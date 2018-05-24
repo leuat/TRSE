@@ -1,0 +1,576 @@
+program RogueBurgerOne;
+var
+	//	intro_image_color: IncBin("images/lemonspawn_color.bin", "$3000");  // $800
+	// 3854
+	mainChar: IncBin("charsets/charset_text.bin","$4800"); // $800 bytes
+	
+	levelChar: IncBin("charsets/charset_level.bin","$5000");// $800 bytes
+	sprite0data : incbin("sprites/fastfood.bin", "$5800"); // will be $1000 bytes // locally 2000
+	music1 : incsid("music/fliptape60.sid", "2");
+	
+	multiColorChar: IncBin("charsets/lcharsetMC.bin", "$8800");
+	levels: IncBin("levels/levels.flf", "$9000"); // 2400 in hex
+
+	@userdata "$0400" "$0800" "Bank 0 screen"
+	@userdata "$4400" "$4800" "Bank 1 screen"
+	@userdata "$8400" "$8800" "Bank 2 screen"
+	@userdata "$D800" "$E000" "Color space"
+
+	//	intro_image_data: IncBin("images/lemonspawn_data.bin", "$A000"); // $2000 suze
+	
+	//3832 lines
+	
+	//	music1 : incsid("fliptape3.sid");
+	m_posx, m_posy : byte; // current level position in grid
+	i, redraw, j,k,l,val2: byte;  // i is temp, redraw states that the map should be redrawn
+	time : byte;
+
+	currentScroll: byte=0;
+	keepbitmask : byte;
+	
+	keyPressedWait : byte;
+
+
+	sprite1_counter, tmp2,tmp3,val : byte; // sprite1_counter shifts between sprite animations
+	spritex, tmp : integer; // Sprite positions and temp integer
+	spritey, frameCounter : byte;
+	
+
+	player_score : byte;
+	player_speed : byte;
+	
+	current_background : byte;
+	TextRogueBurger: string = "ROGUE BURGER ONE";
+
+	zeropage1, zeropage2, zeropage3, zeropage4, zeropage5, zeropage6, zeropage7 : pointer;
+
+	// Scroller vars
+	ms_sshift : byte=0;
+	ms_scroll : byte=7;
+
+
+
+	@define levelointer zeropage7
+
+
+
+
+	IntroText : string = (
+	"    ROGUE BURGER ONE WAS VICIOUSLY THROWN INTO THE SEWERS AFTER BEING DISCARDED BY A NORWEGIAN VEGAN         ",
+	" ANGRY WITH THE WORLD SHE GREW UP IN  ROGUE BURGER ONE SWORE TO HUNT DOWN THE SUFFERING FAST FOOD REVENANTS IN THE SEWERS BENEATH OSLO       ",
+	"  PUTTING THEM OUT OF THEIR MISERY BY SMITING THEM WITH PIZZA          ",
+	" WHILE UNDERTAKING THIS HUGE BURDEN  SHE CAME ACROSS A SCORE OF SACRED SCROLLS THAT WOULD FOREVER CHANGE HER DESTINY        ",
+	"WILL ROGUE BURGER ONE EVER FIND TRUE HAPPINESS            ONLY THE MOST AUDACIOUS ADVENTURER WILL EVER REVEAL THIS DIVINE SECRET         UNRAVELING A RECIPE FOR THE ULTIMATE DELIGHT             ",
+		0);
+
+	ScrollText1: string = "HALF A POOD OF FLESHY BITS";
+	ScrollText2: string = "                  ONIONS WITHOUT A FAULT";
+	ScrollText3: string = "A CULLINGLEY OF CHILI HITS";
+	ScrollText4: string = "                  TOMATOES AND SOME SALT";
+	ScrollText5: string = "MIX AND FRY ON AVERAGE HEAT";
+	ScrollText6: string = "                      BUNS TO TOP IT OFF";
+	ScrollText7: string = "DEVOUR THE SAVORY DRIPPING MEAT";
+	ScrollText8: string = "                  ICE COLD BEER TO QUAFF";
+
+
+	EndingText: string = (	"    ROGUE BURGER ONE FINALLY MANAGED TO FIND HAPPINESS TOGETHER WITH HER NEWFOUND FRIENDS         ",
+							"  SHE WAS SOON EATEN BY A HAPPY PLAYER         IF THERE IS A POINT TO THIS STORY PLEASE LET US KNOW            " );
+
+
+/* Credits section 
+
+*/
+	creditsCounter: byte = 0;
+
+	@define creditsCMax 4 // Time of credz movement
+	@define creditsStartX 9
+	@define creditsStartY 17
+
+	@define CreditsColors 3
+
+	creditsX: byte = @creditsStartX;
+	creditsY: byte = @creditsStartY;
+
+	@define newline 254
+	@define cclear 253
+	@define cpause 252	
+
+	// 136 = health upgrade
+	// 137 = ammp upgrade
+	// 138 = hotdog
+	// 135 = HEART
+	// 134 = AMMO
+
+	CreditsText : string = (129, @cclear, @cpause,
+							"ROGUE BURGER ONE", @newline,
+							" 2018 LEMONSPAWN", @newline, 
+							"  VERSION 0000 0100", 
+							@cpause,@cpause,@cpause,@cpause,
+							@cclear, @cpause, "     ", @newline,@newline, "   INSTRUCTIONS", @cpause,@cpause,@cpause, @cclear,
+							"DONT DIE. ", 129, @cpause, @cpause,@cpause, 
+							@newline, " PICK UP STUFF", 134, @cpause, @cpause,
+							@newline, "  SHOOT OTHER STUFF", 130, @cpause,@cpause,@cpause,128
+							@cclear, "FIND BOOSTS", @cpause, @cpause,
+							@newline, "  HEALTH", 135,  @cpause,@cpause
+							@newline, "    AMMO", 134,  @cpause,@cpause,@cpause,@cpause
+							@cclear, "PROCURE UPGRADES", 128, @cpause, @cpause,
+							@newline, "  HEALTH", 136, @cpause, @cpause,
+							@newline, "    PIZZA WEAPON", 137, @cpause,@cpause,@cpause,@cpause
+							@cclear, "SEARCH FOR ", @newline, "SACRED SCROLLS", 141,
+							@newline, "CONTAINING AN ANCIENT ", @newline,"SECRET RECIPE", @cpause, @cpause,
+							@newline, "SPACE BAR TO VIEW ", @cpause, @cpause,@cpause,
+
+							128, @cclear, @cpause, "DEVELOPED BY", @newline,@newline  
+							"     LEMONSPAWN", @cpause, @cpause, @cclear,
+							"MUSIC BY", @newline,@newline, "  RICHARD OF TND", @cpause, @cpause,@cpause, @cclear
+							"CODE GFX DESIGN LEVELS", @newline,"AND EVERYTHING ELSE", @newline, "BY ", @cpause, "LEUAT", @cpause, @cpause, @newline, @cpause,@cclear
+							"DEVELOPED WITH", @newline, "  TURBO RASCAL", @newline,"    SYNTAX ERROR", @cpause, @cpause,@cpause, @cclear
+							"ROGUE BURGER ONE FULL", @newline, "SOURCE CODE IS INCLUDED", @newline,"IN THE TURBO RASCAL", 
+							@newline, "DOWNLOAD PACKAGE", @cpause, @cpause, @cpause,@cclear,
+							"IN ADDITION TO SEVERAL", @newline, "OTHER TUTORIALS ON", @newline,"HOW TO DEVELOP GAMES", 
+							@newline, "AND DEMOS FOR THE ", @newline,"COMMODORE 64 IN 2018", @cpause, @cpause,@cpause, @cclear,
+							
+							"VISIT", @newline, " TURBORASCAL.COM", @newline,"  FOR C64 CODING", @cpause, @cpause,  @cpause,  @cclear
+							
+							);
+	
+
+
+	EndingTextWriter : string = (@cclear, @cpause,
+							"THANKS FOR PLAYING",@newline,
+							" ROGUE BURGER ONE", @newline,
+							"  2018 LEMONSPAWN", @cpause,@cpause,@cpause,@cclear, 
+							"THIS GAME WAS DEVELOPED", @newline,
+							"AS AN EXAMPLE OF WHAT", @newline,
+							"IS POSSIBLE TO CREATE", @newline, 
+							"WITH TURBO RASCAL ", @newline,
+							"SYNTAX ERROR", @cpause,@cpause,@cpause, @cclear,
+							"ALL CONTENT WITH THE",@newline,
+							"EXCEPTION OF THE TITLE",@newline,
+							"MUSIC WAS CREATED",@newline,
+							"USING TRSE", @cpause,@cpause,@cpause, @cclear
+							"THE ENTIRE GAME SOURCE",@newline,
+							"CODE WITH ALL RESOURCES",@newline,
+							"ARE INCLUDED WHEN YOU ",@newline,
+							"DOWNLOAD THE TRSE SUITE", @cpause,@cpause,@cpause, @cclear,
+							"PRESS BUTTON TO RESET", @cpause,@cpause,@cpause,@cpause,@cpause,@cpause,@cpause,@cpause,@cpause);
+
+
+
+	
+	// Entity sprite locations in memory *64 on current bank
+	entity_sprites : array[8] of byte = (
+	$61, $60, $72, $73, $74, $66, $67, $68, $69,$6A,$6B, $6C,
+	$6D, $6E, $6F, $70, $71, $76 ,    $77 , $78, $79);
+	
+	// pai = 1, 60
+	// ice cream = 2, 72
+	// toast = 3, 73
+	// pizza = 4, 74
+	// pizza ammo =  5, 66
+	// heart = 6, 67
+	// health up = 7, 68 , upgrade bit 1
+	// ammo up = 8, 69, upgrade bit 2
+	// hotdog = 9, 6a
+	// kebab = 10, 6b
+	// taco = 11, 6c
+	// scroll = 12, 6d, upgrade bit 4
+	// beer = 13, 6e
+	// donut = 14, 6f
+	// croissant = 15, 70
+	// e = 16, 71
+	// shoe = 17, 76 , upgrade  bit 8
+	// Boss = 18, 19,20,21
+	
+	
+	fade : array [16] of byte = (11,6,6,12,4,14,15,1,1,15,14,4,12,6,6,11);
+	
+	// Used to calculate direction of pizza bullet
+	prev_dx, prev_dy : byte;
+	
+	
+	// Entities
+	no_entities : byte;
+	entity_pos_x : array[8] of byte;
+	entity_pos_y : array[8] of byte;
+	entity_curpos_x : array[8] of byte;
+	entity_curpos_y : array[8] of byte;
+	entity_dd_x : array[8] of byte;
+	entity_dd_y : array[8] of byte;
+	entity_pos_spread : array[8] of byte;
+	entity_type : array[8] of byte;
+	entity_sprite : array[8] of byte;
+	entity_color : array[8] of byte;
+	entity_health : array[8] of byte;
+	
+	entity_framecounter_x : array[8] of byte;
+	entity_framecounter_y : array[8] of byte;
+	
+	entity_framecounter_maxx : array[8] of byte;
+	entity_framecounter_maxy : array[8] of byte;
+	
+	entity_hurt : array[8] of byte;
+	
+	entity_pickup : array[8] of byte;
+	
+	player_health : byte;
+	bullet_count : byte;
+	
+	
+	player_maxhealth : byte;
+	bullet_max  : byte;
+	
+	bullet_x : byte;
+	bullet_y, bullet_dx, bullet_dy : byte;
+	bullet_wait : byte;
+	
+	bullet_dmg : byte;
+	
+	joystick_pressed : byte;
+	
+	
+	moveSprite : array[8] of byte = ($61,$62,$63,$64,$65, $64,$63,$62);
+	
+	@define usekernal 0
+	
+	
+	// pizza is 5, heart is 6, health upgrade is 7, ammo upgrade is 8,
+	// hotdog is 9
+	//data_header =,id,x,y,life,color, spread, sx, sy, isdead, damage, ammo, sound, upgrade
+	
+	// Location in .flf files of entity values
+	@define entity_id "0"
+	@define entity_isdead "8"
+	@define entity_damage "9"
+	@define entity_ammo "10"
+	@define entity_sound "11"
+	@define entity_upgrade "12"
+	@define entity_tag "13"
+	
+	@define upgrade_health_bit "0"
+	@define upgrade_ammo_bit "1"
+	@define upgrade_scroll_bit "2"
+	@define upgrade_speed_bit "3"
+	
+	// Screen writing positions
+	@define screen1hi "$44"
+	@define screenmem1 "^$4400"
+	
+	@define screen2hi "$04"
+	@define screenmem2 "^$0400"
+	
+	@define charmapLevel "$14"
+	@define charmapText "$12"
+	
+	@define clearchar "$20"
+	
+	@define spritebank "1"
+	
+	@define playerSprite "0"
+	@define bulletSprite "7"
+	
+	@define player_sprite_loc "$60"
+	@define bullet_sprite_loc "$66"
+	
+	@define crashDistance "7"
+	
+	@define playerSpeed "2"
+	
+	
+	@define highCharMemoryPos "$12"
+	
+	@define sidchannel "SID_CHANNEL3"
+	
+	@define levelpointer "zeropage7"
+	@define colorpointer zeropage4
+	
+
+	@define renderText2x2 zeropage1
+
+
+	//@define immortal true
+
+	immortal, ignoreCollisions : byte = 0;
+
+
+	
+//   Renders a .flf level at map pos x,y
+
+
+
+//@include "RasLib/sprites.ras"
+
+// Sprite 0 and 7 are reserved, so we can only have 6 entity sprites in one screen
+
+
+
+procedure InitGameOver();
+procedure InitNewGame();
+procedure rasterUpdateGame();
+procedure InitMainScreen();
+procedure MainScreen();
+
+@include "rendering.ras"
+@include "entities.ras"
+@include "gameoverwon.ras"
+
+@include "player.ras"
+@include "introscreen.ras"
+
+
+
+
+procedure debug(db_posx, db_posy, db_val : byte);
+begin
+	moveto(db_posx, db_posy, @screen1hi);
+	printnumber(db_val);
+end;
+
+
+
+
+
+interrupt RasterUpdateScrollView();
+begin
+	StartIRQ(@usekernal);
+	setbank(VIC_BANK1);
+//	poke(VIC_DATA_LOC, 0, @highCharMemoryPos);
+	poke(VIC_DATA_LOC, 0, @charmapText);
+	if (keyPressedWait=0) then begin
+		if (keypressed(KEY_SPACE)=1)then begin
+			copyfullscreen(^$0400, ^$4400);
+			copyfullscreen(^$8000, ^$D800);
+			poke(SPRITE_BITMASK,0, keepbitmask);
+			keyPressedWait:=16;
+			RasterIRQ(rasterUpdateGame(), 1,@usekernal);
+			CloseIRQ();
+			returninterrupt();
+		end;
+
+	end;
+	inc(time);
+	y:=1;
+	for i:=0 to 8 do begin
+		moveto(0,y,$D8);
+		val:=fade[ (time +i*5)&15];
+		fill(screenmemory, val, 40);
+		y:=y+l;
+
+	end;
+
+
+	if keyPressedWait<>0 then dec(keyPressedWait);
+
+	CloseIRQ();
+end;
+
+
+
+procedure PrepareScrollView();
+begin
+	keepbitmask:=peek(SPRITE_BITMASK,0);
+	SPRITE_BITMASK:=0; // clear sprites
+	copyfullscreen(^$4400, ^$0400);
+	copyfullscreen(^$D800,^$8000);
+	clearscreen(LIGHT_BLUE,$D800);
+	clearscreen($20,^$4400);
+	poke(VIC_DATA_LOC, 0, @charmapText);
+	setregularcolormode();
+	keyPressedWait:=16; // Counter for pressing J again
+	k:=0;
+	y:=1;
+	l:=3;
+
+	if (currentScroll<>0) then
+	for i:=0 to currentScroll do begin
+		moveto(0,y,$44);
+		if i=0 then printstring(ScrollText1,0,40);
+		if i=1 then printstring(ScrollText2,0,40);
+		if i=2 then printstring(ScrollText3,0,40);
+		if i=3 then printstring(ScrollText4,0,40);
+		if i=4 then printstring(ScrollText5,0,40);
+		if i=5 then printstring(ScrollText6,0,40);
+		if i=6 then printstring(ScrollText7,0,40);
+		if i=7 then printstring(ScrollText8,0,40);
+
+		y:=y+l;
+	
+	end;	
+
+
+
+end;
+
+
+
+interrupt rasterUpdateGame();
+begin
+	// Call sid
+	//	call(SIDFILE_1_PLAY);
+	// Make sure upper part of screen renders text
+	StartIRQ(@usekernal);
+	inc(time);
+
+
+	//setRegularColorMode();
+	setMultiColorMode();
+	poke(MULTICOLOR_CHAR_COL, 0, BLACK);
+//	waitForRaster(1);
+	// Set regular text font
+	setbank(VIC_BANK2);
+	poke(VIC_DATA_LOC, 0, @highCharMemoryPos);
+	// Wait until level starts
+//	PrintTextColor();
+	UpdateEntities();
+
+
+	
+	waitforRaster(67);
+	// Set multi color & level font
+	setbank(VIC_BANK1);
+	
+	poke(MULTICOLOR_CHAR_COL, 0, current_background);
+	poke(VIC_DATA_LOC, 0, @charmapLevel);
+	setMulticolorMode();
+	RenderHealthBar();
+	RenderBulletBar();
+	moveto(36, 1, @screen1hi);
+	printnumber(player_score);
+	
+	UpdatePlayer();
+	UpdateBullet();
+
+	if (keypressed(KEY_ENTER)=1) then begin
+	
+		SCREEN_BG_COL:=RED;
+	end;
+	
+
+
+	if (keyPressedWait=0) then begin
+		if (keypressed(KEY_SPACE)=1) then begin
+			PrepareScrollView();
+			RasterIRQ(RasterUpdateScrollView(), 1, @usekernal);
+			CloseIRQ();
+			returninterrupt();	
+		end;
+		if (keypressed(KEY_P)=1) then begin
+			keyPressedWait:=16;
+			immortal:=(immortal+1)&1;
+			//poke(SPRITE_MULTICOLOR_REG2,0,WHITE);
+			//Loop();
+		end;
+		if (keypressed(KEY_L)=1) then begin
+			keyPressedWait:=16;
+			ignoreCollisions:=(ignoreCollisions+1)&1;
+		end;
+		if (keypressed(KEY_U)=1) then begin
+			InitGameWon();
+			RasterIRQ(RasterGameWon(), 1, @usekernal);
+			CloseIRQ();	
+			returninterrupt();
+		end;
+
+	end;
+	if keyPressedWait<>0 then dec(keyPressedWait);
+	
+
+	waitForRaster(242);
+	wait(9);
+	// Go back to regular font
+	
+	poke(VIC_DATA_LOC, 0, @charmapText);
+	poke(MULTICOLOR_CHAR_COL, 0, BLACK);
+	UpdatePlayerSprite();
+	
+	
+	waitForRaster(255);
+	// Make sure multicolor font is loaded afterwards
+	poke(VIC_DATA_LOC, 0, @charmapLevel);
+	
+	// Acknowledge interrupt
+	
+	
+	
+	CloseIRQ();	
+	
+end;
+
+
+procedure InitNewGame();
+begin
+	m_posx:=0;
+	m_posy:=0;
+	
+
+	//copyfullscreen(^$B000,^$8400);
+	ClearScreen($20, $4400);
+	PrintText();
+	PrintTextColor();
+	// Initial map rendering
+	ResetLevels(levels);
+	RenderLevel(levels,m_posx, m_posy, @screen1hi);
+	current_background := peek(MULTICOLOR_CHAR_COL,0);
+	LoadEntities();
+	InitEntities();
+	
+
+	currentScroll:=0;
+	// Initial sprite position
+	spritex := 160;
+	spritey := 100;
+	
+	player_speed := 1;
+	
+	sprite1_counter := 1;
+	bullet_wait := 0;
+	player_score := 0;
+	joystick_pressed := 0;
+	bullet_dmg:=4;
+	bullet_count :=8;
+	
+	player_health := 30;
+	player_maxhealth := 30;
+	
+	bullet_max := 10;
+	
+	frameCounter:=0;
+	
+	setmulticolormode();
+	// Remember to implement resetting all "isdead" flag. also, make this part of flags bit.
+end;
+
+
+
+interrupt NMI();
+begin
+	
+end;
+
+
+begin
+	
+	//	Intro();
+	// TURN OFF Kernal Basic! WHOO!
+
+
+
+	InitSid(SIDFILE_1_INIT);
+	preventirq();
+	disableciainterrupts();
+	nmiirq(NMI());	
+	setmemoryconfig(1,@usekernal,0);
+
+	// Take care of levels that is being killed at $8400
+//	copyfullscreen(^$8400,^$B000);
+
+
+	InitMainScreen();
+	// Hook that raster!
+	//DisableInterrupts();
+	RasterIRQ(MainScreen(), 100,@usekernal);
+	enablerasterirq();
+	enableirq();
+	Loop();
+end.
+

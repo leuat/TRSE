@@ -1,0 +1,389 @@
+program Tutorial15_Polygon_work_in_progress;
+var
+	i, j,k,val,r,sin,cos,idx0, idx1, time: byte=5;
+	
+	center: array[2] of byte=(80,100);
+	theta,x0,x1,y0,y1,z: byte;
+	
+	@define gridSize 4
+	@define gridsq 16
+	
+	
+	xx,yy,x,y,t : integer;
+	inttime:integer;
+	
+	px: array[3] of byte = (40, 70, 50);
+	py: array[3] of byte = (40, 70, 50);
+	
+	
+	gridx: array[@gridsq] of byte;
+	gridy: array[@gridsq] of byte;
+	gridz: array[@gridsq] of byte;
+	
+	
+	addressPointer: pointer;
+	@define address addressPointer
+	@define bitmapstart "$6000"
+	
+	// Currently, putpixel2 and putpixel3 are supported
+	@define putpixel "putpixel2();"
+	
+	@include "../RasLib/bitmapgraphics.ras"
+	
+	
+	
+	/*
+	switch between bank 0 and 1
+	*/
+procedure SwitchDrawBank();
+begin
+	if bmg_currbank=0 then begin
+		bmg_currbank := $40;
+		SetBank(VIC_BANK1);
+		clearbitmap($A400, 22); // Clear a certain window only
+	end
+	
+	else
+	begin
+		bmg_currbank:=$0;
+		SetBank(VIC_BANK2);
+		clearbitmap($6400, 22);
+	end;
+		poke(VIC_DATA_LOC, 0,$18);
+
+end;
+
+
+procedure filler(fx1, fx2, fy:byte);
+begin
+	if fx1<>fx2 then
+	
+asm("
+
+	ldx fx1
+	
+
+fillerloop:
+	ldy fy
+	
+	lda ytablelow,y
+	clc
+	adc xtablelow,x
+	sta @address
+	
+	lda ytablehigh,y
+	adc bmg_currbank
+	adc xtablehigh,x
+	sta @address+1
+	
+	ldy #$00
+	lda (@address),y
+	
+	ora bmg_mask,x
+	sta (@address),y
+
+	inx
+	cpx fx2
+	bne fillerloop
+
+");
+	
+end;
+
+// Polygon slope scale
+@define scale "128"
+
+
+/*
+   FillPolygon NOT OPTIMIZED at all. Still doesn't work for all cases, so fix up!
+*/
+
+procedure FillPolygon(fbf_x0,fbf_y0, fbf_x1,fbf_y1, fbf_x2, fbf_y2 : byte);
+var
+	invslope1, invslope2:integer;
+	curx1, curx2,iii: integer;
+	ccx1, ccx2, fby,dx1,dx2, dy1,dy2 : byte;
+
+begin
+
+	// sort by y
+
+
+	if fbf_y1<fbf_y0 then begin
+		swap(fbf_y1, fbf_y0);
+		swap(fbf_x1, fbf_x0);
+	end;
+
+
+	if fbf_y2<fbf_y1 then begin
+		swap(fbf_y2, fbf_y1);
+		swap(fbf_x2, fbf_x1);
+	end;
+
+	if fbf_y1<fbf_y0 then begin
+		swap(fbf_y1, fbf_y0);
+		swap(fbf_x1, fbf_x0);
+	end;
+
+
+
+
+	dy1:=fbf_y1-fbf_y0;
+	dy2:=fbf_y2-fbf_y0;
+
+
+	// Check for 0	
+	if dy1=0 then begin
+		dy1:=1;
+		fbf_y1:=fbf_y1+1;
+	end;
+	
+	if dy2=0 then begin
+		dy2:=1;
+		fbf_y2:=fbf_y2+1;
+	end;
+	
+
+
+	if fbf_x0<fbf_x1 then begin
+		dx1:=fbf_x1 - fbf_x0;
+		invslope1 := (dx1)*@scale;
+    	invslope1:=invslope1/(dy1);
+	end
+	else begin
+		dx1:=fbf_x0 - fbf_x1;
+		invslope1 := (dx1)*@scale;
+    	invslope1:=invslope1/(dy1);
+		invslope1:=65535-invslope1;
+	//	SCREEN_BG_COL:=RED;
+	end;
+	if fbf_x0<fbf_x2 then begin
+		dx1:=fbf_x2 - fbf_x0;
+		invslope2 := (dx1)*@scale;
+    	invslope2:=invslope2/(dy2);
+//		SCREEN_FG_COL:=GREEN;
+
+	end
+	else begin
+		dx1:=fbf_x0 - fbf_x2;
+		invslope2 := (dx1)*@scale;
+    	invslope2:=invslope2/(dy2);
+		invslope2:=65535-invslope2;
+	end;
+
+
+	if fbf_x1>fbf_x2 then begin
+		curx1:=invslope1;
+		invslope1:=invslope2;
+		invslope2:=curx1;
+	end;
+	
+	
+	curx1 := fbf_x0*@scale;
+	curx2 := fbf_x0*@scale;
+
+	if fbf_y1>fbf_y0 then	
+
+	for fby := fbf_y0 to fbf_y1 offpage do begin
+		ccx1:=curx1/@scale;
+		ccx2:=curx2/@scale;
+		filler(ccx1,ccx2, fby);
+
+		curx1 := curx1 + invslope1;
+		curx2 := curx2 + invslope2;
+	end;
+
+	
+//	end;
+
+	
+
+	fbf_x0:=fbf_x1; // center piece
+	dy2:=fbf_y2-fbf_y1;
+
+
+	if dy2=0 then begin
+		dy2:=1;
+		fbf_y2:=fbf_y2+1;
+	end;
+
+//	if dy2<>0 then begin
+
+	if fbf_x0<fbf_x2 then begin
+		dx1:=fbf_x2 - fbf_x0;
+		iii := (dx1)*@scale;
+    	iii:=iii/(dy2);
+	end
+	else begin
+		dx1:=fbf_x0 - fbf_x2;
+		iii := (dx1)*@scale;
+    	iii:=iii/(dy2);
+  		iii:=65535-iii;
+	end;
+
+	if fbf_x1<fbf_x2 then
+		invslope1:=iii
+	else
+		invslope2:=iii;
+
+
+	for fby := fbf_y1 to fbf_y2 offpage do begin
+		ccx1:=curx1/@scale;
+		ccx2:=curx2/@scale;
+		filler(ccx1,ccx2, fby);
+
+		curx1 := curx1 + invslope1;
+		curx2 := curx2 + invslope2;
+	end;
+
+//	end;
+end;
+
+
+
+
+
+
+procedure Rotate2D(th, ii, wx, wy:byte);
+begin
+	cos:=sine[th];
+	sin:=sine[th+64];
+	x:=cos*wx;
+	x:=x/256;
+	
+	y:=sin*wy;
+	y:=y/256;
+	
+	x:=x-wx/2;
+	y:=y-wy/2;
+	
+	px[ii]:=x+center[0];
+	py[ii]:=y+center[1];
+	
+end;
+
+
+procedure UpdateRaster();
+
+begin
+	SwitchDrawBank();
+	
+	//filler(10,100, 10);
+	
+	Rotate2D(theta, 0, 30, 80);
+	Rotate2D(theta+60, 1, 80, 60);
+	Rotate2D(theta*1-120, 2, 60, 60);
+	/*Line(px[0],py[0],px[1],py[1]);
+	Line(px[1],py[1],px[2],py[2]);
+	Line(px[2],py[2],px[0],py[0]);
+	*/
+	
+	//FillPolygon( 10,40, 40,90, 50,120);
+	FillPolygon(px[0],py[0],px[1],py[1], px[2], py[2]);
+	
+
+	theta:=theta+6;
+	
+end;
+
+
+/*procedure SetupGrid();
+begin
+	for x:=0 to @gridSize do begin
+		for y:=0 to @gridSize do begin
+			
+			gridx[x+y*@gridSize]:=(x)*10;
+			gridy[x+y*@gridSize]:=y*4 + 60;
+			gridz[x+y*@gridSize]:=55;
+		end;
+	end;
+	
+end;
+
+
+
+procedure Draw3DLine(d3l_i0, d3l_i1:byte);
+begin
+	
+	xx:=gridx[d3l_i0]*64;
+	xx:=xx+inttime;
+	xx:=xx/gridy[d3l_i0];
+	x0:=xx + 80;
+	
+	xx:=gridz[d3l_i0]*64;
+	xx:=xx/gridy[d3l_i0];
+	y0:=xx + 80;
+	
+	xx:=gridx[d3l_i1]*64;
+	xx:=xx+inttime;
+	xx:=xx/gridy[d3l_i1];
+	x1:=xx + 80;
+	
+	xx:=gridz[d3l_i1]*64;
+	xx:=xx/gridy[d3l_i1];
+	y1:=xx + 80;
+	
+	
+	Line(x0,y0,x1,y1);
+	
+end;
+
+
+procedure DrawGrid();
+begin
+	for x:=0 to @gridSize-1 do begin
+		for y:=0 to @gridSize-1 do begin
+			idx0:=x+y*@gridSize;
+			idx1:=x+y*@gridSize+1;
+			
+			Draw3DLine(idx0, idx1);
+			
+			idx1:=x+y*@gridSize+@gridSize;
+			Draw3DLine(idx0, idx1);
+			
+			
+		end;
+	end;
+	time:=time+1;
+	inttime:=inttime+10;
+	clearbitmap($2000,32);
+end;
+*/
+
+begin
+	initmoveto();
+	bmg_currbank :=0; // Current bitmap bank (added to high bit of putpixel)
+	SetupPixelTables();
+	inczp(@address,10);
+	poke(VIC_DATA_LOC, 0,$18);
+	
+	setmulticolormode();
+	setbitmapmode();
+	
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+	//clearbitmap($2000,32);
+	setmemoryconfig(1,1,0);
+
+	clearbitmap($6000,32);
+	clearbitmap($A000,32);
+	
+	clearscreen(RED,$D800);
+	clearscreen(GREEN,$0400);
+	clearscreen(BLUE,$4400);
+	
+	//	ClearBitmapB1();
+	//	ClearBitmapB2();
+	
+	
+//	SetupGrid();
+
+	setbank(VIC_BANK1);	
+	bmg_currbank:=$00;
+	//while 1=1 do DrawGrid();
+	while 1=1 do UpdateRaster();
+	
+	Loop();
+	
+end.
+

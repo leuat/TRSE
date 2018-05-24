@@ -1,0 +1,20 @@
+
+
+
+procedure InitEnding();
+begin
+
+
+
+end;
+
+
+
+
+interrupt RasterEnding();
+begin
+	StartIRQ(@usekernal);
+
+
+	CloseIRQ();
+end;

@@ -1,0 +1,301 @@
+General
+Constants and variables
+	SCREEN_BG_COL
+		<h2>Screen border color</h2>
+		Ever heard of 53280?
+	SCREEN_FG_COL
+		<h2>Screen background color</h2>
+		Ever heard of 53281?
+	zeropage
+		Zeropage1-7
+	sine
+		<h2>sine</h2>
+		Sine is a table of 256 bytes f
+	screenmeory
+		moveto
+
+Built-in methods
+	clearbitmap
+		<h2>ClearBitmap( [ address ], [ fillsize = 256*lines ] );</h2><br>
+		Clears a bitmap / any kind of memory with 256*parameter 2 bytes. For example:<br>
+		<font color="@code">ClearBitmap($2000, 32);</font><br>
+		Clears 8192 (32*256) bytes at $2000.
+	clearscreen
+		<h2>ClearScreen( [ char ], [ address ]); </h2>
+		Clears exactly 40*25 = 1000 bytes of memory at the given address with the provided value. Example:<br>
+		<font color="@code">ClearScreen($20, ^$0400);</font><br>
+		Fill the screen memory of bank 0 with space ($20)
+
+	closeirq
+		<h2>CloseIRQ( ));</h2>
+		Closes an IRQ method. For example: <br>
+		<font color="@code">
+		RasterIRQ(myRaster(), 0, 1); // Assign myRaster with kernel (1)<br>
+		...<br>
+		procedure myRaster();<br>
+		begin<br>
+		  startirq(1); // start IRQ with raster<br>
+		  ...<br>
+		  closeirq();<br>
+		end(); </br>
+		</font>
+
+
+	copycharsetfromrom
+		<h2>CopyCharsetFromRom( [ destination address ]);</h2>
+		Copies the standard ROM charset to the specified address. Example: <br><br>
+		<font color="@code">copycharsetfromrom(^$5000);</font><br>
+
+	disableciainterrupts
+		<h2>DisableCIAInterrupts();</h2>
+		Disables all CIA interrupts
+	enableirq
+		<h2>EnableIRQ</h2>
+		Enables all irqs (basically a <b>cli</b> command)
+
+	fill
+		<h2>fill ( [ addr ], [ value ], [ count &lt;$ff ] )</h2><br>
+		Fills [count] bytes with [value] at the [address].
+		Examples:<br>
+		<font color="@code">fill(zeropage4, 0, 0);</font><br>
+		Fills values at zeropage4 with 256 bytes of 0<br>
+		<br>
+		<font color="@code">fill(^$0400, $20, 40);</font><br>
+		Fills the first 40 bytes of screen memory with blanks (value $20)<br>
+		<br>
+
+	inczp
+		<h2>inczp( [zeropage], [ val ] );</h2>
+		Increases the mentioned zeropage pointer by [ val ] bytes. <br>
+		Example:<br>
+		<font color="@code">inczp(zeropage2, 64);</font><br>
+
+	memcpy
+		<h2>memcpy( [ src Addr ], [ src shift ], [ dst addr], [ count &lt;$ff ] )</h2>
+		copies [ count ] bytes from src+shift to destination. <br><br>
+		Examples:<br>
+	moveto
+		<h2>moveto( x, y, [ address high byte ] ); </h2><br>
+		Move the screen cursor pointer "screenmemory" to position x,y on the screen with the given high byte.<br><br>
+		Example:<br>
+		<font color="@code">
+		moveto(0,5, $04);<br>
+		for i:=0 to 40 do
+			screenmemory[i]:=i;
+		</font>
+		<br>
+		fills the 5th row of screen bank 0 ($0400) with 40 bytes from 0 to i.
+
+	peek
+		<h2>peek( [ addr ], [ shift ])</h2>
+		Retrieves value at address with shift. Must take address as input with ^.
+		Example: <br>
+		<font color="@code">a:=peek(^$D800, 0);</font><br>
+		Retrieves the first byte of color ram<br>
+		<br>
+		<font color="@code">a:=peek(var, 4);</font><br><
+		Retrieves the 4th byte of array, same as a:=var[4];<br>
+		<br>
+		<font color="@code">a:=peek(zeropage2, i);</font><br>
+		Retrieves the ith value of zeropage2, same as a:=zeropage[i];
+	poke
+		<h2>poke( [ addr], [ shift], [ val ]);</h2>
+		Sets the value at address with shift. Must take address as input with ^.
+		Example: <br>
+		<font color="@code">poke(^$D800, 3, 1);</font><br>
+		Sets the third byte of color ram to white (1)<br>
+		<br>
+		<font color="@code">poke(var, 4,a);</font><br><
+		Sets the 4th byte of array to a, same as var[4]:=a;<br>
+		<br>
+		<font color="@code">poke(zeropage2, i, 0);</font><br>
+		Sets the ith value of zeropage2 to zero, same as zeropage[i]:=0;
+	preventirq
+		<h2>PreventIRQ</h2>
+		Prevents all interrupts (basically a <b>sei</b> command)
+	rasterirq
+		<h2>RasterIRQ( [ raster routine ], [ raster line], [ use kernal ]); </h2>
+		Hooks the raster irq to a procedure to fire at a given line. Example: <br>
+		<font color="@code">
+		RasterIRQ(myRaster(), 0, 1); // Assign myRaster with kernel (1) to fire at rasterline 0<br>
+		...<br>
+		procedure myRaster();<br>
+		begin<br>
+		  startirq(1); // start IRQ with raster<br>
+		  ...<br>
+		  closeirq();<br>
+		end(); </br>
+		</font>
+
+
+	setbank
+		<h2>SetBank(VIC_BANK[0-3]);</h2>
+		Sets current VIC bank 0-3 (VIC_BANK0, VIC_BANK3 etc).
+	setspriteloc
+		<h2>SetSpriteLoc( [ sprite=[0:7], [ dataloc ], [bank=[0:3] );</h2>
+		Sets sprite data pointer location. The sprite number (or variable) is limited to
+		0-7, while the bank number must be a numeric. The actual sprite position must be located at  64*dataloc.
+		<br><br><b>Example:</b><br>
+		Assume you have loaded a set of 10 sprites at position $2400. The start of the 64-bit sprite
+		chunks is then $2400 / 64 = $90. If you want to set sprite number 4 to the sprite data at chunk 0 (bank 0), you would write<br>
+		<font color="@code">setspriteloc(4, $90, 0);</font><br>
+		If you want sprite 3 to display the 5rd chunk on bank 1, you type <br>
+		<font color="@code">setspriteloc(3, $95, 1);</font><br>
+	setspritepos
+		<h2>SetSpritePos([x=0:320], [y=0:255], [sprite number 0:7]);</h2>
+		Sets the x/y position of sprite [sprite]. Example:<br>
+		<font color="@code">setspritepos(x, y, 0);</font><br>
+		Will set sprite 0 to position x, y (where x can be an integer>256).
+
+
+	setmemoryconfig
+		<h2>setmemoryconfig(io=[0:1], kernal=[0:1], basic=[0:1]);</h2>
+		Sets the current memory configuration (memory address $01), enabling or disabling
+		BASIC, IO or Kernal. Example:<br>
+		To enable IO and Kernal while disabling BASIC, use <br>
+		<font color="@code">setmemoryconfig(1,1,0);</font>
+	startirq
+		<h2>StartIRQ( kernal = [0:1]));</h2>
+		Starts an IRQ method. For example: <br>
+		<font color="@code">
+		RasterIRQ(myRaster(), 0, 1); // Assign myRaster with kernel (1)<br>
+		...<br>
+		procedure myRaster();<br>
+		begin<br>
+		  startirq(1); // start IRQ with raster<br>
+		  ...<br>
+		  closeirq();<br>
+		end(); </br>
+		</font>
+	waitforraster
+		<h2>waitforraster( [ line number ]);</h2>
+		Wait for the specified raster line.
+	waitnoraster
+		<h2>waitnoraster( [ line numbers ]);</h2>
+		Wait for [ line numbers ] raster lines.
+
+
+
+Syntax
+	array
+		<h2>Array</h2>
+		Array of [ data value ] contains an array of the given value. For now, only arrays of <b>byte></b> exist, in addition to zeropage pointer arrays. <br>
+		Example<br>
+		<font color="@code">
+		var
+		  myArray: array[16] of byte = (0,1,2,3,4,5,6,7,7,6,5,4,3,2,1,0);
+		</font>
+	byte
+		<h2>byte</h2>
+		8 bits, 2 nibbles, whatever you want to call it, it is the most important thing on the c64. That, and the whole reason it is called 
+		"8 bit". If you don't know what a byte is, you don't deserve to use the C64. 
+	define
+		<h2>@define preprocessor</h2><br>
+		The @define preprocessor directive lets you define variables compile-time which will replace
+		all occurences in the text. For instance<br>
+		<font color="@code">
+		@define var "5"<br>
+		@define putpixel "myPutPixel();"<br>
+		//.. in the code<br>
+		for a:=0 to @var do @myPutPixel();<br>
+		</font><br>
+		you can also use defines to exclude/include blocks of code:<br>
+		<font color="@code">
+		@ifdef var <br>
+		printline("debug",0,10);<br>
+		@endif<br>
+		</font>
+		</br>
+	for
+		<h2>for</h2><br>
+		Syntax with begin blocks:<br><br>
+		<font color="@code">
+		for a:=0 to 20 do begin<br>
+			screenMemory[a]:=b;
+			incscreenx(40);
+		end;<br>
+		</font>
+		Syntax without blocks:<br>
+		<font color="@code">
+		for a:=0 to 16 do <br>
+			poke(SCREEN_BG_COL, 0, a);<br>
+		<br>
+		</font>
+		Step syntax <b></b>:<br>
+		<font color="@code">
+		for a:=0 to 16 step 4 do ..<br>
+		<br>
+		</font>
+		<h3>onpage/offpage</h3>
+		<font color="@code">
+		for a:=0 to 4 <b>onpage</b> do <br>
+		onpage forces the for block on the current page.
+		</font>
+	if
+		<h2>conditionals: if</h2>
+		The most basic of conditionals. <br>
+		<font color="@code">
+		if a>b then begin<br>
+		...<br>
+		end;</br>
+		</font>
+		<br>
+		With else block, remove the final semicolon ; before the else keyword:<br>
+		<font color="@code">
+		if a>b then begin<br>
+		...<br>
+		end</br>
+		else<br>
+		   a:=b; // do something <br>
+		</font>
+		<br>
+		The TRSE compiler tries to measure the size of the conditional block, and produces either an inpage or offpage branch. However, this might at times fail. It is therefore possible to force an offpage/onpage branch by using the onpage (&lt;127 bytes, fast) or offpage (&gt;127 bytes) keywords.<br>
+		<br>
+		Example: 
+		<font color="@code">
+		if a>b onpage then begin  // Force the branch to be fast/small, but requires less than 127 bytes of code<br>
+		...<br>
+		</font>
+		<h3>Multiple logical conditionals</h3><br>
+		Two keywords, <b>and</b> and <b>or</b> can be used for multiple logical conditionals.<br>
+		<font color="@code">
+		if (a>b and (b<c or d<>a)) then begin <br> 
+		...<br>
+		</font>
+		Multiple logical conditionals always enforce offpage branching. 
+
+	incbin
+		<h2>IncBin("file.bin", "$address");</h2>
+		Includes a binary file at the given address. <br>Example:<br>
+		<font color="@code">IncBin("levels.flf", "$4000");</font>
+				 
+
+	include
+		<h2>@include preprocessor</h2><br>
+		@include lets you include another source file. Syntax:<br>
+		<font color="@code">
+		@include "../Lib/MyGfxLib.ras"<br>
+		</font>
+
+	incsid
+		<h2>IncSid("music.sid", "shift");</h2>
+		Includes a SID file. 
+
+	procedure
+		<h2>procedures</h2><br>
+		User-defined procedures:<br>
+		<font color="@code">
+		procedure MyProc(a,b : byte);<br>
+		begin<br>
+		   ...<br>
+		end;<br>
+		</font>
+		<br>
+		To call a procedure:<br>
+		<font color="@code">
+		MyProc(10,5);<br>
+		</font>
+
+
+
+

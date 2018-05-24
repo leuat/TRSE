@@ -1,0 +1,784 @@
+program TakoNeko;
+var  
+//	levels: IncBin("levels/takonekolevel.flf", "$1100"); // 2400 in hex
+/*	levels: IncBin("levels/test2.flf", "$1500"); // 2400 in hex
+	levelChar: IncBin("charsets/charset_intro.bin","$4000");// $800 bytes
+	levelChar2: IncBin("charsets/charset_intro.bin","$8000");// $800 bytes
+*/
+
+	levelChar: IncBin("charsets/charset_takoneko.bin","$4000");// $800 bytes
+	sprites0: IncBin("sprites/takoneko.bin", "$4C00");
+	levels: IncBin("levels/takonekoLevel.flf", "$5000"); // 2400 in hex
+
+//	sprite0data : incbin("sprites/fastfood.bin", "$5800"); // will be $1000 bytes // locally 2000
+
+
+	levelChar2: IncBin("charsets/charset_takoneko.bin","$8000");// $800 bytes
+	sprites1: IncBin("sprites/takoneko.bin", "$8C00");
+	regularChar: IncBin("charsets/charset_text.bin","$C000");// $800 bytes
+
+
+	@define pspritepos $40
+	@define soundChannel "SID_CHANNEL3"
+
+	background:byte=0;
+
+	tmp2, tmp3, blockx, blocky, scroll, direction,m:byte=0;
+
+	spritex, tmp:integer;
+	speedup, speeddown:byte=0;
+	spritey:byte;
+	perform:byte;
+	m_posx, m_posy, m_tmp : byte;
+	takoFollowing: byte = 0;
+
+	m_levelInit : byte = 0;
+	m_currentPos : byte=19;
+	m_currentAb : byte=0;
+
+	g_currentBank: byte=0;
+
+	vscroll: byte=6;
+	zeropage3: pointer;
+	currentTextColor : byte = 0;
+
+	moveSpriteRight : array[8] of byte = ($30,$31,$32,$31,$30, $31,$32,$31); 
+	moveSpriteLeft : array[8] of byte = ($35,$36,$37,$36,$35, $36,$37,$36); 
+	moveSpriteLeftIdle : byte = $34; 
+	moveSpriteRightIdle : byte = $33; 
+
+	takoSpriteRight : byte = $39;
+	takoSpriteLeft : byte = $39;
+	bulletSpriteLoc : byte = $38;
+
+	
+	usedSprites : array[8] of byte = (1,1,0,0,0,0,0,0);
+	usedSpritesText : array[8] of byte;
+	usedSpritesText2 : array[8] of byte;
+	usedSpritesEffect : array[8] of byte;
+
+	entity_x : array[8] of byte;
+	entity_y : array[8] of byte;
+	entity_sx : array[8] of byte;
+	entity_sy : array[8] of byte;
+
+	
+	bulletTime: byte=0;
+	bulletProgress:byte=0;
+	bulletHit:byte=0;
+
+	bulletColor:array[16] of color=(15,14,6,11,0,0,0, 0,0,0, 11, 6, 14, 15);
+
+
+
+//	test:pointer;
+//	test2:pointer;
+	i,j,k,time, val:byte=0;
+	sprite1_counter: byte=1;
+
+	useScroll:byte=1;
+
+
+	mask: array[255] of byte=(
+	1,1,1,1,0,0,0,0,0,0,  0,0,1,1,1,1,1,1,1,1,   1,1,1,1,1,1,1,1,1,1,  1,0,0,0,0,1,1,1,1,1,
+	1,1,1,1,0,0,0,0,0,0,  0,0,1,1,1,1,1,1,1,1,   1,1,1,1,1,1,1,1,1,1,  1,0,0,0,0,1,1,1,1,1,
+	0,0,0,0,0,0,0,0,0,0,  0,0,1,1,1,1,1,1,1,1,   0,0,1,1,1,1,1,1,1,1,  1,0,0,1,1,1,1,1,1,1,
+	0,0,0,0,0,0,0,0,0,0,  0,0,1,1,1,1,1,1,1,1,   0,0,1,1,1,1,1,1,1,1,  1,0,0,1,1,1,1,1,1,1,
+	0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0);
+
+
+	catText, lp:pointer;
+
+
+	@define crashDistance 5
+
+	@define newline 254
+	@define cclear 253
+	@define cpause 252	
+	@define ccolor 251
+
+	@define nekoColor 0
+	@define takoColor 9
+	@define memColor 6
+
+	@define takoSprite 2
+	@define bulletSprite 1
+
+	@define entityStory 5
+
+	@define beginText 255
+
+
+@include "story.ras"
+
+
+
+	@define creditsCMax 3 // Time of credz movement
+
+	@define CreditsColors 3
+	@define creditsStartX 2
+	@define creditsStartY 20
+	creditsX: byte= @creditsStartX;
+	creditsY: byte= @creditsStartY;
+
+
+@define usekernal "0"
+
+/*
+   Renders a .flf level at map pos x,y
+*/
+
+@define playerSprite "0"
+@define charmapLevel "$20"
+@define charmapText "$12"
+
+@define screen1hi "$48"
+@define screenmem1 "^$4800"
+
+@define screen2hi "$88"
+@define screenmem2 "^$8800"
+
+@userdata "$4800" "$4C00" "Bank 2 screen"
+@userdata "$8800" "$8C00" "Bank 3 screen"
+
+@define colorpointer zeropage3
+
+@define spritebank "2"
+
+
+@include "levelrenderer.ras"
+
+
+
+procedure setStory(ss_story:byte);
+begin
+	if ss_story=1 then catText:=takoText;
+	if ss_story=2 then catText:=D020Text;
+	if ss_story=3 then catText:=D020TextHit;
+	if ss_story=4 then catText:=D016Text;
+	if ss_story=5 then catText:=D016TextHit;
+end;
+
+
+procedure findCollider(fc_x,fc_y:byte);
+begin
+	val := 255;
+	j:=0;
+
+	for i:=2 to 8 do begin
+		if usedSprites[i]<>0 then
+			begin
+			tmp2 := abs(entity_x[i] - fc_x);
+			tmp3 := abs(entity_y[i] - fc_y);
+			
+			tmp2:=tmp2/2 + tmp3/2;
+			
+			//tmp2 :=tmp2 + abs(entity_curpos_y[i] -fc_y);
+			if tmp2<val then begin
+				val:=tmp2;
+				j:=i;
+			end;
+			
+		end;
+	end;
+	// Winner in val, index in j
+	
+end;
+
+// Sets zeropage 5 to entity data of a given index
+procedure pointToEntityData(pte_idx : byte);
+begin
+	lp:=levelpointer;
+	if pte_idx<>0 then
+	for i:=0 to pte_idx do
+		inczp(lp, m_rl_chunksize);
+	
+end;
+
+
+procedure Shoot();
+begin
+	togglebit(SPRITE_BITMASK, @bulletSprite, 1);
+	entity_x[@bulletSprite]:=spritex/2;
+	usedSprites[@bulletSprite]:=1;
+
+	if direction=0 then entity_x[@bulletSprite]:=entity_x[@bulletSprite]-12;
+	if direction=1 then entity_x[@bulletSprite]:=entity_x[@bulletSprite]+12;
+	entity_y[@bulletSprite]:=spritey;
+	poke(^$47F8 + ^$0400,@bulletSprite ,bulletSpriteLoc); 
+	poke(^$87F8 + ^$0400,@bulletSprite ,bulletSpriteLoc); 
+	SPRITE_COLOR[@bulletSprite]:=LIGHT_GREY;
+
+	tmp:=entity_x[@bulletSprite]*2;
+	spritepos(tmp,entity_y[@bulletSprite],@bulletSprite);
+	bulletProgress:=15;
+	bulletHit:=0;
+
+end;
+
+
+procedure ApplyEffect();
+begin
+	if bulletHit=1 then inc(^$D020);
+	if bulletHit=2 then begin
+		if useScroll=1 then useScroll:=0 else useScroll:=1;
+	end;
+	
+end;
+
+procedure UpdateBullet();
+begin
+	if usedSprites[@bulletSprite]=0 then return();
+
+	entity_y[@bulletSprite]:=entity_y[@bulletSprite]-1;
+	SPRITE_COLOR[@bulletSprite]:=bulletColor[bulletProgress];
+	tmp:=entity_x[@bulletSprite]*2;
+	spritepos(tmp,entity_y[@bulletSprite],@bulletSprite);
+	k:=80 - bulletProgress*3;
+	PlaySound(SID_CHANNEL1,
+			13,  // Volume
+			k,  // Hi byte frequency
+			0*16+0,  // Attack voice 1
+			3*16 + 6,   // Sustain = 16*15 + release=6
+			1 +SID_SAW,  // Waveform
+			SID_SAW);  // waveform*/
+
+
+	if (bulletHit=0) then begin
+
+		findCollider(entity_x[@bulletSprite], entity_y[@bulletSprite]);
+	
+		if val<@crashDistance offpage then begin
+		//pointToEntityData(j);
+			if (usedSpritesEffect[j]<>0) then begin
+				bulletHit:=usedSpritesEffect[j];
+				ApplyEffect();
+			end;		
+			if (usedSpritesText2[j]<>0) then begin
+				setStory(usedSpritesText2[j]);
+				usedSpritesText2[j]:=0;//Don't start text again
+			end;
+		end;
+
+	end;
+	
+	if bulletProgress<>0 then begin
+		dec(bulletProgress);
+	end
+	else
+	begin
+		togglebit(SPRITE_BITMASK,@bulletSprite,0);
+		usedSprites[@bulletSprite]:=0;
+		bulletProgress:=0;
+	end;
+
+end;
+
+
+// Updates the sprite & the sprite animation
+procedure UpdatePlayerSpriteMovement();
+begin
+	
+	val := joystickup+joystickdown+joystickleft+joystickright;
+	if val<>0 then 
+		val:=1;
+
+	
+//	if bulletTime<>0 then dec(bulletTime);
+	if (bulletProgress=0 and joystickbutton=1) then begin
+		Shoot();
+	//	bulletTime:=10;
+	end;
+
+
+	sprite1_counter:=sprite1_counter-val;
+
+	if sprite1_counter>200 then
+		sprite1_counter := 31;
+
+	// Animation hits at 0 and 10
+	
+	i:=sprite1_counter/4;
+
+	if (joystickleft =0 and joystickright=0) then begin
+		if direction=0 then k:=moveSpriteLeftIdle
+		else k:=moveSpriteRightIdle;
+	end;
+
+	if (joystickleft=1) then begin 
+		k:=moveSpriteLeft[i]; 
+		direction:=0; 
+	end;
+	if (joystickright=1) then begin 
+		k:=moveSpriteRight[i]; 
+		direction:=1; 
+	end;
+
+
+//	setspriteloc(@playerSprite, moveSprite[i], 1);
+	poke(^$47F8 + ^$0400,@playerSprite,k); 
+	poke(^$87F8 + ^$0400,@playerSprite,k); 
+	
+
+
+
+	
+end;
+
+procedure UpdatePlayerInteractions();
+begin
+	tmp2:=spritex/2;
+	findCollider(tmp2, spritey);
+	
+	if val<@crashDistance offpage then begin
+		//pointToEntityData(j);
+		if (usedSpritesText[j]<>0) then begin
+			setStory(usedSpritesText[j]);
+			usedSpritesText[j]:=0;//Don't start text again
+			if usedSprites[j]=57 then
+				takoFollowing:=1;
+		end;		
+
+	end;
+
+end;
+
+
+
+procedure UpdatePlayer();
+begin
+	Joystick();
+	BackgroundCollide();
+	if (joystickup=1 and blocky=1) then begin
+		speedup:=64;
+		blocky:=0;
+		speeddown:=0;
+	end;
+
+	speeddown:=speeddown+2;
+
+	if speedup<>0 then dec(speedup);;
+	if speedup<>0 then dec(speedup);;
+
+	if (blocky=0) then begin
+		tmp2:=speeddown/16;
+		spritey:=spritey+tmp2;
+		tmp2:=speedup/16;
+		spritey:=spritey-tmp2;
+		
+		//SCREEN_BG_COL:=BLACK;
+	end
+	else
+		speeddown:=0;
+
+	if (blockx=1) then begin
+		joystickright:=0;
+		joystickleft:=0;
+		//SCREEN_BG_COL:=RED;
+	end;
+
+	spritex:=spritex + joystickright-joystickleft;
+
+	scroll:=0;
+	if (spritex<160) then begin
+		
+	end
+	else
+	begin
+		spritex:=160;
+		if joystickright=1 then scroll:=1;
+		joystickleft:=0;
+	end;
+
+//	if joystickdown=1 then spritey:=spritey+1;
+//	if joystickup=1 then spritey:=spritey-1;
+	spritepos(spritex, spritey, 0);
+	UpdatePlayerSpriteMovement();
+
+end;
+
+procedure UpdateEntitiesBlink();
+begin
+
+	k:=time/4&1;
+	j:=bulletColor[time&15];
+	for i:=3 to 8 do begin
+		if usedSprites[i]<>0 then begin
+				m:=SPRITE_COLOR[i];
+				if k=0 then SPRITE_COLOR[i]:=j
+				else SPRITE_COLOR[i]:=m;
+		end;
+		
+	end;
+
+end;
+
+
+procedure UpdateEntitySprites(ues_move:byte);
+begin
+	for i:=1 to 8 do begin
+		if usedSprites[i]<>0 then begin
+			tmp:=entity_x[i]*2;						
+			spritepos(tmp,entity_y[i],i);
+			entity_x[i]:=entity_x[i]-ues_move;
+			if entity_x[i]<4 then begin // turn off sprite
+				usedSprites[i]:=0;
+				togglebit(SPRITE_BITMASK,i,0);
+				
+			end;
+		end;
+		
+	end;
+end;
+
+
+
+
+
+procedure FindEntities();
+begin
+	m:=20-m_currentPos;
+	lp:=levelpointer;
+	for i:=0 to 6 do begin
+		val:=lp[0];
+		if val=0 then return();
+		if (val<10) then begin  // is a sprite!
+			if (m=lp[2] and m_currentAb=0) then begin
+			k:=0;
+			for m:=2 to 8 do 
+				if (usedSprites[m]=0 and k=0) then k:=m;
+
+			
+			usedSprites[k]:=lp[1];
+			usedSpritesText[k]:=lp[4];
+			usedSpritesText2[k]:=lp[7];
+			usedSpritesEffect[k]:=lp[6];
+
+//			if k=2 then SCREEN_BG_COL:=RED;
+			// Set memory loc
+			poke(^$47F8 + ^$0400,k,lp[1]); 
+			poke(^$87F8 + ^$0400,k,lp[1]); 
+			togglebit(SPRITE_BITMASK,k,1);
+			SPRITE_COLOR[k]:=lp[5];
+			entity_x[k]:=39*4+10;
+			entity_y[k]:=lp[3]*8+45;
+			end;
+
+		end;
+		if val=@beginText then begin
+			if (m=lp[2] and m_currentAb=0) then begin
+				SCREEN_BG_COL:=GREEN;
+				setStory(lp[1]);
+
+			end;
+		end;
+		inczp(lp,m_rl_chunksize);
+		
+
+	end;
+
+end;
+
+
+/*procedure UpdateText();
+begin
+	moveto(1,20,$C8);
+	printstring("SO QT I IS KITTEN",0,40);
+
+end;
+*/
+procedure UpdateCredits();
+var
+	creditsCounter,l:byte=0;
+begin
+	k:=$C8; 
+	moveto(creditsX, creditsY, k);
+	val:=catText[0];
+
+	if val=@cclear then creditsCounter:=0;
+	if (creditsCounter<>0) then begin
+		l:=creditsCounter&7;
+		screenmemory[1]:=138 + l;
+		moveto(creditsX, creditsY, $D8);
+		screenmemory[1]:=currentTextColor;
+	dec(creditsCounter);
+		return();
+	end;
+	screenmemory[1]:=$20;
+
+
+	creditsCounter := @creditsCMax;
+
+
+	val:=catText[0];
+	if val=0 then 
+		return();
+	
+	inczp(catText,1);
+
+	if val=@cpause then begin
+		creditsCounter := @creditsCMax*8;
+		return();
+	end;
+	if val=@ccolor then begin
+		currentTextColor:=catText[0];
+		inczp(catText,1);
+		return();
+	end;
+
+	if val=@cclear then begin
+		creditsX:=@creditsStartX;
+		creditsY:=@creditsStartY;
+
+		// Clear screen
+		fill(^$C800 + ^20*^40, $20, 120);
+
+		return();
+	end;
+	if val=@newline then begin
+		creditsX:=@creditsStartX;
+		inc(creditsY);
+		return();
+	end;
+	inc(creditsX);
+
+	moveto(creditsX, creditsY, k);
+	if val>$40 then begin 	
+		val:=val-64;
+		if val>$20 then val:=val+32;
+	end;
+	screenmemory[0]:=val;
+	screenmemory[1]:=$20;
+	moveto(creditsX, creditsY, $D8);
+	screenmemory[0]:=currentTextColor;
+
+	PlaySound(@soundChannel,
+			15,  // Volume
+			35,  // Hi byte frequency
+			0*16+0,  // Attack voice 1
+			5*16 + 2,   // Sustain = 16*15 + release=6
+			1 +SID_TRI,  // Waveform
+			SID_TRI);  // waveform*/
+
+	
+	dec(creditsCounter);
+	
+end;
+
+
+
+procedure UpdateTako();
+begin
+	if takoFollowing=0 then return();
+	tmp:=spritex/2;
+	if direction=0 then begin	
+		tmp:=tmp+15;
+		poke(^$47F8 + ^$0400,@takoSprite,usedSprites[@takoSprite]); 
+		poke(^$87F8 + ^$0400,@takoSprite,usedSprites[@takoSprite]); 
+
+	end
+	 else begin
+		tmp:=tmp-15;	
+		poke(^$47F8 + ^$0400,@takoSprite,usedSprites[@takoSprite]+1); 
+		poke(^$87F8 + ^$0400,@takoSprite,usedSprites[@takoSprite]+1); 
+	end;
+
+	if (entity_x[@takoSprite]<tmp) then 
+		entity_x[@takoSprite]:=entity_x[@takoSprite]+1;
+	if (entity_x[@takoSprite]>tmp) then
+		entity_x[@takoSprite]:=entity_x[@takoSprite]-1;
+
+	k:=spritey-5;
+
+	if (entity_y[@takoSprite]<k) then 
+		entity_y[@takoSprite]:=entity_y[@takoSprite]+1;
+	if (entity_y[@takoSprite]>k) then
+		entity_y[@takoSprite]:=entity_y[@takoSprite]-1;
+	
+	tmp:=entity_x[@takoSprite]*2;
+	spritepos(tmp, entity_y[@takoSprite], @takoSprite);
+
+end;
+
+
+
+interrupt RasterGame();
+begin
+	startirq(@usekernal);
+	SCREEN_FG_COL:=background;
+	inc(time);
+	poke(VIC_DATA_LOC, 0, @charmapLevel);
+//	UpdatePlayerSprite();
+	if (vscroll=6 and perform=1) then begin
+		RenderColor();
+		FindEntities();
+		perform:=0;
+		
+		inc(m_currentAb);
+		if (m_currentAb=2) then begin
+			dec(m_currentPos);
+			m_currentAb:=0;
+			if (m_currentPos>127) then begin
+				m_currentPos:=19;
+				inc(m_posx);
+			end;
+		end;
+	end;
+
+	if (useScroll=1) then
+		scrollx(vscroll);
+
+//	dec(vscroll);
+	if (scroll=1) then begin	
+		dec(vscroll);
+		perform:=1;
+		i:=vscroll&1;
+		UpdateEntitySprites(i);			
+
+	end;
+	if (vscroll>128) then begin
+		vscroll:=7;
+		//perform:=1;
+	end;
+
+
+	
+	if (vscroll=2 and perform=1) then begin
+		CopyHScreen(0);
+		perform :=0;
+	end;
+
+	if (vscroll=4 and perform=1) then begin
+		CopyHScreen(1);
+		perform:=0;
+	end;
+
+	
+
+	
+
+	if (vscroll=7 and perform=1) then begin
+		val:=@screen1hi;
+		if (g_currentBank=1) then val:=@screen2hi;
+		moveto(0,1, val);
+		screenmemory[39]:=$20;
+		RenderLevel(levels, m_posx, m_posy, val,19,20,m_currentPos, m_currentAb);
+		perform:=1;
+	end;
+
+	UpdateTako();
+	UpdateCredits();
+	UpdatePlayerInteractions();
+	UpdateBullet();
+	UpdateEntitiesBlink();
+
+	waitforraster(193);
+	wait(13);
+	SCREEN_FG_COL:=GREEN;
+	scrollx(0);
+	setbank(VIC_BANK3);
+	setregularcolormode();
+	UpdatePlayer();
+
+	waitforraster(235);
+	setmulticolormode();
+	if g_currentBank=0 then 
+		SetBank(VIC_BANK2)
+	else 
+		SetBank(VIC_BANK1);
+
+
+	if (vscroll=7 and perform=1) then begin
+		SwitchBank();
+		CopyHScreenCol(0);
+		CopyHScreenCol(1);
+		perform:=0;
+	end;
+
+
+	closeirq();
+end;
+
+
+
+procedure InitSprites();
+begin
+
+	// Black and yellow are our colors
+	poke(SPRITE_MULTICOLOR_REG1, 0, BLACK);
+	poke(SPRITE_MULTICOLOR_REG2, 0, DARK_GREY);
+
+    poke(SPRITE_BITMASK,0, %00000001);
+
+	poke(SPRITE_COLOR,0, PURPLE);
+
+	poke(SPRITE_MULTICOLOR, 0, $FF); // ALL multicolor
+
+	spritepos(spritex,spritey,0);
+
+end;
+
+
+
+
+procedure InitNewGame();
+begin
+	m_posx:=0;
+	m_posy:=0;
+
+	// Initial map rendering
+//	ResetLevels();
+//	levelpointer := levels;
+	setbank(VIC_BANK2);
+	setmulticolormode();
+	poke(VIC_DATA_LOC, 0, @charmapLevel);
+	levelpointer := levels;
+	clearscreen($20,@screenmem2);
+	clearscreen($20,@screenmem1);
+	clearscreen($20,^$C800);
+	fill(^$D800 + ^20*^40, 240,0);
+
+	levelpointer:=levels;
+	ReadLevelheader();
+	levelpointer:=levels;
+	m_screen:=@screen2hi;
+	m_li:=0;
+	m_lj:=0;
+	RenderFullLevel();
+	m_posx:=1;
+	// Initial sprite position
+	spritex := 160;
+	spritey := 100;	
+
+	speedup:=0;
+	hideborderx(1);
+
+	poke(MULTICOLOR_CHAR_COL, 0, BLACK);
+	poke(MULTICOLOR_CHAR_COL, 2, LIGHT_BLUE); 
+	poke(MULTICOLOR_CHAR_COL, 1, DARK_GREY);
+	SCREEN_BG_COL:=CYAN;
+	background := SCREEN_BG_COL;
+	SCREEN_BG_COL:=BLACK;
+
+	poke(MULTICOLOR_CHAR_COL, 0, background);
+	poke(MULTICOLOR_CHAR_COL, 2, ORANGE); 
+	poke(MULTICOLOR_CHAR_COL, 1, DARK_GREY);
+
+	catText:=storyText;
+
+
+	InitSprites();
+end;
+
+
+
+begin
+	setmemoryconfig(1,@usekernal,0);
+	DisableCIAInterrupts();
+	InitNewGame();
+	RasterIRQ(RasterGame(), 0, @usekernal);
+	enableirq();
+	enablerasterirq();
+	Loop();
+end.

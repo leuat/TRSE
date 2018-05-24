@@ -1,0 +1,142 @@
+PROGRAM tutorial4;
+VAR
+	a,b, c, i, j,k,val,mainloop, time : byte;
+	x,y : byte;
+	sprite0data: IncBin("sprites/tutorial4.bin", "$0F00");
+	
+	sprite_time : byte;
+	
+	sprite_x : integer;
+	sprite_y : byte;
+	
+	bullet_x : integer;
+	bullet_y : byte;
+	
+	
+	
+	
+procedure InitializeSprites();
+begin
+	sprite_x:=160;
+	sprite_y:=180;
+	
+	bullet_x:=400;
+	bullet_y:=180;
+	
+	setSpriteLoc(0, $3C, 0);
+	setSpriteLoc(1, $3E, 0);
+	
+	poke(SPRITE_BITMASK,0, %00000011);
+	
+	poke(SPRITE_COLOR,0, YELLOW);
+	poke(SPRITE_COLOR,1, GREEN);
+	
+end;
+
+procedure MoveSoundEffect(freq_move:byte);
+begin
+	//Volume, hi byte freq, attack voice 1, sustain=16* + release, waveform, release waveform
+	PlaySound(SID_CHANNEL1,
+	7,  // Volume
+	freq_move,  // Hi byte frequency
+	0*16+0,  // Attack voice 1
+	3*16 + 3,   // Sustain = 16*15 + release=6
+	1 +SID_NOISE,  // Waveform
+	SID_NOISE);  // waveform
+	
+end;
+
+procedure ShootSoundEffect(wave_type, freq:byte);
+begin
+	//Volume, hi byte freq, attack voice 1, sustain=16* + release, waveform, release waveform
+	PlaySound(SID_CHANNEL2,
+	15,  // Volume
+	freq,  // Hi byte frequency
+	0*16+0,  // Attack voice 1
+	15*16 + 6,   // Sustain = 16*15 + release=6
+	1 +wave_type,  // Waveform
+	wave_type);  // waveform
+	
+end;
+
+procedure PrintText();
+begin
+	MoveTo(17, 24, $04);
+	printnumber(time);
+end;
+
+
+procedure MoveBullet();
+begin
+	spritepos(bullet_x, bullet_y, 1);
+	bullet_x:=bullet_x+1;
+end;
+
+
+procedure MoveSprite();
+begin
+	
+	spritepos(sprite_x, sprite_y, 0);
+	Joystick();
+	
+	sprite_x := sprite_x - joystickleft*2;
+	sprite_x := sprite_x + joystickright*2;
+	sprite_y := sprite_y + joystickdown*2;
+	sprite_y := sprite_y - joystickup*2;
+	
+	rand(15, 45, x);
+	if (joystickleft=1 or joystickright=1) then
+		MoveSoundEffect(x);
+	if (joystickup<>0 or joystickdown <>0) then
+		MoveSoundEffect(x);
+	
+	
+	
+	if joystickbutton=1 then begin
+		ShootSoundEffect(SID_SAW, 15);
+		bullet_x:=sprite_x;
+		bullet_y:=sprite_y;
+		
+	end;
+end;
+
+
+procedure UpdateSprite();
+begin
+	sprite_time := sprite_time +1;
+	if sprite_time>20 then begin
+		sprite_time:=0;
+	end;
+	
+	if sprite_time=10 then begin
+		setSpriteLoc(0, $3C, 0);
+	end;
+	if sprite_time=0 then begin
+		setSpriteLoc(0, $3D, 0);
+	end;
+end;
+
+
+
+begin
+	poke(SCREEN_BG_COL, 0, RED);
+	poke(SCREEN_FG_COL, 0, BLACK);
+	ClearScreen($20, SCREEN_CHAR_LOC);
+	
+	
+	mainloop:=1;
+	time:=0;
+	sprite_time := 0;
+	
+	InitializeSprites();
+	While 1<>2 do begin
+		time:=time+1;
+		UpdateSprite();
+		PrintText();
+		
+		MoveSprite();
+		MoveBullet();
+		WaitForRaster(1);
+	end;
+	
+END.

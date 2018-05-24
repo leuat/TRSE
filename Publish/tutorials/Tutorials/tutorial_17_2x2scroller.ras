@@ -1,0 +1,156 @@
+program Tutorial17_2x2Scroller;
+var
+	i,val,val2,k : byte;
+	pText : pointer;
+	
+	charset: IncBin("charsets/lfont2.bin","$2000");
+
+	ms_scroll : byte=7;
+
+	ms_sshift : byte=0;
+
+	text : string=("THIS IS YET ANOTHER TWO X TWO WRITER WITHOUT NUMBERS   FONT STILL LOOKS KINDA FUNNY   ESPECIALLY Y I  ");
+
+
+@define usekernal "0" 
+@define charmap "$18"
+@define screen_hi "$04"
+@define screen_f "^$0400"
+// Since textcolor1 sets the $D800 colors, it will be multicolor - 8 - dark blue
+@define textColor1 "LIGHT_GREEN"
+@define textColor2 "LIGHT_GREEN"
+@define textColor3 "DARK_GREY"
+
+
+@define lineColor "DARK_GREY"
+
+// Y pos of scroller (in chars)
+@define scrollerLineY 5
+@define scrollerStartRaster 86
+@define scrollerEndRaster 110
+
+
+procedure MainScreen();
+
+
+interrupt MainScreenScrollerEnds();
+begin
+	startirq(@usekernal);
+	wait(6);
+	SCREEN_FG_COL:=@lineColor;
+	scrollx(0);
+	waitnoraster(1);
+	wait(9);
+	SCREEN_FG_COL:=BLACK;
+	RasterIRQ(MainScreen(),130, @usekernal);
+	// Copy content 1 to the left
+	if (ms_scroll=1) then begin
+		memcpy(@screen_f + ^40*^@scrollerLineY, 1, @screen_f + ^40*^@scrollerLineY, 40);
+		memcpy(@screen_f + ^40*^@scrollerLineY+^40, 1, @screen_f + ^40*^@scrollerLineY +^40, 40);
+	end;
+	closeirq();
+	
+end;
+
+
+procedure DrawText();
+begin
+	// if scroll<0
+	if (ms_scroll>127) then begin
+		val:=pText[0];
+		moveto(0,@scrollerLineY, @screen_hi);
+		if (val=$20) then val2:=val
+		else begin
+			if val>64 then val:=val-65;
+			if val>16 then val:=val+24;  
+			val:=val*2;
+		
+			val:=val + ms_sshift;
+			val2:=val+40;
+		end;
+
+		screenmemory[39]:=val;
+		screenmemory[39+40]:=val2;
+		ms_scroll := 7;
+		inc(ms_sshift);
+		if (ms_sshift=2) then begin
+			ms_sshift:=0;
+			inczp(pText,1);
+			if (pText[0]=0) then pText:=text;
+	
+		end;
+
+
+	end;
+
+end;
+
+
+interrupt MainScreenScroller();
+begin
+	startirq(@usekernal);
+	wait(6);
+	SCREEN_FG_COL:=@lineColor;
+	waitnoraster(1);
+	wait(10);
+	SCREEN_FG_COL:=BLACK;
+	
+	dec(ms_scroll);
+	dec(ms_scroll); // double speed
+	scrollx(ms_scroll);
+	
+	DrawText();
+
+	RasterIRQ(MainScreenScrollerEnds(),@scrollerEndRaster, @usekernal);
+
+	closeirq();
+end;
+
+
+interrupt MainScreen();
+begin
+	startirq(@usekernal);
+	RasterIRQ(MainScreenScroller(), @scrollerStartRaster, @usekernal);
+
+
+	CloseIRQ();
+
+end;
+
+interrupt NMI();
+begin
+	startirq(@usekernal);
+
+	closeIRQ();
+end;
+
+begin
+
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+	// Set charmap location at $3000
+	VIC_DATA_LOC := @charmap;
+	// Clear screen and color memory
+	ClearScreen($20, SCREEN_CHAR_LOC);
+	ClearScreen(@textColor1, SCREEN_COL_LOC);
+
+	MULTICOLOR_CHAR_COL[1]:=@textColor2;
+	MULTICOLOR_CHAR_COL[2]:=@textColor3;
+
+	pText:=text;
+
+	setmulticolormode();
+	// Hook the raster
+	hideborderx(0);
+	preventirq();
+	DisableCIAInterrupts();
+	nmiirq(NMI());
+	SetMemoryConfig(1,@usekernal,0);
+
+	RasterIRQ(MainScreen(),1,@usekernal);
+	EnableRasterIRQ();
+
+	enableirq();
+	Loop();
+
+end.

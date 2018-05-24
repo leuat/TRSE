@@ -1,0 +1,28 @@
+
+
+procedure VerticalScroll();
+var 
+	g_vscroll : byte;
+begin
+		g_vscroll:=(g_vscroll+1)&7;
+
+		if g_vscroll=0 then begin
+			WaitForRaster(150);
+			CopyColor(0);
+		end;
+
+		waitForRaster(251);
+		if g_vscroll=0 then SwitchBank();
+		if g_vscroll=1 then CopyScreen(1);
+		if g_vscroll=4 then CopyScreen(0);
+
+		if g_vscroll=0 then begin
+			CopyColor(1);
+			//printColor();
+		end;	
+		scrolly(g_vscroll);
+
+		//if scroll=7 then PrintLine();
+
+end;
+

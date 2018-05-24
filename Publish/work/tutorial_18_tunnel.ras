@@ -1,0 +1,166 @@
+program Tutorial6;
+var
+//	image_color: IncBin("images/moose_color.bin", "$5000");
+//	image_data: IncBin("images/tunnel_data.bin", "$6000");
+	charset1 : incbin("charsets/tunnel.bin", "$2000");
+	charset2 : incbin("charsets/tunnel2.bin", "$6000");
+//	charset2 : incbin("charsets/tunnel.bin", "$6000");
+//	charset3 : incbin("charsets/tunnel.bin", "$A000");
+	i,j,idx,c : byte;
+	z0: pointer;
+	max:byte = 4;
+	ctab : array[2] of byte = ( 2,0,0,0, 2,0,0,0,0 );
+	time:byte=0;
+
+@define useKernal "0"
+
+@define rl0 82
+@define rl1 130
+@define rl2 162
+@define rl3 210
+
+
+interrupt Raster1();
+
+interrupt Raster0();
+begin
+	StartIRQ(@useKernal);
+	SCREEN_FG_COL:=BLACK;
+//	MULTICOLOR_CHAR_COL[0]:=ctab[idx];
+	//setmulticolormode();
+	RasterIRQ(Raster1(), @rl0, @useKernal);
+	MULTICOLOR_CHAR_COL[2]:=ctab[idx+1];
+	MULTICOLOR_CHAR_COL[1]:=ctab[idx+2];
+
+	CloseIRQ();
+end;
+
+
+interrupt Raster4();
+begin
+	StartIRQ(@useKernal);
+	SCREEN_FG_COL:=BLACK;
+
+	setbank(VIC_BANK2);
+	setregularcolormode();
+	fill(^$D800+ ^40*^14, c,120);
+	
+	inc(time);
+		if time&31=0 then 
+			inc(idx);
+	if idx=max then begin
+		idx:=0;
+	end;
+
+//	idx:=(sine[time*1]/8);
+	//idx:=idx&3;
+	idx:=(time/4)&3;
+	RasterIRQ(Raster0(), 0, @useKernal);
+
+	CloseIRQ();
+end;
+
+
+
+interrupt Raster3();
+begin
+	StartIRQ(@useKernal);
+	setbank(VIC_BANK1);
+	setmulticolormode();
+	MULTICOLOR_CHAR_COL[0]:=ctab[idx];
+	fill(^$D800+ ^40*^7, c,120);
+
+	RasterIRQ(Raster4(), @rl3, @useKernal);
+
+	CloseIRQ();
+end;
+
+
+interrupt Raster2();
+begin
+	StartIRQ(@useKernal);
+	SCREEN_FG_COL:=BLACK;
+	setbank(VIC_BANK2);
+	setregularcolormode();
+	//fill(^$D800+ ^40*^7, c,120);
+	fill(^$D800+ ^40*^4, c,120);
+
+	RasterIRQ(Raster3(), @rl2, @useKernal);
+
+	CloseIRQ();
+end;
+
+
+interrupt Raster1();
+begin
+	StartIRQ(@useKernal);
+	
+//	SCREEN_FG_COL:=BLACK;
+	setmulticolormode();
+	setbank(VIC_BANK0);
+
+	MULTICOLOR_CHAR_COL[0]:=ctab[idx];
+	c:=ctab[idx+3]+8;
+	fill(^$D800+ ^40*^17, c,120);
+
+	RasterIRQ(Raster2(), @rl1, @useKernal);
+	CloseIRQ();
+end;
+
+
+begin
+
+	//setmemoryconfig(1,0,0);
+
+	//setbitmapmode();
+	poke(VIC_DATA_LOC, 0,$18);
+	setbank(VIC_BANK0);
+	//copyimagecolordata(image_color,1);
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+	clearscreen($20,^$0400);
+	clearscreen($20,^$4400);
+	clearscreen($20,^$8400);
+	moveto(0,0,$04);
+	idx:=0;
+
+	// fill char 55
+	z0:=$2000;
+/*	for i:=0 to 255 do inczp(z0, 8);
+	for i:=0 to 8 do z0[i]:=0;
+	*/
+
+
+	for j:=0 to 6 do begin
+		moveto(0,j+4,$04);
+		for i:=0 to 40 do begin
+			screenmemory[i]:=idx+i;
+		end;
+		idx:=idx+40;
+	end;
+	idx:=0;
+	for j:=0 to 6 do begin
+		moveto(0,j+14,$44);
+		for i:=0 to 40 do begin
+			screenmemory[i]:=idx+i;
+		end;
+		idx:=idx+40;
+	end;
+	
+	
+	idx:=0;
+
+
+	preventirq();
+	DisableCIAInterrupts();
+//	nmiirq(NMI());
+	SetMemoryConfig(1,@useKernal,0);
+
+	RasterIRQ(Raster1(),@rl0,@useKernal);
+	EnableRasterIRQ();
+	enableirq();
+
+
+	Loop();
+
+end.

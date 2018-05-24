@@ -1,0 +1,14 @@
+// Initialize sprites 
+procedure CopySprites(cpsp_count : byte);
+var 
+	cpsp_i : byte;
+begin
+	for cpsp_i:=#0 to cpsp_count do begin
+		memcpy(zeropage2, #0, zeropage3, #63);  
+
+		inczp(zeropage2, #64);
+		inczp(zeropage3, #64);
+
+	end;
+
+end;

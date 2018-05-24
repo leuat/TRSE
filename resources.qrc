@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/images/brush_dither.png</file>
+        <file>resources/images/brush_fill.png</file>
+        <file>resources/images/brush_spray.png</file>
+        <file>resources/images/brush_circle.png</file>
+        <file>resources/images/brush_line.png</file>
+        <file>resources/images/cmb_icon.png</file>
+        <file>resources/images/asm_icon.png</file>
+        <file>resources/images/image_icon.png</file>
+        <file>resources/images/trselogo.png</file>
+        <file>resources/images/creatures.png</file>
+        <file>resources/images/friday.jpg</file>
+        <file>resources/images/friday.png</file>
+        <file>resources/text/about.txt</file>
+        <file>resources/text/Documentation.txt</file>
+    </qresource>
+</RCC>

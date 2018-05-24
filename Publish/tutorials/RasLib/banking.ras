@@ -1,0 +1,63 @@
+
+procedure Banking_Vars();
+var
+	g_currentBank:byte;
+	g_dataLoc : byte=$1a;
+    temp_colorCopy : array[40] of byte;
+
+begin
+	g_currentBank:=0;
+end;
+
+
+procedure CopyScreen(ul_:byte);
+begin
+
+	if g_currentBank=0 then begin
+		if ul_=0 then
+			copyhalfscreen(^$0400 + ^520, ^$4400 + ^40 + ^520,12, 1,1)
+		else
+			copyhalfscreen(^$0400, ^$4400 + ^40, 13, 1,1);
+
+	end;
+	if g_currentBank=1 then begin
+		if ul_=0 then 
+			copyhalfscreen(^$4400+^520, ^$0400 + ^40 + ^520, 12, 1,1)
+		else
+			copyhalfscreen(^$4400, ^$0400 + ^40,13, 1,1);
+	end;
+
+end;
+
+
+
+
+procedure CopyColor( ul2_copycolor:byte );
+
+begin
+	 if ul2_copycolor=0 then begin
+		// First, copy the missing line
+		memcpy(^$DA08, 0, temp_colorCopy, 40);
+		copyhalfscreen(^$D800, ^$D800+^40,13, 1,1);
+	end
+
+	else begin 
+		copyhalfscreen(^$D800+^14*^40 , ^$D800+^15*^40,10,1,1);
+		memcpy(temp_colorCopy, 0, ^$D800 + ^14*^40, 40);
+
+	end;
+
+
+end;
+
+procedure SwitchBank();
+begin
+	if g_currentBank=0 then 
+		SetBank(VIC_BANK1)
+	else 
+		SetBank(VIC_BANK0);
+
+	poke(VIC_DATA_LOC, 0, g_dataLoc);
+
+	g_currentBank:=(g_currentBank+1)&1;
+end;

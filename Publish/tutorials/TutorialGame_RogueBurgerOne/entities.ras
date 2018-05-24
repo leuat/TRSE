@@ -1,0 +1,293 @@
+// Sets zeropage 5 to entity data of a given index
+procedure pointToEntityData(pte_idx : byte);
+begin
+	zeropage5:=zeropage3;
+	if pte_idx<>0 then
+	for i:=0 to pte_idx do
+		inczp(zeropage5, m_rl_chunksize);
+	
+end;
+
+/*
+Sets up entity data when a new level is loaded
+*/
+procedure LoadEntities();
+begin
+	// levelPointer
+	val:=1;
+	no_entities := 0;
+	zeropage3:=@levelpointer;
+	while val=1 do begin
+		// Check if entity is not zero
+			if (@levelpointer[0]<>0 and no_entities<5) then
+		begin
+			entity_pos_x[no_entities] := @levelpointer[1]*4 + 10;
+			entity_pos_y[no_entities] := @levelpointer[2]*8+45;
+			
+			entity_curpos_x[no_entities] := entity_pos_x[no_entities];
+			entity_curpos_y[no_entities] := entity_pos_y[no_entities];
+			entity_type[no_entities] := @levelpointer[0];
+			
+			entity_color[no_entities] := @levelpointer[4];
+			
+			entity_pos_spread[no_entities] := @levelpointer[5];
+			
+			entity_dd_x[no_entities] := 1;
+			entity_dd_y[no_entities] := 1;
+			
+			entity_framecounter_x[no_entities] := @levelpointer[6];;
+			entity_framecounter_y[no_entities] := @levelpointer[7];;
+			
+			entity_framecounter_maxx[no_entities] := @levelpointer[6];;
+			entity_framecounter_maxy[no_entities] := @levelpointer[7];;
+			
+			entity_health[no_entities] := @levelpointer[3];;
+			
+			if @levelpointer[@entity_isdead]=1 then
+				entity_type[no_entities] := 0;
+			
+			entity_pickup[no_entities]:=0;
+			// Positive stuff! For use in blinking!
+				if @levelpointer[@entity_ammo]<>0 then
+			entity_pickup[no_entities]:=1;
+			if @levelpointer[@entity_damage]>128 then
+				entity_pickup[no_entities]:=1;
+			if @levelpointer[@entity_upgrade]<>0 then
+				entity_pickup[no_entities]:=1;
+			
+			
+			entity_hurt[no_entities]:=0;
+			
+			no_entities:=no_entities+1;
+			
+		end
+		else
+			val:=0; // break loop
+		inczp(@levelpointer, m_rl_chunksize);
+		
+	end;
+end;
+
+/*
+After loading entity data on a new level, initialize sprites and corresponding colors
+*/
+procedure InitEntities();
+begin
+	// Clear sprite bitmask
+	zeropage5:=zeropage3;
+	poke(SPRITE_BITMASK, 0, 1);
+	poke(SPRITE_STRETCH_X, 0, %00000000);
+	poke(SPRITE_STRETCH_Y, 0, %00000000);
+	if no_entities<>0 then
+	for val:=0 to no_entities do begin
+		
+		if entity_type[val]<>0 then begin
+			pointToEntityData(val);
+			i:=val+1;
+			j:=	entity_sprites[ entity_type[val] ];
+			SetSpriteLoc(i, j ,@spritebank);
+			toggleBit(SPRITE_BITMASK, i, 1);
+			poke(SPRITE_COLOR,i, entity_color[val]);
+			j:=getbit(zeropage5[@entity_tag], 0);
+			if j=0 then begin
+				togglebit(SPRITE_STRETCH_X, i, 1);
+				togglebit(SPRITE_STRETCH_Y, i, 1);
+				
+			end;
+			
+			
+			//			inczp(zeropage5, m_rl_chunksize);
+			
+		end;
+	end;
+	
+end;
+/*
+Called for each frame: Moves entities according to definition, aggressive if hurt
+	
+*/
+procedure UpdateEntities();
+begin
+	
+	// Move all
+	
+	if no_entities<>0 then
+	for i:=0 to no_entities do begin
+		
+		
+		entity_framecounter_x[i]:= entity_framecounter_x[i] - 1;
+		if entity_framecounter_x[i]=0 then begin
+			entity_framecounter_x[i]:=entity_framecounter_maxx[i];
+			
+			if entity_hurt[i]=0 then begin // Passive movement
+				entity_curpos_x[i] := entity_curpos_x[i] + entity_dd_x[i];
+				
+				val := entity_curpos_x[i] - entity_pos_x[i];
+				j:=entity_pos_spread[i];
+				if val>j then
+					entity_dd_x[i] := 0 - entity_dd_x[i];
+			end
+			else begin // Aggressive behaviour
+				val:=spritex/2;
+				val:=val-entity_curpos_x[i];
+				if val<128 then val:=1 else val:=255;
+				entity_curpos_x[i] := entity_curpos_x[i] + val;
+			end;
+		end;
+		
+		entity_framecounter_y[i] := entity_framecounter_y[i] - 1;
+		if entity_framecounter_y[i]=0 then begin
+			entity_framecounter_y[i]:=entity_framecounter_maxy[i];
+			
+			if entity_hurt[i]=0 then begin // Passive
+				
+				entity_curpos_y[i] := entity_curpos_y[i] + entity_dd_y[i];
+				
+				
+				val := entity_curpos_y[i] - entity_pos_y[i];
+				j:=entity_pos_spread[i];
+				if val>j then
+					entity_dd_y[i] := 0 - entity_dd_y[i];
+			end
+			
+			else begin  // Aggressive behaviour
+				val:=spritey - entity_curpos_y[i];
+				if val<128 then val:=1 else val:=255;
+				entity_curpos_y[i] := entity_curpos_y[i] + val;
+			end;
+			
+			
+		end;
+		
+		
+		// Color stuff. Fix.
+		val:=i+1;
+		if entity_pickup[i]=1 then begin
+			j := time &7;
+			if j=0 then
+				poke(SPRITE_COLOR,val, 1)
+			else
+				poke(SPRITE_COLOR,val, entity_color[i]);
+			
+			
+		end;
+		
+		if entity_hurt[i]=1 then begin
+			j := time &3;
+			if j=0 then
+				poke(SPRITE_COLOR,val, 1)
+			else
+				poke(SPRITE_COLOR,val, entity_color[i]);
+			
+		end;
+		
+	end;
+	
+	for i:=0 to no_entities do begin
+		val:=i+1;
+		tmp:=entity_curpos_x[i];
+		tmp:=tmp*2;
+		spritepos(tmp, entity_curpos_y[i], val);
+		//		spritepos(tmp, entity_curpos_y[i], val+1 ); CRASH FIX
+		
+	end;
+	
+end;
+
+
+procedure PlayDeathSound(ps_t:byte);
+begin
+	if ps_t=1 then
+		PlaySound(@sidchannel,
+	15,  // Volume
+	5,  // Hi byte frequency
+	0*16+0,  // Attack voice 1
+	5*16 + 9,   // Sustain = 16*15 + release=6
+	1 +SID_NOISE,  // Waveform
+	SID_NOISE);  // waveform
+	if ps_t=2 then
+		PlaySound(@sidchannel,
+	15,  // Volume
+	25,  // Hi byte frequency
+	5*16+3,  // Attack voice 1
+	5*16 + 9,   // Sustain = 16*15 + release=6
+	1 +SID_TRI,  // Waveform
+	SID_SAW);  // waveform
+	
+	if ps_t=3 then
+		PlaySound(@sidchannel,
+	15,  // Volume
+	45,  // Hi byte frequency
+	0*16+15,  // Attack voice 1
+	15*15 + 8,   // Sustain = 16*15 + release=6
+	1+ SID_SAW ,  // Waveform
+	SID_SAW);  // waveform
+	
+	if ps_t=4 then
+		PlaySound(@sidchannel,
+	15,  // Volume
+	50,  // Hi byte frequency
+	0*16+15,  // Attack voice 1
+	15*15 + 9,   // Sustain = 16*15 + release=6
+	1+ SID_TRI ,  // Waveform
+	SID_TRI);  // waveform
+	
+	
+end;
+
+
+/*
+Hit a certain entity of index de_i with damage de_dmg
+*/
+
+procedure HitEntity(de_i, de_dmg : byte);
+begin
+	entity_health[de_i]:=entity_health[de_i] -de_dmg;
+	entity_hurt[de_i] :=1;
+	if entity_framecounter_maxx[de_i]=0 then
+		entity_framecounter_maxx[de_i]:=1;
+	if entity_framecounter_maxy[de_i]=0 then
+		entity_framecounter_maxy[de_i]:=1;
+	
+	entity_framecounter_x[de_i] := 1;
+	entity_framecounter_y[de_i] := 1;
+	
+	
+	// Entity dies
+	if (entity_health[de_i] =0 or entity_health[de_i]>128) then begin
+		entity_type[de_i] :=0; // Turn off
+		
+		togglebit(SPRITE_BITMASK, j+1, 0);
+		zeropage5[@entity_isdead]:=1;
+		PlayDeathSound(zeropage5[@entity_sound]);
+		player_score:=player_score +1;
+		
+		val:=zeropage5[@entity_upgrade];
+		// UPGRADES!
+		
+		j:=getbit(val, @upgrade_ammo_bit);
+		if 0=j then bullet_dmg:=bullet_dmg+4;
+		j:=getbit(val, @upgrade_health_bit);
+		if j=0 then begin
+			player_health := player_health + 10;
+			player_maxhealth := player_maxhealth + 10;
+		end;
+		j:=getbit(val, @upgrade_speed_bit);
+		if j=0 then player_speed := player_speed +1;
+		
+		j:=getbit(val, @upgrade_scroll_bit);
+		if j=0 then inc(currentScroll);
+		
+		
+	end
+	else
+		PlaySound(SID_CHANNEL3,
+	15,  // Volume
+	10,  // Hi byte frequency
+	0*16+0,  // Attack voice 1
+	5*16 + 6,   // Sustain = 16*15 + release=6
+	1 +SID_NOISE,  // Waveform
+	SID_NOISE);  // waveform
+	
+end;
+

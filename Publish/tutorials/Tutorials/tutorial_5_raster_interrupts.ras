@@ -1,0 +1,115 @@
+program RasterInterruptsAndSid;
+var
+	time, mainloop,a,b,i,j, idx, color,val : byte;
+	bar_0, colorIndex, diff : byte;
+	bar_s : array[4] of byte = (
+	0, 5, 12, 20);
+	currentBar, barCount : byte;
+ 	fade : array [8] of byte = 
+(00,11,6,12,4,14,15,1,1,15,14,4,12,6,11,00,00); 
+	sidfile: incsid("sid/tutorial5.sid");
+	
+
+
+procedure Bars();
+
+
+procedure UpdateScreen();
+begin
+	Poke(SCREEN_BG_COL, 0, BLACK);
+	Poke(SCREEN_FG_COL, 0, BLACK);
+
+	Call(SIDFILE_1_PLAY);
+	Fill(^$D800 + ^40*^15, fade[(time/4) & 15], 40);
+	Fill(^$D800 + ^40*^17, fade[(time/4 + 5) & 15], 40);
+
+end;
+
+
+interrupt UpdateRaster();
+begin
+	startirq(1);
+	UpdateScreen();
+
+	time:=time+1;
+
+	bar_s[0] := sine[time*2]/2 + 100;
+	bar_s[1] := sine[time*2 + 30]/2 + 100;
+	
+	if bar_s[1]<bar_s[0] then begin
+		swap(bar_s[0], bar_s[1]);
+	end;
+
+	barCount:=15;
+	currentBar:=0;	
+	colorIndex:=0;
+	Bars();
+	
+	//kernalInterrupt();
+	closeirq();
+end;
+
+
+procedure Bars();
+begin
+	a:=bar_s[currentBar];
+	WaitForRaster(a);
+
+	for i:=0 to barCount do begin
+		val:=fade[colorIndex];
+		Poke(SCREEN_BG_COL, 0, val);
+		Poke(SCREEN_FG_COL, 0, val);
+		colorIndex:=colorIndex+1;
+		WaitNoRaster(1);
+		
+	end;
+	Poke(SCREEN_BG_COL, 0, 0);
+	Poke(SCREEN_FG_COL, 0, 0);
+
+	a:=bar_s[currentBar];
+	currentBar:=currentBar+1;
+	b:=bar_s[currentBar];
+	diff := (b - a);
+	barCount:=15;
+	colorIndex:=0;
+
+	if diff<36 then begin
+		a:=peek(^$d012, 0);
+		bar_s[currentBar]:=a+2;
+		barCount:=diff/2 +2;
+		colorIndex:=15-diff/2;
+	end;
+
+	if currentBar < 2 then begin
+		Bars();
+	end;
+	
+end;
+
+
+begin
+	InitSid(SIDFILE_1_INIT);
+
+	poke(SCREEN_BG_COL, 0, BLACK);
+	poke(SCREEN_FG_COL, 1, BLACK);
+
+	ClearScreen($20, SCREEN_CHAR_LOC);
+
+	moveto(8,15, $04);
+	printstring("E P I C    H E L L O", 0, 30);
+	moveto(0,17, $04);
+	printstring("M U S I C   F R O M   D E F L E M A S K", 0, 40);
+
+	mainloop:=1;
+	time:=0;
+
+	preventirq();
+	DisableCiaInterrupts();
+	setmemoryconfig(1,1,0);
+	RasterIRQ(UpdateRaster(), 0,1);
+	enablerasterirq();
+	enableirq();
+
+	Loop();
+
+end.

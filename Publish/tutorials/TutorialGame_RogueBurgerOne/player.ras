@@ -1,0 +1,356 @@
+// Updates the sprite & the sprite animation
+procedure UpdatePlayerSprite();
+begin
+	spritepos(spritex, spritey, @playerSprite);
+	
+	val := joystickup+joystickdown+joystickleft+joystickright;
+	if val<>0 then
+		val:=1;
+	
+	
+	sprite1_counter:=sprite1_counter-val;
+
+	if sprite1_counter>200 then
+		sprite1_counter := 31;
+
+	// Animation hits at 0 and 10
+	
+	i:=sprite1_counter/4;
+	k:=moveSprite[i];
+	setspriteloc(@playerSprite, moveSprite[i], @spritebank);
+	
+	
+end;
+
+/*
+Entity software collider: check closest sprite to x,y
+
+*/
+procedure findCollider(fc_x,fc_y:byte);
+begin
+	val := 255;
+	j:=0;
+	if no_entities<>0 then
+
+	for i:=0 to no_entities do begin
+		if entity_type[i]<>0 then
+			begin
+			tmp2 := abs(entity_curpos_x[i] - fc_x);
+			tmp3 := abs(entity_curpos_y[i] - fc_y);
+			
+			tmp2:=tmp2/2 + tmp3/2;
+			
+			//tmp2 :=tmp2 + abs(entity_curpos_y[i] -fc_y);
+			if tmp2<val then begin
+				val:=tmp2;
+				j:=i;
+			end;
+			
+		end;
+	end;
+	// Winner in val, index in j
+	
+end;
+
+/*
+Reverse sprite position, check level data background color bit 3 for bg collision
+	*/
+
+procedure BackgroundCollideBullet();
+
+procedure UpdateBullet();
+begin
+	val := getbit(SPRITE_BITMASK, @bulletSprite);
+	//val:=1;
+	//togglebit(SPRITE_BITMASK, 7, 1);
+	if val=0 then
+		begin
+		tmp:=bullet_x;
+		tmp:=tmp*2;
+		
+		bullet_x := bullet_x + bullet_dx;
+		bullet_y := bullet_y + bullet_dy;
+		
+		spritepos(tmp, bullet_y, @bulletSprite);
+		
+		
+		findCollider(bullet_x, bullet_y);
+		if val<4 then begin
+			pointToEntityData(j);
+			togglebit(SPRITE_BITMASK, @bulletSprite, 0);
+			HitEntity(j, bullet_dmg);
+			return();
+			
+		end;
+		
+		BackgroundCollideBullet();
+		if tmp2=1 then begin
+			togglebit(SPRITE_BITMASK, @bulletSprite, 0);
+		end;
+		
+		
+	end;
+	setSpriteLoc(7, @bullet_sprite_loc, @spritebank);
+	
+end;
+
+
+procedure Shoot();
+begin
+	
+	if (joystickbutton=1 and (bullet_count<>0 and bullet_wait=0)) then begin
+		// Shoot!
+
+		bullet_x := spritex/2;
+		bullet_y := spritey;
+		
+		bullet_dy := prev_dy*2;
+		bullet_dx := prev_dx;
+		
+		bullet_x := bullet_x + bullet_dx * 4;
+		bullet_y := bullet_y + bullet_dy * 4;
+		togglebit(SPRITE_BITMASK, @bulletSprite, 0);
+		
+		if (bullet_dy<>0 or bullet_dx<>0) then begin
+			tmp:=bullet_x;
+			tmp:=tmp*2;
+			spritepos(tmp, bullet_y, @bulletSprite);
+			togglebit(SPRITE_BITMASK, @bulletSprite, 1);
+			PlaySound(SID_CHANNEL2,
+			15,  // Volume
+			15,  // Hi byte frequency
+			0*16+0,  // Attack voice 1
+			5*16 + 6,   // Sustain = 16*15 + release=6
+			1 +SID_NOISE,  // Waveform
+			SID_NOISE);  // waveform*/
+			
+			
+			
+			bullet_count:=bullet_count-1;
+			
+			
+		end;
+		bullet_wait := 30;
+		joystick_pressed := 0;
+		
+	end;
+	
+	if bullet_wait<>0 then
+		bullet_wait:=bullet_wait - 1;
+	
+	
+end;
+
+
+
+procedure BackgroundCollideBullet();
+begin
+	
+/*	tmp:=bullet_x+3;
+	i:=tmp/4-m_rl_startx;
+	j:=(bullet_y-55)/8;
+	i:=i-m_rl_starty;
+	i:=i/2;
+	j:=j/2;
+	val := j*m_rl_width +i;
+	//	val := val + i;
+	val:=peek(zeropage4, val);
+	tmp2:=getbit(val, 3);
+*/
+
+	k:=bullet_x - 10;
+	i:=(k)/8;// -m_rl_startx;//-m_rl_startx;
+	//	i:=i-m_rl_starty;
+	j:=(bullet_y-53)/16;
+	val := j*m_rl_width+i;
+	tmp2:=getbit(zeropage4[val], 3);
+
+	
+end;
+
+
+
+procedure BackgroundCollide();
+begin
+	
+	tmp:=spritex - 12;
+	tmp:=tmp +joystickright*8;
+	tmp:=tmp - joystickleft*8;
+	i:=(tmp)/16;// -m_rl_startx;//-m_rl_startx;
+	//	i:=i-m_rl_starty;
+	j:=(spritey-55);
+	j:=j+joystickdown*8;
+	j:=j-joystickup*8;
+	j:=j/16;
+	val := j*m_rl_width+i;
+	tmp2:=getbit(zeropage4[val], 3);
+	//if joystickup=1 then 
+//		k:=0-m
+	//k:=(joystickup + joystickdown)*m_rl_width;
+	
+
+	
+end;
+
+
+
+
+procedure UpdatePlayer();
+begin
+	// Update joystick routines
+	Joystick();
+	
+	//	if joystickbutton=1 then
+		Shoot();
+	
+	// Hit
+	//val:=getBit(SPRITE_COLLISION, @playerSprite);
+	tmp2:=spritex/2;
+	findCollider(tmp2, spritey);
+	
+	if val<@crashDistance offpage then begin
+		pointToEntityData(j);
+		player_health := player_health - zeropage5[@entity_damage];
+		if (entity_type[j]>18) then begin
+			if currentScroll>8 then begin
+				InitGameWon();
+				RasterIRQ(RasterGameWon(), 1, @usekernal);
+				return();
+
+			end;
+
+		end;
+
+		if (immortal=0) then begin
+		if player_health >200 then
+			InitGameOver();
+		end
+		else begin // Immortal!
+			if player_health >200 then
+				player_health:=10;
+		end;
+		
+		if player_health>player_maxhealth then
+			player_health := player_maxhealth;
+		
+		bullet_count := bullet_count + zeropage5[@entity_ammo];
+		if bullet_count>bullet_max then
+			bullet_count:=bullet_max;
+		HitEntity(j, 1);
+		//		debug(25, 0, zeropage5[9]);
+		PlaySound(SID_CHANNEL2,
+		15,  // Volume
+		25,  // Hi byte frequency
+		0*16+0,  // Attack voice 1
+		5*16 + 3,   // Sustain = 16*15 + release=6
+		1 +SID_SAW,  // Waveform
+		SID_NOISE);  // waveform
+		
+		
+	end;
+	//    asm(";test");
+	
+	// Default: don't redraw
+	redraw:=0;
+	
+	// Move sprite
+	
+	//if joystick_pressed=0 then begin
+		
+		if (joystickright<>0 or joystickleft<>0) then begin
+			prev_dx := joystickright - joystickleft;
+			prev_dy := 0;
+		end;
+		
+		if (joystickup<>0 or joystickdown<>0) then begin
+			prev_dy := joystickdown - joystickup;
+			prev_dx := 0;
+		end;
+		
+		
+
+		spritex:=spritex + joystickright*player_speed;
+		spritex:=spritex - joystickleft*player_speed;
+		spritey:=spritey + joystickdown*player_speed - joystickup*player_speed;
+		//end;
+		
+		// Get sprite collision
+		//tmp2 := getbit(SPRITE_BG_COLLISION, @playerSprite);
+		
+		
+		
+		if (ignoreCollisions=0) then		
+			BackgroundCollide();
+		// If collision, abort abort
+		if tmp2=1 then begin
+			spritex:=spritex - joystickright*player_speed;
+			spritex:=spritex + joystickleft*player_speed;
+			spritey:=spritey - joystickdown*player_speed + joystickup*player_speed;
+			
+		end;
+//		UpdatePlayerSprite();
+		
+		
+		// Sprite border check, boring stuff, extract numbers to defines
+		if spritex>318 then begin
+			if m_posx<>m_rl_sizex-1 then begin
+				m_posx:=m_posx+1;
+				spritex:=25;
+				redraw:=1;
+			end
+			else
+				spritex:=317;
+		end;
+		if spritex<24 then begin
+			if m_posx<>0 then begin
+				spritex:= 317;
+				m_posx:=m_posx-1;
+				redraw:=1;
+			end
+			else
+				spritex:=25;
+		end;
+		
+		if spritey<65 then begin
+			if m_posy<>0 then begin
+				
+				spritey:=219;
+				m_posy:=m_posy-1;
+				redraw:=1;
+			end
+			else
+				spritey:=66;
+			
+		end;
+		if spritey>220 then begin
+			if m_posy<>m_rl_sizey-1 then begin
+				spritey:=66;
+				m_posy:=m_posy+1;
+				redraw:=1;
+			end
+			else
+				spritey:=219;
+		end;
+		
+		
+		if redraw=1 then begin
+			poke(SPRITE_BITMASK,0, %00000000);
+			ClearText();
+			poke(SCREEN_FG_COL, 0, BLACK);
+			// Render me baby!
+//			@levelpointer := levels;
+			// Defined in Levels.ras
+			RenderLevel(levels, m_posx, m_posy, @screen2hi);
+			LoadEntities();
+			InitEntities();
+			
+			current_background := peek(MULTICOLOR_CHAR_COL,0);
+			
+			CopyFullScreen(@screenmem2, @screenmem1);
+			
+			PrintText();
+		end;
+		
+		
+	end;
+	

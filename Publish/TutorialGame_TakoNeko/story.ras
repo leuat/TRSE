@@ -1,0 +1,60 @@
+
+
+	storyText : string = (@cclear, @cpause,
+							"I am cat.", @cpause,
+							@newline, "I am cute.", @cpause, @cpause,
+							@newline, "Must find friends.", @cpause,@cpause,@cpause);
+
+
+	takoText: string = (@cclear, @ccolor,@takoColor, "Well hello there. ",@cpause, @newline,
+						"Who might you be?",@cpause,@cpause,
+						@cclear, @ccolor, @nekoColor,
+						"I am cat. ", @cpause, @newline,
+						@ccolor,@takoColor,@cclear, "I am octopus, and we seem to be",@newline,"stuck in a virtual world. ",@cpause,
+						@newline, "Do you comprehend our predicament?", @cpause, @cpause,
+						@cclear, @ccolor, @nekoColor,
+						"I am cat. ", @cpause, @newline,
+						"I am cute. ", @cpause, @newline,
+						"That is all I know. ", @cpause
+						);
+
+	
+	D020Text: string = (@cclear, @ccolor,@memColor, "Halt!  ",@cpause, "I am the mighty $D020", @newline,
+						"and lord of background border color. ",@cpause,
+						@newline, "Please don't hit me!", @cpause, @cpause
+//						@cclear, @ccolor, @nekoColor,
+	//					"I am cat. ", @cpause, @newline,
+						@cclear, @ccolor,@takoColor, "Perhaps you shoud meow on him?"
+						);
+
+	D020TextHit: string = (@cclear, @ccolor,@memColor, "Ouch!  ",@cpause, "Now you have to ", @newline,
+						"repeat that 15 more times for the ",
+						@newline, "default color to return", @cpause, @cpause
+						@cclear, @ccolor,@takoColor, "Please do, this background color", 
+						@newline, "scheme is just dreadful. ", 
+						@cpause, @cpause, @cpause, @cclear );
+							
+
+	D016Text: string = (@cclear, @ccolor,@memColor, "Haha!  ",@cpause, "$D016 here! Without me, this", @cpause, @newline,
+						"game would look sucky and the C64",
+						@newline, "wouldn't have been popuplar!", @cpause, @cpause
+						@cclear, @ccolor, @nekoColor,
+						"What is a game? and a c64?", @cpause,
+						@newline, "I am cat. ", @cpause, @newline,
+						@cclear, @ccolor,@takoColor, "Hm let's see what happens when", 
+						@newline, "hitting him..." 
+						);
+
+	D016TextHit: string = (
+						@cclear, @ccolor,@takoColor, "Oh dear, you seem to have turned", 
+						@newline, "off horizontal scrolling.. ", 
+						@newline, "Please do restore order!" 
+						);
+
+
+
+
+
+
+
+

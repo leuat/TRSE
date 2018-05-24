@@ -1,0 +1,83 @@
+program Tutorial10;
+var
+	image_color: IncBin("images/weird_color.bin", "$5000");
+	image_data: IncBin("images/weird_data.bin", "$6000");
+	dy, vy, val, orgChar : byte;
+	ypos:byte;
+	x,y : byte;
+	fadeStep, wwait : byte;
+	
+	fade1 : array[16] of byte =
+	(0, 15, 9, 6, 2, 12, 12, 9 ,
+	9,  11, 8, 0, 11, 5, 6, 12);
+	
+	
+interrupt Update();
+begin
+	startirq(1);
+	waitForRaster(30);
+	SetBank(VIC_BANK1);
+	poke(VIC_DATA_LOC, 0,$18);
+	SetBitmapMode();
+	SetMultiColorMode();
+	if (joystickbutton=1) then wwait :=10;
+	if wwait<>0 then begin
+		if wwait&1=0 then
+		begin
+			TransformColors(fade1, $4400);
+			TransformColors(fade1, $D800);
+		end;
+		dec(wwait);
+	end;
+	
+	Joystick();
+	
+	val := ypos;
+	
+	waitNoRaster(val);
+	waitNoRaster(1);
+	SetBank(VIC_BANK0);
+	poke(VIC_DATA_LOC, 0,orgChar);
+	
+	SetTextMode();
+	SetRegularColorMode();
+	
+	
+	if val<215 then begin
+		ypos:=ypos+vy;
+		vy:=vy+dy;
+	end
+	else
+	begin
+		ypos:=214;
+		vy:=vy/2;
+		vy:=255 - vy;
+		if vy>252 then begin
+			ypos := 216;
+			vy:=0;
+			dy:=0;
+		end;
+	end;
+	
+	closeirq();
+end;
+
+
+
+begin
+	ypos:=0;
+	dy:=1;
+	vy:=0;
+	wwait:=0;
+	orgChar := peek(VIC_DATA_LOC, 0);
+	clearscreen($20,^$0400);
+	poke(VIC_DATA_LOC, 0,$18);
+	copyimagecolordata(image_color,1);
+	preventirq();
+	DisableCIAInterrupts();
+	RasterIRQ(Update(),0, 1);
+	enablerasterirq();
+	//Loop();
+	
+end.
+

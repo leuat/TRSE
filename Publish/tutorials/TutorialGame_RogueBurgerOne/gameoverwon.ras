@@ -1,0 +1,222 @@
+interrupt GameOverLoop();
+begin
+	startirq(@usekernal);
+	setRegularColormode();
+	poke(VIC_DATA_LOC, 0, @charmapText);
+	val:=val+1;
+	moveto(15,10, @screen1hi);
+	printstring("GAME OVER", 0, 20);
+	moveto(15,13, @screen1hi);
+	printstring("SCORE", 0, 20);
+	moveto(21,13, @screen1hi);
+	printnumber(player_score);
+	moveto(0,10, $D8);
+	j:=fade[val&15];
+	k:=fade[(val+2)&15];
+	for i:=0 to 39 do begin
+		screenmemory[i] := j;
+		screenmemory[i+120] := k;
+	end;
+	
+	call(SIDFILE_1_PLAY);
+	Joystick();
+	
+	if joystickbutton=1 then begin
+		InitMainScreen();
+		RasterIRQ(MainScreen(), 0, @usekernal);
+	end;
+	
+	
+	waitForRaster(200);
+	closeirq();
+end;
+
+
+
+procedure InitGameWon();
+begin
+	InitSid(SIDFILE_1_INIT);
+	
+	Setbank(VIC_BANK1);
+	ClearScreen($20, $4400);
+	ClearScreen($02, SCREEN_COL_LOC);
+
+	poke(VIC_DATA_LOC, 0, @charmapText);
+	poke(SCREEN_BG_COL, 0, BLACK);
+	
+	poke(SPRITE_BITMASK, 0, %00001111);
+	spritey:=180;
+	spritex:=160;
+	spritepos(spritex, spritey, 0);
+
+	setspriteloc(1,entity_sprites[18],1);
+	setspriteloc(2,entity_sprites[19],1);
+	setspriteloc(3,entity_sprites[20],1);
+
+	SPRITE_COLOR[1]:=RED;
+	SPRITE_COLOR[2]:=RED;
+	SPRITE_COLOR[3]:=RED;
+	zeropage4:=EndingTextWriter;
+
+	SPRITE_STRETCH_X:=%00001110;
+	SPRITE_STRETCH_Y:=%00001110;
+
+
+	spritepos(tmp, 40, 1);
+	spritepos(tmp, 40+21+21, 2);
+	tmp:=tmp+24+24;
+	spritepos(tmp, 40+21+21, 3);
+
+	zeropage1:=EndingText;
+	clearscreen(DARK_GREY, $D800);
+	
+
+
+end;
+
+interrupt GameWonScreenScroller();
+
+interrupt RasterGameWon();
+begin
+	startirq(@usekernal);
+	spritepos(spritex, spritey, 0);
+
+	if (spritey>80) then 
+		dec(spritey)
+	else 
+	begin
+		SPRITE_STRETCH_X:=$FF;
+		SPRITE_STRETCH_Y:=$FF;
+		spritex:=140;
+		call(SIDFILE_1_PLAY);
+		inc(val2);
+		if val2>10 then 
+			SPRITE_COLOR := WHITE
+		else
+			SPRITE_COLOR:=RED;
+		if val2>20 then
+			val2:=0; 
+		RasterIRQ(GameWonScreenScroller(), 142,@usekernal);
+
+		
+	end;
+	
+	Joystick();
+
+	if (joystickbutton=1) then 	begin
+		InitMainScreen();
+		RasterIRQ(MainScreen(), 140,@usekernal);
+	end;
+
+
+
+
+	closeirq();
+end;
+
+procedure UpdateCredits();
+
+interrupt GameWonScrollerEnds();
+begin
+	startirq(@usekernal);
+	asm(" 
+		ldx #4
+		dex
+		bne *-1
+	");
+	SCREEN_FG_COL:=BLUE;
+	scrollx(0);
+	waitnoraster(1);
+	asm(" 
+		ldx #9
+		dex
+		bne *-1
+	");
+	SCREEN_FG_COL:=BLACK;
+	poke(VIC_DATA_LOC, 0, @charmapText);
+	setbank(VIC_BANK1);
+	RasterIRQ(RasterGameWon(),204, @usekernal);
+	if (ms_scroll=1) then begin
+		memcpy(^$8400 + ^40*^12, 1, ^$8400 + ^40*^12, 39);
+		memcpy(^$8400 + ^40*^13, 1, ^$8400 + ^40*^13, 39);
+	end;
+
+	UpdateCredits();
+
+	closeirq();
+	
+end;
+
+
+interrupt GameWonScreenScroller();
+begin
+	startirq(@usekernal);
+	asm(" 
+		ldx #4
+		dex
+		bne *-1
+	");
+	SCREEN_FG_COL:=BLUE;
+	poke(VIC_DATA_LOC, 0, @highCharMemoryPos);
+	setbank(VIC_BANK2);
+	waitnoraster(1);
+	asm(" 
+		ldx #13
+		dex
+		bne *-1
+	");
+	SCREEN_FG_COL:=BLACK;
+	
+	dec(ms_scroll);
+	dec(ms_scroll);
+	scrollx(ms_scroll);
+	MULTICOLOR_CHAR_COL[1]:=YELLOW;
+	MULTICOLOR_CHAR_COL[2]:=DARK_GREY;
+	
+	RenderScrollerText(12);
+	if (zeropage1[0]=0) then zeropage1:=EndingText;
+
+	
+	RasterIRQ(GameWonScrollerEnds(),164, @usekernal);
+
+	closeirq();
+end;
+
+
+
+
+
+
+// Funky sprite flashing and noises on game over
+procedure InitGameOver();
+begin
+	for i:=0 to 100 do begin
+		poke(SPRITE_COLOR, 0, i);
+		poke(SPRITE_COLOR, 1, i);
+		waitForRaster(1);
+		val:=120-i;
+		PlaySound(SID_CHANNEL3,
+		15,  // Volume
+		val,  // Hi byte frequency
+		0*16+0,  // Attack voice 1
+		5*16 + 6,   // Sustain = 16*15 + release=6
+		1 +SID_NOISE,  // Waveform
+		SID_SAW);  // waveform
+		
+		waitForRaster(255);
+	end;
+	rasterIRQ(GameOverLoop(), 0,@usekernal);
+	
+	InitSid(SIDFILE_1_INIT);
+	
+	Setbank(VIC_BANK1);
+	poke(SPRITE_BITMASK, 0, 0);
+	ClearScreen($20, $4400);
+	ClearScreen($02, SCREEN_COL_LOC);
+	poke(VIC_DATA_LOC, 0, @charmapText);
+	poke(SCREEN_BG_COL, 0, BLACK);
+	
+	
+	
+end;
+

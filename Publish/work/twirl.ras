@@ -1,0 +1,396 @@
+program twirl;
+var  
+   a,b,d,i,j,val,idx,y,x,dx,dy,col,k,l,m,t,c1,c2: byte; 
+	oa,ob,oc, tVal:byte;
+   p1, zp,l1,t1,tp,val2: pointer;
+
+	ms_scroll, ms_shift:byte=0;
+	scroll:byte=7;
+
+	posx: array[64] of byte=
+	(3,4,4,3,2,2,2,3,4,5,5,5,5,4,3,2,1, 1, 1, 1, 1, 2,3,4,5,6, 6,6,6,6,6, 5,4,3,2,1,0,  0,0,0,0,0,0,     
+	1,2,3,4,5,6); 
+	posy: array[64] of byte=
+	(3,3,4,4,4,3,2,2,2,2,3,4,5,5,5,5,5, 4, 3, 2 ,1, 1,1,1,1,1, 2,3,4,5,6, 6,6,6,6,6,6,  5,4,3,2,1,0,  
+	0,0,0,0,0,0) ;
+
+	c,time,c2x, c2y,ax, ay : byte;
+	// Use custom charset
+	// nice colors
+	fade : array [256] of byte;// = (11,6,12,12,4,14,15,1,15,14,4,12,12,6,11,14,4,15,1,15,14,4,12,12,6,11); 
+	add:byte=0;
+
+	// mini sine table
+	sine2: array[256] of byte;
+	colorarray: array[256] of byte;
+
+	effect: byte = 0;
+
+	cnt,colorTick:byte=0;
+
+//	data: incbin("images/tutorial18.bin");
+
+	text: string= " HFHF      ";
+
+	//circles: incbin("images/circles.bin", "$3000");
+	//lines: incbin("images/lines.bin", "$3800");
+	charset: IncBin("charsets/tutorial19_charset.bin","$4000");
+//	charset: IncBin("charsets/tutorial3.bin","$4000");
+
+	pText, rtext:pointer;	
+	shift:array[25] of byte;
+
+	ddx:array[256] of byte;
+	rb:array[256] of byte;
+
+
+	@define screen_hi $44
+
+	@define useKernal 0
+
+	@define starty "4"
+
+
+
+
+procedure GenerateCharset();
+begin
+	clearscreen($00,^$2000);
+	clearscreen($00,^$2300);
+
+	zp:=$2008;
+	for i:=0 to 100 do begin
+
+		cnt:=i+1;
+		if cnt>49 then begin	
+			cnt:=100-i;
+//			cnt:=49;
+		end;
+		for j:=0 to cnt do begin
+			y:=posy[j];
+			x:=posx[j];
+			togglebit(zp[y],x,1);
+		end;
+
+		inczp(zp,8);
+	end;
+end;
+
+procedure GenerateRandomCharset();
+var	
+	tmp:array[256] of byte;
+begin
+
+	for i:=0 to 256 do begin
+		rand(0,8,j);
+		tmp[i]:=j;
+
+	end;
+
+	clearscreen($00,^$2000);
+	clearscreen($00,^$2300);
+
+	zp:=$2000;
+	k:=0;
+	for i:=0 to 98 do begin
+
+		cnt:=i;
+		if cnt>48 then begin	
+			cnt:=47-i;
+//			cnt:=49;
+		end;
+		cnt:=cnt*2;
+		if (cnt<>0) then 
+		for j:=0 to cnt do begin
+			y:=tmp[k];
+			x:=tmp[k+71];
+			togglebit(zp[y],x,1);
+			k:=k+11;
+		end;
+		
+		inczp(zp,8);
+	end;
+end;
+
+
+procedure RenderBar(rb_a, rb_b, rb_c:byte);
+begin
+	k:=0+(rb_b-rb_a)*4 - 8;
+//	if k>49 then k:=255;
+	if k>127 then k:=0;
+	if rb_a<rb_b then 
+	for x:=rb_a to rb_b do begin
+		p1[x]:=rb_c;
+		screenmemory[x]:=k;
+	//	if k<80 then inc(k);
+	end;
+
+end;
+
+
+procedure RenderBarText(rb_aa, rb_bb, rb_cc:byte);
+begin
+	k:=0+(rb_bb-rb_aa)*4 - 8;
+//	if k>49 then k:=255;
+	if k>127 then k:=0;
+
+	j:=rb[rb_bb-rb_aa];
+	//j:=8;
+	val:=0;
+	dx:=12;
+	if rb_aa<rb_bb then 
+	for x:=rb_aa to rb_bb do begin
+		dx:=ddx[val];
+			if zp[dx]=1 then 
+				p1[x]:=BLUE
+			else
+				p1[x]:=rb_cc;								
+ 
+		val:=val+j;
+		screenmemory[x]:=k;
+	end;
+
+end;
+
+
+procedure RenderTwirl();
+begin
+	moveto(20,0,$D8);
+	p1:=screenmemory;	
+	moveto(20,0,$04);	
+/*	scroll:=ms_scroll;
+	inc(ms_scroll);
+	if (ms_scroll=8) then begin
+
+
+	end;*/
+	scroll:=7;
+	pText:=text;
+	for y:=0 to 25 do begin
+
+
+		k:=shift[y];//-sine[(y+time)*4]/4;
+//		while (k>90) do k:=k-90;
+		oa:=sine2[k];
+		ob:=sine2[k+80];
+		oc:=sine2[k+160];
+		d:=sine2[k+240];
+	//	d:=sine[y*8+time*4+128+64]/16;
+		a:=oa;
+		b:=ob;
+		c:=oc;
+	//	d:=oc;
+
+
+	/*	if y&7>4 then begin
+			a:=a/2+4;
+			b:=b/2+4;
+			c:=c/2+4;
+			d:=d/2+4;
+		end;
+*/
+		inc(scroll);
+		inczp(zp, 8);
+		if (scroll=8) then begin
+
+			inczp(pText,1);
+			scroll:=0;
+			if pText[0]=0 then pText:=text;
+			tVal:=pText[0];
+
+
+			if tVal>64 then tVal:=tVal-64;
+			
+			zp:=$6000;
+			if (tVal<>0) then
+			for i:=0 to tVal do inczp(zp, 64);
+			
+
+		end;
+
+
+		k:=a;
+		if b<k then k:=b;
+		if c<k then k:=c;
+
+		if k<>0 then	
+		for x:=0 to k do begin
+			p1[x]:=0;
+		end;
+
+		k:=a;
+		if b>k then k:=b;
+		if c>k then k:=c;
+	
+		if k<>16 then
+		for x:=k to 16 do begin
+			p1[x]:=0;
+		end;
+		k:=65;
+		RenderBar(a,b,PURPLE);
+		RenderBarText(b,c,WHITE);
+		RenderBarText(c,a,YELLOW);
+		//RenderBar(d,a,BLUE);
+/*		k:=64+(b-a);
+		if a<b then 
+		for x:=a to b do begin
+			p1[x]:=RED;
+			screenmemory[x]:=k;
+			//inc(k);
+		end;
+		k:=64+(c-b);
+		if b<c then 
+		for x:=b to c do begin
+			p1[x]:=GREEN;
+			screenmemory[x]:=k;
+			//inc(k);
+		end;
+		k:=64+(d-c);
+		if c<d then 
+		for x:=c to d do begin
+			p1[x]:=BLUE;
+			screenmemory[x]:=k;
+			//inc(k);
+		end;
+		k:=64+(a-d);
+		if d<a then 
+		for x:=d to a do begin
+			p1[x]:=YELLOW;
+			screenmemory[x]:=k;
+			//inc(k);
+		end;
+
+*/
+//		if (a>b) then begin swap(c1,c2); end;
+/*
+
+
+
+		if (a<>0) then
+			for x:=0 to a do p1[x]:=0;
+		if (c<>0) then
+			for x:=c to 16 do p1[x]:=0;
+
+		k:=64+(b-a);
+		if a<>b then
+		for x:=a to b do begin
+			screenmemory[x]:=k;
+			k:=k+1;
+			p1[x]:=RED;
+		end;
+	//	k:=16+(d-c)*4;
+		k:=64+(c-b);
+		if b<>c then
+		
+		for x:=b to c do begin
+			screenmemory[x]:=k;
+			k:=k+1;
+			p1[x]:=WHITE;
+		end;*/
+		inczp(screenmemory,40);
+		inczp(p1,40);
+	end;
+
+
+end;
+
+
+
+interrupt Raster1();
+begin
+
+	inc(time);
+	
+	for i:=0 to 25 do begin
+//		shift[i]:=sine[i*4]/8+time;
+		//shift[i]:=4*time+i*4 - sine[i+time*4];
+		j:=sine[time];
+		k:=sine[i*3+time*4-j];
+		shift[i]:=k/4 - time*4 +i*2;
+	end;
+	RenderTwirl();
+	
+
+end;
+
+procedure Precalc();
+begin
+	for i:=0 to 0 do begin
+//		sine2[i]:=(sine[2*i]);
+		sine2[i]:=sine[i]/16 ;
+		rb[i]:=128/i;
+		ddx[i]:=i/16;
+
+	end;
+	for i:=0 to 25 do shift[i]:=i*3;
+
+
+	for i:=0 to 0 do begin
+		colorarray[i]:=((i)/40)+1;
+	end;
+
+
+end;
+
+procedure UnpackFont();
+begin
+	zp:=$4000;
+	pText:=$6000;
+
+	for i:=0 to 128 do begin
+		for y:=0 to 8 do begin
+		for j:=0 to 8 do begin
+			c:=0;
+			if getbit(zp[0],7-j)=1 then c:=1;
+			pText[j]:=c;
+		end;
+		inczp(zp, 1);
+		inczp(pText,8);
+		end;
+
+	end;
+
+
+end;
+
+
+
+interrupt NMI();
+begin
+
+end;
+
+begin
+	poke(VIC_DATA_LOC, 0,$18);
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+//	copycharsetfromrom(^$4000);
+	clearscreen($00,^$0400);
+	clearscreen($00,^$4400);
+	clearscreen(LIGHT_BLUE, ^$D800);
+//	copycharsetfromrom(^$4000);
+//	setmulticolormode();
+//	for i:=0 to 0 do sine[i]:=sine[i]/2;
+	GenerateCharset();
+	//GenerateRandomCharset();
+	UnpackFont();
+	cnt:=0;
+	idx:=0;
+	Precalc();
+	//SetColor(BLUE, PURPLE, LIGHT_BLUE);
+	hideborderx(1);
+	pText:=text;
+
+
+
+	DisableCIAInterrupts();
+	nmiirq(NMI());
+	SetMemoryConfig(1,@useKernal,0);
+
+	RasterIRQ(Raster1(),0,@useKernal);
+	EnableRasterIRQ();
+
+	enableirq();
+	Loop();
+
+end.

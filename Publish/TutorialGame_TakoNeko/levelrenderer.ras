@@ -1,0 +1,258 @@
+procedure CopyHScreen(ul_:byte);
+begin
+	if g_currentBank=0 then begin
+		if ul_=0 then
+			copyhalfscreen(@screenmem2 + ^520, @screenmem1 -^1 + ^520,5, 1,0)
+		else
+			copyhalfscreen(@screenmem2, @screenmem1 -^1, 13, 1,0);
+
+	end;
+	if g_currentBank=1 then begin
+		if ul_=0 then 
+			copyhalfscreen(@screenmem1+^520, @screenmem2 - ^1 + ^520, 5, 1,0)
+		else
+			copyhalfscreen(@screenmem1, @screenmem2 - ^1,13, 1,0);
+	end;
+
+end;
+
+procedure CopyHScreenCol(ul2_:byte);
+begin
+
+		if ul2_=0 then 
+			copyhalfscreen(^$D800+^520+^1, ^$D800 + ^520, 5, 1,0)
+		else
+			copyhalfscreen(^$D800+^1+^40*^2, ^$D800 +^40*^2,11, 1,0);
+
+//		copyfullscreen(^$D800+^1,^$D800);
+
+end;
+
+
+procedure SwitchBank();
+begin
+	if g_currentBank=0 then 
+		SetBank(VIC_BANK1)
+	else 
+		SetBank(VIC_BANK2);
+
+
+	poke(VIC_DATA_LOC, 0, @charmapLevel);
+
+	g_currentBank:=(g_currentBank+1)&1;
+end;
+
+
+procedure RenderLevel(levelpointer:pointer; m_li, m_lj, m_screen, m_li_from, m_li_to, m_li_shift, m_li_ab: byte);
+var
+   m_rl_width, m_rl_height : byte;
+   m_rl_sizex, m_rl_sizey : byte;
+   m_rl_startx, m_rl_starty : byte;
+   m_rl_dataSize, m_rl_pos : byte;
+   m_rl_i, m_rl_j, m_rl_val, m_rl_val2, m_rl_idx: byte;
+   m_rl_chunksize, m_rl_chunks : byte;
+
+begin
+	// Fluff files have 13 byte headers
+	inczp(levelpointer, 9+13);
+
+	m_rl_pos := m_rl_sizex*m_lj + m_li;
+	
+	m_rl_val := m_rl_width*m_rl_height;
+//	m_rl_val := m_rl_val;// + m_width; 
+
+	// Skip levels
+	if m_rl_pos<>0 then
+	for m_rl_j:=0 to m_rl_pos do begin
+			inczp(levelpointer,m_rl_val);
+			inczp(levelpointer,m_rl_val);
+			inczp(levelpointer,m_rl_dataSize);
+	end;
+
+	// Set screen position 
+
+	moveto(m_rl_startx, m_rl_starty, m_screen);
+	
+	// Fill screen with chars
+	//call(SIDFILE_1_PLAY);
+
+	for m_rl_j:=0 to m_rl_height do begin
+		for m_rl_i:=m_li_from to m_li_to do begin
+			m_rl_val := levelpointer[m_rl_i-m_li_shift] + m_li_ab;
+			m_rl_idx:=m_rl_i*2;
+			screenmemory[m_rl_idx+40]:=m_rl_val+40;
+			screenmemory[m_rl_idx]:=m_rl_val;
+		 end;
+		inczp(screenmemory, 80);
+		inczp(levelpointer,m_rl_width);
+	end;
+	m_levelInit := 1;
+	// Then colors
+end;
+
+procedure RenderFullLevel();
+begin
+	// Fluff files have 13 byte headers
+	inczp(levelpointer, 9+13);
+
+	m_rl_pos := m_rl_sizex*m_lj + m_li;
+	
+	m_rl_val := m_rl_width*m_rl_height;
+//	m_rl_val := m_rl_val;// + m_width; 
+
+	// Skip levels
+	if m_rl_pos<>0 then
+	for m_rl_j:=0 to m_rl_pos do begin
+			inczp(levelpointer,m_rl_val);
+			inczp(levelpointer,m_rl_val);
+			inczp(levelpointer,m_rl_dataSize);
+	end;
+
+	// Set screen position 
+
+	moveto(m_rl_startx, m_rl_starty, m_screen);
+	
+	// Fill screen with chars
+	//call(SIDFILE_1_PLAY);
+
+	for m_rl_j:=0 to m_rl_height do begin
+		for m_rl_i:=0 to m_rl_width do begin
+			m_rl_val := levelpointer[m_rl_i];
+			m_rl_idx:=m_rl_i*2;
+			screenmemory[m_rl_idx+40]:=m_rl_val+40;
+			screenmemory[m_rl_idx]:=m_rl_val;
+			screenmemory[m_rl_idx+41]:=m_rl_val+41;
+			screenmemory[m_rl_idx+1]:=m_rl_val+1;
+		 end;
+		inczp(screenmemory, 80);
+		inczp(levelpointer,m_rl_width);
+	end;
+
+	moveto(m_rl_startx, m_rl_starty, $D8);
+	@colorpointer:=levelpointer;
+	for m_rl_j:=0 to m_rl_height do begin
+		for m_rl_i:=0 to m_rl_width do begin
+			m_rl_val := levelpointer[m_rl_i]&7 + 8;
+			m_rl_val:=m_rl_val|16;	
+			m_rl_idx:=m_rl_i*2;
+			screenmemory[m_rl_idx+40]:=m_rl_val;
+			screenmemory[m_rl_idx]:=m_rl_val;
+			screenmemory[m_rl_idx+41]:=m_rl_val;
+			screenmemory[m_rl_idx+1]:=m_rl_val;
+	
+	 	end;
+		inczp(screenmemory, 80);
+		inczp(levelpointer, m_rl_width);
+	
+	end;
+end;
+
+procedure BackgroundCollide();
+begin
+	
+	tmp:=spritex - 12;
+	//tmp:=tmp +joystickright*8;
+	//tmp:=tmp - joystickleft*8;
+	i:=(tmp)/8;// -m_rl_startx;//-m_rl_startx;
+	
+	//	i:=i-m_rl_starty;
+	j:=(spritey-38);
+//	j:=j+joystickdown*8;
+//	j:=j-joystickup*8;
+	j:=j/8;
+	val := j*m_rl_width+i;
+	if g_currentBank=0 then
+	moveto(i-1,j, $88)
+	else
+	moveto(i-1,j, $48);
+	//tmp2:=getbit(@colorpointer[val], 3);
+	val:=screenmemory[41]; // down
+	tmp2:=mask[val];
+	blockx:=0;
+	blocky:=0;
+	
+	if (tmp2=1) then begin
+		blocky:=1;
+	end;
+	val:=screenmemory[ 1 + joystickright - joystickleft]; // down
+	tmp2:=mask[val];
+	
+	if (tmp2=1) then begin
+		blockx:=1;
+	end;
+	//if joystickup=1 then 
+//		k:=0-m
+	//k:=(joystickup + joystickdown)*m_rl_width;
+	
+	//moveto(i-3,j, $88);
+	//screenmemory[0]:=10;
+	
+	
+end;
+
+
+
+
+
+
+procedure ReadLevelheader();
+begin
+	inczp(levelpointer, 13); // Fluff header
+
+	// Read level header info
+
+	m_rl_sizex := levelpointer[0];
+	m_rl_sizey := levelpointer[1];
+
+	m_rl_width := levelpointer[2];
+	m_rl_height := levelpointer[3];
+
+	m_rl_startx := levelpointer[4];
+	m_rl_starty := levelpointer[5];
+
+
+	m_rl_chunks := levelpointer[6];
+	m_rl_chunksize := levelpointer[7];
+
+	m_rl_dataSize := levelpointer[8];
+
+end;
+
+
+procedure RenderColor();
+begin
+
+	if (m_levelInit=0) then return();
+
+	moveto(m_rl_startx, m_rl_starty, $D8);
+//	call(SIDFILE_1_PLAY);
+	@colorpointer:=levelpointer;
+	for m_rl_j:=0 to m_rl_height do begin
+		for m_rl_i:=m_li_from to m_li_to do begin
+			m_rl_val := levelpointer[m_rl_i-m_li_shift]&7 + 8;
+			if (levelpointer[m_rl_i-m_li_shift]>7) then m_rl_val:=m_rl_val|16;
+			m_rl_idx:=m_rl_i*2;
+			screenmemory[m_rl_idx+40]:=m_rl_val;
+			screenmemory[m_rl_idx]:=m_rl_val;
+	
+	 	end;
+		inczp(screenmemory, 80);
+		inczp(levelpointer, m_rl_width);
+	
+	end;
+	// Set multicolor colors
+	//call(SIDFILE_1_PLAY);
+
+	/*poke(MULTICOLOR_CHAR_COL, 0, levelpointer[0]);
+	poke(MULTICOLOR_CHAR_COL, 2, levelpointer[1]);
+	poke(MULTICOLOR_CHAR_COL, 1, levelpointer[2]);
+
+	background:=levelpointer[0];
+*/
+	inczp(levelpointer, 3);
+	// levelpointer now points to chunk data!
+
+
+end;
+
+
