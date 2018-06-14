@@ -411,7 +411,6 @@ begin
 	StartIRQ(@usekernal);
 	inc(time);
 
-
 	//setRegularColorMode();
 	setMultiColorMode();
 	poke(MULTICOLOR_CHAR_COL, 0, BLACK);
