@@ -6,7 +6,7 @@
 #include <QMap>
 #include <QImage>
 #include <QPainter>
-#include <QPixMap>
+#include <QPixmap>
 
 
 namespace Ui {

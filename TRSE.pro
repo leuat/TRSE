@@ -34,6 +34,11 @@ win32-msvc*{
   LIBS += -openmp
 }
 
+linux-g*{
+  QMAKE_CXXFLAGS += -fopenmp
+  LIBS += -fopenmp
+}
+
 win32:RC_ICONS += trse.ico
 
 SOURCES += main.cpp\

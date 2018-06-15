@@ -10,7 +10,7 @@
 #include <QPixmap>
 #include <QLayout>
 #include "source/LeLib/data.h"
-
+#include <math.h>
 class Metric {
 public:
     virtual float getDistance(QColor& a, QColor& b) = 0;

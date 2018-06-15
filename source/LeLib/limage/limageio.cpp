@@ -46,7 +46,7 @@ LImage* LImageIO::Load(QString filename)
 
     QFile file( filename);
     if( !file.open( QFile::ReadOnly ) )
-        return false;
+        return nullptr;
 
     float version;
     unsigned char imageType;
@@ -60,7 +60,7 @@ LImage* LImageIO::Load(QString filename)
     if (version>Data::data.version) {
         qDebug() << "File version higher than current version (" << version << " vs current " << Data::data.version << ")";
         file.close();
-        return false;
+        return nullptr;
     }
 
     LImage* img = LImageFactory::Create(LImage::CharToType(imageType), LColorList::CharToType(paletteType));
