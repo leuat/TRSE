@@ -273,6 +273,12 @@ void Syntax::SetupBuiltinFunctions()
                 << BuiltInFunction::Type::INTEGER
                 );
 
+    builtInFunctions["deczp"] = BuiltInFunction(
+                "deczp",
+                QList<BuiltInFunction::Type>()<< BuiltInFunction::Type::INTEGER
+                << BuiltInFunction::Type::INTEGER
+                );
+
 
     builtInFunctions["hidebordery"] = BuiltInFunction(
                 "hidebordery",

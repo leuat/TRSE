@@ -116,7 +116,8 @@ SOURCES += main.cpp\
     source/LeLib/util/lgraph.cpp \
     source/LeLib/util/lmessage.cpp \
     source/LeLib/util/spline.cpp \
-    source/LeLib/util/util.cpp
+    source/LeLib/util/util.cpp \
+    source/LeLib/util/SimplexNoise.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -195,7 +196,8 @@ HEADERS  += mainwindow.h \
     source/LeLib/util/lmessage.h \
     source/LeLib/util/random.h \
     source/LeLib/util/spline.h \
-    source/LeLib/util/util.h
+    source/LeLib/util/util.h \
+    source/LeLib/util/SimplexNoise.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \

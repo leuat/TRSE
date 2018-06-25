@@ -49,6 +49,7 @@ public:
     void Clearsound(Assembler* as);
     void IncScreenX(Assembler* as);
     void IncZp(Assembler* as);
+    void DecZp(Assembler* as);
     void Call(Assembler* as);
     void InitSid(Assembler* as);
     void InitMul16x8(Assembler* as);

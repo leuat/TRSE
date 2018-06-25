@@ -25,7 +25,7 @@ void CIniFile::Load(QString fname) {
             CItem it;
             it.dval = -1;
             it.name = tok[0].toLower().trimmed();
-            it.strval = tok[1].toLower().trimmed();
+            it.strval = tok[1].trimmed();
             bool ok;
             it.dval  = tok[1].toFloat(&ok);
             if (ok) {

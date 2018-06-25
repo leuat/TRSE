@@ -210,6 +210,9 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     if (m_procName.toLower() == "inczp")
             IncZp(as);
 
+    if (m_procName.toLower() == "deczp")
+            DecZp(as);
+
 
 
     if (m_procName.toLower() == "spritepos")
@@ -1467,6 +1470,34 @@ void NodeBuiltinMethod::IncZp(Assembler *as)
 
 
     as->m_labelStack["incscreenx"].pop();
+
+}
+
+
+void NodeBuiltinMethod::DecZp(Assembler *as)
+{
+    as->m_labelStack["deczp"].push();
+    QString lbl = as->getLabel("deczp");
+
+    NodeVar* var = dynamic_cast<NodeVar*>(m_params[0]);
+    if (var==nullptr) {
+        ErrorHandler::e.Error("DecZp: Left-hand parameter must be zeropage pointer");
+    }
+    if (var->getType(as)!=TokenType::POINTER) {
+        ErrorHandler::e.Error("DecZp: Left-hand parameter must be zeropage pointer");
+    }
+
+    m_params[1]->Build(as);
+    as->Term();
+    as->Asm("clc");
+    as->Asm("sbc "+ var->value);
+    as->Asm("bcc " + lbl);
+    as->Asm("dec "+ var->value + " +1");
+    as->Label(lbl);
+    as->Asm("sta "+ var->value);
+
+
+    as->m_labelStack["deczp"].pop();
 
 }
 

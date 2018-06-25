@@ -400,9 +400,15 @@ void MainWindow::on_tabMain_currentChanged(int index)
     if (imageedit!=nullptr) {
         m_updateThread->SetCurrentImage(&imageedit->m_work, &imageedit->m_toolBox, imageedit->getLabelImage());
     }
-    m_currentDoc = (TRSEDocument*)ui->tabMain->widget(index);
 
-    m_currentDoc->Reload();
+    if ((TRSEDocument*)ui->tabMain->widget(index)!=nullptr) {
+        m_currentDoc = (TRSEDocument*)ui->tabMain->widget(index);
+        if (m_currentDoc!=nullptr && index!=0)
+            m_currentDoc->Reload();
+
+
+    }
+
 
 }
 
