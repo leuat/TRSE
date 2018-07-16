@@ -30,7 +30,6 @@ var
 // Plasma procedure
 
 
-
 procedure Plasma();
 begin
 	c2x:=ax;

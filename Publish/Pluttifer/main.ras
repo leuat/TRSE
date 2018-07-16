@@ -1,0 +1,278 @@
+program Pluttifer;
+var  
+   	index,i,j, x,y,val,ix,iy: byte = 0; 
+	charset:incbin("charsets/charset_level.bin", "$6000");
+	data1: incbin("data/perlin16.dat");
+
+	map_pos_x,xx,yy,k : byte=1;
+	map_pos_y : byte=1;
+	cur_pos_x, cur_pos_y, cur_val: byte;
+
+	rands: array[256] of byte;
+
+	pp, pu:pointer;
+
+	walker_x, walker_y: array[8] of byte;
+	no_walkers, ok: byte=1;
+
+	cur_rnd, cur_room_x, cur_room_y:byte=0;
+
+	cur_dir, cur_cnt:byte=0;
+
+@define mappos $8000
+@define useKernal 0
+
+@define screenPtr $4400
+@define screenLo $44
+
+@define mapSizeX 128
+@define mapSizeY 128
+
+@define mapDisplaySizeX 16
+@define mapDisplaySizeY 9
+
+@define mapStartX 6
+@define mapStartY 2
+
+
+procedure DrawMap();
+begin
+	moveto(@mapStartX,@mapStartY,@screenLo);
+	cur_pos_x:=map_pos_x;
+	cur_pos_y:=map_pos_y;
+
+	pp:=@mappos;
+	if (cur_pos_y<>0) then
+		for i:=0 to cur_pos_y do inczp(pp, 128);
+	inczp(pp, cur_pos_x);
+//	cur_val:=pp[cur_pos_x]+64;
+
+	for y:=0 to @mapDisplaySizeY do begin
+		for x:=0 to @mapDisplaySizeX do begin
+			//CalculateMap();
+			cur_val:=pp[x];
+			i:=x*2;
+			//inc(cur_pos_x);
+			screenmemory[i]:=cur_val;
+			screenmemory[i+1]:=cur_val+1;
+			screenmemory[i+41]:=cur_val+41;
+			screenmemory[i+40]:=cur_val+40;
+		end;
+		//inc(cur_pos_y);
+		//cur_pos_x:=cur_pos_x - @mapSizeX;
+		inczp(screenmemory,80);
+		inczp(pp, 128);
+	end;
+
+end;
+
+
+procedure InitRand();
+begin
+	for i:=0 to 0 do begin
+		rand(0,255,val);
+		rands[i]:=val;	
+	end;
+
+end;
+
+
+procedure ClearMap();
+begin
+	pp:=@mappos;
+	val:=0;
+	for y:=0 to 128 do begin
+		for x:=0 to 128 do begin
+			pp[x]:=$00;
+			//if rands[val]>90 then pp[x]:=$20;
+			inc(val);
+		end;
+		val:=val+31;
+		inczp(pp,128);
+	end;
+
+end;
+
+
+procedure FindNewDirection(fdno : byte);
+begin
+	val:=rands[cur_rnd];
+	inc(cur_rnd);
+	cur_cnt:=val&15 + 7;
+	val:=rands[cur_rnd];
+	inc(cur_rnd);
+	cur_dir:=val&3;
+	cur_room_x :=2;
+	cur_room_y :=2;
+	if val&7=5 then begin 
+		cur_room_x:=rands[cur_rnd]&3+2;
+		inc(cur_rnd);
+		cur_room_y:=rands[cur_rnd]&3+2;
+	end;
+//	cur_room_x:=1;
+//	cur_room_y:=1;
+	pp:=@mappos;
+
+//	if (walker_y[fdno]<>0) then
+//		for x:=0 to walker_y[fdno] do inczp(pp,128);
+	
+	//inczp(pp, walker_x[fdno]);
+
+end;
+
+procedure FindNewStartingPoint(fnsp : byte);
+begin
+
+	ok:=0;
+	val:=0;
+	while ok=0 do begin
+		rand(0,127,xx);		
+		rand(0,127,yy);		
+
+		pp:=@mappos;
+
+		if (yy<>0) then
+			for x:=0 to yy do inczp(pp,128);
+		
+		if pp[xx]<>0 then begin
+			ok:=1;
+			cur_pos_x[fnsp]:=xx;
+			cur_pos_y[fnsp]:=yy;
+		end;
+		inc(val);
+		if val>127 then ok:=1;
+	end;
+
+	FindNewDirection(fnsp);
+	
+	//inczp(pp, walker_x[fdno]);
+
+end;
+
+
+procedure Walk(wno:byte);
+begin
+//	x:=walker_x[wno];
+
+	//i:=1;//val&7;
+	pp:=@mappos;
+
+	if (walker_y[fdno]<>0) then
+		for x:=0 to walker_y[fdno] do inczp(pp,128);
+/*	
+	inczp(pp, walker_x[fdno]);
+*/
+	ok:=0;
+	if (cur_cnt>0) then begin
+		x:=walker_x[wno];
+
+		pu:=pp;
+		for yy:=0 to cur_room_y do begin
+			
+			for xx:=0 to cur_room_x do
+				pu[x+128+xx]:=$20;
+	
+			inczp(pu, 128);
+		end;
+
+		asm(";wtf");
+		if (cur_dir=0 and walker_x[wno]<127) then 
+		begin
+			//if (pp[x+130]<>0) then begin FindNewDirection(wno);return(); end; 
+			walker_x[wno]:=walker_x[wno]+1; 
+			ok:=1;
+		end;
+		if (cur_dir=1 and walker_y[wno]<127) then 
+		begin
+			pu:=pp;
+			inczp(pu,128);
+			inczp(pu,128);
+			//if (pu[x+128]<>0) then begin FindNewDirection(wno);return(); end; 
+			//inczp(pp,128); 
+			walker_y[wno]:=walker_y[wno]+1; 
+			ok:=1;
+		end;
+		if (cur_dir=2 and walker_x[wno]>2) then 
+		begin 
+			//if (pp[x+126]<>0) then begin FindNewDirection(wno);return(); end; 
+			walker_x[wno]:=walker_x[wno]-1; 
+			ok:=1;
+		end;
+		if (cur_dir=3 and walker_y[wno]>2) then 
+		begin 
+			//if (pp[x+0]<>0) then begin FindNewDirection(wno);return(); end; 
+			//deczp(pp,128); 
+			walker_y[wno]:=walker_y[wno]-1; 
+			ok:=1;
+		end;
+
+	end;
+//	if (ok=0) then begin FindNewStartingPoint(wno);return(); end; 
+	if (ok=0) then begin FindNewDirection(wno);return(); end; 
+
+	dec(cur_cnt);
+	if (cur_cnt>127) then begin
+		FindNewDirection(wno);
+	end;
+
+end;
+
+
+
+procedure GenerateMap();
+begin
+	ClearMap();
+	FindNewDirection(0);
+	walker_x[0]:=64;
+	walker_y[0]:=64;
+	for y:=0 to 150 do begin
+		
+		for k:=0 to 10 do
+			Walk(0);
+
+	end;
+end;
+
+
+procedure Initialize();
+begin
+	setbank(VIC_BANK1);
+	SCREEN_BG_COL:=BLUE;
+	SCREEN_FG_COL:=BLACK;
+	VIC_DATA_LOC := $18;
+
+	
+
+	InitRand();
+	GenerateMap();
+//	set
+	clearscreen($20,@screenPtr);
+	clearscreen(GREEN+8,$D800);
+	MULTICOLOR_CHAR_COL[1]:=RED;
+	MULTICOLOR_CHAR_COL[2]:=GREY;
+	setmulticolormode();
+//	GenerateMap();
+	SCREEN_BG_COL:=BLACK;
+
+	walker_x[0]:=10;
+	walker_y[0]:=9;
+	no_walkers:=1;
+
+end;
+
+
+begin
+	disableciainterrupts();
+	SetMemoryConfig(1,@useKernal,0);
+	Initialize();
+	while (1=1) do begin
+
+		DrawMap();
+		joystick();
+		if (joystickright=1 and map_pos_x<110) then inc(map_pos_x);	
+		if (joystickleft=1 and map_pos_x>1) then dec(map_pos_x);	
+		if (joystickdown=1 and map_pos_y<110) then inc(map_pos_y);	
+		if (joystickup=1 and map_pos_y>1) then dec(map_pos_y);	
+	
+	end;
+end.

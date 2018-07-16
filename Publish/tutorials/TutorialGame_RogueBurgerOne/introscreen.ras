@@ -175,19 +175,21 @@ interrupt MainScreen();
 interrupt MainScreenScrollerEnds();
 begin
 	startirq(@usekernal);
-	asm(" 
+	wait(4);
+/*	asm(" 
 		ldx #4
 		dex
 		bne *-1
-	");
+	");*/
 	SCREEN_FG_COL:=BLUE;
 	scrollx(0);
 	waitnoraster(1);
-	asm(" 
+	wait(9);
+/*	asm(" 
 		ldx #9
 		dex
 		bne *-1
-	");
+	");*/
 	SCREEN_FG_COL:=BLACK;
 	poke(VIC_DATA_LOC, 0, @charmapText);
 	setbank(VIC_BANK1);
