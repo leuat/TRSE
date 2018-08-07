@@ -14,12 +14,13 @@ StandardColorImage::StandardColorImage(LColorList::Type t) : MultiColorImage(t)
     Clear();
     m_type = LImage::Type::HiresBitmap;
 
-    m_supports.asmExport = false;
+
+    m_supports.asmExport = true;
     m_supports.binaryLoad = false;
-    m_supports.binarySave = false;
+    m_supports.binarySave = true;
     m_supports.flfSave = true;
     m_supports.flfLoad = true;
-    m_supports.asmExport = false;
+    m_supports.asmExport = true;
 
 }
 

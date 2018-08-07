@@ -1,7 +1,7 @@
 
 s
 rmdir /s /q trse
-set dir=C:\Users\leuat\Documents\GitHub\build-Fluff64-Desktop_Qt_5_9_2_MSVC2017_64bit-Release\
+set dir=C:\Users\leuat\Documents\GitHub\trse\Release\
 mkdir trse
 xcopy /s %dir%\release\*.exe trse\
 xcopy /s %dir%\release\iconengines trse\

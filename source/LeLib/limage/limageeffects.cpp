@@ -24,6 +24,9 @@ void LImageEffects::InitEffects()
     ie1->m_params["noColors"] = 4;
     ie1->m_params["continuous"] = 1;
     ie1->m_params["lpow"] = 0.5;
+    ie1->m_params["tiltampx"] = 0.0;
+    ie1->m_params["tiltampy"] = 0.0;
+    ie1->m_params["tiltscale"] = 0.0;
 
     m_effects.append(ie1);
 
@@ -35,6 +38,9 @@ void LImageEffects::RenderCircles(LImageEffect *le)
     int continuous = le->m_params["continuous"];
     float width = m_image->m_width;
     float height = m_image->m_height;
+    float tiltampx = le->m_params["tiltampx"];
+    float tiltampy = le->m_params["tiltampy"];
+    float tiltscale = le->m_params["tiltscale"];
     QVector3D center(0.5, 0.5,0);
     for (int x=0;x<width;x++)
         for (int y=0;y<height;y++) {
@@ -42,10 +48,18 @@ void LImageEffects::RenderCircles(LImageEffect *le)
             QVector3D p(x/width, y/height,0);
             p=p-center;
             //float angle = atan2(y,x);
-            float angle = atan2(p.y(),p.x());//+3.14159*2;
 
 
             float l = pow(p.length(), le->m_params["lpow"]);
+
+            QVector3D shift(tiltampx*cos(l*tiltscale),tiltampy*sin(l*tiltscale),0 );
+
+            // Now redo all!
+            p=p+shift;
+            l = pow(p.length(), le->m_params["lpow"]);
+            float angle = atan2(p.y(),p.x());//+3.14159*2;
+
+
             float as = ((angle*le->m_params["angleStretch"]));
             if (continuous==0) as=(((((int)(angle*8.0))*le->m_params["angleStretch"])));
             //if ((int)as%2==0)  as=0;
