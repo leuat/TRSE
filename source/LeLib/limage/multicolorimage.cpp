@@ -21,6 +21,11 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     m_supports.flfLoad = true;
 
 
+    m_exportParams["StartX"] = 0;
+    m_exportParams["EndX"] = 40;
+    m_exportParams["StartY"] = 0;
+    m_exportParams["EndY"] = 25;
+
 }
 
 void MultiColorImage::setPixel(int x, int y, unsigned int color)
@@ -252,9 +257,18 @@ void MultiColorImage::ExportBin(QFile& ofile)
         QFile::remove(fColor);
 
     QByteArray data;
-    for (int i=0;i<40*25;i++) {
+
+    int sx = static_cast<int>(m_exportParams["StartX"]);
+    int ex = static_cast<int>(m_exportParams["EndX"]);
+    int sy = static_cast<int>(m_exportParams["StartY"]);
+    int ey = static_cast<int>(m_exportParams["EndY"]);
+
+    for (int j=sy;j<ey;j++)
+        for (int i=sx;i<ex;i++)
+            data.append(m_data[i + j*40].data());
+/*    for (int i=0;i<40*25;i++) {
         data.append(m_data[i].data());
-    }
+    }*/
     QFile file(fData);
     file.open(QIODevice::WriteOnly);
     file.write( data );
@@ -264,12 +278,21 @@ void MultiColorImage::ExportBin(QFile& ofile)
     colorData.append(m_background);
     colorData.append(m_border);
     data.clear();
-    for (int i=0;i<40*25;i++) {
-        colorData.append((uchar)m_data[i].colorMapToNumber(1,2));
+    for (int j=sy;j<ey;j++)
+        for (int i=sx;i<ex;i++)
+//            data.append(m_data[i + j*40].data());
+            colorData.append((uchar)m_data[j*40 + i].colorMapToNumber(1,2));
+
+  /*  for (int i=0;i<40*25;i++) {
       //  qDebug () << QString::number((uchar)colorData[colorData.count()-1]);
-    }
-    for (int i=0;i<40*25;i++) {
-        uchar c = (uchar)m_data[i].c[3];
+//        colorData.append((uchar)m_data[i].colorMapToNumber(1,2));
+    }*/
+    for (int j=sy;j<ey;j++)
+        for (int i=sx;i<ex;i++) {
+
+//    for (int i=0;i<40*25;i++) {
+//        uchar c = (uchar)m_data[i].c[3];
+        uchar c = (uchar)m_data[i+j*40].c[3];
         if (c==255)
             c=0;
         if (c!=0)

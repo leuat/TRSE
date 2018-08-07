@@ -2485,6 +2485,13 @@ void NodeBuiltinMethod::Jammer(Assembler *as)
 
 void NodeBuiltinMethod::FLD(Assembler *as)
 {
+
+    NodeNumber* num = dynamic_cast<NodeNumber*>(m_params[1]);
+    if (num==nullptr)
+        ErrorHandler::e.Error("FLD: last parameter required to be pure constant number (0 or 1)");
+
+    int val = num->m_val;
+
     QString lbl = as->NewLabel("fld");
     as->Comment("FLD effect");
     m_params[0]->Build(as);
@@ -2500,7 +2507,10 @@ void NodeBuiltinMethod::FLD(Assembler *as)
     as->Asm("lda $d011");
     as->Asm("adc #1");
     as->Asm("and #7");
+    if (val==0)
     as->Asm("ora #$18");
+        else
+    as->Asm("ora #$38");
     as->Asm("sta $d011");
 
     as->Asm("dex ; Decrease counter");

@@ -171,7 +171,10 @@ void Syntax::SetupBuiltinFunctions()
     builtInFunctions["fld"] = BuiltInFunction(
                 "fld",
                 QList<BuiltInFunction::Type>()
-                << BuiltInFunction::Type::INTEGER);
+                << BuiltInFunction::Type::INTEGER
+                << BuiltInFunction::Type::INTEGER
+
+                );
 
 
     builtInFunctions["moveto"] = BuiltInFunction(
