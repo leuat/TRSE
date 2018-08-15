@@ -24,6 +24,8 @@ class MemoryBlock {
         m_name=name;
     }
 
+
+
     QString Type() {
         if (m_type==CODE) return "code";
         if (m_type==DATA) return "data";
@@ -176,6 +178,8 @@ public:
     void Asm(QString s, QString comment="");
     void Label(QString s);
     virtual void Optimise() {}
+
+    virtual void IncludeFile(QString file) {}
     void ClearTerm() {
         m_term = "";
     }

@@ -66,6 +66,7 @@ public:
     void Swap(Assembler* as);
     void MemCpyLarge(Assembler* as);
     void SetBank(Assembler* as);
+    void Decrunch(Assembler* as);
     void CopyImageColorData(Assembler* as);
     void CopyHalfScreen(Assembler* as);
     void CopyFullScreenUnrolled(Assembler* as);
@@ -85,6 +86,8 @@ public:
     void DisableNMI(Assembler* as);
     void KeyPressed(Assembler* as);
     void Wait(Assembler* as);
+
+
 
     QString BitShiftX(Assembler* as);
 
@@ -108,7 +111,7 @@ public:
     void InitMoveto(Assembler *as);
     void InitEightBitMul(Assembler* as);
     void InitPrintString(Assembler* as);
-
+    void InitDecrunch(Assembler* as);
 
 
 

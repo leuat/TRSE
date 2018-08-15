@@ -60,6 +60,7 @@ void Parser::InitBuiltinFunctions()
     InitBuiltinFunction(QStringList()<< "*", "init8x8div");
     InitBuiltinFunction(QStringList()<< "*", "init16x8div");
     InitBuiltinFunction(QStringList()<< "rand", "initrandom");
+    InitBuiltinFunction(QStringList()<< "decrunch", "init_decrunch");
     InitBuiltinFunction(QStringList()<< "sine", "initsinetable");
     InitBuiltinFunction(QStringList()<< "moveto", "initmoveto");
     InitBuiltinFunction(QStringList()<< "printstring" << "printnumber", "initprintstring");

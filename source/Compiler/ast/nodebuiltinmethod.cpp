@@ -75,6 +75,14 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
         InitZeroPage(as);
     }
 
+    if (m_procName.toLower() == "decrunch")
+        Decrunch(as);
+
+    if (m_procName.toLower()=="init_decrunch") {
+        InitDecrunch(as);
+    }
+
+
     if (m_procName.toLower()=="startirq") {
         StartIRQ(as);
     }
@@ -652,6 +660,15 @@ void NodeBuiltinMethod::InitPrintString(Assembler *as)
     as->Label("printstring_done");
 
 
+
+}
+
+void NodeBuiltinMethod::InitDecrunch(Assembler *as)
+{
+    as->Label("init_decrunch");
+    as->Asm("jmp end_init_decrunch");
+    as->IncludeFile("includes/init_decompress.asm");
+    as->Label("end_init_decrunch");
 
 }
 void NodeBuiltinMethod::PrintNumber(Assembler *as)
@@ -2035,6 +2052,21 @@ void NodeBuiltinMethod::SetBank(Assembler *as)
     m_params[0]->Build(as);
     as->Term();
     as->Asm("sta $dd00");
+}
+
+void NodeBuiltinMethod::Decrunch(Assembler *as)
+{
+    NodeNumber *num = dynamic_cast<NodeNumber*>(m_params[0]);
+    if (num==nullptr)
+        ErrorHandler::e.Error("Decrunch : parameter 0 must be a constant memory address!");
+
+    as->Comment("; Decrunch");
+    as->Asm("lda #" + QString::number(((int)num->m_val)&0xFF));
+    as->Asm("sta opbase+1");
+    as->Asm("lda #" + QString::number(((int)num->m_val>>8)&0xFF));
+    as->Asm("sta opbase+2");
+    as->Asm("jsr exod_decrunch");
+
 }
 
 void NodeBuiltinMethod::CopyImageColorData(Assembler *as)

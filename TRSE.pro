@@ -117,7 +117,8 @@ SOURCES += main.cpp\
     source/LeLib/util/lmessage.cpp \
     source/LeLib/util/spline.cpp \
     source/LeLib/util/util.cpp \
-    source/LeLib/util/SimplexNoise.cpp
+    source/LeLib/util/SimplexNoise.cpp \
+    source/LeLib/limage/movieconverter.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -197,7 +198,8 @@ HEADERS  += mainwindow.h \
     source/LeLib/util/random.h \
     source/LeLib/util/spline.h \
     source/LeLib/util/util.h \
-    source/LeLib/util/SimplexNoise.h
+    source/LeLib/util/SimplexNoise.h \
+    source/LeLib/limage/movieconverter.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \

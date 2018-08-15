@@ -171,7 +171,7 @@
      <x>0</x>
      <y>0</y>
      <width>1600</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -205,6 +205,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionTRSE_Settings"/>
+    <addaction name="actionMovie_Creator"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -319,6 +320,11 @@
   <action name="actionHelp_F1">
    <property name="text">
     <string>Help F1</string>
+   </property>
+  </action>
+  <action name="actionMovie_Creator">
+   <property name="text">
+    <string>Movie Creator</string>
    </property>
   </action>
  </widget>

@@ -455,6 +455,29 @@ void AsmMOS6502::StartPrint()
  */
 }
 
+void AsmMOS6502::IncludeFile(QString pfile)
+{
+    QFile file(pfile);
+    if(!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Could not open core include file: " +pfile;
+        return;
+    }
+
+    QTextStream in(&file);
+
+    while(!in.atEnd()) {
+        QString line = in.readLine();
+/*        if (line.startsWith(" ") | line.startsWith("\t"))
+            Asm(line);
+            else
+            Label(line);*/
+        m_source << line;
+  //      QStringList fields = line.split(",");
+    }
+
+    file.close();
+}
+
 
 void AsmMOS6502::StartForLoop(QString var, QString startVal)
 {

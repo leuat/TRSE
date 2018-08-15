@@ -687,3 +687,11 @@ void MainWindow::on_btnMemoryAnalyze_clicked()
     if (m_currentDoc!=nullptr)
         m_currentDoc->MemoryAnalyze();
 }
+
+void MainWindow::on_actionMovie_Creator_triggered()
+{
+    MovieConverter mc;
+    mc.Convert("/home/leuat/Videos/Webcam/test","in",
+               "jpg","/home/leuat/Dropbox/TRSE/HFDemo/misc/movie1.bin",10, 80,30,20,1.0f);
+
+}

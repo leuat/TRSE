@@ -23,7 +23,7 @@
 #include "source/trsedocuments/formimageeditor.h"
 #include "source/dialogtrsesettings.h"
 #include "source/messages.h"
-
+#include "source/LeLib/limage/movieconverter.h"
 #include "ui_mainwindow.h"
 namespace Ui {
 class MainWindow;
@@ -215,6 +215,8 @@ private slots:
     void on_actionHelp_F1_triggered();
 
     void on_btnMemoryAnalyze_clicked();
+
+    void on_actionMovie_Creator_triggered();
 
 private:
 

@@ -124,9 +124,10 @@ public:
     void Variable(QString var, bool isBtyte) override;
 
 
-    void WriteBuiltinWriteln();
+    void WriteBuiltinWriteln() override;
     void StartPrint() override;
 
+    void IncludeFile(QString file) override;
 
     void StartForLoop(QString a, QString b) override;
     void EndForLoop(QString endVal) override;

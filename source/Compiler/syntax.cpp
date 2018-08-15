@@ -176,6 +176,9 @@ void Syntax::SetupBuiltinFunctions()
 
                 );
 
+    builtInFunctions["decrunch"] = BuiltInFunction("decrunch", QList<BuiltInFunction::Type>()
+                                                   << BuiltInFunction::Type::INTEGER);
+
 
     builtInFunctions["moveto"] = BuiltInFunction(
                 "moveto",
@@ -358,7 +361,7 @@ void Syntax::SetupBuiltinFunctions()
                 );
 
     builtInFunctions["initjoystick"] = BuiltInFunction(
-                "initjoystick",
+                "initFjoystick",
                 QList<BuiltInFunction::Type>()
                 );
 

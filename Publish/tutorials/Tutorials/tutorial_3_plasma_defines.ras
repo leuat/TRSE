@@ -111,7 +111,7 @@ begin
 	// Clear screen and color memory
 	ClearScreen($20, SCREEN_CHAR_LOC);
 	ClearScreen(GREEN, SCREEN_COL_LOC);
-
+//	setmulticolormode();
 	// Main loop
 	while 1<>2 do begin
 		time:=time+1;
