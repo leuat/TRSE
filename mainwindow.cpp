@@ -695,3 +695,8 @@ void MainWindow::on_actionMovie_Creator_triggered()
                "jpg","/home/leuat/Dropbox/TRSE/HFDemo/misc/movie1.bin",10, 80,30,20,1.0f);
 
 }
+
+void MainWindow::on_actionCheck_for_new_version_triggered()
+{
+
+}

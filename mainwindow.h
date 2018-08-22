@@ -218,6 +218,8 @@ private slots:
 
     void on_actionMovie_Creator_triggered();
 
+    void on_actionCheck_for_new_version_triggered();
+
 private:
 
     QString FindPathInProjectFolders(const QModelIndex &index);

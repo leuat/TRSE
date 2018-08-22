@@ -78,7 +78,6 @@ void CharsetImage::SaveBin(QFile& file)
     file.write( ( char * )( &m_extraCols[3] ), 1 );
     file.write( ( char * )( &m_data ),  25*40*12 );
 
-    qDebug() << "SAVBING";
 
 }
 

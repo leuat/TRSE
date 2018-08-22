@@ -93,6 +93,7 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     if (m_procName.toLower()=="poke")
         Poke(as);
 
+
     if (m_procName.toLower()=="copyzpdata")
         CopyZPdata(as);
 
@@ -1013,7 +1014,7 @@ void NodeBuiltinMethod::Fill(Assembler *as)
 
 
 void NodeBuiltinMethod::ScrollX(Assembler *as)
-{
+{   
 //    LoadVar(as, 0);
    // as->Asm("dec $d019");
     as->Asm("lda $d016  ");
