@@ -1504,15 +1504,19 @@ void NodeBuiltinMethod::DecZp(Assembler *as)
     if (var->getType(as)!=TokenType::POINTER) {
         ErrorHandler::e.Error("DecZp: Left-hand parameter must be zeropage pointer");
     }
-
+    as->Comment("Decrease zeropage pointer");
+    as->Asm("lda " + var->value);
+    as->Asm("clc");
+    as->Asm("sec");
+    as->Term("sbc ");
     m_params[1]->Build(as);
     as->Term();
-    as->Asm("clc");
-    as->Asm("sbc "+ var->value);
+
     as->Asm("bcc " + lbl);
     as->Asm("dec "+ var->value + " +1");
     as->Label(lbl);
     as->Asm("sta "+ var->value);
+
 
 
     as->m_labelStack["deczp"].pop();

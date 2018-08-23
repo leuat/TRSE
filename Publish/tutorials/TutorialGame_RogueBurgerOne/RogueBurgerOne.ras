@@ -559,16 +559,16 @@ end;
 
 procedure IntroImageScreen();
 begin
+	
+	decrunch($CB4A);
+	copyimagecolordata(imagedata_colors,2);
 
 	setmulticolormode();
 	setbitmapmode();
 	poke(VIC_DATA_LOC, 0,$18);
 	setbank(VIC_BANK2);
-	copyimagecolordata(imagedata_colors,2);
 	SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL:=BLACK;
-	
-	decrunch($CB4A);
 
 	val:=0;
 	while val=0 do begin
@@ -580,6 +580,61 @@ begin
 		waitforraster(250);
 
 	end;
+	c:=0;
+	y:=0;
+	for i:=0 to 100 do begin
+		zeropage2:=$A000;
+		zeropage3:=$BEC0;
+
+		if y<>0 then
+		for j:=0 to y do begin
+			inczp(zeropage2,160);
+			inczp(zeropage2,160);
+			deczp(zeropage3,160);
+			deczp(zeropage3,160);
+
+		end;	
+		for x:=0 to 2 do begin
+			val:=0;
+			for j:=0 to 20 do begin
+				zeropage2[val+c]:=0;
+				zeropage3[val+7-c]:=0;
+				val:=val+8;
+			end;
+			inczp(zeropage2,160);
+			inczp(zeropage3,160);
+		end;
+
+/*		k:=39-y;
+		if (k<>0) then
+		for j:=0 to k do begin
+			inczp(zeropage2,160);
+			inczp(zeropage2,160);
+		end;	
+		for x:=0 to 2 do begin
+			val:=0;
+			for j:=0 to 20 do begin
+				zeropage2[val+c]:=0;
+				val:=val+8;
+			end;
+			
+			inczp(zeropage2,160);
+		end;
+*/
+
+
+
+		inc(c);
+		if (c=8) then begin
+			c:=0;
+			inc(y);
+
+		end;
+		waitnoraster(100);
+
+	end;
+	clearscreen(BLACK,$D800);
+
 
 	settextmode();
 	clearscreen($20,$8400);
