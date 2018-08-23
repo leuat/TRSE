@@ -139,7 +139,7 @@ void FormImageEditor::UpdateImage()
 
 //    m_updateThread->m_
 
-    ui->lblImage->setPixmap(m_updateThread->m_pixMapImage);
+    ui->lblImage->setPixmap(m_updateThread->m_pixMapImage.scaled(320, 320, Qt::IgnoreAspectRatio, Qt::FastTransformation));
 
 
 

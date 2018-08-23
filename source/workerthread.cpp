@@ -108,6 +108,7 @@ void WorkerThread::UpdateImage(LImage *mc)
 
     mc->ToQImage(m_work->m_currentImage->m_image->m_colorList, m_tmpImage, m_zoom, m_zoomCenter);
     m_pixMapImage.convertFromImage(*m_tmpImage);
+
     //ui->lblImageName->setText(m_work->m_currentImage->m_name  + "(" + m_work->m_currentImage->m_imageType->name + ")");
 
 

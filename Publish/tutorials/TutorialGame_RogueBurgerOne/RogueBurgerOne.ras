@@ -8,8 +8,14 @@ var
 	sprite0data : incbin("sprites/fastfood.bin", "$5800"); // will be $1000 bytes // locally 2000
 	music1 : incsid("music/fliptape60.sid", "2");
 	
+	imagedata_colors:IncBin("images/introscreen_color.bin","$7000");
 	multiColorChar: IncBin("charsets/lcharsetMC.bin", "$8800");
-	levels: IncBin("levels/levels.flf", "$9000"); // 2400 in hex
+	//levels: IncBin("levels/levels.flf", "$9000"); // 2400 in hex
+
+	imagedata_crunched:IncBin("images/introscreen_data_compressed.bin","$C000");
+	levelsCrunched: IncBin("levels/levels_compressed.bin", "$E000"); // 2400 in hex
+
+	@define levels $9000
 
 	@userdata "$0400" "$0800" "Bank 0 screen"
 	@userdata "$4400" "$4800" "Bank 1 screen"
@@ -102,10 +108,12 @@ var
 	// 135 = HEART
 	// 134 = AMMO
 
+	@define isDebug isDebug
+
 	CreditsText : string = (129, @cclear, @cpause,
 							"ROGUE BURGER ONE", @newline,
 							" 2018 LEMONSPAWN", @newline, 
-							"  VERSION 0000 0100", 
+							"  VERSION 0000 0101", 
 							@cpause,@cpause,@cpause,@cpause,
 							@cclear, @cpause, "     ", @newline,@newline, "   INSTRUCTIONS", @cpause,@cpause,@cpause, @cclear,
 							"DONT DIE. ", 129, @cpause, @cpause,@cpause, 
@@ -440,10 +448,6 @@ begin
 	UpdatePlayer();
 	UpdateBullet();
 
-	if (keypressed(KEY_ENTER)=1) then begin
-	
-		SCREEN_BG_COL:=RED;
-	end;
 	
 
 
@@ -454,6 +458,7 @@ begin
 			CloseIRQ();
 			returninterrupt();	
 		end;
+@ifdef isDebug
 		if (keypressed(KEY_P)=1) then begin
 			keyPressedWait:=16;
 			immortal:=(immortal+1)&1;
@@ -470,6 +475,7 @@ begin
 			CloseIRQ();	
 			returninterrupt();
 		end;
+@endif
 
 	end;
 	if keyPressedWait<>0 then dec(keyPressedWait);
@@ -508,8 +514,8 @@ begin
 	PrintText();
 	PrintTextColor();
 	// Initial map rendering
-	ResetLevels(levels);
-	RenderLevel(levels,m_posx, m_posy, @screen1hi);
+	ResetLevels(@levels);
+	RenderLevel(@levels,m_posx, m_posy, @screen1hi);
 	current_background := peek(MULTICOLOR_CHAR_COL,0);
 	LoadEntities();
 	InitEntities();
@@ -520,8 +526,11 @@ begin
 	spritex := 160;
 	spritey := 100;
 	
-	player_speed := 1;
-	
+	player_speed := 1; // set to 1 on release
+@ifdef isDebug
+	player_speed := 1; 
+
+@endif	
 	sprite1_counter := 1;
 	bullet_wait := 0;
 	player_score := 0;
@@ -548,6 +557,36 @@ begin
 end;
 
 
+procedure IntroImageScreen();
+begin
+
+	setmulticolormode();
+	setbitmapmode();
+	poke(VIC_DATA_LOC, 0,$18);
+	setbank(VIC_BANK2);
+	copyimagecolordata(imagedata_colors,2);
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+	
+	decrunch($CB4A);
+
+	val:=0;
+	while val=0 do begin
+		waitforraster(0);
+		if (joystickbutton=1) then val:=1;
+//		waitforraster(200);
+//		call(SIDFILE_1_PLAY);
+		joystick();
+		waitforraster(250);
+
+	end;
+
+	settextmode();
+	clearscreen($20,$8400);
+	decrunch($F0ED);
+end;
+
+
 begin
 	
 	//	Intro();
@@ -564,7 +603,7 @@ begin
 	// Take care of levels that is being killed at $8400
 //	copyfullscreen(^$8400,^$B000);
 
-
+	IntroImageScreen();
 	InitMainScreen();
 	// Hook that raster!
 	//DisableInterrupts();

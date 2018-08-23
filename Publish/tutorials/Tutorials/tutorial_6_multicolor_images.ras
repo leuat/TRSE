@@ -1,7 +1,9 @@
 program Tutorial6;
 var
-	image_color: IncBin("images/moose_color.bin", "$5000");
-	image_data: IncBin("images/moose_data.bin", "$6000");
+//	image_color: IncBin("images/moose_color.bin", "$5000");
+//	image_data: IncBin("images/moose_data.bin", "$6000");
+	image_color: IncBin("images/introscreen_color.bin", "$5000");
+	image_data: IncBin("images/introscreen_data.bin", "$6000");
 
 
 begin
@@ -11,7 +13,7 @@ begin
 	poke(VIC_DATA_LOC, 0,$18);
 	setbank(VIC_BANK1);
 	copyimagecolordata(image_color,1);
-
+	SCREEN_FG_COL:=BLACK;
 	Loop();
 
 end.

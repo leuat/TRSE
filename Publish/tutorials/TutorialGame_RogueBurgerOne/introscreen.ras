@@ -103,7 +103,7 @@ begin
 
 	player_health:=20;
 	val:=1;
-	
+	hideborderx(1);	
 end;
 
 @define y_start "3"

@@ -340,7 +340,7 @@ begin
 			// Render me baby!
 //			@levelpointer := levels;
 			// Defined in Levels.ras
-			RenderLevel(levels, m_posx, m_posy, @screen2hi);
+			RenderLevel(@levels, m_posx, m_posy, @screen2hi);
 			LoadEntities();
 			InitEntities();
 			

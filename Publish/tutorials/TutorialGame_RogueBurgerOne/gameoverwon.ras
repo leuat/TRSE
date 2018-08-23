@@ -61,6 +61,12 @@ begin
 	SPRITE_STRETCH_X:=%00001110;
 	SPRITE_STRETCH_Y:=%00001110;
 
+	moveto(15,24, @screen1hi);
+	printstring("SCORE", 0, 20);
+	moveto(21,24, @screen1hi);
+	printnumber(player_score);
+
+
 
 	spritepos(tmp, 40, 1);
 	spritepos(tmp, 40+21+21, 2);
