@@ -641,7 +641,6 @@ begin
 	decrunch($F0ED);
 end;
 
-
 begin
 	
 	//	Intro();

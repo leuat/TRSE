@@ -21,8 +21,9 @@ begin
 		dby:=3;
 	end;
 
+	dby:=dby*40;
 	for i:=0 to 6 do begin
-		k:=dbx + dby*40 + i;
+		k:=dbx + dby + i;
 		screenmemory[i]:=k;
 		screenmemory[i+40]:=k+40;
 		screenmemory[i+80]:=k+80;
@@ -175,7 +176,7 @@ interrupt MainScreen();
 interrupt MainScreenScrollerEnds();
 begin
 	startirq(@usekernal);
-	wait(4);
+	wait(5);
 /*	asm(" 
 		ldx #4
 		dex
@@ -184,7 +185,7 @@ begin
 	SCREEN_FG_COL:=BLUE;
 	scrollx(0);
 	waitnoraster(1);
-	wait(9);
+	wait(10);
 /*	asm(" 
 		ldx #9
 		dex
@@ -327,6 +328,7 @@ begin
 	val:=zeropage4[0];	
 	if val<>@cclear then
 		Plasma();
+
 	UpdateCredits();
 
 	inc(drawBurgerCount);
@@ -337,7 +339,9 @@ begin
 		inc(currentBurger);
 		if (currentBurger=4) then currentBurger:=0;
 		
-	end;
+	end
+	else
+
 	
 	SCREEN_FG_COL:=BLACK;
 
@@ -355,8 +359,8 @@ begin
 		//enableirq();
 		
 	end
-	else
-		RasterIRQ(MainScreenScroller(), 86, @usekernal);
+	else // 87 works
+		RasterIRQ(MainScreenScroller(), 79, @usekernal);
 
 
 	closeirq();	
