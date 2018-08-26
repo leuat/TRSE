@@ -9,8 +9,10 @@ var
 	music1 : incsid("music/fliptape60.sid", "2");
 	
 	imagedata_colors:IncBin("images/introscreen_color.bin","$7000");
+	logodata_colors:IncBin("images/logoscreen_color.bin","$7800");
 	multiColorChar: IncBin("charsets/lcharsetMC.bin", "$8800");
 	//levels: IncBin("levels/levels.flf", "$9000"); // 2400 in hex
+	logodata_crunched:IncBin("images/logoscreen_data_compressed.bin","$9000");
 
 	imagedata_crunched:IncBin("images/introscreen_data_compressed.bin","$C000");
 	levelsCrunched: IncBin("levels/levels_compressed.bin", "$E000"); // 2400 in hex
@@ -21,6 +23,11 @@ var
 	@userdata "$4400" "$4800" "Bank 1 screen"
 	@userdata "$8400" "$8800" "Bank 2 screen"
 	@userdata "$D800" "$E000" "Color space"
+
+	@define imageCrunch $CACF
+	@define logoCrunch $918F
+	@define levelCrunch $F0ED
+
 
 
 	//	intro_image_data: IncBin("images/lemonspawn_data.bin", "$A000"); // $2000 suze
@@ -133,6 +140,7 @@ var
 							"     LEMONSPAWN", @cpause, @cpause, @cclear,
 							"MUSIC BY", @newline,@newline, "  RICHARD OF TND", @cpause, @cpause,@cpause, @cclear
 							"CODE GFX DESIGN LEVELS", @newline,"AND EVERYTHING ELSE", @newline, "BY ", @cpause, "LEUAT", @cpause, @cpause, @newline, @cpause,@cclear
+							"SPRITES BY", @newline,@newline, @cpause, "    GJENTA", @newline, @cpause, @cpause,@cpause,@cpause,@cclear
 							"DEVELOPED WITH", @newline, "  TURBO RASCAL", @newline,"    SYNTAX ERROR", @cpause, @cpause,@cpause, @cclear
 							"ROGUE BURGER ONE FULL", @newline, "SOURCE CODE IS INCLUDED", @newline,"IN THE TURBO RASCAL", 
 							@newline, "DOWNLOAD PACKAGE", @cpause, @cpause, @cpause,@cclear,
@@ -419,7 +427,8 @@ begin
 	// Make sure upper part of screen renders text
 	StartIRQ(@usekernal);
 	inc(time);
-
+	keepbitmask:=SPRITE_BITMASK;
+	SPRITE_BITMASK:=0;
 	//setRegularColorMode();
 	setMultiColorMode();
 	poke(MULTICOLOR_CHAR_COL, 0, BLACK);
@@ -436,6 +445,7 @@ begin
 	waitforRaster(67);
 	// Set multi color & level font
 	setbank(VIC_BANK1);
+	SPRITE_BITMASK:=keepbitmask;
 	
 	poke(MULTICOLOR_CHAR_COL, 0, current_background);
 	poke(VIC_DATA_LOC, 0, @charmapLevel);
@@ -511,6 +521,9 @@ begin
 
 	//copyfullscreen(^$B000,^$8400);
 	ClearScreen($20, $4400);
+	//fill(^$9000,0,64);
+//	for i:=0 to 8 do setspriteloc(i,$40,2);
+
 	PrintText();
 	PrintTextColor();
 	// Initial map rendering
@@ -528,7 +541,7 @@ begin
 	
 	player_speed := 1; // set to 1 on release
 @ifdef isDebug
-	player_speed := 1; 
+	player_speed := 2; 
 
 @endif	
 	sprite1_counter := 1;
@@ -546,7 +559,6 @@ begin
 	frameCounter:=0;
 	
 	setmulticolormode();
-	// Remember to implement resetting all "isdead" flag. also, make this part of flags bit.
 end;
 
 
@@ -557,19 +569,9 @@ begin
 end;
 
 
-procedure IntroImageScreen();
+procedure BitmapEffect();
 begin
-	
-	decrunch($CB4A);
-	copyimagecolordata(imagedata_colors,2);
-
-	setmulticolormode();
-	setbitmapmode();
-	poke(VIC_DATA_LOC, 0,$18);
-	setbank(VIC_BANK2);
-	SCREEN_BG_COL:=BLACK;
-	SCREEN_FG_COL:=BLACK;
-
+	joystickbutton:=0;
 	val:=0;
 	while val=0 do begin
 		waitforraster(0);
@@ -582,7 +584,7 @@ begin
 	end;
 	c:=0;
 	y:=0;
-	for i:=0 to 100 do begin
+	for i:=0 to 200 do begin
 		zeropage2:=$A000;
 		zeropage3:=$BEC0;
 
@@ -590,19 +592,19 @@ begin
 		for j:=0 to y do begin
 			inczp(zeropage2,160);
 			inczp(zeropage2,160);
-			deczp(zeropage3,160);
-			deczp(zeropage3,160);
+//			deczp(zeropage3,160);
+//			deczp(zeropage3,160);
 
 		end;	
 		for x:=0 to 2 do begin
 			val:=0;
 			for j:=0 to 20 do begin
 				zeropage2[val+c]:=0;
-				zeropage3[val+7-c]:=0;
+		//		zeropage3[val+7-c]:=0;
 				val:=val+8;
 			end;
 			inczp(zeropage2,160);
-			inczp(zeropage3,160);
+	//		inczp(zeropage3,160);
 		end;
 
 /*		k:=39-y;
@@ -636,9 +638,39 @@ begin
 	clearscreen(BLACK,$D800);
 
 
+end;
+
+
+
+procedure IntroImageScreen();
+begin
+
+	decrunch(@logoCrunch);
+	copyimagecolordata(logodata_colors,2);
+
+	setmulticolormode();
+	setbitmapmode();
+	poke(VIC_DATA_LOC, 0,$18);
+	setbank(VIC_BANK2);
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+
+	BitmapEffect();
+	clearscreen(00,$D800);
+	clearscreen(00,$8400);
+
+	
+	decrunch(@imageCrunch);
+	copyimagecolordata(imagedata_colors,2);
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+
+
+	BitmapEffect();
+
 	settextmode();
 	clearscreen($20,$8400);
-	decrunch($F0ED);
+	decrunch(@levelCrunch);
 end;
 
 begin
@@ -648,11 +680,11 @@ begin
 
 
 
-	InitSid(SIDFILE_1_INIT);
 	preventirq();
 	disableciainterrupts();
 	nmiirq(NMI());	
 	setmemoryconfig(1,@usekernal,0);
+	InitSid(SIDFILE_1_INIT);
 
 	// Take care of levels that is being killed at $8400
 //	copyfullscreen(^$8400,^$B000);

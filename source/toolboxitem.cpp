@@ -144,6 +144,7 @@ void CopyStamp::Perform(int x, int y, unsigned char color, LImage *img, bool isP
     if (button==1 && m_status == Status::Idle) {
         m_status = Status::Selecting;
         m_start = QPoint(x,y);
+       // qDebug() << "Start1";
         if (m_copy==nullptr)
             m_copy = LImageFactory::Create(img->m_type, img->m_colorList.m_type);
         // New from source
@@ -152,6 +153,7 @@ void CopyStamp::Perform(int x, int y, unsigned char color, LImage *img, bool isP
             m_copy = LImageFactory::Create(img->m_type, img->m_colorList.m_type);
 
         }
+     //   qDebug() << "Start2";
         m_copy->CopyFrom(img);
     }
 
@@ -182,7 +184,7 @@ void CopyStamp::StampImage(int x, int y, LImage* img)
     for (int i=0;i<w;i++)
         for (int j=0;j<h;j++) {
             unsigned int col = m_copy->getPixel(m_start.x() + i, m_start.y()+j);
-            if (col!=img->m_background)
+            //if (col!=img->m_background)
                 for (int xd=0;xd<m_copy->m_scale;xd++)
                     img->setPixel(i-w/2+x + xd,j-h/2+y, col);
         }

@@ -311,7 +311,7 @@ begin
 				spritex:=25;
 		end;
 		
-		if spritey<65 then begin
+		if spritey<68 then begin
 			if m_posy<>0 then begin
 				
 				spritey:=219;
@@ -319,12 +319,12 @@ begin
 				redraw:=1;
 			end
 			else
-				spritey:=66;
+				spritey:=69;
 			
 		end;
 		if spritey>220 then begin
 			if m_posy<>m_rl_sizey-1 then begin
-				spritey:=66;
+				spritey:=69;
 				m_posy:=m_posy+1;
 				redraw:=1;
 			end

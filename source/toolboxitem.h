@@ -98,7 +98,7 @@ public:
     QPoint m_end;
     enum Status { Selecting, DoneSelecting, Stamp, Idle };
     Status m_status = Status::Idle;
-    LImage* m_copy;
+    LImage* m_copy=nullptr;
 
     CopyStamp() {}
     CopyStamp(QString name, QString imagefile) : ToolboxItem(name, imagefile) { }

@@ -2,3 +2,5 @@ C:/Users/leuat/OneDrive/Documents/GitHub/Fluff64/dasm/exomizer.exe mem -lnone im
 pause
 C:/Users/leuat/OneDrive/Documents/GitHub/Fluff64/dasm/exomizer.exe mem -lnone  levels/levels.flf@0x9000 -o levels/levels_compressed.bin
 pause
+C:/Users/leuat/OneDrive/Documents/GitHub/Fluff64/dasm/exomizer.exe mem -lnone images/logoscreen_data.bin@0xA000 -o images/logoscreen_data_compressed.bin 
+pause

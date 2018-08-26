@@ -46,6 +46,7 @@ begin
 	setregularcolormode();
 	ClearScreen(@clearchar, $0400);
 	ClearScreen(@clearchar, $4400);
+	call(SIDFILE_1_PLAY);
 	ClearScreen(@clearchar, $8400);
 	ClearScreen(11, SCREEN_COL_LOC);
 	joystickbutton:=0;
@@ -62,6 +63,7 @@ begin
 	// Draw side stuff
 	moveto(0, 00, $44);
 	zeropage2:=$D800;
+	call(SIDFILE_1_PLAY);
 	for i:=0 to 25 do begin
 
 		if (i<5 or i>7) then begin
@@ -81,6 +83,7 @@ begin
 		inczp(zeropage2, 40);	
 	end;
 	// Set up main colors
+	call(SIDFILE_1_PLAY);
 	moveto(0,14,$D8);
 	for j:=0 to 10 do begin
 		for i:=6 to 34 do begin
@@ -101,6 +104,7 @@ begin
 	SPRITE_STRETCH_X:=0;
 	SPRITE_STRETCH_Y:=0;
 	InitSprites();
+	call(SIDFILE_1_PLAY);
 
 	player_health:=20;
 	val:=1;
@@ -216,11 +220,12 @@ begin
 	poke(VIC_DATA_LOC, 0, @highCharMemoryPos);
 	setbank(VIC_BANK2);
 	waitnoraster(1);
-	asm(" 
+	wait(12);
+/*	asm(" 
 		ldx #13
 		dex
 		bne *-1
-	");
+	");*/
 	SCREEN_FG_COL:=BLACK;
 	
 	dec(ms_scroll);
@@ -347,6 +352,11 @@ begin
 
 	if (joystickbutton=1 and player_health=0) then begin
 		val:=0;
+		clearscreen(BLACK,$D800);
+		setregularcolormode();
+//		setbank(VIC_BANK0);
+	//	ClearScreen($20,$0400);
+		ClearScreen($20,$4400);
 		clearsound();
 		InitSprites();
 		PrintText();
@@ -354,6 +364,7 @@ begin
 		// My VIC of chosing
 		setbank(VIC_BANK1);
 		//disableciainterrupts();
+		setmulticolormode();
 		RasterIRQ(rasterUpdateGame(), 0,@usekernal);
 		//enablerasterirq();
 		//enableirq();

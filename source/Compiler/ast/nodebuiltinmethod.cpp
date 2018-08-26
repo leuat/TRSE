@@ -1114,7 +1114,13 @@ void NodeBuiltinMethod::PlaySound(Assembler *as)
 void NodeBuiltinMethod::Clearsound(Assembler *as)
 {
     // 0, 7, 14
-    as->Asm("lda #0");
+
+       as->Asm("lda #0");
+       as->Asm("sta 54276" );
+       as->Asm("sta 54283" );
+       as->Asm("sta 54290" );
+
+ /*   as->Asm("lda #0");
     as->Asm("sta 54272" );
     as->Asm("sta 54272+7" );
     as->Asm("sta 54272+14" );
@@ -1507,7 +1513,7 @@ void NodeBuiltinMethod::DecZp(Assembler *as)
     as->Comment("Decrease zeropage pointer");
     as->Asm("lda " + var->value);
     as->Asm("clc");
-    as->Asm("sec");
+//    as->Asm("sec");
     as->Term("sbc ");
     m_params[1]->Build(as);
     as->Term();
