@@ -40,9 +40,16 @@ public:
     void IncSid(Assembler* as) {
 
         // Init address or load address? hmmm
-        as->Appendix("org $" +QString::number(sid.m_loadAddress,16),1);
+
+
+        QString pos = QString::number(sid.m_loadAddress,16);
+        Appendix app("$"+pos);
+
+        app.Append("org $" +pos,1);
 //        as->Appendix(v->value,0);
-        as->Appendix("incbin \"" + as->m_projectDir + sid.m_outFile + "\"",1);
+        app.Append("incbin \"" + as->m_projectDir + sid.m_outFile + "\"",1);
+
+        as->m_appendix.append(app);
 
         int size=0;
         QFile f(as->m_projectDir + sid.m_outFile);
@@ -78,9 +85,12 @@ public:
         }
         else {
 //            qDebug() << "bin: "<<v->value << " at " << t->m_position;
-            as->Appendix("org " +t->m_position,1);
-            as->Appendix(v->value,0);
-            as->Appendix("incbin \"" + filename + "\"",1);
+            Appendix app(t->m_position);
+
+            app.Append("org " +t->m_position,1);
+            app.Append(v->value,0);
+            app.Append("incbin \"" + filename + "\"",1);
+            as->m_appendix.append(app);
             bool ok;
             int start=0;
             if (t->m_position.startsWith("$")) {

@@ -112,9 +112,10 @@ void AsmMOS6502::DeclareArray(QString name, QString type, int count, QStringList
         t = byte;
 
 
-    if (data.count()==0) {
+    if (data.count()==0 && pos=="") {
         Write(name +"\t" + t + "\t ");
         Asm("org "+name+"+" +QString::number(count));
+
     }
     else {
         QString s="";
@@ -135,9 +136,12 @@ void AsmMOS6502::DeclareArray(QString name, QString type, int count, QStringList
                 Write(lst[i]);
         }
         else {
-            Appendix("org " + pos,1);
+            Appendix app(pos);
+            app.Append("org " + pos,1);
             for (int i=0;i<lst.count();i++)
-                Appendix(lst[i],0);
+                app.Append(lst[i],0);
+
+            m_appendix.append(app);
         }
 
     }

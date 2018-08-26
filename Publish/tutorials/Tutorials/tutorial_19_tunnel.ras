@@ -267,7 +267,6 @@ begin
 		end
 		else
 		begin
-//			if colorTick=2 then SetColor(BLUE, PURPLE, LIGHT_BLUE);
 			if colorTick=4 then SetColor(DARK_GREY,DARK_GREY, DARK_GREY);
 			if colorTick=6 then SetColor(DARK_GREY, DARK_GREY, BLUE);
 			if colorTick=8 then SetColor(DARK_GREY, BLUE, LIGHT_GREY);
@@ -307,7 +306,6 @@ end;
 
 procedure TweakTabs();
 begin
-	/* Tweak circles and lines*/
 	zp:=circles;
 	for y:=0 to 25 do begin
 		for x:=0 to 40 do
@@ -347,9 +345,9 @@ end;
 
 begin
 	Initialize();
-
 	DisableCIAInterrupts();
-	nmiirq(NMI());
+	//nmiirq(NMI());
+
 	SetMemoryConfig(1,@useKernal,0);
 
 	RasterIRQ(Raster1(),0,@useKernal);

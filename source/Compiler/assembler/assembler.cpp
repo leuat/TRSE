@@ -42,6 +42,40 @@ void Assembler::Write(QString str, int level)
 
 }
 
+bool caseInsensitiveLessThan(const Appendix &s1, const Appendix &s2)
+{
+    QString sa = s1.m_pos.toLower().replace("$","0x");
+    QString sb = s2.m_pos.toLower().replace("$","0x");
+
+    int a,b;
+    bool ok;
+
+//    qDebug() << sa << " vs " << sb;
+
+    if (sa.contains("0x")) a=sa.toInt(&ok, 16);
+    else
+        a = sa.toInt(&ok, 10);
+
+    if (sb.contains("0x")) b=sb.toInt(&ok, 16);
+    else
+        b = sb.toInt(&ok, 10);
+
+
+    return a < b;
+}
+
+/*int doSomething()
+{
+    QStringList list;
+    list << "AlPha" << "beTA" << "gamma" << "DELTA";
+    qStableSort(list.begin(), list.end(), caseInsensitiveLessThan);
+    // list: [ "AlPha", "beTA", "DELTA", "gamma" ]
+}*/
+void Assembler::SortAppendix()
+{
+   qSort(m_appendix.begin(), m_appendix.end(), caseInsensitiveLessThan);
+}
+
 void Assembler::PushCounter()
 {
     m_cycleCounter.append(0);
@@ -136,16 +170,6 @@ void Assembler::Term()
     ClearTerm();
 }
 
-void Assembler::Appendix(QString str, int level)
-{
-    QString s ="";
-    for (int i=0;i<level;i++)
-        s+="\t";
-    s+=str;
-    m_appendix.append(s);
-
-}
-
 void Assembler::Connect()
 {
     // Connect with temp vars
@@ -161,7 +185,11 @@ void Assembler::Connect()
     }
     m_source = newSource;
 
-    m_source<<m_appendix;
+    //m_source<<m_appendix;
+    SortAppendix();
+    for (int i=0;i<m_appendix.count();i++) {
+        m_source << m_appendix[i].m_source;
+    }
     m_appendix.clear();
 }
 

@@ -1,3 +1,3 @@
-project_path = C:/Users/leuat/OneDrive/Documents/GitHub/TRSE/Publish/tutorials/TutorialGame_RogueBurgerOne/
+project_path = /home/leuat/code/TRSE/Publish/tutorials/TutorialGame_RogueBurgerOne/
 open_files = ,player.ras, intrologo2.flf, RogueBurgerOne.ras, introscreen.ras
 data_header = ,id, x, y, life, color, spread, sx, sy, isdead, damage, ammo, sound, upgrade

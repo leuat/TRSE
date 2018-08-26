@@ -36,6 +36,7 @@ void Syntax::SetupReservedWords()
     reservedWords.append(Token(TokenType::OF,"OF"));
     reservedWords.append(Token(TokenType::BYTE,"BYTE"));
     reservedWords.append(Token(TokenType::INCBIN,"INCBIN"));
+//    reservedWords.append(Token(TokenType::RESERVE,"RESERVE"));
     reservedWords.append(Token(TokenType::STRING,"STRING"));
     reservedWords.append(Token(TokenType::CSTRING,"CSTRING"));
     reservedWords.append(Token(TokenType::ASM,"ASM"));

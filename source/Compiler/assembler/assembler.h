@@ -82,12 +82,33 @@ public:
     }
 };
 
+class Appendix {
+public:
+    Appendix() {}
+    Appendix(QString pos) {
+        m_pos=pos;
+    }
+
+    QStringList m_source;
+    QString m_pos;
+
+    void Append(QString str, int level)
+    {
+        QString s ="";
+        for (int i=0;i<level;i++)
+            s+="\t";
+        s+=str;
+        m_source.append(s);
+    }
+
+};
+
 
 class Assembler
 {
 public:
     QStringList m_source;
-    QStringList m_appendix;
+    QVector<Appendix> m_appendix;
     QString m_term;
     QMap<QString, Stack> m_stack;
     QMap<QString, LabelStack> m_labelStack;
@@ -98,6 +119,8 @@ public:
     QStringList m_tempVars;
     int m_varDeclEndsLineNumber = 0;
     int m_totalOptimizedLines;
+
+    void SortAppendix();
 
     QMap<int, int> m_cycles;
     QMap<int, int> m_blockIndent;
@@ -169,7 +192,7 @@ public:
     virtual void WriteBuiltinWriteln() {}
     virtual void StartPrint() {}
     virtual void Variable(QString s, bool isByte) {}
-    void Appendix(QString s, int l);
+    //void Appendix(QString s, int l);
     virtual void LoadVariable(QString var) {}
     void Connect();
     virtual QString StoreInTempVar(QString name, QString type="byte")  { return name;}

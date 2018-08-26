@@ -154,6 +154,7 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         return;
     }
+
     if (m_currentToken.m_value=="include") {
         Eat();
         Eat();
