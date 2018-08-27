@@ -38,9 +38,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
+#if defined(Q_OS_MAC)
     Util::path = QCoreApplication::applicationDirPath() + "/../../";
-#if defined(Q_OS_WIN)
-    Util::path = QCoreApplication::applicationDirPath() +"/";
 
 #endif
 
