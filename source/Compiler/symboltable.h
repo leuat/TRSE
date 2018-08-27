@@ -13,6 +13,9 @@ class Symbol {
 public:
     QString m_name;
     QString m_type;
+    int m_org = 0;
+    int m_size = 0;
+
     PVar* m_value = nullptr;
     TokenType::Type getTokenType() {
         //qDebug() << "gettokentype: " <<m_name <<" : "<<m_type;
@@ -30,6 +33,10 @@ public:
             return TokenType::STRING;
         if (m_type.toLower()=="cstring")
             return TokenType::CSTRING;
+        if (m_type.toLower()=="incbin")
+            return TokenType::INCBIN;
+        if (m_type.toLower()=="incsid")
+            return TokenType::INCSID;
         return TokenType::NADA;
     }
     Symbol(QString name, QString type="") {

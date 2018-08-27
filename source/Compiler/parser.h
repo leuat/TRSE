@@ -22,7 +22,7 @@
 #include "source/Compiler/ast/nodebuiltinmethod.h"
 #include "source/Compiler/ast/nodewhileloop.h"
 #include "source/Compiler/ast/nodeasm.h"
-#include "source/Compiler/ast/nodebinaryclause.h".h"
+#include "source/Compiler/ast/nodebinaryclause.h"
 
 
 

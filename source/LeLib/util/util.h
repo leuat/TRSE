@@ -64,6 +64,20 @@ public:
 
     static QColor colorScale(QColor& col, int mean, int std);
 
+
+    static int C64StringToInt(QString f) {
+        int val;
+        bool ok;
+        if (f.contains("$")) {
+            val = f.replace("$","0x").toInt(&ok,16);
+        }
+        else
+            val = f.toInt(&ok,10);
+
+        return val;
+
+    }
+
     static QString fixFolder(QString folderName) {
         if (folderName[folderName.count()-1]=='\\')
                 return folderName;

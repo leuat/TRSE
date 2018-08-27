@@ -15,7 +15,7 @@ var
 	logodata_crunched:IncBin("images/logoscreen_data_compressed.bin","$9000");
 
 	imagedata_crunched:IncBin("images/introscreen_data_compressed.bin","$C000");
-	levelsCrunched: IncBin("levels/levels_compressed.bin", "$E000"); // 2400 in hex
+	leveldata_crunched: IncBin("levels/levels_compressed.bin", "$E000"); // 2400 in hex
 
 	@define levels $9000
 
@@ -24,10 +24,10 @@ var
 	@userdata "$8400" "$8800" "Bank 2 screen"
 	@userdata "$D800" "$E000" "Color space"
 
-	@define imageCrunch $CACF
-	@define logoCrunch $918F
+/*	@define imageCrunch $CACF
+	@define logoCrunch $918E
 	@define levelCrunch $F0ED
-
+*/
 
 
 	//	intro_image_data: IncBin("images/lemonspawn_data.bin", "$A000"); // $2000 suze
@@ -645,7 +645,7 @@ end;
 procedure IntroImageScreen();
 begin
 
-	decrunch(@logoCrunch);
+	decrunch(logodata_crunched);
 	copyimagecolordata(logodata_colors,2);
 
 	setmulticolormode();
@@ -660,7 +660,7 @@ begin
 	clearscreen(00,$8400);
 
 	
-	decrunch(@imageCrunch);
+	decrunch(imagedata_crunched);
 	copyimagecolordata(imagedata_colors,2);
 	SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL:=BLACK;
@@ -670,7 +670,7 @@ begin
 
 	settextmode();
 	clearscreen($20,$8400);
-	decrunch(@levelCrunch);
+	decrunch(leveldata_crunched);
 end;
 
 begin

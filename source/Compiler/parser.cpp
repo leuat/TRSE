@@ -901,6 +901,8 @@ Node *Parser::TypeSpec()
         if (m_currentToken.m_type==TokenType::COMMA) {
             Eat();
             position = m_currentToken.m_value;
+            if (position=="")
+                position="$"+QString::number(m_currentToken.m_intVal,16);
             Eat();
         }
         Eat(TokenType::RPAREN);
@@ -937,6 +939,9 @@ Node *Parser::TypeSpec()
         if (m_currentToken.m_type==TokenType::AT) {
             Eat(TokenType::AT);
             position = m_currentToken.m_value;
+            if (position=="")
+                position="$"+QString::number(m_currentToken.m_intVal,16);
+
             Eat(m_currentToken.m_type);
         }
 

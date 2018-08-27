@@ -10,11 +10,12 @@
 #include "source/Compiler/ast/nodevar.h"
 #include "source/Compiler/ast/nodevartype.h"
 #include "source/Compiler/misc/sidfile.h"
-
+#include "source/LeLib/util/util.h"
 class NodeVarDecl : public Node {
 public:
     Node* m_varNode = nullptr;
     Node* m_typeNode;
+    int m_fileSize=0;
     SidFile sid;
 
     int m_pushedPointers = 0;
@@ -57,6 +58,7 @@ public:
             size = f.size();  //when file does open.
             f.close();
         }
+        m_fileSize = size;
 
         as->blocks.append(MemoryBlock(sid.m_loadAddress,sid.m_loadAddress+size, MemoryBlock::MUSIC, sid.m_fileName));
 
@@ -69,7 +71,6 @@ public:
         QString filename = as->m_projectDir + "/" + t->m_filename;
         if (!QFile::exists(filename))
             ErrorHandler::e.Error("Could not locate binary file for inclusion :" +filename);
-
 
         int size=0;
         QFile f(filename);
@@ -87,6 +88,10 @@ public:
 //            qDebug() << "bin: "<<v->value << " at " << t->m_position;
             Appendix app(t->m_position);
 
+            Symbol* typeSymbol = as->m_symTab->Lookup(v->value, m_op.m_lineNumber);
+            typeSymbol->m_org = Util::C64StringToInt(t->m_position);
+            typeSymbol->m_size = size;
+//            qDebug() << "POS: " << typeSymbol->m_org;
             app.Append("org " +t->m_position,1);
             app.Append(v->value,0);
             app.Append("incbin \"" + filename + "\"",1);
@@ -157,6 +162,8 @@ public:
         NodeVar* v = (NodeVar*)m_varNode;
         NodeVarType* t = (NodeVarType*)m_typeNode;
 
+//        v->m_op.m_type =t->m_op.m_type;
+        //v->m_type = t;
 
         if (t->m_op.m_type==TokenType::ARRAY) {
             as->DeclareArray(v->value, t->m_arrayVarType.m_value, t->m_op.m_intVal, t->m_data, t->m_position);

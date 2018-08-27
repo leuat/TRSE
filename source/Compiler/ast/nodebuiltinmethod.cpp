@@ -1845,7 +1845,7 @@ void NodeBuiltinMethod::ClearScreen(Assembler *as)
 
 
     QString lbl = as->NewLabel("clearloop");
-    QString lbl2 = as->NewLabel("clearloop2");
+  //  QString lbl2 = as->NewLabel("clearloop2");
     QString shift = "$" + QString::number((int)num->m_val, 16);
     as->Comment("Clear screen with offset");
     as->Asm("ldx #$00");
@@ -1854,18 +1854,19 @@ void NodeBuiltinMethod::ClearScreen(Assembler *as)
     as->Asm("sta $0000+"+shift+",x");
     as->Asm("sta $0100+"+shift+",x");
     as->Asm("sta $0200+"+shift+",x");
+    as->Asm("sta $02e8+"+shift+",x");
 //    as->Asm("sta $0300+"+shift+",x");
     as->Asm("dex");
     as->Asm("bne "+lbl);
-    as->Asm("ldx #232");
+   /* as->Asm("ldx #232");
     as->Label(lbl2);
     as->Asm("sta $02FF+"+shift+",x");
     as->Asm("dex");
     as->Asm("bne "+lbl2);
 
-
+*/
     as->PopLabel("clearloop");
-    as->PopLabel("clearloop2");
+//    as->PopLabel("clearloop2");
 
 }
 
@@ -2068,16 +2069,37 @@ void NodeBuiltinMethod::SetBank(Assembler *as)
 void NodeBuiltinMethod::Decrunch(Assembler *as)
 {
     NodeNumber *num = dynamic_cast<NodeNumber*>(m_params[0]);
-    if (num==nullptr)
-        ErrorHandler::e.Error("Decrunch : parameter 0 must be a constant memory address!");
-
-    as->Comment("; Decrunch");
+    if (num!=nullptr) {
+    as->Comment("; Decrunch number direct");
     as->Asm("lda #" + QString::number(((int)num->m_val)&0xFF));
     as->Asm("sta opbase+1");
     as->Asm("lda #" + QString::number(((int)num->m_val>>8)&0xFF));
     as->Asm("sta opbase+2");
     as->Asm("jsr exod_decrunch");
+    return;
+    }
 
+
+    NodeVar *var = dynamic_cast<NodeVar*>(m_params[0]);
+    if (var==nullptr)
+            ErrorHandler::e.Error("Decrunch : parameter 0 must be an incbin block or address!");
+
+    if (var->getType(as)!=TokenType::INCBIN)
+        ErrorHandler::e.Error("Decrunch : parameter 0 must be a pointer to a IncBin block or address!");
+
+
+
+    Symbol* varS = as->m_symTab->Lookup(var->value, m_op.m_lineNumber);
+    int pos = varS->m_org + varS->m_size;
+
+//    qDebug() <<" DECRUNCH:" << varS->m_org << varS->m_size;
+
+        as->Comment("; Decrunch number direct");
+        as->Asm("lda #" + QString::number(((int)pos)&0xFF));
+        as->Asm("sta opbase+1");
+        as->Asm("lda #" + QString::number(((int)pos>>8)&0xFF));
+        as->Asm("sta opbase+2");
+        as->Asm("jsr exod_decrunch");
 }
 
 void NodeBuiltinMethod::CopyImageColorData(Assembler *as)

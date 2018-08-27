@@ -8,12 +8,13 @@
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/ast/nodenumber.h"
+#include "source/Compiler/ast/nodevartype.h"
 
 class NodeVar : public Node {
 public:
     QString value;
     Node* m_expr = nullptr;
-
+    //NodeVarType* m_type;
 
 
     NodeVar(Token t) {
