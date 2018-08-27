@@ -37,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_updateThread, SIGNAL(requestCloseWindowSignal()), this, SLOT(closeWindowSlot()));
 
 
+
     Util::path = QCoreApplication::applicationDirPath() + "/../../";
 #if defined(Q_OS_WIN)
     Util::path = QCoreApplication::applicationDirPath() +"/";

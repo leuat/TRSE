@@ -27,9 +27,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 macx {
   QMAKE_CXXFLAGS += -openmp
-  LIBS += -openmp
+  #LIBS += -openmp
+  ICON = trse.icns
 
 }
+
 
 
 win32-g++ {
@@ -47,6 +49,7 @@ linux-g*{
 }
 
 win32:RC_ICONS += trse.ico
+
 
 SOURCES += main.cpp\
         mainwindow.cpp \

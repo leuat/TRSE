@@ -5,6 +5,7 @@
 #include "imageworker.h"
 #include <QDialog>
 
+
 namespace Ui {
 class DialogImport;
 }
