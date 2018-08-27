@@ -1212,6 +1212,7 @@ void NodeBuiltinMethod::IncDec(Assembler *as, QString cmd)
     if (v!=nullptr && v->m_expr!=nullptr) {
         as->ClearTerm();
         v->m_expr->Build(as);
+        as->Term();
         as->Asm("tax");
         as->Asm(cmd +" " + v->value + ",x");
         return;

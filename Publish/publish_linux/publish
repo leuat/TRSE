@@ -1,0 +1,15 @@
+rm -rf trse
+mkdir trse/
+mkdir trse/bin
+cp -r ../../Release/trse trse/bin
+cp -r ../../Release/lib trse/bin
+cp -r ../../Release/plugins trse/bin
+cp -r ../source/* trse/bin/
+cp -r ../tutorials/RasLib trse/
+cp -r ../tutorials/Tutorials trse/
+cp -r ../tutorials/TutorialGame_RogueBurgerOne trse/
+find trse/* -name "*.prg" -type f -delete
+find trse/* -name "*.asm" -type f -delete
+cp trse.sh trse
+tar -cvf trse.tar trse
+gzip trse.tar

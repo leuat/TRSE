@@ -526,8 +526,11 @@ void AsmMOS6502::Optimise()
     OptimisePassStaLda();
     OptimisePassLdx("x");
     OptimisePassLdx("y");
+    OptimisePassLdaTax("x");
+    OptimisePassLdaTax("y");
     OptimiseJumps();
 }
+
 
 void AsmMOS6502::OptimisePassStaLda()
 {
@@ -599,6 +602,46 @@ void AsmMOS6502::OptimisePassLdx(QString x)
             allDone = true;
         RemoveLines();
     }
+}
+
+void AsmMOS6502::OptimisePassLdaTax(QString x)
+{
+    m_removeLines.clear();
+    int j;
+    for (int i=0;i<m_source.count()-1;i++) {
+        QString l0 = getLine(i);
+        if (l0.contains("lda") && !l0.contains(",")) {
+            //qDebug() << l0;
+            int k=i;
+            int n;
+                QString l1 = getNextLine(k,j);
+                QString l2 = getNextLine(j,n);
+                k=j;
+                QString op = getToken(l1,0);
+                if (op==("ta"+x)) {
+                    bool perform=true;
+                    QString tst = getToken(l2,0);
+                    if (tst.startsWith("ta") || tst=="sta")
+                        perform=false;
+
+                    if (perform) {
+                        m_removeLines.append(j);
+                        QString org = m_source[i];
+                        m_source[i] = m_source[i].toLower().replace("lda", "ld"+x)+" ; OPTIMIZED BUGZ";
+                        qDebug() << "Changed : "<< org << " to " <<m_source[i] << " with op " <<op;
+                    }
+                    //m_removeLines.append(i);
+
+
+
+            }
+//            if (m_removeLines.count()!=0)
+  //              break;
+        }
+    }
+
+    RemoveLines();
+
 }
 
 

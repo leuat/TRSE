@@ -3,18 +3,41 @@ Constants and variables
 	SCREEN_BG_COL
 		<h2>Screen border color</h2>
 		Ever heard of 53280?
+                SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL
 		<h2>Screen background color</h2>
 		Ever heard of 53281?
-	zeropage
-		Zeropage1-7
+                SCREEN_FG_COL:=BLACK;
+        zeropages
+                <h2>Zeropages and pointers</h2>
+                Zeropages are in TRSE defined as pointers. The individial addresses
+                for the zeropages are defined in the TRSE settings dialoge, and will be chosen
+                from this pool. Usage:<br>
+                <br>
+                var<br>
+                   myPtr: pointer;<br>
+                <br>
+                ...<br>
+                 <br>
+                myPtr:=$D800; // point to color memory<br>
+                myPtr[64]:=$08; // set 64th value of zp, so $D800+64<br>
+                inczp(myPtr,40); Jump down 40 columns<br>
+                ...<br>
+                myPtr:=someData;
+
 	sine
 		<h2>sine</h2>
-		Sine is a table of 256 bytes f
-	screenmeory
-		moveto
+                Sine is a table of 256 bytes.
+        screenmemory
+                <h2>screenmemory</h2>
+                screenmemory is a built-in zero page pointer that is used with the
+                <b>moveto</b> method.
 
 Built-in methods
+        abs
+                <h2>abs( [ variable or number ]);</h2>
+                Returns the absolute value of the number/variable.
+
 	clearbitmap
 		<h2>ClearBitmap( [ address ], [ fillsize = 256*lines ] );</h2><br>
 		Clears a bitmap / any kind of memory with 256*parameter 2 bytes. For example:<br>
@@ -25,6 +48,10 @@ Built-in methods
 		Clears exactly 40*25 = 1000 bytes of memory at the given address with the provided value. Example:<br>
 		<font color="@code">ClearScreen($20, ^$0400);</font><br>
 		Fill the screen memory of bank 0 with space ($20)
+
+        clearsound
+                <h2>ClearSound();</h2>
+                Terminates all sound on SID (setting control flags to zero).
 
 	closeirq
 		<h2>CloseIRQ( ));</h2>
@@ -46,6 +73,12 @@ Built-in methods
 		Copies the standard ROM charset to the specified address. Example: <br><br>
 		<font color="@code">copycharsetfromrom(^$5000);</font><br>
 
+        deczp
+                <h2>deczp( [zeropage], [ val ] );</h2>
+                Decreases the mentioned zeropage pointer by [ val ] bytes. <br>
+                Example:<br>
+                <font color="@code">deczp(zeropage2, 64);</font><br>
+
 	disableciainterrupts
 		<h2>DisableCIAInterrupts();</h2>
 		Disables all CIA interrupts
@@ -64,11 +97,37 @@ Built-in methods
 		Fills the first 40 bytes of screen memory with blanks (value $20)<br>
 		<br>
 
+        fld
+                <h2>fld( [ num raster lines], [is text mode=0, bitmap mode=1] );
+                Performs a demo effect FLD shift of a given number of raster lines.
+                Must specify whether you are in text mode(0) or bitmap mode(1)
+
 	inczp
 		<h2>inczp( [zeropage], [ val ] );</h2>
 		Increases the mentioned zeropage pointer by [ val ] bytes. <br>
 		Example:<br>
 		<font color="@code">inczp(zeropage2, 64);</font><br>
+
+        jammer
+                <h2>jammer( [ raster line number ], [ jammer color] );</h2>
+                Jammer is a debugging tool that sets a specific background color and jams the processor
+                if a certain raster line is reached. Useful for testing whether certain raster IRQs
+                stay within their limits. Usage:<br>
+                <font color="@code">jammer(150, YELLOW); // crashes the processor with yellow bg if line 150 is hit</font><br>
+
+        keypressed
+                <h2>Keypressed( [ key code ]);</h2>
+                Returns 1 if key is pressed, 0 if not. Example:<br>
+                <font color="@code">
+                if (keypressed(KEY_SPACE)=1)then begin<br>
+                ...<br>
+                end;<br>
+                </font><br>
+                Key codes are KEY_SPACE, KEY_A, KEY_F5, KEY_PLUS, KEY_COMMODORE etc<br>
+
+        loop
+                <h2>loop()</h2>
+                Performs and infinite loop (halts the process)
 
 	memcpy
 		<h2>memcpy( [ src Addr ], [ src shift ], [ dst addr], [ count &lt;$ff ] )</h2>
@@ -85,6 +144,20 @@ Built-in methods
 		</font>
 		<br>
 		fills the 5th row of screen bank 0 ($0400) with 40 bytes from 0 to i.
+
+        nmiirq
+                <h2>NMIIrq( [ procedure ]);</h2>
+                Sets the NMI interrupt query to a given procedure. Let procedure be blank
+                to disable completely. Example:<br>
+                <font color="@code">
+                interrupt MyEmptyNMI();<br>
+                begin<br>
+                <br>
+                end;<br>
+                ...<br>
+                nmiirq(MyEmptyNMI());
+                </font>
+                <br>
 
 	peek
 		<h2>peek( [ addr ], [ shift ])</h2>
@@ -127,7 +200,9 @@ Built-in methods
 		end(); </br>
 		</font>
 
-
+        return
+                <h2>Return();</h2>
+                Simply performs a rts, useful for termninating conditionals in procedures.
 	setbank
 		<h2>SetBank(VIC_BANK[0-3]);</h2>
 		Sets current VIC bank 0-3 (VIC_BANK0, VIC_BANK3 etc).
@@ -146,7 +221,6 @@ Built-in methods
 		Sets the x/y position of sprite [sprite]. Example:<br>
 		<font color="@code">setspritepos(x, y, 0);</font><br>
 		Will set sprite 0 to position x, y (where x can be an integer>256).
-
 
 	setmemoryconfig
 		<h2>setmemoryconfig(io=[0:1], kernal=[0:1], basic=[0:1]);</h2>
@@ -170,6 +244,7 @@ Built-in methods
 	waitforraster
 		<h2>waitforraster( [ line number ]);</h2>
 		Wait for the specified raster line.
+
 	waitnoraster
 		<h2>waitnoraster( [ line numbers ]);</h2>
 		Wait for [ line numbers ] raster lines.
@@ -184,6 +259,7 @@ Syntax
 		<font color="@code">
 		var
 		  myArray: array[16] of byte = (0,1,2,3,4,5,6,7,7,6,5,4,3,2,1,0);
+                  other_array: array[256] of byte at $8000; // defines the array at location $8000
 		</font>
 	byte
 		<h2>byte</h2>
@@ -267,7 +343,7 @@ Syntax
 	incbin
 		<h2>IncBin("file.bin", "$address");</h2>
 		Includes a binary file at the given address. <br>Example:<br>
-		<font color="@code">IncBin("levels.flf", "$4000");</font>
+                <font color="@code">IncBin("levels.flf", $4000);</font>
 				 
 
 	include
@@ -279,7 +355,9 @@ Syntax
 
 	incsid
 		<h2>IncSid("music.sid", "shift");</h2>
-		Includes a SID file. 
+                Includes a SID file. Will automatically generate temporary files and
+                extract sid file header information for automated playback. See call(SIDFILE_1_PLAY)
+                and initsid(SIDFILE_1);
 
 	procedure
 		<h2>procedures</h2><br>

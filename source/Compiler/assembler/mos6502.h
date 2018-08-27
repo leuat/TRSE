@@ -135,6 +135,7 @@ public:
     void Optimise() override;
     void OptimisePassStaLda();
     void OptimisePassLdx(QString x);
+    void OptimisePassLdaTax(QString x);
     void OptimiseJumps();
     QString getLine(int i);
     QString getNextLine(int i, int &j);
