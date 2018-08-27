@@ -76,6 +76,8 @@ public:
 
 
 private:
+
+    static QString path;
     Ui::FormRasEditor *ui;
 
 signals:

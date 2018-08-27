@@ -37,6 +37,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_updateThread, SIGNAL(requestCloseWindowSignal()), this, SLOT(closeWindowSlot()));
 
 
+    Util::path = QCoreApplication::applicationDirPath() + "/../../";
+#if defined(Q_OS_WIN)
+    Util::path = QCoreApplication::applicationDirPath() +"/";
+
+#endif
+
+    m_iniFileName = Util::path + m_iniFileName;
     connect( ui->tabMain, SIGNAL(tabCloseRequested(int)),this, SLOT(RemoveTab(int)));
     connect(qApp, SIGNAL(aboutToQuit()), m_updateThread, SLOT(OnQuit()));
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(OnQuit()));

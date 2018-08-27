@@ -22,7 +22,7 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
         as->Asm("jmp $ea81        ; return to kernal interrupt routine");
 
     if (m_procName.toLower()=="loop")
-        as->Asm("jmp * ; loop like (Â¤/%");
+        as->Asm("jmp * ; loop like (¤/%");
 
     if (m_procName.toLower()=="call") {
         Call(as);
@@ -668,7 +668,7 @@ void NodeBuiltinMethod::InitDecrunch(Assembler *as)
 {
     as->Label("init_decrunch");
     as->Asm("jmp end_init_decrunch");
-    as->IncludeFile("includes/init_decompress.asm");
+    as->IncludeFile(Util::path+"includes/init_decompress.asm");
     as->Label("end_init_decrunch");
 
 }
@@ -862,7 +862,6 @@ void NodeBuiltinMethod::PokeScreenColor(Assembler *as, int hiAddress)
 
 /*(char=65, col=4, x shift 65 count 20,
                 x shift, count... )
-
 */
 
 
@@ -926,7 +925,7 @@ void NodeBuiltinMethod::SetSpritePos(Assembler *as)
 
         QString var = BitShiftX(as);
 
-        as->Asm("pla"); // Get back the original stÃ¸ff
+        as->Asm("pla"); // Get back the original støff
 
         as->Asm("asl"); // Multiply by two in the end
         as->Asm("tax"); // X is the counter
@@ -1014,7 +1013,7 @@ void NodeBuiltinMethod::Fill(Assembler *as)
 
 
 void NodeBuiltinMethod::ScrollX(Assembler *as)
-{   
+{
 //    LoadVar(as, 0);
    // as->Asm("dec $d019");
     as->Asm("lda $d016  ");
@@ -1124,11 +1123,9 @@ void NodeBuiltinMethod::Clearsound(Assembler *as)
     as->Asm("sta 54272" );
     as->Asm("sta 54272+7" );
     as->Asm("sta 54272+14" );
-
     as->Asm("sta 54272+6" );
     as->Asm("sta 54272+7+6" );
     as->Asm("sta 54272+14+6" );
-
 /*    as->Asm("sei");
     as->Asm("lda #$ea");
     as->Asm("sta $0315 ");
@@ -1480,7 +1477,6 @@ void NodeBuiltinMethod::IncZp(Assembler *as)
     as->Asm("inc "+ var->value + " +1");
     as->Label(lbl);
     as->Asm("sta "+ var->value);
-
 */
 
     m_params[1]->Build(as);
@@ -1598,17 +1594,14 @@ void NodeBuiltinMethod::InitSid(Assembler *as)
 /*void NodeBuiltinMethod::InitDiv8x8(Assembler* as) {
     as->Asm("jmp div8x8_def_end");
     as->Label("div8x8_procedure_defs");
-
     as->Label("div8x8_c .byte 0 ");
     as->Label("div8x8_d .byte 0 ");
     as->Label("div8x8_e .byte 0 ");
-
     as->Comment("Normal 8x8 bin div");
     as->Label("div8x8_procedure");
     as->Asm("ASL div8x8_d");
     as->Asm("LDA #$00");
     as->Asm("ROL");
-
     as->Asm("LDX #$08");
     as->Label("div8x8loop1");
     as->Asm("CMP div8x8_c");
@@ -1618,7 +1611,6 @@ void NodeBuiltinMethod::InitSid(Assembler *as)
     as->Asm("ROL");
     as->Asm("DEX");
     as->Asm("BNE div8x8loop1");
-
     as->Asm("LDX #$08");
     as->Label("div8x8loop2");
     as->Asm("CMP div8x8_c");
@@ -1628,15 +1620,10 @@ void NodeBuiltinMethod::InitSid(Assembler *as)
     as->Asm("ASL");
     as->Asm("DEX");
     as->Asm("BNE div8x8loop2");
-
     as->Asm("lda div8x8_d");
     as->Asm("rts");
-
-
     as->Label("div8x8_def_end");
-
 }
-
 */
 
 void NodeBuiltinMethod::InitDiv8x8(Assembler* as) {
@@ -1772,9 +1759,7 @@ void NodeBuiltinMethod::DisableInterrupts(Assembler *as)
     NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_params[0]);
     if (addr==nullptr)
         ErrorHandler::e.Error("First parameter must be interrupt procedure!", m_op.m_lineNumber);
-
     QString name = addr->m_procedure->m_procName;
-
     as->Comment("Set raster interrupt pointing to : " +name);
     as->Asm("lda #$01    ; Set Interrupt Request Mask...");
     as->Asm("sta $d01a   ; ...we want IRQ by Rasterbeam");
@@ -1782,11 +1767,8 @@ void NodeBuiltinMethod::DisableInterrupts(Assembler *as)
     as->Asm("ldx #>"+ name);
     as->Asm("sta $314    ; store in $314/$315");
     as->Asm("stx $315");
-
     LoadVar(as,1);
     as->Asm("sta $d012");
-
-
 }
 */
 void NodeBuiltinMethod::RasterIRQ(Assembler *as)
@@ -1830,7 +1812,6 @@ void NodeBuiltinMethod::RasterIRQ(Assembler *as)
     as->Asm("ldx #>"+ name);
     as->Asm("sta $314    ; store in $314/$315");
     as->Asm("stx $315");
-
     LoadVar(as,1);
     as->Asm("sta $d012");
 */
@@ -1863,7 +1844,6 @@ void NodeBuiltinMethod::ClearScreen(Assembler *as)
     as->Asm("sta $02FF+"+shift+",x");
     as->Asm("dex");
     as->Asm("bne "+lbl2);
-
 */
     as->PopLabel("clearloop");
 //    as->PopLabel("clearloop2");
@@ -1880,10 +1860,8 @@ void NodeBuiltinMethod::WaitNoRasterLines(Assembler *as)
     NodeVar* nvar = (NodeVar*)dynamic_cast<NodeVar*>(m_params[0]);
     if (nvar!=nullptr)
             var = nvar->value;
-
     if (var=="")
         ErrorHandler::e.Error("WaitNoRasterLines: parameter must be either constant or variable, not expression", m_op.m_lineNumber);
-
 */
     as->Comment("Wait for no of raster lines");
   //  as->Label(lbl);
@@ -1919,11 +1897,9 @@ void NodeBuiltinMethod::SetSpriteLoc(Assembler *as)
   /*  NodeNumber* num2 = (NodeNumber*)dynamic_cast<NodeNumber*>(m_params[0]);
     if (num2==nullptr)
         ErrorHandler::e.Error("SetSpriteLoc parameter 0 must be constant");
-
     NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_params[1]);
     if (num==nullptr)
         ErrorHandler::e.Error("SetSpriteLoc parameter 1 must be constant");
-
 */
     NodeNumber* num3 = (NodeNumber*)dynamic_cast<NodeNumber*>(m_params[2]);
     if (num3==nullptr)
@@ -2002,40 +1978,27 @@ void NodeBuiltinMethod::Swap(Assembler *as)
 void NodeBuiltinMethod::MemCpyLarge(Assembler *as)
 {
     /*as->Comment("Memory copy large > 255 bytes");
-
     NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_params[0]);
     if (var==nullptr)
         ErrorHandler::e.Error("MemCpyLarge parameter 0 must be Variable location");
-
-
     NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_params[3]);
     if (num==nullptr)
         ErrorHandler::e.Error("MemCpyLarge parameter 4 must be constant");
-
-
     QString defs = as->NewLabel("memcpy_defs");
     QString counter = as->NewLabel("memcpy_counter");
     QString carry = as->NewLabel("memcpy_carry");
-
     as->Asm("lda <"+var->value);
     as->Asm("ldy >"+var->value);
     as->Asm("sta print_text+0");
     as->Asm("sty print_text+1");
-
     as->Asm("lda <"+var->value);
     as->Asm("ldy >"+var->value);
     as->Asm("sta print_text+0");
     as->Asm("sty print_text+1");
-
-
     as->Asm("jmp " + defs);
     as->Label(counter + "\t dc.w\t" + num->HexValue());
     as->Label(defs);
     as->
-
-
-
-
     as->PopLabel("memcpy_defs");
     as->PopLabel("memcpy_counter");
     as->PopLabel("memcpy_carry");
@@ -2178,7 +2141,6 @@ void NodeBuiltinMethod::CopyHalfScreen(Assembler *as)
     as->Term(" + #40*#12-#1,x", true);
     as->Asm("dex");
     as->Asm("bne "+lbl2);
-
 */
     NodeNumber * lines = dynamic_cast<NodeNumber*>(m_params[2]);
     if (lines==nullptr)
@@ -2472,11 +2434,9 @@ void NodeBuiltinMethod::EnableInterrupts(Assembler* as) {
   //  as->Asm("lda $dc0d");
   //  as->Asm("lda $dd0d");
 //    as->Asm("asl $d019");
-
     as->Asm("lda $d011   ; Bit#0 of $d011 is basically...");
     as->Asm("and #$7f    ; ...the 9th Bit for $d012");
     as->Asm("sta $d011   ; we need to make sure it is set to zero ");
-
     as->Asm("cli");
 }
 */
@@ -2595,7 +2555,6 @@ void NodeBuiltinMethod::InitJoystick(Assembler *as)
     as->Label("joystickbutton .byte 0");
     as->Label("callJoystick");
 /*
-
     as->Asm("lda $dc00 ;read joystick port 2");
     as->Asm("lsr       ;get switch bits");
     as->Asm("ror joystickup   ;switch_history = switch_history/2 + 128*current_switch_state");
@@ -2680,4 +2639,3 @@ void NodeBuiltinMethod::InitJoystick(Assembler *as)
     as->Asm("rts");
 
 }
-
