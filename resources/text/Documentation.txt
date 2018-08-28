@@ -1,14 +1,52 @@
-General
 Constants and variables
 	SCREEN_BG_COL
 		<h2>Screen border color</h2>
-		Ever heard of 53280?
-                SCREEN_BG_COL:=BLACK;
+		Ever heard of 53280?<br>
+		SCREEN_BG_COL:=BLACK;<br>
+
 	SCREEN_FG_COL
-		<h2>Screen background color</h2>
-		Ever heard of 53281?
-                SCREEN_FG_COL:=BLACK;
-        zeropages
+		<h2>Screen background color</h2><br>
+		Ever heard of 53281?<br>
+
+        SCREEN_FG_COL:=BLACK;
+
+    VIC_BANK0
+
+    VIC_BANK1
+    VIC_BANK2
+    VIC_BANK3
+    VIC_DATA_LOC($D018)
+	RASTERLINE_POS($D012)
+	SPRITE_POS($D000)
+	SPRITE_DATA_LOC ($07F8)
+	SPRITE_BITMASK ($D015)
+	SPRITE_COLOR ($D027)
+	SPRITE_COLLISION ($D01E)
+	SPRITE_BG_COLLISION ($D01F)	
+	SPRITE_STRETCH_X ($D01D)	
+	SPRITE_STRETCH_Y ($D017)
+	SPRITE_MULTICOLOR ($D01C)
+	SPRITE_MULTICOLOR_REG1 ($D025)
+    SPRITE_MULTICOLOR_REG2 ($D026)
+    MULTICOLOR_CHAR_COL ($D021)
+
+    SID_TRI
+    SID_SAW
+    SID_PULSE
+    SID_NOISE
+    SID_CHANNEL1
+    SID_CHANNEL2
+    SID_CHANNEL3
+
+    SID ($D400)
+
+    SIDFILE_1_INIT
+    SIDFILE_2_INIT
+    SIDFILE_1_PLAY
+    SIDFILE_2_PLAY
+
+
+	zeropages
                 <h2>Zeropages and pointers</h2>
                 Zeropages are in TRSE defined as pointers. The individial addresses
                 for the zeropages are defined in the TRSE settings dialoge, and will be chosen
@@ -28,13 +66,13 @@ Constants and variables
 	sine
 		<h2>sine</h2>
                 Sine is a table of 256 bytes.
-        screenmemory
+	screenmemory
                 <h2>screenmemory</h2>
                 screenmemory is a built-in zero page pointer that is used with the
                 <b>moveto</b> method.
 
 Built-in methods
-        abs
+	abs
                 <h2>abs( [ variable or number ]);</h2>
                 Returns the absolute value of the number/variable.
 
@@ -49,7 +87,7 @@ Built-in methods
 		<font color="@code">ClearScreen($20, ^$0400);</font><br>
 		Fill the screen memory of bank 0 with space ($20)
 
-        clearsound
+	clearsound
                 <h2>ClearSound();</h2>
                 Terminates all sound on SID (setting control flags to zero).
 
@@ -73,7 +111,48 @@ Built-in methods
 		Copies the standard ROM charset to the specified address. Example: <br><br>
 		<font color="@code">copycharsetfromrom(^$5000);</font><br>
 
-        deczp
+	copyimagecolordata
+                <h2>CopyImageColorData( [ data_address ], [ bank=0..3] );</h2>
+                Copies 800 bytes of TRSE .flf-exported multicolor image data
+                to image and color memory. Usage: <br>
+                <br>
+                <font color="@code">
+                program Tutorial6;<br>
+                var<br>
+                        image_color: IncBin("images/moose_color.bin", "$5000");<br>
+                        image_data: IncBin("images/moose_data.bin", "$6000");<br>
+                <br>
+                begin<br>
+                        setmulticolormode();<br>
+                        setbitmapmode();<br>
+                        poke(VIC_DATA_LOC, 0,$18);<br>
+                        setbank(VIC_BANK1);<br>
+                        copyimagecolordata(image_color,1);<br>
+                        SCREEN_FG_COL:=BLACK;<br>
+                        Loop();<br>
+                end.<br>
+                </font>
+
+    decrunch
+                <h2>Decrunch( [ address] or [ variable ]);</h2>
+                When including a exomizer-compressed file, you can decrunch it
+                either by pointing directly to the memory address (really, the memory address
+                + length of the file) or by automagically letting TRSE extract the file size.
+                Example: Assume you have a $199-byte compressed file that you would like to uncompress:
+                <br>
+                <br>
+                <font color="@code">
+                var
+                  compressed_data: incbin("my_data.bin",$8000);<br>
+                  <br>
+                ...<br>
+                <br>
+                decrunch($8199);
+                // OR
+                decrunch(compressed_data);
+                </font>
+
+    deczp
                 <h2>deczp( [zeropage], [ val ] );</h2>
                 Decreases the mentioned zeropage pointer by [ val ] bytes. <br>
                 Example:<br>
@@ -97,8 +176,8 @@ Built-in methods
 		Fills the first 40 bytes of screen memory with blanks (value $20)<br>
 		<br>
 
-        fld
-                <h2>fld( [ num raster lines], [is text mode=0, bitmap mode=1] );
+    fld
+                <h2>fld( [ num raster lines], [is text mode=0, bitmap mode=1] );</h2>
                 Performs a demo effect FLD shift of a given number of raster lines.
                 Must specify whether you are in text mode(0) or bitmap mode(1)
 
@@ -108,14 +187,14 @@ Built-in methods
 		Example:<br>
 		<font color="@code">inczp(zeropage2, 64);</font><br>
 
-        jammer
+    jammer
                 <h2>jammer( [ raster line number ], [ jammer color] );</h2>
                 Jammer is a debugging tool that sets a specific background color and jams the processor
                 if a certain raster line is reached. Useful for testing whether certain raster IRQs
                 stay within their limits. Usage:<br>
                 <font color="@code">jammer(150, YELLOW); // crashes the processor with yellow bg if line 150 is hit</font><br>
 
-        keypressed
+    keypressed
                 <h2>Keypressed( [ key code ]);</h2>
                 Returns 1 if key is pressed, 0 if not. Example:<br>
                 <font color="@code">
@@ -125,7 +204,7 @@ Built-in methods
                 </font><br>
                 Key codes are KEY_SPACE, KEY_A, KEY_F5, KEY_PLUS, KEY_COMMODORE etc<br>
 
-        loop
+    loop
                 <h2>loop()</h2>
                 Performs and infinite loop (halts the process)
 
@@ -133,6 +212,11 @@ Built-in methods
 		<h2>memcpy( [ src Addr ], [ src shift ], [ dst addr], [ count &lt;$ff ] )</h2>
 		copies [ count ] bytes from src+shift to destination. <br><br>
 		Examples:<br>
+        <font color="@code">
+		memcpy(^$0400, 0, $0480, 40);<br>
+		memcpy(^$D800+^40*^2, 0, ^$D800+^40*^3, 80);<br>
+		</font>
+
 	moveto
 		<h2>moveto( x, y, [ address high byte ] ); </h2><br>
 		Move the screen cursor pointer "screenmemory" to position x,y on the screen with the given high byte.<br><br>
@@ -145,7 +229,7 @@ Built-in methods
 		<br>
 		fills the 5th row of screen bank 0 ($0400) with 40 bytes from 0 to i.
 
-        nmiirq
+    nmiirq
                 <h2>NMIIrq( [ procedure ]);</h2>
                 Sets the NMI interrupt query to a given procedure. Let procedure be blank
                 to disable completely. Example:<br>
@@ -200,12 +284,27 @@ Built-in methods
 		end(); </br>
 		</font>
 
-        return
+    return
                 <h2>Return();</h2>
                 Simply performs a rts, useful for termninating conditionals in procedures.
 	setbank
 		<h2>SetBank(VIC_BANK[0-3]);</h2>
 		Sets current VIC bank 0-3 (VIC_BANK0, VIC_BANK3 etc).
+
+    setbitmapmode
+                <h2>SetBitmapMode();</h2>
+                Sets the VIC 320x200 bitmap mode.
+
+    setmulticolormode
+                <h2>SetMultiColorMode();</h2>
+                Sets the current mode to multicolor mode (4 colors per char).
+
+    setregularcolormode
+                <h2>SetRegularColorMode();</h2>
+                Sets the current mode to regular mode. (2 colors per char)
+
+
+
 	setspriteloc
 		<h2>SetSpriteLoc( [ sprite=[0:7], [ dataloc ], [bank=[0:3] );</h2>
 		Sets sprite data pointer location. The sprite number (or variable) is limited to
@@ -228,6 +327,10 @@ Built-in methods
 		BASIC, IO or Kernal. Example:<br>
 		To enable IO and Kernal while disabling BASIC, use <br>
 		<font color="@code">setmemoryconfig(1,1,0);</font>
+    settextmode
+                <h2>SetTextMode();</h2>
+                Sets the VIC text mode
+
 	startirq
 		<h2>StartIRQ( kernal = [0:1]));</h2>
 		Starts an IRQ method. For example: <br>
@@ -241,6 +344,10 @@ Built-in methods
 		  closeirq();<br>
 		end(); </br>
 		</font>
+    swap
+                <h2>Swap( [ var a], [ var b] );</h2>
+                Swaps two variables <b>a</b> and <b>b</b>.<br>
+
 	waitforraster
 		<h2>waitforraster( [ line number ]);</h2>
 		Wait for the specified raster line.
@@ -258,8 +365,8 @@ Syntax
 		Example<br>
 		<font color="@code">
 		var
-		  myArray: array[16] of byte = (0,1,2,3,4,5,6,7,7,6,5,4,3,2,1,0);
-                  other_array: array[256] of byte at $8000; // defines the array at location $8000
+		  myArray: array[16] of byte = (0,1,2,3,4,5,6,7,7,6,5,4,3,2,1,0);<br>
+          other_array: array[256] of byte at $8000; // defines the array at location $8000
 		</font>
 	byte
 		<h2>byte</h2>

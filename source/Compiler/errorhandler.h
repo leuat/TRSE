@@ -11,6 +11,7 @@
 #include <exception>
 using namespace std;
 
+
 class FatalErrorException: public exception
 {
 public:

@@ -91,7 +91,9 @@ void Helper::LoadFromResource()
         int tab = 0;
         QString s=m_lst[i].replace("    ", "\t");
         if (s.trimmed()=="")continue;
+
         while (s[tab]=='\t') tab++; // Find number of tabs
+        if (tab>=3) tab=2;
         if (tab==0) {
             zero = new HelpTopic();
             zero->m_text = s.replace("\t", "");

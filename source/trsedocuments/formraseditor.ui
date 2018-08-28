@@ -110,7 +110,7 @@
   <customwidget>
    <class>CodeEditor</class>
    <extends>QPlainTextEdit</extends>
-   <header>source\PmmEdit\codeeditor.h</header>
+   <header>source/PmmEdit/codeeditor.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
