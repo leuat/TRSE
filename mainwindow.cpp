@@ -161,6 +161,8 @@ void MainWindow::VerifyDefaults()
         m_iniFile.setString("theme", "dark_standard.ini");
     if (!m_iniFile.contains("zeropages"))
        m_iniFile.setStringList("zeropages", AsmMOS6502::m_defaultZeroPointers.split(","));
+    if (!m_iniFile.contains("post_optimize"))
+        m_iniFile.setFloat("post_optimize", 1);
 
     m_iniFile.filename = m_iniFileName;
 
@@ -442,6 +444,8 @@ void MainWindow::on_actionRas_source_file_triggered()
     QString filename = dialog.getSaveFileName(NULL, "Create New File",getProjectPath(),f);
 
     if (filename=="")
+        return;
+    if (!filename.toLower().endsWith(".ras"))
         return;
     QString orgFile;
     //filename = filename.split("/").last();

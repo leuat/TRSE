@@ -18,7 +18,7 @@ public:
     void Parse();
     void Visit(Node* n);
     void Interpret();
-    bool Build(Type, QString projDir, QStringList zp);
+    bool Build(Type, QString projDir, QStringList zp, bool optimize);
     void CleanupCycleLinenumbers();
     void CleanupBlockLinenumbers();
     void SaveBuild(QString filename);

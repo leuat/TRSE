@@ -35,7 +35,7 @@ void Interpreter::Interpret()
 
 }
 
-bool Interpreter::Build(Interpreter::Type type, QString project_dir, QStringList zeropages)
+bool Interpreter::Build(Interpreter::Type type, QString project_dir, QStringList zeropages, bool optimize)
 {
     if (m_tree==nullptr) {
         qDebug() << "Interpreter::Build : tree not parsed!";
@@ -73,7 +73,8 @@ bool Interpreter::Build(Interpreter::Type type, QString project_dir, QStringList
 
     m_assembler->Label("EndSymbol");
     m_assembler->Connect();
-    m_assembler->Optimise();
+    if (optimize)
+        m_assembler->Optimise();
     CleanupCycleLinenumbers();
     CleanupBlockLinenumbers();
     return true;

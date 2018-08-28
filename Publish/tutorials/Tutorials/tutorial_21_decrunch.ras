@@ -1,0 +1,23 @@
+program Tutorial21_decrunch;
+var
+	image_color: IncBin("images/jack_color.bin", "$5000");
+	image_data: IncBin("images/jack_data_decrunch_to_6000.bin", $2000);
+
+// original image data in: images/jack_data.bin
+// exomizer usage: exomizer mem -lnone jack_data.bin@0x6000 -o jack_data_decrunch_to_6000.bin
+// NOTE: if you are using exomizer 3.0, you need to add "-P0" to the above command
+
+begin
+
+	setmulticolormode();
+	setbitmapmode();
+	poke(VIC_DATA_LOC, 0,$18);
+	setbank(VIC_BANK1);
+	copyimagecolordata(image_color,1);
+	SCREEN_FG_COL:=BLACK;
+	// Decrunches the data from $2000 to $6000
+	decrunch(image_data);
+
+	Loop();
+
+end.

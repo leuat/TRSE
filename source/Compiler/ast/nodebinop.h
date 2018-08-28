@@ -353,14 +353,16 @@ public:
         as->m_labelStack["wordAdd"].push();
         QString lblword = as->getLabel("wordAdd");
 
-        QString lbl = as->NewLabel("rightvarInteger");
-        QString lblJmp = as->NewLabel("jmprightvarInteger");
+        //QString lbl = as->NewLabel("rightvarInteger");
+//        QString lblJmp = as->NewLabel("jmprightvarInteger");
 
         NodeVar* v = dynamic_cast<NodeVar*>(m_left);
 
-        as->Asm("jmp " + lblJmp);
-        as->Write(lbl +"\t.word\t0");
-        as->Label(lblJmp);
+        //as->Asm("jmp " + lblJmp);
+        //as->Write(lbl +"\t.word\t0");
+        //as->Label(lblJmp);
+        QString lbl = as->StoreInTempVar("rightvarInteger", "word");
+
         as->ClearTerm();
         as->Asm("ldy #0");
         m_right->Build(as);
@@ -399,8 +401,8 @@ public:
 
         as->PopLabel("wordAdd");
 
-        as->PopLabel("rightvarInteger");
-        as->PopLabel("jmprightvarInteger");
+//        as->PopLabel("rightvarInteger");
+  //      as->PopLabel("jmprightvarInteger");
 
     }
 

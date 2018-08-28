@@ -33,7 +33,7 @@ public:
     Lexer lexer;
     QString filename;
     QElapsedTimer timer;
-
+    bool isInitialized=false;
     int m_searchFromPos = 0;
     int m_currentFromPos = 0;
     bool m_buildSuccess = false;

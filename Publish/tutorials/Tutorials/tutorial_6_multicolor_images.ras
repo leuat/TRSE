@@ -3,7 +3,6 @@ var
 	image_color: IncBin("images/moose_color.bin", "$5000");
 	image_data: IncBin("images/moose_data.bin", "$6000");
 
-
 begin
 
 	setmulticolormode();
