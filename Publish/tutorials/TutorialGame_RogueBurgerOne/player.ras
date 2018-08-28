@@ -220,8 +220,9 @@ begin
 			end;
 
 		end;
-
+@ifdef isDebug
 		if (immortal=0) then begin
+
 		if player_health >200 then
 			InitGameOver();
 		end
@@ -229,7 +230,12 @@ begin
 			if player_health >200 then
 				player_health:=10;
 		end;
-		
+@endif
+@ifndef isDebug
+		if player_health >200 then
+			InitGameOver();
+
+@endif		
 		if player_health>player_maxhealth then
 			player_health := player_maxhealth;
 		
@@ -278,8 +284,9 @@ begin
 		//tmp2 := getbit(SPRITE_BG_COLLISION, @playerSprite);
 		
 		
-		
+@ifdef isDebug		
 		if (ignoreCollisions=0) then		
+@endif
 			BackgroundCollide();
 		// If collision, abort abort
 		if tmp2=1 then begin
