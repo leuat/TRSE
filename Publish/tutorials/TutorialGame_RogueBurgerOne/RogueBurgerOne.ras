@@ -1,40 +1,64 @@
 program RogueBurgerOne;
 var
-	//	intro_image_color: IncBin("images/lemonspawn_color.bin", "$3000");  // $800
-	// 3854
+
+/*
+
+	Rogue Burger One is a TRSE tutorial game. Actually, right now it is not really a 
+	tutorial but more an example project, without proper documentation and stuff.
+
+	This will be updated in future releases of the TRSE framework. Hopefully. 
+
+	For now, this is the main file, which contains all variable declarations, texsts
+	and intro / main game raster interrupt procedures. 
+
+
+*/
+
+	// Compile with debug flags?
+	@define isDebug isDebug
+	// Turn off kernal	
+	@define usekernal 0
+
+
+	/*
+
+		Binary inclusion files
+
+
+	*/
+
+	// Text charsets (bank 1)
 	mainChar: IncBin("charsets/charset_text.bin","$4800"); // $800 bytes
 	
+	// Level multicolor charsets (bank 1)
 	levelChar: IncBin("charsets/charset_level.bin","$5000");// $800 bytes
+	// Sprite data bank 1
 	sprite0data : incbin("sprites/fastfood.bin", "$5800"); // will be $1000 bytes // locally 2000
 	music1 : incsid("music/fliptape60.sid", "2");
 	
+	// image and logo color data (should be compressed really..)
 	imagedata_colors:IncBin("images/introscreen_color.bin","$7000");
 	logodata_colors:IncBin("images/logoscreen_color.bin","$7800");
-	multiColorChar: IncBin("charsets/lcharsetMC.bin", "$8800");
-	//levels: IncBin("levels/levels.flf", "$9000"); // 2400 in hex
-	logodata_crunched:IncBin("images/logoscreen_data_compressed.bin","$9000");
 
+	// Scroller multicolor charset (bank 2)
+	multiColorChar: IncBin("charsets/lcharsetMC.bin", "$8800");
+
+//Compressed image & logo data (about $800 bytes each)
+	logodata_crunched:IncBin("images/logoscreen_data_compressed.bin","$9000");
 	imagedata_crunched:IncBin("images/introscreen_data_compressed.bin","$C000");
+// Compressed image data at $E000
 	leveldata_crunched: IncBin("levels/levels_compressed.bin", "$E000"); // 2400 in hex
 
+// Unpack levels to:
 	@define levels $9000
 
+// Define some user data (for the memory map)
 	@userdata "$0400" "$0800" "Bank 0 screen"
 	@userdata "$4400" "$4800" "Bank 1 screen"
 	@userdata "$8400" "$8800" "Bank 2 screen"
 	@userdata "$D800" "$E000" "Color space"
 
-/*	@define imageCrunch $CACF
-	@define logoCrunch $918E
-	@define levelCrunch $F0ED
-*/
-
-
-	//	intro_image_data: IncBin("images/lemonspawn_data.bin", "$A000"); // $2000 suze
-	
-	//3832 lines
-	
-	//	music1 : incsid("fliptape3.sid");
+// Common variables
 	m_posx, m_posy : byte; // current level position in grid
 	i, redraw, j,k,l,val2: byte;  // i is temp, redraw states that the map should be redrawn
 	time : byte;
@@ -44,17 +68,15 @@ var
 	
 	keyPressedWait : byte;
 
-
 	sprite1_counter, tmp2,tmp3,val : byte; // sprite1_counter shifts between sprite animations
 	spritex, tmp : integer; // Sprite positions and temp integer
 	spritey, frameCounter : byte;
 	
-
 	player_score : byte;
 	player_speed : byte;
 	
 	current_background : byte;
-	TextRogueBurger: string = "ROGUE BURGER ONE";
+
 
 	zeropage1, zeropage2, zeropage3, zeropage4, zeropage5, zeropage6, zeropage7 : pointer;
 
@@ -66,7 +88,14 @@ var
 
 	@define levelointer zeropage7
 
+	/*
 
+	Text defintions
+
+	*/
+
+	// Title text in gameplay 
+	TextRogueBurger: string = "ROGUE BURGER ONE";
 
 
 	IntroText : string = (
@@ -91,7 +120,7 @@ var
 							"  SHE WAS SOON EATEN BY A HAPPY PLAYER         IF THERE IS A POINT TO THIS STORY PLEASE LET US KNOW            " );
 
 
-/* Credits section 
+/* Credits section, textwriter.
 
 */
 	creditsCounter: byte = 0;
@@ -115,8 +144,9 @@ var
 	// 135 = HEART
 	// 134 = AMMO
 
-	@define isDebug isDebug
 
+
+// Credits text
 	CreditsText : string = (129, @cclear, @cpause,
 							"ROGUE BURGER ONE", @newline,
 							" 2018 LEMONSPAWN", @newline, 
@@ -199,26 +229,27 @@ var
 	// shoe = 17, 76 , upgrade  bit 8
 	// Boss = 18, 19,20,21
 	
-	
+
+	// Color fading scheme		
 	fade : array [16] of byte = (11,6,6,12,4,14,15,1,1,15,14,4,12,6,6,11);
 	
 	// Used to calculate direction of pizza bullet
 	prev_dx, prev_dy : byte;
 	
 	
-	// Entities
-	no_entities : byte;
-	entity_pos_x : array[8] of byte;
-	entity_pos_y : array[8] of byte;
-	entity_curpos_x : array[8] of byte;
+	// Entitiy data
+	no_entities : byte; // # entities on the screen
+	entity_pos_x : array[8] of byte; //# org pos x for each entity /2
+	entity_pos_y : array[8] of byte; //# org pos y for each entity 
+	entity_curpos_x : array[8] of byte; // current pos for each entity
 	entity_curpos_y : array[8] of byte;
-	entity_dd_x : array[8] of byte;
+	entity_dd_x : array[8] of byte; // current speed for each entity in x/y
 	entity_dd_y : array[8] of byte;
-	entity_pos_spread : array[8] of byte;
-	entity_type : array[8] of byte;
-	entity_sprite : array[8] of byte;
-	entity_color : array[8] of byte;
-	entity_health : array[8] of byte;
+	entity_pos_spread : array[8] of byte; // How far does the entity move?
+	entity_type : array[8] of byte; // Type, aggressive etc
+	entity_sprite : array[8] of byte;    // Sprite location pointer
+	entity_color : array[8] of byte;      // Entity colors
+	entity_health : array[8] of byte;     // Entity health
 	
 	entity_framecounter_x : array[8] of byte;
 	entity_framecounter_y : array[8] of byte;
@@ -245,10 +276,9 @@ var
 	
 	joystick_pressed : byte;
 	
-	
+	// Sprite locations for player burger sprite
 	moveSprite : array[8] of byte = ($61,$62,$63,$64,$65, $64,$63,$62);
-	
-	@define usekernal 0
+
 	
 	
 	// pizza is 5, heart is 6, health upgrade is 7, ammo upgrade is 8,
@@ -295,7 +325,8 @@ var
 	
 	
 	@define highCharMemoryPos "$12"
-	
+
+	// Sound channel	
 	@define sidchannel "SID_CHANNEL3"
 	
 	@define levelpointer "zeropage7"
@@ -310,15 +341,7 @@ var
 @endif
 
 	
-//   Renders a .flf level at map pos x,y
-
-
-
-//@include "RasLib/sprites.ras"
-
 // Sprite 0 and 7 are reserved, so we can only have 6 entity sprites in one screen
-
-
 
 procedure InitGameOver();
 procedure InitNewGame();
@@ -345,12 +368,12 @@ end;
 
 
 
+// Raster interrupt for displaying scroll fragments.
 
 interrupt RasterUpdateScrollView();
 begin
 	StartIRQ(@usekernal);
 	setbank(VIC_BANK1);
-//	poke(VIC_DATA_LOC, 0, @highCharMemoryPos);
 	poke(VIC_DATA_LOC, 0, @charmapText);
 	if (keyPressedWait=0) then begin
 		if (keypressed(KEY_SPACE)=1)then begin
@@ -366,6 +389,7 @@ begin
 	end;
 	inc(time);
 	y:=1;
+	// Fill colors
 	for i:=0 to 8 do begin
 		moveto(0,y,$D8);
 		val:=fade[ (time +i*5)&15];
@@ -392,7 +416,7 @@ begin
 	clearscreen($20,^$4400);
 	poke(VIC_DATA_LOC, 0, @charmapText);
 	setregularcolormode();
-	keyPressedWait:=16; // Counter for pressing J again
+	keyPressedWait:=16; // Counter for pressing space again
 	k:=0;
 	y:=1;
 	l:=3;
@@ -418,12 +442,14 @@ begin
 end;
 
 
+/* 
+	Main raster that updates the game 
+  	bank 1 display on upper part
+  	bank 1 on middle and lower part, lower part has different charset (text) and no multicolor
 
+*/
 interrupt rasterUpdateGame();
 begin
-	// Call sid
-	//	call(SIDFILE_1_PLAY);
-	// Make sure upper part of screen renders text
 	StartIRQ(@usekernal);
 	inc(time);
 	keepbitmask:=SPRITE_BITMASK;
@@ -435,8 +461,6 @@ begin
 	// Set regular text font
 	setbank(VIC_BANK2);
 	poke(VIC_DATA_LOC, 0, @highCharMemoryPos);
-	// Wait until level starts
-//	PrintTextColor();
 	UpdateEntities();
 
 
