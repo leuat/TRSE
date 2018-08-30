@@ -29,8 +29,8 @@ void Messages::InitMessages()
     m_messages[MEMORY_OVERLAP_ERROR] = Message(MEMORY_OVERLAP_ERROR, Message::Error, "Your program has overlapping memory configurations. A future version of TRSE will include a memory visualization "
                                    "tool, but for now you need to manually reorganize your code blocks and include files.");
 
-    m_messages[NO_DASM] = Message(NO_DASM, Message::Error, "You need to download the Dasm assembler (http://dasm-dillon.sourceforge.net/) and specify the location of dasm.exe in the TRSE settings panel.");
-    m_messages[NO_EXOMIZER] = Message(NO_EXOMIZER, Message::Error, "In order to use Exomizer, you need to download the exe file and  specify the location of exomizer.exe in the TRSE settings panel.");
+    m_messages[NO_DASM] = Message(NO_DASM, Message::Error, "You need to download the Dasm assembler (http://dasm-dillon.sourceforge.net/) and specify the location of the dasm executable in the TRSE settings panel.");
+    m_messages[NO_EXOMIZER] = Message(NO_EXOMIZER, Message::Error, "In order to use Exomizer, you need to download the exe file and  specify the location of the exomizer executablein the TRSE settings panel.");
     m_messages[NO_EMULATOR] = Message(NO_EMULATOR, Message::Error,
                                       "You need to download a c64 emulator (such as Vice) and specify the location in the TRSE settings panel.");
 
@@ -51,16 +51,11 @@ void Messages::InitMessages()
                                        );
 
     m_messages[ALPHA_WARNING] = Message(ALPHA_WARNING, Message::Msg,
-                                      "Ah. Hi there! <br><br>Welcome to this pre-pre-alpha release of Turbo Rascal Syntax Error. However, be warned: "
-                                      "this version is probably riddled with bugs and will occasionally crash. Not really meant for production. "
-                                      "For now, open the tutorial 1-10 project located in the parent directory and play around. <br> "
+                                      "Ah. Hi there! <br><br>Welcome to this final alpha release of Turbo Rascal Syntax Error! "
+                                      "A fair warning: This version might have some bugs and will occasionally crash. "
+                                      "If this is your first time using the TRSE framework, please open the tutorials project located in the parent directory and play around. <br> "
                                       "<br> "
-                                      "<b>A fair warning:</b><br>"
-                                      "In the following version, the tutorials will probably be overhauled. So, if you do create your own project, please remember "
-                                      "to place it in a completely separate directory from the TRSE directory, or everything will be overwritten with subsequent updates.<br>"
-                                      "<br>"
-                                      "If there are bugs with the updater, you can ignore it by just running <b>bin&#92;trse.exe</b><br><br>"
-                                      "Thank you so much for trying out this pre-pre-alpha release of the TRSE suite! Remember to report any bugs to <b>generalgrapefruit@lemonspawn.com</b>.");
+                                      "Thank you so much for trying out Turbo Rascal Syntax Error! Remember to report any bugs to <b>generalgrapefruit@lemonspawn.com</b>.");
 
 
 }

@@ -65,7 +65,7 @@ void DialogTRSESettings::on_pushButton_clicked()
 void DialogTRSESettings::on_btnEmulator_clicked()
 {
     QString filename = QFileDialog::getOpenFileName(this,
-        tr("Emulator location"), m_ini->getString("project_path"), "*.exe");
+        tr("Emulator location"), m_ini->getString("project_path"), "*");
     ui->leEmulator->setText(filename);
 
 }
@@ -73,7 +73,7 @@ void DialogTRSESettings::on_btnEmulator_clicked()
 void DialogTRSESettings::on_btnExomizer_clicked()
 {
     QString filename = QFileDialog::getOpenFileName(this,
-        tr("Exomizer location"), m_ini->getString("project_path"), "*.exe");
+        tr("Exomizer location"), m_ini->getString("project_path"), "*");
     ui->leExomizer->setText(filename);
 
 }
@@ -81,7 +81,7 @@ void DialogTRSESettings::on_btnExomizer_clicked()
 void DialogTRSESettings::on_btnDasm_clicked()
 {
     QString filename = QFileDialog::getOpenFileName(this,
-        tr("Dasm location"), m_ini->getString("project_path"), "*.exe");
+        tr("Dasm location"), m_ini->getString("project_path"), "*");
     ui->leDasm->setText(filename);
 
 }
