@@ -1,3 +1,3 @@
 project_path = /home/leuat/code/TRSE/Publish/tutorials/TutorialGame_RogueBurgerOne/
-open_files = ,RogueBurgerOne.asm, introscreen.ras, player.ras, RogueBurgerOne.ras, titlescreen2.flf, intrologo2.flf
+open_files = ,levels/levels.flf, images/intrologo2.flf, images/titlescreen2.flf, charsets/charset_text.flf, charsets/charset_level.flf, titlescreen2.flf, intrologo2.flf
 data_header = ,id, x, y, life, color, spread, sx, sy, isdead, damage, ammo, sound, upgrade

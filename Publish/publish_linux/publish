@@ -11,5 +11,5 @@ cp -r ../tutorials/TutorialGame_RogueBurgerOne trse/
 find trse/* -name "*.prg" -type f -delete
 find trse/* -name "*.asm" -type f -delete
 cp trse.sh trse
-tar -cvf trse.tar trse
-gzip trse.tar
+tar -cvf trse_linux64.tar trse
+gzip trse_linux64.tar
