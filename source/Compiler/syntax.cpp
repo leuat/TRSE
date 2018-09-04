@@ -605,4 +605,45 @@ void Syntax::SetupKeys()
 
 }
 
+bool Syntax::isNumeric(QString s) {
+    bool ok;
+    int dec = s.toInt(&ok, 10);
+    return ok;
+}
+
+bool Syntax::isDigit(QString s) {
+    // Check if HEX
+    return digit.contains(s);
+
+}
+
+bool Syntax::isDigitHex(QString s) {
+    // Check if HEX
+    return digitAll.contains(s);
+
+}
+
+bool Syntax::isAlnum(QString s) {
+    return alnum.contains(s.toLower());
+}
+
+bool Syntax::isString(QString s) {
+    return alnumString.contains(s.toLower());
+}
+
+bool Syntax::isAlpha(QString s) {
+    return alpha.contains(s.toLower());
+}
+
+Token Syntax::GetID(QString val) {
+    for (Token& t: reservedWords)
+        if (val.toUpper()==t.m_value) {
+            t.m_lineNumber = Pmm::Data::d.lineNumber;
+            return t;
+        }
+
+    //exit(1);
+    return Token(TokenType::ID, val);
+}
+
 

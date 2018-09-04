@@ -1,6 +1,14 @@
 #include "nodeprogram.h"
 
 
+void NodeProgram::Delete() {
+    if (m_NodeBlock) {
+        m_NodeBlock->Delete();
+        delete m_NodeBlock;
+        m_NodeBlock = nullptr;
+    }
+}
+
 PVar NodeProgram::Execute(SymbolTable *symTab, uint lvl) {
     Pmm::Data::d.Set(m_op.m_lineNumber, m_op.m_currentLineText);
     level = lvl+1;
@@ -9,4 +17,18 @@ PVar NodeProgram::Execute(SymbolTable *symTab, uint lvl) {
     m_NodeBlock->Execute(symTab, level);
     return PVar();
 
+}
+
+void NodeProgram::ExecuteSym(SymbolTable *symTab) {
+    m_NodeBlock->ExecuteSym(symTab);
+}
+
+QString NodeProgram::Build(Assembler *a) {
+    Node::Build(a);
+
+    NodeBuiltinMethod::m_isInitialized.clear();
+    a->Program(m_name);
+    m_NodeBlock->Build(a);
+    a->EndProgram();
+    return "";
 }

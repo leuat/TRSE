@@ -3,6 +3,12 @@
 #include "source/Compiler/syntax.h"
 
 
+NodeProcedureDecl::NodeProcedureDecl(Token t, QString m) {
+    m_op = t;
+    m_procName = m;
+    m_isInterrupt = false;
+}
+
 NodeProcedureDecl::NodeProcedureDecl(Token t, QString m, QVector<Node *> paramDecl, Node *block, bool isInterrupt) {
     m_op = t;
 
@@ -15,6 +21,22 @@ NodeProcedureDecl::NodeProcedureDecl(Token t, QString m, QVector<Node *> paramDe
 
     m_isInterrupt = isInterrupt;
 
+}
+
+void NodeProcedureDecl::Delete() {
+    ErrorHandler::e.DebugLow("Memory: Deleting in NodeProcedureDecl", level);
+
+    for (Node* n: m_paramDecl) {
+        n->Delete();
+        delete n;
+    }
+    m_paramDecl.clear();
+    if (m_block) {
+        m_block->Delete();
+        delete m_block;
+        m_block = nullptr;
+    }
+    ErrorHandler::e.DebugLow("Memory DONE: Deleting in NodeProcedureDecl", level);
 }
 
 void NodeProcedureDecl::SetParametersValue(QVector<PVar> &lst) {

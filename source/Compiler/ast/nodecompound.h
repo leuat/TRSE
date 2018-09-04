@@ -14,39 +14,11 @@ public:
     NodeCompound(Token t) {
         m_op = t;
     }
-    PVar Execute(SymbolTable* symTab, uint lvl) override {
-        Pmm::Data::d.Set(m_op.m_lineNumber, m_op.m_currentLineText);
+    PVar Execute(SymbolTable* symTab, uint lvl) override;
+    void Delete() override;
+    void ExecuteSym(SymbolTable* symTab) override;
 
-        level = lvl+1;
-        for (Node* n: children)
-            n->Execute(symTab, level);
-        return PVar();
-
-    }
-    void Delete() override {
-        for (Node* n: children) {
-            n->Delete();
-            delete n;
-        }
-        children.clear();
-    }
-    void ExecuteSym(SymbolTable* symTab) override {
-        Pmm::Data::d.Set(m_op.m_lineNumber, m_op.m_currentLineText);
-        for (Node* n:children) {
-            ErrorHandler::e.DebugLow("Calling Compound Node",level);
-            n->ExecuteSym(symTab);
-        }
-    }
-
-    QString Build(Assembler* as) {
-        Node::Build(as);
-
-        as->BeginBlock();
-        for (Node* n: children)
-            n->Build(as);
-        as->EndBlock();
-        return "";
-    }
+    QString Build(Assembler* as) override;
 
 };
 #endif // NODECOMPOUND_H

@@ -117,6 +117,7 @@ void MultiColorImage::CopyFrom(LImage* img)
         MultiColorImage* mc = (MultiColorImage*)img;
          m_background = mc->m_background;
          m_border = mc->m_border;
+
         // qDebug() << "COPY FROM";
 #pragma omp parallel for
          for(int i=0;i<25*40;i++) {

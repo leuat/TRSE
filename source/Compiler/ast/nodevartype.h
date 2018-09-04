@@ -17,35 +17,10 @@ public:
     QString m_filename, m_position;
     QString initVal ="0";
 
-    NodeVarType(Token t, QString position,   Token arrayVarType,QStringList data) {
-        m_op = t;
-        value = t.m_value;
-        m_arrayVarType = arrayVarType;
-        m_data = data;
-        m_position = position;
-
-    }
-    NodeVarType(Token t, QStringList data) {
-        m_op = t;
-        value = t.m_value;
-        //m_arrayVarType = TokenType::STRING;
-        m_data = data;
-
-    }
-    NodeVarType(Token t,  QString filename, QString position ) {
-        m_op = t;
-        value = t.m_value;
-        m_filename = filename;
-        m_position = position;
-
-
-    }
-    NodeVarType(Token t,  QString initvalue ) {
-        m_op = t;
-        value = t.m_value;
-        initVal = initvalue;
-
-    }
+    NodeVarType(Token t, QString position,   Token arrayVarType,QStringList data);
+    NodeVarType(Token t, QStringList data);
+    NodeVarType(Token t,  QString filename, QString position );
+    NodeVarType(Token t,  QString initvalue );
     PVar Execute(SymbolTable* symTab, uint lvl) override;
     void ExecuteSym(SymbolTable* symTab) override {
 

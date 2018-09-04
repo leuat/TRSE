@@ -23,28 +23,12 @@ public:
 
 
 
-    void Delete() override {
-        if (m_NodeBlock) {
-            m_NodeBlock->Delete();
-            delete m_NodeBlock;
-            m_NodeBlock = nullptr;
-        }
-    }
+    void Delete() override;
 
     PVar Execute(SymbolTable* symTab, uint lvl) override;
-    void ExecuteSym(SymbolTable* symTab) override {
-        m_NodeBlock->ExecuteSym(symTab);
-    }
+    void ExecuteSym(SymbolTable* symTab) override;
 
-    QString Build(Assembler* a) {
-        Node::Build(a);
-
-        NodeBuiltinMethod::m_isInitialized.clear();
-        a->Program(m_name);
-        m_NodeBlock->Build(a);
-        a->EndProgram();
-        return "";
-    }
+    QString Build(Assembler* a) override;
 
 };
 

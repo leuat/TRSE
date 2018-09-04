@@ -16,9 +16,9 @@ public:
     QVector<QPushButton*> m_buttons;
 
 
-    void Initialize(QLayout* layout);
+    void Initialize(QGridLayout* layout);
 
-    void BuildGUI(QLayout* ly);
+    void BuildGUI(QGridLayout* ly);
     ToolboxItem* m_current;
 
     void handleButton(int data);

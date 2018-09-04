@@ -104,10 +104,14 @@
             <x>9</x>
             <y>19</y>
             <width>131</width>
-            <height>541</height>
+            <height>451</height>
            </rect>
           </property>
-          <layout class="QGridLayout" name="lyToolbox_3"/>
+          <layout class="QGridLayout" name="lyToolbox_3">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+          </layout>
          </widget>
         </widget>
         <widget class="QWidget" name="gridLayoutWidget_7">

@@ -33,14 +33,7 @@ public:
         m_elseBlock = elseBlock;
         m_conditionals = conditionals;
     }*/
-    NodeConditional(Token op, int forcePage, Node* clause, Node* block, bool isWhile, Node* elseBlock=nullptr) {
-        m_block = block;
-        m_isWhileLoop = isWhile;
-        m_elseBlock = elseBlock;
-        m_binaryClause = clause;
-        m_op = op;
-        m_forcePage = forcePage;
-    }
+    NodeConditional(Token op, int forcePage, Node* clause, Node* block, bool isWhile, Node* elseBlock=nullptr);
 
 /*    void ConditionalTryFail(Assembler* , QString labelFail, int i);
     void ConditionalTrySuccess(Assembler* , QString labelFail, int i);
@@ -48,25 +41,7 @@ public:
 
 
 
-    void Delete() override {
-        /*if (m_a) {
-            m_a->Delete();
-            delete m_a;
-            m_a = nullptr;
-        }
-        if (m_b) {
-            m_b->Delete();
-            delete m_b;
-            m_b = nullptr;
-        }*/
-        if (m_block) {
-            m_block->Delete();
-            delete m_block;
-            m_block = nullptr;
-        }
-
-
-    }
+    void Delete() override;
 
     PVar Execute(SymbolTable* symTab, uint lvl) override;
 

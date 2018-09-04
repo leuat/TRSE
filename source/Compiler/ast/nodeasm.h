@@ -18,16 +18,7 @@ public:
         return PVar();
     }
 
-    QString Build(Assembler *as) override {
-        QStringList txt = m_asm.split("\n");
-        as->Comment("");
-        as->Comment("****** Inline assembler section");
-        for (QString t: txt) {
-            as->Write(t,0);
-        }
-        as->Asm("");
-        return "";
-    }
+    QString Build(Assembler *as) override;
     void ExecuteSym(SymbolTable* symTab) override {
 
     }

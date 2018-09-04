@@ -14,7 +14,7 @@ public:
     PixelChar m_color;
     CharsetImage(LColorList::Type t);
 
-    PixelChar m_copy[16];
+    PixelChar m_copy[64];
 
     enum Mode{ FULL_IMAGE, CHARSET1x1, CHARSET2x2, CHARSET2x2_REPEAT};
 

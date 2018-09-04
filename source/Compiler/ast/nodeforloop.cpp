@@ -1,6 +1,16 @@
 #include "nodeforloop.h"
 #include "nodenumber.h"
 
+NodeForLoop::NodeForLoop(Node *a, Node *b, Node *block, Node *step, bool unroll, int forcePage, int loopCounter) {
+    m_a = a;
+    m_b = b;
+    m_block = block;
+    m_forcePage = forcePage;
+    m_step = step;
+    m_loopCounter = loopCounter;
+    //        m_op = op;
+}
+
 void NodeForLoop::Compare(Assembler *as) {
 
     if (m_loopCounter==0) {
@@ -78,12 +88,32 @@ PVar NodeForLoop::Execute(SymbolTable *symTab, uint lvl) {
 
 }
 
+void NodeForLoop::Delete() {
+    if (m_a) {
+        m_a->Delete();
+        delete m_a;
+        m_a = nullptr;
+    }
+    if (m_b) {
+        m_b->Delete();
+        delete m_b;
+        m_b = nullptr;
+    }
+    if (m_block) {
+        m_block->Delete();
+        delete m_block;
+        m_block = nullptr;
+    }
+
+
+}
+
 void NodeForLoop::LargeLoop(Assembler *as)
 {
     QString loopForFix = as->NewLabel("forLoopFix");
     QString loopDone = as->NewLabel("forLoopDone");
 
-/*    Compare(as);
+    /*    Compare(as);
     as->Asm("bne "+loopForFix);
     as->Asm("jmp "+loopDone);*/
     as->Label(loopForFix);

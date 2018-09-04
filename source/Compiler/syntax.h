@@ -73,43 +73,16 @@ public:
 
     static Syntax s;
 
-    bool isNumeric(QString s) {
-        bool ok;
-        int dec = s.toInt(&ok, 10);
-        return ok;
-    }
+    bool isNumeric(QString s);
 
-    bool isDigit(QString s) {
-        // Check if HEX
-        return digit.contains(s);
+    bool isDigit(QString s);
+    bool isDigitHex(QString s);
+    bool isAlnum(QString s);
+    bool isString(QString s);
 
-    }
-    bool isDigitHex(QString s) {
-        // Check if HEX
-        return digitAll.contains(s);
+    bool isAlpha(QString s);
 
-    }
-    bool isAlnum(QString s) {
-        return alnum.contains(s.toLower());
-    }
-    bool isString(QString s) {
-        return alnumString.contains(s.toLower());
-    }
-
-    bool isAlpha(QString s) {
-        return alpha.contains(s.toLower());
-    }
-
-    Token GetID(QString val) {
-        for (Token& t: reservedWords)
-            if (val.toUpper()==t.m_value) {
-                t.m_lineNumber = Pmm::Data::d.lineNumber;
-                return t;
-            }
-
-        //exit(1);
-        return Token(TokenType::ID, val);
-    }
+    Token GetID(QString val);
 };
 
 #endif // SYNTAX_H

@@ -94,13 +94,13 @@ public:
 class CopyStamp : public ToolboxItem {
 public:
     void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
-    QPoint m_start;
-    QPoint m_end;
+    static QPoint m_start;
+    static QPoint m_end;
     enum Status { Selecting, DoneSelecting, Stamp, Idle };
-    Status m_status = Status::Idle;
-    LImage* m_copy=nullptr;
+    static Status m_status;// = Status::Idle;
+    static LImage* m_copy;
 
-    CopyStamp() {}
+    CopyStamp() {m_status=Idle;}
     CopyStamp(QString name, QString imagefile) : ToolboxItem(name, imagefile) { }
     void IsPreview(int button, bool& isPreview) override {
         if (button==1)
@@ -108,6 +108,31 @@ public:
     }
 
     void StampImage(int x, int y, LImage* img);
+    void Init() override { m_status = Status::Idle;}
+
+
+};
+
+
+class RotateAround : public ToolboxItem {
+public:
+    void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
+    QPoint m_start;
+    QPoint m_end;
+    float angele;
+
+    enum Status { Click, Down, Idle };
+    Status m_status = Status::Idle;
+    LImage* m_copy=nullptr;
+
+    RotateAround() {}
+    RotateAround(QString name, QString imagefile) : ToolboxItem(name, imagefile) { }
+    void IsPreview(int button, bool& isPreview) override {
+        //if (button==1)
+        //isPreview = true;
+    }
+
+    //void RotateImage(int x, int y, LImage* img);
     void Init() override { m_status = Status::Idle;}
 
 

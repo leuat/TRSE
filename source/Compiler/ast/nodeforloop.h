@@ -20,15 +20,7 @@ public:
     Node* m_step = nullptr;
     int m_loopCounter=0;
 
-    NodeForLoop(Node* a, Node* b, Node* block, Node* step, bool unroll, int forcePage, int loopCounter) {
-        m_a = a;
-        m_b = b;
-        m_block = block;
-        m_forcePage = forcePage;
-        m_step = step;
-        m_loopCounter = loopCounter;
-//        m_op = op;
-    }
+    NodeForLoop(Node* a, Node* b, Node* block, Node* step, bool unroll, int forcePage, int loopCounter);
 
 
     void Compare(Assembler* as);
@@ -37,25 +29,7 @@ public:
 
 
     PVar Execute(SymbolTable* symTab, uint lvl) override;
-    void Delete() override {
-        if (m_a) {
-            m_a->Delete();
-            delete m_a;
-            m_a = nullptr;
-        }
-        if (m_b) {
-            m_b->Delete();
-            delete m_b;
-            m_b = nullptr;
-        }
-        if (m_block) {
-            m_block->Delete();
-            delete m_block;
-            m_block = nullptr;
-        }
-
-
-    }
+    void Delete() override;
     void ExecuteSym(SymbolTable* symTab) override {
         m_block->ExecuteSym(symTab);
     }

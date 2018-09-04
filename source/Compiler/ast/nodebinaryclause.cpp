@@ -5,6 +5,13 @@
 
 
 
+void NodeBinaryClause::ExecuteSym(SymbolTable *sym) {
+    if (m_left!=nullptr)
+        m_left->ExecuteSym(sym);
+    if (m_right!=nullptr)
+        m_left->ExecuteSym(sym);
+}
+
 void NodeBinaryClause::BuildToCmp(Assembler *as)
 {
     QString b="";
@@ -53,6 +60,14 @@ void NodeBinaryClause::BuildSimple(Assembler *as, QString lblFailed)
 
 
 
+}
+
+bool NodeBinaryClause::cannotBeSimplified(Assembler *as) {
+    // can NOT be simplified
+    return ((m_op.m_type==TokenType::AND || m_op.m_type == TokenType::OR)
+            || m_left->getType(as)==TokenType::INTEGER || m_right->getType(as)==TokenType::INTEGER
+
+            );
 }
 
 void NodeBinaryClause::BinaryClause(Assembler *as)

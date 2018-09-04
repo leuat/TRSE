@@ -177,6 +177,13 @@ void CopyStamp::Perform(int x, int y, unsigned char color, LImage *img, bool isP
 
 }
 
+LImage* CopyStamp::m_copy=nullptr;
+QPoint CopyStamp::m_start;
+QPoint CopyStamp::m_end;
+
+CopyStamp::Status CopyStamp::m_status;// = Idle;
+
+
 void CopyStamp::StampImage(int x, int y, LImage* img)
 {
     int w = abs(m_end.x()-m_start.x());
@@ -191,3 +198,39 @@ void CopyStamp::StampImage(int x, int y, LImage* img)
 }
 
 
+
+void RotateAround::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
+{
+    if (button==1 && m_status == Status::Idle) {
+        m_status = Status::Down;
+        m_start = QPoint(x,y);
+       // qDebug() << "Start1";
+        if (m_copy==nullptr)
+            m_copy = LImageFactory::Create(img->m_type, img->m_colorList.m_type);
+        // New from source
+        if (m_copy->m_type!=img->m_type) {
+            delete m_copy;
+            m_copy = LImageFactory::Create(img->m_type, img->m_colorList.m_type);
+
+        }
+     //   qDebug() << "Start2";
+        m_copy->CopyFrom(img);
+        qDebug() << "NEW";
+    }
+
+
+    if (m_status == Status::Down && button==1) {
+        m_end = QPoint(x,y)-m_start;
+        float angle = m_end.x()/10.0f;
+        m_copy->Rotate(m_start, angle, 1, img);
+
+    }
+
+    if (m_status == Status::Down && button==0) {
+        float angle = m_end.x()/10.0f;
+        m_status = Status::Idle;
+        m_copy->Rotate(m_start, angle, 1, img);
+
+    }
+
+}

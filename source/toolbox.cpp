@@ -7,7 +7,7 @@ Toolbox::Toolbox()
 }
 
 
-void Toolbox::Initialize(QLayout* ly)
+void Toolbox::Initialize(QGridLayout* ly)
 {
     m_items.clear();
     m_items.append(new ShapeBox("",":/resources/images/brush_circle.png"));
@@ -16,6 +16,8 @@ void Toolbox::Initialize(QLayout* ly)
     m_items.append(new Filler("",":/resources/images/brush_fill.png"));
     m_items.append(new Line("",":/resources/images/brush_line.png"));
     m_items.append(new CopyStamp("CS",""));
+    m_items.append(new RotateAround("Rotate",""));
+
 
     m_current = m_items[0];
 
@@ -23,9 +25,11 @@ void Toolbox::Initialize(QLayout* ly)
 
 }
 
-void Toolbox::BuildGUI(QLayout *ly)
+void Toolbox::BuildGUI(QGridLayout *ly)
 {
     int size = 50;
+    int row=0;
+    int col=0;
     for (int i=0;i<m_items.count();i++) {
         QPushButton *b = new QPushButton();
         //b->setGeometry(0,0,40,40);
@@ -41,12 +45,17 @@ void Toolbox::BuildGUI(QLayout *ly)
         b->setFixedSize(QSize(size, size));
         QObject::connect( b, &QPushButton::clicked,  [=](){ handleButton(i); } );
 
-        ly->addWidget(b);
+        ly->addWidget(b,row,col);
 
         b->setIcon(m_items[i]->m_icon);
         b->setIconSize(QSize(b->width(), b->height()*2));
 
         m_buttons.append(b);
+        col++;
+        if (col==2) {
+            col=0;
+            row++;
+        }
 
     }
 }

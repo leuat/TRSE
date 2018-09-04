@@ -44,26 +44,13 @@ public:
     int m_intVal=0;
     int m_lineNumber=0;
     QString m_currentLineText="";
-    QString getType() {
-        return TokenType::types[m_type];
-    }
+    QString getType();
 
     Token();
 
 
-    Token(TokenType::Type t, QString val) {
-        m_value = val;
-        m_type = t;
-        m_lineNumber = Pmm::Data::d.lineNumber;
-        m_currentLineText = Pmm::Data::d.currentLineText;
-    }
-    Token(TokenType::Type t, int val) {
-        m_intVal = val;
-        m_type = t;
-        m_lineNumber = Pmm::Data::d.lineNumber;
-        m_currentLineText = Pmm::Data::d.currentLineText;
-
-    }
+    Token(TokenType::Type t, QString val);
+    Token(TokenType::Type t, int val);
 
 };
 

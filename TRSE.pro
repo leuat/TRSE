@@ -26,29 +26,35 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #QMAKE_CXXFLAGS += -fopenmp -std=c++11
 
 macx {
-  QMAKE_CXXFLAGS += -openmp
-  #LIBS += -openmp
-  ICON = trse.icns
+    QMAKE_CXXFLAGS += -openmp
+    #LIBS += -openmp
+    ICON = trse.icns
+    QMAKE_CXXFLAGS += -Ofast
 
 }
 
 
 
 win32-g++ {
-  QMAKE_CXXFLAGS += -fopenmp
-  LIBS += -fopenmp
+    QMAKE_CXXFLAGS += -fopenmp
+    LIBS += -fopenmp
 }
 win32-msvc*{
-  QMAKE_CXXFLAGS += -openmp
-  LIBS += -openmp
+    QMAKE_CXXFLAGS += -openmp
+    LIBS += -openmp
+    QMAKE_CXXFLAGS += -Ofast
 }
 
 linux-g*{
-  QMAKE_CXXFLAGS += -fopenmp
-  LIBS += -fopenmp
+    QMAKE_CXXFLAGS += -fopenmp
+    QMAKE_CXXFLAGS +=  -Wno-unused-variable -Wno-unused-parameter -Wno-sign-compare -Wno-comment -Wno-parentheses -Wno-delete-non-virtual-dtor
+    LIBS += -fopenmp
+    QMAKE_CXXFLAGS +=  -Ofast
+
 }
 
 win32:RC_ICONS += trse.ico
+
 
 
 SOURCES += main.cpp\
@@ -128,7 +134,8 @@ SOURCES += main.cpp\
     source/LeLib/util/spline.cpp \
     source/LeLib/util/util.cpp \
     source/LeLib/util/SimplexNoise.cpp \
-    source/LeLib/limage/movieconverter.cpp
+    source/LeLib/limage/movieconverter.cpp \
+    source/LeLib/limage/limagecharsetfixedcolor.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -209,7 +216,8 @@ HEADERS  += mainwindow.h \
     source/LeLib/util/spline.h \
     source/LeLib/util/util.h \
     source/LeLib/util/SimplexNoise.h \
-    source/LeLib/limage/movieconverter.h
+    source/LeLib/limage/movieconverter.h \
+    source/LeLib/limage/limagecharsetfixedcolor.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \

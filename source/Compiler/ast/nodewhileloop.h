@@ -11,21 +11,11 @@ public:
     NodeWhileLoop(Node* block) {
         m_block = block;
     }
-    void Delete() override {
-        if (m_block) {
-            m_block->Delete();
-            delete m_block;
-            m_block = nullptr;
-        }
-
-
-    }
+    void Delete() override;
 
     PVar Execute(SymbolTable* symTab, uint lvl) override {return PVar();}
 
-    void ExecuteSym(SymbolTable* symTab) override {
-       m_block->ExecuteSym(symTab);
-    }
+    void ExecuteSym(SymbolTable* symTab) override;
 
 
 };

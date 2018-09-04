@@ -130,6 +130,7 @@ QPoint LImageSprites::getXY(int x, int y)
 
 }
 
+
 bool LImageSprites::KeyPress(QKeyEvent *e)
 {
     QPoint dir(0,0);
@@ -152,6 +153,7 @@ bool LImageSprites::KeyPress(QKeyEvent *e)
     return true;
 
 }
+//   qDebug() << "Start2";
 
 void LImageSprites::setPixel(int x, int y, unsigned int color)
 {
@@ -209,31 +211,54 @@ void LImageSprites::FlipHorizontal()
 
 }
 
+void LImageSprites::CopyPasteChar(int type)
+{
+    //if (m_currentMode==CHARSET1x1)
+    int max=1;
+    if (m_currentMode==CHARSET2x2) max = 6;
+    int x=0;
+    int k0 = 0;
+    int k=0;
+
+    for (int kk=0;kk<max;kk++)
+    {
+       int j=0;
+        int add=k;
+        for (int i=0;i<9;i++) {
+            if (type==0)
+            m_copy[x]=m_data[m_currencChar+add];
+            if (type==1)
+            m_data[m_currencChar+add]=m_copy[x];
+
+            x++;
+            j++;
+            if (j<=2) {
+                add++;
+            }
+            else {
+                j=0;
+                add=add+38;
+            }
+        }
+        k0=k0+1;
+        k=k+3;
+        if (k0==3) {
+            k0=0;
+            k=40*3;
+        }
+
+    }
+
+}
+
+
 void LImageSprites::CopyChar()
 {
-    m_copy[0] = m_data[m_currencChar];
-    m_copy[1] = m_data[m_currencChar+1];
-    m_copy[2] = m_data[m_currencChar+2];
-    m_copy[3] = m_data[m_currencChar+40];
-    m_copy[4] = m_data[m_currencChar+41];
-    m_copy[5] = m_data[m_currencChar+42];
-    m_copy[6] = m_data[m_currencChar+80];
-    m_copy[7] = m_data[m_currencChar+81];
-    m_copy[8] = m_data[m_currencChar+82];
-
-
+    CopyPasteChar(0);
 }
 
 void LImageSprites::PasteChar()
 {
-    m_data[m_currencChar] = m_copy[0];
-    m_data[m_currencChar+1] = m_copy[1];
-    m_data[m_currencChar+2] = m_copy[2];
-    m_data[m_currencChar+40] = m_copy[3];
-    m_data[m_currencChar+41] = m_copy[4];
-    m_data[m_currencChar+42] = m_copy[5];
-    m_data[m_currencChar+80] = m_copy[6];
-    m_data[m_currencChar+81] = m_copy[7];
-    m_data[m_currencChar+82] = m_copy[8];
+    CopyPasteChar(1);
 
 }

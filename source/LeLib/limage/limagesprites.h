@@ -22,7 +22,11 @@ public:
     void FromRaw(QByteArray& arr) override;
     void ToRaw(QByteArray& arr) override;
 
+
     QPoint getXY(int x, int y);
+
+    void CopyPasteChar(int type);
+
 
     bool KeyPress(QKeyEvent *e) override;
 

@@ -60,6 +60,20 @@ LImage::Type LImage::CharToType(unsigned char c)
 
 }
 
+void LImage::Rotate(QPoint center, float angle, float scale, LImage* img)
+{
+    for (int i=0;i<m_width;i++)
+        for (int j=0;j<m_height;j++) {
+            float xx = (i - center.x())/scale;
+            float yy = (j - center.y())/scale/2;
+
+            float xr = xx*cos(angle)-yy*sin(angle) + center.x();
+            float yr = (yy*cos(angle)+xx*sin(angle))*2 + center.y();
+            img->setPixel(i,j,getPixel(xr,yr));
+
+        }
+}
+
 
 
 

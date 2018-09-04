@@ -25,26 +25,11 @@ public:
     virtual bool DataEquals(Node* other) { return false;}
     virtual QString HexValue() {return "0";}
     virtual int numValue() { return 0;}
-    virtual void Delete() {
-        if (m_left!=nullptr) {
-            m_left->Delete();
-            delete m_left;
-            m_left = nullptr;
-        }
-        if (m_right!=nullptr) {
-            m_right->Delete();
-            delete m_right;
-            m_left = nullptr;
-
-        }
-    }
+    virtual void Delete();
     virtual bool isPureNumeric() {
         return false;
     }
-    virtual QString Build(Assembler* as) {
-        m_currentLineNumber = m_op.m_lineNumber;
-        return "";
-    }
+    virtual QString Build(Assembler* as);
     virtual void LoadVariable(Assembler* a) {}
     virtual void StoreVariable(Assembler* a) {}
     virtual TokenType::Type getType(Assembler* as) {
@@ -54,10 +39,7 @@ public:
     virtual bool isAddress() { return false;}
     virtual void AssignPointer(Assembler* as, QString memoryLocation) {}
 
-    void RequireAddress(Node* n,QString name, int ln) {
-        if (!n->isAddress())
-            ErrorHandler::e.Error(name + " requires parameter to be memory address", ln);
-    }
+    void RequireAddress(Node* n,QString name, int ln);
 
     void RequireNumber(Node* n,QString name, int ln) {
         if (!n->isPureNumeric())
@@ -69,16 +51,7 @@ public:
    virtual bool isMinusOne() { return false; }
     virtual bool isOne() { return false; }
 
-    bool verifyBlockBranchSize(Assembler *as, Node* testBlock)
-    {
-        AsmMOS6502 tmpAsm;
-        tmpAsm.m_symTab = as->m_symTab;
-        testBlock->Build(&tmpAsm);
-        //qDebug() << "block count:" << tmpAsm.m_source.count();
-        int blockCount = tmpAsm.m_source.count();
-        return blockCount<80;
-
-    }
+    bool verifyBlockBranchSize(Assembler *as, Node* testBlock);
 
 
 };

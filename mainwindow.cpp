@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
        m_iniFile.Load(m_iniFileName);
 
     VerifyDefaults();
-    QPoint p = ui->splitter->pos();
+    //QPoint p = ui->splitter->pos();
 //    p.setX();
     QVector3D sp = m_iniFile.getVec("splitpos");
     if (sp.length()!=0)

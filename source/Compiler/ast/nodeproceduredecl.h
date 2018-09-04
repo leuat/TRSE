@@ -17,30 +17,12 @@ public:
     Node* m_block = nullptr;
 
 
-    NodeProcedureDecl(Token t, QString m) {
-        m_op = t;
-        m_procName = m;
-        m_isInterrupt = false;
-    }
+    NodeProcedureDecl(Token t, QString m);
 
 
     NodeProcedureDecl(Token t, QString m, QVector<Node*> paramDecl, Node* block, bool isInterrupt=false);
 
-    void Delete() override {
-        ErrorHandler::e.DebugLow("Memory: Deleting in NodeProcedureDecl", level);
-
-        for (Node* n: m_paramDecl) {
-            n->Delete();
-            delete n;
-        }
-        m_paramDecl.clear();
-        if (m_block) {
-            m_block->Delete();
-            delete m_block;
-            m_block = nullptr;
-        }
-        ErrorHandler::e.DebugLow("Memory DONE: Deleting in NodeProcedureDecl", level);
-    }
+    void Delete() override;
 
     void SetParametersValue(QVector<PVar>& lst);
 

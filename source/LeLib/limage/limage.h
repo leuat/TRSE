@@ -98,6 +98,8 @@ public:
         return "Full image mode";
     }
 
+    virtual void Rotate(QPoint center, float angle, float scale, LImage* img);
+
     virtual void setPixel(int x, int y, unsigned int color) = 0;
     virtual unsigned int getPixel(int x, int y) = 0;
     virtual void SetColor(uchar col, uchar idx) {}

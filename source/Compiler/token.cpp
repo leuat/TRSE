@@ -11,8 +11,27 @@ QString TokenType::types[65] = { "INTEGER", "PLUS", "MINUS", "MUL", "DIV", "LPAR
             "INCLUDE", "DEFINE", "PREPROCESSOR", "IFDEF", "ENDIF", "IFNDEF", "OFFPAGE", "ONPAGE",
             "STEP", "UNROLL", "LOOPX", "LOOPY", "CSTRING", "USERDATA"};
 
+QString Token::getType() {
+    return TokenType::types[m_type];
+}
+
 Token::Token()
 {
+    m_lineNumber = Pmm::Data::d.lineNumber;
+    m_currentLineText = Pmm::Data::d.currentLineText;
+
+}
+
+Token::Token(TokenType::Type t, QString val) {
+    m_value = val;
+    m_type = t;
+    m_lineNumber = Pmm::Data::d.lineNumber;
+    m_currentLineText = Pmm::Data::d.currentLineText;
+}
+
+Token::Token(TokenType::Type t, int val) {
+    m_intVal = val;
+    m_type = t;
     m_lineNumber = Pmm::Data::d.lineNumber;
     m_currentLineText = Pmm::Data::d.currentLineText;
 

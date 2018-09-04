@@ -17,25 +17,14 @@ public:
         return PVar();
     }
 
-    void ExecuteSym(SymbolTable* sym) {
-        if (m_left!=nullptr)
-            m_left->ExecuteSym(sym);
-        if (m_right!=nullptr)
-            m_left->ExecuteSym(sym);
-    }
+    void ExecuteSym(SymbolTable* sym) override;
 
     void BuildToCmp(Assembler* as);
 
     void BuildSimple(Assembler* as, QString failedLabel);
 
 
-    bool cannotBeSimplified(Assembler* as) {
-       // can NOT be simplified
-        return ((m_op.m_type==TokenType::AND || m_op.m_type == TokenType::OR)
-                || m_left->getType(as)==TokenType::INTEGER || m_right->getType(as)==TokenType::INTEGER
-
-                );
-    }
+    bool cannotBeSimplified(Assembler* as);
 
 //    void OnlyNumVar(Assembler* as, QString a, QString b);
 

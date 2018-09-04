@@ -109,8 +109,8 @@ public:
 
     QString PushZeroPointer() override;
     void PopZeroPointer() override;
-    void PopAllZeroPointers() { m_curZeroPointer=0;}
-    bool CheckZPAvailability();
+    void PopAllZeroPointers() override { m_curZeroPointer=0;}
+    bool CheckZPAvailability() override;
 
 
 
@@ -142,7 +142,7 @@ public:
     QString getToken(QString, int t);
     void RemoveLines();
 
-    int getLineCount();
+    int getLineCount() override;
 
 
     MOSOperation GetOperand(QStringList s);
