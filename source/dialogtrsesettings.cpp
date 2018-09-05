@@ -1,6 +1,7 @@
 #include "dialogtrsesettings.h"
 #include "ui_dialogtrsesettings.h"
 #include <QFileDialog>
+#include "source/LeLib/util/util.h"
 #include <QStringList>
 #include <QDir>
 
@@ -19,7 +20,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leExomizer->setText(m_ini->getString("exomizer"));
     ui->leZeropages->setText(  fromStringList(m_ini->getStringList("zeropages")));
 
-    QDir directory("themes/");
+    QDir directory(Util::path+"themes/");
     QStringList themes = directory.entryList(QStringList() << "*.ini");
     ui->cmbTheme->clear();
     QStringList washed;
