@@ -193,7 +193,7 @@ void CharsetImage::FromRaw(QByteArray &arr)
         int val = 256*8;
      //   qDebug() << "Charset contains colors";
         for (int i=0;i<40*25;i++) {
-            m_data[i].c[3] = arr[i+val];
+            m_data[i].c[3] = arr[i+val]&7;
 //            if (i<4) qDebug() << "Color val: " << QString::number(arr[i+val]);
        //     if (m_data[i].c[3]!=0)
          //       qDebug() << m_data[i].c[3];
@@ -220,11 +220,17 @@ void CharsetImage::ToRaw(QByteArray &arr)
         QByteArray cols;
         cols.resize(size);
 
+/*        qDebug() << "Extracols:";
+        for (int i=0;i<3;i++)
+            qDebug() << QString::number(m_extraCols[i]);
+*/
+        m_extraCols[0]=m_background;
+
         for (int i=start;i<end;i++) {
             PixelChar& pc = m_data[i];
 
-            cols[(i-start)] = getVariableColor(&pc);
-//            if (i<4) qDebug() << "Cols: " << getVariableColor(&pc);
+            cols[(i-start)] = (getVariableColor(&pc) & 7) +8;
+           // if (i<4) qDebug() << "Cols: " << getVariableColor(&pc);
         }
         arr.append(cols);
     }

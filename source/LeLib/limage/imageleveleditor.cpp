@@ -126,9 +126,26 @@ void ImageLevelEditor::SaveBin(QFile &file)
 
 void ImageLevelEditor::LoadBin(QFile &file)
 {
-    QByteArray header = file.read(32);
-    m_meta.fromHeader(header);
+    // Make sure
+    //QByteArray header = file.read(32);
+    QByteArray h1 = file.read(9);
+    m_meta.fromHeader(h1);
     m_meta.Calculate();
+    int actualSize = m_meta.totalSize() + 13;
+    // Test for old or new version of file type
+    if (file.size()==actualSize) {
+        qDebug() << "NEW type of file!";
+        // NEW version:
+        QByteArray h2 = file.read(32-9);
+        h1.append(h2);
+        m_meta.fromHeader(h1);
+        m_meta.Calculate();
+    }
+    else {
+        qDebug() << "OLD type of file!";
+        m_meta.m_useColors=true;
+     }
+
 
     Initialize(m_meta);
 /*    qDebug() << "INChardata: " <<m_meta.dataSize();
