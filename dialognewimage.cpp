@@ -41,6 +41,7 @@ void DialogNewImage::ToMeta()
 {
     if (!started)
         return;
+    m_meta.m_useColors = !ui->chkUseColors->isChecked();
     m_meta.m_width = ui->leScreenWidth->text().toInt();
     m_meta.m_height = ui->leScreenHeight->text().toInt();
     m_meta.m_sizex = ui->leLevelsX->text().toInt();
@@ -126,6 +127,16 @@ void DialogNewImage::on_leChunkSize_textChanged(const QString &arg1)
 }
 
 void DialogNewImage::on_leDataChunks_textChanged(const QString &arg1)
+{
+    ToMeta();
+}
+
+void DialogNewImage::on_checkBox_clicked()
+{
+    ToMeta();
+}
+
+void DialogNewImage::on_chkUseColors_stateChanged(int arg1)
 {
     ToMeta();
 }

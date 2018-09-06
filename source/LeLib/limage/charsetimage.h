@@ -35,6 +35,8 @@ public:
     void SaveBin(QFile& file) override;
     void LoadBin(QFile& file) override;
 
+    uchar getVariableColor(PixelChar* pc);
+
     CharsetImage* getCharset() override { return this; }
     unsigned int getPixel(int x, int y) override;
 

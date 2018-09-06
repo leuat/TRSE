@@ -97,13 +97,15 @@ void ImageLevelEditor::SaveBin(QFile &file)
     int i=0;
     CharmapLevel* ll = m_levels[0];
 
-    qDebug() << "Chardata: " <<ll->m_CharData.size();
+/*    qDebug() << "Chardata: " <<ll->m_CharData.size();
     qDebug() << "Colordata: " <<ll->m_CharData.size();
     qDebug() << "Extradata: " <<ll->m_ExtraData.size();
-
+*/
     for (CharmapLevel* l : m_levels) {
         file.write( l->m_CharData);
-        file.write( l->m_ColorData);
+        if (m_meta.m_useColors)
+
+           file.write( l->m_ColorData);
         file.write( l->m_ExtraData);
 
         if (l->m_CharData.size()!= ll->m_CharData.size()) {
@@ -124,18 +126,19 @@ void ImageLevelEditor::SaveBin(QFile &file)
 
 void ImageLevelEditor::LoadBin(QFile &file)
 {
-    QByteArray header = file.read(9);
+    QByteArray header = file.read(32);
     m_meta.fromHeader(header);
     m_meta.Calculate();
 
     Initialize(m_meta);
-    qDebug() << "INChardata: " <<m_meta.dataSize();
-    qDebug() << "INExtraData: " <<m_meta.m_extraDataSize;
+/*    qDebug() << "INChardata: " <<m_meta.dataSize();
+    qDebug() << "INExtraData: " <<m_meta.m_extraDataSize;*/
     for (CharmapLevel* l : m_levels) {
 
         l->m_CharData = file.read(m_meta.dataSize());
+        if (m_meta.m_useColors)
         l->m_ColorData = file.read(m_meta.dataSize());
-        l->m_ExtraData = file.read(m_meta.m_extraDataSize);
+            l->m_ExtraData = file.read(m_meta.m_extraDataSize);
     }
 
     SetLevel(QPoint(0,0));
@@ -296,7 +299,9 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 
 
     uchar v = m_currentLevel->m_CharData[pos];
-    uchar col = m_currentLevel->m_ColorData[pos];
+    uchar col=0;
+    if (m_meta.m_useColors)
+        col = m_currentLevel->m_ColorData[pos];
     int ix = (x % (8)/2)*2;//- (dx*40);
     int iy = y % 8;//- (dy*25);
 
@@ -306,14 +311,20 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 
     pos = v + shift;
 
+
+    if (!m_meta.m_useColors)
+        col = m_charset->m_data[pos].c[3];
+
 //    return m_charset->m_data[pos].get(v + (2*x)&7, v+ y&7,m_bitMask);
     uint val = m_charset->m_data[pos].get(ix, iy,m_charset->m_bitMask);
 
-    if (val==m_charset->m_data[pos].c[3]) {
-        val = col&0b00000111;
-    }
-    if ((col&0b00001000)==0b00001000)
+    if (m_meta.m_useColors) {
+        if (val==m_charset->m_data[pos].c[3]) {
+            val = col&0b00000111;
+        }
+        if ((col&0b00001000)==0b00001000)
             val+=1000;
+    }
 
     return val;
 

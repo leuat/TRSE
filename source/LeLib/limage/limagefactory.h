@@ -10,6 +10,7 @@
 #include "source/LeLib/limage/imageleveleditor.h"
 #include "source/LeLib/limage/limagecharsetregular.h"
 #include "source/LeLib/limage/limagesprites.h"
+#include "source/LeLib/limage/limagecharsetfixedcolor.h"
 
 class LImageFactory {
 public:
@@ -33,6 +34,8 @@ public:
             return new ImageLevelEditor(colorType);
         if (t == LImage::Type::Sprites)
             return new LImageSprites(colorType);
+        if (t == LImage::Type::CharMapMultiColorFixed)
+            return new LImageCharsetFixedColor(colorType);
 
         qDebug() << "ERROR: LImageFactory could not find type " << t;
         qDebug() << "Charmapfactory: " << LImage::Type::CharmapRegular;

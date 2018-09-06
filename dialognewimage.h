@@ -49,6 +49,10 @@ private slots:
 
     void on_leDataChunks_textChanged(const QString &arg1);
 
+    void on_checkBox_clicked();
+
+    void on_chkUseColors_stateChanged(int arg1);
+
 private:
     Ui::DialogNewImage *ui;
 };

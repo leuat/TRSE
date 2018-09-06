@@ -31,6 +31,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 6;
     if (t==FullScreenChar)
         return 7;
+    if (t==CharMapMultiColorFixed)
+        return 8;
 
 
     return 255;
@@ -54,6 +56,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return CharmapRegular;
     if (c==7)
         return FullScreenChar;
+    if (c==8)
+        return CharMapMultiColorFixed;
 
 
     return NotSupported;

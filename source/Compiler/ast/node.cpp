@@ -23,7 +23,7 @@ QString Node::Build(Assembler *as) {
 
 void Node::RequireAddress(Node *n, QString name, int ln) {
     if (!n->isAddress())
-        ErrorHandler::e.Error(name + " requires parameter to be memory address", ln);
+        ErrorHandler::e.Error(name + " requires parameter to be memory address. Did you forget a '^' symbol such as ^$D800?", ln);
 }
 
 bool Node::verifyBlockBranchSize(Assembler *as, Node *testBlock)

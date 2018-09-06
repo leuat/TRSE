@@ -35,6 +35,7 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
 
     m_exportParams["Start"] = 0;
     m_exportParams["End"] = 256;
+    m_exportParams["IncludeColors"] = 0;
 
 }
 
@@ -58,7 +59,6 @@ void CharsetImage::ImportBin(QFile &file)
 /*    SetColor(0, m_background); //MULTICOLOR_CHAR_COL +0
     SetColor(1, 2);// MULTICOLOR_CHAR_COL +2
     SetColor(2, 1); // MULTICOLOR_CHAR_COL +1*/
-    SetColor(5, 3); // Color that is changeable*/
 }
 
 void CharsetImage::ExportBin(QFile &f)
@@ -90,6 +90,21 @@ void CharsetImage::LoadBin(QFile& file)
     file.read( ( char * )( &m_extraCols[3] ), 1 );
     file.read( ( char * )( &m_data ),  25*40*12 );
 
+}
+
+uchar CharsetImage::getVariableColor(PixelChar *pc)
+{
+    uchar col = -1;
+    for (int i=0;i<4;i++) {
+        col = pc->c[i];
+        bool ok=true;
+        for (int j=0;j<3;j++)
+            if (col==m_extraCols[j])
+                ok=false;
+        if (ok)
+            return col;
+    }
+    return 0;
 }
 
 unsigned int CharsetImage::getPixel(int x, int y)
@@ -173,6 +188,19 @@ void CharsetImage::FromRaw(QByteArray &arr)
             pc.p[j] = v;
         }
     }
+    // Contains colors as well
+    if (arr.size()>256*8) {
+        int val = 256*8;
+     //   qDebug() << "Charset contains colors";
+        for (int i=0;i<40*25;i++) {
+            m_data[i].c[3] = arr[i+val];
+//            if (i<4) qDebug() << "Color val: " << QString::number(arr[i+val]);
+       //     if (m_data[i].c[3]!=0)
+         //       qDebug() << m_data[i].c[3];
+        }
+    }
+    else SetColor(5, 3); // Set default green
+
 }
 
 void CharsetImage::ToRaw(QByteArray &arr)
@@ -187,6 +215,18 @@ void CharsetImage::ToRaw(QByteArray &arr)
         PixelChar& pc = m_data[i];
         for (int j=0;j<8;j++)
             arr[(i-start)*8+j] = PixelChar::reverse(pc.p[j]);
+    }
+    if (m_exportParams["IncludeColors"] != 0) {
+        QByteArray cols;
+        cols.resize(size);
+
+        for (int i=start;i<end;i++) {
+            PixelChar& pc = m_data[i];
+
+            cols[(i-start)] = getVariableColor(&pc);
+//            if (i<4) qDebug() << "Cols: " << getVariableColor(&pc);
+        }
+        arr.append(cols);
     }
 }
 

@@ -50,8 +50,8 @@ private:
     int m_totalSize;
     int m_headerSize;
 
-
 public:
+    bool m_useColors=true;
     int m_width, m_height;
     int m_sizex, m_sizey;
     int m_startx, m_starty;
@@ -69,15 +69,19 @@ public:
     void Calculate()
     {
         m_dataSize = m_width*m_height;
-        m_levelSize = 2*m_dataSize + m_extraDataSize;
-        m_headerSize = 1 + 1 + 1 + 1 + 1 + 1 + 2 + 1;
+        if (m_useColors)
+            m_levelSize = 2*m_dataSize + m_extraDataSize;
+        else
+            m_levelSize = m_dataSize + m_extraDataSize;
+//        m_headerSize = 1 + 1 + 1 + 1 + 1 + 1 + 2 + 1;
+        m_headerSize = 32;
         // w/h sx/sy  stx/sty   levelSize
         m_totalSize = m_levelSize*m_sizex*m_sizey + m_headerSize;
     }
 
     QByteArray toHeader() {
         QByteArray ba;
-        ba.resize(9);
+        ba.resize(32);
         ba[0] = (uint)m_sizex;
         ba[1] = (uint)m_sizey;
         ba[2] = (uint)m_width;
@@ -89,6 +93,7 @@ public:
         ba[6] = (uint)m_dataChunks;
         ba[7] = (uint)m_dataChunkSize;
         ba[8] = (uint)m_extraDataSize;
+        ba[9] = m_useColors==true ? 1:0;
         return ba;
     }
 
@@ -105,6 +110,7 @@ public:
         m_dataChunkSize = (uchar)ba[7];
         m_extraDataSize = (uchar)ba[8];
 
+        m_useColors = ((uchar)ba[9]==1);
     }
 
 
@@ -126,6 +132,7 @@ public:
 
     CharmapLevel* getLevel(int i, int j);
     CharmapGlobalData m_meta;
+
 
 
     void SetLevel(QPoint f);
