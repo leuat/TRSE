@@ -141,6 +141,10 @@ void AsmMOS6502::DeclareArray(QString name, QString type, int count, QStringList
             for (int i=0;i<lst.count();i++)
                 app.Append(lst[i],0);
 
+            int p = Util::NumberFromStringHex(pos);
+
+            blocks.append(MemoryBlock(p,p+count, MemoryBlock::ARRAY, name));
+
             m_appendix.append(app);
         }
 
@@ -627,7 +631,7 @@ void AsmMOS6502::OptimisePassLdaTax(QString x)
                     if (perform) {
                         m_removeLines.append(j);
                         QString org = m_source[i];
-                        m_source[i] = m_source[i].toLower().replace("lda", "ld"+x)+" ; OPTIMIZED BUGZ";
+                        m_source[i] = m_source[i].toLower().replace("lda", "ld"+x)+" ; optimized, look out for bugs";
                         qDebug() << "Changed : "<< org << " to " <<m_source[i] << " with op " <<op;
                     }
                     //m_removeLines.append(i);

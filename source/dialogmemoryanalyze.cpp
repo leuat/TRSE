@@ -98,6 +98,7 @@ void DialogMemoryAnalyze::InitColors()
     m_colors["music"]=QColor(255,255,127);
     m_colors["data"]=QColor(127,127,255);
     m_colors["user"]=QColor(127,255,255);
+    m_colors["array"]=QColor(255,127,255);
 }
 
 

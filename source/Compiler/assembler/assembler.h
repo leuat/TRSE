@@ -13,7 +13,7 @@
 class MemoryBlock {
   public:
     int m_start, m_end;
-    enum Type {CODE, DATA, MUSIC, USER};
+    enum Type {CODE, DATA, MUSIC, USER, ARRAY};
     Type m_type;
     QString m_name;
     MemoryBlock() {}
@@ -30,6 +30,7 @@ class MemoryBlock {
         if (m_type==CODE) return "code";
         if (m_type==DATA) return "data";
         if (m_type==MUSIC) return "music";
+        if (m_type==ARRAY) return "array";
         return "user";
     }
 };

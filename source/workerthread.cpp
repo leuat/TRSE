@@ -3,6 +3,8 @@
 
 void WorkerThread::UpdateDrawing()
 {
+
+
     if (m_work==nullptr)
         return;
     if (m_isPanning)
@@ -15,17 +17,42 @@ void WorkerThread::UpdateDrawing()
     }
 
 
+
+
+    if (Data::data.imageEvent == 0 && !m_hasLeft) {
+        m_hasLeft = true;
+        isPreview=false;
+        Data::data.Redraw();
+        //qDebug() << "HASLEFT " << m_time << m_currentPos;
+        return;
+
+    }
+
+//    qDebug() << "Before" << m_time;
+    // Check if leave event triggerede
+
+    QPointF pos = (m_currentPos - QPointF(0.5, 0.5) -m_zoomCenter)*m_zoom + m_zoomCenter ;
+    bool isInWindow  =(pos.x()>=0 && pos.x()<m_work->m_currentImage->m_image->m_width &&
+                       pos.y()>=0 && pos.y()<m_work->m_currentImage->m_image->m_height);
+
+
+
+
+//    qDebug() << (m_prevPos-m_currentPos);
     if (!Data::data.forceRedraw && m_currentButton == 0)
+
     if ((abs(m_prevPos.x()-m_currentPos.x())<1) && (abs(m_prevPos.y()-m_currentPos.y()))<1)
         return;
 
-    QPointF pos = (m_currentPos - QPointF(0.5, 0.5) -m_zoomCenter)*m_zoom + m_zoomCenter ;
+//    if (Data::data.imageEvent != 2)
+  //      return;
 
-    if ((pos.x()>=0 && pos.x()<m_work->m_currentImage->m_image->m_width &&
-       pos.y()>=0 && pos.y()<m_work->m_currentImage->m_image->m_height) || Data::data.forceRedraw ) {
+
+    if ( isInWindow || Data::data.forceRedraw )
+    {
         m_work->m_currentImage->m_temp->CopyFrom(m_work->m_currentImage->m_image);
         Data::data.forceRedraw = false;
-
+        m_hasLeft = false;
         LImage* img = (LImage*)m_work->m_currentImage->m_image;
         isPreview = false;
 
@@ -49,7 +76,9 @@ void WorkerThread::UpdateDrawing()
         Data::data.Redraw();
     }
     else {
-        Data::data.Redraw();
+//        qDebug() << "OUTSIDE" << m_time;
+
+        //Data::data.Redraw();
         m_currentButton = 0;
     }
     if (m_currentButton == -1)
@@ -76,6 +105,8 @@ void WorkerThread::UpdateMousePosition()
     m_prevPos = m_currentPos;
     m_currentPos = QPoint(pos.x(), pos.y());
 */
+//    m_prevPos = m_currentPos;
+
 }
 
 void WorkerThread::UpdatePanning()
@@ -117,7 +148,10 @@ void WorkerThread::UpdateImage(LImage *mc)
     //qDebug() << "Updating image "<< m_work->m_currentImage;
 //    qDebug() << "ToQImage";
 
+//    qDebug() << m_tmpImage->width();
+
     mc->ToQImage(m_work->m_currentImage->m_image->m_colorList, m_tmpImage, m_zoom, m_zoomCenter);
+   // m_tmpImage->fill(QColor(255,0,0));
     m_pixMapImage.convertFromImage(*m_tmpImage);
 
     //ui->lblImageName->setText(m_work->m_currentImage->m_name  + "(" + m_work->m_currentImage->m_imageType->name + ")");
@@ -175,15 +209,13 @@ void WorkerThread::run()
         }
 */
         UpdateMessages();
-        UpdateMousePosition();
+        // Mouse position now being handled by QLabelLImage
+        //UpdateMousePosition();
         UpdatePanning();
         UpdateDrawing();
+        m_time++;
 
-        /*if (Data::data.redrawInput) {
-            m_work->Convert();
-            UpdateOutput();
-            Data::data.redrawInput = false;
-        }*/
+
         if (Data::data.redrawOutput && m_work!=nullptr) {
 
 //            qDebug() << "Redraw" << rand()%100;
@@ -191,17 +223,11 @@ void WorkerThread::run()
             if (isPreview) {
                 img = m_work->m_currentImage->m_temp;
             }
+            //qDebug() << "Updating image" << m_time;
             UpdateImage(img);
             Data::data.redrawOutput = false;
 
         }
-        int newShift = 0;
-//        if (QApplication::keyboardModifiers() & Qt::ShiftModifier)
-//            newShift = 1;
-
-//        qDebug() << (QApplication::keyboardModifiers() & Qt::ShiftModifier) << " + "  << rand()%100;
-
-
 
 
         QThread::msleep(5);

@@ -151,6 +151,10 @@ void FormImageEditor::UpdateImage()
 
 //    m_updateThread->m_
 
+
+   // m_updateThread->m_pixMapImage.fill(QColor(0,255,0));
+    ui->lblImage->setVisible(true);
+
     ui->lblImage->setPixmap(m_updateThread->m_pixMapImage.scaled(320, 320, Qt::IgnoreAspectRatio, Qt::FastTransformation));
 
 
@@ -811,12 +815,10 @@ void FormImageEditor::Destroy()
 {
     //delete m_work.m_currentImage;
 
-    qDebug() << "BSET";
-    m_updateThread->m_imgLabel = nullptr;
+    //m_updateThread->m_imgLabel = nullptr;
     m_updateThread->m_work = nullptr;
 //    m_updateThread->m_ = nullptr;
 
-    qDebug() << "SET";
 }
 
 

@@ -2,6 +2,7 @@
 #define MOS6502_H
 
 #include "source/Compiler/assembler/assembler.h"
+#include "source/LeLib/util/util.h"
 
 class CStringItem {
 public:

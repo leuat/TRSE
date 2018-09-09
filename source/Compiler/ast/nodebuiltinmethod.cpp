@@ -2069,12 +2069,24 @@ void NodeBuiltinMethod::Decrunch(Assembler *as)
 void NodeBuiltinMethod::CopyImageColorData(Assembler *as)
 {
     NodeVar* var = dynamic_cast<NodeVar*>(m_params[0]);
+    QString varName;
+
     if (var==nullptr)
-        ErrorHandler::e.Error("CopyImageColorData : parameter 0 must be a variable!");
+    {
+        NodeNumber* num =dynamic_cast<NodeNumber*>(m_params[0]);
+        if (num==nullptr)
+            ErrorHandler::e.Error("CopyImageColorData : parameter 0 must be a variable or address");
+
+        varName = num->HexValue();
+    }
+    else varName = var->value;
 
     NodeNumber * bank = dynamic_cast<NodeNumber*>(m_params[1]);
     if (bank==nullptr)
         ErrorHandler::e.Error("CopyImageColorData : parameter 1 must be a constant number!");
+
+
+
 
 
     QString addBank="0";
@@ -2085,7 +2097,6 @@ void NodeBuiltinMethod::CopyImageColorData(Assembler *as)
     if (bank->m_val==3)
         addBank="$c000";
 
-    QString varName = var->value;
     QString lbl = as->NewLabel("copyimageloop");
 
 

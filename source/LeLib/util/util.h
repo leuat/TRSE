@@ -108,6 +108,14 @@ public:
         arr[t.size()]=0;
         return arr;
     }
+
+    static int NumberFromStringHex(QString s) {
+        bool ok = true;
+        if (s.startsWith("$"))
+            return s.remove("$").toInt(&ok, 16);
+        return s.toInt(&ok,  10);
+    }
+
     static QVector3D fromSpherical(float r, float t, float p) {
         return QVector3D( r*sin(t)*cos(p), r*sin(t)*sin(p), r*cos(t)  );
     }

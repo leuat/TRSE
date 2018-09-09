@@ -12,6 +12,7 @@ public:
     bool forceRedraw = false;
     bool redrawFileList = false;
     bool abort = false;
+    int imageEvent = 0;
     bool requestSaveAs = false;
     bool requestCloseWindow = false;
     bool blink = false;

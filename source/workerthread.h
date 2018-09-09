@@ -20,13 +20,16 @@ class WorkerThread : public QThread {
     Q_OBJECT
 
 public:
-
+    int m_time = 0;
     bool m_quit = false;
     ImageWorker* m_work = nullptr;
     Toolbox* m_toolBox = nullptr;
-    QLabel* m_imgLabel = nullptr;
+  //  QLabel* m_imgLabel = nullptr;
     int m_blinkTimer = 0;
     QPalette m_pal, m_orgPal;
+
+    bool m_hasLeft = false;
+
     WorkerThread() {
 
     }
@@ -35,10 +38,10 @@ public:
     void SetCurrentImage(ImageWorker* work, Toolbox* tb, QLabel* lbl) {
         m_work = work;
         m_toolBox = tb;
-        m_imgLabel = lbl;
+        //m_imgLabel = lbl;
     }
 
-    QPointF pos;
+//    QPointF pos;
 
     QPointF m_currentPos, m_prevPos;
     int m_currentButton = 0;
