@@ -19,11 +19,23 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
     m_fileExtension = "flf";
     Data::data.currentColor=1;
 
-
     m_grid.ApplyToLabel(ui->lblGrid);
     updateCharSet();
     ui->lblGrid->setVisible(ui->chkGrid->isChecked());
+/*    ui->lblImage->setMouseTracking(true);
+    ui->lblGrid->setMouseTracking(true);
+    setMouseTracking(true);
+*/
+    //ui->lblImage->visibleRegion()
+    ui->lblImage->m_work = &m_work;
+    ui->lblImage->setMouseTracking(true);
+}
 
+void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *iniProject) {
+    m_updateThread = t;
+    m_iniFile = ini;
+    m_projectIniFile = iniProject;
+    ui->lblImage->m_updateThread = t;
 }
 
 FormImageEditor::~FormImageEditor()
@@ -68,7 +80,7 @@ void FormImageEditor::wheelEvent(QWheelEvent *event)
         m_updateThread->m_zoomCenter = (m_updateThread->m_zoomCenter*t + (1-t)*m_updateThread->m_currentPos);//*(2-2*m_zoom);
         Data::data.redrawOutput = true;
 
-        m_grid.CreateGrid(40,25,m_gridColor,4, m_updateThread->m_zoom, m_updateThread->m_zoomCenter);
+        m_grid.CreateGrid(40,25,m_gridColor,4, m_updateThread->m_zoom, QPoint(m_updateThread->m_zoomCenter.x(), m_updateThread->m_zoomCenter.y()));
 
     }
     else {
@@ -312,7 +324,25 @@ void FormImageEditor::resizeEvent(QResizeEvent *event)
     ui->lblGrid->repaint();
    // qDebug() <<
 //    qDebug() << ui->lblImage->geometry();
-  //  ui->lblImage->setVisible(false);
+    //  ui->lblImage->setVisible(false);
+}
+
+void FormImageEditor::mouseMoveEvent(QMouseEvent *e)
+{
+    /*  if (m_work==nullptr)
+              return;
+          if (m_imgLabel==nullptr)
+              return;
+          if (m_work==nullptr)
+              return;
+          if (m_quit)
+              return;
+          if (m_work->m_currentImage==nullptr)
+              return;
+      */
+
+
+
 }
 
 
@@ -780,6 +810,13 @@ void FormImageEditor::on_lstCharMap_currentItemChanged(QTableWidgetItem *current
 void FormImageEditor::Destroy()
 {
     //delete m_work.m_currentImage;
+
+    qDebug() << "BSET";
+    m_updateThread->m_imgLabel = nullptr;
+    m_updateThread->m_work = nullptr;
+//    m_updateThread->m_ = nullptr;
+
+    qDebug() << "SET";
 }
 
 

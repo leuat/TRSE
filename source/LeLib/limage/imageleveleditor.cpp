@@ -221,6 +221,10 @@ bool ImageLevelEditor::KeyPress(QKeyEvent *e)
         dir.setX(1);
 
 
+    if (e->key()==Qt::Key_C) {
+        m_currencChar=0x20;
+    }
+
     if (dir.x()!=0 || dir.y()!=0) {
         SetLevel(m_currentLevelPos + dir);
         return true;
@@ -472,7 +476,7 @@ QImage CharmapLevel::createImage(int size, LColorList& lst, int width, int heigh
             }
             if (val==32)
                 colval = 0;
-            img.setPixel(i,j, lst.m_list[colval].color.rgba());
+            img.setPixel(i,j, lst.get(colval).color.rgba());
         }
 
     return img;

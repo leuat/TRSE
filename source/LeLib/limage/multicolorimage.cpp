@@ -657,7 +657,7 @@ QImage PixelChar::toQImage(int size, uchar bmask, LColorList& lst, int scale)
 
          //   if (rand()%100==0 && c!=0)
            //     qDebug() << lst.m_list[c].color;
-            img.setPixel(i,j,lst.m_list[c].color.rgba());
+            img.setPixel(i,j,lst.get(c).color.rgba());
         }
 
     return img;
@@ -720,7 +720,7 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage* img, float zoom, QPointF
                 col-=1000;
                 c = QColor(255, 128, 128);
             }
-            QColor scol = lst.m_list[col].color;
+            QColor scol = lst.get(col).color;
             if (c.red()>0 && renderPathGrid) {
                 if ((int)(xp) %4==0 || (int)(yp+1)%4==0)
                     scol = c;

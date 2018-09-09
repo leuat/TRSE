@@ -49,6 +49,7 @@ public:
 
     void resizeEvent(QResizeEvent *event) override;
 
+    void mouseMoveEvent(QMouseEvent* e) override;
     void mousePressEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
     void wheelEvent(QWheelEvent *event) override;
@@ -67,6 +68,8 @@ public:
     QLabel* getLabelImage();
 
     void UpdateCurrentMode();
+
+    void InitDocument(WorkerThread* t, CIniFile* ini, CIniFile* iniProject) override;
 
 
 private:
@@ -140,5 +143,6 @@ private slots:
     void on_btnResizeData_clicked();
 
 };
+
 
 #endif // FormImageEditor_H

@@ -18,6 +18,7 @@ void WorkerThread::UpdateDrawing()
     if (!Data::data.forceRedraw && m_currentButton == 0)
     if ((abs(m_prevPos.x()-m_currentPos.x())<1) && (abs(m_prevPos.y()-m_currentPos.y()))<1)
         return;
+
     QPointF pos = (m_currentPos - QPointF(0.5, 0.5) -m_zoomCenter)*m_zoom + m_zoomCenter ;
 
     if ((pos.x()>=0 && pos.x()<m_work->m_currentImage->m_image->m_width &&
@@ -58,14 +59,23 @@ void WorkerThread::UpdateDrawing()
 
 void WorkerThread::UpdateMousePosition()
 {
+  /*  if (m_work==nullptr)
+        return;
+    if (m_imgLabel==nullptr)
+        return;
     if (m_work==nullptr)
         return;
+    if (m_quit)
+        return;
+    if (m_work->m_currentImage==nullptr)
+        return;
+
     QPointF pos = QCursor::pos() -m_imgLabel->mapToGlobal(QPoint(0,0));
     pos.setX(pos.x()/(float)m_imgLabel->width()*m_work->m_currentImage->m_image->m_width);
     pos.setY(pos.y()/(float)m_imgLabel->height()*m_work->m_currentImage->m_image->m_height);
     m_prevPos = m_currentPos;
     m_currentPos = QPoint(pos.x(), pos.y());
-
+*/
 }
 
 void WorkerThread::UpdatePanning()
@@ -73,9 +83,10 @@ void WorkerThread::UpdatePanning()
     if (!m_work)
         return;
     m_isPanning = false;
-    if (m_currentButton == 2 && (QApplication::keyboardModifiers() & Qt::ShiftModifier)) {
-        QPoint delta = (m_prevPos - m_currentPos);
-        m_zoomCenter+=(QPoint)delta*0.5;
+//    if (m_currentButton == 2 && (QApplication::keyboardModifiers() & Qt::ShiftModifier)) {
+        if (m_currentButton == 2 && (Qt::ShiftModifier)) {
+        QPointF delta = (m_prevPos - m_currentPos);
+        m_zoomCenter+=(QPointF)delta*0.5;
 //        qDebug() << delta;
         m_isPanning = true;
         Data::data.Redraw();

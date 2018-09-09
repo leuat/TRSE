@@ -255,7 +255,7 @@ void LImageQImage::ToQImage(LColorList& lst, QImage* img, float zoom, QPointF ce
             unsigned int col = getPixel(xp,yp) % 16;
 
 //            img->setPixel(i,j,QRgb(col));
-            img->setPixel(i,j,lst.m_list[col%16].color.rgb());
+            img->setPixel(i,j,lst.get(col%16).color.rgb());
         }
     //return img;
 }

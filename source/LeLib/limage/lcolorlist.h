@@ -40,6 +40,9 @@ public:
 class LColorList : public QObject
 {
     Q_OBJECT
+private:
+    QVector<LColor> m_list;
+
 
 public:
     enum Type{ C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF };
@@ -48,11 +51,15 @@ public:
     LColorList();
     ~LColorList();
 
+    LColor& get(int i) {
+        if (i<m_list.count())
+            return m_list[i];
+        else return m_list[0];
+    }
 
     static unsigned char TypeToChar(Type t);
     static Type CharToType(unsigned char c);
 
-    QVector<LColor> m_list;
     QVector<QPushButton*> m_buttonsImport;
     QVector<QPushButton*> m_buttonsEdit;
 

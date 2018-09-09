@@ -13,7 +13,6 @@
 #include <QPointF>
 #include <QLabel>
 #include <source/toolbox.h>
-#include "ui_formimageeditor.h"
 
 
 
@@ -22,10 +21,10 @@ class WorkerThread : public QThread {
 
 public:
 
+    bool m_quit = false;
     ImageWorker* m_work = nullptr;
     Toolbox* m_toolBox = nullptr;
-    bool m_quit = false;
-    QLabel* m_imgLabel;
+    QLabel* m_imgLabel = nullptr;
     int m_blinkTimer = 0;
     QPalette m_pal, m_orgPal;
     WorkerThread() {
@@ -41,11 +40,11 @@ public:
 
     QPointF pos;
 
-    QPoint m_currentPos, m_prevPos;
+    QPointF m_currentPos, m_prevPos;
     int m_currentButton = 0;
     float m_zoom = 1;
     bool m_isPanning = false;
-    QPoint m_zoomCenter = QPoint(00,00);
+    QPointF m_zoomCenter = QPoint(00,00);
     QPoint m_currentPosInImage;
 
     void run() override;

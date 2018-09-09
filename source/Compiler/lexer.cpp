@@ -368,7 +368,7 @@ Token Lexer::GetNextToken()
             //m_text = m_text.replace("\n", "");
             return Token(TokenType::DOT, ".");
         }
-        ErrorHandler::e.Error( "Error parsing: " + m_currentChar );
+        ErrorHandler::e.Error( "Error parsing: " + m_currentChar,Pmm::Data::d.lineNumber );
 
 
 

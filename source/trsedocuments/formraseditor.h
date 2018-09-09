@@ -74,7 +74,6 @@ public:
 
     void SetOutputText(QString txt);
 
-
 private:
 
     static QString path;

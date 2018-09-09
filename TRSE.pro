@@ -135,7 +135,8 @@ SOURCES += main.cpp\
     source/LeLib/util/util.cpp \
     source/LeLib/util/SimplexNoise.cpp \
     source/LeLib/limage/movieconverter.cpp \
-    source/LeLib/limage/limagecharsetfixedcolor.cpp
+    source/LeLib/limage/limagecharsetfixedcolor.cpp \
+    source/qlabellimage.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -217,7 +218,8 @@ HEADERS  += mainwindow.h \
     source/LeLib/util/util.h \
     source/LeLib/util/SimplexNoise.h \
     source/LeLib/limage/movieconverter.h \
-    source/LeLib/limage/limagecharsetfixedcolor.h
+    source/LeLib/limage/limagecharsetfixedcolor.h \
+    source/qlabellimage.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \

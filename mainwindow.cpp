@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_updateThread, SIGNAL(requestSaveAs()), this, SLOT(SaveAs()));
     connect(m_updateThread, SIGNAL(requestCloseWindowSignal()), this, SLOT(closeWindowSlot()));
 
-
+    this->setMouseTracking(true);
 
 
 #if defined(Q_OS_MAC)
@@ -334,28 +334,42 @@ void MainWindow::SaveAs()
 
 void MainWindow::RemoveTab(int idx, bool save)
 {
+    qDebug() << "A-1";
     if (idx==0)
         return;
+
     idx--;
+    qDebug() << "A0";
     TRSEDocument* doc = m_documents[idx];
+    if (doc==nullptr)
+        return;
     if (save) {
         m_currentProject.m_ini.removeFromList("open_files", doc->m_currentFileShort);
         m_currentProject.Save();
     }
-
+    qDebug() << m_documents.count() << " vs idx: " << idx;
+    qDebug() << "A";
     m_documents[idx]->Destroy();
+    qDebug() << "A_1";
+    delete doc;
+    qDebug() << "F";
+
     m_documents.remove(idx);
-   ui->tabMain->removeTab(idx+1);
+    qDebug() << "A_2";
+//    ui->tabMain->removeTab(idx+1);
+    qDebug() << "B";
 
 
-   m_updateThread->SetCurrentImage(nullptr, nullptr, nullptr);
+    m_updateThread->SetCurrentImage(nullptr, nullptr, nullptr);
+    qDebug() << "C";
     TRSEDocument* d = (TRSEDocument*)ui->tabMain->currentWidget();
     FormImageEditor* fe = dynamic_cast<FormImageEditor*>(d);
+    qDebug() << "D";
 
     if (fe!=nullptr)
        m_updateThread->SetCurrentImage(&fe->m_work, &fe->m_toolBox,fe->getLabelImage());
+    qDebug() << "E";
 
-    delete doc;
 }
 
 void MainWindow::CloseAll()

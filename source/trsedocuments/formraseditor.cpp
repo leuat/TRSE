@@ -175,6 +175,7 @@ void FormRasEditor::SetOutputText(QString txt)
 }
 
 
+
 void FormRasEditor::Setup()
 {
       setupEditor();
