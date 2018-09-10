@@ -50,6 +50,10 @@ void WorkerThread::UpdateDrawing()
 
     if ( isInWindow || Data::data.forceRedraw )
     {
+        if (m_work==nullptr) return;
+        if (m_work->m_currentImage==nullptr) return;
+        if (m_work->m_currentImage->m_image==nullptr) return;
+
         m_work->m_currentImage->m_temp->CopyFrom(m_work->m_currentImage->m_image);
         Data::data.forceRedraw = false;
         m_hasLeft = false;
@@ -133,6 +137,8 @@ void WorkerThread::UpdatePanning()
 void WorkerThread::UpdateImage(LImage *mc)
 {
    if (m_work == nullptr)
+       return;
+   if (mc==nullptr)
        return;
     if (m_tmpImage == nullptr) {
         m_tmpImage = new QImage(mc->m_width,mc->m_height,QImage::Format_ARGB32);
@@ -230,7 +236,7 @@ void WorkerThread::run()
         }
 
 
-        QThread::msleep(5);
+        QThread::msleep(40);
     }
 
 }

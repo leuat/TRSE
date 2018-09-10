@@ -816,7 +816,8 @@ void FormImageEditor::Destroy()
     //delete m_work.m_currentImage;
 
     //m_updateThread->m_imgLabel = nullptr;
-    m_updateThread->m_work = nullptr;
+//    m_updateThread->
+    //m_updateThread->m_work = nullptr;
 //    m_updateThread->m_ = nullptr;
 
 }

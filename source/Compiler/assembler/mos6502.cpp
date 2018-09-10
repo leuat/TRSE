@@ -224,10 +224,10 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal)
         if (curIdx>=curStr.length()) {
             curIdx=0;
             curLin++;
-            qDebug() << curLin;
+//            qDebug() << curLin;
             if (curLin<initVal.count()) {
                 curStr=initVal[curLin];
-                qDebug() << curStr;
+  //              qDebug() << curStr;
             }
             else done=true;
         }

@@ -528,6 +528,15 @@ void Syntax::SetupBuiltinFunctions()
                 QList<BuiltInFunction::Type>()
                 );
 
+    builtInFunctions["screenoff"] = BuiltInFunction(
+                "screenoff",
+                QList<BuiltInFunction::Type>()
+                );
+    builtInFunctions["screenon"] = BuiltInFunction(
+                "screenon",
+                QList<BuiltInFunction::Type>()
+                );
+
     builtInFunctions["returninterrupt"] = BuiltInFunction(
                 "returninterrupt",
                 QList<BuiltInFunction::Type>()
