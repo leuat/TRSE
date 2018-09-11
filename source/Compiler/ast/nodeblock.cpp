@@ -10,6 +10,7 @@ void NodeBlock::SetParameter(QString name, PVar var) {
 
 void NodeBlock::Delete() {
     Node::Delete();
+
     if (m_useOwnSymTab && m_symTab!=nullptr) {
         m_symTab->Delete();
     }
@@ -76,7 +77,7 @@ QString NodeBlock::Build(Assembler *as) {
     }
     as->VarDeclEnds();
     as->PushCounter();
-
+    as->EndMemoryBlock();
     if (!blockLabel)
         as->Label(label);
     if (m_compoundStatement!=nullptr)

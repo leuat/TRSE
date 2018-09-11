@@ -25,7 +25,7 @@ void NodeProgram::ExecuteSym(SymbolTable *symTab) {
 
 QString NodeProgram::Build(Assembler *a) {
     Node::Build(a);
-
+    a->EndMemoryBlock();
     NodeBuiltinMethod::m_isInitialized.clear();
     a->Program(m_name);
     m_NodeBlock->Build(a);
