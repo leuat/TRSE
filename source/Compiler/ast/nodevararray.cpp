@@ -1,6 +1,6 @@
 #include "nodevararray.h"
 
-NodeVarArray::NodeVarArray(Token token, Node *expr) {
+NodeVarArray::NodeVarArray(Token token, Node *expr):Node() {
     m_var = new NodeVar(token);
     m_expr = expr;
 }

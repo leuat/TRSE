@@ -24,11 +24,20 @@
 #include "source/Compiler/ast/nodeasm.h"
 #include "source/Compiler/ast/nodebinaryclause.h"
 
+class ParserBlock {
+public:
+    int m_blockID;
+    QString pos;
+};
 
 
 
 class Parser {
 public:
+
+    QVector<ParserBlock> m_parserBlocks;
+
+//    int m_currentParserBlock=-1;
 
     QMap<QString, Node*> m_procedures;
     QMap<QString, QString> m_preprocessorDefines;
@@ -44,7 +53,7 @@ public:
     ~Parser() {
         Delete();
     }
-    QVector<MemoryBlock> m_userBlocks;
+    QVector<MemoryBlock*> m_userBlocks;
 
     void Delete();
 

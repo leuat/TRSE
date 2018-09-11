@@ -110,12 +110,28 @@ class Assembler
 public:
     QStringList m_source;
     QVector<Appendix> m_appendix;
+    QVector<Appendix> m_extraBlocks;
+
+    Appendix* m_currentBlock = nullptr;
+
+    void StartMemoryBlock(QString pos) {
+        Appendix app(pos);
+        m_appendix.append(app);
+        m_currentBlock = &m_appendix[m_appendix.count()-1];
+        m_currentBlock->Append("org "+pos,1);
+    }
+
+    void EndMemoryBlock() {
+//        qDebug() << "Trying to end memory block.. ";
+        m_currentBlock=nullptr;
+    }
+
     QString m_term;
     QMap<QString, Stack> m_stack;
     QMap<QString, LabelStack> m_labelStack;
     SymbolTable* m_symTab;
     QString m_projectDir;
-    QVector<MemoryBlock> blocks;
+    QVector<MemoryBlock*> blocks;
 
     QStringList m_tempVars;
     int m_varDeclEndsLineNumber = 0;

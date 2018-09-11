@@ -16,7 +16,9 @@ public:
     Node* m_varNode = nullptr;
     Node* m_typeNode;
     int m_fileSize=0;
+    int m_dataSize=0;
     SidFile sid;
+    static MemoryBlock* m_curMemoryBlock;
 
     int m_pushedPointers = 0;
 
@@ -24,6 +26,9 @@ public:
 
     void Delete() override;
 
+    int getDataSize() {
+        return m_dataSize;
+    }
 
     void IncSid(Assembler* as);
 

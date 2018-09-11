@@ -239,6 +239,7 @@ QString NodeAssign::AssignVariable(Assembler *as) {
 }
 
 QString NodeAssign::Build(Assembler *as) {
+
     Node::Build(as);
     as->PushCounter();
     QString s = AssignVariable(as);

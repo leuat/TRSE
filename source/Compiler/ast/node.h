@@ -13,8 +13,19 @@ public:
     Token m_op;
     int m_lineNumber;
     uint level = 0;
+
     Node* m_left = nullptr, *m_right = nullptr;
     bool m_isWord = false;
+    static int m_currentBlock;
+    static QString m_currentBlockPos;
+    int m_blockID;
+    QString m_blockPos;
+    Node() {
+        m_blockID = m_currentBlock;
+        m_blockPos = m_currentBlockPos;
+    }
+
+    int MaintainBlocks(Assembler* as);
 
     TokenType::Type m_forceType = TokenType::NADA;
 

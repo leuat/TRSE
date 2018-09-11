@@ -1,7 +1,7 @@
 #include "nodeforloop.h"
 #include "nodenumber.h"
 
-NodeForLoop::NodeForLoop(Node *a, Node *b, Node *block, Node *step, bool unroll, int forcePage, int loopCounter) {
+NodeForLoop::NodeForLoop(Node *a, Node *b, Node *block, Node *step, bool unroll, int forcePage, int loopCounter) :Node(){
     m_a = a;
     m_b = b;
     m_block = block;

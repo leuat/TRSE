@@ -17,7 +17,8 @@ public:
         FOR, TO, DO, NADA, ADDRESS, WHILE,
         ARRAY, OF, BYTE, LBRACKET, RBRACKET, INCBIN, ASM, INCSID,
         INTERRUPT, BITAND, BITOR, ELSE, OR, AND, POINTER, AT, INCLUDE, DEFINE, PREPROCESSOR,
-        IFDEF, ENDIF, IFNDEF, OFFPAGE, ONPAGE, STEP, UNROLL, LOOPX, LOOPY, CSTRING, USERDATA
+        IFDEF, ENDIF, IFNDEF, OFFPAGE, ONPAGE, STEP, UNROLL, LOOPX, LOOPY, CSTRING, USERDATA,
+        STARTBLOCK, ENDBLOCK
     };
 
     static QString types[];
@@ -47,7 +48,7 @@ public:
     QString getType();
 
     Token();
-
+    QString getNumAsHexString();
 
     Token(TokenType::Type t, QString val);
     Token(TokenType::Type t, int val);

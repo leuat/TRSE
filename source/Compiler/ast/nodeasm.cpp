@@ -1,6 +1,7 @@
 #include "nodeasm.h"
 
 QString NodeAsm::Build(Assembler *as) {
+    Node::Build(as);
     QStringList txt = m_asm.split("\n");
     as->Comment("");
     as->Comment("****** Inline assembler section");

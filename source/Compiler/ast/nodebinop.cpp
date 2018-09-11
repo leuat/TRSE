@@ -1,7 +1,7 @@
 #include "nodebinop.h"
 
 
-NodeBinOP::NodeBinOP(Node *left, Token op, Node *right) {
+NodeBinOP::NodeBinOP(Node *left, Token op, Node *right):Node() {
     m_right = right;
     m_left = left;
     m_op = op;

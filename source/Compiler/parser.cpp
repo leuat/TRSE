@@ -73,6 +73,7 @@ void Parser::InitBuiltinFunction(QStringList methodName, QString builtinFunction
     QString txt = m_lexer->m_text.toLower();
     for (QString s: methodName)
      if (txt.contains(s)) {
+         Node::m_currentBlock=-1;
         m_procedures[builtinFunctionName] = new NodeProcedureDecl(Token(TokenType::PROCEDURE, builtinFunctionName), builtinFunctionName);
         return;
      }
@@ -171,6 +172,23 @@ void Parser::HandlePreprocessorInParsing()
     if (m_currentToken.m_value=="ifndef") {
         PreprocessIfDefs(false);
         return;
+    }
+
+    if (m_currentToken.m_value=="startblock") {
+        Eat();
+        QString startPos = m_currentToken.getNumAsHexString();
+        Eat();
+        ParserBlock pb;
+        pb.m_blockID = m_parserBlocks.count();
+        pb.pos = startPos;
+        m_parserBlocks.append(pb);
+        Node::m_currentBlock = pb.m_blockID;
+        Node::m_currentBlockPos = pb.pos;
+    }
+    if (m_currentToken.m_value=="endblock") {
+        Eat();
+        Node::m_currentBlock = -1;
+
     }
 
 }
@@ -552,7 +570,7 @@ void Parser::Preprocess()
                 Eat();
                 QString name = m_currentToken.m_value;
                 bool ok;
-                m_userBlocks.append(MemoryBlock(from.remove("$").toInt(&ok,16), to.remove("$").toInt(&ok, 16),
+                m_userBlocks.append(new MemoryBlock(from.remove("$").toInt(&ok,16), to.remove("$").toInt(&ok, 16),
                                                 MemoryBlock::USER, name));
 
             }
@@ -593,9 +611,9 @@ Node* Parser::Parse()
 */
     //qDebug() <<m_lexer->m_text[0];
     SymbolTable::Initialize();
+    Node::m_currentBlock=-1;
     InitBuiltinFunctions();
     NodeProgram* root = (NodeProgram*)Program();
-
     // First add builtin functions
     for (QString s: m_procedures.keys())
         if (((NodeProcedureDecl*)m_procedures[s])->m_block==nullptr)
@@ -938,9 +956,7 @@ Node *Parser::TypeSpec()
         QString position = "";
         if (m_currentToken.m_type==TokenType::AT) {
             Eat(TokenType::AT);
-            position = m_currentToken.m_value;
-            if (position=="")
-                position="$"+QString::number(m_currentToken.m_intVal,16);
+            position = m_currentToken.getNumAsHexString();
 
             Eat(m_currentToken.m_type);
         }

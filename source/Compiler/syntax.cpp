@@ -57,6 +57,9 @@ void Syntax::SetupReservedWords()
     reservedWords.append(Token(TokenType::ONPAGE,"ONPAGE"));
     reservedWords.append(Token(TokenType::STEP,"STEP"));
     reservedWords.append(Token(TokenType::UNROLL,"UNROLL"));
+    reservedWords.append(Token(TokenType::STARTBLOCK,"STARTBLOCK"));
+    reservedWords.append(Token(TokenType::ENDBLOCK,"ENDBLOCK"));
+
 //    reservedWords.append(Token(TokenType::LOOPX,"LOOPX"));
 //    reservedWords.append(Token(TokenType::LOOPY,"LOOPY"));
 

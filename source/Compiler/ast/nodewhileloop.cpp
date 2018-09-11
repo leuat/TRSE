@@ -1,6 +1,6 @@
 #include "nodewhileloop.h"
 
-NodeWhileLoop::NodeWhileLoop()
+NodeWhileLoop::NodeWhileLoop():Node()
 {
 
 }

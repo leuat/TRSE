@@ -15,7 +15,7 @@ class NodeProgram : public Node {
 public:
     QString m_name;
     NodeBlock* m_NodeBlock;
-    NodeProgram(QString n, NodeBlock* b) {
+    NodeProgram(QString n, NodeBlock* b):Node() {
         m_NodeBlock = b;
         m_name = n;
     }

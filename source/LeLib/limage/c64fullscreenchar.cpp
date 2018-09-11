@@ -10,8 +10,13 @@ C64FullScreenChar::C64FullScreenChar(LColorList::Type t) : MultiColorImage(t)
     m_width = 320;
     m_height = 200;
     m_scaleX = 1.0f;
-    m_bitMask = 0b11;
+/*    m_bitMask = 0b11;
     m_noColors = 4;
+  */
+    m_bitMask = 0b1;
+    m_noColors = 2;
+
+
     m_scale = 1;
     m_minCol = 0;
     m_type = LImage::Type::FullScreenChar;

@@ -19,7 +19,7 @@ public:
     SymbolTable* m_symTab = nullptr;
     bool m_useOwnSymTab;
 
-    NodeBlock(Token t, QVector<Node*> decl, Node* comp, bool useOwnSymTab = true) {
+    NodeBlock(Token t, QVector<Node*> decl, Node* comp, bool useOwnSymTab = true):Node() {
         m_compoundStatement = comp;
         m_decl = decl;
         m_op = t;
@@ -31,7 +31,7 @@ public:
 
     void PopZeroPointers(Assembler* as);
 
-   QString Build(Assembler* as);
+   QString Build(Assembler* as) override;
 
     PVar Execute(SymbolTable* symTab, uint lvl) override;
 

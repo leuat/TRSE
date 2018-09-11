@@ -1,6 +1,8 @@
 #include "nodevardecl.h"
 
-NodeVarDecl::NodeVarDecl(Node *varNode, Node *typeNode) {
+MemoryBlock* NodeVarDecl::m_curMemoryBlock = nullptr;
+
+NodeVarDecl::NodeVarDecl(Node *varNode, Node *typeNode):Node() {
     m_varNode = varNode;
     m_typeNode = typeNode;
 }
@@ -39,7 +41,7 @@ void NodeVarDecl::IncSid(Assembler *as) {
     }
     m_fileSize = size;
 
-    as->blocks.append(MemoryBlock(sid.m_loadAddress,sid.m_loadAddress+size, MemoryBlock::MUSIC, sid.m_fileName));
+    as->blocks.append(new MemoryBlock(sid.m_loadAddress,sid.m_loadAddress+size, MemoryBlock::MUSIC, sid.m_fileName));
 
 
 }
@@ -82,7 +84,7 @@ void NodeVarDecl::IncBin(Assembler *as) {
         }
         else start = t->m_position.toInt();
 
-        as->blocks.append(MemoryBlock(start,start+size, MemoryBlock::DATA,t->m_filename));
+        as->blocks.append(new MemoryBlock(start,start+size, MemoryBlock::DATA,t->m_filename));
 
     }
 }
@@ -135,7 +137,22 @@ void NodeVarDecl::DeclarePointer(Assembler *as) {
 
 QString NodeVarDecl::Build(Assembler *as) {
     Node::Build(as);
+    MaintainBlocks(as);
+    if (as->m_currentBlock!=nullptr) {
+        if (m_curMemoryBlock==nullptr) {
+            bool ok;
+            QString p = as->m_currentBlock->m_pos;
+            int pos = p.remove("$").toInt(&ok, 16);
+            m_curMemoryBlock = new MemoryBlock(pos,pos,MemoryBlock::ARRAY, "Variables and arrays");
+            as->blocks.append(m_curMemoryBlock);
+        }
+    }
+    else
+        m_curMemoryBlock=nullptr;
+ /*   if (ret==2) {
+        m_curMemoryBlock = nullptr;
 
+    }*/
     ExecuteSym(as->m_symTab);
 
     NodeVar* v = (NodeVar*)m_varNode;
@@ -147,32 +164,52 @@ QString NodeVarDecl::Build(Assembler *as) {
     if (t->m_op.m_type==TokenType::ARRAY) {
         as->DeclareArray(v->value, t->m_arrayVarType.m_value, t->m_op.m_intVal, t->m_data, t->m_position);
         //qDebug() << "IS: " << TokenType::types[as->m_symTab->Lookup(v->value)->getTokenType()];
+        m_dataSize=t->m_op.m_intVal;
         as->m_symTab->Lookup(v->value, m_op.m_lineNumber)->m_type="address";
-        return "";
-    }
+    }else
     if (t->m_op.m_type==TokenType::STRING) {
         as->DeclareString(v->value, t->m_data);
-        return "";
+        m_dataSize = 0;
+        for (QString s: t->m_data)
+            m_dataSize+=s.count();
+        m_dataSize++; // 0 end
     }
+    else
     if (t->m_op.m_type==TokenType::CSTRING) {
         as->DeclareCString(v->value, t->m_data);
-        return "";
+        m_dataSize = 0;
+        for (QString s: t->m_data)
+            m_dataSize+=s.count();
+        m_dataSize++; // 0 end
     }
+    else
     if (t->m_op.m_type==TokenType::INCBIN) {
+        if (m_curMemoryBlock!=nullptr)
+            ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block :",m_op.m_lineNumber);
+
         IncBin(as);
-        return "";
     }
+    else
     if (t->m_op.m_type==TokenType::INCSID) {
+        if (m_curMemoryBlock!=nullptr)
+            ErrorHandler::e.Error("IncSid can not be declared within a user-defined memory block :",m_op.m_lineNumber);
         IncSid(as);
-        return "";
     }
+    else
     if (t->m_op.m_type==TokenType::POINTER) {
+        if (m_curMemoryBlock!=nullptr)
+            ErrorHandler::e.Error("Pointers can not be declared within a user-defined memory block :",m_op.m_lineNumber);
         DeclarePointer(as);
-        return "";
+    }else {
+        m_dataSize=1;
+        if (t->value.toLower()=="integer") m_dataSize = 2;
+        as->DeclareVariable(v->value, t->value, t->initVal);
     }
 
+    if (m_curMemoryBlock!=nullptr) {
+        m_curMemoryBlock->m_end+=m_dataSize;
+    }
 
-    as->DeclareVariable(v->value, t->value, t->initVal);
     return "";
 }
 

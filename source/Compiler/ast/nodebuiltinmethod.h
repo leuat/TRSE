@@ -14,7 +14,7 @@ public:
     QVector<Node*> m_params;
     static QMap<QString, bool> m_isInitialized;
 
-    NodeBuiltinMethod(QString m, QVector<Node*> params) {
+    NodeBuiltinMethod(QString m, QVector<Node*> params):Node() {
         m_procName = m;
         m_params = params;
         m_op.m_type = TokenType::BYTE;

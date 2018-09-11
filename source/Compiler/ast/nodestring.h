@@ -12,7 +12,7 @@ class NodeString : public Node {
 public:
     QStringList m_val;
     bool m_isCString = false;
-    NodeString(Token op, QStringList val, bool isCString) {
+    NodeString(Token op, QStringList val, bool isCString):Node() {
         m_op = op;
         m_val = val;
         m_isCString = isCString;

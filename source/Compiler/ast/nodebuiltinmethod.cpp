@@ -899,18 +899,21 @@ void NodeBuiltinMethod::SetSpritePos(Assembler *as)
         LoadVar(as, 0);
         //as->Asm("tax");
         as->Asm("sta $D000,x");
-        m_params[0]->Build(as);
-        as->Term("+1",true);
-        as->Asm("cmp #0");
-        as->Asm("beq " + lbl);
+        if (m_params[0]->isWord(as)) {
+
+            m_params[0]->Build(as);
+            as->Term("+1",true);
+            as->Asm("cmp #0");
+            as->Asm("beq " + lbl);
+            as->Asm("lda $D010");
+            as->Asm("ora #%" + QString::number(v,2) );
+            as->Asm("sta $D010");
+            as->Asm("jmp "+lbl2);
+        }
 
 
-        as->Asm("lda $D010");
-        as->Asm("ora #%" + QString::number(v,2) );
         //m_params[3]->Build(as);
     //    as->Term();
-        as->Asm("sta $D010");
-        as->Asm("jmp "+lbl2);
         as->Label(lbl);
 
         as->Asm("lda $D010");
@@ -944,17 +947,19 @@ void NodeBuiltinMethod::SetSpritePos(Assembler *as)
 
         LoadVar(as, 0);
         as->Asm("sta $D000,x");
-        m_params[0]->Build(as);
-        as->Term("+1",true);
-        as->Asm("cmp #0");
-        as->Asm("beq " + lbl);
+        if (m_params[0]->isWord(as)) {
+            m_params[0]->Build(as);
+            as->Term("+1",true);
+            as->Asm("cmp #0");
+            as->Asm("beq " + lbl);
+            as->Asm("lda $D010");
+            as->Asm("ora " + var );
+            //m_params[3]->Build(as);
+        //    as->Term();
+            as->Asm("sta $D010");
+            as->Asm("jmp "+lbl2);
+        }
 
-        as->Asm("lda $D010");
-        as->Asm("ora " + var );
-        //m_params[3]->Build(as);
-    //    as->Term();
-        as->Asm("sta $D010");
-        as->Asm("jmp "+lbl2);
         as->Label(lbl);
 
         as->Asm("lda #$FF");

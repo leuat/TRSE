@@ -8,7 +8,7 @@ DialogMemoryAnalyze::DialogMemoryAnalyze(QWidget *parent) :
     ui->setupUi(this);
 }
 
-void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock> &blocks)
+void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks)
 {
     InitColors();
     float ysize=1600;
@@ -22,10 +22,10 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock> &blocks)
     QPainter p;
     p.begin(&img);
     int i=0;
-    for (MemoryBlock& mb:blocks) {
-        float y0 = (mb.m_start/65535.0)*ysize;
-        float y1 = (mb.m_end/65535.0)*ysize;
-        QColor c = m_colors[mb.Type()];
+    for (MemoryBlock* mb:blocks) {
+        float y0 = (mb->m_start/65535.0)*ysize;
+        float y1 = (mb->m_end/65535.0)*ysize;
+        QColor c = m_colors[mb->Type()];
         //float scale=(0.5 + (rand()%100/100.0));
         float scale = 0.9;
         if (i%2==1) scale=1.2f;
@@ -39,10 +39,10 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock> &blocks)
 
         p.setPen(QPen(QColor(32,32,48)));
         p.setFont(QFont("Times", 16, QFont::Bold));
-        p.drawText(QRect(xstart, y0,xsize-xstart-xborder, y1-y0), Qt::AlignCenter, mb.m_name);
+        p.drawText(QRect(xstart, y0,xsize-xstart-xborder, y1-y0), Qt::AlignCenter, mb->m_name);
 
-        QString f = "$"+QString::number(mb.m_start,16).rightJustified(4, '0');
-        QString t = "$"+QString::number(mb.m_end,16).rightJustified(4, '0');
+        QString f = "$"+QString::number(mb->m_start,16).rightJustified(4, '0');
+        QString t = "$"+QString::number(mb->m_end,16).rightJustified(4, '0');
 
         p.drawText(QRect(xstart, y0,xsize-xstart-xborder, y1-y0), Qt::AlignLeft|Qt::AlignTop, f + " - " + t);
         i++;

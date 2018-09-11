@@ -1,7 +1,7 @@
 #include "nodevartype.h"
 
 
-NodeVarType::NodeVarType(Token t, QString position, Token arrayVarType, QStringList data) {
+NodeVarType::NodeVarType(Token t, QString position, Token arrayVarType, QStringList data):Node() {
     m_op = t;
     value = t.m_value;
     m_arrayVarType = arrayVarType;
@@ -10,7 +10,7 @@ NodeVarType::NodeVarType(Token t, QString position, Token arrayVarType, QStringL
 
 }
 
-NodeVarType::NodeVarType(Token t, QStringList data) {
+NodeVarType::NodeVarType(Token t, QStringList data) : Node() {
     m_op = t;
     value = t.m_value;
     //m_arrayVarType = TokenType::STRING;
@@ -18,7 +18,7 @@ NodeVarType::NodeVarType(Token t, QStringList data) {
 
 }
 
-NodeVarType::NodeVarType(Token t, QString filename, QString position) {
+NodeVarType::NodeVarType(Token t, QString filename, QString position) : Node() {
     m_op = t;
     value = t.m_value;
     m_filename = filename;
@@ -27,7 +27,7 @@ NodeVarType::NodeVarType(Token t, QString filename, QString position) {
 
 }
 
-NodeVarType::NodeVarType(Token t, QString initvalue) {
+NodeVarType::NodeVarType(Token t, QString initvalue) : Node() {
     m_op = t;
     value = t.m_value;
     initVal = initvalue;

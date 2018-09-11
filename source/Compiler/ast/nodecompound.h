@@ -11,7 +11,7 @@
 class NodeCompound : public Node {
 public:
     QVector<Node*> children;
-    NodeCompound(Token t) {
+    NodeCompound(Token t):Node() {
         m_op = t;
     }
     PVar Execute(SymbolTable* symTab, uint lvl) override;

@@ -7,7 +7,7 @@
 class NodeBinaryClause : public Node
 {
 public:
-    NodeBinaryClause(Token op, Node* left, Node* right) {
+    NodeBinaryClause(Token op, Node* left, Node* right):Node() {
         m_right = right;
         m_left = left;
         m_op = op;

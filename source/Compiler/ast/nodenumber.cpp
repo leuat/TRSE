@@ -1,7 +1,7 @@
 #include "nodenumber.h"
 
 
-NodeNumber::NodeNumber(Token op, int val) {
+NodeNumber::NodeNumber(Token op, int val) :Node() {
     m_op = op;
     m_val = val;
 

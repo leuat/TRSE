@@ -88,7 +88,7 @@ QString NodeConditional::Build(Assembler *as) {
 
 
 
-NodeConditional::NodeConditional(Token op, int forcePage, Node *clause, Node *block, bool isWhile, Node *elseBlock) {
+NodeConditional::NodeConditional(Token op, int forcePage, Node *clause, Node *block, bool isWhile, Node *elseBlock) :Node(){
     m_block = block;
     m_isWhileLoop = isWhile;
     m_elseBlock = elseBlock;

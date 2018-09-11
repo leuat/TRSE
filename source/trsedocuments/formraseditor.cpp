@@ -488,7 +488,7 @@ void FormRasEditor::MemoryAnalyze()
     if (interpreter.m_assembler==nullptr)
         return;
 
-    interpreter.m_assembler->blocks.append(MemoryBlock(0x800, codeEnd, MemoryBlock::CODE, "code"));
+    interpreter.m_assembler->blocks.append(new MemoryBlock(0x800, codeEnd, MemoryBlock::CODE, "code"));
 
 
 /*    for (MemoryBlock& mb:interpreter.m_assembler->blocks) {

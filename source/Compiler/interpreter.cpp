@@ -68,7 +68,7 @@ bool Interpreter::Build(Interpreter::Type type, QString project_dir, QStringList
             return false;
     }*/
 
-    for (MemoryBlock& mb:m_parser->m_userBlocks)
+    for (MemoryBlock* mb:m_parser->m_userBlocks)
         m_assembler->blocks.append(mb);
 
     m_assembler->Label("EndSymbol");

@@ -39,6 +39,8 @@ void NodeBlock::PopZeroPointers(Assembler *as) {
 QString NodeBlock::Build(Assembler *as) {
     //as->VarDeclHeader();
     Node::Build(as);
+    // In case memory block is acive
+    as->EndMemoryBlock();
     as->PushBlock(m_currentLineNumber);
 
 

@@ -29,14 +29,21 @@ void Assembler::Nl()
 
 void Assembler::Write(QString str, int level)
 {
-    QString s ="";
-    for (int i=0;i<level;i++)
-        s+="\t";
-    s+=str;
-    m_source.append(s);
+    if (m_currentBlock==nullptr) {
+
+        QString s ="";
+        for (int i=0;i<level;i++)
+            s+="\t";
+        s+=str;
+        m_source.append(s);
+    }
+    else {
+        m_currentBlock->Append(str,level);
+//        qDebug() << "CURRENTBLOCK: " << str;
+    }
 
 
-    int cnt = CountCycles(s);
+    int cnt = CountCycles(str);
     for (int i=0;i<m_cycleCounter.count();i++)
         m_cycleCounter[i] += cnt;
 
@@ -73,6 +80,8 @@ bool caseInsensitiveLessThan(const Appendix &s1, const Appendix &s2)
 }*/
 void Assembler::SortAppendix()
 {
+ /*   for (int i=0;i<m_appendix.count();i++)
+        qDebug() << "appos:" << m_appendix[i].m_pos;*/
    qSort(m_appendix.begin(), m_appendix.end(), caseInsensitiveLessThan);
 }
 
@@ -186,8 +195,11 @@ void Assembler::Connect()
     m_source = newSource;
 
     //m_source<<m_appendix;
+//    m_appendix.append(m_extraBlocks);
     SortAppendix();
+  //  qDebug() << m_appendix[0].m_source;
     for (int i=0;i<m_appendix.count();i++) {
+//        qDebug() << m_appendix[i].m_source;
         m_source << m_appendix[i].m_source;
     }
     m_appendix.clear();

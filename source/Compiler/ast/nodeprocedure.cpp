@@ -1,7 +1,7 @@
 #include "nodeprocedure.h"
 
 
-NodeProcedure::NodeProcedure(NodeProcedureDecl *proc, QVector<Node *> params, Token t) {
+NodeProcedure::NodeProcedure(NodeProcedureDecl *proc, QVector<Node *> params, Token t):Node() {
     m_parameters = params;
     m_procedure = proc;
     m_op = t;

@@ -1,7 +1,7 @@
 #include "nodeunaryop.h"
 
 
-NodeUnaryOp::NodeUnaryOp(Token t, Node *right) {
+NodeUnaryOp::NodeUnaryOp(Token t, Node *right):Node() {
     m_op = t;
     m_right = right;
     m_left = nullptr;

@@ -9,7 +9,8 @@ public:
     QString m_asm;
 
 
-    NodeAsm(Token t) {
+    NodeAsm(Token t):Node() {
+
         m_asm = t.m_value;
         m_op = t;
     }

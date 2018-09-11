@@ -8,7 +8,7 @@ void CIniFile::Load(QString fname) {
         qDebug() << "Could not find file " << fname;
         return;
     }
-    qDebug() << fname << "exists";
+//    qDebug() << fname << "exists";
 
     QFile file(fname);
     file.open(QIODevice::ReadOnly | QIODevice::Text);

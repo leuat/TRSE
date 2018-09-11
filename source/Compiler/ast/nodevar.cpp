@@ -1,12 +1,12 @@
 #include "nodevar.h"
 
 
-NodeVar::NodeVar(Token t) {
+NodeVar::NodeVar(Token t):Node() {
     m_op = t;
     value = t.m_value;
 }
 
-NodeVar::NodeVar(Token t, Node *expr) {
+NodeVar::NodeVar(Token t, Node *expr) : Node() {
     m_op = t;
     value = t.m_value;
     m_expr = expr;
