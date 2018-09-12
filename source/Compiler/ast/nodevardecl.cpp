@@ -137,13 +137,15 @@ void NodeVarDecl::DeclarePointer(Assembler *as) {
 
 QString NodeVarDecl::Build(Assembler *as) {
     Node::Build(as);
-    MaintainBlocks(as);
+    int ret = MaintainBlocks(as);
+
+    if (ret==3) m_curMemoryBlock=nullptr;
     if (as->m_currentBlock!=nullptr) {
         if (m_curMemoryBlock==nullptr) {
             bool ok;
             QString p = as->m_currentBlock->m_pos;
             int pos = p.remove("$").toInt(&ok, 16);
-            m_curMemoryBlock = new MemoryBlock(pos,pos,MemoryBlock::ARRAY, "Variables and arrays");
+            m_curMemoryBlock = new MemoryBlock(pos,pos,MemoryBlock::ARRAY, m_blockInfo.m_blockName);
             as->blocks.append(m_curMemoryBlock);
         }
     }

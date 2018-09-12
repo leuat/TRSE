@@ -8,6 +8,15 @@
 #include "source/Compiler/assembler/mos6502.h"
 
 
+class MemoryBlockInfo {
+public:
+    QString m_blockPos, m_blockName;
+    int m_blockID;
+    MemoryBlockInfo() {
+        m_blockID = -1;
+    }
+};
+
 class Node {
 public:
     Token m_op;
@@ -16,13 +25,10 @@ public:
 
     Node* m_left = nullptr, *m_right = nullptr;
     bool m_isWord = false;
-    static int m_currentBlock;
-    static QString m_currentBlockPos;
-    int m_blockID;
-    QString m_blockPos;
+    static MemoryBlockInfo m_staticBlockInfo;
+    MemoryBlockInfo m_blockInfo;
     Node() {
-        m_blockID = m_currentBlock;
-        m_blockPos = m_currentBlockPos;
+        m_blockInfo = m_staticBlockInfo;
     }
 
     int MaintainBlocks(Assembler* as);

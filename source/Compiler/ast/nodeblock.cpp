@@ -56,10 +56,10 @@ QString NodeBlock::Build(Assembler *as) {
     for (Node* n: m_decl) {
         // Print label at end of vardecl
         if (dynamic_cast<NodeVarDecl*>(n)==nullptr) {
-            if (!blockLabel)
+/*            if (!blockLabel)
                 as->Label(label);
             blockLabel = true;
-
+*/
             if (!blockProcedure) // Print label at end of vardecl
             {
                 if (n->m_op.m_lineNumber!=0) {

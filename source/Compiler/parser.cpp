@@ -73,7 +73,7 @@ void Parser::InitBuiltinFunction(QStringList methodName, QString builtinFunction
     QString txt = m_lexer->m_text.toLower();
     for (QString s: methodName)
      if (txt.contains(s)) {
-         Node::m_currentBlock=-1;
+         Node::m_staticBlockInfo.m_blockID=-1;
         m_procedures[builtinFunctionName] = new NodeProcedureDecl(Token(TokenType::PROCEDURE, builtinFunctionName), builtinFunctionName);
         return;
      }
@@ -178,16 +178,21 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         QString startPos = m_currentToken.getNumAsHexString();
         Eat();
+        QString name = m_currentToken.m_value;
+        Eat();
         ParserBlock pb;
         pb.m_blockID = m_parserBlocks.count();
         pb.pos = startPos;
         m_parserBlocks.append(pb);
-        Node::m_currentBlock = pb.m_blockID;
-        Node::m_currentBlockPos = pb.pos;
+        Node::m_staticBlockInfo.m_blockID = pb.m_blockID;
+        Node::m_staticBlockInfo.m_blockPos = pb.pos;
+        Node::m_staticBlockInfo.m_blockName = name;
+
+//        qDebug() << "Starting block: " << Node::m_currentBlockPos;
     }
     if (m_currentToken.m_value=="endblock") {
         Eat();
-        Node::m_currentBlock = -1;
+        Node::m_staticBlockInfo.m_blockID = -1;
 
     }
 
@@ -611,13 +616,14 @@ Node* Parser::Parse()
 */
     //qDebug() <<m_lexer->m_text[0];
     SymbolTable::Initialize();
-    Node::m_currentBlock=-1;
+    Node::m_staticBlockInfo.m_blockID=-1;
     InitBuiltinFunctions();
     NodeProgram* root = (NodeProgram*)Program();
     // First add builtin functions
     for (QString s: m_procedures.keys())
         if (((NodeProcedureDecl*)m_procedures[s])->m_block==nullptr)
             root->m_NodeBlock->m_decl.append(m_procedures[s]);
+
 
     // Then add regular ones ORDERED BY DEFINITION
     //for (QString s: m_procedures.keys())

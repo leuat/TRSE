@@ -86,7 +86,7 @@ QString NodeProcedureDecl::Build(Assembler *as)
 
 
     if (!isInitFunction) {
-        as->Asm("jmp afterProc_" + m_procName);
+        //as->Asm("jmp afterProc_" + m_procName);
 
 
         as->Label(m_procName);
@@ -99,7 +99,7 @@ QString NodeProcedureDecl::Build(Assembler *as)
         if (!m_isInterrupt)
             as->Asm("rts");
         else as->Asm("rti");
-      as->Label("afterProc_" + m_procName);
+      //as->Label("afterProc_" + m_procName);
     }
     return 0;
 }
