@@ -18,6 +18,15 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
         as->EndWriteln();
     }
 
+    if (m_procName.toLower()=="enableallram") {
+            as->Comment("Enable all ram visible");
+            as->Asm("lda $01");
+            as->Asm("and #%00");
+            as->Asm("ora #%100");
+            as->Asm("sta $01");
+
+    }
+
     if (m_procName.toLower()=="kernalinterrupt")
         as->Asm("jmp $ea81        ; return to kernal interrupt routine");
 
@@ -2338,6 +2347,12 @@ void NodeBuiltinMethod::TransformColors(Assembler *as)
         as->Asm("lda " + var->value+ ",y");
         as->Asm("ora " + tempVar);
         as->Asm("sta "+num->StringValue() + shift +",x");
+
+        as->Asm("lda $D800"+shift+",x");
+        as->Asm("tay");
+        as->Asm("lda " + var->value+ ",y");
+        as->Asm("sta $D800"+shift+",x");
+
 
         as->Asm("dex");
         as->Asm("bne " + loopInner);

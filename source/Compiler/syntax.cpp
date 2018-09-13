@@ -99,6 +99,13 @@ void Syntax::SetupBuiltinFunctions()
                //  << BuiltInFunction::Type::INTEGER
                 );
 
+    builtInFunctions["enableallram"] = BuiltInFunction(
+                "enableallram",
+                QList<BuiltInFunction::Type>()
+               //  << BuiltInFunction::Type::INTEGER
+                );
+
+
     builtInFunctions["memcpy"] = BuiltInFunction(
                 "memcpy",
                 QList<BuiltInFunction::Type>()<< BuiltInFunction::Type::INTEGER <<
