@@ -19,7 +19,7 @@ void FormPaw::FillToIni()
     m_pawData.setString("ras_include_file",ui->leOutfile->text());
     m_pawData.setString("packed_address",Util::numToHex(Util::VerifyHexAddress(ui->lePackedAddress->text())));
     m_pawData.setString("output_dir",ui->leOutDir->text());
-
+    m_pawData.setFloat("use_exomizer3", ui->chkExomizer3->isChecked()?1:0);
     QStringList data;
     m_files.clear();
 
@@ -50,6 +50,7 @@ void FormPaw::FillFromIni()
     ui->lePackedAddress->setText(m_pawData.getString("packed_address"));
     ui->leOutDir->setText(m_pawData.getString("output_dir"));
 
+    ui->chkExomizer3->setChecked(m_pawData.getdouble("use_exomizer3")==1);
     QStringList data = m_pawData.getStringList("data");
 
 
@@ -83,6 +84,8 @@ void FormPaw::Build()
     QString ex = m_iniFile->getString("exomizer");
  //   QString isExomizer3 = "-P0";
     QString isExomizer3 = "";
+    if (m_pawData.getdouble("use_exomizer3")==1)
+            isExomizer3="-P0";
 
     if (!QFile::exists(ex)) {
         ui->leOutput->setText("Exomizer not correctly set up");
@@ -105,13 +108,27 @@ void FormPaw::Build()
             QString adr = pf.address;
             QString of = pf.inFile+"@" + adr.replace("$","0x");
             QStringList params = QStringList() << "mem" << "-lnone" <<of << "-o" << pf.cFile;
+            if (isExomizer3!="")
+                params<<isExomizer3;
+
             output+="Compressing :"+ pf.inFile + "\n";
             ui->leOutput->setText(output);
 
             processCompress.start(ex, params  );
             processCompress.waitForFinished();
-            QString std(processCompress.readAllStandardError());
-//            output+=std + processCompress.readAllStandardError();
+            QString err(processCompress.readAllStandardError());
+            QString std = processCompress.readAllStandardOutput();
+            if (std.toLower().contains("error")) {
+                output = "<b>ERROR</b><br>"+std;
+                ui->leOutput->setText(output);
+                return;
+            }
+            if (err.toLower().contains("error")) {
+                output = "<b>ERROR</b><br>"+err;
+                ui->leOutput->setText(output);
+                return;
+            }
+            output+=err;// + processCompress.readAllStandardOutput();
   //          qDebug() << std;
             pf.packedSize = QFile(pf.cFile).size();
 

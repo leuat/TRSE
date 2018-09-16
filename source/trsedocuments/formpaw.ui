@@ -163,6 +163,19 @@
      </rect>
     </property>
    </widget>
+   <widget class="QCheckBox" name="chkExomizer3">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>390</y>
+      <width>171</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Using exomizer 3+</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QTextBrowser" name="leOutput">
    <property name="geometry">
