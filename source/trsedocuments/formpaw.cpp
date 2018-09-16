@@ -166,3 +166,28 @@ void FormPaw::on_pushButton_2_clicked()
 {
     ui->tabData->removeRow(ui->tabData->currentRow());
 }
+
+void FormPaw::Clear()
+{
+    ui->leOutput->setText("");
+}
+
+void FormPaw::on_lePackedAddress_cursorPositionChanged(int arg1, int arg2)
+{
+    Clear();
+}
+
+void FormPaw::on_leOutDir_cursorPositionChanged(int arg1, int arg2)
+{
+    Clear();
+}
+
+void FormPaw::on_leOutfile_cursorPositionChanged(int arg1, int arg2)
+{
+    Clear();
+}
+
+void FormPaw::on_tabData_cellChanged(int row, int column)
+{
+    Clear();
+}

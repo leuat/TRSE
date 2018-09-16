@@ -55,6 +55,15 @@ private slots:
 
     void on_pushButton_2_clicked();
 
+    void Clear();
+    void on_lePackedAddress_cursorPositionChanged(int arg1, int arg2);
+
+    void on_leOutDir_cursorPositionChanged(int arg1, int arg2);
+
+    void on_leOutfile_cursorPositionChanged(int arg1, int arg2);
+
+    void on_tabData_cellChanged(int row, int column);
+
 private:
     Ui::FormPaw *ui;
 };
