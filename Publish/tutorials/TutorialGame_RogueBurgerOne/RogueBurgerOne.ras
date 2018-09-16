@@ -15,7 +15,7 @@ var
 */
 
 	// Compile with debug flags?
-	@define isDebug isDebug
+//	@define isDebug isDebug
 	// Turn off kernal	
 	@define usekernal 0
 

@@ -56,6 +56,7 @@ bool Interpreter::Build(Interpreter::Type type, QString project_dir, QStringList
 
     if (m_tree!=nullptr)
         try {
+            dynamic_cast<NodeProgram*>(m_tree)->m_initJumps = m_parser->m_initJumps;
             m_tree->Build(m_assembler);
         } catch (FatalErrorException e) {
             HandleError(e,"Error during build");

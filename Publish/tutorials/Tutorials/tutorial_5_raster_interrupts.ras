@@ -8,7 +8,7 @@ var
  	fade : array [8] of byte = 
 (00,11,6,12,4,14,15,1,1,15,14,4,12,6,11,00,00); 
 	sidfile: incsid("sid/tutorial5.sid");
-	
+	// Regular sidfiles seem to need +2, so incsid("sid/mySid.sid", "2");
 
 
 procedure Bars();

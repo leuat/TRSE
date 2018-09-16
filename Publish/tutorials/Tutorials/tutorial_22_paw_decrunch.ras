@@ -9,6 +9,7 @@ var
 	The .paw-file will automatically pack all listed data with their respected unpacking addresses,
 	and create the include file used here. 
 
+	press space to cycle between the two images
 */
 
 @include "tutorial_22_packed_resources_auto_generated.ras"
@@ -26,18 +27,20 @@ begin
 	poke(VIC_DATA_LOC, 0,$18);
 	setbank(VIC_BANK1);
 	SCREEN_FG_COL:=BLACK;
-	
-	decrunch(image1_color); // Decrunches to $2000
-	copyimagecolordata($2000,1);
-	decrunch(image1_data);
-
-	while (keypressed(KEY_SPACE)=0) do waitforraster(0);
-
-	decrunch(image2_color); // Decrunches to $2000
-	copyimagecolordata($2000,1);
-	decrunch(image2_data);
-
-
+	while (1=1) do begin
+		screenoff(); // turn off screen while decrunching..
+		decrunch(image1_color); // Decrunches to $2000
+		copyimagecolordata($2000,1);
+		decrunch(image1_data);
+		screenon();
+		while (keypressed(KEY_SPACE)=0) do waitforraster(0);
+		screenoff();
+		decrunch(image2_color); // Decrunches to $2000
+		copyimagecolordata($2000,1);
+		decrunch(image2_data);
+		screenon();
+		while (keypressed(KEY_SPACE)=0) do waitforraster(0);
+	end;
 	Loop();
 
 end.

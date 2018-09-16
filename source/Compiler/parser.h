@@ -45,6 +45,7 @@ public:
     Lexer* m_lexer;
     Token m_currentToken;
     int m_pass = 0;
+    QStringList  m_initJumps;
     SymbolTable* m_symTab;
     Parser();
     Parser(Lexer* l) {
@@ -104,7 +105,7 @@ public:
     void InitBuiltinFunctions();
 
 
-    void InitBuiltinFunction(QStringList methodName, QString builtinFunctionName);
+    void InitBuiltinFunction(QStringList methodName, QString builtinFunctionName, QString initjump="");
 
 };
 

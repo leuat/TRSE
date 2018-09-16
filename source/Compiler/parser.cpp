@@ -55,26 +55,30 @@ int Parser::findSymbolLineNumber(QString symbol)
 
 void Parser::InitBuiltinFunctions()
 {
+    m_initJumps.clear();
     InitBuiltinFunction(QStringList()<< "*", "initeightbitmul");
     InitBuiltinFunction(QStringList()<< "*", "init16x8mul");
     InitBuiltinFunction(QStringList()<< "*", "init8x8div");
     InitBuiltinFunction(QStringList()<< "*", "init16x8div");
-    InitBuiltinFunction(QStringList()<< "rand", "initrandom");
+    InitBuiltinFunction(QStringList()<< "rand", "initrandom","init_random_call");
     InitBuiltinFunction(QStringList()<< "decrunch", "init_decrunch");
-    InitBuiltinFunction(QStringList()<< "sine", "initsinetable");
+    InitBuiltinFunction(QStringList()<< "sine", "initsinetable", "initsine_calculate");
+
     InitBuiltinFunction(QStringList()<< "moveto", "initmoveto");
     InitBuiltinFunction(QStringList()<< "printstring" << "printnumber", "initprintstring");
     InitBuiltinFunction(QStringList()<< "joystick" , "initjoystick");
 //    InitBuiltinFunction(QStringList()<< "zeropage" << "inczp" , "initzeropage");
  }
 
-void Parser::InitBuiltinFunction(QStringList methodName, QString builtinFunctionName)
+void Parser::InitBuiltinFunction(QStringList methodName, QString builtinFunctionName, QString initJump )
 {
     QString txt = m_lexer->m_text.toLower();
     for (QString s: methodName)
      if (txt.contains(s)) {
          Node::m_staticBlockInfo.m_blockID=-1;
         m_procedures[builtinFunctionName] = new NodeProcedureDecl(Token(TokenType::PROCEDURE, builtinFunctionName), builtinFunctionName);
+        if (initJump!="")
+            m_initJumps << "\tjsr "+ initJump;
         return;
      }
 

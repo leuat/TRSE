@@ -815,12 +815,13 @@ void NodeBuiltinMethod::InitRandom(Assembler *as)
         return;
     m_isInitialized["rand"] = true;
     as->Asm ("; init random");
+    as->Label("init_random_call");
     as->Asm("LDA #$FF");
     as->Asm("STA $D40E");
     as->Asm("STA $D40F");
     as->Asm("LDA #$80");
     as->Asm("STA $D412");
-    as->Asm("jmp continueRandom");
+    as->Asm("rts");
     as->DeclareVariable("upperRandom", "byte","0");
     as->DeclareVariable("lowerRandom", "byte","0");
     as->Label("callRandom");
@@ -833,7 +834,6 @@ void NodeBuiltinMethod::InitRandom(Assembler *as)
     as->Asm("BCS RandomLoop   ; branch if value >");
     as->Asm("ADC lowerRandom");
     as->Asm("RTS");
-    as->Label("continueRandom");
 }
 
 void NodeBuiltinMethod::PokeScreen(Assembler *as, int shift)
@@ -1434,13 +1434,13 @@ void NodeBuiltinMethod::InitSinusTable(Assembler *as)
 {
     if (m_isInitialized["sinetab"])
         return;
-    as->Asm("jmp initsin_continue");
+//    as->Asm("jmp initsin_continue");
     as->Label("sine .byte 0 ");
     as->Asm("org sine +#255");
 
     as->Label("value .word 0");
     as->Label("delta .word 0");
-    as->Label("initsin_continue");
+    as->Label("initsine_calculate");
 
 
     as->Asm("ldy #$3f");
@@ -1471,6 +1471,7 @@ void NodeBuiltinMethod::InitSinusTable(Assembler *as)
     as->Asm("inx");
     as->Asm("dey");
     as->Asm("bpl initsin_a");
+    as->Asm("rts");
 
 
     m_isInitialized["sinetab"]=true;

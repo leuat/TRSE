@@ -28,6 +28,7 @@ QString NodeProgram::Build(Assembler *a) {
     a->EndMemoryBlock();
     NodeBuiltinMethod::m_isInitialized.clear();
     a->Program(m_name);
+    a->m_source << m_initJumps;
     m_NodeBlock->Build(a);
     a->EndProgram();
     return "";
