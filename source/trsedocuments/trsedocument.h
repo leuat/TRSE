@@ -5,6 +5,7 @@
 #include "source/LeLib/util/cinifile.h"
 #include <QWidget>
 #include "source/LeLib/data.h"
+#include <QApplication>
 
 class TRSEDocument : public QWidget
 {
@@ -49,11 +50,15 @@ public:
 
     }
 
+    virtual void keyPressEvent(QKeyEvent *e);
+
+
     virtual void Reload() {}
 
 
     virtual void Destroy() = 0;
 
 };
+
 
 #endif // TRSEDOCUMENT_H

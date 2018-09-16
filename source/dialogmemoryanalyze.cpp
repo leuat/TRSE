@@ -8,7 +8,7 @@ DialogMemoryAnalyze::DialogMemoryAnalyze(QWidget *parent) :
     ui->setupUi(this);
 }
 
-void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks)
+void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize)
 {
     InitColors();
     float ysize=1600;
@@ -38,7 +38,7 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks)
 
 
         p.setPen(QPen(QColor(32,32,48)));
-        p.setFont(QFont("Times", 16, QFont::Bold));
+        p.setFont(QFont("Arial", fontSize, QFont::Bold));
         p.drawText(QRect(xstart, y0,xsize-xstart-xborder, y1-y0), Qt::AlignCenter, mb->m_name);
 
         QString f = "$"+QString::number(mb->m_start,16).rightJustified(4, '0');

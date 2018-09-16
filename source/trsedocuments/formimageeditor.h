@@ -33,7 +33,6 @@ public:
 
     LImageQImage m_grid;
     Toolbox m_toolBox;
-    QColor m_gridColor = QColor(64,128,128,128);
     LColorList* m_currentColorList = nullptr;
     LImageEffects m_imageEffects;
     QMap<QString, QLineEdit*> m_imageEffectsLineEdits;

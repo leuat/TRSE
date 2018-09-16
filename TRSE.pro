@@ -136,7 +136,8 @@ SOURCES += main.cpp\
     source/LeLib/util/SimplexNoise.cpp \
     source/LeLib/limage/movieconverter.cpp \
     source/LeLib/limage/limagecharsetfixedcolor.cpp \
-    source/qlabellimage.cpp
+    source/qlabellimage.cpp \
+    source/trsedocuments/formpaw.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -219,7 +220,8 @@ HEADERS  += mainwindow.h \
     source/LeLib/util/SimplexNoise.h \
     source/LeLib/limage/movieconverter.h \
     source/LeLib/limage/limagecharsetfixedcolor.h \
-    source/qlabellimage.h
+    source/qlabellimage.h \
+    source/trsedocuments/formpaw.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \
@@ -231,7 +233,8 @@ FORMS    += mainwindow.ui \
     source/dialogabout.ui \
     source/dialoghelp.ui \
     source/dialogexport.ui \
-    source/dialogmemoryanalyze.ui
+    source/dialogmemoryanalyze.ui \
+    source/trsedocuments/formpaw.ui
 
 RESOURCES += \
     resources.qrc

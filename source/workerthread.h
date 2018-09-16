@@ -43,12 +43,16 @@ public:
 
 //    QPointF pos;
 
+    LImageQImage* m_grid=nullptr;
+
     QPointF m_currentPos, m_prevPos;
     int m_currentButton = 0;
     float m_zoom = 1;
+    bool m_drawGrid = false;
     bool m_isPanning = false;
     QPointF m_zoomCenter = QPoint(00,00);
     QPoint m_currentPosInImage;
+    QColor m_gridColor = QColor(64,128,128,128);
 
     void run() override;
     QImage* m_tmpImage = nullptr;

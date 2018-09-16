@@ -19,5 +19,8 @@ public:
 //    void mouseLeaveEvent(QMouseEvent* e) override;
 
     bool eventFilter(QObject *object, QEvent *event) override;
+
+    void mouseReleaseEvent(QMouseEvent*  e) override;
+    void mousePressEvent(QMouseEvent* e) override;
 };
 

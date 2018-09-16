@@ -21,6 +21,7 @@
 #include "source/LeLib/util/cinifile.h"
 #include "source/trsedocuments/formraseditor.h"
 #include "source/trsedocuments/formimageeditor.h"
+#include "source/trsedocuments/formpaw.h"
 #include "source/dialogtrsesettings.h"
 #include "source/messages.h"
 #include "source/LeLib/limage/movieconverter.h"
@@ -35,6 +36,7 @@ class TRSEProject {
 public:
     CIniFile m_ini;
     QString m_filename;
+    QStringList m_acceptedFileTypes = {"asm", "flf", "ras", "prg", "paw", "inc"};
     void Load(QString projectfile) {
         m_ini = CIniFile();
         m_ini.Load(projectfile);
@@ -66,6 +68,7 @@ class CustomFileSystemModel : public QFileSystemModel {
 
     }
 
+
     QVariant data ( const QModelIndex & index, int role ) const override
     {
         if( index.column() == 0 && role == Qt::DecorationRole ) {
@@ -80,6 +83,8 @@ class CustomFileSystemModel : public QFileSystemModel {
                 img.load(":resources/images/cmb_icon.png");
             if (f.contains(".flf"))
                 img.load(":resources/images/image_icon.png");
+            if (f.contains(".paw"))
+                img.load(":resources/images/paw_icon.png");
 
             QIcon ic(QPixmap::fromImage(img));
 
@@ -219,6 +224,8 @@ private slots:
     void on_actionMovie_Creator_triggered();
 
     void on_actionCheck_for_new_version_triggered();
+
+    void on_actionPaw_packed_resource_file_triggered();
 
 private:
 

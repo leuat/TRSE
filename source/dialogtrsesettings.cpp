@@ -35,6 +35,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leFontSize->setText(QString::number((int)m_ini->getdouble("font_size")));
     ui->leTabWidth->setText(QString::number((int)m_ini->getdouble("tab_width")));
 
+    ui->leFontSizeMemoryAnalyzer->setText(QString::number((int)m_ini->getdouble("memory_analyzer_font_size")));
 }
 
 
@@ -48,6 +49,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setFloat("font_size", ui->leFontSize->text().toInt());
     m_ini->setFloat("tab_width", ui->leTabWidth->text().toInt());
     m_ini->setStringList("zeropages", toStringList(ui->leZeropages->text()));
+    m_ini->setFloat("memory_analyzer_font_size", ui->leFontSizeMemoryAnalyzer->text().toInt());
 
 }
 

@@ -710,8 +710,8 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage* img, float zoom, QPointF
     for (int i=0;i<m_width;i++)
         for (int j=0;j<m_height;j++) {
 
-            float xp = ((i-center.x())*zoom)+ center.x();
-            float yp = ((j-center.y())*zoom) + center.y();
+            float xp = floor(((i-center.x())*zoom)+ center.x());
+            float yp = floor(((j-center.y())*zoom) + center.y());
 
             unsigned int col = getPixel(xp,yp);
             // Has transparency?

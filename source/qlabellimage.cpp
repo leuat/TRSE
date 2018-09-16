@@ -33,23 +33,73 @@ void QLabelLImage::mouseMoveEvent(QMouseEvent *e)
     if (m_time%256==0)
     m_updateThread->m_prevPos = m_updateThread->m_currentPos;
     m_updateThread->m_currentPos = QPointF(pos.x(), pos.y());
+
+/*    qDebug() << this;
+    Data::data.Redraw();
+*/
+//    qDebug() << "WT MV:" << m_updateThread->m_currentButton;
+
    // qDebug() << "pp:" <<m_updateThread->m_prevPos;
    // qDebug() << "cp:" <<m_updateThread->m_currentPos;
     m_time++;
 }
 
 bool QLabelLImage::eventFilter(QObject *object, QEvent *event){
+/*    if ( !dynamic_cast<QInputEvent*>( event ) )
+           return false;
+*/
     if(object==this) {
 //        if  (event->type()==QEvent::Move)
     //    qDebug() << "Move event";
         mouseMoveEvent((QMouseEvent*)event);
-
+/*        mousePressEvent((QMouseEvent*)event);
+        mouseReleaseEvent((QMouseEvent*)event);*/
+        //mousePressEvent((QMouseEvent*)event);
+        //mouseReleaseEvent((QMouseEvent*)event);
+        //m_updateThread->
         if (event->type()==QEvent::Enter) Data::data.imageEvent = 1;
         if (event->type()==QEvent::Leave) Data::data.imageEvent = 0;
+
+//        Data::data.Redraw();
+
+//        qDebug() << this;
 
         return false;
     }
     return true;
+}
+
+void QLabelLImage::mouseReleaseEvent(QMouseEvent *e)
+{
+    if (m_updateThread==nullptr)
+        return;
+    if (m_updateThread->m_currentButton==1) {
+        m_updateThread->m_currentButton = -1;
+    }
+    else
+        m_updateThread->m_currentButton = 0;
+
+
+}
+
+void QLabelLImage::mousePressEvent(QMouseEvent *e)
+{
+    if (m_updateThread==nullptr)
+        return;
+    m_updateThread->m_work->m_currentImage->AddUndo();
+
+        if(e->buttons() == Qt::RightButton) {
+            m_updateThread->m_currentButton = 2;
+            if (e->modifiers() & Qt::ShiftModifier) {
+                m_updateThread->m_prevPos = m_updateThread->m_currentPos;
+                m_updateThread->m_currentButton = 4;
+            }
+        }
+
+        if(e->buttons() == Qt::LeftButton) {
+            m_updateThread->m_currentButton = 1;
+        }
+  //  qDebug() << m_updateThread->m_currentButton;
 }
 
 

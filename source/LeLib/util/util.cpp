@@ -75,6 +75,29 @@ string Util::trim(string strin)
   return str;
 }
 
+int Util::VerifyHexAddress(QString s)
+{
+    int val;
+    bool ok;
+    if (s.startsWith("$")) {
+        val=s.replace("$","").toInt(&ok, 16);
+    }
+    else
+    if (s.startsWith("0x")) {
+            val=s.replace("0x","").toInt(&ok, 16);
+        }
+    else val=s.toInt(&ok, 10);
+    if (!ok)
+        return -1;
+    return val;
+
+}
+
+QString Util::numToHex(int v)
+{
+    return "$" + QString::number(v,16);
+}
+
 QColor Util::colorScale(QColor &col, int mean, int std)
 {
     float f = 1.0/(2*std)*255;

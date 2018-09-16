@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Turbo Rascal Syntax error, &quot;;&quot; expected but &quot;BEGIN&quot; Version 0.03 Alpha</string>
+   <string>Turbo Rascal Syntax error, &quot;;&quot; expected but &quot;BEGIN&quot; Version 0.04 Beta</string>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
@@ -171,7 +171,7 @@
      <x>0</x>
      <y>0</y>
      <width>1600</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -184,6 +184,7 @@
      </property>
      <addaction name="actionRas_source_file"/>
      <addaction name="actionImage"/>
+     <addaction name="actionPaw_packed_resource_file"/>
     </widget>
     <addaction name="menuNew"/>
     <addaction name="actionNew_project"/>
@@ -333,6 +334,11 @@
   <action name="actionCheck_for_new_version">
    <property name="text">
     <string>Check for new version</string>
+   </property>
+  </action>
+  <action name="actionPaw_packed_resource_file">
+   <property name="text">
+    <string>Paw packed resource file</string>
    </property>
   </action>
  </widget>

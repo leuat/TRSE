@@ -19,7 +19,7 @@ class DialogMemoryAnalyze : public QDialog
 
 public:
     explicit DialogMemoryAnalyze(QWidget *parent = 0);
-    void Initialize(QVector<MemoryBlock*>& blocks);
+    void Initialize(QVector<MemoryBlock*>& blocks, int fontSize);
     QMap<QString, QColor> m_colors;
     void InitColors();
     ~DialogMemoryAnalyze();

@@ -88,7 +88,7 @@ QImage* LImageQImage::ApplyEffectToImage(QImage& src, QGraphicsBlurEffect *effec
     return res;
 }
 
-void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, float zoom, QPoint center)
+void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, float zoom, QPointF center)
 {
 
     int width = m_qImage->width();
@@ -132,6 +132,7 @@ void LImageQImage::ApplyToLabel(QLabel *l)
     if (m_qImage!=nullptr)
         p.convertFromImage(*m_qImage);
     l->setPixmap(p);
+
 }
 
 void LImageQImage::setPixel(int x, int y, unsigned int color)

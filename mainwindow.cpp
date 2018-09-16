@@ -114,22 +114,18 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
 void MainWindow::mousePressEvent(QMouseEvent *e)
 {
-    if(e->buttons() == Qt::RightButton)
+/*    if(e->buttons() == Qt::RightButton)
         m_updateThread->m_currentButton = 2;
     if(e->buttons() == Qt::LeftButton) {
         m_updateThread->m_currentButton = 1;
     }
 
+    qDebug() << "WTOF" << m_updateThread->m_currentButton;*/
 
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *e)
 {
-    if (m_updateThread->m_currentButton==2)
-        m_updateThread->m_currentButton = 0;
-    else
-        m_updateThread->m_currentButton = -1;
-
 }
 
 void MainWindow::wheelEvent(QWheelEvent *event)
@@ -163,7 +159,8 @@ void MainWindow::VerifyDefaults()
        m_iniFile.setStringList("zeropages", AsmMOS6502::m_defaultZeroPointers.split(","));
     if (!m_iniFile.contains("post_optimize"))
         m_iniFile.setFloat("post_optimize", 1);
-
+    if (!m_iniFile.contains("memory_analyzer_font_size"))
+        m_iniFile.setFloat("memory_analyzer_font_size", 17);
     m_iniFile.filename = m_iniFileName;
 
 }
@@ -193,6 +190,9 @@ void MainWindow::LoadDocument(QString fileName)
     }
     if (fileName.contains(".ras") || fileName.contains(".asm") || fileName.contains(".inc")  ) {
         editor = new FormRasEditor(this);
+    }
+    if (fileName.contains(".paw")  ) {
+        editor = new FormPaw(this);
     }
     editor->InitDocument(m_updateThread, &m_iniFile, &m_currentProject.m_ini);
     editor->m_currentSourceFile = getProjectPath() + "/" + fileName;
@@ -245,7 +245,7 @@ void MainWindow::RefreshFileList()
     fileSystemModel->setRootPath(rootPath);
     fileSystemModel->setFilter(QDir::NoDotAndDotDot |
                             QDir::AllDirs |QDir::AllEntries);
-    fileSystemModel->setNameFilters(QStringList() << "*.ras" << "*.asm" << "*.txt" << "*.prg" << "*.inc" << "*.flf");
+    fileSystemModel->setNameFilters(QStringList() << "*.ras" << "*.asm" << "*.txt" << "*.prg" << "*.inc" << "*.flf" <<"*.paw");
     fileSystemModel->setNameFilterDisables(false);
 
     ui->treeFiles->setModel(fileSystemModel);
@@ -293,7 +293,7 @@ void MainWindow::UpdateRecentProjects()
 {
     ui->lstRecentProjects->clear();
     QStringList l = m_iniFile.getStringList("recent_projects");
-    qDebug() << l;
+//    qDebug() << l;
 
     for (QString s: l) {
         QListWidgetItem* item= new QListWidgetItem();
@@ -334,12 +334,10 @@ void MainWindow::SaveAs()
 
 void MainWindow::RemoveTab(int idx, bool save)
 {
-    qDebug() << "A-1";
     if (idx==0)
         return;
 
     idx--;
-    qDebug() << "A0";
     TRSEDocument* doc = m_documents[idx];
     if (doc==nullptr)
         return;
@@ -347,28 +345,19 @@ void MainWindow::RemoveTab(int idx, bool save)
         m_currentProject.m_ini.removeFromList("open_files", doc->m_currentFileShort);
         m_currentProject.Save();
     }
-    qDebug() << m_documents.count() << " vs idx: " << idx;
-    qDebug() << "A";
     m_documents[idx]->Destroy();
-    qDebug() << "A_1";
     delete doc;
-    qDebug() << "F";
 
     m_documents.remove(idx);
-    qDebug() << "A_2";
 //    ui->tabMain->removeTab(idx+1);
-    qDebug() << "B";
 
 
     m_updateThread->SetCurrentImage(nullptr, nullptr, nullptr);
-    qDebug() << "C";
     TRSEDocument* d = (TRSEDocument*)ui->tabMain->currentWidget();
     FormImageEditor* fe = dynamic_cast<FormImageEditor*>(d);
-    qDebug() << "D";
 
     if (fe!=nullptr)
        m_updateThread->SetCurrentImage(&fe->m_work, &fe->m_toolBox,fe->getLabelImage());
-    qDebug() << "E";
 
 }
 
@@ -395,11 +384,9 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
     // Finally load file!
     QString file = index.data().toString();
     if (file.toLower().endsWith(".ras") || file.toLower().endsWith(".asm")
-            || file.toLower().endsWith(".inc")) {
+            || file.toLower().endsWith(".inc") || file.toLower().endsWith(".flf")
+            || file.toLower().endsWith(".paw")) {
         LoadDocument(path + file);
-    }
-    if (file.toLower().endsWith(".flf")) {
-        LoadDocument(path +file);
     }
     if (file.toLower().endsWith(".prg")) {
         FormRasEditor::ExecutePrg(getProjectPath()+"/" + file, m_iniFile.getString("emulator"));
@@ -725,5 +712,46 @@ void MainWindow::on_actionMovie_Creator_triggered()
 
 void MainWindow::on_actionCheck_for_new_version_triggered()
 {
+
+}
+
+void MainWindow::on_actionPaw_packed_resource_file_triggered()
+{
+    if (m_currentProject.m_filename=="") {
+        Messages::messages.DisplayMessage(Messages::messages.NO_PROJECT);
+        return;
+    }
+
+
+
+    QFileDialog dialog;
+    dialog.setFileMode(QFileDialog::AnyFile);
+    QString f = "Paw Files (*.paw)";
+    QString filename = dialog.getSaveFileName(NULL, "Create New File",getProjectPath(),f);
+
+    if (filename=="")
+        return;
+    if (!filename.toLower().endsWith(".paw"))
+        return;
+    QString orgFile;
+    //filename = filename.split("/").last();
+    filename = filename.toLower().remove(getProjectPath().toLower());
+
+    //qDebug() << filename;
+    QString fn = getProjectPath() + filename;
+    if (QFile::exists(fn))
+        QFile::remove(fn);
+    QFile file(fn);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream s(&file);
+        s<< "ras_include_file = packed_resources1.ras\n";
+        s<< "packed_address = $4000  \n";
+
+    }
+
+    file.close();
+//    LoadRasFile(filename);
+    LoadDocument(filename);
+    RefreshFileList();
 
 }

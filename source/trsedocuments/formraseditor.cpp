@@ -230,6 +230,7 @@ void FormRasEditor::wheelEvent(QWheelEvent *event)
 
 void FormRasEditor::keyPressEvent(QKeyEvent *e)
 {
+    TRSEDocument::keyPressEvent(e);
     if (e->key() == Qt::Key_Escape && ui->leSearch->hasFocus()) {
         ui->txtEditor->setFocus();
     }
@@ -273,14 +274,6 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
     }
 
 
-    if (e->key() == Qt::Key_S &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
-        //on_btnSave_2_clicked();
-        //            Save(m_currentSourceFile);
-        SaveCurrent();
-    }
-    if (e->key() == Qt::Key_B &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
-        Build();
-    }
     if (e->key() == Qt::Key_U &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
         MemoryAnalyze();
     }
@@ -495,7 +488,7 @@ void FormRasEditor::MemoryAnalyze()
         qDebug() << QString::number(mb.m_start,16) << " to " <<QString::number(mb.m_end,16) << " " << mb.Type();
     }*/
     DialogMemoryAnalyze* dma = new DialogMemoryAnalyze();
-    dma->Initialize(interpreter.m_assembler->blocks);
+    dma->Initialize(interpreter.m_assembler->blocks, m_iniFile->getInt("memory_analyzer_font_size"));
     dma->exec();
 
 }

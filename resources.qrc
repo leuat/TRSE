@@ -14,5 +14,6 @@
         <file>resources/images/friday.png</file>
         <file>resources/text/about.txt</file>
         <file>resources/text/Documentation.txt</file>
+        <file>resources/images/paw_icon.png</file>
     </qresource>
 </RCC>

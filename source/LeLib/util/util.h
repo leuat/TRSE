@@ -60,6 +60,8 @@ public:
     static void verify_file(string filename);
     static bool verify_file_bool(string filename);
     static string trim(string s);
+    static int VerifyHexAddress(QString s);
+    static QString numToHex(int v);
     static QString path;
 
     static QColor colorScale(QColor& col, int mean, int std);
