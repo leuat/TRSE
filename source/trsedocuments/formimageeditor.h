@@ -123,7 +123,7 @@ private slots:
 
     void on_btnExportBin_clicked();
 
-    void on_tabWidget_2_currentChanged(int index);
+    void on_tabMain_currentChanged(int index);
 
     void on_btnLoadCharmap_clicked();
 

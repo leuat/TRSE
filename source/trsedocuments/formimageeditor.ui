@@ -75,9 +75,9 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QTabWidget" name="tabEffects">
+      <widget class="QTabWidget" name="tabMain">
        <property name="currentIndex">
-        <number>1</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">

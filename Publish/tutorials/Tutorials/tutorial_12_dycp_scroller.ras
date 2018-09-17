@@ -260,7 +260,8 @@ begin
 	copycharsetfromrom(^@charmap);
 	for a:=0 to 255 do sine[a]:=sine[a]/12;
 	sine[255] := sine[0];
-	poke(VIC_DATA_LOC, 0,$18);
+//	poke(VIC_DATA_LOC, 0,$18);
+	SetCharsetLocation($2000);
 	hideborderx(1);
 	
 	//setmulticolormode();

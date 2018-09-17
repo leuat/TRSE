@@ -70,6 +70,9 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     if (m_procName.toLower()=="copycharsetfromrom") {
         CopyCharsetFromRom(as);
     }
+    if (m_procName.toLower() == "setcharsetlocation") {
+        SetCharsetLocation(as);
+    }
 
     if (m_procName.toLower() == "setspriteloc")
         SetSpriteLoc(as);
@@ -1164,6 +1167,37 @@ void NodeBuiltinMethod::Clearsound(Assembler *as)
     as->Asm("inc $d019");
     as->Asm("lda $dc0d");
     as->Asm("cli");*/
+}
+
+void NodeBuiltinMethod::SetCharsetLocation(Assembler *as)
+{
+/*    NodeVar* v = dynamic_cast<NodeVar*>(m_params[0]);
+    if (v==nullptr)
+        ErrorHandler::e.Error("SetCharsetLocation parameter must be an incbin address!");
+  */
+    NodeNumber* v = dynamic_cast<NodeNumber*>(m_params[0]);
+    if (v==nullptr)
+        ErrorHandler::e.Error("SetCharsetLocation parameter must be an address!", m_op.m_lineNumber);
+
+    int n = v->m_val;
+    bool ok=false;
+    uchar b = 0;
+    if (n==0x00) { b=0b0000; ok=true;}
+    if (n==0x0800) { b=0b0010; ok=true;}
+    if (n==0x1000) { b=0b0100; ok=true;}
+    if (n==0x1800) { b=0b0110; ok=true;}
+    if (n==0x2000) { b=0b1000; ok=true;}
+    if (n==0x2800) { b=0b1010; ok=true;}
+    if (n==0x3000) { b=0b1100; ok=true;}
+    if (n==0x3800) { b=0b1110; ok=true;}
+    if (!ok)
+        ErrorHandler::e.Error("SetCharsetLocation parameter must be one of the following values: $0000,$0800,$1000,$1800,$2000, $2800, $3000 or $3800", m_op.m_lineNumber);
+
+    as->Asm("lda $D018");
+    as->Asm("and #%11110001");
+    qDebug() << QString::number(b);
+    as->Asm("ora #"+QString::number(b));
+    as->Asm("sta $D018");
 }
 
 void NodeBuiltinMethod::InitZeroPage(Assembler* as) {

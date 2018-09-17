@@ -125,7 +125,7 @@
         <string>999</string>
        </property>
        <property name="text">
-        <string>22</string>
+        <string>20</string>
        </property>
       </widget>
      </item>
@@ -208,6 +208,12 @@
       <widget class="QCheckBox" name="chkUseColors">
        <property name="text">
         <string>Use charset colors (not level)</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="tristate">
+        <bool>false</bool>
        </property>
       </widget>
      </item>

@@ -538,6 +538,13 @@ void Syntax::SetupBuiltinFunctions()
                 QList<BuiltInFunction::Type>()
                 );
 
+    builtInFunctions["setcharsetlocation"] = BuiltInFunction(
+                "setcharsetlocation",
+                QList<BuiltInFunction::Type>()
+                <<BuiltInFunction::Type::INTEGER
+
+                );
+
     builtInFunctions["screenoff"] = BuiltInFunction(
                 "screenoff",
                 QList<BuiltInFunction::Type>()
