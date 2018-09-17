@@ -89,41 +89,45 @@ void LImageSprites::ToRaw(QByteArray &arr)
 
 QPoint LImageSprites::getXY(int x, int y)
 {
-    int xx,yy;
+    int xx,yy, shiftx, shifty,i,j;
 
     if (m_currentMode!=CHARSET2x2) {
 
 
-        int shiftx = ((m_currencChar%40)*4)%320;
-        int shifty = ((int)((m_currencChar-m_currencChar%40)/(int)40))*8;
+        shiftx = ((m_currencChar%40)*4)%320;
 
-        int i = x/320.0*24;
-        int j = y/200.0*21;
+        shifty = ((int)((m_currencChar-m_currencChar%40)/(int)40))*8;
 
-        //        if (j<0 || j>=24 || i<0 || i>=16)
-        //            return QPoint(0,0);
-        xx = i+shiftx;
-        yy = j+shifty;
-    }
-    if (m_currentMode==CHARSET2x2) {
-
-
-        int shiftx = ((m_currencChar%40)*4)%320;
-        int shifty = ((int)((m_currencChar-m_currencChar%40)/(int)40))*8;
-
-        int i = x/320.0*24*3;
-        int j = y/200.0*21*2;
-
-
+        i = x/320.0*24;
+        j = y/200.0*21;
 
         //        if (j<0 || j>=24 || i<0 || i>=16)
         //            return QPoint(0,0);
-        xx = i+shiftx;
-        yy = j+shifty;
+    }
+    if (m_currentMode==CHARSET2x2)
+    {
 
-        if (yy>=21) yy+=3;
+
+        shiftx = ((m_currencChar%40)*4)%320;
+        shifty = ((int)((m_currencChar-m_currencChar%40)/(int)40))*8;
+
+        i = x/320.0*24*3;
+        j = y/200.0*21*2;
+
+
+
+        //        if (j<0 || j>=24 || i<0 || i>=16)
+        //            return QPoint(0,0);
+
 
     }
+    if (m_bitMask==0b1)
+        shiftx*=2;
+    xx = i+shiftx;
+    yy = j+shifty;
+
+    if (m_currentMode==CHARSET2x2)
+    if (yy>=21) yy+=3;
 
 
     return QPoint(xx,yy);

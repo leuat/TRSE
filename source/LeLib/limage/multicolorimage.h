@@ -80,11 +80,13 @@ public:
 
     int LookUp(PixelChar pc);
     CharsetImage* m_charset = nullptr;
+    virtual void setMultiColor(bool doSet) override;
 
     void CalculateCharIndices();
     int Eat(int start, int add);
     void SaveCharRascal(QString file, QString name);
     void LoadCharset(QString file) override;
+    bool isMultiColor() override { return m_bitMask==0b11; }
 
 //    unsigned char m_border=0, m_background=0;
 

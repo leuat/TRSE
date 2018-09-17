@@ -74,9 +74,9 @@
    <widget class="QTableWidget" name="tabData">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>10</x>
       <y>160</y>
-      <width>571</width>
+      <width>661</width>
       <height>211</height>
      </rect>
     </property>
@@ -110,7 +110,7 @@
     </column>
     <column>
      <property name="text">
-      <string>Address</string>
+      <string>Unpack Address</string>
      </property>
     </column>
    </widget>

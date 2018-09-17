@@ -220,7 +220,7 @@ void FormImageEditor::Load(QString filename)
     ui->cmbEffect->clear();
     ui->cmbEffect->addItems(m_imageEffects.getStringList());
 
-
+    ui->chkDisplayMulticolor->setChecked(m_work.m_currentImage->m_image->isMultiColor());
 }
 
 void FormImageEditor::Save(QString filename)
@@ -796,7 +796,7 @@ void FormImageEditor::on_btnLoadCharmap_clicked()
 
 
     QString fileName = QFileDialog::getOpenFileName(this,
-        tr("Open Character map"), m_projectIniFile->getString("project_path"), tr("Binary Files (*.bin )"));
+        tr("Open Character map"), m_projectIniFile->getString("project_path"), tr("Binary Files (*.bin, *.flf )"));
 
     if (fileName == "")
         return;
@@ -880,4 +880,10 @@ void FormImageEditor::on_btnResizeData_clicked()
     delete dResize;
 
 
+}
+
+void FormImageEditor::on_chkDisplayMulticolor_stateChanged(int arg1)
+{
+    m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
+    Data::data.Redraw();
 }

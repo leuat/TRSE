@@ -77,7 +77,7 @@
      <item row="1" column="1">
       <widget class="QTabWidget" name="tabEffects">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -547,6 +547,13 @@
       <widget class="QLabel" name="lblPosition">
        <property name="text">
         <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="chkDisplayMulticolor">
+       <property name="text">
+        <string>Display multicolor</string>
        </property>
       </widget>
      </item>

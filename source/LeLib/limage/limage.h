@@ -128,6 +128,9 @@ public:
     virtual void setForeground(unsigned int col) { m_border = col; }
     virtual void setBackground(unsigned int col) {m_background = col; }
 
+    virtual void setMultiColor(bool doSet) {}
+
+    virtual bool isMultiColor() { return false; }
     void drawLine(float x0, float y0, float x1, float y1, unsigned int col, int size);
 
     void Box(int x, int y, unsigned char col, int size);

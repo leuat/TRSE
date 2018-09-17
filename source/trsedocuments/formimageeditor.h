@@ -141,6 +141,7 @@ private slots:
 
     void on_btnResizeData_clicked();
 
+    void on_chkDisplayMulticolor_stateChanged(int arg1);
 };
 
 

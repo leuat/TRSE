@@ -24,6 +24,9 @@ public:
     }
 
 
+
+//    virtual bool isMultiColor() { return false; }
+
     CharmapLevel(int sizeChar, int sizeExtraData) {
         m_CharData.resize(sizeChar);
         m_ColorData.resize(sizeChar);
@@ -164,6 +167,7 @@ public:
     void setPixel(int x, int y, unsigned int color) override;
     unsigned int getPixel(int x, int y) override;
     void CopyFrom(LImage* mc) override;
+    void setMultiColor(bool doSet) override {}
 
 
     void Resize(CharmapGlobalData newMeta);

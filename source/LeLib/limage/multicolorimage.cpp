@@ -6,6 +6,7 @@
 #include "source/LeLib/limage/charsetimage.h"
 #include <typeinfo>
 #include "source/LeLib/util/util.h"
+#include "source/LeLib/limage/limageio.h"
 
 MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
 {
@@ -322,13 +323,21 @@ void MultiColorImage::LoadCharset(QString file)
         return;
     }
 
-    QFile f(file);
-    qDebug() << "Loading";
-    f.open(QIODevice::ReadOnly);
-    m_charset = new CharsetImage(m_colorList.m_type);
-    m_charset->ImportBin(f);
-    f.close();
-    qDebug() << "Done";
+    if (file.toLower().endsWith(".bin")) {
+        QFile f(file);
+        f.open(QIODevice::ReadOnly);
+        m_charset = new CharsetImage(m_colorList.m_type);
+        m_charset->ImportBin(f);
+        f.close();
+    }
+    if (file.toLower().endsWith(".flf")) {
+        LImage* img =LImageIO::Load(file);
+        m_charset = dynamic_cast<CharsetImage*>(img);
+        if (m_charset==nullptr) {
+
+        }
+//        m_charset =
+    }
 
 }
 
@@ -349,6 +358,29 @@ int MultiColorImage::LookUp(PixelChar pc)
     m_organized.append(pc);
     return m_organized.count()-1;
 
+}
+
+void MultiColorImage::setMultiColor(bool doSet)
+{
+    if (doSet) {
+        m_width = 160;
+        m_height = 200;
+        m_scaleX = 2.5f;
+        m_bitMask = 0b11;
+        m_noColors = 4;
+        m_scale = 2;
+        m_minCol = 0;
+    }
+    else {
+        m_width = 320;
+        m_height = 200;
+        m_scaleX = 1.2f;
+        m_bitMask = 0b1;
+        m_noColors = 2;
+        m_scale = 1;
+        m_minCol = 0;
+
+    }
 }
 
 void MultiColorImage::CalculateCharIndices()

@@ -51,8 +51,7 @@ void Messages::InitMessages()
                                        );
 
     m_messages[ALPHA_WARNING] = Message(ALPHA_WARNING, Message::Msg,
-                                      "Ah. Hi there! <br><br>Welcome to this final alpha release of Turbo Rascal Syntax Error! "
-                                      "A fair warning: This version might have some bugs and will occasionally crash. "
+                                      "Ah. Hi there! <br><br>Welcome to this first beta release of Turbo Rascal Syntax Error! "
                                       "If this is your first time using the TRSE framework, please open the tutorials project located in the parent directory and play around. <br> "
                                       "<br> "
                                       "Thank you so much for trying out Turbo Rascal Syntax Error! Remember to report any bugs to <b>generalgrapefruit@lemonspawn.com</b>.");
