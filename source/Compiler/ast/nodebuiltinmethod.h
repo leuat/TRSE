@@ -91,9 +91,9 @@ public:
 
     QString BitShiftX(Assembler* as);
 
-    void LoadVar(Assembler* as, int paramNo, QString register, QString load="");
+    void LoadVar(Assembler* as, int paramNo, QString registe, QString load="");
     void LoadVar(Assembler* as, int paramNo);
-    void SaveVar(Assembler* as, int paramNo, QString register, QString load="");
+    void SaveVar(Assembler* as, int paramNo, QString registe, QString load="");
     void SaveVar(Assembler* as, int paramNo);
 
     void VerifyInitialized(QString method, QString initmethod);

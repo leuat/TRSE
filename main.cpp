@@ -25,6 +25,7 @@ void SetDarkPalette(QApplication& a) {
 
 }
 
+
 void SetMongisPalette(QApplication& a) {
     QPalette darkPalette;
     darkPalette.setColor(QPalette::Window, QColor(128,53,255));
@@ -78,7 +79,10 @@ void ConvertPerlin(QString input, QString out, float div) {
 int main(int argc, char *argv[])
 {
 
+/*   #pragma omp for
 
+    for (int i=0;i<19;i++)
+        i=0;*/
     QApplication a(argc, argv);
     a.setStyle(QStyleFactory::create("Fusion"));
     SetDarkPalette(a);
