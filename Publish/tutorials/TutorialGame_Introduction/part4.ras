@@ -1,0 +1,51 @@
+program part4_charsets;
+var  
+   	charset1: incbin("charsets/charset1.bin", $2000);
+	colors : pointer;
+	i,j:byte;
+
+procedure print2x2block(x,y,c:byte);
+begin
+	moveto(x,y,$04);
+	screenmemory[0]:=c;
+	screenmemory[1]:=c+1;
+	screenmemory[40]:=c+40;
+	screenmemory[41]:=c+41;
+
+	moveto(x,y,$D8);
+	screenmemory[0]:=colors[c];
+	screenmemory[1]:=colors[c+1];
+	screenmemory[40]:=colors[c+40];;
+	screenmemory[41]:=colors[c+41];;
+
+end;
+
+
+begin
+	clearscreen(LIGHT_BLUE, $D800);
+	clearscreen($20, $0400);
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+
+	colors:=$2800;
+
+	MULTICOLOR_CHAR_COL[1]:=GREY;
+	MULTICOLOR_CHAR_COL[2]:=BROWN;
+
+	setmulticolormode();
+
+	setcharsetlocation($2000);
+
+	// Draw some lines of blocks
+	for 	i:=0 to 18 do
+		print2x2block(3 + i*2,2,0);
+
+	for 	i:=0 to 18 do begin
+		print2x2block(3 + i*2,20,2);
+		print2x2block(3 + i*2,22,4);
+	end;
+
+
+	Loop();
+
+end.

@@ -2,7 +2,8 @@
 /*
    Renders a .flf level at map pos x,y
 */
-procedure RenderLevel(m_li, m_lj, m_screen: byte);
+
+procedure ReadHeader();
 var
    m_rl_width, m_rl_height : byte;
    m_rl_sizex, m_rl_sizey : byte;
@@ -12,7 +13,6 @@ var
    m_rl_chunksize, m_rl_chunks : byte;
 
 begin
-	// Fluff files have 13 byte headers
 	inczp(@levelpointer, 13); // Fluff header
 
 	// Read level header info
@@ -32,10 +32,17 @@ begin
 
 	m_rl_dataSize := @levelpointer[8];
 
+
+
+
+end;
+
+procedure RenderColorLevel(m_li, m_lj, m_screen: byte);
+begin
+	// Fluff files have 13 byte headers
 	
 	// Go past header
-
-	inczp(@levelpointer, 9);
+	inczp(levelpointer, 32);
 
 	// Calculate position in level layout
 
@@ -47,9 +54,9 @@ begin
 	// Skip levels
 	if m_rl_pos<>0 then
 	for m_rl_j:=0 to m_rl_pos do begin
-			inczp(@levelpointer,m_rl_val);
-			inczp(@levelpointer,m_rl_val);
-			inczp(@levelpointer,m_rl_dataSize);
+			inczp(levelpointer,m_rl_val);
+			inczp(levelpointer,m_rl_val);
+			inczp(levelpointer,m_rl_dataSize);
 	end;
 
 	// Set screen position 
@@ -61,7 +68,7 @@ begin
 	
 	for m_rl_j:=0 to m_rl_height do begin
 		for m_rl_i:=0 to m_rl_width do begin
-			m_rl_val := peek(@levelpointer,m_rl_i);
+			m_rl_val := peek(levelpointer,m_rl_i);
 			m_rl_idx:=m_rl_i*2;
 
 			screenmemory[m_rl_idx]:=m_rl_val;
@@ -69,16 +76,16 @@ begin
 			screenmemory[m_rl_idx+40]:=m_rl_val+40;
 			screenmemory[m_rl_idx+41]:=m_rl_val+41;
 		 end;
-		incscreenx(80);
-		inczp(@levelpointer,m_rl_width);
+		inczp(screenmemory, 80);
+		inczp(levelpointer,m_rl_width);
 	end;
 	// Then colors
 	moveto(m_rl_startx, m_rl_starty, $D8);
 //	call(SIDFILE_1_PLAY);
-	@colorpointer:=@levelpointer;
+	@colorpointer:=levelpointer;
 	for m_rl_j:=0 to m_rl_height do begin
 		for m_rl_i:=0 to m_rl_width do begin
-			m_rl_val := peek(@levelpointer,m_rl_i)&7 + 8;
+			m_rl_val := peek(levelpointer,m_rl_i)&7 + 8;
 			m_rl_idx:=m_rl_i*2;
 	
 			screenmemory[m_rl_idx]:=m_rl_val;
@@ -89,20 +96,74 @@ begin
 
 
 	 	end;
-		incscreenx(80);
-		inczp(@levelpointer, m_rl_width);
+		inczp(screenmemory, 80);
+		inczp(levelpointer, m_rl_width);
 	
 	end;
 	// Set multicolor colors
 	//call(SIDFILE_1_PLAY);
-	m_rl_val :=  peek(@levelpointer,0);
-	poke(MULTICOLOR_CHAR_COL, 0, m_rl_val);
-	m_rl_val :=  peek(@levelpointer,1);
-	poke(MULTICOLOR_CHAR_COL, 2, m_rl_val); 
-	m_rl_val :=  peek(@levelpointer,2);
-	poke(MULTICOLOR_CHAR_COL, 1, m_rl_val);
+	poke(MULTICOLOR_CHAR_COL, 0, levelpointer[0]);
+	poke(MULTICOLOR_CHAR_COL, 2, levelpointer[1]); 
+	poke(MULTICOLOR_CHAR_COL, 1, levelpointer[2]);
 
-	inczp(@levelpointer, 3);
-	// levelpointer now points to chunk data!
+	inczp(levelpointer, 3);
+	// levelpointer now points to following data cun!
+
+end;
+
+procedure RenderCharsetColorLevel(m_li2, m_lj2, m_screen2: byte);
+var
+
+begin
+	// Fluff files have 13 byte headers
+	inczp(levelpointer, 32+13);
+
+	m_rl_pos := m_rl_sizex*m_lj2 + m_li2;
+	
+	m_rl_val := m_rl_width*m_rl_height;
+//	m_rl_val := m_rl_val;// + m_width; 
+
+	// Skip levels
+	if m_rl_pos<>0 then
+	for m_rl_j:=0 to m_rl_pos do begin
+			inczp(levelpointer,m_rl_val);
+			inczp(levelpointer,m_rl_dataSize);
+	end;
+
+
+	moveto(m_rl_startx, m_rl_starty, $D8);
+	colormemory:=screenmemory;
+	moveto(m_rl_startx, m_rl_starty, m_screen2);
+	
+	// Fill screen with chars
+	//if current_game_mode=@gameModeMap then
+	//call(SIDFILE_1_PLAY);
+
+	for m_rl_j:=0 to m_rl_height do begin
+		m_rl_idx:=0;
+	
+		for m_rl_i:=0 to m_rl_width do begin
+			m_rl_val := levelpointer[m_rl_i];
+			screenmemory[m_rl_idx+40]:=m_rl_val+40;
+			screenmemory[m_rl_idx]:=m_rl_val;
+			screenmemory[m_rl_idx+41]:=m_rl_val+41;
+			screenmemory[m_rl_idx+1]:=m_rl_val+1;
+
+			colormemory[m_rl_idx] := colors[m_rl_val];
+			colormemory[m_rl_idx+1] := colors[m_rl_val+1];
+			colormemory[m_rl_idx+41] := colors[m_rl_val+41];
+			colormemory[m_rl_idx+40] := colors[m_rl_val+40];
+
+			m_rl_idx:=m_rl_idx+2;
+		 end;
+		inczp(screenmemory, 80);
+		inczp(colormemory, 80);
+		inczp(levelpointer,m_rl_width);
+	end;
+
+	poke(MULTICOLOR_CHAR_COL, 0, levelpointer[0]);
+	poke(MULTICOLOR_CHAR_COL, 2, levelpointer[1]); 
+	poke(MULTICOLOR_CHAR_COL, 1, levelpointer[2]);
+	inczp(levelpointer,3);
 
 end;

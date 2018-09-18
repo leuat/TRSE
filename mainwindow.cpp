@@ -642,7 +642,7 @@ void MainWindow::LoadProject(QString filename)
 
     QStringList files = m_currentProject.m_ini.getStringList("open_files");
     for (QString f: files) {
-        if (QFile::exists(f))
+        if (QFile::exists(getProjectPath() + "/"+ f))
             LoadDocument(f);
     }
 

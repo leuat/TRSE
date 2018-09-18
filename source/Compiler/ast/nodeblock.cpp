@@ -46,11 +46,16 @@ QString NodeBlock::Build(Assembler *as) {
 
 
 
-    QString label = as->NewLabel("block");
-    as->Asm("jmp " + label);
     bool blockLabel = false;
     bool blockProcedure = false;
+    bool hasLabel = false;
+
+    QString label = as->NewLabel("block");
+
+
     if (m_decl.count()!=0) {
+        as->Asm("jmp " + label);
+        hasLabel = true;
         //           as->PushBlock(m_decl[0]->m_op.m_lineNumber-1);
     }
     for (Node* n: m_decl) {
@@ -78,8 +83,10 @@ QString NodeBlock::Build(Assembler *as) {
     as->VarDeclEnds();
     as->PushCounter();
     as->EndMemoryBlock();
-    if (!blockLabel)
+    if (!blockLabel && hasLabel)
         as->Label(label);
+    if (forceLabel!="")
+        as->Label(forceLabel);
     if (m_compoundStatement!=nullptr)
         m_compoundStatement->Build(as);
 

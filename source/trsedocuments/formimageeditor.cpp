@@ -683,12 +683,12 @@ void FormImageEditor::SetMCColors()
 
 void FormImageEditor::UpdateLevels()
 {
+//    qDebug() << "ICONS!";
     ImageLevelEditor* le = dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image);
     if (le==nullptr)
         return;
 
     QVector<QPixmap> icons = le->CreateIcons();
-
 
 
     Util::clearLayout(ui->gridLevels);
@@ -776,8 +776,9 @@ void FormImageEditor::on_btnExportBin_clicked()
 
 }
 
-void FormImageEditor::on_tabWidget_2_currentChanged(int index)
+void FormImageEditor::on_tabMain_currentChanged(int index)
 {
+    qDebug() << index;
     if (index==1)
         m_work.m_currentImage->m_image->SetCurrentType(LImage::WriteType::Color);
     if (index==3)

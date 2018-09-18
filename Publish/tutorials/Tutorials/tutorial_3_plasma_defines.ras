@@ -101,7 +101,7 @@ begin
 	SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL:=BLACK;
 	// Set charmap location at $2000
-	VIC_DATA_LOC := $18;
+	SetCharsetLocation($2000);
 	// Set custom character pos
 	// Initialize sine functions
 	ax:=1;

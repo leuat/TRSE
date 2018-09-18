@@ -326,7 +326,7 @@ end;
 
 procedure Initialize();
 begin
-	poke(VIC_DATA_LOC, 0,$18);
+	SetCharsetLocation($2000);
 	SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL:=BLACK;
 	clearscreen($00,^$0400);

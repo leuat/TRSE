@@ -9,8 +9,6 @@ program tutorial_18_horizontal_starfield;
 @define charPos 64
 // where to put char ROM data?
 @define charsetPos $2000
-// VIC charset value pointing to $2000
-@define charsetVicData $18
 // Use bank 1
 @define screenLoc $04
 
@@ -160,7 +158,8 @@ begin
 	SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL:=BLACK;
 	clearscreen($20,$0400);	
-	VIC_DATA_LOC:=@charsetVicData;
+	//VIC_DATA_LOC:=@charsetVicData;
+	SetCharsetLocation(@charsetPos);
 	copycharsetfromrom(^@charsetPos);
 	InitializeText();
 	

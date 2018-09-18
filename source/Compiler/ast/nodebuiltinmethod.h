@@ -47,6 +47,7 @@ public:
     PVar Execute(SymbolTable* symTab, uint lvl) override;
     void PlaySound(Assembler* as);
     void Clearsound(Assembler* as);
+    void SetCharsetLocation(Assembler* as);
     void IncScreenX(Assembler* as);
     void IncZp(Assembler* as);
     void DecZp(Assembler* as);
