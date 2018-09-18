@@ -15,6 +15,7 @@
 class NodeBlock : public Node {
 public:
     QVector<Node*> m_decl;
+    QString forceLabel = "";
     Node* m_compoundStatement = nullptr;
     SymbolTable* m_symTab = nullptr;
     bool m_useOwnSymTab;

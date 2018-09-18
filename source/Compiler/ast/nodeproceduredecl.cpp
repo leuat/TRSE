@@ -89,12 +89,16 @@ QString NodeProcedureDecl::Build(Assembler *as)
         //as->Asm("jmp afterProc_" + m_procName);
 
 
-        as->Label(m_procName);
+        //as->Label(m_procName);
     }
 //    if (m_isInterrupt)
   //      as->Asm("dec $d019        ; acknowledge IRQ");
-
-    m_block->Build(as);
+    if (m_block!=nullptr) {
+        NodeBlock* b = dynamic_cast<NodeBlock*>(m_block);
+        if (b!=nullptr)
+            b->forceLabel=m_procName;
+        m_block->Build(as);
+    }
     if (!isInitFunction) {
         if (!m_isInterrupt)
             as->Asm("rts");
