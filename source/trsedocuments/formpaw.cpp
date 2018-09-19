@@ -20,6 +20,8 @@ void FormPaw::FillToIni()
     m_pawData.setString("packed_address",Util::numToHex(Util::VerifyHexAddress(ui->lePackedAddress->text())));
     m_pawData.setString("output_dir",ui->leOutDir->text());
     m_pawData.setFloat("use_exomizer3", ui->chkExomizer3->isChecked()?1:0);
+    m_pawData.setString("address_field", ui->leAddressField->text());
+
     QStringList data;
     m_files.clear();
 
@@ -49,7 +51,7 @@ void FormPaw::FillFromIni()
     ui->leOutfile->setText(m_pawData.getString("ras_include_file"));
     ui->lePackedAddress->setText(m_pawData.getString("packed_address"));
     ui->leOutDir->setText(m_pawData.getString("output_dir"));
-
+    ui->leAddressField->setText(m_pawData.getString("address_field"));
     ui->chkExomizer3->setChecked(m_pawData.getdouble("use_exomizer3")==1);
     QStringList data = m_pawData.getStringList("data");
 
@@ -160,12 +162,24 @@ void FormPaw::CreateIncludefile()
         text_file.write(s+"\n")
   */
     int address = Util::NumberFromStringHex(m_pawData.getString("packed_address"));
+    QVector<int> addresses;
     for (PawFile& pf : m_files) {
         QString s = pf.name + " : IncBin(\""+pf.incCFile+"\", " + Util::numToHex(address) + ");\n";
         address+=pf.packedSize;
+        addresses.append(address);
         stream<<s;
     }
+    QString adr = m_pawData.getString("address_field") + " : array [" + QString::number(m_files.count()*2) +"] of byte = (\n";
+    for (int i: addresses){
+        adr+="\t"+QString::number(i&255) + ", ";
+        adr+=QString::number((i>>8)&255);
+        if (i!=addresses[addresses.count()-1])
+            adr+=",";
+        adr+="\n";
+    }
 
+    adr = adr+");";
+    stream << adr;
     file.close();
 
 }

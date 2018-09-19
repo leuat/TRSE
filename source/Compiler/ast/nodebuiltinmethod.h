@@ -68,6 +68,7 @@ public:
     void MemCpyLarge(Assembler* as);
     void SetBank(Assembler* as);
     void Decrunch(Assembler* as);
+    void DecrunchFromIndex(Assembler* as);
     void CopyImageColorData(Assembler* as);
     void CopyHalfScreen(Assembler* as);
     void CopyFullScreenUnrolled(Assembler* as);
