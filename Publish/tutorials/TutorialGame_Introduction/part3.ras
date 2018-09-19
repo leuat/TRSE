@@ -1,0 +1,30 @@
+program part3;
+var  
+	mySprites:incbin("sprites/sprites.bin", $3200);
+
+procedure InitSprites();
+begin
+	setspriteloc(0,$C8,0);
+	setspriteloc(1,$C9,0);
+
+	spritepos(60,100,0);
+	spritepos(220,100,1);
+
+	SPRITE_BITMASK:=%00000011;
+
+	SPRITE_MULTICOLOR:=%00000011;
+	SPRITE_MULTICOLOR_REG1:=LIGHT_GREEN;
+	SPRITE_MULTICOLOR_REG2:=GREY;
+
+	SPRITE_COLOR[0]:=RED;
+	SPRITE_COLOR[1]:=BLUE;
+end;
+
+begin
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+	ClearScreen($20, $0400);
+		
+	InitSprites();
+	Loop();
+end.
