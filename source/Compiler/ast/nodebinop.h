@@ -9,7 +9,7 @@
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/ast/nodevar.h"
 #include "source/Compiler/ast/nodenumber.h"
-
+#include "source/Compiler/ast/nodeunaryop.h"
 class NodeBinOP : public Node {
 public:
 
@@ -40,7 +40,8 @@ public:
     bool isAddress() override;
 
 
-    void BothPureNumbersBinOp(Assembler* as);
+    int BothPureNumbersBinOp(Assembler* as);
+//    int BothPureNumbersBinOpOld(Assembler* as);
 
 
     void RightIsPureNumericMulDiv8bit(Assembler* as);

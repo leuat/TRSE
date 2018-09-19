@@ -1201,7 +1201,7 @@ void NodeBuiltinMethod::SetCharsetLocation(Assembler *as)
 }
 
 void NodeBuiltinMethod::InitZeroPage(Assembler* as) {
-    as->Asm("jmp initzeropage_continue");
+/*    as->Asm("jmp initzeropage_continue");
     as->Label("zeropage1 = $02");
     as->Label("zeropage2 = $04");
     as->Label("zeropage3 = $08");
@@ -1210,7 +1210,7 @@ void NodeBuiltinMethod::InitZeroPage(Assembler* as) {
     as->Label("zeropage6 = $24");
     as->Label("zeropage7 = $68");
 
-    as->Label("initzeropage_continue");
+    as->Label("initzeropage_continue");*/
 }
 
 void NodeBuiltinMethod::Abs(Assembler *as)
