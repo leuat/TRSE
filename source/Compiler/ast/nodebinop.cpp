@@ -135,11 +135,65 @@ bool NodeBinOP::isAddress() {
     return m_left->isAddress() && m_right->isAddress();
 }
 
-void NodeBinOP::BothPureNumbersBinOp(Assembler *as) {
+int NodeBinOP::BothPureNumbersBinOp(Assembler *as) {
+
+
+    //NodeNumber *a = (NodeNumber*)dynamic_cast<const NodeNumber*>(m_left);
+    //NodeNumber *b = (NodeNumber*)dynamic_cast<const NodeNumber*>(m_right);
+    //BothConstants(as);
+    if (dynamic_cast<NodeUnaryOp*>(m_left)!=nullptr) {
+        NodeNumber *b = (NodeNumber*)dynamic_cast<const NodeNumber*>(m_right);
+        if (m_left->m_op.m_type==TokenType::MINUS) {
+            return b->m_val*-1;
+        }
+        else
+            if (m_left->m_op.m_type==TokenType::PLUS) {
+                return b->m_val;
+            }
+            ErrorHandler::e.Error("Unknown binary operation!", m_op.m_lineNumber);
+
+        }
+
+    int na=0;
+    int nb=0;
+    if (dynamic_cast<NodeBinOP*>(m_left)!=nullptr)
+        na = dynamic_cast<NodeBinOP*>(m_left)->BothPureNumbersBinOp(as);
+    else
+        na = dynamic_cast<NodeNumber*>(m_left)->m_val;
+    if (dynamic_cast<NodeBinOP*>(m_right)!=nullptr)
+        nb = dynamic_cast<NodeBinOP*>(m_right)->BothPureNumbersBinOp(as);
+    else
+        nb = dynamic_cast<NodeNumber*>(m_right)->m_val;
+
+
+    if (m_op.m_type==TokenType::PLUS)
+        na+=nb;
+    if (m_op.m_type==TokenType::MINUS)
+        na-=nb;
+    if (m_op.m_type==TokenType::DIV) {
+        if (nb==0) {
+            ErrorHandler::e.Error("Binary operation: Division by zero!", m_op.m_lineNumber);
+        }
+        else
+        na/=nb;
+    }
+    if (m_op.m_type==TokenType::MUL)
+        na*=nb;
+    if (m_op.m_type==TokenType::BITAND)
+        na&=nb;
+    if (m_op.m_type==TokenType::BITOR)
+        na|=nb;
+
+    return na;
+
+}
+
+/*void NodeBinOP::BothPureNumbersBinOpOld(Assembler *as) {
+
+
     NodeNumber *a = (NodeNumber*)dynamic_cast<const NodeNumber*>(m_left);
     NodeNumber *b = (NodeNumber*)dynamic_cast<const NodeNumber*>(m_right);
-    //BothConstants(as);
-    as->Comment("Binop of two constant values");
+
     m_left->Build(as);
     if (m_op.m_type==TokenType::PLUS)
         as->Term("+");
@@ -156,6 +210,7 @@ void NodeBinOP::BothPureNumbersBinOp(Assembler *as) {
 
     m_right->Build(as);
 }
+*/
 
 void NodeBinOP::RightIsPureNumericMulDiv8bit(Assembler *as) {
     int val = ((NodeNumber*)m_right)->m_val;
@@ -542,9 +597,24 @@ QString NodeBinOP::Build(Assembler *as) {
 
     if (isPureNumeric()) {
 
-        BothPureNumbersBinOp(as);
+
+        int val = BothPureNumbersBinOp(as);
+        QString s = "#";
+        if (m_left->isAddress() || m_right->isAddress())
+            s = "";
+        //s=s+QString::number(val);
         //as->Term("#" + HexValue());
 
+        if (as->m_term=="")
+            if (!isWord(as))
+                as->Asm("lda " + s + QString::number(val));
+            else {
+                as->Asm("lda " + s+QString::number(val&255));
+                as->Asm("ldy " + s+QString::number((val>>8)&255));
+            }
+
+        else
+            as->Term(s+QString::number(val));
         return "";
     }
 

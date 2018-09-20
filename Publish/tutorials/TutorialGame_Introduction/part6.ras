@@ -1,0 +1,73 @@
+program part6_RenderLevel;
+var  
+
+@define levelPosition $5000
+@define charsetPosition $2000
+@define useKernal 0
+
+   	charset1: incbin("charsets/charset1.bin", @charsetPosition);
+	levels: incbin("levels/level1.flf", @levelPosition);
+	colors, levelpointer, colormemory : pointer;
+	i,j:byte = 0;
+	curLevel_x, curLevel_y : byte=0;
+
+@define colorpointer colormemory
+@include "../RasLib/levels.ras"
+
+procedure Initialize();
+begin
+	clearscreen(LIGHT_BLUE, $D800);
+	clearscreen($20, $0400);
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+
+	colors:=$2800;
+
+	MULTICOLOR_CHAR_COL[1]:=GREY;
+	MULTICOLOR_CHAR_COL[2]:=BROWN;
+
+	setmulticolormode();
+
+	setcharsetlocation(@charsetPosition);
+
+	levelpointer:=@levelPosition;
+	ReadHeader();
+end;
+
+
+
+interrupt RasterRenderLevels();
+begin
+	StartIRQ(@useKernal);
+	if (i=0) then begin
+		joystick();
+		if (joystickdown=1) then begin inc(curLevel_y); i:=10; end;
+		if (joystickup=1) then begin dec(curLevel_y); i:=10; end;
+		if (joystickleft=1) then begin dec(curLevel_x); i:=10; end;
+		if (joystickright=1) then begin inc(curLevel_x); i:=10; end;
+	end;
+
+	if (i=10) then begin
+		levelpointer:=@levelPosition;
+		screenoff();
+		RenderCharsetColorLevel(curLevel_x,curLevel_y,$04);
+		screenon();
+	end;
+	if i<>0 then dec(i); // i acts as a counter
+
+	CloseIRQ();
+end;
+
+begin
+	Initialize();
+
+	levelpointer:=@levelPosition;
+	RenderCharsetColorLevel(curLevel_x,curLevel_y,$04);
+
+	DisableCIAInterrupts();
+	SetMemoryConfig(1,@useKernal,0);
+	RasterIRQ(RasterRenderLevels(),$00,@useKernal);
+	EnableRasterIRQ();
+	enableirq();
+	Loop(); 
+end.

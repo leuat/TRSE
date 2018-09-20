@@ -102,6 +102,10 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     if (m_procName.toLower() == "decrunch")
         Decrunch(as);
 
+    if (m_procName.toLower() == "decrunchfromindex")
+        DecrunchFromIndex(as);
+
+
     if (m_procName.toLower()=="init_decrunch") {
         InitDecrunch(as);
     }
@@ -1201,7 +1205,7 @@ void NodeBuiltinMethod::SetCharsetLocation(Assembler *as)
 }
 
 void NodeBuiltinMethod::InitZeroPage(Assembler* as) {
-    as->Asm("jmp initzeropage_continue");
+/*    as->Asm("jmp initzeropage_continue");
     as->Label("zeropage1 = $02");
     as->Label("zeropage2 = $04");
     as->Label("zeropage3 = $08");
@@ -1210,7 +1214,7 @@ void NodeBuiltinMethod::InitZeroPage(Assembler* as) {
     as->Label("zeropage6 = $24");
     as->Label("zeropage7 = $68");
 
-    as->Label("initzeropage_continue");
+    as->Label("initzeropage_continue");*/
 }
 
 void NodeBuiltinMethod::Abs(Assembler *as)
@@ -2125,6 +2129,27 @@ void NodeBuiltinMethod::Decrunch(Assembler *as)
         as->Asm("lda #" + QString::number(((int)pos>>8)&0xFF));
         as->Asm("sta opbase+2");
         as->Asm("jsr exod_decrunch");
+}
+
+void NodeBuiltinMethod::DecrunchFromIndex(Assembler *as)
+{
+    m_params[1]->Build(as);
+    as->Term();
+    as->Asm("asl");
+    as->Asm("tax");
+
+    as->Comment("; Decrunch from index");
+//    as->Term("lda ");
+    m_params[0]->Build(as);
+    as->Term(",x", true);
+    as->Asm("sta opbase+1");
+    as->Asm("inx");
+  //  as->Term("lda ");
+    m_params[0]->Build(as);
+    as->Term(",x",true);
+    as->Asm("sta opbase+2");
+    as->Asm("jsr exod_decrunch");
+
 }
 
 void NodeBuiltinMethod::CopyImageColorData(Assembler *as)

@@ -8,6 +8,7 @@
 #include "source/LeLib/limage/limageqimage.h"
 #include "imageworker.h"
 #include <QListWidget>
+#include <QAbstractItemView>
 #include <QListWidgetItem>
 #include "source/LeLib/limage/limageio.h"
 #include "dialognewimage.h"
@@ -142,6 +143,7 @@ private slots:
     void on_btnResizeData_clicked();
 
     void on_chkDisplayMulticolor_stateChanged(int arg1);
+    void on_leHeaders_editingFinished();
 };
 
 

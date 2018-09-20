@@ -319,7 +319,7 @@ void MultiColorImage::ExportBin(QFile& ofile)
 void MultiColorImage::LoadCharset(QString file)
 {
     if (!QFile::exists(file)) {
-        qDebug() << "Could not find file " << file;
+//        qDebug() << "Could not find file " << file;
         return;
     }
 

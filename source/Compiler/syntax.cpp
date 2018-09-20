@@ -190,6 +190,9 @@ void Syntax::SetupBuiltinFunctions()
     builtInFunctions["decrunch"] = BuiltInFunction("decrunch", QList<BuiltInFunction::Type>()
                                                    << BuiltInFunction::Type::INTEGER);
 
+    builtInFunctions["decrunchfromindex"] = BuiltInFunction("decrunchfromindex", QList<BuiltInFunction::Type>()
+                                                   << BuiltInFunction::Type::INTEGER << BuiltInFunction::Type::INTEGER);
+
 
     builtInFunctions["moveto"] = BuiltInFunction(
                 "moveto",

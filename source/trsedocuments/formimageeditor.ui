@@ -77,7 +77,7 @@
      <item row="1" column="1">
       <widget class="QTabWidget" name="tabMain">
        <property name="currentIndex">
-        <number>2</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -432,6 +432,9 @@
             <string>Resize data</string>
            </property>
           </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLineEdit" name="leHeaders"/>
          </item>
         </layout>
        </widget>

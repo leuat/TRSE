@@ -1,6 +1,6 @@
 program tutorial_22_paw_decrunch;
 var
-	
+   i:byte;	
 
 /*
 	For this tutorial to work, you must first load "tutorial_22_images.paw" and build
@@ -27,19 +27,17 @@ begin
 	poke(VIC_DATA_LOC, 0,$18);
 	setbank(VIC_BANK1);
 	SCREEN_FG_COL:=BLACK;
-	while (1=1) do begin
+	i:=0;
+	while (1=1) offpage do begin
 		screenoff(); // turn off screen while decrunching..
-		decrunch(image1_color); // Decrunches to $2000
+		decrunchfromindex(tutorial_22_packed_address,i+1); 
 		copyimagecolordata($2000,1);
-		decrunch(image1_data);
+		decrunchfromindex(tutorial_22_packed_address,i); // Decrunches to $2000
 		screenon();
 		while (keypressed(KEY_SPACE)=0) do waitforraster(0);
-		screenoff();
-		decrunch(image2_color); // Decrunches to $2000
-		copyimagecolordata($2000,1);
-		decrunch(image2_data);
-		screenon();
-		while (keypressed(KEY_SPACE)=0) do waitforraster(0);
+		i:=i+2;
+		if (i=6) then i:=0;		
+
 	end;
 	Loop();
 

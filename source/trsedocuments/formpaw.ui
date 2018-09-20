@@ -25,59 +25,13 @@
    <property name="title">
     <string/>
    </property>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>40</y>
-      <width>151</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>RAS include output file:</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="leOutfile">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>40</y>
-      <width>321</width>
-      <height>25</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>120</y>
-      <width>171</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Memory address to pack to</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="lePackedAddress">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>120</y>
-      <width>161</width>
-      <height>25</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QTableWidget" name="tabData">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>160</y>
+      <y>180</y>
       <width>661</width>
-      <height>211</height>
+      <height>191</height>
      </rect>
     </property>
     <property name="cornerButtonEnabled">
@@ -140,29 +94,6 @@
      <string>-</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>80</y>
-      <width>151</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Packed file directory</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="leOutDir">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>80</y>
-      <width>321</width>
-      <height>25</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="chkExomizer3">
     <property name="geometry">
      <rect>
@@ -175,6 +106,58 @@
     <property name="text">
      <string>Using exomizer 3+</string>
     </property>
+   </widget>
+   <widget class="QWidget" name="formLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>30</y>
+      <width>641</width>
+      <height>143</height>
+     </rect>
+    </property>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>RAS include output file:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="leOutfile"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Packed file directory</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="leOutDir"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Memory address to pack to</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="lePackedAddress"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Name of address field</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="leAddressField"/>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QTextBrowser" name="leOutput">
