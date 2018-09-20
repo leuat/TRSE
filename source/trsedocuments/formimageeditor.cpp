@@ -34,7 +34,7 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
     ui->lblImage->m_work = &m_work;
     ui->lblImage->setMouseTracking(true);
 
-
+//    ui->tblData->verticalHeader()->setEditTriggers(QAbstractItemView::DoubleClicked);
 
 }
 
@@ -117,7 +117,10 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
         if (!ui->tblData->hasFocus() && !(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
             m_work.m_currentImage->m_image->StoreData(ui->tblData);
             m_work.m_currentImage->m_image->KeyPress(e);
-            m_work.m_currentImage->m_image->BuildData(ui->tblData, m_projectIniFile->getStringList("data_header"));
+            QStringList lst = m_projectIniFile->getStringList("data_header_"+m_currentFileShort);
+
+            m_work.m_currentImage->m_image->BuildData(ui->tblData, lst);
+
         }
 
 
@@ -203,7 +206,7 @@ void FormImageEditor::Load(QString filename)
 
     m_work.New(img, filename);
 
-    img->LoadCharset(m_iniFile->getString("current_charset"));
+    img->LoadCharset(m_projectIniFile->getString("charset_"+m_currentFileShort));
     updateCharSet();
 
     Data::data.redrawFileList = true;
@@ -221,12 +224,32 @@ void FormImageEditor::Load(QString filename)
     ui->cmbEffect->addItems(m_imageEffects.getStringList());
 
     ui->chkDisplayMulticolor->setChecked(m_work.m_currentImage->m_image->isMultiColor());
+
+    QString s = "";
+    QStringList lst = m_projectIniFile->getStringList("data_header_"+m_currentFileShort);
+
+    for (QString q:lst)
+        s+= q +",";
+    s.remove(s.count()-1,1);
+    ui->leHeaders->setText(s);
+
+    m_work.m_currentImage->m_image->BuildData(ui->tblData,lst);
+
+
+
 }
 
 void FormImageEditor::Save(QString filename)
 {
     LImageIO::Save(filename,m_work.m_currentImage->m_image);
+    QStringList lst;
+    for (int i=0;i<ui->tblData->rowCount();i++)
+        lst<<ui->tblData->verticalHeaderItem(i)->text();
 
+    //QStringList lst = m_projectIniFile->getStringList("data_header_"+m_currentFileShort);
+
+    m_projectIniFile->setStringList("data_header_"+m_currentFileShort,lst);
+    m_projectIniFile->Save(m_projectIniFile->filename);
 }
 
 void FormImageEditor::FillImageEffect()
@@ -706,7 +729,7 @@ void FormImageEditor::UpdateLevels()
             QObject::connect( l, &QPushButton::clicked,  [=](){
                 m_work.m_currentImage->m_image->StoreData(ui->tblData);
                 le->SetLevel(QPoint(i,j));
-                m_work.m_currentImage->m_image->BuildData(ui->tblData,m_projectIniFile->getStringList("data_header"));
+                m_work.m_currentImage->m_image->BuildData(ui->tblData,m_projectIniFile->getStringList("data_header_"+m_currentFileShort));
                 Data::data.Redraw();
                 Data::data.forceRedraw = true;
             }
@@ -804,8 +827,8 @@ void FormImageEditor::on_btnLoadCharmap_clicked()
 
 
     mci->LoadCharset(fileName);
-    m_iniFile->setString("current_charset", fileName);
-    m_iniFile->Save();
+    m_projectIniFile->setString("charset_"+m_currentFileShort, fileName);
+    m_projectIniFile->Save();
     updateCharSet();
 
 }
@@ -887,4 +910,15 @@ void FormImageEditor::on_chkDisplayMulticolor_stateChanged(int arg1)
 {
     m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
     Data::data.Redraw();
+}
+
+void FormImageEditor::on_leHeaders_editingFinished()
+{
+    QStringList lst = ui->leHeaders->text().remove(" ").split(",");
+
+    m_work.m_currentImage->m_image->BuildData(ui->tblData, lst);
+    m_projectIniFile->setStringList("data_header_"+m_currentFileShort,lst);
+    m_projectIniFile->Save(m_projectIniFile->filename);
+
+
 }
