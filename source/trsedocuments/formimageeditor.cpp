@@ -243,8 +243,10 @@ void FormImageEditor::Save(QString filename)
 {
     LImageIO::Save(filename,m_work.m_currentImage->m_image);
     QStringList lst;
-    for (int i=0;i<ui->tblData->rowCount();i++)
-        lst<<ui->tblData->verticalHeaderItem(i)->text();
+    for (int i=0;i<ui->tblData->rowCount();i++) {
+        if (ui->tblData->verticalHeaderItem(i)!=nullptr)
+            lst<<ui->tblData->verticalHeaderItem(i)->text();
+    }
 
     //QStringList lst = m_projectIniFile->getStringList("data_header_"+m_currentFileShort);
 
@@ -894,7 +896,8 @@ void FormImageEditor::on_btnResizeData_clicked()
     dResize->exec();
     if (dResize->retVal!=-1) {
         img->Resize(dResize->m_meta);
-
+        QStringList lst = m_projectIniFile->getStringList("data_header_"+m_currentFileShort);
+        m_work.m_currentImage->m_image->BuildData(ui->tblData,lst);
     }
 
 

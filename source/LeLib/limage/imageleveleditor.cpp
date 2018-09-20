@@ -104,7 +104,6 @@ void ImageLevelEditor::SaveBin(QFile &file)
     for (CharmapLevel* l : m_levels) {
         file.write( l->m_CharData);
         if (m_meta.m_useColors)
-
            file.write( l->m_ColorData);
         file.write( l->m_ExtraData);
 
@@ -398,16 +397,40 @@ void ImageLevelEditor::Resize(CharmapGlobalData newMeta)
 {
     if (newMeta.m_dataChunks!=m_meta.m_dataChunks || newMeta.m_dataChunkSize!=m_meta.m_dataChunkSize) {
       //  qDebug() << "Resizing datachunks";
+        int odc = m_meta.m_dataChunks;
+        int odcs = m_meta.m_dataChunkSize;
+
         m_meta.m_dataChunks = newMeta.m_dataChunks;
         m_meta.m_dataChunkSize = newMeta.m_dataChunkSize;
 
-        m_meta.m_extraDataSize = 3 + m_meta.m_dataChunkSize*m_meta.m_dataChunks;
+        m_meta.m_extraDataSize = 3+m_meta.m_dataChunkSize*m_meta.m_dataChunks;
         m_meta.Calculate();
         for (int i=0;i<m_meta.m_sizex*m_meta.m_sizey;i++) {
             int k = m_levels[i]->m_ExtraData.count();
-            m_levels[i]->m_ExtraData.resize(m_meta.m_extraDataSize);
-            for (int j=k;j<m_meta.m_extraDataSize; j++)
-                m_levels[i]->m_ExtraData[j]=0;
+            QByteArray newData;
+            newData.resize(m_meta.m_extraDataSize);
+            newData.fill(0);
+            for (int j=0;j<m_meta.m_dataChunks;j++) {
+                for (int k=0;k<m_meta.m_dataChunkSize;k++) {
+                    int nidx = 3+j*m_meta.m_dataChunkSize+k;
+                    int oidx = 3+j*odcs + k;
+                    char val = 0;
+                    if (oidx<m_levels[i]->m_ExtraData.count() &&
+                       j<odc && k<odcs)
+                        val=m_levels[i]->m_ExtraData[oidx];
+                    //qDebug() << odcs << " vs "  <<m_meta.m_dataChunkSize << " and k " << k << " :  " << QString::number(val) ;
+
+                    newData[nidx] = val;
+                }
+
+            }
+            newData[0] = m_levels[i]->m_ExtraData[0];
+            newData[1] = m_levels[i]->m_ExtraData[1];
+            newData[2] = m_levels[i]->m_ExtraData[2];
+            //m_levels[i]->m_ExtraData.resize(m_meta.m_extraDataSize);
+            m_levels[i]->m_ExtraData = newData;
+            //for (int j=k;j<m_meta.m_extraDataSize; j++)
+            //    m_levels[i]->m_ExtraData[j]=0;
         }
 
     }
