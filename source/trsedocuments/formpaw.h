@@ -18,7 +18,8 @@ public:
     QString incCFile;
     int packedSize=0;
 
-    PawFile(QString ifile, QString cfile, QString addr, QString n) {
+    PawFile(QString ifile, QString cfile, QString addr, QString n)
+    {
         name = n;
         address = addr;
         cFile = cfile;
@@ -28,13 +29,39 @@ public:
     PawFile() {}
 };
 
+
+class PawThread : public QThread
+{
+    Q_OBJECT
+public:
+    CIniFile* m_pawData,* m_projectData,* m_iniFile;
+    QVector<PawFile>* m_files;
+    QString isExomizer3, output;
+
+    PawThread(CIniFile* pawData, CIniFile* projectData, CIniFile* iniFile,  QVector<PawFile> *files) {
+        m_pawData = pawData;
+        m_projectData = projectData;
+        m_iniFile = iniFile;
+        m_files = files;
+    }
+
+    void CreateIncludefile();
+
+
+protected:
+    void run();
+
+signals:
+    void EmitTextUpdate();
+};
+
 class FormPaw : public TRSEDocument
 {
     Q_OBJECT
 
     CIniFile m_pawData;
     QVector<PawFile> m_files;
-    QString output;
+    PawThread* pt = nullptr;
 public:
     explicit FormPaw(QWidget *parent = nullptr);
     ~FormPaw();
@@ -52,6 +79,8 @@ public:
 
 private slots:
     void on_pushButton_clicked();
+
+    void onTextUpdate();
 
     void on_pushButton_2_clicked();
 
