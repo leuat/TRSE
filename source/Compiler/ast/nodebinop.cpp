@@ -408,14 +408,14 @@ void NodeBinOP::HandleVarBinopB16bit(Assembler *as) {
     //as->Asm("jmp " + lblJmp);
     //as->Write(lbl +"\t.word\t0");
     //as->Label(lblJmp);
-    QString lbl = as->StoreInTempVar("rightvarInteger", "word");
-
+    as->Comment(";here");
     as->ClearTerm();
     as->Asm("ldy #0");
     m_right->Build(as);
 
     as->Term();
-    as->Asm("sta " +lbl);
+//    as->Asm("sta " +lbl);
+    QString lbl = as->StoreInTempVar("rightvarInteger", "word");
     as->Asm("sty " +lbl+"+1");
     as->Term();
 
@@ -453,33 +453,40 @@ void NodeBinOP::HandleVarBinopB16bit(Assembler *as) {
 
 }
 
+
 void NodeBinOP::HandleGenericBinop16bit(Assembler *as) {
+
 
     as->m_labelStack["wordAdd"].push();
     QString lblword = as->getLabel("wordAdd");
 
-    QString lbl = as->NewLabel("rightvarInteger");
+    //QString lbl = as->NewLabel("rightvarInteger");
     QString lblJmp = as->NewLabel("jmprightvarInteger");
 
 
     as->Comment("Generic 16 bit op");
 
-    as->Asm("jmp " + lblJmp);
+/*    as->Asm("jmp " + lblJmp);
     as->Write(lbl +"\t.word\t0");
-    as->Label(lblJmp);
+    as->Label(lblJmp);*/
+
     as->ClearTerm();
     as->Asm("ldy #0");
     m_right->Build(as);
 
+        // 255 + k - j doesn't work
     as->Term();
-    as->Asm("sta " +lbl);
-    as->Asm("sty " +lbl+"+1");
+    QString lbl = as->StoreInTempVar("rightvarInteger", "word");
+
+//    as->Asm("sta " +lbl);
+    as->Asm("sty " +lbl+"+1"); // J is stored
     as->Term();
 
     //as->Variable(v->value, false);
     //as->Asm("lda " + v->value + "+1");
-
+    m_left->m_isWord = true;
     m_left->Build(as);
+    as->Term();
     as->Comment("Low bit binop:");
     as->BinOP(m_op.m_type);
     as->Term(lbl, true); // high bit added to a
@@ -494,19 +501,23 @@ void NodeBinOP::HandleGenericBinop16bit(Assembler *as) {
     }
 
     as->Label(lblword);
-    as->Asm("sta "+lbl);
+    as->Asm("sta "+lbl + " ;wtf");
     as->Comment("High-bit binop");
     as->Asm("tya");
 
-    as->BinOP(m_op.m_type);
+//    as->BinOP(m_op.m_type);
+    as->BinOP(TokenType::PLUS);
+
     as->Term(lbl+"+1",true);
+//    as->Asm("lda #0");
+
     as->Asm("tay");
     as->Asm("lda "+lbl);
 
 
     as->PopLabel("wordAdd");
 
-    as->PopLabel("rightvarInteger");
+    //as->PopLabel("rightvarInteger");
     as->PopLabel("jmprightvarInteger");
 
 }
@@ -521,8 +532,11 @@ void NodeBinOP::HandleRestBinOp(Assembler *as) {
         Symbol* s = as->m_symTab->Lookup(varName, m_op.m_lineNumber);
     }
     isWord16 = isWord(as);
+    if (m_isWord)
+        isWord16 = true;
     // check if both are constant values:
     if (!isWord16) {
+        as->Comment("8 bit binop");
         // Optimizing check: if right var is number, then cut losses
         if (HandleSingleAddSub(as)) {
             return;

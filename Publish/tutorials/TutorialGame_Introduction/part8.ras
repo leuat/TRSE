@@ -1,4 +1,4 @@
-program part7_RenderLevel;
+program part7_Collisions;
 var  
 
 // levels are loaded to/from $5000
@@ -14,10 +14,21 @@ var
 
 	colors, levelpointer, colormemory : pointer;
 	i,j:byte = 0;
-	curLevel_x, curLevel_y : byte=0;
+	curLevel_x, curLevel_y : byte=1;
+	// Defines if x/y directions are being blocked
 
+	k,l,blockx, blocky,map_player_direction : byte = 0;
 	player_x: integer;
 	player_y: byte;
+
+	background_mask: array[256] of byte=(
+	1,1,1,1,1,1,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
+	1,1,1,1,1,1,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0);
+
 
 // Max / min movement position for player sprite x,y	
 	@define miny 66
@@ -27,10 +38,15 @@ var
 
 	@define playerSprite 0
 
+
+
 @define colorpointer colormemory
 
 // RasLib contains all level rendering routines
 @include "../RasLib/levels.ras"
+
+
+
 
 // Sets up sprite
 procedure InitMainSprite();
@@ -80,11 +96,45 @@ end;
 	on the opposite part of the screen. 
 
 */
+
+
+procedure GetCurrentCharacterAtPlayerPosition();
+var
+	currentChar : byte = 0;
+
+begin
+	
+end;
+
+
+procedure PlayerBackgroundCollide();
+var
+	tmp:integer;
+	
+begin
+	tmp:=(player_x - 12);
+	i:=tmp/8;
+	j:=(player_y-38)/8;
+	moveto(i-1,j-1, $04);
+	blockx:=0;
+	blocky:=0;
+	
+	k:=screenmemory[ map_player_direction +40+1]; // down
+	
+	if (background_mask[k]=1) then begin
+		if (joystickdown=1 or joystickup=1) then blocky:=1;
+		if (joystickleft=1 or joystickright=1) then blockx:=1;
+	end;
+end;
+
+
+
 procedure TraverseLevels();
 var 
    redraw:byte=0;
 begin
 	redraw:=0;
+	
 	if (player_x<@minx) then begin
 		if (curLevel_x<>0) then begin
 			dec(curLevel_x);
@@ -125,7 +175,6 @@ begin
 	end;
 
 
-
 	if redraw=1 then begin
 		levelpointer:=@levelPosition;
 		RenderCharsetColorLevel(curLevel_x,curLevel_y,$04);
@@ -140,8 +189,20 @@ end;
 procedure MovePlayerSprite();
 begin
 	joystick();
-	player_x:=player_x+joystickright-joystickleft;
-	player_y:=player_y+joystickdown-joystickup;
+
+	map_player_direction:=0;
+	if (joystickleft=1) then map_player_direction:=map_player_direction-1;
+	if (joystickright=1) then map_player_direction:=map_player_direction+1;
+	if (joystickdown=1) then map_player_direction:=map_player_direction+40;
+	if (joystickup=1) then map_player_direction:=map_player_direction-40;
+
+	PlayerBackgroundCollide();
+
+	if (blockx=0) then
+		player_x:=player_x+joystickright-joystickleft;
+	if (blocky=0) then
+		player_y:=player_y+joystickdown-joystickup;
+
 	spritepos(player_x,player_y,@playerSprite);
 end;
 
@@ -150,11 +211,8 @@ end;
 interrupt RasterRenderLevels();
 begin
 	StartIRQ(@useKernal);
-	setbank(VIC_BANK0);
 	MovePlayerSprite();	
 	TraverseLevels();
-
-
 	CloseIRQ();
 end;
 
