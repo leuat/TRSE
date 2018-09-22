@@ -31,7 +31,7 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
         as->Asm("jmp $ea81        ; return to kernal interrupt routine");
 
     if (m_procName.toLower()=="loop")
-        as->Asm("jmp * ; loop like (¤/%");
+        as->Asm("jmp * ; loop like (ï¿½/%");
 
     if (m_procName.toLower()=="call") {
         Call(as);
@@ -369,11 +369,22 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     return "";
 }
 
+void NodeBuiltinMethod::AddMemoryBlock(Assembler *as, int param)
+{
+    NodeNumber* num = dynamic_cast<NodeNumber*>(m_params[param]);
+    if (num==nullptr)
+        return;
+    MemoryBlock b(num->m_val,num->m_val+1,MemoryBlock::USER,"Memory write");
+    b.m_lineNumber = m_op.m_lineNumber;
+    as->m_userWrittenBlocks.append(b);
+}
+
 void NodeBuiltinMethod::Poke(Assembler* as)
 {
     // Optimization : if parameter 1 is zero, drop the ldx / tax
     as->Comment("Poke");
     RequireAddress(m_params[0],"Poke", m_op.m_lineNumber);
+    AddMemoryBlock(as,0);
     NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_params[1]);
     if (num!=nullptr!=0 && num->m_val==0) {
         as->Comment("Optimization: shift is zero");
@@ -454,6 +465,8 @@ void NodeBuiltinMethod::MemCpy(Assembler* as)
     if (var==nullptr && !m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_op.m_lineNumber);
     }
+    AddMemoryBlock(as,2);
+
     QString addr = "";
     if (m_params[0]->isPureNumeric())
         addr = m_params[0]->HexValue();
@@ -535,6 +548,7 @@ void NodeBuiltinMethod::MemCpyUnroll(Assembler* as)
     QString ap2 = "";
     QString bp1 = "";
     QString bp2 = "";
+    AddMemoryBlock(as,2);
 
     if (m_params[2]->getType(as)==TokenType::POINTER) {
         bp1="(";
@@ -807,6 +821,8 @@ void NodeBuiltinMethod::PrintString(Assembler *as)
 
 void NodeBuiltinMethod::MoveTo(Assembler *as)
 {
+    //AddMemoryBlock(as,1);
+
     VerifyInitialized("moveto", "InitMoveto");
     LoadVar(as, 0);
     as->Asm("sta screen_x");
@@ -956,7 +972,7 @@ void NodeBuiltinMethod::SetSpritePos(Assembler *as)
 
         QString var = BitShiftX(as);
 
-        as->Asm("pla"); // Get back the original støff
+        as->Asm("pla"); // Get back the original stï¿½ff
 
         as->Asm("asl"); // Multiply by two in the end
         as->Asm("tax"); // X is the counter
@@ -1890,6 +1906,7 @@ void NodeBuiltinMethod::ClearScreen(Assembler *as)
     if (num==nullptr)
         ErrorHandler::e.Error("ClearScreen: second parameter must be constant number", m_op.m_lineNumber);
 
+    AddMemoryBlock(as,1);
 
     QString lbl = as->NewLabel("clearloop");
   //  QString lbl2 = as->NewLabel("clearloop2");
@@ -2240,6 +2257,8 @@ void NodeBuiltinMethod::CopyHalfScreen(Assembler *as)
     as->Asm("dex");
     as->Asm("bne "+lbl2);
 */
+    AddMemoryBlock(as,1);
+
     NodeNumber * lines = dynamic_cast<NodeNumber*>(m_params[2]);
     if (lines==nullptr)
         ErrorHandler::e.Error("CopyImageColorData : parameter 3 must be a constant number!");
@@ -2257,6 +2276,7 @@ void NodeBuiltinMethod::CopyHalfScreen(Assembler *as)
     else
         as->Asm("ldx #00");
     as->Label(lbl);
+
 
 
     int cnt = lines->m_val;
@@ -2335,6 +2355,7 @@ void NodeBuiltinMethod::CopyFullScreen(Assembler *as)
     as->Comment("Copy full screen");
     RequireAddress(m_params[0],"CopyFullscreen", m_op.m_lineNumber);
     RequireAddress(m_params[1],"CopyFullscreen", m_op.m_lineNumber);
+    AddMemoryBlock(as,1);
 
     QString lbl = as->NewLabel("fullcopyloop");
     QString lbl2 = as->NewLabel("fullcopyloop2");

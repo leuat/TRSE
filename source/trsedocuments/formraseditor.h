@@ -67,12 +67,14 @@ public:
     void keyPressEvent(QKeyEvent* e) override;
 
     void Destroy() override {}
-
+    void TestForCodeOverwrite(int codeEnd, QString& output);
     void GotoLine(int ln) override;
 
     Ui::FormRasEditor* UI(){return ui;}
 
     void SetOutputText(QString txt);
+
+    int FindEndSymbol(QString output);
 
 private:
 

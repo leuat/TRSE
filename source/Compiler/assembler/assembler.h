@@ -12,9 +12,10 @@
 
 class MemoryBlock {
   public:
-    int m_start, m_end;
+    int m_start, m_end, m_lineNumber;
     enum Type {CODE, DATA, MUSIC, USER, ARRAY};
     Type m_type;
+
     QString m_name;
     MemoryBlock() {}
     MemoryBlock(int start, int end, Type type, QString name){
@@ -111,6 +112,7 @@ public:
     QStringList m_source;
     QVector<Appendix> m_appendix;
     QVector<Appendix> m_extraBlocks;
+    QVector<MemoryBlock> m_userWrittenBlocks;
 
     Appendix* m_currentBlock = nullptr;
 
