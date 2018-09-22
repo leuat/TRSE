@@ -241,6 +241,8 @@ void FormImageEditor::Load(QString filename)
 
 void FormImageEditor::Save(QString filename)
 {
+    m_work.m_currentImage->m_image->StoreData(ui->tblData);
+
     LImageIO::Save(filename,m_work.m_currentImage->m_image);
     QStringList lst;
     for (int i=0;i<ui->tblData->rowCount();i++) {
@@ -923,5 +925,11 @@ void FormImageEditor::on_leHeaders_editingFinished()
     m_projectIniFile->setStringList("data_header_"+m_currentFileShort,lst);
     m_projectIniFile->Save(m_projectIniFile->filename);
 
+
+}
+
+void FormImageEditor::on_tblData_cellChanged(int row, int column)
+{
+    //m_work.m_currentImage->m_image->StoreData(ui->tblData);
 
 }

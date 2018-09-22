@@ -28,6 +28,7 @@ public:
     }
 
     QString Build(Assembler *as) override;
+    void AddMemoryBlock(Assembler* as, int param);
     void Poke(Assembler* as);
     void Peek(Assembler* as);
     void MemCpy(Assembler* as);

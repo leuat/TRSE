@@ -19,6 +19,12 @@ void DialogTRSESettings::FillFromIni()
     ui->leEmulator->setText(m_ini->getString("emulator"));
     ui->leExomizer->setText(m_ini->getString("exomizer"));
     ui->leZeropages->setText(  fromStringList(m_ini->getStringList("zeropages")));
+//    if (ui->cmbPalette->currentText()=="Dark")
+    if (m_ini->getdouble("windowpalette")==0)
+        ui->cmbPalette->setCurrentText("Dark");
+    if (m_ini->getdouble("windowpalette")==1)
+        ui->cmbPalette->setCurrentText("Light");
+
 
     QDir directory(Util::path+"themes/");
     QStringList themes = directory.entryList(QStringList() << "*.ini");
@@ -50,6 +56,11 @@ void DialogTRSESettings::FillToIni()
     m_ini->setFloat("tab_width", ui->leTabWidth->text().toInt());
     m_ini->setStringList("zeropages", toStringList(ui->leZeropages->text()));
     m_ini->setFloat("memory_analyzer_font_size", ui->leFontSizeMemoryAnalyzer->text().toInt());
+
+    if (ui->cmbPalette->currentText()=="Dark")
+        m_ini->setFloat("windowpalette",0);
+    if (ui->cmbPalette->currentText()=="Light")
+        m_ini->setFloat("windowpalette",1);
 
 }
 

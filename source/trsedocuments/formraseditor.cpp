@@ -87,10 +87,15 @@ void FormRasEditor::Build()
 //        text+="+"<br>";
 
         QProcess process;
-        process.start(m_iniFile->getString("dasm"), QStringList()<<(filename +".asm") << ("-o"+filename+".prg"));
+        process.start(m_iniFile->getString("dasm"), QStringList()<<(filename +".asm") << ("-o"+filename+".prg") << "-v3");
         process.waitForFinished();
         //process;
         QProcess processCompress;
+        //qDebug() <<process.readAllStandardOutput();
+        QString output(process.readAllStandardOutput());
+        int codeEnd=FindEndSymbol(output);
+
+        qDebug() << "Code end: " << Util::numToHex(codeEnd) << codeEnd;
         int orgFileSize = QFile(filename+".prg").size();
 
         if (m_iniFile->getdouble("perform_crunch")==1) {
@@ -100,7 +105,6 @@ void FormRasEditor::Build()
             processCompress.start(m_iniFile->getString("exomizer"), QStringList()<< "sfx" << "$0810" << fn<< "-o" << fn  );
             processCompress.waitForFinished();
         }
-        QString output(process.readAllStandardOutput());
         int size = QFile(filename+".prg").size();
 
 
@@ -139,14 +143,15 @@ void FormRasEditor::Build()
         }
 
 
-
         if (m_buildSuccess) {
             output ="Assembled file size: <b>" + QString::number(size) + "</b> bytes";
             if (m_iniFile->getdouble("perform_crunch")==1) {
                 output=output+" (<font color=\"#70FF40\"> " + QString::number((int)(100.0*(float)size/(float)orgFileSize))+  " % </font> of original size ) <br>";
                 output=output+"Original file size: " + QString::number(orgFileSize) + " bytes";
             }
+
         }
+        TestForCodeOverwrite(codeEnd,text);
 
         //ui->ed
         ui->txtOutput->setText(text + output);
@@ -165,6 +170,7 @@ void FormRasEditor::Build()
         m_buildSuccess = false;
 
     }
+
     SetLights();
 }
 
@@ -172,6 +178,19 @@ void FormRasEditor::SetOutputText(QString txt)
 {
     ui->txtOutput->setText(ErrorHandler::e.m_teOut);
 
+}
+
+int FormRasEditor::FindEndSymbol(QString out)
+{
+    QStringList output = QString(out).split("\n");
+    for (QString s : output) {
+        if (s.toLower().contains("endsymbol")) {
+            s= s.remove("EndSymbol").trimmed();
+            bool ok;
+            return s.toInt(&ok, 16);
+        }
+    }
+    return 0;
 }
 
 
@@ -212,6 +231,8 @@ void FormRasEditor::SetupHighlighter()
         delete highlighter;
     CIniFile colors;
     colors.Load(Util::path + "themes/" + m_iniFile->getString("theme"));
+    ui->txtEditor->InitColors(colors);
+
     QPalette p = ui->txtEditor->palette();
     p.setColor(QPalette::Base, colors.getColor("backgroundcolor"));
     p.setColor(QPalette::Text, colors.getColor("textcolor"));
@@ -285,6 +306,17 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
 //    if (e->key() == Qt::Key_Tab && (QApplication::keyboardModifiers() & Qt
 
 
+}
+
+void FormRasEditor::TestForCodeOverwrite(int codeEnd, QString& output)
+{
+    for (MemoryBlock& mb: interpreter.m_assembler->m_userWrittenBlocks) {
+//        qDebug() << Util::numToHex(mb.m_start) << " vs " << Util::numToHex(codeEnd) ;
+        if (mb.m_start<codeEnd && mb.m_start>=0x800) {
+            output +="\n<font color=\"#FF8080\">WARNING:</font>Possible code block overwrite on line <b>" +QString::number(mb.m_lineNumber) + "</b>.&nbsp;";
+            output += "<font color=\"#FF8080\">Proceed with caution </font>(writing to <font color=\"#FF8080\">"+Util::numToHex(mb.m_start)+"</font>, code ends at <font color=\"#FF8080\">"+Util::numToHex(codeEnd) +")</font>. <br>";
+        }
+    }
 }
 
 void FormRasEditor::GotoLine(int ln)
@@ -469,15 +501,7 @@ void FormRasEditor::MemoryAnalyze()
     process.start(m_iniFile->getString("dasm"), QStringList()<<(filename +".asm") << ("-o"+filename+".prg") << "-v3");
     process.waitForFinished();
     //process;
-    int codeEnd=0;
-    QStringList output = QString(process.readAllStandardOutput()).split("\n");
-    for (QString s : output) {
-        if (s.toLower().contains("endsymbol")) {
-            s= s.remove("EndSymbol").trimmed();
-            bool ok;
-            codeEnd = s.toInt(&ok, 16);
-        }
-    }
+    int codeEnd=FindEndSymbol(process.readAllStandardOutput());
     if (interpreter.m_assembler==nullptr)
         return;
 

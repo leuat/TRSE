@@ -52,7 +52,6 @@ public:
 
 
     void RightIsPureNumericMulDiv16bit(Assembler* as);
-
     void HandleMulDiv(Assembler* as);
 
 
@@ -62,6 +61,7 @@ public:
 
 
     void HandleVarBinopB16bit(Assembler* as);
+//    void HandleGenericBinOp16BitPureVar(Assembler* as);
 
     void HandleGenericBinop16bit(Assembler* as);
 

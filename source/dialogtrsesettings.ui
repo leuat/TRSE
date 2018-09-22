@@ -103,7 +103,7 @@
           <item row="2" column="0">
            <widget class="QLabel" name="label_6">
             <property name="text">
-             <string>Exomizer v1 location</string>
+             <string>Exomizer location</string>
             </property>
            </widget>
           </item>
@@ -154,8 +154,8 @@
         <widget class="QComboBox" name="cmbTheme">
          <property name="geometry">
           <rect>
-           <x>120</x>
-           <y>40</y>
+           <x>160</x>
+           <y>20</y>
            <width>241</width>
            <height>22</height>
           </rect>
@@ -165,7 +165,7 @@
          <property name="geometry">
           <rect>
            <x>40</x>
-           <y>40</y>
+           <y>20</y>
            <width>55</width>
            <height>21</height>
           </rect>
@@ -226,6 +226,39 @@
            </item>
           </layout>
          </widget>
+        </widget>
+        <widget class="QComboBox" name="cmbPalette">
+         <property name="geometry">
+          <rect>
+           <x>160</x>
+           <y>50</y>
+           <width>241</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <item>
+          <property name="text">
+           <string>Dark</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Light</string>
+          </property>
+         </item>
+        </widget>
+        <widget class="QLabel" name="label_8">
+         <property name="geometry">
+          <rect>
+           <x>40</x>
+           <y>50</y>
+           <width>101</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Window palette</string>
+         </property>
         </widget>
        </widget>
       </widget>

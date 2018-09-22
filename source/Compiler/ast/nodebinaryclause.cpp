@@ -136,8 +136,8 @@ void NodeBinaryClause::BinaryClauseInteger(Assembler *as)
         hi = varb->value+ "+1";
     }
 
-    m_left->Build(as);
-    as->Term();
+    //m_left->Build(as);
+    //as->Term();
 
     if (numb!=nullptr || varb!=nullptr) {
         if (m_op.m_type==TokenType::GREATER) {
