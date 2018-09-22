@@ -144,6 +144,7 @@ private slots:
 
     void on_chkDisplayMulticolor_stateChanged(int arg1);
     void on_leHeaders_editingFinished();
+    void on_tblData_cellChanged(int row, int column);
 };
 
 

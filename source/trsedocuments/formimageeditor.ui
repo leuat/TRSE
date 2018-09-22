@@ -77,7 +77,7 @@
      <item row="1" column="1">
       <widget class="QTabWidget" name="tabMain">
        <property name="currentIndex">
-        <number>1</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
