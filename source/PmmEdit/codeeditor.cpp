@@ -348,7 +348,7 @@ void CodeEditor::highlightCurrentLine()
     if (!isReadOnly()) {
         QTextEdit::ExtraSelection selection;
 
-        QColor lineColor = QColor(QColor(10,40,50));
+        QColor lineColor = currentLineColor;//  QColor(QColor(10,40,50));
 
         selection.format.setBackground(lineColor);
         selection.format.setProperty(QTextFormat::FullWidthSelection, true);
@@ -365,7 +365,7 @@ void CodeEditor::highlightCurrentLine()
 void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
     QPainter painter(lineNumberArea);
-    painter.fillRect(event->rect(), QColor(50,60,70));
+    painter.fillRect(event->rect(), lineNumberBackgroundColor);
 
 
     QTextBlock block = firstVisibleBlock();
@@ -376,7 +376,7 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
     while (block.isValid() && top <= event->rect().bottom()) {
         if (block.isVisible() && bottom >= event->rect().top()) {
             QString number = QString::number(blockNumber + 1);
-            painter.setPen(Qt::lightGray);
+            painter.setPen(lineNumbersColor);
             painter.drawText(0, top, lineNumberArea->width(), fontMetrics().height(),
                              Qt::AlignRight, number);
         }
@@ -393,13 +393,13 @@ void CodeEditor::cycleNumberAreaPaintEvent(QPaintEvent *event)
 {
     QPainter painter(cycleNumberArea);
 
-    painter.fillRect(event->rect(), QColor(50,60,70));
+    painter.fillRect(event->rect(), cyclesBackgroundColor);
 
 
     QTextBlock block = firstVisibleBlock();
     int blockNumber = block.blockNumber();
     int top = (int) blockBoundingGeometry(block).translated(contentOffset()).top();
-    painter.setPen(Qt::yellow);
+    painter.setPen(cyclesColor);
     painter.drawText(0, top, cycleNumberArea->width(), fontMetrics().height(),
                  Qt::AlignLeft, "#Cycles");
 

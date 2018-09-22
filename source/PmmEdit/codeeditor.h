@@ -12,6 +12,7 @@
 #include "source/Compiler/symboltable.h"
 #include "source/Compiler/syntax.h"
 #include "source/Compiler/parser.h"
+#include "source/LeLib/util/cinifile.h"
 
 class QPaintEvent;
 class QResizeEvent;
@@ -30,8 +31,16 @@ class CodeEditor : public QPlainTextEdit
 
 public:
     CodeEditor(QWidget *parent = 0);
-
+    QColor currentLineColor, lineNumberBackgroundColor, cyclesBackgroundColor, cyclesColor, lineNumbersColor;
     void setCompleter(QCompleter *c);
+    void InitColors(CIniFile cols) {
+        currentLineColor = cols.getColor("currentline");
+        lineNumberBackgroundColor = cols.getColor("linenumbersbackground");
+        cyclesBackgroundColor = cols.getColor("cyclesbackground");
+        cyclesColor = cols.getColor("cycles");
+        lineNumbersColor = cols.getColor("linenumbers");
+
+    }
     QCompleter *completer() const;
     QAbstractItemModel *modelFromFile(const QString& fileName);
     QAbstractItemModel *modelFromTRSE(SymbolTable* symtab, Parser* parser);

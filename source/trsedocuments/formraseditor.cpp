@@ -231,6 +231,8 @@ void FormRasEditor::SetupHighlighter()
         delete highlighter;
     CIniFile colors;
     colors.Load(Util::path + "themes/" + m_iniFile->getString("theme"));
+    ui->txtEditor->InitColors(colors);
+
     QPalette p = ui->txtEditor->palette();
     p.setColor(QPalette::Base, colors.getColor("backgroundcolor"));
     p.setColor(QPalette::Text, colors.getColor("textcolor"));
