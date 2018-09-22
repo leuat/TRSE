@@ -2,28 +2,6 @@
 #include <QApplication>
 #include <QStyleFactory>
 
-void SetDarkPalette(QApplication& a) {
-    QPalette darkPalette;
-    darkPalette.setColor(QPalette::Window, QColor(53,53,53));
-    darkPalette.setColor(QPalette::WindowText, Qt::white);
-    darkPalette.setColor(QPalette::Base, QColor(25,25,25));
-    darkPalette.setColor(QPalette::AlternateBase, QColor(53,53,53));
-    darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
-    darkPalette.setColor(QPalette::ToolTipText, Qt::white);
-    darkPalette.setColor(QPalette::Text, Qt::white);
-    darkPalette.setColor(QPalette::Button, QColor(53,53,53));
-    darkPalette.setColor(QPalette::ButtonText, Qt::white);
-    darkPalette.setColor(QPalette::BrightText, Qt::red);
-    darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
-
-    darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
-    darkPalette.setColor(QPalette::HighlightedText, Qt::black);
-
-
-    a.setPalette(darkPalette);
-
-
-}
 
 void SetMongisPalette(QApplication& a) {
     QPalette darkPalette;
@@ -42,6 +20,7 @@ void SetMongisPalette(QApplication& a) {
     darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
     darkPalette.setColor(QPalette::HighlightedText, Qt::black);
 
+    a.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
 
     a.setPalette(darkPalette);
 
@@ -81,11 +60,11 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
     a.setStyle(QStyleFactory::create("Fusion"));
-    SetDarkPalette(a);
+    //CIniFile ini;
+
 //    SetMongisPalette(a);
 
 
-    a.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
 
 //    ConvertPerlin("/home/leuat/Desktop/Perlin.png", "/home/leuat/code/TRSE/Publish/Pluttifer/data/perlin16.dat", 8);
 

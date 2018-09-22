@@ -110,7 +110,7 @@ public:
  //   CodeEditor m_codeEditor;
     CustomFileSystemModel *fileSystemModel;
     QString m_iniFileName = "fluff64.ini";
-
+    QPalette m_defaultPalette;
     QVector<TRSEDocument*> m_documents;
 
 
@@ -129,6 +129,7 @@ public:
 
     void VerifyDefaults();
 
+    void SetDarkPalette();
 
 
 
@@ -233,5 +234,6 @@ private:
 
     Ui::MainWindow *ui;
 };
+
 
 #endif // MAINWINDOW_H

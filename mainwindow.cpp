@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    m_defaultPalette = palette();
     ui->setupUi(this);
    // m_work.m_colorList.CreateUI(ui->layoutColors,0);
 
@@ -59,6 +60,9 @@ MainWindow::MainWindow(QWidget *parent) :
        m_iniFile.Load(m_iniFileName);
 
     VerifyDefaults();
+    if (m_iniFile.getdouble("windowpalette")==0)
+        SetDarkPalette();
+
     //QPoint p = ui->splitter->pos();
 //    p.setX();
     QVector3D sp = m_iniFile.getVec("splitpos");
@@ -149,6 +153,9 @@ void MainWindow::keyReleaseEvent(QKeyEvent *e)
 
 void MainWindow::VerifyDefaults()
 {
+    if (!m_iniFile.contains("windowpalette"))
+        m_iniFile.setFloat("windowpalette", 0);
+
     if (!m_iniFile.contains("font_size"))
         m_iniFile.setFloat("font_size", 12);
     if (!m_iniFile.contains("tab_width"))
@@ -583,6 +590,10 @@ void MainWindow::on_actionTRSE_Settings_triggered()
 
     delete dSettings;
 
+    if (m_iniFile.getdouble("windowpalette")==0)
+        SetDarkPalette();
+    if (m_iniFile.getdouble("windowpalette")==1)
+        QApplication::setPalette(m_defaultPalette);
 }
 
 void MainWindow::on_actionNew_project_triggered()
@@ -753,5 +764,27 @@ void MainWindow::on_actionPaw_packed_resource_file_triggered()
 //    LoadRasFile(filename);
     LoadDocument(filename);
     RefreshFileList();
+
+}
+void MainWindow::SetDarkPalette() {
+    QPalette darkPalette;
+    darkPalette.setColor(QPalette::Window, QColor(53,53,53));
+    darkPalette.setColor(QPalette::WindowText, Qt::white);
+    darkPalette.setColor(QPalette::Base, QColor(25,25,25));
+    darkPalette.setColor(QPalette::AlternateBase, QColor(53,53,53));
+    darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
+    darkPalette.setColor(QPalette::ToolTipText, Qt::white);
+    darkPalette.setColor(QPalette::Text, Qt::white);
+    darkPalette.setColor(QPalette::Button, QColor(53,53,53));
+    darkPalette.setColor(QPalette::ButtonText, Qt::white);
+    darkPalette.setColor(QPalette::BrightText, Qt::red);
+    darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+
+    darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+    darkPalette.setColor(QPalette::HighlightedText, Qt::black);
+
+
+    QApplication::setPalette(darkPalette);
+
 
 }
