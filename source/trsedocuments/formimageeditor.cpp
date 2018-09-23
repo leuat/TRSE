@@ -457,7 +457,9 @@ void FormImageEditor::on_btnFlipHorisontal_clicked()
 void FormImageEditor::on_chkGrid_clicked(bool checked)
 {
 //    if (checked)
-    ui->lblGrid->setVisible(checked);
+//    ui->lblGrid->setVisible(checked);
+    m_updateThread->m_drawGrid=!m_updateThread->m_drawGrid;
+
 }
 
 void FormImageEditor::on_chkBackgroundArea_clicked(bool checked)

@@ -111,6 +111,13 @@ Built-in methods
 		Copies the standard ROM charset to the specified address. Example: <br><br>
 		<font color="@code">copycharsetfromrom(^$5000);</font><br>
 
+
+	copyfullscreen
+		<h2>CopyFullScreen(addr_from, addr_to);</h2>
+		CopyFullScreen copies 40*25 bytes of information ( a full screen ) from 
+		the source to target address. For example, CopyFullScreen(^$0400, ^$4400) will copy all
+		data from the screen on bank 0 to bank 1.
+
 	copyimagecolordata
                 <h2>CopyImageColorData( [ data_address ], [ bank=0..3] );</h2>
                 Copies 800 bytes of TRSE .flf-exported multicolor image data
@@ -133,6 +140,13 @@ Built-in methods
                 end.<br>
                 </font>
 
+    dec
+		<h2>dec(address);</h2>
+		dec(a) is exactly the same as a:=a-1.
+
+
+
+
     decrunch
                 <h2>Decrunch( [ address] or [ variable ]);</h2>
                 When including a exomizer-compressed file, you can decrunch it
@@ -151,6 +165,14 @@ Built-in methods
                 // OR
                 decrunch(compressed_data);
                 </font>
+    decrunchfromindex
+    			<h2>DecrunchFromIndex( address_list, index);</h2>
+    			When crunching data using a paw file, you need to specify the name of an address list. This address list is used as the first parameter in DecrunchFromIndex, while the second parameter is the index of the resource you wish to decrunch.<br>
+    			<br>
+    			...
+				DecrunchFromIndex(my_address, i);
+				Pause();
+				inc(i)
 
     deczp
                 <h2>deczp( [zeropage], [ val ] );</h2>
@@ -161,6 +183,19 @@ Built-in methods
 	disableciainterrupts
 		<h2>DisableCIAInterrupts();</h2>
 		Disables all CIA interrupts
+
+	enableallram
+                <h2>EnableAllRam();</h2>
+                Let's all the ram on the C64 be visible (seting the first three bits
+                of address $01 to %100. Handy for reading from $D000 etc.
+                Remember to restore the original value:<br>
+                <font color="@code">
+                orgVal := peek(^$01,0);<br>
+                EnableAllRam();<br>
+                memcpy(^$D000,0, ^$4000, 128);<br>
+                poke(^$01,0,orgVal); // Restore original value <br>
+                </font><br>
+
 	enableirq
 		<h2>EnableIRQ</h2>
 		Enables all irqs (basically a <b>cli</b> command)
@@ -181,6 +216,17 @@ Built-in methods
                 Performs a demo effect FLD shift of a given number of raster lines.
                 Must specify whether you are in text mode(0) or bitmap mode(1)
 
+    getbit
+    		<h2>GetBit(address, bit)</h2>
+    		GetBit(address, bit) returns 0 or 1 depending on whether the bit at the specified address is set. Example:
+    		<font color="@code">if (GetBit(SPRITE_BITMASK,3)==1) then ...</font><br>
+    		(Start a code block if sprite 3 is active)
+
+    inc
+		<h2>inc(address);</h2>
+		inc(a) is exactly the same as a:=a+1.
+
+
 	inczp
 		<h2>inczp( [zeropage], [ val ] );</h2>
 		Increases the mentioned zeropage pointer by [ val ] bytes. <br>
@@ -193,6 +239,12 @@ Built-in methods
                 if a certain raster line is reached. Useful for testing whether certain raster IRQs
                 stay within their limits. Usage:<br>
                 <font color="@code">jammer(150, YELLOW); // crashes the processor with yellow bg if line 150 is hit</font><br>
+
+	joystick
+		<h2>Joystick();</h2>
+		Reads the joystick port values and populates joystick variables:<br>
+		joystickup, joystickdown, joystickleft, joystickright, joystickbutton. values are 1 if registered and 0 if not. Joystick
+		currently only supports port 2, from TRSE version 0.05 there will be support for both joysticks.
 
     keypressed
                 <h2>Keypressed( [ key code ]);</h2>
@@ -255,6 +307,21 @@ Built-in methods
 		<br>
 		<font color="@code">a:=peek(zeropage2, i);</font><br>
 		Retrieves the ith value of zeropage2, same as a:=zeropage[i];
+	playsound
+		<h2>Playsound();</h2>
+		Plays a single sound. Usage:<br>
+		<font color="@code">
+			PlaySound(SID_CHANNEL1, <br>
+				13,  // Volume<br>
+				20,  // Hi byte frequency<br>
+				0*16+0,  // Attack voice 1<br>
+				3*16 + 12,   // Sustain = 16*15 + release=6<br>
+				1 +SID_SAW,  // Waveform<br>
+				SID_SAW);  // waveform <br>
+		</font>
+		Channels are SID_CHANNEL1, SID_CHANNEL2 or SID_CHANNEL3 while waveform 
+		can be SID_SAW, SID_TRI, SID_PULSE and SID_NOISE.
+
 	poke
 		<h2>poke( [ addr], [ shift], [ val ]);</h2>
 		Sets the value at address with shift. Must take address as input with ^.
@@ -270,6 +337,18 @@ Built-in methods
 	preventirq
 		<h2>PreventIRQ</h2>
 		Prevents all interrupts (basically a <b>sei</b> command)
+
+	printdecimal
+		<h2>PrintDecimal(number, [number of digits])</h2>
+		Prints a decimal number (byte or integer) at the current screenmemory position (see <b>moveto</b>).
+		Example:  <font color="@code">PrintDecimal(player_health, 1); </font> <br>
+		(displays the byte <i>player_health</i> with 2 decimal numbers)
+
+	printnumber
+		<h2>Printnumber( number (byte))</h2>
+		Outputs the hexidecimal value of the byte parameter at the current screen position (using moveto())
+
+
 	rasterirq
 		<h2>RasterIRQ( [ raster routine ], [ raster line], [ use kernal ]); </h2>
 		Hooks the raster irq to a procedure to fire at a given line. Example: <br>
@@ -287,6 +366,16 @@ Built-in methods
     return
                 <h2>Return();</h2>
                 Simply performs a rts, useful for termninating conditionals in procedures.
+	screenoff
+				<h2>ScreenOff();</h2>
+				Turns the screen off
+	screenon
+            <h2>ScreenOff();</h2>
+            Turns the screen off
+    scrollx/scrolly
+    		<h2>Scrollx([value]); Scrolly([value])</h2>
+    		Sets the scroll registry to [value] pixels (between 0-7) in either the x or y direction.
+
 	setbank
 		<h2>SetBank(VIC_BANK[0-3]);</h2>
 		Sets current VIC bank 0-3 (VIC_BANK0, VIC_BANK3 etc).
@@ -294,6 +383,16 @@ Built-in methods
     setbitmapmode
                 <h2>SetBitmapMode();</h2>
                 Sets the VIC 320x200 bitmap mode.
+
+    setcharsetlocation
+    			<h2>SetCharsetLocation( [ address]);</h2>a
+    			This method lets the user set the charset address on the local VIC bank. For instance,
+    			if you have included a character set at $2000 in memory, you simply use SetCharsetLocation($2000) to
+    			use the charset. If you include your charset data on $6000 at bank 1, you still only write 
+    			SetCharsetLocation($2000).<br>
+    			<br>
+    			Address value must start with 0 and increment with $0800 bytes, so values must be $0, $0800, $1000, $1800 etc.
+
 
     setmulticolormode
                 <h2>SetMultiColorMode();</h2>
@@ -347,6 +446,17 @@ Built-in methods
     swap
                 <h2>Swap( [ var a], [ var b] );</h2>
                 Swaps two variables <b>a</b> and <b>b</b>.<br>
+
+	togglebit
+		<h2>ToggleBit(address, bit, 0/1);</h2>
+		ToggleBit sets the desired bit of the address to either 0 or 1. Example:<br>
+		<font color="@code">togglebit(SPRITE_BITMASK, 4, 1);</font><br>
+		(turns on rendering of the 5th sprite by setting bit 5 to 1). 
+		<br>Also see getbit.
+
+	wait 
+		<h2>Wait( [no cycles ])</h2>
+		Waits a number of cycles. 
 
 	waitforraster
 		<h2>waitforraster( [ line number ]);</h2>
@@ -447,6 +557,7 @@ Syntax
 		</font>
 		Multiple logical conditionals always enforce offpage branching. 
 
+
 	incbin
 		<h2>IncBin("file.bin", "$address");</h2>
 		Includes a binary file at the given address. <br>Example:<br>
@@ -481,6 +592,18 @@ Syntax
 		MyProc(10,5);<br>
 		</font>
 
+	startblock
+		<h2>Startblock</h2>
+		All variables declared within the block (with the exception of pointers) will be moved to the specified memory address.
+		Usage: <br>
+		<font color="@code">
+		// The following variables are placed at $8000 with text marked in the memory analyzer
+		@StartBlock $8000 "My custom varialbe block"<br>
+		  arr: array[256] of byte;<br>
+		  variable: byte;<br>
+		@endBlock
+
+		</font>
 
 
 

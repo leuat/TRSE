@@ -149,6 +149,17 @@ void Syntax::SetupBuiltinFunctions()
                 "initmoveto",
                 QList<BuiltInFunction::Type>());
 
+    builtInFunctions["initprintdecimal"] = BuiltInFunction(
+                "initprintdecimal",
+                QList<BuiltInFunction::Type>());
+
+    builtInFunctions["printdecimal"] = BuiltInFunction(
+                "printdecimal",
+                QList<BuiltInFunction::Type>()
+                << BuiltInFunction::Type::INTEGER <<
+                BuiltInFunction::Type::INTEGER
+                );
+
 
     builtInFunctions["initeightbitmul"] = BuiltInFunction(
                 "initeightbitmul",
@@ -246,11 +257,11 @@ void Syntax::SetupBuiltinFunctions()
                 QList<BuiltInFunction::Type>()<< BuiltInFunction::Type::INTEGER
                 );
 
-    builtInFunctions["incscreenx"] = BuiltInFunction(
+/*    builtInFunctions["incscreenx"] = BuiltInFunction(
                 "incscreenx",
                 QList<BuiltInFunction::Type>()<< BuiltInFunction::Type::INTEGER
                 );
-
+*/
     builtInFunctions["setmemoryconfig"] = BuiltInFunction(
                 "setmemoryconfig",
                 QList<BuiltInFunction::Type>()<<
@@ -394,7 +405,7 @@ void Syntax::SetupBuiltinFunctions()
 
 
 
-    builtInFunctions["copyzpdata"] = BuiltInFunction(
+/*    builtInFunctions["copyzpdata"] = BuiltInFunction(
                 "copyzpdata",
                 QList<BuiltInFunction::Type>()
                 << BuiltInFunction::Type::INTEGER
@@ -402,7 +413,7 @@ void Syntax::SetupBuiltinFunctions()
                 );
 
 
-
+*/
     builtInFunctions["playsound"] = BuiltInFunction(
                 "playsound",
                 QList<BuiltInFunction::Type>()
