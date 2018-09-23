@@ -122,9 +122,9 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
         Poke(as);
 
 
-    if (m_procName.toLower()=="copyzpdata")
+/*    if (m_procName.toLower()=="copyzpdata")
         CopyZPdata(as);
-
+*/
     if (m_procName.toLower()=="swap")
         Swap(as);
 
@@ -210,6 +210,9 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     if (m_procName.toLower()=="inc")
         IncDec(as, "inc");
 
+    if (m_procName.toLower()=="printdecimal")
+        PrintDecimal(as);
+
     if (m_procName.toLower()=="wait")
         Wait(as);
 
@@ -241,9 +244,9 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     if (m_procName.toLower() == "scrolly")
        ScrollY(as);
 
-    if (m_procName.toLower() == "incscreenx")
+/*    if (m_procName.toLower() == "incscreenx")
             IncScreenX(as);
-
+*/
     if (m_procName.toLower() == "inczp")
             IncZp(as);
 
@@ -257,6 +260,10 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
 
     if (m_procName.toLower() == "initeightbitmul")
             InitEightBitMul(as);
+
+
+    if (m_procName.toLower() == "initprintdecimal")
+            InitPrintDecimal(as);
 
     if (m_procName.toLower() == "init16x8mul")
             InitMul16x8(as);
@@ -336,34 +343,6 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
 
     if (m_procName.toLower()=="rasterirq")
         RasterIRQ(as);
-
-    if (m_procName.toLower()=="printchar") {
-        as->ClearTerm();
-        m_params[1]->Build(as);
-        int x = as->m_term.toInt();
-        as->ClearTerm();
-        m_params[2]->Build(as);
-        int y = as->m_term.toInt();
-        as->ClearTerm();
-        int pos = y*40 +x;
-
-
-
-    }
-
-    if (m_procName.toLower()=="print") {
-        QString s = "";
-        if (m_params.count()!=4)
-            ErrorHandler::e.Error("Print requires 4 parameters");
-
-        as->StartPrint();
-        m_params[0]->Build(as);
-        m_params[0]->Build(as);
-//        if (m_params[1]!=nullptr)
-  //          s+=m_params[1]->Execute(symTab, level).toString();
-
-    }
-
 
     as->PopCounter(m_op.m_lineNumber-1);
     return "";
@@ -714,6 +693,59 @@ void NodeBuiltinMethod::InitDecrunch(Assembler *as)
     as->Label("end_init_decrunch");
 
 }
+
+
+
+void NodeBuiltinMethod::InitPrintDecimal(Assembler *as)
+{
+    as->Label("ipd_div_lo dc.b 0");
+    as->Label("ipd_div_hi dc.b 0");
+    as->Label("init_printdecimal_div10");
+//div10:
+    as->Asm("ldx #$11");
+    as->Asm("lda #$00");
+    as->Asm("clc");
+    as->Label("init_printdecimal_loop");
+    as->Asm("rol");
+    as->Asm("cmp #$0A");
+    as->Asm("bcc init_printdecimal_skip");
+    as->Asm("sbc #$0A");
+    as->Label("init_printdecimal_skip");
+    as->Asm("rol ipd_div_lo");
+    as->Asm("rol ipd_div_hi");
+    as->Asm("dex");
+    as->Asm("bne init_printdecimal_loop");
+    as->Asm("rts");
+}
+void NodeBuiltinMethod::PrintDecimal(Assembler *as)
+{
+    QString lbl= as->NewLabel("printdecimal");
+
+    as->Asm("ldy #0");
+    m_params[0]->Build(as);
+    as->Term();
+  //  as->Asm("")
+
+    as->Asm("sta ipd_div_lo");
+    as->Asm("sty ipd_div_hi");
+
+    m_params[1]->Build(as);
+    as->Term();
+    as->Asm("tay");
+    as->Label(lbl);
+    as->Asm("jsr init_printdecimal_div10 ");
+    as->Asm("ora #$30");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("dey");
+    as->Asm("bpl "+lbl);
+//    as->Asm("rts");
+
+ //   as->P
+}
+
+
+
+
 void NodeBuiltinMethod::PrintNumber(Assembler *as)
 {
 
@@ -1026,6 +1058,7 @@ void NodeBuiltinMethod::Fill(Assembler *as)
 {
     QString lbl = as->NewLabel("fill");
     RequireAddress(m_params[0],"Fill",m_op.m_lineNumber);
+    AddMemoryBlock(as,0);
     if (m_params[0]->getType(as)==TokenType::POINTER) {
 
         LoadVar(as,1);
@@ -2057,6 +2090,7 @@ void NodeBuiltinMethod::Swap(Assembler *as)
 
 
 }
+
 
 void NodeBuiltinMethod::MemCpyLarge(Assembler *as)
 {

@@ -17,10 +17,14 @@ var
 	curLevel_x, curLevel_y : byte=0;
 	// Defines if x/y directions are being blocked
 
-	k,l,blockx, blocky,map_player_direction : byte = 0;
 	player_x: integer;
 	player_y: byte;
 
+	// k & l are just two more counters. blockx/y is set to 1 if x/y movement i hindered.
+	// map player direction specifies the (screen) direction of the player: -1, -40, 1, 41 etc
+	k,l,blockx, blocky,map_player_direction : byte = 0;
+
+	// Background mask of the character set. 1 means collisions is enabled.
 	background_mask: array[256] of byte=(
 	1,1,1,1,1,1,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
 	1,1,1,1,1,1,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
@@ -69,7 +73,7 @@ begin
 	SPRITE_COLOR[@playerSprite]:=RED;
 end;
 
-
+// Initializes charset, loads level header info
 procedure Initialize();
 begin
 	clearscreen(LIGHT_BLUE, $D800);
@@ -90,15 +94,12 @@ begin
 	ReadHeader();
 end;
 
-/*	
-	Traverselevels checkes whether the player has moved close to a border.
-    If true, then the neighbouring screen is loaded and the player sprite is placed
-	on the opposite part of the screen. 
+
+/*
+	Performs the check on whether the player sprite collides with
+	a collideable character set
 
 */
-
-
-
 procedure PlayerBackgroundCollide();
 var
 	tmp:integer;
@@ -119,7 +120,12 @@ begin
 	end;
 end;
 
+/*	
+	Traverselevels checkes whether the player has moved close to a border.
+    If true, then the neighbouring screen is loaded and the player sprite is placed
+	on the opposite part of the screen. 
 
+*/
 
 procedure TraverseLevels();
 var 
@@ -182,6 +188,7 @@ procedure MovePlayerSprite();
 begin
 	joystick();
 
+	// Calculate map_direction
 	map_player_direction:=0;
 	if (joystickleft=1) then map_player_direction:=map_player_direction-1;
 	if (joystickright=1) then map_player_direction:=map_player_direction+1;
@@ -190,6 +197,7 @@ begin
 
 	PlayerBackgroundCollide();
 
+	// Perform blocks
 	if (blockx=0) then
 		player_x:=player_x+joystickright-joystickleft;
 	if (blocky=0) then

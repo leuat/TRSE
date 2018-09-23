@@ -66,6 +66,7 @@ public:
     void SetSpriteLoc(Assembler* as);
     void ClearBitmap(Assembler* as);
     void Swap(Assembler* as);
+    void PrintDecimal(Assembler* as);
     void MemCpyLarge(Assembler* as);
     void SetBank(Assembler* as);
     void Decrunch(Assembler* as);
@@ -115,7 +116,7 @@ public:
     void InitEightBitMul(Assembler* as);
     void InitPrintString(Assembler* as);
     void InitDecrunch(Assembler* as);
-
+    void InitPrintDecimal(Assembler* as);
 
 
     void ExecuteSym(SymbolTable* symTab) override {

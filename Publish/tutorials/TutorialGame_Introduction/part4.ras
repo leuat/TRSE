@@ -1,9 +1,13 @@
 program part4_charsets;
 var  
+	// Charset at $2000
    	charset1: incbin("charsets/charset1.bin", $2000);
+	// Pointer that will point to character data location at $2000+$800=$2800
 	colors : pointer;
 	i,j:byte;
 
+// Prints a 2x2 block at position x,y with the upper left value of c, (and c+1, c+40 and c+41)
+// Also prints colors based of the "colors" pointer (which must be initialized first)
 procedure print2x2block(x,y,c:byte);
 begin
 	moveto(x,y,$04);
@@ -22,18 +26,21 @@ end;
 
 
 begin
+	// Fill the color ram with light blue
 	clearscreen(LIGHT_BLUE, $D800);
+	// Clear screen
 	clearscreen($20, $0400);
 	SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL:=BLACK;
-
+	// Set color pointer
 	colors:=$2800;
-
+	// Set multicolor characters (grey brown) 
+	// multicolor_char_col[0] is the same as SCREEN_FG_COL
 	MULTICOLOR_CHAR_COL[1]:=GREY;
 	MULTICOLOR_CHAR_COL[2]:=BROWN;
-
+	// Enables multicolor mode!
 	setmulticolormode();
-
+	// Let the VIC know where the charset is located
 	setcharsetlocation($2000);
 
 	// Draw some lines of blocks

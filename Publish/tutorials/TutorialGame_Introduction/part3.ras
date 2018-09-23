@@ -1,28 +1,33 @@
 program part3;
 var  
+	// Include raw sprite data at $3200 on vic bank 0
 	mySprites:incbin("sprites/sprites.bin", $3200);
 
+
 procedure InitSprites();
-begin
+begin	
+	// points sprite 0 and 1 to point to data $C8, $C9 on vic bank 0 (where $C8*64=$3200)
 	setspriteloc(0,$C8,0);
 	setspriteloc(1,$C9,0);
-
+	// Set the sprite x / y position on screen
 	spritepos(60,100,0);
 	spritepos(220,100,1);
-
+	// Turn on the two first sprites (first two bits)
 	SPRITE_BITMASK:=%00000011;
-
+	// Let the first two sprites have multi color enabled
 	SPRITE_MULTICOLOR:=%00000011;
 	SPRITE_MULTICOLOR_REG1:=LIGHT_GREEN;
 	SPRITE_MULTICOLOR_REG2:=GREY;
-
+	// Set individual sprite colors
 	SPRITE_COLOR[0]:=RED;
 	SPRITE_COLOR[1]:=BLUE;
 end;
 
 begin
+	// Set black border & background
 	SCREEN_BG_COL:=BLACK;
-	SCREEN_FG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;	
+	// Fill screen (at $0400) with blank spaces ($20)
 	ClearScreen($20, $0400);
 		
 	InitSprites();
