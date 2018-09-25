@@ -452,6 +452,8 @@ void FormImageEditor::on_btnFlipHorisontal_clicked()
 
     LImageIO::Save(filename,m_work.m_currentImage->m_image);
 
+
+
 }
 */
 void FormImageEditor::on_chkGrid_clicked(bool checked)
