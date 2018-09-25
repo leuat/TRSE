@@ -29,6 +29,7 @@ var
 
 /*
 	Original unoptimized version
+	NB doesn't work anymore fix fix
 */
 procedure DYCP_Unoptimized();
 begin
@@ -85,6 +86,7 @@ end;
 */
 procedure DYCP_Optimized();
 begin
+
 	if g_currentBank=0 then		
 		zeropage2 := @cmem
 	else
@@ -155,7 +157,7 @@ begin
 	scrollx(0);
 
 	// Start doing DYCP magick (while waiting for raster..)
-	if scroll = 7 then begin
+	if scroll = 7  then begin
 		
 		if g_currentBank=0 then g_currentBank:=1
 		else g_currentBank := 0;

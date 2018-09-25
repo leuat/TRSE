@@ -49,14 +49,14 @@ var
 	*/
 procedure CopyHScreen(ul_:byte);
 begin
-	if g_currentBank=0 then begin
+	if g_currentBank=0 offpage then begin
 		if ul_=0 then
 			copyhalfscreen(^$0400 + ^520, ^$4400 -^1 + ^520,12, 1,0)
 		else
 			copyhalfscreen(^$0400, ^$4400 -^1, 13, 1,0);
 		
 	end;
-	if g_currentBank=1 then begin
+	if g_currentBank=1 offpage then begin
 		if ul_=0 then
 			copyhalfscreen(^$4400+^520, ^$0400 - ^1 + ^520, 12, 1,0)
 		else

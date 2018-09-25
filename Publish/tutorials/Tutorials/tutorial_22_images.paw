@@ -1,6 +1,6 @@
 ras_include_file = tutorial_22_packed_resources_auto_generated.ras
 packed_address = $8000
 output_dir = compressed/
-data = ,image1_data, images/jack_data.bin, $6000, image1_color, images/jack_color.bin, $2000, image2_data, images/moose_data.bin, $6000, image2_color, images/moose_color.bin, $2000, brain_data, images/brain_data.bin, $6000, brain_color, images/brain_color.bin, $2000
-use_exomizer3 = 0
+data = ,image1_data, images/jack_data.bin, $6000, image1_color, images/jack_color.bin, $2000, image2_data, images/moose_data.bin, $6000, image2_color, images/moose_color.bin, $2000, octopus_data, images/octopus_data.bin, $6000, octopus_color, images/octopus_color.bin, $2000
+use_exomizer3 = 1
 address_field = tutorial_22_packed_address
