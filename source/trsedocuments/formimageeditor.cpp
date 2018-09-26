@@ -135,6 +135,14 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             m_work.m_currentImage->Undo();
 
         }
+        if (e->key()==Qt::Key_M && !(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+            bool is = !m_work.m_currentImage->m_image->isMultiColor();
+            m_work.m_currentImage->m_image->setMultiColor(is);
+            ui->chkDisplayMulticolor->setChecked(is);
+
+            Data::data.Redraw();
+        }
+
         if (e->key() == Qt::Key_Z  && !(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
                 ui->chkGrid->setChecked(!ui->chkGrid->isChecked());
                 //ui->lblGrid->setVisible(ui->chkGrid->isChecked());
@@ -461,6 +469,7 @@ void FormImageEditor::on_chkGrid_clicked(bool checked)
 //    if (checked)
 //    ui->lblGrid->setVisible(checked);
     m_updateThread->m_drawGrid=!m_updateThread->m_drawGrid;
+    Data::data.Redraw();
 
 }
 
@@ -935,5 +944,12 @@ void FormImageEditor::on_leHeaders_editingFinished()
 void FormImageEditor::on_tblData_cellChanged(int row, int column)
 {
     //m_work.m_currentImage->m_image->StoreData(ui->tblData);
+
+}
+
+void FormImageEditor::on_btnHelpImage_clicked()
+{
+    DialogImageHelp* dih = new DialogImageHelp(this);
+    dih->show();
 
 }

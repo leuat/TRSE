@@ -1,5 +1,6 @@
 program Tutorial15_Polygon_work_in_progress;
 var
+	// Polygon broken. Will be fixed / changed for version 0.05
 	i, j,k,val,r,sin,cos,idx0, idx1, time: byte=5;
 	
 	center: array[2] of byte=(80,100);

@@ -71,7 +71,6 @@ public:
 
 
 
-
     virtual void setCurrentChar(int i) {m_currencChar = i;}
 
     virtual CharsetImage* getCharset() { return nullptr; }

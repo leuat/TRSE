@@ -16,6 +16,7 @@
 #include "source/dialogexport.h"
 #include "source/LeLib/util/util.h"
 #include "source/LeLib/limage/limageeffects.h"
+#include "source/dialogimagehelp.h"
 #include <QLineEdit>
 namespace Ui {
 class Formimageeditor;
@@ -145,6 +146,9 @@ private slots:
     void on_chkDisplayMulticolor_stateChanged(int arg1);
     void on_leHeaders_editingFinished();
     void on_tblData_cellChanged(int row, int column);
+
+    void on_btnHelpImage_clicked();
+
 };
 
 

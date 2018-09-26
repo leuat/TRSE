@@ -95,7 +95,7 @@ void FormRasEditor::Build()
         QString output(process.readAllStandardOutput());
         int codeEnd=FindEndSymbol(output);
 
-        qDebug() << "Code end: " << Util::numToHex(codeEnd) << codeEnd;
+//        qDebug() << "Code end: " << Util::numToHex(codeEnd) << codeEnd;
         int orgFileSize = QFile(filename+".prg").size();
 
         if (m_iniFile->getdouble("perform_crunch")==1) {

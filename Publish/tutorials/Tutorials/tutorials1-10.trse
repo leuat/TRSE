@@ -1,2 +1,3 @@
 project_path = /home/leuat/code/TRSE/Publish/tutorials/Tutorials/
-open_files = ,tutorial_4_of_sprites_input_sound.ras, tutorial_5_raster_interrupts.ras, tutorial_7_scrolling_and_multicolor.ras, tutorial_8_fullscreen_scroll.ras, tutorial_9_scrolling_and_sprites.ras, tutorial_10_image_effects.ras, tutorial_21_decrunch.ras, tutorial_18_starfield.ras, tutorial_17_2x2scroller.ras, tutorial_16_megascroller.ras, tutorial_14_fire.ras, tutorial_11_lines.ras, tutorial_12_dycp_scroller.ras, tutorial_13_rasterirq.ras, tutorial_15_polygon.ras, tutorial_22_packed_resources_auto_generated.ras, tutorial_22_images.paw, tutorial_22_paw_decrunch.ras, tutorial_3_plasma_defines.ras, tutorial_20_fading_text.ras, tutorial_19_tunnel.ras, tuorial_1_helloworld.ras, tuorial_2_random.ras
+open_files = ,sprites/tutorial9.flf, images/jack.flf
+data_header_images/jack.flf = 0

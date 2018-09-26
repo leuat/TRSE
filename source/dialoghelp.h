@@ -7,7 +7,6 @@
 #include <QVector>
 #include <QListWidgetItem>
 
-
 namespace Ui {
 class DialogHelp;
 }
