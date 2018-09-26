@@ -75,9 +75,10 @@ begin
 	copyimagecolordata(image_color,1);
 	preventirq();
 	DisableCIAInterrupts();
-	RasterIRQ(Update(),0, 1);
-	enablerasterirq();
-	//Loop();
+	RasterIRQ(Update(),1, 1);
+	EnableRasterIRQ();
+	enableirq();
+	Loop();
 	
 end.
 
