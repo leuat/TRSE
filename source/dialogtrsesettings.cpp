@@ -1,5 +1,6 @@
 #include "dialogtrsesettings.h"
 #include "ui_dialogtrsesettings.h"
+#include "source/LeLib/util/util.h"
 #include <QFileDialog>
 #include "source/LeLib/util/util.h"
 #include <QStringList>
@@ -26,7 +27,7 @@ void DialogTRSESettings::FillFromIni()
         ui->cmbPalette->setCurrentText("Light");
 
 
-    QDir directory(Util::path+"themes/");
+    QDir directory(Util::path+"/themes/");
     QStringList themes = directory.entryList(QStringList() << "*.ini");
     ui->cmbTheme->clear();
     QStringList washed;
