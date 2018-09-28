@@ -8,11 +8,11 @@ cp -r ../source/* trse/bin/
 cp -r ../tutorials/RasLib trse/
 cp -r ../tutorials/Tutorials trse/
 cp -r ../tutorials/TutorialGame_RogueBurgerOne trse/
-cp -r ../tutorials/TutorialGame_IntroGame trse/
+cp -r ../tutorials/TutorialGame_Introduction trse/
 find trse/* -name "*.prg" -type f -delete
 find trse/Tutorials/* -name "*.asm" -type f -delete
 find trse/TutorialGame_RogueBurgerOne/* -name "*.asm" -type f -delete
-find trse/TutorialGame_IntroGame/* -name "*.asm" -type f -delete
+find trse/TutorialGame_Introduction/* -name "*.asm" -type f -delete
 cp trse.sh trse
 tar -cvf trse_linux64.tar trse
 gzip trse_linux64.tar

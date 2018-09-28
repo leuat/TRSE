@@ -113,7 +113,6 @@ begin
 	blocky:=0;
 	
 	k:=screenmemory[ map_player_direction +40+1]; // down
-	
 	if (background_mask[k]=1) then begin
 		if (joystickdown=1 or joystickup=1) then blocky:=1;
 		if (joystickleft=1 or joystickright=1) then blockx:=1;

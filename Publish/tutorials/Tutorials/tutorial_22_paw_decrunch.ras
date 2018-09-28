@@ -12,6 +12,8 @@ var
 	press space to cycle between the two images
 */
 
+
+// The following include file is automatically generated during paw file build
 @include "tutorial_22_packed_resources_auto_generated.ras"
 
 
@@ -29,14 +31,20 @@ begin
 	SCREEN_FG_COL:=BLACK;
 	i:=0;
 	while (1=1) offpage do begin
+		// Turn off screen during decrunching process
 		screenoff(); // turn off screen while decrunching..
+		// unpacks color data to $2000
 		decrunchfromindex(tutorial_22_packed_address,i+1); 
+		// copy color data to screen + $D800
 		copyimagecolordata($2000,1);
-		decrunchfromindex(tutorial_22_packed_address,i); // Decrunches to $2000
+		// Decrunch image data
+		decrunchfromindex(tutorial_22_packed_address,i); // decrunches to vic 1
+		// Turn on screen
 		screenon();
 		while (keypressed(KEY_SPACE)=0) do waitforraster(0);
 		i:=i+2;
-		if (i=6) then i:=0;		
+		// Reset counter after 3 images + data 
+		if (i=6) then i:=0;
 
 	end;
 	Loop();

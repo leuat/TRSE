@@ -371,7 +371,7 @@ Built-in methods
 				Turns the screen off
 	screenon
             <h2>ScreenOff();</h2>
-            Turns the screen off
+            Turns the screen on
     scrollx/scrolly
     		<h2>Scrollx([value]); Scrolly([value])</h2>
     		Sets the scroll registry to [value] pixels (between 0-7) in either the x or y direction.
