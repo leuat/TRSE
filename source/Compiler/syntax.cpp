@@ -165,6 +165,15 @@ void Syntax::SetupBuiltinFunctions()
                 "initeightbitmul",
                 QList<BuiltInFunction::Type>());
 
+    builtInFunctions["blockmemcpy"] = BuiltInFunction(
+                "blockmemcpy",
+                QList<BuiltInFunction::Type>()
+                <<BuiltInFunction::Type::INTEGER
+                <<BuiltInFunction::Type::INTEGER
+                <<BuiltInFunction::Type::INTEGER
+
+                );
+
     builtInFunctions["init16x8mul"] = BuiltInFunction(
                 "init16x8mul",
                 QList<BuiltInFunction::Type>());

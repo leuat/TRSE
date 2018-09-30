@@ -73,6 +73,7 @@ public:
     void DecrunchFromIndex(Assembler* as);
     void CopyImageColorData(Assembler* as);
     void CopyHalfScreen(Assembler* as);
+    void BlockMemCpy(Assembler* as);
     void CopyFullScreenUnrolled(Assembler* as);
     void CopyFullScreen(Assembler* as);
     void TransformColors(Assembler* as);

@@ -59,6 +59,10 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     if (m_procName.toLower()=="enablerasterirq") {
         EnableRasterIRQ(as);
     }
+    if (m_procName.toLower()=="blockmemcpy") {
+        BlockMemCpy(as);
+    }
+
     if (m_procName.toLower()=="keypressed") {
         KeyPressed(as);
     }
@@ -2424,6 +2428,45 @@ void NodeBuiltinMethod::CopyFullScreen(Assembler *as)
     as->Asm("bne " + lbl2);
 
 }
+
+void NodeBuiltinMethod::BlockMemCpy(Assembler *as)
+{
+
+    as->Comment("Block memcpy");
+    RequireAddress(m_params[0],"BlockMemCpy", m_op.m_lineNumber);
+    RequireAddress(m_params[1],"BlockMemCpy", m_op.m_lineNumber);
+
+    NodeNumber* num = dynamic_cast<NodeNumber*>(m_params[2]);
+    if (num==nullptr)
+        ErrorHandler::e.Error("BlockMemCpy parameter 3 *must* be a pure number");
+
+    NodeNumber* from = dynamic_cast<NodeNumber*>(m_params[0]);
+    if (from==nullptr)
+        ErrorHandler::e.Error("BlockMemCpy parameter 1 *must* be a pure number");
+
+    NodeNumber* to = dynamic_cast<NodeNumber*>(m_params[1]);
+    if (to==nullptr)
+        ErrorHandler::e.Error("BlockMemCpy parameter 2 *must* be a pure number");
+
+
+    int v = num->m_val;
+    AddMemoryBlock(as,1);
+
+    QString lbl = as->NewLabel("Blockmemcpy_lbl1");
+
+    as->Asm("ldx #0");
+    as->Label(lbl);
+
+    for (int i=0;i<v;i++) {
+        as->Asm("lda $"+QString::number((int)from->m_val + i*256,16)+",x");
+        as->Asm("sta $"+QString::number((int)to->m_val + i*256,16)+",x");
+    }
+
+    as->Asm("dex");
+    as->Asm("bne " + lbl);
+
+}
+
 
 void NodeBuiltinMethod::TransformColors(Assembler *as)
 {
