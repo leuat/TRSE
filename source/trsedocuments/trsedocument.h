@@ -37,6 +37,7 @@ public:
     virtual void GotoLine(int ln) {}
     virtual void Build() {}
     virtual void Run() {}
+    virtual void PrepareClose() {}
 
     virtual void MemoryAnalyze() {}
 

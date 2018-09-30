@@ -8,9 +8,13 @@ QLabelLImage::QLabelLImage()
 
 void QLabelLImage::mouseMoveEvent(QMouseEvent *e)
 {
+    if (m_cancel)
+        return;
     if (m_work==nullptr)
         return;
     if (m_work->m_currentImage==nullptr)
+        return;
+    if (m_work->m_currentImage->m_image==nullptr)
         return;
     if (m_updateThread==nullptr)
         return;
@@ -48,6 +52,8 @@ bool QLabelLImage::eventFilter(QObject *object, QEvent *event){
 /*    if ( !dynamic_cast<QInputEvent*>( event ) )
            return false;
 */
+    if (m_cancel)
+        return true;
     if(object==this) {
 //        if  (event->type()==QEvent::Move)
     //    qDebug() << "Move event";
@@ -71,6 +77,8 @@ bool QLabelLImage::eventFilter(QObject *object, QEvent *event){
 
 void QLabelLImage::mouseReleaseEvent(QMouseEvent *e)
 {
+    if (m_cancel)
+        return;
     if (m_updateThread==nullptr)
         return;
     if (m_updateThread->m_currentButton==1) {
@@ -84,6 +92,8 @@ void QLabelLImage::mouseReleaseEvent(QMouseEvent *e)
 
 void QLabelLImage::mousePressEvent(QMouseEvent *e)
 {
+    if (m_cancel)
+        return;
     if (m_updateThread==nullptr)
         return;
     m_updateThread->m_work->m_currentImage->AddUndo();

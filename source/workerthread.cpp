@@ -34,6 +34,21 @@ void WorkerThread::UpdateDrawing()
 //    qDebug() << "Before" << m_time;
     // Check if leave event triggerede
 
+    if (m_work==nullptr) {
+        qDebug() << "M_WORK is null in updatedrawinbg";
+        return;
+    }
+
+    if (m_work->m_currentImage==nullptr){
+        qDebug() << "M_WORK->m_currentImage is null in updatedrawinbg";
+        return;
+    }
+
+    if (m_work->m_currentImage->m_image==nullptr){
+        qDebug() << "M_WORK->m_currentImage->m_image is null in updatedrawinbg";
+        return;
+    }
+
     QPointF pos = (m_currentPos - QPointF(0.5, 0.5) -m_zoomCenter)*m_zoom + m_zoomCenter ;
     bool isInWindow  =(pos.x()>=0 && pos.x()<m_work->m_currentImage->m_image->m_width &&
                        pos.y()>=0 && pos.y()<m_work->m_currentImage->m_image->m_height);
@@ -151,7 +166,7 @@ void WorkerThread::UpdatePanning()
 
 
 
-void WorkerThread::UpdateImage(LImage *mc)
+void WorkerThread::UpdateImage(LImage * mc)
 {
    if (m_work == nullptr)
        return;
@@ -176,8 +191,14 @@ void WorkerThread::UpdateImage(LImage *mc)
 //    qDebug() << "ToQImage";
 
 //    qDebug() << m_tmpImage->width();
+    if (mc==nullptr)
+        return;
+    if (m_work->m_currentImage==nullptr)
+        return;
+    if (m_work->m_currentImage->m_image==nullptr)
+        return;
 
-    mc->ToQImage(m_work->m_currentImage->m_image->m_colorList, m_tmpImage, m_zoom, m_zoomCenter);
+        mc->ToQImage(m_work->m_currentImage->m_image->m_colorList, m_tmpImage, m_zoom, m_zoomCenter);
    // m_tmpImage->fill(QColor(255,0,0));
     m_pixMapImage.convertFromImage(*m_tmpImage);
 
@@ -234,6 +255,17 @@ void WorkerThread::OnQuit()
     m_quit = true;
 }
 
+void WorkerThread::Park()
+{
+    m_park = true;
+    msleep(35);
+}
+
+void WorkerThread::Continue()
+{
+    m_park = false;
+}
+
 void WorkerThread::run()
 {
     while (!m_quit) {
@@ -244,28 +276,29 @@ void WorkerThread::run()
             continue;
         }
 */
-//        qDebug() << "WOOT" <<m_time;
-        UpdateMessages();
-        // Mouse position now being handled by QLabelLImage
-        //UpdateMousePosition();
-        UpdatePanning();
-        UpdateDrawing();
-        m_time++;
+        if (!m_park) {
+            //        qDebug() << "WOOT" <<m_time;
+            UpdateMessages();
+            // Mouse position now being handled by QLabelLImage
+            //UpdateMousePosition();
+            UpdatePanning();
+            UpdateDrawing();
+            m_time++;
 
 
-        if (Data::data.redrawOutput && m_work!=nullptr) {
+            if (Data::data.redrawOutput && m_work!=nullptr) {
 
-//            qDebug() << "Redraw" << rand()%100;
-            LImage* img = m_work->m_currentImage->m_image;
-            if (isPreview) {
-                img = m_work->m_currentImage->m_temp;
+                //            qDebug() << "Redraw" << rand()%100;
+                LImage* img = m_work->m_currentImage->m_image;
+                if (isPreview) {
+                    img = m_work->m_currentImage->m_temp;
+                }
+                //qDebug() << "Updating image" << m_time;
+                UpdateImage(img);
+                Data::data.redrawOutput = false;
+
             }
-            //qDebug() << "Updating image" << m_time;
-            UpdateImage(img);
-            Data::data.redrawOutput = false;
-
         }
-
 
         QThread::msleep(15);
     }

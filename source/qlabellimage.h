@@ -14,10 +14,11 @@ public:
     WorkerThread* m_updateThread = nullptr;
     ImageWorker* m_work = nullptr;
     bool m_active=false;
+    bool m_cancel = false;
 
     void mouseMoveEvent(QMouseEvent *e) override;
 //    void mouseLeaveEvent(QMouseEvent* e) override;
-
+    void CancelAll() {m_cancel=true; m_active=false;}
     bool eventFilter(QObject *object, QEvent *event) override;
 
     void mouseReleaseEvent(QMouseEvent*  e) override;

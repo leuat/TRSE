@@ -55,6 +55,7 @@ void ImageWorker::UpdateListView(QListView *lst)
 
 }
 
+
 QStringList ImageWorker::getImageTypes()
 {
     QStringList l;

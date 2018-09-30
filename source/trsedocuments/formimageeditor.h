@@ -44,6 +44,8 @@ public:
     void UpdatePalette();
     void updateCharSet();
 
+    void PrepareClose() override;
+
     void SetMCColors();
     void UpdateLevels();
     void FillCMBColors();

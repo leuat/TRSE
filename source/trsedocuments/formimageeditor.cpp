@@ -211,7 +211,8 @@ void FormImageEditor::Load(QString filename)
 */
 
     LImage* img = LImageIO::Load(filename);
-
+    if (img==nullptr)
+        return;
     m_work.New(img, filename);
 
     img->LoadCharset(m_projectIniFile->getString("charset_"+m_currentFileShort));
@@ -703,6 +704,11 @@ void FormImageEditor::updateCharSet()
 //    int size = (ui->lstCharMap->rect().width()-ui->lstCharMap->spacing())/8;
   //  ui->lstCharMap->setIconSize(QSize(size,size));
 
+}
+
+void FormImageEditor::PrepareClose()
+{
+    ui->lblImage->CancelAll();
 }
 
 void FormImageEditor::SetMCColors()

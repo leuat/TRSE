@@ -346,6 +346,12 @@ void MainWindow::RemoveTab(int idx, bool save)
 
     idx--;
     TRSEDocument* doc = m_documents[idx];
+    m_updateThread->Park();
+    QThread::msleep(30);
+    m_updateThread->SetCurrentImage(nullptr, nullptr, nullptr);
+
+    doc->PrepareClose();
+
     if (doc==nullptr)
         return;
     if (save) {
@@ -359,13 +365,13 @@ void MainWindow::RemoveTab(int idx, bool save)
 //    ui->tabMain->removeTab(idx+1);
 
 
-    m_updateThread->SetCurrentImage(nullptr, nullptr, nullptr);
     TRSEDocument* d = (TRSEDocument*)ui->tabMain->currentWidget();
     FormImageEditor* fe = dynamic_cast<FormImageEditor*>(d);
 
     if (fe!=nullptr)
        m_updateThread->SetCurrentImage(&fe->m_work, &fe->m_toolBox,fe->getLabelImage());
 
+    m_updateThread->Continue();
 }
 
 void MainWindow::CloseAll()

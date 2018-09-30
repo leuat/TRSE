@@ -29,11 +29,15 @@ public:
     QPalette m_pal, m_orgPal;
 
     bool m_hasLeft = false;
+    bool m_park = false;
 
     WorkerThread() {
 
     }
 
+
+    void Park();
+    void Continue();
 
     void SetCurrentImage(ImageWorker* work, Toolbox* tb, QLabel* lbl) {
         m_work = work;
