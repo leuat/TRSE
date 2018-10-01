@@ -16,4 +16,5 @@ find trse/TutorialGame_Introduction/* -name "*.asm" -type f -delete
 cp trse.sh trse
 tar -cvf trse_linux64.tar trse
 gzip trse_linux64.tar
-scp trse_linux64.tar.gz leuat@www.irio.co.uk:www/trse/
+scp trse_linux64.tar.gz leuat@www.irio.co.uk:www/trse/trse_v0.04_linux64.tar.gz
+

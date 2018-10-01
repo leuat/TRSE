@@ -105,6 +105,7 @@ void ImageLevelEditor::SaveBin(QFile &file)
         file.write( l->m_CharData);
         if (m_meta.m_useColors)
            file.write( l->m_ColorData);
+
         file.write( l->m_ExtraData);
 
         if (l->m_CharData.size()!= ll->m_CharData.size()) {
@@ -127,25 +128,30 @@ void ImageLevelEditor::LoadBin(QFile &file)
 {
     // Make sure
     //QByteArray header = file.read(32);
-    QByteArray h1 = file.read(9);
+/*    QByteArray h1 = file.read(9);
     m_meta.fromHeader(h1);
+//    m_meta.m_useColors = true;
     m_meta.Calculate();
     int actualSize = m_meta.totalSize() + 13;
     // Test for old or new version of file type
+    qDebug() << "Actual file size : " << QString::number(file.size());
+    qDebug() << "Should be file size : " << QString::number(actualSize);
     if (file.size()==actualSize) {
         qDebug() << "NEW type of file!";
         // NEW version:
-        QByteArray h2 = file.read(32-9);
-        h1.append(h2);
+        */
+        QByteArray h1 = file.read(32);
+//        h1.append(h2);
         m_meta.fromHeader(h1);
         m_meta.Calculate();
-    }
+
+/*    }
     else {
         qDebug() << "OLD type of file!";
-        m_meta.m_useColors=true;
+        m_meta.m_useColors = true;
      }
 
-
+*/
     Initialize(m_meta);
 /*    qDebug() << "INChardata: " <<m_meta.dataSize();
     qDebug() << "INExtraData: " <<m_meta.m_extraDataSize;*/

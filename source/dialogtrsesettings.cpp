@@ -27,13 +27,14 @@ void DialogTRSESettings::FillFromIni()
         ui->cmbPalette->setCurrentText("Light");
 
 
-    QDir directory(Util::path+"/themes/");
+    QDir directory(Util::path+"themes/");
     QStringList themes = directory.entryList(QStringList() << "*.ini");
     ui->cmbTheme->clear();
+    qDebug() << "themes : " << themes;
     QStringList washed;
     for (QString s: themes) {
         QString name = s.split(".")[0];
-      //  qDebug() << name;
+        qDebug() << name;
         washed << name;
     }
     ui->cmbTheme->addItems(washed);
