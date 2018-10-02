@@ -143,9 +143,9 @@ bool LImageSprites::KeyPress(QKeyEvent *e)
 
 
 
-    if (e->key()==Qt::Key_W)
+    if (e->key()==Qt::Key_W && m_currencChar>=40*s)
         m_currencChar-=40*s;
-    if (e->key()==Qt::Key_A)
+    if (e->key()==Qt::Key_A && m_currencChar>=s)
         m_currencChar-=1*s;
     if (e->key()==Qt::Key_S)
         m_currencChar+=40*s;

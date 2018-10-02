@@ -367,7 +367,7 @@ void MainWindow::RemoveTab(int idx, bool save)
 
     TRSEDocument* d = (TRSEDocument*)ui->tabMain->currentWidget();
     FormImageEditor* fe = dynamic_cast<FormImageEditor*>(d);
-
+    ui->tabMain->currentWidget()->setFocus();
     if (fe!=nullptr)
        m_updateThread->SetCurrentImage(&fe->m_work, &fe->m_toolBox,fe->getLabelImage());
 

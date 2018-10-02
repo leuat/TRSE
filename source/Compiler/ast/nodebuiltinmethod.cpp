@@ -93,13 +93,14 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
 
     if (m_procName.toLower() == "screenoff") {
         as->Asm("lda $D011");
-        as->Asm("and #%11101111");
+        as->Asm("and #%01101111");
         as->Asm("sta $D011");
        }
 
     if (m_procName.toLower() == "screenon") {
         as->Asm("lda $D011");
         as->Asm("ora #%00010000");
+        as->Asm("and #%01111111");
         as->Asm("sta $D011");
        }
 
