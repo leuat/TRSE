@@ -28,7 +28,7 @@ void DialogTRSESettings::FillFromIni()
 
 
     QDir directory(Util::path+"themes/");
-    QStringList themes = directory.entryList(QStringList() << "*.ini");
+    QStringList  themes = directory.entryList(QStringList() << "*.ini");
     ui->cmbTheme->clear();
     qDebug() << "themes : " << themes;
     QStringList washed;
