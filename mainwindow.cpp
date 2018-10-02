@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_updateThread, SIGNAL(requestCloseWindowSignal()), this, SLOT(closeWindowSlot()));
 
     this->setMouseTracking(true);
-
+    m_currentDoc = nullptr;
 
 #if defined(Q_OS_MAC)
     Util::path = QCoreApplication::applicationDirPath() + "/../../";
@@ -425,14 +425,17 @@ void MainWindow::on_tabMain_currentChanged(int index)
         m_updateThread->SetCurrentImage(&imageedit->m_work, &imageedit->m_toolBox, imageedit->getLabelImage());
     }
 
-    if ((TRSEDocument*)ui->tabMain->widget(index)!=nullptr) {
-        m_currentDoc = (TRSEDocument*)ui->tabMain->widget(index);
+    if (dynamic_cast<TRSEDocument*>(ui->tabMain->widget(index))!=nullptr) {
+        m_currentDoc = dynamic_cast<TRSEDocument*>(ui->tabMain->widget(index));
         if (m_currentDoc!=nullptr && index!=0)
             m_currentDoc->Reload();
 
-
+//        qDebug() << "dyn:" << dynamic_cast<TRSEDocument*>(ui->tabMain->widget(index));
     }
 
+    else {
+        m_currentDoc=nullptr;
+    }
 
 }
 
