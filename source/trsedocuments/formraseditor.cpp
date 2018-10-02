@@ -30,7 +30,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString emulator)
 #ifdef _WIN32
     QProcess::execute("taskkill /im \"x64.exe\" /f");
 #endif
-    process.startDetached(emulator, QStringList() << fileName);
+    process.startDetached(emulator, QStringList() <<  QDir::toNativeSeparators(fileName));
 //    process.pi
     QString output(process.readAllStandardOutput());
 
