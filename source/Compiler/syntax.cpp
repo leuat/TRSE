@@ -120,14 +120,14 @@ void Syntax::SetupBuiltinFunctions()
                 BuiltInFunction::Type::INTEGER <<
                 BuiltInFunction::Type::INTEGER);
 
-    builtInFunctions["memcpylarge"] = BuiltInFunction(
+/*    builtInFunctions["memcpylarge"] = BuiltInFunction(
                 "memcpylarge",
                 QList<BuiltInFunction::Type>()<< BuiltInFunction::Type::INTEGER <<
                 BuiltInFunction::Type::INTEGER <<
                 BuiltInFunction::Type::INTEGER <<
                 BuiltInFunction::Type::INTEGER);
 
-
+*/
 
     builtInFunctions["wait"] = (BuiltInFunction(
     "wait",  QList<BuiltInFunction::Type>() << BuiltInFunction::Type::INTEGER, true));
@@ -203,6 +203,13 @@ void Syntax::SetupBuiltinFunctions()
                 "fld",
                 QList<BuiltInFunction::Type>()
                 << BuiltInFunction::Type::INTEGER
+                << BuiltInFunction::Type::INTEGER
+
+                );
+
+    builtInFunctions["sqrt"] = BuiltInFunction(
+                "sqrt",
+                QList<BuiltInFunction::Type>()
                 << BuiltInFunction::Type::INTEGER
 
                 );

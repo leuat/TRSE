@@ -8,7 +8,7 @@
 #include "source/messages.h"
 #include "source/Compiler/lexer.h"
 #include "source/Compiler/parser.h"
-#include "source/Compiler/interpreter.h"
+#include "source/Compiler/compiler.h"
 #include <QElapsedTimer>
 #include "source/dialoghelp.h"
 #include "source/dialogmemoryanalyze.h"
@@ -28,7 +28,7 @@ public:
     Highlighter* highlighter = nullptr;
     QFont m_font;
 
-    Interpreter interpreter;
+    Compiler compiler;
     Parser parser;
     Lexer lexer;
     QString filename;

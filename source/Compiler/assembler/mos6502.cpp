@@ -475,6 +475,9 @@ void AsmMOS6502::IncludeFile(QString pfile)
 
     while(!in.atEnd()) {
         QString line = in.readLine();
+        for (QString key: m_replaceValues.keys())
+            line = line.replace(key, m_replaceValues[key]); // Replace stuff like zps
+
 /*        if (line.startsWith(" ") | line.startsWith("\t"))
             Asm(line);
             else

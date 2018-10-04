@@ -18,7 +18,7 @@
 
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/parser.h"
-#include "source/Compiler/interpreter.h"
+#include "source/Compiler/compiler.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -158,6 +158,9 @@ void MainWindow::VerifyDefaults()
 
     if (!m_iniFile.contains("font_size"))
         m_iniFile.setFloat("font_size", 12);
+    if (!m_iniFile.contains("hide_exomizer_footprint"))
+        m_iniFile.setFloat("hide_exomizer_footprint", 1);
+
     if (!m_iniFile.contains("tab_width"))
         m_iniFile.setFloat("tab_width", 4);
     if (!m_iniFile.contains("theme"))
@@ -168,6 +171,40 @@ void MainWindow::VerifyDefaults()
         m_iniFile.setFloat("post_optimize", 1);
     if (!m_iniFile.contains("memory_analyzer_font_size"))
         m_iniFile.setFloat("memory_analyzer_font_size", 17);
+
+    if (!m_iniFile.contains("zeropage_screenmemory"))
+        m_iniFile.setString("zeropage_screenmemory","$fe");
+
+    if (!m_iniFile.contains("zeropage_decrunch1"))
+        m_iniFile.setString("zeropage_decrunch1","$47");
+
+    if (!m_iniFile.contains("zeropage_decrunch2"))
+        m_iniFile.setString("zeropage_decrunch2","$48");
+
+    if (!m_iniFile.contains("zeropage_decrunch3"))
+        m_iniFile.setString("zeropage_decrunch3","$4A");
+
+    if (!m_iniFile.contains("zeropage_decrunch4"))
+        m_iniFile.setString("zeropage_decrunch4","$4B");
+
+
+
+
+
+    if (!m_iniFile.contains("zeropage_internal1"))
+        m_iniFile.setString("zeropage_internal1","$4C");
+
+    if (!m_iniFile.contains("zeropage_internal2"))
+        m_iniFile.setString("zeropage_internal2","$4D");
+
+    if (!m_iniFile.contains("zeropage_internal3"))
+        m_iniFile.setString("zeropage_internal3","$4E");
+
+    if (!m_iniFile.contains("zeropage_internal4"))
+        m_iniFile.setString("zeropage_internal4","$4F");
+
+
+
     m_iniFile.filename = m_iniFileName;
 
 }
@@ -725,8 +762,14 @@ void MainWindow::on_btnMemoryAnalyze_clicked()
 void MainWindow::on_actionMovie_Creator_triggered()
 {
     MovieConverter mc;
-    mc.Convert("/home/leuat/Videos/Webcam/test","in",
-               "jpg","/home/leuat/Dropbox/TRSE/HFDemo/misc/movie1.bin",10, 80,30,20,1.0f);
+/*    mc.ConvertPacked("/home/leuat/Videos/Webcam/test/","in",
+               "jpg",
+               "/home/leuat/Dropbox/TRSE/HFDemo/misc/movie2.bin",10, 80,30,20,1.0f);
+*/
+    // Test, galaxy
+    mc.ConvertPacked("/home/leuat/Videos/galaxy3/","in",
+               "jpg",
+               "/home/leuat/Dropbox/TRSE/HFDemo/misc/movie2.bin",3, 60,30,18,0.8f);
 
 }
 

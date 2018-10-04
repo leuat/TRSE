@@ -11,6 +11,7 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
 
     as->PushCounter();
 
+
     if (m_procName.toLower()=="writeln") {
         as->Writeln();
 
@@ -41,6 +42,12 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
 
     if (m_procName.toLower()=="abs") {
         Abs(as);
+    }
+    if (m_procName.toLower()=="initsqrt16") {
+        InitSqrt16(as);
+    }
+    if (m_procName.toLower()=="sqrt") {
+        Sqrt(as);
     }
     if (m_procName.toLower()=="nmiirq") {
         DisableNMI(as);
@@ -578,7 +585,7 @@ void NodeBuiltinMethod::InitMoveto(Assembler *as)
 
     QString lbl = as->NewLabel("moveto");
     as->Asm("jmp " + lbl);
-    as->Label("screenmemory = $fb ");
+    as->Label("screenmemory =  "+as->m_zeropageScreenMemory);
     as->Label("screen_x .byte 0 ");
     as->Label("screen_y .byte 0 ");
 
@@ -1291,6 +1298,28 @@ void NodeBuiltinMethod::Abs(Assembler *as)
 
 }
 
+void NodeBuiltinMethod::Sqrt(Assembler *as)
+{
+    as->Comment("Setup sqrt");
+    m_params[0]->Build(as);
+    if (as->m_internalZP.count()<4)
+        return;
+    if (m_params[0]->isWord(as)) {
+        as->Asm("sta " + as->m_internalZP[0]);
+        as->Asm("sty " + as->m_internalZP[1]);
+    }
+    else
+    {
+        as->Asm("sta " + as->m_internalZP[0]);
+        as->Asm("ldy #0");
+        as->Asm("sty " + as->m_internalZP[1]);
+
+    }
+    as->Asm("jsr sqrt16_init");
+    as->Asm("lda " +as->m_internalZP[0]);
+
+}
+
 void NodeBuiltinMethod::CopyCharsetFromRom(Assembler *as)
 {
     RequireAddress(m_params[0],"CopyCharsetFromRom",m_op.m_lineNumber);
@@ -1520,6 +1549,8 @@ QString NodeBuiltinMethod::BitShiftX(Assembler *as)
     return as->StoreInTempVar("bitmask");
 
 }
+
+
 
 
 void NodeBuiltinMethod::InitSinusTable(Assembler *as)
@@ -1779,11 +1810,14 @@ void NodeBuiltinMethod::InitDiv8x8(Assembler* as) {
 
 void NodeBuiltinMethod::InitDiv16x8(Assembler *as)
 {
+    if (as->m_internalZP.count()<4)
+        return;
     as->Asm("jmp div16x8_def_end");
-    as->Label("divisor = $58     ;$59 used for hi-byte");
-    as->Label("dividend = $fb	  ;$fc used for hi-byte");
-    as->Label("remainder = $fd	  ;$fe used for hi-byte");
-    as->Label("result = dividend ;save memory by reusing divident to store the result");
+
+/*    as->Label("divisor = $58     ;$59 used for hi-byte");   0
+    as->Label("dividend = $fb	  ;$fc used for hi-byte");    1
+    as->Label("remainder = $fd	  ;$fe used for hi-byte");   2*/
+  //  as->Label("result = dividend ;save memory by reusing divident to store the result");
 
     as->Label("divide16x8	lda #0	        ;preset remainder to 0");
     as->Asm("sta remainder");
@@ -1810,6 +1844,41 @@ void NodeBuiltinMethod::InitDiv16x8(Assembler *as)
     as->Asm("rts");
 
     as->Label("div16x8_def_end");
+}
+
+void NodeBuiltinMethod::InitSqrt16(Assembler *as)
+{
+    if (as->m_internalZP.count()<4)
+        return;
+        as->Label("sqrt16_init");
+        as->Asm("ldy #$01 ");
+
+
+        as->Asm("sty " + as->m_internalZP[2]);
+        as->Asm("dey");
+        as->Asm("sty "+as->m_internalZP[3]+" ; msby of first odd number (sqrt = 0)");
+        as->Label("sqrt16_again");
+        as->Asm("sec");
+        as->Asm("lda "+as->m_internalZP[0]+" ; save remainder in X register");
+        as->Asm("tax ; subtract odd lo from integer lo");
+        as->Asm("sbc "+as->m_internalZP[2]+"");
+        as->Asm("sta "+as->m_internalZP[0]+"");
+        as->Asm("lda "+as->m_internalZP[1]+" ; subtract odd hi from integer hi");
+        as->Asm("sbc "+as->m_internalZP[3]+"");
+        as->Asm("sta "+as->m_internalZP[1]+" ; is subtract result negative?");
+        as->Asm("bcc sqrt16_nomore ; no. increment square root");
+        as->Asm("iny");
+        as->Asm("lda "+as->m_internalZP[2]+" ; calculate next odd number");
+        as->Asm("adc #$01");
+        as->Asm("sta "+as->m_internalZP[2]+"");
+        as->Asm("bcc sqrt16_again");
+        as->Asm("inc "+as->m_internalZP[3]+"");
+        as->Asm("jmp sqrt16_again");
+        as->Label("sqrt16_nomore");
+        as->Asm("sty "+as->m_internalZP[0]+" ; all done, store square root");
+        as->Asm("stx "+as->m_internalZP[1]+" ; and remainder");
+        as->Asm("rts");
+
 }
 
 
@@ -2099,6 +2168,7 @@ void NodeBuiltinMethod::Swap(Assembler *as)
 
 void NodeBuiltinMethod::MemCpyLarge(Assembler *as)
 {
+
     /*as->Comment("Memory copy large > 255 bytes");
     NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_params[0]);
     if (var==nullptr)

@@ -17,6 +17,7 @@ class MemoryBlock {
     Type m_type;
 
     QString m_name;
+
     MemoryBlock() {}
     MemoryBlock(int start, int end, Type type, QString name){
         m_start=start;
@@ -106,6 +107,7 @@ public:
 };
 
 
+
 class Assembler
 {
 public:
@@ -113,6 +115,11 @@ public:
     QVector<Appendix> m_appendix;
     QVector<Appendix> m_extraBlocks;
     QVector<MemoryBlock> m_userWrittenBlocks;
+
+    QString m_zeropageScreenMemory="$fb";
+    QMap<QString, QString> m_replaceValues;
+
+    QStringList m_internalZP;
 
     Appendix* m_currentBlock = nullptr;
 

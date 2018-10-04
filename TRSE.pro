@@ -81,7 +81,7 @@ SOURCES += main.cpp\
     source/dialogmemoryanalyze.cpp \
     source/Compiler/data_pmm.cpp \
     source/Compiler/errorhandler.cpp \
-    source/Compiler/interpreter.cpp \
+    source/Compiler/compiler.cpp \
     source/Compiler/lexer.cpp \
     source/Compiler/parser.cpp \
     source/Compiler/pvar.cpp \
@@ -138,7 +138,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagecharsetfixedcolor.cpp \
     source/qlabellimage.cpp \
     source/trsedocuments/formpaw.cpp \
-    source/dialogimagehelp.cpp
+    source/dialogimagehelp.cpp \
 
 
 HEADERS  += mainwindow.h \
@@ -164,7 +164,7 @@ HEADERS  += mainwindow.h \
     source/dialogmemoryanalyze.h \
     source/Compiler/data_pmm.h \
     source/Compiler/errorhandler.h \
-    source/Compiler/interpreter.h \
+    source/Compiler/compiler.h \
     source/Compiler/lexer.h \
     source/Compiler/parser.h \
     source/Compiler/pvar.h \
@@ -223,7 +223,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagecharsetfixedcolor.h \
     source/qlabellimage.h \
     source/trsedocuments/formpaw.h \
-    source/dialogimagehelp.h
+    source/dialogimagehelp.h \
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \

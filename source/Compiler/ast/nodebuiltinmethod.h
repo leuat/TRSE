@@ -57,6 +57,7 @@ public:
     void InitMul16x8(Assembler* as);
     void InitDiv8x8(Assembler* as);
     void InitDiv16x8(Assembler* as);
+    void InitSqrt16(Assembler* as);
     void DisableInterrupts(Assembler* as);
 //    void EnableInterrupts(Assembler* as);
     void RasterIRQ(Assembler* as);
@@ -82,6 +83,7 @@ public:
     void CopyZPdata(Assembler* as);
     void InitZeroPage(Assembler* as);
     void Abs(Assembler* as);
+    void Sqrt(Assembler* as);
     void CopyCharsetFromRom(Assembler* as);
     void IncDec(Assembler* as, QString cmd);
     void SetMemoryConfig(Assembler* as);

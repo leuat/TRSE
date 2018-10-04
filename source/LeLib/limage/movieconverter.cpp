@@ -38,7 +38,7 @@ QByteArray MovieConverter::ConvertImage(QImage &img, int w, int h, float zoom)
     return b;
 }
 
-void MovieConverter::Convert(QString dir, QString baseName, QString fileExtension, QString outFile, int frameSkip, int maxFrames, int width, int height, float zoom)
+void MovieConverter::ConvertRaw(QString dir, QString baseName, QString fileExtension, QString outFile, int frameSkip, int maxFrames, int width, int height, float zoom)
 {
 
     QByteArray buf;
@@ -72,3 +72,142 @@ void MovieConverter::Convert(QString dir, QString baseName, QString fileExtensio
     }
     qDebug() << "No frames: " << noframes;
 }
+
+void MovieConverter::ConvertPacked(QString dir, QString baseName, QString fileExtension, QString outFile, int frameSkip, int maxFrames, int width, int height, float zoom)
+{
+
+    QByteArray buf;
+
+    QDir directory(dir);
+    qDebug() << dir;
+    QStringList images = directory.entryList(QStringList() << "*."+fileExtension,QDir::Files);
+    int cur=1;
+    int val = 0;
+    int lowest = 1E20;
+    for (QString img: images) {
+        QString first = img.remove(baseName);
+        first = first.split(".")[0];
+        val = first.toInt();
+        qDebug() << val << " " << img;
+        if (val<lowest)
+            lowest=val;
+    }
+    cur = lowest;
+//    qDebug() << "lowest:" <<lowest;
+  //  exit(1);
+    bool done=false;
+    int noframes = 0;
+    int idx=0;
+    QByteArray prevFrame, curFrame;
+    float compr;
+    int kk=0;
+    while (!done) {
+        QString fname = dir + "/" + baseName + QString::number(cur)+"."+fileExtension;
+        qDebug() << fname;
+        if (!QFile::exists(fname))
+            done=true;
+        else {
+            QImage img;
+            img.load(fname);
+            curFrame = ConvertImage(img, width, height,zoom);
+            if (idx==0) {
+                prevFrame = curFrame;
+                buf.append(curFrame);
+                idx++;
+                noframes++;
+                kk=0;
+            }
+
+            if (kk==frameSkip) {
+                if (idx!=0) {
+                    buf.append(CompressImage(prevFrame, curFrame, width,height, compr )    );
+                    prevFrame = curFrame;
+                    kk=0;
+                    noframes++;
+                    if (noframes>=maxFrames)
+                        done=true;
+                }
+
+
+
+            }
+            cur+=frameSkip;
+            kk++;
+
+        }
+    }
+    qDebug() << "Compression:" << (compr/noframes)*100 << "%";
+
+    if (buf.length()!=0) {
+        QFile f(outFile);
+        f.open(QFile::WriteOnly);
+        f.write(buf);
+        f.close();
+    }
+    qDebug() << "No frames: " << noframes;
+}
+
+QByteArray MovieConverter::CompressImage(QByteArray prevFrame, QByteArray newFrame, int w, int h, float&compr)
+{
+    QByteArray ret;
+    uchar skip=0;
+    qDebug() << prevFrame.count();
+    int c = 0;
+    for (int x=0;x<h;x++) {
+
+        for (int y=0;y<w;y++)
+        {
+            int i=y + x*w;
+            prevFrame[i] = prevFrame[i]&0x0F;
+            newFrame[i] = newFrame[i]&0x0F;
+            char a = prevFrame[i]/2;
+            char b = newFrame[i]/2;
+
+
+            /*if (((uchar)newFrame[i]==SKIP) || ((uchar)newFrame[i]==END)) {
+                qDebug() << "WARNING: NEWFRAME SKIP OR END";
+                newFrame[i]  = (newFrame[i] & 0x0F) | 4<<4;
+            }*/
+            //newFrame[i]  = (newFrame[i] & 15) | 4<<4;
+
+            if (abs(a-b)<1) {
+                if (skip<254) {
+                    skip++;
+                    //continue;
+                }
+                else {
+                    ret.append(SKIP);
+                    ret.append(skip);
+                    c+=2;
+                    skip=0;
+                    continue;
+
+                }
+
+            }
+            else {
+                if (skip!=0) {
+                    ret.append(SKIP);
+                    ret.append(skip);
+                    ret.append(newFrame[i]/2);
+                    c+=3;
+                    skip=0;
+                }
+                else {
+                    ret.append(newFrame[i]/2);
+                    c+=1;
+                }
+
+            }
+        }
+        skip+=40-w;
+    }
+    qDebug() << ret.count();
+    qDebug() << "C:" << c/((float)w*h)*100<< "%";
+    compr+=c/((float)w*h);
+    ret.append(END);
+    return ret;
+}
+
+
+

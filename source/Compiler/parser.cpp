@@ -64,6 +64,8 @@ void Parser::InitBuiltinFunctions()
     InitBuiltinFunction(QStringList()<< "decrunch", "init_decrunch");
     InitBuiltinFunction(QStringList()<< "sine", "initsinetable", "initsine_calculate");
 
+
+    InitBuiltinFunction(QStringList()<< "sqrt", "initsqrt16");
     InitBuiltinFunction(QStringList()<< "printdecimal", "initprintdecimal");
     InitBuiltinFunction(QStringList()<< "moveto", "initmoveto");
     InitBuiltinFunction(QStringList()<< "printstring" << "printnumber", "initprintstring");

@@ -1,11 +1,12 @@
-#ifndef INTERPRETER_H
-#define INTERPRETER_H
+#ifndef Compiler_H
+#define Compiler_H
 
 #include "parser.h"
 #include "source/Compiler/assembler/mos6502.h"
 #include "source/Compiler/assembler/asmpascal.h"
+#include "source/LeLib/util/cinifile.h"
 
-class Interpreter
+class Compiler
 {
 public:
     Node* m_tree = nullptr;
@@ -13,12 +14,12 @@ public:
     Assembler* m_assembler = nullptr;
     Parser* m_parser;
     FatalErrorException recentError;
-    Interpreter(Parser* p);
-    Interpreter() {}
+    Compiler(Parser* p);
+    Compiler() {}
     void Parse();
     void Visit(Node* n);
     void Interpret();
-    bool Build(Type, QString projDir, QStringList zp, bool optimize);
+    bool Build(Type, QString projDir, CIniFile& ini);
     void CleanupCycleLinenumbers();
     void CleanupBlockLinenumbers();
     void SaveBuild(QString filename);
@@ -26,4 +27,4 @@ public:
     void FindLineNumberAndFile(int inLe, QString& file, int& outle);
 };
 
-#endif // INTERPRETER_H
+#endif // Compiler_H

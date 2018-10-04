@@ -1,11 +1,12 @@
-#include "interpreter.h"
+#include "compiler.h"
 #include <QDebug>
-Interpreter::Interpreter(Parser* p)
+
+Compiler::Compiler(Parser* p)
 {
     m_parser = p;
 }
 
-void Interpreter::Parse()
+void Compiler::Parse()
 {
     m_tree = nullptr;
     qDebug() << "Parsing..";
@@ -19,12 +20,12 @@ void Interpreter::Parse()
 
 }
 
-void Interpreter::Visit(Node* n)
+void Compiler::Visit(Node* n)
 {
     n->Execute(nullptr, 0);
 }
 
-void Interpreter::Interpret()
+void Compiler::Interpret()
 {
     if (m_tree!=nullptr)
         try {
@@ -35,10 +36,10 @@ void Interpreter::Interpret()
 
 }
 
-bool Interpreter::Build(Interpreter::Type type, QString project_dir, QStringList zeropages, bool optimize)
+bool Compiler::Build(Compiler::Type type, QString project_dir, CIniFile& ini)
 {
     if (m_tree==nullptr) {
-        qDebug() << "Interpreter::Build : tree not parsed!";
+        qDebug() << "Compiler::Build : tree not parsed!";
         return false;
     }
     if (m_assembler)
@@ -50,7 +51,19 @@ bool Interpreter::Build(Interpreter::Type type, QString project_dir, QStringList
         m_assembler = new AsmPascal();
 
 
-    m_assembler->InitZeroPointers(zeropages);
+    m_assembler->InitZeroPointers(ini.getStringList("zeropages"));
+    m_assembler->m_zeropageScreenMemory = ini.getString("zeropage_screenmemory");
+    m_assembler->m_replaceValues["@DECRUNCH_ZP1"] = ini.getString("zeropage_decrunch1");
+    m_assembler->m_replaceValues["@DECRUNCH_ZP2"] = ini.getString("zeropage_decrunch2");
+    m_assembler->m_replaceValues["@DECRUNCH_ZP3"] = ini.getString("zeropage_decrunch3");
+    m_assembler->m_replaceValues["@DECRUNCH_ZP4"] = ini.getString("zeropage_decrunch4");
+
+    m_assembler->m_internalZP << ini.getString("zeropage_internal1");
+    m_assembler->m_internalZP << ini.getString("zeropage_internal2");
+    m_assembler->m_internalZP << ini.getString("zeropage_internal3");
+    m_assembler->m_internalZP << ini.getString("zeropage_internal4");
+
+    qDebug() << "Internal Count: " << m_assembler->m_internalZP.count();
 
     m_assembler->m_projectDir = project_dir;
 
@@ -72,9 +85,11 @@ bool Interpreter::Build(Interpreter::Type type, QString project_dir, QStringList
     for (MemoryBlock* mb:m_parser->m_userBlocks)
         m_assembler->blocks.append(mb);
 
+
+
     m_assembler->Label("EndSymbol");
     m_assembler->Connect();
-    if (optimize)
+    if (ini.getdouble("post_optimize")==1.0)
         m_assembler->Optimise();
     CleanupCycleLinenumbers();
     CleanupBlockLinenumbers();
@@ -82,7 +97,7 @@ bool Interpreter::Build(Interpreter::Type type, QString project_dir, QStringList
 
 }
 
-void Interpreter::CleanupCycleLinenumbers()
+void Compiler::CleanupCycleLinenumbers()
 {
 
     QMap<int, int> cycles;
@@ -110,7 +125,7 @@ void Interpreter::CleanupCycleLinenumbers()
     m_assembler->m_cycles = cycles;
 }
 
-void Interpreter::CleanupBlockLinenumbers()
+void Compiler::CleanupBlockLinenumbers()
 {
     QMap<int, int> blocks;
 
@@ -138,14 +153,14 @@ void Interpreter::CleanupBlockLinenumbers()
 
 }
 
-void Interpreter::SaveBuild(QString filename)
+void Compiler::SaveBuild(QString filename)
 {
     if (!m_assembler)
         return;
     m_assembler->Save(filename);
 }
 
-void Interpreter::HandleError(FatalErrorException fe, QString e)
+void Compiler::HandleError(FatalErrorException fe, QString e)
 {
     QString msg = "";
     int linenr = fe.linenr;
@@ -171,7 +186,7 @@ void Interpreter::HandleError(FatalErrorException fe, QString e)
 
 }
 
-void Interpreter::FindLineNumberAndFile(int inLe, QString& file, int& outle)
+void Compiler::FindLineNumberAndFile(int inLe, QString& file, int& outle)
 {
     file="";
     outle = inLe;
