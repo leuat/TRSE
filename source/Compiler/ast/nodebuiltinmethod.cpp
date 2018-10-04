@@ -1812,12 +1812,12 @@ void NodeBuiltinMethod::InitDiv16x8(Assembler *as)
 {
     if (as->m_internalZP.count()<4)
         return;
-    as->Asm("jmp div16x8_def_end");
+//    as->Asm("jmp div16x8_def_end");
 
-/*    as->Label("divisor = $58     ;$59 used for hi-byte");   0
-    as->Label("dividend = $fb	  ;$fc used for hi-byte");    1
-    as->Label("remainder = $fd	  ;$fe used for hi-byte");   2*/
-  //  as->Label("result = dividend ;save memory by reusing divident to store the result");
+    as->Label("divisor = $58     ;$59 used for hi-byte");   //0
+    as->Label("dividend = $fb	  ;$fc used for hi-byte");    //1
+    as->Label("remainder = $fd	  ;$fe used for hi-byte");  // 2
+    as->Label("result = dividend ;save memory by reusing divident to store the result");
 
     as->Label("divide16x8	lda #0	        ;preset remainder to 0");
     as->Asm("sta remainder");
@@ -1843,7 +1843,7 @@ void NodeBuiltinMethod::InitDiv16x8(Assembler *as)
     as->Asm("bne divloop16");
     as->Asm("rts");
 
-    as->Label("div16x8_def_end");
+//    as->Label("div16x8_def_end");
 }
 
 void NodeBuiltinMethod::InitSqrt16(Assembler *as)
