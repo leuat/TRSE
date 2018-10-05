@@ -26,6 +26,8 @@ public:
     Node* m_left = nullptr, *m_right = nullptr;
     bool m_isWord = false;
     static MemoryBlockInfo m_staticBlockInfo;
+    static MemoryBlock* m_curMemoryBlock;
+
     MemoryBlockInfo m_blockInfo;
     Node() {
         m_blockInfo = m_staticBlockInfo;

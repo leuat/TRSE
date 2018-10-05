@@ -95,6 +95,11 @@ void FormRasEditor::Build()
         QString output(process.readAllStandardOutput());
         int codeEnd=FindEndSymbol(output);
 
+        // Machine Code Analyzer
+        VerifyMachineCodeZP(filename+".prg");
+
+
+
 //        qDebug() << "Code end: " << Util::numToHex(codeEnd) << codeEnd;
         int orgFileSize = QFile(filename+".prg").size();
 
@@ -194,6 +199,53 @@ int FormRasEditor::FindEndSymbol(QString out)
         }
     }
     return 0;
+}
+
+void FormRasEditor::FindBlockEndSymbols(QString out)
+{
+    m_blockEndSymbols.clear();
+    QStringList output = QString(out).split("\n");
+    for (QString s : output) {
+        if (s.toLower().contains("endblock")) {
+            s = s.toLower().simplified().split(" ")[1];
+
+            bool ok;
+            int i= s.toInt(&ok, 16);
+            m_blockEndSymbols.append(i);
+        }
+    }
+
+}
+
+void FormRasEditor::ConnectBlockSymbols()
+{
+    for (int sym : m_blockEndSymbols) {
+        int winner = 0xFFFF;
+        MemoryBlock* winnerBlock=nullptr;
+
+        for (MemoryBlock* mb: compiler.m_assembler->blocks) {
+//            if (mb->m_type==MemoryBlock::CODE &&  sym>mb->m_start)
+                if (sym>mb->m_start)
+                if (sym-mb->m_start<winner) {
+                    winner = sym-mb->m_start;
+                    winnerBlock  =mb;
+                }
+        }
+        if (winnerBlock!=nullptr) {
+            winnerBlock->m_end = sym;
+       //     qDebug() << Util::numToHex(sym) << " " << winnerBlock->Type();
+        }
+    }
+
+
+}
+
+bool FormRasEditor::VerifyMachineCodeZP(QString fname)
+{
+
+    m_mca.Load(fname);
+    m_mca.AnalyzeZP();
+
 }
 
 
@@ -463,7 +515,7 @@ bool FormRasEditor::BuildStep()
     QString path = m_projectIniFile->getString("project_path") + "/";
     filename = m_currentSourceFile.split(".")[0];
 
-    return compiler.Build(Compiler::MOS6502, path ,*m_iniFile);
+    return compiler.Build(Compiler::MOS6502, path ,*m_iniFile, *m_projectIniFile);
 }
 
 void FormRasEditor::FillFromIni()
@@ -504,11 +556,17 @@ void FormRasEditor::MemoryAnalyze()
     process.start(m_iniFile->getString("dasm"), QStringList()<<(filename +".asm") << ("-o"+filename+".prg") << "-v3");
     process.waitForFinished();
     //process;
-    int codeEnd=FindEndSymbol(process.readAllStandardOutput());
+    QString output = process.readAllStandardOutput();
+    int codeEnd=FindEndSymbol(output);
+
     if (compiler.m_assembler==nullptr)
         return;
 
+    FindBlockEndSymbols(output);
+    ConnectBlockSymbols();
     compiler.m_assembler->blocks.append(new MemoryBlock(0x800, codeEnd, MemoryBlock::CODE, "code"));
+
+    m_mca.ClassifyZP(compiler.m_assembler->blocks);
 
 
 /*    for (MemoryBlock& mb:compiler.m_assembler->blocks) {

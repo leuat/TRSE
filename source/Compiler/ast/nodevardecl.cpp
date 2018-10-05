@@ -1,6 +1,5 @@
 #include "nodevardecl.h"
 
-MemoryBlock* NodeVarDecl::m_curMemoryBlock = nullptr;
 
 NodeVarDecl::NodeVarDecl(Node *varNode, Node *typeNode):Node() {
     m_varNode = varNode;

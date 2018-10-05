@@ -2,6 +2,8 @@
 
 //QMap<QString, bool> LabelStack::sNumbersUsed;
 
+int Appendix::s_id = 0;
+
 
 Assembler::Assembler()
 {

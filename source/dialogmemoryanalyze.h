@@ -17,11 +17,15 @@ class DialogMemoryAnalyze : public QDialog
 {
     Q_OBJECT
 
+    int m_fontSize;
+    QVector<MemoryBlock*> m_blocks;
 public:
     explicit DialogMemoryAnalyze(QWidget *parent = 0);
     void Initialize(QVector<MemoryBlock*>& blocks, int fontSize);
     QMap<QString, QColor> m_colors;
     void InitColors();
+    void resizeEvent(QResizeEvent *) override;
+    void VerifyZPMusic(QVector<MemoryBlock*> &blocks);
     ~DialogMemoryAnalyze();
 
 private slots:

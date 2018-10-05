@@ -19,7 +19,7 @@ public:
     void Parse();
     void Visit(Node* n);
     void Interpret();
-    bool Build(Type, QString projDir, CIniFile& ini);
+    bool Build(Type, QString projDir, CIniFile& ini, CIniFile& pIni);
     void CleanupCycleLinenumbers();
     void CleanupBlockLinenumbers();
     void SaveBuild(QString filename);

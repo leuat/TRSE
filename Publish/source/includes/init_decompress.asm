@@ -2,14 +2,30 @@
 ; -------------------------------------------------------------------
 ; zero page addresses used
 ; -------------------------------------------------------------------
-exod_zp_len_lo = $a7
+;exod_zp_len_lo = $a7
 
-exod_zp_src_lo  = $ae
+;exod_zp_src_lo  = $ae
+;exod_zp_src_hi  = exod_zp_src_lo + 1
+
+;exod_zp_bits_hi = $fc
+
+;exod_zp_bitbuf  = $fd
+
+
+
+
+exod_zp_len_lo = @DECRUNCH_ZP1
+
+exod_zp_src_lo  = @DECRUNCH_ZP2
 exod_zp_src_hi  = exod_zp_src_lo + 1
 
-exod_zp_bits_hi = $fc
+exod_zp_bits_hi = @DECRUNCH_ZP3
 
-exod_zp_bitbuf  = $fd
+exod_zp_bitbuf  = @DECRUNCH_ZP4
+
+
+
+
 exod_zp_dest_lo = exod_zp_bitbuf + 1	; dest addr lo
 exod_zp_dest_hi = exod_zp_bitbuf + 2	; dest addr hi
 

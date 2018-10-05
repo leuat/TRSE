@@ -50,10 +50,17 @@
          <enum>Qt::Horizontal</enum>
         </property>
         <widget class="QWidget" name="layoutWidget">
-         <layout class="QVBoxLayout" name="verticalLayout_4" stretch="20,1">
+         <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,20,1">
           <property name="sizeConstraint">
            <enum>QLayout::SetMaximumSize</enum>
           </property>
+          <item>
+           <widget class="QPushButton" name="btnProjectSettings">
+            <property name="text">
+             <string>Project Settings</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QTreeView" name="treeFiles"/>
           </item>
@@ -200,6 +207,7 @@
     <addaction name="actionSearch"/>
     <addaction name="actionReplace"/>
     <addaction name="actionAuto_ident"/>
+    <addaction name="actionProject_Settings"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -339,6 +347,11 @@
   <action name="actionPaw_packed_resource_file">
    <property name="text">
     <string>Paw packed resource file</string>
+   </property>
+  </action>
+  <action name="actionProject_Settings">
+   <property name="text">
+    <string>Project Settings</string>
    </property>
   </action>
  </widget>

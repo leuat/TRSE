@@ -15,7 +15,7 @@ class MemoryBlock {
     int m_start, m_end, m_lineNumber;
     enum Type {CODE, DATA, MUSIC, USER, ARRAY};
     Type m_type;
-
+    QVector<int> m_zeropages;
     QString m_name;
 
     MemoryBlock() {}
@@ -87,9 +87,14 @@ public:
 
 class Appendix {
 public:
-    Appendix() {}
+    static int s_id;
+    int m_id;
+    Appendix() {
+        m_id=s_id++;
+    }
     Appendix(QString pos) {
         m_pos=pos;
+        m_id=s_id++;
     }
 
     QStringList m_source;
@@ -132,6 +137,8 @@ public:
 
     void EndMemoryBlock() {
 //        qDebug() << "Trying to end memory block.. ";
+        if (m_currentBlock!=nullptr)
+            Label("EndBlock"+QString::number(m_currentBlock->m_id));
         m_currentBlock=nullptr;
     }
 

@@ -2,6 +2,7 @@
 
 int Node::m_currentLineNumber;
 MemoryBlockInfo  Node::m_staticBlockInfo;
+MemoryBlock* Node::m_curMemoryBlock = nullptr;
 
 int Node::MaintainBlocks(Assembler* as)
 {

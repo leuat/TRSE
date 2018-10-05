@@ -18,7 +18,6 @@ public:
     int m_fileSize=0;
     int m_dataSize=0;
     SidFile sid;
-    static MemoryBlock* m_curMemoryBlock;
 
     int m_pushedPointers = 0;
 

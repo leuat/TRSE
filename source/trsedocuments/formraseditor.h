@@ -12,6 +12,7 @@
 #include <QElapsedTimer>
 #include "source/dialoghelp.h"
 #include "source/dialogmemoryanalyze.h"
+#include "source/Compiler/misc/machinecodeanalyzer.h"
 
 namespace Ui {
     class FormRasEditor;
@@ -28,6 +29,9 @@ public:
     Highlighter* highlighter = nullptr;
     QFont m_font;
 
+    QVector<int> m_blockEndSymbols;
+
+    MachineCodeAnalyzer m_mca;
     Compiler compiler;
     Parser parser;
     Lexer lexer;
@@ -75,8 +79,12 @@ public:
     void SetOutputText(QString txt);
 
     int FindEndSymbol(QString output);
+    void FindBlockEndSymbols(QString output);
+    void ConnectBlockSymbols();
 
 private:
+
+    bool VerifyMachineCodeZP(QString fname);
 
     static QString path;
     Ui::FormRasEditor *ui;

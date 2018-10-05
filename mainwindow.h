@@ -26,6 +26,9 @@
 #include "source/messages.h"
 #include "source/LeLib/limage/movieconverter.h"
 #include "ui_mainwindow.h"
+#include "source/dialogprojectsettings.h"
+
+
 namespace Ui {
 class MainWindow;
 
@@ -35,7 +38,7 @@ class MainWindow;
 class TRSEProject {
 public:
     CIniFile m_ini;
-    QString m_filename;
+    QString m_filename="";
     QStringList m_acceptedFileTypes = {"asm", "flf", "ras", "prg", "paw", "inc"};
     void Load(QString projectfile) {
         m_ini = CIniFile();
@@ -47,6 +50,46 @@ public:
         for (QString s: l) path+=s+"/";
         m_ini.setString("project_path", path);
     }
+
+    void VerifyDefaults() {
+        if (!m_ini.contains("zeropages"))
+           m_ini.setStringList("zeropages", AsmMOS6502::m_defaultZeroPointers.split(","));
+
+
+        if (!m_ini.contains("zeropage_screenmemory"))
+            m_ini.setString("zeropage_screenmemory","$fe");
+
+        if (!m_ini.contains("zeropage_decrunch1"))
+            m_ini.setString("zeropage_decrunch1","$47");
+
+        if (!m_ini.contains("zeropage_decrunch2"))
+            m_ini.setString("zeropage_decrunch2","$48");
+
+        if (!m_ini.contains("zeropage_decrunch3"))
+            m_ini.setString("zeropage_decrunch3","$4A");
+
+        if (!m_ini.contains("zeropage_decrunch4"))
+            m_ini.setString("zeropage_decrunch4","$4B");
+
+
+
+
+
+        if (!m_ini.contains("zeropage_internal1"))
+            m_ini.setString("zeropage_internal1","$4C");
+
+        if (!m_ini.contains("zeropage_internal2"))
+            m_ini.setString("zeropage_internal2","$4D");
+
+        if (!m_ini.contains("zeropage_internal3"))
+            m_ini.setString("zeropage_internal3","$4E");
+
+        if (!m_ini.contains("zeropage_internal4"))
+            m_ini.setString("zeropage_internal4","$4F");
+
+    }
+
+
     void Close() {
         m_ini = CIniFile();
         m_filename = "";
@@ -128,6 +171,7 @@ public:
     void keyReleaseEvent(QKeyEvent *e);
 
     void VerifyDefaults();
+    void VerifyProjectDefaults();
 
     void SetDarkPalette();
 
@@ -147,8 +191,9 @@ public:
     void RefreshFileList();
 public slots:
 
+    void OpenProjectSettings();
 
-      void OnQuit();
+    void OnQuit();
 
     void ForceOpenFile(QString s, int ln);
 
@@ -227,6 +272,10 @@ private slots:
     void on_actionCheck_for_new_version_triggered();
 
     void on_actionPaw_packed_resource_file_triggered();
+
+    void on_actionProject_Settings_triggered();
+
+    void on_btnProjectSettings_clicked();
 
 private:
 

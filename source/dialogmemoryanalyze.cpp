@@ -1,5 +1,6 @@
 #include "dialogmemoryanalyze.h"
 #include "ui_dialogmemoryanalyze.h"
+#include "source/LeLib/util/util.h"
 
 DialogMemoryAnalyze::DialogMemoryAnalyze(QWidget *parent) :
     QDialog(parent),
@@ -10,13 +11,21 @@ DialogMemoryAnalyze::DialogMemoryAnalyze(QWidget *parent) :
 
 void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize)
 {
+    m_blocks = blocks;
+    m_fontSize = fontSize;
+
+    fontSize/=2;
+
     InitColors();
-    float ysize=1600;
-    float xsize = 1600;
+    float xsize = ui->lblImage->width();
+    float ysize= ui->lblImage->height();
+/*    float xsize=this->width()*2;
+    float ysize=this->height()*2;*/
     QImage img(QSize(xsize,ysize), QImage::Format_ARGB32);
 
     img.fill(QColor(80,110,80));
-    int xstart = 400;
+    int xstart = xsize/4;
+    int ww = xsize/5;
     int xborder = 40;
 
     QPainter p;
@@ -33,18 +42,49 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
         c.setGreen(min(c.green()*scale,255.0f));
         c.setBlue(min(c.blue()*scale,255.0f));
         for (int y=y0;y<y1;y++)
-            for (int x=xstart;x<xsize-xborder;x++)
+            for (int x=xstart;x<xsize-xborder-ww;x++)
+                img.setPixel(x,y,c.rgba());
+
+        int box2s = ww;
+        float s2 = 0.75f;
+        c.setRed(min(c.red()*scale*s2,255.0f));
+        c.setGreen(min(c.green()*scale*s2,255.0f));
+        c.setBlue(min(c.blue()*scale*s2,255.0f));
+
+
+        for (int y=y0;y<y1;y++)
+            for (int x=xsize-xborder-box2s;x<xsize-xborder;x++)
                 img.setPixel(x,y,c.rgba());
 
 
+        int box1 = xsize-xstart-xborder-box2s;
+        int box2 = xsize-xborder-box2s;
+
         p.setPen(QPen(QColor(32,32,48)));
         p.setFont(QFont("Arial", fontSize, QFont::Bold));
-        p.drawText(QRect(xstart, y0,xsize-xstart-xborder, y1-y0), Qt::AlignCenter, mb->m_name);
+        p.drawText(QRect(xstart, y0,box1, y1-y0), Qt::AlignCenter, mb->m_name);
 
         QString f = "$"+QString::number(mb->m_start,16).rightJustified(4, '0');
         QString t = "$"+QString::number(mb->m_end,16).rightJustified(4, '0');
 
-        p.drawText(QRect(xstart, y0,xsize-xstart-xborder, y1-y0), Qt::AlignLeft|Qt::AlignTop, f + " - " + t);
+        p.drawText(QRect(xstart, y0,box1, y1-y0), Qt::AlignLeft|Qt::AlignTop, f + " - " + t);
+
+        // Zeropages
+        QString zp = "";
+        int cnt=0;
+        for (int i: mb->m_zeropages) {
+            zp+=Util::numToHex(i) + " ";
+            if (cnt++==5) { zp+="\n"; cnt=0; }
+        }
+        if (mb->m_zeropages.count()!=0)
+            zp = "zp :"+zp;
+        zp=zp.trimmed();
+        p.setFont(QFont("Arial", fontSize-1, QFont::Bold));
+
+        p.drawText(QRect(xsize-xborder-box2s+12, y0,box2, y1-y0), Qt::AlignLeft|Qt::AlignTop, zp);
+
+
+
         i++;
 
     }
@@ -63,8 +103,8 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
 
     QPixmap pm;
     pm.convertFromImage(img);
-    ui->lblImage->setPixmap(pm);
-
+    ui->lblImage->setPixmap(pm.scaled(ui->lblImage->width(),ui->lblImage->height(), Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+//label->setPixmap(p.scaled(w,h,Qt::KeepAspectRatio));
 
 /*    for (MemoryBlock& mb:blocks) {
         QPushButton *b = new QPushButton();
@@ -89,6 +129,8 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
     }
 */
 
+
+    VerifyZPMusic(blocks);
 }
 
 void DialogMemoryAnalyze::InitColors()
@@ -99,6 +141,41 @@ void DialogMemoryAnalyze::InitColors()
     m_colors["data"]=QColor(127,127,255);
     m_colors["user"]=QColor(127,255,255);
     m_colors["array"]=QColor(255,127,255);
+}
+
+void DialogMemoryAnalyze::resizeEvent(QResizeEvent *)
+{
+    Initialize(m_blocks, m_fontSize);
+}
+
+void DialogMemoryAnalyze::VerifyZPMusic(QVector<MemoryBlock*> &blocks)
+{
+    QVector<MemoryBlock*> music;
+    for (MemoryBlock* mb : blocks) {
+        if (mb->m_type == MemoryBlock::MUSIC)
+            music.append(mb);
+    }
+    QString infoText="";
+    for (MemoryBlock* mb: music) {
+        bool overlaps=false;
+        QString overlapString="";
+        for (MemoryBlock* o : blocks)
+            if (o!=mb) {
+                for (int j: o->m_zeropages)
+                    if (mb->m_zeropages.contains(j)) {
+                        overlaps = true;
+                        overlapString += Util::numToHex(j)+" ";
+                    }
+
+
+            }
+        if (overlaps) {
+            infoText += "<font color=\"#FF4040\">WARNING</font>:";
+            infoText += "Music track '" + mb->m_name +"' has overlapping zero pages with code : " + overlapString;
+        }
+
+    }
+    ui->leInfoText->setText(infoText);
 }
 
 

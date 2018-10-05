@@ -36,7 +36,7 @@ void Compiler::Interpret()
 
 }
 
-bool Compiler::Build(Compiler::Type type, QString project_dir, CIniFile& ini)
+bool Compiler::Build(Compiler::Type type, QString project_dir, CIniFile& ini, CIniFile& pIni)
 {
     if (m_tree==nullptr) {
         qDebug() << "Compiler::Build : tree not parsed!";
@@ -51,19 +51,18 @@ bool Compiler::Build(Compiler::Type type, QString project_dir, CIniFile& ini)
         m_assembler = new AsmPascal();
 
 
-    m_assembler->InitZeroPointers(ini.getStringList("zeropages"));
-    m_assembler->m_zeropageScreenMemory = ini.getString("zeropage_screenmemory");
-    m_assembler->m_replaceValues["@DECRUNCH_ZP1"] = ini.getString("zeropage_decrunch1");
-    m_assembler->m_replaceValues["@DECRUNCH_ZP2"] = ini.getString("zeropage_decrunch2");
-    m_assembler->m_replaceValues["@DECRUNCH_ZP3"] = ini.getString("zeropage_decrunch3");
-    m_assembler->m_replaceValues["@DECRUNCH_ZP4"] = ini.getString("zeropage_decrunch4");
+    m_assembler->InitZeroPointers(pIni.getStringList("zeropages"));
+    m_assembler->m_zeropageScreenMemory = pIni.getString("zeropage_screenmemory");
+    m_assembler->m_replaceValues["@DECRUNCH_ZP1"] = pIni.getString("zeropage_decrunch1");
+    m_assembler->m_replaceValues["@DECRUNCH_ZP2"] = pIni.getString("zeropage_decrunch2");
+    m_assembler->m_replaceValues["@DECRUNCH_ZP3"] = pIni.getString("zeropage_decrunch3");
+    m_assembler->m_replaceValues["@DECRUNCH_ZP4"] = pIni.getString("zeropage_decrunch4");
 
-    m_assembler->m_internalZP << ini.getString("zeropage_internal1");
-    m_assembler->m_internalZP << ini.getString("zeropage_internal2");
-    m_assembler->m_internalZP << ini.getString("zeropage_internal3");
-    m_assembler->m_internalZP << ini.getString("zeropage_internal4");
+    m_assembler->m_internalZP << pIni.getString("zeropage_internal1");
+    m_assembler->m_internalZP << pIni.getString("zeropage_internal2");
+    m_assembler->m_internalZP << pIni.getString("zeropage_internal3");
+    m_assembler->m_internalZP << pIni.getString("zeropage_internal4");
 
-    qDebug() << "Internal Count: " << m_assembler->m_internalZP.count();
 
     m_assembler->m_projectDir = project_dir;
 
@@ -86,7 +85,7 @@ bool Compiler::Build(Compiler::Type type, QString project_dir, CIniFile& ini)
         m_assembler->blocks.append(mb);
 
 
-
+    m_assembler->EndMemoryBlock();
     m_assembler->Label("EndSymbol");
     m_assembler->Connect();
     if (ini.getdouble("post_optimize")==1.0)

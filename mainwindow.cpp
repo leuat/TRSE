@@ -165,47 +165,21 @@ void MainWindow::VerifyDefaults()
         m_iniFile.setFloat("tab_width", 4);
     if (!m_iniFile.contains("theme"))
         m_iniFile.setString("theme", "dark_standard.ini");
-    if (!m_iniFile.contains("zeropages"))
-       m_iniFile.setStringList("zeropages", AsmMOS6502::m_defaultZeroPointers.split(","));
     if (!m_iniFile.contains("post_optimize"))
         m_iniFile.setFloat("post_optimize", 1);
     if (!m_iniFile.contains("memory_analyzer_font_size"))
         m_iniFile.setFloat("memory_analyzer_font_size", 17);
 
-    if (!m_iniFile.contains("zeropage_screenmemory"))
-        m_iniFile.setString("zeropage_screenmemory","$fe");
-
-    if (!m_iniFile.contains("zeropage_decrunch1"))
-        m_iniFile.setString("zeropage_decrunch1","$47");
-
-    if (!m_iniFile.contains("zeropage_decrunch2"))
-        m_iniFile.setString("zeropage_decrunch2","$48");
-
-    if (!m_iniFile.contains("zeropage_decrunch3"))
-        m_iniFile.setString("zeropage_decrunch3","$4A");
-
-    if (!m_iniFile.contains("zeropage_decrunch4"))
-        m_iniFile.setString("zeropage_decrunch4","$4B");
-
-
-
-
-
-    if (!m_iniFile.contains("zeropage_internal1"))
-        m_iniFile.setString("zeropage_internal1","$4C");
-
-    if (!m_iniFile.contains("zeropage_internal2"))
-        m_iniFile.setString("zeropage_internal2","$4D");
-
-    if (!m_iniFile.contains("zeropage_internal3"))
-        m_iniFile.setString("zeropage_internal3","$4E");
-
-    if (!m_iniFile.contains("zeropage_internal4"))
-        m_iniFile.setString("zeropage_internal4","$4F");
-
 
 
     m_iniFile.filename = m_iniFileName;
+
+}
+
+void MainWindow::VerifyProjectDefaults()
+{
+    m_currentProject.VerifyDefaults();
+
 
 }
 
@@ -298,6 +272,19 @@ void MainWindow::RefreshFileList()
     ui->treeFiles->hideColumn(1);
     ui->treeFiles->hideColumn(2);
     ui->treeFiles->hideColumn(3);
+
+}
+
+void MainWindow::OpenProjectSettings()
+{
+    if (m_currentProject.m_filename=="")
+        return;
+
+    DialogProjectSettings* dSettings = new DialogProjectSettings(this);
+    dSettings->SetInit(&m_currentProject.m_ini);
+    dSettings->exec();
+    delete dSettings;
+
 
 }
 
@@ -690,6 +677,7 @@ void MainWindow::LoadProject(QString filename)
 {
     CloseAll();
     m_currentProject.Load(filename);
+    VerifyProjectDefaults();
 //    m_iniFile.setString("project_path", getProjectPath());
     m_iniFile.addStringList("recent_projects", filename, true);
     RefreshFileList();
@@ -839,4 +827,14 @@ void MainWindow::SetDarkPalette() {
     QApplication::setPalette(darkPalette);
 
 
+}
+
+void MainWindow::on_actionProject_Settings_triggered()
+{
+    OpenProjectSettings();
+}
+
+void MainWindow::on_btnProjectSettings_clicked()
+{
+    OpenProjectSettings();
 }

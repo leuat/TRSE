@@ -60,7 +60,26 @@ QString NodeProcedureDecl::Build(Assembler *as)
 {
     Node::Build(as);
     // In case memory block is acive
-    as->EndMemoryBlock();
+//    as->EndMemoryBlock();
+
+    int ret = MaintainBlocks(as);
+
+    if (ret==3) m_curMemoryBlock=nullptr;
+    if (as->m_currentBlock!=nullptr) {
+        if (m_curMemoryBlock==nullptr) {
+            bool ok;
+//            qDebug() << "Creating new block procedure for " << m_procName;
+            QString p = as->m_currentBlock->m_pos;
+            int pos = p.remove("$").toInt(&ok, 16);
+            m_curMemoryBlock = new MemoryBlock(pos,pos,MemoryBlock::ARRAY, m_blockInfo.m_blockName);
+            as->blocks.append(m_curMemoryBlock);
+        }
+    }
+    else
+        m_curMemoryBlock=nullptr;
+
+
+
     //MaintainBlocks(as);
     if (m_block==nullptr)  // Is builtin procedure
         m_block = new NodeBuiltinMethod(m_procName, QVector<Node*>());
@@ -71,7 +90,6 @@ QString NodeProcedureDecl::Build(Assembler *as)
         isBuiltinFunction = true;
         isInitFunction = Syntax::s.builtInFunctions[m_procName].m_initFunction;
     }
-
 
     as->Asm("");
     as->Asm("");
@@ -105,6 +123,12 @@ QString NodeProcedureDecl::Build(Assembler *as)
         else as->Asm("rti");
       //as->Label("afterProc_" + m_procName);
     }
+
+    if (m_curMemoryBlock!=nullptr) {
+        m_curMemoryBlock->m_end+=10;
+    }
+
+
     return 0;
 }
 

@@ -139,6 +139,8 @@ SOURCES += main.cpp\
     source/qlabellimage.cpp \
     source/trsedocuments/formpaw.cpp \
     source/dialogimagehelp.cpp \
+    source/Compiler/misc/machinecodeanalyzer.cpp \
+    source/dialogprojectsettings.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -224,6 +226,8 @@ HEADERS  += mainwindow.h \
     source/qlabellimage.h \
     source/trsedocuments/formpaw.h \
     source/dialogimagehelp.h \
+    source/Compiler/misc/machinecodeanalyzer.h \
+    source/dialogprojectsettings.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \
@@ -237,7 +241,8 @@ FORMS    += mainwindow.ui \
     source/dialogexport.ui \
     source/dialogmemoryanalyze.ui \
     source/trsedocuments/formpaw.ui \
-    source/dialogimagehelp.ui
+    source/dialogimagehelp.ui \
+    source/dialogprojectsettings.ui
 
 RESOURCES += \
     resources.qrc

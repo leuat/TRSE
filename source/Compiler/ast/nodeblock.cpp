@@ -41,7 +41,7 @@ QString NodeBlock::Build(Assembler *as) {
     //as->VarDeclHeader();
     Node::Build(as);
     // In case memory block is acive
-    as->EndMemoryBlock();
+    //as->EndMemoryBlock();
     as->PushBlock(m_currentLineNumber);
 
 
@@ -82,7 +82,7 @@ QString NodeBlock::Build(Assembler *as) {
     }
     as->VarDeclEnds();
     as->PushCounter();
-    as->EndMemoryBlock();
+ //   as->EndMemoryBlock();
     if (!blockLabel && hasLabel)
         as->Label(label);
     if (forceLabel!="")
