@@ -75,7 +75,6 @@ void FormImageEditor::mouseReleaseEvent(QMouseEvent *e)
         m_updateThread->m_currentButton = -1;
 */
     updateCharSet();
-
 }
 
 void FormImageEditor::wheelEvent(QWheelEvent *event)
@@ -181,6 +180,7 @@ void FormImageEditor::UpdateImage()
     ui->lblImage->setPixmap(m_updateThread->m_pixMapImage.scaled(320, 320, Qt::IgnoreAspectRatio, Qt::FastTransformation));
 
 
+    m_documentIsChanged = ui->lblImage->m_imageChanged;
 
     if (!ui->tblData->hasFocus())
         ui->lblImage->setFocus();

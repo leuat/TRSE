@@ -16,6 +16,8 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateCycleNumberAreaWidth(int)));
     connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateCycleNumberArea(QRect,int)));
 
+    connect(this, SIGNAL(textChanged()), this, SLOT(onTextChanged()));
+
     updateLineNumberAreaWidth(0);
     updateCycleNumberAreaWidth(0);
     highlightCurrentLine();
@@ -185,6 +187,7 @@ void CodeEditor::InitCompleter(SymbolTable* symTab, Parser* parser)
     setCompleter(completer);
 
 }
+
 
 
 

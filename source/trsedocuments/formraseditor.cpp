@@ -278,6 +278,7 @@ void FormRasEditor::SetLights()
 void FormRasEditor::SetText(QString s)
 {
     ui->txtEditor->setPlainText(s);
+    ui->txtEditor->m_textChanged = false;
 }
 
 void FormRasEditor::SetupHighlighter()
@@ -314,6 +315,9 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
     if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier))
         Data::data.requestCloseWindow = true;
 
+//    if (ui->txtEditor->m_textChanged)
+        m_documentIsChanged  = ui->txtEditor->m_textChanged;
+
     if (e->key()==Qt::Key_K && (QApplication::keyboardModifiers() & Qt::ControlModifier))
         AutoFormat();
 
@@ -343,6 +347,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
                 int ln=np->m_op.m_lineNumber;
                 QTextCursor cursor(ui->txtEditor->document()->findBlockByLineNumber(ln));
                 ui->txtEditor->setTextCursor(cursor);
+
             }
         }
 
@@ -358,7 +363,6 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         Run();
     }
 
-//    if (e->key() == Qt::Key_Tab && (QApplication::keyboardModifiers() & Qt
 
 
 }
@@ -604,7 +608,7 @@ void FormRasEditor::Save(QString filename)
     }
     file.close();
     m_iniFile->Save();
-
+    ui->txtEditor->m_textChanged = false;
 }
 
 void FormRasEditor::Load(QString filename)

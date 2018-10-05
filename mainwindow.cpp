@@ -370,6 +370,8 @@ void MainWindow::RemoveTab(int idx, bool save)
 
     idx--;
     TRSEDocument* doc = m_documents[idx];
+    if (!doc->SaveChanges())
+        return;
     m_updateThread->Park();
     QThread::msleep(30);
     m_updateThread->SetCurrentImage(nullptr, nullptr, nullptr);

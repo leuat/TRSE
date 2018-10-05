@@ -1,16 +1,17 @@
 #include "workerthread.h"
 #include "source/LeLib/util/util.h"
 #include <QPainter>
+
 void WorkerThread::UpdateDrawing()
 {
-
-
-
     if (m_work==nullptr)
         return;
 
     if (m_isPanning)
         return;
+
+
+
 
 
     if (Data::data.currentIsColor) {
@@ -78,6 +79,8 @@ void WorkerThread::UpdateDrawing()
 
         if (m_work->m_currentImage==nullptr) return;
         if (m_work->m_currentImage->m_image==nullptr) return;
+
+
 
 
         m_work->m_currentImage->m_temp->CopyFrom(m_work->m_currentImage->m_image);

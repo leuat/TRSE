@@ -6,13 +6,15 @@
 #include <QWidget>
 #include "source/LeLib/data.h"
 #include <QApplication>
-
+#include <QMessageBox>
 class TRSEDocument : public QWidget
 {
     Q_OBJECT
 public:
     TRSEDocument(QWidget* parent);
 
+
+    bool m_documentIsChanged = false;
     QString m_currentSourceFile;
     QString m_currentFileShort;
 
@@ -27,6 +29,7 @@ public:
     virtual void Save(QString filename) {}
     virtual void Load(QString filename) {}
     virtual void AutoFormat() {}
+    bool SaveChanges();
     void SaveCurrent() {
         if (m_currentSourceFile=="") {
             Data::data.requestSaveAs = true;

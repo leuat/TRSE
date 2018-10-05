@@ -5,6 +5,7 @@
 class QLabelLImage : public QLabel
 {
 public:
+    bool m_imageChanged = false;
     QLabelLImage();
     QLabelLImage(QWidget* parent) : QLabel(parent) {
         setMouseTracking(true);

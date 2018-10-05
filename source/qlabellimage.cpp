@@ -98,7 +98,10 @@ void QLabelLImage::mousePressEvent(QMouseEvent *e)
         return;
     m_updateThread->m_work->m_currentImage->AddUndo();
 
+
+
         if(e->buttons() == Qt::RightButton) {
+            m_imageChanged = true;
             m_updateThread->m_currentButton = 2;
             if (e->modifiers() & Qt::ShiftModifier) {
                 m_updateThread->m_prevPos = m_updateThread->m_currentPos;
@@ -108,6 +111,7 @@ void QLabelLImage::mousePressEvent(QMouseEvent *e)
 
         if(e->buttons() == Qt::LeftButton) {
             m_updateThread->m_currentButton = 1;
+            m_imageChanged = true;
         }
   //  qDebug() << m_updateThread->m_currentButton;
 }

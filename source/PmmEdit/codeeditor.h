@@ -30,6 +30,7 @@ class CodeEditor : public QPlainTextEdit
     Q_OBJECT
 
 public:
+    bool m_textChanged = false;
     CodeEditor(QWidget *parent = 0);
     QColor currentLineColor, lineNumberBackgroundColor, cyclesBackgroundColor, cyclesColor, lineNumbersColor;
     void setCompleter(QCompleter *c);
@@ -55,12 +56,18 @@ public:
 
     void InitCompleter(SymbolTable* m_symTab, Parser* parser);
 
-
     QMap<int,int> m_cycles;
 
     void RepaintCycles() {
         cycleNumberArea->repaint();
     }
+
+private slots:
+    void onTextChanged(){
+//        qDebug() << "HAAA";
+        m_textChanged = true;
+    }
+
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -93,6 +100,7 @@ private:
 
 private:
     QCompleter *c = nullptr;
+
 
 
 
