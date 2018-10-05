@@ -1,3 +1,5 @@
+First of all: see http://www.turborascal.com
+
 # TRSE
 Turbo Rascal Syntax Error full repo 
 - C++
