@@ -150,7 +150,7 @@ end;
 */
 procedure MovePlayerSprite();
 begin
-	joystick();
+	joystick(2);
 	player_x:=player_x+joystickright-joystickleft;
 	player_y:=player_y+joystickdown-joystickup;
 	spritepos(player_x,player_y,@playerSprite);

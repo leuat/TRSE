@@ -601,7 +601,7 @@ begin
 		if (joystickbutton=1) then val:=1;
 //		waitforraster(200);
 //		call(SIDFILE_1_PLAY);
-		joystick();
+		joystick(2);
 		waitforraster(250);
 
 	end;

@@ -429,7 +429,7 @@ void Syntax::SetupBuiltinFunctions()
 
     builtInFunctions["joystick"] = BuiltInFunction(
                 "joystick",
-               QList<BuiltInFunction::Type>()
+               QList<BuiltInFunction::Type>() <<BuiltInFunction::Type::INTEGER
                 );
 
 

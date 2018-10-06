@@ -277,7 +277,7 @@ end;
 */
 procedure MovePlayerSprite();
 begin
-	joystick();
+	joystick(2);
 
 	map_player_direction:=0;
 	if (joystickleft=1) then map_player_direction:=map_player_direction-1;

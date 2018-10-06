@@ -323,7 +323,7 @@ interrupt MainScreen();
 
 begin
 	startirq(@usekernal);
-	Joystick();
+	Joystick(2);
 	//	if val=1 then
 	call(SIDFILE_1_PLAY);
 	

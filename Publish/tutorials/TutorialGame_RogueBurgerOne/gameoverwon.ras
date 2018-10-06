@@ -19,7 +19,7 @@ begin
 	end;
 	
 	call(SIDFILE_1_PLAY);
-	Joystick();
+	Joystick(2);
 	
 	if joystickbutton=1 then begin
 		InitMainScreen();
@@ -107,7 +107,7 @@ begin
 		
 	end;
 	
-	Joystick();
+	Joystick(2);
 
 	if (joystickbutton=1) then 	begin
 		InitMainScreen();

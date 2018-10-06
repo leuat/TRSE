@@ -198,7 +198,7 @@ end;
 procedure UpdatePlayer();
 begin
 	// Update joystick routines
-	Joystick();
+	Joystick(2);
 	
 	//	if joystickbutton=1 then
 		Shoot();

@@ -185,7 +185,7 @@ end;
 */
 procedure MovePlayerSprite();
 begin
-	joystick();
+	joystick(2);
 
 	// Calculate map_direction
 	map_player_direction:=0;

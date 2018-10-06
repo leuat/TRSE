@@ -1157,6 +1157,32 @@ void NodeBuiltinMethod::ScrollY(Assembler *as)
 
 void NodeBuiltinMethod::Joystick(Assembler *as)
 {
+    NodeNumber* num = dynamic_cast<NodeNumber*>(m_params[0]);
+    if (num==nullptr || num->m_val<1 || num->m_val>2)
+        ErrorHandler::e.Error("Joystick requires numeric parameter : 1 or 2 (for port 1 or 2)", m_op.m_lineNumber);
+    //QString port = "$dc00";
+    if (as->m_internalZP.count()==0)
+        return;
+
+
+    if (num->m_val==1.0f) {
+        as->Asm("lda #%11111111  ; CIA#1 port A = outputs ");
+        as->Asm("sta $dc02             ");
+
+        as->Asm("lda #%00000000  ; CIA#1 port B = inputs");
+        as->Asm("sta $dc03             ");
+        as->Asm("lda $dc01");
+    }
+    else {
+        as->Asm("lda #%11111111  ; CIA#1 port A = outputs ");
+        as->Asm("sta $dc03             ");
+
+        as->Asm("lda #%00000000  ; CIA#1 port B = inputs");
+        as->Asm("sta $dc02             ");
+        as->Asm("lda $dc00");
+    }
+
+    as->Asm("sta "+as->m_internalZP[2]);
     as->Asm("jsr callJoystick");
 }
 
@@ -2841,7 +2867,10 @@ void NodeBuiltinMethod::FLD(Assembler *as)
 void NodeBuiltinMethod::InitJoystick(Assembler *as)
 {
 
-    as->Asm("jmp callJoystick");
+    if (as->m_internalZP.count()==0)
+        return;
+
+//    as->Asm("jmp callJoystick");
     as->Label("joystickup .byte 0");
     as->Label("joystickdown .byte 0");
     as->Label("joystickleft .byte 0");
@@ -2876,18 +2905,13 @@ void NodeBuiltinMethod::InitJoystick(Assembler *as)
     as->Asm("sta joystickright");
     as->Asm("sta joystickbutton");
 
-    as->Asm("lda #%11111111  ; CIA#1 port A = outputs ");
-    as->Asm("sta $dc03             ");
 
-    as->Asm("lda #%00000000  ; CIA#1 port B = inputs");
-    as->Asm("sta $dc02             ");
-
-
-    QString port = "$dc00";
-
+    //QString port = "$dc00";
     // UP
+    QString addr = as->m_internalZP[2];
+
     as->Asm("lda #%00000001 ; mask joystick up movement");
-    as->Asm("bit "+port+"      ; bitwise AND with address 56320");
+    as->Asm("bit "+addr+"      ; bitwise AND with address 56320");
     as->Asm("bne joystick_down       ; zero flag is not set -> skip to down");
     as->Asm("lda #1");
     as->Asm("sta joystickup");
@@ -2896,7 +2920,7 @@ void NodeBuiltinMethod::InitJoystick(Assembler *as)
     // DOWN
 
     as->Asm("lda #%00000010 ; mask joystick down movement");
-    as->Asm("bit "+port+"      ; bitwise AND with address 56320");
+    as->Asm("bit "+addr+"      ; bitwise AND with address 56320");
     as->Asm("bne joystick_left       ; zero flag is not set -> skip to down");
     as->Asm("lda #1");
     as->Asm("sta joystickdown");
@@ -2905,7 +2929,7 @@ void NodeBuiltinMethod::InitJoystick(Assembler *as)
     as->Label("joystick_left");
 
     as->Asm("lda #%00000100 ; mask joystick left movement");
-    as->Asm("bit "+port+"      ; bitwise AND with address 56320");
+    as->Asm("bit "+addr+"      ; bitwise AND with address 56320");
     as->Asm("bne joystick_right       ; zero flag is not set -> skip to down");
     as->Asm("lda #1");
     as->Asm("sta joystickleft");
@@ -2914,7 +2938,7 @@ void NodeBuiltinMethod::InitJoystick(Assembler *as)
     as->Label("joystick_right");
 
     as->Asm("lda #%00001000 ; mask joystick up movement");
-    as->Asm("bit "+port+"      ; bitwise AND with address 56320");
+    as->Asm("bit "+addr+"      ; bitwise AND with address 56320");
     as->Asm("bne joystick_button       ; zero flag is not set -> skip to down");
     as->Asm("lda #1");
     as->Asm("sta joystickright");
@@ -2923,7 +2947,7 @@ void NodeBuiltinMethod::InitJoystick(Assembler *as)
     // BUTTON
 
     as->Asm("lda #%00010000 ; mask joystick up movement");
-    as->Asm("bit "+port+"      ; bitwise AND with address 56320");
+    as->Asm("bit "+addr+"      ; bitwise AND with address 56320");
     as->Asm("bne callJoystick_end       ; zero flag is not set -> skip to down");
     as->Asm("lda #1");
     as->Asm("sta joystickbutton");

@@ -1,4 +1,4 @@
-project_path = C:/Users/leuat/OneDrive/Documents/GitHub/TRSE/Publish/tutorials/Tutorials/
+project_path = /home/leuat/code/TRSE/Publish/tutorials/Tutorials/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $47
@@ -9,4 +9,4 @@ zeropage_internal1 = $4C
 zeropage_internal2 = $4D
 zeropage_internal3 = $4E
 zeropage_internal4 = $4F
-open_files = ,tutorial_23_sqrt_effect.ras, tutorial_19_tunnel.ras
+open_files = ,tutorial_9_scrolling_and_sprites.ras, tutorial_19_tunnel.ras, tutorial_23_sqrt_effect.ras

@@ -77,7 +77,7 @@ procedure MoveSprite();
 begin
 	
 	spritepos(sprite_x, sprite_y, 0);
-	Joystick();
+	Joystick(2);
 	
 	sprite_x := sprite_x - joystickleft*2;
 	sprite_x := sprite_x + joystickright*2;

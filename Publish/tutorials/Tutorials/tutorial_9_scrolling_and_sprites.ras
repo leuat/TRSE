@@ -146,7 +146,7 @@ end;
 procedure MovePlayer();
 begin
 	spritepos(player_x, player_y, @_playerSprite);
-	Joystick();
+	Joystick(2);
 
 	player_x := player_x - joystickleft*2;
 	player_x := player_x + joystickright*2;
