@@ -1,0 +1,52 @@
+program tutorial_23_sqrt_effect;
+var  
+@define charsetPos "$6000"
+@define charVal "64"
+	charset: IncBin("charsets/tutorial19_charset.bin", @charsetPos);
+
+	x,y,i,j,dx,dy : byte;
+	wrk : integer;
+	dp:pointer;
+
+
+@startblock $8200 "Code far far away!"
+
+procedure Render();
+begin
+	moveto(0,0,$44);
+	for y:=0 to 25 do begin
+		for x:=0 to 40 do begin
+			dx:=abs(20-x);
+			dy:=abs(13-y);
+			wrk := dx*dx + dy*dy;
+			i:=(sqrt(wrk)/8)&15;
+			screenmemory[x]:=i+@charVal;
+		end;
+		inczp(screenmemory,40);
+	end;
+end;
+
+
+procedure ShiftCharsetData();
+begin
+	memcpy(^$6000+^@charVal*^8, 0, ^$6000+^@charVal*^8+^128,8);
+	memcpy(^$6000+^@charVal*^8+^8, 0, ^$6000+^@charVal*^8,^128);
+
+end;
+
+@endblock
+
+begin
+	setcharsetlocation(@charsetPos);
+	clearscreen($20,$4400);
+	clearscreen(YELLOW,$D800);
+	setbank(VIC_BANK1);
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+	Render();
+
+	while (1<2) do begin
+		ShiftCharsetData();
+		waitnoraster(255);
+	end;
+end.
