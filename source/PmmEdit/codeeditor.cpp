@@ -417,7 +417,7 @@ void CodeEditor::cycleNumberAreaPaintEvent(QPaintEvent *event)
             {
 
                 QString number = QString::number(m_cycles[ln]);
-                painter.setPen(Qt::yellow);
+                painter.setPen(cyclesColor);
                 painter.drawText(0, top, cycleNumberArea->width(), fontMetrics().height(),
                              Qt::AlignLeft, number);
             }
