@@ -266,7 +266,7 @@ bool FormRasEditor::VerifyMachineCodeZP(QString fname)
 
     m_mca.Load(fname);
     m_mca.AnalyzeZP();
-
+    return true;
 }
 
 

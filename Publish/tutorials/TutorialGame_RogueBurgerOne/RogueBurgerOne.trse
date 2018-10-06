@@ -1,1 +1,13 @@
 data_header = ,id, x, y, life, color, spread, sx, sy, isdead, damage, ammo, sound, upgrade
+project_path = C:/Users/leuat/OneDrive/Documents/GitHub/TRSE/Publish/tutorials/TutorialGame_RogueBurgerOne/
+zeropages = ,$02,  $04,  $08,  $16,  $0B, $0D,  $10,  $12,  $22, $24,  $68
+zeropage_screenmemory = $fe
+zeropage_decrunch1 = $47
+zeropage_decrunch2 = $48
+zeropage_decrunch3 = $4A
+zeropage_decrunch4 = $4B
+zeropage_internal1 = $4C
+zeropage_internal2 = $4D
+zeropage_internal3 = $4E
+zeropage_internal4 = $4F
+open_files = ,RogueBurgerOne.ras

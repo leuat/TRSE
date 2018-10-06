@@ -38,8 +38,8 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
     fontSize/=2;
 
     InitColors();
-    float xsize = ui->lblImage->width();
-    float ysize= ui->lblImage->height();
+    float xsize = ui->lblImage->width()-2;
+    float ysize= ui->lblImage->height()-8;
 /*    float xsize=this->width()*2;
     float ysize=this->height()*2;*/
     QImage img(QSize(xsize,ysize), QImage::Format_ARGB32);
@@ -124,7 +124,9 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
 
     QPixmap pm;
     pm.convertFromImage(img);
-    ui->lblImage->setPixmap(pm.scaled(ui->lblImage->width(),ui->lblImage->height(), Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+    ui->lblImage->setPixmap(pm.scaled(xsize,ysize, Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+
+    ui->lblImage->setPixmap(pm);
 //label->setPixmap(p.scaled(w,h,Qt::KeepAspectRatio));
 
 /*    for (MemoryBlock& mb:blocks) {
@@ -164,9 +166,12 @@ void DialogMemoryAnalyze::InitColors()
     m_colors["array"]=QColor(255,127,255);
 }
 
-void DialogMemoryAnalyze::resizeEvent(QResizeEvent *)
+void DialogMemoryAnalyze::resizeEvent(QResizeEvent *e)
 {
-    Initialize(m_blocks, m_fontSize);
+ /*   qDebug() << "oldize: " <<e->oldSize();
+    qDebug() << "new: " <<e->size();
+    if (e->oldSize()!=e->size())*/
+        Initialize(m_blocks, m_fontSize);
 }
 
 void DialogMemoryAnalyze::VerifyZPMusic(QVector<MemoryBlock*> &blocks)

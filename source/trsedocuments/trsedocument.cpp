@@ -28,6 +28,7 @@ TRSEDocument::TRSEDocument(QWidget* parent) : QWidget(parent)
 
 bool TRSEDocument::SaveChanges()
 {
+//    qDebug() << "Document changed: " << m_documentIsChanged;
     if (!m_documentIsChanged)
         return true;
     QMessageBox msgBox;
