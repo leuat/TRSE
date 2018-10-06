@@ -58,6 +58,19 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_exportParams["End"] = 256;
     m_exportParams["IncludeColors"] = 0;
 
+
+    m_GUIParams[btnLoadCharset] ="";
+    m_GUIParams[btn1x1] = "1x1 Character set";
+    m_GUIParams[btn2x2] = "2x2 Character set";
+    m_GUIParams[btn2x2repeat] = "2x2 Character repeat";
+    m_GUIParams[btnCopy] = "Copy";
+    m_GUIParams[btnPaste] = "Paste";
+    m_GUIParams[btnFlipH] = "Flip Horizontal";
+    m_GUIParams[btnFlipV] = "Flip Vertical";
+    m_GUIParams[btnEditFullCharset] = "Full charset";
+
+    m_GUIParams[tabCharset] = "1";
+
 }
 
 void CharsetImage::SetColor(uchar col, uchar idx)

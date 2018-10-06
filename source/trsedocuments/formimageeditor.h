@@ -65,6 +65,10 @@ public:
     void UpdatePalette();
     void updateCharSet();
 
+    void PrepareImageTypeGUI();
+
+    void SetButton(QPushButton* btn, LImage::GUIType type);
+
     void PrepareClose() override;
 
     void SetMCColors();

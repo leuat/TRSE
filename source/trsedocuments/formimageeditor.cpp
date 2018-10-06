@@ -236,6 +236,8 @@ void FormImageEditor::Load(QString filename)
         return;
     m_work.New(img, filename);
 
+
+    PrepareImageTypeGUI();
     img->LoadCharset(m_projectIniFile->getString("charset_"+m_currentFileShort));
     updateCharSet();
 
@@ -724,6 +726,49 @@ void FormImageEditor::updateCharSet()
 //    ui->lstCharMap->
 //    int size = (ui->lstCharMap->rect().width()-ui->lstCharMap->spacing())/8;
   //  ui->lstCharMap->setIconSize(QSize(size,size));
+
+}
+
+
+
+
+void FormImageEditor::PrepareImageTypeGUI()
+{
+    // Only display "load charset" for levels
+    SetButton(ui->btnLoadCharmap,LImage::GUIType::btnLoadCharset);
+    SetButton(ui->btnCharset1x1,LImage::GUIType::btn1x1);
+    SetButton(ui->btnCharset2x2,LImage::GUIType::btn2x2);
+    SetButton(ui->btnCharset2x2Repeat,LImage::GUIType::btn2x2repeat);
+    SetButton(ui->btnCharsetCopy,LImage::GUIType::btnCopy);
+    SetButton(ui->btnCharsetPaste,LImage::GUIType::btnPaste);
+    SetButton(ui->btnFlipHorisontal,LImage::GUIType::btnFlipH);
+    SetButton(ui->btnFlipVert,LImage::GUIType::btnFlipV);
+    SetButton(ui->btnCharsetFull,LImage::GUIType::btnEditFullCharset);
+
+    int idx=0;
+    if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabCharset]=="") {
+        ui->tabMain->removeTab(3);
+        idx++;
+    }
+    if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabLevels]=="") {
+        ui->tabMain->removeTab(4-idx);
+        idx++;
+    }
+    if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabData]==""){
+            ui->tabMain->removeTab(5-idx);
+            idx++;
+        }
+
+
+
+}
+
+void FormImageEditor::SetButton(QPushButton *btn, LImage::GUIType type)
+{
+    if (m_work.m_currentImage->m_image->m_GUIParams[type]=="")
+        btn->setVisible(false);
+    else
+        btn->setText(m_work.m_currentImage->m_image->m_GUIParams[type]);
 
 }
 

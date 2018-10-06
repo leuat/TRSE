@@ -30,14 +30,7 @@
 class LImageSprites : public CharsetImage
 {
 public:
-    LImageSprites(LColorList::Type t) : CharsetImage(t) {
-        m_type = LImage::Type::Sprites;
-        m_charCount = 1024;
-        m_currentMode = Mode::CHARSET1x1;
-        m_currencChar=0;
-        //Data::data.currentColor=0;
-
-    }
+    LImageSprites(LColorList::Type t);
   //  void ImportBin(QFile& f) override;
    // void ExportBin(QFile& f) override;
     void FromRaw(QByteArray& arr) override;

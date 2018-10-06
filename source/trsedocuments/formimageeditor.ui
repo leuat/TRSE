@@ -111,68 +111,6 @@
           </layout>
          </widget>
         </widget>
-        <widget class="QWidget" name="gridLayoutWidget_7">
-         <property name="geometry">
-          <rect>
-           <x>170</x>
-           <y>20</y>
-           <width>195</width>
-           <height>205</height>
-          </rect>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0" columnstretch="0,0">
-          <item row="3" column="1">
-           <widget class="QPushButton" name="btnNew">
-            <property name="toolTip">
-             <string>Clear this image</string>
-            </property>
-            <property name="text">
-             <string>Clear</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QPushButton" name="btnImportBin">
-            <property name="toolTip">
-             <string>Import binary data (from CBM PRG studio etc). Plain C64 binary format.</string>
-            </property>
-            <property name="text">
-             <string>Import bin</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QPushButton" name="btnExportBin">
-            <property name="toolTip">
-             <string>Export to C64 binary format (or CBM PRG Studio)</string>
-            </property>
-            <property name="text">
-             <string>Export bin</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="btnExportImage">
-            <property name="toolTip">
-             <string>Export this image as a png/jpg</string>
-            </property>
-            <property name="text">
-             <string>Export image</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QPushButton" name="btnImport">
-            <property name="toolTip">
-             <string>Imports a png/jpg into a c64 image of any type</string>
-            </property>
-            <property name="text">
-             <string>Import image</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
        </widget>
        <widget class="QWidget" name="tab_4">
         <attribute name="title">
@@ -310,7 +248,74 @@
          </widget>
         </widget>
        </widget>
-       <widget class="QWidget" name="tab_5">
+       <widget class="QWidget" name="tab_3">
+        <attribute name="title">
+         <string>Import/Export</string>
+        </attribute>
+        <widget class="QWidget" name="gridLayoutWidget_7">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>195</width>
+           <height>205</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0" columnstretch="0,0">
+          <item row="3" column="1">
+           <widget class="QPushButton" name="btnNew">
+            <property name="toolTip">
+             <string>Clear this image</string>
+            </property>
+            <property name="text">
+             <string>Clear</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QPushButton" name="btnImportBin">
+            <property name="toolTip">
+             <string>Import binary data (from CBM PRG studio etc). Plain C64 binary format.</string>
+            </property>
+            <property name="text">
+             <string>Import bin</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QPushButton" name="btnExportBin">
+            <property name="toolTip">
+             <string>Export to C64 binary format (or CBM PRG Studio)</string>
+            </property>
+            <property name="text">
+             <string>Export bin</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="btnExportImage">
+            <property name="toolTip">
+             <string>Export this image as a png/jpg</string>
+            </property>
+            <property name="text">
+             <string>Export image</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QPushButton" name="btnImport">
+            <property name="toolTip">
+             <string>Imports a png/jpg into a c64 image of any type</string>
+            </property>
+            <property name="text">
+             <string>Import image</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="tabCharset">
         <attribute name="title">
          <string>Charset</string>
         </attribute>

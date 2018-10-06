@@ -23,15 +23,35 @@
 #include <QByteArray>
 #include "source/LeLib/util/util.h"
 
+LImageSprites::LImageSprites(LColorList::Type t) : CharsetImage(t) {
+    m_type = LImage::Type::Sprites;
+    m_charCount = 1024;
+    m_currentMode = Mode::CHARSET1x1;
+    m_currencChar=0;
+
+    m_GUIParams[btnLoadCharset] ="";
+    m_GUIParams[btn1x1] = "1x1 Character set";
+    m_GUIParams[btn2x2] = "3x2 Character set";
+    m_GUIParams[btn2x2repeat] = "";
+    m_GUIParams[btnCopy] = "Copy";
+    m_GUIParams[btnPaste] = "Paste";
+    m_GUIParams[btnFlipH] = "Flip Horizontal";
+    m_GUIParams[btnFlipV] = "Flip Vertical";
+    m_GUIParams[btnEditFullCharset] = "";
+
+    //Data::data.currentColor=0;
+
+}
+
 void LImageSprites::FromRaw(QByteArray &arr)
 {
     Clear();
     int count = m_rawData.count()/64;
-   // qDebug() << "Count: " << count;
+    // qDebug() << "Count: " << count;
     int xp = 0;
     int yp = 0;
 
-//    return;
+    //    return;
     for (int i=0;i<count;i++) {
         int pos = i*64;
         int cnt = 0;

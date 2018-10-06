@@ -73,8 +73,15 @@ public:
     static unsigned char TypeToChar(Type t);
     static Type CharToType(unsigned char c);
 
+    enum GUIType { btnLoadCharset, btnEditFullCharset, btn1x1, btn2x2,
+                   btn2x2repeat, btnFlipV, btnFlipH, btnCopy, btnPaste,
+                   tabLevels, tabCharset, tabData};
+
 
     QMap<QString, float> m_exportParams;
+
+    QMap<GUIType, QString> m_GUIParams;
+
 
     int m_width;
     int m_height;

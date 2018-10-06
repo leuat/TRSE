@@ -72,6 +72,22 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_supports.asmExport = false;
 
 
+    m_GUIParams[btnLoadCharset] ="Load Charset";
+    m_GUIParams[btn1x1] = "";
+    m_GUIParams[btn2x2] = "";
+    m_GUIParams[btn2x2repeat] = "";
+    m_GUIParams[btnCopy] = "Copy";
+    m_GUIParams[btnPaste] = "Paste";
+    m_GUIParams[btnFlipH] = "";
+    m_GUIParams[btnFlipV] = "";
+    m_GUIParams[btnEditFullCharset] = "";
+
+    m_GUIParams[tabCharset] = "1";
+    m_GUIParams[tabData] = "1";
+    m_GUIParams[tabLevels] = "1";
+
+
+
 }
 
 void ImageLevelEditor::Initialize(CharmapGlobalData meta)

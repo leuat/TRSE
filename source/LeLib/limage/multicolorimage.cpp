@@ -43,6 +43,21 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     m_supports.flfLoad = true;
 
 
+    m_GUIParams[btnLoadCharset] ="";
+    m_GUIParams[btn1x1] = "";
+    m_GUIParams[btn2x2] = "";
+    m_GUIParams[btn2x2repeat] = "";
+    m_GUIParams[btnCopy] = "";
+    m_GUIParams[btnPaste] = "";
+    m_GUIParams[btnFlipH] = "";
+    m_GUIParams[btnFlipV] = "";
+
+    m_GUIParams[tabCharset] = "";
+    m_GUIParams[tabData] = "";
+    m_GUIParams[tabLevels] = "";
+
+    m_GUIParams[btnEditFullCharset] = "";
+
     m_exportParams["StartX"] = 0;
     m_exportParams["EndX"] = 40;
     m_exportParams["StartY"] = 0;
