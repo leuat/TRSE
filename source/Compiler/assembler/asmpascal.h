@@ -1,4 +1,4 @@
-#ifndef ASMPASCAL_H
+/*#ifndef ASMPASCAL_H
 #define ASMPASCAL_H
 
 #include "source/Compiler/assembler/assembler.h"
@@ -28,3 +28,4 @@ public:
 };
 
 #endif // ASMPASCAL_H
+*/

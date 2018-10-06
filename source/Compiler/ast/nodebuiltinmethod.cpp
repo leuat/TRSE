@@ -1,3 +1,24 @@
+/*
+ * Turbo Rascal Syntax error, “;” expected but “BEGIN” (TRSE, Turbo Rascal SE)
+ * 8 bit software development IDE for the Commodore 64
+ * Copyright (C) 2018  Nicolaas Ervik Groeneboom (nicolaas.groeneboom@gmail.com)
+ *
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program (LICENSE.txt).
+ *   If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #include "nodebuiltinmethod.h"
 #include "nodenumber.h"
 #include "nodevar.h"
@@ -1244,7 +1265,7 @@ void NodeBuiltinMethod::SetCharsetLocation(Assembler *as)
     if (v==nullptr)
         ErrorHandler::e.Error("SetCharsetLocation parameter must be an address!", m_op.m_lineNumber);
 
-    int n = v->m_val;
+    int n = (unsigned int)v->m_val % 0x4000;
     bool ok=false;
     uchar b = 0;
     if (n==0x00) { b=0b0000; ok=true;}

@@ -1,34 +1,30 @@
+/*
+ * Turbo Rascal Syntax error, “;” expected but “BEGIN” (TRSE, Turbo Rascal SE)
+ * 8 bit software development IDE for the Commodore 64
+ * Copyright (C) 2018  Nicolaas Ervik Groeneboom (nicolaas.groeneboom@gmail.com)
+ *
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program (LICENSE.txt).
+ *   If not, see <https://www.gnu.org/licenses/>.
+*/
+
+
 #include "mainwindow.h"
 #include <QApplication>
 #include <QStyleFactory>
 
-
-
-void SetMongisPalette(QApplication& a) {
-    QPalette darkPalette;
-    darkPalette.setColor(QPalette::Window, QColor(128,53,255));
-    darkPalette.setColor(QPalette::WindowText, Qt::white);
-    darkPalette.setColor(QPalette::Base, QColor(25,25,25));
-    darkPalette.setColor(QPalette::AlternateBase, QColor(53,53,53));
-    darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
-    darkPalette.setColor(QPalette::ToolTipText, Qt::white);
-    darkPalette.setColor(QPalette::Text, Qt::white);
-    darkPalette.setColor(QPalette::Button, QColor(53,53,53));
-    darkPalette.setColor(QPalette::ButtonText, Qt::white);
-    darkPalette.setColor(QPalette::BrightText, Qt::red);
-    darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
-
-    darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
-    darkPalette.setColor(QPalette::HighlightedText, Qt::black);
-
-    a.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
-
-    a.setPalette(darkPalette);
-
-
-}
-
-void ConvertPerlin(QString input, QString out, float div) {
+/*void ConvertPerlin(QString input, QString out, float div) {
     QImage img;
     img.load(input);
 
@@ -52,7 +48,7 @@ void ConvertPerlin(QString input, QString out, float div) {
     f.write(a);
     f.close();
 }
-
+*/
 
 
 int main(int argc, char *argv[])

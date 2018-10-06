@@ -1,4 +1,4 @@
-#include "asmpascal.h"
+/*#include "asmpascal.h"
 
 AsmPascal::AsmPascal()
 {
@@ -92,3 +92,4 @@ void AsmPascal::EndWriteln()
 }
 
 
+*/
