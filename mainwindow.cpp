@@ -66,6 +66,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 #endif
 
+   int id= QFontDatabase::addApplicationFont(":resources/fonts/c64.ttf");
+   m_fontFamily = QFontDatabase::applicationFontFamilies(id).at(0);
     m_iniFileName = Util::path + m_iniFileName;
     connect( ui->tabMain, SIGNAL(tabCloseRequested(int)),this, SLOT(RemoveTab(int)));
     connect(qApp, SIGNAL(aboutToQuit()), m_updateThread, SLOT(OnQuit()));
@@ -715,7 +717,23 @@ void MainWindow::LoadProject(QString filename)
     m_iniFile.Save();
 
     // Set compiler syntax based on system
-    Syntax::s.Init(Syntax::SystemFromString(m_currentProject.m_ini.getString("system")));
+    QString system = m_currentProject.m_ini.getString("system");
+    Syntax::s.Init(Syntax::SystemFromString(system));
+    QImage img(":resources/images/" +system+".png");
+
+    QPainter p;
+    p.begin(&img);
+
+    QPointF pos(5,img.height()-10);
+//    p.setFont(QFont("c64", 12, QFont::Bold));
+    p.setFont(QFont(m_fontFamily, 8));
+    p.setPen(QPen(QColor(0,0,0)));
+    p.drawText(pos, system);
+    p.setPen(QPen(QColor(255,200,70)));
+    p.drawText(pos-QPointF(2,2), system);
+    p.end();
+
+    ui->lblCommodoreImage->setPixmap(QPixmap::fromImage(img));
 
 
     UpdateRecentProjects();

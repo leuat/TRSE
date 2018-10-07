@@ -1,4 +1,6 @@
 rm -rf trse
+find ../tutorials/ -name "*.prg" -type f -delete
+find ../tutorials/ -name "*.asm" -type f -delete
 mkdir trse/
 mkdir trse/bin
 cp -r ../../Release/trse trse/bin
@@ -9,10 +11,7 @@ cp -r ../tutorials/RasLib trse/
 cp -r ../tutorials/Tutorials trse/
 cp -r ../tutorials/TutorialGame_RogueBurgerOne trse/
 cp -r ../tutorials/TutorialGame_Introduction trse/
-find trse/* -name "*.prg" -type f -delete
-find trse/Tutorials/* -name "*.asm" -type f -delete
-find trse/TutorialGame_RogueBurgerOne/* -name "*.asm" -type f -delete
-find trse/TutorialGame_Introduction/* -name "*.asm" -type f -delete
+cp -r ../tutorials/Vic20/
 cp trse.sh trse
 tar -cvf trse_linux64.tar trse
 gzip trse_linux64.tar

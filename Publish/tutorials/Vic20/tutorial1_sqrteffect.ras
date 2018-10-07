@@ -1,0 +1,88 @@
+program Tutorial_1_sqrteffect;
+
+/*
+	Note: TRSE does not yet support the Vic-20 natively, so most of the methods
+	that are c64-specific (rasters, sprites etc) are disabled in VIC 20 mode.
+
+	We hope to add more native support (built-in methods) for the VIC later on!
+
+
+*/
+// Screen color location
+@define colorLoc $9600
+// Screen character location
+@define screenLoc $1E00 
+// Place to dump generated data.
+@define dataloc $1600
+// VIC-20 background color register
+@define colorReg $900F
+
+@userdata "$1600" "$1826" "Generated Table"
+
+var  
+	// Character that builds the circle. Some random petscii ones
+	vals : array[8] of byte = ($20, $2E, $2B, $51, $5A, $56, $5E, $5E );
+
+	x,y,i,j,time,dx,dy : byte=0;
+	wrk : integer;
+	// Pointers to color, data and screen
+	cp,data,screen:pointer;
+
+/*
+	Fills @dataLoc with 25x22 circles & 7
+*/
+
+procedure Calculate();
+begin
+	cp:=@dataloc;
+	for y:=0 to 25 do begin
+		for x:=0 to 22 do begin
+			dx:=abs(11-x);
+			dy:=abs(13-y);
+			wrk := dx*dx + dy*dy;
+			i:=(sqrt(wrk)/16)&7;
+			cp[x]:=i;
+		end;
+		inczp(cp,22);
+	end;
+	
+end;
+
+// Loads from dataloc and draws to screen + color screen
+ 
+procedure Update();
+begin
+	screen:=@screenLoc;
+	cp:=@colorLoc; // Color memory
+	data:=@dataloc;
+	for y:=0 to 25 do begin
+		for x:=0 to 22 do begin
+			i:=(data[x]-time)&7;
+			screen[x]:=vals[i];
+			cp[x]:=i;
+		end;
+		inczp(screen,22);
+		inczp(cp,22);
+		inczp(data,22);
+	end;
+
+	inc(time);
+
+end;
+
+
+
+begin
+	poke(^@colorReg,0,%00001000);
+	time:=0;
+	
+	Calculate();
+	while (1=1) do begin
+		Update();
+		// Just wait
+		for i:=0 to 255 do wait(10);
+	end;
+	Loop();
+
+
+end.

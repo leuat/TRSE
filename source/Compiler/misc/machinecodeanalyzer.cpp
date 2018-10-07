@@ -52,7 +52,7 @@ void MachineCodeAnalyzer::ClassifyZP(QVector<MemoryBlock*> blocks)
 
 void MachineCodeAnalyzer::AnalyzeZP()
 {
-    int addr=startAddr;
+    int addr=Syntax::s.m_startAddress;
     m_mczp.clear();
     for (int i=0;i<m_data.count()-1;i++) {
         uchar d = m_data[i];

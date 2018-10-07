@@ -32,6 +32,10 @@ Syntax::Syntax()
 void Syntax::Init(System s)
 {
     m_currentSystem = s;
+    if (s==VIC20)
+        m_startAddress = 0x1000;
+    if (s==C64)
+        m_startAddress = 0x0800;
     SetupReservedWords();
     SetupBuiltinFunctions(s);
     SetupKeys();

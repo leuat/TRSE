@@ -43,7 +43,6 @@ class MCZP {
 class MachineCodeAnalyzer
 {
 public:
-    int startAddr = 0x800;
 
     QByteArray m_data;
     MachineCodeAnalyzer();

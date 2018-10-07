@@ -44,7 +44,10 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
     float ysize=this->height()*2;*/
     QImage img(QSize(xsize,ysize), QImage::Format_ARGB32);
 
-    img.fill(QColor(80,110,80));
+    if (Syntax::s.m_currentSystem==Syntax::C64)
+        img.fill(QColor(80,110,80));
+    if (Syntax::s.m_currentSystem==Syntax::VIC20)
+        img.fill(QColor(80,110,200));
     int xstart = xsize/4;
     int ww = xsize/5;
     int xborder = 40;
@@ -52,6 +55,7 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
     QPainter p;
     p.begin(&img);
     int i=0;
+
     for (MemoryBlock* mb:blocks) {
         float y0 = (mb->m_start/65535.0)*ysize;
         float y1 = (mb->m_end/65535.0)*ysize;

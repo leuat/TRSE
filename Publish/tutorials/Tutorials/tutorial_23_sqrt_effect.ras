@@ -38,7 +38,7 @@ end;
 
 begin
 	setcharsetlocation(@charsetPos);
-	clearscreen($20,$4400);
+	clearscreen($20,^$4400);
 
 	
 /*	i:=3;

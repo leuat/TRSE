@@ -78,6 +78,7 @@ public:
     QMap<QString, BuiltInFunction> builtInFunctions;
     enum System {C64, VIC20, PET, NES};
     System m_currentSystem;
+    int m_startAddress = 0x800;
     Syntax();
     void Init(System s);
     void SetupReservedWords();

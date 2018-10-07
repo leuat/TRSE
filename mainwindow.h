@@ -26,6 +26,7 @@
 #include "imageworker.h"
 #include <QString>
 #include <QPixmap>
+#include <QFontDatabase>
 #include <QFileDialog>
 #include "source/LeLib/data.h"
 #include <QThread>
@@ -175,6 +176,7 @@ public:
  //   CodeEditor m_codeEditor;
     CustomFileSystemModel *fileSystemModel;
     QString m_iniFileName = "fluff64.ini";
+    QString m_fontFamily;
     QPalette m_defaultPalette;
     QVector<TRSEDocument*> m_documents;
 
