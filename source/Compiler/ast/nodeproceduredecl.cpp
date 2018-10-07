@@ -103,7 +103,7 @@ QString NodeProcedureDecl::Build(Assembler *as)
 
     //MaintainBlocks(as);
     if (m_block==nullptr)  // Is builtin procedure
-        m_block = new NodeBuiltinMethod(m_procName, QVector<Node*>());
+        m_block = new NodeBuiltinMethod(m_procName, QVector<Node*>(), nullptr);
 
     bool isInitFunction=false;
     bool isBuiltinFunction=false;

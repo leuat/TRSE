@@ -55,7 +55,7 @@ public:
 
 class BuiltInFunction {
 public:
-    enum Type {STRING, NUMBER, ADDRESS, BYTE, INTEGER};
+    enum Type {STRING, NUMBER, ADDRESS, BYTE, INTEGER, PROCEDURE};
     QString m_name;
     QList<Type> m_params;
 
@@ -81,7 +81,6 @@ public:
     Syntax();
     void Init(System s);
     void SetupReservedWords();
-    void SetupBuiltinFunctionsDeprecated();
     void SetupBuiltinFunctions(System s);
     void SetupKeys();
 

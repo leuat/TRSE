@@ -33,8 +33,37 @@ bool NodeBuiltinMethod::Command(QString name)
 }
 
 
+
+void NodeBuiltinMethod::VerifyParams(Assembler* as)
+{
+    if (m_function==nullptr)
+        return;
+
+    QString error = "Error: "+m_procName +" requires parameter ";
+
+    for (int p=0;p<m_params.count();p++) {
+        QString cp = QString::number(p+1);
+        if (m_function->m_params[p]==BuiltInFunction::ADDRESS) {
+            if (!m_params[p]->isAddress()) {
+     //           qDebug() << "TYPE: " << m_params[p]->m_op.getType();
+                ErrorHandler::e.Error(error + cp + " to be an address. Did you forget a ^?", m_op.m_lineNumber);
+            }
+        }
+        if (m_function->m_params[p]==BuiltInFunction::NUMBER) {
+            if (!m_params[p]->isPureNumeric())
+                ErrorHandler::e.Error(error + cp + " to be pure numeric", m_op.m_lineNumber);
+        }
+        if (m_function->m_params[p]==BuiltInFunction::PROCEDURE) {
+            if (dynamic_cast<NodeProcedure*>(m_params[p])==nullptr)
+                ErrorHandler::e.Error(error + cp + " to be a procedure", m_op.m_lineNumber);
+        }
+    }
+}
+
 QString NodeBuiltinMethod::Build(Assembler *as) {
     Node::Build(as);
+
+    VerifyParams(as);
 
     as->PushCounter();
 
@@ -2017,8 +2046,9 @@ void NodeBuiltinMethod::DisableInterrupts(Assembler *as)
 void NodeBuiltinMethod::RasterIRQ(Assembler *as)
 {
     NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_params[0]);
-    if (addr==nullptr)
-        ErrorHandler::e.Error("First parameter must be interrupt procedure!", m_op.m_lineNumber);
+//    if (addr==nullptr)
+  //      ErrorHandler::e.Error("First parameter must be interrupt procedure!", m_op.m_lineNumber);
+
 
     QString name = addr->m_procedure->m_procName;
 

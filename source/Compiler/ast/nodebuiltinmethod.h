@@ -34,11 +34,15 @@ public:
     QString m_procName;
     QVector<Node*> m_params;
     static QMap<QString, bool> m_isInitialized;
+    BuiltInFunction* m_function = nullptr;
 
-    NodeBuiltinMethod(QString m, QVector<Node*> params):Node() {
+    void VerifyParams(Assembler* as);
+
+    NodeBuiltinMethod(QString m, QVector<Node*> params, BuiltInFunction* bf):Node() {
         m_procName = m;
         m_params = params;
         m_op.m_type = TokenType::BYTE;
+        m_function= bf;
     }
 
     void Delete() override {

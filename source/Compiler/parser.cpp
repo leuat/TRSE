@@ -1073,7 +1073,7 @@ Node *Parser::BuiltinFunction()
             ErrorHandler::e.Error(s, m_currentToken.m_lineNumber);
         }
 
-        return new NodeBuiltinMethod(procName,paramList);
+        return new NodeBuiltinMethod(procName,paramList,&Syntax::s.builtInFunctions[procName]);
         //p->SetParameters(paramList);
 
 

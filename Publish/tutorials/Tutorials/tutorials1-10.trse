@@ -9,5 +9,5 @@ zeropage_internal1 = $4c
 zeropage_internal2 = $4e
 zeropage_internal3 = $50
 zeropage_internal4 = $52
-open_files = ,tutorial_23_sqrt_effect.ras, tuorial_1_helloworld.ras
+open_files = ,tuorial_1_helloworld.ras, tutorial_23_sqrt_effect.ras
 system = C64
