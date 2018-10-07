@@ -241,10 +241,9 @@ Built-in methods
                 <font color="@code">jammer(150, YELLOW); // crashes the processor with yellow bg if line 150 is hit</font><br>
 
 	joystick
-		<h2>Joystick();</h2>
-		Reads the joystick port values and populates joystick variables:<br>
-		joystickup, joystickdown, joystickleft, joystickright, joystickbutton. values are 1 if registered and 0 if not. Joystick
-		currently only supports port 2, from TRSE version 0.05 there will be support for both joysticks.
+                <h2>Joystick([1 or 2]);</h2>
+                Reads the joystick port 1 or 2 values and populates joystick variables:<br>
+                joystickup, joystickdown, joystickleft, joystickright, joystickbutton. values are 1 if registered and 0 if not.
 
     keypressed
                 <h2>Keypressed( [ key code ]);</h2>

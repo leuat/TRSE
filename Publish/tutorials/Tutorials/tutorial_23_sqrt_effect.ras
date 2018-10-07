@@ -7,7 +7,7 @@ var
 	x,y,i,j,dx,dy : byte;
 	wrk : integer;
 	dp:pointer;
-
+	tmp: array[4] of byte = (1,2,3,4,5);
 
 @startblock $8200 "Code far far away!"
 
@@ -39,7 +39,15 @@ end;
 begin
 	setcharsetlocation(@charsetPos);
 	clearscreen($20,$4400);
-	clearscreen(YELLOW,$D800);
+
+	
+/*	i:=3;
+	j:=tmp[i];
+	asm(";bugg");
+	poke(^$D020, 0, tmp[i]);
+	poke(^$D021, 0, tmp[i]);
+	clearscreen(tmp[i],^$D800);*/
+	clearscreen(YELLOW,^$D800);
 	setbank(VIC_BANK1);
 	SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL:=BLACK;

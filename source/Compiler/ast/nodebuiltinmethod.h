@@ -49,6 +49,9 @@ public:
     }
 
     QString Build(Assembler *as) override;
+
+    bool Command(QString name);
+
     void AddMemoryBlock(Assembler* as, int param);
     void Poke(Assembler* as);
     void Peek(Assembler* as);

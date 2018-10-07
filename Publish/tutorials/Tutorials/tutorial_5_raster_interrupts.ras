@@ -1,6 +1,6 @@
 program RasterInterruptsAndSid;
 var
-	time, mainloop,a,b,i,j, idx, color,val : byte;
+	time, mainloop,a,b,i,j, idx, color,val, nextRaster, curCount : byte;
 	bar_0, colorIndex, diff : byte;
 	bar_s : array[4] of byte = (
 	0, 5, 12, 20);
@@ -10,8 +10,10 @@ var
 	sidfile: incsid("sid/tutorial5.sid");
 	// Regular sidfiles seem to need +2, so incsid("sid/mySid.sid", "2");
 
+@define useKernal 0
 
-procedure Bars();
+
+interrupt Bars();
 
 
 procedure UpdateScreen();
@@ -19,71 +21,55 @@ begin
 	Poke(SCREEN_BG_COL, 0, BLACK);
 	Poke(SCREEN_FG_COL, 0, BLACK);
 
-	Call(SIDFILE_1_PLAY);
+//	Call(SIDFILE_1_PLAY);
 	Fill(^$D800 + ^40*^15, fade[(time/4) & 15], 40);
 	Fill(^$D800 + ^40*^17, fade[(time/4 + 5) & 15], 40);
 
 end;
 
 
-interrupt UpdateRaster();
+interrupt MainRasterTop();
 begin
-	startirq(1);
+	StartIRQ(@useKernal);
 	UpdateScreen();
 
 	time:=time+1;
 
-	bar_s[0] := sine[time*2]/2 + 100;
-	bar_s[1] := sine[time*2 + 30]/2 + 100;
+	bar_s[0] := sine[time*2]/2 + 30;
+	bar_s[1] := sine[time*2 + 30]/2 + 30;
 	
-	if bar_s[1]<bar_s[0] then begin
+/*	if bar_s[1]<bar_s[0] then begin
 		swap(bar_s[0], bar_s[1]);
 	end;
-
+*/
 	barCount:=15;
 	currentBar:=0;	
 	colorIndex:=0;
-	Bars();
+
+	nextRaster := bar_s[currentBar];
+
+	RasterIRQ(Bars(), nextRaster , @useKernal);		
 	
-	//kernalInterrupt();
-	closeirq();
+	CloseIRQ();
 end;
 
 
-procedure Bars();
+interrupt Bars();
 begin
-	a:=bar_s[currentBar];
-	WaitForRaster(a);
+	StartIRQ(@useKernal);
+	//wait(7);
+	SCREEN_BG_COL:=fade[colorIndex];
+	SCREEN_FG_COL:=fade[colorIndex];
 
-	for i:=0 to barCount do begin
-		val:=fade[colorIndex];
-		Poke(SCREEN_BG_COL, 0, val);
-		Poke(SCREEN_FG_COL, 0, val);
-		colorIndex:=colorIndex+1;
-		WaitNoRaster(1);
-		
-	end;
-	Poke(SCREEN_BG_COL, 0, 0);
-	Poke(SCREEN_FG_COL, 0, 0);
+	nextRaster:=nextRaster+3;
+	inc(colorIndex);
+	dec(barCount);
+	if (barCount<16) then
+		RasterIRQ(Bars(), nextRaster, @useKernal)
+	else
+		RasterIRQ(MainRasterTop(), 0, @useKernal);		
 
-	a:=bar_s[currentBar];
-	currentBar:=currentBar+1;
-	b:=bar_s[currentBar];
-	diff := (b - a);
-	barCount:=15;
-	colorIndex:=0;
-
-	if diff<36 then begin
-		a:=peek(^$d012, 0);
-		bar_s[currentBar]:=a+2;
-		barCount:=diff/2 +2;
-		colorIndex:=15-diff/2;
-	end;
-
-	if currentBar < 2 then begin
-		Bars();
-	end;
-	
+	CloseIrq();	
 end;
 
 
@@ -95,8 +81,9 @@ begin
 
 	ClearScreen($20, SCREEN_CHAR_LOC);
 
+	
 	moveto(8,15, $04);
-	printstring("E P I C    H E L L O", 0, 30);
+	printstring("E P I C    H E L L O", 0, 20);
 	moveto(0,17, $04);
 	printstring("M U S I C   F R O M   D E F L E M A S K", 0, 40);
 
@@ -105,8 +92,8 @@ begin
 
 	preventirq();
 	DisableCiaInterrupts();
-	setmemoryconfig(1,1,0);
-	RasterIRQ(UpdateRaster(), 0,1);
+	setmemoryconfig(1,@useKernal,0);
+	RasterIRQ(MainRasterTop(), 0,@useKernal);
 	enablerasterirq();
 	enableirq();
 

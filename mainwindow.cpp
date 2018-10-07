@@ -706,14 +706,18 @@ void MainWindow::LoadProject(QString filename)
     RefreshFileList();
     m_iniFile.Save();
 
+    // Set compiler syntax based on system
+    Syntax::s.Init(Syntax::SystemFromString(m_currentProject.m_ini.getString("system")));
+
+
     UpdateRecentProjects();
+
 
     QStringList files = m_currentProject.m_ini.getStringList("open_files");
     for (QString f: files) {
         if (QFile::exists(getProjectPath() + "/"+ f))
             LoadDocument(f);
     }
-
 
 }
 

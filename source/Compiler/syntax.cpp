@@ -27,10 +27,17 @@ Syntax Syntax::s;
 
 Syntax::Syntax()
 {
-    SetupReservedWords();
-    SetupBuiltinFunctions();
-    SetupKeys();
 }
+
+void Syntax::Init(System s)
+{
+    m_currentSystem = s;
+    SetupReservedWords();
+    SetupBuiltinFunctions(s);
+    SetupKeys();
+
+}
+
 
 
 
@@ -87,11 +94,12 @@ void Syntax::SetupReservedWords()
 
 }
 
-void Syntax::SetupBuiltinFunctions()
+void Syntax::SetupBuiltinFunctionsDeprecated()
 {
     builtInFunctions["writeln"] = BuiltInFunction(
                 "writeln",
-                QList<BuiltInFunction::Type>()<< BuiltInFunction::STRING<< BuiltInFunction::Type::INTEGER );
+                QList<BuiltInFunction::Type>()<<
+                BuiltInFunction::STRING<< BuiltInFunction::Type::INTEGER );
 
     builtInFunctions["poke"] = BuiltInFunction(
                 "poke",
@@ -381,12 +389,12 @@ void Syntax::SetupBuiltinFunctions()
                 << BuiltInFunction::Type::INTEGER
                 );
 
-    builtInFunctions["copyfullscreenunrolled"] = BuiltInFunction(
+/*    builtInFunctions["copyfullscreenunrolled"] = BuiltInFunction(
                 "copyfullscreenunrolled",
                 QList<BuiltInFunction::Type>()<< BuiltInFunction::Type::INTEGER
                 << BuiltInFunction::Type::INTEGER
                 );
-
+*/
 /*    builtInFunctions["sin"] = BuiltInFunction(
                 "sin",
                 QList<BuiltInFunction::Type>()<< BuiltInFunction::Type::INTEGER<<
@@ -615,9 +623,63 @@ void Syntax::SetupBuiltinFunctions()
                 "copyimagecolordata",
                 QList<BuiltInFunction::Type>()
                 <<BuiltInFunction::Type::INTEGER
-                <<BuiltInFunction::Type::INTEGER
+                << BuiltInFunction::Type::INTEGER
                 );
 
+
+
+}
+
+void Syntax::SetupBuiltinFunctions(System system)
+{
+    builtInFunctions.clear();
+    QString data;
+
+
+
+    QFile file(":resources/text/builtinmethods.txt");
+    file.open(QFile::ReadOnly | QFile::Text);
+    data = file.readAll();
+    file.close();
+
+    QString currentSystem = StringFromSystem(m_currentSystem).toLower();
+
+    for (QString s: data.split('\n')) {
+        s= s.simplified();
+        if (s.count()==0) continue;
+        if (s.startsWith("#")) continue;
+        s=s.replace(" ", "");
+
+
+
+        QStringList data = s.split(";");
+        QString method = data[0].toLower();
+        QString system = data[1].toLower();
+        QStringList params = data[2].toLower().split(",");
+
+        // Build parameter list
+        QList<BuiltInFunction::Type> paramList;
+        for (QString p: params) {
+            if (p=="a")
+                paramList << BuiltInFunction::Type::ADDRESS;
+            if (p=="b")
+                paramList << BuiltInFunction::Type::BYTE;
+            if (p=="n")
+                paramList << BuiltInFunction::Type::NUMBER;
+            if (p=="i")
+                paramList << BuiltInFunction::Type::INTEGER;
+            if (p=="ib")
+                paramList << BuiltInFunction::Type::INTEGER;
+            if (p=="s")
+                paramList << BuiltInFunction::Type::ADDRESS;
+        }
+        if (system.contains(currentSystem)) {
+            builtInFunctions[method] = BuiltInFunction(method, paramList);
+
+        }
+
+
+    }
 
 
 }

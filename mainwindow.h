@@ -93,20 +93,21 @@ public:
             m_ini.setString("zeropage_decrunch4","$4B");
 
 
-
+        if (!m_ini.contains("system"))
+            m_ini.setString("system", "C64");
 
 
         if (!m_ini.contains("zeropage_internal1"))
             m_ini.setString("zeropage_internal1","$4C");
 
         if (!m_ini.contains("zeropage_internal2"))
-            m_ini.setString("zeropage_internal2","$4D");
+            m_ini.setString("zeropage_internal2","$4E");
 
         if (!m_ini.contains("zeropage_internal3"))
-            m_ini.setString("zeropage_internal3","$4E");
+            m_ini.setString("zeropage_internal3","$50");
 
         if (!m_ini.contains("zeropage_internal4"))
-            m_ini.setString("zeropage_internal4","$4F");
+            m_ini.setString("zeropage_internal4","$52");
 
     }
 

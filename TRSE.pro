@@ -47,7 +47,7 @@ win32-msvc*{
 
 linux-g*{
     QMAKE_CXXFLAGS += -fopenmp
-    QMAKE_CXXFLAGS +=  -Wno-unused-variable -Wno-unused-parameter -Wno-sign-compare -Wno-comment -Wno-parentheses -Wno-delete-non-virtual-dtor
+    QMAKE_CXXFLAGS +=  -Wno-unused-variable -Wno-unused-parameter -Wno-sign-compare -Wno-comment -Wno-parentheses -Wno-delete-non-virtual-dtor -Wno-missing-noreturn
     LIBS += -fopenmp
     QMAKE_CXXFLAGS +=  -Ofast
 
@@ -252,4 +252,7 @@ RESOURCES += \
 
 DISTFILES += \
     resources/text/about.txt \
-    resources/text/Documentation.txt
+    resources/text/Documentation.txt \
+    resources/text/builtinmethods.txt \
+    resources/text/builtinmethods.txt \
+    resources/text/builtinmethods.txt

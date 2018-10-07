@@ -15,5 +15,6 @@
         <file>resources/text/about.txt</file>
         <file>resources/text/Documentation.txt</file>
         <file>resources/images/paw_icon.png</file>
+        <file>resources/text/builtinmethods.txt</file>
     </qresource>
 </RCC>

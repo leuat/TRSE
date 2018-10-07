@@ -55,7 +55,7 @@ public:
 
 class BuiltInFunction {
 public:
-    enum Type {STRING, INTEGER, REAL};
+    enum Type {STRING, NUMBER, ADDRESS, BYTE, INTEGER};
     QString m_name;
     QList<Type> m_params;
 
@@ -76,10 +76,33 @@ public:
     QVector<Token> reservedWords;
     //QVector<BuiltInFunction> builtinFunctions;
     QMap<QString, BuiltInFunction> builtInFunctions;
+    enum System {C64, VIC20, PET, NES};
+    System m_currentSystem;
     Syntax();
+    void Init(System s);
     void SetupReservedWords();
-    void SetupBuiltinFunctions();
+    void SetupBuiltinFunctionsDeprecated();
+    void SetupBuiltinFunctions(System s);
     void SetupKeys();
+
+    static System SystemFromString(QString s) {
+        if (s.toLower()=="c64")
+            return C64;
+        if (s.toLower()=="pet")
+            return PET;
+        if (s.toLower()=="vic20")
+            return VIC20;
+        if (s.toLower()=="nes")
+            return NES;
+    }
+
+    static QString StringFromSystem(System s) {
+        if (s == C64) return "C64";
+        if (s == PET) return "PET";
+        if (s == VIC20) return "VIC20";
+        if (s == NES) return "NES";
+    }
+
     QString puredigit = "0123456789^";
     QString digit = "^0123456789$%";
     QString digitAll = "^0123456789$%ABCDEFabcdef";

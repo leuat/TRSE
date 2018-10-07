@@ -27,20 +27,26 @@
 
 QMap<QString, bool> NodeBuiltinMethod::m_isInitialized;
 
+bool NodeBuiltinMethod::Command(QString name)
+{
+    return m_procName.toLower() == name.toLower();
+}
+
+
 QString NodeBuiltinMethod::Build(Assembler *as) {
     Node::Build(as);
 
     as->PushCounter();
 
 
-    if (m_procName.toLower()=="writeln") {
+    if (Command("Writeln")) {
         as->Writeln();
 
         m_params[0]->Build(as);
         as->EndWriteln();
     }
 
-    if (m_procName.toLower()=="enableallram") {
+    if (Command("EnableAllRam")) {
             as->Comment("Enable all ram visible");
             as->Asm("lda $01");
             as->Asm("and #%00");
@@ -49,140 +55,140 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
 
     }
 
-    if (m_procName.toLower()=="kernalinterrupt")
+    if (Command("KernalInterrupt"))
         as->Asm("jmp $ea81        ; return to kernal interrupt routine");
 
-    if (m_procName.toLower()=="loop")
+    if (Command("Loop"))
         as->Asm("jmp * ; loop like (�/%");
 
-    if (m_procName.toLower()=="call") {
+    if (Command("Call")) {
         Call(as);
     }
-    if (m_procName.toLower()=="fld")
+    if (Command("fld"))
         FLD(as);
 
-    if (m_procName.toLower()=="abs") {
+    if (Command("Abs")) {
         Abs(as);
     }
-    if (m_procName.toLower()=="initsqrt16") {
+    if (Command("initsqrt16")) {
         InitSqrt16(as);
     }
-    if (m_procName.toLower()=="sqrt") {
+    if (Command("Sqrt")) {
         Sqrt(as);
     }
-    if (m_procName.toLower()=="nmiirq") {
+    if (Command("NmiIRQ")) {
         DisableNMI(as);
     }
 
-    if (m_procName.toLower()=="setmemoryconfig") {
+    if (Command("SetMemoryConfig")) {
         SetMemoryConfig(as);
     }
-    if (m_procName.toLower()=="return") {
+    if (Command("Return")) {
         as->Asm("rts");
     }
-    if (m_procName.toLower()=="returninterrupt") {
+    if (Command("ReturnInterrupt")) {
         as->Asm("rti");
     }
 
-    if (m_procName.toLower()=="enablerasterirq") {
+    if (Command("EnableRasterIRQ")) {
         EnableRasterIRQ(as);
     }
-    if (m_procName.toLower()=="blockmemcpy") {
+    if (Command("BlockMemCpy")) {
         BlockMemCpy(as);
     }
 
-    if (m_procName.toLower()=="keypressed") {
+    if (Command("Keypressed")) {
         KeyPressed(as);
     }
 
-    if (m_procName.toLower()=="clearsound") {
+    if (Command("clearsound")) {
         Clearsound(as);
     }
 
-    if (m_procName.toLower()=="copycharsetfromrom") {
+    if (Command("copycharsetfromrom")) {
         CopyCharsetFromRom(as);
     }
-    if (m_procName.toLower() == "setcharsetlocation") {
+    if (Command("setcharsetlocation")) {
         SetCharsetLocation(as);
     }
 
-    if (m_procName.toLower() == "setspriteloc")
+    if (Command("setspriteloc"))
         SetSpriteLoc(as);
 
-    if (m_procName.toLower() == "jammer")
+    if (Command("jammer"))
         Jammer(as);
 
-    if (m_procName.toLower()=="initsid") {
+    if (Command("initsid")) {
         InitSid(as);
     }
-    if (m_procName.toLower()=="initzeropage") {
+/*    if (Command("initzeropage")) {
         InitZeroPage(as);
     }
-
-    if (m_procName.toLower() == "screenoff") {
+*/
+    if (Command("screenoff")) {
         as->Asm("lda $D011");
         as->Asm("and #%01101111");
         as->Asm("sta $D011");
        }
 
-    if (m_procName.toLower() == "screenon") {
+    if (Command("screenon")) {
         as->Asm("lda $D011");
         as->Asm("ora #%00010000");
         as->Asm("and #%01111111");
         as->Asm("sta $D011");
        }
 
-    if (m_procName.toLower() == "decrunch")
+    if (Command("decrunch"))
         Decrunch(as);
 
-    if (m_procName.toLower() == "decrunchfromindex")
+    if (Command("decrunchfromindex"))
         DecrunchFromIndex(as);
 
 
-    if (m_procName.toLower()=="init_decrunch") {
+    if (Command("init_decrunch")) {
         InitDecrunch(as);
     }
 
 
-    if (m_procName.toLower()=="startirq") {
+    if (Command("startirq")) {
         StartIRQ(as);
     }
-    if (m_procName.toLower()=="closeirq") {
+    if (Command("closeirq")) {
         CloseIRQ(as);
     }
 
-    if (m_procName.toLower()=="poke")
+    if (Command("poke"))
         Poke(as);
 
 
-/*    if (m_procName.toLower()=="copyzpdata")
+/*    if (Command("copyzpdata")
         CopyZPdata(as);
 */
-    if (m_procName.toLower()=="swap")
+    if (Command("swap"))
         Swap(as);
 
-    if (m_procName.toLower()=="clearbitmap")
+    if (Command("clearbitmap"))
         ClearBitmap(as);
-    if (m_procName.toLower()=="clearscreen")
+    if (Command("clearscreen"))
         ClearScreen(as);
 
-    if (m_procName.toLower()=="peek")
+    if (Command("peek"))
         Peek(as);
 
 
-    if (m_procName.toLower() == "copyimagecolordata")
+    if (Command("copyimagecolordata"))
         CopyImageColorData(as);
 
-    if (m_procName.toLower()=="waitforraster")
+    if (Command("waitforraster"))
         WaitForRaster(as);
 
-    if (m_procName.toLower() =="setmulticolormode") {
+    if (Command("setmulticolormode")) {
         as->Comment("Multicolor mode");
         as->Asm("lda #16"); // 0000 0000
         as->Asm("ora $d016");
         as->Asm("sta $d016");
     }
-    if (m_procName.toLower() =="setregularcolormode") {
+    if (Command("setregularcolormode")) {
         as->Comment("Regularcolor mode");
         as->Asm("lda $d016");
         as->Asm("and #%11101111");
@@ -190,196 +196,197 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
 
     }
 
-    if (m_procName.toLower()=="hidebordery") {
+    if (Command("hidebordery")) {
         as->Comment("Hide y border");
         as->Asm("lda $d011");
         as->Asm("and #$f7  ; change bit 4");
         as->Asm("sta $d011");
 
     }
-    if (m_procName.toLower()=="hideborderx") {
+    if (Command("hideborderx")) {
         as->Comment("Hide x border");
         as->Asm("lda $D016");
         as->Asm("and #$f7  ; change bit 4");
         as->Asm("sta $D016");
 
     }
-    if (m_procName.toLower() =="settextmode") {
+    if (Command("settextmode")) {
         as->Comment("Regular text mode ");
         as->Asm("lda $D011");
         as->Asm("and #%11011111");
         as->Asm("sta $D011");
     }
-    if (m_procName.toLower() =="setbank") {
+    if (Command("setbank")) {
         SetBank(as);
     }
 
-    if (m_procName.toLower() =="togglebit") {
+    if (Command("togglebit")) {
         ToggleBit(as);
     }
-    if (m_procName.toLower() =="getbit") {
+    if (Command("getbit")) {
         GetBit(as);
     }
 
-    if (m_procName.toLower() == "copyhalfscreen")
+    if (Command("copyhalfscreen"))
         CopyHalfScreen(as);
 
-    if (m_procName.toLower() == "copyfullscreen")
+    if (Command("copyfullscreen"))
         CopyFullScreen(as);
 
-    if (m_procName.toLower() == "copyfullscreenuunrolled")
+    if (Command("copyfullscreenuunrolled"))
         CopyFullScreenUnrolled(as);
 
-    if (m_procName.toLower() =="setbitmapmode") {
+    if (Command("setbitmapmode")) {
         as->Comment("Bitmap mode ");
         as->Asm("lda #$3b");
         as->Asm("sta $d011");
     }
 
 
-    if (m_procName.toLower()=="waitnoraster")
+    if (Command("waitnoraster"))
         WaitNoRasterLines(as);
 
-    if (m_procName.toLower()=="inc")
+    if (Command("inc"))
         IncDec(as, "inc");
 
-    if (m_procName.toLower()=="printdecimal")
+    if (Command("printdecimal"))
         PrintDecimal(as);
 
-    if (m_procName.toLower()=="wait")
+    if (Command("wait"))
         Wait(as);
 
-    if (m_procName.toLower()=="dec")
+    if (Command("dec"))
         IncDec(as, "dec");
 
 
-    if (m_procName.toLower()=="memcpy")
+    if (Command("memcpy"))
         MemCpy(as);
 
-    if (m_procName.toLower()=="unrolledmemcpy")
+    if (Command("unrolledmemcpy"))
         MemCpyUnroll(as);
 
-    if (m_procName.toLower()=="memcpylarge")
+    if (Command("memcpylarge"))
         MemCpyLarge(as);
 
 
-    if (m_procName.toLower()=="and")
+    if (Command("and"))
         BitOp(as,0);
 
-    if (m_procName.toLower()=="or")
+    if (Command("or"))
         BitOp(as,1);
 
-    if (m_procName.toLower()=="rand")
+    if (Command("rand"))
         Rand(as);
-    if (m_procName.toLower() == "scrollx")
+    if (Command("scrollx"))
        ScrollX(as);
 
-    if (m_procName.toLower() == "scrolly")
+    if (Command("scrolly"))
        ScrollY(as);
 
-/*    if (m_procName.toLower() == "incscreenx")
+/*    if (Command("incscreenx")
             IncScreenX(as);
 */
-    if (m_procName.toLower() == "inczp")
+    if (Command("inczp"))
             IncZp(as);
 
-    if (m_procName.toLower() == "deczp")
+    if (Command("deczp"))
             DecZp(as);
 
 
 
-    if (m_procName.toLower() == "spritepos")
+    if (Command("spritepos"))
             SetSpritePos(as);
 
-    if (m_procName.toLower() == "initeightbitmul")
+    if (Command("initeightbitmul"))
             InitEightBitMul(as);
 
 
-    if (m_procName.toLower() == "initprintdecimal")
+    if (Command("initprintdecimal"))
             InitPrintDecimal(as);
 
-    if (m_procName.toLower() == "init16x8mul")
+    if (Command("init16x8mul"))
             InitMul16x8(as);
 
-    if (m_procName.toLower() == "init16x8div")
+    if (Command("init16x8div"))
             InitDiv16x8(as);
 
-    if (m_procName.toLower() == "preventirq") {
+    if (Command("preventirq")) {
         as->Asm("sei");
     }
 
-    if (m_procName.toLower() == "enableirq") {
+    if (Command("enableirq")) {
         as->Asm("asl $d019");
         as->Asm("cli");
     }
 
-    if (m_procName.toLower() == "init8x8div")
+    if (Command("init8x8div"))
             InitDiv8x8(as);
 
-/*    if (m_procName.toLower() == "init16x8mul")
+/*    if (Command("init16x8mul")
             InitMul16x8(as);
   */
-    if (m_procName.toLower()=="fill")
+    if (Command("fill"))
         Fill(as);
 
-    if (m_procName.toLower()=="initrandom")
+    if (Command("initrandom"))
         InitRandom(as);
 
-    if (m_procName.toLower()=="transformcolors")
+    if (Command("transformcolors"))
         TransformColors(as);
 
-//    if (m_procName.toLower()=="enableinterrupts")
+//    if (Command("enableinterrupts")
   //      EnableInterrupts(as);
 
-    if (m_procName.toLower()=="initmoveto") {
+    if (Command("initmoveto")) {
         InitMoveto(as);
     }
-    if (m_procName.toLower()=="initjoystick") {
+    if (Command("initjoystick")) {
         InitJoystick(as);
     }
-    if (m_procName.toLower()=="joystick") {
+    if (Command("joystick")) {
         Joystick(as);
     }
-    if (m_procName.toLower()=="playsound") {
+    if (Command("playsound")) {
         PlaySound(as);
     }
 
-    if (m_procName.toLower()=="initprintstring") {
+    if (Command("initprintstring")) {
         InitPrintString(as);
     }
-    if (m_procName.toLower()=="printnumber") {
+    if (Command("printnumber")) {
         PrintNumber(as);
     }
 
-    if (m_procName.toLower()=="printstring") {
+    if (Command("printstring")) {
         PrintString(as);
     }
 
-    /*    if (m_procName.toLower()=="definesinetable")
+    /*    if (Command("definesinetable")
             InitSinusTable(as);
     */
 
-    if (m_procName.toLower()=="initsinetable")
+    if (Command("initsinetable"))
         InitSinusTable(as);
 
-    if (m_procName.toLower()=="moveto")
+    if (Command("moveto"))
         MoveTo(as);
 
-    if (m_procName.toLower()=="pokescreen") {
+    if (Command("pokescreen")) {
         PokeScreen(as, 0);
     }
-    if (m_procName.toLower()=="pokescreencolor") {
+    if (Command("pokescreencolor")) {
         PokeScreenColor(as, 0);
     }
-    if (m_procName.toLower()=="disableciainterrupts")
+    if (Command("disableciainterrupts"))
         DisableInterrupts(as);
 
-    if (m_procName.toLower()=="rasterirq")
+    if (Command("rasterirq"))
         RasterIRQ(as);
 
     as->PopCounter(m_op.m_lineNumber-1);
     return "";
 }
+
 
 void NodeBuiltinMethod::AddMemoryBlock(Assembler *as, int param)
 {
@@ -689,7 +696,7 @@ void NodeBuiltinMethod::InitPrintString(Assembler *as)
     m_isInitialized["initprintstring"] = true;
 
     as->ClearTerm();
-    as->Label("print_text = $fd");
+    as->Label("print_text = "+as->m_internalZP[0]);
     as->Label("print_number_text .dc \"    \",0");
     as->Label("printstring");
     as->Asm("ldy #0");
@@ -1208,7 +1215,7 @@ PVar NodeBuiltinMethod::Execute(SymbolTable *symTab, uint lvl) {
     ErrorHandler::e.DebugLow("Calling Builtin",level);
     level = lvl+1;
 
-    if (m_procName.toLower()=="writeln") {
+    if (Command("writeln")) {
         QString s = "";
         if (m_params[0]!=nullptr)
             s+=m_params[0]->Execute(symTab, level).toString();
@@ -1314,13 +1321,6 @@ void NodeBuiltinMethod::SetCharsetLocation(Assembler *as)
 
 void NodeBuiltinMethod::InitZeroPage(Assembler* as) {
 /*    as->Asm("jmp initzeropage_continue");
-    as->Label("zeropage1 = $02");
-    as->Label("zeropage2 = $04");
-    as->Label("zeropage3 = $08");
-    as->Label("zeropage4 = $16");
-    as->Label("zeropage5 = $22");
-    as->Label("zeropage6 = $24");
-    as->Label("zeropage7 = $68");
 
     as->Label("initzeropage_continue");*/
 }
@@ -1825,12 +1825,16 @@ void NodeBuiltinMethod::InitSid(Assembler *as)
 */
 
 void NodeBuiltinMethod::InitDiv8x8(Assembler* as) {
-    as->Asm("jmp div8x8_def_end");
-    as->Label("div8x8_procedure_defs");
+//    as->Asm("jmp div8x8_def_end");
+  //  as->Label("div8x8_procedure_defs");
 
-    as->Label("div8x8_c .byte 0 ");
+/*    as->Label("div8x8_c .byte 0 ");
     as->Label("div8x8_d .byte 0 ");
     as->Label("div8x8_e .byte 0 ");
+*/
+    as->Label("div8x8_c = " + as->m_internalZP[0]);
+    as->Label("div8x8_d = "+ as->m_internalZP[1]);
+    as->Label("div8x8_e = "+ as->m_internalZP[2]);
 
     as->Comment("Normal 8x8 bin div");
     as->Label("div8x8_procedure");
@@ -1861,9 +1865,9 @@ void NodeBuiltinMethod::InitDiv16x8(Assembler *as)
         return;
 //    as->Asm("jmp div16x8_def_end");
 
-    as->Label("divisor = $58     ;$59 used for hi-byte");   //0
-    as->Label("dividend = $fb	  ;$fc used for hi-byte");    //1
-    as->Label("remainder = $fd	  ;$fe used for hi-byte");  // 2
+    as->Label("divisor = "+as->m_internalZP[0]+"     ;$59 used for hi-byte");   //0
+    as->Label("dividend = "+as->m_internalZP[1]+"	  ;$fc used for hi-byte");    //1
+    as->Label("remainder = "+as->m_internalZP[2]+"	  ;$fe used for hi-byte");  // 2
     as->Label("result = dividend ;save memory by reusing divident to store the result");
 
     as->Label("divide16x8	lda #0	        ;preset remainder to 0");
@@ -1934,12 +1938,15 @@ void NodeBuiltinMethod::InitMul16x8(Assembler *as)
 {
 
 //     Multiplies "num1" by "num2" and stores result in .A (low byte, also in .X) and .Y (high byte)
-    as->Asm("jmp mul16x8_def_end");
-    as->Label("mul16x8_procedure_defs");
+//    as->Asm("jmp mul16x8_def_end");
+  //  as->Label("mul16x8_procedure_defs");
 
-    as->Label("mul16x8_num1Hi .byte 0 ");
+/*    as->Label("mul16x8_num1Hi .byte 0 ");
     as->Label("mul16x8_num1 .byte 0 ");
-    as->Label("mul16x8_num2 .byte 0 ");
+    as->Label("mul16x8_num2 .byte 0 ");*/
+    as->Label("mul16x8_num1Hi = " + as->m_internalZP[0]);
+    as->Label("mul16x8_num1 = " + as->m_internalZP[1]);
+    as->Label("mul16x8_num2 = " + as->m_internalZP[2]);
 
     as->Label("mul16x8_procedure");
 
@@ -2066,8 +2073,8 @@ void NodeBuiltinMethod::ClearScreen(Assembler *as)
   //  QString lbl2 = as->NewLabel("clearloop2");
     QString shift = "$" + QString::number((int)num->m_val, 16);
     as->Comment("Clear screen with offset");
-    as->Asm("ldx #$00");
     LoadVar(as, 0);
+    as->Asm("ldx #$00");
     as->Label(lbl);
     as->Asm("sta $0000+"+shift+",x");
     as->Asm("sta $0100+"+shift+",x");

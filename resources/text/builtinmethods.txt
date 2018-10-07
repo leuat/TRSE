@@ -1,0 +1,125 @@
+# format : method name, compatibility list, parameters
+# s = string
+# b = byte
+# i = integer
+# a = address
+# n = pure number
+# ib = integer or byte
+
+# init functions
+initrandom; C64 ; 
+initsinetable; C64, VIC20, PET, NES ; 
+initmoveto; C64, VIC20, PET, NES ; 
+initprintdecimal; C64, VIC20, PET, NES ; 
+initeightbitmul; C64, VIC20, PET, NES ; 
+init16x8mul; C64, VIC20, PET, NES ; 
+init8x8div; C64, VIC20, PET, NES ; 
+initprintstring; C64  ; 
+initjoystick; C64, VIC20  ; 
+
+
+#Memory routines
+
+Poke; C64, VIC20, PET, NES ; a,b,b
+Peek; C64, VIC20, PET, NES ; a,b
+ToggleBit; C64, VIC20, PET, NES ; a,b,b
+GetBit; C64, VIC20, PET, NES ; a,b
+EnableAllRam; C64, VIC20  ; 
+MemCpy; C64, VIC20, PET, NES ; a,b,a,b
+BlockMemCpy; C64, VIC20, PET, NES ; a,a,n
+Inc; C64, VIC20, PET, NES ; a
+Dec; C64, VIC20, PET, NES ; a
+Fill; C64, VIC20, PET, NES ; a, b, b
+SetMemoryConfig ; C64, VIC20, PET, NES ; b,b,b
+CopyHalfScreen; C64, VIC20, PET, NES ; a,a,b,b,n
+CopyFullScreen; C64, VIC20, PET, NES ; 	a,a
+
+
+Decrunch; C64 ; a
+DecrunchFromIndex; C64 ; a,b
+
+IncZP; C64, VIC20, PET, NES ; a, b
+DecZP; C64, VIC20, PET, NES ; a, b
+
+# Charset routines
+
+CopyCharsetFromRom; C64 ; a
+SetCharsetLocation; C64; n
+
+
+
+# Screen routines
+
+Writeln; C64, VIC20, PET, NES ; s,b
+MoveTo; C64 ; b,b,b
+ScrollX; C64 ; b
+ScrollY; C64 ; b
+HideBorderX; C64 ; b
+HideBorderY; C64 ; b
+PrintString; C64, VIC20, PET; s,b,b
+PrintNumber; C64, VIC20, PET; b
+PrintDecimal; C64, VIC20, PET; i,n
+ClearScreen; C64; b, a
+ClearBitmap; C64; a, b	
+SetMultiColorMode; C64; 
+SetRegularColorMode; C64;
+SetBitmapMode; C64;
+SetTextMode; C64;
+SetBank; C64; b
+ScreenOff; C64; 
+ScreenOn; C64; 
+CopyImageColorData; C64; a,a
+
+# Sprite routines
+
+SpritePos; C64 ; ib,b,b
+SetSpriteLoc; C64; b,b,n
+
+# Sound/Music routines
+
+PlaySound; C64; b,b,b,b,b,b,b
+InitSid; C64; a
+ClearSound; C64; 
+
+
+# Math routines
+
+Sqrt ; C64, VIC20, PET, NES  ; ib
+Swap; C64, VIC20, PET, NES; b,b
+Abs;  C64, VIC20, PET, NES;b
+
+
+# Other routines
+
+Wait; C64, VIC20, PET, NES ; b
+Jammer; C64  ; n,n
+FLD ; C64 ; b,n
+TransformColors; C64; a,a
+Call; C64, VIC20, PET, NES; a
+Loop; C64, VIC20, PET, NES; 
+Return;  C64, VIC20, PET, NES; 
+
+
+# IO ports
+
+Joystick; C64, VIC20; n
+Keypressed; C64, VIC20; b
+
+
+# IRQ routines
+
+NmiIRQ; C64, VIC20, PET ; a
+EnableRasterIRQ; C64; 
+StartIRQ; C64; b
+CloseIRQ; C64; 
+EnableIRQ; C64;
+PreventIRQ; C64; 
+DisableCIAInterruptS; C64;
+RasterIRQ; C64 ; n,n,n
+ReturnInterrupt; C64;
+
+
+WaitForRaster; C64; b
+WaitNoRaster; C64; b
+
+
