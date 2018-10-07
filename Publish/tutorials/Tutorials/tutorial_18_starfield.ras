@@ -157,7 +157,7 @@ begin
 	GenerateCharset();
 	SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL:=BLACK;
-	clearscreen($20,$0400);	
+	clearscreen($20,^$0400);	
 	//VIC_DATA_LOC:=@charsetVicData;
 	SetCharsetLocation(@charsetPos);
 	copycharsetfromrom(^@charsetPos);

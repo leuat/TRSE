@@ -276,9 +276,9 @@ begin
 	Setup();
 	g_dataLoc:=$1a;
 	ClearScreen($20, SCREEN_CHAR_LOC);
-	ClearScreen($20, $4400);
+	ClearScreen($20, ^$4400);
 	ClearScreen($0F, SCREEN_COL_LOC);
-	ClearScreen($20, $8400);
+	ClearScreen($20, ^$8400);
 
 	MoveTo(20, 1, $84);
 	printString(" SCORE:", 1, 10);

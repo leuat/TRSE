@@ -28,7 +28,7 @@ begin
 	SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL:=BLACK;	
 	// Fill screen (at $0400) with blank spaces ($20)
-	ClearScreen($20, $0400);
+	ClearScreen($20, ^$0400);
 		
 	InitSprites();
 	Loop();

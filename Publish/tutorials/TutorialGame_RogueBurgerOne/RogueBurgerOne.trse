@@ -11,3 +11,4 @@ zeropage_internal2 = $4D
 zeropage_internal3 = $4E
 zeropage_internal4 = $4F
 open_files = ,RogueBurgerOne.ras
+system = C64

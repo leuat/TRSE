@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Turbo Rascal Syntax error, &quot;;&quot; expected but &quot;BEGIN&quot; Version 0.05 ASE Preview v1</string>
+   <string>Turbo Rascal Syntax error, &quot;;&quot; expected but &quot;BEGIN&quot; Version 0.05 ASE Preview v2</string>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>

@@ -30,8 +30,8 @@ our character set
 // Initializes charsets etc
 procedure Initialize();
 begin
-	clearscreen(LIGHT_BLUE, $D800);
-	clearscreen($20, $0400);
+	clearscreen(LIGHT_BLUE, ^$D800);
+	clearscreen($20, ^$0400);
 	SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL:=BLACK;
 
@@ -59,7 +59,7 @@ interrupt RasterRenderLevels();
 begin
 	StartIRQ(@useKernal);
 	if (i=0) then begin
-		joystick();
+		joystick(2);
 		if (joystickdown=1) then begin inc(curLevel_y); i:=10; end;
 		if (joystickup=1) then begin dec(curLevel_y); i:=10; end;
 		if (joystickleft=1) then begin dec(curLevel_x); i:=10; end;

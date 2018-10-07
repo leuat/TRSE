@@ -27,9 +27,9 @@ end;
 
 begin
 	// Fill the color ram with light blue
-	clearscreen(LIGHT_BLUE, $D800);
+	clearscreen(LIGHT_BLUE, ^$D800);
 	// Clear screen
-	clearscreen($20, $0400);
+	clearscreen($20, ^$0400);
 	SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL:=BLACK;
 	// Set color pointer

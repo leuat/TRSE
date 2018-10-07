@@ -412,7 +412,7 @@ begin
 	SPRITE_BITMASK:=0; // clear sprites
 	copyfullscreen(^$4400, ^$0400);
 	copyfullscreen(^$D800,^$8000);
-	clearscreen(LIGHT_BLUE,$D800);
+	clearscreen(LIGHT_BLUE,^$D800);
 	clearscreen($20,^$4400);
 	poke(VIC_DATA_LOC, 0, @charmapText);
 	setregularcolormode();
@@ -543,7 +543,7 @@ begin
 	
 
 	//copyfullscreen(^$B000,^$8400);
-	ClearScreen($20, $4400);
+	ClearScreen($20, ^$4400);
 	//fill(^$9000,0,64);
 //	for i:=0 to 8 do setspriteloc(i,$40,2);
 
@@ -658,7 +658,7 @@ begin
 		waitnoraster(100);
 
 	end;
-	clearscreen(BLACK,$D800);
+	clearscreen(BLACK,^$D800);
 
 
 end;
@@ -679,8 +679,8 @@ begin
 	SCREEN_FG_COL:=BLACK;
 
 	BitmapEffect();
-	clearscreen(00,$D800);
-	clearscreen(00,$8400);
+	clearscreen(00,^$D800);
+	clearscreen(00,^$8400);
 
 	
 	decrunch(imagedata_crunched);
@@ -692,7 +692,7 @@ begin
 	BitmapEffect();
 
 	settextmode();
-	clearscreen($20,$8400);
+	clearscreen($20,^$8400);
 	decrunch(leveldata_crunched);
 end;
 

@@ -272,7 +272,7 @@ begin
 	clearscreen(161,^$4400);
 
 	clearbitmap(^$2000,16);
-	clearbitmap($6000,16);
+	clearbitmap(^$6000,16);
 
 	SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL:=BLACK;

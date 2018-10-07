@@ -85,8 +85,8 @@ end;
 
 procedure Initialize();
 begin
-	clearscreen(LIGHT_BLUE, $D800);
-	clearscreen($20, $0400);
+	clearscreen(LIGHT_BLUE, ^$D800);
+	clearscreen($20, ^$0400);
 	SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL:=BLACK;
 	// Pointer to character color definitions

@@ -10,4 +10,5 @@ zeropage_internal1 = $4C
 zeropage_internal2 = $4D
 zeropage_internal3 = $4E
 zeropage_internal4 = $4F
-open_files = ,part8.ras
+open_files = ,part9.ras, part7.ras, part6.ras, part4.ras, part3.ras, part8.ras
+system = C64

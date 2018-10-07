@@ -19,14 +19,14 @@ begin
 	if bmg_currbank=0 then begin
 		bmg_currbank := $40;
 		SetBank(VIC_BANK0);
-		clearbitmap($6400, 22); // Clear a certain window only
+		clearbitmap(^$6400, 22); // Clear a certain window only
 	end
 	
 	else
 	begin
 		bmg_currbank:=0;
 		SetBank(VIC_BANK1);
-		clearbitmap($2400, 22);
+		clearbitmap(^$2400, 22);
 	end;
 	
 end;
@@ -84,12 +84,12 @@ begin
 	
 	SCREEN_BG_COL:=BLUE;
 	SCREEN_FG_COL:=RED;
-	clearbitmap($2000,32);
-	clearbitmap($6000,32);
+	clearbitmap(^$2000,32);
+	clearbitmap(^$6000,32);
 	
-	clearscreen(YELLOW,$D800);
-	clearscreen(GREEN,$0400);
-	clearscreen(BLUE,$4400);
+	clearscreen(YELLOW,^$D800);
+	clearscreen(GREEN,^$0400);
+	clearscreen(BLUE,^$4400);
 	
 	//	ClearBitmapB1();
 	//	ClearBitmapB2();

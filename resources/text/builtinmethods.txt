@@ -69,7 +69,7 @@ SetTextMode; C64;
 SetBank; C64; b
 ScreenOff; C64; 
 ScreenOn; C64; 
-CopyImageColorData; C64; a,a
+CopyImageColorData; C64; a,n
 
 # Sprite routines
 
@@ -88,6 +88,7 @@ ClearSound; C64;
 Sqrt ; C64, VIC20, PET, NES  ; ib
 Swap; C64, VIC20, PET, NES; b,b
 Abs;  C64, VIC20, PET, NES;b
+Rand; C64 ; b,b,b
 
 
 # Other routines

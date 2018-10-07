@@ -36,7 +36,7 @@ begin
 		// unpacks color data to $2000
 		decrunchfromindex(tutorial_22_packed_address,i+1); 
 		// copy color data to screen + $D800
-		copyimagecolordata($2000,1);
+		copyimagecolordata(^$2000,1);
 		// Decrunch image data
 		decrunchfromindex(tutorial_22_packed_address,i); // decrunches to vic 1
 		// Turn on screen

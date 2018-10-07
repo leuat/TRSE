@@ -137,7 +137,7 @@ void Syntax::SetupBuiltinFunctions(System system)
             if (p=="ib")
                 paramList << BuiltInFunction::Type::INTEGER;
             if (p=="s")
-                paramList << BuiltInFunction::Type::ADDRESS;
+                paramList << BuiltInFunction::Type::STRING;
             if (p=="p")
                 paramList << BuiltInFunction::Type::PROCEDURE;
         }

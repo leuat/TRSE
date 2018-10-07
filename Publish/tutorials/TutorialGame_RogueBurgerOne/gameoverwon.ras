@@ -38,7 +38,7 @@ begin
 	InitSid(SIDFILE_1_INIT);
 	
 	Setbank(VIC_BANK1);
-	ClearScreen($20, $4400);
+	ClearScreen($20, ^$4400);
 	ClearScreen($02, SCREEN_COL_LOC);
 
 	poke(VIC_DATA_LOC, 0, @charmapText);
@@ -74,7 +74,7 @@ begin
 	spritepos(tmp, 40+21+21, 3);
 
 	zeropage1:=EndingText;
-	clearscreen(DARK_GREY, $D800);
+	clearscreen(DARK_GREY, ^$D800);
 	
 
 
@@ -217,7 +217,7 @@ begin
 	
 	Setbank(VIC_BANK1);
 	poke(SPRITE_BITMASK, 0, 0);
-	ClearScreen($20, $4400);
+	ClearScreen($20, ^$4400);
 	ClearScreen($02, SCREEN_COL_LOC);
 	poke(VIC_DATA_LOC, 0, @charmapText);
 	poke(SCREEN_BG_COL, 0, BLACK);

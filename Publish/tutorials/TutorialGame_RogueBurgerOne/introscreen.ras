@@ -44,10 +44,10 @@ begin
 	poke(SCREEN_FG_COL, 0, 0);
 	SetBank(VIC_BANK1);
 	setregularcolormode();
-	ClearScreen(@clearchar, $0400);
-	ClearScreen(@clearchar, $4400);
+	ClearScreen(@clearchar, ^$0400);
+	ClearScreen(@clearchar, ^$4400);
 	call(SIDFILE_1_PLAY);
-	ClearScreen(@clearchar, $8400);
+	ClearScreen(@clearchar, ^$8400);
 	ClearScreen(11, SCREEN_COL_LOC);
 	joystickbutton:=0;
 	moveto(5, 10, $D8);
@@ -352,11 +352,11 @@ begin
 
 	if (joystickbutton=1 and player_health=0) then begin
 		val:=0;
-		clearscreen(BLACK,$D800);
+		clearscreen(BLACK,^$D800);
 		setregularcolormode();
 //		setbank(VIC_BANK0);
 	//	ClearScreen($20,$0400);
-		ClearScreen($20,$4400);
+		ClearScreen($20,^$4400);
 		clearsound();
 		InitSprites();
 		PrintText();

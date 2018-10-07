@@ -24,13 +24,13 @@ begin
 	if wwait<>0 then begin
 		if wwait&1=0 then
 		begin
-			TransformColors(fade1, $4400);
+			TransformColors(fade1, ^$4400);
 //			TransformColors(fade1, $D800);
 		end;
 		dec(wwait);
 	end;
 	
-	Joystick();
+	Joystick(2);
 	
 	val := ypos;
 	
