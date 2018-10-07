@@ -39,6 +39,7 @@ void DialogTRSESettings::FillFromIni()
 {
     ui->leDasm->setText(m_ini->getString("dasm"));
     ui->leEmulator->setText(m_ini->getString("emulator"));
+    ui->leVic20Emulator->setText(m_ini->getString("vic20_emulator"));
     ui->leExomizer->setText(m_ini->getString("exomizer"));
 //    if (ui->cmbPalette->currentText()=="Dark")
     if (m_ini->getdouble("windowpalette")==0)
@@ -75,6 +76,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("dasm", ui->leDasm->text());
     m_ini->setString("exomizer", ui->leExomizer->text());
     m_ini->setString("emulator", ui->leEmulator->text());
+    m_ini->setString("vic20_emulator", ui->leVic20Emulator->text());
     m_ini->setString("theme", ui->cmbTheme->currentText() + ".ini");
 
     m_ini->setFloat("font_size", ui->leFontSize->text().toInt());

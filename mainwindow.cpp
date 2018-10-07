@@ -306,6 +306,9 @@ void MainWindow::OpenProjectSettings()
     dSettings->exec();
     delete dSettings;
 
+    // Set compiler syntax based on system
+    Syntax::s.Init(Syntax::SystemFromString(m_currentProject.m_ini.getString("system")));
+
 
 }
 
@@ -449,7 +452,12 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
         LoadDocument(path + file);
     }
     if (file.toLower().endsWith(".prg")) {
-        FormRasEditor::ExecutePrg(getProjectPath()+"/" + file, m_iniFile.getString("emulator"));
+
+        QString emu = m_iniFile.getString("emulator");
+        if (m_currentProject.m_ini.getString("system")=="VIC20")
+            emu = m_iniFile.getString("vic20_emulator");
+
+        FormRasEditor::ExecutePrg(getProjectPath()+"/" + file, emu, m_currentProject.m_ini.getString("system"));
     }
 
     Data::data.Redraw();

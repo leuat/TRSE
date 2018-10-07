@@ -105,14 +105,35 @@ void AsmMOS6502::Program(QString programName)
 {
     Asm("processor 6502");
     Nl();
-    Asm("ORG $0801");
-/*    Asm(".byte    $0E, $08, $0A, $00, $9E,   $20, $28,  $32, $33"); //  ( 2,3
-    Asm(".byte    $30, $34, $29, $00, $00, $00");   // 0, 4, )*/
-    Asm(".byte    $0E, $08, $0A, $00, $9E, $20, $28, $32, $30"); //  ( 2,0
-    Asm(".byte    $36, $34, $29, $00, $00, $00");   // 6, 4, )*/
-    Nl();
-    Asm("ORG $0810");
-    Nl();
+    if (Syntax::s.m_currentSystem==Syntax::C64) {
+        Asm("ORG $0801");
+        // 2064
+        Asm(".byte    $0E, $08, $0A, $00, $9E, $20, $28, $32, $30"); //  ( 2,0
+        Asm(".byte    $36, $34, $29, $00, $00, $00");   // 6, 4, )*/
+        Nl();
+        Asm("ORG $0810");
+        Nl();
+    }
+    if (Syntax::s.m_currentSystem==Syntax::VIC20) {
+        Asm("  ORG $1001");
+        // 4112
+        Asm(".byte    $0E, $08, $0A, $00, $9E, $20, $28, $34, $31"); //  ( 2,0
+        Asm(".byte    $31, $32, $29, $00, $00, $00");   // 6, 4, )*/
+
+        Nl();
+        Asm("ORG $1010");
+        Nl();
+
+/*        Asm("   ORG $1001");
+        Asm("   dc.w basicEnd    ; Next Line link, here end of Basic program");
+        Asm("            dc.w 2013        ; The line number for the SYS statement");
+        Asm("            dc.b  $9e         ; SYS token");
+        Asm("            dc.b  \" \"");
+        Asm("            dc.b  \"4110\"");
+        Asm("            dc.b  0  ");
+        Asm("basicEnd    dc.w  0         ");
+*/
+    }
     Label(programName);
 }
 

@@ -40,18 +40,25 @@ FormRasEditor::~FormRasEditor()
     delete ui;
 }
 
-void FormRasEditor::ExecutePrg(QString fileName, QString emulator)
+void FormRasEditor::ExecutePrg(QString fileName, QString emulator, QString system)
 {
     if (!QFile::exists(emulator)) {
         Messages::messages.DisplayMessage(Messages::messages.NO_EMULATOR);
         return;
     }
     QProcess process;
+
+    QStringList params;
+    if (system=="VIC20")
+         params<< "-autostartprgmode" << "1";
+
+    params << QDir::toNativeSeparators(fileName);
     process.waitForFinished();
 #ifdef _WIN32
     QProcess::execute("taskkill /im \"x64.exe\" /f");
 #endif
-    process.startDetached(emulator, QStringList() <<  QDir::toNativeSeparators(fileName));
+//    qDebug() << emulator << " " << params <<  QDir::toNativeSeparators(fileName);
+    process.startDetached(emulator, params);
 //    process.pi
     QString output(process.readAllStandardOutput());
 
@@ -282,7 +289,14 @@ void FormRasEditor::Run()
         return;
     QString filename = m_currentSourceFile.split(".")[0] + ".prg";
 
-    ExecutePrg(filename,m_iniFile->getString("emulator"));
+    QString emulator = "";
+    if (Syntax::s.m_currentSystem==Syntax::C64)
+        emulator = m_iniFile->getString("emulator");
+    if (Syntax::s.m_currentSystem==Syntax::VIC20)
+        emulator = m_iniFile->getString("vic20_emulator");
+    if (emulator=="")
+        return;
+    ExecutePrg(filename,emulator, m_projectIniFile->getString("system"));
 
 }
 

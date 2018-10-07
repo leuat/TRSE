@@ -45,6 +45,54 @@
        <property name="currentIndex">
         <number>0</number>
        </property>
+       <widget class="QWidget" name="tab_3">
+        <attribute name="title">
+         <string>General</string>
+        </attribute>
+        <widget class="QComboBox" name="cmbSystem">
+         <property name="geometry">
+          <rect>
+           <x>90</x>
+           <y>40</y>
+           <width>141</width>
+           <height>25</height>
+          </rect>
+         </property>
+         <item>
+          <property name="text">
+           <string>C64</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>VIC20</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>PET (Not supported yet)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>NES (Not supported yet)</string>
+          </property>
+         </item>
+        </widget>
+        <widget class="QLabel" name="label">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>30</y>
+           <width>54</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>System:</string>
+         </property>
+        </widget>
+       </widget>
        <widget class="QWidget" name="tab">
         <attribute name="title">
          <string>Zeropages</string>

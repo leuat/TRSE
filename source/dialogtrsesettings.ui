@@ -56,66 +56,112 @@
         <attribute name="title">
          <string>Environment</string>
         </attribute>
-        <widget class="QWidget" name="gridLayoutWidget">
+        <widget class="QPushButton" name="btnEmulator_2">
          <property name="geometry">
           <rect>
-           <x>70</x>
-           <y>40</y>
-           <width>521</width>
-           <height>152</height>
+           <x>769</x>
+           <y>80</y>
+           <width>80</width>
+           <height>25</height>
           </rect>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="2">
-           <widget class="QPushButton" name="btnEmulator">
-            <property name="text">
-             <string>...</string>
-            </property>
-           </widget>
+         <property name="text">
+          <string>...</string>
+         </property>
+        </widget>
+        <widget class="QWidget" name="verticalLayoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>40</x>
+           <y>40</y>
+           <width>521</width>
+           <height>201</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>C64 Emulator location</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="leEmulator"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnEmulator">
+              <property name="text">
+               <string>...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="btnDasm">
-            <property name="text">
-             <string>...</string>
-            </property>
-           </widget>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>VIC 20 emulator location:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="leVic20Emulator"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnVic20Emulator">
+              <property name="text">
+               <string>...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>Dasm location</string>
-            </property>
-           </widget>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Dasm location</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="leDasm"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnDasm">
+              <property name="text">
+               <string>...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="leDasm"/>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="leEmulator"/>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Emulator location</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>Exomizer location</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="leExomizer"/>
-          </item>
-          <item row="2" column="2">
-           <widget class="QPushButton" name="btnExomizer">
-            <property name="text">
-             <string>...</string>
-            </property>
-           </widget>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Exomizer location</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="leExomizer"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnExomizer">
+              <property name="text">
+               <string>...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
