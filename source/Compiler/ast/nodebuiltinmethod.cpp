@@ -689,8 +689,9 @@ void NodeBuiltinMethod::InitEightBitMul(Assembler *as)
     m_isInitialized["eightbitmul"] = true;
 
     QString l = as->NewLabel("multiply_eightbit");
-    as->Asm("jmp " + l);
-    as->Label("multiplier .byte 0");
+//    as->Asm("jmp " + l);
+  //  as->Label("multiplier .byte 0");
+    as->Label("multiplier = " + as->m_internalZP[0]);
     as->Label("multiply_eightbit");
     as->Asm("cpx #$00");
     as->Asm("beq mul_end");

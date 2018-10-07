@@ -97,6 +97,8 @@ void Parser::InitBuiltinFunctions()
 
 void Parser::InitBuiltinFunction(QStringList methodName, QString builtinFunctionName, QString initJump )
 {
+    if (m_ignoreMethods.contains(builtinFunctionName.toLower()))
+            return;
     QString txt = m_lexer->m_text.toLower();
     for (QString s: methodName)
      if (txt.contains(s)) {
@@ -184,6 +186,13 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         return;
     }
+
+    if (m_currentToken.m_value=="ignoremethod") {
+        Eat();
+        Eat();
+        return;
+    }
+
 
     if (m_currentToken.m_value=="include") {
         Eat();
@@ -608,6 +617,10 @@ void Parser::Preprocess()
                                                 MemoryBlock::USER, name));
 
             }
+            else if (m_currentToken.m_value.toLower() =="ignoremethod") {
+                Eat(TokenType::PREPROCESSOR);
+                m_ignoreMethods.append(m_currentToken.m_value);
+            }
         }
 
         Eat(m_currentToken.m_type);
@@ -643,6 +656,7 @@ Node* Parser::Parse()
     qDebug() << m_lexer->m_currentChar;
     qDebug() << m_currentToken.getType();
 */
+//    qDebug() << m_ignoreMethods;
     //qDebug() <<m_lexer->m_text[0];
     SymbolTable::Initialize();
     Node::m_staticBlockInfo.m_blockID=-1;

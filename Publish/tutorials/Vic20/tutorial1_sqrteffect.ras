@@ -19,6 +19,19 @@ program Tutorial_1_sqrteffect;
 
 @userdata "$1600" "$17FA" "Generated Table"
 
+@ignoremethod "init16x8div"
+
+@ignoremethod "init16x8mul"
+
+@ignoremethod "init8x8div"
+
+@ignoremethod "initrandom"
+
+// We actually multiply eightbit
+//@ignoremethod "initeightbitmul"
+
+
+
 var  
 	// Character that builds the circle. Some random petscii ones
 	vals : array[8] of byte = ($20, $2E, $2B, $51, $5A, $56, $5E, $5E );

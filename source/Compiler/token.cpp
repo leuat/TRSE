@@ -21,7 +21,7 @@
 
 #include "token.h"
 
-QString TokenType::types[67] = { "INTEGER", "PLUS", "MINUS", "MUL", "DIV", "LPAREN",
+QString TokenType::types[68] = { "INTEGER", "PLUS", "MINUS", "MUL", "DIV", "LPAREN",
             "RPAREN", "TEOF", "ID", "ASSIGN", "BEGIN",
             "END", "SEMI", "DOT", "VAR", "REAL",
             "PROGRAM", "COLON", "COMMA", "INTEGER_CONST", "REAL_CONST", "PROCEDURE",
@@ -30,7 +30,8 @@ QString TokenType::types[67] = { "INTEGER", "PLUS", "MINUS", "MUL", "DIV", "LPAR
             "BYTE", "LBRACKET", "RBRACKET", "INCBIN", "ASM", "INCSID",
             "INTERRUPT", "BITAND", "BITOR", "ELSE", "OR", "AND", "POINTER","AT",
             "INCLUDE", "DEFINE", "PREPROCESSOR", "IFDEF", "ENDIF", "IFNDEF", "OFFPAGE", "ONPAGE",
-            "STEP", "UNROLL", "LOOPX", "LOOPY", "CSTRING", "USERDATA", "STARTBLOCK", "ENDBLOCK"};
+            "STEP", "UNROLL", "LOOPX", "LOOPY", "CSTRING", "USERDATA", "STARTBLOCK", "ENDBLOCK",
+            "IGNOREMETHOD"};
 
 QString Token::getType() {
     return TokenType::types[m_type];

@@ -14,6 +14,7 @@ initmoveto; C64, VIC20, PET, NES ;
 initprintdecimal; C64, VIC20, PET, NES ; 
 initeightbitmul; C64, VIC20, PET, NES ; 
 init16x8mul; C64, VIC20, PET, NES ; 
+init16x8div; C64, VIC20, PET, NES ; 
 init8x8div; C64, VIC20, PET, NES ; 
 initprintstring; C64  ; 
 initjoystick; C64, VIC20  ; 
