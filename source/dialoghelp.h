@@ -26,29 +26,27 @@
 #include <QString>
 #include <QStringList>
 #include <QVector>
+#include "source/Compiler/syntax.h"
 #include <QListWidgetItem>
+#include <QPalette>
 
 namespace Ui {
 class DialogHelp;
 }
 
-class HelpTopic {
-public:
-    QString m_text;
-    QString m_info;
-    QVector<HelpTopic*> m_topics;
 
+class HelpType {
+public:
+    QString id;
+    QString name;
+    HelpType() {}
+    HelpType(QString i, QString n) {
+        id=i;
+        name=n;
+    }
 };
 
-class Helper {
-public:
-    HelpTopic m_topics;
-    void LoadFromResource();
-    QStringList m_lst;
-    int m_curIdx = 0;
-    int m_curTab = 0;
-    void Build(HelpTopic& t, int curTab);
-};
+
 
 
 class DialogHelp : public QDialog
@@ -58,14 +56,24 @@ class DialogHelp : public QDialog
 public:
     explicit DialogHelp(QWidget *parent, QString search);
     ~DialogHelp();
-    Helper m_helper;
 
-    int m_curTopic, m_curItem;
+    QVector<HelpType> m_helpTypes;
+    QVector<QString> m_currentItems;
 
+    QString m_currentType;
 
+    int m_curTopic, m_curItem, m_idx;
+
+    void LoadItems(int idx);
+    void LoadItem(QString word);
     void FillTopics();
-    void FillItems(int idx);
-    void FillHelpText();
+
+    void pal(QPalette p) {
+        setPalette(p);
+    }
+
+    void AppendItem(QListWidget* w, QString s);
+
 private slots:
     void on_pushButton_clicked();
 
@@ -76,6 +84,7 @@ private slots:
     void on_leSearch_textChanged(const QString &arg1);
 
     void on_lstItems_currentRowChanged(int currentRow);
+
 
 private:
     Ui::DialogHelp *ui;

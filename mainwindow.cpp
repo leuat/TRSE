@@ -49,7 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
    // m_work.m_colorList.CreateUI(ui->layoutColors,0);
 
-
+    TRSEDocument::m_defaultPalette = m_defaultPalette;
 
     //QObject::connect(m_updateThread, SIGNAL(valueChanged()), this, SLOT (Update()));
     m_updateThread = new WorkerThread();

@@ -21,6 +21,8 @@
 
 #include "trsedocument.h"
 
+QPalette TRSEDocument::m_defaultPalette;
+
 TRSEDocument::TRSEDocument(QWidget* parent) : QWidget(parent)
 {
 

@@ -368,6 +368,8 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         QString word = tc.selectedText();
 
         DialogHelp* dh = new DialogHelp(this, word);
+        dh->setPalette(m_defaultPalette);
+
         dh->show();
 
     }

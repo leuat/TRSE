@@ -58,14 +58,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTextBrowser" name="txtHelp">
-          <property name="font">
-           <font>
-            <family>Segoe UI</family>
-            <pointsize>12</pointsize>
-           </font>
-          </property>
-         </widget>
+         <widget class="QTextEdit" name="txtHelp"/>
         </item>
        </layout>
       </item>

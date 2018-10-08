@@ -19,5 +19,6 @@
         <file>resources/images/VIC20.png</file>
         <file>resources/images/C64.png</file>
         <file>resources/fonts/c64.ttf</file>
+        <file>resources/text/help/m/poke.rtf</file>
     </qresource>
 </RCC>

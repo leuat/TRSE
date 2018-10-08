@@ -40,7 +40,7 @@ public:
     QString m_currentFileShort;
 
     QString m_fileExtension;
-
+    static QPalette m_defaultPalette;
     QString m_outputText;
 
     WorkerThread* m_updateThread;

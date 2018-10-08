@@ -8,6 +8,6 @@ zeropage_internal1 = $4c
 zeropage_internal2 = $4e
 zeropage_internal3 = $50
 zeropage_internal4 = $52
-open_files = ,tutorial_9_scrolling_and_sprites.ras, tuorial_2_random.ras, tutorial_5_raster_interrupts.ras, tutorial_23_sqrt_effect.ras
+open_files = ,tutorial_23_sqrt_effect.ras, tutorial_5_raster_interrupts.ras, tuorial_2_random.ras, tutorial_9_scrolling_and_sprites.ras
 system = C64
 project_path = /home/leuat/code/TRSE/Publish/tutorials/Tutorials/
