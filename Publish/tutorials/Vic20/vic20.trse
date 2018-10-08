@@ -1,4 +1,3 @@
-project_path = /home/leuat/code/TRSE/Publish/tutorials/Vic20/
 open_files = ,tutorial1_sqrteffect.ras, tutorial1_sqrteffect.asm
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 zeropage_screenmemory = $fe
@@ -11,3 +10,4 @@ zeropage_internal1 = $4c
 zeropage_internal2 = $4e
 zeropage_internal3 = $50
 zeropage_internal4 = $52
+project_path = /Users/nicolaasgroeneboom/work/code/TRSE/Publish/tutorials/Vic20/
