@@ -15,10 +15,11 @@
         <file>resources/text/about.txt</file>
         <file>resources/text/Documentation.txt</file>
         <file>resources/images/paw_icon.png</file>
-        <file>resources/text/builtinmethods.txt</file>
         <file>resources/images/VIC20.png</file>
         <file>resources/images/C64.png</file>
         <file>resources/fonts/c64.ttf</file>
         <file>resources/text/help/m/poke.rtf</file>
+        <file>resources/text/syntax.txt</file>
+        <file>resources/code/init_decompress.asm</file>
     </qresource>
 </RCC>

@@ -759,7 +759,8 @@ void NodeBuiltinMethod::InitDecrunch(Assembler *as)
 {
     as->Label("init_decrunch");
     as->Asm("jmp end_init_decrunch");
-    as->IncludeFile(Util::path+"includes/init_decompress.asm");
+//    as->IncludeFile(Util::path+"includes/init_decompress.asm");
+    as->IncludeFile(":resources/code/init_decompress.asm");
     as->Label("end_init_decrunch");
 
 }

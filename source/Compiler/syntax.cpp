@@ -184,7 +184,7 @@ void Syntax::SetupKeys()
 
 void Syntax::LoadSyntaxData()
 {
-    QFile file(":resources/text/builtinmethods.txt");
+    QFile file(":resources/text/syntax.txt");
     file.open(QFile::ReadOnly | QFile::Text);
     m_syntaxData = file.readAll();
     file.close();
