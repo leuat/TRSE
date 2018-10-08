@@ -21,5 +21,6 @@
         <file>resources/text/help/m/poke.rtf</file>
         <file>resources/text/syntax.txt</file>
         <file>resources/code/init_decompress.asm</file>
+        <file>resources/code/log2_table.asm</file>
     </qresource>
 </RCC>

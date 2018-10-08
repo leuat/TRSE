@@ -149,7 +149,6 @@ public:
     void InitDecrunch(Assembler* as);
     void InitPrintDecimal(Assembler* as);
 
-
     void ExecuteSym(SymbolTable* symTab) override {
 
     }

@@ -108,6 +108,9 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     if (Command("NmiIRQ")) {
         DisableNMI(as);
     }
+    if (Command("initlog2"))
+        as->IncludeFile(":resources/code/log2_table.asm");
+
 
     if (Command("SetMemoryConfig")) {
         SetMemoryConfig(as);

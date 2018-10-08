@@ -20,6 +20,7 @@ begin
 			dy:=abs(13-y);
 			wrk := dx*dx + dy*dy;
 			i:=(sqrt(wrk)/8)&15;
+			i:=log2_table[i];
 			screenmemory[x]:=i+@charVal;
 		end;
 		inczp(screenmemory,40);
