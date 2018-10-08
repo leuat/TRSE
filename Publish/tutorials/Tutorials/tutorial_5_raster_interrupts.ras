@@ -31,7 +31,7 @@ end;
 interrupt MainRasterTop();
 begin
 	StartIRQ(@useKernal);
-	UpdateScreen();
+//	UpdateScreen();
 
 	time:=time+1;
 
@@ -46,7 +46,9 @@ begin
 	currentBar:=0;	
 	colorIndex:=0;
 
-	nextRaster := bar_s[currentBar];
+	
+
+	nextRaster := 127;//bar_s[currentBar];
 
 	RasterIRQ(Bars(), nextRaster , @useKernal);		
 	
@@ -57,17 +59,47 @@ end;
 interrupt Bars();
 begin
 	StartIRQ(@useKernal);
-	//wait(7);
-	SCREEN_BG_COL:=fade[colorIndex];
-	SCREEN_FG_COL:=fade[colorIndex];
+	//wait(8);
+	j:=nextRaster;
+	for i:=0 to 16 do begin
+		inc(j);
+		inc(colorIndex);
+		if (j&7=0) then begin
+			waitforraster(j);
+			wait(8);
+//			asm(" nop ");
+//			asm(" nop ");
+//			asm(" bit $ea ");
+			SCREEN_FG_COL:=LIGHT_RED;;
+		end
+		else begin
+			inc(j);
+			waitforraster(j);
+			wait(6);
+		asm(" nop
+			  nop
+;			 nop
+			  bit $ea
+//			  nop 
+				");
+			SCREEN_FG_COL:=fade[colorIndex];
+	end;
+//		SCREEN_BG_COL:=fade[colorIndex];
 
-	nextRaster:=nextRaster+3;
+
+	end;
+	SCREEN_FG_COL:=BLACK;
+
+
+/*	nextRaster:=nextRaster+3;
 	inc(colorIndex);
 	dec(barCount);
 	if (barCount<16) then
 		RasterIRQ(Bars(), nextRaster, @useKernal)
 	else
 		RasterIRQ(MainRasterTop(), 0, @useKernal);		
+*/
+	RasterIRQ(MainRasterTop(), 0, @useKernal);		
 
 	CloseIrq();	
 end;

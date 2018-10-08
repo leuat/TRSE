@@ -23,8 +23,9 @@
 #define TOKEN_H
 
 #include <QString>
+#include <QMap>
 #include "data_pmm.h"
-
+#include <QDebug>
 
 class TokenType {
 public:
@@ -46,6 +47,18 @@ public:
     static QString getType(Type t) {
         return types[t];
     }
+
+    static Type getType(QString s) {
+        for (int i=0;i<68;i++)
+            if (types[i].toLower()==s.toLower()) {
+//                qDebug() << s;
+                return (Type)i;
+            }
+
+        return DIV;
+    }
+
+//    QMap<QString, TokenType::Type> m_stringType;
 
     QString m_value;
     Type m_type;

@@ -66,6 +66,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 #endif
 
+
+    ui->lblCommodoreImage->setAlignment(Qt::AlignCenter);
+
    int id= QFontDatabase::addApplicationFont(":resources/fonts/c64.ttf");
    m_fontFamily = QFontDatabase::applicationFontFamilies(id).at(0);
     m_iniFileName = Util::path + m_iniFileName;

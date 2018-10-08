@@ -1,3 +1,8 @@
+#    
+#    
+#    M E T H O D S 
+#
+#
 # format : method name, compatibility list, parameters
 # s = string
 # b = byte
@@ -8,121 +13,245 @@
 # p = procedure
 
 # init functions
-initrandom; C64 ; 
-initsinetable; C64, VIC20, PET, NES ; 
-initmoveto; C64, VIC20, PET, NES ; 
-initprintdecimal; C64, VIC20, PET, NES ; 
-initeightbitmul; C64, VIC20, PET, NES ; 
-init16x8mul; C64, VIC20, PET, NES ; 
-init16x8div; C64, VIC20, PET, NES ; 
-init8x8div; C64, VIC20, PET, NES ; 
-initprintstring; C64  ; 
-initjoystick; C64, VIC20  ; 
+m; initrandom; C64 ; 
+m; initsinetable; C64, VIC20, PET, NES ; 
+m; initmoveto; C64, VIC20, PET, NES ; 
+m; initprintdecimal; C64, VIC20, PET, NES ; 
+m; initeightbitmul; C64, VIC20, PET, NES ; 
+m; init16x8mul; C64, VIC20, PET, NES ; 
+m; init16x8div; C64, VIC20, PET, NES ; 
+m; init8x8div; C64, VIC20, PET, NES ; 
+m; initprintstring; C64  ; 
+m; initjoystick; C64, VIC20  ; 
 
 
 #Memory routines
 
-Poke; C64, VIC20, PET, NES ; a,b,b
-Peek; C64, VIC20, PET, NES ; a,b
-ToggleBit; C64, VIC20, PET, NES ; a,b,b
-GetBit; C64, VIC20, PET, NES ; a,b
-EnableAllRam; C64, VIC20  ; 
-MemCpy; C64, VIC20, PET, NES ; a,b,a,b
-BlockMemCpy; C64, VIC20, PET, NES ; a,a,n
-Inc; C64, VIC20, PET, NES ; a
-Dec; C64, VIC20, PET, NES ; a
-Fill; C64, VIC20, PET, NES ; a, b, b
-SetMemoryConfig ; C64, VIC20, PET, NES ; b,b,b
-CopyHalfScreen; C64, VIC20, PET, NES ; a,a,b,b,n
-CopyFullScreen; C64, VIC20, PET, NES ; 	a,a
+m; Poke; C64, VIC20, PET, NES ; a,b,b
+m; Peek; C64, VIC20, PET, NES ; a,b
+m; ToggleBit; C64, VIC20, PET, NES ; a,b,b
+m; GetBit; C64, VIC20, PET, NES ; a,b
+m; EnableAllRam; C64, VIC20  ; 
+m; MemCpy; C64, VIC20, PET, NES ; a,b,a,b
+m; BlockMemCpy; C64, VIC20, PET, NES ; a,a,n
+m; Inc; C64, VIC20, PET, NES ; a
+m; Dec; C64, VIC20, PET, NES ; a
+m; Fill; C64, VIC20, PET, NES ; a, b, b
+m; SetMemoryConfig ; C64, VIC20, PET, NES ; b,b,b
+m; CopyHalfScreen; C64, VIC20, PET, NES ; a,a,b,b,n
+m; CopyFullScreen; C64, VIC20, PET, NES ; 	a,a
 
 
-Decrunch; C64 ; a
-DecrunchFromIndex; C64 ; a,b
+m; Decrunch; C64 ; a
+m; DecrunchFromIndex; C64 ; a,b
 
-IncZP; C64, VIC20, PET, NES ; a, b
-DecZP; C64, VIC20, PET, NES ; a, b
+m; IncZP; C64, VIC20, PET, NES ; a, b
+m; DecZP; C64, VIC20, PET, NES ; a, b
 
 # Charset routines
 
-CopyCharsetFromRom; C64 ; a
-SetCharsetLocation; C64; n
+m; CopyCharsetFromRom; C64 ; a
+m; SetCharsetLocation; C64; n
 
 
 
 # Screen routines
 
-Writeln; C64, VIC20, PET, NES ; s,b
-MoveTo; C64 ; b,b,b
-ScrollX; C64 ; b
-ScrollY; C64 ; b
-HideBorderX; C64 ; b
-HideBorderY; C64 ; b
-PrintString; C64, VIC20, PET; s,b,b
-PrintNumber; C64, VIC20, PET; b
-PrintDecimal; C64, VIC20, PET; i,n
-ClearScreen; C64; b, a
-ClearBitmap; C64; a, b	
-SetMultiColorMode; C64; 
-SetRegularColorMode; C64;
-SetBitmapMode; C64;
-SetTextMode; C64;
-SetBank; C64; b
-ScreenOff; C64; 
-ScreenOn; C64; 
-CopyImageColorData; C64; a,n
+m; Writeln; C64, VIC20, PET, NES ; s,b
+m; MoveTo; C64 ; b,b,b
+m; ScrollX; C64 ; b
+m; ScrollY; C64 ; b
+m; HideBorderX; C64 ; b
+m; HideBorderY; C64 ; b
+m; PrintString; C64, VIC20, PET; s,b,b
+m; PrintNumber; C64, VIC20, PET; b
+m; PrintDecimal; C64, VIC20, PET; i,n
+m; ClearScreen; C64; b, a
+m; ClearBitmap; C64; a, b	
+m; SetMultiColorMode; C64; 
+m; SetRegularColorMode; C64;
+m; SetBitmapMode; C64;
+m; SetTextMode; C64;
+m; SetBank; C64; b
+m; ScreenOff; C64; 
+m; ScreenOn; C64; 
+m; CopyImageColorData; C64; a,n
 
 # Sprite routines
 
-SpritePos; C64 ; ib,b,b
-SetSpriteLoc; C64; b,b,n
+m; SpritePos; C64 ; ib,b,b
+m; SetSpriteLoc; C64; b,b,n
 
 # Sound/Music routines
 
-PlaySound; C64; b,b,b,b,b,b,b
-InitSid; C64; a
-ClearSound; C64; 
+m; PlaySound; C64; b,b,b,b,b,b,b
+m; InitSid; C64; a
+m; ClearSound; C64; 
 
 
 # Math routines
 
-Sqrt ; C64, VIC20, PET, NES  ; ib
-Swap; C64, VIC20, PET, NES; b,b
-Abs;  C64, VIC20, PET, NES;b
-Rand; C64 ; b,b,b
+m; Sqrt ; C64, VIC20, PET, NES  ; ib
+m; Swap; C64, VIC20, PET, NES; b,b
+m; Abs;  C64, VIC20, PET, NES;b
+m; Rand; C64 ; b,b,b
 
 
 # Other routines
 
-Wait; C64, VIC20, PET, NES ; b
-Jammer; C64  ; n,n
-FLD ; C64 ; b,n
-TransformColors; C64; a,a
-Call; C64, VIC20, PET, NES; a
-Loop; C64, VIC20, PET, NES; 
-Return;  C64, VIC20, PET, NES; 
+m; Wait; C64, VIC20, PET, NES ; b
+m; Jammer; C64  ; n,n
+m; FLD ; C64 ; b,n
+m; TransformColors; C64; a,a
+m; Call; C64, VIC20, PET, NES; a
+m; Loop; C64, VIC20, PET, NES; 
+m; Return;  C64, VIC20, PET, NES; 
 
 
 # IO ports
 
-Joystick; C64, VIC20; n
-Keypressed; C64, VIC20; b
+m; Joystick; C64, VIC20; n
+m; Keypressed; C64, VIC20; b
 
 
 # IRQ routines
 
-NmiIRQ; C64, VIC20, PET ; p
-EnableRasterIRQ; C64; 
-StartIRQ; C64; b
-CloseIRQ; C64; 
-EnableIRQ; C64;
-PreventIRQ; C64; 
-DisableCIAInterruptS; C64;
-RasterIRQ; C64 ; p,b,n
-ReturnInterrupt; C64;
+m; NmiIRQ; C64, VIC20, PET ; p
+m; EnableRasterIRQ; C64; 
+m; StartIRQ; C64; b
+m; CloseIRQ; C64; 
+m; EnableIRQ; C64;
+m; PreventIRQ; C64; 
+m; DisableCIAInterruptS; C64;
+m; RasterIRQ; C64 ; p,b,n
+m; ReturnInterrupt; C64;
 
 
-WaitForRaster; C64; b
-WaitNoRaster; C64; b
+m; WaitForRaster; C64; b
+m; WaitNoRaster; C64; b
+
+
+
+
+#
+#
+#
+#  C O N S T A N T S
+#
+#
+#
+
+
+c; SCREEN_BG_COL; C64; a; $D020
+c; SCREEN_FG_COL; C64; a; $D021
+c; SCREEN_CHAR_LOC; C64; a; $0400 
+c; SCREEN_COL_LOC; C64; a; $D800
+c; RASTERLINE_POS; C64; a; $D012
+c; BLACK; C64; b; 0
+c; WHITE; C64; b; 1
+c; RED  ; C64;b;2 
+c; CYAN; C64; b;3
+c; PURPLE; C64; b;4
+c; GREEN; C64; b;5
+c; BLUE; C64; b;6
+c; YELLOW; C64; b;7
+c; ORANGE; C64; b;8
+c; BROWN; C64; b;9
+c; LIGHT_RED; C64; b;10
+c; DARK_GREY; C64; b;11
+c; GREY; C64; b;12
+c; LIGHT_GREEN; C64;b;13 
+c; LIGHT_BLUE; C64; b;14
+c; LIGHT_GREY; C64; b;15
+c; SPRITE_POS; C64; a; $D000
+c; SPRITE_DATA_LOC; C64; a;$07F8
+c; SPRITE_BITMASK; C64; a; $D015
+c; SPRITE_COLOR; C64;a;$D027 
+c; SPRITE_DATA; C64; a; $0340 
+c; SPRITE_COLLISION; C64;a;$D01E 
+c; SPRITE_BG_COLLISION; C64;a;$D01F 
+c; SPRITE_STRETCH_X; C64;a;$D01D 
+c; SPRITE_STRETCH_Y; C64;a;$D017 
+
+
+c; SPRITE_MULTICOLOR; C64;a;$D01C
+c; SPRITE_MULTICOLOR_REG1; C64;a;$D025
+c; SPRITE_MULTICOLOR_REG2; C64; a;$D026
+c; MULTICOLOR_CHAR_COL; C64;a;$D021
+c; SID_TRI; C64;b;16
+c; SID_SAW; C64;b;32
+c; SID_PULSE; C64;b;64
+c; SID_NOISE; C64;b;128
+c; SID_CHANNEL1; C64;b;0
+c; SID_CHANNEL2; C64;b;7
+c; SID_CHANNEL3; C64;b;14
+c; SID; C64;a;$D400
+c; VIC_BANK0; C64; b;3
+c; VIC_BANK1; C64;b;2
+c; VIC_BANK2; C64;b;1
+c; VIC_BANK3; C64;b;0
+c; VIC_DATA_LOC; C64;a;$d018
+
+
+
+
+
+
+
+
+
+#
+#
+#
+#
+#   R E S E R V E D      W O R D S
+# 
+#
+#
+#
+
+r; BEGIN; C64, VIC20, PET, NES
+r; END; C64, VIC20, PET, NES
+r; VAR; C64, VIC20, PET, NES
+r; PROGRAM; C64, VIC20, PET, NES
+r; INTEGER; C64, VIC20, PET, NES
+r; PROCEDURE; C64, VIC20, PET, NES
+r; IF; C64, VIC20, PET, NES
+r; THEN; C64, VIC20, PET, NES
+r; FOR; C64, VIC20, PET, NES
+r; TO; C64, VIC20, PET, NES
+r; DO; C64, VIC20, PET, NES
+r; WHILE; C64, VIC20, PET, NES
+r; ARRAY; C64, VIC20, PET, NES
+r; OF; C64, VIC20, PET, NES
+r; BYTE; C64, VIC20, PET, NES
+r; INCBIN; C64, VIC20, PET, NES
+r; STRING; C64, VIC20, PET, NES
+r; CSTRING; C64, VIC20, PET
+r; ASM; C64, VIC20, PET, NES
+r; INCSID; C64
+r; INTERRUPT; C64, VIC20, PET, NES
+r; ELSE; C64, VIC20, PET, NES
+r; OR; C64, VIC20, PET, NES
+r; AND; C64, VIC20, PET, NES
+r; POINTER; C64, VIC20, PET, NES
+r; AT; C64, VIC20, PET, NES
+r; INCLUDE; C64, VIC20, PET, NES
+r; USERDATA; C64, VIC20, PET, NES
+r; IFDEF; C64, VIC20, PET, NES
+r; DEFINE; C64, VIC20, PET, NES
+r; IFNDEF; C64, VIC20, PET, NES
+r; ENDIF; C64, VIC20, PET, NES
+r; OFFPAGE; C64, VIC20, PET, NES
+r; ONPAGE; C64, VIC20, PET, NES
+r; STEP; C64, VIC20, PET, NES
+r; UNROLL; C64, VIC20, PET, NES
+r; STARTBLOCK; C64, VIC20, PET, NES
+r; ENDBLOCK; C64, VIC20, PET, NES
+r; IGNOREMETHOD; C64, VIC20, PET, NES
+
+
+
+
 
 

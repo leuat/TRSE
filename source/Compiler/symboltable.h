@@ -29,7 +29,7 @@
 #include "pvar.h"
 #include "token.h"
 #include "syntax.h"
-
+#include "source/LeLib/util/util.h"
 class Symbol {
 public:
     QString m_name;

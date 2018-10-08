@@ -77,6 +77,7 @@ public:
     //QVector<BuiltInFunction> builtinFunctions;
     QMap<QString, BuiltInFunction> builtInFunctions;
     enum System {C64, VIC20, PET, NES};
+    QString m_syntaxData; // File syntax data
     System m_currentSystem;
     int m_startAddress = 0x800;
     Syntax();
@@ -84,6 +85,7 @@ public:
     void SetupReservedWords();
     void SetupBuiltinFunctions(System s);
     void SetupKeys();
+    void LoadSyntaxData();
 
     static System SystemFromString(QString s) {
         if (s.toLower()=="c64")

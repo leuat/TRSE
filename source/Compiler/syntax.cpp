@@ -36,6 +36,8 @@ void Syntax::Init(System s)
         m_startAddress = 0x1000;
     if (s==C64)
         m_startAddress = 0x0800;
+    LoadSyntaxData();
+
     SetupReservedWords();
     SetupBuiltinFunctions(s);
     SetupKeys();
@@ -49,80 +51,48 @@ void Syntax::Init(System s)
 void Syntax::SetupReservedWords()
 {
     reservedWords.clear();
-    reservedWords.append(Token(TokenType::BEGIN,"BEGIN"));
-    reservedWords.append(Token(TokenType::END,"END"));
-    reservedWords.append(Token(TokenType::VAR,"VAR"));
-    reservedWords.append(Token(TokenType::PROGRAM,"PROGRAM"));
-    reservedWords.append(Token(TokenType::DIV,"DIV"));
-    reservedWords.append(Token(TokenType::INTEGER,"INTEGER"));
-    reservedWords.append(Token(TokenType::REAL,"REAL"));
-    reservedWords.append(Token(TokenType::PROCEDURE,"PROCEDURE"));
-    //reservedWords.append(Token(TokenType::WRITELN,"WRITELN"));
-    reservedWords.append(Token(TokenType::IF,"IF"));
-    reservedWords.append(Token(TokenType::THEN,"THEN"));
-    reservedWords.append(Token(TokenType::FOR,"FOR"));
-    reservedWords.append(Token(TokenType::TO,"TO"));
-    reservedWords.append(Token(TokenType::DO,"DO"));
-    reservedWords.append(Token(TokenType::WHILE,"WHILE"));
-    reservedWords.append(Token(TokenType::ARRAY,"ARRAY"));
-    reservedWords.append(Token(TokenType::OF,"OF"));
-    reservedWords.append(Token(TokenType::BYTE,"BYTE"));
-    reservedWords.append(Token(TokenType::INCBIN,"INCBIN"));
-//    reservedWords.append(Token(TokenType::RESERVE,"RESERVE"));
-    reservedWords.append(Token(TokenType::STRING,"STRING"));
-    reservedWords.append(Token(TokenType::CSTRING,"CSTRING"));
-    reservedWords.append(Token(TokenType::ASM,"ASM"));
-    reservedWords.append(Token(TokenType::INCSID,"INCSID"));
-    reservedWords.append(Token(TokenType::INTERRUPT,"INTERRUPT"));
-    reservedWords.append(Token(TokenType::ELSE,"ELSE"));
-    reservedWords.append(Token(TokenType::OR,"OR"));
-    reservedWords.append(Token(TokenType::AND,"AND"));
-    reservedWords.append(Token(TokenType::POINTER,"POINTER"));
-    reservedWords.append(Token(TokenType::AT,"AT"));
-    reservedWords.append(Token(TokenType::INCLUDE,"INCLUDE"));
-    reservedWords.append(Token(TokenType::USERDATA,"USERDATA"));
-    reservedWords.append(Token(TokenType::DEFINE,"DEFINE"));
-    reservedWords.append(Token(TokenType::IFDEF,"IFDEF"));
-    reservedWords.append(Token(TokenType::IFNDEF,"IFNDEF"));
-    reservedWords.append(Token(TokenType::ENDIF,"ENDIF"));
-    reservedWords.append(Token(TokenType::OFFPAGE,"OFFPAGE"));
-    reservedWords.append(Token(TokenType::ONPAGE,"ONPAGE"));
-    reservedWords.append(Token(TokenType::STEP,"STEP"));
-    reservedWords.append(Token(TokenType::UNROLL,"UNROLL"));
-    reservedWords.append(Token(TokenType::STARTBLOCK,"STARTBLOCK"));
-    reservedWords.append(Token(TokenType::ENDBLOCK,"ENDBLOCK"));
-    reservedWords.append(Token(TokenType::IGNOREMETHOD,"IGNOREMETHOD"));
-
-//    reservedWords.append(Token(TokenType::LOOPX,"LOOPX"));
-//    reservedWords.append(Token(TokenType::LOOPY,"LOOPY"));
-
-
-}
-
-void Syntax::SetupBuiltinFunctions(System system)
-{
-    builtInFunctions.clear();
-    QString data;
-
-
-
-    QFile file(":resources/text/builtinmethods.txt");
-    file.open(QFile::ReadOnly | QFile::Text);
-    data = file.readAll();
-    file.close();
-
     QString currentSystem = StringFromSystem(m_currentSystem).toLower();
-
-    for (QString s: data.split('\n')) {
+    for (QString s: m_syntaxData.split('\n')) {
         s= s.simplified();
         if (s.count()==0) continue;
         if (s.startsWith("#")) continue;
         s=s.replace(" ", "");
 
         QStringList data = s.split(";");
-        QString method = data[0].toLower();
-        QString system = data[1].toLower();
-        QStringList params = data[2].toLower().split(",");
+        if (data[0].toLower()!="r")
+            continue;
+        QString word = data[1].toLower();
+        QString system = data[2].toLower();
+
+        if (system.contains(currentSystem)) {
+
+            reservedWords.append(Token(TokenType::getType(word), word.toUpper()));
+        }
+
+     }
+
+}
+
+void Syntax::SetupBuiltinFunctions(System system)
+{
+    builtInFunctions.clear();
+
+
+
+    QString currentSystem = StringFromSystem(m_currentSystem).toLower();
+
+    for (QString s: m_syntaxData.split('\n')) {
+        s= s.simplified();
+        if (s.count()==0) continue;
+        if (s.startsWith("#")) continue;
+        s=s.replace(" ", "");
+
+        QStringList data = s.split(";");
+        if (data[0].toLower()!="m")
+            continue;
+        QString method = data[1].toLower();
+        QString system = data[2].toLower();
+        QStringList params = data[3].toLower().split(",");
 
         // Build parameter list
         QList<BuiltInFunction::Type> paramList;
@@ -209,6 +179,16 @@ void Syntax::SetupKeys()
     m_c64keys[0xEE] = C64Key("COMMODORE","KEY_COMMODORE",0xEE , row[7], column[5]);
     m_c64keys[0x3a] = C64Key(":","KEY_COLON",0x3a , row[5], column[5]);
     m_c64keys[0x3d] = C64Key("=","KEY_EQUALS",0x3d , row[6], column[5]);
+
+}
+
+void Syntax::LoadSyntaxData()
+{
+    QFile file(":resources/text/builtinmethods.txt");
+    file.open(QFile::ReadOnly | QFile::Text);
+    m_syntaxData = file.readAll();
+    file.close();
+
 
 }
 

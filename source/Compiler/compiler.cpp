@@ -191,9 +191,9 @@ void Compiler::HandleError(FatalErrorException fe, QString e)
     //linenr = fe.linenr;
 
 
-    QString line = "on line: " + QString::number(linenr+1);
+    QString line = " on line: " + QString::number(linenr+1);
     if (file!="")
-        msg+="In file : " + file + "\n";
+        msg+=" in file : " + file + "\n";
 
     fe.file=file;
 
