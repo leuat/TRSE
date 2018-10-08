@@ -142,6 +142,15 @@ m; WaitNoRaster; C64; b
 #
 
 
+
+
+# VIC 20-specific constants
+c; SCREEN_COL_LOC; VIC20; a; $9600
+c; SCREEN_CHAR_LOC; VIC20; a; $1E00
+
+
+
+# C64-specific constants
 c; SCREEN_BG_COL; C64; a; $D020
 c; SCREEN_FG_COL; C64; a; $D021
 c; SCREEN_CHAR_LOC; C64; a; $0400 
