@@ -339,6 +339,7 @@ void NodeBinOP::RightIsPureNumericMulDiv16bit(Assembler *as) {
     as->Term();
 
     varName = as->StoreInTempVar("int_shift", "word");
+
     as->Asm("sty "+varName);
     as->Asm("sta "+varName+"+1");
     command = "\t lsr " + varName +"+1"+ "\n";
@@ -350,7 +351,7 @@ void NodeBinOP::RightIsPureNumericMulDiv16bit(Assembler *as) {
 
     as->Asm("lda " + varName);
 
-
+    as->PopTempVar();
 }
 
 void NodeBinOP::HandleMulDiv(Assembler *as) {
@@ -468,7 +469,7 @@ void NodeBinOP::HandleVarBinopB16bit(Assembler *as) {
 
 
     as->PopLabel("wordAdd");
-
+    as->PopTempVar();
     //        as->PopLabel("rightvarInteger");
     //      as->PopLabel("jmprightvarInteger");
 
@@ -540,7 +541,7 @@ void NodeBinOP::HandleGenericBinop16bit(Assembler *as) {
 
     //as->PopLabel("rightvarInteger");
     as->PopLabel("jmprightvarInteger");
-
+    as->PopTempVar();
 }
 
 void NodeBinOP::HandleRestBinOp(Assembler *as) {
@@ -582,6 +583,7 @@ void NodeBinOP::HandleRestBinOp(Assembler *as) {
 
             as->BinOP(m_op.m_type);
             as->Term(lbl,true);
+            as->PopTempVar();
             //as->PopLabel("rightvar");
             //as->PopLabel("jmprightvar");
         }

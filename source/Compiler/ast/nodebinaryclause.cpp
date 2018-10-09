@@ -57,6 +57,7 @@ void NodeBinaryClause::BuildToCmp(Assembler *as)
         m_right->Build(as);
         as->Term();
         as->Asm("cmp " + tmpVar);
+        as->PopTempVar();
     }
 
 
@@ -240,6 +241,8 @@ void NodeBinaryClause::LogicalClause(Assembler *as)
     if (m_op.m_type==TokenType::OR)
         as->Asm("ora " + tmpVar);
 
+
+    as->PopTempVar();
     //as->Asm("lda " + tmpVar);
 
     // Done comparing!

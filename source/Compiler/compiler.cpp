@@ -74,7 +74,7 @@ bool Compiler::Build(Compiler::Type type, QString project_dir, CIniFile& ini, CI
     if (m_assembler==nullptr)
         return false;
 
-    m_assembler->InitZeroPointers(pIni.getStringList("zeropages"));
+    m_assembler->InitZeroPointers(pIni.getStringList("zeropages"),pIni.getStringList("temp_zeropages"));
     m_assembler->m_zeropageScreenMemory = pIni.getString("zeropage_screenmemory");
     m_assembler->m_replaceValues["@DECRUNCH_ZP1"] = pIni.getString("zeropage_decrunch1");
     m_assembler->m_replaceValues["@DECRUNCH_ZP2"] = pIni.getString("zeropage_decrunch2");

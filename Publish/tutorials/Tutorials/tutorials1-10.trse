@@ -1,4 +1,3 @@
-zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $47
 zeropage_decrunch2 = $48
@@ -8,6 +7,8 @@ zeropage_internal1 = $4c
 zeropage_internal2 = $4e
 zeropage_internal3 = $50
 zeropage_internal4 = $52
-open_files = ,tutorial_23_sqrt_effect.asm, tutorial_23_sqrt_effect.ras, tutorial_5_raster_interrupts.ras, tuorial_2_random.ras, tutorial_9_scrolling_and_sprites.ras
+open_files = ,tutorial_16_megascroller.ras
 system = C64
+temp_zeropages = ,$54, $56, $58, $5A
 project_path = /home/leuat/code/TRSE/Publish/tutorials/Tutorials/
+zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68

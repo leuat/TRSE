@@ -23,6 +23,7 @@
 #include "source/Compiler/syntax.h"
 
 QString AsmMOS6502::m_defaultZeroPointers = "$02, $04, $08, $16, $0B,$0D, $10, $12, $22,$24, $68";
+QString AsmMOS6502::m_defaultTempZeroPointers = "$54, $56, $58, $5A";
 
 
 AsmMOS6502::AsmMOS6502() :Assembler()
@@ -233,7 +234,7 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal)
         Write(s);
         return;
     }
-    qDebug() << initVal.count();
+//    qDebug() << initVal.count();
     QString curStr = initVal[curLin];
     while (!done) {
 
@@ -249,7 +250,7 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal)
         }*/
         if (curIdx<curStr.length()) {
             QString c = curStr[curIdx].toUpper();
-            qDebug() << c;
+            //qDebug() << c;
             if (m_cstr.contains(c)) {
                 uchar sc = m_cstr[c].m_screenCode;
                 s+="$"+QString::number(sc,16);
@@ -280,6 +281,7 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal)
         Write(s + "0");
     else Write("\tdc.b\t0 ");
 }
+
 
 void AsmMOS6502::BeginBlock()
 {
@@ -426,6 +428,24 @@ bool AsmMOS6502::CheckZPAvailability()
 
 QString AsmMOS6502::StoreInTempVar(QString name, QString type)
 {
+    if (m_zpStack.count()<m_tempZeroPointers.count()) {
+       // qDebug() << "B" << m_tempZeroPointers.count();
+
+        int i = m_zpStack.count();
+        m_zpStack.append(m_tempZeroPointers[i]);
+//        qDebug() << name << " INCREASE TO " << m_zpStack.count();
+
+        QString tmpVar = NewLabel(name+"_var");
+        QString labelVar = tmpVar + " = " + m_zpStack.last();
+        Label(labelVar);
+//        m_tempVars << labelVar;
+        Asm("sta " + tmpVar);
+        PopLabel(name+ "_var");
+        return tmpVar;
+
+    }
+
+   // qDebug() << "Using reglar variables: " << m_zpStack.count();
     QString tmpVar = NewLabel(name+"_var");
     QString labelVar = tmpVar + "\t."+type+"\t0 ";
     m_tempVars << labelVar;
@@ -433,6 +453,16 @@ QString AsmMOS6502::StoreInTempVar(QString name, QString type)
     PopLabel(name+ "_var");
     return tmpVar;
 }
+
+void AsmMOS6502::PopTempVar()
+{
+    if (m_zpStack.count()>0) {
+        m_zpStack.removeLast();
+    }
+//    else
+  //      ErrorHandler::e.Error("COMPILER ERROR: Assembler::PopTempVar Trying to pop tempvar from zero");
+}
+
 
 void AsmMOS6502::Writeln()
 {
@@ -927,7 +957,7 @@ void AsmMOS6502::InitMosOpCycles()
 
 
 
-void AsmMOS6502::InitZeroPointers(QStringList lst)
+void AsmMOS6502::InitZeroPointers(QStringList lst, QStringList tmpList)
 {
     m_zeroPointers.clear();
     for (QString s: lst) {
@@ -940,4 +970,14 @@ void AsmMOS6502::InitZeroPointers(QStringList lst)
         if (s!="" && ok)
             m_zeroPointers.append(s);
     }
+    m_tempZeroPointers.clear();
+
+
+    for (QString zp : tmpList) {
+        if (zp!="") {
+            m_tempZeroPointers.append(zp);
+        }
+    }
+
+
 }

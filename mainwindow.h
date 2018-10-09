@@ -78,6 +78,9 @@ public:
            m_ini.setStringList("zeropages", AsmMOS6502::m_defaultZeroPointers.split(","));
 
 
+        if (!m_ini.contains("temp_zeropages"))
+           m_ini.setStringList("temp_zeropages", AsmMOS6502::m_defaultTempZeroPointers.split(","));
+
         if (!m_ini.contains("zeropage_screenmemory"))
             m_ini.setString("zeropage_screenmemory","$fe");
 
@@ -178,6 +181,7 @@ public:
     QString m_iniFileName = "fluff64.ini";
     QString m_fontFamily;
     QPalette m_defaultPalette;
+    QString m_currentPath;
     QVector<TRSEDocument*> m_documents;
 
 

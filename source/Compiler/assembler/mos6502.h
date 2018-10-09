@@ -83,10 +83,10 @@ public:
     QMap<QString, MOSOperandCycle> m_opCycles;
 
     static QString m_defaultZeroPointers;
+    static QString m_defaultTempZeroPointers;
     QMap<QString, CStringItem> m_cstr;
 
 
-    QVector<QString> m_zeroPointers;
     int m_curZeroPointer=0;
 
     QVector<int> m_removeLines;
@@ -110,13 +110,14 @@ public:
     void EndProgram() override;
     void DeclareArray(QString name, QString type, int count, QStringList lst, QString pos) override;
     void InitMosOpCycles();
-    void InitZeroPointers(QStringList lst) override;
+    void InitZeroPointers(QStringList lst, QStringList tmpList) override;
 
     void VarDeclHeader();
     void DeclareVariable(QString name, QString type, QString initval) override;
     void DeclareString(QString name, QStringList initval) override;
     void DeclareCString(QString name, QStringList initval) override;
 
+    void PopTempVar() override;
     void BeginBlock() override;
     void EndBlock() override;
     void ApplyTerm() override;

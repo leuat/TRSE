@@ -1116,7 +1116,7 @@ void NodeBuiltinMethod::SetSpritePos(Assembler *as)
         as->Asm("tay");
         LoadVar(as, 1); // In case we load from an array
         as->Asm("sta $D000,y");
-
+        as->PopTempVar();
 
     }
 
@@ -2676,6 +2676,7 @@ void NodeBuiltinMethod::TransformColors(Assembler *as)
         as->Asm("bne " + loopInner);
         as->PopLabel("transform_loop_outer");
     }
+    as->PopTempVar();
 }
 
 void NodeBuiltinMethod::ToggleBit(Assembler *as)
@@ -2706,7 +2707,6 @@ void NodeBuiltinMethod::ToggleBit(Assembler *as)
     as->Term();
     as->Asm("tax");
     QString var = BitShiftX(as);
-
     if (toggle->m_val==0) { // turn off}
         as->Asm("lda #$FF");
         as->Asm("eor " + var);
@@ -2720,7 +2720,7 @@ void NodeBuiltinMethod::ToggleBit(Assembler *as)
         as->Asm("ora " +var);
         SaveVar(as,0);
     }
-
+    as->PopTempVar();
     // Else, perform the full shit...
 }
 
@@ -2762,7 +2762,7 @@ void NodeBuiltinMethod::GetBit(Assembler *as)
 
     as->PopLabel("getbit_false");
 
-
+    as->PopTempVar();
 //    ErrorHandler::e.Error("NOT IMPLEMENTED (getbit with number)");
 
     // do full shit

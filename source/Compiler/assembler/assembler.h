@@ -146,6 +146,9 @@ public:
     QMap<QString, QString> m_replaceValues;
 
     QStringList m_internalZP;
+    QVector<QString> m_zeroPointers; // org zp input
+    QVector<QString> m_tempZeroPointers; // org temp zp input
+    QVector<QString> m_zpStack; // temp zp stack
 
     Appendix* m_currentBlock = nullptr;
 
@@ -195,7 +198,7 @@ public:
     virtual QString PushZeroPointer() { return ""; }
     virtual void PopZeroPointer() {}
     virtual void PopAllZeroPointers() {}
-    virtual void InitZeroPointers(QStringList lst) {}
+    virtual void InitZeroPointers(QStringList lst, QStringList lst2) {}
 
     void VarDeclEnds() {
         if (m_varDeclEndsLineNumber == 0) // Only assign if not previously
@@ -250,6 +253,7 @@ public:
     virtual void LoadVariable(QString var) {}
     void Connect();
     virtual QString StoreInTempVar(QString name, QString type="byte")  { return name;}
+    virtual void PopTempVar() {}
     virtual void StartForLoop(QString a, QString b) {}
     virtual void EndForLoop(QString endVal) {}
     void Asm(QString s, QString comment="");

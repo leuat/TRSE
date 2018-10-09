@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>660</width>
-    <height>489</height>
+    <width>729</width>
+    <height>555</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,7 +43,7 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -102,8 +102,8 @@
           <rect>
            <x>40</x>
            <y>20</y>
-           <width>551</width>
-           <height>191</height>
+           <width>611</width>
+           <height>221</height>
           </rect>
          </property>
          <property name="title">
@@ -249,6 +249,20 @@
               </item>
              </layout>
             </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <item>
+               <widget class="QLabel" name="label_16">
+                <property name="text">
+                 <string>Temp vars zeropages</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="leTempZP"/>
+              </item>
+             </layout>
+            </item>
            </layout>
           </item>
          </layout>
@@ -257,9 +271,9 @@
          <property name="geometry">
           <rect>
            <x>50</x>
-           <y>230</y>
-           <width>541</width>
-           <height>141</height>
+           <y>270</y>
+           <width>601</width>
+           <height>181</height>
           </rect>
          </property>
          <property name="html">

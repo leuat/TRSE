@@ -66,7 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 #endif
 
-
+    m_currentPath = "";
     ui->lblCommodoreImage->setAlignment(Qt::AlignCenter);
 
    int id= QFontDatabase::addApplicationFont(":resources/fonts/c64.ttf");
@@ -278,6 +278,8 @@ void MainWindow::SetupFileList()
 
 void MainWindow::RefreshFileList()
 {
+    if (m_currentPath=="")
+        return;
     fileSystemModel = new CustomFileSystemModel(this);
     QString rootPath= getProjectPath();
     if (rootPath=="") {
@@ -439,9 +441,15 @@ void MainWindow::CloseAll()
 
 QString MainWindow::getProjectPath()
 {
-    return m_currentProject.m_ini.getString("project_path");
+    return m_currentPath + QDir::toNativeSeparators("/");
+
 }
 
+/*QString MainWindow::getProjectPath()
+{
+    return m_currentProject.m_ini.getString("project_path");
+}
+*/
 
 void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
 {
@@ -679,7 +687,8 @@ void MainWindow::on_actionNew_project_triggered()
         path+=splt[i] + "/";
 
     m_currentProject = TRSEProject();
-    m_currentProject.m_ini.setString("project_path", path);
+    m_currentPath = path;
+    //m_currentProject.m_ini.setString("project_path", path);
     m_currentProject.m_filename = filename;
     m_currentProject.Save();
     RefreshFileList();
@@ -713,6 +722,8 @@ void MainWindow::LoadProject(QString filename)
 {
     CloseAll();
     m_currentProject.Load(filename);
+    m_currentPath = QFileInfo(QFile(filename)).absolutePath();
+    qDebug() << m_currentPath;
     VerifyProjectDefaults();
 //    m_iniFile.setString("project_path", getProjectPath());
     m_iniFile.addStringList("recent_projects", filename, true);

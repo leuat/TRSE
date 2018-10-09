@@ -1,5 +1,5 @@
 program MegaScroller;
-
+//
 var
 	// Various
 	c,val,time,i, scroll,scrollsplit,val2,k : byte = 0;
