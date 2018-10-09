@@ -605,8 +605,12 @@ void AsmMOS6502::Optimise()
     OptimisePassStaLda();
     OptimisePassLdx("x");
     OptimisePassLdx("y");
+
     OptimisePassLdaTax("x");
     OptimisePassLdaTax("y");
+
+    OptimisePassLdx("a");
+
     OptimiseJumps();
 }
 
@@ -652,24 +656,57 @@ void AsmMOS6502::OptimisePassLdx(QString x)
                 //qDebug() << l0;
                 int k=i;
                 int cnt = 0;
+                int curCnt = 0;
+                int ll=i;
                 while (!done) {
                     QString l1 = getNextLine(k,j);
                     k=j;
-                    if (l0==l1) {
-                        //qDebug () << "Removing because equal: " << l0 << ", " << l1;
+                    QString op2 = getToken(l1,1);
+                    QString op = getToken(l1,0);
+
+                    if (l0==l1 && !op2.startsWith("(") && !op2.contains(",")) {
+                        if (x=="a")
+                        qDebug () << "Removing because equal: " << l0 << ", " << l1;
                         m_removeLines.append(j);
+                        curCnt++;
                         //qDebug() << "Removing: " << l1 << " on line " << j;
                         continue;
                     }
-                    QString op = getToken(l1,0);
                     //qDebug() << "curop:" << op;
                     // Changex in x
+                    if (x=="x" || x=="y")
                     if (op==("ld"+x) || op==("ta"+x) || op=="jmp" || op=="rts" || op=="jsr" ||
-                            op==("in" +x) || op==("de"+x)|| op.length()!=3 ) {
+                            op==("in" +x) || op==("de"+x)|| op.length()!=3 )
 //                        op==("in" +x) || op==("de"+x)|| op==("sta")|| op.length()!=3 ) {
                         //qDebug() << "Done because: " << l1;
+                        done=true;
+
+                    ll++;
+
+                     if (x=="a") {
+                        if (op==("lda") || op==("txa") || op==("tya") || op=="jmp" || op=="rts" || op=="jsr" ||
+                                op==("ina") || op==("dea")|| op.length()!=3  || op==("adc") || op==("sbc") || op==("cmp")
+                                || op=="clc" || op=="sec" || op=="asl" || op=="rol" || op=="ror" || op=="lsr"
+                                || op=="bcc" || op=="bcs" || op=="pla" || op=="beq" || op=="bpl" || op=="bne"
+                                || op=="and" || op=="ora" || op=="eor" || op=="bit"
+                                )
+
+//                          if (!(op[2] == "x" || op[2] == "y" || op[2]=="sta"))
+
                         done = true;
-                    }
+                        if (curCnt!=0 && done==true) {
+                            for (int kk=i;kk<ll;kk++) {
+                                QString ss =QString::number(kk) +("   " + l0)+ " : " +getLine(kk);// << "  :  " << l1;
+                                if (kk-i==curCnt-1)
+                                    ss+="  << HER";
+                                qDebug() << ss;
+                            }
+
+                            qDebug() << "**** DONE";
+                     }
+
+                     }
+
 
                 }
                 if (m_removeLines.count()!=0)
