@@ -1562,7 +1562,7 @@ void NodeBuiltinMethod::DisableNMI(Assembler *as)
 
 void NodeBuiltinMethod::KeyPressed(Assembler *as)
 {
-    as->Comment("Keypressed test");
+    as->Comment("Keypressed");
 
     NodeNumber* num = dynamic_cast<NodeNumber*>(m_params[0]);
     if (num==nullptr)

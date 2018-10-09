@@ -1,9 +1,12 @@
-<p style="text-align: center; font-size: 15px;">&nbsp;</p>
-<h1 style="text-align: center;">Welcome to Aconvert.com Document Editor!</h1>
-<p>&nbsp;</p>
-<p>Welcome to Aconvert.com document editor! Please note this simple online document editor is inaccurate. We do not recommend using it to edit complicate document files.</p>
-<h2>How to use it?</h2>
-<ol>
-<li>&nbsp;Click "Load File" button to select a document file on your computer. This document editor supports document formats <a href="../../format/html/">HTML</a>, <a href="../../format/doc/">DOC</a>, <a href="../../format/docx/">DOCX</a>, <a href="../../format/xls/">XLS</a>, <a href="../../format/xlsx/">XLSX</a>, <a href="../../format/ppt/">PPT</a>, <a href="../../format/pptx/">PPTX</a>, <a href="../../format/txt/">TXT</a>, <a href="../../format/rtf/">RTF</a>, <a href="../../format/odt/">ODT</a>, <a href="../../format/ods/">ODS</a> and <a href="../../format/odp/">ODP</a>.</li>
-<li>&nbsp;Click "Save File" button to save content to HTML5 file. The saved files will be listed at the bottom. You can use our online converter to convert saved HTML file to other format such as PDF, DOC or TXT etc.</li>
-</ol>
+<p>Pokes the specified address in parameter 1 + parameter 2 with&nbsp; the value given in parameter 3.</p>
+<p><strong>Examples:</strong></p>
+<p><code>poke(^$D020, 0, RED); // Red border color</code></p>
+<p><code>
+poke(my_array, 3, 10); // Set 3rd element of array to 10.
+// Same as:
+my_array[3] := 10;
+</code><</p>
+<p><code>
+for i:=0 to b do 
+   poke(my_data, i, i*2);
+   </code></p>

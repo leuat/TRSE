@@ -54,7 +54,7 @@ class DialogHelp : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogHelp(QWidget *parent, QString search);
+    explicit DialogHelp(QWidget *parent, QString search, QPalette pal);
     ~DialogHelp();
 
     QVector<HelpType> m_helpTypes;
@@ -68,9 +68,6 @@ public:
     void LoadItem(QString word);
     void FillTopics();
 
-    void pal(QPalette p) {
-        setPalette(p);
-    }
 
     void AppendItem(QListWidget* w, QString s);
 

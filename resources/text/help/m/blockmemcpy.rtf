@@ -1,0 +1,7 @@
+<p>Copies 256* (parameter 3) bytes of memory from source address (parameter 1) to destination address (parameter 2).</p>
+<p><b>Example:</b></p>
+<code>
+// copies 256*8 = $800 bytes of data from a charset data location to somewhere else
+BlockMemCpy(my_charset, ^$2000,8);
+</code>
+<p>Note that the last parameter must be a pure number.</p>

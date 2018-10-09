@@ -22,5 +22,11 @@
         <file>resources/text/syntax.txt</file>
         <file>resources/code/init_decompress.asm</file>
         <file>resources/code/log2_table.asm</file>
+        <file>resources/text/help/m/peek.rtf</file>
+        <file>resources/text/help/m/togglebit.rtf</file>
+        <file>resources/text/help/m/getbit.rtf</file>
+        <file>resources/text/help/m/enableallram.rtf</file>
+        <file>resources/text/help/m/memcpy.rtf</file>
+        <file>resources/text/help/m/blockmemcpy.rtf</file>
     </qresource>
 </RCC>

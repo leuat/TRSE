@@ -112,7 +112,7 @@ bool Compiler::Build(Compiler::Type type, QString project_dir, CIniFile& ini, CI
     m_assembler->Label("EndSymbol");
     m_assembler->Connect();
     if (ini.getdouble("post_optimize")==1.0)
-        m_assembler->Optimise();
+        m_assembler->Optimise(pIni);
     CleanupCycleLinenumbers();
     CleanupBlockLinenumbers();
     return true;

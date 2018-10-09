@@ -51,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     TRSEDocument::m_defaultPalette = m_defaultPalette;
 
+
     //QObject::connect(m_updateThread, SIGNAL(valueChanged()), this, SLOT (Update()));
     m_updateThread = new WorkerThread();
     connect(m_updateThread, SIGNAL(updateImageSignal()), this, SLOT(updateImage()));
@@ -804,7 +805,7 @@ void MainWindow::on_actionClose_current_project_triggered()
 
 void MainWindow::on_actionHelp_F1_triggered()
 {
-    DialogHelp* dh = new DialogHelp(this, "");
+    DialogHelp* dh = new DialogHelp(this, "", m_defaultPalette);
     dh->show();
 }
 

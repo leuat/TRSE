@@ -24,6 +24,7 @@
 
 #include "source/Compiler/assembler/assembler.h"
 #include "source/LeLib/util/util.h"
+#include "source/LeLib/util/cinifile.h"
 
 class CStringItem {
 public:
@@ -155,7 +156,7 @@ public:
     void StartForLoop(QString a, QString b) override;
     void EndForLoop(QString endVal) override;
 
-    void Optimise() override;
+    void Optimise(CIniFile& ini) override;
     void OptimisePassStaLda();
     void OptimisePassLdx(QString x);
     void OptimisePassLdaTax(QString x);

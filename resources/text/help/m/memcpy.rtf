@@ -1,0 +1,11 @@
+<p>Copies 0-255 (parameter 4) bytes of memory from source address (parameter 1 + parameter 2) to destination address (parameter 3).</p>
+<p><b>Example:</b></p>
+<code>
+// copies 40 bytes of data from my_data to the first row of the screen (bank 0)
+MemCpy(my_data, 0, ^$0400,40);
+</code>
+<p>MemCpy also supports copying with zero pages:</p>
+<code>
+// copies 160 bytes = 4 rows from color memory to some user-defined pointer
+MemCpy(^$D800, 0, my_ptr, 160);
+</code>

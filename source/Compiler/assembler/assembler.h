@@ -30,6 +30,7 @@
 #include "source/Compiler/token.h"
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/symboltable.h"
+#include "source/LeLib/util/cinifile.h"
 
 class MemoryBlock {
   public:
@@ -258,7 +259,7 @@ public:
     virtual void EndForLoop(QString endVal) {}
     void Asm(QString s, QString comment="");
     void Label(QString s);
-    virtual void Optimise() {}
+    virtual void Optimise(CIniFile& ini) {}
 
     virtual void IncludeFile(QString file) {}
     void ClearTerm() {

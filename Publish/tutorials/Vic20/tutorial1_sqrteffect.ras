@@ -10,8 +10,6 @@ program Tutorial_1_sqrteffect;
 */
 // Place to dump generated data.
 @define dataloc $1600
-// VIC-20 background color register
-@define colorReg $900F
 
 @userdata "$1600" "$17FA" "Generated Table"
 
@@ -82,7 +80,7 @@ end;
 
 
 begin
-	poke(^@colorReg,0,%00001000);
+	poke(SCREEN_BG_COLOR,0,%00001000);
 	time:=0;
 	
 	Calculate();

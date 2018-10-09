@@ -523,7 +523,7 @@ void NodeBinOP::HandleGenericBinop16bit(Assembler *as) {
     }
 
     as->Label(lblword);
-    as->Asm("sta "+lbl + " ;wtf");
+    as->Asm("sta "+lbl);
     as->Comment("High-bit binop");
     as->Asm("tya");
 

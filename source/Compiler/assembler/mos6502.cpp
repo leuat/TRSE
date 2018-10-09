@@ -599,7 +599,7 @@ void AsmMOS6502::EndForLoop(QString endVal)
 
 }
 
-void AsmMOS6502::Optimise()
+void AsmMOS6502::Optimise(CIniFile& ini)
 {
     m_totalOptimizedLines = 0;
     OptimisePassStaLda();

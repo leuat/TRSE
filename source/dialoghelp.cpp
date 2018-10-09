@@ -26,7 +26,7 @@
 #include <QFile>
 #include <QDebug>
 
-DialogHelp::DialogHelp(QWidget *parent, QString txt) :
+DialogHelp::DialogHelp(QWidget *parent, QString txt, QPalette pal) :
     QDialog(parent),
     ui(new Ui::DialogHelp)
 {
@@ -42,7 +42,13 @@ DialogHelp::DialogHelp(QWidget *parent, QString txt) :
     LoadItems(0);
     ui->leSearch->setText(txt);
 
+/*    setPalette(pal);
+    this->setPalette(pal);
 
+
+    setStyleSheet("background-color:WHITE");
+*/
+//    QApplication::setPalette(pal, "DialogHelp");
 
 }
 
@@ -112,7 +118,7 @@ void DialogHelp::LoadItem(QString findword)
         if (type=="m")
          {
                 QStringList params = data[3].toLower().split(",");
-                QString val = "<font size=+2><b>"+word + "(";
+                QString val = "<h2>"+word + "(";
                 for (QString s: params) {
                     if (s=="b") val+="[byte variable]";
                     if (s=="i") val+="[integer variable]";
@@ -124,7 +130,7 @@ void DialogHelp::LoadItem(QString findword)
 
                 }
                 val.remove(val.length()-2,2);
-                val+=");</font></b><br><br>";
+                val+=");</h2>";
 
                 QString fn =":resources/text/help/"+type+"/"+word.toLower()+".rtf";
                 qDebug() << "looking for "<< fn;
@@ -133,6 +139,8 @@ void DialogHelp::LoadItem(QString findword)
                     f.open(QFile::ReadOnly | QFile::Text);
                     QString s = f.readAll();
                     f.close();
+                    s=s.replace("<code>","<pre><code><font color=\"#E0B050\">");
+                    s=s.replace("</code>","</font></code></pre>");
                     val+=s;
 
                 }
