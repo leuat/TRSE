@@ -442,7 +442,7 @@ void MainWindow::CloseAll()
 
 QString MainWindow::getProjectPath()
 {
-    return m_currentPath + QDir::toNativeSeparators("/");
+    return m_currentPath + "/";//QDir::toNativeSeparators("/");
 
 }
 
@@ -531,20 +531,22 @@ void MainWindow::on_actionRas_source_file_triggered()
 
     if (filename=="")
         return;
-    if (!filename.toLower().endsWith(".ras"))
-        return;
+    if (!filename.toLower().endsWith(".ras")) {
+        filename = filename + ".ras";
+    }
     QString orgFile;
     //filename = filename.split("/").last();
     filename = filename.toLower().remove(getProjectPath().toLower());
 
-    qDebug() << filename;
+//    qDebug() << filename;
+  //  qDebug() << getProjectPath().toLower();
     QString fn = getProjectPath() + filename;
     if (QFile::exists(fn))
         QFile::remove(fn);
     QFile file(fn);
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream s(&file);
-        s<< "program spankme;\n";
+        s<< "program MyProgram;\n";
         s<< "var  \n";
         s<< "   index: byte; \n";
         s<< "begin\n\n";

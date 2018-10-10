@@ -192,6 +192,11 @@ public:
     void PushBlock(int ln);
     void PopBlock(int ln);
 
+
+    virtual void InitZeroPointers(QStringList list1, QStringList list2) {
+
+    }
+
     virtual int getLineCount() {return m_source.count();}
     int CountCycles(QString s);
     virtual int CountInstructionCycle(QStringList s) {return 0;}
@@ -199,7 +204,6 @@ public:
     virtual QString PushZeroPointer() { return ""; }
     virtual void PopZeroPointer() {}
     virtual void PopAllZeroPointers() {}
-    virtual void InitZeroPointers(QStringList lst, QStringList lst2) {}
 
     void VarDeclEnds() {
         if (m_varDeclEndsLineNumber == 0) // Only assign if not previously
