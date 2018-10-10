@@ -527,7 +527,7 @@ void MainWindow::on_actionRas_source_file_triggered()
     QFileDialog dialog;
     dialog.setFileMode(QFileDialog::AnyFile);
     QString f = "Ras Files (*.ras)";
-    QString filename = dialog.getSaveFileName(NULL, "Create New File",getProjectPath(),f);
+    QString filename = dialog.getSaveFileName(nullptr, "Create New File",getProjectPath(),f);
 
     if (filename=="")
         return;
@@ -537,7 +537,7 @@ void MainWindow::on_actionRas_source_file_triggered()
     //filename = filename.split("/").last();
     filename = filename.toLower().remove(getProjectPath().toLower());
 
-    //qDebug() << filename;
+    qDebug() << filename;
     QString fn = getProjectPath() + filename;
     if (QFile::exists(fn))
         QFile::remove(fn);
