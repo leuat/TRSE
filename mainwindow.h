@@ -113,6 +113,14 @@ public:
         if (!m_ini.contains("zeropage_internal4"))
             m_ini.setString("zeropage_internal4","$52");
 
+
+        m_ini.setFloat("post_optimizer_passlda", 1);
+        m_ini.setFloat("post_optimizer_passjmp", 1);
+        m_ini.setFloat("post_optimizer_passldatax", 1);
+        m_ini.setFloat("post_optimizer_passstalda", 1);
+        m_ini.setFloat("post_optimizer_passldx", 1);
+
+
     }
 
 

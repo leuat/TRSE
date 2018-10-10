@@ -62,6 +62,16 @@ void DialogProjectSettings::FillFromIni()
 
     ui->cmbSystem->setCurrentText(m_ini->getString("system"));
 
+
+
+    ui->chkPassLda->setChecked(m_ini->getdouble("post_optimizer_passlda")==1);
+    ui->chkPassJmp->setChecked(m_ini->getdouble("post_optimizer_passjmp")==1);
+    ui->chkPassLdaTax->setChecked(m_ini->getdouble("post_optimizer_passldatax")==1);
+
+    ui->chkPassStaLda->setChecked(m_ini->getdouble("post_optimizer_passstalda")==1);
+    ui->chkPassLdx->setChecked(m_ini->getdouble("post_optimizer_passldx")==1);
+//    ui->chkPOEnabled->setChecked(m_ini->getdouble("post_optimize")==1);
+
 }
 
 void DialogProjectSettings::FillToIni()
@@ -82,6 +92,14 @@ void DialogProjectSettings::FillToIni()
     m_ini->setString("zeropage_internal4", Util::numToHex(Util::NumberFromStringHex(ui->leInternalZp4->text())));
 
     m_ini->setString("system", ui->cmbSystem->currentText());
+
+
+    m_ini->setFloat("post_optimizer_passlda", ui->chkPassLda->isChecked());
+    m_ini->setFloat("post_optimizer_passjmp", ui->chkPassJmp->isChecked());
+    m_ini->setFloat("post_optimizer_passldatax", ui->chkPassLdaTax->isChecked());
+    m_ini->setFloat("post_optimizer_passstalda", ui->chkPassStaLda->isChecked());
+    m_ini->setFloat("post_optimizer_passldx", ui->chkPassLdx->isChecked());
+  //  m_ini->setFloat("post_optimize", ui->chkPOEnabled->isChecked());
 
 
 }

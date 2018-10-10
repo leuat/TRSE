@@ -85,6 +85,7 @@ void DialogTRSESettings::FillToIni()
 
     m_ini->setFloat("hide_exomizer_footprint", ui->chkExomizerFootprint->isChecked()?1:0);
 
+
     if (ui->cmbPalette->currentText()=="Dark")
         m_ini->setFloat("windowpalette",0);
     if (ui->cmbPalette->currentText()=="Light")

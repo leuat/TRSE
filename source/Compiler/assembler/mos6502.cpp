@@ -602,16 +602,25 @@ void AsmMOS6502::EndForLoop(QString endVal)
 void AsmMOS6502::Optimise(CIniFile& ini)
 {
     m_totalOptimizedLines = 0;
-    OptimisePassStaLda();
-    OptimisePassLdx("x");
-    OptimisePassLdx("y");
+    if (ini.getdouble("post_optimizer_passstalda")==1)
+        OptimisePassStaLda();
+    if (ini.getdouble("post_optimizer_passldx")==1)
+        OptimisePassLdx("x");
+    if (ini.getdouble("post_optimizer_passldx")==1)
+        OptimisePassLdx("y");
 
-    OptimisePassLdaTax("x");
-    OptimisePassLdaTax("y");
+    if (ini.getdouble("post_optimizer_passldatax")==1)
 
-    OptimisePassLdx("a");
+        OptimisePassLdaTax("x");
+    if (ini.getdouble("post_optimizer_passldatax")==1)
+        OptimisePassLdaTax("y");
 
-    OptimiseJumps();
+    if (ini.getdouble("post_optimizer_passlda")==1)
+
+        OptimisePassLdx("a");
+
+    if (ini.getdouble("post_optimizer_passjmp")==1)
+        OptimiseJumps();
 }
 
 
@@ -666,7 +675,7 @@ void AsmMOS6502::OptimisePassLdx(QString x)
 
                     if (l0==l1 && !op2.startsWith("(") && !op2.contains(",")) {
                         if (x=="a")
-                        qDebug () << "Removing because equal: " << l0 << ", " << l1;
+//                        qDebug () << "Removing because equal: " << l0 << ", " << l1;
                         m_removeLines.append(j);
                         curCnt++;
                         //qDebug() << "Removing: " << l1 << " on line " << j;
@@ -694,7 +703,7 @@ void AsmMOS6502::OptimisePassLdx(QString x)
 //                          if (!(op[2] == "x" || op[2] == "y" || op[2]=="sta"))
 
                         done = true;
-                        if (curCnt!=0 && done==true) {
+/*                        if (curCnt!=0 && done==true) {
                             for (int kk=i;kk<ll;kk++) {
                                 QString ss =QString::number(kk) +("   " + l0)+ " : " +getLine(kk);// << "  :  " << l1;
                                 if (kk-i==curCnt-1)
@@ -703,7 +712,7 @@ void AsmMOS6502::OptimisePassLdx(QString x)
                             }
 
                             qDebug() << "**** DONE";
-                     }
+                     }*/
 
                      }
 
