@@ -28,5 +28,6 @@
         <file>resources/text/help/m/enableallram.rtf</file>
         <file>resources/text/help/m/memcpy.rtf</file>
         <file>resources/text/help/m/blockmemcpy.rtf</file>
+        <file>resources/code/atan2.asm</file>
     </qresource>
 </RCC>

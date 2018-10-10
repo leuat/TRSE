@@ -23,6 +23,7 @@ m; init16x8div; C64, VIC20, PET, NES ;
 m; init8x8div; C64, VIC20, PET, NES ; 
 m; initprintstring; C64  ; 
 m; initjoystick; C64, VIC20  ; 
+m; initatan2; C64, VIC20  ;
 
 
 #Memory routines
@@ -91,6 +92,7 @@ m; ClearSound; C64;
 
 # Math routines
 
+m; Atan2 ; C64, VIC20, PET, NES  ; b,b,b,b
 m; Sqrt ; C64, VIC20, PET, NES  ; ib
 m; Swap; C64, VIC20, PET, NES; b,b
 m; Abs;  C64, VIC20, PET, NES;b

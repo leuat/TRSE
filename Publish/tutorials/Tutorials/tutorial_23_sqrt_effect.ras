@@ -9,7 +9,7 @@ var
 	dp:pointer;
 	tmp: array[4] of byte = (1,2,3,4,5);
 
-@startblock $8200 "Code far far away!"
+//@startblock $8200 "Code far far away!"
 
 procedure Render();
 begin
@@ -18,8 +18,13 @@ begin
 		for x:=0 to 40 do begin
 			dx:=abs(20-x);
 			dy:=abs(13-y);
-			wrk := dx*dx + dy*dy;
-			i:=(sqrt(wrk)/8)&15;
+/*			asm("
+				lda #0
+				sta octant
+ ");*/
+			i:=(atan2(20,x,12,y));
+			i:=(i/2)&15;
+//			i:=6;
 			screenmemory[x]:=i+@charVal;
 		end;
 		inczp(screenmemory,40);
@@ -34,19 +39,13 @@ begin
 
 end;
 
-@endblock
+//@endblock
 
 begin
 	setcharsetlocation(@charsetPos);
 	clearscreen($20,^$4400);
 
 	
-/*	i:=3;
-	j:=tmp[i];
-	asm(";bugg");
-	poke(^$D020, 0, tmp[i]);
-	poke(^$D021, 0, tmp[i]);
-	clearscreen(tmp[i],^$D800);*/
 	clearscreen(YELLOW,^$D800);
 	setbank(VIC_BANK1);
 	SCREEN_BG_COL:=BLACK;

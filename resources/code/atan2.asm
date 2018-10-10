@@ -9,23 +9,28 @@
 
 octant		= @DECRUNCH_ZP1
 
-atan2		
-		lda x1
-		sbc x2
+atan2_x1    .byte 0
+atan2_x2    .byte 0
+atan2_y1    .byte 0
+atan2_y2    .byte 0
+
+atan2_call
+		lda atan2_x1
+		sbc atan2_x2
 		bcs *+4
 		eor #$ff
 		tax
 		rol octant
 
-		lda y1
-		sbc y2
+		lda atan2_y1
+		sbc atan2_y2
 		bcs *+4
 		eor #$ff
 		tay
 		rol octant
 
-		lda log2_tab,x
-		sbc log2_tab,y
+                lda log2_table,x
+                sbc log2_table,y
 		bcc *+4
 		eor #$ff
 		tax
@@ -35,7 +40,7 @@ atan2
 		and #%111
 		tay
 
-		lda atan_tab,x
+                lda atan_tab,x
 		eor octant_adjust,y
 		rts
 

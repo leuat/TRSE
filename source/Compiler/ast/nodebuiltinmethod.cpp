@@ -102,8 +102,15 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     if (Command("initsqrt16")) {
         InitSqrt16(as);
     }
+    if (Command("initatan2")) {
+        InitAtan2(as);
+    }
+
     if (Command("Sqrt")) {
         Sqrt(as);
+    }
+    if (Command("Atan2")) {
+        Atan2(as);
     }
     if (Command("NmiIRQ")) {
         DisableNMI(as);
@@ -1401,6 +1408,33 @@ void NodeBuiltinMethod::Sqrt(Assembler *as)
 
 }
 
+void NodeBuiltinMethod::Atan2(Assembler *as)
+{
+      as->Comment("Call atan2");
+
+      m_params[0]->Build(as);
+      as->Term();
+      as->Asm("sta atan2_x1");
+
+      m_params[1]->Build(as);
+      as->Term();
+      as->Asm("sta atan2_x2");
+
+      m_params[2]->Build(as);
+      as->Term();
+      as->Asm("sta atan2_y1");
+
+      m_params[3]->Build(as);
+      as->Term();
+      as->Asm("sta atan2_y2");
+
+
+//      as->Asm("pha");
+//      m_params[1]->Build(as);
+  //    as->Term();
+      as->Asm("jsr atan2_call");
+}
+
 void NodeBuiltinMethod::CopyCharsetFromRom(Assembler *as)
 {
     RequireAddress(m_params[0],"CopyCharsetFromRom",m_op.m_lineNumber);
@@ -1963,6 +1997,12 @@ void NodeBuiltinMethod::InitSqrt16(Assembler *as)
         as->Asm("sty "+as->m_internalZP[0]+" ; all done, store square root");
         as->Asm("stx "+as->m_internalZP[1]+" ; and remainder");
         as->Asm("rts");
+
+}
+
+void NodeBuiltinMethod::InitAtan2(Assembler *as)
+{
+    as->IncludeFile(":resources/code/atan2.asm");
 
 }
 
