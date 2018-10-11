@@ -44,6 +44,8 @@ public:
     bool flfSave = false;
     bool flfLoad = false;
     bool asmExport = false;
+    bool koalaExport = false;
+    bool koalaImport = false;
 
     bool displayColors = true;
     bool displayBackground = true;
@@ -138,6 +140,7 @@ public:
     virtual void LoadBin(QFile &file) = 0;
 
 
+
     virtual void BuildData(QTableWidget* tbl, QStringList header) {}
     virtual void StoreData(QTableWidget* tbl) {}
 
@@ -147,6 +150,10 @@ public:
 
     virtual void ExportBin(QFile &file) {}
     virtual void ImportBin(QFile &file) {}
+
+
+    virtual void ExportKoa(QFile &file) {}
+    virtual void ImportKoa(QFile &file) {}
 
     virtual void Release() {}
 

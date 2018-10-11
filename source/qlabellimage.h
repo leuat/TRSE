@@ -25,6 +25,7 @@
 
 class QLabelLImage : public QLabel
 {
+    Q_OBJECT
 public:
     bool m_imageChanged = false;
     QLabelLImage();
@@ -45,5 +46,8 @@ public:
 
     void mouseReleaseEvent(QMouseEvent*  e) override;
     void mousePressEvent(QMouseEvent* e) override;
+
+signals:
+    void EmitMouseMove();
 };
 

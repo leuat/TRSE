@@ -55,9 +55,19 @@ void QLabelLImage::mouseMoveEvent(QMouseEvent *e)
 */
     //m_prevPos = m_currentPos;
     // m_currentPos = QPoint(pos.x(), pos.y());
+
     if (m_time%256==0)
     m_updateThread->m_prevPos = m_updateThread->m_currentPos;
     m_updateThread->m_currentPos = QPointF(pos.x(), pos.y());
+
+//    if (m_updateThread->m_prevPos-m_updateThread->m_currentPos!=QPoint(0,0))
+//    qDebug() <<m_updateThread->m_prevPos;
+  //  qDebug() <<m_updateThread->m_currentPos;
+
+    m_time++;
+
+    if (m_updateThread->m_prevPos-m_updateThread->m_currentPos!=QPoint(0,0))
+       emit EmitMouseMove();
 
 /*    qDebug() << this;
     Data::data.Redraw();
@@ -66,7 +76,6 @@ void QLabelLImage::mouseMoveEvent(QMouseEvent *e)
 
    // qDebug() << "pp:" <<m_updateThread->m_prevPos;
    // qDebug() << "cp:" <<m_updateThread->m_currentPos;
-    m_time++;
 }
 
 bool QLabelLImage::eventFilter(QObject *object, QEvent *event){
@@ -109,6 +118,9 @@ void QLabelLImage::mouseReleaseEvent(QMouseEvent *e)
         m_updateThread->m_currentButton = 0;
 
 
+
+    emit EmitMouseMove();
+
 }
 
 void QLabelLImage::mousePressEvent(QMouseEvent *e)
@@ -135,6 +147,9 @@ void QLabelLImage::mousePressEvent(QMouseEvent *e)
             m_imageChanged = true;
         }
   //  qDebug() << m_updateThread->m_currentButton;
+     //   emit EmitMouseMove();
+        emit EmitMouseMove();
+
 }
 
 

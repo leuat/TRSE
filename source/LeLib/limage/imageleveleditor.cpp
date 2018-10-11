@@ -70,7 +70,8 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_supports.flfSave = true;
     m_supports.flfLoad = true;
     m_supports.asmExport = false;
-
+    m_supports.koalaExport = false;
+    m_supports.koalaImport = false;
 
     m_GUIParams[btnLoadCharset] ="Load Charset";
     m_GUIParams[btn1x1] = "";

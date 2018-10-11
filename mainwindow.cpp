@@ -59,6 +59,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_updateThread, SIGNAL(requestSaveAs()), this, SLOT(SaveAs()));
     connect(m_updateThread, SIGNAL(requestCloseWindowSignal()), this, SLOT(closeWindowSlot()));
 
+
+
     this->setMouseTracking(true);
     m_currentDoc = nullptr;
 
@@ -79,7 +81,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     m_updateThread->m_orgPal = palette();
-    m_updateThread->start();
+///    m_updateThread->start();
 
   //  ui->centralWidget->setLayout(new QGridLayout());
 
@@ -231,6 +233,7 @@ void MainWindow::LoadDocument(QString fileName)
         editor = new FormImageEditor(this);
         FormImageEditor* fe = (FormImageEditor*)editor;
         m_updateThread->SetCurrentImage(&fe->m_work, &fe->m_toolBox, fe->getLabelImage());
+        fe->m_projectPath = getProjectPath();
 
     }
     if (fileName.contains(".ras") || fileName.contains(".asm") || fileName.contains(".inc")  ) {
@@ -446,6 +449,11 @@ QString MainWindow::getProjectPath()
 
 }
 
+void MainWindow::onImageMouseMove()
+{
+    m_updateThread->RunContents();
+}
+
 /*QString MainWindow::getProjectPath()
 {
     return m_currentProject.m_ini.getString("project_path");
@@ -489,9 +497,13 @@ void MainWindow::on_tabMain_currentChanged(int index)
     FormRasEditor* rasedit = dynamic_cast<FormRasEditor*>(ui->tabMain->widget(index));
     if (rasedit!=nullptr) {
         m_updateThread->SetCurrentImage(nullptr, nullptr, nullptr);
+
+
+
     }
     if (imageedit!=nullptr) {
         m_updateThread->SetCurrentImage(&imageedit->m_work, &imageedit->m_toolBox, imageedit->getLabelImage());
+        connect( imageedit, SIGNAL(EmitMouseEvent()),this, SLOT(onImageMouseMove()));
     }
 
     if (dynamic_cast<TRSEDocument*>(ui->tabMain->widget(index))!=nullptr) {

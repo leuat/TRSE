@@ -79,6 +79,8 @@ public:
     QPoint m_currentPosInImage;
     QColor m_gridColor = QColor(64,128,128,128);
 
+
+    void RunContents();
     void run() override;
     QImage* m_tmpImage = nullptr;
     QPixmap m_pixMapImage;

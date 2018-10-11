@@ -69,6 +69,7 @@ public:
     void Compress();
     void Build() override;
     void Setup();
+
     void Run() override;
     void SetLights();
     void SetText(QString s);

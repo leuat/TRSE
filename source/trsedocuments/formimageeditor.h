@@ -38,6 +38,7 @@
 #include "source/LeLib/util/util.h"
 #include "source/LeLib/limage/limageeffects.h"
 #include "source/dialogimagehelp.h"
+#include "source/qlabellimage.h"
 #include <QLineEdit>
 namespace Ui {
 class Formimageeditor;
@@ -60,7 +61,7 @@ public:
     LImageEffects m_imageEffects;
     QMap<QString, QLineEdit*> m_imageEffectsLineEdits;
     LImageEffect* m_currentImageEffect = nullptr;
-
+    QString m_projectPath;
 
     void UpdatePalette();
     void updateCharSet();
@@ -100,10 +101,19 @@ public:
     void InitDocument(WorkerThread* t, CIniFile* ini, CIniFile* iniProject) override;
 
 
+    void GenericExportImage(QString type, QString ext);
+    void GenericImportImage(QString type, QString ext);
+
+signals:
+    void EmitMouseEvent();
+
 private:
     Ui::Formimageeditor *ui;
 
 private slots:
+
+    void onImageMouseEvent();
+
     void on_btnExportAsm_clicked();
 
     void on_btnGenerate_clicked();
@@ -176,6 +186,8 @@ private slots:
 
     void on_btnHelpImage_clicked();
 
+    void on_btnExportKoala_clicked();
+    void on_btnImportKoala_clicked();
 };
 
 

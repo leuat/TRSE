@@ -54,8 +54,10 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
 
     ui->lblImage->m_work = &m_work;
     ui->lblImage->setMouseTracking(true);
+    void EmitMouseMove();
 
-//    ui->tblData->verticalHeader()->setEditTriggers(QAbstractItemView::DoubleClicked);
+    connect(ui->lblImage, SIGNAL(EmitMouseMove()), this, SLOT(onImageMouseEvent()));
+
 
 }
 
@@ -67,6 +69,12 @@ void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *ini
     //ui->lblGrid->m_updateThread = t;
     m_updateThread->m_grid = &m_grid;
     m_grid.CreateGrid(40,25,m_updateThread->m_gridColor,4, 1, QPoint(0,0));
+}
+
+
+void FormImageEditor::onImageMouseEvent()
+{
+    emit EmitMouseEvent();
 }
 
 FormImageEditor::~FormImageEditor()
@@ -370,6 +378,9 @@ void FormImageEditor::UpdatePalette()
 
     ui->btnExportBin->setVisible(m_work.m_currentImage->m_image->m_supports.binarySave);
     ui->btnImportBin->setVisible(m_work.m_currentImage->m_image->m_supports.binaryLoad);
+
+    ui->btnExportKoala->setVisible(m_work.m_currentImage->m_image->m_supports.koalaExport);
+    ui->btnImportKoala->setVisible(m_work.m_currentImage->m_image->m_supports.koalaImport);
 
     ui->cmbMC1->setVisible(m_work.m_currentImage->m_image->m_supports.displayMC1);
     ui->cmbMC2->setVisible(m_work.m_currentImage->m_image->m_supports.displayMC2);
@@ -831,32 +842,8 @@ void FormImageEditor::UpdateLevels()
 
 }
 
-
-
-void FormImageEditor::on_btnImportBin_clicked()
+void FormImageEditor::GenericExportImage(QString type, QString ext)
 {
-    QString f = "Binary Files ( *.bin )";
-    QString filename = QFileDialog::getOpenFileName(this,
-        tr("Import binary file"), m_projectIniFile->getString("project_path"), f);
-    if (filename=="")
-        return;
-
-
-    QFile file(filename);
-    file.open(QIODevice::ReadOnly);
-    m_work.m_currentImage->m_image->ImportBin(file);
-    file.close();
-
-    Data::data.redrawFileList = true;
-    Data::data.Redraw();
-    UpdatePalette();
-
-}
-
-void FormImageEditor::on_btnExportBin_clicked()
-{
-
-
     if (m_work.m_currentImage->m_image->m_exportParams.keys().count()!=0) {
         DialogExport* de = new DialogExport();
         de->Init(m_work.m_currentImage->m_image);
@@ -866,9 +853,12 @@ void FormImageEditor::on_btnExportBin_clicked()
             return;
 
     }
+    QString ttr  = "Export " + type.toLower() + " file";
+    QString f = type+" ( *."+ext+" )";
+
     QString fileName = QFileDialog::getSaveFileName(this,
-                                                    tr("Export binary file"), m_projectIniFile->getString("project_path"),
-                                                    tr("Bin (*.bin);"));
+                                                    ttr.toStdString().c_str(), m_projectPath,
+                                                    f);
 
 
 //    m_work.m_currentImage->m_image->ExportAsm(fileName);
@@ -878,13 +868,65 @@ void FormImageEditor::on_btnExportBin_clicked()
         QFile::remove(fileName);
     QFile file(fileName);
     file.open(QIODevice::WriteOnly);
-    m_work.m_currentImage->m_image->ExportBin(file);
+    if (ext=="bin")
+        m_work.m_currentImage->m_image->ExportBin(file);
+    if (ext=="koa")
+        m_work.m_currentImage->m_image->ExportKoa(file);
     if (file.isOpen())
         file.close();
 
-  //  fileName.remove(".bin");
 
-//    mi->ExportRasBin(fileName, "");
+}
+
+void FormImageEditor::GenericImportImage(QString type, QString ext)
+{
+
+    QString f = type+" ( *."+ext+" )";
+    QString ttr  = "Import " + type.toLower() + " file";
+    QString filename = QFileDialog::getOpenFileName(this,
+        ttr.toStdString().c_str(), m_projectPath, f);
+    if (filename=="")
+        return;
+
+
+    QFile file(filename);
+    file.open(QIODevice::ReadOnly);
+    if (ext=="bin")
+        m_work.m_currentImage->m_image->ImportBin(file);
+    if (ext=="koa")
+        m_work.m_currentImage->m_image->ImportKoa(file);
+    file.close();
+
+    Data::data.redrawFileList = true;
+    Data::data.Redraw();
+    UpdatePalette();
+
+}
+
+
+void FormImageEditor::on_btnExportKoala_clicked()
+{
+    GenericExportImage("Koala", "koa");
+
+}
+
+void FormImageEditor::on_btnImportKoala_clicked()
+{
+    GenericImportImage("Koala", "koa");
+
+}
+
+
+
+void FormImageEditor::on_btnImportBin_clicked()
+{
+    GenericImportImage("Binary", "bin");
+}
+
+void FormImageEditor::on_btnExportBin_clicked()
+{
+
+    GenericExportImage("Binary", "bin");
 
 }
 
@@ -1025,3 +1067,4 @@ void FormImageEditor::on_btnHelpImage_clicked()
     dih->show();
 
 }
+

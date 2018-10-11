@@ -263,6 +263,8 @@ signals:
 private slots:
 
 
+    void onImageMouseMove();
+
     void on_treeFiles_doubleClicked(const QModelIndex &index);
 
 

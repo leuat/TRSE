@@ -39,6 +39,8 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     m_supports.asmExport = true;
     m_supports.binaryLoad = false;
     m_supports.binarySave = true;
+    m_supports.koalaImport = true;
+    m_supports.koalaExport = true;
     m_supports.flfSave = true;
     m_supports.flfLoad = true;
 
@@ -130,6 +132,55 @@ void MultiColorImage::LoadBin(QFile& file)
     file.read( ( char * )( &m_border ), 1);
     file.read( ( char * )( &m_data ),  25*40*12 );
 
+}
+
+void MultiColorImage::ImportKoa(QFile &f)
+{
+    QByteArray data, screen, color, bg;
+    f.read(2);
+    data = f.read(0x1F40);
+    screen = f.read(0x3E8);
+    color = f.read(0x3E8);
+    bg = f.read(1);
+    int pos = 0;
+
+    for (PixelChar& pc: m_data) {
+        for (int i=0;i<8;i++)
+            pc.p[i] = PixelChar::reverse(data[pos*8+i]);
+        pc.c[1] = screen[pos]&15;
+        pc.c[2] = (screen[pos]>>4)&15;
+        pc.c[3] = color[pos];
+        pos++;
+    }
+    setBackground(bg[0]);
+
+}
+
+void MultiColorImage::ExportKoa(QFile &f)
+{
+    QByteArray data, screen, color, bg;
+    int pos = 0;
+    screen.resize(1000);
+    color.resize(1000);
+    for (PixelChar& pc: m_data) {
+        for (int i=0;i<8;i++)
+            data.append(PixelChar::reverse(pc.p[i]));
+
+        screen[pos] = pc.c[1] | pc.c[2]<<4;
+        color[pos] = pc.c[3];
+        pos++;
+    }
+    //setBackground(bg[0]);
+
+    QByteArray fdata;
+    fdata.append((uchar)0x00);
+    fdata.append((uchar)0x60);
+    fdata.append(data);
+    fdata.append(screen);
+    fdata.append(color);
+    fdata.append((uchar)m_background);
+
+    f.write(fdata);
 }
 
 void MultiColorImage::fromQImage(QImage *img, LColorList &lst)

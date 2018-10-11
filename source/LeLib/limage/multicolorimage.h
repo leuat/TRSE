@@ -119,6 +119,9 @@ public:
     void SaveBin(QFile& f) override;
     void LoadBin(QFile& f) override;
 
+    void ImportKoa(QFile& f) override;
+    void ExportKoa(QFile& f) override;
+
     void Initialize(int width, int height) override {}
 
     void setForeground(unsigned int col) override;

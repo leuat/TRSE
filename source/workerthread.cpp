@@ -290,38 +290,41 @@ void WorkerThread::Continue()
     m_park = false;
 }
 
+void WorkerThread::RunContents()
+{
+    UpdateMessages();
+    // Mouse position now being handled by QLabelLImage
+    //UpdateMousePosition();
+    UpdatePanning();
+    UpdateDrawing();
+    m_time++;
+
+//    qDebug() << rand()%100;
+
+    if (Data::data.redrawOutput && m_work!=nullptr) {
+
+        //            qDebug() << "Redraw" << rand()%100;
+        LImage* img = m_work->m_currentImage->m_image;
+        if (isPreview) {
+            img = m_work->m_currentImage->m_temp;
+        }
+        //qDebug() << "Updating image" << m_time;
+        UpdateImage(img);
+        Data::data.redrawOutput = false;
+
+    }
+
+
+}
+
+
+
+
 void WorkerThread::run()
 {
     while (!m_quit) {
-
-/*        if (!ui->taMain->currentIndex()==1) {
-            QThread::msleep(5);
-
-            continue;
-        }
-*/
         if (!m_park) {
-            //        qDebug() << "WOOT" <<m_time;
-            UpdateMessages();
-            // Mouse position now being handled by QLabelLImage
-            //UpdateMousePosition();
-            UpdatePanning();
-            UpdateDrawing();
-            m_time++;
-
-
-            if (Data::data.redrawOutput && m_work!=nullptr) {
-
-                //            qDebug() << "Redraw" << rand()%100;
-                LImage* img = m_work->m_currentImage->m_image;
-                if (isPreview) {
-                    img = m_work->m_currentImage->m_temp;
-                }
-                //qDebug() << "Updating image" << m_time;
-                UpdateImage(img);
-                Data::data.redrawOutput = false;
-
-            }
+            RunContents();
         }
 
         QThread::msleep(15);
