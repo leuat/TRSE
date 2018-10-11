@@ -127,6 +127,8 @@ void Filler::Perform(int x, int y, unsigned char color, LImage *img, bool isPrev
 
 void Filler::Fill(int i, int j, unsigned char col, unsigned char testCol, LImage *img)
 {
+    if (i<0 || j<0 || j>=img->m_height || i>=img->m_width)
+        return;
     if (testCol == img->getPixel(i,j)) {
         img->setPixel(i,j, col);
         if (i<img->m_width-1)

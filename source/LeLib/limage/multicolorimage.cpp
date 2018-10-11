@@ -587,7 +587,11 @@ PixelChar &MultiColorImage::getPixelChar(int x, int y)
 {
     int dx = x/(8/m_scale);
     int dy = y/8;
-    return m_data[(int)Util::clamp(dx + 40*dy,0,40*25)];
+    int i = Util::clamp(dx + 40*dy,0,40*25);
+    if (i>=0 && i<40*25)
+        return m_data[i];
+    else
+        return m_data[0];
 
 }
 

@@ -43,6 +43,10 @@ public:
     Token m_op;
     int m_lineNumber;
     uint level = 0;
+    bool m_isUsed = false;
+
+
+
 
     Node* m_left = nullptr, *m_right = nullptr;
     bool m_isWord = false;

@@ -19,7 +19,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
@@ -60,7 +60,7 @@
          <property name="geometry">
           <rect>
            <x>40</x>
-           <y>30</y>
+           <y>40</y>
            <width>621</width>
            <height>201</height>
           </rect>
@@ -156,7 +156,7 @@
          <property name="geometry">
           <rect>
            <x>40</x>
-           <y>250</y>
+           <y>-10</y>
            <width>803</width>
            <height>61</height>
           </rect>
@@ -164,6 +164,48 @@
          <property name="text">
           <string>Note: The emulators points to the executables, not application folder. 
 So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QWidget" name="verticalLayoutWidget_2">
+         <property name="geometry">
+          <rect>
+           <x>40</x>
+           <y>310</y>
+           <width>621</width>
+           <height>111</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <item>
+             <widget class="QLabel" name="label_12">
+              <property name="text">
+               <string>User-defined command (Ctrl-T):</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QLabel" name="label_13">
+         <property name="geometry">
+          <rect>
+           <x>40</x>
+           <y>250</y>
+           <width>803</width>
+           <height>61</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>User defined commands: type @prg to use the current .prg output file</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>

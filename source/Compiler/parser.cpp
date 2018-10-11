@@ -663,9 +663,63 @@ Node* Parser::Parse()
     //qDebug() <<m_lexer->m_text[0];
     SymbolTable::Initialize();
     Node::m_staticBlockInfo.m_blockID=-1;
-    InitBuiltinFunctions();
     NodeProgram* root = (NodeProgram*)Program();
     // First add builtin functions
+
+    // Remove unused procedures
+/*    QMap<QString, Node*> usedProcs;
+    for (QString s: m_procedures.keys()) {
+
+        if (((NodeProcedureDecl*)m_procedures[s])->m_isUsed==true ||
+                ((NodeProcedureDecl*)m_procedures[s])->m_block==nullptr)
+            usedProcs[s] = m_procedures[s];
+        else {
+            qDebug() << "Removing procedure: " << s;
+            m_proceduresOnly.removeOne(m_procedures[s]);
+        }
+    }
+    m_procedures = usedProcs;*/
+    // First, set null pointers
+
+/*    for (Node* n: m_procedures) {
+        NodeProcedureDecl* np = (NodeProcedureDecl*)n;
+        if (np->m_block==nullptr) {
+           // if (((NodeProcedureDecl*)n)->m_procName==p->m_procName)
+           //     n->m_isUsed = true;
+            for (Node* n2: m_proceduresOnly) {
+                NodeProcedureDecl* np2 = (NodeProcedureDecl*)n2;
+                qDebug() << np->m_procName << " " << np2->m_procName;
+                if (np2->m_procName == np->m_procName) {
+                    if (np2->m_isUsed==true || np->m_isUsed==true) {
+                        np2->m_isUsed = true;
+                        np->m_isUsed = true;
+                    }
+                    else {
+                        np2->m_isUsed = false;
+                        np->m_isUsed = false;
+                        qDebug() << "Both false:" << np2->m_procName;
+                    }
+                }
+            }
+
+        }
+    }
+*/
+    QVector<Node*> procs;
+    for (Node* n: m_proceduresOnly) {
+        NodeProcedureDecl* np = (NodeProcedureDecl*)n;
+        if ((np->m_isUsed==true))
+            procs.append(n);
+        else {
+            qDebug() << "Removing procedure: " << np->m_procName;
+//            m_proceduresOnly.removeOne(m_procedures[s]);
+        }
+    }
+    m_proceduresOnly = procs;
+
+    InitBuiltinFunctions();
+
+
     for (QString s: m_procedures.keys())
         if (((NodeProcedureDecl*)m_procedures[s])->m_block==nullptr)
             root->m_NodeBlock->m_decl.append(m_procedures[s]);
@@ -709,6 +763,8 @@ Node *Parser::FindProcedure()
         Eat(TokenType::RPAREN);
 
         //p->SetParameters(paramList);
+        p->m_isUsed = true;
+//        if (p->m_procName==BGMUpdateSpriteLoc)
 
         return new NodeProcedure(p, paramList, t);
     }
@@ -895,7 +951,10 @@ QVector<Node*> Parser::Declarations(bool isMain)
             // Check if already defined
 
         }
-
+        bool isUsed = false;
+        if (m_procedures[procName]!=nullptr)
+            procDecl->m_isUsed = m_procedures[procName]->m_isUsed;
+        //qDebug() <<procName;
         m_procedures[procName] = procDecl;
         if (block!=nullptr) {
             bool ok = true;

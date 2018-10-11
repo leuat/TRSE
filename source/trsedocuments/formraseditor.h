@@ -40,6 +40,15 @@ namespace Ui {
 }
 
 
+/*class Builder : public QThread  {
+public:
+
+
+
+
+};
+*/
+
 class FormRasEditor : public TRSEDocument
 {
     Q_OBJECT
