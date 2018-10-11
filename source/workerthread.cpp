@@ -83,10 +83,10 @@ void WorkerThread::UpdateDrawing()
 
 
 
-    if (!Data::data.forceRedraw && m_currentButton == 0)
+    //if (!Data::data.forceRedraw && m_currentButton == 0)
 
-    if ((abs(m_prevPos.x()-m_currentPos.x())<1) && (abs(m_prevPos.y()-m_currentPos.y()))<1)
-        return;
+//    if ((abs(m_prevPos.x()-m_currentPos.x())<1) && (abs(m_prevPos.y()-m_currentPos.y()))<1)
+  //      return;
 
 //    if (Data::data.imageEvent != 2)
   //      return;

@@ -114,7 +114,6 @@ private:
 signals:
     void OpenOtherFile(QString filename, int ln);
 
-
 private slots:
     void on_leSearch_textChanged();
 

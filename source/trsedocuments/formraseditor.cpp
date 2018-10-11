@@ -96,7 +96,7 @@ void FormRasEditor::Compress()
 void FormRasEditor::Build()
 {
     SaveCurrent();
-
+    emit requestBuild();
     if (BuildStep())
         {
         compiler.SaveBuild(filename + ".asm");
@@ -348,7 +348,8 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
     }
 
     if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier))
-        Data::data.requestCloseWindow = true;
+        emit requestCloseWindow();
+    //    Data::data.requestCloseWindow = true;
 
 //    if (ui->txtEditor->m_textChanged)
         m_documentIsChanged  = ui->txtEditor->m_textChanged;

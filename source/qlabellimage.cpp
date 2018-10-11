@@ -40,42 +40,25 @@ void QLabelLImage::mouseMoveEvent(QMouseEvent *e)
     if (m_updateThread==nullptr)
         return;
 
+
     m_active=true;
 
     QPointF pos = QCursor::pos() -mapToGlobal(QPoint(0,0));
     pos.setX(pos.x()*(float)m_work->m_currentImage->m_image->m_width/width());
     pos.setY(pos.y()*(float)m_work->m_currentImage->m_image->m_height/height());
 
-  //  qDebug() << "WHOO" << pos;
-/*    if (pos.x()>=m_work->m_currentImage->m_image->m_width || pos.x()<0) {
-        Data::data.Redraw();
-        //qDebug() << "OUTSIDE";
-        m_active=false;
-    }
-*/
-    //m_prevPos = m_currentPos;
-    // m_currentPos = QPoint(pos.x(), pos.y());
-
-    if (m_time%256==0)
     m_updateThread->m_prevPos = m_updateThread->m_currentPos;
     m_updateThread->m_currentPos = QPointF(pos.x(), pos.y());
 
-//    if (m_updateThread->m_prevPos-m_updateThread->m_currentPos!=QPoint(0,0))
-//    qDebug() <<m_updateThread->m_prevPos;
-  //  qDebug() <<m_updateThread->m_currentPos;
+    if ((m_updateThread->m_prevPos-m_updateThread->m_currentPos).manhattanLength()>0.0)
 
-    m_time++;
-
-    if (m_updateThread->m_prevPos-m_updateThread->m_currentPos!=QPoint(0,0))
        emit EmitMouseMove();
 
-/*    qDebug() << this;
-    Data::data.Redraw();
-*/
-//    qDebug() << "WT MV:" << m_updateThread->m_currentButton;
+}
 
-   // qDebug() << "pp:" <<m_updateThread->m_prevPos;
-   // qDebug() << "cp:" <<m_updateThread->m_currentPos;
+void QLabelLImage::wheelEvent(QWheelEvent *e)
+{
+    emit EmitMouseMove();
 }
 
 bool QLabelLImage::eventFilter(QObject *object, QEvent *event){
@@ -146,8 +129,6 @@ void QLabelLImage::mousePressEvent(QMouseEvent *e)
             m_updateThread->m_currentButton = 1;
             m_imageChanged = true;
         }
-  //  qDebug() << m_updateThread->m_currentButton;
-     //   emit EmitMouseMove();
         emit EmitMouseMove();
 
 }

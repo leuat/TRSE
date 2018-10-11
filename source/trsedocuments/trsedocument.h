@@ -43,7 +43,7 @@ public:
     static QPalette m_defaultPalette;
     QString m_outputText;
 
-    WorkerThread* m_updateThread;
+//    WorkerThread* m_updateThread;
     CIniFile* m_iniFile;
     CIniFile* m_projectIniFile;
 
@@ -53,10 +53,12 @@ public:
     bool SaveChanges();
     void SaveCurrent() {
         if (m_currentSourceFile=="") {
-            Data::data.requestSaveAs = true;
+            emit requestSaveAs();
+            return;
         }
         Save(m_currentSourceFile);
         Data::data.blink = true;
+        emit updatePaletteSignal();
     }
     virtual void GotoLine(int ln) {}
     virtual void Build() {}
@@ -69,7 +71,7 @@ public:
     virtual void Init() {}
     virtual void UpdateColors() { }
     virtual void InitDocument(WorkerThread* t, CIniFile* ini, CIniFile* iniProject) {
-        m_updateThread = t;
+      //  m_updateThread = t;
         m_iniFile = ini;
         m_projectIniFile = iniProject;
 
@@ -82,6 +84,12 @@ public:
 
 
     virtual void Destroy() = 0;
+
+signals:
+    void requestCloseWindow();
+    void updatePaletteSignal();
+    void requestBuild();
+    void requestSaveAs();
 
 };
 

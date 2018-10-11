@@ -6,16 +6,54 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1178</width>
-    <height>632</height>
+    <width>647</width>
+    <height>471</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
+   <item row="1" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QCheckBox" name="chkGrid">
+       <property name="text">
+        <string>Grid (z)</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="chkBackgroundArea">
+       <property name="text">
+        <string>Collision area (x)</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblPosition">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="chkDisplayMulticolor">
+       <property name="text">
+        <string>Display multicolor</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0" columnstretch="2,1">
+    <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0" columnstretch="2,0">
      <item row="1" column="0">
       <widget class="QGroupBox" name="groupBox">
        <property name="title">
@@ -62,22 +100,34 @@
        <zorder>lblGrid</zorder>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="lblImageName">
-       <property name="font">
-        <font>
-         <pointsize>14</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Image Name</string>
-       </property>
-      </widget>
+     <item row="2" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,4">
+       <item>
+        <widget class="QPushButton" name="btnHelpImage">
+         <property name="text">
+          <string>Keyboard shortcuts</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lblMode">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item row="1" column="1">
       <widget class="QTabWidget" name="tabMain">
+       <property name="maximumSize">
+        <size>
+         <width>400</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -330,6 +380,12 @@
         </widget>
        </widget>
        <widget class="QWidget" name="tabCharset">
+        <property name="maximumSize">
+         <size>
+          <width>400</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <attribute name="title">
          <string>Charset</string>
         </attribute>
@@ -523,24 +579,6 @@
        </widget>
       </widget>
      </item>
-     <item row="2" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,4">
-       <item>
-        <widget class="QPushButton" name="btnHelpImage">
-         <property name="text">
-          <string>Keyboard shortcuts</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="lblMode">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
      <item row="0" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="6">
        <property name="spacing">
@@ -561,41 +599,15 @@
        </item>
       </layout>
      </item>
-    </layout>
-   </item>
-   <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QCheckBox" name="chkGrid">
+     <item row="0" column="0">
+      <widget class="QLabel" name="lblImageName">
+       <property name="font">
+        <font>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>Grid (z)</string>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="chkBackgroundArea">
-       <property name="text">
-        <string>Collision area (x)</string>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="lblPosition">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="chkDisplayMulticolor">
-       <property name="text">
-        <string>Display multicolor</string>
+        <string>Image Name</string>
        </property>
       </widget>
      </item>

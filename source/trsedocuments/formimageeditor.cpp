@@ -54,27 +54,32 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
 
     ui->lblImage->m_work = &m_work;
     ui->lblImage->setMouseTracking(true);
-    void EmitMouseMove();
+    ui->lblImage->m_updateThread = &m_updateThread;
+//    void EmitMouseMove();
 
     connect(ui->lblImage, SIGNAL(EmitMouseMove()), this, SLOT(onImageMouseEvent()));
+
+    m_updateThread.SetCurrentImage(&m_work, &m_toolBox, getLabelImage());
 
 
 }
 
 void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *iniProject) {
-    m_updateThread = t;
+//    m_updateThread = t;
     m_iniFile = ini;
     m_projectIniFile = iniProject;
-    ui->lblImage->m_updateThread = t;
+//    ui->lblImage->m_updateThread = t;
     //ui->lblGrid->m_updateThread = t;
-    m_updateThread->m_grid = &m_grid;
-    m_grid.CreateGrid(40,25,m_updateThread->m_gridColor,4, 1, QPoint(0,0));
+    m_updateThread.m_grid = &m_grid;
+    m_grid.CreateGrid(40,25,m_updateThread.m_gridColor,4, 1, QPoint(0,0));
 }
 
 
 void FormImageEditor::onImageMouseEvent()
 {
-    emit EmitMouseEvent();
+//    emit EmitMouseEvent();
+    m_updateThread.RunContents();
+    UpdateImage();
 }
 
 FormImageEditor::~FormImageEditor()
@@ -89,19 +94,19 @@ void FormImageEditor::mousePressEvent(QMouseEvent *e)
         m_work.m_currentImage->AddUndo();
     }
     if(e->buttons() == Qt::RightButton)
-        m_updateThread->m_currentButton = 2;
+        m_updateThread.m_currentButton = 2;
     if(e->buttons() == Qt::LeftButton) {
-        m_updateThread->m_currentButton = 1;
+        m_updateThread.m_currentButton = 1;
     }
 */
 }
 
 void FormImageEditor::mouseReleaseEvent(QMouseEvent *e)
 {
-/*    if (m_updateThread->m_currentButton==2)
-        m_updateThread->m_currentButton = 0;
+/*    if (m_updateThread.m_currentButton==2)
+        m_updateThread.m_currentButton = 0;
     else
-        m_updateThread->m_currentButton = -1;
+        m_updateThread.m_currentButton = -1;
 */
     updateCharSet();
 }
@@ -111,14 +116,14 @@ void FormImageEditor::wheelEvent(QWheelEvent *event)
     float f = event->delta()/100.0f;
 
     if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
-        m_updateThread->m_zoom -=f*0.05;
-        m_updateThread->m_zoom = std::min(m_updateThread->m_zoom, 1.0f);
-        m_updateThread->m_zoom = std::max(m_updateThread->m_zoom, 0.1f);
+        m_updateThread.m_zoom -=f*0.05;
+        m_updateThread.m_zoom = std::min(m_updateThread.m_zoom, 1.0f);
+        m_updateThread.m_zoom = std::max(m_updateThread.m_zoom, 0.1f);
         float t = 0.0f;
-        m_updateThread->m_zoomCenter = (m_updateThread->m_zoomCenter*t + (1-t)*m_updateThread->m_currentPos);//*(2-2*m_zoom);
+        m_updateThread.m_zoomCenter = (m_updateThread.m_zoomCenter*t + (1-t)*m_updateThread.m_currentPos);//*(2-2*m_zoom);
         Data::data.redrawOutput = true;
 
-        m_grid.CreateGrid(40,25,m_updateThread->m_gridColor,4, m_updateThread->m_zoom, QPoint(m_updateThread->m_zoomCenter.x(), m_updateThread->m_zoomCenter.y()));
+        m_grid.CreateGrid(40,25,m_updateThread.m_gridColor,4, m_updateThread.m_zoom, QPoint(m_updateThread.m_zoomCenter.x(), m_updateThread.m_zoomCenter.y()));
 
     }
     else {
@@ -126,7 +131,7 @@ void FormImageEditor::wheelEvent(QWheelEvent *event)
         m_toolBox.m_current->m_size = std::max(m_toolBox.m_current->m_size,1.0f);
         m_toolBox.m_current->m_size = std::min(m_toolBox.m_current->m_size,50.0f);
     }
-//    if (m_updateThread->m_isPanning)
+//    if (m_updateThread.m_isPanning)
 
     Data::data.redrawOutput = true;
     Data::data.forceRedraw = true;
@@ -157,7 +162,8 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
         updateCharSet();
 
         if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier))
-            Data::data.requestCloseWindow = true;
+//            Data::data.requestCloseWindow = true;
+            emit requestCloseWindow();
 
         if (e->key()==Qt::Key_Z && QApplication::keyboardModifiers() & Qt::ControlModifier) {
             m_work.m_currentImage->Undo();
@@ -174,7 +180,7 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
         if (e->key() == Qt::Key_Z  && !(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
                 ui->chkGrid->setChecked(!ui->chkGrid->isChecked());
                 //ui->lblGrid->setVisible(ui->chkGrid->isChecked());
-                m_updateThread->m_drawGrid=!m_updateThread->m_drawGrid;
+                m_updateThread.m_drawGrid=!m_updateThread.m_drawGrid;
 
         }
         if (e->key() == Qt::Key_X) {
@@ -182,6 +188,7 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             ui->chkBackgroundArea->setChecked(m_work.m_currentImage->m_image->renderPathGrid);
         }
 
+        emit onImageMouseEvent();
         Data::data.forceRedraw = true;
         Data::data.Redraw();
 
@@ -200,13 +207,13 @@ void FormImageEditor::keyReleaseEvent(QKeyEvent *e)
 void FormImageEditor::UpdateImage()
 {
 
-//    m_updateThread->m_
+//    m_updateThread.m_
 
 
-   // m_updateThread->m_pixMapImage.fill(QColor(0,255,0));
+   // m_updateThread.m_pixMapImage.fill(QColor(0,255,0));
     ui->lblImage->setVisible(true);
 
-    ui->lblImage->setPixmap(m_updateThread->m_pixMapImage.scaled(320, 320, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+    ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(320, 320, Qt::IgnoreAspectRatio, Qt::FastTransformation));
 
 
     m_documentIsChanged = ui->lblImage->m_imageChanged;
@@ -218,8 +225,8 @@ void FormImageEditor::UpdateImage()
     QString currentChar = "   Current char: $" + QString::number(m_work.m_currentImage->m_image->m_currencChar,16);
     currentChar+=" (" + QString::number(m_work.m_currentImage->m_image->m_currencChar) + ")";
     ui->lblPosition->setText("Position: " +
-                             QString::number(m_updateThread->m_currentPosInImage.x()) + ", " +
-                             QString::number(m_updateThread->m_currentPosInImage.y()) + currentChar);
+                             QString::number(m_updateThread.m_currentPosInImage.x()) + ", " +
+                             QString::number(m_updateThread.m_currentPosInImage.y()) + currentChar);
 
 
     m_grid.ApplyToLabel(ui->lblGrid);
@@ -503,7 +510,7 @@ void FormImageEditor::on_chkGrid_clicked(bool checked)
 {
 //    if (checked)
 //    ui->lblGrid->setVisible(checked);
-    m_updateThread->m_drawGrid=!m_updateThread->m_drawGrid;
+    m_updateThread.m_drawGrid=!m_updateThread.m_drawGrid;
     Data::data.Redraw();
 
 }
@@ -532,7 +539,7 @@ void FormImageEditor::on_btnExportImage_clicked()
     if (fileName == "")
         return;
 
-    m_updateThread->m_tmpImage->save(fileName);
+    m_updateThread.m_tmpImage->save(fileName);
 
 
 }
@@ -574,7 +581,7 @@ void FormImageEditor::on_btnCharset1x1_clicked()
     if (ci==nullptr)
         return;
 
-    m_updateThread->m_zoom = 1.0;
+    m_updateThread.m_zoom = 1.0;
     ci->m_currentMode = CharsetImage::Mode::CHARSET1x1;
     Data::data.forceRedraw = true;
     UpdateCurrentMode();
@@ -587,7 +594,7 @@ void FormImageEditor::on_btnCharset2x2_clicked()
     if (ci==nullptr)
         return;
 
-    m_updateThread->m_zoom = 1.0;
+    m_updateThread.m_zoom = 1.0;
     ci->m_currentMode = CharsetImage::Mode::CHARSET2x2;
     Data::data.forceRedraw = true;
     UpdateCurrentMode();
@@ -598,7 +605,7 @@ void FormImageEditor::on_btnCharset2x2Repeat_clicked()
     CharsetImage* ci = dynamic_cast<CharsetImage*>(m_work.m_currentImage->m_image);
     if (ci==nullptr)
         return;
-    m_updateThread->m_zoom = 1.0;
+    m_updateThread.m_zoom = 1.0;
 
     ci->m_currentMode = CharsetImage::Mode::CHARSET2x2_REPEAT;
     UpdateCurrentMode();
@@ -982,10 +989,10 @@ void FormImageEditor::Destroy()
 {
     //delete m_work.m_currentImage;
 
-    //m_updateThread->m_imgLabel = nullptr;
-//    m_updateThread->
-    //m_updateThread->m_work = nullptr;
-//    m_updateThread->m_ = nullptr;
+    //m_updateThread.m_imgLabel = nullptr;
+//    m_updateThread.
+    //m_updateThread.m_work = nullptr;
+//    m_updateThread.m_ = nullptr;
 
 }
 

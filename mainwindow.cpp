@@ -53,12 +53,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     //QObject::connect(m_updateThread, SIGNAL(valueChanged()), this, SLOT (Update()));
-    m_updateThread = new WorkerThread();
-    connect(m_updateThread, SIGNAL(updateImageSignal()), this, SLOT(updateImage()));
-    connect(m_updateThread, SIGNAL(updatePaletteSignal()), this, SLOT(updatePalette()));
-    connect(m_updateThread, SIGNAL(requestSaveAs()), this, SLOT(SaveAs()));
-    connect(m_updateThread, SIGNAL(requestCloseWindowSignal()), this, SLOT(closeWindowSlot()));
-
+//    m_updateThread = new WorkerThread();
+//    connect(m_updateThread, SIGNAL(updateImageSignal()), this, SLOT(updateImage()));
 
 
     this->setMouseTracking(true);
@@ -76,11 +72,11 @@ MainWindow::MainWindow(QWidget *parent) :
    m_fontFamily = QFontDatabase::applicationFontFamilies(id).at(0);
     m_iniFileName = Util::path + m_iniFileName;
     connect( ui->tabMain, SIGNAL(tabCloseRequested(int)),this, SLOT(RemoveTab(int)));
-    connect(qApp, SIGNAL(aboutToQuit()), m_updateThread, SLOT(OnQuit()));
+//    connect(qApp, SIGNAL(aboutToQuit()), m_updateThread, SLOT(OnQuit()));
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(OnQuit()));
 
 
-    m_updateThread->m_orgPal = palette();
+//    m_updateThread->m_orgPal = palette();
 ///    m_updateThread->start();
 
   //  ui->centralWidget->setLayout(new QGridLayout());
@@ -119,12 +115,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     Messages::messages.DisplayMessage(Messages::messages.ALPHA_WARNING);
-
-#ifndef USE_LIBTIFF
-    //ui->btnTiff->setVisible(false);
-#endif
-//    m_updateThread->join();
-//    m_updateThread->
+    ui->lblSave->setHidden(true);
+    ui->lblBuild->setHidden(true);
+    this->installEventFilter(this);
 }
 
 
@@ -167,6 +160,7 @@ void MainWindow::wheelEvent(QWheelEvent *event)
 
 }
 
+
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
 
@@ -179,6 +173,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent *e)
 {
 
 }
+
 
 void MainWindow::VerifyDefaults()
 {
@@ -232,7 +227,6 @@ void MainWindow::LoadDocument(QString fileName)
     if (fileName.contains(".flf")) {
         editor = new FormImageEditor(this);
         FormImageEditor* fe = (FormImageEditor*)editor;
-        m_updateThread->SetCurrentImage(&fe->m_work, &fe->m_toolBox, fe->getLabelImage());
         fe->m_projectPath = getProjectPath();
 
     }
@@ -242,7 +236,7 @@ void MainWindow::LoadDocument(QString fileName)
     if (fileName.contains(".paw")  ) {
         editor = new FormPaw(this);
     }
-    editor->InitDocument(m_updateThread, &m_iniFile, &m_currentProject.m_ini);
+    editor->InitDocument(nullptr, &m_iniFile, &m_currentProject.m_ini);
     editor->m_currentSourceFile = getProjectPath() + "/" + fileName;
     editor->m_currentFileShort = fileName;
     ui->tabMain->addTab(editor, fileName);
@@ -263,12 +257,20 @@ void MainWindow::LoadDocument(QString fileName)
     ui->tabMain->setTabsClosable(true);
     m_documents.append(editor);
     m_currentDoc = editor;
+    ConnectDocument();
 
+ //    connect(m_currentDoc, SIGNAL(OpenOtherFile(QString, int )), this, SLOT(ForceOpenFile(QString , int)));
+}
+void MainWindow::ConnectDocument()
+{
+    connect(m_currentDoc, SIGNAL(updatePaletteSignal()), this, SLOT(updatePalette()));
+    connect(m_currentDoc, SIGNAL(requestSaveAs()), this, SLOT(SaveAs()));
+    connect(m_currentDoc, SIGNAL(requestCloseWindow()), this, SLOT(closeWindowSlot()));
 
-    connect(m_currentDoc, SIGNAL(OpenOtherFile(QString, int )), this, SLOT(ForceOpenFile(QString , int)));
-
+    connect(m_currentDoc, SIGNAL(requestBuild()), this, SLOT(acceptBuild()));
 
 }
+
 
 
 void MainWindow::SetupFileList()
@@ -353,6 +355,7 @@ void MainWindow::closeWindowSlot()
 {
     int idx = ui->tabMain->currentIndex();
     RemoveTab(idx);
+    //qDebug() << "DONE";
 }
 
 void MainWindow::UpdateRecentProjects()
@@ -377,7 +380,6 @@ void MainWindow::SaveAs()
 {
     QString ext = m_currentDoc->m_fileExtension;
 
-
     QFileDialog dialog;
     dialog.setFileMode(QFileDialog::AnyFile);
     QString f = ext +" Files (*."+ext+")";
@@ -394,6 +396,7 @@ void MainWindow::SaveAs()
     m_currentDoc->SaveCurrent();
 
     ui->tabMain->setTabText(ui->tabMain->currentIndex(),filename);
+    updatePalette();
 
 
 }
@@ -403,13 +406,13 @@ void MainWindow::RemoveTab(int idx, bool save)
     if (idx==0)
         return;
 
+
     idx--;
     TRSEDocument* doc = m_documents[idx];
     if (!doc->SaveChanges())
         return;
-    m_updateThread->Park();
-    QThread::msleep(30);
-    m_updateThread->SetCurrentImage(nullptr, nullptr, nullptr);
+//    m_updateThread->Park();
+//    QThread::msleep(30);
 
     doc->PrepareClose();
 
@@ -419,20 +422,31 @@ void MainWindow::RemoveTab(int idx, bool save)
         m_currentProject.m_ini.removeFromList("open_files", doc->m_currentFileShort);
         m_currentProject.Save();
     }
+
+
+//    disconnect(m_currentDoc, SIGNAL(requestCloseWindow()), this, SLOT(closeWindowSlot()));
+
+    ui->tabMain->removeTab(idx+1);
+
     m_documents[idx]->Destroy();
-    delete doc;
-
+    m_documents[idx];
     m_documents.remove(idx);
-//    ui->tabMain->removeTab(idx+1);
 
 
-    TRSEDocument* d = (TRSEDocument*)ui->tabMain->currentWidget();
-    FormImageEditor* fe = dynamic_cast<FormImageEditor*>(d);
+//    m_updateThread->SetCurrentImage(nullptr, nullptr, nullptr);
+
+
+
+ //   TRSEDocument* d = (TRSEDocument*)ui->tabMain->currentWidget();
+ //   FormImageEditor* fe = dynamic_cast<FormImageEditor*>(d);
     ui->tabMain->currentWidget()->setFocus();
-    if (fe!=nullptr)
+
+
+/*    if (fe!=nullptr)
        m_updateThread->SetCurrentImage(&fe->m_work, &fe->m_toolBox,fe->getLabelImage());
 
     m_updateThread->Continue();
+    */
 }
 
 void MainWindow::CloseAll()
@@ -451,7 +465,7 @@ QString MainWindow::getProjectPath()
 
 void MainWindow::onImageMouseMove()
 {
-    m_updateThread->RunContents();
+    //m_updateThread->RunContents();
 }
 
 /*QString MainWindow::getProjectPath()
@@ -496,14 +510,14 @@ void MainWindow::on_tabMain_currentChanged(int index)
     FormImageEditor* imageedit = dynamic_cast<FormImageEditor*>(ui->tabMain->widget(index));
     FormRasEditor* rasedit = dynamic_cast<FormRasEditor*>(ui->tabMain->widget(index));
     if (rasedit!=nullptr) {
-        m_updateThread->SetCurrentImage(nullptr, nullptr, nullptr);
+        //m_updateThread->SetCurrentImage(nullptr, nullptr, nullptr);
 
 
 
     }
     if (imageedit!=nullptr) {
-        m_updateThread->SetCurrentImage(&imageedit->m_work, &imageedit->m_toolBox, imageedit->getLabelImage());
-        connect( imageedit, SIGNAL(EmitMouseEvent()),this, SLOT(onImageMouseMove()));
+        //m_updateThread->SetCurrentImage(&imageedit->m_work, &imageedit->m_toolBox, imageedit->getLabelImage());
+        //connect( imageedit, SIGNAL(EmitMouseEvent()),this, SLOT(onImageMouseMove()));
     }
 
     if (dynamic_cast<TRSEDocument*>(ui->tabMain->widget(index))!=nullptr) {
@@ -641,7 +655,7 @@ void MainWindow::on_actionImage_triggered()
     delete dNewFile;
 
     editor->UpdatePalette();
-    editor->InitDocument(m_updateThread, &m_iniFile, &m_currentProject.m_ini);
+    editor->InitDocument(nullptr, &m_iniFile, &m_currentProject.m_ini);
     editor->m_currentSourceFile = "";
     editor->m_currentFileShort = "";
     ui->tabMain->addTab(editor, "New Image");
@@ -656,6 +670,7 @@ void MainWindow::on_actionImage_triggered()
     m_documents.append(editor);
     m_currentDoc = editor;
 
+    ConnectDocument();
 
 }
 
@@ -788,6 +803,8 @@ void MainWindow::on_btnBuild_3_clicked()
 {
     if (m_currentDoc!=nullptr)
         m_currentDoc->Build();
+
+
 }
 
 void MainWindow::on_btnBuild_4_clicked()

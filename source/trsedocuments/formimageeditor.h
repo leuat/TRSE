@@ -55,6 +55,8 @@ public:
     ~FormImageEditor();
     ImageWorker m_work;
 
+    WorkerThread m_updateThread;
+
     LImageQImage m_grid;
     Toolbox m_toolBox;
     LColorList* m_currentColorList = nullptr;

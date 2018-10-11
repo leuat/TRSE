@@ -27,6 +27,7 @@
 #include <QString>
 #include <QPixmap>
 #include <QFontDatabase>
+#include <QMovie>
 #include <QFileDialog>
 #include "source/LeLib/data.h"
 #include <QThread>
@@ -34,6 +35,7 @@
 #include <QFileSystemModel>
 #include <QLayout>
 #include <QPointF>
+#include <QTimer>
 #include <source/toolbox.h>
 #include "source/workerthread.h"
 #include "imageeditor.h"
@@ -193,6 +195,9 @@ public:
     QVector<TRSEDocument*> m_documents;
 
 
+
+
+
     TRSEProject m_currentProject;
 
 
@@ -206,6 +211,8 @@ public:
     void keyPressEvent(QKeyEvent* e);
     void keyReleaseEvent(QKeyEvent *e);
 
+    void ConnectDocument();
+
     void VerifyDefaults();
     void VerifyProjectDefaults();
 
@@ -213,7 +220,7 @@ public:
 
 
 
-    WorkerThread* m_updateThread;
+//    WorkerThread* m_updateThread;
 
     void LoadDocument(QString fileName);
 
@@ -224,27 +231,36 @@ public:
   //  void setupEditor();
     void SetupFileList();
 
+
     void RefreshFileList();
 public slots:
 
+
+    void acceptBuild() {
+        ui->lblBuild->setHidden(false);
+        QTimer::singleShot(500, ui->lblBuild, &QLabel::hide);
+
+    }
     void OpenProjectSettings();
 
     void OnQuit();
 
     void ForceOpenFile(QString s, int ln);
 
-    void updateImage() {
+/*    void updateImage() {
         FormImageEditor* imageEdit = dynamic_cast<FormImageEditor*>(ui->tabMain->currentWidget());
         if (imageEdit==nullptr)
             return;
 
 
-        imageEdit->UpdateImage();
+//        imageEdit->UpdateImage();
 
-    }
+    }*/
     void closeWindowSlot();
     void updatePalette() {
-        setPalette(m_updateThread->m_pal);
+        //setPalette(m_updateThread->m_pal);
+        ui->lblSave->setHidden(false);
+        QTimer::singleShot(500, ui->lblSave, &QLabel::hide);
     }
 
     void UpdateRecentProjects();
