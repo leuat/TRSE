@@ -1,4 +1,4 @@
-open_files = ,tutorial2_tunnel_rotator.ras, tutorial1_sqrteffect.ras, test.ras
+open_files = ,tutorial1_sqrteffect.ras, tutorial2_tunnel_rotator.ras, test.ras
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $47
@@ -10,7 +10,7 @@ zeropage_internal1 = $4c
 zeropage_internal2 = $4e
 zeropage_internal3 = $50
 zeropage_internal4 = $52
-project_path = /home/leuat/code/TRSE/Publish/tutorials/Vic20/
+project_path = C:/Users/leuat/OneDrive/Documents/GitHub/TRSE/Publish/tutorials/Vic20/
 temp_zeropages = ,$54, $56, $58, $5A
 post_optimizer_passlda = 1
 post_optimizer_passjmp = 1

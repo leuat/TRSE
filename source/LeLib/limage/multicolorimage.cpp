@@ -173,8 +173,8 @@ void MultiColorImage::ExportKoa(QFile &f)
     //setBackground(bg[0]);
 
     QByteArray fdata;
-    fdata.append((uchar)0x00);
-    fdata.append((uchar)0x60);
+    fdata.append((char)0x00);
+    fdata.append((char)0x60);
     fdata.append(data);
     fdata.append(screen);
     fdata.append(color);

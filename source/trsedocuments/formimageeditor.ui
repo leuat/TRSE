@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>647</width>
-    <height>471</height>
+    <width>1133</width>
+    <height>663</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -53,7 +53,7 @@
     </layout>
    </item>
    <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0" columnstretch="2,0">
+    <layout class="QGridLayout" name="gridLayout" rowstretch="1,25,1" columnstretch="2,1" rowminimumheight="1,1,1" columnminimumwidth="1,1">
      <item row="1" column="0">
       <widget class="QGroupBox" name="groupBox">
        <property name="title">
@@ -118,6 +118,38 @@
        </item>
       </layout>
      </item>
+     <item row="0" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="6">
+       <property name="spacing">
+        <number>2</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="lblImageName">
+       <property name="font">
+        <font>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Image Name</string>
+       </property>
+      </widget>
+     </item>
      <item row="1" column="1">
       <widget class="QTabWidget" name="tabMain">
        <property name="maximumSize">
@@ -127,7 +159,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>4</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -577,38 +609,6 @@
          </property>
         </widget>
        </widget>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="6">
-       <property name="spacing">
-        <number>2</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="label_3">
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="lblImageName">
-       <property name="font">
-        <font>
-         <pointsize>14</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Image Name</string>
-       </property>
       </widget>
      </item>
     </layout>
