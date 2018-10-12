@@ -140,7 +140,9 @@ SOURCES += main.cpp\
     source/trsedocuments/formpaw.cpp \
     source/dialogimagehelp.cpp \
     source/Compiler/misc/machinecodeanalyzer.cpp \
-    source/dialogprojectsettings.cpp
+    source/dialogprojectsettings.cpp \
+    source/Assembler/orgasm.cpp \
+    source/Compiler/Opcodes/opcodes6502.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -227,7 +229,9 @@ HEADERS  += mainwindow.h \
     source/trsedocuments/formpaw.h \
     source/dialogimagehelp.h \
     source/Compiler/misc/machinecodeanalyzer.h \
-    source/dialogprojectsettings.h
+    source/dialogprojectsettings.h \
+    source/Assembler/orgasm.h \
+    source/Compiler/Opcodes/opcodes6502.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \
@@ -255,4 +259,5 @@ DISTFILES += \
     resources/text/Documentation.txt \
     resources/text/builtinmethods.txt \
     resources/text/builtinmethods.txt \
-    resources/text/builtinmethods.txt
+    resources/text/builtinmethods.txt \
+    resources/images/NES.png

@@ -40,6 +40,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leDasm->setText(m_ini->getString("dasm"));
     ui->leEmulator->setText(m_ini->getString("emulator"));
     ui->leVic20Emulator->setText(m_ini->getString("vic20_emulator"));
+    ui->leNesEmulator->setText(m_ini->getString("nes_emulator"));
     ui->leExomizer->setText(m_ini->getString("exomizer"));
 //    if (ui->cmbPalette->currentText()=="Dark")
     if (m_ini->getdouble("windowpalette")==0)
@@ -66,7 +67,9 @@ void DialogTRSESettings::FillFromIni()
 
     ui->leFontSizeMemoryAnalyzer->setText(QString::number((int)m_ini->getdouble("memory_analyzer_font_size")));
     ui->chkExomizerFootprint->setChecked(m_ini->getdouble("hide_exomizer_footprint")==1.0);
+    ui->chkRemoveUnusedProcedures->setChecked( m_ini->getdouble("optimizer_remove_unused_symbols")==1.0);
 
+    ui->leUserDefined->setText(m_ini->getString("user_defined_command"));
 
 }
 
@@ -77,6 +80,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("exomizer", ui->leExomizer->text());
     m_ini->setString("emulator", ui->leEmulator->text());
     m_ini->setString("vic20_emulator", ui->leVic20Emulator->text());
+    m_ini->setString("nes_emulator", ui->leNesEmulator->text());
     m_ini->setString("theme", ui->cmbTheme->currentText() + ".ini");
 
     m_ini->setFloat("font_size", ui->leFontSize->text().toInt());
@@ -85,6 +89,12 @@ void DialogTRSESettings::FillToIni()
 
     m_ini->setFloat("hide_exomizer_footprint", ui->chkExomizerFootprint->isChecked()?1:0);
 
+
+
+    m_ini->setString("user_defined_command",ui->leUserDefined->text());
+
+
+    m_ini->setFloat("optimizer_remove_unused_symbols", ui->chkRemoveUnusedProcedures->isChecked()?1:0);
 
     if (ui->cmbPalette->currentText()=="Dark")
         m_ini->setFloat("windowpalette",0);

@@ -33,5 +33,6 @@
         <file>resources/images/building.gif</file>
         <file>resources/images/hammer.jpg</file>
         <file>resources/images/hammer.png</file>
+        <file>resources/images/NES.png</file>
     </qresource>
 </RCC>

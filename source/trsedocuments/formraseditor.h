@@ -112,6 +112,7 @@ public:
     int FindEndSymbol(QString output);
     void FindBlockEndSymbols(QString output);
     void ConnectBlockSymbols();
+    void BuildNes(QString prg);
 
 private:
 

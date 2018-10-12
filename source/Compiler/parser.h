@@ -90,7 +90,7 @@ public:
 
     int findPage();
 
-    Node* Parse();
+    Node* Parse(bool removeUnusedDecls);
     Node* Variable();
     Node* Empty();
     Node* AssignStatement();

@@ -28,6 +28,8 @@
 #include "source/LeLib/data.h"
 #include <QApplication>
 #include <QMessageBox>
+#include <QProcess>
+
 class TRSEDocument : public QWidget
 {
     Q_OBJECT
@@ -79,6 +81,8 @@ public:
 
     virtual void keyPressEvent(QKeyEvent *e);
 
+
+    void UserDefined();
 
     virtual void Reload() {}
 

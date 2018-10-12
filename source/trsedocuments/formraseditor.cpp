@@ -206,7 +206,10 @@ void FormRasEditor::Build()
         m_buildSuccess = false;
 
     }
+    if (m_projectIniFile->getString("system")=="NES") {
+        BuildNes(m_currentSourceFile.split(".")[0]);
 
+    }
     SetLights();
 }
 
@@ -268,6 +271,39 @@ void FormRasEditor::ConnectBlockSymbols()
 
 }
 
+void FormRasEditor::BuildNes(QString prg)
+{
+    QByteArray header;
+    header.resize(16);
+    header.fill(0);
+    header[0] = 0x4E;
+    header[1] = 0x45;
+    header[2] = 0x53;
+    header[3] = 0x1A;
+    // 0000 1000
+
+    header[4] = 2; // PRG rom kb
+    // 0001 0000
+
+    header[5] = 0; // CHR rom
+    header[6] = 0b00000001;
+
+
+
+    QFile f(prg+ ".prg");
+    f.open(QFile::ReadOnly);
+    QByteArray data = f.readAll();
+    f.close();
+//    qDebug() << prg;
+
+    QFile out(prg+ ".nes");
+    out.open(QFile::WriteOnly);
+    out.write(header);
+    out.write(data);
+    out.close();
+
+}
+
 bool FormRasEditor::VerifyMachineCodeZP(QString fname)
 {
 
@@ -294,6 +330,10 @@ void FormRasEditor::Run()
         emulator = m_iniFile->getString("emulator");
     if (Syntax::s.m_currentSystem==Syntax::VIC20)
         emulator = m_iniFile->getString("vic20_emulator");
+    if (Syntax::s.m_currentSystem==Syntax::NES) {
+        emulator = m_iniFile->getString("nes_emulator");
+        filename = m_currentSourceFile.split(".")[0] + ".nes";
+    }
     if (emulator=="")
         return;
     ExecutePrg(filename,emulator, m_projectIniFile->getString("system"));
@@ -548,7 +588,7 @@ bool FormRasEditor::BuildStep()
     timer.start();
     lexer = Lexer(text, lst, m_projectIniFile->getString("project_path"));
     parser = Parser(&lexer);
-    compiler = Compiler(&parser);
+    compiler = Compiler(&parser,m_iniFile, m_projectIniFile);
     compiler.Parse();
 //    compiler.Interpret();
 
@@ -558,7 +598,7 @@ bool FormRasEditor::BuildStep()
     QString path = m_projectIniFile->getString("project_path") + "/";
     filename = m_currentSourceFile.split(".")[0];
 
-    return compiler.Build(Compiler::MOS6502, path ,*m_iniFile, *m_projectIniFile);
+    return compiler.Build(Compiler::MOS6502, path);
 }
 
 void FormRasEditor::FillFromIni()

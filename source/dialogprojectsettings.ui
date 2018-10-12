@@ -70,12 +70,12 @@
          </item>
          <item>
           <property name="text">
-           <string>PET (Not supported yet)</string>
+           <string>NES</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>NES (Not supported yet)</string>
+           <string>PET (Not supported yet)</string>
           </property>
          </item>
         </widget>

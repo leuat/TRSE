@@ -25,7 +25,7 @@
 #include "source/Compiler/assembler/assembler.h"
 #include "source/LeLib/util/util.h"
 #include "source/LeLib/util/cinifile.h"
-
+#include "source/Compiler/Opcodes/opcodes6502.h"
 class CStringItem {
 public:
     uchar m_pscii, m_screenCode;
@@ -41,52 +41,17 @@ public:
 };
 
 
-
-class MOSOperandCycle {
-public:
-    QString m_name;
-    int m_implied;
-  //  int m_acc;
-    int m_immediate;
-    int m_absolute;
-    int m_absoluteWithParam;
-    int m_zeropage;
-    int m_zeropageWithParam;
-    MOSOperandCycle() {}
-    MOSOperandCycle(QString name, int implied, int immediate, int absolute, int abswp, int zp, int zpwp) {
-        m_name = name;
-        m_implied = implied;
- //       m_acc = acc;
-        m_immediate = immediate;
-        m_absolute = absolute;
-        m_absoluteWithParam = abswp;
-        m_zeropage = zp;
-        m_zeropageWithParam = zpwp;
-    }
-};
-
-class MOSOperation {
-  public:
-    QString operand;
-    QString param1 = "";
-    QString param2 ="";
-    bool isNumeric = false;
-    bool is16bit = false;
-    bool isZeroPage = false;
-};
-
-
 class AsmMOS6502 : public Assembler
 {
 public:
     AsmMOS6502();
 
-    QMap<QString, MOSOperandCycle> m_opCycles;
 
     static QString m_defaultZeroPointers;
     static QString m_defaultTempZeroPointers;
     QMap<QString, CStringItem> m_cstr;
 
+    Opcodes6502 m_opCycles;
 
     int m_curZeroPointer=0;
 
@@ -110,7 +75,6 @@ public:
     void Program(QString name) override;
     void EndProgram() override;
     void DeclareArray(QString name, QString type, int count, QStringList lst, QString pos) override;
-    void InitMosOpCycles();
     void InitZeroPointers(QStringList lst, QStringList tmpList) override;
 
     void VarDeclHeader();

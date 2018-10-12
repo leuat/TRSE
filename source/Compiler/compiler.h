@@ -34,13 +34,14 @@ public:
     enum Type{PASCAL, MOS6502};
     Assembler* m_assembler = nullptr;
     Parser* m_parser;
+    CIniFile* m_ini, *m_projectIni;
     FatalErrorException recentError;
-    Compiler(Parser* p);
+    Compiler(Parser* p, CIniFile* ini, CIniFile* pIni);
     Compiler() {}
     void Parse();
     void Visit(Node* n);
     void Interpret();
-    bool Build(Type, QString projDir, CIniFile& ini, CIniFile& pIni);
+    bool Build(Type, QString projDir);
     void CleanupCycleLinenumbers();
     void CleanupBlockLinenumbers();
     void SaveBuild(QString filename);

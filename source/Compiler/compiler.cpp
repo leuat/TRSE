@@ -22,9 +22,11 @@
 #include "compiler.h"
 #include <QDebug>
 
-Compiler::Compiler(Parser* p)
+Compiler::Compiler(Parser* p, CIniFile* ini, CIniFile* pIni)
 {
     m_parser = p;
+    m_ini = ini;
+    m_projectIni = pIni;
 }
 
 void Compiler::Parse()
@@ -33,7 +35,7 @@ void Compiler::Parse()
     qDebug() << "Parsing..";
     try {
 
-        m_tree = m_parser->Parse();
+        m_tree = m_parser->Parse(m_ini->getdouble("optimizer_remove_unused_symbols")==1.0);
     } catch (FatalErrorException e) {
         qDebug() << "ERROR parse " << e.message;
         HandleError(e, "Error during parsing:");
@@ -57,7 +59,7 @@ void Compiler::Interpret()
 
 }
 
-bool Compiler::Build(Compiler::Type type, QString project_dir, CIniFile& ini, CIniFile& pIni)
+bool Compiler::Build(Compiler::Type type, QString project_dir)
 {
     if (m_tree==nullptr) {
         qDebug() << "Compiler::Build : tree not parsed!";
@@ -74,17 +76,17 @@ bool Compiler::Build(Compiler::Type type, QString project_dir, CIniFile& ini, CI
     if (m_assembler==nullptr)
         return false;
 
-    m_assembler->InitZeroPointers(pIni.getStringList("zeropages"),pIni.getStringList("temp_zeropages"));
-    m_assembler->m_zeropageScreenMemory = pIni.getString("zeropage_screenmemory");
-    m_assembler->m_replaceValues["@DECRUNCH_ZP1"] = pIni.getString("zeropage_decrunch1");
-    m_assembler->m_replaceValues["@DECRUNCH_ZP2"] = pIni.getString("zeropage_decrunch2");
-    m_assembler->m_replaceValues["@DECRUNCH_ZP3"] = pIni.getString("zeropage_decrunch3");
-    m_assembler->m_replaceValues["@DECRUNCH_ZP4"] = pIni.getString("zeropage_decrunch4");
+    m_assembler->InitZeroPointers(m_projectIni->getStringList("zeropages"),m_projectIni->getStringList("temp_zeropages"));
+    m_assembler->m_zeropageScreenMemory = m_projectIni->getString("zeropage_screenmemory");
+    m_assembler->m_replaceValues["@DECRUNCH_ZP1"] = m_projectIni->getString("zeropage_decrunch1");
+    m_assembler->m_replaceValues["@DECRUNCH_ZP2"] = m_projectIni->getString("zeropage_decrunch2");
+    m_assembler->m_replaceValues["@DECRUNCH_ZP3"] = m_projectIni->getString("zeropage_decrunch3");
+    m_assembler->m_replaceValues["@DECRUNCH_ZP4"] = m_projectIni->getString("zeropage_decrunch4");
 
-    m_assembler->m_internalZP << pIni.getString("zeropage_internal1");
-    m_assembler->m_internalZP << pIni.getString("zeropage_internal2");
-    m_assembler->m_internalZP << pIni.getString("zeropage_internal3");
-    m_assembler->m_internalZP << pIni.getString("zeropage_internal4");
+    m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal1");
+    m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal2");
+    m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal3");
+    m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal4");
 
 
     m_assembler->m_projectDir = project_dir;
@@ -111,8 +113,8 @@ bool Compiler::Build(Compiler::Type type, QString project_dir, CIniFile& ini, CI
     m_assembler->EndMemoryBlock();
     m_assembler->Label("EndSymbol");
     m_assembler->Connect();
-    if (ini.getdouble("post_optimize")==1.0)
-        m_assembler->Optimise(pIni);
+    if (m_ini->getdouble("post_optimize")==1.0)
+        m_assembler->Optimise(*m_projectIni);
     CleanupCycleLinenumbers();
     CleanupBlockLinenumbers();
     return true;

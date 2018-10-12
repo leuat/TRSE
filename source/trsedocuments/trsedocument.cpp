@@ -58,4 +58,26 @@ void TRSEDocument::keyPressEvent(QKeyEvent *e) {
         Build();
     }
 
+    if (e->key() == Qt::Key_T &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+        UserDefined();
+    }
+
+}
+
+void TRSEDocument::UserDefined()
+{
+    QProcess p;
+
+    QString s = m_iniFile->getString("user_defined_command").trimmed();
+    if (s=="")
+        return;
+
+    s=s.replace("@prg", m_currentSourceFile.replace(".ras", ".prg"));
+    QStringList params = s.split(" ");
+    QString cmd = params[0];
+    params.removeFirst();
+    qDebug() << params;
+    p.execute(cmd,params);
+    p.waitForFinished();
+
 }

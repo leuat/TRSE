@@ -194,7 +194,8 @@ void MainWindow::VerifyDefaults()
     if (!m_iniFile.contains("memory_analyzer_font_size"))
         m_iniFile.setFloat("memory_analyzer_font_size", 17);
 
-
+    if (!m_iniFile.contains("optimizer_remove_unused_symbols"))
+     m_iniFile.setFloat("optimizer_remove_unused_symbols",1);
 
     m_iniFile.filename = m_iniFileName;
 
@@ -492,6 +493,8 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
         QString emu = m_iniFile.getString("emulator");
         if (m_currentProject.m_ini.getString("system")=="VIC20")
             emu = m_iniFile.getString("vic20_emulator");
+        if (m_currentProject.m_ini.getString("system")=="NES")
+            emu = m_iniFile.getString("nes_emulator");
 
         FormRasEditor::ExecutePrg(getProjectPath()+"/" + file, emu, m_currentProject.m_ini.getString("system"));
     }

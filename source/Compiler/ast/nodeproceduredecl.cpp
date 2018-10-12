@@ -139,8 +139,9 @@ QString NodeProcedureDecl::Build(Assembler *as)
         m_block->Build(as);
     }
     if (!isInitFunction) {
-        if (!m_isInterrupt)
+        if (!m_isInterrupt) {
             as->Asm("rts");
+        }
         else as->Asm("rti");
       //as->Label("afterProc_" + m_procName);
     }
