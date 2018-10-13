@@ -426,6 +426,9 @@ bool CharsetImage::KeyPress(QKeyEvent *e)
     if (e->key()==Qt::Key_D)
         m_currencChar+=1*s;
 
+    if (m_currencChar>32545)
+        m_currencChar=0;
+
     m_currencChar = Util::clamp(m_currencChar,0,255);
 
 

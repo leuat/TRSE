@@ -30,8 +30,8 @@ LImageSprites::LImageSprites(LColorList::Type t) : CharsetImage(t) {
     m_currencChar=0;
 
     m_GUIParams[btnLoadCharset] ="";
-    m_GUIParams[btn1x1] = "1x1 Character set";
-    m_GUIParams[btn2x2] = "3x2 Character set";
+    m_GUIParams[btn1x1] = "1x1 Sprite";
+    m_GUIParams[btn2x2] = "3x2 Sprites";
     m_GUIParams[btn2x2repeat] = "";
     m_GUIParams[btnCopy] = "Copy";
     m_GUIParams[btnPaste] = "Paste";
@@ -39,6 +39,10 @@ LImageSprites::LImageSprites(LColorList::Type t) : CharsetImage(t) {
     m_GUIParams[btnFlipV] = "Flip Vertical";
     m_GUIParams[btnEditFullCharset] = "";
 
+
+
+    m_exportParams.clear();
+    m_exportParams["no_sprites"] = 16;
     //Data::data.currentColor=0;
 
 }
@@ -97,6 +101,7 @@ void LImageSprites::ToRaw(QByteArray &arr)
     int yp = 0;
     bool done=false;
     int i=0;
+    int noSprites = 0;
     while (!done) {
         int pos = i*64;
         int cnt = 0;
@@ -117,12 +122,15 @@ void LImageSprites::ToRaw(QByteArray &arr)
                 }
             }
         }
-        done = allBlack;
+        done = noSprites>=m_exportParams["no_sprites"];
+
+        //done = allBlack;
         xp+=3;
         if (xp>=38) {
             xp=0;
             yp+=3;
         }
+        noSprites++;
     }
     qDebug() << "Converted : " << (arr.count()/64) << " sprites";
 }

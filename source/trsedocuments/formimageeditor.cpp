@@ -80,6 +80,9 @@ void FormImageEditor::onImageMouseEvent()
 //    emit EmitMouseEvent();
     m_updateThread.RunContents();
     UpdateImage();
+
+//    updateCharSet();
+
 }
 
 FormImageEditor::~FormImageEditor()
@@ -476,6 +479,7 @@ void FormImageEditor::on_btnFlipVert_clicked()
 
     Data::data.forceRedraw = true;
     Data::data.Redraw();
+    onImageMouseEvent();
 
 }
 
@@ -485,6 +489,7 @@ void FormImageEditor::on_btnFlipHorisontal_clicked()
 
     Data::data.forceRedraw = true;
     Data::data.Redraw();
+    onImageMouseEvent();
 
 }
 
@@ -512,6 +517,7 @@ void FormImageEditor::on_chkGrid_clicked(bool checked)
 //    ui->lblGrid->setVisible(checked);
     m_updateThread.m_drawGrid=!m_updateThread.m_drawGrid;
     Data::data.Redraw();
+    onImageMouseEvent();
 
 }
 
@@ -550,6 +556,9 @@ void FormImageEditor::on_lstImages_clicked(const QModelIndex &index)
     m_work.SetImage(index.row());
     Data::data.redrawFileList = true;
     UpdatePalette();
+
+    onImageMouseEvent();
+
 }
 
 void FormImageEditor::on_btnImport_clicked()
@@ -561,6 +570,7 @@ void FormImageEditor::on_btnImport_clicked()
         m_work.m_currentImage->m_image->CopyFrom(di->m_image);
         Data::data.redrawOutput = true;
     }
+    onImageMouseEvent();
 
 }
 
@@ -573,6 +583,7 @@ void FormImageEditor::on_btnCharsetFull_clicked()
     ci->m_currentMode = CharsetImage::Mode::FULL_IMAGE;
     Data::data.forceRedraw = true;
     UpdateCurrentMode();
+    onImageMouseEvent();
 }
 
 void FormImageEditor::on_btnCharset1x1_clicked()
@@ -584,7 +595,7 @@ void FormImageEditor::on_btnCharset1x1_clicked()
     m_updateThread.m_zoom = 1.0;
     ci->m_currentMode = CharsetImage::Mode::CHARSET1x1;
     Data::data.forceRedraw = true;
-    UpdateCurrentMode();
+    onImageMouseEvent();
 
 }
 
@@ -598,6 +609,7 @@ void FormImageEditor::on_btnCharset2x2_clicked()
     ci->m_currentMode = CharsetImage::Mode::CHARSET2x2;
     Data::data.forceRedraw = true;
     UpdateCurrentMode();
+    onImageMouseEvent();
 }
 
 void FormImageEditor::on_btnCharset2x2Repeat_clicked()
@@ -610,6 +622,7 @@ void FormImageEditor::on_btnCharset2x2Repeat_clicked()
     ci->m_currentMode = CharsetImage::Mode::CHARSET2x2_REPEAT;
     UpdateCurrentMode();
     Data::data.forceRedraw = true;
+    onImageMouseEvent();
 
 }
 
@@ -622,6 +635,7 @@ void FormImageEditor::on_btnCharsetPaste_clicked()
 {
     m_work.m_currentImage->m_image->PasteChar();
     Data::data.forceRedraw = true;
+    onImageMouseEvent();
 
 }
 
@@ -745,6 +759,7 @@ void FormImageEditor::updateCharSet()
 //    int size = (ui->lstCharMap->rect().width()-ui->lstCharMap->spacing())/8;
   //  ui->lstCharMap->setIconSize(QSize(size,size));
 
+    emit EmitMouseEvent();
 }
 
 
@@ -981,6 +996,7 @@ void FormImageEditor::on_lstCharMap_currentItemChanged(QTableWidgetItem *current
 
     Data::data.Redraw();
     Data::data.forceRedraw = true;
+    onImageMouseEvent();
 
 
 }
@@ -1049,6 +1065,8 @@ void FormImageEditor::on_chkDisplayMulticolor_stateChanged(int arg1)
 {
     m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
     Data::data.Redraw();
+    onImageMouseEvent();
+
 }
 
 void FormImageEditor::on_leHeaders_editingFinished()
