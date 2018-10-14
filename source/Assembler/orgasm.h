@@ -11,28 +11,32 @@ public:
     QString m_line;
     QString m_opCode;
     QString m_label;
-    enum Type {imm, zp, zpx, zpy, izx, izy, abs, abx,aby, ind, rel, label, imp, none};
+    enum Type {none, imm, zp, zpx, zpy, izx, izy, abs, abx,aby, ind, rel, label, imp};
     QStringList m_debug;
     Type m_type;
     QString m_arg;
     int m_size = 0;
     QByteArray m_data;
+    enum Pass { passSymbol, passCompile };
 
     Type getType(QString s) {
         s=s.toLower();
-        qDebug() << " Getting type from : " << s;
+//        qDebug() << " Getting type from : " << s;
         if (s=="")
             return none;
         if (s.startsWith("#"))
             return imm;
         int i = 0;
-        if (s.contains(","))
+        if (s.contains(",")) {
             i = Util::NumberFromStringHex(s.split(",")[0]);
+        }
         else
+        {
             i = Util::NumberFromStringHex(s);
+        }
 
 
-        if (!s.contains("(") && s.contains(",x"))
+        if (!s.contains("(") && i<256 && s.contains(",x"))
             return zpx;
         if (!s.contains("(") && s.contains(",y"))
             return zpy;
@@ -40,12 +44,14 @@ public:
             return izx;
         if (s.contains("(") && s.contains("),y"))
             return izy;
-        if (!s.contains("(") &&i>=256 && !s.contains(")")) {
+        if (!s.contains("(") && i>=256 && !s.contains(")") && !s.contains(",x") && !s.contains(",y")) {
+
             return abs;
 
         }
-        if (!s.contains("(")&&i>=256 && !s.contains(")") && s.contains(",x"))
+        if (!s.contains("(")&&i>=256 && !s.contains(")") && s.contains(",x")) {
             return abx;
+        }
         if (!s.contains("(")&&i>=256 && !s.contains(")") && s.contains(",y"))
             return aby;
         if (s.contains("(")&&i>=256 && s.contains(")") && !s.contains(","))
@@ -56,7 +62,7 @@ public:
     }
 
 
-    bool Assemble(QString line, Opcodes6502& m_opCodes, int pCounter);
+    bool Assemble(QString& line, Opcodes6502& m_opCodes, int pCounter, Pass pass, QMap<QString, int>& symbols);
 
 };
 
@@ -68,7 +74,9 @@ public:
     QStringList m_debug;
     QString m_output;
     Opcodes6502 m_opCodes;
+    QMap<QString, QString> m_prep;
     QByteArray m_data;
+    bool m_success=false;
 
 
 
@@ -78,11 +86,16 @@ public:
     QMap<QString, int> m_symbols;
 
     void Debug(QString s);
-    QString TreatLabel(QString s);
+    QString TreatLabel(QString& s);
 
     void TreatOrg(QStringList lst);
     void TreatData(QString s);
+    QStringList Compile(Instruction::Pass pass, QStringList& lst);
+
     void Assemble(QString inFile, QString outFile);
+
+    QStringList Preprocess(QStringList lst);
+    QStringList BinaryOps(QStringList lst);
 
 };
 

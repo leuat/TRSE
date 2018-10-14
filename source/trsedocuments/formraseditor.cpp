@@ -130,9 +130,11 @@ void FormRasEditor::Build()
             OrgAsm orgAsm;
             orgAsm.LoadCodes();
             orgAsm.Assemble(filename+".asm", filename+".prg");
-            output = "complete.";
-            for (QString s : orgAsm.m_debug)
-             qDebug() << s ;
+            if (orgAsm.m_success) {
+                output = "complete.";
+                //for (QString s : orgAsm.m_debug)
+                //qDebug() << s ;
+            }
         }
         // Machine Code Analyzer
         VerifyMachineCodeZP(filename+".prg");
