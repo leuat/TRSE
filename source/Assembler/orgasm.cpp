@@ -40,9 +40,9 @@ void OrgAsm::Debug(QString s)
     m_debug<<Util::numToHex(m_pCounter)+ " : " +s;
 }
 
-QString OrgAsm::TreatLabel(QString& line)
+QString OrgAsm::TreatLabel(QString line)
 {
-    line=line.toLower();
+//    line=line.toLower();
     if (! (line.startsWith("\t") || (line.startsWith(" ")) )) {
        // a : dc.b 0
        line.replace(":"," ");
@@ -54,17 +54,39 @@ QString OrgAsm::TreatLabel(QString& line)
 
             Debug("New symbol '" + lbl+"' at " + Util::numToHex(m_pCounter) );
 
-            line = line.replace(lbl, " ");
+
+            //line = line.replace(lbl, " ");
+            line = " ";
+            if (lblSplit.count()>1)
+                for (int i=1;i<lblSplit.count();i++)
+                    line+=lblSplit[i] + " ";
+
+//            qDebug() << "New label: " << lbl<< " starts with line " << line;
        }
     }
 
-    return line.simplified().trimmed().toLower();
+    return line.simplified().trimmed();
 
 }
 
 void OrgAsm::TreatOrg(QStringList l)
 {
-    int val = Util::NumberFromStringHex(l[1]);
+    qDebug() << l[0] << " " << l[1];
+//    if (l.count()>2)
+  //      qDebug() << l[2];
+    QString v = l[1];
+    if (l.count()>2)
+        v+=" "+l[2];
+    for (QString s: m_symbols.keys()) {
+        if (v.contains(s))
+            v = v.replace(s, Util::numToHex(m_symbols[s]));
+    }
+
+    //qDebug() << v;
+
+//    int val = Util::NumberFromStringHex(l[1]);
+    int val = Util::NumberFromStringHex(Util::BinopString(v));
+  //  qDebug() << Util::numToHex(val);
 
     if (m_data.count()==0) {
         m_data.append(val&0xFF);
@@ -77,13 +99,13 @@ void OrgAsm::TreatOrg(QStringList l)
     else {
         int cnt =0;
         while (m_pCounter<val) {
-            m_data.append((uchar)0);
+            m_data.append((uchar)0xFF);
             m_pCounter++;
             cnt++;
 
         }
         Debug("Org padding : " + Util::numToHex(cnt) +" bytes to " + Util::numToHex(val));
-
+//        qDebug() << "Org padding : " + Util::numToHex(cnt) +" bytes to " + Util::numToHex(val);
 
     }
 
@@ -91,24 +113,58 @@ void OrgAsm::TreatOrg(QStringList l)
 
 void OrgAsm::TreatData(QString s)
 {
+    qDebug() << s;
     QStringList lst = s.replace(",", " ").simplified().split(" ");
-
+    bool isWord = false;
+    if (s.simplified().split(" ")[0]==".word") {
+        isWord = true;
+  //      qDebug() << " ****** IS WORD ******* " << s;
+    }
 
     if (lst.count()==1) {
         m_data.append((uchar)0);
-        Debug(" data: 1 byte (single");
+        if (isWord) {
+//            qDebug() << "APPENDING EXRA";
+            m_data.append((uchar)0);
+            m_pCounter++;
+        }
+        Debug(" data: 1 byte = 0 ");
         m_pCounter++;
         return;
     }
     for (int i=1;i<lst.count();i++) {
 //        qDebug() <<lst[i];
+        //if (lst[i].trimmed()=="")
+         //   continue;
         m_data.append((uchar)Util::NumberFromStringHex(lst[i]));
         m_pCounter++;
+        if (isWord) {
+            m_data.append((uchar)Util::NumberFromStringHex(lst[i]));
+            m_pCounter++;
+
+        }
 
     }
-//    qDebug() << " data: "+Util::numToHex(lst.count()-1)+" bytes";
-    Debug(" data: "+Util::numToHex(lst.count()-1)+" bytes");
+//    qDebug() << "Data org: " << s;
+   qDebug() << " data: "+Util::numToHex(lst.count()-1)+" bytes";
+  //  Debug(" data: "+Util::numToHex(lst.count()-1)+" bytes");
 
+}
+
+void OrgAsm::TreatIncBin(QString s)
+{
+    s = s.replace("\"","");
+    if (!QFile::exists(s)) {
+        qDebug() << "File doesn't exist: " << s;
+        exit(1);
+    }
+    QFile f(s);
+    f.open(QFile::ReadOnly);
+    QByteArray d = f.readAll();
+    f.close();
+    m_data.append(d);
+    //qDebug() << " CUR : " << Util::numToHex(m_pCounter);
+    m_pCounter+=d.count();
 }
 
 QStringList OrgAsm::Compile(Instruction::Pass pass, QStringList& lst)
@@ -121,22 +177,30 @@ QStringList OrgAsm::Compile(Instruction::Pass pass, QStringList& lst)
             continue;
         if (s.simplified().startsWith(";"))
             continue;
-        if (pass==Instruction::passSymbol)
-            s = TreatLabel(o);
+        if (pass==Instruction::passSymbol && !o.toLower().contains("incbin"))
+            s = TreatLabel(o).toLower();
 
         if (s =="") // label only
             continue;
 
         // Test for org
-        QStringList l = s.split(" ");
-        if (l.count()==2 && l[0]=="org") {
+
+//        qDebug() << "L " << o <<  " " << s;
+        QStringList l = s.simplified().split(" ");
+//        qDebug() << s;
+        if (l[0]=="org") {
             TreatOrg(l);
         }
         else
-        if (l[0]==".byte" || l[0]=="dc.b") {
-
+        if (l[0]==".byte" || l[0]=="dc.b" || l[0]=="d.b" || l[0] ==".word") {
             TreatData(s);
         }
+        else
+        if (l.count()==2 && l[0]=="incbin") {
+            //qDebug() << o;
+            TreatIncBin(o.simplified().split(" ")[1]);
+        }
+
         else {
 
 
@@ -183,23 +247,35 @@ void OrgAsm::Assemble(QString inFile, QString outFile)
         qDebug() << " ******* PASS PREPROCESS";
         lst = Preprocess(lst);
 
+        m_data.clear();
+        lst = BinaryOps(lst);
+        m_data.clear();
 
+/*        for (QString l: lst)
+           qDebug() << l.simplified();
+
+        exit(1);
+*/
         qDebug() << " ******* PASS SYMBOL";
         lst = Compile(Instruction::passSymbol, lst);
         m_data.clear();
-
 
         qDebug() << " ******* PASS BINARY OP";
         lst = BinaryOps(lst);
         m_data.clear();
 
-        for (QString l: lst)
-            qDebug() << l;
-        exit(1);
+//        exit(1);
 
 
         qDebug() << " ******* PASS COMPILE";
         Compile(Instruction::passCompile, lst);
+        for (QString l: lst)
+           qDebug() << l.simplified();
+
+
+//        exit(1);
+
+
 
     } catch (QString error) {
         qDebug() << "ERROR: " << error;
@@ -225,7 +301,11 @@ QStringList OrgAsm::Preprocess(QStringList lst)
             continue;
         if (s.simplified().startsWith(";"))
             continue;
+        s = s.split(";")[0];
         //s = s.toLower().simplified();
+        s = s.replace("dc.b", ".byte");
+        s = s.replace("dc.w", ".word");
+
         if (s.contains("=")) {
             QStringList l = s.simplified().split("=");
             m_prep[l[0].trimmed()] = l[1].trimmed();
@@ -235,16 +315,25 @@ QStringList OrgAsm::Preprocess(QStringList lst)
             continue;
         }
         // Afterwards, replace all
+        s = s.replace("\t", " ");
         QStringList l = s.split(" ");
+//        qDebug() << s;
         if (l.count()>1) {
-            QStringList l2 = l[1].split(",")[0].split("-")[0].split("+");
-            QString cmp = l2[0];
-//            qDebug() << cmp;
-            for (QString k : m_prep.keys())
-                if (k==cmp) {
-                    s = s.replace(k,m_prep[k]);
- //                   qDebug() << "Replaced: " << s;
-                }
+
+            for (int i=1;i<l.count();i++) {
+
+                QString v = l[i];
+  //              qDebug() << v;
+
+                QStringList l2 = v.split(",")[0].split("-")[0].split("+");
+                QString cmp = l2[0].replace("(","").replace(")","").simplified();
+                for (QString k : m_prep.keys())
+                    if (k==cmp) {
+    //                    qDebug() << "** Replace Before : " << s;
+                        s = s.replace(k,m_prep[k]);
+      //                  qDebug() << "** Replace after: " << s;
+                    }
+            }
         }
 
 //        qDebug() << s;
@@ -260,29 +349,55 @@ QStringList OrgAsm::BinaryOps(QStringList lst)
     QStringList newList;
     m_prep.clear();
     for (QString& s: lst) {
-
+        QString o = s;
         if (s.simplified()=="")
             continue;
         if (s.simplified().startsWith(";"))
             continue;
+        if (s.simplified().startsWith(".byte") || s.simplified().startsWith("dc.b") ||
+                s.simplified().startsWith("d.b") || s.simplified().startsWith(".word")) {
+
+            newList<< s;
+            continue;
+        }
+        if (!(s.startsWith(" ") || s.startsWith("\t"))) {
+            newList<< s;
+            continue;
+
+        }
+        if (s.simplified().startsWith("org") ) {
+            newList<< s;
+            continue;
+        }
+
         //s = s.toLower().simplified();
 
-        QStringList l = s.simplified().split(" ");
-        if (l.count()>1) {
-            QStringList whole = l[0].split(",");
-            QString li = whole[0];
-
-            if (li.contains("+"))
-                li = Util ::numToHex(Util::NumberFromStringHex(li.split("+")[0]) + Util::NumberFromStringHex(li.split("+")[1]));
-
-            if (li.contains("-"))
-                li = Util ::numToHex(Util::NumberFromStringHex(li.split("-")[0]) - Util::NumberFromStringHex(li.split("+")[1]));
-
-
-            s = l[0] + " " + li;
-            if (whole.count()>1)
-                s+="," + whole[1];
+        QString label = "";
+        if (!(s.startsWith(" ") || s.startsWith("\t"))) {
+            s=s.replace(":", "");
+            label=s.simplified().split(" ")[0];
+            s=s.replace(label, "");
         }
+
+
+        QString ret = "";
+        QStringList l = s.simplified().split(" ");
+        QString main = l[0];
+        QString tag = "";
+        if (l.count()>1)
+        for (int i=1;i<l.count();i++) {
+            tag+=" " + l[i];
+        }
+        QStringList lTag = tag.split(",");
+        lTag[0] = Util::BinopString(lTag[0]);
+//        qDebug() << "Before: " <<s;
+        s = main + " " + lTag[0];
+        if (lTag.count()>1)
+            s+= ","+lTag[1];
+        s= label + " " + s;
+
+//        if (s.contains("$80"))
+  //          qDebug() << s;
 
        newList<<s;
     }
@@ -297,8 +412,15 @@ bool Instruction::Assemble(QString& line, Opcodes6502 &m_opCodes, int pCounter, 
     QStringList ll = line.split(";");
     line = ll[0].simplified();
 
-    if (line.contains("*"))
-        line = line.replace("*", Util::numToHex(pCounter));
+    if (line.contains("*")) {
+//        line = line.replace("*", Util::numToHex(pCounter));
+        QString add = line.simplified().split(" ")[1].replace(" ", "");
+        add = add.replace("*", Util::numToHex(pCounter));
+        add = Util::BinopString(add);
+        line = line.split(" ")[0] + " " + add;
+        qDebug() << add;
+
+    }
 
     if (pass==passCompile) {
         for (QString sym : symbols.keys()) {
@@ -307,14 +429,19 @@ bool Instruction::Assemble(QString& line, Opcodes6502 &m_opCodes, int pCounter, 
             QStringList l = line.split(" ");
             if (l.count()>1) {
                 QStringList l2 = l[1].split(",");
-//                qDebug() << l2 << " vs " << line;
-                if (l2[0] == sym) {
+//                qDebug() << l2 << " vs " << sym;
+
+                //sym = sym.toLower();
+                QString cmp = l2[0].replace("(","").replace(")","").trimmed().toLower().split("+")[0].split("-")[0];
+                if (cmp==(sym.toLower())) {
 //                    line = line.replace(sym, Util::numToHex(symbols[sym]));
-                    l2[0] = Util::numToHex(symbols[sym]);
+                    l2[0].replace(sym.toLower(),Util::numToHex(symbols[sym]));
+                    l2[0] = Util::BinopString(l2[0]);
+//                    qDebug() << line << " vs " << l2[0] <<  " with sym " << sym ;
                     line = l[0] + " " + l2[0];
                     if (l2.count()>1)
                         line+="," + l2[1];
-                    qDebug() << line;
+  //                  qDebug() << " *** " << line;
 
                 }
 
@@ -329,16 +456,22 @@ bool Instruction::Assemble(QString& line, Opcodes6502 &m_opCodes, int pCounter, 
 
     if (opCode=="processor")
         return true;
+//    qDebug() << line;
 
-
+    if (opCode=="org")
+        return true;
     Type type = imp;
     MOSOperandCycle cyc;
 
+//    if (opCode=="org")
+  //      return false;
+
     if (m_opCodes.m_opCycles.contains(opCode))
         cyc = m_opCodes.m_opCycles[opCode];
-    else
+    else {
+        qDebug() << line;
         throw QString("Uknown opcode: " + opCode);
-
+    }
 
     if (cyc.m_opcodes.count()==0)
         throw QString("Opcode not implemented yet: " + opCode);
@@ -352,19 +485,22 @@ bool Instruction::Assemble(QString& line, Opcodes6502 &m_opCodes, int pCounter, 
 
     // Override types or pass symbol
     if (pass==passSymbol) {
-        if (opCode == "jmp")
+        if (opCode == "jmp" || opCode=="jsr")
             type = abs;
+
+//        if (opCode == "ldy" )
     }
 
     int code = cyc.m_opcodes[(int)type];
-
-    if (code==0 && pass==passCompile)
+    if (code==0 && pass==passCompile) {
+        qDebug() << "ERROR on line : " << line;
         throw QString("Opcode type not implemented yet: " + opCode + "  type " +type );
+    }
 
 
     int val=0;
     if (type!=none) {
-        QString num = lst[1].split(",")[0].replace("#","");
+        QString num = lst[1].split(",")[0].replace("#","").replace("(","").replace(")","");
         //qDebug() << " NUM " << num << "  with type " << type;
         val = Util::NumberFromStringHex(num);
     }
@@ -372,14 +508,13 @@ bool Instruction::Assemble(QString& line, Opcodes6502 &m_opCodes, int pCounter, 
   //  qDebug() << cyc.m_opcodes;
     m_debug << (" I : " + opCode + " type: " + (int)type  + ":" +Util::numToHex(code) + "    value : " + Util::numToHex(val)) ;
 
-    qDebug() << Util::numToHex(pCounter) << m_debug;
 
     m_data.append(code);
 
 
     if (opCode=="bpl" || opCode=="bne" || opCode=="beq" || opCode=="bcc" || opCode=="bcs") {
         int diff = (val)-pCounter-2;
-        qDebug() << "Diff: " << Util::numToHex((uchar)diff);
+//        qDebug() << "Diff: " << Util::numToHex((uchar)diff);
         m_data.append((uchar)diff);
     }
     else
@@ -392,6 +527,7 @@ bool Instruction::Assemble(QString& line, Opcodes6502 &m_opCodes, int pCounter, 
         m_data.append(val&0xFF);
         m_data.append((val>>8)&0xFF);
     }
+//    qDebug() << Util::numToHex(pCounter) << m_debug << " " <<QString::number(m_data.count());
 
     return true;
 

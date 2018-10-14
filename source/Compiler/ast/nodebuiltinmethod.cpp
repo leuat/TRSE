@@ -1936,7 +1936,7 @@ void NodeBuiltinMethod::InitDiv16x8(Assembler *as)
     as->Label("divisor = "+as->m_internalZP[0]+"     ;$59 used for hi-byte");   //0
     as->Label("dividend = "+as->m_internalZP[1]+"	  ;$fc used for hi-byte");    //1
     as->Label("remainder = "+as->m_internalZP[2]+"	  ;$fe used for hi-byte");  // 2
-    as->Label("result = dividend ;save memory by reusing divident to store the result");
+    as->Label("result = "+as->m_internalZP[1]+" ;save memory by reusing divident to store the result");
 
     as->Label("divide16x8	lda #0	        ;preset remainder to 0");
     as->Asm("sta remainder");

@@ -27,18 +27,24 @@ public:
         if (s.startsWith("#"))
             return imm;
         int i = 0;
+        bool ok;
         if (s.contains(",")) {
-            i = Util::NumberFromStringHex(s.split(",")[0]);
+            ok = Util::NumberFromStringHex(s.split(",")[0],i);
         }
         else
         {
-            i = Util::NumberFromStringHex(s);
+            ok = Util::NumberFromStringHex(s,i);
         }
 
+        if (!ok)
+            i  = 0x1000; // Force using address
+
+        if (i<256 && !s.contains(","))
+            return zp;
 
         if (!s.contains("(") && i<256 && s.contains(",x"))
             return zpx;
-        if (!s.contains("(") && s.contains(",y"))
+        if (!s.contains("(")  && i<256 && s.contains(",y"))
             return zpy;
         if (s.contains("(") && s.contains(",x)"))
             return izx;
@@ -86,10 +92,11 @@ public:
     QMap<QString, int> m_symbols;
 
     void Debug(QString s);
-    QString TreatLabel(QString& s);
+    QString TreatLabel(QString s);
 
     void TreatOrg(QStringList lst);
     void TreatData(QString s);
+    void TreatIncBin(QString s);
     QStringList Compile(Instruction::Pass pass, QStringList& lst);
 
     void Assemble(QString inFile, QString outFile);

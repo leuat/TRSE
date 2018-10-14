@@ -82,6 +82,39 @@ bool Util::verify_file_bool(string filename) {
   return true;
 }
 
+QString Util::BinopString(QString a) {
+    QString pa ="";
+    QString pb = "";
+    a=a.simplified().trimmed();
+    if (a.contains("(")) {
+        a = a.replace("(","").replace(")","");
+        pa = "(";
+        pb= ")";
+    }
+    if (a.contains("+")) {
+        QStringList l = a.split("+");
+        int n1, n2;
+        bool ok1=NumberFromStringHex(l[0], n1);
+        bool ok2=NumberFromStringHex(l[1], n2);
+
+        if (ok1&&ok2)
+            return pa + pa+numToHex(n1+n2) + pb;
+
+    }
+    if (a.contains("-")) {
+        QStringList l = a.split("-");
+        int n1, n2;
+        bool ok1=NumberFromStringHex(l[0], n1);
+        bool ok2=NumberFromStringHex(l[1], n2);
+
+        if (ok1&&ok2)
+            return pa + pa+numToHex(n1-n2) + pb;
+
+    }
+    return pa+a+pb;
+
+}
+
 
 string Util::trim(string strin)
 {

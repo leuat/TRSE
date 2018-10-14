@@ -114,6 +114,7 @@ void FormRasEditor::Build()
 
 //        text+="+"<br>";
         QString output;
+
         int codeEnd = 0;
         qDebug() << m_iniFile->getString("assembler");
         if (m_iniFile->getString("assembler").toLower()=="dasm") {

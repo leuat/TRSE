@@ -138,7 +138,30 @@ public:
             return s.remove("$").toInt(&ok, 16);
         if (s.toLower().startsWith("0x"))
             return s.remove("$").toInt(&ok, 16);
+        if (s.toLower().startsWith("%"))
+            return s.remove("%").toInt(&ok, 2);
+
         return s.toInt(&ok,  10);
+    }
+
+
+
+    static QString BinopString(QString a);
+
+    static bool NumberFromStringHex(QString s, int& num) {
+        bool ok = true;
+        s = s.replace("#","");
+        if (s.startsWith("$"))
+            num= s.remove("$").toInt(&ok, 16);
+        else
+        if (s.toLower().startsWith("0x"))
+            num = s.remove("$").toInt(&ok, 16);
+        else
+            if (s.toLower().startsWith("%"))
+                num = s.remove("%").toInt(&ok, 2);
+        else
+        num  =s.toInt(&ok,  10);
+        return ok;
     }
 
     static QVector3D fromSpherical(float r, float t, float p) {
@@ -330,12 +353,13 @@ public:
     }
 };
 
+
 template <typename T>
 struct PtrLess // public std::binary_function<bool, const T*, const T*>
 {
-  bool operator()(const T* a, const T* b) const
-  {
-    // may want to check that the pointers aren't zero...
-    return *a < *b;
-  }
+    bool operator()(const T* a, const T* b) const
+    {
+        // may want to check that the pointers aren't zero...
+        return *a < *b;
+    }
 };
