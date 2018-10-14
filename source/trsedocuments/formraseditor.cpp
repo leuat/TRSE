@@ -103,7 +103,7 @@ void FormRasEditor::Build()
         QString text ="Build <b><font color=\"#90FF90\">Successful</font>!</b> ( "+  (Util::MilisecondToString(timer.elapsed())) +")<br>";
         text+="Assembler file saved to : <b>" + filename+".asm</b><br>";
         text+="Compiled <b>" + QString::number(parser.m_lexer->m_lines.count()) +"</b> lines of Turbo Rascal to <b>";
-        text+=QString::number(compiler.m_assembler->getLineCount()) + "</b> lines of DASM assembler instructions (and variables/labels)<br>";
+        text+=QString::number(compiler.m_assembler->getLineCount()) + "</b> lines of assembler instructions (and variables/labels)<br>";
         if (m_iniFile->getdouble("post_optimize")==1) {
             text+="Post-optimized away <b>" + QString::number(compiler.m_assembler->m_totalOptimizedLines) +"</b> lines of assembler instructions ";
             text=text+"(<font color=\"#70FF40\"> " + QString::number((int)(100.0*(float)compiler.m_assembler->m_totalOptimizedLines/(float)compiler.m_assembler->getLineCount()))+  " % </font> of total ) <br>";
@@ -113,16 +113,27 @@ void FormRasEditor::Build()
             text+="<font color=\"#FFA090\">Warning:</font>Post-optimizer disabled. Enable for faster results (unless post-optimizer breaks something).<br>";
 
 //        text+="+"<br>";
+        QString output;
+        int codeEnd = 0;
+        qDebug() << m_iniFile->getString("assembler");
+        if (m_iniFile->getString("assembler").toLower()=="dasm") {
+            QProcess process;
+            process.start(m_iniFile->getString("dasm"), QStringList()<<(filename +".asm") << ("-o"+filename+".prg") << "-v3");
+            process.waitForFinished();
+            //process;
+            //qDebug() <<process.readAllStandardOutput();
+            output = process.readAllStandardOutput();
 
-        QProcess process;
-        process.start(m_iniFile->getString("dasm"), QStringList()<<(filename +".asm") << ("-o"+filename+".prg") << "-v3");
-        process.waitForFinished();
-        //process;
-        QProcess processCompress;
-        //qDebug() <<process.readAllStandardOutput();
-        QString output(process.readAllStandardOutput());
-        int codeEnd=FindEndSymbol(output);
-
+            codeEnd=FindEndSymbol(output);
+        }
+        else if (m_iniFile->getString("assembler").toLower()=="orgasm") {
+            OrgAsm orgAsm;
+            orgAsm.LoadCodes();
+            orgAsm.Assemble(filename+".asm", filename+".prg");
+            output = "complete.";
+            for (QString s : orgAsm.m_debug)
+             qDebug() << s ;
+        }
         // Machine Code Analyzer
         VerifyMachineCodeZP(filename+".prg");
 
@@ -132,6 +143,8 @@ void FormRasEditor::Build()
         int orgFileSize = QFile(filename+".prg").size();
 
         if (m_iniFile->getdouble("perform_crunch")==1) {
+            QProcess processCompress;
+
             QString fn = (filename +".prg");
             if (!QFile::exists(m_iniFile->getString("exomizer")))
                 Messages::messages.DisplayMessage(Messages::messages.NO_EXOMIZER);

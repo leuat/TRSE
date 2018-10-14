@@ -2,7 +2,11 @@
 #define OPCODES6502_H
 #include <QString>
 #include <QStringList>
+#include <QVector>
 #include <QMap>
+
+
+
 
 
 class MOSOperandCycle {
@@ -15,7 +19,13 @@ public:
     int m_absoluteWithParam;
     int m_zeropage;
     int m_zeropageWithParam;
-    int m_opcode;
+//    int m_opcode;
+
+
+
+
+    QVector<uchar> m_opcodes;
+
     MOSOperandCycle() {}
     MOSOperandCycle(QString name, int implied, int immediate, int absolute, int abswp, int zp, int zpwp) {
         m_name = name;
@@ -26,8 +36,11 @@ public:
         m_absoluteWithParam = abswp;
         m_zeropage = zp;
         m_zeropageWithParam = zpwp;
+
 //        m_opcode = opcode;
     }
+
+
 };
 
 class MOSOperation {
@@ -51,7 +64,7 @@ public:
     bool contains(QString s) {
         return m_opCycles.contains(s);
     }
-    MOSOperandCycle operator [](QString s) {
+    MOSOperandCycle& operator [](QString s) {
             return m_opCycles[s];
        }
 };

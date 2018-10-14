@@ -136,6 +136,8 @@ public:
         bool ok = true;
         if (s.startsWith("$"))
             return s.remove("$").toInt(&ok, 16);
+        if (s.toLower().startsWith("0x"))
+            return s.remove("$").toInt(&ok, 16);
         return s.toInt(&ok,  10);
     }
 

@@ -71,6 +71,8 @@ void DialogTRSESettings::FillFromIni()
 
     ui->leUserDefined->setText(m_ini->getString("user_defined_command"));
 
+    ui->cmbAssembler->setCurrentText(m_ini->getString("assembler"));
+
 }
 
 
@@ -100,6 +102,9 @@ void DialogTRSESettings::FillToIni()
         m_ini->setFloat("windowpalette",0);
     if (ui->cmbPalette->currentText()=="Light")
         m_ini->setFloat("windowpalette",1);
+
+
+    m_ini->setString("assembler", ui->cmbAssembler->currentText());
 
 }
 
