@@ -85,13 +85,47 @@ bool Util::verify_file_bool(string filename) {
 QString Util::BinopString(QString a) {
     QString pa ="";
     QString pb = "";
-    a=a.simplified().trimmed();
+    a=a.simplified().trimmed().toLower();
     if (a.contains("(")) {
         a = a.replace("(","").replace(")","");
         pa = "(";
         pb= ")";
     }
-    if (a.contains("+")) {
+
+    if (!(a.contains("+") || a.contains("-")))
+        return pa+a+pb;
+
+
+    QString b = a;
+    QStringList lst = b.replace("+","|").replace("-","|").split("|");
+
+    QString q=a;
+    QString str = "0123456789$#%abcdef ";
+    for (int i=0;i<str.length();i++)
+        q=q.replace(str[i],"");
+
+//    qDebug() << q;
+//    qDebug() << lst;
+//    exit(1);
+    int val = 0;
+    bool ok=Util::NumberFromStringHex(lst[0],val);
+    if (!ok)
+        return pa+a+pb;
+
+    for (int i=0;i<q.length();i++) {
+        int v;
+        ok = Util::NumberFromStringHex(lst[i+1],v);
+        if (!ok)
+            return pa+a+pb;
+        if (q[i]=="+")
+            val+=v;
+        if (q[i]=="-")
+            val-=v;
+    }
+
+    return pa + Util::numToHex(val) + pb;
+
+    /*if (a.contains("+")) {
         QStringList l = a.split("+");
         int n1, n2;
         bool ok1=NumberFromStringHex(l[0], n1);
@@ -111,6 +145,7 @@ QString Util::BinopString(QString a) {
             return pa + pa+numToHex(n1-n2) + pb;
 
     }
+    */
     return pa+a+pb;
 
 }

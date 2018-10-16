@@ -53,7 +53,7 @@ exod_decrunch:
 	ldx #3
 exod_init_zp:
 	jsr exod_get_crunched_byte
-	sta exod_zp_bitbuf - 1,x
+        sta exod_zp_bitbuf-1,x
 	dex
 	bne exod_init_zp
 ; -------------------------------------------------------------------
@@ -68,7 +68,7 @@ exod_nextone:
 
 	txa			; this clears reg a
 	lsr			; and sets the carry flag
-	ldx exod_tabl_bi-1,y
+        ldx exod_tabl_bi-1,y
 exod_rolle:
 	rol
 	rol exod_zp_bits_hi

@@ -309,7 +309,7 @@ QStringList OrgAsm::Preprocess(QStringList lst)
         if (s.contains("=")) {
             QStringList l = s.simplified().split("=");
             m_prep[l[0].trimmed()] = l[1].trimmed();
-            qDebug() << l[0] <<  " wth  " << l[1];
+          //  qDebug() << l[0] <<  " wth  " << l[1];
 
 //            m_symbols[l[0]] = Util::NumberFromStringHex( l[1]);
             continue;

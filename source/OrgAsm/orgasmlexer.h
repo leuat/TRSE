@@ -83,7 +83,7 @@ class OrgasmInstruction {
             return none;
         }
 
-        QByteArray Assemble(QString& expr, Opcodes6502 &m_opCodes, OrgasmData::PassType pass, QMap<QString, int>& symbols, int pCounter);
+        QByteArray Assemble(QString& expr, Opcodes6502 &m_opCodes, OrgasmData::PassType pass, QMap<QString, int>& symbols, int pCounter, QMap<QString, QString>& constants);
 
 
     };
@@ -101,6 +101,9 @@ public:
     QString m_orgLine="";
     OrgasmInstruction m_instruction;
     bool m_ignore = false;
+
+    static bool m_inIFDEF;
+
 
     QString Type() {
         if (m_type==INSTRUCTION)
@@ -131,6 +134,7 @@ public:
     QString m_currentChar;
     QVector<OrgasmLine> m_ol;
     QMap<QString, int> m_symbols;
+    QMap<QString, QString> m_constants;
     Opcodes6502 m_opCodes;
     QVector<OrgasmLine> m_olines;
     bool m_success = false;
@@ -149,7 +153,8 @@ public:
 
     void Assemble(QString filename, QString out);
 
-    void PassConstants();
+    void PassFindConstants();
+    void PassReplaceConstants();
     void PassLabels();
     void Compile(OrgasmData::PassType pt);
 

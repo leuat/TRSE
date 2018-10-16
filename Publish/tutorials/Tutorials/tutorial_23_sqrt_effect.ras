@@ -7,7 +7,7 @@ var
 	x,y,i,j,dx,dy : byte;
 	wrk : integer;
 	dp:pointer;
-	tmp: array[4] of byte = (1,2,3,4,5);
+	tmp: array[4] of byte = (1,2,3,4,5,0);
 
 //@startblock $8200 "Code far far away!"
 
