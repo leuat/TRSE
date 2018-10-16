@@ -6,6 +6,8 @@
 
 #include "source/Compiler/Opcodes/opcodes6502.h"
 #include "source/LeLib/util/util.h"
+
+
 class Instruction {
 public:
     QString m_line;

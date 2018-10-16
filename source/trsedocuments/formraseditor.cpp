@@ -128,8 +128,8 @@ void FormRasEditor::Build()
             codeEnd=FindEndSymbol(output);
         }
         else if (m_iniFile->getString("assembler").toLower()=="orgasm") {
-            OrgAsm orgAsm;
-            orgAsm.LoadCodes();
+            Orgasm2 orgAsm;
+            //orgAsm.LoadCodes();
             orgAsm.Assemble(filename+".asm", filename+".prg");
             if (orgAsm.m_success) {
                 output = "complete.";

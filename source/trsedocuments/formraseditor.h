@@ -34,7 +34,8 @@
 #include "source/dialoghelp.h"
 #include "source/dialogmemoryanalyze.h"
 #include "source/Compiler/misc/machinecodeanalyzer.h"
-#include "source/Assembler/orgasm.h"
+#include "source/OrgAsm/orgasm.h"
+#include "source/OrgAsm/orgasmlexer.h"
 
 namespace Ui {
     class FormRasEditor;

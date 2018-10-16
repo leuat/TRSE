@@ -141,8 +141,9 @@ SOURCES += main.cpp\
     source/dialogimagehelp.cpp \
     source/Compiler/misc/machinecodeanalyzer.cpp \
     source/dialogprojectsettings.cpp \
-    source/Assembler/orgasm.cpp \
-    source/Compiler/Opcodes/opcodes6502.cpp
+    source/OrgAsm/orgasm.cpp \
+    source/Compiler/Opcodes/opcodes6502.cpp \
+    source/OrgAsm/orgasmlexer.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -230,8 +231,9 @@ HEADERS  += mainwindow.h \
     source/dialogimagehelp.h \
     source/Compiler/misc/machinecodeanalyzer.h \
     source/dialogprojectsettings.h \
-    source/Assembler/orgasm.h \
-    source/Compiler/Opcodes/opcodes6502.h
+    source/OrgAsm/orgasm.h \
+    source/Compiler/Opcodes/opcodes6502.h \
+    source/OrgAsm/orgasmlexer.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \

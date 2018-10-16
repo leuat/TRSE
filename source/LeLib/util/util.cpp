@@ -114,6 +114,11 @@ QString Util::BinopString(QString a) {
     return pa+a+pb;
 
 }
+QString Util::ReplaceWords(QString line, QString word) {
+
+
+}
+
 
 
 string Util::trim(string strin)

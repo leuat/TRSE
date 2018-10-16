@@ -134,6 +134,7 @@ public:
 
     static int NumberFromStringHex(QString s) {
         bool ok = true;
+        s=s.trimmed();
         if (s.startsWith("$"))
             return s.remove("$").toInt(&ok, 16);
         if (s.toLower().startsWith("0x"))
@@ -143,6 +144,8 @@ public:
 
         return s.toInt(&ok,  10);
     }
+
+    static QString ReplaceWords(QString line, QString word);
 
 
 
