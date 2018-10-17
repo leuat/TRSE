@@ -1,14 +1,21 @@
 #include "orgasm.h"
+#include <QRegularExpression>
 
-OrgAsm::OrgAsm()
-{
-    m_opCodes.InitMosOpCycles();
-//    LoadCodes();
-   /// Connect the cycles
+bool OrgasmLine::m_inIFDEF = false;
 
+void Orgasm::LoadFile(QString filename) {
+    LoadCodes();
+    QFile f(filename);
+    f.open(QFile::ReadOnly);
+    m_source=f.readAll();
+    f.close();
+    m_lines = m_source.split("\n");
+    m_pCounter = 0;
+    m_done = false;
+    m_constantPassLines = -1;
 }
 
-void OrgAsm::LoadCodes()
+void Orgasm::LoadCodes()
 {
     QFile f(":/resources/text/opcodes.txt");
     f.open(QFile::ReadOnly);
@@ -24,7 +31,7 @@ void OrgAsm::LoadCodes()
         for (int i=0;i<11;i++) {
             bool ok;
             int code = lst[i+1].toInt(&ok, 16);
-//            qDebug() << "Adding : " << lst[0] << " " << Util::numToHex(code);
+            //            qDebug() << "Adding : " << lst[0] << " " << Util::numToHex(code);
             opCodes.append( code );
         }
         MOSOperandCycle c = m_opCodes[lst[0]];
@@ -35,252 +42,189 @@ void OrgAsm::LoadCodes()
 
 }
 
-void OrgAsm::Debug(QString s)
-{
-    m_debug<<Util::numToHex(m_pCounter)+ " : " +s;
+OrgasmLine Orgasm::LexLine(int i) {
+    OrgasmLine l;
+    QString line = m_lines[i];
+    // First: Do we have alabel?
+    line = line.replace("\t", " ");
+    line = line.replace("dc.b", ".byte");
+    line = line.replace("dc.w", ".word");
+    line = line.replace(".dc ", ".byte ");
+    line = line.split(";")[0];
+
+    l.m_orgLine = line;
+
+//    if (line.toLower().contains("else"))
+  //      qDebug() << line;
+
+    if (line.simplified().toLower().startsWith("ifconst")) {
+        OrgasmLine::m_inIFDEF= true;
+        l.m_ignore = true;
+        return l;
+
+    }
+
+    if (line.simplified().toLower().startsWith("ifnconst")) {
+        OrgasmLine::m_inIFDEF= false;
+        l.m_ignore = true;
+        return l;
+
+    }
+
+
+    if (line.simplified().toLower().startsWith("endif")) {
+        OrgasmLine::m_inIFDEF= false;
+        l.m_ignore = true;
+        return l;
+
+    }
+
+    if (line.simplified().toLower() == ("else")) {
+        OrgasmLine::m_inIFDEF= !OrgasmLine::m_inIFDEF;
+        l.m_ignore = true;
+        return l;
+
+    }
+
+    if (OrgasmLine::m_inIFDEF) {
+        l.m_ignore = true;
+        return l;
+
+    }
+
+    if (!(line[0]==" ") && !line.contains("=")) {
+        QString lbl = line.replace(":", " ").trimmed().split(" ")[0];
+        l.m_label = lbl;
+//        qDebug() << line;
+
+        line.remove(0, lbl.length()).replace(":", " ");
+  //      qDebug() << line;
+
+    }
+
+
+    if (line.simplified().startsWith(";") || line.simplified()=="") {
+        if (l.m_label=="")
+            l.m_ignore = true;
+        else l.m_type = OrgasmLine::LABELONLY;
+        return l;
+    }
+
+
+    QStringList lst = line.simplified().split(" ");
+
+
+    if (lst[0].toLower()=="org") {
+        l.m_type = OrgasmLine::ORG;
+        l.m_expr = "";
+        for (int i=0;i<lst.count()-1;i++)
+           l.m_expr += lst[i+1] + " ";
+        return l;
+    }
+    if (lst[0].toLower()=="incbin") {
+        l.m_type = OrgasmLine::INCBIN;
+        l.m_expr = lst[1];
+        return l;
+    }
+    if (line.contains("=")) {
+        l.m_type = OrgasmLine::CONSTANT;
+        QStringList cl = line.split("=");
+        l.m_label = cl[0].trimmed();
+        l.m_expr = cl[1].trimmed();
+        return l;
+    }
+    if (lst[0].toLower()==".byte") {
+        l.m_type = OrgasmLine::BYTE;
+        l.m_expr = line.replace(".byte", "").trimmed();//.simplified();
+        return l;
+    }
+    if (lst[0].toLower()==".word") {
+        l.m_type = OrgasmLine::WORD;
+        l.m_expr = line.replace(".word", "").trimmed();//.simplified();
+        return l;
+    }
+
+
+    l.m_type = OrgasmLine::INSTRUCTION;
+    l.m_instruction.Init(lst);
+/*    if (lst.count()>1)
+        l.m_expr = lst[1];*/
+    l.m_expr="";
+    for (int i=0;i<lst.count()-1;i++)
+        l.m_expr +=lst[i+1] + " ";
+
+    //        l.m.l.m_instruction.getTypeFromParams(lst[1]);
+    //      l.m_op
+
+
+
+    return l;
 }
 
-QString OrgAsm::TreatLabel(QString line)
+void Orgasm::Assemble(QString filename, QString outFile)
 {
-//    line=line.toLower();
-    if (! (line.startsWith("\t") || (line.startsWith(" ")) )) {
-       // a : dc.b 0
-       line.replace(":"," ");
-
-       QStringList lblSplit = line.simplified().split(" ");
-       QString lbl = lblSplit[0];
-       if (lbl!="") {
-            m_symbols[lbl] = m_pCounter;
-
-            Debug("New symbol '" + lbl+"' at " + Util::numToHex(m_pCounter) );
-
-
-            //line = line.replace(lbl, " ");
-            line = " ";
-            if (lblSplit.count()>1)
-                for (int i=1;i<lblSplit.count();i++)
-                    line+=lblSplit[i] + " ";
-
-//            qDebug() << "New label: " << lbl<< " starts with line " << line;
-       }
-    }
-
-    return line.simplified().trimmed();
-
-}
-
-void OrgAsm::TreatOrg(QStringList l)
-{
-    qDebug() << l[0] << " " << l[1];
-//    if (l.count()>2)
-  //      qDebug() << l[2];
-    QString v = l[1];
-    if (l.count()>2)
-        v+=" "+l[2];
-    for (QString s: m_symbols.keys()) {
-        if (v.contains(s))
-            v = v.replace(s, Util::numToHex(m_symbols[s]));
-    }
-
-    //qDebug() << v;
-
-//    int val = Util::NumberFromStringHex(l[1]);
-    int val = Util::NumberFromStringHex(Util::BinopString(v));
-  //  qDebug() << Util::numToHex(val);
-
-    if (m_data.count()==0) {
-        m_data.append(val&0xFF);
-        m_data.append((val>>8)&0xFF);
-        m_pCounter = val;
-        Debug("First org: " + Util::numToHex(val));
-
-
-    }
-    else {
-        int cnt =0;
-        while (m_pCounter<val) {
-            m_data.append((uchar)0xFF);
-            m_pCounter++;
-            cnt++;
-
-        }
-        Debug("Org padding : " + Util::numToHex(cnt) +" bytes to " + Util::numToHex(val));
-//        qDebug() << "Org padding : " + Util::numToHex(cnt) +" bytes to " + Util::numToHex(val);
-
-    }
-
-}
-
-void OrgAsm::TreatData(QString s)
-{
-    qDebug() << s;
-    QStringList lst = s.replace(",", " ").simplified().split(" ");
-    bool isWord = false;
-    if (s.simplified().split(" ")[0]==".word") {
-        isWord = true;
-  //      qDebug() << " ****** IS WORD ******* " << s;
-    }
-
-    if (lst.count()==1) {
-        m_data.append((uchar)0);
-        if (isWord) {
-//            qDebug() << "APPENDING EXRA";
-            m_data.append((uchar)0);
-            m_pCounter++;
-        }
-        Debug(" data: 1 byte = 0 ");
-        m_pCounter++;
-        return;
-    }
-    for (int i=1;i<lst.count();i++) {
-//        qDebug() <<lst[i];
-        //if (lst[i].trimmed()=="")
-         //   continue;
-        m_data.append((uchar)Util::NumberFromStringHex(lst[i]));
-        m_pCounter++;
-        if (isWord) {
-            m_data.append((uchar)Util::NumberFromStringHex(lst[i]));
-            m_pCounter++;
-
-        }
-
-    }
-//    qDebug() << "Data org: " << s;
-   qDebug() << " data: "+Util::numToHex(lst.count()-1)+" bytes";
-  //  Debug(" data: "+Util::numToHex(lst.count()-1)+" bytes");
-
-}
-
-void OrgAsm::TreatIncBin(QString s)
-{
-    s = s.replace("\"","");
-    if (!QFile::exists(s)) {
-        qDebug() << "File doesn't exist: " << s;
-        exit(1);
-    }
-    QFile f(s);
-    f.open(QFile::ReadOnly);
-    QByteArray d = f.readAll();
-    f.close();
-    m_data.append(d);
-    //qDebug() << " CUR : " << Util::numToHex(m_pCounter);
-    m_pCounter+=d.count();
-}
-
-QStringList OrgAsm::Compile(Instruction::Pass pass, QStringList& lst)
-{
-    int cnt  = 0;
-    QStringList newList;
-    for (QString& s: lst) {
-        QString o = s;
-        if (s.simplified()=="")
-            continue;
-        if (s.simplified().startsWith(";"))
-            continue;
-        if (pass==Instruction::passSymbol && !o.toLower().contains("incbin"))
-            s = TreatLabel(o).toLower();
-
-        if (s =="") // label only
-            continue;
-
-        // Test for org
-
-//        qDebug() << "L " << o <<  " " << s;
-        QStringList l = s.simplified().split(" ");
-//        qDebug() << s;
-        if (l[0]=="org") {
-            TreatOrg(l);
-        }
-        else
-        if (l[0]==".byte" || l[0]=="dc.b" || l[0]=="d.b" || l[0] ==".word") {
-            TreatData(s);
-        }
-        else
-        if (l.count()==2 && l[0]=="incbin") {
-            //qDebug() << o;
-            TreatIncBin(o.simplified().split(" ")[1]);
-        }
-
-        else {
-
-
-            Instruction i;
-            i.Assemble(s, m_opCodes, m_pCounter, pass, m_symbols);
-            m_data.append(i.m_data);
-            m_pCounter+=i.m_data.count();
-        }
-//        m_debug << i.m_debug;
-
-
-        if (pass==Instruction::passSymbol) {
-//            lst[cnt] = s;
-            newList<<s;
-//            qDebug() << " PPPP " << lst[cnt];
-//            s = TreatLabel(o);
-        }
-        cnt++;
-    }
-
-    return newList;
-}
-
-
-
-
-void OrgAsm::Assemble(QString inFile, QString outFile)
-{
-    QFile f(inFile);
-    f.open(QFile::ReadOnly);
-    QString allData = f.readAll();
-    QStringList lst = allData.split("\n");
-    f.close();
-
-    LoadCodes();
-
-    m_data = QByteArray();
-    m_debug = QStringList();
-    m_output = "";
-    m_pCounter=0;
+    m_success = false;
+    LoadFile(filename);
+    m_olines.clear();
 
     try {
 
-        qDebug() << " ******* PASS PREPROCESS";
-        lst = Preprocess(lst);
 
-        m_data.clear();
-        lst = BinaryOps(lst);
-        m_data.clear();
-
-/*        for (QString l: lst)
-           qDebug() << l.simplified();
-
-        exit(1);
-*/
-        qDebug() << " ******* PASS SYMBOL";
-        lst = Compile(Instruction::passSymbol, lst);
-        m_data.clear();
-
-        qDebug() << " ******* PASS BINARY OP";
-        lst = BinaryOps(lst);
-        m_data.clear();
-
-//        exit(1);
-
-
-        qDebug() << " ******* PASS COMPILE";
-        Compile(Instruction::passCompile, lst);
-        for (QString l: lst)
-           qDebug() << l.simplified();
-
-
-//        exit(1);
-
-
-
-    } catch (QString error) {
-        qDebug() << "ERROR: " << error;
-        return;
+    for (int i=0;i<m_lines.count();i++) {
+        OrgasmLine ol = LexLine(i);
+        if (!ol.m_ignore)
+            m_olines.append(ol);
     }
+
+
+    PassFindConstants();
+    PassReplaceConstants();
+//       for (QString s: m_constants.keys())
+  //         qDebug() << s << " " << m_constants[s];
+   //     exit(1);
+/*    while (m_constantPassLines!=0) {
+        PassConstants();
+        qDebug() << "PAssing" << m_constantPassLines;
+    }
+*/
+    QTime myTimer;
+    myTimer.start();
+//    qDebug() << "LABELS  " << QString::number((myTimer.elapsed()/100.0));
+    Compile(OrgasmData::PASS_LABELS);
+  //  qDebug() << "DONE " << QString::number((myTimer.elapsed()/100.0));
+
+
+    m_regs.clear();
+    for (QString &s : m_symbols.keys())
+        m_regs[s] = new QRegExp("\\b" + s + "\\b");
+
+
+
+//    exit(1);
+ //   for (QString s: m_symbols.keys())
+   //     qDebug() << s << " " << Util::numToHex(m_symbols[s]);
+
+
+    //qDebug() << "SYMBOLS: " << QString::number((myTimer.elapsed()/100.0));
+    Compile(OrgasmData::PASS_SYMBOLS);
+    //qDebug() << "DONE " << QString::number((myTimer.elapsed()/100.0));
+
+
+/*    for (OrgasmLine& ol:m_olines) {
+        qDebug() << "                                         org: "<<ol.m_orgLine;
+        QString pos =Util::numToHex(ol.m_pos);
+        if (ol.m_type==OrgasmLine::INSTRUCTION)
+            qDebug() <<pos << ol.m_instruction.m_opCode << " " << ol.m_expr;
+        if (ol.m_type==OrgasmLine::ORG)
+            qDebug() <<pos << "org" << ol.m_expr;
+        if (ol.m_type==OrgasmLine::CONSTANT)
+            qDebug() <<pos << ol.m_label<< " = " << ol.m_expr;
+        if (ol.m_type==OrgasmLine::INCBIN)
+            qDebug() <<pos << "incbin " << ol.m_expr;
+        if (ol.m_type==OrgasmLine::BYTE)
+            qDebug() <<pos << ".byte " << ol.m_expr;
+    }
+*/
     m_success = true;
     if (QFile::exists(outFile))
         QFile::remove(outFile);
@@ -288,247 +232,441 @@ void OrgAsm::Assemble(QString inFile, QString outFile)
     out.open(QFile::WriteOnly);
     out.write(m_data);
     out.close();
+
+
+
+    }
+    catch (QString e) {
+        qDebug() << "Error compiling: " << e;
+
+    }
+
 }
 
-QStringList OrgAsm::Preprocess(QStringList lst)
+void Orgasm::PassReplaceConstants()
 {
-    int cnt  = 0;
-    QStringList newList;
-    m_prep.clear();
-    for (QString& s: lst) {
-
-        if (s.simplified()=="")
-            continue;
-        if (s.simplified().startsWith(";"))
-            continue;
-        s = s.split(";")[0];
-        //s = s.toLower().simplified();
-        s = s.replace("dc.b", ".byte");
-        s = s.replace("dc.w", ".word");
-
-        if (s.contains("=")) {
-            QStringList l = s.simplified().split("=");
-            m_prep[l[0].trimmed()] = l[1].trimmed();
-          //  qDebug() << l[0] <<  " wth  " << l[1];
-
-//            m_symbols[l[0]] = Util::NumberFromStringHex( l[1]);
-            continue;
-        }
-        // Afterwards, replace all
-        s = s.replace("\t", " ");
-        QStringList l = s.split(" ");
-//        qDebug() << s;
-        if (l.count()>1) {
-
-            for (int i=1;i<l.count();i++) {
-
-                QString v = l[i];
-  //              qDebug() << v;
-
-                QStringList l2 = v.split(",")[0].split("-")[0].split("+");
-                QString cmp = l2[0].replace("(","").replace(")","").simplified();
-                for (QString k : m_prep.keys())
-                    if (k==cmp) {
-    //                    qDebug() << "** Replace Before : " << s;
-                        s = s.replace(k,m_prep[k]);
-      //                  qDebug() << "** Replace after: " << s;
-                    }
+    //    if (m_constantPassLines==0)
+    for (OrgasmLine& ol : m_olines) {
+        if (ol.m_type != OrgasmLine::CONSTANT) {
+            for (QString k : m_constants.keys()) {
+                if (ol.m_expr.contains(k))
+                ol.m_expr =  OrgasmData::ReplaceWord(ol.m_expr, k, m_constants[k]);
+//                ol.m_instruction. =  OrgasmData::ReplaceWord(ol.m_expr, k, m_constants[k]);
             }
-        }
 
-//        qDebug() << s;
-       newList<<s;
+        }
     }
 
-    return newList;
 }
 
-QStringList OrgAsm::BinaryOps(QStringList lst)
+
+
+void Orgasm::PassFindConstants()
 {
-    int cnt  = 0;
-    QStringList newList;
-    m_prep.clear();
-    for (QString& s: lst) {
-        QString o = s;
-        if (s.simplified()=="")
-            continue;
-        if (s.simplified().startsWith(";"))
-            continue;
-        if (s.simplified().startsWith(".byte") || s.simplified().startsWith("dc.b") ||
-                s.simplified().startsWith("d.b") || s.simplified().startsWith(".word")) {
+//    if (m_constantPassLines==0)
+  //      return;
+    m_constantPassLines = 0;
+    for (OrgasmLine& ol : m_olines) {
+        if (ol.m_type == OrgasmLine::CONSTANT) {
+//            qDebug() << ol.m_label;
+            if (m_constants.contains(ol.m_label))
+                continue;
+            m_constants[ol.m_label] = ol.m_expr;
 
-            newList<< s;
-            continue;
+            for (QString key : m_constants.keys()) {
+                ol.m_expr.replace(key, m_constants[key]);
+            }
+
+            int var = 0;
+            //qDebug() << ol.m_expr;
+            OrgasmData::BinopExpr(ol.m_expr,var,"");
+
+
+            /*bool ok = Util::NumberFromStringHex(ol.m_expr, var);
+            if (ok) {
+                m_symbols[ol.m_label] = var;
+            }
+            else {
+                m_constantPassLines++;
+            }
+            */
+/*            qDebug() << ol.m_label << " = " << ol.m_expr;
+            if (m_symbols.contains(ol.m_label))
+                qDebug() << "NOW DEFINED : " << Util::numToHex(m_symbols[ol.m_label]);
+*/
+            //m_symbols[ol.m_label.simplified()] = ol.m_expr.simplified();
+            //m_symbols[ol.m_label.simplified()] = ol.m_expr.simplified();
         }
-        if (!(s.startsWith(" ") || s.startsWith("\t"))) {
-            newList<< s;
-            continue;
-
-        }
-        if (s.simplified().startsWith("org") ) {
-            newList<< s;
-            continue;
-        }
-
-        //s = s.toLower().simplified();
-
-        QString label = "";
-        if (!(s.startsWith(" ") || s.startsWith("\t"))) {
-            s=s.replace(":", "");
-            label=s.simplified().split(" ")[0];
-            s=s.replace(label, "");
-        }
-
-
-        QString ret = "";
-        QStringList l = s.simplified().split(" ");
-        QString main = l[0];
-        QString tag = "";
-        if (l.count()>1)
-        for (int i=1;i<l.count();i++) {
-            tag+=" " + l[i];
-        }
-        QStringList lTag = tag.split(",");
-        lTag[0] = Util::BinopString(lTag[0]);
-//        qDebug() << "Before: " <<s;
-        s = main + " " + lTag[0];
-        if (lTag.count()>1)
-            s+= ","+lTag[1];
-        s= label + " " + s;
-
-//        if (s.contains("$80"))
-  //          qDebug() << s;
-
-       newList<<s;
     }
-
-    return newList;
 
 }
 
-bool Instruction::Assemble(QString& line, Opcodes6502 &m_opCodes, int pCounter, Instruction::Pass pass, QMap<QString, int>& symbols) {
+void Orgasm::Compile(OrgasmData::PassType pt)
+{
+    m_pCounter = 0;
+//    return;
+
+    m_data = QByteArray();
+    for (OrgasmLine& ol : m_olines) {
+        if (ol.m_type == OrgasmLine::CONSTANT)
+            continue;
+
+        if (ol.m_label!="" && pt == OrgasmData::PASS_LABELS) {
+//            qDebug() << "Writing to label: " << ol.m_label << Util::numToHex(m_pCounter);
+             m_symbols[ol.m_label] = m_pCounter;
+        }
+        ol.m_pos = m_pCounter;
 
 
-    QStringList ll = line.split(";");
-    line = ll[0].simplified();
+//        qDm_pCounter
 
-    if (line.contains("*")) {
+        if (ol.m_type==OrgasmLine::BYTE)
+            ProcessByteData(ol);
+
+        if (ol.m_type==OrgasmLine::WORD)
+            ProcessWordData(ol);
+
+        if (ol.m_type==OrgasmLine::ORG)
+            ProcessOrgData(ol);
+
+        if (ol.m_type==OrgasmLine::INSTRUCTION)
+            ProcessInstructionData(ol, pt);
+
+        if (ol.m_type==OrgasmLine::INCBIN)
+            ProcessIncBin(ol);
+
+
+//        qDebug() << "End: "<< ol.m_instruction.m_opCode << ol.m_expr  << Util::numToHex(m_pCounter);
+
+    }
+
+
+}
+
+void Orgasm::ProcessByteData(OrgasmLine &ol)
+{
+    if (ol.m_expr.trimmed()=="") {
+        m_pCounter++;
+        m_data.append((uchar)0x00);
+        return;
+    }
+    QStringList lst = ol.m_expr.split(",");
+//    qDebug() << lst;
+    for (QString s: lst) {
+        if (s.trimmed()=="") continue;
+  //      qDebug() << Util::NumberFromStringHex(s);
+        if (!s.contains("\"")) {
+            m_data.append(Util::NumberFromStringHex(s));
+            m_pCounter++;
+
+        }
+        else {
+            QString str = s;
+            str = str.remove("\"");
+            for (int i=0;i<str.length();i++) {
+                int c = str.at(i).toLatin1();
+//                if (c>)
+//                qDebug() << c << QChar(c);
+                m_data.append((uchar)c);
+                m_pCounter++;
+
+            }
+  //          exit(1);
+
+        }
+    }
+}
+
+void Orgasm::ProcessWordData(OrgasmLine &ol)
+{
+    if (ol.m_expr=="") {
+        m_pCounter+=2;
+        m_data.append((uchar)0x00);
+        m_data.append((uchar)0x00);
+        return;
+    }
+    QStringList lst = ol.m_expr.split(",");
+    for (QString s: lst) {
+        if (s.trimmed()=="") continue;
+        m_data.append(Util::NumberFromStringHex(s));
+        m_data.append(Util::NumberFromStringHex(s));
+        m_pCounter++;
+        m_pCounter++;
+    }
+}
+
+void Orgasm::ProcessOrgData(OrgasmLine &ol)
+{
+    if (m_pCounter == 0) {
+        int val = Util::NumberFromStringHex(ol.m_expr);
+        m_data.append(val&0xFF);
+        m_data.append((val>>8)&0xFF);
+        m_pCounter = val;
+        return;
+    }
+    else {
+
+
+        for (QString s: m_symbols.keys())
+                ol.m_expr = OrgasmData::ReplaceWord(ol.m_expr,s,Util::numToHex(m_symbols[s]));
+
+        ol.m_expr =ol.m_expr.replace("#","");
+
+        int val = Util::NumberFromStringHex(Util::BinopString(ol.m_expr));
+        while (m_pCounter<val) {
+            m_pCounter++;
+            m_data.append((uchar)0xff);
+        }
+    }
+}
+
+void Orgasm::ProcessIncBin(OrgasmLine &ol)
+{
+    //qDebug() << ol.m_expr;
+    QFile f(ol.m_expr.replace("\"",""));
+    f.open(QFile::ReadOnly);
+    QByteArray data = f.readAll();
+    f.close();
+    m_data.append(data);
+    m_pCounter+=data.count();
+
+
+}
+
+void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
+{
+    QByteArray d = ol.m_instruction.Assemble(ol.m_expr, m_opCodes, pd, m_symbols, m_pCounter,m_constants, m_regs);
+    if (d.count()>0) {
+        m_data.append(d);
+        m_pCounter+=d.count();
+    }
+}
+
+
+
+
+
+
+
+QByteArray OrgasmInstruction::Assemble(QString& expr, Opcodes6502 &m_opCodes, OrgasmData::PassType pass, QMap<QString, int>& symbols, int pCounter, QMap<QString, QString>& constants, QMap<QString, QRegExp*>& exp) {
+
+    QByteArray data;
+    m_opCode = m_opCode.toLower();
+
+    if (m_opCode=="processor")
+        return data;
+//    qDebug() << line;
+
+    if (m_opCode=="org")
+        return data;
+
+
+    if (expr.contains("*")) {
 //        line = line.replace("*", Util::numToHex(pCounter));
-        QString add = line.simplified().split(" ")[1].replace(" ", "");
+        QString add = expr;//expr.simplified().split(" ")[1].replace(" ", "");
         add = add.replace("*", Util::numToHex(pCounter));
         add = Util::BinopString(add);
-        line = line.split(" ")[0] + " " + add;
-        qDebug() << add;
+        expr = add;//expr.split(" ")[0] + " " + add;
+    //    qDebug() << "* : " << expr;
 
     }
+    QString orgExpr = expr;
+//    if (pass==OrgasmData::PASS_SYMBOLS)
+    {
+        QStringList l2 = expr.simplified().split(",");
 
-    if (pass==passCompile) {
-        for (QString sym : symbols.keys()) {
-            // Replace symbols
+        for (QString& c : constants.keys()) {
+            l2[0] = OrgasmData::ReplaceWord(l2[0],c,constants[c]);
 
-            QStringList l = line.split(" ");
-            if (l.count()>1) {
-                QStringList l2 = l[1].split(",");
-//                qDebug() << l2 << " vs " << sym;
+        }
 
-                //sym = sym.toLower();
-                QString cmp = l2[0].replace("(","").replace(")","").trimmed().toLower().split("+")[0].split("-")[0];
-                if (cmp==(sym.toLower())) {
-//                    line = line.replace(sym, Util::numToHex(symbols[sym]));
-                    l2[0].replace(sym.toLower(),Util::numToHex(symbols[sym]));
-                    l2[0] = Util::BinopString(l2[0]);
-//                    qDebug() << line << " vs " << l2[0] <<  " with sym " << sym ;
-                    line = l[0] + " " + l2[0];
-                    if (l2.count()>1)
-                        line+="," + l2[1];
-  //                  qDebug() << " *** " << line;
+//        qDebug() << "***" << l2;
 
+        QString tst = l2[0];
+        QString org = l2[0];
+        tst = tst.replace("#", "").simplified();
+//        qDebug() << symbols.keys().count();
+        for (QString& sym : symbols.keys()) {
+//            qDebug() << sym;
+            if (!tst.contains(sym))
+                continue;
+            int i = symbols[sym];
+            if (tst==("<"+sym)) {
+                l2[0] = l2[0].replace("<"+sym,"$"+QString::number(i&0xFF,16));
+                break;
+            }
+            else
+                if (tst==(">"+sym)) {
+                    l2[0] = l2[0].replace(">"+sym,"$"+QString::number((i>>8)&0xFF,16));
+                    break;
                 }
 
+            if (tst.contains(sym)) {
+
+/*                std::regex e ("\\b" +sym.toStdString()+ "\\b");   // matches words beginning by "sub"
+                QString l = "$"+QString::number(i,16);
+                 l2[0] = QString::fromStdString(std::regex_replace (l2[0].toStdString(),e,l.toStdString()));
+*/
+ //               l2[0] = l2[0].replace(*exp[sym],"$"+QString::number(i,16));
+}
+                l2[0] = OrgasmData::ReplaceWord(l2[0],sym,"$"+QString::number(i,16));
+                //l2[0] = l2[0].replace(sym,"$"+QString::number(i,16));
+                if (org!=l2[0])
+                    break;
+        }
+        expr = l2[0];
+        if (l2.count()>1)
+            expr+=","+l2[1];
+
+
+
+        if (expr!="") {
+            int val;
+            QString repl = "$1000";
+            if (expr.contains("<") || expr.contains(">"))
+                repl= "#$10";
+
+            expr = expr.replace("<","").replace(">","");
+
+            expr = OrgasmData::BinopExpr(expr, val, repl);
+            if (val==-1 && pass==OrgasmData::PASS_SYMBOLS) {
+                qDebug() << l2;
+                qDebug() << m_opCode<<  orgExpr;
+                throw QString("Unknown operation: " +orgExpr);
             }
+
         }
     }
+
+
+
+
 
 //    qDebug() << " ** " << line;
 
-    QStringList lst = line.split(" ");
-    QString opCode = lst[0];
 
-    if (opCode=="processor")
-        return true;
-//    qDebug() << line;
 
-    if (opCode=="org")
-        return true;
     Type type = imp;
     MOSOperandCycle cyc;
 
 //    if (opCode=="org")
   //      return false;
 
-    if (m_opCodes.m_opCycles.contains(opCode))
-        cyc = m_opCodes.m_opCycles[opCode];
+    if (m_opCodes.m_opCycles.contains(m_opCode))
+        cyc = m_opCodes.m_opCycles[m_opCode];
     else {
-        qDebug() << line;
-        throw QString("Uknown opcode: " + opCode);
+        qDebug() << expr;
+        throw QString("Uknown opcode: " + m_opCode);
     }
 
     if (cyc.m_opcodes.count()==0)
-        throw QString("Opcode not implemented yet: " + opCode);
+        throw QString("Opcode not implemented yet: " + m_opCode);
 
 
-
-    if (lst.count()>1)
-        type = getType(lst[1]);
+    if (expr!="")
+        type =  getTypeFromParams(expr);
     else
         type = none;
 
+
+
+
     // Override types or pass symbol
-    if (pass==passSymbol) {
-        if (opCode == "jmp" || opCode=="jsr")
+//    if (pass==OrgasmData::PASS_LABELS) {
+        if (m_opCode == "jmp" || m_opCode=="jsr")
             type = abs;
 
 //        if (opCode == "ldy" )
-    }
+//    }
 
     int code = cyc.m_opcodes[(int)type];
-    if (code==0 && pass==passCompile) {
-        qDebug() << "ERROR on line : " << line;
-        throw QString("Opcode type not implemented yet: " + opCode + "  type " +type );
+    if (code==0 && pass==OrgasmData::PASS_SYMBOLS) {
+        qDebug() << "ERROR on line : " << m_opCode + " " +expr;
+        throw QString("Opcode type not implemented yet: " + m_opCode + "  type " +type );
     }
+
 
 
     int val=0;
     if (type!=none) {
-        QString num = lst[1].split(",")[0].replace("#","").replace("(","").replace(")","");
+        QString num = expr.split(",")[0].replace("#","").replace("(","").replace(")","");
         //qDebug() << " NUM " << num << "  with type " << type;
         val = Util::NumberFromStringHex(num);
+//        qDebug() << "EXPR: " << expr << val << " with code "<< Util::numToHex(code);
     }
 //    qDebug() << cyc.m_name;
   //  qDebug() << cyc.m_opcodes;
-    m_debug << (" I : " + opCode + " type: " + (int)type  + ":" +Util::numToHex(code) + "    value : " + Util::numToHex(val)) ;
+//    m_debug << (" I : " + opCode + " type: " + (int)type  + ":" +Util::numToHex(code) + "    value : " + Util::numToHex(val)) ;
 
 
-    m_data.append(code);
+    data.append(code);
 
 
-    if (opCode=="bpl" || opCode=="bne" || opCode=="beq" || opCode=="bcc" || opCode=="bcs") {
+    if (m_opCode=="bpl" || m_opCode=="bne" || m_opCode=="beq" || m_opCode=="bcc" || m_opCode=="bcs") {
         int diff = (val)-pCounter-2;
 //        qDebug() << "Diff: " << Util::numToHex((uchar)diff);
-        m_data.append((uchar)diff);
+        data.append((uchar)diff);
     }
     else
 
     if (type==zp || type==zpx || type==zpy || type == izx || type == izy || type==imm) {
-        m_data.append(val);
+        data.append(val);
     }
     else
     if (type==abs || type==abx || type == aby || type == ind) {
-        m_data.append(val&0xFF);
-        m_data.append((val>>8)&0xFF);
+        data.append(val&0xFF);
+        data.append((val>>8)&0xFF);
     }
-//    qDebug() << Util::numToHex(pCounter) << m_debug << " " <<QString::number(m_data.count());
+    if (pass != OrgasmData::PASS_SYMBOLS)
+        expr = orgExpr;
 
-    return true;
+    return data;
 
+}
+
+
+
+
+
+QString OrgasmData::ReplaceWord(QString& line, QString& word, QString replacement)
+{
+    if (!line.contains(word))
+        return line;
+//    line = line.replace(" ", "");
+//    QRegExp rg("\\b" + word + "\\b");
+    QRegularExpression rg("\\b" + word + "\\b");
+    return line.replace(rg,replacement);
+//    "sine+255"
+
+}
+
+QString OrgasmData::BinopExpr(QString& expr, int& val, QString rep)
+{
+    QStringList l = expr.simplified().split(",");
+    l[0] = l[0].replace("(","").replace(")","");
+    l[0] = l[0].replace(" ","");
+    //sym = sym.toLower();
+//                qDebug() << "bf: " << l2[0] << "          expr: " << expr;
+    l[0] = Util::BinopString(l[0]);
+
+
+    if(!Util::NumberFromStringHex(l[0],val)) {
+        val=-1;
+        if (rep!="")
+            l[0] = rep;
+    }
+
+    QString pa="";
+    QString pb="";
+    if (expr.contains("(")) {
+        pa="(";
+        pb=")";
+    }
+    expr = pa+l[0]+pb;
+    if (l.count()>1)
+        expr+="," + l[1];
+
+
+
+    return expr;
 }

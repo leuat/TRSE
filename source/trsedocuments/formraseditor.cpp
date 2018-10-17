@@ -114,7 +114,7 @@ void FormRasEditor::Build()
 
 //        text+="+"<br>";
         QString output;
-
+        int time = timer.elapsed();
         int codeEnd = 0;
         qDebug() << m_iniFile->getString("assembler");
         if (m_iniFile->getString("assembler").toLower()=="dasm") {
@@ -128,7 +128,7 @@ void FormRasEditor::Build()
             codeEnd=FindEndSymbol(output);
         }
         else if (m_iniFile->getString("assembler").toLower()=="orgasm") {
-            Orgasm2 orgAsm;
+            Orgasm orgAsm;
             //orgAsm.LoadCodes();
             orgAsm.Assemble(filename+".asm", filename+".prg");
             if (orgAsm.m_success) {
@@ -139,8 +139,8 @@ void FormRasEditor::Build()
         }
         // Machine Code Analyzer
         VerifyMachineCodeZP(filename+".prg");
-
-
+        int assembleTime = timer.elapsed()- time;
+        time = timer.elapsed();
 
 //        qDebug() << "Code end: " << Util::numToHex(codeEnd) << codeEnd;
         int orgFileSize = QFile(filename+".prg").size();
@@ -158,6 +158,7 @@ void FormRasEditor::Build()
             processCompress.waitForFinished();
         }
         int size = QFile(filename+".prg").size();
+        int crunchTime = timer.elapsed()- time;
 
 
         m_buildSuccess = true;
@@ -201,6 +202,8 @@ void FormRasEditor::Build()
                 output=output+" (<font color=\"#70FF40\"> " + QString::number((int)(100.0*(float)size/(float)orgFileSize))+  " % </font> of original size ) <br>";
                 output=output+"Original file size: " + QString::number(orgFileSize) + " bytes";
             }
+            output = output + "\nAssemble time: <font color=\"#70FF40\">"+ (Util::MilisecondToString(assembleTime)) + "</font>";
+            output = output + "Crunch time: <font color=\"#70FF40\">"+ (Util::MilisecondToString(crunchTime)) + "</font>";
 
         }
         TestForCodeOverwrite(codeEnd,text);
