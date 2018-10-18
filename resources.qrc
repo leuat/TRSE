@@ -35,5 +35,6 @@
         <file>resources/images/hammer.png</file>
         <file>resources/images/NES.png</file>
         <file>resources/text/opcodes.txt</file>
+        <file>resources/images/C128.png</file>
     </qresource>
 </RCC>

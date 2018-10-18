@@ -83,11 +83,12 @@ class OrgasmInstruction {
             return none;
         }
 
-        QByteArray Assemble(QString& expr, Opcodes6502 &m_opCodes,
+/*        QByteArray Assemble(QString& expr, Opcodes6502 &m_opCodes,
                             OrgasmData::PassType pass, QMap<QString, int>& symbols,
-                            int pCounter, QMap<QString, QString>& constants, QMap<QString, QRegExp*>& exp);
+                            int pCounter, QMap<QString, QString>& constants, QMap<QString, QRegExp*>& exp,
+                            QVector<QString>& symList, QVector<QString>& constList);
 
-
+*/
     };
 
 
@@ -135,6 +136,7 @@ public:
     QStringList m_lines;
     QString m_currentChar;
     QVector<OrgasmLine> m_ol;
+    QVector<QString> m_symbolsList, m_constList;
     QMap<QString, int> m_symbols;
     QMap<QString, QString> m_constants;
     Opcodes6502 m_opCodes;

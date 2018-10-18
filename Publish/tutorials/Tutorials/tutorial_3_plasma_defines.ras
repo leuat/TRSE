@@ -102,6 +102,7 @@ begin
 	SCREEN_FG_COL:=BLACK;
 	// Set charmap location at $2000
 	SetCharsetLocation($2000);
+//	poke(^$0A2C, 0,$18);
 	// Set custom character pos
 	// Initialize sine functions
 	ax:=1;

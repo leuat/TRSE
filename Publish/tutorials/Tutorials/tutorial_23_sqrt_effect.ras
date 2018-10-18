@@ -44,7 +44,7 @@ end;
 begin
 	setcharsetlocation(@charsetPos);
 	clearscreen($20,^$4400);
-
+//	setmemoryconfig(1,0,0);
 	
 	clearscreen(YELLOW,^$D800);
 	setbank(VIC_BANK1);
@@ -53,7 +53,8 @@ begin
 	Render();
 
 	while (1<2) do begin
-		ShiftCharsetData();
-		waitnoraster(255);
+	//	ShiftCharsetData();
+		//waitnoraster(255);
+		wait(255);
 	end;
 end.

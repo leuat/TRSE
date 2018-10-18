@@ -76,7 +76,7 @@ public:
     QVector<Token> reservedWords;
     //QVector<BuiltInFunction> builtinFunctions;
     QMap<QString, BuiltInFunction> builtInFunctions;
-    enum System {C64, VIC20, PET, NES};
+    enum System {C64, VIC20, PET, NES, C128};
     QString m_syntaxData; // File syntax data
     System m_currentSystem;
     int m_startAddress = 0x800;
@@ -90,6 +90,8 @@ public:
     static System SystemFromString(QString s) {
         if (s.toLower()=="c64")
             return C64;
+        if (s.toLower()=="c128")
+            return C128;
         if (s.toLower()=="pet")
             return PET;
         if (s.toLower()=="vic20")
@@ -103,6 +105,7 @@ public:
         if (s == PET) return "PET";
         if (s == VIC20) return "VIC20";
         if (s == NES) return "NES";
+        if (s == C128) return "C128";
     }
 
     QString puredigit = "0123456789^";

@@ -115,6 +115,15 @@ void AsmMOS6502::Program(QString programName)
         Asm("ORG $0810");
         Nl();
     }
+    if (Syntax::s.m_currentSystem==Syntax::C128) {
+        Asm("ORG $1C01");
+        // 2064
+        Asm(".byte    $0E, $08, $0A, $00, $9E, $20, $28, $37, $31"); //  ( 2,0
+        Asm(".byte    $38, $34, $29, $00, $00, $00");   // 6, 4, )*/
+        Nl();
+        Asm("ORG $1C10");
+        Nl();
+    }
     if (Syntax::s.m_currentSystem==Syntax::NES) {
 //        Asm("org $0000");
 

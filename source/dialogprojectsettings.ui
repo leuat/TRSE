@@ -65,6 +65,11 @@
          </item>
          <item>
           <property name="text">
+           <string>C128</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
            <string>VIC20</string>
           </property>
          </item>

@@ -36,6 +36,10 @@ void Syntax::Init(System s)
         m_startAddress = 0x1000;
     if (s==C64)
         m_startAddress = 0x0800;
+    if (s==C128)
+        m_startAddress = 0x01C01;
+
+
     LoadSyntaxData();
 
     SetupReservedWords();

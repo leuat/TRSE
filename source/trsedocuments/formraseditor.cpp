@@ -96,9 +96,11 @@ void FormRasEditor::Compress()
 void FormRasEditor::Build()
 {
     SaveCurrent();
+    qDebug() << "HE";
     emit requestBuild();
     if (BuildStep())
         {
+//        qDebug() << "ME";
         compiler.SaveBuild(filename + ".asm");
         QString text ="Build <b><font color=\"#90FF90\">Successful</font>!</b> ( "+  (Util::MilisecondToString(timer.elapsed())) +")<br>";
         text+="Assembler file saved to : <b>" + filename+".asm</b><br>";

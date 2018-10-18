@@ -4,7 +4,6 @@ var
    fade : array [16] of byte = (11,6,6,12,4,14,15,1,1,15,14,4,12,6,6,11); 
    mainChar: IncBin("charsets/tutorial3.bin","$27FF");
 
-
 // Include methods for banking
 @include "../RasLib/banking.ras"
 

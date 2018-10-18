@@ -1353,11 +1353,12 @@ void NodeBuiltinMethod::SetCharsetLocation(Assembler *as)
     if (!ok)
         ErrorHandler::e.Error("SetCharsetLocation parameter must be one of the following values: $0000,$0800,$1000,$1800,$2000, $2800, $3000 or $3800", m_op.m_lineNumber);
 
-    as->Asm("lda $D018");
+    QString addr = Util::numToHex(as->m_symTab->m_constants["VIC_DATA_LOC"]->m_value->m_fVal);
+    as->Asm("lda "+addr);
     as->Asm("and #%11110001");
     qDebug() << QString::number(b);
     as->Asm("ora #"+QString::number(b));
-    as->Asm("sta $D018");
+    as->Asm("sta "+addr);
 }
 
 void NodeBuiltinMethod::InitZeroPage(Assembler* as) {
