@@ -24,7 +24,7 @@
 
 #include "source/Compiler/ast/ast.h"
 #include "source/Compiler/lexer.h"
-
+#include <QRegularExpression>
 #include "source/Compiler/ast/nodebinop.h"
 #include "source/Compiler/ast/nodenumber.h"
 #include "source/Compiler/ast/nodestring.h"

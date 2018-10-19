@@ -639,7 +639,12 @@ void Parser::PreprocessReplace()
     for (QString k: m_preprocessorDefines.keys()) {
         QString val = m_preprocessorDefines[k];
 //        qDebug() << "Replacing: @" + k << "  with " << val;
-        m_lexer->m_text = m_lexer->m_text.replace("@" +k, val);
+        QRegularExpression rg = QRegularExpression("@\\b"+k+"\\b");
+        qDebug() << rg;
+
+
+//        m_lexer->m_text = m_lexer->m_text.replace("@" +k, val);
+        m_lexer->m_text = m_lexer->m_text.replace(rg, val);
 
     }
 }

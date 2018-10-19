@@ -142,7 +142,7 @@ void DialogHelp::LoadItem(QString findword)
                 val+=");</h2>";
 
                 QString fn =":resources/text/help/"+type+"/"+word.toLower()+".rtf";
-                qDebug() << "looking for "<< fn;
+//                qDebug() << "looking for "<< fn;
                 if (QFile::exists(fn)) {
                     QFile f(fn);
                     f.open(QFile::ReadOnly | QFile::Text);

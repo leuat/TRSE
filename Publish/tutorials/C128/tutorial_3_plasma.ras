@@ -56,9 +56,9 @@ begin
 
 	end;
 	// Move cursor to (1,y) on $0400 on bank 1
-	moveto(1,@y_start, $04);
+	moveto(1, @y_start , $04);
 	
-	for y:=@y_start to 23 do begin
+	for y:= @y_start to 23 do begin
 		val:=siny[y];
 		for x:=1 to 36 do begin
 			screenmemory[x]:=64+(sinx[x] +val)/16;
