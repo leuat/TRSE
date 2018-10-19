@@ -493,6 +493,8 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
         QString emu = m_iniFile.getString("emulator");
         if (m_currentProject.m_ini.getString("system")=="VIC20")
             emu = m_iniFile.getString("vic20_emulator");
+        if (m_currentProject.m_ini.getString("system")=="C128")
+            emu = m_iniFile.getString("c128_emulator");
         if (m_currentProject.m_ini.getString("system")=="NES")
             emu = m_iniFile.getString("nes_emulator");
 

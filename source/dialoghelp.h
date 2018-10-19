@@ -70,6 +70,7 @@ public:
 
 
     void AppendItem(QListWidget* w, QString s);
+    void SearchForItem(QString item);
 
 private slots:
     void on_pushButton_clicked();

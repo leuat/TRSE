@@ -1,0 +1,14 @@
+<p>Decrunches crunched data from the specific index. Used in conjunction with packed paw files that automatically
+generate index tables.  Assume that you have compiled .paw-file with 5 crunched text screens, and wish to show them all sequentially:
+<code>
+
+// This paw file will contain an array of crunch indices
+#include "automatically_generated_paw_file.ras"
+
+
+begin
+	for i:=0 to 5 do begin
+		decrunch(my_crunched_data_array, i); // will decrunch and display each of the images..
+		... wait... 
+	end;
+</code>

@@ -42,6 +42,10 @@ DialogHelp::DialogHelp(QWidget *parent, QString txt, QPalette pal) :
     LoadItems(0);
     ui->leSearch->setText(txt);
 
+
+    if (txt!="")
+        SearchForItem(txt);
+
 /*    setPalette(pal);
     this->setPalette(pal);
 
@@ -56,6 +60,9 @@ DialogHelp::~DialogHelp()
 {
     delete ui;
 }
+
+
+
 
 void DialogHelp::LoadItems(int idx)
 {
@@ -98,6 +105,8 @@ void DialogHelp::LoadItems(int idx)
 
          }
     }
+    ui->lstItems->sortItems();
+
 }
 
 void DialogHelp::LoadItem(QString findword)
@@ -186,6 +195,34 @@ void DialogHelp::AppendItem(QListWidget *w, QString text)
     item->setText(text);
     w->addItem(item);
 
+}
+
+void DialogHelp::SearchForItem(QString item)
+{
+    QString currentSystem = Syntax::StringFromSystem(Syntax::s.m_currentSystem).toLower();
+    m_idx=0;
+    ui->lstItems->clear();
+    m_currentItems.clear();
+    for (QString s: Syntax::s.m_syntaxData.split('\n')) {
+
+        s= s.simplified();
+        if (s.count()==0) continue;
+        if (s.startsWith("#")) continue;
+        s=s.replace(" ", "");
+
+        QStringList data = s.split(";");
+        if (data[1].toLower() ==item.toLower()) {
+            //HelpType ht = m_helpTypes[idx];
+            int idx;
+            for (int i=0;i<m_helpTypes.count();i++)
+                if (m_helpTypes[i].id.toLower()==data[0].toLower())
+                    idx=i;
+            LoadItems(idx);
+            LoadItem(data[1]);
+            return;
+        }
+    }
+    LoadItems(0);
 }
 
 

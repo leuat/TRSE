@@ -1,0 +1,14 @@
+image1_data : IncBin("compressed//image1_data_c.bin", $8000);
+image1_color : IncBin("compressed//image1_color_c.bin", $88a6);
+image2_data : IncBin("compressed//image2_data_c.bin", $8a28);
+image2_color : IncBin("compressed//image2_color_c.bin", $9e06);
+octopus_data : IncBin("compressed//octopus_data_c.bin", $a2ba);
+octopus_color : IncBin("compressed//octopus_color_c.bin", $aa4c);
+tutorial_22_packed_address : array [12] of byte = (
+	166, 136,
+	40, 138,
+	6, 158,
+	186, 162,
+	76, 170,
+	90, 172
+);

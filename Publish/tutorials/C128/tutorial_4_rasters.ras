@@ -1,0 +1,56 @@
+program Tutorial_4_rasters;
+var
+	a,b:byte;
+
+@define kernal "1"
+
+interrupt IRQ1();
+
+
+interrupt IRQ0();
+begin
+	StartIRQ(@kernal);
+	SCREEN_BG_COL:=RED;
+	RasterIRQ(IRQ1(),$40,@kernal);
+
+//	RasterIRQ(IRQ1(),$40,@kernal);
+	
+	CloseIRQ();
+end;
+
+
+interrupt IRQ2();
+begin
+	StartIRQ(@kernal);
+	SCREEN_BG_COL:=YELLOW;
+	RasterIRQ(IRQ0(),$00,@kernal);
+	CloseIRQ();
+end;
+
+
+interrupt IRQ1();
+begin
+	StartIRQ(@kernal);
+	SCREEN_BG_COL:=GREEN;
+
+	RasterIRQ(IRQ2(),$80,@kernal);
+	CloseIRQ();
+
+end;
+
+
+begin
+	preventirq();
+	DisableCIAInterrupts();
+//	SetMemoryConfig(1,@kernal,0);
+	asm("
+		lda #$3e        ;RAM0 + KERNAL & I/O
+        sta $ff00
+	    lda #$ff        ;Turn off screen-setup part of
+        sta $d8                ;screen editor IRQ routine
+	");
+	RasterIRQ(IRQ0(),$00,@kernal);
+	EnableRasterIRQ();
+	enableirq();
+	Loop(); 
+end.

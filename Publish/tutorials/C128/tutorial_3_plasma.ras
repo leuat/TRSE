@@ -1,0 +1,122 @@
+program Tutorial3_plasma;
+
+var
+	// some plasma variables
+	c,val,time,c2x, c2y,ax, ay : byte;
+	x,y : byte;
+	// Use custom charset
+	charset: IncBin("charsets/charset_8x8.bin","$2000");
+	// nice colors
+	fade : array [8] of byte = (11,6,12,12,4,14,15,1,1,1,1,15,14,4,12,12,6,11,1,1); 
+	
+	shiftx: byte;
+
+	// mini sine table
+    siny : array[25] of byte; 
+	sinx : array[40] of byte; 
+
+
+
+
+// Define y_start as a global preprocessor constant
+@define y_start "5"
+// Remove the following line to ignore colors! much faster.
+@define include_color true
+
+@define tunnelpos "$3000"
+
+
+
+// Plasma procedure
+
+
+procedure Plasma();
+begin
+	c2x:=ax;
+	c2y:=ay;
+	
+	shiftx:=shiftx+25;
+
+	// Set up y-sine table
+	for x:=0 to 25 do begin 
+		siny[x]:=  sine[c2x] + sine[c2y];// + shiftx;
+		c2x:=c2x+4;
+		c2y:=c2y+9;
+	end;
+
+	ax:=ax+3;
+	ay:=ay-5;
+
+
+	// Set up x-sine table
+	for x:=0 to 40 do begin 
+		sinx[x] := sine[c2x] + sine[c2y];
+		c2x:=c2x+3;
+		c2y:=c2y+7;
+
+	end;
+	// Move cursor to (1,y) on $0400 on bank 1
+	moveto(1,@y_start, $04);
+	
+	for y:=@y_start to 23 do begin
+		val:=siny[y];
+		for x:=1 to 36 do begin
+			screenmemory[x]:=64+(sinx[x] +val)/16;
+		end;
+		// Increase x by 40 (next row)
+		inczp(screenmemory, 40);
+	end;
+
+
+// this block is only compiled if include_color is defined, and will color the plasma with
+// the "fade" colors
+@ifdef include_color	
+
+	// Move to color area
+	moveto(1,@y_start, $D8);
+
+	// Loop through y
+	for y:=@y_start to 23 do begin
+		val:=siny[y];
+		for x:=1 to 36 do begin
+			// Color that screen
+			screenmemory[x] := fade[8+ (sinx[x] +val)/16 ];;
+
+		end;
+		// Inc screen x by 40
+		inczp(screenmemory, 40);
+	end;
+
+@endif
+		
+	
+
+end;
+
+
+
+
+begin
+	// Set color background
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+	// Set charmap location at $2000
+	SetCharsetLocation($2000);
+//	poke(^$0A2C, 0,$18);
+	// Set custom character pos
+	// Initialize sine functions
+	ax:=1;
+	ay:=5;
+
+
+	// Clear screen and color memory
+	ClearScreen($20, SCREEN_CHAR_LOC);
+	ClearScreen(GREEN, SCREEN_COL_LOC);
+//	setmulticolormode();
+	// Main loop
+	while 1<>2 do begin
+		time:=time+1;
+		waitForRaster(0);
+		Plasma();
+	end;
+end.

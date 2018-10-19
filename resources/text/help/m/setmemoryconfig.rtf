@@ -1,0 +1,26 @@
+<h2>C64</h2>
+On the C64, this method configures the current memory setup. 
+<ul>
+<li><b>Parameter 1:</b> Enables/disables BASIC</li>
+<li><b>Parameter 2:</b> Enables/disables IO</li>
+<li><b>Parameter 3:</b> Enables/disables Kernal</li>
+</ul>
+For instance, if you wish to disable Kernal and basic but keep IO, use
+<code>SetMemoryConfig(0,1,0);</code>
+
+
+
+<h2>C128</h2>
+On the C128, this method takes in 5 numerical parameters and changes the C128 MMU ( Memory Management Unit, address $FF00) to enable/disable various parts of the memory to be visible memory or ROM. The parameters are:
+<ul>
+<li><b>Parameter 1:</b> $D000-$DFFF IO (0) or RAM (1) </li>
+<li><b>Parameter 2:</b> $4000-$7FFF System ROM (0) or RAM (1) </li>
+<li><b>Parameter 3:</b> $8000-$BFFF System ROM (0) or RAM (1) </li>
+<li><b>Parameter 4:</b> $C000-$FFFF System ROM (0) or RAM (1) </li>
+<li><b>Parameter 5:</b> Ram bank 0 (0) or bank 1 (1) </li>
+</ul>
+For instance: Make all ram except IO visible, and use the "other" memory bank: 
+<code>
+SetMemoryConfig(0,1,1,1,1);
+</code>
+

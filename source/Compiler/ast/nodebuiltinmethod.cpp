@@ -1498,6 +1498,10 @@ void NodeBuiltinMethod::IncDec(Assembler *as, QString cmd)
 void NodeBuiltinMethod::SetMemoryConfig(Assembler *as)
 {
     as->Comment("Set Memory Config");
+
+    if (Syntax::s.m_currentSystem==Syntax::C64) {
+
+
     RequireNumber(m_params[0], "SetMemoryConfig", m_op.m_lineNumber);
     RequireNumber(m_params[1], "SetMemoryConfig", m_op.m_lineNumber);
     RequireNumber(m_params[2], "SetMemoryConfig", m_op.m_lineNumber);
@@ -1520,6 +1524,27 @@ void NodeBuiltinMethod::SetMemoryConfig(Assembler *as)
     as->Asm("ora #%" + QString::number(val,2));
     as->Asm("sta $01");
 
+    }
+
+    if (Syntax::s.m_currentSystem == Syntax::C128) {
+        //as->Asm("lda #0");
+        uchar v = 0;
+        if (dynamic_cast<NodeNumber*>(m_params[0])->m_val!=0)
+            v |= 0b00000001; // (0=IO, 1=RAM/ROM)
+        if (dynamic_cast<NodeNumber*>(m_params[1])->m_val!=0)
+            v |= 0b00000010; // Bank 1 RAM = 1, ROM =0))
+        if (dynamic_cast<NodeNumber*>(m_params[2])->m_val!=0)
+            v |= 0b00001100; // B000 RAM = 1, ROM =0))
+        if (dynamic_cast<NodeNumber*>(m_params[3])->m_val!=0)
+            v |= 0b00110000; // C000 RAM = 1, ROM =0))
+        if (dynamic_cast<NodeNumber*>(m_params[4])->m_val!=0)
+            v |= 0b01000000; // C000 RAM = 1, ROM =0))
+
+        as->Asm("lda #"+Util::numToHex(v));
+        as->Asm("sta $FF00");
+
+    }
+
 }
 
 void NodeBuiltinMethod::EnableRasterIRQ(Assembler* as)
@@ -1535,6 +1560,9 @@ void NodeBuiltinMethod::EnableRasterIRQ(Assembler* as)
 void NodeBuiltinMethod::StartIRQ(Assembler *as)
 {
     as->Comment("StartIRQ");
+
+    if (Syntax::s.m_currentSystem == Syntax::C64) {
+
     RequireNumber(m_params[0], "StartIRQ", m_op.m_lineNumber);
     NodeNumber* n = dynamic_cast<NodeNumber*>(m_params[0]);
     if (n->m_val==1) {
@@ -1548,50 +1576,72 @@ void NodeBuiltinMethod::StartIRQ(Assembler *as)
         as->Asm("pha");
         as->Asm("asl $d019");
     }
+    }
+    if (Syntax::s.m_currentSystem == Syntax::C128) {
+        as->Asm("lda $d019");
+        as->Asm("sta $d019");
+        as->Asm("lda $FF00");
+        as->Asm("pha");
+    }
+
 }
 
 void NodeBuiltinMethod::CloseIRQ(Assembler *as)
 {
     as->Comment("CloseIRQ");
+    if (Syntax::s.m_currentSystem == Syntax::C64) {
+
     as->Asm("pla");
     as->Asm("tay");
     as->Asm("pla");
     as->Asm("tax");
     as->Asm("pla");
-   // as->Asm("rti");
+    }
+    if (Syntax::s.m_currentSystem == Syntax::C128) {
+        as->Asm("pla");
+        as->Asm("sta $FF00");
+
+        as->Asm("lda #$00");
+        as->Asm("sta $d030");
+        as->Asm("jmp $fa65");
+
+    }
 }
 
 void NodeBuiltinMethod::DisableNMI(Assembler *as)
 {
-    as->Comment("Hook NMI");
+    if (Syntax::s.m_currentSystem == Syntax::C64) {
 
-    NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_params[0]);
-    if (addr==nullptr)
-        ErrorHandler::e.Error("First parameter must be interrupt procedure!", m_op.m_lineNumber);
+        as->Comment("Hook NMI");
 
-    QString name = addr->m_procedure->m_procName;
+        NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_params[0]);
+        if (addr==nullptr)
+            ErrorHandler::e.Error("First parameter must be interrupt procedure!", m_op.m_lineNumber);
 
-    as->Asm("sei");
-    as->Asm("lda     #<"+name);
-    as->Asm("sta     $0318");
-    as->Asm("lda     #>"+name);
-    as->Asm("sta     $0319");
+        QString name = addr->m_procedure->m_procName;
 
-    as->Asm("lda     #$00            ; Stop time A CIA2");
-    as->Asm("sta     $dd0e");
+        as->Asm("sei");
+        as->Asm("lda     #<"+name);
+        as->Asm("sta     $0318");
+        as->Asm("lda     #>"+name);
+        as->Asm("sta     $0319");
 
-    as->Asm("lda     #$00");
-    as->Asm("sta     $dd04           ; Set timer value #1 (Timer A CIA 2)");
-    as->Asm("lda     #$00");
-    as->Asm("sta     $dd05           ; Set timer value #2 (Timer A CIA 2)");
+        as->Asm("lda     #$00            ; Stop time A CIA2");
+        as->Asm("sta     $dd0e");
 
-    as->Asm("lda     #%10000001      ; Fill bit to 1 and enable NMI to occur from Timer A");
-    as->Asm("sta     $dd0d");
+        as->Asm("lda     #$00");
+        as->Asm("sta     $dd04           ; Set timer value #1 (Timer A CIA 2)");
+        as->Asm("lda     #$00");
+        as->Asm("sta     $dd05           ; Set timer value #2 (Timer A CIA 2)");
 
-    as->Asm("lda     #$01");
-    as->Asm("sta     $dd0e           ; Start timer A CIA (NMI will occur immediately)(*)");
+        as->Asm("lda     #%10000001      ; Fill bit to 1 and enable NMI to occur from Timer A");
+        as->Asm("sta     $dd0d");
 
-    as->Asm("cli");
+        as->Asm("lda     #$01");
+        as->Asm("sta     $dd0e           ; Start timer A CIA (NMI will occur immediately)(*)");
+
+        as->Asm("cli");
+    }
 
 }
 
@@ -2500,15 +2550,15 @@ void NodeBuiltinMethod::CopyHalfScreen(Assembler *as)
 
     NodeNumber * lines = dynamic_cast<NodeNumber*>(m_params[2]);
     if (lines==nullptr)
-        ErrorHandler::e.Error("CopyImageColorData : parameter 3 must be a constant number!");
+        ErrorHandler::e.Error("CopyHalfScreen : parameter 3 must be a constant number!");
 
     NodeNumber *inverted = dynamic_cast<NodeNumber*>(m_params[3]);
     if (inverted==nullptr)
-        ErrorHandler::e.Error("CopyImageColorData : parameter 4 must be a constant number!");
+        ErrorHandler::e.Error("CopyHalfScreen : parameter 4 must be a constant number!");
 
     NodeNumber *invertedx = dynamic_cast<NodeNumber*>(m_params[4]);
     if (invertedx==nullptr)
-        ErrorHandler::e.Error("CopyImageColorData : parameter 5 must be a constant number!");
+        ErrorHandler::e.Error("CopyHalfScreen : parameter 5 must be a constant number!");
 
     if (invertedx->m_val==1)
         as->Asm("ldx #40");

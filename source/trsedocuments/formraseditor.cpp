@@ -351,6 +351,8 @@ void FormRasEditor::Run()
         emulator = m_iniFile->getString("emulator");
     if (Syntax::s.m_currentSystem==Syntax::VIC20)
         emulator = m_iniFile->getString("vic20_emulator");
+    if (Syntax::s.m_currentSystem==Syntax::C128)
+        emulator = m_iniFile->getString("c128_emulator");
     if (Syntax::s.m_currentSystem==Syntax::NES) {
         emulator = m_iniFile->getString("nes_emulator");
         filename = m_currentSourceFile.split(".")[0] + ".nes";

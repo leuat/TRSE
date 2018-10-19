@@ -1,0 +1,11 @@
+<p>Closes an IRQ before returning the interrupt. Same usage on C64 and C128, but different implementations on the various systems. 
+<code>
+interrupt Raster1();
+begin
+	StartIRQ(@useKernal);
+
+	// Perform some actions
+
+	CloseIRQ();
+end;
+</code>

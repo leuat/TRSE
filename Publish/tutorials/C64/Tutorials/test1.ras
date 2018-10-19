@@ -1,0 +1,6 @@
+program spankme;
+var  
+   index: byte; 
+begin
+
+end.

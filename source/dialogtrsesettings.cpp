@@ -39,6 +39,7 @@ void DialogTRSESettings::FillFromIni()
 {
     ui->leDasm->setText(m_ini->getString("dasm"));
     ui->leEmulator->setText(m_ini->getString("emulator"));
+    ui->leEmulatorC128->setText(m_ini->getString("c128_emulator"));
     ui->leVic20Emulator->setText(m_ini->getString("vic20_emulator"));
     ui->leNesEmulator->setText(m_ini->getString("nes_emulator"));
     ui->leExomizer->setText(m_ini->getString("exomizer"));
@@ -82,6 +83,9 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("exomizer", ui->leExomizer->text());
     m_ini->setString("emulator", ui->leEmulator->text());
     m_ini->setString("vic20_emulator", ui->leVic20Emulator->text());
+    m_ini->setString("c128_emulator", ui->leEmulatorC128->text());
+
+
     m_ini->setString("nes_emulator", ui->leNesEmulator->text());
     m_ini->setString("theme", ui->cmbTheme->currentText() + ".ini");
 

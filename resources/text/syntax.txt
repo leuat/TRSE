@@ -32,15 +32,18 @@ m; Poke; C64, C128, VIC20, PET, NES ; a,b,b
 m; Peek; C64, C128, VIC20, PET, NES ; a,b
 m; ToggleBit; C64, C128, VIC20, PET, NES ; a,b,b
 m; GetBit; C64, C128, VIC20, PET, NES ; a,b
-m; EnableAllRam; C64, C128, VIC20  ;
+m; EnableAllRam; C64  ;
 m; MemCpy; C64, C128, VIC20, PET, NES ; a,b,a,b
 m; BlockMemCpy; C64, C128, VIC20, PET, NES ; a,a,n
 m; Inc; C64, C128, VIC20, PET, NES ; a
 m; Dec; C64, C128, VIC20, PET, NES ; a
 m; Fill; C64, C128, VIC20, PET, NES ; a, b, b
-m; SetMemoryConfig ; C64, C128, VIC20, PET, NES ; b,b,b
+m; SetMemoryConfig ; C64,  VIC20, PET, NES ; b,b,b
 m; CopyHalfScreen; C64, C128, VIC20, PET, NES ; a,a,b,b,n
 m; CopyFullScreen; C64, C128, VIC20, PET, NES ; 	a,a
+
+
+m; SetMemoryConfig ; C128 ; n,n,n,n,n
 
 
 m; Decrunch; C64, C128 ; a
@@ -146,6 +149,9 @@ m; WaitNoRaster; C64, C128; b
 
 
 
+
+
+
 # VIC 20-specific constants
 c; SCREEN_COL_LOC; VIC20; a; $9600
 c; SCREEN_CHAR_LOC; VIC20; a; $1E00
@@ -208,6 +214,7 @@ c; VIC_DATA_LOC; C64, C128;a;$d018
 # C128 støff
 
 c; VIC_DATA_LOC; C128;a;$0A2C
+c; MMU ; C128 ; a ; $FF00
 
 
 

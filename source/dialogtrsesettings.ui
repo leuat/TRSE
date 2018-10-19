@@ -19,7 +19,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>3</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
@@ -54,7 +54,7 @@
        </widget>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
-         <string>Environment</string>
+         <string>Emulators</string>
         </attribute>
         <widget class="QLabel" name="label_11">
          <property name="geometry">
@@ -119,9 +119,9 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
          <property name="geometry">
           <rect>
            <x>40</x>
-           <y>50</y>
+           <y>90</y>
            <width>621</width>
-           <height>131</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="title">
@@ -133,7 +133,7 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
             <x>0</x>
             <y>20</y>
             <width>621</width>
-            <height>95</height>
+            <height>128</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -151,6 +151,27 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
              </item>
              <item>
               <widget class="QPushButton" name="btnEmulator">
+               <property name="text">
+                <string>...</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_13">
+             <item>
+              <widget class="QLabel" name="label_16">
+               <property name="text">
+                <string>C128 Emulator location</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="leEmulatorC128"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnEmulatorC128">
                <property name="text">
                 <string>...</string>
                </property>
@@ -193,73 +214,6 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
              </item>
              <item>
               <widget class="QPushButton" name="btnNesEmulatr">
-               <property name="text">
-                <string>...</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </widget>
-        <widget class="QGroupBox" name="groupBox_4">
-         <property name="geometry">
-          <rect>
-           <x>40</x>
-           <y>190</y>
-           <width>621</width>
-           <height>131</height>
-          </rect>
-         </property>
-         <property name="title">
-          <string>Assembler</string>
-         </property>
-         <widget class="QWidget" name="verticalLayoutWidget">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>30</y>
-            <width>621</width>
-            <height>95</height>
-           </rect>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
-             <item>
-              <widget class="QLabel" name="label_2">
-               <property name="text">
-                <string>Dasm location</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="leDasm"/>
-             </item>
-             <item>
-              <widget class="QPushButton" name="btnDasm">
-               <property name="text">
-                <string>...</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_6">
-             <item>
-              <widget class="QLabel" name="label_6">
-               <property name="text">
-                <string>Exomizer location</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="leExomizer"/>
-             </item>
-             <item>
-              <widget class="QPushButton" name="btnExomizer">
                <property name="text">
                 <string>...</string>
                </property>
@@ -390,6 +344,73 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
            </layout>
           </item>
          </layout>
+        </widget>
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>170</y>
+           <width>621</width>
+           <height>131</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>External Assembler</string>
+         </property>
+         <widget class="QWidget" name="verticalLayoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>30</y>
+            <width>621</width>
+            <height>95</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>Dasm location</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="leDasm"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnDasm">
+               <property name="text">
+                <string>...</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <item>
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>Exomizer location</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="leExomizer"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnExomizer">
+               <property name="text">
+                <string>...</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </widget>
        <widget class="QWidget" name="tab_3">

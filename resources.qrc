@@ -36,5 +36,19 @@
         <file>resources/images/NES.png</file>
         <file>resources/text/opcodes.txt</file>
         <file>resources/images/C128.png</file>
+        <file>resources/text/help/m/setmemoryconfig.rtf</file>
+        <file>resources/text/help/m/decrunchfromindex.rtf</file>
+        <file>resources/text/help/m/decrunch.rtf</file>
+        <file>resources/text/help/m/inc.rtf</file>
+        <file>resources/text/help/m/dec.rtf</file>
+        <file>resources/text/help/m/copyhalfscreen.rtf</file>
+        <file>resources/text/help/m/copyfullscreen.rtf</file>
+        <file>resources/text/help/m/copycharsetfromrom.rtf</file>
+        <file>resources/text/help/m/closeirq.rtf</file>
+        <file>resources/text/help/m/clearsound.rtf</file>
+        <file>resources/text/help/m/clearscreen.rtf</file>
+        <file>resources/text/help/m/clearbitmap.rtf</file>
+        <file>resources/text/help/m/atan2.rtf</file>
+        <file>resources/text/help/m/abs.rtf</file>
     </qresource>
 </RCC>
