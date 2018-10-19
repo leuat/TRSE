@@ -38,6 +38,8 @@ macx {
 win32-g++ {
     QMAKE_CXXFLAGS += -fopenmp
     LIBS += -fopenmp
+    QMAKE_CXXFLAGS += -Ofast
+
 }
 win32-msvc*{
     QMAKE_CXXFLAGS += -openmp

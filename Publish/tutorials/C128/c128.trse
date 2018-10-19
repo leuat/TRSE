@@ -1,4 +1,4 @@
-project_path = /home/leuat/code/TRSE/Publish/tutorials/C128/
+project_path = C:/Users/leuat/OneDrive/Documents/GitHub/TRSE/Publish/tutorials/C128/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fe
@@ -16,4 +16,4 @@ post_optimizer_passjmp = 1
 post_optimizer_passldatax = 1
 post_optimizer_passstalda = 1
 post_optimizer_passldx = 1
-open_files = ,tutorial_4_rasters.ras, tutorial_6_dycp.ras, tutorial_3_plasma.ras
+open_files = ,tutorial_3_plasma.ras, tutorial_6_dycp.ras, tutorial_4_rasters.ras

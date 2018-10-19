@@ -151,7 +151,7 @@ QString Util::BinopString(QString a) {
 }
 QString Util::ReplaceWords(QString line, QString word) {
 
-
+    return "";
 }
 
 

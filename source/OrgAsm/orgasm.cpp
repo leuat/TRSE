@@ -357,7 +357,7 @@ void Orgasm::ProcessByteData(OrgasmLine &ol)
 {
     if (ol.m_expr.trimmed()=="") {
         m_pCounter++;
-        m_data.append((uchar)0x00);
+        m_data.append((char)0x00);
         return;
     }
     QStringList lst = ol.m_expr.split(",");
@@ -391,8 +391,8 @@ void Orgasm::ProcessWordData(OrgasmLine &ol)
 {
     if (ol.m_expr=="") {
         m_pCounter+=2;
-        m_data.append((uchar)0x00);
-        m_data.append((uchar)0x00);
+        m_data.append((char)0x00);
+        m_data.append((char)0x00);
         return;
     }
     QStringList lst = ol.m_expr.split(",");
