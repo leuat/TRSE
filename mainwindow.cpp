@@ -197,6 +197,9 @@ void MainWindow::VerifyDefaults()
     if (!m_iniFile.contains("optimizer_remove_unused_symbols"))
      m_iniFile.setFloat("optimizer_remove_unused_symbols",1);
 
+    if (!m_iniFile.contains("assembler"))
+        m_iniFile.setString("assembler","dasm");
+
     m_iniFile.filename = m_iniFileName;
 
 }
