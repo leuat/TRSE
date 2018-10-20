@@ -1,0 +1,32 @@
+interrupt RasterScene1();
+begin
+	startirq(@useKernal);
+	ProgressTracker();
+
+	closeIRQ();
+end;
+
+
+procedure InitScene1();
+begin
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+	setbank(VIC_BANK1);
+	// Use the 3rd column of the timestamp to specify index of the packed data!
+	i:=timeStamps[currentPart*4+2];
+	// Enable reading $D000-$DFFF
+	enableallram();
+	// Decrunch image data to $6000	
+	decrunchfromindex(packed_data_addresses,i); 
+	// Decrunch color data to $4800
+	decrunchfromindex(packed_data_addresses,i+1);
+	// Restore memory config
+	poke(^$01, 0,keep01);
+	// Copy color data to bank 1 and $D800
+	copyimagecolordata(^$4800,1);
+	// Enable multicolor bitmap image at location $6000
+	poke(VIC_DATA_LOC, 0,$18);
+	setbitmapmode();
+	setmulticolormode();
+
+end;

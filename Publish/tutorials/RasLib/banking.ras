@@ -1,13 +1,20 @@
-
-procedure Banking_Vars();
+procedure SwitchBank();
 var
-	g_currentBank:byte;
-	g_dataLoc : byte=$1a;
+	g_currentBank:byte = 0;
+	g_dataLoc : byte = $1a;
     temp_colorCopy : array[40] of byte;
-
 begin
-		g_currentBank:=0;
+	if g_currentBank=0 then 
+		SetBank(VIC_BANK1)
+	else 
+		SetBank(VIC_BANK0);
+
+	poke(VIC_DATA_LOC, 0, g_dataLoc);
+
+	g_currentBank:=(g_currentBank+1)&1;
 end;
+
+
 
 
 procedure CopyScreen(ul_:byte);
@@ -50,14 +57,3 @@ begin
 
 end;
 
-procedure SwitchBank();
-begin
-	if g_currentBank=0 then 
-		SetBank(VIC_BANK1)
-	else 
-		SetBank(VIC_BANK0);
-
-	poke(VIC_DATA_LOC, 0, g_dataLoc);
-
-	g_currentBank:=(g_currentBank+1)&1;
-end;

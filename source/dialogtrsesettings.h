@@ -73,6 +73,12 @@ private slots:
 
     void on_btnExomizer_clicked();
 
+    void on_btnEmulatorC128_clicked();
+
+    void on_btnVic20Emulator_clicked();
+
+    void on_btnNesEmulatr_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

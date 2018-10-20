@@ -47,7 +47,7 @@ var
 @define colorpointer colormemory
 
 // RasLib contains all level rendering routines
-@include "../RasLib/levels.ras"
+@include "../../RasLib/levels.ras"
 
 
 

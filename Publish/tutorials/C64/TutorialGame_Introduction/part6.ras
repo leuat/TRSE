@@ -25,7 +25,7 @@ our character set
 
 // Include RasLib level renderer
 @define colorpointer colormemory
-@include "../RasLib/levels.ras"
+@include "../../RasLib/levels.ras"
 
 // Initializes charsets etc
 procedure Initialize();

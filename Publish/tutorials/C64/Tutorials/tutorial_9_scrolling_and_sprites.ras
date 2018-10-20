@@ -29,12 +29,13 @@ var
 @define _monsterSprite "1"
 
 
+
+
 // Include methods for banking
-@include "../RasLib/banking.ras"
+@include "../../RasLib/banking.ras"
 
 // include vscroll methods
-@include "../RasLib/verticalscrolling.ras"
-
+@include "../../RasLib/verticalscrolling.ras"
 
 @define spriteBaseLoc "$90"
 

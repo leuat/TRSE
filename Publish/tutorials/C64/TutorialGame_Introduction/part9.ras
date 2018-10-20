@@ -56,7 +56,7 @@ var
 @define colorpointer colormemory
 
 // RasLib contains all level rendering routines
-@include "../RasLib/levels.ras"
+@include "../../RasLib/levels.ras"
 
 
 
@@ -312,6 +312,7 @@ end;
 begin
 	Initialize();
 	InitMainSprite();
+
 
 	levelpointer:=@levelPosition;
 	RenderCharsetColorLevel(curLevel_x,curLevel_y,$04);

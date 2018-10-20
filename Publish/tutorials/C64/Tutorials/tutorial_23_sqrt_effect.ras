@@ -18,10 +18,6 @@ begin
 		for x:=0 to 40 do begin
 			dx:=abs(20-x);
 			dy:=abs(13-y);
-/*			asm("
-				lda #0
-				sta octant
- ");*/
 			i:=(atan2(20,x,12,y));
 			i:=(i/2)&15;
 //			i:=6;
@@ -53,8 +49,8 @@ begin
 	Render();
 
 	while (1<2) do begin
-	//	ShiftCharsetData();
-		//waitnoraster(255);
+		ShiftCharsetData();
+		waitnoraster(255);
 		wait(255);
 	end;
 end.

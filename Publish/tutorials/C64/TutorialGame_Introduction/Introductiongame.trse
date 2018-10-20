@@ -1,5 +1,5 @@
 data_header_levels/level1.flf = ,sprite, x, y, color, -, -, -, -
-project_path = /home/leuat/code/TRSE/Publish/tutorials/TutorialGame_Introduction/
+project_path = /home/leuat/code/TRSE/Publish/tutorials/C64/TutorialGame_Introduction/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $47
@@ -10,7 +10,7 @@ zeropage_internal1 = $4C
 zeropage_internal2 = $4D
 zeropage_internal3 = $4E
 zeropage_internal4 = $4F
-open_files = ,part9.ras, part3.ras
+open_files = ,part9.ras, part9.asm, part3.ras
 system = C64
 temp_zeropages = ,$54, $56, $58, $5A
 post_optimizer_passlda = 1

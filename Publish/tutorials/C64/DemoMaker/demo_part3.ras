@@ -1,7 +1,6 @@
 program DemoMaker;
 var  
 
-
 @define play_music 1
 // Turn off kernalr
 @define useKernal 0
@@ -26,7 +25,6 @@ var
 	
 // Main demo music (by Uctumi)
 	music: incsid("music/courierb0.sid","2");
-
 
 
 // Put all these variables at $F000
@@ -71,24 +69,16 @@ var
 
 	timeStamps: array[64] of byte = (		
 										@scene1, $7, 0,0, 
-										@scene2, $10,0,0,
-										@scene3, $23,0,0,
-										@scene1, $40,1,0
+										@scene1, $10,2,0
 
 										);
 
 
 @endblock
 
-// Temp $100 block
-@startblock $0500 "TEMP"
-	temp:array[256] of byte;
-@endblock
 
-// Temp $100 block
-@startblock $8000 "TEMP"
-	temp2:array[256] of byte;
-@endblock
+// Include automatically generated scenes
+@include "packed_resources1.ras"
 
 
 
@@ -176,6 +166,8 @@ begin
 
 end;
 
+
+
 // Include a scene
 @include "include/scene1.ras"
 
@@ -210,9 +202,9 @@ begin
 	// Only advance when main loop gives the flag that scene init is complete!
 	if (initComplete=1) then begin
 
-		if (nextScene=@scene1) then begin
-		//RasterIRQ(RasterScene1(),0,@useKernal);
-		end;
+		if (nextScene=@scene1) then 
+			RasterIRQ(RasterScene1(),0,@useKernal);
+
 	end;
 
 @ifdef play_music
@@ -245,8 +237,8 @@ begin
 			SPRITE_BITMASK:=0;
 			screenoff();
 
-			//if (nextScene=@scene1) then 
-			//	InitScene1();
+			if (nextScene=@scene1) then 
+				InitScene1();
 
 			screenon();
 			initComplete:=1;
@@ -269,7 +261,7 @@ begin
 	SetMemoryConfig(1,@useKernal,0);
 	// Make sure we keep that config stored 
 	keep01:=peek(^$01,0);
-
+	currentPart := 0;
 	nextScene:=timeStamps[currentPart*4];
 
 	initsid(SIDFILE_1_INIT);
@@ -279,5 +271,4 @@ begin
 	EnableRasterIRQ();
 	enableirq();
 	UpdateMainloop();
-
 end.

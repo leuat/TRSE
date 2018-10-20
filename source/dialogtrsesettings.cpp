@@ -128,7 +128,8 @@ void DialogTRSESettings::on_btnEmulator_clicked()
 {
     QString filename = QFileDialog::getOpenFileName(this,
         tr("Emulator location"), m_ini->getString("project_path"), "*");
-    ui->leEmulator->setText(filename);
+    if (filename!="")
+       ui->leEmulator->setText(filename);
 
 }
 
@@ -136,6 +137,7 @@ void DialogTRSESettings::on_btnExomizer_clicked()
 {
     QString filename = QFileDialog::getOpenFileName(this,
         tr("Exomizer location"), m_ini->getString("project_path"), "*");
+    if (filename!="")
     ui->leExomizer->setText(filename);
 
 }
@@ -144,6 +146,34 @@ void DialogTRSESettings::on_btnDasm_clicked()
 {
     QString filename = QFileDialog::getOpenFileName(this,
         tr("Dasm location"), m_ini->getString("project_path"), "*");
+    if (filename!="")
     ui->leDasm->setText(filename);
+
+}
+
+void DialogTRSESettings::on_btnEmulatorC128_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("C128 Emulator location"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+    ui->leEmulatorC128->setText(filename);
+
+}
+
+void DialogTRSESettings::on_btnVic20Emulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("VIC-20 Emulator location"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+    ui->leVic20Emulator->setText(filename);
+
+}
+
+void DialogTRSESettings::on_btnNesEmulatr_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("NES Emulator location"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+    ui->leNesEmulator->setText(filename);
 
 }
