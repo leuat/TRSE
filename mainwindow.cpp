@@ -270,7 +270,7 @@ void MainWindow::ConnectDocument()
     connect(m_currentDoc, SIGNAL(updatePaletteSignal()), this, SLOT(updatePalette()));
     connect(m_currentDoc, SIGNAL(requestSaveAs()), this, SLOT(SaveAs()));
     connect(m_currentDoc, SIGNAL(requestCloseWindow()), this, SLOT(closeWindowSlot()));
-
+    connect(m_currentDoc, SIGNAL(emitFindFile()), this, SLOT(FindFileDialog()));
     connect(m_currentDoc, SIGNAL(requestBuild()), this, SLOT(acceptBuild()));
 
 }
@@ -290,6 +290,8 @@ void MainWindow::RefreshFileList()
 {
     if (m_currentPath=="")
         return;
+    if (fileSystemModel!=nullptr)
+        delete fileSystemModel;
     fileSystemModel = new CustomFileSystemModel(this);
     QString rootPath= getProjectPath();
     if (rootPath=="") {
@@ -465,6 +467,28 @@ QString MainWindow::getProjectPath()
 {
     return m_currentPath + "/";//QDir::toNativeSeparators("/");
 
+}
+
+void MainWindow::FindFileDialog()
+{
+
+    QStringList lst = QStringList() <<"*.asm" << "*.ras" << "*.prg" << "*.flf" << "*.paw";
+    QDirIterator it(getProjectPath(), lst, QDir::Files, QDirIterator::Subdirectories);
+    QVector<QString> files;
+    while (it.hasNext()) {
+        QString s = it.next();
+        s=s.remove(getProjectPath());
+        files.append(s);
+    }
+    DialogFindFile* df = new DialogFindFile();
+    df->Init(files);
+
+    df->exec();
+    qDebug() << df->m_selected;
+    if (df->m_selected!="")
+        LoadDocument(df->m_selected);
+
+    delete df;
 }
 
 void MainWindow::onImageMouseMove()

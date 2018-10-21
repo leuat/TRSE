@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Turbo Rascal Syntax error, &quot;;&quot; expected but &quot;BEGIN&quot; Version 0.05 ASE Preview v7</string>
+   <string>Turbo Rascal Syntax error, &quot;;&quot; expected but &quot;BEGIN&quot; Version 0.05 &quot;Arne Special Edition&quot; Preview v8</string>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
@@ -298,6 +298,7 @@
     <addaction name="actionReplace"/>
     <addaction name="actionAuto_ident"/>
     <addaction name="actionProject_Settings"/>
+    <addaction name="actionFind_file_c_s"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -448,6 +449,11 @@
   <action name="actionDonate">
    <property name="text">
     <string>Donate</string>
+   </property>
+  </action>
+  <action name="actionFind_file_c_s">
+   <property name="text">
+    <string>Find file (c-s)</string>
    </property>
   </action>
  </widget>

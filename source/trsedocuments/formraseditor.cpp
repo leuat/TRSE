@@ -419,6 +419,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         ui->txtEditor->setFocus();
     }
 
+
     if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier))
         emit requestCloseWindow();
     //    Data::data.requestCloseWindow = true;
@@ -426,9 +427,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
 //    if (ui->txtEditor->m_textChanged)
         m_documentIsChanged  = ui->txtEditor->m_textChanged;
 
-    if (e->key()==Qt::Key_K && (QApplication::keyboardModifiers() & Qt::ControlModifier))
-        AutoFormat();
-
+    if (e->key()==Qt::Key_J && (QApplication::keyboardModifiers() & Qt::ControlModifier)) AutoFormat();
     if (e->key()==Qt::Key_F && QApplication::keyboardModifiers() & Qt::ControlModifier) {
         ui->leSearch->setText("");
         m_searchFromPos = ui->txtEditor->textCursor().position();

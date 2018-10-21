@@ -90,6 +90,7 @@ public:
     virtual void Destroy() = 0;
 
 signals:
+    void emitFindFile();
     void requestCloseWindow();
     void updatePaletteSignal();
     void requestBuild();

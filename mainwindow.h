@@ -52,6 +52,7 @@
 #include "ui_mainwindow.h"
 #include "source/dialogprojectsettings.h"
 #include "source/dialogdonate.h"
+#include "source/dialogfindfile.h"
 
 namespace Ui {
 class MainWindow;
@@ -187,7 +188,7 @@ public:
 
     CIniFile m_iniFile;
  //   CodeEditor m_codeEditor;
-    CustomFileSystemModel *fileSystemModel;
+    CustomFileSystemModel *fileSystemModel = nullptr;
     QString m_iniFileName = "fluff64.ini";
     QString m_fontFamily;
     QPalette m_defaultPalette;
@@ -278,6 +279,7 @@ signals:
 
 private slots:
 
+   void FindFileDialog();
 
     void onImageMouseMove();
 
