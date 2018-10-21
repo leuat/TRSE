@@ -1,0 +1,91 @@
+procedure TransitionScene2();
+begin
+	if (transitionMode=0) then begin
+		if (tVal>16) then begin tVal:=25;return(); end;
+		p1:=$7000;
+		p2:=$6800+^@scene2charval*^8;
+		if (tVal<>0) then begin
+		inczp(p1,tVal*8);
+		end;
+		memcpy(p1,0,p2,8); // Copy single character
+		inc(tVal);
+
+	end
+	else 
+	begin
+		if (tVal>127) then return();
+		moveto(0,tVal,$44);
+		fill(screenmemory,$20,40);
+		dec(tVal);
+	end;
+
+end;
+
+
+
+procedure RenderScene2Effect();
+begin
+	moveto(0,0,$44);
+	for a:=0 to 25 do begin
+		for b:=0 to 40 do begin
+			k:=abs(20-b);
+			l:=abs(13-a);
+			if (o=0) then 
+				i:=(atan2(20,b,12,a)) // lines
+			else begin
+				i:=k*k+l*l; // circles
+				i:=i/4;
+			end;
+			i:=(i/2)&15;
+//			i:=6;
+			screenmemory[b]:=i+@scene2charval;
+		end;
+		inczp(screenmemory,40);
+	end;
+end;
+
+
+procedure ShiftCharsetData();
+begin
+	memcpy(^$6800+^@scene2charval*^8, 0, ^$6800+^@scene2charval*^8+^128,8);
+	memcpy(^$6800+^@scene2charval*^8+^8, 0, ^$6800+^@scene2charval*^8,^128);
+
+end;
+
+
+interrupt RasterScene2();
+begin
+	startirq(@useKernal);
+	ProgressTracker();
+	TransitionScene2();
+	ShiftCharsetData();
+	closeIRQ();
+end;
+
+
+procedure InitScene2();
+begin
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+	setbank(VIC_BANK1);
+	// Use the 3rd column of the timestamp to specify effect color
+	i:=timeStamps[currentPart*4+2];
+	// Use the 4th column of the timestamp to specify effect type, 0=lines  1 = circles
+	o:=timeStamps[currentPart*4+3];
+
+	clearscreen(i,^$D800);
+	enableallram();
+	decrunch(charset_c);
+	poke(^$01, 0, keep01);
+	RenderScene2Effect();
+	tVal:=0;
+	// Copy 16*8 byte charset to somewhere else
+	memcpy(^$6800+^@scene2charval*^8,0,^$7000,128);
+	// Fill charset blank
+	fill(^$6800+^@scene2charval*^8,0,128);
+	p1:=$4400;
+	setcharsetlocation($6800);
+	settextmode();
+	setregularcolormode();
+
+end;

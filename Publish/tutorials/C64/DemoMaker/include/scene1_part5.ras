@@ -1,0 +1,78 @@
+procedure TransitionScene1();
+begin
+	if (transitionMode=0) then begin
+		// Transition IN : Copy colors to screen at y=tVal
+		// Copy color $4400 data
+		if (tVal>25) then return();
+
+		moveto(0,tVal, $48);
+		zp1:=screenmemory;
+		inczp(zp1,2);
+		moveto(0,tVal, $44);
+		memcpy(zp1, 0, screenmemory, 40);
+		// Copy color $D800 data
+		inczp(zp1,250);
+		inczp(zp1,250);
+		inczp(zp1,250);
+		inczp(zp1,250);
+		moveto(0,tVal, $D8);
+		memcpy(zp1, 0, screenmemory, 40);
+		if (time&1=0) then
+			inc(tVal);
+	end
+	else
+	begin
+		if (b<21) then begin
+			moveto(0,0,$44);
+			zp1:=screenmemory;
+			moveto(0,0,$D8);
+			for i:=0 to 25 do begin
+				zp1[b]:=0;
+				zp1[39-b]:=0;
+				screenmemory[b]:=0;
+				screenmemory[39-b]:=0;
+				inczp(zp1,40);
+				inczp(screenmemory,40);
+			end;
+			if (time&1=0) then
+			inc(b);
+		end;
+	end;
+
+end;
+interrupt RasterScene1();
+begin
+	startirq(@useKernal);
+	ProgressTracker();
+	TransitionScene1();
+	closeIRQ();
+end;
+
+
+procedure InitScene1();
+begin
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+	setbank(VIC_BANK1);
+	// Use the 3rd column of the timestamp to specify index of the packed data!
+	i:=timeStamps[currentPart*4+2];
+	// Enable reading $D000-$DFFF
+	enableallram();
+	// Decrunch image data to $6000	
+	decrunchfromindex(packed_data_addresses,i); 
+	// Decrunch color data to $4800
+	decrunchfromindex(packed_data_addresses,i+1);
+	// Restore memory config
+	poke(^$01, 0,keep01);
+	//copyimagecolordata(^$4800,1);
+	tVal:=0;
+	// Set everything to black...
+	clearscreen(0,^$4400);
+	clearscreen(0,^$D800);
+	b:=0;
+		// Enable multicolor bitmap image at location $6000
+	poke(VIC_DATA_LOC, 0,$18);
+	setbitmapmode();
+	setmulticolormode();
+
+end;
