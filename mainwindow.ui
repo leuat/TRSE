@@ -311,6 +311,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionHelp_F1"/>
+    <addaction name="actionDonate"/>
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
@@ -442,6 +443,11 @@
   <action name="actionProject_Settings">
    <property name="text">
     <string>Project Settings</string>
+   </property>
+  </action>
+  <action name="actionDonate">
+   <property name="text">
+    <string>Donate</string>
    </property>
   </action>
  </widget>

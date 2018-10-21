@@ -51,7 +51,7 @@
 #include "source/LeLib/limage/movieconverter.h"
 #include "ui_mainwindow.h"
 #include "source/dialogprojectsettings.h"
-
+#include "source/dialogdonate.h"
 
 namespace Ui {
 class MainWindow;
@@ -330,6 +330,8 @@ private slots:
     void on_actionProject_Settings_triggered();
 
     void on_btnProjectSettings_clicked();
+
+    void on_actionDonate_triggered();
 
 private:
 

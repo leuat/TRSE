@@ -945,3 +945,10 @@ void MainWindow::on_btnProjectSettings_clicked()
 {
     OpenProjectSettings();
 }
+
+void MainWindow::on_actionDonate_triggered()
+{
+    DialogDonate* dn = new DialogDonate();
+    dn->exec();
+    delete dn;
+}

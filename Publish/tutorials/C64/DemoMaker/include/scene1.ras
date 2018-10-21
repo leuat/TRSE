@@ -1,3 +1,6 @@
+
+
+
 interrupt RasterScene1();
 begin
 	startirq(@useKernal);
@@ -5,6 +8,9 @@ begin
 
 	closeIRQ();
 end;
+
+
+
 
 
 procedure InitScene1();
@@ -22,8 +28,9 @@ begin
 	decrunchfromindex(packed_data_addresses,i+1);
 	// Restore memory config
 	poke(^$01, 0,keep01);
-	// Copy color data to bank 1 and $D800
+	// Don't copy color data: Set everything black
 	copyimagecolordata(^$4800,1);
+	
 	// Enable multicolor bitmap image at location $6000
 	poke(VIC_DATA_LOC, 0,$18);
 	setbitmapmode();

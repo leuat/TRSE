@@ -145,7 +145,8 @@ SOURCES += main.cpp\
     source/dialogprojectsettings.cpp \
     source/OrgAsm/orgasm.cpp \
     source/Compiler/Opcodes/opcodes6502.cpp \
-    source/OrgAsm/orgasmlexer.cpp
+    source/OrgAsm/orgasmlexer.cpp \
+    source/dialogdonate.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -235,7 +236,8 @@ HEADERS  += mainwindow.h \
     source/dialogprojectsettings.h \
     source/OrgAsm/orgasm.h \
     source/Compiler/Opcodes/opcodes6502.h \
-    source/OrgAsm/orgasmlexer.h
+    source/OrgAsm/orgasmlexer.h \
+    source/dialogdonate.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \
@@ -250,7 +252,8 @@ FORMS    += mainwindow.ui \
     source/dialogmemoryanalyze.ui \
     source/trsedocuments/formpaw.ui \
     source/dialogimagehelp.ui \
-    source/dialogprojectsettings.ui
+    source/dialogprojectsettings.ui \
+    source/dialogdonate.ui
 
 RESOURCES += \
     resources.qrc
