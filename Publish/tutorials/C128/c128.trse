@@ -16,4 +16,4 @@ post_optimizer_passjmp = 1
 post_optimizer_passldatax = 1
 post_optimizer_passstalda = 1
 post_optimizer_passldx = 1
-open_files = ,tutorial_3_plasma.ras, tutorial_6_dycp.ras, tutorial_4_rasters.ras, tutorial_5_megascroller.ras
+open_files = ,tutorial_5_megascroller.ras, tutorial_4_rasters.ras, tutorial_6_dycp.ras, tutorial_3_plasma.ras

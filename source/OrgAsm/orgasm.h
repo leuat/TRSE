@@ -145,6 +145,7 @@ public:
     int m_constantPassLines;
     QByteArray m_data;
     QMap<QString, QRegExp*> m_regs;
+    QString m_output;
 
 
     int m_pCounter = 0;

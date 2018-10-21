@@ -164,7 +164,7 @@ interrupt Raster1();
 begin
 	StartIRQ(@useKernal);
 	SetMemoryConfig(0,1,1,1,0);	
-	//RasterIRQ((),@miniScrollerStart,@useKernal);
+
 	@ifdef displayRasterTime
 	SCREEN_BG_COL:=GREEN;
 	@endif

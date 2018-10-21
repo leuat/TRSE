@@ -133,11 +133,12 @@ void FormRasEditor::Build()
             Orgasm orgAsm;
             //orgAsm.LoadCodes();
             orgAsm.Assemble(filename+".asm", filename+".prg");
-            if (orgAsm.m_success) {
+/*            if (orgAsm.m_success) {
                 output = "complete.";
                 //for (QString s : orgAsm.m_debug)
                 //qDebug() << s ;
-            }
+            }*/
+            output = orgAsm.m_output;
         }
         // Machine Code Analyzer
         VerifyMachineCodeZP(filename+".prg");
@@ -174,7 +175,7 @@ void FormRasEditor::Build()
         m_buildSuccess = true;
 
         if (output.toLower().contains("error")) {
-            text="<font color=\"#FF6040\">DASM Fatal error!</font><br>";
+            text="<font color=\"#FF6040\">Fatal error during assembly!</font><br>";
             m_buildSuccess = false;
             if (output.toLower().contains("branch out of range")) {
                 Messages::messages.DisplayMessage(Messages::messages.BRANCH_ERROR);

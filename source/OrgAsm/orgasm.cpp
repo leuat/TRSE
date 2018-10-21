@@ -194,28 +194,15 @@ void Orgasm::Assemble(QString filename, QString outFile)
 */
     QTime myTimer;
     myTimer.start();
-    qDebug() << "LABELS  " << QString::number((myTimer.elapsed()/100.0));
+//    qDebug() << "LABELS  " << QString::number((myTimer.elapsed()/100.0));
     Compile(OrgasmData::PASS_LABELS);
-    qDebug() << "DONE " << QString::number((myTimer.elapsed()/100.0));
+  //  qDebug() << "DONE " << QString::number((myTimer.elapsed()/100.0));
 
 
-    //qSort(m_symbolsList.begin(), m_symbolsList.end(), stringSort);
 
-
-    /*m_regs.clear();
-    for (QString &s : m_symbols.keys())
-        m_regs[s] = new QRegExp("\\b" + s + "\\b");
-*/
-
-
-//    exit(1);
- //   for (QString s: m_symbols.keys())
-   //     qDebug() << s << " " << Util::numToHex(m_symbols[s]);
-
-
-    qDebug() << "SYMBOLS: " << QString::number((myTimer.elapsed()/100.0));
+    //qDebug() << "SYMBOLS: " << QString::number((myTimer.elapsed()/100.0));
     Compile(OrgasmData::PASS_SYMBOLS);
-    qDebug() << "DONE " << QString::number((myTimer.elapsed()/100.0));
+    //qDebug() << "DONE " << QString::number((myTimer.elapsed()/100.0));
 
 
 /*    for (OrgasmLine& ol:m_olines) {
@@ -240,13 +227,13 @@ void Orgasm::Assemble(QString filename, QString outFile)
     out.open(QFile::WriteOnly);
     out.write(m_data);
     out.close();
-
+    m_output = "Complete.";
 
 
     }
     catch (QString e) {
-        qDebug() << "Error compiling: " << e;
-
+        //qDebug() << "Error compiling: " << e;
+        m_output = "Error during OrgAsm assembly: "+e;
     }
 
 }
@@ -423,6 +410,12 @@ void Orgasm::ProcessOrgData(OrgasmLine &ol)
         ol.m_expr =ol.m_expr.replace("#","");
 
         int val = Util::NumberFromStringHex(Util::BinopString(ol.m_expr));
+        if (val<m_pCounter) {
+            QString e = "Origin reversed index. Trying to move program counter backwards to '"+Util::numToHex(val)+"' from current counter " + Util::numToHex(m_pCounter)+". ";
+            e += "Please make sure that your included data does not overlap, and make use of the memory analyzer tool.";
+            throw QString(e);
+        }
+
         while (m_pCounter<val) {
             m_pCounter++;
             m_data.append((uchar)0xff);
