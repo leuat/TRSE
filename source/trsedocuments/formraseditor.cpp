@@ -151,9 +151,17 @@ void FormRasEditor::Build()
             QProcess processCompress;
 
             QString fn = (filename +".prg");
+            QString target="-t64";
+            if (Syntax::s.m_currentSystem==Syntax::C128)
+                target="-t128";
+            if (Syntax::s.m_currentSystem==Syntax::VIC20)
+                target="-t20";
+
             if (!QFile::exists(m_iniFile->getString("exomizer")))
                 Messages::messages.DisplayMessage(Messages::messages.NO_EXOMIZER);
-            QStringList exoParams = QStringList() << "sfx" << "$0810" << fn<< "-o" << fn;
+            QStringList exoParams = QStringList() << "sfx" << Util::numToHex(Syntax::s.m_programStartAddress) << target << fn<< "-o" << fn ;
+//            QStringList exoParams = QStringList() << "sfx" << "$0810"  << fn<< "-o" << fn ;
+            qDebug() << exoParams;
             if (m_iniFile->getdouble("hide_exomizer_footprint")==1)
                 exoParams << "-n";
             processCompress.start(m_iniFile->getString("exomizer"), exoParams  );

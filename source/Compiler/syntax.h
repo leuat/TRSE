@@ -80,6 +80,7 @@ public:
     QString m_syntaxData; // File syntax data
     System m_currentSystem;
     int m_startAddress = 0x800;
+    int m_programStartAddress = 0x810;
     Syntax();
     void Init(System s);
     void SetupReservedWords();

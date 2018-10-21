@@ -32,13 +32,18 @@ Syntax::Syntax()
 void Syntax::Init(System s)
 {
     m_currentSystem = s;
-    if (s==VIC20)
+    if (s==VIC20) {
         m_startAddress = 0x1000;
-    if (s==C64)
+        m_programStartAddress = 0x1010;
+    }
+    if (s==C64) {
         m_startAddress = 0x0800;
-    if (s==C128)
-        m_startAddress = 0x01C01;
-
+        m_programStartAddress = 0x0810;
+    }
+    if (s==C128) {
+        m_startAddress = 0x01C00;
+        m_programStartAddress = 0x1C10;
+    }
 
     LoadSyntaxData();
 
