@@ -484,7 +484,6 @@ void MainWindow::FindFileDialog()
     df->Init(files);
 
     df->exec();
-    qDebug() << df->m_selected;
     if (df->m_selected!="")
         LoadDocument(df->m_selected);
 
@@ -519,15 +518,15 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
     }
     if (file.toLower().endsWith(".prg")) {
 
-        QString emu = m_iniFile.getString("emulator");
+/*        QString emu = m_iniFile.getString("emulator");
         if (m_currentProject.m_ini.getString("system")=="VIC20")
             emu = m_iniFile.getString("vic20_emulator");
         if (m_currentProject.m_ini.getString("system")=="C128")
             emu = m_iniFile.getString("c128_emulator");
         if (m_currentProject.m_ini.getString("system")=="NES")
             emu = m_iniFile.getString("nes_emulator");
-
-        FormRasEditor::ExecutePrg(getProjectPath()+"/" + file, emu, m_currentProject.m_ini.getString("system"));
+*/
+//        FormRasEditor::ExecutePrg(getProjectPath()+"/" + file, m_currentProject.m_ini.getString("system"));
     }
 
     Data::data.Redraw();
@@ -787,7 +786,6 @@ void MainWindow::LoadProject(QString filename)
     CloseAll();
     m_currentProject.Load(filename);
     m_currentPath = QFileInfo(QFile(filename)).absolutePath();
-    qDebug() << m_currentPath;
     VerifyProjectDefaults();
 //    m_iniFile.setString("project_path", getProjectPath());
     m_iniFile.addStringList("recent_projects", filename, true);

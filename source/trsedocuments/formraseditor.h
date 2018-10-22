@@ -74,7 +74,7 @@ public:
     int m_currentFromPos = 0;
     bool m_buildSuccess = false;
     void LoadRasFile(QString fileName);
-    static void ExecutePrg(QString fileName, QString emulator, QString system);
+    void ExecutePrg(QString fileName,  QString system);
     void InitDocument(WorkerThread *t, CIniFile *ini, CIniFile* iniProject) override;
     void setupEditor();
     void Compress();

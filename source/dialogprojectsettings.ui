@@ -107,8 +107,73 @@
           </rect>
          </property>
          <property name="text">
-          <string>Memory configuration:</string>
+          <string>System configuration:</string>
          </property>
+        </widget>
+        <widget class="QTabWidget" name="tabWidget">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>120</y>
+           <width>671</width>
+           <height>341</height>
+          </rect>
+         </property>
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <widget class="QWidget" name="tabC64">
+          <attribute name="title">
+           <string>C64</string>
+          </attribute>
+         </widget>
+         <widget class="QWidget" name="tabC128">
+          <attribute name="title">
+           <string>C128</string>
+          </attribute>
+          <widget class="QWidget" name="verticalLayoutWidget">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>10</y>
+             <width>651</width>
+             <height>101</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>Screen column mode:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="cmbColumns">
+                <item>
+                 <property name="text">
+                  <string>40</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>80</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tabVic20">
+          <attribute name="title">
+           <string>VIC-20</string>
+          </attribute>
+         </widget>
         </widget>
        </widget>
        <widget class="QWidget" name="tab">

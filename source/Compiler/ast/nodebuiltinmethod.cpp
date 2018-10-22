@@ -84,6 +84,15 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
 
     }
 
+    if (Command("Go80Columns")) {
+        as->Comment("Go 80 columns");
+        as->Asm("lda $d7");
+
+        //;bmi jess
+        as->Asm("jsr $FF5F");
+
+    }
+
     if (Command("KernalInterrupt"))
         as->Asm("jmp $ea81        ; return to kernal interrupt routine");
 
@@ -104,6 +113,11 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     }
     if (Command("initatan2")) {
         InitAtan2(as);
+    }
+
+
+    if (Command("VDCWrite")) {
+        VDCWrite(as);
     }
 
     if (Command("Sqrt")) {
@@ -214,6 +228,11 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     if (Command("peek"))
         Peek(as);
 
+    if (Command("print80"))
+        Print80(as);
+
+    if (Command("fill80"))
+        Fill80(as);
 
     if (Command("copyimagecolordata"))
         CopyImageColorData(as);
@@ -379,6 +398,9 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     if (Command("initmoveto")) {
         InitMoveto(as);
     }
+    if (Command("initmoveto80")) {
+        InitMoveto80(as);
+    }
     if (Command("initjoystick")) {
         InitJoystick(as);
     }
@@ -409,6 +431,10 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
 
     if (Command("moveto"))
         MoveTo(as);
+
+    if (Command("moveto80")) {
+        MoveTo80(as);
+    }
 
     if (Command("pokescreen")) {
         PokeScreen(as, 0);
@@ -691,6 +717,82 @@ void NodeBuiltinMethod::InitMoveto(Assembler *as)
 
 }
 
+void NodeBuiltinMethod::InitMoveto80(Assembler *as)
+{
+    if (m_isInitialized["moveto80"])
+        return;
+
+    QString lbl = as->NewLabel("moveto80");
+    as->Asm("jmp " + lbl);
+    as->Label("screenmemory80 =  "+as->m_zeropageScreenMemory);
+    as->Label("screen_x_80 .byte 0 ");
+    as->Label("screen_y_80 .byte 0 ");
+
+    as->Label("SetScreenPosition80");
+
+    //as->Asm("lda #4");
+    as->Asm("sta screenmemory80+1");
+    as->Asm("lda #0");
+    as->Asm("sta screenmemory80");
+    as->Asm("ldy screen_y_80");
+    as->Asm("cpy #0");
+    as->Asm("beq sydone80");
+    as->Label("syloop80");
+    as->Asm("clc");
+    as->Asm("adc #80");
+    as->Asm("bcc sskip80");
+    as->Asm("inc screenmemory80+1");
+    as->Label("sskip80");
+    as->Asm("dey");
+    as->Asm("cpy #$00");
+    as->Asm("bne syloop80");
+    as->Label("sydone80");
+    as->Asm("ldx screen_x_80");
+    as->Asm("cpx #0");
+    as->Asm("beq sxdone80");
+    as->Asm("clc");
+    as->Asm("adc screen_x_80");
+    as->Asm("bcc sxdone80");
+    as->Asm("inc screenmemory80+1");
+    as->Label("sxdone80");
+    as->Asm("sta screenmemory80");
+    as->Label(lbl);
+
+    as->PopLabel("moveto80");
+
+
+    QString lbl1 = as->NewLabel("a_moveto80");
+    QString lbl2 = as->NewLabel("b_moveto80");
+
+    as->Asm("lda #18");
+    as->Asm("sta $D600");
+    as->Label(lbl1);
+    as->Asm("bit $D600");
+    as->Asm("bpl "+lbl1);
+    as->Asm("lda screenmemory80+1");
+    as->Asm("sta $D601");
+
+    as->Asm("lda #19");
+    as->Asm("sta $D600");
+    as->Label(lbl2);
+    as->Asm("bit $D600");
+    as->Asm("bpl "+lbl2);
+    as->Asm("lda screenmemory80");
+    as->Asm("sta $D601");
+
+    as->Asm("rts");
+
+
+    as->PopLabel("a_moveto80");
+    as->PopLabel("b_moveto80");
+
+
+
+
+    m_isInitialized["moveto80"]=true;
+
+}
+
 void NodeBuiltinMethod::InitEightBitMul(Assembler *as)
 {
     if (m_isInitialized["eightbitmul"])
@@ -943,6 +1045,90 @@ void NodeBuiltinMethod::MoveTo(Assembler *as)
     as->Asm("sta screen_y");
     LoadVar(as, 2);
     as->Asm("jsr SetScreenPosition");
+}
+
+
+
+
+void NodeBuiltinMethod::MoveTo80(Assembler *as)
+{
+    //AddMemoryBlock(as,1);
+
+    VerifyInitialized("moveto80", "InitMoveto80");
+    LoadVar(as, 0);
+    as->Asm("sta screen_x_80");
+    LoadVar(as, 1);
+    as->Asm("sta screen_y_80");
+    LoadVar(as, 2);
+    as->Asm("jsr SetScreenPosition80");
+
+
+
+}
+
+void NodeBuiltinMethod::Print80(Assembler *as)
+{
+    as->Comment("Print80");
+
+    QString lbl1= as->NewLabel("print80_text");
+    QString lbl2= as->NewLabel("print80_loop");
+
+    as->Asm("ldx #0");
+    as->Asm("ldy #31");
+    as->Asm("sty $D600");
+    as->Label(lbl1);
+    as->Asm("bit $D600");
+    as->Asm("bpl "+lbl1);
+    as->Term("lda ");
+    m_params[0]->Build(as);
+    as->Term(",x",true);
+    as->Asm("sta $D601");
+    as->Asm("inx");
+    as->Label(lbl2);
+
+    as->Term("lda ");
+    m_params[0]->Build(as);
+    as->Term(",x",true);
+    as->Asm("sta $D601");
+    as->Asm("inx");
+    as->Term("cpx ");
+    m_params[1]->Build(as);
+    as->Term();
+    as->Asm("bne "+lbl2);
+
+    as->PopLabel("print80_text");
+    as->PopLabel("print80_loop");
+
+
+}
+
+void NodeBuiltinMethod::Fill80(Assembler *as)
+{
+    as->Comment("Fill80");
+
+    QString lbl1= as->NewLabel("fill80_text");
+    QString lbl2= as->NewLabel("fill80_loop");
+
+    LoadVar(as,0);
+    as->Asm("tay");
+    LoadVar(as,1);
+    as->Asm("tax");
+    as->Asm("lda #31");
+    as->Asm("sta $D600");
+    as->Label(lbl1);
+    as->Asm("bit $D600");
+    as->Asm("bpl "+lbl1);
+    as->Asm("sty $D601");
+    as->Asm("dex");
+    as->Label(lbl2);
+
+    as->Asm("sty $D601");
+    as->Asm("dex");
+    as->Asm("bne "+lbl2);
+
+    as->PopLabel("fill80_text");
+    as->PopLabel("fill80_loop");
+
 }
 
 void NodeBuiltinMethod::InitRandom(Assembler *as)
@@ -1868,6 +2054,7 @@ void NodeBuiltinMethod::IncScreenX(Assembler *as)
     as->m_labelStack["incscreenx"].pop();
 
 }
+
 
 
 void NodeBuiltinMethod::Call(Assembler *as)
@@ -2937,6 +3124,22 @@ void NodeBuiltinMethod::VerifyInitialized(QString method, QString initmethod)
     if (!m_isInitialized[method])
         ErrorHandler::e.Error("Please declare "+ initmethod+"() before using " + method+"();");
 
+}
+
+void NodeBuiltinMethod::VDCWrite(Assembler *as)
+{
+    QString lbl = as->NewLabel("vdc_write");
+
+    m_params[0]->Build(as);
+    as->Term();
+    as->Asm("sta $D600");
+    as->Label(lbl);
+    as->Asm("bit $D600");
+    as->Asm("bpl "+lbl);
+    m_params[1]->Build(as);
+    as->Term();
+    as->Asm("sta $D601");
+    as->PopLabel("vdc_write");
 }
 
 void NodeBuiltinMethod::Jammer(Assembler *as)

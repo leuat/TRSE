@@ -63,6 +63,7 @@ public:
     void MemCpyUnroll(Assembler* as);
     void Rand(Assembler* as);
     void MoveTo(Assembler* as);
+    void MoveTo80(Assembler* as);
     void PokeScreen(Assembler* as, int hiAddress);
     void PokeScreenColor(Assembler* as, int hiAddress);
     void SetSpritePos(Assembler* as);
@@ -78,6 +79,8 @@ public:
     void Clearsound(Assembler* as);
     void SetCharsetLocation(Assembler* as);
     void IncScreenX(Assembler* as);
+    void Print80(Assembler* as);
+    void Fill80(Assembler* as);
     void IncZp(Assembler* as);
     void DecZp(Assembler* as);
     void Call(Assembler* as);
@@ -135,7 +138,7 @@ public:
 
     void VerifyInitialized(QString method, QString initmethod);
 
-
+    void VDCWrite(Assembler* as);
 
     void Jammer(Assembler *as);
     void FLD(Assembler* as);
@@ -146,6 +149,7 @@ public:
     void InitRandom(Assembler* as);
     void InitSinusTable(Assembler* as);
     void InitMoveto(Assembler *as);
+    void InitMoveto80(Assembler *as);
     void InitEightBitMul(Assembler* as);
     void InitPrintString(Assembler* as);
     void InitDecrunch(Assembler* as);

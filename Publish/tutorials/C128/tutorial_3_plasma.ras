@@ -100,6 +100,8 @@ begin
 	// Set color background
 	SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL:=BLACK;
+
+//	Loop();
 	// Set charmap location at $2000
 	SetCharsetLocation($2000);
 //	poke(^$0A2C, 0,$18);

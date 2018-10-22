@@ -216,12 +216,14 @@ c; VIC_DATA_LOC; C64, C128;a;$d018
 
 c; VIC_DATA_LOC; C128;a;$0A2C
 c; MMU ; C128 ; a ; $FF00
+c; SWAPPER; C128; a; $FF5F
 
-
-
-
-
-
+m; VDCWrite; C128; b, b
+m; Go80Columns; C128;
+m; initmoveto80; C128;
+m; moveto80; C128; b,b,b
+m; print80; C128; a,b
+m; fill80; C128; b,b
 
 
 

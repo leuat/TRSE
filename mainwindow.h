@@ -124,6 +124,14 @@ public:
         m_ini.setFloat("post_optimizer_passldx", 1);
 
 
+        if (m_ini.getString("system")=="C128") {
+
+            if (!m_ini.contains("columns")) {
+                m_ini.setString("columns","40");
+            }
+
+        }
+
     }
 
 

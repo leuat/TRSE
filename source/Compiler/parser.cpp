@@ -92,8 +92,10 @@ void Parser::InitBuiltinFunctions()
 
     InitBuiltinFunction(QStringList()<< "sqrt", "initsqrt16");
     InitBuiltinFunction(QStringList()<< "printdecimal", "initprintdecimal");
+    InitBuiltinFunction(QStringList()<< "moveto80", "initmoveto80");
     InitBuiltinFunction(QStringList()<< "moveto", "initmoveto");
     InitBuiltinFunction(QStringList()<< "printstring" << "printnumber", "initprintstring");
+
     InitBuiltinFunction(QStringList()<< "joystick" , "initjoystick");
 //    InitBuiltinFunction(QStringList()<< "zeropage" << "inczp" , "initzeropage");
  }

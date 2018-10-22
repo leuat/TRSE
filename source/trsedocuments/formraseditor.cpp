@@ -40,25 +40,40 @@ FormRasEditor::~FormRasEditor()
     delete ui;
 }
 
-void FormRasEditor::ExecutePrg(QString fileName, QString emulator, QString system)
+void FormRasEditor::ExecutePrg(QString fileName, QString system)
 {
-    if (!QFile::exists(emulator)) {
+
+    QString emu = m_iniFile->getString("emulator");
+    QStringList params;
+
+    if (m_projectIniFile->getString("system")=="VIC20") {
+        emu = m_iniFile->getString("vic20_emulator");
+        params<< "-autostartprgmode" << "1";
+    }
+    if (m_projectIniFile->getString("system")=="C128") {
+        emu = m_iniFile->getString("c128_emulator");
+
+        params << "-" + m_projectIniFile->getString("columns")+"col";
+        qDebug() << params;
+    }
+    if (m_projectIniFile->getString("system")=="NES") {
+        emu = m_iniFile->getString("nes_emulator");
+    }
+
+
+
+    if (!QFile::exists(emu)) {
         Messages::messages.DisplayMessage(Messages::messages.NO_EMULATOR);
         return;
     }
     QProcess process;
-
-    QStringList params;
-    if (system=="VIC20")
-         params<< "-autostartprgmode" << "1";
-
     params << QDir::toNativeSeparators(fileName);
     process.waitForFinished();
 #ifdef _WIN32
     QProcess::execute("taskkill /im \"x64.exe\" /f");
 #endif
 //    qDebug() << emulator << " " << params <<  QDir::toNativeSeparators(fileName);
-    process.startDetached(emulator, params);
+    process.startDetached(emu, params);
 //    process.pi
     QString output(process.readAllStandardOutput());
 
@@ -355,20 +370,7 @@ void FormRasEditor::Run()
         return;
     QString filename = m_currentSourceFile.split(".")[0] + ".prg";
 
-    QString emulator = "";
-    if (Syntax::s.m_currentSystem==Syntax::C64)
-        emulator = m_iniFile->getString("emulator");
-    if (Syntax::s.m_currentSystem==Syntax::VIC20)
-        emulator = m_iniFile->getString("vic20_emulator");
-    if (Syntax::s.m_currentSystem==Syntax::C128)
-        emulator = m_iniFile->getString("c128_emulator");
-    if (Syntax::s.m_currentSystem==Syntax::NES) {
-        emulator = m_iniFile->getString("nes_emulator");
-        filename = m_currentSourceFile.split(".")[0] + ".nes";
-    }
-    if (emulator=="")
-        return;
-    ExecutePrg(filename,emulator, m_projectIniFile->getString("system"));
+    ExecutePrg(filename, m_projectIniFile->getString("system"));
 
 }
 
