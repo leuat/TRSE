@@ -489,6 +489,8 @@ void MainWindow::FindFileDialog()
         LoadDocument(df->m_selected);
 
     delete df;
+
+    m_currentDoc->setFocus();
 }
 
 void MainWindow::onImageMouseMove()

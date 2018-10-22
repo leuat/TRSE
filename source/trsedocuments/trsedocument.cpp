@@ -62,7 +62,7 @@ void TRSEDocument::keyPressEvent(QKeyEvent *e) {
         UserDefined();
     }
 
-    if (e->key() == Qt::Key_S &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+    if (e->key() == Qt::Key_L &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
         emit emitFindFile();
     }
 

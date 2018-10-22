@@ -453,7 +453,7 @@
   </action>
   <action name="actionFind_file_c_s">
    <property name="text">
-    <string>Find file (c-s)</string>
+    <string>Find file (c-l)</string>
    </property>
   </action>
  </widget>

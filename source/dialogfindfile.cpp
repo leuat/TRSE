@@ -36,6 +36,10 @@ void DialogFindFile::keyPressEvent(QKeyEvent *e)
         ui->lstItems->setCurrentRow(cur);
 
     }
+    if (e->key() == Qt::Key_Escape) {
+        m_selected="";
+        close();
+    }
 }
 
 void DialogFindFile::Update()
