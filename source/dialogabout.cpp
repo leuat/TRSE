@@ -30,13 +30,13 @@ DialogAbout::DialogAbout(QWidget *parent) :
     ui->setupUi(this);
 
 
-    QFile f(":resources/text/about.txt");
+/*    QFile f(":resources/text/about.txt");
   //  if (QFile::exists(":resources/text/about.txt"))
       //  exit(1);
     f.open(QIODevice::ReadOnly | QFile::Text) ;
     ui->txtAbout->setText(f.readAll());
     f.close();
-
+*/
 
 }
 
