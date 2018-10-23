@@ -53,8 +53,8 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     if (m_projectIniFile->getString("system")=="C128") {
         emu = m_iniFile->getString("c128_emulator");
 
-        params << "-" + m_projectIniFile->getString("columns")+"col";
-        qDebug() << params;
+        //params << "-" + m_projectIniFile->getString("columns")+"col";
+        //qDebug() << params;
     }
     if (m_projectIniFile->getString("system")=="NES") {
         emu = m_iniFile->getString("nes_emulator");
