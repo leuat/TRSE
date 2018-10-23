@@ -1,0 +1,150 @@
+program Tutorial_7_80col;
+var  
+   	i,j,k, x,y,dx,dy, time,xx,add: byte; 
+	int : integer;
+	zp1,zp2 : pointer;
+	perlin : incbin("data/perlin16.dat");
+	charset : incbin("charsets/charset_8x8.bin", $3000);
+//	charset : incbin("data/circles.bin", $4000);
+
+
+@define c1pos $4000
+@define l1pos $4800
+
+
+procedure PreCalculate();
+begin
+	zp1:=@c1pos;
+	zp2:=@l1pos;
+	xx:=255;
+	for y:=0 to 25 do begin
+		for x:=0 to 80 do begin
+			dx:=abs(40-x);
+			dx:=dx/3;
+		
+			dy:=abs(12-y);
+			int := dx*dx + dy*dy;
+			int:=int/7;
+//&			int:=int;
+//			i:=int;
+			i:=sqrt(int);
+			i:=i+5;
+			zp1[x]:=64/i;
+			//zp1[x]:=i;
+
+			j:=atan2(40,x,24,y*2);
+
+			zp2[x]:=j/5;
+
+		end;
+		inczp(zp1,80);
+		inczp(zp2,80);
+	end;
+
+end;
+
+
+
+
+procedure Render();
+begin
+	vdcinit(31);
+	zp1:=@c1pos;
+	zp2:=@l1pos;
+	for y:=0 to 25 do begin
+		for x:=0 to 80 do begin
+			asm("
+				ldy x
+				lda (zp1),y
+				adc time	
+				adc (zp2),y
+				tax
+				lda perlin,x
+				adc add	
+				sta $D601				
+			");
+/*			i:=(zp1[x]+time);
+			j:=(zp2[x]);
+
+			k:=i&15 + j;
+			//k:=j*16+i;
+			k:=peek(perlin, k)+add ;
+
+
+
+/*			i:=zp2[x]+time;
+			j:=sine[zp1[x]-time];
+
+			k:=(i+j)&15 + add;
+			//k:=j*16+i;*/
+//			poke(^$D601,0,k);
+
+		end;
+		inczp(zp1,80);
+		inczp(zp2,80);
+	end;
+
+
+end;
+
+
+
+procedure CopyCharset();
+begin
+	zp1:=charset;
+	vdcwrite(18,$20);
+	vdcwrite(19,$00);
+	vdcinit(31);
+	for i:=0 to 256 do begin
+		for j:=0 to 8 do begin
+			k:=zp1[j];
+			poke(^$D601,0,k);			
+		end;
+
+		for j:=0 to 8 do
+			poke(^$D601,0,k);			
+
+		inczp(zp1,8);
+	end;
+
+end;
+
+procedure SetupTables();
+begin
+	for i:=0 to 0 do begin
+		k:=peek(perlin,i);
+		k:=k/28;
+		poke(perlin,i,k);
+	end;
+
+end;
+
+
+begin
+	Go80Columns();
+	i:=peek(^$D030,0);
+	poke(^$D030,0,i|1);
+	
+	SetMemoryConfig(0,1,1,1,0);	
+	PreCalculate();
+	SetupTables();
+	MoveTo80(0,0,$08);
+	CopyCharset();	
+	for i:=0 to 25 do 
+//		fill80((i)&3+3, 80);
+		fill80(7, 80);
+	
+	// Move to x=20, y=10 at memory address $0000 on the VDC (text matrix)
+	
+	while (1=1) do begin
+		inc(time);
+		MoveTo80(0,0,0);
+		add:=64;
+		Render();
+		MoveTo80(0,0,$08);
+		add:=7;
+		Render();
+	end;
+
+	Loop();
+end.

@@ -16,5 +16,5 @@ post_optimizer_passjmp = 1
 post_optimizer_passldatax = 1
 post_optimizer_passstalda = 1
 post_optimizer_passldx = 1
-open_files = ,tutorial_7_80col.ras
+open_files = -1
 columns = 40

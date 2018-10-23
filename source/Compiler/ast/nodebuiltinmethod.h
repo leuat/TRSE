@@ -81,6 +81,7 @@ public:
     void IncScreenX(Assembler* as);
     void Print80(Assembler* as);
     void Fill80(Assembler* as);
+
     void IncZp(Assembler* as);
     void DecZp(Assembler* as);
     void Call(Assembler* as);
@@ -139,6 +140,7 @@ public:
     void VerifyInitialized(QString method, QString initmethod);
 
     void VDCWrite(Assembler* as);
+    void VDCInit(Assembler* as);
 
     void Jammer(Assembler *as);
     void FLD(Assembler* as);

@@ -119,6 +119,10 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     if (Command("VDCWrite")) {
         VDCWrite(as);
     }
+    if (Command("VDCInit")) {
+        VDCInit(as);
+    }
+
 
     if (Command("Sqrt")) {
         Sqrt(as);
@@ -3140,6 +3144,20 @@ void NodeBuiltinMethod::VDCWrite(Assembler *as)
     as->Term();
     as->Asm("sta $D601");
     as->PopLabel("vdc_write");
+}
+
+void NodeBuiltinMethod::VDCInit(Assembler *as)
+{
+    QString lbl = as->NewLabel("vdc_init");
+
+    m_params[0]->Build(as);
+    as->Term();
+    as->Asm("sta $D600");
+    as->Label(lbl);
+    as->Asm("bit $D600");
+    as->Asm("bpl "+lbl);
+    as->PopLabel("vdc_init");
+
 }
 
 void NodeBuiltinMethod::Jammer(Assembler *as)

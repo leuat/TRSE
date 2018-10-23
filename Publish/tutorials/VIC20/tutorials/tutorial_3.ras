@@ -1,0 +1,56 @@
+program Tutorial_3;
+
+/*
+	Note: TRSE does not yet support the Vic-20 natively, so most of the methods
+	that are c64-specific (rasters, sprites etc) are disabled in VIC 20 mode.
+
+	We hope to add more native support (built-in methods) for the VIC later on!
+
+
+*/
+// Place to dump generated data.
+@define dataloc $1600
+
+@userdata "$1600" "$17FA" "Generated Table"
+
+@ignoremethod "init16x8div"
+
+@ignoremethod "init16x8mul"
+
+@ignoremethod "init8x8div"
+
+@ignoremethod "initrandom"
+
+// We actually multiply eightbit
+//@ignoremethod "initeightbitmul"
+
+
+
+var  
+	i,j,time : byte;
+
+begin
+	poke(SCREEN_BG_COLOR,0,%00001000);
+	time:=0;
+//	poke(^56,0,22);
+//	poke(^648,0,22);
+	VIC_DATA_LOC := %11011110; //$DE
+	togglebit(SCREEN_TEXT_HEIGHT,0,1);
+	fill(^$1800,0,0);
+	fill(^$1900,0,0);
+	fill(^$1A00,0,0);
+	fill(^$1B00,0,0);
+	fill(^$1C00,0,0);
+	fill(^$1D00,0,0);
+	fill(^$1E00,1,0);
+	fill(^$1F00,2,0);
+	while (1=1) do begin
+		// Just wait
+
+		for i:=0 to 255 do poke(^$1600,i,i);
+//		for i:=0 to 255 do poke(^$1700,i,i);
+	end;
+	Loop();
+
+
+end.
