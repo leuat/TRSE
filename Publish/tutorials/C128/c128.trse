@@ -1,4 +1,4 @@
-project_path = C:/Users/leuat/OneDrive/Documents/GitHub/TRSE/Publish/tutorials/C128/
+project_path = /home/leuat/code/TRSE/Publish/tutorials/C128/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fe
@@ -18,3 +18,4 @@ post_optimizer_passstalda = 1
 post_optimizer_passldx = 1
 open_files = -1
 columns = 40
+data_header_charsets/charset_8x8.flf = 0

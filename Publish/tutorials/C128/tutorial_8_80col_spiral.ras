@@ -100,7 +100,7 @@ begin
 			k:=zp1[j];
 			poke(^$D601,0,k);			
 		end;
-
+		// Shadow 8 bytes wasted because the VDC needs 16 bytes per &%(¤/% char
 		for j:=0 to 8 do
 			poke(^$D601,0,k);			
 
@@ -122,13 +122,15 @@ end;
 
 begin
 	Go80Columns();
+	// Set 2 mhz mode
 	i:=peek(^$D030,0);
 	poke(^$D030,0,i|1);
-	
+	// Enable $4K-$8K
 	SetMemoryConfig(0,1,1,1,0);	
 	PreCalculate();
 	SetupTables();
 	MoveTo80(0,0,$08);
+	// Copy charset data from ram to VDC ($2000)
 	CopyCharset();	
 	for i:=0 to 25 do 
 //		fill80((i)&3+3, 80);
@@ -138,12 +140,14 @@ begin
 	
 	while (1=1) do begin
 		inc(time);
+		// Move to matrix ram
 		MoveTo80(0,0,0);
-		add:=64;
-		Render();
+		add:=64; // Base character
+		Render(); // Render text
+		// Move to color (attribute) ram
 		MoveTo80(0,0,$08);
-		add:=7;
-		Render();
+		add:=7; // base color = 7
+		Render(); // Render color
 	end;
 
 	Loop();

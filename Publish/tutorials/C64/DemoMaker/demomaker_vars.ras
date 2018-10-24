@@ -1,0 +1,14 @@
+	// Points to next scene (@scene1, @scene2 etc)
+	nextScene: byte=0;
+	// 0 if scene is not yet initialized, 1 if initialized
+	initComplete:byte=0;  
+	// Current row in the timeStamps table
+	currentPart: byte = 0;
+	// 1 if transition mode is entered (and scene is nearing completion)
+	transitionMode : byte=0;
+	// keep01 contains the memory config, and is used when decrunching from $D000 etc
+	// Currentconfig is a temp variable that is used for storing memory config $01 during wait
+	// rater, as the raster might trigger in the middle of a decrunch
+	keep01, currentConfig : byte;	
+	// time, 0.5*time and 0.25*time
+	time, time2, time4 : byte=0;

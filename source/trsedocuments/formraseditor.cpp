@@ -543,7 +543,7 @@ void FormRasEditor::AutoFormat()
     bool varBlock = false;
     for (QString& s:source) {
         QString nxt = "";
-        if (ln+1<m_currentSourceFile.count()-1)
+        if (ln+1<source.count()-1)
             nxt = source[ln+1];
         nxt=nxt.toLower();
 
@@ -582,6 +582,7 @@ void FormRasEditor::AutoFormat()
                 if (!k.endsWith(";") )
                 singleLine = 1;
         }
+        if (!s.trimmed().startsWith("@"))
         for (int i=0;i<curBlock+add;i++)
             s.insert(0,"\t");
 
