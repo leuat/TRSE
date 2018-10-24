@@ -80,6 +80,7 @@ procedure InitSceneRaster();
 begin
 	if (nextScene=@scene1) then 
 		RasterIRQ(RasterScene1(),0,@useKernal);
+
 	if (nextScene=@scene2) then 
 		RasterIRQ(RasterScene2(),0,@useKernal);
 
@@ -90,6 +91,7 @@ procedure MainLoopInitScene();
 begin
 	if (nextScene=@scene1) then 
 		InitScene1();
+
 	if (nextScene=@scene2) then 
 		InitScene2();
 
