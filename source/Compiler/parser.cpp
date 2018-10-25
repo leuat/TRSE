@@ -126,30 +126,43 @@ void Parser::VerifyToken(Token t)
 
 void Parser::PreprocessIfDefs(bool ifdef)
 {
-    Eat();
+
+    //Eat();
+     Eat();
     QString key = m_currentToken.m_value;
-    Eat();
+//    Eat();
 
   /*  for (QString k : m_preprocessorDefines.keys())
         qDebug() << " key : " << k;
 */
-//    qDebug() << key << " " << m_preprocessorDefines.contains(key);
-    if (ifdef && m_preprocessorDefines.contains(key))
-
+//    qDebug() <<"********** IFDEF" <<  key << " " << m_preprocessorDefines.contains(key);
+    if (ifdef && m_preprocessorDefines.contains(key)) {
+        Eat();
         return; // K
+    }
 
-    if (!ifdef && !m_preprocessorDefines.contains(key))
+    if (!ifdef && !m_preprocessorDefines.contains(key)) {
+        Eat();
         return;
+    }
 
     // Remove everything!
-
+    m_ignoreAll = true;
     while (!m_lexer->m_finished) {
-        m_pass = 0;
-        Eat(); // OM NOM NOM
-        m_pass = 1;
+        if (m_currentToken.m_type==TokenType::PREPROCESSOR) {
+            m_pass=1;
+            Eat();
+        }
+        else {
+            m_pass = 0;
+            Eat(); // OM NOM NOM
+            m_pass = 1;
+        }
         if (m_currentToken.m_type==TokenType::PREPROCESSOR) {
             if (m_currentToken.m_value=="endif") {
                 Eat();
+                m_ignoreAll = false;
+
                 return; // Finish
             }
         }
@@ -215,6 +228,14 @@ void Parser::HandlePreprocessorInParsing()
     if (m_currentToken.m_value=="ifndef") {
         PreprocessIfDefs(false);
         return;
+    }
+    if (m_currentToken.m_value=="error") {
+            Eat();
+
+            if (!m_ignoreAll)
+              ErrorHandler::e.Error(m_currentToken.m_value, m_currentToken.m_lineNumber);
+
+            return;
     }
 
     if (m_currentToken.m_value=="startblock") {
@@ -502,7 +523,7 @@ Node *Parser::CompoundStatement()
 
 }
 
-Node *Parser::Program()
+Node *Parser::Program(QString param)
 {
 //    Node* n = CompoundStatement();
     Eat(TokenType::PROGRAM);
@@ -510,7 +531,7 @@ Node *Parser::Program()
     QString progName = varNode->value;
     Eat(TokenType::SEMI);
     NodeBlock* block = (NodeBlock*)Block(true);
-    NodeProgram* program = new NodeProgram(progName, block);
+    NodeProgram* program = new NodeProgram(progName,  param, block);
     Eat(TokenType::DOT);
 
     return program;
@@ -581,7 +602,7 @@ void Parser::Preprocess()
     m_lexer->Initialize();
     m_lexer->m_ignorePreprocessor = false;
     m_currentToken = m_lexer->GetNextToken();
-    m_preprocessorDefines.clear();
+    //m_preprocessorDefines.clear();
     while (m_currentToken.m_type!=TokenType::TEOF) {
         if (m_currentToken.m_type == TokenType::PREPROCESSOR) {
             if (m_currentToken.m_value.toLower()=="include") {
@@ -626,6 +647,11 @@ void Parser::Preprocess()
                 Eat(TokenType::PREPROCESSOR);
                 m_ignoreMethods.append(m_currentToken.m_value);
             }
+          /*  else if (m_currentToken.m_value.toLower() =="error") {
+                Eat(TokenType::PREPROCESSOR);
+                ErrorHandler::e.Error("Error from preprocessor3: " +m_currentToken.m_value);
+
+            }*/
         }
 
         Eat(m_currentToken.m_type);
@@ -642,7 +668,7 @@ void Parser::PreprocessReplace()
         QString val = m_preprocessorDefines[k];
 //        qDebug() << "Replacing: @" + k << "  with " << val;
         QRegularExpression rg = QRegularExpression("@\\b"+k+"\\b");
-        qDebug() << rg;
+        //qDebug() << rg;
 
 
 //        m_lexer->m_text = m_lexer->m_text.replace("@" +k, val);
@@ -651,7 +677,7 @@ void Parser::PreprocessReplace()
     }
 }
 
-Node* Parser::Parse(bool removeUnusedDecls)
+Node* Parser::Parse(bool removeUnusedDecls, QString param)
 {
     // Call preprocessor for include files etc
     m_lexer->m_text = m_lexer->m_orgText;
@@ -670,7 +696,7 @@ Node* Parser::Parse(bool removeUnusedDecls)
     //qDebug() <<m_lexer->m_text[0];
     SymbolTable::Initialize();
     Node::m_staticBlockInfo.m_blockID=-1;
-    NodeProgram* root = (NodeProgram*)Program();
+    NodeProgram* root = (NodeProgram*)Program(param);
     // First add builtin functions
 
     if (removeUnusedDecls) {
@@ -749,6 +775,7 @@ Node *Parser::Block(bool useOwnSymTab)
 /*    if (m_currentToken.m_type!=TokenType::VAR  && m_currentToken.m_type!=TokenType::BEGIN)
         return nullptr;
 */
+
     if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT)
         return nullptr;
     return new NodeBlock(m_currentToken, Declarations(useOwnSymTab), CompoundStatement(), useOwnSymTab);
@@ -871,6 +898,9 @@ QVector<Node*> Parser::Declarations(bool isMain)
             Eat(TokenType::SEMI);
         }
     }
+
+
+
 
 /*
     while (m_currentToken.m_type==TokenType::ID || m_currentToken.m_type==TokenType::PROCEDURE ||

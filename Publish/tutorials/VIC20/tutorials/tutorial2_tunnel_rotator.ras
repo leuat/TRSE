@@ -9,8 +9,8 @@ program Trallala;
 
 */
 // Place to dump generated data.
-@define dataloc $1700
-@define lineloc $18FA
+@define dataloc $1800
+@define lineloc $19FA
 
 @userdata "$1600" "$17FA" "Generated Table"
 
@@ -31,7 +31,7 @@ var
 	wrk : integer;
 	// Pointers to color, data and screen
 	cp,l1,c1,screen:pointer;
-	perlin: incbin("data/perlin16.dat", "$1A00");
+	perlin: incbin("data/perlin16.dat", "$2A00");
 /*
 	Fills @dataLoc with 25x22 circles & 7
 */

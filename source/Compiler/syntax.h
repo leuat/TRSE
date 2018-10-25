@@ -81,8 +81,9 @@ public:
     System m_currentSystem;
     int m_startAddress = 0x800;
     int m_programStartAddress = 0x810;
+    int m_memoryType = 0;
     Syntax();
-    void Init(System s);
+    void Init(System s,QString p);
     void SetupReservedWords();
     void SetupBuiltinFunctions(System s);
     void SetupKeys();

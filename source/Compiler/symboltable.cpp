@@ -66,8 +66,12 @@ void SymbolTable::Initialize()
         QString constant = data[1].toUpper();
         QString system = data[2].toLower();
         QString type = data[3].toLower();
-        QString value = data[4].toUpper();
-
+        QStringList values = data[4].replace(" ","").split(",");
+        QString value;
+        if (Syntax::s.m_memoryType<values.count())
+            value = values[Syntax::s.m_memoryType];
+        else
+            value = values[0];
         if (system.contains(currentSystem)) {
             int ival = Util::NumberFromStringHex(value);
             if (type=="b")

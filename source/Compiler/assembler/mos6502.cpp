@@ -102,60 +102,29 @@ void AsmMOS6502::InitCStrings()
 
 }
 
-void AsmMOS6502::Program(QString programName)
+void AsmMOS6502::Program(QString programName, QString vicConfig)
 {
+
     Asm("processor 6502");
     Nl();
-    if (Syntax::s.m_currentSystem==Syntax::C64) {
-        Asm("ORG $0801");
+    Asm("ORG "+Util::numToHex(Syntax::s.m_startAddress+1));
         // 2064
-        Asm(".byte    $0E, $08, $0A, $00, $9E, $20, $28, $32, $30"); //  ( 2,0
-        Asm(".byte    $36, $34, $29, $00, $00, $00");   // 6, 4, )*/
-        Nl();
-        Asm("ORG $0810");
-        Nl();
+    Asm(".byte    $0E, $08, $0A, $00, $9E, $20, $28");
+    QString s = QString::number(Syntax::s.m_programStartAddress);
+    QString line = ".byte   ";
+    for (int i=0;i<s.count();i++) {
+        int val = QString(s[i]).toInt() + 0x30;
+        line = line + Util::numToHex(val) + ",";
     }
-    if (Syntax::s.m_currentSystem==Syntax::C128) {
-        Asm("ORG $1C01");
-        // 2064
-        Asm(".byte    $0E, $08, $0A, $00, $9E, $20, $28, $37, $31"); //  ( 2,0
-        Asm(".byte    $38, $34, $29, $00, $00, $00");   // 6, 4, )*/
-        Nl();
-        Asm("ORG $1C10");
-        Nl();
-    }
-    if (Syntax::s.m_currentSystem==Syntax::NES) {
-//        Asm("org $0000");
+    line = line.remove(line.count()-1,1);
+    Asm(line);
 
-        Asm("org $8000");
+    Asm(".byte    $29, $00, $00, $00");   // 6, 4, )*/
+    Nl();
+    Asm("ORG " + Util::numToHex(Syntax::s.m_programStartAddress));
 
-/*Label("vblankwait1:");       //; First wait for vblank to make sure PPU is ready
-Asm("BIT $2002");
-Asm("BPL vblankwait1");*/
-
-    }
-
-    if (Syntax::s.m_currentSystem==Syntax::VIC20) {
-        Asm("  ORG $1001");
-        // 4112
-        Asm(".byte    $0E, $08, $0A, $00, $9E, $20, $28, $34, $31"); //  ( 2,0
-        Asm(".byte    $31, $32, $29, $00, $00, $00");   // 6, 4, )*/
-
-        Nl();
-        Asm("ORG $1010");
-        Nl();
-
-/*        Asm("   ORG $1001");
-        Asm("   dc.w basicEnd    ; Next Line link, here end of Basic program");
-        Asm("            dc.w 2013        ; The line number for the SYS statement");
-        Asm("            dc.b  $9e         ; SYS token");
-        Asm("            dc.b  \" \"");
-        Asm("            dc.b  \"4110\"");
-        Asm("            dc.b  0  ");
-        Asm("basicEnd    dc.w  0         ");
-*/
-    }
     Label(programName);
+
 }
 
 void AsmMOS6502::EndProgram()

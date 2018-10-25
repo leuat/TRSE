@@ -229,7 +229,7 @@ public:
     void Nl();
     void Write(QString str, int level=0);
 
-    virtual void Program(QString name) = 0;
+    virtual void Program(QString name, QString vicParam) = 0;
     virtual void EndProgram() = 0;
     virtual void VarDeclHeader() = 0;
     virtual void DeclareVariable(QString name, QString type, QString initVal)=0;

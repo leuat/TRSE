@@ -29,12 +29,23 @@ Syntax::Syntax()
 {
 }
 
-void Syntax::Init(System s)
+void Syntax::Init(System s, QString param)
 {
     m_currentSystem = s;
     if (s==VIC20) {
-        m_startAddress = 0x1000;
-        m_programStartAddress = 0x1010;
+        if (param=="none") {
+            m_startAddress = 0x1000;
+            m_programStartAddress = 0x1010;
+            m_memoryType = 0;
+        }
+        else
+        {
+            m_startAddress = 0x1200;
+            m_programStartAddress = 0x1210;
+            m_memoryType = 1;
+
+       }
+
     }
     if (s==C64) {
         m_startAddress = 0x0800;

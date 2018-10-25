@@ -34,12 +34,13 @@
 
 class NodeProgram : public Node {
 public:
-    QString m_name;
+    QString m_name, m_param;
     QStringList m_initJumps;
     NodeBlock* m_NodeBlock;
-    NodeProgram(QString n, NodeBlock* b):Node() {
+    NodeProgram(QString n, QString p, NodeBlock* b):Node() {
         m_NodeBlock = b;
         m_name = n;
+        m_param = p;
     }
 
 

@@ -49,18 +49,19 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     if (m_projectIniFile->getString("system")=="VIC20") {
         emu = m_iniFile->getString("vic20_emulator");
         params<< "-autostartprgmode" << "1";
+        params<< "-memory" << m_projectIniFile->getString("vic_memory_config");
     }
     if (m_projectIniFile->getString("system")=="C128") {
         emu = m_iniFile->getString("c128_emulator");
 
         //params << "-" + m_projectIniFile->getString("columns")+"col";
-        //qDebug() << params;
     }
     if (m_projectIniFile->getString("system")=="NES") {
         emu = m_iniFile->getString("nes_emulator");
     }
 
 
+    //qDebug() << params;
 
     if (!QFile::exists(emu)) {
         Messages::messages.DisplayMessage(Messages::messages.NO_EMULATOR);
@@ -111,7 +112,6 @@ void FormRasEditor::Compress()
 void FormRasEditor::Build()
 {
     SaveCurrent();
-    qDebug() << "HE";
     emit requestBuild();
     if (BuildStep())
         {
@@ -133,7 +133,7 @@ void FormRasEditor::Build()
         QString output;
         int time = timer.elapsed();
         int codeEnd = 0;
-        qDebug() << m_iniFile->getString("assembler");
+        //qDebug() << m_iniFile->getString("assembler");
         if (m_iniFile->getString("assembler").toLower()=="dasm") {
             QProcess process;
             process.start(m_iniFile->getString("dasm"), QStringList()<<(filename +".asm") << ("-o"+filename+".prg") << "-v3");
@@ -170,11 +170,17 @@ void FormRasEditor::Build()
             QString target="-t64";
             if (Syntax::s.m_currentSystem==Syntax::C128)
                 target="-t128";
-            if (Syntax::s.m_currentSystem==Syntax::VIC20)
+            if (Syntax::s.m_currentSystem==Syntax::VIC20) {
                 target="-t20";
+                if (m_projectIniFile->getString("vic_memory_config")!="none") {
+                    target="-t52";
+
+                }
+            }
 
             if (!QFile::exists(m_iniFile->getString("exomizer")))
                 Messages::messages.DisplayMessage(Messages::messages.NO_EXOMIZER);
+
             QStringList exoParams = QStringList() << "sfx" << Util::numToHex(Syntax::s.m_programStartAddress) << target << fn<< "-o" << fn ;
 //            QStringList exoParams = QStringList() << "sfx" << "$0810"  << fn<< "-o" << fn ;
             qDebug() << exoParams;

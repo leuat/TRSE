@@ -131,7 +131,10 @@ public:
             }
 
         }
-
+        if (m_ini.getString("system")=="VIC_20") {
+            if (m_ini.contains("vic_memory_config"))
+               m_ini.setString("vic_memory_config","none");
+        }
     }
 
 

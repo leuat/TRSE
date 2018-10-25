@@ -67,6 +67,7 @@ public:
     Lexer* m_lexer;
     Token m_currentToken;
     int m_pass = 0;
+    bool m_ignoreAll = false;
     QStringList  m_initJumps;
     SymbolTable* m_symTab;
     Parser();
@@ -90,14 +91,14 @@ public:
 
     int findPage();
 
-    Node* Parse(bool removeUnusedDecls);
+    Node* Parse(bool removeUnusedDecls, QString param);
     Node* Variable();
     Node* Empty();
     Node* AssignStatement();
     Node* Statement();
     QVector<Node*> StatementList();
     Node* CompoundStatement();
-    Node* Program();
+    Node* Program(QString param);
     Node* Factor();
     Node* Expr();
     Node* Term();

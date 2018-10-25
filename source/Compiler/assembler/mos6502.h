@@ -72,7 +72,7 @@ public:
     void InitCStrings();
 
 
-    void Program(QString name) override;
+    void Program(QString name, QString vicParams) override;
     void EndProgram() override;
     void DeclareArray(QString name, QString type, int count, QStringList lst, QString pos) override;
     void InitZeroPointers(QStringList lst, QStringList tmpList) override;

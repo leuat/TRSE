@@ -78,6 +78,13 @@ void DialogProjectSettings::FillFromIni()
     }
 
 
+    if (m_ini->getString("system")=="VIC20") {
+        ui->tabConfigs->setCurrentWidget(ui->tabVic20);
+    }
+
+    ui->cmbVic20Config->setCurrentText(m_ini->getString("vic_memory_config"));
+
+
 //    ui->chkPOEnabled->setChecked(m_ini->getdouble("post_optimize")==1);
 
 }
@@ -111,9 +118,10 @@ void DialogProjectSettings::FillToIni()
 
     if (m_ini->getString("system")=="C128") {
         m_ini->setString("columns", ui->cmbColumns->currentText());
-        qDebug() << "WHOO2  " << m_ini->getString("columns");
 
     }
+   if (m_ini->getString("system")=="VIC20") {
 
-
+        m_ini->setString("vic_memory_config",ui->cmbVic20Config->currentText());
+    }
 }

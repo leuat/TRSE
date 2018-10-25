@@ -326,7 +326,7 @@ void MainWindow::OpenProjectSettings()
     delete dSettings;
 
     // Set compiler syntax based on system
-    Syntax::s.Init(Syntax::SystemFromString(m_currentProject.m_ini.getString("system")));
+    Syntax::s.Init(Syntax::SystemFromString(m_currentProject.m_ini.getString("system")),m_currentProject.m_ini.getString("vic_memory_config"));
 
 
 }
@@ -794,7 +794,7 @@ void MainWindow::LoadProject(QString filename)
 
     // Set compiler syntax based on system
     QString system = m_currentProject.m_ini.getString("system");
-    Syntax::s.Init(Syntax::SystemFromString(system));
+    Syntax::s.Init(Syntax::SystemFromString(system),m_currentProject.m_ini.getString("vic_memory_config"));
     QImage img(":resources/images/" +system+".png");
 
     QPainter p;

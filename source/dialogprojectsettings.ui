@@ -110,7 +110,7 @@
           <string>System configuration:</string>
          </property>
         </widget>
-        <widget class="QTabWidget" name="tabWidget">
+        <widget class="QTabWidget" name="tabConfigs">
          <property name="geometry">
           <rect>
            <x>20</x>
@@ -120,7 +120,7 @@
           </rect>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="tabC64">
           <attribute name="title">
@@ -173,6 +173,63 @@
           <attribute name="title">
            <string>VIC-20</string>
           </attribute>
+          <widget class="QWidget" name="verticalLayoutWidget_2">
+           <property name="geometry">
+            <rect>
+             <x>30</x>
+             <y>30</y>
+             <width>611</width>
+             <height>131</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_10">
+              <item>
+               <widget class="QLabel" name="label_5">
+                <property name="text">
+                 <string>Memory expansion blocks to include:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="cmbVic20Config">
+                <item>
+                 <property name="text">
+                  <string>none</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>all</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>3k</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>8k</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>16k</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>24k</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </widget>
        </widget>
