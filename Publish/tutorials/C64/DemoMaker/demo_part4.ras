@@ -81,8 +81,6 @@ begin
 		RasterIRQ(RasterScene1(),0,@useKernal);
 	if (nextScene=@scene2) then 
 		RasterIRQ(RasterScene2(),0,@useKernal);
-
-
 end;
 
 procedure MainLoopInitScene();

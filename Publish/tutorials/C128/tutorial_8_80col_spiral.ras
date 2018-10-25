@@ -52,9 +52,12 @@ begin
 	zp1:=@c1pos;
 	zp2:=@l1pos;
 	for y:=0 to 25 do begin
-		for x:=0 to 80 do begin
+//		for x:=0 to 80 do begin
 			asm("
-				ldy x
+				ldy #0
+				
+;				ldy x
+iLoop:
 				lda (zp1),y
 				adc time	
 				adc (zp2),y
@@ -62,6 +65,10 @@ begin
 				lda perlin,x
 				adc add	
 				sta $D601				
+
+				iny
+				cpy #80
+				bne iLoop
 			");
 /*			i:=(zp1[x]+time);
 			j:=(zp2[x]);
@@ -79,7 +86,7 @@ begin
 			//k:=j*16+i;*/
 //			poke(^$D601,0,k);
 
-		end;
+//		end;
 		inczp(zp1,80);
 		inczp(zp2,80);
 	end;

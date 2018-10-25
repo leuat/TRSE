@@ -90,9 +90,6 @@ begin
 	time:=0;	
 	Setup();
 	preventirq();
-	disableCIAinterrupts();
-	RasterIRQ(Update(),1 ,1);
-	enablerasterirq();
-	enableirq();
+	StartRasterChain(Update(), 0,1);
 	Loop();
 end.

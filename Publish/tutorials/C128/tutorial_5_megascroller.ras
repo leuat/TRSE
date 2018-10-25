@@ -228,13 +228,7 @@ begin
 	scrollsplit := 0;
 	// Hook the raster
 	hideborderx(0);
-	PreventIRQ();
-	DisableCIAInterrupts();
-	
-	RasterIRQ(Raster1(),1,@useKernal);
-	EnableRasterIRQ();
-	
-	enableirq();
-	Loop();
+	StartRasterChain(Raster1(),1,@useKernal);
+s	Loop();
 end.
 

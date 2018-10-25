@@ -214,14 +214,9 @@ begin
 	// Hook the raster
 	hideborderx(0);
 	
-	DisableCIAInterrupts();
 	nmiirq(NMI());
 	SetMemoryConfig(1,@useKernal,0);
-	
-	RasterIRQ(Raster1(),1,@useKernal);
-	EnableRasterIRQ();
-	
-	enableirq();
+	StartRasterChain(Raster1(),1,@useKernal);
 	Loop();
 end.
 

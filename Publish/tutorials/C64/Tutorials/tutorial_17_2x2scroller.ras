@@ -142,15 +142,9 @@ begin
 	setmulticolormode();
 	// Hook the raster
 	hideborderx(0);
-	preventirq();
-	DisableCIAInterrupts();
 	nmiirq(NMI());
-	SetMemoryConfig(1,@usekernal,0);
-
-	RasterIRQ(MainScreen(),1,@usekernal);
-	EnableRasterIRQ();
-
-	enableirq();
+	SetMemoryConfig(1,@useKernal,0);
+	StartRasterChain(Raster1(),1,@useKernal);
 	Loop();
 
 end.

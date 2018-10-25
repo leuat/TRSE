@@ -62,7 +62,7 @@ m; SetCharsetLocation; C64, C128; n
 # Screen routines
 
 m; Writeln; C64, C128, VIC20, PET, NES ; s,b
-m; MoveTo; C64, C128 ; b,b,b
+m; MoveTo; C64, C128, VIC20 ; b,b,b
 m; ScrollX; C64, C128 ; b
 m; ScrollY; C64, C128 ; b
 m; HideBorderX; C64, C128 ; b
@@ -124,6 +124,7 @@ m; Keypressed; C64, C128, VIC20; b
 m; NmiIRQ; C64, C128, VIC20, PET ; p
 m; EnableRasterIRQ; C64, C128;
 m; StartIRQ; C64, C128; b
+m; StartRasterChain; C64, C128; p,b,n
 m; CloseIRQ; C64, C128;
 m; EnableIRQ; C64, C128;
 m; PreventIRQ; C64, C128;
@@ -132,10 +133,10 @@ m; RasterIRQ; C64, C128 ; p,b,n
 m; ReturnInterrupt; C64, C128;
 
 
-m; WaitForRaster; C64, C128; b
-m; WaitNoRaster; C64, C128; b
+m; WaitForRaster; C64, C128, VIC20; b
+m; WaitNoRaster; C64, C128, VIC20; b
 
-
+m; DisableVIC20IRQ; VIC20;
 
 
 #
@@ -158,6 +159,7 @@ c; SCREEN_CHAR_LOC; VIC20; a; $1E00
 c; SCREEN_BG_COLOR; VIC20; a; $900F
 c; SCREEN_TEXT_HEIGHT; VIC20; a; $9003
 c; VIC_DATA_LOC; VIC20; a; $9005
+
 
 # C64, C128-specific constants
 c; SCREEN_BG_COL; C64, C128; a; $D020

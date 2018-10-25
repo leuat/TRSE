@@ -319,12 +319,9 @@ begin
 	LoadEntities();
 	InitEntities();
 	// Turn off all interrupts
-	DisableCIAInterrupts();
 	// Turn off kernal
 	SetMemoryConfig(1,@useKernal,0);
 	// Set up raster IRQ
-	RasterIRQ(RasterRenderLevels(),$00,@useKernal);
-	EnableRasterIRQ();
-	enableirq();
+	StartRasterChain(RasterRenderLevels(),$00,@useKernal);
 	Loop(); 
 end.

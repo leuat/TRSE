@@ -114,6 +114,7 @@ end;
 
 
 begin
+	DisableVIC20IRQ();
 	poke(SCREEN_BG_COLOR,0,%00001000);
 	time:=0;
 	

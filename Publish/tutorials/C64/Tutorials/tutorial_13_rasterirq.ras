@@ -36,10 +36,6 @@ end;
 
 
 begin
-	DisableCIAInterrupts();
-	SetMemoryConfig(1,@kernal,0);
-	RasterIRQ(IRQ0(),$00,@kernal);
-	EnableRasterIRQ();
-	enableirq();
+	StartRasterChain(IRQ0(), 0,@kernal);
 	Loop(); 
 end.

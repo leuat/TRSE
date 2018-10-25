@@ -50,5 +50,6 @@
         <file>resources/text/help/m/clearbitmap.rtf</file>
         <file>resources/text/help/m/atan2.rtf</file>
         <file>resources/text/help/m/abs.rtf</file>
+        <file>resources/text/help/m/startrasterchain.rtf</file>
     </qresource>
 </RCC>

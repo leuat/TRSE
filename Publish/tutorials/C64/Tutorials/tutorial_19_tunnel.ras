@@ -345,15 +345,10 @@ end;
 
 begin
 	Initialize();
-	DisableCIAInterrupts();
-	//nmiirq(NMI());
 
 	SetMemoryConfig(1,@useKernal,0);
 
-	RasterIRQ(Raster1(),0,@useKernal);
-	EnableRasterIRQ();
-
-	enableirq();
+	StartRasterChain(Raster1(),0,@useKernal);
 	Loop();
 
 end.

@@ -30,6 +30,7 @@ var
 	i,j,time : byte;
 
 begin
+	DisableVIC20IRQ();
 	poke(SCREEN_BG_COLOR,0,%00001000);
 	time:=0;
 //	poke(^56,0,22);

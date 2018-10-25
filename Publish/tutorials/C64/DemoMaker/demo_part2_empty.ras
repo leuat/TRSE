@@ -1,4 +1,4 @@
-program DemoMaker;
+program DemoMaker_part2;
 var  
 
 @define play_music 1

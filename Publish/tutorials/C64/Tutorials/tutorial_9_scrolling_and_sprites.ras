@@ -285,11 +285,7 @@ begin
 	printString(" SCORE:", 1, 10);
 
 	InitializeSprites();
-	preventirq();
-	disableCIAinterrupts();
-	RasterIRQ(Update(), 0,1);
-	enablerasterirq();
-	enableirq();
+	StartRasterChain(Update(), 0,1);
 
 	loop();
 

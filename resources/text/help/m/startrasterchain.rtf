@@ -1,0 +1,15 @@
+<p>StartRasterChain is basically a shortcut to jumpstart rasters, and typing
+<code>
+StartRasterChain(Raster1(), rasterLine, @useKernal);
+</code>
+is identical to
+<code>
+PreventIRQ();
+DisableCIAInterrupts();
+
+RasterIRQ(Raster1(),rasterLine,@useKernal);
+EnableRasterIRQ();
+
+enableirq();
+
+</code>

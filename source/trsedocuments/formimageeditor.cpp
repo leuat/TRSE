@@ -821,6 +821,8 @@ void FormImageEditor::SetMCColors()
     m_work.m_currentImage->m_image->SetColor(b, 2);
 
     updateCharSet();
+    emit onImageMouseEvent();
+
     Data::data.Redraw();
     Data::data.forceRedraw = true;
 

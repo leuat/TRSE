@@ -40,17 +40,6 @@ end;
 
 
 begin
-	preventirq();
-	DisableCIAInterrupts();
-//	SetMemoryConfig(1,@kernal,0);
-	asm("
-		lda #$3e        ;RAM0 + KERNAL & I/O
-        sta $ff00
-	    lda #$ff        ;Turn off screen-setup part of
-        sta $d8                ;screen editor IRQ routine
-	");
-	RasterIRQ(IRQ0(),$00,@kernal);
-	EnableRasterIRQ();
-	enableirq();
+	StartRasterChain(IRQ0(), 0, @kernal);
 	Loop(); 
 end.

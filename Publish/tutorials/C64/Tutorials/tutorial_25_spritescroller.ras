@@ -1,0 +1,187 @@
+Program Tutorial_25_spritescroller;
+var
+	zp,tp, p1,ep,time: pointer;
+	i,j,k,l,m,n,o,p,col : byte;
+	temp2: array[256] of byte;
+
+
+@define maxTextSprites 8
+
+	// Sprite16x16scroller:
+	textSprite_x:array[@maxTextSprites] of byte;
+	textSprite_y:array[@maxTextSprites] of byte;
+	textSprite_col:array[@maxTextSprites] of byte;
+	textSprite_status:array[@maxTextSprites] of byte;
+	textSprite_t:array[@maxTextSprites] of byte;
+	textSprite_cnt:byte=0;
+	ms_x: integer;
+	
+	scrollerText : string=(" THIS IS A NICE SPRITE SCROLLER TEXT  ",0);
+
+	colorsGreen : array [16] of byte = (  11,11,5,12,13,13,15,7,  7,15,13,13,12,5,11,11  );
+
+
+@define useKernal 0
+
+// Position of included charset
+@define charsetLoc $1400
+
+	charset : incbin("charsets/charset_16x16.bin", @charsetLoc);
+
+// Position of generated chars (right after)
+@define generatedSpritesLoc $2800
+// Sprite loc on vic bank
+@define textSpriteLoc $A0
+
+@define spriteScrollerWaviness 16
+
+@define spriteScrollerYPos 170
+
+@define spriteTextColor colorsGreen
+
+
+// Generates sprite data from 16x16 font
+
+procedure GenerateSprites();
+begin
+	// Place at p1
+	// Org at zp
+	tp:=zp;
+	inczp(tp,160);
+	inczp(tp,160);
+	for k:=0 to 26 do begin
+		fill(p1, 0, 64); // Clear sprite  
+		// val is pos
+
+		j:=0;
+		for i:=0 to 8 do begin
+			p1[j]:=zp[i];
+			p1[j+1]:=zp[i+8];
+			p1[j+24]:=tp[i];
+			p1[j+25]:=tp[i+8];
+			j:=j+3;
+		end;
+		inczp(p1,64);
+		inczp(zp, 16); 
+		inczp(tp, 16); 
+		if (k=15) then begin
+			inczp(zp, 8*8);// To next line
+			inczp(zp, 160); // Another line down
+			inczp(zp, 160); // Another line down
+
+			inczp(tp, 8*8);// To next line
+			inczp(tp, 160); // Another line down
+			inczp(tp, 160); // Another line down
+		end;
+		
+	end;
+	
+
+
+end;
+
+// Maintains the sprites : moving them, setting y pos, color,turns off
+procedure Maintain16x16Sprites();
+begin
+	col:=0;
+	for i:=0 to @maxTextSprites do begin
+		if (textSprite_status[i]=1) then begin
+			textSprite_x[i]:=textSprite_x[i] -1;
+			k:=textSprite_t[i];
+			textSprite_y[i]:=@spriteScrollerYPos + temp2[k];
+			ms_x:=textSprite_x[i]*2;
+			spritepos(ms_x, textSprite_y[i], i);
+			textSprite_t[i]:=textSprite_t[i]+3;
+		//	if (time&1=1) then 
+				inc(textSprite_col[i]);
+//			waitnoraster(1);
+			k:=textSprite_col[i]&15;
+			SPRITE_COLOR[i]:= @spriteTextColor[k];
+
+//			poke(SPRITE_COLOR,i, fadeGreen[k]);
+			if (textSprite_x[i]>253) then begin
+				togglebit(SPRITE_BITMASK,i,0);
+				textSprite_status[i]:=0;
+			end;
+		end;
+	end;
+	
+
+end;
+
+// Renews a new sprite (from text)
+procedure Renew16x16Sprites();
+begin
+	inc(textSprite_cnt);
+	if (textSprite_cnt<24) then return();
+	textSprite_cnt:=0;
+
+	k:=ep[0];
+	if (k=$20) then begin
+		inczp(ep,1);
+		if (ep[0]=0) then ep:=scrollerText;
+		return();
+	end;
+	if (k>64) then begin
+		k:=k-64-1;
+		j:=255;
+		for i:=0 to @maxTextSprites do 
+			if textSprite_status[i]=0 then j:=i;
+		
+		if (j<>255) then begin
+			textSprite_x[j]:=176;
+//			textSprite_y[j]:=@spriteScrollerYPos;
+			textSprite_status[j]:=1;
+			togglebit(SPRITE_BITMASK, j, 1);
+//			SPRITE_COLOR[j]:=GREEN;	
+			textSprite_col[j]:=0;//)&15;
+			setspriteloc(j, @textSpriteLoc +k, 0);
+			//textSprite_loc[j]:=@textSpriteLoc +k;
+			textSprite_t[j]:=time;
+			inczp(ep,1);
+		end;
+
+	end;
+end;
+
+
+
+// Initializes sprites and generates sprite data
+procedure Init16x16Sprites();
+begin
+
+	zp:=@charsetLoc;
+	p1:=@generatedSpritesLoc;
+	GenerateSprites();
+
+	SPRITE_BITMASK:=$00;
+	SPRITE_STRETCH_X:=$FF;
+	SPRITE_STRETCH_Y:=$FF;
+
+	fill(textSprite_status,0,@maxTextSprites);
+
+	for i:=0 to 0 do
+		temp2[i]:=sine[i]/@spriteScrollerWaviness;
+
+end;
+
+// Main raster
+interrupt RasterMain();
+begin
+	StartIRQ(@useKernal);
+	inc(time);
+	Renew16x16Sprites();
+	Maintain16x16Sprites();
+	closeIrq();	
+end;
+
+// Main routine
+begin
+	PreventIRQ();
+	disableciainterrupts();	
+	setmemoryconfig(1,@useKernal,0);
+	Init16x16Sprites();
+	ep:=scrollerText;
+	StartRasterChain(RasterMain(),0,@useKernal);
+	Loop();
+end.

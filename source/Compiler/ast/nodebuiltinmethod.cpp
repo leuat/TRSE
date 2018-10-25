@@ -123,6 +123,15 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
         VDCInit(as);
     }
 
+    if (Command("StartRasterChain")) {
+        as->Asm("sei");
+        DisableInterrupts(as);
+        RasterIRQ(as);
+        EnableRasterIRQ(as);
+        as->Asm("asl $d019");
+        as->Asm("cli");
+    }
+
 
     if (Command("Sqrt")) {
         Sqrt(as);
@@ -156,6 +165,13 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
 
     if (Command("Keypressed")) {
         KeyPressed(as);
+    }
+
+    if (Command("DisableVIC20IRQ")) {
+       as->Asm("lda #$7f");
+       as->Asm("sta $912e ; disable and acknowledge interrupts");
+       as->Asm("sta $912d");
+
     }
 
     if (Command("clearsound")) {
@@ -696,7 +712,10 @@ void NodeBuiltinMethod::InitMoveto(Assembler *as)
     as->Asm("beq sydone");
     as->Label("syloop");
     as->Asm("clc");
-    as->Asm("adc #40");
+    if (Syntax::s.m_currentSystem==Syntax::C128 || Syntax::s.m_currentSystem==Syntax::C64)
+        as->Asm("adc #40");
+    if (Syntax::s.m_currentSystem==Syntax::VIC20)
+        as->Asm("adc #22");
     as->Asm("bcc sskip");
     as->Asm("inc screenmemory+1");
     as->Label("sskip");
@@ -2063,14 +2082,18 @@ void NodeBuiltinMethod::IncScreenX(Assembler *as)
 
 void NodeBuiltinMethod::Call(Assembler *as)
 {
-    NodeNumber* num= (NodeNumber*)dynamic_cast<NodeNumber*>(m_params[0]);
-    if (num!=nullptr) {
+    //NodeNumber* num= (NodeNumber*)dynamic_cast<NodeNumber*>(m_params[0]);
+    as->Term("jsr ");
+    m_params[0]->Build(as);
+    as->Term();
+
+  /*  if (num!=nullptr) {
         as->Term("jsr ");
         num->Build(as);
         as->Term();
         return;
-    }
-    ErrorHandler::e.Error("Call currently only supports constant values", m_op.m_lineNumber);
+    }*/
+//    ErrorHandler::e.Error("Call currently only supports constant values", m_op.m_lineNumber);
 /*    NodeVar* num= (NodeVar*)dynamic_cast<NodeNumber*>(m_params[0]);
     if (num!=nullptr) {
         as->Asm("jsr $" + QString::number(num->m_val,16));
@@ -2427,10 +2450,18 @@ void NodeBuiltinMethod::WaitNoRasterLines(Assembler *as)
     as->Comment("Wait for no of raster lines");
   //  as->Label(lbl);
     LoadVar(as, 0);
+
+    QString cmp ="$d012";
+    if (Syntax::s.m_currentSystem==Syntax::VIC20)
+        cmp="$9004";
+
+
+
+
     as->Asm("clc ");
-    as->Asm("adc $d012");
+    as->Asm("adc "+cmp);
     //as->Asm("adc " + var);
-    as->Asm("cmp $d012");
+    as->Asm("cmp "+cmp);
     as->Asm("bne *-3" );
 
 
@@ -2447,7 +2478,11 @@ void NodeBuiltinMethod::WaitForRaster(Assembler *as)
 //    as->Asm("lda $d012 ; raster line pos");
 //    as->Asm("clc ; clear carry ");
  //   as->Label("lblTest");
-    as->Asm("cpx $d012");
+    if (Syntax::s.m_currentSystem==Syntax::C64 || Syntax::s.m_currentSystem==Syntax::C128)
+        as->Asm("cpx $d012");
+    if (Syntax::s.m_currentSystem==Syntax::VIC20)
+        as->Asm("cpx $9004");
+
     as->Asm("bne *-3");
 
 }
