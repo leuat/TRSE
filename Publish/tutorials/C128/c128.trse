@@ -16,6 +16,6 @@ post_optimizer_passjmp = 1
 post_optimizer_passldatax = 1
 post_optimizer_passstalda = 1
 post_optimizer_passldx = 1
-open_files = ,tutorial_8_80col_spiral.ras
+open_files = -1
 columns = 40
 data_header_charsets/charset_8x8.flf = 0

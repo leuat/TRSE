@@ -12,7 +12,7 @@ var
 	text : string=("THIS IS YET ANOTHER TWO X TWO WRITER WITHOUT NUMBERS   FONT STILL LOOKS KINDA FUNNY   ESPECIALLY Y I  ");
 
 
-@define usekernal "0" 
+@define useKernal "0" 
 @define charmap "$18"
 @define screen_hi "$04"
 @define screen_f "^$0400"
@@ -35,14 +35,14 @@ procedure MainScreen();
 
 interrupt MainScreenScrollerEnds();
 begin
-	startirq(@usekernal);
+	startirq(@useKernal);
 	wait(6);
 	SCREEN_FG_COL:=@lineColor;
 	scrollx(0);
 	waitnoraster(1);
 	wait(9);
 	SCREEN_FG_COL:=BLACK;
-	RasterIRQ(MainScreen(),130, @usekernal);
+	RasterIRQ(MainScreen(),130, @useKernal);
 	// Copy content 1 to the left
 	if (ms_scroll=1) then begin
 		memcpy(@screen_f + ^40*^@scrollerLineY, 1, @screen_f + ^40*^@scrollerLineY, 40);
@@ -88,7 +88,7 @@ end;
 
 interrupt MainScreenScroller();
 begin
-	startirq(@usekernal);
+	startirq(@useKernal);
 	wait(6);
 	SCREEN_FG_COL:=@lineColor;
 	waitnoraster(1);
@@ -101,7 +101,7 @@ begin
 	
 	DrawText();
 
-	RasterIRQ(MainScreenScrollerEnds(),@scrollerEndRaster, @usekernal);
+	RasterIRQ(MainScreenScrollerEnds(),@scrollerEndRaster, @useKernal);
 
 	closeirq();
 end;
@@ -109,8 +109,8 @@ end;
 
 interrupt MainScreen();
 begin
-	startirq(@usekernal);
-	RasterIRQ(MainScreenScroller(), @scrollerStartRaster, @usekernal);
+	startirq(@useKernal);
+	RasterIRQ(MainScreenScroller(), @scrollerStartRaster, @useKernal);
 
 
 	CloseIRQ();
@@ -119,7 +119,7 @@ end;
 
 interrupt NMI();
 begin
-	startirq(@usekernal);
+	startirq(@useKernal);
 
 	closeIRQ();
 end;
@@ -144,7 +144,7 @@ begin
 	hideborderx(0);
 	nmiirq(NMI());
 	SetMemoryConfig(1,@useKernal,0);
-	StartRasterChain(Raster1(),1,@useKernal);
+	StartRasterChain(MainScreen(),1,@useKernal);
 	Loop();
 
 end.

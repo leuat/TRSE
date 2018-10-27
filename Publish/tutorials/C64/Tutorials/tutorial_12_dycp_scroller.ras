@@ -18,7 +18,7 @@ var
 	//charset: IncBin("charsets/tutorial3.bin","@charmap");
 
 // Uses banking	
-@include "../RasLib/banking.ras"
+@include "../../RasLib/banking.ras"
 
 // Turn the defines on / off in order to test optimized/unoptimized versions
 

@@ -1,4 +1,4 @@
-program Tutorial_4;
+program Tutorial_4_raster_and_music;
 var
 /*
 Note: TRSE does not yet support the Vic-20 natively, so most of the methods

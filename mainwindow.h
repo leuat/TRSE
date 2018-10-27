@@ -346,6 +346,8 @@ private slots:
 
     void on_actionDonate_triggered();
 
+    void on_actionFind_file_c_s_triggered();
+
 private:
 
     QString FindPathInProjectFolders(const QModelIndex &index);

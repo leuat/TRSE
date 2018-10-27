@@ -29,7 +29,7 @@ var
 	// Currently, putpixel2 and putpixel3 are supported
 	@define putpixel "putpixel2();"
 	
-	@include "../RasLib/bitmapgraphics.ras"
+	@include "../../RasLib/bitmapgraphics.ras"
 	
 	
 	
@@ -354,6 +354,9 @@ end;
 begin
 	bmg_currbank :=0; // Current bitmap bank (added to high bit of putpixel)
 	SetupPixelTables();
+	if (1=2) then
+		Line(0,0,1,1);
+	
 	inczp(@address,10);
 	poke(VIC_DATA_LOC, 0,$18);
 	

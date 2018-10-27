@@ -1,4 +1,4 @@
-open_files = ,demo_part5.ras, main.ras
+open_files = ,main.ras
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $47

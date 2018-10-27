@@ -8,7 +8,7 @@ var
 	// Currently, putpixel2 and putpixel3 are supported
 	@define putpixel "putpixel2();"
 	
-	@include "../RasLib/bitmapgraphics.ras"
+	@include "../../RasLib/bitmapgraphics.ras"
 
 
 /*

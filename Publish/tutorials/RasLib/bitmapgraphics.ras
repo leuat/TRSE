@@ -1,4 +1,3 @@
-
 	xtablelow: array[160] of byte;
 	xtablehigh: array[160] of byte;
 	ytablelow: array[200] of byte;
@@ -10,6 +9,7 @@
 	bmg_d, bmg_currbank:byte;
 	bmg_low, bmg_high, bmg_k, bmg_i, bmg_val : byte;
 	bmg_index : integer;
+
 
 
 

@@ -976,3 +976,8 @@ void MainWindow::on_actionDonate_triggered()
     dn->exec();
     delete dn;
 }
+
+void MainWindow::on_actionFind_file_c_s_triggered()
+{
+    FindFileDialog();
+}
