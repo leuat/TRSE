@@ -136,7 +136,7 @@ void FormRasEditor::Build()
         //qDebug() << m_iniFile->getString("assembler");
         if (m_iniFile->getString("assembler").toLower()=="dasm") {
             QProcess process;
-            process.start(m_iniFile->getString("dasm"), QStringList()<<(filename +".asm") << ("-o"+filename+".prg") << "-v3");
+            process.start(m_iniFile->getString("dasm"), QStringList()<<(filename +".asm") << ("-o"+filename+".prg"));//) << "-v3");
             process.waitForFinished();
             //process;
             //qDebug() <<process.readAllStandardOutput();

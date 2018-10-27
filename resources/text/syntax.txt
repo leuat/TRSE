@@ -112,7 +112,8 @@ m; TransformColors; C64, C128; a,a
 m; Call; C64, C128, VIC20, PET, NES; a
 m; Loop; C64, C128, VIC20, PET, NES;
 m; Return;  C64, C128, VIC20, PET, NES;
-
+m; Set2MhzMode; C128;
+m; Set1MhzMode; C128;
 
 # IO ports
 

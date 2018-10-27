@@ -469,6 +469,19 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     if (Command("rasterirq"))
         RasterIRQ(as);
 
+    if (Command("Set2MhzMode")) {
+        as->Asm("lda $D030");
+        as->Asm("ora #1");
+        as->Asm("sta $D030");
+
+    }
+    if (Command("Set1MhzMode")) {
+        as->Asm("lda $D030");
+        as->Asm("and #%11111110");
+        as->Asm("sta $D030");
+
+    }
+
     as->PopCounter(m_op.m_lineNumber-1);
     return "";
 }

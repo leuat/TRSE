@@ -12,7 +12,7 @@ var
 	image_color: IncBin("images/jack_color.bin", "$7000");
 	image_data: IncBin("images/jack_data.bin", "$A000");
 
-	zpc,z,g_currentBank, g_dataLoc : byte=0;
+	zpc,z : byte=0;
 
 	zeropage2, zeropage3, zeropage5, zeropage4: pointer;
 

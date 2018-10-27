@@ -229,6 +229,6 @@ begin
 	// Hook the raster
 	hideborderx(0);
 	StartRasterChain(Raster1(),1,@useKernal);
-s	Loop();
+	Loop();
 end.
 

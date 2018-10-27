@@ -5,7 +5,6 @@ var
 	zp1,zp2 : pointer;
 	perlin : incbin("data/perlin16.dat");
 	charset : incbin("charsets/charset_8x8.bin", $3000);
-//	charset : incbin("data/circles.bin", $4000);
 
 
 @define c1pos $4000
@@ -25,12 +24,9 @@ begin
 			dy:=abs(12-y);
 			int := dx*dx + dy*dy;
 			int:=int/7;
-//&			int:=int;
-//			i:=int;
 			i:=sqrt(int);
 			i:=i+5;
 			zp1[x]:=64/i;
-			//zp1[x]:=i;
 
 			j:=atan2(40,x,24,y*2);
 
@@ -130,8 +126,7 @@ end;
 begin
 	Go80Columns();
 	// Set 2 mhz mode
-	i:=peek(^$D030,0);
-	poke(^$D030,0,i|1);
+	Set2MhzMode();
 	// Enable $4K-$8K
 	SetMemoryConfig(0,1,1,1,0);	
 	PreCalculate();
@@ -140,7 +135,6 @@ begin
 	// Copy charset data from ram to VDC ($2000)
 	CopyCharset();	
 	for i:=0 to 25 do 
-//		fill80((i)&3+3, 80);
 		fill80(7, 80);
 	
 	// Move to x=20, y=10 at memory address $0000 on the VDC (text matrix)

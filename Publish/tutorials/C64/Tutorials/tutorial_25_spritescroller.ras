@@ -47,6 +47,7 @@ begin
 	// Place at p1
 	// Org at zp
 	tp:=zp;
+	@asdoer:=10;
 	inczp(tp,160);
 	inczp(tp,160);
 	for k:=0 to 26 do begin
