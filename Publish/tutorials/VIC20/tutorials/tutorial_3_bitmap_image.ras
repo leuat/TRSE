@@ -13,25 +13,26 @@ program Tutorial_3;
 
 // Image in images/logo.flf
 
-// Size of image
+// Size of image. Defined when creating and drawing the flf file
 @define imageWidth 20
 @define imageHeight 20
-
-
+// Bitmap will be loaded as a charset
+@define charsetAndBitmap $1400
 
 var  
-	i,j,k, time, time4,t:byte;
-	charset : incbin("images/logo.bin", $1400);
+	i,j,k, time,t:byte;
 	zp: pointer;
+	charset : incbin("images/logo.bin", @charsetAndBitmap);
 
 
 // Put all code at $2400
 @startblock $2400 Code
 
+// Copy color data from bitmap data
 procedure CopyImageColor();
 begin
 
-	zp:=$1400 + @imageWidth*@imageHeight*8;
+	zp:=@charsetAndBitmap + @imageWidth*@imageHeight*8;
 //	
 	moveto(0,0,$94);
 	for j:=0 to @imageHeight do begin
@@ -48,44 +49,46 @@ end;
 
 procedure Main();
 begin
+	// Turn off interrupts so we won't be distrubed
 	DisableVIC20IRQ();
-	// Screen and border color
-	SCREEN_BG_COLOR:=%01100000;
+	// Background is PURPLE and BLACK		
+	SCREEN_BG_COLOR:=PURPLE*16;
+	// Auxilliary color is cyan
 	AUX_COLOR_AND_VOLUME:=CYAN*16;
-	VIC_DATA_LOC := %11001101; // $1000 memory and $1c00 ram
-
+	// Screen to $1000
+	setscreenlocation($1000);
+	// Set charset location to where bitmap data is
+	setcharsetlocation(@charsetAndBitmap);
+	// Set height of columns (-1, needs to be odd)
 	SCREEN_TEXT_HEIGHT:=@imageHeight-1;
+	// Width of screen same as bitmap
 	SCREEN_TEXT_WIDTH:=@imageWidth;
+
+	// Copy color data
 	CopyImageColor();
 
+	// Draw 256 chars on the screen from 0 to 256
 	moveto(0,0,$10);
 	for i:=0 to 0 do begin
 		screenmemory[i]:=i;
 	end;
 
 
-	// After this, raster scrolling
+	// After this, some random raster effect
 	while (1=1) do begin
-		time:=time+1;
-		time4:=time4+4;
-		t:=sine[time4]/4+32;
-//		t:=t + sine[time*3]/8;
+		time:=time+4;
+		t:=sine[time]/4+32;
 		
 		waitforraster(t);
-		AUX_COLOR_AND_VOLUME:=CYAN*16;
+		AUX_COLOR_AND_VOLUME:=BLACK*16;
 		for i:=0 to 24 do begin
-			poke(SCREEN_BG_COLOR,0,%00100101);
+			SCREEN_BG_COLOR:=BLUE;
 			waitnoraster(1);
 						
 		end;
 		AUX_COLOR_AND_VOLUME:=PURPLE*16;
-
-		SCREEN_BG_COLOR:=%01100000;
-		
-		
-		
+		SCREEN_BG_COLOR:=BLUE*16;
 	end;
-
 
 end;
 

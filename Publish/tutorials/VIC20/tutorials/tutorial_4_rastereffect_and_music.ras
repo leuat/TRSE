@@ -13,7 +13,7 @@ We hope to add more native support (built-in methods) for the VIC later on!
 
 
 @ifdef ORGASM
-@error "Unfortunately, this program can not be assembled with OrgAsm. Use DASM instead."
+@error "Unfortunately, this program can not be assembled with OrgAsm. Use DASM instead. "
 @endif
 
 
@@ -40,7 +40,7 @@ We hope to add more native support (built-in methods) for the VIC later on!
 	
 
 @startblock $2400 music
-	@include "music/test1.ras"
+	@include "music/mystic_runner.ras"
 @endblock
 
 	
@@ -64,22 +64,10 @@ end;
 
 begin
 	DisableVIC20Irq();
-	poke(SCREEN_BG_COLOR,0,%0001000);
-	time:=0;
-/*
-0					000 ROM	$8000	set 1
-					; 0001  "	$8400
-					; 0010  "	$8800 set 2
-					; 0011  "	$8C00
-					; 1100 RAM	$1000
-					; 1101  "	$1400
-					; 1110  "	$1800
-					; 1111  "	$1C00
+	SCREEN_BG_COLOR:=BLACK;
 
-
-*/
-
-	VIC_DATA_LOC := %11001111; // $1000 memory and $1c00 ram
+	setscreenlocation($1000);
+	setcharsetlocation($1C00);
 	Music();
 
 	ClearScreen();
@@ -92,12 +80,12 @@ begin
 		j:=j/16;
 		poke(perlin,i,j);
 	end;
-	
+	// Start playing music
 	asm("
 		jsr pl_Init
 	");
 
-	
+	// Raster loop
 	while (1=1) do begin
 		time:=time+1;
 		time4:=time4+4;

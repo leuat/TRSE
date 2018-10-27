@@ -55,7 +55,8 @@ m; DecZP; C64, C128, VIC20, PET, NES ; a, b
 # Charset routines
 
 m; CopyCharsetFromRom; C64, C128 ; a
-m; SetCharsetLocation; C64, C128; n
+m; SetCharsetLocation; C64, C128, VIC20; n
+m; SetScreenLocation; C64, C128, VIC20; n
 
 
 

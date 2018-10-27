@@ -32,6 +32,10 @@ var
 	// Pointers to color, data and screen
 	cp,l1,c1,screen:pointer;
 	perlin: incbin("data/perlin16.dat", "$2A00");
+
+@define charsetLoc $1c00
+
+	charset : incbin("charsets/charset_8x8.bin",@charsetLoc);
 /*
 	Fills @dataLoc with 25x22 circles & 7
 */
@@ -51,7 +55,7 @@ begin
 
 			i:=atan2(11,x,12,y);
 		
-			screen[x]:=i/12;
+			screen[x]:=i/8;
 		end;
 		inczp(cp,22);
 		inczp(screen,22);
@@ -59,33 +63,6 @@ begin
 	
 end;
 
-// Loads from dataloc and draws to screen + color screen
- 
-/*procedure UpdatePerlinTunnel();
-begin
-	screen:=SCREEN_CHAR_LOC;
-	cp:=SCREEN_COL_LOC; // Color memory
-	c1:=@dataloc;
-	l1:=@lineloc;
-	for y:=0 to 23 do begin
-		for x:=0 to 22 do begin
-			i:=(c1[x]-time);
-			j:=l1[x]*16;
-			k:=peek(perlin,i+j);
-			k:=k&7;
-			screen[x]:=vals[k];
-			cp[x]:=vals[k]&7;
-		end;
-		inczp(screen,22);
-		inczp(cp,22);
-		inczp(l1,22);
-		inczp(c1,22);
-	end;
-
-	inc(time);
-
-end;
-*/
 procedure Update();
 begin
 	screen:=SCREEN_CHAR_LOC;
@@ -97,9 +74,9 @@ begin
 			i:=(l1[x]-time);
 			j:=c1[x]+time2;
 			i:=i+sine[j]/8;
-			k:=i&7;
-			screen[x]:=vals[k];
-			cp[x]:=vals[k]&7;
+			k:=i&15;
+			screen[x]:=k+80;
+			cp[x]:=(k/4)&1+2;
 		end;
 		inczp(screen,22);
 		inczp(cp,22);
@@ -115,14 +92,13 @@ end;
 
 begin
 	DisableVIC20IRQ();
-	poke(SCREEN_BG_COLOR,0,%00001000);
+	SCREEN_BG_COLOR:=BLACK;
+	setcharsetlocation(@charsetLoc);
 	time:=0;
 	
 	Calculate();
 	while (1=1) do begin
 		Update();
-		// Just wait
-		for i:=0 to 255 do wait(10);
 	end;
 	Loop();
 

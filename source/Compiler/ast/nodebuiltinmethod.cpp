@@ -114,7 +114,8 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     if (Command("initatan2")) {
         InitAtan2(as);
     }
-
+    if (Command("SetScreenLocation"))
+        SetScreenLocation(as);
 
     if (Command("VDCWrite")) {
         VDCWrite(as);
@@ -1548,6 +1549,9 @@ void NodeBuiltinMethod::SetCharsetLocation(Assembler *as)
     if (v==nullptr)
         ErrorHandler::e.Error("SetCharsetLocation parameter must be an address!", m_op.m_lineNumber);
 
+
+    if (Syntax::s.m_currentSystem==Syntax::C128 || Syntax::s.m_currentSystem==Syntax::C64) {
+
     int n = (unsigned int)v->m_val % 0x4000;
     bool ok=false;
     uchar b = 0;
@@ -1568,6 +1572,69 @@ void NodeBuiltinMethod::SetCharsetLocation(Assembler *as)
     qDebug() << QString::number(b);
     as->Asm("ora #"+QString::number(b));
     as->Asm("sta "+addr);
+    }
+    if (Syntax::s.m_currentSystem==Syntax::VIC20) {
+        int n = (unsigned int)v->m_val;
+        QString v = "";
+        if (n==0x8000) v="0000";
+        if (n==0x8400) v="0001";
+        if (n==0x8800) v="0010";
+        if (n==0x8C00) v="0011";
+        if (n==0x1000) v="1100";
+        if (n==0x1400) v="1101";
+        if (n==0x1800) v="1110";
+        if (n==0x1C00) v="1111";
+        if (v=="")
+            ErrorHandler::e.Error("SetCharsetLocation parameter must be one of the following values: $8000, $8400, $8800,$8C00, $1000, $1400, $1800, $1C00", m_op.m_lineNumber);
+
+
+        as->Asm("lda $9005");
+  //      as->Asm("and #%00001111");
+//        as->Asm("ora #%"+v+"0000");
+        as->Asm("and #%11110000");
+        as->Asm("ora #%0000"+v);
+        as->Asm("sta $9005");
+
+
+    }
+
+
+
+}
+
+void NodeBuiltinMethod::SetScreenLocation(Assembler *as)
+{
+    NodeNumber* v = dynamic_cast<NodeNumber*>(m_params[0]);
+    if (v==nullptr)
+        ErrorHandler::e.Error("SetScreenLocation parameter must be an address!", m_op.m_lineNumber);
+
+
+    if (Syntax::s.m_currentSystem==Syntax::C128 || Syntax::s.m_currentSystem==Syntax::C64) {
+        ErrorHandler::e.Error("SetScreenLocation not implemented for C64 yet", m_op.m_lineNumber);
+    }
+    if (Syntax::s.m_currentSystem==Syntax::VIC20) {
+        int n = (unsigned int)v->m_val;
+        QString v = "";
+        if (n==0x8000) v="0000";
+        if (n==0x8400) v="0001";
+        if (n==0x8800) v="0010";
+        if (n==0x8C00) v="0011";
+        if (n==0x1000) v="1100";
+        if (n==0x1400) v="1101";
+        if (n==0x1800) v="1110";
+        if (n==0x1C00) v="1111";
+        if (v=="")
+            ErrorHandler::e.Error("SetScreenLocation parameter must be one of the following values: $8000, $8400, $8800,$8C00, $1000, $1400, $1800, $1C00", m_op.m_lineNumber);
+
+
+        as->Asm("lda $9005");
+        as->Asm("and #%00001111");
+        as->Asm("ora #%"+v+"0000");
+        as->Asm("sta $9005");
+
+
+    }
+
 }
 
 void NodeBuiltinMethod::InitZeroPage(Assembler* as) {

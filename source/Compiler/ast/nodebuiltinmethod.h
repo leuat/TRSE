@@ -78,6 +78,7 @@ public:
     void PlaySound(Assembler* as);
     void Clearsound(Assembler* as);
     void SetCharsetLocation(Assembler* as);
+    void SetScreenLocation(Assembler* as);
     void IncScreenX(Assembler* as);
     void Print80(Assembler* as);
     void Fill80(Assembler* as);
