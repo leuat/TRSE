@@ -35,6 +35,7 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("C64 Fullscreen Characters", LImage::Type::FullScreenChar,LColorList::Type::C64));
     m_types.append(ImageType("C64 Level Editor", LImage::Type::LevelEditor,LColorList::Type::C64));
     m_types.append(ImageType("C64 Sprite Editor", LImage::Type::Sprites,LColorList::Type::C64));
+    m_types.append(ImageType("VIC20 Multicolor bitmap", LImage::Type::VIC20_MultiColorbitmap,LColorList::Type::VIC20));
 //    m_types.append(ImageType("C64 Multicolor Charmap Fixed Colors", LImage::Type::CharMapMultiColorFixed,LColorList::Type::C64));
 
     /*    m_types.append(ImageType("CGA Palette 1 Lo", LImage::Type::QImageBitmap,LColorList::Type::CGA1_LOW));
@@ -106,6 +107,10 @@ void ImageWorker::New(int image, CharmapGlobalData gd = CharmapGlobalData())
     m_currentImage = new ImageEdit(&m_types[image], "New Image");
     if (m_types[image].type==LImage::Type::LevelEditor)
         dynamic_cast<ImageLevelEditor*>(m_currentImage->m_image)->Initialize(gd);
+    if (m_types[image].type==LImage::Type::VIC20_MultiColorbitmap) {
+        LImageVIC20* lv =  dynamic_cast<LImageVIC20*>(m_currentImage->m_image);
+        lv->SetCharSize(gd.m_width, gd.m_height);
+    }
 
     m_images.append(m_currentImage);
     m_currentImage->m_fileName="";

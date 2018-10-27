@@ -66,7 +66,7 @@ private:
 
 
 public:
-    enum Type{ C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF };
+    enum Type{ C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20 };
 
     Type m_type = Type::C64;
     LColorList();
@@ -91,6 +91,7 @@ public:
 
     void InitC64_org();
     void InitC64();
+    void InitVIC20();
     void InitCGA1_LOW();
     void InitCGA1_HIGH();
     void InitCGA2_LOW();

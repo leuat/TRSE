@@ -45,6 +45,11 @@ public:
     void ToMeta();
     void CreateInfo();
 
+    void VICImageToData();
+
+
+    int m_charWidth;
+    int m_charHeight;
 
     ~DialogNewImage();
 private slots:
@@ -73,6 +78,10 @@ private slots:
     void on_checkBox_clicked();
 
     void on_chkUseColors_stateChanged(int arg1);
+
+    void on_leCharWidth_textChanged(const QString &arg1);
+
+    void on_leCharHeight_textChanged(const QString &arg1);
 
 private:
     Ui::DialogNewImage *ui;

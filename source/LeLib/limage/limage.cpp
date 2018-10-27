@@ -54,6 +54,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 7;
     if (t==CharMapMultiColorFixed)
         return 8;
+    if (t==VIC20_MultiColorbitmap)
+        return 9;
 
 
     return 255;
@@ -79,6 +81,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return FullScreenChar;
     if (c==8)
         return CharMapMultiColorFixed;
+    if (c==9)
+        return VIC20_MultiColorbitmap;
 
 
     return NotSupported;

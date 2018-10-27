@@ -1,4 +1,4 @@
-open_files = ,tutorial_4.ras, test.ras
+open_files = ,images/logo.flf, tutorial_1_sqrteffect.ras, tutorial_2_tunnel_rotator.ras, tutorial_3_bitmap_image.ras, images/test2.flf, images/test1.flf, images/test3.flf, tutorial_3.ras, tutorial_4.ras, test.ras
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $47
@@ -18,4 +18,9 @@ post_optimizer_passldatax = 1
 post_optimizer_passstalda = 1
 post_optimizer_passldx = 1
 data_header_charsets/charset_8x8.flf = 0
-vic_memory_config = all
+vic_memory_config = 24k
+data_header_images/test1 = 0
+data_header_images/test1.flf = 0
+data_header_images/test2 = 0
+data_header_images/test2.flf = 0
+data_header_images/test3.flf = 0

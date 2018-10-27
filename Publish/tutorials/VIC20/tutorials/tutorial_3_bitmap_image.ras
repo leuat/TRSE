@@ -1,0 +1,96 @@
+program Tutorial_3;
+
+
+
+@ignoremethod "init16x8div"
+
+@ignoremethod "init16x8mul"
+
+@ignoremethod "init8x8div"
+
+@ignoremethod "initrandom"
+
+
+// Image in images/logo.flf
+
+// Size of image
+@define imageWidth 20
+@define imageHeight 20
+
+
+
+var  
+	i,j,k, time, time4,t:byte;
+	charset : incbin("images/logo.bin", $1400);
+	zp: pointer;
+
+
+// Put all code at $2400
+@startblock $2400 Code
+
+procedure CopyImageColor();
+begin
+
+	zp:=$1400 + @imageWidth*@imageHeight*8;
+//	
+	moveto(0,0,$94);
+	for j:=0 to @imageHeight do begin
+		for i:=0 to @imageWidth do begin
+			k:=zp[i]	 | zp[i+@imageWidth];
+			screenmemory[i]:=k;
+		end;
+		inczp(screenmemory,@imageWidth);
+		inczp(zp,@imageWidth*2);
+
+	end;
+
+end;
+
+procedure Main();
+begin
+	DisableVIC20IRQ();
+	// Screen and border color
+	SCREEN_BG_COLOR:=%01100000;
+	AUX_COLOR_AND_VOLUME:=CYAN*16;
+	VIC_DATA_LOC := %11001101; // $1000 memory and $1c00 ram
+
+	SCREEN_TEXT_HEIGHT:=@imageHeight-1;
+	SCREEN_TEXT_WIDTH:=@imageWidth;
+	CopyImageColor();
+
+	moveto(0,0,$10);
+	for i:=0 to 0 do begin
+		screenmemory[i]:=i;
+	end;
+
+
+	// After this, raster scrolling
+	while (1=1) do begin
+		time:=time+1;
+		time4:=time4+4;
+		t:=sine[time4]/4+32;
+//		t:=t + sine[time*3]/8;
+		
+		waitforraster(t);
+		AUX_COLOR_AND_VOLUME:=CYAN*16;
+		for i:=0 to 24 do begin
+			poke(SCREEN_BG_COLOR,0,%00100101);
+			waitnoraster(1);
+						
+		end;
+		AUX_COLOR_AND_VOLUME:=PURPLE*16;
+
+		SCREEN_BG_COLOR:=%01100000;
+		
+		
+		
+	end;
+
+
+end;
+
+@endblock
+
+begin
+	Main();	
+end.

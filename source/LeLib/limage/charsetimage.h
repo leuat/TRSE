@@ -37,6 +37,8 @@ public:
 
     PixelChar m_copy[64];
 
+    int m_colorOrderType = 0; // C64
+
     enum Mode{ FULL_IMAGE, CHARSET1x1, CHARSET2x2, CHARSET2x2_REPEAT};
 
     QString GetCurrentModeString() override {

@@ -49,6 +49,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 4;
   if (t==CGA2_HIGH)
       return 5;
+  if (t==VIC20)
+      return 6;
 
   return 255;
 }
@@ -67,6 +69,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return CGA2_LOW;
     if (c==5)
         return CGA2_HIGH;
+    if (c==6)
+        return VIC20;
 
     return UNSUPPORTED;
 
@@ -91,6 +95,8 @@ void LColorList::Initialize(Type t)
         InitCGA2_LOW();
     if (m_type == Type::TIFF)
         InitC64();
+    if (m_type == Type::VIC20)
+        InitVIC20();
 
 
 
@@ -140,6 +146,55 @@ void LColorList::InitC64()
     m_list.append(LColor(QColor(0x6c, 0x5e, 0xb5),""));
     m_list.append(LColor(QColor(0x95, 0x95, 0x95),""));
 
+    m_background = m_list[0];
+
+}
+
+void LColorList::InitVIC20()
+{
+    m_list.clear();
+
+
+    m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));
+    m_list.append(LColor(QColor(0xFF, 0xFF, 0xFF),""));
+    m_list.append(LColor(QColor(0x68, 0x37, 0x2b),""));
+    m_list.append(LColor(QColor(0x70, 0xa4, 0xb2),""));
+    m_list.append(LColor(QColor(0x6f, 0x3d, 0x86),""));
+    m_list.append(LColor(QColor(0x58, 0x8d, 0x43),""));
+    m_list.append(LColor(QColor(0x35, 0x28, 0x79),""));
+    m_list.append(LColor(QColor(0xb8, 0xc7, 0x6F),""));
+
+/*    m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));
+    m_list.append(LColor(QColor(0xFF, 0xFF, 0xFF),""));
+    m_list.append(LColor(QColor(0x68, 0x37, 0x2b),""));
+    m_list.append(LColor(QColor(0x70, 0xa4, 0xb2),""));
+    m_list.append(LColor(QColor(0x6f, 0x3d, 0x86),""));
+    m_list.append(LColor(QColor(0x58, 0x8d, 0x43),""));
+    m_list.append(LColor(QColor(0x35, 0x28, 0x79),""));
+    m_list.append(LColor(QColor(0xb8, 0xc7, 0x6F),""));
+*/
+
+
+
+
+
+
+ /*   m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));
+    m_list.append(LColor(QColor(0xFF, 0xFF, 0xFF),""));
+    m_list.append(LColor(QColor(103, 55, 43),""));
+    m_list.append(LColor(QColor(112,165 ,177 ),""));
+    m_list.append(LColor(QColor(111, 61, 133),""));
+    m_list.append(LColor(QColor(88, 140, 67),""));
+    m_list.append(LColor(QColor(52, 40, 121),""));
+    m_list.append(LColor(QColor(183, 198,110 ),""));
+    m_list.append(LColor(QColor(111, 79, 37),""));
+    m_list.append(LColor(QColor(66, 57, 0),""));
+    m_list.append(LColor(QColor(153, 102, 89),""));
+    m_list.append(LColor(QColor(68, 68, 68),""));
+    m_list.append(LColor(QColor(108, 108, 108),""));
+    m_list.append(LColor(QColor(154, 209, 131),""));
+    m_list.append(LColor(QColor(107, 94, 181),""));
+    m_list.append(LColor(QColor(150,150 ,150 ),""));*/
     m_background = m_list[0];
 
 }

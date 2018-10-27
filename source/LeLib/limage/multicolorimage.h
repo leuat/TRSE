@@ -51,6 +51,10 @@ public:
     void Reorganize(unsigned char bitMask, unsigned char Scale,unsigned char minCol, unsigned char maxCol);
     int Count(unsigned int col, unsigned char bitMask, unsigned char Scale);
 
+    static uchar Swap(int a, int b, uchar c);
+    static uchar VIC20Swap( uchar c);
+
+
     static unsigned char reverse(unsigned char b) {
        b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
        b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
@@ -93,6 +97,8 @@ public:
 //    QVector<CharPos> m_charPos;
     QByteArray m_outputData;
     int m_Index = 0;
+    int m_charWidth=40;
+    int m_charHeight=25;
 
     MultiColorImage(LColorList::Type t);
     PixelChar m_data[40*25];
@@ -146,6 +152,8 @@ public:
 
   //  void ExportAsm(QString filename) override;
     void ExportBin(QFile& file) override;
+
+    void SetCharSize(int x, int y);
 
 };
 

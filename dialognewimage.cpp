@@ -30,6 +30,8 @@ DialogNewImage::DialogNewImage(QWidget *parent) :
     connect(ui->btnResult, SIGNAL(accepted()), this, SLOT(slotOk()));
 
     ui->grpLevelDesignerParams->setVisible(false);
+    ui->grpImageSize->setVisible(false);
+
 
 }
 
@@ -88,6 +90,26 @@ void DialogNewImage::CreateInfo()
     ui->lblInfo->setText(txt);
 }
 
+void DialogNewImage::VICImageToData()
+{
+    m_charWidth = ui->leCharWidth->text().toInt();
+    m_charHeight = ui->leCharHeight->text().toInt();
+
+    QString txt="";
+    int chars = m_charWidth*m_charHeight/2;
+    txt+= "Chars (8x16) used: " + QString::number(chars) +"\n";
+    if (chars>192)
+            txt+= "WARNING more than 192 chars! Will be truncated. \n";
+
+    txt+= "Data size: " + QString::number(m_charWidth*m_charHeight*8) + " bytes\n";
+    txt+= "Color size: " + QString::number(m_charWidth*m_charHeight) + " bytes\n";
+    txt+= "Total size: " + QString::number(m_charWidth*m_charHeight*9) + " bytes\n";
+    txt+= "Pixel dimensions " + QString::number(m_charWidth*4) + "x" +QString::number(m_charHeight*8);
+    ui->lblInfo->setText(txt);
+
+
+}
+
 DialogNewImage::~DialogNewImage()
 {
     delete ui;
@@ -96,6 +118,9 @@ DialogNewImage::~DialogNewImage()
 
 void DialogNewImage::slotOk()
 {
+    //VICImageToData();
+    m_meta.m_width = m_charWidth;
+    m_meta.m_height = m_charHeight;
     retVal = ui->comboBox->currentIndex();
 }
 
@@ -103,6 +128,10 @@ void DialogNewImage::on_comboBox_currentIndexChanged(int index)
 {
     if (index==7)
         ui->grpLevelDesignerParams->setVisible(true);
+    if (index==9) {
+        ui->grpImageSize->setVisible(true);
+        VICImageToData();
+    }
 
     ToMeta();
 }
@@ -160,4 +189,14 @@ void DialogNewImage::on_checkBox_clicked()
 void DialogNewImage::on_chkUseColors_stateChanged(int arg1)
 {
     ToMeta();
+}
+
+void DialogNewImage::on_leCharWidth_textChanged(const QString &arg1)
+{
+    VICImageToData();
+}
+
+void DialogNewImage::on_leCharHeight_textChanged(const QString &arg1)
+{
+    VICImageToData();
 }

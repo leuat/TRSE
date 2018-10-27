@@ -32,6 +32,7 @@
 #include "source/LeLib/limage/limagecharsetregular.h"
 #include "source/LeLib/limage/limagesprites.h"
 #include "source/LeLib/limage/limagecharsetfixedcolor.h"
+#include "source/LeLib/limage/limagevic20.h"
 
 class LImageFactory {
 public:
@@ -57,6 +58,8 @@ public:
             return new LImageSprites(colorType);
         if (t == LImage::Type::CharMapMultiColorFixed)
             return new LImageCharsetFixedColor(colorType);
+        if (t == LImage::Type::VIC20_MultiColorbitmap)
+            return new LImageVIC20(colorType);
 
         qDebug() << "ERROR: LImageFactory could not find type " << t;
         qDebug() << "Charmapfactory: " << LImage::Type::CharmapRegular;

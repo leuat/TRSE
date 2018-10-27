@@ -9,7 +9,7 @@
  *   the Free Software Foundation, either version 3 of the License, or
  *   (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
+ *   This program is distributed in the hope that it will be usekc,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
@@ -61,9 +61,9 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     m_GUIParams[btnEditFullCharset] = "";
 
     m_exportParams["StartX"] = 0;
-    m_exportParams["EndX"] = 40;
+    m_exportParams["EndX"] = m_charWidth;
     m_exportParams["StartY"] = 0;
-    m_exportParams["EndY"] = 25;
+    m_exportParams["EndY"] = m_charHeight;
 
 }
 
@@ -76,8 +76,8 @@ void MultiColorImage::setPixel(int x, int y, unsigned int color)
 
     pc.Reorganize(m_bitMask, m_scale,m_minCol, m_noColors);
 
-    int ix = x % (8/m_scale);//- (dx*40);
-    int iy = y % 8;//- (dy*25);
+    int ix = x % (8/m_scale);//- (dx*m_charWidth);
+    int iy = y % 8;//- (dy*m_charHeight);
 
     //if (ix==0 || ix == 2 || ix == 4 || ix == 6)
     pc.set(m_scale*ix, iy, color, m_bitMask, m_noColors, m_minCol);
@@ -91,8 +91,8 @@ unsigned int MultiColorImage::getPixel(int x, int y)
         return 0;
     PixelChar& pc = getPixelChar(x,y);
 
-    int ix = x % (8/m_scale);//- (dx*40);
-    int iy = y % 8;//- (dy*25);
+    int ix = x % (8/m_scale);//- (dx*m_charWidth);
+    int iy = y % 8;//- (dy*m_charHeight);
 
     return pc.get(m_scale*ix, iy, m_bitMask);
 
@@ -106,7 +106,7 @@ void MultiColorImage::setForeground(unsigned int col)
 void MultiColorImage::setBackground(unsigned int col)
 {
     m_background = col;
-    for (int i=0;i<40*25;i++) {
+    for (int i=0;i<m_charWidth*m_charHeight;i++) {
         m_data[i].c[0] = col;
     }
 }
@@ -114,7 +114,7 @@ void MultiColorImage::setBackground(unsigned int col)
 void MultiColorImage::Reorganize()
 {
 #pragma omp parallel for
-    for (int i=0;i<40*25;i++)
+    for (int i=0;i<m_charWidth*m_charHeight;i++)
         m_data[i].Reorganize(m_bitMask, m_scale, m_minCol, m_noColors);
 }
 
@@ -122,7 +122,7 @@ void MultiColorImage::SaveBin(QFile& file)
 {
     file.write( ( char * )( &m_background ),  1 );
     file.write( ( char * )( &m_border ), 1 );
-    file.write( ( char * )( &m_data ),  25*40*12 );
+    file.write( ( char * )( &m_data ),  m_charHeight*m_charWidth*12 );
 
 }
 
@@ -130,7 +130,7 @@ void MultiColorImage::LoadBin(QFile& file)
 {
     file.read( ( char * )( &m_background ),1 );
     file.read( ( char * )( &m_border ), 1);
-    file.read( ( char * )( &m_data ),  25*40*12 );
+    file.read( ( char * )( &m_data ),  m_charHeight*m_charWidth*12 );
 
 }
 
@@ -208,7 +208,7 @@ void MultiColorImage::CopyFrom(LImage* img)
 
         // qDebug() << "COPY FROM";
 #pragma omp parallel for
-         for(int i=0;i<25*40;i++) {
+         for(int i=0;i<m_charHeight*m_charWidth;i++) {
              for (int j=0;j<8;j++)
                  m_data[i].p[j] = mc->m_data[i].p[j];
              for (int j=0;j<4;j++)
@@ -245,7 +245,7 @@ void MultiColorImage::CopyFrom(LImage* img)
 
 
     s << "IMG_CHARSET = $2000\n";
-    s << "IMG_SCREENDATA = $4000\n";
+    s << "IMG_SCREENDATA = $m_charWidth00\n";
     s << "IMG_COLORDATA = IMG_SCREENDATA + 1002\n\n";
 
     s << "display_image\n";
@@ -257,7 +257,7 @@ void MultiColorImage::CopyFrom(LImage* img)
     s << "  ldx #$00 \n";
     s << "loaddccimage\n";
     s << "  lda IMG_SCREENDATA+2,x\n";
-    s << "  sta $0400,x \n";
+    s << "  sta $0m_charWidth0,x \n";
     s << "  lda IMG_SCREENDATA + #$102,x \n";
     s << "  sta $0500,x \n";
     s << "  lda IMG_SCREENDATA + #$202,x \n";
@@ -283,7 +283,7 @@ void MultiColorImage::CopyFrom(LImage* img)
     s << "; Set multicolor mode \n";
     s << "  lda #$18 \n";
     s << "  sta $d016 \n";
-    s << "; Set bitmap position ($400 bytes) \n";
+    s << "; Set bitmap position ($m_charWidth0 bytes) \n";
     s << "  lda #$18 \n";
     s << "  sta $d018 \n";
     s << "loop \n";
@@ -291,18 +291,18 @@ void MultiColorImage::CopyFrom(LImage* img)
     s << "  rts \n \n";
     s << "*=IMG_CHARSET \n";
 
-    for (int y=0;y<25;y++)
-        for (int x=0;x<40;x++)
+    for (int y=0;y<m_charHeight;y++)
+        for (int x=0;x<m_charWidth;x++)
         {
-        s << m_data[y*40 + x].bitmapToAssembler();
+        s << m_data[y*m_charWidth + x].bitmapToAssembler();
     }
     s << "\n*=IMG_SCREENDATA \n";
     s << "  byte " << m_border << ", " << m_background << "\n";
-    for (int y=0;y<25;y++)
+    for (int y=0;y<m_charHeight;y++)
     {
         QString str = "   byte ";
-        for (int x=0;x<40;x++) {
-           str = str +  m_data[x + y*40].colorMapToAssembler(1,2);
+        for (int x=0;x<m_charWidth;x++) {
+           str = str +  m_data[x + y*m_charWidth].colorMapToAssembler(1,2);
             if (x!=39)
                 str = str + ", ";
         }
@@ -311,11 +311,11 @@ void MultiColorImage::CopyFrom(LImage* img)
     }
 
     s << "\n*=IMG_COLORDATA \n";
-    for (int y=0;y<25;y++)
+    for (int y=0;y<m_charHeight;y++)
     {
         QString str = "   byte ";
-        for (int x=0;x<40;x++) {
-           str = str +  m_data[x + y*40].colorToAssembler();
+        for (int x=0;x<m_charWidth;x++) {
+           str = str +  m_data[x + y*m_charWidth].colorToAssembler();
             if (x!=39)
                 str = str + ", ";
         }
@@ -354,8 +354,8 @@ void MultiColorImage::ExportBin(QFile& ofile)
 
     for (int j=sy;j<ey;j++)
         for (int i=sx;i<ex;i++)
-            data.append(m_data[i + j*40].data());
-/*    for (int i=0;i<40*25;i++) {
+            data.append(m_data[i + j*m_charWidth].data());
+/*    for (int i=0;i<m_charWidth*m_charHeight;i++) {
         data.append(m_data[i].data());
     }*/
     QFile file(fData);
@@ -369,19 +369,19 @@ void MultiColorImage::ExportBin(QFile& ofile)
     data.clear();
     for (int j=sy;j<ey;j++)
         for (int i=sx;i<ex;i++)
-//            data.append(m_data[i + j*40].data());
-            colorData.append((uchar)m_data[j*40 + i].colorMapToNumber(1,2));
+//            data.append(m_data[i + j*m_charWidth].data());
+            colorData.append((uchar)m_data[j*m_charWidth + i].colorMapToNumber(1,2));
 
-  /*  for (int i=0;i<40*25;i++) {
+  /*  for (int i=0;i<m_charWidth*m_charHeight;i++) {
       //  qDebug () << QString::number((uchar)colorData[colorData.count()-1]);
 //        colorData.append((uchar)m_data[i].colorMapToNumber(1,2));
     }*/
     for (int j=sy;j<ey;j++)
         for (int i=sx;i<ex;i++) {
 
-//    for (int i=0;i<40*25;i++) {
+//    for (int i=0;i<m_charWidth*m_charHeight;i++) {
 //        uchar c = (uchar)m_data[i].c[3];
-        uchar c = (uchar)m_data[i+j*40].c[3];
+        uchar c = (uchar)m_data[i+j*m_charWidth].c[3];
         if (c==255)
             c=0;
         if (c!=0)
@@ -401,6 +401,18 @@ void MultiColorImage::ExportBin(QFile& ofile)
     ofile.close();
     QFile::remove(ofile.fileName());
 
+}
+
+void MultiColorImage::SetCharSize(int x, int y)
+{
+    m_width = x*8;
+    if (m_bitMask==0x11) {
+        m_width = x*4;
+
+    }
+    m_height = y*8;
+    m_charWidth = x;
+    m_charHeight = y;
 }
 
 void MultiColorImage::LoadCharset(QString file)
@@ -430,7 +442,7 @@ void MultiColorImage::LoadCharset(QString file)
 
 void MultiColorImage::Clear()
 {
-    for (int i=0;i<40*25;i++) {
+    for (int i=0;i<m_charWidth*m_charHeight;i++) {
         m_data[i].Clear(m_background);
     }
 }
@@ -475,7 +487,7 @@ void MultiColorImage::CalculateCharIndices()
     m_organized.clear();
     m_outputData.clear();
     int add=0;
-    for (int x=0;x<40*25;x++) {
+    for (int x=0;x<m_charWidth*m_charHeight;x++) {
         PixelChar pc= m_data[x];
         if (pc.isEmpty()) {
             add++;
@@ -587,8 +599,8 @@ PixelChar &MultiColorImage::getPixelChar(int x, int y)
 {
     int dx = x/(8/m_scale);
     int dy = y/8;
-    int i = Util::clamp(dx + 40*dy,0,40*25);
-    if (i>=0 && i<40*25)
+    int i = Util::clamp(dx + m_charWidth*dy,0,m_charWidth*m_charHeight);
+    if (i>=0 && i<m_charWidth*m_charHeight)
         return m_data[i];
     else
         return m_data[0];
@@ -652,12 +664,10 @@ void PixelChar::set(int x, int y, unsigned char color, unsigned char bitMask, un
     }
 
 
-/*    if (rand()%100>20)
-        qDebug() << winner;*/
-    // Clear
     unsigned int f = ~(bitMask << x);
     p[y] &= f;
     // Add
+
     p[y] |= winner<<x;
 
 }
@@ -823,6 +833,42 @@ int PixelChar::Count(unsigned int col, unsigned char bitMask, unsigned char scal
             if ( ((p[j]>>scale*i) & bitMask)==col)
                 cnt++;
     return cnt;
+}
+
+uchar PixelChar::Swap(int a, int b, uchar c)
+{
+    uchar org = c;
+        // damn
+    uchar n1 = (c>>a) & 0b00000011;
+    uchar n2 = (c>>b) & 0b00000011;
+
+    uchar mask =  ((0b11)<<a) | ((0b11) <<b);
+
+    c = c & ~mask;
+    c = c | (n1<<b) | (n2<<a);
+
+
+    return c;
+}
+
+uchar PixelChar::VIC20Swap(uchar c)
+{
+    uchar ret = 0;
+    for (int i=0;i<4;i++) {
+        uchar v = c>>(i*2) & 0b11;
+/*        if (v==0b10) v=0b11;
+        else
+            if (v==0b11) v=0b10;
+*/
+        if (v==0b01) v=0b11;
+        else
+            if (v==0b11) v=0b01;
+
+
+        ret |= (v<<(i*2));
+
+    }
+    return ret;
 }
 
 
