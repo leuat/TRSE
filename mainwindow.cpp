@@ -70,7 +70,22 @@ MainWindow::MainWindow(QWidget *parent) :
 
    int id= QFontDatabase::addApplicationFont(":resources/fonts/c64.ttf");
    m_fontFamily = QFontDatabase::applicationFontFamilies(id).at(0);
-    m_iniFileName = Util::path + m_iniFileName;
+#ifndef Q_OS_WIN
+   QString pa = QDir::homePath() +QDir::separator() + m_iniFileHomeDir;
+   QString oldFile = Util::path + m_iniFileName;
+    if (!QDir().exists(pa))
+        QDir().mkdir(pa);
+    m_iniFileName = pa +QDir::separator()+ m_iniFileName;
+
+    // Move old file
+    if (QFile::exists(oldFile)) {
+        QFile::copy(oldFile, m_iniFileName);
+        QFile::remove(oldFile);
+    }
+
+//    qDebug() << m_iniFileName;
+//    exit(1);
+#endif
     connect( ui->tabMain, SIGNAL(tabCloseRequested(int)),this, SLOT(RemoveTab(int)));
 //    connect(qApp, SIGNAL(aboutToQuit()), m_updateThread, SLOT(OnQuit()));
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(OnQuit()));

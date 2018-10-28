@@ -36,6 +36,7 @@
 #include <QLayout>
 #include <QPointF>
 #include <QTimer>
+#include <QStandardPaths>
 #include <source/toolbox.h>
 #include "source/workerthread.h"
 #include "imageeditor.h"
@@ -201,6 +202,7 @@ public:
  //   CodeEditor m_codeEditor;
     CustomFileSystemModel *fileSystemModel = nullptr;
     QString m_iniFileName = "fluff64.ini";
+    QString m_iniFileHomeDir = ".TRSE";
     QString m_fontFamily;
     QPalette m_defaultPalette;
     QString m_currentPath;
