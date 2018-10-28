@@ -1,0 +1,11 @@
+<p>Prints a zero-terminated string [ parameter 1 ] shifted with [ parameter 2] bytes with maximum length given in parameter 3. Example:
+<code>
+var
+	text: string = ("THIS IS A STRING");
+
+begin
+	// Move to x,y = 5,5 at bank 0 
+	moveto(5,5,$04);
+	printstring(text,1,3); // prints "HIS"
+end.
+</code> 

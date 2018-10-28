@@ -1,0 +1,13 @@
+<p>Usage: SetSpriteLoc( [ sprite=[0:7], [ dataloc ], [bank=[0:3] );<br>
+
+<p>Sets sprite data pointer location. The sprite number (or variable) is limited to
+0-7, while the bank number must be a numeric. The actual sprite position must be located at  64*dataloc.
+<p>Example: Assume you have loaded a set of 10 sprites at position <b>$2400</b>. The start of the 64-bit sprite
+chunks is then $2400 / 64 = $90. If you want to set sprite number 4 to the sprite data at chunk 0 (bank 0), you would type:
+<code>
+setspriteloc(4, $90, 0);
+</code>
+If you want sprite 3 to display the 5rd chunk on bank 1, you type
+<code>
+setspriteloc(3, $95, 1);
+</code>

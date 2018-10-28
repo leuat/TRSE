@@ -62,7 +62,7 @@ m; SetScreenLocation; C64, C128, VIC20; n
 
 # Screen routines
 
-m; Writeln; C64, C128, VIC20, PET, NES ; s,b
+# m; Writeln; C64, C128, VIC20, PET, NES ; s,b
 m; MoveTo; C64, C128, VIC20 ; b,b,b
 m; ScrollX; C64, C128 ; b
 m; ScrollY; C64, C128 ; b

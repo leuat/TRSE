@@ -51,5 +51,29 @@
         <file>resources/text/help/m/atan2.rtf</file>
         <file>resources/text/help/m/abs.rtf</file>
         <file>resources/text/help/m/startrasterchain.rtf</file>
+        <file>resources/text/help/m/sqrt.rtf</file>
+        <file>resources/text/help/m/setspritepos.rtf</file>
+        <file>resources/text/help/m/setspriteloc.rtf</file>
+        <file>resources/text/help/m/setcharsetlocation.rtf</file>
+        <file>resources/text/help/m/setbank.rtf</file>
+        <file>resources/text/help/m/screenon.rtf</file>
+        <file>resources/text/help/m/screenoff.rtf</file>
+        <file>resources/text/help/m/return.rtf</file>
+        <file>resources/text/help/m/rasterirq.rtf</file>
+        <file>resources/text/help/m/rand.rtf</file>
+        <file>resources/text/help/m/printstring.rtf</file>
+        <file>resources/text/help/m/printnumber.rtf</file>
+        <file>resources/text/help/m/printdecimal.rtf</file>
+        <file>resources/text/help/m/preventirq.rtf</file>
+        <file>resources/text/help/m/playsound.rtf</file>
+        <file>resources/text/help/m/moveto.rtf</file>
+        <file>resources/text/help/m/loop.rtf</file>
+        <file>resources/text/help/m/keypressed.rtf</file>
+        <file>resources/text/help/m/joystick.rtf</file>
+        <file>resources/text/help/m/jammer.rtf</file>
+        <file>resources/text/help/m/inczp.rtf</file>
+        <file>resources/text/help/m/fld.rtf</file>
+        <file>resources/text/help/m/fill.rtf</file>
+        <file>resources/text/help/m/enableieq.rtf</file>
     </qresource>
 </RCC>

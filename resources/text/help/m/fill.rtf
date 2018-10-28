@@ -1,0 +1,9 @@
+<p>Fills [ parameter 3] bytes of [ parameter 2] at the address specified in [ parameter 1]</p>
+<code>
+  fill(^$D800,0,40); // Fill 40 chars of zeroes (0, black) at the start of color ram $D800 (first row)
+
+  // zp is a pointer, point to a specific character in a charset and fill 8 bytes with value 255
+  zp:=charset +^@myCharVal;
+  fill(zp,255,8);
+    
+</code>

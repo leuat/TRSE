@@ -1,0 +1,12 @@
+<p>Plays a single sound. Usage:<br>
+<code>
+PlaySound(SID_CHANNEL1, 
+				13,  // Volume
+				20,  // Hi byte frequency
+				0*16+0,  // Attack voice 1
+				3*16 + 12,   // Sustain = 16*15 + release=6
+				1 +SID_SAW,  // Waveform
+				SID_SAW);  // waveform 
+</code>
+Channels are SID_CHANNEL1, SID_CHANNEL2 or SID_CHANNEL3 while waveform 
+can be SID_SAW, SID_TRI, SID_PULSE and SID_NOISE.

@@ -1,0 +1,11 @@
+Sets up the raster irq to trigger a user-defined interrupt (procedure) at a given raster line. Example: <br>
+<code>
+RasterIRQ(myRaster(), 25, 1); // Assign myRaster with kernel (1) to fire at rasterline 25
+..
+procedure myRaster();
+begin
+	 startirq(1); // start IRQ with kernal=1
+	 ...
+	closeirq();
+end(); 
+</code>

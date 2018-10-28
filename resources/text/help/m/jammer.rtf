@@ -1,0 +1,22 @@
+<p>Jammer is a debug function that will jam the computer if the current raster line is larger than the value provided
+in parameter 1. If the system is jammed, the background color is set to parameter 2. <br>
+<br>
+Useful for debugging raster effects that are too slow
+
+<code>
+@define DEBUG_MODE 1
+
+interrupt MyRaster();
+begin
+	StartIRQ(@useKernal);
+
+	PerFormSomeTediousTask();
+ 
+	// if debug mode flag is set
+@ifdef DEBUG_MODE
+	// if current raster line hits 200, jam the computer with a blue background
+	Jammer(200,BLUE);
+@endif
+	closeIRQ();
+end;
+</code>

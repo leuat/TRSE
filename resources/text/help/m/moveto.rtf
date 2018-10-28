@@ -1,0 +1,18 @@
+<p>Moves the <b>screenmemory</b> pointer to the specified x/y (parameter 1,2 ) position with address high bit specified in parameter 3. <br>
+<br>
+Formula:<br>
+screenmemory = [ param3 *$100] + x +y*40
+<code>
+	// Move to x=4, y=5 in color memory
+  	moveto(4,5,$d8);
+  	// zp is another pointer
+  	zp:=screenmemory;
+	// Move to x=4, y=5 in bank 0 screen matrix
+  	moveto(4,5,$04);
+
+  	for i:=0 to 20 do begin
+  		screenmemory[i] := i; // Fill screen with some random text here
+  		zp[i] := i&3+2; // Fill color ram with some random colors
+  	end;
+
+</code>

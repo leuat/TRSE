@@ -1,0 +1,11 @@
+<h2>C64/128</h2>
+<p>This method lets the user set the charset address on the local VIC bank. For instance,
+if you have included a character set at $2000 in memory, you simply use SetCharsetLocation($2000) to
+use the charset. If you include your charset data on $6000 at bank 1, you can either use $2000 or $6000. 
+<p>
+Address value must start with 0 and increment with $0800 bytes, so values must be $0, $0800, $1000, $1800 etc.
+<h2>VIC-20</h2>
+SetCharsetLocation must take one of the following parameters: <br>
+$1000, $1400, $1800, $1C00,
+$8000, $8400, $8800, $8C00
+

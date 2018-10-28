@@ -1,0 +1,14 @@
+<p>Uses the SID to generate a random number with lower and upper values given in parameter 1 and 2. Value is stored
+in the input variable provided in parameter 3. 
+<p><b>Note</b> that the smaller the interval, the slower the method. In addition, using the method during music playback will interfere with the music. It is therefore recommended to generate random tables at the start of your program.  
+
+<code>
+procedure InitRandom();
+begin
+ // loop 256 
+	for i:=0 to 0 do begin
+		rand(0,i,j); // generate random value between [0,i] and store in j
+		myTable[i]:=j;
+	end;
+end;
+</code> 

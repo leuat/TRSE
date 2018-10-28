@@ -1,0 +1,14 @@
+<p>Increases zero page pointer address in [ parameter 1 ] with [ parameter 2] bytes.  
+<code>
+	// zp is a pointer.
+	// Point to bank 0 screen
+	  zp := $0400;
+	  for j:=0 to 25 do begin
+	  	for i:=0 to 40 do begin
+	  		// Fill the screen with some random value i
+	  		zp[i]:=i;
+	  	end;
+	  	// increase the pointer with 40 (1 row )
+	  	inczp(zp, 40);
+	  end;
+</code>
