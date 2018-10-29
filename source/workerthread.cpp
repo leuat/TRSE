@@ -301,7 +301,9 @@ void WorkerThread::RunContents()
 
 //    qDebug() << rand()%100;
 
-    if (Data::data.redrawOutput && m_work!=nullptr) {
+//    if (Data::data.redrawOutput && m_work!=nullptr)
+        if (m_work!=nullptr)
+    {
 
         //            qDebug() << "Redraw" << rand()%100;
         LImage* img = m_work->m_currentImage->m_image;

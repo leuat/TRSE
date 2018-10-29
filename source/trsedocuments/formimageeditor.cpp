@@ -952,43 +952,46 @@ void FormImageEditor::UpdateSpriteImages()
     if (m_keepSpriteChar.count()==0)
         m_keepSpriteChar.resize(3);
 
+    QImage empty = QImage(1,1,QImage::Format_ARGB32);
+    empty.fill(QColor(0,0,0,0));
+    QPixmap pixmapEmpty;
+    pixmapEmpty.convertFromImage(empty);
+
     int keep = img->m_currencChar;
     for (int i=0;i<3;i++) {
         int k = i-1+img->m_currencChar;
-
-        if (k==img->m_currencChar) {
-//            ui->lblSprite2->setPixmap(m_updateThread.m_pixMapImage.scaled(40, 32, Qt::IgnoreAspectRatio, Qt::FastTransformation));
-            img->ToQImage(img->m_colorList, &m_tmpImage, 1, QPoint(0.5, 0.5));
-            QPixmap pixmap;
-            pixmap.convertFromImage(m_tmpImage);
-
-            QLabel* l = nullptr;
-                l = ui->lblSprite2;
-            ui->lblSprite2->setPixmap(pixmap.scaled(40, 32, Qt::IgnoreAspectRatio, Qt::FastTransformation));
-        }
-        else
-
-        if (m_keepSpriteChar[i]!=k)
-        if ((k>=0) && (k<img->m_sprites.count())) {
-
-           m_keepSpriteChar[i] = k;
-            img->m_currencChar = k;
-            img->ToQImage(img->m_colorList, &m_tmpImage, 1, QPoint(0.5, 0.5));
-            img->m_currencChar = keep;
-            QPixmap pixmap;
-            pixmap.convertFromImage(m_tmpImage);
-
-            QLabel* l = nullptr;
+        QLabel* l = nullptr;
             if (i==0)
                 l = ui->lblSprite1;
-            if (i==1)
-                l = ui->lblSprite2;
             if (i==2)
                 l = ui->lblSprite3;
 
-                l->setPixmap(pixmap.scaled(40, 32, Qt::IgnoreAspectRatio, Qt::FastTransformation));
-
+        if (k==img->m_currencChar) {
+            ui->lblSprite2->setPixmap(m_updateThread.m_pixMapImage.scaled(40, 32, Qt::IgnoreAspectRatio, Qt::FastTransformation));
         }
+        else
+
+            if (m_keepSpriteChar[i]!=k) {
+                if ((k>=0) && (k<img->m_sprites.count())) {
+                    m_keepSpriteChar[i] = k;
+                    img->m_currencChar = k;
+                    img->ToQImage(img->m_colorList, &m_tmpImage, 1, QPoint(0.5, 0.5));
+                    img->m_currencChar = keep;
+                    QPixmap pixmap = QPixmap();
+                    pixmap.convertFromImage(m_tmpImage);
+
+                        if (l!=nullptr)
+                            l->setPixmap(pixmap.scaled(40, 32, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+
+                }
+                else {
+                    l->setPixmap(pixmapEmpty.scaled(40, 32, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+                    m_keepSpriteChar[i] = -1;
+                }
+
+            }
+
+
     }
 
 //    img->m_currencChar = keep;
@@ -1194,6 +1197,9 @@ void FormImageEditor::on_btnDeleteSprite_clicked()
             img->m_currencChar = img->m_sprites.count()-1;
     }
     onImageMouseEvent();
+    for (int i=0;i<3;i++)
+        m_keepSpriteChar[i]=-1;
+    UpdateSpriteImages();
 
 }
 

@@ -236,6 +236,20 @@ void LImageSprites2::SetColor(uchar col, uchar idx)
     m_extraCols[idx] = col;
 }
 
+void LImageSprites2::SetColor(uchar col, uchar idx, LSprite &s)
+{
+
+    m_color.c[idx] = col;
+
+    if (idx==0)
+        m_background = col;
+
+    for (int i=0;i<s.m_data.count();i++)
+        s.m_data[i].c[idx] = col;
+
+    m_extraCols[idx] = col;
+}
+
 bool LImageSprites2::KeyPress(QKeyEvent *e)
 {
 
@@ -244,9 +258,9 @@ bool LImageSprites2::KeyPress(QKeyEvent *e)
     if (e->key()==Qt::Key_D)
         m_currencChar+=1;
 
-    if (m_currencChar<0) m_currencChar=m_sprites.count()-1;
+    if (m_currencChar>2500) m_currencChar=0;
     if (m_currencChar>=m_sprites.count())
-        m_currencChar=0;
+        m_currencChar=m_sprites.count()-1;
 //    m_currencChar = Util::clamp(m_currencChar,0,m_sprites.count()-1);
 
 
@@ -267,6 +281,54 @@ void LImageSprites2::PasteChar()
 {
     if (m_copy.m_data.count()!=0)
         m_sprites[m_currencChar]=m_copy;
+
+}
+
+void LImageSprites2::FlipHorizontal()
+{
+    LSprite s = m_sprites[m_currencChar];
+    float wx = (s.m_blocksWidth*s.m_pcWidth*8);
+    float wy = (int)((s.m_blocksHeight*s.m_pcHeight*8.0));
+    LSprite n;
+    n.Initialize(s.m_blocksWidth,s.m_blocksHeight);
+    for (int i=0;i<4;i++)
+        SetColor(m_extraCols[i],i,n);
+
+    for (float y=0;y<wy;y++) {
+        for (float x=0;x<wx;x++) {
+            float i = (x/(wx));
+            float j = (y/(wy));
+            unsigned int u = s.getPixel(i,j,m_bitMask);
+            n.setPixel(i,1-j,u, m_bitMask);
+        }
+
+    }
+
+    m_sprites[m_currencChar] = n;
+
+}
+
+void LImageSprites2::FlipVertical()
+{
+    LSprite s = m_sprites[m_currencChar];
+    float wx = (s.m_blocksWidth*s.m_pcWidth*8);
+    float wy = (int)((s.m_blocksHeight*s.m_pcHeight*8.0));
+    LSprite n;
+    n.Initialize(s.m_blocksWidth,s.m_blocksHeight);
+    for (int i=0;i<4;i++)
+        SetColor(m_extraCols[i],i,n);
+
+    for (float y=0;y<wy;y++) {
+        for (float x=0;x<wx;x++) {
+            float i = ((x+0.5)/(wx));
+            float j = (y/(wy));
+            unsigned int u = s.getPixel(i,j,m_bitMask);
+            n.setPixel(1-i,j,u, m_bitMask);
+        }
+
+    }
+
+    m_sprites[m_currencChar] = n;
 
 }
 

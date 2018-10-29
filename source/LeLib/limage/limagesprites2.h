@@ -82,7 +82,7 @@ public:
     }
 
 
-    void Copy();
+   void Copy();
 
    void setPixel(int x, int y, unsigned int color) override;
 
@@ -91,11 +91,15 @@ public:
    void SaveBin(QFile& file) override;
    void LoadBin(QFile& file) override;
    void SetColor(uchar col, uchar idx) override;
+   void SetColor(uchar col, uchar idx, LSprite& s);
 
    bool KeyPress(QKeyEvent *e) override;
 
    void CopyChar() override;
    void PasteChar() override;
+
+   virtual void FlipHorizontal() override;
+   virtual void FlipVertical() override;
 
 
 };

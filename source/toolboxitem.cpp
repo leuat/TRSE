@@ -238,7 +238,6 @@ void RotateAround::Perform(int x, int y, unsigned char color, LImage *img, bool 
         }
      //   qDebug() << "Start2";
         m_copy->CopyFrom(img);
-        qDebug() << "NEW";
     }
 
 
