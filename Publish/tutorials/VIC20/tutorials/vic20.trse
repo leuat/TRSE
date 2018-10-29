@@ -1,4 +1,4 @@
-open_files = ,tutorial_3_bitmap_image.ras, tutorial_4_rastereffect_and_music.ras, images/test2.flf, images/test1.flf, images/test3.flf, tutorial_3.ras, tutorial_4.ras, test.ras
+open_files = ,tutorial_4_rastereffect_and_music.ras, tutorial_3_bitmap_image.ras, images/test2.flf, images/test1.flf, images/test3.flf, tutorial_3.ras, tutorial_4.ras, test.ras
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $47

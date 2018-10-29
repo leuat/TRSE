@@ -875,7 +875,7 @@ uchar PixelChar::VIC20Swap(uchar c)
 void MultiColorImage::ToQImage(LColorList& lst, QImage* img, float zoom, QPointF center)
 {
 //    return;
-#pragma omp parallel for
+//#pragma omp parallel for
     for (int i=0;i<m_width;i++)
         for (int j=0;j<m_height;j++) {
 

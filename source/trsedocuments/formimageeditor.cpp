@@ -72,6 +72,7 @@ void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *ini
     //ui->lblGrid->m_updateThread = t;
     m_updateThread.m_grid = &m_grid;
     m_grid.CreateGrid(40,25,m_updateThread.m_gridColor,4, 1, QPoint(0,0));
+
 }
 
 
@@ -80,7 +81,8 @@ void FormImageEditor::onImageMouseEvent()
 //    emit EmitMouseEvent();
     m_updateThread.RunContents();
     UpdateImage();
-
+    if (dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image)!=nullptr)
+        UpdateSpriteImages();
 //    updateCharSet();
 
 }
@@ -225,8 +227,8 @@ void FormImageEditor::UpdateImage()
         ui->lblImage->setFocus();
 
 
-    QString currentChar = "   Current char: $" + QString::number(m_work.m_currentImage->m_image->m_currencChar,16);
-    currentChar+=" (" + QString::number(m_work.m_currentImage->m_image->m_currencChar) + ")";
+
+    QString currentChar = m_work.m_currentImage->m_image->GetCurrentDataString();
     ui->lblPosition->setText("Position: " +
                              QString::number(m_updateThread.m_currentPosInImage.x()) + ", " +
                              QString::number(m_updateThread.m_currentPosInImage.y()) + currentChar);
@@ -237,6 +239,7 @@ void FormImageEditor::UpdateImage()
         //m_work.UpdateListView(ui->lstImages);
         Data::data.redrawFileList = false;
     }
+
 
 }
 
@@ -759,7 +762,7 @@ void FormImageEditor::updateCharSet()
 //    int size = (ui->lstCharMap->rect().width()-ui->lstCharMap->spacing())/8;
   //  ui->lstCharMap->setIconSize(QSize(size,size));
 
-    emit EmitMouseEvent();
+    onImageMouseEvent();
 }
 
 
@@ -779,16 +782,25 @@ void FormImageEditor::PrepareImageTypeGUI()
     SetButton(ui->btnCharsetFull,LImage::GUIType::btnEditFullCharset);
 
     int idx=0;
+//    qDebug() << m_work.m_currentImage->m_image->m_GUIParams;
     if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabCharset]=="") {
         ui->tabMain->removeTab(3);
         idx++;
     }
-    if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabLevels]=="") {
+    if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabSprites]=="") {
         ui->tabMain->removeTab(4-idx);
         idx++;
     }
+    if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabLevels]=="") {
+        ui->tabMain->removeTab(5-idx);
+        idx++;
+    }
     if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabData]==""){
-            ui->tabMain->removeTab(5-idx);
+            ui->tabMain->removeTab(6-idx);
+            idx++;
+        }
+    if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabEffects]==""){
+            ui->tabMain->removeTab(7-idx);
             idx++;
         }
 
@@ -927,6 +939,65 @@ void FormImageEditor::GenericImportImage(QString type, QString ext)
 
 }
 
+void FormImageEditor::UpdateSpriteImages()
+{
+    LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
+    if (img==nullptr)
+        return;
+
+//    ui->lblSprite1->setPixmap(m_updateThread.m_pixMapImage.scaled(320, 320, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+//    QImage m_tmpImage = QImage(img->m_width,img->m_height,QImage::Format_ARGB32);
+    QImage m_tmpImage = QImage(img->m_width,img->m_height,QImage::Format_ARGB32);
+
+    if (m_keepSpriteChar.count()==0)
+        m_keepSpriteChar.resize(3);
+
+    int keep = img->m_currencChar;
+    for (int i=0;i<3;i++) {
+        int k = i-1+img->m_currencChar;
+
+        if (k==img->m_currencChar) {
+//            ui->lblSprite2->setPixmap(m_updateThread.m_pixMapImage.scaled(40, 32, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+            img->ToQImage(img->m_colorList, &m_tmpImage, 1, QPoint(0.5, 0.5));
+            QPixmap pixmap;
+            pixmap.convertFromImage(m_tmpImage);
+
+            QLabel* l = nullptr;
+                l = ui->lblSprite2;
+            ui->lblSprite2->setPixmap(pixmap.scaled(40, 32, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+        }
+        else
+
+        if (m_keepSpriteChar[i]!=k)
+        if ((k>=0) && (k<img->m_sprites.count())) {
+
+           m_keepSpriteChar[i] = k;
+            img->m_currencChar = k;
+            img->ToQImage(img->m_colorList, &m_tmpImage, 1, QPoint(0.5, 0.5));
+            img->m_currencChar = keep;
+            QPixmap pixmap;
+            pixmap.convertFromImage(m_tmpImage);
+
+            QLabel* l = nullptr;
+            if (i==0)
+                l = ui->lblSprite1;
+            if (i==1)
+                l = ui->lblSprite2;
+            if (i==2)
+                l = ui->lblSprite3;
+
+                l->setPixmap(pixmap.scaled(40, 32, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+
+        }
+    }
+
+//    img->m_currencChar = keep;
+//    ui->lblSprite2->setPixmap(m_updateThread.m_pixMapImage.scaled(40, 32, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+
+
+
+}
+
 
 void FormImageEditor::on_btnExportKoala_clicked()
 {
@@ -1018,12 +1089,14 @@ void FormImageEditor::Destroy()
 void FormImageEditor::on_cmbMC1_activated(int index)
 {
     SetMCColors();
+    emit onImageMouseEvent();
 
 }
 
 void FormImageEditor::on_cmbMC2_activated(int index)
 {
     SetMCColors();
+    emit onImageMouseEvent();
 
 }
 
@@ -1031,6 +1104,7 @@ void FormImageEditor::on_cmbBackgroundMain_3_activated(int index)
 {
     m_work.m_currentImage->m_image->setBackground(index);
     SetMCColors();
+    emit onImageMouseEvent();
     Data::data.redrawOutput = true;
 
 }
@@ -1095,3 +1169,56 @@ void FormImageEditor::on_btnHelpImage_clicked()
 
 }
 
+
+void FormImageEditor::on_btnNewSprite_clicked()
+{
+    LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
+    if (img==nullptr)
+        return;
+    img->AddSprite(ui->cmbSpriteX->currentText().toInt(), ui->cmbSpriteY->currentText().toInt());
+    onImageMouseEvent();
+
+}
+
+void FormImageEditor::on_btnDeleteSprite_clicked()
+{
+    LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
+    if (img==nullptr)
+        return;
+    if (img->m_sprites.count()>1) {
+
+        if (img->m_currencChar>=img->m_sprites.count())
+            img->m_currencChar = img->m_sprites.count()-1;
+        img->m_sprites.remove(img->m_currencChar);
+        if (img->m_currencChar>=img->m_sprites.count())
+            img->m_currencChar = img->m_sprites.count()-1;
+    }
+    onImageMouseEvent();
+
+}
+
+void FormImageEditor::on_btnCopySprite_clicked()
+{
+    m_work.m_currentImage->m_image->CopyChar();
+    onImageMouseEvent();
+}
+
+void FormImageEditor::on_btnPasteSprite_clicked()
+{
+    m_work.m_currentImage->m_image->PasteChar();
+    onImageMouseEvent();
+
+}
+
+void FormImageEditor::on_btnFlipXSprite_clicked()
+{
+    m_work.m_currentImage->m_image->FlipVertical();
+    onImageMouseEvent();
+
+}
+
+void FormImageEditor::on_btnFlipYSprite_clicked()
+{
+    m_work.m_currentImage->m_image->FlipHorizontal();
+    onImageMouseEvent();
+}

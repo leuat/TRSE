@@ -148,7 +148,8 @@ SOURCES += main.cpp\
     source/OrgAsm/orgasmlexer.cpp \
     source/dialogdonate.cpp \
     source/dialogfindfile.cpp \
-    source/LeLib/limage/limagevic20.cpp
+    source/LeLib/limage/limagevic20.cpp \
+    source/LeLib/limage/limagesprites2.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -241,7 +242,8 @@ HEADERS  += mainwindow.h \
     source/OrgAsm/orgasmlexer.h \
     source/dialogdonate.h \
     source/dialogfindfile.h \
-    source/LeLib/limage/limagevic20.h
+    source/LeLib/limage/limagevic20.h \
+    source/LeLib/limage/limagesprites2.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \

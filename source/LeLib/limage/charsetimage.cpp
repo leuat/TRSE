@@ -40,6 +40,9 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     SetColor(5,3);
 
 
+
+    m_supports.koalaExport = false;
+    m_supports.koalaImport = false;
     m_supports.asmExport = false;
     m_supports.binaryLoad = true;
     m_supports.binarySave = true;

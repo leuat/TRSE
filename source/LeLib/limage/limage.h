@@ -61,7 +61,7 @@ class LImage
 public:
     enum Type { QImageBitmap, MultiColorBitmap, HiresBitmap,
                 NotSupported, Tiff, CharMapMulticolor, FullScreenChar, LevelEditor, CharmapRegular, CharMapMultiColorFixed,
-              Sprites, VIC20_MultiColorbitmap};
+              Sprites, VIC20_MultiColorbitmap, Sprites2};
 
 
     enum WriteType { Color, Character };
@@ -77,7 +77,7 @@ public:
 
     enum GUIType { btnLoadCharset, btnEditFullCharset, btn1x1, btn2x2,
                    btn2x2repeat, btnFlipV, btnFlipH, btnCopy, btnPaste,
-                   tabLevels, tabCharset, tabData};
+                   tabLevels, tabCharset, tabData, tabSprites, tabEffects};
 
 
     QMap<QString, float> m_exportParams;
@@ -125,6 +125,10 @@ public:
 
     virtual QString GetCurrentModeString() {
         return "Full image mode";
+    }
+
+    virtual QString GetCurrentDataString() {
+        return "";
     }
 
     virtual void Rotate(QPoint center, float angle, float scale, LImage* img);

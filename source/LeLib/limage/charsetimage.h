@@ -23,6 +23,7 @@
 #define CHARSETIMAGE_H
 
 #include "multicolorimage.h"
+#include "source/LeLib/util/util.h"
 #include <QPixmap>
 
 
@@ -51,6 +52,10 @@ public:
 
 
     Mode m_currentMode = FULL_IMAGE;
+
+    QString GetCurrentDataString() override {
+        return "  Character : " + Util::numToHex(m_currencChar);
+    }
 
 
     void SetColor(uchar col, uchar idx) override;

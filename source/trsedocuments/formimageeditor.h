@@ -64,6 +64,7 @@ public:
     QMap<QString, QLineEdit*> m_imageEffectsLineEdits;
     LImageEffect* m_currentImageEffect = nullptr;
     QString m_projectPath;
+    QVector<int> m_keepSpriteChar;
 
     void UpdatePalette();
     void updateCharSet();
@@ -106,9 +107,11 @@ public:
     void GenericExportImage(QString type, QString ext);
     void GenericImportImage(QString type, QString ext);
 
-signals:
-    void EmitMouseEvent();
+    void UpdateSpriteImages();
 
+/*signals:
+    void EmitMouseEvent();
+*/
 private:
     Ui::Formimageeditor *ui;
 
@@ -190,6 +193,12 @@ private slots:
 
     void on_btnExportKoala_clicked();
     void on_btnImportKoala_clicked();
+    void on_btnNewSprite_clicked();
+    void on_btnDeleteSprite_clicked();
+    void on_btnCopySprite_clicked();
+    void on_btnPasteSprite_clicked();
+    void on_btnFlipXSprite_clicked();
+    void on_btnFlipYSprite_clicked();
 };
 
 

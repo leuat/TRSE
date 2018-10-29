@@ -707,6 +707,7 @@ void MainWindow::on_actionImage_triggered()
     editor->m_currentSourceFile = "";
     editor->m_currentFileShort = "";
     ui->tabMain->addTab(editor, "New Image");
+    editor->PrepareImageTypeGUI();
 
     editor->setFocus();
     editor->showMaximized();
