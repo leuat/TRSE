@@ -70,7 +70,7 @@ void LImageSprites::FromRaw(QByteArray &arr)
 
                     if (cnt<64) {
                        pc.p[z] = PixelChar::reverse(m_rawData[pos + cnt]);
-                       pc.p[z] = pc.flipSpriteBit(z);
+                       pc.p[z] = pc.flipSpriteBit(z,m_bitMask);
                     }
                     cnt++;
 
@@ -116,7 +116,7 @@ void LImageSprites::ToRaw(QByteArray &arr)
                     if (pc.p[z]!=0)
                         allBlack = false;
                     if (cnt<64)
-                        arr.append(PixelChar::reverse(pc.flipSpriteBit(z)));
+                        arr.append(PixelChar::reverse(pc.flipSpriteBit(z,m_bitMask)));
                     cnt++;
 
                 }

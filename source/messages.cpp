@@ -72,10 +72,17 @@ void Messages::InitMessages()
                                        );
 
     m_messages[ALPHA_WARNING] = Message(ALPHA_WARNING, Message::Msg,
-                                      "Ah. Hi there! <br><br>Welcome to this first beta release of Turbo Rascal Syntax Error! "
+                                      "Ah. Hi there! <br><br>Welcome to this new beta release of Turbo Rascal Syntax Error 0.05! "
                                       "If this is your first time using the TRSE framework, please open the tutorials project located in the parent directory and play around. <br> "
                                       "<br> "
                                       "Thank you so much for trying out Turbo Rascal Syntax Error! Remember to report any bugs to <b>generalgrapefruit@lemonspawn.com</b>.");
+
+
+    m_messages[OLD_SPRITE_FILE] = Message(OLD_SPRITE_FILE, Message::Msg,
+                                      "You are now opening a deprecated and old version of the sprite system used in TRSE. While it is still possible "
+                                       "to use this old system, we strongly recomend that you start using the new sprite file types. <br><br>"
+                                       "You can export your old sprite data to a binary file, and then just import into the new .flf sprite type. "
+                                          );
 
 
 }

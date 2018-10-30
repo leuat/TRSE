@@ -21,9 +21,9 @@ public:
 
     }
 
-    QByteArray toQByteArray();
+    QByteArray toQByteArray(int mask);
 
-    LSprite(QByteArray& a, int index) {
+    LSprite(QByteArray& a, int index, int mask) {
         int c = index;
         Initialize(1,1);
         for (int y=0;y<3;y++) {
@@ -31,7 +31,7 @@ public:
                 for (int j=0;j<8;j++) {
                     int d = c+3*j;
                     m_data[y*3+x].p[j] = PixelChar::reverse(a[d]);
-                    m_data[y*3+x].p[j] = m_data[y*3+x].flipSpriteBit(j);
+                    m_data[y*3+x].p[j] = m_data[y*3+x].flipSpriteBit(j, mask);
                 }
                 c++;
             }
@@ -77,8 +77,8 @@ public:
 
     QString GetCurrentDataString() override {
         if (m_currencChar<0) return "";
-        QString blockSize = " block size (" +QString::number(m_sprites[m_currencChar].m_blocksHeight);
-        blockSize += ", " +QString::number(m_sprites[m_currencChar].m_blocksWidth)+")";
+        QString blockSize = " block size (" +QString::number(m_sprites[m_currencChar].m_blocksWidth);
+        blockSize += ", " +QString::number(m_sprites[m_currencChar].m_blocksHeight)+")";
         return "  Sprite : " + QString::number(m_currencChar) + "/" +
                 QString::number(m_sprites.count()) + blockSize;
     }

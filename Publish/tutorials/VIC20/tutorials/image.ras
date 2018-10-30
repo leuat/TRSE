@@ -1,0 +1,86 @@
+program Tutorial_3;
+
+
+
+@ignoremethod "init16x8div"
+
+@ignoremethod "init16x8mul"
+
+@ignoremethod "init8x8div"
+
+@ignoremethod "initrandom"
+
+
+// Image in images/logo.flf
+
+// Size of image. Defined when creating and drawing the flf file
+@define imageWidth 20
+@define imageHeight 20
+// Bitmap will be loaded as a charset
+@define charsetAndBitmap $1400
+
+var  
+	i,j,k, time,t:byte;
+	zp: pointer;
+	charset : incbin("images/test4.bin", @charsetAndBitmap);
+
+
+// Put all code at $2400
+@startblock $2600 Code
+
+// Copy color data from bitmap data
+procedure CopyImageColor();
+begin
+
+	zp:=@charsetAndBitmap + @imageWidth*(@imageHeight)*8;
+//	
+	moveto(0,0,$94);
+	for j:=0 to @imageHeight do begin
+		for i:=0 to @imageWidth do begin
+			k:=zp[i]	 | zp[i+@imageWidth];
+			screenmemory[i]:=k;
+		end;
+		inczp(screenmemory,@imageWidth);
+		inczp(zp,@imageWidth*2);
+
+	end;
+
+end;
+
+procedure Main();
+begin
+	// Turn off interrupts so we won't be distrubed
+	DisableVIC20IRQ();
+	// Background is PURPLE and BLACK		
+	SCREEN_BG_COLOR:=CYAN*16 + YELLOW;
+	// Auxilliary color is cyan
+	AUX_COLOR_AND_VOLUME:=RED*16;
+	// Screen to $1000
+	setscreenlocation($1000);
+	// Set charset location to where bitmap data is
+	setcharsetlocation(@charsetAndBitmap);
+	// Set height of columns (-1, needs to be odd)
+	SCREEN_TEXT_HEIGHT:=@imageHeight-1;
+	// Width of screen same as bitmap
+	SCREEN_TEXT_WIDTH:=@imageWidth;
+
+	// Copy color data
+	CopyImageColor();
+
+	// Draw 256 chars on the screen from 0 to 256
+	moveto(0,0,$10);
+	for i:=0 to 0 do begin
+		screenmemory[i]:=i;
+	end;
+
+
+	// After this, some random raster effect
+
+	Loop();
+end;
+
+@endblock
+
+begin
+	Main();	
+end.

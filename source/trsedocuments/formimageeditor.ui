@@ -697,36 +697,54 @@
            <x>10</x>
            <y>10</y>
            <width>341</width>
-           <height>81</height>
+           <height>102</height>
           </rect>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
-           <widget class="QLabel" name="lblSprite1">
+           <widget class="QPushButton" name="lblSprite1">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>90</height>
+             </size>
+            </property>
             <property name="text">
              <string/>
             </property>
-            <property name="scaledContents">
+            <property name="flat">
              <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="lblSprite2">
+           <widget class="QPushButton" name="lblSprite2">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>90</height>
+             </size>
+            </property>
             <property name="text">
              <string/>
             </property>
-            <property name="scaledContents">
+            <property name="flat">
              <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="lblSprite3">
+           <widget class="QPushButton" name="lblSprite3">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>90</height>
+             </size>
+            </property>
             <property name="text">
              <string/>
             </property>
-            <property name="scaledContents">
+            <property name="flat">
              <bool>true</bool>
             </property>
            </widget>

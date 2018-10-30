@@ -39,6 +39,8 @@
 #include "source/LeLib/limage/limageeffects.h"
 #include "source/dialogimagehelp.h"
 #include "source/qlabellimage.h"
+#include "source/LeLib/limage/limagefactory.h"
+
 #include <QLineEdit>
 namespace Ui {
 class Formimageeditor;
@@ -204,6 +206,8 @@ private slots:
     void on_btnPanRight_clicked();
     void on_btnPanUp_clicked();
     void on_btnPanDown_clicked();
+    void on_lblSprite1_clicked();
+    void on_lblSprite3_clicked();
 };
 
 

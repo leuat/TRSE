@@ -25,8 +25,7 @@
 #include "charsetimage.h"
 #include <QPixmap>
 #include <QKeyEvent>
-
-
+//
 class LImageSprites : public CharsetImage
 {
 public:

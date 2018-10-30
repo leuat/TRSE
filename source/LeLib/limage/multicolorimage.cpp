@@ -748,9 +748,11 @@ QByteArray PixelChar::data()
     return qb;
 }
 
-uchar PixelChar::flipSpriteBit(int cnt)
+uchar PixelChar::flipSpriteBit(int cnt, int m)
 {
     uchar k = p[cnt];
+    if (m==0b1)
+        return k;
     for (int i=0;i<8;i+=2) {
         uchar mask = 0b11 <<i;
         uchar j = (k >> i)&0b11;

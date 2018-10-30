@@ -62,6 +62,8 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
     m_updateThread.SetCurrentImage(&m_work, &m_toolBox, getLabelImage());
 
 
+
+
 }
 
 void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *iniProject) {
@@ -72,6 +74,8 @@ void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *ini
     //ui->lblGrid->m_updateThread = t;
     m_updateThread.m_grid = &m_grid;
     m_grid.CreateGrid(40,25,m_updateThread.m_gridColor,4, 1, QPoint(0,0));
+
+
 
 }
 
@@ -287,6 +291,11 @@ void FormImageEditor::Load(QString filename)
     ui->leHeaders->setText(s);
 
     m_work.m_currentImage->m_image->BuildData(ui->tblData,lst);
+
+
+    if (dynamic_cast<LImageSprites*>(m_work.m_currentImage->m_image)!=nullptr) {
+        Messages::messages.DisplayMessage(Messages::messages.OLD_SPRITE_FILE);
+    }
 
 
 
@@ -637,6 +646,7 @@ void FormImageEditor::on_btnCharsetCopy_clicked()
 
 void FormImageEditor::on_btnCharsetPaste_clicked()
 {
+    m_work.m_currentImage->AddUndo();
     m_work.m_currentImage->m_image->PasteChar();
     Data::data.forceRedraw = true;
     onImageMouseEvent();
@@ -957,18 +967,23 @@ void FormImageEditor::UpdateSpriteImages()
     empty.fill(QColor(0,0,0,0));
     QPixmap pixmapEmpty;
     pixmapEmpty.convertFromImage(empty);
-
+    QIcon emptyIcon(pixmapEmpty);
     int keep = img->m_currencChar;
+    int sx = 40*3;
+    int sy = 32*3;
     for (int i=0;i<3;i++) {
         int k = i-1+img->m_currencChar;
-        QLabel* l = nullptr;
+        QPushButton* l = nullptr;
             if (i==0)
                 l = ui->lblSprite1;
             if (i==2)
                 l = ui->lblSprite3;
 
         if (k==img->m_currencChar) {
-            ui->lblSprite2->setPixmap(m_updateThread.m_pixMapImage.scaled(40, 32, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+            QIcon butt(m_updateThread.m_pixMapImage.scaled(sx, sy, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+
+            ui->lblSprite2->setIcon(butt);
+            ui->lblSprite2->setIconSize(QSize( sx,sy));
         }
         else
 
@@ -980,13 +995,17 @@ void FormImageEditor::UpdateSpriteImages()
                     img->m_currencChar = keep;
                     QPixmap pixmap = QPixmap();
                     pixmap.convertFromImage(m_tmpImage);
-
+                    pixmap = pixmap.scaled(sx, sy, Qt::IgnoreAspectRatio, Qt::FastTransformation);
+                    QIcon ButtonIcon(pixmap);
                         if (l!=nullptr)
-                            l->setPixmap(pixmap.scaled(40, 32, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+//                            l->setPixmap(pixmap.scaled(40, 32, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+                        l->setIcon(ButtonIcon);
+                        l->setIconSize(QSize(sx,sy));
 
                 }
                 else {
-                    l->setPixmap(pixmapEmpty.scaled(40, 32, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+//                    l->setPixmap(pixmapEmpty.scaled(40, 32, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+                    l->setIcon(emptyIcon);
                     m_keepSpriteChar[i] = -1;
                 }
 
@@ -1176,6 +1195,7 @@ void FormImageEditor::on_btnHelpImage_clicked()
 
 void FormImageEditor::on_btnNewSprite_clicked()
 {
+    m_work.m_currentImage->AddUndo();
     LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
     if (img==nullptr)
         return;
@@ -1186,6 +1206,7 @@ void FormImageEditor::on_btnNewSprite_clicked()
 
 void FormImageEditor::on_btnDeleteSprite_clicked()
 {
+    m_work.m_currentImage->AddUndo();
     LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
     if (img==nullptr)
         return;
@@ -1212,6 +1233,7 @@ void FormImageEditor::on_btnCopySprite_clicked()
 
 void FormImageEditor::on_btnPasteSprite_clicked()
 {
+    m_work.m_currentImage->AddUndo();
     m_work.m_currentImage->m_image->PasteChar();
     onImageMouseEvent();
 
@@ -1219,6 +1241,7 @@ void FormImageEditor::on_btnPasteSprite_clicked()
 
 void FormImageEditor::on_btnFlipXSprite_clicked()
 {
+    m_work.m_currentImage->AddUndo();
     m_work.m_currentImage->m_image->FlipVertical();
     onImageMouseEvent();
 
@@ -1226,6 +1249,7 @@ void FormImageEditor::on_btnFlipXSprite_clicked()
 
 void FormImageEditor::on_btnFlipYSprite_clicked()
 {
+    m_work.m_currentImage->AddUndo();
     m_work.m_currentImage->m_image->FlipHorizontal();
     onImageMouseEvent();
 }
@@ -1249,12 +1273,14 @@ void FormImageEditor::on_sliderX_actionTriggered(int action)
 
 void FormImageEditor::on_btnPanLeft_clicked()
 {
+    m_work.m_currentImage->AddUndo();
     m_work.m_currentImage->m_image->Transform(-1,0);
     onImageMouseEvent();
 }
 
 void FormImageEditor::on_btnPanRight_clicked()
 {
+    m_work.m_currentImage->AddUndo();
     m_work.m_currentImage->m_image->Transform(1,0);
     onImageMouseEvent();
 
@@ -1262,6 +1288,7 @@ void FormImageEditor::on_btnPanRight_clicked()
 
 void FormImageEditor::on_btnPanUp_clicked()
 {
+    m_work.m_currentImage->AddUndo();
     m_work.m_currentImage->m_image->Transform(0,-1);
     onImageMouseEvent();
 
@@ -1269,7 +1296,32 @@ void FormImageEditor::on_btnPanUp_clicked()
 
 void FormImageEditor::on_btnPanDown_clicked()
 {
+    m_work.m_currentImage->AddUndo();
     m_work.m_currentImage->m_image->Transform(0,1);
     onImageMouseEvent();
 
+}
+
+void FormImageEditor::on_lblSprite1_clicked()
+{
+    LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
+    if (img==nullptr)
+        return;
+    if (img->m_currencChar>0)  {
+        img->m_currencChar--;
+        onImageMouseEvent();
+
+    }
+}
+
+void FormImageEditor::on_lblSprite3_clicked()
+{
+    LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
+    if (img==nullptr)
+        return;
+    if (img->m_currencChar<img->m_sprites.count()-1)  {
+        img->m_currencChar++;
+        onImageMouseEvent();
+
+    }
 }

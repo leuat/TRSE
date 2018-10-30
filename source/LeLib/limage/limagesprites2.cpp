@@ -5,8 +5,8 @@ LImageSprites2::LImageSprites2(LColorList::Type t) : CharsetImage(t) {
     m_type = LImage::Type::Sprites2;
     m_currencChar=0;
     m_bitMask = 0b11;
-    m_width = 160/4;
-    m_height = 200/4;
+    m_width = 160;
+    m_height = 200;
     m_GUIParams[tabCharset] = "";
     m_GUIParams[tabData] = "";
     m_GUIParams[tabLevels] = "";
@@ -39,7 +39,7 @@ void LImageSprites2::ImportBin(QFile &f)
     QByteArray a = f.readAll();
     int cnt = a.count()/64;
     for (int i=0;i<cnt;i++) {
-        LSprite s(a,i*64);
+        LSprite s(a,i*64,m_bitMask);
         m_sprites.append(s);
         m_currencChar = m_sprites.count()-1;
         for (int j=0;j<4;j++)
@@ -50,7 +50,7 @@ void LImageSprites2::ImportBin(QFile &f)
 void LImageSprites2::ExportBin(QFile &f)
 {
     for (int i=0;i<m_sprites.count();i++) {
-        f.write(m_sprites[i].toQByteArray());
+        f.write(m_sprites[i].toQByteArray(m_bitMask));
     }
 }
 
@@ -108,12 +108,11 @@ unsigned int LImageSprites2::getPixel(int x, int y)
 
 }
 
-QByteArray LSprite::toQByteArray() {
+QByteArray LSprite::toQByteArray(int mask) {
     QByteArray data;
 
 
     QVector<QByteArray> grid;
-    qDebug() << "bw, bh: " << m_blocksWidth << m_blocksHeight;
 
     grid.resize(m_blocksWidth*(m_blocksHeight+1));
 
@@ -144,20 +143,15 @@ QByteArray LSprite::toQByteArray() {
             for (int y=0;y<m_pcHeight;y++) {
                 for (int j=0;j<8;j++) {
                     if (yy<21)
-                        {
-                        a.append(m_data[idx+m_blocksWidth*m_pcWidth*y+0].flipSpriteBit(j));
-                        a.append(m_data[idx+m_blocksWidth*m_pcWidth*y+1].flipSpriteBit(j));
-                        a.append(m_data[idx+m_blocksWidth*m_pcWidth*y+2].flipSpriteBit(j));
-                    }
-                    else {
-                        grid[nxGrid].append(m_data[idx+m_blocksWidth*m_pcWidth*y+0].flipSpriteBit(j));
-                        grid[nxGrid].append(m_data[idx+m_blocksWidth*m_pcWidth*y+1].flipSpriteBit(j));
-                        grid[nxGrid].append(m_data[idx+m_blocksWidth*m_pcWidth*y+2].flipSpriteBit(j));
-                    }
+                        for (int k=0;k<3;k++)
+
+                        a.append(m_data[idx+m_blocksWidth*m_pcWidth*y+k].flipSpriteBit(j,mask));
+                    else
+                        for (int k=0;k<3;k++)
+                        grid[nxGrid].append(m_data[idx+m_blocksWidth*m_pcWidth*y+k].flipSpriteBit(j,mask));
                     yy++;
                 }
             }
-            qDebug() << a.size();
             a.append((char)0);
             data.append(a);
         }
@@ -187,7 +181,12 @@ PixelChar *LSprite::GetSetData(float x, float y, float &ix, float &iy, uchar bit
     if (iy>m_blocksHeight*21)
         return nullptr;
     iy=(int)iy&7;
-    ix=((int)(ix*8.0)/scale)&((8/scale)-1);
+    //ix=((int)(ix*8.0)/scale)&((8/scale)-1);
+    if (scale==1) {
+        ix = (int)(ix*8.0)&7;
+    }
+    else
+        ix=((int)(ix*8.0)/scale)&((8/scale)-1);
     //   int ix = x % (8/m_scale);//- (dx*m_charWidth);
     ix =(int)ix*scale;
     return &m_data[v];
@@ -226,6 +225,7 @@ void LImageSprites2::SaveBin(QFile& file)
     file.write( ( char * )( &m_extraCols[3] ), 1 );
 
     uchar cnt = m_sprites.count();
+    qDebug() << "Saving BIN:" << cnt;
     file.write( ( char * )( &cnt ), 1 );
     for (LSprite& s : m_sprites) {
         uchar sx = s.m_blocksWidth;
@@ -234,6 +234,7 @@ void LImageSprites2::SaveBin(QFile& file)
         file.write( ( char * )( &sx ), 1 );
         file.write( ( char * )( &sy ), 1 );
 //        file.write( ( char * )( &m_data ),  m_charHeight*m_charWidth*12 );
+
 
         QByteArray data;
         for (PixelChar& pc: s.m_data) {
@@ -322,6 +323,11 @@ bool LImageSprites2::KeyPress(QKeyEvent *e)
         m_currencChar-=1;
     if (e->key()==Qt::Key_D)
         m_currencChar+=1;
+
+    if (e->key()==Qt::Key_I) {
+        qDebug() << "W: " << m_width;
+        qDebug() << "H: " << m_height;
+    }
 
     if (m_currencChar>2500) m_currencChar=0;
     if (m_currencChar>=m_sprites.count())
