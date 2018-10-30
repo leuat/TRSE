@@ -21,6 +21,8 @@ public:
 
     }
 
+    QByteArray toQByteArray();
+
     LSprite(QByteArray& a, int index) {
         int c = index;
         Initialize(1,1);

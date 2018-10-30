@@ -1232,7 +1232,7 @@ void FormImageEditor::on_btnFlipYSprite_clicked()
 
 void FormImageEditor::on_sliderX_actionTriggered(int action)
 {
-    int v = ui->sliderX->value();
+/*    int v = ui->sliderX->value();
     if (v>60) {
         m_work.m_currentImage->m_image->Transform(1,0);
 //        ui->sliderX->setValue(50);
@@ -1243,6 +1243,33 @@ void FormImageEditor::on_sliderX_actionTriggered(int action)
   //      ui->sliderX->setValue(50);
 
     }
+    onImageMouseEvent();
+*/
+}
+
+void FormImageEditor::on_btnPanLeft_clicked()
+{
+    m_work.m_currentImage->m_image->Transform(-1,0);
+    onImageMouseEvent();
+}
+
+void FormImageEditor::on_btnPanRight_clicked()
+{
+    m_work.m_currentImage->m_image->Transform(1,0);
+    onImageMouseEvent();
+
+}
+
+void FormImageEditor::on_btnPanUp_clicked()
+{
+    m_work.m_currentImage->m_image->Transform(0,-1);
+    onImageMouseEvent();
+
+}
+
+void FormImageEditor::on_btnPanDown_clicked()
+{
+    m_work.m_currentImage->m_image->Transform(0,1);
     onImageMouseEvent();
 
 }

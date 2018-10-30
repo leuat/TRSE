@@ -49,7 +49,9 @@ void LImageSprites2::ImportBin(QFile &f)
 
 void LImageSprites2::ExportBin(QFile &f)
 {
-
+    for (int i=0;i<m_sprites.count();i++) {
+        f.write(m_sprites[i].toQByteArray());
+    }
 }
 
 void LImageSprites2::CopyFrom(LImage *img)
@@ -106,6 +108,69 @@ unsigned int LImageSprites2::getPixel(int x, int y)
 
 }
 
+QByteArray LSprite::toQByteArray() {
+    QByteArray data;
+
+
+    QVector<QByteArray> grid;
+    qDebug() << "bw, bh: " << m_blocksWidth << m_blocksHeight;
+
+    grid.resize(m_blocksWidth*(m_blocksHeight+1));
+
+    for (int j=0;j<m_blocksHeight;j++) {
+        for (int i=0;i<m_blocksWidth;i++) {
+            QByteArray a;
+
+
+
+/*            000 000 000 000
+            000 000 000 000
+            000 000 000 000
+
+            000 000 000 000
+            000 000 000 000
+            000 000 000 000
+
+  */
+
+
+            int idx = (i*3+j*m_blocksWidth*3*3);
+//            qDebug() << idx;
+            a.append(grid[i+j*m_blocksWidth]); // Append current grid
+            int nxGrid = i+(j+1)*m_blocksWidth;
+
+            int yy=a.count()/3;
+
+            for (int y=0;y<m_pcHeight;y++) {
+                for (int j=0;j<8;j++) {
+                    if (yy<21)
+                        {
+                        a.append(m_data[idx+m_blocksWidth*m_pcWidth*y+0].flipSpriteBit(j));
+                        a.append(m_data[idx+m_blocksWidth*m_pcWidth*y+1].flipSpriteBit(j));
+                        a.append(m_data[idx+m_blocksWidth*m_pcWidth*y+2].flipSpriteBit(j));
+                    }
+                    else {
+                        grid[nxGrid].append(m_data[idx+m_blocksWidth*m_pcWidth*y+0].flipSpriteBit(j));
+                        grid[nxGrid].append(m_data[idx+m_blocksWidth*m_pcWidth*y+1].flipSpriteBit(j));
+                        grid[nxGrid].append(m_data[idx+m_blocksWidth*m_pcWidth*y+2].flipSpriteBit(j));
+                    }
+                    yy++;
+                }
+            }
+            qDebug() << a.size();
+            a.append((char)0);
+            data.append(a);
+        }
+    }
+    data.resize(m_blocksHeight*m_blocksWidth*64);
+    for (char& c: data) {
+        c = PixelChar::reverse(c);
+    }
+
+
+    return data;
+}
+
 PixelChar *LSprite::GetSetData(float x, float y, float &ix, float &iy, uchar bitMask)
 {
     ix = x*m_blocksWidth*3.0f;
@@ -123,7 +188,7 @@ PixelChar *LSprite::GetSetData(float x, float y, float &ix, float &iy, uchar bit
         return nullptr;
     iy=(int)iy&7;
     ix=((int)(ix*8.0)/scale)&((8/scale)-1);
- //   int ix = x % (8/m_scale);//- (dx*m_charWidth);
+    //   int ix = x % (8/m_scale);//- (dx*m_charWidth);
     ix =(int)ix*scale;
     return &m_data[v];
 
@@ -283,7 +348,7 @@ void LImageSprites2::PasteChar()
         m_sprites[m_currencChar]=m_copy;
 
 }
-
+// Transforms x/y, flips
 void LImageSprites2::MegaTransform(int flip, int ix, int iy)
 {
     LSprite s = m_sprites[m_currencChar];
@@ -294,23 +359,33 @@ void LImageSprites2::MegaTransform(int flip, int ix, int iy)
     for (int i=0;i<4;i++)
         SetColor(m_extraCols[i],i,n);
 
+
+
+
+    float ddx = 0.5;
+    float ddy = 0.5;
+    if (flip==3) {
+        if (ix<0) {
+           ddx=-0.05;
+        }
+        if (iy<0)
+           ddy*=-1;
+    }
+
     for (float y=0;y<wy;y++) {
         for (float x=0;x<wx;x++) {
-            float i = ((x+0.15)/(wx));
-            float j = (y/(wy));
+
+            float i = ((x+ddx)/(wx));
+            float j = ((y+ddy)/(wy));
+
+            float ii = ((x+ix+ddx)/(wx));
+            float jj = ((y+iy+ddy)/(wy));
 
 
-            float dx=ix/wx;
-            float dy =iy/wy;
-
-            float ii = i+dx;
-            float jj = j+dy;
-
-            if (jj>1) jj-=1;
+            if (jj>=1) jj-=1;
             if (jj<0) jj+=1;
-            if (ii>1) ii-=1;
+            if (ii>=1) ii-=1;
             if (ii<0) ii+=1;
-
 
             unsigned int u = s.getPixel(ii,jj,m_bitMask);
             if (flip==1)

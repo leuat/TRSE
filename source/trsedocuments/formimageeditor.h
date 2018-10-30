@@ -200,6 +200,10 @@ private slots:
     void on_btnFlipXSprite_clicked();
     void on_btnFlipYSprite_clicked();
     void on_sliderX_actionTriggered(int action);
+    void on_btnPanLeft_clicked();
+    void on_btnPanRight_clicked();
+    void on_btnPanUp_clicked();
+    void on_btnPanDown_clicked();
 };
 
 
