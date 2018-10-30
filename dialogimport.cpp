@@ -38,15 +38,26 @@ DialogImport::~DialogImport()
     delete ui;
 }
 
-void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType)
+void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType, LImage* img)
 {
     m_imageType = imageType;
 
     m_image = LImageFactory::Create(m_imageType, colorType);
 
+
+    LImageVIC20* vic = dynamic_cast<LImageVIC20*>(img);
+    if (vic!=nullptr) {
+        LImageVIC20* i = dynamic_cast<LImageVIC20*>(m_image);
+        i->SetCharSize(vic->m_charWidth, vic->m_charHeight);
+        i->m_width/=2;
+
+    }
+
     m_image->m_colorList.CreateUI(ui->layoutColors,0);
     m_image->m_colorList.FillComboBox(ui->cmbForeground);
     m_image->m_colorList.FillComboBox(ui->cmbBackground);
+    m_image->m_colorList.FillComboBox(ui->cmbMC1);
+    m_image->m_colorList.FillComboBox(ui->cmbMC2);
 
     //QObject::connect(this, LColorList::colorValueChanged, UpdateOutput);
     connect(&m_image->m_colorList, SIGNAL(colorValueChanged()), this, SLOT(UpdateOutput()));
@@ -62,12 +73,18 @@ void DialogImport::Convert()
     m_output.Release();
     m_output.m_qImage = m_work.Resize(m_image->m_width, m_image->m_height, m_image->m_colorList, m_contrast, m_shift, m_hsv, m_saturation, m_scale);
     m_image->Clear();
+    SetColors();
     m_image->fromQImage(m_output.m_qImage, m_image->m_colorList);
+
+
+
 
     if (m_output.m_qImage==nullptr)
          m_output.m_qImage = new QImage(m_image->m_width, m_image->m_height, QImage::Format_ARGB32);
 
-    m_image->ToQImage(m_image->m_colorList,m_output.m_qImage,1, QPoint(0,0));
+
+    m_image->ToQImage(m_image->m_colorList,m_output.m_qImage,1, QPoint(0.0,0.0));
+
 
 
 }
@@ -83,7 +100,10 @@ void DialogImport::UpdateOutput()
 {
     Convert();
     QPixmap p;
+//    QPixmap p = m_pixMapImage.scaled(QSize(grid.width(),grid.height()),  Qt::IgnoreAspectRatio, Qt::FastTransformation);
+
     p.convertFromImage(*m_output.m_qImage);
+    p = p.scaled(320,200);
     ui->lblTwo->setPixmap(p);
 }
 
@@ -97,7 +117,21 @@ void DialogImport::on_cmbForeground_activated(int index)
 void DialogImport::on_cmbBackground_activated(int index)
 {
     m_image->setBackground(index);
+ //   m_image->setC
     UpdateOutput();
+}
+
+void DialogImport::SetColors()
+{
+    int a = ui->cmbMC1->currentIndex();
+    int b = ui->cmbMC2->currentIndex();
+    int back = ui->cmbBackground->currentIndex();
+
+
+    m_image->SetColor(back, 0);
+    m_image->SetColor(a, 1);
+    m_image->SetColor(b, 2);
+
 }
 
 
@@ -158,3 +192,16 @@ void DialogImport::on_hsBlur_sliderMoved(int position)
 }
 
 
+
+void DialogImport::on_cmbMC1_activated(int index)
+{
+    SetColors();
+    UpdateOutput();
+
+}
+
+void DialogImport::on_cmbMC2_activated(int index)
+{
+    SetColors();
+    UpdateOutput();
+}

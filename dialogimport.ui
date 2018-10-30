@@ -32,7 +32,7 @@
   <widget class="QComboBox" name="cmbBackground">
    <property name="geometry">
     <rect>
-     <x>960</x>
+     <x>860</x>
      <y>90</y>
      <width>61</width>
      <height>41</height>
@@ -341,6 +341,26 @@
    </property>
    <property name="text">
     <string>Import</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="cmbMC1">
+   <property name="geometry">
+    <rect>
+     <x>980</x>
+     <y>90</y>
+     <width>61</width>
+     <height>41</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="cmbMC2">
+   <property name="geometry">
+    <rect>
+     <x>1060</x>
+     <y>90</y>
+     <width>61</width>
+     <height>41</height>
+    </rect>
    </property>
   </widget>
  </widget>

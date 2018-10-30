@@ -567,10 +567,11 @@ void FormImageEditor::on_lstImages_clicked(const QModelIndex &index)
 void FormImageEditor::on_btnImport_clicked()
 {
     DialogImport* di = new DialogImport(this);
-    di->Initialize(m_work.m_currentImage->m_imageType->type, m_work.m_currentImage->m_image->m_colorList.m_type);
+    di->Initialize(m_work.m_currentImage->m_imageType->type, m_work.m_currentImage->m_image->m_colorList.m_type, m_work.m_currentImage->m_image);
     di->exec();
     if (di->m_ok) {
         m_work.m_currentImage->m_image->CopyFrom(di->m_image);
+        FillCMBColors();
         Data::data.redrawOutput = true;
     }
     onImageMouseEvent();
@@ -1227,4 +1228,21 @@ void FormImageEditor::on_btnFlipYSprite_clicked()
 {
     m_work.m_currentImage->m_image->FlipHorizontal();
     onImageMouseEvent();
+}
+
+void FormImageEditor::on_sliderX_actionTriggered(int action)
+{
+    int v = ui->sliderX->value();
+    if (v>60) {
+        m_work.m_currentImage->m_image->Transform(1,0);
+//        ui->sliderX->setValue(50);
+
+    }
+    if (v>40) {
+        m_work.m_currentImage->m_image->Transform(-1,0);
+  //      ui->sliderX->setValue(50);
+
+    }
+    onImageMouseEvent();
+
 }

@@ -122,7 +122,7 @@ void LImageVIC20::setPixel(int x, int y, unsigned int color)
     int dx = x/(8/m_scale);
     int dy = y/8;
     int i = dx + m_charWidth*dy;
-    if (i>m_charHeight*m_charWidth || i>=192*2)
+    if (i>m_charHeight*m_charWidth || i>=192*2 || i<0)
         return;
 
     CharsetImage::setPixel(x,y,color);

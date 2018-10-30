@@ -876,13 +876,18 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage* img, float zoom, QPointF
 {
 //    return;
 //#pragma omp parallel for
+
+
     for (int i=0;i<m_width;i++)
         for (int j=0;j<m_height;j++) {
 
             float xp = floor(((i-center.x())*zoom)+ center.x());
             float yp = floor(((j-center.y())*zoom) + center.y());
 
-            unsigned int col = getPixel(xp,yp);
+
+            unsigned int col = 0;
+            if (xp>=0 && xp<m_width && yp>=0 && yp<m_height)
+                col = getPixel(xp,yp);
             // Has transparency?
             QColor c=QColor(0,0,0);
             if (col>=1000) {

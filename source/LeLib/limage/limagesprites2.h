@@ -98,8 +98,11 @@ public:
    void CopyChar() override;
    void PasteChar() override;
 
+   void MegaTransform(int flip, int x, int y);
+
    virtual void FlipHorizontal() override;
    virtual void FlipVertical() override;
+   virtual void Transform(int x, int y) override;
 
 
 };

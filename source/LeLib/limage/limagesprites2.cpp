@@ -284,7 +284,7 @@ void LImageSprites2::PasteChar()
 
 }
 
-void LImageSprites2::FlipHorizontal()
+void LImageSprites2::MegaTransform(int flip, int ix, int iy)
 {
     LSprite s = m_sprites[m_currencChar];
     float wx = (s.m_blocksWidth*s.m_pcWidth*8);
@@ -296,10 +296,31 @@ void LImageSprites2::FlipHorizontal()
 
     for (float y=0;y<wy;y++) {
         for (float x=0;x<wx;x++) {
-            float i = (x/(wx));
+            float i = ((x+0.15)/(wx));
             float j = (y/(wy));
-            unsigned int u = s.getPixel(i,j,m_bitMask);
-            n.setPixel(i,1-j,u, m_bitMask);
+
+
+            float dx=ix/wx;
+            float dy =iy/wy;
+
+            float ii = i+dx;
+            float jj = j+dy;
+
+            if (jj>1) jj-=1;
+            if (jj<0) jj+=1;
+            if (ii>1) ii-=1;
+            if (ii<0) ii+=1;
+
+
+            unsigned int u = s.getPixel(ii,jj,m_bitMask);
+            if (flip==1)
+                n.setPixel(i,1-j,u, m_bitMask);
+            if (flip==0)
+                n.setPixel(1-i,j,u, m_bitMask);
+            if (flip==3) {
+                n.setPixel(i,j,u, m_bitMask);
+
+            }
         }
 
     }
@@ -308,27 +329,20 @@ void LImageSprites2::FlipHorizontal()
 
 }
 
+void LImageSprites2::FlipHorizontal()
+{
+    MegaTransform(1,0,0);
+}
+
 void LImageSprites2::FlipVertical()
 {
-    LSprite s = m_sprites[m_currencChar];
-    float wx = (s.m_blocksWidth*s.m_pcWidth*8);
-    float wy = (int)((s.m_blocksHeight*s.m_pcHeight*8.0));
-    LSprite n;
-    n.Initialize(s.m_blocksWidth,s.m_blocksHeight);
-    for (int i=0;i<4;i++)
-        SetColor(m_extraCols[i],i,n);
+    MegaTransform(0,0,0);
 
-    for (float y=0;y<wy;y++) {
-        for (float x=0;x<wx;x++) {
-            float i = ((x+0.5)/(wx));
-            float j = (y/(wy));
-            unsigned int u = s.getPixel(i,j,m_bitMask);
-            n.setPixel(1-i,j,u, m_bitMask);
-        }
+}
 
-    }
-
-    m_sprites[m_currencChar] = n;
+void LImageSprites2::Transform(int x, int y)
+{
+    MegaTransform(3,x,y);
 
 }
 

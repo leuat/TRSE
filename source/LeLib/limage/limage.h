@@ -119,6 +119,8 @@ public:
     virtual void FlipHorizontal() {}
     virtual void FlipVertical() {}
 
+    virtual void Transform(int x, int y) { }
+
     virtual void Fix() {} // Used to fix problems. Really? Yeah. Character level corruptions etc.
 
     virtual void Initialize(int width, int height) = 0;

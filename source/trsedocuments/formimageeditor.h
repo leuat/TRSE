@@ -199,6 +199,7 @@ private slots:
     void on_btnPasteSprite_clicked();
     void on_btnFlipXSprite_clicked();
     void on_btnFlipYSprite_clicked();
+    void on_sliderX_actionTriggered(int action);
 };
 
 

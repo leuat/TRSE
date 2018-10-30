@@ -38,7 +38,7 @@ class DialogImport : public QDialog
 public:
     explicit DialogImport(QWidget *parent = 0);
     ~DialogImport();
-    void Initialize(LImage::Type imageType, LColorList::Type colorType);
+    void Initialize(LImage::Type imageType, LColorList::Type colorType, LImage* img);
 
 
     float m_contrast = 1;
@@ -79,7 +79,7 @@ private slots:
 
     void on_cmbBackground_activated(int index);
 
-
+    void SetColors();
 
 
 private slots:
@@ -90,6 +90,10 @@ private slots:
     void slotOk();
 
 
+
+    void on_cmbMC1_activated(int index);
+
+    void on_cmbMC2_activated(int index);
 
 private:
     Ui::DialogImport *ui;
