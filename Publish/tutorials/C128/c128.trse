@@ -1,4 +1,3 @@
-project_path = /Users/nicolaasgroeneboom/work/code/TRSE/Publish/tutorials/C128/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fe

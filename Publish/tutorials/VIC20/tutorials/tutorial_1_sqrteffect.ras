@@ -1,13 +1,5 @@
 program Tutorial_1_sqrteffect;
 
-/*
-	Note: TRSE does not yet support the Vic-20 natively, so most of the methods
-	that are c64-specific (rasters, sprites etc) are disabled in VIC 20 mode.
-
-	We hope to add more native support (built-in methods) for the VIC later on!
-
-
-*/
 // Place to dump generated data.
 @define dataloc $1600
 

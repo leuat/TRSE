@@ -2,8 +2,8 @@ program Tutorial7;
 var
 	xscroll, x,y, val, i: byte;
 	textshift, wobbleShift: byte;
-	text: string =("               WHY AM I DOING THIS WHEN I SHOULD BE SLEEPING        I WANT SMOOTH HARDWARE SCROLLING IRL  ",
-	           "     THIS SCOLLING DOESN'T END PROPERLY ");
+	text: string =("                  I WANT SMOOTH HARDWARE SCROLLING IRL      ",
+	           "     THIS SCOLLING DOESN'T END PROPERLY     ");
 
 	time: byte;
 	colorIndex:byte;
