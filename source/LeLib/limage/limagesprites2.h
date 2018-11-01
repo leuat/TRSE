@@ -40,6 +40,12 @@ public:
 
     }
 
+    void FillColor(int color, int idx) {
+        for (int i=0;i<m_data.count();i++) {
+            m_data[i].c[idx] = color;
+        }
+    }
+
     void Initialize(int bw, int bh) {
         m_blocksHeight = bh;
         m_blocksWidth = bw;
@@ -105,6 +111,9 @@ public:
    virtual void FlipHorizontal() override;
    virtual void FlipVertical() override;
    virtual void Transform(int x, int y) override;
+
+
+   void ShiftSprites(int i);
 
 
 };

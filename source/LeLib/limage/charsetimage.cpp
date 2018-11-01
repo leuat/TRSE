@@ -153,22 +153,31 @@ unsigned int CharsetImage::getPixel(int x, int y)
         return MultiColorImage::getPixel(x,y);
 
 
+
     int bp = 8;
     if (m_currentMode==CHARSET2x2)
         bp=16;
 
+
+
     if (m_currentMode == CHARSET1x1 || m_currentMode == CHARSET2x2) {
         int i = x/320.0*bp;
         int j = y/200.0*bp;
-        int shiftx = (m_currencChar*8/m_scale)%320;
-        int shifty = (m_currencChar/(int)m_charHeight)*8;
+        int shiftx = (m_currencChar*8)%320;
+        int shifty = (m_currencChar/(int)m_charWidth)*8;
+
+
+        shiftx/=m_scale;
+
         return MultiColorImage::getPixel(i+shiftx,j+shifty);
     }
     if (m_currentMode == CHARSET2x2_REPEAT) {
         int i = x/320.0*16*3;
         int j = y/200.0*16*3;
-        int shiftx = (m_currencChar*8/m_scale)%320;
-        int shifty = (m_currencChar/(int)m_charHeight)*8;
+        int shiftx = (m_currencChar*8)%320;
+        int shifty = (m_currencChar/(int)m_charWidth)*8;
+
+        shiftx/=m_scale;
 
         int xx = i%8+shiftx;
         int yy = j%16+shifty;
@@ -313,8 +322,10 @@ void CharsetImage::setPixel(int x, int y, unsigned int color)
         bp=16;
 
     int xx,yy;
-    int shiftx = (m_currencChar*8/m_scale)%320;
-    int shifty = (m_currencChar/(int)m_charHeight)*8;
+    int shiftx = (m_currencChar*8)%320;
+    int shifty = (m_currencChar/(int)m_charWidth)*8;
+    shiftx/=m_scale;
+
     if (m_currentMode == CHARSET1x1 || m_currentMode == CHARSET2x2) {
         int i = x/320.0*bp;
         int j = y/200.0*bp;

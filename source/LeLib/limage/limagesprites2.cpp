@@ -89,6 +89,15 @@ void LImageSprites2::setPixel(int x, int y, unsigned int color)
     float fx = x/(float)m_width;
     float fy = y/(float)m_height;
 
+    bool fillColor = true;
+    for (int i=0;i<3;i++) {
+        if (m_extraCols[i]==color)
+            fillColor = false;
+    }
+    if (fillColor)
+        m_sprites[m_currencChar].FillColor(color,3);
+
+
 
     m_sprites[m_currencChar].setPixel(fx,fy,color,m_bitMask);
 
@@ -296,8 +305,10 @@ void LImageSprites2::SetColor(uchar col, uchar idx)
         m_background = col;
 
     if (m_currencChar>=0)
+
     for (int i=0;i<m_sprites[m_currencChar].m_data.count();i++)
         m_sprites[m_currencChar].m_data[i].c[idx] = col;
+
 
     m_extraCols[idx] = col;
 }
@@ -350,8 +361,11 @@ void LImageSprites2::CopyChar()
 
 void LImageSprites2::PasteChar()
 {
-    if (m_copy.m_data.count()!=0)
-        m_sprites[m_currencChar]=m_copy;
+    if (m_copy.m_data.count()==0)
+        return;
+
+//    if (m_sprites[m_currencChar].m_blocksHeight == m_copy.m_blocksHeight)
+    m_sprites[m_currencChar]=m_copy;
 
 }
 // Transforms x/y, flips
@@ -424,6 +438,26 @@ void LImageSprites2::FlipVertical()
 void LImageSprites2::Transform(int x, int y)
 {
     MegaTransform(3,x,y);
+
+}
+
+void LImageSprites2::ShiftSprites(int i)
+{
+    int nxt = m_currencChar+i;
+ //   qDebug() << "Cur: " << m_currencChar;
+   // qDebug() << "next: " << nxt;
+    if (nxt<0)
+        return;
+    if (nxt>=m_sprites.count())
+        return;
+    if (m_sprites.count()<=1)
+        return;
+
+    LSprite tmp = m_sprites[m_currencChar];
+    m_sprites[m_currencChar] = m_sprites[nxt];
+    m_sprites[nxt] = tmp;
+
+    m_currencChar = nxt;
 
 }
 

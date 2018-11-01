@@ -36,7 +36,7 @@ void Toolbox::Initialize(QGridLayout* ly)
     m_items.append(new Dither("",":/resources/images/brush_dither.png"));
     m_items.append(new Filler("",":/resources/images/brush_fill.png"));
     m_items.append(new Line("",":/resources/images/brush_line.png"));
-    m_items.append(new CopyStamp("CS",""));
+    m_items.append(new CopyStamp("Copy",""));
     m_items.append(new RotateAround("Rotate",""));
 
 
@@ -73,7 +73,7 @@ void Toolbox::BuildGUI(QGridLayout *ly)
 
         m_buttons.append(b);
         col++;
-        if (col==2) {
+        if (col==1) {
             col=0;
             row++;
         }

@@ -46,11 +46,14 @@ OrgasmLine Orgasm::LexLine(int i) {
     OrgasmLine l;
     QString line = m_lines[i];
     // First: Do we have alabel?
+//    line = line.replace("//",";");
     line = line.replace("\t", " ");
     line = line.replace("dc.b", ".byte");
     line = line.replace("dc.w", ".word");
     line = line.replace(".dc ", ".byte ");
     line = line.split(";")[0];
+    if (!line.toLower().contains("incbin"))
+        line = line.split("//")[0];
 
     l.m_orgLine = line;
 
@@ -103,7 +106,7 @@ OrgasmLine Orgasm::LexLine(int i) {
     }
 
 
-    if (line.simplified().startsWith(";") || line.simplified()=="") {
+    if (line.simplified().startsWith(";") || line.simplified()=="" || line.simplified().startsWith("//")) {
         if (l.m_label=="")
             l.m_ignore = true;
         else l.m_type = OrgasmLine::LABELONLY;

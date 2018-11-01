@@ -208,6 +208,8 @@ private slots:
     void on_btnPanDown_clicked();
     void on_lblSprite1_clicked();
     void on_lblSprite3_clicked();
+    void on_btnMoveSpriteLeft_clicked();
+    void on_btnMoveSpriteRight_clicked();
 };
 
 

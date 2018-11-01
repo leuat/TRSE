@@ -795,23 +795,23 @@ void FormImageEditor::PrepareImageTypeGUI()
     int idx=0;
 //    qDebug() << m_work.m_currentImage->m_image->m_GUIParams;
     if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabCharset]=="") {
-        ui->tabMain->removeTab(3);
+        ui->tabMain->removeTab(1);
         idx++;
     }
     if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabSprites]=="") {
-        ui->tabMain->removeTab(4-idx);
+        ui->tabMain->removeTab(2-idx);
         idx++;
     }
     if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabLevels]=="") {
-        ui->tabMain->removeTab(5-idx);
+        ui->tabMain->removeTab(3-idx);
         idx++;
     }
     if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabData]==""){
-            ui->tabMain->removeTab(6-idx);
+            ui->tabMain->removeTab(4-idx);
             idx++;
         }
     if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabEffects]==""){
-            ui->tabMain->removeTab(7-idx);
+            ui->tabMain->removeTab(5-idx);
             idx++;
         }
 
@@ -968,9 +968,10 @@ void FormImageEditor::UpdateSpriteImages()
     QPixmap pixmapEmpty;
     pixmapEmpty.convertFromImage(empty);
     QIcon emptyIcon(pixmapEmpty);
+
     int keep = img->m_currencChar;
-    int sx = 40*3;
-    int sy = 32*3;
+    int sx = 40*2.5;
+    int sy = 32*2.5;
     for (int i=0;i<3;i++) {
         int k = i-1+img->m_currencChar;
         QPushButton* l = nullptr;
@@ -979,9 +980,14 @@ void FormImageEditor::UpdateSpriteImages()
             if (i==2)
                 l = ui->lblSprite3;
 
-        if (k==img->m_currencChar) {
-            QIcon butt(m_updateThread.m_pixMapImage.scaled(sx, sy, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+        if (k<0) {
+            l->setIcon(emptyIcon);
+            m_keepSpriteChar[i] = -1;
+        }
 
+
+        if (k == img->m_currencChar) {
+            QIcon butt(m_updateThread.m_pixMapImage.scaled(sx, sy, Qt::IgnoreAspectRatio, Qt::FastTransformation));
             ui->lblSprite2->setIcon(butt);
             ui->lblSprite2->setIconSize(QSize( sx,sy));
         }
@@ -1088,6 +1094,7 @@ void FormImageEditor::on_lstCharMap_currentItemChanged(QTableWidgetItem *current
     int idx = current->data(Qt::UserRole).toInt();
     m_work.m_currentImage->m_image->SetCurrentType(LImage::WriteType::Character);
    // Data::data.currentColor = idx;
+//    qDebug() << idx << Util::numToHex(idx);
     m_work.m_currentImage->m_image->setCurrentChar(idx);
 
     Data::data.Redraw();
@@ -1324,4 +1331,33 @@ void FormImageEditor::on_lblSprite3_clicked()
         onImageMouseEvent();
 
     }
+}
+
+void FormImageEditor::on_btnMoveSpriteLeft_clicked()
+{
+    LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
+    if (img==nullptr)
+        return;
+
+    img->ShiftSprites(-1);
+
+    for (int i=0;i<3;i++)
+        m_keepSpriteChar[i]=-1;
+
+
+
+    onImageMouseEvent();
+}
+
+void FormImageEditor::on_btnMoveSpriteRight_clicked()
+{
+    LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
+    if (img==nullptr)
+        return;
+    img->ShiftSprites(1);
+
+    for (int i=0;i<3;i++)
+        m_keepSpriteChar[i]=-1;
+
+    onImageMouseEvent();
 }
