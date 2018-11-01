@@ -222,7 +222,7 @@ void WorkerThread::UpdateImage(LImage * mc)
     if (m_work->m_currentImage->m_image==nullptr)
         return;
 
-        mc->ToQImage(m_work->m_currentImage->m_image->m_colorList, m_tmpImage, m_zoom, m_zoomCenter);
+        mc->ToQImage(m_work->m_currentImage->m_image->m_colorList, *m_tmpImage, m_zoom, m_zoomCenter);
    // m_tmpImage->fill(QColor(255,0,0));
     m_pixMapImage.convertFromImage(*m_tmpImage);
 

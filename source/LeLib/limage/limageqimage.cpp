@@ -265,7 +265,7 @@ QImage *LImageQImage::Blur(float blurRadius)
 
 }
 
-void LImageQImage::ToQImage(LColorList& lst, QImage* img, float zoom, QPointF center)
+void LImageQImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center)
 {
 #pragma omp parallel for
     for (int i=0;i<m_width;i++)
@@ -277,7 +277,7 @@ void LImageQImage::ToQImage(LColorList& lst, QImage* img, float zoom, QPointF ce
             unsigned int col = getPixel(xp,yp) % 16;
 
 //            img->setPixel(i,j,QRgb(col));
-            img->setPixel(i,j,lst.get(col%16).color.rgb());
+            img.setPixel(i,j,lst.get(col%16).color.rgb());
         }
     //return img;
 }

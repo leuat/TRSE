@@ -45,7 +45,7 @@ public:
 
     void LoadQImage(QString filename);
 
-    virtual void ToQImage(LColorList& lst, QImage* img, float zoom, QPointF center) override;
+    virtual void ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center) override;
     void fromQImage(QImage* img, LColorList& lst) override;
 
 

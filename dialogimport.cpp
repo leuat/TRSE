@@ -83,7 +83,7 @@ void DialogImport::Convert()
          m_output.m_qImage = new QImage(m_image->m_width, m_image->m_height, QImage::Format_ARGB32);
 
 
-    m_image->ToQImage(m_image->m_colorList,m_output.m_qImage,1, QPoint(0.0,0.0));
+    m_image->ToQImage(m_image->m_colorList,*m_output.m_qImage,1, QPoint(0.0,0.0));
 
 
 

@@ -86,10 +86,17 @@ void LImageSprites2::setPixel(int x, int y, unsigned int color)
     if (m_currencChar>=m_sprites.count())
             return;
 
+
+/*    LSprite& s = m_sprites[m_currencChar];
+    CharsetImage::setMultiColor(s.m_header[s.HEADER_MULTICOLOR]==(char)1);
+*/
     float fx = x/(float)m_width;
     float fy = y/(float)m_height;
 
     bool fillColor = true;
+
+
+
     for (int i=0;i<3;i++) {
         if (m_extraCols[i]==color)
             fillColor = false;
@@ -109,6 +116,10 @@ unsigned int LImageSprites2::getPixel(int x, int y)
         return 0;
     if (m_currencChar>=m_sprites.count())
             return 0 ;
+
+
+    LSprite& s = m_sprites[m_currencChar];
+    CharsetImage::setMultiColor(s.m_header[s.HEADER_MULTICOLOR]==(char)1);
 
     float fx = x/(float)m_width;
     float fy = y/(float)m_height;
@@ -240,10 +251,11 @@ void LImageSprites2::SaveBin(QFile& file)
         uchar sx = s.m_blocksWidth;
         uchar sy = s.m_blocksHeight;
 
+
         file.write( ( char * )( &sx ), 1 );
         file.write( ( char * )( &sy ), 1 );
 //        file.write( ( char * )( &m_data ),  m_charHeight*m_charWidth*12 );
-
+        file.write(s.m_header);
 
         QByteArray data;
         for (PixelChar& pc: s.m_data) {
@@ -276,6 +288,7 @@ void LImageSprites2::LoadBin(QFile& file)
 
         LSprite s;
         s.Initialize(sx,sy);
+        s.m_header = file.read(s.HEADER_SIZE);
 
         QByteArray data = file.read(sx*sy*s.m_pcHeight*s.m_pcWidth*12);
         int c=0;
@@ -368,6 +381,25 @@ void LImageSprites2::PasteChar()
     m_sprites[m_currencChar]=m_copy;
 
 }
+
+void LImageSprites2::ToQImage(LColorList &lst, QImage &img, float zoom, QPointF center)
+{
+    LSprite& s = m_sprites[m_currencChar];
+    CharsetImage::setMultiColor(s.m_header[s.HEADER_MULTICOLOR]==(char)1);
+
+    img = img.scaled(m_width,m_height);
+
+    MultiColorImage::ToQImage(lst,img,zoom,center);
+}
+
+void LImageSprites2::ToggleSpriteMulticolor()
+{
+    LSprite& s = m_sprites[m_currencChar];
+
+    s.m_header[s.HEADER_MULTICOLOR]=(s.m_header[s.HEADER_MULTICOLOR]+1)&1;
+
+
+}
 // Transforms x/y, flips
 void LImageSprites2::MegaTransform(int flip, int ix, int iy)
 {
@@ -376,6 +408,7 @@ void LImageSprites2::MegaTransform(int flip, int ix, int iy)
     float wy = (int)((s.m_blocksHeight*s.m_pcHeight*8.0));
     LSprite n;
     n.Initialize(s.m_blocksWidth,s.m_blocksHeight);
+    n.m_header = s.m_header;
     for (int i=0;i<4;i++)
         SetColor(m_extraCols[i],i,n);
 

@@ -15,10 +15,15 @@ public:
     int m_pcWidth = 3;
     int m_pcHeight = 3;
 
+    int HEADER_SIZE = 16;
+    int HEADER_MULTICOLOR = 0;
+
+    QByteArray m_header;
+
     QVector<PixelChar> m_data;
 
     LSprite() {
-
+        m_header.resize(HEADER_SIZE);
     }
 
     QByteArray toQByteArray(int mask);
@@ -50,6 +55,7 @@ public:
         m_blocksHeight = bh;
         m_blocksWidth = bw;
         m_data.resize(bh*bw*m_pcWidth*m_pcHeight);
+        m_header.resize(HEADER_SIZE);
     }
     PixelChar* GetSetData(float x, float y, float& ix, float& iy, uchar bitMask);
 
@@ -105,7 +111,16 @@ public:
 
    void CopyChar() override;
    void PasteChar() override;
+   void setMultiColor(bool doSet) override {
 
+   }
+
+
+
+   void ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center) override;
+
+
+   void ToggleSpriteMulticolor();
    void MegaTransform(int flip, int x, int y);
 
    virtual void FlipHorizontal() override;

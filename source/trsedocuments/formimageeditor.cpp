@@ -997,7 +997,7 @@ void FormImageEditor::UpdateSpriteImages()
                 if ((k>=0) && (k<img->m_sprites.count())) {
                     m_keepSpriteChar[i] = k;
                     img->m_currencChar = k;
-                    img->ToQImage(img->m_colorList, &m_tmpImage, 1, QPoint(0.5, 0.5));
+                    img->ToQImage(img->m_colorList, m_tmpImage, 1, QPoint(0.5, 0.5));
                     img->m_currencChar = keep;
                     QPixmap pixmap = QPixmap();
                     pixmap.convertFromImage(m_tmpImage);
@@ -1360,4 +1360,15 @@ void FormImageEditor::on_btnMoveSpriteRight_clicked()
         m_keepSpriteChar[i]=-1;
 
     onImageMouseEvent();
+}
+
+void FormImageEditor::on_btnSpriteMulticolor_clicked()
+{
+    LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
+    if (img==nullptr)
+        return;
+
+    img->ToggleSpriteMulticolor();
+    onImageMouseEvent();
+
 }

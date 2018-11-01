@@ -874,7 +874,7 @@ uchar PixelChar::VIC20Swap(uchar c)
 }
 
 
-void MultiColorImage::ToQImage(LColorList& lst, QImage* img, float zoom, QPointF center)
+void MultiColorImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center)
 {
 //    return;
 //#pragma omp parallel for
@@ -904,7 +904,7 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage* img, float zoom, QPointF
             QRgb rgbCol = (scol).rgb();
             //for (int k=0;k<m_scale;k++)
  //               img->setPixel(m_scale*i + k,j,rgbCol);
-                img->setPixel(i,j,rgbCol);
+                img.setPixel(i,j,rgbCol);
         }
     //return img;
 }
