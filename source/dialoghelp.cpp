@@ -252,6 +252,9 @@ void DialogHelp::on_leSearch_textChanged(const QString &arg1)
 void DialogHelp::on_lstItems_currentRowChanged(int currentRow)
 {
 
+    if (ui->lstItems->item(currentRow)==nullptr)
+        return;
+
     int idx = ui->lstItems->item(currentRow)->data(Qt::UserRole).toInt();
     LoadItem(m_currentItems[idx]);
 

@@ -53,7 +53,7 @@ void Messages::InitMessages()
     m_messages[NO_DASM] = Message(NO_DASM, Message::Error, "You need to download the Dasm assembler (http://dasm-dillon.sourceforge.net/) and specify the location of the dasm executable in the TRSE settings panel.");
     m_messages[NO_EXOMIZER] = Message(NO_EXOMIZER, Message::Error, "In order to use Exomizer, you need to download the exe file and  specify the location of the exomizer executablein the TRSE settings panel.");
     m_messages[NO_EMULATOR] = Message(NO_EMULATOR, Message::Error,
-                                      "You need to download a c64 emulator (such as Vice) and specify the location in the TRSE settings panel.");
+                                      "You need to download an emulator for your system (c64, nes, vic20, c128) (such as Vice) and specify the location in the TRSE settings panel.");
 
     m_messages[NO_PROJECT] = Message(NO_PROJECT, Message::Error,
                                       "You need to open a project in order to create a new file.");

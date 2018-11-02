@@ -303,13 +303,16 @@ void MainWindow::SetupFileList()
 
 void MainWindow::RefreshFileList()
 {
-    if (m_currentPath=="")
-        return;
+//    qDebug() << m_currentPath << rand()%100;
+  //  if (m_currentPath=="")
+    //    return;
     if (fileSystemModel!=nullptr)
         delete fileSystemModel;
     fileSystemModel = new CustomFileSystemModel(this);
+
+
     QString rootPath= getProjectPath();
-    if (rootPath=="") {
+    if (m_currentPath=="") {
         ui->treeFiles->setModel(nullptr);
             return;
 
@@ -399,6 +402,10 @@ void MainWindow::UpdateRecentProjects()
 
 void MainWindow::SaveAs()
 {
+    if (m_currentDoc==nullptr)
+        return;
+    if (m_currentPath=="")
+        return;
     QString ext = m_currentDoc->m_fileExtension;
 
     QFileDialog dialog;
@@ -472,10 +479,10 @@ void MainWindow::RemoveTab(int idx, bool save)
 
 void MainWindow::CloseAll()
 {
-    qDebug() << "Close all";
     while (ui->tabMain->count()!=1) {
         RemoveTab(1, false);
     }
+
 }
 
 QString MainWindow::getProjectPath()
@@ -879,6 +886,7 @@ void MainWindow::on_actionClose_current_project_triggered()
 {
     CloseAll();
     m_currentProject.Close();
+    m_currentPath = "";
     RefreshFileList();
 }
 
@@ -970,8 +978,8 @@ void MainWindow::SetDarkPalette() {
     darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
     darkPalette.setColor(QPalette::HighlightedText, Qt::black);
 
-
     QApplication::setPalette(darkPalette);
+    qApp->setStyleSheet("QToolTip { color: #ffE0C0; background-color: #000000; border: 0px; }");
 
 
 }

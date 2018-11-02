@@ -127,7 +127,7 @@ void DialogTRSESettings::on_pushButton_clicked()
 void DialogTRSESettings::on_btnEmulator_clicked()
 {
     QString filename = QFileDialog::getOpenFileName(this,
-        tr("Emulator location"), m_ini->getString("project_path"), "*");
+        tr("C64 Emulator location"), m_ini->getString("project_path"), "*");
     if (filename!="")
        ui->leEmulator->setText(filename);
 
