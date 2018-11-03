@@ -18,4 +18,3 @@ post_optimizer_passldx = 1
 data_header_charsets/charset_8x8.flf = 0
 vic_memory_config = 24k
 open_files = 0
-project_path = /home/leuat/code/TRSE/Publish/tutorials/VIC20/tutorials/
