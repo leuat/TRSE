@@ -24,7 +24,7 @@
 #include <QApplication>
 #include <QStyleFactory>
 
-/*void ConvertPerlin(QString input, QString out, float div) {
+void ConvertPerlin(QString input, QString out, float div) {
     QImage img;
     img.load(input);
 
@@ -33,14 +33,15 @@
     int xh = img.height()/div;
     a.resize(xw*xh);
 
-    qDebug() << "Converting file: " << xw;
+    qDebug() << xw;
+//    qDebug() << "Converting file: " << xw;
 
     for (int x=0;x<xw;x++)
         for (int y=0;y<xh;y++) {
 
             a[x + y*xw]=QColor(img.pixel(x*div, y*div)).red();
-            if (rand()%100>98)
-                qDebug() << a[x + y*xw];
+//            if (rand()%100>98)
+  //              qDebug() << a[x + y*xw];
         }
 
     QFile f(out);
@@ -48,7 +49,7 @@
     f.write(a);
     f.close();
 }
-*/
+
 
 
 int main(int argc, char *argv[])
@@ -66,8 +67,8 @@ int main(int argc, char *argv[])
 
 
 
-//    ConvertPerlin("/home/leuat/Desktop/Perlin.png", "/home/leuat/code/TRSE/Publish/Pluttifer/data/perlin16.dat", 8);
-
+//    ConvertPerlin("/home/leuat/Pictures/Perlin.jpg", "/home/leuat/Dropbox/TRSE/DesertPlanet/data/perlin40.dat", 12.5);
+  //  exit(1);
 
 
     MainWindow w;

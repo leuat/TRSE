@@ -128,6 +128,11 @@ public:
    virtual void Transform(int x, int y) override;
 
 
+/*   void GetWidth() override {
+       return m_sprites[m_currencChar].
+   }
+  */
+
    void ShiftSprites(int i);
 
 

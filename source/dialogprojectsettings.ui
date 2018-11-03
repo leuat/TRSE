@@ -405,7 +405,7 @@ p, li { white-space: pre-wrap; }
               <string>These are the zeropages that will be used when declaring &quot;pointers&quot;</string>
              </property>
              <property name="text">
-              <string>Zeropages:</string>
+              <string>Pointer zeropages</string>
              </property>
             </widget>
            </item>

@@ -245,7 +245,7 @@ void LImageSprites2::SaveBin(QFile& file)
     file.write( ( char * )( &m_extraCols[3] ), 1 );
 
     uchar cnt = m_sprites.count();
-    qDebug() << "Saving BIN:" << cnt;
+
     file.write( ( char * )( &cnt ), 1 );
     for (LSprite& s : m_sprites) {
         uchar sx = s.m_blocksWidth;

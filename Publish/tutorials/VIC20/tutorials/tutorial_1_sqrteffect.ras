@@ -31,6 +31,7 @@ var
 	Fills @dataLoc with 25x22 circles & 7
 */
 
+// Calculates a bunch of circles with center 11,13
 procedure Calculate();
 begin
 	cp:=@dataloc;
@@ -73,8 +74,7 @@ end;
 
 begin
 	DisableVIC20IRQ();
-
-	poke(SCREEN_BG_COLOR,0,%00001000);
+	SCREEN_BG_COLOR := 8;
 	time:=0;
 	
 	Calculate();

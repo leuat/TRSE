@@ -52,6 +52,15 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
         i->m_width/=2;
 
     }
+    LImageSprites2* sprite = dynamic_cast<LImageSprites2*>(img);
+
+    if (sprite!=nullptr) {
+        m_image->CopyFrom(sprite);
+
+        qDebug() << QString::number(sprite->m_sprites[sprite->m_currencChar].m_header[0]);
+//        qDebug() << "BLOCKS: " << sprite->m_sprites[sprite->m_currencChar].m_blocksWidth;
+    }
+
 
     m_image->m_colorList.CreateUI(ui->layoutColors,0);
     m_image->m_colorList.FillComboBox(ui->cmbForeground);
@@ -72,6 +81,8 @@ void DialogImport::Convert()
 //    qDebug()<< "Type" << m_imageType;
     m_output.Release();
     m_output.m_qImage = m_work.Resize(m_image->m_width, m_image->m_height, m_image->m_colorList, m_contrast, m_shift, m_hsv, m_saturation, m_scale);
+  //  qDebug() << m_image->m_width;
+    //exit(1);
     m_image->Clear();
     SetColors();
     m_image->fromQImage(m_output.m_qImage, m_image->m_colorList);

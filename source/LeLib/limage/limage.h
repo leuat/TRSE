@@ -99,6 +99,13 @@ public:
     unsigned int m_currencChar;
 
 
+    virtual int GetWidth() {
+        return m_width;
+    }
+    virtual int GetHeight() {
+        return m_height;
+    }
+
 
 
     virtual void setCurrentChar(int i) {m_currencChar = i;}
