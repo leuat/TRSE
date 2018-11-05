@@ -27,10 +27,10 @@
 NodeProcedureDecl::NodeProcedureDecl(Token t, QString m):Node() {
     m_op = t;
     m_procName = m;
-    m_isInterrupt = false;
+    m_type=0;
 }
 
-NodeProcedureDecl::NodeProcedureDecl(Token t, QString m, QVector<Node *> paramDecl, Node *block, bool isInterrupt) : Node() {
+NodeProcedureDecl::NodeProcedureDecl(Token t, QString m, QVector<Node *> paramDecl, Node *block, int type) : Node() {
     m_op = t;
 
     m_procName = m;
@@ -40,7 +40,7 @@ NodeProcedureDecl::NodeProcedureDecl(Token t, QString m, QVector<Node *> paramDe
     for (int i=0;i<m_paramDecl.count();i++)
         b->m_decl.append(m_paramDecl[i]);
 
-    m_isInterrupt = isInterrupt;
+    m_type=type;
 
 }
 
@@ -139,7 +139,7 @@ QString NodeProcedureDecl::Build(Assembler *as)
         m_block->Build(as);
     }
     if (!isInitFunction) {
-        if (!m_isInterrupt) {
+        if (m_type==0) {
             as->Asm("rts");
         }
         else as->Asm("rti");

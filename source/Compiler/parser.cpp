@@ -83,6 +83,7 @@ void Parser::InitBuiltinFunctions()
     InitBuiltinFunction(QStringList()<< "*", "init8x8div");
     InitBuiltinFunction(QStringList()<< "*", "init16x8div");
     InitBuiltinFunction(QStringList()<< "rand", "initrandom","init_random_call");
+    InitBuiltinFunction(QStringList()<< "rasterirqwedge" , "init_wedge");
     InitBuiltinFunction(QStringList()<< "decrunch", "init_decrunch");
     InitBuiltinFunction(QStringList()<< "sine", "initsinetable", "initsine_calculate");
     InitBuiltinFunction(QStringList()<< "log2_table" << "atan2", "initlog2");
@@ -776,7 +777,7 @@ Node *Parser::Block(bool useOwnSymTab)
         return nullptr;
 */
 
-    if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT)
+    if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type==TokenType::WEDGE)
         return nullptr;
     return new NodeBlock(m_currentToken, Declarations(useOwnSymTab), CompoundStatement(), useOwnSymTab);
 }
@@ -922,8 +923,11 @@ QVector<Node*> Parser::Declarations(bool isMain)
 
 
 */
-    while (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT) {
-        bool isInterrupt= (m_currentToken.m_type==TokenType::PROCEDURE)?false:true;
+    while (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type == TokenType::WEDGE) {
+        int type=0;
+        if (m_currentToken.m_type == TokenType::INTERRUPT) type=1;
+        if (m_currentToken.m_type == TokenType::WEDGE) type=2;
+     //   bool isInterrupt= (m_currentToken.m_type==TokenType::PROCEDURE)?false:true;
         Token tok = m_currentToken;
         Eat(m_currentToken.m_type);
         QString procName = m_currentToken.m_value;
@@ -942,7 +946,7 @@ QVector<Node*> Parser::Declarations(bool isMain)
         Node* block = Block(true);
 //        if (block==nullptr)
   //          qDebug() << "Procedure decl: " << procName;
-        Node* procDecl = new NodeProcedureDecl(tok, procName, paramDecl, block, isInterrupt);
+        Node* procDecl = new NodeProcedureDecl(tok, procName, paramDecl, block, type);
         //decl.append(procDecl);
         if (block!=nullptr)
             Eat(TokenType::SEMI);

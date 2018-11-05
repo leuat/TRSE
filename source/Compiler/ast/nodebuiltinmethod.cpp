@@ -93,6 +93,18 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
 
     }
 
+    if (Command("init_wedge")) {
+        as->IncludeFile(":resources/code/init_wedge_regular.ras");
+        as->IncludeFile(":resources/code/init_wedge_bad.ras");
+
+    }
+
+    if (Command("Nop")) {
+        NodeNumber* num = dynamic_cast<NodeNumber*>(m_params[0]);
+        for (int i=0;i<num->m_val;i++)
+            as->Asm("nop");
+    }
+
     if (Command("KernalInterrupt"))
         as->Asm("jmp $ea81        ; return to kernal interrupt routine");
 
@@ -227,9 +239,15 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     if (Command("startirq")) {
         StartIRQ(as);
     }
-    if (Command("closeirq")) {
-        CloseIRQ(as);
-    }
+    if (Command("startirqwedge"))
+        StartIRQWedge(as);
+
+    if (Command("closeirq"))
+        CloseIRQ(as,false);
+
+
+    if (Command("closeirqwedge"))
+        CloseIRQ(as,true);
 
     if (Command("poke"))
         Poke(as);
@@ -278,7 +296,7 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     if (Command("hidebordery")) {
         as->Comment("Hide y border");
         as->Asm("lda $d011");
-        as->Asm("and #$f7  ; change bit 4");
+        as->Asm("and #$77  ; change bit 4");
         as->Asm("sta $d011");
 
     }
@@ -292,7 +310,7 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
     if (Command("settextmode")) {
         as->Comment("Regular text mode ");
         as->Asm("lda $D011");
-        as->Asm("and #%11011111");
+        as->Asm("and #%01011111");
         as->Asm("sta $D011");
     }
     if (Command("setbank")) {
@@ -468,6 +486,10 @@ QString NodeBuiltinMethod::Build(Assembler *as) {
 
     if (Command("rasterirq"))
         RasterIRQ(as);
+
+    if (Command("rasterirqwedge"))
+        RasterIRQWedge(as);
+
 
     if (Command("Set2MhzMode")) {
         as->Asm("lda $D030");
@@ -1412,16 +1434,24 @@ void NodeBuiltinMethod::ScrollX(Assembler *as)
 
 }
 
+
+
 void NodeBuiltinMethod::ScrollY(Assembler *as)
 {
 //    LoadVar(as, 0);
+
+
    // as->Asm("dec $d019");
+
+    as->Comment("; Scrolly ");
+
     as->Asm("lda $d011  ");
-    as->Asm("and #$F8"); // 8 = 1000
+    as->Asm("and #$78"); // 8 = 1000
     //as->Asm("clc");
     as->Term("ora ");
     m_params[0]->Build(as);
     as->Term();
+    as->Asm("and #$7F"); // 8 = 1000
     as->Asm("sta $d011");
 
 }
@@ -1875,10 +1905,48 @@ void NodeBuiltinMethod::StartIRQ(Assembler *as)
 
 }
 
-void NodeBuiltinMethod::CloseIRQ(Assembler *as)
+void NodeBuiltinMethod::StartIRQWedge(Assembler *as)
+{
+    QString lbl1 = as->NewLabel("startirqwedge_lbl1");
+    QString lbl2 = as->NewLabel("startirqwedge_lbl2");
+
+    NodeNumber* num = dynamic_cast<NodeNumber*>(m_params[0]);
+
+    as->Asm("txs");
+
+
+
+    as->Asm("ldx #"+Util::numToHex(num->m_val));
+
+    as->Label(lbl1);
+
+    as->Asm("dex");
+
+    as->Asm("bne "+lbl1);
+
+    as->Asm("bit $ea");
+
+
+    as->Asm("lda $d012");
+
+    as->Asm("cmp $d012");
+
+    as->Asm("beq "+lbl2);
+
+    as->Label(lbl2);
+
+    as->PopLabel("startirqwedge_lbl1");
+    as->PopLabel("startirqwedge_lbl2");
+
+}
+
+void NodeBuiltinMethod::CloseIRQ(Assembler *as, bool isWedge)
 {
     as->Comment("CloseIRQ");
     if (Syntax::s.m_currentSystem == Syntax::C64) {
+
+    if (isWedge)
+        as->Asm("asl $D019");
 
     as->Asm("pla");
     as->Asm("tay");
@@ -2468,18 +2536,54 @@ void NodeBuiltinMethod::RasterIRQ(Assembler *as)
         as->Asm("sta $0315");
 
     }
-/*    as->Comment("Set raster interrupt pointing to : " +name);
-    as->Asm("lda #$01    ; Set Interrupt Request Mask...");
-    as->Asm("sta $d01a   ; ...we want IRQ by Rasterbeam");
-    as->Asm("lda #<" + name);
-    as->Asm("ldx #>"+ name);
-    as->Asm("sta $314    ; store in $314/$315");
-    as->Asm("stx $315");
-    LoadVar(as,1);
-    as->Asm("sta $d012");
-*/
 
 }
+
+
+
+void NodeBuiltinMethod::RasterIRQWedge(Assembler *as)
+{
+    NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_params[0]);
+    QString name = addr->m_procedure->m_procName;
+
+    NodeNumber* num = dynamic_cast<NodeNumber*>(m_params[2]);
+
+    as->Comment("RasterIRQ Wedge: Hook a wedge");
+
+    as->ClearTerm();
+    m_params[1]->Build(as);
+    as->Term();
+
+    if (num->m_val==0) {
+//        as->Asm("lda #$(adresstosignalIRQ)
+        as->Asm("sta $d012");
+
+        as->Asm("lda #<"+name);
+        as->Asm("sta IRQWedgeStartRegular+18");
+        as->Asm("lda #>"+name);
+        as->Asm("sta IRQWedgeStartRegular+23");
+
+
+        as->Asm("lda #<IRQWedgeStartRegular");
+        as->Asm("sta $fffe");
+        as->Asm("lda #>IRQWedgeStartRegular");
+        as->Asm("sta $ffff");
+
+
+    }
+    else
+    {
+            ErrorHandler::e.Error("Error! Kernal wedge not implemented. Nag the developer (leuat).", m_currentLineNumber);
+/*        as->Asm("sta $d012");
+        as->Asm("lda #<"+name);
+        as->Asm("sta $0314");
+        as->Asm("lda #>"+name);
+        as->Asm("sta $0315");
+*/
+    }
+
+}
+
 
 void NodeBuiltinMethod::ClearScreen(Assembler *as)
 {

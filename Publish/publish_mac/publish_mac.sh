@@ -3,7 +3,7 @@ mkdir trse
 cp -r ../../release/trse.app trse/
 cp -r  ../source/* trse/trse.app/	
 cp -r ../tutorials/RasLib trse/RasLib/
-cp -r ../tutorials/Vic20 trse/Vic20
+cp -r ../tutorials/VIC20 trse/VIC20
 cp -r ../tutorials/C64 trse/C64
 cp -r ../tutorials/C128 trse/C128
 cd trse/trse.app

@@ -34,14 +34,14 @@ class NodeProcedureDecl : public Node {
 public:
     QString m_procName;
     QVector<Node*> m_paramDecl;
-    bool m_isInterrupt;
+    int m_type;
     Node* m_block = nullptr;
 
 
     NodeProcedureDecl(Token t, QString m);
 
 
-    NodeProcedureDecl(Token t, QString m, QVector<Node*> paramDecl, Node* block, bool isInterrupt=false);
+    NodeProcedureDecl(Token t, QString m, QVector<Node*> paramDecl, Node* block, int type);
 
     void Delete() override;
 

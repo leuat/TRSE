@@ -43,6 +43,8 @@ m; CopyHalfScreen; C64, C128, VIC20, PET, NES ; a,a,b,b,n
 m; CopyFullScreen; C64, C128, VIC20, PET, NES ; 	a,a
 
 
+m; Nop; C128, C64, VIC20, PET,NES; n
+
 m; SetMemoryConfig ; C128 ; n,n,n,n,n
 
 
@@ -126,12 +128,15 @@ m; Keypressed; C64, C128, VIC20; b
 m; NmiIRQ; C64, C128, VIC20, PET ; p
 m; EnableRasterIRQ; C64, C128;
 m; StartIRQ; C64, C128; b
+m; StartIRQWedge; C64, C128; b
 m; StartRasterChain; C64, C128; p,b,n
 m; CloseIRQ; C64, C128;
+m; CloseIRQWedge; C64, C128;
 m; EnableIRQ; C64, C128;
 m; PreventIRQ; C64, C128;
 m; DisableCIAInterruptS; C64, C128;
 m; RasterIRQ; C64, C128 ; p,b,n
+m; RasterIRQWedge; C64, C128 ; p,b,n
 m; ReturnInterrupt; C64, C128;
 
 
@@ -283,7 +288,7 @@ r; STARTBLOCK; C64, C128, VIC20, PET, NES
 r; ENDBLOCK; C64, C128, VIC20, PET, NES
 r; IGNOREMETHOD; C64, C128, VIC20, PET, NES
 r; ERROR; C64, C128, VIC20, PET, NES
-
+r; WEDGE; C64, C128
 
 
 

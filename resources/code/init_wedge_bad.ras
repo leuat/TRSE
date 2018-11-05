@@ -1,0 +1,106 @@
+IRQWedgeStartBad
+
+	; StartIRQ
+	pha
+	txa
+	pha
+	tya
+	pha
+	asl $d019
+	; RasterIRQ : Hook a procedure
+	; 8 bit binop
+	; Add/sub where right value is constant number
+	lda y
+	clc
+	adc #2
+	 ; end add / sub var with constant
+	
+	sta $d012
+	lda #00
+	sta $fffe
+	lda #00
+	sta $ffff
+	; 
+	; ****** Inline assembler section
+
+	    tsx
+    
+	
+	asl $d019
+	cli
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	; 
+	; ****** Inline assembler section
+ bit $ea 
+	
+
+	rti

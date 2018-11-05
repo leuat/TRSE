@@ -95,6 +95,7 @@ public:
     void DisableInterrupts(Assembler* as);
 //    void EnableInterrupts(Assembler* as);
     void RasterIRQ(Assembler* as);
+    void RasterIRQWedge(Assembler* as);
     void ClearScreen(Assembler* as);
     void WaitForRaster(Assembler* as);
     void WaitNoRasterLines(Assembler* as);
@@ -124,7 +125,8 @@ public:
     void SetMemoryConfig(Assembler* as);
     void EnableRasterIRQ(Assembler* as);
     void StartIRQ(Assembler* as);
-    void CloseIRQ(Assembler* as);
+    void StartIRQWedge(Assembler* as);
+    void CloseIRQ(Assembler* as, bool isWedge);
     void DisableNMI(Assembler* as);
     void KeyPressed(Assembler* as);
     void Wait(Assembler* as);

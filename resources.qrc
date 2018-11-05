@@ -75,5 +75,7 @@
         <file>resources/text/help/m/fld.rtf</file>
         <file>resources/text/help/m/fill.rtf</file>
         <file>resources/text/help/m/enableieq.rtf</file>
+        <file>resources/code/init_wedge_regular.ras</file>
+        <file>resources/code/init_wedge_bad.ras</file>
     </qresource>
 </RCC>
