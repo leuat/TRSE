@@ -2558,18 +2558,51 @@ void NodeBuiltinMethod::RasterIRQWedge(Assembler *as)
 //        as->Asm("lda #$(adresstosignalIRQ)
         as->Asm("sta $d012");
 
+        QString lbl1 = as->NewLabel("rasterirqwedgelbl1");
+        QString lbl2 = as->NewLabel("rasterirqwedgelbl2");
+
+        //  0000 0011
+        //  0000 1011
+        as->Asm("and #%00001011");
+        as->Asm("cmp #%0011");
+        as->Asm("beq " + lbl1);
+        as->Asm("cmp #%1011");
+        as->Asm("beq " + lbl1);
+        as->Asm("adc #1");
+        as->Asm("cmp #%0011");
+        as->Asm("beq " + lbl1);
+        as->Asm("cmp #%1011");
+        as->Asm("beq " + lbl1);
+
         as->Asm("lda #<"+name);
         as->Asm("sta IRQWedgeStartRegular+18");
         as->Asm("lda #>"+name);
         as->Asm("sta IRQWedgeStartRegular+23");
 
-
         as->Asm("lda #<IRQWedgeStartRegular");
         as->Asm("sta $fffe");
         as->Asm("lda #>IRQWedgeStartRegular");
         as->Asm("sta $ffff");
+        as->Asm("jmp "+lbl2);
+
+        as->Label(lbl1); // BAD BAD BAAAAD
+
+        as->Asm("lda #<"+name);
+        as->Asm("sta IRQWedgeStartBad+18");
+        as->Asm("lda #>"+name);
+        as->Asm("sta IRQWedgeStartBad+23");
+
+        as->Asm("lda #<IRQWedgeStartBad");
+        as->Asm("sta $fffe");
+        as->Asm("lda #>IRQWedgeStartBad");
+        as->Asm("sta $ffff");
+//        as->Asm("jmp "+lbl2);
 
 
+        as->Label(lbl2);
+
+        as->PopLabel("rasterirqwedgelbl1");
+        as->PopLabel("rasterirqwedgelbl2");
     }
     else
     {

@@ -18,7 +18,7 @@ IRQWedgeStartRegular
 	sta $d012
 	lda #00 ; lo ; 17
 	sta $fffe
-	lda #00 ; hi  ; 22
+	lda #02 ; hi  ; 22
 	sta $ffff
 	; 
 	; ****** Inline assembler section
@@ -48,5 +48,7 @@ IRQWedgeStartRegular
 	nop
 	nop
 	nop
+
+
 
 	rti
