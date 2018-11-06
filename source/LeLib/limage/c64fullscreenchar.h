@@ -24,16 +24,42 @@
 
 #include "multicolorimage.h"
 #include "charsetimage.h"
+#include <QKeyEvent>
+
+class C64Screen {
+public:
+    QByteArray m_rawData, m_rawColors, m_data;
+
+    void Init(int x, int y, int d) {
+        m_rawColors.resize(x*y);
+        m_rawData.resize(x*y);
+        m_data.resize(d);
+        Clear();
+    }
+
+    void Clear() {
+    for (int i=0;i<m_rawData.count();i++)
+        m_rawData[i] = 0x20;
+
+    for (int i=0;i<m_rawData.count();i++)
+        m_rawColors[i] = 0x2;
+    }
+
+};
+
 
 class C64FullScreenChar: public MultiColorImage
 {
 public:
-    QByteArray m_rawData, m_rawColors;
-    bool m_isMultiColor = false;
 
-    int m_charWidth = 40;
+    QVector<C64Screen> m_screens;
+
+//    QByteArray m_rawData, m_rawColors;
+  //  bool m_isMultiColor = false;
+
+/*    int m_charWidth = 40;
     int m_charHeight = 25;
-
+*/
 
     PixelChar m_color;
     C64FullScreenChar(LColorList::Type t);
@@ -51,12 +77,48 @@ public:
     void ExportBin(QFile& f) override;
 //    void FromRaw(QByteArray& arr);
 //    void ToRaw(QByteArray& arr);
-    void BuildImage();
+    QString GetCurrentDataString() override {
+        if (m_current<0) return "";
+        QString curChar =  "  Character : " + Util::numToHex(m_currencChar);
+        QString screen = "  Screen : " + QString::number(m_current) + "/" +
+                QString::number(m_screens.count()) ;
+        return curChar +  screen;
+    }
+
+
+
+    //    virtual void setMultiColor(bool doSet) override {}
+
     CharsetImage* getCharset() override { return m_charset; }
+    virtual int getContainerCount() override {return m_screens.count();}
+
+
+    bool KeyPress(QKeyEvent *e) override;
+
+    void AddNew(int, int) override {
+        C64Screen s;
+        s.Init(m_charWidth,m_charHeight, 16);
+        m_screens.append(s);
+        m_current = m_screens.count()-1;
+    }
+
+    void Prev() override {
+        if (m_current>0)
+        m_current--;
+    }
+
+    void Next() override {
+        if (m_current<m_screens.count()-1)
+        m_current++;
+    }
 
     void setPixel(int x, int y, unsigned int color) override;
     unsigned int getPixel(int x, int y) override;
     void CopyFrom(LImage* mc) override;
+    void Delete() override;
+
+
 };
+
 
 #endif // CHARSETIMAGE_H

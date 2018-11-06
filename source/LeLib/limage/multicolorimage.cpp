@@ -422,11 +422,13 @@ void MultiColorImage::LoadCharset(QString file)
         return;
     }
 
-    if (file.toLower().endsWith(".bin")) {
+    if (file.toLower().endsWith(".bin") || file.toLower().endsWith(".rom")  ) {
         QFile f(file);
         f.open(QIODevice::ReadOnly);
         m_charset = new CharsetImage(m_colorList.m_type);
         m_charset->ImportBin(f);
+        if (file.toLower().endsWith(".rom"))
+            m_charset->setMultiColor(false);
         f.close();
     }
     if (file.toLower().endsWith(".flf")) {

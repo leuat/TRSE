@@ -77,5 +77,6 @@
         <file>resources/text/help/m/enableieq.rtf</file>
         <file>resources/code/init_wedge_regular.ras</file>
         <file>resources/code/init_wedge_bad.ras</file>
+        <file>resources/character.rom</file>
     </qresource>
 </RCC>

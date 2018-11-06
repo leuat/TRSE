@@ -87,6 +87,8 @@ void FormImageEditor::onImageMouseEvent()
     UpdateImage();
     if (dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image)!=nullptr)
         UpdateSpriteImages();
+    if (dynamic_cast<C64FullScreenChar*>(m_work.m_currentImage->m_image)!=nullptr)
+        UpdateSpriteImages();
 //    updateCharSet();
 
 }
@@ -802,10 +804,15 @@ void FormImageEditor::PrepareImageTypeGUI()
         ui->tabMain->removeTab(2-idx);
         idx++;
     }
+    else ui->tabMain->setTabText(2-idx,m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabSprites]);
+
     if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabLevels]=="") {
         ui->tabMain->removeTab(3-idx);
         idx++;
     }
+
+
+
     if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabData]==""){
             ui->tabMain->removeTab(4-idx);
             idx++;
@@ -952,13 +959,13 @@ void FormImageEditor::GenericImportImage(QString type, QString ext)
 
 void FormImageEditor::UpdateSpriteImages()
 {
-    LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
+/*    LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
     if (img==nullptr)
         return;
-
+*/
 //    ui->lblSprite1->setPixmap(m_updateThread.m_pixMapImage.scaled(320, 320, Qt::IgnoreAspectRatio, Qt::FastTransformation));
 //    QImage m_tmpImage = QImage(img->m_width,img->m_height,QImage::Format_ARGB32);
-    QImage m_tmpImage = QImage(img->m_width,img->m_height,QImage::Format_ARGB32);
+    QImage m_tmpImage = QImage(m_work.m_currentImage->m_image->m_width,m_work.m_currentImage->m_image->m_height,QImage::Format_ARGB32);
 
     if (m_keepSpriteChar.count()==0)
         m_keepSpriteChar.resize(3);
@@ -969,11 +976,14 @@ void FormImageEditor::UpdateSpriteImages()
     pixmapEmpty.convertFromImage(empty);
     QIcon emptyIcon(pixmapEmpty);
 
-    int keep = img->m_currencChar;
+
+
+
+    int keep = m_work.m_currentImage->m_image->m_current;
     int sx = 40*2.5;
     int sy = 32*2.5;
     for (int i=0;i<3;i++) {
-        int k = i-1+img->m_currencChar;
+        int k = i-1+m_work.m_currentImage->m_image->m_current;
         QPushButton* l = nullptr;
             if (i==0)
                 l = ui->lblSprite1;
@@ -986,7 +996,7 @@ void FormImageEditor::UpdateSpriteImages()
         }
 
 
-        if (k == img->m_currencChar) {
+        if (k == m_work.m_currentImage->m_image->m_current) {
             QIcon butt(m_updateThread.m_pixMapImage.scaled(sx, sy, Qt::IgnoreAspectRatio, Qt::FastTransformation));
             ui->lblSprite2->setIcon(butt);
             ui->lblSprite2->setIconSize(QSize( sx,sy));
@@ -994,11 +1004,11 @@ void FormImageEditor::UpdateSpriteImages()
         else
 
             if (m_keepSpriteChar[i]!=k) {
-                if ((k>=0) && (k<img->m_sprites.count())) {
+                if ((k>=0) && (k<m_work.m_currentImage->m_image->getContainerCount())) {
                     m_keepSpriteChar[i] = k;
-                    img->m_currencChar = k;
-                    img->ToQImage(img->m_colorList, m_tmpImage, 1, QPoint(0.5, 0.5));
-                    img->m_currencChar = keep;
+                    m_work.m_currentImage->m_image->m_current = k;
+                    m_work.m_currentImage->m_image->ToQImage(m_work.m_currentImage->m_image->m_colorList, m_tmpImage, 1, QPoint(0.5, 0.5));
+                    m_work.m_currentImage->m_image->m_current = keep;
                     QPixmap pixmap = QPixmap();
                     pixmap.convertFromImage(m_tmpImage);
                     pixmap = pixmap.scaled(sx, sy, Qt::IgnoreAspectRatio, Qt::FastTransformation);
@@ -1068,11 +1078,6 @@ void FormImageEditor::on_tabMain_currentChanged(int index)
 void FormImageEditor::on_btnLoadCharmap_clicked()
 {
 
-    MultiColorImage* mci = dynamic_cast<MultiColorImage*>(m_work.m_currentImage->m_image);
-
-    if (mci==nullptr)
-        return;
-
 
     QString fileName = QFileDialog::getOpenFileName(this,
         tr("Open Character map"), m_projectIniFile->getString("project_path"), tr("Binary Files (*.bin, *.flf )"));
@@ -1081,7 +1086,7 @@ void FormImageEditor::on_btnLoadCharmap_clicked()
         return;
 
 
-    mci->LoadCharset(fileName);
+    m_work.m_currentImage->m_image->LoadCharset(fileName);
     m_projectIniFile->setString("charset_"+m_currentFileShort, fileName);
     m_projectIniFile->Save();
     updateCharSet();
@@ -1203,10 +1208,7 @@ void FormImageEditor::on_btnHelpImage_clicked()
 void FormImageEditor::on_btnNewSprite_clicked()
 {
     m_work.m_currentImage->AddUndo();
-    LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
-    if (img==nullptr)
-        return;
-    img->AddSprite(ui->cmbSpriteX->currentText().toInt(), ui->cmbSpriteY->currentText().toInt());
+    m_work.m_currentImage->m_image->AddNew(ui->cmbSpriteX->currentText().toInt(), ui->cmbSpriteY->currentText().toInt());
     onImageMouseEvent();
 
 }
@@ -1214,20 +1216,13 @@ void FormImageEditor::on_btnNewSprite_clicked()
 void FormImageEditor::on_btnDeleteSprite_clicked()
 {
     m_work.m_currentImage->AddUndo();
-    LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
-    if (img==nullptr)
-        return;
-    if (img->m_sprites.count()>1) {
 
-        if (img->m_currencChar>=img->m_sprites.count())
-            img->m_currencChar = img->m_sprites.count()-1;
-        img->m_sprites.remove(img->m_currencChar);
-        if (img->m_currencChar>=img->m_sprites.count())
-            img->m_currencChar = img->m_sprites.count()-1;
-    }
+    m_work.m_currentImage->m_image->Delete();
+
     onImageMouseEvent();
     for (int i=0;i<3;i++)
         m_keepSpriteChar[i]=-1;
+
     UpdateSpriteImages();
 
 }
@@ -1311,26 +1306,15 @@ void FormImageEditor::on_btnPanDown_clicked()
 
 void FormImageEditor::on_lblSprite1_clicked()
 {
-    LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
-    if (img==nullptr)
-        return;
-    if (img->m_currencChar>0)  {
-        img->m_currencChar--;
-        onImageMouseEvent();
+    m_work.m_currentImage->m_image->Prev();
+    onImageMouseEvent();
 
-    }
 }
 
 void FormImageEditor::on_lblSprite3_clicked()
 {
-    LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
-    if (img==nullptr)
-        return;
-    if (img->m_currencChar<img->m_sprites.count()-1)  {
-        img->m_currencChar++;
-        onImageMouseEvent();
-
-    }
+    m_work.m_currentImage->m_image->Next();
+    onImageMouseEvent();
 }
 
 void FormImageEditor::on_btnMoveSpriteLeft_clicked()
@@ -1370,5 +1354,30 @@ void FormImageEditor::on_btnSpriteMulticolor_clicked()
 
     img->ToggleSpriteMulticolor();
     onImageMouseEvent();
+
+}
+
+void FormImageEditor::on_btnImportRom_clicked()
+{
+
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Import ROM charset", "This will import the standard C64 ROM charset and overwrite your current data.\n\nAre you sure?",
+                                  QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::No)
+        return;
+
+    QString fileName = ":resources/character.rom";
+    m_work.m_currentImage->m_image->LoadCharset(fileName);
+
+    m_projectIniFile->setString("charset_"+m_currentFileShort, fileName);
+    m_projectIniFile->Save();
+    updateCharSet();
+    m_work.m_currentImage->m_image->setMultiColor(false);
+    ui->chkDisplayMulticolor->setChecked(false);
+    Data::data.Redraw();
+
+    SetMCColors();
+
+
 
 }

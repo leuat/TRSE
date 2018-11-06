@@ -113,18 +113,29 @@ public:
     virtual CharsetImage* getCharset() { return nullptr; }
 
     bool renderPathGrid = false;
-
+    int m_current = 0;
     unsigned char m_extraCols[4];
 
     LColorList m_colorList;
+
+
+    virtual int getContainerCount() {return 1;}
+
+    virtual void AddNew(int x, int y) {};
 
     virtual void RenderEffect(QMap<QString, float> params) {}
 
     virtual void CopyChar() {}
     virtual void PasteChar() {}
 
+    virtual void Delete() {}
+
+
     virtual void FlipHorizontal() {}
     virtual void FlipVertical() {}
+
+    virtual void Next() {}
+    virtual void Prev() {}
 
     virtual void Transform(int x, int y) { }
 

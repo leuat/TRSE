@@ -42,57 +42,68 @@ C64FullScreenChar::C64FullScreenChar(LColorList::Type t) : MultiColorImage(t)
     m_minCol = 0;
     m_type = LImage::Type::FullScreenChar;
 
-    m_rawData.resize(m_charWidth*m_charHeight);
-    m_rawColors.resize(m_charWidth*m_charHeight);
-    Clear();
+    AddNew(1,1);
 
     SetColor(1,1);
     SetColor(2,2);
+    SetColor(3,3);
+
 
     m_supports.asmExport = false;
     m_supports.binaryLoad = true;
     m_supports.binarySave = true;
-    m_supports.flfSave = false;
+    m_supports.flfSave = true;
     m_supports.flfLoad = true;
     m_supports.asmExport = false;
 
+
+
+    m_GUIParams[btnLoadCharset] ="Load Charset";
+    m_GUIParams[btn1x1] = "";
+    m_GUIParams[btn2x2] = "";
+    m_GUIParams[btn2x2repeat] = "";
+    m_GUIParams[btnCopy] = "";
+    m_GUIParams[btnPaste] = "";
+    m_GUIParams[btnFlipH] = "";
+    m_GUIParams[btnFlipV] = "";
+
+    m_GUIParams[tabCharset] = "Charset";
+    m_GUIParams[btnEditFullCharset] = "";
+
+    m_GUIParams[tabSprites] ="Screens";
 
 
 }
 
 void C64FullScreenChar::SetColor(uchar col, uchar idx)
 {
-    if (m_charset==nullptr)
-        return;
+    if (m_charset!=nullptr)
+//        return;
     m_charset->SetColor(col, idx);
     m_extraCols[idx] = col;
 }
 
 void C64FullScreenChar::Clear()
 {
-    for (int i=0;i<m_rawData.count();i++)
-        m_rawData[i] = 0x20;
-
-    for (int i=0;i<m_rawData.count();i++)
-        m_rawColors[i] = 0x5;
+    m_screens[m_current].Clear();
 
 }
 
 void C64FullScreenChar::ImportBin(QFile &f)
 {
-    m_rawData = f.read(1000);
+/*    m_rawData = f.read(1000);
     m_rawColors = f.read(1000);
     // Shift down
     for (int i=0;i<m_rawColors.count();i++)
         m_rawColors[i] = m_rawColors[i] - 8;
 //    FromRaw(m_rawData);
-
+*/
 }
 
 void C64FullScreenChar::ExportBin(QFile &f)
 {
  //   ToRaw(m_rawData);
-    f.write(m_rawData);
+  //  f.write(m_rawData);
 /*    for (int i=0;i<m_rawColors.count();i++)
         m_rawColors[i] = m_rawColors[i] + 8;
 
@@ -104,40 +115,43 @@ void C64FullScreenChar::ExportBin(QFile &f)
 
 }
 
-void C64FullScreenChar::BuildImage()
+bool C64FullScreenChar::KeyPress(QKeyEvent *e)
 {
-    for (int i=0;i<m_charWidth;i++)
-        for (int j=0;j<m_charHeight;j++) {
-            uchar val = m_rawData[j*m_charWidth + i];
 
-            if (val!=0 && rand()%100==0)
-            for (int k=0;k<8;k++)
-             m_data[i + j*m_charWidth].p[k] = rand()%255; //m_charset->m_data[val];
-        }
+    if (e->key()==Qt::Key_A)
+        Prev();
+    if (e->key()==Qt::Key_D)
+        Next();
 
+    SetColor(m_extraCols[0],0);
+    SetColor(m_extraCols[1],1);
+    SetColor(m_extraCols[2],2);
+    return true;
 }
 
 void C64FullScreenChar::setPixel(int x, int y, unsigned int color)
 {
+    m_width=320;
     if (x>=320 || x<0 || y>=200 || y<0)
         return;
 
     if (m_writeType==Character)
-       m_rawData[x/8+ (y/8)*m_charWidth] = m_currencChar;
+        m_screens[m_current].m_rawData[x/8+ (y/8)*m_charWidth] = m_currencChar;
     if (m_writeType==Color)
-       m_rawColors[x/8+ (y/8)*m_charWidth] = color;
+        m_screens[m_current].m_rawColors[x/8+ (y/8)*m_charWidth] = color;
     //BuildImage();
 }
 
 unsigned int C64FullScreenChar::getPixel(int x, int y)
 {
+    m_width=320;
     if (m_charset==nullptr)
         return 0;
     if (x>=320 || x<0 || y>=200 || y<0)
         return 0;
-    uchar v = m_rawData[(x/8) + (y/8)*m_charWidth];
-    uchar col = m_rawColors[(x/8) + (y/8)*m_charWidth];
-    int ix = (x % (8)/2)*2;//- (dx*40);
+    uchar v = m_screens[m_current].m_rawData[(x/8) + (y/8)*m_charWidth];
+    uchar col = m_screens[m_current].m_rawColors[(x/8) + (y/8)*m_charWidth];
+    int ix = (x % (8)/m_scale)*m_scale;//- (dx*40);
     int iy = y % 8;//- (dy*25);
 
  //   return pc.get(m_scale*ix, iy, m_bitMask);
@@ -146,9 +160,18 @@ unsigned int C64FullScreenChar::getPixel(int x, int y)
 
     int pos = v;
 //    return m_charset->m_data[pos].get(v + (2*x)&7, v+ y&7,m_bitMask);
-    uchar val = m_charset->m_data[pos].get(ix, iy,m_charset->m_bitMask);
-    if (val==m_charset->m_data[pos].c[3])
-        val = col;
+//    uchar val = m_charset->m_data[pos].get(ix, iy,m_charset->m_bitMask);
+    uchar val = m_charset->m_data[pos].get(ix, iy,m_bitMask);
+
+    if (m_bitMask==0b11) {
+        if (val==m_charset->m_data[pos].c[3])
+            val = col;
+    }
+    else {
+        if (val!=m_charset->m_data[pos].c[0])
+            val = col;
+
+    }
 
 
     return val;
@@ -162,12 +185,13 @@ void C64FullScreenChar::CopyFrom(LImage *mc)
         if (c->m_charset==nullptr)
             return;
 
-        m_rawData.resize(m_charHeight*m_charWidth);
-        m_rawColors.resize(m_charHeight*m_charWidth);
-        for (int i=0;i<m_rawData.count();i++) {
-            m_rawData[i] = c->m_rawData[i];
-            m_rawColors[i] = c->m_rawColors[i];
-        }
+
+        m_charWidth = c->m_charWidth;
+        m_charHeight = c->m_charHeight;
+
+        m_screens = c->m_screens;
+        m_current = c->m_current;
+
         m_charset = c->m_charset;
         m_writeType = c->m_writeType;
         m_currencChar = c->m_currencChar;
@@ -183,8 +207,21 @@ void C64FullScreenChar::SaveBin(QFile& file)
 {
     file.write( ( char * )( &m_background ),  1 );
     file.write( ( char * )( &m_border ), 1 );
-    file.write( m_rawColors ,  25*40);
-    file.write( m_rawData ,  25*40);
+    file.write( ( char * )( &m_charWidth ),  1 );
+    file.write( ( char * )( &m_charHeight), 1 );
+    uchar v = m_screens.count();
+    file.write( ( char * )( &v), 1 );
+
+    char tmp = 0;
+    for (int i=0;i<11;i++)
+        file.write( ( char * )( &tmp), 1 );
+
+    for (C64Screen& s : m_screens) {
+
+        file.write( s.m_rawColors ,  m_charHeight*m_charWidth);
+        file.write( s.m_rawData ,  m_charHeight*m_charWidth);
+        file.write( s.m_data,  s.m_data.count());
+    }
 
 
 }
@@ -193,10 +230,37 @@ void C64FullScreenChar::LoadBin(QFile& file)
 {
     file.read( ( char * )( &m_background ),1 );
     file.read( ( char * )( &m_border ), 1);
-    m_rawColors.resize(25*40);
-    m_rawData.resize(25*40);
-    m_rawColors = file.read( 25*40);
-    m_rawData = file.read( 25*40);
+    file.read( ( char * )( &m_charWidth ),  1 );
+    file.read( ( char * )( &m_charHeight), 1 );
+    uchar cnt;
+    file.read( ( char * )( &cnt), 1 );
+
+    char tmp = 0;
+    for (int i=0;i<11;i++)
+        file.read( ( char * )( &tmp), 1 );
+
+    m_screens.clear();
+    for (int i=0;i<cnt;i++) {
+        C64Screen s;
+        s.Init(m_charHeight, m_charWidth,16);
+        s.m_rawColors = file.read( m_charWidth*m_charHeight);
+        s.m_rawData = file.read(m_charWidth*m_charHeight);
+        s.m_data = file.read(16);
+        m_screens.append(s);
+    }
+    m_current = 0;
+
+
+}
+void C64FullScreenChar::Delete()
+{
+    if (m_screens.count()>1) {
+        if (m_current>=m_screens.count())
+            m_current = m_screens.count()-1;
+        m_screens.remove(m_current);
+        if (m_current>=m_screens.count())
+            m_current = m_screens.count()-1;
+    }
 
 }
 

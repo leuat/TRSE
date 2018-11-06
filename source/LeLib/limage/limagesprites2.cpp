@@ -3,7 +3,7 @@
 
 LImageSprites2::LImageSprites2(LColorList::Type t) : CharsetImage(t) {
     m_type = LImage::Type::Sprites2;
-    m_currencChar=0;
+    m_current=0;
     m_bitMask = 0b11;
     m_width = 160;
     m_height = 200;
@@ -17,17 +17,17 @@ LImageSprites2::LImageSprites2(LColorList::Type t) : CharsetImage(t) {
 
     m_exportParams.clear();
 
-    AddSprite(1,1);
+    AddNew(1,1);
     //Data::data.currentColor=0;
 
 }
 
-void LImageSprites2::AddSprite(int x, int y)
+void LImageSprites2::AddNew(int x, int y)
 {
     LSprite s;
     s.Initialize(x,y);
     m_sprites.append(s);
-    m_currencChar = m_sprites.count()-1;
+    m_current = m_sprites.count()-1;
     SetColor(m_extraCols[0],0);
     SetColor(m_extraCols[1],1);
     SetColor(m_extraCols[2],2);
@@ -41,7 +41,7 @@ void LImageSprites2::ImportBin(QFile &f)
     for (int i=0;i<cnt;i++) {
         LSprite s(a,i*64,m_bitMask);
         m_sprites.append(s);
-        m_currencChar = m_sprites.count()-1;
+        m_current = m_sprites.count()-1;
         for (int j=0;j<4;j++)
             SetColor(m_extraCols[j],j);
     }
@@ -68,7 +68,7 @@ void LImageSprites2::CopyFrom(LImage *img)
          for (int i=0;i<4;i++)
              m_extraCols[i] = mc->m_extraCols[i];
          m_sprites = mc->m_sprites;
-         m_currencChar = mc->m_currencChar;
+         m_current = mc->m_current;
     }
     else
     {
@@ -80,14 +80,14 @@ void LImageSprites2::CopyFrom(LImage *img)
 
 void LImageSprites2::setPixel(int x, int y, unsigned int color)
 {
-    if (m_currencChar<0)
+    if (m_current<0)
         return;
 
-    if (m_currencChar>=m_sprites.count())
+    if (m_current>=m_sprites.count())
             return;
 
 
-/*    LSprite& s = m_sprites[m_currencChar];
+/*    LSprite& s = m_sprites[m_current];
     CharsetImage::setMultiColor(s.m_header[s.HEADER_MULTICOLOR]==(char)1);
 */
     float fx = x/(float)m_width;
@@ -102,29 +102,29 @@ void LImageSprites2::setPixel(int x, int y, unsigned int color)
             fillColor = false;
     }
     if (fillColor)
-        m_sprites[m_currencChar].FillColor(color,3);
+        m_sprites[m_current].FillColor(color,3);
 
 
 
-    m_sprites[m_currencChar].setPixel(fx,fy,color,m_bitMask);
+    m_sprites[m_current].setPixel(fx,fy,color,m_bitMask);
 
 }
 
 unsigned int LImageSprites2::getPixel(int x, int y)
 {
-    if (m_currencChar<0)
+    if (m_current<0)
         return 0;
-    if (m_currencChar>=m_sprites.count())
+    if (m_current>=m_sprites.count())
             return 0 ;
 
 
-    LSprite& s = m_sprites[m_currencChar];
+    LSprite& s = m_sprites[m_current];
     CharsetImage::setMultiColor(s.m_header[s.HEADER_MULTICOLOR]==(char)1);
 
     float fx = x/(float)m_width;
     float fy = y/(float)m_height;
 
-    return m_sprites[m_currencChar].getPixel(fx,fy,m_bitMask);
+    return m_sprites[m_current].getPixel(fx,fy,m_bitMask);
 
 }
 
@@ -301,7 +301,7 @@ void LImageSprites2::LoadBin(QFile& file)
         }
         m_sprites.append(s);
     }
-    m_currencChar = 0;
+    m_current = 0;
 
     m_extraCols[0] = m_background;
     SetColor(m_extraCols[1],1);
@@ -317,10 +317,10 @@ void LImageSprites2::SetColor(uchar col, uchar idx)
     if (idx==0)
         m_background = col;
 
-    if (m_currencChar>=0)
+    if (m_current>=0)
 
-    for (int i=0;i<m_sprites[m_currencChar].m_data.count();i++)
-        m_sprites[m_currencChar].m_data[i].c[idx] = col;
+    for (int i=0;i<m_sprites[m_current].m_data.count();i++)
+        m_sprites[m_current].m_data[i].c[idx] = col;
 
 
     m_extraCols[idx] = col;
@@ -344,19 +344,15 @@ bool LImageSprites2::KeyPress(QKeyEvent *e)
 {
 
     if (e->key()==Qt::Key_A)
-        m_currencChar-=1;
+        Prev();
     if (e->key()==Qt::Key_D)
-        m_currencChar+=1;
+        Next();
 
-    if (e->key()==Qt::Key_I) {
-        qDebug() << "W: " << m_width;
-        qDebug() << "H: " << m_height;
-    }
 
-    if (m_currencChar>2500) m_currencChar=0;
-    if (m_currencChar>=m_sprites.count())
-        m_currencChar=m_sprites.count()-1;
-//    m_currencChar = Util::clamp(m_currencChar,0,m_sprites.count()-1);
+    if (m_current>2500) m_current=0;
+    if (m_current>=m_sprites.count())
+        m_current=m_sprites.count()-1;
+//    m_current = Util::clamp(m_current,0,m_sprites.count()-1);
 
 
     SetColor(m_extraCols[0],0);
@@ -368,8 +364,8 @@ bool LImageSprites2::KeyPress(QKeyEvent *e)
 
 void LImageSprites2::CopyChar()
 {
-    if (m_currencChar<0) return;
-    m_copy = m_sprites[m_currencChar];
+    if (m_current<0) return;
+    m_copy = m_sprites[m_current];
 }
 
 void LImageSprites2::PasteChar()
@@ -377,14 +373,14 @@ void LImageSprites2::PasteChar()
     if (m_copy.m_data.count()==0)
         return;
 
-//    if (m_sprites[m_currencChar].m_blocksHeight == m_copy.m_blocksHeight)
-    m_sprites[m_currencChar]=m_copy;
+//    if (m_sprites[m_current].m_blocksHeight == m_copy.m_blocksHeight)
+    m_sprites[m_current]=m_copy;
 
 }
 
 void LImageSprites2::ToQImage(LColorList &lst, QImage &img, float zoom, QPointF center)
 {
-    LSprite& s = m_sprites[m_currencChar];
+    LSprite& s = m_sprites[m_current];
     CharsetImage::setMultiColor(s.m_header[s.HEADER_MULTICOLOR]==(char)1);
 
     img = img.scaled(m_width,m_height);
@@ -394,7 +390,7 @@ void LImageSprites2::ToQImage(LColorList &lst, QImage &img, float zoom, QPointF 
 
 void LImageSprites2::ToggleSpriteMulticolor()
 {
-    LSprite& s = m_sprites[m_currencChar];
+    LSprite& s = m_sprites[m_current];
 
     s.m_header[s.HEADER_MULTICOLOR]=(s.m_header[s.HEADER_MULTICOLOR]+1)&1;
 
@@ -403,7 +399,7 @@ void LImageSprites2::ToggleSpriteMulticolor()
 // Transforms x/y, flips
 void LImageSprites2::MegaTransform(int flip, int ix, int iy)
 {
-    LSprite s = m_sprites[m_currencChar];
+    LSprite s = m_sprites[m_current];
     float wx = (s.m_blocksWidth*s.m_pcWidth*8);
     float wy = (int)((s.m_blocksHeight*s.m_pcHeight*8.0));
     LSprite n;
@@ -453,7 +449,7 @@ void LImageSprites2::MegaTransform(int flip, int ix, int iy)
 
     }
 
-    m_sprites[m_currencChar] = n;
+    m_sprites[m_current] = n;
 
 }
 
@@ -474,10 +470,23 @@ void LImageSprites2::Transform(int x, int y)
 
 }
 
+void LImageSprites2::Delete()
+{
+    if (m_sprites.count()>1) {
+
+        if (m_current>=m_sprites.count())
+            m_current = m_sprites.count()-1;
+        m_sprites.remove(m_current);
+        if (m_current>=m_sprites.count())
+            m_current = m_sprites.count()-1;
+    }
+
+}
+
 void LImageSprites2::ShiftSprites(int i)
 {
-    int nxt = m_currencChar+i;
- //   qDebug() << "Cur: " << m_currencChar;
+    int nxt = m_current+i;
+ //   qDebug() << "Cur: " << m_current;
    // qDebug() << "next: " << nxt;
     if (nxt<0)
         return;
@@ -486,11 +495,11 @@ void LImageSprites2::ShiftSprites(int i)
     if (m_sprites.count()<=1)
         return;
 
-    LSprite tmp = m_sprites[m_currencChar];
-    m_sprites[m_currencChar] = m_sprites[nxt];
+    LSprite tmp = m_sprites[m_current];
+    m_sprites[m_current] = m_sprites[nxt];
     m_sprites[nxt] = tmp;
 
-    m_currencChar = nxt;
+    m_current = nxt;
 
 }
 

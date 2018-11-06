@@ -211,6 +211,7 @@ private slots:
     void on_btnMoveSpriteLeft_clicked();
     void on_btnMoveSpriteRight_clicked();
     void on_btnSpriteMulticolor_clicked();
+    void on_btnImportRom_clicked();
 };
 
 

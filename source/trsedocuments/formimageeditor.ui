@@ -220,7 +220,7 @@
         <layout class="QGridLayout" name="gridLayout_9">
          <item row="0" column="0">
           <layout class="QGridLayout" name="gridLayout_8">
-           <item row="1" column="0">
+           <item row="2" column="0">
             <widget class="QTableWidget" name="lstCharMap"/>
            </item>
            <item row="0" column="0">
@@ -233,7 +233,7 @@
              </property>
             </widget>
            </item>
-           <item row="6" column="0">
+           <item row="7" column="0">
             <layout class="QGridLayout" name="gridLayout_11">
              <item row="3" column="0">
               <widget class="QPushButton" name="btnCharset2x2Repeat">
@@ -292,6 +292,13 @@
               </widget>
              </item>
             </layout>
+           </item>
+           <item row="1" column="0">
+            <widget class="QPushButton" name="btnImportRom">
+             <property name="text">
+              <string>Import C64 ROM charset</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -368,7 +375,7 @@
             <item>
              <widget class="QPushButton" name="btnNewSprite">
               <property name="text">
-               <string>New Sprite</string>
+               <string>New</string>
               </property>
              </widget>
             </item>
@@ -488,7 +495,7 @@
             <item row="0" column="0">
              <widget class="QPushButton" name="btnDeleteSprite">
               <property name="text">
-               <string>Delete sprite</string>
+               <string>Delete</string>
               </property>
              </widget>
             </item>
@@ -530,14 +537,14 @@
             <item row="4" column="0">
              <widget class="QPushButton" name="btnMoveSpriteLeft">
               <property name="text">
-               <string>Move sprite left</string>
+               <string>Move left</string>
               </property>
              </widget>
             </item>
             <item row="4" column="1">
              <widget class="QPushButton" name="btnMoveSpriteRight">
               <property name="text">
-               <string>Move sprite right</string>
+               <string>Move right</string>
               </property>
              </widget>
             </item>

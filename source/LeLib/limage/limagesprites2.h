@@ -79,7 +79,6 @@ public:
     LSprite m_copy;
 
 
-    void AddSprite(int x, int y);
 
     void ImportBin(QFile& f) override;
     void ExportBin(QFile& f) override;
@@ -88,10 +87,10 @@ public:
     void CopyFrom(LImage* mc) override;
 
     QString GetCurrentDataString() override {
-        if (m_currencChar<0) return "";
-        QString blockSize = " block size (" +QString::number(m_sprites[m_currencChar].m_blocksWidth);
-        blockSize += ", " +QString::number(m_sprites[m_currencChar].m_blocksHeight)+")";
-        return "  Sprite : " + QString::number(m_currencChar) + "/" +
+        if (m_current<0) return "";
+        QString blockSize = " block size (" +QString::number(m_sprites[m_current].m_blocksWidth);
+        blockSize += ", " +QString::number(m_sprites[m_current].m_blocksHeight)+")";
+        return "  Sprite : " + QString::number(m_current) + "/" +
                 QString::number(m_sprites.count()) + blockSize;
     }
 
@@ -123,15 +122,28 @@ public:
    void ToggleSpriteMulticolor();
    void MegaTransform(int flip, int x, int y);
 
+   void AddNew(int x, int y) override;
+
    virtual void FlipHorizontal() override;
    virtual void FlipVertical() override;
    virtual void Transform(int x, int y) override;
+   virtual int getContainerCount() override {return m_sprites.count();}
 
+   void Delete() override;
 
-/*   void GetWidth() override {
-       return m_sprites[m_currencChar].
+   void Next() override {
+       if (m_current<m_sprites.count()-1)  {
+           m_current++;
+       }
    }
-  */
+
+   void Prev() override {
+       if (m_current>0)  {
+           m_current--;
+       }
+
+   }
+
 
    void ShiftSprites(int i);
 
