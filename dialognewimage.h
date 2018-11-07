@@ -47,6 +47,7 @@ public:
 
     void VICImageToData();
 
+    void CharImageToData();
 
     int m_charWidth;
     int m_charHeight;

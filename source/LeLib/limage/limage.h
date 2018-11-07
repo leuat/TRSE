@@ -46,6 +46,7 @@ public:
     bool asmExport = false;
     bool koalaExport = false;
     bool koalaImport = false;
+    bool movieExport = false;
 
     bool displayColors = true;
     bool displayBackground = true;
@@ -162,7 +163,12 @@ public:
     virtual void SaveBin(QFile &file) = 0;
     virtual void LoadBin(QFile &file) = 0;
 
+    void ApplyColor() {
+       SetColor(m_extraCols[0],0);
+       SetColor(m_extraCols[1],1);
+       SetColor(m_extraCols[2],2);
 
+    }
 
     virtual void BuildData(QTableWidget* tbl, QStringList header) {}
     virtual void StoreData(QTableWidget* tbl) {}
@@ -173,6 +179,9 @@ public:
 
     virtual void ExportBin(QFile &file) {}
     virtual void ImportBin(QFile &file) {}
+
+
+    virtual void ExportMovie(QFile &file) {}
 
 
     virtual void ExportKoa(QFile &file) {}

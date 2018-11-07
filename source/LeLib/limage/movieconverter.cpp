@@ -230,5 +230,65 @@ QByteArray MovieConverter::CompressImage(QByteArray prevFrame, QByteArray newFra
     return ret;
 }
 
+QByteArray MovieConverter::CompressScreen(QByteArray prevFrame, QByteArray newFrame, int w, int h, float &compr)
+{
+    QByteArray ret;
+    uchar skip=0;
+    qDebug() << prevFrame.count();
+    int c = 0;
+    for (int x=0;x<h;x++) {
+
+        for (int y=0;y<w;y++)
+        {
+            int i=2*(y + x*w);
+//            prevFrame[i] = prevFrame[i];
+//            newFrame[i] = newFrame[i];
+            char px1 = prevFrame[i];
+            char px2 = newFrame[i];
+
+            char c1 = (prevFrame[i+1] & 0xF);
+            char c2 = (newFrame[i+1]& 0xF);
+
+            if (px1==px2 && c1==c2 ) {
+                if (skip<254) {
+                    skip++;
+                    //continue;
+                }
+                else {
+                    ret.append(MSKIP | c2);
+                    ret.append(skip);
+                    c+=2;
+                    skip=0;
+                    continue;
+
+                }
+
+            }
+            else {
+                if (skip!=0) {
+                    ret.append(MSKIP | c2);
+                    ret.append(skip);
+                    ret.append(c2);
+                    ret.append(px2);
+                    c+=4;
+                    skip=0;
+                }
+                else {
+                    ret.append(c2);
+                    ret.append(px2);
+                    c+=2;
+                }
+
+            }
+        }
+        skip+=40-w;
+    }
+    qDebug() << ret.count();
+    qDebug() << "C:" << c/((float)w*h)*100<< "%";
+    compr+=c/((float)w*h);
+    ret.append(MEND);
+    return ret;
+}
+
 
 

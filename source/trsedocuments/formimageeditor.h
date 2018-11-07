@@ -213,6 +213,7 @@ private slots:
     void on_btnMoveSpriteRight_clicked();
     void on_btnSpriteMulticolor_clicked();
     void on_btnImportRom_clicked();
+    void on_btnExportMovie_clicked();
 };
 
 

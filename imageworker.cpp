@@ -112,6 +112,10 @@ void ImageWorker::New(int image, CharmapGlobalData gd = CharmapGlobalData())
         LImageVIC20* lv =  dynamic_cast<LImageVIC20*>(m_currentImage->m_image);
         lv->SetCharSize(gd.m_width, gd.m_height);
     }
+    if (m_types[image].type==LImage::Type::FullScreenChar) {
+        C64FullScreenChar* lv =  dynamic_cast<C64FullScreenChar*>(m_currentImage->m_image);
+        lv->SetCharSize(gd.m_width, gd.m_height);
+    }
 
     m_images.append(m_currentImage);
     m_currentImage->m_fileName="";

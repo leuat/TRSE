@@ -32,10 +32,17 @@ public:
     uchar SKIP = 255;
     uchar END = 254;
 
+    uchar MSKIP = 0b10000000;
+    uchar MEND = 0b01000000;
+
+
     QByteArray ConvertImage(QImage& img, int w, int h, float zoom);
     void ConvertRaw(QString dir, QString baseName,  QString fileExtension,QString outFile,int frameSkip, int maxFrames, int width, int height, float zoom);
     void ConvertPacked(QString dir, QString baseName,  QString fileExtension,QString outFile,int frameSkip, int maxFrames, int width, int height, float zoom);
     QByteArray CompressImage(QByteArray prevFrame, QByteArray newFrame, int w, int h, float& compr);
+
+
+    QByteArray CompressScreen(QByteArray prevFrame, QByteArray newFrame, int w, int h, float & compr);
 
 };
 

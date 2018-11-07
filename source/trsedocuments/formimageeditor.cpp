@@ -300,6 +300,9 @@ void FormImageEditor::Load(QString filename)
     }
 
 
+    onImageMouseEvent();
+    updateCharSet();
+
 
 }
 
@@ -406,11 +409,14 @@ void FormImageEditor::UpdatePalette()
     ui->btnExportKoala->setVisible(m_work.m_currentImage->m_image->m_supports.koalaExport);
     ui->btnImportKoala->setVisible(m_work.m_currentImage->m_image->m_supports.koalaImport);
 
+    ui->btnExportMovie->setVisible(m_work.m_currentImage->m_image->m_supports.movieExport);
+
     ui->cmbMC1->setVisible(m_work.m_currentImage->m_image->m_supports.displayMC1);
     ui->cmbMC2->setVisible(m_work.m_currentImage->m_image->m_supports.displayMC2);
     ui->cmbBorderMain_3->setVisible(m_work.m_currentImage->m_image->m_supports.displayForeground);
     ui->layoutColorsEdit_3->setEnabled(m_work.m_currentImage->m_image->m_supports.displayColors);
 
+    m_work.m_currentImage->m_image->ApplyColor();
 
 
 //    ui->btnLoad->setVisible(m_work.m_currentImage->m_image->m_supports.flfLoad);
@@ -918,6 +924,9 @@ void FormImageEditor::GenericExportImage(QString type, QString ext)
 //    m_work.m_currentImage->m_image->ExportAsm(fileName);
 //    MultiColorImage* mi = (MultiColorImage*)dynamic_cast<MultiColorImage*>(m_work.m_currentImage->m_image);
 
+    if (fileName=="")
+        return;
+
     if (QFile::exists(fileName))
         QFile::remove(fileName);
     QFile file(fileName);
@@ -926,6 +935,8 @@ void FormImageEditor::GenericExportImage(QString type, QString ext)
         m_work.m_currentImage->m_image->ExportBin(file);
     if (ext=="koa")
         m_work.m_currentImage->m_image->ExportKoa(file);
+    if (ext=="trm")
+        m_work.m_currentImage->m_image->ExportMovie(file);
     if (file.isOpen())
         file.close();
 
@@ -1402,4 +1413,9 @@ void FormImageEditor::on_btnImportRom_clicked()
 
 
 
+}
+
+void FormImageEditor::on_btnExportMovie_clicked()
+{
+    GenericExportImage("TRSE Movie","trm");
 }

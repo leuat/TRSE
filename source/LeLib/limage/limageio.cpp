@@ -88,6 +88,7 @@ LImage* LImageIO::Load(QString filename)
     if (img==nullptr)
         return nullptr;
     img->LoadBin(file);
+
     file.close();
     return img;
 }

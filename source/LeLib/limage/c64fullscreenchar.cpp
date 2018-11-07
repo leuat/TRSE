@@ -55,7 +55,7 @@ C64FullScreenChar::C64FullScreenChar(LColorList::Type t) : MultiColorImage(t)
     m_supports.flfSave = true;
     m_supports.flfLoad = true;
     m_supports.asmExport = false;
-
+    m_supports.movieExport = true;
 
 
     m_GUIParams[btnLoadCharset] ="Load Charset";
@@ -72,6 +72,8 @@ C64FullScreenChar::C64FullScreenChar(LColorList::Type t) : MultiColorImage(t)
 
     m_GUIParams[tabSprites] ="Screens";
 
+
+    m_exportParams.clear();
 
 }
 
@@ -142,6 +144,8 @@ void C64FullScreenChar::setPixel(int x, int y, unsigned int color)
     m_width=320;
     if (x>=320 || x<0 || y>=200 || y<0)
         return;
+    x=x*m_charWidth/40.0;
+    y=y*m_charHeight/25.0;
 
     if (m_writeType==Character)
         ((C64Screen*)m_items[m_current])->m_rawData[x/8+ (y/8)*m_charWidth] = m_currencChar;
@@ -157,10 +161,14 @@ unsigned int C64FullScreenChar::getPixel(int x, int y)
         return 0;
     if (x>=320 || x<0 || y>=200 || y<0)
         return 0;
+
+    x=x*m_charWidth/40.0;
+    y=y*m_charHeight/25.0;
+
     uchar v = ((C64Screen*)m_items[m_current])->m_rawData[(x/8) + (y/8)*m_charWidth];
     uchar col = ((C64Screen*)m_items[m_current])->m_rawColors[(x/8) + (y/8)*m_charWidth];
-    int ix = (x % (8)/m_scale)*m_scale;//- (dx*40);
-    int iy = y % 8;//- (dy*25);
+    int ix = (x % 8);//- (dx*40);
+    int iy = (y % 8);//- (dy*25);
 
  //   return pc.get(m_scale*ix, iy, m_bitMask);
 
@@ -217,6 +225,51 @@ void C64FullScreenChar::CopyFrom(LImage *mc)
     }
     else
     LImage::CopyFrom(mc);
+
+}
+
+void C64FullScreenChar::ExportMovie(QFile &file)
+{
+    QVector<QByteArray> screens;
+    QByteArray mty;
+    mty.resize(m_charWidth*m_charHeight*2);
+    mty.fill(0);
+    screens.append(mty);
+    for (LImageContainerItem* li :m_items) {
+        C64Screen* screen = dynamic_cast<C64Screen*>(li);
+        QByteArray s;
+        for (int i=0;i<m_charWidth*m_charHeight;i++) {
+            s.append(screen->m_rawData[i]);
+            s.append(screen->m_rawColors[i]);
+        }
+        screens.append(s);
+    }
+    MovieConverter mc;
+    float compr;
+    int cnt=0;
+
+    QByteArray header;
+    header.append(m_charWidth);
+    header.append(m_charHeight);
+    header.append(m_items.count());
+
+    file.write(header);
+
+
+
+    for (int i=0;i<screens.count()-1;i++) {
+        QByteArray data = mc.CompressScreen(screens[i], screens[i+1],m_charWidth, m_charHeight,compr);
+        file.write(data);
+        cnt+=data.count();
+    }
+
+    float total = m_charHeight*m_charWidth*screens.count();
+    qDebug() << "Compression : " << cnt/total*100 << " %";
+
+
+
+
+
 
 }
 

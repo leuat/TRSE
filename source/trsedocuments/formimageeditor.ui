@@ -124,7 +124,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -139,7 +139,14 @@
            <height>205</height>
           </rect>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0" columnstretch="0,0">
+         <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0,0,0" columnstretch="0,0">
+          <item row="3" column="1">
+           <widget class="QPushButton" name="btnExportKoala">
+            <property name="text">
+             <string>Export koala</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QPushButton" name="btnImport">
             <property name="toolTip">
@@ -150,23 +157,10 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QPushButton" name="btnImportBin">
-            <property name="toolTip">
-             <string>Import binary data (from CBM PRG studio etc). Plain C64 binary format.</string>
-            </property>
+          <item row="3" column="0">
+           <widget class="QPushButton" name="btnImportKoala">
             <property name="text">
-             <string>Import bin</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QPushButton" name="btnExportBin">
-            <property name="toolTip">
-             <string>Export to C64 binary format (or CBM PRG Studio)</string>
-            </property>
-            <property name="text">
-             <string>Export bin</string>
+             <string>Import koala</string>
             </property>
            </widget>
           </item>
@@ -180,7 +174,34 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="2" column="1">
+           <widget class="QPushButton" name="btnExportBin">
+            <property name="toolTip">
+             <string>Export to C64 binary format (or CBM PRG Studio)</string>
+            </property>
+            <property name="text">
+             <string>Export bin</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QPushButton" name="btnImportBin">
+            <property name="toolTip">
+             <string>Import binary data (from CBM PRG studio etc). Plain C64 binary format.</string>
+            </property>
+            <property name="text">
+             <string>Import bin</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QPushButton" name="btnExportMovie">
+            <property name="text">
+             <string>Export movie</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
            <widget class="QPushButton" name="btnNew">
             <property name="toolTip">
              <string>Clear this image</string>
@@ -190,21 +211,15 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QPushButton" name="btnImportKoala">
-            <property name="text">
-             <string>Import koala</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QPushButton" name="btnExportKoala">
-            <property name="text">
-             <string>Export koala</string>
-            </property>
-           </widget>
-          </item>
          </layout>
+         <zorder>btnImport</zorder>
+         <zorder>btnImportBin</zorder>
+         <zorder>btnExportBin</zorder>
+         <zorder>btnExportImage</zorder>
+         <zorder>btnImportKoala</zorder>
+         <zorder>btnExportKoala</zorder>
+         <zorder>btnNew</zorder>
+         <zorder>btnExportMovie</zorder>
         </widget>
        </widget>
        <widget class="QWidget" name="tabCharset">

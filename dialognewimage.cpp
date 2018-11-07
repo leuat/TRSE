@@ -110,6 +110,21 @@ void DialogNewImage::VICImageToData()
 
 }
 
+void DialogNewImage::CharImageToData()
+{
+    m_charWidth = ui->leCharWidth->text().toInt();
+    m_charHeight = ui->leCharHeight->text().toInt();
+
+    QString txt="";
+    int chars = m_charWidth*m_charHeight;
+    txt+= "Chars (8x8) used: " + QString::number(chars) +"\n";
+    txt+= "Data size: " + QString::number(m_charWidth*m_charHeight) + " bytes\n";
+    txt+= "Color size: " + QString::number(m_charWidth*m_charHeight) + " bytes\n";
+    txt+= "Total size: " + QString::number(m_charWidth*m_charHeight*2) + " bytes\n";
+    ui->lblInfo->setText(txt);
+
+}
+
 DialogNewImage::~DialogNewImage()
 {
     delete ui;
@@ -126,12 +141,21 @@ void DialogNewImage::slotOk()
 
 void DialogNewImage::on_comboBox_currentIndexChanged(int index)
 {
+    ui->grpLevelDesignerParams->setVisible(false);
+    ui->grpImageSize->setVisible(false);
+
     if (index==7)
         ui->grpLevelDesignerParams->setVisible(true);
     if (index==9) {
         ui->grpImageSize->setVisible(true);
         VICImageToData();
     }
+
+    if (index==6) {
+        ui->grpImageSize->setVisible(true);
+        CharImageToData();
+    }
+
 
     ToMeta();
 }

@@ -26,7 +26,7 @@
 #include "charsetimage.h"
 #include <QKeyEvent>
 #include "limagecontainer.h"
-
+#include "movieconverter.h"
 class C64Screen : public LImageContainerItem {
 public:
     QByteArray m_rawData, m_rawColors, m_data;
@@ -131,6 +131,7 @@ public:
     void CopyFrom(LImage* mc) override;
 
 
+    void ExportMovie(QFile &file) override;
 
 
 };
