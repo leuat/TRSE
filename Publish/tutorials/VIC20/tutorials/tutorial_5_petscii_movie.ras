@@ -1,0 +1,91 @@
+program MyProgram;
+var  
+	ok, i, j ,k,m,dx,dy,time,l,curFrame,val,wx,wy,g0,g1,c,maxFrames : byte = 0;
+
+	zp,cp: pointer;
+
+	@define mpos $3000
+
+	movie: incBin("movie/movie.trm", @mpos);
+
+	@define useKernal 0
+
+
+
+procedure RenderNextPackedFrame();
+begin
+//	moveto(5,2,$D8);
+//	cp:=screenmemory;
+	cp:=SCREEN_COL_LOC;
+	moveto(0,0,$1C);
+
+	m:=0;
+	dy:=0;
+	dx:=1;
+	i:=zp[0];
+	g0:=0;
+	
+	while (g0=0) do begin
+		g1:=getbit(zp[0],7);
+//		screenmemory[0]:=2;
+		if (g1=0) then begin
+			c:=zp[0]&15;
+			k:=zp[1];
+			inczp(screenmemory, k);
+			inczp(cp, k);
+			inczp(zp, 2);
+		
+		end
+		else 
+		begin
+				cp[0]:=zp[0]&7;
+				screenmemory[0]:=zp[1]+128;
+				inczp(screenmemory,1);
+				inczp(cp,1);
+				inczp(zp,2);
+		end;
+		g0:=1-getbit(zp[0],6);
+
+	end;
+	dx:=0;
+	inc(curFrame);
+	inczp(zp,1);
+
+end;
+
+
+
+
+
+begin
+	SCREEN_BG_COLOR:=0;
+	//Clearscreen($20, ^$0400);	
+	setscreenlocation($1C00);
+	
+	wx:=40;
+	wy:=25;
+	zp:=@mpos;
+	maxFrames := zp[2];
+	inczp(zp,3);
+//	Loop();
+//	CopyMovieData();
+	moveto(0,22,$1c);
+	fill(screenmemory, $20, 40);
+	moveto(0,22,$94);
+	fill(screenmemory, GREEN, 40);
+	while(1=1) do begin
+		RenderNextPackedFrame();
+		for i:=0 to 25 do 
+			waitforraster(0);
+		if (curFrame>maxFrames) then begin
+			curFrame:=0;
+			zp:=@mpos+3;		
+		end;
+
+	end;
+
+	Loop();
+
+end.
+
+

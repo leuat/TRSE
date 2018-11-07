@@ -300,12 +300,18 @@ void C64FullScreenChar::SaveBin(QFile& file)
     uchar v = m_items.count();
     file.write( ( char * )( &v), 1 );
 
+
+    qDebug() << "w h " << QString::number(m_charWidth) << " " << QString::number(m_charHeight);
+    qDebug() << "cnt " << QString::number(v);
+
     char tmp = 0;
     for (int i=0;i<11;i++)
         file.write( ( char * )( &tmp), 1 );
 
-    for (LImageContainerItem* li : m_items)
+    for (LImageContainerItem* li : m_items){
+//        qDebug() << "Size: " << li->ToQByteArray(0).count();
         file.write(li->ToQByteArray(0));
+    }
 
 
 }

@@ -281,7 +281,7 @@ QByteArray MovieConverter::CompressScreen(QByteArray prevFrame, QByteArray newFr
 
             }
         }
-        skip+=40-w;
+//        skip+=40-w;
     }
     qDebug() << ret.count();
     qDebug() << "C:" << c/((float)w*h)*100<< "%";
