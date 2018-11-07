@@ -22,12 +22,12 @@ LImageSprites2::LImageSprites2(LColorList::Type t) : CharsetImage(t) {
 
 }
 
-void LImageSprites2::AddNew(int x, int y)
+void LImageSprites2::AddNew(int w, int h)
 {
-    LSprite s;
-    s.Initialize(x,y);
-    m_sprites.append(s);
-    m_current = m_sprites.count()-1;
+    LSprite* s = new LSprite();
+    s->Init(w,h);
+    m_items.append(s);
+    m_current = m_items.count()-1;
     SetColor(m_extraCols[0],0);
     SetColor(m_extraCols[1],1);
     SetColor(m_extraCols[2],2);
@@ -39,9 +39,9 @@ void LImageSprites2::ImportBin(QFile &f)
     QByteArray a = f.readAll();
     int cnt = a.count()/64;
     for (int i=0;i<cnt;i++) {
-        LSprite s(a,i*64,m_bitMask);
-        m_sprites.append(s);
-        m_current = m_sprites.count()-1;
+        LSprite* s = new LSprite(a,i*64,m_bitMask);
+        m_items.append(s);
+        m_current = m_items.count()-1;
         for (int j=0;j<4;j++)
             SetColor(m_extraCols[j],j);
     }
@@ -49,8 +49,8 @@ void LImageSprites2::ImportBin(QFile &f)
 
 void LImageSprites2::ExportBin(QFile &f)
 {
-    for (int i=0;i<m_sprites.count();i++) {
-        f.write(m_sprites[i].toQByteArray(m_bitMask));
+    for (int i=0;i<m_items.count();i++) {
+        f.write(m_items[i]->ToQByteArray(m_bitMask));
     }
 }
 
@@ -67,7 +67,18 @@ void LImageSprites2::CopyFrom(LImage *img)
          m_bitMask = mc->m_bitMask;
          for (int i=0;i<4;i++)
              m_extraCols[i] = mc->m_extraCols[i];
-         m_sprites = mc->m_sprites;
+//         m_items = mc->m_items;
+
+         DeleteAll();
+         for (LImageContainerItem* li: mc->m_items) {
+             LSprite* s= (LSprite*)li;
+             LSprite* s2= new LSprite();
+             *s2 = *s;
+
+             m_items.append(s2);
+         }
+
+
          m_current = mc->m_current;
     }
     else
@@ -83,11 +94,11 @@ void LImageSprites2::setPixel(int x, int y, unsigned int color)
     if (m_current<0)
         return;
 
-    if (m_current>=m_sprites.count())
+    if (m_current>=m_items.count())
             return;
 
 
-/*    LSprite& s = m_sprites[m_current];
+/*    LSprite& s = m_items[m_current];
     CharsetImage::setMultiColor(s.m_header[s.HEADER_MULTICOLOR]==(char)1);
 */
     float fx = x/(float)m_width;
@@ -102,11 +113,11 @@ void LImageSprites2::setPixel(int x, int y, unsigned int color)
             fillColor = false;
     }
     if (fillColor)
-        m_sprites[m_current].FillColor(color,3);
+        ((LSprite*)m_items[m_current])->FillColor(color,3);
 
 
 
-    m_sprites[m_current].setPixel(fx,fy,color,m_bitMask);
+    ((LSprite*)m_items[m_current])->setPixel(fx,fy,color,m_bitMask);
 
 }
 
@@ -114,30 +125,30 @@ unsigned int LImageSprites2::getPixel(int x, int y)
 {
     if (m_current<0)
         return 0;
-    if (m_current>=m_sprites.count())
+    if (m_current>=m_items.count())
             return 0 ;
 
 
-    LSprite& s = m_sprites[m_current];
-    CharsetImage::setMultiColor(s.m_header[s.HEADER_MULTICOLOR]==(char)1);
+    LSprite* s = (LSprite*)m_items[m_current];
+    CharsetImage::setMultiColor(s->m_header[s->HEADER_MULTICOLOR]==(char)1);
 
     float fx = x/(float)m_width;
     float fy = y/(float)m_height;
 
-    return m_sprites[m_current].getPixel(fx,fy,m_bitMask);
+    return s->getPixel(fx,fy,m_bitMask);
 
 }
 
-QByteArray LSprite::toQByteArray(int mask) {
+QByteArray LSprite::ToQByteArray(int mask) {
     QByteArray data;
 
 
     QVector<QByteArray> grid;
 
-    grid.resize(m_blocksWidth*(m_blocksHeight+1));
+    grid.resize(m_width*(m_height+1));
 
-    for (int j=0;j<m_blocksHeight;j++) {
-        for (int i=0;i<m_blocksWidth;i++) {
+    for (int j=0;j<m_height;j++) {
+        for (int i=0;i<m_width;i++) {
             QByteArray a;
 
 
@@ -153,10 +164,10 @@ QByteArray LSprite::toQByteArray(int mask) {
   */
 
 
-            int idx = (i*3+j*m_blocksWidth*3*3);
+            int idx = (i*3+j*m_width*3*3);
 //            qDebug() << idx;
-            a.append(grid[i+j*m_blocksWidth]); // Append current grid
-            int nxGrid = i+(j+1)*m_blocksWidth;
+            a.append(grid[i+j*m_width]); // Append current grid
+            int nxGrid = i+(j+1)*m_width;
 
             int yy=a.count()/3;
 
@@ -165,10 +176,10 @@ QByteArray LSprite::toQByteArray(int mask) {
                     if (yy<21)
                         for (int k=0;k<3;k++)
 
-                        a.append(m_data[idx+m_blocksWidth*m_pcWidth*y+k].flipSpriteBit(j,mask));
+                        a.append(m_data[idx+m_width*m_pcWidth*y+k].flipSpriteBit(j,mask));
                     else
                         for (int k=0;k<3;k++)
-                        grid[nxGrid].append(m_data[idx+m_blocksWidth*m_pcWidth*y+k].flipSpriteBit(j,mask));
+                        grid[nxGrid].append(m_data[idx+m_width*m_pcWidth*y+k].flipSpriteBit(j,mask));
                     yy++;
                 }
             }
@@ -176,7 +187,7 @@ QByteArray LSprite::toQByteArray(int mask) {
             data.append(a);
         }
     }
-    data.resize(m_blocksHeight*m_blocksWidth*64);
+    data.resize(m_height*m_width*64);
     for (char& c: data) {
         c = PixelChar::reverse(c);
     }
@@ -187,18 +198,18 @@ QByteArray LSprite::toQByteArray(int mask) {
 
 PixelChar *LSprite::GetSetData(float x, float y, float &ix, float &iy, uchar bitMask)
 {
-    ix = x*m_blocksWidth*3.0f;
-    iy = y*m_blocksHeight*3.0f/24*21.0f;
-    if (iy<0 || iy>=m_blocksHeight*3) return nullptr;
-    if (ix<0 || ix>=m_blocksWidth*3) return nullptr;
+    ix = x*m_width*3.0f;
+    iy = y*m_height*3.0f/24*21.0f;
+    if (iy<0 || iy>=m_height*3) return nullptr;
+    if (ix<0 || ix>=m_width*3) return nullptr;
     int scale = 1;
     if (bitMask==0b11) scale =2;
-    int v = (int)ix+(int)iy*m_pcHeight*m_blocksWidth;
+    int v = (int)ix+(int)iy*m_pcHeight*m_width;
     if (v<0 || v>=m_data.count())
         return nullptr;
     //PixelChar& pc = m_data[v];
     iy=((int)(iy*8.0));
-    if (iy>m_blocksHeight*21)
+    if (iy>m_height*21)
         return nullptr;
     iy=(int)iy&7;
     //ix=((int)(ix*8.0)/scale)&((8/scale)-1);
@@ -244,28 +255,29 @@ void LImageSprites2::SaveBin(QFile& file)
     file.write( ( char * )( &m_extraCols[2] ), 1 );
     file.write( ( char * )( &m_extraCols[3] ), 1 );
 
-    uchar cnt = m_sprites.count();
+    uchar cnt = m_items.count();
 
     file.write( ( char * )( &cnt ), 1 );
-    for (LSprite& s : m_sprites) {
-        uchar sx = s.m_blocksWidth;
-        uchar sy = s.m_blocksHeight;
+    for (LImageContainerItem* li : m_items) {
 
+        LSprite* s = dynamic_cast<LSprite*>(li);
+        uchar sx = s->m_width;
+        uchar sy = s->m_height;
 
         file.write( ( char * )( &sx ), 1 );
         file.write( ( char * )( &sy ), 1 );
 //        file.write( ( char * )( &m_data ),  m_charHeight*m_charWidth*12 );
-        file.write(s.m_header);
+        file.write(s->m_header);
 
         QByteArray data;
-        for (PixelChar& pc: s.m_data) {
+        for (PixelChar& pc: s->m_data) {
                     for (int j=0;j<8;j++)
                         data.append(pc.p[j]);
                     for (int j=0;j<4;j++)
                         data.append(pc.c[j]);
                 }
 
-        file.write( data, sx*sy*s.m_pcHeight*s.m_pcWidth*12);
+        file.write( data, sx*sy*s->m_pcHeight*s->m_pcWidth*12);
 
     }
 
@@ -273,7 +285,7 @@ void LImageSprites2::SaveBin(QFile& file)
 
 void LImageSprites2::LoadBin(QFile& file)
 {
-    m_sprites.clear();
+    m_items.clear();
     file.read( ( char * )( &m_background ),  1 );
     file.read( ( char * )( &m_border ), 1 );
     file.read( ( char * )( &m_extraCols[1] ), 1 );
@@ -286,20 +298,21 @@ void LImageSprites2::LoadBin(QFile& file)
         file.read( ( char * )( &sx ), 1 );
         file.read( ( char * )( &sy ), 1 );
 
-        LSprite s;
-        s.Initialize(sx,sy);
-        s.m_header = file.read(s.HEADER_SIZE);
+        LSprite* s = new LSprite();
 
-        QByteArray data = file.read(sx*sy*s.m_pcHeight*s.m_pcWidth*12);
+        s->Init(sx,sy);
+        s->m_header = file.read(s->HEADER_SIZE);
+
+        QByteArray data = file.read(sx*sy*s->m_pcHeight*s->m_pcWidth*12);
         int c=0;
-        for (PixelChar& pc: s.m_data) {
+        for (PixelChar& pc: s->m_data) {
             for (int j=0;j<8;j++)
                 pc.p[j] = data[12*c+j];
             for (int j=0;j<4;j++)
                 pc.c[j] = data[12*c+j+8];
             c++;
         }
-        m_sprites.append(s);
+        m_items.append(s);
     }
     m_current = 0;
 
@@ -319,8 +332,8 @@ void LImageSprites2::SetColor(uchar col, uchar idx)
 
     if (m_current>=0)
 
-    for (int i=0;i<m_sprites[m_current].m_data.count();i++)
-        m_sprites[m_current].m_data[i].c[idx] = col;
+    for (int i=0;i<((LSprite*)m_items[m_current])->m_data.count();i++)
+        ((LSprite*)m_items[m_current])->m_data[i].c[idx] = col;
 
 
     m_extraCols[idx] = col;
@@ -350,9 +363,9 @@ bool LImageSprites2::KeyPress(QKeyEvent *e)
 
 
     if (m_current>2500) m_current=0;
-    if (m_current>=m_sprites.count())
-        m_current=m_sprites.count()-1;
-//    m_current = Util::clamp(m_current,0,m_sprites.count()-1);
+    if (m_current>=m_items.count())
+        m_current=m_items.count()-1;
+//    m_current = Util::clamp(m_current,0,m_items.count()-1);
 
 
     SetColor(m_extraCols[0],0);
@@ -365,7 +378,7 @@ bool LImageSprites2::KeyPress(QKeyEvent *e)
 void LImageSprites2::CopyChar()
 {
     if (m_current<0) return;
-    m_copy = m_sprites[m_current];
+    m_copy = *((LSprite*)m_items[m_current]);
 }
 
 void LImageSprites2::PasteChar()
@@ -373,15 +386,15 @@ void LImageSprites2::PasteChar()
     if (m_copy.m_data.count()==0)
         return;
 
-//    if (m_sprites[m_current].m_blocksHeight == m_copy.m_blocksHeight)
-    m_sprites[m_current]=m_copy;
+//    if (m_items[m_current].m_height == m_copy.m_height)
+    *((LSprite*)m_items[m_current])=m_copy;
 
 }
 
 void LImageSprites2::ToQImage(LColorList &lst, QImage &img, float zoom, QPointF center)
 {
-    LSprite& s = m_sprites[m_current];
-    CharsetImage::setMultiColor(s.m_header[s.HEADER_MULTICOLOR]==(char)1);
+    LSprite* s = ((LSprite*)m_items[m_current]);
+    CharsetImage::setMultiColor(s->m_header[s->HEADER_MULTICOLOR]==(char)1);
 
     img = img.scaled(m_width,m_height);
 
@@ -390,21 +403,21 @@ void LImageSprites2::ToQImage(LColorList &lst, QImage &img, float zoom, QPointF 
 
 void LImageSprites2::ToggleSpriteMulticolor()
 {
-    LSprite& s = m_sprites[m_current];
+    LSprite* s = ((LSprite*)m_items[m_current]);
 
-    s.m_header[s.HEADER_MULTICOLOR]=(s.m_header[s.HEADER_MULTICOLOR]+1)&1;
+    s->m_header[s->HEADER_MULTICOLOR]=(s->m_header[s->HEADER_MULTICOLOR]+1)&1;
 
 
 }
 // Transforms x/y, flips
 void LImageSprites2::MegaTransform(int flip, int ix, int iy)
 {
-    LSprite s = m_sprites[m_current];
-    float wx = (s.m_blocksWidth*s.m_pcWidth*8);
-    float wy = (int)((s.m_blocksHeight*s.m_pcHeight*8.0));
+    LSprite* s = ((LSprite*)m_items[m_current]);
+    float wx = (s->m_width*s->m_pcWidth*8);
+    float wy = (int)((s->m_height*s->m_pcHeight*8.0));
     LSprite n;
-    n.Initialize(s.m_blocksWidth,s.m_blocksHeight);
-    n.m_header = s.m_header;
+    n.Init(s->m_width, s->m_height);
+    n.m_header = s->m_header;
     for (int i=0;i<4;i++)
         SetColor(m_extraCols[i],i,n);
 
@@ -436,7 +449,7 @@ void LImageSprites2::MegaTransform(int flip, int ix, int iy)
             if (ii>=1) ii-=1;
             if (ii<0) ii+=1;
 
-            unsigned int u = s.getPixel(ii,jj,m_bitMask);
+            unsigned int u = s->getPixel(ii,jj,m_bitMask);
             if (flip==1)
                 n.setPixel(i,1-j,u, m_bitMask);
             if (flip==0)
@@ -449,7 +462,7 @@ void LImageSprites2::MegaTransform(int flip, int ix, int iy)
 
     }
 
-    m_sprites[m_current] = n;
+    m_items[m_current] = new LSprite(n);
 
 }
 
@@ -470,19 +483,6 @@ void LImageSprites2::Transform(int x, int y)
 
 }
 
-void LImageSprites2::Delete()
-{
-    if (m_sprites.count()>1) {
-
-        if (m_current>=m_sprites.count())
-            m_current = m_sprites.count()-1;
-        m_sprites.remove(m_current);
-        if (m_current>=m_sprites.count())
-            m_current = m_sprites.count()-1;
-    }
-
-}
-
 void LImageSprites2::ShiftSprites(int i)
 {
     int nxt = m_current+i;
@@ -490,14 +490,14 @@ void LImageSprites2::ShiftSprites(int i)
    // qDebug() << "next: " << nxt;
     if (nxt<0)
         return;
-    if (nxt>=m_sprites.count())
+    if (nxt>=m_items.count())
         return;
-    if (m_sprites.count()<=1)
+    if (m_items.count()<=1)
         return;
 
-    LSprite tmp = m_sprites[m_current];
-    m_sprites[m_current] = m_sprites[nxt];
-    m_sprites[nxt] = tmp;
+    LSprite* tmp = ((LSprite*)m_items[m_current]);
+    m_items[m_current] = m_items[nxt];
+    m_items[nxt] = tmp;
 
     m_current = nxt;
 

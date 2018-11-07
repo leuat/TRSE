@@ -56,8 +56,7 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 
     if (sprite!=nullptr) {
         m_image->CopyFrom(sprite);
-
-        qDebug() << QString::number(sprite->m_sprites[sprite->m_currencChar].m_header[0]);
+//        qDebug() << QString::number(sprite->m_items[sprite->m_current].m_header[0]);
 //        qDebug() << "BLOCKS: " << sprite->m_sprites[sprite->m_currencChar].m_blocksWidth;
     }
 

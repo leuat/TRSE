@@ -40,6 +40,7 @@
 #include "source/dialogimagehelp.h"
 #include "source/qlabellimage.h"
 #include "source/LeLib/limage/limagefactory.h"
+#include "source/LeLib/limage/limagecontainer.h"
 
 #include <QLineEdit>
 namespace Ui {

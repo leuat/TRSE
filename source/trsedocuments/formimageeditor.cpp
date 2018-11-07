@@ -976,14 +976,17 @@ void FormImageEditor::UpdateSpriteImages()
     pixmapEmpty.convertFromImage(empty);
     QIcon emptyIcon(pixmapEmpty);
 
+    LImageContainer* cont = dynamic_cast<LImageContainer*>(m_work.m_currentImage->m_image);
+
+    if (cont==nullptr)
+        return;
 
 
-
-    int keep = m_work.m_currentImage->m_image->m_current;
+    int keep = cont->m_current;
     int sx = 40*2.5;
     int sy = 32*2.5;
     for (int i=0;i<3;i++) {
-        int k = i-1+m_work.m_currentImage->m_image->m_current;
+        int k = i-1+cont->m_current;
         QPushButton* l = nullptr;
             if (i==0)
                 l = ui->lblSprite1;
@@ -996,7 +999,7 @@ void FormImageEditor::UpdateSpriteImages()
         }
 
 
-        if (k == m_work.m_currentImage->m_image->m_current) {
+        if (k == cont->m_current) {
             QIcon butt(m_updateThread.m_pixMapImage.scaled(sx, sy, Qt::IgnoreAspectRatio, Qt::FastTransformation));
             ui->lblSprite2->setIcon(butt);
             ui->lblSprite2->setIconSize(QSize( sx,sy));
@@ -1006,9 +1009,9 @@ void FormImageEditor::UpdateSpriteImages()
             if (m_keepSpriteChar[i]!=k) {
                 if ((k>=0) && (k<m_work.m_currentImage->m_image->getContainerCount())) {
                     m_keepSpriteChar[i] = k;
-                    m_work.m_currentImage->m_image->m_current = k;
+                    cont->m_current = k;
                     m_work.m_currentImage->m_image->ToQImage(m_work.m_currentImage->m_image->m_colorList, m_tmpImage, 1, QPoint(0.5, 0.5));
-                    m_work.m_currentImage->m_image->m_current = keep;
+                    cont->m_current = keep;
                     QPixmap pixmap = QPixmap();
                     pixmap.convertFromImage(m_tmpImage);
                     pixmap = pixmap.scaled(sx, sy, Qt::IgnoreAspectRatio, Qt::FastTransformation);
@@ -1208,16 +1211,25 @@ void FormImageEditor::on_btnHelpImage_clicked()
 void FormImageEditor::on_btnNewSprite_clicked()
 {
     m_work.m_currentImage->AddUndo();
-    m_work.m_currentImage->m_image->AddNew(ui->cmbSpriteX->currentText().toInt(), ui->cmbSpriteY->currentText().toInt());
+
+    LImageContainer* cont = dynamic_cast<LImageContainer*>(m_work.m_currentImage->m_image);
+
+    if (cont==nullptr)
+        return;
+
+    cont->AddNew(ui->cmbSpriteX->currentText().toInt(),ui->cmbSpriteY->currentText().toInt());
     onImageMouseEvent();
 
 }
 
 void FormImageEditor::on_btnDeleteSprite_clicked()
 {
+    LImageContainer* cont = dynamic_cast<LImageContainer*>(m_work.m_currentImage->m_image);
+    if (cont==nullptr)
+        return;
     m_work.m_currentImage->AddUndo();
 
-    m_work.m_currentImage->m_image->Delete();
+    cont->Delete();
 
     onImageMouseEvent();
     for (int i=0;i<3;i++)
@@ -1306,14 +1318,24 @@ void FormImageEditor::on_btnPanDown_clicked()
 
 void FormImageEditor::on_lblSprite1_clicked()
 {
-    m_work.m_currentImage->m_image->Prev();
+    LImageContainer* cont = dynamic_cast<LImageContainer*>(m_work.m_currentImage->m_image);
+
+    if (cont==nullptr)
+        return;
+
+    cont->Prev();
     onImageMouseEvent();
 
 }
 
 void FormImageEditor::on_lblSprite3_clicked()
 {
-    m_work.m_currentImage->m_image->Next();
+    LImageContainer* cont = dynamic_cast<LImageContainer*>(m_work.m_currentImage->m_image);
+
+    if (cont==nullptr)
+        return;
+
+    cont->Next();
     onImageMouseEvent();
 }
 

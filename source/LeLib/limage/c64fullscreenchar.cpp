@@ -85,7 +85,7 @@ void C64FullScreenChar::SetColor(uchar col, uchar idx)
 
 void C64FullScreenChar::Clear()
 {
-    m_screens[m_current].Clear();
+    m_items[m_current]->Clear();
 
 }
 
@@ -129,6 +129,14 @@ bool C64FullScreenChar::KeyPress(QKeyEvent *e)
     return true;
 }
 
+void C64FullScreenChar::AddNew(int w, int h) {
+    C64Screen* s = new C64Screen();
+
+    s->Init(m_charWidth, m_charHeight);
+    m_items.append(s);
+    m_current = m_items.count()-1;
+}
+
 void C64FullScreenChar::setPixel(int x, int y, unsigned int color)
 {
     m_width=320;
@@ -136,9 +144,9 @@ void C64FullScreenChar::setPixel(int x, int y, unsigned int color)
         return;
 
     if (m_writeType==Character)
-        m_screens[m_current].m_rawData[x/8+ (y/8)*m_charWidth] = m_currencChar;
+        ((C64Screen*)m_items[m_current])->m_rawData[x/8+ (y/8)*m_charWidth] = m_currencChar;
     if (m_writeType==Color)
-        m_screens[m_current].m_rawColors[x/8+ (y/8)*m_charWidth] = color;
+        ((C64Screen*)m_items[m_current])->m_rawColors[x/8+ (y/8)*m_charWidth] = color;
     //BuildImage();
 }
 
@@ -149,8 +157,8 @@ unsigned int C64FullScreenChar::getPixel(int x, int y)
         return 0;
     if (x>=320 || x<0 || y>=200 || y<0)
         return 0;
-    uchar v = m_screens[m_current].m_rawData[(x/8) + (y/8)*m_charWidth];
-    uchar col = m_screens[m_current].m_rawColors[(x/8) + (y/8)*m_charWidth];
+    uchar v = ((C64Screen*)m_items[m_current])->m_rawData[(x/8) + (y/8)*m_charWidth];
+    uchar col = ((C64Screen*)m_items[m_current])->m_rawColors[(x/8) + (y/8)*m_charWidth];
     int ix = (x % (8)/m_scale)*m_scale;//- (dx*40);
     int iy = y % 8;//- (dy*25);
 
@@ -189,7 +197,17 @@ void C64FullScreenChar::CopyFrom(LImage *mc)
         m_charWidth = c->m_charWidth;
         m_charHeight = c->m_charHeight;
 
-        m_screens = c->m_screens;
+        DeleteAll();
+        for (LImageContainerItem* li: c->m_items) {
+            C64Screen* s= (C64Screen*)li;
+            C64Screen* s2= new C64Screen();
+            *s2 = *s;
+
+            m_items.append(s2);
+        }
+
+
+//        m_items = c->m_items;
         m_current = c->m_current;
 
         m_charset = c->m_charset;
@@ -202,6 +220,23 @@ void C64FullScreenChar::CopyFrom(LImage *mc)
 
 }
 
+void C64FullScreenChar::CopyChar()
+{
+    if (m_current<0) return;
+    m_copy = *((C64Screen*)m_items[m_current]);
+}
+
+void C64FullScreenChar::PasteChar()
+{
+    if (m_copy.m_data.count()==0)
+        return;
+
+//    if (m_items[m_current].m_height == m_copy.m_height)
+    *((C64Screen*)m_items[m_current])=m_copy;
+
+}
+
+
 
 void C64FullScreenChar::SaveBin(QFile& file)
 {
@@ -209,19 +244,15 @@ void C64FullScreenChar::SaveBin(QFile& file)
     file.write( ( char * )( &m_border ), 1 );
     file.write( ( char * )( &m_charWidth ),  1 );
     file.write( ( char * )( &m_charHeight), 1 );
-    uchar v = m_screens.count();
+    uchar v = m_items.count();
     file.write( ( char * )( &v), 1 );
 
     char tmp = 0;
     for (int i=0;i<11;i++)
         file.write( ( char * )( &tmp), 1 );
 
-    for (C64Screen& s : m_screens) {
-
-        file.write( s.m_rawColors ,  m_charHeight*m_charWidth);
-        file.write( s.m_rawData ,  m_charHeight*m_charWidth);
-        file.write( s.m_data,  s.m_data.count());
-    }
+    for (LImageContainerItem* li : m_items)
+        file.write(li->ToQByteArray(0));
 
 
 }
@@ -239,28 +270,19 @@ void C64FullScreenChar::LoadBin(QFile& file)
     for (int i=0;i<11;i++)
         file.read( ( char * )( &tmp), 1 );
 
-    m_screens.clear();
+    m_items.clear();
+
     for (int i=0;i<cnt;i++) {
-        C64Screen s;
-        s.Init(m_charHeight, m_charWidth,16);
-        s.m_rawColors = file.read( m_charWidth*m_charHeight);
-        s.m_rawData = file.read(m_charWidth*m_charHeight);
-        s.m_data = file.read(16);
-        m_screens.append(s);
+        C64Screen* s = new C64Screen();
+
+        s->Init(m_charWidth, m_charHeight);
+        s->m_rawColors = file.read( m_charWidth*m_charHeight);
+        s->m_rawData = file.read(m_charWidth*m_charHeight);
+        s->m_data = file.read(16);
+        m_items.append(s);
     }
     m_current = 0;
 
-
-}
-void C64FullScreenChar::Delete()
-{
-    if (m_screens.count()>1) {
-        if (m_current>=m_screens.count())
-            m_current = m_screens.count()-1;
-        m_screens.remove(m_current);
-        if (m_current>=m_screens.count())
-            m_current = m_screens.count()-1;
-    }
 
 }
 

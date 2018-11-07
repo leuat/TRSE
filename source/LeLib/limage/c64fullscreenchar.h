@@ -25,19 +25,31 @@
 #include "multicolorimage.h"
 #include "charsetimage.h"
 #include <QKeyEvent>
+#include "limagecontainer.h"
 
-class C64Screen {
+class C64Screen : public LImageContainerItem {
 public:
     QByteArray m_rawData, m_rawColors, m_data;
 
-    void Init(int x, int y, int d) {
-        m_rawColors.resize(x*y);
-        m_rawData.resize(x*y);
-        m_data.resize(d);
+    void Init(int w, int h)  override {
+        m_width = w;
+        m_height = h;
+        m_rawColors.resize(w*h);
+        m_rawData.resize(w*h);
+        m_data.resize(16);
         Clear();
     }
 
-    void Clear() {
+    QByteArray ToQByteArray(int b) override {
+        QByteArray a;
+        a.append(m_rawColors);
+        a.append(m_rawData);
+        a.append(m_data);
+        return a;
+
+    }
+
+    void Clear() override {
     for (int i=0;i<m_rawData.count();i++)
         m_rawData[i] = 0x20;
 
@@ -48,13 +60,12 @@ public:
 };
 
 
-class C64FullScreenChar: public MultiColorImage
+class C64FullScreenChar: public MultiColorImage, public LImageContainer
 {
 public:
 
-    QVector<C64Screen> m_screens;
 
-//    QByteArray m_rawData, m_rawColors;
+//    QByteArray m_rawData, m_rawColors
   //  bool m_isMultiColor = false;
 
 /*    int m_charWidth = 40;
@@ -62,6 +73,9 @@ public:
 */
 
     PixelChar m_color;
+    C64Screen m_copy;
+
+
     C64FullScreenChar(LColorList::Type t);
 
 
@@ -81,7 +95,7 @@ public:
         if (m_current<0) return "";
         QString curChar =  "  Character : " + Util::numToHex(m_currencChar);
         QString screen = "  Screen : " + QString::number(m_current) + "/" +
-                QString::number(m_screens.count()) ;
+                QString::number(m_items.count()) ;
         return curChar +  screen;
     }
 
@@ -90,32 +104,33 @@ public:
     //    virtual void setMultiColor(bool doSet) override {}
 
     CharsetImage* getCharset() override { return m_charset; }
-    virtual int getContainerCount() override {return m_screens.count();}
+    virtual int getContainerCount() override {return m_items.count();}
 
 
     bool KeyPress(QKeyEvent *e) override;
+    void CopyChar();
+    void PasteChar();
 
-    void AddNew(int, int) override {
-        C64Screen s;
-        s.Init(m_charWidth,m_charHeight, 16);
-        m_screens.append(s);
-        m_current = m_screens.count()-1;
-    }
+    void AddNew(int w, int h) override;
 
-    void Prev() override {
+    /*void Prev() override {
         if (m_current>0)
         m_current--;
     }
 
     void Next() override {
-        if (m_current<m_screens.count()-1)
+        if (m_current<m_items.count()-1)
         m_current++;
     }
+    void Delete() override;
 
+*/
     void setPixel(int x, int y, unsigned int color) override;
     unsigned int getPixel(int x, int y) override;
+
     void CopyFrom(LImage* mc) override;
-    void Delete() override;
+
+
 
 
 };

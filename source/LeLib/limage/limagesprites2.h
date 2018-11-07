@@ -5,13 +5,10 @@
 
 #include "source/LeLib/limage/charsetimage.h"
 #include "source/LeLib/util/util.h"
+#include "source/LeLib/limage/limagecontainer.h"
 
-
-class LSprite {
+class LSprite : public LImageContainerItem {
 public:
-    int m_blocksWidth= 1;
-    int m_blocksHeight = 1;
-
     int m_pcWidth = 3;
     int m_pcHeight = 3;
 
@@ -26,11 +23,16 @@ public:
         m_header.resize(HEADER_SIZE);
     }
 
-    QByteArray toQByteArray(int mask);
+    QByteArray ToQByteArray(int mask) override;
+
+    void Clear() override {
+        for (PixelChar &pc : m_data)
+            pc.Clear(pc.c[0]);
+    }
 
     LSprite(QByteArray& a, int index, int mask) {
         int c = index;
-        Initialize(1,1);
+        Init(1,1);
         for (int y=0;y<3;y++) {
             for (int x=0;x<3;x++) {
                 for (int j=0;j<8;j++) {
@@ -51,10 +53,10 @@ public:
         }
     }
 
-    void Initialize(int bw, int bh) {
-        m_blocksHeight = bh;
-        m_blocksWidth = bw;
-        m_data.resize(bh*bw*m_pcWidth*m_pcHeight);
+    void Init(int w, int h) override {
+        m_height = w;
+        m_width =h;
+        m_data.resize(m_height*m_width*m_pcWidth*m_pcHeight);
         m_header.resize(HEADER_SIZE);
     }
     PixelChar* GetSetData(float x, float y, float& ix, float& iy, uchar bitMask);
@@ -66,7 +68,7 @@ public:
 };
 
 
-class LImageSprites2 : public CharsetImage
+class LImageSprites2 : public CharsetImage, public LImageContainer
 {
 public:
     LImageSprites2(LColorList::Type t);
@@ -75,7 +77,6 @@ public:
 //    LImageSprites2() {}
 
 
-    QVector<LSprite> m_sprites;
     LSprite m_copy;
 
 
@@ -88,10 +89,10 @@ public:
 
     QString GetCurrentDataString() override {
         if (m_current<0) return "";
-        QString blockSize = " block size (" +QString::number(m_sprites[m_current].m_blocksWidth);
-        blockSize += ", " +QString::number(m_sprites[m_current].m_blocksHeight)+")";
+        QString blockSize = " block size (" +QString::number(m_items[m_current]->m_width);
+        blockSize += ", " +QString::number(m_items[m_current]->m_height)+")";
         return "  Sprite : " + QString::number(m_current) + "/" +
-                QString::number(m_sprites.count()) + blockSize;
+                QString::number(m_items.count()) + blockSize;
     }
 
 
@@ -122,14 +123,8 @@ public:
    void ToggleSpriteMulticolor();
    void MegaTransform(int flip, int x, int y);
 
-   void AddNew(int x, int y) override;
-
-   virtual void FlipHorizontal() override;
-   virtual void FlipVertical() override;
-   virtual void Transform(int x, int y) override;
-   virtual int getContainerCount() override {return m_sprites.count();}
-
-   void Delete() override;
+   void AddNew(int w, int h) override;
+/*   void Delete() override;
 
    void Next() override {
        if (m_current<m_sprites.count()-1)  {
@@ -143,6 +138,12 @@ public:
        }
 
    }
+*/
+
+   virtual void FlipHorizontal() override;
+   virtual void FlipVertical() override;
+   virtual void Transform(int x, int y) override;
+   virtual int getContainerCount() override {return m_items.count();}
 
 
    void ShiftSprites(int i);
