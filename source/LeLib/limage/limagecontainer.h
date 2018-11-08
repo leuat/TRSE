@@ -32,6 +32,12 @@ public:
     void Next();
     void Delete();
 
+    void Shift(int val);
+
+    virtual void setExtraData(int idx, char val) {}
+    virtual char getExtraData(int idx) {}
+
+
     void DeleteAll() {
         for (int i=0;i<m_items.count();i++)
             delete m_items[i];

@@ -56,6 +56,13 @@ void DialogExport::FillParams()
         ui->grdParams->addWidget(le,row,1);
         m_les[key] = le;
         row++;
+        QString comment = m_image->m_exportParamsComments[key];
+        if (comment!=nullptr) {
+            QLabel *lab = new QLabel(comment);
+            ui->grdParams->addWidget(lab,row,0);
+            row++;
+        }
+
     }
 }
 

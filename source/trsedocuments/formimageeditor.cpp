@@ -416,6 +416,9 @@ void FormImageEditor::UpdatePalette()
     ui->cmbBorderMain_3->setVisible(m_work.m_currentImage->m_image->m_supports.displayForeground);
     ui->layoutColorsEdit_3->setEnabled(m_work.m_currentImage->m_image->m_supports.displayColors);
 
+    ui->lblTimeStamp->setVisible(m_work.m_currentImage->m_image->m_supports.displayTimestamp);
+    ui->leTimeStamp->setVisible(m_work.m_currentImage->m_image->m_supports.displayTimestamp);
+
     m_work.m_currentImage->m_image->ApplyColor();
 
 
@@ -810,8 +813,10 @@ void FormImageEditor::PrepareImageTypeGUI()
         ui->tabMain->removeTab(2-idx);
         idx++;
     }
-    else ui->tabMain->setTabText(2-idx,m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabSprites]);
+    else {
+        ui->tabMain->setTabText(2-idx,m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabSprites]);
 
+    }
     if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabLevels]=="") {
         ui->tabMain->removeTab(3-idx);
         idx++;
@@ -988,6 +993,8 @@ void FormImageEditor::UpdateSpriteImages()
     QIcon emptyIcon(pixmapEmpty);
 
     LImageContainer* cont = dynamic_cast<LImageContainer*>(m_work.m_currentImage->m_image);
+
+    ui->leTimeStamp->setText(QString::number(cont->getExtraData(0)));
 
     if (cont==nullptr)
         return;
@@ -1352,11 +1359,11 @@ void FormImageEditor::on_lblSprite3_clicked()
 
 void FormImageEditor::on_btnMoveSpriteLeft_clicked()
 {
-    LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
+    LImageContainer* img = dynamic_cast<LImageContainer*>(m_work.m_currentImage->m_image);
     if (img==nullptr)
         return;
 
-    img->ShiftSprites(-1);
+    img->Shift(-1);
 
     for (int i=0;i<3;i++)
         m_keepSpriteChar[i]=-1;
@@ -1368,10 +1375,10 @@ void FormImageEditor::on_btnMoveSpriteLeft_clicked()
 
 void FormImageEditor::on_btnMoveSpriteRight_clicked()
 {
-    LImageSprites2* img = dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image);
+    LImageContainer* img = dynamic_cast<LImageContainer*>(m_work.m_currentImage->m_image);
     if (img==nullptr)
         return;
-    img->ShiftSprites(1);
+    img->Shift(1);
 
     for (int i=0;i<3;i++)
         m_keepSpriteChar[i]=-1;
@@ -1418,4 +1425,13 @@ void FormImageEditor::on_btnImportRom_clicked()
 void FormImageEditor::on_btnExportMovie_clicked()
 {
     GenericExportImage("TRSE Movie","trm");
+}
+
+void FormImageEditor::on_leTimeStamp_textChanged(const QString &arg1)
+{
+    char c = ui->leTimeStamp->text().toInt();
+    LImageContainer* le = dynamic_cast<LImageContainer*>(m_work.m_currentImage->m_image);
+    if (le==nullptr)
+        return;
+    le->setExtraData(0,c);
 }

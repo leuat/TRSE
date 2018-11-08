@@ -290,5 +290,112 @@ QByteArray MovieConverter::CompressScreen(QByteArray prevFrame, QByteArray newFr
     return ret;
 }
 
+QByteArray MovieConverter::CompressScreen2(QByteArray prevFrame, QByteArray newFrame, int w, int h, float &compr)
+{
+    QByteArray ret;
+    uchar skip=0;
+    int c = 0;
+    for (int kk=0;kk<2;kk++) {
+        for (int x=0;x<h;x++) {
+            for (int y=0;y<w;y++)
+            {
+                int i=2*(y + x*w);
+                char px1 = prevFrame[i];
+                char px2 = newFrame[i];
+
+                if (kk==1) {
+                    px1 = (prevFrame[i+1] & 0xF);
+                    px2 = (newFrame[i+1]& 0xF);
+                }
+
+                if (px1==px2) {
+                    if (skip<255) {
+                        skip++;
+                        //continue;
+                    }
+                    else {
+                        ret.append(SKIP);
+                        ret.append(skip);
+                        c+=2;
+                        skip=0;
+                        continue;
+
+                    }
+
+                }
+                else {
+                    if (skip!=0) {
+                        ret.append(SKIP);
+                        ret.append(skip);
+                        ret.append(px2);
+                        c+=3;
+                        skip=0;
+                    }
+                    else {
+                        ret.append(px2);
+                        c+=1;
+                    }
+
+                }
+            }
+            //        skip+=40-w;
+        }
+        //    qDebug() << ret.count();
+        //  qDebug() << "C:" << c/((float)w*h)*100<< "%";
+        compr+=c/((float)w*h);
+        ret.append(END);
+        skip=0;
+    }
+    return ret;
+}
 
 
+
+QByteArray MovieConverter::CompressScreen3(QByteArray prevFrame, QByteArray newFrame, int w, int h, float &compr, char CEnd, char CSkip)
+{
+    QByteArray ret;
+    uchar skip=0;
+    int c = 0;
+    uchar cnt = 0;
+    for (int kk=0;kk<2;kk++) {
+        cnt=1;
+        char cur = newFrame[0];
+        if (kk==1) {
+            cur = (newFrame[1] & 0xF);
+        }
+        for (int x=0;x<h;x++) {
+            for (int y=0;y<w;y++)
+            {
+                int i=2*(y + x*w);
+                char px2 = newFrame[i];
+
+                if (kk==1)
+                    px2 = (newFrame[i+1]& 0xF);
+
+
+                if (cur==px2 && cnt<255) {
+                    cnt++;
+                }
+                else {
+
+                    ret.append(cnt);
+                    ret.append(cur);
+                    c+=2;
+
+                    cur=px2;
+                    cnt=1;
+                }
+            }
+            //        skip+=40-w;
+        }
+        //    qDebug() << ret.count();
+        //  qDebug() << "C:" << c/((float)w*h)*100<< "%";
+        ret.append(cnt);
+        ret.append(cur);
+        c+=2;
+        compr+=c/((float)w*h);
+        ret.append(CEnd);
+        skip=0;
+    }
+    return ret;
+}

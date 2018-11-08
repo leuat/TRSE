@@ -124,21 +124,6 @@ public:
    void MegaTransform(int flip, int x, int y);
 
    void AddNew(int w, int h) override;
-/*   void Delete() override;
-
-   void Next() override {
-       if (m_current<m_sprites.count()-1)  {
-           m_current++;
-       }
-   }
-
-   void Prev() override {
-       if (m_current>0)  {
-           m_current--;
-       }
-
-   }
-*/
 
    virtual void FlipHorizontal() override;
    virtual void FlipVertical() override;
@@ -146,7 +131,6 @@ public:
    virtual int getContainerCount() override {return m_items.count();}
 
 
-   void ShiftSprites(int i);
 
 
 };

@@ -36,3 +36,22 @@ void LImageContainer::Delete()
     }
 
 }
+
+void LImageContainer::Shift(int val)
+{
+    int nxt = m_current+val;
+    if (nxt<0)
+        return;
+    if (nxt>=m_items.count())
+        return;
+    if (m_items.count()<=1)
+        return;
+
+    LImageContainerItem* tmp = ((LImageContainerItem*)m_items[m_current]);
+    m_items[m_current] = m_items[nxt];
+    m_items[nxt] = tmp;
+
+    m_current = nxt;
+
+
+}

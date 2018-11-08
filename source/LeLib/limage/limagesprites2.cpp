@@ -483,23 +483,4 @@ void LImageSprites2::Transform(int x, int y)
 
 }
 
-void LImageSprites2::ShiftSprites(int i)
-{
-    int nxt = m_current+i;
- //   qDebug() << "Cur: " << m_current;
-   // qDebug() << "next: " << nxt;
-    if (nxt<0)
-        return;
-    if (nxt>=m_items.count())
-        return;
-    if (m_items.count()<=1)
-        return;
-
-    LSprite* tmp = ((LSprite*)m_items[m_current]);
-    m_items[m_current] = m_items[nxt];
-    m_items[nxt] = tmp;
-
-    m_current = nxt;
-
-}
 

@@ -214,6 +214,7 @@ private slots:
     void on_btnSpriteMulticolor_clicked();
     void on_btnImportRom_clicked();
     void on_btnExportMovie_clicked();
+    void on_leTimeStamp_textChanged(const QString &arg1);
 };
 
 

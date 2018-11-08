@@ -56,6 +56,7 @@ C64FullScreenChar::C64FullScreenChar(LColorList::Type t) : MultiColorImage(t)
     m_supports.flfLoad = true;
     m_supports.asmExport = false;
     m_supports.movieExport = true;
+    m_supports.displayTimestamp = true;
 
 
     m_GUIParams[btnLoadCharset] ="Load Charset";
@@ -74,6 +75,11 @@ C64FullScreenChar::C64FullScreenChar(LColorList::Type t) : MultiColorImage(t)
 
 
     m_exportParams.clear();
+    m_exportParams["EndChar"] = 254;
+    m_exportParams["SkipChar"] = 255;
+    m_exportParamsComments["EndChar"]  ="Make sure you didn't use this char in any of the screens.";
+    m_exportParamsComments["SkipChar"]  ="Make sure you didn't use this char in any of the screens.";
+    m_exportParams["ExportTimeStamps"] = 1;
 
 }
 
@@ -258,13 +264,22 @@ void C64FullScreenChar::ExportMovie(QFile &file)
 
 
     for (int i=0;i<screens.count()-1;i++) {
-        QByteArray data = mc.CompressScreen(screens[i], screens[i+1],m_charWidth, m_charHeight,compr);
+        LImageContainerItem* li = m_items[i ];
+        C64Screen* screen = dynamic_cast<C64Screen*>(li);
+        QByteArray data = mc.CompressScreen3(screens[i], screens[i+1],
+                m_charWidth, m_charHeight,compr,
+                (char)m_exportParams["EndChar"],(char)m_exportParams["SkipChar"]);
+
+        qDebug() << screen;
+
+        if (m_exportParams["ExportTimeStamps"]!=0)
+            data.append(screen->m_data[0]);
         file.write(data);
         cnt+=data.count();
     }
 
-    float total = m_charHeight*m_charWidth*screens.count();
-    qDebug() << "Compression : " << cnt/total*100 << " %";
+    float total = m_charHeight*m_charWidth*screens.count()*2;
+    qDebug() << "Compression : " << (1-cnt/total)*100 << " %";
 
 
 

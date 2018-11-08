@@ -124,7 +124,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -499,46 +499,11 @@
            </layout>
           </item>
           <item>
-           <layout class="QGridLayout" name="gridLayout_10" columnstretch="0,0">
-            <item row="1" column="1">
-             <widget class="QPushButton" name="btnPasteSprite">
-              <property name="text">
-               <string>Paste</string>
-              </property>
-             </widget>
-            </item>
+           <layout class="QGridLayout" name="gridLayout_10" columnstretch="1,1">
             <item row="0" column="0">
              <widget class="QPushButton" name="btnDeleteSprite">
               <property name="text">
                <string>Delete</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QPushButton" name="btnPanRight">
-              <property name="text">
-               <string>Pan horizontal</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QPushButton" name="btnFlipYSprite">
-              <property name="text">
-               <string>Flip Y</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QPushButton" name="btnCopySprite">
-              <property name="text">
-               <string>Copy</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QPushButton" name="btnFlipXSprite">
-              <property name="text">
-               <string>Flip X</string>
               </property>
              </widget>
             </item>
@@ -549,13 +514,6 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="0">
-             <widget class="QPushButton" name="btnMoveSpriteLeft">
-              <property name="text">
-               <string>Move left</string>
-              </property>
-             </widget>
-            </item>
             <item row="4" column="1">
              <widget class="QPushButton" name="btnMoveSpriteRight">
               <property name="text">
@@ -563,10 +521,66 @@
               </property>
              </widget>
             </item>
+            <item row="6" column="1">
+             <layout class="QHBoxLayout" name="hlTimeStamp">
+              <item>
+               <widget class="QLabel" name="lblTimeStamp">
+                <property name="text">
+                 <string>TimeStamp</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="leTimeStamp"/>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="1">
+             <widget class="QPushButton" name="btnPasteSprite">
+              <property name="text">
+               <string>Paste</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QPushButton" name="btnCopySprite">
+              <property name="text">
+               <string>Copy</string>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="1">
              <widget class="QPushButton" name="btnSpriteMulticolor">
               <property name="text">
                <string>Toggle multicolor</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QPushButton" name="btnMoveSpriteLeft">
+              <property name="text">
+               <string>Move left</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QPushButton" name="btnPanRight">
+              <property name="text">
+               <string>Pan horizontal</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QPushButton" name="btnFlipXSprite">
+              <property name="text">
+               <string>Flip X</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QPushButton" name="btnFlipYSprite">
+              <property name="text">
+               <string>Flip Y</string>
               </property>
              </widget>
             </item>

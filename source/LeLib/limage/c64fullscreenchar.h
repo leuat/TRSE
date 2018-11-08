@@ -133,6 +133,13 @@ public:
 
     void ExportMovie(QFile &file) override;
 
+    void setExtraData(int idx, char val) override {
+        ((C64Screen*)m_items[m_current])->m_data[idx] = val;
+    }
+    char getExtraData(int idx) override {
+        return ((C64Screen*)m_items[m_current])->m_data[idx];
+    }
+
 
 };
 

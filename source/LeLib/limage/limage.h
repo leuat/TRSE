@@ -54,6 +54,9 @@ public:
     bool displayMC1 = true;
     bool displayMC2 = true;
 
+    bool displayTimestamp = false;
+
+
 };
 
 
@@ -82,6 +85,7 @@ public:
 
 
     QMap<QString, float> m_exportParams;
+    QMap<QString, QString> m_exportParamsComments;
 
     QMap<GUIType, QString> m_GUIParams;
 
