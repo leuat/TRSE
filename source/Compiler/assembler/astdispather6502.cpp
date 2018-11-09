@@ -515,6 +515,23 @@ void ASTDispather6502::dispatch(NodeNumber *node)
  *  */
 
 
+void ASTDispather6502::dispatch(NodeBuiltinMethod *node)
+{
+    dispatch((Node*)node);
+
+    node->VerifyParams(as);
+
+    as->PushCounter();
+
+    Methods6502 methods;
+    methods.m_node = node;
+    methods.Assemble(as);
+
+    as->PopCounter(node->m_op.m_lineNumber-1);
+
+}
+
+
 void ASTDispather6502::dispatch(Node *node)
 {
     node->m_currentLineNumber = node->m_op.m_lineNumber;
@@ -1846,6 +1863,7 @@ void ASTDispather6502::dispatch(NodeAssign *node)
     as->PopCounter(node->m_op.m_lineNumber);
 
 }
+
 
 
 QString ASTDispather6502::AssignVariable(NodeAssign *node) {

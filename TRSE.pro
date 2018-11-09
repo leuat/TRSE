@@ -152,7 +152,8 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagesprites2.cpp \
     source/LeLib/limage/limagecontainer.cpp \
     source/Compiler/assembler/abstractastdispatcher.cpp \
-    source/Compiler/assembler/astdispather6502.cpp
+    source/Compiler/assembler/astdispather6502.cpp \
+    source/Compiler/assembler/methods6502.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -249,7 +250,8 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagesprites2.h \
     source/LeLib/limage/limagecontainer.h \
     source/Compiler/assembler/abstractastdispatcher.h \
-    source/Compiler/assembler/astdispather6502.h
+    source/Compiler/assembler/astdispather6502.h \
+    source/Compiler/assembler/methods6502.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \

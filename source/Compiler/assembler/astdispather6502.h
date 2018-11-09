@@ -2,6 +2,7 @@
 #define ASTDISPATHER6502_H
 
 #include "abstractastdispatcher.h"
+#include "methods6502.h"
 
 class ASTDispather6502 : public AbstractASTDispatcher
 {
@@ -137,6 +138,8 @@ public:
     bool IsSimpleIncDec(NodeVar *var, NodeAssign* node);
 
     QString AssignVariable(NodeAssign* node);
+
+
 
 
 };
