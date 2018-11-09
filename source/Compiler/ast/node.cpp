@@ -20,6 +20,7 @@
 */
 
 #include "node.h"
+#include "source/Compiler/assembler/astdispather6502.h"
 
 int Node::m_currentLineNumber;
 MemoryBlockInfo  Node::m_staticBlockInfo;
@@ -65,11 +66,6 @@ void Node::Delete() {
     }
 }
 
-QString Node::Build(Assembler *as) {
-    m_currentLineNumber = m_op.m_lineNumber;
-
-    return "";
-}
 
 void Node::RequireAddress(Node *n, QString name, int ln) {
     if (!n->isAddress())
@@ -80,7 +76,10 @@ bool Node::verifyBlockBranchSize(Assembler *as, Node *testBlock)
 {
     AsmMOS6502 tmpAsm;
     tmpAsm.m_symTab = as->m_symTab;
-    testBlock->Build(&tmpAsm);
+    ASTDispather6502 dispatcher;
+    dispatcher.as = &tmpAsm;
+    testBlock->Accept(&dispatcher);
+//    testBlock->Build(&tmpAsm);
     //qDebug() << "block count:" << tmpAsm.m_source.count();
     int blockCount = tmpAsm.m_source.count();
     return blockCount<80;

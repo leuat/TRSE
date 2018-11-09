@@ -39,9 +39,6 @@ public:
         m_val = val;
         m_isCString = isCString;
     }
-    PVar  Execute(SymbolTable* symTab, uint lvl) override;
-
-    QString Build(Assembler *as) override;
 
     void ExecuteSym(SymbolTable* symTab) override {
     }

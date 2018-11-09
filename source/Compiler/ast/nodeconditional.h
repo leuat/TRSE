@@ -65,13 +65,11 @@ public:
 
     void Delete() override;
 
-    PVar Execute(SymbolTable* symTab, uint lvl) override;
 
     void ExecuteSym(SymbolTable* symTab) override {
        m_block->ExecuteSym(symTab);
     }
 
-    QString Build(Assembler *as) override;
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);
     }

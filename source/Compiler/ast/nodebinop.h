@@ -28,7 +28,8 @@
 #include "source/Compiler/symboltable.h"
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/ast/node.h"
-#include "source/Compiler/ast/nodevar.h"
+
+
 #include "source/Compiler/ast/nodenumber.h"
 #include "source/Compiler/ast/nodeunaryop.h"
 
@@ -39,7 +40,6 @@ class NodeBinOP : public Node {
 public:
 
     NodeBinOP(Node* left, Token op, Node* right);
-    PVar Execute(SymbolTable* symTab, uint lvl) override;
     void ExecuteSym(SymbolTable* symTab) override;
 
     QString BothConstants(Assembler* as);
@@ -47,57 +47,19 @@ public:
     bool isPureNumeric() override;
 
 
-
-
-
-
-
-    void EightBitMul(Assembler* as);
-
-    void EightBitDiv(Assembler* as);
-
-
-
-    void LoadVariable(Assembler* as) override;
-
-
     bool isAddress() override;
 
 
-    int BothPureNumbersBinOp(Assembler* as);
-//    int BothPureNumbersBinOpOld(Assembler* as);
-
-
-    void RightIsPureNumericMulDiv8bit(Assembler* as);
-
-    void Mul16x8(Assembler* as);
-
-    void Div16x8(Assembler* as);
-
-
-    void RightIsPureNumericMulDiv16bit(Assembler* as);
-    void HandleMulDiv(Assembler* as);
-
-
-    bool HandleSingleAddSub(Assembler* as);
-
     bool isWord(Assembler* as) override;
 
-
-    void HandleVarBinopB16bit(Assembler* as);
-//    void HandleGenericBinOp16BitPureVar(Assembler* as);
-
-    void HandleGenericBinop16bit(Assembler* as);
-
-
-    void HandleRestBinOp(Assembler* as);
 
 
     int numValue() override;
 
     QString HexValue() override;
 
-    QString Build(Assembler *as) override;
+    int BothPureNumbersBinOp(Assembler *as);
+
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);

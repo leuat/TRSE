@@ -53,9 +53,6 @@ public:
 
     void PopZeroPointers(Assembler* as);
 
-   QString Build(Assembler* as) override;
-
-    PVar Execute(SymbolTable* symTab, uint lvl) override;
 
     void ExecuteSym(SymbolTable* symTab) override;
 

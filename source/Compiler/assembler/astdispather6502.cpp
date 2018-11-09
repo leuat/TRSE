@@ -266,7 +266,7 @@ void ASTDispather6502::RightIsPureNumericMulDiv16bit(Node *node) {
 
 
     as->Asm("");
-    node->m_left->LoadVariable(as);
+    LoadVariable(node->m_left);
     as->Term();
 
     varName = as->StoreInTempVar("int_shift", "word");
@@ -289,14 +289,14 @@ void ASTDispather6502::Mul16x8(Node *node) {
     as->Comment("Mul 16x8 setup");
     as->Asm("");
     if (node->m_left->getType(as)==TokenType::INTEGER) {
-        node->m_left->LoadVariable(as);
+        LoadVariable(node->m_left);
         as->Term();
         as->Asm("sty mul16x8_num1");
         as->Asm("sta mul16x8_num1Hi");
     }
     else {
         // 8x8 bit
-        node->m_left->LoadVariable(as);
+        LoadVariable(node->m_left);
         as->Term();
         as->Asm("sta mul16x8_num1");
         as->Asm("lda #0");
@@ -304,7 +304,7 @@ void ASTDispather6502::Mul16x8(Node *node) {
     }
 
     as->Asm("");
-    node->m_right->LoadVariable(as);
+    LoadVariable(node->m_right);
     as->Term();
     as->Asm("sta mul16x8_num2");
     as->Asm("jsr mul16x8_procedure");
@@ -410,7 +410,7 @@ void ASTDispather6502::RightIsPureNumericMulDiv8bit(Node *node) {
 
 
     as->Asm("");
-    node->m_left->LoadVariable(as);
+    LoadVariable(node->m_left);
     as->Term();
 
     for (int i=0;i<cnt;i++)
@@ -525,9 +525,7 @@ void ASTDispather6502::dispatch(NodeBuiltinMethod *node)
 
     Methods6502 methods;
     methods.m_node = node;
-    qDebug() << "START ";
-    methods.Assemble(as);
-    qDebug() << "ND ";
+    methods.Assemble(as,this);
 
     as->PopCounter(node->m_op.m_lineNumber-1);
 
@@ -1360,7 +1358,7 @@ void ASTDispather6502::dispatch(NodeConditional *node)
         QString failedLabel = labelElseDone;
         if (node->m_elseBlock!=nullptr)
             failedLabel = labelElse;
-        bn->BuildSimple(as, failedLabel);
+        BuildSimple(bn,  failedLabel);
     }
     // Start main block
     as->Label(lblstartTrueBlock); // This means skip inside
@@ -1568,6 +1566,26 @@ void ASTDispather6502::LoadByteArray(NodeVar *node) {
 
 }
 
+void ASTDispather6502::LoadVariable(Node *node)
+{
+    NodeVar* v = dynamic_cast<NodeVar*>(node);
+    if (v!=nullptr) {
+        LoadVariable(v);
+        return;
+    }
+
+    NodeNumber* num = dynamic_cast<NodeNumber*>(node);
+    if (num!=nullptr) {
+        LoadVariable(num);
+        return;
+    }
+
+    node->Accept(this);
+//    ErrorHandler::e.Error("Uknown variable type!", node->m_op.m_lineNumber);
+
+}
+
+
 void ASTDispather6502::LoadVariable(NodeVar *node) {
 
     /*        if (as->m_symTab->Lookup(value)==nullptr)
@@ -1601,6 +1619,15 @@ void ASTDispather6502::LoadVariable(NodeVar *node) {
     ErrorHandler::e.Error(TokenType::getType(t) + " assignment not supported yet for exp: " + node->value);
     return;
 }
+
+void ASTDispather6502::LoadVariable(NodeNumber *node)
+{
+   as->ClearTerm();
+   as->Term("lda ");
+   node->Accept(this);
+   as->Term();
+}
+
 
 void ASTDispather6502::StoreVariable(NodeVar *node) {
     //        as->Comment("VarNode StoreVariable");
@@ -1760,7 +1787,7 @@ bool ASTDispather6502::isSimpleAeqAOpB(NodeVar *var, NodeAssign *node) {
         return false;
     /*
      as->Comment("Optimizer: a = a +/- b");
-    var->LoadVariable(as);
+    var->LoadVariable(this);
     as->BinOP(rterm->m_op.m_type);
     rterm->m_right->Build(as);
     as->Term();
@@ -1769,7 +1796,7 @@ bool ASTDispather6502::isSimpleAeqAOpB(NodeVar *var, NodeAssign *node) {
 
 
     as->Comment("Optimizer: a = a +/- b");
-    var->LoadVariable(as);
+    LoadVariable(var);
     as->BinOP(rterm->m_op.m_type);
     rterm->m_right->Accept(this);
 //    rterm->m_right->Build(as);
@@ -1837,7 +1864,8 @@ bool ASTDispather6502::IsSimpleIncDec(NodeVar *var, NodeAssign *node) {
             return false;
         // Ok. Both are equal. OPTIMIZE!
         //            return false;
-        if (var->LoadXYVarOrNum(as, var->m_expr,true)) {
+
+        if (LoadXYVarOrNum(var, var->m_expr,true)) {
             as->Comment("Optimize byte array " + operand);
 
             as->Asm(operand + var->value+",x");
@@ -1934,7 +1962,7 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
     node->m_right->Accept(this);
 
     as->Term();
-    v->StoreVariable(as);
+    StoreVariable(v);
 
      return v->value;
 }

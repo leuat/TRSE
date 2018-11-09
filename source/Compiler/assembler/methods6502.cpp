@@ -13,12 +13,13 @@ bool Methods6502::Command(QString name)
 
 
 
-void Methods6502::Assemble(Assembler *as) {
+void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
+    m_dispatcher = dispatcher;
     if (Command("Writeln")) {
         as->Writeln();
 
-        m_node->m_params[0]->Build(as);
+        m_node->m_params[0]->Accept(dispatcher);
         as->EndWriteln();
     }
 
@@ -516,10 +517,10 @@ void Methods6502::Peek(Assembler* as)
 
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Term("ldy ");
-        m_node->m_params[1]->Build(as);
+        m_node->m_params[1]->Accept(m_dispatcher);
         as->Term();
         as->Term("lda (");
-        m_node->m_params[0]->Build(as);
+        m_node->m_params[0]->Accept(m_dispatcher);
         as->Term("),y", true);
         return;
     }
@@ -529,7 +530,7 @@ void Methods6502::Peek(Assembler* as)
     if (num!=nullptr) {
         as->ClearTerm();
         as->Term("lda ");
-        m_node->m_params[0]->Build(as);
+        m_node->m_params[0]->Accept(m_dispatcher);
         as->Term(" + " + num->HexValue());
         as->Term();
         return;
@@ -592,12 +593,12 @@ void Methods6502::MemCpy(Assembler* as)
 
 
     as->Term("sta " + bp1);
-    m_node->m_params[2]->Build(as);
+    m_node->m_params[2]->Accept(m_dispatcher);
     as->Term(bp2 + ",y", true);
 
     as->Asm("iny");
     as->Term("cpy ");
-    m_node->m_params[3]->Build(as);
+    m_node->m_params[3]->Accept(m_dispatcher);
     as->Term();
     as->Asm("bne " + lbl);
 
@@ -654,7 +655,7 @@ void Methods6502::MemCpyUnroll(Assembler* as)
 
 
         as->Term("sta " + bp1);
-        m_node->m_params[2]->Build(as);
+        m_node->m_params[2]->Accept(m_dispatcher);
         as->Term(bp2 + ",y", true);
     }
 
@@ -910,14 +911,14 @@ void Methods6502::PrintDecimal(Assembler *as)
     QString lbl= as->NewLabel("printdecimal");
 
     as->Asm("ldy #0");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
   //  as->Asm("")
 
     as->Asm("sta ipd_div_lo");
     as->Asm("sty ipd_div_hi");
 
-    m_node->m_params[1]->Build(as);
+    m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
     as->Asm("tay");
     as->Label(lbl);
@@ -943,7 +944,7 @@ void Methods6502::PrintNumber(Assembler *as)
     as->Asm("ldx #0");
 
     as->ClearTerm();
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
 
     as->Asm("tay");
@@ -1020,7 +1021,7 @@ void Methods6502::PrintString(Assembler *as)
     as->Comment("TEST");
     as->Asm("lda #<" +varName);
     as->Term("adc ");
-    m_node->m_params[1]->Build(as);
+    m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
     as->Asm("ldy #>" +varName);
     as->Asm("sta print_text+0");
@@ -1085,19 +1086,19 @@ void Methods6502::Print80(Assembler *as)
     as->Asm("bit $D600");
     as->Asm("bpl "+lbl1);
     as->Term("lda ");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term(",x",true);
     as->Asm("sta $D601");
     as->Asm("inx");
     as->Label(lbl2);
 
     as->Term("lda ");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term(",x",true);
     as->Asm("sta $D601");
     as->Asm("inx");
     as->Term("cpx ");
-    m_node->m_params[1]->Build(as);
+    m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
     as->Asm("bne "+lbl2);
 
@@ -1167,7 +1168,7 @@ void Methods6502::PokeScreen(Assembler *as, int shift)
 {
     LoadVar(as, 0);
     as->Term("ldy ");
-    m_node->m_params[1]->Build(as);
+    m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
     as->Asm("sta (screenmemory),y");
 }
@@ -1182,7 +1183,7 @@ void Methods6502::PokeScreenColor(Assembler *as, int hiAddress)
 
     LoadVar(as, 0);
     as->Term("ldy ");
-    m_node->m_params[2]->Build(as);
+    m_node->m_params[2]->Accept(m_dispatcher);
     as->Term();
     as->Asm("sta (screenmemory),y");
     for (int i=0;i<num->m_val-1;i++) {
@@ -1237,7 +1238,7 @@ void Methods6502::SetSpritePos(Assembler *as)
         as->Asm("sta $D000,x");
         if (m_node->m_params[0]->isWord(as)) {
 
-            m_node->m_params[0]->Build(as);
+            m_node->m_params[0]->Accept(m_dispatcher);
             as->Term("+1",true);
             as->Asm("cmp #0");
             as->Asm("beq " + lbl);
@@ -1268,7 +1269,7 @@ void Methods6502::SetSpritePos(Assembler *as)
 
     }
     else {
-        m_node->m_params[2]->Build(as);
+        m_node->m_params[2]->Accept(m_dispatcher);
         as->Term();
         // Shift left number of blah
         as->Asm("pha");
@@ -1284,7 +1285,7 @@ void Methods6502::SetSpritePos(Assembler *as)
         LoadVar(as, 0);
         as->Asm("sta $D000,x");
         if (m_node->m_params[0]->isWord(as)) {
-            m_node->m_params[0]->Build(as);
+            m_node->m_params[0]->Accept(m_dispatcher);
             as->Term("+1",true);
             as->Asm("cmp #0");
             as->Asm("beq " + lbl);
@@ -1337,11 +1338,11 @@ void Methods6502::Fill(Assembler *as)
         as->Asm("ldy #0");
         as->Label(lbl);
         as->Term("sta (");
-        m_node->m_params[0]->Build(as);
+        m_node->m_params[0]->Accept(m_dispatcher);
         as->Term("),y", true);
         as->Asm("iny");
         as->Term("cpy ");
-        m_node->m_params[2]->Build(as);
+        m_node->m_params[2]->Accept(m_dispatcher);
         as->Term();
         as->Asm("bne "+lbl);
         as->PopLabel("fill");
@@ -1354,11 +1355,11 @@ void Methods6502::Fill(Assembler *as)
     as->Asm("ldx #0");
     as->Label(lbl);
     as->Term("sta ");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term(",x", true);
     as->Asm("inx");
     as->Term("cpx ");
-    m_node->m_params[2]->Build(as);
+    m_node->m_params[2]->Accept(m_dispatcher);
     as->Term();
     as->Asm("bne "+lbl);
     as->PopLabel("fill");
@@ -1374,7 +1375,7 @@ void Methods6502::ScrollX(Assembler *as)
     as->Asm("and #$F8");
     //as->Asm("clc");
     as->Term("ora ");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
     as->Asm("sta $d016");
 
@@ -1395,7 +1396,7 @@ void Methods6502::ScrollY(Assembler *as)
     as->Asm("and #$78"); // 8 = 1000
     //as->Asm("clc");
     as->Term("ora ");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
     as->Asm("and #$7F"); // 8 = 1000
     as->Asm("sta $d011");
@@ -1437,16 +1438,16 @@ void Methods6502::BitOp(Assembler *as, int type)
 {
     as->ClearTerm();
     as->Term("lda ");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
     if (type==0)
         as->Term("and ");
     if (type==1)
         as->Term("ora ");
-    m_node->m_params[1]->Build(as);
+    m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
     as->Term("sta ");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
 }
 
@@ -1621,7 +1622,7 @@ void Methods6502::Abs(Assembler *as)
 
     as->Comment("abs(x)");
     as->ClearTerm();
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
     QString l = as->NewLabel("abslabel");
     as->Asm("cmp #127");
@@ -1638,7 +1639,7 @@ void Methods6502::Abs(Assembler *as)
 void Methods6502::Sqrt(Assembler *as)
 {
     as->Comment("Setup sqrt");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     if (as->m_internalZP.count()<4)
         return;
     if (m_node->m_params[0]->isWord(as)) {
@@ -1661,19 +1662,19 @@ void Methods6502::Atan2(Assembler *as)
 {
       as->Comment("Call atan2");
 
-      m_node->m_params[0]->Build(as);
+      m_node->m_params[0]->Accept(m_dispatcher);
       as->Term();
       as->Asm("sta atan2_x1");
 
-      m_node->m_params[1]->Build(as);
+      m_node->m_params[1]->Accept(m_dispatcher);
       as->Term();
       as->Asm("sta atan2_x2");
 
-      m_node->m_params[2]->Build(as);
+      m_node->m_params[2]->Accept(m_dispatcher);
       as->Term();
       as->Asm("sta atan2_y1");
 
-      m_node->m_params[3]->Build(as);
+      m_node->m_params[3]->Accept(m_dispatcher);
       as->Term();
       as->Asm("sta atan2_y2");
 
@@ -1698,13 +1699,13 @@ void Methods6502::CopyCharsetFromRom(Assembler *as)
     as->Asm("lda $D800,y");
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Term("sta (");
-        m_node->m_params[0]->Build(as);
+        m_node->m_params[0]->Accept(m_dispatcher);
         as->Term("),y", true);
 
     }
     else {
         as->Term("sta ");
-        m_node->m_params[0]->Build(as);
+        m_node->m_params[0]->Accept(m_dispatcher);
         as->Term(",y", true);
     }
     //as->Asm("sta (zeropage1),y");
@@ -1722,7 +1723,7 @@ void Methods6502::IncDec(Assembler *as, QString cmd)
     NodeVar* v = dynamic_cast<NodeVar*>(m_node->m_params[0]);
     if (v!=nullptr && v->m_expr!=nullptr) {
         as->ClearTerm();
-        v->m_expr->Build(as);
+        v->m_expr->Accept(m_dispatcher);
         as->Term();
         as->Asm("tax");
         as->Asm(cmd +" " + v->value + ",x");
@@ -1737,7 +1738,7 @@ void Methods6502::IncDec(Assembler *as, QString cmd)
 
     as->ClearTerm();
     as->Term(cmd + " ");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
 
 
@@ -2082,7 +2083,7 @@ void Methods6502::IncZp(Assembler *as)
     as->Asm("sta "+ var->value);
 */
 
-    m_node->m_params[1]->Build(as);
+    m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
     as->Asm("clc");
     as->Asm("adc "+ var->value);
@@ -2114,7 +2115,7 @@ void Methods6502::DecZp(Assembler *as)
     as->Asm("clc");
 //    as->Asm("sec");
     as->Term("sbc ");
-    m_node->m_params[1]->Build(as);
+    m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
 
     as->Asm("bcc " + lbl);
@@ -2137,7 +2138,7 @@ void Methods6502::IncScreenX(Assembler *as)
     QString lbl = as->getLabel("incscreenx");
 
     as->Term("lda ");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
     as->Asm("sta screen_x");
     as->Asm("lda screenmemory");
@@ -2161,7 +2162,7 @@ void Methods6502::Call(Assembler *as)
 {
     //NodeNumber* num= (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
     as->Term("jsr ");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
 
   /*  if (num!=nullptr) {
@@ -2189,7 +2190,7 @@ void Methods6502::InitSid(Assembler *as)
         as->Asm("tax");
         as->Asm("tay");
         as->Term("jsr ");
-        num->Build(as);
+        num->Accept(m_dispatcher);
         as->Term();
 
         return;
@@ -2445,7 +2446,7 @@ void Methods6502::RasterIRQ(Assembler *as)
     as->Comment("RasterIRQ : Hook a procedure");
 
     as->ClearTerm();
-    m_node->m_params[1]->Build(as);
+    m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
 
     if (num->m_val==0) {
@@ -2480,7 +2481,7 @@ void Methods6502::RasterIRQWedge(Assembler *as)
     as->Comment("RasterIRQ Wedge: Hook a wedge");
 
     as->ClearTerm();
-    m_node->m_params[1]->Build(as);
+    m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
 
     if (num->m_val==0) {
@@ -2708,10 +2709,10 @@ void Methods6502::Swap(Assembler *as)
     as->Asm("tay ");
     LoadVar(as, 1);
 //    SaveVar(as, 0);
-    vars[0]->StoreVariable(as);
+    m_dispatcher->StoreVariable(vars[0]);
     LoadVar(as, 0);
     as->Asm("tya");
-    vars[1]->StoreVariable(as);
+    m_dispatcher->StoreVariable(vars[1]);
     //as->Asm("sta " + vars[1]->value+ ",x");
 
 
@@ -2768,7 +2769,7 @@ void Methods6502::SetBank(Assembler *as)
     as->Asm("lda $dd00");
     as->Asm("and #$fc");
     as->Term("ora ");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
     as->Asm("sta $dd00");
 }
@@ -2811,19 +2812,19 @@ void Methods6502::Decrunch(Assembler *as)
 
 void Methods6502::DecrunchFromIndex(Assembler *as)
 {
-    m_node->m_params[1]->Build(as);
+    m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
     as->Asm("asl");
     as->Asm("tax");
 
     as->Comment("; Decrunch from index");
 //    as->Term("lda ");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term(",x", true);
     as->Asm("sta opbase+1");
     as->Asm("inx");
   //  as->Term("lda ");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term(",x",true);
     as->Asm("sta opbase+2");
     as->Asm("jsr exod_decrunch");
@@ -2951,10 +2952,10 @@ void Methods6502::CopyHalfScreen(Assembler *as)
 
         as->ClearTerm();
         as->Term("lda ");
-        m_node->m_params[0]->Build(as);
+        m_node->m_params[0]->Accept(m_dispatcher);
         as->Term(" + "+shift+",x", true);
         as->Term("sta ");
-        m_node->m_params[1]->Build(as);
+        m_node->m_params[1]->Accept(m_dispatcher);
         as->Term(" + "+shift+",x", true);
     }
     // Afterwards, copy last 25 bytes
@@ -2992,10 +2993,10 @@ void Methods6502::CopyFullScreenUnrolled(Assembler *as)
 
         as->ClearTerm();
         as->Term("lda ");
-        m_node->m_params[0]->Build(as);
+        m_node->m_params[0]->Accept(m_dispatcher);
         as->Term(" + "+shift+",x", true);
         as->Term("sta ");
-        m_node->m_params[1]->Build(as);
+        m_node->m_params[1]->Accept(m_dispatcher);
         as->Term(" + "+shift+",x", true);
     }
     // Afterwards, copy last 25 bytes
@@ -3028,10 +3029,10 @@ void Methods6502::CopyFullScreen(Assembler *as)
         QString shift = "$"+QString::number(0x100*i,16);
         as->ClearTerm();
         as->Term("lda ");
-        m_node->m_params[0]->Build(as);
+        m_node->m_params[0]->Accept(m_dispatcher);
         as->Term(" + "+shift+",x", true);
         as->Term("sta ");
-        m_node->m_params[1]->Build(as);
+        m_node->m_params[1]->Accept(m_dispatcher);
         as->Term(" + "+shift+",x", true);
     }
     as->Asm("dex");
@@ -3041,10 +3042,10 @@ void Methods6502::CopyFullScreen(Assembler *as)
     QString shift = "$"+QString::number(0x100*3-1,16);
     as->ClearTerm();
     as->Term("lda ");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term(" + "+shift+",x", true);
     as->Term("sta ");
-    m_node->m_params[1]->Build(as);
+    m_node->m_params[1]->Accept(m_dispatcher);
     as->Term(" + "+shift+",x", true);
 
     as->Asm("dex");
@@ -3166,7 +3167,7 @@ void Methods6502::ToggleBit(Assembler *as)
             SaveVar(as,0);
         }
     }
-    m_node->m_params[1]->Build(as);
+    m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
     as->Asm("tax");
     QString var = BitShiftX(as);
@@ -3209,7 +3210,7 @@ void Methods6502::GetBit(Assembler *as)
 
     QString lbl = as->NewLabel("getbit_false");
     QString lblD = as->NewLabel("getbit_done");
-    m_node->m_params[1]->Build(as);
+    m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
     as->Asm("tax");
     QString var = BitShiftX(as);
@@ -3238,13 +3239,13 @@ void Methods6502::CopyZPdata(Assembler *as)
     QString loop = as->NewLabel("zpcopy");
     as->ClearTerm();
     as->Term("ldy ");
-    m_node->m_params[1]->Build(as);
+    m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
     as->Label(loop);
     as->Asm("lda (print_text),y");
  //   as->Asm("lda #46");
     as->Term("sta ");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term(",y", true);
     as->Asm("dey");
     as->Asm("bne " + loop);
@@ -3272,7 +3273,7 @@ void Methods6502::SaveVar(Assembler *as, int paramNo, QString reg, QString extra
         as->Term("sta ");
     else
         as->Term(extra);
-    m_node->m_params[paramNo]->Build(as);
+    m_node->m_params[paramNo]->Accept(m_dispatcher);
     if (reg!="")
         reg = "," + reg;
     as->Term(reg, true);
@@ -3287,7 +3288,7 @@ void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
         as->Term("lda ");
     else
         as->Term(lda);
-    m_node->m_params[paramNo]->Build(as);
+    m_node->m_params[paramNo]->Accept(m_dispatcher);
     if (reg!="")
         reg = "," + reg;
     as->Term(reg, true);
@@ -3315,13 +3316,13 @@ void Methods6502::VDCWrite(Assembler *as)
 {
     QString lbl = as->NewLabel("vdc_write");
 
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
     as->Asm("sta $D600");
     as->Label(lbl);
     as->Asm("bit $D600");
     as->Asm("bpl "+lbl);
-    m_node->m_params[1]->Build(as);
+    m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
     as->Asm("sta $D601");
     as->PopLabel("vdc_write");
@@ -3331,7 +3332,7 @@ void Methods6502::VDCInit(Assembler *as)
 {
     QString lbl = as->NewLabel("vdc_init");
 
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
     as->Asm("sta $D600");
     as->Label(lbl);
@@ -3345,7 +3346,7 @@ void Methods6502::Jammer(Assembler *as)
 {
     as->Comment("Jammer");
     QString lbl = as->NewLabel("jammer");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
     //;sta     $7000
     as->Asm("cmp $d012");
@@ -3353,7 +3354,7 @@ void Methods6502::Jammer(Assembler *as)
     as->Asm("bcs "+lbl);
     as->Asm("lda #$02");
     as->Asm("sta     $0400");
-    m_node->m_params[1]->Build(as);
+    m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
     as->Asm("sta     $d020");
     as->Asm("sta     $d021");
@@ -3374,7 +3375,7 @@ void Methods6502::FLD(Assembler *as)
 
     QString lbl = as->NewLabel("fld");
     as->Comment("FLD effect");
-    m_node->m_params[0]->Build(as);
+    m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
     as->Asm("tax");
 

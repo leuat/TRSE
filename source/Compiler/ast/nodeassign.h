@@ -48,19 +48,6 @@ public:
         m_left = left;
     }
 
-    PVar Execute(SymbolTable* symTab, uint lvl) override;
-    void AssignString(Assembler *as);
-
-    void AssignPointer(Assembler* as);
-
-    bool isSimpleAeqAOpB(NodeVar* var, Assembler* as);
-
-
-    bool IsSimpleIncDec(NodeVar* var, Assembler* as);
-
-    QString AssignVariable(Assembler* as);
-
-    QString Build(Assembler* as) override;
     void ExecuteSym(SymbolTable* symTab) override;
 
     void Accept(AbstractASTDispatcher* dispatcher) override {

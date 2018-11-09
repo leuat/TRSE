@@ -45,22 +45,14 @@ public:
     NodeForLoop(Node* a, Node* b, Node* block, Node* step, bool unroll, int forcePage, int loopCounter);
 
 
-    void Compare(Assembler* as);
-
-    void IncreaseCounter(Assembler* as);
 
 
-    PVar Execute(SymbolTable* symTab, uint lvl) override;
     void Delete() override;
     void ExecuteSym(SymbolTable* symTab) override {
         m_block->ExecuteSym(symTab);
     }
 
 
-    void LargeLoop(Assembler* as);
-    void SmallLoop(Assembler* as);
-
-    QString Build(Assembler *as) override;
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);
     }

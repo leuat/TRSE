@@ -34,10 +34,6 @@ public:
 
     NodeVarArray(Token token, Node* expr);
 
-    PVar Execute(SymbolTable* symTab, uint lvl) override;
-
-    QString Build(Assembler *as) override;
-
     void StoreAcc(Assembler* as);
 
 

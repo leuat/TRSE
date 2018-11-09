@@ -35,7 +35,6 @@ public:
     }
     void Delete() override;
 
-    PVar Execute(SymbolTable* symTab, uint lvl) override {return PVar();}
 
     void ExecuteSym(SymbolTable* symTab) override;
     void Accept(AbstractASTDispatcher* dispatcher) override {

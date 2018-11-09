@@ -36,12 +36,10 @@
 class NodeUnaryOp : public Node {
 public:
     NodeUnaryOp(Token t, Node* right);
-    PVar Execute(SymbolTable* symTab, uint lvl) override;
 
 
     bool isMinusOne() override;
 
-    QString Build(Assembler* as) override;
 
 
     void ExecuteSym(SymbolTable* symTab) override {

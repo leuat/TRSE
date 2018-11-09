@@ -66,7 +66,6 @@ public:
 
     int m_cycleCounter;
     static int m_currentLineNumber;
-    virtual PVar Execute(SymbolTable* symTab, uint lvl) = 0;
     virtual void ExecuteSym(SymbolTable* symTab) = 0;
     virtual bool DataEquals(Node* other) { return false;}
     virtual QString HexValue() {return "0";}
@@ -75,9 +74,8 @@ public:
     virtual bool isPureNumeric() {
         return false;
     }
-    virtual QString Build(Assembler* as);
-    virtual void LoadVariable(Assembler* a) {}
-    virtual void StoreVariable(Assembler* a) {}
+/*    virtual void LoadVariable(AbstractASTDispatcher* dispatcher) {}
+    virtual void StoreVariable(AbstractASTDispatcher* dispatcher) {}*/
     virtual TokenType::Type getType(Assembler* as) {
         return m_op.m_type;
     }
@@ -106,10 +104,6 @@ public:
 
 class NoOp : public Node {
     public:
-    PVar Execute(SymbolTable* symTab, uint lvl) override {
-        level = lvl+1;
-        return PVar();
-    }
     void ExecuteSym(SymbolTable* symTab) override {
 
     }

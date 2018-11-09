@@ -26,6 +26,7 @@
 #include "source/LeLib/util/util.h"
 #include "source/LeLib/util/cinifile.h"
 #include "source/Compiler/Opcodes/opcodes6502.h"
+
 class CStringItem {
 public:
     uchar m_pscii, m_screenCode;

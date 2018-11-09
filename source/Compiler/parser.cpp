@@ -1012,6 +1012,7 @@ QVector<Node *> Parser::VariableDeclarations()
         NodeVarDecl* decl = new NodeVarDecl(n, typeNode);
         var_decleratons.append(decl);
         if (typeNode->m_op.m_type == TokenType::INCSID) {
+
             decl->InitSid(m_lexer->m_path);
         }
     }

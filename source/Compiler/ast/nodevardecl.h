@@ -52,23 +52,12 @@ public:
         return m_dataSize;
     }
 
-    void IncSid(Assembler* as);
-
-    void IncBin(Assembler* as);
-
-    void InitSid(QString projectDir);
-
-    void DeclarePointer(Assembler*  as);
-
-    QString Build(Assembler* as) override;
-
-
-    PVar Execute(SymbolTable* symTab, uint lvl) override;
     void ExecuteSym(SymbolTable* symTab) override;
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);
     }
 
+    void InitSid(QString projectDir);
 
 };
 

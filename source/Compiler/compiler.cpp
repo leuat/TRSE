@@ -47,21 +47,6 @@ void Compiler::Parse()
 
 }
 
-void Compiler::Visit(Node* n)
-{
-    n->Execute(nullptr, 0);
-}
-
-void Compiler::Interpret()
-{
-    if (m_tree!=nullptr)
-        try {
-        Visit(m_tree);
-    } catch (FatalErrorException e) {
-
-    }
-
-}
 
 bool Compiler::Build(Compiler::Type type, QString project_dir)
 {

@@ -1,6 +1,7 @@
 #ifndef METHODS6502_H
 #define METHODS6502_H
 
+#include "abstractastdispatcher.h"
 #include "source/Compiler/assembler/assembler.h"
 #include "source/Compiler/ast/nodenumber.h"
 #include "source/Compiler/ast/nodevar.h"
@@ -12,9 +13,10 @@ class Methods6502
 {
 public:
     Methods6502();
+    AbstractASTDispatcher* m_dispatcher;
     NodeBuiltinMethod* m_node = nullptr;
 
-    void Assemble(Assembler* as);
+    void Assemble(Assembler* as, AbstractASTDispatcher* dispenser);
 
 
     bool Command(QString name);

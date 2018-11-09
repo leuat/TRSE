@@ -28,7 +28,6 @@
 #include "source/Compiler/symboltable.h"
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/ast/node.h"
-#include "source/Compiler/ast/nodevar.h"
 #include "source/Compiler/assembler/abstractastdispatcher.h"
 
 class NodeVarType : public Node {
@@ -43,10 +42,10 @@ public:
     NodeVarType(Token t, QStringList data);
     NodeVarType(Token t,  QString filename, QString position );
     NodeVarType(Token t,  QString initvalue );
-    PVar Execute(SymbolTable* symTab, uint lvl) override;
-    void ExecuteSym(SymbolTable* symTab) override {
 
-    }
+    void ExecuteSym(SymbolTable* symTab) override {};
+
+
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);
     }

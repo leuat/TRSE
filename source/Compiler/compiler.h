@@ -41,8 +41,6 @@ public:
     Compiler(Parser* p, CIniFile* ini, CIniFile* pIni);
     Compiler() {}
     void Parse();
-    void Visit(Node* n);
-    void Interpret();
     bool Build(Type, QString projDir);
     void CleanupCycleLinenumbers();
     void CleanupBlockLinenumbers();

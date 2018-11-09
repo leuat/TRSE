@@ -36,7 +36,6 @@ public:
     float m_val;
     NodeNumber(Token op, int val);
     QString m_strVal = "";
-    PVar Execute(SymbolTable* symTab, uint lvl) override;
     void ExecuteSym(SymbolTable* symTab) override {
     }
 
@@ -46,7 +45,7 @@ public:
 
     bool isWord(Assembler* as) override;
 
-    void LoadVariable(Assembler* as) override;
+    //void LoadVariable(AbstractASTDispatcher* dispatcher) override;
 
     int numValue() { return m_val;}
 
@@ -61,7 +60,6 @@ public:
     bool isMinusOne() override;
 
     bool isOne() override;
-    QString Build(Assembler *as) override;
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);
     }

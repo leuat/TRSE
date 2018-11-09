@@ -38,11 +38,6 @@ public:
         m_op = t;
     }
 
-    PVar Execute(SymbolTable* symTab, uint lvl) override {
-        return PVar();
-    }
-
-    QString Build(Assembler *as) override;
     void ExecuteSym(SymbolTable* symTab) override {
 
     }

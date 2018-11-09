@@ -40,7 +40,6 @@ public:
 
     NodeVar(Token t, Node* expr);
 
-    PVar Execute(SymbolTable* symTab, uint lvl) override;
 
 
     TokenType::Type getType(Assembler* as) override;
@@ -49,21 +48,15 @@ public:
     bool DataEquals(Node *other) override;
     bool isWord(Assembler* as) override;
 
-    void LoadPointer(Assembler* as);
 
-    virtual void AssignPointer(Assembler *as, QString memoryLocation);
-
-    bool LoadXYVarOrNum(Assembler* as, Node* node, bool isx);
-
-    void LoadByteArray(Assembler *as);
 
     bool isAddress() override;
 
-    void LoadVariable(Assembler* as) override;
+/*    void LoadVariable(AbstractASTDispatcher* dispatcher) override;
+    void LoadPointer(Assembler* as);
 
-    void StoreVariable(Assembler* as) override;
-
-    QString Build(Assembler *as) override;
+    void StoreVariable(AbstractASTDispatcher* dispatcher) override;
+*/
     void ExecuteSym(SymbolTable* symTab) override;
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);

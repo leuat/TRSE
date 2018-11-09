@@ -136,9 +136,11 @@ public:
     void LoadByteArray(NodeVar* node);
 
 
-    void LoadVariable(NodeVar* node);
+    void LoadVariable(NodeVar* node) override;
+    void LoadVariable(Node* node) override;
+    void LoadVariable(NodeNumber* node) override;
 
-    void StoreVariable(NodeVar* node);
+    void StoreVariable(NodeVar* node) override;
 
     /*
      *

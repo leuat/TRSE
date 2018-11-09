@@ -52,6 +52,12 @@ public:
     virtual void dispatch(NodeAsm *node) = 0;
     virtual void dispatch(NodeBinaryClause *node) = 0;
 
+
+    virtual void StoreVariable(NodeVar* n) = 0;
+    virtual void LoadVariable(NodeVar* n) = 0;
+    virtual void LoadVariable(Node* n) = 0;
+    virtual void LoadVariable(NodeNumber* n) = 0;
+
 };
 
 #endif // ABSTRACTASTDISPATCHER_H

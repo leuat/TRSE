@@ -36,11 +36,9 @@ public:
     NodeCompound(Token t):Node() {
         m_op = t;
     }
-    PVar Execute(SymbolTable* symTab, uint lvl) override;
     void Delete() override;
     void ExecuteSym(SymbolTable* symTab) override;
 
-    QString Build(Assembler* as) override;
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);
     }
