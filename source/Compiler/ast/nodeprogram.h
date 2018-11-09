@@ -31,6 +31,7 @@
 #include "source/Compiler/ast/nodebuiltinmethod.h"
 #include "source/Compiler/ast/nodeblock.h"
 #include "source/Compiler/ast/nodeproceduredecl.h"
+#include "source/Compiler/assembler/abstractastdispatcher.h"
 
 class NodeProgram : public Node {
 public:
@@ -52,6 +53,10 @@ public:
     void ExecuteSym(SymbolTable* symTab) override;
 
     QString Build(Assembler* a) override;
+
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
+    }
 
 };
 

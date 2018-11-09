@@ -22,7 +22,7 @@
 #ifndef NODEBLOCK_H
 #define NODEBLOCK_H
 
-
+#include "source/Compiler/assembler/abstractastdispatcher.h"
 
 #include "source/Compiler/token.h"
 #include "source/Compiler/pvar.h"
@@ -59,6 +59,9 @@ public:
 
     void ExecuteSym(SymbolTable* symTab) override;
 
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
+    }
 
 };
 

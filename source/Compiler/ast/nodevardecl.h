@@ -32,6 +32,8 @@
 #include "source/Compiler/ast/nodevartype.h"
 #include "source/Compiler/misc/sidfile.h"
 #include "source/LeLib/util/util.h"
+#include "source/Compiler/assembler/abstractastdispatcher.h"
+
 class NodeVarDecl : public Node {
 public:
     Node* m_varNode = nullptr;
@@ -63,6 +65,9 @@ public:
 
     PVar Execute(SymbolTable* symTab, uint lvl) override;
     void ExecuteSym(SymbolTable* symTab) override;
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
+    }
 
 
 };

@@ -33,6 +33,7 @@
 #include "source/Compiler/ast/nodevararray.h"
 #include "source/Compiler/ast/nodebinop.h"
 
+#include "source/Compiler/assembler/abstractastdispatcher.h"
 
 //class NodeBinop;
 
@@ -62,6 +63,9 @@ public:
     QString Build(Assembler* as) override;
     void ExecuteSym(SymbolTable* symTab) override;
 
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
+    }
 
 };
 

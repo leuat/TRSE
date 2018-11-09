@@ -31,6 +31,7 @@
 #include "source/Compiler/ast/nodenumber.h"
 #include "source/Compiler/ast/nodevar.h"
 #include "source/Compiler/ast/nodebinop.h"
+#include "source/Compiler/assembler/abstractastdispatcher.h"
 
 class NodeUnaryOp : public Node {
 public:
@@ -45,6 +46,9 @@ public:
 
     void ExecuteSym(SymbolTable* symTab) override {
         m_right->ExecuteSym(symTab);
+    }
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
     }
 
 };

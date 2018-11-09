@@ -27,6 +27,7 @@
 #include "source/Compiler/pvar.h"
 #include "source/Compiler/symboltable.h"
 #include "source/Compiler/errorhandler.h"
+#include "source/Compiler/assembler/abstractastdispatcher.h"
 #include "source/Compiler/ast/node.h"
 
 
@@ -61,6 +62,9 @@ public:
 
     bool isOne() override;
     QString Build(Assembler *as) override;
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
+    }
 
 
 };

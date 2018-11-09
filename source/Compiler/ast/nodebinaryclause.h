@@ -23,6 +23,7 @@
 #define NODEBINARYCLAUSE_H
 
 #include "node.h"
+#include "source/Compiler/assembler/abstractastdispatcher.h"
 
 
 class NodeBinaryClause : public Node
@@ -58,6 +59,9 @@ public:
     // Output: a = 0, 1
     QString Build(Assembler *as) override;
 
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
+    };
 
 
 };

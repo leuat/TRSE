@@ -72,8 +72,13 @@ bool Compiler::Build(Compiler::Type type, QString project_dir)
     if (m_assembler)
         delete m_assembler;
 
-    if (type==MOS6502)
+    if (type==MOS6502) {
         m_assembler = new AsmMOS6502();
+        m_dispatcher = new ASTDispather6502();
+    }
+
+
+
 /*    if (type==PASCAL)
         m_assembler = new AsmPascal();
 */
@@ -98,7 +103,11 @@ bool Compiler::Build(Compiler::Type type, QString project_dir)
     if (m_tree!=nullptr)
         try {
             dynamic_cast<NodeProgram*>(m_tree)->m_initJumps = m_parser->m_initJumps;
-            m_tree->Build(m_assembler);
+            m_dispatcher->as = m_assembler;
+//            m_dispatcher->dispatch(m_tree);
+            m_tree->Accept(m_dispatcher);
+
+            //m_tree->Build(m_assembler);
         } catch (FatalErrorException e) {
             HandleError(e,"Error during build");
             return false;

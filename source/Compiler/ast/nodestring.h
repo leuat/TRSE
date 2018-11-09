@@ -28,6 +28,7 @@
 #include "source/Compiler/symboltable.h"
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/ast/node.h"
+#include "source/Compiler/assembler/abstractastdispatcher.h"
 
 class NodeString : public Node {
 public:
@@ -44,6 +45,11 @@ public:
 
     void ExecuteSym(SymbolTable* symTab) override {
     }
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
+    }
+
+
 };
 
 #endif // NODESTRING_H

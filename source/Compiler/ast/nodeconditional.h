@@ -30,6 +30,7 @@
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/ast/nodebinaryclause.h"
 #include <QVector>
+#include "source/Compiler/assembler/abstractastdispatcher.h"
 
 class NodeConditional : public Node {
 public:
@@ -71,6 +72,9 @@ public:
     }
 
     QString Build(Assembler *as) override;
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
+    }
 
 };
 

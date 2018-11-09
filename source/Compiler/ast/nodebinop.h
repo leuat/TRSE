@@ -31,6 +31,10 @@
 #include "source/Compiler/ast/nodevar.h"
 #include "source/Compiler/ast/nodenumber.h"
 #include "source/Compiler/ast/nodeunaryop.h"
+
+#include "source/Compiler/assembler/abstractastdispatcher.h"
+
+
 class NodeBinOP : public Node {
 public:
 
@@ -94,6 +98,10 @@ public:
     QString HexValue() override;
 
     QString Build(Assembler *as) override;
+
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
+    };
 
 };
 

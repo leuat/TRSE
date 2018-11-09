@@ -24,6 +24,9 @@
 
 #include "node.h"
 
+
+#include "source/Compiler/assembler/abstractastdispatcher.h"
+
 class NodeAsm : public Node
 {
 public:
@@ -43,6 +46,11 @@ public:
     void ExecuteSym(SymbolTable* symTab) override {
 
     }
+
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
+    }
+
 };
 
 #endif // NODEASM_H

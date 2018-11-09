@@ -28,7 +28,7 @@
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/ast/nodenumber.h"
 #include "source/Compiler/ast/nodevartype.h"
-
+#include "source/Compiler/assembler/abstractastdispatcher.h"
 class NodeVar : public Node {
 public:
     QString value;
@@ -65,5 +65,8 @@ public:
 
     QString Build(Assembler *as) override;
     void ExecuteSym(SymbolTable* symTab) override;
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
+    }
 
 };

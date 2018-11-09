@@ -28,6 +28,8 @@
 #include "source/Compiler/assembler/assembler.h"
 #include "source/Compiler/assembler/mos6502.h"
 
+#include "source/Compiler/assembler/abstractastdispatcher.h"
+
 
 class MemoryBlockInfo {
 public:
@@ -79,6 +81,7 @@ public:
     virtual TokenType::Type getType(Assembler* as) {
         return m_op.m_type;
     }
+    virtual void Accept(AbstractASTDispatcher* dispatcher) = 0;
 
     virtual bool isAddress() { return false;}
     virtual void AssignPointer(Assembler* as, QString memoryLocation) {}
@@ -110,6 +113,10 @@ class NoOp : public Node {
     void ExecuteSym(SymbolTable* symTab) override {
 
     }
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
+    }
+
 };
 
 #endif // NODE_H

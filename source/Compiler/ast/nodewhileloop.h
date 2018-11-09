@@ -23,6 +23,7 @@
 #define NODEWHILELOOP_H
 
 #include "source/Compiler/ast/node.h"
+#include "source/Compiler/assembler/abstractastdispatcher.h"
 
 class NodeWhileLoop : public Node
 {
@@ -37,6 +38,10 @@ public:
     PVar Execute(SymbolTable* symTab, uint lvl) override {return PVar();}
 
     void ExecuteSym(SymbolTable* symTab) override;
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
+    }
+
 
 
 };

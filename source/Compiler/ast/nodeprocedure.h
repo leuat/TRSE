@@ -31,6 +31,7 @@
 #include "source/Compiler/ast/nodeproceduredecl.h"
 #include "source/Compiler/ast/nodevar.h"
 #include "source/Compiler/ast/nodeassign.h"
+#include "source/Compiler/assembler/abstractastdispatcher.h"
 
 class NodeProcedure : public Node {
 public:
@@ -46,6 +47,10 @@ public:
 
     PVar Execute(SymbolTable *symTab, uint lvl) override;
     void ExecuteSym(SymbolTable* symTab) override;
+
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
+    }
 
 };
 

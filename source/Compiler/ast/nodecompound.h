@@ -27,6 +27,7 @@
 #include "source/Compiler/pvar.h"
 #include "source/Compiler/symboltable.h"
 #include "source/Compiler/errorhandler.h"
+#include "source/Compiler/assembler/abstractastdispatcher.h"
 #include "source/Compiler/ast/node.h"
 
 class NodeCompound : public Node {
@@ -40,6 +41,9 @@ public:
     void ExecuteSym(SymbolTable* symTab) override;
 
     QString Build(Assembler* as) override;
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
+    }
 
 };
 #endif // NODECOMPOUND_H

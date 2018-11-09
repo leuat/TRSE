@@ -30,6 +30,7 @@
 #include "source/Compiler/ast/nodeassign.h"
 #include "source/Compiler/ast/nodevar.h"
 
+#include "source/Compiler/assembler/abstractastdispatcher.h"
 
 class NodeForLoop : public Node {
 public:
@@ -60,6 +61,9 @@ public:
     void SmallLoop(Assembler* as);
 
     QString Build(Assembler *as) override;
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
+    }
 
 };
 #endif // NODEFORLOOP_H

@@ -115,6 +115,8 @@ void Assembler::PushCounter()
 
 void Assembler::PopCounter(int ln)
 {
+    if (m_cycleCounter.count()==0)
+        return;
     int i = m_cycleCounter.last();
     m_cycleCounter.removeLast();
     if (i>m_cycles[ln]) // Only count largest number
