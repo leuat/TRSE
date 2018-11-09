@@ -278,7 +278,7 @@ void MainWindow::LoadDocument(QString fileName)
     m_currentDoc = editor;
     ConnectDocument();
 
- //    connect(m_currentDoc, SIGNAL(OpenOtherFile(QString, int )), this, SLOT(ForceOpenFile(QString , int)));
+     connect(m_currentDoc, SIGNAL(OpenOtherFile(QString, int )), this, SLOT(ForceOpenFile(QString , int)));
 }
 void MainWindow::ConnectDocument()
 {

@@ -91,18 +91,6 @@ bool NodeBinOP::isPureNumeric() {
     return (m_left->isPureNumeric() && m_right->isPureNumeric());
 }
 
-int NodeBinOP::getShiftCount(int i) {
-    if (i==1) return 0;
-    if (i==2) return 1;
-    if (i==4) return 2;
-    if (i==8) return 3;
-    if (i==16) return 4;
-    if (i==32) return 5;
-    if (i==64) return 6;
-    if (i==128) return 7;
-    if (i==256) return 8;
-    return -1;
-}
 
 void NodeBinOP::EightBitMul(Assembler *as) {
 
@@ -235,7 +223,7 @@ int NodeBinOP::BothPureNumbersBinOp(Assembler *as) {
 
 void NodeBinOP::RightIsPureNumericMulDiv8bit(Assembler *as) {
     int val = ((NodeNumber*)m_right)->m_val;
-    int cnt = getShiftCount(val);
+    int cnt = Util::getShiftCount(val);
     if (cnt == -1 ) {
         if (m_op.m_type == TokenType::MUL)
             EightBitMul(as);
@@ -312,7 +300,7 @@ void NodeBinOP::Div16x8(Assembler *as) {
 void NodeBinOP::RightIsPureNumericMulDiv16bit(Assembler *as) {
     int val = ((NodeNumber*)m_right)->m_val;
 
-    int cnt = getShiftCount(val);
+    int cnt = Util::getShiftCount(val);
     if (cnt == -1 && m_op.m_type == TokenType::DIV ) {
         //if (m_op.m_type == TokenType::MUL)
         //    EightBitMul(as);

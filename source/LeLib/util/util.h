@@ -88,6 +88,10 @@ public:
     static QColor colorScale(QColor& col, int mean, int std);
 
 
+    static int getShiftCount(int i);
+
+
+
     static int C64StringToInt(QString f) {
         int val;
         bool ok;

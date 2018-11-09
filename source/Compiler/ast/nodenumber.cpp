@@ -135,5 +135,7 @@ QString NodeNumber::Build(Assembler *as) {
         as->Term("lda " + val);
     else
         as->Term(val);
+
+
     return val;
 }

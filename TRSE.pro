@@ -150,7 +150,9 @@ SOURCES += main.cpp\
     source/dialogfindfile.cpp \
     source/LeLib/limage/limagevic20.cpp \
     source/LeLib/limage/limagesprites2.cpp \
-    source/LeLib/limage/limagecontainer.cpp
+    source/LeLib/limage/limagecontainer.cpp \
+    source/Compiler/assembler/abstractastdispatcher.cpp \
+    source/Compiler/assembler/astdispather6502.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -245,7 +247,9 @@ HEADERS  += mainwindow.h \
     source/dialogfindfile.h \
     source/LeLib/limage/limagevic20.h \
     source/LeLib/limage/limagesprites2.h \
-    source/LeLib/limage/limagecontainer.h
+    source/LeLib/limage/limagecontainer.h \
+    source/Compiler/assembler/abstractastdispatcher.h \
+    source/Compiler/assembler/astdispather6502.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \

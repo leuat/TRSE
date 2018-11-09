@@ -34,10 +34,10 @@ class NodeNumber : public Node {
 public:
     float m_val;
     NodeNumber(Token op, int val);
+    QString m_strVal = "";
     PVar Execute(SymbolTable* symTab, uint lvl) override;
     void ExecuteSym(SymbolTable* symTab) override {
     }
-
 
     bool isAddress() override;
 

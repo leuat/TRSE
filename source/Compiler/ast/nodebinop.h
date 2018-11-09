@@ -42,7 +42,6 @@ public:
 
     bool isPureNumeric() override;
 
-    int getShiftCount(int i);
 
 
 
