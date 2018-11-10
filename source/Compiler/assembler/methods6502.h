@@ -56,6 +56,8 @@ public:
     void InitDiv16x8(Assembler* as);
     void InitSqrt16(Assembler* as);
     void InitAtan2(Assembler* as);
+    void InitModPlayer(Assembler* as);
+    void IncludeModPlayer(Assembler* as);
     void DisableInterrupts(Assembler* as);
 //    void EnableInterrupts(Assembler* as);
     void RasterIRQ(Assembler* as);

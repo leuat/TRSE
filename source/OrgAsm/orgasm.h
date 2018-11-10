@@ -62,8 +62,9 @@ class OrgasmInstruction {
                 return zpx;
             if (!s.contains("(")  && i<256 && s.contains(",y"))
                 return zpy;
-            if (s.contains("(") && s.contains(",x)"))
+            if (s.contains("(") && s.contains(",x)")) {
                 return izx;
+            }
             if (s.contains("(") && s.contains("),y"))
                 return izy;
             if (!s.contains("(") && i>=256 && !s.contains(")") && !s.contains(",x") && !s.contains(",y")) {

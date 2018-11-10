@@ -74,6 +74,23 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("initatan2")) {
         InitAtan2(as);
     }
+    if (Command("include_modplayer"))
+        IncludeModPlayer(as);
+
+    if (Command("initmodplayer"))
+        InitModPlayer(as);
+
+    if (Command("playmod")) {
+        as->Asm("pla");
+        as->Asm("tax");
+        as->Asm("pla");
+        as->Asm("jsr music_cont");
+        as->Asm("pha");
+        as->Asm("txa");
+        as->Asm("pha");
+
+    }
+
     if (Command("SetScreenLocation"))
         SetScreenLocation(as);
 
@@ -2346,6 +2363,23 @@ void Methods6502::InitSqrt16(Assembler *as)
 void Methods6502::InitAtan2(Assembler *as)
 {
     as->IncludeFile(":resources/code/atan2.asm");
+
+}
+
+void Methods6502::InitModPlayer(Assembler *as)
+{
+
+    as->Asm("jsr		setup_music");
+    as->Asm("jsr		skip_order_wrap ; enter in the middle of the music loop");
+    as->Asm("pha");
+    as->Asm("txa");
+    as->Asm("pha");
+
+}
+
+void Methods6502::IncludeModPlayer(Assembler *as)
+{
+    as->IncludeFile(":resources/code/vic20_mod_music.asm");
 
 }
 

@@ -84,6 +84,7 @@ void Parser::InitBuiltinFunctions()
     InitBuiltinFunction(QStringList()<< "*", "init16x8div");
     InitBuiltinFunction(QStringList()<< "rand", "initrandom","init_random_call");
     InitBuiltinFunction(QStringList()<< "rasterirqwedge" , "init_wedge");
+    InitBuiltinFunction(QStringList()<< "initmodplayer" , "include_modplayer");
     InitBuiltinFunction(QStringList()<< "decrunch", "init_decrunch");
     InitBuiltinFunction(QStringList()<< "sine", "initsinetable", "initsine_calculate");
     InitBuiltinFunction(QStringList()<< "log2_table" << "atan2", "initlog2");

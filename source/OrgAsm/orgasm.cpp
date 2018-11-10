@@ -134,6 +134,7 @@ OrgasmLine Orgasm::LexLine(int i) {
         QStringList cl = line.split("=");
         l.m_label = cl[0].trimmed();
         l.m_expr = cl[1].trimmed();
+        qDebug() << l.m_expr;
         return l;
     }
     if (lst[0].toLower()==".byte") {
@@ -350,9 +351,11 @@ void Orgasm::ProcessByteData(OrgasmLine &ol)
         m_data.append((char)0x00);
         return;
     }
+//    qDebug() << ol.m_expr;
     QStringList lst = ol.m_expr.split(",");
 //    qDebug() << lst;
     for (QString s: lst) {
+
         if (s.trimmed()=="") continue;
   //      qDebug() << Util::NumberFromStringHex(s);
         if (!s.contains("\"")) {
@@ -467,6 +470,8 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     QString orgExpr = expr;
 //    if (pass==OrgasmData::PASS_SYMBOLS)
     {
+//        qDebug() << expr;
+
         QStringList l2 = expr.simplified().split(",");
 
         for (QString& c : m_constList) {
@@ -519,7 +524,6 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
             expr+=","+l2[1];
 
 
-
         if (expr!="") {
             int val;
             QString repl = "$1000";
@@ -527,8 +531,10 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
                 repl= "#$10";
 
             expr = expr.replace("<","").replace(">","");
-
+//            qDebug() << "A" <<expr;
+            if (!(expr.startsWith("(") && expr.endsWith(")")))
             expr = OrgasmData::BinopExpr(expr, val, repl);
+  //          qDebug() << "B" <<expr;
             if (val==-1 && pd==OrgasmData::PASS_SYMBOLS) {
                 qDebug() << l2;
                 qDebug() << ol.m_instruction.m_opCode<<  orgExpr;
@@ -547,6 +553,8 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     QString m_opCode = ol.m_instruction.m_opCode;
 
 
+
+
     OrgasmInstruction::Type type = OrgasmInstruction::imp;
     MOSOperandCycle cyc;
 
@@ -556,7 +564,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     if (m_opCodes.m_opCycles.contains(m_opCode))
         cyc = m_opCodes.m_opCycles[m_opCode];
     else {
-        qDebug() << expr;
+//        qDebug() << expr;
         throw QString("Uknown opcode: " + m_opCode);
     }
 
@@ -564,12 +572,13 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         throw QString("Opcode not implemented yet: " + m_opCode);
 
 
+//    qDebug() << "BEFORE: " << expr;
     if (expr!="")
         type =  ol.m_instruction.getTypeFromParams(expr);
     else
         type = OrgasmInstruction::none;
 
-
+//    qDebug() << type;
 
 
     // Override types or pass symbol
