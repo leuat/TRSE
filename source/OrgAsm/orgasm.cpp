@@ -134,7 +134,7 @@ OrgasmLine Orgasm::LexLine(int i) {
         QStringList cl = line.split("=");
         l.m_label = cl[0].trimmed();
         l.m_expr = cl[1].trimmed();
-        qDebug() << l.m_expr;
+        //qDebug() << l.m_expr;
         return l;
     }
     if (lst[0].toLower()==".byte") {
@@ -531,13 +531,13 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
                 repl= "#$10";
 
             expr = expr.replace("<","").replace(">","");
-//            qDebug() << "A" <<expr;
+//            qDebug() << "A" <expr;
             if (!(expr.startsWith("(") && expr.endsWith(")")))
             expr = OrgasmData::BinopExpr(expr, val, repl);
   //          qDebug() << "B" <<expr;
             if (val==-1 && pd==OrgasmData::PASS_SYMBOLS) {
-                qDebug() << l2;
-                qDebug() << ol.m_instruction.m_opCode<<  orgExpr;
+                //qDebug() << l2;
+                //qDebug() << ol.m_instruction.m_opCode<<  orgExpr;
                 throw QString("Unknown operation: " +orgExpr);
             }
 

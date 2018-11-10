@@ -148,6 +148,9 @@ m; WaitForRaster; C64, C128, VIC20; b
 m; WaitNoRaster; C64, C128, VIC20; b
 
 m; DisableVIC20IRQ; VIC20;
+m; StartVIAIRQ; VIC20;
+m; CloseVIAIRQ; VIC20;
+m; VIAIRQ; VIC20; p,b,b
 
 
 #

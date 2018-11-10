@@ -422,6 +422,7 @@ void ASTDispather6502::RightIsPureNumericMulDiv8bit(Node *node) {
 void ASTDispather6502::dispatch(NodeBinOP *node)
 {
 
+    node->DispatchConstructor();
     // First check if both are consants:
 
 
@@ -468,6 +469,8 @@ void ASTDispather6502::dispatch(NodeBinOP *node)
 
 void ASTDispather6502::dispatch(NodeNumber *node)
 {
+    node->DispatchConstructor();
+
     QString val = "";
 
     /*        if (as->m_symTab->m_constants.contains(m_op.m_value)) {
@@ -518,6 +521,7 @@ void ASTDispather6502::dispatch(NodeNumber *node)
 
 void ASTDispather6502::dispatch(NodeBuiltinMethod *node)
 {
+    node->DispatchConstructor();
 
     node->VerifyParams(as);
 
@@ -534,6 +538,8 @@ void ASTDispather6502::dispatch(NodeBuiltinMethod *node)
 
 void ASTDispather6502::dispatch(Node *node)
 {
+    node->DispatchConstructor();
+
     node->m_currentLineNumber = node->m_op.m_lineNumber;
 }
 
@@ -541,6 +547,8 @@ void ASTDispather6502::dispatch(Node *node)
 
 void ASTDispather6502::dispatch(NodeProcedure *node)
 {
+    node->DispatchConstructor();
+
 
     if (node->m_parameters.count()!=node->m_procedure->m_paramDecl.count())
         ErrorHandler::e.Error("Procedure '" + node->m_procedure->m_procName+"' requires "
@@ -561,6 +569,8 @@ void ASTDispather6502::dispatch(NodeProcedure *node)
 
 void ASTDispather6502::dispatch(NodeProcedureDecl *node)
 {
+    node->DispatchConstructor();
+
     // In case memory block is acive
 //    as->EndMemoryBlock();
 
@@ -638,6 +648,8 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
 
 void ASTDispather6502::dispatch(NodeProgram *node)
 {
+    node->DispatchConstructor();
+
     as->EndMemoryBlock();
     NodeBuiltinMethod::m_isInitialized.clear();
     as->Program(node->m_name, node->m_param);
@@ -648,10 +660,13 @@ void ASTDispather6502::dispatch(NodeProgram *node)
 
 void ASTDispather6502::dispatch(NodeVarType *node)
 {
+    node->DispatchConstructor();
 
 }
 void ASTDispather6502::dispatch(NodeAsm *node)
 {
+    node->DispatchConstructor();
+
     QStringList txt = node->m_asm.split("\n");
     as->Comment("");
     as->Comment("****** Inline assembler section");
@@ -663,11 +678,15 @@ void ASTDispather6502::dispatch(NodeAsm *node)
 
 void ASTDispather6502::dispatch(NodeString *node)
 {
+    node->DispatchConstructor();
+
     as->String(node->m_val);
 }
 
 void ASTDispather6502::dispatch(NodeUnaryOp *node)
 {
+    node->DispatchConstructor();
+
     NodeNumber* num = dynamic_cast<NodeNumber*>(node->m_right);
 
     if (num!=nullptr) {
@@ -694,6 +713,7 @@ void ASTDispather6502::dispatch(NodeUnaryOp *node)
 
 void ASTDispather6502::dispatch(NodeCompound *node)
 {
+    node->DispatchConstructor();
 
     as->BeginBlock();
     for (Node* n: node->children)
@@ -707,6 +727,8 @@ void ASTDispather6502::dispatch(NodeCompound *node)
 
 void ASTDispather6502::dispatch(NodeBlock *node)
 {
+    node->DispatchConstructor();
+
     // In case memory block is acive
     //as->EndMemoryBlock();
     as->PushBlock(node->m_currentLineNumber);
@@ -780,6 +802,8 @@ void ASTDispather6502::dispatch(NodeBlock *node)
 
 void ASTDispather6502::dispatch(NodeVarDecl *node)
 {
+    node->DispatchConstructor();
+
     int ret = node->MaintainBlocks(as);
 
     if (ret==3) node->m_curMemoryBlock=nullptr;
@@ -1165,6 +1189,8 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
 
 void ASTDispather6502::dispatch(NodeBinaryClause *node)
 {
+    node->DispatchConstructor();
+
     //    node->accept(this);
     //    Node::Build(as);
 
@@ -1312,6 +1338,8 @@ void ASTDispather6502::LargeLoop(NodeForLoop *node)
 
 void ASTDispather6502::dispatch(NodeConditional *node)
 {
+    node->DispatchConstructor();
+
 
     as->PushCounter();
     QString labelStartOverAgain = as->NewLabel("while");
@@ -1404,6 +1432,8 @@ void ASTDispather6502::dispatch(NodeConditional *node)
 
 void ASTDispather6502::dispatch(NodeForLoop *node)
 {
+    node->DispatchConstructor();
+
 
     //QString m_currentVar = ((NodeAssign*)m_a)->m_
     NodeAssign *nVar = dynamic_cast<NodeAssign*>(node->m_a);
@@ -1413,9 +1443,7 @@ void ASTDispather6502::dispatch(NodeForLoop *node)
         ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
 
     QString var = dynamic_cast<NodeVar*>(nVar->m_left)->value;//  m_a->Build(as);
-    qDebug() << "A";
     node->m_a->Accept(this);
-    qDebug() << "A";
     if (node->m_loopCounter==1) as->Asm("tax");
     if (node->m_loopCounter==2) as->Asm("tay");
     //QString to = m_b->Build(as);
@@ -1506,6 +1534,8 @@ void ASTDispather6502::LoadPointer(NodeVar *node) {
 
 void ASTDispather6502::dispatch(NodeVar *node)
 {
+
+    node->DispatchConstructor();
 
     QString  val = node->value;
     Pmm::Data::d.lineNumber = node->m_op.m_lineNumber;
@@ -1893,11 +1923,11 @@ bool ASTDispather6502::IsSimpleIncDec(NodeVar *var, NodeAssign *node) {
 
 void ASTDispather6502::dispatch(NodeAssign *node)
 {
+    node->DispatchConstructor();
+
     as->PushCounter();
-    qDebug() << node << " AA";
 
     AssignVariable(node);
-    qDebug() << node << " BB";
 
     as->PopCounter(node->m_op.m_lineNumber);
 

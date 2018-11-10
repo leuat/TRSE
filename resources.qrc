@@ -79,5 +79,6 @@
         <file>resources/code/init_wedge_bad.ras</file>
         <file>resources/character.rom</file>
         <file>resources/code/vic20_mod_music.asm</file>
+        <file>resources/code/vic20_irq.asm</file>
     </qresource>
 </RCC>

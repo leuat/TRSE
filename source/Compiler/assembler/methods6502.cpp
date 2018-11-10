@@ -32,6 +32,15 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     }
 
+    if (Command("CloseVIAIRQ"))
+        as->Asm(" jmp $eabf     ; return to normal IRQ	");
+
+    if (Command("VIAIRQ"))
+        VIAIRQ(as);
+
+    if (Command("init_viairq"))
+        InitVIAIRQ(as);
+
     if (Command("Go80Columns")) {
         as->Comment("Go 80 columns");
         as->Asm("lda $d7");
@@ -2501,6 +2510,35 @@ void Methods6502::RasterIRQ(Assembler *as)
 
     }
 
+}
+
+void Methods6502::VIAIRQ(Assembler *as)
+{
+    NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_node->m_params[0]);
+    QString name = addr->m_procedure->m_procName;
+    m_node->RequireNumber(m_node->m_params[2], "RasterIRQ", m_node->m_op.m_lineNumber);
+//    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+
+
+    as->Asm("lda #<"+name);
+    as->Asm("sta pointers_vic_raster+1");
+    as->Asm("lda #>"+name);
+    as->Asm("sta pointers_vic_raster+6");
+
+    m_node->m_params[1]->Accept(m_dispatcher);
+    as->Term();
+    as->Asm("sta timers_vic_raster+1");
+    m_node->m_params[2]->Accept(m_dispatcher);
+    as->Term();
+    as->Asm("sta timers_vic_raster+3");
+
+
+    as->Asm("jsr init_via_irq");
+}
+
+void Methods6502::InitVIAIRQ(Assembler *as)
+{
+    as->IncludeFile(":resources/code/vic20_irq.asm");
 }
 
 

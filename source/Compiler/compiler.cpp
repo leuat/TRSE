@@ -62,11 +62,6 @@ bool Compiler::Build(Compiler::Type type, QString project_dir)
         m_dispatcher = new ASTDispather6502();
     }
 
-
-
-/*    if (type==PASCAL)
-        m_assembler = new AsmPascal();
-*/
     if (m_assembler==nullptr)
         return false;
 
@@ -104,8 +99,9 @@ bool Compiler::Build(Compiler::Type type, QString project_dir)
             return false;
     }*/
 
-    for (MemoryBlock* mb:m_parser->m_userBlocks)
+    for (MemoryBlock* mb:m_parser->m_userBlocks) {
         m_assembler->blocks.append(mb);
+    }
 
 
     m_assembler->EndMemoryBlock();

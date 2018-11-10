@@ -183,7 +183,7 @@ void FormRasEditor::Build()
 
             QStringList exoParams = QStringList() << "sfx" << Util::numToHex(Syntax::s.m_programStartAddress) << target << fn<< "-o" << fn ;
 //            QStringList exoParams = QStringList() << "sfx" << "$0810"  << fn<< "-o" << fn ;
-            qDebug() << exoParams;
+           // qDebug() << exoParams;
             if (m_iniFile->getdouble("hide_exomizer_footprint")==1)
                 exoParams << "-n";
             processCompress.start(m_iniFile->getString("exomizer"), exoParams  );

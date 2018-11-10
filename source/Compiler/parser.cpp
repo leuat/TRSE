@@ -77,13 +77,26 @@ int Parser::findSymbolLineNumber(QString symbol)
 
 void Parser::InitBuiltinFunctions()
 {
-    m_initJumps.clear();
+    if (m_preprocessorDefines.contains("BuiltinMethodsLocation")) {
+
+        m_initJumps.clear();
+        ParserBlock pb;
+        pb.m_blockID = m_parserBlocks.count();
+        pb.pos = m_preprocessorDefines["BuiltinMethodsLocation"] ;
+        m_parserBlocks.append(pb);
+        Node::m_staticBlockInfo.m_blockID = pb.m_blockID;
+        Node::m_staticBlockInfo.m_blockPos = pb.pos;
+        Node::m_staticBlockInfo.m_blockName = "Builtin Methods";
+    }
+
+
     InitBuiltinFunction(QStringList()<< "*", "initeightbitmul");
     InitBuiltinFunction(QStringList()<< "*", "init16x8mul");
     InitBuiltinFunction(QStringList()<< "*", "init8x8div");
     InitBuiltinFunction(QStringList()<< "*", "init16x8div");
     InitBuiltinFunction(QStringList()<< "rand", "initrandom","init_random_call");
     InitBuiltinFunction(QStringList()<< "rasterirqwedge" , "init_wedge");
+    InitBuiltinFunction(QStringList()<< "viairq" , "init_viairq");
     InitBuiltinFunction(QStringList()<< "initmodplayer" , "include_modplayer");
     InitBuiltinFunction(QStringList()<< "decrunch", "init_decrunch");
     InitBuiltinFunction(QStringList()<< "sine", "initsinetable", "initsine_calculate");
@@ -99,7 +112,8 @@ void Parser::InitBuiltinFunctions()
     InitBuiltinFunction(QStringList()<< "printstring" << "printnumber", "initprintstring");
 
     InitBuiltinFunction(QStringList()<< "joystick" , "initjoystick");
-//    InitBuiltinFunction(QStringList()<< "zeropage" << "inczp" , "initzeropage");
+
+    Node::m_staticBlockInfo.m_blockID = -1;
  }
 
 void Parser::InitBuiltinFunction(QStringList methodName, QString builtinFunctionName, QString initJump )
@@ -109,7 +123,7 @@ void Parser::InitBuiltinFunction(QStringList methodName, QString builtinFunction
     QString txt = m_lexer->m_text.toLower();
     for (QString s: methodName)
      if (txt.contains(s)) {
-         Node::m_staticBlockInfo.m_blockID=-1;
+//         Node::m_staticBlockInfo.m_blockID=-1;
         m_procedures[builtinFunctionName] = new NodeProcedureDecl(Token(TokenType::PROCEDURE, builtinFunctionName), builtinFunctionName);
         if (initJump!="")
             m_initJumps << "\tjsr "+ initJump;
@@ -632,6 +646,9 @@ void Parser::Preprocess()
                     val = QString::number(m_currentToken.m_intVal);
 
                 m_preprocessorDefines[key] = val;
+
+
+
             }
             else if (m_currentToken.m_value.toLower() =="userdata") {
                 Eat(TokenType::PREPROCESSOR);

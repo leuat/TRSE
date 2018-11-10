@@ -60,6 +60,12 @@ public:
         m_blockInfo = m_staticBlockInfo;
     }
 
+
+    void DispatchConstructor() {
+//        m_blockInfo = m_staticBlockInfo;
+        m_currentLineNumber = m_op.m_lineNumber;
+    }
+
     int MaintainBlocks(Assembler* as);
 
     TokenType::Type m_forceType = TokenType::NADA;
