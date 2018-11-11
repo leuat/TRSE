@@ -34,8 +34,8 @@ public:
 
     void Shift(int val);
 
-    virtual void setExtraData(int idx, char val) {}
-    virtual char getExtraData(int idx) {}
+    virtual void setExtraData(int idx, char val) { return;}
+    virtual char getExtraData(int idx) { return 0;}
 
 
     void DeleteAll() {

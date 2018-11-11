@@ -624,6 +624,7 @@ void MainWindow::on_actionRas_source_file_triggered()
     QString fn = getProjectPath() + filename;
     if (QFile::exists(fn))
         QFile::remove(fn);
+
     QFile file(fn);
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream s(&file);
