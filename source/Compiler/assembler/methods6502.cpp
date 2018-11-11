@@ -90,13 +90,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         InitModPlayer(as);
 
     if (Command("playmod")) {
-        as->Asm("pla");
-        as->Asm("tax");
-        as->Asm("pla");
+
+        as->Asm("ldx mod_save_x");
+        as->Asm("lda mod_save_a");
         as->Asm("jsr music_cont");
-        as->Asm("pha");
-        as->Asm("txa");
-        as->Asm("pha");
+        as->Asm("stx mod_save_x");
+        as->Asm("sta mod_save_a");
 
     }
 
@@ -2380,9 +2379,10 @@ void Methods6502::InitModPlayer(Assembler *as)
 
     as->Asm("jsr		setup_music");
     as->Asm("jsr		skip_order_wrap ; enter in the middle of the music loop");
-    as->Asm("pha");
-    as->Asm("txa");
-    as->Asm("pha");
+
+    as->Asm("stx mod_save_x");
+    as->Asm("sta mod_save_a");
+
 
 }
 

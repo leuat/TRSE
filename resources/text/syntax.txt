@@ -48,8 +48,8 @@ m; Nop; C128, C64, VIC20, PET,NES; n
 m; SetMemoryConfig ; C128 ; n,n,n,n,n
 
 
-m; Decrunch; C64, C128 ; a
-m; DecrunchFromIndex; C64, C128 ; a,b
+m; Decrunch; C64, C128, VIC20 ; a
+m; DecrunchFromIndex; C64, C128, VIC20 ; a,b
 
 m; IncZP; C64, C128, VIC20, PET, NES ; a, b
 m; DecZP; C64, C128, VIC20, PET, NES ; a, b

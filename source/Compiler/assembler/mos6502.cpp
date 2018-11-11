@@ -534,6 +534,8 @@ void AsmMOS6502::IncludeFile(QString pfile)
 
     QTextStream in(&file);
 
+    QStringList source;
+
     while(!in.atEnd()) {
         QString line = in.readLine();
         for (QString key: m_replaceValues.keys())
@@ -543,11 +545,16 @@ void AsmMOS6502::IncludeFile(QString pfile)
             Asm(line);
             else
             Label(line);*/
-        m_source << line;
+        source << line;
   //      QStringList fields = line.split(",");
     }
-
     file.close();
+
+    if (m_currentBlock==nullptr)
+        m_source<<source;
+    else
+        m_currentBlock->m_source<<source;;
+
 }
 
 

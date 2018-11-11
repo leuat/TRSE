@@ -8,9 +8,13 @@ high	= $900c
 noise	= $900d
 volume	= $900e
 
+
+mod_save_x= $70
+mod_save_a =$71
+
 pattern_pointer = $19
 channel_pointer = $28	; product area for multiplication
-workarea 		= $57
+workarea 		= $34
 
 ;   2014 SYS 4110 
                   ; machine code starts at $100e = #4110 
