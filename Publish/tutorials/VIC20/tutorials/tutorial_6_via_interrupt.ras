@@ -1,0 +1,53 @@
+program Tutorial_6_VIA_interrupt;
+var  
+   i,j,k,time,n: byte = 0; 
+
+
+interrupt MyInterrupt();
+begin
+	StartIRQ(0);
+	wait(3);
+	// VIA irq raster is RED
+	for i:=0 to 32 do begin
+		j:=SCREEN_BG_COLOR;
+		SCREEN_BG_COLOR:=(j+1)&15;
+		nop(31);
+		end;
+	SCREEN_BG_COLOR:=BLACK;
+		
+	closeIRQ();
+end;
+
+procedure Clear();
+begin
+	fill(^$1000,$20,0);
+	fill(^$1100,$20,0);
+	fill(^$9400,BLACK,0);
+	fill(^$9500,BLACK,0);
+end;
+
+
+begin
+	DisableVIC20IRQ();
+	Clear();
+	// Time the interrupt directly with the raster (PAL);
+	// 312 scanlines * 71 cycles -2 = $5686
+	VIAIRQ(MyInterrupt(), $86, $56);
+	// Some random raster stuff
+	n:=20;
+	while (1=1) do begin
+		// Mainloop lowe raster is BLUE
+		waitforraster(0);
+		SCREEN_BG_COLOR:=BLACK;
+		i:=sine[time*4]/8+80;
+		waitforraster(i);
+		SCREEN_BG_COLOR:=BLUE;
+		waitnoraster(32);
+		SCREEN_BG_COLOR:=BLACK;
+
+		if (time&31=31) then inc(n);
+
+		inc(time);
+	end;
+
+end.

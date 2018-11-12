@@ -74,12 +74,22 @@ C64FullScreenChar::C64FullScreenChar(LColorList::Type t) : MultiColorImage(t)
     m_GUIParams[tabSprites] ="Screens";
 
 
+    m_supports.asmExport=false;
+    m_supports.koalaExport = false;
+    m_supports.koalaImport = false;
+    m_supports.binaryLoad = false;
+    m_supports.binarySave = false;
     m_exportParams.clear();
     m_exportParams["EndChar"] = 254;
     m_exportParams["SkipChar"] = 255;
     m_exportParamsComments["EndChar"]  ="Make sure you didn't use this char in any of the screens.";
     m_exportParamsComments["SkipChar"]  ="Make sure you didn't use this char in any of the screens.";
     m_exportParams["ExportTimeStamps"] = 1;
+
+
+    m_exportParams["CompressionType"] = 2;
+    m_exportParamsComments["CompressionType"]  ="CompressionType can be either\n 2 or 3. Type 2 compresses\n the animation"
+                                           "by only saving \nframe changes, while type 3 saves \nthe whole image but perform a png-like\n compression.";
 
 }
 
@@ -236,6 +246,15 @@ void C64FullScreenChar::CopyFrom(LImage *mc)
 
 void C64FullScreenChar::ExportMovie(QFile &file)
 {
+
+    int compressionType = m_exportParams["CompressionType"];
+
+    if (compressionType<2 || compressionType>3) {
+        QMessageBox msgBox;
+        msgBox.setText("CompressionType must be either 2 or 3");
+        msgBox.exec();
+        return;
+    }
     QVector<QByteArray> screens;
     QByteArray mty;
     mty.resize(m_charWidth*m_charHeight*2);
@@ -258,6 +277,8 @@ void C64FullScreenChar::ExportMovie(QFile &file)
     header.append(m_charWidth);
     header.append(m_charHeight);
     header.append(m_items.count());
+    header.append(compressionType);
+    header.append((char)m_exportParams["ExportTimeStamps"]);
 
     file.write(header);
 
@@ -266,11 +287,20 @@ void C64FullScreenChar::ExportMovie(QFile &file)
     for (int i=0;i<screens.count()-1;i++) {
         LImageContainerItem* li = m_items[i ];
         C64Screen* screen = dynamic_cast<C64Screen*>(li);
-        QByteArray data = mc.CompressScreen3(screens[i], screens[i+1],
+
+        QByteArray data;
+
+        if (compressionType==3)
+        data = mc.CompressScreen3(screens[i], screens[i+1],
                 m_charWidth, m_charHeight,compr,
                 (char)m_exportParams["EndChar"],(char)m_exportParams["SkipChar"]);
 
-        qDebug() << screen;
+        if (compressionType==2)
+        data = mc.CompressScreen2(screens[i], screens[i+1],
+                m_charWidth, m_charHeight,compr);
+
+
+       // qDebug() << screen;
 
         if (m_exportParams["ExportTimeStamps"]!=0)
             data.append(screen->m_data[0]);
@@ -279,7 +309,15 @@ void C64FullScreenChar::ExportMovie(QFile &file)
     }
 
     float total = m_charHeight*m_charWidth*screens.count()*2;
-    qDebug() << "Compression : " << (1-cnt/total)*100 << " %";
+
+    QMessageBox msgBox;
+    QString s = "Original size: " + QString::number(total)+ "bytes\n";
+    s += "Packed size: " + QString::number(cnt)+ "bytes\n";
+    s += "Compression: " + QString::number((1-cnt/total)*100)+ " %\n";
+
+    msgBox.setText(s);
+    msgBox.exec();
+
 
 
 

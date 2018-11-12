@@ -1,23 +1,35 @@
 program MyProgram;
 var  
-	ok, i, j ,k,m,dx,dy,time,l,curFrame,val,wx,wy,g0,g1,c,maxFrames, pass : byte = 0;
-
+	ok, i, j ,k,m,dx,dy,time,l,curFrame,val,g0,g1,c,maxFrames, pass : byte = 0;
+	hasTimeStamps, compressionType : byte;
 	zp,cp: pointer;
 
 	@define mpos $3000
 
-	movie: incBin("movie/movie3.trm", @mpos);
+	movie: incBin("movie/movie.trm", @mpos);
 
 	@define useKernal 0
 
 
 
-procedure RenderNextPackedFrame1();
+procedure ReadAnimationHeader();
+begin
+	zp:=@mpos;
+	maxFrames := zp[2];
+	compressionType := zp[3];
+	hasTimeStamps:=zp[4];
+	inczp(zp,5);
+	curFrame:=0;
+
+end;
+
+
+/*procedure RenderNextPackedFrame1();
 begin
 //	moveto(5,2,$D8);
 //	cp:=screenmemory;
-	cp:=SCREEN_COL_LOC;
-	moveto(0,0,$1C);
+	cp:=SCREEN_COL_LOC-1;
+	screenmemory:=$1C00-1;
 
 	m:=0;
 	dy:=0;
@@ -52,9 +64,9 @@ begin
 	inczp(zp,1);
 
 end;
+*/
 
-
-procedure RenderNextPackedFrame2();
+procedure RenderNextPackedFrameCompressionType2();
 begin
 //	moveto(5,2,$D8);
 //	cp:=screenmemory;
@@ -67,11 +79,11 @@ begin
 
 	for pass:=0 to 2 do begin
 
-	if pass=0 then
-		moveto(0,0,$1C);
 	if pass=1 then
-	
-		moveto(0,0,$94);
+		screenmemory:=$9400;
+
+	if pass=0 then
+		screenmemory:=$1C00;
 	
 	while (g0<>254) do begin
 	
@@ -96,11 +108,13 @@ begin
 	g0:=0;
 	end;
 
+	if (hasTimeStamps=1) then inczp(zp,1);
+
 	inc(curFrame);
 
 end;
 
-procedure RenderNextPackedFrame3();
+procedure RenderNextPackedFrameCompressionType3();
 begin
 //	moveto(5,2,$D8);
 //	cp:=screenmemory;
@@ -113,11 +127,14 @@ begin
 
 	for pass:=0 to 2 do begin
 
-	if pass=0 then
-		moveto(0,0,$1C);
+
 	if pass=1 then
-		moveto(0,0,$94);
+		screenmemory:=$9400-1;
+
+	if pass=0 then
+		screenmemory:=$1C00-1;
 	
+
 	while (g0<>254) do begin
 	
 			g1:=zp[0];
@@ -135,36 +152,30 @@ begin
 	g0:=0;
 	end;
 
+	if (hasTimeStamps=1) then inczp(zp,1);
+
 	inc(curFrame);
 
 end;
-
-
 
 begin
 	SCREEN_BG_COLOR:=0;
 	//Clearscreen($20, ^$0400);	
 	setscreenlocation($1C00);
 	
-	wx:=40;
-	wy:=25;
-	zp:=@mpos;
-	maxFrames := zp[2];
-	inczp(zp,3);
-//	Loop();
-//	CopyMovieData();
-	moveto(0,22,$1c);
-	fill(screenmemory, $20, 40);
-	moveto(0,22,$94);
-	fill(screenmemory, GREEN, 40);
 	while(1=1) do begin
-		RenderNextPackedFrame3();
+		if (compressionType=3) then 
+			RenderNextPackedFrameCompressionType3();
+
+		if (compressionType=2) then 
+			RenderNextPackedFrameCompressionType2();
+	
 		for i:=0 to 25 do 
 			waitforraster(0);
 
 		if (curFrame>maxFrames) then begin
-			curFrame:=0;
-			zp:=@mpos+3;		
+			ReadAnimationHeader();
+
 		end;
 	end;
 

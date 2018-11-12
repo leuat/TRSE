@@ -131,10 +131,10 @@ m; Keypressed; C64, C128, VIC20; b
 
 m; NmiIRQ; C64, C128, VIC20, PET ; p
 m; EnableRasterIRQ; C64, C128;
-m; StartIRQ; C64, C128; b
+m; StartIRQ; C64, C128, VIC20; b
 m; StartIRQWedge; C64, C128; b
 m; StartRasterChain; C64, C128; p,b,n
-m; CloseIRQ; C64, C128;
+m; CloseIRQ; C64, C128, VIC20;
 m; CloseIRQWedge; C64, C128;
 m; EnableIRQ; C64, C128;
 m; PreventIRQ; C64, C128;
@@ -148,8 +148,8 @@ m; WaitForRaster; C64, C128, VIC20; b
 m; WaitNoRaster; C64, C128, VIC20; b
 
 m; DisableVIC20IRQ; VIC20;
-m; StartVIAIRQ; VIC20;
-m; CloseVIAIRQ; VIC20;
+#m; StartVIAIRQ; VIC20;
+#m; CloseVIAIRQ; VIC20;
 m; VIAIRQ; VIC20; p,b,b
 
 

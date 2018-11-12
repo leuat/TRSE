@@ -27,6 +27,7 @@
 #include <QKeyEvent>
 #include "limagecontainer.h"
 #include "movieconverter.h"
+#include <QMessageBox>
 class C64Screen : public LImageContainerItem {
 public:
     QByteArray m_rawData, m_rawColors, m_data;

@@ -32,8 +32,6 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     }
 
-    if (Command("CloseVIAIRQ"))
-        as->Asm(" jmp $eabf     ; return to normal IRQ	");
 
     if (Command("VIAIRQ"))
         VIAIRQ(as);
@@ -1857,6 +1855,14 @@ void Methods6502::StartIRQ(Assembler *as)
         as->Asm("lda $FF00");
         as->Asm("pha");
     }
+    if (Syntax::s.m_currentSystem == Syntax::VIC20) {
+        as->Asm("pha");
+        as->Asm("txa");
+        as->Asm("pha");
+        as->Asm("tya");
+        as->Asm("pha");
+
+    }
 
 }
 
@@ -1900,14 +1906,14 @@ void Methods6502::CloseIRQ(Assembler *as, bool isWedge)
     as->Comment("CloseIRQ");
     if (Syntax::s.m_currentSystem == Syntax::C64) {
 
-    if (isWedge)
-        as->Asm("asl $D019");
+        if (isWedge)
+            as->Asm("asl $D019");
 
-    as->Asm("pla");
-    as->Asm("tay");
-    as->Asm("pla");
-    as->Asm("tax");
-    as->Asm("pla");
+        as->Asm("pla");
+        as->Asm("tay");
+        as->Asm("pla");
+        as->Asm("tax");
+        as->Asm("pla");
     }
     if (Syntax::s.m_currentSystem == Syntax::C128) {
         as->Asm("pla");
@@ -1916,6 +1922,15 @@ void Methods6502::CloseIRQ(Assembler *as, bool isWedge)
         as->Asm("lda #$00");
         as->Asm("sta $d030");
         as->Asm("jmp $fa65");
+
+    }
+    if (Syntax::s.m_currentSystem == Syntax::VIC20) {
+        as->Asm("pla");
+        as->Asm("tay");
+        as->Asm("pla");
+        as->Asm("tax");
+        as->Asm("pla");
+        as->Asm(" jmp $eabf     ; return to normal IRQ	");
 
     }
 }
@@ -2628,27 +2643,60 @@ void Methods6502::ClearScreen(Assembler *as)
 
     AddMemoryBlock(as,1);
 
-    QString lbl = as->NewLabel("clearloop");
-  //  QString lbl2 = as->NewLabel("clearloop2");
-    QString shift = "$" + QString::number((int)num->m_val, 16);
-    as->Comment("Clear screen with offset");
-    LoadVar(as, 0);
-    as->Asm("ldx #$00");
-    as->Label(lbl);
-    as->Asm("sta $0000+"+shift+",x");
-    as->Asm("sta $0100+"+shift+",x");
-    as->Asm("sta $0200+"+shift+",x");
-    as->Asm("sta $02e8+"+shift+",x");
-//    as->Asm("sta $0300+"+shift+",x");
-    as->Asm("dex");
-    as->Asm("bne "+lbl);
-   /* as->Asm("ldx #232");
+
+    if (Syntax::s.m_currentSystem==Syntax::C128 || Syntax::s.m_currentSystem==Syntax::C64) {
+
+        QString lbl = as->NewLabel("clearloop");
+        //  QString lbl2 = as->NewLabel("clearloop2");
+        QString shift = "$" + QString::number((int)num->m_val, 16);
+        as->Comment("Clear screen with offset");
+        LoadVar(as, 0);
+        as->Asm("ldx #$00");
+        as->Label(lbl);
+        as->Asm("sta $0000+"+shift+",x");
+        as->Asm("sta $0100+"+shift+",x");
+        as->Asm("sta $0200+"+shift+",x");
+        as->Asm("sta $02e8+"+shift+",x");
+        //    as->Asm("sta $0300+"+shift+",x");
+        as->Asm("dex");
+        as->Asm("bne "+lbl);
+        /* as->Asm("ldx #232");
     as->Label(lbl2);
     as->Asm("sta $02FF+"+shift+",x");
     as->Asm("dex");
     as->Asm("bne "+lbl2);
 */
-    as->PopLabel("clearloop");
+        as->PopLabel("clearloop");
+    }
+    if (Syntax::s.m_currentSystem==Syntax::VIC20) {
+        //ldy $9002
+        ErrorHandler::e.Error("ClearScreen not yet implemented for VIC20", m_node->m_op.m_lineNumber);
+        as->Comment("Clear screen");
+        LoadVar(as, 0);
+
+        QString lblOuter = as->NewLabel("clearloopouter");
+        QString lblInner = as->NewLabel("clearloopinner");
+        QString valH = "$" + QString::number((int)num->m_val>>8, 16);
+        QString valL = "$" + QString::number((int)num->m_val&0xFF, 16);
+
+/*        as->Asm("lda #" + valH);
+        as->Asm("sta " + as->m_internalZP[0]);
+        as->Asm("lda #" + valL);
+        as->Asm("sta " + as->m_internalZP[0] + "+1");
+*/
+        as->Asm("ldy #0 ");
+        as->Label(lblOuter);
+
+
+        as->Asm("ldy #0 ");
+        as->Label(lblOuter);
+        as->Asm("ldx #0");
+        as->Label(lblInner);
+        as->Asm("sta $");
+
+
+
+    }
 //    as->PopLabel("clearloop2");
 
 }
