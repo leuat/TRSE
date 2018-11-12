@@ -6,6 +6,11 @@ var
 interrupt MyInterrupt();
 begin
 	StartIRQ(0);
+
+/*	i:=sine[time]/16;
+	poke(VSCROLL_REGISTER,0,i);
+	waitnoraster(1);
+*/
 	wait(3);
 	// VIA irq raster is RED
 	for i:=0 to 32 do begin

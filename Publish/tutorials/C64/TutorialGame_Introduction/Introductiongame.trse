@@ -17,6 +17,5 @@ post_optimizer_passldatax = 1
 post_optimizer_passstalda = 1
 post_optimizer_passldx = 1
 data_header_sprites/sprites.flf = 0
-project_path = /home/leuat/code/TRSE/Publish/tutorials/C64/TutorialGame_Introduction/
 open_files = -1
 charset_levels/level1.flf = :resources/character.rom

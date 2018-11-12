@@ -54,8 +54,8 @@ public:
     }
 
     void Init(int w, int h) override {
-        m_height = w;
-        m_width =h;
+        m_height = h;
+        m_width = w;
         m_data.resize(m_height*m_width*m_pcWidth*m_pcHeight);
         m_header.resize(HEADER_SIZE);
     }

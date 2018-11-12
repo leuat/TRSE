@@ -8,7 +8,7 @@ var
 
 	This will be updated in future releases of the TRSE framework. Hopefully. 
 
-	For now, this is the main file, which contains all variable declarations, texsts
+	For now, this is the main file, which contains all variable declarations, texts
 	and intro / main game raster interrupt procedures. 
 
 

@@ -298,6 +298,7 @@ void LImageSprites2::LoadBin(QFile& file)
         file.read( ( char * )( &sx ), 1 );
         file.read( ( char * )( &sy ), 1 );
 
+
         LSprite* s = new LSprite();
 
         s->Init(sx,sy);

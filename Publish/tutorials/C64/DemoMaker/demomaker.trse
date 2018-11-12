@@ -15,5 +15,4 @@ post_optimizer_passjmp = 1
 post_optimizer_passldatax = 1
 post_optimizer_passstalda = 1
 post_optimizer_passldx = 1
-project_path = /home/leuat/code/TRSE/Publish/tutorials/C64/DemoMaker/
-open_files = ,packed_data.paw, demo_part2_empty.ras, demomaker_procedures.ras
+open_files = -1

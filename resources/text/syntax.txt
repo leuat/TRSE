@@ -42,6 +42,9 @@ m; SetMemoryConfig ; C64,  VIC20, PET, NES ; b,b,b
 m; CopyHalfScreen; C64, C128, VIC20, PET, NES ; a,a,b,b,n
 m; CopyFullScreen; C64, C128, VIC20, PET, NES ; 	a,a
 
+M; CopyBytesShiftLeft; C64,C128, VIC20, PET, NES; a,a,b,b
+M; CopyBytesShiftRight; C64,C128, VIC20, PET, NES; a,a,b,b
+
 
 m; Nop; C128, C64, VIC20, PET,NES; n
 
@@ -175,7 +178,7 @@ c; SCREEN_TEXT_HEIGHT; VIC20; a; $9003
 c; VIC_DATA_LOC; VIC20; a; $9005
 c; AUX_COLOR_AND_VOLUME; VIC20; a; $900E
 c; SCREEN_TEXT_WIDTH; VIC20; a; $9002
-
+c; VSCROLL_REGISTER; VIC20; a; $9001
 # C64, C128-specific constants
 c; SCREEN_BG_COL; C64, C128; a; $D020
 c; SCREEN_FG_COL; C64, C128; a; $D021

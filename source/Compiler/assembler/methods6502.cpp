@@ -162,6 +162,11 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         Clearsound(as);
     }
 
+    if (Command("copybytesshiftleft"))
+        CopyBytesShift(as,true);
+    if (Command("copybytesshiftright"))
+        CopyBytesShift(as,false);
+
     if (Command("copycharsetfromrom")) {
         CopyCharsetFromRom(as);
     }
@@ -1092,6 +1097,52 @@ void Methods6502::MoveTo80(Assembler *as)
     as->Asm("jsr SetScreenPosition80");
 
 
+
+}
+
+void Methods6502::CopyBytesShift(Assembler *as, bool isLeft)
+{
+
+    QString lblOuter = as->NewLabel("copybytesshift_outer");
+    QString lblInner = as->NewLabel("copybytesshift_inner");
+    QString lblSkip = as->NewLabel("copybytesshift_skip");
+
+    as->Asm("; CopyBytesShift");
+
+//    LoadVar(as,2);
+    as->Asm("ldy #0");
+    as->Label(lblOuter);
+    LoadVar(as,3);
+    as->Asm("tax");
+    as->Term("lda ");
+    m_node->m_params[0]->Accept(m_dispatcher);
+    as->Term(",y",true);
+
+    as->Asm("cpx #0");
+    as->Asm("beq "+lblSkip);
+    as->Label(lblInner);
+    if (isLeft)
+        as->Asm("asl");
+    else
+        as->Asm("lsr");
+//    as->Asm("clc");
+    as->Asm("dex");
+    as->Asm("bne "+lblInner);
+    as->Label(lblSkip);
+    as->Term("sta ");
+    m_node->m_params[1]->Accept(m_dispatcher);
+    as->Term(",y",true);
+    as->Asm("iny");
+    as->Term("cpy ");
+    m_node->m_params[2]->Accept(m_dispatcher);
+    as->Term();
+    as->Asm("bne "+lblOuter);
+
+
+
+    as->PopLabel("copybytesshift_outer");
+    as->PopLabel("copybytesshift_inner");
+    as->PopLabel("copybytesshift_skip");
 
 }
 
@@ -2700,6 +2751,7 @@ void Methods6502::ClearScreen(Assembler *as)
 //    as->PopLabel("clearloop2");
 
 }
+
 
 void Methods6502::WaitNoRasterLines(Assembler *as)
 {
