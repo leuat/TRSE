@@ -114,13 +114,13 @@ public:
      */
 
 
-    void Compare(NodeForLoop* node);
+    void Compare(NodeForLoop* node, NodeVar* var, bool isLarge, QString);
 
-    void IncreaseCounter(NodeForLoop* node);
+    void IncreaseCounter(NodeForLoop* node, NodeVar* var);
 
-    void LargeLoop(NodeForLoop* node);
+    void LargeLoop(NodeForLoop* node, NodeVar* var);
 
-    void SmallLoop(NodeForLoop* node);
+    void SmallLoop(NodeForLoop* node, NodeVar* var);
 
     /*
      *

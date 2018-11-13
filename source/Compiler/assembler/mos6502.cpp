@@ -429,6 +429,8 @@ QString AsmMOS6502::StoreInTempVar(QString name, QString type)
         Label(labelVar);
 //        m_tempVars << labelVar;
         Asm("sta " + tmpVar);
+        if (type=="word")
+            Asm("sty " + tmpVar + "+1");
         PopLabel(name+ "_var");
         return tmpVar;
 
@@ -439,6 +441,8 @@ QString AsmMOS6502::StoreInTempVar(QString name, QString type)
     QString labelVar = tmpVar + "\t."+type+"\t0 ";
     m_tempVars << labelVar;
     Asm("sta " + tmpVar);
+    if (type=="word")
+        Asm("sty " + tmpVar + "+1");
     PopLabel(name+ "_var");
     return tmpVar;
 }

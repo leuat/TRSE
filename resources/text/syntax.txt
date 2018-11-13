@@ -42,8 +42,7 @@ m; SetMemoryConfig ; C64,  VIC20, PET, NES ; b,b,b
 m; CopyHalfScreen; C64, C128, VIC20, PET, NES ; a,a,b,b,n
 m; CopyFullScreen; C64, C128, VIC20, PET, NES ; 	a,a
 
-M; CopyBytesShiftLeft; C64,C128, VIC20, PET, NES; a,a,b,b
-M; CopyBytesShiftRight; C64,C128, VIC20, PET, NES; a,a,b,b
+M; CopyBytesShift; C64,C128, VIC20, PET, NES; a,a,b,b,n
 
 
 m; Nop; C128, C64, VIC20, PET,NES; n

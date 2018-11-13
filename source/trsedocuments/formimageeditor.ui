@@ -124,7 +124,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -139,31 +139,7 @@
            <height>205</height>
           </rect>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0,0,0" columnstretch="0,0">
-          <item row="3" column="1">
-           <widget class="QPushButton" name="btnExportKoala">
-            <property name="text">
-             <string>Export koala</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QPushButton" name="btnImport">
-            <property name="toolTip">
-             <string>Imports a png/jpg into a c64 image of any type</string>
-            </property>
-            <property name="text">
-             <string>Import image</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QPushButton" name="btnImportKoala">
-            <property name="text">
-             <string>Import koala</string>
-            </property>
-           </widget>
-          </item>
+         <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0,0,0,0" columnstretch="0,0">
           <item row="0" column="1">
            <widget class="QPushButton" name="btnExportImage">
             <property name="toolTip">
@@ -184,16 +160,6 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QPushButton" name="btnImportBin">
-            <property name="toolTip">
-             <string>Import binary data (from CBM PRG studio etc). Plain C64 binary format.</string>
-            </property>
-            <property name="text">
-             <string>Import bin</string>
-            </property>
-           </widget>
-          </item>
           <item row="5" column="1">
            <widget class="QPushButton" name="btnExportMovie">
             <property name="text">
@@ -211,6 +177,54 @@
             </property>
            </widget>
           </item>
+          <item row="2" column="0">
+           <widget class="QPushButton" name="btnImportBin">
+            <property name="toolTip">
+             <string>Import binary data (from CBM PRG studio etc). Plain C64 binary format.</string>
+            </property>
+            <property name="text">
+             <string>Import bin</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QPushButton" name="btnImport">
+            <property name="toolTip">
+             <string>Imports a png/jpg into a c64 image of any type</string>
+            </property>
+            <property name="text">
+             <string>Import image</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QPushButton" name="btnExportKoala">
+            <property name="text">
+             <string>Export koala</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QPushButton" name="btnImportKoala">
+            <property name="text">
+             <string>Import koala</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <widget class="QPushButton" name="btnExportC">
+            <property name="text">
+             <string>Export .c</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QPushButton" name="btnImportC">
+            <property name="text">
+             <string>Import .c</string>
+            </property>
+           </widget>
+          </item>
          </layout>
          <zorder>btnImport</zorder>
          <zorder>btnImportBin</zorder>
@@ -220,6 +234,8 @@
          <zorder>btnExportKoala</zorder>
          <zorder>btnNew</zorder>
          <zorder>btnExportMovie</zorder>
+         <zorder>btnExportC</zorder>
+         <zorder>btnImportC</zorder>
         </widget>
        </widget>
        <widget class="QWidget" name="tabCharset">
@@ -500,10 +516,10 @@
           </item>
           <item>
            <layout class="QGridLayout" name="gridLayout_10" columnstretch="1,1">
-            <item row="0" column="0">
-             <widget class="QPushButton" name="btnDeleteSprite">
+            <item row="1" column="1">
+             <widget class="QPushButton" name="btnPasteSprite">
               <property name="text">
-               <string>Delete</string>
+               <string>Paste</string>
               </property>
              </widget>
             </item>
@@ -514,10 +530,52 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="1">
-             <widget class="QPushButton" name="btnMoveSpriteRight">
+            <item row="2" column="0">
+             <widget class="QPushButton" name="btnFlipXSprite">
               <property name="text">
-               <string>Move right</string>
+               <string>Flip X</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QPushButton" name="btnFlipYSprite">
+              <property name="text">
+               <string>Flip Y</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QPushButton" name="btnSpriteMulticolor">
+              <property name="text">
+               <string>Toggle multicolor</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QPushButton" name="btnPanRight">
+              <property name="text">
+               <string>Pan horizontal</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QPushButton" name="btnDeleteSprite">
+              <property name="text">
+               <string>Delete</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QPushButton" name="btnMoveSpriteLeft">
+              <property name="text">
+               <string>Move left</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QPushButton" name="btnCopySprite">
+              <property name="text">
+               <string>Copy</string>
               </property>
              </widget>
             </item>
@@ -535,52 +593,10 @@
               </item>
              </layout>
             </item>
-            <item row="1" column="1">
-             <widget class="QPushButton" name="btnPasteSprite">
+            <item row="4" column="1">
+             <widget class="QPushButton" name="btnMoveSpriteRight">
               <property name="text">
-               <string>Paste</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QPushButton" name="btnCopySprite">
-              <property name="text">
-               <string>Copy</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QPushButton" name="btnSpriteMulticolor">
-              <property name="text">
-               <string>Toggle multicolor</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QPushButton" name="btnMoveSpriteLeft">
-              <property name="text">
-               <string>Move left</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QPushButton" name="btnPanRight">
-              <property name="text">
-               <string>Pan horizontal</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QPushButton" name="btnFlipXSprite">
-              <property name="text">
-               <string>Flip X</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QPushButton" name="btnFlipYSprite">
-              <property name="text">
-               <string>Flip Y</string>
+               <string>Move right</string>
               </property>
              </widget>
             </item>

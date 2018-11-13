@@ -215,6 +215,7 @@ private slots:
     void on_btnImportRom_clicked();
     void on_btnExportMovie_clicked();
     void on_leTimeStamp_textChanged(const QString &arg1);
+    void on_btnImportC_clicked();
 };
 
 

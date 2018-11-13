@@ -43,7 +43,7 @@ public:
 
 
     QByteArray CompressScreen(QByteArray prevFrame, QByteArray newFrame, int w, int h, float & compr);
-    QByteArray CompressScreen2(QByteArray prevFrame, QByteArray newFrame, int w, int h, float & compr);
+    QByteArray CompressScreen2(QByteArray prevFrame, QByteArray newFrame, int w, int h, float & compr, char ,char);
     QByteArray CompressScreen3(QByteArray prevFrame, QByteArray newFrame, int w, int h, float & compr, char, char);
 
 };

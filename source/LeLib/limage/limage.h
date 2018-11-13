@@ -48,6 +48,9 @@ public:
     bool koalaImport = false;
     bool movieExport = false;
 
+    bool exportc = false;
+    bool importc = false;
+
     bool displayColors = true;
     bool displayBackground = true;
     bool displayForeground = true;
@@ -197,6 +200,9 @@ public:
 
     virtual void setForeground(unsigned int col) { m_border = col; }
     virtual void setBackground(unsigned int col) {m_background = col; }
+
+    virtual void ExportC(QFile& file)  {}
+    virtual void ImportC(QFile& file)  {}
 
     virtual void setMultiColor(bool doSet) {}
 

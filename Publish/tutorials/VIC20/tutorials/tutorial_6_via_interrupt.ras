@@ -50,7 +50,7 @@ begin
 		waitnoraster(32);
 		SCREEN_BG_COLOR:=BLACK;
 
-		if (time&31=31) then inc(n);
+		//if (time&31=31) then inc(n);
 
 		inc(time);
 	end;

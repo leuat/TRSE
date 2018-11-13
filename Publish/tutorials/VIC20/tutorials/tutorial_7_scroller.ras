@@ -1,9 +1,9 @@
 program Tutorial_7_scroller;
 var  
-   	i,j,k,scrollx,x,y,k,scroll,l: byte = 0; 
+   	i,j,k,scrollx,x,y,k,scroll,l,time: byte = 0; 
 
 	@define charPos $1C00
-	@define orgChar $72
+	@define orgChar $58
 
 	@define charCopyPos 64
 
@@ -58,12 +58,8 @@ begin
 	moveto(0,@ScrollerY,$10);
 
 	for y:=0 to 8 do begin
-		for x:=1 to 21 do begin
-			
-
+		for x:=2 to 20 do begin
 			i:=zp[x]*2 + zp[x+1];
-
-			
 			k:=$20;
 			if (i<>0) then k:=@charCopyPos+i;
 			screenmemory[x]:=k;
@@ -83,8 +79,19 @@ begin
 	fill(^$1100,$20,0);
 	fill(^$3000,$0,0);
 	fill(^$3100,$00,0);
-	fill(^$9400,YELLOW,0);
-	fill(^$9500,YELLOW,0);
+
+	zp:=$9400;
+	for i:=0 to 23 do begin
+		j:=i+1;
+		if (j&3=0) then
+		fill(zp,YELLOW,22)
+		else
+		fill(zp,YELLOW,22);
+		inczp(zp, 22);
+	end;
+
+	//fill(^$9400,YELLOW,0);
+	//fill(^$9500,YELLOW,0);
 	SCREEN_BG_COLOR:=BLACK + BLACK*16;
 end;
 
@@ -92,23 +99,30 @@ end;
 procedure UpdateChars();
 begin
 
+	
+	k:=(8-scrollx);
 
+	i:=sine[time*6]/48;
 
-	zp:=^@charPos+^@orgChar*^8;
-	h1:=^@charPos+^@charCopyPos*^8+8;
-	k:=7-scrollx;
+	zp:=^@charPos+^$47*^8;
+//	zp:=^@charPos+^$57*^8;
+	if (i<>0) then
+		inczp(zp,i*8);
+	h1:=^@charPos+^@orgChar*^8;
+	memcpy(zp,0,h1,8);
 
-
-	CopyBytesShiftRight(^@charPos+^@orgChar*^8,^@charPos+^@charCopyPos*^8+^8,8,7-scrollx);
-	CopyBytesShiftLeft(^@charPos+^@orgChar*^8,^@charPos+^@charCopyPos*^8+^16,8,scrollx);
-//	CopyBytesShiftRight(^@charPos+^@orgChar*^8,^@charPos+^@charCopyPos*^8+^24,8,scrollx);
-
+	CopyBytesShift(^@charPos+^@orgChar*^8,^@charPos+^@charCopyPos*^8+^8,8,k,1);
+	CopyBytesShift(^@charPos+^@orgChar*^8,^@charPos+^@charCopyPos*^8+^16,8,scrollx,0);
+	CopyBytesShift(^@charPos+^@orgChar*^8,^@charPos+^@charCopyPos*^8+^24,8,scrollx,2);
 end;
 
 
 interrupt RasterInterrupt();
 begin
 	startirq(0);
+	
+	VSCROLL_REGISTER:=sine[time*5]/32+30;
+
 
 	closeirq();
 end;
@@ -121,22 +135,17 @@ begin
 	tp:=@text;
 
 	disablevic20irq();
-//	viairq(RasterInterrupt(),$86,$56);
 	Clear();
-//	moveto(0,0,$10);
-//	printstring("HALLA",0,40);
 	scroll:=0;
-	fill(^@charPos+^@orgChar*^8,255,8);
-	fill(^@charPos+^@charCopyPos*^8+^16+^8,255,8);
-	
-	poke(^@charPos+^@orgChar*^8,0,0);
-	poke(^@charPos+^@charCopyPos*^8+^16+^8,0,0);
 
+	VIAIRQ(RasterInterrupt(), $86, $56);
+	
+//	poke(^@charPos+^@orgChar*^8,0,0);
+//	poke(^@charPos+^@charCopyPos*^8+^16+^8,0,0);
 	while (1=1) do begin
 		waitforraster(0);
 		SCREEN_BG_COLOR:=BLACK;
-//		waitforraster(200);
-	
+		inc(time);
 		
 
 		if (scrollx=1) then begin	
@@ -150,17 +159,22 @@ begin
 			end;
 
 		end;
-		if (scrollx=0) then begin
-			PrintText();
-			CopyToScreen();
+		if (scrollx=2) then 			PrintText();
 
-		end;
-//		if (scrollx=1) then 	
-
-		waitforraster(148);
 		inc(scrollx);
 		if (scrollx=8) then scrollx:=0;
 		UpdateChars();
+		if (scrollx=0) then begin
+	//k:=SCREEN_BG_COLOR;
+	//SCREEN_BG_COLOR:=RED;
+			CopyToScreen();
+	//SCREEN_BG_COLOR:=k;
+		end;
+//		if (scrollx=1) then 	
+
+//		waitforraster(146);
+
+//		for i:=0 to 0 do wait(40);
 
 
 	end;

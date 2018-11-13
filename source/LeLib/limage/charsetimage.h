@@ -30,7 +30,7 @@
 class CharsetImage : public MultiColorImage
 {
 public:
-    int m_charCount = 255;
+    int m_charCount = 256;
     QByteArray m_rawData;
     bool m_isMultiColor = false;
     PixelChar m_color;
@@ -64,6 +64,11 @@ public:
     void LoadBin(QFile& file) override;
 
     uchar getVariableColor(PixelChar* pc);
+
+
+    void LoadCharset(QString file) override;
+
+
 
     CharsetImage* getCharset() override { return this; }
     unsigned int getPixel(int x, int y) override;

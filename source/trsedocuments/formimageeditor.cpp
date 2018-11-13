@@ -265,7 +265,8 @@ void FormImageEditor::Load(QString filename)
 
 
     PrepareImageTypeGUI();
-    img->LoadCharset(m_projectIniFile->getString("charset_"+m_currentFileShort));
+    if (dynamic_cast<ImageLevelEditor*>(img)!=nullptr || dynamic_cast<C64FullScreenChar*>(img)!=nullptr)
+        img->LoadCharset(m_projectIniFile->getString("charset_"+m_currentFileShort));
     updateCharSet();
 
     Data::data.redrawFileList = true;
@@ -405,6 +406,10 @@ void FormImageEditor::UpdatePalette()
 
     ui->btnExportBin->setVisible(m_work.m_currentImage->m_image->m_supports.binarySave);
     ui->btnImportBin->setVisible(m_work.m_currentImage->m_image->m_supports.binaryLoad);
+
+    ui->btnExportC->setVisible(m_work.m_currentImage->m_image->m_supports.exportc);
+    ui->btnImportC->setVisible(m_work.m_currentImage->m_image->m_supports.importc);
+
 
     ui->btnExportKoala->setVisible(m_work.m_currentImage->m_image->m_supports.koalaExport);
     ui->btnImportKoala->setVisible(m_work.m_currentImage->m_image->m_supports.koalaImport);
@@ -739,7 +744,7 @@ void FormImageEditor::updateCharSet()
 */
 //   ui->lstCharMap->setViewMode(QListView::IconMode);
    ui->lstCharMap->setColumnCount(40);
-   ui->lstCharMap->setRowCount(maps.count()/40);
+   ui->lstCharMap->setRowCount(1+maps.count()/40);
     int cnt=0;
     int j=0;
     int i=0;
@@ -752,6 +757,7 @@ void FormImageEditor::updateCharSet()
     QStringList lst;
     for (int i=0;i<40;i++)
          lst<<"";
+
     ui->lstCharMap->setHorizontalHeaderLabels(lst);
 
     int kk= 0;
@@ -765,6 +771,7 @@ void FormImageEditor::updateCharSet()
             ui->lstCharMap->setItem(j,i,itm);
 
         }
+        //qDebug() << kk;
         itm->setIcon(q);
         itm->setData(Qt::UserRole, kk);
         cnt++;
@@ -965,6 +972,9 @@ void FormImageEditor::GenericImportImage(QString type, QString ext)
         m_work.m_currentImage->m_image->ImportBin(file);
     if (ext=="koa")
         m_work.m_currentImage->m_image->ImportKoa(file);
+    if (ext=="c")
+        m_work.m_currentImage->m_image->ImportC(file);
+
     file.close();
 
     Data::data.redrawFileList = true;
@@ -1117,6 +1127,8 @@ void FormImageEditor::on_btnLoadCharmap_clicked()
 void FormImageEditor::on_lstCharMap_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous)
 {
 
+    if (current==nullptr)
+        return;
     int idx = current->data(Qt::UserRole).toInt();
     m_work.m_currentImage->m_image->SetCurrentType(LImage::WriteType::Character);
    // Data::data.currentColor = idx;
@@ -1434,4 +1446,10 @@ void FormImageEditor::on_leTimeStamp_textChanged(const QString &arg1)
     if (le==nullptr)
         return;
     le->setExtraData(0,c);
+}
+
+void FormImageEditor::on_btnImportC_clicked()
+{
+    GenericImportImage("c", "c");
+
 }

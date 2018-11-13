@@ -290,7 +290,7 @@ QByteArray MovieConverter::CompressScreen(QByteArray prevFrame, QByteArray newFr
     return ret;
 }
 
-QByteArray MovieConverter::CompressScreen2(QByteArray prevFrame, QByteArray newFrame, int w, int h, float &compr)
+QByteArray MovieConverter::CompressScreen2(QByteArray prevFrame, QByteArray newFrame, int w, int h, float &compr,char endChar,char skipChar)
 {
     QByteArray ret;
     uchar skip=0;
@@ -309,13 +309,14 @@ QByteArray MovieConverter::CompressScreen2(QByteArray prevFrame, QByteArray newF
                 }
 
                 if (px1==px2) {
-                    if (skip<255) {
+                    if (skip<254) {
                         skip++;
                         //continue;
                     }
                     else {
-                        ret.append(SKIP);
-                        ret.append(skip);
+
+                        ret.append(skipChar);
+                        ret.append(skip+1);
                         c+=2;
                         skip=0;
                         continue;
@@ -325,7 +326,7 @@ QByteArray MovieConverter::CompressScreen2(QByteArray prevFrame, QByteArray newF
                 }
                 else {
                     if (skip!=0) {
-                        ret.append(SKIP);
+                        ret.append(skipChar);
                         ret.append(skip);
                         ret.append(px2);
                         c+=3;
@@ -343,7 +344,7 @@ QByteArray MovieConverter::CompressScreen2(QByteArray prevFrame, QByteArray newF
         //    qDebug() << ret.count();
         //  qDebug() << "C:" << c/((float)w*h)*100<< "%";
         compr+=c/((float)w*h);
-        ret.append(END);
+        ret.append(endChar);
         skip=0;
     }
     return ret;

@@ -162,10 +162,8 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         Clearsound(as);
     }
 
-    if (Command("copybytesshiftleft"))
+    if (Command("copybytesshift"))
         CopyBytesShift(as,true);
-    if (Command("copybytesshiftright"))
-        CopyBytesShift(as,false);
 
     if (Command("copycharsetfromrom")) {
         CopyCharsetFromRom(as);
@@ -1106,6 +1104,14 @@ void Methods6502::CopyBytesShift(Assembler *as, bool isLeft)
     QString lblOuter = as->NewLabel("copybytesshift_outer");
     QString lblInner = as->NewLabel("copybytesshift_inner");
     QString lblSkip = as->NewLabel("copybytesshift_skip");
+    QString lblSkipInside = as->NewLabel("copybytesshift_skip2");
+
+    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[4]);
+
+    QString cmd = "asl";
+    if (num->m_val==1) cmd ="lsr";
+    if (num->m_val==2) cmd ="rol";
+    if (num->m_val==3) cmd ="ror";
 
     as->Asm("; CopyBytesShift");
 
@@ -1114,20 +1120,47 @@ void Methods6502::CopyBytesShift(Assembler *as, bool isLeft)
     as->Label(lblOuter);
     LoadVar(as,3);
     as->Asm("tax");
+
     as->Term("lda ");
     m_node->m_params[0]->Accept(m_dispatcher);
     as->Term(",y",true);
 
     as->Asm("cpx #0");
     as->Asm("beq "+lblSkip);
+    if (cmd=="ror" || cmd=="rol") {
+
+        as->Asm("clc");
+//        as->Asm("bit #128");
+
+//        as->Asm("cmp #128");
+
+//        as->Asm("bcc "+lblSkip);
+  //      as->Asm("ora #%10000001");
+    }
+
     as->Label(lblInner);
-    if (isLeft)
-        as->Asm("asl");
-    else
-        as->Asm("lsr");
-//    as->Asm("clc");
+
+    as->Asm(cmd);
+
+    if (cmd=="rol") {
+        as->Asm("and #%11111110");
+        as->Asm("bcc "+lblSkipInside);
+        as->Asm("ora #%00000001");
+        as->Label(lblSkipInside);
+    }
+
+
+//    as->Asm("cpx #0");
     as->Asm("dex");
     as->Asm("bne "+lblInner);
+
+    if (cmd=="ror" || cmd=="rol") {
+//        as->Asm("clc");
+//        as->Asm("bcc "+lblSkip);
+  //      as->Asm("ora #%10000001");
+    }
+
+
     as->Label(lblSkip);
     as->Term("sta ");
     m_node->m_params[1]->Accept(m_dispatcher);
@@ -1143,6 +1176,7 @@ void Methods6502::CopyBytesShift(Assembler *as, bool isLeft)
     as->PopLabel("copybytesshift_outer");
     as->PopLabel("copybytesshift_inner");
     as->PopLabel("copybytesshift_skip");
+    as->PopLabel("copybytesshift_skip2");
 
 }
 

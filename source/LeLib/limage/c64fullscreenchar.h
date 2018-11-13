@@ -76,7 +76,7 @@ public:
     PixelChar m_color;
     C64Screen m_copy;
 
-
+    unsigned int m_tempChar=0;
     C64FullScreenChar(LColorList::Type t);
 
 
@@ -108,6 +108,7 @@ public:
     virtual int getContainerCount() override {return m_items.count();}
 
 
+
     bool KeyPress(QKeyEvent *e) override;
     void CopyChar();
     void PasteChar();
@@ -134,6 +135,8 @@ public:
 
     void ExportMovie(QFile &file) override;
 
+    void ImportC(QFile &file) override;
+
     void setExtraData(int idx, char val) override {
         ((C64Screen*)m_items[m_current])->m_data[idx] = val;
     }
@@ -141,6 +144,7 @@ public:
         return ((C64Screen*)m_items[m_current])->m_data[idx];
     }
 
+    void Transform(int x, int y) override;
 
 };
 

@@ -144,6 +144,13 @@ uchar CharsetImage::getVariableColor(PixelChar *pc)
     return 0;
 }
 
+void CharsetImage::LoadCharset(QString file)
+{
+    MultiColorImage::LoadCharset(file);
+    if (m_charset!=nullptr)
+        CopyFrom(m_charset);
+}
+
 unsigned int CharsetImage::getPixel(int x, int y)
 {
     if (m_currencChar>m_charWidth*m_charHeight)
