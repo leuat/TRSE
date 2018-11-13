@@ -362,7 +362,7 @@ void C64FullScreenChar::ImportC(QFile &file)
 
         AddNew(m_charWidth, m_charHeight);
         C64Screen* s = dynamic_cast<C64Screen*>(m_items.last());
-        int k = 2;
+        int k = 5;
         for (int i=0;i<m_charWidth*m_charHeight;i++) {
             s->m_rawData[i] =data[k].toInt();
             k++;
