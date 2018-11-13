@@ -31,7 +31,7 @@ A1_vic_raster:
   sta $912b
 
 
-	// 312*71-2 = $568
+        ; 312*71-2 = $568
 timers_vic_raster:
   lda #$56
   ldx #$86

@@ -1,6 +1,6 @@
 program Tutorial_7_scroller;
 var  
-   	i,j,k,scrollx,x,y,k,scroll,l,time: byte = 0; 
+   	i,j,k,scrollx,x,y,scroll,l,time: byte = 0; 
 
 	@define charPos $1C00
 	@define orgChar $58
@@ -121,7 +121,7 @@ interrupt RasterInterrupt();
 begin
 	startirq(0);
 	
-	VSCROLL_REGISTER:=sine[time*5]/32+30;
+	VSCROLL_REGISTER:=sine[time*2]/32+30;
 
 
 	closeirq();

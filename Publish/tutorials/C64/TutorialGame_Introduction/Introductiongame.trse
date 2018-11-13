@@ -17,5 +17,4 @@ post_optimizer_passldatax = 1
 post_optimizer_passstalda = 1
 post_optimizer_passldx = 1
 data_header_sprites/sprites.flf = 0
-open_files = -1
 charset_levels/level1.flf = :resources/character.rom

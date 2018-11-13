@@ -21,6 +21,5 @@ data_header_sprites/test1_delete.flf = 0
 data_header_sprites/tutorial4.flf = 0
 data_header_sprites/tutorial9.flf = 0
 data_header_sprites/tutorial_26_logo.flf = 0
-open_files = ,data/test.ras, sdfsdf.ras
 charset_charsets/main_charset.flf = :resources/character.rom
 charset_charsets/lfont2.flf = :resources/character.rom
