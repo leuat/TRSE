@@ -23,3 +23,5 @@ charset_ = :resources/character.rom
 charset_charsets/charset_8x8.flf = :resources/character.rom
 charset_charsets/charset_game.flf = :resources/character.rom
 data_header_charsets/charset_game.flf = 0
+project_path = /home/leuat/code/TRSE/Publish/tutorials/VIC20/tutorials/
+open_files = ,tutorial_7_scroller.ras, tutorial_5_petscii_movie.ras, image.ras

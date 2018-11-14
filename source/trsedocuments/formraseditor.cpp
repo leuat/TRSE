@@ -142,7 +142,7 @@ void FormRasEditor::Build()
             //qDebug() <<process.readAllStandardOutput();
             output = process.readAllStandardOutput();
 
-            codeEnd=FindEndSymbol(output);
+           // codeEnd=FindEndSymbol(output);
         }
         else if (m_iniFile->getString("assembler").toLower()=="orgasm") {
             Orgasm orgAsm;
@@ -270,29 +270,31 @@ void FormRasEditor::SetOutputText(QString txt)
 
 }
 
-int FormRasEditor::FindEndSymbol(QString out)
+int FormRasEditor::FindEndSymbol(Orgasm& orgasm)
 {
-    QStringList output = QString(out).split("\n");
-    for (QString s : output) {
+//    QStringList output = QString(out).split("\n");
+    for (QString s : orgasm.m_symbols.keys()) {
         if (s.toLower().contains("endsymbol")) {
-            s= s.remove("EndSymbol").trimmed();
-            bool ok;
-            return s.toInt(&ok, 16);
+            return orgasm.m_symbols[s];
+            //s= s.remove("EndSymbol").trimmed();
+//            bool ok;
+  //          qDebug() << "FOUND END " << s;
+//            exit(1);
+//            return s.toInt(&ok, 16);
         }
     }
     return 0;
 }
 
-void FormRasEditor::FindBlockEndSymbols(QString out)
+void FormRasEditor::FindBlockEndSymbols(Orgasm& orgasm)
 {
     m_blockEndSymbols.clear();
-    QStringList output = QString(out).split("\n");
-    for (QString s : output) {
+    for (QString s : orgasm.m_symbols.keys()) {
         if (s.toLower().contains("endblock")) {
-            s = s.toLower().simplified().split(" ")[1];
+            s = s.toLower().simplified().split("block")[1];
 
-            bool ok;
-            int i= s.toInt(&ok, 16);
+//            bool ok;
+            int i= orgasm.m_symbols[s];//.toInt(&ok, 16);
             m_blockEndSymbols.append(i);
         }
     }
@@ -675,17 +677,31 @@ void FormRasEditor::MemoryAnalyze()
     m_iniFile->setFloat("perform_crunch",0);
     Build();
     m_iniFile->setFloat("perform_crunch",i);
-    QProcess process;
+    /*QProcess process;
     process.start(m_iniFile->getString("dasm"), QStringList()<<(filename +".asm") << ("-o"+filename+".prg") << "-v3");
     process.waitForFinished();
     //process;
     QString output = process.readAllStandardOutput();
     int codeEnd=FindEndSymbol(output);
+    */
 
+    Orgasm orgAsm;
+    //orgAsm.LoadCodes();
+    orgAsm.Assemble(filename+".asm", filename+".prg");
+    int codeEnd=FindEndSymbol(orgAsm);
+
+//    output = orgAsm.m_output;
+
+
+
+/*    qDebug() << Util::numToHex(codeEnd);
+  //  exit(1);
     if (compiler.m_assembler==nullptr)
         return;
 
-    FindBlockEndSymbols(output);
+    qDebug() << output;
+*/
+    FindBlockEndSymbols(orgAsm);
     ConnectBlockSymbols();
     compiler.m_assembler->blocks.append(new MemoryBlock(Syntax::s.m_startAddress, codeEnd, MemoryBlock::CODE, "code"));
 

@@ -9,8 +9,8 @@ noise	= $900d
 volume	= $900e
 
 
-mod_save_x= $70
-mod_save_a =$71
+mod_save_x = $70
+mod_save_a = $71
 
 pattern_pointer = $19
 channel_pointer = $28	; product area for multiplication
@@ -72,8 +72,8 @@ channel_loop: stx $26	; we save the channel index to zero page
 		sta workarea+1
 		
 		; row pointer now lies at workarea - workarea+1
-		ldx #0
-		lda (workarea,x)
+                ldy #0
+                lda (workarea),y
 		ldx $26 ; load the channel index to X
 		
 		; do nothing if note is 0x00
@@ -96,7 +96,8 @@ skip_notecut: cmp #16
 		bcs effect_speed
 loop_label1:	clc
 		sbc #15
-		sta volume ; overwrite auxiliary color information like a boss
+                ora volume ; overwrite auxiliary color information like a boss
+                sta volume
 		;sta screen+6
 		jmp skip_channel_update
 		
@@ -146,7 +147,6 @@ skip_channel_update:	clc
 
 
 music_cont:
-		// pop
 
 
 		inx

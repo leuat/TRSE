@@ -60,7 +60,7 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_exportParams["Start"] = 0;
     m_exportParams["End"] = 256;
     m_exportParams["IncludeColors"] = 0;
-
+    m_exportParams["VIC20mode"] = 0;
 
     m_GUIParams[btnLoadCharset] ="";
     m_GUIParams[btn1x1] = "1x1 Character set";
@@ -266,14 +266,19 @@ void CharsetImage::ToRaw(QByteArray &arr)
     int size = start-end;
 //    qDebug() << start << " " << end;
 
+//    m_colorOrderType = m_exportParams["m_"]
+
+
     arr.resize(size*8);
     for (int i=start;i<end;i++) {
         PixelChar& pc = m_data[i];
         for (int j=0;j<8;j++) {
             if (m_colorOrderType==0)
                 arr[(i-start)*8+j] = PixelChar::reverse(pc.p[j]);
-            if (m_colorOrderType==1)
+            if (m_colorOrderType==1 || m_exportParams["VIC20mode"]==1)
                 arr[(i-start)*8+j] = PixelChar::reverse(PixelChar::VIC20Swap(pc.p[j]));
+
+
 
         }
     }

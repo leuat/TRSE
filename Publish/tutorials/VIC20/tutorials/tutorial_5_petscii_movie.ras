@@ -1,7 +1,7 @@
 program MyProgram;
 var  
 	ok, i, j ,k,m,dx,dy,time,l,curFrame,val,g0,g1,c,maxFrames, pass : byte = 0;
-	hasTimeStamps, compressionType : byte;
+	hasTimeStamps, compressionType, endChar, skipChar : byte;
 	zp,cp: pointer;
 
 	@define mpos $3000
@@ -18,7 +18,9 @@ begin
 	maxFrames := zp[2];
 	compressionType := zp[3];
 	hasTimeStamps:=zp[4];
-	inczp(zp,5);
+	endChar:=zp[5];
+	skipChar:=zp[6];
+	inczp(zp,7);
 	curFrame:=0;
 
 end;
@@ -85,10 +87,10 @@ begin
 	if pass=0 then
 		screenmemory:=$1C00;
 	
-	while (g0<>254) do begin
+	while (g0<>endChar) do begin
 	
 //		screenmemory[0]:=2;
-		if (zp[0] = 255) then begin
+		if (zp[0] = skipChar) then begin
 			k:=zp[1];
 			inczp(screenmemory, k);
 			inczp(zp, 2);
@@ -135,7 +137,7 @@ begin
 		screenmemory:=$1C00-1;
 	
 
-	while (g0<>254) do begin
+	while (g0<>endChar) do begin
 	
 			g1:=zp[0];
 			i:=zp[1]+128;

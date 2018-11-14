@@ -356,7 +356,7 @@ void C64FullScreenChar::ImportC(QFile &file)
     txt = txt.replace("\n","").replace("\r","");
     QStringList lst = txt.toLower().split("{");
 
-    for (int i=1;i<lst.count();i+=2) {
+    for (int i=1;i<lst.count();i+=1) {
         QString q = lst[i].split("}")[0];
         QStringList data = q.split(",");
 
@@ -419,8 +419,8 @@ void C64FullScreenChar::SaveBin(QFile& file)
     file.write( ( char * )( &v), 1 );
 
 
-    qDebug() << "w h " << QString::number(m_charWidth) << " " << QString::number(m_charHeight);
-    qDebug() << "cnt " << QString::number(v);
+//    qDebug() << "w h " << QString::number(m_charWidth) << " " << QString::number(m_charHeight);
+  //  qDebug() << "cnt " << QString::number(v);
 
     char tmp = 0;
     for (int i=0;i<11;i++)

@@ -111,8 +111,8 @@ public:
 
     void SetOutputText(QString txt);
 
-    int FindEndSymbol(QString output);
-    void FindBlockEndSymbols(QString output);
+    int FindEndSymbol(Orgasm& orgAsm);
+    void FindBlockEndSymbols(Orgasm& orgAsm);
     void ConnectBlockSymbols();
     void BuildNes(QString prg);
 
