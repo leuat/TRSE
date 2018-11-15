@@ -84,7 +84,6 @@ public:
 
     void IncBin(NodeVarDecl* node);
 
-    void InitSid(NodeVarDecl* node,QString projectDir);
 
     void DeclarePointer(NodeVarDecl* node);
 

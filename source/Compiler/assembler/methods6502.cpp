@@ -23,6 +23,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         as->EndWriteln();
     }
 
+    if (Command("init_vic20_sidplay"))
+        InitPlaySidVIC20(as);
+
+
+    if (Command("PlayVIC20Sid"))
+        PlayVIC20Sid(as);
     if (Command("EnableAllRam")) {
             as->Comment("Enable all ram visible");
             as->Asm("lda $01");
@@ -46,6 +52,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         //;bmi jess
         as->Asm("jsr $FF5F");
 
+    }
+
+    if (Command("PlayVIC20Sid")) {
+        PlayVIC20Sid(as);
     }
 
     if (Command("init_wedge")) {
@@ -932,6 +942,12 @@ void Methods6502::InitPrintDecimal(Assembler *as)
     as->Asm("bne init_printdecimal_loop");
     as->Asm("rts");
 }
+
+void Methods6502::InitPlaySidVIC20(Assembler *as)
+{
+    as->IncludeFile(":resources/code/vic20_playsid_init.asm");
+
+}
 void Methods6502::PrintDecimal(Assembler *as)
 {
     QString lbl= as->NewLabel("printdecimal");
@@ -1471,6 +1487,15 @@ void Methods6502::Fill(Assembler *as)
     as->Term();
     as->Asm("bne "+lbl);
     as->PopLabel("fill");
+
+}
+
+void Methods6502::PlayVIC20Sid(Assembler *as)
+{
+    as->Term("jsr ");
+    m_node->m_params[0]->Accept(m_dispatcher);
+    as->Term();
+    as->Asm("jsr vic20_playsid_init");
 
 }
 
@@ -2317,6 +2342,15 @@ void Methods6502::InitSid(Assembler *as)
         as->Term("jsr ");
         num->Accept(m_dispatcher);
         as->Term();
+
+        if (Syntax::s.m_currentSystem == Syntax::VIC20) {
+            as->Asm("lda	$900e");
+            as->Asm("ora	#$0f");
+            as->Asm("sta	$900e");
+//            as->Asm("rts");
+        }
+
+
 
         return;
     }

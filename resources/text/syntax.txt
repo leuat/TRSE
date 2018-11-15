@@ -100,6 +100,7 @@ m; ClearSound; C64, C128;
 # VIC 20 Music routines
 m; InitModPlayer; VIC20;
 m; PlayMod; VIC20;
+m; PlayVIC20Sid; VIC20; a
 
 
 # Math routines

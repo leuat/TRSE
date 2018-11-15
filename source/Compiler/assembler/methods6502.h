@@ -29,11 +29,13 @@ public:
     void Rand(Assembler* as);
     void MoveTo(Assembler* as);
     void MoveTo80(Assembler* as);
+
     void CopyBytesShift(Assembler* as, bool isLeft);
     void PokeScreen(Assembler* as, int hiAddress);
     void PokeScreenColor(Assembler* as, int hiAddress);
     void SetSpritePos(Assembler* as);
     void Fill(Assembler* as);
+    void PlayVIC20Sid(Assembler* as);
     void PrintNumber(Assembler* as);
     void PrintString(Assembler* as);
     void ScrollX(Assembler* as);
@@ -128,7 +130,7 @@ public:
     void InitPrintString(Assembler* as);
     void InitDecrunch(Assembler* as);
     void InitPrintDecimal(Assembler* as);
-
+    void InitPlaySidVIC20(Assembler* as);
 };
 
 #endif // METHODS6502_H

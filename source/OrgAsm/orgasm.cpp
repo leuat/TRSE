@@ -356,12 +356,15 @@ void Orgasm::ProcessByteData(OrgasmLine &ol)
 //    qDebug() << ol.m_expr;
     QStringList lst = ol.m_expr.split(",");
 //    qDebug() << lst;
+
     for (QString s: lst) {
 
         if (s.trimmed()=="") continue;
   //      qDebug() << Util::NumberFromStringHex(s);
         if (!s.contains("\"")) {
+//            if (lst.count()>1)  qDebug() << "Adding: " <<  Util::NumberFromStringHex(s);
             m_data.append(Util::NumberFromStringHex(s));
+
 //            qDebug() << Util::NumberFromStringHex(s);
             //qDebug() << s << Util::NumberFromStringHex(s);
             m_pCounter++;
@@ -382,6 +385,7 @@ void Orgasm::ProcessByteData(OrgasmLine &ol)
 
         }
     }
+//    qDebug() << "Final val added: " << QString::number((uchar)m_data[m_data.count()-1]);
 }
 
 void Orgasm::ProcessWordData(OrgasmLine &ol)

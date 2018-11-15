@@ -955,34 +955,6 @@ void ASTDispather6502::IncBin(NodeVarDecl *node) {
     }
 }
 
-void ASTDispather6502::InitSid(NodeVarDecl *node, QString projectDir) {
-    NodeVar* v = (NodeVar*)node->m_varNode;
-    NodeVarType* t = (NodeVarType*)node->m_typeNode;
-
-
-    int headerShift = 0;
-    if (t->m_position!="") {
-        QString val = t->m_position;
-        bool ok;
-        headerShift = val.toInt(&ok);
-        if (!ok)
-            headerShift = 0;
-    }
-
-    node->sid.Load(t->m_filename, projectDir);
-    node->sid.Convert(headerShift,0x2000);
-    /*        qDebug() << "SID LOAD: " << QString::number(sid.m_loadAddress,16);
-            qDebug() << "SID INIT: " << QString::number(sid.m_initAddress,16);
-           qDebug() << "SID PLAY: " << QString::number(sid.m_playAddress,16);
-    */
-    if (node->sid.m_loadAddress ==0 ) {
-        qDebug() << "BUG load sid at ZERO?";
-        node->sid.m_loadAddress = node->sid.m_initAddress;
-    }
-    SymbolTable::DefineSid(node->sid.m_initAddress, node->sid.m_playAddress);
-
-}
-
 void ASTDispather6502::DeclarePointer(NodeVarDecl *node) {
 
     if (!as->CheckZPAvailability())

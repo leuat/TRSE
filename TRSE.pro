@@ -282,4 +282,5 @@ DISTFILES += \
     resources/text/builtinmethods.txt \
     resources/text/builtinmethods.txt \
     resources/text/builtinmethods.txt \
-    resources/images/NES.png
+    resources/images/NES.png \
+    resources/code/vic20_playsid_init.asm

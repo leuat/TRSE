@@ -27,6 +27,7 @@
 #include <QByteArray>
 #include "source/Compiler/errorhandler.h"
 #include "source/LeLib/util/util.h"
+#include "source/Compiler/syntax.h"
 
 class SidFile
 {
