@@ -571,6 +571,9 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
 {
     node->DispatchConstructor();
 
+//    if (node->m_curMemoryBlock!=nullptr)
+  //      qDebug() << node->m_procName << "IS IN BLOCK " << node->m_curMemoryBlock->m_name << " STARTING AT " << Util::numToHex(node->m_curMemoryBlock->m_start);
+
     // In case memory block is acive
 //    as->EndMemoryBlock();
 
@@ -967,7 +970,7 @@ void ASTDispather6502::InitSid(NodeVarDecl *node, QString projectDir) {
     }
 
     node->sid.Load(t->m_filename, projectDir);
-    node->sid.Convert(headerShift);
+    node->sid.Convert(headerShift,0x2000);
     /*        qDebug() << "SID LOAD: " << QString::number(sid.m_loadAddress,16);
             qDebug() << "SID INIT: " << QString::number(sid.m_initAddress,16);
            qDebug() << "SID PLAY: " << QString::number(sid.m_playAddress,16);

@@ -94,7 +94,7 @@ m; SetSpriteLoc; C64, C128; b,b,n
 # Sound/Music routines
 
 m; PlaySound; C64, C128; b,b,b,b,b,b,b
-m; InitSid; C64, C128; a
+m; InitSid; C64, C128,VIC20; a
 m; ClearSound; C64, C128;
 
 # VIC 20 Music routines
@@ -276,7 +276,7 @@ r; INCBIN; C64, C128, VIC20, PET, NES
 r; STRING; C64, C128, VIC20, PET, NES
 r; CSTRING; C64, C128, VIC20, PET
 r; ASM; C64, C128, VIC20, PET, NES
-r; INCSID; C64, C128
+r; INCSID; C64, C128, VIC20
 r; INTERRUPT; C64, C128, VIC20, PET, NES
 r; ELSE; C64, C128, VIC20, PET, NES
 r; OR; C64, C128, VIC20, PET, NES

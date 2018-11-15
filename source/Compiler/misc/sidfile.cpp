@@ -30,7 +30,7 @@ void SidFile::Load(QString filename, QString path)
 {
     m_path = path;
     m_fileName = filename;
-    if (!filename.endsWith(".sid"))
+    if (!filename.endsWith(".sid") && !filename.endsWith(".vsid"))
         ErrorHandler::e.Error("Unable to load '" + filename +"', must be sid file!");
     QFile file(path + filename);
 
@@ -53,8 +53,9 @@ void SidFile::Load(QString filename, QString path)
     file.close();
 }
 
-void SidFile::Convert(int headerShift)
+void SidFile::Convert(int headerShift, int newAddress)
 {
+    QString org = m_fileName;
     m_outFile = m_fileName.remove(".sid");
     QStringList l = m_fileName.split("/");
     QString last = l.last();
@@ -77,6 +78,31 @@ void SidFile::Convert(int headerShift)
     int headerSize = 0x7C + headerShift;
     // Should the +2 be included? FUCK!
     m_blob.remove(0,headerSize);
+
+    // Replace all d400 with newaddress
+    if (org.toLower().trimmed().endsWith(".vsid")) {
+        qDebug() << "VSID CONVERSION: ";
+        for (int i=1;i<m_blob.count();i++) {
+            uchar hi = m_blob[i];
+            uchar lo = m_blob[i-1];
+            if (hi==0xD4) {
+ //               lo=lo&31;
+                if (lo<0x1F) {
+                    int addr = newAddress+lo;
+                    qDebug() << "SID Moving: " << Util::numToHex((unsigned short)((hi<<8)|lo)) << " to " << Util::numToHex(addr);
+                    m_blob[i]=(addr>>8)&0xFF;
+                    m_blob[i-1]=(addr)&0xFF;
+                }
+                 else {
+                    qDebug() << "IG:" << Util::numToHex((hi));
+                    qDebug() << "IGNORING : " << Util::numToHex((unsigned short)((hi<<8)|lo));
+                }
+            }
+        }
+
+
+    }
+
     file.write(m_blob);
     file.close();
 

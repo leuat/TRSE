@@ -32,6 +32,7 @@ class C64Screen : public LImageContainerItem {
 public:
     QByteArray m_rawData, m_rawColors, m_data;
 
+
     void Init(int w, int h)  override {
         m_width = w;
         m_height = h;

@@ -26,6 +26,7 @@
 #include <QFile>
 #include <QByteArray>
 #include "source/Compiler/errorhandler.h"
+#include "source/LeLib/util/util.h"
 
 class SidFile
 {
@@ -36,7 +37,7 @@ public:
     QString m_outFile, m_fileName, m_path;
 
     void Load(QString filename, QString path);
-    void Convert(int headerShift);
+    void Convert(int headerShift, int newAddress);
 };
 
 #endif // SID_H

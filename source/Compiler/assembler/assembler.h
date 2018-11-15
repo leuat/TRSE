@@ -154,6 +154,8 @@ public:
     Appendix* m_currentBlock = nullptr;
 
     void StartMemoryBlock(QString pos) {
+        EndMemoryBlock();
+//        qDebug() << "Starting emory pos: "<< pos;
         Appendix app(pos);
         m_appendix.append(app);
         m_currentBlock = &m_appendix[m_appendix.count()-1];
@@ -162,8 +164,10 @@ public:
 
     void EndMemoryBlock() {
 //        qDebug() << "Trying to end memory block.. ";
-        if (m_currentBlock!=nullptr)
+        if (m_currentBlock!=nullptr) {
             Label("EndBlock"+QString::number(m_currentBlock->m_id));
+
+        }
         m_currentBlock=nullptr;
     }
 

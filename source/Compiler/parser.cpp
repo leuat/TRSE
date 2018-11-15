@@ -77,16 +77,17 @@ int Parser::findSymbolLineNumber(QString symbol)
 
 void Parser::InitBuiltinFunctions()
 {
+    m_initJumps.clear();
     if (m_preprocessorDefines.contains("BuiltinMethodsLocation")) {
 
-        m_initJumps.clear();
         ParserBlock pb;
         pb.m_blockID = m_parserBlocks.count();
-        pb.pos = m_preprocessorDefines["BuiltinMethodsLocation"] ;
+        pb.pos = m_preprocessorDefines["BuiltinMethodsLocation"];
+        pb.pos = Util::numToHex(pb.pos.toInt());
         m_parserBlocks.append(pb);
         Node::m_staticBlockInfo.m_blockID = pb.m_blockID;
         Node::m_staticBlockInfo.m_blockPos = pb.pos;
-        Node::m_staticBlockInfo.m_blockName = "Builtin Methods";
+        Node::m_staticBlockInfo.m_blockName = "BuiltinMethods";
     }
 
 
@@ -114,6 +115,7 @@ void Parser::InitBuiltinFunctions()
     InitBuiltinFunction(QStringList()<< "joystick" , "initjoystick");
 
     Node::m_staticBlockInfo.m_blockID = -1;
+//    EndMemoryBlock();
  }
 
 void Parser::InitBuiltinFunction(QStringList methodName, QString builtinFunctionName, QString initJump )
@@ -703,6 +705,8 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param)
     m_pass = 0;
     Preprocess();
     m_pass = 1;
+    m_parserBlocks.clear();
+
     m_symTab = new SymbolTable();
     m_lexer->Initialize();
     m_lexer->m_ignorePreprocessor = true;

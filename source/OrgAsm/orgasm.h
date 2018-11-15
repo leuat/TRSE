@@ -158,7 +158,7 @@ public:
 
     OrgasmLine LexLine(int i);
 
-    void Assemble(QString filename, QString out);
+    bool Assemble(QString filename, QString out);
 
     void PassFindConstants();
     void PassReplaceConstants();

@@ -18,6 +18,7 @@ var
 	@define ScrollerY 12
 
 
+
 procedure PrintText();
 begin
 	h1:=@charPos+8;//$05D0;
@@ -126,7 +127,6 @@ begin
 
 	closeirq();
 end;
-
 
 
 begin

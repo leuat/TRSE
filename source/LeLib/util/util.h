@@ -139,14 +139,34 @@ public:
     static int NumberFromStringHex(QString s) {
         bool ok = true;
         s=s.trimmed();
-        if (s.startsWith("$"))
-            return s.remove("$").toInt(&ok, 16);
-        if (s.toLower().startsWith("0x"))
-            return s.remove("$").toInt(&ok, 16);
-        if (s.toLower().startsWith("%"))
-            return s.remove("%").toInt(&ok, 2);
 
-        return s.toInt(&ok,  10);
+        int val = 0;
+
+        int type = 0;
+        if (s.startsWith("<")) {
+            type = 1;
+            s = s.replace("<","");
+        }
+        if (s.startsWith(">")) {
+            type = 2;
+            s = s.replace(">","");
+        }
+
+        if (s.startsWith("$"))
+            val = s.remove("$").toInt(&ok, 16);
+        else
+        if (s.toLower().startsWith("0x"))
+            val = s.remove("$").toInt(&ok, 16);
+        else
+        if (s.toLower().startsWith("%"))
+            val= s.remove("%").toInt(&ok, 2);
+        else
+            val = s.toInt(&ok,  10);
+
+        if (type==1)  val = (val)&0xFF;
+        if (type==2)  val = (val>>8)&0xFF;
+
+        return val;
     }
 
     static QString ReplaceWords(QString line, QString word);

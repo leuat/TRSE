@@ -79,7 +79,7 @@ void NodeVarDecl::InitSid(QString projectDir) {
     }
 
     sid.Load(t->m_filename, projectDir);
-    sid.Convert(headerShift);
+    sid.Convert(headerShift,0x2000);
     /*        qDebug() << "SID LOAD: " << QString::number(sid.m_loadAddress,16);
                 qDebug() << "SID INIT: " << QString::number(sid.m_initAddress,16);
                qDebug() << "SID PLAY: " << QString::number(sid.m_playAddress,16);

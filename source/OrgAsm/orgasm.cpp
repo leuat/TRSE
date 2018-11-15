@@ -49,6 +49,8 @@ OrgasmLine Orgasm::LexLine(int i) {
 //    line = line.replace("//",";");
     line = line.replace("\t", " ");
     line = line.replace("dc.b", ".byte");
+    line = line.replace("!by", ".byte");
+    line = line.replace("!fi", ".byte");
     line = line.replace("dc.w", ".word");
     line = line.replace(".dc ", ".byte ");
     line = line.split(";")[0];
@@ -170,7 +172,7 @@ bool stringSort(const QString &s1, const QString &s2)
     return s1.count() < s2.count();
 }
 */
-void Orgasm::Assemble(QString filename, QString outFile)
+bool Orgasm::Assemble(QString filename, QString outFile)
 {
     m_success = false;
     LoadFile(filename);
@@ -360,6 +362,8 @@ void Orgasm::ProcessByteData(OrgasmLine &ol)
   //      qDebug() << Util::NumberFromStringHex(s);
         if (!s.contains("\"")) {
             m_data.append(Util::NumberFromStringHex(s));
+//            qDebug() << Util::NumberFromStringHex(s);
+            //qDebug() << s << Util::NumberFromStringHex(s);
             m_pCounter++;
 
         }

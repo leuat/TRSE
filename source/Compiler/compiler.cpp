@@ -103,7 +103,6 @@ bool Compiler::Build(Compiler::Type type, QString project_dir)
         m_assembler->blocks.append(mb);
     }
 
-
     m_assembler->EndMemoryBlock();
     m_assembler->Label("EndSymbol");
     m_assembler->Connect();

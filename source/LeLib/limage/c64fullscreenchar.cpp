@@ -101,6 +101,7 @@ void C64FullScreenChar::SetColor(uchar col, uchar idx)
     if (m_charset!=nullptr)
 //        return;
     m_charset->SetColor(col, idx);
+    if (idx==0) ((C64Screen*)m_items[m_current])->m_data[1] = col;
     m_extraCols[idx] = col;
 }
 
@@ -144,6 +145,8 @@ bool C64FullScreenChar::KeyPress(QKeyEvent *e)
     if (e->key()==Qt::Key_D)
         Next();
 
+
+    SetColor(((C64Screen*)m_items[m_current])->m_data[1],0);
 
     if (e->key()==Qt::Key_C) {
         m_writeType=Character;
@@ -314,14 +317,17 @@ void C64FullScreenChar::ExportMovie(QFile &file)
 
         QByteArray data;
 
+        data.append(screen->m_data[1]);
+//        data.append(screen->m_data[2]);
+
         if (compressionType==3)
-        data = mc.CompressScreen3(screens[i], screens[i+1],
+        data.append(mc.CompressScreen3(screens[i], screens[i+1],
                 m_charWidth, m_charHeight,compr,
-                endChar,skipChar);
+                endChar,skipChar));
 
         if (compressionType==2)
-        data = mc.CompressScreen2(screens[i], screens[i+1],
-                m_charWidth, m_charHeight,compr,endChar,skipChar);
+        data.append(mc.CompressScreen2(screens[i], screens[i+1],
+                m_charWidth, m_charHeight,compr,endChar,skipChar));
 
 
        // qDebug() << screen;
@@ -362,6 +368,7 @@ void C64FullScreenChar::ImportC(QFile &file)
 
         AddNew(m_charWidth, m_charHeight);
         C64Screen* s = dynamic_cast<C64Screen*>(m_items.last());
+        s->m_data[1] = data[4].toInt();
         int k = 5;
         for (int i=0;i<m_charWidth*m_charHeight;i++) {
             s->m_rawData[i] =data[k].toInt();

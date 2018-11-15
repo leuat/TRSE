@@ -291,10 +291,11 @@ void FormRasEditor::FindBlockEndSymbols(Orgasm& orgasm)
     m_blockEndSymbols.clear();
     for (QString s : orgasm.m_symbols.keys()) {
         if (s.toLower().contains("endblock")) {
-            s = s.toLower().simplified().split("block")[1];
-
+           QString spl = s;
+            spl = spl.toLower().simplified().split("block")[1];
 //            bool ok;
             int i= orgasm.m_symbols[s];//.toInt(&ok, 16);
+            //qDebug() << "FOUND endblock : " << s << Util::numToHex(i);
             m_blockEndSymbols.append(i);
         }
     }
@@ -675,8 +676,11 @@ void FormRasEditor::MemoryAnalyze()
 {
     int i= m_iniFile->getdouble("perform_crunch");
     m_iniFile->setFloat("perform_crunch",0);
-    Build();
+    if (!BuildStep())
+        return;
     m_iniFile->setFloat("perform_crunch",i);
+    compiler.SaveBuild(filename + ".asm");
+
     /*QProcess process;
     process.start(m_iniFile->getString("dasm"), QStringList()<<(filename +".asm") << ("-o"+filename+".prg") << "-v3");
     process.waitForFinished();
@@ -688,29 +692,16 @@ void FormRasEditor::MemoryAnalyze()
     Orgasm orgAsm;
     //orgAsm.LoadCodes();
     orgAsm.Assemble(filename+".asm", filename+".prg");
+    if (!orgAsm.m_success)
+        return;
     int codeEnd=FindEndSymbol(orgAsm);
 
-//    output = orgAsm.m_output;
-
-
-
-/*    qDebug() << Util::numToHex(codeEnd);
-  //  exit(1);
-    if (compiler.m_assembler==nullptr)
-        return;
-
-    qDebug() << output;
-*/
     FindBlockEndSymbols(orgAsm);
     ConnectBlockSymbols();
     compiler.m_assembler->blocks.append(new MemoryBlock(Syntax::s.m_startAddress, codeEnd, MemoryBlock::CODE, "code"));
 
     m_mca.ClassifyZP(compiler.m_assembler->blocks);
 
-
-/*    for (MemoryBlock& mb:compiler.m_assembler->blocks) {
-        qDebug() << QString::number(mb.m_start,16) << " to " <<QString::number(mb.m_end,16) << " " << mb.Type();
-    }*/
     DialogMemoryAnalyze* dma = new DialogMemoryAnalyze();
     dma->Initialize(compiler.m_assembler->blocks, m_iniFile->getInt("memory_analyzer_font_size"));
     dma->exec();
