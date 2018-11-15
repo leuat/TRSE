@@ -64,7 +64,7 @@ void NodeVarDecl::ExecuteSym(SymbolTable *symTab) {
 
 }
 
-void NodeVarDecl::InitSid(QString projectDir) {
+void NodeVarDecl::InitSid(QString projectDir, int VICAddress) {
     NodeVar* v = (NodeVar*)m_varNode;
     NodeVarType* t = (NodeVarType*)m_typeNode;
 
@@ -79,7 +79,7 @@ void NodeVarDecl::InitSid(QString projectDir) {
     }
 
     sid.Load(t->m_filename, projectDir);
-    sid.Convert(headerShift,0x2000);
+    sid.Convert(headerShift,VICAddress);
     /*        qDebug() << "SID LOAD: " << QString::number(sid.m_loadAddress,16);
                 qDebug() << "SID INIT: " << QString::number(sid.m_initAddress,16);
                qDebug() << "SID PLAY: " << QString::number(sid.m_playAddress,16);

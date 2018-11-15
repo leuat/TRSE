@@ -57,7 +57,7 @@ public:
         dispatcher->dispatch(this);
     }
 
-    void InitSid(QString projectDir);
+    void InitSid(QString projectDir, int VICAddress);
 
 };
 

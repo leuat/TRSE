@@ -1035,7 +1035,13 @@ QVector<Node *> Parser::VariableDeclarations()
         var_decleratons.append(decl);
         if (typeNode->m_op.m_type == TokenType::INCSID) {
 
-            decl->InitSid(m_lexer->m_path);
+            int sidloc = 0;
+            if (m_preprocessorDefines.contains("SIDEmulatorLocation")) {
+                sidloc = Util::NumberFromStringHex(m_preprocessorDefines["SIDEmulatorLocation"]);
+                //qDebug() << sidloc;
+            }
+//            exit(1);
+            decl->InitSid(m_lexer->m_path, sidloc);
         }
     }
 

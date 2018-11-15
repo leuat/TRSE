@@ -86,12 +86,12 @@ void SidFile::Convert(int headerShift, int newAddress)
             uchar hi = m_blob[i];
             uchar lo = m_blob[i-1];
             if (hi==0xD4) {
- //               lo=lo&31;
+                lo=lo&31;
                 if (lo<0x1F) {
                     int addr = newAddress+lo;
                     qDebug() << "SID Moving: " << Util::numToHex((unsigned short)((hi<<8)|lo)) << " to " << Util::numToHex(addr);
-                    m_blob[i]=(addr>>8)&0xFF;
-                    m_blob[i-1]=(addr)&0xFF;
+                    m_blob[i]=(uchar)((addr>>8));
+                    m_blob[i-1]=(uchar)((addr));
                 }
                  else {
                     qDebug() << "IG:" << Util::numToHex((hi));
