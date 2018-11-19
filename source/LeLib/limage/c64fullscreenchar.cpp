@@ -124,8 +124,9 @@ void C64FullScreenChar::ImportBin(QFile &f)
 
 void C64FullScreenChar::ExportBin(QFile &f)
 {
- //   ToRaw(m_rawData);
-  //  f.write(m_rawData);
+
+//    C64Screen* s = (C64Screen*)m_items[m]
+
 /*    for (int i=0;i<m_rawColors.count();i++)
         m_rawColors[i] = m_rawColors[i] + 8;
 

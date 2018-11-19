@@ -96,7 +96,7 @@ class OrgasmInstruction {
 
 class OrgasmLine {
 public:
-    enum OLType {INSTRUCTION, ORG, INCBIN, CONSTANT, BYTE, WORD, LABELONLY};
+    enum OLType {INSTRUCTION, ORG, INCBIN, CONSTANT, BYTE, WORD, LABELONLY, PADBYTE};
 
     OLType m_type;
     int m_pos;
@@ -165,7 +165,8 @@ public:
     void PassLabels();
     void Compile(OrgasmData::PassType pt);
 
-    void ProcessByteData(OrgasmLine& ol);
+    void ProcessByteData(OrgasmLine& ol,OrgasmData::PassType );
+    void ProcessBytePad(OrgasmLine& ol);
     void ProcessWordData(OrgasmLine& ol);
     void ProcessOrgData(OrgasmLine& ol);
     void ProcessIncBin(OrgasmLine& ol);

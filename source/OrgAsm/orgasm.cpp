@@ -52,6 +52,10 @@ OrgasmLine Orgasm::LexLine(int i) {
     line = line.replace("!by", ".byte");
     line = line.replace("!fi", ".byte");
     line = line.replace("dc.w", ".word");
+    //line = line.replace("ds.w", ".word");
+ //   line = line.replace("equ", "=");
+//    line = line.replace("EQU", "=");
+    //line = line.replace("ds.b", ".byte");
     line = line.replace(".dc ", ".byte ");
     line = line.split(";")[0];
     if (!line.toLower().contains("incbin"))
@@ -142,6 +146,11 @@ OrgasmLine Orgasm::LexLine(int i) {
     if (lst[0].toLower()==".byte") {
         l.m_type = OrgasmLine::BYTE;
         l.m_expr = line.replace(".byte", "").trimmed();//.simplified();
+        return l;
+    }
+    if (lst[0].toLower()=="ds.b") {
+        l.m_type = OrgasmLine::PADBYTE;
+        l.m_expr = line.replace("ds.b", "").trimmed();//.simplified();
         return l;
     }
     if (lst[0].toLower()==".word") {
@@ -252,7 +261,6 @@ void Orgasm::PassReplaceConstants()
             for (QString k : m_constList) {
                 if (ol.m_expr.contains(k))
                 ol.m_expr =  OrgasmData::ReplaceWord(ol.m_expr, k, m_constants[k]);
-//                ol.m_instruction. =  OrgasmData::ReplaceWord(ol.m_expr, k, m_constants[k]);
             }
 
         }
@@ -324,7 +332,10 @@ void Orgasm::Compile(OrgasmData::PassType pt)
 //        qDm_pCounter
 
         if (ol.m_type==OrgasmLine::BYTE)
-            ProcessByteData(ol);
+            ProcessByteData(ol,pt);
+
+        if (ol.m_type==OrgasmLine::PADBYTE)
+            ProcessBytePad(ol);
 
         if (ol.m_type==OrgasmLine::WORD)
             ProcessWordData(ol);
@@ -346,7 +357,7 @@ void Orgasm::Compile(OrgasmData::PassType pt)
 
 }
 
-void Orgasm::ProcessByteData(OrgasmLine &ol)
+void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
 {
     if (ol.m_expr.trimmed()=="") {
         m_pCounter++;
@@ -354,14 +365,34 @@ void Orgasm::ProcessByteData(OrgasmLine &ol)
         return;
     }
 //    qDebug() << ol.m_expr;
+
+
+
     QStringList lst = ol.m_expr.split(",");
 //    qDebug() << lst;
-
     for (QString s: lst) {
 
         if (s.trimmed()=="") continue;
   //      qDebug() << Util::NumberFromStringHex(s);
         if (!s.contains("\"")) {
+
+            if (pt==OrgasmData::PASS_SYMBOLS) {
+    //            qDebug() << "Before "<< s;
+            for (QString& c: m_symbolsList)
+                if (s.contains(c)) {
+                    //qDebug() << c;
+                    //exit(1);
+                    s = OrgasmData::ReplaceWord(s,c,Util::numToHex(m_symbols[c]));
+
+                }
+  //              qDebug() << "After: "<<s;
+
+                s = Util::numToHex(Util::NumberFromStringHex(s));
+//                qDebug() << "After2: "<<s;
+
+            }
+
+
 //            if (lst.count()>1)  qDebug() << "Adding: " <<  Util::NumberFromStringHex(s);
             m_data.append(Util::NumberFromStringHex(s));
 
@@ -385,7 +416,30 @@ void Orgasm::ProcessByteData(OrgasmLine &ol)
 
         }
     }
-//    qDebug() << "Final val added: " << QString::number((uchar)m_data[m_data.count()-1]);
+    //    qDebug() << "Final val added: " << QString::number((uchar)m_data[m_data.count()-1]);
+}
+
+void Orgasm::ProcessBytePad(OrgasmLine &ol)
+{
+    QStringList lst = ol.m_expr.simplified().split(" ");
+
+//    qDebug() << lst;
+  //
+
+
+//    qDebug() << lst;
+    //qDebug() << ol.m_expr;
+    int v = 0;
+    if (lst.count()==2)
+        v = Util::NumberFromStringHex(lst[1]);
+
+    int cnt = Util::NumberFromStringHex(lst[0]);
+    for (int i=0;i<cnt;i++) {
+        m_pCounter++;
+        m_data.append((char)v);
+
+    }
+
 }
 
 void Orgasm::ProcessWordData(OrgasmLine &ol)
@@ -527,21 +581,38 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
                 }
                 cur++;
         }
+
         expr = l2[0];
         if (l2.count()>1)
             expr+=","+l2[1];
 
 
         if (expr!="") {
-            int val;
+            int val = 0;
             QString repl = "$1000";
             if (expr.contains("<") || expr.contains(">"))
                 repl= "#$10";
 
             expr = expr.replace("<","").replace(">","");
 //            qDebug() << "A" <expr;
-            if (!(expr.startsWith("(") && expr.endsWith(")")))
-            expr = OrgasmData::BinopExpr(expr, val, repl);
+            if (!(expr.startsWith("(") && expr.endsWith(")"))) {
+ //               expr = OrgasmData::BinopExpr(expr, val, repl);
+                bool hasHash = false;
+                if (expr.simplified().startsWith("#"))
+                    hasHash = true;
+                expr = OrgasmData::BinopExpr(expr, val, repl);
+                if (hasHash)
+                    expr = "#"+expr;
+            }
+
+/*            if (orgExpr.toUpper().contains("5")) {
+                qDebug() << "org: " << orgExpr;
+                qDebug() << "l2: " << l2;
+                qDebug() << "expr: " << expr;
+    //            exit(1);
+            }
+*/
+
   //          qDebug() << "B" <<expr;
             if (val==-1 && pd==OrgasmData::PASS_SYMBOLS) {
                 //qDebug() << l2;
@@ -620,8 +691,12 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     data.append(code);
 
 
-    if (m_opCode=="bpl" || m_opCode=="bne" || m_opCode=="beq" || m_opCode=="bcc" || m_opCode=="bcs") {
+    if (m_opCode=="bpl" || m_opCode=="bne" || m_opCode=="beq" || m_opCode=="bcc" || m_opCode=="bcs" || m_opCode=="bvc" || m_opCode=="bmi") {
         int diff = (val)-m_pCounter-2;
+  //      qDebug() << QString::number(diff);
+        if (abs(diff)>=128 && pd==OrgasmData::PASS_SYMBOLS) {
+            throw QString("Branch out of range : " +QString::number(diff));
+        }
 //        qDebug() << "Diff: " << Util::numToHex((uchar)diff);
         data.append((uchar)diff);
     }
@@ -671,6 +746,12 @@ QString OrgasmData::ReplaceWord(QString& line, QString& word, QString replacemen
 
 QString OrgasmData::BinopExpr(QString& expr, int& val, QString rep)
 {
+    bool hasHash = false;
+/*    if (expr.contains("#")) {
+//        qDebug() << expr;
+        hasHash = true;
+        expr = expr.replace("#","");
+    }*/
     QStringList l = expr.simplified().split(",");
     l[0] = l[0].replace("(","").replace(")","");
     l[0] = l[0].replace(" ","");
@@ -696,6 +777,7 @@ QString OrgasmData::BinopExpr(QString& expr, int& val, QString rep)
         expr+="," + l[1];
 
 
-
+/*    if (hasHash)
+        expr = "#"+expr;*/
     return expr;
 }
