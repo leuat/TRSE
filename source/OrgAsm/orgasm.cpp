@@ -250,7 +250,7 @@ bool Orgasm::Assemble(QString filename, QString outFile)
         //qDebug() << "Error compiling: " << e;
         m_output = "Error during OrgAsm assembly: "+e;
     }
-
+    return m_success;
 }
 
 void Orgasm::PassReplaceConstants()
