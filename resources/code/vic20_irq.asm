@@ -1,6 +1,6 @@
 init_via_irq:
 
-  ldx #28       ; wait for this raster line (times 2)
+  ldx #0       ; wait for this raster line (times 2)
 A0_vic_raster:
   cpx $9004
   bne A0_vic_raster        ; at this stage, the inaccuracy is 7 clock cycles

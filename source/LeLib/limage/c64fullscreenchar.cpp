@@ -57,7 +57,7 @@ C64FullScreenChar::C64FullScreenChar(LColorList::Type t) : MultiColorImage(t)
     m_supports.asmExport = false;
     m_supports.movieExport = true;
     m_supports.displayTimestamp = true;
-
+//    m_supports.binarySave
 
     m_supports.importc = true;
     m_supports.exportc = false;
@@ -80,8 +80,6 @@ C64FullScreenChar::C64FullScreenChar(LColorList::Type t) : MultiColorImage(t)
     m_supports.asmExport=false;
     m_supports.koalaExport = false;
     m_supports.koalaImport = false;
-    m_supports.binaryLoad = false;
-    m_supports.binarySave = false;
     m_exportParams.clear();
     m_exportParams["EndChar"] = 254;
     m_exportParams["SkipChar"] = 255;
@@ -93,6 +91,10 @@ C64FullScreenChar::C64FullScreenChar(LColorList::Type t) : MultiColorImage(t)
     m_exportParams["CompressionType"] = 2;
     m_exportParamsComments["CompressionType"]  ="CompressionType can be either\n 2 or 3. Type 2 compresses\n the animation"
                                            "by only saving \nframe changes, while type 3 saves \nthe whole image but perform a png-like\n compression.";
+
+
+    m_exportParams["Fullscreen_Colors"] = 1;
+    m_exportParams["Fullscreen_Chars"] = 1;
 
 }
 
@@ -125,7 +127,12 @@ void C64FullScreenChar::ImportBin(QFile &f)
 void C64FullScreenChar::ExportBin(QFile &f)
 {
 
-//    C64Screen* s = (C64Screen*)m_items[m]
+    C64Screen* s = (C64Screen*)m_items[m_current];
+
+    if (m_exportParams["Fullscreen_Chars"]==1)
+       f.write(s->m_rawData);
+    if (m_exportParams["Fullscreen_Colors"]==1)
+    f.write(s->m_rawColors);
 
 /*    for (int i=0;i<m_rawColors.count();i++)
         m_rawColors[i] = m_rawColors[i] + 8;
