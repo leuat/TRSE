@@ -1,0 +1,89 @@
+
+
+// Image in images/logo.flf
+
+// Size of image. Defined when creating and drawing the flf file
+// Bitmap will be loaded as a charset
+
+// Copy color data from bitmap data
+procedure CopyImageColor();
+begin
+
+	zp:=$6600 + @imageWidth*@imageHeight*8;
+//	
+	moveto(0,0,$94);
+	for j:=0 to @imageHeight do begin
+		for i:=0 to @imageWidth do begin
+			k:=zp[i]	 | zp[i+@imageWidth];
+//			k:=BLUE+8;
+			screenmemory[i]:=k;
+		end;
+		inczp(screenmemory,@imageWidth);
+		inczp(zp,@imageWidth*2);
+
+	end;
+
+end;
+
+Procedure InitScene2();
+begin
+	vscroll:=220;
+	SCREEN_BG_COLOR:=YELLOW*16 + RED;
+	i:=AUX_COLOR_AND_VOLUME;
+	i:=i&15;
+	AUX_COLOR_AND_VOLUME:=WHITE*16 +i;
+	// Auxilliary color is cyan
+//	AUX_COLOR_AND_VOLUME:=AUX_COLOR_AND_VOLUME | GREEN;
+	setscreenlocation($1000);
+	setcharsetlocation(@charsetAndBitmap);
+	SCREEN_TEXT_HEIGHT:=@imageHeight-1;
+	SCREEN_TEXT_WIDTH:=@imageWidth;
+	decrunch(logoc);
+	blockmemcpy(^$6600,^$1400,$C);
+
+	// Copy color data
+	CopyImageColor();
+//	$900E:=10;
+
+	// Draw 256 chars on the screen from 0 to 256
+	moveto(0,0,$10);
+	for i:=0 to 0 do begin
+		screenmemory[i]:=i;
+	end;
+	scroll:=0;
+	tt:=0;
+
+//	AUX_COLOR_AND_VOLUME:=GREEN*16 | AUX_COLOR_AND_VOLUME;
+
+	// After this, some random raster effect
+	time:=128;
+
+end;
+
+
+Procedure Scene2Display();
+begin
+
+	if (vscroll>vscrollTarget) then vscroll:=sine[time]+vscrollTarget-2;
+
+	if (transition=1) then begin
+		if (scroll<8) then begin
+			j:=0;
+			if (tt=0) then 
+				zp:=@charPos	
+			else begin
+				zp:=@charPos+$740;
+				j:=128;
+			end;
+			for i:=0 to j do begin
+				zp[scroll]:=0;
+				inczp(zp,8);
+			end;
+			inc(tt);
+			if (tt=2) then begin inc(scroll);tt:=0;end;
+		end;
+	end;
+
+end;
+
+

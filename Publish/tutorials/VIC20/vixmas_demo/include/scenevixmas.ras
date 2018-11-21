@@ -1,0 +1,80 @@
+procedure InitVixmas();
+begin
+	fill(^$9400,BLACK,0);
+	fill(^$9500,BLACK,0);
+	fill(^$1000,$20,0);
+	fill(^$1100,$20,0);
+	SCREEN_TEXT_HEIGHT:=46;
+	SCREEN_TEXT_WIDTH:=22;
+
+	blockmemcpy(^$8400,^$1400,8);
+	setcharsetlocation($1400);
+//	blockmemcpy(^$8400,^$1400,8);
+//	decrunch(charsetc);
+	decrunch(perlinc);
+	decrunch(vixmasc);
+//	decrunch(anim1c);
+	ReadAnimationHeader();
+//	SCREEN_BG_COLOR:=RED;
+	animShift:=0;
+	ignoreColor:=0;
+
+	idx:=0;
+	RenderNextPackedFrame2();
+	dy:=0;
+//	fill(^$9400+^22*^4,WHITE,0);
+//	SCREEN_BG_COLOR:=BLUE*16;
+	tt:=0;
+	dx:=0;
+	scroll:=0;
+	tp:=vixtext;
+	time:=128;
+	memcpy(^$1400+^255*^8, 0,^$1400,8);
+
+end;
+procedure RenderVixmas();
+begin
+//	RenderVixmasPlasma();
+
+	if (transition=0) then
+		if (vscroll>vscrollTarget) then vscroll:=sine[time]+vscrollTarget-2;
+	if (transition=1) then
+		if (vscroll<220) then vscroll:=vscroll+6;
+
+	inc(dx);
+
+	if (dx&1=1) then 
+		begin
+
+		if (dy<>0) then
+			dec(dy)
+		else	
+			RenderCredzText();
+		end;
+
+	p1:=$1400;
+	h1:=$1400+$28*8;
+	h2:=$1400+$29*8;
+	inc(tt);
+//	scroll:=scroll&7;
+	for y:=0 to 8 do begin
+		for x:=0 to 8 do begin
+			j:=x+tt;
+			j:=j&7;
+			i:=getbit(p1[y],j);
+			if (i=1) then 
+				togglebit(h1[y],x,1)
+			else
+				togglebit(h1[y],x,0);
+								
+			if (i=1) then 
+				togglebit(h2[y],7-x,1)
+			else
+				togglebit(h2[y],7-x,0);
+
+		end;
+
+	end;
+
+end;
+

@@ -1,0 +1,153 @@
+
+
+
+
+
+procedure InitSnowingChars();
+begin
+	zp:=@charPos + @snowChar*8;
+	for j:=0 to 8 do begin
+		fill(zp,255,8);
+//		zp[j]:=%00010000;
+		zp[j]:=%11101111;
+		inczp(zp,8);
+	end;
+	zp:=@charPos + @groundChar*8;
+	for j:=0 to 8 do begin
+		fill(zp,255,8);
+//		zp[j]:=%00010000;
+		if j<>0 then
+		for i:=0 to j+1 do
+			zp[7-i]:=0;
+		inczp(zp,8);
+	end;
+end;
+
+procedure UpdateSnow();
+begin
+	zp:=$1000;
+	k:=time*7;
+	for i:=0 to 22 do begin
+		j:=peek(^@perlin,k+i);
+		if (j>180) then begin
+			zp[i]:=@snowChar;
+			k:=k+71;
+		end;
+
+	end;
+
+
+	for j:=0 to 21 do begin
+		for i:=0 to 22 do begin
+			k:=zp[i];
+			if (k>@snowChar and k<@snowCharEnd) then begin
+				zp[i]:=k+1;
+				if zp[i]=@snowCharEnd then begin
+					zp[i]:=$20;
+					l:=zp[i+22];
+					if l=$20 then begin
+						zp[i+22]:=@snowChar;
+					end
+					else begin
+						if (l>@groundChar and l<@groundCharEnd) then 
+						begin
+							zp[i+22]:=zp[i+22]+1;
+						end
+						else
+						begin
+							zp[i]:=@groundChar;
+					
+						end;
+						
+					end;
+					
+				end;
+				
+			end;
+
+		end;
+		inczp(zp,22);
+
+	end;
+
+end;
+
+/*
+procedure RenderMusicBars();
+begin
+	
+	j:=peek(^$900D,0);
+	k:=peek(^$900C,0);
+	m:=peek(^$900B,0);
+	k:=k/16;
+	m:=m/16;
+	j:=j/16;
+	for i:=0 to 16 do begin
+		if (i>j) then l:=GREEN else l:=YELLOW;
+		screenmemory[i]:=l;		
+		if (i>k) then l:=GREEN else l:=RED;
+		screenmemory[i+22]:=l;		
+		if (i>m) then l:=GREEN else l:=CYAN;
+		screenmemory[i+44]:=l;		
+	end;
+
+	
+
+end;
+
+*/
+procedure InitSnowing();
+begin
+//	decrunch(charsetc);
+	goCrazy:=0;
+//	setchar
+	ignoreColor:=1;
+//	SCREEN_TEXT_HEIGHT:=36;
+	SCREEN_TEXT_HEIGHT:=46;
+	SCREEN_TEXT_WIDTH:=22;
+	vscroll:=vscrollTarget;
+	animShift:=128;
+	fill(^$1000,$20,0);
+	fill(^$1100,$20,0);
+	blockmemcpy(^$8400,^$1400,8);
+	setcharsetlocation($1400);
+	SCREEN_BG_COLOR:=RED | BLUE*16;
+	decrunch(perlinc);
+
+	InitSnowingChars();
+	decrunch(anim_snowc);
+	ReadAnimationHeader();
+	animShift:=0;
+//	setcharsetlocation($1400);
+
+	RenderNextPackedFrame2();
+	fill(^$1000+^19*^22,$a0,40*3);
+	fill(^$9400+^19*^22,GREEN,40*3);
+	scroll:=0;
+	dx:=0;
+end;
+
+
+procedure RenderSnowing();
+begin
+//	UpdateSnow();
+
+	if (dx=1) then UpdateSnow();
+	if (curFrame<maxFrames) then begin
+		inc(scroll);
+		if (scroll=12) then begin
+			scroll:=0;
+			RenderNextPackedFrame2()	
+		end;
+	end
+	else dx:=1;
+
+	if (transition=1)  then begin
+		if (vscroll<220) then
+			vscroll:=vscroll+4;
+	end;
+//	moveto(0,20,$94);
+//	RenderMusicBars();
+
+
+end;

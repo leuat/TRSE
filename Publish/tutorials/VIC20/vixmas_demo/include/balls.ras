@@ -1,0 +1,158 @@
+procedure InitBalls();
+begin
+	decrunch(ballbackgroundc);
+	decrunch(perlinc);
+	SCREEN_BG_COLOR:=BLACK+BLUE*16;;
+	animShift:=128;
+	goCrazy:=0;
+	setscreenlocation($1000);
+	setcharsetlocation($8000);
+	ReadAnimationHeader();
+	SCREEN_TEXT_HEIGHT:=dy*2;
+	SCREEN_TEXT_WIDTH:=dx;
+	fill(^$9400,BLACK,0);
+	fill(^$9500,BLACK,0);
+
+	fill(^$1000,$66,0);
+	fill(^$1100,$66,0);
+	idx:=0;
+	time:=0;
+//	RenderNextPackedFrame2();
+	vscroll:=vscrollTarget;
+//	blockmemcpy(^$1000,^@screenSave,2);
+//	tt:=0;
+//	nextTime:=tt;
+	tt:=0;
+
+	noBalls:=0;
+	scroll:=0;
+
+end;
+
+
+procedure RenderB();
+begin
+		screenmemory[1]:=k;		
+		screenmemory[0+22]:=k;		
+		screenmemory[1+22]:=l;		
+		screenmemory[2+22]:=l;		
+		screenmemory[0+44]:=k;		
+		screenmemory[1+44]:=l;		
+		screenmemory[2+44]:=l;		
+		screenmemory[1+66]:=l;		
+end;
+
+procedure RenderBallEntities();
+begin
+	if (noBalls<2) then return();
+	for i:=1 to noBalls  do begin
+		x:=ball_x[i]/8;
+		y:=ball_y[i]/8;
+		moveto(x, y, $10);
+		k:=@ballChar2-128;
+		l:=@ballChar2-128;
+		RenderB();
+		moveto(x, y, $94);
+		k:=ball_color[i];
+		l:=k;
+		RenderB();
+
+	end;
+end;
+
+procedure MoveBalls();
+begin
+/*	for 	i:=0 to noBalls do begin
+		if (ball_y[i]>170) then ball_dy[i]:=0-ball_dy[i];
+		if (ball_y[i]<10) then ball_dy[i]:=0-ball_dy[i];
+		ball_y[i]:=ball_y[i] + ball_dy[i];
+		ball_x[i]:=ball_x[i] + ball_dx[i];
+
+
+		ball_dx[i]:=ball_dx[i] + ball_ddx[i]-127;
+		ball_dy[i]:=ball_dy[i] + ball_ddy[i]-127;
+
+		ball_ddx[i]:=127;
+		ball_ddy[i]:=127;
+
+	end;*/
+//	if (time&1=1) then inc(tt);
+	cx:=sine[tt]/4;
+	cy:=sine[tt+time]/4;
+	if (noBalls<>0) then
+	for 	i:=0 to noBalls do begin
+		k:=ball_dx[i]+time*6;
+		j:=sine[k]/3;
+		ball_y[i]:=cx + j;
+		j:=sine[k+64]/3;
+		ball_x[i]:=cy + j;
+//		if (ball_x[i]<5) then ball_x[i]:=5;
+//		if (ball_y[i]<2) then ball_y[i]:=2;
+
+	end;
+
+	if (noBalls<>0) then
+	for 	i:=0 to noBalls do begin
+		ball_dx[i]:=ball_dx[i] + i-2;
+
+	end;
+
+end;
+
+procedure RenderBalls();
+begin
+//	waitforraster(0);
+	//blockmemcpy(^@screenSave,^$1000,2);
+
+		i:=SCREEN_BG_COLOR;
+		i:=i&$0F;
+		j:=peek(^$900D,0);
+		j:=j/32;
+		SCREEN_BG_COLOR:=bgcolors2[j]*16|i;//|cnt|7;
+	
+
+	zp:=$1000;
+	fill(^$1000+^22*^22, $66,22);
+	h1:=$1000+22;
+	for i:=1 to 23 do begin
+		memcpy(h1,0,zp,22);
+		inczp(h1,22);
+		inczp(zp,22);
+	end;
+
+
+	zp:=$9400+22*22;
+	j:=idx;
+	m:=sine[time];
+	for i:=0 to 22 do begin
+		j:=idx + i/2;
+		k:=peek(^@perlin,j);
+		l:=PURPLE;
+		if (k>m) then l:=CYAN;
+		zp[i]:=l;
+	end;
+	inc(scroll);
+	zp:=$9400;
+
+	h1:=$9400+22;
+	for i:=1 to 23 do begin
+		memcpy(h1,0,zp,22);
+		inczp(h1,22);
+		inczp(zp,22);
+	end;
+	idx:=idx+16;
+
+//	copyhalfscreen(^$1000+^22, ^$1000,  
+	MoveBalls();
+	RenderBallEntities();
+//	waitforraster(140);
+
+	if (noBalls<5) then 
+	if (scroll&63=63) then
+		inc(noBalls);
+
+	if (transition=1) then 
+		if (vscroll<210) then  vscroll:=vscroll+5;
+
+
+end;

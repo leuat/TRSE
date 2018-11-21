@@ -1,0 +1,93 @@
+procedure GenerateFireCharset();
+begin
+
+	zp:=$1400+@charFire*8;
+	fill(zp,255,8);
+	inczp(zp,8);
+	k:=0;
+	l:=60;
+	for i:=0 to 15 do begin
+		for y:=0 to 8 do begin
+			for x:=0 to 8 do begin
+				j:=peek(^@perlin,k+x);
+				k:=k+121;
+				if j>l then togglebit(zp[y],x,1) else togglebit(zp[y],x,0);
+
+			end;
+		end;
+		l:=l+10;
+		inczp(zp,8);
+	 	k:=k+77;
+	end;
+end;
+
+procedure InitFire();
+begin
+	SCREEN_BG_COLOR:=RED | RED*16;
+	fill(^$9400,BLACK,0);
+	fill(^$9500,BLACK,0);
+	decrunch(ballbackgroundc);
+	decrunch(perlinc);
+	ReadAnimationHeader();
+
+	setcharsetlocation($1400);
+	blockmemcpy(^$8000,^$1400,8);
+	animShift:=128;
+	ignoreColor:=1;
+	idx:=0;
+	RenderNextPackedFrame2();
+
+	GenerateFireCharset();
+
+/*	moveto(0,11,$94);
+	for i:=0 to 13 do begin
+		fill(screenmemory,BLACK,22);
+		inczp(screenmemory,22);
+	end;
+	moveto(0,22,$10);
+*/
+end;
+
+procedure FireEffect();
+begin
+	moveto(4,12,$10);
+	m:=sine[time*3]/32+1;
+	for j:=0 to 10 do begin
+		for i:=1 to 13 do begin
+
+		screenmemory[0]:=0;
+		screenmemory[13]:=0;
+
+		
+			k:=screenmemory[i+44]+screenmemory[i+21]+screenmemory[i+22]+screenmemory[i+23];
+			if (k>m) then k:=k-m;
+			k:=k/4;
+			screenmemory[i]:=k&15;
+
+		end;
+		inczp(screenmemory,22);
+	end;
+
+end;
+
+procedure RenderFire();
+begin
+	moveto(4,22,$10);
+	k:=time*7 + sine[time];
+
+	for i:=0 to 14 do begin
+		j:=peek(^@perlin,k)/16;	
+		screenmemory[i]:=j;
+		k:=k+83;
+	end;
+	FireEffect();
+
+	if (transition=1) then begin
+		if (idx<32) then idx:=idx+1;
+		if (vscroll<220) then 
+			vscroll:=vscroll+idx/2
+		else idx:=0;
+	end;
+
+
+end;

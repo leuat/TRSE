@@ -1,0 +1,443 @@
+program VIXMAS_DEMO;
+
+@define BuiltinMethodsLocation $7900
+
+var  
+
+@ignoremethod "init_random_call"
+@ignoremethod "printdecimal"
+
+@ignoremethod "init_random"
+
+@ifdef ORGASM
+@error "This demo needs DASM in order to compile. Orgasm will be updated later. "
+@endif 
+
+
+@define SceneAnim 0
+@define SceneImage 1
+@define SceneSnowing 2
+@define SceneScroller 3
+@define SceneTunnel 4
+@define SceneBalls 5
+@define SceneFire 6
+@define SceneCredz 7
+@define SceneVixmas 8
+@define SceneDie 9
+
+@define moviepos $6600
+@define screenSave $7000
+
+@userdata "$6600" "$7600" "Decrunched data"
+@userdata "$1000" "$1200" "SCREEN"
+@userdata "$1400" "$1C00" "Charset data"
+
+@define scrollerWriterPos $6600
+@define scrollerWriterPosHi $66
+
+
+
+	@define perlin $1E00
+	@define orgChar $68
+
+	@define charCopyPos $64
+
+	@define charsetAndBitmap $1400
+	@define charPos $1400
+
+
+   	index, ntscSkip, maxMusicTicker, initComplete, nextTimeStamp, currentPos, transition, isInitialized: byte = 0; 
+	time,x,y,currentScene, nextScene, nextTime, skipChar, endChar, compressionType, hasTimeStamps : byte;
+	zp, keep,h1,tp,h2,l1,p0,p1 : pointer;
+	wrk:integer;
+	scroll,scrollx,l,m, animShift,vscroll,cx,cy,idx, noBalls, ignoreColor,charVal,clearFlag,vscrollTarget : byte = 0;
+	goCrazy,isPal:byte=1;
+	// Animation stuff
+	curFrame, maxFrames, pass, g0, g1,tmp : byte;
+	
+	i,j,dx,dy,k,t,time4, tt : byte;
+	// 0010
+
+	/*
+		Demo timestamps
+	*/
+
+
+	timeStamps : array[16] of byte = (
+
+
+				@SceneAnim, $05, 0, 0
+				@SceneFire, $08, 0, 0
+				@SceneImage, $10, 0, 0,
+				@SceneVixmas, $13, 0, 0
+				@SceneSnowing, $1D, 0, 0
+				@SceneScroller, $27, 0, 0
+				@SceneTunnel, $2D, 0, 0
+				@SceneBalls, $37, 0, 0
+				@SceneCredz, $80, 0, 0
+				@SceneDie, $81, 0, 0
+);
+
+	@define imageWidth 20
+	@define imageHeight 20
+
+//@startblock $1100 Code1
+
+	
+	
+	@define ScrollerY 12
+
+/*
+	SNOWING STUFF
+
+*/
+
+@define snowChar 80
+@define snowCharEnd 88
+@define groundChar 88
+@define groundCharEnd 95
+
+/*
+	Tunnel stuff
+
+
+*/
+
+@define dataloc $1800
+@define lineloc $19FA
+
+
+/* 
+	BALL STUFF
+	
+*/
+
+
+@define noBalls 5
+
+	ball_x : array[@noBalls] of byte = (24, 74, 120, 220,0);
+	ball_y : array[@noBalls] of byte = (24, 100, 32, 48,0);
+	ball_dx : array[@noBalls] of byte = (0,64,128,192,0,0);
+	ball_color : array[@noBalls] of byte = (6,5, 2, 1,6,6);
+
+@define ballChar $66
+@define ballChar2 $A0
+	
+// Fireplace stuff
+
+@define charFire $0
+
+
+/*
+
+   Credz stuff
+*/
+
+@define charCredz $88
+
+@startblock $7680 StringsAndArrays  
+	@define credsX 1
+	@define credsY 1
+	text : string = ("MERRY XMAS 2018         ");
+
+	@define cclear 128
+	@define cpause 129
+	@define cmove 130
+	@define ccolor 131
+	@define cwait 132
+
+
+	bgcolors: array[8] of byte = (2,2,2,2,2,7,7,1);
+	bgcolors2: array[8] of byte = (0,0,4,4,6,6,7,1);
+//	bgcolors: array[8] of byte = (0,0,2,2,7,7,1,1);
+
+	introtext : string = (@cwait, 33,
+						@cmove,1,5,
+						@ccolor,2, "HKUTO",@cwait,6,
+						@cmove,1,14,
+						@ccolor,2, "FORCE",@cwait,255);
+
+
+	vixtext : string = (@cwait, 2,
+						@cmove,2,5,
+						@ccolor,1, "VIX",@cwait,8,
+						@cmove,5,12,
+						@ccolor,1, "MAS",@cwait,255);
+
+
+	textCredz : string = (@cwait, 48, 
+						@cmove,7,1, @cclear,
+						@ccolor,1, "VIX",
+						@cmove,7,7,
+						@ccolor,2, "MAS",
+					    @cwait, 16, 
+
+
+						@cmove,2,1, @cclear,@ccolor,6,
+						"CODE", 
+						@cmove,1,7, @ccolor,7, "LEUAT", @cwait, 16, @cclear
+						@ccolor,6,"GFX", 
+						@cmove,1,7, @ccolor,7, "LEUAT", @cwait, 16, @cclear,
+						@ccolor,6,"MUSIC", 
+						@cmove,1,7, @ccolor,3, "WRLRD", @cwait, 16, @cclear,
+						@ccolor,6,"FONT", 
+						@cmove,1,7, @ccolor,3, "ARLEK", @cwait, 16, @cclear,
+			//			@ccolor,6,"HELP", 
+						@cmove,3,4, "HELP", @cwait, 	16, @cclear,
+						@ccolor,2,"MAJIK", 
+						@cmove,1,7, "EYRIC", @cwait, 16, @cclear,
+						@ccolor,6,
+						@cmove,3,2, "MADE", @cwait, 	4
+						@cmove,3,7, "WITH", @cwait, 	16, @cclear,
+						@ccolor,3,@cmove,3,4,"TRSE", 
+					   @cwait, 20, @cclear,
+
+
+						@cmove,1,1, 
+						@ccolor,1,"M", @cwait, 2, 
+						@ccolor,5,"E", @cwait, 2, 
+						@ccolor,1,"R", @cwait, 2, 
+						@ccolor,5,"R", @cwait, 2, 
+						@ccolor,1,"Y", @cwait, 16,
+						@cmove,3,7, 
+						@ccolor,2,"X", @cwait, 2, 
+						@ccolor,5,"M", @cwait, 2, 
+						@ccolor,2,"A", @cwait, 2, 
+						@ccolor,5,"S", @cwait, 2, 
+						@cwait, 255				
+						@cwait, 255				
+						@cclear, 
+						
+
+
+		0
+
+
+
+);
+
+
+	fontTable : array[16] of byte = ($20, $7e, $7C, $E2, 
+									$6C, $7f, $E1,  $Fb, // 0101
+									$7b, $61, $ff, $ec, //1011
+									$62, $fc, $fe, $a0); // 1110
+
+
+@endblock
+
+/*
+
+   Regular code stats
+*/
+
+@include "packed_resources1.ras"	
+
+
+@startblock $2000 Code2
+
+@include "include/music.ras"
+@include "include/scene1.ras"
+@include "include/tunnel.ras"
+@include "include/credz.ras"
+@include "include/image1.ras"
+@include "include/snowing.ras"
+@include "include/scenevixmas.ras"
+@include "include/balls.ras"
+@include "include/scenescroller.ras"
+@include "include/fire.ras"
+
+interrupt MainIRQ();
+var 
+	cnt,c3:byte=0;
+begin
+	StartIRQ(0);
+	if (goCrazy=1) then begin
+		cnt:=SCREEN_BG_COLOR;
+		cnt:=cnt&$F0;
+		c3:=peek(^$900D,0);
+		c3:=c3/32;
+		SCREEN_BG_COLOR:=bgcolors[c3]|cnt;//|cnt|7;
+	end;
+
+	if (isPal=1) then  begin
+			asm(" jsr pl_Play");
+		end
+	else
+	begin
+		if (ntscSkip<>0) then 
+			asm(" jsr pl_Play");
+
+		dec(ntscSkip);
+		if ntscSkip>127 then ntscSkip:=4;
+
+	end;
+
+	VSCROLL_REGISTER:=vscroll;
+
+//	currentScene:=timeStamps[time4*4];
+	
+	
+	CloseIRQ();
+end;
+
+procedure InitMainDemo();
+begin
+	DisableVIC20IRQ();
+
+	if (1=2) then InitMusic2();
+	
+	isPal:=0;
+	vscrollTarget:=31;
+	if PAL_OR_NTSC[0]=12 then begin
+		isPal:=1;
+		vscrollTarget:=38;
+	end;
+
+	time4:=0;
+	currentScene := timeStamps[0];
+	vscroll:=vscrollTarget;
+	asm("
+     lda #0
+     jsr pl_Init 
+
+	");
+
+
+
+	if (isPal=1) then begin
+		VIAIRQ(MainIRQ(),$86,$56);
+	end
+	else begin
+		VIAIRQ(MainIRQ(),$43,$42);
+	end;
+
+end;
+
+
+procedure MainDemoStuff();
+begin
+	nextTimeStamp:=timeStamps[currentPos+1];
+	isInitialized := timeStamps[currentPos+3];
+
+	if (nextTimeStamp=time4+1) then transition:=1;
+
+	if (nextTimeStamp=time4 and isInitialized=0) then begin
+		timeStamps[currentPos+3]:=1;
+		currentPos:=currentPos+4;
+//		nextScene:=timeStamps[currentPos];
+		currentScene :=timeStamps[currentPos];
+		initComplete := 0;
+		transition:=0;
+				
+	end;
+
+
+
+		if (initComplete=1) then begin
+			if (currentScene=@SceneAnim) then 
+				RenderScene1();
+	
+			if (currentScene=@SceneImage) then 
+				Scene2Display();
+
+			if (currentScene=@SceneScroller) then 
+				RenderSceneScroller();
+
+			if (currentScene=@SceneSnowing) then 
+				RenderSnowing();
+
+			if (currentScene=@SceneTunnel) then 
+				RenderTunnel();
+
+			if (currentScene=@SceneBalls) then 
+				RenderBalls();
+
+			if (currentScene=@SceneFire) then 
+				RenderFire();
+
+			if (currentScene=@SceneCredz) then 
+				RenderCredz();
+
+			if (currentScene=@SceneVixmas) then 
+				RenderVixmas();
+			
+
+		end
+		else
+		begin
+			if (currentScene=@SceneAnim) then 
+				InitScene1();
+	
+			if (currentScene=@SceneImage) then 
+				InitScene2();
+
+			if (currentScene=@SceneScroller) then 
+				InitSceneScroller();
+
+			if (currentScene=@SceneSnowing) then 
+				InitSnowing();
+
+			if (currentScene=@SceneTunnel) then 
+				InitTunnel();
+
+			if (currentScene=@SceneBalls) then 
+				InitBalls();
+
+			if (currentScene=@SceneFire) then 
+				InitFire();
+
+			if (currentScene=@SceneCredz) then 
+				InitCredz();
+
+			if (currentScene=@SceneVixmas) then 
+				InitVixmas();
+
+			if (currentScene=@SceneDie) then begin
+				setcharsetlocation($8400);
+				fill(^$9400,BLACK,0);
+				fill(^$9500,BLACK,0);
+				fill(^$1100,$20,0);
+				fill(^$1000,$20,0);
+				DisableVIC20IRQ();
+				AUX_COLOR_AND_VOLUME:=0;
+				Loop();
+			end;
+		
+			initComplete := 1;
+		end;
+
+
+end;
+
+
+@endblock 
+
+
+
+
+procedure MainDemo();
+begin
+
+	InitMainDemo();
+	while (1=1) do begin
+//		waitforraster(0);
+
+	waitforraster(0);
+
+	inc(time);
+	if (time&63=63) then begin
+		inc(time4);
+	end;
+
+	MainDemoStuff();
+
+	end;
+
+
+end;
+
+
+
+begin
+	MainDemo();
+end.

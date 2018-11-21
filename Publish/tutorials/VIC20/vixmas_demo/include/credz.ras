@@ -1,0 +1,341 @@
+procedure RenderFlag();
+begin
+//	zp:=$1000;
+	moveto(3,0,$94);
+	l1:=screenmemory;
+	moveto(3,0,$10);
+	zp:=screenmemory;
+	k:=0;
+	for y:=0 to 12 do begin
+		
+		for x:=0 to 16 do begin
+/*			k:=RED;
+			if (x=5 or x=7) then k:=WHITE;
+			if (y=5 or y=7) then k:=WHITE;
+			if (x=6) then k:=BLUE;
+			if (y=6) then k:=BLUE;
+*/
+			k:=RED;
+			j:=x+y;
+			if (j&1=1) then k:=YELLOW;
+			l1[x]:=k;
+			j:=sine[(x+y)*8+time]/16;//peek(^@perlin,k)/16;
+			zp[x]:=@charCredz + j;
+			inc(k);
+		end;
+		inczp(zp,22);
+		inczp(l1,22);
+	end;
+
+//	fill(^$9400,RED,240);
+//	fill(^$9400+^240,RED,60);
+	
+end;
+
+
+
+
+procedure InitCredz();
+begin
+	fill(^$9400,BLACK,0);
+	fill(^$9500,BLACK,0);
+	goCrazy:=0;
+	vscroll:=210;
+	decrunch(credzc);
+	decrunch(perlinc);
+	decrunch(charsetc);
+	ReadAnimationHeader();
+	
+	setcharsetlocation($1400);
+	animShift:=0;
+//	ignoreColor:=1;
+	RenderNextPackedFrame2();
+
+	SCREEN_BG_COLOR:=BLACK | 14*16  | 8;
+	idx:=0;
+	charVal:=@charCredz;
+	tp:=textCredz;
+	RenderFlag();
+
+/*	moveto(@credsX,@credsY,$94);
+	l1:=screenmemory;
+	moveto(@credsX,@credsY,$10);*/
+	cx:=BLUE;
+	dy:=0;
+	noBalls:=0;
+	scroll:=0;
+	clearFlag:=255;
+	tt:=128;
+	time:=8;
+end;
+
+procedure RenderCredzChar();
+begin
+	k:=tp[0];
+
+	if (k=0) then begin
+		tp:=textCredz;
+		scroll:=0;
+		return();
+
+	end;
+
+	if (k=@ccolor) then begin
+		cx:=tp[1];
+		inczp(tp,2);
+		return();
+
+	end;
+
+	if (k=@cclear) then begin
+		inczp(tp,1);
+		/*fill(^$1000,$20,240);
+		fill(^$1000+^240,$20,22);*/
+		moveto(@credsX,@credsY,$94);
+		l1:=screenmemory;	
+		moveto(@credsX,@credsY,$10);
+		dy:=16;
+		clearFlag:=12;
+		return();		
+	end;
+
+	if (k=@cmove) then begin
+		moveto(tp[1],tp[2],$94);
+		l1:=screenmemory;	
+		moveto(tp[1],tp[2],$10);
+		
+		inczp(tp,3);
+		return();
+
+	end;
+	if (k=@cwait) then begin
+		dy:=tp[1];
+		inczp(tp,2);
+		return();
+
+	end;
+
+	if (k=$20) then begin
+		inczp(screenmemory,4);
+		inczp(l1,4);
+		inczp(tp,1);
+		return();
+	end;
+	if (k>64) then
+		k:=k-64;
+
+	p1:=$1400;
+
+	if k>31 then begin
+		k:=k-31;
+		inczp(p1, 31*8);
+	end;
+	if (k<>0) then 
+		inczp(p1, k*8);
+
+	h1:=screenmemory;
+	h2:=l1;
+	l:=scroll*2;
+	m:=l+2;
+	idx:=1;
+	for y:=0 to 8 step 2 do begin
+		for x:=l to m step 2 do begin
+			k:=7-x;
+			g1:=6-x;
+			g0:=0;
+			g0:=getbit(p1[y],k);
+			
+			tmp:=getbit(p1[y+1],g1);
+			g0:=g0+tmp*4;
+			tmp:=getbit(p1[y],g1);
+			g0:=g0+tmp*2;
+			tmp:=getbit(p1[y+1],k);
+			g0:=g0+tmp*8;
+//			g0:=g0&15;
+			g0:=fontTable[g0];
+			g1:=x/2;
+			h1[g1]:=g0;
+			h2[g1]:=cx;
+		end;
+		inczp(h1,22);
+		inczp(h2,22);
+	end;
+//	if (tt&7=7) then 
+	inc(scroll);
+
+	if (scroll=4) then begin
+		inczp(screenmemory,4);	
+		inczp(l1,4);
+		inczp(tp,1);
+		scroll:=0;
+	end;
+
+	dy:=0;
+//	SCREEN_BG_COLOR:=BLACK;
+end;
+
+
+procedure RenderCredzText();
+begin
+	RenderCredzChar();
+	
+end;
+
+/*procedure RenderCredzScroller();
+begin
+
+	moveto(21,3,$10);
+
+	inc(idx);
+
+	charVal:=@charCredz + sine[time]/16;
+
+		
+	if (idx=7) then begin
+	PrintText();
+	if (tp[0]=0) then tp:=textCredz;
+
+
+	screenmemory:=$1000+^3*^22;
+	h2:=screenmemory;
+	inczp(h2,1);
+	for i:=0 to 8 do begin
+		memcpy(h2,0,screenmemory,21);
+		inczp(h2,22);
+		inczp(screenmemory,22);
+	end;
+
+	idx:=0;
+	end;
+
+
+end;
+
+
+
+*/
+
+
+procedure RenderWater();
+begin
+	h1:=$1000+22*14;
+	inc(noBalls);
+	l:=time*4+noBalls;
+	m:=time*3;
+	k:=0;
+	for i:=0 to 22 do begin
+		j:=0;
+		j:=sine[l+k]/64;
+		j:=j+sine[k-m]/64;
+		h1[i]:=$b0 + j;
+
+
+		k:=k+16;
+	end;
+
+end;
+
+procedure RenderCredz();
+begin
+	if (vscroll>vscrollTarget) then vscroll:=sine[tt]+vscrollTarget-2;
+	SCREEN_BG_COLOR:=BLACK | 8*16  | 8;
+	inc(tt);
+
+
+
+//	SCREEN_BG_COLOR:=BLACK | 14*16  | 8;
+
+	if (idx=1) then
+		setcharsetlocation($8000);
+
+
+	if (tt&3=3) then begin
+//	if (x>238) then begin
+		if (dy<>0) then
+			dec(dy)
+		else	
+			RenderCredzText();
+	end;
+
+
+	if (clearFlag<127) then begin
+		zp:=screenmemory;
+		moveto(0,clearFlag,$10);
+		fill(screenmemory, $20, 22);
+		dec(clearFlag);
+		
+		screenmemory:=zp;
+	end;
+
+	
+	
+	if (idx=0) then begin
+		memcpy(^@charPos+^8*^@charCredz,0,^@charPos+^8*^@charCredz+^16*^8,8);
+		memcpy(^@charPos+^8*^@charCredz+^8,0,^@charPos+^8*^@charCredz,8*16);
+	end;
+//	i:=86+sine[time*4]/32;
+//	x:=peek(^$900D,0);
+
+//	if (vscroll<38) then
+	/*	i:=SCREEN_BG_COLOR;
+		i:=i&$0F;
+		j:=peek(^$900D,0);
+		j:=j/32;
+		
+		j:=bgcolors2[j]*16;
+*/
+
+	g0:=time&7;
+	
+	zp:=$1000+16*22;
+	h1:=$9400+16*22;
+	if (g0=7) then
+	for i:=0 to 3 do begin
+		k:=zp[0];
+		h2:=zp;
+		inczp(h2,1);
+		memcpy(h2,0,zp,21);
+		zp[21]:=k;
+		h2:=h1;
+		k:=h1[0];
+		inczp(h2,1);
+		memcpy(h2,0,h1,21);
+		h1[21]:=k;
+		
+		inczp(zp,22);
+		inczp(h1,22);
+
+	end;
+
+	i:=92;
+	if (isPal=0) then i:=82;
+
+	waitforraster(i);
+
+
+
+	SCREEN_BG_COLOR:=BLACK | 6*16  | 8;
+	setcharsetlocation($1400);
+
+
+	if (g0=7) then
+	for i:=3 to 6 do begin
+		k:=zp[0];
+		h2:=zp;
+		inczp(h2,1);
+		memcpy(h2,0,zp,21);
+		zp[21]:=k;
+		h2:=h1;
+		k:=h1[0];
+		inczp(h2,1);
+		memcpy(h2,0,h1,21);
+		h1[21]:=k;
+		
+		inczp(zp,22);
+		inczp(h1,22);
+
+	end;
+
+	RenderWater();
+
+end;

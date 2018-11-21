@@ -1,0 +1,136 @@
+procedure RenderNextPackedFrame2();
+begin
+//	moveto(5,2,$D8);
+//	cp:=screenmemory;
+
+	if (ignoreColor=0) then begin
+		i:=zp[0];
+		SCREEN_BG_COLOR:=i*16;
+
+	end;
+/*	i:=peek(^$900F,0);
+	i:=i|%00001000;
+	poke(^$900F,0,i);
+*/
+	inczp(zp,1);
+
+	g0:=zp[0];
+
+	for pass:=0 to 2 do begin
+
+	if pass=0 then
+		moveto(0,0,$10);
+
+	if pass=1 then
+		screenmemory:=$9400;
+//		moveto(0,0,$94);
+	
+	while (g0<>endChar) do begin
+	
+		if (zp[0] = skipChar) then begin
+			k:=zp[1];
+			inczp(screenmemory, k);
+			inczp(zp, 2);
+		
+		end
+		else 
+		begin
+			j:=animShift;
+//			if (pass=1) then j:=5;
+			screenmemory[0]:=zp[0]+j;//animShift;
+			inczp(screenmemory,1);
+			inczp(zp,1);
+		end;
+		g0:=zp[0];
+
+	end;
+
+	inczp(zp,1);
+	g0:=0;
+	end;
+
+	//for i:=0 to 10 do wait(255);
+
+	inc(curFrame);
+	nextTime := zp[0];
+	inczp(zp,1);
+	tt:=0;
+
+end;
+
+
+procedure ReadAnimationHeader();
+begin
+	zp:=@moviepos;
+	dx := zp[0];
+	dy := zp[1];
+	maxFrames := zp[2];
+	compressionType := zp[3];
+	hasTimeStamps:=zp[4];
+	endChar:=zp[5];
+	skipChar:=zp[6];
+	inczp(zp,7);
+	curFrame:=0;
+end;
+
+
+procedure RenderCredzText();
+
+procedure RenderScene1();
+begin
+		waitforraster(0);
+/*		if (time&7=7) then inc(tt);
+		if (curFrame<maxFrames) then
+		if tt=nextTime then begin
+			RenderNextPackedFrame2();
+		end;*/
+	if (time&1=1) then begin
+
+		if (dy<>0) then
+			dec(dy)
+		else	
+			RenderCredzText();
+	end;
+
+
+end;
+
+
+
+procedure InitScene1();
+begin
+//	SCREEN_BG_COLOR:=BLACK;
+	decrunch(anim1c);
+	animShift:=128;
+	setscreenlocation($1000);
+	setcharsetlocation($8000);
+	ReadAnimationHeader();
+	ignoreColor:=0;
+	SCREEN_TEXT_HEIGHT:=dy*2;
+	SCREEN_TEXT_WIDTH:=dx;
+	fill(^$9400,BLACK,0);
+	fill(^$9500,BLACK,0);
+	time:=0;
+	RenderNextPackedFrame2();
+	vscroll:=vscrollTarget;
+	tp:=introtext;
+	dy:=0;
+	tt:=0;
+	nextTime:=tt;
+	decrunch(charsetc);
+		
+//	decrunch(charsetc);
+//	setcharsetlocation($1400);
+/*	screenmemory:=$1000;
+	fill(screenmemory,$20,253);
+	screenmemory:=$1000+253;
+	fill(screenmemory,$20,253);
+
+	screenmemory:=$9400;
+	fill(screenmemory,$0,253);
+	screenmemory:=$9400+253;
+	fill(screenmemory,$0,253);
+*/
+
+
+end;

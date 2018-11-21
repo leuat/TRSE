@@ -1,0 +1,6 @@
+ras_include_file = packed_resources1.ras
+packed_address = $5400
+output_dir = compressed/
+use_exomizer3 = 0
+address_field = packed_addr
+data = ,logoc, images/santa.bin, $6600, charsetc, charsets/charset.bin, $1400, anim1c, images/anim_snowman.trm, $6600, anim_snowc, images/anim_snow.trm, $6600, perlinc, data/perlin16.dat, $1e00, ballbackgroundc, images/firebackground.trm, $6600, credzc, images/credz.trm, $6600, charset_scrollerc, charsets/charset_scroller.bin, $1400, vixmasc, images/vixmas.trm, $6600

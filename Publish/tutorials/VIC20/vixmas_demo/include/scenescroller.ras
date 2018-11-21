@@ -1,0 +1,268 @@
+
+
+procedure RenderScrollerBug();
+begin
+	k:=$50;
+	l:=tt;
+	dy:=0;
+//	m:=
+	if (peek(^$900D,0)>127) then dy:=4;
+	moveto(10,3, $10);
+	for j:=0 to 5 do begin
+	for i:=0 to 4 do begin
+//		dy:=0;
+//		m:=peek(^@perlin,l);
+//		if (m>127) then dy:=4;
+
+		screenmemory[i]:=k+i+dy;
+		l:=l+77;
+	end;
+	inczp(screenmemory,22);
+	inczp(h1,22);
+	k:=k+40;
+	end;
+
+
+end;
+
+procedure PrintText();
+begin
+	h1:=@charPos+8;//$05D0;
+	k:=tp[0];
+	if (k<>$20) then begin
+	k:=k-65;
+	if (k<>0) then begin
+		if (k>31) then begin
+			inczp(h1,31*8);
+			k:=k-31;
+		end;
+	end;
+	inczp(h1,k*8);
+
+	if (charVal=0) then
+	for i:=0 to 8 do begin
+		
+		j:=getbit(h1[i],7-scroll);
+		screenmemory[0]:=j;
+
+		inczp(screenmemory,22);
+	end
+	else begin
+	for i:=0 to 8 do begin
+		
+		j:=getbit(h1[i],7-scroll);
+		if (j=1) then 
+		screenmemory[0]:=charVal
+		else
+		screenmemory[0]:=$20;
+		inczp(screenmemory,22);
+	end
+
+
+	end;
+
+
+
+	end;
+
+	inc(scroll);
+
+	if (scroll=8) then begin
+		inczp(tp,1);
+		scroll:=0;
+	//	if (tp[0]=0) then tp:=text;
+	end;
+end;
+
+
+procedure CopyToScreen();
+begin
+	moveto(0,@ScrollerY,@scrollerWriterPosHi);
+	zp:=screenmemory;
+	moveto(0,@ScrollerY,$10);
+	for y:=0 to 8 do begin
+	/*	asm("
+			ldy #2
+ll1:
+			lda (zp),y			
+			asl
+			iny
+			clc
+			adc (zp),y
+			dey
+			cmp #0
+			beq isZero
+			adc @charCopyPos
+			jmp sett
+
+isZero:		lda #$20
+sett:		sta (screenmemory),y
+		
+
+			iny
+			cpy #20
+			bne ll1
+		");
+*/
+
+		for x:=2 to 20 do begin
+			i:=zp[x]*2 + zp[x+1];
+			k:=@charCopyPos+i;
+			screenmemory[x]:=k;
+
+		end;
+		inczp(zp,22);
+		inczp(screenmemory,22);
+	end;
+		
+
+end;
+
+
+procedure Clear();
+begin
+	fill(^$1000,$20,0);
+	fill(^$1100,$20,0);
+	fill(^@scrollerWriterPos,$0,0);
+	fill(^@scrollerWriterPos+^$100,$00,0);
+
+	zp:=$9400;
+	for i:=0 to 23 do begin
+		j:=i+1;
+		if (j&3=0) then
+		fill(zp,YELLOW,22)
+		else
+		fill(zp,YELLOW,22);
+		inczp(zp, 22);
+	end;
+	k:=$50;
+	moveto(10,3, $94);
+	h1:=screenmemory;
+	moveto(10,3, $10);
+	for j:=0 to 5 do begin
+	for i:=0 to 4 do begin
+		screenmemory[i]:=k+i;
+		h1[i]:=YELLOW+8;
+	end;
+	inczp(screenmemory,22);
+	inczp(h1,22);
+	k:=k+40;
+	end;
+	//fill(^$9400,YELLOW,0);
+	//fill(^$9500,YELLOW,0);
+	SCREEN_BG_COLOR:=RED +BLACK*16;
+//	AUX_COLOR_AND_VOLUME:=AUX_COLOR_AND_VOLUME |GREEN*16 ;
+
+	zp:=^@charPos+^@orgChar*^8;
+
+	fill(^@charPos+^@charCopyPos*^8,0,8);
+	
+/*	for i:=0 to 8 do begin
+		k:=zp[i];
+		asm("
+			lda k
+			eor #%11111111
+			sta k
+			");
+		zp[i]:=k;
+	end;
+*/
+end;
+
+
+procedure UpdateChars();
+begin
+
+	
+	k:=(8-scrollx);
+
+	i:=sine[time*6]/48;
+
+	zp:=^@charPos+^$47*^8;
+//	zp:=^@charPos+^$57*^8;
+	if (i<>0) then
+		inczp(zp,i*8);
+	h1:=^@charPos+^@orgChar*^8;
+	memcpy(zp,0,h1,8);
+
+
+//	fill(^@charPos+^@orgChar*^8,255,8);
+
+
+	CopyBytesShift(^@charPos+^@orgChar*^8,^@charPos+^@charCopyPos*^8+^8,8,k,1);
+	CopyBytesShift(^@charPos+^@orgChar*^8,^@charPos+^@charCopyPos*^8+^16,8,scrollx,0);
+	CopyBytesShift(^@charPos+^@orgChar*^8,^@charPos+^@charCopyPos*^8+^24,8,scrollx,2);
+end;
+
+
+procedure InitSceneScroller();
+begin
+
+	i:=AUX_COLOR_AND_VOLUME;
+	i:=i&15;
+	AUX_COLOR_AND_VOLUME:=i;
+
+//	decrunch(charset_scrollerc);
+	setcharsetlocation(@charPos);
+	decrunch(charsetc);
+	decrunch(perlinc);
+	blockmemcpy(^$1400,^$6600,3);
+
+ 	decrunch(charset_scrollerc);
+	blockmemcpy(^$6600,^$1400, 2);
+	memcpy(^$6800,0,^$1600, 128);
+
+	tp:=@text;
+	vscroll:=220;
+	SCREEN_TEXT_WIDTH:=22;
+	SCREEN_TEXT_HEIGHT:=44;
+
+	Clear();
+	scroll:=0;
+	dx:=128;
+	tt:=0;
+end;
+
+
+
+procedure RenderSceneScroller();
+begin
+
+	
+	if (vscroll>vscrollTarget) then vscroll:=sine[dx]+vscrollTarget-2;
+	inc(dx);
+
+		inc(scrollx);
+		inc(scrollx);
+
+		if (scrollx=2) then RenderScrollerBug();
+
+		if (scrollx>7) then scrollx:=0;
+		UpdateChars();
+		if (scrollx=0) then CopyToScreen();
+		if (scrollx=6) then begin	
+			screenmemory:=@scrollerWriterPos+^@ScrollerY*^22;
+			h2:=screenmemory;
+			inczp(h2,1);
+			for i:=0 to 8 do begin
+				memcpy(h2,0,screenmemory,21);
+				inczp(h2,22);
+				inczp(screenmemory,22);
+			end;
+
+			moveto(21,@ScrollerY,@scrollerWriterPosHi);
+
+			PrintText();
+			if (tp[0]=0) then tp:=text;
+
+		end;
+//		waitforraster(140);
+	
+//		if (scrollx=1) then 	
+
+//		waitforraster(146);
+
+//		for i:=0 to 0 do wait(40);
+	if (time&7=7) then 
+		inc(tt);
+end;

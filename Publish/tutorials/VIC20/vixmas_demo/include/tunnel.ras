@@ -1,0 +1,160 @@
+
+procedure CalculateTunnel();
+begin
+	zp:=@dataloc;
+	h1:=@lineloc;
+	for y:=0 to 23 do begin
+		for x:=0 to 22 do begin
+			dx:=abs(11-x);
+			dy:=abs(12-y);
+			wrk := dx*dx + dy*dy;
+			i:=(sqrt(wrk)/2);
+//			cp[x]:=255/i;
+			zp[x]:=255/i;
+
+			i:=atan2(11,x,12,y);
+		
+			h1[x]:=i;
+		end;
+		inczp(zp,22);
+		inczp(h1,22);
+	end;
+	
+end;
+
+procedure UpdateTunnel();
+begin
+	screenmemory:=SCREEN_CHAR_LOC+22;
+	h1:=SCREEN_COL_LOC+22; // Color memory
+	zp:=@dataloc+22;
+	h2:=@lineloc+22;
+	tt:=time*3;
+	l:=tt;
+	m:=sine[tt]/4+tt;
+		
+	for y:=1 to 22 do begin
+		if (y<10 or y>14) then
+		for x:=0 to g0 do begin
+			asm("
+				ldy x
+				lda (h2),y
+				adc m
+				and #$F0
+				sta $C0	
+				lda (zp),y
+				adc l
+				lsr
+				lsr
+				lsr
+				adc $C0
+				tax
+				lda @perlin,x
+				pha
+				and #$0F
+				adc #64
+				sta (screenmemory),y
+				pla
+				lsr
+				lsr
+				and #$1
+				clc
+				adc #4
+				sta (h1),y
+		");
+
+/*			i:=(h2[x]+m);
+			j:=(zp[x]+l)/8;
+			i:=i & %11110000;
+			//i:=i+j/8;
+	//		j:=j/8;
+			k:=peek(^@perlin,i+j);
+			screenmemory[x]:=k&15+64;
+//			h1[x]:=(k/4)&1+4;
+//			if j=0 then j:=WHITE else j:=GREEN;
+			h1[x]:=(k/4)&1+4;
+			*/
+		end;
+		inczp(screenmemory,22);
+		inczp(zp,22);
+		inczp(h1,22);
+		inczp(h2,22);
+	end;
+
+
+	if (transition=1) then begin
+		fill(tp,255,8);
+		inczp(tp,8);
+		fill(l1,BLACK,8);
+		inczp(l1,8);
+	end;
+
+	if (g0<22) then inc(g0); 
+//	time2:=time2+4;
+end;
+
+
+
+
+
+procedure InitTunnel();
+begin
+	SCREEN_BG_COLOR:=BLACK;
+	SCREEN_TEXT_HEIGHT:=44;
+	SCREEN_TEXT_WIDTH:=22;
+
+	vscroll:=vscrollTarget;
+	idx:=0;
+	goCrazy:=0;
+	fill(^$1000,$20, 0);
+	fill(^$1100,$20, 0);
+	fill(^$9400,BLACK, 0);
+	fill(^$9500,BLACK, 0);
+	decrunch(charsetc);
+	l1:= ^$9400+^10*^22;
+	fill(^$1000+^10*^22,$20, 22*4);
+	fill(^$9400+^10*^22,RED, 22*4);
+	setcharsetlocation($1400);
+
+	moveto(0,11,$10);
+	printstring("H O K U T O  F O R C E",0,40);
+	decrunch(perlinc);
+	CalculateTunnel();
+	zp:=@charPos + 64*8;
+	for i:=0 to 16 do begin
+		
+		for j:=0 to 8 do begin
+			k:=zp[j];
+			asm("
+				lda k	
+				eor #$FF
+				sta k
+			");
+			zp[j]:=k;
+		end;
+		inczp(zp,8);
+	end;
+	tp:=@charPos + 64*8;
+//	inczp(screenmemory, 44);
+//	printstring("H O K U T O ",0,40);
+	g0:=1;
+//	time:=0;
+
+//	vscroll:=38;
+
+	dy:=0;
+end;	
+
+
+procedure RenderTunnel();
+begin
+	vscroll:=38;
+//	if (g0>22) then g0:=1;
+	UpdateTunnel();
+
+	j:=peek(^$900D,0);
+	j:=j/32;
+	
+	fill(^$9400+^10*^22,bgcolors[j], 22*4);
+
+	
+end;
