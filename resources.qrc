@@ -81,5 +81,6 @@
         <file>resources/code/vic20_mod_music.asm</file>
         <file>resources/code/vic20_irq.asm</file>
         <file>resources/code/vic20_playsid_init.asm</file>
+        <file>resources/images/BBCM.png</file>
     </qresource>
 </RCC>

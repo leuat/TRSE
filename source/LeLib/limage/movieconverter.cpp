@@ -49,7 +49,8 @@ QByteArray MovieConverter::ConvertImage(QImage &img, int w, int h, float zoom)
             int val  =std::max(c.red(),c.green());
             val  =std::max(c.blue(),val);
             val=val/16;
-            QColor c64Col = lst.getClosestColor(c);
+            int winner = 0;
+            QColor c64Col = lst.getClosestColor(c,winner);
             uchar idx = lst.getIndex(c64Col);
             //if (idx!=0) qDebug() <<idx;
             val=val | (idx<<4);

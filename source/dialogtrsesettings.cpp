@@ -42,6 +42,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leEmulatorC128->setText(m_ini->getString("c128_emulator"));
     ui->leVic20Emulator->setText(m_ini->getString("vic20_emulator"));
     ui->leNesEmulator->setText(m_ini->getString("nes_emulator"));
+    ui->leBBCMEmulator->setText(m_ini->getString("bbcm_emulator"));
     ui->leExomizer->setText(m_ini->getString("exomizer"));
 //    if (ui->cmbPalette->currentText()=="Dark")
     if (m_ini->getdouble("windowpalette")==0)
@@ -84,6 +85,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("emulator", ui->leEmulator->text());
     m_ini->setString("vic20_emulator", ui->leVic20Emulator->text());
     m_ini->setString("c128_emulator", ui->leEmulatorC128->text());
+    m_ini->setString("bbcm_emulator", ui->leBBCMEmulator->text());
 
 
     m_ini->setString("nes_emulator", ui->leNesEmulator->text());

@@ -128,6 +128,8 @@ public:
     void ImportKoa(QFile& f) override;
     void ExportKoa(QFile& f) override;
 
+    void FloydSteinbergDither(QImage& img, LColorList& colors) override;
+
     void Initialize(int width, int height) override {}
 
     void setForeground(unsigned int col) override;

@@ -262,6 +262,13 @@ public:
     }
 
     static QColor toColor(QVector3D c) {
+        if (c.x()>255) c.setX(255);
+        if (c.y()>255) c.setY(255);
+        if (c.z()>255) c.setZ(255);
+        if (c.x()<0) c.setX(0);
+        if (c.y()<0) c.setY(0);
+        if (c.z()<0) c.setZ(0);
+
         return QColor(c.x(),c.y(),c.z());
     }
 

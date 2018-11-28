@@ -95,6 +95,8 @@ private slots:
 
     void on_cmbMC2_activated(int index);
 
+    void on_chkDither_stateChanged(int arg1);
+
 private:
     Ui::DialogImport *ui;
 };

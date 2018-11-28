@@ -57,7 +57,7 @@ void Syntax::Init(System s, QString param)
     }
     if (s==BBCM) {
         m_startAddress = 0x02000;
-        m_programStartAddress = 0x2000;
+        m_programStartAddress = 0x2010;
     }
 
     LoadSyntaxData();

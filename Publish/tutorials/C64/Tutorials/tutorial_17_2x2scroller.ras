@@ -103,6 +103,7 @@ begin
 
 	RasterIRQ(MainScreenScrollerEnds(),@scrollerEndRaster, @useKernal);
 
+
 	closeirq();
 end;
 

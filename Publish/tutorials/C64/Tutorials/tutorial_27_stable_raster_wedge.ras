@@ -40,11 +40,19 @@ begin
     closeirqwedge();
 end;
 
+interrupt nmii();
+begin
+	StartIRQ(@useKernal);
+	inc(SCREEN_BG_COL);
+	Loop();
+	CloseIRQ();
+end;
 
 begin
 	preventirq();
 	disableciainterrupts();
 	SetMemoryConfig(1,@useKernal,0);
 	StartRasterChain(RasterTop(),0,@useKernal);
+	NMIIRQ(nmii());
 	Loop();
 end.

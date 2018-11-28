@@ -125,6 +125,8 @@ public:
 
     LColorList m_colorList;
 
+    virtual void FloydSteinbergDither(QImage& img, LColorList& colors) {}
+
 
     virtual int getContainerCount() {return 1;}
 

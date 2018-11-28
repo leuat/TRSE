@@ -153,7 +153,10 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagecontainer.cpp \
     source/Compiler/assembler/abstractastdispatcher.cpp \
     source/Compiler/assembler/astdispather6502.cpp \
-    source/Compiler/assembler/methods6502.cpp
+    source/Compiler/assembler/methods6502.cpp \
+    source/dialogeffects.cpp \
+    source/effects/abstractdemoeffect.cpp \
+    source/effects/demoeffecttwister.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -251,7 +254,10 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagecontainer.h \
     source/Compiler/assembler/abstractastdispatcher.h \
     source/Compiler/assembler/astdispather6502.h \
-    source/Compiler/assembler/methods6502.h
+    source/Compiler/assembler/methods6502.h \
+    source/dialogeffects.h \
+    source/effects/abstractdemoeffect.h \
+    source/effects/demoeffecttwister.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \
@@ -268,7 +274,8 @@ FORMS    += mainwindow.ui \
     source/dialogimagehelp.ui \
     source/dialogprojectsettings.ui \
     source/dialogdonate.ui \
-    source/dialogfindfile.ui
+    source/dialogfindfile.ui \
+    source/dialogeffects.ui
 
 RESOURCES += \
     resources.qrc

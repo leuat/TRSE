@@ -222,6 +222,10 @@ unsigned int C64FullScreenChar::getPixel(int x, int y)
     int pos = v;
 //    return m_charset->m_data[pos].get(v + (2*x)&7, v+ y&7,m_bitMask);
 //    uchar val = m_charset->m_data[pos].get(ix, iy,m_charset->m_bitMask);
+
+//    if (rand()%100==0)
+  //  qDebug() << m_bitMask;
+
     uchar val = m_charset->m_data[pos].get(ix, iy,m_bitMask);
 
     if (m_bitMask==0b11) {

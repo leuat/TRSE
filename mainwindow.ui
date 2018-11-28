@@ -306,6 +306,7 @@
     </property>
     <addaction name="actionTRSE_Settings"/>
     <addaction name="actionMovie_Creator"/>
+    <addaction name="actionEffects"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -454,6 +455,11 @@
   <action name="actionFind_file_c_s">
    <property name="text">
     <string>Find file (c-l)</string>
+   </property>
+  </action>
+  <action name="actionEffects">
+   <property name="text">
+    <string>Effects</string>
    </property>
   </action>
  </widget>

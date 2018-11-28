@@ -105,6 +105,14 @@ void AsmMOS6502::InitCStrings()
 void AsmMOS6502::Program(QString programName, QString vicConfig)
 {
 
+
+    if (Syntax::s.m_currentSystem==Syntax::BBCM) {
+        Asm("processor 6502");
+        Asm("ORG "+Util::numToHex(0x2000));
+        return;
+    }
+
+
     Asm("processor 6502");
     Nl();
     Asm("ORG "+Util::numToHex(Syntax::s.m_startAddress+1));

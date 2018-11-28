@@ -61,7 +61,7 @@ public:
 
     // Specific stuff
 
-    QImage* Resize(int x, int y, LColorList& lst, float contrast, float shift, float hsv, float sat, QPointF scale);
+    QImage* Resize(int x, int y, LColorList& lst, float contrast, float shift, float hsv, float sat, QPointF scale, bool useDither);
     QImage* Blur(float rad);
     QImage* ApplyEffectToImage(QImage& src, QGraphicsBlurEffect *effect);
 

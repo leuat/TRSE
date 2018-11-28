@@ -182,7 +182,7 @@ void LImageQImage::Release()
 
 
 
-QImage* LImageQImage::Resize(int x, int y, LColorList& lst, float gamma, float shift, float hsvShift, float sat, QPointF scale)
+QImage* LImageQImage::Resize(int x, int y, LColorList& lst, float gamma, float shift, float hsvShift, float sat, QPointF scale, bool useDither)
 {
 
     QImage* other = new QImage(x,y,QImage::Format_ARGB32);
@@ -241,7 +241,12 @@ QImage* LImageQImage::Resize(int x, int y, LColorList& lst, float gamma, float s
             v.setZ( pow(color.blue()+ shift, gamma));
 
             v = Util::clamp(v,0,255);
-            QColor newCol = lst.getClosestColor(Util::toColor(v));
+            int winner = 0;
+            QColor newCol;
+            if (useDither)
+                newCol = Util::toColor(v);
+            else
+                newCol = lst.getClosestColor(Util::toColor(v),winner);
  //           QColor newCol = lst.getClosestColor(org);
 
             other->setPixel(i,j,newCol.rgb());

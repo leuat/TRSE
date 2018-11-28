@@ -70,12 +70,11 @@ end;
 
 procedure RenderNextPackedFrameCompressionType2();
 begin
-//	moveto(5,2,$D8);
-//	cp:=screenmemory;
 
 	m:=0;
 	dy:=0;
 	dx:=1;
+	inczp(zp,1);
 	i:=zp[0];
 	g0:=0;
 

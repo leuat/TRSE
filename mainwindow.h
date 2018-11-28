@@ -350,6 +350,8 @@ private slots:
 
     void on_actionFind_file_c_s_triggered();
 
+    void on_actionEffects_triggered();
+
 private:
 
     QString FindPathInProjectFolders(const QModelIndex &index);

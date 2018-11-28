@@ -92,6 +92,8 @@ void CharsetImage::SetColor(uchar col, uchar idx)
 void CharsetImage::ImportBin(QFile &file)
 {
     m_rawData = file.readAll();
+    m_rawData.remove(0,2);
+    m_rawData.resize(8*64);
     FromRaw(m_rawData);
 /*    SetColor(0, m_background); //MULTICOLOR_CHAR_COL +0
     SetColor(1, 2);// MULTICOLOR_CHAR_COL +2
@@ -235,8 +237,8 @@ void CharsetImage::FlipHorizontal()
 
 void CharsetImage::FromRaw(QByteArray &arr)
 {
-    Clear();
-    for (int i=0;i<256;i++) {
+//    Clear();
+    for (int i=0;i<arr.count()/8;i++) {
         PixelChar& pc = m_data[i];
         int idx=i*8;
         for (int j=0;j<8;j++) {

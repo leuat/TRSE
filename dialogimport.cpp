@@ -79,12 +79,16 @@ void DialogImport::Convert()
 {
 //    qDebug()<< "Type" << m_imageType;
     m_output.Release();
-    m_output.m_qImage = m_work.Resize(m_image->m_width, m_image->m_height, m_image->m_colorList, m_contrast, m_shift, m_hsv, m_saturation, m_scale);
+    bool useDither = ui->chkDither->isChecked();
+    m_output.m_qImage = m_work.Resize(m_image->m_width, m_image->m_height, m_image->m_colorList, m_contrast, m_shift, m_hsv, m_saturation, m_scale, useDither);
   //  qDebug() << m_image->m_width;
     //exit(1);
     m_image->Clear();
     SetColors();
-    m_image->fromQImage(m_output.m_qImage, m_image->m_colorList);
+    if (!useDither)
+       m_image->fromQImage(m_output.m_qImage, m_image->m_colorList);
+    else
+    m_image->FloydSteinbergDither(*m_output.m_qImage,m_image->m_colorList);
 
 
 
@@ -214,4 +218,11 @@ void DialogImport::on_cmbMC2_activated(int index)
 {
     SetColors();
     UpdateOutput();
+}
+
+void DialogImport::on_chkDither_stateChanged(int arg1)
+{
+    SetColors();
+    UpdateOutput();
+
 }

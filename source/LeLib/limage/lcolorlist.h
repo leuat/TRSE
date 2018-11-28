@@ -85,7 +85,7 @@ public:
     QVector<QPushButton*> m_buttonsEdit;
 
     Metric* m_metric = nullptr;
-
+    void EnableColors(QVector<int>& cols);
 
     void Initialize(Type t);
 
@@ -97,7 +97,7 @@ public:
     void InitCGA2_LOW();
     void InitCGA2_HIGH();
     void UpdateColors();
-    QColor getClosestColor(QColor col);
+    QColor getClosestColor(QColor col, int& winner);
 
     void FillComboBox(QComboBox* cmb);
 

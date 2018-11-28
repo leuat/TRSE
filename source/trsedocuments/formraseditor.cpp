@@ -59,6 +59,9 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     if (m_projectIniFile->getString("system")=="NES") {
         emu = m_iniFile->getString("nes_emulator");
     }
+    if (m_projectIniFile->getString("system")=="BBCM") {
+        emu = m_iniFile->getString("bbcm_emulator");
+    }
 
 
     //qDebug() << params;

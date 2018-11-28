@@ -36,7 +36,7 @@
 #include "source/LeLib/limage/limageio.h"
 #include <QMessageBox>
 #include "source/Compiler/assembler/mos6502.h"
-
+#include "source/dialogeffects.h"
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/parser.h"
 #include "source/Compiler/compiler.h"
@@ -820,7 +820,6 @@ void MainWindow::LoadProject(QString filename)
     QString system = m_currentProject.m_ini.getString("system");
     Syntax::s.Init(Syntax::SystemFromString(system),m_currentProject.m_ini.getString("vic_memory_config"));
     QImage img(":resources/images/" +system+".png");
-
     QPainter p;
     p.begin(&img);
 
@@ -1005,4 +1004,11 @@ void MainWindow::on_actionDonate_triggered()
 void MainWindow::on_actionFind_file_c_s_triggered()
 {
     FindFileDialog();
+}
+
+void MainWindow::on_actionEffects_triggered()
+{
+    DialogEffects* de = new DialogEffects();
+    de->exec();
+    delete de;
 }

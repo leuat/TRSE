@@ -183,6 +183,42 @@ void MultiColorImage::ExportKoa(QFile &f)
     f.write(fdata);
 }
 
+void MultiColorImage::FloydSteinbergDither(QImage &img, LColorList& colors)
+{
+/*    for each y from top to bottom
+       for each x from left to right
+          oldpixel  := pixel[x][y]
+          newpixel  := find_closest_palette_color(oldpixel)
+          pixel[x][y]  := newpixel
+          quant_error  := oldpixel - newpixel
+          pixel[x + 1][y    ] := pixel[x + 1][y    ] + quant_error * 7 / 16
+          pixel[x - 1][y + 1] := pixel[x - 1][y + 1] + quant_error * 3 / 16
+          pixel[x    ][y + 1] := pixel[x    ][y + 1] + quant_error * 5 / 16
+          pixel[x + 1][y + 1] := pixel[x + 1][y + 1] + quant_error * 1 / 16*/
+
+
+    for (int y=0;y<m_height;y++) {
+        for (int x=0;x<m_width;x++) {
+            QColor oldPixel = QColor(img.pixel(x,y));
+            int winner = 0;
+            QColor newPixel = colors.getClosestColor(oldPixel, winner);
+            //int c = m_colorList.getIndex(newPixel);
+            setPixel(x,y,winner);
+            QVector3D qErr(oldPixel.red()-newPixel.red(),oldPixel.green()-newPixel.green(),oldPixel.blue()-newPixel.blue());
+            if (x!=m_width-1)
+                img.setPixel(x+1,y,Util::toColor(Util::fromColor(img.pixel(x+1,y))+qErr*7/16.0).rgba());
+            if (y!=m_height-1) {
+                if (x!=0)
+                img.setPixel(x-1,y+1,Util::toColor(Util::fromColor(img.pixel(x-1,y+1))+qErr*3/16.0).rgba());
+                img.setPixel(x,y+1,Util::toColor(Util::fromColor(img.pixel(x,y+1))+qErr*5/16.0).rgba());
+                if (x!=m_width-1)
+                img.setPixel(x+1,y+1,Util::toColor(Util::fromColor(img.pixel(x+1,y+1))+qErr*1/16.0).rgba());
+            }
+        }
+    }
+
+}
+
 void MultiColorImage::fromQImage(QImage *img, LColorList &lst)
 {
 #pragma omp parallel for
@@ -482,6 +518,8 @@ void MultiColorImage::setMultiColor(bool doSet)
         m_minCol = 0;
 
     }
+    if (m_charset!=nullptr)
+        m_charset->setMultiColor(doSet);
 }
 
 void MultiColorImage::CalculateCharIndices()

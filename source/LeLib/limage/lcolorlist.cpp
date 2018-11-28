@@ -76,6 +76,18 @@ LColorList::Type LColorList::CharToType(unsigned char c)
 
 }
 
+void LColorList::EnableColors(QVector<int> &cols)
+{
+    for (int i=0;i<m_list.count();i++) {
+        if (cols.contains(i))
+            m_list[i].inUse = true;
+        else
+            m_list[i].inUse = false;
+
+    }
+
+}
+
 void LColorList::Initialize(Type t)
 {
     m_type = t;
@@ -233,10 +245,9 @@ void LColorList::InitCGA2_HIGH()
     m_list.append(LColor(QColor(0xff,0xff,0x55),"Brown"));
 }
 
-QColor LColorList::getClosestColor(QColor col)
+QColor LColorList::getClosestColor(QColor col, int& winner)
 {
     float d = 1E20;
-    int winner=0;
     int i = 0;
 //    qDebug() << "WHOO";
     for (int i=0;i<m_list.count();i++) {
