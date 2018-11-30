@@ -107,7 +107,15 @@ void DemoEffectTwister::RenderBar(int y, float width, QVector3D init, float maxy
                // col = m_cols[5-(int)(l/256*5)];
          //       m_mc->setPixel(j,y,col);
 //                QColor c(l*0.5,l*0.5,l);
-                m_img.setPixel(j,y,Util::toColor(l).rgba());
+                float w = m_img.width();
+                float h = m_img.height();
+                float th = m_params["rotation"].m_val;//m_time/10.0;
+                float x = ((j-w/2)*cos(th)-(y-h/2)*sin(th)) +w/2+0.5;
+                float yy = ((j-w/2)*sin(th)+(y-h/2)*cos(th)) +h/2+0.5;
+
+//                m_img.setPixel(j,y,Util::toColor(l).rgba());
+                if (x>=0 && x<w && yy>=0 && yy<h)
+                    m_img.setPixel(x,yy,Util::toColor(l).rgba());
 
                 k++;
                 ss+=sx;
@@ -141,6 +149,7 @@ void DemoEffectTwister::SetParameters(int preset)
         m_params["color_mc1"] = DemoEffectParam("color_mc1",7);
         m_params["color_mc2"] = DemoEffectParam("color_mc2",10);
         m_params["color_main"] = DemoEffectParam("color_main",2);
+        m_params["rotation"] = DemoEffectParam("rotation",0);
 //        m_params["colorList"] = DemoEffectParam("colorList",3.0);
 
 
@@ -196,27 +205,7 @@ void DemoEffectTwister::run()
 
   //          }
         }
-/*        for (int y=0; y<m_img.height();y++) {
-            for (int x=0;x<m_img.width();x++) {
-                int winner = 0;
-                QColor c = m_mc->m_colorList.getClosestColor(QColor(m_img.pixel(x,y)),winner);
-                int col = m_mc->m_colorList.getIndex(c);
-                m_mc->setPixel(x,y,col);
-            }
-        }
-        m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
-*/
-      //  m_mc->setMultiColor(true);
-        if (m_toggleC64) {
-            m_mc->m_colorList.EnableColors(m_cols);
-            m_mc->SetColor(m_cols[0],0);
-            m_mc->SetColor(m_cols[1],1);
-            m_mc->SetColor(m_cols[3],2);
-            m_mc->SetColor(m_cols[2],3);
-            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList);
-
-            m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
-        }
+        ConvertToC64();
         emit SignalImageUpdate();
         this->msleep(10);
     }

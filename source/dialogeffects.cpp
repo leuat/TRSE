@@ -34,14 +34,17 @@ void DialogEffects::Abort()
 
 void DialogEffects::Create()
 {
-    if (m_effect!=nullptr)
+    if (m_effect!=nullptr) {
+        Abort();
         delete m_effect;
-
-    if (ui->comboBox->currentText()=="Twister") {
-        m_effect = new DemoEffectTwister(ui->glParams);
     }
-    connect(m_effect,SIGNAL(SignalImageUpdate()),this,SLOT(UpdateImage()));
 
+    if (ui->comboBox->currentText()=="Twister")
+        m_effect = new DemoEffectTwister(ui->glParams);
+    if (ui->comboBox->currentText()=="Raytracer")
+        m_effect = new DemoEffectRaytracer(ui->glParams);
+
+    connect(m_effect,SIGNAL(SignalImageUpdate()),this,SLOT(UpdateImage()));
     m_effect->FillToGUI();
     m_effect->start();
 }
@@ -53,8 +56,8 @@ void DialogEffects::UpdateImage()
     QPixmap p = QPixmap::fromImage(m_effect->m_img);
     ui->lblImage->setPixmap(p);
 
-
-
+    m_avg = (int)(0.2*m_effect->m_elapsedTime +0.8*m_avg) ;
+    ui->lblTime->setText(QString::number(m_avg));
 
 }
 
@@ -93,4 +96,9 @@ void DialogEffects::on_btnSave_clicked()
     m_effect->m_toggleC64 = c64;
     m_effect->m_toggleAnim = anim;
 
+}
+
+void DialogEffects::on_comboBox_activated(const QString &arg1)
+{
+    Create();
 }

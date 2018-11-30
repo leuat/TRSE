@@ -12,12 +12,10 @@ class DemoEffectTwister : public AbstractDemoEffect
     Q_OBJECT
 
 private:
-    CharsetImage* m_mc;
 
     QVector<float> m_angles;
-    QVector<int> m_cols;
     int m_width = 18;
-    int m_height = 16;
+    int m_height = 8;
     int m_N = 4;
     //QVector<int> m_colors;
 

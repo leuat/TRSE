@@ -6,27 +6,33 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>746</width>
-    <height>557</height>
+    <width>866</width>
+    <height>510</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout" stretch="1,5">
      <item>
       <layout class="QGridLayout" name="glParams"/>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="2,1">
        <item>
         <widget class="QLabel" name="lblImage">
          <property name="minimumSize">
           <size>
-           <width>320</width>
-           <height>200</height>
+           <width>640</width>
+           <height>480</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>800</width>
+           <height>600</height>
           </size>
          </property>
          <property name="text">
@@ -43,22 +49,27 @@
           <widget class="QComboBox" name="comboBox">
            <item>
             <property name="text">
+             <string>Raytracer</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
              <string>Twister</string>
             </property>
            </item>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QPushButton" name="btnSave">
-           <property name="text">
-            <string>Save</string>
-           </property>
           </widget>
          </item>
          <item row="1" column="0">
           <widget class="QPushButton" name="btnToggleC64">
            <property name="text">
             <string>Toggle C64</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QPushButton" name="btnSave">
+           <property name="text">
+            <string>Save</string>
            </property>
           </widget>
          </item>
@@ -69,18 +80,25 @@
            </property>
           </widget>
          </item>
+         <item row="2" column="1">
+          <widget class="QPushButton" name="pushButton">
+           <property name="text">
+            <string>Close</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="lblTime">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>
      </item>
     </layout>
-   </item>
-   <item row="1" column="0">
-    <widget class="QPushButton" name="pushButton">
-     <property name="text">
-      <string>Close</string>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>

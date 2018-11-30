@@ -8,7 +8,8 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QDebug>
-
+#include "source/LeLib/limage/charsetimage.h"
+#include <QElapsedTimer>
 class DemoEffectParam {
 public:
     QString m_name;
@@ -34,12 +35,24 @@ public:
     AbstractDemoEffect(QGridLayout* gl);
     bool m_abort = false;
     QMap<QString,DemoEffectParam> m_params;
+    CharsetImage* m_mc;
+    QVector<int> m_cols;
+//    int m_elapsedTime=0;
+    QElapsedTimer m_timer;
+    int m_elapsedTime;
+
+
+
+
     virtual void Render(QImage& img) {}
 
     virtual void SetParameters(int preset) {}
     virtual void Save(QString file);
 
     virtual void Init() {}
+
+
+    void ConvertToC64();
 
     void FillToGUI();
 signals:

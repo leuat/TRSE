@@ -156,7 +156,13 @@ SOURCES += main.cpp\
     source/Compiler/assembler/methods6502.cpp \
     source/dialogeffects.cpp \
     source/effects/abstractdemoeffect.cpp \
-    source/effects/demoeffecttwister.cpp
+    source/effects/demoeffecttwister.cpp \
+    source/effects/demoeffectraytracer.cpp \
+    source/Raytracer/raytracer.cpp \
+    source/Raytracer/rayobject.cpp \
+    source/Raytracer/camera.cpp \
+    source/Raytracer/raytracerglobals.cpp \
+    source/Raytracer/material.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -257,7 +263,13 @@ HEADERS  += mainwindow.h \
     source/Compiler/assembler/methods6502.h \
     source/dialogeffects.h \
     source/effects/abstractdemoeffect.h \
-    source/effects/demoeffecttwister.h
+    source/effects/demoeffecttwister.h \
+    source/effects/demoeffectraytracer.h \
+    source/Raytracer/raytracer.h \
+    source/Raytracer/rayobject.h \
+    source/Raytracer/camera.h \
+    source/Raytracer/raytracerglobals.h \
+    source/Raytracer/material.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \
