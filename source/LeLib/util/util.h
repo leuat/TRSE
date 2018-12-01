@@ -91,6 +91,8 @@ public:
     static int getShiftCount(int i);
 
 
+    static QVector3D abss(QVector3D a);
+    static QVector3D maxx(QVector3D a, QVector3D b);
 
     static int C64StringToInt(QString f) {
         int val;
@@ -120,6 +122,7 @@ public:
         return s;
     }
 
+    static float minmax(float v, float a, float b);
 
     static QString findFileInDirectory(QString search,QString dir, QString extension);
     static QString findFileInSubDirectories(QString file, QString dir, QString extension);

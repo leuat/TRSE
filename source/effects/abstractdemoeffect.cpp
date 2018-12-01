@@ -22,7 +22,7 @@ void AbstractDemoEffect::ConvertToC64()
         m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList);
 
         m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
-    }
+        }
 
 }
 

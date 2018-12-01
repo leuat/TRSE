@@ -5,6 +5,21 @@ RayTracerGlobals::RayTracerGlobals()
     m_lights.append(new DirectionalLight(QVector3D(1,1,-1).normalized(),QVector3D(1,1,1)));
 }
 
+void RayTracerGlobals::Sky(Ray* ray)
+{
+
+    DirectionalLight* light = static_cast<DirectionalLight*>(m_lights[0]);
+        float sun = Util::minmax(QVector3D::dotProduct(light->m_direction,ray->m_direction), 0.0f, 1.0 );
+        QVector3D col = QVector3D(0.6,0.71,0.75) - ray->m_direction.y()*0.1*QVector3D(1.0,0.5,1.0) + 0.05*0.5*QVector3D(1,1,1);
+        col += 1.0*QVector3D(1.0,.6,0.1)*pow( sun, 20.0 );
+
+
+        // sun glare
+//        col += 0.2*QVector3D(1.0,0.4,0.2)*pow( sun, 3.0 );
+    ray->m_intensity = col;
+    return;
+}
+
 bool Ray::IntersectSphere(const QVector3D& pos, QVector3D r, QVector3D &isp1, QVector3D &isp2, double &t0, double &t1) {
 
     QVector3D o = m_origin-pos;
@@ -41,4 +56,47 @@ bool Ray::IntersectSphere(const QVector3D& pos, QVector3D r, QVector3D &isp1, QV
     isp2 = o+d*t1;
 
     return true;
+}
+
+bool Ray::IntersectBox(QVector3D pos, QVector3D bb,QVector3D& isp1,QVector3D& isp2, double& t0, double& t1)
+{
+    QVector3D min = bb*-1+pos;
+    QVector3D max = bb+pos;
+
+
+        float tmin = (min.x() - m_origin.x()) / m_direction.x();
+        float tmax = (max.x() - m_origin.x()) / m_direction.x();
+
+        if (tmin > tmax) swap(tmin, tmax);
+
+        float tymin = (min.y() - m_origin.y()) / m_direction.y();
+        float tymax = (max.y() - m_origin.y()) / m_direction.y();
+
+        if (tymin > tymax) swap(tymin, tymax);
+
+        if ((tmin > tymax) || (tymin > tmax))
+            return false;
+
+        if (tymin > tmin)
+            tmin = tymin;
+
+        if (tymax < tmax)
+            tmax = tymax;
+
+        float tzmin = (min.z() - m_origin.z()) / m_direction.z();
+        float tzmax = (max.z() - m_origin.z()) / m_direction.z();
+
+        if (tzmin > tzmax) swap(tzmin, tzmax);
+
+        if ((tmin > tzmax) || (tzmin > tmax))
+            return false;
+
+        if (tzmin > tmin)
+            tmin = tzmin;
+
+        if (tzmax < tmax)
+            tmax = tzmax;
+
+
+        return true;
 }

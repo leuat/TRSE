@@ -19,7 +19,11 @@ public:
     QVector<AbstractRayObject*> m_objects;
     Camera m_camera;
     RayTracerGlobals m_globals;
-    void Render(QImage& img);
+    enum Pass { Image, Reflect, Shadow};
+    void Raytrace(QImage& img);
+    void Raymarch(QImage& img);
+
+    bool RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, int cnt, int tid);
 
 
 };

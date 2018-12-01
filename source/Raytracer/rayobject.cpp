@@ -2,7 +2,7 @@
 
 AbstractRayObject::AbstractRayObject()
 {
-
+    m_rotmat.setToIdentity();
 }
 
 float AbstractRayObject::ApplyDirectionalLight(QVector3D normal, RayTracerGlobals &globals)
@@ -39,7 +39,8 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
 
     double l = (ray->m_origin-(isp+m_position)).length();
 
-    if (l<ray->m_z) {
+    if (l<ray->m_z)
+    {
 
         QVector3D col = m_material.m_color;
 
@@ -60,12 +61,14 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
                 col.setY(col.y()*c.y());
                 col.setZ(col.z()*c.z());
             }
-
+//            col.setX(1);
             ray->m_intensity = col*ApplyDirectionalLight(normal,globals) + globals.m_ambient;
 
-            if (m_material.m_reflectivity>0 && ray->m_reflect!=0) {
-                ray->m_intensity = ray->m_intensity*(1-m_material.m_reflectivity) + m_material.m_reflectivity*Reflect(this,isp+m_position, reflectDir, globals, objects, ray->m_reflect-1);
-            }
+/*            if (m_material.m_reflectivity>0 && ray->m_reflect!=0) {
+                if (pass==0)
+                if (pass==2)
+                ray->m_intensity = ray->m_intensity*(1-m_material.m_reflectivity) + m_material.m_reflectivity*ReflectMarch(this,isp+m_position, reflectDir, globals, objects, ray->m_reflect-1);
+            }*/
             ray->m_intensity += ApplySpecularLight(normal,ray->m_direction,  globals, m_material);
         }
         ray->m_z = l;
@@ -110,8 +113,50 @@ QVector3D AbstractRayObject::Reflect(AbstractRayObject* me, QVector3D isp, QVect
         I=I+ray.m_intensity;
   //  }
 //    I= QVector3D(1,0,0);
-    return I;///(float)N;
+        return I;///(float)N;
 }
+
+QVector3D AbstractRayObject::ReflectMarch(AbstractRayObject *me, QVector3D isp, QVector3D normal, RayTracerGlobals &globals, QVector<AbstractRayObject *> &objects, int reflect)
+{
+    QVector3D I = QVector3D(0,0,0);
+    int N = 16;
+
+    for (int i=0;i<16;i++) {
+//        isp =
+        Ray ray(isp,normal);
+        ray.m_reflect = reflect;
+        //if (rand()%100==0) qDebug() << reflect;
+        for (AbstractRayObject* ar: objects) {
+            if (ar==me)
+                continue;
+
+
+        }
+
+        I=I+ray.m_intensity;
+        return I;///(float)N;
+    }
+}
+
+QVector3D AbstractRayObject::CalcMarchNormal(QVector3D &pos)
+{
+    QVector3D e = QVector3D(1.0,-1.0,0)*0.1773*0.05;
+
+    QVector3D exyy = QVector3D(e.x(), e.y(),e.y());
+    QVector3D eyyx = QVector3D(e.y(), e.y(),e.x());
+    QVector3D eyxy = QVector3D(e.y(), e.x(),e.y());
+    QVector3D exxx = QVector3D(e.x(), e.x(),e.x());
+
+
+//    vec2( sdSphere(    pos-vec3( 0.0,0.25, 0.0), 0.25 ), 46.9 ) );
+//    if (rand()%100==0) qDebug() << "POS: " << pos;
+    return ( exyy*intersect( pos + exyy ) +
+                      eyyx*intersect( pos + eyyx ) +
+                      eyxy*intersect( pos + eyxy ) +
+                      exxx*intersect( pos + exxx ) ).normalized();
+
+}
+
 
 bool RayObjectSphere::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D& isp, int pass, QVector<AbstractRayObject*>& objects)
 {
@@ -137,10 +182,22 @@ bool RayObjectSphere::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D& i
     return false;
 }
 
+float RayObjectSphere::intersect(Ray *ray)
+{
+    return (m_position+ray->m_currentPos).length() - m_radius.x();
+
+
+}
+
 QVector3D RayObjectPlane::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D& tangent) {
     QVector3D bt = QVector3D::crossProduct(normal,tangent).normalized();
 
     return QVector3D(QVector3D::dotProduct(bt,pos),QVector3D::dotProduct(tangent,pos),0)*m_material.m_uvScale;
+}
+
+float RayObjectPlane::intersect(Ray *ray)
+{
+    return (-m_position.y() + ray->m_currentPos.y());
 }
 
 bool RayObjectPlane::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D &isp, int pass, QVector<AbstractRayObject *> &objects)
@@ -161,9 +218,26 @@ bool RayObjectPlane::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D &is
             CalculateLight(ray,normal,tangent,p,globals,reflectionDir, objects, pass);
         return true;
     }
+    globals.Sky(ray);
     return false;
 
 
+}
+
+QVector3D RayObjectTorus::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D &tangent)
+{
+    return QVector3D(0,0,0);
+}
+
+float RayObjectTorus::intersect(Ray *ray)
+{
+
+    QVector3D pos = m_position + ray->m_currentPos;
+    QVector3D pp = pos;
+    pp.setY(0);
+    QVector3D q = QVector3D(pp.length()-m_radius.x(),pos.y(),0);
+     return q.length()-m_radius.y();
+     return 1E20;
 }
 
 bool RayObjectTorus::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D &isp, int pass, QVector<AbstractRayObject *> &objects)
@@ -185,4 +259,33 @@ bool RayObjectTorus::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D &is
     }
     return false;
 
+}
+
+QVector3D RayObjectBox::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D &tangent)
+{
+    return QVector3D(1,1,0);
+}
+
+float RayObjectBox::intersect(Ray *ray)
+{
+    QVector3D d = Util::abss(m_position+ray->m_currentPos) - m_box;// +ray->m_currentPos;
+
+    return min(max(d.x(),max(d.y(),d.z())),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length();
+
+}
+
+bool RayObjectBox::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D &isp, int pass, QVector<AbstractRayObject *> &objects)
+{
+    QVector3D isp2;
+    double t1, t2;
+    if (ray->IntersectBox(m_position,m_box,isp,isp2,t1,t2)) {
+
+        QVector3D normal = QVector3D(1,0,0);//calculateNormal(ray, isp);
+        QVector3D tangent = QVector3D(0,1,0);//calculateNormal(ray, isp);
+        QVector3D reflectionDir = QVector3D(0,0,1);//calculateNormal(ray, isp);
+        CalculateLight(ray,normal,tangent,m_position,globals,reflectionDir, objects, pass);
+
+        return true;
+    }
+    return false;
 }

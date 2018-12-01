@@ -4,7 +4,9 @@
 #include <QVector3D>
 #include <QVector>
 #include <math.h>
+#include <QMatrix3x3>
 #include "source/LeLib/util/SimplexNoise.h"
+#include "source/LeLib/util/util.h"
 
 #include "camera.h"
 class Ray {
@@ -15,6 +17,19 @@ public:
     float m_reflect = 3;
     double m_z = 1E20;
 
+    float m_curStep = 0;
+    QVector3D m_currentPos;
+
+    Ray() {}
+    void swap(float& a, float& b) {
+        float c=a;
+        a=b;
+        b=c;
+    }
+
+    void setCurrent(float t) {
+        m_currentPos  = m_origin + m_direction*t;
+    }
 
     Ray(QVector3D pos, QVector3D dir) {
         m_origin = pos;
@@ -26,8 +41,14 @@ public:
         m_intensity = I;
     }
 
-    bool IntersectSphere(const QVector3D& pos, QVector3D r,QVector3D& isp1,QVector3D& isp2, double& t0, double& t1);
+    Ray Rotate(QMatrix4x4& rotmat, QVector3D pos) {
+        Ray r(rotmat*(m_currentPos+pos)-pos,rotmat*m_direction);
+        r.m_currentPos = r.m_origin;
+        return r;
+    }
 
+    bool IntersectSphere(const QVector3D& pos, QVector3D r,QVector3D& isp1,QVector3D& isp2, double& t0, double& t1);
+    bool IntersectBox(QVector3D pos, QVector3D bb,QVector3D& isp1,QVector3D& isp2, double& t0, double& t1);
 
 };
 
@@ -70,6 +91,9 @@ public:
 
     QVector<AbstractLight*> m_lights;
     Camera* m_camera;
+
+
+    void Sky(Ray* ray);
 
 
 };

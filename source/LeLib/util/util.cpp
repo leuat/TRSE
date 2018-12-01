@@ -220,6 +220,23 @@ int Util::getShiftCount(int i) {
     return -1;
 }
 
+QVector3D Util::abss(QVector3D a)
+{
+    return QVector3D(abs(a.x()), abs(a.y()), abs(a.z()));
+}
+
+QVector3D Util::maxx(QVector3D a, QVector3D b)
+{
+    return QVector3D(max(a.x(),b.x()), max(a.y(),b.y()), max(a.z(),b.z()));
+}
+
+float Util::minmax(float v, float a, float b)
+{
+    v = max(v,a);
+    v = min(v,b);
+    return v;
+}
+
 QString Util::findFileInDirectory(QString search, QString dir, QString extension)
 {
     QDirIterator it(dir, QStringList() << "*." + extension, QDir::Files);
