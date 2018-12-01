@@ -66,7 +66,7 @@ void RayTracer::Raytrace(QImage &img)
 
             }
             else
-                m_globals.Sky(&ray);
+                m_globals.Sky(&ray, m_globals.m_skyScale);
 
             QColor c = Util::toColor(ray.m_intensity*256*shadow + m_globals.m_ambient);
             //                if (i<img.width() && j<img.height())
@@ -107,6 +107,7 @@ void RayTracer::Raymarch(QImage &img)
 
             QVector3D dir = m_camera.coord2ray(x,y,img.width());
             Ray ray(m_camera.m_camera,dir);
+            ray.m_reflect=3;
 
 //            float m_z = 1E20;
             int tid = omp_get_thread_num();
@@ -128,7 +129,28 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
  //   Ray rotated;
     ray.m_currentPos = ray.m_origin;
 
-    for (AbstractRayObject* ro: m_objects) {
+    // Generate list with bb
+    QVector<AbstractRayObject*> culled;
+    for (AbstractRayObject* o: m_objects) {
+        QVector3D isp1, isp2;
+        double t0, t1;
+        if (ray.IntersectSphere(o->m_position*-1,QVector3D(1,1,1)*o->m_bbRadius,isp1, isp2, t0,t1)) {
+            //if (( t1>0) || dynamic_cast<RayObjectPlane*>(o)!=nullptr)
+                culled.append(o);
+        }
+
+
+    }
+
+//    culled = m_objects;
+
+    if (culled.length()==0) {
+//        m_globals.Sky(&ray, m_globals.m_skyScale);
+        return false;
+    }
+
+
+    for (AbstractRayObject* ro: culled) {
         ro->m_localRay[tid] = ray.Rotate(ro->m_rotmat, ro->m_position);
     }
 
@@ -139,9 +161,13 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
         float keep=1000.0;
         ray.m_curStep =t; //(ray.m_origin-m_objects[j]->m_position).length();
         ray.setCurrent(t);
+
+
+
+
         //rotated = ray;
         AbstractRayObject* w= nullptr;
-        for (AbstractRayObject* ro: m_objects) {
+        for (AbstractRayObject* ro: culled) {
 
             if (ro==ignore)
                 continue;
@@ -194,7 +220,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
         if (winner->m_material.m_reflectivity>0 && ray.m_reflect>0) {
             Ray nxt(lp,reflectionDir);
             nxt.m_reflect=ray.m_reflect-1;
-            RayMarchSingle(nxt, Reflect, winner,16,tid);
+            RayMarchSingle(nxt, Reflect, winner,24,tid);
 
             ray.m_intensity = ray.m_intensity*(1-winner->m_material.m_reflectivity) + winner->m_material.m_reflectivity*nxt.m_intensity;
         }
@@ -204,7 +230,10 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
         for (AbstractLight* al: m_globals.m_lights) {
 //            Ray shadowRay(isp,winner->m_rotmat*al->m_direction*1);
             Ray shadowRay(lp,al->m_direction);
-            if (RayMarchSingle(shadowRay, Shadow, winner,14,tid)) {
+            AbstractRayObject* o= nullptr;
+            if (dynamic_cast<RayObjectBox*>(winner)!=nullptr)
+                o=winner;
+            if (RayMarchSingle(shadowRay, Shadow, o,14,tid)) {
                 shadow*=0.5;
             }
 
@@ -216,7 +245,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
         return true;
 
     }
-    m_globals.Sky(&ray);
+    m_globals.Sky(&ray,m_globals.m_skyScale);
 
     return false;
 }

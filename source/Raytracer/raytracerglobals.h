@@ -76,6 +76,7 @@ public:
     RayTracerGlobals();
     SimplexNoise m_noise;
 
+    float m_skyScale = 1;
 
     QVector3D getPerlinNormal(QVector3D p, QVector3D n, QVector3D t, QVector3D bn, float s, float s2) {
         QVector3D p0 = n.normalized()+p;
@@ -93,7 +94,7 @@ public:
     Camera* m_camera;
 
 
-    void Sky(Ray* ray);
+    void Sky(Ray* ray, float scale);
 
 
 };

@@ -5,7 +5,7 @@ RayTracerGlobals::RayTracerGlobals()
     m_lights.append(new DirectionalLight(QVector3D(1,1,-1).normalized(),QVector3D(1,1,1)));
 }
 
-void RayTracerGlobals::Sky(Ray* ray)
+void RayTracerGlobals::Sky(Ray* ray, float scale)
 {
 
     DirectionalLight* light = static_cast<DirectionalLight*>(m_lights[0]);
@@ -16,7 +16,7 @@ void RayTracerGlobals::Sky(Ray* ray)
 
         // sun glare
 //        col += 0.2*QVector3D(1.0,0.4,0.2)*pow( sun, 3.0 );
-    ray->m_intensity = col;
+    ray->m_intensity = col*scale;
     return;
 }
 

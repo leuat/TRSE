@@ -218,7 +218,7 @@ bool RayObjectPlane::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D &is
             CalculateLight(ray,normal,tangent,p,globals,reflectionDir, objects, pass);
         return true;
     }
-    globals.Sky(ray);
+    globals.Sky(ray, 1);
     return false;
 
 
@@ -240,26 +240,6 @@ float RayObjectTorus::intersect(Ray *ray)
      return 1E20;
 }
 
-bool RayObjectTorus::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D &isp, int pass, QVector<AbstractRayObject *> &objects)
-{
-    double t = QVector3D::dotProduct(m_pNormal, m_position-ray->m_origin)/QVector3D::dotProduct(m_pNormal,ray->m_direction);
-
-    if (t>0) {
-        QVector3D tangent = QVector3D::crossProduct(QVector3D(1.123,1.12345,45.1234),m_pNormal).normalized();
-
-        isp = ray->m_origin+t*ray->m_direction.normalized();
-        QVector3D normal = GetPerturbedNormal(isp, m_pNormal, tangent, globals);
-        QVector3D p = isp - m_position;
-
-        QVector3D reflectionDir = ray->m_direction-2*QVector3D::dotProduct(ray->m_direction, normal)*normal;
-
-//        if (pass==0)
-            CalculateLight(ray,normal,tangent,p,globals,reflectionDir, objects, pass);
-        return true;
-    }
-    return false;
-
-}
 
 QVector3D RayObjectBox::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D &tangent)
 {
@@ -269,23 +249,21 @@ QVector3D RayObjectBox::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D
 float RayObjectBox::intersect(Ray *ray)
 {
     QVector3D d = Util::abss(m_position+ray->m_currentPos) - m_box;// +ray->m_currentPos;
-
-    return min(max(d.x(),max(d.y(),d.z())),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length();
+    float r=0.0;
+    return min(max(d.x()-r,max(d.y()-r,d.z()-r)),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length();
 
 }
 
-bool RayObjectBox::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D &isp, int pass, QVector<AbstractRayObject *> &objects)
+QVector3D RayObjectCylinder::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D &tangent)
 {
-    QVector3D isp2;
-    double t1, t2;
-    if (ray->IntersectBox(m_position,m_box,isp,isp2,t1,t2)) {
+    return QVector3D(0,0,0);
+}
 
-        QVector3D normal = QVector3D(1,0,0);//calculateNormal(ray, isp);
-        QVector3D tangent = QVector3D(0,1,0);//calculateNormal(ray, isp);
-        QVector3D reflectionDir = QVector3D(0,0,1);//calculateNormal(ray, isp);
-        CalculateLight(ray,normal,tangent,m_position,globals,reflectionDir, objects, pass);
+float RayObjectCylinder::intersect(Ray *ray)
+{
+    QVector3D pos = m_position+ray->m_currentPos;
+    QVector3D p = QVector3D(pos.x(), pos.z(),0);
+    QVector3D d = QVector3D(p.length()-2*m_radius.x() + m_radius.y()*1.0, abs(pos.y())-m_radius.z(),0);
 
-        return true;
-    }
-    return false;
+    return min(max(d.x(),d.y()),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length() - m_radius.y();
 }

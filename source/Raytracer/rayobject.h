@@ -2,6 +2,7 @@
 #define RAYOBJECT_H
 
 #include <QVector3D>
+#include <QVector2D>
 #include <QMatrix4x4>
 #include "source/LeLib/util/util.h"
 #include <math.h>
@@ -25,6 +26,8 @@ public:
 
     Ray m_localRay[32];
 
+    float m_bbRadius;
+
 
 
     void SetRotation(QVector3D v) {
@@ -42,7 +45,7 @@ public:
     AbstractRayObject();
 
     virtual QVector3D calculateNormal(Ray* ray, QVector3D isp) {return QVector3D(0,0,0);}
-    virtual bool RayTrace(Ray* ray, RayTracerGlobals& globals, QVector3D& isp, int pass,QVector<AbstractRayObject*>& objects) = 0;
+    virtual bool RayTrace(Ray* ray, RayTracerGlobals& globals, QVector3D& isp, int pass,QVector<AbstractRayObject*>& objects) {return false;}
 
     float ApplyDirectionalLight(QVector3D normal, RayTracerGlobals& globals);
     QVector3D ApplySpecularLight(QVector3D normal, QVector3D view, RayTracerGlobals& globals, Material& mat);
@@ -74,6 +77,7 @@ public:
         m_radius = rad;
         m_position = pos;
         m_material = material;
+        m_bbRadius = rad.length();
     }
     QVector3D m_radius = QVector3D(1,1,1);
     bool RayTrace(Ray* ray, RayTracerGlobals& globals, QVector3D& isp, int pass,QVector<AbstractRayObject*>& objects) override;
@@ -90,6 +94,7 @@ public:
         m_pNormal = normal;
         m_position = pos;
         m_material = material;
+        m_bbRadius = 1000;
     }
     QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) override;
     float intersect(Ray* ray) override;
@@ -107,11 +112,11 @@ public:
         m_pNormal = normal;
         m_position = pos;
         m_material = material;
+        m_bbRadius = m_box.length();
     }
     QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) override;
     float intersect(Ray* ray) override;
 
-    bool RayTrace(Ray* ray, RayTracerGlobals& globals, QVector3D& isp, int pass,QVector<AbstractRayObject*>& objects) override;
 };
 
 
@@ -125,13 +130,29 @@ public:
         m_position = pos;
         m_material = material;
         m_radius = radius;
+        m_bbRadius = 2*radius.x();
     }
     QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) override;
     float intersect(Ray* ray) override;
 
-    bool RayTrace(Ray* ray, RayTracerGlobals& globals, QVector3D& isp, int pass,QVector<AbstractRayObject*>& objects) override;
 };
 
+
+class RayObjectCylinder : public AbstractRayObject {
+public:
+    QVector3D m_radius = QVector3D(2,1,0);
+
+
+    RayObjectCylinder(QVector3D pos, QVector3D radius, Material material) {
+        m_position = pos;
+        m_material = material;
+        m_radius = radius;
+        m_bbRadius = radius.length();
+    }
+    QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) override;
+    float intersect(Ray* ray) override;
+
+};
 
 
 #endif // RAYOBJECT_H
