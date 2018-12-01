@@ -13,8 +13,8 @@ DemoEffectRaytracer::DemoEffectRaytracer(QGridLayout* gl) : AbstractDemoEffect (
     m_rt.m_globals.m_lights[0]->m_color = QVector3D(1,1,0.7);
 //     SetParameters(0);
 //    m_img = QImage(160,200,QImage::Format_ARGB32);
-    m_img = QImage(160,200,QImage::Format_ARGB32);
-  //  m_img = QImage(400,300,QImage::Format_ARGB32);
+  //  m_img = QImage(160,200,QImage::Format_ARGB32);
+    m_img = QImage(400,300,QImage::Format_ARGB32);
  //   m_img = QImage(1980,1600,QImage::Format_ARGB32);
     m_rt.m_objects.clear();
 
@@ -37,13 +37,14 @@ DemoEffectRaytracer::DemoEffectRaytracer(QGridLayout* gl) : AbstractDemoEffect (
         int k= rand()%100;
  //       if (i==0) k=10;
    //     if (i==1) k=70;
+        float pn = 0.1;
        if (k>=0 && k<40)
-            m_rt.m_objects.append(new RayObjectBox(pos,QVector3D(1,1,1), Material(col,rand()%100,0.7, 0.0f,19.123,"")));
+            m_rt.m_objects.append(new RayObjectBox(pos,QVector3D(1,1,1), Material(col,rand()%100,0.7, pn,19.123,"")));
         else if
            (k>=40 && k<=60)
-            m_rt.m_objects.append(new RayObjectSphere(pos,QVector3D(1,1,1), Material(col,rand()%100,0.7, 0.0f,19.123,"")));
+            m_rt.m_objects.append(new RayObjectSphere(pos,QVector3D(1,1,1), Material(col,rand()%100,0.7, pn,19.123,"")));
         else
-            m_rt.m_objects.append(new RayObjectTorus(pos,QVector3D(1,0.3,0), QVector3D(0,1,0),Material(col,rand()%100,0.7, 0.0f,19.123,"")));
+            m_rt.m_objects.append(new RayObjectTorus(pos,QVector3D(1,0.3,0), QVector3D(0,1,0),Material(col,rand()%100,0.7, pn,19.123,"")));
 
     }
 

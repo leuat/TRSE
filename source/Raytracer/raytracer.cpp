@@ -180,6 +180,10 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
         QVector3D tt(1,2,-213.123);
         QVector3D tangent = QVector3D::crossProduct(tt,normal).normalized();
         QVector3D bi = QVector3D::crossProduct(tangent,normal).normalized();
+
+        normal  = winner->GetPerturbedNormal(isp,normal,tangent,m_globals);
+
+
 //        ray.m_reflect = 0;
         QVector3D reflectionDir = ray.m_direction-2*QVector3D::dotProduct(ray.m_direction, normal)*normal;
         QVector3D lp = ray.m_currentPos;//-winner->m_localPos;
