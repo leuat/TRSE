@@ -63,9 +63,14 @@ public:
 private slots:
     void on_btnClose_clicked();
 
+    void on_pushButton_clicked();
+
+    void on_pushButton_2_clicked();
+
 private:
     void FillFromIni();
     void FillToIni();
+    void FillTabDataToIni();
     void Close();
     Ui::DialogProjectSettings *ui;
 };

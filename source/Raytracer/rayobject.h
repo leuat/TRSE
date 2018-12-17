@@ -130,7 +130,7 @@ public:
         m_position = pos;
         m_material = material;
         m_radius = radius;
-        m_bbRadius = 2*radius.x();
+        m_bbRadius = (radius.x()+radius.y());
     }
     QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) override;
     float intersect(Ray* ray) override;
@@ -147,7 +147,7 @@ public:
         m_position = pos;
         m_material = material;
         m_radius = radius;
-        m_bbRadius = radius.length();
+        m_bbRadius = 1.1*radius.length();
     }
     QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) override;
     float intersect(Ray* ray) override;

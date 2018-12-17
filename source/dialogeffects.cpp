@@ -71,7 +71,9 @@ void DialogEffects::on_btnToggleAnim_clicked()
 {
     if (m_effect==nullptr)
         return;
-    m_effect->m_toggleAnim=!m_effect->m_toggleAnim;
+    m_effect->ToggleAnim();
+//    m_effect->m_toggleAnim=!m_effect->m_toggleAnim;
+ //   m_effect->m_time = 0;
 }
 
 void DialogEffects::on_btnToggleC64_clicked()

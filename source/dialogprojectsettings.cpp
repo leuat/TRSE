@@ -18,7 +18,6 @@
  *   along with this program (LICENSE.txt).
  *   If not, see <https://www.gnu.org/licenses/>.
 */
-
 #include "dialogprojectsettings.h"
 #include "ui_dialogprojectsettings.h"
 
@@ -62,7 +61,8 @@ void DialogProjectSettings::FillFromIni()
 
     ui->cmbSystem->setCurrentText(m_ini->getString("system"));
 
-
+    ui->cmbOutputType->setCurrentText(m_ini->getString("output_type"));
+    ui->leMainFile->setText(m_ini->getString("main_ras_file"));
 
     ui->chkPassLda->setChecked(m_ini->getdouble("post_optimizer_passlda")==1);
     ui->chkPassJmp->setChecked(m_ini->getdouble("post_optimizer_passjmp")==1);
@@ -83,6 +83,16 @@ void DialogProjectSettings::FillFromIni()
     }
 
     ui->cmbVic20Config->setCurrentText(m_ini->getString("vic_memory_config"));
+
+
+    QStringList files = m_ini->getStringList("disk_files");
+    QStringList names = m_ini->getStringList("disk_names");
+
+    for (int r=0;r<names.count();r++) {
+        ui->tabData->insertRow(r);
+        ui->tabData->setItem(r,0,new QTableWidgetItem(names[r]));
+        ui->tabData->setItem(r,1,new QTableWidgetItem(files[r]));
+    }
 
 
 //    ui->chkPOEnabled->setChecked(m_ini->getdouble("post_optimize")==1);
@@ -114,14 +124,53 @@ void DialogProjectSettings::FillToIni()
     m_ini->setFloat("post_optimizer_passldatax", ui->chkPassLdaTax->isChecked());
     m_ini->setFloat("post_optimizer_passstalda", ui->chkPassStaLda->isChecked());
     m_ini->setFloat("post_optimizer_passldx", ui->chkPassLdx->isChecked());
-  //  m_ini->setFloat("post_optimize", ui->chkPOEnabled->isChecked());
+    //  m_ini->setFloat("post_optimize", ui->chkPOEnabled->isChecked());
 
     if (m_ini->getString("system")=="C128") {
         m_ini->setString("columns", ui->cmbColumns->currentText());
 
     }
-   if (m_ini->getString("system")=="VIC20") {
+    if (m_ini->getString("system")=="VIC20") {
 
         m_ini->setString("vic_memory_config",ui->cmbVic20Config->currentText());
     }
+
+    m_ini->setString("output_type", ui->cmbOutputType->currentText());
+    m_ini->setString("main_ras_file", ui->leMainFile->text());
+
+    FillTabDataToIni();
+
 }
+
+void DialogProjectSettings::FillTabDataToIni()
+{
+    QStringList names;
+    QStringList files;
+
+    for (int r=0;r<ui->tabData->rowCount();r++) {
+        names<< ui->tabData->item(r,0)->text();
+        files<< ui->tabData->item(r,1)->text();
+
+    }
+
+    m_ini->setStringList("disk_files",files);
+    m_ini->setStringList("disk_names",names);
+
+}
+
+void DialogProjectSettings::on_pushButton_clicked()
+{
+    int r =ui->tabData->rowCount();
+    ui->tabData->insertRow(r);
+    ui->tabData->setItem(r,0,new QTableWidgetItem(""));
+    ui->tabData->setItem(r,1,new QTableWidgetItem(""));
+    ui->tabData->setItem(r,2,new QTableWidgetItem(""));
+
+}
+
+void DialogProjectSettings::on_pushButton_2_clicked()
+{
+    ui->tabData->removeRow(ui->tabData->currentRow());
+
+}
+

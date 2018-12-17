@@ -167,6 +167,7 @@ skip_order_wrap:	stx order
 		sta pattern
 		
 		; store pattern0 pointer in zeropage
+reset_pattern_pointer_two:
 		ldx #<pattern0
 		stx workarea
 		ldx #>pattern0

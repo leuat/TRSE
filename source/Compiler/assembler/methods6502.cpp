@@ -2511,6 +2511,24 @@ void Methods6502::InitAtan2(Assembler *as)
 void Methods6502::InitModPlayer(Assembler *as)
 {
 
+    // First set up:
+    m_node->m_params[0]->Accept(m_dispatcher);
+    as->Term();
+    as->Asm("sta reset_pattern_pointer+5");
+    as->Asm("sta reset_pattern_pointer_two+5");
+    m_node->m_params[1]->Accept(m_dispatcher);
+    as->Term();
+    as->Asm("sta reset_pattern_pointer+1");
+    as->Asm("sta reset_pattern_pointer_two+1");
+/*
+    m_node->m_params[1]->Accept(m_dispatcher);
+    lda #$00
+    sta reset_pattern_pointer_two+1
+    lda #$a0
+    sta reset_pattern_pointer_two+5
+
+*/
+
     as->Asm("jsr		setup_music");
     as->Asm("jsr		skip_order_wrap ; enter in the middle of the music loop");
 

@@ -41,7 +41,7 @@ public:
     QElapsedTimer m_timer;
     int m_elapsedTime;
 
-
+    virtual void ToggleAnim() {m_toggleAnim=!m_toggleAnim;}
 
 
     virtual void Render(QImage& img) {}

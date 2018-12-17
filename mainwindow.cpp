@@ -256,6 +256,7 @@ void MainWindow::LoadDocument(QString fileName)
         editor = new FormPaw(this);
     }
     editor->InitDocument(nullptr, &m_iniFile, &m_currentProject.m_ini);
+    editor->m_currentDir = m_currentPath;
     editor->m_currentSourceFile = getProjectPath() + "/" + fileName;
     editor->m_currentFileShort = fileName;
     ui->tabMain->addTab(editor, fileName);
@@ -278,7 +279,23 @@ void MainWindow::LoadDocument(QString fileName)
     m_currentDoc = editor;
     ConnectDocument();
 
-     connect(m_currentDoc, SIGNAL(OpenOtherFile(QString, int )), this, SLOT(ForceOpenFile(QString , int)));
+    connect(m_currentDoc, SIGNAL(OpenOtherFile(QString, int )), this, SLOT(ForceOpenFile(QString , int)));
+}
+
+bool MainWindow::VerifyFile(QString file, QString message)
+{
+    if (QFile::exists(m_currentPath+"//"+ file))
+        return true;
+
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Error");
+    msgBox.setInformativeText("Could not find file '"+file+"'");
+    msgBox.setText(message);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    int ret = msgBox.exec();
+    return false;
+
 }
 void MainWindow::ConnectDocument()
 {
@@ -287,6 +304,8 @@ void MainWindow::ConnectDocument()
     connect(m_currentDoc, SIGNAL(requestCloseWindow()), this, SLOT(closeWindowSlot()));
     connect(m_currentDoc, SIGNAL(emitFindFile()), this, SLOT(FindFileDialog()));
     connect(m_currentDoc, SIGNAL(requestBuild()), this, SLOT(acceptBuild()));
+    connect(m_currentDoc, SIGNAL(requestBuildMain()), this, SLOT(acceptBuildMain()));
+    connect(m_currentDoc, SIGNAL(requestRunMain()), this, SLOT(acceptRunMain()));
 
 }
 

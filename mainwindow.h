@@ -240,7 +240,7 @@ public:
 
     bool m_quit = false;
 
-
+    bool VerifyFile(QString file, QString message);
 
   //  void setupEditor();
     void SetupFileList();
@@ -249,6 +249,22 @@ public:
     void RefreshFileList();
 public slots:
 
+
+    void acceptBuildMain() {
+        acceptBuild();
+        if (!VerifyFile(m_currentProject.m_ini.getString("main_ras_file"),"Error trying to build main project file. Please see project settings and specify correct path to main .ras file"))
+            return;
+        LoadDocument(m_currentProject.m_ini.getString("main_ras_file"));
+        m_currentDoc->Build();
+
+    }
+
+    void acceptRunMain() {
+        if (!VerifyFile(m_currentProject.m_ini.getString("main_ras_file"),"Error trying to build main project file. Please see project settings and specify correct path to main .ras file"))
+            return;
+        LoadDocument(m_currentProject.m_ini.getString("main_ras_file"));
+        m_currentDoc->Run();
+    }
 
     void acceptBuild() {
         ui->lblBuild->setHidden(false);

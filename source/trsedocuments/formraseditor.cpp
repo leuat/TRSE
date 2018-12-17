@@ -115,6 +115,15 @@ void FormRasEditor::Compress()
 void FormRasEditor::Build()
 {
     SaveCurrent();
+
+    if (m_projectIniFile->getString("main_ras_file")!="") {
+        if (m_projectIniFile->getString("main_ras_file")!=m_currentFileShort) {
+            emit requestBuildMain();
+            return;
+        }
+
+    }
+
     emit requestBuild();
     if (BuildStep())
         {
@@ -149,13 +158,7 @@ void FormRasEditor::Build()
         }
         else if (m_iniFile->getString("assembler").toLower()=="orgasm") {
             Orgasm orgAsm;
-            //orgAsm.LoadCodes();
             orgAsm.Assemble(filename+".asm", filename+".prg");
-/*            if (orgAsm.m_success) {
-                output = "complete.";
-                //for (QString s : orgAsm.m_debug)
-                //qDebug() << s ;
-            }*/
             output = orgAsm.m_output;
         }
         // Machine Code Analyzer
@@ -243,7 +246,51 @@ void FormRasEditor::Build()
         }
         TestForCodeOverwrite(codeEnd,text);
 
-        //ui->ed
+///usr/bin/c1541 -format demo,id d64 /home/leuat/Dropbox/TRSE/DesertPlanet//demo.d64 -attach /home/leuat/Dropbox/TRSE/DesertPlanet//demo.d64 -write /home/leuat/Dropbox/TRSE/DesertPlanet//demo.prg demo
+        if (m_projectIniFile->getString("output_type")=="d64") {
+            if (!QFile::exists(m_iniFile->getString("c1541"))) {
+                Messages::messages.DisplayMessage(Messages::messages.NO_C1541);
+                return;
+            }
+//            c1541 -format diskname,id d64 my_diskimage.d64 -attach my_diskimage.d64 -write my_program.prg myprog
+            QString f = filename.split("/").last();
+            QStringList d64Params = QStringList() << "-format" << f+",id"<< "d64";
+            d64Params << filename+".d64";
+            d64Params << "-attach" <<filename+".d64";
+            d64Params << "-write" <<filename+".prg" << f;
+
+            QStringList disk_files = m_projectIniFile->getStringList("disk_files");
+            QStringList disk_names = m_projectIniFile->getStringList("disk_names");
+            for (int i=0;i<disk_files.count();i++) {
+                QString fn = m_currentDir+"/"+disk_files[i];
+                if (QFile::exists(fn)) {
+                    d64Params << "-write" <<fn << disk_names[i];
+
+                }
+                else {
+                    QMessageBox msgBox;
+                    msgBox.setText("Error: Could not append project file '"+fn+"' because it does not exist");
+                    msgBox.exec();
+                    return;
+                }
+            }
+
+//            QStringList exoParams = QStringList() << "sfx" << "$0810"  << fn<< "-o" << fn ;
+           // qDebug() << exoParams;
+            QProcess process1541;
+            process1541.start(m_iniFile->getString("c1541"), d64Params  );
+            process1541.waitForFinished();
+
+            qDebug() << m_iniFile->getString("c1541") << d64Params;
+            qDebug() << process1541.readAllStandardOutput();
+            qDebug() << process1541.readAllStandardError();
+
+
+///usr/bin/c1541 -format demo,id d64 /home/leuat/Dropbox/TRSE/DesertPlanet//demo.d64 -attach /home/leuat/Dropbox/TRSE/DesertPlanet//demo.d64 -write /home/leuat/Dropbox/TRSE/DesertPlanet//demo.prg demo -write /home/leuat/Dropbox/TRSE/DesertPlanet/data/perlin40.dat perlin
+
+        }
+
+
         ui->txtOutput->setText(text + output);
         ui->txtEditor->m_cycles =  compiler.m_assembler->m_cycles;
         ui->txtEditor->RepaintCycles();
@@ -378,9 +425,24 @@ void FormRasEditor::Setup()
 
 void FormRasEditor::Run()
 {
+
+    if (m_projectIniFile->getString("main_ras_file")!="") {
+        if (m_projectIniFile->getString("main_ras_file")!=m_currentFileShort) {
+            emit requestRunMain();
+            return;
+        }
+
+    }
+
     if (!m_buildSuccess)
         return;
-    QString filename = m_currentSourceFile.split(".")[0] + ".prg";
+
+    if (!m_projectIniFile->contains("output_type"))
+        m_projectIniFile->setString("output_type","prg");
+
+    QString filename = m_currentSourceFile.split(".")[0] + "."+ m_projectIniFile->getString("output_type");
+    qDebug() << filename;
+
 
     ExecutePrg(filename, m_projectIniFile->getString("system"));
 

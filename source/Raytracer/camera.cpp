@@ -104,9 +104,9 @@ void Camera::setupViewmatrix() {
 
 }
 
-QVector3D Camera::coord2ray(float x, float y, float width) {
+QVector3D Camera::coord2ray(float x, float y, float width, float height) {
     double xx = x / (width  * 0.5) - 1.0;
-    double yy = y / (width * 0.5) - 1.0;
+    double yy = y / (height * 0.5) - 1.0;
 
     QVector4D screenPos = QVector4D(xx, -yy, 1.0, 1.0);
     QVector4D worldPos = m_invVP * screenPos;

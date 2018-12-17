@@ -27,7 +27,7 @@ void RayTracer::Raytrace(QImage &img)
 #pragma omp parallel for
     for (int j=0;j<img.height();j++)
         for (int i=0;i<img.width();i++) {
-            QVector3D dir = m_camera.coord2ray(i,j,img.width());
+            QVector3D dir = m_camera.coord2ray(i,j,img.width(), img.height());
             Ray ray(m_camera.m_camera,dir);
 
             float m_z = 1E20;
@@ -85,7 +85,7 @@ void RayTracer::Raytrace(QImage &img)
 
 
 
-void RayTracer::Raymarch(QImage &img)
+void RayTracer::Raymarch(QImage &img, int w, int h)
 {
     m_globals.m_camera = &m_camera;
 
@@ -97,15 +97,19 @@ void RayTracer::Raymarch(QImage &img)
 //    QVector<AbstractRayObject*> objs;
 
 
-       float aspect = img.width()/(float)img.height();
+       float aspect = w/(float)h;
+       float ah = 1;
+//       qDebug() << w << h;
+ //      aspect = 0.5;
 #pragma omp parallel for
-    for (int j=0;j<img.height();j++)
-        for (int i=0;i<img.width();i++) {
+        for (int i=0;i<w;i++)
+            for (int j=0;j<h;j++)
+        {
 
-            float x = i;
+            float x = i;//*aspect;
             float y = j*aspect;
 
-            QVector3D dir = m_camera.coord2ray(x,y,img.width());
+            QVector3D dir = m_camera.coord2ray(x,y,w,h);
             Ray ray(m_camera.m_camera,dir);
             ray.m_reflect=3;
 
@@ -234,7 +238,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
             if (dynamic_cast<RayObjectBox*>(winner)!=nullptr)
                 o=winner;
             if (RayMarchSingle(shadowRay, Shadow, o,14,tid)) {
-                shadow*=0.5;
+                shadow*=m_globals.m_shadowScale;
             }
 
         }

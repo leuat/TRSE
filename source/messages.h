@@ -67,6 +67,7 @@ public:
     int BRANCH_ERROR = 7;
     int NO_EXOMIZER = 8;
     int OLD_SPRITE_FILE = 9;
+    int NO_C1541 = 10;
 
     QMap<int, Message> m_messages;
     CIniFile* m_iniFile;

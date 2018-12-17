@@ -77,7 +77,7 @@ public:
     SimplexNoise m_noise;
 
     float m_skyScale = 1;
-
+    float m_shadowScale = 0.5;
     QVector3D getPerlinNormal(QVector3D p, QVector3D n, QVector3D t, QVector3D bn, float s, float s2) {
         QVector3D p0 = n.normalized()+p;
         QVector3D p1 = (n+t*s).normalized()+p;

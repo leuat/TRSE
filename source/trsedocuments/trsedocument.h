@@ -40,6 +40,7 @@ public:
     bool m_documentIsChanged = false;
     QString m_currentSourceFile;
     QString m_currentFileShort;
+    QString m_currentDir;
 
     QString m_fileExtension;
     static QPalette m_defaultPalette;
@@ -94,6 +95,8 @@ signals:
     void requestCloseWindow();
     void updatePaletteSignal();
     void requestBuild();
+    void requestBuildMain();
+    void requestRunMain();
     void requestSaveAs();
 
 };

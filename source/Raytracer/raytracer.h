@@ -21,7 +21,7 @@ public:
     RayTracerGlobals m_globals;
     enum Pass { Image, Reflect, Shadow};
     void Raytrace(QImage& img);
-    void Raymarch(QImage& img);
+    void Raymarch(QImage& img, int w, int h);
 
     bool RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, int cnt, int tid);
 

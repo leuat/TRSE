@@ -34,7 +34,7 @@ public:
 
     void setupViewmatrix();
 
-    QVector3D coord2ray(float x, float y, float width);
+    QVector3D coord2ray(float x, float y, float width, float height);
 
 
     void setRotation(QVector3D& v);
