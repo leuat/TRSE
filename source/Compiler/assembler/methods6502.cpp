@@ -42,6 +42,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("VIAIRQ"))
         VIAIRQ(as);
 
+    if (Command("KrillLoad")) {
+        KrillLoad(as);
+    }
+
     if (Command("init_viairq"))
         InitVIAIRQ(as);
 
@@ -1259,6 +1263,30 @@ void Methods6502::Fill80(Assembler *as)
     as->PopLabel("fill80_text");
     as->PopLabel("fill80_loop");
 
+}
+
+void Methods6502::KrillLoad(Assembler *as)
+{
+    NodeVar* varName = dynamic_cast<NodeVar*>(m_node->m_params[0]);
+//    NodeVar* varJump = dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    if (varName==nullptr) {
+        ErrorHandler::e.Error("When loading a file, first parameter must point to a zero-terminated string", m_node->m_op.m_lineNumber);
+    }
+/*    QString jmp = "";
+    if (varJump==nullptr) {
+        jmp = varJump->
+    }
+    QString filename = ->;*/
+    as->Asm("ldx #<"+varName->value);
+    as->Asm("ldy #>"+varName->value);
+    as->Term("jsr ");
+    m_node->m_params[1]->Accept(m_dispatcher);
+    as->Term();
+
+/*    ldx #<filename
+    ldy #>filename
+    jsr	@loadraw
+  */
 }
 
 void Methods6502::InitRandom(Assembler *as)

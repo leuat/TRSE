@@ -21,10 +21,11 @@
 #include "dialogprojectsettings.h"
 #include "ui_dialogprojectsettings.h"
 
-DialogProjectSettings::DialogProjectSettings(QWidget *parent) :
+DialogProjectSettings::DialogProjectSettings(QString dir, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogProjectSettings)
 {
+    m_currentDir = dir;
     ui->setupUi(this);
 }
 
@@ -62,7 +63,7 @@ void DialogProjectSettings::FillFromIni()
     ui->cmbSystem->setCurrentText(m_ini->getString("system"));
 
     ui->cmbOutputType->setCurrentText(m_ini->getString("output_type"));
-    ui->leMainFile->setText(m_ini->getString("main_ras_file"));
+    //ui->leMainFile->setText(m_ini->getString("main_ras_file"));
 
     ui->chkPassLda->setChecked(m_ini->getdouble("post_optimizer_passlda")==1);
     ui->chkPassJmp->setChecked(m_ini->getdouble("post_optimizer_passjmp")==1);
@@ -88,14 +89,32 @@ void DialogProjectSettings::FillFromIni()
     QStringList files = m_ini->getStringList("disk_files");
     QStringList names = m_ini->getStringList("disk_names");
 
-    for (int r=0;r<names.count();r++) {
+/*    for (int r=0;r<names.count();r++) {
         ui->tabData->insertRow(r);
         ui->tabData->setItem(r,0,new QTableWidgetItem(names[r]));
         ui->tabData->setItem(r,1,new QTableWidgetItem(files[r]));
     }
 
-
+*/
 //    ui->chkPOEnabled->setChecked(m_ini->getdouble("post_optimize")==1);
+
+
+    QStringList ras = Util::FindFilesOfType(m_currentDir+"/","ras");
+//    qDebug() << ras << m_currentDir;
+    ui->cmbMainRas->clear();
+    ui->cmbMainRas->addItem("none");
+    ui->cmbMainRas->addItems(ras);
+
+    ui->cmbMainRas->setCurrentText(m_ini->getString("main_ras_file"));
+
+
+    QStringList paw = Util::FindFilesOfType(m_currentDir+"/","paw");
+//    qDebug() << ras << m_currentDir;
+    ui->cmbPawInclude->clear();
+    ui->cmbPawInclude->addItem("none");
+    ui->cmbPawInclude->addItems(paw);
+
+    ui->cmbPawInclude->setCurrentText(m_ini->getString("d64_paw_file"));
 
 }
 
@@ -136,13 +155,14 @@ void DialogProjectSettings::FillToIni()
     }
 
     m_ini->setString("output_type", ui->cmbOutputType->currentText());
-    m_ini->setString("main_ras_file", ui->leMainFile->text());
+    m_ini->setString("main_ras_file", ui->cmbMainRas->currentText());
+    m_ini->setString("d64_paw_file", ui->cmbPawInclude->currentText());
 
-    FillTabDataToIni();
+//    FillTabDataToIni();
 
 }
 
-void DialogProjectSettings::FillTabDataToIni()
+/*void DialogProjectSettings::FillTabDataToIni()
 {
     QStringList names;
     QStringList files;
@@ -174,3 +194,4 @@ void DialogProjectSettings::on_pushButton_2_clicked()
 
 }
 
+*/

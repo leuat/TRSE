@@ -104,6 +104,10 @@ public:
         if (!m_ini.contains("system"))
             m_ini.setString("system", "C64");
 
+        if (!m_ini.contains("main_ras_file"))
+            m_ini.setString("main_ras_file", "none");
+
+
 
         if (!m_ini.contains("zeropage_internal1"))
             m_ini.setString("zeropage_internal1","$4C");

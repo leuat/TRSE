@@ -49,6 +49,7 @@ public:
     void IncScreenX(Assembler* as);
     void Print80(Assembler* as);
     void Fill80(Assembler* as);
+    void KrillLoad(Assembler* as);
 
     void IncZp(Assembler* as);
     void DecZp(Assembler* as);

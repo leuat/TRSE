@@ -116,7 +116,7 @@ void FormRasEditor::Build()
 {
     SaveCurrent();
 
-    if (m_projectIniFile->getString("main_ras_file")!="") {
+    if (m_projectIniFile->getString("main_ras_file")!="none") {
         if (m_projectIniFile->getString("main_ras_file")!=m_currentFileShort) {
             emit requestBuildMain();
             return;
@@ -246,37 +246,21 @@ void FormRasEditor::Build()
         }
         TestForCodeOverwrite(codeEnd,text);
 
-///usr/bin/c1541 -format demo,id d64 /home/leuat/Dropbox/TRSE/DesertPlanet//demo.d64 -attach /home/leuat/Dropbox/TRSE/DesertPlanet//demo.d64 -write /home/leuat/Dropbox/TRSE/DesertPlanet//demo.prg demo
         if (m_projectIniFile->getString("output_type")=="d64") {
             if (!QFile::exists(m_iniFile->getString("c1541"))) {
                 Messages::messages.DisplayMessage(Messages::messages.NO_C1541);
                 return;
             }
-//            c1541 -format diskname,id d64 my_diskimage.d64 -attach my_diskimage.d64 -write my_program.prg myprog
+        //            c1541 -format diskname,id d64 my_diskimage.d64 -attach my_diskimage.d64 -write my_program.prg myprog
             QString f = filename.split("/").last();
             QStringList d64Params = QStringList() << "-format" << f+",id"<< "d64";
             d64Params << filename+".d64";
             d64Params << "-attach" <<filename+".d64";
             d64Params << "-write" <<filename+".prg" << f;
-
-            QStringList disk_files = m_projectIniFile->getStringList("disk_files");
-            QStringList disk_names = m_projectIniFile->getStringList("disk_names");
-            for (int i=0;i<disk_files.count();i++) {
-                QString fn = m_currentDir+"/"+disk_files[i];
-                if (QFile::exists(fn)) {
-                    d64Params << "-write" <<fn << disk_names[i];
-
-                }
-                else {
-                    QMessageBox msgBox;
-                    msgBox.setText("Error: Could not append project file '"+fn+"' because it does not exist");
-                    msgBox.exec();
+            if (m_projectIniFile->getString("d64_paw_file")!="none")
+                if (!BuildDiskFiles(d64Params))
                     return;
-                }
-            }
 
-//            QStringList exoParams = QStringList() << "sfx" << "$0810"  << fn<< "-o" << fn ;
-           // qDebug() << exoParams;
             QProcess process1541;
             process1541.start(m_iniFile->getString("c1541"), d64Params  );
             process1541.waitForFinished();
@@ -285,10 +269,8 @@ void FormRasEditor::Build()
             qDebug() << process1541.readAllStandardOutput();
             qDebug() << process1541.readAllStandardError();
 
-
-///usr/bin/c1541 -format demo,id d64 /home/leuat/Dropbox/TRSE/DesertPlanet//demo.d64 -attach /home/leuat/Dropbox/TRSE/DesertPlanet//demo.d64 -write /home/leuat/Dropbox/TRSE/DesertPlanet//demo.prg demo -write /home/leuat/Dropbox/TRSE/DesertPlanet/data/perlin40.dat perlin
-
         }
+
 
 
         ui->txtOutput->setText(text + output);
@@ -312,6 +294,41 @@ void FormRasEditor::Build()
 
     }
     SetLights();
+}
+
+bool FormRasEditor::BuildDiskFiles(QStringList& d64Params)
+{
+
+    QString pawFile = m_projectIniFile->getString("d64_paw_file");
+    CIniFile paw;
+    paw.Load(m_currentDir + "/"+pawFile);
+    QStringList data = paw.getStringList("data");
+    int count = data.count()/3;
+    QString outFolder = m_currentDir+"/"+ paw.getString("output_dir");
+    if (!QDir().exists(outFolder))
+            QDir().mkdir(outFolder);
+
+    for (int i=0;i<count;i++) {
+        QString orgFileName = data[3*i+1];
+        QString name = data[3*i];
+        int address = Util::NumberFromStringHex( data[3*i+2]);
+        QString fn = m_currentDir+"/"+orgFileName;
+        if (!QFile::exists(fn)) {
+            QMessageBox msgBox;
+            msgBox.setText("Error: Could not append disk include file '"+fn+"' because it does not exist");
+            msgBox.exec();
+            return false;
+        }
+
+        QString of = outFolder+"/"+orgFileName.split("/").last();
+        Util::ConvertFileWithLoadAddress(fn,of,address);
+
+         d64Params << "-write" <<of << name;
+
+    }
+
+    return true;
+
 }
 
 void FormRasEditor::SetOutputText(QString txt)
@@ -426,7 +443,7 @@ void FormRasEditor::Setup()
 void FormRasEditor::Run()
 {
 
-    if (m_projectIniFile->getString("main_ras_file")!="") {
+    if (m_projectIniFile->getString("main_ras_file")!="none") {
         if (m_projectIniFile->getString("main_ras_file")!=m_currentFileShort) {
             emit requestRunMain();
             return;

@@ -79,6 +79,7 @@ public:
     void setupEditor();
     void Compress();
     void Build() override;
+    bool BuildDiskFiles(QStringList& d64Params);
     void Setup();
 
     void Run() override;
@@ -96,7 +97,7 @@ public:
     void MemoryAnalyze() override;
 
 
-    void Reload();
+    void Reload() override;
 
     void Save(QString filename) override;
     void Load(QString filename) override;

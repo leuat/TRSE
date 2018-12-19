@@ -35,6 +35,7 @@ class DialogProjectSettings : public QDialog
     Q_OBJECT
 public:
     CIniFile* m_ini;
+    QString m_currentDir;
     void SetInit(CIniFile* ini) {
         m_ini = ini;
         FillFromIni();
@@ -57,20 +58,20 @@ public:
 
 
 public:
-    explicit DialogProjectSettings(QWidget *parent = nullptr);
+    explicit DialogProjectSettings(QString dir, QWidget *parent = nullptr);
     ~DialogProjectSettings();
 
 private slots:
     void on_btnClose_clicked();
 
-    void on_pushButton_clicked();
+  //  void on_pushButton_clicked();
 
-    void on_pushButton_2_clicked();
+   // void on_pushButton_2_clicked();
 
 private:
     void FillFromIni();
     void FillToIni();
-    void FillTabDataToIni();
+//    void FillTabDataToIni();
     void Close();
     Ui::DialogProjectSettings *ui;
 };

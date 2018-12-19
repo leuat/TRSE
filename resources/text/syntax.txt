@@ -63,6 +63,10 @@ m; SetCharsetLocation; C64, C128, VIC20; n
 m; SetScreenLocation; C64, C128, VIC20; n
 
 
+# IO
+
+m; KrillLoad; C64; a,a
+
 
 # Screen routines
 

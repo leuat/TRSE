@@ -220,6 +220,37 @@ int Util::getShiftCount(int i) {
     return -1;
 }
 
+QStringList Util::FindFilesOfType(QString dir, QString type)
+{
+    QStringList l;
+    QDirIterator it(dir, QStringList() << "*."+type, QDir::Files, QDirIterator::Subdirectories);
+    while (it.hasNext())
+        l << it.next().toLower().remove(dir.toLower());
+    return l;
+}
+
+void Util::ConvertFileWithLoadAddress(QString input, QString output, int address)
+{
+    QFile f(input);
+    f.open(QFile::ReadOnly);
+    QByteArray a = f.readAll();
+    f.close();
+
+    if (QFile::exists(output)) {
+        QFile f(output);
+        f.remove();
+    }
+//    qDebug() << a.size() << input;
+  //  exit(1);
+    a.insert(0,(address>>8)&0xFF);
+    a.insert(0,(address)&0xFF);
+
+    QFile o(output);
+    o.open(QFile::WriteOnly);
+    o.write(a);
+    o.close();
+}
+
 QVector3D Util::abss(QVector3D a)
 {
     return QVector3D(abs(a.x()), abs(a.y()), abs(a.z()));

@@ -24,4 +24,4 @@ charset_charsets/charset_8x8.flf = :resources/character.rom
 charset_charsets/charset_game.flf = :resources/character.rom
 data_header_charsets/charset_game.flf = 0
 project_path = /home/leuat/code/TRSE/Publish/tutorials/VIC20/tutorials/
-open_files = ,tutorial_6_via_interrupt.ras, tutorial_8_twister.ras
+open_files = ,tutorial_8_twister.ras, tutorial_6_via_interrupt.ras

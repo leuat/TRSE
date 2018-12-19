@@ -357,7 +357,7 @@ void MainWindow::OpenProjectSettings()
     if (m_currentProject.m_filename=="")
         return;
 
-    DialogProjectSettings* dSettings = new DialogProjectSettings(this);
+    DialogProjectSettings* dSettings = new DialogProjectSettings(m_currentPath, this);
     dSettings->SetInit(&m_currentProject.m_ini);
     dSettings->exec();
     delete dSettings;
