@@ -229,7 +229,14 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         return;
     }
-
+/*    if (m_currentToken.m_value=="use") {
+        Eat();
+        Eat();
+        Eat();
+        Eat();
+        return;
+    }
+*/
 
     if (m_currentToken.m_value=="include") {
         Eat();
@@ -650,7 +657,7 @@ void Parser::Preprocess()
 
                 m_preprocessorDefines[key] = val;
 
-
+//                qDebug() << "Defined: " << key << val;
 
             }
             else if (m_currentToken.m_value.toLower() =="userdata") {
@@ -669,6 +676,81 @@ void Parser::Preprocess()
                 Eat(TokenType::PREPROCESSOR);
                 m_ignoreMethods.append(m_currentToken.m_value);
             }
+            else if (m_currentToken.m_value.toLower() =="use") {
+                Eat();
+                QString type = m_currentToken.m_value;
+                bool ok=false;
+                if (type.toLower()=="krillsloader") {
+                    ok=true;
+                    int ln = Pmm::Data::d.lineNumber;
+
+                    //m_lexer->m_lines.removeAt(ln);
+                    //m_lexer->m_orgText.replace(orgL,"\n");
+                    Eat();
+                    int loaderPos = m_currentToken.m_intVal;
+                    Eat();
+                    int loaderOrgPos = m_currentToken.m_intVal;
+                    Eat();
+                    int installerPos = m_currentToken.m_intVal;
+
+
+                    m_preprocessorDefines["_InstallKrill"] = Util::numToHex(installerPos + 0x1390);
+                    m_preprocessorDefines["_LoadrawKrill"] = Util::numToHex(loaderPos);
+                    m_preprocessorDefines["_ResidentLoaderSource"] = Util::numToHex(loaderOrgPos);
+                    m_preprocessorDefines["_ResidentLoaderDestination"] = Util::numToHex(loaderPos);
+
+
+                    QString pos = QString::number(loaderPos,16);
+                    if (pos=="200") pos = "0200";
+                    QString loaderFile =":resources/bin/krill/loader_"+pos+"-c64.prg";
+                    QString installerFile =":resources/bin/krill/install_"+QString::number(installerPos,16)+"-c64.prg";
+
+                    if (!QFile::exists(loaderFile))
+                        ErrorHandler::e.Error("When using krills loader, the loader location must be either 0200, 1000,2000 etc");
+
+                    if (!QFile::exists(installerFile))
+                        ErrorHandler::e.Error("When using krills loader, the installer location must be either 1000, 2000, 3000 etc");
+
+
+                    QString outFolder = m_currentDir+"/auto_bin/";
+                    QString outFolderShort = "auto_bin/";
+
+                    if (!QDir().exists(outFolder))
+                            QDir().mkdir(outFolder);
+
+                    QString outFile = outFolder+"krill_loader.bin";
+                    if (QFile::exists(outFile)) {
+                        QFile f(outFile);
+                        f.remove();
+                    }
+                    QFile::copy(loaderFile, outFile);
+                    outFile = outFolder+"krill_installer.bin";
+                    if (QFile::exists(outFile)) {
+                        QFile f(outFile);
+                        f.remove();
+                    }
+                    QFile::copy(installerFile, outFile);
+
+                    outFile = outFolderShort+"krill_loader.bin";
+                    QString replaceLine = "_ResidentLoader_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(loaderOrgPos-2,16)+");";
+                    outFile = outFolderShort+"krill_installer.bin";
+                    replaceLine += "\n_Installer_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(installerPos-2,16)+");";
+
+//_Installer_Binary: 		incbin ("bin/install-c64.bin",$5000);
+  //                  qDebug() << replaceLine;
+//                    qDebug() << Util::numToHex(loaderPos);
+                    QString orgL =  m_lexer->m_lines[ln];
+                    m_lexer->m_text.replace(orgL,replaceLine+"\n\t");
+                    m_lexer->m_pos-=orgL.count();
+
+                    //Eat();
+                }
+                if (!ok) {
+                    ErrorHandler::e.Error("Uknown @use parameter : "+type, m_currentToken.m_lineNumber);
+                }
+            }
+
+
           /*  else if (m_currentToken.m_value.toLower() =="error") {
                 Eat(TokenType::PREPROCESSOR);
                 ErrorHandler::e.Error("Error from preprocessor3: " +m_currentToken.m_value);
@@ -676,7 +758,9 @@ void Parser::Preprocess()
             }*/
         }
 
-        Eat(m_currentToken.m_type);
+        Eat();
+        //qDebug() << "VAL: " << m_currentToken.m_value << m_currentToken.getType();
+
     }
 
     // Afterwards, replace all preprocessor defines
@@ -697,6 +781,7 @@ void Parser::PreprocessReplace()
         m_lexer->m_text = m_lexer->m_text.replace(rg, val);
 
     }
+//    qDebug() << m_preprocessorDefines.keys();
 }
 
 Node* Parser::Parse(bool removeUnusedDecls, QString param)
@@ -841,7 +926,7 @@ Node *Parser::ForLoop()
         if (m_currentToken.m_type==TokenType::STEP) {
             Eat();
             step = Expr();
-            qDebug() << TokenType::getType(step->m_op.m_type);
+            //qDebug() << TokenType::getType(step->m_op.m_type);
         }
         if (m_currentToken.m_type==TokenType::LOOPX) {
             Eat();

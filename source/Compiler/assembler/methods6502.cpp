@@ -1282,6 +1282,13 @@ void Methods6502::KrillLoad(Assembler *as)
     as->Term("jsr ");
     m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
+    QString lbl = as->NewLabel("loadkrill");
+    as->PopLabel("loadkrill");
+    as->Asm("bcc "+lbl);
+    as->Asm("lda #$01");
+    as->Asm("sta	$d021");
+    as->Asm("jmp *");
+    as->Label(lbl);
 
 /*    ldx #<filename
     ldy #>filename

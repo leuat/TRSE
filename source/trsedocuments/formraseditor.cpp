@@ -265,9 +265,9 @@ void FormRasEditor::Build()
             process1541.start(m_iniFile->getString("c1541"), d64Params  );
             process1541.waitForFinished();
 
-            qDebug() << m_iniFile->getString("c1541") << d64Params;
-            qDebug() << process1541.readAllStandardOutput();
-            qDebug() << process1541.readAllStandardError();
+//            qDebug() << m_iniFile->getString("c1541") << d64Params;
+  //          qDebug() << process1541.readAllStandardOutput();
+    //        qDebug() << process1541.readAllStandardError();
 
         }
 
@@ -713,6 +713,7 @@ bool FormRasEditor::BuildStep()
     timer.start();
     lexer = Lexer(text, lst, m_projectIniFile->getString("project_path"));
     parser = Parser(&lexer);
+    parser.m_currentDir = m_currentDir;
     compiler = Compiler(&parser,m_iniFile, m_projectIniFile);
     compiler.Parse();
 //    compiler.Interpret();

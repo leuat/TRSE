@@ -60,6 +60,7 @@ public:
 
 //    int m_currentParserBlock=-1;
 
+    QString m_currentDir;
     QMap<QString, Node*> m_procedures;
     QMap<QString, QString> m_preprocessorDefines;
     QVector<Node*> m_proceduresOnly;

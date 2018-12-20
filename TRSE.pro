@@ -300,4 +300,30 @@ DISTFILES += \
     resources/text/builtinmethods.txt \
     resources/text/builtinmethods.txt \
     resources/images/NES.png \
-    resources/code/vic20_playsid_init.asm
+    resources/code/vic20_playsid_init.asm \
+    resources/bin/krill/loader_f000-c64.prg \
+    resources/bin/krill/loader_e000-c64.prg \
+    resources/bin/krill/loader_c000-c64.prg \
+    resources/bin/krill/loader_b000-c64.prg \
+    resources/bin/krill/loader_a000-c64.prg \
+    resources/bin/krill/loader_9000-c64.prg \
+    resources/bin/krill/loader_8000-c64.prg \
+    resources/bin/krill/loader_7000-c64.prg \
+    resources/bin/krill/loader_6000-c64.prg \
+    resources/bin/krill/loader_5000-c64.prg \
+    resources/bin/krill/loader_4000-c64.prg \
+    resources/bin/krill/loader_3000-c64.prg \
+    resources/bin/krill/loader_2000-c64.prg \
+    resources/bin/krill/loader_1000-c64.prg \
+    resources/bin/krill/loader_0200-c64.prg \
+    resources/bin/krill/install_b000-c64.prg \
+    resources/bin/krill/install_a000-c64.prg \
+    resources/bin/krill/install_9000-c64.prg \
+    resources/bin/krill/install_8000-c64.prg \
+    resources/bin/krill/install_7000-c64.prg \
+    resources/bin/krill/install_6000-c64.prg \
+    resources/bin/krill/install_5000-c64.prg \
+    resources/bin/krill/install_4000-c64.prg \
+    resources/bin/krill/instal_3000-c64.prg \
+    resources/bin/krill/install_2000-c64.prg \
+    resources/bin/krill/install_1000-c64.prg
