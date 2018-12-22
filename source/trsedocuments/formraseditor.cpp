@@ -83,6 +83,22 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 
 }
 
+QStringList FormRasEditor::getFileList()
+{
+    QString pawFile = m_projectIniFile->getString("d64_paw_file");
+    if (pawFile=="none") return QStringList();
+    CIniFile paw;
+    paw.Load(m_currentDir + "/"+pawFile);
+    QStringList data = paw.getStringList("data");
+    QStringList ret;
+    int count = data.count()/3;
+    for (int i=0;i<count;i++) {
+        ret<< data[3*i];
+    }
+    return ret;
+
+}
+
 void FormRasEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile* pro)
 {
     TRSEDocument::InitDocument(t,ini, pro);
@@ -713,6 +729,8 @@ bool FormRasEditor::BuildStep()
     timer.start();
     lexer = Lexer(text, lst, m_projectIniFile->getString("project_path"));
     parser = Parser(&lexer);
+    parser.m_diskFiles = getFileList();
+//    qDebug() << "HEISANN";
     parser.m_currentDir = m_currentDir;
     compiler = Compiler(&parser,m_iniFile, m_projectIniFile);
     compiler.Parse();

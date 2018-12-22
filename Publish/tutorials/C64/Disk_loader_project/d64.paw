@@ -1,0 +1,6 @@
+ras_include_file = 0
+packed_address = $0
+output_dir = d64_auto/
+use_exomizer3 = 0
+address_field = 0
+data = ,octopus_data, images/octopus_data.bin, $6000, octopus_color, images/octopus_color.bin, $2000, moose_data, images/moose_data.bin, $6000, moose_color, images/moose_color.bin, $2000

@@ -1,0 +1,38 @@
+program disk_loader_project;
+var  
+   i: byte; 
+
+	@use KrillsLoader $0200 $3000 $5000 
+
+begin
+	
+	InitKrill();
+
+//	setmemoryconfig(1,0,0);
+	setmulticolormode();
+	setbitmapmode();
+	// Bitmap points to $6000 etc
+	VIC_DATA_LOC := $18;
+	SCREEN_FG_COL:=BLACK;
+	i:=0;
+	setbank(VIC_BANK1);
+	while (1=1) offpage do begin
+		// Turn off screen during decrunching process
+//		screenoff(); // turn off screen while decrunching..
+		if (i=0) then KrillLoad(octopus_color);
+		if (i=1) then KrillLoad(moose_color);
+
+		copyimagecolordata(^$2000,1);
+		// Decrunch image data
+		if (i=0) then KrillLoad(octopus_data);
+		if (i=1) then KrillLoad(moose_data);
+		while (keypressed(KEY_SPACE)=0) do waitforraster(0);
+
+		i:=i+1;
+
+		if (i=2) then i:=0;
+
+	end;
+
+end.
+

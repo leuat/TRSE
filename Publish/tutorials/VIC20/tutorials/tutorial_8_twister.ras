@@ -1,0 +1,170 @@
+program Twister;
+var  
+	
+
+@define twister "$2000"
+   	xp: byte; 
+	twister: incbin("data/twister.bin",@twister);
+//	charset: incbin("charsets/charset_8x8.bin", $2000);
+	zp,zp2,p1,cp:pointer;
+
+
+@startblock $2A00 "vars"
+	x,y,i,j,time,ttime,k,l,tt,m,t1,t2,current : byte = 0;
+	table : array[320] of byte;
+	sine2 : array[256] of byte;
+	eights : array[9] of byte = (0,0,8,16,24,32,40,48,56,64);
+@endblock
+
+procedure WOOT();
+begin
+
+end;
+
+@startblock $3000 "code"
+
+
+
+procedure InitTwister();
+begin
+//	moveto(0,4,$10);
+	screenmemory:=$1000;	
+	k:=64;
+	for y:=0 to 22 do begin
+		for x:=0 to 8 do begin
+			screenmemory[x+8]:=k;
+//			screenmemory[x+16]:=k;
+//			screenmemory[x+14]:=k;
+			inc(k);
+//			if k>192 then k:=64;
+		end;
+		inczp(screenmemory,22);
+
+	end;
+
+end;
+
+
+procedure UpdateTwister();
+begin
+	//zp:=@twister;
+	zp2:=$1400+64*8;
+	t1:=time*3+0 + sine[time];
+	t2:=-time*2+99;
+	k:=time*8;
+
+
+	xp:=0;
+	for y:=0 to 22 do begin
+		for x:=0 to 8 do begin
+//			l:=0;
+			tt:=sine2[t1+xp];
+			m:=sine2[t2-xp];
+//			m:=sine2[tt+m];
+//			tt:=(tt-m-k)&%11111110;
+			tt:=(m+tt-k)&%11111110;
+
+			asm("
+				ldx tt
+				lda table,x
+				sta zp
+				inx
+				lda table,x
+				sta zp+1
+
+			");
+
+
+/*			for k:=0 to 8 do begin
+				zp2[l]:=zp[l];
+				l:=l+8;
+			end;*/
+			asm("
+			ldx #8
+			clc
+
+blah:
+			ldy eights,x
+			lda (zp),y
+			sta (zp2),y
+			dex
+			bne  blah
+			");
+			inczp(zp2,1);
+			inc(xp);
+//			inc(xp);
+//			xp:=xp+3;
+		end;
+		inczp(zp2,8*7);		
+	end;
+
+end;
+
+procedure InitTable();
+begin
+	zp:=@twister;
+	p1:=table;
+	k:=0;
+	for i:=0 to 128 do begin
+		j:=i*2;
+		asm("
+			ldy j
+			lda zp
+			sta (p1),y
+			iny 
+			lda zp+1
+			sta (p1),y
+		");	
+		inczp(zp,1);
+		inc(k);
+		if (k=8) then begin
+			k:=0;
+			inczp(zp,7*8);
+		end;
+		if (i=63) then 	zp:=@twister;
+
+	end;
+
+end;
+
+procedure InitSine();
+begin
+	for i:=0 to 0 do sine2[i]:=sine[i]/4;
+
+end;
+
+procedure MainRoutine();
+begin
+	SCREEN_BG_COLOR:=PURPLE;
+	fill(^$9400,YELLOW+8,0);
+	fill(^$9500,YELLOW+8,0);
+	fill(^$1000,$20,0);
+	fill(^$1100,$20,0);
+	InitTwister();
+	InitTable();
+	InitSine();
+	blockmemcpy(^$8000,^$1400,8);
+	AUX_COLOR_AND_VOLUME:=6*16;
+//	copycharsetfromrom(^$2000);
+	setcharsetlocation($1400);
+	while (1=1) do begin
+		WaitForRaster(0);
+		UpdateTwister();
+		inc(time);
+		inc(ttime);
+	end;
+
+end;
+
+
+@endblock
+
+
+procedure what();
+begin
+
+end;
+
+begin
+	MainRoutine();
+end.

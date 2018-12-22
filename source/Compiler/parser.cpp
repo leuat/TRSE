@@ -736,6 +736,14 @@ void Parser::Preprocess()
                     outFile = outFolderShort+"krill_installer.bin";
                     replaceLine += "\n_Installer_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(installerPos-2,16)+");";
 
+                    for (QString s: m_diskFiles)
+                        replaceLine+= s + ": string=(\""+s.toUpper()+"\");";
+
+                    // Now load all disk files
+//                    CIniFile paw;
+  //                  paw.Load()
+
+
 //_Installer_Binary: 		incbin ("bin/install-c64.bin",$5000);
   //                  qDebug() << replaceLine;
 //                    qDebug() << Util::numToHex(loaderPos);
@@ -770,6 +778,7 @@ void Parser::Preprocess()
 
 void Parser::PreprocessReplace()
 {
+
     for (QString k: m_preprocessorDefines.keys()) {
         QString val = m_preprocessorDefines[k];
 //        qDebug() << "Replacing: @" + k << "  with " << val;

@@ -45,6 +45,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("KrillLoad")) {
         KrillLoad(as);
     }
+    if (Command("InitKrill")) {
+        InitKrill(as);
+    }
 
     if (Command("init_viairq"))
         InitVIAIRQ(as);
@@ -1279,21 +1282,52 @@ void Methods6502::KrillLoad(Assembler *as)
     QString filename = ->;*/
     as->Asm("ldx #<"+varName->value);
     as->Asm("ldy #>"+varName->value);
-    as->Term("jsr ");
-    m_node->m_params[1]->Accept(m_dispatcher);
-    as->Term();
+    as->Asm("jsr "+as->m_defines["_LoadrawKrill"]);
+//    m_node->m_params[1]->Accept(m_dispatcher);
+//    as->Term();
     QString lbl = as->NewLabel("loadkrill");
+    QString lblcrash = as->NewLabel("loadkrillcrash");
     as->PopLabel("loadkrill");
     as->Asm("bcc "+lbl);
-    as->Asm("lda #$01");
-    as->Asm("sta	$d021");
-    as->Asm("jmp *");
+    as->Label(lblcrash);
+    as->Asm("inc $D021");
+
+    as->Asm("jmp "+lblcrash);
     as->Label(lbl);
+
+    as->PopLabel("loadkrillcrash");
 
 /*    ldx #<filename
     ldy #>filename
     jsr	@loadraw
   */
+}
+
+void Methods6502::InitKrill(Assembler *as)
+{
+//    qDebug() << as->m_defines;
+    as->Comment("Init Krill");
+    DisableInterrupts(as);
+    as->Asm("jsr " + as->m_defines["_InstallKrill"]);
+    as->Asm("sei");
+
+    QString src = as->m_defines["_ResidentLoaderSource"];
+    QString dst = as->m_defines["_ResidentLoaderDestination"];
+
+    if (src==dst)
+        return;
+    as->Asm("ldx #0");
+    QString lbl = as->NewLabel("copylabel");
+    as->Label(lbl);
+    as->Asm("lda "+src+",x");
+    as->Asm("sta "+dst+",x");
+    as->Asm("lda "+src+"+$100"+",x");
+    as->Asm("sta "+dst+"+$100"+",x");
+    as->Asm("inx");
+    as->Asm("bne " + lbl);
+//    blockmemcpy(^@_ResidentLoaderSource,^@_ResidentLoaderDestination,2);
+
+
 }
 
 void Methods6502::InitRandom(Assembler *as)
@@ -3059,9 +3093,10 @@ void Methods6502::MemCpyLarge(Assembler *as)
 void Methods6502::SetBank(Assembler *as)
 {
     as->Comment("Set bank");
-    as->Asm("lda $dd00");
-    as->Asm("and #$fc");
-    as->Term("ora ");
+//    as->Asm("lda $dd00");
+//    as->Asm("and #$fc");
+ //   as->Asm("and #%00000000");
+    as->Term("lda ");
     m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
     as->Asm("sta $dd00");

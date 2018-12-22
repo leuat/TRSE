@@ -1,4 +1,3 @@
-project_path = /home/leuat/code/TRSE/Publish/tutorials/VIC20/vixmas_demo/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 temp_zeropages = ,$5A, $5C, $60, $62
 zeropage_screenmemory = $fe
@@ -16,7 +15,6 @@ post_optimizer_passjmp = 1
 post_optimizer_passldatax = 1
 post_optimizer_passstalda = 1
 post_optimizer_passldx = 1
-open_files = ,demo.ras, include/image1.ras, data.paw, images/logo.flf
 vic_memory_config = 24k
 data_header_images/logo.flf = 0
 charset_ = /home/leuat/Dropbox/TRSE/VIXMas/charsets/charset.flf

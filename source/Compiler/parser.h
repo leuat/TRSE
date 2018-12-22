@@ -63,6 +63,7 @@ public:
     QString m_currentDir;
     QMap<QString, Node*> m_procedures;
     QMap<QString, QString> m_preprocessorDefines;
+    QStringList m_diskFiles;
     QVector<Node*> m_proceduresOnly;
     QVector<QString> m_ignoreMethods;
     Lexer* m_lexer;

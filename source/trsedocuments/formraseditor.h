@@ -75,6 +75,7 @@ public:
     bool m_buildSuccess = false;
     void LoadRasFile(QString fileName);
     void ExecutePrg(QString fileName,  QString system);
+    QStringList getFileList();
     void InitDocument(WorkerThread *t, CIniFile *ini, CIniFile* iniProject) override;
     void setupEditor();
     void Compress();

@@ -1,0 +1,854 @@
+program MyProgram;
+var  
+   index: byte; 
+	bgcol,k3, x,y,time,time2,idx,i,j,road, k,ms_shift,k2,current, ffld,val,a,b, cur_col, cur_start,l,m,dy,scroll,dscroll: byte = 0;
+	sx,dsx,tt,speed: byte =1;
+	cc, i_, k_, k2_, j_:byte = 0;
+	shifts : array[16] of byte;
+	shifts2 : array[16] of byte;
+	int : integer;
+
+	colorsRedhues : array [16] of byte = (  0,11,0,0  );
+	
+	roads: array[32] of byte = (
+	%11110000,	%00000000,
+	%11100000,	%00000001,
+	%11000000,	%00000011,
+	%10000000,	%00000111,
+	%00000000,	%00001111,
+	%00000000,	%00011110,
+	%00000000,	%00111100,
+	%00000000,	%01111000,
+	%00000000,	%11110000,
+	%00000001,	%11100000,
+	%00000011,	%11000000,
+	%00000111,	%10000000,
+	%00001111,	%00000000,
+	%00011100,	%00000000,
+	%00111000,	%00000000,
+	%01110000,	%00000000,
+
+
+
+	);
+//	textcols : array[7] of byte = (7,4,4,3,3,11, 11);
+
+
+@define roadBlock $3D
+
+	charset:incbin("charsets/charset.bin", $2000);
+	sprites : incbin("images/trse.bin",$2800);
+
+	sine2:array[256] of byte;
+	tab:array[256] of byte;
+
+
+//@define debugRaster 1
+	
+
+
+	waves : string=(   
+//					"          ",255,
+					"LEMONSPAWN  ",255,
+					  "PRESENTS    ",255,
+					  "$4K         ",255,
+					  "DREAMS     ",255,
+					  "CODE        ",255,
+					  "LEUAT        ",255,
+					  "MUSIC        ",255,
+					  "WARLORD      ",255,
+					  "DEVELOPED      ",255,
+					  "WITH        ",255,
+					  "TRSE        ",255,
+					0); 
+
+
+	@define starPos $b0
+	@define starPosEnd $b8
+	@define starsY 7
+	@define starsPerLine 2
+	@define starsLines 5
+
+	star_x:array[24] of byte;	
+	star_dx:array[24] of byte;	
+	star_ddx:array[24] of byte;	
+
+@define FontTabPos $2A00
+
+	zp,p1,p2,tp,tp2:pointer;
+
+	// Used in main
+	p3,p4,zp2 : pointer;
+
+	uct: incsid("music/exhale2B.sid","2");
+	
+//	cs: incbin("charsets/waves.bin",$2800);
+
+	fontTable : array[16] of byte = ($20, $7e, $7C, $E2, 
+									$6C, $7f, $E1,  $Fb,
+									$7b, $61, $ff, $ec,
+									$62, $fc, $fe, $53);
+
+
+
+	fadeBlue : array [16] of byte = (11,6,6,12,4,14,15,1,1,15,14,4,12,6,6,11); 
+
+
+
+	text : string = ("         LEMONSPAWN PRESENTS      $4K DREAMS       A SMALL CRACKTRO          PARTICIPATING IN THE 2018 CSDB INTRO CREATION COMPETITION                ",
+					" CODE LEUAT      MUSIC WARLORD       THANKS TO EVERYONE WHO ARE SUPPORTING THE CONTINUOUS DEVELOPMENT OF TRSE                 ");
+
+@startblock @FontTabPos FontTab
+	FontTab : array[256] of byte;
+@endblock
+
+	
+@include "packed_resources1.ras"
+
+@define useKernal 0
+@define ypos 16
+
+interrupt RasterBar();
+interrupt RasterLower();
+
+procedure MoveRestSprites();
+procedure UpdateRoad();
+procedure PrintWave();
+
+
+//procedure PrintNumberOfWaves();
+
+@define rypos 14
+
+procedure SetupScroll();
+begin
+	k2:=-time;
+	for k:=0 to 4 do begin
+		ms_shift:=sine[time+k2];// -sine[time*2+k2*2+3]/4;
+		if (dscroll<>0) then
+			shifts[k]:=7-ms_shift&7;
+		ms_shift:=ms_shift/8;
+		shifts2[k]:=ms_shift;	
+//		if (dscroll<>0) then
+		if (k=1) then shifts[k]:=7-dscroll;
+		k2:=k2+44;
+	end;
+end;
+
+
+procedure PrintWaves();
+begin
+	moveto(0,@ypos-2,$04);
+
+	p1:=screenmemory;
+	inczp(p1,40);
+	
+	a:=0;
+	b:=40;
+	ms_shift:=shifts2[0];
+	PrintWave();
+	ms_shift:=shifts2[2];
+	moveto(0,@ypos+4,$04);
+
+	p1:=screenmemory;
+	inczp(p1,40);
+	PrintWave();
+
+
+end;
+
+@define cwait 128
+
+procedure RenderCredzChar();
+begin
+	k:=tp[0];
+
+	if (k=0) then begin
+		tp:=text;
+		scroll:=0;
+		return();
+
+	end;
+
+
+	if (k=@cwait) then begin
+		dy:=tp[1];
+		inczp(tp,2);
+		return();
+
+	end;
+
+		k:=k*2;
+		asm("
+			ldy k
+			lda @FontTabPos,y
+			sta zp
+			iny
+			lda @FontTabPos,y
+			sta zp+1
+
+		");
+
+
+	screenmemory:=$0400+@ypos*40+39;
+	idx:=1;
+	l:=scroll*2;
+	m:=scroll*2+2;
+	for y:=0 to 8 step 2 do begin
+		for x:=l to m step 2 do begin
+			
+			k:=getbit(zp[y],7-x);
+			k:=k+getbit(zp[y],6-x)*2;
+			k:=k+getbit(zp[y+1],6-x)*4;
+			k:=k+getbit(zp[y+1],7-x)*8;
+//			k:=k&15;
+			if (tp[0]=$20) then k:=0;
+			screenmemory[0]:=fontTable[k];
+//			h2[x/2]:=cx;
+		end;
+		inczp(screenmemory,40);
+	end;
+	inc(scroll);
+	if (scroll=4) then begin
+		inczp(tp,1);
+		scroll:=0;
+	end;
+
+	dy:=0;
+//	SCREEN_BG_COLOR:=BLACK;
+end;
+
+
+procedure SetupFontTab();
+begin
+	p1:=@FontTabPos;
+	for i:=0 to 128 do begin	
+		k:=i;
+		if (k>64) then
+			k:=k-64;
+
+		zp:=$2000;
+
+		if k>31 then begin
+			k:=k-31;
+			inczp(zp, 31*8);
+		end;
+		if (k<>0) then 
+			inczp(zp, k*8);
+
+		k:=i*2;
+		asm("
+			ldy k
+	
+			lda zp
+			sta (p1),y
+			lda zp+1
+			iny
+			sta (p1),y
+
+	
+
+		");
+//		inczp(p1,2);
+
+	end;
+
+end;
+
+
+
+
+procedure SetupCopyText();
+begin
+	p3:=$2000+128*8;
+	p4:=$2000+128*8+16*8;
+//	tt:=time2;
+//	c:=0;
+	time2:=time2+1;
+	sx:=0-sine[time2+32]/12+4;
+//	if (time&7=3) then 
+//		dec(sx);
+
+	if (time2>253) then begin
+		while (tp2[0]<>255) do
+			inczp(tp2,1);
+		inczp(tp2,1);
+		if (tp2[0]=0) then tp2:=waves;			
+		time2:=0;
+//		sx:=12;
+	end;
+
+	cc:=0;
+	tt:=time2*4;
+//	if (a<>0) then begin inczp(p3,a*8);inczp(p4,a*8);end;
+
+
+end;
+
+
+procedure CopyText();
+begin
+	for i_:=a to b  do begin
+		k_:=tp2[i_]*2;
+//		if (tp2[i_]=255) then k_:=$40;
+		asm("
+			
+			ldy k_
+			lda @FontTabPos,y
+			sta zp2
+			iny
+			lda @FontTabPos,y
+			sta zp2+1
+
+		");
+
+		asm("
+			ldy #0
+			lda #0
+ll1:
+			sta (p3),y
+			sta (p4),y
+			iny
+			cpy #8
+			bne ll1	
+		");
+		k2_:=sine2[tt+cc]+sx;
+		if (tp2[i_]<>$20) then
+//		for j_:=0 to 7 do begin
+		
+/*			k_:=j_+k2_;
+			if (k_<8) then 
+				p3[k_]:=zp2[j_]
+			else
+			if (k_<16) then 
+				p3[k_-8+8*16]:=zp2[j_];
+*/
+			asm("
+
+				ldy #0
+ppqq:			sty p1
+				
+				
+;				ldy j_
+				lda (zp2),y
+				sta zp
+
+				tya
+				clc
+				adc k2_
+				tax
+				lda tab,x
+				tay
+				lda zp
+				sta (p3),y
+
+				ldy p1
+				iny
+				cpy #7
+				bne ppqq
+				
+			");
+	
+/*			k_:=j_+k2_;
+			k_:=tab[k_];
+			p3[k_]:=zp2[j_];*/
+//		end;
+		cc:=cc+(sine[time]/8)+16;
+		inczp(p3,8);
+		inczp(p4,8);
+	end;
+	//p4[7]:=0;
+	poke(^$2000+^128*^8 + ^254,0,0);
+//	if (sx=16) then begin
+//		sx:=-8;
+//	end;
+end;
+
+
+procedure RenderStars();
+begin
+	moveto(0,@starsY,$D8);
+	p1:=screenmemory;
+	moveto(0,@starsY,$04);
+	k:=0;
+	dsx:=time/4;
+//	for i:=0 to @starsLines do begin
+	for i:=a to b do begin
+		for j:=0 to @starsPerLine do begin
+
+			star_dx[k]:=star_dx[k]-star_ddx[k];
+			if (star_dx[k]>127) then begin
+				star_dx[k]:=star_dx[x]+8;
+
+				m:=star_x[k];
+				l:=screenmemory[m];
+		
+				if (l>@starPos and l<@starPosEnd) then
+					screenmemory[m]:=$20;
+		
+				dec(star_x[k]);
+		
+				if (star_x[k]>128) then 	
+				begin	
+					star_x[k]:=39;
+					star_ddx[k]:=time&3+1;
+				end;
+			end;
+			
+			m:=star_x[k];
+			l:=screenmemory[m];
+			if (l>@starPos) then if (l<@starPosEnd) then
+				l:=$20;
+
+//			if (l=$20 or (l>@starPos and l<@starPosEnd)) then begin
+			if (l=$20) then begin
+				p1[m]:=fadeBlue[dsx&15];
+				screenmemory[m]:=@starPos + star_dx[k];
+			end;
+
+			inc(k);
+			inc(dsx);
+		end;
+				
+		inczp(screenmemory,40);
+		inczp(p1,40);
+	end;
+
+end;
+
+procedure MoveSprites();
+
+
+interrupt RasterTop();
+begin
+	
+	StartIRQ(@useKernal);	
+/*	call(SIDFILE_1_PLAY);
+	CloseIRQ();
+	asm(" rti");
+*/
+
+	setregularcolormode();
+	SCREEN_BG_COL:=bgcol;
+	SCREEN_FG_COL:=bgcol;
+	i:=sine[time*4]/32;
+	scrollx(i);
+//		SCREEN_BG_COL:=PURPLE;
+
+@ifdef debugRaster
+	SCREEN_BG_COL:=RED;
+@endif
+//	call(SIDFILE_1_PLAY);
+@ifdef debugRaster
+	SCREEN_BG_COL:=BLACK;
+@endif
+//	SCREEN_BG_COL:=BLACK;
+	inc(time);
+	dscroll:=dscroll+2;
+@ifdef debugRaster
+	SCREEN_BG_COL:=YELLOW;
+@endif
+	
+//		SCREEN_BG_COL:=RED;
+	if (dscroll=8) then begin
+		zp:=$0400+40*@ypos;
+		p1:=$0400+40*@ypos+1;
+		for i:=0 to 4 do begin
+			memcpy(p1,0,zp,39);
+			inczp(zp,40);
+			inczp(p1,40);
+		end;
+		zp:=$D800+40*@ypos;
+		p1:=$D800+40*@ypos+1;
+		for i:=0 to 4 do begin
+			j:=zp[0];
+			memcpy(p1,0,zp,39);
+			zp[39]:=j;
+			inczp(zp,40);
+			inczp(p1,40);
+		end;
+		dscroll:=0;
+//		SetupScrollText();
+	end;
+	SetupScroll();
+@ifdef debugRaster
+	SCREEN_BG_COL:=BLACK;
+@endif
+	
+//	SCREEN_BG_COL:=YELLOW;
+//	SCREEN_BG_COL:=BLACK;
+	if (dscroll<>0) then begin
+//		fill(^$2000+^128*^8,0,0);
+@ifdef debugRaster
+	SCREEN_BG_COL:=BLUE;
+@endif
+		PrintWaves();
+@ifdef debugRaster
+	SCREEN_BG_COL:=GREEN;
+@endif
+		a:=0;
+		b:=7;
+		RenderStars();
+
+
+@ifdef debugRaster
+	SCREEN_BG_COL:=BLACK;
+@endif
+/*		zp:=$0400;
+		zp2:=$2800;
+		k:=sine[time*4]/8;
+		if (k<>0) then 
+		inczp(zp2,k);
+		for j:=0 to 13 do begin
+			memcpy(zp2,0,zp,40);
+			inczp(zp2,40);
+			inczp(zp,40);
+		end;
+*/
+	end;
+
+	y:=142+18; 
+	current:=0;
+	idx:=0;
+//	UpdateRoad();
+
+//	i:=time/2;
+//	SPRITE_MULTICOLOR_REG1[1]:=fade2[i&15];
+
+
+//	RasterIRQWedge(RasterBar(), y,@useKernal);
+	RasterIRQ(RasterBar(), y,@useKernal);
+	i:=time;
+//	colorsRedhues[1]:=fade[i&31];
+//	i:=i;
+//	colorsRedhues[2]:=fade[i&31];
+	hideborderx(1);
+
+	a:=5;
+	b:=6;
+
+	if (KeyPressed(KEY_SPACE)=1) then begin
+		SetMemoryConfig(1,1,1);
+		screenoff();
+		asm(" jmp $FCE2 ");
+	end;
+	CloseIRQ();
+
+end;
+
+
+
+interrupt RasterBar();
+begin
+//	StartIRQWedge(7);
+	StartIRQ(@useKernal);
+	wait(17);
+	SCREEN_BG_COL:=colorsRedhues[idx];
+	SCREEN_FG_COL:=SCREEN_BG_COL;
+//	j:=idx-cur_start;
+
+
+
+//	setmulticolormode();
+	inc(idx);
+
+
+
+	scrollx(shifts[current]);
+
+	y:=y+16;
+	if (idx=2) then y:=y+16;
+	inc(current);
+//	RasterIRQWedge(RasterBar(), y, @useKernal);
+	RasterIRQ(RasterBar(), y, @useKernal);
+
+
+//	j:=idx-cur_start;
+	if (idx=4) then begin // Go to top again
+		RasterIRQ(RasterTop(),0,@useKernal);
+//		SCREEN_BG_COL:=GREEN;
+@ifdef debugRaster
+	SCREEN_BG_COL:=PURPLE;
+@endif
+		if (dscroll=0) then 	begin
+			RenderCredzChar();
+		end
+		else begin
+			a:=0;
+			b:=8;
+			SetupCopyText();	
+			CopyText();
+		end;
+@ifdef debugRaster
+	SCREEN_BG_COL:=BLACK;
+@endif
+//		SCREEN_BG_COL:=BLACK;
+
+	end;
+	
+	if (idx=2) then
+	begin 
+		call(SIDFILE_1_PLAY);
+		MoveRestSprites();
+	end;
+
+	if (idx=1) then 		MoveSprites();
+
+
+/*	if (idx=3) then begin
+		MoveRestSprites();
+	end;
+*/
+
+/*	if (idx<3) then begin
+	a:=3+idx;
+	b:=a+1;
+	RenderStars();
+	end;
+*/
+//    closeirqwedge();
+    closeirq();
+end;
+
+
+procedure SetupSine2();
+begin
+	for i:=0 to 0 do sine2[i]:=sine[i]/32;
+
+	fill(tab,254,0);
+	for i:=0 to 32 do begin
+		if (i<16) then tab[i]:=i+16*8-8;
+		if (i<8) then tab[i]:=i;
+	end;
+
+end;
+
+
+procedure InitStars();
+begin
+	for i:=0 to 24 do begin
+		rand(0,160,j);
+		star_x[i]:=j/4;	
+		rand(0,255,j);
+		star_dx[i]:=j&7;
+		rand(0,255,j);
+		star_ddx[i]:=j&3 +1;
+
+	end;
+	zp:=$2000+8*@starPos;
+	for i:=0 to 8 do begin
+		fill(zp,0,8);
+		togglebit(zp[3],7-i,1);
+		togglebit(zp[4],7-i,1);
+/*		togglebit(zp[4],8-i,1);
+		togglebit(zp[4],6-i,1);
+		togglebit(zp[4],7-i,1);
+		togglebit(zp[3],7-i,1);
+		togglebit(zp[5],7-i,1);*/
+		inczp(zp,8);
+	end;
+end;
+
+
+procedure MoveSprites();
+begin
+	i:=sine[time*2]/4+40;
+	int:=i;
+	j:=0;
+//	poke(^$D010,0,0);
+	for i:=0 to 5 do begin
+		int:=int+24;
+		poke(^$D000,j,int);		
+//		if (int>256) then togglebit(^$D010,i,1);
+
+		j:=j+2;
+	end;
+end;
+
+procedure MoveRestSprites();
+begin
+	for i:=5 to 8 do begin
+		int:=int+24;
+		spritepos(int, 210, i);
+	end;
+
+
+end;
+
+procedure InitSprites();
+begin
+	SPRITE_BITMASK:=$FF;
+	SPRITE_MULTICOLOR:=$FF;
+	SPRITE_STRETCH_Y:=$FF;
+	SPRITE_MULTICOLOR_REG1[0]:=BLUE;
+	SPRITE_MULTICOLOR_REG1[1]:=CYAN;
+//	fill(^$0800,0,0);
+//	fill(^$0900,0,0);
+	for i:=0 to 8 do begin
+		int:=i*24;
+		int:=int+80;
+		y:=210;
+		spritepos(int,y,i);		
+		setspriteloc(i,$A0+i,0);
+		SPRITE_COLOR[i]:=PURPLE;
+	end;
+
+
+end;
+
+procedure UpdateRoad();
+begin
+	road:=(road+1)&15;
+	k:=(road+1)&15;
+	k:=k*2;
+	zp:=$2000+@roadBlock*8;
+	j:=road*2;
+	zp[6]:=roads[j];
+	zp[6+8]:=roads[j+1];
+	zp[7]:=roads[k];
+	zp[7+8]:=roads[k+1];
+
+end;
+
+
+procedure InitRoad();
+begin
+	screenmemory:=$0400+3*40;
+	fill(^$2000+^@roadBlock*^8,$FF,16);	
+	for i:=0 to 40 do begin
+		if (screenmemory[i]=$53) then begin
+			screenmemory[i]:=i&1 + @roadBlock;		
+		end;
+	end;
+
+/*	for i:=0 to 32 do begin
+		j:=roads[i];
+		asm("
+			lda j
+			eor #$FF
+			sta j
+		");
+		roads[i]:=j;
+	end;*/
+end;
+
+procedure InitWaves();
+begin
+	Screenoff();
+	setbank(VIC_BANK0);
+//	ClearScreen($20,^$4400);
+	ClearScreen($20,^$0400);
+/*	i:=peek(^$01,0);
+	poke(^$01,0,$33);
+	blockmemcpy(^$D000,^$2000,8);
+	poke(^$01,0,i);*/
+	InitSprites();
+//	MULTICOLOR_CHAR_COL[0]:=BROWN;	
+	MULTICOLOR_CHAR_COL[2]:=BLACK;	
+	MULTICOLOR_CHAR_COL[1]:=RED;	
+	hideborderx(1);
+	ffld:=100;
+	val:=1;
+	cur_start:=0;
+	decrunch(logo_col);
+	decrunch(logo_chars);
+
+
+	tp:=text;
+	InitStars();
+	screenmemory:=$0400;
+	for i:=0 to 25 do begin
+		for j:=0 to 40 do begin
+			screenmemory[j]:=screenmemory[j];
+		end;
+		inczp(screenmemory,40);
+	end;
+
+/*	moveto(0,@ypos-2,$D8);
+	for i:=0 to 12 do begin
+//		j:=(i+3);
+		j:=colorsBlues2[i&15];
+		fill(screenmemory, j, 40);
+		inczp(screenmemory,40);
+	end;*/
+	initsid(SIDFILE_1_INIT);
+	hideborderx(1);
+	setcharsetlocation($2000);
+	fill(^$2000+^128*^8,0,0);
+	tp2:=waves;
+	SetupFontTab();
+	SetupSine2();
+//	InitRoad();
+	fill(^$D800+^14*^40, PURPLE,40);
+	fill(^$D800+^15*^40, CYAN,40);
+	fill(^$D800+^20*^40, YELLOW,40);
+	fill(^$D800+^21*^40, PURPLE,40);
+
+	fill(^$D800+^18*^40, YELLOW,80);
+
+	fill(^$D800+^16*^40, CYAN,80);
+
+	fill(^$0400+^14*^40, $20,160);
+	fill(^$0400+^18*^40, $20,160);
+
+	for i:=0 to 105 do begin
+		waitforraster(0);
+		waitforraster(255);
+		call(SIDFILE_1_PLAY);
+	end;
+	ScreenOn();
+end;
+
+procedure PrintWave();
+begin
+
+	asm("
+		ldy a
+pwl:		tya
+		adc ms_shift
+		and #7
+		adc #128
+		sta (screenmemory),y
+		adc #16
+		sta (p1),y
+		
+		iny
+		cpy b
+		bne pwl
+
+	");
+
+/*
+	for i:=10 to 30 do begin
+		j:=(i+ms_shift)&15;
+		screenmemory[i]:=j;
+		screenmemory[i+40]:=j+40;
+
+	end;
+*/
+end;
+
+
+interrupt nmi();
+begin
+end;
+
+
+
+begin
+	preventirq();
+	disableciainterrupts();
+	nmiirq(nmi());
+
+
+	SetMemoryConfig(1,@useKernal,0);
+	InitWaves();
+//	StartRasterChain(RasterTop(),0,@useKernal);
+	RasterIRQ(RasterTop(),0,@useKernal);
+	
+	EnableRasterIRQ();
+	enableirq();
+
+	Loop();
+
+end.

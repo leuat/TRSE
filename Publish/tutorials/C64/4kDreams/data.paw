@@ -1,0 +1,6 @@
+ras_include_file = packed_resources1.ras
+packed_address = $1e00
+output_dir = compressed/
+use_exomizer3 = 0
+address_field = data
+data = ,logo_col, images/logo_colors.bin, $d800, logo_chars, images/logo_chars.bin, $400

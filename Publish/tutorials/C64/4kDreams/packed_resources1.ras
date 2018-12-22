@@ -1,0 +1,6 @@
+logo_col : IncBin("compressed//logo_col_c.bin", $1e00);
+logo_chars : IncBin("compressed//logo_chars_c.bin", $1ec1);
+data : array [4] of byte = (
+	193, 30,
+	77, 31
+);

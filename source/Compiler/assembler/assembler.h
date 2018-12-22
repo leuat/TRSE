@@ -83,7 +83,6 @@ public:
     QVector<QString> m_vars;
     QString m_current;
     QMap<QString, bool> sNumbersUsed;
-
     void push() {
         bool ok=false;
         while (!ok) {
@@ -150,6 +149,8 @@ public:
     QVector<QString> m_zeroPointers; // org zp input
     QVector<QString> m_tempZeroPointers; // org temp zp input
     QVector<QString> m_zpStack; // temp zp stack
+
+    QMap<QString, QString> m_defines;
 
     Appendix* m_currentBlock = nullptr;
 

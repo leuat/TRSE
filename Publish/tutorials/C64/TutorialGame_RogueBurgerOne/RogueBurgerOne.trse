@@ -16,5 +16,3 @@ post_optimizer_passjmp = 1
 post_optimizer_passldatax = 1
 post_optimizer_passstalda = 1
 post_optimizer_passldx = 1
-project_path = /home/leuat/code/TRSE/Publish/tutorials/C64/TutorialGame_RogueBurgerOne/
-open_files = ,RogueBurgerOne.ras
