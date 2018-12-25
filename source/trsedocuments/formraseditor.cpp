@@ -267,7 +267,10 @@ void FormRasEditor::Build()
             QFile header(":resources/bin/crt_header.bin");
             header.open(QFile::ReadOnly);
             output = header.readAll();
+
             header.close();
+            output[0x99] = (char)m_projectIniFile->getdouble("background_color");
+            output[0x94] = (char)m_projectIniFile->getdouble("border_color");
 
             QByteArray mainb;
             QFile mainf(filename+".prg");
@@ -276,7 +279,16 @@ void FormRasEditor::Build()
             mainf.close();
             mainb.remove(0,2);
             output.append(mainb);
-                for (int i=output.size();i<16464;i++)
+            if (mainb.size()>=16384) {
+                QMessageBox msgBox;
+                m_buildSuccess = false;
+                msgBox.setText("Error: Compiled file larger than maximum cartridge size (max 16386 bytes vs current "+QString::number(mainb.size()) + " bytes)." );
+                msgBox.exec();
+                return;
+
+            }
+
+            for (int i=output.size();i<16464;i++)
                 output.append((char)0);
 
             QFile o(filename+".crt");

@@ -140,6 +140,11 @@ public:
             if (m_ini.contains("vic_memory_config"))
                m_ini.setString("vic_memory_config","none");
         }
+        if (!m_ini.contains("border_color"))
+            m_ini.setFloat("border_color",0);
+        if (!m_ini.contains("background_color"))
+            m_ini.setFloat("background_color",0);
+
     }
 
 

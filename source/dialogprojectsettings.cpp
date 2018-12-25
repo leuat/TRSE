@@ -116,6 +116,8 @@ void DialogProjectSettings::FillFromIni()
 
     ui->cmbPawInclude->setCurrentText(m_ini->getString("d64_paw_file"));
 
+    ui->leBackgroundColor->setText(QString::number(m_ini->getdouble("background_color")));
+    ui->leBorderColor->setText(QString::number(m_ini->getdouble("border_color")));
 }
 
 void DialogProjectSettings::FillToIni()
@@ -124,6 +126,9 @@ void DialogProjectSettings::FillToIni()
     m_ini->setStringList("temp_zeropages", toStringList(ui->leTempZP->text()));
 
     m_ini->setString("zeropage_screenmemory", Util::numToHex(Util::NumberFromStringHex(ui->leZeropageScreenMemory->text())));
+
+    m_ini->setFloat("border_color", ui->leBorderColor->text().toInt());
+    m_ini->setFloat("background_color", ui->leBackgroundColor->text().toInt());
 
     m_ini->setString("zeropage_decrunch1", Util::numToHex(Util::NumberFromStringHex(ui->leDecrunchZp1->text())));
     m_ini->setString("zeropage_decrunch2", Util::numToHex(Util::NumberFromStringHex(ui->leDecrunchZp2->text())));
