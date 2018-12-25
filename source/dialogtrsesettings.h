@@ -79,6 +79,8 @@ private slots:
 
     void on_btnNesEmulatr_clicked();
 
+    void on_btnC1541Emulator_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

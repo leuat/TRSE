@@ -262,6 +262,30 @@ void FormRasEditor::Build()
         }
         TestForCodeOverwrite(codeEnd,text);
 
+        if (m_projectIniFile->getString("output_type")=="crt") {
+            QByteArray output;
+            QFile header(":resources/bin/crt_header.bin");
+            header.open(QFile::ReadOnly);
+            output = header.readAll();
+            header.close();
+
+            QByteArray mainb;
+            QFile mainf(filename+".prg");
+            mainf.open(QFile::ReadOnly);
+            mainb = mainf.readAll();
+            mainf.close();
+            mainb.remove(0,2);
+            output.append(mainb);
+                for (int i=output.size();i<16464;i++)
+                output.append((char)0);
+
+            QFile o(filename+".crt");
+            o.open(QFile::WriteOnly);
+            o.write(output);
+            o.close();
+
+        }
+
         if (m_projectIniFile->getString("output_type")=="d64") {
             if (!QFile::exists(m_iniFile->getString("c1541"))) {
                 Messages::messages.DisplayMessage(Messages::messages.NO_C1541);

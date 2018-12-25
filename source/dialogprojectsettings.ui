@@ -273,7 +273,7 @@
             </item>
             <item>
              <property name="text">
-              <string>16kb crt</string>
+              <string>crt</string>
              </property>
             </item>
            </widget>

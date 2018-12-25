@@ -180,3 +180,12 @@ void DialogTRSESettings::on_btnNesEmulatr_clicked()
     ui->leNesEmulator->setText(filename);
 
 }
+
+void DialogTRSESettings::on_btnC1541Emulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("C1541 location"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leC1541->setText(filename);
+
+}

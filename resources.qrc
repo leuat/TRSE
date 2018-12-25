@@ -108,5 +108,6 @@
         <file>resources/bin/krill/instal_3000-c64.prg</file>
         <file>resources/bin/krill/install_2000-c64.prg</file>
         <file>resources/bin/krill/install_1000-c64.prg</file>
+        <file>resources/bin/crt_header.bin</file>
     </qresource>
 </RCC>
