@@ -134,8 +134,10 @@ DialogNewImage::~DialogNewImage()
 void DialogNewImage::slotOk()
 {
     //VICImageToData();
-    m_meta.m_width = m_charWidth;
-    m_meta.m_height = m_charHeight;
+    if (ui->comboBox->currentIndex() == 9) {
+         m_meta.m_width = m_charWidth;
+        m_meta.m_height = m_charHeight;
+    }
     retVal = ui->comboBox->currentIndex();
 }
 

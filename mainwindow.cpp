@@ -721,6 +721,7 @@ void MainWindow::on_actionImage_triggered()
     dNewFile->setModal(true);
     dNewFile->exec();
     if (dNewFile->retVal!=-1) {
+
         editor->m_work.New(dNewFile->retVal, dNewFile->m_meta);
     } else {
         delete editor;

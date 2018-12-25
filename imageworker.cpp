@@ -105,6 +105,7 @@ void ImageWorker::New(LImage *image, QString name)
 
 void ImageWorker::New(int image, CharmapGlobalData gd = CharmapGlobalData())
 {
+//    exit(1);
     m_currentImage = new ImageEdit(&m_types[image], "New Image");
     if (m_types[image].type==LImage::Type::LevelEditor)
         dynamic_cast<ImageLevelEditor*>(m_currentImage->m_image)->Initialize(gd);

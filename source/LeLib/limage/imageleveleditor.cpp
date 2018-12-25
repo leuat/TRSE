@@ -63,6 +63,8 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_scale = 1;
     m_minCol = 0;
     m_type = LImage::Type::LevelEditor;
+    m_charWidth = 40;
+    m_charHeight = 25;
 
     m_supports.asmExport = false;
     m_supports.binaryLoad = false;
@@ -95,6 +97,8 @@ void ImageLevelEditor::Initialize(CharmapGlobalData meta)
 {
     m_meta = meta;
     m_meta.Calculate();
+//    qDebug() << meta.m_width;
+  //  qDebug() << meta.dataSize();
     m_levels.resize(m_meta.m_sizex*m_meta.m_sizey);
     for (int i=0;i<m_meta.m_sizex;i++)
         for (int j=0;j<m_meta.m_sizey;j++)
@@ -139,6 +143,13 @@ void ImageLevelEditor::SaveBin(QFile &file)
     qDebug() << "Colordata: " <<ll->m_CharData.size();
     qDebug() << "Extradata: " <<ll->m_ExtraData.size();
 */
+    qDebug() << "cnt" << m_levels.count();
+    qDebug() << "sx" <<m_meta.m_sizex;
+    qDebug() << m_meta.m_sizey;
+    qDebug() << "w"<< m_meta.m_width;
+    qDebug() << m_meta.m_height;
+
+    qDebug() << m_levels.count();
     for (CharmapLevel* l : m_levels) {
         file.write( l->m_CharData);
         if (m_meta.m_useColors)

@@ -49,8 +49,8 @@ public:
 
     void CharImageToData();
 
-    int m_charWidth;
-    int m_charHeight;
+    int m_charWidth=40;
+    int m_charHeight=25;
 
     ~DialogNewImage();
 private slots:

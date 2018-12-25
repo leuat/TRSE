@@ -76,7 +76,7 @@ private:
 
 public:
     bool m_useColors=true;
-    int m_width, m_height;
+    int m_width=40, m_height=25;
     int m_sizex, m_sizey;
     int m_startx, m_starty;
     int m_extraDataSize;
