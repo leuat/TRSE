@@ -440,6 +440,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("playsound")) {
         PlaySound(as);
     }
+    if (Command("setfrequency")) {
+        SetFrequency(as);
+    }
 
     if (Command("initprintstring")) {
         InitPrintString(as);
@@ -1683,6 +1686,37 @@ void Methods6502::PlaySound(Assembler *as)
  //   }
 
 }
+
+
+void Methods6502::SetFrequency(Assembler *as)
+{
+//    LoadVar(as, 0);
+    NodeNumber *num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    if (num==nullptr) {
+        ErrorHandler::e.Error("First value must be constant - addresses chip");
+    }
+    QString add = " + " + num->HexValue();
+
+    int SID = 54272;
+//    LoadVar(as, 1);
+  //  as->Asm("sta 54272 +24" );
+    LoadVar(as, 1);
+    as->Asm("sta 54272 +1" + add);
+    /*LoadVar(as, 3);
+    as->Asm("sta 54272 +5"+add);
+    LoadVar(as, 4);
+    as->Asm("sta 54272 +6"+add);
+    LoadVar(as, 5);
+    as->Asm("sta 54272 +$4"+add);
+    LoadVar(as, 6);
+    as->Asm("sta 54272 +$4"+add);
+*/
+    //    if (num->m_val==1) {
+ //       as->
+ //   }
+
+}
+
 
 void Methods6502::Clearsound(Assembler *as)
 {

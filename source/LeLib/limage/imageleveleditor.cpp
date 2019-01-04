@@ -24,7 +24,7 @@
 
 void ImageLevelEditor::SetLevel(QPoint f)
 {
-    // Clamp'
+    // Clamp
     f.setX(Util::clamp(f.x(), 0, m_meta.m_sizex-1));
     f.setY(Util::clamp(f.y(), 0, m_meta.m_sizey-1));
 
@@ -139,17 +139,6 @@ void ImageLevelEditor::SaveBin(QFile &file)
     int i=0;
     CharmapLevel* ll = m_levels[0];
 
-/*    qDebug() << "Chardata: " <<ll->m_CharData.size();
-    qDebug() << "Colordata: " <<ll->m_CharData.size();
-    qDebug() << "Extradata: " <<ll->m_ExtraData.size();
-*/
-    qDebug() << "cnt" << m_levels.count();
-    qDebug() << "sx" <<m_meta.m_sizex;
-    qDebug() << m_meta.m_sizey;
-    qDebug() << "w"<< m_meta.m_width;
-    qDebug() << m_meta.m_height;
-
-    qDebug() << m_levels.count();
     for (CharmapLevel* l : m_levels) {
         file.write( l->m_CharData);
         if (m_meta.m_useColors)
@@ -315,8 +304,13 @@ bool ImageLevelEditor::PixelToPos(int x, int y, int& pos)
 
     x/=16;
     y/=16;
+
+
     x=x-m_meta.m_startx;
     y=y-m_meta.m_starty*0.5;
+
+    if (x>=m_meta.m_width)
+        return false;
 
     pos = x + y*m_meta.m_width;
     if (pos<0 || pos>=m_meta.dataSize())
@@ -382,7 +376,8 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 
  //   return pc.get(m_scale*ix, iy, m_bitMask);
 
-
+//    if (ix>m_meta.m_width)
+  //      return 0;
 
     pos = v + shift;
 

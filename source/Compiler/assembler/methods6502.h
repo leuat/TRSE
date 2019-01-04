@@ -29,6 +29,8 @@ public:
     void Rand(Assembler* as);
     void MoveTo(Assembler* as);
     void MoveTo80(Assembler* as);
+    void SetFrequency(Assembler *as);
+
 
     void CopyBytesShift(Assembler* as, bool isLeft);
     void PokeScreen(Assembler* as, int hiAddress);

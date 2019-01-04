@@ -119,6 +119,16 @@ int main(int argc, char *argv[])
   //  exit(1);
 
 
+/*    QFile f("random.bin");
+    QByteArray arr;
+    for (int i=0;i<256;i++)
+        arr.append(rand()%256);
+
+    f.open(QFile::WriteOnly);
+    f.write(arr);
+    f.close();
+*/
+
     MainWindow w;
     w.show();
 
