@@ -21,3 +21,5 @@ d64_paw_file = d64.paw
 machine_state = $35
 border_color = 0
 background_color = 0
+project_path = C:/Users/leuat/OneDrive/Documents/GitHub/TRSE/Publish/tutorials/C64/Disk_loader_project/
+open_files = 6.95146e-310

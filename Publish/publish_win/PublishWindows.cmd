@@ -1,6 +1,6 @@
 
 rmdir /s /q trse
-set dir=C:\Users\leuat\Documents\GitHub\TRSE\Release\
+set dir=C:\Users\leuat\OneDrive\Documents\GitHub\TRSE\build
 mkdir trse
 xcopy /s %dir%\release\*.exe trse\
 xcopy /s %dir%\release\iconengines trse\

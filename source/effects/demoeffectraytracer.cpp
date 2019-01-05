@@ -64,7 +64,7 @@ void DemoEffectRaytracer::Scene1()
 
 //    m_rt.m_objects.append(new RayObjectTorus(QVector3D(0,0,0),QVector3D(2,1,0), QVector3D(0,1,0), Material(col,rand()%150+100,0.4, 0.0f,19.123,"")));
     m_rt.m_objects.append(new RayObjectPlane(QVector3D(0,-4,0),QVector3D(0,1,0),
-                                             Material(QVector3D(0.9, 0.7, 0.5),30,0.5,0.0f,3.0, "brick1.jpg")));
+                                             Material(QVector3D(0.9, 0.7, 0.5),30,0.5,0.0f,3.0, "")));
 
 
 
