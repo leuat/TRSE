@@ -757,6 +757,7 @@ void Parser::Preprocess()
                     m_lexer->m_text.replace(orgL,replaceLine+"\n\t");
                     m_lexer->m_pos-=orgL.count();
 
+
                     //Eat();
                 }
                 if (!ok) {
