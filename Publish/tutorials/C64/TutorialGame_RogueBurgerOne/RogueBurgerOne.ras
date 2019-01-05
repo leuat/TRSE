@@ -469,6 +469,7 @@ begin
 	
 	waitforRaster(67);
 	// Set multi color & level font
+	wait(1);
 	setbank(VIC_BANK1);
 	SPRITE_BITMASK:=keepbitmask;
 	

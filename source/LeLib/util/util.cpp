@@ -251,6 +251,25 @@ void Util::ConvertFileWithLoadAddress(QString input, QString output, int address
     o.close();
 }
 
+void Util::ConvertFileWithLoadAddress(QString input, QString output)
+{
+    QFile f(input);
+    f.open(QFile::ReadOnly);
+    QByteArray a = f.readAll();
+    f.close();
+
+    if (QFile::exists(output)) {
+        QFile f(output);
+        f.remove();
+    }
+    a.remove(0,2);
+
+    QFile o(output);
+    o.open(QFile::WriteOnly);
+    o.write(a);
+    o.close();
+}
+
 QVector3D Util::abss(QVector3D a)
 {
     return QVector3D(abs(a.x()), abs(a.y()), abs(a.z()));

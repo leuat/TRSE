@@ -702,8 +702,8 @@ void Parser::Preprocess()
 
                     QString pos = QString::number(loaderPos,16);
                     if (pos=="200") pos = "0200";
-                    QString loaderFile =":resources/bin/krill/loader_"+pos+"-c64.prg";
-                    QString installerFile =":resources/bin/krill/install_"+QString::number(installerPos,16)+"-c64.prg";
+                    QString loaderFile =":resources/bin/krill/loader_PAL_NTSC_"+pos.toUpper()+"-c64.prg";
+                    QString installerFile =":resources/bin/krill/install_PAL_NTSC_"+QString::number(installerPos,16).toUpper()+"-c64.prg";
 
                     if (!QFile::exists(loaderFile))
                         ErrorHandler::e.Error("When using krills loader, the loader location must be either 0200, 1000,2000 etc");
@@ -723,18 +723,24 @@ void Parser::Preprocess()
                         QFile f(outFile);
                         f.remove();
                     }
-                    QFile::copy(loaderFile, outFile);
+//                    QFile::copy(loaderFile, outFile);
+                    Util::ConvertFileWithLoadAddress(loaderFile,outFile);
+
                     outFile = outFolder+"krill_installer.bin";
                     if (QFile::exists(outFile)) {
                         QFile f(outFile);
                         f.remove();
                     }
-                    QFile::copy(installerFile, outFile);
+                    Util::ConvertFileWithLoadAddress(installerFile,outFile);
+//                    QFile in(installerFile);
+  //                  QByteArray data =
+
+                    //QFile::copy(installerFile, outFile);
 
                     outFile = outFolderShort+"krill_loader.bin";
-                    QString replaceLine = "_ResidentLoader_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(loaderOrgPos-2,16)+");";
+                    QString replaceLine = "_ResidentLoader_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(loaderOrgPos,16)+");";
                     outFile = outFolderShort+"krill_installer.bin";
-                    replaceLine += "\n_Installer_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(installerPos-2,16)+");";
+                    replaceLine += "\n_Installer_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(installerPos,16)+");";
 
                     for (QString s: m_diskFiles)
                         replaceLine+= s + ": string=(\""+s.toUpper()+"\");";

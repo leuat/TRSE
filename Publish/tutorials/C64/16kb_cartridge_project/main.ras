@@ -1,0 +1,13 @@
+program CRTProject;
+var  
+   index: byte; 
+begin
+	clearscreen($20,^$0400);
+	clearscreen(LIGHT_GREEN,^$D800);
+	moveto(4,11,$04);
+	printstring("THIS IS A CARTRIDGE PROJECT",0,40);
+	moveto(0,13,$04);
+	printstring("COLOR AND MEMORY MAP IN PROJECT SETTINGS",0,40);
+	
+	Loop();
+end.

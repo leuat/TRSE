@@ -94,6 +94,7 @@ public:
     static QStringList FindFilesOfType(QString dir, QString type);
 
     static void ConvertFileWithLoadAddress(QString input, QString output, int address);
+    static void ConvertFileWithLoadAddress(QString input, QString output);
 
     static QVector3D abss(QVector3D a);
     static QVector3D maxx(QVector3D a, QVector3D b);

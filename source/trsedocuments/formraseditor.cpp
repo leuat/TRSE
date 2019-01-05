@@ -272,6 +272,8 @@ void FormRasEditor::Build()
             output[0x99] = (char)m_projectIniFile->getdouble("background_color");
             output[0x94] = (char)m_projectIniFile->getdouble("border_color");
 
+            output[0x90] = (char)Util::NumberFromStringHex(m_projectIniFile->getString("machine_state"));
+
             QByteArray mainb;
             QFile mainf(filename+".prg");
             mainf.open(QFile::ReadOnly);
@@ -460,7 +462,6 @@ void FormRasEditor::BuildNes(QString prg)
 
     header[5] = 0; // CHR rom
     header[6] = 0b00000001;
-
 
 
     QFile f(prg+ ".prg");

@@ -128,6 +128,8 @@ public:
         m_ini.setFloat("post_optimizer_passstalda", 1);
         m_ini.setFloat("post_optimizer_passldx", 1);
 
+        if (!m_ini.contains("machine_state"))
+          m_ini.setString("machine_state", "$35");
 
         if (m_ini.getString("system")=="C128") {
 

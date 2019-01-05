@@ -108,6 +108,8 @@ void DialogProjectSettings::FillFromIni()
     ui->cmbMainRas->setCurrentText(m_ini->getString("main_ras_file"));
 
 
+    ui->leInitMachineState->setText(m_ini->getString("machine_state"));
+
     QStringList paw = Util::FindFilesOfType(m_currentDir+"/","paw");
 //    qDebug() << ras << m_currentDir;
     ui->cmbPawInclude->clear();
@@ -129,6 +131,7 @@ void DialogProjectSettings::FillToIni()
 
     m_ini->setFloat("border_color", ui->leBorderColor->text().toInt());
     m_ini->setFloat("background_color", ui->leBackgroundColor->text().toInt());
+    m_ini->setString("machine_state", ui->leInitMachineState->text());
 
     m_ini->setString("zeropage_decrunch1", Util::numToHex(Util::NumberFromStringHex(ui->leDecrunchZp1->text())));
     m_ini->setString("zeropage_decrunch2", Util::numToHex(Util::NumberFromStringHex(ui->leDecrunchZp2->text())));
