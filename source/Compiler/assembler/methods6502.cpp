@@ -728,16 +728,17 @@ void Methods6502::InitMoveto(Assembler *as)
     QString lbl = as->NewLabel("moveto");
     as->Asm("jmp " + lbl);
     as->Label("screenmemory =  "+as->m_zeropageScreenMemory);
-    as->Label("screen_x .byte 0 ");
-    as->Label("screen_y .byte 0 ");
-
+//    as->Label("screen_x .byte 0 ");
+//    as->Label("screen_y .byte 0 ");
+    as->Label("screen_x = "+as->m_internalZP[0]);
+    as->Label("screen_y = "+as->m_internalZP[1]);
     as->Label("SetScreenPosition");
     //as->Asm("lda #4");
     as->Asm("sta screenmemory+1");
     as->Asm("lda #0");
     as->Asm("sta screenmemory");
     as->Asm("ldy screen_y");
-    as->Asm("cpy #0");
+  //  as->Asm("cpy #0");
     as->Asm("beq sydone");
     as->Label("syloop");
     as->Asm("clc");
@@ -749,11 +750,12 @@ void Methods6502::InitMoveto(Assembler *as)
     as->Asm("inc screenmemory+1");
     as->Label("sskip");
     as->Asm("dey");
-    as->Asm("cpy #$00");
+    // Do we really need the next one?
+//    as->Asm("cpy #$00");
     as->Asm("bne syloop");
     as->Label("sydone");
     as->Asm("ldx screen_x");
-    as->Asm("cpx #0");
+    //as->Asm("cpx #0");
     as->Asm("beq sxdone");
     as->Asm("clc");
     as->Asm("adc screen_x");
@@ -1283,8 +1285,15 @@ void Methods6502::KrillLoad(Assembler *as)
         jmp = varJump->
     }
     QString filename = ->;*/
-    as->Asm("ldx #<"+varName->value);
-    as->Asm("ldy #>"+varName->value);
+    if (varName->getType(as)==TokenType::POINTER) {
+        as->Asm("ldx "+varName->value);
+        as->Asm("ldy "+varName->value +"+1");
+
+    }
+    else {
+        as->Asm("ldx #<"+varName->value);
+        as->Asm("ldy #>"+varName->value);
+    }
     as->Asm("jsr "+as->m_defines["_LoadrawKrill"]);
 //    m_node->m_params[1]->Accept(m_dispatcher);
 //    as->Term();
@@ -3645,15 +3654,25 @@ void Methods6502::SaveVar(Assembler *as, int paramNo, QString reg, QString extra
 
 void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
 {
-    as->ClearTerm();
-    if (lda=="")
-        as->Term("lda ");
+
+    if (dynamic_cast<NodeVar*>(m_node->m_params[paramNo])!=nullptr ||
+        dynamic_cast<NodeNumber*>(m_node->m_params[paramNo])!=nullptr) {
+
+        as->ClearTerm();
+        if (lda=="")
+            as->Term("lda ");
+        else
+            as->Term(lda);
+
+        m_node->m_params[paramNo]->Accept(m_dispatcher);
+        if (reg!="")
+            reg = "," + reg;
+
+        as->Term(reg, true);
+
+    }
     else
-        as->Term(lda);
-    m_node->m_params[paramNo]->Accept(m_dispatcher);
-    if (reg!="")
-        reg = "," + reg;
-    as->Term(reg, true);
+        m_node->m_params[paramNo]->Accept(m_dispatcher);
 
 }
 

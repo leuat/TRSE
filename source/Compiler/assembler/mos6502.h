@@ -126,6 +126,7 @@ public:
     void OptimisePassLdx(QString x);
     void OptimisePassLdaTax(QString x);
     void OptimiseJumps();
+    void OptimiseCmp(QString op);
     QString getLine(int i);
     QString getNextLine(int i, int &j);
     QString getToken(QString, int t);

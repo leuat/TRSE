@@ -53,6 +53,12 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
             if (dynamic_cast<NodeProcedure*>(m_params[p])==nullptr)
                 ErrorHandler::e.Error(error + cp + " to be a procedure", m_op.m_lineNumber);
         }
+        if (dynamic_cast<NodeVar*>(m_params[p])!=nullptr) {
+                NodeVar* v = dynamic_cast<NodeVar*>(m_params[p]);
+                v->ExecuteSym(as->m_symTab);
+//            if (dynamic_cast<NodeProcedure*>(m_params[p])==nullptr)
+  //              ErrorHandler::e.Error(error + cp + " to be a procedure", m_op.m_lineNumber);
+        }
     }
 }
 

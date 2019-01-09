@@ -797,6 +797,10 @@ void Parser::PreprocessReplace()
         m_lexer->m_text = m_lexer->m_text.replace(rg, val);
 
     }
+
+  //  qDebug() << m_lexer->m_text;
+//    exit(1);
+
 //    qDebug() << m_preprocessorDefines.keys();
 }
 
@@ -1112,6 +1116,7 @@ QVector<Node *> Parser::VariableDeclarations()
     vars.append(new NodeVar(m_currentToken));
     if (m_symTab->m_symbols.contains(m_currentToken.m_value))
         ErrorHandler::e.Error("Variable '" + m_currentToken.m_value + "' is already defined.", m_currentToken.m_lineNumber);
+
     m_symTab->Define(new Symbol(m_currentToken.m_value,""));
     Eat(TokenType::ID);
 
@@ -1229,9 +1234,16 @@ Node *Parser::TypeSpec()
     if (m_currentToken.m_type == TokenType::EQUALS) {
         Eat();
         initVal = m_currentToken.m_value;
-
+/*        if (initVal.count()>0 && initVal[0]=='@' ) {
+            ErrorHandler::e.Error("Could not find preprocessor : " + initVal);
+        }*/
         if (initVal=="") {
+            bool ok=true;
             initVal = QString::number(m_currentToken.m_intVal);
+        }else
+        {
+            ErrorHandler::e.Error("Unknown initialization value : " + initVal, m_currentToken.m_lineNumber);
+
         }
 
 

@@ -607,7 +607,7 @@ void AsmMOS6502::EndForLoop(QString endVal)
  //   qDebug() << "loop: " << m_stack["for"].current();
 
 }
-
+// 8790 vs 8717
 void AsmMOS6502::Optimise(CIniFile& ini)
 {
     m_totalOptimizedLines = 0;
@@ -630,6 +630,12 @@ void AsmMOS6502::Optimise(CIniFile& ini)
 
     if (ini.getdouble("post_optimizer_passjmp")==1)
         OptimiseJumps();
+
+//    if (ini.getdouble("post_optimizer_passcmp")==1)
+        OptimiseCmp("cmp");
+  //      OptimiseCmp("cpy");
+  //      OptimiseCmp("cpx");
+
 }
 
 
@@ -798,6 +804,31 @@ void AsmMOS6502::OptimiseJumps()
                 m_removeLines.append(j);
                 i++;
                 continue;
+            }
+        }
+    }
+    RemoveLines();
+
+}
+
+void AsmMOS6502::OptimiseCmp(QString op)
+{
+    m_removeLines.clear();
+    int j;
+    for (int i=0;i<m_source.count()-1;i++) {
+        QString l0 = getLine(i).toLower();
+        if (l0.contains(op+ " ")) {
+
+
+
+            QString lbl0 = getToken(l0, 1);
+            if (lbl0.startsWith("#")) {
+                lbl0 = lbl0.remove(0,1);
+                int num = Util::NumberFromStringHex(lbl0);
+                if (num==0) {
+                    m_removeLines.append(i);
+                   // qDebug() << "REmoving: " << l0;
+                }
             }
         }
     }
