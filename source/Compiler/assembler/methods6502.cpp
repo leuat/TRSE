@@ -45,6 +45,16 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("LoadPalette"))
         LoadPalette(as);
 
+    if (Command("ReadInput"))
+        ReadInput(as);
+
+
+    if (Command("PPUBackgroundDump"))
+        PPUDump(as,0x20,00,32,30);
+
+    if (Command("PPUAttributeDump"))
+        PPUDump(as,0x23,0xC0,64,1);
+
     if (Command("KrillLoad")) {
         KrillLoad(as);
     }
@@ -1721,6 +1731,35 @@ void Methods6502::LoadPalette(Assembler* as)
 
 }
 
+void Methods6502::ReadInput(Assembler *as)
+{
+    as->Label("buttons = " + Util::numToHex(as->m_zbyte));
+    as->m_zbyte++;
+    as->IncludeFile(":resources/code/nes_readinput.asm");
+
+    as->m_symTab->Define(new Symbol("buttons","byte"));
+}
+
+void Methods6502::PPUDump(Assembler *as, int hi, int lo, int x, int y)
+{
+  as->Asm("lda $2002");
+  as->Asm("lda #"+Util::numToHex(hi));
+  as->Asm("sta $2006");
+  as->Asm("lda #"+Util::numToHex(lo));
+  as->Asm("sta $2006");
+  for (int i=0;i<y;i++) {
+      as->Asm("ldx #0");
+      QString lbl = as->NewLabel("PPUDump");
+      as->Label(lbl);
+      as->Asm("lda "+m_node->m_params[0]->getAddress()+"+" +Util::numToHex(x*i) +",x");
+      as->Asm("sta $2007");
+      as->Asm("inx");
+      as->Asm("cpx #" + Util::numToHex(x));
+      as->Asm("bne "+lbl);
+      as->PopLabel("PPUDump");
+  }
+}
+
 
 void Methods6502::SetFrequency(Assembler *as)
 {
@@ -2918,7 +2957,7 @@ void Methods6502::ClearScreen(Assembler *as)
     AddMemoryBlock(as,1);
 
 
-    if (Syntax::s.m_currentSystem==Syntax::C128 || Syntax::s.m_currentSystem==Syntax::C64) {
+    if (Syntax::s.m_currentSystem==Syntax::C128 || Syntax::s.m_currentSystem==Syntax::C64 || Syntax::s.m_currentSystem==Syntax::NES) {
 
         QString lbl = as->NewLabel("clearloop");
         //  QString lbl2 = as->NewLabel("clearloop2");

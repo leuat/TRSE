@@ -64,9 +64,12 @@ m; SetScreenLocation; C64, C128, VIC20; n
 
 
 
-# NES:
+# NES stuff:
 
 m; LoadPalette; NES; a
+m; ReadInput; NES;
+m; PPUBackgroundDump; NES; a
+m; PPUAttributeDump; NES; a
 
 # IO
 
@@ -84,7 +87,7 @@ m; HideBorderY; C64, C128 ; b
 m; PrintString; C64, C128, VIC20, PET; s,b,b
 m; PrintNumber; C64, C128, VIC20, PET; b
 m; PrintDecimal; C64, C128, VIC20, PET; i,n
-m; ClearScreen; C64, C128; b, a
+m; ClearScreen; C64, C128, NES; b, a
 m; ClearBitmap; C64, C128; a, b
 m; SetMultiColorMode; C64, C128;
 m; SetRegularColorMode; C64, C128;

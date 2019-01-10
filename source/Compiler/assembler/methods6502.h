@@ -45,7 +45,14 @@ public:
     void Joystick(Assembler* as);
     void BitOp(Assembler* as, int type);
     void PlaySound(Assembler* as);
+
+    /*
+     * NES
+     * */
     void LoadPalette(Assembler* as);
+    void ReadInput(Assembler* as);
+    void PPUDump(Assembler* as, int hi, int lo,int x, int y);
+
     void Clearsound(Assembler* as);
     void SetCharsetLocation(Assembler* as);
     void SetScreenLocation(Assembler* as);

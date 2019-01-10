@@ -1,6 +1,6 @@
 RESET:
   SEI          ; disable IRQs
-;  CLD          ; disable decimal mode
+  CLD          ; disable decimal mode
   LDX #$40  
   STX $4017    ; disable APU frame IRQ
   LDX #$FF  
@@ -24,6 +24,7 @@ clrmem:
   STA $0700,x
   LDA #$FE
   STA $0300,x
+  STA $0200,x
   INX
   BNE clrmem
 
