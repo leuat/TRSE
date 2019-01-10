@@ -63,6 +63,11 @@ m; SetCharsetLocation; C64, C128, VIC20; n
 m; SetScreenLocation; C64, C128, VIC20; n
 
 
+
+# NES:
+
+m; LoadPalette; NES; a
+
 # IO
 
 m; KrillLoad; C64; a

@@ -48,6 +48,7 @@ public:
     bool DataEquals(Node *other) override;
     bool isWord(Assembler* as) override;
 
+    QString getAddress() override {return value;}
 
 
     bool isAddress() override;

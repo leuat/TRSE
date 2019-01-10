@@ -106,14 +106,20 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
 {
 
 
+
     if (Syntax::s.m_currentSystem==Syntax::BBCM) {
-        Asm("processor 6502");
         Asm("ORG "+Util::numToHex(0x2000));
         return;
     }
 
+    if (Syntax::s.m_currentSystem==Syntax::NES) {
+        Asm("ORG "+Util::numToHex(Syntax::s.m_programStartAddress));
+//        StartMemoryBlock("$8000");
 
-    Asm("processor 6502");
+//        Asm("ORG "+Util::numToHex(0x8000));
+        return;
+    }
+
     Nl();
     Asm("ORG "+Util::numToHex(Syntax::s.m_startAddress+1));
         // 2064
@@ -203,8 +209,15 @@ void AsmMOS6502::DeclareVariable(QString name, QString type, QString initval)
     QString t = "";
     if (type.toLower()=="integer")
         t = word;
-    if (type.toLower()=="byte")
+    if (type.toLower()=="byte") {
         t = byte;
+
+        if (Syntax::s.m_currentSystem == Syntax::NES) {
+            Write(name +"\t=\t"+Util::numToHex(m_zbyte));
+            m_zbyte++;
+            return;
+        }
+    }
 
     if (t=="")
         ErrorHandler::e.Error("Cannot declare variable of type: " + type);
@@ -633,6 +646,9 @@ void AsmMOS6502::Optimise(CIniFile& ini)
 
 //    if (ini.getdouble("post_optimizer_passcmp")==1)
         OptimiseCmp("cmp");
+            // 6157
+        OptimisePhaPla1();
+//        OptimisePhaPla2();
   //      OptimiseCmp("cpy");
   //      OptimiseCmp("cpx");
 
@@ -830,6 +846,81 @@ void AsmMOS6502::OptimiseCmp(QString op)
                    // qDebug() << "REmoving: " << l0;
                 }
             }
+        }
+    }
+    RemoveLines();
+
+}
+
+void AsmMOS6502::OptimisePhaPla1()
+{
+
+    /*
+     * Removes :
+     *   pha
+     *   tax
+     *   pla
+     *
+     * */
+
+    m_removeLines.clear();
+    int j,k;
+    for (int i=0;i<m_source.count()-1;i++) {
+        QString l0 = getLine(i).toLower().trimmed();
+        if (l0 == "pha") {
+            QString l1 = getNextLine(i,j);
+            if (l1.toLower().trimmed()=="tax") {
+                l1= getNextLine(j,k);
+                if (l1.toLower().trimmed()=="pla") {
+                    m_removeLines.append(i);
+                    m_removeLines.append(k);
+                }
+            }
+        }
+    }
+    RemoveLines();
+
+}
+
+/*
+ * Removes:
+ *
+ * pha
+ *
+ * ..
+ *
+ * pla
+ * lda ...
+ *
+ * */
+void AsmMOS6502::OptimisePhaPla2()
+{
+    m_removeLines.clear();
+    int j,k;
+    for (int i=0;i<m_source.count()-1;i++) {
+        QString l0 = getLine(i).toLower().trimmed();
+        if (l0 == "pha") {
+            QString l1="";
+            k=i;
+         //   qDebug() << " START ************************";
+            while (!(l1=="pla" || l1=="pha")) {
+                j=k;
+                l1 = getNextLine(j,k).toLower().trimmed();
+                //qDebug() << l1;
+            }
+           // if (l1=="pha") {i=j;continue;}
+
+            int two = k;
+            j=k;
+            if (getNextLine(j,k).toLower().trimmed().startsWith("lda ")) {
+               //     m_removeLines.append(two);
+                 //   m_removeLines.append(i);
+                    qDebug() << "Removing: "<< m_source[two];
+                    qDebug() << "Removing: "<< m_source[i];
+                    qDebug() << getNextLine(j,k).toLower().trimmed();
+            }
+
+            i=k;
         }
     }
     RemoveLines();

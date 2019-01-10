@@ -457,22 +457,51 @@ void FormRasEditor::BuildNes(QString prg)
     header[3] = 0x1A;
     // 0000 1000
 
-    header[4] = 2; // PRG rom kb
+    header[4] = m_projectIniFile->getdouble("nes_16k_blocks"); // PRG rom kb
     // 0001 0000
 
-    header[5] = 0; // CHR rom
+    header[5] = m_projectIniFile->getdouble("nes_8k_blocks"); // CHR rom
     header[6] = 0b00000001;
 
 
     QFile f(prg+ ".prg");
     f.open(QFile::ReadOnly);
     QByteArray data = f.readAll();
+    data = data.remove(0,2);
     f.close();
 //    qDebug() << prg;
 
+    data.insert(0,header);
+    int dc = data.count();
+    qDebug() << dc;
+//    exit(1);
+    int j=pow(2,14)*m_projectIniFile->getdouble("nes_16k_blocks")-dc+16;
+    for (int i=0;i<j;i++)
+        data.append((char)0);
+
+
+
+    //qDebug() << data.size();
+
+    QByteArray chr;
+    QFile mmm(m_currentDir+"/"+m_projectIniFile->getString("nes_8k_file"));
+    mmm.open(QFile::ReadOnly);
+    chr = mmm.readAll();
+    //qDebug() << chr.size();
+    //chr.fill(255);
+    mmm.close();
+
+    data.append(chr);
+
+    /*for (int i=0;i<pow(2,13);i++)
+        data.append((char)rand()%255);
+*/
+    if (QFile::exists(prg+".nes"))
+        QFile::remove(prg+".nes");
+
     QFile out(prg+ ".nes");
     out.open(QFile::WriteOnly);
-    out.write(header);
+//    out.write(header);
     out.write(data);
     out.close();
 
@@ -511,8 +540,10 @@ void FormRasEditor::Run()
         m_projectIniFile->setString("output_type","prg");
 
     QString filename = m_currentSourceFile.split(".")[0] + "."+ m_projectIniFile->getString("output_type");
+    if (m_projectIniFile->getString("system")=="NES")
+        filename = m_currentSourceFile.split(".")[0] + ".nes";
     qDebug() << filename;
-
+//    exit(1);
 
     ExecutePrg(filename, m_projectIniFile->getString("system"));
 

@@ -109,5 +109,7 @@
         <file>resources/bin/krill/install_PAL_NTSC_2000-c64.prg</file>
         <file>resources/bin/krill/loader_PAL_NTSC_0200-c64.prg</file>
         <file>resources/bin/krill/install_PAL_NTSC_1000-c64.prg</file>
+        <file>resources/code/nes_init.asm</file>
+        <file>resources/code/nes_end.asm</file>
     </qresource>
 </RCC>

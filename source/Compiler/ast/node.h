@@ -77,6 +77,9 @@ public:
     virtual QString HexValue() {return "0";}
     virtual int numValue() { return 0;}
     virtual void Delete();
+
+    virtual QString getAddress() {return "";}
+
     virtual bool isPureNumeric() {
         return false;
     }

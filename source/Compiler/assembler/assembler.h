@@ -153,14 +153,19 @@ public:
     QMap<QString, QString> m_defines;
 
     Appendix* m_currentBlock = nullptr;
+    QVector<Appendix*> m_blockStack;
+
+    int m_zbyte = 0;
 
     void StartMemoryBlock(QString pos) {
-        EndMemoryBlock();
+        //EndMemoryBlock();
 //        qDebug() << "Starting emory pos: "<< pos;
         Appendix app(pos);
         m_appendix.append(app);
         m_currentBlock = &m_appendix[m_appendix.count()-1];
         m_currentBlock->Append("org "+pos,1);
+        m_blockStack.append(m_currentBlock);
+//        m_currentBlockCount = m_appendix.count()-1;
     }
 
     void EndMemoryBlock() {
@@ -170,6 +175,12 @@ public:
 
         }
         m_currentBlock=nullptr;
+        if (m_blockStack.count()>0)
+            m_blockStack.removeLast();
+        if (m_blockStack.count()!=0) {
+            m_currentBlock = m_blockStack.last();
+            qDebug() << "STILL STACK : " << m_blockStack.count();
+        }
     }
 
     QString m_term;

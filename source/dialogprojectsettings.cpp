@@ -75,7 +75,12 @@ void DialogProjectSettings::FillFromIni()
 
     if (m_ini->getString("system")=="C128") {
         ui->cmbColumns->setCurrentText(QString::number(m_ini->getdouble("columns")));
-//        qDebug() << "WHOO1  " << m_ini->getFloat("columns");
+    }
+
+    if (m_ini->getString("system")=="NES") {
+        ui->cmbNES16KBlocks->setCurrentText(QString::number(m_ini->getdouble("nes_16k_blocks")));
+        ui->cmbNES8KBlocks->setCurrentText(QString::number(m_ini->getdouble("nes_8k_blocks")));
+        ui->leNESCharFile->setText(m_ini->getString("nes_8k_file"));
     }
 
 
@@ -161,6 +166,13 @@ void DialogProjectSettings::FillToIni()
 
         m_ini->setString("vic_memory_config",ui->cmbVic20Config->currentText());
     }
+
+    if (m_ini->getString("system")=="NES") {
+        m_ini->setFloat("nes_16k_blocks",ui->cmbNES16KBlocks->currentText().toInt());
+        m_ini->setFloat("nes_8k_blocks",ui->cmbNES8KBlocks->currentText().toInt());
+        m_ini->setString("nes_8k_file",ui->leNESCharFile->text());
+    }
+
 
     m_ini->setString("output_type", ui->cmbOutputType->currentText());
     m_ini->setString("main_ras_file", ui->cmbMainRas->currentText());

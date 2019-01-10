@@ -44,7 +44,7 @@ begin
 		textshift:=textshift+ 1;
 	end;
 	// increase scrolling 
-
+	asm(";collect");
 	xscroll:=(xscroll+1)&7;
 	y:=0;
 	// Optional wobble effect on the main image	
@@ -72,7 +72,7 @@ begin
 	// scroll this area
 	Scrollx(8-xscroll);
 	// wait for rasterline to hit near bottom
-	waitForRaster(25*10);
+//	waitForRaster(250);
 	// switch back to bank 1 and set multi color mode again
 
 	setbank(VIC_BANK1);

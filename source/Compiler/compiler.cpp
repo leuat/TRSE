@@ -102,6 +102,7 @@ bool Compiler::Build(Compiler::Type type, QString project_dir)
     }*/
 
     for (MemoryBlock* mb:m_parser->m_userBlocks) {
+
         m_assembler->blocks.append(mb);
     }
 

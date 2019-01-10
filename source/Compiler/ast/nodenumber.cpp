@@ -37,6 +37,8 @@ bool NodeNumber::isAddress() {
     return m_op.m_type == TokenType::ADDRESS;
 }
 
+
+
 bool NodeNumber::isPureNumeric() {
     return true;
 }

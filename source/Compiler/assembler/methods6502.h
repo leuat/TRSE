@@ -45,6 +45,7 @@ public:
     void Joystick(Assembler* as);
     void BitOp(Assembler* as, int type);
     void PlaySound(Assembler* as);
+    void LoadPalette(Assembler* as);
     void Clearsound(Assembler* as);
     void SetCharsetLocation(Assembler* as);
     void SetScreenLocation(Assembler* as);

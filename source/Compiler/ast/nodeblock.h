@@ -40,6 +40,8 @@ public:
     Node* m_compoundStatement = nullptr;
     SymbolTable* m_symTab = nullptr;
     bool m_useOwnSymTab;
+    bool m_isMainBlock = false;
+
 
     NodeBlock(Token t, QVector<Node*> decl, Node* comp, bool useOwnSymTab = true):Node() {
         m_compoundStatement = comp;

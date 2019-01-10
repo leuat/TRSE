@@ -42,6 +42,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("VIAIRQ"))
         VIAIRQ(as);
 
+    if (Command("LoadPalette"))
+        LoadPalette(as);
+
     if (Command("KrillLoad")) {
         KrillLoad(as);
     }
@@ -1693,6 +1696,28 @@ void Methods6502::PlaySound(Assembler *as)
     //    if (num->m_val==1) {
  //       as->
  //   }
+
+}
+
+void Methods6502::LoadPalette(Assembler* as)
+{
+
+    QString lbl = as->NewLabel("LoadPalette");
+
+  as->Asm("LDA $2002");
+  as->Asm("LDA #$3F");
+  as->Asm("STA $2006");
+  as->Asm("LDA #$00");
+  as->Asm("STA $2006");
+  as->Asm("LDX #$00");
+  as->Label(lbl);
+  as->Asm("LDA "+m_node->m_params[0]->getAddress()+",x");
+  as->Asm("STA $2007");
+  as->Asm("INX");
+  as->Asm("CPX #$20");
+  as->Asm("BNE "+lbl);
+
+  as->PopLabel("LoadPalette");
 
 }
 

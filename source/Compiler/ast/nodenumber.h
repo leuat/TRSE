@@ -49,6 +49,10 @@ public:
 
     int numValue() { return m_val;}
 
+    QString getAddress() override {return Util::numToHex(m_val);}
+
+
+
     QString HexValue() override;
 
     bool DataEquals(Node *other) override;

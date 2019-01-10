@@ -653,11 +653,14 @@ void ASTDispather6502::dispatch(NodeProgram *node)
 {
     node->DispatchConstructor();
 
-    as->EndMemoryBlock();
+//    as->EndMemoryBlock();
     NodeBuiltinMethod::m_isInitialized.clear();
     as->Program(node->m_name, node->m_param);
     as->m_source << node->m_initJumps;
+    node->m_NodeBlock->m_isMainBlock = true;
     node->m_NodeBlock->Accept(this);
+
+//    qDebug() << as->m_currentBlock;
     as->EndProgram();
 }
 
@@ -780,12 +783,18 @@ void ASTDispather6502::dispatch(NodeBlock *node)
         as->Label(label);
     if (node->forceLabel!="")
         as->Label(node->forceLabel);
+
+    if (node->m_isMainBlock && Syntax::s.m_currentSystem == Syntax::NES)
+        as->IncludeFile(":resources/code/nes_init.asm");
+
     if (node->m_compoundStatement!=nullptr)
         node->m_compoundStatement->Accept(this);
 
 
     as->PopCounter(node->m_op.m_lineNumber-1);
     as->PopBlock(node->m_currentLineNumber);
+    if (node->m_isMainBlock && Syntax::s.m_currentSystem == Syntax::NES)
+        as->IncludeFile(":resources/code/nes_end.asm");
 
     node->PopZeroPointers(as);
 
@@ -1196,6 +1205,9 @@ void ASTDispather6502::LogicalClause(Node *node)
     if (dynamic_cast<NodeBinaryClause*>(node->m_right)==nullptr)
         ErrorHandler::e.Error("Logical clause: right hand term must be binary clause");
 
+
+
+
     node->m_left->Accept(this);
     QString tmpVar = as->StoreInTempVar("logical_class_temp");
     node->m_right->Accept(this);
@@ -1557,12 +1569,14 @@ void ASTDispather6502::LoadPointer(NodeVar *node) {
     as->ClearTerm();
     if (!LoadXYVarOrNum(node, node->m_expr,false))
     {
-
-        as->Asm("pha");
+        as->Comment("LDA stuff");
+        if (!(m=="" || m.startsWith("lda")))
+            as->Asm("pha");
         node->m_expr->Accept(this);
         as->Term();
         as->Asm("tay");
-        as->Asm("pla");
+        if (!(m=="" || m.startsWith("lda")))
+            as->Asm("pla");
     }
     if (m=="")
         m="lda ";

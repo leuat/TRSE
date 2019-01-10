@@ -220,13 +220,19 @@ void Assembler::Connect()
     m_source = newSource;
 
     //m_source<<m_appendix;
-//    m_appendix.append(m_extraBlocks);
+//    m_appendix.append(m_ extraBlocks);
     SortAppendix();
+
   //  qDebug() << m_appendix[0].m_source;
+    QStringList pre;
     for (int i=0;i<m_appendix.count();i++) {
 //        qDebug() << m_appendix[i].m_source;
-        m_source << m_appendix[i].m_source;
+        if (Util::NumberFromStringHex(m_appendix[i].m_pos)<Syntax::s.m_programStartAddress)
+            pre <<m_appendix[i].m_source;
+        else m_source << m_appendix[i].m_source;
     }
+    m_source = QStringList() << " processor 6502" <<pre << m_source;
+
     m_appendix.clear();
 }
 
