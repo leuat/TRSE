@@ -185,7 +185,7 @@ void FormRasEditor::Build()
 //        qDebug() << "Code end: " << Util::numToHex(codeEnd) << codeEnd;
         int orgFileSize = QFile(filename+".prg").size();
 
-        if (m_iniFile->getdouble("perform_crunch")==1) {
+        if (m_iniFile->getdouble("perform_crunch")==1 && (Syntax::s.m_currentSystem!=Syntax::NES)) {
             QProcess processCompress;
 
             QString fn = (filename +".prg");
@@ -892,11 +892,11 @@ void FormRasEditor::Reload()
 
 void FormRasEditor::Save(QString filename)
 {
-    if (QFile::exists(filename))
-        QFile::remove(filename);
+  //  if (QFile::exists(filename))
+    //    QFile::remove(filename);
     QString txt = ui->txtEditor->document()->toPlainText();
     QFile file(filename);
-    if (file.open(QIODevice::ReadWrite))
+    if (file.open(QIODevice::ReadWrite | QIODevice::Truncate))
     {
         QTextStream stream(&file);
         stream << txt;

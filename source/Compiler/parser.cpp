@@ -1123,6 +1123,9 @@ QVector<Node *> Parser::VariableDeclarations()
     while (m_currentToken.m_type == TokenType::COMMA) {
         Eat(TokenType::COMMA);
         vars.append(new NodeVar(m_currentToken));
+        if (m_symTab->m_symbols.contains(m_currentToken.m_value))
+            ErrorHandler::e.Error("Variable '" + m_currentToken.m_value + "' is already defined.", m_currentToken.m_lineNumber);
+
         Eat(TokenType::ID);
     }
     Eat(TokenType::COLON);
