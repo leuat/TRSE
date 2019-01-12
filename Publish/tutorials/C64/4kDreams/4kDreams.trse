@@ -32,5 +32,5 @@ border_color = 0
 background_color = 0
 machine_state = $35
 output_type = prg
-project_path = C:/Users/leuat/OneDrive/Documents/GitHub/TRSE/Publish/tutorials/C64/4kDreams/
+project_path = /home/leuat/code/TRSE/Publish/tutorials/C64/4kDreams/
 open_files = -1

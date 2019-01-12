@@ -73,11 +73,12 @@ channel_loop: stx $26	; we save the channel index to zero page
 		
 		; row pointer now lies at workarea - workarea+1
                 ldy #0
-                lda (workarea),y
 		ldx $26 ; load the channel index to X
-		
+                lda (workarea),y
+
 		; do nothing if note is 0x00
-		cmp #$00		
+                ;cmp #$00
+                nop
 		beq skip_channel_update
 		; 0x01 is notecut
 		cmp #$01

@@ -128,6 +128,8 @@ OrgasmLine Orgasm::LexLine(int i) {
         l.m_expr = "";
         for (int i=0;i<lst.count()-1;i++)
            l.m_expr += lst[i+1] + " ";
+
+
         return l;
     }
     if (lst[0].toLower()=="incbin") {
@@ -453,8 +455,14 @@ void Orgasm::ProcessWordData(OrgasmLine &ol)
     QStringList lst = ol.m_expr.split(",");
     for (QString s: lst) {
         if (s.trimmed()=="") continue;
-        m_data.append(Util::NumberFromStringHex(s));
-        m_data.append(Util::NumberFromStringHex(s));
+        if (m_symbolsList.contains(s)) {
+            m_data.append(m_symbols[s]&0xFF);
+            m_data.append((m_symbols[s]>>8)&0xFF);
+        }
+        else {
+            m_data.append(Util::NumberFromStringHex(s)&0xFF);
+            m_data.append(Util::NumberFromStringHex(s)>>8);
+        }
         m_pCounter++;
         m_pCounter++;
     }

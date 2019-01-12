@@ -50,7 +50,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
 
     if (Command("PPUBackgroundDump"))
-        PPUDump(as,0x20,00,32,30);
+//        PPUDump(as,0x20,00,32,30);
+    PPUDump(as,0x20,00,240,4);
+
 
     if (Command("PPUAttributeDump"))
         PPUDump(as,0x23,0xC0,64,1);
