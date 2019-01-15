@@ -1,0 +1,84 @@
+program Tutorial_1_hello_nes;
+
+/*
+
+  You need to have installed the NES emulator "mednafen", and set the NES emulator
+  location in the TRSE settings dialog. 
+
+  charset data and initial address are set in project settings
+
+  you can edit the charset data / palette data using any .chr-editor such as YY-chr (https://www.romhacking.net/utilities/119/)
+
+
+*/
+
+var  
+   	i: byte; 
+	// Must include dummy at $8000 due to the fact we are using 2 16kb blocks. For a larger project,
+	// this is where the music will go
+	dummy: incbin("palette/palette.dat",$8000);
+	// Standard palette. Use YYchr (https://www.romhacking.net/utilities/119/) to create and edit.
+	palette: incbin("palette/palette.dat");
+	zp:pointer;
+
+
+
+// NMI will automatically be called on every vblank. Update PPU gfx here! For now,
+// it is emtpy. 
+
+interrupt NMI();
+begin
+
+end;
+
+/*
+	Sets up the background screen by filling 32x30 rows with
+    some values to a temp address at $0400, then dumping to nametable 1 ($2000) on the PPU 
+
+    Afterwards, creating 64 random attribute (color) values and dumping them to the attribute 
+
+*/
+
+// use $0400 as temp storage area
+@define storage $0400
+
+procedure InitScreen();
+begin
+	zp:=@storage;
+	// fill 30 lines with same value i+50
+	for i:=0 to 30 do begin
+		fill(zp,i+50,32);
+		inczp(zp,32);
+	end;
+	// Dump from storage to PPU nametable 0 ($2000 = ($20, $00));
+	PPUBackgroundDump(^@storage,$20,0);
+
+	// Same as above, create 64 "random" attribute (color) values
+	for i:=0 to 64 do begin
+		poke(^@storage,i,%11011000);
+	end;
+	// Dump from storage to PPU nametable 0 ($23C0 = ($23, $C0));
+
+	PPUAttributeDump(^@storage,$23,$C0);
+
+end;
+
+
+// Starting point after resetting the NES
+begin
+	// Load palette
+	LoadPalette(palette);
+	// Set up background & color values
+	InitScreen();
+	
+	// Turn on background
+	ToggleBackground(1);
+	// Display background in border 0
+	ToggleBorderBackground(1);
+	// set nametable 0 = $2000 (where we dumped the background data)
+	SetNametable(0);
+	// Turn on NMI
+	ToggleNMI(1);
+	// Halt! (this is where non-drawing gamelogic should happen)
+	Loop();
+end.

@@ -138,6 +138,13 @@ public:
             }
 
         }
+
+        if (m_ini.getString("system")=="NES") {
+            if (!m_ini.contains("nes_code_start"))
+                m_ini.setString("nes_code_start","$C000");
+        }
+
+
         if (m_ini.getString("system")=="VIC_20") {
             if (m_ini.contains("vic_memory_config"))
                m_ini.setString("vic_memory_config","none");

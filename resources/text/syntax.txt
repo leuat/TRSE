@@ -77,7 +77,24 @@ m; PPUSingle; NES; b,b,b
 m; LoadSong; NES; b
 m; PlaySong; NES;
 m; PPUDrawColumn; NES; a,b,b,b
-
+m; ToggleNMI; NES; n
+m; ToggleVRAM32Inc; NES; n
+m; ToggleSpriteTableAddress; NES; n
+m; ToggleBackgroundTableAddress; NES; n
+m; SetNameTable; NES; b
+m; ToggleGreyscale; NES; n
+m; ToggleSprites; NES; n
+m; ToggleBackground; NES; n
+m; ToggleBorderSprites; NES; n
+m; ToggleBorderBackground; NES; n
+m; SetSpriteLocation; NES; b
+m; Split; NES;
+m; Scroll; NES; b,b
+m; ; NES; n
+m; ; NES; n
+m; ; NES; n
+m; ; NES; n
+m; ; NES; n
 
 
 # IO
@@ -191,7 +208,17 @@ m; VIAIRQ; VIC20; p,b,b
 
 
 
+# NES-specific
 
+c; PPUCTRL; NES; a; $2000
+c; PPUMASK; NES; a; $2001
+c; PPUSTATUS; NES; a; $2002
+c; OAMADDR; NES; a; $2003
+c; OAMDATA; NES; a; $2004
+c; PPUSCROLL; NES; a; $2005
+c; PPUADDR; NES; a; $2006
+c; PPUDATA; NES; a; $2007
+c; OAMDMA; NES; a; $4014
 
 
 

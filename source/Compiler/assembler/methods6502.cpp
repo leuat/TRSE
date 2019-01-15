@@ -51,6 +51,71 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("PlaySong"))
         as->Asm("jsr " + (Util::numToHex(as->m_symTab->m_constants["SIDFILE_1_PLAY"]->m_value->m_fVal)));
 
+    if (Command("ToggleNMI"))
+        ToggleRegisterBit(as,"$2000",7);
+
+    if (Command("ToggleVRAM32Inc"))
+        ToggleRegisterBit(as,"$2000",2);
+
+    if (Command("ToggleSpriteTableAddress"))
+        ToggleRegisterBit(as,"$2000",3);
+
+    if (Command("ToggleBackgroundTableAddress"))
+        ToggleRegisterBit(as,"$2000",4);
+
+    if (Command("ToggleBorderBackground"))
+        ToggleRegisterBit(as,"$2001",1);
+
+    if (Command("ToggleBorderSprites"))
+        ToggleRegisterBit(as,"$2001",2);
+
+
+    if (Command("ToggleBackground"))
+        ToggleRegisterBit(as,"$2001",3);
+
+    if (Command("ToggleSprites"))
+        ToggleRegisterBit(as,"$2001",4);
+
+    if (Command("ToggleGreyscale"))
+        ToggleRegisterBit(as,"$2001",0);
+
+
+    if (Command("SetNameTable")) {
+        //LoadVar(as,0);
+        //QString tn = as->StoreInTempVar("tempName");
+        as->Asm("lda $2000");
+        as->Asm("and #%11111100");
+        as->Term("ora ");
+        m_node->m_params[0]->Accept(m_dispatcher);
+        as->Term();
+        as->Asm("sta $2000");
+    }
+    if (Command("SetSpriteLocation")) {
+        as->Asm("lda #0");
+        as->Asm("sta $2003");
+        LoadVar(as,0);
+        as->Asm("sta $4014");
+    }
+    if (Command("Split")) {
+        QString lbl1 = as->NewLabel("l1");
+        QString lbl2 = as->NewLabel("l2");
+
+        as->Label(lbl1);
+        as->Asm("bit $2002");
+        as->Asm("bvs " +lbl1);
+        as->Label(lbl2);
+        as->Asm("bit $2002");
+        as->Asm("bvc " +lbl2);
+
+        as->PopLabel("l1");
+        as->PopLabel("l2");
+    }
+    if (Command("Scroll")) {
+        LoadVar(as,0);
+        as->Asm("sta $2005");
+        LoadVar(as,1);
+        as->Asm("sta $2005");
+    }
 
     if (Command("PPUBackgroundDump"))
 //        PPUDump(as,0x20,00,32,30);
@@ -2589,6 +2654,24 @@ void Methods6502::Call(Assembler *as)
         return;
     }
 */
+}
+
+void Methods6502::ToggleRegisterBit(Assembler *as, QString addr, int bit)
+{
+    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    if (num==nullptr) {
+           ErrorHandler::e.Error("Call currently only supports constant 0/1 (on/off)", m_node->m_op.m_lineNumber);
+
+    }
+    int val = num->m_val;
+    uchar v=1<<bit;
+    as->Asm("lda "+addr);
+    if (val==1)
+        as->Asm("ora #%"+QString::number(v,2));
+    if (val==0)
+        as->Asm("and #%"+QString::number((uchar)~v,2));
+    as->Asm("sta "+addr);
+
 }
 
 void Methods6502::InitSid(Assembler *as)

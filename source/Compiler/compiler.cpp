@@ -85,6 +85,12 @@ bool Compiler::Build(Compiler::Type type, QString project_dir)
 
     m_assembler->m_projectDir = project_dir;
 
+    if (Syntax::s.m_currentSystem == Syntax::NES) {
+        Syntax::s.m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
+        Syntax::s.m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
+    }
+
+
     if (m_tree!=nullptr)
         try {
             dynamic_cast<NodeProgram*>(m_tree)->m_initJumps = m_parser->m_initJumps;

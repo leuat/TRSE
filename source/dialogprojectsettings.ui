@@ -268,6 +268,11 @@
              <widget class="QComboBox" name="cmbNES8KBlocks">
               <item>
                <property name="text">
+                <string>0</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
                 <string>1</string>
                </property>
               </item>
@@ -312,6 +317,16 @@
                </widget>
               </item>
              </layout>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_22">
+              <property name="text">
+               <string>Code start address</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="leNESCodeStart"/>
             </item>
            </layout>
           </widget>

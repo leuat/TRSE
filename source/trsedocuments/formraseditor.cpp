@@ -796,6 +796,8 @@ bool FormRasEditor::BuildStep()
 //    SymbolTable::isInitialized = true;
 
     timer.start();
+
+
     lexer = Lexer(text, lst, m_projectIniFile->getString("project_path"));
     parser = Parser(&lexer);
     parser.m_diskFiles = getFileList();
