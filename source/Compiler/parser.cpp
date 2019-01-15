@@ -1143,15 +1143,20 @@ QVector<Node *> Parser::VariableDeclarations()
     for (Node* n : vars) {
         NodeVarDecl* decl = new NodeVarDecl(n, typeNode);
         var_decleratons.append(decl);
+//        qDebug() <<  typeNode->m_op.getType() << typeNode->m_op.m_value;;
         if (typeNode->m_op.m_type == TokenType::INCSID) {
-
             int sidloc = 0;
             if (m_preprocessorDefines.contains("SIDEmulatorLocation")) {
                 sidloc = Util::NumberFromStringHex(m_preprocessorDefines["SIDEmulatorLocation"]);
                 //qDebug() << sidloc;
             }
 //            exit(1);
-            decl->InitSid(m_lexer->m_path, sidloc);
+            decl->InitSid(m_lexer->m_path, sidloc, "sid");
+        }
+        if (typeNode->m_op.m_type == TokenType::INCNSF) {
+            int sidloc = 0;
+ //           exit(1);
+            decl->InitSid(m_lexer->m_path, sidloc, "nsf");
         }
     }
 
@@ -1163,7 +1168,7 @@ Node *Parser::TypeSpec()
 {
     Token t = m_currentToken;
 
-    if (m_currentToken.m_type == TokenType::INCBIN || m_currentToken.m_type == TokenType::INCSID) {
+    if (m_currentToken.m_type == TokenType::INCBIN || m_currentToken.m_type == TokenType::INCSID || m_currentToken.m_type == TokenType::INCNSF) {
         Eat();
         Eat(TokenType::LPAREN);
         QString binFile = m_currentToken.m_value;

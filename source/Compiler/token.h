@@ -30,7 +30,7 @@
 class TokenType {
 public:
     enum Type {
-        INTEGER, PLUS, MINUS, MUL, DIV, LPAREN,
+        NONE, INTEGER, PLUS, MINUS, MUL, DIV, LPAREN,
         RPAREN, TEOF, ID, ASSIGN, BEGIN,
         END, SEMI, DOT, VAR, REAL,
         PROGRAM, COLON, COMMA, INTEGER_CONST,
@@ -40,7 +40,7 @@ public:
         ARRAY, OF, BYTE, LBRACKET, RBRACKET, INCBIN, ASM, INCSID,
         INTERRUPT, BITAND, BITOR, ELSE, OR, AND, POINTER, AT, INCLUDE, DEFINE, PREPROCESSOR,
         IFDEF, ENDIF, IFNDEF, OFFPAGE, ONPAGE, STEP, UNROLL, LOOPX, LOOPY, CSTRING, USERDATA,
-        STARTBLOCK, ENDBLOCK, IGNOREMETHOD, ERRORMESSAGE, WEDGE, USE
+        STARTBLOCK, ENDBLOCK, IGNOREMETHOD, ERRORMESSAGE, WEDGE, USE, INCNSF
     };
 
     static QString types[];
@@ -48,15 +48,7 @@ public:
         return types[t];
     }
 
-    static Type getType(QString s) {
-        for (int i=0;i<68;i++)
-            if (types[i].toLower()==s.toLower()) {
-//                qDebug() << s;
-                return (Type)i;
-            }
-
-        return DIV;
-    }
+    static Type getType(QString s);
 
 //    QMap<QString, TokenType::Type> m_stringType;
 

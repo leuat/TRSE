@@ -57,10 +57,13 @@ bool Compiler::Build(Compiler::Type type, QString project_dir)
     if (m_assembler)
         delete m_assembler;
 
+
     if (type==MOS6502) {
         m_assembler = new AsmMOS6502();
         m_dispatcher = new ASTDispather6502();
     }
+//    qDebug() << SymbolTable::m_constants["SIDFILE_1_INIT"]->m_value->toString();
+  //  exit(1);
 
     if (m_assembler==nullptr)
         return false;

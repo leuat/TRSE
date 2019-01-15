@@ -915,9 +915,9 @@ void AsmMOS6502::OptimisePhaPla2()
             if (getNextLine(j,k).toLower().trimmed().startsWith("lda ")) {
                //     m_removeLines.append(two);
                  //   m_removeLines.append(i);
-                    qDebug() << "Removing: "<< m_source[two];
-                    qDebug() << "Removing: "<< m_source[i];
-                    qDebug() << getNextLine(j,k).toLower().trimmed();
+                    //qDebug() << "Removing: "<< m_source[two];
+                    //qDebug() << "Removing: "<< m_source[i];
+                    //qDebug() << getNextLine(j,k).toLower().trimmed();
             }
 
             i=k;

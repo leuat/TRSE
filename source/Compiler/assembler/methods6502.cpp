@@ -48,10 +48,19 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("ReadInput"))
         ReadInput(as);
 
+    if (Command("PlaySong"))
+        as->Asm("jsr " + (Util::numToHex(as->m_symTab->m_constants["SIDFILE_1_PLAY"]->m_value->m_fVal)));
+
 
     if (Command("PPUBackgroundDump"))
 //        PPUDump(as,0x20,00,32,30);
-    PPUDump(as,0x20,00,240,4);
+       PPUDump(as,0x20,00,240,4);
+
+    if (Command("PPUDrawColumn"))
+        PPUDrawColumn(as);
+
+    if (Command("PPUSingle"))
+        PPUSingle(as);
 
 
     if (Command("PPUAttributeDump"))
@@ -75,6 +84,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         as->Asm("jsr $FF5F");
 
     }
+
+    if (Command("LoadSong"))
+        LoadSong(as);
 
     if (Command("PlayVIC20Sid")) {
         PlayVIC20Sid(as);
@@ -761,6 +773,8 @@ void Methods6502::InitMoveto(Assembler *as)
         as->Asm("adc #40");
     if (Syntax::s.m_currentSystem==Syntax::VIC20)
         as->Asm("adc #22");
+    if (Syntax::s.m_currentSystem==Syntax::NES)
+        as->Asm("adc #32");
     as->Asm("bcc sskip");
     as->Asm("inc screenmemory+1");
     as->Label("sskip");
@@ -1745,21 +1759,73 @@ void Methods6502::ReadInput(Assembler *as)
 void Methods6502::PPUDump(Assembler *as, int hi, int lo, int x, int y)
 {
   as->Asm("lda $2002");
-  as->Asm("lda #"+Util::numToHex(hi));
+  //m_node->m_params[0]->Accept(m_dispatcher);
+  LoadVar(as,1);
+//  as->Asm("lda #"+Util::numToHex(hi));
   as->Asm("sta $2006");
-  as->Asm("lda #"+Util::numToHex(lo));
+  LoadVar(as,2);
+//  m_node->m_params[1]->Accept(m_dispatcher);
+  QString addr = m_node->m_params[0]->getAddress();
+//  as->Asm("lda #"+Util::numToHex(lo));
   as->Asm("sta $2006");
   for (int i=0;i<y;i++) {
       as->Asm("ldx #0");
       QString lbl = as->NewLabel("PPUDump");
       as->Label(lbl);
-      as->Asm("lda "+m_node->m_params[0]->getAddress()+"+" +Util::numToHex(x*i) +",x");
+      as->Asm("lda "+addr+"+" +Util::numToHex(x*i) +",x");
       as->Asm("sta $2007");
       as->Asm("inx");
       as->Asm("cpx #" + Util::numToHex(x));
       as->Asm("bne "+lbl);
       as->PopLabel("PPUDump");
   }
+  as->ClearTerm();
+}
+
+void Methods6502::PPUSingle(Assembler *as)
+{
+    as->Asm("lda $2002");
+    LoadVar(as,0);
+    as->Asm("sta $2006");
+    LoadVar(as,1);
+    QString addr = m_node->m_params[0]->getAddress();
+    as->Asm("sta $2006");
+    LoadVar(as,2);
+    as->Asm("sta $2007");
+
+}
+
+void Methods6502::LoadSong(Assembler *as)
+{
+    LoadVar(as,0);
+    as->Asm("ldx #1");
+
+    as->Asm("jsr " + (Util::numToHex(as->m_symTab->m_constants["SIDFILE_1_INIT"]->m_value->m_fVal)));
+
+}
+
+void Methods6502::PPUDrawColumn(Assembler *as)
+{
+    as->Comment("PPU Draw column");
+    as->Asm("lda #%00000100");
+    as->Asm("sta $2000");
+    as->Asm("lda $2002");
+    LoadVar(as,1);
+    as->Asm("sta $2006");
+    LoadVar(as,2);
+    as->Asm("sta $2006");
+    LoadVar(as,3);
+    as->Asm("tax");
+    as->Asm("ldy #0");
+    QString lbl = as->NewLabel("PPUDrawColumn");
+    as->Label(lbl);
+    as->Asm("lda "+m_node->m_params[0]->getAddress()+",y");
+    as->Asm("sta $2007");
+    as->Asm("iny");
+    as->Asm("dex");
+    as->Asm("bne "+lbl);
+
+    as->PopLabel("PPUDrawColumn");
 }
 
 
@@ -1853,7 +1919,6 @@ void Methods6502::SetCharsetLocation(Assembler *as)
     QString addr = Util::numToHex(as->m_symTab->m_constants["VIC_DATA_LOC"]->m_value->m_fVal);
     as->Asm("lda "+addr);
     as->Asm("and #%11110001");
-    qDebug() << QString::number(b);
     as->Asm("ora #"+QString::number(b));
     as->Asm("sta "+addr);
     }
@@ -2121,6 +2186,14 @@ void Methods6502::StartIRQ(Assembler *as)
 {
     as->Comment("StartIRQ");
 
+    if (Syntax::s.m_currentSystem == Syntax::NES) {
+        as->Asm("pha");
+        as->Asm("txa");
+        as->Asm("pha");
+        as->Asm("tya");
+        as->Asm("pha");
+    }
+
     if (Syntax::s.m_currentSystem == Syntax::C64) {
 
     m_node->RequireNumber(m_node->m_params[0], "StartIRQ", m_node->m_op.m_lineNumber);
@@ -2192,6 +2265,16 @@ void Methods6502::StartIRQWedge(Assembler *as)
 void Methods6502::CloseIRQ(Assembler *as, bool isWedge)
 {
     as->Comment("CloseIRQ");
+    if (Syntax::s.m_currentSystem == Syntax::NES) {
+
+
+        as->Asm("pla");
+        as->Asm("tay");
+        as->Asm("pla");
+        as->Asm("tax");
+        as->Asm("pla");
+
+    }
     if (Syntax::s.m_currentSystem == Syntax::C64) {
 
         if (isWedge)
@@ -3729,6 +3812,7 @@ void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
             as->Term("lda ");
         else
             as->Term(lda);
+
 
         m_node->m_params[paramNo]->Accept(m_dispatcher);
         if (reg!="")

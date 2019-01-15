@@ -57,7 +57,7 @@ public:
         dispatcher->dispatch(this);
     }
 
-    void InitSid(QString projectDir, int VICAddress);
+    void InitSid(QString projectDir, int VICAddress, QString type);
 
 };
 

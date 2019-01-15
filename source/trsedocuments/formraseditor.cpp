@@ -476,6 +476,7 @@ void FormRasEditor::BuildNes(QString prg)
     qDebug() << dc;
 //    exit(1);
     int j=pow(2,14)*m_projectIniFile->getdouble("nes_16k_blocks")-dc+16;
+//    qDebug() << "Appending: " <<j;
     for (int i=0;i<j;i++)
         data.append((char)0);
 

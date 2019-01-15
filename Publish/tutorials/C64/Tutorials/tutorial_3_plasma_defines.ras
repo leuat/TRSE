@@ -117,6 +117,7 @@ begin
 	while 1<>2 do begin
 		time:=time+1;
 		waitForRaster(0);
-		Plasma();
+//		Plasma();
 	end;
+
 end.

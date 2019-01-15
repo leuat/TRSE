@@ -38,7 +38,8 @@ public:
     QString m_outFile, m_fileName, m_path;
 
     void Load(QString filename, QString path);
-    void Convert(int headerShift, int newAddress);
+    void LoadNSF(QString filename, QString path);
+    void Convert(int headerShift, int newAddress, QString fileEnding, int hsz);
 };
 
 #endif // SID_H

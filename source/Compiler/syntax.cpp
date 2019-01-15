@@ -52,8 +52,8 @@ void Syntax::Init(System s, QString param)
         m_programStartAddress = 0x0810;
     }
     if (s==NES) {
-        m_startAddress = 0x8000;
-        m_programStartAddress = 0x8000;
+        m_startAddress = 0xCA00;
+        m_programStartAddress = 0xCA00;
     }
     if (s==C128) {
         m_startAddress = 0x01C00;

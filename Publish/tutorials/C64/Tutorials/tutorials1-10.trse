@@ -28,5 +28,5 @@ project_path = /home/leuat/code/TRSE/Publish/tutorials/C64/Tutorials/
 machine_state = $35
 border_color = 0
 background_color = 0
-open_files = ,tutorial_7_scrolling_and_multicolor.ras
+open_files = ,tutorial_3_plasma_defines.ras
 output_type = prg

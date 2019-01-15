@@ -51,7 +51,7 @@ void SymbolTable::Initialize()
   //  if (isInitialized)
 //        return;
 
-    m_constants.clear();
+  //  m_constants.clear();
 
     QString currentSystem = Syntax::StringFromSystem(Syntax::s.m_currentSystem).toLower();
     for (QString s: Syntax::s.m_syntaxData.split('\n')) {
@@ -83,11 +83,12 @@ void SymbolTable::Initialize()
         }
 
      }
-
-    m_constants["SIDFILE_1_INIT"] = new Symbol("","ADDRESS", 0);
-    m_constants["SIDFILE_2_INIT"] = new Symbol("","ADDRESS", 0);
-    m_constants["SIDFILE_1_PLAY"] = new Symbol("","ADDRESS", 0);
-    m_constants["SIDFILE_2_PLAY"] = new Symbol("","ADDRESS", 0);
+    if (!m_constants.contains("SIDFILE_1_INIT")) {
+        m_constants["SIDFILE_1_INIT"] = new Symbol("","ADDRESS", 0);
+      m_constants["SIDFILE_2_INIT"] = new Symbol("","ADDRESS", 0);
+      m_constants["SIDFILE_1_PLAY"] = new Symbol("","ADDRESS", 0);
+      m_constants["SIDFILE_2_PLAY"] = new Symbol("","ADDRESS", 0);
+    }
 
     for (unsigned char key: Syntax::s.m_c64keys.keys()) {
         C64Key k = Syntax::s.m_c64keys[key];
@@ -140,6 +141,7 @@ void SymbolTable::InitBuiltins()
     Define(new BuiltInTypeSymbol("ARRAY",""));
     Define(new BuiltInTypeSymbol("INCBIN",""));
     Define(new BuiltInTypeSymbol("INCSID",""));
+    Define(new BuiltInTypeSymbol("INCNSF",""));
 
     Define(new Symbol("return",""));
     Define(new Symbol("sine", "address"));

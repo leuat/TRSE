@@ -53,10 +53,52 @@ void SidFile::Load(QString filename, QString path)
     file.close();
 }
 
-void SidFile::Convert(int headerShift, int newAddress)
+void SidFile::LoadNSF(QString filename, QString path)
+{
+    m_path = path;
+    m_fileName = filename;
+    if (!filename.endsWith(".nsf"))
+        ErrorHandler::e.Error("Unable to load '" + filename +"', must be NSF file!");
+    QFile file(path + filename);
+
+    if (!QFile::exists(path + filename))
+        ErrorHandler::e.Error("Unable to locate '" + filename +"'");
+
+    file.open(QIODevice::ReadOnly);
+    m_blob = file.readAll();
+    //qDebug() << "sid file size: " << m_blob.count();
+
+
+    if (!(m_blob.at(0)=='N' && m_blob.at(1)=='E' && m_blob.at(2)=='S' && m_blob.at(3)=='M'))
+        ErrorHandler::e.Error("File '" + filename +"' not identified as a NSF file");
+
+    uchar u = m_blob.at(9);
+    m_loadAddress = (u&0xff)<<8 | ((uchar)m_blob.at(8))<<0;
+    m_initAddress = (uchar)(m_blob.at(0xb))<<8 | ((uchar)m_blob.at(0xa))<<0;
+    m_playAddress = (uchar)(m_blob.at(0xd))<<8 | ((uchar)m_blob.at(0xc))<<0;
+
+
+/*    m_loadAddress+=10;
+    m_initAddress+=10;
+    m_playAddress+=10;
+*/
+    qDebug() << "MUSIC data: " << Util::numToHex(u);
+    qDebug() << "Load address:" << Util::numToHex(m_loadAddress);
+    qDebug() << "Init address:" << Util::numToHex(m_initAddress);
+    qDebug() << "Play address:" << Util::numToHex(m_playAddress);
+
+
+  /*  qDebug() << Util::numToHex(m_loadAddress);
+    qDebug() << Util::numToHex(m_initAddress);
+    qDebug() << Util::numToHex(m_playAddress);*/
+//    exit(1);
+    file.close();
+}
+
+void SidFile::Convert(int headerShift, int newAddress, QString fileEnding, int hsz)
 {
     QString org = m_fileName;
-    m_outFile = m_fileName.remove(".sid");
+    m_outFile = m_fileName.remove("."+fileEnding);
     QStringList l = m_fileName.split("/");
     QString last = l.last();
 //    qDebug() << "last: " << last;
@@ -75,8 +117,9 @@ void SidFile::Convert(int headerShift, int newAddress)
 
     QFile file(m_path + m_outFile);
     file.open(QIODevice::WriteOnly);
-    int headerSize = 0x7C + headerShift;
-    // Should the +2 be included? FUCK!
+ //   int headerSize = 0x7C + headerShift;
+    int headerSize = hsz + headerShift;
+    // Should the +2 be included?
     m_blob.remove(0,headerSize);
 
     // Replace all d400 with newaddress
@@ -105,6 +148,7 @@ void SidFile::Convert(int headerShift, int newAddress)
 
 
     }
+
 
     file.write(m_blob);
     file.close();

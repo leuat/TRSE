@@ -871,7 +871,7 @@ void ASTDispather6502::dispatch(NodeVarDecl *node)
         IncBin(node);
     }
     else
-    if (t->m_op.m_type==TokenType::INCSID) {
+    if (t->m_op.m_type==TokenType::INCSID || t->m_op.m_type==TokenType::INCNSF) {
         if (node->m_curMemoryBlock!=nullptr)
             ErrorHandler::e.Error("IncSid can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
         IncSid(node);

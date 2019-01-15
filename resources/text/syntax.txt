@@ -28,6 +28,8 @@ m; initatan2; C64, C128, VIC20  ;
 
 #Memory routines
 
+m; moveto; C64, NES; b,b,b
+
 m; Poke; C64, C128, VIC20, PET, NES ; a,b,b
 m; Peek; C64, C128, VIC20, PET, NES ; a,b
 m; ToggleBit; C64, C128, VIC20, PET, NES ; a,b,b
@@ -62,14 +64,21 @@ m; CopyCharsetFromRom; C64, C128 ; a
 m; SetCharsetLocation; C64, C128, VIC20; n
 m; SetScreenLocation; C64, C128, VIC20; n
 
-
-
+# **********************
+#
 # NES stuff:
-
+#
+# **********************
 m; LoadPalette; NES; a
 m; ReadInput; NES;
-m; PPUBackgroundDump; NES; a
-m; PPUAttributeDump; NES; a
+m; PPUBackgroundDump; NES; a,b,b
+m; PPUAttributeDump; NES; a,b,b
+m; PPUSingle; NES; b,b,b
+m; LoadSong; NES; b
+m; PlaySong; NES;
+m; PPUDrawColumn; NES; a,b,b,b
+
+
 
 # IO
 
@@ -80,8 +89,8 @@ m; InitKrill; C64;
 
 # m; Writeln; C64, C128, VIC20, PET, NES ; s,b
 m; MoveTo; C64, C128, VIC20 ; b,b,b
-m; ScrollX; C64, C128 ; b
 m; ScrollY; C64, C128 ; b
+m; ScrollX; C64, C128 ; b
 m; HideBorderX; C64, C128 ; b
 m; HideBorderY; C64, C128 ; b
 m; PrintString; C64, C128, VIC20, PET; s,b,b
@@ -104,6 +113,9 @@ m; SpritePos; C64, C128 ; ib,b,b
 m; SetSpriteLoc; C64, C128; b,b,n
 
 # Sound/Music routines
+
+
+
 
 m; PlaySound; C64, C128; b,b,b,b,b,b,b
 m; SetFrequency; C64, C128; b,b
@@ -147,10 +159,10 @@ m; Keypressed; C64, C128, VIC20; b
 
 m; NmiIRQ; C64, C128, VIC20, PET ; p
 m; EnableRasterIRQ; C64, C128;
-m; StartIRQ; C64, C128, VIC20; b
+m; StartIRQ; C64, C128, VIC20, NES; b
 m; StartIRQWedge; C64, C128; b
 m; StartRasterChain; C64, C128; p,b,n
-m; CloseIRQ; C64, C128, VIC20;
+m; CloseIRQ; C64, C128, VIC20, NES;
 m; CloseIRQWedge; C64, C128;
 m; EnableIRQ; C64, C128;
 m; PreventIRQ; C64, C128;
@@ -297,7 +309,8 @@ r; INCBIN; C64, C128, VIC20, PET, NES, BBCM
 r; STRING; C64, C128, VIC20, PET, NES, BBCM
 r; CSTRING; C64, C128, VIC20, PET, BBCM
 r; ASM; C64, C128, VIC20, PET, NES, BBCM
-r; INCSID; C64, C128, VIC20, BBCM
+r; INCSID; C64, C128, VIC20, NES
+r; INCNSF; NES
 r; INTERRUPT; C64, C128, VIC20, PET, NES, BBCM
 r; ELSE; C64, C128, VIC20, PET, NES, BBCM
 r; OR; C64, C128, VIC20, PET, NES, BBCM
