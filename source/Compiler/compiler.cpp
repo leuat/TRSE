@@ -37,7 +37,9 @@ void Compiler::Parse()
     //qDebug() << "******" << m_ini->getString("assembler").toUpper();
     try {
 
-        m_tree = m_parser->Parse(m_ini->getdouble("optimizer_remove_unused_symbols")==1.0,m_projectIni->getString("vic_memory_config"));
+        m_tree = m_parser->Parse(m_ini->getdouble("optimizer_remove_unused_symbols")==1.0 &&
+                                 Syntax::s.m_currentSystem!=Syntax::NES
+                                 ,m_projectIni->getString("vic_memory_config"));
         //qDebug() << m_parser->m_preprocessorDefines["ORGASM"];
         //exit(1);
     } catch (FatalErrorException e) {

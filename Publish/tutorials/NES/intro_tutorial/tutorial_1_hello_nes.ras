@@ -33,7 +33,7 @@ end;
 
 
 // Empty
-procedure IRQ();
+interrupt IRQ();
 begin
 
 end;
