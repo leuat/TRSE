@@ -17,5 +17,6 @@ xcopy /e  ..\tutorials\RasLib trse\RasLib\
 xcopy /e  ..\tutorials\C64\* trse\C64\
 xcopy /e  ..\tutorials\C128\* trse\C128\
 xcopy /e  ..\tutorials\Vic20\* trse\Vic20\
+xcopy /e  ..\tutorials\NES\* trse\NES\
 xcopy /e dll\* trse\
 REM xcopy start.cmd trse\
