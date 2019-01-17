@@ -50,7 +50,7 @@ void Messages::InitMessages()
     m_messages[MEMORY_OVERLAP_ERROR] = Message(MEMORY_OVERLAP_ERROR, Message::Error, "Your program has overlapping memory configurations. A future version of TRSE will include a memory visualization "
                                    "tool, but for now you need to manually reorganize your code blocks and include files.");
 
-    m_messages[NO_DASM] = Message(NO_DASM, Message::Error, "You need to download the Dasm assembler (http://dasm-dillon.sourceforge.net/) and specify the location of the dasm executable in the TRSE settings panel.");
+    m_messages[NO_DASM] = Message(NO_DASM, Message::Error, "You need to download the Dasm assembler (http://dasm-dillon.sourceforge.net/) and specify the location of the dasm executable in the TRSE settings panel. Or stick to the built-in TRSE assembler namde 'OrgAsm'.");
     m_messages[NO_EXOMIZER] = Message(NO_EXOMIZER, Message::Error, "In order to use Exomizer, you need to download the exe file and  specify the location of the exomizer executablein the TRSE settings panel.");
     m_messages[NO_C1541] = Message(NO_C1541, Message::Error, "In order to create .d64 disk files, you need to install vice & specify the location of the c1541 disk tool in the TRSE settings dialog.");
     m_messages[NO_EMULATOR] = Message(NO_EMULATOR, Message::Error,
@@ -73,7 +73,7 @@ void Messages::InitMessages()
                                        );
 
     m_messages[ALPHA_WARNING] = Message(ALPHA_WARNING, Message::Msg,
-                                      "Ah. Hi there! <br><br>Welcome to this new beta release of Turbo Rascal Syntax Error 0.06 preview version 4! "
+                                      "Hi there! <br><br>Welcome to this new release of Turbo Rascal Syntax Error 0.06! "
                                       "If this is your first time using the TRSE framework, please open the tutorials project located in the parent directory and play around. <br> "
                                       "<br> "
                                       "Thank you so much for trying out Turbo Rascal Syntax Error! Remember to report any bugs to <b>generalgrapefruit@lemonspawn.com</b>.");

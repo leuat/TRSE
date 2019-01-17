@@ -64,10 +64,10 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     }
 
 
-    //qDebug() << params;
-
     if (!QFile::exists(emu)) {
         Messages::messages.DisplayMessage(Messages::messages.NO_EMULATOR);
+        ui->txtOutput->setText("Could not find the emulator for system '"+m_projectIniFile->getString("system")+"'\nMake sure you have set a correct path in the TRSE settings dialoge!\n\n"+
+        "Example: VICE 'c64','c128','xvic' or NES 'mednafen'.");
         return;
     }
     QProcess process;
@@ -473,7 +473,7 @@ void FormRasEditor::BuildNes(QString prg)
 
     data.insert(0,header);
     int dc = data.count();
-    qDebug() << dc;
+//    qDebug() << dc;
 //    exit(1);
     int j=pow(2,14)*m_projectIniFile->getdouble("nes_16k_blocks")-dc+16;
 //    qDebug() << "Appending: " <<j;
@@ -543,7 +543,7 @@ void FormRasEditor::Run()
     QString filename = m_currentSourceFile.split(".")[0] + "."+ m_projectIniFile->getString("output_type");
     if (m_projectIniFile->getString("system")=="NES")
         filename = m_currentSourceFile.split(".")[0] + ".nes";
-    qDebug() << filename;
+//    qDebug() << filename;
 //    exit(1);
 
     ExecutePrg(filename, m_projectIniFile->getString("system"));

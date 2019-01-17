@@ -11,6 +11,7 @@ cp -r ../tutorials/RasLib trse/
 cp -r ../tutorials/C64 trse/
 cp -r ../tutorials/C128 trse/
 cp -r ../tutorials/VIC20 trse/
+cp -r ../tutorials/NES trse/
 cp trse.sh trse
 tar -cvf trse_linux64.tar trse
 gzip trse_linux64.tar

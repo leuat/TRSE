@@ -127,6 +127,8 @@ public:
         m_ini.setFloat("post_optimizer_passldatax", 1);
         m_ini.setFloat("post_optimizer_passstalda", 1);
         m_ini.setFloat("post_optimizer_passldx", 1);
+        m_ini.setFloat("post_optimizer_passcmp", 1);
+        m_ini.setFloat("post_optimizer_passphapla", 1);
 
         if (!m_ini.contains("machine_state"))
           m_ini.setString("machine_state", "$35");

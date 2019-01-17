@@ -31,6 +31,14 @@ begin
 
 end;
 
+
+// Empty
+procedure IRQ();
+begin
+
+end;
+
+
 /*
 	Sets up the background screen by filling 32x30 rows with
     some values to a temp address at $0400, then dumping to nametable 1 ($2000) on the PPU 

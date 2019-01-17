@@ -43,7 +43,7 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -757,20 +757,6 @@ p, li { white-space: pre-wrap; }
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="1" column="0">
-           <widget class="QCheckBox" name="chkPassLdx">
-            <property name="text">
-             <string>Pass Ldx</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="chkPassStaLda">
-            <property name="text">
-             <string>Pass StaLda</string>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="0">
            <widget class="QCheckBox" name="chkPassLdaTax">
             <property name="text">
@@ -785,10 +771,38 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="chkPassStaLda">
+            <property name="text">
+             <string>Pass StaLda</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="chkPassLdx">
+            <property name="text">
+             <string>Pass Ldx</string>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="1">
            <widget class="QCheckBox" name="chkPassLda">
             <property name="text">
              <string>Pass Lda</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="chkPassCmp0">
+            <property name="text">
+             <string>Pass cmp #0</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QCheckBox" name="chkPassPhaPla">
+            <property name="text">
+             <string>Pass pha/pla</string>
             </property>
            </widget>
           </item>

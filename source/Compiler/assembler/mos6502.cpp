@@ -645,8 +645,10 @@ void AsmMOS6502::Optimise(CIniFile& ini)
         OptimiseJumps();
 
 //    if (ini.getdouble("post_optimizer_passcmp")==1)
+    if (ini.getdouble("post_optimizer_passcmp")==1)
         OptimiseCmp("cmp");
             // 6157
+    if (ini.getdouble("post_optimizer_passphapla")==1)
         OptimisePhaPla1();
 //        OptimisePhaPla2();
   //      OptimiseCmp("cpy");

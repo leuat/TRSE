@@ -76,6 +76,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("ToggleSprites"))
         ToggleRegisterBit(as,"$2001",4);
 
+    if (Command("ToggleSpriteSize"))
+        ToggleRegisterBit(as,"$2000",5);
+
     if (Command("ToggleGreyscale"))
         ToggleRegisterBit(as,"$2001",0);
 

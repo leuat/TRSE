@@ -1,19 +1,17 @@
 program Tutorial_2_hello_sprites;
 
 /*
-
-  You need to have installed the NES emulator "mednafen", and set the NES emulator
-  location in the TRSE settings dialog. 
-
-  charset data and initial address are set in project settings
-
-  you can edit the charset data / palette data using any .chr-editor such as YY-chr (https://www.romhacking.net/utilities/119/)
-
+	
+	This example shows how to draw a simple background, turn on sprites,
+    move the sprites around & finally play some music
 
 */
 
+
+
+
 var  
-   	i: byte; 
+   	i,k: byte; 
 	// Must include dummy at $8000 due to the fact we are using 2 16kb blocks. For a larger project,
 	// this is where the music will go
 	music: incnsf("music/zelda.nsf");
@@ -21,43 +19,108 @@ var
 	palette: incbin("palette/palette.dat");
 
 
-
-
+	// Location of the sprite
 	sprite_x, sprite_y : byte;
+
+	// Data location of the sprite (at $0200)
+	@define spriteLocHi $02
+	@define spriteLoc $0204
+
+	
+	// Format: Y, sprite, palette, X
+	sprite_data : array[16] of byte=(
+		0,2,1,0,
+		0,3,1,8,
+		8,18,0,0,
+		8,19,0,8);
+
 
 
 	zp:pointer;
 
 
+// Forward decleration
+procedure SetSpritePosition();
+
+// Empty
+procedure IRQ();
+begin
+
+end;
+
+
+// Moves the player. ReadInput populates the "buttons" variable
+procedure MovePlayer();
+begin
+	ReadInput();
+	sprite_x:=sprite_x+getbit(buttons,0)-getbit(buttons,1); // x axis
+	sprite_y:=sprite_y+getbit(buttons,2)-getbit(buttons,3); // y axis
+	// Set sprite location after update
+	SetSpritePosition();	
+
+
+end;
+
 
 // NMI will automatically be called on every vblank. Update PPU gfx here! For now,
 // it is emtpy. 
 
+
 interrupt NMI();
 begin
+	// Startirq pushes a,x,y onto the stack
 	Startirq(0);
-
-
-	PlaySong();
-
-	// Do nothing really
+	// First, make sure that the PPU knows that sprites are located at @spriteLoc
+	SetSpriteLocation(@spriteLocHi);
 	SetNametable(0);
-	ToggleNMI(1);
 
+	// Play the song!
+	PlaySong();
+	// MovePlayer should really be called outside the NMI, waste of time
+	MovePlayer();
+	// Make sure that sprite properties are set, re-enable NMI
+	ToggleSpriteSize(0);
+	ToggleSpriteTableAddress(0);
+	ToggleNMI(1);
+	// Closeirq pops a,x,y from the stack
 	CloseIRQ();
 end;
 
-/*
-	Sets up the background screen by filling 32x30 rows with
-    some values to a temp address at $0400, then dumping to nametable 1 ($2000) on the PPU 
-
-    Afterwards, creating 64 random attribute (color) values and dumping them to the attribute 
-
-*/
 
 // use $0400 as temp storage area
 @define storage $0400
 
+
+/*
+	SetSpriteLocation sets the sprite location (x,y) for the four sprites
+	to (sprite_x, sprite_y)+(offset_x, offset_y), where the offsets are defined in colum 0,3 in 
+ 	the sprite_data table. 
+	
+*/
+procedure SetSpritePosition();
+begin
+	k:=0;
+	for i:=0 to 4 do begin
+		poke(^@spriteLoc,k+0,sprite_data[k+0]+sprite_y);
+		poke(^@spriteLoc,k+3,sprite_data[k+3]+sprite_x);
+		k:=k+4;
+	end;
+
+end;
+/*
+ 	Simple sprite initialization: Copy sprite data, update sprite position
+*/
+procedure InitSprites();
+begin
+	memcpy(sprite_data, 0,^@spriteLoc,16);
+	SetSpritePosition();
+end;
+
+/*
+ 	Renders an initial screen:
+ 		- attribute table filled with random value %10101010
+		- background namespace(0) = $2000 filled with two rows of value 96 (some random block)
+*/
 procedure InitScreen();
 begin
 	zp:=@storage;
@@ -81,24 +144,37 @@ begin
 end;
 
 
+/*
+	Initializes variables
+*/
+procedure InitVariables();
+begin
+	sprite_x:=70;
+	sprite_y:=40;
+end;
+
+
 // Starting point after resetting the NES
 begin
-	fill(^0,0,0);
-	fill(^$100,0,0);
 	// Load palette
 	LoadPalette(palette);
 	// Set up background & color values
 	InitScreen();
-	
+	InitSprites();
+
+
 	// Turn on background
 	ToggleBackground(1);
+	// Turn on sprites
+	ToggleSprites(1);
 	// Display background in border 0
 	ToggleBorderBackground(1);
 	// set nametable 0 = $2000 (where we dumped the background data)
-	SetNametable(0);
+
 	// Load music
 	LoadSong(1);
-	// Turn on NMI
+	InitVariables();
+	// Turn on NMI and RUN!
 	ToggleNMI(1);
 	
 	// Halt! (this is where non-drawing gamelogic should happen)

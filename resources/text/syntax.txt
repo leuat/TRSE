@@ -90,6 +90,7 @@ m; ToggleBorderBackground; NES; n
 m; SetSpriteLocation; NES; b
 m; Split; NES;
 m; Scroll; NES; b,b
+m; ToggleSpriteSize; NES; n
 m; ; NES; n
 m; ; NES; n
 m; ; NES; n
