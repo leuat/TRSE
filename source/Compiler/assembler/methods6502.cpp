@@ -483,6 +483,8 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("initeightbitmul"))
             InitEightBitMul(as);
 
+    if (Command("init8x8mulNes"))
+        Init8x8MulNes(as);
 
     if (Command("initprintdecimal"))
             InitPrintDecimal(as);
@@ -955,6 +957,37 @@ void Methods6502::InitEightBitMul(Assembler *as)
 //    as->Asm("jmp " + l);
   //  as->Label("multiplier .byte 0");
     as->Label("multiplier = " + as->m_internalZP[0]);
+    as->Label("multiplier_a = " + as->m_internalZP[1]);
+    as->Label("multiply_eightbit");
+    as->Asm("cpx #$00");
+    as->Asm("beq mul_end");
+    as->Asm("dex");
+    as->Asm("stx "+as->m_internalZP[1]);
+    as->Asm("lsr");
+    as->Asm("sta multiplier");
+    as->Asm("lda #$00");
+//    as->Asm("sta multiplier_a");
+    as->Asm("ldx #$08");
+    as->Label("mul_loop");
+    as->Asm("bcc mul_skip");
+    as->Label("mul_mod");
+    as->Asm("adc multiplier_a");
+    as->Label("mul_skip");
+    as->Asm("ror");
+    as->Asm("ror multiplier");
+    as->Asm("dex");
+    as->Asm("bne mul_loop");
+    as->Asm("ldx multiplier");
+    as->Asm("rts");
+    as->Label("mul_end");
+    as->Asm("txa");
+    as->Asm("rts");
+    as->Label(l);
+    as->PopLabel("multiply_eightbit");
+
+
+/*    as->Label("multiplier = " + as->m_internalZP[0]);
+    as->Label("multiplier_a = " + as->m_internalZP[1]);
     as->Label("multiply_eightbit");
     as->Asm("cpx #$00");
     as->Asm("beq mul_end");
@@ -980,6 +1013,58 @@ void Methods6502::InitEightBitMul(Assembler *as)
     as->Asm("rts");
     as->Label(l);
     as->PopLabel("multiply_eightbit");
+*/
+}
+
+void Methods6502::Init8x8MulNes(Assembler *as)
+{
+    m_node->m_isInitialized["eightbitmul"] = true;
+
+    as->Label("multiply_eightbit");    as->Label("prodlo = " + as->m_internalZP[0]);
+    as->Label("factor2 = " + as->m_internalZP[1]);
+    as->Label("initmul8x8_a = " + as->m_internalZP[2]);
+    as->Asm("sta initmul8x8_a");
+    as->Asm("lsr initmul8x8_a");
+    as->Asm("sta prodlo");
+    as->Asm("stx factor2");
+    as->Asm("lda #0");
+    as->Asm("ldy #8");
+    as->Label("initmul8x8_loop");
+    as->Asm("bcc initmul8x8_noadd");
+    as->Asm("clc");
+    as->Asm("adc factor2");
+    as->Label("initmul8x8_noadd");
+    as->Asm("ror initmul8x8_a");
+    as->Asm("ror prodlo");
+    as->Asm("dey");
+    as->Asm("bne initmul8x8_loop");
+    as->Asm("rts");
+
+ /*   .proc mul8
+    prodlo  = $0000
+    factor2 = $0001
+
+      ; Factor 1 is stored in the lower bits of prodlo; the low byte of
+      ; the product is stored in the upper bits.
+      lsr a  ; prime the carry bit for the loop
+      sta prodlo
+      sty factor2
+      lda #0
+      ldy #8
+    loop:
+      ; At the start of the loop, one bit of prodlo has already been
+      ; shifted out into the carry.
+      bcc noadd
+      clc
+      adc factor2
+    noadd:
+      ror a
+      ror prodlo  ; pull another bit out for the next iteration
+      dey         ; inc/dec don't modify carry; only shifts and adds do
+      bne loop
+      rts
+    .endproc
+   */
 }
 
 void Methods6502::InitPrintString(Assembler *as)

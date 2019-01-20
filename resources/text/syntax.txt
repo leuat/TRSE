@@ -14,7 +14,7 @@
 
 # init functions
 m; initrandom; C64, C128 ;
-m; initsinetable; C64, C128, VIC20, PET, NES ;
+m; initsinetable; C64, C128, VIC20, PET;
 m; initmoveto; C64, C128, VIC20, PET, NES ;
 m; initprintdecimal; C64, C128, VIC20, PET, NES ;
 m; initeightbitmul; C64, C128, VIC20, PET, NES ;

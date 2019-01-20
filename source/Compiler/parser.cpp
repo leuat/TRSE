@@ -90,8 +90,11 @@ void Parser::InitBuiltinFunctions()
         Node::m_staticBlockInfo.m_blockName = "BuiltinMethods";
     }
 
+/*    if (Syntax::s.m_currentSystem == Syntax::NES)
+        InitBuiltinFunction(QStringList()<< "*", "init8x8mulNes");
+    else*/
+        InitBuiltinFunction(QStringList()<< "*", "initeightbitmul");
 
-    InitBuiltinFunction(QStringList()<< "*", "initeightbitmul");
     InitBuiltinFunction(QStringList()<< "*", "init16x8mul");
     InitBuiltinFunction(QStringList()<< "*", "init8x8div");
     InitBuiltinFunction(QStringList()<< "*", "init16x8div");
@@ -101,7 +104,8 @@ void Parser::InitBuiltinFunctions()
     InitBuiltinFunction(QStringList()<< "viairq" , "init_viairq");
     InitBuiltinFunction(QStringList()<< "initmodplayer" , "include_modplayer");
     InitBuiltinFunction(QStringList()<< "decrunch", "init_decrunch");
-    InitBuiltinFunction(QStringList()<< "sine", "initsinetable", "initsine_calculate");
+    if (Syntax::s.m_currentSystem!=Syntax::NES)
+       InitBuiltinFunction(QStringList()<< "sine", "initsinetable", "initsine_calculate");
     InitBuiltinFunction(QStringList()<< "log2_table" << "atan2", "initlog2");
 
     InitBuiltinFunction(QStringList()<< "atan2", "initatan2");

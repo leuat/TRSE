@@ -141,6 +141,7 @@ public:
     void InitMoveto(Assembler *as);
     void InitMoveto80(Assembler *as);
     void InitEightBitMul(Assembler* as);
+    void Init8x8MulNes(Assembler* as);
     void InitPrintString(Assembler* as);
     void InitDecrunch(Assembler* as);
     void InitPrintDecimal(Assembler* as);

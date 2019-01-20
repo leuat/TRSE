@@ -98,6 +98,17 @@ void CreateBinaryFile(QString fn) {
 
 }
 
+void SineTable(QString fn) {
+    QFile f(fn);
+    f.open(QFile::WriteOnly);
+    QByteArray b;
+    for (int i=0;i<256;i++)
+        b.append(sin((i/256.0)*3.14159265*2)*127+128);
+    f.write(b);
+    f.close();
+
+}
+
 
 
 int main(int argc, char *argv[])
@@ -114,6 +125,7 @@ int main(int argc, char *argv[])
 //    SetMongisPalette(a);
 
 //    CreateBinaryFile("music.bin");
+    SineTable("sine.bin");
 
 //    ConvertPerlin("/home/leuat/Pictures/Perlin.jpg", "/home/leuat/Dropbox/TRSE/VICDemo/data/perlin22.dat", 23.25);
   //  exit(1);
