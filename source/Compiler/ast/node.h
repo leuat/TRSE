@@ -83,6 +83,9 @@ public:
     virtual bool isPureNumeric() {
         return false;
     }
+    virtual bool isPureVariable() {
+        return false;
+    }
 /*    virtual void LoadVariable(AbstractASTDispatcher* dispatcher) {}
     virtual void StoreVariable(AbstractASTDispatcher* dispatcher) {}*/
     virtual TokenType::Type getType(Assembler* as) {

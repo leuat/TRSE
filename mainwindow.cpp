@@ -833,7 +833,9 @@ void MainWindow::LoadProject(QString filename)
     VerifyProjectDefaults();
 //    m_iniFile.setString("project_path", getProjectPath());
     m_iniFile.addStringList("recent_projects", filename, true);
+
     RefreshFileList();
+
     m_iniFile.Save();
 
     // Set compiler syntax based on system

@@ -48,7 +48,7 @@ public:
     QImage toQImage(int size, uchar bmask, LColorList& lst, int scale);
     bool isEmpty();
     bool isEqualBytes(PixelChar& o);
-    void Reorganize(unsigned char bitMask, unsigned char Scale,unsigned char minCol, unsigned char maxCol);
+    void Reorganize(unsigned char bitMask, unsigned char Scale,unsigned char minCol, unsigned char maxCol, unsigned char bgCol);
     int Count(unsigned int col, unsigned char bitMask, unsigned char Scale);
 
     static uchar Swap(int a, int b, uchar c);

@@ -50,6 +50,9 @@ public:
 
     QString getAddress() override {return value;}
 
+    bool isPureVariable() override {
+        return true;
+    }
 
     bool isAddress() override;
 

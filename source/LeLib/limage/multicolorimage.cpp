@@ -74,7 +74,11 @@ void MultiColorImage::setPixel(int x, int y, unsigned int color)
         return;
     PixelChar& pc = getPixelChar(x,y);
 
-    pc.Reorganize(m_bitMask, m_scale,m_minCol, m_noColors);
+//    qDebug() << m_minCol;
+  //  qDebug() << m_noColors;
+
+//    qDebug() << m_extraCols[0] << m_background;
+    pc.Reorganize(m_bitMask, m_scale,m_minCol, m_noColors, m_background);
 
     int ix = x % (8/m_scale);//- (dx*m_charWidth);
     int iy = y % 8;//- (dy*m_charHeight);
@@ -115,7 +119,7 @@ void MultiColorImage::Reorganize()
 {
 #pragma omp parallel for
     for (int i=0;i<m_charWidth*m_charHeight;i++)
-        m_data[i].Reorganize(m_bitMask, m_scale, m_minCol, m_noColors);
+        m_data[i].Reorganize(m_bitMask, m_scale, m_minCol, m_noColors,m_extraCols[0]);
 }
 
 void MultiColorImage::SaveBin(QFile& file)
@@ -856,11 +860,23 @@ bool PixelChar::isEqualBytes(PixelChar &o)
     return true;
 }
 
-void PixelChar::Reorganize(unsigned char bitMask, unsigned char scale, unsigned char minCol, unsigned char maxCol)
+void PixelChar::Reorganize(unsigned char bitMask, unsigned char scale, unsigned char minCol, unsigned char maxCol, unsigned char bgCol)
 {
+//    if (rand()%1000==0)
+  //      qDebug() << bgCol << minCol << maxCol;
+    if (c[0]!=bgCol)
+        for (int i=1;i<maxCol;i++)
+            if (c[i]==bgCol) {
+                unsigned char tmp = c[0];
+                c[0]=c[i];
+                c[i]=tmp;
+
+            }
+    if (minCol<1) minCol=1;
     for (int i=minCol;i<maxCol;i++) {
         unsigned int cnt = Count(i, bitMask, scale);
-        if ((cnt == 0)) {
+//        qDebug() << cnt;
+        if (cnt == 0) {
             c[i] = 255;
            // qDebug() << "REMOVING COLOR";
         }

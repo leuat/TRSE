@@ -616,7 +616,8 @@ Node* Parser::Factor()
 Node* Parser::Term()
 {
     Node* node = Factor();
-    while (m_currentToken.m_type == TokenType::Type::MUL || m_currentToken.m_type == TokenType::Type::DIV) {
+    while (m_currentToken.m_type == TokenType::Type::MUL || m_currentToken.m_type == TokenType::Type::DIV
+    || m_currentToken.m_type == TokenType::Type::BITAND || m_currentToken.m_type == TokenType::Type::BITOR){
         Token t = m_currentToken;
         Eat(m_currentToken.m_type);
 

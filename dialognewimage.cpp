@@ -138,6 +138,14 @@ void DialogNewImage::slotOk()
          m_meta.m_width = m_charWidth;
         m_meta.m_height = m_charHeight;
     }
+    if (ui->comboBox->currentIndex()==6) {
+        ui->grpImageSize->setVisible(true);
+        CharImageToData();
+        m_meta.m_width = m_charWidth;
+       m_meta.m_height = m_charHeight;
+ //       exit(1);
+    }
+
     retVal = ui->comboBox->currentIndex();
 }
 
@@ -148,6 +156,7 @@ void DialogNewImage::on_comboBox_currentIndexChanged(int index)
 
     if (index==7)
         ui->grpLevelDesignerParams->setVisible(true);
+
     if (index==9) {
         ui->grpImageSize->setVisible(true);
         VICImageToData();
@@ -156,6 +165,7 @@ void DialogNewImage::on_comboBox_currentIndexChanged(int index)
     if (index==6) {
         ui->grpImageSize->setVisible(true);
         CharImageToData();
+ //       exit(1);
     }
 
 

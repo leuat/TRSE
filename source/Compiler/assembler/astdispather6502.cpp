@@ -187,8 +187,11 @@ bool ASTDispather6502::HandleSingleAddSub(Node *node) {
     NodeNumber* num = dynamic_cast<NodeNumber*>(node->m_right);
     NodeVar* vnum = dynamic_cast<NodeVar*>(node->m_right);
     NodeVar* var = dynamic_cast<NodeVar*>(node->m_left);
-
     if (num!=nullptr || vnum!=nullptr) {
+/*        if (num!=nullptr)
+            qDebug() << "Number:"  <<num->m_val;
+        if (vnum!=nullptr)
+            qDebug() << "Var:"  <<vnum->value;*/
         as->Comment("Add/sub where right value is constant number");
         if (num!=nullptr && num->m_op.m_type==TokenType::ADDRESS && var!=nullptr) {
             //qDebug() << "ADDRESS: " << num->StringValue();
@@ -424,6 +427,16 @@ void ASTDispather6502::dispatch(NodeBinOP *node)
 
     node->DispatchConstructor();
     // First check if both are consants:
+
+    // First, flip such that anything numeric / pure var is to the right
+
+    if (!(node->m_right->isPureNumeric() || node->m_right->isPureVariable())) {
+        if (node->m_left->isPureNumeric() || node->m_left->isPureVariable()) {
+            Node* tmp = node->m_right;
+            node->m_right = node->m_left;
+            node->m_left = tmp;
+        }
+    }
 
 
     if (node->isPureNumeric()) {

@@ -23,10 +23,14 @@ public:
 /*    int m_frameWidth = 4;
     int m_frameHeight = 4;
 */
-    int m_frameWidth = 40;
-    int m_frameHeight = 25;
+//    int m_frameWidth = 40;
+  //  int m_frameHeight = 25;
 
-    int m_currentscene = 1;
+    int m_frameWidth = 4;
+    int m_frameHeight = 4;
+
+
+    int m_currentscene = 2;
 
     void Scene1();
     void Scene2();

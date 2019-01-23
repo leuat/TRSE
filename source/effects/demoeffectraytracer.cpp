@@ -84,7 +84,7 @@ void DemoEffectRaytracer::Scene2()
 //    m_rt.m_objects.append(new RayObjectCylinder(pos,QVector3D(0.3,0.1,2), Material(col,spec,ref, pn,ps,"")));
 
 
-    QVector3D p(0,6,0);
+    QVector3D p(6,0,0);
     m_rt.m_objects.append(new RayObjectBox(pos,QVector3D(1,1,1), Material(col,spec,ref, pn,ps,"")));
 
     m_rt.m_objects.append(new RayObjectBox(pos-p,QVector3D(1,1,1), Material(col,spec,ref, pn,ps,"")));
@@ -103,22 +103,23 @@ void DemoEffectRaytracer::Scene2()
 }
 
 void DemoEffectRaytracer::UpdateScene2() {
-    float t = (360/(float)(m_noFrames-1))*((int)m_time%(int)(m_noFrames));
+    float t = -(360/(float)(m_noFrames))*((int)m_time%(int)(m_noFrames));
 //    float t2 = (11/(float)(m_noFrames-1))*((int)m_time%(int)(m_noFrames));
-    float t2 = (6.0/(float)(m_noFrames-1))*((int)m_time%(int)(m_noFrames));
+    float ww = 5.3;
+    float t2 = (ww/(float)(m_noFrames-1))*((int)m_time%(int)(m_noFrames));
 
-    m_rt.m_camera.m_camera.setY(t2);
-    m_rt.m_camera.m_target.setY(t2);
-    m_rt.m_camera.m_target.setX(-0.3);
+    m_rt.m_camera.m_camera.setX(t2-ww/2);
+    m_rt.m_camera.m_target.setX(t2-ww/2);
+    m_rt.m_camera.m_target.setY(-1.3);
 
     m_rt.m_globals.m_lights[0]->m_direction = QVector3D(0,0,-1);
 
    for (AbstractRayObject* ro : m_rt.m_objects) {
-    ro->m_bbRadius=30;
-    ro->SetRotation(QVector3D(0,0, t));
+        ro->m_bbRadius=30;
+        ro->SetRotation(QVector3D(0,0, t));
    }
     m_rt.m_globals.m_skyScale = 0;
-    m_rt.m_camera.m_camera.setZ(-60);
+    m_rt.m_camera.m_camera.setZ(-100);
     m_rt.m_globals.m_shadowScale = 1;
     m_rt.m_camera.m_fov = 3.0;
 }
@@ -168,6 +169,13 @@ void DemoEffectRaytracer::run()
         w = 4*(m_frameWidth);
         h = 8*m_frameHeight;
         m_rt.Raymarch(m_img, w,h);
+        for (int y=0;y<h;y++) {
+        for (int x=0;x<2;x++) {
+            for (int i=0;i<w;i++)
+                m_img.setPixel(i+x*w,y,m_img.pixel(i,y));
+        }
+        }
+
         m_elapsedTime = m_timer.elapsed();
         ConvertToC64();
         AppendData();
