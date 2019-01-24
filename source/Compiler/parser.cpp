@@ -303,6 +303,8 @@ Node *Parser::Variable()
 
       //  qDebug() << "looking for " << m_currentToken.m_value << " , found symbol: " << s->m_name << " with value " << s->m_value->m_fVal;
 
+//        qDebug() << m_currentToken.m_value;
+
         if (s->m_type=="ADDRESS") m_currentToken.m_type=TokenType::ADDRESS;
         if (s->m_type=="INTEGER") m_currentToken.m_type=TokenType::INTEGER;
         if (s->m_type=="BYTE") m_currentToken.m_type=TokenType::BYTE;
@@ -336,6 +338,12 @@ Node *Parser::Variable()
 
         Eat(m_currentToken.m_type);
         if (m_currentToken.m_type!=TokenType::LBRACKET) {
+            if (t.m_value.endsWith("^")) {
+                t.m_value.replace("^","");
+  //              qDebug() << t.m_value;
+//                exit(1);
+                t.m_type = TokenType::ADDRESS;
+            }
             n = new NodeVar(t);
         }
         else

@@ -984,6 +984,7 @@ void Methods6502::InitEightBitMul(Assembler *as)
     as->Asm("rts");
     as->Label("mul_end");
     as->Asm("txa");
+//    as->Asm("ldy #0");
     as->Asm("rts");
     as->Label(l);
     as->PopLabel("multiply_eightbit");
@@ -3030,7 +3031,8 @@ void Methods6502::InitMul16x8(Assembler *as)
     as->Label("mul16x8_procedure");
 
     as->Asm("lda #$00");
-    as->Asm("tay");
+    as->Asm("ldy #$00");
+//    as->Asm("tay");
     as->Asm("sty mul16x8_num1Hi  ; remove this line for 16*8=16bit multiply");
     as->Asm("beq mul16x8_enterLoop");
 

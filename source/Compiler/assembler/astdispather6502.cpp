@@ -54,6 +54,7 @@ void ASTDispather6502::EightBitMul(Node *node) {
 
     as->Asm("jsr multiply_eightbit");
     as->Asm("txa"); // result in a
+    as->Asm("ldy #0");
 
 }
 
@@ -75,6 +76,9 @@ void ASTDispather6502::HandleGenericBinop16bit(Node *node) {
 
     as->ClearTerm();
     as->Asm("ldy #0");
+//    qDebug() <<node->m_left->m_op.m_value;
+  //  exit(1);
+//    node->m_right->forceWord();
     node->m_right->Accept(this);
 
     // 255 + k - j doesn't work
@@ -82,7 +86,7 @@ void ASTDispather6502::HandleGenericBinop16bit(Node *node) {
     QString lbl = as->StoreInTempVar("rightvarInteger", "word");
 
     //    as->Asm("sta " +lbl);
-    as->Asm("sty " +lbl+"+1"); // J is stored
+//    as->Asm("sty " +lbl+"+1"); // J is stored
     as->Term();
 
     //as->Variable(v->value, false);
@@ -167,15 +171,26 @@ void ASTDispather6502::HandleVarBinopB16bit(Node *node) {
     //    as->Asm("sta " +lbl);
     QString lbl = as->StoreInTempVar("rightvarInteger", "word");
 //    as->Asm("sty " +lbl+"+1");
+//        qDebug() << as->m_term;
     as->Term();
-
   //  as->Asm("clc");
     //as->Variable(v->value, false);
-    as->Asm("lda " + v->value + "+1");
+  //  as->Comment(";HEREHERE");
+//    exit(1);
+    if (v->m_op.m_type!=TokenType::ADDRESS)
+        as->Asm("lda " + v->value + "+1");
+    else
+        as->Asm("lda #>" + v->value + "");
+
     as->BinOP(node->m_op.m_type);
     as->Term(lbl+"+1", true);
     as->Asm("tay");
-    as->Asm("lda "+ v->value);
+//    qDebug() << v->value << v->m_op.getType();
+  //  exit(1);
+    if (v->m_op.m_type!=TokenType::ADDRESS)
+        as->Asm("lda "+ v->value);
+    else
+        as->Asm("lda #<"+ v->value);
     //as->Asm("clc");
 
     //            as->ClearTerm();
@@ -1650,12 +1665,17 @@ void ASTDispather6502::dispatch(NodeVar *node)
     }
     else {
         bool isOK = true;
-
+//        qDebug() << val << " is " << s->getTokenType();
 
         if (s->getTokenType()==TokenType::INTEGER)
             isOK = false;
         if (s->getTokenType()==TokenType::POINTER && as->m_term=="")
             isOK = false;
+        if ((s->getTokenType()==TokenType::ADDRESS || s->getTokenType()==TokenType::INCBIN)  && as->m_term=="") {
+            as->Asm("lda #<" + val);
+            as->Asm("ldy #>" + val);
+            return;
+        }
         if (node->m_fake16bit && s->getTokenType()==TokenType::BYTE )
             as->Asm("ldy #0 ; Fake 16 bit");
         as->Variable(val, isOK);
@@ -1870,8 +1890,13 @@ void ASTDispather6502::AssignPointer(NodeAssign *node) {
     NodeNumber* bNum = dynamic_cast<NodeNumber*>(node->m_right);
     NodeVar* aVar = dynamic_cast<NodeVar*>(node->m_left);
 
+
+//    if (!node->m_right->isAddress())
+  //      ErrorHandler::e.Error("Must be address", node->m_op.m_lineNumber);
+
     if (IsSimpleIncDec(aVar,  node))
         return;
+
 
 
     if (bVar==nullptr && !node->m_right->isPureNumeric()) {
@@ -1880,6 +1905,7 @@ void ASTDispather6502::AssignPointer(NodeAssign *node) {
         as->Term();
         node->m_right->Accept(this);
         as->Term();
+        as->Comment(";end");
         as->Asm("sta " + aVar->value);
         as->Asm("sty "+ aVar->value+"+1");
         return;
@@ -1891,10 +1917,13 @@ void ASTDispather6502::AssignPointer(NodeAssign *node) {
     if (bVar!=nullptr) {
 
         if (bVar->getType(as)!=TokenType::POINTER) {
-            as->Asm("lda #<" + bVar->value);
-            as->Asm("ldx #>" + bVar->value);
-            as->Asm("sta " + aVar->value);
-            as->Asm("stx "+ aVar->value+"+1");
+//            if (bVar->m_op.m_type==TokenType::ADDRESS) {
+                as->Asm("lda #<" + bVar->value);
+                as->Asm("ldx #>" + bVar->value);
+                as->Asm("sta " + aVar->value);
+                as->Asm("stx "+ aVar->value+"+1");
+                return;
+  //          }
         }
         else
         {
@@ -1902,14 +1931,20 @@ void ASTDispather6502::AssignPointer(NodeAssign *node) {
             as->Asm("ldx " + bVar->value + "+1");
             as->Asm("sta " + aVar->value);
             as->Asm("stx "+ aVar->value+"+1");
+            return;
         }
+
     }
     if (node->m_right->isPureNumeric()) {
         as->Asm("lda #" + QString::number(((int)node->m_right->numValue()) & 255));
         as->Asm("ldx #" + QString::number(((int)node->m_right->numValue()>>8) & 255) );
         as->Asm("sta " + aVar->value);
         as->Asm("stx "+ aVar->value+"+1");
+        return;
+
     }
+     ErrorHandler::e.Error("Right-hand side must be constant or address", node->m_op.m_lineNumber);
+
 }
 
 bool ASTDispather6502::isSimpleAeqAOpB(NodeVar *var, NodeAssign *node) {
@@ -1963,6 +1998,7 @@ bool ASTDispather6502::isSimpleAeqAOpB16Bit(NodeVar *var, NodeAssign *node)
     //        return false;
     //      }
 
+
     if (!(rterm->m_op.m_type==TokenType::PLUS || rterm->m_op.m_type==TokenType::MINUS))
         return false;
 //    exit(1);
@@ -2000,6 +2036,7 @@ bool ASTDispather6502::isSimpleAeqAOpB16Bit(NodeVar *var, NodeAssign *node)
 
 bool ASTDispather6502::IsSimpleIncDec(NodeVar *var, NodeAssign *node) {
     // Right is binop
+//    return false;
     NodeBinOP* rterm = dynamic_cast<NodeBinOP*>(node->m_right);
     if (rterm==nullptr)
         return false;
@@ -2020,7 +2057,7 @@ bool ASTDispather6502::IsSimpleIncDec(NodeVar *var, NodeAssign *node) {
         if (!(num!=nullptr && num->m_val==1))
             return isSimpleAeqAOpB(var, node);
     }
-        else
+    else
         return isSimpleAeqAOpB16Bit(var, node);
 
 //    if (var->isWord(as))
