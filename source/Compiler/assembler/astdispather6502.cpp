@@ -1142,7 +1142,7 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
         if (node->m_op.m_type==TokenType::GREATER) {
             as->Comment("Compare INTEGER with pure num / var optimization");
             as->Asm("lda " + vara->value + "+1   ; compare high bytes");
-            as->Asm("cmp " + hi);
+            as->Asm("cmp " + hi + " ;keep");
             as->Asm("bcc " + lbl2);
             as->Asm("bne " + lbl1);
             as->Asm("lda " + vara->value);
@@ -1152,7 +1152,7 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
         if (node->m_op.m_type==TokenType::LESS) {
             as->Comment("Compare INTEGER with pure num / var optimization");
             as->Asm("lda " + vara->value + "+1   ; compare high bytes");
-            as->Asm("cmp " + hi);
+            as->Asm("cmp " + hi + " ;keep");
             as->Asm("bcc " + lbl1);
             as->Asm("bne " + lbl2);
             as->Asm("lda " + vara->value);
@@ -1963,7 +1963,7 @@ bool ASTDispather6502::isSimpleAeqAOpB16Bit(NodeVar *var, NodeAssign *node)
     //        return false;
     //      }
 
-    if (!(rterm->m_op.m_type==TokenType::PLUS))// || rterm->m_op.m_type==TokenType::MINUS))
+    if (!(rterm->m_op.m_type==TokenType::PLUS || rterm->m_op.m_type==TokenType::MINUS))
         return false;
 //    exit(1);
 //    return false;
@@ -1975,13 +1975,17 @@ bool ASTDispather6502::isSimpleAeqAOpB16Bit(NodeVar *var, NodeAssign *node)
         as->Term();
 //        as->Asm("clc");
         as->BinOP(rterm->m_op.m_type);
+
         rterm->m_right->Accept(this);
         as->Term();
-        as->Asm("bcc "+lbl);
-        if (rterm->m_op.m_type==TokenType::PLUS)
+        if (rterm->m_op.m_type==TokenType::PLUS) {
+            as->Asm("bcc "+lbl);
             as->Asm("inc " + var->value + "+1");
-        else
+        }
+        else {
+            as->Asm("bcs "+lbl);
             as->Asm("dec " + var->value + "+1");
+        }
 
         as->Label(lbl);
         as->Asm("sta " + var->value + "+0");

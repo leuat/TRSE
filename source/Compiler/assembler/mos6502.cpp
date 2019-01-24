@@ -835,7 +835,7 @@ void AsmMOS6502::OptimiseCmp(QString op)
     int j;
     for (int i=0;i<m_source.count()-1;i++) {
         QString l0 = getLine(i).toLower();
-        if (l0.contains(op+ " ")) {
+        if (l0.contains(op+ " ") && !l0.contains(";keep")) {
 
 
 
