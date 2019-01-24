@@ -165,16 +165,8 @@ begin
 		if (scrollx=8) then scrollx:=0;
 		UpdateChars();
 		if (scrollx=0) then begin
-	//k:=SCREEN_BG_COLOR;
-	//SCREEN_BG_COLOR:=RED;
 			CopyToScreen();
-	//SCREEN_BG_COLOR:=k;
 		end;
-//		if (scrollx=1) then 	
-
-//		waitforraster(146);
-
-//		for i:=0 to 0 do wait(40);
 
 
 	end;

@@ -4,6 +4,7 @@ var
 	random_values : array[255] of byte;
 	x, y : byte;
 	index : byte;
+	screenP, colorP : pointer;
 
 //	  charset: IncBin("charsets/tutorial3.bin","$1fff");
 
@@ -37,28 +38,29 @@ begin
 	y:=sine[0];
 	while 1=1 do begin
 		// loop y		
-		for y:=5 to 20 do begin
+		screenP:=SCREEN_CHAR_LOC;
+		colorP:=SCREEN_COL_LOC;
+		for y:=0 to 24 do begin
 			// moves current screen position
-			moveto(0, y, $04); // $04 is screen memory upper byte
 			// Select some random color
-			for x:=5 to 35 do begin
+			for x:=0 to 40 do begin
 				// Sets both screen and color values
-				screenmemory[x] := random_values[index];
+				screenP[x] := random_values[index];
 				// increases screen X counter
 				// Increase by some random non-repeatable prime
 				index:=index+17;
-	    	end;
-			moveto(0, y, $D8); // $04 is screen memory upper byte
+	    		end;
 			// Select some random color
 			random_color := random_values[index]/16;
 			// restrict to 0-16
-			for x:=5 to 35 do begin
+			for x:=0 to 40 do begin
 				// Sets both screen and color values
-				screenmemory[x] := random_color;
+				colorP[x] := random_color;
 				// increases screen X counter
 			
 	    	end;
-
+		screenP:=screenP+40;
+		colorP:=colorP+40;
 		end
 	end;
 

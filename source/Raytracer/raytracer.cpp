@@ -1,5 +1,5 @@
 #include "raytracer.h"
-#include <omp.h>
+//#include <omp.h>
 
 RayTracer::RayTracer()
 {
@@ -114,7 +114,9 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
             ray.m_reflect=3;
 
 //            float m_z = 1E20;
-            int tid = omp_get_thread_num();
+            //int tid = omp_get_thread_num();
+
+            int tid = 0;
 
             RayMarchSingle(ray, Image, nullptr,80,tid);
             QColor c = Util::toColor(ray.m_intensity*256 + m_globals.m_ambient);

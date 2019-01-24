@@ -9,16 +9,18 @@ var
 	colorIndex:byte;
 	fade : array [16] of byte = (11,6,6,12,4,14,15,1,1,15,14,4,12,6,6,11); 
 	
-	mainChar: IncBin("charsets/tutorial3.bin","$27FF");
-	image_color: IncBin("images/octopus_color.bin", "$5000");
+	mainChar: IncBin("charsets/tutorial3.bin",$27FF);
+	image_color: IncBin("images/octopus_color.bin", $5000);
 	
-	image_data: IncBin("images/octopus_data.bin", "$6000");
+	image_data: IncBin("images/octopus_data.bin", $6000);
 
 
 procedure PrintText();
 begin
 	// move to screen position
 	moveto(2,23, $04);
+	fill(screenmemory,0,55);
+	
 	// print text
 	PrintString(text, textshift, 36);
 	// move cursor to color
@@ -36,7 +38,7 @@ interrupt UpdateRaster();
 begin
 	startirq(0);
 	// increase global time
-	time:=time+1;
+	inc(time);
 	// increase text shift only every 8th step due to scrolling 
 
 	x:=time&7;
@@ -49,7 +51,7 @@ begin
 	y:=0;
 	// Optional wobble effect on the main image	
 	wobbleShift:=sine[time*2];
-	while y<210 do begin
+	while y<200 do begin
 		// Keep until rasterline hits text line
 		y:=peek(RASTERLINE_POS, 0);
 		val:=sine[y*8 + wobbleShift]/32;
@@ -58,7 +60,7 @@ begin
 	end;
 
 	// Wait for text line raster
-	waitForRaster(23*10);
+	waitForRaster(220);
 	// switch bank to 0
 	setbank(VIC_BANK0);
 	// switch graphics mode
@@ -70,11 +72,11 @@ begin
 	SetCharsetLocation($2800);
 
 	// scroll this area
-	Scrollx(8-xscroll);
+	Scrollx((8-xscroll)&7);
 	// wait for rasterline to hit near bottom
-//	waitForRaster(250);
+	waitForRaster(250);
 	// switch back to bank 1 and set multi color mode again
-
+	
 	setbank(VIC_BANK1);
 
 	Scrollx(0); 
@@ -84,7 +86,6 @@ begin
 	// Make sure we point the vic to the bitmap data
 	poke(VIC_DATA_LOC, 0, $18);
 	// finally, update the text
-
 	PrintText();
 	// call system kernel
 	closeirq();	
@@ -104,6 +105,8 @@ begin
 end;
 
 begin
+
+
 	Setup();
 	preventirq();
 	setmemoryconfig(1,0,0);
