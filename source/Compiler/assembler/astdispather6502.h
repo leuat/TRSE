@@ -154,6 +154,7 @@ public:
     void AssignPointer(NodeAssign* node);
 
     bool isSimpleAeqAOpB(NodeVar *var, NodeAssign* node);
+    bool isSimpleAeqAOpB16Bit(NodeVar *var, NodeAssign* node);
 
     bool IsSimpleIncDec(NodeVar *var, NodeAssign* node);
 

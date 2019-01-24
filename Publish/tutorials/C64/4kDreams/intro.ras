@@ -125,8 +125,9 @@ begin
 	k2:=-time;
 	for k:=0 to 4 do begin
 		ms_shift:=sine[time+k2];// -sine[time*2+k2*2+3]/4;
-		if (dscroll<>0) then
-			shifts[k]:=7-ms_shift&7;
+		if (dscroll<>0) then begin
+			shifts[k]:=(7-ms_shift)&7;
+		end;
 		ms_shift:=ms_shift/8;
 		shifts2[k]:=ms_shift;	
 //		if (dscroll<>0) then
@@ -553,7 +554,7 @@ begin
 	inc(idx);
 
 
-
+//	shifts[current]:=7-time&7;
 	scrollx(shifts[current]);
 
 	y:=y+16;

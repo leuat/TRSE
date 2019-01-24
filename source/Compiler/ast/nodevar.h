@@ -34,7 +34,7 @@ public:
     QString value;
     Node* m_expr = nullptr;
     //NodeVarType* m_type;
-
+    bool m_fake16bit = false;
 
     NodeVar(Token t);
 
@@ -47,6 +47,11 @@ public:
 
     bool DataEquals(Node *other) override;
     bool isWord(Assembler* as) override;
+
+
+    void forceWord() override {
+        m_fake16bit = true;
+    }
 
     QString getAddress() override {return value;}
 

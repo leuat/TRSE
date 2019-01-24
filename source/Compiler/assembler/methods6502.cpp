@@ -156,6 +156,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("LoadSong"))
         LoadSong(as);
 
+    if (Command("RightBitShift"))
+        RightBitShift(as);
+
     if (Command("PlayVIC20Sid")) {
         PlayVIC20Sid(as);
     }
@@ -1796,6 +1799,38 @@ void Methods6502::ScrollY(Assembler *as)
     as->Term();
     as->Asm("and #$7F"); // 8 = 1000
     as->Asm("sta $d011");
+
+}
+
+void Methods6502::RightBitShift(Assembler *as)
+{
+    as->Comment("Right bitshift");
+    QString lbl = as->NewLabel("RightBitshift");
+
+    QString addr = m_node->m_params[0]->getAddress();
+
+
+  //  qDebug() << m_node->m_params[0]->m_op.m_value;
+//    exit(1);
+    int num = m_node->m_params[1]->getInteger();
+
+    as->PopLabel("RightBitshift");
+    as->Asm("ldx #0");
+    as->Label(lbl);
+
+
+
+
+    as->Asm("lda "+addr+",x");
+
+    as->Asm("lsr");
+    for (int i=1;i<num;i++)
+        as->Asm("ror "+addr+"+"+QString::number(i*8)+" ,x");
+   as->Asm("ror "+addr+",x");
+
+    as->Asm("inx");
+    as->Asm("cpx #8");
+    as->Asm("bne "+lbl);
 
 }
 

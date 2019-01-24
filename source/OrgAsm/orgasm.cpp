@@ -517,6 +517,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 //    QByteArray d = ol.m_instruction.Assemble(ol.m_expr, m_opCodes, pd, m_symbols, m_pCounter,m_constants, m_regs, m_symbolsList);
 
     QString expr = ol.m_expr;
+    QString orgexpr = expr;
     QByteArray data;
     ol.m_instruction.m_opCode = ol.m_instruction.m_opCode.toLower();
 
@@ -656,7 +657,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     }
 
     if (cyc.m_opcodes.count()==0)
-        throw QString("Opcode not implemented yet: " + m_opCode);
+        throw QString("Opcode not implemented yet: " + m_opCode + " on line " + orgexpr);
 
 
 //    qDebug() << "BEFORE: " << expr;
@@ -679,7 +680,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     int code = cyc.m_opcodes[(int)type];
     if (code==0 && pd==OrgasmData::PASS_SYMBOLS) {
         qDebug() << "ERROR on line : " << m_opCode + " " +expr;
-        throw QString("Opcode type not implemented yet: " + m_opCode + "  type " +type );
+        throw QString("Opcode type not implemented yet: " + m_opCode + "  type " +type + "        on line " + ol.m_expr );
     }
 
 

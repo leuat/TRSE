@@ -64,6 +64,7 @@ begin
 			screenmemory[x]:=(sinx[x] +val)/8 + 64;
 		end;
 		// Increase x by 40 (next row)
+//		screenmemory:=screenmemory+40;
 		inczp(screenmemory, 40);
 	end;
 
@@ -117,7 +118,7 @@ begin
 	while 1<>2 do begin
 		time:=time+1;
 		waitForRaster(0);
-//		Plasma();
+		Plasma();
 	end;
 
 end.

@@ -79,6 +79,12 @@ public:
     virtual void Delete();
 
     virtual QString getAddress() {return "";}
+    virtual int getInteger() {
+        ErrorHandler::e.Error("Parameter require to be pure number",m_op.m_lineNumber);
+        return 0;
+    }
+
+    virtual void forceWord() {}
 
     virtual bool isPureNumeric() {
         return false;

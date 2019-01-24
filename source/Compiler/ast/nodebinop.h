@@ -19,9 +19,7 @@
  *   If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef NODEBINOP_H
-#define NODEBINOP_H
-
+#pragma once
 
 #include "source/Compiler/token.h"
 #include "source/Compiler/pvar.h"
@@ -52,6 +50,15 @@ public:
 
     bool isWord(Assembler* as) override;
 
+    QString getAddress() override {
+        return HexValue();
+    }
+
+    void forceWord() override {
+       m_left->forceWord();
+       m_right->forceWord();
+    }
+
 
 
     int numValue() override;
@@ -68,4 +75,3 @@ public:
 };
 
 
-#endif // NODEBINOP_H

@@ -55,11 +55,11 @@ bool NodeVar::DataEquals(Node *other) {
 bool NodeVar::isWord(Assembler *as) {
 
 
-    return getType(as)==TokenType::INTEGER;
-    return m_op.m_type==TokenType::INTEGER;
+    return getType(as)==TokenType::INTEGER || (getType(as)==TokenType::POINTER && m_expr==nullptr) || m_fake16bit;
+/*    return m_op.m_type==TokenType::INTEGER;
     Symbol* s = as->m_symTab->Lookup(value, m_op.m_lineNumber);
 
-    return s->m_type.toLower()=="integer";
+    return s->m_type.toLower()=="integer";*/
 }
 
 

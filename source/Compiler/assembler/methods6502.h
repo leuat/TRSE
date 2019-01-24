@@ -42,6 +42,7 @@ public:
     void PrintString(Assembler* as);
     void ScrollX(Assembler* as);
     void ScrollY(Assembler* as);
+    void RightBitShift(Assembler* as);
     void Joystick(Assembler* as);
     void BitOp(Assembler* as, int type);
     void PlaySound(Assembler* as);
