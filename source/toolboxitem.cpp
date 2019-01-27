@@ -213,10 +213,11 @@ void CopyStamp::StampImage(int x, int y, LImage* img)
     int h = abs(m_end.y()-m_start.y());
     for (int i=0;i<w;i++)
         for (int j=0;j<h;j++) {
-            unsigned int col = m_copy->getPixel(m_start.x() + i, m_start.y()+j);
-            //if (col!=img->m_background)
-                for (int xd=0;xd<m_copy->m_scale;xd++)
-                    img->setPixel(i-w/2+x + xd,j-h/2+y, col);
+            unsigned int col = m_copy->getPixel(m_start.x() + i-0.5, m_start.y()+j-0.5);
+            if (col!=img->m_background)
+                img->setPixel(i-w/2+x,j-h/2+y, col);
+//                for (int xd=0;xd<m_copy->m_scale;xd++)
+  //                  img->setPixel(i-w/2.0+x + xd,j-h/2.0+y, col);
         }
 }
 

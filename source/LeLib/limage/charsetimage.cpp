@@ -92,8 +92,8 @@ void CharsetImage::SetColor(uchar col, uchar idx)
 void CharsetImage::ImportBin(QFile &file)
 {
     m_rawData = file.readAll();
-    m_rawData.remove(0,2);
-    m_rawData.resize(8*64);
+  //  m_rawData.remove(0,2);
+//    m_rawData.resize(8*64);
     FromRaw(m_rawData);
 /*    SetColor(0, m_background); //MULTICOLOR_CHAR_COL +0
     SetColor(1, 2);// MULTICOLOR_CHAR_COL +2

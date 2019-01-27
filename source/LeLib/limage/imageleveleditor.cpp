@@ -297,23 +297,25 @@ QVector<QPixmap> ImageLevelEditor::CreateIcons()
 }
 
 
-bool ImageLevelEditor::PixelToPos(int x, int y, int& pos)
+bool ImageLevelEditor::PixelToPos(int x, float y, int& pos)
 {
     if (x>=320 || x<0 || y>=200 || y<0)
         return false;
 
-    x/=16;
-    y/=16;
+    x/=16.0;
+    y/=16.0;
 
 
     x=x-m_meta.m_startx;
-    y=y-m_meta.m_starty*0.5;
-
+    y=(y-(m_meta.m_starty*0.5-0.01));
+    if (y<0) return false;
+    if (x<0) return false;
     if (x>=m_meta.m_width)
         return false;
 
-    pos = x + y*m_meta.m_width;
-    if (pos<0 || pos>=m_meta.dataSize())
+
+    pos = x + (int)y*m_meta.m_width;
+    if ((pos<0 || pos>=m_meta.dataSize()))
         return false;
 
     return true;

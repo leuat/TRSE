@@ -193,7 +193,7 @@ public:
 
     void Resize(CharmapGlobalData newMeta);
 
-    bool PixelToPos(int x, int y, int& pos);
+    bool PixelToPos(int x, float y, int& pos);
 
     void Fix() override; // Fix data doccuption
 

@@ -90,7 +90,10 @@ void FormImageEditor::onImageMouseEvent()
         UpdateSpriteImages();
     if (dynamic_cast<C64FullScreenChar*>(m_work.m_currentImage->m_image)!=nullptr)
         UpdateSpriteImages();
-//    updateCharSet();
+//    if (dynamic_cast<LImageCharsetRegular*>(m_work.m_currentImage->m_image)!=nullptr)
+  //      updateCharSet();
+
+    //    updateCharSet();
 
 }
 
@@ -224,9 +227,10 @@ void FormImageEditor::UpdateImage()
 
    // m_updateThread.m_pixMapImage.fill(QColor(0,255,0));
     ui->lblImage->setVisible(true);
-
-    ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(320, 320, Qt::IgnoreAspectRatio, Qt::FastTransformation));
-
+    ui->lblImage->setScaledContents(true);
+    //    ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(320, 320, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+    ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(320, 200, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+   ui->lblImage->setMaximumHeight(ui->lblImage->size().width()/(320/200.0));
 
     m_documentIsChanged = ui->lblImage->m_imageChanged;
 
@@ -675,6 +679,8 @@ void FormImageEditor::on_btnCharsetPaste_clicked()
     m_work.m_currentImage->m_image->PasteChar();
     Data::data.forceRedraw = true;
     onImageMouseEvent();
+    updateCharSet();
+    Data::data.Redraw();
 
 }
 
@@ -731,6 +737,8 @@ void FormImageEditor::updateCharSet()
 
     QVector<QPixmap> maps;
     charmap->ToQPixMaps(maps);
+
+
 
   /*  Util::clearLayout(ui->grdChars);
     int i=0;
@@ -913,6 +921,8 @@ void FormImageEditor::UpdateLevels()
                 m_work.m_currentImage->m_image->BuildData(ui->tblData,m_projectIniFile->getStringList("data_header_"+m_currentFileShort));
                 Data::data.Redraw();
                 Data::data.forceRedraw = true;
+                onImageMouseEvent();
+
             }
 
             );
@@ -1106,10 +1116,9 @@ void FormImageEditor::on_btnExportBin_clicked()
 
 void FormImageEditor::on_tabMain_currentChanged(int index)
 {
-    qDebug() << index;
     if (index==1)
         m_work.m_currentImage->m_image->SetCurrentType(LImage::WriteType::Color);
-    if (index==3)
+    if (index==2)
         UpdateLevels();
 //    if (index==2)
 //        m_work.m_currentImage->m_image->SetCurrentType(LImage::WriteType::Character);
@@ -1460,5 +1469,14 @@ void FormImageEditor::on_leTimeStamp_textChanged(const QString &arg1)
 void FormImageEditor::on_btnImportC_clicked()
 {
     GenericImportImage("c", "c");
+
+}
+
+void FormImageEditor::on_cmbZoomLevel_activated(const QString &arg1)
+{
+    QString s = ui->cmbZoomLevel->currentText();
+    s = s.replace("x","");
+    m_updateThread.m_zoom = 1.0f/s.toFloat();
+    onImageMouseEvent();
 
 }

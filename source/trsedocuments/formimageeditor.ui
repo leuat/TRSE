@@ -124,7 +124,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>5</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -721,7 +721,46 @@
         <layout class="QGridLayout" name="layoutColorsEdit_3"/>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,1,1,1,1,1,1,0">
+        <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,1,1,1,1,1,1,1,1,0">
+         <item>
+          <widget class="QLabel" name="label_13">
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Zoom level</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cmbZoomLevel">
+           <property name="toolTip">
+            <string>General background color. </string>
+           </property>
+           <item>
+            <property name="text">
+             <string>1x</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>2x</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>4x</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>8x</string>
+            </property>
+           </item>
+          </widget>
+         </item>
          <item>
           <widget class="QLabel" name="label_10">
            <property name="font">
