@@ -64,7 +64,8 @@ bool NodeVar::isWord(Assembler *as) {
 
 
 bool NodeVar::isAddress() {
-    return true;
+  //  return m_op.m_type==TokenType::ADDRESS;
+   return true;
 }
 
 

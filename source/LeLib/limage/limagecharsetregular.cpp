@@ -50,6 +50,7 @@ LImageCharsetRegular::LImageCharsetRegular(LColorList::Type t) : CharsetImage(t)
     m_supports.displayMC2 = false;
 
 
+
     m_currencChar=0;
     m_currentMode=Mode::CHARSET1x1;
 }

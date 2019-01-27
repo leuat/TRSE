@@ -330,6 +330,12 @@ void FormImageEditor::FillImageEffect()
     if (m_currentImageEffect==nullptr)
         return;
     int row=0;
+    //for (QWidget* qw : ui->grdEffectParams->items)
+        QLayoutItem *item = nullptr;
+        while ((item = ui->grdEffectParams->takeAt(0)) != nullptr) {
+        delete item->widget();
+        }
+    //ui->grdEffectParams->removeWidget()
     for (QString key: m_currentImageEffect->m_params.keys()) {
         QLabel* lab= new QLabel(key);
         QLineEdit* le=new QLineEdit(QString::number(m_currentImageEffect->m_params[key]));
@@ -348,7 +354,9 @@ void FormImageEditor::FillImageEffect()
 void FormImageEditor::FillToImageParams()
 {
     for (QString key: m_imageEffectsLineEdits.keys()) {
-        m_currentImageEffect->m_params[key] = m_imageEffectsLineEdits[key]->text().toFloat();
+//        qDebug() << key << m_imageEffectsLineEdits[key]->text();
+        if (m_currentImageEffect->m_params.contains(key))
+            m_currentImageEffect->m_params[key] = m_imageEffectsLineEdits[key]->text().toFloat();
     }
 }
 

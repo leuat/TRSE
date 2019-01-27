@@ -51,6 +51,16 @@ void LImageEffects::InitEffects()
 
     m_effects.append(ie1);
 
+    LImageEffect* ie2 = new LImageEffect("Waves");
+    ie2->m_params["height"] = 80;
+    ie2->m_params["width"] = 40;
+    ie2->m_params["spread"] = 2;
+    ie2->m_params["amplitude"] = 0.045;
+    ie2->m_params["threshold"] = 0.0;
+
+    m_effects.append(ie2);
+
+
 }
 
 void LImageEffects::RenderCircles(LImageEffect *le)
@@ -105,6 +115,37 @@ void LImageEffects::RenderCircles(LImageEffect *le)
 
 }
 
+void LImageEffects::RenderWaves(LImageEffect *le)
+{
+    float cwidth = le->m_params["width"];
+    float cheight = le->m_params["height"];
+    float spread = le->m_params["spread"];
+    float threshold = le->m_params["threshold"];
+    float amp = le->m_params["amplitude"];
+
+
+    float height = m_image->m_height;
+    float width = m_image->m_width;
+//    return;
+    QVector3D center(0.5, 0.5,0);
+    for (int x=0;x<width;x++) {
+        for (int y=0;y<height;y++) {
+            QVector3D p(x/width, y/height,0);
+            float yy = sin(p.x()*cwidth)*amp;
+            float l = sin((p.y()+yy)*cheight);
+//            while (l>1) l-=1;
+            int k=0;
+            if (l>threshold)
+                k=2;
+
+
+//            m_image->m_currencChar = k;
+            m_image->setPixel(x,y,k);
+
+        }
+    }
+}
+
 void LImageEffects::Render(QString effect)
 {
     LImageEffect* winner = nullptr;
@@ -118,6 +159,8 @@ void LImageEffects::Render(QString effect)
 
     if (winner->m_name=="Circles")
         RenderCircles(winner);
+    if (winner->m_name=="Waves")
+        RenderWaves(winner);
 
 
 }

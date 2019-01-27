@@ -57,6 +57,7 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     m_GUIParams[tabCharset] = "";
     m_GUIParams[tabData] = "";
     m_GUIParams[tabLevels] = "";
+    m_GUIParams[tabEffects] = "Effects";
 
     m_GUIParams[btnEditFullCharset] = "";
 

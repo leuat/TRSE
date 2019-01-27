@@ -53,6 +53,7 @@ public:
     void InitEffects();
 
     void RenderCircles(LImageEffect* le);
+    void RenderWaves(LImageEffect* le);
 
     void Render(QString effect);
 

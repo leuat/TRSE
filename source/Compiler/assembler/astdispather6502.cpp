@@ -1901,11 +1901,13 @@ void ASTDispather6502::AssignPointer(NodeAssign *node) {
 
     if (bVar==nullptr && !node->m_right->isPureNumeric()) {
         //ErrorHandler::e.Error("Error assigning pointer: right-hand must be variable or number", node->m_op.m_lineNumber);
+//        if (!node->m_right->isAddress())
+  //          ErrorHandler::e.Error("Error assigning pointer: right-hand must be variable or number", node->m_op.m_lineNumber);
         node->m_right->forceWord();
         as->Term();
         node->m_right->Accept(this);
         as->Term();
-        as->Comment(";end");
+     //  as->Comment(";end");
         as->Asm("sta " + aVar->value);
         as->Asm("sty "+ aVar->value+"+1");
         return;

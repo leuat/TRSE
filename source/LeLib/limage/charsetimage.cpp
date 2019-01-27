@@ -476,7 +476,7 @@ void CharsetImage::CopyChar()
     if (m_currentMode == CHARSET2x2 || m_currentMode == CHARSET2x2_REPEAT) {
         m_copy[0] = m_data[m_currencChar];
         m_copy[1] = m_data[m_currencChar+1];
-        m_copy[2] = m_data[m_currencChar+m_charHeight];
+        m_copy[2] = m_data[m_currencChar+40];
         m_copy[3] = m_data[m_currencChar+41];
 
     }
@@ -491,7 +491,8 @@ void CharsetImage::PasteChar()
     if (m_currentMode == CHARSET2x2 || m_currentMode == CHARSET2x2_REPEAT) {
         m_data[m_currencChar] = m_copy[0];
         m_data[m_currencChar+1] = m_copy[1];
-        m_data[m_currencChar+m_charHeight] = m_copy[2];
+//        m_data[m_currencChar+m_charHeight] = m_copy[2];
+        m_data[m_currencChar+40] = m_copy[2];
         m_data[m_currencChar+41] = m_copy[3];
 
     }

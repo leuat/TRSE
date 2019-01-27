@@ -30,7 +30,7 @@ public:
     int m_frameHeight = 4;
 
 
-    int m_currentscene = 2;
+    int m_currentscene = 1;
 
     void Scene1();
     void Scene2();
