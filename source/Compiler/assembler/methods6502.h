@@ -47,6 +47,8 @@ public:
     void BitOp(Assembler* as, int type);
     void PlaySound(Assembler* as);
 
+    void LoHi(Assembler* as, bool isLo);
+
     /*
      * NES
      * */

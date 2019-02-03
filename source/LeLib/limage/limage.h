@@ -125,7 +125,7 @@ public:
 
     LColorList m_colorList;
 
-    virtual void FloydSteinbergDither(QImage& img, LColorList& colors) {}
+    virtual void FloydSteinbergDither(QImage& img, LColorList& colors, bool dither) {}
 
 
     virtual int getContainerCount() {return 1;}

@@ -88,7 +88,7 @@ void DialogImport::Convert()
     if (!useDither)
        m_image->fromQImage(m_output.m_qImage, m_image->m_colorList);
     else
-    m_image->FloydSteinbergDither(*m_output.m_qImage,m_image->m_colorList);
+        m_image->FloydSteinbergDither(*m_output.m_qImage,m_image->m_colorList, true);
 
 
 

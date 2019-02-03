@@ -18,24 +18,35 @@ public:
 
     RayTracer m_rt;
 
-    int m_noFrames = 32;
+    int m_noFrames = 22;
     int m_curFrame = 0;
 /*    int m_frameWidth = 4;
     int m_frameHeight = 4;
 */
-//    int m_frameWidth = 40;
-  //  int m_frameHeight = 25;
+  //  int m_frameWidth = 40;
+    //int m_frameHeight = 25;
 
-    int m_frameWidth = 4;
-    int m_frameHeight = 4;
+    int m_frameWidth = 40;
+    int m_frameHeight = 25;
+    int m_nextFrameSave = 1;
+    QByteArray m_charData;
+    QByteArray m_screenData;
 
-
-    int m_currentscene = 1;
+    int m_currentscene = 3;
+    int m_compression = 9;
+    float m_dither = true;
+    int m_N = 6;
 
     void Scene1();
     void Scene2();
+    void Scene3();
+    void Scene4();
+    void Scene5();
     void UpdateScene1();
     void UpdateScene2();
+    void UpdateScene3();
+    void UpdateScene4();
+    void UpdateScene5();
     void run() override;
     void Save(QString f) override;
     void Init() override;

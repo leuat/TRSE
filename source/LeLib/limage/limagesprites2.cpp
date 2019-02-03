@@ -10,7 +10,7 @@ LImageSprites2::LImageSprites2(LColorList::Type t) : CharsetImage(t) {
     m_GUIParams[tabCharset] = "";
     m_GUIParams[tabData] = "";
     m_GUIParams[tabLevels] = "";
-    m_GUIParams[tabEffects] = "";
+    m_GUIParams[tabEffects] = "Effects";
 
     m_GUIParams[btnEditFullCharset] = "";
     m_GUIParams[tabSprites] ="Sprites";

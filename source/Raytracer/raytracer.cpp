@@ -101,7 +101,7 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
        float ah = 1;
 //       qDebug() << w << h;
  //      aspect = 0.5;
-#pragma omp parallel for
+//#pragma omp parallel for
         for (int i=0;i<w;i++)
             for (int j=0;j<h;j++)
         {

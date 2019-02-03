@@ -124,6 +124,9 @@ m; SetBank; C64, C128; b
 m; ScreenOff; C64, C128;
 m; ScreenOn; C64, C128;
 m; CopyImageColorData; C64, C128; a,n
+m; Lo; C64, C128, NES, VIC20; a
+m; Hi; C64, C128, NES, VIC20; a
+
 
 # Sprite routines
 

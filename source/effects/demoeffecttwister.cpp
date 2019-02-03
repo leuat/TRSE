@@ -205,7 +205,7 @@ void DemoEffectTwister::run()
 
   //          }
         }
-        ConvertToC64();
+        ConvertToC64(true);
         emit SignalImageUpdate();
         this->msleep(10);
     }

@@ -93,6 +93,13 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         as->Term();
         as->Asm("sta $2000");
     }
+    if (Command("Lo")) {
+        LoHi(as,true);
+    }
+    if (Command("Hi")) {
+        LoHi(as,false);
+    }
+
     if (Command("SetSpriteLocation")) {
         as->Asm("lda #0");
         as->Asm("sta $2003");
@@ -1911,6 +1918,30 @@ void Methods6502::PlaySound(Assembler *as)
     //    if (num->m_val==1) {
  //       as->
  //   }
+
+}
+
+void Methods6502::LoHi(Assembler *as, bool isLo)
+{
+//    qDebug() << m_node->m_params.count();
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        if (isLo)
+            as->Asm("lda " + m_node->m_params[0]->getAddress());
+        else
+            as->Asm("lda " + m_node->m_params[0]->getAddress()+"+1");
+    }
+    if (m_node->m_params[0]->getType(as)==TokenType::ADDRESS) {
+        if (isLo)
+            as->Asm("lda #<" + m_node->m_params[0]->getAddress());
+        else
+            as->Asm("lda #>" + m_node->m_params[0]->getAddress());
+    }
+    if (m_node->m_params[0]->getType(as)==TokenType::INTEGER) {
+        if (isLo)
+            as->Asm("lda #" + Util::numToHex(m_node->m_params[0]->getInteger()&0xFF));
+        else
+            as->Asm("lda #" + Util::numToHex((m_node->m_params[0]->getInteger()>>8)&0xFF));
+    }
 
 }
 
@@ -3785,37 +3816,96 @@ void Methods6502::BlockMemCpy(Assembler *as)
 {
 
     as->Comment("Block memcpy");
-    m_node->RequireAddress(m_node->m_params[0],"BlockMemCpy", m_node->m_op.m_lineNumber);
-    m_node->RequireAddress(m_node->m_params[1],"BlockMemCpy", m_node->m_op.m_lineNumber);
+//    m_node->RequireAddress(m_node->m_params[0],"BlockMemCpy", m_node->m_op.m_lineNumber);
+  //  m_node->RequireAddress(m_node->m_params[1],"BlockMemCpy", m_node->m_op.m_lineNumber);
 
-    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
-    if (num==nullptr)
-        ErrorHandler::e.Error("BlockMemCpy parameter 3 *must* be a pure number");
 
-    NodeNumber* from = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+/*    NodeNumber* from = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
     if (from==nullptr)
         ErrorHandler::e.Error("BlockMemCpy parameter 1 *must* be a pure number");
+*/
 
-    NodeNumber* to = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
-    if (to==nullptr)
-        ErrorHandler::e.Error("BlockMemCpy parameter 2 *must* be a pure number");
-
-
-    int v = num->m_val;
     AddMemoryBlock(as,1);
 
+
+
+
+//    lda (zp),y
+
+
     QString lbl = as->NewLabel("Blockmemcpy_lbl1");
+    QString lbl2 = as->NewLabel("Blockmemcpy_lbl2");
 
-    as->Asm("ldx #0");
-    as->Label(lbl);
+    as->PopLabel("Blockmemcpy_lbl1");
+    as->PopLabel("Blockmemcpy_lbl2");
 
-    for (int i=0;i<v;i++) {
-        as->Asm("lda $"+QString::number((int)from->m_val + i*256,16)+",x");
-        as->Asm("sta $"+QString::number((int)to->m_val + i*256,16)+",x");
+    if (m_node->m_params[0]->getType(as)!=TokenType::POINTER) {
+        NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+        if (num==nullptr)
+            ErrorHandler::e.Error("BlockMemCpy parameter 3 *must* be a pure number");
+
+        NodeNumber* to = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+        if (to==nullptr)
+            ErrorHandler::e.Error("BlockMemCpy parameter 2 *must* be a pure number");
+
+
+        int v = num->m_val;
+
+        as->Asm("ldy #0");
+        as->Label(lbl);
+
+        for (int i=0;i<v;i++) {
+            as->Asm("lda $"+QString::number(m_node->m_params[0]->getInteger() + i*256,16)+",y");
+            as->Asm("sta $"+QString::number((int)to->m_val + i*256,16)+",y");
+        }
+
+        as->Asm("dey");
+        as->Asm("bne " + lbl);
+
     }
 
-    as->Asm("dex");
-    as->Asm("bne " + lbl);
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+//        qDebug() << "HERE" << as->m_internalZP.count();
+        if (as->m_internalZP.count()==0)
+            return;
+        QString zp = as->m_internalZP[0];
+        QString zp2 = as->m_internalZP[1];
+  //      qDebug() << "HERE -1";
+        as->Asm("lda "+m_node->m_params[0]->getAddress());
+    //    qDebug() << "HERE -2";
+        as->Asm("sta "+zp);
+        as->Asm("lda "+m_node->m_params[0]->getAddress()+"+1");
+        as->Asm("sta "+zp+"+1");
+
+        as->Asm("lda "+m_node->m_params[1]->getAddress());
+        as->Asm("sta "+zp2);
+        as->Asm("lda "+m_node->m_params[1]->getAddress()+"+1");
+        as->Asm("sta "+zp2+"+1");
+
+
+      //  qDebug() << "HERE 0";
+        m_node->m_params[2]->Accept(m_dispatcher);
+        //qDebug() << "HERE 1";
+        as->Term();
+       // qDebug() << "HERE 2";
+
+        as->Asm("tax");
+        as->Label(lbl2);
+        as->Asm("ldy #0");
+        as->Label(lbl);
+
+            as->Asm("lda ("+zp+"),y");
+            as->Asm("sta ("+zp2+"),y");
+
+        as->Asm("dey");
+        as->Asm("bne " + lbl);
+        as->Asm("inc "+zp+"+1");
+        as->Asm("inc "+zp2+"+1");
+        as->Asm("dex");
+        as->Asm("bne " + lbl2);
+        //qDebug() << "HERE 3";
+
+    }
 
 }
 

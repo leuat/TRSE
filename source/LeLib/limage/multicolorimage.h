@@ -51,6 +51,39 @@ public:
     void Reorganize(unsigned char bitMask, unsigned char Scale,unsigned char minCol, unsigned char maxCol, unsigned char bgCol);
     int Count(unsigned int col, unsigned char bitMask, unsigned char Scale);
 
+    int Compare(PixelChar& other) {
+        int l = 0;
+        for (int i=0;i<8;i++)
+            l+=other.p[i] != p[i];
+
+/*        for (int i=0;i<4;i++)
+            l+=other.c[i]!=c[i];
+*/
+        return l;
+
+    }
+
+
+    int CompareLength(PixelChar& other) {
+        int l = 0;
+        for (int i=0;i<8;i++)
+            for (int j=0;j<4;j++) {
+                char a = (p[i]>>(2*j))&0b11;
+                char b = (other.p[i]>>(2*j))&0b11;
+                if ( a != b )
+                    l++;
+                if (a==0 && b!=0) l++;
+                if (b==0 && a!=0) l++;
+
+            }
+//            if (other.p[i]!=p[i])
+  //          l+=other.p[i] != p[i];
+
+        return l;
+
+    }
+
+
     static uchar Swap(int a, int b, uchar c);
     static uchar VIC20Swap( uchar c);
 
@@ -128,7 +161,7 @@ public:
     void ImportKoa(QFile& f) override;
     void ExportKoa(QFile& f) override;
 
-    void FloydSteinbergDither(QImage& img, LColorList& colors) override;
+    void FloydSteinbergDither(QImage& img, LColorList& colors, bool dither) override;
 
     void Initialize(int width, int height) override {}
 

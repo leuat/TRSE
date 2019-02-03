@@ -29,6 +29,7 @@ class AbstractDemoEffect : public QThread
 public:
     QImage m_img;
     float m_time=0;
+    QString m_infoText;
     bool m_toggleAnim = true;
     bool m_toggleC64 = true;
     QGridLayout* m_gl = nullptr;
@@ -52,7 +53,7 @@ public:
     virtual void Init() {}
 
 
-    void ConvertToC64();
+    void ConvertToC64(bool dither);
 
     void FillToGUI();
 signals:

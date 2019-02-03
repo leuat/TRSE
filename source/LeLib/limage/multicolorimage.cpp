@@ -188,7 +188,7 @@ void MultiColorImage::ExportKoa(QFile &f)
     f.write(fdata);
 }
 
-void MultiColorImage::FloydSteinbergDither(QImage &img, LColorList& colors)
+void MultiColorImage::FloydSteinbergDither(QImage &img, LColorList& colors, bool dither)
 {
 /*    for each y from top to bottom
        for each x from left to right
@@ -210,14 +210,16 @@ void MultiColorImage::FloydSteinbergDither(QImage &img, LColorList& colors)
             //int c = m_colorList.getIndex(newPixel);
             setPixel(x,y,winner);
             QVector3D qErr(oldPixel.red()-newPixel.red(),oldPixel.green()-newPixel.green(),oldPixel.blue()-newPixel.blue());
-            if (x!=m_width-1)
-                img.setPixel(x+1,y,Util::toColor(Util::fromColor(img.pixel(x+1,y))+qErr*7/16.0).rgba());
-            if (y!=m_height-1) {
-                if (x!=0)
-                img.setPixel(x-1,y+1,Util::toColor(Util::fromColor(img.pixel(x-1,y+1))+qErr*3/16.0).rgba());
-                img.setPixel(x,y+1,Util::toColor(Util::fromColor(img.pixel(x,y+1))+qErr*5/16.0).rgba());
+            if (dither) {
                 if (x!=m_width-1)
-                img.setPixel(x+1,y+1,Util::toColor(Util::fromColor(img.pixel(x+1,y+1))+qErr*1/16.0).rgba());
+                    img.setPixel(x+1,y,Util::toColor(Util::fromColor(img.pixel(x+1,y))+qErr*7/16.0).rgba());
+                if (y!=m_height-1) {
+                    if (x!=0)
+                        img.setPixel(x-1,y+1,Util::toColor(Util::fromColor(img.pixel(x-1,y+1))+qErr*3/16.0).rgba());
+                    img.setPixel(x,y+1,Util::toColor(Util::fromColor(img.pixel(x,y+1))+qErr*5/16.0).rgba());
+                    if (x!=m_width-1)
+                        img.setPixel(x+1,y+1,Util::toColor(Util::fromColor(img.pixel(x+1,y+1))+qErr*1/16.0).rgba());
+                }
             }
         }
     }

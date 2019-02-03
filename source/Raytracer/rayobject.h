@@ -108,7 +108,14 @@ public:
     QVector3D m_pNormal = QVector3D(0,1,0);
     QVector3D m_box = QVector3D(1,1,1);
 
-    RayObjectBox(QVector3D pos, QVector3D normal, Material material) {
+    RayObjectBox(QVector3D pos, QVector3D normal, QVector3D box, Material material) {
+        m_pNormal = normal;
+        m_position = pos;
+        m_box = box;
+        m_material = material;
+        m_bbRadius = m_box.length();
+    }
+    RayObjectBox(QVector3D pos, QVector3D normal,Material material) {
         m_pNormal = normal;
         m_position = pos;
         m_material = material;

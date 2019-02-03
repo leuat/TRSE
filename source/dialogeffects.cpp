@@ -59,6 +59,8 @@ void DialogEffects::UpdateImage()
     m_avg = (int)(0.2*m_effect->m_elapsedTime +0.8*m_avg) ;
     ui->lblTime->setText(QString::number(m_avg));
 
+    ui->txtOutput->setText(m_effect->m_infoText);
+
 }
 
 void DialogEffects::on_pushButton_clicked()

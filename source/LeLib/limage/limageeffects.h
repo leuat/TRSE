@@ -25,6 +25,7 @@
 
 #include "source/LeLib/limage/limage.h"
 #include "source/LeLib/limage/multicolorimage.h"
+#include "source/LeLib/limage/limagesprites2.h"
 #include <QString>
 class LImageEffect {
   public:
@@ -54,6 +55,7 @@ public:
 
     void RenderCircles(LImageEffect* le);
     void RenderWaves(LImageEffect* le);
+    void RenderSpriteCircles(LImageEffect* le);
 
     void Render(QString effect);
 

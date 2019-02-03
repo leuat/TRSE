@@ -60,6 +60,12 @@ void LImageEffects::InitEffects()
 
     m_effects.append(ie2);
 
+    LImageEffect* ie3 = new LImageEffect("SpriteCircles");
+    ie3->m_params["count"] = 16;
+    ie3->m_params["amplitude"] = 0.045;
+    ie3->m_params["threshold"] = 0.0;
+
+    m_effects.append(ie3);
 
 }
 
@@ -115,6 +121,9 @@ void LImageEffects::RenderCircles(LImageEffect *le)
 
 }
 
+
+
+
 void LImageEffects::RenderWaves(LImageEffect *le)
 {
     float cwidth = le->m_params["width"];
@@ -146,6 +155,34 @@ void LImageEffects::RenderWaves(LImageEffect *le)
     }
 }
 
+void LImageEffects::RenderSpriteCircles(LImageEffect *le)
+{
+    LImageSprites2 *img = dynamic_cast<LImageSprites2*>(m_image);
+    if (img==nullptr)
+        return;
+    float cnt = le->m_params["count"];
+
+
+    float w = img->m_width;
+    float h = img->m_height;
+    for (int i=0;i<cnt;i++) {
+        img->AddNew(1,1);
+        float a = i/cnt;
+        float b = (i+2)/cnt;
+        for (int x=0;x<w;x++)
+            for (int y=0;y<h;y++) {
+                int col = 2;
+                float xx = (x-w/2.0)/w;
+                float yy = (y-h/2.0)/h;
+                float s = sqrt(xx*xx+yy*yy)/0.45f;
+                if (s>a && s<b)
+                    col=1;
+                img->setPixel(x,y,col);
+
+            }
+    }
+}
+
 void LImageEffects::Render(QString effect)
 {
     LImageEffect* winner = nullptr;
@@ -161,6 +198,8 @@ void LImageEffects::Render(QString effect)
         RenderCircles(winner);
     if (winner->m_name=="Waves")
         RenderWaves(winner);
+    if (winner->m_name=="SpriteCircles")
+        RenderSpriteCircles(winner);
 
 
 }

@@ -58,6 +58,9 @@ public:
     }
 
 
+
+    void CompressAndSave(QByteArray& chars, QByteArray& screen, int x0,int x1, int y0, int y1, int& noChars, int compression, int maxChars);
+
     void SetColor(uchar col, uchar idx) override;
 
     void SaveBin(QFile& file) override;

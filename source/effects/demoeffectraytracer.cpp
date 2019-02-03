@@ -30,6 +30,15 @@ DemoEffectRaytracer::DemoEffectRaytracer(QGridLayout* gl) : AbstractDemoEffect (
     if (m_currentscene==1)
         Scene1();
 
+    if (m_currentscene==3)
+        Scene3();
+
+    if (m_currentscene==4)
+        Scene4();
+
+    if (m_currentscene==5)
+        Scene5();
+
     m_params["camera_x"] = DemoEffectParam("camera_x",0);
 }
 
@@ -102,6 +111,121 @@ void DemoEffectRaytracer::Scene2()
 */
 }
 
+void DemoEffectRaytracer::Scene3()
+{
+    float N = m_N;
+    float radius = 10;
+    QVector3D col = QVector3D(0.6,0.6,0.8);
+    float pn = 0;
+    float ps = 1;
+    float ref = 0.2;
+
+    for (int i=0;i<N; i++) {
+
+        float x= sin(i*3.1415965*2.0/N);
+        float y= cos(i*3.1415965*2.0/N);
+        QVector3D pos = QVector3D(x,0,y)*radius;
+  //      m_rt.m_objects.append(new RayObjectBox(pos,QVector3D(0.2,1,0.0), Material(col,0,ref, pn,ps,"")));
+//        m_rt.m_objects.last()->SetRotation(QVector3D(90,0,90));
+        m_rt.m_objects.append(new RayObjectTorus(pos,QVector3D(2.25,0.7,0), QVector3D(0,1,0),Material(col,rand()%100,ref, pn,ps,"")));
+        m_rt.m_objects.append(new RayObjectCylinder(pos,QVector3D(0.3,1,1),Material(col,rand()%100,ref, pn,ps,"")));
+    }
+
+}
+
+void DemoEffectRaytracer::UpdateScene3()
+{
+    float t = (2*3.14165/m_N)*m_time/m_noFrames;
+    float x = sin(t);
+    float y = cos(t);
+    m_rt.m_camera.m_camera = QVector3D(x,0.3,y)*24;
+    m_rt.m_camera.m_target = QVector3D(0,1.1,0);
+//    m_rt.m_camera.m_camera = QVector3D(x,0.35,y)*22;
+  //  m_rt.m_camera.m_target = QVector3D(0,0.4,0);
+    t=t+1.5;
+    x = sin(t);
+    y = cos(t);
+    m_rt.m_globals.m_lights[0]->m_direction = QVector3D(x,0.9,y)*1;
+    m_rt.m_globals.m_skyScale = 0;
+
+    for (int i=1;i<m_rt.m_objects.count();i+=2) {
+        float j = 3.14159*((i/1)&1);///(m_rt.m_objects.count()/2.0)*3.14159;
+        float y = cos(t*6 + 3.14/2)*0.6;
+        m_rt.m_objects[i]->m_position.setY(y);
+    }
+}
+
+
+void DemoEffectRaytracer::Scene4()
+{
+    float N = 6;
+    float radius = 10.0;
+    QVector3D col = QVector3D(0.6,0.6,0.8);
+    float pn = 0;
+    float ps = 1;
+    float ref = 0.2;
+
+    QVector3D pos = QVector3D(0,0,0);
+    m_rt.m_objects.append(new RayObjectBox(pos,QVector3D(0,1,0), QVector3D(7,3,7), Material(col,rand()%100,ref, pn,ps,"")));
+
+}
+
+void DemoEffectRaytracer::Scene5()
+{
+    float N = 6;
+    float radius = 10.0;
+    QVector3D col = QVector3D(0.6,0.6,0.8);
+    float pn = 0;
+    float ps = 1;
+    float ref = 0.2;
+
+    QVector3D pos = QVector3D(0,0,0);
+    m_rt.m_objects.append(new RayObjectCylinder(pos,QVector3D(0.5,1,4), Material(col,rand()%100,ref, pn,ps,"")));
+
+}
+
+void DemoEffectRaytracer::UpdateScene5()
+{
+    float t = (2*3.14165/4.0)*m_time/18;
+    float x = sin(t);
+    float y = cos(t);
+
+    m_rt.m_objects[0]->SetRotation(QVector3D(0,0,90*cos(t)));
+
+
+    m_rt.m_camera.m_camera = QVector3D(x,0.3,y)*24;
+    m_rt.m_camera.m_target = QVector3D(0,1.1,0);
+//    m_rt.m_camera.m_camera = QVector3D(x,0.35,y)*22;
+  //  m_rt.m_camera.m_target = QVector3D(0,0.4,0);
+    t=t+1.0;
+    x = sin(t);
+    y = cos(t);
+    m_rt.m_globals.m_lights[0]->m_direction = QVector3D(x,0.4,y)*1;
+    m_rt.m_globals.m_skyScale = 0;
+
+
+}
+
+
+void DemoEffectRaytracer::UpdateScene4()
+{
+    float t = (2*3.14165/4.0)*m_time/18;
+    float x = sin(t);
+    float y = cos(t);
+    m_rt.m_camera.m_camera = QVector3D(x,0.3,y)*24;
+    m_rt.m_camera.m_target = QVector3D(0,1.1,0);
+//    m_rt.m_camera.m_camera = QVector3D(x,0.35,y)*22;
+  //  m_rt.m_camera.m_target = QVector3D(0,0.4,0);
+    t=t+1.0;
+    x = sin(t);
+    y = cos(t);
+    m_rt.m_globals.m_lights[0]->m_direction = QVector3D(x,0.4,y)*1;
+    m_rt.m_globals.m_skyScale = 0;
+
+}
+
+
+
 void DemoEffectRaytracer::UpdateScene2() {
     float t = -(360/(float)(m_noFrames))*((int)m_time%(int)(m_noFrames));
 //    float t2 = (11/(float)(m_noFrames-1))*((int)m_time%(int)(m_noFrames));
@@ -123,6 +247,7 @@ void DemoEffectRaytracer::UpdateScene2() {
     m_rt.m_globals.m_shadowScale = 1;
     m_rt.m_camera.m_fov = 3.0;
 }
+
 
 
 void DemoEffectRaytracer::UpdateScene1()
@@ -164,23 +289,56 @@ void DemoEffectRaytracer::run()
         m_timer.start();
 //        m_timer.
 //        m_rt.Raytrace(m_img);
-        int w= m_img.width();
+        int w = m_img.width();
         int h = m_img.height();
         w = 4*(m_frameWidth);
         h = 8*m_frameHeight;
         m_rt.Raymarch(m_img, w,h);
         for (int y=0;y<h;y++) {
-        for (int x=0;x<2;x++) {
+        //for (int x=0;x<1;x++)
+        {
             for (int i=0;i<w;i++)
-                m_img.setPixel(i+x*w,y,m_img.pixel(i,y));
+//                m_img.setPixel(i+x*w,y,m_img.pixel(i,y));
+            m_img.setPixel(i,y,m_img.pixel(i,y));
         }
         }
 
+
+
         m_elapsedTime = m_timer.elapsed();
-        ConvertToC64();
-        AppendData();
+//        ConvertToC64(m_params["dither"].m_val == 1);
+        ConvertToC64(m_dither);
+//        AppendData();
       //  m_img.save("test.png");
+        //m_mc->CompressAndSave("test.bin");
+        int noChars = 0;
+        if (m_curFrame<m_noFrames) {
+            m_mc->CompressAndSave(m_charData, m_screenData, 0,40,13,25,noChars, m_compression, 128);
+            m_infoText+="Compressing frame "+QString::number(m_curFrame) + " with chars : " + QString::number(noChars)+"\n";
+
+        }
+        m_curFrame++;
+
+        if ((m_curFrame==6*m_nextFrameSave && m_curFrame<=m_noFrames) || m_curFrame==m_noFrames || m_curFrame==20) {
+            QString kk = QString::number(m_nextFrameSave);
+            QFile f("chardata"+kk+".bin");
+            f.open(QFile::WriteOnly);
+            f.write(m_charData);
+            f.close();
+            m_charData.clear();
+
+            QFile f2("screendata"+kk+".bin");
+            f2.open(QFile::WriteOnly);
+            f2.write(m_screenData);
+            f2.close();
+            m_screenData.clear();
+            m_nextFrameSave++;
+
+        }
+//        qDebug() << m_curFrame;
+
         emit SignalImageUpdate();
+
         this->msleep(10);
     }
 
@@ -201,6 +359,12 @@ void DemoEffectRaytracer::Init()
             UpdateScene2();
         if (m_currentscene == 1)
             UpdateScene1();
+        if (m_currentscene == 3)
+            UpdateScene3();
+        if (m_currentscene == 4)
+            UpdateScene4();
+        if (m_currentscene == 5)
+            UpdateScene5();
     }
     m_rt.m_camera.m_rotMatrix.setToIdentity();
     m_rt.m_camera.setupViewmatrix();
@@ -226,11 +390,12 @@ void DemoEffectRaytracer::SetParameters(int preset)
 {
     if (preset==0) {
         m_params["color_bg"] = DemoEffectParam("color_bg",0);
-        m_params["color_mc1"] = DemoEffectParam("color_mc1",5);
+        m_params["color_mc1"] = DemoEffectParam("color_mc1",4);
         m_params["color_mc2"] = DemoEffectParam("color_mc2",6);
-        m_params["color_main"] = DemoEffectParam("color_main",2);
+        m_params["color_main"] = DemoEffectParam("color_main",1);
         m_params["char_width"] = DemoEffectParam("char_width",40);
         m_params["char_height"] = DemoEffectParam("char_height",25);
+        m_params["dither"] = DemoEffectParam("dither",1);
 
     }
 

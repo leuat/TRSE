@@ -11,7 +11,7 @@ void AbstractDemoEffect::Save(QString file)
 
 }
 
-void AbstractDemoEffect::ConvertToC64()
+void AbstractDemoEffect::ConvertToC64(bool dither)
 {
     if (m_toggleC64) {
         m_mc->m_colorList.EnableColors(m_cols);
@@ -19,8 +19,13 @@ void AbstractDemoEffect::ConvertToC64()
         m_mc->SetColor(m_cols[1],1);
         m_mc->SetColor(m_cols[3],2);
         m_mc->SetColor(m_cols[2],3);
-        m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList);
-
+        m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, dither);
+/*        if (dither)
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
+        else
+            m_mc->fromQImage(&m_img, m_mc->m_colorList);
+       // else m_mc->;
+*/
         m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
         }
 

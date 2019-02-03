@@ -24,3 +24,5 @@ background_color = 0
 output_type = prg
 post_optimizer_passcmp = 1
 post_optimizer_passphapla = 1
+project_path = /home/leuat/code/TRSE/Publish/tutorials/C128/
+open_files = ,tutorial_8_80col_spiral.ras, tutorial_8_80col_spiral.asm
