@@ -33,7 +33,6 @@ INCLUDEPATH +=$$PWD/libs/lua/include
 #if USE_LUA
 #LIBS
 DEPENDPATH += $$PWD/../Libs
-LIBS += -L$$PWD/libs/lua/ -llua
 
 macx {
     QMAKE_CXXFLAGS += -openmp
@@ -41,6 +40,7 @@ macx {
     ICON = trse.icns
     QMAKE_CXXFLAGS += -Ofast
     LIBS += -ldl
+    LIBS += -L$$PWD/libs/lua/ -llua
 
 }
 
@@ -54,6 +54,8 @@ win32-msvc*{
     QMAKE_CXXFLAGS += -openmp
     LIBS += -openmp
     QMAKE_CXXFLAGS += -Ofast
+    LIBS += -L$$PWD/libs/lua/ -llua
+
 }
 
 linux-g*{
@@ -62,6 +64,7 @@ linux-g*{
     LIBS += -fopenmp
     QMAKE_CXXFLAGS +=  -Ofast
     LIBS += -ldl
+    LIBS += -L$$PWD/libs/lua/ -llua
 
 
 }

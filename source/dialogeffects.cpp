@@ -140,6 +140,7 @@ static int SetRotation(lua_State *L)
             aro->SetRotation(QVector3D(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4)));
         }
     }
+    return 0;
 }
 
 
