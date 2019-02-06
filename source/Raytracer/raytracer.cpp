@@ -11,12 +11,14 @@ int cmpfunc (const AbstractRayObject * a, AbstractRayObject * b) {
 }
 
 
-void RayTracer::Raytrace(QImage &img)
+/*void RayTracer::Raytrace(QImage &img)
 {
     m_globals.m_camera = &m_camera;
 
-    for (AbstractRayObject* aro : m_objects)
-        aro->m_localPos = aro->m_position-m_camera.m_camera;
+    for (AbstractRayObject* aro : m_objects) {
+        aro->SetLocalPos(m_camera.m_camera);
+//        aro->m_localPos = aro->m_position-m_camera.m_camera;
+    }
 
 //    qSort(m_objects.begin(), m_objects.end(), cmpfunc);
 
@@ -79,7 +81,7 @@ void RayTracer::Raytrace(QImage &img)
         }
 }
 
-
+*/
 
 
 
@@ -89,8 +91,17 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
 {
     m_globals.m_camera = &m_camera;
 
-    for (AbstractRayObject* aro : m_objects)
-        aro->m_localPos = aro->m_position-m_camera.m_camera;
+    m_objectsFlattened.clear();
+    QMatrix4x4 id;
+    id.setToIdentity();
+    for (AbstractRayObject* aro : m_objects) {
+        aro->SetLocalPos(QVector3D(0,0,0), id);
+//        aro->SetLocalRotation();
+        aro->AddToFlattened(m_objectsFlattened);
+    }
+
+
+//        aro->m_localPos = aro->m_position-m_camera.m_camera;
 
 //    qSort(m_objects.begin(), m_objects.end(), cmpfunc);
 
@@ -138,10 +149,10 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
 
     // Generate list with bb
     QVector<AbstractRayObject*> culled;
-    for (AbstractRayObject* o: m_objects) {
+    for (AbstractRayObject* o: m_objectsFlattened) {
         QVector3D isp1, isp2;
         double t0, t1;
-        if (ray.IntersectSphere(o->m_position*-1,QVector3D(1,1,1)*o->m_bbRadius,isp1, isp2, t0,t1)) {
+        if (ray.IntersectSphere(o->m_localPos*-1,QVector3D(1,1,1)*o->m_bbRadius,isp1, isp2, t0,t1)) {
             //if (( t1>0) || dynamic_cast<RayObjectPlane*>(o)!=nullptr)
                 culled.append(o);
         }
@@ -158,7 +169,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
 
 
     for (AbstractRayObject* ro: culled) {
-        ro->m_localRay[tid] = ray.Rotate(ro->m_rotmat, ro->m_position);
+        ro->m_localRay[tid] = ray.Rotate(ro->m_localRotmat, ro->m_localPos);
     }
 
 
@@ -209,7 +220,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
 //                exit(1);
         isp = rotated.m_currentPos;
         QVector3D normal = winner->CalcMarchNormal(rotated.m_currentPos);
-        normal = winner->m_rotmatInv*normal;
+        normal = winner->m_localRotmatInv*normal;
         QVector3D tt(1,2,-213.123);
         QVector3D tangent = QVector3D::crossProduct(tt,normal).normalized();
         QVector3D bi = QVector3D::crossProduct(tangent,normal).normalized();
@@ -236,7 +247,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
 
         for (AbstractLight* al: m_globals.m_lights) {
 //            Ray shadowRay(isp,winner->m_rotmat*al->m_direction*1);
-            Ray shadowRay(lp,al->m_direction);
+            Ray shadowRay(lp,al->m_direction.normalized());
             AbstractRayObject* o= nullptr;
             if (dynamic_cast<RayObjectBox*>(winner)!=nullptr)
                 o=winner;

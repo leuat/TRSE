@@ -16,10 +16,12 @@ public:
 
     QMatrix4x4 m_transform;
     QMatrix4x4 m_rotmat, m_rotmatInv;
+    QMatrix4x4 m_localRotmat, m_localRotmatInv;
     QVector3D m_position;
     QVector3D m_scale;
     QVector3D m_rotation;
     QVector3D m_localPos;
+    QVector3D m_centerPos;
 
     Material m_material;
     QString m_name;
@@ -28,7 +30,43 @@ public:
 
     float m_bbRadius;
 
+    QVector<AbstractRayObject*> m_children;
 
+    void SetMaterial(Material m) {
+        m_material = m;
+        for (AbstractRayObject* aro : m_children)
+            aro->SetMaterial(m);
+
+    }
+
+    void AddToFlattened(QVector<AbstractRayObject*>& list) {
+        list.append(this);
+        for (AbstractRayObject* aro : m_children)
+            aro->AddToFlattened(list);
+
+    }
+
+    AbstractRayObject* Find(QString name) {
+        if (m_name == name)
+            return this;
+
+        for (AbstractRayObject* aro: m_children) {
+            AbstractRayObject* c = aro->Find(name);
+            if (c!=nullptr)
+                return c;
+        }
+        return nullptr;
+    }
+
+
+    void SetLocalPos(QVector3D campos, QMatrix4x4 mat) {
+        m_localRotmat = m_rotmat*mat;
+        m_centerPos = campos;
+        m_localPos = campos + mat.inverted()*m_position;
+        m_localRotmatInv = m_localRotmat.inverted();
+        for (AbstractRayObject* aro : m_children)
+            aro->SetLocalPos(m_localPos, m_localRotmat);
+    }
 
     void SetRotation(QVector3D v) {
         m_rotation = v;

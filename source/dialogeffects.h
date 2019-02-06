@@ -23,10 +23,14 @@ public:
     explicit DialogEffects(QString file, QWidget *parent = nullptr);
     ~DialogEffects();
 
+
     void Abort();
-    void Init();
+    void Init(QString dir);
 private:
-    QString m_file, m_error;
+
+    static int Message(lua_State *L);
+
+    QString m_file;
     void Create();
     Ui::DialogEffects *ui;
     int m_avg=0;

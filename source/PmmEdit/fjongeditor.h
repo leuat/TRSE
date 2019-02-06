@@ -2,8 +2,9 @@
 #define FJONGEDITOR_H
 
 #include <QPlainTextEdit>
+#include "codeeditor.h"
 
-class FjongEditor : public QPlainTextEdit
+class FjongEditor : public CodeEditor
 {
 
     Q_OBJECT

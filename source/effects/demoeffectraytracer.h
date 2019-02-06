@@ -9,7 +9,7 @@
 class DemoEffectRaytracer : public AbstractDemoEffect
 {
 public:
-    DemoEffectRaytracer(QGridLayout* gl);
+    DemoEffectRaytracer();
 
 //    CIniFile m_file;
 

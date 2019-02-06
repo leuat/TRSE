@@ -19,7 +19,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
@@ -481,19 +481,19 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
           <rect>
            <x>40</x>
            <y>20</y>
-           <width>55</width>
+           <width>101</width>
            <height>21</height>
           </rect>
          </property>
          <property name="text">
-          <string>Theme</string>
+          <string>Rascal theme</string>
          </property>
         </widget>
         <widget class="QGroupBox" name="groupBox">
          <property name="geometry">
           <rect>
            <x>40</x>
-           <y>100</y>
+           <y>150</y>
            <width>461</width>
            <height>311</height>
           </rect>
@@ -546,7 +546,7 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
          <property name="geometry">
           <rect>
            <x>160</x>
-           <y>50</y>
+           <y>80</y>
            <width>241</width>
            <height>22</height>
           </rect>
@@ -566,13 +566,36 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
          <property name="geometry">
           <rect>
            <x>40</x>
-           <y>50</y>
+           <y>80</y>
            <width>101</width>
            <height>21</height>
           </rect>
          </property>
          <property name="text">
           <string>Window palette</string>
+         </property>
+        </widget>
+        <widget class="QComboBox" name="cmbThemeFjong">
+         <property name="geometry">
+          <rect>
+           <x>160</x>
+           <y>50</y>
+           <width>241</width>
+           <height>22</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_21">
+         <property name="geometry">
+          <rect>
+           <x>40</x>
+           <y>50</y>
+           <width>91</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Fjong theme</string>
          </property>
         </widget>
        </widget>

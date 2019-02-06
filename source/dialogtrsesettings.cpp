@@ -65,6 +65,10 @@ void DialogTRSESettings::FillFromIni()
     ui->cmbTheme->addItems(washed);
     ui->cmbTheme->setCurrentText(m_ini->getString("theme").split(".")[0]);
 
+    ui->cmbThemeFjong->addItems(washed);
+    ui->cmbThemeFjong->setCurrentText(m_ini->getString("theme_fjong").split(".")[0]);
+
+
     ui->leFontSize->setText(QString::number((int)m_ini->getdouble("font_size")));
     ui->leTabWidth->setText(QString::number((int)m_ini->getdouble("tab_width")));
 
@@ -91,6 +95,7 @@ void DialogTRSESettings::FillToIni()
 
     m_ini->setString("nes_emulator", ui->leNesEmulator->text());
     m_ini->setString("theme", ui->cmbTheme->currentText() + ".ini");
+    m_ini->setString("theme_fjong", ui->cmbThemeFjong->currentText() + ".ini");
 
     m_ini->setFloat("font_size", ui->leFontSize->text().toInt());
     m_ini->setFloat("tab_width", ui->leTabWidth->text().toInt());

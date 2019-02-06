@@ -16,12 +16,22 @@ class RayTracer
 {
 public:
     RayTracer();
-    QVector<AbstractRayObject*> m_objects;
+    QVector<AbstractRayObject*> m_objects, m_objectsFlattened;
     Camera m_camera;
     RayTracerGlobals m_globals;
     enum Pass { Image, Reflect, Shadow};
-    void Raytrace(QImage& img);
+//    void Raytrace(QImage& img);
     void Raymarch(QImage& img, int w, int h);
+
+    AbstractRayObject* Find(QString name) {
+        for (AbstractRayObject* aro: m_objects) {
+            AbstractRayObject* c = aro->Find(name);
+            if (c!=nullptr)
+                return c;
+
+        }
+        return nullptr;
+    }
 
     bool RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, int cnt, int tid);
 

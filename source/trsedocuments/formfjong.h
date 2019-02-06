@@ -5,6 +5,8 @@
 #include "trsedocument.h"
 #include "source/LeLib/luascript.h"
 #include "source/dialogeffects.h"
+#include "source/PmmEdit/highlighter.h"
+
 namespace Ui {
 class FormFjong;
 }
@@ -21,6 +23,7 @@ public:
     void Destroy() override {}
 
     void SetText(QString txt);
+    Highlighter* highlighter = nullptr;
 
     void Save(QString filename) override;
     void Load(QString filename) override;
@@ -33,6 +36,8 @@ public:
 
     void Build() override { Run(); }
     void Run() override;
+
+    void SetupHighlighter();
 
 
 private:

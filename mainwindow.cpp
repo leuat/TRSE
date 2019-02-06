@@ -204,6 +204,8 @@ void MainWindow::VerifyDefaults()
         m_iniFile.setFloat("tab_width", 4);
     if (!m_iniFile.contains("theme"))
         m_iniFile.setString("theme", "dark_standard.ini");
+    if (!m_iniFile.contains("theme_fjong"))
+        m_iniFile.setString("theme_fjong", "dark_standard.ini");
     if (!m_iniFile.contains("post_optimize"))
         m_iniFile.setFloat("post_optimize", 1);
     if (!m_iniFile.contains("memory_analyzer_font_size"))

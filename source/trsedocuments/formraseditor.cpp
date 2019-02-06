@@ -578,7 +578,7 @@ void FormRasEditor::SetupHighlighter()
     p.setColor(QPalette::Base, colors.getColor("backgroundcolor"));
     p.setColor(QPalette::Text, colors.getColor("textcolor"));
     ui->txtEditor->setPalette(p);
-    highlighter = new Highlighter(colors, ui->txtEditor->document());
+    highlighter = new Highlighter(colors, 0, ui->txtEditor->document());
 
 //    qDebug() << "UPDATE " << m_iniFile->getString("theme");
 

@@ -27,7 +27,7 @@
 #include <QDebug>
 
 
-Highlighter::Highlighter(CIniFile ini, QTextDocument *parent)
+Highlighter::Highlighter(CIniFile ini, int type, QTextDocument *parent)
     : QSyntaxHighlighter(parent)
 {
     HighlightingRule rule;
@@ -48,38 +48,39 @@ Highlighter::Highlighter(CIniFile ini, QTextDocument *parent)
         highlightingRules.append(rule);
     }
 
+    if (type==0)
+    {
+        builtinFunctionFormat.setForeground(m_colors.getColor("builtinfunctioncolor"));
+        builtinFunctionFormat.setFontWeight(QFont::Bold);
+        keywordPatterns.clear();
 
-    builtinFunctionFormat.setForeground(m_colors.getColor("builtinfunctioncolor"));
-    builtinFunctionFormat.setFontWeight(QFont::Bold);
-    keywordPatterns.clear();
+        for (QString k: Syntax::s.builtInFunctions.keys()) {
+            //qDebug() << QString::number(i) << TokenType::types[i].toLower();
+            QString name = Syntax::s.builtInFunctions[k].m_name;
+            QString s = "\\b" + name.toLower() + "\\b";
+            keywordPatterns<<s;
+        }
 
-    for (QString k: Syntax::s.builtInFunctions.keys()) {
-        //qDebug() << QString::number(i) << TokenType::types[i].toLower();
-        QString name = Syntax::s.builtInFunctions[k].m_name;
-        QString s = "\\b" + name.toLower() + "\\b";
-        keywordPatterns<<s;
+        foreach (const QString &pattern, keywordPatterns) {
+            rule.pattern = QRegularExpression(pattern,QRegularExpression::CaseInsensitiveOption);
+            rule.format = builtinFunctionFormat;
+            highlightingRules.append(rule);
+        }
+
+        /* CONSTANTS */
+
+        SymbolTable::Initialize();
+
+        constantsFormat.setForeground(m_colors.getColor("constantscolor"));
+        constantsFormat.setFontWeight(QFont::Normal);
+        keywordPatterns.clear();
+
+        for (QString k: SymbolTable::m_constants.keys()) {
+            //qDebug() << QString::number(i) << TokenType::types[i].toLower();
+            QString s = "\\b" + k.toLower() + "\\b";
+            keywordPatterns<<s;
+        }
     }
-
-    foreach (const QString &pattern, keywordPatterns) {
-        rule.pattern = QRegularExpression(pattern,QRegularExpression::CaseInsensitiveOption);
-        rule.format = builtinFunctionFormat;
-        highlightingRules.append(rule);
-    }
-
-    /* CONSTANTS */
-
-    SymbolTable::Initialize();
-
-    constantsFormat.setForeground(m_colors.getColor("constantscolor"));
-    constantsFormat.setFontWeight(QFont::Normal);
-    keywordPatterns.clear();
-
-    for (QString k: SymbolTable::m_constants.keys()) {
-        //qDebug() << QString::number(i) << TokenType::types[i].toLower();
-        QString s = "\\b" + k.toLower() + "\\b";
-        keywordPatterns<<s;
-    }
-
     foreach (const QString &pattern, keywordPatterns) {
         rule.pattern = QRegularExpression(pattern,QRegularExpression::CaseInsensitiveOption);
         rule.format = constantsFormat;

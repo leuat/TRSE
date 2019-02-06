@@ -35,7 +35,7 @@ class Highlighter : public QSyntaxHighlighter
     Q_OBJECT
 
 public:
-    Highlighter(CIniFile ini, QTextDocument *parent = 0);
+    Highlighter(CIniFile ini, int type, QTextDocument *parent = 0);
     CIniFile m_colors;
     void Save(QString fn);
 

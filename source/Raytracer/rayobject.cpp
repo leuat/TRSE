@@ -37,7 +37,7 @@ QVector3D AbstractRayObject::ApplySpecularLight(QVector3D normal, QVector3D view
 void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& tangent, QVector3D& isp, RayTracerGlobals &globals,QVector3D reflectDir, QVector<AbstractRayObject*>& objects, int pass)
 {
 
-    double l = (ray->m_origin-(isp+m_position)).length();
+    double l = (ray->m_origin-(isp+m_localPos)).length();
 
     if (l<ray->m_z)
     {
@@ -67,7 +67,7 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
 /*            if (m_material.m_reflectivity>0 && ray->m_reflect!=0) {
                 if (pass==0)
                 if (pass==2)
-                ray->m_intensity = ray->m_intensity*(1-m_material.m_reflectivity) + m_material.m_reflectivity*ReflectMarch(this,isp+m_position, reflectDir, globals, objects, ray->m_reflect-1);
+                ray->m_intensity = ray->m_intensity*(1-m_material.m_reflectivity) + m_material.m_reflectivity*ReflectMarch(this,isp+m_localPos, reflectDir, globals, objects, ray->m_reflect-1);
             }*/
             ray->m_intensity += ApplySpecularLight(normal,ray->m_direction,  globals, m_material);
         }
@@ -162,7 +162,7 @@ bool RayObjectSphere::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D& i
 {
     QVector3D isp1, isp2;
     double t0,t1;
-    if (ray->IntersectSphere(m_position,m_radius,isp1, isp2, t0,t1)) {
+    if (ray->IntersectSphere(m_localPos,m_radius,isp1, isp2, t0,t1)) {
         isp = isp1;
         if (t0<0 || t1<0)
             return false;
@@ -184,7 +184,7 @@ bool RayObjectSphere::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D& i
 
 float RayObjectSphere::intersect(Ray *ray)
 {
-    return (m_position+ray->m_currentPos).length() - m_radius.x();
+    return (m_localPos+ray->m_currentPos).length() - m_radius.x();
 
 
 }
@@ -197,20 +197,20 @@ QVector3D RayObjectPlane::CalculateUV(QVector3D &pos, QVector3D &normal, QVector
 
 float RayObjectPlane::intersect(Ray *ray)
 {
-    return (-m_position.y() + ray->m_currentPos.y());
+    return (-m_localPos.y() + ray->m_currentPos.y());
 }
 
 bool RayObjectPlane::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D &isp, int pass, QVector<AbstractRayObject *> &objects)
 {
 
-    double t = QVector3D::dotProduct(m_pNormal, m_position-ray->m_origin)/QVector3D::dotProduct(m_pNormal,ray->m_direction);
+    double t = QVector3D::dotProduct(m_pNormal, m_localPos-ray->m_origin)/QVector3D::dotProduct(m_pNormal,ray->m_direction);
 
     if (t>0) {
         QVector3D tangent = QVector3D::crossProduct(QVector3D(1.123,1.12345,45.1234),m_pNormal).normalized();
 
         isp = ray->m_origin+t*ray->m_direction.normalized();
         QVector3D normal = GetPerturbedNormal(isp, m_pNormal, tangent, globals);
-        QVector3D p = isp - m_position;
+        QVector3D p = isp - m_localPos;
 
         QVector3D reflectionDir = ray->m_direction-2*QVector3D::dotProduct(ray->m_direction, normal)*normal;
 
@@ -232,7 +232,7 @@ QVector3D RayObjectTorus::CalculateUV(QVector3D &pos, QVector3D &normal, QVector
 float RayObjectTorus::intersect(Ray *ray)
 {
 
-    QVector3D pos = m_position + ray->m_currentPos;
+    QVector3D pos = m_localPos + ray->m_currentPos;
     QVector3D pp = pos;
     pp.setY(0);
     QVector3D q = QVector3D(pp.length()-m_radius.x(),pos.y(),0);
@@ -248,7 +248,7 @@ QVector3D RayObjectBox::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D
 
 float RayObjectBox::intersect(Ray *ray)
 {
-    QVector3D d = Util::abss(m_position+ray->m_currentPos) - m_box;// +ray->m_currentPos;
+    QVector3D d = Util::abss(m_localPos+ray->m_currentPos) - m_box;// +ray->m_currentPos;
     float r=0.0;
     return min(max(d.x()-r,max(d.y()-r,d.z()-r)),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length();
 
@@ -261,7 +261,7 @@ QVector3D RayObjectCylinder::CalculateUV(QVector3D &pos, QVector3D &normal, QVec
 
 float RayObjectCylinder::intersect(Ray *ray)
 {
-    QVector3D pos = m_position+ray->m_currentPos;
+    QVector3D pos = m_localPos+ray->m_currentPos;
     QVector3D p = QVector3D(pos.x(), pos.z(),0);
     QVector3D d = QVector3D(p.length()-2*m_radius.x() + m_radius.y()*1.0, abs(pos.y())-m_radius.z(),0);
 

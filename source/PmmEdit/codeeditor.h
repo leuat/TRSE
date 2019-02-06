@@ -83,7 +83,7 @@ public:
         cycleNumberArea->repaint();
     }
 
-private slots:
+protected slots:
     void onTextChanged(){
 //        qDebug() << "HAAA";
         m_textChanged = true;
@@ -94,7 +94,7 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
 //    void cycleresizeEvent(QResizeEvent *event) override;
 
-private slots:
+protected slots:
     void highlightCurrentLine();
     void updateLineNumberArea(const QRect &, int);
     void updateLineNumberAreaWidth(int newBlockCount);
@@ -102,7 +102,7 @@ private slots:
     void updateCycleNumberArea(const QRect &, int);
     void updateCycleNumberAreaWidth(int newBlockCount);
 
-private:
+protected:
     QWidget *lineNumberArea;
     QWidget *cycleNumberArea;
 
@@ -113,13 +113,13 @@ protected:
     void keyPressEvent(QKeyEvent *e) override;
     void focusInEvent(QFocusEvent *e) override;
 
-private slots:
+protected slots:
     void insertCompletion(const QString &completion);
 
-private:
+protected:
     QString textUnderCursor() const;
 
-private:
+protected:
     QCompleter *c = nullptr;
 
 
@@ -145,7 +145,7 @@ protected:
         codeEditor->lineNumberAreaPaintEvent(event);
     }
 
-private:
+protected:
     CodeEditor *codeEditor;
 };
 
@@ -166,7 +166,7 @@ protected:
         codeEditor->cycleNumberAreaPaintEvent(event);
     }
 
-private:
+protected:
     CodeEditor *codeEditor;
 };
 

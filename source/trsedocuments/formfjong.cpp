@@ -51,6 +51,7 @@ void FormFjong::Load(QString filename)
     }
     file.close();
     UpdateFromIni();
+    SetupHighlighter();
 }
 
 void FormFjong::UpdateFromIni()
@@ -84,7 +85,7 @@ void FormFjong::Run()
     m_currentSourceFile.replace("//","/");
 
     DialogEffects* de = new DialogEffects(m_currentSourceFile);
-    de->Init();
+    de->Init(m_currentDir);
     de->exec();
     delete de;
 
@@ -96,5 +97,23 @@ void FormFjong::Run()
 */
 
 
+
+}
+
+void FormFjong::SetupHighlighter()
+{
+    if (highlighter != nullptr)
+        delete highlighter;
+    CIniFile colors;
+    colors.Load(Util::path + "themes/" + m_iniFile->getString("theme_fjong"));
+    ui->txtEditor->InitColors(colors);
+
+    QPalette p = ui->txtEditor->palette();
+    p.setColor(QPalette::Base, colors.getColor("backgroundcolor"));
+    p.setColor(QPalette::Text, colors.getColor("textcolor"));
+    ui->txtEditor->setPalette(p);
+    highlighter = new Highlighter(colors, 0, ui->txtEditor->document());
+
+    //    qDebug() << "UPDATE " << m_iniFile->getString("theme");
 
 }

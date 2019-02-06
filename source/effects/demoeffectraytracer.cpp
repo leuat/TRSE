@@ -1,34 +1,9 @@
 #include "demoeffectraytracer.h"
 
-DemoEffectRaytracer::DemoEffectRaytracer(QGridLayout* gl) : AbstractDemoEffect (gl)
+DemoEffectRaytracer::DemoEffectRaytracer() : AbstractDemoEffect (nullptr)
 {
 
 
-
-//    m_rt->m_camera.m_camera = QVector3D(0,0,-5);
-//    float a = 0.05;
-  //  m_rt->m_globals.m_ambient = QVector3D(a,a,a);
-
-    /*if (m_currentscene==2)
-        Scene2();
-
-    if (m_currentscene==1)
-        Scene1();
-
-    if (m_currentscene==3)
-        Scene3();
-
-    if (m_currentscene==4)
-        Scene4();
-
-    if (m_currentscene==5)
-        Scene5();
-
-    if (m_currentscene==6)
-        Scene6();
-
-    m_params["camera_x"] = DemoEffectParam("camera_x",0);
-    */
 }
 
 void DemoEffectRaytracer::Scene1()
@@ -451,10 +426,10 @@ void DemoEffectRaytracer::UpdateScene1()
 
 void DemoEffectRaytracer::run()
 {
+    m_img.fill(QColor(0,0,0,255));
     while (!m_abort) {
         m_time+=1;
         // m_mc->Clear();
-        m_img.fill(QColor(0,0,0,255));
         Init();
         m_timer = QElapsedTimer();
         m_timer.start();
@@ -470,7 +445,7 @@ void DemoEffectRaytracer::run()
 //        m_img.fill(QColor(0,0,0,0));
 //        m_rt->Raymarch(m_img, 2*w,h);
         m_rt->Raymarch(m_img, w,h);
-        for (int y=0;y<h;y++) {
+/*        for (int y=0;y<h;y++) {
         //for (int x=0;x<1;x++)
         {
             for (int i=0;i<w;i++)
@@ -479,7 +454,7 @@ void DemoEffectRaytracer::run()
         }
         }
 
-
+*/
 
         m_elapsedTime = m_timer.elapsed();
 //        ConvertToC64(m_params["dither"].m_val == 1);
@@ -527,11 +502,15 @@ void DemoEffectRaytracer::Init()
 
     m_cols.clear();
 
-    m_cols.append(m_params["color_bg"].m_val);
+    m_cols = m_rt->m_globals.m_c64Colors;
+    //if (m_cols.count()<4)
+
+
+/*    m_cols.append(m_params["color_bg"].m_val);
     m_cols.append(m_params["color_mc1"].m_val);
     m_cols.append(m_params["color_main"].m_val); // This one generic
     m_cols.append(m_params["color_mc2"].m_val);
-
+*/
     m_mc->SetColor(m_cols[0],0);
     m_mc->SetColor(m_cols[1],1);
     m_mc->SetColor(m_cols[3],2);

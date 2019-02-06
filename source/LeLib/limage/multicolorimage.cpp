@@ -202,8 +202,10 @@ void MultiColorImage::FloydSteinbergDither(QImage &img, LColorList& colors, bool
           pixel[x + 1][y + 1] := pixel[x + 1][y + 1] + quant_error * 1 / 16*/
 
 
-    for (int y=0;y<m_height;y++) {
-        for (int x=0;x<m_width;x++) {
+    int height  =min(img.height(), m_height);
+    int width  =min(img.width(), m_width);
+    for (int y=0;y<height;y++) {
+        for (int x=0;x<width;x++) {
             QColor oldPixel = QColor(img.pixel(x,y));
             int winner = 0;
             QColor newPixel = colors.getClosestColor(oldPixel, winner);
@@ -211,13 +213,13 @@ void MultiColorImage::FloydSteinbergDither(QImage &img, LColorList& colors, bool
             setPixel(x,y,winner);
             QVector3D qErr(oldPixel.red()-newPixel.red(),oldPixel.green()-newPixel.green(),oldPixel.blue()-newPixel.blue());
             if (dither) {
-                if (x!=m_width-1)
+                if (x!=width-1)
                     img.setPixel(x+1,y,Util::toColor(Util::fromColor(img.pixel(x+1,y))+qErr*7/16.0).rgba());
-                if (y!=m_height-1) {
+                if (y!=height-1) {
                     if (x!=0)
                         img.setPixel(x-1,y+1,Util::toColor(Util::fromColor(img.pixel(x-1,y+1))+qErr*3/16.0).rgba());
                     img.setPixel(x,y+1,Util::toColor(Util::fromColor(img.pixel(x,y+1))+qErr*5/16.0).rgba());
-                    if (x!=m_width-1)
+                    if (x!=width-1)
                         img.setPixel(x+1,y+1,Util::toColor(Util::fromColor(img.pixel(x+1,y+1))+qErr*1/16.0).rgba());
                 }
             }
@@ -937,17 +939,19 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF
 {
 //    return;
 //#pragma omp parallel for
+    int height  =min(img.height(), m_height);
+    int width  =min(img.width(), m_width);
 
 
-    for (int i=0;i<m_width;i++)
-        for (int j=0;j<m_height;j++) {
+    for (int i=0;i<width;i++)
+        for (int j=0;j<height;j++) {
 
             float xp = floor(((i-center.x())*zoom)+ center.x());
             float yp = floor(((j-center.y())*zoom) + center.y());
 
 
             unsigned int col = 0;
-            if (xp>=0 && xp<m_width && yp>=0 && yp<m_height)
+            if (xp>=0 && xp<width && yp>=0 && yp<height)
                 col = getPixel(xp,yp);
             // Has transparency?
             QColor c=QColor(0,0,0);
