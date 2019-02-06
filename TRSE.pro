@@ -63,8 +63,8 @@ linux-g*{
     QMAKE_CXXFLAGS +=  -Wno-unused-variable -Wno-unused-parameter -Wno-sign-compare -Wno-comment -Wno-parentheses -Wno-delete-non-virtual-dtor -Wno-missing-noreturn
     LIBS += -fopenmp
     QMAKE_CXXFLAGS +=  -Ofast
-    LIBS += -ldl
-    LIBS += -L$$PWD/libs/lua/ -llua
+    LIBS += -L$$PWD/libs/lua/ -llua -ldl
+#    LIBS += -ldl
 
 
 }
