@@ -112,5 +112,6 @@
         <file>resources/code/nes_init.asm</file>
         <file>resources/code/nes_end.asm</file>
         <file>resources/code/nes_readinput.asm</file>
+        <file>resources/images/torus.jpg</file>
     </qresource>
 </RCC>

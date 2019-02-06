@@ -31,7 +31,7 @@ public:
     float m_time=0;
     QString m_infoText;
     bool m_toggleAnim = true;
-    bool m_toggleC64 = true;
+    bool m_toggleC64 = false;
     QGridLayout* m_gl = nullptr;
     AbstractDemoEffect(QGridLayout* gl);
     bool m_abort = false;
@@ -41,9 +41,17 @@ public:
 //    int m_elapsedTime=0;
     QElapsedTimer m_timer;
     int m_elapsedTime;
+    void SaveCharset(QString filename, int w, int h);
+    void AddScreen(QByteArray& data, int w, int h);
+
+    int Compare(QByteArray& a, QByteArray& b, int p1, int p2, int length);
+
+    void OptimizeAndPackCharsetData(QByteArray& dataIn, QByteArray& out, QByteArray& table, int width, int compression);
+
 
     virtual void ToggleAnim() {m_toggleAnim=!m_toggleAnim;}
 
+    virtual void Initialize() {}
 
     virtual void Render(QImage& img) {}
 

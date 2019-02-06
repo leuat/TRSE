@@ -3577,14 +3577,15 @@ void Methods6502::DecrunchFromIndex(Assembler *as)
     as->Asm("tax");
 
     as->Comment("; Decrunch from index");
-//    as->Term("lda ");
-    m_node->m_params[0]->Accept(m_dispatcher);
-    as->Term(",x", true);
+    as->Asm("lda " + m_node->m_params[0]->getAddress()+",x");
+//    m_node->m_params[0]->Accept(m_dispatcher);
+    //as->Term(",x", true);
     as->Asm("sta opbase+1");
     as->Asm("inx");
   //  as->Term("lda ");
-    m_node->m_params[0]->Accept(m_dispatcher);
-    as->Term(",x",true);
+  //  m_node->m_params[0]->Accept(m_dispatcher);
+//    as->Term(",x",true);
+    as->Asm("lda " + m_node->m_params[0]->getAddress()+",x");
     as->Asm("sta opbase+2");
     as->Asm("jsr exod_decrunch");
 

@@ -6,10 +6,12 @@
 #include "source/effects/abstractdemoeffect.h"
 #include "source/effects/demoeffecttwister.h"
 #include "source/effects/demoeffectraytracer.h"
+#include "source/LeLib/luascript.h"
 
 namespace Ui {
 class DialogEffects;
 }
+
 
 class DialogEffects : public QDialog
 {
@@ -18,15 +20,19 @@ class DialogEffects : public QDialog
     AbstractDemoEffect* m_effect = nullptr;
 
 public:
-    explicit DialogEffects(QWidget *parent = nullptr);
+    explicit DialogEffects(QString file, QWidget *parent = nullptr);
     ~DialogEffects();
 
     void Abort();
-
+    void Init();
 private:
+    QString m_file, m_error;
     void Create();
     Ui::DialogEffects *ui;
     int m_avg=0;
+    void LoadScript(QString file);
+    void UpdateGlobals();
+//    QMap<QString, Material> m_materials;
 
 public slots:
     void UpdateImage();

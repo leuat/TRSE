@@ -5,6 +5,9 @@ DemoEffectTwister::DemoEffectTwister(QGridLayout* gl) : AbstractDemoEffect (gl)
 //    m_mc = new MultiColorImage(LColorList::C64);
     m_mc = new CharsetImage(LColorList::C64);
 
+
+    m_charset = new CharsetImage(LColorList::C64);
+
     m_mc->m_currentMode = CharsetImage::FULL_IMAGE;
      //m_mc->Initialize(160,200);
      m_mc->setMultiColor(true);
@@ -15,7 +18,7 @@ DemoEffectTwister::DemoEffectTwister(QGridLayout* gl) : AbstractDemoEffect (gl)
      SetParameters(0);
 }
 
-void DemoEffectTwister::RenderBar(int y, float width, QVector3D init, float maxy, float tt, float sscale )
+void DemoEffectTwister::RenderBar(int y, float width, QVector3D init, float maxy, float tt, float sscale, QVector<float> mask )
 {
     if (m_angles.count()==0)
         return;
@@ -90,7 +93,8 @@ void DemoEffectTwister::RenderBar(int y, float width, QVector3D init, float maxy
                     QVector3D pp = p+light*step*l2;
 
                     QVector3D perp(-dpx.z(), 0,dpx.x());
-                        float d = QVector3D::dotProduct(pp + p1, perp);
+                    //perp = perp * mask[(j-x1)*2];
+                        float d = QVector3D::dotProduct(pp+p1, perp);
 
 //                    if (QVector3D::dotProduct(pp-p1,dpx)>0)
                        if (d<0)
@@ -100,6 +104,7 @@ void DemoEffectTwister::RenderBar(int y, float width, QVector3D init, float maxy
 
                 }
 //                col=c;
+                l=l-QVector3D(1,1,1)*mask[(j-x1)*2];
                 if (l.x()<0) l.setX(0);
                 if (l.y()<0) l.setY(0);
                 if (l.z()<0) l.setZ(0);
@@ -185,6 +190,7 @@ void DemoEffectTwister::SaveTwister(QString filename, int w, int h)
     f.close();
 }
 
+
 void DemoEffectTwister::run()
 {
 
@@ -196,11 +202,34 @@ void DemoEffectTwister::run()
         m_mc->Clear();
         m_img.fill(QColor(0,0,0,255));
         Init();
+
+        QVector<float> mask;
+        int ww = m_params["width"].m_val*4;
+        mask.resize(ww);
+        mask.fill(1);
+//        for (int i=0;i<7;i++)
+  //          mask[rand()%mask.count()]=1+rand()%4;
+
+
+    //    PixelChar& pc = m_charset->m_data[m_char];
+//        for (int i=0;i<8;i++)
+  //          pc.p[i]=rand()%256;
+
         for (int y=0; y<m_img.height();y++) {
+            // Fill mask
+            int yy = y%8;
+            PixelChar& pc = m_charset->m_data[m_char];
+            for (int i=0;i<ww;i++) {
+               mask[i]=1;
+               float x = (i/(float)ww*2)*8-4;
+               if (pc.get(x/2,yy,1)!=0)
+                   mask[i]=300;
+            }
+
                 RenderBar(y,m_params["width"].m_val*2,
                 QVector3D(m_params["init_red"].m_val,m_params["init_green"].m_val,m_params["init_blue"].m_val),
-               m_height*8,
-                m_params["concave"].m_val, m_params["shadow"].m_val);
+                m_height*8,
+                m_params["concave"].m_val, m_params["shadow"].m_val, mask);
 
 
   //          }
@@ -213,7 +242,8 @@ void DemoEffectTwister::run()
 
 void DemoEffectTwister::Save(QString f)
 {
-    SaveTwister(f,m_params["width"].m_val,m_height);
+//    SaveTwister(f,m_params["width"].m_val,m_height);
+    SaveCharset(f,m_params["width"].m_val*4,m_height*8);
 
 }
 
@@ -221,6 +251,9 @@ void DemoEffectTwister::Init()
 {
     m_angles.clear();
     m_cols.clear();
+
+    m_charset->LoadCharset(":resources/character.rom");
+
     for (int i=0;i<m_params["no_points"].m_val;i++) {
         m_angles.append(i*2.0*M_PI/(float)m_params["no_points"].m_val);
     }

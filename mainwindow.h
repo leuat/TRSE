@@ -46,6 +46,7 @@
 #include "source/LeLib/util/cinifile.h"
 #include "source/trsedocuments/formraseditor.h"
 #include "source/trsedocuments/formimageeditor.h"
+#include "source/trsedocuments/formfjong.h"
 #include "source/trsedocuments/formpaw.h"
 #include "source/dialogtrsesettings.h"
 #include "source/messages.h"
@@ -65,7 +66,7 @@ class TRSEProject {
 public:
     CIniFile m_ini;
     QString m_filename="";
-    QStringList m_acceptedFileTypes = {"asm", "flf", "ras", "prg", "paw", "inc"};
+//    QStringList m_acceptedFileTypes = {"asm", "flf", "ras", "prg", "paw", "inc", "fjo"};
     void Load(QString projectfile) {
         m_ini = CIniFile();
         m_ini.Load(projectfile);
@@ -197,6 +198,8 @@ class CustomFileSystemModel : public QFileSystemModel {
                 img.load(":resources/images/image_icon.png");
             if (f.contains(".paw"))
                 img.load(":resources/images/paw_icon.png");
+            if (f.contains(".fjo"))
+                img.load(":resources/images/torus.jpg");
 
             QIcon ic(QPixmap::fromImage(img));
 
@@ -387,6 +390,8 @@ private slots:
     void on_actionFind_file_c_s_triggered();
 
     void on_actionEffects_triggered();
+
+    void on_actionFjong_Raymarcher_document_triggered();
 
 private:
 

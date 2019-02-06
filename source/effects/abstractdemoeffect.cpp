@@ -11,6 +11,98 @@ void AbstractDemoEffect::Save(QString file)
 
 }
 
+void AbstractDemoEffect::SaveCharset(QString filename, int w, int h)
+{
+    QFile f(filename);
+    f.open(QFile::WriteOnly);
+    QByteArray data;
+    for (int y=0;y<h;y++)
+        for (int x=0;x<w;x++) {
+            char c = QColor(m_img.pixel(x,y)).red()/16;
+            data.append(c);
+            //qDebug() << yy;
+            //PixelChar& pc = m_mc->m_data[40*y+x];
+            //for (int i=0;i<8;i++)
+            //    data.append(PixelChar::reverse(pc.p[i]));
+        }
+
+
+
+    f.write(data);
+    f.close();
+
+}
+
+void AbstractDemoEffect::AddScreen(QByteArray &data, int w, int h)
+{
+    for (int y=0;y<h;y+=1)
+        for (int x=0;x<2*w;x+=2) {
+            char c1 = QColor(m_img.pixel(x,y)).red()/32;
+            char c2 = QColor(m_img.pixel(x+1,y)).red()/32;
+            char add = 0;
+            char c = max(c1,c2);
+            if (c>7) c=7;
+            if (c1<1) add=40;
+            if (c2<1) add=48;
+//            add=0;
+            data.append(c+0xA0+add);
+        }
+
+}
+
+int AbstractDemoEffect::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length)
+{
+    int l = 0;
+    for (int i=0;i<length;i++) {
+        if (a[p1+i]!=b[p2+i]) l++;
+    }
+    return l;
+}
+
+void AbstractDemoEffect::OptimizeAndPackCharsetData(QByteArray &dataIn, QByteArray &out, QByteArray &table, int width, int compression)
+{
+    out.clear();
+    table.clear();
+
+    int cnt = dataIn.count()/width;
+    qDebug() << "Width : " << width;
+    qDebug() << "total rows: " << cnt;
+    qDebug() << "total chars x frames: " << (cnt/width);
+    qDebug() << "total chars: " << (cnt/32)/width;
+
+    qDebug() << "cnt SHOULD be " << (32*width*26);
+
+
+    for (int i=0;i<cnt;i++) {
+        unsigned short currentPointer = 0;
+        bool isNew = true;
+        for (int j=0;j<out.count()/width;j++) {
+            int metric = Compare(dataIn, out, i*width, j*width, width);
+            if (metric<compression) {
+                currentPointer =j*width;
+                isNew=false;
+                //break;
+            }
+        }
+        if (isNew) {
+            currentPointer = out.count();
+            for (int j=0;j<width;j++) {
+                out.append(dataIn[i*width+j]);
+            }
+        }
+//        qDebug() << isNew << currentPointer;
+        char lo = currentPointer&0xff;
+        char hi = (currentPointer>>8)&0xff;
+//        qDebug() << QString::number(lo) << QString::number(hi);
+        table.append(lo);
+        table.append(hi);
+
+    }
+
+
+}
+
+
 void AbstractDemoEffect::ConvertToC64(bool dither)
 {
     if (m_toggleC64) {

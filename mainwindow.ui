@@ -282,6 +282,8 @@
      <addaction name="actionRas_source_file"/>
      <addaction name="actionImage"/>
      <addaction name="actionPaw_packed_resource_file"/>
+     <addaction name="separator"/>
+     <addaction name="actionFjong_Raymarcher_document"/>
     </widget>
     <addaction name="menuNew"/>
     <addaction name="actionNew_project"/>
@@ -466,6 +468,11 @@
    </property>
    <property name="text">
     <string>Effects</string>
+   </property>
+  </action>
+  <action name="actionFjong_Raymarcher_document">
+   <property name="text">
+    <string>Fjong Raymarcher document</string>
    </property>
   </action>
  </widget>

@@ -1,5 +1,5 @@
 #include "raytracer.h"
-//#include <omp.h>
+#include <omp.h>
 
 RayTracer::RayTracer()
 {
@@ -98,25 +98,26 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
 
 
        float aspect = w/(float)h;
+       if (aspect>1) aspect = h/(float)w;
        float ah = 1;
 //       qDebug() << w << h;
  //      aspect = 0.5;
-//#pragma omp parallel for
+#pragma omp parallel for
         for (int i=0;i<w;i++)
             for (int j=0;j<h;j++)
         {
 
             float x = i;//*aspect;
-            float y = j*aspect;
+            float y = j;//*aspect;
 
             QVector3D dir = m_camera.coord2ray(x,y,w,h);
             Ray ray(m_camera.m_camera,dir);
             ray.m_reflect=3;
 
 //            float m_z = 1E20;
-            //int tid = omp_get_thread_num();
+            int tid = omp_get_thread_num();
 
-            int tid = 0;
+            //int tid = 0;
 
             RayMarchSingle(ray, Image, nullptr,80,tid);
             QColor c = Util::toColor(ray.m_intensity*256 + m_globals.m_ambient);
@@ -151,7 +152,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
 //    culled = m_objects;
 
     if (culled.length()==0) {
-//        m_globals.Sky(&ray, m_globals.m_skyScale);
+        m_globals.Sky(&ray, m_globals.m_skyScale);
         return false;
     }
 

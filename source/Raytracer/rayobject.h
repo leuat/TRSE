@@ -22,7 +22,7 @@ public:
     QVector3D m_localPos;
 
     Material m_material;
-
+    QString m_name;
 
     Ray m_localRay[32];
 

@@ -694,7 +694,6 @@ void FormRasEditor::UpdateColors()
 
 void FormRasEditor::UpdateFromIni()
 {
-
     QFontMetrics metrics(m_font);
 
     m_font.setPointSize(m_iniFile->getdouble("font_size"));

@@ -15,7 +15,9 @@ TEMPLATE = app
 # any feature of Qt which as been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS
+DEFINES -= QT_DEPRECATED_WARNINGS
+
+DEFINES += USE_LUA
 
 # You can also make yopur code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -25,11 +27,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 #QMAKE_CXXFLAGS += -fopenmp -std=c++11
 
+
+INCLUDEPATH +=$$PWD/libs/lua/include
+
+#if USE_LUA
+#LIBS
+DEPENDPATH += $$PWD/../Libs
+LIBS += -L$$PWD/libs/lua/ -llua
+
 macx {
     QMAKE_CXXFLAGS += -openmp
     #LIBS += -openmp
     ICON = trse.icns
     QMAKE_CXXFLAGS += -Ofast
+    LIBS += -ldl
 
 }
 
@@ -50,6 +61,8 @@ linux-g*{
     QMAKE_CXXFLAGS +=  -Wno-unused-variable -Wno-unused-parameter -Wno-sign-compare -Wno-comment -Wno-parentheses -Wno-delete-non-virtual-dtor -Wno-missing-noreturn
     LIBS += -fopenmp
     QMAKE_CXXFLAGS +=  -Ofast
+    LIBS += -ldl
+
 
 }
 
@@ -160,7 +173,11 @@ SOURCES += main.cpp\
     source/Raytracer/rayobject.cpp \
     source/Raytracer/camera.cpp \
     source/Raytracer/raytracerglobals.cpp \
-    source/Raytracer/material.cpp
+    source/Raytracer/material.cpp \
+    source/effects/demoeffectcharsettwister.cpp \
+    source/trsedocuments/formfjong.cpp \
+    source/PmmEdit/fjongeditor.cpp \
+    source/LeLib/luascript.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -267,7 +284,11 @@ HEADERS  += mainwindow.h \
     source/Raytracer/rayobject.h \
     source/Raytracer/camera.h \
     source/Raytracer/raytracerglobals.h \
-    source/Raytracer/material.h
+    source/Raytracer/material.h \
+    source/effects/demoeffectcharsettwister.h \
+    source/trsedocuments/formfjong.h \
+    source/PmmEdit/fjongeditor.h \
+    source/LeLib/luascript.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \
@@ -285,10 +306,13 @@ FORMS    += mainwindow.ui \
     source/dialogprojectsettings.ui \
     source/dialogdonate.ui \
     source/dialogfindfile.ui \
-    source/dialogeffects.ui
+    source/dialogeffects.ui \
+    source/trsedocuments/formfjong.ui
 
 RESOURCES += \
     resources.qrc
+
+
 
 
 #LELIB INCLUDES

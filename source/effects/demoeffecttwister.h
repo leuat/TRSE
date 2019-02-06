@@ -17,13 +17,14 @@ private:
     int m_width = 18;
     int m_height = 8;
     int m_N = 4;
+    int m_char = 1;
     //QVector<int> m_colors;
 
 public:
     DemoEffectTwister(QGridLayout* gl) ;
 
-
-    void RenderBar(int, float, QVector3D, float maxy, float tt, float sscale);
+    CharsetImage* m_charset ;
+    void RenderBar(int, float, QVector3D, float maxy, float tt, float sscale, QVector<float> mask);
     void Render(QImage& img) override;
 
     void SetParameters(int preset) override;

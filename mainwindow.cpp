@@ -252,6 +252,9 @@ void MainWindow::LoadDocument(QString fileName)
     if (fileName.contains(".ras") || fileName.contains(".asm") || fileName.contains(".inc")  ) {
         editor = new FormRasEditor(this);
     }
+    if (fileName.contains(".fjo")) {
+        editor = new FormFjong(this);
+    }
     if (fileName.contains(".paw")  ) {
         editor = new FormPaw(this);
     }
@@ -340,7 +343,7 @@ void MainWindow::RefreshFileList()
     fileSystemModel->setRootPath(rootPath);
     fileSystemModel->setFilter(QDir::NoDotAndDotDot |
                             QDir::AllDirs |QDir::AllEntries);
-    fileSystemModel->setNameFilters(QStringList() << "*.ras" << "*.asm" << "*.txt" << "*.prg" << "*.inc" << "*.flf" <<"*.paw");
+    fileSystemModel->setNameFilters(QStringList() << "*.ras" << "*.asm" << "*.txt" << "*.prg" << "*.inc" << "*.flf" <<"*.paw" << "*.fjo");
     fileSystemModel->setNameFilterDisables(false);
 
     ui->treeFiles->setModel(fileSystemModel);
@@ -554,7 +557,7 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
     QString file = index.data().toString();
     if (file.toLower().endsWith(".ras") || file.toLower().endsWith(".asm")
             || file.toLower().endsWith(".inc") || file.toLower().endsWith(".flf")
-            || file.toLower().endsWith(".paw")) {
+            || file.toLower().endsWith(".paw") || file.toLower().endsWith(".fjo")) {
         LoadDocument(path + file);
     }
     if (file.toLower().endsWith(".prg")) {
@@ -1030,7 +1033,48 @@ void MainWindow::on_actionFind_file_c_s_triggered()
 
 void MainWindow::on_actionEffects_triggered()
 {
-    DialogEffects* de = new DialogEffects();
+    DialogEffects* de = new DialogEffects("");
     de->exec();
     delete de;
+}
+
+void MainWindow::on_actionFjong_Raymarcher_document_triggered()
+{
+    if (m_currentProject.m_filename=="") {
+        Messages::messages.DisplayMessage(Messages::messages.NO_PROJECT);
+        return;
+    }
+
+
+
+    QFileDialog dialog;
+    dialog.setFileMode(QFileDialog::AnyFile);
+    QString f = "Ras Files (*.fjo)";
+    QString filename = dialog.getSaveFileName(nullptr, "Create New Fjong File",getProjectPath(),f);
+
+    if (filename=="")
+        return;
+    if (!filename.toLower().endsWith(".fjo")) {
+        filename = filename + ".fjo";
+    }
+    QString orgFile;
+    //filename = filename.split("/").last();
+    filename = filename.toLower().remove(getProjectPath().toLower());
+
+//    qDebug() << filename;
+  //  qDebug() << getProjectPath().toLower();
+    QString fn = getProjectPath() + filename;
+    if (QFile::exists(fn))
+        QFile::remove(fn);
+
+    QFile file(fn);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream s(&file);
+        s << "";
+    }
+
+    file.close();
+//    LoadRasFile(filename);
+    LoadDocument(filename);
+    RefreshFileList();
 }
