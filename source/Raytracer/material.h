@@ -36,6 +36,7 @@ public:
     Material();
 
     QVector3D m_color =QVector3D(1,0.5,0.5);
+    float m_shininess_strength =1;
     float m_shininess=0;
     float m_reflectivity=0.5;
     float m_perlinness = 0.3;

@@ -7,7 +7,6 @@ LuaScript::LuaScript(const QString& filename) {
     int load = luaL_loadfile(L, filename.toStdString().c_str());
     if (load==0) {
         int err = lua_pcall(L, 0, 0, 0);
-        qDebug() << "Error: " << err;
         if (err!=0) {
             L = nullptr;
 
@@ -22,11 +21,6 @@ LuaScript::LuaScript(const QString& filename) {
     }
 
 
-/*    if (luaL_loadfile(L, filename.toStdString().c_str()) || lua_pcall(L, 0, 0, 0)) {
-          //  std::cout<<"Error: script not loaded ("<<filename<<")"<<std::endl;
-            L = 0;
-        }*/
-    qDebug() << "Here: " << L;
     if(L) luaL_openlibs(L);
 }
 

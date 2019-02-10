@@ -28,7 +28,9 @@ class AbstractDemoEffect : public QThread
     Q_OBJECT
 public:
     QImage m_img;
+    QPixmap m_pixmap;
     float m_time=0;
+    bool m_ready = true;
     QString m_infoText;
     bool m_toggleAnim = true;
     bool m_toggleC64 = false;
@@ -42,7 +44,7 @@ public:
     QElapsedTimer m_timer;
     int m_elapsedTime;
     void SaveCharset(QString filename, int w, int h);
-    void AddScreen(QByteArray& data, int w, int h);
+    void AddScreen(QByteArray& data, int w, int h, char base, int div, char add1, char add2);
 
     int Compare(QByteArray& a, QByteArray& b, int p1, int p2, int length);
 
@@ -59,7 +61,7 @@ public:
     virtual void Save(QString file);
 
     virtual void Init() {}
-
+//    virtual void
 
     void ConvertToC64(bool dither);
 

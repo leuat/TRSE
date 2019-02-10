@@ -59,14 +59,9 @@ public:
     }
 
 
-    void SetLocalPos(QVector3D campos, QMatrix4x4 mat) {
-        m_localRotmat = m_rotmat*mat;
-        m_centerPos = campos;
-        m_localPos = campos + mat.inverted()*m_position;
-        m_localRotmatInv = m_localRotmat.inverted();
-        for (AbstractRayObject* aro : m_children)
-            aro->SetLocalPos(m_localPos, m_localRotmat);
-    }
+    void SetLocalPos(QVector3D campos, QMatrix4x4 mat);
+
+    void SetLocalRay(int tid, Ray& ray);
 
     void SetRotation(QVector3D v) {
         m_rotation = v;
@@ -108,6 +103,30 @@ public:
 
 };
 
+
+class RayObjectEmpty : public AbstractRayObject {
+public:
+    RayObjectEmpty(QVector3D pos) {
+        m_position = pos;
+        m_bbRadius = 0.01;
+    }
+    float intersect(Ray* ray) override;
+
+};
+
+
+class RayObjectUnion : public AbstractRayObject {
+public:
+    RayObjectUnion(QVector3D pos) {
+        m_position = pos;
+
+    }
+    QVector<AbstractRayObject*> m_objects;
+
+
+    float intersect(Ray* ray) override;
+
+};
 
 class RayObjectSphere : public AbstractRayObject {
 public:

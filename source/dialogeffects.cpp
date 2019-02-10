@@ -4,6 +4,9 @@
 LuaScript* m_script = nullptr;
 QString m_infoText = "", m_error="";
 QString m_currentDir;
+QByteArray m_screenData, m_charData;
+AbstractDemoEffect* m_effect = nullptr;
+
 
 DialogEffects::DialogEffects(QString file, QWidget *parent) :
     QDialog(parent),
@@ -11,7 +14,9 @@ DialogEffects::DialogEffects(QString file, QWidget *parent) :
 {
     ui->setupUi(this);
     m_file = file;
-
+    m_effect = nullptr;
+    m_screenData.clear();
+    m_charData.clear();
 }
 
 DialogEffects::~DialogEffects()
@@ -86,7 +91,7 @@ static int LuaCos(lua_State *L) {
 static int AddObject(lua_State *L)
 {
 //    qDebug();// << text;
-  //  int n = lua_gettop(L);
+    int args = lua_gettop(L);
   //  if (n!=5) {
 //       return 0;
    // }
@@ -95,8 +100,6 @@ static int AddObject(lua_State *L)
     QString name = lua_tostring(L,2);
     QString parent = lua_tostring(L,3);
     QString material = lua_tostring(L,4);
-
-
 
     AbstractRayObject* obj = nullptr;
     int N = 5;
@@ -110,36 +113,86 @@ static int AddObject(lua_State *L)
 
     }
 
+    if (object=="cylinder") {
+        obj =
+                    new RayObjectCylinder(
+                        QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
+                        QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
+                        mat);
+
+    }
+
+
     if (object=="box") {
         obj =
                     new RayObjectBox(
                         QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
-                        QVector3D(0,1,0),
+                        QVector3D(lua_tonumber(L,N+6),1,0),
                         QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
                         mat);
 
 
     }
 
-/*    if (object=="char") {
+    if (object=="char") {
 
         CharsetImage* charset = new CharsetImage(LColorList::C64);
-        if (QString(lua_tostring(L,4)).toLower()=="rom")
+        QString charName = lua_tostring(L,N);
+        if (charName.toLower()=="rom") {
             charset->LoadCharset(":resources/character.rom");
-        else
-            charset->LoadCharset(m_currentDir+"/"+QString(lua_tostring(L,4)));
+        }
+        else {
+            QString fname = m_currentDir+"/"+QString(lua_tostring(L,N));
+            qDebug() << "Trying to load: " << fname;
+            if (!QFile::exists(fname)) {
+                m_error += "Could not open file: " + fname + "\n";
+                return 0;
+            }
+            charset->LoadCharset(fname);
+        }
+        N++;
 
-       obj =
+        int chr = lua_tonumber(L, N);
+        N++;
+
+        QVector3D orgPos = QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2));
+        QVector3D scale = QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5));
+        QVector3D size = QVector3D(lua_tonumber(L,N+6),lua_tonumber(L,N+7),lua_tonumber(L,N+8));
+        obj = new RayObjectEmpty(orgPos);
+//        obj = new RayObjectUnion(orgPos);
+        PixelChar& pc = charset->m_data[chr];
+        for (int y=0;y<8;y++)
+            for (int x=0;x<8;x++) {
+                if (((pc.p[y]>>x) & 1)==1) {
+                    float xx = (x-4+0.5)*scale.x();
+                    float yy = (y-4+0.5)*scale.y();
+                    float s = 0.5;
+                    QVector3D pos = QVector3D(0,yy,xx);
+
+
+
+                    AbstractRayObject* aro = new RayObjectBox(pos,QVector3D(0,1,0),
+                                                           size, mat);
+
+                    //((RayObjectUnion*)obj)->m_objects.append(aro);
+                    obj->m_children.append(aro);
+                }
+            }
+
+
+
+
+/*       obj =
                     new RayObjectBox(
                         QVector3D(lua_tonumber(L,4),lua_tonumber(L,5),lua_tonumber(L,6)) ,
                         QVector3D(0,1,0),
                         QVector3D(lua_tonumber(L,7),lua_tonumber(L,8),lua_tonumber(L,9)),
                         mat);
-
+*/
         delete charset;
 
     }
-*/
+
     if (obj!=nullptr) {
         obj->m_name= name;
         if (parent=="")
@@ -147,7 +200,7 @@ static int AddObject(lua_State *L)
         else {
             AbstractRayObject* aro = m_rt.Find(parent);
             if (aro==nullptr) {
-                m_error +="Error in AddObject: Could not find parent object '" + parent+  "'";
+                m_error +="Error in AddObject: Could not find parent object '" + parent+  "'\n";
                 return 0;
             }
             aro->m_children.append(obj);
@@ -161,11 +214,13 @@ static int AddObject(lua_State *L)
 
         mat.m_shininess = m_script->get<float>(material+".shininess");
 
+        mat.m_shininess_strength = m_script->get<float>(material+".shininess_intensity");
+
 
         obj->SetMaterial(mat);
 
     }
-    else m_error +="Error in AddObject: Unkown type '" + object+  "'";
+    else m_error +="Error in AddObject: Unkown type '" + object+  "'\n";
 
     return 0;
 
@@ -179,7 +234,7 @@ static int SetRotation(lua_State *L)
     QString name = lua_tostring(L,1);
     AbstractRayObject* aro = m_rt.Find(name);
     if (aro==nullptr) {
-        m_error +="Error in SetRotation : Could not find object '" + name+ "'";
+        m_error +="Error in SetRotation : Could not find object '" + name+ "'\n";
         return 0;
     }
 
@@ -194,11 +249,25 @@ static int SetPosition(lua_State *L)
     QString name = lua_tostring(L,1);
     AbstractRayObject* aro = m_rt.Find(name);
     if (aro==nullptr) {
-        m_error +="Error in SetRotation : Could not find object '" + name+ "'";
+        m_error +="Error in SetRotation : Could not find object '" + name+ "'\n";
         return 0;
     }
 
     aro->m_position = (QVector3D(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4)));
+    return 0;
+}
+
+static int SetY(lua_State *L)
+{
+//    int n = lua_gettop(L);
+    QString name = lua_tostring(L,1);
+    AbstractRayObject* aro = m_rt.Find(name);
+    if (aro==nullptr) {
+        m_error +="Error in SetRotation : Could not find object '" + name+ "'\n";
+        return 0;
+    }
+
+    aro->m_position.setY(lua_tonumber(L,2));
     return 0;
 }
 
@@ -214,6 +283,62 @@ int DialogEffects::Message(lua_State *L)
 static int ClearObjects(lua_State *L) {
     m_rt.m_objects.clear();
     return 0;
+}
+
+static int AddScreen(lua_State* L) {
+
+    if (m_effect!=nullptr)
+       m_effect->AddScreen(m_screenData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tonumber(L,5),lua_tonumber(L,6));
+
+    return 0;
+}
+
+static int CompressCharset(lua_State* L) {
+    // 0, 40, 13, 25
+    int noChars;
+    m_effect->m_mc->CompressAndSave(m_charData, m_screenData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3),lua_tonumber(L,4),noChars,lua_tonumber(L,5),  lua_tonumber(L,6));
+    m_infoText+="Compressed chars: " + QString::number(noChars) + "\n";
+    return 0;
+}
+
+static int SaveScreenAndCharset(lua_State* L) {
+    QFile f(m_currentDir+"/"+ lua_tostring(L,2));
+    f.open(QFile::WriteOnly);
+    f.write(m_charData);
+    f.close();
+    m_charData.clear();
+
+    QFile f2(m_currentDir+"/"+lua_tostring(L,1));
+    f2.open(QFile::WriteOnly);
+    f2.write(m_screenData);
+    f2.close();
+    m_screenData.clear();
+    return 0;
+}
+
+
+static int CompressAndSaveHorizontalData(lua_State* L) {
+
+    QByteArray packedData, table;
+    table.clear();
+//    qDebug() <<m_count*16 << " but is " <<m_screenData.count()/ww;
+    m_effect->OptimizeAndPackCharsetData(m_screenData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2));
+  //  qDebug() << "Table should be : " << (m_noChars-1)*1024;
+    //qDebug() << "Table is : " << table.count();
+
+
+    QFile f(m_currentDir+"/"+lua_tostring(L,3));
+    f.open(QFile::WriteOnly);
+    f.write(packedData);
+    f.close();
+
+    QFile f2(m_currentDir+"/"+  lua_tostring(L,4));
+    f2.open(QFile::WriteOnly);
+    f2.write(table);
+    f2.close();
+
+    return 0;
+
 }
 
 void DialogEffects::LoadScript(QString file)
@@ -240,9 +365,14 @@ void DialogEffects::LoadScript(QString file)
 
 
     lua_register(m_script->L, "AddObject", AddObject);
+    lua_register(m_script->L, "CompressAndSaveHorizontalData", CompressAndSaveHorizontalData);
+    lua_register(m_script->L, "CompressCharset", CompressCharset);
+    lua_register(m_script->L, "SaveScreenAndCharset", SaveScreenAndCharset);
+    lua_register(m_script->L, "AddScreen", AddScreen);
     lua_register(m_script->L, "SetRotation", SetRotation);
     lua_register(m_script->L, "SetPosition", SetPosition);
     lua_register(m_script->L, "sin", LuaSin);
+    lua_register(m_script->L, "SetY", SetY);
     lua_register(m_script->L, "cos", LuaCos);
     lua_register(m_script->L, "Message", Message);
     lua_register(m_script->L, "ClearAllObjects", ClearObjects);
@@ -269,7 +399,10 @@ void DialogEffects::UpdateGlobals()
 {
     if (m_script==nullptr)
         return;
+
+    m_rt.m_camera.m_fov = m_script->get<float>("globals.fov");
     m_rt.m_camera.m_camera = m_script->getVec("globals.camera");
+    m_rt.m_camera.m_target = m_script->getVec("globals.target");
     m_rt.m_globals.m_lights[0]->m_direction = m_script->getVec("globals.light0.direction").normalized();
     m_rt.m_globals.m_lights[0]->m_color = m_script->getVec("globals.light0.color");
     m_rt.m_globals.m_ambient = m_script->getVec("globals.ambient");
@@ -296,28 +429,27 @@ void DialogEffects::UpdateImage()
         return;
     }
 
-    QPixmap p;//
-    p.convertFromImage(m_effect->m_img);
-    if (m_effect->m_img.width()<321)
-        p = p.scaled(320, 200, Qt::IgnoreAspectRatio, Qt::FastTransformation);
-
-    ui->lblImage->setPixmap( p );
-    ui->txtOutput->setText(m_infoText);
-
+    ui->lblImage->setPixmap( m_effect->m_pixmap );
+    if (ui->txtOutput->toPlainText()!=m_infoText)
+        ui->txtOutput->setText(m_infoText);
 
 
 
     if (m_script!=nullptr && m_rt.m_globals.m_isPaused==0) {
-        int ret = luaL_dostring(m_script->L, "Update()");
+        luaL_dostring(m_script->L, "Update()");
         UpdateGlobals();
         if (m_script->m_error!="") m_error = m_script->m_error;
 
     }
+//    qDebug() << "KAKE";
 
 
+    m_effect->m_ready = true;
+//    m_effect->Render(m_effect->m_img);
+    m_effect->start();
 }
 
-void DialogEffects::on_pushButton_clicked()
+/*void DialogEffects::on_pushButton_clicked()
 {
     Abort();
     close();
@@ -360,3 +492,4 @@ void DialogEffects::on_comboBox_activated(const QString &arg1)
 {
     Create();
 }
+*/

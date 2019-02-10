@@ -33,19 +33,23 @@ void AbstractDemoEffect::SaveCharset(QString filename, int w, int h)
 
 }
 
-void AbstractDemoEffect::AddScreen(QByteArray &data, int w, int h)
+void AbstractDemoEffect::AddScreen(QByteArray &data, int w, int h, char base, int div, char ca1, char ca2)
 {
+
     for (int y=0;y<h;y+=1)
         for (int x=0;x<2*w;x+=2) {
-            char c1 = QColor(m_img.pixel(x,y)).red()/32;
-            char c2 = QColor(m_img.pixel(x+1,y)).red()/32;
+            char c1,c2;
+//            if (x<m_img.width() && y<m_img.height())
+            c1 = QColor(m_img.pixel(x,y)).red()/div;
+  //          if (x+1<m_img.width() && y<m_img.height())
+            c2 = QColor(m_img.pixel(x+1,y)).red()/div;
             char add = 0;
             char c = max(c1,c2);
-            if (c>7) c=7;
-            if (c1<1) add=40;
-            if (c2<1) add=48;
+            //if (c>7) c=7;
+            if (c1<1) add=ca1;
+            if (c2<1) add=ca2;
 //            add=0;
-            data.append(c+0xA0+add);
+            data.append(c+base+add);
         }
 
 }

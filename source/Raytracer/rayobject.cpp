@@ -1,5 +1,25 @@
 #include "rayobject.h"
 
+void AbstractRayObject::SetLocalPos(QVector3D campos, QMatrix4x4 mat) {
+    m_localRotmat = m_rotmat*mat;
+    m_centerPos = campos;
+    m_localPos = campos + mat.inverted()*m_position;
+    m_localRotmatInv = m_localRotmat.inverted();
+    float bbr = m_bbRadius;
+    for (AbstractRayObject* aro : m_children) {
+        aro->SetLocalPos(m_localPos, m_localRotmat);
+        bbr = max(bbr, aro->m_position.length()+aro->m_bbRadius);
+    }
+    m_bbRadius = bbr;
+}
+
+void AbstractRayObject::SetLocalRay(int tid, Ray &ray) {
+    m_localRay[tid] = ray.Rotate(m_localRotmat, m_localPos);
+    for (AbstractRayObject* aro:m_children)
+        aro->SetLocalRay(tid, ray);
+
+}
+
 AbstractRayObject::AbstractRayObject()
 {
     m_rotmat.setToIdentity();
@@ -28,7 +48,7 @@ QVector3D AbstractRayObject::ApplySpecularLight(QVector3D normal, QVector3D view
 
 
         QVector3D H = ((dl->m_direction.normalized()-view.normalized())).normalized();
-        l+=  dl->m_color*max(pow(QVector3D::dotProduct(H,normal),m_material.m_shininess),0.0f);
+        l+=  dl->m_color*mat.m_shininess_strength*max(pow(QVector3D::dotProduct(H,normal),m_material.m_shininess),0.0f);
     }
     return l;
 
@@ -249,7 +269,8 @@ QVector3D RayObjectBox::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D
 float RayObjectBox::intersect(Ray *ray)
 {
     QVector3D d = Util::abss(m_localPos+ray->m_currentPos) - m_box;// +ray->m_currentPos;
-    float r=0.0;
+    float r=m_pNormal.x();
+
     return min(max(d.x()-r,max(d.y()-r,d.z()-r)),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length();
 
 }
@@ -266,4 +287,27 @@ float RayObjectCylinder::intersect(Ray *ray)
     QVector3D d = QVector3D(p.length()-2*m_radius.x() + m_radius.y()*1.0, abs(pos.y())-m_radius.z(),0);
 
     return min(max(d.x(),d.y()),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length() - m_radius.y();
+}
+
+float RayObjectUnion::intersect(Ray *ray) {
+    float d = 0;
+    for (AbstractRayObject* aro: m_objects) {
+  //      c.m_origin+=aro->m_position;
+//        c.m_currentPos+=aro->m_position;
+//        d = (aro->intersect(&c),d);
+    }
+    return d;
+
+}
+
+float RayObjectEmpty::intersect(Ray *ray) {
+    float d = 1E10;
+    for (AbstractRayObject* aro: m_children) {
+/*        if ((aro->m_position-ray->m_currentPos).length()>aro->m_bbRadius)
+            break;*/
+        Ray r = *ray;// = new Ray();
+        r = r.Rotate(aro->m_localRotmat,aro->m_localPos);
+        d = min(aro->intersect(&r),d);
+    }
+    return d;
 }
