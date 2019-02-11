@@ -71,6 +71,10 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         return;
     }
     QProcess process;
+    if (m_projectIniFile->getString("system")=="VIC20" || m_projectIniFile->getString("system")=="C64" || m_projectIniFile->getString("system")=="C128")
+        if (m_iniFile->getdouble("auto_inject")==1.0) {
+           params << "-autostartprgmode" << "1";
+        }
     params << QDir::toNativeSeparators(fileName);
     process.waitForFinished();
 #ifdef _WIN32

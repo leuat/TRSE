@@ -19,7 +19,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>4</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
@@ -103,7 +103,7 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
          <property name="geometry">
           <rect>
            <x>40</x>
-           <y>410</y>
+           <y>420</y>
            <width>803</width>
            <height>61</height>
           </rect>
@@ -229,9 +229,9 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
          <property name="geometry">
           <rect>
            <x>40</x>
-           <y>350</y>
+           <y>380</y>
            <width>621</width>
-           <height>51</height>
+           <height>55</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -262,7 +262,7 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
          <property name="geometry">
           <rect>
            <x>40</x>
-           <y>310</y>
+           <y>340</y>
            <width>803</width>
            <height>61</height>
           </rect>
@@ -272,6 +272,19 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
          </property>
          <property name="wordWrap">
           <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="chkAutoInject">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>310</y>
+           <width>421</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Auto inject program</string>
          </property>
         </widget>
        </widget>

@@ -45,6 +45,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leBBCMEmulator->setText(m_ini->getString("bbcm_emulator"));
     ui->leC1541->setText(m_ini->getString("c1541"));
     ui->leExomizer->setText(m_ini->getString("exomizer"));
+    ui->chkAutoInject->setChecked(m_ini->getdouble("auto_inject")==1.0);
 //    if (ui->cmbPalette->currentText()=="Dark")
     if (m_ini->getdouble("windowpalette")==0)
         ui->cmbPalette->setCurrentText("Dark");
@@ -104,7 +105,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setFloat("hide_exomizer_footprint", ui->chkExomizerFootprint->isChecked()?1:0);
 
 
-
+    m_ini->setFloat("auto_inject", ui->chkAutoInject->isChecked()?1:0);
     m_ini->setString("user_defined_command",ui->leUserDefined->text());
 
 
