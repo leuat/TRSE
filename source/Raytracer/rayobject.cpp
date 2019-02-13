@@ -84,12 +84,6 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
             }
 //            col.setX(1);
             ray->m_intensity = col*ApplyDirectionalLight(normal,globals) + globals.m_ambient;
-
-/*            if (m_material.m_reflectivity>0 && ray->m_reflect!=0) {
-                if (pass==0)
-                if (pass==2)
-                ray->m_intensity = ray->m_intensity*(1-m_material.m_reflectivity) + m_material.m_reflectivity*ReflectMarch(this,isp+m_localPos, reflectDir, globals, objects, ray->m_reflect-1);
-            }*/
             ray->m_intensity += ApplySpecularLight(normal,ray->m_direction,  globals, m_material);
         }
         ray->m_z = l;
@@ -161,6 +155,9 @@ QVector3D AbstractRayObject::ReflectMarch(AbstractRayObject *me, QVector3D isp, 
 
 QVector3D AbstractRayObject::CalcMarchNormal(QVector3D &pos)
 {
+    if (m_hasNormal)
+        return m_normal;
+
     QVector3D e = QVector3D(1.0,-1.0,0)*0.1773*0.05;
 
     QVector3D exyy = QVector3D(e.x(), e.y(),e.y());
@@ -254,11 +251,11 @@ float RayObjectTorus::intersect(Ray *ray)
 {
 
     QVector3D pos = m_localPos + ray->m_currentPos;
+//    pos = pos + QVector3D(0.2,0,0)*sin(pos.x()*4.0);
     QVector3D pp = pos;
     pp.setY(0);
     QVector3D q = QVector3D(pp.length()-m_radius.x(),pos.y(),0);
      return q.length()-m_radius.y();
-     return 1E20;
 }
 
 
@@ -319,6 +316,12 @@ float RayObjectEmpty::intersect(Ray *ray) {
     return d;
 }
 
+RayObjectTriangle::RayObjectTriangle() {
+    m_sendsShadow = false;
+    m_receivesShadow = false;
+    m_hasNormal = true;
+}
+
 float RayObjectTriangle::intersect(Ray *ray)
 {
 
@@ -346,7 +349,7 @@ float RayObjectTriangle::intersect(Ray *ray)
 //    ray->m_currentPos-=m_localPos;
 
     if (!sameside) {
-        return 1;
+        return 100;
     }
 
     return d;

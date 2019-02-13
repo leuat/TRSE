@@ -17,6 +17,7 @@ public:
     float m_reflect = 3;
     double m_z = 1E20;
 
+
     float m_curStep = 0;
     QVector3D m_currentPos;
 
@@ -77,6 +78,8 @@ public:
     SimplexNoise m_noise;
 
 
+    double m_steps = 120;
+    double m_shadowSteps = 60;
     float m_isPaused = 0;
     float m_skyScale = 1;
     float m_c64Output = 0;

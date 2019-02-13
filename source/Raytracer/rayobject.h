@@ -18,12 +18,16 @@ public:
     QMatrix4x4 m_transform;
     QMatrix4x4 m_rotmat, m_rotmatInv;
     QMatrix4x4 m_localRotmat, m_localRotmatInv;
+    QVector3D m_normal;
     QVector3D m_position;
     QVector3D m_scale;
     QVector3D m_rotation;
     QVector3D m_localPos;
     QVector3D m_centerPos;
+    bool m_sendsShadow = true;
+    bool m_receivesShadow = true;
     bool m_flatten = true;
+    bool m_hasNormal = false;
     Material m_material;
     QString m_name;
 
@@ -207,9 +211,8 @@ public:
 class RayObjectTriangle: public AbstractRayObject {
   public:
     QVector3D m_pos[3];
-    QVector3D m_normal;
 
-
+    RayObjectTriangle();
     float intersect(Ray* ray) override;
 
 

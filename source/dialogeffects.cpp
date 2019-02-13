@@ -445,6 +445,8 @@ void DialogEffects::UpdateGlobals()
     m_rt.m_globals.m_dither = m_script->get<float>("output.dither");
 
     m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.c64_colors");
+    m_rt.m_globals.m_steps = m_script->get<float>("globals.raymarch_steps");
+    m_rt.m_globals.m_shadowSteps = m_script->get<float>("globals.raymarch_shadow_steps");
 }
 
 void DialogEffects::UpdateImage()

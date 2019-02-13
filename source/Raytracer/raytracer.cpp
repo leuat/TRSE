@@ -131,7 +131,7 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
 
             //int tid = 0;
 
-            RayMarchSingle(ray, Image, nullptr,80,tid);
+            RayMarchSingle(ray, Image, nullptr,m_globals.m_steps,tid);
             QColor c = Util::toColor(ray.m_intensity*256 + m_globals.m_ambient);
             img.setPixel(i,j,c.rgba());
 
@@ -154,6 +154,8 @@ void RayTracer::LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat
   //              continue;
             QVector3D pos = ol.m_vertices[ f.v1  ]*scale+ol.m_vertices[ f.v2  ]*scale+ol.m_vertices[ f.v3  ]*scale;
 
+
+
 /*            parent->m_children.append(new RayObjectSphere(ol.m_vertices[ f.v1  ]*scale,QVector3D(0.1,0,0),mat));
             parent->m_children.append(new RayObjectSphere(ol.m_vertices[ f.v2  ]*scale,QVector3D(0.1,0,0),mat));
             parent->m_children.append(new RayObjectSphere(ol.m_vertices[ f.v3  ]*scale,QVector3D(0.1,0,0),mat));*/
@@ -167,9 +169,9 @@ void RayTracer::LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat
 
                 for (int i=0;i<3;i++) {
                     rt->m_pos[i]-=rt->m_centerPos;
-                    rt->m_pos[i]*=1.00;
+                    rt->m_pos[i]*=1.04;
                 }
-
+                qDebug() << rt->m_receivesShadow;
                 rt->m_normal = QVector3D::crossProduct(rt->m_pos[1]-rt->m_pos[0],rt->m_pos[2]-rt->m_pos[0]).normalized();
                 rt->m_bbRadius = max(max((rt->m_pos[0]).length(),
                                      (rt->m_pos[1]).length()),
@@ -224,6 +226,10 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
         else
         if (ray.IntersectSphere((o->m_localPos)*-1,QVector3D(1,1,1)*o->m_bbRadius,isp1, isp2, t0,t1)) {
             //if (( t1>0) || dynamic_cast<RayObjectPlane*>(o)!=nullptr)
+            if (pass==Pass::Shadow) {
+                if (o->m_sendsShadow)
+                    culled.append(o);
+            }else
                 culled.append(o);
         }
 
@@ -291,10 +297,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
 //                exit(1);
         isp = rotated.m_currentPos;
         QVector3D normal;
-        if (dynamic_cast<RayObjectTriangle*>(winner)!=nullptr)
-            normal = dynamic_cast<RayObjectTriangle*>(winner)->m_normal;
-        else
-            normal = winner->CalcMarchNormal(rotated.m_currentPos);
+         normal = winner->CalcMarchNormal(rotated.m_currentPos);
 
         normal = winner->m_localRotmatInv*normal;
         QVector3D tt(1,2,-213.123);
@@ -314,12 +317,13 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
         if (winner->m_material.m_reflectivity>0 && ray.m_reflect>0) {
             Ray nxt(lp,reflectionDir);
             nxt.m_reflect=ray.m_reflect-1;
-            RayMarchSingle(nxt, Reflect, winner,24,tid);
+            RayMarchSingle(nxt, Reflect, winner,m_globals.m_shadowSteps,tid);
 
             ray.m_intensity = ray.m_intensity*(1-winner->m_material.m_reflectivity) + winner->m_material.m_reflectivity*nxt.m_intensity;
         }
 
 //        if (pass==Image)
+        if (winner->m_receivesShadow)
         for (AbstractLight* al: m_globals.m_lights) {
 //            Ray shadowRay(isp,winner->m_rotmat*al->m_direction*1);
             Ray shadowRay(lp,al->m_direction.normalized());
