@@ -45,8 +45,8 @@ void ObjLoader::Parse()
                 m_faces.append(f);
                 Face f2;
                 f2.v1 = ilst[0]-1;
-                f2.v2 = ilst[3]-1;
-                f2.v3 = ilst[2]-1;
+                f2.v2 = ilst[2]-1;
+                f2.v3 = ilst[3]-1;
                 m_faces.append(f2);
             }
 //            qDebug() << f.v1 << f.v2 << f.v3;
@@ -54,6 +54,4 @@ void ObjLoader::Parse()
 //            m_faces.append(QVector3D(lst[1].toFloat(),lst[2].toFloat(),lst[3].toFloat()));
         }
     }
-    qDebug() << "Faces: " << m_faces.count();
-    qDebug() << "Vertices: " << m_vertices.count();
 }

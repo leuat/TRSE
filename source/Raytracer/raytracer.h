@@ -22,7 +22,7 @@ public:
 //    void Raytrace(QImage& img);
     void Raymarch(QImage& img, int w, int h);
 
-    void LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat);
+    void LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat, QString name);
 
     AbstractRayObject* Find(QString name) {
         for (AbstractRayObject* aro: m_objects) {

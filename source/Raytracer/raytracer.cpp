@@ -139,12 +139,13 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
 
 }
 
-void RayTracer::LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat)
+void RayTracer::LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat, QString name)
 {
         ObjLoader ol(fn);
 
         ol.Parse();
         RayObjectEmpty* parent = new RayObjectEmpty(orgPos);
+        parent->m_name = name;
         parent->m_material = mat;
         m_objects.append(parent);
         for (Face& f: ol.m_faces) {
@@ -163,9 +164,12 @@ void RayTracer::LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat
                 rt->m_centerPos = (rt->m_pos[0]+ rt->m_pos[1]+rt->m_pos[2])/3;
                 rt->m_position = -rt->m_centerPos;//rt->m_centerPos;
                 rt->m_localPos = -rt->m_centerPos;//rt->m_centerPos;
-                rt->m_pos[0]-=rt->m_centerPos;
-                rt->m_pos[1]-=rt->m_centerPos;
-                rt->m_pos[2]-=rt->m_centerPos;
+
+                for (int i=0;i<3;i++) {
+                    rt->m_pos[i]-=rt->m_centerPos;
+                    rt->m_pos[i]*=1.00;
+                }
+
                 rt->m_normal = QVector3D::crossProduct(rt->m_pos[1]-rt->m_pos[0],rt->m_pos[2]-rt->m_pos[0]).normalized();
                 rt->m_bbRadius = max(max((rt->m_pos[0]).length(),
                                      (rt->m_pos[1]).length()),
@@ -175,10 +179,6 @@ void RayTracer::LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat
                 rt->m_pos[1]+=rt->m_centerPos;
                 rt->m_pos[2]+=rt->m_centerPos;
 
-/*                rt->m_bbRadius = max(max((rt->m_pos[0]-rt->m_centerPos).length(),
-                                     (rt->m_pos[1]-rt->m_centerPos).length()),
-                                     (rt->m_pos[2]-rt->m_centerPos).length());
-*/
   //          if (parent->m_children.count()<200)
                 parent->m_children.append(rt);
 
@@ -290,7 +290,12 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
         //ray.m_currentPos = isp;
 //                exit(1);
         isp = rotated.m_currentPos;
-        QVector3D normal = winner->CalcMarchNormal(rotated.m_currentPos);
+        QVector3D normal;
+        if (dynamic_cast<RayObjectTriangle*>(winner)!=nullptr)
+            normal = dynamic_cast<RayObjectTriangle*>(winner)->m_normal;
+        else
+            normal = winner->CalcMarchNormal(rotated.m_currentPos);
+
         normal = winner->m_localRotmatInv*normal;
         QVector3D tt(1,2,-213.123);
         QVector3D tangent = QVector3D::crossProduct(tt,normal).normalized();

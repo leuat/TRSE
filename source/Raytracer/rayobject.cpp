@@ -303,15 +303,18 @@ float RayObjectUnion::intersect(Ray *ray) {
 
 float RayObjectEmpty::intersect(Ray *ray) {
     float d = 1E10;
-    return 1;
+
+    if (m_flatten)
+        return d;
+
     for (AbstractRayObject* aro: m_children) {
 /*        if ((aro->m_position-ray->m_currentPos).length()>aro->m_bbRadius)
             break;*/
         Ray r = *ray;// = new Ray();
         r = r.Rotate(aro->m_localRotmat,aro->m_localPos);
-        /*d = min(aro->intersect(&r),d);
+        d = min(aro->intersect(&r),d);
         if (d<=0)
-            return d;*/
+            return d;
     }
     return d;
 }
@@ -320,13 +323,12 @@ float RayObjectTriangle::intersect(Ray *ray)
 {
 
     QVector3D p = ray->m_currentPos;
-    float dtop = abs(p.distanceToPlane(m_pos[0], m_normal));
+    float h = 0.06;
+    float dtop = abs(p.distanceToPlane(m_pos[1], m_normal));
     float d = dtop;//dtop-2;
-    if (d>0.1) {
-//        double t = abs(QVector3D::dotProduct(m_normal, m_pos[0]-ray->m_origin)/QVector3D::dotProduct(m_normal,ray->m_direction.normalized()));
+    if (d>h) {
+//        float t = 0.1*abs(QVector3D::dotProduct(m_normal, m_pos[0]-ray->m_origin)/QVector3D::dotProduct(m_normal,ray->m_direction.normalized()));
   //      return t;
-    //    ray->m_currentPos-=m_localPos;
-
         return d;
     }
 
@@ -335,15 +337,19 @@ float RayObjectTriangle::intersect(Ray *ray)
             Util::SameSide(p, m_pos[2], m_pos[0], m_pos[1]) &&
             Util::SameSide(p, m_pos[1], m_pos[0], m_pos[2]);
 
+/*    bool sameside2 =
+            Util::SameSide(p, m_pos[0], m_pos[2], m_pos[1]) &&
+            Util::SameSide(p, m_pos[2], m_pos[1], m_pos[0]) &&
+            Util::SameSide(p, m_pos[1], m_pos[2], m_pos[0]);
 
-    if (!sameside) {
-  //      ray->m_currentPos-=m_localPos;
-        return 0.1;
-    }
+*/
 //    ray->m_currentPos-=m_localPos;
 
-    return d;
+    if (!sameside) {
+        return 1;
+    }
 
+    return d;
 }
 
 

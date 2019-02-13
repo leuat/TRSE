@@ -140,7 +140,7 @@ static int AddObject(lua_State *L)
 
         mat.m_shininess_strength = m_script->get<float>(material+".shininess_intensity");
 
-        m_rt.LoadMesh(fn, meshscale,orgPos, mat);
+        m_rt.LoadMesh(fn, meshscale,orgPos, mat,name);
         return 0;
 
 //        QVector3D scale = QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5));
@@ -171,7 +171,6 @@ static int AddObject(lua_State *L)
         }
         else {
             QString fname = m_currentDir+"/"+QString(lua_tostring(L,N));
-            qDebug() << "Trying to load: " << fname;
             if (!QFile::exists(fname)) {
                 m_error += "Could not open file: " + fname + "\n";
                 return 0;
@@ -187,6 +186,7 @@ static int AddObject(lua_State *L)
         QVector3D scale = QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5));
         QVector3D size = QVector3D(lua_tonumber(L,N+6),lua_tonumber(L,N+7),lua_tonumber(L,N+8));
         obj = new RayObjectEmpty(orgPos);
+        obj->m_flatten = false;
 //        obj = new RayObjectUnion(orgPos);
         PixelChar& pc = charset->m_data[chr];
         for (int y=0;y<8;y++)

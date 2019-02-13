@@ -23,7 +23,7 @@ public:
     QVector3D m_rotation;
     QVector3D m_localPos;
     QVector3D m_centerPos;
-
+    bool m_flatten = true;
     Material m_material;
     QString m_name;
 
@@ -43,7 +43,7 @@ public:
 
     void AddToFlattened(QVector<AbstractRayObject*>& list) {
        list.append(this);
-
+        if (m_flatten)
         for (AbstractRayObject* aro : m_children)
             aro->AddToFlattened(list);
 
