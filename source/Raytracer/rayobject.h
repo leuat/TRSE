@@ -9,6 +9,7 @@
 #include "raytracerglobals.h"
 #include "material.h"
 #include <QQuaternion>
+#include "source/LeLib/objloader/objloader.h"
 
 class AbstractRayObject
 {
@@ -39,8 +40,10 @@ public:
 
     }
 
+
     void AddToFlattened(QVector<AbstractRayObject*>& list) {
-        list.append(this);
+       list.append(this);
+
         for (AbstractRayObject* aro : m_children)
             aro->AddToFlattened(list);
 
@@ -198,6 +201,17 @@ public:
     }
     QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) override;
     float intersect(Ray* ray) override;
+
+};
+
+class RayObjectTriangle: public AbstractRayObject {
+  public:
+    QVector3D m_pos[3];
+    QVector3D m_normal;
+
+
+    float intersect(Ray* ray) override;
+
 
 };
 

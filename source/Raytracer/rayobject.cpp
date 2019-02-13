@@ -1,8 +1,9 @@
 #include "rayobject.h"
 
+
 void AbstractRayObject::SetLocalPos(QVector3D campos, QMatrix4x4 mat) {
     m_localRotmat = m_rotmat*mat;
-    m_centerPos = campos;
+//    m_centerPos = campos;
     m_localPos = campos + mat.inverted()*m_position;
     m_localRotmatInv = m_localRotmat.inverted();
     float bbr = m_bbRadius;
@@ -302,12 +303,66 @@ float RayObjectUnion::intersect(Ray *ray) {
 
 float RayObjectEmpty::intersect(Ray *ray) {
     float d = 1E10;
+    return 1;
     for (AbstractRayObject* aro: m_children) {
 /*        if ((aro->m_position-ray->m_currentPos).length()>aro->m_bbRadius)
             break;*/
         Ray r = *ray;// = new Ray();
         r = r.Rotate(aro->m_localRotmat,aro->m_localPos);
-        d = min(aro->intersect(&r),d);
+        /*d = min(aro->intersect(&r),d);
+        if (d<=0)
+            return d;*/
     }
     return d;
 }
+
+float RayObjectTriangle::intersect(Ray *ray)
+{
+
+    QVector3D p = ray->m_currentPos;
+    float dtop = abs(p.distanceToPlane(m_pos[0], m_normal));
+    float d = dtop;//dtop-2;
+    if (d>0.1) {
+//        double t = abs(QVector3D::dotProduct(m_normal, m_pos[0]-ray->m_origin)/QVector3D::dotProduct(m_normal,ray->m_direction.normalized()));
+  //      return t;
+    //    ray->m_currentPos-=m_localPos;
+
+        return d;
+    }
+
+    bool sameside =
+            Util::SameSide(p, m_pos[0], m_pos[1], m_pos[2]) &&
+            Util::SameSide(p, m_pos[2], m_pos[0], m_pos[1]) &&
+            Util::SameSide(p, m_pos[1], m_pos[0], m_pos[2]);
+
+
+    if (!sameside) {
+  //      ray->m_currentPos-=m_localPos;
+        return 0.1;
+    }
+//    ray->m_currentPos-=m_localPos;
+
+    return d;
+
+}
+
+
+/*    float sdEquilateralTriangle(  in vec2 p )
+    {
+        const float k = 1.73205;//sqrt(3.0);
+        p.x = abs(p.x) - 1.0;
+        p.y = p.y + 1.0/k;
+        if( p.x + k*p.y > 0.0 ) p = vec2( p.x - k*p.y, -k*p.x - p.y )/2.0;
+        p.x += 2.0 - 2.0*clamp( (p.x+2.0)/2.0, 0.0, 1.0 );
+        return -length(p)*sign(p.y);
+    }
+
+    float sdTriPrism( vec3 p, vec2 h )
+    {
+        vec3 q = abs(p);
+        float d1 = q.z-h.y;
+        h.x *= 0.866025;
+        float d2 = sdEquilateralTriangle(p.xy/h.x)*h.x;
+        return length(max(vec2(d1,d2),0.0)) + min(max(d1,d2), 0.);
+    }
+  */

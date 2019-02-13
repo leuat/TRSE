@@ -121,7 +121,35 @@ static int AddObject(lua_State *L)
                         mat);
 
     }
+    if (object=="mesh") {
+        QString fn = m_currentDir+"/"+ lua_tostring(L,N);
+        float meshscale = lua_tonumber(L,N+1);
+        N+=2;
+        if (!QFile::exists(fn)) {
+            m_error = "Could not find 3d object file: "+fn;
+            return 0;
+        }
 
+        QVector3D orgPos = QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2));
+
+        mat.m_color = m_script->getVec(material+".color");
+
+        mat.m_reflectivity = m_script->get<float>(material+".reflection");
+
+        mat.m_shininess = m_script->get<float>(material+".shininess");
+
+        mat.m_shininess_strength = m_script->get<float>(material+".shininess_intensity");
+
+        m_rt.LoadMesh(fn, meshscale,orgPos, mat);
+        return 0;
+
+//        QVector3D scale = QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5));
+//        QVector3D size = QVector3D(lua_tonumber(L,N+6),lua_tonumber(L,N+7),lua_tonumber(L,N+8));
+        //obj = new RayObjectEmpty(orgPos);
+        //obj->LoadMesh(fn, meshscale);
+
+
+    }
 
     if (object=="box") {
         obj =
@@ -428,6 +456,8 @@ void DialogEffects::UpdateImage()
         ui->txtOutput->setText(m_error);
         return;
     }
+
+
 
     ui->lblImage->setPixmap( m_effect->m_pixmap );
     if (ui->txtOutput->toPlainText()!=m_infoText)

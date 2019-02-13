@@ -97,10 +97,10 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
     for (AbstractRayObject* aro : m_objects) {
         aro->SetLocalPos(QVector3D(0,0,0), id);
 //        aro->SetLocalRotation();
-        //aro->AddToFlattened(m_objectsFlattened);
+        aro->SetMaterial(aro->m_material);
+        aro->AddToFlattened(m_objectsFlattened);
     }
-
-    m_objectsFlattened = m_objects;
+//    m_objectsFlattened = m_objects;
 
 //        aro->m_localPos = aro->m_position-m_camera.m_camera;
 
@@ -139,6 +139,68 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
 
 }
 
+void RayTracer::LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat)
+{
+        ObjLoader ol(fn);
+
+        ol.Parse();
+        RayObjectEmpty* parent = new RayObjectEmpty(orgPos);
+        parent->m_material = mat;
+        m_objects.append(parent);
+        for (Face& f: ol.m_faces) {
+    //        qDebug() << "Face " << f.v1;
+//            if (f.v1>=ol.m_vertices.count() || f.v2>=ol.m_vertices.count() || f.v3>=ol.m_vertices.count())
+  //              continue;
+            QVector3D pos = ol.m_vertices[ f.v1  ]*scale+ol.m_vertices[ f.v2  ]*scale+ol.m_vertices[ f.v3  ]*scale;
+
+/*            parent->m_children.append(new RayObjectSphere(ol.m_vertices[ f.v1  ]*scale,QVector3D(0.1,0,0),mat));
+            parent->m_children.append(new RayObjectSphere(ol.m_vertices[ f.v2  ]*scale,QVector3D(0.1,0,0),mat));
+            parent->m_children.append(new RayObjectSphere(ol.m_vertices[ f.v3  ]*scale,QVector3D(0.1,0,0),mat));*/
+                RayObjectTriangle *rt = new RayObjectTriangle();
+                rt->m_pos[0] = ol.m_vertices[ f.v1  ]*scale;
+                rt->m_pos[1] = ol.m_vertices[ f.v2  ]*scale;
+                rt->m_pos[2] = ol.m_vertices[ f.v3  ]*scale;
+                rt->m_centerPos = (rt->m_pos[0]+ rt->m_pos[1]+rt->m_pos[2])/3;
+                rt->m_position = -rt->m_centerPos;//rt->m_centerPos;
+                rt->m_localPos = -rt->m_centerPos;//rt->m_centerPos;
+                rt->m_pos[0]-=rt->m_centerPos;
+                rt->m_pos[1]-=rt->m_centerPos;
+                rt->m_pos[2]-=rt->m_centerPos;
+                rt->m_normal = QVector3D::crossProduct(rt->m_pos[1]-rt->m_pos[0],rt->m_pos[2]-rt->m_pos[0]).normalized();
+                rt->m_bbRadius = max(max((rt->m_pos[0]).length(),
+                                     (rt->m_pos[1]).length()),
+                                     (rt->m_pos[2]).length());
+
+                rt->m_pos[0]+=rt->m_centerPos;
+                rt->m_pos[1]+=rt->m_centerPos;
+                rt->m_pos[2]+=rt->m_centerPos;
+
+/*                rt->m_bbRadius = max(max((rt->m_pos[0]-rt->m_centerPos).length(),
+                                     (rt->m_pos[1]-rt->m_centerPos).length()),
+                                     (rt->m_pos[2]-rt->m_centerPos).length());
+*/
+  //          if (parent->m_children.count()<200)
+                parent->m_children.append(rt);
+
+            //qDebug() << f.v1 << f.v2 << f.v3;
+        /*    RayObjectTriangle *rt = new RayObjectTriangle();
+            rt->m_pos[0] = ol.m_vertices[ f.v1  ]*scale;
+            rt->m_pos[1] = ol.m_vertices[ f.v2  ]*scale;
+            rt->m_pos[2] = ol.m_vertices[ f.v3  ]*scale;
+            rt->m_centerPos = (rt->m_pos[0]+ rt->m_pos[1]+rt->m_pos[2])/3;
+            rt->m_position = rt->m_centerPos;
+            rt->m_normal = QVector3D::crossProduct(rt->m_pos[1]-rt->m_pos[0],rt->m_pos[2]-rt->m_pos[0]).normalized();
+            if (m_children.count()<30)
+                m_children.append(rt);
+                */
+
+        }
+
+
+    }
+
+//}
+
 bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, int cnt, int tid)
 {
     QVector3D isp;
@@ -150,16 +212,17 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
 
     // Generate list with bb
     QVector<AbstractRayObject*> culled, f2;
-    f2 = m_objects;
+    f2 = m_objectsFlattened;
     for (AbstractRayObject* o: f2) {
         QVector3D isp1, isp2;
         double t0, t1;
+//        qDebug() << o->m_localPos;
         if (o->m_bbRadius==0) {
             culled.append(o);
 
         }
         else
-        if (ray.IntersectSphere(o->m_localPos*-1,QVector3D(1,1,1)*o->m_bbRadius,isp1, isp2, t0,t1)) {
+        if (ray.IntersectSphere((o->m_localPos)*-1,QVector3D(1,1,1)*o->m_bbRadius,isp1, isp2, t0,t1)) {
             //if (( t1>0) || dynamic_cast<RayObjectPlane*>(o)!=nullptr)
                 culled.append(o);
         }

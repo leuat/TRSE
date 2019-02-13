@@ -8,8 +8,7 @@
 #include "raytracerglobals.h"
 #include "rayobject.h"
 #include <QImage>
-
-
+#include "source/LeLib/objloader/objloader.h"
 
 
 class RayTracer
@@ -22,6 +21,8 @@ public:
     enum Pass { Image, Reflect, Shadow};
 //    void Raytrace(QImage& img);
     void Raymarch(QImage& img, int w, int h);
+
+    void LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat);
 
     AbstractRayObject* Find(QString name) {
         for (AbstractRayObject* aro: m_objects) {

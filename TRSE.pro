@@ -180,7 +180,8 @@ SOURCES += main.cpp\
     source/effects/demoeffectcharsettwister.cpp \
     source/trsedocuments/formfjong.cpp \
     source/PmmEdit/fjongeditor.cpp \
-    source/LeLib/luascript.cpp
+    source/LeLib/luascript.cpp \
+    source/LeLib/objloader/objloader.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -291,7 +292,12 @@ HEADERS  += mainwindow.h \
     source/effects/demoeffectcharsettwister.h \
     source/trsedocuments/formfjong.h \
     source/PmmEdit/fjongeditor.h \
-    source/LeLib/luascript.h
+    source/LeLib/luascript.h \
+    source/LeLib/objloader/objLoader.h \
+    source/LeLib/objloader/obj_parser.h \
+    source/LeLib/objloader/string_extra.h \
+    source/LeLib/objloader/list.h \
+    source/LeLib/objloader/objloader.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \

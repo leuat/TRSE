@@ -48,25 +48,21 @@ void DemoEffectRaytracer::Render(QImage &img)
 
     int w = m_rt->m_globals.m_width;
     int h = m_rt->m_globals.m_height;
-//        m_rt->Raymarch(m_img, 2*w,1.6*h);
-//        m_img.fill(QColor(0,0,0,0));
-//        m_rt->Raymarch(m_img, 2*w,h);
+
     m_rt->Raymarch(m_img, w,h);
 
     m_elapsedTime = m_timer.elapsed();
-//        ConvertToC64(m_params["dither"].m_val == 1);
     m_toggleC64 = m_rt->m_globals.m_c64Output==1;
-     ConvertToC64(m_rt->m_globals.m_dither==1);
+    ConvertToC64(m_rt->m_globals.m_dither==1);
 
-     m_ready = false;
 
-     //    QPixmap p;
     m_pixmap.convertFromImage(m_img);
     if (m_img.width()<321)
         m_pixmap = m_pixmap.scaled(320, 200, Qt::IgnoreAspectRatio, Qt::FastTransformation);
 
-//    sleep(100);
+    msleep(15);
 
+    m_ready = false;
     emit SignalImageUpdate();
 }
 

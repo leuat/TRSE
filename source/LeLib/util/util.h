@@ -112,6 +112,13 @@ public:
 
     }
 
+    static bool SameSide(const QVector3D& p1,const QVector3D& p2, const QVector3D& a,const QVector3D& b) {
+        QVector3D cp1 = QVector3D::crossProduct(b-a, p1-a);
+        QVector3D cp2 = QVector3D::crossProduct(b-a, p2-a);
+        return QVector3D::dotProduct (cp1, cp2) >= 0;
+//        else return false
+    }
+
     static QString fixFolder(QString folderName) {
         if (folderName[folderName.count()-1]=='\\')
                 return folderName;
