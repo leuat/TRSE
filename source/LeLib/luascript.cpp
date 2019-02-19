@@ -1,6 +1,7 @@
 #include "luascript.h"
 
 
+
 LuaScript::LuaScript(const QString& filename) {
     L = luaL_newstate();
 
