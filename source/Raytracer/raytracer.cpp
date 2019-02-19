@@ -1,5 +1,8 @@
 #include "raytracer.h"
+
+#ifndef TARGET_OS_MAC
 #include <omp.h>
+#endif
 
 RayTracer::RayTracer()
 {
@@ -127,8 +130,11 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
             ray.m_reflect=3;
 
 //            float m_z = 1E20;
+#ifndef TARGET_OS_MAC
             int tid = omp_get_thread_num();
-
+#else
+        int tid = 0;
+#endif
             //int tid = 0;
 
             RayMarchSingle(ray, Image, nullptr,m_globals.m_steps,tid);

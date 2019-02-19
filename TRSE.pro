@@ -40,7 +40,7 @@ macx {
     ICON = trse.icns
     QMAKE_CXXFLAGS += -Ofast
     LIBS += -ldl
-    LIBS += -L$$PWD/libs/lua/ -llua
+    LIBS += -L$$PWD/libs/lua/ -lluamac
 
 }
 
