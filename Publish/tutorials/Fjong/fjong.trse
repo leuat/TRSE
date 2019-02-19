@@ -1,4 +1,3 @@
-project_path = /home/leuat/code/TRSE/Publish/tutorials/Fjong/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fe
@@ -22,5 +21,4 @@ post_optimizer_passphapla = 1
 machine_state = $35
 border_color = 0
 background_color = 0
-open_files = ,example3.ras, example3.fjo, example4.ras, example4.fjo, example4.asm
 output_type = prg

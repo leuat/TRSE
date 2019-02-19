@@ -1,14 +1,14 @@
 globals = {
-	camera = { x = 65, y=-50.0, z=0.0 },
+	camera = { x = 57, y=-45.0, z=0.0 },
 	fov = 40, 
 	target = { x = 0, y=0.0, z=0 },
-	light0 = {   	direction = { x=3.6, y=-1.9, z=0 }, 
+	light0 = {   	direction = { x=3.6, y=-0.9, z=0 }, 
 				color = { x=1, y=1, z=1}, 
 			},
 	ambient = { x = 0, y = 0, z = 0 },
      
 	sky = 0,
-	shadow_scale = 0.5,
+	shadow_scale = 0.0,
 	isPaused = 0,
 	
 	raymarch_steps = 70,
@@ -38,13 +38,19 @@ Material2 = {
 	shininess_intensity = 1
 }
 
--- Init is called on start  
 
 frame = 0
+-- Total number of frames
 noFrames = 16
 
+
+-- Text to display
 text = "TRSE"
 charname = "char"
+
+-- Init is called on start  
+
+
 function Init()
 
 	AddObject("torus","torus1","","Material2",  0,0,0,  15, 0.5,0);
@@ -54,33 +60,31 @@ function Init()
 	radius = 10
 	dx = 6
 	x = -dx*(string.len(text)-1)/2
+	-- Generate text
 	for i=1, string.len(text) do
 
+		-- Character set to use. Can also be a charset file (flf/bin) located in the project dir
 		font ="rom"
 		c = string.sub(text,i,i+1)
 		char = string.byte(c)-65
 
 		AddObject("char", charname .. tostring(i), "", "Material1",  font, char+1,   
-			0,0,x,            -- position
+			0,0,x,          -- position
 			0.6,1,0.5,      -- width xyz 
 			0.550,0.6,0.31  -- stretch xyz
 		);          
        	x=x+dx
 
-
 	end
 
-
-
 	UpdateGraphics()
-	SetRotation("torus1",-40,0,10);
 
 end
 
 function UpdateGraphics()
 
   	t = ((frame+24)/noFrames)*360
-	SetRotation("torus1",-40+t,0,10);
+	SetRotation("torus1",-40+t/2,0,10);
 
 	-- Rotate text
 
