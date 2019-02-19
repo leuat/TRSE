@@ -22,3 +22,5 @@ machine_state = $35
 border_color = 0
 background_color = 0
 output_type = prg
+project_path = C:/Users/leuat/OneDrive/Documents/GitHub/TRSE/Publish/tutorials/Fjong/
+open_files = ,example3.ras, example4.ras, example4.fjo, example3.fjo, example2.fjo, example1.fjo
