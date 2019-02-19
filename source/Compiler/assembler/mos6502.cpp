@@ -949,6 +949,8 @@ QString AsmMOS6502::getNextLine(int i, int &j)
     //            qDebug() << getLine(i);
         i++;
     }
+    if (i==m_source.count())
+        return "";
     j=i;
 //    qDebug() << "RET: " << getLine(i);
     return getLine(i);

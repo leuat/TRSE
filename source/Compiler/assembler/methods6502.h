@@ -49,6 +49,8 @@ public:
 
     void LoHi(Assembler* as, bool isLo);
 
+    void LoadAndStoreInZp(Node* n, Assembler* as, QString zp);
+
     /*
      * NES
      * */

@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Turbo Rascal Syntax error, &quot;;&quot; expected but &quot;BEGIN&quot; Version 0.06.2</string>
+   <string>Turbo Rascal Syntax error, &quot;;&quot; expected but &quot;BEGIN&quot; Version 0.06.3</string>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
@@ -330,14 +330,6 @@
    <addaction name="menuTools"/>
    <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
-  </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionImport">

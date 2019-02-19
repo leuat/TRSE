@@ -33,6 +33,8 @@ public:
 
     void Init(LuaScript& s);
 
+    void keyPressEvent(QKeyEvent *e);
+
 
     void Build() override { Run(); }
     void Run() override;

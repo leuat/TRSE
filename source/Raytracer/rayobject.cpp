@@ -324,14 +324,14 @@ RayObjectTriangle::RayObjectTriangle() {
 
 float RayObjectTriangle::intersect(Ray *ray)
 {
-
+/*    return 100;
+    if (QVector3D::dotProduct(m_normal,ray->m_direction)>0)
+        return 100;*/
     QVector3D p = ray->m_currentPos;
     float h = 0.06;
     float dtop = abs(p.distanceToPlane(m_pos[1], m_normal));
     float d = dtop;//dtop-2;
     if (d>h) {
-//        float t = 0.1*abs(QVector3D::dotProduct(m_normal, m_pos[0]-ray->m_origin)/QVector3D::dotProduct(m_normal,ray->m_direction.normalized()));
-  //      return t;
         return d;
     }
 
@@ -340,13 +340,6 @@ float RayObjectTriangle::intersect(Ray *ray)
             Util::SameSide(p, m_pos[2], m_pos[0], m_pos[1]) &&
             Util::SameSide(p, m_pos[1], m_pos[0], m_pos[2]);
 
-/*    bool sameside2 =
-            Util::SameSide(p, m_pos[0], m_pos[2], m_pos[1]) &&
-            Util::SameSide(p, m_pos[2], m_pos[1], m_pos[0]) &&
-            Util::SameSide(p, m_pos[1], m_pos[2], m_pos[0]);
-
-*/
-//    ray->m_currentPos-=m_localPos;
 
     if (!sameside) {
         return 100;

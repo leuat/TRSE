@@ -117,3 +117,49 @@ void FormFjong::SetupHighlighter()
     //    qDebug() << "UPDATE " << m_iniFile->getString("theme");
 
 }
+
+void FormFjong::keyPressEvent(QKeyEvent *e)
+{
+    TRSEDocument::keyPressEvent(e);
+    /*if (e->key() == Qt::Key_Escape && ui->leSearch->hasFocus()) {
+        ui->txtEditor->setFocus();
+    }
+*/
+
+    if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier))
+        emit requestCloseWindow();
+    //    Data::data.requestCloseWindow = true;
+
+//    if (ui->txtEditor->m_textChanged)
+        m_documentIsChanged  = ui->txtEditor->m_textChanged;
+
+    if (e->key()==Qt::Key_J && (QApplication::keyboardModifiers() & Qt::ControlModifier)) AutoFormat();
+/*    if (e->key()==Qt::Key_F && QApplication::keyboardModifiers() & Qt::ControlModifier) {
+        ui->leSearch->setText("");
+        m_searchFromPos = ui->txtEditor->textCursor().position();
+        ui->leSearch->setFocus();
+    }
+*/
+  /*  if (e->key()==Qt::Key_F1) {
+        QTextCursor tc = ui->txtEditor->textCursor();
+        tc.select(QTextCursor::WordUnderCursor);
+        QString word = tc.selectedText();
+
+        DialogHelp* dh = new DialogHelp(this, word, m_defaultPalette);
+//        dh->setPalette(m_defaultPalette);
+     //   QApplication::setPalette(m_defaultPalette);
+
+        dh->show();
+
+    }
+*/
+
+    if (e->key() == Qt::Key_R &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+        Build();
+  //      Run();
+    }
+
+
+
+}
+

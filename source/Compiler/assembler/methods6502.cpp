@@ -1945,6 +1945,35 @@ void Methods6502::LoHi(Assembler *as, bool isLo)
 
 }
 
+void Methods6502::LoadAndStoreInZp(Node* n, Assembler *as, QString zp)
+{
+    as->ClearTerm();
+    qDebug() << n->getType(as);
+
+    if (n->getType(as) == TokenType::POINTER) {
+        as->Term("lda ");
+        n->Accept(m_dispatcher);
+        as->Term();
+        as->Asm("sta "+zp);
+        as->Term("lda ");
+        n->Accept(m_dispatcher);
+        as->Term("+1", true);
+        as->Asm("sta "+zp+"+1");
+    }
+    if (n->getType(as) == TokenType::ADDRESS) {
+        as->Asm("lda #" + Util::numToHex(Util::NumberFromStringHex(n->getAddress())&0xFF));
+        as->Asm("sta "+zp);
+        as->Asm("lda #" + Util::numToHex((Util::NumberFromStringHex(n->getAddress())>>8)&0xFF));
+        as->Asm("sta "+zp+"+1");
+    }
+    if (n->getType(as) == TokenType::VAR) {
+        as->Asm("lda #>" + n->getAddress());
+        as->Asm("sta "+zp);
+        as->Asm("lda #<" + n->getAddress());
+        as->Asm("sta "+zp+"+1");
+    }
+}
+
 void Methods6502::LoadPalette(Assembler* as)
 {
 
@@ -3775,10 +3804,67 @@ void Methods6502::CopyFullScreen(Assembler *as)
 {
 
     as->Comment("Copy full screen");
-    m_node->RequireAddress(m_node->m_params[0],"CopyFullscreen", m_node->m_op.m_lineNumber);
-    m_node->RequireAddress(m_node->m_params[1],"CopyFullscreen", m_node->m_op.m_lineNumber);
+//    m_node->RequireAddress(m_node->m_params[0],"CopyFullscreen", m_node->m_op.m_lineNumber);
+  //  m_node->RequireAddress(m_node->m_params[1],"CopyFullscreen", m_node->m_op.m_lineNumber);
     AddMemoryBlock(as,1);
 
+
+   if (m_node->m_params[0]->getType(as) == TokenType::POINTER || m_node->m_params[1]->getType(as) == TokenType::POINTER) {
+        // Do full pointer blah
+
+
+        QString lblOuter = as->NewLabel("outer");
+        QString lblInner = as->NewLabel("inner");
+        QString lblFinal = as->NewLabel("final");
+
+        QString zpf = as->m_internalZP[0];
+        QString zpt = as->m_internalZP[1];
+
+        LoadAndStoreInZp(m_node->m_params[0],as,zpf);
+        LoadAndStoreInZp(m_node->m_params[1],as,zpt);
+
+
+
+        as->Comment("CopyFullscreen with pointers");
+
+        as->Asm("ldx #3");
+        as->Label(lblOuter);
+
+        as->Asm("ldy #0");
+        as->Label(lblInner);
+        as->ClearTerm();
+        as->Asm("lda ("+zpf+"),y");
+        as->Asm("sta ("+zpt+"),y");
+
+        as->Asm("dey");
+        as->Asm("bne "+lblInner);
+        as->Asm("inc "+zpf+"+1");
+        as->Asm("inc "+zpt+"+1");
+
+        as->Asm("dex");
+        as->Asm("bne "+lblOuter);
+
+
+
+        as->Asm("ldy #0");
+        as->Label(lblFinal);
+        as->ClearTerm();
+        as->Asm("lda ("+zpf+"),y");
+        as->Asm("sta ("+zpt+"),y");
+
+        as->Asm("iny");
+        as->Asm("cpy #232");
+        as->Asm("bne "+lblFinal);
+
+
+
+        as->PopLabel("outer");
+        as->PopLabel("inner");
+        as->PopLabel("final");
+
+
+        return;
+    }
     QString lbl = as->NewLabel("fullcopyloop");
     QString lbl2 = as->NewLabel("fullcopyloop2");
 

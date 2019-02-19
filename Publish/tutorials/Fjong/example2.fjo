@@ -1,0 +1,97 @@
+globals = {
+	camera = { x = 0, y=-0.0, z=6.0 },
+	fov = 90, 
+	target = { x = 0, y=0.3, z=0 },
+	light0 = {   	direction = { x=1, y=1, z=2 }, 
+				color = { x=1, y=1, z=1}, 
+			},
+	ambient = { x = 0, y = 0, z = 0 },
+     
+	sky = 1,
+	shadow_scale = 0.5,
+	isPaused = 0,
+	
+	raymarch_steps = 70,
+	raymarch_shadow_steps = 40
+
+}
+
+output = {
+	resolution = { width = 320, height=200 },
+	c64_output = 0,
+	dither = 1,
+	c64_colors = { 14,6,4,1 }
+}
+
+
+
+Material1 = {
+	color = { x=1.0, y=0.6, z=0.6 },
+	reflection = 1,
+	shininess = 200,
+	shininess_intensity = 1 
+
+}
+
+MaterialGround = {
+	color = { x=0.4, y=0.9, z=0.6 },
+	reflection = 0.0,
+	shininess = 100,
+	shininess_intensity = 0 
+
+}
+
+
+-- Init is called on start  
+ 
+function Init()
+
+
+
+-- 	AddObject("plane","plane1","","MaterialGround",  0,-5,0,0,1,0);
+	AddObject("torus","torus1","","Material1",  -2,-1,2,  0.5, 0.2,0);
+	AddObject("sphere","sphere1","","Material1",  4,-1,2,  2,0,0);
+	AddObject("torus","torus2","","Material1",  -2,-1,0,  0.5, 0.2,0);
+	AddObject("box","box1","","MaterialGround",  -0,0,0,  1,1,1);
+
+	UpdateGraphics()
+
+end
+
+
+distance = 10
+frame = 0
+noFrames = 200
+char = 0
+
+function UpdateGraphics()
+
+  	t = ((frame+24)/noFrames)*3.14159*2 
+	r = 3
+
+	globals.camera.x = sin(t)*r
+	globals.camera.z = cos(t)*r
+	globals.camera.y = 3.5;
+	globals.target.y = 0.5;
+	t=t+3.14159/2
+	globals.light0.direction.x = sin(t)
+	globals.light0.direction.z = cos(t)
+	
+	
+
+	t=t*4
+	SetRotation("torus1",t*20,t*45,t*44);
+	SetRotation("torus2",t*23,t*31,t*16);
+	SetRotation("box1",t*35,t*12,t*33);
+
+end
+
+
+function Update()
+
+	frame=frame+1
+	globals.sky = cos(frame/10)/2 + 0.5
+	UpdateGraphics()
+
+
+end

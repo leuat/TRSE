@@ -1,0 +1,82 @@
+globals = {
+	camera = { x = 0, y=-0.0, z=2.0 },
+	fov = 40, 
+	target = { x = 0, y=0.0, z=0 },
+	light0 = {   	direction = { x=1, y=1, z=1 }, 
+				color = { x=1, y=1, z=1}, 
+			},
+	ambient = { x = 0, y = 0, z = 0 },
+     
+	sky = 0,
+	shadow_scale = 0.5,
+	isPaused = 0,
+	
+	raymarch_steps = 70,
+	raymarch_shadow_steps = 40
+
+}
+
+output = {
+	resolution = { width = 64, height=24 },
+	c64_output = 0,
+	dither = 1,
+	c64_colors = { 14,6,4,1 }
+}
+
+
+
+Material1 = {
+	color = { x=1.0, y=0.5, z=0.2 },
+	reflection = 0,
+	shininess = 100,
+	shininess_intensity = 1 
+
+}
+
+
+
+-- Init is called on start  
+ 
+function Init()
+
+
+
+	AddObject("torus","torus1","","Material1",  0,0,0,  0.5, 0.2,0);
+	UpdateGraphics()
+
+end
+
+
+distance = 10
+frame = 0
+noFrames = 64
+char = 0
+
+function UpdateGraphics()
+
+  	t = ((frame+24)/noFrames)*360
+
+	SetRotation("torus1",t,0,t);
+
+end
+
+
+function Update()
+
+	UpdateGraphics()
+
+
+	if (frame == noFrames) then 
+			CompressAndSaveHorizontalData(32,3, "data/example3_screen.bin","data/example3_table.bin");
+			Message("Files written to data/example3_...bin")
+			
+	end
+
+	if (frame<noFrames) then
+	     AddScreen(32,24, 0xA0, 32, 40, 48)
+	end
+
+	frame=frame+1
+
+
+end

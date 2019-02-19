@@ -1,0 +1,89 @@
+program Example4;
+var  
+	i,j,k,l,y,x,frame,time,curBank: byte = 0;
+	zp,p1,p2 : pointer;
+	in : integer;
+
+	charsetBank1 : incbin("data/example4_chardata.bin",$2000);
+	charsetBank2 : incbin("data/example4_chardata.bin",$6000);
+	screen : incbin("data/example4_screendata.bin",$8000);
+
+
+
+procedure SetScreen();
+begin
+	// Ugly but works
+	p1:=screen + 250*frame;
+	p1:=p1 + frame*250;
+	p1:=p1 + frame*250;
+	p1:=p1 + frame*250;
+
+	p2:=$0400;
+	if (curBank=0) then p2:=$4400;
+	copyfullscreen(p1, p2);
+
+	if (frame>0 and frame<4) then setcharsetlocation($2000);
+	if (frame>4 and frame<8) then setcharsetlocation($2800);
+	if (frame>8 and frame<12) then setcharsetlocation($3000);
+	if (frame>12 and frame<16) then setcharsetlocation($3800);
+
+	curBank:=(curBank +1)&1;
+
+	if (curBank=0) then setBank(VIC_BANK0) 
+	else setBank(VIC_BANK1);
+
+	
+end;
+
+/* Since we restricted each image to consist of 64 characters, we can fit 4 images into a single
+256*8 charset. However, every second screen memory data must add a value of 64*frame, which we do here.
+
+*/
+
+procedure SetupScreenShift();
+begin
+	p1:=screen;
+	for i:=0 to 16 do begin
+		k:=(i&3)*64;
+		for y:=0 to 25 do begin
+			for x:=0 to 40 do 
+				p1[x]:=p1[x]+k;
+			inczp(p1,40);
+		end;	
+		
+	end;
+end;
+
+interrupt RasterMain();
+begin
+	StartIRQ(0);
+
+	SetScreen();	
+	if (time&3=0) then 
+		frame:=(frame + 1)&15;
+		
+	inc(time);
+
+	closeirq();
+end;
+
+
+begin
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	SetupScreenShift();
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+	clearscreen(PURPLE+8,^$D800);
+	
+	setmulticolormode();
+	MULTICOLOR_CHAR_COL[2]:=BLUE;
+	MULTICOLOR_CHAR_COL[1]:=WHITE;
+
+
+	RasterIRQ(RasterMain(),0,0);
+	EnableRasterIRQ();
+	enableirq();
+	Loop();
+
+end.

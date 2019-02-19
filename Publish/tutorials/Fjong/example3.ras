@@ -1,0 +1,90 @@
+program Example3;
+var  
+
+
+@define twister $2800
+@define tablepos $B000
+
+	data: incbin("data/example3_screen.bin",@twister);
+	table: incbin("data/example3_table.bin",@tablepos);
+	charset: incbin("charsets/main.bin", $2000);
+
+	y, i,j,time,k,l, h,frame : byte = 0;
+	kp,zp,p1:pointer;
+
+
+
+
+
+procedure RenderMovie();
+begin
+	zp:=$0400 + 4; // Place in center
+	j:=0;
+	// Locate position in table. Each line in the table has 24x2 bytes of pointer data
+	kp:=table + 48*frame; 
+	for y:=0 to 24 do begin
+
+		l:=kp[j];
+		h:=kp[j+1];
+
+
+		j:=j+2;
+		p1:=data;
+		asm("
+			lda p1
+			clc
+			adc l
+			bcc cont
+			inc p1+1
+cont:
+			sta p1
+
+			lda p1+1
+			clc
+			adc h
+			sta p1+1
+			
+		");
+		memcpy(p1,0,zp,32);
+		inczp(zp,40);
+	end;
+
+end;
+
+
+
+
+
+
+
+interrupt RasterMain();
+begin
+	StartIRQ(0);
+
+	RenderMovie();
+	
+	frame:=(frame + 1)&63;
+		
+	inc(time);
+
+
+	closeirq();
+end;
+
+
+begin
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	ClearScreen($20,^$0400);
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+	clearscreen(LIGHT_BLUE,^$D800);
+
+	setcharsetlocation($2000);
+	setregularcolormode();
+
+	RasterIRQ(RasterMain(),0,0);
+	EnableRasterIRQ();
+	enableirq();
+	Loop();
+end.

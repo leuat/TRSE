@@ -20,6 +20,8 @@ void RayTracerGlobals::Sky(Ray* ray, float scale)
     return;
 }
 
+//bool Ray::::IntersectSphereFake(const QVector3D& pos, QVector3D r, QVector3D &isp1, QVector3D &isp2, double &t0, double &t1) {
+
 bool Ray::IntersectSphere(const QVector3D& pos, QVector3D r, QVector3D &isp1, QVector3D &isp2, double &t0, double &t1) {
 
     QVector3D o = m_origin-pos;
@@ -35,11 +37,11 @@ bool Ray::IntersectSphere(const QVector3D& pos, QVector3D r, QVector3D &isp1, QV
     QVector3D rO = QVector3D(o.x()*r.x(), o.y()*r.y(), o.z()*r.z());
 
 
-    double A = QVector3D::dotProduct(d,rD);
-    double B = 2.0*(QVector3D::dotProduct(d, rO));
-    double C = QVector3D::dotProduct(o, rO) - 1.0;
+    float A = QVector3D::dotProduct(d,rD);
+    float B = 2.0*(QVector3D::dotProduct(d, rO));
+    float C = QVector3D::dotProduct(o, rO) - 1.0;
 
-    double S = (B*B - 4.0*A*C);
+    float S = (B*B - 4.0*A*C);
 
     if (S<=0) {
         isp1 = QVector3D(0,0,0);

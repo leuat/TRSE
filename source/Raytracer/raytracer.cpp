@@ -139,7 +139,7 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
 
 }
 
-void RayTracer::LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat, QString name)
+void RayTracer::LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat, QString name, bool invertN)
 {
         ObjLoader ol(fn);
 
@@ -171,8 +171,9 @@ void RayTracer::LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat
                     rt->m_pos[i]-=rt->m_centerPos;
                     rt->m_pos[i]*=1.04;
                 }
-                qDebug() << rt->m_receivesShadow;
                 rt->m_normal = QVector3D::crossProduct(rt->m_pos[1]-rt->m_pos[0],rt->m_pos[2]-rt->m_pos[0]).normalized();
+                if (invertN)
+                    rt->m_normal*=-1;
                 rt->m_bbRadius = max(max((rt->m_pos[0]).length(),
                                      (rt->m_pos[1]).length()),
                                      (rt->m_pos[2]).length());
@@ -211,47 +212,60 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
     AbstractRayObject *winner = nullptr;
  //   Ray rotated;
     ray.m_currentPos = ray.m_origin;
-
     // Generate list with bb
-    QVector<AbstractRayObject*> culled, f2;
-    f2 = m_objectsFlattened;
-    for (AbstractRayObject* o: f2) {
+    QVector<AbstractRayObject*> culled;
+//    f2 = m_objectsFlattened;
+  //  if (pass==Pass::Shadow)
+    //    return false;
+    int cur = 0;
+    for (AbstractRayObject* o: m_objectsFlattened) {
         QVector3D isp1, isp2;
         double t0, t1;
 //        qDebug() << o->m_localPos;
+//        if (culled.size()>10)
+  //          break;
+        if (o->m_hasNormal) {
+            if (QVector3D::dotProduct(ray.m_direction, o->m_normal)>0)
+                continue;
+        }
+
         if (o->m_bbRadius==0) {
-            culled.append(o);
+           // culled.append(o);
 
         }
         else
-        if (ray.IntersectSphere((o->m_localPos)*-1,QVector3D(1,1,1)*o->m_bbRadius,isp1, isp2, t0,t1)) {
+//        if (ray.IntersectSphere((o->m_localPos)*-1,QVector3D(1,1,1)*o->m_bbRadius,isp1, isp2, t0,t1))
+        if (ray.IntersectBox((o->m_localPos)*-1,QVector3D(1,1,1)*o->m_bbRadius,isp1, isp2, t0,t1))
+        {
             //if (( t1>0) || dynamic_cast<RayObjectPlane*>(o)!=nullptr)
             if (pass==Pass::Shadow) {
                 if (o->m_sendsShadow)
                     culled.append(o);
-            }else
+            } else
+//                o->AddToFlattened(culled);
                 culled.append(o);
         }
 
-
     }
+
+//    if (culled.size()>2)
+  //      qDebug() << culled.size();
+//    culled = f2;
 //    return false;
-//    culled = m_objects;
+
+//    culled = m_objectsFlattened;
 
     if (culled.length()==0) {
         m_globals.Sky(&ray, m_globals.m_skyScale);
         return false;
     }
 
-
     for (AbstractRayObject* ro: culled) {
         ro->SetLocalRay(tid,ray);
 //        ro->m_localRay[tid] = ray.Rotate(ro->m_localRotmat, ro->m_localPos);
     }
 
-
-
-
+//    return false;
     for (int i=0;i<cnt;i++) {
         float precis = 0.004*t;
         float keep=1000.0;
@@ -267,6 +281,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
 
             if (ro==ignore)
                 continue;
+
             ro->m_localRay[tid].setCurrent(t);
 
             float keep2 = ro->intersect(&ro->m_localRay[tid]);
@@ -289,8 +304,11 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
 
     }
 
-
     if (winner!=nullptr) {
+
+  //      m_objectsFlattened.removeAll(winner);
+    //    m_objectsFlattened.insert(0,winner);
+
         Ray rotated = winner->m_localRay[tid];//ray.Rotate(winner->m_rotmat, winner->m_position);
 
         //ray.m_currentPos = isp;
