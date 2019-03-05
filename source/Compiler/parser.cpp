@@ -709,6 +709,8 @@ void Parser::Preprocess()
 
                     m_preprocessorDefines["_InstallKrill"] = Util::numToHex(installerPos + 0x1390);
                     m_preprocessorDefines["_LoadrawKrill"] = Util::numToHex(loaderPos);
+//                    m_preprocessorDefines["_LoadrawKrill"] = Util::numToHex(loaderPos);
+//                    qDebug() << m_preprocessorDefines["_LoadrawKrill"];
                     m_preprocessorDefines["_ResidentLoaderSource"] = Util::numToHex(loaderOrgPos);
                     m_preprocessorDefines["_ResidentLoaderDestination"] = Util::numToHex(loaderPos);
 

@@ -85,6 +85,17 @@ bool Compiler::Build(Compiler::Type type, QString project_dir)
     m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal4");
 
 
+    if (m_projectIni->getdouble("override_target_settings")==1) {
+        Syntax::s.m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
+        Syntax::s.m_programStartAddress = Syntax::s.m_startAddress+10;//Util::NumberFromStringHex(m_ini->getString("override_target_settings_org"));
+        Syntax::s.m_ignoreSys = m_projectIni->getdouble("override_target_settings_sys")==1;
+        Syntax::s.m_stripPrg = m_projectIni->getdouble("override_target_settings_prg")==1;
+    } else {
+        Syntax::s.m_ignoreSys = false;
+        Syntax::s.m_stripPrg = false;
+
+    }
+
     m_assembler->m_projectDir = project_dir;
 
     if (Syntax::s.m_currentSystem == Syntax::NES) {

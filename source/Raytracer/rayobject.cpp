@@ -368,3 +368,33 @@ float RayObjectTriangle::intersect(Ray *ray)
         return length(max(vec2(d1,d2),0.0)) + min(max(d1,d2), 0.);
     }
   */
+
+float RayObjectGenMesh::intersect(Ray *ray)
+{
+    if (m_type=="duck")
+        return Duck(ray);
+    return 1;
+}
+
+float RayObjectGenMesh::Duck(Ray *ray)
+{
+    m_bbRadius = m_radius.x()*2;
+    float cur = 100;
+    QVector3D cp = m_localPos+ray->m_currentPos;
+    //cp.setY(cp.y()/0.8);
+    cp = cp*QVector3D(1,1.2,1);
+
+    QVector3D cpBottom = m_localPos+ray->m_currentPos;
+    cpBottom = cpBottom*QVector3D(0.7, 1.3 *(1+0.3* pow(1.2*sin(cpBottom.x()),3)), 1.0);
+
+
+    float top = (cp - QVector3D(0.3,1.4,0)).length() - m_radius.x()*0.8;
+    float bottom = (cpBottom).length() - m_radius.x();
+
+
+    cur = min(top, bottom);
+
+
+
+    return cur;
+}

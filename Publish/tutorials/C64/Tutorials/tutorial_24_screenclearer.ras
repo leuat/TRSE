@@ -7,6 +7,9 @@ var
 
 	temp:array[255] of byte;
 
+
+
+
 	colorsc1 : array [16] of byte = (  0, 11,6,12,12,4,14,15,7,1,7,6,   6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6  );
 	colorsc2 : array [16] of byte = (  0, 11,6,12,12,4,14,14,14,   14,14,14,14,14,14,14,14,14  );
 	orgperlin:incbin("data/perlin16.dat");	

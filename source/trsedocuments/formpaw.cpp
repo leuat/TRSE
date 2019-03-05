@@ -43,15 +43,18 @@ void FormPaw::FillToIni()
     m_pawData.setFloat("use_exomizer3", ui->chkExomizer3->isChecked()?1:0);
     m_pawData.setString("address_field", ui->leAddressField->text());
 
-    QStringList data;
+    QStringList data, data_tinycrunch;
     m_files.clear();
 
     for (int r=0;r<ui->tabData->rowCount();r++) {
-        for (int c=0;c<ui->tabData->columnCount();c++)
-            if (c!=2)
-                data<< ui->tabData->item(r,c)->text();
-            else
-                data<< Util::numToHex(Util::VerifyHexAddress(ui->tabData->item(r,c)->text()));
+//        for (int c=0;c<ui->tabData->columnCount();c++) {
+        data << ui->tabData->item(r,0)->text();
+        data << ui->tabData->item(r,1)->text();
+        QString useTiny = "0";
+        if (ui->tabData->item(r,3)!=nullptr)
+            useTiny =  ui->tabData->item(r,3)->text();
+        data_tinycrunch << useTiny;
+           data<< Util::numToHex(Util::VerifyHexAddress(ui->tabData->item(r,2)->text()));
 
         PawFile pf(m_projectIniFile->getString("project_path")+"/"+ui->tabData->item(r,1)->text(),
                    m_projectIniFile->getString("project_path")+"/"+  m_pawData.getString("output_dir")+"/" + ui->tabData->item(r,0)->text() + "_c.bin",
@@ -60,10 +63,11 @@ void FormPaw::FillToIni()
                    ui->tabData->item(r,0)->text()
                    );
         pf.incCFile = m_pawData.getString("output_dir")+"/" + ui->tabData->item(r,0)->text() + "_c.bin";
-
+        pf.tinyCrunch = useTiny=="1";
         m_files.append(pf);
     }
     m_pawData.setStringList("data",data);
+    m_pawData.setStringList("data_tinycrunch", data_tinycrunch);
 
 }
 
@@ -75,6 +79,7 @@ void FormPaw::FillFromIni()
     ui->leAddressField->setText(m_pawData.getString("address_field"));
     ui->chkExomizer3->setChecked(m_pawData.getdouble("use_exomizer3")==1);
     QStringList data = m_pawData.getStringList("data");
+    QStringList dataTinycrunch = m_pawData.getStringList("data_tinycrunch");
 
 
     for (int r=0;r<data.count()/3;r++) {
@@ -82,6 +87,8 @@ void FormPaw::FillFromIni()
         ui->tabData->setItem(r,0,new QTableWidgetItem(data[3*r+0]));
         ui->tabData->setItem(r,1,new QTableWidgetItem(data[3*r+1]));
         ui->tabData->setItem(r,2,new QTableWidgetItem(data[3*r+2]));
+        if (r<dataTinycrunch.count())
+           ui->tabData->setItem(r,3,new QTableWidgetItem(dataTinycrunch[r]));
     }
 
 }
@@ -220,6 +227,7 @@ void FormPaw::on_pushButton_clicked()
     ui->tabData->setItem(r,0,new QTableWidgetItem(""));
     ui->tabData->setItem(r,1,new QTableWidgetItem(""));
     ui->tabData->setItem(r,2,new QTableWidgetItem(""));
+    ui->tabData->setItem(r,3,new QTableWidgetItem("0"));
 }
 
 void FormPaw::onTextUpdate()
@@ -304,6 +312,7 @@ void PawThread::CreateIncludefile()
 void PawThread::run()
 {
     QString ex = m_iniFile->getString("exomizer");
+    QString tt = m_iniFile->getString("tinycrunch");
 
     for (PawFile& pf: *m_files) {
             QProcess processCompress;
@@ -311,17 +320,34 @@ void PawThread::run()
             QString of = pf.inFile+"@" + adr.replace("$","0x");
             QStringList params = QStringList() << "mem" << "-lnone" <<of << "-o" << pf.cFile;
             if (isExomizer3!="")
-                params<<isExomizer3;
+                params << isExomizer3;
 
-            output+="Compressing :"+ pf.inFile + "\n";
-            emit EmitTextUpdate();
+            if (pf.tinyCrunch) {
+                params = QStringList() << tt << "--inPlace" << pf.inFile << pf.cFile;
+                output+="Compressing :"+ pf.inFile + "\n";
+                emit EmitTextUpdate();
 
-            //ui->leOutput->setText(output);
+                //ui->leOutput->setText(output);
 
-            processCompress.start(ex, params  );
+                processCompress.start("python", params  );
+
+            }
+            else {
+                output+="Compressing :"+ pf.inFile + "\n";
+                emit EmitTextUpdate();
+
+                //ui->leOutput->setText(output);
+
+                processCompress.start(ex, params  );
+
+            }
+
             processCompress.waitForFinished();
             QString err(processCompress.readAllStandardError());
             QString std = processCompress.readAllStandardOutput();
+
+            qDebug() << err << std;
+
             if (std.toLower().contains("error")) {
                 output = "<b>ERROR</b><br>"+std;
                 emit EmitTextUpdate();

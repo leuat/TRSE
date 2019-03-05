@@ -142,7 +142,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         PPUDump(as,0x23,0xC0,64,1);
 
     if (Command("KrillLoad")) {
-        KrillLoad(as);
+        KrillLoad(as,false);
+    }
+    if (Command("KrillLoadCompressed")) {
+        KrillLoad(as,true);
     }
     if (Command("InitKrill")) {
         InitKrill(as);
@@ -1466,7 +1469,7 @@ void Methods6502::Fill80(Assembler *as)
 
 }
 
-void Methods6502::KrillLoad(Assembler *as)
+void Methods6502::KrillLoad(Assembler *as, bool isCompressed)
 {
     NodeVar* varName = dynamic_cast<NodeVar*>(m_node->m_params[0]);
 //    NodeVar* varJump = dynamic_cast<NodeVar*>(m_node->m_params[1]);
@@ -1487,7 +1490,10 @@ void Methods6502::KrillLoad(Assembler *as)
         as->Asm("ldx #<"+varName->value);
         as->Asm("ldy #>"+varName->value);
     }
-    as->Asm("jsr "+as->m_defines["_LoadrawKrill"]);
+    if (!isCompressed)
+        as->Asm("jsr "+as->m_defines["_LoadrawKrill"]);
+    else
+        as->Asm("jsr "+Util::numToHex(Util::NumberFromStringHex(as->m_defines["_LoadrawKrill"])+0xb));
 //    m_node->m_params[1]->Accept(m_dispatcher);
 //    as->Term();
     QString lbl = as->NewLabel("loadkrill");
@@ -1528,6 +1534,10 @@ void Methods6502::InitKrill(Assembler *as)
     as->Asm("sta "+dst+",x");
     as->Asm("lda "+src+"+$100"+",x");
     as->Asm("sta "+dst+"+$100"+",x");
+/*    as->Asm("lda "+src+"+$200"+",x");
+    as->Asm("sta "+dst+"+$200"+",x");
+    as->Asm("lda "+src+"+$300"+",x");
+    as->Asm("sta "+dst+"+$300"+",x");*/
     as->Asm("inx");
     as->Asm("bne " + lbl);
 //    blockmemcpy(^@_ResidentLoaderSource,^@_ResidentLoaderDestination,2);
@@ -2321,7 +2331,9 @@ void Methods6502::CopyCharsetFromRom(Assembler *as)
 
     as->Asm("ldy #$00");
     as->Label(lbl);
-    as->Asm("lda $D800,y");
+    for (int i=0;i<8;i++) {
+        QString mp = Util::numToHex(i*100);
+    as->Asm("lda $D000 + "+mp+",y");
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Term("sta (");
         m_node->m_params[0]->Accept(m_dispatcher);
@@ -2331,7 +2343,8 @@ void Methods6502::CopyCharsetFromRom(Assembler *as)
     else {
         as->Term("sta ");
         m_node->m_params[0]->Accept(m_dispatcher);
-        as->Term(",y", true);
+        as->Term("+"+mp+",y", true);
+    }
     }
     //as->Asm("sta (zeropage1),y");
     as->Asm("dey");

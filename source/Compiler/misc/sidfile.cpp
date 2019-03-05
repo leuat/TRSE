@@ -50,6 +50,8 @@ void SidFile::Load(QString filename, QString path)
     m_playAddress = m_blob.at(0xc)<<8 | m_blob.at(0xc+1)<<0;
 
 
+    qDebug() << Util::numToHex(m_playAddress);
+
     file.close();
 }
 

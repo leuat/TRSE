@@ -97,6 +97,18 @@ void DialogProjectSettings::FillFromIni()
     QStringList files = m_ini->getStringList("disk_files");
     QStringList names = m_ini->getStringList("disk_names");
 
+
+
+    ui->chkOverrideTargetSettings->setChecked(m_ini->getdouble("override_target_settings")==1);
+
+    ui->leProgramStartAddress->setText(m_ini->getString("override_target_settings_org"));
+    ui->chkIgnoreBasic->setChecked(m_ini->getdouble("override_target_settings_sys")==1);
+    ui->chkStripPrg->setChecked(m_ini->getdouble("override_target_settings_prg")==1);
+
+
+
+
+
 /*    for (int r=0;r<names.count();r++) {
         ui->tabData->insertRow(r);
         ui->tabData->setItem(r,0,new QTableWidgetItem(names[r]));
@@ -185,6 +197,13 @@ void DialogProjectSettings::FillToIni()
     m_ini->setString("output_type", ui->cmbOutputType->currentText());
     m_ini->setString("main_ras_file", ui->cmbMainRas->currentText());
     m_ini->setString("d64_paw_file", ui->cmbPawInclude->currentText());
+
+
+    m_ini->setFloat("override_target_settings", ui->chkOverrideTargetSettings->isChecked());
+    m_ini->setString("override_target_settings_org", ui->leProgramStartAddress->text());
+    m_ini->setFloat("override_target_settings_sys", ui->chkIgnoreBasic->isChecked());
+    m_ini->setFloat("override_target_settings_prg", ui->chkStripPrg->isChecked());
+
 
 //    FillTabDataToIni();
 

@@ -229,6 +229,15 @@ QStringList Util::FindFilesOfType(QString dir, QString type)
     return l;
 }
 
+void Util::CopyFile(QString i, QString o) {
+    if (QFile::exists(o)) {
+        QFile ff(o);
+        ff.remove();
+    }
+    QFile::copy(i,o);
+
+}
+
 void Util::ConvertFileWithLoadAddress(QString input, QString output, int address)
 {
     QFile f(input);

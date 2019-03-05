@@ -50,3 +50,5 @@ output_type = prg
 d64_paw_file = none
 post_optimizer_passcmp = 1
 post_optimizer_passphapla = 1
+project_path = /home/leuat/code/TRSE/Publish/tutorials/VIC20/vixmas_demo/
+open_files = ,demo.ras

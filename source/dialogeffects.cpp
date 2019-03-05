@@ -128,7 +128,19 @@ static int AddObject(lua_State *L)
                         QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
                         mat);
 
+
+
     }
+    if (object=="genmesh") {
+        QString type = lua_tostring(L,N);
+        N++;
+        obj =
+                    new RayObjectGenMesh(type,
+                        QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
+                        QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
+                        mat);
+    }
+
     if (object=="plane") {
         obj =
                     new RayObjectPlane(
@@ -137,6 +149,9 @@ static int AddObject(lua_State *L)
                         mat);
 
     }
+
+
+
     if (object=="mesh") {
         QString fn = m_currentDir+"/"+ lua_tostring(L,N);
         float meshscale = lua_tonumber(L,N+1);

@@ -121,22 +121,28 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
     }
 
     Nl();
+
+
+
+
     Asm("ORG "+Util::numToHex(Syntax::s.m_startAddress+1));
+
+    if (!Syntax::s.m_ignoreSys) {
         // 2064
-    Asm(".byte    $0E, $08, $0A, $00, $9E, $20, $28");
-    QString s = QString::number(Syntax::s.m_programStartAddress);
-    QString line = ".byte   ";
-    for (int i=0;i<s.count();i++) {
-        int val = QString(s[i]).toInt() + 0x30;
-        line = line + Util::numToHex(val) + ",";
+        Asm(".byte    $0E, $08, $0A, $00, $9E, $20, $28");
+        QString s = QString::number(Syntax::s.m_programStartAddress);
+        QString line = ".byte   ";
+        for (int i=0;i<s.count();i++) {
+            int val = QString(s[i]).toInt() + 0x30;
+            line = line + Util::numToHex(val) + ",";
+        }
+        line = line.remove(line.count()-1,1);
+        Asm(line);
+
+        Asm(".byte    $29, $00, $00, $00");   // 6, 4, )*/
+        Nl();
+        Asm("ORG " + Util::numToHex(Syntax::s.m_programStartAddress));
     }
-    line = line.remove(line.count()-1,1);
-    Asm(line);
-
-    Asm(".byte    $29, $00, $00, $00");   // 6, 4, )*/
-    Nl();
-    Asm("ORG " + Util::numToHex(Syntax::s.m_programStartAddress));
-
     Label(programName);
 
 }

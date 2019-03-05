@@ -157,6 +157,19 @@ public:
         if (!m_ini.contains("background_color"))
             m_ini.setFloat("background_color",0);
 
+
+        if (!m_ini.contains("override_target_settings"))
+            m_ini.setFloat("override_target_settings",0);
+
+        if (!m_ini.contains("override_target_settings_org"))
+            m_ini.setString("override_target_settings_org","$810");
+
+        if (!m_ini.contains("override_target_settings_ignore_sys"))
+            m_ini.setFloat("override_target_settings_ignore_sys",0);
+
+        if (!m_ini.contains("override_target_settings_ignore_prg"))
+            m_ini.setFloat("override_target_settings_ignore_prg",0);
+
     }
 
 

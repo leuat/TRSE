@@ -45,6 +45,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leBBCMEmulator->setText(m_ini->getString("bbcm_emulator"));
     ui->leC1541->setText(m_ini->getString("c1541"));
     ui->leExomizer->setText(m_ini->getString("exomizer"));
+    ui->leTinyCrunch->setText(m_ini->getString("tinycrunch"));
     ui->chkAutoInject->setChecked(m_ini->getdouble("auto_inject")==1.0);
 //    if (ui->cmbPalette->currentText()=="Dark")
     if (m_ini->getdouble("windowpalette")==0)
@@ -88,6 +89,7 @@ void DialogTRSESettings::FillToIni()
 {
     m_ini->setString("dasm", ui->leDasm->text());
     m_ini->setString("exomizer", ui->leExomizer->text());
+    m_ini->setString("tinycrunch", ui->leTinyCrunch->text());
     m_ini->setString("emulator", ui->leEmulator->text());
     m_ini->setString("vic20_emulator", ui->leVic20Emulator->text());
     m_ini->setString("c128_emulator", ui->leEmulatorC128->text());
@@ -193,5 +195,14 @@ void DialogTRSESettings::on_btnC1541Emulator_clicked()
         tr("C1541 location"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->leC1541->setText(filename);
+
+}
+
+void DialogTRSESettings::on_btnTinyCrunch_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Tinycrunch script location"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leTinyCrunch->setText(filename);
 
 }

@@ -25,3 +25,5 @@ post_optimizer_passcmp = 1
 post_optimizer_passphapla = 1
 charset_levels/levels.flf = /home/leuat/code/TRSE/Publish/tutorials/C64/TutorialGame_RogueBurgerOne/charsets/charset_level.flf
 d64_paw_file = none
+project_path = /home/leuat/code/TRSE/Publish/tutorials/C64/TutorialGame_RogueBurgerOne/
+open_files = ,RogueBurgerOne.ras

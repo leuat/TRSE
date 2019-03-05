@@ -183,11 +183,16 @@ void FormRasEditor::Build()
         }
         // Machine Code Analyzer
         VerifyMachineCodeZP(filename+".prg");
+
+
         int assembleTime = timer.elapsed()- time;
         time = timer.elapsed();
 
 //        qDebug() << "Code end: " << Util::numToHex(codeEnd) << codeEnd;
         int orgFileSize = QFile(filename+".prg").size();
+
+        if (Syntax::s.m_stripPrg)
+            Util::ConvertFileWithLoadAddress(filename+".prg", filename+".prg");
 
         if (m_iniFile->getdouble("perform_crunch")==1 && (Syntax::s.m_currentSystem!=Syntax::NES)) {
             QProcess processCompress;
@@ -207,14 +212,38 @@ void FormRasEditor::Build()
             if (!QFile::exists(m_iniFile->getString("exomizer")))
                 Messages::messages.DisplayMessage(Messages::messages.NO_EXOMIZER);
 
-            QStringList exoParams = QStringList() << "sfx" << Util::numToHex(Syntax::s.m_programStartAddress) << target << fn<< "-o" << fn ;
-//            QStringList exoParams = QStringList() << "sfx" << "$0810"  << fn<< "-o" << fn ;
-           // qDebug() << exoParams;
+
+            QString startAddress = Util::numToHex(Syntax::s.m_programStartAddress);
+            if (Syntax::s.m_ignoreSys)
+               startAddress = Util::numToHex(Syntax::s.m_startAddress+1);
+
+            QStringList exoParams = QStringList() << "sfx" << startAddress << target << fn<< "-o" << fn ;
+
             if (m_iniFile->getdouble("hide_exomizer_footprint")==1)
                 exoParams << "-n";
+
+
+/*            if (Syntax::s.m_ignoreSys) {
+                QString laddr = "none";
+                laddr = "0x8000";
+//                laddr = "0x"+QString::number(Syntax::s.m_startAddress+1+16992    ,16);
+                exoParams = QStringList() << "mem" <<"-l"+laddr << fn+"@"+startAddress.replace("$","0x")<< "-o" << fn ;
+                qDebug() << exoParams;
+                target ="";
+            }
+*/
+//            QStringList exoParams = QStringList() << "sfx" << "$0810"  << fn<< "-o" << fn ;
+           // qDebug() << exoParams;
             processCompress.start(m_iniFile->getString("exomizer"), exoParams  );
             processCompress.waitForFinished();
+            qDebug() << processCompress.readAllStandardError() << processCompress.readAllStandardOutput();
         }
+
+
+//        if (Syntax::s.m_stripPrg)
+  //         Util::ConvertFileWithLoadAddress(filename+".prg", filename+".prg");
+
+
         int size = QFile(filename+".prg").size();
         int crunchTime = timer.elapsed()- time;
 
@@ -361,6 +390,7 @@ bool FormRasEditor::BuildDiskFiles(QStringList& d64Params)
     CIniFile paw;
     paw.Load(m_currentDir + "/"+pawFile);
     QStringList data = paw.getStringList("data");
+    QStringList data_tc = paw.getStringList("data_tinycrunch");
     int count = data.count()/3;
     QString outFolder = m_currentDir+"/"+ paw.getString("output_dir");
     if (!QDir().exists(outFolder))
@@ -368,6 +398,11 @@ bool FormRasEditor::BuildDiskFiles(QStringList& d64Params)
 
     for (int i=0;i<count;i++) {
         QString orgFileName = data[3*i+1];
+
+        bool isCrunched = false;
+        if (i<data_tc.count())
+            isCrunched = data_tc[i]=="1";
+
         QString name = data[3*i];
         int address = Util::NumberFromStringHex( data[3*i+2]);
         QString fn = m_currentDir+"/"+orgFileName;
@@ -377,12 +412,21 @@ bool FormRasEditor::BuildDiskFiles(QStringList& d64Params)
             msgBox.exec();
             return false;
         }
+        if (!isCrunched) {
+            QString of = outFolder+"/"+orgFileName.split("/").last();
+    //h        Util::ConvertFileWithLoadAddress(fn,of,address);
+            Util::CopyFile(fn,of);
 
-        QString of = outFolder+"/"+orgFileName.split("/").last();
-        Util::ConvertFileWithLoadAddress(fn,of,address);
+             d64Params << "-write" <<of << name;
+        }
+        else {
+//            QString ending = orgFileName.split(".").last();
+            QString iff = name;
+            QString of = outFolder+"/"+iff+"_c.bin";
+            qDebug() << of;
+             d64Params << "-write" <<of << name;
 
-         d64Params << "-write" <<of << name;
-
+        }
     }
 
     return true;

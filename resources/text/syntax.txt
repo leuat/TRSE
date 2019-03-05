@@ -101,6 +101,7 @@ m; ; NES; n
 # IO
 
 m; KrillLoad; C64; a
+m; KrillLoadCompressed; C64; a
 m; InitKrill; C64;
 
 # Screen routines

@@ -36,6 +36,7 @@ class FormPaw;
 class PawFile {
 public:
     QString inFile, cFile, address, name;
+    bool tinyCrunch = false;
     QString incCFile;
     int packedSize=0;
 

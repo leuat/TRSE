@@ -221,16 +221,14 @@ void FormImageEditor::keyReleaseEvent(QKeyEvent *e)
 
 void FormImageEditor::UpdateImage()
 {
-
+//    return;
 //    m_updateThread.m_
-
-
    // m_updateThread.m_pixMapImage.fill(QColor(0,255,0));
     ui->lblImage->setVisible(true);
     ui->lblImage->setScaledContents(true);
     //    ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(320, 320, Qt::IgnoreAspectRatio, Qt::FastTransformation));
     ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(320, 200, Qt::IgnoreAspectRatio, Qt::FastTransformation));
-   ui->lblImage->setMaximumHeight(ui->lblImage->size().width()/(320/200.0));
+    ui->lblImage->setMaximumHeight(ui->lblImage->size().width()/(320/200.0));
 
     m_documentIsChanged = ui->lblImage->m_imageChanged;
 
@@ -283,7 +281,7 @@ void FormImageEditor::Load(QString filename)
 
     m_imageEffects.Init(m_work.m_currentImage->m_image);
 
-    ui->lblImageName->setText(m_currentFileShort);
+    //ui->lblImageName->setText(m_currentFileShort);
 
     ui->cmbEffect->clear();
     ui->cmbEffect->addItems(m_imageEffects.getStringList());

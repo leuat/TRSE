@@ -30,6 +30,10 @@ begin
 	// Set screen foreground and background to black. The second parameter is an offset.
 	Poke(SCREEN_BG_COL, 0, BLACK);
 	Poke(SCREEN_FG_COL, 0, BLACK);
+
+	//poke(^$D020,YELLOW);
+//	SCREEN_BG_COL:=YELLOW;
+
 //	SCREEN_BG_COL:=BLACK;
 	// point to start of random table
 	index:=0; 

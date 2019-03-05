@@ -81,6 +81,8 @@ private slots:
 
     void on_btnC1541Emulator_clicked();
 
+    void on_btnTinyCrunch_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

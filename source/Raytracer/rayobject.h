@@ -150,6 +150,25 @@ public:
 
 };
 
+
+class RayObjectGenMesh : public AbstractRayObject {
+public:
+
+    QString m_type;
+    QVector3D m_radius;
+    RayObjectGenMesh(QString type, QVector3D pos, QVector3D rad, Material material) {
+        m_type = type.toLower();
+        m_radius = rad;
+        m_position = pos;
+        m_material = material;
+        m_bbRadius = rad.length();
+    }
+    float intersect(Ray* ray) override;
+    float Duck(Ray* ray);
+};
+
+
+
 class RayObjectPlane : public AbstractRayObject {
 public:
     QVector3D m_pNormal = QVector3D(0,1,0);

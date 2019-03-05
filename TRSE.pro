@@ -385,4 +385,6 @@ DISTFILES += \
     resources/bin/krill/install_4000-c64.prg \
     resources/bin/krill/install_2000-c64.prg \
     resources/bin/krill/install_1000-c64.prg \
-    resources/bin/krill/instal_3000-c64.prg
+    resources/bin/krill/instal_3000-c64.prg \
+    resources/bin/krill/new/loader_PAL_NTSCL_0200-c64.prg \
+    resources/bin/krill/new/install_PAL_NTSC_5000-c64.prg
