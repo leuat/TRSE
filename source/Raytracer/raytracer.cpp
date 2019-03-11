@@ -117,7 +117,7 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
        float ah = 1;
 //       qDebug() << w << h;
  //      aspect = 0.5;
-#pragma omp parallel for
+//#pragma omp parallel for
         for (int i=0;i<w;i++)
             for (int j=0;j<h;j++)
         {
@@ -354,7 +354,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
             AbstractRayObject* o= nullptr;
             if (dynamic_cast<RayObjectBox*>(winner)!=nullptr)
                 o=winner;
-            if (RayMarchSingle(shadowRay, Shadow, o,14,tid)) {
+            if (RayMarchSingle(shadowRay, Shadow, nullptr,14,tid)) {
                 shadow*=m_globals.m_shadowScale;
             }
 

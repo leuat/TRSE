@@ -171,6 +171,7 @@ m; Return;  C64, C128, VIC20, PET, NES;
 m; Set2MhzMode; C128;
 m; Set1MhzMode; C128;
 m; RightBitShift; C64, C128, VIC20, NES; a, n
+m; LeftBitShift; C64, C128, VIC20, NES; a, n
 
 # IO ports
 

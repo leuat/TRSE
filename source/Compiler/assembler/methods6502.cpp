@@ -167,7 +167,11 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         LoadSong(as);
 
     if (Command("RightBitShift"))
-        RightBitShift(as);
+        RightBitShift(as, true);
+
+    if (Command("LeftBitShift"))
+        RightBitShift(as, false);
+
 
     if (Command("PlayVIC20Sid")) {
         PlayVIC20Sid(as);
@@ -1820,7 +1824,7 @@ void Methods6502::ScrollY(Assembler *as)
 
 }
 
-void Methods6502::RightBitShift(Assembler *as)
+void Methods6502::RightBitShift(Assembler *as, bool isRight)
 {
     as->Comment("Right bitshift");
     QString lbl = as->NewLabel("RightBitshift");
@@ -1841,10 +1845,22 @@ void Methods6502::RightBitShift(Assembler *as)
 
     as->Asm("lda "+addr+",x");
 
-    as->Asm("lsr");
-    for (int i=1;i<num;i++)
-        as->Asm("ror "+addr+"+"+QString::number(i*8)+" ,x");
-   as->Asm("ror "+addr+",x");
+    if (isRight) {
+
+        as->Asm("lsr");
+        for (int i=1;i<num;i++)
+            as->Asm("ror "+addr+"+"+QString::number(i*8)+" ,x");
+        as->Asm("ror "+addr+",x");
+    }else {
+        as->Asm("lda "+addr+",x");
+
+        as->Asm("asl");
+        for (int i=1;i<num;i++)
+            as->Asm("rol "+addr+"+"+QString::number(i*8)+" ,x");
+       as->Asm("rol "+addr+",x");
+
+
+    }
 
     as->Asm("inx");
     as->Asm("cpx #8");
