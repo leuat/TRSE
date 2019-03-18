@@ -54,6 +54,19 @@ void AbstractDemoEffect::AddScreen(QByteArray &data, int w, int h, char base, in
 
 }
 
+void AbstractDemoEffect::AddToDataX(QByteArray &data, int xp, int yp, int w, int h)
+{
+    for (int y=0;y<h;y+=1)
+        for (int x=0;x<w;x+=1) {
+            int xx = xp+x;
+            int yy = yp+y;
+
+            PixelChar& pc = m_mc->m_data[40*(yy/8)+xx];
+            data.append(PixelChar::reverse(pc.p[yy&7]));
+        }
+
+}
+
 int AbstractDemoEffect::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length)
 {
     int l = 0;

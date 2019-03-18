@@ -30,7 +30,7 @@ public:
     bool m_hasNormal = false;
     Material m_material;
     QString m_name;
-
+    static SimplexNoise m_sn;
     Ray m_localRay[32];
 
     float m_bbRadius;
@@ -122,6 +122,8 @@ public:
 };
 
 
+
+
 class RayObjectUnion : public AbstractRayObject {
 public:
     RayObjectUnion(QVector3D pos) {
@@ -134,6 +136,26 @@ public:
     float intersect(Ray* ray) override;
 
 };
+
+
+class RayObjectOperation : public AbstractRayObject {
+public:
+    QString m_type;
+    float m_blend;
+    AbstractRayObject* m_o1, *m_o2;
+    RayObjectOperation(QString type, float blend, AbstractRayObject* o1, AbstractRayObject* o2) {
+        m_type = type.toLower();
+       m_blend = blend;
+       m_o1 = o1;
+       m_o2 = o2;
+
+    }
+
+
+    float intersect(Ray* ray) override;
+
+};
+
 
 class RayObjectSphere : public AbstractRayObject {
 public:
@@ -247,9 +269,22 @@ public:
         m_position = pos;
         m_material = material;
         m_radius = radius;
-        m_bbRadius = 1.1*radius.length();
+        m_bbRadius = 1.5*radius.length();
     }
     QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) override;
+    float intersect(Ray* ray) override;
+
+};
+
+class RayObjectPerlin : public AbstractRayObject {
+public:
+    QVector3D m_perlinVals;
+    AbstractRayObject* m_obj;
+    RayObjectPerlin(QVector3D vals, AbstractRayObject* obj) {
+        m_perlinVals = vals;
+        m_obj = obj;
+    }
+
     float intersect(Ray* ray) override;
 
 };

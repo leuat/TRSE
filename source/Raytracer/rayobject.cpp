@@ -1,5 +1,7 @@
 #include "rayobject.h"
 
+SimplexNoise AbstractRayObject::m_sn;
+
 
 void AbstractRayObject::SetLocalPos(QVector3D campos, QMatrix4x4 mat) {
     m_localRotmat = m_rotmat*mat;
@@ -202,7 +204,7 @@ bool RayObjectSphere::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D& i
 
 float RayObjectSphere::intersect(Ray *ray)
 {
-    return (m_localPos+ray->m_currentPos).length() - m_radius.x();
+    return ((m_localPos+ray->m_currentPos).length() - m_radius.x());
 
 
 }
@@ -266,11 +268,9 @@ QVector3D RayObjectBox::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D
 
 float RayObjectBox::intersect(Ray *ray)
 {
-    QVector3D d = Util::abss(m_localPos+ray->m_currentPos) - m_box;// +ray->m_currentPos;
+    QVector3D d = Util::abss(m_localPos+ ray->m_currentPos) - m_box;// +ray->m_currentPos;
     float r=m_pNormal.x();
-
     return min(max(d.x()-r,max(d.y()-r,d.z()-r)),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length();
-
 }
 
 QVector3D RayObjectCylinder::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D &tangent)
@@ -397,4 +397,30 @@ float RayObjectGenMesh::Duck(Ray *ray)
 
 
     return cur;
+}
+
+float RayObjectOperation::intersect(Ray *ray)
+{
+    if (m_type == "blend") {
+        return (m_blend*m_o1->intersect(ray) + (1-m_blend)*m_o2->intersect(ray));
+    }
+    if (m_type == "max")
+        return max(m_o1->intersect(ray),m_o2->intersect(ray));
+    if (m_type == "min")
+        return max(m_o1->intersect(ray),m_o2->intersect(ray));
+    if (m_type == "sub")
+        return m_o1->intersect(ray)*max(-m_o2->intersect(ray),0.0f);
+}
+
+float RayObjectPerlin::intersect(Ray *ray)
+{
+    float amp=m_perlinVals.x();
+    float scale=m_perlinVals.y();
+
+    QVector3D d2 =  ray->m_currentPos;// +ray->m_currentPos;
+    float mm = m_obj->intersect(ray);
+    if (mm>0.2) return mm;
+
+    return mm + amp*m_sn.noise(d2.x()*scale, d2.y()*scale, d2.z()*scale);
+
 }

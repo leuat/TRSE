@@ -45,6 +45,7 @@ public:
     int m_elapsedTime;
     void SaveCharset(QString filename, int w, int h);
     void AddScreen(QByteArray& data, int w, int h, char base, int div, char add1, char add2);
+    void AddToDataX(QByteArray& data, int x, int y, int w, int h);
 
     int Compare(QByteArray& a, QByteArray& b, int p1, int p2, int length);
 

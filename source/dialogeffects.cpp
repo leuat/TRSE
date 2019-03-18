@@ -151,6 +151,30 @@ static int AddObject(lua_State *L)
     }
 
 
+    if (object=="operation") {
+        QString type = lua_tostring(L,N);
+        float blend = lua_tonumber(L,N+1);
+
+        AbstractRayObject* o1 = m_rt.Find(lua_tostring(L,N+2));
+        AbstractRayObject* o2 = m_rt.Find(lua_tostring(L,N+3));
+        obj =
+                    new RayObjectOperation(type, blend, o1, o2);
+
+        m_rt.m_objects.removeAll(o1);
+        m_rt.m_objects.removeAll(o2);
+    }
+
+
+    if (object=="perlin") {
+        AbstractRayObject* o1 = m_rt.Find(lua_tostring(L,N));
+        N++;
+        QVector3D vals = QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2));
+        obj =
+                    new RayObjectPerlin(vals,o1);
+
+        m_rt.m_objects.removeAll(o1);
+    }
+
 
     if (object=="mesh") {
         QString fn = m_currentDir+"/"+ lua_tostring(L,N);
@@ -187,7 +211,7 @@ static int AddObject(lua_State *L)
         obj =
                     new RayObjectBox(
                         QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
-                        QVector3D(lua_tonumber(L,N+6),1,0),
+                        QVector3D(lua_tonumber(L,N+6),lua_tonumber(L,N+7),lua_tonumber(L,N+8)),
                         QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
                         mat);
 
@@ -353,6 +377,15 @@ static int AddScreen(lua_State* L) {
     return 0;
 }
 
+static int AddToData(lua_State* L) {
+
+    if (m_effect!=nullptr)
+       m_effect->AddToDataX(m_charData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+
+    return 0;
+}
+
+
 static int CompressCharset(lua_State* L) {
     // 0, 40, 13, 25
     int noChars;
@@ -360,6 +393,9 @@ static int CompressCharset(lua_State* L) {
     m_infoText+="Compressed chars: " + QString::number(noChars) + "\n";
     return 0;
 }
+
+
+
 
 static int SaveScreenAndCharset(lua_State* L) {
     QFile f(m_currentDir+"/"+ lua_tostring(L,2));
@@ -373,6 +409,17 @@ static int SaveScreenAndCharset(lua_State* L) {
     f2.write(m_screenData);
     f2.close();
     m_screenData.clear();
+    return 0;
+}
+
+
+static int SaveData(lua_State* L) {
+    QFile f(m_currentDir+"/"+ lua_tostring(L,1));
+    f.open(QFile::WriteOnly);
+
+    f.write(m_charData);
+    f.close();
+    m_charData.clear();
     return 0;
 }
 
@@ -428,6 +475,9 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "CompressAndSaveHorizontalData", CompressAndSaveHorizontalData);
     lua_register(m_script->L, "CompressCharset", CompressCharset);
     lua_register(m_script->L, "SaveScreenAndCharset", SaveScreenAndCharset);
+    lua_register(m_script->L, "SaveRawData", SaveData);
+    lua_register(m_script->L, "AddC64LineToData", AddToData);
+
     lua_register(m_script->L, "AddScreen", AddScreen);
     lua_register(m_script->L, "SetRotation", SetRotation);
     lua_register(m_script->L, "SetPosition", SetPosition);

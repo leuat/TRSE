@@ -20,6 +20,7 @@ public:
 
     float m_curStep = 0;
     QVector3D m_currentPos;
+    QVector3D m_currentPosUnrotated;
 
     Ray() {}
     void swap(float& a, float& b) {

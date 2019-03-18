@@ -738,26 +738,32 @@ void Methods6502::MemCpy(Assembler* as)
         bp2=")";
     }
 
-
+    QString x = "x";
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER)
+        x="y";
     as->Comment("memcpy");
     QString lbl = as->NewLabel("memcpy");
-    as->Asm("ldy #0");
+    as->Asm("ld"+x+" #0");
     as->Label(lbl);
     //LoadVar(as, 0, "x");
 
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER)
-        as->Asm("lda ("+ addr +"),y");
-    else
-        as->Asm("lda " +addr +" +  " + num2->HexValue() + ",y");
+        as->Asm("lda ("+ addr +"),"+x);
+    else {
+        QString v = num2->HexValue();
+        if (v=="$0") v=""; else v="+ "+v;
+
+        as->Asm("lda " +addr + v + ","+x);
+    }
     as->ClearTerm();
 
 
     as->Term("sta " + bp1);
     m_node->m_params[2]->Accept(m_dispatcher);
-    as->Term(bp2 + ",y", true);
+    as->Term(bp2 + ","+x, true);
 
-    as->Asm("iny");
-    as->Term("cpy ");
+    as->Asm("in"+x+"");
+    as->Term("cp"+x+" ");
     m_node->m_params[3]->Accept(m_dispatcher);
     as->Term();
     as->Asm("bne " + lbl);
