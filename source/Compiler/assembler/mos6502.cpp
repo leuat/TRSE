@@ -791,7 +791,7 @@ void AsmMOS6502::OptimisePassLdaTax(QString x)
                     if (perform) {
                         m_removeLines.append(j);
                         QString org = m_source[i];
-                        m_source[i] = m_source[i].toLower().replace("lda", "ld"+x)+" ; optimized, look out for bugs";
+                        m_source[i] = m_source[i].replace("lda", "ld"+x)+" ; optimized, look out for bugs";
                         //qDebug() << "Changed : "<< org << " to " <<m_source[i] << " with op " <<op;
                     }
                     //m_removeLines.append(i);

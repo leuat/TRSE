@@ -43,7 +43,7 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>3</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -343,7 +343,7 @@
            <x>30</x>
            <y>40</y>
            <width>501</width>
-           <height>121</height>
+           <height>143</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
@@ -392,6 +392,16 @@
           </item>
           <item row="2" column="1">
            <widget class="QComboBox" name="cmbPawInclude"/>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_24">
+            <property name="text">
+             <string>Disk 2 d64 Paw file</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QComboBox" name="cmbPawInclude2"/>
           </item>
          </layout>
         </widget>

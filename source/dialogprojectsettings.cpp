@@ -136,7 +136,13 @@ void DialogProjectSettings::FillFromIni()
     ui->cmbPawInclude->addItem("none");
     ui->cmbPawInclude->addItems(paw);
 
+    ui->cmbPawInclude2->clear();
+    ui->cmbPawInclude2->addItem("none");
+    ui->cmbPawInclude2->addItems(paw);
+
     ui->cmbPawInclude->setCurrentText(m_ini->getString("d64_paw_file"));
+
+    ui->cmbPawInclude->setCurrentText(m_ini->getString("d64_paw_file_disk2"));
 
     ui->leBackgroundColor->setText(QString::number(m_ini->getdouble("background_color")));
     ui->leBorderColor->setText(QString::number(m_ini->getdouble("border_color")));
@@ -197,6 +203,7 @@ void DialogProjectSettings::FillToIni()
     m_ini->setString("output_type", ui->cmbOutputType->currentText());
     m_ini->setString("main_ras_file", ui->cmbMainRas->currentText());
     m_ini->setString("d64_paw_file", ui->cmbPawInclude->currentText());
+    m_ini->setString("d64_paw_file_disk2", ui->cmbPawInclude2->currentText());
 
 
     m_ini->setFloat("override_target_settings", ui->chkOverrideTargetSettings->isChecked());

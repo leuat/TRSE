@@ -86,6 +86,11 @@ static int LuaCos(lua_State *L) {
     return 1;
 }
 
+static int LuaSqrt(lua_State *L) {
+    lua_pushnumber(L, sqrt(lua_tonumber(L, 1)));
+    return 1;
+}
+
 
 
 static int AddObject(lua_State *L)
@@ -215,6 +220,7 @@ static int AddObject(lua_State *L)
                         QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
                         mat);
 
+//        obj->m_flatten = false;
 
     }
 
@@ -484,6 +490,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "sin", LuaSin);
     lua_register(m_script->L, "SetY", SetY);
     lua_register(m_script->L, "cos", LuaCos);
+    lua_register(m_script->L, "sqrt", LuaSqrt);
     lua_register(m_script->L, "Message", Message);
     lua_register(m_script->L, "ClearAllObjects", ClearObjects);
 

@@ -103,6 +103,8 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
         aro->SetMaterial(aro->m_material);
         aro->AddToFlattened(m_objectsFlattened);
     }
+  //  for (AbstractRayObject* aro : m_objectsFlattened)
+//        qDebug() << aro->m_name;
 //    m_objectsFlattened = m_objects;
 
 //        aro->m_localPos = aro->m_position-m_camera.m_camera;

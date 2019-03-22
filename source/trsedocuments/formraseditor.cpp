@@ -99,6 +99,18 @@ QStringList FormRasEditor::getFileList()
     for (int i=0;i<count;i++) {
         ret<< data[3*i];
     }
+
+    QString pawFile2 = m_projectIniFile->getString("d64_paw_file_disk2");
+    if (pawFile2=="none") return ret;
+    CIniFile paw2;
+    paw2.Load(m_currentDir + "/"+pawFile2);
+    QStringList data2 = paw2.getStringList("data");
+    int count2 = data2.count()/3;
+    for (int i=0;i<count2;i++) {
+        ret<< data2[3*i];
+    }
+
+
     return ret;
 
 }
@@ -339,7 +351,7 @@ void FormRasEditor::Build()
                 return;
             }
         //            c1541 -format diskname,id d64 my_diskimage.d64 -attach my_diskimage.d64 -write my_program.prg myprog
-            QString f = filename.split("/").last();
+/*            QString f = filename.split("/").last();
             QStringList d64Params = QStringList() << "-format" << f+",id"<< "d64";
             d64Params << filename+".d64";
             d64Params << "-attach" <<filename+".d64";
@@ -351,11 +363,9 @@ void FormRasEditor::Build()
             QProcess process1541;
             process1541.start(m_iniFile->getString("c1541"), d64Params  );
             process1541.waitForFinished();
-
-//            qDebug() << m_iniFile->getString("c1541") << d64Params;
-  //          qDebug() << process1541.readAllStandardOutput();
-    //        qDebug() << process1541.readAllStandardError();
-
+*/
+            CreateDisk(filename, "d64_paw_file", true);
+            CreateDisk(filename+"_side2", "d64_paw_file_disk2",false);
         }
 
 
@@ -383,10 +393,10 @@ void FormRasEditor::Build()
     SetLights();
 }
 
-bool FormRasEditor::BuildDiskFiles(QStringList& d64Params)
+bool FormRasEditor::BuildDiskFiles(QStringList& d64Params, QString iniData)
 {
 
-    QString pawFile = m_projectIniFile->getString("d64_paw_file");
+    QString pawFile = m_projectIniFile->getString(iniData);
     CIniFile paw;
     paw.Load(m_currentDir + "/"+pawFile);
     QStringList data = paw.getStringList("data");
@@ -423,7 +433,7 @@ bool FormRasEditor::BuildDiskFiles(QStringList& d64Params)
 //            QString ending = orgFileName.split(".").last();
             QString iff = name;
             QString of = outFolder+"/"+iff+"_c.bin";
-            qDebug() << of;
+//            qDebug() << of;
              d64Params << "-write" <<of << name;
 
         }
@@ -568,7 +578,28 @@ bool FormRasEditor::VerifyMachineCodeZP(QString fname)
 
 void FormRasEditor::Setup()
 {
-      setupEditor();
+    setupEditor();
+}
+
+void FormRasEditor::CreateDisk(QString filename, QString iniData, bool addPrg)
+{
+    QString f = filename.split("/").last();
+    QStringList d64Params = QStringList() << "-format" << f+",id"<< "d64";
+    d64Params << filename+".d64";
+    d64Params << "-attach" <<filename+".d64";
+    if (addPrg)
+        d64Params << "-write" <<filename+".prg" << f;
+    if (m_projectIniFile->getString(iniData)!="none") {
+        if (!BuildDiskFiles(d64Params,iniData))
+            return;
+
+
+     QProcess process1541;
+//     qDebug() <<"Building disk with: " << d64Params;
+     process1541.start(m_iniFile->getString("c1541"), d64Params  );
+        process1541.waitForFinished();
+    }
+
 }
 
 void FormRasEditor::Run()

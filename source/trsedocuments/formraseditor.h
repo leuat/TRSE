@@ -80,8 +80,11 @@ public:
     void setupEditor();
     void Compress();
     void Build() override;
-    bool BuildDiskFiles(QStringList& d64Params);
+    bool BuildDiskFiles(QStringList& d64Params, QString data);
     void Setup();
+
+    void CreateDisk(QString filename, QString iniData, bool addPrg);
+
 
     void Run() override;
     void SetLights();
