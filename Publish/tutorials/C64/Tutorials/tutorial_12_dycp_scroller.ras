@@ -100,8 +100,7 @@ begin
 		val := zeropage5[i]; // text value
 		if val>64 then begin
 			val:=(val-64)*8;
-
-			k:=val+9;
+			k:=val+8;
 			asm("
 			; First clear the two first bytes on top
 			ldy y

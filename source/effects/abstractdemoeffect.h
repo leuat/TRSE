@@ -10,6 +10,7 @@
 #include <QDebug>
 #include "source/LeLib/limage/charsetimage.h"
 #include <QElapsedTimer>
+
 class DemoEffectParam {
 public:
     QString m_name;
@@ -43,13 +44,6 @@ public:
 //    int m_elapsedTime=0;
     QElapsedTimer m_timer;
     int m_elapsedTime;
-    void SaveCharset(QString filename, int w, int h);
-    void AddScreen(QByteArray& data, int w, int h, char base, int div, char add1, char add2);
-    void AddToDataX(QByteArray& data, int x, int y, int w, int h);
-
-    int Compare(QByteArray& a, QByteArray& b, int p1, int p2, int length);
-
-    void OptimizeAndPackCharsetData(QByteArray& dataIn, QByteArray& out, QByteArray& table, int width, int compression);
 
 
     virtual void ToggleAnim() {m_toggleAnim=!m_toggleAnim;}
@@ -64,7 +58,21 @@ public:
     virtual void Init() {}
 //    virtual void
 
-    void ConvertToC64(bool dither);
+    void ConvertToC64(bool dither)
+    {
+        if (!m_toggleC64)
+            return;
+        m_mc->m_colorList.EnableColors(m_cols);
+        m_mc->SetColor(m_cols[0],0);
+        m_mc->SetColor(m_cols[1],1);
+        m_mc->SetColor(m_cols[3],2);
+        m_mc->SetColor(m_cols[2],3);
+        m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, dither);
+
+        m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
+
+    }
+
 
     void FillToGUI();
 signals:

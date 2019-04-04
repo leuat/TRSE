@@ -6,7 +6,7 @@ QString m_infoText = "", m_error="";
 QString m_currentDir;
 QByteArray m_screenData, m_charData;
 AbstractDemoEffect* m_effect = nullptr;
-
+Compression m_compression;
 
 DialogEffects::DialogEffects(QString file, QWidget *parent) :
     QDialog(parent),
@@ -378,7 +378,7 @@ static int ClearObjects(lua_State *L) {
 static int AddScreen(lua_State* L) {
 
     if (m_effect!=nullptr)
-       m_effect->AddScreen(m_screenData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tonumber(L,5),lua_tonumber(L,6));
+        m_compression.AddScreen(m_screenData, m_effect->m_img,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tonumber(L,5),lua_tonumber(L,6));
 
     return 0;
 }
@@ -386,7 +386,7 @@ static int AddScreen(lua_State* L) {
 static int AddToData(lua_State* L) {
 
     if (m_effect!=nullptr)
-       m_effect->AddToDataX(m_charData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+       m_compression.AddToDataX(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
 
     return 0;
 }
@@ -435,7 +435,10 @@ static int CompressAndSaveHorizontalData(lua_State* L) {
     QByteArray packedData, table;
     table.clear();
 //    qDebug() <<m_count*16 << " but is " <<m_screenData.count()/ww;
-    m_effect->OptimizeAndPackCharsetData(m_screenData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2));
+    if (m_screenData.count()!=0)
+    m_compression.OptimizeAndPackCharsetData(m_screenData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2));
+    else
+        m_compression.OptimizeAndPackCharsetData(m_charData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2));
   //  qDebug() << "Table should be : " << (m_noChars-1)*1024;
     //qDebug() << "Table is : " << table.count();
 

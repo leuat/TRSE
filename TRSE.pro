@@ -181,7 +181,8 @@ SOURCES += main.cpp\
     source/trsedocuments/formfjong.cpp \
     source/PmmEdit/fjongeditor.cpp \
     source/LeLib/luascript.cpp \
-    source/LeLib/objloader/objloader.cpp
+    source/LeLib/objloader/objloader.cpp \
+    source/LeLib/limage/compression.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -297,7 +298,8 @@ HEADERS  += mainwindow.h \
     source/LeLib/objloader/obj_parser.h \
     source/LeLib/objloader/string_extra.h \
     source/LeLib/objloader/list.h \
-    source/LeLib/objloader/objloader.h
+    source/LeLib/objloader/objloader.h \
+    source/LeLib/limage/compression.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \

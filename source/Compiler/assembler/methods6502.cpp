@@ -396,19 +396,21 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     }
 
-    if (Command("hidebordery")) {
-        as->Comment("Hide y border");
+    if (Command("hideborderx")) {
+        ToggleRegisterBit(as,"$D016",3,false);
+/*        as->Comment("Hide y border");
         as->Asm("lda $d011");
         as->Asm("and #$77  ; change bit 4");
-        as->Asm("sta $d011");
+        as->Asm("sta $d011");*/
 
     }
-    if (Command("hideborderx")) {
-        as->Comment("Hide x border");
+    if (Command("hidebordery")) {
+        ToggleRegisterBit(as,"$D011",3,false);
+/*        as->Comment("Hide x border");
         as->Asm("lda $D016");
         as->Asm("and #$f7  ; change bit 4");
         as->Asm("sta $D016");
-
+*/
     }
     if (Command("settextmode")) {
         as->Comment("Regular text mode ");
@@ -2875,7 +2877,7 @@ void Methods6502::Call(Assembler *as)
 */
 }
 
-void Methods6502::ToggleRegisterBit(Assembler *as, QString addr, int bit)
+void Methods6502::ToggleRegisterBit(Assembler *as, QString addr, int bit, bool regular)
 {
     NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
     if (num==nullptr) {
@@ -2885,9 +2887,14 @@ void Methods6502::ToggleRegisterBit(Assembler *as, QString addr, int bit)
     int val = num->m_val;
     uchar v=1<<bit;
     as->Asm("lda "+addr);
-    if (val==1)
+
+    int a = 1;
+    int b = 0;
+
+    if (!regular) { b=1; a=0; }
+    if (val==a)
         as->Asm("ora #%"+QString::number(v,2));
-    if (val==0)
+    if (val==b)
         as->Asm("and #%"+QString::number((uchar)~v,2));
     as->Asm("sta "+addr);
 

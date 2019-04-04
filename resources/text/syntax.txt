@@ -56,7 +56,7 @@ m; Decrunch; C64, C128, VIC20 ; a
 m; DecrunchFromIndex; C64, C128, VIC20 ; a,b
 
 m; IncZP; C64, C128, VIC20, PET, NES ; a, b
-m; DecZP; C64, C128, VIC20, PET, NES ; a, b
+#m; DecZP; C64, C128, VIC20, PET, NES ; a, b
 
 # Charset routines
 
@@ -110,8 +110,8 @@ m; InitKrill; C64;
 m; MoveTo; C64, C128, VIC20 ; b,b,b
 m; ScrollY; C64, C128 ; b
 m; ScrollX; C64, C128 ; b
-m; HideBorderX; C64, C128 ; b
-m; HideBorderY; C64, C128 ; b
+m; hideborderx; C64, C128 ; b
+m; hidebordery; C64, C128 ; b
 m; PrintString; C64, C128, VIC20, PET; s,b,b
 m; PrintNumber; C64, C128, VIC20, PET; b
 m; PrintDecimal; C64, C128, VIC20, PET; i,n
@@ -190,7 +190,7 @@ m; CloseIRQ; C64, C128, VIC20, NES;
 m; CloseIRQWedge; C64, C128;
 m; EnableIRQ; C64, C128;
 m; PreventIRQ; C64, C128;
-m; DisableCIAInterruptS; C64, C128;
+m; DisableCIAInterrupts; C64, C128;
 m; RasterIRQ; C64, C128 ; p,b,n
 m; RasterIRQWedge; C64, C128 ; p,b,n
 m; ReturnInterrupt; C64, C128;
@@ -367,6 +367,7 @@ r; IGNOREMETHOD; C64, C128, VIC20, PET, NES, BBCM
 r; ERROR; C64, C128, VIC20, PET, NES, BBCM
 r; WEDGE; C64, C128, BBCM
 r; USE; C64, C128, VIC, BBCM
+r; STARTASSEMBLER; C64, C128, VIC, BBCM
 
 
 

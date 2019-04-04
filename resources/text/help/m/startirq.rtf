@@ -1,0 +1,26 @@
+<p>Used for starting an interrupt method. Parameter specifies whether kernal is used (1) or not (0) 
+Example:
+<code>
+program MyRasterExample;
+var
+  i: byte;
+
+@define useKernal 0
+
+interrupt MyRaster();
+begin
+	StartIRQ(@useKernal);
+
+	inc(^$D020); // Do some random stuff - flash screen
+	CloseIRQ();
+end;
+
+begin
+	disableciainterrupts();
+	setmemoryconfig(1,@useKernal,0);
+	StartRasterChain(MyRaster(),0,@useKernal);
+	Loop();
+end.
+
+
+</code>

@@ -71,6 +71,7 @@ bool Compiler::Build(Compiler::Type type, QString project_dir)
         return false;
 
 
+    m_assembler->m_startInsertAssembler << m_parser->m_initAssembler;
     m_assembler->m_defines = m_parser->m_preprocessorDefines;
     m_assembler->InitZeroPointers(m_projectIni->getStringList("zeropages"),m_projectIni->getStringList("temp_zeropages"));
     m_assembler->m_zeropageScreenMemory = m_projectIni->getString("zeropage_screenmemory");

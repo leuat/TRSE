@@ -76,78 +76,6 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
 
 }
 
-void CharsetImage::CompressAndSave(QByteArray& chardata, QByteArray& screen, int x0,int x1, int y0, int y1, int& noChars, int compression, int maxChars) {
-    CharsetImage* ni = new CharsetImage(m_colorList.m_type);
-
-
-    QVector<PixelChar> chars;
-    QByteArray data;
-    int sx = x1-x0;
-    int sy = y1-y0;
-    data.resize(sx*sy);
-    data.fill(0x0);
-    noChars = 0;
-    for (int j=0;j<sy;j++) {
-
-        for (int i=0;i<sx;i++)
-        {
-            bool add = true;
-            PixelChar& pc = m_data[i+x0 + (j+y0)*40];
-            int pi = 0;
-            bool found = false;
-            for (PixelChar& p : chars) {
-                if (found)
-                    break;
-                int metric = pc.CompareLength(p);
-//                int metric = pc.Compare(p);
-                if (metric <compression) {
-                    data[i + j*sx] = pi;
-                    found = true;
-                    break;
-
-                }
-                pi++;
-//                if (pi>255) exit(1);
-            }
-            if (!found) {
-                chars.append(pc);
-                data[i + j*sx] = chars.count()-1;
-                noChars++;
-
-            }
-            //        data[i]=i;
-        }
-    }
-
-    //QFile f(outFile);
-    //f.open(QFile::WriteOnly);
-    QByteArray out;
-    for (int i=0;i<maxChars;i++) {
-        if (i<chars.count()) {
-            for (int j=0;j<8;j++)
-                out.append(PixelChar::reverse(chars[i].p[j]));
-        }
-        else
-            for (int j=0;j<8;j++)
-                out.append((char)0);
-
-    }
-//    qDebug() << data.count();
-    //out.append(data);
-    chardata.append(out);
-    screen.append(data);
-/*    f.write(out);
-    f.write(data);
-
-    f.close();
-*/
-
-    delete ni;
-
-   // return out;
-
-
-}
 
 void CharsetImage::SetColor(uchar col, uchar idx)
 {
@@ -449,6 +377,13 @@ void CharsetImage::ToQPixMaps(QVector<QPixmap> &map)
         QPixmap p = QPixmap::fromImage(img);
         map.append(p);
     }
+}
+
+QPixmap CharsetImage::ToQPixMap(int chr)
+{
+    QImage img = m_data[chr].toQImage(64, m_bitMask, m_colorList, m_scale);
+    return QPixmap::fromImage(img);
+
 }
 
 void CharsetImage::setPixel(int x, int y, unsigned int color)

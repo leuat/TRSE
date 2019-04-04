@@ -127,6 +127,8 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
 
     Asm("ORG "+Util::numToHex(Syntax::s.m_startAddress+1));
 
+
+
     if (!Syntax::s.m_ignoreSys) {
         // 2064
         Asm(".byte    $0E, $08, $0A, $00, $9E, $20, $28");
@@ -143,6 +145,8 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
         Nl();
         Asm("ORG " + Util::numToHex(Syntax::s.m_programStartAddress));
     }
+    m_source+=m_startInsertAssembler;
+
     Label(programName);
 
 }

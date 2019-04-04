@@ -71,7 +71,7 @@ public:
     void IncZp(Assembler* as);
     void DecZp(Assembler* as);
     void Call(Assembler* as);
-    void ToggleRegisterBit(Assembler* as, QString addr, int bit);
+    void ToggleRegisterBit(Assembler* as, QString addr, int bit, bool regular=true);
     void InitSid(Assembler* as);
     void InitMul16x8(Assembler* as);
     void InitDiv8x8(Assembler* as);

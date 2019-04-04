@@ -243,7 +243,8 @@ void DemoEffectTwister::run()
 void DemoEffectTwister::Save(QString f)
 {
 //    SaveTwister(f,m_params["width"].m_val,m_height);
-    SaveCharset(f,m_params["width"].m_val*4,m_height*8);
+
+    //SaveCharset(f,m_params["width"].m_val*4,m_height*8);
 
 }
 

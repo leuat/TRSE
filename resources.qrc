@@ -113,5 +113,26 @@
         <file>resources/code/nes_end.asm</file>
         <file>resources/code/nes_readinput.asm</file>
         <file>resources/images/torus.jpg</file>
+        <file>resources/text/help/m/call.rtf</file>
+        <file>resources/text/help/m/waitnoraster.rtf</file>
+        <file>resources/text/help/m/waitforraster.rtf</file>
+        <file>resources/text/help/m/wait.rtf</file>
+        <file>resources/text/help/m/swap.rtf</file>
+        <file>resources/text/help/m/startirq.rtf</file>
+        <file>resources/text/help/m/spritepos.rtf</file>
+        <file>resources/text/help/m/setscreenlocation.rtf</file>
+        <file>resources/text/help/m/setmulticolormode.rtf</file>
+        <file>resources/text/help/m/setfrequency.rtf</file>
+        <file>resources/text/help/m/settextmode.rtf</file>
+        <file>resources/text/help/m/setbitmapmode.rtf</file>
+        <file>resources/text/help/m/scrolly.rtf</file>
+        <file>resources/text/help/m/scrollx.rtf</file>
+        <file>resources/text/help/m/returninterrupt.rtf</file>
+        <file>resources/text/help/m/nop.rtf</file>
+        <file>resources/text/help/m/nmiirq.rtf</file>
+        <file>resources/text/help/m/rightbitshift.rtf</file>
+        <file>resources/text/help/m/leftbitshift.rtf</file>
+        <file>resources/text/help/m/krillloadcompressed.rtf</file>
+        <file>resources/text/help/m/krillload.rtf</file>
     </qresource>
 </RCC>

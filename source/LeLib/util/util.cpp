@@ -325,6 +325,14 @@ QString Util::listFiles(QDir directory, QString searchFile)
         return "";
 }
 
+void Util::SaveByteArray(QByteArray &data, QString file) {
+    QFile f(file);
+    f.open(QFile::WriteOnly);
+    f.write(data);
+    f.close();
+
+}
+
 QString Util::findFileInSubDirectories(QString search, QString dir, QString extension)
 {
     QDir directory(dir);

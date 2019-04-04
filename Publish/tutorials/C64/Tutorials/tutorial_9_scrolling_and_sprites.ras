@@ -226,7 +226,7 @@ end;
 interrupt Update();
 begin
 	startirq(1);
-	hidebordery(0);
+	hidebordery(1);
 	time:=time+1;
 
 

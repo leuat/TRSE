@@ -141,7 +141,7 @@ public:
     QVector<Appendix> m_appendix;
     QVector<Appendix> m_extraBlocks;
     QVector<MemoryBlock> m_userWrittenBlocks;
-
+    QStringList m_startInsertAssembler;
     QString m_zeropageScreenMemory="$fb";
     QMap<QString, QString> m_replaceValues;
 

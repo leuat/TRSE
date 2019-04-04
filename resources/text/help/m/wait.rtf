@@ -1,0 +1,9 @@
+<p>Waits [parameter 1]*4+2 cycles. 
+<p>Example: Wait(10) waits for 42 cycles and equals
+<code>
+asm("
+  ldx #10
+  dex
+  bne *-1
+")
+</code>

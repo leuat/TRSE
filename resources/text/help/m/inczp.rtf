@@ -1,4 +1,9 @@
-<p>Increases zero page pointer address in [ parameter 1 ] with [ parameter 2] bytes.  
+<p>Increases zero page pointer address in [ parameter 1 ] with [ parameter 2] bytes. 
+<p>IncZP is currently obsolete, since it can be replaced with
+<code>
+ zp := zp +8;
+</code> 
+but is still included for backwards compatibility. 
 <code>
 	// zp is a pointer.
 	// Point to bank 0 screen

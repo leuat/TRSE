@@ -7,6 +7,7 @@
 #include "source/effects/demoeffecttwister.h"
 #include "source/effects/demoeffectraytracer.h"
 #include "source/LeLib/luascript.h"
+#include "source/LeLib/limage/compression.h"
 #include <QPixmap>
 
 namespace Ui {
@@ -28,6 +29,7 @@ private:
 
     static int Message(lua_State *L);
     QString m_file;
+
     void Create();
     Ui::DialogEffects *ui;
     int m_avg=0;

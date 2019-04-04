@@ -27,6 +27,7 @@
 #include "source/LeLib/limage/limage.h"
 #include <QImage>
 #include <QByteArray>
+//#include <source/effects/demoeffectraytracer.h>
 
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
@@ -184,11 +185,17 @@ public:
 
     void CopyFrom(LImage* mc) override;
 
+    void ForceColorFlattening();
 
   //  void ExportAsm(QString filename) override;
     void ExportBin(QFile& file) override;
 
     void SetCharSize(int x, int y);
+
+   void ExportCompressed(QString f1, QString f2) override;
+
+   void CompressAndSave(QByteArray& chars, QByteArray& screen, int x0,int x1, int y0, int y1, int& noChars, int compression, int maxChars);
+
 
 };
 

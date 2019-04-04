@@ -424,8 +424,8 @@ bool FormRasEditor::BuildDiskFiles(QStringList& d64Params, QString iniData)
         }
         if (!isCrunched) {
             QString of = outFolder+"/"+orgFileName.split("/").last();
-    //h        Util::ConvertFileWithLoadAddress(fn,of,address);
-            Util::CopyFile(fn,of);
+            Util::ConvertFileWithLoadAddress(fn,of,address);
+    //        Util::CopyFile(fn,of);
 
              d64Params << "-write" <<of << name;
         }
@@ -589,6 +589,7 @@ void FormRasEditor::CreateDisk(QString filename, QString iniData, bool addPrg)
     d64Params << "-attach" <<filename+".d64";
     if (addPrg)
         d64Params << "-write" <<filename+".prg" << f;
+
     if (m_projectIniFile->getString(iniData)!="none") {
         if (!BuildDiskFiles(d64Params,iniData))
             return;
@@ -696,7 +697,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         tc.select(QTextCursor::WordUnderCursor);
         QString word = tc.selectedText();
 
-        DialogHelp* dh = new DialogHelp(this, word, m_defaultPalette);
+        DialogHelp* dh = new DialogHelp(nullptr, word, m_defaultPalette);
 //        dh->setPalette(m_defaultPalette);
      //   QApplication::setPalette(m_defaultPalette);
 

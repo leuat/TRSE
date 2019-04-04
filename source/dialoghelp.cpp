@@ -81,6 +81,8 @@ void DialogHelp::LoadItems(int idx)
         if (data[0].toLower()== ht.id) {
             QString word = data[1];
             QString system = data[2].toLower();
+            if (word.toLower().startsWith("init")) continue;
+
 
             if (system.contains(currentSystem)) {
 /*                QString val = word + "(";

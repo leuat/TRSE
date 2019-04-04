@@ -47,6 +47,7 @@ public:
     bool koalaExport = false;
     bool koalaImport = false;
     bool movieExport = false;
+    bool compressedExport = false;
 
     bool exportc = false;
     bool importc = false;
@@ -56,6 +57,8 @@ public:
     bool displayForeground = true;
     bool displayMC1 = true;
     bool displayMC2 = true;
+
+
 
     bool displayTimestamp = false;
 
@@ -189,6 +192,7 @@ public:
     virtual void ExportBin(QFile &file) {}
     virtual void ImportBin(QFile &file) {}
 
+    virtual void ExportCompressed(QString f1, QString f2) {}
 
     virtual void ExportMovie(QFile &file) {}
 

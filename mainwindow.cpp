@@ -815,6 +815,7 @@ void MainWindow::on_actionNew_project_triggered()
     m_iniFile.Save();
 
     UpdateRecentProjects();
+    LoadProject(filename);
 
 }
 
@@ -924,8 +925,9 @@ void MainWindow::on_actionClose_current_project_triggered()
 
 void MainWindow::on_actionHelp_F1_triggered()
 {
-    DialogHelp* dh = new DialogHelp(this, "", m_defaultPalette);
+    DialogHelp* dh = new DialogHelp(nullptr, "", m_defaultPalette);
     dh->show();
+//    dh->exec();
 }
 
 void MainWindow::on_btnMemoryAnalyze_clicked()

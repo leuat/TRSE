@@ -233,6 +233,11 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         return;
     }
+    if (m_currentToken.m_value=="startassembler") {
+        Eat();
+        Eat();
+        return;
+    }
 /*    if (m_currentToken.m_value=="use") {
         Eat();
         Eat();
@@ -688,6 +693,11 @@ void Parser::Preprocess()
             else if (m_currentToken.m_value.toLower() =="ignoremethod") {
                 Eat(TokenType::PREPROCESSOR);
                 m_ignoreMethods.append(m_currentToken.m_value);
+            }
+            else if (m_currentToken.m_value.toLower() =="startassembler") {
+                Eat(TokenType::PREPROCESSOR);
+                m_initAssembler = m_currentToken.m_value;
+                //m_ignoreMethods.append(m_currentToken.m_value);
             }
             else if (m_currentToken.m_value.toLower() =="use") {
                 Eat();

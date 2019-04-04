@@ -154,6 +154,8 @@ public:
         return arr;
     }
 
+    static void SaveByteArray(QByteArray& data, QString file);
+
     static int NumberFromStringHex(QString s) {
         bool ok = true;
         s=s.trimmed();

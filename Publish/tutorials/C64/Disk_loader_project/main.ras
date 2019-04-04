@@ -21,7 +21,6 @@ begin
 		// Display data while loading! cool stuff
 		if (i=0) then KrillLoad(octopus_color);
 		if (i=1) then KrillLoad(moose_color);
-
 		copyimagecolordata(^$2000,1);
 
 		if (i=0) then KrillLoad(octopus_data);

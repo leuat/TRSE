@@ -74,7 +74,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -175,6 +175,13 @@
             </property>
            </widget>
           </item>
+          <item row="5" column="0">
+           <widget class="QPushButton" name="btnExportCompressed">
+            <property name="text">
+             <string>Export compressed</string>
+            </property>
+           </widget>
+          </item>
          </layout>
          <zorder>btnImport</zorder>
          <zorder>btnImportBin</zorder>
@@ -186,6 +193,7 @@
          <zorder>btnExportMovie</zorder>
          <zorder>btnExportC</zorder>
          <zorder>btnImportC</zorder>
+         <zorder>btnExportCompressed</zorder>
         </widget>
        </widget>
        <widget class="QWidget" name="tabCharset">

@@ -59,7 +59,6 @@ public:
 
 
 
-    void CompressAndSave(QByteArray& chars, QByteArray& screen, int x0,int x1, int y0, int y1, int& noChars, int compression, int maxChars);
 
     void SetColor(uchar col, uchar idx) override;
 
@@ -81,6 +80,7 @@ public:
     virtual void FromRaw(QByteArray& arr);
     virtual void ToRaw(QByteArray& arr);
     void ToQPixMaps(QVector<QPixmap>& map);
+    QPixmap ToQPixMap(int chr);
     virtual void setPixel(int x, int y, unsigned int color) override;
 
 

@@ -1,0 +1,20 @@
+<p>Loads a file from disk using the Krill loader system in TRSE. 
+<p>Example: Assume you have 
+<ul>
+<li>Created a .paw d64 file that contains some random data file with name "my_file" placed at a memory location of your chosing
+<li>In the "project settings", selected a "d64" project
+<li>Wish to include krill's loader at $0200
+</ul>
+you need to write the following code to be able to load the file: 
+<code>
+program Loader;
+var
+   i: byte;
+	@use KrillsLoader $0200 $2000 $5000 
+
+begin
+	InitKrill();
+ 	KrillLoad(my_file);
+end;
+</code>
+

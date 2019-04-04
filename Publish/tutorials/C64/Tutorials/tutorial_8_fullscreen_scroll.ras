@@ -53,7 +53,8 @@ interrupt Update();
 
 begin
 	startirq(1);
-	hideBorderY(0);
+	asm(";crash");
+	hideBorderY(1);
 	time:=time+1;
 	a:=(time*4)&1;
 

@@ -71,6 +71,7 @@ public:
 
     void UpdatePalette();
     void updateCharSet();
+    void updateSingleCharSet();
 
     void PrepareImageTypeGUI();
 
@@ -217,6 +218,7 @@ private slots:
     void on_leTimeStamp_textChanged(const QString &arg1);
     void on_btnImportC_clicked();
     void on_cmbZoomLevel_activated(const QString &arg1);
+    void on_btnExportCompressed_clicked();
 };
 
 

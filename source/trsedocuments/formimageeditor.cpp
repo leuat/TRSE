@@ -94,7 +94,7 @@ void FormImageEditor::onImageMouseEvent()
   //      updateCharSet();
 
     //    updateCharSet();
-
+    updateSingleCharSet();
 }
 
 FormImageEditor::~FormImageEditor()
@@ -415,6 +415,7 @@ void FormImageEditor::UpdatePalette()
     ui->cmbMC1->setCurrentIndex(m_work.m_currentImage->m_image->m_extraCols[1]);
     ui->cmbMC2->setCurrentIndex(m_work.m_currentImage->m_image->m_extraCols[2]);
 
+    ui->btnExportCompressed->setVisible(m_work.m_currentImage->m_image->m_supports.compressedExport);
     ui->btnExportBin->setVisible(m_work.m_currentImage->m_image->m_supports.binarySave);
     ui->btnImportBin->setVisible(m_work.m_currentImage->m_image->m_supports.binaryLoad);
 
@@ -807,6 +808,30 @@ void FormImageEditor::updateCharSet()
   //  ui->lstCharMap->setIconSize(QSize(size,size));
 
     onImageMouseEvent();
+}
+
+void FormImageEditor::updateSingleCharSet()
+{
+    UpdateCurrentMode();
+    CharsetImage* charmap = m_work.m_currentImage->m_image->getCharset();
+    ImageLevelEditor* le = dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image);
+    if (le!=nullptr && charmap==nullptr) {
+        Messages::messages.DisplayMessage(Messages::messages.CHARSET_WARNING);
+        return;
+    }
+    if (charmap == nullptr)
+        return;
+    if (charmap->m_currencChar<0)
+        return;
+    QPixmap pmap = charmap->ToQPixMap(charmap->m_currencChar);
+
+    int kk= 0;
+    int i = charmap->m_currencChar/(int)40;
+    int j = charmap->m_currencChar%40;
+    QTableWidgetItem *itm = ui->lstCharMap->item(i,j);
+    itm->setIcon(pmap);
+
+
 }
 
 
@@ -1476,5 +1501,48 @@ void FormImageEditor::on_cmbZoomLevel_activated(const QString &arg1)
     s = s.replace("x","");
     m_updateThread.m_zoom = 1.0f/s.toFloat();
     onImageMouseEvent();
+
+}
+
+void FormImageEditor::on_btnExportCompressed_clicked()
+{
+    if (m_work.m_currentImage->m_image->m_exportParams.keys().count()!=0) {
+        DialogExport* de = new DialogExport();
+        de->Init(m_work.m_currentImage->m_image);
+        de->exec();
+
+        if (!de->isOk)
+            return;
+
+    }
+    QString ext = "bin";
+    QString ttr  = "Export compressed image";
+    QString f = "Binary( *."+ext+" )";
+
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                                    ttr.toStdString().c_str(), m_projectPath,
+                                                    f);
+
+
+//    m_work.m_currentImage->m_image->ExportAsm(fileName);
+//    MultiColorImage* mi = (MultiColorImage*)dynamic_cast<MultiColorImage*>(m_work.m_currentImage->m_image);
+
+    fileName = fileName.remove(".bin");
+
+    if (fileName=="")
+        return;
+
+    QString f1 = fileName + "_screen.bin";
+    QString f2 = fileName + "_charset.bin";
+
+    if (QFile::exists(f1))
+        QFile::remove(f1);
+
+    if (QFile::exists(f2))
+        QFile::remove(f2);
+
+
+    m_work.m_currentImage->m_image->ExportCompressed(f1,f2);
+
 
 }

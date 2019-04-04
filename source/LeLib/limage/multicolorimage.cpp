@@ -28,6 +28,7 @@
 #include <typeinfo>
 #include "source/LeLib/util/util.h"
 #include "source/LeLib/limage/limageio.h"
+#include "source/LeLib/limage/compression.h"
 
 MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
 {
@@ -43,7 +44,7 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     m_supports.koalaExport = true;
     m_supports.flfSave = true;
     m_supports.flfLoad = true;
-
+    m_supports.compressedExport = true;
 
     m_GUIParams[btnLoadCharset] ="";
     m_GUIParams[btn1x1] = "";
@@ -65,6 +66,7 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     m_exportParams["EndX"] = m_charWidth;
     m_exportParams["StartY"] = 0;
     m_exportParams["EndY"] = m_charHeight;
+    m_exportParams["Compression"] = 0;
 
 }
 
@@ -268,6 +270,15 @@ void MultiColorImage::CopyFrom(LImage* img)
 
 }
 
+void MultiColorImage::ForceColorFlattening()
+{
+    PixelChar& org = m_data[0];
+    for (int i=1;i<1000;i++) {
+        for (int j=0;j<4;j++)
+            m_data[j].c[j] = org.c[j];
+    }
+}
+
 /*void MultiColorImage::ExportAsm(QString filename)
 {
     QString filen = filename.split(".")[0];
@@ -458,6 +469,36 @@ void MultiColorImage::SetCharSize(int x, int y)
     m_height = y*8;
     m_charWidth = x;
     m_charHeight = y;
+}
+
+void MultiColorImage::ExportCompressed(QString f1, QString f2)
+{
+    //int x0,int x1, int y0, int y1, int& noChars, int compression, int maxChars) {
+
+    Compression c;
+//    c.OptimizeAndPackCharsetData()
+    QByteArray charData, screenData;
+    int noChars;
+
+    ForceColorFlattening();
+
+    CompressAndSave(charData, screenData,
+                    m_exportParams["StartX"],m_exportParams["EndX"],
+                    m_exportParams["StartY"],m_exportParams["EndY"],
+                    noChars,    m_exportParams["Compression"],255 );
+//    qDebug() << "No chars :" << noChars;
+    Util::SaveByteArray(screenData, f1);
+    Util::SaveByteArray(charData, f2);
+
+
+    QMessageBox msgBox;
+    QString s = "Compression used: " +QString::number((int)m_exportParams["Compression"])+"\n\n";
+    s+= "Packed to #chars : "+QString::number(noChars);
+
+    msgBox.setText(s);
+    msgBox.exec();
+
+
 }
 
 void MultiColorImage::LoadCharset(QString file)
@@ -990,5 +1031,78 @@ void MultiColorImage::RenderEffect(QMap<QString, float> params)
             int k = ((int)(l*density + as))%(int)params["noColors"];
             setPixel(x,y,k);
         }
+
+}
+
+void MultiColorImage::CompressAndSave(QByteArray& chardata, QByteArray& screen, int x0,int x1, int y0, int y1, int& noChars, int compression, int maxChars) {
+    CharsetImage* ni = new CharsetImage(m_colorList.m_type);
+
+
+    QVector<PixelChar> chars;
+    QByteArray data;
+    int sx = x1-x0;
+    int sy = y1-y0;
+    data.resize(sx*sy);
+    data.fill(0x0);
+    noChars = 0;
+    for (int j=0;j<sy;j++) {
+
+        for (int i=0;i<sx;i++)
+        {
+            bool add = true;
+            PixelChar& pc = m_data[i+x0 + (j+y0)*40];
+            int pi = 0;
+            bool found = false;
+            for (PixelChar& p : chars) {
+                if (found)
+                    break;
+                int metric = pc.CompareLength(p);
+//                int metric = pc.Compare(p);
+                if (metric <compression) {
+                    data[i + j*sx] = pi;
+                    found = true;
+                    break;
+
+                }
+                pi++;
+//                if (pi>255) exit(1);
+            }
+            if (!found) {
+                chars.append(pc);
+                data[i + j*sx] = chars.count()-1;
+                noChars++;
+
+            }
+            //        data[i]=i;
+        }
+    }
+
+    //QFile f(outFile);
+    //f.open(QFile::WriteOnly);
+    QByteArray out;
+    for (int i=0;i<maxChars;i++) {
+        if (i<chars.count()) {
+            for (int j=0;j<8;j++)
+                out.append(PixelChar::reverse(chars[i].p[j]));
+        }
+        else
+            for (int j=0;j<8;j++)
+                out.append((char)0);
+
+    }
+//    qDebug() << data.count();
+    //out.append(data);
+    chardata.append(out);
+    screen.append(data);
+/*    f.write(out);
+    f.write(data);
+
+    f.close();
+*/
+
+    delete ni;
+
+   // return out;
+
 
 }
