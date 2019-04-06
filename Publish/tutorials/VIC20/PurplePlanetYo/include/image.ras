@@ -1,0 +1,174 @@
+
+
+// Image in images/logo.flf
+
+// Size of image. Defined when creating and drawing the flf file
+// Bitmap will be loaded as a charset
+
+// Copy color data from bitmap data
+procedure PrintOrgText();
+begin
+	i:=0;
+	while (tp[0]<>0) then begin
+		j:=screenmemory[i];
+		
+		p1:=$1400;
+		
+		while (j>15) then begin inczp(p1,15*16); j:=j-15; end;
+		j:=j*16;
+		inczp(p1, j);
+
+		j:=tp[0];
+//		j:=66;
+		if (j<>$20) then begin
+			j:=j-64;
+			zp:=@fontAddress;
+			while (j>32) then begin inczp(zp,32*8); j:=j-32; end;
+			j:=j*8;
+			inczp(zp, j);
+			
+//			memcpy(zp,0,p1,8);
+/*			fill(p1,0,16);
+			zp[0]:=zp[0];
+			zp[0]:=zp[0];
+*/
+			for k:=0 to 16 do begin
+				l:=k/2;
+				m:=zp[l];
+				if (getbit(m,0)=1) then togglebit(m,1,1) else togglebit(m,1,0);
+				if (getbit(m,2)=1) then togglebit(m,3,1) else togglebit(m,3,0);
+				if (getbit(m,4)=1) then togglebit(m,5,1) else togglebit(m,5,0);
+				if (getbit(m,6)=1) then togglebit(m,7,1) else togglebit(m,7,0);
+				asm("		
+					lda m
+					ldy k
+					//and (p1),y
+					sta (p1),y
+
+				");
+//				p1[k]:=zp[k/2];
+			end;
+//			fill(p1,0,16);
+		end;
+
+		inc(i);
+		inczp(tp,1);
+	end;
+	
+
+end;
+
+procedure CopyImageColor();
+begin
+
+	zp:=@unpackAddress + @imageWidth*@imageHeight*8;
+//	
+	moveto(0,0,$94);
+	for j:=0 to @imageHeight do begin
+		for i:=0 to @imageWidth do begin
+			k:=zp[i]	 | zp[i+@imageWidth];
+//			k:=BLUE+8;
+			screenmemory[i]:=k;
+		end;
+		inczp(screenmemory,@imageWidth);
+		inczp(zp,@imageWidth*2);
+
+	end;
+
+end;
+
+Procedure InitImage();
+begin
+	vscroll:=220;
+	SCREEN_BG_COLOR:=PURPLE + BLUE*16;
+	i:=AUX_COLOR_AND_VOLUME;
+	i:=i&15;
+	AUX_COLOR_AND_VOLUME:=BLACK*16 +i;
+	// Auxilliary color is cyan
+//	AUX_COLOR_AND_VOLUME:=AUX_COLOR_AND_VOLUME | GREEN;
+	setscreenlocation($1000);
+	setcharsetlocation(@charsetAndBitmap);
+	SCREEN_TEXT_HEIGHT:=@imageHeight-1;
+	SCREEN_TEXT_WIDTH:=@imageWidth;
+	decrunch(charsetc);
+	blockmemcpy(^$1400,^$0400,4);
+	decrunch(logoc);
+	blockmemcpy(^@unpackAddress,^$1400,$C);
+	blockmemcpy(^$0400,^@fontAddress,4);
+
+	// Copy color data
+	CopyImageColor();
+//	$900E:=10;
+	c2x:=0;
+	// Draw 256 chars on the screen from 0 to 256
+	moveto(0,0,$10);
+	for i:=0 to 0 do begin
+		screenmemory[i]:=i;
+	end;
+	scroll:=0;
+	tt:=0;
+	
+//	AUX_COLOR_AND_VOLUME:=GREEN*16 | AUX_COLOR_AND_VOLUME;
+
+	// After this, some random raster effect
+	time:=128;
+	textCounterMax:=1;
+end;
+
+
+procedure RenderImageText();
+begin
+	
+end;
+
+
+Procedure RenderImage();
+begin
+
+	if (vscroll>vscrollTarget) then vscroll:=sine[time]+vscrollTarget-2;
+
+
+	RenderImageText();
+
+	if (transition=1) then begin
+		if (scroll<8) then begin
+			j:=0;
+			if (tt=0) then 
+				zp:=@charPos	
+			else begin
+				zp:=@charPos+$740;
+				j:=128;
+			end;
+			for i:=0 to j do begin
+				zp[scroll]:=0;
+				inczp(zp,8);
+			end;
+			inc(tt);
+			if (tt=2) then begin inc(scroll);tt:=0;end;
+		end;
+	end;
+	if (time&3=1) then inc(c2x);
+
+
+	if (c2x=27) then begin
+		tp:=title1;
+		screenmemory:=$1000 + 3+20*3;
+		PrintOrgText();
+		inc(c2x);
+	end;
+	if (c2x=33) then begin
+		tp:=title2;
+		screenmemory:=$1000 + 5+20*5;
+		PrintOrgText();
+		inc(c2x);
+	end;
+	if (c2x=40) then begin
+		tp:=title3;
+		screenmemory:=$1000 + 7+20*7;
+		PrintOrgText();
+		inc(c2x);
+	end;
+
+end;
+
+

@@ -1,0 +1,244 @@
+
+
+
+/*
+procedure GeneratePlasmaCharset();
+var 
+	quadrantx: array[4] of byte = (0,4,4,0);
+	quadranty: array[4] of byte = (0,0,4,4);
+begin
+	zp:=$1400;//+@plasmaChar*8;
+	memcpy(^$1400+^64*^8, 0,^$0400+^0,8);
+	memcpy(^$1400+^66*^8, 0,^$0400+^8,8);
+	memcpy(^$1400+^68*^8, 0,^$0400+^16,8);
+	memcpy(^$1400+^90*^8, 0,^$0400+^24,8);
+
+//	fill(^$0400+^8,255,64);
+	val:=0;
+	for i:=0 to 0 do begin
+		fill(zp,0,8);
+
+		
+		
+		for j:=0 to 8 step 2 do begin
+			k:=j;
+			c2x := quadrantx[j/2];
+			c2y := quadranty[j/2];
+			dx:=getbit(i,k+1);
+			dy:=getbit(i,k);
+			dx:=dx*2+dy;
+			p1:=$0400;
+			dx:=dx*32+48;
+			//inczp(p1,dx*8);
+			for x:=0 to 4 do begin
+				for y:=0 to 4 do begin
+					if peek(^@perlin,val)>dx then
+						togglebit(zp[y+c2y],x+c2x,1);
+					inc(val);
+
+				end;
+			end;
+			inc(val);
+
+		end;
+	
+
+		inczp(zp,8);
+	end;
+end;
+*/
+
+
+procedure GeneratePlasmaCharset();
+begin
+	
+	zp:=$1400+@plasmaChar*8;
+	p1:=$1400+@plasmaChar*8+32*8;
+	val:=0;
+	j:=0;
+
+
+
+
+	for i:=0 to 32 do begin
+		fill(zp,0,8);
+		fill(p1,255,8);
+		
+		for y:=0 to 8 do begin
+			for x:=0 to 8 do begin
+				if (peek(^@perlin,val)>j) then togglebit(zp[y],x,1);
+				inc(val);
+				if (peek(^@perlin,val)>j) then togglebit(p1[y],x,0);
+				inc(val);
+			end;
+		end;
+		inc(val);
+		inczp(zp,8);
+		inczp(p1,8);
+	//	if (j<235) then
+		j:=j+8;
+	end;
+end;
+
+procedure InitPlasma();
+begin
+	vscroll:=240;
+	SCREEN_BG_COLOR:=BLACK;
+	
+	fill(^$1000,$20,0);
+	fill(^$1100,$20,0);
+ 	decrunch(charsetc);
+	dx:=1;
+	charsetShift:=33;
+	InitCharset();	
+	fill(^$1400+^$20*^8,0,8);
+	decrunch(perlinc);
+
+	i:=AUX_COLOR_AND_VOLUME;
+	i:=i&15;
+	AUX_COLOR_AND_VOLUME:=14*16+i;
+
+
+	GeneratePlasmaCharset();
+	setcharsetlocation($1400);
+	setscreenlocation($1000);
+	fill(^$1000,64+32,0);
+	fill(^$1100,64+32,0);
+	fill(^$9400,6+8,0);
+	fill(^$9500,6+8,0);
+	textP:=textPlasma;
+	g1:=1;
+end;
+
+
+
+// Plasma procedure
+
+
+@define siny $0400
+@define sinx $0500
+@define y_start 1
+
+procedure InnerPlasma();
+begin
+	c2x:=dx;
+	c2y:=dy;
+	
+	shiftx:=shiftx+1;
+
+	// Set up y-sine table
+	for x:=0 to 23 do begin
+		j:=sine[c2x] + sine[c2y] - shiftx;
+		poke(^@siny,x,j);
+		c2x:=c2x+3;
+		c2y:=c2y+7;
+	end;
+
+	dx:=dx+2;
+	dy:=dy-3;
+
+
+	// Set up x-sine table
+	for x:=0 to 23 do begin 
+		j:=sine[c2x] + sine[c2y];
+		poke(^@sinx,x,j);
+		c2x:=c2x+2;
+		c2y:=c2y+5;
+
+	end;
+	// Move cursor to (1,y) on $0400 on bank 1
+	moveto(0,@y_start, $94);
+	p1:=screenmemory;	
+	moveto(0,@y_start, $10);
+	zp:=@perlin;	
+	tt:=1-time*8;
+	for y:=@y_start to 22 do begin
+		val:=peek(^@siny,y);
+		for x:=0 to g1 do begin
+			if (screenmemory[x]>63) then begin 
+				k:=zp[x]+tt;
+				k:=k+(peek(^@sinx,x) +val);
+				k:=k/4;
+				screenmemory[x]:=k + @plasmaChar;
+				k:=k/4;
+			end;
+//			p1[x]:=fade1[k]+8;
+//			p1[x]:=6+8;
+		end;
+		// Increase x by 40 (next row)
+		inczp(screenmemory, 22);
+		inczp(zp, 22);
+		inczp(p1,22);
+	end;
+	if g1<>22 then inc(g1);
+end;
+
+/*procedure InnerPlasma();
+begin
+	c2x:=dx;
+	c2y:=dy;
+	
+	shiftx:=shiftx+25;
+
+	// Set up y-sine table
+	for x:=0 to 46 do begin
+		j:=sine[c2x] + sine[c2y];// + shiftx;
+
+		poke(^@siny,x,j);
+		c2x:=c2x+4;
+		c2y:=c2y+9;
+	end;
+
+	dx:=dx+3;
+	dy:=dy-5;
+
+
+	// Set up x-sine table
+	for x:=0 to 44 do begin 
+		j:=sine[c2x] + sine[c2y];
+		poke(^@sinx,x,j);
+		c2x:=c2x+3;
+		c2y:=c2y+7;
+
+	end;
+	// Move cursor to (1,y) on $0400 on bank 1
+	moveto(0,@y_start, $10);
+	
+	for y:=0 to 44 step 2 do begin
+		val:=peek(^@siny,y);
+		l:=peek(^@siny,y+1);
+		xx:=0;
+		for x:=0 to 44 step 2 do begin
+			k:=(peek(^@sinx,x) +val)/32;
+			g1:=(peek(^@sinx,x+1) +val)/32;
+			k:=k|g1*4;
+			g1:=(peek(^@sinx,x+1) +l)/32;
+			k:=k|g1*16;
+			g1:=(peek(^@sinx,x) +l)/32;
+			k:=k|g1*64;
+			screenmemory[xx]:=k;
+			inc(xx);
+		end;
+		// Increase x by 40 (next row)
+		inczp(screenmemory, 22);
+	end;
+
+
+	
+
+end;
+*/
+
+procedure RenderPlasma();
+begin
+	vscroll:=vscrollTarget;
+	g0:=64;
+	if (startEffect=1) then 
+		InnerPlasma();
+
+	SCREEN_BG_COLOR:=BLACK;
+	PrintText();
+	if (transition=1) then ClearWithStripes();
+	//for i:=0 to 0 do poke(^$1000,i,i);
+
+end;

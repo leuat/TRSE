@@ -1,0 +1,196 @@
+procedure RenderNextPackedFrame2();
+begin
+//	moveto(5,2,$D8);
+//	cp:=screenmemory;
+
+/*	if (ignoreColor=0) then begin
+		i:=zp[0];
+		SCREEN_BG_COLOR:=i*16+8;
+
+	end;*/
+/*	i:=peek(^$900F,0);
+	i:=i|%00001000;
+	poke(^$900F,0,i);
+*/
+	inczp(zp,1);
+
+	g0:=zp[0];
+
+	for pass:=0 to 2 do begin
+
+	if pass=0 then
+		moveto(0,0,$10);
+
+	if pass=1 then
+		screenmemory:=$9400;
+//		moveto(0,0,$94);
+	
+	while (g0<>endChar) do begin
+	
+		if (zp[0] = skipChar) then begin
+			k:=zp[1];
+			inczp(screenmemory, k);
+			inczp(zp, 2);
+		
+		end
+		else 
+		begin
+			j:=animShift;
+//			if (pass=1) then j:=5;
+			screenmemory[0]:=zp[0]+j;//animShift;
+			inczp(screenmemory,1);
+			inczp(zp,1);
+		end;
+		g0:=zp[0];
+
+	end;
+
+	inczp(zp,1);
+	g0:=0;
+	end;
+
+	//for i:=0 to 10 do wait(255);
+
+	inc(curFrame);
+	nextTime := zp[0];
+	inczp(zp,1);
+	tt:=0;
+
+end;
+
+
+procedure ReadAnimationHeader();
+begin
+	zp:=@moviepos;
+	dx := zp[0];
+	dy := zp[1];
+	maxFrames := zp[2];
+	compressionType := zp[3];
+	hasTimeStamps:=zp[4];
+	endChar:=zp[5];
+	skipChar:=zp[6];
+	inczp(zp,7);
+	curFrame:=0;
+end;
+
+
+
+procedure UpdateIntroRaster();
+
+procedure InitLogoText();
+var
+	twisterColors: array[8] of byte;
+begin
+	TransitionH(CYAN, 0, 0);
+	SCREEN_BG_COLOR:=CYAN + CYAN*16+8;
+//	vscroll:=250;
+//	setscreenlocation($1000);
+//	setcharsetlocation($1400);
+	decrunch(logotextc);
+	decrunch(charsetc);
+	//animShift:=128;
+	ignoreColor:=0;
+	animShift:=0;
+	dy:=23;
+	dx:=22;
+	SCREEN_TEXT_HEIGHT:=dy*2;
+	SCREEN_TEXT_WIDTH:=dx;
+	ReadAnimationHeader();
+	//fill(^$9400,BLACK,0);
+	//fill(^$9500,BLACK,0);
+	time:=0;
+	RenderNextPackedFrame2();
+//	vscroll:=vscrollTarget;
+	fill(^@table,8+CYAN,128);
+	twisterColors[0]:=13*16+8+CYAN;
+	twisterColors[1]:=4*16+8+CYAN;
+	twisterColors[2]:=13*16+8+CYAN;
+	twisterColors[3]:=4*16+8+CYAN;
+
+	twisterColors[4]:=13*16+8+CYAN;
+	twisterColors[5]:=6*16+8+CYAN;
+	twisterColors[6]:=13*16+8+CYAN;
+	twisterColors[7]:=6*16+8+CYAN;
+	UpdateIntroRaster();
+	waitforraster(5);
+end;
+
+
+procedure RenderIntroBar();
+var 
+	aa,b,c,d:byte;
+begin
+	aa:=sine[k]/16;
+	b:=sine[k+100]/16;
+	c:=sine[k+100+28]/16;
+	d:=sine[k+228]/16;
+
+	k:=b-aa;
+	zp:=@table;
+	inczp(zp, aa+m);
+	if (k<127) then 
+		if k<>0 then
+			fill(zp, twisterColors[l], k); 
+	inc(l);
+
+	k:=c-b;
+	zp:=@table;
+	inczp(zp, b+m);
+	if (k<127) then 
+		if k<>0 then
+			fill(zp, twisterColors[l], k); 
+	inc(l);
+
+	k:=d-c;
+	zp:=@table;
+	inczp(zp, c+m);
+	if (k<127) then 
+		if k<>0 then
+			fill(zp, twisterColors[l], k); 
+	inc(l);
+
+	k:=aa-d;
+	zp:=@table;
+	inczp(zp, d+m);
+	if (k<127) then 
+		if k<>0 then
+			fill(zp, twisterColors[l], k); 
+	inc(l);
+
+end;
+
+
+procedure UpdateIntroRaster();
+begin
+	n:=rasterSpread+2;
+	fill(^@table,CYAN*16+8+CYAN,80);
+	k:=33+time*3 + sine[time]/4;
+	m:=sine[time]/n+12;
+	l:=0;
+	RenderIntroBar();
+	n:=rasterSpread+1;
+	k:=66-time*2 + sine[time+95]/6 + 100;;
+	l:=4;
+	m:=sine[time+128]/n+12;
+	RenderIntroBar();
+	
+end;
+
+procedure RenderLogoText();
+begin
+	SCREEN_BG_COLOR:=CYAN*16+CYAN+8;
+	noBalls := 22;
+	if (transition=0) then begin
+		if (vscroll>vscrollTarget) then
+			vscroll:=vscroll-4;
+
+	end
+	else
+		if vscroll<250 then vscroll:=vscroll+4;
+
+//	if (vscroll<vscrollTarget) then
+		RasterAllBars();	
+
+	SCREEN_BG_COLOR:=CYAN*16+CYAN+8;
+	UpdateIntroRaster();
+end;

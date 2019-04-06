@@ -1,0 +1,6 @@
+ras_include_file = packed_resources1.ras
+packed_address = $5800
+output_dir = compressed/
+use_exomizer3 = 0
+address_field = addr_data
+data = ,twisterc, data/twister2.bin, $4800, logoc, images/image.bin, $4800, twister2c, data/twister.bin, $4800, torusc, data/torus.bin, $4800, charsetc, charset/charset.bin, $1400, perlinc, data/perlin22.dat, $1e00, music, data/music.bin, $a000, boxc, data/box.bin, $4800, logotextc, images/logo.trm, $4800, wavesetc, charset/waveset.bin, $1400

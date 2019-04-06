@@ -735,12 +735,13 @@ void Methods6502::MemCpy(Assembler* as)
     QString bp1 = "";
     QString bp2 = "";
 
+    QString x = "x";
     if (m_node->m_params[2]->getType(as)==TokenType::POINTER) {
         bp1="(";
         bp2=")";
+        x="y";
     }
 
-    QString x = "x";
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER)
         x="y";
     as->Comment("memcpy");

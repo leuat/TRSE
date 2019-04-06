@@ -1,0 +1,171 @@
+procedure InitCharset();
+begin
+
+	zp:=$1400;
+	// Invert charset
+
+	if (dx=1) then
+	for i:=0 to 0 do begin
+		for j:=0 to 8 do begin
+			k:=zp[j];
+			asm("
+				lda k
+				eor #$FF
+				sta k
+			");
+			zp[j]:=k;
+		end;
+		inczp(zp,8);		
+	end;
+	if (charsetShift=0) then return();
+	zp:=$1400;
+
+	p0:=$1400+8;
+//	p1:=$1400;
+	p1:=$1400 + 8*charsetShift;
+//	for i:=0 to charsetShift do inczp(p1,8);	
+//	p1:=$1400+@charsetShift*8;
+
+
+	k:=255;
+	if (dx=0) then
+		k:=0;
+
+
+	for i:=0 to loadChars do begin
+		memcpy(p0,0,zp,8);
+
+		for j:=0 to 8 do 
+			p0[j]:=zp[j/2];
+
+		for j:=0 to 8 do 
+			
+			p1[j]:=zp[4+j/2];
+
+		p0[6]:=k;
+		p1[1]:=k;
+		p1[3]:=k;
+		p1[5]:=k;
+
+
+		inczp(p1,8);
+		inczp(p0,8);
+	end;
+end;
+
+procedure PrintText();
+begin
+	k:=textP[0];
+	if (k=0) then return();
+
+	if (textCounter<>0) then begin
+		dec(textCounter);
+		return();
+	end;
+	
+
+	if (k=@ccol) then begin
+		textColor:=textP[1];
+		inczp(textP,2);
+		return();
+	end;
+	if (k=@cstart) then begin
+		if textP[1]=128 then begin
+			musicRunning:=1;
+			inczp(textP,2);
+			return();
+		end;
+		startEffect:=textP[1];
+		inczp(textP,2);
+		return();
+	end;
+
+	if (k=@cpause) then begin
+		textCounter:=textP[1];
+		inczp(textP,2);
+		return();
+	end;
+
+	if (k=@cmove) then begin
+		moveto(textP[1], textP[2],$10);
+		tm:=screenmemory;
+		moveto(textP[1], textP[2],$94);
+		tc:=screenmemory;
+		inczp(textP,3);
+		return();
+	end;
+
+	if k>64 then begin
+		j:=k-64; 
+		tm[0]:=j;
+		tm[22]:=j+charsetShift-1;
+		tc[0]:=textColor;
+		tc[22]:=textColor;
+	end
+	else begin
+		if k=$20 then begin
+			tm[0]:=k;
+			tm[22]:=k;
+		end
+		else begin
+		j:=k; 
+		tm[0]:=j;
+		tm[22]:=j+charsetShift-1;
+		tc[0]:=textColor;
+		tc[22]:=textColor;
+
+		end;
+	end;
+	
+	inczp(tm,1);
+	inczp(tc,1);
+	inczp(textP,1);
+	if (textColor=0) then textCounter:=1
+	else
+		textCounter:=textCounterMax;
+end;
+
+procedure TransitionH(th_c, th_dc, th_inv:byte);
+begin
+	if (th_dc=1) then begin 
+		decrunch(charsetc);
+		setcharsetlocation($1400);
+
+	end;
+		zp:=$1400+$40*8;
+		if (th_inv=1) then 
+		for i:=0 to 64 do begin
+			k:=zp[i];
+asm("
+				lda k
+				eor #$FF
+				sta k
+");
+			zp[i]:=k;
+	
+		end;
+
+	val:=SCREEN_BG_COLOR;
+	for k:=0 to 32 do begin
+		waitforraster(1);
+//		SCREEN_BG_COLOR:=th_c;
+		zp:=$1000 + k - 8;
+		p1:=$9400 + k - 8;
+		for j:=0 to 23 do begin
+			for i:=0 to 8 do begin
+				l:=i+k;
+				if (l>8) then if (l<30) then begin 
+					zp[i]:=$47-i;
+					p1[i]:=th_c;
+				end;
+			end;
+			zp:=zp+22;		
+			p1:=p1+22;		
+		
+		end;
+//		i:=k*4;
+//		waitforraster(i);
+//		SCREEN_BG_COLOR:=val;
+//		waitforraster(9);
+	end;
+end;

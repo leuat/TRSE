@@ -1,0 +1,22 @@
+twisterc : IncBin("compressed//twisterc_c.bin", $5800);
+logoc : IncBin("compressed//logoc_c.bin", $592f);
+twister2c : IncBin("compressed//twister2c_c.bin", $5d68);
+torusc : IncBin("compressed//torusc_c.bin", $5e9b);
+charsetc : IncBin("compressed//charsetc_c.bin", $6710);
+perlinc : IncBin("compressed//perlinc_c.bin", $6aca);
+music : IncBin("compressed//music_c.bin", $6cc7);
+boxc : IncBin("compressed//boxc_c.bin", $70db);
+logotextc : IncBin("compressed//logotextc_c.bin", $762d);
+wavesetc : IncBin("compressed//wavesetc_c.bin", $76be);
+addr_data : array [20] of byte = (
+	47, 89,
+	104, 93,
+	155, 94,
+	16, 103,
+	202, 106,
+	199, 108,
+	219, 112,
+	45, 118,
+	190, 118,
+	206, 119
+);

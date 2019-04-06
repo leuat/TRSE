@@ -1,0 +1,514 @@
+program PPY;
+
+@define BuiltinMethodsLocation $7A00
+
+var  
+
+@ignoremethod "init_random_call"
+@ignoremethod "printdecimal"
+//@ignoremethod "init16x8div"
+
+@ignoremethod "init_random"
+//@ignoremethod "initprintstring"
+//@ignoremethod "initprintdecimal"
+
+
+@define SceneTwister 0
+@define SceneImage 1
+@define SceneCharback 2
+@define SceneRasters 3
+@define ScenePlasma 4
+@define SceneNext 5
+@define SceneLogoText 6
+@define SceneCharEffect 7
+@define SceneCharEffect2 8
+@define SceneSineEffect 9
+@define SceneDie 255
+
+@define imageWidth 20
+@define imageHeight 20
+
+@define perlin $1E00
+
+@define ddval 0
+
+@userdata "$4800" "$5800" "Decrunched data"
+@userdata "$1000" "$1200" "SCREEN"
+@userdata "$1400" "$1C00" "Charset data"
+@userdata "$A000" "$C000" "Uncompressed music"
+@userdata "$0400" "$0700" "Tables"
+
+@define unpackAddress $4800
+@define fontAddress $5000
+
+@define scrollerWriterPos $A000
+@define scrollerWriterPosHi $66
+
+
+//	sid1: incsid("music/unusable/merryxmas7A.sid",2);
+
+
+//	tst: incbin("images/logo.bin",$6000);
+
+	@define charsetAndBitmap $1400
+	@define charPos $1400
+	@define moviepos $4800
+
+//	@define wavechar $de
+	@define wavechar $e2
+//	@define wavechar $da
+	@define waveChar1 $78
+	
+	@define expc $80
+	@define creditsColor BLUE
+
+	@define wavepos $17C0
+//	@define wavepos $1408
+
+   	musicTicker, index, ntscSkip, maxMusicTicker, initComplete, nextTimeStamp, currentPos, transition, isInitialized: byte = 0; 
+	time,x,y,currentScene, nextScene, nextTime, skipChar, endChar, compressionType, hasTimeStamps, musicRunning : byte = 0;
+	textP,zp,tc,h1,tp,h2,l1,p0,p1,zp2,tm : pointer;
+	wrk:integer;
+//	pattern0: byte = 0; // Dummy pointer
+	scroll,scrollx,l,val,m, animShift,vscroll,cx,cy,idx, noBalls, ignoreColor,charVal,clearFlag,vscrollTarget : byte = 0;
+	goCrazy,isPal,pattern0:byte=1;
+	c2x,c2y, shiftx, clearVal:byte=0;
+	// Animation stuff
+	curFrame, maxFrames, pass, g0, g1,tmp, textCounter : byte = 0;
+	textColor, startEffect:byte=3;
+	textCounterMax,n : byte=3;
+	charsetShift,xx: byte= $ba;
+	rasterCount : byte = 76;
+	rasterBalls : byte = 22;
+	rasterSpread:byte=5;
+	rasterStart:byte=16;
+	upper,lower : byte;
+	i,j,dx,dy,k,t,time4, tt: byte;
+
+	bcolors : array[8] of byte = ($20, $B0,$C0, $D0,$E0, $F0,$F0, $F0, $F0,$F0, $F0);
+
+//	rCol : array[16] of byte = (0, 4, 4, 6, 6, 3,7,1,  1,7,3,6,6,4,4,0);
+	rasterCol : array[8] of byte = (0,4,6, 3,7,1,3,6,0 );
+	rCol : array[8] of byte = (0,0,0, 0,0,0,0,0,0 );
+//	rCol : array[16] of byte = (0, 4, 6, 4, 6, 3,7,1,  3,7,3,6,4,6,4,0);
+	eights : array[9] of byte = (0,0,8,16,24,32,40,48,56,64);
+
+
+	// 0010
+
+   	xp: byte; 
+
+
+	x,y,j,ttime,k,l,tt,m,t1,t2,current : byte = 0;
+	loadChars : byte = 30;
+
+/*
+	Scene Plasma
+	Tunnel
+	Rotator?
+	Change bg colors
+	Transitionss
+	Opening
+	Better text writer
+
+*/
+
+	timeStamps : array[16] of byte = (
+//				@SceneCharEffect, $90,0,0,0,0,
+//				@SceneCharEffect, $90,0,0,0,0,
+//				@SceneLogoText, $17, 0, 0, 0,0,
+//				@SceneCharEffect, $8B,0,0,0,0,
+//				@SceneTwister, $3A , 0, 0, 0,0,  // twister
+//				@SceneTwister, $2, 1, 0, 0,0,
+//				@SceneCharEffect, $60,0,0,0,0,
+
+
+				@SceneRasters, $11, 0, 0, 0,0,
+				@SceneLogoText, $17, 0, 0, 0,0,
+				@SceneImage, $1D, 0, 0, 0,0,
+				@SceneCharback, $28, 0, 0, 0,0,
+				@SceneNext, $34, 0, 0, 4,0,
+				@SceneTwister, $3A , 0, 0, 0,0,  // twister
+				@SceneCharback, $45, 1, 0, 0,0,
+				@SceneNext, $4E, 2, 0, 3,0,
+				@ScenePlasma, $56, 0 ,0, 0,0,
+				@SceneNext, $63, 1, 0, 6,0,
+				@SceneSineEffect, $6B,$00,0,0,0,
+				@SceneCharEffect, $8B,0,0,0,0,
+				@SceneDie, $FE, 0, 0, 0,0,
+);
+
+@include "packed_resources1.ras"
+
+ // pattern0: incbin("data/music.bin", $4000);
+
+
+@define sine2 $0400
+@define table $0500
+@define table2 $4800
+
+@define plasmaChar 64
+
+//pattern0: byte;
+
+/*@startblock $a000 "Test"
+	pattern:byte;
+@endblock
+*/
+
+/*@startblock $5000 "Tables"
+procedure WHOO1();
+var
+	table : array[320] of byte;
+	sine2 : array[256] of byte;
+
+@endblock
+*/
+
+procedure WHOO2();
+begin
+
+end;
+
+
+//@startblock $21FC Code2
+@startblock $2000 Code2
+
+
+
+procedure Texts();
+var
+
+//	bb:array [1024] of byte;
+	@define ccol $F0
+	@define cmove $F1
+	@define cpause $F2
+	@define cstart $F3
+	/*fade1: array[16] of byte = (
+		6,6,  4,4, 3, 7, 1, 1,7,3,4,4,6,6);  */ 
+	text1 : string = (
+					@cmove,1,16,@ccol, 6, "VIC IS NEARING",@ccol,4," FORTY", @cpause,32
+					@cmove,2,18,@ccol, 6, "STILL FEELS",@ccol,2," SPIFFY", @cstart ,128, @cstart,1,@cpause,32,
+					@cmove,1,16,@ccol, 0, "VIC IS TURNING FORTY", 
+
+					@cmove,0,16,@ccol, 6, "VIC ENJOYS", @ccol, 4, " SPACE TIME", 
+					@cmove,2,18,@ccol, 0, "VIC STILL FEEL SPIFFY ",
+					@cpause,128, 
+					@cmove,2,6,@ccol,0,"   LOVES TO", @ccol, 0, " MOVE", @cpause,128,
+					@cmove,0,16,@ccol, 0, "VIC ENJOYS SPACE TIME", 
+					@cmove,0,16,@ccol, 6, "FOUND", @ccol, 2, " PLANET",@ccol, 6, " TO",@ccol, 4," HAPPY", @cpause,0,
+					@cmove,2,6,@ccol,0,"                    ", 
+					@cmove,2,18,@ccol, 6, "  OH",@ccol,2," MR RASTER ", @cpause, 32, 
+					@cmove,6,20,@ccol, 6,"YOU SILLY GOOSE"
+	);
+
+	text2: string = (
+					@cmove,2,18,@ccol, 4, "PURPLE",@ccol,6," PLANET YO", @cpause,16,
+					@cmove,1,20,@ccol, 6, "FILLED WITH FRIENDS", 
+					@cstart,1, @cpause,64, 
+					@cmove,2,18,@ccol, 0, "PURPLE",@ccol,0," PLANET YO",
+					@cmove,1,20,@ccol, 0, "FILLED WITH FRIENDS", 
+					@cmove,4,18,@ccol, 6, "HIYA DR ",@ccol,2,"TORUS", @cpause,64,
+					@cmove,4,20,@ccol, 6, "SURE IS ",@ccol,2,"SWELL",  
+	);
+
+	text3 : string = (
+					@cmove,2,18,@ccol, 6, "VIC IS ",@ccol,2,"HAPPY", @cpause,16,
+					@cmove,1,20,@ccol, 6, "MRS BOX IS HERE TOO", 
+					@cstart,1, @cpause,64, 
+		/*			@cmove,2,18,@ccol, 0, "PURPLE",@ccol,0," PLANET YO",
+					@cmove,1,20,@ccol, 0, "FILLED WITH FRIENDS", 
+					@cmove,4,18,@ccol, 6, "HIYA MR ",@ccol,2,"TORUS", @cpause,64,
+					@cmove,2,20,@ccol, 6, "SURE FEELING ",@ccol,2,"SWELL", */ 
+	);
+	
+//	temptemp: string=("HALLA");
+
+	textTwister : string = (@cmove,0,4,@ccol, 6, "GOOD OL",@cmove,2,6,"MISTER",@ccol,2, 
+							@cmove,3,8,"TWISTER",@cstart,1,
+					@cpause,128,
+					@cmove,2,17,@ccol,4,"YUMMY"
+	);
+
+
+	textPlasma : string = (//@cmove,3,12,@ccol, 6, "VIC NEEDS TO EAT",@ccol,2, @cpause,32,
+							@cmove,5,14,@ccol, 4,"SPACE",@ccol, 2," PLASMA",@cstart,1, @cpause,100,
+							@cmove,1,17,@ccol, 6,"DELICIOUS",@cpause,8, " NUTRICIOUS",@cpause,8,
+							@cmove,5,19,@ccol, 6,"VIC IS HUNGRY",
+							//@cmove,2,12,@ccol, 0, 65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,65,@ccol,2
+	);  
+
+	textCredits : string = (@cpause,128,
+					@cmove,1,4,@ccol, 4, "PURPLE PLANET YO", @cpause,64,
+					@cmove,1,7,@ccol, 2, "CODE ",@ccol, 7,"LEUAT",  @cpause,32,
+					@cmove,1,10,@ccol, 2, "MUSIC ",@ccol, 7, "RAPHAELGOULART", @cpause,128,
+
+					@cmove,1,14,@ccol, 2, "PROXIMA AT", 
+					@cmove,1,17,@ccol, 7, "FJ+LLDATA 2019",0 
+	);
+
+
+	@define scrollerChar $a0
+	@define scrollerFixChar $b0
+	@define cmovex $f4
+
+	textScroller1 : string= (@cmovex, 4, @ccol, 12, "SO   " 
+						  @cmovex, 8, @ccol, 11,"MANY   ",
+						  @cmovex, 12, @ccol, 15,"FRIENDS        ");
+
+	textScroller2: string= (@cmovex, 4, @ccol, 8, "HUNGRY   "
+							@cmovex, 8, @ccol, 9, "FOR   ",   
+							@cmovex, 12, @ccol, 15, "LUV             ");
+
+	textScroller3: string= (@cmovex, 8, @ccol, 4, "LOVELY ",@ccol,6," PLANET        ",0);
+
+
+//	sCol: array[8] of byte = (4,4,4,4,4,4,4,4);
+
+	title1: string=("PURPLE");
+	title2: string=("PLANET");
+	title3: string=("YO");
+	title4: string=("NOT USED BUT FILLER");
+
+begin
+
+end;
+
+@include "include/chars.ras"
+@include "include/modmusic.ras"
+
+@include "include/charback.ras"
+@include "include/rasterbars.ras"
+@include "include/scenenext.ras"
+@include "include/twister.ras"
+@include "include/image.ras"
+@include "include/logotext.ras"
+@include "include/credits.ras"
+
+@include "include/chareffect.ras"
+
+@include "include/plasma.ras"
+
+interrupt MainIRQ();
+var 
+	cnt,c3:byte=0;
+begin
+	StartIRQ(0);
+	//if (1=2) then Texts();
+	if (musicRunning=1) then begin
+		musicRunning := 2;
+		AUX_COLOR_AND_VOLUME:=10;
+
+	end;
+	if (musicRunning=2) then begin
+	if (isPal=1) then  begin
+		PlayMod();
+		end
+	else
+	begin
+		if (ntscSkip<>0) then 
+			PlayMod();
+
+//		Play Mod();
+
+		dec(ntscSkip);
+		if ntscSkip>127 then ntscSkip:=5;
+
+	end;
+	end;
+/*		Play Mod();
+
+	if (musicTicker=0) then begin
+		musicTicker:=maxMusicTicker;
+			
+	end
+	else
+	dec(musicTicker);
+*/
+	VSCROLL_REGISTER:=vscroll;
+	
+	
+	CloseIRQ();
+end;
+
+procedure InitMainDemo();
+begin
+
+	DisableVIC20IRQ();
+	decrunch(music);
+	if (1=2) then ModMusic();
+	
+	isPal:=0;
+	vscrollTarget:=31;
+	maxMusicTicker:=4;
+	if PAL_OR_NTSC[0]=12 then begin
+		isPal:=1;
+		vscrollTarget:=38;
+		maxMusicTicker:=1;
+	end	
+	else 
+	begin
+		rasterCount:=60;
+		rasterBalls := 19;
+		rasterSpread:=6;
+		rasterStart:=10;
+	end;
+	time4:=0;
+	currentScene := timeStamps[0];
+	vscroll:=vscrollTarget;
+	//moveto
+
+
+	
+
+	/*
+		Cheat: Change mod pattern pos
+	*/
+	InitModPlayer($A0,$00);
+	AUX_COLOR_AND_VOLUME:=0;
+
+	if (isPal=1) then begin
+		VIAIRQ(MainIRQ(),$86,$56);
+	end
+	else begin
+		VIAIRQ(MainIRQ(),$43,$42);
+//		VIAIRQ(MainIRQ(),$86,$56);
+	end;
+
+end;
+
+
+procedure MainDemoStuff();
+begin
+	nextTimeStamp:=timeStamps[currentPos+1];
+	isInitialized := timeStamps[currentPos+3];
+
+	if (nextTimeStamp=time4+1) then transition:=1;
+
+	if (nextTimeStamp=time4 and isInitialized=0) then begin
+		timeStamps[currentPos+3]:=1;
+		currentPos:=currentPos+6;
+//		nextScene:=timeStamps[currentPos];
+		currentScene :=timeStamps[currentPos];
+		initComplete := 0;
+		transition:=0;
+	end;
+
+
+
+		if (initComplete=1) then begin
+			if (currentScene=@SceneTwister) then 
+				RenderTwister();
+
+			if (currentScene=@SceneImage) then 
+				RenderImage();
+
+			if (currentScene=@SceneCharback) then 
+				RenderCharback();
+
+			if (currentScene=@SceneRasters) then 
+				RenderRasterBars();
+
+			if (currentScene=@ScenePlasma) then 
+				RenderPlasma();
+
+			if (currentScene=@SceneNext) then 
+				RenderSceneNext();
+
+			if (currentScene=@SceneLogoText) then 
+				RenderLogoText();
+
+			if (currentScene=@SceneCharEffect) then 
+				RenderCharEffect();
+
+//			if (currentScene=@SceneCharEffect2) then 
+//				RenderCharEffect2();
+
+			if (currentScene=@SceneSineEffect) then 
+				RenderSineEffect();
+
+		end
+		else
+		begin
+			if (currentScene=@SceneTwister) then 
+				InitTwister();
+	
+			if (currentScene=@SceneImage) then 
+				InitImage();
+
+			if (currentScene=@SceneCharback) then 
+				InitCharback();
+
+			if (currentScene=@SceneRasters) then 
+				InitRasterbars();
+
+			if (currentScene=@ScenePlasma) then 
+				InitPlasma();
+
+			if (currentScene=@SceneNext) then 
+				InitSceneNext();
+
+			if (currentScene=@SceneLogoText) then 
+				InitLogoText();
+
+			if (currentScene=@SceneCharEffect) then 
+				InitCharEffect();
+
+//			if (currentScene=@SceneCharEffect2) then 
+//				InitCharEffect2();
+
+			if (currentScene=@SceneSineEffect) then 
+				InitSineEffect();
+
+			if (currentScene=@SceneDie) then begin
+				setcharsetlocation($8400);
+				fill(^$9400,BLACK,0);
+				fill(^$9500,BLACK,0);
+				fill(^$1100,$20,0);
+				fill(^$1000,$20,0);
+				DisableVIC20IRQ();
+				AUX_COLOR_AND_VOLUME:=0;
+				Loop();
+			end;
+		
+			initComplete := 1;
+			startEffect:=0;
+			clearVal:=0;
+		end;
+
+
+end;
+
+
+@endblock 
+
+
+
+
+procedure MainDemo();
+begin
+//	Loop();
+	InitMainDemo();
+	while (1=1) do begin
+//		waitforraster(0);
+
+		waitforraster(0);
+
+		inc(time);
+		if (time&63=63) then begin
+			inc(time4);
+		end;
+
+		MainDemoStuff();
+
+	end;
+
+
+end;
+
+
+
+begin
+
+	MainDemo();
+end.

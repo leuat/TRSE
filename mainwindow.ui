@@ -307,8 +307,6 @@
      <string>Tools</string>
     </property>
     <addaction name="actionTRSE_Settings"/>
-    <addaction name="actionMovie_Creator"/>
-    <addaction name="actionEffects"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">

@@ -52,7 +52,7 @@ begin
 	preventirq();
 	disableciainterrupts();
 	SetMemoryConfig(1,@useKernal,0);
+//	NMIIRQ(nmii());
 	StartRasterChain(RasterTop(),0,@useKernal);
-	NMIIRQ(nmii());
 	Loop();
 end.

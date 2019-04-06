@@ -1,0 +1,140 @@
+procedure RasterPAL();
+begin
+	waitforraster(24);
+	wait(8);
+	asm(" 
+		nop 
+		nop
+		nop
+		nop
+	");
+	for i:=0 to rasterCount do begin
+		SCREEN_BG_COLOR:=peek(^@table,i);
+		wait(noBalls);
+//		asm(" bit $ea ");
+		
+//		asm(" nop ");
+
+	end;	
+
+end;
+
+procedure RasterNTSC();
+begin
+	waitforraster(20);
+	wait(14);asm("nop");
+/*	asm(" 
+		nop 
+		nop
+		nop
+		nop
+	");*/
+	for i:=0 to rasterCount do begin
+		SCREEN_BG_COLOR:=peek(^@table,i);
+		wait(noBalls);
+		asm(" bit $ea ");
+		
+	//	asm(" nop ");
+
+	end;	
+
+end;
+
+
+procedure InitRasterbars();
+begin
+	TransitionH(BLACK, 1, 0);
+	SCREEN_TEXT_WIDTH:=22;
+	SCREEN_TEXT_HEIGHT:=46;
+//	blockmemcpy(^$8000,^$1400,8);
+	decrunch(charsetc);
+	dx:=1;
+	SCREEN_BG_COLOR:=BLACK;
+	InitCharset();
+	for i:=0 to 0 do begin
+		j:=i&3;
+		poke(^@table,i,0);//table[i]:=0;//j | j*16;
+	end;
+	fill(^$1000,$20+128,0);
+	fill(^$1100,$20+128,0);
+	fill(^$9400,BLUE,0);
+	fill(^$9500,BLUE,0);
+	cx:=0;
+//	blockmemcpy(^$8000,^$1400,8);
+//	SCREEN_BG_COLOR:=RED+ WHITE*16;
+	setcharsetlocation($1400);
+	setscreenlocation($1000);
+	noBalls:=1;
+	for i:=0 to 9 do rasterCol[i]:=rasterCol[i]| rasterCol[i]*16;
+	//printstring("HALLA",0,40);
+		
+	for i:=0 to 0 do poke(^@table2, i, sine[i]/rasterSpread);
+
+	textP:=text1;
+end;
+
+
+procedure FillRaster();
+begin
+	j:=k+16;
+//	if j>100 then j:=100;
+	l:=0;
+//	if (k<>j) then
+	zp:=@table;
+	inczp(zp, k+rasterStart);
+	memcpy(rCol,0, zp,9);
+/*	for i:=k to j do begin
+		table[i]:=rCol[l];
+		l:=l+1;
+	end;*/
+end;
+
+
+procedure RasterAllBars();
+begin
+	if (isPal=1) then RasterPAL()
+	else RasterNTSC();
+
+end;
+
+procedure RenderRasterBars();
+begin
+	SCREEN_BG_COLOR:=BLACK;
+	// 21
+	noBalls := rasterBalls;
+
+	RasterAllBars();
+	SCREEN_BG_COLOR:=BLACK;
+//	if (time&31=31) then inc(noBalls);
+	PrintText();
+
+	if (startEffect=0) then return();
+
+	x:=time;
+	if (transition=0) then begin
+		if (time&7=7) then 
+			if (cx<9) then begin		
+				rCol[cx]:=rasterCol[cx];
+				inc(cx);	
+			end;
+	end
+	else
+	begin
+		if (time&7=3) then 
+		if cx<>0 then 
+			begin
+				rCol[cx]:=0;
+				dec(cx);
+			end;
+
+	end;
+	
+//	if cx<>0 then
+	for y:=0 to 16 do begin
+		k:=peek(^@table2,x);
+		FillRaster();
+		x:=x+6;
+	end;
+
+
+end;

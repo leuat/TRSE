@@ -1,0 +1,217 @@
+
+procedure CopyCharback();
+begin
+	zp:=@unpackAddress;
+
+	if (k<>0) then 
+		for i:=0 to k do inczp(zp, 4*4*8);
+
+	p1:=$1600;
+	if (l<>0) then inczp(p1,l);
+	memcpy(zp,0,p1,4*4*8);
+
+end;
+
+
+procedure ClearWithStripes();
+begin
+	if (clearVal=24) then return();
+
+	moveto(0,clearVal,$10);
+	for i:=0 to 22 step 2 do screenmemory[i]:=$20;
+	moveto(0,clearVal,$94);
+	for i:=0 to 22 step 2 do screenmemory[i]:=0;
+	moveto(0,23-clearVal,$10);
+	for i:=0 to 22 step 2 do screenmemory[i+1]:=$20;
+	moveto(0,23-clearVal,$94);
+	for i:=0 to 22 step 2 do screenmemory[i+1]:=0;
+	if (time&1=1) then 
+		inc(clearVal);
+end;
+
+
+procedure PrintCharback();
+begin
+	screenmemory[0]:=k;
+	screenmemory[1]:=k+1;
+	screenmemory[2]:=k+2;
+	screenmemory[3]:=k+3;
+	screenmemory[22]:=k+4;
+	screenmemory[23]:=k+5;
+	screenmemory[24]:=k+6;
+	screenmemory[25]:=k+7;
+	screenmemory[44]:=k+8;
+	screenmemory[45]:=k+9;
+	screenmemory[46]:=k+10;
+	screenmemory[47]:=k+11;
+	screenmemory[66]:=k+12;
+	screenmemory[67]:=k+13;
+	screenmemory[68]:=k+14;
+	screenmemory[69]:=k+15;
+
+end;
+
+procedure RenderBackground();
+begin
+	if (dx>250) then return();
+	zp:=$1C00;
+	p0:=$1000;
+	p1:=$1E00; // perlin
+	j:=dy*22;
+	if (dy<>0) then begin
+		inczp(zp,j);	
+		inczp(p0,j);
+		inczp(p1,j);
+	end;
+
+	for j:=0 to 6 do begin
+/*		for i:=0 to 22 do begin
+			
+
+			if (p1[i]<dx) then p0[i]:=zp[i];
+
+		end;*/
+		asm("
+			ldy #0
+rbl:
+			lda (p1),y
+			cmp dx
+			bcs trall
+			lda (zp),y
+			sta (p0),y
+trall:
+			iny
+			cpy #22
+			bne rbl
+
+
+
+		");
+		inczp(p1,22*3);
+		inczp(p0,22*3);
+		inczp(zp,22*3);
+	end;
+
+	
+	dx:=dx+1;
+	inc(dy);
+	if (dy=3) then dy:=0;	
+
+end;
+
+procedure InitCharback();
+
+begin
+//	moveto(0,0,$10);
+	y:=0;
+	x:=0;
+//	blockmemcpy(^$8000,^$1400,4);
+		fill(^$1400+^$20*^8+^128*^8,0,8);
+		fill(^$1400+^$20*^8,0,8);
+	
+	fill(^$1000,$20+128,0);
+	fill(^$1100,$20+128,0);
+	fill(^$1C00,$20+128,0);
+	fill(^$1D00,$20+128,0);
+//	decrunch(backgroundc);
+	//animShift:=128;
+
+	g0:=timeStamps[currentPos+2];
+
+	decrunch(charsetc);
+	fill(^$1400+^$20*^8+^128*^8,0,8);
+	fill(^$1400+^$20*^8,0,8);
+	dx:=1;
+	charsetShift := $ba;
+	InitCharset();
+	fill(^$1400+^$20*^8+^128*^8,0,8);
+	fill(^$1400+^$20*^8,0,8);
+//	fill(^$14000
+//	ReadAnimationHeader();
+//	RenderNextPackedFrame2();
+	fill(^$9400, WHITE+8, 0);
+	fill(^$9500, WHITE+8, 0);
+
+	textCounterMax:=3;
+
+	SCREEN_TEXT_WIDTH:=22;
+	SCREEN_TEXT_HEIGHT:=46;
+
+	decrunch(perlinc);
+	scroll:=0; // Current scene
+	if (g0=1) then 
+		decrunch(boxc);
+	if (g0=0) then 
+		decrunch(torusc);
+
+
+	SCREEN_BG_COLOR:=BLUE+BLACK*16;
+	i:=AUX_COLOR_AND_VOLUME;
+	i:=i&15;
+	AUX_COLOR_AND_VOLUME:=CYAN*16 | i;
+	setcharsetlocation($1400);
+	vscroll:=250;
+
+	dx:=40;
+	dy:=0;
+	l:=0;
+	for i:=0 to 5 do begin
+		x:=i*4;
+		if (g0=1) then inc(l);
+//		inc(l);
+
+		if (l=2) then l:=0;
+		for j:=0 to 5 do begin
+			y:=j*4;
+			moveto(x+1,y+2,$1C);
+			k:=64;
+//			if (g0=0) then begin
+				if (l=1) then k:=64+16;
+				inc(l);
+				if (l=2) then l:=0;
+//			end;
+			PrintCharback();
+		end;
+
+	end;
+
+	if (g0=0) then 
+		textP:=text2;
+	if (g0=1) then 
+		textP:=text3;
+
+
+	g1:=0;
+
+end;
+
+
+procedure RenderCharback();
+begin
+	vscroll:=vscrollTarget;
+	k:=scroll;
+	l:=0;
+	CopyCharback();
+	k:=(31-scroll+16+g0)&31;
+	if (g0=0) then 	k:=(scroll+16+g0)&31;
+
+	l:=16*8;
+	CopyCharback();
+
+	if (transition=1) then ClearWithStripes();
+
+	PrintText();
+
+	if (time & 3=3) then begin
+		inc(scroll);
+//		inc(g0);
+	end;
+	if (startEffect=1) then 
+		RenderBackground();
+
+
+
+	if (scroll=32) then scroll:=0;
+
+
+end;

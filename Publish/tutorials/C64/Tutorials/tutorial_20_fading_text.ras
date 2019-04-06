@@ -7,7 +7,7 @@ var
 @define screenPos $04	
 
 	// Colors to fade between, one per frame
-	colors: array [20] of byte = (0,11,6,12,12,4,14,15,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,15,14,4,12,12,6,11,0); 
+	colors:  array[34] of byte = (0, $06,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06,$06);
 
 
 	// Current texts, supports @max 
@@ -77,7 +77,7 @@ begin
 	i:=0;
 	// Write chars as long as char isn't zero 
 	while (textPtr[0]<>0) do begin
-		colorPtr[i]:=BLACK; // Should be black!
+		colorPtr[i]:=0; // Should be black!
 		val:=textPtr[0];
 		if (val>64) then val:=val-64; // Petscii/c64 codes etc
 		screenmemory[i]:=val;
@@ -105,7 +105,9 @@ begin
 			text_time[i]:=text_time[i]-1; // damn dec doesn't work
 			val:=colors[text_time[i]];
 			moveto(text_x[i],text_y[i],$D8);
-			for j:=0 to text_len[i] do screenmemory[j]:=val;
+			j:=text_len[i];
+			fill(screenmemory,val,j);
+//			for j:=0 to text_len[i] do screenmemory[j]:=val;
 
 		end;
 	end; 
@@ -120,7 +122,7 @@ procedure Update();
 begin
 	inc(time1);
 	// Every second frame, update colors
-	if (time1&1=0) then
+//	if (time1&1=0) then
 		UpdateTextColors();
 	// Every 7th frame, advance timer
 	if (time1&7=0) then begin	
@@ -144,6 +146,7 @@ begin
 	SCREEN_FG_COL:=BLACK;
 	textPtr:=demotext;
 	ClearScreen($20,^$0400);
+	ClearScreen(00,^$D800);
 
 	while (1=1) do Update();
 

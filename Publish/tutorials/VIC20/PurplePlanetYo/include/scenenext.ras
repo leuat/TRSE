@@ -1,0 +1,184 @@
+/*procedure GenerateWeirdCharset();
+begin
+	zp:=$1400+@scrollerChar*8;
+	for i:=0 to 8 do begin
+		fill(zp,0,8);
+		j:=7-i;
+		
+		for k:=j to 8 do begin
+			zp[k]:=%01010101;
+		end;
+		inczp(zp,8);
+	end;
+	fill(zp,%01010101,16);
+end;
+*/
+
+procedure RenderScrollerText();
+begin
+	if (tp[0]=@cmovex) then begin
+		dx:=tp[1];
+		inczp(tp,2);
+		scroll:=-1;
+		return();
+	end;
+	if (tp[0]=@ccol) then begin
+		SCREEN_BG_COLOR:=tp[1]*16+dy;
+		inczp(tp,2);
+		scroll:=-1;
+		return();
+
+	end;
+	zp:=$1400;
+	if tp[0]=0 then return();
+	j:=tp[0];
+	if (j<>$20) then begin
+	if j>64 then j:=j-64;
+
+	zp:=$1400 + j*8;
+
+	for i:=0 to 8 do begin
+		j:=getbit(zp[scroll],7-i);
+		k:=$20;
+		if j=1 then k:=@scrollerChar;
+		screenmemory[i]:=k;
+//		inczp(screenmemory,1);
+
+	end;
+	end;
+
+
+end;
+
+
+procedure InitSceneNext();
+begin
+	dy:=timeStamps[currentPos+4];
+	decrunch(charsetc);
+	TransitionH(dy, 0, 1);
+
+	if (timeStamps[currentPos+2]=0) then 
+		tp:=textScroller1;
+
+
+	if (timeStamps[currentPos+2]=1) then 
+		tp:=textScroller2;
+
+	if (timeStamps[currentPos+2]=2) then 
+		tp:=textScroller3;
+
+//	tp:=textScroller1;
+	decrunch(perlinc);
+	setcharsetlocation($1400);
+	SCREEN_TEXT_WIDTH:=22;
+	SCREEN_TEXT_HEIGHT:=46;
+
+/*	fill(^$1000,$20,0);
+	fill(^$1100,$20,0);
+	fill(^$9400,dy,0);
+	fill(^$9500,dy,0);*/
+//	SCREEN_BG_COLOR:=12*16+dy;
+
+	scroll:=0;
+	for i:=0 to 0 do poke(^@sine2,i,sine[i]/42);;
+/*	zp:=^$9400+^8*^22;
+	for i:=0 to 8 do begin
+		fill(zp, sCol[i], 22);
+		inczp(zp,22);
+	end;*/
+/*	fill(^$1000+^12,@scrollerFixChar,8);
+	fill(^$1000+^12+^22*^22,@scrollerFixChar+1,8);
+
+	moveto(12,0,$94);
+	for i:=0 to 23 do begin
+		j:=6;
+		if (i=0 or i=22) then j:=4;
+		fill(screenmemory, j, 8);
+		inczp(screenmemory,22);
+	end;
+*/
+	dx:=1;
+end;
+
+
+
+procedure UpdateScreen2();
+begin
+	zp:=@perlin;
+	tt:=time*4;
+	m:=@scrollerChar;
+	
+	for j:=0 to 20 do begin
+		for i:=0 to 8 do begin
+			k:=screenmemory[i];
+			if (k>m) then begin
+				l:=tt-j;
+				//l:=l;
+				k:=peek(^@sine2,l)+2;
+				if (k>j) then k:=j;
+				l:=22-j;
+				if (k>l) then k:=l;
+				screenmemory[i]:=k+$af;
+			end;
+			
+		end;
+		inczp(screenmemory,22);
+		inczp(zp,22);
+	end;
+	
+
+end;
+
+procedure ScrollerCopyScreen();
+begin
+		zp:=screenmemory;
+		inczp(zp,22);
+			for j:=0 to 20 do begin
+				memcpy(zp,0,screenmemory,16);
+				inczp(screenmemory,22);
+				inczp(zp,22);
+			end;
+
+
+end;
+
+
+procedure RenderSceneNext();
+begin
+	tt:=time&3;
+//	SCREEN_BG_COLOR:=8;
+//	if (transition=0) then begin
+		vscroll:=vscrollTarget-tt;
+		VSCROLL_REGISTER:=vscroll;
+/*	end
+		else begin
+			if vscroll<240 then vscroll:=vscroll+8;
+			VSCROLL_REGISTER:=vscroll;
+			SCREEN_BG_COLOR:=PURPLE + PURPLE*16;
+			return();
+		end;
+*/
+	if (tt=0) then begin
+		moveto(dx,1,$10);
+		ScrollerCopyScreen();
+	end;
+	if (tt=1) then begin
+		moveto(dx,21,$10);	
+		RenderScrollerText();
+
+		inc(scroll);
+		if (scroll=8) then begin
+			scroll:=0;
+			inczp(tp,1);
+		end;
+
+	end;
+//*/	
+	if tt>1 then begin
+		moveto(dx,1,$10);
+		UpdateScreen2();
+	//	moveto(14,0,$10);
+	//	UpdateScreen2();
+	end;
+
+end;

@@ -1,0 +1,168 @@
+procedure RenderCharEffectBackground2();
+begin
+	if (dy=23) then return();
+	zp:=$1000+22*dy;
+	for j:=dy to dy+1 do begin
+		for i:=0 to 22 do  begin
+//			b:=1 + i&3;
+
+			k:=i&7;
+			l:=@expc;
+			n:=(j+i)&1;
+			if (n=0) then l:=@expc+40;
+			k:=k+l;
+			zp[i]:=k;
+		end;
+		inczp(zp,22);
+	end;
+	inc(dy);
+end;
+
+
+
+procedure RenderCharEffectBackground();
+begin
+	zp:=$1000;
+	for j:=0 to 23 do begin
+		for i:=0 to 22 do  begin
+			b:=1 + i&3;
+
+			k:=i +j*3;
+			l:=(j&7)*4 + @waveChar1;
+//			if (j&1=0) then l:=@waveChar1 el
+			k:=k&3 + l;
+			zp[i]:=k;
+		end;
+		inczp(zp,22);
+	end;
+
+end;
+
+procedure InitCharEffect();
+begin
+//	SCREEN_BG_COLOR:=PURPLE + 16*PURPLE;
+	//SCREEN_TEXT_WIDTH:=22;
+//	TransitionH(BLUE, 1, 1);
+	
+
+	vscroll:=250;
+	setscreenlocation($1000);
+	setcharsetlocation($1400);
+	decrunch(wavesetc);
+	memcpy(^$1400,0,^$0400, 8*8);
+	memcpy(^$1400+^40*^8,0,^$0400+^64, 8*8);
+
+	decrunch(charsetc);
+	//animShift:=128;
+	ignoreColor:=0;
+	dy:=23;
+	dx:=22;
+	SCREEN_TEXT_HEIGHT:=dy*2;
+	SCREEN_TEXT_WIDTH:=dx;
+	fill(^$9400,BLUE,0);
+	fill(^$9500,BLUE,0);
+	SCREEN_BG_COLOR:=8;
+//	SCREEN_BG_COLOR:=@creditsColor*16 + @creditsColor+8;
+	fill(^$1000,$20,0);
+	fill(^$1100,$20,0);
+	//RenderCharEffectBackground2();
+
+/*	zp:=@table2;
+	memcpy(^$1400+^@wavechar*^8,0,^$1400+^@waveChar1*^8,8*4);
+
+	for i:=0 to 33 do begin
+		memcpy(^$1400+^@waveChar1*^8,0,zp,32);
+		RightBitShift(^$1400+^@waveChar1*^8,4);
+		inczp(zp,32);
+	end;
+*/
+	twisterColors[0]:=0*16+@ddval+@creditsColor;
+	twisterColors[1]:=2*16+@ddval+@creditsColor;
+	twisterColors[2]:=0*16+@ddval+@creditsColor;
+	twisterColors[3]:=2*16+@ddval+@creditsColor;
+
+	twisterColors[4]:=0*16+@ddval+@creditsColor;
+	twisterColors[5]:=4*16+@ddval+@creditsColor;
+	twisterColors[6]:=0*16+@ddval+@creditsColor;
+	twisterColors[7]:=4*16+@ddval+@creditsColor;
+
+
+	dx:=0;
+	charsetShift :=$ba;
+	loadChars := $39;
+	InitCharset();
+
+	textP:=textCredits;
+	scroll:=10;
+	memcpy(^$0400,0,^$1400+^@expc*^8, 8*8);
+	memcpy(^$0400+^64,0,^$1400+^40*^8+^@expc*^8, 8*8);
+	dy:=1;
+	
+
+end;
+
+
+procedure RenderCharEffect();
+begin
+	RenderCharEffectBackground2();
+
+	PrintText();
+//	if (isPal=1) then 
+//		RenderLogoText();
+
+	vscroll:=vscrollTarget;	
+/*	p1:=^$1400+^@waveChar1*^8;
+	j:=time*2;
+	if (time&1=1) then begin
+		p1:=^$1400+^@waveChar1*^8 +^32*^4;
+		j:=j+128;
+
+	end;
+*/
+
+//	if (time&1=0) then begin
+	RightBitShift(^$1400+^@expc*^8,8);
+	RightBitShift(^$1400+^@expc*^8+^40*^8,8);
+/*	end
+	else begin
+
+	p1 := ^$1400+^@expc*^8;
+	zp:=^$1400+^@expc*^8 + ^40*^8;
+	for i:=0 to 8 do begin
+		
+		k:=p1[0];
+		for j:=0 to 7 do p1[j]:=p1[j+1];
+		p1[7]:=k;
+
+		k:=zp[0];
+		for j:=0 to 7 do 
+			zp[j]:=zp[j+1];
+		zp[7]:=k;
+
+		inczp(zp,8);
+		inczp(p1,8);
+
+	end;	
+	end;
+*/
+
+/*	k:=time&3;
+	p1:=^$1400+^@waveChar1*^8;
+	inczp(p1,k*64);
+	//if (k<>0) then for i:=0 to k do 
+	//	inczp(p1,32);
+	j:=j+k*64;
+	
+*/
+/*	for i:=0 to 4 do begin
+		wrk:=(sine[j]/8)- time;
+		wrk:=wrk&31;
+		zp:=@table2+wrk*32;
+		memcpy(zp,0,p1,32);
+		inczp(p1,32);
+		j:=j+32;
+	end;	*/	
+	if (scroll<>0) then if (time&63=0) then dec(scroll);
+	AUX_COLOR_AND_VOLUME:=scroll;
+	vscroll:=vscrollTarget;
+end;

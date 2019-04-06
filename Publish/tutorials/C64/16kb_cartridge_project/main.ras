@@ -1,6 +1,7 @@
 program CRTProject;
 var  
    index: byte; 
+ // MUST be exomized!
 begin
 	clearscreen($20,^$0400);
 	clearscreen(LIGHT_GREEN,^$D800);

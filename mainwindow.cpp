@@ -523,7 +523,7 @@ QString MainWindow::getProjectPath()
 void MainWindow::FindFileDialog()
 {
 
-    QStringList lst = QStringList() <<"*.asm" << "*.ras" << "*.prg" << "*.flf" << "*.paw";
+    QStringList lst = QStringList() <<"*.asm" << "*.ras" << "*.fjo" << "*.flf" << "*.paw";
     QDirIterator it(getProjectPath(), lst, QDir::Files, QDirIterator::Subdirectories);
     QVector<QString> files;
     while (it.hasNext()) {
