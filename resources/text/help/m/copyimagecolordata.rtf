@@ -1,0 +1,12 @@
+<p>First parameter is data address, second is which bank to use (0-3)
+<p>Used for copying image color data exported with TRSE. Data is stored as the following:
+<p><b>Bytes</b>
+<p>0-1 : Background color<br>
+2-1001 : Color data (for $0400, both nibbles)
+1002-2002 : Color data (for $D800, low nibble only)
+<p><b>Usage</b>
+<code>
+CopyImageColorData(myColorData, 1); //copies data from myColorData to color ram in bank 1 /$D800
+</code>
+
+
