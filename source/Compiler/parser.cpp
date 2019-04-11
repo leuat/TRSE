@@ -829,15 +829,17 @@ void Parser::PreprocessReplace()
 //    qDebug() << m_preprocessorDefines.keys();
 }
 
-Node* Parser::Parse(bool removeUnusedDecls, QString param)
+Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines)
 {
     // Call preprocessor for include files etc
+    qDebug() << globalDefines;
+    m_lexer->m_orgText = m_lexer->m_orgText + "\n" + globalDefines+"\n";
+
     m_lexer->m_text = m_lexer->m_orgText;
     m_pass = 0;
     Preprocess();
     m_pass = 1;
     m_parserBlocks.clear();
-
     m_symTab = new SymbolTable();
     m_lexer->Initialize();
     m_lexer->m_ignorePreprocessor = true;

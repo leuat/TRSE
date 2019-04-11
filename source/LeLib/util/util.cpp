@@ -333,6 +333,20 @@ void Util::SaveByteArray(QByteArray &data, QString file) {
 
 }
 
+QString Util::fromStringList(QStringList lst)
+{
+    QString ret;
+    int i=0;
+    for (QString s : lst) {
+        ret+=s;
+        if (i!=lst.count()-1)
+            ret+="\n";
+        i++;
+    }
+
+    return ret;
+}
+
 QString Util::findFileInSubDirectories(QString search, QString dir, QString extension)
 {
     QDir directory(dir);

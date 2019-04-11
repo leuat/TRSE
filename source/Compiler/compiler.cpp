@@ -36,10 +36,9 @@ void Compiler::Parse()
     m_parser->m_preprocessorDefines[m_ini->getString("assembler").toUpper()]=1;
     //qDebug() << "******" << m_ini->getString("assembler").toUpper();
     try {
-
-        m_tree = m_parser->Parse(m_ini->getdouble("optimizer_remove_unused_symbols")==1.0 &&
+        m_tree = m_parser->Parse( m_ini->getdouble("optimizer_remove_unused_symbols")==1.0 &&
                                  Syntax::s.m_currentSystem!=Syntax::NES
-                                 ,m_projectIni->getString("vic_memory_config"));
+                                 ,m_projectIni->getString("vic_memory_config"),Util::fromStringList(m_projectIni->getStringList("global_defines")));
         //qDebug() << m_parser->m_preprocessorDefines["ORGASM"];
         //exit(1);
     } catch (FatalErrorException e) {
@@ -86,6 +85,8 @@ bool Compiler::Build(Compiler::Type type, QString project_dir)
     m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal4");
 
 
+
+
     if (m_projectIni->getdouble("override_target_settings")==1) {
         Syntax::s.m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
         Syntax::s.m_programStartAddress = Syntax::s.m_startAddress+10;//Util::NumberFromStringHex(m_ini->getString("override_target_settings_org"));
@@ -103,7 +104,6 @@ bool Compiler::Build(Compiler::Type type, QString project_dir)
         Syntax::s.m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
         Syntax::s.m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
     }
-
 
     if (m_tree!=nullptr)
         try {

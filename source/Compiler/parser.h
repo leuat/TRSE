@@ -94,7 +94,7 @@ public:
 
     int findPage();
 
-    Node* Parse(bool removeUnusedDecls, QString param);
+    Node* Parse(bool removeUnusedDecls, QString param, QString globalDefines);
     Node* Variable();
     Node* Empty();
     Node* AssignStatement();

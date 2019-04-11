@@ -43,7 +43,7 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -737,6 +737,29 @@ p, li { white-space: pre-wrap; }
          <property name="text">
           <string>Override default target settings</string>
          </property>
+        </widget>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>250</y>
+           <width>621</width>
+           <height>201</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Global project defines</string>
+         </property>
+         <widget class="QPlainTextEdit" name="txtGlobalDefines">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>20</y>
+            <width>621</width>
+            <height>171</height>
+           </rect>
+          </property>
+         </widget>
         </widget>
        </widget>
        <widget class="QWidget" name="tab_4">

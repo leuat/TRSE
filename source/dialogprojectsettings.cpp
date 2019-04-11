@@ -58,6 +58,8 @@ void DialogProjectSettings::FillFromIni()
 
     ui->leZeropages->setText(  fromStringList(m_ini->getStringList("zeropages")));
 
+    ui->txtGlobalDefines->setPlainText(Util::fromStringList( m_ini->getStringList("global_defines")));
+
     ui->leTempZP->setText(  fromStringList(m_ini->getStringList("temp_zeropages")));
 
     ui->cmbSystem->setCurrentText(m_ini->getString("system"));
@@ -159,6 +161,8 @@ void DialogProjectSettings::FillToIni()
     m_ini->setFloat("background_color", ui->leBackgroundColor->text().toInt());
     m_ini->setString("machine_state", ui->leInitMachineState->text());
 
+    m_ini->setStringList("global_defines", ui->txtGlobalDefines->toPlainText().split("\n"));
+    qDebug() << ui->txtGlobalDefines->toPlainText().split("\n");
     m_ini->setString("zeropage_decrunch1", Util::numToHex(Util::NumberFromStringHex(ui->leDecrunchZp1->text())));
     m_ini->setString("zeropage_decrunch2", Util::numToHex(Util::NumberFromStringHex(ui->leDecrunchZp2->text())));
     m_ini->setString("zeropage_decrunch3", Util::numToHex(Util::NumberFromStringHex(ui->leDecrunchZp3->text())));
