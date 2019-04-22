@@ -62,6 +62,18 @@ public:
 
 };
 
+
+
+
+class ShapeBoxFilter : public ToolboxItem {
+public:
+    void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
+
+    ShapeBoxFilter();
+    ShapeBoxFilter(QString name, QString imagefile) : ToolboxItem(name, imagefile) { }
+
+};
+
 class Circle : public ToolboxItem {
 public:
     void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;

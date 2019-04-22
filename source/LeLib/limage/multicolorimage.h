@@ -52,6 +52,8 @@ public:
     void Reorganize(unsigned char bitMask, unsigned char Scale,unsigned char minCol, unsigned char maxCol, unsigned char bgCol);
     int Count(unsigned int col, unsigned char bitMask, unsigned char Scale);
 
+
+
     int Compare(PixelChar& other) {
         int l = 0;
         for (int i=0;i<8;i++)
@@ -155,6 +157,7 @@ public:
     unsigned int getPixel(int x, int y) override;
 
     void Reorganize();
+    bool KeyPress(QKeyEvent *e) override;
 
     void SaveBin(QFile& f) override;
     void LoadBin(QFile& f) override;
@@ -189,6 +192,7 @@ public:
 
   //  void ExportAsm(QString filename) override;
     void ExportBin(QFile& file) override;
+    void ImportBin(QFile& file) override;
 
     void SetCharSize(int x, int y);
 
@@ -196,7 +200,10 @@ public:
 
    void CompressAndSave(QByteArray& chars, QByteArray& screen, int x0,int x1, int y0, int y1, int& noChars, int compression, int maxChars);
 
+   void SetColor(uchar col, uchar idx) override;
+
 
 };
+
 
 #endif // MULTICOLORIMAGE_H

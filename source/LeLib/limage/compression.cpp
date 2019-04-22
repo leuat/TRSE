@@ -56,6 +56,58 @@ void Compression::AddToDataX(QByteArray &data, CharsetImage& img, int xp, int yp
 
 }
 
+int Compression::CompareSprites(QByteArray &d1, QByteArray& d2, int sprite1, int sprite2)
+{
+    int l=0;
+    for (int i=0;i<63;i++) {
+        if (d1[i+sprite1*64] != d2[i+sprite2*64])
+            l++;
+    }
+    return l;
+}
+
+void Compression::SaveCompressedSpriteData(QByteArray &data, QString dataFile, QString tableFile, int address, int compressionLevel)
+{
+    int noSprites = data.count()/64;
+    QByteArray dataOut, tableOut;
+    int noSpritesOut = 0;
+    int compressed  = 0;
+    qDebug() << data.count();
+    noSpritesOut = 2;
+    for (int i=0;i<64;i++) dataOut.append((char)0);
+    for (int i=0;i<64;i++) dataOut.append((char)0xFF);
+    for (int i=0;i<noSprites;i++) {
+
+        int found = -1;
+
+        for (int j=0;j<noSpritesOut;j++) {
+            if (CompareSprites(data,dataOut,i,j)<compressionLevel) {
+                found = j;
+            }
+        }
+        if (found!=-1) compressed++;
+
+        if (found==-1) {
+            for (int j=0;j<64;j++)
+                dataOut.append(data[j+i*64]);
+
+            found = noSpritesOut;
+            noSpritesOut++;
+            qDebug() << noSpritesOut << " vs " << noSprites;
+
+        }
+
+        tableOut.append(found + address/64);
+
+    }
+    qDebug() << "# sprites:" << noSprites;
+    qDebug() << "# Compressed sprites:" << noSprites-compressed;
+    qDebug() << "Compression level:" << QString::number((1-compressed/(float)noSprites)*100) << "%";
+    Util::SaveByteArray(dataOut,dataFile);
+    Util::SaveByteArray(tableOut, tableFile);
+
+}
+
 int Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length)
 {
     int l = 0;

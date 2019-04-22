@@ -34,9 +34,9 @@ public:
         return nullptr;
     }
 
-    bool RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, int cnt, int tid);
+    bool RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, int cnt, int tid, QPoint point);
 
-
+    void Compile2DList(QString fileOutput, int base, int maxx);
 };
 
 #endif // RAYTRACER_H

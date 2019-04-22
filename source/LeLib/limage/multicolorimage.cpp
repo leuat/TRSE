@@ -22,6 +22,7 @@
 #include "source/LeLib/limage/multicolorimage.h"
 #include <QDebug>
 #include <QFile>
+#include <QApplication>
 #include <QTextStream>
 #include "source/LeLib/limage/standardcolorimage.h"
 #include "source/LeLib/limage/charsetimage.h"
@@ -38,7 +39,7 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     Clear();
     m_type = LImage::Type::MultiColorBitmap;
     m_supports.asmExport = true;
-    m_supports.binaryLoad = false;
+    m_supports.binaryLoad = true;
     m_supports.binarySave = true;
     m_supports.koalaImport = true;
     m_supports.koalaExport = true;
@@ -68,6 +69,8 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     m_exportParams["EndY"] = m_charHeight;
     m_exportParams["Compression"] = 0;
 
+    for (int i=0;i<4;i++)
+        m_extraCols[i] = 0;
 }
 
 void MultiColorImage::setPixel(int x, int y, unsigned int color)
@@ -123,6 +126,38 @@ void MultiColorImage::Reorganize()
 #pragma omp parallel for
     for (int i=0;i<m_charWidth*m_charHeight;i++)
         m_data[i].Reorganize(m_bitMask, m_scale, m_minCol, m_noColors,m_extraCols[0]);
+}
+
+bool MultiColorImage::KeyPress(QKeyEvent *e)
+{
+/*    int add = 0;
+    if (QApplication::keyboardModifiers() & Qt::ShiftModifier) {
+        add=10;
+    }
+    qDebug() << QString::number(e->key()==Qt::Key_0);*/
+    int add = 0;
+        if (e->key()==Qt::Key_0 ) { Data::data.currentColor = 0+add;}
+        if (e->key()==Qt::Key_1 ) { Data::data.currentColor = 1+add;}
+        if (e->key()==Qt::Key_2 ) { Data::data.currentColor = 2+add;}
+        if (e->key()==Qt::Key_3 ) { Data::data.currentColor = 3+add;}
+        if (e->key()==Qt::Key_4 ) { Data::data.currentColor = 4+add;}
+        if (e->key()==Qt::Key_5 ) { Data::data.currentColor = 5+add;}
+        if (e->key()==Qt::Key_6 ) { Data::data.currentColor = 6+add;}
+        if (e->key()==Qt::Key_7 ) { Data::data.currentColor = 7+add;}
+        if (e->key()==Qt::Key_8 ) { Data::data.currentColor = 8+add;}
+        if (e->key()==Qt::Key_9 ) { Data::data.currentColor = 9+add;}
+
+/*        add = 10;
+        if (e->key()==Qt::Key_Equal ) { Data::data.currentColor = 0+add;}
+        if (e->key()==Qt::Key_Exclam ) { Data::data.currentColor = 1+add;}
+        if (e->key()==Qt::Key_QuoteDbl ) { Data::data.currentColor = 2+add;}
+        if (e->key()==Qt::Key_ ) { Data::data.currentColor = 3+add;}
+        if (e->key()==Qt::Key_4 ) { Data::data.currentColor = 4+add;}
+        if (e->key()==Qt::Key_5 ) { Data::data.currentColor = 5+add;}
+        if (e->key()==Qt::Key_6 ) { Data::data.currentColor = 6+add;}
+        if (e->key()==Qt::Key_7 ) { Data::data.currentColor = 7+add;}
+        if (e->key()==Qt::Key_8 ) { Data::data.currentColor = 8+add;}
+        if (e->key()==Qt::Key_9 ) { Data::data.currentColor = 9+add;}*/
 }
 
 void MultiColorImage::SaveBin(QFile& file)
@@ -261,6 +296,7 @@ void MultiColorImage::CopyFrom(LImage* img)
              for (int j=0;j<4;j++)
                  m_data[i].c[j] = mc->m_data[i].c[j];
          }
+         for (int i=0;i<4;i++) m_extraCols[i] = img->m_extraCols[i];
     }
     else
     {
@@ -457,6 +493,21 @@ void MultiColorImage::ExportBin(QFile& ofile)
     ofile.close();
     QFile::remove(ofile.fileName());
 
+}
+
+void MultiColorImage::ImportBin(QFile &file)
+{
+    QByteArray data = file.readAll();
+    int j=0;
+    for (int i=0;i<1000;i++) {
+        for (int k=0;k<8;k++)
+            m_data[i].p[k] = PixelChar::reverse(data[j+k]);
+        m_data[i].c[0] = 0;
+        m_data[i].c[1] = 1;
+        m_data[i].c[2] = 2;
+        m_data[i].c[3] = 3;
+        j+=8;
+    }
 }
 
 void MultiColorImage::SetCharSize(int x, int y)
@@ -1104,5 +1155,12 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QByteArray& screen, 
 
    // return out;
 
+
+}
+
+void MultiColorImage::SetColor(uchar col, uchar idx)
+{
+    m_extraCols[idx] = col;
+//    qDebug()<< m_extraCols[idx];
 
 }

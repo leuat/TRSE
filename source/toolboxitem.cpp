@@ -67,6 +67,43 @@ void ShapeBox::Perform(int x, int y, unsigned char color, LImage* img, bool isPr
         }
 }
 
+void ShapeBoxFilter::Perform(int x, int y, unsigned char color, LImage* img, bool isPreview, int button)
+{
+    float m= m_size;
+    for (int i=0;i<m;i++)
+        for (int j=0;j<m;j++) {
+            int d = m/2;
+            float xx = i-d;
+            float yy = (j-d);
+            float l = sqrt(xx*xx*img->m_scaleX + yy*yy);
+
+            bool ok = l<m/2.5;
+            if (m_type==1)
+                ok = abs(l-m/3)<1;
+
+            if (ok)
+            {
+                bool regular=true;
+    //            if (rand()%100>98)// for (int i=0;i<4;i++)
+  //                  qDebug() << img->m_extraCols[2];
+                if (img->m_background!=img->m_extraCols[2]) {
+//                    qDebug() << img->m_extraCols[2];
+                    regular = false;
+                }
+
+
+                if (regular) {
+                    if (img->getPixel(x+xx,y+yy)!=img->m_background)
+                        img->setPixel(x+xx,y+yy,color);
+                }
+                else
+                    if (img->getPixel(x+xx,y+yy)==img->m_extraCols[2])
+                        img->setPixel(x+xx,y+yy,color);
+            }
+        }
+}
+
+
 
 void Circle::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
 {

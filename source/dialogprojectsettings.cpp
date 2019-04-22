@@ -144,7 +144,7 @@ void DialogProjectSettings::FillFromIni()
 
     ui->cmbPawInclude->setCurrentText(m_ini->getString("d64_paw_file"));
 
-    ui->cmbPawInclude->setCurrentText(m_ini->getString("d64_paw_file_disk2"));
+    ui->cmbPawInclude2->setCurrentText(m_ini->getString("d64_paw_file_disk2"));
 
     ui->leBackgroundColor->setText(QString::number(m_ini->getdouble("background_color")));
     ui->leBorderColor->setText(QString::number(m_ini->getdouble("border_color")));

@@ -32,7 +32,7 @@ public:
     QString m_name;
     static SimplexNoise m_sn;
     Ray m_localRay[32];
-
+    QVector<QPoint> m_2Dpoints;
     float m_bbRadius;
 
     QVector<AbstractRayObject*> m_children;

@@ -162,6 +162,32 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             Data::data.forceRedraw = true;
         }
 
+
+        if (e->key()==Qt::Key_D) {
+            m_updateThread.m_zoomCenter.setX(m_updateThread.m_zoomCenter.x() + 1);
+            emit onImageMouseEvent();
+            Data::data.forceRedraw = true;
+            Data::data.Redraw();
+        }
+        if (e->key()==Qt::Key_A) {
+            m_updateThread.m_zoomCenter.setX(m_updateThread.m_zoomCenter.x() - 1);
+            emit onImageMouseEvent();
+            Data::data.forceRedraw = true;
+            Data::data.Redraw();
+        }
+        if (e->key()==Qt::Key_W) {
+            m_updateThread.m_zoomCenter.setY(m_updateThread.m_zoomCenter.y() - 1);
+            emit onImageMouseEvent();
+            Data::data.forceRedraw = true;
+            Data::data.Redraw();
+        }
+        if (e->key()==Qt::Key_S) {
+            m_updateThread.m_zoomCenter.setY(m_updateThread.m_zoomCenter.y() + 1);
+            emit onImageMouseEvent();
+            Data::data.forceRedraw = true;
+            Data::data.Redraw();
+        }
+
         if (!ui->tblData->hasFocus() && !(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
             m_work.m_currentImage->m_image->StoreData(ui->tblData);
             m_work.m_currentImage->m_image->KeyPress(e);

@@ -139,7 +139,7 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
 #endif
             //int tid = 0;
 
-            RayMarchSingle(ray, Image, nullptr,m_globals.m_steps,tid);
+            RayMarchSingle(ray, Image, nullptr,m_globals.m_steps,tid, QPoint(x,y));
             QColor c = Util::toColor(ray.m_intensity*256 + m_globals.m_ambient);
             img.setPixel(i,j,c.rgba());
 
@@ -212,7 +212,7 @@ void RayTracer::LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat
 
 //}
 
-bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, int cnt, int tid)
+bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, int cnt, int tid, QPoint point)
 {
     QVector3D isp;
     float shadow = 1;
@@ -331,8 +331,8 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
         QVector3D bi = QVector3D::crossProduct(tangent,normal).normalized();
 
 //        normal  = winner->GetPerturbedNormal(isp,normal,tangent,m_globals);
-
-
+        if (pass!=Pass::Shadow)
+            winner->m_2Dpoints.append(point);
 //        ray.m_reflect = 0;
         QVector3D reflectionDir = ray.m_direction-2*QVector3D::dotProduct(ray.m_direction, normal)*normal;
         QVector3D lp = ray.m_currentPos;//-winner->m_localPos;
@@ -343,7 +343,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
         if (winner->m_material.m_reflectivity>0 && ray.m_reflect>0) {
             Ray nxt(lp,reflectionDir);
             nxt.m_reflect=ray.m_reflect-1;
-            RayMarchSingle(nxt, Reflect, winner,m_globals.m_shadowSteps,tid);
+            RayMarchSingle(nxt, Reflect, winner,m_globals.m_shadowSteps,tid, point);
 
             ray.m_intensity = ray.m_intensity*(1-winner->m_material.m_reflectivity) + winner->m_material.m_reflectivity*nxt.m_intensity;
         }
@@ -356,7 +356,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
             AbstractRayObject* o= nullptr;
             if (dynamic_cast<RayObjectBox*>(winner)!=nullptr)
                 o=winner;
-            if (RayMarchSingle(shadowRay, Shadow, nullptr,14,tid)) {
+            if (RayMarchSingle(shadowRay, Shadow, nullptr,14,tid, point)) {
                 shadow*=m_globals.m_shadowScale;
             }
 
@@ -371,4 +371,64 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
     m_globals.Sky(&ray,m_globals.m_skyScale);
 
     return false;
+}
+
+void RayTracer::Compile2DList(QString fileOutput, int base, int maxx)
+{
+    QByteArray data;
+    data.append(m_objects.count());
+    QVector<QPoint> total;
+    for (AbstractRayObject* aro : m_objects) {
+
+        QVector<QPoint> reduced;
+        int j=0;
+  //      qDebug() << aro->m_2Dpoints.count();
+        for (QPoint p: aro->m_2Dpoints) {
+            p.setX(p.x()/4);
+            p.setY(p.y()/8);
+            bool ok=true;
+            for (QPoint op:reduced)
+                if (op==p)
+                    ok=false;
+            /*for (QPoint op:total)
+                if (op==p)
+                    ok=false;
+*/
+            if (ok) {
+                reduced.append(p);
+
+            }
+        }
+  //      total.append(reduced);
+//        if (reduced.count()>)
+        if (reduced.count()>=maxx) reduced.resize(maxx);
+        char cnt = reduced.count();
+        data.append(cnt);
+        QVector<int> positions;
+        for (QPoint p: reduced) {
+            int i = base + p.x() + p.y()*40;
+            positions.append(i);
+  //          qDebug() << Util::numToHex(i);
+//            data.append((char)((i)&0xFF));
+  //          data.append((char)((i>>8)&0xFF));
+        }
+        if (cnt!=0) {
+            qSort(positions);
+            //        qDebug() << positions;
+            int org=positions[0];
+            data.append((char)((org)&0xFF));
+            data.append((char)((org>>8)&0xFF));
+            data.append((char)0);
+            for (int i=1; i<positions.count();i++) {
+                data.append((uchar)(positions[i]-org));
+            }
+        }
+        else {
+            qDebug() << "CNT iS ZERO : " << QString::number(cnt);
+            int org = base;
+        }
+
+        aro->m_2Dpoints.clear();
+    }
+    Util::SaveByteArray(data,fileOutput);
 }

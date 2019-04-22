@@ -38,6 +38,7 @@ void Toolbox::Initialize(QGridLayout* ly)
     m_items.append(new Line("",":/resources/images/brush_line.png"));
     m_items.append(new CopyStamp("Copy",""));
     m_items.append(new RotateAround("Rotate",""));
+    m_items.append(new ShapeBoxFilter("Non-bg",""));
 
 
     m_current = m_items[0];

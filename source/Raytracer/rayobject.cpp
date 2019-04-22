@@ -85,7 +85,10 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
                 col.setZ(col.z()*c.z());
             }
 //            col.setX(1);
-            ray->m_intensity = col*ApplyDirectionalLight(normal,globals) + globals.m_ambient;
+            ray->m_intensity = col*ApplyDirectionalLight(normal,globals);
+            ray->m_intensity.setX(max(ray->m_intensity.x(),globals.m_ambient.x()*col.x()));
+            ray->m_intensity.setY(max(ray->m_intensity.y(),globals.m_ambient.y()*col.y()));
+            ray->m_intensity.setZ(max(ray->m_intensity.z(),globals.m_ambient.z()*col.z()));
             ray->m_intensity += ApplySpecularLight(normal,ray->m_direction,  globals, m_material);
         }
         ray->m_z = l;

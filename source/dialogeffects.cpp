@@ -419,6 +419,15 @@ static int SaveScreenAndCharset(lua_State* L) {
 }
 
 
+static int Save2DInfo(lua_State* L) {
+    QString file = m_currentDir+"/"+ lua_tostring(L,1);
+    int base = lua_tonumber(L,2);
+    int maxx = lua_tonumber(L,3);
+    m_rt.Compile2DList(file,base,maxx);
+    return 0;
+}
+
+
 static int SaveData(lua_State* L) {
     QFile f(m_currentDir+"/"+ lua_tostring(L,1));
     f.open(QFile::WriteOnly);
@@ -429,6 +438,12 @@ static int SaveData(lua_State* L) {
     return 0;
 }
 
+static int SaveCompressedSpriteData(lua_State* L) {
+
+    m_compression.SaveCompressedSpriteData(m_charData, m_currentDir+"/"+ lua_tostring(L,1), m_currentDir+"/"+ lua_tostring(L,2), lua_tonumber(L,3),lua_tonumber(L,4));
+    m_charData.clear();
+    return 0;
+}
 
 static int CompressAndSaveHorizontalData(lua_State* L) {
 
@@ -484,8 +499,10 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "CompressAndSaveHorizontalData", CompressAndSaveHorizontalData);
     lua_register(m_script->L, "CompressCharset", CompressCharset);
     lua_register(m_script->L, "SaveScreenAndCharset", SaveScreenAndCharset);
+    lua_register(m_script->L, "SaveCompressedSpriteData", SaveCompressedSpriteData);
     lua_register(m_script->L, "SaveRawData", SaveData);
     lua_register(m_script->L, "AddC64LineToData", AddToData);
+    lua_register(m_script->L, "Save2DInfo", Save2DInfo);
 
     lua_register(m_script->L, "AddScreen", AddScreen);
     lua_register(m_script->L, "SetRotation", SetRotation);
