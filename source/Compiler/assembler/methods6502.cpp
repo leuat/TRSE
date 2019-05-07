@@ -15,6 +15,7 @@ bool Methods6502::Command(QString name)
 
 void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
+
     m_dispatcher = dispatcher;
     if (Command("Writeln")) {
         as->Writeln();
@@ -432,8 +433,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("copyhalfscreen"))
         CopyHalfScreen(as);
 
-    if (Command("copyfullscreen"))
+    if (Command("copyfullscreen")) {
         CopyFullScreen(as);
+    }
 
     if (Command("copyfullscreenuunrolled"))
         CopyFullScreenUnrolled(as);
@@ -1983,7 +1985,7 @@ void Methods6502::LoHi(Assembler *as, bool isLo)
 void Methods6502::LoadAndStoreInZp(Node* n, Assembler *as, QString zp)
 {
     as->ClearTerm();
-    qDebug() << n->getType(as);
+   // qDebug() << n->getType(as);
 
     if (n->getType(as) == TokenType::POINTER) {
         as->Term("lda ");
@@ -3855,16 +3857,17 @@ void Methods6502::CopyFullScreen(Assembler *as)
    if (m_node->m_params[0]->getType(as) == TokenType::POINTER || m_node->m_params[1]->getType(as) == TokenType::POINTER) {
         // Do full pointer blah
 
-
         QString lblOuter = as->NewLabel("outer");
         QString lblInner = as->NewLabel("inner");
         QString lblFinal = as->NewLabel("final");
+
 
         QString zpf = as->m_internalZP[0];
         QString zpt = as->m_internalZP[1];
 
         LoadAndStoreInZp(m_node->m_params[0],as,zpf);
         LoadAndStoreInZp(m_node->m_params[1],as,zpt);
+
 
 
 
@@ -3878,6 +3881,7 @@ void Methods6502::CopyFullScreen(Assembler *as)
         as->ClearTerm();
         as->Asm("lda ("+zpf+"),y");
         as->Asm("sta ("+zpt+"),y");
+
 
         as->Asm("dey");
         as->Asm("bne "+lblInner);

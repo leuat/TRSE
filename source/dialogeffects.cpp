@@ -176,7 +176,9 @@ static int AddObject(lua_State *L)
         QVector3D vals = QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2));
         obj =
                     new RayObjectPerlin(vals,o1);
-
+        obj->m_position = o1->m_position;
+        obj->m_rotation = o1->m_rotation;
+        obj->m_bbRadius = o1->m_bbRadius;
         m_rt.m_objects.removeAll(o1);
     }
 
@@ -333,6 +335,20 @@ static int SetRotation(lua_State *L)
 }
 
 
+static int SetQuatAxisAngle(lua_State *L)
+{
+//    int n = lua_gettop(L);
+    QString name = lua_tostring(L,1);
+    AbstractRayObject* aro = m_rt.Find(name);
+    if (aro==nullptr) {
+        m_error +="Error in SetRotation : Could not find object '" + name+ "'\n";
+        return 0;
+    }
+
+    aro->SetQuatAxisAngle(QVector3D(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4)),lua_tonumber(L,5));
+    return 0;
+}
+
 static int SetPosition(lua_State *L)
 {
 //    int n = lua_gettop(L);
@@ -445,6 +461,19 @@ static int SaveCompressedSpriteData(lua_State* L) {
     return 0;
 }
 
+
+
+static int OptimizeScreenAndCharset(lua_State* L) {
+
+    QByteArray sOut, cOut;
+//    void Compression::OptimizeScreenAndCharset(QByteArray &screen, QByteArray &charset, QByteArray &sOut, QByteArray &cOut, int sw, int sh, int charSize, int compression)
+
+    m_compression.OptimizeScreenAndCharset(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+//    m_charData.clear();
+    m_charData = cOut;
+    m_screenData = sOut;
+    return 0;
+}
 static int CompressAndSaveHorizontalData(lua_State* L) {
 
     QByteArray packedData, table;
@@ -497,6 +526,7 @@ void DialogEffects::LoadScript(QString file)
 
     lua_register(m_script->L, "AddObject", AddObject);
     lua_register(m_script->L, "CompressAndSaveHorizontalData", CompressAndSaveHorizontalData);
+    lua_register(m_script->L, "OptimizeScreenAndCharset", OptimizeScreenAndCharset);
     lua_register(m_script->L, "CompressCharset", CompressCharset);
     lua_register(m_script->L, "SaveScreenAndCharset", SaveScreenAndCharset);
     lua_register(m_script->L, "SaveCompressedSpriteData", SaveCompressedSpriteData);
@@ -506,6 +536,7 @@ void DialogEffects::LoadScript(QString file)
 
     lua_register(m_script->L, "AddScreen", AddScreen);
     lua_register(m_script->L, "SetRotation", SetRotation);
+    lua_register(m_script->L, "SetQuatAxisAngle", SetQuatAxisAngle);
     lua_register(m_script->L, "SetPosition", SetPosition);
     lua_register(m_script->L, "sin", LuaSin);
     lua_register(m_script->L, "SetY", SetY);
@@ -540,6 +571,7 @@ void DialogEffects::UpdateGlobals()
     m_rt.m_camera.m_fov = m_script->get<float>("globals.fov");
     m_rt.m_camera.m_camera = m_script->getVec("globals.camera");
     m_rt.m_camera.m_target = m_script->getVec("globals.target");
+    m_rt.m_camera.m_up = m_script->getVec("globals.up");
     m_rt.m_globals.m_lights[0]->m_direction = m_script->getVec("globals.light0.direction").normalized();
     m_rt.m_globals.m_lights[0]->m_color = m_script->getVec("globals.light0.color");
     m_rt.m_globals.m_ambient = m_script->getVec("globals.ambient");
@@ -551,6 +583,7 @@ void DialogEffects::UpdateGlobals()
     m_rt.m_globals.m_height = m_script->get<float>("output.resolution.height");
 
     m_rt.m_globals.m_c64Output = m_script->get<float>("output.c64_output");
+    m_rt.m_globals.m_multicolor = m_script->get<float>("output.c64_multicolor");
     m_rt.m_globals.m_dither = m_script->get<float>("output.dither");
 
     m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.c64_colors");

@@ -79,7 +79,7 @@ void ShapeBoxFilter::Perform(int x, int y, unsigned char color, LImage* img, boo
 
             bool ok = l<m/2.5;
             if (m_type==1)
-                ok = abs(l-m/3)<1;
+                ok = abs(l-m/3)<0.5;
 
             if (ok)
             {

@@ -93,6 +93,8 @@ public:
     void keyReleaseEvent(QKeyEvent *e) override;
     void UpdateImage();
 
+    void UpdateGrid();
+
     void Load(QString filename) override;
     void Save(QString filename) override;
 

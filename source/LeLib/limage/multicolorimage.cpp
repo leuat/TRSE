@@ -1095,7 +1095,15 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QByteArray& screen, 
     int sy = y1-y0;
     data.resize(sx*sy);
     data.fill(0x0);
-    noChars = 0;
+    noChars = 2;
+    PixelChar p0;
+    PixelChar p1;
+    for (int i=0;i<8;i++) {
+        p0.p[i]=0xFF;
+        p1.p[i]=0x00;
+    }
+    chars.append(p0);
+    chars.append(p1);
     for (int j=0;j<sy;j++) {
 
         for (int i=0;i<sx;i++)

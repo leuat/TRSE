@@ -58,17 +58,17 @@ public:
     virtual void Init() {}
 //    virtual void
 
-    void ConvertToC64(bool dither)
+    void ConvertToC64(bool dither, bool isMulticolor)
     {
         if (!m_toggleC64)
             return;
+        m_mc->setMultiColor(isMulticolor);
         m_mc->m_colorList.EnableColors(m_cols);
         m_mc->SetColor(m_cols[0],0);
         m_mc->SetColor(m_cols[1],1);
         m_mc->SetColor(m_cols[3],2);
         m_mc->SetColor(m_cols[2],3);
         m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, dither);
-
         m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
 
     }

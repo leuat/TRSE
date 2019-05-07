@@ -79,11 +79,12 @@ bool Compiler::Build(Compiler::Type type, QString project_dir)
     m_assembler->m_replaceValues["@DECRUNCH_ZP3"] = m_projectIni->getString("zeropage_decrunch3");
     m_assembler->m_replaceValues["@DECRUNCH_ZP4"] = m_projectIni->getString("zeropage_decrunch4");
 
+
+
     m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal1");
     m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal2");
     m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal3");
     m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal4");
-
 
 
 
@@ -110,6 +111,7 @@ bool Compiler::Build(Compiler::Type type, QString project_dir)
             dynamic_cast<NodeProgram*>(m_tree)->m_initJumps = m_parser->m_initJumps;
             m_dispatcher->as = m_assembler;
 //            m_dispatcher->dispatch(m_tree);
+
             m_tree->Accept(m_dispatcher);
 
             //m_tree->Build(m_assembler);

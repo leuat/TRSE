@@ -114,6 +114,7 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
 //    QVector<AbstractRayObject*> objs;
 
 
+
        float aspect = w/(float)h;
        if (aspect>1) aspect = h/(float)w;
        float ah = 1;

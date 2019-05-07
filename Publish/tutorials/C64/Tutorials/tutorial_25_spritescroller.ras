@@ -170,6 +170,7 @@ interrupt RasterMain();
 begin
 	StartIRQ(@useKernal);
 	inc(time);
+
 	Renew16x16Sprites();
 	Maintain16x16Sprites();
 	closeIrq();	

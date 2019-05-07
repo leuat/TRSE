@@ -74,8 +74,8 @@ void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *ini
 //    ui->lblImage->m_updateThread = t;
     //ui->lblGrid->m_updateThread = t;
     m_updateThread.m_grid = &m_grid;
-    m_grid.CreateGrid(40,25,m_updateThread.m_gridColor,4, 1, QPoint(0,0));
-
+//    m_grid.CreateGrid(40,25,m_updateThread.m_gridColor,4, 1, QPoint(0,0));
+    UpdateGrid();
 
 
 }
@@ -162,32 +162,32 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             Data::data.forceRedraw = true;
         }
 
-
-        if (e->key()==Qt::Key_D) {
-            m_updateThread.m_zoomCenter.setX(m_updateThread.m_zoomCenter.x() + 1);
-            emit onImageMouseEvent();
-            Data::data.forceRedraw = true;
-            Data::data.Redraw();
+        if (!(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+            if (e->key()==Qt::Key_D) {
+                m_updateThread.m_zoomCenter.setX(m_updateThread.m_zoomCenter.x() + 1);
+                emit onImageMouseEvent();
+                Data::data.forceRedraw = true;
+                Data::data.Redraw();
+            }
+            if (e->key()==Qt::Key_A) {
+                m_updateThread.m_zoomCenter.setX(m_updateThread.m_zoomCenter.x() - 1);
+                emit onImageMouseEvent();
+                Data::data.forceRedraw = true;
+                Data::data.Redraw();
+            }
+            if (e->key()==Qt::Key_W) {
+                m_updateThread.m_zoomCenter.setY(m_updateThread.m_zoomCenter.y() - 1);
+                emit onImageMouseEvent();
+                Data::data.forceRedraw = true;
+                Data::data.Redraw();
+            }
+            if (e->key()==Qt::Key_S) {
+                m_updateThread.m_zoomCenter.setY(m_updateThread.m_zoomCenter.y() + 1);
+                emit onImageMouseEvent();
+                Data::data.forceRedraw = true;
+                Data::data.Redraw();
+            }
         }
-        if (e->key()==Qt::Key_A) {
-            m_updateThread.m_zoomCenter.setX(m_updateThread.m_zoomCenter.x() - 1);
-            emit onImageMouseEvent();
-            Data::data.forceRedraw = true;
-            Data::data.Redraw();
-        }
-        if (e->key()==Qt::Key_W) {
-            m_updateThread.m_zoomCenter.setY(m_updateThread.m_zoomCenter.y() - 1);
-            emit onImageMouseEvent();
-            Data::data.forceRedraw = true;
-            Data::data.Redraw();
-        }
-        if (e->key()==Qt::Key_S) {
-            m_updateThread.m_zoomCenter.setY(m_updateThread.m_zoomCenter.y() + 1);
-            emit onImageMouseEvent();
-            Data::data.forceRedraw = true;
-            Data::data.Redraw();
-        }
-
         if (!ui->tblData->hasFocus() && !(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
             m_work.m_currentImage->m_image->StoreData(ui->tblData);
             m_work.m_currentImage->m_image->KeyPress(e);
@@ -269,12 +269,20 @@ void FormImageEditor::UpdateImage()
                              QString::number(m_updateThread.m_currentPosInImage.y()) + currentChar);
 
 
-    m_grid.ApplyToLabel(ui->lblGrid);
+    UpdateGrid();
+
     if (Data::data.redrawFileList) {
         //m_work.UpdateListView(ui->lstImages);
         Data::data.redrawFileList = false;
     }
 
+
+}
+
+void FormImageEditor::UpdateGrid()
+{
+    m_grid.CreateGrid(40,25,m_updateThread.m_gridColor,4, m_updateThread.m_zoom, QPoint(m_updateThread.m_zoomCenter.x(), m_updateThread.m_zoomCenter.y()));
+    m_grid.ApplyToLabel(ui->lblGrid);
 
 }
 

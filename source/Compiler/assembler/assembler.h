@@ -145,7 +145,7 @@ public:
     QString m_zeropageScreenMemory="$fb";
     QMap<QString, QString> m_replaceValues;
 
-    QStringList m_internalZP;
+    static QStringList m_internalZP;
     QVector<QString> m_zeroPointers; // org zp input
     QVector<QString> m_tempZeroPointers; // org temp zp input
     QVector<QString> m_zpStack; // temp zp stack

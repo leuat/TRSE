@@ -84,6 +84,7 @@ public:
     float m_isPaused = 0;
     float m_skyScale = 1;
     float m_c64Output = 0;
+    float m_multicolor = 1;
     float m_dither = 0;
     float m_shadowScale = 0.5;
     int m_width, m_height;

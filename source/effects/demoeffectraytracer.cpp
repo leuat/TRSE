@@ -53,7 +53,7 @@ void DemoEffectRaytracer::Render(QImage &img)
 
     m_elapsedTime = m_timer.elapsed();
     m_toggleC64 = m_rt->m_globals.m_c64Output==1;
-    ConvertToC64(m_rt->m_globals.m_dither==1);
+    ConvertToC64(m_rt->m_globals.m_dither==1,m_rt->m_globals.m_multicolor==1);
 
 
     m_pixmap.convertFromImage(m_img);

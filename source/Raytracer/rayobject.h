@@ -82,6 +82,20 @@ public:
         m_rotmatInv = m_rotmat.inverted(&b);
     }
 
+    void SetQuatAxisAngle(QVector3D v, float angle) {
+        m_rotation = v;
+        QMatrix3x3 rot = QQuaternion::fromAxisAndAngle(v,angle).toRotationMatrix();
+        m_rotmat.setToIdentity();
+        for (int i=0;i<3;i++)
+            for (int j=0;j<3;j++)
+                m_rotmat(i,j) = rot(i,j);
+
+        bool b;
+        m_rotmatInv = m_rotmat.inverted(&b);
+    }
+
+
+
     AbstractRayObject();
 
     virtual QVector3D calculateNormal(Ray* ray, QVector3D isp) {return QVector3D(0,0,0);}
