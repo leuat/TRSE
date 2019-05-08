@@ -225,6 +225,9 @@ void MultiColorImage::ExportKoa(QFile &f)
     f.write(fdata);
 }
 
+
+
+
 void MultiColorImage::FloydSteinbergDither(QImage &img, LColorList& colors, bool dither)
 {
 /*    for each y from top to bottom
@@ -260,6 +263,35 @@ void MultiColorImage::FloydSteinbergDither(QImage &img, LColorList& colors, bool
                         img.setPixel(x+1,y+1,Util::toColor(Util::fromColor(img.pixel(x+1,y+1))+qErr*1/16.0).rgba());
                 }
             }
+        }
+    }
+
+}
+
+void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength)
+{
+    int height  =min(img.height(), m_height);
+    int width  =min(img.width(), m_width);
+    QMatrix4x4 bayer4x4 = QMatrix4x4(0,8,2,10,  12,4,14,6, 3,11,1,9, 15,7,13,5);
+    bayer4x4 = bayer4x4*1/16.0*strength.x();
+
+    for (int y=0;y<height;y++) {
+        for (int x=0;x<width;x++) {
+
+//            color.R = color.R + bayer8x8[x % 8, y % 8] * GAP / 65;
+
+            QColor color = QColor(img.pixel(x,y));
+            int yp = y + x%(int)strength.y();
+            int xp = x + y%(int)strength.z();
+            color.setRed(color.red() + bayer4x4(xp % 4,yp % 4));
+            color.setGreen(color.green() + bayer4x4(xp % 4,yp % 4));
+            color.setBlue(color.blue() + bayer4x4(xp % 4,yp % 4));
+
+            int winner = 0;
+            QColor newPixel = colors.getClosestColor(color, winner);
+            //int c = m_colorList.getIndex(newPixel);
+            setPixel(x,y,winner);
+
         }
     }
 

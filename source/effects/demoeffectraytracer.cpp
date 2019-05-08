@@ -13,10 +13,17 @@ void DemoEffectRaytracer::Initialize()
     if (m_rt == nullptr)
         m_rt = new RayTracer();
 
-   m_mc = new CharsetImage(LColorList::C64);
+   m_mc = new MultiColorImage(LColorList::C64);
 
-   m_mc->m_currentMode = CharsetImage::FULL_IMAGE;
+   if (m_rt->m_globals.m_c64ImageType == 0.0) {
+       delete m_mc;
+       m_mc = new CharsetImage(LColorList::C64);
+
+       ((CharsetImage*)(m_mc))->m_currentMode = CharsetImage::FULL_IMAGE;
+
+   }
    m_mc->setMultiColor(true);
+
 
    m_rt->m_globals.m_lights[0]->m_color = QVector3D(1,1,0.7);
    m_img = QImage(m_rt->m_globals.m_width,m_rt->m_globals.m_height,QImage::Format_ARGB32);
@@ -53,7 +60,7 @@ void DemoEffectRaytracer::Render(QImage &img)
 
     m_elapsedTime = m_timer.elapsed();
     m_toggleC64 = m_rt->m_globals.m_c64Output==1;
-    ConvertToC64(m_rt->m_globals.m_dither==1,m_rt->m_globals.m_multicolor==1);
+    ConvertToC64(m_rt->m_globals.m_dither,m_rt->m_globals.m_multicolor==1,m_rt->m_globals.m_ditherStrength);
 
 
     m_pixmap.convertFromImage(m_img);

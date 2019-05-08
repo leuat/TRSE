@@ -92,6 +92,23 @@ static int LuaSqrt(lua_State *L) {
 }
 
 
+static int AddLight(lua_State *L) {
+    QVector3D dir = QVector3D(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+    QVector3D col = QVector3D(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7));
+    int no = lua_tonumber(L,1);
+    if (m_rt.m_globals.m_lights.count()<=no)
+        m_rt.m_globals.m_lights.resize(no+1);
+
+//    qDebug() << m_rt.m_globals.m_lights.count();
+    if (m_rt.m_globals.m_lights[no]==nullptr)
+        m_rt.m_globals.m_lights[no] = new DirectionalLight(dir,col);
+
+    m_rt.m_globals.m_lights[no]->m_color = col;
+    m_rt.m_globals.m_lights[no]->m_direction = dir;
+    return 1;
+}
+
+
 
 static int AddObject(lua_State *L)
 {
@@ -461,6 +478,14 @@ static int SaveCompressedSpriteData(lua_State* L) {
     return 0;
 }
 
+static int SaveMulticolorImage(lua_State* L) {
+    QFile f(m_currentDir+"/"+  lua_tostring(L,1));
+    m_effect->m_mc->ExportBin(f);
+ //   m_effect->m_mc->SaveBin(f);
+    m_charData.clear();
+    return 0;
+}
+
 
 
 static int OptimizeScreenAndCharset(lua_State* L) {
@@ -533,6 +558,8 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "SaveRawData", SaveData);
     lua_register(m_script->L, "AddC64LineToData", AddToData);
     lua_register(m_script->L, "Save2DInfo", Save2DInfo);
+    lua_register(m_script->L, "SetLight", AddLight);
+    lua_register(m_script->L, "SaveMulticolorImage", SaveMulticolorImage);
 
     lua_register(m_script->L, "AddScreen", AddScreen);
     lua_register(m_script->L, "SetRotation", SetRotation);
@@ -585,6 +612,9 @@ void DialogEffects::UpdateGlobals()
     m_rt.m_globals.m_c64Output = m_script->get<float>("output.c64_output");
     m_rt.m_globals.m_multicolor = m_script->get<float>("output.c64_multicolor");
     m_rt.m_globals.m_dither = m_script->get<float>("output.dither");
+    m_rt.m_globals.m_ditherStrength = m_script->getVec("output.ditherStrength");
+ //   if (m_script->lua_gettostack("output.c64_imageType"))
+        m_rt.m_globals.m_c64ImageType = m_script->get<float>("output.c64_imageType");
 
     m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.c64_colors");
     m_rt.m_globals.m_steps = m_script->get<float>("globals.raymarch_steps");

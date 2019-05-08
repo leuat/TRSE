@@ -58,7 +58,7 @@ win32-msvc*{
 
 }
 
-linux-g*{
+linux*{
     QMAKE_CXXFLAGS += -fopenmp
     QMAKE_CXXFLAGS +=  -Wno-unused-variable -Wno-unused-parameter -Wno-sign-compare -Wno-comment -Wno-parentheses -Wno-delete-non-virtual-dtor -Wno-missing-noreturn
     LIBS += -fopenmp

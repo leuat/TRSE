@@ -23,6 +23,7 @@
 #define MULTICOLORIMAGE_H
 
 #include <QVector>
+#include <QMatrix4x4>
 #include "source/LeLib/limage/lcolorlist.h"
 #include "source/LeLib/limage/limage.h"
 #include <QImage>
@@ -166,6 +167,7 @@ public:
     void ExportKoa(QFile& f) override;
 
     void FloydSteinbergDither(QImage& img, LColorList& colors, bool dither) override;
+    void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength) override;
 
     void Initialize(int width, int height) override {}
 

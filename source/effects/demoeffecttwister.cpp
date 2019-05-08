@@ -8,7 +8,7 @@ DemoEffectTwister::DemoEffectTwister(QGridLayout* gl) : AbstractDemoEffect (gl)
 
     m_charset = new CharsetImage(LColorList::C64);
 
-    m_mc->m_currentMode = CharsetImage::FULL_IMAGE;
+//    m_mc->m_currentMode = CharsetImage::FULL_IMAGE;
      //m_mc->Initialize(160,200);
      m_mc->setMultiColor(true);
      m_img = QImage(160,200,QImage::Format_ARGB32);
@@ -234,7 +234,7 @@ void DemoEffectTwister::run()
 
   //          }
         }
-        ConvertToC64(true,true);
+        //ConvertToC64(true,true,0);
         emit SignalImageUpdate();
         this->msleep(10);
     }

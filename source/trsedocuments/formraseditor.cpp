@@ -246,9 +246,11 @@ void FormRasEditor::Build()
 */
 //            QStringList exoParams = QStringList() << "sfx" << "$0810"  << fn<< "-o" << fn ;
            // qDebug() << exoParams;
+            qDebug() << "Starting exomizer";
             processCompress.start(m_iniFile->getString("exomizer"), exoParams  );
             processCompress.waitForFinished();
             qDebug() << processCompress.readAllStandardError() << processCompress.readAllStandardOutput();
+            qDebug() << "*** END EXO";
         }
 
 

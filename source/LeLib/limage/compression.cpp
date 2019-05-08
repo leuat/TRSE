@@ -43,7 +43,7 @@ void Compression::AddScreen(QByteArray &data, QImage& img,int w, int h, char bas
 }
 
 
-void Compression::AddToDataX(QByteArray &data, CharsetImage& img, int xp, int yp, int w, int h)
+void Compression::AddToDataX(QByteArray &data, MultiColorImage& img, int xp, int yp, int w, int h)
 {
     for (int y=0;y<h;y+=1)
         for (int x=0;x<w;x+=1) {
