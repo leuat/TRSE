@@ -2,7 +2,7 @@
 
 RayTracerGlobals::RayTracerGlobals()
 {
-    m_lights.append(new DirectionalLight(QVector3D(1,1,-1).normalized(),QVector3D(1,1,1)));
+
 }
 
 void RayTracerGlobals::Sky(Ray* ray, float scale)

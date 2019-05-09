@@ -71,6 +71,9 @@ void DialogEffects::Create()
 //    }
     m_effect->Initialize();
     connect(m_effect,SIGNAL(SignalImageUpdate()),this,SLOT(UpdateImage()));
+
+
+
 //    m_effect->FillToGUI();
     m_effect->start();
 }
@@ -478,10 +481,16 @@ static int SaveCompressedSpriteData(lua_State* L) {
     return 0;
 }
 
+
 static int SaveMulticolorImage(lua_State* L) {
-    QFile f(m_currentDir+"/"+  lua_tostring(L,1));
+    QString fname = m_currentDir+"/"+  lua_tostring(L,1);
+    if (QFile::exists(fname))
+        QFile::remove(fname);
+    QFile f(fname);
+
     m_effect->m_mc->ExportBin(f);
- //   m_effect->m_mc->SaveBin(f);
+//    f.open()
+  //  m_effect->m_mc->SaveBin(f);
     m_charData.clear();
     return 0;
 }
@@ -539,7 +548,7 @@ void DialogEffects::LoadScript(QString file)
         return;
     }
 
-    m_rt.m_globals.m_lights[0]->m_color = QVector3D(1,1,0.7);
+//    m_rt.m_globals.m_lights[0]->m_color = QVector3D(1,1,0.7);
     m_rt.m_objects.clear();
 
 
@@ -558,7 +567,6 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "SaveRawData", SaveData);
     lua_register(m_script->L, "AddC64LineToData", AddToData);
     lua_register(m_script->L, "Save2DInfo", Save2DInfo);
-    lua_register(m_script->L, "SetLight", AddLight);
     lua_register(m_script->L, "SaveMulticolorImage", SaveMulticolorImage);
 
     lua_register(m_script->L, "AddScreen", AddScreen);
@@ -575,12 +583,19 @@ void DialogEffects::LoadScript(QString file)
     /* run the script */
     int ret = luaL_dostring(m_script->L, "Init()");
 
+    lua_register(m_script->L, "SetLight", AddLight);
+
     UpdateGlobals();
+
+
+
 }
 
 void DialogEffects::Init(QString dir)
 {
     m_currentDir = dir;
+    m_rt.m_globals.m_lights.clear();
+    m_rt.m_globals.m_lights.append(new DirectionalLight(QVector3D(1,1,-1).normalized(),QVector3D(1,1,1)));
     if (m_file!="")
         LoadScript(m_file);
 
@@ -594,6 +609,8 @@ void DialogEffects::UpdateGlobals()
 {
     if (m_script==nullptr)
         return;
+
+
 
     m_rt.m_camera.m_fov = m_script->get<float>("globals.fov");
     m_rt.m_camera.m_camera = m_script->getVec("globals.camera");
@@ -611,6 +628,7 @@ void DialogEffects::UpdateGlobals()
 
     m_rt.m_globals.m_c64Output = m_script->get<float>("output.c64_output");
     m_rt.m_globals.m_multicolor = m_script->get<float>("output.c64_multicolor");
+    m_rt.m_globals.m_aspect = m_script->get<float>("output.aspect");
     m_rt.m_globals.m_dither = m_script->get<float>("output.dither");
     m_rt.m_globals.m_ditherStrength = m_script->getVec("output.ditherStrength");
  //   if (m_script->lua_gettostack("output.c64_imageType"))
@@ -650,7 +668,8 @@ void DialogEffects::UpdateImage()
 
     m_effect->m_ready = true;
 //    m_effect->Render(m_effect->m_img);
-    m_effect->start();
+//    m_effect->start();
+//    m_effect->Render(m_effect->m_img);
 }
 
 /*void DialogEffects::on_pushButton_clicked()

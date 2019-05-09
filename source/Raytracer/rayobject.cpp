@@ -28,22 +28,25 @@ AbstractRayObject::AbstractRayObject()
     m_rotmat.setToIdentity();
 }
 
-float AbstractRayObject::ApplyDirectionalLight(QVector3D normal, RayTracerGlobals &globals)
+QVector3D AbstractRayObject::ApplyDirectionalLight(QVector3D normal, RayTracerGlobals &globals,QVector<float>& shadows)
 {
-    float l = 0;
+    QVector3D l = QVector3D(0,0,0);
+    int cnt = 0;
     for (AbstractLight* al : globals.m_lights) {
         DirectionalLight* dl = static_cast<DirectionalLight*>(al);
         if (dl==nullptr)
             continue;
 
-        l+= max(QVector3D::dotProduct(dl->m_direction.normalized(),normal),0.0f);
+        l+= dl->m_color*max(QVector3D::dotProduct(dl->m_direction.normalized(),normal),0.0f)*shadows[cnt];
+        cnt++;
     }
     return l;
 }
 
-QVector3D AbstractRayObject::ApplySpecularLight(QVector3D normal, QVector3D view, RayTracerGlobals &globals, Material &mat)
+QVector3D AbstractRayObject::ApplySpecularLight(QVector3D normal, QVector3D view, RayTracerGlobals &globals, Material &mat,QVector<float>& shadows)
 {
     QVector3D l = QVector3D(0,0,0);
+    int cnt = 0;
     for (AbstractLight* al : globals.m_lights) {
         DirectionalLight* dl = static_cast<DirectionalLight*>(al);
         if (dl==nullptr)
@@ -51,13 +54,14 @@ QVector3D AbstractRayObject::ApplySpecularLight(QVector3D normal, QVector3D view
 
 
         QVector3D H = ((dl->m_direction.normalized()-view.normalized())).normalized();
-        l+=  dl->m_color*mat.m_shininess_strength*max(pow(QVector3D::dotProduct(H,normal),m_material.m_shininess),0.0f);
+        l+=  dl->m_color*mat.m_shininess_strength*max(pow(QVector3D::dotProduct(H,normal),m_material.m_shininess),0.0f)*shadows[cnt];
+        cnt++;
     }
     return l;
 
 }
 
-void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& tangent, QVector3D& isp, RayTracerGlobals &globals,QVector3D reflectDir, QVector<AbstractRayObject*>& objects, int pass)
+void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& tangent, QVector3D& isp, RayTracerGlobals &globals,QVector3D reflectDir, QVector<AbstractRayObject*>& objects, int pass, QVector<float>& shadows)
 {
 
     double l = (ray->m_origin-(isp+m_localPos)).length();
@@ -85,11 +89,14 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
                 col.setZ(col.z()*c.z());
             }
 //            col.setX(1);
-            ray->m_intensity = col*ApplyDirectionalLight(normal,globals);
+
+
+
+            ray->m_intensity = col*ApplyDirectionalLight(normal,globals,shadows);
             ray->m_intensity.setX(max(ray->m_intensity.x(),globals.m_ambient.x()*col.x()));
             ray->m_intensity.setY(max(ray->m_intensity.y(),globals.m_ambient.y()*col.y()));
             ray->m_intensity.setZ(max(ray->m_intensity.z(),globals.m_ambient.z()*col.z()));
-            ray->m_intensity += ApplySpecularLight(normal,ray->m_direction,  globals, m_material);
+            ray->m_intensity += ApplySpecularLight(normal,ray->m_direction,  globals, m_material, shadows);
         }
         ray->m_z = l;
     }
@@ -198,7 +205,7 @@ bool RayObjectSphere::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D& i
         normal = GetPerturbedNormal(QVector3D(0,0,0),isp.normalized(),tangent, globals);
 
 //        if (pass==0)
-            CalculateLight(ray,normal,tangent, isp,globals, isp.normalized(),objects,pass);
+//            CalculateLight(ray,normal,tangent, isp,globals, isp.normalized(),objects,pass);
 
         return true;
     }
@@ -238,7 +245,7 @@ bool RayObjectPlane::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D &is
         QVector3D reflectionDir = ray->m_direction-2*QVector3D::dotProduct(ray->m_direction, normal)*normal;
 
 //        if (pass==0)
-            CalculateLight(ray,normal,tangent,p,globals,reflectionDir, objects, pass);
+            //CalculateLight(ray,normal,tangent,p,globals,reflectionDir, objects, pass);
         return true;
     }
     globals.Sky(ray, 1);
@@ -349,6 +356,7 @@ float RayObjectTriangle::intersect(Ray *ray)
     }
 
     return d;
+
 }
 
 

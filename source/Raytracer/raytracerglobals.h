@@ -86,6 +86,7 @@ public:
     float m_c64Output = 0;
     float m_multicolor = 1;
     float m_dither = 0;
+    float m_aspect = 1;
     QVector3D m_ditherStrength = QVector3D(0,0,0);
     float m_c64ImageType = 0;
     float m_shadowScale = 0.5;

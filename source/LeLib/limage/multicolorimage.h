@@ -27,6 +27,7 @@
 #include "source/LeLib/limage/lcolorlist.h"
 #include "source/LeLib/limage/limage.h"
 #include <QImage>
+#include <QtMath>
 #include <QByteArray>
 //#include <source/effects/demoeffectraytracer.h>
 

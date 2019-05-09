@@ -283,9 +283,9 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
             QColor color = QColor(img.pixel(x,y));
             int yp = y + x%(int)strength.y();
             int xp = x + y%(int)strength.z();
-            color.setRed(color.red() + bayer4x4(xp % 4,yp % 4));
-            color.setGreen(color.green() + bayer4x4(xp % 4,yp % 4));
-            color.setBlue(color.blue() + bayer4x4(xp % 4,yp % 4));
+            color.setRed(min(color.red() + bayer4x4(xp % 4,yp % 4),255.0f));
+            color.setGreen(min(color.green() + bayer4x4(xp % 4,yp % 4),255.0f));
+            color.setBlue(min(color.blue() + bayer4x4(xp % 4,yp % 4),255.0f));
 
             int winner = 0;
             QColor newPixel = colors.getClosestColor(color, winner);
@@ -508,15 +508,14 @@ void MultiColorImage::ExportBin(QFile& ofile)
         uchar c = (uchar)m_data[i+j*m_charWidth].c[3];
         if (c==255)
             c=0;
-        if (c!=0)
-            qDebug() << c;
+//        if (c!=0)
+  //          qDebug() << c;
         data.append((char)c);
     }
     QFile file2(fColor);
     file2.open(QIODevice::WriteOnly);
     file2.write( colorData );
     file2.write( data );
-    qDebug() << "Length: " << colorData.count();
     file2.close();
 
 
@@ -531,15 +530,30 @@ void MultiColorImage::ImportBin(QFile &file)
 {
     QByteArray data = file.readAll();
     int j=0;
+    if (file.fileName().contains("_data")) {
     for (int i=0;i<1000;i++) {
         for (int k=0;k<8;k++)
             m_data[i].p[k] = PixelChar::reverse(data[j+k]);
-        m_data[i].c[0] = 0;
+
+/*        m_data[i].c[0] = 0;
         m_data[i].c[1] = 1;
         m_data[i].c[2] = 2;
-        m_data[i].c[3] = 3;
+        m_data[i].c[3] = 3;*/
         j+=8;
     }
+    }
+    if (file.fileName().contains("_color")) {
+    j=2;
+    for (int i=0;i<1000;i++) {
+
+        m_data[i].c[0] = 0;//data[j+0];
+        m_data[i].c[1] = data[j+0]&0x0F;
+        m_data[i].c[2] = data[j+0]>>4;
+        m_data[i].c[3] = data[j+1000];
+        j+=1;
+    }
+    }
+
 }
 
 void MultiColorImage::SetCharSize(int x, int y)

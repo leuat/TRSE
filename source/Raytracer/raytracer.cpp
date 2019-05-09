@@ -69,6 +69,8 @@ int cmpfunc (const AbstractRayObject * a, AbstractRayObject * b) {
                     }
                 }
 
+
+
             }
             else
                 m_globals.Sky(&ray, m_globals.m_skyScale);
@@ -92,6 +94,7 @@ int cmpfunc (const AbstractRayObject * a, AbstractRayObject * b) {
 
 void RayTracer::Raymarch(QImage &img, int w, int h)
 {
+
     m_globals.m_camera = &m_camera;
 
     m_objectsFlattened.clear();
@@ -114,21 +117,23 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
 //    QVector<AbstractRayObject*> objs;
 
 
-
        float aspect = w/(float)h;
        if (aspect>1) aspect = h/(float)w;
        float ah = 1;
+     //  QVector3D tmp[w*h];
 //       qDebug() << w << h;
  //      aspect = 0.5;
-//#pragma omp parallel for
-        for (int i=0;i<w;i++)
-            for (int j=0;j<h;j++)
+
+
+#pragma omp parallel for
+       for (int j=0;j<h;j++)
+           for (int i=0;i<w;i++)
         {
 
-            float x = i;//*aspect;
+            float x = i*m_globals.m_aspect;//*aspect;
             float y = j;//*aspect;
 
-            QVector3D dir = m_camera.coord2ray(x,y,w,h);
+            QVector3D dir = m_camera.coord2ray(x,y,w,h);;
             Ray ray(m_camera.m_camera,dir);
             ray.m_reflect=3;
 
@@ -139,13 +144,21 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
         int tid = 0;
 #endif
             //int tid = 0;
-
             RayMarchSingle(ray, Image, nullptr,m_globals.m_steps,tid, QPoint(x,y));
+  //          tmp[i+j*w] = ray.m_intensity;
             QColor c = Util::toColor(ray.m_intensity*256 + m_globals.m_ambient);
             img.setPixel(i,j,c.rgba());
 
         }
 
+/*        for (int i=0;i<w;i++)
+            for (int j=0;j<h;j++) {
+                QColor c = Util::toColor(tmp[i+j*w]*256 + m_globals.m_ambient);
+                img.setPixel(i,j,c.rgba());
+
+            }
+
+*/
 }
 
 void RayTracer::LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat, QString name, bool invertN)
@@ -216,7 +229,6 @@ void RayTracer::LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat
 bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, int cnt, int tid, QPoint point)
 {
     QVector3D isp;
-    float shadow = 1;
     float t = 1;
     AbstractRayObject *winner = nullptr;
  //   Ray rotated;
@@ -227,6 +239,12 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
   //  if (pass==Pass::Shadow)
     //    return false;
     int cur = 0;
+
+
+
+//    ray.m_intensity = ray.m_cu;
+  //  return true;
+
     for (AbstractRayObject* o: m_objectsFlattened) {
         QVector3D isp1, isp2;
         double t0, t1;
@@ -256,7 +274,6 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
         }
 
     }
-
 //    if (culled.size()>2)
   //      qDebug() << culled.size();
 //    culled = f2;
@@ -294,6 +311,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
             ro->m_localRay[tid].setCurrent(t);
 
             float keep2 = ro->intersect(&ro->m_localRay[tid]);
+//            float keep2 = ro->intersect(&ray);
             if (keep2<keep) {
                 keep = keep2;
                 w = ro;
@@ -314,7 +332,6 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
     }
 
     if (winner!=nullptr) {
-
   //      m_objectsFlattened.removeAll(winner);
     //    m_objectsFlattened.insert(0,winner);
 
@@ -331,15 +348,42 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
         QVector3D tangent = QVector3D::crossProduct(tt,normal).normalized();
         QVector3D bi = QVector3D::crossProduct(tangent,normal).normalized();
 
+
+
 //        normal  = winner->GetPerturbedNormal(isp,normal,tangent,m_globals);
         if (pass!=Pass::Shadow)
-            winner->m_2Dpoints.append(point);
+            winner->m_2Dpoints[tid].append(point);
+
+
 //        ray.m_reflect = 0;
         QVector3D reflectionDir = ray.m_direction-2*QVector3D::dotProduct(ray.m_direction, normal)*normal;
         QVector3D lp = ray.m_currentPos;//-winner->m_localPos;
- //       ray.m_z=10000;
 
-        winner->CalculateLight(&ray,normal,tangent,lp,m_globals,reflectionDir,m_objects,0);
+
+
+        QVector<float> shadows;
+        for (int i=0;i<m_globals.m_lights.count();i++)
+            shadows.append(1);
+        //        if (pass==Image)
+        int cnt = 0;
+        if (winner->m_receivesShadow)
+            for (AbstractLight* al: m_globals.m_lights) {
+                //            Ray shadowRay(isp,winner->m_rotmat*al->m_direction*1);
+                Ray shadowRay(lp,al->m_direction.normalized());
+                AbstractRayObject* o= nullptr;
+                if (dynamic_cast<RayObjectBox*>(winner)!=nullptr)
+                    o=winner;
+                float shadow = 1;
+                if (RayMarchSingle(shadowRay, Shadow, nullptr,14,tid, point)) {
+                    shadow = m_globals.m_shadowScale;
+                }
+                shadows[cnt] = shadow;
+                cnt++;
+            }
+
+        //  qDebug() << shadows;
+
+        winner->CalculateLight(&ray,normal,tangent,lp,m_globals,reflectionDir,m_objects,0,shadows);
 
         if (winner->m_material.m_reflectivity>0 && ray.m_reflect>0) {
             Ray nxt(lp,reflectionDir);
@@ -349,21 +393,8 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
             ray.m_intensity = ray.m_intensity*(1-winner->m_material.m_reflectivity) + winner->m_material.m_reflectivity*nxt.m_intensity;
         }
 
-//        if (pass==Image)
-        if (winner->m_receivesShadow)
-        for (AbstractLight* al: m_globals.m_lights) {
-//            Ray shadowRay(isp,winner->m_rotmat*al->m_direction*1);
-            Ray shadowRay(lp,al->m_direction.normalized());
-            AbstractRayObject* o= nullptr;
-            if (dynamic_cast<RayObjectBox*>(winner)!=nullptr)
-                o=winner;
-            if (RayMarchSingle(shadowRay, Shadow, nullptr,14,tid, point)) {
-                shadow*=m_globals.m_shadowScale;
-            }
 
-        }
-
-        ray.m_intensity*=shadow;
+        //ray.m_intensity*=shadow;
 
 
         return true;
@@ -384,7 +415,13 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx)
         QVector<QPoint> reduced;
         int j=0;
   //      qDebug() << aro->m_2Dpoints.count();
-        for (QPoint p: aro->m_2Dpoints) {
+
+        // Combine all 2D points from instances
+        QVector<QPoint> all;
+        for (int i=0;i<32;i++)
+            all.append(aro->m_2Dpoints[i]);
+
+        for (QPoint p: all) {
             p.setX(p.x()/4);
             p.setY(p.y()/8);
             bool ok=true;
@@ -428,8 +465,8 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx)
             qDebug() << "CNT iS ZERO : " << QString::number(cnt);
             int org = base;
         }
-
-        aro->m_2Dpoints.clear();
+        for (int i=0;i<32;i++)
+        aro->m_2Dpoints[i].clear();
     }
     Util::SaveByteArray(data,fileOutput);
 }

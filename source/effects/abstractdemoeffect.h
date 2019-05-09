@@ -73,6 +73,9 @@ public:
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
         if (dither==2)
             m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength);
+        if (dither==0)
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
+
         m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
 
     }

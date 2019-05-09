@@ -47,30 +47,53 @@ void DemoEffectRaytracer::run()
 
 void DemoEffectRaytracer::Render(QImage &img)
 {
+    while (!m_abort) {
+
+
+    while (!m_ready) {
+        msleep(10);
+        if (m_abort)
+            return;
+    }
+
+    m_ready = false;
+
+
     m_time+=1;
     // m_mc->Clear();
-    Init();
-    m_timer = QElapsedTimer();
-    m_timer.start();
+    //qDebug() << "FRAME0";
 
+    Init();
+    //qDebug() << "FRAME1";
+//    m_timer = QElapsedTimer();
+  //  m_timer.start();
+
+    //qDebug() << "FRAME" << rand()%100;
+//    if (m_rt==nullptr)
+  //      qDebug() << "ISNULL";
+    //return;
     int w = m_rt->m_globals.m_width;
     int h = m_rt->m_globals.m_height;
 
     m_rt->Raymarch(m_img, w,h);
+    //qDebug() << "FRAME2";
 
     m_elapsedTime = m_timer.elapsed();
     m_toggleC64 = m_rt->m_globals.m_c64Output==1;
     ConvertToC64(m_rt->m_globals.m_dither,m_rt->m_globals.m_multicolor==1,m_rt->m_globals.m_ditherStrength);
 
+    //qDebug() << "FRAME3";
 
     m_pixmap.convertFromImage(m_img);
     if (m_img.width()<321)
         m_pixmap = m_pixmap.scaled(320, 200, Qt::IgnoreAspectRatio, Qt::FastTransformation);
 
-    msleep(15);
 
-    m_ready = false;
     emit SignalImageUpdate();
+
+    }
+    //qDebug() << "FRAME5";
+
 }
 
 

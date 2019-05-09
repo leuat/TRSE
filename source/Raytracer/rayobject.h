@@ -32,7 +32,7 @@ public:
     QString m_name;
     static SimplexNoise m_sn;
     Ray m_localRay[32];
-    QVector<QPoint> m_2Dpoints;
+    QVector<QPoint> m_2Dpoints[32];
     float m_bbRadius;
 
     QVector<AbstractRayObject*> m_children;
@@ -101,11 +101,11 @@ public:
     virtual QVector3D calculateNormal(Ray* ray, QVector3D isp) {return QVector3D(0,0,0);}
     virtual bool RayTrace(Ray* ray, RayTracerGlobals& globals, QVector3D& isp, int pass,QVector<AbstractRayObject*>& objects) {return false;}
 
-    float ApplyDirectionalLight(QVector3D normal, RayTracerGlobals& globals);
-    QVector3D ApplySpecularLight(QVector3D normal, QVector3D view, RayTracerGlobals& globals, Material& mat);
+    QVector3D ApplyDirectionalLight(QVector3D normal, RayTracerGlobals& globals,QVector<float>& shadows);
+    QVector3D ApplySpecularLight(QVector3D normal, QVector3D view, RayTracerGlobals& globals, Material& mat,QVector<float>& shadows);
     virtual QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) {return QVector3D(0,0,0);}
 
-    void CalculateLight(Ray* ray, QVector3D& normal,  QVector3D& tangent, QVector3D& localIsp,  RayTracerGlobals& globals, QVector3D reflectDir,QVector<AbstractRayObject*>& objects, int pass);
+    void CalculateLight(Ray* ray, QVector3D& normal,  QVector3D& tangent, QVector3D& localIsp,  RayTracerGlobals& globals, QVector3D reflectDir,QVector<AbstractRayObject*>& objects, int pass, QVector<float>& shadows);
 
     QVector3D GetPerturbedNormal(QVector3D pos, QVector3D normal, QVector3D tangent, RayTracerGlobals& globals);
 
