@@ -43,7 +43,7 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>3</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -80,12 +80,17 @@
          </item>
          <item>
           <property name="text">
-           <string>PET (Not supported yet)</string>
+           <string>PET</string>
           </property>
          </item>
          <item>
           <property name="text">
            <string>BBCM</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Amiga</string>
           </property>
          </item>
         </widget>
@@ -125,7 +130,7 @@
           </rect>
          </property>
          <property name="currentIndex">
-          <number>3</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="tabC64">
           <attribute name="title">
@@ -330,6 +335,11 @@
             </item>
            </layout>
           </widget>
+         </widget>
+         <widget class="QWidget" name="tab_7">
+          <attribute name="title">
+           <string>Amiga</string>
+          </attribute>
          </widget>
         </widget>
        </widget>

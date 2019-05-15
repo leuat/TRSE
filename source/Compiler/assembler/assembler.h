@@ -247,38 +247,39 @@ public:
 
 
 
-    virtual void Program(QString name, QString vicParam) = 0;
-    virtual void EndProgram() = 0;
-    virtual void VarDeclHeader() = 0;
-    virtual void DeclareVariable(QString name, QString type, QString initVal)=0;
+    virtual void Program(QString name, QString vicParam) {};
+    virtual void EndProgram() {}
+    virtual void VarDeclHeader() {}
+    virtual void DeclareVariable(QString name, QString type, QString initVal){}
     virtual void DeclareString(QString name, QStringList initVal) {}
     virtual void DeclareCString(QString name, QStringList initVal) {}
     virtual void DeclareArray(QString name, QString type, int count, QStringList lst, QString position) {}
-    virtual void BeginBlock() = 0;
-    virtual void EndBlock() = 0;
-    virtual void AssignVariable(QString var) = 0;
-    virtual void EndAssignVariable(QString var) {}
-    virtual void ApplyTerm() = 0;
-    virtual void Number(QString n) = 0;
-    virtual QString  String(QStringList s) = 0;
-    virtual void BinOP(TokenType::Type t)=0;
-    virtual void Poke(bool start) = 0;
-    virtual void Peek(bool start) {}
+    virtual void BeginBlock() {}
+    virtual void EndBlock() {}
+//    virtual void AssignVariable(QString var) = 0;
+//    virtual void EndAssignVariable(QString var) {}
+    virtual void ApplyTerm() {}
+    virtual void Number(QString n) {}
+    virtual QString  String(QStringList s) {}
+    virtual void BinOP(TokenType::Type t){}
+//    virtual void Poke(bool start) = 0;
+//    virtual void Peek(bool start) {}
     virtual void Term(QString s, bool write=false);
     virtual void Comment(QString s) {}
     void Term();
-    virtual void Writeln() = 0;
-    virtual void EndWriteln() = 0;
-    virtual void WriteBuiltinWriteln() {}
-    virtual void StartPrint() {}
+  //  virtual void Writeln() = 0;
+  //  virtual void EndWriteln() = 0;
+  //  virtual void WriteBuiltinWriteln() {}
+  //  virtual void StartPrint() {}
     virtual void Variable(QString s, bool isByte) {}
     //void Appendix(QString s, int l);
     virtual void LoadVariable(QString var) {}
     void Connect();
     virtual QString StoreInTempVar(QString name, QString type="byte")  { return name;}
     virtual void PopTempVar() {}
-    virtual void StartForLoop(QString a, QString b) {}
-    virtual void EndForLoop(QString endVal) {}
+//    virtual void StartForLoop(QString a, QString b) {}
+//    virtual void EndForLoop(QString endVal) {}
+
     void Asm(QString s, QString comment="");
     void Label(QString s);
     virtual void Optimise(CIniFile& ini) {}

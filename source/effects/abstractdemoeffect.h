@@ -64,11 +64,11 @@ public:
         if (!m_toggleC64)
             return;
         m_mc->setMultiColor(isMulticolor);
-        m_mc->m_colorList.EnableColors(m_cols);
         m_mc->SetColor(m_cols[0],0);
         m_mc->SetColor(m_cols[1],1);
         m_mc->SetColor(m_cols[3],2);
         m_mc->SetColor(m_cols[2],3);
+        m_mc->m_colorList.EnableColors(m_cols);
         if (dither==1)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
         if (dither==2)

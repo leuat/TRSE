@@ -491,6 +491,12 @@ void MultiColorImage::ExportBin(QFile& ofile)
     colorData.append(m_background);
     colorData.append(m_border);
     data.clear();
+    int charC = 3;
+    if (m_bitMask== 0b1) { // Regular color
+        charC = 1;
+        qDebug() << "REGULAR COLOR";
+    }
+    if (charC==3)
     for (int j=sy;j<ey;j++)
         for (int i=sx;i<ex;i++)
 //            data.append(m_data[i + j*m_charWidth].data());
@@ -505,7 +511,7 @@ void MultiColorImage::ExportBin(QFile& ofile)
 
 //    for (int i=0;i<m_charWidth*m_charHeight;i++) {
 //        uchar c = (uchar)m_data[i].c[3];
-        uchar c = (uchar)m_data[i+j*m_charWidth].c[3];
+        uchar c = (uchar)m_data[i+j*m_charWidth].c[charC];
         if (c==255)
             c=0;
 //        if (c!=0)
@@ -665,7 +671,9 @@ void MultiColorImage::setMultiColor(bool doSet)
         m_minCol = 0;
 
     }
-    if (m_charset!=nullptr)
+//    for (int i=0;i<1000;i++)
+  //      m_data->c[0] = m_extraCols[0];
+     if (m_charset!=nullptr)
         m_charset->setMultiColor(doSet);
 }
 

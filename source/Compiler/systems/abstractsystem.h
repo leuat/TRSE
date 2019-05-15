@@ -1,0 +1,61 @@
+#ifndef ABSTRACTSYSTEM_H
+#define ABSTRACTSYSTEM_H
+
+#include <QString>
+#include <QFile>
+#include "source/LeLib/util/cinifile.h"
+#include <QElapsedTimer>
+
+class AbstractSystem
+{
+public:
+    AbstractSystem(CIniFile* settings, CIniFile* proj) {
+        m_projectIni = proj;
+        m_settingsIni = settings;
+    }
+    QElapsedTimer timer;
+    CIniFile* m_projectIni, *m_settingsIni;
+    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA};
+    enum Processor {MOS6502, M68000};
+
+    bool m_buildSuccess;
+
+    static System SystemFromString(QString s) {
+        if (s.toLower()=="c64")
+            return C64;
+        if (s.toLower()=="c128")
+            return C128;
+        if (s.toLower()=="pet")
+            return PET;
+        if (s.toLower()=="vic20")
+            return VIC20;
+        if (s.toLower()=="nes")
+            return NES;
+        if (s.toLower()=="bbcm")
+            return BBCM;
+        if (s.toLower()=="amiga")
+            return AMIGA;
+    }
+
+    static QString StringFromSystem(System s) {
+        if (s == C64) return "C64";
+        if (s == PET) return "PET";
+        if (s == VIC20) return "VIC20";
+        if (s == NES) return "NES";
+        if (s == C128) return "C128";
+        if (s == BBCM) return "BBCM";
+        if (s == AMIGA) return "AMIGA";
+    }
+
+
+    System m_system = C64;
+    Processor m_processor = MOS6502;
+
+    virtual void Assemble(QString& text, QString file, QString currentDir) {}
+    virtual void PostProcess(QString& text, QString file, QString currentDir) {}
+
+};
+
+
+
+#endif // ABSTRACTSYSTEM_H

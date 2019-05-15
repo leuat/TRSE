@@ -24,29 +24,33 @@
 
 #include "parser.h"
 #include "source/Compiler/assembler/mos6502.h"
+#include "source/Compiler/assembler/m68000.h"
 #include "source/Compiler/assembler/asmpascal.h"
 #include "source/Compiler/assembler/astdispather6502.h"
 #include "source/LeLib/util/cinifile.h"
+
+#include "source/Compiler/systems/abstractsystem.h"
 
 class Compiler
 {
 public:
     Node* m_tree = nullptr;
-    enum Type{PASCAL, MOS6502};
     Assembler* m_assembler = nullptr;
     AbstractASTDispatcher* m_dispatcher = nullptr;
-    Parser* m_parser;
+    Parser m_parser;
+    Lexer m_lexer;
     CIniFile* m_ini, *m_projectIni;
     FatalErrorException recentError;
-    Compiler(Parser* p, CIniFile* ini, CIniFile* pIni);
+    Compiler(CIniFile* ini, CIniFile* pIni);
     Compiler() {}
-    void Parse();
-    bool Build(Type, QString projDir);
+    void Parse(QString text, QStringList lst);
+    bool Build( AbstractSystem* system, QString projDir);
     void CleanupCycleLinenumbers();
     void CleanupBlockLinenumbers();
     void SaveBuild(QString filename);
     void HandleError(FatalErrorException fe, QString se);
     void FindLineNumberAndFile(int inLe, QString& file, int& outle);
+    void Init6502Assembler();
 };
 
 #endif // Compiler_H

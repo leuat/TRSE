@@ -109,6 +109,30 @@ void SineTable(QString fn) {
 
 }
 
+void TanTable(QString fn) {
+    QFile f(fn);
+    f.open(QFile::WriteOnly);
+    QByteArray b;
+    float ss = 0.8;
+    float PI = 3.14159265;
+    float div = 1.0f;
+    for (int i=0;i<256;i++) {
+//        b.append(1+tan((i/256.0)*3.14159265/2 + 3.14159)*127+128);
+//      b.append(1+tan((i/256.0)*PI/2.83)*127+128);
+        float v = tan( ((i/256.0)*PI*ss+PI/2.0 + (PI/2.0*(1-ss)/1) ) )*0.4;
+        if (v>div) v=div;
+        if (v<-div) v=-div;
+        v=v/div;
+//        qDebug() << i<< " : " << v;
+      b.append((v+1)*127+128);
+}
+//    for (int i=0;i<256;i++)
+  //      qDebug() << QString::number(i)  << " : " << QString::number(b[i]);
+
+    f.write(b);
+    f.close();
+
+}
 
 
 int main(int argc, char *argv[])
@@ -125,7 +149,7 @@ int main(int argc, char *argv[])
 //    SetMongisPalette(a);
 
 //    CreateBinaryFile("music.bin");
-    SineTable("sine.bin");
+//    SineTable("sine.bin");
 
 //    ConvertPerlin("/home/leuat/Pictures/Perlin.jpg", "/home/leuat/Dropbox/TRSE/VICDemo/data/perlin22.dat", 23.25);
   //  exit(1);
@@ -140,7 +164,7 @@ int main(int argc, char *argv[])
     f.write(arr);
     f.close();
 */
-
+  //  TanTable("tan.bin");
     MainWindow w;
     w.show();
 

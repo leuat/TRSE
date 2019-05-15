@@ -17,13 +17,13 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
 
     m_dispatcher = dispatcher;
-    if (Command("Writeln")) {
+/*    if (Command("Writeln")) {
         as->Writeln();
 
         m_node->m_params[0]->Accept(dispatcher);
         as->EndWriteln();
     }
-
+*/
     if (Command("init_vic20_sidplay"))
         InitPlaySidVIC20(as);
 
@@ -3355,7 +3355,7 @@ void Methods6502::ClearScreen(Assembler *as)
     AddMemoryBlock(as,1);
 
 
-    if (Syntax::s.m_currentSystem==Syntax::C128 || Syntax::s.m_currentSystem==Syntax::C64 || Syntax::s.m_currentSystem==Syntax::NES) {
+    if (Syntax::s.m_currentSystem==Syntax::C128 || Syntax::s.m_currentSystem==Syntax::C64 || Syntax::s.m_currentSystem==Syntax::NES || Syntax::s.m_currentSystem==Syntax::PET) {
 
         QString lbl = as->NewLabel("clearloop");
         //  QString lbl2 = as->NewLabel("clearloop2");

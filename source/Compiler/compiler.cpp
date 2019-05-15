@@ -22,24 +22,29 @@
 #include "compiler.h"
 #include <QDebug>
 
-Compiler::Compiler(Parser* p, CIniFile* ini, CIniFile* pIni)
+Compiler::Compiler(CIniFile* ini, CIniFile* pIni)
 {
-    m_parser = p;
     m_ini = ini;
     m_projectIni = pIni;
 }
 
-void Compiler::Parse()
+void Compiler::Parse(QString text, QStringList lst)
 {
+
+    m_lexer = Lexer(text, lst, m_projectIni->getString("project_path"));
+    m_parser.m_lexer = &m_lexer;
+
+
+
     m_tree = nullptr;
-    m_parser->m_preprocessorDefines[m_projectIni->getString("system").toUpper()]=1;
-    m_parser->m_preprocessorDefines[m_ini->getString("assembler").toUpper()]=1;
+    m_parser.m_preprocessorDefines[m_projectIni->getString("system").toUpper()]=1;
+    m_parser.m_preprocessorDefines[m_ini->getString("assembler").toUpper()]=1;
     //qDebug() << "******" << m_ini->getString("assembler").toUpper();
     try {
-        m_tree = m_parser->Parse( m_ini->getdouble("optimizer_remove_unused_symbols")==1.0 &&
+        m_tree = m_parser.Parse( m_ini->getdouble("optimizer_remove_unused_symbols")==1.0 &&
                                  Syntax::s.m_currentSystem!=Syntax::NES
                                  ,m_projectIni->getString("vic_memory_config"),Util::fromStringList(m_projectIni->getStringList("global_defines")));
-        //qDebug() << m_parser->m_preprocessorDefines["ORGASM"];
+        //qDebug() << m_parser.m_preprocessorDefines["ORGASM"];
         //exit(1);
     } catch (FatalErrorException e) {
         qDebug() << "ERROR parse " << e.message;
@@ -49,7 +54,7 @@ void Compiler::Parse()
 }
 
 
-bool Compiler::Build(Compiler::Type type, QString project_dir)
+bool Compiler::Build(AbstractSystem* system, QString project_dir)
 {
     if (m_tree==nullptr) {
         qDebug() << "Compiler::Build : tree not parsed!";
@@ -59,74 +64,39 @@ bool Compiler::Build(Compiler::Type type, QString project_dir)
         delete m_assembler;
 
 
-    if (type==MOS6502) {
+    if (system->m_processor==AbstractSystem::MOS6502) {
         m_assembler = new AsmMOS6502();
         m_dispatcher = new ASTDispather6502();
+        Init6502Assembler();
     }
+
+    if (system->m_processor==AbstractSystem::M68000) {
+        m_assembler = new AsmM68000();//
+        //m_dispatcher = new ASTDispather6502();
+//        Init6502Assembler();
+    }
+
 //    qDebug() << SymbolTable::m_constants["SIDFILE_1_INIT"]->m_value->toString();
   //  exit(1);
 
     if (m_assembler==nullptr)
         return false;
 
-
-    m_assembler->m_startInsertAssembler << m_parser->m_initAssembler;
-    m_assembler->m_defines = m_parser->m_preprocessorDefines;
-    m_assembler->InitZeroPointers(m_projectIni->getStringList("zeropages"),m_projectIni->getStringList("temp_zeropages"));
-    m_assembler->m_zeropageScreenMemory = m_projectIni->getString("zeropage_screenmemory");
-    m_assembler->m_replaceValues["@DECRUNCH_ZP1"] = m_projectIni->getString("zeropage_decrunch1");
-    m_assembler->m_replaceValues["@DECRUNCH_ZP2"] = m_projectIni->getString("zeropage_decrunch2");
-    m_assembler->m_replaceValues["@DECRUNCH_ZP3"] = m_projectIni->getString("zeropage_decrunch3");
-    m_assembler->m_replaceValues["@DECRUNCH_ZP4"] = m_projectIni->getString("zeropage_decrunch4");
-
-
-
-    m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal1");
-    m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal2");
-    m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal3");
-    m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal4");
-
-
-
-    if (m_projectIni->getdouble("override_target_settings")==1) {
-        Syntax::s.m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
-        Syntax::s.m_programStartAddress = Syntax::s.m_startAddress+10;//Util::NumberFromStringHex(m_ini->getString("override_target_settings_org"));
-        Syntax::s.m_ignoreSys = m_projectIni->getdouble("override_target_settings_sys")==1;
-        Syntax::s.m_stripPrg = m_projectIni->getdouble("override_target_settings_prg")==1;
-    } else {
-        Syntax::s.m_ignoreSys = false;
-        Syntax::s.m_stripPrg = false;
-
-    }
-
     m_assembler->m_projectDir = project_dir;
 
-    if (Syntax::s.m_currentSystem == Syntax::NES) {
-        Syntax::s.m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
-        Syntax::s.m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
-    }
 
     if (m_tree!=nullptr)
         try {
-            dynamic_cast<NodeProgram*>(m_tree)->m_initJumps = m_parser->m_initJumps;
+            dynamic_cast<NodeProgram*>(m_tree)->m_initJumps = m_parser.m_initJumps;
             m_dispatcher->as = m_assembler;
-//            m_dispatcher->dispatch(m_tree);
-
             m_tree->Accept(m_dispatcher);
 
-            //m_tree->Build(m_assembler);
         } catch (FatalErrorException e) {
             HandleError(e,"Error during build");
             return false;
          }
- /*       try {
-           // m_tree->ExecuteSym(m_assembler->m_symTab);
-        } catch (FatalErrorException e) {
-            HandleError(e,"Error during symbolic check");
-            return false;
-    }*/
 
-    for (MemoryBlock* mb:m_parser->m_userBlocks) {
+    for (MemoryBlock* mb:m_parser.m_userBlocks) {
 
         m_assembler->blocks.append(mb);
     }
@@ -151,7 +121,7 @@ void Compiler::CleanupCycleLinenumbers()
 
         int count = m_assembler->m_cycles[i];
         int nl = i;
-        for (FilePart& fp : m_parser->m_lexer->m_includeFiles) {
+        for (FilePart& fp : m_parser.m_lexer->m_includeFiles) {
             // Modify bi filepart
             if (nl>fp.m_startLine && nl<fp.m_endLine) {
                 cycles[fp.m_startLine]+=count;
@@ -178,7 +148,7 @@ void Compiler::CleanupBlockLinenumbers()
 
         int count = m_assembler->m_blockIndent[i];
         int nl = i;
-        for (FilePart& fp : m_parser->m_lexer->m_includeFiles) {
+        for (FilePart& fp : m_parser.m_lexer->m_includeFiles) {
             // Modify bi filepart
             if (nl>fp.m_startLine && nl<fp.m_endLine) {
                 blocks[fp.m_startLine]+=count;
@@ -221,8 +191,8 @@ void Compiler::HandleError(FatalErrorException fe, QString e)
     fe.file=file;
 
     msg +="\nFatal error " + line;
-    if (linenr<m_parser->m_lexer->m_lines.count() && linenr>=0)
-        msg+="\nSource: " + m_parser->m_lexer->m_lines[linenr];
+    if (linenr<m_parser.m_lexer->m_lines.count() && linenr>=0)
+        msg+="\nSource: " + m_parser.m_lexer->m_lines[linenr];
     msg+="\n\nMessage: ";
     Pmm::Data::d.lineNumber = linenr+1;
 
@@ -235,20 +205,20 @@ void Compiler::FindLineNumberAndFile(int inLe, QString& file, int& outle)
 {
     file="";
     outle = inLe;
-    if (m_parser->m_lexer->m_includeFiles.count()==0) {
+    if (m_parser.m_lexer->m_includeFiles.count()==0) {
         return;
     }
 
     int cur = inLe;
 
     qDebug() << "input line number: " << inLe;
-    qDebug() << "Start line: " << m_parser->m_lexer->m_includeFiles[0].m_startLine;
-    if (cur<=m_parser->m_lexer->m_includeFiles[0].m_startLine) {
+    qDebug() << "Start line: " << m_parser.m_lexer->m_includeFiles[0].m_startLine;
+    if (cur<=m_parser.m_lexer->m_includeFiles[0].m_startLine) {
         return;
     }
 
 
-    for (FilePart fp: m_parser->m_lexer->m_includeFiles) {
+    for (FilePart fp: m_parser.m_lexer->m_includeFiles) {
         if (inLe >= fp.m_startLine && inLe<fp.m_endLine) {
             file = fp.m_name;
             outle = inLe - fp.m_startLine;
@@ -258,4 +228,43 @@ void Compiler::FindLineNumberAndFile(int inLe, QString& file, int& outle)
         cur=cur - (fp.m_endLine-fp.m_startLine);
     }
     outle = cur;
+}
+
+void Compiler::Init6502Assembler()
+{
+    m_assembler->m_startInsertAssembler << m_parser.m_initAssembler;
+    m_assembler->m_defines = m_parser.m_preprocessorDefines;
+
+    m_assembler->InitZeroPointers(m_projectIni->getStringList("zeropages"),m_projectIni->getStringList("temp_zeropages"));
+    m_assembler->m_zeropageScreenMemory = m_projectIni->getString("zeropage_screenmemory");
+    m_assembler->m_replaceValues["@DECRUNCH_ZP1"] = m_projectIni->getString("zeropage_decrunch1");
+    m_assembler->m_replaceValues["@DECRUNCH_ZP2"] = m_projectIni->getString("zeropage_decrunch2");
+    m_assembler->m_replaceValues["@DECRUNCH_ZP3"] = m_projectIni->getString("zeropage_decrunch3");
+    m_assembler->m_replaceValues["@DECRUNCH_ZP4"] = m_projectIni->getString("zeropage_decrunch4");
+
+    m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal1");
+    m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal2");
+    m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal3");
+    m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal4");
+
+
+
+    if (m_projectIni->getdouble("override_target_settings")==1) {
+        Syntax::s.m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
+        Syntax::s.m_programStartAddress = Syntax::s.m_startAddress+0x10;//Util::NumberFromStringHex(m_ini->getString("override_target_settings_org"));
+        Syntax::s.m_ignoreSys = m_projectIni->getdouble("override_target_settings_sys")==1;
+        Syntax::s.m_stripPrg = m_projectIni->getdouble("override_target_settings_prg")==1;
+    } else {
+        Syntax::s.m_ignoreSys = false;
+        Syntax::s.m_stripPrg = false;
+
+    }
+
+
+    if (Syntax::s.m_currentSystem == Syntax::NES) {
+        Syntax::s.m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
+        Syntax::s.m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
+    }
+
+
 }

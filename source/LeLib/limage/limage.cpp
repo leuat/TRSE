@@ -58,6 +58,10 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 9;
     if (t==Sprites2)
         return 10;
+    if (t==CGA)
+        return 11;
+    if (t==AMIGA)
+        return 12;
 
     return 255;
 }
@@ -86,7 +90,10 @@ LImage::Type LImage::CharToType(unsigned char c)
         return VIC20_MultiColorbitmap;
     if (c==10)
         return Sprites2;
-
+    if (c==11)
+        return CGA;
+    if (c==12)
+        return AMIGA;
 
     return NotSupported;
 

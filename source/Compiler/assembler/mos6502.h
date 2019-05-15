@@ -90,11 +90,11 @@ public:
     void Number(QString n) override;
     void Comment(QString s) override;
     QString String(QStringList s) override;
-    void AssignVariable(QString v) override;
-    void EndAssignVariable(QString variable) override;
+ //   void AssignVariable(QString v) override;
+ //   void EndAssignVariable(QString variable) override;
     void BinOP(TokenType::Type t) override;
-    void Poke(bool start) override;
-    void Peek(bool start) override;
+ //   void Poke(bool start) override;
+ //   void Peek(bool start) override;
 
     QString PushZeroPointer() override;
     void PopZeroPointer() override;
@@ -106,20 +106,20 @@ public:
     QString StoreInTempVar(QString name, QString type="byte") override;
 
 
-    void Writeln() override;
-    void EndWriteln() override;
+//    void Writeln() override;
+ //   void EndWriteln() override;
     void LoadVariable(QString var) override;
 
     void Variable(QString var, bool isBtyte) override;
 
 
-    void WriteBuiltinWriteln() override;
-    void StartPrint() override;
+   // void WriteBuiltinWriteln() override;
+   // void StartPrint() override;
 
     void IncludeFile(QString file) override;
 
-    void StartForLoop(QString a, QString b) override;
-    void EndForLoop(QString endVal) override;
+  //  void StartForLoop(QString a, QString b) override;
+  //  void EndForLoop(QString endVal) override;
 
     void Optimise(CIniFile& ini) override;
     void OptimisePassStaLda();

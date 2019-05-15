@@ -1,0 +1,1448 @@
+Detecting ISA HardSID boards.
+Could not open '/dev/port'.
+Cannot get permission to access $300.
+Detecting PCI HardSID boards.
+No PCI HardSID boards found.
+
+Available command-line options:
+
+-logfile <Name>
+	Specify log file name
+-verbose
+	Enable verbose log output.
+-silent
+	(null)
+-help
+	Show a list of the available options and exit normally
+-?
+	Show a list of the available options and exit normally
+-h
+	Show a list of the available options and exit normally
+-features
+	Show a list of the available compile-time options and their configuration.
+-default
+	Restore default settings
+-config <filename>
+	Specify config file
+-dumpconfig <filename>
+	Dump all resources to specified config file
+-chdir <Directory>
+	Change current working directory.
+-limitcycles <value>
+	Specify number of cycles to run before quitting with an error.
+-console
+	Console mode (for music playback)
+-core
+	Allow production of core dumps
++core
+	Do not produce core dumps
+-autostart <Name>
+	Attach and autostart tape/disk image <name>
+-autoload <Name>
+	Attach and autoload tape/disk image <name>
+-1 <Name>
+	Attach <name> as a tape image
+-8 <Name>
+	Attach <name> as a disk image in drive #8
+-9 <Name>
+	Attach <name> as a disk image in drive #9
+-10 <Name>
+	Attach <name> as a disk image in drive #10
+-11 <Name>
+	Attach <name> as a disk image in drive #11
+-directory <Path>
+	Define search path to locate system files
+-colormap
+	Install a private colormap
++colormap
+	Use the default colormap
+-displaydepth <value>
+	Specify X display depth (1..32)
+-fullscreen
+	Enable fullscreen
++fullscreen
+	Disable fullscreen
+-htmlbrowser <Command>
+	Specify an HTML browser for the on-line help
+-saveres
+	Save settings on exit
++confirmexit
+	Never confirm quitting VICE
+-confirmexit
+	Confirm quitting VICE
++saveres
+	Never save settings on exit
+-romsetfile <File>
+	load the given romset file
+-romsetarchive <File>
+	load the given romset archive
+-romsetarchiveselect <Item number>
+	select the given item from the current romset archive
+-moncommands <Name>
+	Execute monitor commands from file
+-monlog <Name>
+	Write monitor output also to file
+-initbreak <value>
+	Set an initial breakpoint for the monitor
+-keepmonopen
+	Keep the monitor open
++keepmonopen
+	Do not keep the monitor open
+-jamaction <Type>
+	Set action on CPU JAM: (0: Ask, 1: continue, 2: Monitor, 3: Reset, 4: Hard Reset, 5: Quit Emulator)
+-exitscreenshot <Name>
+	Set name of screenshot to save when emulator exits.
+-speed <percent>
+	Limit emulation speed to specified value
+-refresh <value>
+	Update every <value> frames (`0' for automatic)
+-warp
+	Enable warp mode
++warp
+	Disable warp mode
+-sound
+	Enable sound playback
++sound
+	Disable sound playback
+-soundrate <value>
+	Set sound sample rate to <value> Hz
+-soundbufsize <value>
+	Set sound buffer size to <value> msec
+-soundfragsize <value>
+	Set sound fragment size (0: very small, 1: small, 2: medium, 3: large, 4: very large)
+-soundsync <sync>
+	Set sound speed adjustment (0: flexible, 1: adjusting, 2: exact)
+-soundoutput <output mode>
+	Sound output mode: (0: system decides mono/stereo, 1: always mono, 2: always stereo)
+-soundsuspend <Seconds>
+	Specify the pause interval when audio underflows (clicks) happen. 0 means no pause is done.
+-soundvolume <Volume>
+	Specify the sound volume (0..100)
+-sounddev <Name>
+	Specify sound driver. (pulse/alsa/uss/dummy)
+-soundarg <args>
+	Specify initialization parameters for sound driver
+-soundrecdev <Name>
+	Specify recording sound driver. (fs/dump/wav/voc/iff/aiff/mp3/soundmovie)
+-soundrecarg <args>
+	Specify initialization parameters for recording sound driver
+-keymap <number>
+	Specify index of keymap file (0=symbolic, 1=positional, 2=symbolic (user), 3=positional (user))
+-keyboardmapping <number>
+	Specify host keyboard layout
+-keyboardtype <number>
+	Specify emulated keyboard type
+-symkeymap <Name>
+	Specify name of symbolic keymap file
+-poskeymap <Name>
+	Specify name of positional keymap file
+-hwscalepossible
+	Enable the possibility of hardware scaling
++hwscalepossible
+	Disable the possibility of hardware scaling
+-trueaspect
+	Enable true aspect ratio
++trueaspect
+	Disable true aspect ratio
+-keepaspect
+	Keep aspect ratio when scaling
++keepaspect
+	Do not keep aspect ratio when scaling (freescale)
+-virtualdev
+	Enable general mechanisms for fast disk/tape emulation
++virtualdev
+	Disable general mechanisms for fast disk/tape emulation
+-pal
+	Use PAL sync factor
+-ntsc
+	Use NTSC sync factor
+-kernal <Name>
+	Specify name of international Kernal ROM image
+-kernalde <Name>
+	Specify name of German Kernal ROM image
+-kernalfi <Name>
+	Specify name of Finnish Kernal ROM image
+-kernalfr <Name>
+	Specify name of French Kernal ROM image
+-kernalit <Name>
+	Specify name of Italian Kernal ROM image
+-kernalno <Name>
+	Specify name of Norwegian Kernal ROM image
+-kernalse <Name>
+	Specify name of Swedish Kernal ROM image
+-kernalch <Name>
+	Specify name of Swiss Kernal ROM image
+-basiclo <Name>
+	Specify name of BASIC ROM image (lower part)
+-basichi <Name>
+	Specify name of BASIC ROM image (higher part)
+-chargen <Name>
+	Specify name of international character generator ROM image
+-chargde <Name>
+	Specify name of German character generator ROM image
+-chargfr <Name>
+	Specify name of French character generator ROM image
+-chargse <Name>
+	Specify name of Swedish character generator ROM image
+-chargch <Name>
+	Specify name of Swedish character generator ROM image
+-kernal64 <Name>
+	Specify name of C64 mode Kernal ROM image
+-basic64 <Name>
+	Specify name of C64 mode BASIC ROM image
+-acia1
+	Enable the ACIA RS232 interface emulation
++acia1
+	Disable the ACIA RS232 interface emulation
+-ciamodel <Model>
+	Set both CIA models (0 = old 6526, 1 = new 6526A)
+-cia1model <Model>
+	Set CIA 1 model (0 = old 6526, 1 = new 6526A)
+-cia2model <Model>
+	Set CIA 2 model (0 = old 6526, 1 = new 6526A)
+-model <Model>
+	Set C128 model (c128/c128dcr, pal/ntsc)
+-machinetype <Type>
+	Set C128 machine type (0: International, 1: Finnish, 2: French, 3: German, 4: Italian, 5: Norwegian, 6: Swedish, 7: Swiss)
+-c128fullbanks
+	Enable RAM banks 2 and 3
++c128fullbanks
+	Disable RAM banks 2 and 3
+-VICIIvcache
+	Enable the video cache
++VICIIvcache
+	Disable the video cache
+-VICIIdsize
+	Enable double size
++VICIIdsize
+	Disable double size
+-VICIIdscan
+	Enable double scan
++VICIIdscan
+	Disable double scan
+-VICIIaudioleak
+	Enable audio leak emulation
++VICIIaudioleak
+	Disable audio leak emulation
+-VICIIhwscale
+	Enable hardware scaling
++VICIIhwscale
+	Disable hardware scaling
+-VICIIfilter <Mode>
+	Select rendering filter: (0: none, 1: CRT emulation, 2: scale2x)
+-VICIIintpal
+	Use an internal calculated palette
+-VICIIextpal
+	Use an external palette (file)
+-VICIIpalette <Name>
+	Specify name of file of external palette
+-VICIIfulldevice <device>
+	Select fullscreen device
+-VICIIXRANDRfullmode <Mode>
+	Select fullscreen mode
+-VICIIVidmodefullmode <Mode>
+	Select fullscreen mode
+-VICIIsaturation <0-2000>
+	Set saturation of internal calculated palette
+-VICIIcontrast <0-2000>
+	Set contrast of internal calculated palette
+-VICIIbrightness <0-2000>
+	Set brightness of internal calculated palette
+-VICIIgamma <0-4000>
+	Set gamma of internal calculated palette
+-VICIItint <0-2000>
+	Set tint of internal calculated palette
+-VICIIcrtblur <0-1000>
+	Amount of horizontal blur for the CRT emulation.
+-VICIIcrtscanlineshade <0-1000>
+	Amount of scan line shading for the CRT emulation
+-VICIIoddlinesphase <0-2000>
+	Set phase for color carrier in odd lines
+-VICIIoddlinesoffset <0-2000>
+	Set phase offset for color carrier in odd lines
+-VICIIborders <Mode>
+	Set border display mode (0: normal, 1: full, 2: debug)
+-VICIIchecksb
+	Enable sprite-background collision registers
++VICIIchecksb
+	Disable sprite-background collision registers
+-VICIIcheckss
+	Enable sprite-sprite collision registers
++VICIIcheckss
+	Disable sprite-sprite collision registers
+-VDCvcache
+	Enable the video cache
++VDCvcache
+	Disable the video cache
+-VDCdsize
+	Enable double size
++VDCdsize
+	Disable double size
+-VDCdscan
+	Enable double scan
++VDCdscan
+	Disable double scan
+-VDCaudioleak
+	Enable audio leak emulation
++VDCaudioleak
+	Disable audio leak emulation
+-VDChwscale
+	Enable hardware scaling
++VDChwscale
+	Disable hardware scaling
+-VDCfilter <Mode>
+	Select rendering filter: (0: none, 1: CRT emulation, 2: scale2x)
+-VDCintpal
+	Use an internal calculated palette
+-VDCextpal
+	Use an external palette (file)
+-VDCpalette <Name>
+	Specify name of file of external palette
+-VDCfulldevice <device>
+	Select fullscreen device
+-VDCXRANDRfullmode <Mode>
+	Select fullscreen mode
+-VDCVidmodefullmode <Mode>
+	Select fullscreen mode
+-VDCsaturation <0-2000>
+	Set saturation of internal calculated palette
+-VDCcontrast <0-2000>
+	Set contrast of internal calculated palette
+-VDCbrightness <0-2000>
+	Set brightness of internal calculated palette
+-VDCgamma <0-4000>
+	Set gamma of internal calculated palette
+-VDCtint <0-2000>
+	Set tint of internal calculated palette
+-VDCcrtblur <0-1000>
+	Amount of horizontal blur for the CRT emulation.
+-VDCcrtscanlineshade <0-1000>
+	Amount of scan line shading for the CRT emulation
+-VDCoddlinesphase <0-2000>
+	Set phase for color carrier in odd lines
+-VDCoddlinesoffset <0-2000>
+	Set phase offset for color carrier in odd lines
+-VDCstretchvertical
+	Enable additional vertical stretching.
++VDCstretchvertical
+	Disable additional vertical stretching.
+-VDC16KB
+	Set the VDC memory size to 16KB
+-VDC64KB
+	Set the VDC memory size to 64KB
+-VDCRevision <number>
+	Set VDC revision (0..2)
+-sidenginemodel <engine and model>
+	Specify SID engine and model (0: FastSID 6581, 1: FastSID 8580, 256: ReSID 6581, 257: ReSID 8580, 258: ReSID 8580 + digiboost, 512: Catweasel, 768: HardSID, 1792: SSI2001)
+-residsamp <method>
+	reSID sampling method (0: fast, 1: interpolating, 2: resampling, 3: fast resampling)
+-residpass <percent>
+	reSID resampling passband in percentage of total bandwidth (0 - 90)
+-residgain <percent>
+	reSID gain in percent (90 - 100)
+-residfilterbias <number>
+	reSID filter bias setting, which can be used to adjust DAC bias in millivolts.
+-sidstereo <amount>
+	amount of extra SID chips. (0..2)
+-sidstereoaddress <Base address>
+	Specify base address for 2nd SID. (0xD420/0xD440/0xD460/0xD480/0xD4A0/0xD4C0/0xD4E0/0xD700/0xD720/0xD740/0xD760/0xD780/0xD7A0/0xD7C0/0xD7E0/0xDE00/0xDE20/0xDE40/0xDE60/0xDE80/0xDEA0/0xDEC0/0xDEE0/0xDF00/0xDF20/0xDF40/0xDF60/0xDF80/0xDFA0/0xDFC0/0xDFE0)
+-sidtripleaddress <Base address>
+	Specify base address for 3rd SID. (0xD420/0xD440/0xD460/0xD480/0xD4A0/0xD4C0/0xD4E0/0xD700/0xD720/0xD740/0xD760/0xD780/0xD7A0/0xD7C0/0xD7E0/0xDE00/0xDE20/0xDE40/0xDE60/0xDE80/0xDEA0/0xDEC0/0xDEE0/0xDF00/0xDF20/0xDF40/0xDF60/0xDF80/0xDFA0/0xDFC0/0xDFE0)
+-sidfilters
+	Emulate SID filters
++sidfilters
+	Do not emulate SID filters
+-rsdev1 <Name>
+	Specify name of first RS232 device
+-rsdev2 <Name>
+	Specify name of second RS232 device
+-rsdev3 <Name>
+	Specify name of third RS232 device
+-rsdev4 <Name>
+	Specify name of fourth RS232 device
+-rsdev1baud <baudrate>
+	Specify baudrate of first RS232 device
+-rsdev2baud <baudrate>
+	Specify baudrate of second RS232 device
+-rsdev3baud <baudrate>
+	Specify baudrate of third RS232 device
+-rsdev4baud <baudrate>
+	Specify baudrate of fourth RS232 device
+-rsuser
+	Enable RS232 userport emulation
++rsuser
+	Disable RS232 userport emulation
+-rsuserbaud <baud>
+	Set the baud rate of the RS232 userport emulation.
+-rsuserdev <0-3>
+	Specify VICE RS232 device for userport
+-iecdevice4
+	Enable IEC device emulation for device #4
++iecdevice4
+	Disable IEC device emulation for device #4
+-iecdevice5
+	Enable IEC device emulation for device #5
++iecdevice5
+	Disable IEC device emulation for device #5
+-iecdevice6
+	Enable IEC device emulation for device #5
++iecdevice6
+	Disable IEC device emulation for device #6
+-iecdevice7
+	Enable IEC device emulation for device #7
++iecdevice7
+	Disable IEC device emulation for device #7
+-iecdevice8
+	Enable IEC device emulation for device #8
++iecdevice8
+	Disable IEC device emulation for device #8
+-iecdevice9
+	Enable IEC device emulation for device #9
++iecdevice9
+	Disable IEC device emulation for device #9
+-iecdevice10
+	Enable IEC device emulation for device #10
++iecdevice10
+	Disable IEC device emulation for device #10
+-iecdevice11
+	Enable IEC device emulation for device #11
++iecdevice11
+	Disable IEC device emulation for device #11
+-prusertxtdev <0-2>
+	Specify printer text output device for userport printer
+-prtxtdev1 <Name>
+	Specify name of printer text device or dump file
+-prtxtdev2 <Name>
+	Specify name of printer text device or dump file
+-prtxtdev3 <Name>
+	Specify name of printer text device or dump file
+-pr4txtdev <0-2>
+	Specify printer text output device for printer #4
+-pr5txtdev <0-2>
+	Specify printer text output device for printer #5
+-pr6txtdev <0-2>
+	Specify printer text output device for printer #6
+-pr4output <Name>
+	Specify name of output device for device #4. (graphics, text)
+-pr5output <Name>
+	Specify name of output device for device #5. (graphics, text)
+-pr6output <Name>
+	Specify name of output device for device #6. (graphics, text)
+-pr4drv <Name>
+	Specify name of printer driver for device #4. (ascii/mps803/nl10/raw)
+-pr5drv <Name>
+	Specify name of printer driver for device #5. (ascii/mps803/nl10/raw)
+-pr6drv <Name>
+	Specify name of printer driver for device #6. (1520/raw)
+-device4 <Type>
+	Set device type for device #4 (0: None, 1: Filesystem, 2: Real)
+-device5 <Type>
+	Set device type for device #5 (0: None, 1: Filesystem, 2: Real)
+-device6 <Type>
+	Set device type for device #6 (0: None, 1: Filesystem, 2: Real)
+-device7 <Type>
+	Set device type for device #7 (0: None, 2: Real)
+-pruser
+	Enable the userport printer emulation
++pruser
+	Disable the userport printer emulation
+-pruserdrv <Name>
+	Specify name of printer driver for the userport printer. (ascii/nl10/raw)
+-pruseroutput <Name>
+	Specify name of output device for the userport printer. (graphics, text)
+-controlport1device device
+	Set Control port 1 device (0: None, 1: Joystick, 2: Paddles, 3: Mouse (1351), 4: Mouse (NEOS), 5: Mouse (Amiga), 6: Mouse (CX-22), 7: Mouse (Atari ST), 8: Mouse (SmartMouse), 9: Mouse (Micromys), 10: KoalaPad, 11: Light Pen (up trigger), 12: Light Pen (left trigger), 13: Datel Light Pen, 14: Magnum Light Phaser, 15: Stack Light Rifle, 16: Inkwell Light Pen, 17: Sampler (2bit), 18: Sampler (4bit), 19: BBRTC, 20: Paperclip64 dongle, 26: Script 64 dongle, 27: VizaWrite 64 dongle)
+-controlport2device device
+	Set Control port 2 device (0: None, 1: Joystick, 2: Paddles, 3: Mouse (1351), 4: Mouse (NEOS), 5: Mouse (Amiga), 6: Mouse (CX-22), 7: Mouse (Atari ST), 8: Mouse (SmartMouse), 9: Mouse (Micromys), 10: KoalaPad, 17: Sampler (2bit), 18: Sampler (4bit), 19: BBRTC, 20: Paperclip64 dongle, 26: Script 64 dongle, 27: VizaWrite 64 dongle)
+-controlport3device device
+	Set Userport joystick adapter port 1 device (0: None, 1: Joystick, 4: Mouse (NEOS), 5: Mouse (Amiga), 6: Mouse (CX-22), 7: Mouse (Atari ST), 17: Sampler (2bit), 18: Sampler (4bit), 19: BBRTC, 20: Paperclip64 dongle)
+-controlport4device device
+	Set Userport joystick adapter port 2 device (0: None, 1: Joystick, 4: Mouse (NEOS), 5: Mouse (Amiga), 6: Mouse (CX-22), 7: Mouse (Atari ST), 17: Sampler (2bit), 18: Sampler (4bit), 19: BBRTC, 20: Paperclip64 dongle)
+-bbrtcsave
+	Enable saving of the BBRTC data when changed.
++bbrtcsave
+	Disable saving of the BBRTC data when changed.
+-joyopposite
+	Enable opposite joystick directions
++joyopposite
+	Disable opposite joystick directions
+-keyset
+	Enable keyset
++keyset
+	Disable keyset
+-joydev1 <0-9>
+	Set device for joystick port 1 (0: None, 1: Numpad, 2: Keyset 1, 3: Keyset 2, 4: Analog joystick 0, 5: Analog joystick 1, 6: Analog joystick 2, 7: Analog joystick 3, 8: Analog joystick 4, 9: Analog joystick 5)
+-joydev2 <0-9>
+	Set device for joystick port 2 (0: None, 1: Numpad, 2: Keyset 1, 3: Keyset 2, 4: Analog joystick 0, 5: Analog joystick 1, 6: Analog joystick 2, 7: Analog joystick 3, 8: Analog joystick 4, 9: Analog joystick 5)
+-extrajoydev1 <0-9>
+	Set device for extra joystick port 1 (0: None, 1: Numpad, 2: Keyset 1, 3: Keyset 2, 4: Analog joystick 0, 5: Analog joystick 1, 6: Analog joystick 2, 7: Analog joystick 3, 8: Analog joystick 4, 9: Analog joystick 5)
+-extrajoydev2 <0-9>
+	Set device for extra joystick port 2 (0: None, 1: Numpad, 2: Keyset 1, 3: Keyset 2, 4: Analog joystick 0, 5: Analog joystick 1, 6: Analog joystick 2, 7: Analog joystick 3, 8: Analog joystick 4, 9: Analog joystick 5)
+-userportcollision <method>
+	Select the way the Userport collisions should be handled, (0: error message and detach all involved devices, 1: error message and detach last attached involved device, 2: warning in log and 'AND' the valid return values
+-doodleoversize <method>
+	Select the way the oversized input should be handled, (0: scale down, 1: crop left top, 2: crop center top,  3: crop right top, 4: crop left center, 5: crop center, 6: crop right center, 7: crop left bottom, 8: crop center bottom, 9:  crop right bottom)
+-doodleundersize <method>
+	Select the way the undersized input should be handled, (0: scale up, 1: borderize)
+-doodlemc <method>
+	Select the way the multicolor to hires should be handled, (0: b&w, 1: 2 colors, 2: 4 colors, 3: gray scale,  4: best cell colors)
+-koalaoversize <method>
+	Select the way the oversized input should be handled, (0: scale down, 1: crop left top, 2: crop center top,  3: crop right top, 4: crop left center, 5: crop center, 6: crop right center, 7: crop left bottom, 8: crop center bottom, 9:  crop right bottom)
+-koalaundersize <method>
+	Select the way the undersized input should be handled, (0: scale up, 1: borderize)
+-samplename <Name>
+	Specify name of sample file
+-samplerdev device
+	Specify sampler device. (0: media file input)
+-samplergain <Sampler gain>
+	Specify sampler gain in percent (1%-200%)
+-flipname <Name>
+	Specify name of the flip list file image
+-device8 <Type>
+	Set device type for device #8 (0: None, 1: Filesystem, 2: OpenCBM, 3: Block device)
+-device9 <Type>
+	Set device type for device #9 (0: None, 1: Filesystem, 2: OpenCBM, 3: Block device)
+-device10 <Type>
+	Set device type for device #10 (0: None, 1: Filesystem, 2: OpenCBM, 3: Block device)
+-device11 <Type>
+	Set device type for device #11 (0: None, 1: Filesystem, 2: OpenCBM, 3: Block device)
+-attach8ro
+	Attach disk image for drive #8 read only
+-attach8rw
+	Attach disk image for drive #8 read write (if possible)
+-attach9ro
+	Attach disk image for drive #9 read only
+-attach9rw
+	Attach disk image for drive #9 read write (if possible)
+-attach10ro
+	Attach disk image for drive #10 read only
+-attach10rw
+	Attach disk image for drive #10 read write (if possible)
+-attach11ro
+	Attach disk image for drive #11 read only
+-attach11rw
+	Attach disk image for drive #11 read write (if possible)
+-fs8 <Name>
+	Use <name> as directory for file system device #8
+-fs9 <Name>
+	Use <name> as directory for file system device #9
+-fs10 <Name>
+	Use <name> as directory for file system device #10
+-fs11 <Name>
+	Use <name> as directory for file system device #11
+-fs8convertp00
+	Enable on-read support for P00 files on drive 8
++fs8convertp00
+	Enable on-read support for P00 files on drive 8
+-fs9convertp00
+	Enable on-read support for P00 files on drive 9
++fs9convertp00
+	Enable on-read support for P00 files on drive 9
+-fs10convertp00
+	Enable on-read support for P00 files on drive 10
++fs10convertp00
+	Enable on-read support for P00 files on drive 10
+-fs11convertp00
+	Enable on-read support for P00 files on drive 11
++fs11convertp00
+	Enable on-read support for P00 files on drive 11
+-fs8savep00
+	Enable saving of P00 files on drive 8
++fs8savep00
+	Enable saving of P00 files on drive 8
+-fs9savep00
+	Enable saving of P00 files on drive 9
++fs9savep00
+	Enable saving of P00 files on drive 9
+-fs10savep00
+	Enable saving of P00 files on drive 10
++fs10savep00
+	Enable saving of P00 files on drive 10
+-fs11savep00
+	Enable saving of P00 files on drive 11
++fs11savep00
+	Enable saving of P00 files on drive 11
+-fs8hidecbm
+	Hide CBM files (only show P00 files) for drive 8
++fs8hidecbm
+	Do not hide CBM files (show all files) for drive 8
+-fs9hidecbm
+	Hide CBM files (only show P00 files) for drive 9
++fs9hidecbm
+	Do not hide CBM files (show all files) for drive 9
+-fs10hidecbm
+	Hide CBM files (only show P00 files) for drive 10
++fs10hidecbm
+	Do not hide CBM files (show all files) for drive 10
+-fs11hidecbm
+	Hide CBM files (only show P00 files) for drive 11
++fs11hidecbm
+	Do not hide CBM files (show all files) for drive 11
+-rawdrive <Name>
+	Set raw drive device name
+-playback
+	Playback recorded events
+-eventsnapshotdir <Name>
+	Set event snapshot directory
+-eventstartsnapshot <Name>
+	Set event start snapshot
+-eventendsnapshot <Name>
+	Set event end snapshot
+-eventstartmode <Mode>
+	Set event start mode (0: file save, 1: file load, 2: reset, 3: playback)
+-eventimageinc
+	Enable including disk images
++eventimageinc
+	Disable including disk images
+-keybuf <string>
+	Put the specified string into the keyboard buffer.
+-keybuf-delay <value>
+	Set additional keyboard buffer delay (0: use default)
+-basicload
+	On autostart, load to BASIC start (without ',1')
++basicload
+	On autostart, load with ',1'
+-autostartwithcolon
+	On autostart, use the 'RUN' command with a colon, i.e., 'RUN:'
++autostartwithcolon
+	On autostart, do not use the 'RUN' command with a colon; i.e., 'RUN'
+-autostart-handle-tde
+	Handle True Drive Emulation on autostart
++autostart-handle-tde
+	Do not handle True Drive Emulation on autostart
+-autostart-warp
+	Enable warp mode during autostart
++autostart-warp
+	Disable warp mode during autostart
+-autostartprgmode <Mode>
+	Set autostart mode for PRG files (0: VirtualFS, 1: Inject, 2: Disk image)
+-autostartprgdiskimage <Name>
+	Set disk image for autostart of PRG files
+-autostart-delay <frames>
+	Set initial autostart delay (0: use default)
+-autostart-delay-random
+	Enable random initial autostart delay.
++autostart-delay-random
+	Disable random initial autostart delay.
+-netplayserver <hostname>
+	Set the netplay server hostname
+-netplaybind <hostname>
+	Set the netplay binding address
+-netplayport <port>
+	Set the netplay port (0..65535)
+-netplayctrl <key,joy1,joy2,dev,rsrc>
+	Set the netplay control elements (keyboard, joystick1, joystick2, devices and resources), each item takes a value (0: None, 1: Server, 2: Client, 3: Both)
+-mouse
+	Enable mouse grab
++mouse
+	Disable mouse grab
+-smartmousertcsave
+	Enable saving of smart mouse RTC data when changed.
++smartmousertcsave
+	Disable saving of smart mouse RTC data when changed.
+-drive8rtcsave
+	Enable saving of FD2000/4000 RTC data when changed.
++drive8rtcsave
+	Disable saving of FD2000/4000 RTC data when changed.
+-drive8type <Type>
+	Set drive type (0: no drive, 1540: CBM 1540, 1541: CBM 1541, 1542: CBM 1541-II, 1570: CBM 1570, 1571: CBM 1571, 1573: CBM 1571CR, 1581: CBM 1581, 2000: CMD FD-2000, 4000: CMD FD-4000, 2031: CBM 2031, 2040: CBM 2040, 3040: CBM 3040, 4040: CBM 4040, 1001: CBM 1001, 8050: CBM 8050, 8250: CBM 8250)
+-drive8extend <method>
+	Set drive 40 track extension policy (0: never, 1: ask, 2: on access)
+-drive8idle <method>
+	Set drive idling method (0: no traps, 1: skip cycles, 2: trap idle)
+-drive8rpm <RPM>
+	Set drive rpm (30000 = 300rpm)
+-drive8wobble <Wobble>
+	Set drive wobble (100 = +/-0.5rpm)
+-drive9rtcsave
+	Enable saving of FD2000/4000 RTC data when changed.
++drive9rtcsave
+	Disable saving of FD2000/4000 RTC data when changed.
+-drive9type <Type>
+	Set drive type (0: no drive, 1540: CBM 1540, 1541: CBM 1541, 1542: CBM 1541-II, 1570: CBM 1570, 1571: CBM 1571, 1573: CBM 1571CR, 1581: CBM 1581, 2000: CMD FD-2000, 4000: CMD FD-4000, 2031: CBM 2031, 2040: CBM 2040, 3040: CBM 3040, 4040: CBM 4040, 1001: CBM 1001, 8050: CBM 8050, 8250: CBM 8250)
+-drive9extend <method>
+	Set drive 40 track extension policy (0: never, 1: ask, 2: on access)
+-drive9idle <method>
+	Set drive idling method (0: no traps, 1: skip cycles, 2: trap idle)
+-drive9rpm <RPM>
+	Set drive rpm (30000 = 300rpm)
+-drive9wobble <Wobble>
+	Set drive wobble (100 = +/-0.5rpm)
+-drive10rtcsave
+	Enable saving of FD2000/4000 RTC data when changed.
++drive10rtcsave
+	Disable saving of FD2000/4000 RTC data when changed.
+-drive10type <Type>
+	Set drive type (0: no drive, 1540: CBM 1540, 1541: CBM 1541, 1542: CBM 1541-II, 1570: CBM 1570, 1571: CBM 1571, 1573: CBM 1571CR, 1581: CBM 1581, 2000: CMD FD-2000, 4000: CMD FD-4000, 2031: CBM 2031, 2040: CBM 2040, 3040: CBM 3040, 4040: CBM 4040, 1001: CBM 1001, 8050: CBM 8050, 8250: CBM 8250)
+-drive10extend <method>
+	Set drive 40 track extension policy (0: never, 1: ask, 2: on access)
+-drive10idle <method>
+	Set drive idling method (0: no traps, 1: skip cycles, 2: trap idle)
+-drive10rpm <RPM>
+	Set drive rpm (30000 = 300rpm)
+-drive10wobble <Wobble>
+	Set drive wobble (100 = +/-0.5rpm)
+-drive11rtcsave
+	Enable saving of FD2000/4000 RTC data when changed.
++drive11rtcsave
+	Disable saving of FD2000/4000 RTC data when changed.
+-drive11type <Type>
+	Set drive type (0: no drive, 1540: CBM 1540, 1541: CBM 1541, 1542: CBM 1541-II, 1570: CBM 1570, 1571: CBM 1571, 1573: CBM 1571CR, 1581: CBM 1581, 2000: CMD FD-2000, 4000: CMD FD-4000, 2031: CBM 2031, 2040: CBM 2040, 3040: CBM 3040, 4040: CBM 4040, 1001: CBM 1001, 8050: CBM 8050, 8250: CBM 8250)
+-drive11extend <method>
+	Set drive 40 track extension policy (0: never, 1: ask, 2: on access)
+-drive11idle <method>
+	Set drive idling method (0: no traps, 1: skip cycles, 2: trap idle)
+-drive11rpm <RPM>
+	Set drive rpm (30000 = 300rpm)
+-drive11wobble <Wobble>
+	Set drive wobble (100 = +/-0.5rpm)
+-truedrive
+	Enable hardware-level emulation of disk drives
++truedrive
+	Disable hardware-level emulation of disk drives
+-drivesound
+	Enable sound emulation of disk drives
++drivesound
+	Disable sound emulation of disk drives
+-drivesoundvolume <Volume>
+	Set volume for disk drive sound emulation (0-4000)
+-drive8ram2000
+	Enable 8KB RAM expansion at $2000-$3FFF
++drive8ram2000
+	Disable 8KB RAM expansion at $2000-$3FFF
+-drive8ram4000
+	Enable 8KB RAM expansion at $4000-$5FFF
++drive8ram4000
+	Disable 8KB RAM expansion at $4000-$5FFF
+-drive8ram6000
+	Enable 8KB RAM expansion at $6000-$7FFF
++drive8ram6000
+	Disable 8KB RAM expansion at $6000-$7FFF
+-drive8ram8000
+	Enable 8KB RAM expansion at $8000-$9FFF
++drive8ram8000
+	Disable 8KB RAM expansion at $8000-$9FFF
+-drive8rama000
+	Enable 8KB RAM expansion at $A000-$BFFF
++drive8rama000
+	Disable 8KB RAM expansion at $A000-$BFFF
+-drive9ram2000
+	Enable 8KB RAM expansion at $2000-$3FFF
++drive9ram2000
+	Disable 8KB RAM expansion at $2000-$3FFF
+-drive9ram4000
+	Enable 8KB RAM expansion at $4000-$5FFF
++drive9ram4000
+	Disable 8KB RAM expansion at $4000-$5FFF
+-drive9ram6000
+	Enable 8KB RAM expansion at $6000-$7FFF
++drive9ram6000
+	Disable 8KB RAM expansion at $6000-$7FFF
+-drive9ram8000
+	Enable 8KB RAM expansion at $8000-$9FFF
++drive9ram8000
+	Disable 8KB RAM expansion at $8000-$9FFF
+-drive9rama000
+	Enable 8KB RAM expansion at $A000-$BFFF
++drive9rama000
+	Disable 8KB RAM expansion at $A000-$BFFF
+-drive10ram2000
+	Enable 8KB RAM expansion at $2000-$3FFF
++drive10ram2000
+	Disable 8KB RAM expansion at $2000-$3FFF
+-drive10ram4000
+	Enable 8KB RAM expansion at $4000-$5FFF
++drive10ram4000
+	Disable 8KB RAM expansion at $4000-$5FFF
+-drive10ram6000
+	Enable 8KB RAM expansion at $6000-$7FFF
++drive10ram6000
+	Disable 8KB RAM expansion at $6000-$7FFF
+-drive10ram8000
+	Enable 8KB RAM expansion at $8000-$9FFF
++drive10ram8000
+	Disable 8KB RAM expansion at $8000-$9FFF
+-drive10rama000
+	Enable 8KB RAM expansion at $A000-$BFFF
++drive10rama000
+	Disable 8KB RAM expansion at $A000-$BFFF
+-drive11ram2000
+	Enable 8KB RAM expansion at $2000-$3FFF
++drive11ram2000
+	Disable 8KB RAM expansion at $2000-$3FFF
+-drive11ram4000
+	Enable 8KB RAM expansion at $4000-$5FFF
++drive11ram4000
+	Disable 8KB RAM expansion at $4000-$5FFF
+-drive11ram6000
+	Enable 8KB RAM expansion at $6000-$7FFF
++drive11ram6000
+	Disable 8KB RAM expansion at $6000-$7FFF
+-drive11ram8000
+	Enable 8KB RAM expansion at $8000-$9FFF
++drive11ram8000
+	Disable 8KB RAM expansion at $8000-$9FFF
+-drive11rama000
+	Enable 8KB RAM expansion at $A000-$BFFF
++drive11rama000
+	Disable 8KB RAM expansion at $A000-$BFFF
+-dos1540 <Name>
+	Specify name of 1540 DOS ROM image
+-dos1541 <Name>
+	Specify name of 1541 DOS ROM image
+-dos1541II <Name>
+	Specify name of 1541-II DOS ROM image
+-dos1570 <Name>
+	Specify name of 1570 DOS ROM image
+-dos1571 <Name>
+	Specify name of 1571 DOS ROM image
+-dos1581 <Name>
+	Specify name of 1581 DOS ROM image
+-dos2000 <Name>
+	Specify name of 2000 DOS ROM image
+-dos4000 <Name>
+	Specify name of 4000 DOS ROM image
+-dos1571cr <Name>
+	Specify name of 1571CR DOS ROM image
+-parallel8 <Type>
+	Set parallel cable type (0: none, 1: standard, 2: Dolphin DOS 3, 3: Formel 64)
+-drive8profdos
+	Enable Professional DOS
++drive8profdos
+	Disable Professional DOS
+-drive8supercard
+	Enable SuperCard+
++drive8supercard
+	Disable SuperCard+
+-drive8stardos
+	Enable StarDOS
++drive8stardos
+	Disable StarDOS
+-parallel9 <Type>
+	Set parallel cable type (0: none, 1: standard, 2: Dolphin DOS 3, 3: Formel 64)
+-drive9profdos
+	Enable Professional DOS
++drive9profdos
+	Disable Professional DOS
+-drive9supercard
+	Enable SuperCard+
++drive9supercard
+	Disable SuperCard+
+-drive9stardos
+	Enable StarDOS
++drive9stardos
+	Disable StarDOS
+-parallel10 <Type>
+	Set parallel cable type (0: none, 1: standard, 2: Dolphin DOS 3, 3: Formel 64)
+-drive10profdos
+	Enable Professional DOS
++drive10profdos
+	Disable Professional DOS
+-drive10supercard
+	Enable SuperCard+
++drive10supercard
+	Disable SuperCard+
+-drive10stardos
+	Enable StarDOS
++drive10stardos
+	Disable StarDOS
+-parallel11 <Type>
+	Set parallel cable type (0: none, 1: standard, 2: Dolphin DOS 3, 3: Formel 64)
+-drive11profdos
+	Enable Professional DOS
++drive11profdos
+	Disable Professional DOS
+-drive11supercard
+	Enable SuperCard+
++drive11supercard
+	Disable SuperCard+
+-drive11stardos
+	Enable StarDOS
++drive11stardos
+	Disable StarDOS
+-profdos1571 <Name>
+	Specify name of Professional DOS 1571 ROM image
+-supercard <Name>
+	Specify name of SuperCard+ ROM image
+-stardos <Name>
+	Specify name of StarDOS ROM image
+-dos2031 <Name>
+	Specify name of 2031 DOS ROM image
+-dos2040 <Name>
+	Specify name of 2040 DOS ROM image
+-dos3040 <Name>
+	Specify name of 3040 DOS ROM image
+-dos4040 <Name>
+	Specify name of 4040 DOS ROM image
+-dos1001 <Name>
+	Specify name of 1001/8050/8250 DOS ROM image
+-tapelog
+	Enable the tape log device
++tapelog
+	Disable the tape log device
+-tapelogtofile
+	Enable logging to a file
+-tapelogtolog
+	Enable logging to the emulator log file
+-tapelogimage <Name>
+	Specify tape log file name
+-cpclockf83
+	Enable CP Clock F83 (PCF8583 RTC)
++cpclockf83
+	Disable CP Clock F83 (PCF8583 RTC)
+-cpclockf83save
+	Enable saving of the CP Clock F83 (PCF8583 RTC) data when changed.
++cpclockf83save
+	Disable saving of the CP Clock F83 (PCF8583 RTC) data when changed.
+-tapesensedongle
+	Enable tape sense dongle
++tapesensedongle
+	Disable tape sense dongle
+-dtlbasicdongle
+	Enable DTL Basic dongle
++dtlbasicdongle
+	Enable DTL Basic dongle
+-tapediag586220harness
+	Enable the tape part of the 586220 diagnostics harness
++tapediag586220harness
+	Disable the tape part of the 586220 diagnostics harness
+-datasette
+	Enable Datasette
++datasette
+	Disable Datasette
+-dsresetwithcpu
+	Enable automatic Datasette-Reset
++dsresetwithcpu
+	Disable automatic Datasette-Reset
+-dszerogapdelay <value>
+	Set delay in cycles for a zero in the tap
+-dsspeedtuning <value>
+	Set number of cycles added to each gap in the tap
+-dstapewobble <value>
+	Set maximum random number of cycles added to each gap in the tap
+-mmc64
+	Enable the MMC64 expansion
++mmc64
+	Disable the MMC64 expansion
+-mmc64bios <Name>
+	Specify name of MMC64 BIOS image
+-mmc64image <Name>
+	Specify name of MMC64 image
+-mmc64readonly
+	Set the MMC64 card to read-only
+-mmc64readwrite
+	Set the MMC64 card to read/write
+-mmc64bioswrite
+	Save the MMC64 bios when changed
+-mmc64biosreadonly
+	Do not save the MMC64 bios when changed
+-mmc64flash
+	Set the MMC64 Flash Jumper
++mmc64flash
+	Remove the MMC64 Flash Jumper
+-mmc64rev <Revision>
+	Specify MMC64 revision (0: Rev A, 1: Rev B)
+-mmc64sdtype <Type>
+	Specify MMC64 SD type (0: auto, 1: MMC, 2: SD, 3: SDHC)
+-mmc64clockportdevice <device>
+	Clockport device. (0: None)
+-magicvoiceimage <Name>
+	Specify name of Magic Voice ROM image
+-magicvoice
+	Enable the Magic Voice cartridge
++magicvoice
+	Disable the Magic Voice cartridge
+-ieee488
+	Enable the IEEE488 interface emulation
++ieee488
+	Disable the IEEE488 interface emulation
+-ieee488image <Name>
+	specify IEEE488 interface image name
+-dqbb
+	Enable Double Quick Brown Box
++dqbb
+	Disable Double Quick Brown Box
+-dqbbimage <Name>
+	Specify Double Quick Brown Box filename
+-dqbbimagerw
+	Allow writing to DQBB image
++dqbbimagerw
+	Do not write to DQBB image
+-expert
+	Enable the Expert Cartridge
++expert
+	Disable the Expert Cartridge
+-expertimagename <Name>
+	Set Expert Cartridge image name
+-expertimagerw
+	Allow writing to Expert Cartridge image
++expertimagerw
+	Do not write to Expert Cartridge image
+-expertmode <Mode>
+	Set Expert Cartridge mode (0: Off, 1: Prg, 2: On)
+-isepic
+	Enable the ISEPIC cartridge
++isepic
+	Disable the ISEPIC cartridge
+-isepicimagename <Name>
+	Set ISEPIC image name
+-isepicimagerw
+	Allow writing to ISEPIC image
++isepicimagerw
+	Do not write to ISEPIC image
+-isepicswitch
+	Enable the ISEPIC switch
++isepicswitch
+	Disable the ISEPIC switch
+-ramcart
+	Enable the RamCart expansion
++ramcart
+	Disable the RamCart expansion
+-ramcartsize <size in KB>
+	Size of the RAMCART expansion. (64/128)
+-ramcartimage <Name>
+	Specify name of RAMCART image
+-ramcartimagerw
+	Allow writing to RAMCart image
++ramcartimagerw
+	Do not write to RAMCart image
+-ramcartro
+	Set the RAMCart switch to read-only
+-ramcartrw
+	Set the RAMCart switch to read/write
+-miditype <0-4>
+	MIDI interface type (0: Sequential, 1: Passport, 2: DATEL, 3: Namesoft, 4: Maplin)
+-midi
+	Enable MIDI emulation
++midi
+	Disable MIDI emulation
+-midiin <Name>
+	Specify MIDI-In device
+-midiout <Name>
+	Specify MIDI-Out device
+-mididrv <Driver>
+	Specify MIDI driver (0 = OSS, 1 = ALSA)
+-acia1base <Base address>
+	Set the base address of the ACIA cartridge. (0xD700, 0xDE00, 0xDF00)
+-acia1irq <interrupt>
+	Set the ACIA interrupt (0: None, 1: NMI, 2: IRQ)
+-acia1mode <Mode>
+	Set the ACIA mode (0: Normal, 1: Swiftlink, 2: Turbo232)
+-myaciadev <0-3>
+	Specify RS232 device this ACIA should work on
+-digimax
+	Enable the DigiMAX cartridge
++digimax
+	Disable the DigiMAX cartridge
+-digimaxbase <Base address>
+	Base address of the DigiMAX cartridge. (0xDE00/0xDE20/0xDE40/0xDE60/0xDE80/0xDEA0/0xDEC0/0xDEE0/0xDF00/0xDF20/0xDF40/0xDF60/0xDF80/0xDFA0/0xDFC0/0xDFE0)
+-ds12c887rtc
+	Enable the DS12C887 RTC cartridge
++ds12c887rtc
+	Disable the DS12C887 RTC cartridge
+-ds12c887rtchalted
+	Set the RTC oscillator to 'halted'
+-ds12c887rtcrunning
+	Set the RTC oscillator to 'running'
+-ds12c887rtcsave
+	Enable saving of the DS12C887 RTC data when changed.
++ds12c887rtcsave
+	Disable saving of the DS12C887 RTC data when changed.
+-ds12c887rtcbase <Base address>
+	Base address of the DS12C887 RTC cartridge. (0xD700/0xDE00/0xDF00)
+-georam
+	Enable the GEO-RAM expansion unit
++georam
+	Disable the GEO-RAM expansion unit
+-georamsize <size in KB>
+	Size of the GEORAM expansion unit
+-georamimage <Name>
+	Specify name of GEORAM image
+-georamimagerw
+	Allow writing to GEORAM image
++georamimagerw
+	Do not write to GEORAM image
+-reu
+	Enable the RAM Expansion Unit
++reu
+	Disable the RAM Expansion Unit
+-reusize <size in KB>
+	Size of the RAM expansion unit. (128/256/512/1024/2048/4096/8192/16384)
+-reuimage <Name>
+	Specify name of REU image
+-reuimagerw
+	Allow writing to REU image
++reuimagerw
+	Do not write to REU image
+-sfxse
+	Enable the SFX Sound Expander cartridge
++sfxse
+	Disable the SFX Sound Expander cartridge
+-sfxsetype <Type>
+	Set YM chip type (3526 / 3812)
+-sfxss
+	Enable the SFX Sound Sampler cartridge
++sfxss
+	Disable the SFX Sound Sampler cartridge
+-easyflashjumper
+	Enable EasyFlash jumper
++easyflashjumper
+	Disable EasyFlash jumper
+-easyflashcrtwrite
+	Enable writing to EasyFlash .crt image
++easyflashcrtwrite
+	Disable writing to EasyFlash .crt image
+-easyflashcrtoptimize
+	Enable EasyFlash .crt image optimize on write
++easyflashcrtoptimize
+	Disable writing to EasyFlash .crt image
+-gmod2eepromimage
+	Specify GMod2 EEPROM image filename
+-gmod2eepromrw
+	Enable writes to GMod2 EEPROM image
++gmod2eepromrw
+	Disable writes to GMod2 EEPROM image
+-gmod2flashwrite
+	Enable saving of the GMod2 ROM at exit
++gmod2flashwrite
+	Disable saving of the GMod2 ROM at exit
+-sbdigimax
+	Enable the Short Bus DigiMAX expansion
++sbdigimax
+	Disable the Short Bus DigiMAX expansion
+-sbdigimaxbase <Base address>
+	Base address of the Short Bus DigiMAX expansion. (0xDE40/0xDE48)
+-IDE64image1 <Name>
+	Specify name of IDE64 image file
+-IDE64image2 <Name>
+	Specify name of IDE64 image file
+-IDE64image3 <Name>
+	Specify name of IDE64 image file
+-IDE64image4 <Name>
+	Specify name of IDE64 image file
+-IDE64cyl1 <value>
+	Set number of cylinders for the IDE64 emulation. (1..65535)
+-IDE64cyl2 <value>
+	Set number of cylinders for the IDE64 emulation. (1..65535)
+-IDE64cyl3 <value>
+	Set number of cylinders for the IDE64 emulation. (1..65535)
+-IDE64cyl4 <value>
+	Set number of cylinders for the IDE64 emulation. (1..65535)
+-IDE64hds1 <value>
+	Set number of heads for the IDE64 emulation. (1..16)
+-IDE64hds2 <value>
+	Set number of heads for the IDE64 emulation. (1..16)
+-IDE64hds3 <value>
+	Set number of heads for the IDE64 emulation. (1..16)
+-IDE64hds4 <value>
+	Set number of heads for the IDE64 emulation. (1..16)
+-IDE64sec1 <value>
+	Set number of sectors for the IDE64 emulation. (1..63)
+-IDE64sec2 <value>
+	Set number of sectors for the IDE64 emulation. (1..63)
+-IDE64sec3 <value>
+	Set number of sectors for the IDE64 emulation. (1..63)
+-IDE64sec4 <value>
+	Set number of sectors for the IDE64 emulation. (1..63)
+-IDE64autosize1
+	Autodetect image size
++IDE64autosize1
+	Do not autodetect geometry of formatted images
+-IDE64autosize2
+	Autodetect image size
++IDE64autosize2
+	Do not autodetect geometry of formatted images
+-IDE64autosize3
+	Autodetect image size
++IDE64autosize3
+	Do not autodetect geometry of formatted images
+-IDE64autosize4
+	Autodetect image size
++IDE64autosize4
+	Do not autodetect geometry of formatted images
+-IDE64version <value>
+	IDE64 cartridge version
+-IDE64USB
+	Enable IDE64 USB server
++IDE64USB
+	Disable IDE64 USB server
+-IDE64USBAddress <Name>
+	IDE64 USB server address
+-IDE64rtcsave
+	Enable saving of IDE64 RTC data when changed.
++IDE64rtcsave
+	Disable saving of IDE64 RTC data when changed.
+-ide64clockportdevice <device>
+	Clockport device. (0: None)
+-mmcrrescue
+	Enable MMC Replay rescue mode
++mmcrrescue
+	Disable MMC Replay rescue mode
+-mmcrimagerw
+	Allow writing to MMC Replay image
++mmcrimagerw
+	Do not write to MMC Replay image
+-mmcrcardimage <filename>
+	Specify MMC Replay card image filename
+-mmcrcardrw
+	Enable writes to MMC Replay card image
++mmcrcardrw
+	Disable writes to MMC Replay card image
+-mmcreepromimage
+	Specify MMC Replay EEPROM image filename
+-mmcreepromrw
+	Enable writes to MMC Replay EEPROM image
++mmcreepromrw
+	Disable writes to MMC Replay EEPROM image
+-mmcrsdtype <Type>
+	Specify MMC Replay SD type (0: auto, 1: MMC, 2: SD, 3: SDHC)
+-mmcrclockportdevice <device>
+	Clockport device. (0: None)
+-rrbioswrite
+	Enable saving of the RR ROM at exit
++rrbioswrite
+	Disable saving of the RR ROM at exit
+-rrbankjumper
+	Set RR Bank Jumper
++rrbankjumper
+	Unset RR Bank Jumper
+-rrflashjumper
+	Set RR Flash Jumper
++rrflashjumper
+	Unset RR Bank Jumper
+-rrrev <Revision>
+	Set RR Revision (0: Retro Replay, 1: Nordic Replay)
+-rrclockportdevice <device>
+	Clockport device. (0: None)
+-ssramexpansion
+	Enable SS 32k RAM expansion
++ssramexpansion
+	Disable SS 32k RAM expansion
+-debugcart
+	Enable Debug cartridge
++debugcart
+	Disable Debug cartridge
+-cart8 <Name>
+	Attach raw 8KB cartridge image
+-cart16 <Name>
+	Attach raw 16KB cartridge image
+-cartultimax <Name>
+	Attach generic 16kB Ultimax cartridge image
+-cartcrt <Name>
+	Attach CRT cartridge image
+-cartap <Name>
+	Attach raw 32KB Atomic Power cartridge image
+-cartar2 <Name>
+	Attach raw 16kB Action Replay MK2 cartridge image
+-cartar3 <Name>
+	Attach raw 16KB Action Replay MK3 cartridge image
+-cartar4 <Name>
+	Attach raw 32KB Action Replay MK4 cartridge image
+-cartar5 <Name>
+	Attach raw 32KB Action Replay cartridge image
+-cartcap <Name>
+	Attach raw 8kB Capture cartridge image
+-cartcomal <Name>
+	Attach raw 64kB Comal 80 cartridge image
+-cartdep256 <Name>
+	Attach raw Dela EP256 cartridge image
+-cartdep64 <Name>
+	Attach raw Dela EP64 cartridge image
+-cartdep7x8 <Name>
+	Attach raw Dela EP7x8 cartridge image
+-cartdin <Name>
+	Attach raw 128kB Dinamic cartridge image
+-cartdsm <Name>
+	Attach raw 8kB Diashow-Maker cartridge image
+-cartdqbb <Name>
+	Attach raw 16kB Double Quick Brown Box cartridge image
+-carteasy <Name>
+	Attach raw EasyFlash cartridge image
+-carteasycalc <Name>
+	Attach raw 24kB Easy Calc Result cartridge image
+-cartepyx <Name>
+	Attach raw 8KB Epyx FastLoad cartridge image
+-cartexos <Name>
+	Attach raw 8kB EXOS cartridge image
+-cartexpert <Name>
+	Attach raw 8kB Expert Cartridge image
+-cartf64 <Name>
+	Attach raw 32kB Formel 64 image
+-cartfc1 <Name>
+	Attach raw 16kB Final Cartridge image
+-cartfc3 <Name>
+	Attach raw 64kB Final Cartridge III image
+-cartfcplus <Name>
+	Attach raw 32kB Final Cartridge Plus image
+-cartff <Name>
+	Attach raw 8kB Freeze Frame image
+-cartfm <Name>
+	Attach raw 32kB Freeze Machine image
+-cartfp <Name>
+	Attach raw 128kB Fun Play/Power Play cartridge image
+-cartgmod2 <Name>
+	Attach raw 8KB Game Killer cartridge image
+-cartgk <Name>
+	Attach raw 8KB Game Killer cartridge image
+-cartgeoram <Name>
+	Attach raw GEO-RAM cartridge image
+-cartgs <Name>
+	Attach raw 512kB Game System cartridge image
+-cartide64 <Name>
+	Attach raw 64KB IDE64 cartridge image
+-cartieee <Name>
+	Attach IEEE-488 Interface cartridge image
+-cartisepic <Name>
+	Attach raw 2kB ISEPIC cartridge image
+-cartkcs <Name>
+	Attach raw 16kB KCS Power cartridge image
+-cartks <Name>
+	Attach raw 24kB Kingsoft cartridge image
+-cartmach5 <Name>
+	Attach raw 8kB MACH 5 cartridge image
+-cartmd <Name>
+	Attach raw 32/64/128kB Magic Desk cartridge image
+-cartmf <Name>
+	Attach raw Magic Formel cartridge image
+-cartmikro <Name>
+	Attach raw 8kB Mikro Assembler cartridge image
+-cartmmc64 <Name>
+	Attach raw 8kB MMC64 cartridge image
+-cartmmcr <Name>
+	Attach raw 512kB MMC Replay cartridge image
+-cartmv <Name>
+	Attach raw 16kB Magic Voice cartridge image
+-cartocean <Name>
+	Attach raw Ocean cartridge image
+-cartpf <Name>
+	Attach raw 64KB Pagefox cartridge image
+-cartp64 <Name>
+	Attach raw 256KB Prophet 64 cartridge image
+-cartramcart <Name>
+	Attach raw RamCart cartridge image
+-cartreu <Name>
+	Attach raw REU cartridge image
+-cartrep256 <Name>
+	Attach raw REX EP256 cartridge image
+-cartrgcd <Name>
+	Attach raw 64kB RGCD cartridge image
+-cartross <Name>
+	Attach raw 16/32kB ROSS cartridge image
+-cartrr <Name>
+	Attach raw 64KB Retro Replay cartridge image
+-cartru <Name>
+	Attach raw 8kB REX Utility cartridge image
+-carts64 <Name>
+	Attach raw 4kB Snapshot 64 cartridge image
+-cartsb <Name>
+	Attach raw Structured Basic cartridge image
+-cartse5 <Name>
+	Attach raw 16kB Super Explode V5 cartridge image
+-cartsg <Name>
+	Attach raw 64kB Super Games cartridge image
+-cartsilver <Name>
+	Attach raw Silverrock 128 cartridge image
+-cartsimon <Name>
+	Attach raw 16kB Simons Basic cartridge image
+-cartss4 <Name>
+	Attach raw 32KB Super Snapshot V4 cartridge image
+-cartss5 <Name>
+	Attach raw 64KB Super Snapshot V5 cartridge image
+-cartstar <Name>
+	Attach raw 16KB Stardos cartridge image
+-cartwl <Name>
+	Attach raw 16KB Westermann Learning cartridge image
+-cartws <Name>
+	Attach raw 8kB Warp Speed cartridge image
+-cartzaxxon <Name>
+	Attach raw 16kB Zaxxon cartridge image
+-cartreset
+	Reset machine if a cartridge is attached or detached
++cartreset
+	Do not reset machine if a cartridge is attached or detached
++cart
+	Disable default cartridge
+-40col
+	Activate 40 column mode
+-80col
+	Activate 80 column mode
+-go64
+	Always switch to C64 mode on reset
++go64
+	Always switch to C128 mode on reset
+-intfrom <Name>
+	Specify name of internal Function ROM image
+-extfrom <Name>
+	Specify name of external Function ROM image
+-intfunc <Type>
+	Type of internal Function ROM: (0: None, 1: ROM, 2: RAM, 3: RTC)
+-extfunc
+	Type of external Function ROM: (0: None, 1: ROM, 2: RAM, 3: RTC)
+-intfuncrtcsave
+	Enable saving of the internal function RTC data when changed.
++intfuncrtcsave
+	Disable saving of the internal function RTC data when changed.
+-extfuncrtcsave
+	Enable saving of the external function RTC data when changed.
++extfuncrtcsave
+	Disable saving of the external function RTC data when changed.
+-userportjoytype <Type>
+	Set Userport joystick adapter type (0: CGA/Protovision, 1: PET, 2: Hummer, 3: OEM, 4: DXS/HIT, 5: Kingsoft, 6: Starbyte)
+-userportjoy
+	Enable Userport joystick adapter
++userportjoy
+	Disable Userport joystick adapter
+-userportdac
+	Enable Userport DAC for sound output
++userportdac
+	Disable Userport DAC for sound output
+-userportdigimax
+	Enable the userport DigiMAX device
++userportdigimax
+	Disable the userport DigiMAX device
+-userportrtc58321a
+	Enable Userport RTC (58321a)
++userportrtc58321a
+	Disable Userport RTC (58321a)
+-userportrtc58321asave
+	Enable saving of the Userport RTC (58321a) data when changed.
++userportrtc58321asave
+	Disable saving of the Userport RTC (58321a) data when changed.
+-userportrtcds1307
+	Enable Userport RTC (DS1307)
++userportrtcds1307
+	Disable Userport RTC (DS1307)
+-userportrtcds1307save
+	Enable saving of the Userport RTC (DS1307) data when changed.
++userportrtcds1307save
+	Disable saving of the Userport RTC (DS1307) data when changed.
+-userport4bitsampler
+	Enable Userport 4bit sampler
++userport4bitsampler
+	Disable Userport 4bit sampler
+-userport8bss
+	Enable Userport 8bit stereo sampler
++userport8bss
+	Disable Userport 8bit stereo sampler
+-userportdiag586220harness
+	Enable Userport diag 586220 harness module
++userportdiag586220harness
+	Disable Userport diag 586220 harness module
+-iocollision <method>
+	Select the way the I/O collisions should be handled, (0: error message and detach all involved carts, 1: error message and detach last attached involved carts, 2: warning in log and 'AND' the valid return values
+-raminitstartvalue <value>
+	Set the value for the very first RAM address after powerup
+-raminitvalueinvert <num of bytes>
+	Length of memory block initialized with the same value
+-raminitpatterninvert <num of bytes>
+	Length of memory block initialized with the same pattern
+-remotemonitor
+	Enable remote monitor
++remotemonitor
+	Disable remote monitor
+-remotemonitoraddress <Name>
+	The local address the remote monitor should bind to
+
+
+Exiting...
+

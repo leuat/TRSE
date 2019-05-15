@@ -88,6 +88,15 @@ void LColorList::EnableColors(QVector<int> &cols)
 
 }
 
+int LColorList::getNoBitplanes() {
+    if (m_list.count()==2) return 1;
+    if (m_list.count()==4) return 2;
+    if (m_list.count()==8) return 3;
+    if (m_list.count()==16) return 4;
+    if (m_list.count()==32) return 5;
+    return 0;
+}
+
 void LColorList::Initialize(Type t)
 {
     m_type = t;
@@ -283,8 +292,10 @@ void LColorList::FillComboBox(QComboBox *cmb)
 int LColorList::getIndex(QColor c)
 {
     for (int i=0;i<m_list.count();i++) {
-        if (m_list[i].color == c)
+//        qDebug() << "   Testing: " << c << m_list[i].color;
+        if (m_list[i].color == c) {
             return i;
+        }
     }
     return 0;
 }

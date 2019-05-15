@@ -134,5 +134,6 @@
         <file>resources/text/help/m/leftbitshift.rtf</file>
         <file>resources/text/help/m/krillloadcompressed.rtf</file>
         <file>resources/text/help/m/krillload.rtf</file>
+        <file>resources/images/PET.png</file>
     </qresource>
 </RCC>

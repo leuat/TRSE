@@ -487,7 +487,7 @@ static int SaveMulticolorImage(lua_State* L) {
     if (QFile::exists(fname))
         QFile::remove(fname);
     QFile f(fname);
-
+    m_effect->m_mc->setMultiColor(false);
     m_effect->m_mc->ExportBin(f);
 //    f.open()
   //  m_effect->m_mc->SaveBin(f);

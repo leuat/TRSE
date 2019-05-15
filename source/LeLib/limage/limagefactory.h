@@ -34,6 +34,8 @@
 #include "source/LeLib/limage/limagecharsetfixedcolor.h"
 #include "source/LeLib/limage/limagevic20.h"
 #include "source/LeLib/limage/limagesprites2.h"
+#include "source/LeLib/limage/limagecga.h"
+#include "source/LeLib/limage/limageamiga4.h"
 
 class LImageFactory {
 public:
@@ -63,6 +65,10 @@ public:
             return new LImageVIC20(colorType);
         if (t == LImage::Type::Sprites2)
             return new LImageSprites2(colorType);
+        if (t == LImage::Type::CGA)
+            return new LImageCGA(colorType);
+        if (t == LImage::Type::AMIGA)
+            return new LImageAmiga(colorType);
 
         qDebug() << "ERROR: LImageFactory could not find type " << t;
         return nullptr;

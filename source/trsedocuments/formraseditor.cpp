@@ -51,6 +51,11 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         params<< "-autostartprgmode" << "1";
         params<< "-memory" << m_projectIniFile->getString("vic_memory_config");
     }
+    if (m_projectIniFile->getString("system")=="PET") {
+        emu = m_iniFile->getString("pet_emulator");
+        params<< "-autostartprgmode" << "1";
+//        params<< "-memory" << m_projectIniFile->getString("vic_memory_config");
+    }
     if (m_projectIniFile->getString("system")=="C128") {
         emu = m_iniFile->getString("c128_emulator");
 
@@ -157,13 +162,14 @@ void FormRasEditor::Build()
     }
 
     emit requestBuild();
+
     if (BuildStep())
         {
 //        qDebug() << "ME";
         compiler.SaveBuild(filename + ".asm");
-        QString text ="Build <b><font color=\"#90FF90\">Successful</font>!</b> ( "+  (Util::MilisecondToString(timer.elapsed())) +")<br>";
+        QString text ="Build <b><font color=\"#90FF90\">Successful</font>!</b> ( "+  (Util::MilisecondToString(m_system->timer.elapsed())) +")<br>";
         text+="Assembler file saved to : <b>" + filename+".asm</b><br>";
-        text+="Compiled <b>" + QString::number(parser.m_lexer->m_lines.count()) +"</b> lines of Turbo Rascal to <b>";
+        text+="Compiled <b>" + QString::number(compiler.m_parser.m_lexer->m_lines.count()) +"</b> lines of Turbo Rascal to <b>";
         text+=QString::number(compiler.m_assembler->getLineCount()) + "</b> lines of assembler instructions (and variables/labels)<br>";
         if (m_iniFile->getdouble("post_optimize")==1) {
             text+="Post-optimized away <b>" + QString::number(compiler.m_assembler->m_totalOptimizedLines) +"</b> lines of assembler instructions ";
@@ -174,208 +180,18 @@ void FormRasEditor::Build()
             text+="<font color=\"#FFA090\">Warning:</font>Post-optimizer disabled. Enable for faster results (unless post-optimizer breaks something).<br>";
 
 //        text+="+"<br>";
-        QString output;
-        int time = timer.elapsed();
-        int codeEnd = 0;
-        //qDebug() << m_iniFile->getString("assembler");
-        if (m_iniFile->getString("assembler").toLower()=="dasm") {
-            QProcess process;
-            process.start(m_iniFile->getString("dasm"), QStringList()<<(filename +".asm") << ("-o"+filename+".prg"));//) << "-v3");
-            process.waitForFinished();
-            //process;
-            //qDebug() <<process.readAllStandardOutput();
-            output = process.readAllStandardOutput();
 
-           // codeEnd=FindEndSymbol(output);
-        }
-        else if (m_iniFile->getString("assembler").toLower()=="orgasm") {
-            Orgasm orgAsm;
-            orgAsm.Assemble(filename+".asm", filename+".prg");
-            output = orgAsm.m_output;
-        }
-        // Machine Code Analyzer
-        VerifyMachineCodeZP(filename+".prg");
+//        Assemble6502(text);
+        m_system->Assemble(filename, text, m_currentDir);
+        if (m_system->m_buildSuccess)
+            m_system->PostProcess(filename, text, m_currentDir);
 
 
-        int assembleTime = timer.elapsed()- time;
-        time = timer.elapsed();
-
-//        qDebug() << "Code end: " << Util::numToHex(codeEnd) << codeEnd;
-        int orgFileSize = QFile(filename+".prg").size();
-
-        if (Syntax::s.m_stripPrg)
-            Util::ConvertFileWithLoadAddress(filename+".prg", filename+".prg");
-
-        if (m_iniFile->getdouble("perform_crunch")==1 && (Syntax::s.m_currentSystem!=Syntax::NES)) {
-            QProcess processCompress;
-
-            QString fn = (filename +".prg");
-            QString target="-t64";
-            if (Syntax::s.m_currentSystem==Syntax::C128)
-                target="-t128";
-            if (Syntax::s.m_currentSystem==Syntax::VIC20) {
-                target="-t20";
-                if (m_projectIniFile->getString("vic_memory_config")!="none") {
-                    target="-t52";
-
-                }
-            }
-
-            if (!QFile::exists(m_iniFile->getString("exomizer")))
-                Messages::messages.DisplayMessage(Messages::messages.NO_EXOMIZER);
-
-
-            QString startAddress = Util::numToHex(Syntax::s.m_programStartAddress);
-            if (Syntax::s.m_ignoreSys)
-               startAddress = Util::numToHex(Syntax::s.m_startAddress+1);
-
-            QStringList exoParams = QStringList() << "sfx" << startAddress << target << fn<< "-o" << fn ;
-
-            if (m_iniFile->getdouble("hide_exomizer_footprint")==1)
-                exoParams << "-n";
-
-
-/*            if (Syntax::s.m_ignoreSys) {
-                QString laddr = "none";
-                laddr = "0x8000";
-//                laddr = "0x"+QString::number(Syntax::s.m_startAddress+1+16992    ,16);
-                exoParams = QStringList() << "mem" <<"-l"+laddr << fn+"@"+startAddress.replace("$","0x")<< "-o" << fn ;
-                qDebug() << exoParams;
-                target ="";
-            }
-*/
-//            QStringList exoParams = QStringList() << "sfx" << "$0810"  << fn<< "-o" << fn ;
-           // qDebug() << exoParams;
-            qDebug() << "Starting exomizer";
-            processCompress.start(m_iniFile->getString("exomizer"), exoParams  );
-            processCompress.waitForFinished();
-            qDebug() << processCompress.readAllStandardError() << processCompress.readAllStandardOutput();
-            qDebug() << "*** END EXO";
-        }
-
-
-//        if (Syntax::s.m_stripPrg)
-  //         Util::ConvertFileWithLoadAddress(filename+".prg", filename+".prg");
-
-
-        int size = QFile(filename+".prg").size();
-        int crunchTime = timer.elapsed()- time;
-
-
-        m_buildSuccess = true;
-
-        if (output.toLower().contains("error")) {
-            text="<font color=\"#FF6040\">Fatal error during assembly!</font><br>";
-            m_buildSuccess = false;
-            if (output.toLower().contains("branch out of range")) {
-                Messages::messages.DisplayMessage(Messages::messages.BRANCH_ERROR);
-                output += "<br>Please check your <b>onpage/offpage</b> keywords.";
-
-            }
-            else
-            if (output.toLower().contains("reverse-indexed")) {
-                Messages::messages.DisplayMessage(Messages::messages.MEMORY_OVERLAP_ERROR);
-                output += "<br>Please reorganize your binary inclusions in ascending order of memory locations.";
-            }
-            else
-            if (output.toLower().contains("mnemonic")) {
-                output += "<br>Please make sure you have used well-defined labels and variables in your inline assembly code.";
-            }
-
-            else
-                Messages::messages.DisplayMessage(Messages::messages.DASM_COMPILER_ERROR);
-
-        }
-        if (!output.toLower().contains("complete.")) {
-            m_buildSuccess = false;
-            if (output=="") {
-                Messages::messages.DisplayMessage(Messages::messages.NO_DASM);
-
-                output = output + "\nCould not find Dasm.exe. Did you set the correct environment variables?";
-            }
-
-        }
-
-
-        if (m_buildSuccess) {
-            output ="Assembled file size: <b>" + QString::number(size) + "</b> bytes";
-            if (m_iniFile->getdouble("perform_crunch")==1) {
-                output=output+" (<font color=\"#70FF40\"> " + QString::number((int)(100.0*(float)size/(float)orgFileSize))+  " % </font> of original size ) <br>";
-                output=output+"Original file size: " + QString::number(orgFileSize) + " bytes";
-            }
-            output = output + "\nAssemble time: <font color=\"#70FF40\">"+ (Util::MilisecondToString(assembleTime)) + "</font>";
-            output = output + "Crunch time: <font color=\"#70FF40\">"+ (Util::MilisecondToString(crunchTime)) + "</font>";
-
-        }
-        TestForCodeOverwrite(codeEnd,text);
-
-        if (m_projectIniFile->getString("output_type")=="crt") {
-            QByteArray output;
-            QFile header(":resources/bin/crt_header.bin");
-            header.open(QFile::ReadOnly);
-            output = header.readAll();
-
-            header.close();
-            output[0x99] = (char)m_projectIniFile->getdouble("background_color");
-            output[0x94] = (char)m_projectIniFile->getdouble("border_color");
-
-            output[0x90] = (char)Util::NumberFromStringHex(m_projectIniFile->getString("machine_state"));
-
-            QByteArray mainb;
-            QFile mainf(filename+".prg");
-            mainf.open(QFile::ReadOnly);
-            mainb = mainf.readAll();
-            mainf.close();
-            mainb.remove(0,2);
-            output.append(mainb);
-            if (mainb.size()>=16384) {
-                QMessageBox msgBox;
-                m_buildSuccess = false;
-                msgBox.setText("Error: Compiled file larger than maximum cartridge size (max 16386 bytes vs current "+QString::number(mainb.size()) + " bytes)." );
-                msgBox.exec();
-                return;
-
-            }
-
-            for (int i=output.size();i<16464;i++)
-                output.append((char)0);
-
-            QFile o(filename+".crt");
-            o.open(QFile::WriteOnly);
-            o.write(output);
-            o.close();
-
-        }
-
-        if (m_projectIniFile->getString("output_type")=="d64") {
-            if (!QFile::exists(m_iniFile->getString("c1541"))) {
-                Messages::messages.DisplayMessage(Messages::messages.NO_C1541);
-                return;
-            }
-        //            c1541 -format diskname,id d64 my_diskimage.d64 -attach my_diskimage.d64 -write my_program.prg myprog
-/*            QString f = filename.split("/").last();
-            QStringList d64Params = QStringList() << "-format" << f+",id"<< "d64";
-            d64Params << filename+".d64";
-            d64Params << "-attach" <<filename+".d64";
-            d64Params << "-write" <<filename+".prg" << f;
-            if (m_projectIniFile->getString("d64_paw_file")!="none")
-                if (!BuildDiskFiles(d64Params))
-                    return;
-
-            QProcess process1541;
-            process1541.start(m_iniFile->getString("c1541"), d64Params  );
-            process1541.waitForFinished();
-*/
-            CreateDisk(filename, "d64_paw_file", true);
-            CreateDisk(filename+"_side2", "d64_paw_file_disk2",false);
-        }
-
-
-
-        ui->txtOutput->setText(text + output);
+        ui->txtOutput->setText(text);
         ui->txtEditor->m_cycles =  compiler.m_assembler->m_cycles;
         ui->txtEditor->RepaintCycles();
-        ui->txtEditor->InitCompleter(compiler.m_assembler->m_symTab, &parser);
+        ui->txtEditor->InitCompleter(compiler.m_assembler->m_symTab, &compiler.m_parser);
+
 
     }
     else {
@@ -385,7 +201,7 @@ void FormRasEditor::Build()
 
         emit OpenOtherFile(compiler.recentError.file, ln);
         GotoLine(ln);
-        m_buildSuccess = false;
+        m_system->m_buildSuccess = false;
 
     }
     if (m_projectIniFile->getString("system")=="NES") {
@@ -395,55 +211,6 @@ void FormRasEditor::Build()
     SetLights();
 }
 
-bool FormRasEditor::BuildDiskFiles(QStringList& d64Params, QString iniData)
-{
-
-    QString pawFile = m_projectIniFile->getString(iniData);
-    CIniFile paw;
-    paw.Load(m_currentDir + "/"+pawFile);
-    QStringList data = paw.getStringList("data");
-    QStringList data_tc = paw.getStringList("data_tinycrunch");
-    int count = data.count()/3;
-    QString outFolder = m_currentDir+"/"+ paw.getString("output_dir");
-    if (!QDir().exists(outFolder))
-            QDir().mkdir(outFolder);
-
-    for (int i=0;i<count;i++) {
-        QString orgFileName = data[3*i+1];
-
-        bool isCrunched = false;
-        if (i<data_tc.count())
-            isCrunched = data_tc[i]=="1";
-
-        QString name = data[3*i];
-        int address = Util::NumberFromStringHex( data[3*i+2]);
-        QString fn = m_currentDir+"/"+orgFileName;
-        if (!QFile::exists(fn)) {
-            QMessageBox msgBox;
-            msgBox.setText("Error: Could not append disk include file '"+fn+"' because it does not exist");
-            msgBox.exec();
-            return false;
-        }
-        if (!isCrunched) {
-            QString of = outFolder+"/"+orgFileName.split("/").last();
-            Util::ConvertFileWithLoadAddress(fn,of,address);
-    //        Util::CopyFile(fn,of);
-
-             d64Params << "-write" <<of << name;
-        }
-        else {
-//            QString ending = orgFileName.split(".").last();
-            QString iff = name;
-            QString of = outFolder+"/"+iff+"_c.bin";
-//            qDebug() << of;
-             d64Params << "-write" <<of << name;
-
-        }
-    }
-
-    return true;
-
-}
 
 void FormRasEditor::SetOutputText(QString txt)
 {
@@ -557,7 +324,7 @@ void FormRasEditor::BuildNes(QString prg)
     /*for (int i=0;i<pow(2,13);i++)
         data.append((char)rand()%255);
 */
-    if (QFile::exists(prg+".nes"))
+/*    if (QFile::exists(prg+".nes"))
         QFile::remove(prg+".nes");
 
     QFile out(prg+ ".nes");
@@ -565,15 +332,7 @@ void FormRasEditor::BuildNes(QString prg)
 //    out.write(header);
     out.write(data);
     out.close();
-
-}
-
-bool FormRasEditor::VerifyMachineCodeZP(QString fname)
-{
-
-    m_mca.Load(fname);
-    m_mca.AnalyzeZP();
-    return true;
+*/
 }
 
 
@@ -583,31 +342,11 @@ void FormRasEditor::Setup()
     setupEditor();
 }
 
-void FormRasEditor::CreateDisk(QString filename, QString iniData, bool addPrg)
-{
-    QString f = filename.split("/").last();
-    QStringList d64Params = QStringList() << "-format" << f+",id"<< "d64";
-    d64Params << filename+".d64";
-    d64Params << "-attach" <<filename+".d64";
-    if (addPrg)
-        d64Params << "-write" <<filename+".prg" << f;
-
-    if (m_projectIniFile->getString(iniData)!="none") {
-        if (!BuildDiskFiles(d64Params,iniData))
-            return;
-
-
-     QProcess process1541;
-//     qDebug() <<"Building disk with: " << d64Params;
-     process1541.start(m_iniFile->getString("c1541"), d64Params  );
-        process1541.waitForFinished();
-    }
-
-}
 
 void FormRasEditor::Run()
 {
-
+    if (m_system==nullptr)
+        return;
     if (m_projectIniFile->getString("main_ras_file")!="none") {
         if (m_projectIniFile->getString("main_ras_file")!=m_currentFileShort) {
             emit requestRunMain();
@@ -616,7 +355,7 @@ void FormRasEditor::Run()
 
     }
 
-    if (!m_buildSuccess)
+    if (!m_system->m_buildSuccess)
         return;
 
     if (!m_projectIniFile->contains("output_type"))
@@ -634,7 +373,9 @@ void FormRasEditor::Run()
 
 void FormRasEditor::SetLights()
 {
-    if (!m_buildSuccess)
+    if (m_system==nullptr)
+        return;
+    if (!m_system->m_buildSuccess)
         ui->lblLight->setStyleSheet("QLabel { background-color : red; color : blue; }");
     else
         ui->lblLight->setStyleSheet("QLabel { background-color : green; color : blue; }");
@@ -711,7 +452,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         QTextCursor tc = ui->txtEditor->textCursor();
         tc.select(QTextCursor::WordUnderCursor);
         QString word = tc.selectedText();
-        for (Node*n : parser.m_proceduresOnly) {
+        for (Node*n : compiler.m_parser.m_proceduresOnly) {
             NodeProcedureDecl* np = dynamic_cast<NodeProcedureDecl*>(n);
             if (np->m_procName.toLower()==word.toLower()) {
                 int ln=np->m_op.m_lineNumber;
@@ -863,7 +604,8 @@ bool FormRasEditor::BuildStep()
 {
     if (!m_currentSourceFile.toLower().endsWith(".ras")) {
         ui->txtOutput->setText("Turbo Rascal SE can only compile .ras files");
-        m_buildSuccess = false;
+        if (m_system!=nullptr)
+            m_system->m_buildSuccess = false;
         return false;
     }
 
@@ -873,29 +615,30 @@ bool FormRasEditor::BuildStep()
     ErrorHandler::e.m_teOut = "";
     ErrorHandler::e.exitOnError = false;
     QStringList lst = text.split("\n");
- //   text = text.replace("\n","");
-//    SymbolTable::isInitialized = true;
-
-    timer.start();
 
 
-    lexer = Lexer(text, lst, m_projectIniFile->getString("project_path"));
-    parser = Parser(&lexer);
-    parser.m_diskFiles = getFileList();
-//    qDebug() << "HEISANN";
-    parser.m_currentDir = m_currentDir;
-    compiler = Compiler(&parser,m_iniFile, m_projectIniFile);
-    compiler.Parse();
-//    compiler.Interpret();
+    compiler = Compiler(m_iniFile, m_projectIniFile);
+    compiler.m_parser.m_diskFiles = getFileList();
+    compiler.m_parser.m_currentDir = m_currentDir;
 
-    //compiler.Build(compiler::PASCAL);
-    //compiler.SaveBuild(m_outputFilename+".pmm");
+    compiler.Parse(text,lst);
 
     QString path = m_projectIniFile->getString("project_path") + "/";
     filename = m_currentSourceFile.split(".")[0];
 
-    return compiler.Build(Compiler::MOS6502, path);
+    if (m_system != nullptr)
+        delete m_system;
+
+
+    m_system = FactorySystem::Create(AbstractSystem::SystemFromString(
+                                         m_projectIniFile->getString("system")),
+                                        m_iniFile, m_projectIniFile);
+
+    m_system->timer.start();
+
+    return compiler.Build(m_system, path);
 }
+
 
 void FormRasEditor::FillFromIni()
 {

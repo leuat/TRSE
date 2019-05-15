@@ -39,6 +39,7 @@ public:
     QString m_key;
     unsigned char m_value;
     unsigned char m_row, m_column;
+
     C64Key() {}
     C64Key(QString name, QString key, int value, int row, int column) {
         m_name = name;
@@ -76,7 +77,7 @@ public:
     QVector<Token> reservedWords;
     //QVector<BuiltInFunction> builtinFunctions;
     QMap<QString, BuiltInFunction> builtInFunctions;
-    enum System {C64, VIC20, PET, NES, C128, BBCM};
+    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA};
     QString m_syntaxData; // File syntax data
     System m_currentSystem;
     int m_startAddress = 0x800;
@@ -104,6 +105,8 @@ public:
             return NES;
         if (s.toLower()=="bbcm")
             return BBCM;
+        if (s.toLower()=="amiga")
+            return AMIGA;
     }
 
     static QString StringFromSystem(System s) {
@@ -113,6 +116,7 @@ public:
         if (s == NES) return "NES";
         if (s == C128) return "C128";
         if (s == BBCM) return "BBCM";
+        if (s == AMIGA) return "AMIGA";
     }
 
     QString puredigit = "0123456789^";

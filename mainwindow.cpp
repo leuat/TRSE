@@ -847,11 +847,13 @@ void MainWindow::LoadProject(QString filename)
 
     RefreshFileList();
 
+
     m_iniFile.Save();
 
     // Set compiler syntax based on system
     QString system = m_currentProject.m_ini.getString("system");
     Syntax::s.Init(Syntax::SystemFromString(system),m_currentProject.m_ini.getString("vic_memory_config"));
+
     QImage img(":resources/images/" +system+".png");
     QPainter p;
     p.begin(&img);

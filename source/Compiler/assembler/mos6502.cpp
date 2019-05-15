@@ -373,7 +373,7 @@ QString AsmMOS6502::String(QStringList lst)
     return res;
 }
 
-void AsmMOS6502::AssignVariable(QString v)
+/*void AsmMOS6502::AssignVariable(QString v)
 {
     m_currentVar = v;
     m_term="lda ";
@@ -384,7 +384,7 @@ void AsmMOS6502::EndAssignVariable(QString variable)
     Asm(m_term);
     Asm("sta " + variable);
 }
-
+*/
 void AsmMOS6502::BinOP(TokenType::Type t)
 {
     if (t == TokenType::PLUS) {
@@ -405,7 +405,7 @@ void AsmMOS6502::BinOP(TokenType::Type t)
         m_term = "ora ";
     }
 
-}
+}/*
 
 
 void AsmMOS6502::Poke(bool start)
@@ -423,7 +423,7 @@ void AsmMOS6502::Peek(bool start)
    else m_term = "sta ";
 
 }
-
+*/
 QString AsmMOS6502::PushZeroPointer()
 {
     QString zp = m_zeroPointers[m_curZeroPointer];
@@ -487,7 +487,7 @@ void AsmMOS6502::PopTempVar()
   //      ErrorHandler::e.Error("COMPILER ERROR: Assembler::PopTempVar Trying to pop tempvar from zero");
 }
 
-
+/*
 void AsmMOS6502::Writeln()
 {
     m_labelStack["writeln"].push();
@@ -512,7 +512,7 @@ void AsmMOS6502::EndWriteln()
     m_labelStack["writeln"].pop();
 
 }
-
+*/
 void AsmMOS6502::LoadVariable(QString var)
 {
     Asm("lda "+ var);
@@ -537,27 +537,6 @@ void AsmMOS6502::Variable(QString v, bool isByte)
     }
 }
 
-void AsmMOS6502::WriteBuiltinWriteln()
-{
-
-}
-
-void AsmMOS6502::StartPrint()
-{
-    /*
-    LDY #$00
- L0
-     LDA L1,Y
-     CMP #0
-     BEQ L2
-     JSR $FFD2
-     INY
-     JMP L0
- L1
-     .byte "hello world",0
- L2
- */
-}
 
 void AsmMOS6502::IncludeFile(QString pfile)
 {
@@ -593,7 +572,7 @@ void AsmMOS6502::IncludeFile(QString pfile)
 
 }
 
-
+/*
 void AsmMOS6502::StartForLoop(QString var, QString startVal)
 {
 }
@@ -630,6 +609,8 @@ void AsmMOS6502::EndForLoop(QString endVal)
  //   qDebug() << "loop: " << m_stack["for"].current();
 
 }
+
+*/
 // 8790 vs 8717
 void AsmMOS6502::Optimise(CIniFile& ini)
 {

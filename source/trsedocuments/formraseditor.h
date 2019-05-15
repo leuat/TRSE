@@ -37,6 +37,10 @@
 #include "source/OrgAsm/orgasm.h"
 #include "source/OrgAsm/orgasmlexer.h"
 
+#include "source/Compiler/systems/abstractsystem.h"
+#include "source/Compiler/systems/factorysystem.h"
+
+
 namespace Ui {
     class FormRasEditor;
 }
@@ -63,16 +67,15 @@ public:
 
     QVector<int> m_blockEndSymbols;
 
+    AbstractSystem* m_system = nullptr;
+
     MachineCodeAnalyzer m_mca;
     Compiler compiler;
-    Parser parser;
-    Lexer lexer;
     QString filename;
-    QElapsedTimer timer;
     bool isInitialized=false;
     int m_searchFromPos = 0;
     int m_currentFromPos = 0;
-    bool m_buildSuccess = false;
+
     void LoadRasFile(QString fileName);
     void ExecutePrg(QString fileName,  QString system);
     QStringList getFileList();
@@ -83,7 +86,6 @@ public:
     bool BuildDiskFiles(QStringList& d64Params, QString data);
     void Setup();
 
-    void CreateDisk(QString filename, QString iniData, bool addPrg);
 
 
     void Run() override;
@@ -95,6 +97,7 @@ public:
     void UpdateFromIni() override;
     void AutoFormat() override;
     bool BuildStep();
+    void Assemble6502(QString& text);
     void FillFromIni();
     void FillToIni();
 
@@ -123,7 +126,7 @@ public:
 
 private:
 
-    bool VerifyMachineCodeZP(QString fname);
+//    bool VerifyMachineCodeZP(QString fname);
 
     static QString path;
     Ui::FormRasEditor *ui;

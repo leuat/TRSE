@@ -182,7 +182,18 @@ SOURCES += main.cpp\
     source/PmmEdit/fjongeditor.cpp \
     source/LeLib/luascript.cpp \
     source/LeLib/objloader/objloader.cpp \
-    source/LeLib/limage/compression.cpp
+    source/LeLib/limage/compression.cpp \
+    source/LeLib/limage/limagecga.cpp \
+    source/LeLib/limage/limageamiga4.cpp \
+    source/Compiler/assembler/m68000.cpp \
+    source/Compiler/systems/abstractsystem.cpp \
+    source/Compiler/systems/systemmos6502.cpp \
+    source/Compiler/systems/factorysystem.cpp \
+    source/Compiler/systems/systemc64.cpp \
+    source/Compiler/systems/systempet.cpp \
+    source/Compiler/systems/systemvic20.cpp \
+    source/Compiler/systems/systemnes.cpp \
+    source/Compiler/systems/systemc128.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -299,7 +310,18 @@ HEADERS  += mainwindow.h \
     source/LeLib/objloader/string_extra.h \
     source/LeLib/objloader/list.h \
     source/LeLib/objloader/objloader.h \
-    source/LeLib/limage/compression.h
+    source/LeLib/limage/compression.h \
+    source/LeLib/limage/limagecga.h \
+    source/LeLib/limage/limageamiga4.h \
+    source/Compiler/assembler/m68000.h \
+    source/Compiler/systems/abstractsystem.h \
+    source/Compiler/systems/systemmos6502.h \
+    source/Compiler/systems/factorysystem.h \
+    source/Compiler/systems/systemc64.h \
+    source/Compiler/systems/systempet.h \
+    source/Compiler/systems/systemvic20.h \
+    source/Compiler/systems/systemnes.h \
+    source/Compiler/systems/systemc128.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \
@@ -464,4 +486,5 @@ DISTFILES += \
     resources/text/help/m/togglebit.rtf \
     resources/text/help/m/wait.rtf \
     resources/text/help/m/waitforraster.rtf \
-    resources/text/help/m/waitnoraster.rtf
+    resources/text/help/m/waitnoraster.rtf \
+    resources/images/PET.png
