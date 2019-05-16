@@ -47,6 +47,8 @@ public:
 
     bool DataEquals(Node *other) override;
     bool isWord(Assembler* as) override;
+    bool isLong(Assembler* as) override;
+    bool isByte(Assembler* as) override;
 
 
     void forceWord() override {
@@ -58,6 +60,8 @@ public:
     bool isPureVariable() override {
         return true;
     }
+
+    QString getValue() override { return value;}
 
     bool isAddress() override;
 

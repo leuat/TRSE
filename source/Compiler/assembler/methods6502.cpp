@@ -867,11 +867,11 @@ void Methods6502::InitMoveto(Assembler *as)
     as->Asm("beq sydone");
     as->Label("syloop");
     as->Asm("clc");
-    if (Syntax::s.m_currentSystem==Syntax::C128 || Syntax::s.m_currentSystem==Syntax::C64)
+    if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64)
         as->Asm("adc #40");
-    if (Syntax::s.m_currentSystem==Syntax::VIC20)
+    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
         as->Asm("adc #22");
-    if (Syntax::s.m_currentSystem==Syntax::NES)
+    if (Syntax::s.m_currentSystem==AbstractSystem::NES)
         as->Asm("adc #32");
     as->Asm("bcc sskip");
     as->Asm("inc screenmemory+1");
@@ -2186,7 +2186,7 @@ void Methods6502::SetCharsetLocation(Assembler *as)
         ErrorHandler::e.Error("SetCharsetLocation parameter must be an address!", m_node->m_op.m_lineNumber);
 
 
-    if (Syntax::s.m_currentSystem==Syntax::C128 || Syntax::s.m_currentSystem==Syntax::C64) {
+    if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64) {
 
     int n = (unsigned int)v->m_val % 0x4000;
     bool ok=false;
@@ -2208,7 +2208,7 @@ void Methods6502::SetCharsetLocation(Assembler *as)
     as->Asm("ora #"+QString::number(b));
     as->Asm("sta "+addr);
     }
-    if (Syntax::s.m_currentSystem==Syntax::VIC20) {
+    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
         int n = (unsigned int)v->m_val;
         QString v = "";
         if (n==0x8000) v="0000";
@@ -2244,10 +2244,10 @@ void Methods6502::SetScreenLocation(Assembler *as)
         ErrorHandler::e.Error("SetScreenLocation parameter must be an address!", m_node->m_op.m_lineNumber);
 
 
-    if (Syntax::s.m_currentSystem==Syntax::C128 || Syntax::s.m_currentSystem==Syntax::C64) {
+    if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64) {
         ErrorHandler::e.Error("SetScreenLocation not implemented for C64 yet", m_node->m_op.m_lineNumber);
     }
-    if (Syntax::s.m_currentSystem==Syntax::VIC20) {
+    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
         int n = (unsigned int)v->m_val;
         QString v = "";
         if (n==0x8000) v="0000";
@@ -2413,7 +2413,7 @@ void Methods6502::SetMemoryConfig(Assembler *as)
 {
     as->Comment("Set Memory Config");
 
-    if (Syntax::s.m_currentSystem==Syntax::C64) {
+    if (Syntax::s.m_currentSystem==AbstractSystem::C64) {
 
 
     m_node->RequireNumber(m_node->m_params[0], "SetMemoryConfig", m_node->m_op.m_lineNumber);
@@ -2440,7 +2440,7 @@ void Methods6502::SetMemoryConfig(Assembler *as)
 
     }
 
-    if (Syntax::s.m_currentSystem == Syntax::C128) {
+    if (Syntax::s.m_currentSystem == AbstractSystem::C128) {
         //as->Asm("lda #0");
         uchar v = 0;
         if (dynamic_cast<NodeNumber*>(m_node->m_params[0])->m_val!=0)
@@ -2475,7 +2475,7 @@ void Methods6502::StartIRQ(Assembler *as)
 {
     as->Comment("StartIRQ");
 
-    if (Syntax::s.m_currentSystem == Syntax::NES) {
+    if (Syntax::s.m_currentSystem == AbstractSystem::NES) {
         as->Asm("pha");
         as->Asm("txa");
         as->Asm("pha");
@@ -2483,7 +2483,7 @@ void Methods6502::StartIRQ(Assembler *as)
         as->Asm("pha");
     }
 
-    if (Syntax::s.m_currentSystem == Syntax::C64) {
+    if (Syntax::s.m_currentSystem == AbstractSystem::C64) {
 
     m_node->RequireNumber(m_node->m_params[0], "StartIRQ", m_node->m_op.m_lineNumber);
     NodeNumber* n = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
@@ -2499,13 +2499,13 @@ void Methods6502::StartIRQ(Assembler *as)
         as->Asm("asl $d019");
     }
     }
-    if (Syntax::s.m_currentSystem == Syntax::C128) {
+    if (Syntax::s.m_currentSystem == AbstractSystem::C128) {
         as->Asm("lda $d019");
         as->Asm("sta $d019");
         as->Asm("lda $FF00");
         as->Asm("pha");
     }
-    if (Syntax::s.m_currentSystem == Syntax::VIC20) {
+    if (Syntax::s.m_currentSystem == AbstractSystem::VIC20) {
         as->Asm("pha");
         as->Asm("txa");
         as->Asm("pha");
@@ -2554,7 +2554,7 @@ void Methods6502::StartIRQWedge(Assembler *as)
 void Methods6502::CloseIRQ(Assembler *as, bool isWedge)
 {
     as->Comment("CloseIRQ");
-    if (Syntax::s.m_currentSystem == Syntax::NES) {
+    if (Syntax::s.m_currentSystem == AbstractSystem::NES) {
 
 
         as->Asm("pla");
@@ -2564,7 +2564,7 @@ void Methods6502::CloseIRQ(Assembler *as, bool isWedge)
         as->Asm("pla");
 
     }
-    if (Syntax::s.m_currentSystem == Syntax::C64) {
+    if (Syntax::s.m_currentSystem == AbstractSystem::C64) {
 
         if (isWedge)
             as->Asm("asl $D019");
@@ -2575,7 +2575,7 @@ void Methods6502::CloseIRQ(Assembler *as, bool isWedge)
         as->Asm("tax");
         as->Asm("pla");
     }
-    if (Syntax::s.m_currentSystem == Syntax::C128) {
+    if (Syntax::s.m_currentSystem == AbstractSystem::C128) {
         as->Asm("pla");
         as->Asm("sta $FF00");
 
@@ -2584,7 +2584,7 @@ void Methods6502::CloseIRQ(Assembler *as, bool isWedge)
         as->Asm("jmp $fa65");
 
     }
-    if (Syntax::s.m_currentSystem == Syntax::VIC20) {
+    if (Syntax::s.m_currentSystem == AbstractSystem::VIC20) {
         as->Asm("pla");
         as->Asm("tay");
         as->Asm("pla");
@@ -2597,7 +2597,7 @@ void Methods6502::CloseIRQ(Assembler *as, bool isWedge)
 
 void Methods6502::DisableNMI(Assembler *as)
 {
-    if (Syntax::s.m_currentSystem == Syntax::C64) {
+    if (Syntax::s.m_currentSystem == AbstractSystem::C64) {
 
         as->Comment("Hook NMI");
 
@@ -2916,7 +2916,7 @@ void Methods6502::InitSid(Assembler *as)
         num->Accept(m_dispatcher);
         as->Term();
 
-        if (Syntax::s.m_currentSystem == Syntax::VIC20) {
+        if (Syntax::s.m_currentSystem == AbstractSystem::VIC20) {
             as->Asm("lda	$900e");
             as->Asm("ora	#$0f");
             as->Asm("sta	$900e");
@@ -3355,7 +3355,7 @@ void Methods6502::ClearScreen(Assembler *as)
     AddMemoryBlock(as,1);
 
 
-    if (Syntax::s.m_currentSystem==Syntax::C128 || Syntax::s.m_currentSystem==Syntax::C64 || Syntax::s.m_currentSystem==Syntax::NES || Syntax::s.m_currentSystem==Syntax::PET) {
+    if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64 || Syntax::s.m_currentSystem==AbstractSystem::NES || Syntax::s.m_currentSystem==AbstractSystem::PET) {
 
         QString lbl = as->NewLabel("clearloop");
         //  QString lbl2 = as->NewLabel("clearloop2");
@@ -3379,7 +3379,7 @@ void Methods6502::ClearScreen(Assembler *as)
 */
         as->PopLabel("clearloop");
     }
-    if (Syntax::s.m_currentSystem==Syntax::VIC20) {
+    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
         //ldy $9002
         ErrorHandler::e.Error("ClearScreen not yet implemented for VIC20", m_node->m_op.m_lineNumber);
         as->Comment("Clear screen");
@@ -3431,7 +3431,7 @@ void Methods6502::WaitNoRasterLines(Assembler *as)
     LoadVar(as, 0);
 
     QString cmp ="$d012";
-    if (Syntax::s.m_currentSystem==Syntax::VIC20)
+    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
         cmp="$9004";
 
 
@@ -3457,9 +3457,9 @@ void Methods6502::WaitForRaster(Assembler *as)
 //    as->Asm("lda $d012 ; raster line pos");
 //    as->Asm("clc ; clear carry ");
  //   as->Label("lblTest");
-    if (Syntax::s.m_currentSystem==Syntax::C64 || Syntax::s.m_currentSystem==Syntax::C128)
+    if (Syntax::s.m_currentSystem==AbstractSystem::C64 || Syntax::s.m_currentSystem==AbstractSystem::C128)
         as->Asm("cpx $d012");
-    if (Syntax::s.m_currentSystem==Syntax::VIC20)
+    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
         as->Asm("cpx $9004");
 
     as->Asm("bne *-3");

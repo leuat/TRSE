@@ -836,7 +836,7 @@ void ASTDispather6502::dispatch(NodeBlock *node)
     if (node->forceLabel!="")
         as->Label(node->forceLabel);
 
-    if (node->m_isMainBlock && Syntax::s.m_currentSystem == Syntax::NES)
+    if (node->m_isMainBlock && Syntax::s.m_currentSystem == AbstractSystem::NES)
         as->IncludeFile(":resources/code/nes_init.asm");
 
     if (node->m_compoundStatement!=nullptr)
@@ -845,7 +845,7 @@ void ASTDispather6502::dispatch(NodeBlock *node)
 
     as->PopCounter(node->m_op.m_lineNumber-1);
     as->PopBlock(node->m_currentLineNumber);
-    if (node->m_isMainBlock && Syntax::s.m_currentSystem == Syntax::NES)
+    if (node->m_isMainBlock && Syntax::s.m_currentSystem == AbstractSystem::NES)
         as->IncludeFile(":resources/code/nes_end.asm");
 
     node->PopZeroPointers(as);

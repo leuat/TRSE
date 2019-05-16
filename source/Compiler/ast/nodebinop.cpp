@@ -74,7 +74,7 @@ int NodeBinOP::numValue() {
 
 QString NodeBinOP::HexValue() {
     if (!isPureNumeric())
-        return 0;
+        return "";
     int res = numValue();
     //qDebug() << QString::number(res, 16);
     return "$" + QString::number(res, 16);

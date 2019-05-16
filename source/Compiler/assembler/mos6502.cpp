@@ -107,12 +107,12 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
 
 
 
-    if (Syntax::s.m_currentSystem==Syntax::BBCM) {
+    if (Syntax::s.m_currentSystem==AbstractSystem::BBCM) {
         Asm("ORG "+Util::numToHex(0x2000));
         return;
     }
 
-    if (Syntax::s.m_currentSystem==Syntax::NES) {
+    if (Syntax::s.m_currentSystem==AbstractSystem::NES) {
         Asm("ORG "+Util::numToHex(Syntax::s.m_programStartAddress));
 //        StartMemoryBlock("$8000");
 
@@ -222,7 +222,7 @@ void AsmMOS6502::DeclareVariable(QString name, QString type, QString initval)
     if (type.toLower()=="byte") {
         t = byte;
 
-        if (Syntax::s.m_currentSystem == Syntax::NES) {
+        if (Syntax::s.m_currentSystem == AbstractSystem::NES) {
             Write(name +"\t=\t"+Util::numToHex(m_zbyte));
             m_zbyte++;
             return;
@@ -538,39 +538,6 @@ void AsmMOS6502::Variable(QString v, bool isByte)
 }
 
 
-void AsmMOS6502::IncludeFile(QString pfile)
-{
-    QFile file(pfile);
-    if(!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "Could not open core include file: " +pfile;
-        exit(1);
-        return;
-    }
-
-    QTextStream in(&file);
-
-    QStringList source;
-
-    while(!in.atEnd()) {
-        QString line = in.readLine();
-        for (QString key: m_replaceValues.keys())
-            line = line.replace(key, m_replaceValues[key]); // Replace stuff like zps
-
-/*        if (line.startsWith(" ") | line.startsWith("\t"))
-            Asm(line);
-            else
-            Label(line);*/
-        source << line;
-  //      QStringList fields = line.split(",");
-    }
-    file.close();
-
-    if (m_currentBlock==nullptr)
-        m_source<<source;
-    else
-        m_currentBlock->m_source<<source;;
-
-}
 
 /*
 void AsmMOS6502::StartForLoop(QString var, QString startVal)

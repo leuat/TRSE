@@ -53,7 +53,7 @@ void SymbolTable::Initialize()
 
   //  m_constants.clear();
 
-    QString currentSystem = Syntax::StringFromSystem(Syntax::s.m_currentSystem).toLower();
+    QString currentSystem = AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem).toLower();
     for (QString s: Syntax::s.m_syntaxData.split('\n')) {
         s= s.simplified();
         if (s.count()==0) continue;
@@ -133,6 +133,7 @@ void SymbolTable::InitBuiltins()
 {
 
     Define(new BuiltInTypeSymbol("INTEGER",""));
+    Define(new BuiltInTypeSymbol("LONG",""));
     Define(new BuiltInTypeSymbol("REAL",""));
     Define(new BuiltInTypeSymbol("BYTE",""));
     Define(new BuiltInTypeSymbol("STRING",""));
@@ -226,6 +227,8 @@ TokenType::Type Symbol::getTokenType() {
         return TokenType::CSTRING;
     if (m_type.toLower()=="incbin")
         return TokenType::INCBIN;
+    if (m_type.toLower()=="long")
+        return TokenType::LONG;
     if (m_type.toLower()=="incsid")
         return TokenType::INCSID;
     return TokenType::NADA;

@@ -102,6 +102,8 @@ public:
     virtual bool isAddress() { return false;}
     virtual void AssignPointer(Assembler* as, QString memoryLocation) {}
 
+    virtual QString getValue() {}
+
     void RequireAddress(Node* n,QString name, int ln);
 
     void RequireNumber(Node* n,QString name, int ln) {
@@ -110,6 +112,8 @@ public:
     }
 
     virtual bool isWord(Assembler* as) { return false;}
+    virtual bool isLong(Assembler* as) { return false;}
+    virtual bool isByte(Assembler* as) { return false;}
 
    virtual bool isMinusOne() { return false; }
     virtual bool isOne() { return false; }

@@ -30,7 +30,7 @@
 #include <QList>
 #include "pvar.h"
 #include "errorhandler.h"
-
+#include "source/Compiler/systems/abstractsystem.h"
 
 
 class C64Key {
@@ -77,22 +77,22 @@ public:
     QVector<Token> reservedWords;
     //QVector<BuiltInFunction> builtinFunctions;
     QMap<QString, BuiltInFunction> builtInFunctions;
-    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA};
+  //  enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA};
     QString m_syntaxData; // File syntax data
-    System m_currentSystem;
+    AbstractSystem::System m_currentSystem;
     int m_startAddress = 0x800;
     int m_programStartAddress = m_startAddress+10;
     int m_memoryType = 0;
     bool m_ignoreSys = false;
     bool m_stripPrg = false;
     Syntax();
-    void Init(System s,QString p);
+    void Init(AbstractSystem::System s,QString p);
     void SetupReservedWords();
-    void SetupBuiltinFunctions(System s);
+    void SetupBuiltinFunctions(AbstractSystem::System s);
     void SetupKeys();
     void LoadSyntaxData();
 
-    static System SystemFromString(QString s) {
+/*    static System SystemFromString(QString s) {
         if (s.toLower()=="c64")
             return C64;
         if (s.toLower()=="c128")
@@ -118,7 +118,7 @@ public:
         if (s == BBCM) return "BBCM";
         if (s == AMIGA) return "AMIGA";
     }
-
+*/
     QString puredigit = "0123456789^";
     QString digit = "^0123456789$%";
     QString digitAll = "^0123456789$%ABCDEFabcdef";

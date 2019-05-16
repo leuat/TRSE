@@ -182,9 +182,9 @@ void FormRasEditor::Build()
 //        text+="+"<br>";
 
 //        Assemble6502(text);
-        m_system->Assemble(filename, text, m_currentDir);
+        m_system->Assemble(text,filename, m_currentDir);
         if (m_system->m_buildSuccess)
-            m_system->PostProcess(filename, text, m_currentDir);
+            m_system->PostProcess(text, filename, m_currentDir);
 
 
         ui->txtOutput->setText(text);

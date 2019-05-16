@@ -190,6 +190,40 @@ void Assembler::Label(QString s)
     Write(s,0);
 }
 
+void Assembler::IncludeFile(QString pfile)
+{
+    QFile file(pfile);
+    if(!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Could not open core include file: " +pfile;
+        exit(1);
+        return;
+    }
+
+    QTextStream in(&file);
+
+    QStringList source;
+
+    while(!in.atEnd()) {
+        QString line = in.readLine();
+        for (QString key: m_replaceValues.keys())
+            line = line.replace(key, m_replaceValues[key]); // Replace stuff like zps
+
+        /*        if (line.startsWith(" ") | line.startsWith("\t"))
+                Asm(line);
+                else
+                Label(line);*/
+        source << line;
+        //      QStringList fields = line.split(",");
+    }
+    file.close();
+
+    if (m_currentBlock==nullptr)
+        m_source<<source;
+    else
+        m_currentBlock->m_source<<source;;
+
+}
+
 void Assembler::Term(QString s, bool write)
 {
     m_term+=s;
@@ -222,17 +256,18 @@ void Assembler::Connect()
     m_source = newSource;
 
     //m_source<<m_appendix;
-//    m_appendix.append(m_ extraBlocks);
+    //    m_appendix.append(m_ extraBlocks);
     SortAppendix();
 
-  //  qDebug() << m_appendix[0].m_source;
+    //  qDebug() << m_appendix[0].m_source;
     QStringList pre;
     for (int i=0;i<m_appendix.count();i++) {
-//        qDebug() << m_appendix[i].m_source;
+        //        qDebug() << m_appendix[i].m_source;
         if (Util::NumberFromStringHex(m_appendix[i].m_pos)<Syntax::s.m_programStartAddress)
             pre <<m_appendix[i].m_source;
         else m_source << m_appendix[i].m_source;
     }
+
     m_source = QStringList() << " processor 6502" <<pre << m_source;
 
     m_appendix.clear();
@@ -245,3 +280,43 @@ QString Stack::current() const
     return m_current;
 }
 
+
+QString RegisterStack::Get() {
+    if (m_free.count()!=0) {
+        QString reg = m_free[0];
+        m_free.removeFirst();
+        m_latest.append(reg);
+        return reg;
+    }
+    qDebug() << "NO FREE REGISTERS :  RegisterStack::Get()";
+    exit(1);
+
+}
+
+void RegisterStack::Pop(QString reg) {
+    m_free.insert(0,reg);
+    m_latest.removeAll(reg);
+
+}
+
+QString RegisterStack::getLatest() {
+    if (m_latest.count()!=0) {
+        QString l = m_latest.last();
+        m_latest.removeLast();
+        return l;
+    }
+
+    qDebug() << "NO LATEST :  RegisterStack::getLatest()";
+    exit(1);
+
+}
+
+QString RegisterStack::peekLatest() {
+    if (m_latest.count()!=0) {
+        return m_latest.last();
+    }
+
+    qDebug() << "NO LATEST :  RegisterStack::peekLatest()";
+    exit(1);
+
+}

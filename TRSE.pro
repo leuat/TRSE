@@ -185,7 +185,6 @@ SOURCES += main.cpp\
     source/LeLib/limage/compression.cpp \
     source/LeLib/limage/limagecga.cpp \
     source/LeLib/limage/limageamiga4.cpp \
-    source/Compiler/assembler/m68000.cpp \
     source/Compiler/systems/abstractsystem.cpp \
     source/Compiler/systems/systemmos6502.cpp \
     source/Compiler/systems/factorysystem.cpp \
@@ -193,7 +192,11 @@ SOURCES += main.cpp\
     source/Compiler/systems/systempet.cpp \
     source/Compiler/systems/systemvic20.cpp \
     source/Compiler/systems/systemnes.cpp \
-    source/Compiler/systems/systemc128.cpp
+    source/Compiler/systems/systemc128.cpp \
+    source/Compiler/systems/systemm6800.cpp \
+    source/Compiler/systems/systemamiga.cpp \
+    source/Compiler/assembler/astdispatcher68000.cpp \
+    source/Compiler/assembler/AsmM68000.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -313,7 +316,6 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/compression.h \
     source/LeLib/limage/limagecga.h \
     source/LeLib/limage/limageamiga4.h \
-    source/Compiler/assembler/m68000.h \
     source/Compiler/systems/abstractsystem.h \
     source/Compiler/systems/systemmos6502.h \
     source/Compiler/systems/factorysystem.h \
@@ -321,7 +323,11 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systempet.h \
     source/Compiler/systems/systemvic20.h \
     source/Compiler/systems/systemnes.h \
-    source/Compiler/systems/systemc128.h
+    source/Compiler/systems/systemc128.h \
+    source/Compiler/systems/systemm6800.h \
+    source/Compiler/systems/systemamiga.h \
+    source/Compiler/assembler/astdispatcher68000.h \
+    source/Compiler/assembler/AsmM68000.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \
@@ -487,4 +493,6 @@ DISTFILES += \
     resources/text/help/m/wait.rtf \
     resources/text/help/m/waitforraster.rtf \
     resources/text/help/m/waitnoraster.rtf \
-    resources/images/PET.png
+    resources/images/PET.png \
+    resources/code/amiga/end.s \
+    resources/code/amiga/init.s

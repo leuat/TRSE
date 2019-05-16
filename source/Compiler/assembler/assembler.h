@@ -61,6 +61,8 @@ class MemoryBlock {
 
 
 
+
+
 class Stack {
 public:
     QVector<QString> m_vars;
@@ -70,10 +72,12 @@ public:
         m_vars.push_back(s);
         m_current = s;
     }
-    void pop() {
+    QString pop() {
         m_current=m_vars[m_vars.count()-1];
         //m_vars.removeLast();
         m_vars.remove(m_vars.count()-1);
+//        m_current = m_vars.last();
+        return m_current;
     }
   public:
         QString current() const;
@@ -132,7 +136,25 @@ public:
 
 };
 
+class RegisterStack {
+public:
+//    QStringList m_registers;
+    QStringList m_free;
+    QStringList m_occupied;
+    QVector<QString> m_latest;
+    RegisterStack() {}
+    RegisterStack(QStringList vals) {
+        m_free = vals;
+    }
+    int m_current = 0;
+    QString Get();
+    void Pop(QString reg);
 
+    QString getLatest();
+
+    QString peekLatest();
+
+};
 
 class Assembler
 {
@@ -144,6 +166,12 @@ public:
     QStringList m_startInsertAssembler;
     QString m_zeropageScreenMemory="$fb";
     QMap<QString, QString> m_replaceValues;
+
+
+    RegisterStack m_regAcc;
+    RegisterStack m_regMem;
+    Stack m_varStack;
+
 
     static QStringList m_internalZP;
     QVector<QString> m_zeroPointers; // org zp input
@@ -274,7 +302,7 @@ public:
     virtual void Variable(QString s, bool isByte) {}
     //void Appendix(QString s, int l);
     virtual void LoadVariable(QString var) {}
-    void Connect();
+    virtual void Connect();
     virtual QString StoreInTempVar(QString name, QString type="byte")  { return name;}
     virtual void PopTempVar() {}
 //    virtual void StartForLoop(QString a, QString b) {}
@@ -284,7 +312,8 @@ public:
     void Label(QString s);
     virtual void Optimise(CIniFile& ini) {}
 
-    virtual void IncludeFile(QString file) {}
+    virtual void IncludeFile(QString pfile);
+
     void ClearTerm() {
         m_term = "";
     }

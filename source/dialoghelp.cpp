@@ -67,7 +67,7 @@ DialogHelp::~DialogHelp()
 void DialogHelp::LoadItems(int idx)
 {
     HelpType ht = m_helpTypes[idx];
-    QString currentSystem = Syntax::StringFromSystem(Syntax::s.m_currentSystem).toLower();
+    QString currentSystem = AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem).toLower();
     m_idx=0;
     ui->lstItems->clear();
     m_currentItems.clear();
@@ -201,7 +201,7 @@ void DialogHelp::AppendItem(QListWidget *w, QString text)
 
 void DialogHelp::SearchForItem(QString item)
 {
-    QString currentSystem = Syntax::StringFromSystem(Syntax::s.m_currentSystem).toLower();
+    QString currentSystem = AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem).toLower();
     m_idx=0;
     ui->lstItems->clear();
     m_currentItems.clear();

@@ -59,7 +59,9 @@ public:
        m_right->forceWord();
     }
 
-
+    QString getValue() override {
+        return HexValue();
+    }
 
     int numValue() override;
 

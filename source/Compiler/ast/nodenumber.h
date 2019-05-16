@@ -45,6 +45,11 @@ public:
 
     bool isWord(Assembler* as) override;
 
+    QString getValue() override {
+        if (isAddress()) return HexValue(); else return "#" + HexValue();
+    }
+
+
     //void LoadVariable(AbstractASTDispatcher* dispatcher) override;
 
     int numValue() { return m_val;}

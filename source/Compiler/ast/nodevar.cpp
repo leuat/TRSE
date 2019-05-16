@@ -62,6 +62,12 @@ bool NodeVar::isWord(Assembler *as) {
     return s->m_type.toLower()=="integer";*/
 }
 
+bool NodeVar::isLong(Assembler *as) {
+    return getType(as)==TokenType::LONG  && m_expr==nullptr;
+}
+bool NodeVar::isByte(Assembler *as) {
+    return getType(as)==TokenType::BYTE  && m_expr==nullptr;
+}
 
 bool NodeVar::isAddress() {
   //  return m_op.m_type==TokenType::ADDRESS;

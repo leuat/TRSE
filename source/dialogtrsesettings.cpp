@@ -37,6 +37,8 @@ DialogTRSESettings::DialogTRSESettings(QWidget *parent) :
 
 void DialogTRSESettings::FillFromIni()
 {
+    ui->leVasmm->setText(m_ini->getString("vasmm"));
+    ui->le68kTargetDir->setText(m_ini->getString("vasmm_target_dir"));
     ui->leDasm->setText(m_ini->getString("dasm"));
     ui->leEmulator->setText(m_ini->getString("emulator"));
     ui->leEmulatorC128->setText(m_ini->getString("c128_emulator"));
@@ -88,6 +90,11 @@ void DialogTRSESettings::FillFromIni()
 
 void DialogTRSESettings::FillToIni()
 {
+
+
+
+    m_ini->setString("vasmm_target_dir", ui->le68kTargetDir->text());
+    m_ini->setString("vasmm", ui->leVasmm->text());
     m_ini->setString("dasm", ui->leDasm->text());
     m_ini->setString("exomizer", ui->leExomizer->text());
     m_ini->setString("tinycrunch", ui->leTinyCrunch->text());
@@ -206,5 +213,23 @@ void DialogTRSESettings::on_btnTinyCrunch_clicked()
         tr("Tinycrunch script location"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->leTinyCrunch->setText(filename);
+
+}
+
+void DialogTRSESettings::on_btnVasmm_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Vasmm location"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leVasmm->setText(filename);
+
+}
+
+void DialogTRSESettings::on_btn68kTargetDir_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Vasmm target directory"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->le68kTargetDir->setText(filename);
 
 }

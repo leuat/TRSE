@@ -8,6 +8,7 @@
 void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir)
 {
 
+
     QString output;
     int time = timer.elapsed();
     int codeEnd = 0;
@@ -40,14 +41,14 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
     if (Syntax::s.m_stripPrg)
         Util::ConvertFileWithLoadAddress(filename+".prg", filename+".prg");
 
-    if (m_settingsIni->getdouble("perform_crunch")==1 && (Syntax::s.m_currentSystem!=Syntax::NES)) {
+    if (m_settingsIni->getdouble("perform_crunch")==1 && (Syntax::s.m_currentSystem!=AbstractSystem::NES)) {
         QProcess processCompress;
 
         QString fn = (filename +".prg");
         QString target="-t64";
-        if (Syntax::s.m_currentSystem==Syntax::C128)
+        if (Syntax::s.m_currentSystem==AbstractSystem::C128)
             target="-t128";
-        if (Syntax::s.m_currentSystem==Syntax::VIC20) {
+        if (Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
             target="-t20";
             if (m_projectIni->getString("vic_memory_config")!="none") {
                 target="-t52";

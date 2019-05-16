@@ -86,6 +86,11 @@ void Messages::InitMessages()
                                           );
 
 
+    m_messages[NO_VASMM] = Message(NO_VASMM, Message::Error,
+                                      "You need to set up a link to the Vasmm compiler in the \"Assembler\" section in the TRSE settings panel."
+                                          );
+
+
 }
 void Messages::DisplayMessage(int message)
 {

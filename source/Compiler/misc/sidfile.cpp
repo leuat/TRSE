@@ -126,7 +126,7 @@ void SidFile::Convert(int headerShift, int newAddress, QString fileEnding, int h
 
     // Replace all d400 with newaddress
     //if (org.toLower().trimmed().endsWith(".vsid"))
-    if (Syntax::s.m_currentSystem==Syntax::VIC20)
+    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
     {
         qDebug() << "VSID CONVERSION: ";
         for (int i=0;i<m_blob.count()-1;i++) {

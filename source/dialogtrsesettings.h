@@ -83,6 +83,10 @@ private slots:
 
     void on_btnTinyCrunch_clicked();
 
+    void on_btnVasmm_clicked();
+
+    void on_btn68kTargetDir_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

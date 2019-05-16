@@ -104,7 +104,7 @@ void Parser::InitBuiltinFunctions()
     InitBuiltinFunction(QStringList()<< "viairq" , "init_viairq");
     InitBuiltinFunction(QStringList()<< "initmodplayer" , "include_modplayer");
     InitBuiltinFunction(QStringList()<< "decrunch", "init_decrunch");
-    if (Syntax::s.m_currentSystem!=Syntax::NES)
+    if (Syntax::s.m_currentSystem!=AbstractSystem::NES)
        InitBuiltinFunction(QStringList()<< "sine", "initsinetable", "initsine_calculate");
     InitBuiltinFunction(QStringList()<< "log2_table" << "atan2", "initlog2");
 
@@ -311,6 +311,7 @@ Node *Parser::Variable()
 //        qDebug() << m_currentToken.m_value;
 
         if (s->m_type=="ADDRESS") m_currentToken.m_type=TokenType::ADDRESS;
+        if (s->m_type=="LONG") m_currentToken.m_type=TokenType::LONG;
         if (s->m_type=="INTEGER") m_currentToken.m_type=TokenType::INTEGER;
         if (s->m_type=="BYTE") m_currentToken.m_type=TokenType::BYTE;
         if (s->m_type=="STRING") m_currentToken.m_type=TokenType::STRING;

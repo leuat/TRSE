@@ -42,7 +42,7 @@ void Compiler::Parse(QString text, QStringList lst)
     //qDebug() << "******" << m_ini->getString("assembler").toUpper();
     try {
         m_tree = m_parser.Parse( m_ini->getdouble("optimizer_remove_unused_symbols")==1.0 &&
-                                 Syntax::s.m_currentSystem!=Syntax::NES
+                                 Syntax::s.m_currentSystem!=AbstractSystem::NES
                                  ,m_projectIni->getString("vic_memory_config"),Util::fromStringList(m_projectIni->getStringList("global_defines")));
         //qDebug() << m_parser.m_preprocessorDefines["ORGASM"];
         //exit(1);
@@ -72,12 +72,9 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
 
     if (system->m_processor==AbstractSystem::M68000) {
         m_assembler = new AsmM68000();//
-        //m_dispatcher = new ASTDispather6502();
-//        Init6502Assembler();
+        m_dispatcher = new ASTDispather68000();
     }
 
-//    qDebug() << SymbolTable::m_constants["SIDFILE_1_INIT"]->m_value->toString();
-  //  exit(1);
 
     if (m_assembler==nullptr)
         return false;
@@ -261,7 +258,7 @@ void Compiler::Init6502Assembler()
     }
 
 
-    if (Syntax::s.m_currentSystem == Syntax::NES) {
+    if (Syntax::s.m_currentSystem == AbstractSystem::NES) {
         Syntax::s.m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
         Syntax::s.m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
     }

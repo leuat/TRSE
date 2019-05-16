@@ -135,5 +135,7 @@
         <file>resources/text/help/m/krillloadcompressed.rtf</file>
         <file>resources/text/help/m/krillload.rtf</file>
         <file>resources/images/PET.png</file>
+        <file>resources/code/amiga/end.s</file>
+        <file>resources/code/amiga/init.s</file>
     </qresource>
 </RCC>

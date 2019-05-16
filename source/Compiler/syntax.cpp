@@ -29,10 +29,10 @@ Syntax::Syntax()
 {
 }
 
-void Syntax::Init(System s, QString param)
+void Syntax::Init(AbstractSystem::System s, QString param)
 {
     m_currentSystem = s;
-    if (s==VIC20) {
+    if (s==AbstractSystem::VIC20) {
         if (param=="none") {
             m_startAddress = 0x1000;
             m_programStartAddress = 0x1010;
@@ -47,23 +47,23 @@ void Syntax::Init(System s, QString param)
        }
 
     }
-    if (s==C64) {
+    if (s==AbstractSystem::C64) {
         m_startAddress = 0x0800;
         m_programStartAddress = 0x0810;
     }
-    if (s==PET) {
+    if (s==AbstractSystem::PET) {
         m_startAddress = 0x0400;
         m_programStartAddress = 0x0410;
     }
-    if (s==NES) {
+    if (s==AbstractSystem::NES) {
         m_startAddress = 0xCA00;
         m_programStartAddress = 0xCA00;
     }
-    if (s==C128) {
+    if (s==AbstractSystem::C128) {
         m_startAddress = 0x01C00;
         m_programStartAddress = 0x1C10;
     }
-    if (s==BBCM) {
+    if (s==AbstractSystem::BBCM) {
         m_startAddress = 0x02000;
         m_programStartAddress = 0x2010;
     }
@@ -83,7 +83,7 @@ void Syntax::Init(System s, QString param)
 void Syntax::SetupReservedWords()
 {
     reservedWords.clear();
-    QString currentSystem = StringFromSystem(m_currentSystem).toLower();
+    QString currentSystem = AbstractSystem::StringFromSystem(m_currentSystem).toLower();
     for (QString s: m_syntaxData.split('\n')) {
         s= s.simplified();
         if (s.count()==0) continue;
@@ -105,13 +105,13 @@ void Syntax::SetupReservedWords()
 
 }
 
-void Syntax::SetupBuiltinFunctions(System system)
+void Syntax::SetupBuiltinFunctions(AbstractSystem::System system)
 {
     builtInFunctions.clear();
 
 
 
-    QString currentSystem = StringFromSystem(m_currentSystem).toLower();
+    QString currentSystem = AbstractSystem::StringFromSystem(m_currentSystem).toLower();
 
     for (QString s: m_syntaxData.split('\n')) {
         s= s.simplified();
