@@ -59,21 +59,19 @@ public:
     void LoadVariable(NodeNumber* n);
 
 
+    void TransformVariable(Assembler* as, QString op, QString n, QString val, Node* t);
     void TransformVariable(Assembler* as, QString op, NodeVar* n, QString val);
+    void TransformVariable(Assembler* as, QString op, QString n, NodeVar* val);
     void TransformVariable(Assembler* as, QString op, QString n, QString val);
 
-    QString getEndType(Assembler* as, Node* v) {
-        if (v->isWord(as))
-            return ".w";
-        if (v->isLong(as))
-            return ".l";
-        if (v->isByte(as))
-            return ".b";
-    }
+    QString getEndType(Assembler* as, Node* v);
 
     QString AssignVariable(NodeAssign *node);
     void IncBin(Assembler* as, NodeVarDecl *node);
 
+    void BuildSimple(Node *node, QString lblFailed);
+
+    void BuildToCmp(Node *node);
 
 
 };

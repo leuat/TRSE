@@ -296,7 +296,7 @@ public:
 //    virtual void Poke(bool start) = 0;
 //    virtual void Peek(bool start) {}
     virtual void Term(QString s, bool write=false);
-    virtual void Comment(QString s) {}
+    virtual void Comment(QString s) {    Asm("; "+ s) ;}
     void Term();
   //  virtual void Writeln() = 0;
   //  virtual void EndWriteln() = 0;

@@ -337,6 +337,55 @@ void ASTDispather68000::dispatch(NodeProcedureDecl *node)
 
 void ASTDispather68000::dispatch(NodeConditional *node)
 {
+    QString labelStartOverAgain = as->NewLabel("while");
+    QString lblstartTrueBlock = as->NewLabel("ConditionalTrueBlock");
+
+    QString labelElse = as->NewLabel("elseblock");
+    QString labelElseDone = as->NewLabel("elsedoneblock");
+    // QString labelFailed = as->NewLabel("conditionalfailed");
+
+    qDebug() << "HMM";
+
+    if (node->m_isWhileLoop)
+        as->Label(labelStartOverAgain);
+
+    // Test all binary clauses:
+    NodeBinaryClause* bn = dynamic_cast<NodeBinaryClause*>(node->m_binaryClause);
+
+
+        QString failedLabel = labelElseDone;
+        if (node->m_elseBlock!=nullptr)
+            failedLabel = labelElse;
+
+        BuildSimple(bn,  failedLabel);
+
+    // Start main block
+    as->Label(lblstartTrueBlock); // This means skip inside
+
+    node->m_block->Accept(this);
+
+    if (node->m_elseBlock!=nullptr)
+        as->Asm("bra " + labelElseDone);
+
+    // If while loop, return to beginning of conditionals
+    if (node->m_isWhileLoop)
+        as->Asm("bra " + labelStartOverAgain);
+
+    // An else block?
+    if (node->m_elseBlock!=nullptr) {
+        as->Label(labelElse);
+        node->m_elseBlock->Accept(this);
+//        m_elseBlock->Build(as);
+
+    }
+    as->Label(labelElseDone); // Jump here if not
+
+    as->PopLabel("while");
+    as->PopLabel("ConditionalTrueBlock");
+    as->PopLabel("elseblock");
+    as->PopLabel("elsedoneblock");
+//    as->PopLabel("conditionalfailed");
+
 
 }
 
@@ -347,6 +396,7 @@ void ASTDispather68000::dispatch(NodeForLoop *node)
 
 void ASTDispather68000::dispatch(NodeVar *node)
 {
+//    LoadVariable(node);
     as->m_varStack.push(node->getValue());
 }
 
@@ -391,7 +441,10 @@ void ASTDispather68000::StoreVariable(NodeVar *n)
 
 void ASTDispather68000::LoadVariable(NodeVar *n)
 {
-
+    QString d0 = as->m_regAcc.Get();
+    TransformVariable(as,"move"+getEndType(as,n),d0,n->getValue());
+    as->m_regAcc.Pop(d0);
+    as->m_varStack.push(d0);
 }
 
 void ASTDispather68000::LoadVariable(Node *n)
@@ -399,21 +452,50 @@ void ASTDispather68000::LoadVariable(Node *n)
 
 }
 
+
 void ASTDispather68000::LoadVariable(NodeNumber *n)
 {
+    QString d0 = as->m_regAcc.Get();
+    TransformVariable(as,"move",n->getValue(),d0);
+    as->m_regAcc.Pop(d0);
+    as->m_varStack.push(d0);
+
+}
+
+void ASTDispather68000::TransformVariable(Assembler *as, QString op, QString n, QString val, Node *t)
+{
+//    as->Asm(op+getEndType(as,t) +" "+val + "," + n);
+    as->Asm(op+getEndType(as,t) +" "+val + "," + n);
 
 }
 
 void ASTDispather68000::TransformVariable(Assembler* as, QString op, NodeVar *n, QString val)
 {
     as->Asm(op+getEndType(as,n) +" "+val + "," + n->getValue());
-    qDebug() << " ** OP : " << op+getEndType(as,n) +" "+val + "," + n->getValue();
+//    qDebug() << " ** OP : " << op+getEndType(as,n) +" "+val + "," + n->getValue();
+}
+
+void ASTDispather68000::TransformVariable(Assembler *as, QString op, QString n, NodeVar *val)
+{
+    as->Asm(op+getEndType(as,val) +" "+val->getValue() + "," + n);
+//
 }
 
 void ASTDispather68000::TransformVariable(Assembler* as, QString op, QString n, QString val)
 {
     as->Asm(op +" "+val + "," + n);
     qDebug() << " ** OP : " << op +" "+val + "," + n;
+}
+
+QString ASTDispather68000::getEndType(Assembler *as, Node *v) {
+    if (v->isWord(as))
+        return ".w";
+    if (v->isLong(as))
+        return ".l";
+    if (v->isByte(as))
+        return ".b";
+
+    return ".l";
 }
 
 QString ASTDispather68000::AssignVariable(NodeAssign *node) {
@@ -521,5 +603,74 @@ void ASTDispather68000::IncBin(Assembler* as, NodeVarDecl *node) {
   //      as->blocks.append(new MemoryBlock(start,start+size, MemoryBlock::DATA,t->m_filename));
 
     }
+}
+
+void ASTDispather68000::BuildSimple(Node *node, QString lblFailed)
+{
+
+    as->Comment("Binary clause Simplified: " + node->m_op.getType());
+    //    as->Asm("pha"); // Push that baby
+
+    BuildToCmp(node);
+
+    if (node->m_op.m_type==TokenType::EQUALS)
+        as->Asm("bne " + lblFailed);
+    if (node->m_op.m_type==TokenType::NOTEQUALS)
+        as->Asm("beq " + lblFailed);
+    if (node->m_op.m_type==TokenType::GREATER)
+        as->Asm("bcc " + lblFailed);
+    if (node->m_op.m_type==TokenType::LESS)
+        as->Asm("bcs " + lblFailed);
+
+
+
+}
+
+void ASTDispather68000::BuildToCmp(Node *node)
+{
+//    QString b="";
+
+  /*  NodeVar* varb = dynamic_cast<NodeVar*>(node->m_right);
+    if (varb!=nullptr && varb->m_expr==nullptr)
+        b = varb->value;
+
+    NodeNumber* numb = dynamic_cast<NodeNumber*>(node->m_right);
+    if (numb!=nullptr)
+        b = numb->StringValue();
+*/
+//    as->Term();
+
+    if (node->m_left->getValue()!="") {
+        if (node->m_right->isPureNumeric())
+        {
+            as->Comment("Compare with pure num / var optimization");
+            qDebug() << "HÆ";
+            TransformVariable(as,"cmp",node->m_left->getValue(),node->m_right->getValue(),node->m_left);
+            qDebug() << "Done";
+            return;
+        } else
+        {
+            as->Comment("Compare two vars optimization");
+            if (node->m_right->isPureVariable())
+                LoadVariable((NodeVar*)node->m_right);
+                 else
+                node->m_right->Accept(this);
+
+            TransformVariable(as,"cmp",as->m_varStack.pop(),(NodeVar*)node->m_left);
+            return;
+        }
+    }
+
+    node->m_right->Accept(this);
+
+    TransformVariable(as,"cmp",(NodeVar*)node->m_left, as->m_varStack.pop());
+
+        // Perform a full compare : create a temp variable
+//        QString tmpVar = as->m_regAcc.Get();//as->StoreInTempVar("binary_clause_temp");
+//        node->m_right->Accept(this);
+  //      as->Asm("cmp " + tmpVar);
+    //      as->PopTempVar();
+
+
 }
 

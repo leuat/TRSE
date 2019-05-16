@@ -36,9 +36,9 @@ m; initatan2; C64, C128, VIC20  ;
 m; Poke8; Amiga ; a,b
 m; Poke16; Amiga ; a,b
 m; Poke32; Amiga ; a,b
-
+m; WaitVerticalBlank; Amiga;
 m; SetCopperList32; Amiga; a, a
-
+m; ApplyCopperList; Amiga;
 
 
 

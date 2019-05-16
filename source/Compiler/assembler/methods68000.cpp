@@ -25,6 +25,27 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("setcopperlist32"))
         SetCopperList32(as);
 
+    if (Command("WaitVerticalBlank")) {
+        QString lbl = as->NewLabel("waitVB");
+        QString d0 = as->m_regAcc.Get();
+        as->Label(lbl);
+        as->Asm("move.l VPOSR,"+d0);
+        as->Asm("and.l #$1ff00,"+d0);
+        as->Asm("cmp.l #300<<8,"+d0);
+        as->Asm("bne "+lbl);
+
+        as->m_regAcc.Pop(d0);
+        as->PopLabel("waitVB");
+
+    }
+    if (Command("ApplyCopperList")) {
+
+        QString a0 = as->m_regMem.Get();
+        as->Asm("move.l #cop,"+a0);
+        as->Asm("move.l "+a0+",COP1LCH");
+        as->m_regMem.Pop(a0);
+    }
+
 }
 
 bool Methods68000::Command(QString name)
