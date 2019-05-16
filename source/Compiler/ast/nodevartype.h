@@ -35,6 +35,7 @@ public:
     QString value;
     Token m_arrayVarType;
     QStringList m_data;
+    QStringList m_flags;
     QString m_filename, m_position;
     QString initVal ="0";
 

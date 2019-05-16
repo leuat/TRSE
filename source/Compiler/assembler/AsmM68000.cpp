@@ -22,6 +22,8 @@ void AsmM68000::DeclareArray(QString name, QString type, int count, QStringList 
 {
     QString t = byte;
 
+
+
     if (data.count()==0 && pos=="") {
         if (type.toLower()=="integer")
             t = "blk.w";

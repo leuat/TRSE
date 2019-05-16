@@ -191,8 +191,12 @@ void ASTDispather68000::dispatch(NodeVarDecl *node)
 
     node->ExecuteSym(as->m_symTab);
 
+
     NodeVar* v = (NodeVar*)node->m_varNode;
     NodeVarType* t = (NodeVarType*)node->m_typeNode;
+    if (t->m_flags.contains("chipmem")) {
+        as->m_currentBlock = &as->m_chipMem;
+    }
 
     if (t->m_op.m_type==TokenType::ARRAY) {
         as->DeclareArray(v->value, t->m_arrayVarType.m_value, t->m_op.m_intVal, t->m_data, t->m_position);
@@ -219,7 +223,7 @@ void ASTDispather68000::dispatch(NodeVarDecl *node)
         if (node->m_curMemoryBlock!=nullptr)
             ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
 
-  //      IncBin(node);
+        IncBin(as,node);
     }
     else
     if (t->m_op.m_type==TokenType::POINTER) {
@@ -235,6 +239,7 @@ void ASTDispather68000::dispatch(NodeVarDecl *node)
 
 
 
+    as->m_currentBlock = nullptr;
 
 
 }
@@ -370,10 +375,10 @@ void ASTDispather68000::dispatch(NodeBuiltinMethod *node)
 
   //  as->PushCounter();
 
-/*    Methods68000 methods;
+    Methods68000 methods;
     methods.m_node = node;
     methods.Assemble(as,this);
-*/
+
 //    as->PopCounter(node->m_op.m_lineNumber-1);
 
 }
@@ -471,9 +476,50 @@ QString ASTDispather68000::AssignVariable(NodeAssign *node) {
     node->m_right->Accept(this);
     TransformVariable(as, "move",v, as->m_varStack.pop());
 
-
  //   as->Term();
    // StoreVariable(v);
 
+}
+
+void ASTDispather68000::IncBin(Assembler* as, NodeVarDecl *node) {
+    NodeVar* v = (NodeVar*)node->m_varNode;
+    NodeVarType* t = (NodeVarType*)node->m_typeNode;
+    QString filename = as->m_projectDir + "/" + t->m_filename;
+    if (!QFile::exists(filename))
+        ErrorHandler::e.Error("Could not locate binary file for inclusion :" +filename);
+
+    int size=0;
+    QFile f(filename);
+    if (f.open(QIODevice::ReadOnly)){
+        size = f.size();  //when file does open.
+        f.close();
+    }
+
+
+    if (t->m_position=="") {
+        as->Label(v->value);
+        as->Asm("incbin \"" + filename + "\"");
+    }
+    else {
+        //            qDebug() << "bin: "<<v->value << " at " << t->m_position;
+//        Appendix app(t->m_position);
+
+        Symbol* typeSymbol = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
+        typeSymbol->m_org = Util::C64StringToInt(t->m_position);
+        typeSymbol->m_size = size;
+        //            qDebug() << "POS: " << typeSymbol->m_org;
+        //app.Append("org " +t->m_position,1);
+        as->Label(v->value);
+        as->Asm("incbin \"" + filename + "\"");
+/*        bool ok;
+        int start=0;
+        if (t->m_position.startsWith("$")) {
+            start = t->m_position.remove("$").toInt(&ok, 16);
+        }
+        else start = t->m_position.toInt();
+*/
+  //      as->blocks.append(new MemoryBlock(start,start+size, MemoryBlock::DATA,t->m_filename));
+
+    }
 }
 

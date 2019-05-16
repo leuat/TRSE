@@ -196,7 +196,8 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemm6800.cpp \
     source/Compiler/systems/systemamiga.cpp \
     source/Compiler/assembler/astdispatcher68000.cpp \
-    source/Compiler/assembler/AsmM68000.cpp
+    source/Compiler/assembler/AsmM68000.cpp \
+    source/Compiler/assembler/methods68000.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -327,7 +328,8 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemm6800.h \
     source/Compiler/systems/systemamiga.h \
     source/Compiler/assembler/astdispatcher68000.h \
-    source/Compiler/assembler/AsmM68000.h
+    source/Compiler/assembler/AsmM68000.h \
+    source/Compiler/assembler/methods68000.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \

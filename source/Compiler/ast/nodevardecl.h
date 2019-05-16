@@ -40,6 +40,8 @@ public:
     Node* m_typeNode;
     int m_fileSize=0;
     int m_dataSize=0;
+    bool m_chipMem = false;
+
     SidFile sid;
 
     int m_pushedPointers = 0;

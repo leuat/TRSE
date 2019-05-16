@@ -194,6 +194,79 @@ void Parser::PreprocessIfDefs(bool ifdef)
 
 }
 
+void Parser::PreprocessConstants()
+{
+    QString txt;
+    qDebug() << "Here";
+    for (QString s: m_lexer->m_text.split("\n")) {
+//        qDebug() << s;
+        QVector<QString> numbers;
+
+        QString cur = "";
+        for (int i=0;i<s.length();i++) {
+            if (s[i]==' ')
+                continue;
+            if (Syntax::s.binop.contains(QString(s[i].toLower()))) {
+                cur+=s[i];
+            }
+            else if (cur!="") {
+                //int i = Util::NumberFromStringHex(cur);
+                if (cur.contains('*') || cur.contains('+') || cur.contains('-') || cur.contains('/'))
+                numbers.append(cur);
+                cur ="";
+
+            }
+        }
+        if (numbers.count()!=0)
+            qDebug() << numbers;
+
+        txt += s +"\n";
+    }
+
+    m_lexer->m_text = txt;
+}
+
+int Parser::GetParsedInt()
+{
+    bool done = false;
+    int val = 0;
+    QString op = "plus";
+    while (!done) {
+//        qDebug() << "ival:"  << QString::number(m_currentToken.m_intVal);
+        if (op == "plus")
+            val = val + m_currentToken.m_intVal;
+        if (op == "mul")
+            val = val * m_currentToken.m_intVal;
+        if (op == "div")
+            val = val / m_currentToken.m_intVal;
+        if (op == "minus")
+            val = val - m_currentToken.m_intVal;
+        Eat();
+        done = true;
+        if (m_currentToken.m_type == TokenType::MUL) {
+            done = false;
+            op = "mul";
+        }
+        if (m_currentToken.m_type == TokenType::DIV) {
+            done = false;
+            op = "div";
+        }
+        if (m_currentToken.m_type == TokenType::MINUS) {
+            done = false;
+            op = "minus";
+        }
+        if (m_currentToken.m_type == TokenType::PLUS) {
+            done = false;
+            op = "plus";
+        }
+        if (!done)
+            Eat();
+
+    }
+//    qDebug() << QString::number(val);
+    return val;
+}
+
 int Parser::findPage()
 {
     int forcePage = 0;
@@ -838,6 +911,7 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
     m_lexer->m_text = m_lexer->m_orgText;
     m_pass = 0;
     Preprocess();
+//    PreprocessConstants();
     m_pass = 1;
     m_parserBlocks.clear();
     m_symTab = new SymbolTable();
@@ -1210,7 +1284,17 @@ Node *Parser::TypeSpec()
         }
         Eat(TokenType::RPAREN);
 
-        return new NodeVarType(t,binFile, position);
+
+        QStringList flags;
+        if (m_currentToken.m_type==TokenType::CHIPMEM) {
+            Eat(TokenType::CHIPMEM);
+            flags<<"chipmem";
+        }
+
+        NodeVarType *nt =  new NodeVarType(t,binFile, position);
+        nt->m_flags = flags;
+        return nt;
+
 
     }
 
@@ -1218,8 +1302,9 @@ Node *Parser::TypeSpec()
     if (m_currentToken.m_type == TokenType::ARRAY) {
         Eat(TokenType::ARRAY);
         Eat(TokenType::LBRACKET);
-        float count =m_currentToken.m_intVal;
-        Eat(m_currentToken.m_type);
+
+        float count = GetParsedInt();
+
         Eat(TokenType::RBRACKET);
         Eat(TokenType::OF);
         Token arrayType = m_currentToken;
@@ -1245,9 +1330,16 @@ Node *Parser::TypeSpec()
 
             Eat(m_currentToken.m_type);
         }
+        QStringList flags;
+        if (m_currentToken.m_type==TokenType::CHIPMEM) {
+            Eat(TokenType::CHIPMEM);
+            flags<<"chipmem";
+        }
 
         t.m_intVal = count;
-        return new NodeVarType(t,position, arrayType,data);
+        NodeVarType *nt =  new NodeVarType(t,position, arrayType,data);
+        nt->m_flags = flags;
+        return nt;
 
     }
 
@@ -1262,17 +1354,20 @@ Node *Parser::TypeSpec()
         return new NodeVarType(t,initData);
     }
 
+
     Eat();
     // Is regular single byte / pointer
 
     QString initVal = "";
     if (m_currentToken.m_type == TokenType::EQUALS) {
         Eat();
-        initVal = m_currentToken.m_value;
+        initVal = Util::numToHex(GetParsedInt());
+//        qDebug() << m_currentToken.getType();
+  //      Eat();
 /*        if (initVal.count()>0 && initVal[0]=='@' ) {
             ErrorHandler::e.Error("Could not find preprocessor : " + initVal);
         }*/
-        if (initVal=="") {
+/*        if (initVal=="") {
             bool ok=true;
             initVal = QString::number(m_currentToken.m_intVal);
         }else
@@ -1280,9 +1375,9 @@ Node *Parser::TypeSpec()
             ErrorHandler::e.Error("Unknown initialization value : " + initVal, m_currentToken.m_lineNumber);
 
         }
+*/
 
-
-        Eat(m_currentToken.m_type);
+  //      Eat(m_currentToken.m_type);
 
     }
    // qDebug() << "Type: " << t.m_value << " " << initVal;

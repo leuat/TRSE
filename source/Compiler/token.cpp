@@ -32,7 +32,7 @@ QString TokenType::types[] = {
             "INTERRUPT", "BITAND", "BITOR", "ELSE", "OR", "AND", "POINTER","AT",
             "INCLUDE", "DEFINE", "PREPROCESSOR", "IFDEF", "ENDIF", "IFNDEF", "OFFPAGE", "ONPAGE",
             "STEP", "UNROLL", "LOOPX", "LOOPY", "CSTRING", "USERDATA", "STARTBLOCK", "ENDBLOCK",
-            "IGNOREMETHOD", "ERROR", "WEDGE", "USE", "INCNSF", "STARTASSEMBLER", "LONG"};
+            "IGNOREMETHOD", "ERROR", "WEDGE", "USE", "INCNSF", "STARTASSEMBLER", "LONG", "CHIPMEM"};
 
 QString Token::getType() {
     return TokenType::types[m_type];
@@ -73,9 +73,8 @@ Token::Token(TokenType::Type t, int val) {
 TokenType::Type TokenType::getType(QString s) {
     //        qDebug()<< types->count();
     //      exit(1);
-    for (int i=0;i<73;i++)
+    for (int i=0;i<77;i++)
         if (types[i].toLower()==s.toLower()) {
-            //                qDebug() << s;
             return (Type)i;
         }
 

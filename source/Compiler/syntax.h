@@ -125,6 +125,7 @@ public:
     QString alpha = "abcdefghijklmnopqrstuvwxyz_";
     QString alnum =alpha+digit;
     QString alnumString =alpha+digit+ " ;:æøå!#¤%&/()=.,-+*";
+    QString binop = digitAll + " +-*/";
     uint lineNumber = 0;
     void SetupConstants();
 

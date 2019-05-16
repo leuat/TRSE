@@ -162,6 +162,9 @@ public:
     QStringList m_source;
     QVector<Appendix> m_appendix;
     QVector<Appendix> m_extraBlocks;
+    Appendix m_chipMem;
+
+
     QVector<MemoryBlock> m_userWrittenBlocks;
     QStringList m_startInsertAssembler;
     QString m_zeropageScreenMemory="$fb";

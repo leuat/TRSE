@@ -134,6 +134,29 @@ QAbstractItemModel *CodeEditor::modelFromTRSE(SymbolTable *symtab, Parser* parse
 
 }
 
+void CodeEditor::SetIndent()
+{
+    QTextCursor cursor;
+      QString line=textCursor().block().text();
+      QString space;
+      QChar c;
+      int size=line.size();
+
+  // search for white spaces at the beginning of the line
+      for(int i=0; i<size; i++)
+          {
+          c=line[i];
+
+          if(! c.isSpace())
+              {
+              space=line.left(i);
+              break;
+              }
+          }
+      insertPlainText("\n");
+      insertPlainText(space);
+}
+
 
 
 int CodeEditor::lineNumberAreaWidth()
@@ -234,12 +257,19 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
 //        e->ignore();
       //  return;
     }
+    if (e->key()==Qt::Key_Return) {
+        SetIndent();
+        //exit(1);
+        return;
+    }
 
 
     if (c && c->popup()->isVisible()) {
             // The following keys are forwarded by the completer to the widget
            switch (e->key()) {
            case Qt::Key_Enter:
+
+
            case Qt::Key_Return:
            case Qt::Key_Escape:
            case Qt::Key_Tab:
@@ -251,6 +281,10 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
                break;
            }
         }
+    else {
+
+    }
+
     if ((e->modifiers() & Qt::ControlModifier)) {
         c->popup()->hide();
         QPlainTextEdit::keyPressEvent(e);

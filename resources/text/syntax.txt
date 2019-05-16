@@ -26,6 +26,25 @@ m; initjoystick; C64, C128, VIC20  ;
 m; initatan2; C64, C128, VIC20  ;
 
 
+
+
+
+
+
+# ************** AMIGA ROUTINES
+
+m; Poke8; Amiga ; a,b
+m; Poke16; Amiga ; a,b
+m; Poke32; Amiga ; a,b
+
+m; SetCopperList32; Amiga; a, a
+
+
+
+
+
+
+
 #Memory routines
 
 m; moveto; C64, NES; b,b,b
@@ -370,6 +389,7 @@ r; WEDGE; C64, C128
 r; USE; C64, C128, VIC, BBCM, AMIGA
 r; STARTASSEMBLER; C64, C128, VIC, BBCM, AMIGA
 
+r; CHIPMEM; AMIGA
 
 
 

@@ -91,6 +91,9 @@ public:
     void Preprocess();
     void PreprocessReplace();
     void PreprocessIfDefs(bool ifdef);
+    void PreprocessConstants();
+
+    int GetParsedInt();
 
     int findPage();
 

@@ -98,7 +98,7 @@ public:
         return m_op.m_type;
     }
     virtual void Accept(AbstractASTDispatcher* dispatcher) = 0;
-
+    virtual QString getLiteral() {return "";}
     virtual bool isAddress() { return false;}
     virtual void AssignPointer(Assembler* as, QString memoryLocation) {}
 

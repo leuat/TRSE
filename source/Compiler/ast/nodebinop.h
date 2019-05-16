@@ -63,6 +63,28 @@ public:
         return HexValue();
     }
 
+    QString getStringOperation() {
+        if (m_op.m_type == TokenType::PLUS)
+            return "+";
+        if (m_op.m_type == TokenType::MINUS)
+            return "-";
+        if (m_op.m_type == TokenType::MUL)
+            return "*";
+        if (m_op.m_type == TokenType::DIV)
+            return "/";
+        if (m_op.m_type == TokenType::AND)
+            return "&";
+        if (m_op.m_type == TokenType::OR)
+            return "|";
+
+        return "";
+    }
+
+    QString getLiteral() override {
+        return m_left->getLiteral() + getStringOperation() + m_right->getLiteral();
+    }
+
+
     int numValue() override;
 
     QString HexValue() override;

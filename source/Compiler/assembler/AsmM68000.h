@@ -15,7 +15,6 @@ public:
     QString llong = "dc.l";
 
 
-
     void Connect() override {}
 
     void Program(QString name, QString vicParam) override;

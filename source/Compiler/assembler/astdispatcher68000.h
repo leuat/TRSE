@@ -21,6 +21,7 @@
 #include "source/Compiler/ast/nodewhileloop.h"
 #include "source/Compiler/ast/nodeasm.h"
 #include "source/Compiler/ast/nodebinaryclause.h"
+#include "methods68000.h"
 
 class ASTDispather68000 : public AbstractASTDispatcher
 {
@@ -71,6 +72,7 @@ public:
     }
 
     QString AssignVariable(NodeAssign *node);
+    void IncBin(Assembler* as, NodeVarDecl *node);
 
 
 

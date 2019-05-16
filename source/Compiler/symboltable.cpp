@@ -160,7 +160,24 @@ void SymbolTable::InitBuiltins()
     Define(new Symbol("zeropage5", "pointer"));
     Define(new Symbol("zeropage6", "pointer"));
     Define(new Symbol("zeropage7", "pointer"));*/
-    Define(new Symbol("screenmemory", "pointer"));
+    if (Syntax::s.m_currentSystem==AbstractSystem::C64 ||
+            Syntax::s.m_currentSystem==AbstractSystem::C128 ||
+            Syntax::s.m_currentSystem==AbstractSystem::VIC20 ||
+            Syntax::s.m_currentSystem==AbstractSystem::PET) {
+
+        Define(new Symbol("screenmemory", "pointer"));
+    }
+    if (Syntax::s.m_currentSystem==AbstractSystem::AMIGA) {
+        Define(new Symbol("b0h", "integer"));
+        Define(new Symbol("b1h", "integer"));
+        Define(new Symbol("b2h", "integer"));
+        Define(new Symbol("b3h", "integer"));
+        Define(new Symbol("b4h", "integer"));
+        Define(new Symbol("b5h", "integer"));
+        Define(new Symbol("modeven", "integer"));
+        Define(new Symbol("mododd", "integer"));
+
+    }
 
 }
 

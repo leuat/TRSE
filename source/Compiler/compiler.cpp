@@ -98,13 +98,21 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
         m_assembler->blocks.append(mb);
     }
 
-    m_assembler->EndMemoryBlock();
-    m_assembler->Label("EndSymbol");
-    m_assembler->Connect();
-    if (m_ini->getdouble("post_optimize")==1.0)
-        m_assembler->Optimise(*m_projectIni);
-    CleanupCycleLinenumbers();
-    CleanupBlockLinenumbers();
+    if (system->m_processor==AbstractSystem::M68000) {
+//        m_assembler->blocks.append(m_assembler->m_chipMem);
+        m_assembler->m_chipMem.m_source.insert(0,"	Section ChipRAM,Data_c");
+        m_assembler->m_source <<m_assembler->m_chipMem.m_source;
+    }
+
+    if (system->m_processor==AbstractSystem::MOS6502) {
+        m_assembler->EndMemoryBlock();
+        m_assembler->Label("EndSymbol");
+        m_assembler->Connect();
+        if (m_ini->getdouble("post_optimize")==1.0)
+            m_assembler->Optimise(*m_projectIni);
+        CleanupCycleLinenumbers();
+        CleanupBlockLinenumbers();
+    }
     return true;
 
 }

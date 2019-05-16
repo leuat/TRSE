@@ -36,6 +36,7 @@ public:
     //NodeVarType* m_type;
     bool m_fake16bit = false;
 
+
     NodeVar(Token t);
 
     NodeVar(Token t, Node* expr);
@@ -62,6 +63,7 @@ public:
     }
 
     QString getValue() override { return value;}
+    QString getLiteral() override {return value;}
 
     bool isAddress() override;
 

@@ -67,6 +67,8 @@ public:
     QAbstractItemModel *modelFromFile(const QString& fileName);
     QAbstractItemModel *modelFromTRSE(SymbolTable* symtab, Parser* parser);
 
+
+    void SetIndent();
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
 
