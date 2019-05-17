@@ -41,7 +41,7 @@ m; SetCopperList32; Amiga; a, a
 m; ApplyCopperList; Amiga;
 m; memcpy; Amiga; a, a, l
 m; setpalette; Amiga; a, a, l
-m; ablit; Amiga; a,a,i, i,i,i,l,i
+m; ablit; Amiga; a,a,i, i,i,i,i,l,i
 
 
 #Memory routines

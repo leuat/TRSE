@@ -197,7 +197,9 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemamiga.cpp \
     source/Compiler/assembler/astdispatcher68000.cpp \
     source/Compiler/assembler/AsmM68000.cpp \
-    source/Compiler/assembler/methods68000.cpp
+    source/Compiler/assembler/methods68000.cpp \
+    source/dialogcolors.cpp \
+    source/LeLib/limage/bitmapfont.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -329,7 +331,9 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemamiga.h \
     source/Compiler/assembler/astdispatcher68000.h \
     source/Compiler/assembler/AsmM68000.h \
-    source/Compiler/assembler/methods68000.h
+    source/Compiler/assembler/methods68000.h \
+    source/dialogcolors.h \
+    source/LeLib/limage/bitmapfont.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \
@@ -348,7 +352,8 @@ FORMS    += mainwindow.ui \
     source/dialogdonate.ui \
     source/dialogfindfile.ui \
     source/dialogeffects.ui \
-    source/trsedocuments/formfjong.ui
+    source/trsedocuments/formfjong.ui \
+    source/dialogcolors.ui
 
 RESOURCES += \
     resources.qrc

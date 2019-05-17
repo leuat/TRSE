@@ -177,17 +177,22 @@ void Methods68000::ABlit(Assembler *as)
     ; d2 = dst y
     ; d3 = modulo
     ; d4 = blitter size
-    ; d5 = bltmod
+//    ; d5 = bltmod
   */
-    LoadAddress(as,m_node->m_params[0], "a0");
-    LoadAddress(as,m_node->m_params[1], "a1");
+
+    as->Asm("lea     $dff000,a6 ; Hardware registers");
+
+    LoadAddress(as,m_node->m_params[0], "a0"); // src
+    LoadAddress(as,m_node->m_params[1], "a1"); // dst
     as->Asm("move.l #0,d6");
-    LoadVariable(as,"move.w",m_node->m_params[2], "d6");
-    LoadVariable(as,"move.w",m_node->m_params[3], "d1");
-    LoadVariable(as,"move.w",m_node->m_params[4], "d2");
-    LoadVariable(as,"move.w",m_node->m_params[5], "d3");
+    LoadVariable(as,"move.w",m_node->m_params[2], "d6"); // Offset
+    LoadVariable(as,"move.w",m_node->m_params[3], "d1"); // dst x
+    LoadVariable(as,"move.w",m_node->m_params[4], "d2"); // dst y
+    LoadVariable(as,"move.w",m_node->m_params[5], "d3"); // add
     LoadVariable(as,"move.w",m_node->m_params[6], "d4");
-    LoadVariable(as,"move.w",m_node->m_params[7], "d5");
+    LoadVariable(as,"move.w",m_node->m_params[7], "BLTAMOD(a6)"); // mod SRC
+    LoadVariable(as,"move.w",m_node->m_params[8], "BLTDMOD(a6)"); // mod SRC
+
     as->Asm("jsr blitter");
 }
 

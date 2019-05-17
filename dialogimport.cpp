@@ -29,6 +29,10 @@ DialogImport::DialogImport(QWidget *parent) :
     ui(new Ui::DialogImport)
 {
     ui->setupUi(this);
+    QFontDatabase d;
+    ui->cmbFonts->addItems(d.families());
+    ui->cmbFonts->setCurrentText("Courier 10 Pitch");
+
 }
 
 DialogImport::~DialogImport()
@@ -223,6 +227,26 @@ void DialogImport::on_cmbMC2_activated(int index)
 void DialogImport::on_chkDither_stateChanged(int arg1)
 {
     SetColors();
+    UpdateOutput();
+
+}
+
+void DialogImport::on_btnFromFont_clicked()
+{
+
+}
+
+void DialogImport::on_btnImport_2_clicked()
+{
+    // Generate font
+//    m_bf.Test();
+    m_bf.RenderFont(ui->cmbFonts->currentText(),ui->leFontSize->text().toInt(),QFont::Normal,
+                    ui->leFontCharsPerLine->text().toInt(),
+                    ui->leFontCharsPerLColumn->text().toInt());
+    m_input.m_qImage = &m_bf.m_image;
+    SetColors();
+    Blur();
+
     UpdateOutput();
 
 }

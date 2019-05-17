@@ -97,6 +97,41 @@ int LColorList::getNoBitplanes() {
     return 0;
 }
 
+void LColorList::setNoBitplanes(int bpl)
+{
+    m_list.resize(pow(2,bpl));
+}
+
+QByteArray LColorList::toArray()
+{
+    QByteArray data;
+    data.resize(m_list.count()*3+1);
+    data[0] =m_list.count();//(char)getNoBitplanes();
+    int i = 0;
+    for (LColor c: m_list) {
+        data[3*i+0+1] = (char)c.color.red();
+        data[3*i+1+1] = (char)c.color.green();
+        data[3*i+2+1] = (char)c.color.blue();
+        i++;
+
+    }
+
+    return data;
+}
+
+void LColorList::fromArray(QByteArray &d)
+{
+    int size = d[0];
+    m_list.clear();
+//    setNoBitplanes(size);
+    for (int i=0;i<size;i++) {
+        QColor col((unsigned char)d[3*i+1],
+                (unsigned char)d[3*i+2],
+                (unsigned char)d[3*i+3]);
+        m_list.append(LColor(col,""));
+    }
+}
+
 void LColorList::Initialize(Type t)
 {
     m_type = t;
@@ -276,6 +311,18 @@ QColor LColorList::getClosestColor(QColor col, int& winner)
     }*/
     return m_list[winner].color;
 
+}
+
+void LColorList::ExportAmigaPalette(QString filename)
+{
+    QByteArray data;
+    for (LColor l: m_list) {
+        unsigned short d = l.get12BitValue();
+        qDebug() << QString::number(d,16);
+        data.append((char)((d>>8)&0xFF));
+        data.append((char)(d&0xFF));
+    }
+    Util::SaveByteArray(data, filename);
 }
 
 void LColorList::FillComboBox(QComboBox *cmb)

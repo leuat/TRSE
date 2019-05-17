@@ -275,6 +275,18 @@ void Assembler::Connect()
 
 
 
+QString Stack::pop() {
+    if (m_vars.count()==0) {
+        qDebug() << "Trying to POP stack from 0";
+        exit(1);
+    }
+    m_current=m_vars[m_vars.count()-1];
+    //m_vars.removeLast();
+    m_vars.remove(m_vars.count()-1);
+    //        m_current = m_vars.last();
+    return m_current;
+}
+
 QString Stack::current() const
 {
     return m_current;
@@ -295,11 +307,12 @@ QString RegisterStack::Get() {
 
 void RegisterStack::Pop(QString reg) {
     m_free.insert(0,reg);
-    m_latest.removeAll(reg);
+    m_free.removeDuplicates();
+    //m_latest.removeAll(reg);
 
 }
 
-QString RegisterStack::getLatest() {
+/*QString RegisterStack::getLatest() {
     if (m_latest.count()!=0) {
         QString l = m_latest.last();
         m_latest.removeLast();
@@ -319,4 +332,17 @@ QString RegisterStack::peekLatest() {
     qDebug() << "NO LATEST :  RegisterStack::peekLatest()";
     exit(1);
 
+}
+*/
+void LabelStack::push() {
+    bool ok=false;
+    while (!ok) {
+        m_current = QString::number(rand()%100000);
+        ok=true;
+        if (sNumbersUsed.contains(m_current))
+            ok = false;
+    }
+    sNumbersUsed[m_current] = true;
+
+    m_vars.push_back(m_current);
 }

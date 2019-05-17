@@ -41,6 +41,7 @@
 #include "source/qlabellimage.h"
 #include "source/LeLib/limage/limagefactory.h"
 #include "source/LeLib/limage/limagecontainer.h"
+#include "source/dialogcolors.h"
 
 #include <QLineEdit>
 namespace Ui {
@@ -221,6 +222,7 @@ private slots:
     void on_btnImportC_clicked();
     void on_cmbZoomLevel_activated(const QString &arg1);
     void on_btnExportCompressed_clicked();
+    void on_btnPalette_clicked();
 };
 
 

@@ -49,6 +49,8 @@ public:
     bool movieExport = false;
     bool compressedExport = false;
 
+    bool editPalette = true;
+
     bool exportc = false;
     bool importc = false;
 

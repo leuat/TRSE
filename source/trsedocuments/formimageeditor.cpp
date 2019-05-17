@@ -27,6 +27,7 @@
 #include "source/LeLib/limage/charsetimage.h"
 #include "source/messages.h"
 
+
 FormImageEditor::FormImageEditor(QWidget *parent) :
     TRSEDocument(parent),
     ui(new Ui::Formimageeditor)
@@ -871,6 +872,7 @@ void FormImageEditor::updateSingleCharSet()
 
 
 
+
 void FormImageEditor::PrepareImageTypeGUI()
 {
     // Only display "load charset" for levels
@@ -1579,4 +1581,12 @@ void FormImageEditor::on_btnExportCompressed_clicked()
     m_work.m_currentImage->m_image->ExportCompressed(f1,f2);
 
 
+}
+
+void FormImageEditor::on_btnPalette_clicked()
+{
+    DialogColors* dc = new DialogColors();
+    dc->Initialize(&m_work.m_currentImage->m_image->m_colorList, m_projectPath);
+    dc->exec();
+    UpdatePalette();
 }

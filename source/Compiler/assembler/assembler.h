@@ -72,13 +72,7 @@ public:
         m_vars.push_back(s);
         m_current = s;
     }
-    QString pop() {
-        m_current=m_vars[m_vars.count()-1];
-        //m_vars.removeLast();
-        m_vars.remove(m_vars.count()-1);
-//        m_current = m_vars.last();
-        return m_current;
-    }
+    QString pop();
   public:
         QString current() const;
 };
@@ -87,18 +81,7 @@ public:
     QVector<QString> m_vars;
     QString m_current;
     QMap<QString, bool> sNumbersUsed;
-    void push() {
-        bool ok=false;
-        while (!ok) {
-            m_current = QString::number(rand()%100000);
-            ok=true;
-            if (sNumbersUsed.contains(m_current))
-                ok = false;
-        }
-        sNumbersUsed[m_current] = true;
-
-        m_vars.push_back(m_current);
-    }
+    void push();
     void pop() {
         if (m_vars.count()==0) {
             ErrorHandler::e.Error("Trying to pop labelstack from zero : " + m_current);
@@ -141,7 +124,8 @@ public:
 //    QStringList m_registers;
     QStringList m_free;
     QStringList m_occupied;
-    QVector<QString> m_latest;
+//    QVector<QString> m_latest;
+    QString m_latest;
     RegisterStack() {}
     RegisterStack(QStringList vals) {
         m_free = vals;
@@ -150,9 +134,9 @@ public:
     QString Get();
     void Pop(QString reg);
 
-    QString getLatest();
+//    QString getLatest();
 
-    QString peekLatest();
+//    QString peekLatest();
 
 };
 

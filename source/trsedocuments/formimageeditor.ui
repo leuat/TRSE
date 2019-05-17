@@ -182,6 +182,16 @@
             </property>
            </widget>
           </item>
+          <item row="6" column="0">
+           <widget class="QPushButton" name="btnPalette">
+            <property name="toolTip">
+             <string>Clear this image</string>
+            </property>
+            <property name="text">
+             <string>Palette</string>
+            </property>
+           </widget>
+          </item>
          </layout>
          <zorder>btnImport</zorder>
          <zorder>btnImportBin</zorder>
@@ -194,6 +204,7 @@
          <zorder>btnExportC</zorder>
          <zorder>btnImportC</zorder>
          <zorder>btnExportCompressed</zorder>
+         <zorder>btnPalette</zorder>
         </widget>
        </widget>
        <widget class="QWidget" name="tabCharset">

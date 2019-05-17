@@ -40,15 +40,12 @@ blitter:
     add.l   d1,d2
     add.l   d2,a1
 ;    lea     ScreenTab(pc), a2 ; Save addresses here
-    lea     $dff000,a6 ; Hardware registers
 ;    move.w  #$09f0,d0 ; Goes in BLTCON0 (scroll first ) minterm
     move.w  #$09E0,d0 ; Goes in BLTCON0 (scroll first ) minterm
                         ; Leftshift 1, use channels A and D, copy A -> D
     moveq   #0,d2 
 ;    move.w  #(32*$40)*4+(2),d4 ; This is blitter size, y=256, x=44*8 // Størrelsen på området man kopierer *fra*
 
-    move.w  d5,BLTAMOD(a6) ; Set A source
-    move.w  d5,BLTDMOD(a6) ; Set D dest BLTDMOD
     move.l  #$ffffffff,BLTAFWM(a6) ; Set last word and first word mask BLTAFWM and BLTALWM
     move.w  d2,BLTCON1(a6) ;    issa 0   BLTCON1
 .lp:

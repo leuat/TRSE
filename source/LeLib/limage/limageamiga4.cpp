@@ -73,3 +73,21 @@ void LImageAmiga::ExportBin(QFile &file)
 
 }
 
+void LImageAmiga::SaveBin(QFile &file)
+{
+    LImageQImage::SaveBin(file);
+    file.write(m_colorList.toArray());
+}
+
+void LImageAmiga::LoadBin(QFile &file)
+{
+    LImageQImage::LoadBin(file);
+    char size;
+    file.read((char*)&size,1);
+    if (!file.atEnd()) {
+        QByteArray d = file.read(size*3);
+        d.insert(0,size);
+        m_colorList.fromArray(d);
+    }
+}
+

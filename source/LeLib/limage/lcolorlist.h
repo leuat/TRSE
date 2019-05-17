@@ -56,9 +56,33 @@ public:
         name = n;
     }
 
-    int get12BitValue() {
+    unsigned short get12BitValue() {
         return color.red()/16  | (color.green()/16)<<4  | (color.blue()/16)<<8;
 
+    }
+    QString toRGB8() {
+        return QString::number(color.red())+"," + QString::number(color.green()) +","+ QString::number(color.blue());
+    }
+    QString toRGB4() {
+        return QString::number(color.red()/16)+"," + QString::number(color.green()/16) +","+ QString::number(color.blue()/16);
+    }
+
+    void fromRGB8(QString s) {
+        QStringList d = s.simplified().trimmed().split(",");
+        if (d.count()==3) {
+            color.setRed( d[0].toInt() );
+            color.setGreen( d[1].toInt() );
+            color.setBlue( d[2].toInt() );
+        }
+    }
+
+    void fromRGB4(QString s) {
+        QStringList d = s.simplified().trimmed().split(",");
+        if (d.count()==3) {
+            color.setRed( d[0].toInt()*16 );
+            color.setGreen( d[1].toInt()*16 );
+            color.setBlue( d[2].toInt()*16 );
+        }
     }
 
 };
@@ -94,6 +118,9 @@ public:
     void EnableColors(QVector<int>& cols);
 
     int getNoBitplanes();
+    void setNoBitplanes(int bpl);
+    QByteArray toArray();
+    void fromArray(QByteArray& d);
 
     void Initialize(Type t);
 
@@ -106,6 +133,8 @@ public:
     void InitCGA2_HIGH();
     void UpdateColors();
     QColor getClosestColor(QColor col, int& winner);
+
+    void ExportAmigaPalette(QString filename);
 
     void FillComboBox(QComboBox* cmb);
 

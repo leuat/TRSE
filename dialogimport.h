@@ -25,7 +25,8 @@
 
 #include "imageworker.h"
 #include <QDialog>
-
+#include <QFontDatabase>
+#include "source/LeLib/limage/bitmapfont.h"
 
 namespace Ui {
 class DialogImport;
@@ -41,6 +42,7 @@ public:
     void Initialize(LImage::Type imageType, LColorList::Type colorType, LImage* img);
 
 
+    BitmapFont m_bf;
     float m_contrast = 1;
     float m_shift = 0;
     float m_hsv = 0.5;
@@ -96,6 +98,10 @@ private slots:
     void on_cmbMC2_activated(int index);
 
     void on_chkDither_stateChanged(int arg1);
+
+    void on_btnFromFont_clicked();
+
+    void on_btnImport_2_clicked();
 
 private:
     Ui::DialogImport *ui;

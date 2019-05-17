@@ -10,6 +10,8 @@ public:
     LImageAmiga(LColorList::Type t);
 
     void ExportBin(QFile &file) override;
+    void SaveBin(QFile& file) override;
+    void LoadBin(QFile& file) override;
 };
 
 #endif // LIMAGEAMIGA4_H

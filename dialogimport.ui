@@ -16,8 +16,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>460</x>
-     <y>590</y>
+     <x>540</x>
+     <y>610</y>
      <width>621</width>
      <height>32</height>
     </rect>
@@ -355,22 +355,9 @@
      <string/>
     </property>
     <property name="checked">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
    </widget>
-  </widget>
-  <widget class="QPushButton" name="btnImport">
-   <property name="geometry">
-    <rect>
-     <x>750</x>
-     <y>420</y>
-     <width>93</width>
-     <height>28</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Import</string>
-   </property>
   </widget>
   <widget class="QComboBox" name="cmbMC1">
    <property name="geometry">
@@ -391,6 +378,119 @@
      <height>41</height>
     </rect>
    </property>
+  </widget>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>760</x>
+     <y>400</y>
+     <width>401</width>
+     <height>201</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>1</number>
+   </property>
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
+     <string>Image</string>
+    </attribute>
+    <widget class="QPushButton" name="btnImport">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>151</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Import from Image</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>Font</string>
+    </attribute>
+    <widget class="QWidget" name="gridLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>381</width>
+       <height>120</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_9">
+        <property name="text">
+         <string>Font size:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="leFontSize">
+        <property name="text">
+         <string>25</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_10">
+        <property name="text">
+         <string>#no chars per line</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="cmbFonts"/>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="leFontCharsPerLine">
+        <property name="text">
+         <string>10</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_11">
+        <property name="text">
+         <string>Font</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_12">
+        <property name="text">
+         <string>#y increment</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="leFontCharsPerLColumn">
+        <property name="text">
+         <string>16</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QPushButton" name="btnImport_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>140</y>
+       <width>151</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Generate font</string>
+     </property>
+    </widget>
+   </widget>
   </widget>
  </widget>
  <resources/>
