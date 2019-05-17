@@ -137,6 +137,8 @@ void Syntax::SetupBuiltinFunctions(AbstractSystem::System system)
                 paramList << BuiltInFunction::Type::NUMBER;
             if (p=="i")
                 paramList << BuiltInFunction::Type::INTEGER;
+            if (p=="l")
+                paramList << BuiltInFunction::Type::LONG;
             if (p=="ib")
                 paramList << BuiltInFunction::Type::INTEGER;
             if (p=="s")

@@ -34,6 +34,7 @@ class Symbol {
 public:
     QString m_name;
     QString m_type;
+    TokenType::Type m_arrayType;
     int m_org = 0;
     int m_size = 0;
 

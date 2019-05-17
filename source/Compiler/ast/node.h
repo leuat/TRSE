@@ -80,7 +80,7 @@ public:
 
     virtual QString getAddress() {return "";}
     virtual int getInteger() {
-        ErrorHandler::e.Error("Parameter require to be pure number",m_op.m_lineNumber);
+   //     ErrorHandler::e.Error("Parameter is required to be pure number",m_op.m_lineNumber);
         return 0;
     }
 
@@ -97,6 +97,7 @@ public:
     virtual TokenType::Type getType(Assembler* as) {
         return m_op.m_type;
     }
+    virtual bool isArrayIndex() { return false; }
     virtual void Accept(AbstractASTDispatcher* dispatcher) = 0;
     virtual QString getLiteral() {return "";}
     virtual bool isAddress() { return false;}

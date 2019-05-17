@@ -302,6 +302,7 @@ public:
   //  virtual void EndWriteln() = 0;
   //  virtual void WriteBuiltinWriteln() {}
   //  virtual void StartPrint() {}
+
     virtual void Variable(QString s, bool isByte) {}
     //void Appendix(QString s, int l);
     virtual void LoadVariable(QString var) {}

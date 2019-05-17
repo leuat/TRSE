@@ -27,7 +27,7 @@ class ASTDispather68000 : public AbstractASTDispatcher
 {
 public:
     ASTDispather68000();
-
+    QString m_lastSize;
 
     void dispatch(NodeBinOP *node);
     void dispatch(NodeNumber *node);
@@ -64,7 +64,7 @@ public:
     void TransformVariable(Assembler* as, QString op, QString n, NodeVar* val);
     void TransformVariable(Assembler* as, QString op, QString n, QString val);
 
-    QString getEndType(Assembler* as, Node* v);
+    QString getEndType(Assembler* as, Node* v) override;
 
     QString AssignVariable(NodeAssign *node);
     void IncBin(Assembler* as, NodeVarDecl *node);

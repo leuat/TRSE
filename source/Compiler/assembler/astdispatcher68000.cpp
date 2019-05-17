@@ -86,14 +86,14 @@ void ASTDispather68000::dispatch(NodeBinOP *node)
 
     if (start) {
         node->m_left->Accept(this);
-        TransformVariable(as,"move.l",d0,as->m_varStack.pop());
+        TransformVariable(as,"move",d0,as->m_varStack.pop(),node->m_left);
     }
 
     node->m_right->Accept(this);
     QString right = as->m_varStack.pop();
 
     if (op.toLower().contains("mul") || op.toLower().contains("div"))
-        op = op+".w"; else op=op+".l";
+        op = op+".w"; else op=op +m_lastSize;//+".l";
     TransformVariable(as,op,d0,right);
 
 //    as->m_regAcc.Pop(d0);
@@ -327,11 +327,73 @@ void ASTDispather68000::dispatch(NodeBinaryClause *node)
 
 void ASTDispather68000::dispatch(NodeProcedure *node)
 {
+    node->DispatchConstructor();
+
+
+    if (node->m_parameters.count()!=node->m_procedure->m_paramDecl.count())
+        ErrorHandler::e.Error("Procedure '" + node->m_procedure->m_procName+"' requires "
+                              + QString::number(node->m_procedure->m_paramDecl.count()) +" parameters, not "
+                              + QString::number(node->m_parameters.count()) + ".", node->m_op.m_lineNumber);
+
+    for (int i=0; i<node->m_parameters.count();i++) {
+        // Assign all variables
+        NodeVarDecl* vd = (NodeVarDecl*)node->m_procedure->m_paramDecl[i];
+        NodeAssign* na = new NodeAssign(vd->m_varNode, node->m_parameters[i]->m_op, node->m_parameters[i]);
+        na->Accept(this);
+//        na->Build(as);
+    }
+
+    as->Asm("jsr " + node->m_procedure->m_procName);
 
 }
 
 void ASTDispather68000::dispatch(NodeProcedureDecl *node)
 {
+    node->DispatchConstructor();
+
+    bool isInitFunction=false;
+    bool isBuiltinFunction=false;
+    if (Syntax::s.builtInFunctions.contains(node->m_procName)) {
+        isBuiltinFunction = true;
+        isInitFunction = Syntax::s.builtInFunctions[node->m_procName].m_initFunction;
+    }
+
+    as->Asm("");
+    as->Asm("");
+    as->Comment("***********  Defining procedure : " + node->m_procName);
+    QString type = (isBuiltinFunction) ? "Built-in function" : "User-defined procedure";
+    as->Comment("   Procedure type : " + type);
+    if (isBuiltinFunction) {
+        type = (isInitFunction) ? "yes" : "no";
+        as->Comment("   Requires initialization : " + type);
+    }
+    as->Asm("");
+
+
+    if (!isInitFunction) {
+        //as->Asm("jmp afterProc_" + m_procName);
+
+
+        //as->Label(m_procName);
+    }
+//    if (m_isInterrupt)
+  //      as->Asm("dec $d019        ; acknowledge IRQ");
+    if (node->m_block!=nullptr) {
+        NodeBlock* b = dynamic_cast<NodeBlock*>(node->m_block);
+        if (b!=nullptr)
+            b->forceLabel=node->m_procName;
+        node->m_block->Accept(this);
+//        node->m_block->Build(as);
+    }
+    if (!isInitFunction) {
+        if (node->m_type==0) {
+            as->Asm("rts");
+        }
+        else as->Asm("rti");
+      //as->Label("afterProc_" + m_procName);
+    }
+
+
 
 }
 
@@ -391,12 +453,77 @@ void ASTDispather68000::dispatch(NodeConditional *node)
 
 void ASTDispather68000::dispatch(NodeForLoop *node)
 {
+    node->DispatchConstructor();
+
+
+    //QString m_currentVar = ((NodeAssign*)m_a)->m_
+    NodeAssign *nVar = dynamic_cast<NodeAssign*>(node->m_a);
+
+
+    if (nVar==nullptr)
+        ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
+
+    QString var = dynamic_cast<NodeVar*>(nVar->m_left)->value;//  m_a->Build(as);
+    node->m_a->Accept(this);
+//    LoadVariable(node->m_a);
+  //  TransformVariable()
+    //QString to = m_b->Build(as);
+    QString to = "";
+    if (dynamic_cast<const NodeNumber*>(node->m_b) != nullptr)
+        to = QString::number(((NodeNumber*)node->m_b)->m_val);
+    if (dynamic_cast<const NodeVar*>(node->m_b) != nullptr)
+        to = ((NodeVar*)node->m_b)->value;
+
+    as->m_stack["for"].push(var);
+    as->Label(as->NewLabel("for"));
+
+
+
+    QString loopDone = as->NewLabel("forLoopDone");
+
+    /*    Compare(as);
+        as->Asm("bne "+loopForFix);
+        as->Asm("jmp "+loopDone);*/
+    node->m_block->Accept(this);
+    //        m_block->Build(as);
+    //    as->EndForLoop(m_b);
+    as->m_stack["for"].pop();
+    as->Comment("here");
+    TransformVariable(as,"add",var, "#1");
+    LoadVariable(node->m_b);
+    TransformVariable(as,"cmp",as->m_varStack.pop(),var);
+    as->Asm("bne "+as->getLabel("for"));
+/*    as->Asm("cmp " + as->m_stack["for"].current());
+
+    if (!isLarge) {
+        as->Asm("bne "+as->getLabel("for"));
+  */
+
+//    IncreaseCounter(node,var);
+//    Compare(node,var,true,loopDone);
+    //as->Asm("beq "+loopDone);
+
+//    as->Asm("bra " + as->getLabel("for"));
+
+    as->Label(loopDone);
+
+    as->m_labelStack["for"].pop();
+    as->m_labelStack["forLoopDone"].pop();
+
+
+    //LargeLoop(node,dynamic_cast<NodeVar*>(nVar->m_left));
+
 
 }
 
 void ASTDispather68000::dispatch(NodeVar *node)
 {
 //    LoadVariable(node);
+/*    if (node->m_expr!=nullptr) {
+        qDebug() << "HERE";
+        LoadVariable(node);
+        return;
+    }*/
     as->m_varStack.push(node->getValue());
 }
 
@@ -409,11 +536,11 @@ void ASTDispather68000::dispatch(NodeAssign *node)
 {
     node->DispatchConstructor();
 
-    as->PushCounter();
+//    as->PushCounter();
 
     AssignVariable(node);
 
-    as->PopCounter(node->m_op.m_lineNumber);
+  //  as->PopCounter(node->m_op.m_lineNumber);
 
 }
 
@@ -441,6 +568,27 @@ void ASTDispather68000::StoreVariable(NodeVar *n)
 
 void ASTDispather68000::LoadVariable(NodeVar *n)
 {
+    TokenType::Type t = as->m_symTab->Lookup(n->value, n->m_op.m_lineNumber)->getTokenType();
+
+    if (n->m_expr!=nullptr) {
+//        qDebug() << n->m_op.getType();
+  //      exit(1);
+        QString d0 = as->m_regAcc.Get();
+        QString a0 = as->m_regMem.Get();
+        TransformVariable(as,"move.w",d0,"#0");
+        LoadVariable(n->m_expr);
+        QString d1 = as->m_varStack.pop();
+        TransformVariable(as,"lea",a0,n->value);
+        TransformVariable(as,"move",d0,"("+a0+","+d1+")",n);
+        as->m_varStack.push(d0);
+
+        as->m_regMem.Pop(a0);
+        as->m_regAcc.Pop(d0);
+//        as->m_regAcc.Pop(d0);
+//        LoadPointer(n);
+        return;
+    }
+
     QString d0 = as->m_regAcc.Get();
     TransformVariable(as,"move"+getEndType(as,n),d0,n->getValue());
     as->m_regAcc.Pop(d0);
@@ -449,14 +597,28 @@ void ASTDispather68000::LoadVariable(NodeVar *n)
 
 void ASTDispather68000::LoadVariable(Node *n)
 {
+//    qDebug() << "Don't call Dispatcher::LoadVariable with NODE. ";
+  //  exit(1);
+    NodeVar* nv = dynamic_cast<NodeVar*>(n);
+    NodeNumber* nn = dynamic_cast<NodeNumber*>(n);
+    if (nv!=nullptr) {
 
+        LoadVariable((NodeVar*)n);
+    }
+    else
+    if (nn!=nullptr){
+        LoadVariable((NodeNumber*)n);
+    }
+    else {
+        n->Accept(this);
+    }
 }
 
 
 void ASTDispather68000::LoadVariable(NodeNumber *n)
 {
     QString d0 = as->m_regAcc.Get();
-    TransformVariable(as,"move",n->getValue(),d0);
+    TransformVariable(as,"move",d0, n->getValue());
     as->m_regAcc.Pop(d0);
     as->m_varStack.push(d0);
 
@@ -465,6 +627,7 @@ void ASTDispather68000::LoadVariable(NodeNumber *n)
 void ASTDispather68000::TransformVariable(Assembler *as, QString op, QString n, QString val, Node *t)
 {
 //    as->Asm(op+getEndType(as,t) +" "+val + "," + n);
+    m_lastSize = getEndType(as,t);
     as->Asm(op+getEndType(as,t) +" "+val + "," + n);
 
 }
@@ -472,12 +635,16 @@ void ASTDispather68000::TransformVariable(Assembler *as, QString op, QString n, 
 void ASTDispather68000::TransformVariable(Assembler* as, QString op, NodeVar *n, QString val)
 {
     as->Asm(op+getEndType(as,n) +" "+val + "," + n->getValue());
+    m_lastSize = getEndType(as,n);
+
 //    qDebug() << " ** OP : " << op+getEndType(as,n) +" "+val + "," + n->getValue();
 }
 
 void ASTDispather68000::TransformVariable(Assembler *as, QString op, QString n, NodeVar *val)
 {
     as->Asm(op+getEndType(as,val) +" "+val->getValue() + "," + n);
+    m_lastSize = getEndType(as,val);
+
 //
 }
 
@@ -488,14 +655,24 @@ void ASTDispather68000::TransformVariable(Assembler* as, QString op, QString n, 
 }
 
 QString ASTDispather68000::getEndType(Assembler *as, Node *v) {
-    if (v->isWord(as))
+//    getType(as)==TokenType::LONG
+    NodeVar* nv = (NodeVar*)v;
+    TokenType::Type t = v->getType(as);
+    if (nv!=nullptr && nv->m_expr!=nullptr) {
+        Symbol* s = as->m_symTab->Lookup(nv->value, v->m_op.m_lineNumber, v->isAddress());
+        if (s!=nullptr)
+            t = s->m_arrayType;
+    }
+
+
+    if (t==TokenType::INTEGER)
         return ".w";
-    if (v->isLong(as))
+    if (t==TokenType::LONG)
         return ".l";
-    if (v->isByte(as))
+    if (t==TokenType::BYTE)
         return ".b";
 
-    return ".l";
+    return ".b";
 }
 
 QString ASTDispather68000::AssignVariable(NodeAssign *node) {
@@ -530,8 +707,8 @@ QString ASTDispather68000::AssignVariable(NodeAssign *node) {
         AssignPointer(node);
         return v->value;
     }
-
-    if ((NodeString*)dynamic_cast<const NodeString*>(node->m_right))
+*/
+/*    if ((NodeString*)dynamic_cast<const NodeString*>(node->m_right))
     {
         AssignString(node);
         return v->value;
@@ -550,12 +727,17 @@ QString ASTDispather68000::AssignVariable(NodeAssign *node) {
     //    return v->value;
 
     //node->m_right->Accept(this);
-    if (node->m_right->isPureVariable() || node->m_right->isPureNumeric()) {
+
+//    if ((node->m_right->isPureVariable() && !node->m_right->isArrayIndex() ) || node->m_right->isPureNumeric() ) {
+        if ((node->m_right->isPureVariable() && !node->m_right->isArrayIndex() ) || node->m_right->isPureNumeric() ) {
         TransformVariable(as, "move",v,node->m_right->getValue());
         return "";
     }
     // Some expression instead
-    node->m_right->Accept(this);
+    if (node->m_right->isArrayIndex())
+        LoadVariable((NodeVar*)node->m_right);
+    else
+        node->m_right->Accept(this);
     TransformVariable(as, "move",v, as->m_varStack.pop());
 
  //   as->Term();

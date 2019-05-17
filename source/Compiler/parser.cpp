@@ -93,32 +93,37 @@ void Parser::InitBuiltinFunctions()
 /*    if (Syntax::s.m_currentSystem == Syntax::NES)
         InitBuiltinFunction(QStringList()<< "*", "init8x8mulNes");
     else*/
+    if (Syntax::s.m_currentSystem == AbstractSystem::C64 ||
+            Syntax::s.m_currentSystem == AbstractSystem::C128 ||
+            Syntax::s.m_currentSystem == AbstractSystem::NES ||
+            Syntax::s.m_currentSystem == AbstractSystem::VIC20 ||
+            Syntax::s.m_currentSystem == AbstractSystem::BBCM  ) {
         InitBuiltinFunction(QStringList()<< "*", "initeightbitmul");
 
-    InitBuiltinFunction(QStringList()<< "*", "init16x8mul");
-    InitBuiltinFunction(QStringList()<< "*", "init8x8div");
-    InitBuiltinFunction(QStringList()<< "*", "init16x8div");
-    InitBuiltinFunction(QStringList()<< "rand", "initrandom","init_random_call");
-    InitBuiltinFunction(QStringList()<< "rasterirqwedge" , "init_wedge");
-    InitBuiltinFunction(QStringList()<< "playvic20sid" , "init_vic20_sidplay");
-    InitBuiltinFunction(QStringList()<< "viairq" , "init_viairq");
-    InitBuiltinFunction(QStringList()<< "initmodplayer" , "include_modplayer");
-    InitBuiltinFunction(QStringList()<< "decrunch", "init_decrunch");
-    if (Syntax::s.m_currentSystem!=AbstractSystem::NES)
-       InitBuiltinFunction(QStringList()<< "sine", "initsinetable", "initsine_calculate");
-    InitBuiltinFunction(QStringList()<< "log2_table" << "atan2", "initlog2");
+        InitBuiltinFunction(QStringList()<< "*", "init16x8mul");
+        InitBuiltinFunction(QStringList()<< "*", "init8x8div");
+        InitBuiltinFunction(QStringList()<< "*", "init16x8div");
+        InitBuiltinFunction(QStringList()<< "rand", "initrandom","init_random_call");
+        InitBuiltinFunction(QStringList()<< "rasterirqwedge" , "init_wedge");
+        InitBuiltinFunction(QStringList()<< "playvic20sid" , "init_vic20_sidplay");
+        InitBuiltinFunction(QStringList()<< "viairq" , "init_viairq");
+        InitBuiltinFunction(QStringList()<< "initmodplayer" , "include_modplayer");
+        InitBuiltinFunction(QStringList()<< "decrunch", "init_decrunch");
+        if (Syntax::s.m_currentSystem!=AbstractSystem::NES)
+            InitBuiltinFunction(QStringList()<< "sine", "initsinetable", "initsine_calculate");
+        InitBuiltinFunction(QStringList()<< "log2_table" << "atan2", "initlog2");
 
-    InitBuiltinFunction(QStringList()<< "atan2", "initatan2");
+        InitBuiltinFunction(QStringList()<< "atan2", "initatan2");
 
 
-    InitBuiltinFunction(QStringList()<< "sqrt", "initsqrt16");
-    InitBuiltinFunction(QStringList()<< "printdecimal", "initprintdecimal");
-    InitBuiltinFunction(QStringList()<< "moveto80", "initmoveto80");
-    InitBuiltinFunction(QStringList()<< "moveto" << "printstring", "initmoveto");
-    InitBuiltinFunction(QStringList()<< "printstring" << "printnumber", "initprintstring");
+        InitBuiltinFunction(QStringList()<< "sqrt", "initsqrt16");
+        InitBuiltinFunction(QStringList()<< "printdecimal", "initprintdecimal");
+        InitBuiltinFunction(QStringList()<< "moveto80", "initmoveto80");
+        InitBuiltinFunction(QStringList()<< "moveto" << "printstring", "initmoveto");
+        InitBuiltinFunction(QStringList()<< "printstring" << "printnumber", "initprintstring");
 
-    InitBuiltinFunction(QStringList()<< "joystick" , "initjoystick");
-
+        InitBuiltinFunction(QStringList()<< "joystick" , "initjoystick");
+    }
     Node::m_staticBlockInfo.m_blockID = -1;
 //    EndMemoryBlock();
  }
@@ -1337,6 +1342,9 @@ Node *Parser::TypeSpec()
         }
 
         t.m_intVal = count;
+//        qDebug() << "Type: " << t.m_value;
+  //      t.m_type = arrayType.m_type;
+
         NodeVarType *nt =  new NodeVarType(t,position, arrayType,data);
         nt->m_flags = flags;
         return nt;
@@ -1380,7 +1388,6 @@ Node *Parser::TypeSpec()
   //      Eat(m_currentToken.m_type);
 
     }
-   // qDebug() << "Type: " << t.m_value << " " << initVal;
 
     return new NodeVarType(t,initVal);
 

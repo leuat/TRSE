@@ -60,7 +60,8 @@ void AsmM68000::DeclareArray(QString name, QString type, int count, QStringList 
             s=s+data[i];
             if (i%8==7) {
                 s=s+"\n";
-                s=s + "\t" +t + " ";
+                if (i!=data.count()-1)
+                    s=s + "\t" +t + " ";
             }
             else s=s+", ";
 

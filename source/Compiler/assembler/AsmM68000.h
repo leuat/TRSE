@@ -26,7 +26,6 @@ public:
 
     void BinOP(TokenType::Type t) override;
 
-
 };
 
 #endif // M68000_H

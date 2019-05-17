@@ -60,7 +60,8 @@ public:
     }
 
     QString getValue() override {
-        return HexValue();
+        if (isAddress()) return HexValue();
+        return "#" + HexValue();
     }
 
     QString getStringOperation() {

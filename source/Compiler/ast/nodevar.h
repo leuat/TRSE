@@ -62,6 +62,8 @@ public:
         return true;
     }
 
+    bool isArrayIndex() override { return m_expr!=nullptr; }
+
     QString getValue() override { return value;}
     QString getLiteral() override {return value;}
 

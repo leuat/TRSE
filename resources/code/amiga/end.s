@@ -21,6 +21,53 @@
 	movem.l (sp)+,d0-d7/a0-a6
 	rts
 
+
+;** PROCEDURES
+; d6 = src shift
+; d1 = dst x
+; d2 = dst y
+; d3 = modulo
+; a0 = source
+; a1 = dest
+; d4 = blitter size
+; d5 = bltmod
+blitter:
+;    lea     data_1,a0 ; Source
+ ;   add.l   #80*120+10,a0
+     add.l   d6,a0
+;    lea     Screens_1,a1 ; Dest (x15)
+    mulu.w  d3,d2
+    add.l   d1,d2
+    add.l   d2,a1
+;    lea     ScreenTab(pc), a2 ; Save addresses here
+    lea     $dff000,a6 ; Hardware registers
+;    move.w  #$09f0,d0 ; Goes in BLTCON0 (scroll first ) minterm
+    move.w  #$09E0,d0 ; Goes in BLTCON0 (scroll first ) minterm
+                        ; Leftshift 1, use channels A and D, copy A -> D
+    moveq   #0,d2 
+;    move.w  #(32*$40)*4+(2),d4 ; This is blitter size, y=256, x=44*8 // Størrelsen på området man kopierer *fra*
+
+    move.w  d5,BLTAMOD(a6) ; Set A source
+    move.w  d5,BLTDMOD(a6) ; Set D dest BLTDMOD
+    move.l  #$ffffffff,BLTAFWM(a6) ; Set last word and first word mask BLTAFWM and BLTALWM
+    move.w  d2,BLTCON1(a6) ;    issa 0   BLTCON1
+.lp:
+
+.litwait: ; Wait for blitter to be done
+    btst    #14,DMACONR
+    bne.s   .litwait
+
+    move.w  d0,BLTCON0(a6)  ; Set registers; BLTCON0
+    move.l  a0,BLTAPTH(a6) ; src 
+    move.l  a1,BLTDPTH(a6) ; BLT Dest PTR
+    move.w  d4,BLTSIZE(a6) ; BLTSIZE & Start blitter
+    rts
+
+
+
+
+
+
 ; storage for 32-bit addresses and data
 	CNOP 0,4
 oldview:	dc.l 0
@@ -59,10 +106,10 @@ ddfstrt:
 ddfstop:
     dc.w    $00d0
     dc.w    $0108
-modeven:
+copper_mod_even:
 ;set bplmodulo here
     dc.w    0,$010a
-mododd:
+copper_mod_odd:
 ;set bplmodulo here
     dc.w    0
 
@@ -80,7 +127,7 @@ CopSprites:
     dc.w $138,0, $13A,0
     dc.w $13C,0, $13E,0
 
-Pal:
+copper_palette:
     dc.w    $0180, $000
     dc.w    $0182, $fff
     dc.w    $0184, $236
@@ -103,23 +150,23 @@ Pal:
 
 
     dc.w    $e0
-b0h:
+copper_bitplane0:
     dc.w    0,$e2
 b0l:
     dc.w    0,$e4
-b1h:
+copper_bitplane1:
     dc.w    0,$e6
 b1l:
     dc.w    0,$e8
-b2h:
+copper_bitplane2:
     dc.w    0,$ea
 b2l:
     dc.w    0,$ec
-b3h:
+copper_bitplane3:
     dc.w    0,$ee
 b3l:
     dc.w    0,$f0
-b4h:
+copper_bitplane4:
     dc.w    0,$f2
 b4l:
     dc.w    0

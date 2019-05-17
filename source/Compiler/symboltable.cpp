@@ -168,14 +168,15 @@ void SymbolTable::InitBuiltins()
         Define(new Symbol("screenmemory", "pointer"));
     }
     if (Syntax::s.m_currentSystem==AbstractSystem::AMIGA) {
-        Define(new Symbol("b0h", "integer"));
-        Define(new Symbol("b1h", "integer"));
-        Define(new Symbol("b2h", "integer"));
-        Define(new Symbol("b3h", "integer"));
-        Define(new Symbol("b4h", "integer"));
-        Define(new Symbol("b5h", "integer"));
-        Define(new Symbol("modeven", "integer"));
-        Define(new Symbol("mododd", "integer"));
+        Define(new Symbol("copper_bitplane0", "integer"));
+        Define(new Symbol("copper_bitplane1", "integer"));
+        Define(new Symbol("copper_bitplane2", "integer"));
+        Define(new Symbol("copper_bitplane3", "integer"));
+        Define(new Symbol("copper_bitplane4", "integer"));
+        Define(new Symbol("copper_bitplane0", "integer"));
+        Define(new Symbol("copper_mod_even", "integer"));
+        Define(new Symbol("copper_mod_odd", "integer"));
+        Define(new Symbol("copper_palette", "integer"));
 
     }
 
