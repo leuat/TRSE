@@ -117,3 +117,34 @@ void AsmM68000::BinOP(TokenType::Type t)
 
     m_varStack.push(v);
 }
+
+void AsmM68000::DeclareString(QString name, QStringList initval)
+{
+
+    Write(name +"\t" + String(initval));
+    m_term="";
+}
+
+QString AsmM68000::String(QStringList lst)
+{
+
+    QString res;
+    QString mark = "dc.b";
+
+    for (QString s:lst) {
+        bool ok=false;
+        uchar val = s.toInt(&ok);
+        if (!ok)
+            res=res+"\t"+mark+"\t" +"\"" + s + "\"\n";
+
+        else res=res + "\t"+mark+"\t"+QString::number(val) + "\n";
+
+        /*        if (s!=lst.last())
+                res=res + "\n";
+    */
+
+    }
+    res=res + "\t"+mark+"\t0";
+    m_term +=res;
+    return res;
+}

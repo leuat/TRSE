@@ -275,7 +275,7 @@ public:
 //    virtual void EndAssignVariable(QString var) {}
     virtual void ApplyTerm() {}
     virtual void Number(QString n) {}
-    virtual QString  String(QStringList s) {}
+    virtual QString  String(QStringList s) { }
     virtual void BinOP(TokenType::Type t){}
 //    virtual void Poke(bool start) = 0;
 //    virtual void Peek(bool start) {}

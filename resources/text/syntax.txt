@@ -185,7 +185,7 @@ m; FLD ; C64, C128 ; b,n
 m; TransformColors; C64, C128; a,a
 m; Call; C64, C128, VIC20, PET,  PET, NES; a
 m; Loop; C64, C128, VIC20, PET,  PET, NES;
-m; Return;  C64, C128, VIC20, PET,  PET, NES;
+m; Return;  C64, C128, VIC20, PET,  PET, NES, AMIGA;
 m; Set2MhzMode; C128;
 m; Set1MhzMode; C128;
 m; RightBitShift; C64, C128, VIC20, PET,  NES; a, n

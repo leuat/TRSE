@@ -26,6 +26,10 @@ public:
 
     void BinOP(TokenType::Type t) override;
 
+    void DeclareString(QString name, QStringList initval);
+
+    QString String(QStringList lst) override;
+
 };
 
 #endif // M68000_H

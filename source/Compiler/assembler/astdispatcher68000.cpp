@@ -160,6 +160,7 @@ void ASTDispather68000::dispatch(NodeVarDecl *node)
     node->ExecuteSym(as->m_symTab);
 
 
+
     NodeVar* v = (NodeVar*)node->m_varNode;
     NodeVarType* t = (NodeVarType*)node->m_typeNode;
     if (t->m_flags.contains("chipmem")) {
@@ -173,10 +174,11 @@ void ASTDispather68000::dispatch(NodeVarDecl *node)
     }else
     if (t->m_op.m_type==TokenType::STRING) {
         as->DeclareString(v->value, t->m_data);
-        node->m_dataSize = 0;
+
+/*        node->m_dataSize = 0;
         for (QString s: t->m_data)
             node->m_dataSize+=s.count();
-        node->m_dataSize++; // 0 end
+        node->m_dataSize++; // 0 end*/
     }
     else
     if (t->m_op.m_type==TokenType::CSTRING) {
@@ -520,10 +522,15 @@ void ASTDispather68000::LoadVariable(NodeVar *n)
     if (n->m_expr!=nullptr) {
 //        qDebug() << n->m_op.getType();
   //      exit(1);
-        TransformVariable(as,"move.w",as->m_regAcc.m_latest,"#0");
+        bool done = false;
+        if (as->m_regAcc.m_latest.count()==2) {
+            TransformVariable(as,"move.w",as->m_regAcc.m_latest,"#0");
+            done = true;
+        }
         QString d0 = as->m_regAcc.Get();
         QString a0 = as->m_regMem.Get();
-//        TransformVariable(as,"move.w",d0,"#0");
+        if (!done )
+            TransformVariable(as,"move.w",d0,"#0");
         qDebug() << "Loading array: expression";
         LoadVariable(n->m_expr);
         QString d1 = as->m_varStack.pop();
@@ -680,8 +687,10 @@ QString ASTDispather68000::AssignVariable(NodeAssign *node) {
     }
 
     // Some expression instead
-    if (node->m_right->isArrayIndex())
+    if (node->m_right->isArrayIndex()) {
         LoadVariable((NodeVar*)node->m_right);
+
+    }
     else
         node->m_right->Accept(this);
 
@@ -752,9 +761,9 @@ void ASTDispather68000::BuildSimple(Node *node, QString lblFailed)
         as->Asm("bne " + lblFailed);
     if (node->m_op.m_type==TokenType::NOTEQUALS)
         as->Asm("beq " + lblFailed);
-    if (node->m_op.m_type==TokenType::GREATER)
-        as->Asm("bcc " + lblFailed);
     if (node->m_op.m_type==TokenType::LESS)
+        as->Asm("bcc " + lblFailed);
+    if (node->m_op.m_type==TokenType::GREATER)
         as->Asm("bcs " + lblFailed);
 
 

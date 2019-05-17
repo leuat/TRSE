@@ -177,7 +177,11 @@ void SymbolTable::InitBuiltins()
         Define(new Symbol("copper_mod_even", "integer"));
         Define(new Symbol("copper_mod_odd", "integer"));
         Define(new Symbol("copper_palette", "integer"));
+        Define(new Symbol("diwstrt", "integer"));
+        Define(new Symbol("diwstop", "integer"));
 
+        Define(new Symbol("ddfstrt", "integer"));
+        Define(new Symbol("ddfstop", "integer"));
     }
 
 }

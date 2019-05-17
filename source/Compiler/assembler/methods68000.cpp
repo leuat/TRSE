@@ -22,6 +22,9 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("poke32"))
         Poke(as,".l");
 
+    if (Command("return"))
+        as->Asm("rts");
+
     if (Command("setcopperlist32"))
         SetCopperList32(as);
 
