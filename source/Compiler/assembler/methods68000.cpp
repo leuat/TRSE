@@ -15,6 +15,18 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->EndWriteln();
     }
 */
+
+/*    m; InitCustomCopperList; Amiga;
+    m; AddCopperCommand; i,i
+    m; SkipCopperCommands;i
+  */
+    if (Command("initcustomcopperlist"))
+        as->Asm("lea copper_custom,a5");
+    if (Command("endcustomcopperlist"))
+        as->Asm("move.l #$fffffffe,(a5)+");
+    if (Command("addcoppercommand"))
+        AddCopperCommand(as);
+
     if (Command("poke8"))
         Poke(as,".b");
     if (Command("poke16"))
@@ -84,14 +96,33 @@ void Methods68000::LoadAddress(Assembler *as, Node *n, QString d0)
 void Methods68000::Poke(Assembler *as, QString bb)
 {
     QString a0 = as->m_regMem.Get();
-//    m_node->m_params[0]->Accept(m_dispatcher);
-  //  QString pre = "";
-//    if (m_node->m_params[0]->isPureVariable())
-//    as->Asm("lea "+ as->m_varStack.pop() +","+a0);
+    as->Comment("Poke command");
     LoadAddress(as,m_node->m_params[0],a0);
-    m_node->m_params[1]->Accept(m_dispatcher);
+   // m_dispatcher->LoadVariable(m_node->m_params[2]);
+    m_node->m_params[2]->Accept(m_dispatcher);
+    QString val = as->m_varStack.pop();
+//    m_node->m_params[2]->Accept(m_dispatcher);
+    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    if (num!=nullptr) {
+        if (num->m_val==0) {
+            as->Asm("move"+bb+" "+ val +","+"("+a0+")");
 
-    as->Asm("move"+bb+" "+ as->m_varStack.pop() +","+"("+a0+")");
+            as->m_regMem.Pop(a0);
+            return;
+        }
+    }
+
+/*    if (m_node->m_params[2]->isPureNumeric() || m_node->m_params[2]->isPureVariable()) {
+
+    }
+  */
+//    m_node->m_params[2]->Accept(m_dispatcher);
+
+//    Asm(as,"move",as->m_varStack.pop(),d0);
+//    m_dispatcher->LoadVariable(m_node->m_params[1]);
+    m_node->m_params[1]->Accept(m_dispatcher);
+    Asm(as,"add.w",as->m_varStack.pop(),a0 + "; "+val);
+    as->Asm("move"+bb+" "+ val +","+"("+a0+")");
 
     as->m_regMem.Pop(a0);
 
@@ -197,6 +228,15 @@ void Methods68000::ABlit(Assembler *as)
     LoadVariable(as,"move.w",m_node->m_params[8], "BLTDMOD(a6)"); // mod SRC
 
     as->Asm("jsr blitter");
+}
+
+void Methods68000::AddCopperCommand(Assembler* as)
+{
+    m_node->m_params[0]->Accept(m_dispatcher);
+    Asm(as,"move.w",as->m_varStack.pop(),"(a5)+");
+    m_node->m_params[1]->Accept(m_dispatcher);
+    Asm(as,"move.w",as->m_varStack.pop(),"(a5)+");
+
 }
 
 

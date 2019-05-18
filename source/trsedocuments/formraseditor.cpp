@@ -635,7 +635,7 @@ bool FormRasEditor::BuildStep()
                                         m_iniFile, m_projectIniFile);
 
     m_system->timer.start();
-
+    m_system->m_buildSuccess = true;
     return compiler.Build(m_system, path);
 }
 

@@ -1,0 +1,91 @@
+program Tutorial2_CopperList;
+var  
+   	i,j,k,l,m, isDone, time: integer = 0; 
+   	image : incbin("images/image1.bin") chipmem;
+
+	sin64 : array[64] of byte = ($10,$12,$13,$15,$16,$18,$19,$1a,$1b,$1c,$1d,$1e,$1f,$1f,$20,$20,$20,$20,$20,$1f,$1f,$1e,$1d,$1c,$1b,$1a,$19,$18,$16,$15,$13,$12, $10,$e,$d,$b,$a,$8,$7,$6,$5,$4,$3,$2,$1,$1,$0,$0,$0,$0,$0,$1,$1,$2,$3,$4,$5,$6,$7,$8,$a,$b,$d,$e);
+
+
+
+procedure SetupImageCopperList();
+begin
+	poke16(copper_resolution, 0 , $4200); // $4000  = bitplanes, $200 = colours
+	
+	// Setup image copper list (4 bitplanes, 40*40 modulo 120
+	SetCopperList32(image, copper_bitplane0);
+	SetCopperList32(image+^40, copper_bitplane1);
+	SetCopperList32(image+^80, copper_bitplane2);
+	SetCopperList32(image+^120, copper_bitplane3);
+	poke16(copper_mod_even,0,120);
+	poke16(copper_mod_odd,0,120);
+end;
+
+
+
+
+procedure InitCopperList();
+var
+	row, y : integer = 0;
+begin
+	
+	row:=7;
+	j:=time;
+	l:=0;
+	y:=$000F;// Color background start
+	InitCustomCopperList(); // Message start custom copper list
+	AddCopperCommand($0180, 0); // First row black
+	for i:=0 to 128 do begin
+		// First, copper should wait until raster "row" has been reached
+		AddCopperCommand(row, COPPER_WAIT_FOR_RASTER);
+		// Next, copper should scroll
+		AddCopperCommand(COPPER_SCROLL, k);
+	 	// First color of palette (start ) = background, next is +2, +4 etc
+		AddCopperCommand(COPPER_PALETTE_START, y); 
+	 		 	
+	 		 		 		 	
+  		k:=sin64[j&63]/4;
+  		m:=sin64[(j+32)&63]/4;
+  		k:=k+m*16;
+		//k = 4 lower bit sine function     + 4 upper bit sine function (opposite phase)  		
+
+  	 	row:=row+$200;  	 // Wait until the next row
+     	j:=j+2;            // Increase sine wobble
+     	
+
+		// The next part just decreases the value of the background color "y" 
+		// for each 5th line until 0(black) and not lower
+       	l:=l+1;            
+       	if (l=5) then begin 
+       		if (y<>0) then 
+	       		y:=y-1;
+       		l:=0;
+       	end;
+
+	end;
+	// Message end of copper list
+	EndCustomCopperList();
+
+end;
+
+
+begin
+	SetupImageCopperList();
+
+	while (isDone=0) do begin
+	
+		// Init copper list for each frame. 
+		// This should be optimized to only update elements that are in need of update
+		// (like sine scrollers etc)
+		
+		InitCopperList();
+		time:=time+1;	
+	
+		// Wait for vertical blank
+		WaitVerticalBlank();
+
+		// Apply copper list
+		ApplyCopperList();
+		
+	end;
+
+end.

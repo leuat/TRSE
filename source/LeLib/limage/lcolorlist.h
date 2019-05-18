@@ -102,11 +102,9 @@ public:
     LColorList();
     ~LColorList();
 
-    LColor& get(int i) {
-        if (i<m_list.count())
-            return m_list[i];
-        else return m_list[0];
-    }
+    LColor& get(int i);
+    QColor m_cblack = QColor(0,0,0,255);
+    LColor m_black = LColor(m_cblack,"black");
 
     static unsigned char TypeToChar(Type t);
     static Type CharToType(unsigned char c);

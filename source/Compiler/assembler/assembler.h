@@ -207,7 +207,7 @@ public:
 
     QStringList m_tempVars;
     int m_varDeclEndsLineNumber = 0;
-    int m_totalOptimizedLines;
+    int m_totalOptimizedLines = 0;
 
     void SortAppendix();
 

@@ -79,6 +79,7 @@ oldintreq:	dc.w 0
 oldintena:	dc.w 0
 oldadkcon:	dc.w 0
 
+copper_index    dc.w 0
 	CNOP 0,4
 gfxname: dc.b 'graphics.library',0
 
@@ -90,12 +91,13 @@ Chip:
 
     even
 cop:
-;    dc.w    $0100,$0200
     dc.w    $008e
 diwstrt:
-    dc.w    $1070,$0090
+    dc.w    $2c81,$0090
 diwstop:
     dc.w    $2cc1
+
+    
     dc.w    $0092
 ddfstrt:
 ; 
@@ -125,7 +127,7 @@ CopSprites:
     dc.w $13C,0, $13E,0
 
 copper_palette:
-    dc.w    $0180, $000
+    dc.w    $0180, $0FF
     dc.w    $0182, $fff
     dc.w    $0184, $236
     dc.w    $0186, $ba7
@@ -141,6 +143,23 @@ copper_palette:
     dc.w    $019a, $8d9
     dc.w    $019c, $b56
     dc.w    $019e, $999
+
+    dc.w    $01A0, $000
+    dc.w    $01A2, $fff
+    dc.w    $01A4, $236
+    dc.w    $01A6, $ba7
+    dc.w    $01A8, $836
+    dc.w    $01Aa, $485
+    dc.w    $01Ac, $723
+    dc.w    $01Ae, $6cb
+    dc.w    $01B0, $246
+    dc.w    $01B2, $034
+    dc.w    $01B4, $569
+    dc.w    $01B6, $444
+    dc.w    $01B8, $666
+    dc.w    $01Ba, $8d9
+    dc.w    $01Bc, $b56
+    dc.w    $01Be, $999
 
 
 
@@ -170,19 +189,24 @@ b4l:
 
 
 
-
 copbplcon1:
     dc.l    $01020000
     dc.l    $2c01fffe
 copbplcon0
 ; Set bitplane  B
-   dc.l    $01004200, $01800111
-    dc.l    $2d01fffe, $01800000
-    dc.l    $8001fffe, $01002200
-    dc.l    $9001fffe, $01001200
-    dc.l    $ffdffffe
-;    dc.l    $fc01fffe, $0180055a
-    dc.l    $0d01fffe, $01000200
+   dc.w    $0100
+copper_resolution
+   dc.w     $4200 
+copper_custom:
+    dc.l    $fffffffe
+
+
+;    dc.l    $2d01fffe, $01800000
+ ;   dc.l    $8001fffe, $01002200
+  ;  dc.l    $9001fffe, $01001200
+;    dc.l    $ffdffffe
+ ;   dc.l    $0d01fffe, $01000200
+ blk.l   1024
     dc.l    $fffffffe
 
 

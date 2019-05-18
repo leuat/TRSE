@@ -1,0 +1,30 @@
+program Tutorial1;
+var  
+   	i,j,k, isDone: integer = 0; 
+   	image : incbin("images/image1.bin") chipmem;
+
+procedure SetupImageCopperList();
+begin
+	poke16(copper_resolution, 0 , $4200); // $4000  = bitplanes, $200 = colours
+	
+	// Setup image copper list (4 bitplanes, 40*40 modulo 120
+	SetCopperList32(image, copper_bitplane0);
+	SetCopperList32(image+^40, copper_bitplane1);
+	SetCopperList32(image+^80, copper_bitplane2);
+	SetCopperList32(image+^120, copper_bitplane3);
+	poke16(copper_mod_even,0,120);
+	poke16(copper_mod_odd,0,120);
+end;
+
+
+begin
+	SetupImageCopperList();
+		
+	while (isDone=0) do begin
+		// Wait for vertical blank
+		WaitVerticalBlank();	
+		// Apply copper list
+		ApplyCopperList();
+	end;
+
+end.

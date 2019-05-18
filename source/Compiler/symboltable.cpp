@@ -54,6 +54,7 @@ void SymbolTable::Initialize()
   //  m_constants.clear();
 
     QString currentSystem = AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem).toLower();
+    qDebug() << currentSystem;
     for (QString s: Syntax::s.m_syntaxData.split('\n')) {
         s= s.simplified();
         if (s.count()==0) continue;
@@ -78,6 +79,8 @@ void SymbolTable::Initialize()
                 m_constants[constant] = new Symbol(value,"BYTE", ival);
             if (type=="a")
                 m_constants[constant] = new Symbol("^"+value,"ADDRESS", ival);
+            if (type=="i")
+                m_constants[constant] = new Symbol("^"+value,"INTEGER", ival);
 
 //            reservedWords.append(Token(TokenType::getType(word), word.toUpper()));
         }
@@ -182,6 +185,13 @@ void SymbolTable::InitBuiltins()
 
         Define(new Symbol("ddfstrt", "integer"));
         Define(new Symbol("ddfstop", "integer"));
+        Define(new Symbol("copper_resolution", "integer"));
+        Define(new Symbol("copper_custom", "integer"));
+/*        Define(new Symbol("copper_wait_for_raster", "integer"));
+        Define(new Symbol("copper_palette_start", "integer"));
+        Define(new Symbol("copper_scroll", "integer"));
+*/
+
     }
 
 }

@@ -35,14 +35,21 @@ LColorList::~LColorList()
         delete m_metric;
 }
 
+LColor &LColorList::get(int i) {
+    if (i<m_list.count())
+        return m_list[i];
+    if (m_list.count()!=0) return m_list[0];
+    return m_black;
+}
+
 unsigned char LColorList::TypeToChar(LColorList::Type t)
 {
-  if (t==C64)
-      return 0;
-  if (t==C64_ORG)
-      return 1;
-  if (t==CGA1_LOW)
-      return 2;
+    if (t==C64)
+        return 0;
+    if (t==C64_ORG)
+        return 1;
+    if (t==CGA1_LOW)
+        return 2;
   if (t==CGA1_HIGH)
       return 3;
   if (t==CGA2_LOW)

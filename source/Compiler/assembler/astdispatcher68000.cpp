@@ -25,12 +25,17 @@ void ASTDispather68000::dispatch(NodeBinOP *node)
     if (node->isPureNumeric()) {
         qDebug() << "IS PURE NUMERIC BinOp";
         int val = node->BothPureNumbersBinOp(as);
-        QString s = "#";
+        QString s = "";
         if (node->m_left->isAddress() || node->m_right->isAddress())
             s = "";
+        qDebug() << "A0";
         QString d0 = as->m_regAcc.Get();
+        qDebug() << "A05";
         as->Asm("move "+s+node->getValue() +","+d0);
+        qDebug() << "A07";
         as->m_regAcc.Pop(d0);
+        as->m_varStack.push(d0);
+        qDebug() << "A1";
 //        StoreVariable(as,)
         return;
     }
@@ -253,9 +258,12 @@ void ASTDispather68000::dispatch(NodeBlock *node)
 
     }
     as->VarDeclEnds();
+    if (node->m_decl.count()!=0)
+        as->Asm(" 	CNOP 0,4");
 
-    if (!blockLabel && hasLabel)
+    if (!blockLabel && hasLabel) {
         as->Label(label);
+    }
 
     if (node->forceLabel!="")
         as->Label(node->forceLabel);
@@ -619,12 +627,16 @@ QString ASTDispather68000::getEndType(Assembler *as, Node *v) {
     NodeVar* nv = dynamic_cast<NodeVar*>(v);
     TokenType::Type t = v->getType(as);
     if (nv!=nullptr && nv->m_expr!=nullptr) {
-        qDebug() << nv->value;
+      //  qDebug() << nv->value;
         Symbol* s = as->m_symTab->Lookup(nv->value, v->m_op.m_lineNumber, v->isAddress());
         if (s!=nullptr)
             t = s->m_arrayType;
     }
+    NodeNumber* n = dynamic_cast<NodeNumber*>(v);
+    if (n!=nullptr) {
 
+        return ".w";
+    }
 
     if (t==TokenType::INTEGER)
         return ".w";
@@ -723,6 +735,8 @@ void ASTDispather68000::IncBin(Assembler* as, NodeVarDecl *node) {
 
 
     if (t->m_position=="") {
+        as->Asm(" 	CNOP 0,4");
+
         as->Label(v->value);
         as->Asm("incbin \"" + filename + "\"");
     }
@@ -735,6 +749,8 @@ void ASTDispather68000::IncBin(Assembler* as, NodeVarDecl *node) {
         typeSymbol->m_size = size;
         //            qDebug() << "POS: " << typeSymbol->m_org;
         //app.Append("org " +t->m_position,1);
+        as->Asm(" 	CNOP 0,4");
+
         as->Label(v->value);
         as->Asm("incbin \"" + filename + "\"");
 /*        bool ok;

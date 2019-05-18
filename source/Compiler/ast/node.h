@@ -103,7 +103,7 @@ public:
     virtual bool isAddress() { return false;}
     virtual void AssignPointer(Assembler* as, QString memoryLocation) {}
 
-    virtual QString getValue() {}
+    virtual QString getValue() {return "";}
 
     void RequireAddress(Node* n,QString name, int ln);
 

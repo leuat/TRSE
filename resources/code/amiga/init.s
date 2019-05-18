@@ -33,6 +33,10 @@ INTREQ		EQU		$dff09c
 
 
 
+
+
+
+
 init:
 	; store data in hardwareregisters ORed with $8000
         ;(bit 15 is a write-set bit when values are written back into the system)

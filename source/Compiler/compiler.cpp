@@ -100,6 +100,7 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
 
     if (system->m_processor==AbstractSystem::M68000) {
 //        m_assembler->blocks.append(m_assembler->m_chipMem);
+        m_assembler->m_chipMem.m_source.insert(0," 	CNOP 0,4");
         m_assembler->m_chipMem.m_source.insert(0,"	Section ChipRAM,Data_c");
         m_assembler->m_source <<m_assembler->m_chipMem.m_source;
     }

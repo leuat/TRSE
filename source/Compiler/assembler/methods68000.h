@@ -4,6 +4,7 @@
 #include "abstractastdispatcher.h"
 //#include "astdispatcher68000.h"
 #include "source/Compiler/ast/nodebuiltinmethod.h"
+#include "source/Compiler/ast/nodenumber.h"
 
 class Methods68000
 {
@@ -31,6 +32,7 @@ public:
     void Memcpy(Assembler *as);
     void Setpalette(Assembler *as);
     void ABlit(Assembler* as);
+    void AddCopperCommand(Assembler* as);
 };
 
 #endif // METHODS68000_H

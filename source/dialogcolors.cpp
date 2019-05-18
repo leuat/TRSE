@@ -43,6 +43,7 @@ void DialogColors::setColor(int cc, int ty) {
     if (ty==2)
     ui->leRGB4->setText(m_lst->get(m_curCol).toRGB4());
 
+    ui->lblRGB4->setText("$"+QString::number(m_lst->get(m_curCol).get12BitValue(),16));
 
 }
 

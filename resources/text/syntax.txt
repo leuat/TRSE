@@ -33,15 +33,19 @@ m; initatan2; C64, C128, VIC20  ;
 
 # ************** AMIGA ROUTINES
 
-m; Poke8; Amiga ; a,b
-m; Poke16; Amiga ; a,i
-m; Poke32; Amiga ; a,l
+m; Poke8; Amiga ; a,i,b
+m; Poke16; Amiga ; a,i,i
+m; Poke32; Amiga ; a,i,l
 m; WaitVerticalBlank; Amiga;
 m; SetCopperList32; Amiga; a, a
 m; ApplyCopperList; Amiga;
 m; memcpy; Amiga; a, a, l
 m; setpalette; Amiga; a, a, l
 m; ablit; Amiga; a,a,i, i,i,i,i,l,i
+m; InitCustomCopperList; Amiga;
+m; EndCustomCopperList; Amiga;
+m; AddCopperCommand; Amiga; i,i
+m; SkipCopperCommands; Amiga; i
 
 
 #Memory routines
@@ -314,7 +318,9 @@ c; VIC_BANK2; C64, C128;b;1
 c; VIC_BANK3; C64, C128;b;0
 c; VIC_DATA_LOC; C64, C128;a;$d018
 
-
+c; COPPER_SCROLL; AMIGA;i; $0102
+c; COPPER_WAIT_FOR_RASTER; AMIGA; i; $FFFE
+c; COPPER_PALETTE_START; AMIGA;i; $0180
 
 # C128 støff
 
