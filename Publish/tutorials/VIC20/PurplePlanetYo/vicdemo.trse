@@ -1,5 +1,4 @@
 data_header_/home/leuat/dropbox/trse/vicdemo/images/image1.flf = 0
-project_path = /home/leuat/code/TRSE/Publish/tutorials/VIC20/PurplePlanetYo/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fe
@@ -17,7 +16,6 @@ post_optimizer_passjmp = 1
 post_optimizer_passldatax = 1
 post_optimizer_passstalda = 1
 post_optimizer_passldx = 1
-open_files = ,include/chareffect.ras, demo.asm
 data_header_images/image1.flf = 0
 data_header_images/image2.flf = 0
 vic_memory_config = all
