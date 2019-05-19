@@ -1,0 +1,121 @@
+program Tutorial3_blitter_example;
+var  
+   	x,y,i,j,k, isDone,time,src,sourcex,sourcey: integer = 0; 
+
+	// "Proxim" logo created by The Diad^Proxima
+	
+   	logo_image : incbin("images/logo.bin") chipmem;
+   	
+	/*
+	 
+	 The font is generated with TRSE in the following manner:
+	   1. Create a new TRSE image type "Amiga 320x200"
+	   2. Under the "import", select "Font" and generate a bitmap font with 
+          10 columns, 24 pixel spacing, placing the characters evenly in 4x3 byte blocks
+       3. After having created the bitmap image, select "Palette" and change number of bitplanes to "1".
+       4. When exporting the font, it should consist of 1 bitplane 320x200 = 8000 bytes of binary data. 
+	*/	
+   	
+   	font : incbin("images/font.bin") chipmem;
+
+	// Sine table. Will be replaced with built-in sine methods later. 
+	  	
+   	sin64 : array[64] of byte = ($10,$12,$13,$15,$16,$18,$19,$1a,$1b,$1c,$1d,$1e,$1f,$1f,$20,$20,$20,$20,$20,$1f,$1f,$1e,$1d,$1c,$1b,$1a,$19,$18,$16,$15,$13,$12, $10,$e,$d,$b,$a,$8,$7,$6,$5,$4,$3,$2,$1,$1,$0,$0,$0,$0,$0,$1,$1,$2,$3,$4,$5,$6,$7,$8,$a,$b,$d,$e);
+
+	// 40 = 320/8 = bytes per bitplane
+   	@define width 40 
+   	@define height 200
+   	@define bitplanes 4
+   	
+	@define bitmapFont_noCharactersInColumns 10
+	@define bitmapFont_characterHeight 24
+
+	// Text to be displayed
+	text: string =("HELLO");
+	// 5 characters in the string
+	@define noChars 5 
+   	// Allocate screen memory
+   	screen : array[@width*@height*@bitplanes] of byte  chipmem;
+
+procedure SetupScreen();
+begin
+	poke16(copper_resolution, 0 , $4200); // $4000  = bitplanes, $200 = colours, 320x200
+	
+	// Setup interleaved image copper list (4 bitplanes, 40*40 modulo 120
+	SetCopperList32(screen, copper_bitplane0);
+	SetCopperList32(screen+^40, copper_bitplane1);
+	SetCopperList32(screen+^80, copper_bitplane2);
+	SetCopperList32(screen+^120, copper_bitplane3);
+	// Modulo for each line = 120 (meaning that after 40 bytes are written to screen, 
+	// the copper skips 120 bytes to the next interleaved line of data for the current bitplane
+	poke16(copper_mod_even,0,120);
+	poke16(copper_mod_odd,0,120);
+end;
+
+procedure AsciiToPositionInBitmap(a_char :integer);
+begin
+	// ascii character A - 65 = 0
+	j:=a_char-65;
+	sourcey:=0;
+		// There are 10 characters for each row, increase sourcey by 24 pixels
+	while (j>@bitmapFont_noCharactersInColumns) do begin
+		j:=j-@bitmapFont_noCharactersInColumns; 
+		sourcey:=sourcey+@bitmapFont_characterHeight; // height of bitmap font
+	end;
+	sourcex:=j*4; // bitmap font is 4 bytes wide
+	src:=sourcex + sourcey*40; // Source position in bitmap font
+
+end;
+
+
+procedure PrintText();
+begin
+	// 5 characters in total 	
+	for i:=0 to @noChars do begin
+		y:=sin64[(i*6+time)&63]+80;
+		x:=8+i*4;
+		// Convert ascii to bitmap font
+		AsciiToPositionInBitmap(text[i]); // outputs "src"
+		//Blit the character to screen + 80 (to bitplane #3, yielding color 4=purple) 
+		
+		ablit(font, screen+^80, src, x, y,  160,  (26*$40)+(2), 40-4, 160-4);
+
+		
+	end;
+end;
+
+
+begin
+	SetupScreen();
+	
+	// Copy logo.bin to the screen using the blitter. 
+	/*
+		ablit - copy blocks of data using the blitter
+		usage:
+		ablit (source, destination, source offset ,   destination x, destination y,
+		destination y multiplier (4 bitplanes=160 bytes (for pos = x+y*160)), size of block ( y*$40) +x/2, 
+		source modulo (1 bitplane =0), destination modulo (4 bitplanes -1 = 120) 
+			
+	*/
+	ablit(logo_image,screen, 0,  0,0,   160, (100*$40) + 20, 0,120);
+	// Make sure you wait a bit
+	WaitVerticalBlank();	
+
+
+		
+	while (isDone=0) do begin
+	
+		// Blink background color blue
+		i:=sin64[time&63]/4;
+		poke16(copper_palette,2,i); // position 2 = background color = color 0. Next color is located at +6
+
+		PrintText();
+		
+		// Wait for vertical blank
+		WaitVerticalBlank();	
+		// Apply copper list
+		ApplyCopperList();
+		time:=time+1;
+	end;
+
+end.
