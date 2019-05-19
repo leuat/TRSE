@@ -19,5 +19,7 @@ xcopy /e  ..\tutorials\C128\* trse\C128\
 xcopy /e  ..\tutorials\Vic20\* trse\Vic20\
 xcopy /e  ..\tutorials\NES\* trse\NES\
 xcopy /e  ..\tutorials\Fjong\* trse\Fjong\
+xcopy /e  ..\tutorials\PET\* trse\PET\
+xcopy /e  ..\tutorials\Amiga\* trse\Amiga\
 xcopy /e dll\* trse\
 REM xcopy start.cmd trse\
