@@ -6,6 +6,7 @@ globals = {
 	camera = { x = 0, y=0.0, z=2.0 },
 	-- Target position
 	target = { x = 0, y=0.3, z=0 },
+	up = { x=0, y=1, z=0 },
  	-- Field of view
 	fov = 80, 
 	-- Currently, only 1 light is supported
@@ -37,7 +38,14 @@ output = {
 	resolution = { width = 320, height=200 },
 	-- C64 charset image on / off (if "on", resolution must be <160x200)
 	c64_output = 0,
-	dither = 1,
+	aspect = 1,
+	-- 0=charset, 1 = multicolor image 
+	c64_imageType = 0,
+	dither = 2,
+	-- 160x200 multicolor
+	c64_multicolor=1,
+	-- dither strength plus modulo. only works for dither type 2
+	ditherStrength = { x=20, y= 1, z=1}, 
 	-- Four c64 colors to use (for charsets)
 	c64_colors = { 14,6,4,1 }
 }

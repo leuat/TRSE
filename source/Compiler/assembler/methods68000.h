@@ -33,6 +33,7 @@ public:
     void Setpalette(Assembler *as);
     void ABlit(Assembler* as);
     void AddCopperCommand(Assembler* as);
+    void SkipCopperCommands(Assembler* as);
 };
 
 #endif // METHODS68000_H

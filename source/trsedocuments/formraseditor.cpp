@@ -347,6 +347,13 @@ void FormRasEditor::Run()
 {
     if (m_system==nullptr)
         return;
+
+    if (m_system->m_system == AbstractSystem::AMIGA) {
+        Messages::messages.DisplayMessage(Messages::messages.NO_AMIGA_EMULATOR);
+        return;
+    }
+
+
     if (m_projectIniFile->getString("main_ras_file")!="none") {
         if (m_projectIniFile->getString("main_ras_file")!=m_currentFileShort) {
             emit requestRunMain();

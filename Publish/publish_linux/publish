@@ -12,6 +12,8 @@ cp -r ../tutorials/C64 trse/
 cp -r ../tutorials/C128 trse/
 cp -r ../tutorials/VIC20 trse/
 cp -r ../tutorials/NES trse/
+cp -r ../tutorials/Amiga trse/
+cp -r ../tutorials/PET trse/
 cp -r ../tutorials/Fjong trse/
 cp trse.sh trse
 tar -cvf trse_linux64.tar trse

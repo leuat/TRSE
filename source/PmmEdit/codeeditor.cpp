@@ -257,7 +257,8 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
 //        e->ignore();
       //  return;
     }
-    if (e->key()==Qt::Key_Return) {
+    if (!(c && c->popup()->isVisible()))
+    if (e->key()==Qt::Key_Return ) {
         SetIndent();
         //exit(1);
         return;

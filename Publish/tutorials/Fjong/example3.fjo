@@ -2,6 +2,7 @@ globals = {
 	camera = { x = 0, y=-0.0, z=2.0 },
 	fov = 40, 
 	target = { x = 0, y=0.0, z=0 },
+	up = { x=0, y=1, z=0 },
 	light0 = {   	direction = { x=1, y=1, z=1 }, 
 				color = { x=1, y=1, z=1}, 
 			},
@@ -19,7 +20,14 @@ globals = {
 output = {
 	resolution = { width = 64, height=24 },
 	c64_output = 0,
-	dither = 1,
+	aspect = 1,
+	-- 0=charset, 1 = multicolor image 
+	c64_imageType = 0,
+	dither = 2,
+	-- 160x200 multicolor
+	c64_multicolor=1,
+	-- dither strength plus modulo. only works for dither type 2
+	ditherStrength = { x=20, y= 1, z=1}, 
 	c64_colors = { 14,6,4,1 }
 }
 

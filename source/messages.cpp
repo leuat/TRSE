@@ -73,7 +73,7 @@ void Messages::InitMessages()
                                        );
 
     m_messages[ALPHA_WARNING] = Message(ALPHA_WARNING, Message::Msg,
-                                      "Hi there! <br><br>Welcome to this new release of Turbo Rascal Syntax Error 0.06 (sub-version 4)! "
+                                      "Hi there! <br><br>Welcome to this new release of Turbo Rascal Syntax Error 0.06 (sub-version 5), now with Amiga 500 support! "
                                       "If this is your first time using the TRSE framework, please open the tutorials project located in the parent directory and play around. <br> "
                                       "<br> "
                                       "Thank you so much for trying out Turbo Rascal Syntax Error! Remember to report any bugs to <b>generalgrapefruit@lemonspawn.com</b>.");
@@ -88,6 +88,21 @@ void Messages::InitMessages()
 
     m_messages[NO_VASMM] = Message(NO_VASMM, Message::Error,
                                       "You need to set up a link to the Vasmm compiler in the \"Assembler\" section in the TRSE settings panel."
+                                          );
+
+
+    m_messages[NO_AMIGA_EMULATOR] = Message(NO_AMIGA_EMULATOR, Message::Error,
+                                      "TRSE will compile amiga executables and move them to a designated "
+                                      "folder (defined in the TRSE settings dialog). This folder should point to your favorite Amiga emulator's hard drive (such as the FS-UAE emulator) directory. "
+                                      "TRSE will not run the file for you, but we recommend having a snapshot image in FS-UAE that has an open workbench shell window "
+                                      "allowing for rapid execution of build files."
+
+                                          );
+
+    m_messages[AMIGA_WARNING] = Message(AMIGA_WARNING, Message::Msg,
+                                      "As the TRSE m68K compiler is still in its infancy (development started may 15h 2019), it should therefore not be used for full-blown releases yet. The assembler has no optimizer and the biary operations are still buggy as "
+                                       "new features and methods are being implemented. For now, please check out the new Amiga tutorials and give TRSE for the Motorola 68K a try!"
+
                                           );
 
 

@@ -23,19 +23,19 @@ void ASTDispather68000::dispatch(NodeBinOP *node)
 */
 
     if (node->isPureNumeric()) {
-        qDebug() << "IS PURE NUMERIC BinOp";
+        //qDebug() << "IS PURE NUMERIC BinOp";
         int val = node->BothPureNumbersBinOp(as);
         QString s = "";
         if (node->m_left->isAddress() || node->m_right->isAddress())
             s = "";
-        qDebug() << "A0";
+        //qDebug() << "A0";
         QString d0 = as->m_regAcc.Get();
-        qDebug() << "A05";
+        //qDebug() << "A05";
         as->Asm("move "+s+node->getValue() +","+d0);
-        qDebug() << "A07";
+        //qDebug() << "A07";
         as->m_regAcc.Pop(d0);
         as->m_varStack.push(d0);
-        qDebug() << "A1";
+        //qDebug() << "A1";
 //        StoreVariable(as,)
         return;
     }
@@ -75,13 +75,13 @@ void ASTDispather68000::dispatch(NodeBinOP *node)
     if (start) {
         QString l = as->m_regAcc.m_latest;
         d0 = as->m_regAcc.Get();
-        as->Comment("NEW register: " + d0);
+//        as->Comment("NEW register: " + d0);
         as->m_regAcc.m_latest = d0;
     }
     else {
         node->m_left->Accept(this);
         d0 = as->m_regAcc.m_latest;
-        as->Comment("Peeklatest : " + d0);
+  //      as->Comment("Peeklatest : " + d0);
 
     }
 
@@ -89,7 +89,7 @@ void ASTDispather68000::dispatch(NodeBinOP *node)
 //        NodeVar nv =
         node->m_left->Accept(this);
   //      LoadVariable(node->m_left);
-        as->Comment("Start : " + d0);
+    //    as->Comment("Start : " + d0);
 
         TransformVariable(as,"move",d0,as->m_varStack.pop(),node->m_left);
     }
@@ -103,11 +103,11 @@ void ASTDispather68000::dispatch(NodeBinOP *node)
 //    as->Comment("d0 used:" +d0);
 
     TransformVariable(as,op,d0,right);
-    as->Comment("operation done  :  "+op+" : "  + d0 + "  varstack : " + as->m_varStack.current() + "   cnt: " +QString::number(as->m_varStack.m_vars.count()));
-    as->Comment("operation done  :  "+op+" : "  + d0 + "  regstack : " + as->m_regAcc.m_latest + "   cnt: " +QString::number(as->m_regAcc.m_free.count()));
+//    as->Comment("operation done  :  "+op+" : "  + d0 + "  varstack : " + as->m_varStack.current() + "   cnt: " +QString::number(as->m_varStack.m_vars.count()));
+  //  as->Comment("operation done  :  "+op+" : "  + d0 + "  regstack : " + as->m_regAcc.m_latest + "   cnt: " +QString::number(as->m_regAcc.m_free.count()));
  //   if (as->m_varStack.m_vars.count()==1) // EOL {
    //     as->m_varStack.m_vars[0] = d0; // Replace with current for assignment
-    as->Comment("POP register: " + d0);
+ //   as->Comment("POP register: " + d0);
     as->m_regAcc.Pop(d0);
     as->m_varStack.push(d0);
     as->m_regAcc.m_latest =d0;
@@ -258,7 +258,7 @@ void ASTDispather68000::dispatch(NodeBlock *node)
 
     }
     as->VarDeclEnds();
-    if (node->m_decl.count()!=0)
+//    if (node->m_decl.count()!=0)
         as->Asm(" 	CNOP 0,4");
 
     if (!blockLabel && hasLabel) {
@@ -384,7 +384,7 @@ void ASTDispather68000::dispatch(NodeConditional *node)
     QString labelElseDone = as->NewLabel("elsedoneblock");
     // QString labelFailed = as->NewLabel("conditionalfailed");
 
-    qDebug() << "HMM";
+//    qDebug() << "HMM";
 
     if (node->m_isWhileLoop)
         as->Label(labelStartOverAgain);
@@ -442,9 +442,9 @@ void ASTDispather68000::dispatch(NodeForLoop *node)
         ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
 
     QString var = dynamic_cast<NodeVar*>(nVar->m_left)->value;//  m_a->Build(as);
-    qDebug() << "Starting for";
+//    qDebug() << "Starting for";
     node->m_a->Accept(this);
-    qDebug() << "accepted";
+  //  qDebug() << "accepted";
 
 //    LoadVariable(node->m_a);
   //  TransformVariable()
@@ -458,7 +458,7 @@ void ASTDispather68000::dispatch(NodeForLoop *node)
 //    as->m_stack["for"].push(var);
     QString lblFor =as->NewLabel("forloop");
     as->Label(lblFor);
-    qDebug() << "end for";
+//    qDebug() << "end for";
 
 
 
@@ -477,7 +477,7 @@ void ASTDispather68000::dispatch(NodeVar *node)
 {
 //    LoadVariable(node);
     if (node->m_expr!=nullptr) {
-        qDebug() << "HERE";
+//        qDebug() << "HERE";
         LoadVariable(node);
         return;
     }
@@ -539,20 +539,20 @@ void ASTDispather68000::LoadVariable(NodeVar *n)
         QString a0 = as->m_regMem.Get();
         if (!done )
             TransformVariable(as,"move.w",d0,"#0");
-        qDebug() << "Loading array: expression";
+        //qDebug() << "Loading array: expression";
         LoadVariable(n->m_expr);
         QString d1 = as->m_varStack.pop();
-        qDebug() << "Popping varstack: " <<d1;
+        //qDebug() << "Popping varstack: " <<d1;
         TransformVariable(as,"lea",a0,n->value);
         TransformVariable(as,"move",d0,"("+a0+","+d1+")",n);
-        qDebug() << "Cleaning up loadvar: " <<d1;
+        //qDebug() << "Cleaning up loadvar: " <<d1;
         as->m_varStack.push(d0);
 
         as->m_regMem.Pop(a0);
         as->m_regAcc.Pop(d0);
 //        as->m_regAcc.Pop(d0);
 //        LoadPointer(n);
-        qDebug() << "Done: ";
+        //qDebug() << "Done: ";
 
         return;
     }
@@ -619,7 +619,7 @@ void ASTDispather68000::TransformVariable(Assembler *as, QString op, QString n, 
 void ASTDispather68000::TransformVariable(Assembler* as, QString op, QString n, QString val)
 {
     as->Asm(op +" "+val + "," + n);
-    qDebug() << " ** OP : " << op +" "+val + "," + n;
+    //qDebug() << " ** OP : " << op +" "+val + "," + n;
 }
 
 QString ASTDispather68000::getEndType(Assembler *as, Node *v) {
@@ -670,8 +670,8 @@ QString ASTDispather68000::AssignVariable(NodeAssign *node) {
   */
 
     as->Comment("Assigning single variable : " + v->value);
-    as->Comment("Varstack : " + QString::number(as->m_varStack.m_vars.count()));
-    as->Comment("regstack : " + QString::number(as->m_regAcc.m_free.count()));
+//    as->Comment("Varstack : " + QString::number(as->m_varStack.m_vars.count()));
+  //  as->Comment("regstack : " + QString::number(as->m_regAcc.m_free.count()));
     if (node->m_right==nullptr)
         ErrorHandler::e.Error("Node assign: right hand must be expression", node->m_op.m_lineNumber);
 
@@ -683,7 +683,7 @@ QString ASTDispather68000::AssignVariable(NodeAssign *node) {
     if (node->m_left->getType(as)==TokenType::LONG) {
         node->m_right->m_forceType = TokenType::LONG; // FORCE integer on right-hand side
     }
-    qDebug() << "Assigning A";
+    //qDebug() << "Assigning A";
 
     // For constant i:=i+1;
     //if (IsSimpleIncDec(v,  node))
@@ -708,10 +708,10 @@ QString ASTDispather68000::AssignVariable(NodeAssign *node) {
 
 //    qDebug() << "AssignVariable : " << v->value;
     QString reg = as->m_varStack.pop();
-    as->Comment("Assignvariable : " +v->value + " from register " + reg);
+//    as->Comment("Assignvariable : " +v->value + " from register " + reg);
   //  qDebug() << "Reg" << reg;
     TransformVariable(as, "move",v, reg);
-    as->Comment("AssignVariable done varstack : " + QString::number(as->m_varStack.m_vars.count()));
+  //  as->Comment("AssignVariable done varstack : " + QString::number(as->m_varStack.m_vars.count()));
  //   as->m_regAcc.Pop(reg);
 
  //   as->Term();

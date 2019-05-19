@@ -127,7 +127,7 @@ CopSprites:
     dc.w $13C,0, $13E,0
 
 copper_palette:
-    dc.w    $0180, $0FF
+    dc.w    $0180, $000
     dc.w    $0182, $fff
     dc.w    $0184, $236
     dc.w    $0186, $ba7

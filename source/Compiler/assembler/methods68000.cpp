@@ -26,6 +26,8 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->Asm("move.l #$fffffffe,(a5)+");
     if (Command("addcoppercommand"))
         AddCopperCommand(as);
+    if (Command("skipcoppercommands"))
+        SkipCopperCommands(as);
 
     if (Command("poke8"))
         Poke(as,".b");
@@ -236,6 +238,13 @@ void Methods68000::AddCopperCommand(Assembler* as)
     Asm(as,"move.w",as->m_varStack.pop(),"(a5)+");
     m_node->m_params[1]->Accept(m_dispatcher);
     Asm(as,"move.w",as->m_varStack.pop(),"(a5)+");
+
+}
+
+void Methods68000::SkipCopperCommands(Assembler *as)
+{
+    m_node->m_params[0]->Accept(m_dispatcher);
+    Asm(as,"add.l",as->m_varStack.pop(),"a5");
 
 }
 

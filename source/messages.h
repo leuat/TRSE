@@ -69,6 +69,8 @@ public:
     int OLD_SPRITE_FILE = 9;
     int NO_C1541 = 10;
     int NO_VASMM = 11;
+    int NO_AMIGA_EMULATOR = 12;
+    int AMIGA_WARNING = 13;
 
     QMap<int, Message> m_messages;
     CIniFile* m_iniFile;

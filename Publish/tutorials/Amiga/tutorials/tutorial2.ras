@@ -7,7 +7,7 @@ var
 
 
 
-procedure SetupImageCopperList();
+procedure SetupScreen();
 begin
 	poke16(copper_resolution, 0 , $4200); // $4000  = bitplanes, $200 = colours
 	
@@ -21,7 +21,12 @@ begin
 end;
 
 
-
+/*
+ 	Optimization tips:
+ 	Split between "InitCopperList" (keep as is) and "UpdateCopperList".
+ 	In "UpdateCopperList", only update the copper list values that actually change, such as scrolling.
+ 	Use "SkipCopperCommands" to skip bytes between commands. 
+*/
 
 procedure InitCopperList();
 var
@@ -69,7 +74,17 @@ end;
 
 
 begin
-	SetupImageCopperList();
+	SetupScreen();
+
+	/*
+		In this tutorial, we generate a custom copper list that
+		will be changing the scroll register and background colours for each
+		row on the screen. 
+		
+		The copper list is built per frame, and lets the copper operate
+		independently of the cpu. 
+
+	*/
 
 	while (isDone=0) do begin
 	

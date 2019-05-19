@@ -137,5 +137,6 @@
         <file>resources/images/PET.png</file>
         <file>resources/code/amiga/end.s</file>
         <file>resources/code/amiga/init.s</file>
+        <file>resources/images/Amiga.png</file>
     </qresource>
 </RCC>

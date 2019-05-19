@@ -673,7 +673,7 @@ void MainWindow::on_actionRas_source_file_triggered()
 
 void MainWindow::on_actionDelete_file_triggered()
 {
-    qDebug() << (ui->treeFiles->SelectedClicked);
+//    qDebug() << (ui->treeFiles->SelectedClicked);
     QModelIndex qlst = ui->treeFiles->currentIndex();
     if (qlst.data().toString()=="")
         return;
@@ -853,6 +853,8 @@ void MainWindow::LoadProject(QString filename)
     // Set compiler syntax based on system
     QString system = m_currentProject.m_ini.getString("system");
     Syntax::s.Init(AbstractSystem::SystemFromString(system),m_currentProject.m_ini.getString("vic_memory_config"));
+    if (Syntax::s.m_currentSystem==AbstractSystem::AMIGA)
+        Messages::messages.DisplayMessage(Messages::messages.AMIGA_WARNING);
 
     QImage img(":resources/images/" +system+".png");
     QPainter p;

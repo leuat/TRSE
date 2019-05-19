@@ -23,7 +23,7 @@ void SystemM68000::Assemble(QString &text, QString filename, QString currentDir)
         process.start(m_settingsIni->getString("vasmm"), params);
         process.waitForFinished();
         output = process.readAllStandardOutput();
-        qDebug() << output;
+        //qDebug() << output;
         output = process.readAllStandardError();
 
 
@@ -81,7 +81,7 @@ void SystemM68000::PostProcess(QString &text, QString file, QString currentDir)
         if (QFile::exists(newFile))
             QFile::remove(newFile);
 
-        qDebug() << file;
+//        qDebug() << file;
 
         QFile::copy(file, newFile);
     }
