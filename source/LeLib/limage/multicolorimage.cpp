@@ -158,6 +158,7 @@ bool MultiColorImage::KeyPress(QKeyEvent *e)
         if (e->key()==Qt::Key_7 ) { Data::data.currentColor = 7+add;}
         if (e->key()==Qt::Key_8 ) { Data::data.currentColor = 8+add;}
         if (e->key()==Qt::Key_9 ) { Data::data.currentColor = 9+add;}*/
+        return true;
 }
 
 void MultiColorImage::SaveBin(QFile& file)

@@ -18,8 +18,9 @@ LImageAmiga::LImageAmiga(LColorList::Type t)  : LImageQImage(t)
 void LImageAmiga::ExportBin(QFile &file)
 {
     int nobp = m_colorList.getNoBitplanes();
-    qDebug() << nobp;
-    QByteArray data[nobp];
+//    qDebug() << nobp;
+    QVector<QByteArray> data;
+    data.resize(nobp);
     for (int i=0;i<nobp;i++) {
         data[i].resize(200*40);
         data[i].fill(0);
@@ -37,7 +38,7 @@ void LImageAmiga::ExportBin(QFile &file)
             for (int i=0;i<nobp;i++) {
                 int bit = CHECK_BIT(val,i);
                 if (val!=0)
-                qDebug() << QString::number(bit) << " from : " << QString::number(val) << "," <<QString::number(i); ;
+//                qDebug() << QString::number(bit) << " from : " << QString::number(val) << "," <<QString::number(i); ;
                 data[i][idx] = data[i][idx] | (bit<<(7-curBit));
              }
             curBit++;
