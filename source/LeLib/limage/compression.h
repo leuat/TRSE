@@ -17,6 +17,7 @@ public:
     void SaveCharset(QString filename, QImage& img, int w, int h, int div);
     void AddScreen(QByteArray& data, QImage& img, int w, int h, char base, int div, char add1, char add2);
     void AddToDataX(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h);
+    void AddBitplaneToData(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h, int bpl);
 
     int CompareSprites(QByteArray& d1,QByteArray& d2, int sprite1, int sprite2);
 

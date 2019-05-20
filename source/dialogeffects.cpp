@@ -427,6 +427,14 @@ static int AddToData(lua_State* L) {
     return 0;
 }
 
+static int AddBitplaneToData(lua_State* L) {
+
+    if (m_effect!=nullptr)
+       m_compression.AddBitplaneToData(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tonumber(L,5));
+
+    return 0;
+}
+
 
 static int CompressCharset(lua_State* L) {
     // 0, 40, 13, 25
@@ -566,6 +574,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "SaveCompressedSpriteData", SaveCompressedSpriteData);
     lua_register(m_script->L, "SaveRawData", SaveData);
     lua_register(m_script->L, "AddC64LineToData", AddToData);
+    lua_register(m_script->L, "AddAmigaBitplaneToData", AddBitplaneToData);
     lua_register(m_script->L, "Save2DInfo", Save2DInfo);
     lua_register(m_script->L, "SaveMulticolorImage", SaveMulticolorImage);
 

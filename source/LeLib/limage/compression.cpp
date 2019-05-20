@@ -56,6 +56,29 @@ void Compression::AddToDataX(QByteArray &data, MultiColorImage& img, int xp, int
 
 }
 
+void Compression::AddBitplaneToData(QByteArray &data, MultiColorImage &img, int xp, int yp, int w, int h, int bpl)
+{
+    QByteArray d;
+    d.resize(w*h*bpl);
+    for (int y=0;y<h;y+=1)
+        for (int bp=1; bp<bpl;bp++) {
+            int curBit = pow(2,bp-1);
+        for (int x=0;x<w;x+=1) {
+            int xx = xp+x;
+            int yy = yp+y;
+            for (int i=0;i<8;i++) {
+                int col = img.getPixel(xx*8+i,yy);
+                if (col & )
+                //0101
+            }
+            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+            data.append(PixelChar::reverse(pc.p[yy&7]));
+        }
+     }
+
+
+}
+
 int Compression::CompareSprites(QByteArray &d1, QByteArray& d2, int sprite1, int sprite2)
 {
     int l=0;
