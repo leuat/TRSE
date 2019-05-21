@@ -68,7 +68,7 @@ void Compression::AddBitplaneToData(QByteArray &data, MultiColorImage &img, int 
             int yy = yp+y;
             for (int i=0;i<8;i++) {
                 int col = img.getPixel(xx*8+i,yy);
-                if (col & )
+//                if (col )
                 //0101
             }
             PixelChar& pc = img.m_data[40*(yy/8)+xx];
