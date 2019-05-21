@@ -864,7 +864,8 @@ void FormImageEditor::updateSingleCharSet()
     int i = charmap->m_currencChar/(int)40;
     int j = charmap->m_currencChar%40;
     QTableWidgetItem *itm = ui->lstCharMap->item(i,j);
-    itm->setIcon(pmap);
+    if (itm!=nullptr)
+        itm->setIcon(pmap);
 
 
 }

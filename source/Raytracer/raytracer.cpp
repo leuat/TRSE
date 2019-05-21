@@ -428,10 +428,10 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx)
             for (QPoint op:reduced)
                 if (op==p)
                     ok=false;
-            /*for (QPoint op:total)
+            for (QPoint op:total)
                 if (op==p)
                     ok=false;
-*/
+
             if (ok) {
                 reduced.append(p);
 
