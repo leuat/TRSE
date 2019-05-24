@@ -405,7 +405,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
     return false;
 }
 
-void RayTracer::Compile2DList(QString fileOutput, int base, int maxx)
+void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QPoint>& killList)
 {
     QByteArray data;
     data.append(m_objects.count());
@@ -418,28 +418,42 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx)
 
         // Combine all 2D points from instances
         QVector<QPoint> all;
+        QVector<QPoint> perhapsKill;
         for (int i=0;i<32;i++)
             all.append(aro->m_2Dpoints[i]);
 
         for (QPoint p: all) {
+            QPoint org = p;
             p.setX(p.x()/4);
             p.setY(p.y()/8);
             bool ok=true;
+            bool kill = true;
             for (QPoint op:reduced)
-                if (op==p)
+                if (op==p) {
                     ok=false;
-            for (QPoint op:total)
-                if (op==p)
-                    ok=false;
+                    kill = false;
+                }
 
-            if (ok) {
+/*            for (QPoint op:total)
+                if (op==p) {
+                    ok=false;
+                    kill = false;
+                }
+*/
+            if (ok && reduced.count()<maxx) {
                 reduced.append(p);
-
+    //            perhapsKill.append(org);
+//                total.append(p);
             }
+            else if (kill) perhapsKill.append(org);
         }
-  //      total.append(reduced);
+
 //        if (reduced.count()>)
-        if (reduced.count()>=maxx) reduced.resize(maxx);
+  //      if (reduced.count()>maxx) reduced.resize(maxx);
+        // Kill avereything above
+//        perhapsKill.remove(0,std::min(maxx,perhapsKill.count()));
+        killList.append(perhapsKill);
+        total.append(reduced);
         char cnt = reduced.count();
         data.append(cnt);
         QVector<int> positions;

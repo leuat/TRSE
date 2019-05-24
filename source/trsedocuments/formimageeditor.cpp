@@ -33,14 +33,12 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
     ui(new Ui::Formimageeditor)
 {
     ui->setupUi(this);
-
     m_toolBox.Initialize(ui->lyToolbox_3);;
 
     UpdatePalette();
     m_grid.Initialize(320,200);
     m_fileExtension = "flf";
     Data::data.currentColor=1;
-
     m_grid.ApplyToLabel(ui->lblGrid);
     updateCharSet();
     ui->lblGrid->setVisible(ui->chkGrid->isChecked());
@@ -251,6 +249,8 @@ void FormImageEditor::UpdateImage()
 //    return;
 //    m_updateThread.m_
    // m_updateThread.m_pixMapImage.fill(QColor(0,255,0));
+
+
     ui->lblImage->setVisible(true);
     ui->lblImage->setScaledContents(true);
     //    ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(320, 320, Qt::IgnoreAspectRatio, Qt::FastTransformation));

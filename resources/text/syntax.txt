@@ -39,7 +39,7 @@ m; Poke32; Amiga ; a,i,l
 m; WaitVerticalBlank; Amiga;
 m; SetCopperList32; Amiga; a, a
 m; ApplyCopperList; Amiga;
-m; memcpy; Amiga; a, a, l
+m; memcpy; Amiga; a, l,a,l, l
 m; setpalette; Amiga; a, a, l
 m; ablit; Amiga; a,a,i, i,i,i,i,l,i
 m; InitCustomCopperList; Amiga;

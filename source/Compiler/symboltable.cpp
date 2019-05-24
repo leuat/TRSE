@@ -54,7 +54,7 @@ void SymbolTable::Initialize()
   //  m_constants.clear();
 
     QString currentSystem = AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem).toLower();
-    qDebug() << currentSystem;
+//    qDebug() << currentSystem;
     for (QString s: Syntax::s.m_syntaxData.split('\n')) {
         s= s.simplified();
         if (s.count()==0) continue;

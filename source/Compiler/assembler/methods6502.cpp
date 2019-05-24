@@ -3348,9 +3348,7 @@ void Methods6502::RasterIRQWedge(Assembler *as)
 
 void Methods6502::ClearScreen(Assembler *as)
 {
-    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
-    if (num==nullptr)
-        ErrorHandler::e.Error("ClearScreen: second parameter must be constant number", m_node->m_op.m_lineNumber);
+    int val = m_node->m_params[1]->numValue();
 
     AddMemoryBlock(as,1);
 
@@ -3359,7 +3357,7 @@ void Methods6502::ClearScreen(Assembler *as)
 
         QString lbl = as->NewLabel("clearloop");
         //  QString lbl2 = as->NewLabel("clearloop2");
-        QString shift = "$" + QString::number((int)num->m_val, 16);
+        QString shift = Util::numToHex(val);
         as->Comment("Clear screen with offset");
         LoadVar(as, 0);
         as->Asm("ldx #$00");
@@ -3387,8 +3385,8 @@ void Methods6502::ClearScreen(Assembler *as)
 
         QString lblOuter = as->NewLabel("clearloopouter");
         QString lblInner = as->NewLabel("clearloopinner");
-        QString valH = "$" + QString::number((int)num->m_val>>8, 16);
-        QString valL = "$" + QString::number((int)num->m_val&0xFF, 16);
+        QString valH = "$" + QString::number((int)val>>8, 16);
+        QString valL = "$" + QString::number((int)val&0xFF, 16);
 
 /*        as->Asm("lda #" + valH);
         as->Asm("sta " + as->m_internalZP[0]);

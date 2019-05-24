@@ -49,7 +49,7 @@ void Toolbox::Initialize(QGridLayout* ly)
 
 void Toolbox::BuildGUI(QGridLayout *ly)
 {
-    int size = 50;
+    int size = 40;
     int row=0;
     int col=0;
     for (int i=0;i<m_items.count();i++) {
@@ -60,8 +60,8 @@ void Toolbox::BuildGUI(QGridLayout *ly)
         p.setColor(QPalette::Window, m_list[j].color);*/
 //        b->setStyleSheet("background-color: rgb("+txtCol + "); color: rgb(0, 0, 0)");
   //      b->setPalette(p);
-        b->setMaximumWidth(40);
-        b->setMinimumWidth(40);
+        b->setMaximumWidth(20);
+        b->setMinimumWidth(20);
         b->setAutoFillBackground( true );
         b->setText(m_items[i]->m_name);
         b->setFixedSize(QSize(size, size));
@@ -74,7 +74,7 @@ void Toolbox::BuildGUI(QGridLayout *ly)
 
         m_buttons.append(b);
         col++;
-        if (col==1) {
+        if (col==2) {
             col=0;
             row++;
         }

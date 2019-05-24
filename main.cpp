@@ -33,7 +33,6 @@ void ConvertPerlin(QString input, QString out, float div) {
     int xh = img.height()/div;
     a.resize(xw*xh);
 
-    qDebug() << xw;
 //    qDebug() << "Converting file: " << xw;
 
     for (int x=0;x<xw;x++)

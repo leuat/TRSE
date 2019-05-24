@@ -195,6 +195,7 @@ public:
 
   //  void ExportAsm(QString filename) override;
     void ExportBin(QFile& file) override;
+    void ForceExportBin(QFile& file);
     void ImportBin(QFile& file) override;
 
     void SetCharSize(int x, int y);

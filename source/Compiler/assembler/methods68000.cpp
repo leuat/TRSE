@@ -166,9 +166,16 @@ void Methods68000::Memcpy(Assembler *as)
     QString d0 = as->m_regAcc.Get();
     QString lbl = as->NewLabel("memcpy");
 
-    LoadVariable(as, "move.l",m_node->m_params[2], d0);
+    LoadVariable(as, "move.l",m_node->m_params[4], d0);
     LoadVariable(as, "lea", m_node->m_params[0], a0);
-    LoadVariable(as, "lea",m_node->m_params[1], a1);
+    m_node->m_params[1]->Accept(m_dispatcher);
+    Asm(as,"add.w",as->m_varStack.pop(), a0);
+
+
+    LoadVariable(as, "lea",m_node->m_params[2], a1);
+    m_node->m_params[3]->Accept(m_dispatcher);
+    Asm(as,"add.w",as->m_varStack.pop(), a1);
+
     as->Label(lbl);
     as->Asm("move.w ("+a0+")+,("+a1+")+");
     as->Asm("dbf "+d0+","+lbl);

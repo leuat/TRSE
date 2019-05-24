@@ -467,7 +467,16 @@ static int Save2DInfo(lua_State* L) {
     QString file = m_currentDir+"/"+ lua_tostring(L,1);
     int base = lua_tonumber(L,2);
     int maxx = lua_tonumber(L,3);
-    m_rt.Compile2DList(file,base,maxx);
+    QVector<QPoint> killList;
+    m_rt.Compile2DList(file,base,maxx, killList);
+
+   // MultiColorImage mc(m_effect->m_mc->m_colorList.m_type);
+  //  mc.m_data[0].C = m_charData;
+   // m_effect->m_mc
+    int bg = m_effect->m_mc->m_extraCols[0];
+    for (QPoint k: killList)
+        m_effect->m_mc->setPixel(k.x(),k.y(),bg);
+
     return 0;
 }
 
@@ -495,11 +504,19 @@ static int SaveMulticolorImage(lua_State* L) {
     if (QFile::exists(fname))
         QFile::remove(fname);
     QFile f(fname);
+//    f.open(QFile::WriteOnly);
+//    exit(1);
     m_effect->m_mc->setMultiColor(false);
-    m_effect->m_mc->ExportBin(f);
+    m_effect->m_mc->m_exportParams["StartX"]=0;
+    m_effect->m_mc->m_exportParams["StartY"]=0;
+    m_effect->m_mc->m_exportParams["EndX"]=40;
+    m_effect->m_mc->m_exportParams["EndY"]=25;
+
+    dynamic_cast<MultiColorImage*>(m_effect->m_mc)->ForceExportBin(f);
 //    f.open()
   //  m_effect->m_mc->SaveBin(f);
     m_charData.clear();
+  //  f.close();
     return 0;
 }
 

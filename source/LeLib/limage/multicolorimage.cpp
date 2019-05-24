@@ -94,6 +94,10 @@ void MultiColorImage::setPixel(int x, int y, unsigned int color)
 
 }
 
+
+
+
+
 unsigned int MultiColorImage::getPixel(int x, int y)
 {
 
@@ -454,6 +458,9 @@ void MultiColorImage::ForceColorFlattening()
 
 }
 */
+
+
+
 void MultiColorImage::ExportBin(QFile& ofile)
 {
 
@@ -471,11 +478,11 @@ void MultiColorImage::ExportBin(QFile& ofile)
         QFile::remove(fColor);
 
     QByteArray data;
-
     int sx = static_cast<int>(m_exportParams["StartX"]);
     int ex = static_cast<int>(m_exportParams["EndX"]);
     int sy = static_cast<int>(m_exportParams["StartY"]);
     int ey = static_cast<int>(m_exportParams["EndY"]);
+
 
     for (int j=sy;j<ey;j++)
         for (int i=sx;i<ex;i++)
@@ -531,6 +538,11 @@ void MultiColorImage::ExportBin(QFile& ofile)
     ofile.close();
     QFile::remove(ofile.fileName());
 
+}
+
+void MultiColorImage::ForceExportBin(QFile &file)
+{
+    MultiColorImage::ExportBin(file);
 }
 
 void MultiColorImage::ImportBin(QFile &file)

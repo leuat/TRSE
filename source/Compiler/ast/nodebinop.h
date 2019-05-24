@@ -59,6 +59,7 @@ public:
        m_right->forceWord();
     }
 
+
     QString getValue() override {
         if (isAddress()) return HexValue();
         return "#" + HexValue();
