@@ -25,12 +25,26 @@ ADKCONR		EQU		$dff010
 INTENAR		EQU		$dff01c
 INTREQR		EQU		$dff01e
 
+
+CIAAPRA2         EQU             $001
+VPOSR2           EQU             $004
+COP1LCH2         EQU             $080
+DMACONR2		EQU		$002
+ADKCONR2		EQU		$010
+INTENAR2		EQU		$01c
+INTREQR2		EQU		$01e
+
+
 DMACON		EQU		$dff096
 ADKCON		EQU		$dff09e
 INTENA		EQU		$dff09a
 INTREQ		EQU		$dff09c
 
 
+DMACON2		EQU		$096
+ADKCON2		EQU		$09e
+INTENA2		EQU		$09a
+INTREQ2		EQU		$09c
 
 
 

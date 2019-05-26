@@ -27,6 +27,8 @@ public:
     void LoadVariable(Assembler* as, QString cmd, Node* n, QString d0);
     void LoadAddress(Assembler* as, Node* n, QString d0);
 
+    void DrawLine(Assembler*as);
+    void Fill(Assembler*as);
     void Poke(Assembler* as, QString bb);
     void SetCopperList32(Assembler* as);
     void Memcpy(Assembler *as);

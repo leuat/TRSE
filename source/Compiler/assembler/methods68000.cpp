@@ -36,6 +36,17 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("poke32"))
         Poke(as,".l");
 
+    if (Command("InitPoly"))
+        as->IncludeFile(":resources/code/amiga/poly.s");
+    if (Command("InitLine"))
+        as->IncludeFile(":resources/code/amiga/intline.s");
+
+    if (Command("DrawLine"))
+        DrawLine(as);
+
+    if (Command("Fill"))
+        Fill(as);
+
     if (Command("return"))
         as->Asm("rts");
 
@@ -93,6 +104,55 @@ void Methods68000::LoadVariable(Assembler* as, QString cmd, Node* n, QString d0)
 void Methods68000::LoadAddress(Assembler *as, Node *n, QString d0)
 {
     Asm(as,"lea",n->getLiteral(),d0);
+}
+
+void Methods68000::DrawLine(Assembler *as)
+{
+/*    ; d0=X1  d1=Y1  d2=X2  d3=Y2  d5=Screenwidth  a0=address a6=$dff000
+    move.w dx1,d0
+    move.w dx2,d1
+    move.w dy1,d2
+    move.w dy2,d3
+    move.l #40,d5
+    lea screenb1,a0
+    lea	$dff000,a6
+
+    jsr drawLine
+  */
+    as->Comment("DrawLine method");
+    m_node->m_params[0]->Accept(m_dispatcher);
+    Asm(as,"move.w",as->m_varStack.pop(),"d0");
+    m_node->m_params[1]->Accept(m_dispatcher);
+    Asm(as,"move.w",as->m_varStack.pop(),"d2");
+    m_node->m_params[2]->Accept(m_dispatcher);
+    Asm(as,"move.w",as->m_varStack.pop(),"d1");
+    m_node->m_params[3]->Accept(m_dispatcher);
+    Asm(as,"move.w",as->m_varStack.pop(),"d3");
+    m_node->m_params[5]->Accept(m_dispatcher);
+    Asm(as,"move.w",as->m_varStack.pop(),"d5");
+    m_node->m_params[4]->Accept(m_dispatcher);
+    Asm(as,"lea",as->m_varStack.pop(),"a0");
+    as->Asm("lea	$dff000,a6");
+    as->Asm("jsr drawLine");
+
+
+}
+
+void Methods68000::Fill(Assembler *as)
+{
+    as->Comment("Fill method");
+    m_node->m_params[2]->Accept(m_dispatcher);
+    Asm(as,"move.l",as->m_varStack.pop(),"d0");
+    m_node->m_params[1]->Accept(m_dispatcher);
+    Asm(as,"move.l",as->m_varStack.pop(),"d2");
+    m_node->m_params[0]->Accept(m_dispatcher);
+    Asm(as,"lea",as->m_varStack.pop(),"a0");
+    QString lbl = as->NewLabel("fill");
+    as->Label(lbl);
+    as->Asm("move.l d2,(a0)+");
+    as->Asm("dbf d0,"+lbl);
+
+    as->PopLabel("fill");
 }
 
 void Methods68000::Poke(Assembler *as, QString bb)

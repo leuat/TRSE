@@ -138,5 +138,7 @@
         <file>resources/code/amiga/end.s</file>
         <file>resources/code/amiga/init.s</file>
         <file>resources/images/Amiga.png</file>
+        <file>resources/code/amiga/poly.s</file>
+        <file>resources/code/amiga/intline.s</file>
     </qresource>
 </RCC>

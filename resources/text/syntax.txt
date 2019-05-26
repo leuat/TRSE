@@ -46,7 +46,10 @@ m; InitCustomCopperList; Amiga;
 m; EndCustomCopperList; Amiga;
 m; AddCopperCommand; Amiga; i,i
 m; SkipCopperCommands; Amiga; i
-
+m; InitPoly; Amiga;
+m; InitLine; Amiga;
+m; DrawLine; Amiga; i,i,i,i, l, i
+m; Fill; Amiga ; a, l, l
 
 #Memory routines
 

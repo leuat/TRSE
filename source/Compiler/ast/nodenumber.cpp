@@ -56,7 +56,11 @@ bool NodeNumber::isWord(Assembler *as) {
 }
 */
 QString NodeNumber::HexValue() {
+    if (m_val>0)
     return "$" + QString::number((int)m_val,16);
+    else
+        return "-$" + QString::number((int)abs(m_val),16);
+
 }
 
 bool NodeNumber::DataEquals(Node *other) {
