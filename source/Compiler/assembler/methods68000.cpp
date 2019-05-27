@@ -91,8 +91,8 @@ bool Methods68000::Command(QString name)
 
 void Methods68000::LoadVariable(Assembler* as, QString cmd, Node* n, QString d0)
 {
-    if (n->getValue()!="") {
-        Asm(as,cmd,n->getValue(),d0);
+    if (n->getValue(as)!="") {
+        Asm(as,cmd,n->getValue(as),d0);
     }
     else {
         n->Accept(m_dispatcher);
@@ -123,9 +123,9 @@ void Methods68000::DrawLine(Assembler *as)
     m_node->m_params[0]->Accept(m_dispatcher);
     Asm(as,"move.w",as->m_varStack.pop(),"d0");
     m_node->m_params[1]->Accept(m_dispatcher);
-    Asm(as,"move.w",as->m_varStack.pop(),"d2");
-    m_node->m_params[2]->Accept(m_dispatcher);
     Asm(as,"move.w",as->m_varStack.pop(),"d1");
+    m_node->m_params[2]->Accept(m_dispatcher);
+    Asm(as,"move.w",as->m_varStack.pop(),"d2");
     m_node->m_params[3]->Accept(m_dispatcher);
     Asm(as,"move.w",as->m_varStack.pop(),"d3");
     m_node->m_params[5]->Accept(m_dispatcher);

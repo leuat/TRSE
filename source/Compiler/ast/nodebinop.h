@@ -60,7 +60,7 @@ public:
     }
 
 
-    QString getValue() override {
+    QString getValue(Assembler* as)  override {
         if (isAddress()) return HexValue();
         return "#" + HexValue();
     }

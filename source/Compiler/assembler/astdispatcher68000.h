@@ -55,6 +55,7 @@ public:
 
     void StoreVariable(NodeVar* n);
     void LoadVariable(NodeVar* n);
+    void LoadPointer(Node* n);
     void LoadVariable(Node* n);
     void LoadVariable(NodeNumber* n);
 
@@ -72,6 +73,8 @@ public:
     void BuildSimple(Node *node, QString lblFailed);
 
     void BuildToCmp(Node *node);
+
+    void DeclarePointer(NodeVarDecl *node);
 
 
 };

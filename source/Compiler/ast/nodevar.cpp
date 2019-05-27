@@ -40,9 +40,17 @@ NodeVar::NodeVar(Token t, Node *expr) : Node() {
 TokenType::Type NodeVar::getType(Assembler *as) {
     if (m_forceType!=TokenType::NADA)
         return m_forceType;
+
     if (as->m_symTab->Lookup(value, m_op.m_lineNumber)!=nullptr)
         return as->m_symTab->Lookup(value, m_op.m_lineNumber)->getTokenType();
+
     return m_op.m_type;
+}
+
+bool NodeVar::IsPointer(Assembler *as)
+{
+    return as->m_symTab->Lookup(value, m_op.m_lineNumber)->getTokenType()==TokenType::POINTER;
+
 }
 
 bool NodeVar::DataEquals(Node *other) {
@@ -69,9 +77,15 @@ bool NodeVar::isByte(Assembler *as) {
     return getType(as)==TokenType::BYTE  && m_expr==nullptr;
 }
 
+QString NodeVar::getValue(Assembler* as) {
+//    qDebug() << "NodeVar:: getValue : " << value << "  "  <<m_op.getType();
+    if (m_forceAddress && !(getType(as)==TokenType::POINTER)) return "#" + value;
+    return value;
+}
+
 bool NodeVar::isAddress() {
-  //  return m_op.m_type==TokenType::ADDRESS;
-   return true;
+    //  return m_op.m_type==TokenType::ADDRESS;
+    return true;
 }
 
 

@@ -45,6 +45,7 @@ public:
 
     TokenType::Type getType(Assembler* as) override;
 
+    bool IsPointer(Assembler* as);
 
     bool DataEquals(Node *other) override;
     bool isWord(Assembler* as) override;
@@ -64,8 +65,11 @@ public:
 
     bool isArrayIndex() override { return m_expr!=nullptr; }
 
-    QString getValue() override { return value;}
-    QString getLiteral() override {return value;}
+    QString getValue(Assembler* as) override;
+    QString getLiteral() override {
+        if (m_forceAddress) return "#" + value;
+        return value;
+    }
 
     bool isAddress() override;
 

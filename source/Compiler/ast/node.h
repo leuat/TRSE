@@ -46,7 +46,7 @@ public:
     int m_lineNumber;
     uint level = 0;
     bool m_isUsed = false;
-
+    bool m_forceAddress = false;
 
 
 
@@ -77,6 +77,13 @@ public:
     virtual QString HexValue() {return "0";}
     virtual int numValue() { return 0;}
     virtual void Delete();
+    virtual void ForceAddress() {
+        m_forceAddress = true;
+        if (m_left!=nullptr)
+            m_left->ForceAddress();
+        if (m_right!=nullptr)
+            m_right->ForceAddress();
+    }
 
     virtual QString getAddress() {return "";}
     virtual int getInteger() {
@@ -103,7 +110,7 @@ public:
     virtual bool isAddress() { return false;}
     virtual void AssignPointer(Assembler* as, QString memoryLocation) {}
 
-    virtual QString getValue() {return "";}
+    virtual QString getValue(Assembler* as) {return "";}
 
     void RequireAddress(Node* n,QString name, int ln);
 
