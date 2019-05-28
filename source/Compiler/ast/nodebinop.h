@@ -65,6 +65,17 @@ public:
         return "#" + HexValue();
     }
 
+    TokenType::Type getType(Assembler *as) override {
+        TokenType::Type a =m_right->getType(as);
+        TokenType::Type b =m_left->getType(as);
+        if (a==TokenType::LONG || b==TokenType::LONG)
+            return TokenType::LONG;
+        if (a==TokenType::INTEGER || b==TokenType::INTEGER)
+            return TokenType::INTEGER;
+        return TokenType::BYTE;
+
+    }
+
     bool isPure() override {
         return false;
     }

@@ -30,6 +30,7 @@ public:
     QString m_lastSize;
 
     void dispatch(NodeBinOP *node);
+    void dispatchOld(NodeBinOP *node);
     void dispatch(NodeNumber *node);
     void dispatch(NodeAsm *node);
     void dispatch(NodeString *node);
