@@ -71,7 +71,8 @@ void ASTDispather68000::dispatch(NodeBinOP *node)
             d0=d1;
 
         }
-
+        if (m_clearFlag)
+            TransformVariable(as,"moveq",d0,"#0");
 
         as->m_regAcc.m_latest = d0;
     }
@@ -585,6 +586,8 @@ void ASTDispather68000::dispatch(NodeBuiltinMethod *node)
 
 }
 
+
+
 void ASTDispather68000::StoreVariable(NodeVar *n)
 {
         as->Comment("StoreVar : " +QString::number(n->m_expr==nullptr));
@@ -593,7 +596,7 @@ void ASTDispather68000::StoreVariable(NodeVar *n)
       //      exit(1);
             bool done = false;
             if (as->m_regAcc.m_latest.count()==2) {
-                TransformVariable(as,"move.w",as->m_regAcc.m_latest,"#0");
+                TransformVariable(as,"moveq.l",as->m_regAcc.m_latest,"#0");
                 done = true;
             }
             as->m_regAcc.m_latest="";
@@ -602,7 +605,7 @@ void ASTDispather68000::StoreVariable(NodeVar *n)
             QString a0 = as->m_regMem.Get();
 
             if (!done && d0.toLower().startsWith("d") )
-                TransformVariable(as,"move.w",d0,"#0");
+                TransformVariable(as,"moveq.l",d0,"#0");
 
             //qDebug() << "Loading array: expression";
             LoadVariable(n->m_expr);
@@ -613,6 +616,7 @@ void ASTDispather68000::StoreVariable(NodeVar *n)
                 TransformVariable(as,"move.l",a0,n->getValue(as));
             else
                 TransformVariable(as,"lea",a0,n->getValue(as));
+
             TransformVariable(as,"move"+getEndType(as,n),"("+a0+","+d1+")",d0);
             //qDebug() << "Cleaning up loadvar: " <<d1;
     //        as->m_varStack.push(d0);
@@ -650,15 +654,15 @@ void ASTDispather68000::LoadVariable(NodeVar *n)
         bool done = false;
         if (as->m_regAcc.m_latest.count()==2) {
             as->Comment("Trying to clear: " + as->m_regAcc.m_latest + " YO");
-            TransformVariable(as,"move.l",as->m_regAcc.m_latest,"#0");
+//            TransformVariable(as,"move.l",as->m_regAcc.m_latest,"#0");
             done = true;
         }
         QString d0 = as->m_regAcc.Get();
         QString a0 = as->m_regMem.Get();
         if (!done ) {
             as->Comment("Clearing : " + d0 + " YO");
-
-            TransformVariable(as,"move.l",d0,"#0");
+            m_clearFlag=true;
+           // TransformVariable(as,"move.l",d0,"#0");
         }
         //qDebug() << "Loading array: expression";
         m_clearFlag=true;

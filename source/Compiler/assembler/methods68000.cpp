@@ -22,10 +22,13 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
   */
     if (Command("initcustomcopperlist"))
         as->Asm("lea copper_custom,a5");
+
     if (Command("endcustomcopperlist"))
         as->Asm("move.l #$fffffffe,(a5)+");
+
     if (Command("addcoppercommand"))
         AddCopperCommand(as);
+
     if (Command("skipcoppercommands"))
         SkipCopperCommands(as);
 
@@ -312,7 +315,7 @@ void Methods68000::ABlit(Assembler *as)
 
     LoadAddress(as,m_node->m_params[0], "a0"); // src
     LoadAddress(as,m_node->m_params[1], "a1"); // dst
-    as->Asm("move.l #0,d6");
+    as->Asm("moveq.l #0,d6");
     LoadVariable(as,"move.w",m_node->m_params[2], "d6"); // Offset
     LoadVariable(as,"move.w",m_node->m_params[3], "d1"); // dst x
     LoadVariable(as,"move.w",m_node->m_params[4], "d2"); // dst y

@@ -47,7 +47,7 @@ begin
 	 	// First color of palette (start ) = background, next is +2, +4 etc
 		AddCopperCommand(COPPER_PALETTE_START, y); 
 	 		 	
-	 		 		 		 	
+
   		k:=sin64[j&63]/4;
   		m:=sin64[(j+32)&63]/4;
   		k:=k+m*16;
