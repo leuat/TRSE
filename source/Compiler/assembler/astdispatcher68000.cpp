@@ -12,6 +12,9 @@ void ASTDispather68000::dispatch(NodeBinOP *node)
 
     if (node->isPureNumeric()) {
         //qDebug() << "IS PURE NUMERIC BinOp";
+        as->Comment("NodeBinop : both are pure numeric optimization : "+node->getValue(as));
+        as->m_varStack.push(node->getValue(as));
+        return;
         int val = node->BothPureNumbersBinOp(as);
         QString s = "";
         if (node->m_left->isAddress() || node->m_right->isAddress())
