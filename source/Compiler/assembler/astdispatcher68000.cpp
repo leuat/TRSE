@@ -9,18 +9,6 @@ ASTDispather68000::ASTDispather68000()
 void ASTDispather68000::dispatch(NodeBinOP *node)
 {
     node->DispatchConstructor();
-    // First check if both are consants:
-
-    // First, flip such that anything numeric / pure var is to the right
-/*    if (node->m_op.m_type == TokenType::MUL || node->m_op.m_type == TokenType::PLUS)
-    if (!(node->m_right->isPureNumeric() || node->m_right->isPureVariable())) {
-        if (node->m_left->isPureNumeric() || node->m_left->isPureVariable()) {
-            Node* tmp = node->m_right;
-            node->m_right = node->m_left;
-            node->m_left = tmp;
-        }
-    }
-*/
 
     if (node->isPureNumeric()) {
         //qDebug() << "IS PURE NUMERIC BinOp";
@@ -29,6 +17,7 @@ void ASTDispather68000::dispatch(NodeBinOP *node)
         if (node->m_left->isAddress() || node->m_right->isAddress())
             s = "";
         //qDebug() << "A0";
+        as->Comment("NodeBinop : both are pure numeric optimization");
         QString d0 = as->m_regAcc.Get();
         //qDebug() << "A05";
         as->Asm("move "+s+node->getValue(as) +","+d0);
@@ -46,26 +35,23 @@ void ASTDispather68000::dispatch(NodeBinOP *node)
     QString op = as->m_varStack.pop();
 
 
-/*    Node* tmp = node->m_left;
-    node->m_left = node->m_right;
-    node->m_right = tmp;
-*/
-
-    /*
-      // WORKS
+/*
     QString d0 = as->m_regAcc.Get();
-    as->m_varStack.push(d0);
+  //      as->m_varStack.push(d0);
+        node->m_right->Accept(this);
+        QString right = as->m_varStack.pop();
+        node->m_left->Accept(this);
+        if (op.toLower().contains("mul") || op.toLower().contains("div"))
+            op = op+".w"; else op=op +m_lastSize;//+".l";
 
-    node->m_right->Accept(this);
-    QString right = as->m_varStack.pop();
-    node->m_left->Accept(this);
+        TransformVariable(as,"move"+getEndType(as,node->m_left),d0,as->m_varStack.pop());
+        TransformVariable(as,op,d0,right);
+        as->m_varStack.push(d0);
+    as->m_regAcc.Pop(d0);
 
-    TransformVariable(as,"move.l",d0,as->m_varStack.pop());
-    TransformVariable(as,op+".l",d0,right);
 */
 
-
-//    qDebug() << "Start BINOP";
+    as->Comment(" ** StartFree registers: " +QString::number(as->m_regAcc.m_free.count()));
     QString d0 = "";
     bool start = false;
     if (node->m_left->isPureNumeric() || node->m_left->isPureVariable())
@@ -75,13 +61,21 @@ void ASTDispather68000::dispatch(NodeBinOP *node)
     if (start) {
         QString l = as->m_regAcc.m_latest;
         d0 = as->m_regAcc.Get();
-//        as->Comment("NEW register: " + d0);
+        as->Comment("BOP NEW register: " + d0);
+        if (d0==l) {
+            QString d1 = as->m_regAcc.Get();
+            as->m_regAcc.Pop(d0);
+            d0=d1;
+
+        }
+
+
         as->m_regAcc.m_latest = d0;
     }
     else {
         node->m_left->Accept(this);
         d0 = as->m_regAcc.m_latest;
-  //      as->Comment("Peeklatest : " + d0);
+        as->Comment("BOP Peeklatest : " + d0);
 
     }
 
@@ -89,28 +83,86 @@ void ASTDispather68000::dispatch(NodeBinOP *node)
 //        NodeVar nv =
         node->m_left->Accept(this);
   //      LoadVariable(node->m_left);
-    //    as->Comment("Start : " + d0);
+        as->Comment("BOP Start : " + d0);
 
         TransformVariable(as,"move",d0,as->m_varStack.pop(),node->m_left);
     }
 
+
     node->m_right->Accept(this);
     QString right = as->m_varStack.pop();
+
+
 
     if (op.toLower().contains("mul") || op.toLower().contains("div"))
         op = op+".w"; else op=op +m_lastSize;//+".l";
 
-//    as->Comment("d0 used:" +d0);
+    as->Comment("d0 used:" +d0);
 
     TransformVariable(as,op,d0,right);
+
 //    as->Comment("operation done  :  "+op+" : "  + d0 + "  varstack : " + as->m_varStack.current() + "   cnt: " +QString::number(as->m_varStack.m_vars.count()));
   //  as->Comment("operation done  :  "+op+" : "  + d0 + "  regstack : " + as->m_regAcc.m_latest + "   cnt: " +QString::number(as->m_regAcc.m_free.count()));
  //   if (as->m_varStack.m_vars.count()==1) // EOL {
    //     as->m_varStack.m_vars[0] = d0; // Replace with current for assignment
- //   as->Comment("POP register: " + d0);
-    as->m_regAcc.Pop(d0);
+    //if (!start)
+//    if (node->m_left->isPure() && node->m_right->isPure())
+//    as->m_regAcc.Pop(d0);
+
     as->m_varStack.push(d0);
     as->m_regAcc.m_latest =d0;
+    /*as->Comment("Testing: is pure left right " + QString::number(node->m_left->isPure()) + ", " + QString::number(node->m_right->isPure()));
+    if ((!node->m_left->isPure() || !node->m_right->isPure())) {
+        as->Comment("POP register: " + d0);
+        as->Comment("Test POP register: " + right);
+        if (right.startsWith("d")) {
+            as->Comment("POP register: " + right);
+            as->m_regAcc.Pop(right);
+        }
+    }*/
+    as->m_regAcc.Pop(d0);
+    as->Comment(" ** Free registers: " +QString::number(as->m_regAcc.m_free.count()));
+//        if (as)
+//    }
+
+//     a*b;
+
+
+/*    node->m_right->Accept(this);
+    QString d0 = as->m_regAcc.Get();
+    if (op.toLower().contains("mul") || op.toLower().contains("div"))
+        op = op+".w"; else op=op +getEndType(as,node->m_left, node->m_right);//+".l";
+    QString right = as->m_varStack.pop();
+    node->m_left->Accept(this);
+    if (node->m_left->isPure() && node->m_right->isPure()) {
+        as->Comment("Both are PURE!");
+        TransformVariable(as,"move"+getEndType(as,node->m_left,node->m_right),d0,as->m_varStack.pop());
+        TransformVariable(as,op,d0,right);
+    }
+    else
+    if (!(node->m_left->isPure() || node->m_right->isPure()))
+    {
+        as->Comment("None are PURE!");
+        TransformVariable(as,op,d0,as->m_varStack.pop());
+    }
+    else {
+        as->Comment("One is NOT pure!");
+        QString d1 = as->m_regAcc.Get();
+        TransformVariable(as,"move"+getEndType(as,node->m_left,node->m_right),d1,as->m_varStack.pop());
+//        if (op.contains("sub"))
+  //          TransformVariable(as,op,d0,right);
+    //    else
+            TransformVariable(as,op,d1,right);
+
+        as->m_regAcc.Pop(d1);
+
+    }
+    as->m_varStack.push(d0);
+    as->m_regAcc.Pop(d0);
+
+*/
+//    if (node->m_right->isPureNumeric() || node->m_right->isPureVariable())
+
 
 }
 
@@ -216,6 +268,8 @@ void ASTDispather68000::dispatch(NodeVarDecl *node)
         if (node->m_curMemoryBlock!=nullptr)
             ErrorHandler::e.Error("Pointers can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
         DeclarePointer(node);
+        as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
+
     }else {
         node->m_dataSize=1;
         if (t->getValue(as).toLower()=="integer") node->m_dataSize = 2;
@@ -574,8 +628,10 @@ void ASTDispather68000::StoreVariable(NodeVar *n)
             return;
         }
         QString d0 = as->m_varStack.pop();
+
         TransformVariable(as,"move"+getEndType(as,n),n->getValue(as),d0);
-  //      as->m_regAcc.Pop(d0);
+//        if (d0.startsWith("d"))
+  //          as->m_regAcc.Pop(d0);
     //    as->m_varStack.push(d0);
 
 }
@@ -590,20 +646,26 @@ void ASTDispather68000::LoadVariable(NodeVar *n)
   //      exit(1);
         bool done = false;
         if (as->m_regAcc.m_latest.count()==2) {
+            as->Comment("Trying to clear: " + as->m_regAcc.m_latest + " YO");
             TransformVariable(as,"move.l",as->m_regAcc.m_latest,"#0");
             done = true;
         }
         QString d0 = as->m_regAcc.Get();
         QString a0 = as->m_regMem.Get();
-        if (!done )
+        if (!done ) {
+            as->Comment("Clearing : " + d0 + " YO");
+
             TransformVariable(as,"move.l",d0,"#0");
+        }
         //qDebug() << "Loading array: expression";
+        m_clearFlag=true;
         LoadVariable(n->m_expr);
         QString d1 = as->m_varStack.pop();
         //qDebug() << "Popping varstack: " <<d1;
-//        as->Comment("Type : " + TokenType::getType(n->getType(as)));
-  //      as->Comment("Type : " + QString::number(n->IsPointer(as)));
-        if (n->IsPointer(as))
+        as->Comment("Type : " + TokenType::getType(n->getType(as)));
+//        as->Comment("Raw type: " + TokenType::getType(as->m_symTab->Lookup(n->value, n->m_op.m_lineNumber)->getTokenType()));
+        as->Comment("Is Pointer : " + QString::number(n->isPointer(as)));
+        if (n->isPointer(as))
             TransformVariable(as,"move.l",a0,n->getValue(as));
         else
             TransformVariable(as,"lea",a0,n->getValue(as));
@@ -623,9 +685,34 @@ void ASTDispather68000::LoadVariable(NodeVar *n)
     }
 
     QString d0 = as->m_regAcc.Get();
+    if (m_clearFlag) {
+        as->Comment("Clearing");
+        TransformVariable(as,"move.l",d0,"#0");
+
+        m_clearFlag=0;
+    }
     TransformVariable(as,"move"+getEndType(as,n),d0,n->getValue(as));
     as->m_regAcc.Pop(d0);
     as->m_varStack.push(d0);
+}
+
+void ASTDispather68000::LoadAddress(Node *n)
+{
+/*    NodeVar* v = dynamic_cast<NodeVar*>(n);
+    if (v==nullptr) {
+        n->ForceAddress();
+        LoadVariable(n);
+        return;
+    }*/
+    n->ForceAddress();
+    QString a0 = as->m_regMem.Get();
+    as->Comment("LoadAddress: move start with literal: " +n->getLiteral(as));
+    TransformVariable(as,"move.l",a0,n->getLiteral(as));
+    as->m_varStack.push(a0);
+    as->m_regMem.Pop(a0);
+
+//    QString v = n->getLiteral(as);
+
 }
 
 void ASTDispather68000::LoadPointer(Node *n)
@@ -653,6 +740,7 @@ void ASTDispather68000::LoadVariable(Node *n)
         LoadVariable((NodeNumber*)n);
     }
     else {
+        as->Comment("LoadVariable: unknown, just accepting");
         n->Accept(this);
     }
 }
@@ -708,9 +796,14 @@ QString ASTDispather68000::getEndType(Assembler *as, Node *v) {
         Symbol* s = as->m_symTab->Lookup(nv->getValue(as), v->m_op.m_lineNumber, v->isAddress());
         if (s!=nullptr) {
             t = s->m_arrayType;
-            as->Comment("IS Array");
-            if (t==TokenType::IF)
-                t = TokenType::INTEGER;
+            as->Comment("GetEndType : is array of type : " +TokenType::getType(t));
+            if (t==TokenType::IF) {
+  //              as->Comment("Lookup : is type " + TokenType::getType(s->getTokenType()));
+//                t = TokenType::LONG;  // Default pointer is INTEGER
+                if (s->getTokenType()==TokenType::STRING)
+                    t = TokenType::BYTE;
+            }
+
         }
     }
     NodeNumber* n = dynamic_cast<NodeNumber*>(v);
@@ -728,7 +821,7 @@ QString ASTDispather68000::getEndType(Assembler *as, Node *v) {
     if (t==TokenType::BYTE)
         return ".b";
 
-    as->Comment("Current tokentype : "+TokenType::getType(t));
+//    as->Comment("Current tokentype : "+TokenType::getType(t));
 
     return ".b";
 }
@@ -754,7 +847,7 @@ QString ASTDispather68000::AssignVariable(NodeAssign *node) {
     if (node->m_left->getType(as)==TokenType::LONG) {
         node->m_right->m_forceType = TokenType::LONG; // FORCE integer on right-hand side
     }
-    if (node->m_left->getType(as)==TokenType::POINTER) {
+    if (node->m_left->getType(as)==TokenType::POINTER && !node->m_left->isArrayIndex()) {
         node->m_right->m_forceType = TokenType::LONG; // FORCE integer on right-hand side
         node->m_right->ForceAddress();
     }
@@ -769,6 +862,7 @@ QString ASTDispather68000::AssignVariable(NodeAssign *node) {
 
     StoreVariable(v);
     as->Comment("regacc : " +as->m_regAcc.m_latest);
+//    as->m_regAcc.Pop(as->m_regAcc.m_latest);
     while (as->m_varStack.m_vars.count()!=0)
         as->m_varStack.pop();
 
@@ -897,5 +991,16 @@ void ASTDispather68000::DeclarePointer(NodeVarDecl *node) {
     NodeVar* v = dynamic_cast<NodeVar*>(node->m_varNode);
     as->Label(v->getValue(as) + " dc.l "+ initVal);
 
+}
+
+QString ASTDispather68000::ASTDispather68000::getEndType(Assembler *as, Node *v1, Node *v2)
+{
+    QString t1 = getEndType(as,v1);
+    QString t2 = getEndType(as,v2);
+    if (t1 ==".l" || t2==".l")
+        return ".l";
+    if (t1 ==".w" || t2==".w")
+        return ".w";
+    return ".b";
 }
 

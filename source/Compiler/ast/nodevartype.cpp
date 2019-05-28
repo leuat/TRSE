@@ -44,7 +44,7 @@ NodeVarType::NodeVarType(Token t, QString filename, QString position) : Node() {
     value = t.m_value;
     m_filename = filename;
     m_position = position;
-
+    m_arrayVarType.m_type = TokenType::BYTE;
 
 }
 

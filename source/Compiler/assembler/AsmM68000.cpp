@@ -110,10 +110,10 @@ void AsmM68000::BinOP(TokenType::Type t)
         v = "or";
 
     if (t == TokenType::MUL)
-        v = "mulu";
+        v = "muls";
 
     if (t == TokenType::DIV)
-        v = "divu";
+        v = "divs";
 
     m_varStack.push(v);
 }

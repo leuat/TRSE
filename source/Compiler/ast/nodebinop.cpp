@@ -48,6 +48,7 @@ bool NodeBinOP::isAddress() {
 
 
 
+
 bool NodeBinOP::isWord(Assembler *as) {
     return ((m_left->isWord(as) || m_right->isWord(as)) || (m_forceType==TokenType::INTEGER));
 }

@@ -103,7 +103,7 @@ void Methods68000::LoadVariable(Assembler* as, QString cmd, Node* n, QString d0)
 
 void Methods68000::LoadAddress(Assembler *as, Node *n, QString d0)
 {
-    Asm(as,"lea",n->getLiteral(),d0);
+    Asm(as,"lea",n->getLiteral(as),d0);
 }
 
 void Methods68000::DrawLine(Assembler *as)
@@ -121,17 +121,19 @@ void Methods68000::DrawLine(Assembler *as)
   */
     as->Comment("DrawLine method");
     m_node->m_params[0]->Accept(m_dispatcher);
-    Asm(as,"move.w",as->m_varStack.pop(),"d0");
+    Asm(as,"move.l",as->m_varStack.pop(),"d0");
     m_node->m_params[1]->Accept(m_dispatcher);
-    Asm(as,"move.w",as->m_varStack.pop(),"d1");
+    Asm(as,"move.l",as->m_varStack.pop(),"d1");
     m_node->m_params[2]->Accept(m_dispatcher);
-    Asm(as,"move.w",as->m_varStack.pop(),"d2");
+    Asm(as,"move.l",as->m_varStack.pop(),"d2");
     m_node->m_params[3]->Accept(m_dispatcher);
-    Asm(as,"move.w",as->m_varStack.pop(),"d3");
+    Asm(as,"move.l",as->m_varStack.pop(),"d3");
     m_node->m_params[5]->Accept(m_dispatcher);
-    Asm(as,"move.w",as->m_varStack.pop(),"d5");
-    m_node->m_params[4]->Accept(m_dispatcher);
-    Asm(as,"lea",as->m_varStack.pop(),"a0");
+    Asm(as,"move.l",as->m_varStack.pop(),"d5");
+    //m_node->m_params[4]->Accept(m_dispatcher);
+    //Asm(as,"lea",as->m_varStack.pop(),"a0");
+    m_dispatcher->LoadAddress(m_node->m_params[4]);
+    Asm(as,"move.l",as->m_varStack.pop(),"a0");
     as->Asm("lea	$dff000,a6");
     as->Asm("jsr drawLine");
 
@@ -145,8 +147,10 @@ void Methods68000::Fill(Assembler *as)
     Asm(as,"move.l",as->m_varStack.pop(),"d0");
     m_node->m_params[1]->Accept(m_dispatcher);
     Asm(as,"move.l",as->m_varStack.pop(),"d2");
-    m_node->m_params[0]->Accept(m_dispatcher);
-    Asm(as,"lea",as->m_varStack.pop(),"a0");
+//    m_node->m_params[0]->Accept(m_dispatcher);
+    m_dispatcher->LoadAddress(m_node->m_params[0]);
+    Asm(as,"move.l",as->m_varStack.pop(),"a0");
+
     QString lbl = as->NewLabel("fill");
     as->Label(lbl);
     as->Asm("move.l d2,(a0)+");
@@ -192,13 +196,34 @@ void Methods68000::Poke(Assembler *as, QString bb)
 
 void Methods68000::SetCopperList32(Assembler *as)
 {
-    QString val1 = m_node->m_params[0]->getLiteral();
-    QString addr = m_node->m_params[1]->getLiteral();
+    QString val1 = m_node->m_params[0]->getLiteral(as);
+    QString addr = m_node->m_params[1]->getLiteral(as);
     QString a0 = as->m_regMem.Get();
     QString d0 = as->m_regAcc.Get();
 
-    Asm(as,"lea",val1,a0);
-    Asm(as,"move.l",a0,d0);
+
+   // org
+  //  Asm(as,"lea",val1,a0);
+  //  Asm(as,"move.l",a0,d0);
+
+
+    m_dispatcher->LoadAddress(m_node->m_params[0]);
+    Asm(as,"move.l",as->m_varStack.pop(),d0);
+
+
+//    if (m_node->m_params[0]->isPointer(as)) {
+//        m_dispatcher->LoadVariable(m_node->m_params[0]);
+  //      m_dispatcher->LoadAddress(m_node->m_params[0]);
+    //    Asm(as,"move.l",as->m_varStack.pop(),d0);
+    //}
+/*    else {
+        Asm(as,"lea",val1,a0);
+        Asm(as,"move.l",a0,d0);
+    }
+*/
+//    Asm(as,"lea",val1,a0);
+  //  Asm(as,"move.l",a0,d0);
+
     Asm(as,"lea",addr,a0);
     Asm(as,"move.w",d0,"4("+a0+")");
     as->Asm("swap "+d0);

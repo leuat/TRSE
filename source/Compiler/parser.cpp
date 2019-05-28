@@ -1362,9 +1362,32 @@ Node *Parser::TypeSpec()
         return new NodeVarType(t,initData);
     }
 
+    if (m_currentToken.m_type == TokenType::POINTER) {
+        Eat();
+        QString type;
+        NodeVarType* nvt = new NodeVarType(t,"");
+        nvt->m_arrayVarType.m_type = TokenType::BYTE;
+
+        if (m_currentToken.m_type == TokenType::OF) {
+            Eat();
+            TokenType::Type typ = m_currentToken.m_type;
+
+//            NodeString* str = (NodeString*)String();
+  //          initData = str->m_val;
+            Eat();
+            nvt->m_arrayVarType.m_type = typ;
+        }
+
+//        qDebug() <<"Parser typespec pointer: "  << nvt->m_arrayVarType.getType();
+
+        return nvt;
+    }
+
 
     Eat();
     // Is regular single byte / pointer
+
+
 
     QString initVal = "";
     if (m_currentToken.m_type == TokenType::EQUALS) {

@@ -65,6 +65,10 @@ public:
         return "#" + HexValue();
     }
 
+    bool isPure() override {
+        return false;
+    }
+
     QString getStringOperation() {
         if (m_op.m_type == TokenType::PLUS)
             return "+";
@@ -82,8 +86,8 @@ public:
         return "";
     }
 
-    QString getLiteral() override {
-        return m_left->getLiteral() + getStringOperation() + m_right->getLiteral();
+    QString getLiteral(Assembler* as) override {
+        return m_left->getLiteral(as) + getStringOperation() + m_right->getLiteral(as);
     }
 
 

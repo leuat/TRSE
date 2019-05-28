@@ -290,6 +290,7 @@ public:
     virtual void Variable(QString s, bool isByte) {}
     //void Appendix(QString s, int l);
     virtual void LoadVariable(QString var) {}
+
     virtual void Connect();
     virtual QString StoreInTempVar(QString name, QString type="byte")  { return name;}
     virtual void PopTempVar() {}

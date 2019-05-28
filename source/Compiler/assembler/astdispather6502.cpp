@@ -1779,6 +1779,11 @@ void ASTDispather6502::LoadVariable(NodeVar *node) {
     return;
 }
 
+void ASTDispather6502::LoadAddress(Node *node)
+{
+
+}
+
 void ASTDispather6502::LoadVariable(NodeNumber *node)
 {
    as->ClearTerm();

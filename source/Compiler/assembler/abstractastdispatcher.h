@@ -53,11 +53,13 @@ public:
     virtual void dispatch(NodeBinaryClause *node) = 0;
 
     virtual QString getEndType(Assembler* as, Node* v) {return "";}
+    virtual QString getEndType(Assembler *as, Node *v1,Node *v2) {return "";}
 
     virtual void StoreVariable(NodeVar* n) = 0;
     virtual void LoadVariable(NodeVar* n) = 0;
     virtual void LoadVariable(Node* n) = 0;
     virtual void LoadVariable(NodeNumber* n) = 0;
+    virtual void LoadAddress(Node* node) {};
 
 };
 

@@ -58,7 +58,7 @@ public:
         return HexValue();
     }
 
-    QString getLiteral() override {return HexValue();}
+    QString getLiteral(Assembler* as) override {return HexValue();}
 
 
     QString HexValue() override;

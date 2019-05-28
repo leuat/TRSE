@@ -136,6 +136,7 @@ public:
 
 
     void LoadVariable(NodeVar* node) override;
+    void LoadAddress(Node* node) override;
     void LoadVariable(Node* node) override;
     void LoadVariable(NodeNumber* node) override;
 

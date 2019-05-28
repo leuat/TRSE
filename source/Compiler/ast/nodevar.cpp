@@ -47,7 +47,7 @@ TokenType::Type NodeVar::getType(Assembler *as) {
     return m_op.m_type;
 }
 
-bool NodeVar::IsPointer(Assembler *as)
+bool NodeVar::isPointer(Assembler *as)
 {
     return as->m_symTab->Lookup(value, m_op.m_lineNumber)->getTokenType()==TokenType::POINTER;
 

@@ -53,11 +53,12 @@ public:
 
 
 
-    void StoreVariable(NodeVar* n);
-    void LoadVariable(NodeVar* n);
+    void StoreVariable(NodeVar* n) override;
+    void LoadVariable(NodeVar* n) override ;
+    void LoadAddress(Node* n) override;
     void LoadPointer(Node* n);
-    void LoadVariable(Node* n);
-    void LoadVariable(NodeNumber* n);
+    void LoadVariable(Node* n) override;
+    void LoadVariable(NodeNumber* n) override;
 
 
     void TransformVariable(Assembler* as, QString op, QString n, QString val, Node* t);
@@ -75,7 +76,8 @@ public:
     void BuildToCmp(Node *node);
 
     void DeclarePointer(NodeVarDecl *node);
-
+    bool m_clearFlag = false;
+    QString getEndType(Assembler *as, Node *v1,Node *v2) override;
 
 };
 

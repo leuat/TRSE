@@ -67,6 +67,7 @@ public:
     }
 
     int MaintainBlocks(Assembler* as);
+    virtual bool isPointer(Assembler* as)  { return false;}
 
     TokenType::Type m_forceType = TokenType::NADA;
 
@@ -93,6 +94,10 @@ public:
 
     virtual void forceWord() {}
 
+    virtual bool isPure() {
+        return isPureNumeric() || isPureVariable();
+    }
+
     virtual bool isPureNumeric() {
         return false;
     }
@@ -106,7 +111,7 @@ public:
     }
     virtual bool isArrayIndex() { return false; }
     virtual void Accept(AbstractASTDispatcher* dispatcher) = 0;
-    virtual QString getLiteral() {return "";}
+    virtual QString getLiteral(Assembler* as) {return "";}
     virtual bool isAddress() { return false;}
     virtual void AssignPointer(Assembler* as, QString memoryLocation) {}
 
