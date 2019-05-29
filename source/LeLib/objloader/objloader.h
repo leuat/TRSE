@@ -7,7 +7,8 @@
 #include <QVector>
 #include <QVector3D>
 #include <QDebug>
-
+#include "source/LeLib/util/util.h"
+#include <QtEndian>
 class Face {
 public:
     int v1, v2, v3;
@@ -33,6 +34,10 @@ public:
     void Load(QString fn);
 
     void Parse();
+
+    void ExportAmigaVerts(QString vertices, float scale, QVector3D shift);
+    void ExportAmigaLinesFromFaces(QString faces);
+    void ExportAmigaFaces(QString faces);
 
 };
 

@@ -140,5 +140,6 @@
         <file>resources/images/Amiga.png</file>
         <file>resources/code/amiga/poly.s</file>
         <file>resources/code/amiga/intline.s</file>
+        <file>resources/code/amiga/matmul.s</file>
     </qresource>
 </RCC>

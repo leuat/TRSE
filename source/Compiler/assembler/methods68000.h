@@ -36,6 +36,8 @@ public:
     void ABlit(Assembler* as);
     void AddCopperCommand(Assembler* as);
     void SkipCopperCommands(Assembler* as);
+    void MatMul(Assembler* as);
+    void SetRotation(Assembler* as, QString mat);
 };
 
 #endif // METHODS68000_H

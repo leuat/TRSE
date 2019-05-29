@@ -39,6 +39,7 @@ NodeVar::NodeVar(Token t, Node *expr) : Node() {
 
 TokenType::Type NodeVar::getType(Assembler *as) {
 
+
     TokenType::Type t = m_op.m_type;
     if (as->m_symTab->Lookup(value, m_op.m_lineNumber)!=nullptr)
         t= as->m_symTab->Lookup(value, m_op.m_lineNumber)->getTokenType();
@@ -84,7 +85,7 @@ bool NodeVar::isByte(Assembler *as) {
 }
 
 QString NodeVar::getValue(Assembler* as) {
-    qDebug() << "NodeVar:: getValue : " << value << "  "  << TokenType::getType(getType(as));
+//    qDebug() << "NodeVar:: getValue : " << value << "  "  << TokenType::getType(getType(as));
     if (m_forceAddress && !(getType(as)==TokenType::POINTER)) return "#" + value;
     return value;
 }

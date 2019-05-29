@@ -55,3 +55,93 @@ void ObjLoader::Parse()
         }
     }
 }
+
+void ObjLoader::ExportAmigaLinesFromFaces(QString faces)
+{
+    if (QFile::exists(faces))
+        QFile::remove(faces);
+
+    QVector<unsigned short> facs,f2;
+//    facs.resize(6*m_faces.count());
+
+    for (int i=0;i<m_faces.count();i++) {
+        facs.append(qFromBigEndian((unsigned short)(m_faces[i].v1*12)));
+        facs.append(qFromBigEndian((unsigned short)(m_faces[i].v2*12)));
+        facs.append(qFromBigEndian((unsigned short)(m_faces[i].v2*12)));
+        facs.append(qFromBigEndian((unsigned short)(m_faces[i].v3*12)));
+        facs.append(qFromBigEndian((unsigned short)(m_faces[i].v3*12)));
+        facs.append(qFromBigEndian((unsigned short)(m_faces[i].v1*12)));
+
+//        facs[3*i+2] = (int)(m_faces[i].v3*scale);
+    }
+    int cnt = 0;
+    for (int i=0;i<facs.size()/2;i++) {
+        unsigned short v1 = facs[i*2];
+        unsigned short v2 = facs[i*2+1];
+        bool ok= true;
+        for (int j=0;j<f2.count()/2;j++) {
+            if ((v1==f2[2*j] && v2==f2[2*j+1]) || (v2==f2[2*j] && v1==f2[2*j+1]))
+                ok = false;
+        }
+        if (ok) {
+            f2.append(v1);
+            f2.append(v2);
+        }
+    }
+    cnt = f2.count();
+    unsigned short *cfacs = new unsigned short[cnt];
+    for (int i=0;i<cnt;i++)
+        cfacs[i]=f2[i];
+    qDebug() << faces <<" no lines : " << cnt/2;
+    QFile fi2(faces);
+    fi2.open(QFile::WriteOnly);
+    fi2.write((const char*)cfacs,cnt*sizeof(short));
+    fi2.close();
+    delete[] cfacs;
+
+}
+
+void ObjLoader::ExportAmigaFaces(QString faces)
+{
+    if (QFile::exists(faces))
+        QFile::remove(faces);
+
+    unsigned short *facs = new unsigned short[3*m_faces.count()];
+    for (int i=0;i<m_faces.count();i++) {
+        facs[3*i] = qFromBigEndian((unsigned short)(m_faces[i].v1*4*3));
+        facs[3*i+1] = qFromBigEndian((unsigned short)(m_faces[i].v2*4*3));
+        facs[3*i+2] = qFromBigEndian((unsigned short)(m_faces[i].v3*4*3));
+
+//        facs[3*i+2] = (int)(m_faces[i].v3*scale);
+    }
+    qDebug() << "no lines : " << 3*m_faces.count();
+    QFile f2(faces);
+    f2.open(QFile::WriteOnly);
+    f2.write((const char*)facs,3*m_faces.count()*sizeof(short));
+    f2.close();
+    delete[] facs;
+
+}
+
+void ObjLoader::ExportAmigaVerts(QString vertices, float scale, QVector3D shift)
+{
+    if (QFile::exists(vertices))
+        QFile::remove(vertices);
+
+    int *verts = new int[3*m_vertices.count()];
+    for (int i=0;i<m_vertices.count();i++) {
+//        qDebug() << m_vertices[i];
+        verts[3*i+0] = qFromBigEndian((int)(m_vertices[i].x()*scale+shift.x()));
+        verts[3*i+1] = qFromBigEndian((int)(m_vertices[i].y()*scale+shift.y()));
+        verts[3*i+2] = qFromBigEndian((int)(m_vertices[i].z()*scale+shift.z()));
+    }
+    qDebug() << vertices << ": # vertices: " << QString::number(m_vertices.count());
+    QFile f1(vertices);
+    f1.open(QFile::WriteOnly);
+    f1.write((const char*)verts,3*m_vertices.count()*sizeof(int));
+    f1.close();
+    delete[] verts;
+
+
+
+}

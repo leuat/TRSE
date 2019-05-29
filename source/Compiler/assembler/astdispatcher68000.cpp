@@ -707,10 +707,26 @@ void ASTDispather68000::LoadAddress(Node *n)
 
 }
 
+void ASTDispather68000::LoadAddress(Node *n, QString a0)
+{
+    /*    NodeVar* v = dynamic_cast<NodeVar*>(n);
+        if (v==nullptr) {
+            n->ForceAddress();
+            LoadVariable(n);
+            return;
+        }*/
+    n->ForceAddress();
+//    as->Comment("LoadAddress: move start with literal: " +n->getLiteral(as));
+    TransformVariable(as,"move.l",a0,n->getLiteral(as));
+
+    //    QString v = n->getLiteral(as);
+
+}
+
 void ASTDispather68000::LoadPointer(Node *n)
 {
     QString d0 = as->m_regAcc.Get();
-//    n->Accept(m_)
+    //    n->Accept(m_)
     TransformVariable(as,"move"+getEndType(as,n),d0,n->getValue(as));
     as->m_regAcc.Pop(d0);
     as->m_varStack.push(d0);
@@ -719,8 +735,8 @@ void ASTDispather68000::LoadPointer(Node *n)
 
 void ASTDispather68000::LoadVariable(Node *n)
 {
-//    qDebug() << "Don't call Dispatcher::LoadVariable with NODE. ";
-  //  exit(1);
+    //    qDebug() << "Don't call Dispatcher::LoadVariable with NODE. ";
+    //  exit(1);
     NodeVar* nv = dynamic_cast<NodeVar*>(n);
     NodeNumber* nn = dynamic_cast<NodeNumber*>(n);
     if (nv!=nullptr) {
@@ -728,8 +744,8 @@ void ASTDispather68000::LoadVariable(Node *n)
         LoadVariable((NodeVar*)n);
     }
     else
-    if (nn!=nullptr){
-        LoadVariable((NodeNumber*)n);
+        if (nn!=nullptr){
+            LoadVariable((NodeNumber*)n);
     }
     else {
         as->Comment("LoadVariable: unknown, just accepting");

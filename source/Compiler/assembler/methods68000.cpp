@@ -26,11 +26,27 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("endcustomcopperlist"))
         as->Asm("move.l #$fffffffe,(a5)+");
 
+    if (Command("matmul3x3"))
+        MatMul(as);
+
     if (Command("addcoppercommand"))
         AddCopperCommand(as);
 
     if (Command("skipcoppercommands"))
         SkipCopperCommands(as);
+
+    if (Command("initmatmul3x3"))
+        as->IncludeFile(":resources/code/amiga/matmul.s");
+
+    if (Command("setrotationx"))
+        SetRotation(as,"x");
+    if (Command("setrotationy"))
+        SetRotation(as,"y");
+    if (Command("setrotationz"))
+        SetRotation(as,"z");
+    if (Command("setidentity"))
+        SetRotation(as,"id");
+
 
     if (Command("poke8"))
         Poke(as,".b");
@@ -341,6 +357,77 @@ void Methods68000::SkipCopperCommands(Assembler *as)
     m_node->m_params[0]->Accept(m_dispatcher);
     Asm(as,"add.l",as->m_varStack.pop(),"a5");
 
+}
+
+void Methods68000::MatMul(Assembler *as)
+{
+/*    ;move.l mm_res,a0
+    ;move.l mm_mat1,a1
+    ;move.l mm_mat2,a2
+*/
+    m_dispatcher->LoadAddress(m_node->m_params[2],"a0");
+    m_dispatcher->LoadAddress(m_node->m_params[0],"a1");
+    m_dispatcher->LoadAddress(m_node->m_params[1],"a2");
+    as->Asm("jsr matmul_call");
+
+}
+
+void Methods68000::SetRotation(Assembler *as, QString mat)
+{
+    QString a0 = as->m_regMem.Get();
+    QString d0 = as->m_regAcc.Get();
+    QString d1 = as->m_regAcc.Get();
+    QString d2 = as->m_regAcc.Get();
+    as->Comment("Set 3x3 matrix multiplication FAST");
+    m_dispatcher->LoadAddress(m_node->m_params[0],a0);
+    if (mat!="id") {
+        as->Asm("");
+        m_dispatcher->LoadVariable(m_node->m_params[1]);
+        as->Asm("move.l " + as->m_varStack.pop() +","+d0);
+        m_dispatcher->LoadVariable(m_node->m_params[2]);
+        as->Asm("move.l " + as->m_varStack.pop() +","+d1);
+        as->Asm("moveq.l #0,"+d2);
+        as->Asm("sub.w "+d1+","+d2);
+    }
+
+
+    if (mat=="x") {
+        as->Asm("move.l #128,0("+a0+")");
+        as->Asm("move.l "+d0+",16("+a0+")");
+        as->Asm("move.l "+d2+",20("+a0+")");
+        as->Asm("move.l "+d1+",28("+a0+")");
+        as->Asm("move.l "+d0+",32("+a0+")");
+    }
+    if (mat=="z") {
+        as->Asm("move.l #128,32("+a0+")");
+        as->Asm("move.l "+d0+",0("+a0+")");
+        as->Asm("move.l "+d1+",4("+a0+")");
+        as->Asm("move.l "+d2+",12("+a0+")");
+        as->Asm("move.l "+d0+",16("+a0+")");
+    }
+    if (mat=="y") {
+        as->Asm("move.l #128,16("+a0+")");
+        as->Asm("move.l "+d0+",0("+a0+")");
+        as->Asm("move.l "+d2+",8("+a0+")");
+        as->Asm("move.l "+d1+",24("+a0+")");
+        as->Asm("move.l "+d0+",32("+a0+")");
+    }
+    if (mat=="id") {
+        as->Asm("move.l #128,0("+a0+")");
+        as->Asm("move.l #0,4("+a0+")");
+        as->Asm("move.l #0,8("+a0+")");
+        as->Asm("move.l #0,12("+a0+")");
+        as->Asm("move.l #128,16("+a0+")");
+        as->Asm("move.l #0,20("+a0+")");
+        as->Asm("move.l #0,24("+a0+")");
+        as->Asm("move.l #0,28("+a0+")");
+        as->Asm("move.l #128,32("+a0+")");
+    }
+
+    as->m_regMem.Pop(a0);
+    as->m_regAcc.Pop(d0);
+    as->m_regAcc.Pop(d1);
+    as->m_regAcc.Pop(d2);
 }
 
 

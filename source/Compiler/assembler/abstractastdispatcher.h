@@ -59,7 +59,8 @@ public:
     virtual void LoadVariable(NodeVar* n) = 0;
     virtual void LoadVariable(Node* n) = 0;
     virtual void LoadVariable(NodeNumber* n) = 0;
-    virtual void LoadAddress(Node* node) {};
+    virtual void LoadAddress(Node* node) {}
+    virtual void LoadAddress(Node* node,QString reg) {}
 
 };
 

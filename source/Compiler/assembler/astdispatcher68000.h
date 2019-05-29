@@ -57,6 +57,8 @@ public:
     void StoreVariable(NodeVar* n) override;
     void LoadVariable(NodeVar* n) override ;
     void LoadAddress(Node* n) override;
+    void LoadAddress(Node *n, QString reg) override;
+
     void LoadPointer(Node* n);
     void LoadVariable(Node* n) override;
     void LoadVariable(NodeNumber* n) override;

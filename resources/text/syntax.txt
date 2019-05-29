@@ -33,6 +33,14 @@ m; initatan2; C64, C128, VIC20  ;
 
 # ************** AMIGA ROUTINES
 
+# *** INIT METHODS
+
+m; InitMatmul3x3; Amiga;
+m; InitPoly; Amiga;
+m; InitLine; Amiga;
+
+# ** CALL METHODS
+
 m; Poke8; Amiga ; a,i,b
 m; Poke16; Amiga ; a,i,i
 m; Poke32; Amiga ; a,i,l
@@ -46,11 +54,13 @@ m; InitCustomCopperList; Amiga;
 m; EndCustomCopperList; Amiga;
 m; AddCopperCommand; Amiga; i,i
 m; SkipCopperCommands; Amiga; i
-m; InitPoly; Amiga;
-m; InitLine; Amiga;
 m; DrawLine; Amiga; i,i,i,i, l, i
 m; Fill; Amiga ; a, l, l
-
+m; MatMul3x3; Amiga; a,a,a
+m; SetRotationX; Amiga; a, l,l
+m; SetRotationY; Amiga; a, l,l
+m; SetRotationZ; Amiga; a, l,l
+m; SetIdentity; Amiga; a
 #Memory routines
 
 m; moveto; C64, NES; b,b,b

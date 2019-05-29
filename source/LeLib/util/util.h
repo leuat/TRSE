@@ -72,6 +72,16 @@ public:
                          const string& delimiters = " ");
 
 
+
+    static unsigned long int Endian_DWord_Conversion(unsigned long int dword)
+    {
+      return ((dword>>24)&0x000000FF) | ((dword>>8)&0x0000FF00) | ((dword<<8)&0x00FF0000) | ((dword<<24)&0xFF000000);
+   }
+    static unsigned long int Endian_Word_Conversion(unsigned short dword)
+    {
+      return ((dword>>24)&0x000000FF) | ((dword>>8)&0x0000FF00) | ((dword<<8)&0x00FF0000) | ((dword<<24)&0xFF000000);
+   }
+
     static void string2char(string s, char* to);
     static string toString(double d, string param);
     static string toString(double d);
