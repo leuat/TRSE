@@ -141,5 +141,7 @@
         <file>resources/code/amiga/poly.s</file>
         <file>resources/code/amiga/intline.s</file>
         <file>resources/code/amiga/matmul.s</file>
+        <file>resources/code/amiga/matmulvec.s</file>
+        <file>resources/code/amiga/simpleproject.s</file>
     </qresource>
 </RCC>

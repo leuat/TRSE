@@ -25,16 +25,23 @@ void ObjLoader::Parse()
             continue;
         if (lst[0]=="v")
             m_vertices.append(QVector3D(lst[1].toFloat(),lst[2].toFloat(),lst[3].toFloat()));
+        if (lst[0]=="vn")
+            m_normals.append(QVector3D(lst[1].toFloat(),lst[2].toFloat(),lst[3].toFloat()));
         if (lst[0]=="f") {
             QVector<int> ilst;
-            for (int i=1;i<lst.count();i++)
+            QVector<int> flst;
+            for (int i=1;i<lst.count();i++) {
                 ilst.append(lst[i].split("/")[0].toInt());
+                flst.append(lst[i].split("/").last().toInt());
+            }
+            qDebug() << flst;
 
             if (ilst.count()==3) {
                 Face f;
                 f.v1 = ilst[0]-1;
                 f.v2 = ilst[1]-1;
                 f.v3 = ilst[2]-1;
+                f.fn = flst[0]-1;
                 m_faces.append(f);
             }
             if (ilst.count()==4) {
@@ -62,6 +69,7 @@ void ObjLoader::ExportAmigaLinesFromFaces(QString faces)
         QFile::remove(faces);
 
     QVector<unsigned short> facs,f2;
+    QVector<QVector3D> norms;
 //    facs.resize(6*m_faces.count());
 
     for (int i=0;i<m_faces.count();i++) {
@@ -71,10 +79,14 @@ void ObjLoader::ExportAmigaLinesFromFaces(QString faces)
         facs.append(qFromBigEndian((unsigned short)(m_faces[i].v3*12)));
         facs.append(qFromBigEndian((unsigned short)(m_faces[i].v3*12)));
         facs.append(qFromBigEndian((unsigned short)(m_faces[i].v1*12)));
+        for (int j=0;j<3;j++) {
+            norms.append(m_normals[m_faces[i].fn]);
+        }
 
 //        facs[3*i+2] = (int)(m_faces[i].v3*scale);
     }
     int cnt = 0;
+    m_reducedNormals.clear();
     for (int i=0;i<facs.size()/2;i++) {
         unsigned short v1 = facs[i*2];
         unsigned short v2 = facs[i*2+1];
@@ -86,6 +98,8 @@ void ObjLoader::ExportAmigaLinesFromFaces(QString faces)
         if (ok) {
             f2.append(v1);
             f2.append(v2);
+            m_reducedNormals.append(norms[i]);
+
         }
     }
     cnt = f2.count();
@@ -142,6 +156,29 @@ void ObjLoader::ExportAmigaVerts(QString vertices, float scale, QVector3D shift)
     f1.close();
     delete[] verts;
 
+
+
+}
+
+void ObjLoader::ExportAmigaNormalsLines(QString filename, float scale)
+{
+    if (QFile::exists(filename))
+        QFile::remove(filename);
+
+    int *verts = new int[3*m_reducedNormals.count()];
+    for (int i=0;i<m_reducedNormals.count();i++) {
+//        qDebug() << m_vertices[i];
+        verts[3*i+0] = qFromBigEndian((int)(m_reducedNormals[i].x()*scale));
+        verts[3*i+1] = qFromBigEndian((int)(m_reducedNormals[i].y()*scale));
+        verts[3*i+2] = qFromBigEndian((int)(m_reducedNormals[i].z()*scale));
+    }
+    qDebug() << filename << ": # normals: " << QString::number(m_reducedNormals.count());
+//    qDebug() << m_reducedNormals;
+    QFile f1(filename);
+    f1.open(QFile::WriteOnly);
+    f1.write((const char*)verts,3*m_reducedNormals.count()*sizeof(int));
+    f1.close();
+    delete[] verts;
 
 
 }

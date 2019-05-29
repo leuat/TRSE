@@ -874,7 +874,8 @@ QString ASTDispather68000::AssignVariable(NodeAssign *node) {
 
 
     StoreVariable(v);
-    as->Comment("regacc : " +as->m_regAcc.m_latest);
+//    as->Comment("regacc : " +as->m_regAcc.m_latest);
+    as->m_regAcc.m_latest ="";
 //    as->m_regAcc.Pop(as->m_regAcc.m_latest);
     while (as->m_varStack.m_vars.count()!=0)
         as->m_varStack.pop();

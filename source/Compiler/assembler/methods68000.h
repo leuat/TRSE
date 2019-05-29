@@ -38,6 +38,8 @@ public:
     void SkipCopperCommands(Assembler* as);
     void MatMul(Assembler* as);
     void SetRotation(Assembler* as, QString mat);
+    void MatMulVec(Assembler* as);
+    void ProjectToScreen(Assembler* as);
 };
 
 #endif // METHODS68000_H

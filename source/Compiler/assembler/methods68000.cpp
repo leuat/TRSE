@@ -8,18 +8,14 @@ Methods68000::Methods68000()
 void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
 {
     m_dispatcher = dispatcher;
-/*    if (Command("Writeln")) {
-        as->Writeln();
-
-        m_node->m_params[0]->Accept(dispatcher);
-        as->EndWriteln();
+    if (Command("waitforblitter")) {
+        QString lbl = as->NewLabel("waitforblitter");
+        as->Label(lbl);
+        as->Asm("btst	#14,DMACONR");
+        as->Asm("bne.s	"+lbl);
+        as->PopLabel("waitforblitter");
     }
-*/
 
-/*    m; InitCustomCopperList; Amiga;
-    m; AddCopperCommand; i,i
-    m; SkipCopperCommands;i
-  */
     if (Command("initcustomcopperlist"))
         as->Asm("lea copper_custom,a5");
 
@@ -37,6 +33,13 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
 
     if (Command("initmatmul3x3"))
         as->IncludeFile(":resources/code/amiga/matmul.s");
+
+    if (Command("initmatmulvec"))
+        as->IncludeFile(":resources/code/amiga/matmulvec.s");
+
+    if (Command("matmulvec"))
+        MatMulVec(as);
+
 
     if (Command("setrotationx"))
         SetRotation(as,"x");
@@ -59,6 +62,11 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->IncludeFile(":resources/code/amiga/poly.s");
     if (Command("InitLine"))
         as->IncludeFile(":resources/code/amiga/intline.s");
+    if (Command("InitProjectToScreen"))
+        as->IncludeFile(":resources/code/amiga/simpleproject.s");
+
+    if (Command("ProjectToScreen"))
+        ProjectToScreen(as);
 
     if (Command("DrawLine"))
         DrawLine(as);
@@ -428,6 +436,55 @@ void Methods68000::SetRotation(Assembler *as, QString mat)
     as->m_regAcc.Pop(d0);
     as->m_regAcc.Pop(d1);
     as->m_regAcc.Pop(d2);
+}
+
+void Methods68000::MatMulVec(Assembler *as)
+{
+/*    move.l mm_mat,a0
+    move.l mm_vecsIn,a1
+    move.l mm_vecsOut,a2
+
+    moveq.l #0,d6
+  */
+    as->Comment("MatMulVec call");
+    m_dispatcher->LoadAddress(m_node->m_params[0],"a0");
+    m_dispatcher->LoadAddress(m_node->m_params[1],"a1");
+    m_dispatcher->LoadAddress(m_node->m_params[2],"a2");
+    as->Asm("moveq.l #0,d6");
+    as->Asm("moveq.l #4,d5");
+    as->Asm("moveq.l #8,d4");
+    m_node->m_params[3]->Accept(m_dispatcher);
+//    m_dispatcher->LoadVariable(m_node->m_params[3]);
+    as->Asm("move.l "+ as->m_varStack.pop()+",d7");
+
+//    moveq.l #0,d6
+    //	move.w index,d6
+    as->Asm("jsr call_matmulvec");
+}
+
+void Methods68000::ProjectToScreen(Assembler *as)
+{
+    as->Comment("Project to screen init");
+    as->Asm("moveq.l #0,d4");
+    m_node->m_params[1]->Accept(m_dispatcher);
+    as->Asm("move.w "+as->m_varStack.pop() + ",d4");
+    m_dispatcher->LoadAddress(m_node->m_params[0], "a0");
+    as->Asm("jsr call_projecttoscreen");
+    m_node->m_params[2]->Accept(m_dispatcher);
+    as->Asm("move.l d5,"+as->m_varStack.pop());
+    m_node->m_params[3]->Accept(m_dispatcher);
+    as->Asm("move.l d6,"+as->m_varStack.pop());
+    m_dispatcher->LoadAddress(m_node->m_params[0], "a0");
+
+
+//    m_dispatcher->StoreVariable(
+/*    move.l ro_obj,a0
+
+
+    moveq.l #0,d4
+    move.w ro_c,d4
+*/
+
 }
 
 
