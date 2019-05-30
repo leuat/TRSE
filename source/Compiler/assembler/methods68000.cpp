@@ -37,9 +37,14 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("initmatmulvec"))
         as->IncludeFile(":resources/code/amiga/matmulvec.s");
 
+    if (Command("initmatmulvecnormalz"))
+        as->IncludeFile(":resources/code/amiga/matmulvec_norm_z.s");
+
     if (Command("matmulvec"))
         MatMulVec(as);
 
+    if (Command("matmulvecnormalz"))
+        MatMulVecNormalZ(as);
 
     if (Command("setrotationx"))
         SetRotation(as,"x");
@@ -462,6 +467,24 @@ void Methods68000::MatMulVec(Assembler *as)
 //    moveq.l #0,d6
     //	move.w index,d6
     as->Asm("jsr call_matmulvec");
+}
+
+void Methods68000::MatMulVecNormalZ(Assembler *as)
+{
+    as->Comment("MatMulVec normal z only");
+    m_dispatcher->LoadAddress(m_node->m_params[0],"a0");
+    m_dispatcher->LoadAddress(m_node->m_params[1],"a1");
+    m_dispatcher->LoadAddress(m_node->m_params[2],"a2");
+    m_node->m_params[3]->Accept(m_dispatcher);
+//    m_dispatcher->LoadVariable(m_node->m_params[3]);
+    as->Asm("  moveq.l #0,d7");
+
+    as->Asm("move"+m_dispatcher->getEndType(as,m_node->m_params[3])+" "+ as->m_varStack.pop()+",d7");
+
+//    moveq.l #0,d6
+    //	move.w index,d6
+    as->Asm("jsr matmulvec_normal_z_call");
+
 }
 
 void Methods68000::ProjectToScreen(Assembler *as)

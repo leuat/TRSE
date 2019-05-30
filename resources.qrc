@@ -143,5 +143,6 @@
         <file>resources/code/amiga/matmul.s</file>
         <file>resources/code/amiga/matmulvec.s</file>
         <file>resources/code/amiga/simpleproject.s</file>
+        <file>resources/code/amiga/matmulvec_norm_z.s</file>
     </qresource>
 </RCC>

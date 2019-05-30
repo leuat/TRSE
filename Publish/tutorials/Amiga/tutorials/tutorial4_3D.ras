@@ -1,0 +1,285 @@
+program Tutorial3D;
+var  
+
+/*
+
+ 
+   Choose 3D object: LOVE, TEAPOT or FOX below!
+   
+
+*/
+
+@define IS_LOVE 1
+//@define IS_TEAPOT 1
+//@define IS_FOX 1
+
+
+
+
+   	jj,i, isDone,time,tt: integer = 0; 
+	curBuf : integer = 0;
+   	
+	LineMode: integer = $0;
+   	
+	sin256: array[256] of byte = ($80,$83,$86,$89,$8c,$8f,$92,$95,$98,$9b,$9e,$a2,$a5,$a7,$aa,$ad,$b0,$b3,$b6,$b9,$bc,$be,$c1,$c4,$c6,$c9,$cb,$ce,$d0,$d3,$d5,$d7,$da,$dc,$de,$e0,$e2,$e4,$e6,$e8,$ea,$eb,$ed,$ee,$f0,$f1,$f3,$f4,$f5,$f6,$f8,$f9,$fa,$fa,$fb,$fc,$fd,$fd,$fe,$fe,$fe,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$fe,$fe,$fe,$fd,$fd,$fc,$fb,$fa,$fa,$f9,$f8,$f6,$f5,$f4,$f3,$f1,$f0,$ee,$ed,$eb,$ea,$e8,$e6,$e4,$e2,$e0,$de,$dc,$da,$d7,$d5,$d3,$d0,$ce,$cb,$c9,$c6,$c4,$c1,$be,$bc,$b9,$b6,$b3,$b0,$ad,$aa,$a7,$a5,$a2,$9e,$9b,$98,$95,$92,$8f,$8c,$89,$86,$83,$80,$7c,$79,$76,$73,$70,$6d,$6a,$67,$64,$61,$5d,$5a,$58,$55,$52,$4f,$4c,$49,$46,$43,$41,$3e,$3b,$39,$36,$34,$31,$2f,$2c,$2a,$28,$25,$23,$21,$1f,$1d,$1b,$19,$17,$15,$14,$12,$11,$f,$e,$c,$b,$a,$9,$7,$6,$5,$5,$4,$3,$2,$2,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$2,$2,$3,$4,$5,$5,$6,$7,$9,$a,$b,$c,$e,$f,$11,$12,$14,$15,$17,$19,$1b,$1d,$1f,$21,$23,$25,$28,$2a,$2c,$2f,$31,$34,$36,$39,$3b,$3e,$41,$43,$46,$49,$4c,$4f,$52,$55,$58,$5a,$5d,$61,$64,$67,$6a,$6d,$70,$73,$76,$79,$7c);
+
+	screen,offscreen: pointer of long;
+
+	// Rotation matrices  3 x 3 = 9 longs
+	rotmat, rotX, rotY, rotZ,rotmatA : array[9] of long;
+
+	  	
+	// 40 = 320/8 = bytes per bitplane
+   	@define width 40 
+   	@define height 256
+   	@define bitplanes 2
+   	
+	@define bitmapFont_noCharactersInColumns 10
+	@define bitmapFont_characterHeight 24
+
+@ifdef IS_TEAPOT
+	vertices : incbin("objects/teapot_verts.bin");
+	verticesLineList : incbin("objects/teapot_lines.bin");
+	normals : incbin("objects/teapot_line_normals.bin");
+	vcount: long = 301;
+	lcount : long = 850;
+	zpos : long = 400;
+
+@endif
+
+@ifdef IS_FOX
+	vertices : incbin("objects/fox_verts.bin");
+	verticesLineList : incbin("objects/fox_lines.bin");
+	normals : incbin("objects/fox_line_normals.bin");
+	vcount: long = 291;
+	lcount : long = 860;
+	zpos : long = 600;
+	
+@endif
+
+@ifdef IS_LOVE
+	vertices : incbin("objects/love_verts.bin");
+	verticesLineList : incbin("objects/love_lines.bin");
+	normals : incbin("objects/love_line_normals.bin");
+	vcount: long = 92;
+	lcount : long = 270;
+	zpos : long = 150;
+
+@endif
+
+	normals_T : array[1024] of long;
+	vertices_T : array[900] of long;
+	
+   	// Allocate screen memory, 2 screens (1 is back buffer)
+   	
+   	screenb1 : array[@width*@height*@bitplanes] of byte chipmem;
+   	screenb2 : array[@width*@height*@bitplanes] of byte chipmem;
+
+/*
+	Performs the rendering of the scene using lines. Will probably be 
+	converted to a TRSE method later on. 
+
+*/
+procedure RenderObjectLines(ro_obj:pointer of long; ro_normals:pointer of byte; ro_list:pointer of integer, ro_count : long; cxx, cyy, czz : long);
+var
+	ro_ri : integer = 0;
+	ro_x1,ro_y1,ro_x2,ro_y2, ro_z2:long = 0;
+	ro_z1,ro_tmp:byte;
+	ro_idx, ro_nidx : integer = 0;
+	ss : pointer;
+	
+begin
+	ss:=screen+40; // Draw every second 
+	ro_idx:=0;
+	ro_nidx:=2;
+	tt:=0;
+
+	for ro_ri:=0 to ro_count do begin
+		tt:=(tt+1)&1;
+
+//		ro_z1:=ro_normals[ro_nidx];
+		// TRSE doesn't support signed compare yet. 
+		// Ignore drawing line of rotated normal >0
+		asm("
+			move.l ro_normals,a0
+			moveq.l #0,d0
+			move.w ro_nidx,d0
+;;			move.b (a0,d0),ro_z1
+			cmp.b #0,(a0,d0)
+			bgt ro_skipp
+
+		");
+
+			// Project vertices to screen				
+			ProjectToScreen(ro_obj,ro_list[ro_idx], ro_x1, ro_y1);
+			ProjectToScreen(ro_obj,ro_list[ro_idx+2], ro_x2, ro_y2);
+//			WaitForBlitter();
+			if (tt=0) then
+			DrawLine(ro_x1,ro_y1,ro_x2,ro_y2, ss, 80)
+			else
+			DrawLine(ro_x1,ro_y1,ro_x2,ro_y2, screen, 80);
+			
+		asm("ro_skipp");
+
+		ro_idx:=ro_idx+4; // two shorts per line
+		ro_nidx:=ro_nidx+3; // 3 bytes per normal
+	end;
+
+end;
+
+/*
+	Method that sets cosine and sine of a given theta in 0-255
+
+*/
+procedure SetCosin(scs:integer);
+var
+   cost, sint,tmp : long =0;
+	scs_t:  integer = 0;
+	ms : long;
+	v:integer;
+begin
+	scs:=scs&255;
+	v := sin256[scs];
+	sint:=v-128;	
+	
+	scs_t:=scs+64;	
+	scs_t:=scs_t&255;
+	v := sin256[scs_t];
+	cost:=v-128;	
+
+
+end;
+
+/*
+	Sets up the rotation matrix
+	Rx(t1) * Ry(t2) * Rz(t3) of the three Euler angles t1,t2 and t3
+*/
+
+procedure SetupRotMat(rto3D_t1,rto3D_t2,rto3D_t3 : integer);
+begin
+	SetCosin(rto3D_t1);
+	SetRotationX(rotX,cost, sint);
+	SetCosin(rto3D_t2);
+	SetRotationY(rotY, cost, sint);
+	SetCosin(rto3D_t3);
+	SetRotationZ(rotZ, cost, sint);
+
+	// Built-in matmul rulez	
+	MatMul3x3(rotX, rotY, rotmatA);
+	MatMul3x3(rotmatA, rotZ, rotmat);
+end;
+
+
+
+
+/*
+	Flips rendering buffer and updates copper list & pointers
+*/
+procedure FlipBuffers();
+begin
+	if (curBuf=0) then begin
+		screen:=screenb1;
+		offscreen:=screenb2;
+
+	end else begin
+		screen:=screenb2;
+		offscreen:=screenb1;
+	end;
+	SetCopperList32(offscreen, copper_bitplane0);
+	ss:=offscreen+40;
+	SetCopperList32(ss, copper_bitplane1);
+
+	curBuf:=(curBuf+1)&1;
+
+end;
+
+
+/*
+	Sets up basic screen copper list
+*/
+procedure SetupScreen();
+begin
+	poke16(copper_resolution, 0 , $2200); // $4000  = bitplanes, $200 = colours, 32$200
+	
+	// Setup interleaved image copper list (4 bitplanes, 40*40 modulo 120
+	SetCopperList32(screenb1, copper_bitplane0);
+	SetCopperList32(screenb1+^40, copper_bitplane1);
+	// Modulo for each line = 120 (meaning that after 40 bytes are written to screen, 
+	// the copper skips 120 bytes to the next interleaved line of data for the current bitplane
+	poke16(copper_mod_even,0,40);
+	poke16(copper_mod_odd,0,40);
+end;
+
+
+
+/*
+	Initializing method. Most TRSE "Init"-methods will be performed automatically in later versions.
+
+*/
+procedure PerformInit();
+begin
+	SetupScreen();
+	InitLine();
+	InitMatmul3x3();
+	InitMatmulVec();
+	InitMatmulVecNormalZ();
+	
+//	ablit(logo_image,screen, 0,  0,0,   160, (100*$40) + 20, 0,120);
+
+	WaitVerticalBlank();	
+	i:=0;
+	screen:=screenb1;
+	
+	SetIdentity(rotX);	
+	SetIdentity(rotY);	
+	SetIdentity(rotZ);	
+
+
+	// Some random palette
+	poke16(copper_palette,2,$0012);
+	poke16(copper_palette,2+4*1,$070F);
+	poke16(copper_palette,2+4*2,$006E);
+	poke16(copper_palette,2+4*3,$070F);
+
+	// Set line modulo
+	poke16(^$dff060,0,80);
+
+
+end;
+
+
+begin
+	PerformInit();
+	time:=128;
+	
+	jj:=0;
+	while (isDone=0) do begin
+		// Calculate some funky theta1, tehta2
+		i:=time*3;// + sin256[time];
+		i:=i&255;
+		time:=time&255;
+		jj:=(jj-1)&255;
+		
+		// Setup rotation matrix "rotmat"
+		SetupRotMat(time,i,jj);
+		// Multiply rotmat with each vector3 in "vertices", store in "vertices_T"
+		MatmulVec(rotmat, vertices, vertices_T, vcount);
+		// Multiply rotmat with each normal z (byte) in "normals", store in "normals_T"
+		MatmulVecNormalZ(rotmat, normals, normals_T, lcount);
+		// Render object as lines with vertices in"vertices_T", normals in "normals_T" and line A/B list in verticesLineList.
+		// Center xyz = 160,100 and a zpos 
+		RenderObjectLines(vertices_T, normals_T, verticesLineList, lcount, 160,100, zpos);		
+		
+
+		// Perform backbuffer flipping etc
+		FlipBuffers();
+		WaitVerticalBlank();	
+		time:=time+1;
+		fill(screen,0,20*256);
+		
+		ApplyCopperList();
+
+	end;
+
+end.
+

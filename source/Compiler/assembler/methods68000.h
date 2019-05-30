@@ -39,6 +39,7 @@ public:
     void MatMul(Assembler* as);
     void SetRotation(Assembler* as, QString mat);
     void MatMulVec(Assembler* as);
+    void MatMulVecNormalZ(Assembler* as);
     void ProjectToScreen(Assembler* as);
 };
 
