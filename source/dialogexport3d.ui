@@ -19,14 +19,24 @@
      <x>30</x>
      <y>20</y>
      <width>801</width>
-     <height>241</height>
+     <height>269</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="2">
-     <widget class="QPushButton" name="pushButton_2">
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_5">
       <property name="text">
-       <string>...</string>
+       <string>Object scale size</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QCheckBox" name="chkLineData">
+      <property name="text">
+       <string>Output line data</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -37,53 +47,26 @@
       </property>
      </widget>
     </item>
-    <item row="7" column="1">
-     <widget class="QCheckBox" name="chkLineNormals">
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="leInput"/>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="leOutputDir"/>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_4">
       <property name="text">
-       <string>Output line normals</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
+       <string>Center displacement (x,y,z)</string>
       </property>
      </widget>
     </item>
-    <item row="9" column="0">
+    <item row="10" column="0">
      <widget class="QCheckBox" name="chkTriangleData">
       <property name="enabled">
        <bool>false</bool>
       </property>
       <property name="text">
        <string>Output triangle data</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="0">
-     <widget class="QCheckBox" name="chkLineData">
-      <property name="text">
-       <string>Output line data</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QLineEdit" name="leInput"/>
-    </item>
-    <item row="2" column="1">
-     <widget class="QLineEdit" name="leOutput"/>
-    </item>
-    <item row="1" column="2">
-     <widget class="QPushButton" name="pushButton_3">
-      <property name="text">
-       <string>...</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>Output base filename</string>
       </property>
      </widget>
     </item>
@@ -94,23 +77,27 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="1">
-     <widget class="QLineEdit" name="leOutputDir"/>
-    </item>
-    <item row="6" column="0">
-     <widget class="QCheckBox" name="chkVertices">
+    <item row="8" column="1">
+     <widget class="QCheckBox" name="chkLineNormals">
       <property name="text">
-       <string>Output vertices</string>
+       <string>Output line normals</string>
       </property>
       <property name="checked">
        <bool>true</bool>
       </property>
      </widget>
     </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="label_4">
+    <item row="1" column="2">
+     <widget class="QPushButton" name="pushButton_3">
       <property name="text">
-       <string>Center displacement (x,y,z)</string>
+       <string>...</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="text">
+       <string>...</string>
       </property>
      </widget>
     </item>
@@ -121,7 +108,7 @@
       </property>
      </widget>
     </item>
-    <item row="9" column="1">
+    <item row="10" column="1">
      <widget class="QCheckBox" name="chkTriangleNormals">
       <property name="enabled">
        <bool>false</bool>
@@ -131,10 +118,23 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label_5">
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="leOutput"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_3">
       <property name="text">
-       <string>Object scale size</string>
+       <string>Output base filename</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QCheckBox" name="chkVertices">
+      <property name="text">
+       <string>Output vertices</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -142,6 +142,20 @@
      <widget class="QLineEdit" name="leSize">
       <property name="text">
        <string>1</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_6">
+      <property name="text">
+       <string>Minimum line length</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QLineEdit" name="leMinLineLength">
+      <property name="text">
+       <string>0.1</string>
       </property>
      </widget>
     </item>

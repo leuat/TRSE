@@ -64,8 +64,8 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("InitLine"))
         as->IncludeFile(":resources/code/amiga/intline.s");
 
-    if (Command("InitProjectToScreen"))
-        as->IncludeFile(":resources/code/amiga/simpleproject.s");
+//    if (Command("InitProjectToScreen"))
+  //      as->IncludeFile(":resources/code/amiga/simpleproject.s");
 
     if (Command("ProjectToScreen"))
         ProjectToScreen(as);
@@ -471,7 +471,11 @@ void Methods68000::ProjectToScreen(Assembler *as)
     m_node->m_params[1]->Accept(m_dispatcher);
     as->Asm("move.w "+as->m_varStack.pop() + ",d4");
     m_dispatcher->LoadAddress(m_node->m_params[0], "a0");
-    as->Asm("jsr call_projecttoscreen");
+
+
+    as->IncludeFile(":resources/code/amiga/simpleproject.s");
+
+
     m_node->m_params[2]->Accept(m_dispatcher);
     as->Asm("move.l d5,"+as->m_varStack.pop());
     m_node->m_params[3]->Accept(m_dispatcher);

@@ -62,12 +62,12 @@ void DialogExport3D::on_pushButton_4_clicked()
         QStringList vec = ui->leVecDisp->text().split(",");
         QVector3D shift = QVector3D(vec[0].toFloat(),vec[1].toFloat(),vec[2].toFloat());
         float scale = ui->leSize->text().toFloat();
-
+        float minLineLength = ui->leMinLineLength->text().toFloat();
 
         obj.Parse();
 
         Message(obj.ExportAmigaVerts(base+"_verts.bin",scale,shift*-1));
-        Message(obj.ExportAmigaLinesFromFaces(base+"lines.bin"));
+        Message(obj.ExportAmigaLinesFromFaces(base+"_lines.bin",minLineLength));
         Message(obj.ExportAmigaNormalsLines(base+"_line_normals.bin",64.0f));
         Message("Conversion OK.\n");
     } catch (QString s) {
@@ -90,13 +90,20 @@ void DialogExport3D::FillFromIni()
     ui->leSize->setText(QString::number(m_ini->getdouble("export3d_last_size")));
     ui->leVecDisp->setText(Util::toString(m_ini->getStringList("export3d_last_shift")));
     ui->leInput->setText(m_ini->getString("export3d_last_input"));
+
+    ui->leMinLineLength->setText(QString::number(m_ini->getdouble("export3d_last_minlinelength")));
+
 }
+
 
 void DialogExport3D::FillToIni()
 {
     m_ini->setString("export3d_last_output",ui->leOutput->text());
     m_ini->setString("export3d_last_outputdir",ui->leOutputDir->text());
     m_ini->setString("export3d_last_input",ui->leInput->text());
-    m_ini->setString("export3d_last_size",ui->leSize->text());
+    m_ini->setFloat("export3d_last_size",ui->leSize->text().toFloat());
     m_ini->setStringList("export3d_last_shift",ui->leVecDisp->text().split(","));
+
+    m_ini->setFloat("export3d_last_minlinelength",ui->leMinLineLength->text().toFloat());
+
 }

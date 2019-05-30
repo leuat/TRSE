@@ -212,6 +212,7 @@ public:
             }
         }
         qDebug() << "CIniFile: Could not find parameter " + name;
+        return false;
     }
 
     int getInt(QString name) {
@@ -220,6 +221,7 @@ public:
                 return (int)items[i].dval;
         }
         qDebug() << "CIniFile: Could not find parameter " + name;
+        return 0;
     }
 
     double getdouble(QString name) {
@@ -228,6 +230,7 @@ public:
                 return items[i].dval;
         }
         qDebug() << "CIniFile: Could not find parameter " + name;
+        return 0;
     }
 
 /*    bool find(QString key, QString value) {

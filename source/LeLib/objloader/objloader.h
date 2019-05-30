@@ -39,7 +39,7 @@ public:
     QString ExportAmigaVerts(QString vertices, float scale, QVector3D shift);
     QString ExportAmigaVertexNormals(QString filename, float scale);
     QString ExportAmigaNormalsLines(QString filename, float scale);
-    QString ExportAmigaLinesFromFaces(QString faces);
+    QString ExportAmigaLinesFromFaces(QString faces, float minLength);
     QString ExportAmigaFaces(QString faces);
 
 };

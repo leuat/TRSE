@@ -47,7 +47,9 @@ matmulvec_loop
 
 		add.l d2,d0
 		add.l d1,d0
-		divs.w #128,d0
+;		divs.w #128,d0
+		asr #7,d0
+
 		move.l d0,(a2,d6)
 
 
@@ -65,7 +67,8 @@ matmulvec_loop
 
 		add.l d2,d0
 		add.l d1,d0
-		divs.w #128,d0
+;		divs.w #128,d0
+		asr #7,d0
 		move.l d0,(a2,d5)
 
 
@@ -84,7 +87,8 @@ matmulvec_loop
 
 		add.l d2,d0
 		add.l d1,d0
-		divs.w #128,d0
+;		divs.w #128,d0
+		asr #7,d0
 		move.l d0,(a2,d4)
 
 

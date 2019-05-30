@@ -74,7 +74,7 @@ void ObjLoader::Parse()
     }
 }
 
-QString ObjLoader::ExportAmigaLinesFromFaces(QString faces)
+QString ObjLoader::ExportAmigaLinesFromFaces(QString faces, float minLength)
 {
     if (QFile::exists(faces))
         QFile::remove(faces);
@@ -107,6 +107,12 @@ QString ObjLoader::ExportAmigaLinesFromFaces(QString faces)
             if ((v1==f2[2*j] && v2==f2[2*j+1]) || (v2==f2[2*j] && v1==f2[2*j+1]))
                 ok = false;
         }
+
+        QVector3D pv1 = m_vertices[  qFromBigEndian(v1)/12];
+        QVector3D pv2 = m_vertices[ qFromBigEndian(v2)/12];
+        if ((pv1-pv2).length()<minLength)
+            ok=false;
+
         if (ok) {
             f2.append(v1);
             f2.append(v2);
@@ -120,9 +126,15 @@ QString ObjLoader::ExportAmigaLinesFromFaces(QString faces)
         cfacs[i]=f2[i];
     QFile fi2(faces);
     fi2.open(QFile::WriteOnly);
+//    qDebug() << "bf" <<cnt/2;
+    cnt = cnt&0b1111111111100;
+  //  qDebug() << "after " <<cnt/2;
+    m_reducedNormals.resize(cnt/2);
     fi2.write((const char*)cfacs,cnt*sizeof(short));
     fi2.close();
+
     delete[] cfacs;
+    //qDebug() << QString::number(cnt/2);;
     return faces +" no lines : " + QString::number(cnt/2);
 
 }
