@@ -60,8 +60,10 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
 
     if (Command("InitPoly"))
         as->IncludeFile(":resources/code/amiga/poly.s");
+
     if (Command("InitLine"))
         as->IncludeFile(":resources/code/amiga/intline.s");
+
     if (Command("InitProjectToScreen"))
         as->IncludeFile(":resources/code/amiga/simpleproject.s");
 

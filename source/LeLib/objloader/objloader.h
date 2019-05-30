@@ -12,7 +12,7 @@
 class Face {
 public:
     int v1, v2, v3;
-    int fn;
+    int f1,f2,f3;
 };
 
 
@@ -36,10 +36,11 @@ public:
 
     void Parse();
 
-    void ExportAmigaVerts(QString vertices, float scale, QVector3D shift);
-    void ExportAmigaNormalsLines(QString filename, float scale);
-    void ExportAmigaLinesFromFaces(QString faces);
-    void ExportAmigaFaces(QString faces);
+    QString ExportAmigaVerts(QString vertices, float scale, QVector3D shift);
+    QString ExportAmigaVertexNormals(QString filename, float scale);
+    QString ExportAmigaNormalsLines(QString filename, float scale);
+    QString ExportAmigaLinesFromFaces(QString faces);
+    QString ExportAmigaFaces(QString faces);
 
 };
 

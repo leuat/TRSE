@@ -141,23 +141,23 @@ void ConvertObjects(QString file, float scale, QVector3D shift) {
 
       obj.ExportAmigaVerts("/home/leuat/Dropbox/TRSE/Amiga/objs/"+file+"_verts.bin",scale,shift*-1);
       obj.ExportAmigaLinesFromFaces("/home/leuat/Dropbox/TRSE/Amiga/objs/"+file+"_faces.bin");
-      obj.ExportAmigaNormalsLines("/home/leuat/Dropbox/TRSE/Amiga/objs/"+file+"_normals.bin",128.0f);
+      obj.ExportAmigaNormalsLines("/home/leuat/Dropbox/TRSE/Amiga/objs/"+file+"_normals.bin",64.0f);
 
 }
 
 void ConvertAllObjs() {
 //    ConvertObjects("diamond",30,QVector3D(15,15,15));
-  //  ConvertObjects("teapot",1.2f,QVector3D(0,20,0));
-  //  ConvertObjects("cube",30,QVector3D(0,0,0));
-//    ConvertObjects("fox",3,QVector3D(0,0,0));
-    ConvertObjects("love",1,QVector3D(0,25,0));
+//    ConvertObjects("teapot",1.2f,QVector3D(0,20,0));
+//    ConvertObjects("cube",30,QVector3D(0,0,0));
+//    ConvertObjects("fox",3,QVector3D(0,50,0));
+    //ConvertObjects("love",1,QVector3D(0,25,0));
 
 }
 
 
 int main(int argc, char *argv[])
 {
-    ConvertAllObjs();
+//    ConvertAllObjs();
     QApplication a(argc, argv);
     a.setStyle(QStyleFactory::create("Fusion"));
     MainWindow w;

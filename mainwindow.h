@@ -56,6 +56,8 @@
 #include "source/dialogdonate.h"
 #include "source/dialogfindfile.h"
 
+#include "source/dialogexport3d.h"
+
 namespace Ui {
 class MainWindow;
 
@@ -405,6 +407,8 @@ private slots:
     void on_actionEffects_triggered();
 
     void on_actionFjong_Raymarcher_document_triggered();
+
+    void on_actionWavefront_obj_to_amiga_converter_triggered();
 
 private:
 

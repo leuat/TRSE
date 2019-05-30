@@ -250,6 +250,7 @@ void ASTDispather68000::dispatch(NodeVarDecl *node)
             ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
 
         IncBin(as,node);
+
     }
     else
     if (t->m_op.m_type==TokenType::POINTER) {

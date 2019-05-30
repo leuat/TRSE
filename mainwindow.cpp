@@ -1080,6 +1080,7 @@ void MainWindow::on_actionFjong_Raymarcher_document_triggered()
     if (QFile::exists(fn))
         QFile::remove(fn);
 
+
     QFile file(fn);
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream s(&file);
@@ -1090,4 +1091,11 @@ void MainWindow::on_actionFjong_Raymarcher_document_triggered()
 //    LoadRasFile(filename);
     LoadDocument(filename);
     RefreshFileList();
+}
+
+void MainWindow::on_actionWavefront_obj_to_amiga_converter_triggered()
+{
+    DialogExport3D* de = new DialogExport3D(&m_iniFile);
+    de->exec();
+    delete de;
 }

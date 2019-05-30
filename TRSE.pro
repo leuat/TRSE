@@ -76,6 +76,7 @@ win32:RC_ICONS += trse.ico
 SOURCES += main.cpp\
         mainwindow.cpp \
     imageworker.cpp \
+    source/dialogexport3d.cpp \
     source/toolbox.cpp \
     source/toolboxitem.cpp \
     source/workerthread.cpp \
@@ -204,6 +205,7 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     imageworker.h \
+    source/dialogexport3d.h \
     source/toolbox.h \
     source/toolboxitem.h \
     source/workerthread.h \
@@ -338,6 +340,7 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     dialognewimage.ui \
     dialogimport.ui \
+    source/dialogexport3d.ui \
     source/trsedocuments/formraseditor.ui \
     source/trsedocuments/formimageeditor.ui \
     source/dialogtrsesettings.ui \

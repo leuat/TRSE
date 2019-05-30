@@ -307,6 +307,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionTRSE_Settings"/>
+    <addaction name="actionWavefront_obj_to_amiga_converter"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -463,6 +464,11 @@
   <action name="actionFjong_Raymarcher_document">
    <property name="text">
     <string>Fjong Raymarcher document</string>
+   </property>
+  </action>
+  <action name="actionWavefront_obj_to_amiga_converter">
+   <property name="text">
+    <string>Wavefront .obj converter</string>
    </property>
   </action>
  </widget>

@@ -51,17 +51,25 @@ void Util::Tokenize(const string& str,
       pos = s.find_first_of(delimiters, lastPos);
     }
   
-}	
+}
+
+QString Util::toString(QStringList lst) {
+    QString ret="";
+    for (QString& s:lst)
+        ret+=s+",";
+    ret.remove(ret.count()-1,1);
+    return ret;
+}
 
 
-  
+
 const char* Util::read_textfile(string filename) {
-  ifstream f(filename.c_str(), ios::in);
-  string cnt, sum;
-  sum = "";
-  while(!f.eof()) {
-    f >> cnt; 
-    sum = sum + cnt;
+    ifstream f(filename.c_str(), ios::in);
+    string cnt, sum;
+    sum = "";
+    while(!f.eof()) {
+        f >> cnt;
+        sum = sum + cnt;
   }
   f.close();       
   return sum.c_str();           
