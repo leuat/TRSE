@@ -217,7 +217,7 @@ void MainWindow::VerifyDefaults()
         m_iniFile.setFloat("memory_analyzer_font_size", 17);
 
     if (!m_iniFile.contains("optimizer_remove_unused_symbols"))
-     m_iniFile.setFloat("optimizer_remove_unused_symbols",1);
+     m_iniFile.setFloat("optimizer_remove_unused_symbols",0);
 
     if (!m_iniFile.contains("assembler"))
         m_iniFile.setString("assembler","OrgAsm");
