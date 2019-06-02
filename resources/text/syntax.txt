@@ -170,7 +170,8 @@ m; ScreenOn; C64, C128;
 m; CopyImageColorData; C64, C128; a,n
 m; Lo; C64, C128, NES, VIC20; a
 m; Hi; C64, C128, NES, VIC20; a
-
+m; CreateInteger; C64, C128, NES, VIC20; b,b
+m; CreatePointer; C64, C128, NES, VIC20; b,b
 
 # Sprite routines
 

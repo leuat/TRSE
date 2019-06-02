@@ -335,11 +335,11 @@ void C64FullScreenChar::ExportMovie(QFile &file)
         if (compressionType==3)
         data.append(mc.CompressScreen3(screens[i], screens[i+1],
                 m_charWidth, m_charHeight,compr,
-                endChar,skipChar));
+                endChar,skipChar,true));
 
         if (compressionType==2)
         data.append(mc.CompressScreen2(screens[i], screens[i+1],
-                m_charWidth, m_charHeight,compr,endChar,skipChar));
+                m_charWidth, m_charHeight,compr,endChar,skipChar, true));
 
 
        // qDebug() << screen;

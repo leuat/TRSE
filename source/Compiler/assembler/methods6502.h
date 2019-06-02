@@ -46,6 +46,7 @@ public:
     void Joystick(Assembler* as);
     void BitOp(Assembler* as, int type);
     void PlaySound(Assembler* as);
+    void CreateInteger(Assembler* as, QString reg);
 
     void LoHi(Assembler* as, bool isLo);
 

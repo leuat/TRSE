@@ -238,4 +238,144 @@ cnt SHOULD be  576*/
 
 }
 
+void Compression::AddPetsciiScreen(QByteArray &data, QImage &img)
+{
+
+    QByteArray d;
+//    qDebug() << QString::number(img.width());
+    int pixelw = img.width()/80;
+    int pixelH = img.height()/50;
+    QColor bg(QColor(0,0,0));
+    int cnt = 0;
+    unsigned cc = 0;
+    unsigned char petTable[16]= {0x20, 0x7e, 0x7C, 0xE2,
+                                    0x6C, 0x7f, 0xE1,  0xFb,
+                                0x7b, 0x61, 0xff, 0xec,
+                                0x62, 0xfc, 0xfe, 0xA0};
+
+    for (int y=0;y<25;y++)
+        for (int x=0;x<40;x++) {
+            int xx = x/40.0*(float)img.width();
+            int yy = y/25.0*(float)img.height();
+
+
+
+            int i1 =  !Util::isEqual(img.pixelColor(xx,yy),bg) <<0 |
+                      !Util::isEqual(img.pixelColor(xx+pixelw,yy),bg) <<1 |
+                      !Util::isEqual(img.pixelColor(xx,yy+pixelH),bg) <<3 |
+                      !Util::isEqual(img.pixelColor(xx+pixelw,yy+pixelH),bg) <<2;
+
+            int i2 =  !Util::isEqual(img.pixelColor(xx,yy),bg) <<0;
+            i2=i2*0xA0;
+//            d.append(petTable[i1]);
+            d.append(i2);
+//            qDebug() << i1 << img.pixelColor(xx,yy);
+
+
+/*            if (cnt==0) {
+                cc=i1;
+            }
+            else {
+                cc = cc | i1<<4;
+                d.append(cc);
+
+            }
+*/
+//            cnt=(cnt+1)&1;
+//            unsigned char i1 =
+        }
+
+    data.append(d);
+}
+
+
+void Compression::AddBinaryScreen(QByteArray &data, QImage &img)
+{
+
+    QByteArray d;
+//    qDebug() << QString::number(img.width());
+    int pixelw = img.width()/80;
+    int pixelH = img.height()/50;
+    QColor bg(QColor(0,0,0));
+    int cnt = 0;
+    unsigned cc = 0;
+
+    for (int y=0;y<25;y++)
+        for (int x=0;x<40;x++) {
+            int xx = x/40.0*(float)img.width();
+            int yy = y/25.0*(float)img.height();
+
+            int i1 =  !Util::isEqual(img.pixelColor(xx,yy),bg) <<0;
+
+            if (cnt==0) {
+                cc=i1;
+            }
+            else {
+                cc = cc | i1<<cnt;
+
+            }
+
+            cnt=(cnt+1);
+            if (cnt==8) {
+                cnt = 0;
+                d.append(cc);
+
+            }
+//            unsigned char i1 =
+        }
+
+    data.append(d);
+}
+
+void Compression::SaveCompressedTRM(QByteArray& inData, QString fileName, int c)
+{
+    int count = inData.count()/1000;
+    qDebug() << "count screens: " << count;
+    MovieConverter mc;
+    float compr = 0;
+    char endChar = 0x56;
+    char skipChar = 0x1;
+
+
+    QByteArray header;
+
+
+    header.append(40);
+    header.append(25);
+    header.append((unsigned char)count);
+    header.append((char)c);
+    header.append((char)0);
+    header.append(endChar);
+    header.append(skipChar);
+
+//    file.write(header);
+
+
+
+    QByteArray data;
+
+    data.append(header);
+    for (int i=0;i<count-1;i++) {
+
+        QByteArray s1, s2;
+        for (int j=0;j<1000;j++) {
+            s1.append(inData[i*1000 + j]);
+            s2.append(inData[(i+1)*1000 + j]);
+        }
+
+        if (c==3)
+        data.append(mc.CompressScreen3(s1, s2,
+                40, 25,compr,
+                endChar ,skipChar, false));
+
+        if (c==2)
+        data.append(mc.CompressScreen2(s1, s2,
+                40, 25,compr,
+                endChar ,skipChar,false));
+
+    }
+   Util::SaveByteArray(data,fileName) ;
+
+}
+
 

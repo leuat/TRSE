@@ -43,6 +43,14 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("VIAIRQ"))
         VIAIRQ(as);
 
+
+    if (Command("CreateInteger"))
+        CreateInteger(as,"y");
+
+
+    if (Command("CreatePointer"))
+        CreateInteger(as,"x");
+
     if (Command("LoadPalette"))
         LoadPalette(as);
 
@@ -1956,6 +1964,13 @@ void Methods6502::PlaySound(Assembler *as)
  //       as->
  //   }
 
+}
+
+void Methods6502::CreateInteger(Assembler *as, QString reg)
+{
+    LoadVar(as, 0);
+    as->Asm("tay");
+    LoadVar(as, 1);
 }
 
 void Methods6502::LoHi(Assembler *as, bool isLo)

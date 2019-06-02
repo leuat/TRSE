@@ -291,16 +291,25 @@ QByteArray MovieConverter::CompressScreen(QByteArray prevFrame, QByteArray newFr
     return ret;
 }
 
-QByteArray MovieConverter::CompressScreen2(QByteArray prevFrame, QByteArray newFrame, int w, int h, float &compr,char endChar,char skipChar)
+QByteArray MovieConverter::CompressScreen2(QByteArray prevFrame, QByteArray newFrame, int w, int h, float &compr,char endChar,char skipChar, bool useColors)
 {
     QByteArray ret;
     uchar skip=0;
     int c = 0;
-    for (int kk=0;kk<2;kk++) {
+    int kmax = 2;
+    if (!useColors)
+        kmax = 1;
+
+    for (int kk=0;kk<kmax;kk++) {
         for (int x=0;x<h;x++) {
             for (int y=0;y<w;y++)
             {
+
                 int i=2*(y + x*w);
+
+                if (!useColors)
+                    i=y+x*w;
+
                 char px1 = prevFrame[i];
                 char px2 = newFrame[i];
 
@@ -353,13 +362,16 @@ QByteArray MovieConverter::CompressScreen2(QByteArray prevFrame, QByteArray newF
 
 
 
-QByteArray MovieConverter::CompressScreen3(QByteArray prevFrame, QByteArray newFrame, int w, int h, float &compr, char CEnd, char CSkip)
+QByteArray MovieConverter::CompressScreen3(QByteArray prevFrame, QByteArray newFrame, int w, int h, float &compr, char CEnd, char CSkip, bool useColors)
 {
     QByteArray ret;
     uchar skip=0;
     int c = 0;
     uchar cnt = 0;
-    for (int kk=0;kk<2;kk++) {
+    int kmax = 2;
+    if (!useColors)
+        kmax = 1;
+    for (int kk=0;kk<kmax;kk++) {
         cnt=1;
         char cur = newFrame[0];
         if (kk==1) {
@@ -369,6 +381,8 @@ QByteArray MovieConverter::CompressScreen3(QByteArray prevFrame, QByteArray newF
             for (int y=0;y<w;y++)
             {
                 int i=2*(y + x*w);
+                if (!useColors)
+                    i=y+x*w;
                 char px2 = newFrame[i];
 
                 if (kk==1)

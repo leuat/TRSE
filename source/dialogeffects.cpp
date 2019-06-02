@@ -401,8 +401,8 @@ static int SetY(lua_State *L)
 
 int DialogEffects::Message(lua_State *L)
 {
-    m_infoText+=lua_tostring(L,1);
-    m_infoText+="\n";
+    m_infoText=QString(lua_tostring(L,1)) +"\n"+ m_infoText;
+//    m_infoText+="\n";
     return 0;
 }
 
@@ -520,7 +520,71 @@ static int SaveMulticolorImage(lua_State* L) {
     return 0;
 }
 
+static int AddParticle(lua_State* L) {
+    QString name = lua_tostring(L,1);
+    AbstractRayObject* aro = m_rt.Find(name);
+    if (aro==nullptr) {
+        m_infoText+="Could not find object: " + name;
+        return 0;
+    }
 
+    Particle p(aro->m_position,QVector3D(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4)),lua_tonumber(L,5),lua_tonumber(L,6),m_rt.FindID(aro));
+    m_rt.m_particles.AddParticle(p);
+
+    return 0;
+}
+
+static int MoveParticles(lua_State* L) {
+    m_rt.m_particles.Move(lua_tonumber(L,1));
+    m_rt.SetParticles();
+    return 0;
+}
+
+static int ConstrainParticlesBox(lua_State* L) {
+    QVector3D min = QVector3D(lua_tonumber(L,1),lua_tonumber(L,2),lua_tonumber(L,3));
+    QVector3D max = QVector3D(lua_tonumber(L,4),lua_tonumber(L,5),lua_tonumber(L,6));
+    m_rt.m_particles.ConstrainBox(min,max, lua_tonumber(L,7));
+    return 0;
+}
+
+static int ApplyForce(lua_State* L) {
+    QVector3D F = QVector3D(lua_tonumber(L,1),lua_tonumber(L,2),lua_tonumber(L,3));
+    m_rt.m_particles.ApplyForce(F);
+    return 0;
+}
+
+
+
+static int CollideSphere(lua_State* L) {
+    m_rt.m_particles.CollideSphere(lua_tonumber(L,1));
+    return 0;
+}
+
+
+static int AddBinaryScreen(lua_State* L) {
+    m_rt.m_particles.CollideSphere(lua_tonumber(L,1));
+    return 0;
+}
+
+static int AddScreenPetscii(lua_State* L) {
+    m_compression.AddPetsciiScreen(m_charData, m_effect->m_img);
+//    m_rt.m_particles.CollideSphere(lua_tonumber(L,1));
+    return 0;
+}
+
+
+static int AddScreenBinary(lua_State* L) {
+    m_compression.AddBinaryScreen(m_charData, m_effect->m_img);
+//    m_rt.m_particles.CollideSphere(lua_tonumber(L,1));
+    return 0;
+}
+
+/*lua_register(m_script->L, "AddParticle", AddParticle);
+lua_register(m_script->L, "MoveParticles", MoveParticles);
+lua_register(m_script->L, "ConstrainParticlesBox", ConstrainParticlesBox);
+lua_register(m_script->L, "ApplyForce", ApplyForce);
+
+*/
 
 static int OptimizeScreenAndCharset(lua_State* L) {
 
@@ -559,6 +623,10 @@ static int CompressAndSaveHorizontalData(lua_State* L) {
     return 0;
 
 }
+static int SaveCompressedTRM(lua_State* L) {
+    m_compression.SaveCompressedTRM(m_charData,m_currentDir+"/"+ lua_tostring(L,1), lua_tonumber(L,2));
+    return 0;
+}
 
 void DialogEffects::LoadScript(QString file)
 {
@@ -594,8 +662,11 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddAmigaBitplaneToData", AddBitplaneToData);
     lua_register(m_script->L, "Save2DInfo", Save2DInfo);
     lua_register(m_script->L, "SaveMulticolorImage", SaveMulticolorImage);
+    lua_register(m_script->L, "SaveCompressedTRM", SaveCompressedTRM);
 
     lua_register(m_script->L, "AddScreen", AddScreen);
+    lua_register(m_script->L, "AddScreenPetscii", AddScreenPetscii);
+    lua_register(m_script->L, "AddScreenBinary", AddScreenBinary);
     lua_register(m_script->L, "SetRotation", SetRotation);
     lua_register(m_script->L, "SetQuatAxisAngle", SetQuatAxisAngle);
     lua_register(m_script->L, "SetPosition", SetPosition);
@@ -605,6 +676,16 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "sqrt", LuaSqrt);
     lua_register(m_script->L, "Message", Message);
     lua_register(m_script->L, "ClearAllObjects", ClearObjects);
+
+    // Particle effects
+
+    lua_register(m_script->L, "AddParticle", AddParticle);
+    lua_register(m_script->L, "MoveParticles", MoveParticles);
+    lua_register(m_script->L, "ConstrainParticlesBox", ConstrainParticlesBox);
+    lua_register(m_script->L, "ApplyForce", ApplyForce);
+    lua_register(m_script->L, "CollideSphere", CollideSphere);
+
+
 
     /* run the script */
     int ret = luaL_dostring(m_script->L, "Init()");
@@ -622,6 +703,7 @@ void DialogEffects::Init(QString dir)
     m_currentDir = dir;
     m_rt.m_globals.m_lights.clear();
     m_rt.m_globals.m_lights.append(new DirectionalLight(QVector3D(1,1,-1).normalized(),QVector3D(1,1,1)));
+    m_rt.m_particles.Clear();
     if (m_file!="")
         LoadScript(m_file);
 

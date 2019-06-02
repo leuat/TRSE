@@ -6,6 +6,7 @@
 #include <QFile>
 #include "source/LeLib/limage/multicolorimage.h"
 #include "source/LeLib/limage/charsetimage.h"
+#include "source/LeLib/limage/c64fullscreenchar.h"
 #include <QImage>
 #include <math.h>
 #include <QtMath>
@@ -31,7 +32,10 @@ public:
 
     void ConvertToC64(bool dither);
 
+    void AddPetsciiScreen(QByteArray& data, QImage& img);
+    void AddBinaryScreen(QByteArray& data, QImage& img);
 
+    void SaveCompressedTRM(QByteArray& data, QString file, int compression);
 };
 
 #endif // COMPRESSION_H

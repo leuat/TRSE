@@ -31,7 +31,7 @@ var
 	@define bitmapFont_characterHeight 24
 
 	// Text to be displayed
-	text: string =("NAAV   ");
+	text: string =("HELLO");
 	// 5 characters in the string
 	@define noChars 5 
    	// Allocate screen memory

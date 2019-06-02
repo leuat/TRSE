@@ -144,5 +144,7 @@
         <file>resources/code/amiga/matmulvec.s</file>
         <file>resources/code/amiga/simpleproject.s</file>
         <file>resources/code/amiga/matmulvec_norm_z.s</file>
+        <file>resources/text/help/m/createpointer.rtf</file>
+        <file>resources/text/help/m/createinteger.rtf</file>
     </qresource>
 </RCC>

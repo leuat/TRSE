@@ -99,6 +99,17 @@ public:
 
     static QColor colorScale(QColor& col, int mean, int std);
 
+    static int isEqual(QColor a, QColor b) {
+        if (a.red()!=b.red())
+            return 0;
+        if (a.green()!=b.green())
+            return 0;
+        if (a.blue()!=b.blue())
+            return 0;
+
+        return 1;
+    }
+
 
     static int getShiftCount(int i);
 

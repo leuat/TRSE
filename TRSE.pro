@@ -200,7 +200,8 @@ SOURCES += main.cpp\
     source/Compiler/assembler/AsmM68000.cpp \
     source/Compiler/assembler/methods68000.cpp \
     source/dialogcolors.cpp \
-    source/LeLib/limage/bitmapfont.cpp
+    source/LeLib/limage/bitmapfont.cpp \
+    source/Raytracer/particles.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -335,7 +336,8 @@ HEADERS  += mainwindow.h \
     source/Compiler/assembler/AsmM68000.h \
     source/Compiler/assembler/methods68000.h \
     source/dialogcolors.h \
-    source/LeLib/limage/bitmapfont.h
+    source/LeLib/limage/bitmapfont.h \
+    source/Raytracer/particles.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \
