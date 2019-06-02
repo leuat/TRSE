@@ -11,6 +11,7 @@
 # n = pure number
 # ib = integer or byte
 # p = procedure
+# ai = address OR integer
 
 # init functions
 m; initrandom; C64, C128 ;

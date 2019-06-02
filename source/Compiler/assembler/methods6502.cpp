@@ -1990,9 +1990,14 @@ void Methods6502::LoHi(Assembler *as, bool isLo)
     }
     if (m_node->m_params[0]->getType(as)==TokenType::INTEGER) {
         if (isLo)
+        as->Asm("lda " + m_node->m_params[0]->getValue(as));
+        else
+            as->Asm("lda " + m_node->m_params[0]->getValue(as) +"+1");
+
+/*        if (isLo)
             as->Asm("lda #" + Util::numToHex(m_node->m_params[0]->getInteger()&0xFF));
         else
-            as->Asm("lda #" + Util::numToHex((m_node->m_params[0]->getInteger()>>8)&0xFF));
+            as->Asm("lda #" + Util::numToHex((m_node->m_params[0]->getInteger()>>8)&0xFF));*/
     }
 
 }
