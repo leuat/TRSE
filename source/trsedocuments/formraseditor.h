@@ -42,6 +42,9 @@
 
 #include "source/Compiler/sourcebuilder.h"
 
+#include <QThread>
+#include <QElapsedTimer>
+
 namespace Ui {
     class FormRasEditor;
 }
@@ -56,6 +59,22 @@ public:
 };
 */
 
+class BuilderThread : public QThread {
+    Q_OBJECT
+public:
+    SourceBuilder* m_builder = nullptr;
+    QString m_source, m_filename;
+    bool m_isRunning = false;
+    void run() override;
+
+signals:
+    void emitText();
+    void emitSuccess();
+    void emitError();
+
+};
+
+
 class FormRasEditor : public TRSEDocument
 {
     Q_OBJECT
@@ -65,12 +84,12 @@ public:
     ~FormRasEditor();
     Highlighter* highlighter = nullptr;
     QFont m_font;
-
+    bool m_run = false;
     QVector<int> m_blockEndSymbols;
 
-
-    SourceBuilder m_builder;
-
+    BuilderThread m_builderThread;
+    QElapsedTimer m_timer;
+    int m_lastBuild= 0;
 
     MachineCodeAnalyzer m_mca;
     QString filename;
@@ -145,6 +164,12 @@ private slots:
     void on_btnReplace_clicked();
     void on_chkExomize_stateChanged(int arg1);
     void on_chkPostOpt_stateChanged(int arg1);
+
+
+    void HandleUpdateBuildText();
+    void HandleBuildComplete();
+    void HandleBuildError();
+//    void HandleRun();
 };
 
 #endif // FORMRASEDITOR_H

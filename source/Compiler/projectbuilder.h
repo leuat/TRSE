@@ -14,6 +14,7 @@ public:
     ProjectBuilder();
     ProjectBuilder(CIniFile* ini, CIniFile* project, QString curDir);
 
+
     CIniFile m_projectIniFile, m_iniFile;
     QString m_curDir;
     QStringList m_list;

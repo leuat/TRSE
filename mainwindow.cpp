@@ -917,8 +917,15 @@ void MainWindow::on_btnBuild_3_clicked()
 
 void MainWindow::on_btnBuild_4_clicked()
 {
-    if (m_currentDoc!=nullptr)
+    if (m_currentDoc!=nullptr) {
+        FormRasEditor* fre = dynamic_cast<FormRasEditor*>(m_currentDoc);
+        if (fre!=nullptr) {
+            fre->m_run = true;
+            fre->Build();
+            return;
+        }
         m_currentDoc->Run();
+    }
 
 }
 

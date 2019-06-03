@@ -24,7 +24,7 @@
     <number>7</number>
    </property>
    <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout_2" rowstretch="80,1,1,1,20" columnstretch="0">
+    <layout class="QGridLayout" name="gridLayout_2" rowstretch="80,1,1,1,21" columnstretch="0">
      <property name="sizeConstraint">
       <enum>QLayout::SetMaximumSize</enum>
      </property>

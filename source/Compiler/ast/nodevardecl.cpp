@@ -90,7 +90,7 @@ void NodeVarDecl::InitSid(QString projectDir, int VICAddress, QString type) {
                qDebug() << "SID PLAY: " << QString::number(sid.m_playAddress,16);
         */
     if (sid.m_loadAddress ==0 ) {
-        qDebug() << "BUG load sid at ZERO?";
+//        qDebug() << "BUG load sid at ZERO?";
         sid.m_loadAddress = sid.m_initAddress;
     }
     SymbolTable::DefineSid(sid.m_initAddress, sid.m_playAddress);

@@ -15,6 +15,9 @@ SourceBuilder::SourceBuilder(CIniFile *ini, CIniFile *project, QString curDir, Q
 
 bool SourceBuilder::Build(QString source)
 {
+    m_buildSuccess = false;
+    m_assembleSuccess = false;
+    m_output = "";
     if (!m_currentSourceFile.toLower().endsWith(".ras")) {
        m_output = "Turbo Rascal SE can only compile .ras files";
         return false;
@@ -55,8 +58,9 @@ bool SourceBuilder::Build(QString source)
      compiler.SaveBuild(m_filename + ".asm");
 //     qDebug() << "Saving to "+m_filename + ".asm";
 
-    return m_buildSuccess;
+     return m_buildSuccess;
 }
+
 
 bool SourceBuilder::Assemble()
 {

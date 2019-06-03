@@ -6,6 +6,8 @@
 
 #include "source/Compiler/systems/abstractsystem.h"
 #include "source/Compiler/systems/factorysystem.h"
+#include <QThread>
+
 
 class SourceBuilder
 {
@@ -25,10 +27,14 @@ public:
     Compiler compiler;
     bool Build(QString source);
 
+
     bool Assemble();
 
     QString getOutput() {
         return m_output;
+    }
+    void AddMessage(QString msg) {
+        m_output+=msg;
     }
 
 private:
