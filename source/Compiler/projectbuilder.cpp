@@ -13,9 +13,10 @@ ProjectBuilder::ProjectBuilder(CIniFile *ini, CIniFile *project, QString curDir)
 
 }
 
-void ProjectBuilder::Message(QString s)
+void ProjectBuilder::Message(QString s, bool term)
 {
-    m_output +=s+"\n";
+    m_output +=s;
+    if (term) m_output+="<br>";
     emitTextUpdate();
 
 }
@@ -31,6 +32,8 @@ void ProjectBuilder::Build(QString file)
     if (sb->Build(source)) {
 //        Message("Assembling...");
         sb->Assemble();
+        if (!sb->m_assembleSuccess)
+            throw QString("Error during assembly : " + sb->getOutput());
         emitTextUpdate();
     }
     else throw QString("Error compiling : " + f+ "\n" + sb->getOutput());
@@ -53,16 +56,16 @@ void ProjectBuilder::run()
                     throw QString("Build command 'define' requires two parameters: name and value");
 
                 m_projectIniFile.addStringList("global_defines","@define "+cmdList[1] + " " + cmdList[2],false);
-                Message("Adding define: " + cmdList[1] + " " + cmdList[2]);
+                Message("Adding define: <b>" + cmdList[1] + " " + cmdList[2]+"</b>");
 
             }
             if (cmd== "b") {
                 if (cmdList.count()!=2)
                     throw QString("Build command 'b' requires an input file");
-                Message("Compiling:  " + cmdList[1]);;
+                Message("Compiling:  <b>" + cmdList[1] + "</b> ...", false);;
 
                 Build(cmdList[1]);
-                Message("OK.");
+                Message("<i><font color=\"#80FF80\">OK</font></i>.");
             }
             if (cmd == "setvalue") {
                 if (cmdList.count()!=3)
@@ -73,7 +76,7 @@ void ProjectBuilder::run()
                     m_iniFile.setFloat(id, value);
                 if (m_projectIniFile.contains(id))
                     m_projectIniFile.setFloat(id, value);
-                Message("Setting compiler value:  "+id + " to " + QString::number(value));
+                Message("Setting compiler value:  <b>"+id + "</b> to " + QString::number(value));
             }
 
         }
@@ -82,7 +85,11 @@ void ProjectBuilder::run()
             emitTextUpdate();
             return;
         }
+
     }
+    Message("<font color=\"#80FF80\">All done!</font>");
+    emitTextUpdate();
+
 }
 
 void ProjectBuilder::LoadBuildList(QStringList buildList)

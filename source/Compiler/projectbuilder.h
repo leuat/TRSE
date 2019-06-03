@@ -20,7 +20,7 @@ public:
 
     QString m_output;
 
-    void Message(QString s);
+    void Message(QString s, bool term=true);
 
     void Build(QString file);
 

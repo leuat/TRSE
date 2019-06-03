@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "source/Compiler/projectbuilder.h"
+#include <QScrollBar>
 
 namespace Ui {
 class DialogProjectBuilder;

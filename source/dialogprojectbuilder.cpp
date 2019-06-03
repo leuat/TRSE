@@ -36,4 +36,5 @@ void DialogProjectBuilder::on_pushButton_clicked()
 void DialogProjectBuilder::UpdateText()
 {
     ui->txtOutput->setText(m_pb->m_output);
+    ui->txtOutput->verticalScrollBar()->setValue(ui->txtOutput->verticalScrollBar()->maximum());
 }
