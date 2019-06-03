@@ -201,7 +201,10 @@ SOURCES += main.cpp\
     source/Compiler/assembler/methods68000.cpp \
     source/dialogcolors.cpp \
     source/LeLib/limage/bitmapfont.cpp \
-    source/Raytracer/particles.cpp
+    source/Raytracer/particles.cpp \
+    source/Compiler/sourcebuilder.cpp \
+    source/Compiler/projectbuilder.cpp \
+    source/dialogprojectbuilder.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -337,7 +340,10 @@ HEADERS  += mainwindow.h \
     source/Compiler/assembler/methods68000.h \
     source/dialogcolors.h \
     source/LeLib/limage/bitmapfont.h \
-    source/Raytracer/particles.h
+    source/Raytracer/particles.h \
+    source/Compiler/sourcebuilder.h \
+    source/Compiler/projectbuilder.h \
+    source/dialogprojectbuilder.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \
@@ -358,7 +364,8 @@ FORMS    += mainwindow.ui \
     source/dialogfindfile.ui \
     source/dialogeffects.ui \
     source/trsedocuments/formfjong.ui \
-    source/dialogcolors.ui
+    source/dialogcolors.ui \
+    source/dialogprojectbuilder.ui
 
 RESOURCES += \
     resources.qrc

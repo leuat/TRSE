@@ -40,6 +40,7 @@
 #include "source/Compiler/systems/abstractsystem.h"
 #include "source/Compiler/systems/factorysystem.h"
 
+#include "source/Compiler/sourcebuilder.h"
 
 namespace Ui {
     class FormRasEditor;
@@ -67,10 +68,11 @@ public:
 
     QVector<int> m_blockEndSymbols;
 
-    AbstractSystem* m_system = nullptr;
+
+    SourceBuilder m_builder;
+
 
     MachineCodeAnalyzer m_mca;
-    Compiler compiler;
     QString filename;
     bool isInitialized=false;
     int m_searchFromPos = 0;
@@ -78,7 +80,6 @@ public:
 
     void LoadRasFile(QString fileName);
     void ExecutePrg(QString fileName,  QString system);
-    QStringList getFileList();
     void InitDocument(WorkerThread *t, CIniFile *ini, CIniFile* iniProject) override;
     void setupEditor();
     void Compress();
@@ -96,7 +97,7 @@ public:
     void UpdateColors() override;
     void UpdateFromIni() override;
     void AutoFormat() override;
-    bool BuildStep();
+  //  bool BuildStep();
     void Assemble6502(QString& text);
     void FillFromIni();
     void FillToIni();

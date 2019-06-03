@@ -43,7 +43,7 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -915,6 +915,47 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="text">
           <string>Post-optimization passes that are enabled/disabled for this project:</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="tab_8">
+        <attribute name="title">
+         <string>Build List</string>
+        </attribute>
+        <widget class="QLabel" name="label_25">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>581</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Compile list for automated project build. Executed when the &quot;Build All&quot; signal is triggered.</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton">
+         <property name="geometry">
+          <rect>
+           <x>580</x>
+           <y>10</y>
+           <width>80</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Help</string>
+         </property>
+        </widget>
+        <widget class="QPlainTextEdit" name="teBuildList">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>50</y>
+           <width>651</width>
+           <height>401</height>
+          </rect>
          </property>
         </widget>
        </widget>

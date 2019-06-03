@@ -106,8 +106,29 @@ void Messages::InitMessages()
                                           );
 
 
+
+    m_messages[PROJECT_BUILDER_HELP] = Message(PROJECT_BUILDER_HELP, Message::Msg,
+    "TRSE allows for batch compiling of .ras files, which is quite handy when developing demos and other larger projects with multiple source files.\n\n"
+    "In order to use the \"Build All\" button in the main window for batch building, you need to set up a build list. Example:\n\n"
+
+    "setvalue override_target_settings 1\n"
+    "setvalue perform_crunch 0\n"
+    "define IS_DEMO 1\n\n"
+
+    "b effect1.ras\n"
+    "b effect2.ras\n"
+    "b effect3.ras\n"
+    "b effect4.ras\n"
+    "\n\n\n"
+    "In this example, the builder first turns on target settings (etc setting $C00 as the start address),"
+    "before disabling exomizer crunching. We then set a custom preprocessor define IS_DEMO to be 1, before"
+    "compiling each of the source files with the current project settings + custom modified settings."
+                                               );
+
+
+
 }
-void Messages::DisplayMessage(int message)
+void Messages::DisplayMessage(int message, bool isHelp)
 {
     Message m = m_messages[message];
 
@@ -127,7 +148,8 @@ void Messages::DisplayMessage(int message)
         m_iniFile->addStringList("ignore_messages", QString::number(message), true);
         m_messages[message].m_ignore = true;
     }
-
+    if (isHelp)
+        dm->SetHelp();
 
     delete dm;
 

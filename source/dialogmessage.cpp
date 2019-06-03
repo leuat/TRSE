@@ -40,6 +40,11 @@ void DialogMessage::SetMessage(QString msg, QImage img)
     ui->lbImage->setPixmap(QPixmap::fromImage(img));
 }
 
+void DialogMessage::SetHelp()
+{
+    ui->chkStop->setVisible(false);
+}
+
 bool DialogMessage::ignoreIsChecked()
 {
     return ui->chkStop->checkState()==Qt::Checked;

@@ -71,13 +71,14 @@ public:
     int NO_VASMM = 11;
     int NO_AMIGA_EMULATOR = 12;
     int AMIGA_WARNING = 13;
+    int PROJECT_BUILDER_HELP = 14;
 
     QMap<int, Message> m_messages;
     CIniFile* m_iniFile;
     void LoadFromCIni(CIniFile* file);
     void InitMessages();
 
-    void DisplayMessage(int i);
+    void DisplayMessage(int i, bool isHelp=false);
 
 
 };

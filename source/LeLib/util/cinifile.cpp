@@ -61,6 +61,7 @@ void CIniFile::Load(QString fname) {
                 it.vec.setZ( v[2].toFloat());
             }
 
+//            qDebug() << "Loading :  " << it.name;
 
             if (tok[1].split(",").count()!=1) {
                 it.strval = "";
@@ -69,6 +70,7 @@ void CIniFile::Load(QString fname) {
                 it.lst.removeFirst();
                 for (QString& s : it.lst) {
                     s = s.trimmed();
+  //                  qDebug() <<s;
                  //   qDebug() << s;
                 }
             }

@@ -142,6 +142,9 @@ void DialogProjectSettings::FillFromIni()
     ui->cmbPawInclude2->addItem("none");
     ui->cmbPawInclude2->addItems(paw);
 
+    ui->teBuildList->document()->setPlainText(Util::fromStringList(    m_ini->getStringList("build_list")));
+
+
     ui->cmbPawInclude->setCurrentText(m_ini->getString("d64_paw_file"));
 
     ui->cmbPawInclude2->setCurrentText(m_ini->getString("d64_paw_file_disk2"));
@@ -162,7 +165,7 @@ void DialogProjectSettings::FillToIni()
     m_ini->setString("machine_state", ui->leInitMachineState->text());
 
     m_ini->setStringList("global_defines", ui->txtGlobalDefines->toPlainText().split("\n"));
-    qDebug() << ui->txtGlobalDefines->toPlainText().split("\n");
+//    qDebug() << ui->txtGlobalDefines->toPlainText().split("\n");
     m_ini->setString("zeropage_decrunch1", Util::numToHex(Util::NumberFromStringHex(ui->leDecrunchZp1->text())));
     m_ini->setString("zeropage_decrunch2", Util::numToHex(Util::NumberFromStringHex(ui->leDecrunchZp2->text())));
     m_ini->setString("zeropage_decrunch3", Util::numToHex(Util::NumberFromStringHex(ui->leDecrunchZp3->text())));
@@ -215,6 +218,8 @@ void DialogProjectSettings::FillToIni()
     m_ini->setFloat("override_target_settings_sys", ui->chkIgnoreBasic->isChecked());
     m_ini->setFloat("override_target_settings_prg", ui->chkStripPrg->isChecked());
 
+    m_ini->setStringList("build_list", ui->teBuildList->toPlainText().remove("=").split("\n"));
+
 
 //    FillTabDataToIni();
 
@@ -253,3 +258,8 @@ void DialogProjectSettings::on_pushButton_2_clicked()
 }
 
 */
+
+void DialogProjectSettings::on_pushButton_clicked()
+{
+    Messages::messages.DisplayMessage(Messages::messages.PROJECT_BUILDER_HELP,true);
+}

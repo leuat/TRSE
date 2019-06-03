@@ -40,6 +40,8 @@ public:
 
     void SetMessage(QString msg, QImage img);
 
+    void SetHelp();
+
     bool ignoreIsChecked();
 
 private slots:

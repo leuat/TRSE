@@ -715,6 +715,22 @@ QString MainWindow::FindPathInProjectFolders(const QModelIndex &index)
     return path;
 }
 
+void MainWindow::BuildAll()
+{
+
+
+    DialogProjectBuilder* pb = new DialogProjectBuilder();
+
+    pb->Initialize(&m_iniFile, &m_currentProject.m_ini,
+                   m_currentPath,
+                   m_currentProject.m_ini.getStringList("build_list"));
+
+    pb->exec();
+
+    delete pb;
+
+}
+
 
 void MainWindow::on_actionImage_triggered()
 {
@@ -1098,4 +1114,11 @@ void MainWindow::on_actionWavefront_obj_to_amiga_converter_triggered()
     DialogExport3D* de = new DialogExport3D(&m_iniFile);
     de->exec();
     delete de;
+}
+
+void MainWindow::on_btnBuildAll_clicked()
+{
+    if (m_currentProject.m_filename=="")
+        return;
+    BuildAll();
 }

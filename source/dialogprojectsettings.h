@@ -25,6 +25,7 @@
 #include <QDialog>
 #include "source/LeLib/util/util.h"
 #include "source/LeLib/util/cinifile.h"
+#include "source/messages.h"
 
 namespace Ui {
 class DialogProjectSettings;
@@ -67,6 +68,8 @@ private slots:
   //  void on_pushButton_clicked();
 
    // void on_pushButton_2_clicked();
+
+    void on_pushButton_clicked();
 
 private:
     void FillFromIni();

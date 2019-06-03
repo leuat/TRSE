@@ -704,7 +704,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         int diff = (val)-m_pCounter-2;
   //      qDebug() << QString::number(diff);
         if (abs(diff)>=128 && pd==OrgasmData::PASS_SYMBOLS) {
-            throw QString("Branch out of range : " +QString::number(diff));
+            throw QString("Branch out of range : " +QString::number(diff) + " on line :" + m_opCode + " " +expr);
         }
 //        qDebug() << "Diff: " << Util::numToHex((uchar)diff);
         data.append((uchar)diff);

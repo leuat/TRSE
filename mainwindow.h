@@ -55,8 +55,8 @@
 #include "source/dialogprojectsettings.h"
 #include "source/dialogdonate.h"
 #include "source/dialogfindfile.h"
-
 #include "source/dialogexport3d.h"
+#include "source/dialogprojectbuilder.h"
 
 namespace Ui {
 class MainWindow;
@@ -410,9 +410,13 @@ private slots:
 
     void on_actionWavefront_obj_to_amiga_converter_triggered();
 
+    void on_btnBuildAll_clicked();
+
 private:
 
     QString FindPathInProjectFolders(const QModelIndex &index);
+
+    void BuildAll();
 
     Ui::MainWindow *ui;
 };

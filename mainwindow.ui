@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Turbo Rascal Syntax error, &quot;;&quot; expected but &quot;BEGIN&quot; Version 0.06.6</string>
+   <string>Turbo Rascal Syntax error, &quot;;&quot; expected but &quot;BEGIN&quot; Version 0.06.7</string>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
@@ -66,6 +66,13 @@
           </item>
           <item>
            <layout class="QGridLayout" name="gridLayout_8">
+            <item row="0" column="0">
+             <widget class="QPushButton" name="btnSave_3">
+              <property name="text">
+               <string>Save (c-s)</string>
+              </property>
+             </widget>
+            </item>
             <item row="1" column="1">
              <widget class="QPushButton" name="btnMemoryAnalyze">
               <property name="text">
@@ -73,10 +80,10 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="0">
-             <widget class="QPushButton" name="btnSave_3">
+            <item row="1" column="0">
+             <widget class="QPushButton" name="btnBuild_4">
               <property name="text">
-               <string>Save (c-s)</string>
+               <string>Run (c-r)</string>
               </property>
              </widget>
             </item>
@@ -87,10 +94,10 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QPushButton" name="btnBuild_4">
+            <item row="2" column="0">
+             <widget class="QPushButton" name="btnBuildAll">
               <property name="text">
-               <string>Run (c-r)</string>
+               <string>Build All</string>
               </property>
              </widget>
             </item>

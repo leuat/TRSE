@@ -92,34 +92,6 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 
 }
 
-QStringList FormRasEditor::getFileList()
-{
-    QString pawFile = m_projectIniFile->getString("d64_paw_file");
-    if (pawFile=="none") return QStringList();
-    CIniFile paw;
-    paw.Load(m_currentDir + "/"+pawFile);
-    QStringList data = paw.getStringList("data");
-    QStringList ret;
-    int count = data.count()/3;
-    for (int i=0;i<count;i++) {
-        ret<< data[3*i];
-    }
-
-    QString pawFile2 = m_projectIniFile->getString("d64_paw_file_disk2");
-    if (pawFile2=="none") return ret;
-    CIniFile paw2;
-    paw2.Load(m_currentDir + "/"+pawFile2);
-    QStringList data2 = paw2.getStringList("data");
-    int count2 = data2.count()/3;
-    for (int i=0;i<count2;i++) {
-        ret<< data2[3*i];
-    }
-
-
-    return ret;
-
-}
-
 void FormRasEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile* pro)
 {
     TRSEDocument::InitDocument(t,ini, pro);
@@ -163,34 +135,18 @@ void FormRasEditor::Build()
 
     emit requestBuild();
 
-    if (BuildStep())
+    m_builder = SourceBuilder(m_iniFile, m_projectIniFile, m_currentDir, m_currentSourceFile);
+
+    if (m_builder.Build( ui->txtEditor->toPlainText() ))
         {
-//        qDebug() << "ME";
-        compiler.SaveBuild(filename + ".asm");
-        QString text ="Build <b><font color=\"#90FF90\">Successful</font>!</b> ( "+  (Util::MilisecondToString(m_system->timer.elapsed())) +")<br>";
-        text+="Assembler file saved to : <b>" + filename+".asm</b><br>";
-        text+="Compiled <b>" + QString::number(compiler.m_parser.m_lexer->m_lines.count()) +"</b> lines of Turbo Rascal to <b>";
-        text+=QString::number(compiler.m_assembler->getLineCount()) + "</b> lines of assembler instructions (and variables/labels)<br>";
-        if (m_iniFile->getdouble("post_optimize")==1) {
-            text+="Post-optimized away <b>" + QString::number(compiler.m_assembler->m_totalOptimizedLines) +"</b> lines of assembler instructions ";
-            text=text+"(<font color=\"#70FF40\"> " + QString::number((int)(100.0*(float)compiler.m_assembler->m_totalOptimizedLines/(float)compiler.m_assembler->getLineCount()))+  " % </font> of total ) <br>";
+        m_builder.compiler.SaveBuild(filename + ".asm");
 
-        }
-        else
-            text+="<font color=\"#FFA090\">Warning:</font>Post-optimizer disabled. Enable for faster results (unless post-optimizer breaks something).<br>";
+        m_builder.Assemble();
 
-//        text+="+"<br>";
-
-//        Assemble6502(text);
-        m_system->Assemble(text,filename, m_currentDir);
-        if (m_system->m_buildSuccess)
-            m_system->PostProcess(text, filename, m_currentDir);
-
-
-        ui->txtOutput->setText(text);
-        ui->txtEditor->m_cycles =  compiler.m_assembler->m_cycles;
+        ui->txtOutput->setText(m_builder.getOutput());
+        ui->txtEditor->m_cycles =  m_builder.compiler.m_assembler->m_cycles;
         ui->txtEditor->RepaintCycles();
-        ui->txtEditor->InitCompleter(compiler.m_assembler->m_symTab, &compiler.m_parser);
+        ui->txtEditor->InitCompleter(m_builder.compiler.m_assembler->m_symTab, &m_builder.compiler.m_parser);
 
 
     }
@@ -199,9 +155,9 @@ void FormRasEditor::Build()
         m_outputText = ErrorHandler::e.m_teOut;
         int ln = Pmm::Data::d.lineNumber;
 
-        emit OpenOtherFile(compiler.recentError.file, ln);
+        emit OpenOtherFile(m_builder.compiler.recentError.file, ln);
         GotoLine(ln);
-        m_system->m_buildSuccess = false;
+        m_builder.m_system->m_buildSuccess = false;
 
     }
     if (m_projectIniFile->getString("system")=="NES") {
@@ -256,7 +212,7 @@ void FormRasEditor::ConnectBlockSymbols()
         int winner = 0xFFFF;
         MemoryBlock* winnerBlock=nullptr;
 
-        for (MemoryBlock* mb: compiler.m_assembler->blocks) {
+        for (MemoryBlock* mb: m_builder.compiler.m_assembler->blocks) {
 //            if (mb->m_type==MemoryBlock::CODE &&  sym>mb->m_start)
                 if (sym>mb->m_start)
                 if (sym-mb->m_start<winner) {
@@ -345,10 +301,10 @@ void FormRasEditor::Setup()
 
 void FormRasEditor::Run()
 {
-    if (m_system==nullptr)
+    if (m_builder.m_system==nullptr)
         return;
 
-    if (m_system->m_system == AbstractSystem::AMIGA) {
+    if (m_builder.m_system->m_system == AbstractSystem::AMIGA) {
         Messages::messages.DisplayMessage(Messages::messages.NO_AMIGA_EMULATOR);
         return;
     }
@@ -362,7 +318,7 @@ void FormRasEditor::Run()
 
     }
 
-    if (!m_system->m_buildSuccess)
+    if (!m_builder.m_system->m_buildSuccess)
         return;
 
     if (!m_projectIniFile->contains("output_type"))
@@ -380,9 +336,9 @@ void FormRasEditor::Run()
 
 void FormRasEditor::SetLights()
 {
-    if (m_system==nullptr)
+    if (m_builder.m_system==nullptr)
         return;
-    if (!m_system->m_buildSuccess)
+    if (!m_builder.m_system->m_buildSuccess)
         ui->lblLight->setStyleSheet("QLabel { background-color : red; color : blue; }");
     else
         ui->lblLight->setStyleSheet("QLabel { background-color : green; color : blue; }");
@@ -459,7 +415,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         QTextCursor tc = ui->txtEditor->textCursor();
         tc.select(QTextCursor::WordUnderCursor);
         QString word = tc.selectedText();
-        for (Node*n : compiler.m_parser.m_proceduresOnly) {
+        for (Node*n : m_builder.compiler.m_parser.m_proceduresOnly) {
             NodeProcedureDecl* np = dynamic_cast<NodeProcedureDecl*>(n);
             if (np->m_procName.toLower()==word.toLower()) {
                 int ln=np->m_op.m_lineNumber;
@@ -487,7 +443,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
 
 void FormRasEditor::TestForCodeOverwrite(int codeEnd, QString& output)
 {
-    for (MemoryBlock& mb: compiler.m_assembler->m_userWrittenBlocks) {
+    for (MemoryBlock& mb: m_builder.compiler.m_assembler->m_userWrittenBlocks) {
 //        qDebug() << Util::numToHex(mb.m_start) << " vs " << Util::numToHex(codeEnd) ;
         if (mb.m_start<codeEnd && mb.m_start>=Syntax::s.m_startAddress) {
             output +="\n<font color=\"#FF8080\">WARNING:</font>Possible code block overwrite on line <b>" +QString::number(mb.m_lineNumber) + "</b>.&nbsp;";
@@ -535,7 +491,7 @@ void FormRasEditor::UpdateFromIni()
 
 void FormRasEditor::AutoFormat()
 {
-    if (!BuildStep())
+/*    if (!BuildStep())
         return;
 
     int pos = ui->txtEditor->textCursor().position();
@@ -604,9 +560,9 @@ void FormRasEditor::AutoFormat()
     QTextCursor tc = ui->txtEditor->textCursor();
     tc.setPosition(pos);
     ui->txtEditor->setTextCursor(tc);
-
+*/
 }
-
+/*
 bool FormRasEditor::BuildStep()
 {
     if (!m_currentSourceFile.toLower().endsWith(".ras")) {
@@ -646,7 +602,7 @@ bool FormRasEditor::BuildStep()
     return compiler.Build(m_system, path);
 }
 
-
+*/
 void FormRasEditor::FillFromIni()
 {
     ui->chkPostOpt->setChecked(m_iniFile->getdouble("post_optimize")==1);
@@ -679,10 +635,10 @@ void FormRasEditor::MemoryAnalyze()
 {
     int i= m_iniFile->getdouble("perform_crunch");
     m_iniFile->setFloat("perform_crunch",0);
-    if (!BuildStep())
+    if (!m_builder.Build(ui->txtEditor->toPlainText()))
         return;
     m_iniFile->setFloat("perform_crunch",i);
-    compiler.SaveBuild(filename + ".asm");
+    m_builder.compiler.SaveBuild(filename + ".asm");
 
     /*QProcess process;
     process.start(m_iniFile->getString("dasm"), QStringList()<<(filename +".asm") << ("-o"+filename+".prg") << "-v3");
@@ -701,12 +657,12 @@ void FormRasEditor::MemoryAnalyze()
 
     FindBlockEndSymbols(orgAsm);
     ConnectBlockSymbols();
-    compiler.m_assembler->blocks.append(new MemoryBlock(Syntax::s.m_startAddress, codeEnd, MemoryBlock::CODE, "code"));
+    m_builder.compiler.m_assembler->blocks.append(new MemoryBlock(Syntax::s.m_startAddress, codeEnd, MemoryBlock::CODE, "code"));
 
-    m_mca.ClassifyZP(compiler.m_assembler->blocks);
+    m_mca.ClassifyZP(m_builder.compiler.m_assembler->blocks);
 
     DialogMemoryAnalyze* dma = new DialogMemoryAnalyze();
-    dma->Initialize(compiler.m_assembler->blocks, m_iniFile->getInt("memory_analyzer_font_size"));
+    dma->Initialize(m_builder.compiler.m_assembler->blocks, m_iniFile->getInt("memory_analyzer_font_size"));
     dma->exec();
 
 }
