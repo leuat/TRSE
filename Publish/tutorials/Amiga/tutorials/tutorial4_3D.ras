@@ -9,6 +9,9 @@ var
 
 */
 
+
+
+
 @define IS_LOVE 1
 //@define IS_TEAPOT 1
 //@define IS_FOX 1
@@ -82,6 +85,7 @@ var
 */
 procedure RenderObjectLines(ro_obj:pointer of long; ro_normals:pointer of byte; ro_list:pointer of integer, ro_count : long; cxx, cyy, czz : long);
 var
+
 	ro_ri : integer = 0;
 	ro_x1,ro_y1,ro_x2,ro_y2, ro_z2:long = 0;
 	ro_z1,ro_tmp:byte;
@@ -240,6 +244,7 @@ begin
 	poke16(copper_palette,2+4*1,$070F);
 	poke16(copper_palette,2+4*2,$006E);
 	poke16(copper_palette,2+4*3,$070F);
+	poke16(copper_palette,2+4*3,$0FF0);
 
 	// Set line modulo
 	poke16(^$dff060,0,80);

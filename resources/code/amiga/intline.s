@@ -15,7 +15,7 @@ drawLine:
 
 
 
-	move.w	#$a4a,LineMode
+;	move.w	#$a4a,LineMode
 ;	lea		Boff(pc), a4
 ;	lea		$dff000,a6
 .waitblut:

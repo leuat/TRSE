@@ -44,7 +44,10 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         MatMulVec(as);
 
     if (Command("matmulvecnormalz"))
-        MatMulVecNormalZ(as);
+        MatMulVecNormalZ(as, true);
+
+    if (Command("matmulvecnormal"))
+        MatMulVecNormalZ(as,false);
 
     if (Command("setrotationx"))
         SetRotation(as,"x");
@@ -112,7 +115,9 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("setpalette"))
         Setpalette(as);
     if (Command("ablit"))
-        ABlit(as);
+        ABlit(as, false);
+    if (Command("fblit"))
+        ABlit(as, true);
 
 }
 
@@ -135,11 +140,11 @@ void Methods68000::LoadVariable(Assembler* as, QString cmd, Node* n, QString d0)
 
 }
 
-void Methods68000::LoadAddress(Assembler *as, Node *n, QString d0)
+/*void Methods68000::LoadAddress(Assembler *as, Node *n, QString d0)
 {
     Asm(as,"lea",n->getLiteral(as),d0);
 }
-
+*/
 void Methods68000::DrawLine(Assembler *as)
 {
 /*    ; d0=X1  d1=Y1  d2=X2  d3=Y2  d5=Screenwidth  a0=address a6=$dff000
@@ -197,7 +202,8 @@ void Methods68000::Poke(Assembler *as, QString bb)
 {
     QString a0 = as->m_regMem.Get();
     as->Comment("Poke command");
-    LoadAddress(as,m_node->m_params[0],a0);
+    //LoadAddress(as,m_node->m_params[0],a0);
+    m_dispatcher->LoadAddress(m_node->m_params[0],a0);
    // m_dispatcher->LoadVariable(m_node->m_params[2]);
     m_node->m_params[2]->Accept(m_dispatcher);
     QString val = as->m_varStack.pop();
@@ -286,12 +292,14 @@ void Methods68000::Memcpy(Assembler *as)
     QString lbl = as->NewLabel("memcpy");
 
     LoadVariable(as, "move.l",m_node->m_params[4], d0);
-    LoadVariable(as, "lea", m_node->m_params[0], a0);
+//    LoadVariable(as, "lea", m_node->m_params[0], a0);
+    m_dispatcher->LoadAddress(m_node->m_params[0],a0);
+ //   m_dispatcher->LoadAddress()
     m_node->m_params[1]->Accept(m_dispatcher);
     Asm(as,"add.w",as->m_varStack.pop(), a0);
 
 
-    LoadVariable(as, "lea",m_node->m_params[2], a1);
+    m_dispatcher->LoadAddress(m_node->m_params[2],a1);
     m_node->m_params[3]->Accept(m_dispatcher);
     Asm(as,"add.w",as->m_varStack.pop(), a1);
 
@@ -328,7 +336,7 @@ void Methods68000::Setpalette(Assembler *as)
 
 }
 
-void Methods68000::ABlit(Assembler *as)
+void Methods68000::ABlit(Assembler *as, bool isFiller)
 {
 /*    m; ablit; Amiga; a,a, i,i,i,l,i
 
@@ -341,19 +349,36 @@ void Methods68000::ABlit(Assembler *as)
     ; d4 = blitter size
 //    ; d5 = bltmod
   */
+    as->Asm("moveq.l #0,d6");
 
     as->Asm("lea     $dff000,a6 ; Hardware registers");
 
-    LoadAddress(as,m_node->m_params[0], "a0"); // src
-    LoadAddress(as,m_node->m_params[1], "a1"); // dst
-    as->Asm("moveq.l #0,d6");
+    m_dispatcher->LoadAddress(m_node->m_params[0], "a0"); // src
+    m_dispatcher->LoadAddress(m_node->m_params[1], "a1"); // dst
     LoadVariable(as,"move.w",m_node->m_params[2], "d6"); // Offset
     LoadVariable(as,"move.w",m_node->m_params[3], "d1"); // dst x
     LoadVariable(as,"move.w",m_node->m_params[4], "d2"); // dst y
     LoadVariable(as,"move.w",m_node->m_params[5], "d3"); // add
     LoadVariable(as,"move.w",m_node->m_params[6], "d4");
     LoadVariable(as,"move.w",m_node->m_params[7], "BLTAMOD(a6)"); // mod SRC
+    LoadVariable(as,"move.w",m_node->m_params[9], "BLTBMOD(a6)"); // mod SRC
+    LoadVariable(as,"move.w",m_node->m_params[9], "BLTCMOD(a6)"); // mod SRC
     LoadVariable(as,"move.w",m_node->m_params[8], "BLTDMOD(a6)"); // mod SRC
+
+    LoadVariable(as,"move.w",m_node->m_params[10], "d0"); // mod SRC
+
+//    1011
+    if (isFiller) {
+           // 00001011 $0DFC
+//        as->Asm("move.w  #$0DFC,d0 ; Goes in BLTCON0 (scroll first ) minterm");
+        as->Asm("move.w  #$0012,BLTCON1(a6) ;    ");
+    }
+    else {
+//        as->Asm("move.w  #$09E0,d0 ; Goes in BLTCON0 (scroll first ) minterm");
+
+        as->Asm("move.w  #0,BLTCON1(a6) ;    issa 0   BLTCON1");
+    }
+
 
     as->Asm("jsr blitter");
 }
@@ -469,7 +494,7 @@ void Methods68000::MatMulVec(Assembler *as)
     as->Asm("jsr call_matmulvec");
 }
 
-void Methods68000::MatMulVecNormalZ(Assembler *as)
+void Methods68000::MatMulVecNormalZ(Assembler *as, bool isZonly)
 {
     as->Comment("MatMulVec normal z only");
     m_dispatcher->LoadAddress(m_node->m_params[0],"a0");
@@ -483,8 +508,10 @@ void Methods68000::MatMulVecNormalZ(Assembler *as)
 
 //    moveq.l #0,d6
     //	move.w index,d6
+    if (isZonly)
     as->Asm("jsr matmulvec_normal_z_call");
-
+    else
+    as->Asm("jsr matmulvec_normal_call");
 }
 
 void Methods68000::ProjectToScreen(Assembler *as)

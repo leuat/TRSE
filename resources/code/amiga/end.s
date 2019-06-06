@@ -32,22 +32,13 @@
 ; d4 = blitter size
 ; d5 = bltmod
 blitter:
-;    lea     data_1,a0 ; Source
- ;   add.l   #80*120+10,a0
-     add.l   d6,a0
-;    lea     Screens_1,a1 ; Dest (x15)
+    add.l   d6,a0
     mulu.w  d3,d2
     add.l   d1,d2
     add.l   d2,a1
-;    lea     ScreenTab(pc), a2 ; Save addresses here
-;    move.w  #$09f0,d0 ; Goes in BLTCON0 (scroll first ) minterm
-    move.w  #$09E0,d0 ; Goes in BLTCON0 (scroll first ) minterm
                         ; Leftshift 1, use channels A and D, copy A -> D
-    moveq   #0,d2 
-;    move.w  #(32*$40)*4+(2),d4 ; This is blitter size, y=256, x=44*8 // Størrelsen på området man kopierer *fra*
 
     move.l  #$ffffffff,BLTAFWM(a6) ; Set last word and first word mask BLTAFWM and BLTALWM
-    move.w  d2,BLTCON1(a6) ;    issa 0   BLTCON1
 .lp:
 
 .litwait: ; Wait for blitter to be done
@@ -56,11 +47,13 @@ blitter:
 
     move.w  d0,BLTCON0(a6)  ; Set registers; BLTCON0
     move.l  a0,BLTAPTH(a6) ; src 
+    move.l  a1,BLTBPTH(a6) ; BLT Dest PTR
+    move.l  a1,BLTCPTH(a6) ; BLT Dest PTR
     move.l  a1,BLTDPTH(a6) ; BLT Dest PTR
     move.w  d4,BLTSIZE(a6) ; BLTSIZE & Start blitter
     rts
 
-
+; 1001
 
 
 

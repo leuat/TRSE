@@ -70,7 +70,19 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
     {
 
         QVector3D col = m_material.m_color;
-
+        if (m_material.m_checkerBoard.x()!=0) {
+            float x = m_material.m_checkerBoard.x();
+            //QVector3D mul = QVector3D(1,1,1);
+            QVector3D n = normal.normalized();
+            n = QVector3D(asin(n.y()), atan2(n.z(), n.x()),0);
+            //mul.setX(fmod(abs(n.x()), x)>x/2);
+            //mul.setY(fmod(abs(n.y()), x)>x/2);
+            //mul.setZ(fmod(abs(n.z()), x)>x/2);
+            float mul = fmod(abs(n.x()+100), x)>x/3;
+            mul = mul*fmod(abs(n.y()+100), x)>x/3;
+//            mul = mul*fmod(abs(n.z()), x)>x/2;
+            col = col*mul;
+        }
         if (pass==0)
         {
 
@@ -433,5 +445,29 @@ float RayObjectPerlin::intersect(Ray *ray)
     if (mm>0.2) return mm;
 
     return mm + amp*m_sn.noise(d2.x()*scale, d2.y()*scale, d2.z()*scale);
+
+}
+
+float RayObjectHoles::intersect(Ray *ray)
+{
+    QVector3D d2 =  ray->m_currentPos;// +ray->m_currentPos;
+//    d2.setX(fmod(d2.x(),m_vals.x()));
+//    if (d2.x()>m_vals.x()/2) d2.setX(1000);
+
+    ray->m_currentPos = d2;
+    float mm = m_obj->intersect(ray);
+
+    QVector3D d = Util::abss(m_localPos+ ray->m_currentPos) - m_vals;// +ray->m_currentPos;
+    d.setX(fmodf(abs(d.x()),m_vals.x())-m_vals.x()*0.50f);
+    d.setY(fmodf(abs(d.y()),m_vals.y())-m_vals.y()*0.50f);
+    d.setZ(fmodf(abs(d.z()),m_vals.z())-m_vals.z()*0.50f);
+    float cut= min(max(d.x(),max(d.y(),d.z())),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length();
+
+
+/*    if (mm>0.2) return mm;
+    float amp=0.9;
+    float deltay = fmod(abs(d2.x()),m_vals.x())>m_vals.x()/5.0;
+*/
+    return max(mm,cut);// + amp*deltay;
 
 }

@@ -131,7 +131,7 @@ void FormRasEditor::Compress()
 void FormRasEditor::Build()
 {
     // Enforce pause between builds
-    if (abs(m_timer.elapsed()-m_lastBuild)<250)
+    if (abs(m_timer.elapsed()-m_lastBuild)<250) // 250 ms beteen each try
         return;
     m_lastBuild = m_timer.elapsed();
     if (m_builderThread.m_isRunning) {

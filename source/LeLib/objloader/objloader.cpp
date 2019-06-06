@@ -41,6 +41,7 @@ void ObjLoader::Parse()
                 f.v1 = ilst[0]-1;
                 f.v2 = ilst[1]-1;
                 f.v3 = ilst[2]-1;
+
                 f.f1 = flst[0]-1;
                 f.f2 = flst[1]-1;
                 f.f3 = flst[2]-1;
@@ -63,6 +64,9 @@ void ObjLoader::Parse()
                 f2.f2 = flst[2]-1;
                 f2.f3 = flst[3]-1;
                 m_faces.append(f2);
+            }
+            if (ilst.count()!=3) {
+                qDebug() << "Size : " << QString::number(ilst.count());
             }
 //            qDebug() << f.v1 << f.v2 << f.v3;
             //qDebug() << "Appending";
@@ -144,11 +148,13 @@ QString ObjLoader::ExportAmigaFaces(QString faces)
     if (QFile::exists(faces))
         QFile::remove(faces);
 
-    unsigned short *facs = new unsigned short[3*m_faces.count()];
+
+     unsigned short *facs = new unsigned short[3*m_faces.count()];
+
     for (int i=0;i<m_faces.count();i++) {
-        facs[3*i] = qFromBigEndian((unsigned short)(m_faces[i].v1*4*3));
-        facs[3*i+1] = qFromBigEndian((unsigned short)(m_faces[i].v2*4*3));
-        facs[3*i+2] = qFromBigEndian((unsigned short)(m_faces[i].v3*4*3));
+        facs[3*i] = qFromBigEndian((unsigned short)(m_faces[i].v1*12));
+        facs[3*i+1] = qFromBigEndian((unsigned short)(m_faces[i].v2*12));
+        facs[3*i+2] = qFromBigEndian((unsigned short)(m_faces[i].v3*12));
 
 //        facs[3*i+2] = (int)(m_faces[i].v3*scale);
     }
@@ -158,7 +164,33 @@ QString ObjLoader::ExportAmigaFaces(QString faces)
     f2.close();
     delete[] facs;
 
-    return "no lines : "+ QString::number(3*m_faces.count());
+    return "no faces : "+ QString::number(m_faces.count());
+}
+
+QString ObjLoader::ExportAmigaFaceNormals(QString filename, float scale)
+{
+    if (QFile::exists(filename))
+        QFile::remove(filename);
+
+    char *verts = new char[3*m_faces.count()];
+    qDebug() << "Facecount: " << m_faces.count();
+    for (int i=0;i<m_faces.count();i++) {
+        int j = m_faces[i].f1;
+        verts[3*i+0] = (char)(m_normals[j].x()*scale);
+        verts[3*i+1] = (char)(m_normals[j].y()*scale);
+        verts[3*i+2] = (char)(m_normals[j].z()*scale);
+//        qDebug() << QString::number(verts[3*i]);
+    }
+//    qDebug() << m_reducedNormals;
+    QFile f1(filename);
+    f1.open(QFile::WriteOnly);
+    f1.write((const char*)verts,3*m_faces.count()*sizeof(char));
+    f1.close();
+    delete[] verts;
+
+    return filename + ": # face normals: " + QString::number(m_faces.count());
+
+
 }
 
 QString ObjLoader::ExportAmigaVerts(QString vertices, float scale, QVector3D shift)

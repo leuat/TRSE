@@ -304,4 +304,17 @@ public:
 };
 
 
+class RayObjectHoles : public AbstractRayObject {
+public:
+    QVector3D m_vals;
+    AbstractRayObject* m_obj;
+    RayObjectHoles(QVector3D val, AbstractRayObject* obj) {
+        m_vals = val;
+        m_obj = obj;
+    }
+
+    float intersect(Ray* ray) override;
+
+};
+
 #endif // RAYOBJECT_H

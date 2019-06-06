@@ -202,6 +202,18 @@ static int AddObject(lua_State *L)
         m_rt.m_objects.removeAll(o1);
     }
 
+    if (object=="holes") {
+        AbstractRayObject* o1 = m_rt.Find(lua_tostring(L,N));
+        N++;
+        QVector3D vals = QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2));
+        obj =
+                    new RayObjectHoles(vals,o1);
+        obj->m_position = o1->m_position;
+        obj->m_rotation = o1->m_rotation;
+        obj->m_bbRadius = o1->m_bbRadius;
+        m_rt.m_objects.removeAll(o1);
+    }
+
 
     if (object=="mesh") {
         QString fn = m_currentDir+"/"+ lua_tostring(L,N);
@@ -328,7 +340,10 @@ static int AddObject(lua_State *L)
 
         mat.m_shininess_strength = m_script->get<float>(material+".shininess_intensity");
 
-
+        mat.m_shininess_strength = m_script->get<float>(material+".shininess_intensity");
+        if (m_script->lua_exists(material+".checkerboard")) {
+            mat.m_checkerBoard = QVector3D(m_script->get<float>(material+".checkerboard"),0,0);
+        }
         obj->SetMaterial(mat);
 
     }

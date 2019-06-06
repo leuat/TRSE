@@ -97,6 +97,42 @@ public:
         return true;
     }
 
+    bool lua_exists(const QString& variableName) {
+      level = 0;
+      QString var = "";
+        for(unsigned int i = 0; i < variableName.size(); i++) {
+          if(variableName.at(i) == '.') {
+            if(level == 0) {
+              lua_getglobal(L, var.toStdString().c_str());
+            } else {
+              lua_getfield(L, -1, var.toStdString().c_str());
+            }
+
+            if(lua_isnil(L, -1)) {
+    //          printError(variableName, var + " is not defined");
+              return false;
+            } else {
+              var = "";
+              level++;
+            }
+          } else {
+            var += variableName.at(i);
+          }
+        }
+        if(level == 0) {
+          lua_getglobal(L, var.toStdString().c_str());
+        } else {
+          lua_getfield(L, -1, var.toStdString().c_str());
+        }
+        if(lua_isnil(L, -1)) {
+//            printError(variableName, var + " is not defined");
+            return false;
+        }
+
+        return true;
+    }
+
+
     // Generic get
     template<typename T>
     T lua_get(const QString& variableName) {

@@ -41,6 +41,7 @@ public:
     QString ExportAmigaNormalsLines(QString filename, float scale);
     QString ExportAmigaLinesFromFaces(QString faces, float minLength);
     QString ExportAmigaFaces(QString faces);
+    QString ExportAmigaFaceNormals(QString faces, float scale);
 
 };
 

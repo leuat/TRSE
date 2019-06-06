@@ -192,6 +192,7 @@ void ASTDispather68000::dispatch(NodeUnaryOp *node)
         node->m_right->Accept(this);
     }
 
+    as->Comment("Unary op for : " + node->m_right->getValue(as));
 }
 
 void ASTDispather68000::dispatch(NodeCompound *node)
@@ -451,7 +452,7 @@ void ASTDispather68000::dispatch(NodeConditional *node)
         if (node->m_elseBlock!=nullptr)
             failedLabel = labelElse;
 
-        BuildSimple(bn,  failedLabel);
+    BuildSimple(bn,  failedLabel);
 
     // Start main block
     as->Label(lblstartTrueBlock); // This means skip inside
@@ -943,11 +944,15 @@ void ASTDispather68000::BuildSimple(Node *node, QString lblFailed)
     if (node->m_op.m_type==TokenType::NOTEQUALS)
         as->Asm("beq " + lblFailed);
     if (node->m_op.m_type==TokenType::LESS)
+        as->Asm("bgt " + lblFailed);
+    if (node->m_op.m_type==TokenType::GREATER)
+        as->Asm("blt " + lblFailed);
+
+/*    if (node->m_op.m_type==TokenType::LESS)
         as->Asm("bcc " + lblFailed);
     if (node->m_op.m_type==TokenType::GREATER)
         as->Asm("bcs " + lblFailed);
-
-
+*/
 
 }
 
@@ -969,17 +974,25 @@ void ASTDispather68000::BuildToCmp(Node *node)
         if (node->m_right->isPureNumeric())
         {
             as->Comment("Compare with pure num / var optimization");
+//            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
             TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
             return;
         } else
         {
             as->Comment("Compare two vars optimization");
-            if (node->m_right->isPureVariable())
+            if (node->m_right->isPureVariable()) {
+                QString wtf = as->m_regAcc.Get();
                 LoadVariable((NodeVar*)node->m_right);
+                TransformVariable(as,"move",wtf,(NodeVar*)node->m_left);
+                TransformVariable(as,"cmp",wtf,as->m_varStack.pop());
+//                TransformVariable(as,"cmp",wtf,as->m_varStack.pop());
+                as->m_regAcc.Pop(wtf);
+                return;
+            }
                  else
                 node->m_right->Accept(this);
 
-            TransformVariable(as,"cmp",as->m_varStack.pop(),(NodeVar*)node->m_left);
+            TransformVariable(as,"cmp",(NodeVar*)node->m_left,as->m_varStack.pop());
             return;
         }
     }

@@ -54,7 +54,9 @@ m; SetCopperList32; Amiga; a, a
 m; ApplyCopperList; Amiga;
 m; memcpy; Amiga; a, l,a,l, l
 m; setpalette; Amiga; a, a, l
-m; ablit; Amiga; a,a,i, i,i,i,i,l,i
+m; ablit; Amiga; a,a,i, i,i,i,i,l,i,i,i
+m; fblit; Amiga; a,a,i, i,i,i,i,l,i,i,i
+
 m; InitCustomCopperList; Amiga;
 m; EndCustomCopperList; Amiga;
 m; AddCopperCommand; Amiga; i,i
@@ -68,6 +70,7 @@ m; SetRotationZ; Amiga; a, l,l
 m; SetIdentity; Amiga; a
 m; MatMulVec; Amiga; a,a,a,i
 m; MatMulVecNormalZ; Amiga; a,a,a,i
+m; MatMulVecNormal; Amiga; a,a,a,i
 m; ProjectToScreen; Amiga; a,i,l,l
 m; WaitForBlitter; Amiga;
 #Memory routines

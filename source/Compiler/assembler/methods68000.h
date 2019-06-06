@@ -25,7 +25,7 @@ public:
     }
 
     void LoadVariable(Assembler* as, QString cmd, Node* n, QString d0);
-    void LoadAddress(Assembler* as, Node* n, QString d0);
+//    void LoadAddress(Assembler* as, Node* n, QString d0);
 
     void DrawLine(Assembler*as);
     void Fill(Assembler*as);
@@ -33,13 +33,13 @@ public:
     void SetCopperList32(Assembler* as);
     void Memcpy(Assembler *as);
     void Setpalette(Assembler *as);
-    void ABlit(Assembler* as);
+    void ABlit(Assembler* as, bool isFiller);
     void AddCopperCommand(Assembler* as);
     void SkipCopperCommands(Assembler* as);
     void MatMul(Assembler* as);
     void SetRotation(Assembler* as, QString mat);
     void MatMulVec(Assembler* as);
-    void MatMulVecNormalZ(Assembler* as);
+    void MatMulVecNormalZ(Assembler* as, bool isZonly);
     void ProjectToScreen(Assembler* as);
 };
 
