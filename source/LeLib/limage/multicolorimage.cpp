@@ -200,6 +200,7 @@ void MultiColorImage::ImportKoa(QFile &f)
         pos++;
     }
     setBackground(bg[0]);
+//    qDebug() << "KOA background: " <<QString::number(bg[0]);
 
 }
 
@@ -1057,9 +1058,85 @@ int PixelChar::Count(unsigned int col, unsigned char bitMask, unsigned char scal
     return cnt;
 }
 
+void PixelChar::ForceBackgroundColor(int col, int swapcol)
+{
+//    if (c[0] == col)
+  //      return;
+
+    int idx = -1;
+    for (int i=0;i<4;i++) {
+        if (c[i]==swapcol) {
+            idx=i;
+            break;
+        }
+    }
+//    if (idx==-1)
+  //      idx=1;
+//    idx=1;
+    if (idx!=-1) {
+//        qDebug() << "swapping "  << rand()%100;
+        unsigned char s = c[0];
+//        c[0]=c[idx];
+  //      c[idx] = s;
+//        qDebug() << idx;
+        for (int j=0;j<8;j++) {
+
+            p[j] = SwapColor(p[j],0,idx);
+/*            int ss = idx*2;
+            s = p[j]&0b11;
+            unsigned char s2 = (p[j]>>(ss))&0b11;
+            p[j] = p[j] & 0b11111100;
+            p[j] = p[j] & ~(0b11<<(ss));
+            p[j] = p[j] | (s <<(ss)) | s2;*/
+        }
+    }
+//    else c[0]=col;
+
+
+
+}
+
+uchar PixelChar::SwapColor(uchar data, uchar c1, uchar c2)
+{
+    for (int i=0;i<4;i++) {
+        int j= i*2;
+        uchar k1 = (data>>j)&0b11;
+        uchar k2 = k1;
+        if (k1==c1) { k2=c2;}
+//        else
+
+        if (k1==c2) { k2=c1;}
+        uchar mask = ~(0b11<<j);
+        data = data & mask;
+        data = data | (k2<<j);
+
+    }
+    return data;
+}
+
+
+void MultiColorImage::ForceBackgroundColor(int col, int swapCol)
+{
+    for (int i=0;i<1000;i++) {
+        PixelChar& pc= m_data[i];
+        pc.ForceBackgroundColor(col, swapCol);
+    }
+    m_background = swapCol;
+    m_extraCols[0] = swapCol;
+/*    for (int y=0;y<m_height;y++)
+        for (int x=0;x<m_width;x++) {
+            int c = getPixel(x,y);
+            int nc = c;
+            if (c==col) nc=swapCol;
+            if (c==swapCol) nc=col;
+            setPixel(x,y,nc);
+
+        }
+        */
+}
+
 uchar PixelChar::Swap(int a, int b, uchar c)
 {
-    uchar org = c;
         // damn
     uchar n1 = (c>>a) & 0b00000011;
     uchar n2 = (c>>b) & 0b00000011;

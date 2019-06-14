@@ -398,6 +398,20 @@ static int SetPosition(lua_State *L)
     return 0;
 }
 
+static int SetUVShift(lua_State *L)
+{
+//    int n = lua_gettop(L);
+    QString name = lua_tostring(L,1);
+    AbstractRayObject* aro = m_rt.Find(name);
+    if (aro==nullptr) {
+        m_error +="Error in SetRotation : Could not find object '" + name+ "'\n";
+        return 0;
+    }
+
+    aro->m_uvShift= (QVector3D(lua_tonumber(L,2),lua_tonumber(L,3),0));
+    return 0;
+}
+
 static int SetY(lua_State *L)
 {
 //    int n = lua_gettop(L);
@@ -587,7 +601,6 @@ static int AddScreenPetscii(lua_State* L) {
     return 0;
 }
 
-
 static int AddScreenBinary(lua_State* L) {
     m_compression.AddBinaryScreen(m_charData, m_effect->m_img);
 //    m_rt.m_particles.CollideSphere(lua_tonumber(L,1));
@@ -612,6 +625,19 @@ static int OptimizeScreenAndCharset(lua_State* L) {
     m_screenData = sOut;
     return 0;
 }
+
+static int AddRawCharsetData(lua_State* L) {
+    int w = lua_tonumber(L,1);
+    int h = lua_tonumber(L,1);;
+    for (int j=0;j<h;j++)
+        for (int i=0;i<w;i++) {
+            PixelChar& pc = m_effect->m_mc->m_data[j*40+i];
+            for (int k=0;k<8;k++)
+                m_charData.append(pc.reverse(pc.p[k]));
+        }
+
+}
+
 static int CompressAndSaveHorizontalData(lua_State* L) {
 
     QByteArray packedData, table;
@@ -674,6 +700,8 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "SaveCompressedSpriteData", SaveCompressedSpriteData);
     lua_register(m_script->L, "SaveRawData", SaveData);
     lua_register(m_script->L, "AddC64LineToData", AddToData);
+    lua_register(m_script->L, "AddRawCharsetData", AddRawCharsetData);
+
     lua_register(m_script->L, "AddAmigaBitplaneToData", AddBitplaneToData);
     lua_register(m_script->L, "Save2DInfo", Save2DInfo);
     lua_register(m_script->L, "SaveMulticolorImage", SaveMulticolorImage);
@@ -685,6 +713,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "SetRotation", SetRotation);
     lua_register(m_script->L, "SetQuatAxisAngle", SetQuatAxisAngle);
     lua_register(m_script->L, "SetPosition", SetPosition);
+    lua_register(m_script->L, "SetUVShift", SetUVShift);
     lua_register(m_script->L, "sin", LuaSin);
     lua_register(m_script->L, "SetY", SetY);
     lua_register(m_script->L, "cos", LuaCos);

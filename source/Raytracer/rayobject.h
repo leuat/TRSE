@@ -24,6 +24,7 @@ public:
     QVector3D m_rotation;
     QVector3D m_localPos;
     QVector3D m_centerPos;
+    QVector3D m_uvShift = QVector3D(0,0,0);
     bool m_sendsShadow = true;
     bool m_receivesShadow = true;
     bool m_flatten = true;
@@ -183,7 +184,7 @@ public:
     bool RayTrace(Ray* ray, RayTracerGlobals& globals, QVector3D& isp, int pass,QVector<AbstractRayObject*>& objects) override;
     float intersect(Ray* ray) override;
     QVector3D calculateNormal(Ray* ray, QVector3D isp) {return isp;}
-
+    QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent);
 };
 
 

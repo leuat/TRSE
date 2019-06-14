@@ -83,6 +83,8 @@ m; ToggleBit; C64, C128, VIC20, PET,  PET, NES ; a,b,b
 m; GetBit; C64, C128, VIC20, PET,  PET, NES ; a,b
 m; EnableAllRam; C64  ;
 m; MemCpy; C64, C128, VIC20, PET,  PET, NES ; a,b,a,b
+m; MemCpyFast; C64, C128, VIC20, PET,  PET, NES ; a,b,a,b
+m; MemCpyUnroll; C64, C128, VIC20, PET,  PET, NES ; a,b,a,b
 m; BlockMemCpy; C64, C128, VIC20, PET,  PET, NES ; a,a,n
 m; Inc; C64, C128, VIC20, PET,  PET, NES ; a
 m; Dec; C64, C128, VIC20, PET,  PET, NES ; a

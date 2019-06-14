@@ -54,7 +54,7 @@ public:
     void Reorganize(unsigned char bitMask, unsigned char Scale,unsigned char minCol, unsigned char maxCol, unsigned char bgCol);
     int Count(unsigned int col, unsigned char bitMask, unsigned char Scale);
 
-
+    void ForceBackgroundColor(int col, int swapcol);
 
     int Compare(PixelChar& other) {
         int l = 0;
@@ -87,6 +87,8 @@ public:
         return l;
 
     }
+
+    static uchar SwapColor(uchar data, uchar c1, uchar c2);
 
 
     static uchar Swap(int a, int b, uchar c);
@@ -146,6 +148,7 @@ public:
     int LookUp(PixelChar pc);
     CharsetImage* m_charset = nullptr;
     virtual void setMultiColor(bool doSet) override;
+    void ForceBackgroundColor(int col, int swapCol);
 
     void CalculateCharIndices();
     int Eat(int start, int add);

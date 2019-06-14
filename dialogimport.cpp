@@ -88,6 +88,7 @@ void DialogImport::Convert()
   //  qDebug() << m_image->m_width;
     //exit(1);
     m_image->Clear();
+//    m_image->setPixel(10,10,1);
     SetColors();
     if (!useDither)
        m_image->fromQImage(m_output.m_qImage, m_image->m_colorList);
@@ -101,6 +102,15 @@ void DialogImport::Convert()
          m_output.m_qImage = new QImage(m_image->m_width, m_image->m_height, QImage::Format_ARGB32);
 
 
+    CharsetImage* chr = dynamic_cast<CharsetImage*>(m_image);
+    if (chr!=nullptr) {
+        chr->m_currentMode=CharsetImage::Mode::FULL_IMAGE;
+        chr->SetColor(0,0);
+        chr->SetColor(1,1);
+//        chr->set
+
+    }
+    m_image->setPixel(10,10,1);
     m_image->ToQImage(m_image->m_colorList,*m_output.m_qImage,1, QPoint(0.0,0.0));
 
 

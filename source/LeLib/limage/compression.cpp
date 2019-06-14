@@ -105,7 +105,7 @@ void Compression::OptimizeScreenAndCharset(QByteArray &screen, QByteArray &chars
     qDebug() << sw << sh << charSize << screens;
     // All screens are set up. Start compressing!
     for (int i=0;i<screens;i++) {
-        qDebug() << "Current screen: " << i ;
+        qDebug() << "Current screen : " << i ;
 
         for (int x=0;x<sw*sh;x++) {
             int s = screen[i*sw*sh + x] + charSize*i;

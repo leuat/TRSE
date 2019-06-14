@@ -472,9 +472,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
 
     if (Command("memcpy"))
-        MemCpy(as);
+        MemCpy(as,false);
 
-    if (Command("unrolledmemcpy"))
+    if (Command("memcpyfast"))
+        MemCpy(as,true);
+
+    if (Command("memcpyunroll"))
         MemCpyUnroll(as);
 
     if (Command("memcpylarge"))
@@ -716,7 +719,7 @@ void Methods6502::Peek(Assembler* as)
 
 }
 
-void Methods6502::MemCpy(Assembler* as)
+void Methods6502::MemCpy(Assembler* as, bool isFast)
 {
     //as->ClearTerm();
     NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
@@ -754,9 +757,29 @@ void Methods6502::MemCpy(Assembler* as)
 
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER)
         x="y";
-    as->Comment("memcpy");
+    if (!isFast)
+        as->Comment("memcpy");
+    else
+        as->Comment("memcpyfast");
+
     QString lbl = as->NewLabel("memcpy");
-    as->Asm("ld"+x+" #0");
+    if (!isFast)
+        as->Asm("ld"+x+" #0");
+    else {
+        if (m_node->m_params[3]->isPureNumeric()) {
+            qDebug() << m_node->m_params[3]->getValue(as);
+            as->Asm("ld"+x+ " #"+ QString::number((unsigned char)(Util::NumberFromStringHex(m_node->m_params[3]->getValue(as).remove("#"))-1)) );
+        }
+        else {
+            as->Term("ld"+x+" ");
+            m_node->m_params[3]->Accept(m_dispatcher);
+            as->Term();
+            as->Asm("de"+x);
+        }
+    }
+
+
+
     as->Label(lbl);
     //LoadVar(as, 0, "x");
 
@@ -775,11 +798,20 @@ void Methods6502::MemCpy(Assembler* as)
     m_node->m_params[2]->Accept(m_dispatcher);
     as->Term(bp2 + ","+x, true);
 
-    as->Asm("in"+x+"");
-    as->Term("cp"+x+" ");
-    m_node->m_params[3]->Accept(m_dispatcher);
-    as->Term();
-    as->Asm("bne " + lbl);
+
+    if (isFast) {
+        as->Asm("de"+x+"");
+        as->Asm("bpl " + lbl);
+    }
+    else {
+        as->Asm("in"+x+"");
+        as->Term("cp"+x+" ");
+        m_node->m_params[3]->Accept(m_dispatcher);
+        as->Term();
+
+        as->Asm("bne " + lbl);
+
+    }
 
     as->PopLabel("memcpy");
 
@@ -790,24 +822,24 @@ void Methods6502::MemCpyUnroll(Assembler* as)
     //as->ClearTerm();
     NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
     NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
-    if (var==nullptr && num==nullptr) {
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric())
+    {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
     QString addr = "";
-    if (num!=nullptr)
-        addr = num->HexValue();
+    if (m_node->m_params[0]->isPureNumeric())
+        addr = m_node->m_params[0]->HexValue();
     if (var!=nullptr)
         addr = var->value;
 
     NodeNumber* num2 = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
-    if (num2==nullptr) {
+    if (!m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pure numeric", m_node->m_op.m_lineNumber);
     }
     NodeNumber* counter = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[3]);
     if (counter==nullptr) {
         ErrorHandler::e.Error("Third parameter must be pure numeric", m_node->m_op.m_lineNumber);
     }
-
 
 
     QString ap1 = "";
@@ -829,7 +861,8 @@ void Methods6502::MemCpyUnroll(Assembler* as)
         if (m_node->m_params[0]->getType(as)==TokenType::POINTER)
             as->Asm("lda ("+ addr +"),y");
         else
-            as->Asm("lda " +addr +" +  #" + num2->HexValue() + ",y");
+            as->Asm("lda " +addr +" +  #" + num2->getLiteral(as) + ",y");
+
         as->ClearTerm();
 
 

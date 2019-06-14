@@ -187,6 +187,13 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
                 Data::data.Redraw();
             }
         }
+        if (e->key()==Qt::Key_T) {
+            MultiColorImage* mc = dynamic_cast<MultiColorImage*>(m_work.m_currentImage->m_image);
+            if (mc!=nullptr) {
+                mc->ForceBackgroundColor(0,3);
+            }
+        }
+
         if (!ui->tblData->hasFocus() && !(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
             m_work.m_currentImage->m_image->StoreData(ui->tblData);
             m_work.m_currentImage->m_image->KeyPress(e);
@@ -1055,6 +1062,8 @@ void FormImageEditor::GenericImportImage(QString type, QString ext)
         m_work.m_currentImage->m_image->ImportC(file);
 
     file.close();
+
+//    SetMCColors();
 
     Data::data.redrawFileList = true;
     Data::data.Redraw();

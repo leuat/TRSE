@@ -74,7 +74,12 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
             float x = m_material.m_checkerBoard.x();
             //QVector3D mul = QVector3D(1,1,1);
             QVector3D n = normal.normalized();
-            n = QVector3D(asin(n.y()), atan2(n.z(), n.x()),0);
+            Ray r = *ray;// = new Ray();
+            r = r.Rotate(m_localRotmat,m_position);
+            //r = r.Rotate(m_localRotmatInv,m_localPos);
+
+            n = CalculateUV( r.m_currentPos,normal,tangent) + m_uvShift;
+//            n = QVector3D(asin(n.y()), atan2(n.z(), n.x()),0);
             //mul.setX(fmod(abs(n.x()), x)>x/2);
             //mul.setY(fmod(abs(n.y()), x)>x/2);
             //mul.setZ(fmod(abs(n.z()), x)>x/2);
@@ -231,6 +236,12 @@ float RayObjectSphere::intersect(Ray *ray)
 
 }
 
+QVector3D RayObjectSphere::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D &tangent)
+{
+    return QVector3D(asin(normal.y()), atan2(normal.z(), normal.x()),0);
+
+}
+
 QVector3D RayObjectPlane::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D& tangent) {
     QVector3D bt = QVector3D::crossProduct(normal,tangent).normalized();
 
@@ -268,7 +279,19 @@ bool RayObjectPlane::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D &is
 
 QVector3D RayObjectTorus::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D &tangent)
 {
-    return QVector3D(0,0,0);
+    float z = pos.z();
+    float x = pos.x();
+    float y = pos.y();
+    float u = (1.0 - (atan2(z, x) + M_PI) / (M_PI*2));
+
+    float len = sqrt(x * x + z * z);
+
+        // Now rotate about the y-axis to get the point P into the x-z plane.
+    x = len - m_radius.x();
+    float  v = (atan2(y, x) + M_PI) / (M_PI*2);
+
+
+    return QVector3D(u*2,v,0);
 }
 
 float RayObjectTorus::intersect(Ray *ray)
