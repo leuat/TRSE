@@ -263,7 +263,7 @@ static int AddObject(lua_State *L)
         CharsetImage* charset = new CharsetImage(LColorList::C64);
         QString charName = lua_tostring(L,N);
         if (charName.toLower()=="rom") {
-            charset->LoadCharset(":resources/character.rom");
+            charset->LoadCharset(":resources/character.rom",0);
         }
         else {
             QString fname = m_currentDir+"/"+QString(lua_tostring(L,N));
@@ -271,7 +271,8 @@ static int AddObject(lua_State *L)
                 m_error += "Could not open file: " + fname + "\n";
                 return 0;
             }
-            charset->LoadCharset(fname);
+
+            charset->LoadCharset(fname,lua_tonumber(L,N+11));
         }
         N++;
 
@@ -293,11 +294,10 @@ static int AddObject(lua_State *L)
                     float s = 0.5;
                     QVector3D pos = QVector3D(0,yy,xx);
 
-
-
                     AbstractRayObject* aro = new RayObjectBox(pos,QVector3D(0,1,0),
                                                            size, mat);
-
+                    aro->m_name = name + "_"+QString::number(x) +"_"+QString::number(y);
+  //                  qDebug() << aro->m_name;
                     //((RayObjectUnion*)obj)->m_objects.append(aro);
                     obj->m_children.append(aro);
                 }
@@ -390,11 +390,25 @@ static int SetPosition(lua_State *L)
     QString name = lua_tostring(L,1);
     AbstractRayObject* aro = m_rt.Find(name);
     if (aro==nullptr) {
-        m_error +="Error in SetRotation : Could not find object '" + name+ "'\n";
+        m_error +="Error in SetPosition : Could not find object '" + name+ "'\n";
         return 0;
     }
 
     aro->m_position = (QVector3D(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4)));
+    return 0;
+}
+
+static int AddPosition(lua_State *L)
+{
+//    int n = lua_gettop(L);
+    QString name = lua_tostring(L,1);
+    AbstractRayObject* aro = m_rt.Find(name);
+    if (aro==nullptr) {
+        //m_error +="Error in AddPosition : Could not find object '" + name+ "'\n";
+        return 0;
+    }
+
+    aro->m_position += (QVector3D(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4)));
     return 0;
 }
 
@@ -545,6 +559,40 @@ static int SaveMulticolorImage(lua_State* L) {
 //    f.open()
   //  m_effect->m_mc->SaveBin(f);
     m_charData.clear();
+  //  f.close();
+    return 0;
+}
+
+static int SaveKoalaImage(lua_State* L) {
+    QString fname = m_currentDir+"/"+  lua_tostring(L,1);
+    if (QFile::exists(fname))
+        QFile::remove(fname);
+    QFile f(fname);
+    f.open(QFile::WriteOnly);
+//    exit(1);
+    m_effect->m_mc->setMultiColor(false);
+    m_effect->m_mc->m_exportParams["StartX"]=0;
+    m_effect->m_mc->m_exportParams["StartY"]=0;
+    m_effect->m_mc->m_exportParams["EndX"]=40;
+    m_effect->m_mc->m_exportParams["EndY"]=25;
+
+    dynamic_cast<MultiColorImage*>(m_effect->m_mc)->ExportKoa(f);
+//    f.open()
+  //  m_effect->m_mc->SaveBin(f);
+    m_charData.clear();
+  //  f.close();
+    return 0;
+}
+
+static int SaveImage(lua_State* L) {
+    QString fname = m_currentDir+"/"+  lua_tostring(L,1);
+    if (QFile::exists(fname))
+        QFile::remove(fname);
+
+    m_effect->m_img.save(fname);
+//    f.open()
+  //  m_effect->m_mc->SaveBin(f);
+//    m_charData.clear();
   //  f.close();
     return 0;
 }
@@ -705,6 +753,8 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddAmigaBitplaneToData", AddBitplaneToData);
     lua_register(m_script->L, "Save2DInfo", Save2DInfo);
     lua_register(m_script->L, "SaveMulticolorImage", SaveMulticolorImage);
+    lua_register(m_script->L, "SaveKoalaImage", SaveKoalaImage);
+    lua_register(m_script->L, "SaveImage", SaveImage);
     lua_register(m_script->L, "SaveCompressedTRM", SaveCompressedTRM);
 
     lua_register(m_script->L, "AddScreen", AddScreen);
@@ -713,6 +763,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "SetRotation", SetRotation);
     lua_register(m_script->L, "SetQuatAxisAngle", SetQuatAxisAngle);
     lua_register(m_script->L, "SetPosition", SetPosition);
+    lua_register(m_script->L, "AddPosition", AddPosition);
     lua_register(m_script->L, "SetUVShift", SetUVShift);
     lua_register(m_script->L, "sin", LuaSin);
     lua_register(m_script->L, "SetY", SetY);

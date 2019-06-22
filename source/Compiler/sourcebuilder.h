@@ -36,14 +36,14 @@ public:
     void AddMessage(QString msg) {
         m_output+=msg;
     }
+    QString m_currentSourceFile="";
+    QString m_curDir = "";
+    QString m_filename="";
 
 private:
 
     QString m_source = "";
     QString m_output = "";
-    QString m_currentSourceFile="";
-    QString m_curDir = "";
-    QString m_filename="";
 
 
     QStringList getFileList();

@@ -749,12 +749,11 @@ void ASTDispather6502::dispatch(NodeUnaryOp *node)
 
     if (num!=nullptr) {
         int s = num->m_val;
-
+        bool isWord = node->m_forceType==TokenType::INTEGER;
         if (node->m_op.m_type==TokenType::MINUS) {
-            if (num->m_op.m_type<256)
+            if (!isWord)
                 num->m_val=256-num->m_val;
             else
-                if (num->m_op.m_type<65536)
                     num->m_val=65536-num->m_val;
 
         }

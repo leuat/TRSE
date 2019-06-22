@@ -49,7 +49,8 @@ void DialogColors::setColor(int cc, int ty) {
 
 void DialogColors::on_pushButton_clicked()
 {
-    m_org->m_list = m_lst->m_list;
+    //m_org->m_list = m_lst->m_list;
+    m_org->CopyFrom(m_lst);
     close();
 }
 
@@ -107,7 +108,17 @@ void DialogColors::on_pushButton_2_clicked()
 
 void DialogColors::on_cbmBitplanes_currentIndexChanged(int index)
 {
-    qDebug()  << index;
     m_lst->setNoBitplanes(index+1);
     toGUI();
+}
+
+void DialogColors::on_btnLoad_2_clicked()
+{
+    QString pal = ui->cbmPalette->currentText();
+    if (pal.toLower()=="greyscale") {
+        m_lst->SetGreyscale(Util::fromColor(m_lst->m_list[1].color),false);
+    }
+    if (pal.toLower()=="twocolors") {
+        m_lst->SetTwoColors(Util::fromColor(m_lst->m_list[1].color),Util::fromColor(m_lst->m_list[2].color));
+    }
 }

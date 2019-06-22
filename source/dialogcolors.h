@@ -5,7 +5,8 @@
 #include "source/LeLib/limage/lcolorlist.h"
 #include <QFileDialog>
 #include <QDebug>
-
+#include <QVector3D>
+#include "source/LeLib/util/util.h"
 namespace Ui {
 class DialogColors;
 }
@@ -49,6 +50,9 @@ private slots:
     void on_pushButton_2_clicked();
 
     void on_cbmBitplanes_currentIndexChanged(int index);
+
+
+    void on_btnLoad_2_clicked();
 
 private:
     Ui::DialogColors *ui;

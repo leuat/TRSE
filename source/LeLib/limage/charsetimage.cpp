@@ -93,6 +93,9 @@ void CharsetImage::SetColor(uchar col, uchar idx)
 void CharsetImage::ImportBin(QFile &file)
 {
     m_rawData = file.readAll();
+//    qDebug() << "IMPORT BYTES SKIP : " <<m_skipImportBytes;
+    if (m_skipImportBytes!=0)
+        m_rawData.remove(0,m_skipImportBytes);
   //  m_rawData.remove(0,2);
 //    m_rawData.resize(8*64);
     FromRaw(m_rawData);
@@ -147,9 +150,9 @@ uchar CharsetImage::getVariableColor(PixelChar *pc)
     return 0;
 }
 
-void CharsetImage::LoadCharset(QString file)
+void CharsetImage::LoadCharset(QString file, int skipBytes)
 {
-    MultiColorImage::LoadCharset(file);
+    MultiColorImage::LoadCharset(file, skipBytes);
     if (m_charset!=nullptr)
         CopyFrom(m_charset);
 }

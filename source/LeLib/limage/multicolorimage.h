@@ -153,7 +153,7 @@ public:
     void CalculateCharIndices();
     int Eat(int start, int add);
     void SaveCharRascal(QString file, QString name);
-    void LoadCharset(QString file) override;
+    void LoadCharset(QString file, int skipBttes) override;
     bool isMultiColor() override { return m_bitMask==0b11; }
 
 //    unsigned char m_border=0, m_background=0;

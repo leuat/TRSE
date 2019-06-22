@@ -15,6 +15,20 @@ SourceBuilder::SourceBuilder(CIniFile *ini, CIniFile *project, QString curDir, Q
 
 bool SourceBuilder::Build(QString source)
 {
+    if (m_currentSourceFile.toLower().endsWith(".asm")) {
+        m_buildSuccess=true;
+       m_assembleSuccess=false;
+       m_filename = m_currentSourceFile.split(".")[0];
+       if (m_system != nullptr)
+           delete m_system;
+       m_system = FactorySystem::Create(AbstractSystem::SystemFromString(
+                                            m_projectIniFile.getString("system")),
+                                           &m_iniFile, &m_projectIniFile);
+
+       compiler = Compiler(&m_iniFile, &m_projectIniFile);
+       return true;
+    }
+
     m_buildSuccess = false;
     m_assembleSuccess = false;
     m_output = "";
@@ -23,7 +37,6 @@ bool SourceBuilder::Build(QString source)
         return false;
     }
     m_source = source;
-
 //    QString text = ui->txtEditor->toPlainText();
     ErrorHandler::e.m_level = ErrorHandler::e.ERROR_ONLY;
     ErrorHandler::e.m_teOut = "";
@@ -64,10 +77,12 @@ bool SourceBuilder::Build(QString source)
 
 bool SourceBuilder::Assemble()
 {
-//    qDebug() << "SourceBuilder:: assemble : "  + m_curDir + "/"+m_filename;
+//    qDebug() << m_filename << m_curDir;
+//    qDebug() << m_system;
     m_system->Assemble(m_output,m_filename, m_curDir);
     if (m_system->m_buildSuccess)
         m_system->PostProcess(m_output, m_filename, m_curDir);
+  //  qDebug() << "AA2";
     m_assembleSuccess=m_system->m_buildSuccess;
 }
 

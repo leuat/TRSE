@@ -2343,6 +2343,7 @@ void Methods6502::Abs(Assembler *as)
     as->Asm("cmp #127");
     as->Asm("bcc " + l);
     as->Asm("eor #$ff"); // negate
+    as->Asm("clc");
     as->Asm("adc #$01");
     as->Label(l);
 

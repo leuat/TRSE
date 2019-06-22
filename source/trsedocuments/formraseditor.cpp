@@ -159,7 +159,6 @@ void FormRasEditor::Build()
 
 
 
-
     m_builderThread.m_filename = filename;
     m_builderThread.m_source = ui->txtEditor->toPlainText();
     while (m_builderThread.isRunning()) {
@@ -639,8 +638,12 @@ void FormRasEditor::MemoryAnalyze()
 {
     int i= m_iniFile->getdouble("perform_crunch");
     m_iniFile->setFloat("perform_crunch",0);
+    if (m_builderThread.m_builder==nullptr) {
+        return;
+    }
     if (!m_builderThread.m_builder->Build(ui->txtEditor->toPlainText()))
         return;
+
     m_iniFile->setFloat("perform_crunch",i);
     m_builderThread.m_builder->compiler.SaveBuild(filename + ".asm");
 
@@ -768,8 +771,11 @@ void FormRasEditor::HandleUpdateBuildText()
 void FormRasEditor::HandleBuildComplete()
 {
     m_builderThread.msleep(70); // crashes if we don't sleep.. for some reason
+    if (m_builderThread.m_builder->compiler.m_assembler!=nullptr)
     ui->txtEditor->m_cycles =  m_builderThread.m_builder->compiler.m_assembler->m_cycles;
     ui->txtEditor->RepaintCycles();
+    if (m_builderThread.m_builder->compiler.m_assembler!=nullptr)
+
     ui->txtEditor->InitCompleter(m_builderThread.m_builder->compiler.m_assembler->m_symTab, &m_builderThread.m_builder->compiler.m_parser);
 
     if (m_projectIniFile->getString("system")=="NES") {
@@ -792,7 +798,13 @@ void BuilderThread::run()
     m_isRunning=true;
     if (m_builder->Build( m_source ))
     {
-        m_builder->compiler.SaveBuild(m_filename + ".asm");
+        if (!m_builder->m_currentSourceFile.toLower().endsWith(".asm"))
+            m_builder->compiler.SaveBuild(m_filename + ".asm");
+//        else {
+  //          m_builder->m_filename = m_builder->m_currentSourceFile.split(".asm")[0];
+    //    }
+//        qDebug() << m_builder->m_filename;
+
         m_builder->AddMessage("Assembling & compressing... ");
         emit emitText();
 
@@ -807,5 +819,4 @@ void BuilderThread::run()
         emit emitError();
     }
     m_isRunning=false;
-
 }

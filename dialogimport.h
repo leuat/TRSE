@@ -103,6 +103,8 @@ private slots:
 
     void on_btnImport_2_clicked();
 
+    void on_hsDither_sliderMoved(int position);
+
 private:
     Ui::DialogImport *ui;
 };

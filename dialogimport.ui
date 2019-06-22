@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Import image</string>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
@@ -358,6 +358,25 @@
      <bool>false</bool>
     </property>
    </widget>
+   <widget class="QSlider" name="hsDither">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>220</y>
+      <width>261</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>99</number>
+    </property>
+    <property name="value">
+     <number>50</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
   </widget>
   <widget class="QComboBox" name="cmbMC1">
    <property name="geometry">
@@ -389,7 +408,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -406,6 +425,19 @@
      </property>
      <property name="text">
       <string>Import from Image</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="chkGenPal">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>30</y>
+       <width>171</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Generate palette</string>
      </property>
     </widget>
    </widget>

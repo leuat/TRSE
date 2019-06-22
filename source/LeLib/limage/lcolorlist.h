@@ -57,7 +57,7 @@ public:
     }
 
     unsigned short get12BitValue() {
-        return color.red()/16  | (color.green()/16)<<4  | (color.blue()/16)<<8;
+        return color.blue()/16  | (color.green()/16)<<4  | (color.red()/16)<<8;
 
     }
     QString toRGB8() {
@@ -112,8 +112,13 @@ public:
     QVector<QPushButton*> m_buttonsImport;
     QVector<QPushButton*> m_buttonsEdit;
 
+
+    void SetGreyscale(QVector3D base, bool inverted);
+    void SetTwoColors(QVector3D base1, QVector3D base2);
     Metric* m_metric = nullptr;
     void EnableColors(QVector<int>& cols);
+
+    void GeneratePaletteFromQImage(QImage& img);
 
     int getNoBitplanes();
     void setNoBitplanes(int bpl);
@@ -122,6 +127,7 @@ public:
 
     void Initialize(Type t);
 
+    void CopyFrom(LColorList* other);
     void InitC64_org();
     void InitC64();
     void InitVIC20();

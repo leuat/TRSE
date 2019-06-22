@@ -73,7 +73,7 @@ class LImage
 public:
     enum Type { QImageBitmap, MultiColorBitmap, HiresBitmap,
                 NotSupported, Tiff, CharMapMulticolor, FullScreenChar, LevelEditor, CharmapRegular, CharMapMultiColorFixed,
-              Sprites, VIC20_MultiColorbitmap, Sprites2, CGA, AMIGA};
+              Sprites, VIC20_MultiColorbitmap, Sprites2, CGA, AMIGA320x200, AMIGA320x256};
 
 
     enum WriteType { Color, Character };
@@ -130,8 +130,8 @@ public:
 
     LColorList m_colorList;
 
-    virtual void FloydSteinbergDither(QImage& img, LColorList& colors, bool dither) {}
-    virtual void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength) {}
+    virtual void FloydSteinbergDither(QImage& img, LColorList& colors, bool dither);
+    virtual void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength);
 
 
     virtual int getContainerCount() {return 1;}
@@ -172,7 +172,7 @@ public:
     virtual unsigned int getPixel(int x, int y) = 0;
     virtual void SetColor(uchar col, uchar idx) {}
 
-    virtual void LoadCharset(QString file) {}
+    virtual void LoadCharset(QString file, int skipBytes) {}
 
     virtual bool KeyPress(QKeyEvent *e) {return false;}
     virtual void SaveBin(QFile &file) = 0;
@@ -222,13 +222,7 @@ public:
 
     virtual void ToQImage(LColorList& lst, QImage& img, float zoom = 1, QPointF center = QPointF(160,100)) = 0;
 
-    virtual void CopyFrom(LImage* img) {
-        #pragma omp parallel for
-
-        for (int i=0;i<m_width;i++)
-            for (int j=0;j<m_height;j++)
-                setPixel(i,j,img->getPixel(i,j));
-    }
+    virtual void CopyFrom(LImage* img);
 
     virtual void SetCurrentType(WriteType wt) {
         m_writeType = wt;

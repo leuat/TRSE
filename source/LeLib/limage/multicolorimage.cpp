@@ -206,11 +206,14 @@ void MultiColorImage::ImportKoa(QFile &f)
 
 void MultiColorImage::ExportKoa(QFile &f)
 {
+
+
     QByteArray data, screen, color, bg;
     int pos = 0;
     screen.resize(1000);
     color.resize(1000);
     for (PixelChar& pc: m_data) {
+        pc.Reorganize(m_bitMask, m_scale,m_minCol, m_noColors, m_background);
         for (int i=0;i<8;i++)
             data.append(PixelChar::reverse(pc.p[i]));
 
@@ -618,7 +621,7 @@ void MultiColorImage::ExportCompressed(QString f1, QString f2)
 
 }
 
-void MultiColorImage::LoadCharset(QString file)
+void MultiColorImage::LoadCharset(QString file, int skipBytes)
 {
     if (!QFile::exists(file)) {
 //        qDebug() << "Could not find file " << file;
@@ -629,6 +632,9 @@ void MultiColorImage::LoadCharset(QString file)
         QFile f(file);
         f.open(QIODevice::ReadOnly);
         m_charset = new CharsetImage(m_colorList.m_type);
+        if (!file.toLower().endsWith(".rom"))
+         m_charset->m_skipImportBytes = skipBytes;
+
         m_charset->ImportBin(f);
         if (file.toLower().endsWith(".rom"))
             m_charset->setMultiColor(false);

@@ -47,7 +47,7 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
     m_imageType = imageType;
 
     m_image = LImageFactory::Create(m_imageType, colorType);
-
+    m_image->m_colorList.m_list = img->m_colorList.m_list;
 
     LImageVIC20* vic = dynamic_cast<LImageVIC20*>(img);
     if (vic!=nullptr) {
@@ -90,11 +90,14 @@ void DialogImport::Convert()
     m_image->Clear();
 //    m_image->setPixel(10,10,1);
     SetColors();
+    QVector3D strength = QVector3D(1,1,1);
+    strength.setX( (ui->hsDither->value()/100.0)*100.0);
     if (!useDither)
        m_image->fromQImage(m_output.m_qImage, m_image->m_colorList);
     else
-        m_image->FloydSteinbergDither(*m_output.m_qImage,m_image->m_colorList, true);
+//        m_image->FloydSteinbergDither(*m_output.m_qImage,m_image->m_colorList, true);
 
+        m_image->OrdererdDither(*m_output.m_qImage,m_image->m_colorList, strength);
 
 
 
@@ -110,7 +113,6 @@ void DialogImport::Convert()
 //        chr->set
 
     }
-    m_image->setPixel(10,10,1);
     m_image->ToQImage(m_image->m_colorList,*m_output.m_qImage,1, QPoint(0.0,0.0));
 
 
@@ -170,6 +172,11 @@ void DialogImport::on_btnImport_clicked()
         tr("Open Image"), "", tr("Image Files (*.png *.jpg *.bmp *.jpeg)"));
 
     m_input.LoadQImage(fileName);
+    if (ui->chkGenPal->isChecked()) {
+        m_image->m_colorList.GeneratePaletteFromQImage(*m_input.m_qImage);
+        m_image->m_colorList.CreateUI(ui->layoutColors,0);
+
+    }
     Blur();
 
     UpdateOutput();
@@ -257,6 +264,13 @@ void DialogImport::on_btnImport_2_clicked()
     SetColors();
     Blur();
 
+    UpdateOutput();
+
+}
+
+void DialogImport::on_hsDither_sliderMoved(int position)
+{
+    Blur();
     UpdateOutput();
 
 }

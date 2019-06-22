@@ -261,8 +261,9 @@ void FormImageEditor::UpdateImage()
     ui->lblImage->setVisible(true);
     ui->lblImage->setScaledContents(true);
     //    ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(320, 320, Qt::IgnoreAspectRatio, Qt::FastTransformation));
-    ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(320, 200, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+    ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(320, m_work.m_currentImage->m_image->m_height, Qt::IgnoreAspectRatio, Qt::FastTransformation));
     ui->lblImage->setMaximumHeight(ui->lblImage->size().width()/(320/200.0));
+
 
     m_documentIsChanged = ui->lblImage->m_imageChanged;
 
@@ -311,7 +312,7 @@ void FormImageEditor::Load(QString filename)
 
     PrepareImageTypeGUI();
     if (dynamic_cast<ImageLevelEditor*>(img)!=nullptr || dynamic_cast<C64FullScreenChar*>(img)!=nullptr)
-        img->LoadCharset(m_projectIniFile->getString("charset_"+m_currentFileShort));
+        img->LoadCharset(m_projectIniFile->getString("charset_"+m_currentFileShort),0);
     updateCharSet();
 
     Data::data.redrawFileList = true;
@@ -439,7 +440,6 @@ void FormImageEditor::UpdatePalette()
     LColorList* l = &m_work.m_currentImage->m_image->m_colorList;
     //if (m_currentColorList!=l)
     //{
-
         l->CreateUI(ui->layoutColorsEdit_3,1);
         l->FillComboBox(ui->cmbBackgroundMain_3);
         l->FillComboBox(ui->cmbBorderMain_3);
@@ -650,6 +650,8 @@ void FormImageEditor::on_btnImport_clicked()
     di->exec();
     if (di->m_ok) {
         m_work.m_currentImage->m_image->CopyFrom(di->m_image);
+        m_work.m_currentImage->m_image->m_colorList.m_list = di->m_image->m_colorList.m_list;
+        UpdatePalette();
         FillCMBColors();
         Data::data.redrawOutput = true;
     }
@@ -1204,7 +1206,7 @@ void FormImageEditor::on_btnLoadCharmap_clicked()
         return;
 
 
-    m_work.m_currentImage->m_image->LoadCharset(fileName);
+    m_work.m_currentImage->m_image->LoadCharset(fileName,0);
     m_projectIniFile->setString("charset_"+m_currentFileShort, fileName);
     m_projectIniFile->Save();
     updateCharSet();
@@ -1506,7 +1508,7 @@ void FormImageEditor::on_btnImportRom_clicked()
         return;
 
     QString fileName = ":resources/character.rom";
-    m_work.m_currentImage->m_image->LoadCharset(fileName);
+    m_work.m_currentImage->m_image->LoadCharset(fileName,0);
 
     m_projectIniFile->setString("charset_"+m_currentFileShort, fileName);
     m_projectIniFile->Save();

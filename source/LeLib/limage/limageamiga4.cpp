@@ -2,11 +2,19 @@
 
 #define CHECK_BIT(var,pos) (((var) & (1<<(pos)))>>pos)
 
-LImageAmiga::LImageAmiga(LColorList::Type t)  : LImageQImage(t)
+LImageAmiga::LImageAmiga(LColorList::Type t, int type)  : LImageQImage(t)
 {
-    Initialize(320,200);
+    if (type==0) {
+        m_height = 200;
+        Initialize(320,200);
+        m_type = LImage::Type::AMIGA320x200;
+    }
+    if (type==1) {
+        m_height = 256;
+        Initialize(320,256);
+        m_type = LImage::Type::AMIGA320x256;
+    }
     m_scale = 1;
-    m_type = LImage::Type::AMIGA;
     m_supports.asmExport = false;
     m_supports.binaryLoad = false;
     m_supports.binarySave = true;
@@ -22,7 +30,7 @@ void LImageAmiga::ExportBin(QFile &file)
     QVector<QByteArray> data;
     data.resize(nobp);
     for (int i=0;i<nobp;i++) {
-        data[i].resize(200*40);
+        data[i].resize(m_height*40);
         data[i].fill(0);
     }
 
@@ -30,7 +38,7 @@ void LImageAmiga::ExportBin(QFile &file)
 
     int curBit = 0;
     int idx = 0;
-    for (int y=0;y<200;y++) {
+    for (int y=0;y<m_height;y++) {
         for (int x=0;x<320;x++) {
 
             char val = m_qImage->pixel(x,y);
@@ -52,7 +60,7 @@ void LImageAmiga::ExportBin(QFile &file)
     }
 
     QByteArray cData;
-    for (int y=0;y<200;y++) {
+    for (int y=0;y<m_height;y++) {
         for (int i=0;i<nobp;i++)
             for (int j=0;j<40;j++)
                 cData.append(data[i][j+y*40]);

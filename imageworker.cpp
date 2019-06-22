@@ -29,7 +29,8 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("Fake C64 png Palette 1", LImage::Type::QImageBitmap, LColorList::Type::C64));
     m_types.append(ImageType("Fake C64 png Palette 2", LImage::Type::QImageBitmap, LColorList::Type::C64_ORG));
     m_types.append(ImageType("CGA png Palette 1", LImage::Type::CGA, LColorList::Type::CGA1_HIGH));
-    m_types.append(ImageType("Amiga 320x200", LImage::Type::AMIGA, LColorList::Type::C64));
+    m_types.append(ImageType("Amiga 320x256", LImage::Type::AMIGA320x256, LColorList::Type::C64));
+    m_types.append(ImageType("Amiga 320x200", LImage::Type::AMIGA320x200, LColorList::Type::C64));
     m_types.append(ImageType("C64 MultiColor bitmap", LImage::Type::MultiColorBitmap,LColorList::Type::C64));
     m_types.append(ImageType("C64 Hires Bitmap", LImage::Type::HiresBitmap,LColorList::Type::C64));
     m_types.append(ImageType("C64 Multicolor Charmap", LImage::Type::CharMapMulticolor,LColorList::Type::C64));

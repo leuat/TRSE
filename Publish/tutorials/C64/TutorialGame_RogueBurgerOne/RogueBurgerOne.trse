@@ -29,3 +29,5 @@ override_target_settings = 0
 override_target_settings_org = $810
 override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
+project_path = /home/leuat/code/TRSE/Publish/tutorials/C64/TutorialGame_RogueBurgerOne/
+open_files = ,sprites/fastfood.flf, charsets/charset_level.flf, RogueBurgerOne.ras

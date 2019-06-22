@@ -7,8 +7,7 @@
 class LImageAmiga : public LImageQImage
 {
 public:
-    LImageAmiga(LColorList::Type t);
-
+    LImageAmiga(LColorList::Type t, int type);
     void ExportBin(QFile &file) override;
     void SaveBin(QFile& file) override;
     void LoadBin(QFile& file) override;

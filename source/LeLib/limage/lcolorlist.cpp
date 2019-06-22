@@ -83,6 +83,37 @@ LColorList::Type LColorList::CharToType(unsigned char c)
 
 }
 
+void LColorList::SetGreyscale(QVector3D base, bool inverted)
+{
+    for (int i=0;i<m_list.count();i++) {
+        float scale = (i+1)/((float)m_list.count());
+        if (inverted) scale = 1-scale;
+        QVector3D col = base*scale*255;
+        m_list[i].color = Util::toColor(col);
+    }
+}
+
+void LColorList::SetTwoColors(QVector3D base1, QVector3D base2)
+{
+    int cnt = m_list.count();
+    int splt = cnt/3;
+    int cur = 0;
+    for (int i=0;i<splt;i++) {
+        float scale = (i+1)/((float)splt);
+        QVector3D col = base1*scale;
+        m_list[cur].color = Util::toColor(col);
+        col = (base2*scale + base1*(1-scale));
+        if (cur+splt<cnt)
+            m_list[cur+splt].color = Util::toColor(col);
+        col = (base2*(1-scale));
+        if (cur+2*splt<cnt)
+            m_list[cur+2*splt].color = Util::toColor(col);
+
+        cur++;
+    }
+
+}
+
 void LColorList::EnableColors(QVector<int> &cols)
 {
     for (int i=0;i<m_list.count();i++) {
@@ -91,6 +122,63 @@ void LColorList::EnableColors(QVector<int> &cols)
         else
             m_list[i].inUse = false;
 
+    }
+
+}
+
+void LColorList::GeneratePaletteFromQImage(QImage &img)
+{
+    QVector<QVector3D> m_colorList;
+    qDebug() << "Building color list..";
+    for (int i=0;i<10000;i++) {
+            int x  = rand()%img.width();
+            int y  = rand()%img.height();
+            QVector3D c1 = Util::fromColor(img.pixelColor(x,y));
+            bool isNew = true;
+            for (QVector3D& o : m_colorList)
+                if ((o-c1).lengthSquared()<0.001)
+                    isNew = false;
+            if (isNew)
+                m_colorList.append(c1);
+//        qDebug() << y ;
+    }
+
+/*    for (int y=0;y<img.height();y++) {
+        for (int x=0;x<img.width();x++) {
+            QVector3D c1 = Util::fromColor(img.pixelColor(x,y));
+            bool isNew = true;
+            for (QVector3D& o : m_colorList)
+                if ((o-c1).lengthSquared()<0.001)
+                    isNew = false;
+            if (isNew)
+                m_colorList.append(c1);
+        }
+        qDebug() << y ;
+    }
+  */
+
+    qDebug() << " # unique colours : " << m_colorList.count();
+
+    int reducedCount = m_list.count();
+    float distance = 1;
+    while (m_colorList.count()>reducedCount) {
+        QVector<QVector3D> m_newList;
+        for (int i=0;i<m_colorList.count();i++) {
+            bool isNew = true;
+            for (QVector3D& o : m_newList)
+                if ((o-m_colorList[i]).length()<distance)
+                    isNew = false;
+
+            if (isNew)
+                m_newList.append(m_colorList[i]);
+
+        }
+  //      qDebug() << "Reduced from " << m_colorList.count() << " to " << m_newList.count();
+        m_colorList = m_newList;
+        distance=distance+1;
+    }
+    for (int i=0;i<m_colorList.count();i++) {
+        m_list[i].color = Util::toColor(m_colorList[i]);
     }
 
 }
@@ -165,6 +253,13 @@ void LColorList::Initialize(Type t)
 
     m_metric = new LinearMetric();
 
+}
+
+void LColorList::CopyFrom(LColorList *other)
+{
+    m_list.resize(other->m_list.count());
+    for (int i=0;i<m_list.count();i++)
+        m_list[i] = other->m_list[i];
 }
 
 void LColorList::InitC64_org()
@@ -362,6 +457,9 @@ void LColorList::CreateUI(QLayout* ly, int type)
     m_buttonsEdit.clear();
     m_buttonsImport.clear();
 //    m_buttons.clear();
+    int xx=0, yy=0;
+    int width=40/(max(m_list.count()/16,1));
+//    if (m_list.count())
     for(int j=0; j<m_list.count(); j++)
     {
         QPushButton *b = new QPushButton();
@@ -375,21 +473,33 @@ void LColorList::CreateUI(QLayout* ly, int type)
 
         b->setStyleSheet("background-color: rgb("+txtCol + "); color: rgb(0, 0, 0)");
         b->setPalette(p);
-        b->setMaximumWidth(40);
-        b->setMinimumWidth(40);
+        b->setMaximumWidth(width);
+        b->setMinimumWidth(width);
         b->setAutoFillBackground( true );
         if (type==0) {
             QObject::connect( b, &QPushButton::clicked,  [=](){ handleButtonImport(j);} );
         }
         if (type==1) {
-            QObject::connect( b, &QPushButton::clicked,  [=](){ handleButtonEdit(j); } );
+            QObject::connect( b, &QPushButton::clicked,  [=](){ handleButtonEdit(j);} );
         }
         //QObject::connect( b, &QPushButton::clicked,  colorValueChanged );
 
 
-        ly->addWidget(b);
+        QGridLayout* gly = dynamic_cast<QGridLayout*>(ly);
+        if (gly!=nullptr) {
+            gly->addWidget(b,yy,xx);
+        }
+        else
+            ly->addWidget(b);
+
         if (type==0)
             m_buttonsImport.append(b);
+
+        yy++;
+        if (yy==16) {
+            yy=0;
+            xx++;
+        }
     }
 }
 

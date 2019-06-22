@@ -67,8 +67,10 @@ public:
             return new LImageSprites2(colorType);
         if (t == LImage::Type::CGA)
             return new LImageCGA(colorType);
-        if (t == LImage::Type::AMIGA)
-            return new LImageAmiga(colorType);
+        if (t == LImage::Type::AMIGA320x200)
+            return new LImageAmiga(colorType,0);
+        if (t == LImage::Type::AMIGA320x256)
+            return new LImageAmiga(colorType,1);
 
         qDebug() << "ERROR: LImageFactory could not find type " << t;
         return nullptr;

@@ -42,7 +42,7 @@ LImageQImage::LImageQImage(LColorList::Type t)  : LImage(t)
 void LImageQImage::LoadBin(QFile& file)
 {
     m_width = 320;
-    m_height = 200;
+//    m_height = 200;
     m_qImage = new QImage(m_width, m_height, QImage::Format_ARGB32);
     unsigned char *data = new unsigned char[m_width*m_height];
     file.read((char*)data, m_width*m_height);
@@ -116,7 +116,7 @@ void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, float zoom
     int height = m_qImage->height();
     m_qImage->fill(QColor(0,0,0,0));
     center.setX(center.x()/320.0*width);
-    center.setY(center.y()/200.0*height);
+    center.setY(center.y()/m_height*height);
     for (int i=1;i<x;i++)
         for (int j = 0;j<height;j++) {
             float xp = (width/(x))*(i);
@@ -279,10 +279,10 @@ void LImageQImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF ce
             float xp = ((i-center.x())*zoom)+ center.x();
             float yp = ((j-center.y())*zoom) + center.y();
 
-            unsigned int col = getPixel(xp,yp) % 16;
+            unsigned int col = getPixel(xp,yp);// % 16;
 
 //            img->setPixel(i,j,QRgb(col));
-            img.setPixel(i,j,lst.get(col%16).color.rgb());
+            img.setPixel(i,j,lst.get(col).color.rgb());
         }
     //return img;
 }

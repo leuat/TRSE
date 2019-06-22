@@ -202,7 +202,7 @@ void Parser::PreprocessIfDefs(bool ifdef)
 void Parser::PreprocessConstants()
 {
     QString txt;
-    qDebug() << "Here";
+    //qDebug() << "Here";
     for (QString s: m_lexer->m_text.split("\n")) {
 //        qDebug() << s;
         QVector<QString> numbers;
@@ -222,8 +222,8 @@ void Parser::PreprocessConstants()
 
             }
         }
-        if (numbers.count()!=0)
-            qDebug() << numbers;
+//        if (numbers.count()!=0)
+  //          qDebug() << numbers;
 
         txt += s +"\n";
     }
@@ -381,12 +381,14 @@ Node *Parser::Variable()
 {
     Node* n = nullptr;
 
-    if (SymbolTable::m_constants.contains(m_currentToken.m_value)) {
-        Symbol* s = SymbolTable::m_constants[m_currentToken.m_value];
+    if (SymbolTable::m_constants.contains(m_currentToken.m_value.toUpper())) {
+        Symbol* s = SymbolTable::m_constants[m_currentToken.m_value.toUpper()];
 
       //  qDebug() << "looking for " << m_currentToken.m_value << " , found symbol: " << s->m_name << " with value " << s->m_value->m_fVal;
 
 //        qDebug() << m_currentToken.m_value;
+
+//        qDebug() << "Parser::Variable  " << m_currentToken.m_value;
 
         if (s->m_type=="ADDRESS") m_currentToken.m_type=TokenType::ADDRESS;
         if (s->m_type=="LONG") m_currentToken.m_type=TokenType::LONG;
@@ -759,13 +761,13 @@ void Parser::Preprocess()
             }
             else if (m_currentToken.m_value.toLower() =="userdata") {
                 Eat(TokenType::PREPROCESSOR);
-                QString from = m_currentToken.m_value;
+                QString from = m_currentToken.getNumAsHexString();
                 Eat();
-                QString to = m_currentToken.m_value;
+                QString to = m_currentToken.getNumAsHexString();
                 Eat();
                 QString name = m_currentToken.m_value;
                 bool ok;
-                m_userBlocks.append(new MemoryBlock(from.remove("$").toInt(&ok,16), to.remove("$").toInt(&ok, 16),
+                m_userBlocks.append(new MemoryBlock(Util::NumberFromStringHex(from), Util::NumberFromStringHex(to),
                                                 MemoryBlock::USER, name));
 
             }

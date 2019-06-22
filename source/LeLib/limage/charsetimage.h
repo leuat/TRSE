@@ -36,6 +36,7 @@ public:
     PixelChar m_color;
     CharsetImage(LColorList::Type t);
 
+    int m_skipImportBytes = 0;
     PixelChar m_copy[64];
 
     int m_colorOrderType = 0; // C64
@@ -68,7 +69,7 @@ public:
     uchar getVariableColor(PixelChar* pc);
 
 
-    void LoadCharset(QString file) override;
+    void LoadCharset(QString file, int skipBytes) override;
 
 
 

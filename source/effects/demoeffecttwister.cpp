@@ -253,7 +253,7 @@ void DemoEffectTwister::Init()
     m_angles.clear();
     m_cols.clear();
 
-    m_charset->LoadCharset(":resources/character.rom");
+    m_charset->LoadCharset(":resources/character.rom",0);
 
     for (int i=0;i<m_params["no_points"].m_val;i++) {
         m_angles.append(i*2.0*M_PI/(float)m_params["no_points"].m_val);

@@ -27,7 +27,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <QPainter>
-
+#include <QMatrix4x4>
 
 LImage::LImage(LColorList::Type t)
 {
@@ -60,8 +60,10 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 10;
     if (t==CGA)
         return 11;
-    if (t==AMIGA)
+    if (t==AMIGA320x200)
         return 12;
+    if (t==AMIGA320x256)
+        return 13;
 
     return 255;
 }
@@ -93,9 +95,69 @@ LImage::Type LImage::CharToType(unsigned char c)
     if (c==11)
         return CGA;
     if (c==12)
-        return AMIGA;
+        return AMIGA320x200;
+    if (c==13)
+        return AMIGA320x256;
 
     return NotSupported;
+
+}
+
+void LImage::FloydSteinbergDither(QImage &img, LColorList &colors, bool dither)
+{
+    int height  =min(img.height(), m_height);
+    int width  =min(img.width(), m_width);
+    for (int y=0;y<height;y++) {
+        for (int x=0;x<width;x++) {
+            QColor oldPixel = QColor(img.pixel(x,y));
+            int winner = 0;
+            QColor newPixel = colors.getClosestColor(oldPixel, winner);
+            //int c = m_colorList.getIndex(newPixel);
+            setPixel(x,y,winner);
+            QVector3D qErr(oldPixel.red()-newPixel.red(),oldPixel.green()-newPixel.green(),oldPixel.blue()-newPixel.blue());
+            if (dither) {
+                if (x!=width-1)
+                    img.setPixel(x+1,y,Util::toColor(Util::fromColor(img.pixel(x+1,y))+qErr*7/16.0).rgba());
+                if (y!=height-1) {
+                    if (x!=0)
+                        img.setPixel(x-1,y+1,Util::toColor(Util::fromColor(img.pixel(x-1,y+1))+qErr*3/16.0).rgba());
+                    img.setPixel(x,y+1,Util::toColor(Util::fromColor(img.pixel(x,y+1))+qErr*5/16.0).rgba());
+                    if (x!=width-1)
+                        img.setPixel(x+1,y+1,Util::toColor(Util::fromColor(img.pixel(x+1,y+1))+qErr*1/16.0).rgba());
+                }
+            }
+        }
+    }
+
+}
+
+void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength)
+{
+    int height  =min(img.height(), m_height);
+    int width  =min(img.width(), m_width);
+    QMatrix4x4 bayer4x4 = QMatrix4x4(0,8,2,10,  12,4,14,6, 3,11,1,9, 15,7,13,5);
+    bayer4x4 = bayer4x4*1/16.0*strength.x();
+
+    for (int y=0;y<height;y++) {
+        for (int x=0;x<width;x++) {
+
+//            color.R = color.R + bayer8x8[x % 8, y % 8] * GAP / 65;
+
+            QColor color = QColor(img.pixel(x,y));
+            int yp = y + x%(int)strength.y();
+            int xp = x + y%(int)strength.z();
+            color.setRed(min(color.red() + bayer4x4(xp % 4,yp % 4),255.0f));
+            color.setGreen(min(color.green() + bayer4x4(xp % 4,yp % 4),255.0f));
+            color.setBlue(min(color.blue() + bayer4x4(xp % 4,yp % 4),255.0f));
+
+            int winner = 0;
+            QColor newPixel = colors.getClosestColor(color, winner);
+            //int c = m_colorList.getIndex(newPixel);
+            setPixel(x,y,winner);
+
+        }
+    }
+
 
 }
 
@@ -138,4 +200,20 @@ void LImage::Box(int x, int y, unsigned char col, int size)
         }
 }
 
+
+void LImage::CopyFrom(LImage *img) {
+#pragma omp parallel for
+
+    for (int i=0;i<m_width;i++)
+        for (int j=0;j<m_height;j++)
+            setPixel(i,j,img->getPixel(i,j));
+
+/*    if (img->m_colorList.m_list.count()==m_colorList.m_list.count()) {
+        for (int i=0;i<m_colorList.m_list.count();i++)
+            m_colorList.m_list[i].color = img->m_colorList.m_list[i].color;
+
+        qDebug() << "LImage copyfrom  count : " <<img->m_colorList.m_list.count();
+    }
+    */
+}
 
