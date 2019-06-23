@@ -80,99 +80,7 @@ public:
         m_ini.setString("project_path", path);
     }
 
-    void VerifyDefaults() {
-        if (!m_ini.contains("zeropages"))
-           m_ini.setStringList("zeropages", AsmMOS6502::m_defaultZeroPointers.split(","));
-
-
-        if (!m_ini.contains("temp_zeropages"))
-           m_ini.setStringList("temp_zeropages", AsmMOS6502::m_defaultTempZeroPointers.split(","));
-
-        if (!m_ini.contains("zeropage_screenmemory"))
-            m_ini.setString("zeropage_screenmemory","$fe");
-
-        if (!m_ini.contains("zeropage_decrunch1"))
-            m_ini.setString("zeropage_decrunch1","$47");
-
-        if (!m_ini.contains("zeropage_decrunch2"))
-            m_ini.setString("zeropage_decrunch2","$48");
-
-        if (!m_ini.contains("zeropage_decrunch3"))
-            m_ini.setString("zeropage_decrunch3","$4A");
-
-        if (!m_ini.contains("zeropage_decrunch4"))
-            m_ini.setString("zeropage_decrunch4","$4B");
-
-
-        if (!m_ini.contains("system"))
-            m_ini.setString("system", "C64");
-
-        if (!m_ini.contains("main_ras_file"))
-            m_ini.setString("main_ras_file", "none");
-
-
-
-        if (!m_ini.contains("zeropage_internal1"))
-            m_ini.setString("zeropage_internal1","$4C");
-
-        if (!m_ini.contains("zeropage_internal2"))
-            m_ini.setString("zeropage_internal2","$4E");
-
-        if (!m_ini.contains("zeropage_internal3"))
-            m_ini.setString("zeropage_internal3","$50");
-
-        if (!m_ini.contains("zeropage_internal4"))
-            m_ini.setString("zeropage_internal4","$52");
-
-
-        m_ini.setFloat("post_optimizer_passlda", 1);
-        m_ini.setFloat("post_optimizer_passjmp", 1);
-        m_ini.setFloat("post_optimizer_passldatax", 1);
-        m_ini.setFloat("post_optimizer_passstalda", 1);
-        m_ini.setFloat("post_optimizer_passldx", 1);
-        m_ini.setFloat("post_optimizer_passcmp", 1);
-        m_ini.setFloat("post_optimizer_passphapla", 1);
-
-        if (!m_ini.contains("machine_state"))
-          m_ini.setString("machine_state", "$35");
-
-        if (m_ini.getString("system")=="C128") {
-
-            if (!m_ini.contains("columns")) {
-                m_ini.setString("columns","40");
-            }
-
-        }
-
-        if (m_ini.getString("system")=="NES") {
-            if (!m_ini.contains("nes_code_start"))
-                m_ini.setString("nes_code_start","$C000");
-        }
-
-
-        if (m_ini.getString("system")=="VIC_20") {
-            if (m_ini.contains("vic_memory_config"))
-               m_ini.setString("vic_memory_config","none");
-        }
-        if (!m_ini.contains("border_color"))
-            m_ini.setFloat("border_color",0);
-        if (!m_ini.contains("background_color"))
-            m_ini.setFloat("background_color",0);
-
-
-        if (!m_ini.contains("override_target_settings"))
-            m_ini.setFloat("override_target_settings",0);
-
-        if (!m_ini.contains("override_target_settings_org"))
-            m_ini.setString("override_target_settings_org","$810");
-
-        if (!m_ini.contains("override_target_settings_ignore_sys"))
-            m_ini.setFloat("override_target_settings_ignore_sys",0);
-
-        if (!m_ini.contains("override_target_settings_ignore_prg"))
-            m_ini.setFloat("override_target_settings_ignore_prg",0);
-
-    }
+    void VerifyDefaults();
 
 
     void Close() {
@@ -239,6 +147,7 @@ public:
     CIniFile m_iniFile;
  //   CodeEditor m_codeEditor;
     CustomFileSystemModel *fileSystemModel = nullptr;
+    QStringList m_commandParams;
     QString m_iniFileName = "fluff64.ini";
     QString m_iniFileHomeDir = ".TRSE";
     QString m_fontFamily;
@@ -254,6 +163,8 @@ public:
 
 
     TRSEDocument* m_currentDoc = nullptr;
+
+    void AfterStart(QString oldCurDir);
 
     void SearchInSource();
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -339,6 +250,8 @@ public slots:
 
     void CloseAll();
     QString getProjectPath();
+
+
 
 signals:
    void ValueChanged();

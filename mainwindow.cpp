@@ -83,18 +83,10 @@ MainWindow::MainWindow(QWidget *parent) :
         QFile::remove(oldFile);
     }
 
-//    qDebug() << m_iniFileName;
-//    exit(1);
 #endif
     connect( ui->tabMain, SIGNAL(tabCloseRequested(int)),this, SLOT(RemoveTab(int)));
 //    connect(qApp, SIGNAL(aboutToQuit()), m_updateThread, SLOT(OnQuit()));
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(OnQuit()));
-
-
-//    m_updateThread->m_orgPal = palette();
-///    m_updateThread->start();
-
-  //  ui->centralWidget->setLayout(new QGridLayout());
 
     if (QFile::exists(m_iniFileName))
        m_iniFile.Load(m_iniFileName);
@@ -103,8 +95,6 @@ MainWindow::MainWindow(QWidget *parent) :
     if (m_iniFile.getdouble("windowpalette")==0)
         SetDarkPalette();
 
-    //QPoint p = ui->splitter->pos();
-//    p.setX();
     QVector3D sp = m_iniFile.getVec("splitpos");
     if (sp.length()!=0)
         ui->splitter->setSizes(QList<int>() << sp.x() << sp.y());
@@ -113,12 +103,7 @@ MainWindow::MainWindow(QWidget *parent) :
     Messages::messages.LoadFromCIni(&m_iniFile);
     UpdateRecentProjects();
 
-//    m_iniFile.setString("project_path", getProjectPath().replace("\\","/"));
-    //setupEditor();
     SetupFileList();
-//    if (m_iniFile.getString("current_file")!="")
-  //      LoadRasFile(m_iniFile.getString("current_file"));
-
 
     QImage img;
     img.load(":resources/images/trselogo.png");
@@ -141,6 +126,17 @@ MainWindow::~MainWindow()
 {
     m_quit = true;
     delete ui;
+}
+
+void MainWindow::AfterStart(QString oldCurDir)
+{
+    if (m_commandParams.count()>1) {
+        QString p1 = m_commandParams[1];
+        if (p1.toLower().endsWith(".trse")) {
+
+            LoadProject(oldCurDir+QDir::separator()+ p1);
+        }
+    }
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
@@ -1128,4 +1124,98 @@ void MainWindow::on_btnBuildAll_clicked()
     if (m_currentProject.m_filename=="")
         return;
     BuildAll();
+}
+
+void TRSEProject::VerifyDefaults() {
+    if (!m_ini.contains("zeropages"))
+        m_ini.setStringList("zeropages", AsmMOS6502::m_defaultZeroPointers.split(","));
+
+
+    if (!m_ini.contains("temp_zeropages"))
+        m_ini.setStringList("temp_zeropages", AsmMOS6502::m_defaultTempZeroPointers.split(","));
+
+    if (!m_ini.contains("zeropage_screenmemory"))
+        m_ini.setString("zeropage_screenmemory","$fe");
+
+    if (!m_ini.contains("zeropage_decrunch1"))
+        m_ini.setString("zeropage_decrunch1","$47");
+
+    if (!m_ini.contains("zeropage_decrunch2"))
+        m_ini.setString("zeropage_decrunch2","$48");
+
+    if (!m_ini.contains("zeropage_decrunch3"))
+        m_ini.setString("zeropage_decrunch3","$4A");
+
+    if (!m_ini.contains("zeropage_decrunch4"))
+        m_ini.setString("zeropage_decrunch4","$4B");
+
+
+    if (!m_ini.contains("system"))
+        m_ini.setString("system", "C64");
+
+    if (!m_ini.contains("main_ras_file"))
+        m_ini.setString("main_ras_file", "none");
+
+
+
+    if (!m_ini.contains("zeropage_internal1"))
+        m_ini.setString("zeropage_internal1","$4C");
+
+    if (!m_ini.contains("zeropage_internal2"))
+        m_ini.setString("zeropage_internal2","$4E");
+
+    if (!m_ini.contains("zeropage_internal3"))
+        m_ini.setString("zeropage_internal3","$50");
+
+    if (!m_ini.contains("zeropage_internal4"))
+        m_ini.setString("zeropage_internal4","$52");
+
+
+    m_ini.setFloat("post_optimizer_passlda", 1);
+    m_ini.setFloat("post_optimizer_passjmp", 1);
+    m_ini.setFloat("post_optimizer_passldatax", 1);
+    m_ini.setFloat("post_optimizer_passstalda", 1);
+    m_ini.setFloat("post_optimizer_passldx", 1);
+    m_ini.setFloat("post_optimizer_passcmp", 1);
+    m_ini.setFloat("post_optimizer_passphapla", 1);
+
+    if (!m_ini.contains("machine_state"))
+        m_ini.setString("machine_state", "$35");
+
+    if (m_ini.getString("system")=="C128") {
+
+        if (!m_ini.contains("columns")) {
+            m_ini.setString("columns","40");
+        }
+
+    }
+
+    if (m_ini.getString("system")=="NES") {
+        if (!m_ini.contains("nes_code_start"))
+            m_ini.setString("nes_code_start","$C000");
+    }
+
+
+    if (m_ini.getString("system")=="VIC_20") {
+        if (m_ini.contains("vic_memory_config"))
+            m_ini.setString("vic_memory_config","none");
+    }
+    if (!m_ini.contains("border_color"))
+        m_ini.setFloat("border_color",0);
+    if (!m_ini.contains("background_color"))
+        m_ini.setFloat("background_color",0);
+
+
+    if (!m_ini.contains("override_target_settings"))
+        m_ini.setFloat("override_target_settings",0);
+
+    if (!m_ini.contains("override_target_settings_org"))
+        m_ini.setString("override_target_settings_org","$810");
+
+    if (!m_ini.contains("override_target_settings_ignore_sys"))
+        m_ini.setFloat("override_target_settings_ignore_sys",0);
+
+    if (!m_ini.contains("override_target_settings_ignore_prg"))
+        m_ini.setFloat("override_target_settings_ignore_prg",0);
+
 }
