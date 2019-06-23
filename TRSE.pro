@@ -437,7 +437,6 @@ DISTFILES += \
     resources/bin/krill/instal_3000-c64.prg \
     resources/bin/krill/new/loader_PAL_NTSCL_0200-c64.prg \
     resources/bin/krill/new/install_PAL_NTSC_5000-c64.prg \
-    resources/text/help/m/CloseIRQWedge.rtf \
     resources/text/help/m/abs.rtf \
     resources/text/help/m/atan2.rtf \
     resources/text/help/m/blockmemcpy.rtf \
@@ -446,16 +445,19 @@ DISTFILES += \
     resources/text/help/m/clearscreen.rtf \
     resources/text/help/m/clearsound.rtf \
     resources/text/help/m/closeirq.rtf \
+    resources/text/help/m/closeirqwedge.rtf \
+    resources/text/help/m/copybytesshift.rtf \
     resources/text/help/m/copycharsetfromrom.rtf \
     resources/text/help/m/copyfullscreen.rtf \
     resources/text/help/m/copyhalfscreen.rtf \
     resources/text/help/m/copyimagecolordata.rtf \
+    resources/text/help/m/createinteger.rtf \
+    resources/text/help/m/createpointer.rtf \
     resources/text/help/m/dec.rtf \
     resources/text/help/m/decrunch.rtf \
     resources/text/help/m/decrunchfromindex.rtf \
     resources/text/help/m/disableciainterrupts.rtf \
     resources/text/help/m/enableallram.rtf \
-    resources/text/help/m/enableieq.rtf \
     resources/text/help/m/enableirq.rtf \
     resources/text/help/m/enablerasterirq.rtf \
     resources/text/help/m/fill.rtf \
