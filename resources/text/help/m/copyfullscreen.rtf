@@ -1,2 +1,16 @@
-<p>Copies exactly 40*25 = 1000 bytes from the source address (parameter 1) to destination address (parameter2). Example:
-<code>CopyFullScreen(^$0400, ^$4400); // Copies screen memory from bank 0 ($0400) to bank 1 ($4400)
+<h3>CopyFullScreen( [address 1], [address 2] );</h3>
+<ul>
+<li>[address 1] - source address</li>
+<li>[address 2] - destination address</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Copies exactly 40*25 = 1000 bytes from the source address to destination address.</p>
+
+
+<h3>Example</h3>
+
+<code>
+CopyFullScreen(^$0400, ^$4400); // Copies screen memory from bank 0 ($0400) to bank 1 ($4400)
+</code>

@@ -1,5 +1,17 @@
-<p>Fills the specified memory address with 40*25 = 1000 bytes of the value specified in parameter 2. Example:
+<h3>ClearScreen( [byte], [address] );</h3>
+<ul>
+<li>[byte] - value to use to clear the screen</li>
+<li>[address] - address of the screen memory</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Fills the memory address with 40*25 = 1000 bytes of the value specified.</p>
+
+
+<h3>Example</h3>
+
 <code>
-ClearScreen($20, ^$0400); // Clears bank 1 with space ($20)
+ClearScreen($20, ^$0400); // Clears screen bank 1 with a space character ($20)
 ClearScreen(RED, ^$D800); // Fills color ram with red
-</code> 
+</code>

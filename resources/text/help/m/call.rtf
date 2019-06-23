@@ -1,6 +1,21 @@
-<p>Performs a jsr to the address. <code>call(^$8000)</code> is therefore the same as
+<h3>Call( [address] );</h3>
+<ul>
+    <li>[address] - the address to call</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Performs a jsr to the specified address.</p>
+
+
+<h3>Example</h3>
+
 <code>
-asm(" 
-jsr $8000
-");
+Call(^$8000)
+</code>
+
+<p>Essentially creates the following:</p>
+
+<code>
+Asm("jsr $8000");
 </code>
