@@ -86,14 +86,30 @@ void TanTable(QString fn) {
 
 }
 
+void fixCurrentDir(QString execFile) {
+    QStringList al = execFile.split(QDir::separator());
+    al.removeLast();
+    QString dir = QDir::separator();
+    for (QString s : al)
+        dir +=s+QDir::separator();
+
+    QDir::setCurrent(dir);
+
+}
+
 
 int main(int argc, char *argv[])
 {
 //    ConvertAllObjs();
     QApplication a(argc, argv);
+    QString oldCurDir = QDir::currentPath();
+    fixCurrentDir(QString(argv[0]));
     a.setStyle(QStyleFactory::create("Fusion"));
     MainWindow w;
+    for (int i=0;i<argc;i++)
+        w.m_commandParams+=QString(argv[i]);
     w.showMaximized();
+    w.AfterStart(oldCurDir);
 
     return a.exec();
 }
