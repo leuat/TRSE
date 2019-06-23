@@ -74,7 +74,6 @@
         <file>resources/text/help/m/inczp.rtf</file>
         <file>resources/text/help/m/fld.rtf</file>
         <file>resources/text/help/m/fill.rtf</file>
-        <file>resources/text/help/m/enableieq.rtf</file>
         <file>resources/code/init_wedge_regular.ras</file>
         <file>resources/code/init_wedge_bad.ras</file>
         <file>resources/character.rom</file>
@@ -146,6 +145,11 @@
         <file>resources/code/amiga/matmulvec_norm_z.s</file>
         <file>resources/text/help/m/createpointer.rtf</file>
         <file>resources/text/help/m/createinteger.rtf</file>
-        <file>resources/text/help/m/CloseIRQWedge.rtf</file>
+        <file>resources/text/help/m/copyimagecolordata.rtf</file>
+        <file>resources/text/help/m/enableirq.rtf</file>
+        <file>resources/text/help/m/enablerasterirq.rtf</file>
+        <file>resources/text/help/m/disableciainterrupts.rtf</file>
+        <file>resources/text/help/m/closeirqwedge.rtf</file>
+        <file>resources/text/help/m/copybytesshift.rtf</file>
     </qresource>
 </RCC>

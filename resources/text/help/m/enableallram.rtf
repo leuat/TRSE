@@ -1,20 +1,30 @@
-<p>
-Enables reading/writing to all ram (including $D000-$DFFF). Sets the
+<h3>EnableAllRam();</h3>
+<ul>
+</ul>
+
+
+<h3>Description</h3>
+<p>Enables reading/writing to all ram (including $D000-$DFFF). Sets the
 three first bits of memory address $01 to %100.</p>
 <p><b>Note:</b>Remember to restore the original memory config afterwards, or you won't be able to access the VIC</p>
-<p><b>Example</b></p>
-<p><code>
+
+
+
+<h3>Example</h3>
+
+<code>
 var keep01: byte;
 
 begin
-	....
-	// Store original memory config
-	keep01 := peek(^$01,0); 
-	EnableAllRam();
-	// Decrunch something that is stored at $D000
-	Decrunch(my_image);
-	// Restore memory config
-	poke(^$01,0,keep01);
-end;
+        ....
+        // Store original memory config
+        keep01 := peek(^$01,0);
+        EnableAllRam();
 
-</code></p>
+        // Decrunch something that is stored at $D000
+        Decrunch(my_image);
+
+        // Restore memory config
+        poke(^$01,0,keep01);
+end;
+</code>

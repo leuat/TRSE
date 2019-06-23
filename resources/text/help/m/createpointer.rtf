@@ -1,8 +1,18 @@
-<p>Creates a pointer from (hi byte, lo byte). 
-Example:  
+<h3>CreatePointer( [byte hi], [byte lo] );</h3>
+<ul>
+<li>[byte hi] - high byte value</li>
+<li>[byte lo] - low byte value</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Creates a pointer from (hi byte, lo byte).</p>
+
+
+<h3>Example</h3>
+
 <code>
 var p:pointer;
 
 i:=CreatePointer($04, b); // Creates a pointer to $0400 + the value in "b"
-
 </code>
