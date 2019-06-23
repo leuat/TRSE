@@ -58,10 +58,9 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
                 NodeVar* v = dynamic_cast<NodeVar*>(m_params[p]);
                 v->ExecuteSym(as->m_symTab);
 
-
                 if (m_function->m_params[p]==BuiltInFunction::BYTE) {
                     if (v->isWord(as))
-                        ErrorHandler::e.Warning("Method '"+m_procName+"' requires byte value for parameter "+QString::number(p)+", but integer is provided. Might yield incorrect result. ",m_op.m_lineNumber);
+                        ErrorHandler::e.Warning("Method '"+m_procName+"' requires byte value for parameter "+QString::number(p+1)+", but integer is provided. Might yield incorrect result. ",m_op.m_lineNumber);
                 }
 
 
