@@ -60,7 +60,7 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
 
                 if (m_function->m_params[p]==BuiltInFunction::BYTE) {
                     if (v->isWord(as))
-                        ErrorHandler::e.Warning("Method '"+m_procName+"' requires byte value for parameter "+QString::number(p+1)+", but integer is provided. Might yield incorrect result. ",m_op.m_lineNumber);
+                        ErrorHandler::e.Warning("Method '"+m_procName+"' requires byte value for parameter "+QString::number(p+1)+", but an integer is provided. Might yield incorrect result. ",m_op.m_lineNumber);
                 }
 
 

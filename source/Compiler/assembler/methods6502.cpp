@@ -2334,8 +2334,35 @@ void Methods6502::InitZeroPage(Assembler* as) {
 void Methods6502::Abs(Assembler *as)
 {
 
+    if (m_node->m_params[0]->isWord(as)) {
 
-    as->Comment("abs(x)");
+        as->Comment("abs(x) integer");
+        as->ClearTerm();
+        m_node->m_params[0]->Accept(m_dispatcher);
+        as->Term();
+        QString l = as->NewLabel("abslabel");
+        as->Asm("cpy #127");
+        as->Asm("bcc " + l);
+        as->Asm("pha");
+        as->Asm("tya");
+
+        as->Asm("eor #$ff"); // negate
+//        as->Asm("clc");
+//        as->Asm("adc #$01");
+        as->Asm("tay");
+        as->Asm("pla");
+        as->Asm("eor #$ff"); // negate
+        as->Asm("clc");
+        as->Asm("adc #$01");
+
+        as->Label(l);
+
+        as->PopLabel("abslabel");
+
+
+        return;
+    }
+    as->Comment("abs(x) byte");
     as->ClearTerm();
     m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
