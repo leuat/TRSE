@@ -683,7 +683,7 @@ static int AddRawCharsetData(lua_State* L) {
             for (int k=0;k<8;k++)
                 m_charData.append(pc.reverse(pc.p[k]));
         }
-
+    return 0;
 }
 
 static int CompressAndSaveHorizontalData(lua_State* L) {

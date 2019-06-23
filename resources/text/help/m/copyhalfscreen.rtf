@@ -1,4 +1,21 @@
-<p>Copies [parameter 3] number of lines from source address (parameter 1) to destination address (parameter 2) either eith inverted y range (parameter 4) and/or inverted x range (parameter 5). Example:
+<h3>CopyHalfScreen( [address 1], [address 2], [byte 1], [byte 2], [byte 3] );</h3>
+<ul>
+<li>[address 1] - source address</li>
+<li>[address 2] - destination address</li>
+<li>[byte 1] - number of lines</li>
+<li>[byte 2] - inverted y range</li>
+<li>[byte 3] - inverted x range</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Copies the number of lines from the source address to the destination address
+either inverted y range and/or inverted x range.</p>
+
+
+<h3>Example</h3>
+
 <code>
-copyhalfscreen(^$0400, ^$4400 -^1, 13, 1,0); // Copies 13 lines from bank 0 to bank 1 with descending y values, increasing x values
+// Copies 13 lines from bank 0 to bank 1 with descending y values, increasing x values
+CopyHalfScreen(^$0400, ^$4400 -^1, 13, 1, 0);
 </code>

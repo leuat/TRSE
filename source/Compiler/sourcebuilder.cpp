@@ -84,6 +84,7 @@ bool SourceBuilder::Assemble()
         m_system->PostProcess(m_output, m_filename, m_curDir);
   //  qDebug() << "AA2";
     m_assembleSuccess=m_system->m_buildSuccess;
+    return true;
 }
 
 QString SourceBuilder::getOutput() {

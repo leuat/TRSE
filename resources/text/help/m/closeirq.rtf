@@ -1,11 +1,22 @@
-<p>Closes an IRQ before returning the interrupt. Same usage on C64 and C128, but different implementations on the various systems. 
+<h3>CloseIRQ();</h3>
+<ul>
+</ul>
+
+
+<h3>Description</h3>
+<p>Closes an IRQ before returning the interrupt. Same usage on C64 and C128,
+but different implementations on the various systems.</p>
+
+
+<h3>Example</h3>
+
 <code>
 interrupt Raster1();
 begin
-	StartIRQ(@useKernal);
+        StartIRQ(@useKernal);
 
-	// Perform some actions
+        // Perform some actions
 
-	CloseIRQ();
+        CloseIRQ();
 end;
 </code>

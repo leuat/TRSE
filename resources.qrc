@@ -146,5 +146,6 @@
         <file>resources/code/amiga/matmulvec_norm_z.s</file>
         <file>resources/text/help/m/createpointer.rtf</file>
         <file>resources/text/help/m/createinteger.rtf</file>
+        <file>resources/text/help/m/CloseIRQWedge.rtf</file>
     </qresource>
 </RCC>
