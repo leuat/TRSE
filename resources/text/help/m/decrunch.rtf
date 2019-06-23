@@ -1,10 +1,21 @@
-<p>Decrunches crunched data from the specific address. Destination address is specified in crunch. Example:
+<h3>Decrunch( [address] );</h3>
+<ul>
+    <li>[address] - address of crunched data</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Decrunches crunched data from the specific address. Destination address is specified in crunch.</p>
+
+
+<h3>Example</h3>
+
 <code>
-var 
-	my_crunched_data: IncBin("crunched/data_c.bin", $9000);
+var
+        my_crunched_data: IncBin("crunched/data_c.bin", $9000);
 
 begin
-	decrunch(my_crunched_data); // will be decrunched to the address specified in the crunched file
+        decrunch(my_crunched_data); // will be decrunched to the address specified in the crunched file
 
-	...
+        ...
 </code>
