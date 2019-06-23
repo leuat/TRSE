@@ -53,9 +53,18 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
             if (dynamic_cast<NodeProcedure*>(m_params[p])==nullptr)
                 ErrorHandler::e.Error(error + cp + " to be a procedure", m_op.m_lineNumber);
         }
+
         if (dynamic_cast<NodeVar*>(m_params[p])!=nullptr) {
                 NodeVar* v = dynamic_cast<NodeVar*>(m_params[p]);
                 v->ExecuteSym(as->m_symTab);
+
+
+                if (m_function->m_params[p]==BuiltInFunction::BYTE) {
+                    if (v->isWord(as))
+                        ErrorHandler::e.Warning("Method '"+m_procName+"' requires byte value for parameter "+QString::number(p)+", but integer is provided. Might yield incorrect result. ",m_op.m_lineNumber);
+                }
+
+
 //            if (dynamic_cast<NodeProcedure*>(m_params[p])==nullptr)
   //              ErrorHandler::e.Error(error + cp + " to be a procedure", m_op.m_lineNumber);
         }

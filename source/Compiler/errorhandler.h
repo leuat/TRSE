@@ -58,11 +58,13 @@ public:
     static ErrorHandler e;
     int m_level = 0;
 
-    int ERROR_ONLY = 2;
+    int ERROR_ONLY = 3;
+    int WARNING = 2;
     int DEBUG_HIGH = 1;
     int DEBUG_LOW = 0;
 
     QString m_teOut;
+    QStringList m_warnings;
 
 
     void OutputText(QString str) {
@@ -92,6 +94,10 @@ public:
     }
     bool exitOnError= true;
 
+    void ClearWarnings() {
+        m_warnings.clear();
+    }
+
     void Error(QString str, int lineNumber=0) {
         throw FatalErrorException(str, lineNumber);
         //Message(str);
@@ -99,6 +105,8 @@ public:
         //if (exitOnError)
         //    exit(1);
     }
+
+    void Warning(QString str, int lineNumber=0);
 
     void CatchError(FatalErrorException e, QString extraMessage="") {
         Message(extraMessage + e.message);
