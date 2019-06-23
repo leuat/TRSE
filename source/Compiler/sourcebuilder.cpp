@@ -87,6 +87,10 @@ bool SourceBuilder::Assemble()
     return true;
 }
 
+QString SourceBuilder::getOutput() {
+    return ErrorHandler::e.m_teOut +m_output;
+}
+
 QStringList SourceBuilder::getFileList()
 {
     QString pawFile = m_projectIniFile.getString("d64_paw_file");

@@ -205,7 +205,7 @@ m; PlayVIC20Sid; VIC20; a
 m; Atan2 ; C64, C128, VIC20, PET,  PET, NES  ; b,b,b,b
 m; Sqrt ; C64, C128, VIC20, PET,  PET, NES  ; ib
 m; Swap; C64, C128, VIC20, PET,  PET, NES; b,b
-m; Abs;  C64, C128, VIC20, PET,  PET, NES;b
+m; Abs;  C64, C128, VIC20, PET,  PET, NES;ib
 m; Rand; C64, C128 ; b,b,b
 
 

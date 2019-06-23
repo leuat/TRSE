@@ -26,3 +26,14 @@ ErrorHandler ErrorHandler::e;
 ErrorHandler::ErrorHandler()
 {
 }
+
+void ErrorHandler::Warning(QString str, int lineNumber) {
+    QString v = "<font color=\"#F0E030\">Warning at line " + QString::number(lineNumber)+" : " +str + "</font>";
+    m_teOut = m_teOut + v + "<br>";
+    //        Message(, WARNING);
+    //        throw FatalErrorException(str, lineNumber);
+    //Message(str);
+
+    //if (exitOnError)
+    //    exit(1);
+}

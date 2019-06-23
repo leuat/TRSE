@@ -23,11 +23,12 @@
 #include "ui_dialogmemoryanalyze.h"
 #include "source/LeLib/util/util.h"
 
-DialogMemoryAnalyze::DialogMemoryAnalyze(QWidget *parent) :
+DialogMemoryAnalyze::DialogMemoryAnalyze(CIniFile* ini, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogMemoryAnalyze)
 {
     ui->setupUi(this);
+    m_iniFile = ini;
 }
 
 void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize)
@@ -176,6 +177,8 @@ void DialogMemoryAnalyze::resizeEvent(QResizeEvent *e)
     qDebug() << "new: " <<e->size();
     if (e->oldSize()!=e->size())*/
         Initialize(m_blocks, m_fontSize);
+        m_iniFile->setFloat("memory_analyzer_window_width", this->size().width());
+        m_iniFile->setFloat("memory_analyzer_window_height", this->size().height());
 }
 
 void DialogMemoryAnalyze::VerifyZPMusic(QVector<MemoryBlock*> &blocks)
@@ -216,5 +219,6 @@ DialogMemoryAnalyze::~DialogMemoryAnalyze()
 
 void DialogMemoryAnalyze::on_btnClose_clicked()
 {
+    m_iniFile->Save();
     close();
 }

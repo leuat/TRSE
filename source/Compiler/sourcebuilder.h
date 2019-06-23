@@ -30,9 +30,7 @@ public:
 
     bool Assemble();
 
-    QString getOutput() {
-        return m_output;
-    }
+    QString getOutput();
     void AddMessage(QString msg) {
         m_output+=msg;
     }

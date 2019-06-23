@@ -133,8 +133,11 @@ void MainWindow::AfterStart(QString oldCurDir)
     if (m_commandParams.count()>1) {
         QString p1 = m_commandParams[1];
         if (p1.toLower().endsWith(".trse")) {
-
-            LoadProject(oldCurDir+QDir::separator()+ p1);
+#ifdef _WIN32
+        LoadProject(p1);
+#else
+        LoadProject(oldCurDir+QDir::separator()+ p1);
+#endif
         }
     }
 }
@@ -209,8 +212,16 @@ void MainWindow::VerifyDefaults()
         m_iniFile.setString("theme_fjong", "dark_standard.ini");
     if (!m_iniFile.contains("post_optimize"))
         m_iniFile.setFloat("post_optimize", 1);
+
     if (!m_iniFile.contains("memory_analyzer_font_size"))
         m_iniFile.setFloat("memory_analyzer_font_size", 17);
+
+    if (!m_iniFile.contains("memory_analyzer_window_width"))
+        m_iniFile.setFloat("memory_analyzer_window_width", 600);
+    if (!m_iniFile.contains("memory_analyzer_window_height"))
+        m_iniFile.setFloat("memory_analyzer_window_height", 600);
+
+
 
     if (!m_iniFile.contains("optimizer_remove_unused_symbols"))
      m_iniFile.setFloat("optimizer_remove_unused_symbols",0);
