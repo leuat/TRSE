@@ -213,6 +213,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("Abs")) {
         Abs(as);
     }
+    if (Command("IsOverlapping")) {
+        IsOverlapping(as);
+    }
+
     if (Command("initsqrt16")) {
         InitSqrt16(as);
     }
@@ -2370,11 +2374,11 @@ void Methods6502::Abs(Assembler *as)
     m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
     QString l = as->NewLabel("abslabel");
-    as->Asm("cmp #127");
-    as->Asm("bcc " + l);
+    as->Asm("cmp #127"); // sets the Carry flag if -ve number
+    as->Asm("bcc " + l); // branch if carry clear
     as->Asm("eor #$ff"); // negate
-    as->Asm("clc");
-    as->Asm("adc #$01");
+    //as->Asm("clc"); // can save an instruction
+    as->Asm("adc #$00"); // add just the carry from above
     as->Label(l);
 
 
@@ -2402,6 +2406,94 @@ void Methods6502::Sqrt(Assembler *as)
     as->Asm("jsr sqrt16_init");
     as->Asm("lda " +as->m_internalZP[0]);
 
+}
+
+// NOT COMPLETE YET ****** ANDY H ******** 26-06-2019
+void Methods6502::IsOverlapping(Assembler *as)
+{
+/*
+ * ; test sprite X position colliding?
+                lda #100        ; xpos1
+                clc
+                sbc #112        ; sub xpos2
+                cmp #PLAYER_CLEFT
+                bcs collisionOnX
+                cmp #PLAYER_CRIGHT
+                bcs noCollision
+; test sprite Y position colliding?
+collisionOnX    lda #100        ; ypos1
+                clc
+                sbc #102        ; ypos2
+                cmp #PLAYER_CTOP
+                bcs collision
+                cmp #PLAYER_CBOT
+                bcs noCollision
+collision
+                nop
+noCollision    ; check next sprite
+*/
+
+    as->Comment("IsOverlapping collision x1,y1, x2,y2, dist");
+
+    // Pure version (params just variable addr or constant number) - this is faster
+    if (m_node->m_params[0]->isPure() &&
+            m_node->m_params[1]->isPure() &&
+            m_node->m_params[2]->isPure() &&
+            m_node->m_params[3]->isPure() &&
+            m_node->m_params[4]->isPureNumeric()) {
+
+        as->Comment("Implementing Pure version");
+
+        QString lblColXConfirmed = as->NewLabel("ColXConfirmed");
+        QString lblNoCollision = as->NewLabel("NoCollision");
+        QString lblCollision = as->NewLabel("Collision");
+        QString lblCollisionDone = as->NewLabel("CollisionDone");
+
+        m_node->m_params[0]->Accept(m_dispatcher); // lda x1
+        as->Term();
+        as->Asm("clc");
+        as->Asm("sbc " + m_node->m_params[2]->getValue(as));
+        as->Asm("cmp #-" + m_node->m_params[4]->getValue(as).remove(0,2) ); //////////////-ve
+        as->Asm("bcs "+ lblColXConfirmed);
+        as->Asm("cmp "+ m_node->m_params[4]->getValue(as));   //////////////+ve
+        as->Asm("bcs "+ lblNoCollision);
+
+        as->Label(lblColXConfirmed);
+
+        m_node->m_params[1]->Accept(m_dispatcher); // lda x1
+        as->Term();
+        as->Asm("clc");
+        as->Asm("sbc " + m_node->m_params[3]->getValue(as));
+        as->Asm("cmp #-" + m_node->m_params[4]->getValue(as).remove(0,2) ); //////////////-ve
+        as->Asm("bcs "+ lblCollision);
+        as->Asm("cmp "+ m_node->m_params[4]->getValue(as));   //////////////+ve
+        as->Asm("bcs "+ lblNoCollision);
+
+        as->Label(lblCollision);
+        as->Asm("lda #1");
+        as->Asm("jmp " + lblCollisionDone);
+
+        as->Label(lblNoCollision);
+        as->Asm("lda #0");
+
+        as->Label(lblCollisionDone);
+
+        as->PopLabel("ColXConfirmed");
+        as->PopLabel("NoCollision");
+        as->PopLabel("Collision");
+        as->PopLabel("CollisionDone");
+
+    } else {
+        // TO BE IMPLEMENTED LATER
+        as->Comment("Implementing Complex version");
+
+        QString zp = as->m_internalZP[0];
+        LoadVar(as, 1); // Loads variable from parameter 1
+        as->Asm("sta "+zp); // Store this variable in zp
+
+        LoadVar(as,0); // Load variable from paramater 0
+        as->Asm("cmp "+ zp);
+    }
 }
 
 void Methods6502::Atan2(Assembler *as)

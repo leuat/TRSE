@@ -208,6 +208,8 @@ m; Swap; C64, C128, VIC20, PET,  PET, NES; b,b
 m; Abs;  C64, C128, VIC20, PET,  PET, NES;ib
 m; Rand; C64, C128 ; b,b,b
 
+# Collision routines
+m; IsOverlapping; C64, C128, VIC20, PET, NES; b,b,b,b,b
 
 # Other routines
 
