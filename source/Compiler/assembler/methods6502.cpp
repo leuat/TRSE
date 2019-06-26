@@ -1842,35 +1842,27 @@ void Methods6502::PlayVIC20Sid(Assembler *as)
 
 void Methods6502::ScrollX(Assembler *as)
 {
-//    LoadVar(as, 0);
-   // as->Asm("dec $d019");
+    LoadVar(as,0);
+    as->Comment("ScrollX method");
+    as->Asm("sta " + as->m_internalZP[0]);
     as->Asm("lda $d016  ");
     as->Asm("and #$F8");
-    //as->Asm("clc");
-    as->Term("ora ");
-    m_node->m_params[0]->Accept(m_dispatcher);
-    as->Term();
+    as->Asm("ora " +as->m_internalZP[0]);
     as->Asm("sta $d016");
-
 }
 
 
 
 void Methods6502::ScrollY(Assembler *as)
 {
-//    LoadVar(as, 0);
 
-
-   // as->Asm("dec $d019");
-
-    as->Comment("; Scrolly ");
+    as->Comment("ScrollY method ");
+    LoadVar(as,0);
+    as->Asm("sta " + as->m_internalZP[0]);
 
     as->Asm("lda $d011  ");
     as->Asm("and #$78"); // 8 = 1000
-    //as->Asm("clc");
-    as->Term("ora ");
-    m_node->m_params[0]->Accept(m_dispatcher);
-    as->Term();
+    as->Asm("ora "+as->m_internalZP[0]);
     as->Asm("and #$7F"); // 8 = 1000
     as->Asm("sta $d011");
 
@@ -2049,20 +2041,33 @@ void Methods6502::LoadAndStoreInZp(Node* n, Assembler *as, QString zp)
         n->Accept(m_dispatcher);
         as->Term("+1", true);
         as->Asm("sta "+zp+"+1");
+        return;
     }
     if (n->getType(as) == TokenType::ADDRESS) {
         as->Asm("lda #" + Util::numToHex(Util::NumberFromStringHex(n->getAddress())&0xFF));
         as->Asm("sta "+zp);
         as->Asm("lda #" + Util::numToHex((Util::NumberFromStringHex(n->getAddress())>>8)&0xFF));
         as->Asm("sta "+zp+"+1");
+        return;
     }
     if (n->getType(as) == TokenType::VAR) {
         as->Asm("lda #>" + n->getAddress());
         as->Asm("sta "+zp);
         as->Asm("lda #<" + n->getAddress());
         as->Asm("sta "+zp+"+1");
+        return;
     }
+
+
+
 }
+
+/*
+ *
+ *  NES METHODS
+ *
+ *
+*/
 
 void Methods6502::LoadPalette(Assembler* as)
 {
@@ -2346,12 +2351,10 @@ void Methods6502::Abs(Assembler *as)
         as->Asm("pha");
         as->Asm("tya");
 
-        as->Asm("eor #$ff"); // negate
-//        as->Asm("clc");
-//        as->Asm("adc #$01");
+        as->Asm("eor #$ff"); // negate hi
         as->Asm("tay");
         as->Asm("pla");
-        as->Asm("eor #$ff"); // negate
+        as->Asm("eor #$ff"); // negate lo
         as->Asm("clc");
         as->Asm("adc #$01");
 
@@ -2432,7 +2435,7 @@ void Methods6502::CopyCharsetFromRom(Assembler *as)
 {
     m_node->RequireAddress(m_node->m_params[0],"CopyCharsetFromRom",m_node->m_op.m_lineNumber);
     as->Comment("Copy charset from ROM");
-    as->Asm("sei ;copy charset");
+    as->Asm("sei ");
     QString lbl = as->NewLabel("charsetcopy");
     as->Asm("lda #$33 ;from rom - rom visible at d800");
     as->Asm("sta $01");
@@ -3946,7 +3949,6 @@ void Methods6502::CopyFullScreen(Assembler *as)
 
         LoadAndStoreInZp(m_node->m_params[0],as,zpf);
         LoadAndStoreInZp(m_node->m_params[1],as,zpt);
-
 
 
 

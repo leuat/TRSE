@@ -77,7 +77,8 @@ public:
     bool m_isPanning = false;
     QPointF m_zoomCenter = QPoint(00,00);
     QPoint m_currentPosInImage;
-    QColor m_gridColor = QColor(64,128,128,128);
+//    QColor m_gridColor = QColor(64,128,128,128);
+    QColor m_gridColor = QColor(0,0,0,128);
 
 
     void RunContents();
