@@ -39,6 +39,8 @@ public:
     CIniFile m_colors;
     void Save(QString fn);
 
+    void HighlightText(QString &text);
+
 protected:
     void highlightBlock(const QString &text) override;
 

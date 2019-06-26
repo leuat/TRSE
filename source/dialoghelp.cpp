@@ -42,6 +42,9 @@ DialogHelp::DialogHelp(QWidget *parent, QString txt, QPalette pal) :
     LoadItems(0);
     ui->leSearch->setText(txt);
 
+    CIniFile colors;
+    colors.Load(Util::path + "themes/" + "dark_standard.ini");
+    m_highlighter = new Highlighter(colors, 0, nullptr);
 
     if (txt!="")
         SearchForItem(txt);
@@ -144,7 +147,6 @@ void DialogHelp::LoadItem(QString findword)
                 val+=");</h2>";
 
                 QString fn =":resources/text/help/"+type+"/"+word.toLower()+".rtf";
-//                qDebug() << "looking for "<< fn;
                 if (QFile::exists(fn)) {
                     QFile f(fn);
                     f.open(QFile::ReadOnly | QFile::Text);
@@ -154,6 +156,8 @@ void DialogHelp::LoadItem(QString findword)
                     s=s.replace("</code>","</font></code></pre>");
                     val+=s;
 
+             //       m_highlighter->HighlightText(val);
+           //         qDebug() << val;
                 }
 
 

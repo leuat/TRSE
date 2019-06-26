@@ -58,7 +58,7 @@ void ShapeBox::Perform(int x, int y, unsigned char color, LImage* img, bool isPr
 
             bool ok = l<m/2.5;
             if (m_type==1)
-                ok = abs(l-m/3)<1;
+                ok = abs(l-m/3)<0.75;
             if (ok)
             {
 

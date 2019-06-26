@@ -29,6 +29,8 @@
 #include "source/Compiler/syntax.h"
 #include <QListWidgetItem>
 #include <QPalette>
+#include "source/LeLib/util/util.h"
+#include "source/PmmEdit/highlighter.h"
 
 namespace Ui {
 class DialogHelp;
@@ -63,7 +65,7 @@ public:
     QString m_currentType;
 
     int m_curTopic, m_curItem, m_idx;
-
+    Highlighter* m_highlighter = nullptr;
     void LoadItems(int idx);
     void LoadItem(QString word);
     void FillTopics();

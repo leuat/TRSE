@@ -159,6 +159,7 @@ void Highlighter::highlightBlock(const QString &text)
             setFormat(match.capturedStart(), match.capturedLength(), rule.format);
         }
     }
+
     setCurrentBlockState(0);
 
     int startIndex = 0;
@@ -193,5 +194,26 @@ void Highlighter::Save(QString fn)
     m_colors.setVec("quotationcolor", QVector3D(255,128,40));
     m_colors.setVec("commentcolor", QVector3D(128,128,128));
     m_colors.Save(fn);
+}
+
+void Highlighter::HighlightText(QString &text)
+{
+    QString otext = text;
+    foreach (const HighlightingRule &rule, highlightingRules) {
+        QRegularExpressionMatchIterator matchIterator = rule.pattern.globalMatch(text);
+        while (matchIterator.hasNext()) {
+            QRegularExpressionMatch match = matchIterator.next();
+//            qDebug() << match.captured();
+            setFormat(match.capturedStart(), match.capturedLength(), rule.format);
+            //setFormat(match.capturedStart(), match.capturedLength(), QColor(255,0,0,1));
+ //             qDebug() << match.captured()
+/*            if (match.capturedLength()>5) {
+                text.insert(match.capturedStart(),"<font color=\"#FF0000\">");
+                text.insert(match.capturedEnd(),"</font>");
+            }*/
+        }
+
+    }
+//    text = otext;
 }
 

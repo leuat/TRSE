@@ -558,11 +558,13 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 //        qDebug() << symbols.keys().count();
         //for (QString& sym : symbols.keys())
         int cur = 0;
+        if (!tst.startsWith("$"))
         for (QString& sym : m_symbolsList)
         {
-//            qDebug() << sym;
+//            qDebug() << "Testing for symbol " << sym << tst;
             if (!tst.contains(sym))
                 continue;
+
             int i = m_symbols[sym];
             if (tst==("<"+sym)) {
                 l2[0] = l2[0].replace("<"+sym,"$"+QString::number(i&0xFF,16));
@@ -574,7 +576,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
                     break;
                 }
 
-//            if (tst.contains(sym)) {
+            //            if (tst.contains(sym)) {
 
 /*                std::regex e ("\\b" +sym.toStdString()+ "\\b");   // matches words beginning by "sub"
                 QString l = "$"+QString::number(i,16);
@@ -582,6 +584,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 */
  //               l2[0] = l2[0].replace(*exp[sym],"$"+QString::number(i,16));
 //}
+
                 l2[0] = OrgasmData::ReplaceWord(l2[0],sym,"$"+QString::number(i,16));
                 //l2[0] = l2[0].replace(sym,"$"+QString::number(i,16));
                 if (org!=l2[0]) {

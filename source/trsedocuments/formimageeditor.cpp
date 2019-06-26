@@ -627,6 +627,8 @@ void FormImageEditor::on_btnExportImage_clicked()
     if (fileName == "")
         return;
 
+
+
     m_updateThread.m_tmpImage->save(fileName);
 
 
