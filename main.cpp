@@ -101,6 +101,7 @@ void fixCurrentDir(QString execFile) {
 int main(int argc, char *argv[])
 {
 //    ConvertAllObjs();
+//    qDebug() << Util::BinopString("#$C");
     QApplication a(argc, argv);
     QString oldCurDir = QDir::currentPath();
     fixCurrentDir(QString(argv[0]));

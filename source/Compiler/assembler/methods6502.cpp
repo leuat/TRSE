@@ -2460,6 +2460,11 @@ noCollision    ; check next sprite
 
         as->Label(lblColXConfirmed);
 
+        int inVal = 255;
+
+        int val = Util::NumberFromStringHex("#$200");
+        QString str = Util::numToHex(val);
+
         m_node->m_params[1]->Accept(m_dispatcher); // lda x1
         as->Term();
         as->Asm("clc");
