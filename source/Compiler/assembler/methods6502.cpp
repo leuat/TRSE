@@ -2445,7 +2445,7 @@ noCollision    ; check next sprite
         as->Comment("Implementing Pure version");
 
         // need a negative constant
-        QString distNeg = Util::numToHex( 255 - Util::NumberFromStringHex( m_node->m_params[4]->getValue(as).replace("#","") ) );
+        QString distNeg = Util::numToHex( 255 - m_node->m_params[4]->getInteger()  );
 
         QString lblColXConfirmed = as->NewLabel("ColXConfirmed");
         QString lblNoCollision = as->NewLabel("NoCollision");
