@@ -2444,6 +2444,9 @@ noCollision    ; check next sprite
 
         as->Comment("Implementing Pure version");
 
+        // need a negative constant
+        QString distNeg = Util::numToHex( 255 - Util::NumberFromStringHex( m_node->m_params[4]->getValue(as).replace("#","") ) );
+
         QString lblColXConfirmed = as->NewLabel("ColXConfirmed");
         QString lblNoCollision = as->NewLabel("NoCollision");
         QString lblCollision = as->NewLabel("Collision");
@@ -2453,23 +2456,18 @@ noCollision    ; check next sprite
         as->Term();
         as->Asm("clc");
         as->Asm("sbc " + m_node->m_params[2]->getValue(as));
-        as->Asm("cmp #-" + m_node->m_params[4]->getValue(as).remove(0,2) ); //////////////-ve
+        as->Asm("cmp #" + distNeg ); //////////////-ve
         as->Asm("bcs "+ lblColXConfirmed);
         as->Asm("cmp "+ m_node->m_params[4]->getValue(as));   //////////////+ve
         as->Asm("bcs "+ lblNoCollision);
 
         as->Label(lblColXConfirmed);
 
-        int inVal = 255;
-
-        int val = Util::NumberFromStringHex("#$200");
-        QString str = Util::numToHex(val);
-
         m_node->m_params[1]->Accept(m_dispatcher); // lda x1
         as->Term();
         as->Asm("clc");
         as->Asm("sbc " + m_node->m_params[3]->getValue(as));
-        as->Asm("cmp #-" + m_node->m_params[4]->getValue(as).remove(0,2) ); //////////////-ve
+        as->Asm("cmp #" + distNeg ); //////////////-ve
         as->Asm("bcs "+ lblCollision);
         as->Asm("cmp "+ m_node->m_params[4]->getValue(as));   //////////////+ve
         as->Asm("bcs "+ lblNoCollision);
