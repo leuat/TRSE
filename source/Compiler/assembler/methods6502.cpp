@@ -2408,7 +2408,7 @@ void Methods6502::Sqrt(Assembler *as)
 
 }
 
-// NOT COMPLETE YET ****** ANDY H ******** 26-06-2019
+// Calculate if x1,y1 and x2,y2 are with hitbox distance of each other
 void Methods6502::IsOverlapping(Assembler *as)
 {
 /*
@@ -2435,68 +2435,81 @@ noCollision    ; check next sprite
 
     as->Comment("IsOverlapping collision x1,y1, x2,y2, dist");
 
-    // Pure version (params just variable addr or constant number) - this is faster
-    if (m_node->m_params[0]->isPure() &&
-            m_node->m_params[1]->isPure() &&
-            m_node->m_params[2]->isPure() &&
-            m_node->m_params[3]->isPure() &&
-            m_node->m_params[4]->isPureNumeric()) {
+    // need a negative constant
+    QString distNeg = Util::numToHex( 255 - m_node->m_params[4]->getInteger()  );
 
-        as->Comment("Implementing Pure version");
+    QString lblColXConfirmed = as->NewLabel("ColXConfirmed");
+    QString lblNoCollision = as->NewLabel("NoCollision");
+    QString lblCollision = as->NewLabel("Collision");
+    QString lblCollisionDone = as->NewLabel("CollisionDone");
 
-        // need a negative constant
-        QString distNeg = Util::numToHex( 255 - m_node->m_params[4]->getInteger()  );
+    QString zp0 = as->m_internalZP[0];  // used for x/y positions
+    QString zp1 = as->m_internalZP[1];  // used for -ve distance
+    QString zp2 = as->m_internalZP[2];  // used for +ve distance
 
-        QString lblColXConfirmed = as->NewLabel("ColXConfirmed");
-        QString lblNoCollision = as->NewLabel("NoCollision");
-        QString lblCollision = as->NewLabel("Collision");
-        QString lblCollisionDone = as->NewLabel("CollisionDone");
-
-        m_node->m_params[0]->Accept(m_dispatcher); // lda x1
-        as->Term();
-        as->Asm("clc");
-        as->Asm("sbc " + m_node->m_params[2]->getValue(as));
-        as->Asm("cmp #" + distNeg ); //////////////-ve
-        as->Asm("bcs "+ lblColXConfirmed);
-        as->Asm("cmp "+ m_node->m_params[4]->getValue(as));   //////////////+ve
-        as->Asm("bcs "+ lblNoCollision);
-
-        as->Label(lblColXConfirmed);
-
-        m_node->m_params[1]->Accept(m_dispatcher); // lda x1
-        as->Term();
-        as->Asm("clc");
-        as->Asm("sbc " + m_node->m_params[3]->getValue(as));
-        as->Asm("cmp #" + distNeg ); //////////////-ve
-        as->Asm("bcs "+ lblCollision);
-        as->Asm("cmp "+ m_node->m_params[4]->getValue(as));   //////////////+ve
-        as->Asm("bcs "+ lblNoCollision);
-
-        as->Label(lblCollision);
-        as->Asm("lda #1");
-        as->Asm("jmp " + lblCollisionDone);
-
-        as->Label(lblNoCollision);
-        as->Asm("lda #0");
-
-        as->Label(lblCollisionDone);
-
-        as->PopLabel("ColXConfirmed");
-        as->PopLabel("NoCollision");
-        as->PopLabel("Collision");
-        as->PopLabel("CollisionDone");
-
-    } else {
-        // TO BE IMPLEMENTED LATER
-        as->Comment("Implementing Complex version");
-
-        QString zp = as->m_internalZP[0];
-        LoadVar(as, 1); // Loads variable from parameter 1
-        as->Asm("sta "+zp); // Store this variable in zp
-
-        LoadVar(as,0); // Load variable from paramater 0
-        as->Asm("cmp "+ zp);
+    // calc -ve distance
+    if (!m_node->m_params[4]->isPureNumeric()) {
+        as->Comment("Distance is not a constant, store in zero page addresses");
+        LoadVar(as, 4); // Loads distance
+        as->Asm("sta "+zp2); // Store +ve in zp
+        as->Asm("eor #$ff"); // negate, but don't perform 2's compliment as bcs later needs -ve 1 smaller
+        as->Asm("sta "+zp1); // Store -ve in zp
     }
+
+    m_node->m_params[0]->Accept(m_dispatcher); // lda x1
+    as->Term();
+    as->Asm("clc");
+    as->Asm("sbc " + m_node->m_params[2]->getValue(as));
+
+    if (m_node->m_params[4]->isPureNumeric())
+        as->Asm("cmp #" + distNeg ); //////////////-ve
+    else
+        as->Asm("cmp " + zp1 ); //////////////-ve
+
+    as->Asm("bcs "+ lblColXConfirmed);
+
+    if (m_node->m_params[4]->isPureNumeric())
+        as->Asm("cmp "+ m_node->m_params[4]->getValue(as));   //////////////+ve
+    else
+        as->Asm("cmp " + zp2 ); //////////////+ve
+
+    as->Asm("bcs "+ lblNoCollision);
+
+    as->Label(lblColXConfirmed);
+
+    m_node->m_params[1]->Accept(m_dispatcher); // lda x1
+    as->Term();
+    as->Asm("clc");
+    as->Asm("sbc " + m_node->m_params[3]->getValue(as));
+
+    if (m_node->m_params[4]->isPureNumeric())
+        as->Asm("cmp #" + distNeg ); //////////////-ve
+    else
+        as->Asm("cmp " + zp1 ); //////////////-ve
+
+        as->Asm("bcs "+ lblCollision);
+
+    if (m_node->m_params[4]->isPureNumeric())
+        as->Asm("cmp "+ m_node->m_params[4]->getValue(as));   //////////////+ve
+    else
+        as->Asm("cmp " + zp2 ); //////////////+ve
+
+    as->Asm("bcs "+ lblNoCollision);
+
+    as->Label(lblCollision);
+    as->Asm("lda #1");
+    as->Asm("jmp " + lblCollisionDone);
+
+    as->Label(lblNoCollision);
+    as->Asm("lda #0");
+
+    as->Label(lblCollisionDone);
+
+    as->PopLabel("ColXConfirmed");
+    as->PopLabel("NoCollision");
+    as->PopLabel("Collision");
+    as->PopLabel("CollisionDone");
+
 }
 
 void Methods6502::Atan2(Assembler *as)
