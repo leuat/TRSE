@@ -151,5 +151,6 @@
         <file>resources/text/help/m/disableciainterrupts.rtf</file>
         <file>resources/text/help/m/closeirqwedge.rtf</file>
         <file>resources/text/help/m/copybytesshift.rtf</file>
+        <file>resources/text/help/m/isoverlapping.rtf</file>
     </qresource>
 </RCC>

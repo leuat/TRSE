@@ -1,0 +1,29 @@
+<h3>[byte] = IsOverlapping( [byte x1], [byte y1], [byte x2], [byte y2], [byte distance] );</h3>
+<ul>
+<li>[byte x1] - the x position of the first point</li>
+<li>[byte y1] - the y position of the first point</li>
+<li>[byte x2] - the x position of the second point</li>
+<li>[byte y2] - the y position of the second point</li>
+<li>[byte distance] - the distance to check between the two points</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Fast collision test between two points. Returns 1 if [x1/y1] is within [distance] of [x2/y2], otherwise returns 0.</p>
+<p>The distance is tested on the x and y positions and so collision is within a box rather than a straight line distance.
+Suitable testing for 'hitboxes' between two sprites for example.</p>
+<p><strong>Note:</strong> This version only accepts byte parameters.  To test x position of sprites you must scale the
+two x positions down to fit between 0 and 255.  For example divide by 2 or subtract to bring both values below 256.
+A future version will support integers.</p>
+<p><strong>Assembler Optmisation:</strong> If you pass a constant ( eg: 10 or @MyConstant ) or a variable as a parameter,
+the code produced will be smaller.  If pass in a calculation, bear in mind additional code will be created.  If you are
+performing many IsOverapping tests in a loop, do the calculations outside the loop if possible.</p>
+
+<p>Future versions</p>
+
+<h3>Example</h3>
+
+<code>
+result := IsOverlapping( x,y, enemyx,enemyy, 20 );  // returns 1 if x,y is within 10 of enemyx,enemyy
+result := IsOverlapping( 100,100, x,y, r*2 );  // returns 1 if x,y is within [r*2] distance of 100,100
+</code>

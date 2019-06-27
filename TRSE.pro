@@ -468,6 +468,7 @@ DISTFILES += \
     resources/text/help/m/hidebordery.rtf \
     resources/text/help/m/inc.rtf \
     resources/text/help/m/inczp.rtf \
+    resources/text/help/m/isoverlapping.rtf \
     resources/text/help/m/jammer.rtf \
     resources/text/help/m/joystick.rtf \
     resources/text/help/m/keypressed.rtf \
