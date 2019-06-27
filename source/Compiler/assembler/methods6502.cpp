@@ -2433,7 +2433,8 @@ collision
 noCollision    ; check next sprite
 */
 
-    as->Comment("IsOverlapping collision x1,y1, x2,y2, dist");
+    as->Comment("----------");
+    as->Comment("IsOverlapping collision  =  x1,y1, x2,y2, dist");
 
     // need a negative constant
     QString distNeg = Util::numToHex( 255 - m_node->m_params[4]->getInteger()  );
@@ -2456,51 +2457,72 @@ noCollision    ; check next sprite
         as->Asm("sta "+zp1); // Store -ve in zp
     }
 
-    m_node->m_params[0]->Accept(m_dispatcher); // lda x1
-    as->Term();
-    as->Asm("clc");
-    as->Asm("sbc " + m_node->m_params[2]->getValue(as));
+    if (m_node->m_params[2]->isPure()) {                    // x2
+        m_node->m_params[0]->Accept(m_dispatcher);          // x1 - this handles pure and complex
+        as->Term();
+        as->Asm("clc");                                     // pure
+        as->Asm("sbc " + m_node->m_params[2]->getValue(as));
+    } else {
+        as->Comment("x2 is complex");                       // complex
+        LoadVar(as, 2);                                     // Loads x2
+        as->Asm("sta "+zp0);                                // Store
+        m_node->m_params[0]->Accept(m_dispatcher);          // x1 - this handles pure and complex
+        as->Term();
+        as->Asm("clc");
+        as->Asm("sbc " + zp0);
+    }
 
-    if (m_node->m_params[4]->isPureNumeric())
-        as->Asm("cmp #" + distNeg ); //////////////-ve
+    if (m_node->m_params[4]->isPureNumeric())               // distance on X
+        as->Asm("cmp #" + distNeg );                        // -ve pure
     else
-        as->Asm("cmp " + zp1 ); //////////////-ve
+        as->Asm("cmp " + zp1 );                             // -ve complex
 
-    as->Asm("bcs "+ lblColXConfirmed);
+    as->Asm("bcs "+ lblColXConfirmed);                      // x vector 1 within distance
 
-    if (m_node->m_params[4]->isPureNumeric())
-        as->Asm("cmp "+ m_node->m_params[4]->getValue(as));   //////////////+ve
+    if (m_node->m_params[4]->isPureNumeric())               // distance on X
+        as->Asm("cmp "+ m_node->m_params[4]->getValue(as)); // +ve pure
     else
-        as->Asm("cmp " + zp2 ); //////////////+ve
+        as->Asm("cmp " + zp2 );                             // +ve complex
 
-    as->Asm("bcs "+ lblNoCollision);
+    as->Asm("bcs "+ lblNoCollision);                        // x vector 2 not within distance
 
-    as->Label(lblColXConfirmed);
+    as->Label(lblColXConfirmed);                            // X is within +/- distance, now check Y
 
-    m_node->m_params[1]->Accept(m_dispatcher); // lda x1
-    as->Term();
-    as->Asm("clc");
-    as->Asm("sbc " + m_node->m_params[3]->getValue(as));
+    if (m_node->m_params[3]->isPure()) {                    // y2
+        m_node->m_params[1]->Accept(m_dispatcher);          // y1 - this handles pure and complex
+        as->Term();
+        as->Asm("clc");
+        as->Asm("sbc " + m_node->m_params[3]->getValue(as));
+    }
+    else {
+        as->Comment("y2 is complex");                       // complex
+        LoadVar(as, 3);                                     // Loads y2
+        as->Asm("sta "+zp0);                                // Store
+        m_node->m_params[1]->Accept(m_dispatcher);          // y1 - this handles pure and complex
+        as->Term();
+        as->Asm("clc");
+        as->Asm("sbc " + zp0);
+    }
 
-    if (m_node->m_params[4]->isPureNumeric())
-        as->Asm("cmp #" + distNeg ); //////////////-ve
+    if (m_node->m_params[4]->isPureNumeric())               // distance on Y
+        as->Asm("cmp #" + distNeg );                        // -ve pure
     else
-        as->Asm("cmp " + zp1 ); //////////////-ve
+        as->Asm("cmp " + zp1 );                             // -ve complex
 
-        as->Asm("bcs "+ lblCollision);
+    as->Asm("bcs "+ lblCollision);                          // y vector 1 within distance, no more checks needed
 
-    if (m_node->m_params[4]->isPureNumeric())
-        as->Asm("cmp "+ m_node->m_params[4]->getValue(as));   //////////////+ve
+    if (m_node->m_params[4]->isPureNumeric())               // distance on Y
+        as->Asm("cmp "+ m_node->m_params[4]->getValue(as)); // +ve pure
     else
-        as->Asm("cmp " + zp2 ); //////////////+ve
+        as->Asm("cmp " + zp2 );                             // +ve complex
 
-    as->Asm("bcs "+ lblNoCollision);
+    as->Asm("bcs "+ lblNoCollision);                        // y vector 2 not within distance
 
-    as->Label(lblCollision);
+    as->Label(lblCollision);                                // Collision, set a = 1
     as->Asm("lda #1");
     as->Asm("jmp " + lblCollisionDone);
 
-    as->Label(lblNoCollision);
+    as->Label(lblNoCollision);                              // no collision, set a = 0
     as->Asm("lda #0");
 
     as->Label(lblCollisionDone);
