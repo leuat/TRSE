@@ -104,10 +104,7 @@ OrgasmLine Orgasm::LexLine(int i) {
     if (!(line[0]==" ") && !line.contains("=")) {
         QString lbl = line.replace(":", " ").trimmed().split(" ")[0];
         l.m_label = lbl;
-//        qDebug() << line;
-
         line.remove(0, lbl.length()).replace(":", " ");
-  //      qDebug() << line;
 
     }
 
@@ -213,30 +210,9 @@ bool Orgasm::Assemble(QString filename, QString outFile)
     myTimer.start();
 //    qDebug() << "LABELS  " << QString::number((myTimer.elapsed()/100.0));
     Compile(OrgasmData::PASS_LABELS);
-  //  qDebug() << "DONE " << QString::number((myTimer.elapsed()/100.0));
 
-
-
-    //qDebug() << "SYMBOLS: " << QString::number((myTimer.elapsed()/100.0));
     Compile(OrgasmData::PASS_SYMBOLS);
-    //qDebug() << "DONE " << QString::number((myTimer.elapsed()/100.0));
 
-
-/*    for (OrgasmLine& ol:m_olines) {
-        qDebug() << "                                         org: "<<ol.m_orgLine;
-        QString pos =Util::numToHex(ol.m_pos);
-        if (ol.m_type==OrgasmLine::INSTRUCTION)
-            qDebug() <<pos << ol.m_instruction.m_opCode << " " << ol.m_expr;
-        if (ol.m_type==OrgasmLine::ORG)
-            qDebug() <<pos << "org" << ol.m_expr;
-        if (ol.m_type==OrgasmLine::CONSTANT)
-            qDebug() <<pos << ol.m_label<< " = " << ol.m_expr;
-        if (ol.m_type==OrgasmLine::INCBIN)
-            qDebug() <<pos << "incbin " << ol.m_expr;
-        if (ol.m_type==OrgasmLine::BYTE)
-            qDebug() <<pos << ".byte " << ol.m_expr;
-    }
-*/
     m_success = true;
     if (QFile::exists(outFile))
         QFile::remove(outFile);
@@ -280,8 +256,11 @@ void Orgasm::PassFindConstants()
     for (OrgasmLine& ol : m_olines) {
         if (ol.m_type == OrgasmLine::CONSTANT) {
 //            qDebug() << ol.m_label;
-            if (m_constants.contains(ol.m_label))
-                continue;
+            if (m_constants.contains(ol.m_label)) {
+                throw QString("OrgAsm error: constant '"+ol.m_label+"' already defined.");
+//                continue;
+            }
+
             m_constants[ol.m_label] = ol.m_expr;
             m_constList.append(ol.m_label);
 
@@ -325,8 +304,18 @@ void Orgasm::Compile(OrgasmData::PassType pt)
 
         if (ol.m_label!="" && pt == OrgasmData::PASS_LABELS) {
 //            qDebug() << "Writing to label: " << ol.m_label << Util::numToHex(m_pCounter);
-             m_symbols[ol.m_label] = m_pCounter;
-             m_symbolsList.append(ol.m_label);
+            if (m_constants.contains(ol.m_label)) {
+                throw QString("OrgAsm error: label '"+ol.m_label+"' already defined as a constant.");
+
+            }
+            if (!m_symbols.contains(ol.m_label))
+            {
+                m_symbols[ol.m_label] = m_pCounter;
+                m_symbolsList.append(ol.m_label);
+            }
+            else {
+                throw QString("OrgAsm error: symbol '"+ol.m_label+"' already defined");
+            }
         }
         ol.m_pos = m_pCounter;
 

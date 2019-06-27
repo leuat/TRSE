@@ -3200,31 +3200,31 @@ void Methods6502::InitDiv16x8(Assembler *as)
         return;
 //    as->Asm("jmp div16x8_def_end");
 
-    as->Label("divisor = "+as->m_internalZP[0]+"     ;$59 used for hi-byte");   //0
-    as->Label("dividend = "+as->m_internalZP[1]+"	  ;$fc used for hi-byte");    //1
-    as->Label("remainder = "+as->m_internalZP[2]+"	  ;$fe used for hi-byte");  // 2
-    as->Label("result = "+as->m_internalZP[1]+" ;save memory by reusing divident to store the result");
+    as->Label("initdiv16x8_divisor = "+as->m_internalZP[0]+"     ;$59 used for hi-byte");   //0
+    as->Label("initdiv16x8_dividend = "+as->m_internalZP[1]+"	  ;$fc used for hi-byte");    //1
+    as->Label("initdiv16x8_remainder = "+as->m_internalZP[2]+"	  ;$fe used for hi-byte");  // 2
+    as->Label("initdiv16x8_result = "+as->m_internalZP[1]+" ;save memory by reusing divident to store the result");
 
     as->Label("divide16x8	lda #0	        ;preset remainder to 0");
-    as->Asm("sta remainder");
-    as->Asm("sta remainder+1");
+    as->Asm("sta initdiv16x8_remainder");
+    as->Asm("sta initdiv16x8_remainder+1");
     as->Asm("ldx #16	        ;repeat for each bit: ...");
 
-    as->Label("divloop16	asl dividend	;dividend lb & hb*2, msb -> Carry");
-    as->Asm("rol dividend+1");
-    as->Asm("rol remainder	;remainder lb & hb * 2 + msb from carry");
-    as->Asm("rol remainder+1");
-    as->Asm("lda remainder");
+    as->Label("divloop16	asl initdiv16x8_dividend	;dividend lb & hb*2, msb -> Carry");
+    as->Asm("rol initdiv16x8_dividend+1");
+    as->Asm("rol initdiv16x8_remainder	;remainder lb & hb * 2 + msb from carry");
+    as->Asm("rol initdiv16x8_remainder+1");
+    as->Asm("lda initdiv16x8_remainder");
     as->Asm("sec");
-    as->Asm("sbc divisor	;substract divisor to see if it fits in");
+    as->Asm("sbc initdiv16x8_divisor	;substract divisor to see if it fits in");
     as->Asm("tay	        ;lb result -> Y, for we may need it later");
-    as->Asm("lda remainder+1");
-    as->Asm("sbc divisor+1");
+    as->Asm("lda initdiv16x8_remainder+1");
+    as->Asm("sbc initdiv16x8_divisor+1");
     as->Asm("bcc skip16	;if carry=0 then divisor didn't fit in yet");
 
-    as->Asm("sta remainder+1	;else save substraction result as new remainder,");
-    as->Asm("sty remainder");
-    as->Asm("inc result	;and INCrement result cause divisor fit in 1 times");
+    as->Asm("sta initdiv16x8_remainder+1	;else save substraction result as new remainder,");
+    as->Asm("sty initdiv16x8_remainder");
+    as->Asm("inc initdiv16x8_result	;and INCrement result cause divisor fit in 1 times");
     as->Label("skip16	dex");
     as->Asm("bne divloop16");
     as->Asm("rts");

@@ -355,16 +355,16 @@ void ASTDispather6502::Div16x8(Node *node) {
     as->Asm("ldy #0");
     node->m_left->Accept(this);
     as->Term();
-    as->Asm("sta dividend");
-    as->Asm("sty dividend+1");
+    as->Asm("sta initdiv16x8_dividend");
+    as->Asm("sty initdiv16x8_dividend+1");
     as->Asm("ldy #0");
     node->m_right->Accept(this);
     as->Term();
-    as->Asm("sta divisor");
-    as->Asm("sty divisor+1");
+    as->Asm("sta initdiv16x8_divisor");
+    as->Asm("sty initdiv16x8_divisor+1");
     as->Asm("jsr divide16x8");
-    as->Asm("lda dividend");
-    as->Asm("ldy dividend+1");
+    as->Asm("lda initdiv16x8_dividend");
+    as->Asm("ldy initdiv16x8_dividend+1");
 
 }
 
