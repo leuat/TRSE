@@ -196,6 +196,16 @@ void SymbolTable::InitBuiltins()
 
 }
 
+bool SymbolTable::exists(QString name) {
+    if (m_constants.contains(name.toUpper()))
+        return true;
+
+    if (m_symbols.contains(name))
+        return true;
+
+    return false;
+}
+
 Symbol *SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
     //        name = name.toUpper();
     if (m_constants.contains(name.toUpper())) {

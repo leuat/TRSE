@@ -86,6 +86,7 @@ public:
     void setName(QString s);
 
     void InitBuiltins();
+    bool exists(QString name);
 
     Symbol* Lookup(QString name, int lineNumber, bool isAddress=false);
     Symbol* LookupVariables(QString name, int lineNumber);
