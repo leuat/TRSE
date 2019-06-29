@@ -92,7 +92,8 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 #ifdef _WIN32
     QProcess::execute("taskkill /im \"x64.exe\" /f");
 #endif
-//    qDebug() << emulator << " " << params <<  QDir::toNativeSeparators(fileName);
+//    qDebug() << emu << " " << params <<  QDir::toNativeSeparators(fileName);
+
     process.startDetached(emu, params);
 //    process.pi
     QString output(process.readAllStandardOutput());
@@ -241,7 +242,7 @@ void FormRasEditor::BuildNes(QString prg)
     header[2] = 0x53;
     header[3] = 0x1A;
     // 0000 1000
-
+//    qDebug() << "NES: " <<prg;
     header[4] = m_projectIniFile->getdouble("nes_16k_blocks"); // PRG rom kb
     // 0001 0000
 
@@ -282,7 +283,7 @@ void FormRasEditor::BuildNes(QString prg)
     /*for (int i=0;i<pow(2,13);i++)
         data.append((char)rand()%255);
 */
-/*    if (QFile::exists(prg+".nes"))
+    if (QFile::exists(prg+".nes"))
         QFile::remove(prg+".nes");
 
     QFile out(prg+ ".nes");
@@ -290,7 +291,7 @@ void FormRasEditor::BuildNes(QString prg)
 //    out.write(header);
     out.write(data);
     out.close();
-*/
+
 }
 
 

@@ -48,7 +48,7 @@ setup_music: 	lda		#$08
 				rts
 		
 ; main pattern loop
-music:	ldx #0	
+mplayer_music:	ldx #0
 			
 patloop: stx	row
 
@@ -194,7 +194,7 @@ mult_loop:	cpx pattern	; pattern index
 		
 		jmp mult_loop
 
-leave_mult: jmp music ; } end_while 
+leave_mult: jmp mplayer_music ; } end_while
 
 ; stores pattern0 pointer in zeropage at pattern_pointer
 reset_pattern_pointer: ldx #<pattern0

@@ -99,7 +99,7 @@ var
    	xp: byte; 
 
 
-	x,y,j,ttime,k,l,tt,m,t1,t2,current : byte = 0;
+	ttime,t1,t2,current : byte = 0;
 	loadChars : byte = 30;
 
 /*
