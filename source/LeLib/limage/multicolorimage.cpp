@@ -523,7 +523,14 @@ void MultiColorImage::ExportBin(QFile& ofile)
 
 //    for (int i=0;i<m_charWidth*m_charHeight;i++) {
 //        uchar c = (uchar)m_data[i].c[3];
-        uchar c = (uchar)m_data[i+j*m_charWidth].c[charC];
+        uchar c;
+        if (charC==3)
+            c = (uchar)m_data[i+j*m_charWidth].c[charC];
+        if (charC==1) {
+//            c = (uchar)m_data[i+j*m_charWidth].c[charC];
+            c = ((uchar)m_data[j*m_charWidth + i].colorMapToNumber(0,1));
+            qDebug() << c;
+        }
         if (c==255)
             c=0;
 //        if (c!=0)

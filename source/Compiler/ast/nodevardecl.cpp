@@ -77,6 +77,7 @@ void NodeVarDecl::InitSid(QString projectDir, int VICAddress, QString type) {
         headerShift = val.toInt(&ok);
         if (!ok)
             headerShift = 0;
+        qDebug() << headerShift;
     }
     if (type=="sid") {
         sid.Load(t->m_filename, projectDir);
@@ -86,12 +87,12 @@ void NodeVarDecl::InitSid(QString projectDir, int VICAddress, QString type) {
         sid.LoadNSF(t->m_filename, projectDir);
         sid.Convert(headerShift,VICAddress,type,0x80);
     }
-    /*        qDebug() << "SID LOAD: " << QString::number(sid.m_loadAddress,16);
+/*            qDebug() << "SID LOAD: " << QString::number(sid.m_loadAddress,16);
                 qDebug() << "SID INIT: " << QString::number(sid.m_initAddress,16);
                qDebug() << "SID PLAY: " << QString::number(sid.m_playAddress,16);
-        */
+*/
     if (sid.m_loadAddress ==0 ) {
-//        qDebug() << "BUG load sid at ZERO?";
+  //      qDebug() << "BUG load sid at ZERO?";
         sid.m_loadAddress = sid.m_initAddress;
     }
     SymbolTable::DefineSid(sid.m_initAddress, sid.m_playAddress);
