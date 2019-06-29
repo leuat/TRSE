@@ -73,7 +73,7 @@ void Messages::InitMessages()
                                        );
 
     m_messages[ALPHA_WARNING] = Message(ALPHA_WARNING, Message::Msg,
-                                      "Hi there! <br><br>Welcome to this new release of Turbo Rascal Syntax Error 0.06 (sub-version 5), now with Amiga 500 support! "
+                                      "Hi there! <br><br>Welcome to this new release of Turbo Rascal Syntax Error 0.06 (sub-version 7), now with Amiga 500 support and lots of updates! "
                                       "If this is your first time using the TRSE framework, please open the tutorials project located in the parent directory and play around. <br> "
                                       "<br> "
                                       "Thank you so much for trying out Turbo Rascal Syntax Error! Remember to report any bugs to <b>generalgrapefruit@lemonspawn.com</b>.");
