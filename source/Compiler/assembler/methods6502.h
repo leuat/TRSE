@@ -112,6 +112,7 @@ public:
     void Sqrt(Assembler* as);
     void Atan2(Assembler* as);
     void IsOverlapping(Assembler* as);
+    void IsOverlappingWH(Assembler* as);
     void CopyCharsetFromRom(Assembler* as);
     void IncDec(Assembler* as, QString cmd);
     void SetMemoryConfig(Assembler* as);

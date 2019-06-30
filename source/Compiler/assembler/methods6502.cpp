@@ -216,6 +216,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("IsOverlapping")) {
         IsOverlapping(as);
     }
+    if (Command("IsOverlappingWH")) {
+        IsOverlappingWH(as);
+    }
 
     if (Command("initsqrt16")) {
         InitSqrt16(as);
@@ -2411,28 +2414,6 @@ void Methods6502::Sqrt(Assembler *as)
 // Calculate if x1,y1 and x2,y2 are with hitbox distance of each other
 void Methods6502::IsOverlapping(Assembler *as)
 {
-/*
- * ; test sprite X position colliding?
-                lda #100        ; xpos1
-                clc
-                sbc #112        ; sub xpos2
-                cmp #PLAYER_CLEFT
-                bcs collisionOnX
-                cmp #PLAYER_CRIGHT
-                bcs noCollision
-; test sprite Y position colliding?
-collisionOnX    lda #100        ; ypos1
-                clc
-                sbc #102        ; ypos2
-                cmp #PLAYER_CTOP
-                bcs collision
-                cmp #PLAYER_CBOT
-                bcs noCollision
-collision
-                nop
-noCollision    ; check next sprite
-*/
-
     as->Comment("----------");
     as->Comment("IsOverlapping collision  =  x1,y1, x2,y2, dist");
 
@@ -2513,6 +2494,120 @@ noCollision    ; check next sprite
 
     if (m_node->m_params[4]->isPureNumeric())               // distance on Y
         as->Asm("cmp "+ m_node->m_params[4]->getValue(as)); // +ve pure
+    else
+        as->Asm("cmp " + zp2 );                             // +ve complex
+
+    as->Asm("bcs "+ lblNoCollision);                        // y vector 2 not within distance
+
+    as->Label(lblCollision);                                // Collision, set a = 1
+    as->Asm("lda #1");
+    as->Asm("jmp " + lblCollisionDone);
+
+    as->Label(lblNoCollision);                              // no collision, set a = 0
+    as->Asm("lda #0");
+
+    as->Label(lblCollisionDone);
+
+    as->PopLabel("ColXConfirmed");
+    as->PopLabel("NoCollision");
+    as->PopLabel("Collision");
+    as->PopLabel("CollisionDone");
+
+}
+
+// Calculate if x1,y1 and x2,y2 are with rectangluar hitbox distance of each other
+void Methods6502::IsOverlappingWH(Assembler *as)
+{
+    as->Comment("----------");
+    as->Comment("IsOverlapping collision  =  x1,y1, x2,y2, width, height");
+
+    // need a negative constant
+    QString distNegX = Util::numToHex( 255 - m_node->m_params[4]->getInteger()  );
+    QString distNegY = Util::numToHex( 255 - m_node->m_params[5]->getInteger()  );
+
+    QString lblColXConfirmed = as->NewLabel("ColXConfirmed");
+    QString lblNoCollision = as->NewLabel("NoCollision");
+    QString lblCollision = as->NewLabel("Collision");
+    QString lblCollisionDone = as->NewLabel("CollisionDone");
+
+    QString zp0 = as->m_internalZP[0];  // used for x/y positions
+    QString zp1 = as->m_internalZP[1];  // used for -ve distance
+    QString zp2 = as->m_internalZP[2];  // used for +ve distance
+
+    // calc -ve width
+    if (!m_node->m_params[4]->isPureNumeric()) {
+        as->Comment("Distance is not a constant, store in zero page addresses");
+        LoadVar(as, 4); // Loads distance
+        as->Asm("sta "+zp2); // Store +ve in zp
+        as->Asm("eor #$ff"); // negate, but don't perform 2's compliment as bcs later needs -ve 1 smaller
+        as->Asm("sta "+zp1); // Store -ve in zp
+    }
+
+    if (m_node->m_params[2]->isPure()) {                    // x2
+        m_node->m_params[0]->Accept(m_dispatcher);          // x1 - this handles pure and complex
+        as->Term();
+        as->Asm("clc");                                     // pure
+        as->Asm("sbc " + m_node->m_params[2]->getValue(as));
+    } else {
+        as->Comment("x2 is complex");                       // complex
+        LoadVar(as, 2);                                     // Loads x2
+        as->Asm("sta "+zp0);                                // Store
+        m_node->m_params[0]->Accept(m_dispatcher);          // x1 - this handles pure and complex
+        as->Term();
+        as->Asm("clc");
+        as->Asm("sbc " + zp0);
+    }
+
+    if (m_node->m_params[4]->isPureNumeric())               // distance on X
+        as->Asm("cmp #" + distNegX );                        // -ve pure
+    else
+        as->Asm("cmp " + zp1 );                             // -ve complex
+
+    as->Asm("bcs "+ lblColXConfirmed);                      // x vector 1 within distance
+
+    if (m_node->m_params[4]->isPureNumeric())               // distance on X
+        as->Asm("cmp "+ m_node->m_params[4]->getValue(as)); // +ve pure
+    else
+        as->Asm("cmp " + zp2 );                             // +ve complex
+
+    as->Asm("bcs "+ lblNoCollision);                        // x vector 2 not within distance
+
+    as->Label(lblColXConfirmed);                            // X is within +/- distance, now check Y
+
+    // calc -ve height
+    if (!m_node->m_params[5]->isPureNumeric()) {
+        as->Comment("Distance is not a constant, store in zero page addresses");
+        LoadVar(as, 5); // Loads distance
+        as->Asm("sta "+zp2); // Store +ve in zp
+        as->Asm("eor #$ff"); // negate, but don't perform 2's compliment as bcs later needs -ve 1 smaller
+        as->Asm("sta "+zp1); // Store -ve in zp
+    }
+
+    if (m_node->m_params[3]->isPure()) {                    // y2
+        m_node->m_params[1]->Accept(m_dispatcher);          // y1 - this handles pure and complex
+        as->Term();
+        as->Asm("clc");
+        as->Asm("sbc " + m_node->m_params[3]->getValue(as));
+    }
+    else {
+        as->Comment("y2 is complex");                       // complex
+        LoadVar(as, 3);                                     // Loads y2
+        as->Asm("sta "+zp0);                                // Store
+        m_node->m_params[1]->Accept(m_dispatcher);          // y1 - this handles pure and complex
+        as->Term();
+        as->Asm("clc");
+        as->Asm("sbc " + zp0);
+    }
+
+    if (m_node->m_params[5]->isPureNumeric())               // distance on Y
+        as->Asm("cmp #" + distNegY );                        // -ve pure
+    else
+        as->Asm("cmp " + zp1 );                             // -ve complex
+
+    as->Asm("bcs "+ lblCollision);                          // y vector 1 within distance, no more checks needed
+
+    if (m_node->m_params[5]->isPureNumeric())               // distance on Y
+        as->Asm("cmp "+ m_node->m_params[5]->getValue(as)); // +ve pure
     else
         as->Asm("cmp " + zp2 );                             // +ve complex
 

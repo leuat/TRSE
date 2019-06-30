@@ -210,6 +210,7 @@ m; Rand; C64, C128 ; b,b,b
 
 # Collision routines
 m; IsOverlapping; C64, C128, VIC20, PET, NES; b,b,b,b,b
+m; IsOverlappingWH; C64, C128, VIC20, PET, NES; b,b,b,b,b,b
 
 # Other routines
 
