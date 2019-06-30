@@ -132,19 +132,21 @@ void DialogHelp::LoadItem(QString findword)
         if (type=="m")
          {
                 QStringList params = data[3].toLower().split(",");
-                QString val = "<h2>"+word + "(";
+                QString val = "<h2 style=\"color: skyblue\">"+word + "( ";
+                int paramNo = 1;
                 for (QString s: params) {
-                    if (s=="b") val+="[byte variable]";
-                    if (s=="i") val+="[integer variable]";
-                    if (s=="n") val+="[numeric value]";
-                    if (s=="a") val+="[address]";
-                    if (s=="s") val+="[string address]";
+                    if (s=="b") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> byte ]";
+                    if (s=="i") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> integer ]";
+                    if (s=="n") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> numeric ]";
+                    if (s=="a") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> address ]";
+                    if (s=="s") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> string address ]";
 
                     val+=", ";
+                    paramNo++;
 
                 }
                 val.remove(val.length()-2,2);
-                val+=");</h2>";
+                val+=" );</h2>";
 
                 QString fn =":resources/text/help/"+type+"/"+word.toLower()+".rtf";
                 if (QFile::exists(fn)) {
@@ -152,9 +154,13 @@ void DialogHelp::LoadItem(QString findword)
                     f.open(QFile::ReadOnly | QFile::Text);
                     QString s = f.readAll();
                     f.close();
-                    s=s.replace("<code>","<pre><code><font color=\"#E0B050\">");
-                    s=s.replace("</code>","</font></code></pre>");
-                    val+=s;
+
+                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
+                    s=s.replace("</code>","</code></pre>");
+
+                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
+
+                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
 
              //       m_highlighter->HighlightText(val);
            //         qDebug() << val;
