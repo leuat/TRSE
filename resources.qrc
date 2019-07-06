@@ -153,5 +153,7 @@
         <file>resources/text/help/m/copybytesshift.rtf</file>
         <file>resources/text/help/m/isoverlapping.rtf</file>
         <file>resources/text/help/m/isoverlappingwh.rtf</file>
+        <file>resources/text/help/m/hi.rtf</file>
+        <file>resources/text/help/m/lo.rtf</file>
     </qresource>
 </RCC>

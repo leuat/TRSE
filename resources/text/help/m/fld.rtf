@@ -1,6 +1,19 @@
+<h3>FLD( [byte], [number] );
+</h3>
+<ul>
+<li>[byte] - number of raster lines to skip</li>
+<li>[number] - 0 = text mode or 1 = bitmap graphics mode</li>
+</ul>
+
+
+<h3>Description</h3>
 <p>Flexible Line Distance effect. Parameter 1 specifies the number of raster lines to skip, while parameter 2
-specifies whether to use text mode (0) or bitmap graphics mode (1)</p>
+specifies whether to use text mode (0) or bitmap graphics mode (1).</p>
+
+
+<h3>Example</h3>
+
 <code>
-  a := sine[time]/16+1;
-  fld(a,1); // bitmap graphics mode
+a := sine[ time ] / 16 + 1;
+Fld( a, 1 ); // bitmap graphics mode
 </code>

@@ -1,14 +1,21 @@
-<p>
-Returns the bit specified in parameter 2 at the address in parameter 1 (0 or 1)</p>
-<p>
-<b>Examples</b>
-</p> 
-<p><code>
+<h3>[byte] = GetBit( [address], [byte] );</h3>
+<ul>
+    <li>[address] - to check</li>
+    <li>[byte] - bit to check</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Returns the bit specified in parameter 2 at the address in parameter 1 (0 or 1).</p>
+
+
+<h3>Example</h3>
+
+<code>
 // Check if sprite "i" is on
-is_active := GetBit(SPRITE_BITMASK, i); 
+is_active := GetBit( SPRITE_BITMASK, i );
 <br>
-//  sprite-sprite collision occurred 
-if (GetBit(^$D019,2)=1) then begin 
+//  sprite-sprite collision occurred
+if ( GetBit( ^$D019, 2 ) = 1) then begin
    ....
 </code>
-</p>
