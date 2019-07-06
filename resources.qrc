@@ -155,5 +155,7 @@
         <file>resources/text/help/m/isoverlappingwh.rtf</file>
         <file>resources/text/help/m/hi.rtf</file>
         <file>resources/text/help/m/lo.rtf</file>
+        <file>resources/text/help/m/hideborderx.rtf</file>
+        <file>resources/text/help/m/hidebordery.rtf</file>
     </qresource>
 </RCC>
