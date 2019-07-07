@@ -437,6 +437,10 @@ DISTFILES += \
     resources/bin/krill/instal_3000-c64.prg \
     resources/bin/krill/new/loader_PAL_NTSCL_0200-c64.prg \
     resources/bin/krill/new/install_PAL_NTSC_5000-c64.prg \
+    resources/text/help/c/hscroll_register.rtf \
+    resources/text/help/c/screen_text_width.rtf \
+    resources/text/help/c/vic_rasterline.rtf \
+    resources/text/help/c/vscroll_register.rtf \
     resources/text/help/m/abs.rtf \
     resources/text/help/m/atan2.rtf \
     resources/text/help/m/blockmemcpy.rtf \

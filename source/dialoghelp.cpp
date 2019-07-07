@@ -132,7 +132,7 @@ void DialogHelp::LoadItem(QString findword)
         if (type=="m")
          {
                 QStringList params = data[3].toLower().split(",");
-                QString val = "<h2 style=\"color: skyblue\">"+word + "( ";
+                QString val = "<h2 style=\"color: skyblue\">" + word + "( ";
                 int paramNo = 1;
                 for (QString s: params) {
                     if (s=="b") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> byte ]";
@@ -173,14 +173,29 @@ void DialogHelp::LoadItem(QString findword)
 
         if (type=="c")
          {
-                QString type = data[3].toLower();
+                QString ptype = data[3].toLower();
                 QString value = data[4].toUpper();
 
-                QString val = "<font size=+2>"+word + "</font><br><br>";
-                if (type=="a") val+="Address: ";
-                if (type=="b") val+="Byte value: ";
-                val+=value;
+                QString val = "<h2 style=\"color: skyblue\">" + word + "</h2><h3 style=\"color: yellow\">";
+                if (ptype=="a") val += "Address: ";
+                if (ptype=="b") val += "Byte value: ";
+                val += value + "</h3>";
 
+                QString fn =":resources/text/help/"+type+"/"+word.toLower()+".rtf";
+                if (QFile::exists(fn)) {
+                    QFile f(fn);
+                    f.open(QFile::ReadOnly | QFile::Text);
+                    QString s = f.readAll();
+                    f.close();
+
+                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
+                    s=s.replace("</code>","</code></pre>");
+
+                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
+
+                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
+
+                }
 
                 ui->txtHelp->setText(val);
 

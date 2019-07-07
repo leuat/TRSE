@@ -157,5 +157,9 @@
         <file>resources/text/help/m/lo.rtf</file>
         <file>resources/text/help/m/hideborderx.rtf</file>
         <file>resources/text/help/m/hidebordery.rtf</file>
+        <file>resources/text/help/c/vic_rasterline.rtf</file>
+        <file>resources/text/help/c/hscroll_register.rtf</file>
+        <file>resources/text/help/c/screen_text_width.rtf</file>
+        <file>resources/text/help/c/vscroll_register.rtf</file>
     </qresource>
 </RCC>
