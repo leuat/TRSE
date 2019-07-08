@@ -491,3 +491,16 @@ r; CHIPMEM; AMIGA
 
 
 
+#
+#
+#
+#
+#   P L A T F O R M   I N F O
+#
+#
+#
+#
+p; Getting_Started; C64, C128, VIC20, PET, NES, BBCM, AMIGA
+p; Vic20; VIC20
+p; C64; C64
+p; Pascal; C64, C128, VIC20, PET, NES, BBCM, AMIGA

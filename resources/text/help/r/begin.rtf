@@ -1,0 +1,27 @@
+<h3>Description</h3>
+<p>A statement that defines the beginning of a code block in Pascal.  This can be the program, a procedure,
+an if statement and so on.</p>
+<p>A begin must conclude with an end.</p>
+
+<h3>Example</h3>
+<p>A begin defines the start of the code in a procedure and a block of code for a while loop.
+Begin also defines the main code block (or starting point) of a program.</p>
+
+<code>
+// procedures have a begin
+procedure MyProcedure();
+begin
+   myPointer:=myText;
+   moveto(0,5, $04);
+   // Loop have a begin
+   while (myPointer[0]<>0) do begin
+      screenmemory[a]:=myPointer[0]; // draw text
+      myPointer:=myPointer+1; // increase pointer value
+   end;
+end;
+
+// Main code
+begin
+    MyProcedure();
+end.
+</code>

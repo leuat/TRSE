@@ -1,0 +1,23 @@
+<h3>Description</h3>
+<p>Insert assembler code directly into your TRSE Pascal program.</p>
+<p>Note:<br />
+The assembler code will be inserted as you supply it.  Remember that the first column is the label, not an assembler directive.
+</p>
+
+
+<h3>Example 1</h3>
+<p>A single line of assembler code to load the accumulator with a value of 1</p>
+<code>
+asm("  lda #$01");
+</code>
+
+<h3>Example 2</h3>
+<p>Several lines of assembler code</p>
+<code>
+asm("
+        lda #$10
+mylabel dec
+        cmp #$05
+        bcs mylabel
+");
+</code>

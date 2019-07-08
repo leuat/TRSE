@@ -37,6 +37,7 @@ DialogHelp::DialogHelp(QWidget *parent, QString txt, QPalette pal) :
     m_helpTypes.append(HelpType("m","Methods"));
     m_helpTypes.append(HelpType("r","Reserved words"));
     m_helpTypes.append(HelpType("c","Constants"));
+    m_helpTypes.append(HelpType("p","Platform Info"));
 
     FillTopics();
     LoadItems(0);
@@ -171,6 +172,8 @@ void DialogHelp::LoadItem(QString findword)
 
             }
 
+
+
         if (type=="c")
          {
                 QString ptype = data[3].toLower();
@@ -198,10 +201,61 @@ void DialogHelp::LoadItem(QString findword)
                 }
 
                 ui->txtHelp->setText(val);
-
-
-
             }
+
+
+
+        if (type=="r")
+         {
+                QString val = "<h2 style=\"color: skyblue\">" + word + "</h2>";
+                val += "<h3 style=\"color: yellow\">" + data[2] + "</h3>";
+
+                QString fn =":resources/text/help/"+type+"/"+word.toLower()+".rtf";
+                if (QFile::exists(fn)) {
+                    QFile f(fn);
+                    f.open(QFile::ReadOnly | QFile::Text);
+                    QString s = f.readAll();
+                    f.close();
+
+                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
+                    s=s.replace("</code>","</code></pre>");
+
+                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
+
+                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
+
+                }
+
+                ui->txtHelp->setText(val);
+            }
+
+
+
+        if (type=="p")
+         {
+                QString title = QString(word).replace("_", " ");
+                QString val = "<h2 style=\"color: skyblue\">" + title + "</h2>"; //.replace("_", " ")
+
+                QString fn =":resources/text/help/"+type+"/"+word.toLower()+".rtf";
+                if (QFile::exists(fn)) {
+                    QFile f(fn);
+                    f.open(QFile::ReadOnly | QFile::Text);
+                    QString s = f.readAll();
+                    f.close();
+
+                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
+                    s=s.replace("</code>","</code></pre>");
+
+                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
+
+                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
+
+                }
+
+                ui->txtHelp->setText(val);
+            }
+
+
 
          }
     }
