@@ -28,10 +28,14 @@ void ProjectBuilder::Build(QString file)
     if (!QFile::exists(f))
         throw QString("Could not find source file: " + f);
 
+
     QString source = Util::loadTextFile(f);
+//    qDebug() <<"ProjectBuilder A0";
     if (sb->Build(source)) {
 //        Message("Assembling...");
+  //      qDebug() <<"ProjectBuilder A";
         sb->Assemble();
+    //    qDebug() <<"ProjectBuilder B";
         if (!sb->m_assembleSuccess)
             throw QString("Error during assembly : " + sb->getOutput());
         emitTextUpdate();
@@ -63,7 +67,6 @@ void ProjectBuilder::run()
                 if (cmdList.count()!=2)
                     throw QString("Build command 'b' requires an input file");
                 Message("Compiling:  <b>" + cmdList[1] + "</b> ...", false);;
-
                 Build(cmdList[1]);
                 Message("<i><font color=\"#80FF80\">OK</font></i>.");
             }
@@ -84,6 +87,12 @@ void ProjectBuilder::run()
             m_output += "Error: " +s + "\n";
             emitTextUpdate();
             return;
+        }
+        catch (...) {
+            m_output += "Unknown Error!";
+            emitTextUpdate();
+            return;
+
         }
 
     }

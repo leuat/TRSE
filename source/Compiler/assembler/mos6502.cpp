@@ -1042,12 +1042,12 @@ void AsmMOS6502::InitZeroPointers(QStringList lst, QStringList tmpList)
     }
     m_tempZeroPointers.clear();
 
-
     for (QString zp : tmpList) {
         if (zp!="") {
             m_tempZeroPointers.append(zp);
         }
     }
+//       qDebug() << "ASMMos6502 initzero " <<m_tempZeroPointers;
 
 
 }
