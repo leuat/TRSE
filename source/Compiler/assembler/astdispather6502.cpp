@@ -1277,8 +1277,8 @@ void ASTDispather6502::LogicalClause(Node *node)
     // Done comparing!
 }
 
-void ASTDispather6502::Compare(NodeForLoop *node, NodeVar* var, bool isLarge, QString loopDone) {
 
+void ASTDispather6502::Compare(NodeForLoop *node, NodeVar* var, bool isLarge, QString loopDone) {
 
 //    if (!var->isWord(as))
     {
@@ -1288,18 +1288,39 @@ void ASTDispather6502::Compare(NodeForLoop *node, NodeVar* var, bool isLarge, QS
 //        as->Asm("clc");
         as->Asm("cmp " + as->m_stack["for"].current());
 
+        int stepValue = 1; // do we have a step value?
+        if (node->m_step != nullptr) {
+
+            stepValue = node->m_step->numValue(); //node->m_step->getValue(as);
+
+        }
         if (!isLarge) {
-            as->Asm("bne "+as->getLabel("for"));
-            //as->Asm("bcs "+as->getLabel("for"));
+
+            if (stepValue == 1 || stepValue == -1) {
+                // increments / decrements of 1 are safe for BNE
+                // Note: this is not Pascal Compatible
+                as->Asm("bne "+as->getLabel("for"));
+            } else if (stepValue > 1) {
+                // the fix for the Pascal Compatible version is to remove the BEQ on the next line
+                as->Asm("beq "+loopDone); // FOR index == TO value
+                as->Asm("bcs "+as->getLabel("for")); // or FOR index > TO value
+            } else { //if (stepValue < -1) {
+                // this is the fix for the Pascal Compatible
+                // as->Asm("beq "+as->getLabel("for")); // BEQ then the BCC below
+                as->Asm("bcc "+as->getLabel("for")); // FOR index < TO value
+            }
+
         }
         else {
+
+            // LargeLoops needs checking
             as->Asm("beq "+loopDone);
 
         }
         return;
     }
 
-
+/* // FOR loops with word values not currently supported
     ErrorHandler::e.Error("Compare word not implemented in for loops");
 
     // Is word:
@@ -1329,7 +1350,7 @@ void ASTDispather6502::Compare(NodeForLoop *node, NodeVar* var, bool isLarge, QS
     as->Label(label1);
 // Branches to LABEL2 if NUM1 < NUM2
 
-
+*/
 
 /*    LDA NUM1H  ; compare high bytes
              CMP NUM2H
@@ -1338,76 +1359,84 @@ void ASTDispather6502::Compare(NodeForLoop *node, NodeVar* var, bool isLarge, QS
              LDA NUM1L  ; compare low bytes
              CMP NUM2L
              BCC LABEL2 ; if NUM1L < NUM2L then NUM1 < NUM2
-*/
 
-    as->PopLabel("forWordLabel1");
+
+    as->PopLabel("forWordLabel1");*/
 //    as->PopLabel("forWordVar");
 }
 
 void ASTDispather6502::IncreaseCounter(NodeForLoop *node, NodeVar* var) {
+
+    // no STEP included in FOR TO DO, we assume STEP 1
     if (node->m_step==nullptr) {
-            if (!var->isWord(as)) {
-                as->Asm("inc " + as->m_stack["for"].current());
-            }
-            else {
-                as->Asm("clc");
-                as->Asm("inc " + as->m_stack["for"].current());
-                QString lbl = as->NewLabel("lblCounterWord");
-                as->Asm("bcc "+lbl);
-                as->Asm("inc " + as->m_stack["for"].current() +"+1");
 
-                as->Label(lbl);
+        //if (!var->isWord(as)) {
+            as->Asm("inc " + as->m_stack["for"].current());
+       /* }
+        else {
+            as->Asm("clc");
+            as->Asm("inc " + as->m_stack["for"].current());
+            QString lbl = as->NewLabel("lblCounterWord");
+            as->Asm("bcc "+lbl);
+            as->Asm("inc " + as->m_stack["for"].current() +"+1");
 
-                as->PopLabel("lblCounterWord");
+            as->Label(lbl);
 
-            }
-            return;
-    }
-        if (node->m_step->isMinusOne()) {
-//                as->Asm("dec " + as->m_stack["for"].current());
-                if (!var->isWord(as)) {
-                    as->Asm("dec " + as->m_stack["for"].current());
-                }
-                else {
-                    as->Asm("clc");
-                    as->Asm("dec " + as->m_stack["for"].current());
+            as->PopLabel("lblCounterWord");
+
+        }*/
+
+    } else {
+
+        // STEP included in FOR TO DO statement
+        int stepValue = node->m_step->numValue();
+        //stepValue = node->m_step->getInteger();
+        //ErrorHandler::e.Error( QString::number(stepValue) );
+
+        // if 1 or -1 we can optimise!
+        if (stepValue == 1) {
+
+            as->Asm("inc " + as->m_stack["for"].current());
+
+        } else if (stepValue == -1) {
+
+            as->Asm("dec " + as->m_stack["for"].current());
+
+        } else {
+            // Larger +ve/-ve STEP
+
+            // Handles a -ve and +ve step as a byte, eg: -1 == 255
+            as->Asm("clc");
+            as->Asm("lda " + as->m_stack["for"].current());
+            as->ClearTerm();
+            as->Term("adc ");
+            node->m_step->Accept(this);
+            //            m_step->Build(as);
+            as->Term();
+
+            if (var->isWord(as)) {
                     QString lbl = as->NewLabel("lblCounterWord");
                     as->Asm("bcc "+lbl);
-                    as->Asm("dec " + as->m_stack["for"].current() +"+1");
-
+                    as->Asm("inc " + as->m_stack["for"].current() +"+1");
                     as->Label(lbl);
-
                     as->PopLabel("lblCounterWord");
-
-                }
-                return;
-
+            }
+            as->Asm("sta "+as->m_stack["for"].current());
 
         }
+
+    }
+
+
+
  //       if (node->m_loopCounter!=0)
    //         ErrorHandler::e.Error("Error: Loop with step other than 1,-1 cannot have loopy/loopx flag");
         // Is word
-        as->Asm("clc");
-        as->Asm("lda " + as->m_stack["for"].current());
-        as->ClearTerm();
-        as->Term("adc ");
-        node->m_step->Accept(this);
-        //            m_step->Build(as);
-        as->Term();
-
-        if (var->isWord(as)) {
-                QString lbl = as->NewLabel("lblCounterWord");
-                as->Asm("bcc "+lbl);
-                as->Asm("inc " + as->m_stack["for"].current() +"+1");
-                as->Label(lbl);
-                as->PopLabel("lblCounterWord");
-        }
-        as->Asm("sta "+as->m_stack["for"].current());
-
 
 
 }
 
+// handle a small loop
 void ASTDispather6502::SmallLoop(NodeForLoop *node, NodeVar* var)
 {
     QString loopDone = as->NewLabel("forLoopDone");
@@ -1428,7 +1457,7 @@ void ASTDispather6502::SmallLoop(NodeForLoop *node, NodeVar* var)
 
 }
 
-
+// handle a larg loop
 void ASTDispather6502::LargeLoop(NodeForLoop *node, NodeVar* var)
 {
     QString loopForFix = as->NewLabel("forLoopFix");
