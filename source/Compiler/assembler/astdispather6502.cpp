@@ -578,6 +578,7 @@ void ASTDispather6502::dispatch(NodeBuiltinMethod *node)
     node->VerifyParams(as);
 
     as->PushCounter();
+//    qDebug() <<"Dispatcher::builtin" << as->m_tempZeroPointers;
 
     Methods6502 methods;
     methods.m_node = node;
@@ -1433,18 +1434,12 @@ void ASTDispather6502::LargeLoop(NodeForLoop *node, NodeVar* var)
     QString loopForFix = as->NewLabel("forLoopFix");
     QString loopDone = as->NewLabel("forLoopDone");
 
-    /*    Compare(as);
-        as->Asm("bne "+loopForFix);
-        as->Asm("jmp "+loopDone);*/
     as->Label(loopForFix);
     node->m_block->Accept(this);
-    //        m_block->Build(as);
-    //    as->EndForLoop(m_b);
     as->m_stack["for"].pop();
 
     IncreaseCounter(node,var);
     Compare(node,var,true,loopDone);
-    //as->Asm("beq "+loopDone);
 
     as->Asm("jmp " + as->getLabel("for"));
 
@@ -1568,31 +1563,21 @@ void ASTDispather6502::dispatch(NodeForLoop *node)
     node->DispatchConstructor();
 
 
-    //QString m_currentVar = ((NodeAssign*)m_a)->m_
     NodeAssign *nVar = dynamic_cast<NodeAssign*>(node->m_a);
 
-
+    // left node *must* be an assign statement (e.g a:=10)
     if (nVar==nullptr)
         ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
 
-    QString var = dynamic_cast<NodeVar*>(nVar->m_left)->value;//  m_a->Build(as);
+    // Get the variable name
+    QString var = dynamic_cast<NodeVar*>(nVar->m_left)->value;
+    // accept statement (assign variable)
     node->m_a->Accept(this);
-    if (node->m_loopCounter==1) as->Asm("tax");
-    if (node->m_loopCounter==2) as->Asm("tay");
-    //QString to = m_b->Build(as);
-    QString to = "";
-    if (dynamic_cast<const NodeNumber*>(node->m_b) != nullptr)
-        to = QString::number(((NodeNumber*)node->m_b)->m_val);
-    if (dynamic_cast<const NodeVar*>(node->m_b) != nullptr)
-        to = ((NodeVar*)node->m_b)->value;
-  //  if (m_b->m_op.m_type==TokenType::INTEGER ||m_b->m_op.m_type==TokenType::INTEGER_CONST )
-  //      to = "#" + to;
-//    as->StartForLoop(var, to);
+
 
     as->m_stack["for"].push(var);
-//    as->m_labelStack["for"].push();
-    as->Label(as->NewLabel("for"));
 
+    as->Label(as->NewLabel("for"));
 
     bool isSmall = node->verifyBlockBranchSize(as, node->m_block);
 

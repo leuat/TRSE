@@ -86,6 +86,7 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
         try {
             dynamic_cast<NodeProgram*>(m_tree)->m_initJumps = m_parser.m_initJumps;
             m_dispatcher->as = m_assembler;
+
             m_tree->Accept(m_dispatcher);
 
         } catch (FatalErrorException e) {

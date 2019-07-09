@@ -1849,12 +1849,15 @@ void Methods6502::PlayVIC20Sid(Assembler *as)
 
 void Methods6502::ScrollX(Assembler *as)
 {
+    if (as->m_tempZeroPointers.count()==0)
+        return;
     LoadVar(as,0);
     as->Comment("ScrollX method");
-    as->Asm("sta " + as->m_internalZP[0]);
+
+    as->Asm("sta " + as->m_tempZeroPointers[2]);
     as->Asm("lda $d016  ");
     as->Asm("and #$F8");
-    as->Asm("ora " +as->m_internalZP[0]);
+    as->Asm("ora " +as->m_tempZeroPointers[2]);
     as->Asm("sta $d016");
 }
 
@@ -1862,14 +1865,16 @@ void Methods6502::ScrollX(Assembler *as)
 
 void Methods6502::ScrollY(Assembler *as)
 {
+    if (as->m_tempZeroPointers.count()==0)
+        return;
 
     as->Comment("ScrollY method ");
     LoadVar(as,0);
-    as->Asm("sta " + as->m_internalZP[0]);
+    as->Asm("sta " + as->m_tempZeroPointers[2]);
 
     as->Asm("lda $d011  ");
     as->Asm("and #$78"); // 8 = 1000
-    as->Asm("ora "+as->m_internalZP[0]);
+    as->Asm("ora "+as->m_tempZeroPointers[2]);
     as->Asm("and #$7F"); // 8 = 1000
     as->Asm("sta $d011");
 
