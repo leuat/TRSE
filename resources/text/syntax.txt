@@ -164,7 +164,7 @@ m; hidebordery; C64, C128 ; b
 m; PrintString; C64, C128, VIC20, PET,  PET; s,b,b
 m; PrintNumber; C64, C128, VIC20, PET,  PET; b
 m; PrintDecimal; C64, C128, VIC20, PET,  PET; i,n
-m; ClearScreen; C64, C128, NES, PET; b, a
+m; ClearScreen; C64, C128, VIC20, NES, PET; b, a
 m; ClearBitmap; C64, C128; a, b
 m; SetMultiColorMode; C64, C128;
 m; SetRegularColorMode; C64, C128;

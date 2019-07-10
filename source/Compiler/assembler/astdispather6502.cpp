@@ -1391,7 +1391,8 @@ void ASTDispather6502::IncreaseCounter(NodeForLoop *node, NodeVar* var) {
         // STEP included in FOR TO DO statement
         int stepValue = node->m_step->numValue();
         //stepValue = node->m_step->getInteger();
-        //ErrorHandler::e.Error( QString::number(stepValue) );
+        //qDebug() << node->m_step->numValue();
+        //qDebug() << node->m_step->getInteger();
 
         // if 1 or -1 we can optimise!
         if (stepValue == 1) {
