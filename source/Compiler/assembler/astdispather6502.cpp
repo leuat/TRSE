@@ -1285,7 +1285,7 @@ void ASTDispather6502::Compare(NodeForLoop *node, NodeVar* var, bool isLarge, QS
         as->ClearTerm();
         node->m_b->Accept(this);
         as->Term();
-//        as->Asm("clc");
+
         as->Asm("cmp " + as->m_stack["for"].current());
 
         int stepValue = 1; // do we have a step value?
@@ -1314,7 +1314,21 @@ void ASTDispather6502::Compare(NodeForLoop *node, NodeVar* var, bool isLarge, QS
         else {
 
             // LargeLoops needs checking
-            as->Asm("beq "+loopDone);
+            //as->Asm("beq "+loopDone);
+            if (stepValue == 1 || stepValue == -1) {
+                // increments / decrements of 1 are safe for BNE
+                // Note: this is not Pascal Compatible
+                as->Asm("beq "+loopDone);
+            } else if (stepValue > 1) {
+                // the fix for the Pascal Compatible version is to remove the BEQ on the next line
+                as->Asm("beq "+loopDone); // FOR index == TO value
+                as->Asm("bcc "+loopDone); // or FOR index > TO value
+            } else { //if (stepValue < -1) {
+                // this is the fix for the Pascal Compatible
+                // as->Asm("beq "+as->getLabel("for")); // BEQ then the BCC below
+                as->Asm("bcs "+loopDone); // FOR index < TO value
+            }
+
 
         }
         return;
@@ -1447,7 +1461,7 @@ void ASTDispather6502::SmallLoop(NodeForLoop *node, NodeVar* var)
     node->m_block->Accept(this);
     as->m_stack["for"].pop();
     IncreaseCounter(node,var);
-    Compare(node,var,false, loopDone);
+    Compare(node, var, false, loopDone);
 
 //    as->Asm("jmp " + as->getLabel("for"));
 
@@ -1458,7 +1472,7 @@ void ASTDispather6502::SmallLoop(NodeForLoop *node, NodeVar* var)
 
 }
 
-// handle a larg loop
+// handle a large loop
 void ASTDispather6502::LargeLoop(NodeForLoop *node, NodeVar* var)
 {
     QString loopForFix = as->NewLabel("forLoopFix");
@@ -1469,7 +1483,7 @@ void ASTDispather6502::LargeLoop(NodeForLoop *node, NodeVar* var)
     as->m_stack["for"].pop();
 
     IncreaseCounter(node,var);
-    Compare(node,var,true,loopDone);
+    Compare(node, var, true, loopDone);
 
     as->Asm("jmp " + as->getLabel("for"));
 
