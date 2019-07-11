@@ -3663,15 +3663,13 @@ void Methods6502::RasterIRQWedge(Assembler *as)
 
 void Methods6502::ClearScreen(Assembler *as)
 {
-    int val = m_node->m_params[1]->numValue();
+    int val = m_node->m_params[1]->numValue();  // start address (offset) to fill
 
     AddMemoryBlock(as,1);
-
 
     if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64 || Syntax::s.m_currentSystem==AbstractSystem::NES || Syntax::s.m_currentSystem==AbstractSystem::PET) {
 
         QString lbl = as->NewLabel("clearloop");
-        //  QString lbl2 = as->NewLabel("clearloop2");
         QString shift = Util::numToHex(val);
         as->Comment("Clear screen with offset");
         LoadVar(as, 0);
@@ -3684,44 +3682,27 @@ void Methods6502::ClearScreen(Assembler *as)
         //    as->Asm("sta $0300+"+shift+",x");
         as->Asm("dex");
         as->Asm("bne "+lbl);
-        /* as->Asm("ldx #232");
-    as->Label(lbl2);
-    as->Asm("sta $02FF+"+shift+",x");
-    as->Asm("dex");
-    as->Asm("bne "+lbl2);
-*/
+
         as->PopLabel("clearloop");
-    }
-    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
-        //ldy $9002
-        ErrorHandler::e.Error("ClearScreen not yet implemented for VIC20", m_node->m_op.m_lineNumber);
-        as->Comment("Clear screen");
+
+    } else if (Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
+
+        //ErrorHandler::e.Error("ClearScreen not yet implemented for VIC20", m_node->m_op.m_lineNumber);
+
+        QString lbl = as->NewLabel("clearloop");
+        QString shift = Util::numToHex(val-1);
+        as->Comment("Clear screen with offset");
         LoadVar(as, 0);
+        as->Asm("ldx #$FD");
+        as->Label(lbl);
+        as->Asm("sta $0000+"+shift+",x");
+        as->Asm("sta $00FD+"+shift+",x");
+        as->Asm("dex");
+        as->Asm("bne "+lbl);
 
-        QString lblOuter = as->NewLabel("clearloopouter");
-        QString lblInner = as->NewLabel("clearloopinner");
-        QString valH = "$" + QString::number((int)val>>8, 16);
-        QString valL = "$" + QString::number((int)val&0xFF, 16);
-
-/*        as->Asm("lda #" + valH);
-        as->Asm("sta " + as->m_internalZP[0]);
-        as->Asm("lda #" + valL);
-        as->Asm("sta " + as->m_internalZP[0] + "+1");
-*/
-        as->Asm("ldy #0 ");
-        as->Label(lblOuter);
-
-
-        as->Asm("ldy #0 ");
-        as->Label(lblOuter);
-        as->Asm("ldx #0");
-        as->Label(lblInner);
-        as->Asm("sta $");
-
-
+        as->PopLabel("clearloop");
 
     }
-//    as->PopLabel("clearloop2");
 
 }
 
