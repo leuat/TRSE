@@ -33,11 +33,12 @@ INCLUDEPATH +=$$PWD/libs/lua/include
 #if USE_LUA
 #LIBS
 DEPENDPATH += $$PWD/../Libs
+ICON = trse.icns
 
 macx {
     QMAKE_CXXFLAGS += -openmp
     #LIBS += -openmp
-    ICON = trse.icns
+#    ICON = trse.icns
     QMAKE_CXXFLAGS += -Ofast
     LIBS += -ldl
     LIBS += -L$$PWD/libs/lua/ -lluamac
