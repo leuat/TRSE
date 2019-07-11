@@ -515,8 +515,11 @@ Node *Parser::Statement()
         Eat(TokenType::IF);
         node = Conditional();
     }
+    else if (m_currentToken.m_type == TokenType::FORI) {
+        node = ForLoop(true);
+    }
     else if (m_currentToken.m_type == TokenType::FOR) {
-        node = ForLoop();
+        node = ForLoop(false);
     }
     else if (m_currentToken.m_type == TokenType::WHILE) {
         Eat(TokenType::WHILE);
@@ -1035,10 +1038,13 @@ QVector<Node *> Parser::Parameters()
     return decl;
 }
 
-Node *Parser::ForLoop()
+Node *Parser::ForLoop(bool inclusive)
 {
     int ln = m_currentToken.m_lineNumber;
-    Eat(TokenType::FOR);
+    if (inclusive)
+        Eat(TokenType::FORI);
+    else
+        Eat(TokenType::FOR);
     Node* a = AssignStatement();
     Eat(TokenType::TO);
     Node* b = Expr();
@@ -1081,7 +1087,7 @@ Node *Parser::ForLoop()
 
 //    qDebug() << m_currentToken.getType();
   //  exit(1);
-    return new NodeForLoop(a,b,block, step, unroll, forcePage,loopType);
+    return new NodeForLoop(a,b,block, step, unroll, forcePage, loopType, inclusive);
 
 }
 
