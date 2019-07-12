@@ -1278,7 +1278,7 @@ void ASTDispather6502::LogicalClause(Node *node)
 }
 
 
-void ASTDispather6502::Compare(NodeForLoop *node, NodeVar* var, bool isLarge, QString loopDone) {
+void ASTDispather6502::Compare(NodeForLoop *node, NodeVar* var, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive) {
 
 //    if (!var->isWord(as))
     {
@@ -1294,41 +1294,60 @@ void ASTDispather6502::Compare(NodeForLoop *node, NodeVar* var, bool isLarge, QS
             stepValue = node->m_step->numValue(); //node->m_step->getValue(as);
 
         }
-        if (!isLarge) {
+        if (inclusive) {    // inclusive version will END after the TO value
 
-            if (stepValue == 1 || stepValue == -1) {
-                // increments / decrements of 1 are safe for BNE
-                // Note: this is not Pascal Compatible
-                as->Asm("bne "+as->getLabel("for"));
-            } else if (stepValue > 1) {
-                // the fix for the Pascal Compatible version is to remove the BEQ on the next line
-                as->Asm("beq "+loopDone); // FOR index == TO value
-                as->Asm("bcs "+as->getLabel("for")); // or FOR index > TO value
-            } else { //if (stepValue < -1) {
-                // this is the fix for the Pascal Compatible
-                // as->Asm("beq "+as->getLabel("for")); // BEQ then the BCC below
-                as->Asm("bcc "+as->getLabel("for")); // FOR index < TO value
+            if (!isLarge) {
+
+                if (stepValue > 0) {
+                    as->Asm("bcs "+as->getLabel("for")); // or FOR index > TO value
+                } else { //if (stepValue < -1) {
+                    as->Asm("bcc "+as->getLabel("for")); // FOR index < TO value
+                    as->Asm("beq "+as->getLabel("for")); // BEQ then the BCC below
+                }
+
+            }
+            else {
+
+                // LargeLoops needs checking
+                if (stepValue > 0) {
+                    as->Asm("bcc "+loopDone); // or FOR index > TO value
+                } else { //if (stepValue < -1) {
+                    as->Asm("beq "+loopNotDone); // BEQ then the BCC below
+                    as->Asm("bcs "+loopDone); // FOR index < TO value
+                }
+
             }
 
-        }
-        else {
+        } else {            // TRSE version will END on the TO value
 
-            // LargeLoops needs checking
-            //as->Asm("beq "+loopDone);
-            if (stepValue == 1 || stepValue == -1) {
-                // increments / decrements of 1 are safe for BNE
-                // Note: this is not Pascal Compatible
-                as->Asm("beq "+loopDone);
-            } else if (stepValue > 1) {
-                // the fix for the Pascal Compatible version is to remove the BEQ on the next line
-                as->Asm("beq "+loopDone); // FOR index == TO value
-                as->Asm("bcc "+loopDone); // or FOR index > TO value
-            } else { //if (stepValue < -1) {
-                // this is the fix for the Pascal Compatible
-                // as->Asm("beq "+as->getLabel("for")); // BEQ then the BCC below
-                as->Asm("bcs "+loopDone); // FOR index < TO value
+            if (!isLarge) {
+
+                if (stepValue == 1 || stepValue == -1) {
+                    // increments / decrements of 1 are safe for BNE
+                    as->Asm("bne "+as->getLabel("for"));
+                } else if (stepValue > 1) {
+                    as->Asm("beq "+loopDone); // FOR index == TO value
+                    as->Asm("bcs "+as->getLabel("for")); // or FOR index > TO value
+                } else { //if (stepValue < -1) {
+                    as->Asm("bcc "+as->getLabel("for")); // FOR index < TO value
+                }
+
             }
+            else {
 
+                // LargeLoops needs checking
+                //as->Asm("beq "+loopDone);
+                if (stepValue == 1 || stepValue == -1) {
+                    // increments / decrements of 1 are safe for BNE
+                    as->Asm("beq "+loopDone);
+                } else if (stepValue > 1) {
+                    as->Asm("beq "+loopDone); // FOR index == TO value
+                    as->Asm("bcc "+loopDone); // or FOR index > TO value
+                } else { //if (stepValue < -1) {
+                    as->Asm("bcs "+loopDone); // FOR index < TO value
+                }
+
+            }
 
         }
         return;
@@ -1452,7 +1471,7 @@ void ASTDispather6502::IncreaseCounter(NodeForLoop *node, NodeVar* var) {
 }
 
 // handle a small loop
-void ASTDispather6502::SmallLoop(NodeForLoop *node, NodeVar* var)
+void ASTDispather6502::SmallLoop(NodeForLoop *node, NodeVar* var, bool inclusive)
 {
     QString loopDone = as->NewLabel("forLoopDone");
     //  Compare(as);
@@ -1461,7 +1480,7 @@ void ASTDispather6502::SmallLoop(NodeForLoop *node, NodeVar* var)
     node->m_block->Accept(this);
     as->m_stack["for"].pop();
     IncreaseCounter(node,var);
-    Compare(node, var, false, loopDone);
+    Compare(node, var, false, loopDone, nullptr, inclusive);
 
 //    as->Asm("jmp " + as->getLabel("for"));
 
@@ -1473,18 +1492,20 @@ void ASTDispather6502::SmallLoop(NodeForLoop *node, NodeVar* var)
 }
 
 // handle a large loop
-void ASTDispather6502::LargeLoop(NodeForLoop *node, NodeVar* var)
+void ASTDispather6502::LargeLoop(NodeForLoop *node, NodeVar* var, bool inclusive)
 {
     QString loopForFix = as->NewLabel("forLoopFix");
     QString loopDone = as->NewLabel("forLoopDone");
+    QString loopNotDone = as->NewLabel("forLoopNotDone");
 
     as->Label(loopForFix);
     node->m_block->Accept(this);
     as->m_stack["for"].pop();
 
     IncreaseCounter(node,var);
-    Compare(node, var, true, loopDone);
+    Compare(node, var, true, loopDone, loopNotDone, inclusive);
 
+    as->Label(loopNotDone);
     as->Asm("jmp " + as->getLabel("for"));
 
     as->Label(loopDone);
@@ -1492,6 +1513,7 @@ void ASTDispather6502::LargeLoop(NodeForLoop *node, NodeVar* var)
     as->m_labelStack["for"].pop();
     as->m_labelStack["forLoopFix"].pop();
     as->m_labelStack["forLoopDone"].pop();
+    as->m_labelStack["forLoopNotDone"].pop();
 
 }
 
@@ -1609,9 +1631,13 @@ void ASTDispather6502::dispatch(NodeForLoop *node)
 
     NodeAssign *nVar = dynamic_cast<NodeAssign*>(node->m_a);
 
+    // get the inclusive flag for the method used for the coparison, ie: false is < and true is <=
+    bool inclusive =(node->m_inclusive);
+
     // left node *must* be an assign statement (e.g a:=10)
     if (nVar==nullptr)
         ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
+
 
     // Get the variable name
     QString var = dynamic_cast<NodeVar*>(nVar->m_left)->value;
@@ -1632,9 +1658,9 @@ void ASTDispather6502::dispatch(NodeForLoop *node)
         isSmall = true;
 
     if (isSmall)
-        SmallLoop(node,dynamic_cast<NodeVar*>(nVar->m_left));
+        SmallLoop(node,dynamic_cast<NodeVar*>(nVar->m_left), inclusive);
     else
-        LargeLoop(node,dynamic_cast<NodeVar*>(nVar->m_left));
+        LargeLoop(node,dynamic_cast<NodeVar*>(nVar->m_left), inclusive);
 
 
 }

@@ -113,7 +113,7 @@ public:
     //Node* LogicalClause();
     Node* Block(bool useOwnSymTab);
     QVector<Node*> Parameters();
-    Node* ForLoop();
+    Node* ForLoop(bool inclusive);
 //    Node* WhileLoop();
     Node* String();
 
