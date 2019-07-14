@@ -41,4 +41,4 @@ override_target_settings_ignore_prg = 0
 override_target_settings_sys = 0
 override_target_settings_prg = 0
 project_path = /home/leuat/code/TRSE/Publish/tutorials/VIC20/PurplePlanetYo/
-open_files = ,include/credits.ras, include/image.ras, include/logotext.ras, include/modmusic.ras, include/plasma.ras, include/rasterbars.ras, include/twister.ras, include/chars.ras, include/chareffect.ras, include/charback.ras, include/scenenext.ras, demo.ras
+open_files = ,include/modmusic.ras, include/plasma.ras, include/twister.ras
