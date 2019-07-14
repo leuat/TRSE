@@ -47,6 +47,7 @@ public:
     void BitOp(Assembler* as, int type);
     void PlaySound(Assembler* as);
     void CreateInteger(Assembler* as, QString reg);
+    void Tile(Assembler *as);
 
     void LoHi(Assembler* as, bool isLo);
 

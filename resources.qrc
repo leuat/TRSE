@@ -226,5 +226,6 @@
         <file>resources/text/help/c/vpen_register.rtf</file>
         <file>resources/text/help/c/xpaddle_register.rtf</file>
         <file>resources/text/help/c/ypaddle_register.rtf</file>
+        <file>resources/text/help/m/tile.rtf</file>
     </qresource>
 </RCC>

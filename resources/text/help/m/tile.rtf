@@ -1,0 +1,43 @@
+<h3>Tile( [address TL], [address TR], [address BL], [address BR], [byte], [number] );</h3>
+<ul>
+<li>[address TL] - Address of tiles used for Top Left</li>
+<li>[address TR] - Address of tiles used for Top Right</li>
+<li>[address BL] - Address of tiles used for Bottom Left</li>
+<li>[address BR] - Address of tiles used for Bottom Right</li>
+<li>[byte] - Tile number to display</li>
+<li>[number] - Screen width in characters</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Draws a 2 x 2 tile of characters to the screen.  Use MoveTo to set the position first.
+ScreenMemory can also be adjusted before printing a tile.</p>
+<p>A tile is four characters used to make a larger character in the construction of game screens.
+The four addresses can be an array or memory address.  Draw a tile to the screen and colors to the color map.</p>
+
+
+<h3>Example</h3>
+
+<code>
+program TileExample;
+var
+
+   TL: array[8] of byte = (0,1,2,3);
+   TR: array[8] of byte = (3,5,6,7);
+   BL: array[8] of byte = (8,9,10,11);
+   BR: array[8] of byte = (12,13,14,15);
+   @define ScreenWidth 40
+
+begin
+
+        ClearScreen(32, ^$0400);
+        ClearScreen(RED, ^$D800);
+
+
+        moveto(10,10,$04);
+        tile(TL, TR, BL, BR,0,@ScreenWidth);
+
+        loop();
+
+end.
+</code>

@@ -532,6 +532,7 @@ DISTFILES += \
     resources/text/help/m/startirq.rtf \
     resources/text/help/m/startrasterchain.rtf \
     resources/text/help/m/swap.rtf \
+    resources/text/help/m/tile.rtf \
     resources/text/help/m/togglebit.rtf \
     resources/text/help/m/wait.rtf \
     resources/text/help/m/waitforraster.rtf \

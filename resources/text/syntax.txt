@@ -30,8 +30,6 @@ m; initatan2; C64, C128, VIC20  ;
 
 
 
-
-
 # ************** AMIGA ROUTINES
 
 # *** INIT METHODS
@@ -76,6 +74,8 @@ m; WaitForBlitter; Amiga;
 #Memory routines
 
 m; moveto; C64, NES; b,b,b
+
+m; tile; C64, C128, VIC20, PET ; a,a,a,a,b,n
 
 m; Poke; C64, C128, VIC20, PET,  PET, NES ; a,b,b
 m; Peek; C64, C128, VIC20, PET,  PET, NES ; a,b

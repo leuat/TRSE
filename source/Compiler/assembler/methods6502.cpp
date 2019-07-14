@@ -605,6 +605,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         MoveTo80(as);
     }
 
+    if (Command("tile"))
+        Tile(as);
+
     if (Command("pokescreen")) {
         PokeScreen(as, 0);
     }
@@ -1352,6 +1355,49 @@ void Methods6502::PrintString(Assembler *as)
 
 }
 
+// Tile a,a,a,a,b,n
+// a1 = Top Left tile, a2 = Top right, a3 = bottom left, a4 = bottom right
+// b = tile number
+// n = screen width (eg: vic 20 has variable width screen depending on screen width register)
+void Methods6502::Tile(Assembler *as) {
+
+/*    if (m_node->m_isInitialized["moveto"])
+    {
+        ErrorHandler::e.Error("MoveTo must be used to position a tile.");
+    }
+*/
+    VerifyInitialized("moveto", "InitMoveto");
+    if (!m_node->m_params[4]->isPure())
+    {
+        ErrorHandler::e.Error("Tile number can only be a variable or number.");
+    }
+    QString nextline = Util::numToHex( m_node->m_params[5]->getInteger()  );
+    QString nextline2 = Util::numToHex( m_node->m_params[5]->getInteger()+1  );
+    //QString nextline = QString::number( m_node->m_params[5]->getInteger()  );
+    //QString nextline2 = QString::number( m_node->m_params[5]->getInteger()+1  );
+
+    as->Comment("Tile tl,tr,bl,br, tileno, screen_width");
+
+    as->Asm("ldx " + m_node->m_params[4]->getValue(as)); // tile number
+
+    as->Asm("lda "+ m_node->m_params[0]->getValue(as) + ",x");
+    as->Asm("ldy #0");
+    as->Asm("sta (screenmemory),y");
+
+    as->Asm("lda "+ m_node->m_params[1]->getValue(as) + ",x");
+    as->Asm("ldy #1");
+    as->Asm("sta (screenmemory),y");
+
+    as->Asm("lda "+ m_node->m_params[2]->getValue(as) + ",x");
+    as->Asm("ldy #" + nextline);
+    as->Asm("sta (screenmemory),y");
+
+    as->Asm("lda "+ m_node->m_params[3]->getValue(as) + ",x");
+    as->Asm("ldy #" + nextline2);
+    as->Asm("sta (screenmemory),y");
+
+}
+
 
 void Methods6502::MoveTo(Assembler *as)
 {
@@ -1634,6 +1680,7 @@ void Methods6502::InitRandom(Assembler *as)
     as->Asm("ADC lowerRandom");
     as->Asm("RTS");
 }
+
 
 void Methods6502::PokeScreen(Assembler *as, int shift)
 {
@@ -2520,7 +2567,7 @@ void Methods6502::IsOverlapping(Assembler *as)
 
 }
 
-// Calculate if x1,y1 and x2,y2 are with rectangluar hitbox distance of each other
+// Calculate if x1,y1 and x2,y2 are with rectangular hitbox distance of each other
 void Methods6502::IsOverlappingWH(Assembler *as)
 {
     as->Comment("----------");
