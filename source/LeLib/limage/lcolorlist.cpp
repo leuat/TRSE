@@ -36,7 +36,7 @@ LColorList::~LColorList()
 }
 
 LColor &LColorList::get(int i) {
-    if (i<m_list.count())
+    if (i<m_list.count() && i>=0)
         return m_list[i];
     if (m_list.count()!=0) return m_list[0];
     return m_black;

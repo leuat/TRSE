@@ -2989,6 +2989,7 @@ void Methods6502::DisableNMI(Assembler *as)
         as->Asm("sta     $dd0e           ; Start timer A CIA (NMI will occur immediately)(*)");
 
         as->Asm("cli");
+
     }
 
 }
