@@ -1,0 +1,35 @@
+<h3>Commodore 64</h3>
+<p>The C64 has a screen display of 40 x 25 characters, each allowing a character colour to be assigned.</p>
+<ul>
+    <li>$0400 = Default screen memory address</li>
+    <li>$D800 = Default color memory address</li>
+</ul>
+<p>Using MoveTo, the built in pointer <strong>screenmemory</strong> can be initialised to any address 
+    in the screen or color memory.</p>
+<code>
+    MoveTo( 5, 7, $04 ); // move to column 5, row 7 from address (hi-byte) $04 (full address would be $0400 + 5 + 7*40)
+    screenmemory[0] := 1; // place an A character at this memory location
+</code>
+
+
+<h3>Vic 20</h3>
+<p>The Vic20 has a default screen display of 22 x 23 characters, each allowing a character colour to be assigned.</p>
+<ul>
+    <li>$1E00 = Default screen memory address for the unexpanded Vic</li>
+    <li>$9600 = Default color memory address for the unexplanded Vic</li>
+</ul>
+<ul>
+    <li>$1000 = Default screen memory address for the 8k+ Vic</li>
+    <li>$9400 = Default color memory address for the 8k+ Vic</li>
+</ul>
+<p>Using MoveTo, the built in pointer <strong>screenmemory</strong> can be initialised to any address 
+    in the screen or color memory.</p>
+<code>
+    MoveTo( 5, 7, $1E ); // move to column 5, row 7 from address (hi-byte) $1E (full address would be $1E00 + 5 + 7*22)
+    screenmemory[0] := 1; // place an A character at this memory location
+</code>
+
+
+
+<p>See also: <br />
+MoveTo, Tile, PrintString, PrintDecimal and PrintNumber.</p>

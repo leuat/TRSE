@@ -227,5 +227,8 @@
         <file>resources/text/help/c/xpaddle_register.rtf</file>
         <file>resources/text/help/c/ypaddle_register.rtf</file>
         <file>resources/text/help/m/tile.rtf</file>
+        <file>resources/text/help/p/variables.rtf</file>
+        <file>resources/text/help/p/constants.rtf</file>
+        <file>resources/text/help/p/screen.rtf</file>
     </qresource>
 </RCC>

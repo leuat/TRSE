@@ -507,3 +507,6 @@ p; Getting_Started; C64, C128, VIC20, PET, NES, BBCM, AMIGA
 p; Vic20; VIC20
 p; C64; C64
 p; Pascal; C64, C128, VIC20, PET, NES, BBCM, AMIGA
+p; Constants; C64, C128, VIC20, PET, NES, BBCM, AMIGA
+p; Variables; C64, C128, VIC20, PET, NES, BBCM, AMIGA
+p; Screen; C64, VIC20

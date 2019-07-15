@@ -1,0 +1,76 @@
+<p>The following variable types can be declared:</p>
+
+<ul>
+    <li>byte</li>
+    <li>integer</li>
+    <li>string</li>
+    <li>pointer</li>
+    <li>array[n] of (type)</li>
+</ul>
+
+<h3>byte</h3>
+<p>A byte is the native data unit of an 8-bit computer.  It can store values between 0 and 255 (unsigned).</p>
+<code>
+var
+    lives : byte;   // create a variable of type byte
+    magic : byte = 4;  // create a variable and assign a starting value of 4
+
+begin
+    lives := lives -1;
+    magic := 10;
+end.
+</code>
+
+<h3>integer</h3>
+<p>An integer is two bytes and stored in memory with the low byte first followed by the high byte.  
+    It can store values between 0 and 65535 (unsigned).  As TRSE is a low level implementation, not all commands 
+    support integers on 8-bit target builds.</p>
+<code>
+var
+    score : integer;   // create a variable of type integer
+    highScore : byte = 1000;  // create a variable and assign a starting value of 1000
+</code>
+
+<h3>string</h3>
+<p>A string is a way to express text and characters.</p>
+<code>
+var
+    name : string;   // create a variable of type string
+    gender : string = "Magnificent unicorn";  // create a variable and assign a starting value
+    complex : string = ("Hello there", 35, "I am so cool", 17); // can declare a mixture of text and numeric values for each character
+</code>
+
+<h3>pointer</h3>
+<p>A pointer is a two byte, 16 bit number that is used to access an address in memory.  TRSE
+    implements pointers using the zero page, making them very efficient to use.
+</p>
+<code>
+var
+    screen : pointer;   // create a variable of type pointer
+    colormem : pointer;  // note, cannot assign a starting value for a pointer
+
+begin
+    screen := $0400;    // address of the screen memory location on the C64 build
+    colormem := $d800;  // address of the color memory location on the C64 build
+
+    screen[0] := 1;     // place an A (PETSCII) character in the first location (0) at location $0400
+    colormem[0] := RED; // set the color to RED (constant)
+
+    screen[40] := 2;    // place a B character on the next row down
+end.
+</code>
+
+<h3>Array</h3>
+<p>An array is a data structure that allows a list of things to be defined.  Arrays supports
+    bytes and integers only.
+</p>
+<code>
+var
+    enemyx : array[4[ of integer;   // declares an array of 4 integers
+    enemyy : array[4] of byte = (1, 2, 3, 4);  // declares an array of 4 bytes and assigns starting values
+
+begin
+    enemyx[3] := 310;  // assign array index 3 (zero-based, so the last item in the list) a value of 310
+    enemyy[0] := 10;   // assign array index 0 a value of 10
+end.
+</code>
