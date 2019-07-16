@@ -5,4 +5,20 @@
 <h3>Example</h3>
 
 <code>
+    program MyProgram;
+    var 
+        myByte : byte;
+        myInt : integer;
+        ptr : Pointer;	
+        myStr : string;
+
+        myArr1 : array[2] of byte = (1,2);
+        myArr2 : array[2] of integer = (1000, 2000);
+
+        @define screen 40
+        @userdata "$1000" "$1700" "MemoryBlock"
+
+        mySprites : incbin("sprites.bin", $3200);
+
+        @include "anotherFile.ras"
 </code>

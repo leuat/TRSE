@@ -1,8 +1,31 @@
 <h3>Description</h3>
-<p></p>
+<p>Define an interrupt handler.</p>
 
 
 <h3>Example</h3>
 
 <code>
+    @define useKernal 0
+
+    interrupt RasterGame();
+    begin
+        startIrq(@useKernal);
+
+        // do stuff
+        
+        closeirq();
+    end;
+
+    // Main block
+    begin
+        setmemoryconfig(1,@usekernal,0);
+        DisableCIAInterrupts();
+ 
+        RasterIRQ(RasterGame(), 0, @usekernal);
+
+        enableirq();
+        enablerasterirq();
+
+        Loop(); // Halt 
+    end.
 </code>

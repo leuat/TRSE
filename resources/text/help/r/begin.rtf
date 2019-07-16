@@ -14,7 +14,7 @@ begin
    myPointer:=myText;
    moveto(0,5, $04);
    // Loop have a begin
-   while (myPointer[0]<>0) do begin
+   while (myPointer[0]&lt;&gt;0) do begin
       screenmemory[a]:=myPointer[0]; // draw text
       myPointer:=myPointer+1; // increase pointer value
    end;

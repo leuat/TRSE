@@ -1,8 +1,15 @@
 <h3>Description</h3>
-<p></p>
+<p>A pointer to a location in memory.  Can be set to an address and the contents of the address can be manipulated.</p>
 
 
 <h3>Example</h3>
 
 <code>
+    var
+        p : pointer;
+
+    begin
+        p := $0400;  // set the address to $0400 (C64 screen address)
+        p[0] := 1; // set the first location at $0400 to 1
+
 </code>
