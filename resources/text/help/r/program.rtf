@@ -1,8 +1,23 @@
 <h3>Description</h3>
-<p>Define a program.  Every TRSE program needs one.</p>
+<p>Defines the name of your program and begins the structure TRSE requires.</p>
+<p>A program can also contain a VAR section for delcaring variables and must have one 'begin' ... 'end.'
+    that defines what code is executed first.  Take note that the 'end.' finishes with a full stop character
+    and not a semi-colon to differentiate it from other 'end;' blocks.
+</p>
 
 
 <h3>Example</h3>
 
 <code>
+        program ExampleProg;
+        var  
+            
+        begin
+        
+            moveto( 10, 10, $04 );
+            printstring( "HELLO PROGRAM!",0,14);
+            
+            loop();
+        
+        end.
 </code>

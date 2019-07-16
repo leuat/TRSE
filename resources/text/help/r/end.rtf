@@ -1,6 +1,6 @@
 <h3>Description</h3>
 <p>A statement that defines the ending of a code block in Pascal.  This can be the program, a procedure,
-an if statement and so on.</p>
+an if statement, a for loop and so on.</p>
 <p>An end must be preceeded with a begin.</p>
 
 <h3>Example</h3>
@@ -11,17 +11,24 @@ The main code block has a different end. with a full stop.</p>
 // procedures have a begin
 procedure MyProcedure();
 begin
+
    myPointer:=myText;
    moveto(0,5, $04);
-   // Loop have a begin
-   while (myPointer[0]<>0) do begin
+   // Loop has a begin
+   while (myPointer[0]<>0) do
+   begin
+
       screenmemory[a]:=myPointer[0]; // draw text
       myPointer:=myPointer+1; // increase pointer value
+
    end;
+
 end;
 
 // Main code
 begin
-    MyProcedure();
+
+   MyProcedure();
+
 end.
 </code>

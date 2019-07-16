@@ -1,30 +1,26 @@
 <h3>Description</h3>
-<p>The for to do loop is a repetition structure that will count between two values.</p>
+<p>The for/fori to do loop is a repetition structure that will count between two values.</p>
 <p>TRSE implements a for loop where it ends when it reaches the to value.</p>
 
 <h3>Example 1</h3>
 
 <code>
-for i := 1 to 10 do
+for i := 0 to 10 do
 begin
-    // loops 9 times, ending when it reaches 10
+    // FOR loops 10 times, starting at 0 and ending at 9
+end;
+
+fori i := 1 to 10 do
+begin
+    // FORI loops 10 times, starting at 1 and ending at 10
 end;
 </code>
 
 <h3>Example 2</h3>
 
 <code>
-for i := 0 to 10 do
+fori index := 2 to 10 step 2 do
 begin
-    // loops 10 times, ending when it reaches 10
-end;
-</code>
-
-<h3>Example 3</h3>
-
-<code>
-for index := 2 to 10 step 2 do
-begin
-    // counts from 2 to 10 in steps of 2, looping 4 times, ending when reaching 10
+    // counts from 2 to 10 in steps of 2, looping 5 times
 end;
 </code>

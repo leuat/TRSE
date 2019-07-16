@@ -230,5 +230,6 @@
         <file>resources/text/help/p/variables.rtf</file>
         <file>resources/text/help/p/constants.rtf</file>
         <file>resources/text/help/p/screen.rtf</file>
+        <file>resources/text/help/r/fori.rtf</file>
     </qresource>
 </RCC>
