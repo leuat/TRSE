@@ -1,8 +1,36 @@
 <h3>Description</h3>
 <p>A while-do loop statement repeats a block of code until a condition is met.</p>
 
+<h4>while (condition) do | then</h4>
+
 
 <h3>Example</h3>
 
 <code>
+    program Loops;
+    var  
+        index: byte; 
+    begin
+        
+        moveto(0,0,$04);
+        index := 1;
+
+        while (index < 10) do
+        begin
+            screenmemory[index] := 1;
+            index := index + 1;
+        end;
+    
+        moveto(0,1,$04);
+        index := 1;
+
+        while (index < 10) then
+        begin
+            screenmemory[index] := 1;
+            index := index + 1;
+        end;
+    
+        loop();
+        
+    end.
 </code>
