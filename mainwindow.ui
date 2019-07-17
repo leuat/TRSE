@@ -62,7 +62,16 @@
            </widget>
           </item>
           <item>
-           <widget class="QTreeView" name="treeFiles"/>
+           <widget class="QTreeView" name="treeFiles">
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
+            <property name="uniformRowHeights">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item>
            <layout class="QGridLayout" name="gridLayout_8">
@@ -275,7 +284,7 @@
      <x>0</x>
      <y>0</y>
      <width>1380</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
