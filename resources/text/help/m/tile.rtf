@@ -4,7 +4,7 @@
 <li>[address TR] - Address of tiles used for Top Right</li>
 <li>[address BL] - Address of tiles used for Bottom Left</li>
 <li>[address BR] - Address of tiles used for Bottom Right</li>
-<li>[byte] - Tile number to display</li>
+<li>[byte] - Tile number to draw</li>
 <li>[number] - Screen width in characters</li>
 </ul>
 
@@ -22,10 +22,12 @@ The four addresses can be an array or memory address.  Draw a tile to the screen
 program TileExample;
 var
 
+   // tile data for top right, top left, bottom left and bottom right
    TL: array[8] of byte = (0,1,2,3);
    TR: array[8] of byte = (3,5,6,7);
    BL: array[8] of byte = (8,9,10,11);
    BR: array[8] of byte = (12,13,14,15);
+
    @define ScreenWidth 40
 
 begin
@@ -35,7 +37,9 @@ begin
 
 
         moveto(10,10,$04);
-        tile(TL, TR, BL, BR,0,@ScreenWidth);
+        tile(TL, TR, BL, BR, 0, @ScreenWidth);  // draws tile 0 to the screenmemory with bytes:
+                                                // 0,3
+                                                // 8,12
 
         loop();
 
