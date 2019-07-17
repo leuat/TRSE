@@ -1,1 +1,204 @@
-<p>Information about programming on the Vic 20 will be added here.</p>
+<h3>Memory map overview</h3>
+<pre>
+         unexpanded    +3K RAM exp.   >=+8K RAM exp.
+
+$0000 +----------------------------------------------+ $0000
+      |             Zeropage ($00xx),                |
+      |                Stack ($01xx),                |
+      |         OS workspace ($0200..$03FF)          |
+$0400 +--------------+--------------+----------------+ $0400
+                     |              | RAMx (+3K RAM) |
+$1000 +--------------+              +----------------+ $1000
+      |              | BASIC memory |   screen RAM   |
+      | BASIC memory |              +----------------+ $1200
+      |              |              |                |
+$1E00 +--------------+--------------+  BASIC memory  |
+      |  screen RAM  |  screen RAM  |                |
+$2000 +--------------+--------------+--            --+ $2000
+                                    | BLK1 (+8K RAM) |
+                                    +--            --+ $4000
+                                    | BLK2 (+8K RAM) |
+                                    +--            --+ $6000
+                                    | BLK3 (+8K RAM) |
+$8000 +-----------------------------+----------------+ $8000
+      |               Character ROM                  |
+$9000 +----------------------------------------------+ $9000
+      |               VIC registers                  |
+$9100 +----------------------------------------------+ $9100
+      | $911x:VIA #1, $912x:VIA #2 registers+mirrors |
+$9400 +-----------------------------+----------------+ $9400
+      |      unused colour RAM      | for $1000 scrn |
+$9600 +-----------------------------+----------------+ $9600
+      | colour RAM for $1E00 screen |     unused     |
+$9800 +-----------------------------+----------------+ $9800
+      | $9800: I/O2, $9C00: I/O3 cartridge registers |
+$A000 +-----------------------------+----------------+ $A000
+                                    | BLK5 (+8K RAM) |
+$C000 +-----------------------------+----------------+ $C000
+      |                  BASIC ROM                   |
+$E000 +----------------------------------------------+ $E000
+      |                 KERNAL ROM                   |
+$FFFF +----------------------------------------------+ $FFFF
+</pre>
+
+<p>Cassette buffer can be used: 820 to 1020.</p>
+<p>Spare nibbles (values 0-15) in color RAM: 37888 to 38379.</p>
+
+<p>
+Notes:<br />
+
+*Only* the internal RAM ($0000..$03FF, $1000..$1FFF) and the
+character ROM ($8000..$8FFF) are accessible by the VIC chip!
+It is not possible to have screen or character data at
+$0400..$0FFF. The BASIC memory must be contiguous:
+<br />
+- RAM in BLK5 is not counted into "BYTES FREE".<br />
+- When there is RAM in BLK1, the screen RAM is moved to<br />
+  $1000 and any RAM expansion in $0400..$0FFF is blocked
+  from BASIC use (i.e. BLK1 takes precedence over RAMx).<br />
+</p>
+
+<pre>
+=> BASIC memory for  unexpanded VIC-20: $1001 .. $1DFF,
+            ... for  +3K RAM expansion: $0401 .. $1DFF,
+            ... for  +8K RAM expansion: $1201 .. $3FFF,
+            ... for +16K RAM expansion: $1201 .. $5FFF,
+            ... for +24K RAM expansion: $1201 .. $7FFF.
+</pre>
+
+<p><i>* information provided by Mike on the Vic20 Denial forum.</i></p>
+
+
+
+
+<h3>Memory locations</h3>
+
+
+
+
+
+
+<h3>Vic Chip Registers 9000-900F</h3>
+
+<table>
+    <tr>
+        <th>HEX</th>
+        <th>Decimal</th>
+        <th>TRSE</th>
+        <th>Description</th>
+    </tr>
+
+    <tr>
+        <td>9000</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>9001</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>9002</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>9003</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    
+    <tr>
+        <td>9004</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>9005</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>9006</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>9007</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>9008</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>9009</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>900A</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>900B</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>900C</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>900D</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>900E</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>900F</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+</table>

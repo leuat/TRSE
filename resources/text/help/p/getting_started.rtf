@@ -23,6 +23,9 @@
 <p>To open a file, double click it. When clicking on C64 .PRG files, the emulator will automatically run the program.</p>
 <p>To compile a RAS file, press <strong>ctrl+B</strong> to build and <strong>ctrl+R</strong> to run (which will also
 build first). The compile step first produces Dasm .ASM files, before compiling the PRG to a PRG file.</p>
+
+<p>The best way to learn how TRSE works and what it is doing is to examine the ASM files produced from your programs.</p>
+
 <p>Errors in the RAS file will shift the focus to the line where the error occurred. Perhaps. Does&#8217;t always work yet.</p>
 <p><strong><span style="text-decoration: underline;">ctrl-U</span></strong> generates a complete memory map of the
 current project. Here&#8217;s an example from the tutorial game Rogue Burger One:</p>
@@ -36,20 +39,20 @@ the code is <strong>considered unstable</strong>, just like myself on a monday m
 <code>
 program MyProgramName;
 var
-a,b: byte=0;
-// allocates array of 8 bytes
-array1: array[8] of byte;
-// allocates array of 8 bytes with intialization
-array2: array[8] of byte = (0,1,2,3,4,5,6,7);
-// allocates array of 8 bytes at given memory address
-array3: array[8] of byte = (0,1,2,3,4,5,6,7) at $8000;
+    a,b: byte=0;
+    // allocates array of 8 bytes
+    array1: array[8] of byte;
+    // allocates array of 8 bytes with intialization
+    array2: array[8] of byte = (0,1,2,3,4,5,6,7);
+    // allocates array of 8 bytes at given memory address
+    array3: array[8] of byte = (0,1,2,3,4,5,6,7) at $8000;
 
-// include (compressed) binary file at $6000
-myImage: incbin("images/myImage_compressed.bin", $6000);
+    // include (compressed) binary file at $6000
+    myImage: incbin("images/myImage_compressed.bin", $6000);
 
-myText: string = ("THIS IS A STRING", " ANOTHER PART THAT IS ADDED TO THE PREVIOUS STRING", 5,3 ,$44, "YOU CAN ALSO ADD NUMBERS,0);
+    myText: string = ("THIS IS A STRING", " ANOTHER PART THAT IS ADDED TO THE PREVIOUS STRING", 5,3 ,$44, "YOU CAN ALSO ADD NUMBERS,0);
 
-myPointer: pointer; // Zeropage pointer
+    myPointer: pointer; // Zeropage pointer
 </code>
 
 <p>Procedures are declared as such:</p>
