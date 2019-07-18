@@ -147,6 +147,7 @@ public:
     void InitJoystick(Assembler* as);
     void InitRandom(Assembler* as);
     void InitSinusTable(Assembler* as);
+    void DefineScreen(Assembler *as);
     void InitMoveto(Assembler *as);
     void InitMoveto80(Assembler *as);
     void InitEightBitMul(Assembler* as);

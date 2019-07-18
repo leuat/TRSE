@@ -231,5 +231,6 @@
         <file>resources/text/help/p/constants.rtf</file>
         <file>resources/text/help/p/screen.rtf</file>
         <file>resources/text/help/r/fori.rtf</file>
+        <file>resources/text/help/m/definescreen.rtf</file>
     </qresource>
 </RCC>
