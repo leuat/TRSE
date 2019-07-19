@@ -465,7 +465,7 @@ static int AddScreen(lua_State* L) {
 static int AddToData(lua_State* L) {
 
     if (m_effect!=nullptr)
-       m_compression.AddToDataX(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+       m_compression.AddToDataX(m_charData, *((MultiColorImage*)m_effect->m_mc) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
 
     return 0;
 }
@@ -473,7 +473,7 @@ static int AddToData(lua_State* L) {
 static int AddBitplaneToData(lua_State* L) {
 
     if (m_effect!=nullptr)
-       m_compression.AddBitplaneToData(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tonumber(L,5));
+       m_compression.AddBitplaneToData(m_charData, *((MultiColorImage*)(m_effect->m_mc)) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tonumber(L,5));
 
     return 0;
 }
@@ -482,7 +482,11 @@ static int AddBitplaneToData(lua_State* L) {
 static int CompressCharset(lua_State* L) {
     // 0, 40, 13, 25
     int noChars;
-    m_effect->m_mc->CompressAndSave(m_charData, m_screenData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3),lua_tonumber(L,4),noChars,lua_tonumber(L,5),  lua_tonumber(L,6));
+    MultiColorImage* mc = dynamic_cast<MultiColorImage*>(m_effect->m_mc);
+    if (mc==nullptr)
+        return 0;
+
+    mc->CompressAndSave(m_charData, m_screenData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3),lua_tonumber(L,4),noChars,lua_tonumber(L,5),  lua_tonumber(L,6));
     m_infoText+="Compressed chars: " + QString::number(noChars) + "\n";
     return 0;
 }
@@ -677,9 +681,13 @@ static int OptimizeScreenAndCharset(lua_State* L) {
 static int AddRawCharsetData(lua_State* L) {
     int w = lua_tonumber(L,1);
     int h = lua_tonumber(L,1);;
+    MultiColorImage* mc = dynamic_cast<MultiColorImage*>(m_effect->m_mc);
+    if (mc==nullptr)
+        return 0;
+
     for (int j=0;j<h;j++)
         for (int i=0;i<w;i++) {
-            PixelChar& pc = m_effect->m_mc->m_data[j*40+i];
+            PixelChar& pc = mc->m_data[j*40+i];
             for (int k=0;k<8;k++)
                 m_charData.append(pc.reverse(pc.p[k]));
         }

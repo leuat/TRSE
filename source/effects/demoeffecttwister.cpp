@@ -176,7 +176,7 @@ void DemoEffectTwister::SaveTwister(QString filename, int w, int h)
         }
 
 */
-    for (int y=0;y<h;y++)
+/*    for (int y=0;y<h;y++)
         for (int x=0;x<w;x++) {
             //qDebug() << yy;
             PixelChar& pc = m_mc->m_data[40*y+x];
@@ -184,8 +184,7 @@ void DemoEffectTwister::SaveTwister(QString filename, int w, int h)
                 data.append(PixelChar::reverse(pc.p[i]));
         }
 
-
-
+*/
     f.write(data);
     f.close();
 }

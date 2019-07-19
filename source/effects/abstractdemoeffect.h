@@ -34,13 +34,13 @@ public:
     bool m_ready = true;
     QString m_infoText;
     bool m_toggleAnim = true;
-    bool m_toggleC64 = false;
+    int m_outputType = 0;
     QGridLayout* m_gl = nullptr;
     AbstractDemoEffect(QGridLayout* gl);
     bool m_abort = false;
     QMap<QString,DemoEffectParam> m_params;
     //CharsetImage* m_mc;
-    MultiColorImage* m_mc;
+    LImage* m_mc;
     QVector<int> m_cols;
 //    int m_elapsedTime=0;
     QElapsedTimer m_timer;
@@ -61,13 +61,29 @@ public:
 
     void ConvertToC64(int dither, bool isMulticolor, QVector3D ditherStrength)
     {
-        if (!m_toggleC64)
+        if (m_outputType!=1)
             return;
         m_mc->setMultiColor(isMulticolor);
         m_mc->SetColor(m_cols[0],0);
         m_mc->SetColor(m_cols[1],1);
         m_mc->SetColor(m_cols[3],2);
         m_mc->SetColor(m_cols[2],3);
+        m_mc->m_colorList.EnableColors(m_cols);
+        if (dither==1)
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
+        if (dither==2)
+            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength);
+        if (dither==0)
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
+
+        m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
+
+    }
+
+    void ConvertToP8(int dither, QVector3D ditherStrength)
+    {
+/*        if (m_outputType!=1)
+            return;*/
         m_mc->m_colorList.EnableColors(m_cols);
         if (dither==1)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
