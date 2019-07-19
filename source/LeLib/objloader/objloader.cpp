@@ -216,6 +216,57 @@ QString ObjLoader::ExportAmigaVerts(QString vertices, float scale, QVector3D shi
 
 }
 
+QString ObjLoader::ExportLua(QString vertices, QString name, float scale, QVector3D shift)
+{
+    if (QFile::exists(vertices))
+        QFile::remove(vertices);
+
+    QFile f1(vertices);
+    f1.open(QFile::WriteOnly);
+    QTextStream s(&f1);
+    s<< name << "_verts = { \n";
+    for (int i=0;i<m_vertices.count();i++) {
+//        qDebug() << m_vertices[i];
+        s<< ((m_vertices[i].x()*scale+shift.x()))<<", ";
+        s<< ((m_vertices[i].y()*scale+shift.y()))<<", ";
+        QString endd=", \n";
+        if (i==m_vertices.count()-1)
+            endd = "\n}\n";
+        s<< ((m_vertices[i].z()*scale+shift.z())) << endd;
+    }
+
+    s<< name << "_normals = { \n";
+    for (int i=0;i<m_faces.count();i++) {
+//        qDebug() << m_vertices[i]
+        int j = m_faces[i].f1;
+        s<< ((m_normals[j].x()*64))<<", ";
+        s<< ((m_normals[j].y()*64))<<", ";
+        QString endd=", \n";
+        if (i==m_normals.count()-1)
+            endd = "\n}\n";
+        s<< ((m_normals[j].z())*64) << endd;
+    }
+
+    s<< name << "_faces = { \n";
+    for (int i=0;i<m_faces.count();i++) {
+//        qDebug() << m_vertices[i];
+        s<< ((m_faces[i].v1))<<", ";
+        s<< ((m_faces[i].v2))<<", ";
+        QString endd=", \n";
+        if (i==m_faces.count()-1)
+            endd = "\n}\n";
+        s<< ((m_faces[i].v3))<< endd;
+
+    }
+
+
+    f1.close();
+
+
+    return vertices + ": # vertices: " +QString::number(m_vertices.count());
+
+}
+
 
 QString ObjLoader::ExportAmigaNormalsLines(QString filename, float scale)
 {

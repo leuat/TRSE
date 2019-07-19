@@ -19,6 +19,7 @@
  *   If not, see <https://www.gnu.org/licenses/>.
 */
 
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -1126,6 +1127,7 @@ void MainWindow::on_actionFjong_Raymarcher_document_triggered()
 void MainWindow::on_actionWavefront_obj_to_amiga_converter_triggered()
 {
     DialogExport3D* de = new DialogExport3D(&m_iniFile);
+
     de->exec();
     delete de;
 }

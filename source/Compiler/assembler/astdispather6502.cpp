@@ -1041,7 +1041,7 @@ void ASTDispather6502::BinaryClause(Node *node)
     as->Comment("Binary clause: " + node->m_op.getType());
 
     BuildToCmp(node);
-
+    as->Comment("BC done");
     QString lblFailed = as->NewLabel("binaryclausefailed");
     QString lblFinished = as->NewLabel("binaryclausefinished");
 
@@ -1174,6 +1174,16 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
             as->Asm("lda " + vara->value);
             as->Asm("cmp " + lo);
             as->Asm("bcs " + lbl2);
+        }
+        if (node->m_op.m_type==TokenType::EQUALS) {
+            as->Comment("Compare INTEGER with pure num / var optimization");
+            as->Asm("lda " + vara->value + "+1   ; compare high bytes");
+            as->Asm("cmp " + hi + " ;keep");
+            as->Asm("bne " + lbl2);
+            as->Asm("lda " + vara->value);
+            as->Asm("cmp " + lo);
+            as->Asm("bne " + lbl2);
+            as->Asm("jmp " + lbl1);
         }
         as->Label(lbl1); // ok
         as->Asm("lda #1");
