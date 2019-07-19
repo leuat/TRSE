@@ -19,6 +19,17 @@ public:
     enum Processor {MOS6502, M68000};
 
     bool m_buildSuccess;
+    static bool isSupported(System currentSystem, QString list) {
+        return isSupported(StringFromSystem(currentSystem), list);
+    }
+    static bool isSupported(QString currentSystem, QString list) {
+        QStringList lst  = list.toLower().trimmed().simplified().split(",");
+        for (QString s : lst)
+            if (s == currentSystem.toLower())
+                return true;
+
+        return false;
+    }
 
     static System SystemFromString(QString s) {
         if (s.toLower()=="c64")

@@ -86,8 +86,8 @@ void DialogHelp::LoadItems(int idx)
             QString word = data[1];
             QString system = data[2].toLower();
             if (word.toLower().startsWith("init")) continue;
-
-
+            if (!AbstractSystem::isSupported(Syntax::s.m_currentSystem, system))
+                continue;
             if (system.contains(currentSystem)) {
 /*                QString val = word + "(";
                 for (QString s: params) {
@@ -129,7 +129,9 @@ void DialogHelp::LoadItem(QString findword)
             continue;
         QString type = data[0].toLower();
         m_currentType = type;
-//        QString system = data[2].toLower();
+        QString system = data[2].toLower();
+        if (!AbstractSystem::isSupported(Syntax::s.m_currentSystem, system))
+            continue;
         if (type=="m")
          {
                 QStringList params = data[3].toLower().split(",");
