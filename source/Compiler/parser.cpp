@@ -375,6 +375,20 @@ void Parser::HandlePreprocessorInParsing()
 
 }
 
+void Parser::RemoveComments()
+{
+    QRegularExpression rg = QRegularExpression("/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/");
+    //qDebug() << rg;
+    m_lexer->m_text = m_lexer->m_text.replace(rg, "");
+
+    QRegularExpression rg2 = QRegularExpression("//.*?\\n");
+    //qDebug() << rg;
+    m_lexer->m_text = m_lexer->m_text.replace(rg2, "");
+
+    //qDebug() << m_lexer->m_text;
+
+}
+
 
 
 Node *Parser::Variable()
@@ -901,7 +915,6 @@ void Parser::PreprocessReplace()
         QRegularExpression rg = QRegularExpression("@\\b"+k+"\\b");
         //qDebug() << rg;
 
-
 //        m_lexer->m_text = m_lexer->m_text.replace("@" +k, val);
         m_lexer->m_text = m_lexer->m_text.replace(rg, val);
 
@@ -920,6 +933,7 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
 
     m_lexer->m_text = m_lexer->m_orgText;
     m_pass = 0;
+    RemoveComments();
     Preprocess();
 //    PreprocessConstants();
     m_pass = 1;
