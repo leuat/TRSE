@@ -170,7 +170,10 @@ void AsmMOS6502::DeclareArray(QString name, QString type, int count, QStringList
 
     if (data.count()==0 && pos=="") {
         Write(name +"\t" + t + "\t ");
-        Asm("org "+name+"+" +QString::number(count));
+        int scale = 1;
+        if (type.toLower()=="integer")
+            scale = 2;
+        Asm("org "+name+"+" +QString::number(count*scale));
 
     }
     else {
