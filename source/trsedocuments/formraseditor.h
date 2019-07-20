@@ -169,6 +169,7 @@ private slots:
     void HandleUpdateBuildText();
     void HandleBuildComplete();
     void HandleBuildError();
+    void HandleErrorDialogs(QString& output);
 //    void HandleRun();
 };
 

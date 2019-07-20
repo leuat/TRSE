@@ -31,7 +31,6 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
     // Machine Code Analyzer
     VerifyMachineCodeZP(filename+".prg");
 
-
     int assembleTime = timer.elapsed()- time;
     time = timer.elapsed();
 
@@ -40,6 +39,7 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
 
     if (Syntax::s.m_stripPrg)
         Util::ConvertFileWithLoadAddress(filename+".prg", filename+".prg");
+
 
     if (m_settingsIni->getdouble("perform_crunch")==1 && (Syntax::s.m_currentSystem!=AbstractSystem::NES)) {
         QProcess processCompress;
@@ -98,39 +98,16 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
 
 
     m_buildSuccess = true;
-
+    m_orgOutput = "";
     if (output.toLower().contains("error")) {
+        m_orgOutput = output;
         text="<font color=\"#FF6040\">Fatal error during assembly!</font><br>";
         m_buildSuccess = false;
-        if (output.toLower().contains("branch out of range")) {
-            Messages::messages.DisplayMessage(Messages::messages.BRANCH_ERROR);
-            output += "<br>Please check your <b>onpage/offpage</b> keywords.";
-
-        }
-        else
-            if (output.toLower().contains("reverse-indexed")) {
-                Messages::messages.DisplayMessage(Messages::messages.MEMORY_OVERLAP_ERROR);
-                output += "<br>Please reorganize your binary inclusions in ascending order of memory locations.";
-            }
-            else
-                if (output.toLower().contains("mnemonic")) {
-                    output += "<br>Please make sure you have used well-defined labels and variables in your inline assembly code.";
-                }
-
-                else
-                    Messages::messages.DisplayMessage(Messages::messages.DASM_COMPILER_ERROR);
-
     }
+
     if (!output.toLower().contains("complete.")) {
         m_buildSuccess = false;
-        if (output=="") {
-            Messages::messages.DisplayMessage(Messages::messages.NO_DASM);
-
-            output = output + "\nCould not find Dasm.exe. Did you set the correct environment variables?";
-        }
-
     }
-
 
     if (m_buildSuccess) {
         output ="Assembled file size: <b>" + QString::number(size) + "</b> bytes";

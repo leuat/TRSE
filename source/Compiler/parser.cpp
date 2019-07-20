@@ -33,7 +33,7 @@ void Parser::Delete()
         Node* s = m_procedures[val];
            // if (s!=nullptr) {
             //s->Delete();
-            delete s;
+//            delete s;
 //        }
     }
     m_procedures.clear();

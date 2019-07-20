@@ -75,6 +75,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         emu = m_iniFile->getString("bbcm_emulator");
     }
 
+//    qDebug() << "Here  "<<emu ;
 
     if (!QFile::exists(emu)) {
         Messages::messages.DisplayMessage(Messages::messages.NO_EMULATOR);
@@ -93,11 +94,20 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     QProcess::execute("taskkill /im \"x64.exe\" /f");
 #endif
 //    qDebug() << emu << " " << params <<  QDir::toNativeSeparators(fileName);
+#ifdef __APPLE__
+    if (emu.endsWith(".app")) {
+        process.setArguments(params);
+        process.setProgram(emu);
+        process.startDetached();
+    }
+    else process.startDetached(emu, params);
 
+#else
     process.startDetached(emu, params);
+#endif
 //    process.pi
     QString output(process.readAllStandardOutput());
-
+//    process.waitForFinished();
 }
 
 void FormRasEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile* pro)
@@ -757,12 +767,45 @@ void FormRasEditor::HandleBuildError()
     SetOutputText(ErrorHandler::e.m_teOut);
     m_outputText = ErrorHandler::e.m_teOut;
     int ln = Pmm::Data::d.lineNumber;
-
+    HandleErrorDialogs(ErrorHandler::e.m_teOut);
     emit OpenOtherFile(m_builderThread.m_builder->compiler.recentError.file, ln);
     GotoLine(ln);
     m_builderThread.m_builder->m_system->m_buildSuccess = false;
     SetLights();
 
+
+}
+
+void FormRasEditor::HandleErrorDialogs(QString& output)
+{
+    return;
+    if (output.toLower().contains("branch out of range")) {
+        Messages::messages.DisplayMessage(Messages::messages.BRANCH_ERROR);
+        output += "<br>Please check your <b>onpage/offpage</b> keywords.";
+
+    }
+    else
+        if (output.toLower().contains("reverse-indexed")) {
+            Messages::messages.DisplayMessage(Messages::messages.MEMORY_OVERLAP_ERROR);
+            output += "<br>Please reorganize your binary inclusions in ascending order of memory locations.";
+        }
+        else
+            if (output.toLower().contains("mnemonic")) {
+                output += "<br>Please make sure you have used well-defined labels and variables in your inline assembly code.";
+            }
+
+            else
+                Messages::messages.DisplayMessage(Messages::messages.DASM_COMPILER_ERROR);
+
+
+    if (!output.toLower().contains("complete.")) {
+        if (output=="") {
+        Messages::messages.DisplayMessage(Messages::messages.NO_DASM);
+
+            output = output + "\nCould not find Dasm.exe. Did you set the correct environment variables?";
+        }
+
+    }
 
 }
 void FormRasEditor::HandleUpdateBuildText()
@@ -775,15 +818,16 @@ void FormRasEditor::HandleBuildComplete()
 {
     m_builderThread.msleep(70); // crashes if we don't sleep.. for some reason
     if (m_builderThread.m_builder->compiler.m_assembler!=nullptr)
-    ui->txtEditor->m_cycles =  m_builderThread.m_builder->compiler.m_assembler->m_cycles;
+        ui->txtEditor->m_cycles =  m_builderThread.m_builder->compiler.m_assembler->m_cycles;
     ui->txtEditor->RepaintCycles();
     if (m_builderThread.m_builder->compiler.m_assembler!=nullptr)
 
-    ui->txtEditor->InitCompleter(m_builderThread.m_builder->compiler.m_assembler->m_symTab, &m_builderThread.m_builder->compiler.m_parser);
+        ui->txtEditor->InitCompleter(m_builderThread.m_builder->compiler.m_assembler->m_symTab, &m_builderThread.m_builder->compiler.m_parser);
 
     if (m_projectIniFile->getString("system")=="NES") {
         BuildNes(m_currentSourceFile.split(".")[0]);
     }
+    HandleErrorDialogs(ErrorHandler::e.m_teOut);
 
     SetLights();
     if (m_run) {
