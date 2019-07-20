@@ -183,7 +183,7 @@ void AsmMOS6502::DeclareArray(QString name, QString type, int count, QStringList
                 s=s+"\n";
                 s=s + "\t" +t + " ";
             }
-            else s=s+", ";
+            else if (i!=data.count()-1) s=s+", ";
 
         }
         QStringList lst = s.split("\n");

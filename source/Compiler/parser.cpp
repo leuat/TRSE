@@ -1312,8 +1312,9 @@ Node *Parser::TypeSpec()
     if (m_currentToken.m_type == TokenType::ARRAY) {
         Eat(TokenType::ARRAY);
         Eat(TokenType::LBRACKET);
-
-        float count = GetParsedInt();
+        float count = 0;
+        if (m_currentToken.m_type != TokenType::RBRACKET)
+            count = GetParsedInt();
 
         Eat(TokenType::RBRACKET);
         Eat(TokenType::OF);
@@ -1331,6 +1332,17 @@ Node *Parser::TypeSpec()
                     Eat();
             }
             Eat(TokenType::RPAREN);
+            if (count!=data.count() && count!=0) {
+                if (count>data.count()) {
+                    ErrorHandler::e.Warning("Declared array count ("+QString::number((int)count)+") does not match with data ("+QString::number(data.count())+"). Padding with zeros. ", m_currentToken.m_lineNumber);
+                    for (int i=data.count();i<count;i++)
+                        data.append(QString("0"));
+                }
+                else
+                    ErrorHandler::e.Warning("Declared array count ("+QString::number((int)count)+") does not match with data ("+QString::number(data.count())+"). Adjusting array size to fit data. ", m_currentToken.m_lineNumber);
+
+            }
+
         }
 
         QString position = "";
