@@ -196,7 +196,6 @@ public:
             type = 2;
             s = s.replace(">","");
         }
-
         if (s.startsWith("$"))
             val = s.remove("$").toInt(&ok, 16);
         else
