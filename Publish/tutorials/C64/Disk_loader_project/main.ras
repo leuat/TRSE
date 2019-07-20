@@ -1,9 +1,9 @@
 program disk_loader_project;
 var  
    i: byte; 
+	@use KrillsLoader $0200 $3000 $5000 
 	// Place initial loader data at $3000 and installer at $4000. 
 	// Loader will be copied to $0200 when "initkrill" is called
-	@use KrillsLoader $0200 $3000 $5000 
 
 begin
 	

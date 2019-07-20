@@ -725,6 +725,29 @@ static int SaveCompressedTRM(lua_State* L) {
     return 0;
 }
 
+
+static int CopyFile(lua_State* L) {
+    Util::CopyFile(m_currentDir+"/"+ lua_tostring(L,1), m_currentDir+"/"+lua_tostring(L,2));
+    return 0;
+}
+
+
+
+static int AddToPng(lua_State* L) {
+//    Util::CopyFile(m_currentDir+"/"+ lua_tostring(L,1), m_currentDir+"/"+lua_tonumber(L,2));
+    QString inFile = m_currentDir+"/"+ lua_tostring(L,1);
+    QImage img(inFile);
+    int xp = lua_tonumber(L,2);
+    int yp = lua_tonumber(L,3);
+    for (int y=0;y<m_effect->m_mc->GetHeight();y++)
+        for (int x=0;x<m_effect->m_mc->GetWidth();x++) {
+            img.setPixelColor(x+xp,y+yp, m_effect->m_mc->m_colorList.get(m_effect->m_mc->getPixel(x,y)).color);
+        }
+
+    img.save(inFile);
+    return 0;
+}
+
 void DialogEffects::LoadScript(QString file)
 {
     m_script = new LuaScript(file);
@@ -757,6 +780,9 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "SaveRawData", SaveData);
     lua_register(m_script->L, "AddC64LineToData", AddToData);
     lua_register(m_script->L, "AddRawCharsetData", AddRawCharsetData);
+
+    lua_register(m_script->L, "CopyFile", CopyFile);
+    lua_register(m_script->L, "AddToPng", AddToPng);
 
     lua_register(m_script->L, "AddAmigaBitplaneToData", AddBitplaneToData);
     lua_register(m_script->L, "Save2DInfo", Save2DInfo);
