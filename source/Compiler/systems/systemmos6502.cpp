@@ -56,8 +56,12 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
             }
         }
 
-        if (!QFile::exists(m_settingsIni->getString("exomizer")))
-            Messages::messages.DisplayMessage(Messages::messages.NO_EXOMIZER);
+        if (!QFile::exists(m_settingsIni->getString("exomizer"))) {
+            m_buildSuccess = false;
+            text = text + "<br><font color=\"#FF6040\">Incorrect exomizer path. Please setup exomizer in the TRSE settings panel</font><br>";
+            return;
+        }
+//            Messages::messages.DisplayMessage(Messages::messages.NO_EXOMIZER);
 
 
         QString startAddress = Util::numToHex(Syntax::s.m_programStartAddress);
@@ -151,10 +155,13 @@ void SystemMOS6502::PostProcess(QString &text, QString filename, QString current
         mainb.remove(0,2);
         output.append(mainb);
         if (mainb.size()>=16384) {
-            QMessageBox msgBox;
+            /*QMessageBox msgBox;
             m_buildSuccess = false;
             msgBox.setText("Error: Compiled file larger than maximum cartridge size (max 16386 bytes vs current "+QString::number(mainb.size()) + " bytes)." );
-            msgBox.exec();
+            msgBox.exec();*/
+            text=text + "<br><font color=\"#FF6040\">Error: Compiled file larger than maximum cartridge size (max 16386 bytes vs current "+QString::number(mainb.size()) + " bytes).</font><br>";
+            m_buildSuccess = false;
+
             return;
 
         }
@@ -171,7 +178,9 @@ void SystemMOS6502::PostProcess(QString &text, QString filename, QString current
 
     if (m_projectIni->getString("output_type")=="d64") {
         if (!QFile::exists(m_settingsIni->getString("c1541"))) {
-            Messages::messages.DisplayMessage(Messages::messages.NO_C1541);
+            //Messages::messages.DisplayMessage(Messages::messages.NO_C1541);
+            text=text + "<br><font color=\"#FF6040\">link to c1541 not set up in the TRSE settings panel.</font><br>";
+            m_buildSuccess = false;
             return;
         }
         CreateDisk(currentDir, filename, "d64_paw_file", true);
@@ -235,9 +244,12 @@ bool SystemMOS6502::BuildDiskFiles(QString currentDir, QStringList &d64Params, Q
         int address = Util::NumberFromStringHex( data[3*i+2]);
         QString fn = currentDir+"/"+orgFileName;
         if (!QFile::exists(fn)) {
-            QMessageBox msgBox;
-            msgBox.setText("Error: Could not append disk include file '"+fn+"' because it does not exist");
-            msgBox.exec();
+            //QMessageBox msgBox;
+            //msgBox.setText("Error: Could not append disk include file '"+fn+"' because it does not exist");
+            //msgBox.exec();
+            //text=text + "<br><font color=\"#FF6040\">Error: Could not append disk include file '"+fn+"' because it does not exist</font><br>";
+            m_buildSuccess = false;
+
             return false;
         }
         if (!isCrunched) {
