@@ -1751,16 +1751,26 @@ void ASTDispather6502::dispatch(NodeVar *node)
 
 
 bool ASTDispather6502::LoadXYVarOrNum(NodeVar *node, Node *other, bool isx) {
+    Symbol* s = as->m_symTab->Lookup(node->value, node->m_op.m_lineNumber);
     NodeVar* var = dynamic_cast<NodeVar*>(other);
     NodeNumber* num = dynamic_cast<NodeNumber*>(other);
     QString operand = "ldx ";
     if (!isx) operand="ldy ";
     if (var!=nullptr && var->m_expr == nullptr) {
-        as->Asm(operand + var->value);
+            as->Asm(operand + var->value);
+            if (s->m_arrayType==TokenType::INTEGER) // integer array index is *2 (two bytes per array slot)
+            {
+                as->Asm("txa   ; watch for bug, Integer array has index range of 0 to 127");
+                as->Asm("asl");
+                as->Asm("tax");
+            }
         return true;
     }
     if (num!=nullptr) {
-        as->Asm(operand  + num->StringValue());
+        if (s->m_arrayType==TokenType::INTEGER)
+            as->Asm(operand + "#" + QString::number(num->numValue() * 2) + " ; watch for bug, Integer array has max index of 128");
+        else
+            as->Asm(operand  + num->StringValue());
         return true;
     }
     return false;
@@ -1769,15 +1779,26 @@ bool ASTDispather6502::LoadXYVarOrNum(NodeVar *node, Node *other, bool isx) {
 
 void ASTDispather6502::LoadByteArray(NodeVar *node) {
     // Optimizer: if expression is number, just return direct
-    as->Comment("Load Byte array");
+
+    Symbol* s = as->m_symTab->Lookup(node->value, node->m_op.m_lineNumber);
+    if (s->m_arrayType==TokenType::INTEGER)
+        as->Comment("Load Integer array");
+    else if (s->m_arrayType==TokenType::BYTE)
+        as->Comment("Load Byte array");
+    else
+        as->Comment("Load Unknown type array");
+
     QString m = as->m_term;
 
     as->ClearTerm();
     if (!LoadXYVarOrNum(node, node->m_expr,true))
     {
+        // calculation version, eg: index+2  or 3+2
         //       as->Asm("pha");
         node->m_expr->Accept(this);
         as->Term();
+        if (s->m_arrayType==TokenType::INTEGER) // integer array index is *2 (two bytes per array slot)
+            as->Asm("asl");
         as->Asm("tax");
         //          as->Asm("pla");
     }
@@ -1785,6 +1806,9 @@ void ASTDispather6502::LoadByteArray(NodeVar *node) {
         m="lda ";
     as->Asm(m+  node->value+",x");
 
+    if (s->m_arrayType==TokenType::INTEGER) { // integer array need to load the high byte also
+        as->Asm("ldy "+  node->value+"+1,x");
+    }
 }
 
 void ASTDispather6502::LoadVariable(Node *node)
@@ -2253,7 +2277,7 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
     if (node->m_right==nullptr)
         ErrorHandler::e.Error("Node assign: right hand must be expression", node->m_op.m_lineNumber);
     if (node->m_left->getType(as)==TokenType::INTEGER) {
-        as->Asm("ldy #0");
+        as->Asm("ldy #0");    // AH:20190722: Does not appear to serve a purpose - takes up space in prg. Breaks TRSE scroll in 4K C64 demo if take this out
         node->m_right->m_forceType = TokenType::INTEGER; // FORCE integer on right-hand side
     }
     // For constant i:=i+1;
