@@ -160,6 +160,7 @@ begin
 end;
 
 begin
+	DefineScreen();
 	SCREEN_BG_COLOR:=0;
 	//Clearscreen($20, ^$0400);	
 	setscreenlocation($1C00);

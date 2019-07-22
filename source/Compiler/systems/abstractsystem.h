@@ -14,6 +14,7 @@ public:
         m_settingsIni = settings;
     }
     QElapsedTimer timer;
+    QString m_orgOutput;
     CIniFile* m_projectIni, *m_settingsIni;
     enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA};
     enum Processor {MOS6502, M68000};

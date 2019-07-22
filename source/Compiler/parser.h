@@ -88,6 +88,7 @@ public:
     void VerifyToken(Token t);
 
     void HandlePreprocessorInParsing();
+    void RemoveComments();
     void Preprocess();
     void PreprocessReplace();
     void PreprocessIfDefs(bool ifdef);

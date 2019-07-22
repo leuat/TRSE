@@ -24,5 +24,5 @@ cd trse/trse.app
  find trse/Amiga/ -name '*.asm' -delete
 tar -cvf trse_osx.tar trse/
 gzip trse_osx.tar
-scp trse_osx.tar.gz leuat@www.irio.co.uk:www/trse/latest_snapshots/
+scp trse_osx.tar.gz leuat@www.irio.co.uk:www.irio.co.uk/trse/latest_snapshots/
 

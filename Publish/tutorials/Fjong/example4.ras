@@ -102,11 +102,9 @@ begin
 	SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL:=BLACK;
 	clearscreen(PURPLE+8,^$D800);
-	
 	setmulticolormode();
 	MULTICOLOR_CHAR_COL[2]:=BLUE;
 	MULTICOLOR_CHAR_COL[1]:=WHITE;
-
 
 	RasterIRQ(RasterMain(),0,0);
 	EnableRasterIRQ();

@@ -193,8 +193,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     }
 
     if (Command("Nop")) {
-        NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
-        for (int i=0;i<num->m_val;i++)
+        if (!m_node->m_params[0]->isPureNumeric())
+            ErrorHandler::e.Error("Nop() requires a pure numeric value.",m_node->m_op.m_lineNumber);
+        int val = Util::NumberFromStringHex(m_node->m_params[0]->getValue(as).remove("#"));
+        for (int i=0;i<val;i++)
             as->Asm("nop");
     }
 

@@ -19,7 +19,6 @@
  *   If not, see <https://www.gnu.org/licenses/>.
 */
 
-
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 

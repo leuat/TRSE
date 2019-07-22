@@ -31,7 +31,6 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
     // Machine Code Analyzer
     VerifyMachineCodeZP(filename+".prg");
 
-
     int assembleTime = timer.elapsed()- time;
     time = timer.elapsed();
 
@@ -40,6 +39,7 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
 
     if (Syntax::s.m_stripPrg)
         Util::ConvertFileWithLoadAddress(filename+".prg", filename+".prg");
+
 
     if (m_settingsIni->getdouble("perform_crunch")==1 && (Syntax::s.m_currentSystem!=AbstractSystem::NES)) {
         QProcess processCompress;
@@ -56,8 +56,12 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
             }
         }
 
-        if (!QFile::exists(m_settingsIni->getString("exomizer")))
-            Messages::messages.DisplayMessage(Messages::messages.NO_EXOMIZER);
+        if (!QFile::exists(m_settingsIni->getString("exomizer"))) {
+            m_buildSuccess = false;
+            text = text + "<br><font color=\"#FF6040\">Incorrect exomizer path. Please setup exomizer in the TRSE settings panel</font><br>";
+            return;
+        }
+//            Messages::messages.DisplayMessage(Messages::messages.NO_EXOMIZER);
 
 
         QString startAddress = Util::numToHex(Syntax::s.m_programStartAddress);
@@ -98,39 +102,16 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
 
 
     m_buildSuccess = true;
-
+    m_orgOutput = "";
     if (output.toLower().contains("error")) {
+        m_orgOutput = output;
         text="<font color=\"#FF6040\">Fatal error during assembly!</font><br>";
         m_buildSuccess = false;
-        if (output.toLower().contains("branch out of range")) {
-            Messages::messages.DisplayMessage(Messages::messages.BRANCH_ERROR);
-            output += "<br>Please check your <b>onpage/offpage</b> keywords.";
-
-        }
-        else
-            if (output.toLower().contains("reverse-indexed")) {
-                Messages::messages.DisplayMessage(Messages::messages.MEMORY_OVERLAP_ERROR);
-                output += "<br>Please reorganize your binary inclusions in ascending order of memory locations.";
-            }
-            else
-                if (output.toLower().contains("mnemonic")) {
-                    output += "<br>Please make sure you have used well-defined labels and variables in your inline assembly code.";
-                }
-
-                else
-                    Messages::messages.DisplayMessage(Messages::messages.DASM_COMPILER_ERROR);
-
     }
+
     if (!output.toLower().contains("complete.")) {
         m_buildSuccess = false;
-        if (output=="") {
-            Messages::messages.DisplayMessage(Messages::messages.NO_DASM);
-
-            output = output + "\nCould not find Dasm.exe. Did you set the correct environment variables?";
-        }
-
     }
-
 
     if (m_buildSuccess) {
         output ="Assembled file size: <b>" + QString::number(size) + "</b> bytes";
@@ -174,10 +155,13 @@ void SystemMOS6502::PostProcess(QString &text, QString filename, QString current
         mainb.remove(0,2);
         output.append(mainb);
         if (mainb.size()>=16384) {
-            QMessageBox msgBox;
+            /*QMessageBox msgBox;
             m_buildSuccess = false;
             msgBox.setText("Error: Compiled file larger than maximum cartridge size (max 16386 bytes vs current "+QString::number(mainb.size()) + " bytes)." );
-            msgBox.exec();
+            msgBox.exec();*/
+            text=text + "<br><font color=\"#FF6040\">Error: Compiled file larger than maximum cartridge size (max 16386 bytes vs current "+QString::number(mainb.size()) + " bytes).</font><br>";
+            m_buildSuccess = false;
+
             return;
 
         }
@@ -194,7 +178,9 @@ void SystemMOS6502::PostProcess(QString &text, QString filename, QString current
 
     if (m_projectIni->getString("output_type")=="d64") {
         if (!QFile::exists(m_settingsIni->getString("c1541"))) {
-            Messages::messages.DisplayMessage(Messages::messages.NO_C1541);
+            //Messages::messages.DisplayMessage(Messages::messages.NO_C1541);
+            text=text + "<br><font color=\"#FF6040\">link to c1541 not set up in the TRSE settings panel.</font><br>";
+            m_buildSuccess = false;
             return;
         }
         CreateDisk(currentDir, filename, "d64_paw_file", true);
@@ -258,9 +244,12 @@ bool SystemMOS6502::BuildDiskFiles(QString currentDir, QStringList &d64Params, Q
         int address = Util::NumberFromStringHex( data[3*i+2]);
         QString fn = currentDir+"/"+orgFileName;
         if (!QFile::exists(fn)) {
-            QMessageBox msgBox;
-            msgBox.setText("Error: Could not append disk include file '"+fn+"' because it does not exist");
-            msgBox.exec();
+            //QMessageBox msgBox;
+            //msgBox.setText("Error: Could not append disk include file '"+fn+"' because it does not exist");
+            //msgBox.exec();
+            //text=text + "<br><font color=\"#FF6040\">Error: Could not append disk include file '"+fn+"' because it does not exist</font><br>";
+            m_buildSuccess = false;
+
             return false;
         }
         if (!isCrunched) {

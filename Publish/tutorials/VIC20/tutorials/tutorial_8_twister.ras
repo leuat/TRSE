@@ -27,7 +27,8 @@ end;
 
 procedure InitTwister();
 begin
-//	moveto(0,4,$10);
+	
+	DefineScreen();
 	screenmemory:=$1000;	
 	k:=64;
 	for y:=0 to 22 do begin
