@@ -371,6 +371,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("poke"))
         Poke(as);
 
+    if (Command("createaddresstable"))
+        CreateAddressTable(as);
+
+    if (Command("addresstable"))
+        AddressTable(as);
+
 
 /*    if (Command("copyzpdata")
         CopyZPdata(as);
@@ -1369,6 +1375,8 @@ void Methods6502::PrintString(Assembler *as)
     as->PopLabel("printstring_text");
 
 }
+
+
 
 // Tile a,a,a,a,b,n
 // a1 = Top Left tile, a2 = Top right, a3 = bottom left, a4 = bottom right
@@ -2469,6 +2477,106 @@ void Methods6502::Sqrt(Assembler *as)
     }
     as->Asm("jsr sqrt16_init");
     as->Asm("lda " +as->m_internalZP[0]);
+
+}
+
+/*
+        ldy #<$1e00         ; start value hi
+        lda #>$1e00          ; lo
+
+        ldx #0
+
+        sta tab,x    ; Address of table
+        tya
+        sta tab+1,x
+dtloop
+
+        tay
+        lda tab,x
+
+        inx
+        inx
+
+        clc
+        adc #40
+        bcc dtnooverflow
+        iny
+dtnooverflow
+        sta tab,x
+        tya
+        sta tab+1,x
+
+        cpx #18                 ; ( 10 * 2 ) - 2     or     10-1 = 9*2 = 18
+        bcc dtloop
+ */
+void Methods6502::CreateAddressTable(Assembler *as) {
+
+    as->Comment("----------");
+    as->Comment("DefineTable address, StartValue, IncrementValue, TableSize");
+
+    QString lblDTLoop = as->NewLabel("dtloop");
+    QString lblDTNoOverflow = as->NewLabel("dtnooverflow");
+
+
+    QString startValue = Util::numToHex( m_node->m_params[1]->getInteger()  );
+    QString incrementValue = Util::numToHex( m_node->m_params[2]->getInteger()  );
+    QString tableSize = Util::numToHex( ((m_node->m_params[3]->getInteger()) - 1) * 2 ); //  ; ( 10 * 2 ) - 2     or     10-1 = 9*2 = 18
+
+
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+    //AddMemoryBlock(as,2);
+
+    QString addr = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr = var->value;
+
+    if (!m_node->m_params[1]->isPure()) {
+        ErrorHandler::e.Error("second parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    as->Asm("ldy #>" + startValue);
+    as->Asm("lda #<" + startValue);
+
+    as->Asm("ldx #0");
+
+    as->Asm("sta " + addr +",x   ; Address of table");
+    as->Asm("tya");
+    as->Asm("sta " + addr +"+1,x");
+
+    as->Label( lblDTLoop );
+
+    as->Asm("tay");
+    as->Asm("lda " + addr + ",x");
+    as->Asm("inx");
+    as->Asm("inx");
+
+    as->Asm("clc");
+    as->Asm("adc #" + incrementValue );
+    as->Asm("bcc " + lblDTNoOverflow );
+    as->Asm("iny");
+
+    as->Label( lblDTNoOverflow );
+
+    as->Asm("sta " + addr +",x");
+    as->Asm("tya");
+    as->Asm("sta " + addr +"+1,x");
+
+    as->Asm("cpx #" + tableSize ); //  ; ( 10 * 2 ) - 2     or     10-1 = 9*2 = 18
+    as->Asm("bcc " + lblDTLoop );
+
+    as->PopLabel("dtloop");
+    as->PopLabel("dtnooverflow");
+
+
+}
+
+void Methods6502::AddressTable(Assembler *as) {
 
 }
 

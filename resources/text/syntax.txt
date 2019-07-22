@@ -72,12 +72,8 @@ m; MatMulVecNormalZ; Amiga; a,a,a,i
 m; MatMulVecNormal; Amiga; a,a,a,i
 m; ProjectToScreen; Amiga; a,i,l,l
 m; WaitForBlitter; Amiga;
+
 #Memory routines
-
-m; moveto; C64, NES; b,b,b
-
-m; Tile; C64, C128, VIC20, PET ; a,a,a,a,b,n
-
 m; Poke; C64, C128, VIC20, PET,  NES ; a,b,b
 m; Peek; C64, C128, VIC20, PET,  NES ; a,b
 m; ToggleBit; C64, C128, VIC20, PET,  NES ; a,b,b
@@ -96,6 +92,8 @@ m; CopyFullScreen; C64, C128, VIC20, PET,  NES ; a,a
 
 M; CopyBytesShift; C64,C128, VIC20, PET,  NES; a,a,b,b,n
 
+m; CreateAddressTable; C64,C128, VIC20, PET, NES; a,n,b,b
+m; AddressTable; C64,C128, VIC20, PET, NES; a,b,b
 
 m; Nop; C128, C64, VIC20, PET, NES; n
 
@@ -155,9 +153,10 @@ m; KrillLoadCompressed; C64; a
 m; InitKrill; C64;
 
 # Screen routines
-
 # m; Writeln; C64, C128, VIC20, PET,  NES ; s,b
-m; MoveTo; C64, C128, VIC20 ; b,b,b
+
+m; Tile; C64, C128, VIC20, PET ; a,a,a,a,b,n
+m; MoveTo; C64, C128, VIC20, NES ; b,b,b
 m; ScrollY; C64, C128 ; b
 m; ScrollX; C64, C128 ; b
 m; hideborderx; C64, C128 ; b

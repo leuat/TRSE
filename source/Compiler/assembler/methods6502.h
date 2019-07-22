@@ -48,6 +48,9 @@ public:
     void PlaySound(Assembler* as);
     void CreateInteger(Assembler* as, QString reg);
     void Tile(Assembler *as);
+    void CreateAddressTable(Assembler *as);
+    void AddressTable(Assembler *as);
+
 
     void LoHi(Assembler* as, bool isLo);
 
