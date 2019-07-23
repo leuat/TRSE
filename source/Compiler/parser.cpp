@@ -478,7 +478,7 @@ Node *Parser::AssignStatement()
 
     if (m_currentToken.m_type!=TokenType::ASSIGN) {
 //        qDebug() << m_currentToken;
-        ErrorHandler::e.Error("Could not find '" + t.m_value+  "', did you forget a colon?" , token.m_lineNumber);
+        ErrorHandler::e.Error("Error assigning variable <b>'" + t.m_value+  "'</b>, did you forget a colon or mistype? Syntax should be: <b>'a := b;'</b>." , token.m_lineNumber);
     }
     Eat(TokenType::ASSIGN);
     Node* right = Expr();

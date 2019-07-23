@@ -66,7 +66,7 @@ void ObjLoader::Parse()
                 m_faces.append(f2);
             }
             if (ilst.count()!=3) {
-                qDebug() << "Size : " << QString::number(ilst.count());
+//                qDebug() << "Size : " << QString::number(ilst.count());
             }
 //            qDebug() << f.v1 << f.v2 << f.v3;
             //qDebug() << "Appending";
