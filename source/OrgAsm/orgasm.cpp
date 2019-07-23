@@ -593,31 +593,18 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
             QString repl = "$1000";
             if (expr.contains("<") || expr.contains(">"))
                 repl= "#$10";
-
+            QString oexpr = expr;
             expr = expr.replace("<","").replace(">","");
-//            qDebug() << "A" <expr;
             if (!(expr.startsWith("(") && expr.endsWith(")"))) {
- //               expr = OrgasmData::BinopExpr(expr, val, repl);
                 bool hasHash = false;
                 if (expr.simplified().startsWith("#"))
                     hasHash = true;
-                expr = OrgasmData::BinopExpr(expr, val, repl);
+                expr = OrgasmData::BinopExpr(oexpr, val, repl);
                 if (hasHash)
                     expr = "#"+expr;
             }
 
-/*            if (orgExpr.toUpper().contains("5")) {
-                qDebug() << "org: " << orgExpr;
-                qDebug() << "l2: " << l2;
-                qDebug() << "expr: " << expr;
-    //            exit(1);
-            }
-*/
-
-  //          qDebug() << "B" <<expr;
             if (val==-1 && pd==OrgasmData::PASS_SYMBOLS) {
-                //qDebug() << l2;
-                //qDebug() << ol.m_instruction.m_opCode<<  orgExpr;
                 throw QString("Unknown operation: " +orgExpr);
             }
 
