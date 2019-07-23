@@ -232,5 +232,7 @@
         <file>resources/text/help/p/screen.rtf</file>
         <file>resources/text/help/r/fori.rtf</file>
         <file>resources/text/help/m/definescreen.rtf</file>
+        <file>resources/text/help/m/addresstable.rtf</file>
+        <file>resources/text/help/m/createaddresstable.rtf</file>
     </qresource>
 </RCC>

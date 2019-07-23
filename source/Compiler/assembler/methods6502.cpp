@@ -2482,39 +2482,10 @@ void Methods6502::Sqrt(Assembler *as)
 
 }
 
-/*
-        ldy #<$1e00         ; start value hi
-        lda #>$1e00          ; lo
-
-        ldx #0
-
-        sta tab,x    ; Address of table
-        tya
-        sta tab+1,x
-dtloop
-
-        tay
-        lda tab,x
-
-        inx
-        inx
-
-        clc
-        adc #40
-        bcc dtnooverflow
-        iny
-dtnooverflow
-        sta tab,x
-        tya
-        sta tab+1,x
-
-        cpx #18                 ; ( 10 * 2 ) - 2     or     10-1 = 9*2 = 18
-        bcc dtloop
- */
 void Methods6502::CreateAddressTable(Assembler *as) {
 
     as->Comment("----------");
-    as->Comment("DefineTable address, StartValue, IncrementValue, TableSize");
+    as->Comment("DefineAddressTable address, StartValue, IncrementValue, TableSize");
 
     QString lblDTLoop = as->NewLabel("dtloop");
     QString lblDTNoOverflow = as->NewLabel("dtnooverflow");
@@ -2530,7 +2501,6 @@ void Methods6502::CreateAddressTable(Assembler *as) {
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
-    //AddMemoryBlock(as,2);
 
     QString addr = "";
     if (m_node->m_params[0]->isPureNumeric())
@@ -2579,6 +2549,66 @@ void Methods6502::CreateAddressTable(Assembler *as) {
 }
 
 void Methods6502::AddressTable(Assembler *as) {
+
+    as->Comment("----------");
+    as->Comment("AddressTable address, xoffset, yoffset");
+
+    QString lblDTNoOverflow = as->NewLabel("dtnooverflow");
+
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    QString addr = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr = var->value;
+
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "ldx #" + QString::number( m_node->m_params[2]->getInteger() * 2 ) );
+    /*} else if (m_node->m_params[2]->isPure()) {
+        // pure
+        as->Asm( "ldx " + m_node->m_params[2]->getValue(as) ); */
+    } else {
+        // complex
+        as->Comment("yoffset is complex");
+        LoadVar(as, 2);
+        as->Asm("asl ; *2");
+        as->Asm("tax");
+    }
+
+    as->Asm("lda " + addr +",x   ; Address of table lo");
+    as->Asm("ldy " + addr +"+1,x   ; Address of table hi");
+
+    if (m_node->m_params[1]->isPure()) {
+        // pure
+        if (m_node->m_params[1]->isPureNumeric() && m_node->m_params[1]->getInteger() == 0 ) {} else {
+            as->Asm("clc");
+            as->Asm("adc " + m_node->m_params[1]->getValue(as) );
+            as->Asm("bcc " + lblDTNoOverflow );
+            as->Asm("iny  ; overflow into high byte");
+            as->Label( lblDTNoOverflow );
+
+        }
+    } else {
+        // complex
+        QString zp0 = as->m_internalZP[0];
+
+        as->Comment("xoffset is complex");
+        as->Asm("sta " + zp0);
+        LoadVar(as, 1);
+        as->Asm("clc");
+        as->Asm("adc " + zp0);
+        as->Asm("bcc " + lblDTNoOverflow );
+        as->Asm("iny  ; overflow into high byte");
+        as->Label( lblDTNoOverflow );
+    }
+
+    as->PopLabel("dtnooverflow");
 
 }
 

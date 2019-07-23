@@ -1,0 +1,39 @@
+<h3>CreateAddressTable( [address], [number], [byte], [byte] );</h3>
+<ul>
+<li>[address] - Memory address or integer array where to store address table</li>
+<li>[number] - The starting value</li>
+<li>[byte] - Increment value</li>
+<li>[byte] - Total number of entries in address table</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Creates an address table in memory or in an integer array.  Typically used to create a screen or color
+        address table.  Can be used with AddressTable or data read directly from memory or array.
+</p>
+
+
+<h3>Example</h3>
+
+<code>
+program MyProgram;
+var  
+        addr: array[25] of integer;  // will store the address table in this array
+        i: byte;
+        
+        @define scrn $0400
+begin
+
+        definescreen();
+        
+        clearscreen(32, ^@scrn);
+
+        CreateAddressTable( addr, @scrn, 40, 25 );  // create an table of starting 25 row addresses on the screen
+
+	screenmemory := AddressTable( addr, 39, 24 ); // use the table to find the 24th row (starts at 0) and 39th column
+	screenmemory[0] := 0; // draw an @ character at this screen address
+
+	loop();
+	
+end.
+</code>
