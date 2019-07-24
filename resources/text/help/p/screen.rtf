@@ -1,15 +1,32 @@
+<h3>General information</h3>
+<p>Use DefineScreen() to set up the built in <strong>screenmemory</strong> pointer.</p>
+<p>Commands such as MoveTo, PrintString, PrintDecimal, PrintNumber and Tile will utilise this pointer.</p>
+<p>CreateAddressTable and AddressTable commands can be used to set up a faster way to set the location on the screen
+to draw to.</p>
+
 <h3>Commodore 64</h3>
 <p>The C64 has a screen display of 40 x 25 characters, each allowing a character colour to be assigned.</p>
 <ul>
     <li>$0400 = Default screen memory address</li>
     <li>$D800 = Default color memory address</li>
 </ul>
-<p>Using MoveTo, the built in pointer <strong>screenmemory</strong> can be initialised to any address 
-    in the screen or color memory.</p>
+
+<p>Set up an address table for the starting (column 0) of each row on the screen:</p>
 <code>
-    MoveTo( 5, 7, $04 ); // move to column 5, row 7 from address (hi-byte) $04 (full address would be $0400 + 5 + 7*40)
-    screenmemory[0] := 1; // place an A character at this memory location
+var
+    saddr : array[25] of integer;
+    caddr : array[25] of integer;
+
+begin
+    definescreen();
+    CreateAddressTable( saddr, $0400, 40, 25 );   // $0400 screen address, 40 characters per column, 25 rows
+    CreateAddressTable( caddr, $D800, 40, 25 );   // $D800 color address, 40 characters per column, 25 rows
+
+    screenmemory := AddressTable( saddr, 39, 24 ); // pick row 24 (range is 0 to 24) and column 39 (range is 0 to 39)
+    screenmemory[0] := 33;  // place a character at the bottom right of the display
 </code>
+
+
 
 
 <h3>Vic 20</h3>
@@ -22,14 +39,24 @@
     <li>$1000 = Default screen memory address for the 8k+ Vic</li>
     <li>$9400 = Default color memory address for the 8k+ Vic</li>
 </ul>
-<p>Using MoveTo, the built in pointer <strong>screenmemory</strong> can be initialised to any address 
-    in the screen or color memory.</p>
+
+<p>Set up an address table for the starting (column 0) of each row on the screen:</p>
 <code>
-    MoveTo( 5, 7, $1E ); // move to column 5, row 7 from address (hi-byte) $1E (full address would be $1E00 + 5 + 7*22)
-    screenmemory[0] := 1; // place an A character at this memory location
+var
+    saddr : array[23] of integer;
+    caddr : array[23] of integer;
+
+begin
+    definescreen();
+    CreateAddressTable( saddr, $1E00, 22, 23 );   // $1E00 screen address, 40 characters per column, 25 rows
+    CreateAddressTable( caddr, $9600, 22, 23 );   // $9600*00 color address, 40 characters per column, 25 rows
+
+    screenmemory := AddressTable( saddr, 21, 22 ); // pick row 22 (range is 0 to 22) and column 21 (range is 0 to 21)
+    screenmemory[0] := 33;  // place a character at the bottom right of the display
 </code>
 
 
 
+
 <p>See also: <br />
-MoveTo, Tile, PrintString, PrintDecimal and PrintNumber.</p>
+MoveTo, Tile, PrintString, PrintDecimal, PrintNumber, CreateAddressTable and AddressTable.</p>
