@@ -258,6 +258,22 @@ m; DisableVIC20IRQ; VIC20;
 m; VIAIRQ; VIC20; p,b,b
 
 
+
+#
+#
+# F J O N G   raytracer functions (f)
+#
+#
+#
+#
+
+
+f;AddObject;s,s,s,s,f,f,f,f,f,f
+
+
+
+
+
 #
 #
 #

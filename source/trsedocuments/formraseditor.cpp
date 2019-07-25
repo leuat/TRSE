@@ -764,6 +764,7 @@ void FormRasEditor::on_chkPostOpt_stateChanged(int arg1)
 
 void FormRasEditor::HandleBuildError()
 {
+    m_run = false;
     SetOutputText(ErrorHandler::e.m_teOut);
     m_outputText = ErrorHandler::e.m_teOut;
     int ln = Pmm::Data::d.lineNumber;
