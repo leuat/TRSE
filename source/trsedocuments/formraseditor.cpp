@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Turbo Rascal Syntax error, “;” expected but “BEGIN” (TRSE, Turbo Rascal SE)
  * 8 bit software development IDE for the Commodore 64
  * Copyright (C) 2018  Nicolaas Ervik Groeneboom (nicolaas.groeneboom@gmail.com)
@@ -647,6 +647,13 @@ void FormRasEditor::FillToIni()
 
 void FormRasEditor::MemoryAnalyze()
 {
+    if (!m_currentSourceFile.endsWith(".ras")) {
+        ErrorHandler::e.m_warnings.clear();
+        ErrorHandler::e.m_teOut = "";
+        ErrorHandler::e.Warning("Memory analyzer only works for .ras source files");
+        SetOutputText(ErrorHandler::e.m_teOut);
+        return;
+    }
     int i= m_iniFile->getdouble("perform_crunch");
     m_iniFile->setFloat("perform_crunch",0);
     if (m_builderThread.m_builder==nullptr) {
@@ -665,7 +672,6 @@ void FormRasEditor::MemoryAnalyze()
     QString output = process.readAllStandardOutput();
     int codeEnd=FindEndSymbol(output);
     */
-
     Orgasm orgAsm;
     //orgAsm.LoadCodes();
     orgAsm.Assemble(filename+".asm", filename+".prg");
@@ -674,14 +680,19 @@ void FormRasEditor::MemoryAnalyze()
     int codeEnd=FindEndSymbol(orgAsm);
 
     FindBlockEndSymbols(orgAsm);
+//    qDebug() << "B";
     ConnectBlockSymbols();
+//    qDebug() << "asm " << m_builderThread.m_builder->compiler.m_assembler;
     m_builderThread.m_builder->compiler.m_assembler->blocks.append(new MemoryBlock(Syntax::s.m_startAddress, codeEnd, MemoryBlock::CODE, "code"));
+ //   qDebug() << "B2";
 
     m_mca.ClassifyZP(m_builderThread.m_builder->compiler.m_assembler->blocks);
+    qDebug() << "B1";
 
     DialogMemoryAnalyze* dma = new DialogMemoryAnalyze(m_iniFile);
     dma->Initialize(m_builderThread.m_builder->compiler.m_assembler->blocks, m_iniFile->getInt("memory_analyzer_font_size"));
     dma->resize(m_iniFile->getdouble("memory_analyzer_window_width"),m_iniFile->getdouble("memory_analyzer_window_height"));
+    qDebug() << "C";
 
     dma->exec();
     delete dma;
@@ -769,7 +780,8 @@ void FormRasEditor::HandleBuildError()
     m_outputText = ErrorHandler::e.m_teOut;
     int ln = Pmm::Data::d.lineNumber;
     HandleErrorDialogs(ErrorHandler::e.m_teOut);
-    emit OpenOtherFile(m_builderThread.m_builder->compiler.recentError.file, ln);
+    if (m_builderThread.m_builder!=nullptr)
+        emit OpenOtherFile(m_builderThread.m_builder->compiler.recentError.file, ln);
     GotoLine(ln);
     m_builderThread.m_builder->m_system->m_buildSuccess = false;
     SetLights();
