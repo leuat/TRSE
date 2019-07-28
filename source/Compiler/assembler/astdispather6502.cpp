@@ -1050,9 +1050,10 @@ void ASTDispather6502::BinaryClause(Node *node)
         as->Asm("bne " + lblFailed);
     if (node->m_op.m_type==TokenType::NOTEQUALS)
         as->Asm("beq " + lblFailed);
-    if (node->m_op.m_type==TokenType::GREATER)
+    if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::GREATEREQUAL) {
         as->Asm("bcc " + lblFailed);
-    if (node->m_op.m_type==TokenType::LESS)
+    }
+    if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL)
         as->Asm("bcs " + lblFailed);
 
     as->Asm("lda #1; success");
@@ -1084,14 +1085,21 @@ void ASTDispather6502::BuildToCmp(Node *node)
     as->Term();
     if (b!="") {
         as->Comment("Compare with pure num / var optimization");
+        if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::LESSEQUAL)
+            as->Asm("sbc #0");
         as->Asm("cmp " + b);
     }
     else {
         // Perform a full compare : create a temp variable
-        QString tmpVar = as->StoreInTempVar("binary_clause_temp");
+        QString tmpVarB = as->StoreInTempVar("binary_clause_temp");
         node->m_right->Accept(this);
         as->Term();
-        as->Asm("cmp " + tmpVar);
+        QString tmpVarA = as->StoreInTempVar("binary_clause_temp_2");
+        as->Asm("lda " + tmpVarB);
+        if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::LESSEQUAL)
+            as->Asm("sbc #0");
+        as->Asm("cmp " + tmpVarA);
+        as->PopTempVar();
         as->PopTempVar();
     }
 
@@ -1110,9 +1118,10 @@ void ASTDispather6502::BuildSimple(Node *node, QString lblFailed)
         as->Asm("bne " + lblFailed);
     if (node->m_op.m_type==TokenType::NOTEQUALS)
         as->Asm("beq " + lblFailed);
-    if (node->m_op.m_type==TokenType::GREATER)
+    if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::GREATEREQUAL) {
         as->Asm("bcc " + lblFailed);
-    if (node->m_op.m_type==TokenType::LESS)
+    }
+    if (node->m_op.m_type==TokenType::LESS  || node->m_op.m_type==TokenType::LESSEQUAL)
         as->Asm("bcs " + lblFailed);
 
 
@@ -1246,7 +1255,8 @@ void ASTDispather6502::dispatch(NodeBinaryClause *node)
         LogicalClause(node);
     else
         if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type == TokenType::GREATER ||
-                node->m_op.m_type==TokenType::EQUALS || node->m_op.m_type == TokenType::NOTEQUALS) {
+                node->m_op.m_type==TokenType::EQUALS || node->m_op.m_type == TokenType::NOTEQUALS
+                || node->m_op.m_type==TokenType::LESSEQUAL || node->m_op.m_type == TokenType::GREATEREQUAL ) {
             if (node->m_left->getType(as)==TokenType::INTEGER) {
                 BinaryClauseInteger(node);
             }

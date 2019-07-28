@@ -357,7 +357,7 @@ void MainWindow::RefreshFileList()
     fileSystemModel->setRootPath(rootPath);
     fileSystemModel->setFilter(QDir::NoDotAndDotDot |
                             QDir::AllDirs |QDir::AllEntries);
-    fileSystemModel->setNameFilters(QStringList() << "*.ras" << "*.asm" << "*.txt" << "*.prg" << "*.inc" << "*.flf" <<"*.paw" << "*.fjo");
+    fileSystemModel->setNameFilters(QStringList() << "*.ras" << "*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo");
     fileSystemModel->setNameFilterDisables(false);
 
     ui->treeFiles->setModel(fileSystemModel);

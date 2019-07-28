@@ -32,7 +32,7 @@ QString TokenType::types[] = {
             "INTERRUPT", "BITAND", "BITOR", "ELSE", "OR", "AND", "POINTER","AT",
             "INCLUDE", "DEFINE", "PREPROCESSOR", "IFDEF", "ENDIF", "IFNDEF", "OFFPAGE", "ONPAGE",
             "STEP", "UNROLL", "LOOPX", "LOOPY", "CSTRING", "USERDATA", "STARTBLOCK", "ENDBLOCK",
-            "IGNOREMETHOD", "ERROR", "WEDGE", "USE", "INCNSF", "STARTASSEMBLER", "LONG", "CHIPMEM"};
+            "IGNOREMETHOD", "ERROR", "WEDGE", "USE", "INCNSF", "STARTASSEMBLER", "LONG", "CHIPMEM","GREATEREQUAL", "LESSEQUAL"};
 
 QString Token::getType() {
     return TokenType::types[m_type];

@@ -342,10 +342,21 @@ Token Lexer::GetNextToken()
             return Token(TokenType::EQUALS, "=");
         }
         if (m_currentChar==">") {
+            if (peek()=="=") {
+                Advance();
+                Advance();
+                return Token(TokenType::GREATEREQUAL, ">=");
+            }
             Advance();
             return Token(TokenType::GREATER, ">");
         }
         if (m_currentChar=="<") {
+            if (peek()=="=") {
+                Advance();
+                Advance();
+                return Token(TokenType::LESSEQUAL, "<=");
+            }
+
             Advance();
             if (m_currentChar==">") {
                 Advance();

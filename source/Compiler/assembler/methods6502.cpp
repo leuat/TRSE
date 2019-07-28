@@ -1357,7 +1357,6 @@ void Methods6502::PrintString(Assembler *as)
     if (str!=nullptr)
         as->Label(lbl);
     as->Asm("clc");
-    as->Comment("TEST");
     as->Asm("lda #<" +varName);
     as->Term("adc ");
     m_node->m_params[1]->Accept(m_dispatcher);
