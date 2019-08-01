@@ -5,6 +5,7 @@
 //#include "astdispatcher68000.h"
 #include "source/Compiler/ast/nodebuiltinmethod.h"
 #include "source/Compiler/ast/nodenumber.h"
+#include "source/Compiler/ast/nodeprocedure.h"
 
 class Methods68000
 {

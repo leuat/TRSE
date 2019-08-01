@@ -42,7 +42,6 @@ m; InitMatmulVec; Amiga;
 m; InitMatmulVecNormalZ; Amiga;
 m; InitProjectToScreen; Amiga;
 
-
 # ** CALL METHODS
 
 m; Poke8; Amiga ; a,i,b
@@ -72,6 +71,8 @@ m; MatMulVecNormalZ; Amiga; a,a,a,i
 m; MatMulVecNormal; Amiga; a,a,a,i
 m; ProjectToScreen; Amiga; a,i,l,l
 m; WaitForBlitter; Amiga;
+m; VBIRQ;Amiga; p
+
 
 #Memory routines
 m; Poke; C64, C128, VIC20, PET,  NES ; a,b,b

@@ -384,6 +384,8 @@ void ASTDispather68000::dispatch(NodeProcedureDecl *node)
 {
     node->DispatchConstructor();
 
+
+
     bool isInitFunction=false;
     bool isBuiltinFunction=false;
     if (Syntax::s.builtInFunctions.contains(node->m_procName)) {
@@ -401,6 +403,22 @@ void ASTDispather68000::dispatch(NodeProcedureDecl *node)
         as->Comment("   Requires initialization : " + type);
     }
     as->Asm("");
+    QString endLabel = "";
+    if (node->m_type==0) {
+    }
+    else {
+        endLabel = as->NewLabel("endInterrupt");
+        as->PopLabel("endInterrupt");
+        as->Asm(" 	CNOP 0,4");
+        as->Asm("movem.l d0-a6,-(sp)");
+        as->Asm("btst #5,$dff01e ;Check if it's the VB!");
+        as->Asm("; Save all Dx and Ax regs");
+        as->Asm("; Interrupt requested at level 3.");
+        as->Asm("beq.w "+endLabel);
+        as->Asm("move.w #$0020,$dff09c ; Acknowledge VB interrupt");
+        as->Asm("move.w #$0020,$dff09c ; Twice for compatibility");
+    }
+  //as->Label("afterProc_" + m_procName);
 
 
     if (!isInitFunction) {
@@ -422,7 +440,14 @@ void ASTDispather68000::dispatch(NodeProcedureDecl *node)
         if (node->m_type==0) {
             as->Asm("rts");
         }
-        else as->Asm("rti");
+        else {
+            //as->Asm("rti");
+            qDebug() << "NodeProcedureDecl::dispatch " <<endLabel;
+            if (endLabel!="")
+                as->Label(endLabel);
+            as->Asm("movem.l (sp)+,d0-a6");
+            as->Asm("rte");
+        }
       //as->Label("afterProc_" + m_procName);
     }
 

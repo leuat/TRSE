@@ -16,6 +16,13 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->PopLabel("waitforblitter");
     }
 
+    if (Command("vbirq")) {
+        NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_node->m_params[0]);
+        QString name = addr->m_procedure->m_procName;
+
+        as->Asm("move.l #"+name+",$6c.w");
+    }
+
     if (Command("initcustomcopperlist"))
         as->Asm("lea copper_custom,a5");
 

@@ -14,7 +14,7 @@ begin
 		
 		p1:=$1400;
 		
-		while (j>15) then begin inczp(p1,15*16); j:=j-15; end;
+		while (j>=15) then begin inczp(p1,15*16); j:=j-15; end;
 		j:=j*16;
 		inczp(p1, j);
 
@@ -23,7 +23,7 @@ begin
 		if (j<>$20) then begin
 			j:=j-64;
 			zp:=@fontAddress;
-			while (j>32) then begin inczp(zp,32*8); j:=j-32; end;
+			while (j>=32) then begin inczp(zp,32*8); j:=j-32; end;
 			j:=j*8;
 			inczp(zp, j);
 			
@@ -125,7 +125,7 @@ end;
 Procedure RenderImage();
 begin
 
-	if (vscroll>vscrollTarget) then vscroll:=sine[time]+vscrollTarget-2;
+	if (vscroll>=vscrollTarget) then vscroll:=sine[time]+vscrollTarget-2;
 
 
 	RenderImageText();

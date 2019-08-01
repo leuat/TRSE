@@ -33,7 +33,7 @@ begin
 	if tp[0]=0 then return();
 	j:=tp[0];
 	if (j<>$20) then begin
-	if j>64 then j:=j-64;
+	if j>=64 then j:=j-64;
 
 	zp:=$1400 + j*8;
 
@@ -111,13 +111,13 @@ begin
 	for j:=0 to 20 do begin
 		for i:=0 to 8 do begin
 			k:=screenmemory[i];
-			if (k>m) then begin
+			if (k>=m) then begin
 				l:=tt-j;
 				//l:=l;
 				k:=peek(^@sine2,l)+2;
-				if (k>j) then k:=j;
+				if (k>=j) then k:=j;
 				l:=22-j;
-				if (k>l) then k:=l;
+				if (k>=l) then k:=l;
 				screenmemory[i]:=k+$af;
 			end;
 			
@@ -174,7 +174,7 @@ begin
 
 	end;
 //*/	
-	if tt>1 then begin
+	if tt>=1 then begin
 		moveto(dx,1,$10);
 		UpdateScreen2();
 	//	moveto(14,0,$10);

@@ -225,12 +225,12 @@ begin
 	p1:=@FontTabPos;
 	for i:=0 to 128 do begin	
 		k:=i;
-		if (k>64) then
+		if (k>=64) then
 			k:=k-64;
 
 		zp:=$2000;
 
-		if k>31 then begin
+		if k>=31 then begin
 			k:=k-31;
 			inczp(zp, 31*8);
 		end;
@@ -270,7 +270,7 @@ begin
 //	if (time&7=3) then 
 //		dec(sx);
 
-	if (time2>253) then begin
+	if (time2>=253) then begin
 		while (tp2[0]<>255) do
 			inczp(tp2,1);
 		inczp(tp2,1);
@@ -378,18 +378,18 @@ begin
 		for j:=0 to @starsPerLine do begin
 
 			star_dx[k]:=star_dx[k]-star_ddx[k];
-			if (star_dx[k]>127) then begin
+			if (star_dx[k]>=127) then begin
 				star_dx[k]:=star_dx[x]+8;
 
 				m:=star_x[k];
 				l:=screenmemory[m];
 		
-				if (l>@starPos and l<@starPosEnd) then
+				if (l>=@starPos and l<@starPosEnd) then
 					screenmemory[m]:=$20;
 		
 				dec(star_x[k]);
 		
-				if (star_x[k]>128) then 	
+				if (star_x[k]>=128) then 	
 				begin	
 					star_x[k]:=39;
 					star_ddx[k]:=time&3+1;
@@ -398,7 +398,7 @@ begin
 			
 			m:=star_x[k];
 			l:=screenmemory[m];
-			if (l>@starPos) then if (l<@starPosEnd) then
+			if (l>=@starPos) then if (l<@starPosEnd) then
 				l:=$20;
 
 //			if (l=$20 or (l>@starPos and l<@starPosEnd)) then begin

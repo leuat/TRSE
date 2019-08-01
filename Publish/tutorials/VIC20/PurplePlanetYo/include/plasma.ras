@@ -66,9 +66,9 @@ begin
 		
 		for y:=0 to 8 do begin
 			for x:=0 to 8 do begin
-				if (peek(^@perlin,val)>j) then togglebit(zp[y],x,1);
+				if (peek(^@perlin,val)>=j) then togglebit(zp[y],x,1);
 				inc(val);
-				if (peek(^@perlin,val)>j) then togglebit(p1[y],x,0);
+				if (peek(^@perlin,val)>=j) then togglebit(p1[y],x,0);
 				inc(val);
 			end;
 		end;
@@ -155,7 +155,7 @@ begin
 	for y:=@y_start to 22 do begin
 		val:=peek(^@siny,y);
 		for x:=0 to g1 do begin
-			if (screenmemory[x]>63) then begin 
+			if (screenmemory[x]>=63) then begin 
 				k:=zp[x]+tt;
 				k:=k+(peek(^@sinx,x) +val);
 				k:=k/4;

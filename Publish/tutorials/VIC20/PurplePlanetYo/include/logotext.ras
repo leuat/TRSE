@@ -181,7 +181,7 @@ begin
 	SCREEN_BG_COLOR:=CYAN*16+CYAN+8;
 	noBalls := 22;
 	if (transition=0) then begin
-		if (vscroll>vscrollTarget) then
+		if (vscroll>=vscrollTarget) then
 			vscroll:=vscroll-4;
 
 	end
