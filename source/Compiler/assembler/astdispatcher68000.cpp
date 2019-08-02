@@ -318,10 +318,26 @@ void ASTDispather68000::dispatch(NodeBlock *node)
 
     if (!blockLabel && hasLabel) {
         as->Label(label);
+
     }
 
     if (node->forceLabel!="")
         as->Label(node->forceLabel);
+
+    // (Amiga) interrupt.
+    if (node->m_forceInterupt!="") {
+        as->Asm(" 	CNOP 0,4");
+        as->Asm("movem.l d0-d7/a0-a6,-(sp)");
+        as->Asm("btst #5,$dff01f ;Check if it's the VB!");
+        as->Asm("; Save all Dx and Ax regs");
+        as->Asm("; Interrupt requested at level 3.");
+        as->Asm("beq.w "+node->m_forceInterupt);
+        as->Asm("move.w #$0020,$dff09c ; Acknowledge VB interrupt");
+        as->Asm("move.w #$0020,$dff09c ; Twice for compatibility");
+
+    }
+
+
 
     if (node->m_compoundStatement!=nullptr)
         node->m_compoundStatement->Accept(this);
@@ -409,14 +425,12 @@ void ASTDispather68000::dispatch(NodeProcedureDecl *node)
     else {
         endLabel = as->NewLabel("endInterrupt");
         as->PopLabel("endInterrupt");
-        as->Asm(" 	CNOP 0,4");
-        as->Asm("movem.l d0-a6,-(sp)");
-        as->Asm("btst #5,$dff01e ;Check if it's the VB!");
-        as->Asm("; Save all Dx and Ax regs");
-        as->Asm("; Interrupt requested at level 3.");
-        as->Asm("beq.w "+endLabel);
-        as->Asm("move.w #$0020,$dff09c ; Acknowledge VB interrupt");
-        as->Asm("move.w #$0020,$dff09c ; Twice for compatibility");
+        if (node!=nullptr && node->m_block!=nullptr) {
+            NodeBlock* nb = dynamic_cast<NodeBlock*>(node->m_block);
+            if (nb!=nullptr) {
+                nb->m_forceInterupt = endLabel;
+            }
+        }
     }
   //as->Label("afterProc_" + m_procName);
 
@@ -445,7 +459,7 @@ void ASTDispather68000::dispatch(NodeProcedureDecl *node)
             qDebug() << "NodeProcedureDecl::dispatch " <<endLabel;
             if (endLabel!="")
                 as->Label(endLabel);
-            as->Asm("movem.l (sp)+,d0-a6");
+            as->Asm("movem.l (sp)+,d0-d7/a0-a6 ");
             as->Asm("rte");
         }
       //as->Label("afterProc_" + m_procName);

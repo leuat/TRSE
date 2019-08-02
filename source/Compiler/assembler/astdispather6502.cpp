@@ -1257,7 +1257,7 @@ void ASTDispather6502::dispatch(NodeBinaryClause *node)
         if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type == TokenType::GREATER ||
                 node->m_op.m_type==TokenType::EQUALS || node->m_op.m_type == TokenType::NOTEQUALS
                 || node->m_op.m_type==TokenType::LESSEQUAL || node->m_op.m_type == TokenType::GREATEREQUAL ) {
-            if (node->m_left->getType(as)==TokenType::INTEGER) {
+            if (node->m_left->getType(as)==TokenType::INTEGER || node->m_left->getType(as)==TokenType::POINTER) {
                 BinaryClauseInteger(node);
             }
             else
