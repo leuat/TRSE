@@ -4643,7 +4643,7 @@ void Methods6502::GetBit(Assembler *as)
         as->Asm("beq " + lbl);
         as->Asm("lda #1");
         as->Label(lbl);
-        as->Asm("eor #1");
+//        as->Asm("eor #1");
         as->PopLabel("getbit_false");
         return;
     }
