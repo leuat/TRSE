@@ -109,6 +109,9 @@ public:
     virtual TokenType::Type getType(Assembler* as) {
         return m_op.m_type;
     }
+    virtual TokenType::Type getArrayType(Assembler* as) {
+        return m_op.m_type;
+    }
     virtual bool isArrayIndex() { return false; }
     virtual void Accept(AbstractASTDispatcher* dispatcher) = 0;
     virtual QString getLiteral(Assembler* as) {return "";}

@@ -547,9 +547,9 @@ void ASTDispather6502::dispatch(NodeNumber *node)
         int hiBit = ((int)node->m_val)>>8;
         int loBit = ((int)node->m_val)&0xff;
         as->ClearTerm();
-        as->Asm("ldy #" + QString::number(hiBit) );
+        as->Asm("ldy #" + Util::numToHex(hiBit) );
         //            as->Asm("tax");
-        as->Asm("lda #" + QString::number(loBit) );
+        as->Asm("lda #" + Util::numToHex(loBit) );
         return;
 
         //qDebug() << m_op.m_value <<":" << m_val << " : " << hiBit << "  , " << loBit;
@@ -1777,8 +1777,10 @@ bool ASTDispather6502::LoadXYVarOrNum(NodeVar *node, Node *other, bool isx) {
         return true;
     }
     if (num!=nullptr) {
-        if (s->m_arrayType==TokenType::INTEGER)
+//        qDebug() << "LoadXYVarorNum HERE ";
+        if (s->m_arrayType==TokenType::INTEGER) {
             as->Asm(operand + "#" + QString::number(num->numValue() * 2) + " ; watch for bug, Integer array has max index of 128");
+        }
         else
             as->Asm(operand  + num->StringValue());
         return true;
@@ -1899,8 +1901,19 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
     // Is array
     if (node->m_expr != nullptr) {
         NodeNumber* number = dynamic_cast<NodeNumber*>(node->m_expr);
-        if (number!=nullptr && node->getType(as)!=TokenType::POINTER) { // IS NUMBER optimize}
-            as->Asm("sta " + node->value + "+"+ QString::number(number->m_val));
+        if (number!=nullptr && node->getType(as)!=TokenType::POINTER)
+        { // IS NUMBER optimize}
+            if (node->getArrayType(as)==TokenType::INTEGER) {
+                // Store integer array
+                int i = number->m_val*2;
+                as->Asm("sta " + node->value + "+"+ QString::number(i));
+                as->Asm("sty "  + node->value +"+"+ QString::number(i+1));
+
+            }
+            else {
+                as->Asm("sta " + node->value + "+"+ QString::number(number->m_val));
+            }
+            //                as->Asm("tya");
             return;
         }
         else {
@@ -1926,13 +1939,10 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
                 node->m_expr->Accept(this);
                 as->Term();
                 as->Asm("sta " +pa + node->value+ pb + "," + secondReg);
-//                qDebug()<< node->
-                if (node->isWord(as)) {
-   //                 if (node->getType(as)==TokenType::POINTER)
-   //                     ErrorHandler::e.Error("Cannot use pointers with integers (yet)", node->m_op.m_lineNumber);
-
+                if (node->getArrayType(as)==TokenType::INTEGER) {
                     as->Asm("in"+secondReg);
-                    as->Asm("sty "  + node->value + "," + secondReg);
+                    as->Asm("tya");
+                    as->Asm("sta "  + node->value + "," + secondReg);
                 }
                 return;
             }
