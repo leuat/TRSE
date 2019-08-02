@@ -272,6 +272,19 @@ int Parser::GetParsedInt()
     return val;
 }
 
+int Parser::getIntVal(Token t)
+{
+    int val = t.m_intVal;
+    if (t.m_value!="") {
+        //qDebug() << "parser::getintval " <<t.m_value;
+        Symbol* s = m_symTab->Lookup(t.m_value,t.m_lineNumber);
+        if (s!=nullptr)
+            return s->m_value->m_fVal;
+    }
+
+    return val;
+}
+
 int Parser::findPage()
 {
     int forcePage = 0;
@@ -509,22 +522,6 @@ Node *Parser::Statement()
             node = AssignStatement();
 
     }
-/*    else if (m_currentToken.m_type==TokenType::WRITELN) {
-        Eat(TokenType::WRITELN);
-        Eat(TokenType::LPAREN);
-        NodeString* text = (NodeString*)String();
-        Eat(TokenType::STRING);
-        Node* block = nullptr;
-
-        if (m_currentToken.m_type==TokenType::COMMA) {
-            Eat(TokenType::COMMA);
-            block = Expr();
-        }
-
-        Eat(TokenType::RPAREN);
-        //Eat(TokenType::SEMI);
-        node = ExecuteInternalFunction(TokenType::WRITELN, text, block);
-    }*/
     else if (m_currentToken.m_type == TokenType::IF) {
         Eat(TokenType::IF);
         node = Conditional();
@@ -550,7 +547,7 @@ Node *Parser::Statement()
     }
 
     if (node==nullptr)
-        ErrorHandler::e.Error("CAAARGH  ",0);
+        ErrorHandler::e.Error("Node is nullpointer. Should not happen. Contact leuat@irio.co.uk and slap him.",0);
 
 
     return node;
@@ -933,7 +930,7 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
 
     m_lexer->m_text = m_lexer->m_orgText;
     m_pass = 0;
-    RemoveComments();
+//    RemoveComments();
     Preprocess();
 //    PreprocessConstants();
     m_pass = 1;
@@ -1340,7 +1337,8 @@ Node *Parser::TypeSpec()
             Eat();
             Eat(TokenType::LPAREN);
             while (m_currentToken.m_type!=TokenType::RPAREN) {
-                data << QString::number(m_currentToken.m_intVal);
+
+                data << Util::numToHex(getIntVal(m_currentToken));//QString::number(m_currentToken.m_intVal);
                 Eat();
                 if (m_currentToken.m_type==TokenType::COMMA)
                     Eat();

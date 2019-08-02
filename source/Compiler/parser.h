@@ -96,6 +96,8 @@ public:
 
     int GetParsedInt();
 
+    int getIntVal(Token t);
+
     int findPage();
 
     Node* Parse(bool removeUnusedDecls, QString param, QString globalDefines);
