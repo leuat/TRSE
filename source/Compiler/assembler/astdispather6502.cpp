@@ -1909,7 +1909,6 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
             NodeVar* var = dynamic_cast<NodeVar*>(node->m_expr);
             NodeNumber* num = dynamic_cast<NodeNumber*>(node->m_expr);
 
-            //                qDebug() << "Var name: " << value;
             QString secondReg="x";
             QString pa = "";
             QString pb= "";
@@ -1921,12 +1920,20 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
 
             // Optimize for number or pure var
             if (node->m_expr->getType(as)==TokenType::INTEGER_CONST || var!=nullptr) {
+                //qDebug() << "StoreVariable:: HER";
                 as->ClearTerm();
                 as->Term("ld"+secondReg +" ");
                 node->m_expr->Accept(this);
                 as->Term();
                 as->Asm("sta " +pa + node->value+ pb + "," + secondReg);
+//                qDebug()<< node->
+                if (node->isWord(as)) {
+   //                 if (node->getType(as)==TokenType::POINTER)
+   //                     ErrorHandler::e.Error("Cannot use pointers with integers (yet)", node->m_op.m_lineNumber);
 
+                    as->Asm("in"+secondReg);
+                    as->Asm("sty "  + node->value + "," + secondReg);
+                }
                 return;
             }
             // Just regular var optimize
@@ -2286,6 +2293,7 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
     }
     if (node->m_right==nullptr)
         ErrorHandler::e.Error("Node assign: right hand must be expression", node->m_op.m_lineNumber);
+
     if (node->m_left->getType(as)==TokenType::INTEGER) {
         as->Asm("ldy #0");    // AH:20190722: Does not appear to serve a purpose - takes up space in prg. Breaks TRSE scroll in 4K C64 demo if take this out
         node->m_right->m_forceType = TokenType::INTEGER; // FORCE integer on right-hand side
