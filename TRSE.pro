@@ -377,6 +377,8 @@ RESOURCES += \
 #LELIB INCLUDES
 
 DISTFILES += \
+    resources/code/amiga/init_p61_player.s \
+    resources/code/amiga/p61-play.i \
     resources/text/about.txt \
     resources/text/Documentation.txt \
     resources/text/builtinmethods.txt \

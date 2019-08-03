@@ -326,7 +326,7 @@ void ASTDispather68000::dispatch(NodeBlock *node)
 
     // (Amiga) interrupt.
     if (node->m_forceInterupt!="") {
-        as->Asm(" 	CNOP 0,4");
+//        as->Asm(" 	CNOP 0,4");
         as->Asm("movem.l d0-d7/a0-a6,-(sp)");
         as->Asm("btst #5,$dff01f ;Check if it's the VB!");
         as->Asm("; Save all Dx and Ax regs");
@@ -456,7 +456,6 @@ void ASTDispather68000::dispatch(NodeProcedureDecl *node)
         }
         else {
             //as->Asm("rti");
-            qDebug() << "NodeProcedureDecl::dispatch " <<endLabel;
             if (endLabel!="")
                 as->Label(endLabel);
             as->Asm("movem.l (sp)+,d0-d7/a0-a6 ");

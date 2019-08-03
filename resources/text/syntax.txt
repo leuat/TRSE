@@ -41,9 +41,13 @@ m; InitLine; Amiga;
 m; InitMatmulVec; Amiga;
 m; InitMatmulVecNormalZ; Amiga;
 m; InitProjectToScreen; Amiga;
+m; InitP61PlayerInternal; Amiga;
+
 
 # ** CALL METHODS
 
+m; InitP61Module; Amiga;a
+m; PlayP61Module; Amiga;
 m; Poke8; Amiga ; a,i,b
 m; Poke16; Amiga ; a,i,i
 m; Poke32; Amiga ; a,i,l
@@ -54,6 +58,8 @@ m; memcpy; Amiga; a, l,a,l, l
 m; setpalette; Amiga; a, a, l
 m; ablit; Amiga; a,a,i, i,i,i,i,l,i,i,i
 m; fblit; Amiga; a,a,i, i,i,i,i,l,i,i,i
+
+m; EnableInterrupt; Amiga;i
 
 m; InitCustomCopperList; Amiga;
 m; EndCustomCopperList; Amiga;
@@ -433,8 +439,12 @@ c; COPPER_WAIT_FOR_RASTER; AMIGA; i; $FFFE
 c; COPPER_PALETTE_START; AMIGA;i; $0180
 c; COPPER_MODULO_EVEN; AMIGA;i; $0108
 c; COPPER_MODULO_ODD; AMIGA;i; $010A
+c; COPPER_IRQ; AMIGA; i; %00010000
+c; VB_IRQ; AMIGA; i; %00100000
+c; BLITTER_IRQ; AMIGA; i; %01000000
 
-# C128 støff
+
+# C128 ktøff
 
 c; VIC_DATA_LOC; C128;a;$0A2C
 c; MMU ; C128 ; a ; $FF00

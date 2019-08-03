@@ -42,6 +42,7 @@ public:
     void MatMulVec(Assembler* as);
     void MatMulVecNormalZ(Assembler* as, bool isZonly);
     void ProjectToScreen(Assembler* as);
+    void EnableInterrupt(Assembler* as);
 };
 
 #endif // METHODS68000_H

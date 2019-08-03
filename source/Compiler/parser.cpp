@@ -93,6 +93,14 @@ void Parser::InitBuiltinFunctions()
 /*    if (Syntax::s.m_currentSystem == Syntax::NES)
         InitBuiltinFunction(QStringList()<< "*", "init8x8mulNes");
     else*/
+    //m; InitP61Player; Amiga;
+    //m; PlayP61Mod; Amiga; a
+
+   if (Syntax::s.m_currentSystem == AbstractSystem::AMIGA) {
+
+       InitBuiltinFunction(QStringList()<< "playp61module"<<"initp61module" , "initp61playerinternal");
+    }
+
     if (Syntax::s.m_currentSystem == AbstractSystem::C64 ||
             Syntax::s.m_currentSystem == AbstractSystem::C128 ||
             Syntax::s.m_currentSystem == AbstractSystem::NES ||
