@@ -37,7 +37,7 @@ bool NodeBinaryClause::cannotBeSimplified(Assembler *as) {
     // can NOT be simplified
     return ((m_op.m_type==TokenType::AND || m_op.m_type == TokenType::OR)
             || m_left->getType(as)==TokenType::INTEGER || m_right->getType(as)==TokenType::INTEGER
-            || m_left->getType(as)==TokenType::POINTER || m_right->getType(as)==TokenType::POINTER
+            //|| m_left->getType(as)==TokenType::POINTER || m_right->getType(as)==TokenType::POINTER
 
             );
 }
