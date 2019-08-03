@@ -51,19 +51,17 @@ void ImageEdit::Undo()
 {
     if (m_undo.count()<1)
         return;
-    m_image->CopyFrom(m_undo[m_undo.count()-1]);
-    delete m_undo[m_undo.count()-1];
-    m_undo.remove(m_undo.count()-1);
+    m_image->CopyFrom(m_undo.last());
+    m_undo.removeLast();
     Data::data.redrawOutput = true;
 }
 
 void ImageEdit::AddUndo()
 {
     m_undo.append(LImageFactory::Create(m_imageType->type, m_imageType->colorType));
-    m_undo[m_undo.count()-1]->CopyFrom(m_image);
+    m_undo.last()->CopyFrom(m_image);
     if (m_undo.count()>m_undoMax) {
-        delete m_undo[0];
-        m_undo.remove(0);
+        m_undo.removeFirst();
     }
 
 }
