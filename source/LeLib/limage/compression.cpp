@@ -61,7 +61,7 @@ void Compression::AddBitplaneToData(QByteArray &data, MultiColorImage &img, int 
     for (int y=0;y<h;y+=1)
         for (int bp=0; bp<bpl;bp++) {
             int curBit = pow(2,bp);
-            curBit=curBit;
+//            curBit=curBit;
 
 
         for (int x=0;x<w;x++) {
@@ -190,7 +190,7 @@ int Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int lengt
     return l;
 }
 
-void Compression::OptimizeAndPackCharsetData(QByteArray &dataIn, QByteArray &out, QByteArray &table, int width, int compression)
+void Compression::OptimizeAndPackCharsetData(QByteArray &dataIn, QByteArray &out, QByteArray &table, int width, int compression, bool invertTable)
 {
     out.clear();
     table.clear();
@@ -230,8 +230,15 @@ cnt SHOULD be  576*/
         char lo = currentPointer&0xff;
         char hi = (currentPointer>>8)&0xff;
 //        qDebug() << QString::number(lo) << QString::number(hi);
+        if (invertTable) {
+
+            table.append(hi);
+            table.append(lo);
+        }
+        else {
         table.append(lo);
         table.append(hi);
+        }
 
     }
 

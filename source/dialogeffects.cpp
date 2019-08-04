@@ -700,9 +700,9 @@ static int CompressAndSaveHorizontalData(lua_State* L) {
     table.clear();
 //    qDebug() <<m_count*16 << " but is " <<m_screenData.count()/ww;
     if (m_screenData.count()!=0)
-    m_compression.OptimizeAndPackCharsetData(m_screenData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2));
+    m_compression.OptimizeAndPackCharsetData(m_screenData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
     else
-        m_compression.OptimizeAndPackCharsetData(m_charData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2));
+        m_compression.OptimizeAndPackCharsetData(m_charData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
   //  qDebug() << "Table should be : " << (m_noChars-1)*1024;
     //qDebug() << "Table is : " << table.count();
 

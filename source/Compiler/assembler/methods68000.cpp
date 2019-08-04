@@ -42,12 +42,16 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->Asm("sub.l a1,a1");
         as->Asm("sub.l a2,a2");
         as->Asm("moveq #0,d0");
+        as->Asm("lea $DFF000,a6");
+
         as->Asm("jsr P61_Init");
         as->Asm("movem.l (sp)+,d0-a6");
 
     }
     if (Command("PlayP61Module")) {
         as->Asm("movem.l d0-a6,-(sp)");
+        as->Asm("lea $DFF000,a6");
+
         as->Asm("jsr P61_Music");
         as->Asm("movem.l (sp)+,d0-a6");
 

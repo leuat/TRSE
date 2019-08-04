@@ -459,6 +459,7 @@ void ASTDispather68000::dispatch(NodeProcedureDecl *node)
             if (endLabel!="")
                 as->Label(endLabel);
             as->Asm("movem.l (sp)+,d0-d7/a0-a6 ");
+//            as->Asm("movem d0-a6,-(sp)");
             as->Asm("rte");
         }
       //as->Label("afterProc_" + m_procName);

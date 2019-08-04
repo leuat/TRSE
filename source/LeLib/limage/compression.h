@@ -28,7 +28,7 @@ public:
 
     int Compare(QByteArray& a, QByteArray& b, int p1, int p2, int length);
 
-    void OptimizeAndPackCharsetData(QByteArray& dataIn, QByteArray& out, QByteArray& table, int width, int compression);
+    void OptimizeAndPackCharsetData(QByteArray& dataIn, QByteArray& out, QByteArray& table, int width, int compression, bool invertTable);
 
     void ConvertToC64(bool dither);
 
