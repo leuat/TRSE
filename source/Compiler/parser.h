@@ -88,6 +88,7 @@ public:
     void VerifyToken(Token t);
 
     void HandlePreprocessorInParsing();
+    void StripWhiteSpaceBeforeParenthesis();
     void RemoveComments();
     void Preprocess();
     void PreprocessReplace();
