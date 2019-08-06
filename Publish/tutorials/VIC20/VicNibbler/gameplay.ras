@@ -1,0 +1,558 @@
+
+// forward references
+procedure MoveNibblerHeadUp();
+procedure MoveNibblerHeadRight();
+procedure MoveNibblerHeadDown();
+procedure MoveNibblerHeadLeft();
+
+procedure MoveNibblerHead();
+begin
+	// move head
+	if head[0] = @HEADUP then 
+	begin
+		MoveNibblerHeadUp();
+		return();
+	end;
+
+	if head[0] = @HEADRIGHT then // right
+	begin
+		MoveNibblerHeadRight();
+		return();
+	end;
+
+	if head[0] = @HEADDOWN then
+	begin
+		MoveNibblerHeadDown();
+		return();
+	end;
+
+	MoveNibblerHeadLeft();
+
+end;
+
+// move Nibblers tail
+procedure MoveNibblerTail();
+begin
+
+	// move tail only if tailWait counter is ZERO
+	if tailWait <> 0 then
+	begin
+		tailWait := tailWait - 1;
+		return();
+	end;
+	
+	if tail[0] = @TAILUP then // up
+	begin
+		tail[0] := 0;
+		tail := tail - @SCREEN_WIDTH;
+		tailc := tailc - @SCREEN_WIDTH;
+		tailc[0] := YELLOW;
+		// test if change dir
+		if tail[0] = @BODYBL then // LEFT
+		begin
+			tail[0] := @TAILLEFT;
+			return();
+		end;
+		if tail[0] = @BODYBR then // RIGHT
+		begin
+			tail[0] := @TAILRIGHT;
+			return();
+		end;
+		tail[0] := @TAILUP;		
+		return();
+	end;
+	
+	if tail[0] = @TAILRIGHT then // right
+	begin
+		tail[0] := 0;
+		tail := tail + 1;
+		tailc := tailc + 1;
+		tailc[0] := YELLOW;
+		// test if change dir
+		if tail[0] = @BODYTL then // up
+		begin
+			tail[0] := @TAILUP;
+			return();
+		end;
+		if tail[0] = @BODYBL then // down
+		begin
+			tail[0] := @TAILDOWN;
+			return();
+		end;
+		tail[0] := @TAILRIGHT;
+		return();
+	end;
+	
+	if tail[0] = @TAILDOWN then // down
+	begin
+		tail[0] := 0;
+		tail := tail + @SCREEN_WIDTH;
+		tailc := tailc + @SCREEN_WIDTH;
+		tailc[0] := YELLOW;
+		// test if change dir
+		if tail[0] = @BODYTL then // LEFT
+		begin
+			tail[0] := @TAILLEFT;
+			return();
+		end;
+		if tail[0] = @BODYTR then // RIGHT
+		begin
+			tail[0] := @TAILRIGHT;
+			return();
+		end;
+		tail[0] := @TAILDOWN;	
+		return();
+	end;
+	
+	// Left (is the only choice left)
+	tail[0] := 0;
+	tail := tail - 1;
+	tailc := tailc - 1;
+	tailc[0] := YELLOW;
+	// test if change dir
+	if tail[0] = @BODYTR then // up
+	begin
+		tail[0] := @TAILUP;
+		return();
+	end;
+	if tail[0] = @BODYBR then // down
+	begin
+		tail[0] := @TAILDOWN;
+		return();
+	end;
+	tail[0] := @TAILLEFT;
+
+end;
+
+// tests head[0] for FOOD
+procedure EatFood();
+begin
+	if head[0] = @FOOD then begin
+		snd2Freq := @SOUND_COLLECTSTART;
+		tailWait := tailWait + tailGrow;
+		tailGrow := tailGrow + 1; // next time eating food the tail will be longer
+		if tailGrow = @TAILGROWMAX then tailGrow := 1;
+		if numFood < 8 then tailWait := tailWait + 2; // last 7 food grow longer
+
+		stopTime := stopTime + 1;
+		if stopTime >= @STOPTIMEMAX then stopTime := @STOPTIMEMAX;
+		score := score + 1;
+		numFood := numFood - 1;
+		// speed up at the end
+		//if numFood < 3 then 
+		//	if moveTimeReset >4 then moveTimeReset := moveTimeReset - 1;
+		DrawUIScore();
+	end;
+end;
+// Stop Time - hit a wall
+procedure DecStopTime();
+begin
+	if stopTime <>0 then dec(stopTime);	// time allowed to rest
+end;
+
+// test for user input to control Nibbler
+procedure NibblerControl();
+begin
+
+	ReadJoystick();
+	if (^@KEYB = 48) then JoyResult := JoyResult | @JOY_UP;
+	if (^@KEYB = 17) then JoyResult := JoyResult | @JOY_DOWN;
+	if (^@KEYB = 52) then JoyResult := JoyResult | @JOY_LEFT;
+	if (^@KEYB = 13) then JoyResult := JoyResult | @JOY_RIGHT;
+
+	// clear flag JUSTMOVED
+	justMoved := 0;
+
+	if (JoyResult & @JOY_UP = @JOY_UP) then begin 
+		if head[0] <> @HEADUP then // if travelling up or down, this key is invalid
+		if head[0] <> @HEADDOWN then // arcade peanalises you for this!
+		begin
+			p1 := head - @SCREEN_WIDTH;
+			if p1[0] >= 2 then return(); // it is not clear
+			
+			if head[0] = @HEADRIGHT then head[0] := @BODYTL;
+			if head[0] = @HEADLEFT then head[0] := @BODYTR;
+			
+			hissDuration:=@SOUND_HISSDURATION;
+			snd1Freq := 0;
+			
+			head := p1;
+			EatFood();
+			head[0] := @HEADUP;
+			headc := headc - @SCREEN_WIDTH;
+			headc[0] := GREEN;
+			//MoveNibblerTail();
+			justMoved := 1;
+		end;
+		return();
+	end;
+	
+
+	if (JoyResult & @JOY_DOWN = @JOY_DOWN) then begin 
+		if head[0] <> @HEADDOWN then // if travelling up or down, this key is invalid
+		if head[0] <> @HEADUP then // arcade peanalises you for this!
+		begin
+			p1 := head + @SCREEN_WIDTH;
+			if p1[0] >= 2 then return(); // it is not clear
+			
+			if head[0] = @HEADRIGHT then head[0] := @BODYBL;
+			if head[0] = @HEADLEFT then head[0] := @BODYBR;
+			
+			hissDuration:=@SOUND_HISSDURATION;
+			snd1Freq := 0;
+			
+			head := p1;
+			EatFood();
+			head[0] := @HEADDOWN;
+			headc := headc + @SCREEN_WIDTH;
+			headc[0] := GREEN;
+			//MoveNibblerTail();
+			justMoved := 1;
+		end;
+		return();
+	end;
+	
+
+	if (JoyResult & @JOY_LEFT = @JOY_LEFT) then begin 
+		if head[0] <> @HEADLEFT then // if travelling left or right, this key is invalid
+		if head[0] <> @HEADRIGHT then // arcade peanalises you for this!
+		begin
+			p1 := head - 1;
+			if p1[0] >= 2 then return(); // it is not clear
+			
+			if head[0] = @HEADDOWN then head[0] := @BODYTL;
+			if head[0] = @HEADUP then head[0] := @BODYBL;
+			
+			hissDuration:=@SOUND_HISSDURATION;
+			snd1Freq := 0;
+			
+			head := p1;
+			EatFood();
+			head[0] := @HEADLEFT;
+			headc := headc - 1;
+			headc[0] := GREEN;
+			//MoveNibblerTail();
+			justMoved := 1;
+		end;
+		return();
+	end;
+	
+
+	if (JoyResult & @JOY_RIGHT = @JOY_RIGHT) then begin 
+		if head[0] <> @HEADRIGHT then // if travelling left or right, this key is invalid
+		if head[0] <> @HEADLEFT then // arcade peanalises you for this!
+		begin
+			p1 := head + 1;
+			if p1[0] >= 2 then return(); // it is not clear
+			
+			if head[0] = @HEADDOWN then head[0] := @BODYTR;
+			if head[0] = @HEADUP then head[0] := @BODYBR;
+			
+			hissDuration:=@SOUND_HISSDURATION;
+			snd1Freq := 0;
+			
+			head := p1;
+			EatFood();
+			head[0] := @HEADRIGHT;
+			headc := headc + 1;
+			headc[0] := GREEN;
+			//MoveNibblerTail();
+			justMoved := 1;
+		end;
+		return();
+	end;
+	
+end;
+
+
+
+// -------------------------------------------------------------------
+
+procedure MoveNibblerHeadUp();
+begin
+	p1 := head - @SCREEN_WIDTH;
+	 
+	if p1[0] < 2 then // clear ahead 0=space, 1=food
+	begin
+		head[0] := @BODYUP;
+		head := p1;
+		EatFood();
+		head[0] := @HEADUP;
+		headc := headc - @SCREEN_WIDTH;
+		headc[0] := GREEN;
+		return();
+	end;
+	// reached something
+	p2 := head - 1;
+	if head[1] < 2 then // saves bytes having nested IF's instead of AND 
+	if p2[0] < 2 then   // at t-juction
+	begin
+		if snd1Freq =0 then snd1Freq := @SOUND_TJUNCSTART;
+		DecStopTime(); // time allowed to rest
+		inc(tailWait);
+		return();
+	end;
+	
+	DecStopTime(); // time allowed to rest
+	
+	if head[1] < 2 then // right is clear
+	begin
+		hissDuration:=@SOUND_HISSDURATION;
+
+		head[0] := @BODYBR; // bend up char
+		head := head + 1;
+		EatFood();
+		head[0] := @HEADRIGHT;
+		headc := headc + 1;
+		headc[0] := GREEN;
+		return();
+	end;
+	if (p2[0] < 2) then // left is clear
+	begin
+		hissDuration:=@SOUND_HISSDURATION;
+
+		head[0] := @BODYBL; // bend up char
+		head := p2;
+		EatFood();
+		head[0] := @HEADLEFT;
+		headc := headc - 1;
+		headc[0] := GREEN;
+		return();
+	end;
+	//inc(tailWait);
+	gameState := @GAMESTATE_LOOSELIFE;
+	headc[0] := RED;
+end;
+
+// -------------------------------------------------------------------
+
+procedure MoveNibblerHeadRight();
+begin
+
+	if head[1] < 2 then // clear ahead
+	begin
+		head[0] := @BODYRIGHT;
+		head := head + 1;
+		EatFood();
+		head[0] := @HEADRIGHT;
+		headc := headc + 1;
+		headc[0] := GREEN;
+		return();
+	end;
+	// ahead is not clear, change direction?
+
+	p1 := head - @SCREEN_WIDTH;
+	p2 := head + @SCREEN_WIDTH;
+	if p1[0] < 2 then // optimisation instead of AND 
+	if p2[0] < 2 then // at t-juction
+	begin
+		if snd1Freq =0 then snd1Freq := @SOUND_TJUNCSTART;
+		DecStopTime(); // time allowed to rest
+		inc(tailWait);
+		return();
+	end;
+	
+	DecStopTime(); // time allowed to rest
+
+	if p1[0] < 2 then // Only Up is clear
+	begin
+		hissDuration:=@SOUND_HISSDURATION;
+
+		head[0] := @BODYTL; // bend up char
+		head := p1;
+		EatFood();
+		head[0] := @HEADUP;
+		headc := headc - @SCREEN_WIDTH;
+		headc[0] := GREEN;
+		return();
+	end;
+	if p2[0] < 2 then // Only Down is clear
+	begin
+		hissDuration:=@SOUND_HISSDURATION;
+
+		head[0] := @BODYBL; // bend down char ooer
+		head := p2;
+		EatFood();
+		head[0] := @HEADDOWN;
+		headc := headc + @SCREEN_WIDTH;
+		headc[0] := GREEN;
+		return();
+	end;
+	//inc(tailWait);
+	gameState := @GAMESTATE_LOOSELIFE;
+	headc[0] := RED;
+end;
+
+// -------------------------------------------------------------------
+
+procedure MoveNibblerHeadDown();
+begin
+
+	if head[@SCREEN_WIDTH] < 2 then // clear ahead
+	begin
+		head[0] := @BODYDOWN;
+		head := head + @SCREEN_WIDTH;
+		EatFood();
+		head[0] := @HEADDOWN;
+		headc := headc + @SCREEN_WIDTH;
+		headc[0] := GREEN;
+		return();
+	end;
+	// reached something
+	p2 := head - 1;
+	if head[1] < 2 then // saves bytes having nested IF's instead of AND 
+	if p2[0] < 2 then// at t-juction
+	begin
+		if snd1Freq =0 then snd1Freq := @SOUND_TJUNCSTART;
+		DecStopTime(); // time allowed to rest
+		inc(tailWait);
+		return();
+	end;
+	
+	DecStopTime(); // time allowed to rest
+	
+	if head[1] < 2 then // right is clear
+	begin
+		hissDuration:=@SOUND_HISSDURATION;
+
+		head[0] := @BODYTR; // bend char
+		head := head + 1;
+		EatFood();
+		head[0] := @HEADRIGHT;
+		headc := headc + 1;
+		headc[0] := GREEN;
+		return();
+	end;
+	if p2[0] < 2 then // left is clear
+	begin
+		hissDuration:=@SOUND_HISSDURATION;
+
+		head[0] := @BODYTL; // bend char
+		head := p2;
+		EatFood();
+		head[0] := @HEADLEFT;
+		headc := headc - 1;
+		headc[0] := GREEN;
+		return();
+	end;
+	//inc(tailWait);
+	gameState := @GAMESTATE_LOOSELIFE;
+	headc[0] := RED;
+end;
+
+// -------------------------------------------------------------------
+
+procedure MoveNibblerHeadLeft();
+begin
+
+	p1 := head - 1;
+
+	if p1[0] < 2 then // clear ahead
+	begin
+		head[0] := @BODYLEFT;
+		head := p1;
+		EatFood();
+		head[0] := @HEADLEFT;
+		headc := headc - 1;
+		headc[0] := GREEN;
+		return();
+	end;
+	// ahead is not clear, change direction?
+
+	p1 := head - @SCREEN_WIDTH;
+	p2 := head + @SCREEN_WIDTH;
+	if p1[0] < 2 then // optimisation instead of AND 
+	if p2[0] < 2 then // at t-juction
+	begin
+		if snd1Freq =0 then snd1Freq := @SOUND_TJUNCSTART;
+		DecStopTime(); // time allowed to rest
+		inc(tailWait);
+		return();
+	end;
+	
+	DecStopTime(); // time allowed to rest
+	
+	if p1[0] < 2 then // Only Up is clear
+	begin
+		hissDuration:=@SOUND_HISSDURATION;
+
+		head[0] := @BODYTR; // bend up char
+		head := p1;
+		EatFood();
+		head[0] := @HEADUP;
+		headc := headc - @SCREEN_WIDTH;
+		headc[0] := GREEN;
+		return();
+	end;
+	if p2[0] < 2 then // Only Down is clear
+	begin
+		hissDuration:=@SOUND_HISSDURATION;
+
+		head[0] := @BODYBR; // bend down char ooer
+		head := p2;
+		EatFood();
+		head[0] := @HEADDOWN;
+		headc := headc + @SCREEN_WIDTH;
+		headc[0] := GREEN;
+		return();
+	end;
+	// not clear ahead - are we dead ?
+	//inc(tailWait);
+	gameState := @GAMESTATE_LOOSELIFE;
+	headc[0] := RED;
+end;
+
+// -------------------------------------------------------------------
+
+
+
+
+// Scroll the character data for Nibblers boddy
+procedure AnimateNibblerBody();
+begin
+
+	asm("
+	; scroll vertical body up
+	ldy $1c38+8
+	ldx #0
+Scroll1tA26758
+	lda $1c39+8,x
+	sta $1c38+8,x
+	inx
+	cpx #7
+	bne Scroll1tA26758
+	sty $1c3f+8
+	
+	; scroll vertical body down
+	ldy $1c47+8
+	ldx #7
+Scroll2tA26758
+	lda $1c40+7,x
+	sta $1c41+7,x
+	dex
+	cpx #0
+	bne Scroll2tA26758
+	sty $1c40+8
+
+	; scroll horizontal body right
+	ldx #0
+RightBitshiftA26758
+	lda $1c28+8,x
+	lsr
+	ror $1c28+8,x
+	inx
+	cpx #8
+	bne RightBitshiftA26758
+	
+	; scroll horizontal body left
+	ldx #0
+LeftBitshiftA16895
+	lda $1c30+8,x
+	asl
+	rol $1c30+8,x
+	inx
+	cpx #8
+	bne LeftBitshiftA16895
+	");
+
+end;

@@ -1,0 +1,297 @@
+/*
+	VIC NIBBLER for the 3K expanded Vic 20
+	By Andy H @ hewco.uk - visit hewco.uk for more games
+	
+	Project settings: Vic 20 + 3k RAM, start address $0400 
+*/
+program Nibbler;
+var
+	//@define DEBUG		1
+	
+	// I need to save some bytes, I don't use these
+	@ignoremethod "init16x8mul"
+	@ignoremethod "init16x8div"
+	@ignoremethod "init8x8div"
+	@ignoremethod "initeightbitmul"
+	@ignoremethod "initjoystick"
+	@ignoremethod "initmoveto"
+
+	@define CHAR_ADDR	$1c00		// character address
+	@define SCREEN_ADDR	$1e00		// Screen address
+	@define COLOR_ADDR	$9600		// Colour address
+	@define SCREEN_WIDTH 19			// Custom VIC 20 screen width
+	@define SCREEN_HEIGHT 25		// Custom VIC 20 screen height
+	@define WAITVBL_LINE 130 		// 130 works for NTSC 150 // 155 appears to be max on PAL
+	
+	@define KEYB 197				// Read current key pressed
+
+	// sound info
+	@define SOUND_HISSDURATION 2
+	@define SOUND_HISS 253
+	@define SOUND_TJUNCSTART 180
+	@define SOUND_TJUNCMIN 130
+	@define SOUND_COLLECTSTART 200
+	@define SOUND_COLLECTEND 240
+	@define SOUND_COLLECTINC 10
+
+	// characters used for Nibbler the snake
+	@define HEADUP		2
+	@define HEADRIGHT	3
+	@define HEADDOWN	4
+	@define HEADLEFT	5
+	@define BODYRIGHT	6
+	@define BODYLEFT	7
+	@define BODYUP		8
+	@define BODYDOWN	9
+	@define BODYBR		10
+	@define BODYBL		11
+	@define BODYTR		12
+	@define BODYTL		13
+	@define TAILUP		14
+	@define TAILRIGHT	15
+	@define TAILDOWN	16
+	@define TAILLEFT	17
+	@define FOOD		1
+	@define GRID		62
+	
+	@define TAILGROWMAX	4		// how many segments to grow max when eat food odd events -1
+	@define STOPTIMEMAX	10		// max time allows to rest/pause at junctions
+	@define TIMETICKMAX 60		// for counting a second
+	@define TIMETICKOUT 55		// Reset for Timer when out of STOPTIME
+	@define ANIMTIMEMAX 5  		// 5 animation timer
+	@define MOVESTARTVAL 11 	// slowest wave 1 starting speed
+	@define MOVEMINVAL  5		// fastest will move
+
+	scrm : array[24] of integer; // screen memory start addresses
+	clrm : array[24] of integer; // colour memory start addresses
+
+	t, i, r, s : byte; 			// temp variables, used in for loops or calculations
+	int : integer;
+	
+	p1, p2, p3 : pointer;  		// general pointers, often used to reference screenmemory
+
+	head, tail : pointer;  		// head and tail address on screen mem
+	headc, tailc : pointer;  	// head and tail address on colour mem
+	tailWait : byte = 0;		// how many head moves to wait before tail moves again (to allow growing snake)
+	tailGrow : byte = 1;		// how many segments tail grow next time (between 1 and @TAILGROWMAX)
+	animTime : byte = 0;		// how fast to animate the body parts
+	moveTime : byte = 0;		// how fast Nibbler moves, Counter
+	moveTimeReset : byte = @MOVESTARTVAL;	// how fast Nibbler moves, larger means slower
+	justMoved : byte = 0; 		// flag set if player has just pressed key to change direction
+
+	numFood : byte = 0; 		// number of food on level remaining
+
+	gameState : byte =0;		// 0=in progress, 1=hit tail	
+	@define GAMESTATE_GAME 0
+	@define GAMESTATE_LOOSELIFE 1
+
+	stopTime : byte = @STOPTIMEMAX; // how many pauses you are allowed to make before time penalty
+
+	wave : byte=0;				// current wave
+	levelId : byte=0; 			// level index number
+	time : byte=99; 			// current time
+	timeTick : byte=0; 			// count 50 times a second
+	score : integer=0;
+	lives : byte=5;	
+
+	@define MAXLEVELID  10  	// how many level Id's in the array
+	// levels 0 1 2 3 4 5 6 7 8 9
+	// food   0 1 2 3 4 0 1 2 3 4
+	levelarray : array[] of byte = (
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+	);
+	foodarray : array[] of byte = (
+		0, 1, 2, 3, 4, 0, 1, 2, 3, 4
+	);
+	// 0 - 0000 Black   1 - 0001 White  2 - 0010 Red   3 - 0011 Cyan 
+	// 4 - 0100 Purple  5 - 0101 Green  6 - 0110 Blue  7 - 0111 Yellow
+	colourarray : array[] of byte = (
+		7, 3, 4, 5, 2 
+		7, 5, 4, 3, 2
+	);
+
+	charset : incbin("bin\chars.bin", @CHAR_ADDR);  // custom character set
+
+	@include "setup.ras"
+	@include "sound.ras"
+	@include "levels.ras"
+	@include "gameplay.ras"
+	@include "gamescrn.ras"
+
+
+
+// ---- Game Loop ----
+procedure GameLoop();
+begin
+
+	r:=0;
+	while (r=0) do
+	begin
+
+		// slow Nibbler down, only move when moveTime = 0
+		if moveTime = 0 then
+		begin
+			// reset movetime
+			moveTime := moveTimeReset;
+			
+			NibblerControl();
+			// if the player changed direction, don't do an automatic move
+			if (justMoved = 0) then MoveNibblerHead();
+			MoveNibblerTail();
+			// leave Game loop if gameState changes
+			if gameState = @GAMESTATE_LOOSELIFE then return(); // lose life
+			if numFood = 0 then return();
+		end;
+		// adjust movetime, to control Nibbler speed
+		dec(moveTime);
+		
+		// animate the body scrolling characters
+		inc(animTime);
+		if animTime = @ANIMTIMEMAX then 
+		begin
+
+			AnimateNibblerBody();
+			animTime := 0;
+			// hit T junc sound
+			PlaySND1();
+			// collect food
+			PlaySND2();
+			// hiss sound on turning
+			PlaySFX();
+		end;			
+
+		// count down clock
+		inc(timeTick);
+		if timeTick = @TIMETICKMAX then
+		begin
+			timeTick := 0;
+			if stopTime = 0 then timeTick := @TIMETICKOUT; // run out of stop time, count down faster
+			dec(time);
+			DrawUITime();
+			if time = 12 then ColourTime(RED);
+			if time = 0 then
+			begin
+				gameState := @GAMESTATE_LOOSELIFE;
+				return();
+			end;
+		end;
+
+		//PlaySFX();
+	
+		/* debug - to enable debug mode, uncomment the DEBUG define at the top of this file */
+	@ifdef DEBUG
+		//screenmemory := $1fb5; //addresstable(scrm,0,23);
+		//printdecimal(levelId,1);
+		//screenmemory := screenmemory + 3;
+		//printdecimal(levelarray[levelId],1);
+		//screenmemory := screenmemory + 11;
+		//printdecimal(colourarray[levelId],1);
+		//screenmemory := screenmemory + 3;
+		//printdecimal(^@KEYB,1);
+		
+		// skip to next level with N key
+		if ^@KEYB = 28 then
+		begin
+			numFood :=0;
+		end;
+	@endif
+	
+		// this is a hack if it slows down
+		//if peek(^$9004,0) > 20 then 
+		waitforraster(@WAITVBL_LINE);
+
+	end;	
+
+end;
+
+// reset for replaying wave
+procedure ResetVars();
+begin
+	time := 99;
+	stopTime := @STOPTIMEMAX;
+	moveTime := moveTimeReset;
+
+	animTime := 1;
+
+	tailGrow := 1;
+	tailWait := 0;
+end;
+
+
+
+
+// ---- Main Program ----
+begin
+
+	ScreenSetup();
+	
+	SetupJoystick();
+
+	while 1=1 do
+	begin
+
+		TitleSequence();
+
+		// new game starting values
+		wave := 0;
+		levelId := 0;
+		lives := 5;
+		score := 0;
+		numFood := 0;
+		moveTimeReset := @MOVESTARTVAL;
+
+		while lives <> 0 do
+		begin
+			ScrollScreenDown();
+			ColourTime(WHITE);
+			
+			// if numFood is 0 either start of first level, or just completed a level
+			if numFood = 0 then
+			begin
+			
+				ClearTheScreen(); 
+				DrawUITextLabels();
+				DrawUIScore();
+				DrawUILives();
+				DrawLevelFrame();
+				DrawLevelMaze();
+				DrawLevelFood();	
+			
+				wave := wave + 1;
+				levelId :=  levelId + 1;
+				if levelId = @MAXLEVELID then levelId := 0;
+				DrawUIWave();
+				// speed up on wave 2 and 8
+				if levelId = 2 then moveTimeReset := moveTimeReset - 1;
+				if levelId = 4 then lives := lives + 1;
+				if levelId = 8 then moveTimeReset := moveTimeReset - 1;
+				if levelId = 10 then lives := lives + 1;
+				if moveTimeReset < @MOVEMINVAL then moveTimeReset := @MOVEMINVAL;
+				
+			end;
+
+			DrawUITime();
+			DrawUILives();
+			ScrollScreenUp();
+			GameStarting();
+			GameLoop();
+
+			// stop sounds
+			snd1Freq := 0;
+			SOUND1_REGISTER := 0;
+			SOUND2_REGISTER := 0;
+			SOUNDFX_REGISTER := 0;	
+
+			if numFood = 0 then CountBonus();	
+			if gameState = @GAMESTATE_LOOSELIFE then LoseLife();
+			
+			ResetVars();
+			gameState := @GAMESTATE_GAME;
+		end;	
+	
+	end;
+	
+end.
+// ---- Main Program ----
+
+
