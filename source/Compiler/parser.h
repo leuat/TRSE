@@ -64,6 +64,7 @@ public:
     QMap<QString, Node*> m_procedures;
     QMap<QString, QString> m_preprocessorDefines;
     QStringList m_diskFiles;
+    QStringList m_doNotRemoveMethods;
     QString m_initAssembler = "";
     QVector<Node*> m_proceduresOnly;
     QVector<QString> m_ignoreMethods;
