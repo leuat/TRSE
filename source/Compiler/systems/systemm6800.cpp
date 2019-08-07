@@ -73,9 +73,21 @@ void SystemM68000::PostProcess(QString &text, QString file, QString currentDir)
 
     }
 */
-    text = output;
 
     if (m_buildSuccess) {
+
+            int orgFileSize = QFile(file).size();
+
+            output+="<br>Assembled file size: <b>" + QString::number(orgFileSize) + "</b> bytes";
+/*            if (m_settingsIni->getdouble("perform_crunch")==1) {
+                output=output+" (<font color=\"#70FF40\"> " + QString::number((int)(100.0*(float)size/(float)orgFileSize))+  " % </font> of original size ) <br>";
+                output=output+"Original file size: " + QString::number(orgFileSize) + " bytes";
+            }
+            output = output + "\nAssemble time: <font color=\"#70FF40\">"+ (Util::MilisecondToString(assembleTime)) + "</font>";
+            output = output + "Crunch time: <font color=\"#70FF40\">"+ (Util::MilisecondToString(crunchTime)) + "</font>";
+
+  */
+
 
         QString newFile = m_settingsIni->getString("vasmm_target_dir") + "/"+file.split("/").last();
         if (QFile::exists(newFile))
@@ -85,4 +97,6 @@ void SystemM68000::PostProcess(QString &text, QString file, QString currentDir)
 
         QFile::copy(file, newFile);
     }
+    text = output;
+
 }

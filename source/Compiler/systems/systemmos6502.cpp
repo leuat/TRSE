@@ -114,6 +114,7 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
     }
 
     if (m_buildSuccess) {
+
         output ="Assembled file size: <b>" + QString::number(size) + "</b> bytes";
         if (m_settingsIni->getdouble("perform_crunch")==1) {
             output=output+" (<font color=\"#70FF40\"> " + QString::number((int)(100.0*(float)size/(float)orgFileSize))+  " % </font> of original size ) <br>";

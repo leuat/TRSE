@@ -396,6 +396,9 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         ui->txtEditor->setFocus();
     }
 
+    if (e->key() == Qt::Key_Insert) {
+        ui->txtEditor->setOverwriteMode(!ui->txtEditor->overwriteMode());
+    }
 
     if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier))
         emit requestCloseWindow();
