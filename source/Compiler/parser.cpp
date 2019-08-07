@@ -971,7 +971,7 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
             if ((np->m_isUsed==true))
                 procs.append(n);
             else {
-                qDebug() << "Removing procedure: " << np->m_procName;
+//                qDebug() << "Removing procedure: " << np->m_procName;
                 //            m_proceduresOnly.removeOne(m_procedures[s]);
             }
         }
@@ -1352,7 +1352,7 @@ Node *Parser::TypeSpec()
             Eat(TokenType::LPAREN);
             while (m_currentToken.m_type!=TokenType::RPAREN) {
 
-                data << Util::numToHex(getIntVal(m_currentToken));//QString::number(m_currentToken.m_intVal);
+                data << "$0"+QString::number(getIntVal(m_currentToken),16);//QString::number(m_currentToken.m_intVal);
                 Eat();
                 if (m_currentToken.m_type==TokenType::COMMA)
                     Eat();

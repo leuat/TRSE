@@ -373,7 +373,7 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
     //            qDebug() << "Before "<< s;
             for (QString& c: m_symbolsList)
                 if (s.contains(c)) {
-                    //qDebug() << c;
+  //                  qDebug() << c;
                     //exit(1);
                     s = OrgasmData::ReplaceWord(s,c,Util::numToHex(m_symbols[c]));
 
