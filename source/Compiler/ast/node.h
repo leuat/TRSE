@@ -47,6 +47,7 @@ public:
     uint level = 0;
     bool m_isUsed = false;
     bool m_forceAddress = false;
+    bool m_ignoreSuccess = false; // Used for binary expressions
 
 
 

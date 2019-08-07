@@ -159,6 +159,8 @@ public:
 
     bool IsSimpleIncDec(NodeVar *var, NodeAssign* node);
 
+    bool IsSimpleAndOr(NodeBinaryClause* node, QString labelSuccess, QString labelFail);
+
     QString AssignVariable(NodeAssign* node);
 
 

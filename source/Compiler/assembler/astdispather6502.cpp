@@ -1042,7 +1042,12 @@ void ASTDispather6502::BinaryClause(Node *node)
 
     BuildToCmp(node);
     as->Comment("BC done");
-    QString lblFailed = as->NewLabel("binaryclausefailed");
+    QString lblFailed = as->m_lblFailed;
+    bool isNew= false;
+    if (lblFailed=="") {
+        lblFailed = as->NewLabel("binaryclausefailed");
+        isNew=true;
+    }
     QString lblFinished = as->NewLabel("binaryclausefinished");
 
 
@@ -1056,13 +1061,16 @@ void ASTDispather6502::BinaryClause(Node *node)
     if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL)
         as->Asm("bcs " + lblFailed);
 
-    as->Asm("lda #1; success");
-    as->Asm("jmp " + lblFinished);
-    as->Label(lblFailed);
-    as->Asm("lda #0 ; failed state");
-    as->Label(lblFinished);
+    if (!node->m_ignoreSuccess) {
+        as->Asm("lda #1; success");
+        as->Asm("jmp " + lblFinished);
+        as->Label(lblFailed);
+        as->Asm("lda #0 ; failed state");
+        as->Label(lblFinished);
+    }
+    if (isNew)
+        as->PopLabel("binaryclausefailed");
 
-    as->PopLabel("binaryclausefailed");
     as->PopLabel("binaryclausefinished");
     // as->PopLabel("binary_clause_temp_var");
     //  as->PopLabel("binary_clause_temp_lab");
@@ -1236,6 +1244,65 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
 }
 
 
+bool ASTDispather6502::IsSimpleAndOr(NodeBinaryClause *node, QString labelSuccess, QString labelFail)
+{
+    if(node==nullptr)
+        return false;
+//    if (dynamic_cast<NodeBinaryClausenode->m_left)
+    NodeBinaryClause* a = dynamic_cast<NodeBinaryClause*>(node->m_left);
+    NodeBinaryClause* b = dynamic_cast<NodeBinaryClause*>(node->m_right);
+//    return false;
+    if (a==nullptr || b==nullptr)
+        return false;
+    if (a->m_op.m_type==TokenType::AND || a->m_op.m_type==TokenType::OR)
+        return false;
+    if (b->m_op.m_type==TokenType::AND || b->m_op.m_type==TokenType::OR)
+        return false;
+
+
+//    return false;
+    if (node->m_op.m_type==TokenType::AND) {
+        a->m_ignoreSuccess = true;
+        b->m_ignoreSuccess = true;
+
+        as->m_lblFailed = labelFail;
+//        as->m_lblSuccess = labelSuccess;
+        a->Accept(this);
+        b->Accept(this);
+        as->m_lblFailed="";
+        as->m_lblSuccess="";
+        return true;
+    }
+
+    if (node->m_op.m_type==TokenType::OR) {
+        a->m_ignoreSuccess = true;
+        b->m_ignoreSuccess = true;
+        QString tempFailLabel = as->NewLabel("tempfail");
+       // as->m_lblSuccess = labelSuccess;
+        as->m_lblFailed = tempFailLabel;
+        a->Accept(this);
+        as->Asm("jmp "+labelSuccess);
+        as->m_lblFailed = labelFail;
+        as->Label(tempFailLabel);
+        b->Accept(this);
+        as->PopLabel("tempfail");
+
+        as->m_lblFailed="";
+        as->m_lblSuccess="";
+        return true;
+
+    }
+    return false;
+
+//    as->m_lblFailed="";
+  //  as->m_lblSuccess="";
+  //  return true;
+}
+
+
+
+
+
 /*
  *
  *
@@ -1251,8 +1318,10 @@ void ASTDispather6502::dispatch(NodeBinaryClause *node)
     //    Node::Build(as);
 
     // First, check the byte
-    if (node->m_op.m_type==TokenType::AND || node->m_op.m_type == TokenType::OR)
+    if (node->m_op.m_type==TokenType::AND || node->m_op.m_type == TokenType::OR) {
         LogicalClause(node);
+        //qDebug() << "NodeBinaryClause dispatch ";
+    }
     else
         if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type == TokenType::GREATER ||
                 node->m_op.m_type==TokenType::EQUALS || node->m_op.m_type == TokenType::NOTEQUALS
@@ -1279,6 +1348,33 @@ void ASTDispather6502::LogicalClause(Node *node)
         ErrorHandler::e.Error("Logical clause: right hand term must be binary clause");
 
 
+    // Test for optimization : if left and right are pure
+
+
+/*
+    if (node->m_op.m_type==TokenType::OR) {
+        node->m_left->Accept(this);
+        QString tmpVar = as->StoreInTempVar("logical_class_temp");
+        node->m_right->Accept(this);
+        if (node->m_op.m_type==TokenType::AND)
+            as->Asm("and " + tmpVar);
+        if (node->m_op.m_type==TokenType::OR)
+            as->Asm("ora " + tmpVar);
+
+        as->PopTempVar();
+        return;
+    }
+    if (node->m_op.m_type==TokenType::AND) {
+        node->m_left->m_ignoreSuccess=true;
+        node->m_right->m_ignoreSuccess=true;
+        as->m_lblFailed = as->NewLabel("logicalclausefail");
+        node->m_left->Accept(this);
+        node->m_right->Accept(this);
+        as->Label(as->m_lblFailed);
+        as->PopLabel("logicalclausefail");
+        return;
+    }
+*/
 
 
     node->m_left->Accept(this);
@@ -1292,6 +1388,7 @@ void ASTDispather6502::LogicalClause(Node *node)
 
 
     as->PopTempVar();
+
     //as->Asm("lda " + tmpVar);
 
     // Done comparing!
@@ -1568,10 +1665,12 @@ void ASTDispather6502::dispatch(NodeConditional *node)
 
     // Test all binary clauses:
     bool isSimplified = false;
+    bool isOKBranchSize = true;
     NodeBinaryClause* bn = dynamic_cast<NodeBinaryClause*>(node->m_binaryClause);
     if (node->verifyBlockBranchSize(as, node->m_block)) {
         isSimplified = !bn->cannotBeSimplified(as);
     }
+    else isOKBranchSize = false;
 
     // Then, check m_forcepage
     if (node->m_forcePage==1) // force OFFPAGE
@@ -1584,15 +1683,20 @@ void ASTDispather6502::dispatch(NodeConditional *node)
     }
     if (!isSimplified) {
 //        node->m_binaryClause->Build(as);
-        node->m_binaryClause->Accept(this);
-        // Now, a should be either true or false
+        if (isOKBranchSize && IsSimpleAndOr(dynamic_cast<NodeBinaryClause*>(node->m_binaryClause), lblstartTrueBlock,labelElse)){
+        }
+        else {
 
-        as->Asm("cmp #1");
-        as->Asm("beq " + lblstartTrueBlock); // All conditionals checked out!
-        // Do we have an else block?
-        if (node->m_elseBlock!=nullptr)
-            as->Asm("jmp " + labelElse); // All conditionals false: skip to end (or else block)
-        as->Asm("jmp " + labelElseDone);
+            node->m_binaryClause->Accept(this);
+            // Now, a should be either true or false
+
+            as->Asm("cmp #1");
+            as->Asm("beq " + lblstartTrueBlock); // All conditionals checked out!
+            // Do we have an else block?
+            if (node->m_elseBlock!=nullptr)
+                as->Asm("jmp " + labelElse); // All conditionals false: skip to end (or else block)
+            as->Asm("jmp " + labelElseDone);
+        }
     }
     else {
         // Simplified version <80 instructions & just one clause
@@ -1615,8 +1719,9 @@ void ASTDispather6502::dispatch(NodeConditional *node)
         as->Asm("jmp " + labelStartOverAgain);
 
     // An else block?
+    as->Label(labelElse);
     if (node->m_elseBlock!=nullptr) {
-        as->Label(labelElse);
+//        as->Label(labelElse);
         node->m_elseBlock->Accept(this);
 //        m_elseBlock->Build(as);
 
@@ -2232,7 +2337,6 @@ bool ASTDispather6502::IsSimpleIncDec(NodeVar *var, NodeAssign *node) {
     return false;
 
 }
-
 
 
 
