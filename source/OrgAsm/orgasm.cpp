@@ -66,6 +66,8 @@ OrgasmLine Orgasm::LexLine(int i) {
 //    if (line.toLower().contains("else"))
   //      qDebug() << line;
 
+    line.replace("("," (");
+
     if (line.simplified().toLower().startsWith("ifconst")) {
         OrgasmLine::m_inIFDEF= true;
         l.m_ignore = true;
