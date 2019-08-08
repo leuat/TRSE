@@ -319,6 +319,12 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         return;
     }
+    if (m_currentToken.m_value=="donotremove") {
+        Eat();
+        m_doNotRemoveMethods.append(m_currentToken.m_value);
+        Eat();
+        return;
+    }
     if (m_currentToken.m_value=="userdata") {
         Eat();
         Eat();
@@ -968,7 +974,7 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
         QVector<Node*> procs;
         for (Node* n: m_proceduresOnly) {
             NodeProcedureDecl* np = (NodeProcedureDecl*)n;
-            if ((np->m_isUsed==true))
+            if ((np->m_isUsed==true) || m_doNotRemoveMethods.contains(np->m_procName))
                 procs.append(n);
             else {
 //                qDebug() << "Removing procedure: " << np->m_procName;
