@@ -3868,14 +3868,13 @@ void Methods6502::ClearScreen(Assembler *as)
         QString shift = Util::numToHex(val);
         as->Comment("Clear screen with offset");
         LoadVar(as, 0);
-        as->Asm("ldx #$00");
+        as->Asm("ldx #$fa");
         as->Label(lbl);
-        as->Asm("sta $0000+"+shift+",x");
-        as->Asm("sta $0100+"+shift+",x");
-        as->Asm("sta $0200+"+shift+",x");
-        as->Asm("sta $02e8+"+shift+",x");
-        //    as->Asm("sta $0300+"+shift+",x");
         as->Asm("dex");
+        as->Asm("sta $0000+"+shift+",x");
+        as->Asm("sta $00fa+"+shift+",x");
+        as->Asm("sta $01f4+"+shift+",x");
+        as->Asm("sta $02ee+"+shift+",x");
         as->Asm("bne "+lbl);
 
         as->PopLabel("clearloop");
