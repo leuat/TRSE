@@ -3,20 +3,22 @@ find ../tutorials/ -name "*.prg" -type f -delete
 find ../tutorials/ -name "*.asm" -type f -delete
 mkdir trse/
 mkdir trse/bin
+mkdir trse/tutorials/
 cp -r ../../Release/trse trse/bin
 cp -r ../../Release/lib trse/bin
 cp -r ../../Release/plugins trse/bin
 cp -r ../source/* trse/bin/
 cp -r ../tutorials/RasLib trse/
-cp -r ../tutorials/C64 trse/
-cp -r ../tutorials/C128 trse/
-cp -r ../tutorials/VIC20 trse/
-cp -r ../tutorials/NES trse/
-cp -r ../tutorials/Amiga trse/
-cp -r ../tutorials/PET trse/
-cp -r ../tutorials/Fjong trse/
+
+cp -r ../tutorials/C64 trse/tutorials/
+cp -r ../tutorials/C128 trse/tutorials/
+cp -r ../tutorials/VIC20 trse/tutorials/
+cp -r ../tutorials/NES trse/tutorials/
+cp -r ../tutorials/Amiga trse/tutorials/
+cp -r ../tutorials/PET trse/tutorials/
+cp -r ../tutorials/Fjong trse/tutorials/
 cp trse.sh trse
 tar -cvf trse_linux64.tar trse
 gzip trse_linux64.tar
-scp trse_linux64.tar.gz leuat@www.irio.co.uk:www/trse/latest_snapshots/trse_linux64.tar.gz
+scp trse_linux64.tar.gz leuat@www.irio.co.uk:www.irio.co.uk/trse/latest_snapshots/trse_linux64.tar.gz
 

@@ -54,6 +54,18 @@ TokenType::Type NodeVar::getType(Assembler *as) {
     return t;
 }
 
+TokenType::Type NodeVar::getArrayType(Assembler *as)
+{
+    TokenType::Type t = m_op.m_type;
+    if (as->m_symTab->Lookup(value, m_op.m_lineNumber)!=nullptr)
+        t= as->m_symTab->Lookup(value, m_op.m_lineNumber)->m_arrayType;
+
+/*    if (m_forceType!=TokenType::NADA && t!=TokenType::POINTER)
+        return m_forceType;
+*/
+    return t;
+}
+
 bool NodeVar::isPointer(Assembler *as)
 {
     return as->m_symTab->Lookup(value, m_op.m_lineNumber)->getTokenType()==TokenType::POINTER;

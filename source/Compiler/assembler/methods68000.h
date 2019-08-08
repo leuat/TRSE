@@ -5,6 +5,7 @@
 //#include "astdispatcher68000.h"
 #include "source/Compiler/ast/nodebuiltinmethod.h"
 #include "source/Compiler/ast/nodenumber.h"
+#include "source/Compiler/ast/nodeprocedure.h"
 
 class Methods68000
 {
@@ -41,6 +42,7 @@ public:
     void MatMulVec(Assembler* as);
     void MatMulVecNormalZ(Assembler* as, bool isZonly);
     void ProjectToScreen(Assembler* as);
+    void EnableInterrupt(Assembler* as);
 };
 
 #endif // METHODS68000_H

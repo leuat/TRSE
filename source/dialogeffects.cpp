@@ -465,7 +465,7 @@ static int AddScreen(lua_State* L) {
 static int AddToData(lua_State* L) {
 
     if (m_effect!=nullptr)
-       m_compression.AddToDataX(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+       m_compression.AddToDataX(m_charData, *((MultiColorImage*)m_effect->m_mc) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
 
     return 0;
 }
@@ -473,7 +473,7 @@ static int AddToData(lua_State* L) {
 static int AddBitplaneToData(lua_State* L) {
 
     if (m_effect!=nullptr)
-       m_compression.AddBitplaneToData(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tonumber(L,5));
+       m_compression.AddBitplaneToData(m_charData, *((MultiColorImage*)(m_effect->m_mc)) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tonumber(L,5));
 
     return 0;
 }
@@ -482,7 +482,11 @@ static int AddBitplaneToData(lua_State* L) {
 static int CompressCharset(lua_State* L) {
     // 0, 40, 13, 25
     int noChars;
-    m_effect->m_mc->CompressAndSave(m_charData, m_screenData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3),lua_tonumber(L,4),noChars,lua_tonumber(L,5),  lua_tonumber(L,6));
+    MultiColorImage* mc = dynamic_cast<MultiColorImage*>(m_effect->m_mc);
+    if (mc==nullptr)
+        return 0;
+
+    mc->CompressAndSave(m_charData, m_screenData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3),lua_tonumber(L,4),noChars,lua_tonumber(L,5),  lua_tonumber(L,6));
     m_infoText+="Compressed chars: " + QString::number(noChars) + "\n";
     return 0;
 }
@@ -677,9 +681,13 @@ static int OptimizeScreenAndCharset(lua_State* L) {
 static int AddRawCharsetData(lua_State* L) {
     int w = lua_tonumber(L,1);
     int h = lua_tonumber(L,1);;
+    MultiColorImage* mc = dynamic_cast<MultiColorImage*>(m_effect->m_mc);
+    if (mc==nullptr)
+        return 0;
+
     for (int j=0;j<h;j++)
         for (int i=0;i<w;i++) {
-            PixelChar& pc = m_effect->m_mc->m_data[j*40+i];
+            PixelChar& pc = mc->m_data[j*40+i];
             for (int k=0;k<8;k++)
                 m_charData.append(pc.reverse(pc.p[k]));
         }
@@ -692,9 +700,9 @@ static int CompressAndSaveHorizontalData(lua_State* L) {
     table.clear();
 //    qDebug() <<m_count*16 << " but is " <<m_screenData.count()/ww;
     if (m_screenData.count()!=0)
-    m_compression.OptimizeAndPackCharsetData(m_screenData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2));
+    m_compression.OptimizeAndPackCharsetData(m_screenData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
     else
-        m_compression.OptimizeAndPackCharsetData(m_charData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2));
+        m_compression.OptimizeAndPackCharsetData(m_charData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
   //  qDebug() << "Table should be : " << (m_noChars-1)*1024;
     //qDebug() << "Table is : " << table.count();
 
@@ -714,6 +722,29 @@ static int CompressAndSaveHorizontalData(lua_State* L) {
 }
 static int SaveCompressedTRM(lua_State* L) {
     m_compression.SaveCompressedTRM(m_charData,m_currentDir+"/"+ lua_tostring(L,1), lua_tonumber(L,2));
+    return 0;
+}
+
+
+static int CopyFile(lua_State* L) {
+    Util::CopyFile(m_currentDir+"/"+ lua_tostring(L,1), m_currentDir+"/"+lua_tostring(L,2));
+    return 0;
+}
+
+
+
+static int AddToPng(lua_State* L) {
+//    Util::CopyFile(m_currentDir+"/"+ lua_tostring(L,1), m_currentDir+"/"+lua_tonumber(L,2));
+    QString inFile = m_currentDir+"/"+ lua_tostring(L,1);
+    QImage img(inFile);
+    int xp = lua_tonumber(L,2);
+    int yp = lua_tonumber(L,3);
+    for (int y=0;y<m_effect->m_mc->GetHeight();y++)
+        for (int x=0;x<m_effect->m_mc->GetWidth();x++) {
+            img.setPixelColor(x+xp,y+yp, m_effect->m_mc->m_colorList.get(m_effect->m_mc->getPixel(x,y)).color);
+        }
+
+    img.save(inFile);
     return 0;
 }
 
@@ -749,6 +780,9 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "SaveRawData", SaveData);
     lua_register(m_script->L, "AddC64LineToData", AddToData);
     lua_register(m_script->L, "AddRawCharsetData", AddRawCharsetData);
+
+    lua_register(m_script->L, "CopyFile", CopyFile);
+    lua_register(m_script->L, "AddToPng", AddToPng);
 
     lua_register(m_script->L, "AddAmigaBitplaneToData", AddBitplaneToData);
     lua_register(m_script->L, "Save2DInfo", Save2DInfo);

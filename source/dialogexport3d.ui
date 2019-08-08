@@ -19,85 +19,14 @@
      <x>30</x>
      <y>20</y>
      <width>801</width>
-     <height>269</height>
+     <height>323</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="4" column="0">
-     <widget class="QLabel" name="label_5">
-      <property name="text">
-       <string>Object scale size</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="0">
-     <widget class="QCheckBox" name="chkLineData">
-      <property name="text">
-       <string>Output line data</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Wavefront .obj file:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QLineEdit" name="leInput"/>
-    </item>
-    <item row="1" column="1">
-     <widget class="QLineEdit" name="leOutputDir"/>
-    </item>
     <item row="3" column="0">
      <widget class="QLabel" name="label_4">
       <property name="text">
        <string>Center displacement (x,y,z)</string>
-      </property>
-     </widget>
-    </item>
-    <item row="10" column="0">
-     <widget class="QCheckBox" name="chkTriangleData">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="text">
-       <string>Output triangle data</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>Output directory</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="1">
-     <widget class="QCheckBox" name="chkLineNormals">
-      <property name="text">
-       <string>Output line normals</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="2">
-     <widget class="QPushButton" name="pushButton_3">
-      <property name="text">
-       <string>...</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QPushButton" name="pushButton_2">
-      <property name="text">
-       <string>...</string>
       </property>
      </widget>
     </item>
@@ -108,18 +37,49 @@
       </property>
      </widget>
     </item>
-    <item row="10" column="1">
-     <widget class="QCheckBox" name="chkTriangleNormals">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_5">
       <property name="text">
-       <string>Output triangle normals</string>
+       <string>Object scale size</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="1">
-     <widget class="QLineEdit" name="leOutput"/>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Output directory</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QPushButton" name="pushButton_3">
+      <property name="text">
+       <string>...</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="leOutputDir"/>
+    </item>
+    <item row="10" column="1">
+     <widget class="QCheckBox" name="chkLineNormals">
+      <property name="text">
+       <string>Output line normals</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="leInput"/>
+    </item>
+    <item row="5" column="1">
+     <widget class="QLineEdit" name="leMinLineLength">
+      <property name="text">
+       <string>0.1</string>
+      </property>
+     </widget>
     </item>
     <item row="2" column="0">
      <widget class="QLabel" name="label_3">
@@ -128,13 +88,20 @@
       </property>
      </widget>
     </item>
-    <item row="7" column="0">
-     <widget class="QCheckBox" name="chkVertices">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
       <property name="text">
-       <string>Output vertices</string>
+       <string>Wavefront .obj file:</string>
       </property>
-      <property name="checked">
-       <bool>true</bool>
+     </widget>
+    </item>
+    <item row="12" column="0">
+     <widget class="QCheckBox" name="chkTriangleData">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>Output triangle data</string>
       </property>
      </widget>
     </item>
@@ -145,6 +112,26 @@
       </property>
      </widget>
     </item>
+    <item row="8" column="0">
+     <widget class="QCheckBox" name="chkVertices">
+      <property name="text">
+       <string>Output vertices</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="12" column="1">
+     <widget class="QCheckBox" name="chkTriangleNormals">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>Output triangle normals</string>
+      </property>
+     </widget>
+    </item>
     <item row="5" column="0">
      <widget class="QLabel" name="label_6">
       <property name="text">
@@ -152,11 +139,45 @@
       </property>
      </widget>
     </item>
-    <item row="5" column="1">
-     <widget class="QLineEdit" name="leMinLineLength">
+    <item row="0" column="2">
+     <widget class="QPushButton" name="pushButton_2">
       <property name="text">
-       <string>0.1</string>
+       <string>...</string>
       </property>
+     </widget>
+    </item>
+    <item row="10" column="0">
+     <widget class="QCheckBox" name="chkLineData">
+      <property name="text">
+       <string>Output line data</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="leOutput"/>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_7">
+      <property name="text">
+       <string>Type</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QComboBox" name="comboBox">
+      <item>
+       <property name="text">
+        <string>Amiga</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Lua</string>
+       </property>
+      </item>
      </widget>
     </item>
    </layout>
@@ -191,9 +212,9 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>270</y>
+     <y>351</y>
      <width>801</width>
-     <height>192</height>
+     <height>111</height>
     </rect>
    </property>
    <property name="html">

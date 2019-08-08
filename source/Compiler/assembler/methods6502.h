@@ -47,6 +47,10 @@ public:
     void BitOp(Assembler* as, int type);
     void PlaySound(Assembler* as);
     void CreateInteger(Assembler* as, QString reg);
+    void Tile(Assembler *as);
+    void CreateAddressTable(Assembler *as);
+    void AddressTable(Assembler *as);
+
 
     void LoHi(Assembler* as, bool isLo);
 
@@ -112,6 +116,7 @@ public:
     void Sqrt(Assembler* as);
     void Atan2(Assembler* as);
     void IsOverlapping(Assembler* as);
+    void IsOverlappingWH(Assembler* as);
     void CopyCharsetFromRom(Assembler* as);
     void IncDec(Assembler* as, QString cmd);
     void SetMemoryConfig(Assembler* as);
@@ -145,6 +150,7 @@ public:
     void InitJoystick(Assembler* as);
     void InitRandom(Assembler* as);
     void InitSinusTable(Assembler* as);
+    void DefineScreen(Assembler *as);
     void InitMoveto(Assembler *as);
     void InitMoveto80(Assembler *as);
     void InitEightBitMul(Assembler* as);

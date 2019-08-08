@@ -4,6 +4,7 @@
 #include "abstractdemoeffect.h"
 #include "source/LeLib/util/cinifile.h"
 #include "source/Raytracer/raytracer.h"
+#include "source/LeLib/limage/limageqimage.h"
 #include <QMatrix3x3>
 
 class DemoEffectRaytracer : public AbstractDemoEffect

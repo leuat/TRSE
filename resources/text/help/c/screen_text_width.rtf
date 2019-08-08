@@ -1,0 +1,17 @@
+<p>Decimal 36866. PAL = 150.  NTSC = </p>
+<p>This register has two functions</p>
+<ol>
+<li>Bit 7 = the value for line 9 of the address
+for the video RAM. On an unexpanded VIC 20 as the address of the Video
+RAM is $1E00 and therefore this bit 7 is set, however when the video RAM is
+moved to $1000 then bit 7 becomes reset.</li>
+<li>bits 0-6 = determine the number of columns in
+the TV display. Normally this will be the expected value of 22.</li>
+</ol>
+<p> Note: Bit 7 of this register also indicates where the Colour RAM starts. If
+this bit is 1, colour memory starts at location 38400. If this bit is 0,
+colour memory starts at location 37888. Use the following formula:
+</p>
+<code>
+C = 37888 + 4 * ( PEEK ( 36866 ) AND 128 )
+</code>

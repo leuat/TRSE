@@ -1,0 +1,12 @@
+<h3>Description</h3>
+<p>Include a binary file.  Declare in the VAR section of a program.</p>
+
+
+<h3>Example</h3>
+
+<code>
+    var
+        charset1: incbin("charsets/charset1.bin", @charsetPosition);
+        mySprites:incbin("sprites/sprites.bin", $3200);
+        levels: incbin("levels/level1.flf", @levelPosition);
+</code>

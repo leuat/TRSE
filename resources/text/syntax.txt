@@ -16,17 +16,16 @@
 # init functions
 m; initrandom; C64, C128 ;
 m; initsinetable; C64, C128, VIC20, PET,  PET;
-m; initmoveto; C64, C128, VIC20, PET,  PET, NES ;
-m; initprintdecimal; C64, C128, VIC20, PET,  PET, NES ;
-m; initeightbitmul; C64, C128, VIC20, PET,  PET, NES ;
-m; init16x8mul; C64, C128, VIC20, PET,  PET, NES ;
-m; init16x8div; C64, C128, VIC20, PET,  PET, NES ;
-m; init8x8div; C64, C128, VIC20, PET,  PET, NES ;
+m; DefineScreen; C64, C128, VIC20, PET, NES ;
+m; initmoveto; C64, C128, VIC20, PET,  NES ;
+m; initprintdecimal; C64, C128, VIC20, PET,  NES ;
+m; initeightbitmul; C64, C128, VIC20, PET,  NES ;
+m; init16x8mul; C64, C128, VIC20, PET,  NES ;
+m; init16x8div; C64, C128, VIC20, PET,  NES ;
+m; init8x8div; C64, C128, VIC20, PET,  NES ;
 m; initprintstring; C64, C128  ;
 m; initjoystick; C64, C128, VIC20  ;
 m; initatan2; C64, C128, VIC20  ;
-
-
 
 
 
@@ -42,10 +41,13 @@ m; InitLine; Amiga;
 m; InitMatmulVec; Amiga;
 m; InitMatmulVecNormalZ; Amiga;
 m; InitProjectToScreen; Amiga;
+m; InitP61PlayerInternal; Amiga;
 
 
 # ** CALL METHODS
 
+m; InitP61Module; Amiga;a
+m; PlayP61Module; Amiga;
 m; Poke8; Amiga ; a,i,b
 m; Poke16; Amiga ; a,i,i
 m; Poke32; Amiga ; a,i,l
@@ -56,6 +58,8 @@ m; memcpy; Amiga; a, l,a,l, l
 m; setpalette; Amiga; a, a, l
 m; ablit; Amiga; a,a,i, i,i,i,i,l,i,i,i
 m; fblit; Amiga; a,a,i, i,i,i,i,l,i,i,i
+
+m; EnableInterrupt; Amiga;i
 
 m; InitCustomCopperList; Amiga;
 m; EndCustomCopperList; Amiga;
@@ -73,30 +77,32 @@ m; MatMulVecNormalZ; Amiga; a,a,a,i
 m; MatMulVecNormal; Amiga; a,a,a,i
 m; ProjectToScreen; Amiga; a,i,l,l
 m; WaitForBlitter; Amiga;
+m; VBIRQ;Amiga; p
+
+
 #Memory routines
-
-m; moveto; C64, NES; b,b,b
-
-m; Poke; C64, C128, VIC20, PET,  PET, NES ; a,b,b
-m; Peek; C64, C128, VIC20, PET,  PET, NES ; a,b
-m; ToggleBit; C64, C128, VIC20, PET,  PET, NES ; a,b,b
-m; GetBit; C64, C128, VIC20, PET,  PET, NES ; a,b
+m; Poke; C64, C128, VIC20, PET,  NES ; a,b,b
+m; Peek; C64, C128, VIC20, PET,  NES ; a,b
+m; ToggleBit; C64, C128, VIC20, PET,  NES ; a,b,b
+m; GetBit; C64, C128, VIC20, PET,  NES ; a,b
 m; EnableAllRam; C64  ;
-m; MemCpy; C64, C128, VIC20, PET,  PET, NES ; a,b,a,b
-m; MemCpyFast; C64, C128, VIC20, PET,  PET, NES ; a,b,a,b
-m; MemCpyUnroll; C64, C128, VIC20, PET,  PET, NES ; a,b,a,b
-m; BlockMemCpy; C64, C128, VIC20, PET,  PET, NES ; a,a,n
-m; Inc; C64, C128, VIC20, PET,  PET, NES ; a
-m; Dec; C64, C128, VIC20, PET,  PET, NES ; a
-m; Fill; C64, C128, VIC20, PET,  PET, NES ; a, b, b
-m; SetMemoryConfig ; C64,  VIC20, PET,  PET, NES ; b,b,b
-m; CopyHalfScreen; C64, C128, VIC20, PET,  PET, NES ; a,a,b,b,n
-m; CopyFullScreen; C64, C128, VIC20, PET,  PET, NES ; a,a
+m; MemCpy; C64, C128, VIC20, PET,  NES ; a,b,a,b
+m; MemCpyFast; C64, C128, VIC20, PET,  NES ; a,b,a,b
+m; MemCpyUnroll; C64, C128, VIC20, PET,  NES ; a,b,a,b
+m; BlockMemCpy; C64, C128, VIC20, PET,  NES ; a,a,n
+m; Inc; C64, C128, VIC20, PET,  NES ; a
+m; Dec; C64, C128, VIC20, PET,  NES ; a
+m; Fill; C64, C128, VIC20, PET,  NES ; a, b, b
+m; SetMemoryConfig ; C64,  VIC20, PET,  NES ; b,b,b
+m; CopyHalfScreen; C64, C128, VIC20, PET,  NES ; a,a,b,b,n
+m; CopyFullScreen; C64, C128, VIC20, PET,  NES ; a,a
 
-M; CopyBytesShift; C64,C128, VIC20, PET,  PET, NES; a,a,b,b,n
+M; CopyBytesShift; C64,C128, VIC20, PET,  NES; a,a,b,b,n
 
+m; CreateAddressTable; C64,C128, VIC20, PET, NES; a,n,b,b
+m; AddressTable; C64,C128, VIC20, PET, NES; a,b,b
 
-m; Nop; C128, C64, VIC20, PET,  PET,NES; n
+m; Nop; C128, C64, VIC20, PET, NES; n
 
 m; SetMemoryConfig ; C128 ; n,n,n,n,n
 
@@ -104,8 +110,8 @@ m; SetMemoryConfig ; C128 ; n,n,n,n,n
 m; Decrunch; C64, C128, VIC20 ; a
 m; DecrunchFromIndex; C64, C128, VIC20 ; a,b
 
-m; IncZP; C64, C128, VIC20, PET,  PET, NES ; a, b
-#m; DecZP; C64, C128, VIC20, PET,  PET, NES ; a, b
+m; IncZP; C64, C128, VIC20, PET,  NES ; a, b
+#m; DecZP; C64, C128, VIC20, PET,  NES ; a, b
 
 # Charset routines
 
@@ -154,9 +160,10 @@ m; KrillLoadCompressed; C64; a
 m; InitKrill; C64;
 
 # Screen routines
+# m; Writeln; C64, C128, VIC20, PET,  NES ; s,b
 
-# m; Writeln; C64, C128, VIC20, PET,  PET, NES ; s,b
-m; MoveTo; C64, C128, VIC20 ; b,b,b
+m; Tile; C64, C128, VIC20, PET ; a,a,a,a,b,n
+m; MoveTo; C64, C128, VIC20, NES ; b,b,b
 m; ScrollY; C64, C128 ; b
 m; ScrollX; C64, C128 ; b
 m; hideborderx; C64, C128 ; b
@@ -164,7 +171,7 @@ m; hidebordery; C64, C128 ; b
 m; PrintString; C64, C128, VIC20, PET,  PET; s,b,b
 m; PrintNumber; C64, C128, VIC20, PET,  PET; b
 m; PrintDecimal; C64, C128, VIC20, PET,  PET; i,n
-m; ClearScreen; C64, C128, NES, PET; b, a
+m; ClearScreen; C64, C128, VIC20, NES, PET; b, a
 m; ClearBitmap; C64, C128; a, b
 m; SetMultiColorMode; C64, C128;
 m; SetRegularColorMode; C64, C128;
@@ -202,24 +209,25 @@ m; PlayVIC20Sid; VIC20; a
 
 # Math routines
 
-m; Atan2 ; C64, C128, VIC20, PET,  PET, NES  ; b,b,b,b
-m; Sqrt ; C64, C128, VIC20, PET,  PET, NES  ; ib
-m; Swap; C64, C128, VIC20, PET,  PET, NES; b,b
-m; Abs;  C64, C128, VIC20, PET,  PET, NES;ib
+m; Atan2 ; C64, C128, VIC20, PET,  NES  ; b,b,b,b
+m; Sqrt ; C64, C128, VIC20, PET,  NES  ; ib
+m; Swap; C64, C128, VIC20, PET,  NES; b,b
+m; Abs;  C64, C128, VIC20, PET,  NES;ib
 m; Rand; C64, C128 ; b,b,b
 
 # Collision routines
 m; IsOverlapping; C64, C128, VIC20, PET, NES; b,b,b,b,b
+m; IsOverlappingWH; C64, C128, VIC20, PET, NES; b,b,b,b,b,b
 
 # Other routines
 
-m; Wait; C64, C128, VIC20, PET,  PET, NES ; b
+m; Wait; C64, C128, VIC20, PET,  NES ; b
 m; Jammer; C64, C128  ; n,n
 m; FLD ; C64, C128 ; b,n
 m; TransformColors; C64, C128; a,a
-m; Call; C64, C128, VIC20, PET,  PET, NES; a
-m; Loop; C64, C128, VIC20, PET,  PET, NES;
-m; Return;  C64, C128, VIC20, PET,  PET, NES, AMIGA;
+m; Call; C64, C128, VIC20, PET,  NES; a
+m; Loop; C64, C128, VIC20, PET,  NES;
+m; Return;  C64, C128, VIC20, PET,  NES, AMIGA;
 m; Set2MhzMode; C128;
 m; Set1MhzMode; C128;
 m; RightBitShift; C64, C128, VIC20, PET,  NES; a, n
@@ -257,6 +265,22 @@ m; DisableVIC20IRQ; VIC20;
 m; VIAIRQ; VIC20; p,b,b
 
 
+
+#
+#
+# F J O N G   raytracer functions (f)
+#
+#
+#
+#
+
+
+f;AddObject;s,s,s,s,f,f,f,f,f,f
+
+
+
+
+
 #
 #
 #
@@ -282,16 +306,26 @@ c; OAMDMA; NES; a; $4014
 
 
 # VIC 20-specific constants
+c; PAL_OR_NTSC;VIC20; a; $ede4
 c; SCREEN_COL_LOC; VIC20; a; $9600, $9400
 c; SCREEN_CHAR_LOC; VIC20; a; $1E00, $1000
-c; SCREEN_BG_COLOR; VIC20; a; $900F
-c; SCREEN_TEXT_HEIGHT; VIC20; a; $9003
-c; VIC_DATA_LOC; VIC20; a; $9005
-c; AUX_COLOR_AND_VOLUME; VIC20; a; $900E
-c; SCREEN_TEXT_WIDTH; VIC20; a; $9002
+c; HSCROLL_REGISTER; VIC20; a; $9000
 c; VSCROLL_REGISTER; VIC20; a; $9001
-c; PAL_OR_NTSC;VIC20; a; $ede4
-
+c; SCREEN_TEXT_WIDTH; VIC20; a; $9002
+c; SCREEN_TEXT_HEIGHT; VIC20; a; $9003
+c; VIC_RASTERLINE; VIC20; a; $9004
+c; VIC_DATA_LOC; VIC20; a; $9005
+c; SCREEN_CHAR_REGISTER; VIC20; a; $9005
+c; HPEN_REGISTER; VIC20; a; $9006
+c; VPEN_REGISTER; VIC20; a; $9007
+c; XPADDLE_REGISTER; VIC20; a; $9008
+c; YPADDLE_REGISTER; VIC20; a; $9009
+c; SOUND1_REGISTER; VIC20; a; $900A
+c; SOUND2_REGISTER; VIC20; a; $900B
+c; SOUND3_REGISTER; VIC20; a; $900C
+c; SOUNDFX_REGISTER; VIC20; a; $900D
+c; AUX_COLOR_AND_VOLUME; VIC20; a; $900E
+c; SCREEN_BG_COLOR; VIC20; a; $900F
 
 
 
@@ -329,6 +363,58 @@ c; SPRITE_BG_COLLISION; C64, C128;a;$D01F
 c; SPRITE_STRETCH_X; C64, C128;a;$D01D
 c; SPRITE_STRETCH_Y; C64, C128;a;$D017
 
+c; KEY_A; C64, C128, VIC20; b;$01
+c; KEY_B; C64, C128, VIC20; b;$02
+c; KEY_C; C64, C128, VIC20; b;$03
+c; KEY_D; C64, C128, VIC20; b;$04
+c; KEY_E; C64, C128, VIC20; b;$05
+c; KEY_F; C64, C128, VIC20; b;$06
+c; KEY_G; C64, C128, VIC20; b;$07
+c; KEY_H; C64, C128, VIC20; b;$08
+c; KEY_I; C64, C128, VIC20; b;$09
+c; KEY_J; C64, C128, VIC20; b;$0A
+c; KEY_K; C64, C128, VIC20; b;$0B
+c; KEY_L; C64, C128, VIC20; b;$0C
+c; KEY_M; C64, C128, VIC20; b;$0D
+c; KEY_N; C64, C128, VIC20; b;$0E
+c; KEY_O; C64, C128, VIC20; b;$0F
+c; KEY_P; C64, C128, VIC20; b;$10
+c; KEY_Q; C64, C128, VIC20; b;$11
+c; KEY_R; C64, C128, VIC20; b;$12
+c; KEY_S; C64, C128, VIC20; b;$13
+c; KEY_T; C64, C128, VIC20; b;$14
+c; KEY_U; C64, C128, VIC20; b;$15
+c; KEY_V; C64, C128, VIC20; b;$16
+c; KEY_W; C64, C128, VIC20; b;$17
+c; KEY_X; C64, C128, VIC20; b;$18
+c; KEY_Y; C64, C128, VIC20; b;$19
+c; KEY_Z; C64, C128, VIC20; b;$1A
+c; KEY_0; C64, C128, VIC20; b;$30
+c; KEY_1; C64, C128, VIC20; b;$31
+c; KEY_2; C64, C128, VIC20; b;$32
+c; KEY_3; C64, C128, VIC20; b;$33
+c; KEY_4; C64, C128, VIC20; b;$34
+c; KEY_5; C64, C128, VIC20; b;$35
+c; KEY_6; C64, C128, VIC20; b;$36
+c; KEY_7; C64, C128, VIC20; b;$37
+c; KEY_8; C64, C128, VIC20; b;$38
+c; KEY_9; C64, C128, VIC20; b;$39
+
+c; KEY_F1; C64, C128, VIC20; b;$F1
+c; KEY_F3; C64, C128, VIC20; b;$F3
+c; KEY_F5; C64, C128, VIC20; b;$F5
+c; KEY_F7; C64, C128, VIC20; b;$F7
+
+c; KEY_PLUS; C64, C128, VIC20; b;$2b
+c; KEY_POUND; C64, C128, VIC20; b;$1c
+c; KEY_ENTER; C64, C128, VIC20; b;$F0
+c; KEY_ASTERIX; C64, C128, VIC20; b;$2a
+c; KEY_SEMI; C64, C128, VIC20; b;$3b
+c; KEY_HOME; C64, C128, VIC20; b;$EF
+c; KEY_SPACE; C64, C128, VIC20; b;$20
+c; KEY_COMMODORE; C64, C128, VIC20; b;$EE
+c; KEY_COLON; C64, C128, VIC20; b;$3a
+c; KEY_EQUALS; C64, C128, VIC20; b;$3d
 
 c; SPRITE_MULTICOLOR; C64, C128;a;$D01C
 c; SPRITE_MULTICOLOR_REG1; C64, C128;a;$D025
@@ -346,13 +432,19 @@ c; VIC_BANK0; C64, C128; b;3
 c; VIC_BANK1; C64, C128;b;2
 c; VIC_BANK2; C64, C128;b;1
 c; VIC_BANK3; C64, C128;b;0
-c; VIC_DATA_LOC; C64, C128;a;$d018
+c; VIC_DATA_LOC; C64;a;$d018
 
 c; COPPER_SCROLL; AMIGA;i; $0102
 c; COPPER_WAIT_FOR_RASTER; AMIGA; i; $FFFE
 c; COPPER_PALETTE_START; AMIGA;i; $0180
+c; COPPER_MODULO_EVEN; AMIGA;i; $0108
+c; COPPER_MODULO_ODD; AMIGA;i; $010A
+c; COPPER_IRQ; AMIGA; i; %00010000
+c; VB_IRQ; AMIGA; i; %00100000
+c; BLITTER_IRQ; AMIGA; i; %01000000
 
-# C128 støff
+
+# C128 ktøff
 
 c; VIC_DATA_LOC; C128;a;$0A2C
 c; MMU ; C128 ; a ; $FF00
@@ -378,54 +470,72 @@ m; fill80; C128; b,b
 #
 #
 
-r; BEGIN; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; END; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; VAR; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; PROGRAM; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; INTEGER; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
+r; BEGIN; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; END; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; VAR; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; PROGRAM; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; INTEGER; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
 r; LONG; AMIGA
-r; PROCEDURE; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; IF; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; THEN; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; FOR; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; TO; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; DO; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; WHILE; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; ARRAY; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; OF; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; BYTE; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; INCBIN; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; STRING; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; CSTRING; C64, C128, VIC20, PET,  PET, BBCM, AMIGA
-r; ASM; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
+r; PROCEDURE; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; IF; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; THEN; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; FOR; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; FORI; C64, C128, VIC20, PET, NES, BBCM, AMIGA
+r; TO; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; DO; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; WHILE; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; ARRAY; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; OF; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; BYTE; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; INCBIN; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; STRING; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; CSTRING; C64, C128, VIC20, PET,  BBCM, AMIGA
+r; ASM; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
 r; INCSID; C64, C128, VIC20, PET,  NES
 r; INCNSF; NES
-r; INTERRUPT; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; ELSE; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; OR; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; AND; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; POINTER; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; AT; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; INCLUDE; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; USERDATA; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; IFDEF; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; DEFINE; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; IFNDEF; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; ENDIF; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; OFFPAGE; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; ONPAGE; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; STEP; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; UNROLL; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; STARTBLOCK; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; ENDBLOCK; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; IGNOREMETHOD; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
-r; ERROR; C64, C128, VIC20, PET,  PET, NES, BBCM, AMIGA
+r; INTERRUPT; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; ELSE; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; OR; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; AND; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; POINTER; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; AT; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; INCLUDE; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; USERDATA; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; IFDEF; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; DEFINE; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; IFNDEF; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; ENDIF; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; OFFPAGE; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; ONPAGE; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; STEP; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; UNROLL; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; STARTBLOCK; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; ENDBLOCK; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; IGNOREMETHOD; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
+r; ERROR; C64, C128, VIC20, PET,  NES, BBCM, AMIGA
 r; WEDGE; C64, C128
 r; USE; C64, C128, VIC, BBCM, AMIGA
 r; STARTASSEMBLER; C64, C128, VIC, BBCM, AMIGA
+r; DONOTREMOVE; C64, C128, VIC, BBCM, AMIGA
 
 r; CHIPMEM; AMIGA
 
 
 
 
+#
+#
+#
+#
+#   P L A T F O R M   I N F O
+#
+#
+#
+#
+p; Getting_Started; C64, C128, VIC20, PET, NES, BBCM, AMIGA
+p; Vic20; VIC20
+p; C64; C64
+p; Pascal; C64, C128, VIC20, PET, NES, BBCM, AMIGA
+p; Constants; C64, C128, VIC20, PET, NES, BBCM, AMIGA
+p; Variables; C64, C128, VIC20, PET, NES, BBCM, AMIGA
+p; Screen; C64, VIC20

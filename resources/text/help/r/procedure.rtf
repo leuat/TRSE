@@ -1,0 +1,29 @@
+<h3>Description</h3>
+<p>Define a procedure.  Procedures contain parameters which are memory locations.  Note that any variables
+declared are not local variables.
+</p>
+
+
+<h3>Example</h3>
+
+<code>
+    procedure MyProc( ind: byte );
+    var
+        myVar : byte; // this is not a local variable in TRSE, it is just a location to define a space in memory
+
+    begin
+
+        p[ind] := myVar;
+            
+    end;
+
+
+    // main code
+    begin
+
+        myVar := 1; // change myVar
+        MyProc( 10 );  // call procedure
+
+    end.
+        
+</code>

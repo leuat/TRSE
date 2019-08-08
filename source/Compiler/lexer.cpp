@@ -234,9 +234,18 @@ Token Lexer::String()
 
 QString Lexer::peek()
 {
-    if (m_pos+1>=m_text.length())
+    int k=m_pos+1;
+/*    bool done = false;
+    while (k+1<m_text.length() && !done) {
+        k++;
+        done = true;
+        if (m_text[k]==" ")
+            done = false;
+    }
+*/
+    if (k>=m_text.length())
         return "";
-    return QString(m_text[m_pos+1]);
+    return QString(m_text[k]);
 }
 
 void Lexer::Initialize()
@@ -333,10 +342,21 @@ Token Lexer::GetNextToken()
             return Token(TokenType::EQUALS, "=");
         }
         if (m_currentChar==">") {
+            if (peek()=="=") {
+                Advance();
+                Advance();
+                return Token(TokenType::GREATEREQUAL, ">=");
+            }
             Advance();
             return Token(TokenType::GREATER, ">");
         }
         if (m_currentChar=="<") {
+            if (peek()=="=") {
+                Advance();
+                Advance();
+                return Token(TokenType::LESSEQUAL, "<=");
+            }
+
             Advance();
             if (m_currentChar==">") {
                 Advance();

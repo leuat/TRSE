@@ -13,6 +13,7 @@ void DemoEffectRaytracer::Initialize()
     if (m_rt == nullptr)
         m_rt = new RayTracer();
 
+
    m_mc = new MultiColorImage(LColorList::C64);
 
    if (m_rt->m_globals.m_c64ImageType == 0.0) {
@@ -20,6 +21,11 @@ void DemoEffectRaytracer::Initialize()
        m_mc = new CharsetImage(LColorList::C64);
 
        ((CharsetImage*)(m_mc))->m_currentMode = CharsetImage::FULL_IMAGE;
+
+   }
+   if (m_rt->m_globals.m_c64Output == 2.0) {
+       m_mc = new LImageQImage(LColorList::PICO8);
+       m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
 
    }
    m_mc->setMultiColor(true);
@@ -79,8 +85,11 @@ void DemoEffectRaytracer::Render(QImage &img)
     //qDebug() << "FRAME2";
 
     m_elapsedTime = m_timer.elapsed();
-    m_toggleC64 = m_rt->m_globals.m_c64Output==1;
-    ConvertToC64(m_rt->m_globals.m_dither,m_rt->m_globals.m_multicolor==1,m_rt->m_globals.m_ditherStrength);
+    m_outputType = m_rt->m_globals.m_c64Output;
+    if (m_outputType==1)
+        ConvertToC64(m_rt->m_globals.m_dither,m_rt->m_globals.m_multicolor==1,m_rt->m_globals.m_ditherStrength);
+    if (m_outputType==2)
+        ConvertToP8(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
 
     //qDebug() << "FRAME3";
 
@@ -127,9 +136,12 @@ void DemoEffectRaytracer::AppendData()
 {
     if (m_curFrame>=m_noFrames)
         return;
+    MultiColorImage* mc = dynamic_cast<MultiColorImage*>(m_mc);
+    if (mc==nullptr)
+        return;
     for (int y=0;y<m_frameHeight;y++) {
         for (int x=0;x<m_frameWidth;x++) {
-            PixelChar& pc = m_mc->m_data[x+y*40];
+            PixelChar& pc = mc->m_data[x+y*40];
             for (int i=0;i<8;i++)
                 data.append(pc.reverse(pc.p[i]));
         }

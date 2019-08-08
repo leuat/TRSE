@@ -36,7 +36,7 @@ LColorList::~LColorList()
 }
 
 LColor &LColorList::get(int i) {
-    if (i<m_list.count())
+    if (i<m_list.count() && i>=0)
         return m_list[i];
     if (m_list.count()!=0) return m_list[0];
     return m_black;
@@ -58,6 +58,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 5;
   if (t==VIC20)
       return 6;
+  if (t==PICO8)
+      return 7;
 
   return 255;
 }
@@ -78,6 +80,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return CGA2_HIGH;
     if (c==6)
         return VIC20;
+    if (c==7)
+        return PICO8;
 
     return UNSUPPORTED;
 
@@ -248,7 +252,8 @@ void LColorList::Initialize(Type t)
         InitC64();
     if (m_type == Type::VIC20)
         InitVIC20();
-
+    if (m_type == Type::PICO8)
+        InitPICO8();
 
 
     m_metric = new LinearMetric();
@@ -303,6 +308,30 @@ void LColorList::InitC64()
     m_list.append(LColor(QColor(0x9a, 0xd2, 0x84),""));
     m_list.append(LColor(QColor(0x6c, 0x5e, 0xb5),""));
     m_list.append(LColor(QColor(0x95, 0x95, 0x95),""));
+
+    m_background = m_list[0];
+
+}
+
+void LColorList::InitPICO8()
+{
+    m_list.clear();
+    m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));
+    m_list.append(LColor(QColor(0x1d, 0x2b, 0x53),""));
+    m_list.append(LColor(QColor(0x7e, 0x25, 0x53),""));
+    m_list.append(LColor(QColor(0x0, 0x87, 0x51),""));
+    m_list.append(LColor(QColor(0xab, 0x52, 0x36),""));
+    m_list.append(LColor(QColor(0x5f, 0x57, 0x4f),""));
+    m_list.append(LColor(QColor(0xc2, 0xc3, 0xc7),""));
+    m_list.append(LColor(QColor(0xff, 0xf1, 0xe8),""));
+    m_list.append(LColor(QColor(0xff, 0x0, 0x4d),""));
+    m_list.append(LColor(QColor(0xff, 0xa3, 0x0),""));
+    m_list.append(LColor(QColor(0xff, 0xec, 0x27),""));
+    m_list.append(LColor(QColor(0x0, 0xe4, 0x36),""));
+    m_list.append(LColor(QColor(0x29, 0xad, 0xff),""));
+    m_list.append(LColor(QColor(0x83, 0x76, 0x9c),""));
+    m_list.append(LColor(QColor(0xff, 0x77, 0xa8),""));
+    m_list.append(LColor(QColor(0xff, 0xcc, 0xaa),""));
 
     m_background = m_list[0];
 

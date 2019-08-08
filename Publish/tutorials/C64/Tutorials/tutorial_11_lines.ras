@@ -63,9 +63,9 @@ begin
 		yp2[i] := yp[i];
 		xp[i]:=xp[i]+dxp[i];
 		yp[i]:=yp[i]+dyp[i];
-		if xp[i]>125 then dxp[i]:=255;
+		if xp[i]>=125 then dxp[i]:=255;
 		if xp[i]<30 then dxp[i]:=1;
-		if yp[i]>150 then dyp[i]:=255;
+		if yp[i]>=150 then dyp[i]:=255;
 		if yp[i]<30 then dyp[i]:=1;
 		
 	end;

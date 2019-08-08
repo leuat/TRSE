@@ -78,7 +78,7 @@ begin
 		AsciiToPositionInBitmap(text[i]); // outputs "src"
 		//Blit the character to screen + 80 (to bitplane #3, yielding color 4=purple) 
 		
-		ablit(font, screen+^80, src, x, y,  160,  (26*$40)+(2), 40-4, 160-4,$09E0);
+		ablit(font, screen+^80, src, x, y,  160,  (26*$40)+(2), 40-4,160-4, 160-4,$09E0);
 
 		
 	end;
@@ -97,7 +97,7 @@ begin
 		source modulo (1 bitplane =0), destination modulo (4 bitplanes -1 = 120) 
 			
 	*/
-	ablit(logo_image,screen, 0,  0,0,   160, (100*$40) + 20, 0,120,$09E0);
+	ablit(logo_image,screen, 0,  0,0,   160, (100*$40) + 20, 0,120,120,$09E0);
 	// Make sure you wait a bit
 	WaitVerticalBlank();	
 

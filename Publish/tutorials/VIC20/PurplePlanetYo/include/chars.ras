@@ -95,7 +95,7 @@ begin
 		return();
 	end;
 
-	if k>64 then begin
+	if k>=64 then begin
 		j:=k-64; 
 		tm[0]:=j;
 		tm[22]:=j+charsetShift-1;
@@ -154,7 +154,7 @@ asm("
 		for j:=0 to 23 do begin
 			for i:=0 to 8 do begin
 				l:=i+k;
-				if (l>8) then if (l<30) then begin 
+				if (l>=8) then if (l<30) then begin 
 					zp[i]:=$47-i;
 					p1[i]:=th_c;
 				end;

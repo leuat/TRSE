@@ -64,6 +64,7 @@ public:
     QMap<QString, Node*> m_procedures;
     QMap<QString, QString> m_preprocessorDefines;
     QStringList m_diskFiles;
+    QStringList m_doNotRemoveMethods;
     QString m_initAssembler = "";
     QVector<Node*> m_proceduresOnly;
     QVector<QString> m_ignoreMethods;
@@ -88,12 +89,16 @@ public:
     void VerifyToken(Token t);
 
     void HandlePreprocessorInParsing();
+    void StripWhiteSpaceBeforeParenthesis();
+    void RemoveComments();
     void Preprocess();
     void PreprocessReplace();
     void PreprocessIfDefs(bool ifdef);
     void PreprocessConstants();
 
     int GetParsedInt();
+
+    int getIntVal(Token t);
 
     int findPage();
 
@@ -113,7 +118,7 @@ public:
     //Node* LogicalClause();
     Node* Block(bool useOwnSymTab);
     QVector<Node*> Parameters();
-    Node* ForLoop();
+    Node* ForLoop(bool inclusive);
 //    Node* WhileLoop();
     Node* String();
 

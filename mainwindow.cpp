@@ -357,7 +357,7 @@ void MainWindow::RefreshFileList()
     fileSystemModel->setRootPath(rootPath);
     fileSystemModel->setFilter(QDir::NoDotAndDotDot |
                             QDir::AllDirs |QDir::AllEntries);
-    fileSystemModel->setNameFilters(QStringList() << "*.ras" << "*.asm" << "*.txt" << "*.prg" << "*.inc" << "*.flf" <<"*.paw" << "*.fjo");
+    fileSystemModel->setNameFilters(QStringList() << "*.ras" << "*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo");
     fileSystemModel->setNameFilterDisables(false);
 
     ui->treeFiles->setModel(fileSystemModel);
@@ -899,7 +899,8 @@ void MainWindow::LoadProject(QString filename)
 
 
     QStringList files = m_currentProject.m_ini.getStringList("open_files");
-    for (QString f: files) {
+    for (int i=0;i<files.count();i++) {
+        QString f = files[files.count()-1-i];
         if (QFile::exists(getProjectPath() + "/"+ f))
             LoadDocument(f);
     }
@@ -1126,6 +1127,7 @@ void MainWindow::on_actionFjong_Raymarcher_document_triggered()
 void MainWindow::on_actionWavefront_obj_to_amiga_converter_triggered()
 {
     DialogExport3D* de = new DialogExport3D(&m_iniFile);
+
     de->exec();
     delete de;
 }

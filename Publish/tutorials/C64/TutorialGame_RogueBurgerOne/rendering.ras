@@ -1,13 +1,13 @@
 
 procedure RenderScrollerText(rs_ypos:byte);
 begin
-	if (ms_scroll>127) then begin
+	if (ms_scroll>=127) then begin
 		val:=zeropage1[0];
 		moveto(0,rs_ypos, $84);
 		if (val=$20) then val2:=val
 		else begin
-			if val>64 then val:=val-65;
-			if val>16 then val:=val+24;  
+			if val>=64 then val:=val-65;
+			if val>=16 then val:=val+24;  
 			val:=val*2;
 		
 			val:=val + ms_sshift;
@@ -39,10 +39,10 @@ begin
 	val:=@renderText2x2[0];
 	k:=0;
 	while val<>0 do begin
-		if val>64 then val:=val-65;// Find value
+		if val>=64 then val:=val-65;// Find value
 		if val<>$20 then begin
 
-			if val>16 then val:=val+24;  
+			if val>=16 then val:=val+24;  
 			val:=val*2;
 		
 			val:=val + k;
@@ -302,7 +302,7 @@ begin
 	tmp2 := 10/2;
 	k := bullet_count/2;
 	j:=bullet_dmg/4;
-	if j>8 then j:=8;
+	if j>=8 then j:=8;
 	if tmp2<>0 then	
 	for i:=0 to tmp2 do begin
 		screenmemory[i] := 103 +j;

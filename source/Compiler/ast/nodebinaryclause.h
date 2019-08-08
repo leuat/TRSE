@@ -34,7 +34,6 @@ public:
         m_left = left;
         m_op = op;
     }
-
     void ExecuteSym(SymbolTable* sym) override;
 
     bool cannotBeSimplified(Assembler* as);

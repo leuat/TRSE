@@ -1,5 +1,39 @@
-<p>Loads a compressed file from disk using the Krill loader system in TRSE. 
-<p>Works exactly the same way as <b>KrillLoad</b>, but requires the file to be compressed
-using TinyCrunch. 
-<p>Compressing with TinyCrunch can be performed with TRSE by typing "1" into the "compressed" field in the d64 PAW file. Compress by compiling the paw file (ctrl+B)
-<p>You must have downloaded TinyCrunch+python installed + and having set up the link in the TRSE settings dialog. 
+<h3>KrillLoadCompressed( [address] );</h3>
+<ul>
+    <li>[address] - address</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Loads a compressed file from disk using the Krill loader system in TRSE.</p>
+<p>Works exactly the same way as <b>KrillLoad</b>, but requires the file to be compressed.
+using TinyCrunch. </p>
+<p>Compressing with TinyCrunch can be performed with TRSE by typing "1" into the "compressed"
+field in the d64 PAW file. Compress by compiling the paw file (ctrl+B)</p>
+<p>You must have downloaded TinyCrunch + python installed + and having set up the link in the TRSE settings dialog.</p>
+
+<p>For example, assume you have </p>
+
+<ul>
+<li>Created a .paw d64 file that contains some random data file with name "my_file" placed at a memory location of your chosing</li>
+<li>In the "project settings", selected a "d64" project</li>
+<li>Wish to include krill's loader at $0200
+</ul>
+
+<p>you need to write the following code to be able to load the file: </p>
+
+
+<h3>Example</h3>
+
+<code>
+program Loader;
+var
+   i: byte;
+        @use KrillsLoader $0200 $2000 $5000
+
+begin
+        InitKrill();
+        KrillLoad( my_file );
+end;
+</code>
+

@@ -16,11 +16,46 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->PopLabel("waitforblitter");
     }
 
+    if (Command("vbirq")) {
+        NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_node->m_params[0]);
+        QString name = addr->m_procedure->m_procName;
+
+        as->Asm("move.l #"+name+",$6c.w");
+    }
+
     if (Command("initcustomcopperlist"))
         as->Asm("lea copper_custom,a5");
 
     if (Command("endcustomcopperlist"))
         as->Asm("move.l #$fffffffe,(a5)+");
+
+    if (Command("InitP61PlayerInternal")) {
+        as->Asm("jsr init_p1_cont");
+        as->IncludeFile(":resources/code/amiga/init_p61_player.s");
+        as->IncludeFile(":resources/code/amiga/p61-play.i");
+        as->Label("init_p1_cont");
+    }
+    if (Command("InitP61Module")) {
+        as->Asm("movem.l	d0-a6,-(sp)");
+        m_dispatcher->LoadAddress(m_node->m_params[0],"a0");
+        //as->Asm("lea Module1,a0
+        as->Asm("sub.l a1,a1");
+        as->Asm("sub.l a2,a2");
+        as->Asm("moveq #0,d0");
+        as->Asm("lea $DFF000,a6");
+
+        as->Asm("jsr P61_Init");
+        as->Asm("movem.l (sp)+,d0-a6");
+
+    }
+    if (Command("PlayP61Module")) {
+        as->Asm("movem.l d0-a6,-(sp)");
+        as->Asm("lea $DFF000,a6");
+
+        as->Asm("jsr P61_Music");
+        as->Asm("movem.l (sp)+,d0-a6");
+
+    }
 
     if (Command("matmul3x3"))
         MatMul(as);
@@ -65,6 +100,9 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         Poke(as,".w");
     if (Command("poke32"))
         Poke(as,".l");
+
+    if (Command("EnableInterrupt"))
+        EnableInterrupt(as);
 
     if (Command("InitPoly"))
         as->IncludeFile(":resources/code/amiga/poly.s");
@@ -541,6 +579,18 @@ void Methods68000::ProjectToScreen(Assembler *as)
     move.w ro_c,d4
 */
 
+}
+
+void Methods68000::EnableInterrupt(Assembler *as)
+{
+    QString d0 = as->m_regAcc.Get();
+    LoadVariable(as,"move",m_node->m_params[0],d0);
+    as->Asm("or.w #%1100000000000000,"+d0);
+    as->Asm("move.w "+d0+",$dff09a");
+    as->m_regAcc.Pop(d0);
+
+//    as->Asm("move.b "+as->m_varStack.pop() + ",d4");
+//    as->Asm("move.b "+m_node->m_params[0]"",d0");
 }
 
 

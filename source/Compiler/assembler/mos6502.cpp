@@ -170,7 +170,10 @@ void AsmMOS6502::DeclareArray(QString name, QString type, int count, QStringList
 
     if (data.count()==0 && pos=="") {
         Write(name +"\t" + t + "\t ");
-        Asm("org "+name+"+" +QString::number(count));
+        int scale = 1;
+        if (type.toLower()=="integer")
+            scale = 2;
+        Asm("org "+name+"+" +QString::number(count*scale));
 
     }
     else {
@@ -183,7 +186,7 @@ void AsmMOS6502::DeclareArray(QString name, QString type, int count, QStringList
                 s=s+"\n";
                 s=s + "\t" +t + " ";
             }
-            else s=s+", ";
+            else if (i!=data.count()-1) s=s+", ";
 
         }
         QStringList lst = s.split("\n");
@@ -1042,12 +1045,12 @@ void AsmMOS6502::InitZeroPointers(QStringList lst, QStringList tmpList)
     }
     m_tempZeroPointers.clear();
 
-
     for (QString zp : tmpList) {
         if (zp!="") {
             m_tempZeroPointers.append(zp);
         }
     }
+//       qDebug() << "ASMMos6502 initzero " <<m_tempZeroPointers;
 
 
 }

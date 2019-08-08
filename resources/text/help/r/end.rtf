@@ -1,0 +1,34 @@
+<h3>Description</h3>
+<p>A statement that defines the ending of a code block in Pascal.  This can be the program, a procedure,
+an if statement, a for loop and so on.</p>
+<p>An end must be preceeded with a begin.  The 'end' in main program code must end with a fullstop character.</p>
+
+<h3>Example</h3>
+<p>An end used on a procedure and a while loop.  These are defined as end; with a semicolon.
+The main code block has a different end. with a full stop.</p>
+
+<code>
+// procedures have a begin
+procedure MyProcedure();
+begin
+
+   myPointer:=myText;
+   moveto(0,5, $04);
+   // Loop has a begin
+   while (myPointer[0]&lt;&gt;0) do
+   begin
+
+      screenmemory[a]:=myPointer[0]; // draw text
+      myPointer:=myPointer+1; // increase pointer value
+
+   end;
+
+end;
+
+// Main code
+begin
+
+   MyProcedure();
+
+end.
+</code>

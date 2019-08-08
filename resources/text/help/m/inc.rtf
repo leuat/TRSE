@@ -1,6 +1,18 @@
-<p>Increases the value at the address with 1. Example:
+<h3>Inc( [address] );</h3>
+<ul>
+    <li>[address] - the address to increment</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Increases the value at the address with 1.  Creates an inc directive in assembler.</p>
+
+
+<h3>Example</h3>
+
 <code>
-	inc(^$d020);
-	inc(my_variable);
-	inc(my_array[i]);
+inc(^$d020);        // inc $d020 in assembler
+inc(my_variable);   // inc my_variable
+inc(my_array[i]);   // inc my_array,x
 </code>
+

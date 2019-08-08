@@ -312,7 +312,7 @@ begin
 //		Play Mod();
 
 		dec(ntscSkip);
-		if ntscSkip>127 then ntscSkip:=5;
+		if ntscSkip>=127 then ntscSkip:=5;
 
 	end;
 	end;
@@ -359,7 +359,7 @@ begin
 	//moveto
 
 
-	
+//	SCREEN_CHAR_LOC
 
 	/*
 		Cheat: Change mod pattern pos

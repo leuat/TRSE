@@ -96,7 +96,7 @@ private:
 public:
     QVector<LColor> m_list;
 
-    enum Type{ C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20 };
+    enum Type{ C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8 };
 
     Type m_type = Type::C64;
     LColorList();
@@ -130,6 +130,7 @@ public:
     void CopyFrom(LColorList* other);
     void InitC64_org();
     void InitC64();
+    void InitPICO8();
     void InitVIC20();
     void InitCGA1_LOW();
     void InitCGA1_HIGH();

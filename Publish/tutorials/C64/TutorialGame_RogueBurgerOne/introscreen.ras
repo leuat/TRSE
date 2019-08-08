@@ -66,7 +66,7 @@ begin
 	call(SIDFILE_1_PLAY);
 	for i:=0 to 25 do begin
 
-		if (i<5 or i>7) then begin
+		if (i<5 or i>=7) then begin
 			for j:=0 to 5 do begin
 				screenmemory[j]:=58;
 				zeropage2[j]:=BLUE;
@@ -310,7 +310,7 @@ begin
 	inc(creditsX);
 
 	moveto(creditsX, creditsY, k);
-	if (val>64 and val<128) then val:=val-64;
+	if (val>=64 and val<128) then val:=val-64;
 	screenmemory[0]:=val;
 	screenmemory[1]:=$20;
 	dec(creditsCounter);

@@ -3,7 +3,7 @@ begin
 	if (transitionMode=0) then begin
 		// Transition IN : Copy colors to screen at y=tVal
 		// Copy color $4400 data
-		if (tVal>25) then return();
+		if (tVal>=25) then return();
 
 		moveto(0,tVal, $48);
 		zp1:=screenmemory;

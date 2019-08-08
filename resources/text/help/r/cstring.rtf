@@ -1,0 +1,15 @@
+<h3>Description</h3>
+<p>Character string using PETSCII values.  For example, A = 1 instead of 65.</p>
+
+
+<h3>Example</h3>
+
+<code>
+cs : cstring = "TRSE SPEAK PETSCII";
+
+// ASM generated:
+cs	
+	dc.b	$14, $12, $13, $5, $20, $13, $10, $5, $1
+	dc.b	$b, $20, $10, $5, $14, $13, $3, $9, $9
+	dc.b	0 
+</code>

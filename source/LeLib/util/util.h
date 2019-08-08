@@ -182,35 +182,8 @@ public:
     static QString fromStringList(QStringList lst);
 
     static int NumberFromStringHex(QString s) {
-        bool ok = true;
-        s=s.trimmed();
-
         int val = 0;
-
-        int type = 0;
-        if (s.startsWith("<")) {
-            type = 1;
-            s = s.replace("<","");
-        }
-        if (s.startsWith(">")) {
-            type = 2;
-            s = s.replace(">","");
-        }
-
-        if (s.startsWith("$"))
-            val = s.remove("$").toInt(&ok, 16);
-        else
-        if (s.toLower().startsWith("0x"))
-            val = s.remove("$").toInt(&ok, 16);
-        else
-        if (s.toLower().startsWith("%"))
-            val= s.remove("%").toInt(&ok, 2);
-        else
-            val = s.toInt(&ok,  10);
-
-        if (type==1)  val = (val)&0xFF;
-        if (type==2)  val = (val>>8)&0xFF;
-
+        bool ok = NumberFromStringHex(s,val);
         return val;
     }
 
@@ -220,21 +193,7 @@ public:
 
     static QString BinopString(QString a);
 
-    static bool NumberFromStringHex(QString s, int& num) {
-        bool ok = true;
-        s = s.replace("#","");
-        if (s.startsWith("$"))
-            num= s.remove("$").toInt(&ok, 16);
-        else
-        if (s.toLower().startsWith("0x"))
-            num = s.remove("$").toInt(&ok, 16);
-        else
-            if (s.toLower().startsWith("%"))
-                num = s.remove("%").toInt(&ok, 2);
-        else
-        num  =s.toInt(&ok,  10);
-        return ok;
-    }
+    static bool NumberFromStringHex(QString s, int& num);
 
     static QVector3D fromSpherical(float r, float t, float p) {
         return QVector3D( r*sin(t)*cos(p), r*sin(t)*sin(p), r*cos(t)  );

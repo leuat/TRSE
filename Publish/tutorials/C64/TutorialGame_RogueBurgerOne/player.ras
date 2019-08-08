@@ -10,7 +10,7 @@ begin
 	
 	sprite1_counter:=sprite1_counter-val;
 
-	if sprite1_counter>200 then
+	if sprite1_counter>=200 then
 		sprite1_counter := 31;
 
 	// Animation hits at 0 and 10
@@ -63,7 +63,7 @@ begin
 	val := getbit(SPRITE_BITMASK, @bulletSprite);
 	//val:=1;
 	//togglebit(SPRITE_BITMASK, 7, 1);
-	if val=0 then
+	if val=1 then
 		begin
 		tmp:=bullet_x;
 		tmp:=tmp*2;
@@ -163,7 +163,7 @@ begin
 	//	i:=i-m_rl_starty;
 	j:=(bullet_y-53)/16;
 	val := j*m_rl_width+i;
-	tmp2:=getbit(zeropage4[val], 3);
+	tmp2:=1-getbit(zeropage4[val], 3);
 
 	
 end;
@@ -184,6 +184,7 @@ begin
 	j:=j/16;
 	val := j*m_rl_width+i;
 	tmp2:=getbit(zeropage4[val], 3);
+	tmp2:=1-tmp2;
 	//if joystickup=1 then 
 //		k:=0-m
 	//k:=(joystickup + joystickdown)*m_rl_width;
@@ -211,8 +212,8 @@ begin
 	if val<@crashDistance offpage then begin
 		pointToEntityData(j);
 		player_health := player_health - zeropage5[@entity_damage];
-		if (entity_type[j]>18) then begin
-			if currentScroll>8 then begin
+		if (entity_type[j]>=18) then begin
+			if currentScroll>=8 then begin
 				InitGameWon();
 				RasterIRQ(RasterGameWon(), 1, @usekernal);
 				return();
@@ -223,24 +224,24 @@ begin
 @ifdef isDebug
 		if (immortal=0) then begin
 
-		if player_health >200 then
+		if player_health >=200 then
 			InitGameOver();
 		end
 		else begin // Immortal!
-			if player_health >200 then
+			if player_health >=200 then
 				player_health:=10;
 		end;
 @endif
 @ifndef isDebug
-		if player_health >200 then
+		if player_health >=200 then
 			InitGameOver();
 
 @endif		
-		if player_health>player_maxhealth then
+		if player_health>=player_maxhealth then
 			player_health := player_maxhealth;
 		
 		bullet_count := bullet_count + zeropage5[@entity_ammo];
-		if bullet_count>bullet_max then
+		if bullet_count>=bullet_max then
 			bullet_count:=bullet_max;
 		HitEntity(j, 1);
 		//		debug(25, 0, zeropage5[9]);
@@ -274,7 +275,6 @@ begin
 		end;
 		
 		
-
 		spritex:=spritex + joystickright*player_speed;
 		spritex:=spritex - joystickleft*player_speed;
 		spritey:=spritey + joystickdown*player_speed - joystickup*player_speed;
@@ -295,11 +295,12 @@ begin
 			spritey:=spritey - joystickdown*player_speed + joystickup*player_speed;
 			
 		end;
+		
 //		UpdatePlayerSprite();
 		
 		
 		// Sprite border check, boring stuff, extract numbers to defines
-		if spritex>318 then begin
+		if spritex>=318 then begin
 			if m_posx<>m_rl_sizex-1 then begin
 				m_posx:=m_posx+1;
 				spritex:=25;
@@ -310,7 +311,7 @@ begin
 		end;
 		if spritex<24 then begin
 			if m_posx<>0 then begin
-				spritex:= 317;
+				spritex:= 316;
 				m_posx:=m_posx-1;
 				redraw:=1;
 			end
@@ -329,7 +330,7 @@ begin
 				spritey:=69;
 			
 		end;
-		if spritey>220 then begin
+		if spritey>=220 then begin
 			if m_posy<>m_rl_sizey-1 then begin
 				spritey:=69;
 				m_posy:=m_posy+1;

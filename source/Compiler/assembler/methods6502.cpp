@@ -193,8 +193,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     }
 
     if (Command("Nop")) {
-        NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
-        for (int i=0;i<num->m_val;i++)
+        if (!m_node->m_params[0]->isPureNumeric())
+            ErrorHandler::e.Error("Nop() requires a pure numeric value.",m_node->m_op.m_lineNumber);
+        int val = Util::NumberFromStringHex(m_node->m_params[0]->getValue(as).remove("#"));
+        for (int i=0;i<val;i++)
             as->Asm("nop");
     }
 
@@ -215,6 +217,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     }
     if (Command("IsOverlapping")) {
         IsOverlapping(as);
+    }
+    if (Command("IsOverlappingWH")) {
+        IsOverlappingWH(as);
     }
 
     if (Command("initsqrt16")) {
@@ -367,6 +372,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     if (Command("poke"))
         Poke(as);
+
+    if (Command("createaddresstable"))
+        CreateAddressTable(as);
+
+    if (Command("addresstable"))
+        AddressTable(as);
 
 
 /*    if (Command("copyzpdata")
@@ -558,6 +569,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 //    if (Command("enableinterrupts")
   //      EnableInterrupts(as);
 
+    if (Command("definescreen")) {
+        DefineScreen(as);
+    }
     if (Command("initmoveto")) {
         InitMoveto(as);
     }
@@ -601,6 +615,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("moveto80")) {
         MoveTo80(as);
     }
+
+    if (Command("tile"))
+        Tile(as);
 
     if (Command("pokescreen")) {
         PokeScreen(as, 0);
@@ -890,6 +907,17 @@ void Methods6502::Rand(Assembler* as)
 
 }
 
+// Ensure ScreenMemory constant is present
+void Methods6502::DefineScreen(Assembler *as)
+{
+    if (m_node->m_isInitialized["initscreen"])
+        return;
+
+    as->Label("screenmemory =  "+as->m_zeropageScreenMemory);
+
+    m_node->m_isInitialized["initscreen"]=true;
+}
+
 void Methods6502::InitMoveto(Assembler *as)
 {
     if (m_node->m_isInitialized["moveto"])
@@ -897,7 +925,8 @@ void Methods6502::InitMoveto(Assembler *as)
 
     QString lbl = as->NewLabel("moveto");
     as->Asm("jmp " + lbl);
-    as->Label("screenmemory =  "+as->m_zeropageScreenMemory);
+    //as->Label("screenmemory =  "+as->m_zeropageScreenMemory);
+    DefineScreen(as);
 //    as->Label("screen_x .byte 0 ");
 //    as->Label("screen_y .byte 0 ");
     as->Label("screen_x = "+as->m_internalZP[0]);
@@ -1328,7 +1357,6 @@ void Methods6502::PrintString(Assembler *as)
     if (str!=nullptr)
         as->Label(lbl);
     as->Asm("clc");
-    as->Comment("TEST");
     as->Asm("lda #<" +varName);
     as->Term("adc ");
     m_node->m_params[1]->Accept(m_dispatcher);
@@ -1346,6 +1374,45 @@ void Methods6502::PrintString(Assembler *as)
 
     as->PopLabel("printstring_call");
     as->PopLabel("printstring_text");
+
+}
+
+
+
+// Tile a,a,a,a,b,n
+// a1 = Top Left tile, a2 = Top right, a3 = bottom left, a4 = bottom right
+// b = tile number
+// n = screen width (eg: vic 20 has variable width screen depending on screen width register)
+void Methods6502::Tile(Assembler *as) {
+
+    //VerifyInitialized("initscreen", "InitScreen");
+    DefineScreen(as);
+    if (!m_node->m_params[4]->isPure())
+    {
+        ErrorHandler::e.Error("Tile number can only be a variable or number.");
+    }
+    QString nextline = Util::numToHex( m_node->m_params[5]->getInteger()  );
+    QString nextline2 = Util::numToHex( m_node->m_params[5]->getInteger()+1  );
+
+    as->Comment("Tile tl,tr,bl,br, tileno, screen_width");
+
+    as->Asm("ldx " + m_node->m_params[4]->getValue(as)); // tile number
+
+    as->Asm("lda "+ m_node->m_params[0]->getValue(as) + ",x");
+    as->Asm("ldy #0");
+    as->Asm("sta (screenmemory),y");
+
+    as->Asm("lda "+ m_node->m_params[1]->getValue(as) + ",x");
+    as->Asm("ldy #1");
+    as->Asm("sta (screenmemory),y");
+
+    as->Asm("lda "+ m_node->m_params[2]->getValue(as) + ",x");
+    as->Asm("ldy #" + nextline);
+    as->Asm("sta (screenmemory),y");
+
+    as->Asm("lda "+ m_node->m_params[3]->getValue(as) + ",x");
+    as->Asm("ldy #" + nextline2);
+    as->Asm("sta (screenmemory),y");
 
 }
 
@@ -1632,6 +1699,7 @@ void Methods6502::InitRandom(Assembler *as)
     as->Asm("RTS");
 }
 
+
 void Methods6502::PokeScreen(Assembler *as, int shift)
 {
     LoadVar(as, 0);
@@ -1846,12 +1914,15 @@ void Methods6502::PlayVIC20Sid(Assembler *as)
 
 void Methods6502::ScrollX(Assembler *as)
 {
+    if (as->m_tempZeroPointers.count()==0)
+        return;
     LoadVar(as,0);
     as->Comment("ScrollX method");
-    as->Asm("sta " + as->m_internalZP[0]);
+
+    as->Asm("sta " + as->m_tempZeroPointers[2]);
     as->Asm("lda $d016  ");
     as->Asm("and #$F8");
-    as->Asm("ora " +as->m_internalZP[0]);
+    as->Asm("ora " +as->m_tempZeroPointers[2]);
     as->Asm("sta $d016");
 }
 
@@ -1859,14 +1930,16 @@ void Methods6502::ScrollX(Assembler *as)
 
 void Methods6502::ScrollY(Assembler *as)
 {
+    if (as->m_tempZeroPointers.count()==0)
+        return;
 
     as->Comment("ScrollY method ");
     LoadVar(as,0);
-    as->Asm("sta " + as->m_internalZP[0]);
+    as->Asm("sta " + as->m_tempZeroPointers[2]);
 
     as->Asm("lda $d011  ");
     as->Asm("and #$78"); // 8 = 1000
-    as->Asm("ora "+as->m_internalZP[0]);
+    as->Asm("ora "+as->m_tempZeroPointers[2]);
     as->Asm("and #$7F"); // 8 = 1000
     as->Asm("sta $d011");
 
@@ -2408,31 +2481,139 @@ void Methods6502::Sqrt(Assembler *as)
 
 }
 
+void Methods6502::CreateAddressTable(Assembler *as) {
+
+    as->Comment("----------");
+    as->Comment("DefineAddressTable address, StartValue, IncrementValue, TableSize");
+
+    QString lblDTLoop = as->NewLabel("dtloop");
+    QString lblDTNoOverflow = as->NewLabel("dtnooverflow");
+
+
+    QString startValue = Util::numToHex( m_node->m_params[1]->getInteger()  );
+    QString incrementValue = Util::numToHex( m_node->m_params[2]->getInteger()  );
+    QString tableSize = Util::numToHex( ((m_node->m_params[3]->getInteger()) - 1) * 2 ); //  ; ( 10 * 2 ) - 2     or     10-1 = 9*2 = 18
+
+
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    QString addr = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr = var->value;
+
+    if (!m_node->m_params[1]->isPure()) {
+        ErrorHandler::e.Error("second parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    as->Asm("ldy #>" + startValue);
+    as->Asm("lda #<" + startValue);
+
+    as->Asm("ldx #0");
+
+    as->Asm("sta " + addr +",x   ; Address of table");
+    as->Asm("tya");
+    as->Asm("sta " + addr +"+1,x");
+
+    as->Label( lblDTLoop );
+
+    as->Asm("tay");
+    as->Asm("lda " + addr + ",x");
+    as->Asm("inx");
+    as->Asm("inx");
+
+    as->Asm("clc");
+    as->Asm("adc #" + incrementValue );
+    as->Asm("bcc " + lblDTNoOverflow );
+    as->Asm("iny");
+
+    as->Label( lblDTNoOverflow );
+
+    as->Asm("sta " + addr +",x");
+    as->Asm("tya");
+    as->Asm("sta " + addr +"+1,x");
+
+    as->Asm("cpx #" + tableSize ); //  ; ( 10 * 2 ) - 2     or     10-1 = 9*2 = 18
+    as->Asm("bcc " + lblDTLoop );
+
+    as->PopLabel("dtloop");
+    as->PopLabel("dtnooverflow");
+
+
+}
+
+void Methods6502::AddressTable(Assembler *as) {
+
+    as->Comment("----------");
+    as->Comment("AddressTable address, xoffset, yoffset");
+
+    QString lblDTNoOverflow = as->NewLabel("dtnooverflow");
+
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    QString addr = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr = var->value;
+
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "ldx #" + QString::number( m_node->m_params[2]->getInteger() * 2 ) );
+    /*} else if (m_node->m_params[2]->isPure()) {
+        // pure
+        as->Asm( "ldx " + m_node->m_params[2]->getValue(as) ); */
+    } else {
+        // complex
+        as->Comment("yoffset is complex");
+        LoadVar(as, 2);
+        as->Asm("asl ; *2");
+        as->Asm("tax");
+    }
+
+    as->Asm("lda " + addr +",x   ; Address of table lo");
+    as->Asm("ldy " + addr +"+1,x   ; Address of table hi");
+
+    if (m_node->m_params[1]->isPure()) {
+        // pure
+        if (m_node->m_params[1]->isPureNumeric() && m_node->m_params[1]->getInteger() == 0 ) {} else {
+            as->Asm("clc");
+            as->Asm("adc " + m_node->m_params[1]->getValue(as) );
+            as->Asm("bcc " + lblDTNoOverflow );
+            as->Asm("iny  ; overflow into high byte");
+            as->Label( lblDTNoOverflow );
+
+        }
+    } else {
+        // complex
+        QString zp0 = as->m_internalZP[0];
+
+        as->Comment("xoffset is complex");
+        as->Asm("sta " + zp0);
+        LoadVar(as, 1);
+        as->Asm("clc");
+        as->Asm("adc " + zp0);
+        as->Asm("bcc " + lblDTNoOverflow );
+        as->Asm("iny  ; overflow into high byte");
+        as->Label( lblDTNoOverflow );
+    }
+
+    as->PopLabel("dtnooverflow");
+
+}
+
 // Calculate if x1,y1 and x2,y2 are with hitbox distance of each other
 void Methods6502::IsOverlapping(Assembler *as)
 {
-/*
- * ; test sprite X position colliding?
-                lda #100        ; xpos1
-                clc
-                sbc #112        ; sub xpos2
-                cmp #PLAYER_CLEFT
-                bcs collisionOnX
-                cmp #PLAYER_CRIGHT
-                bcs noCollision
-; test sprite Y position colliding?
-collisionOnX    lda #100        ; ypos1
-                clc
-                sbc #102        ; ypos2
-                cmp #PLAYER_CTOP
-                bcs collision
-                cmp #PLAYER_CBOT
-                bcs noCollision
-collision
-                nop
-noCollision    ; check next sprite
-*/
-
     as->Comment("----------");
     as->Comment("IsOverlapping collision  =  x1,y1, x2,y2, dist");
 
@@ -2513,6 +2694,120 @@ noCollision    ; check next sprite
 
     if (m_node->m_params[4]->isPureNumeric())               // distance on Y
         as->Asm("cmp "+ m_node->m_params[4]->getValue(as)); // +ve pure
+    else
+        as->Asm("cmp " + zp2 );                             // +ve complex
+
+    as->Asm("bcs "+ lblNoCollision);                        // y vector 2 not within distance
+
+    as->Label(lblCollision);                                // Collision, set a = 1
+    as->Asm("lda #1");
+    as->Asm("jmp " + lblCollisionDone);
+
+    as->Label(lblNoCollision);                              // no collision, set a = 0
+    as->Asm("lda #0");
+
+    as->Label(lblCollisionDone);
+
+    as->PopLabel("ColXConfirmed");
+    as->PopLabel("NoCollision");
+    as->PopLabel("Collision");
+    as->PopLabel("CollisionDone");
+
+}
+
+// Calculate if x1,y1 and x2,y2 are with rectangular hitbox distance of each other
+void Methods6502::IsOverlappingWH(Assembler *as)
+{
+    as->Comment("----------");
+    as->Comment("IsOverlapping collision  =  x1,y1, x2,y2, width, height");
+
+    // need a negative constant
+    QString distNegX = Util::numToHex( 255 - m_node->m_params[4]->getInteger()  );
+    QString distNegY = Util::numToHex( 255 - m_node->m_params[5]->getInteger()  );
+
+    QString lblColXConfirmed = as->NewLabel("ColXConfirmed");
+    QString lblNoCollision = as->NewLabel("NoCollision");
+    QString lblCollision = as->NewLabel("Collision");
+    QString lblCollisionDone = as->NewLabel("CollisionDone");
+
+    QString zp0 = as->m_internalZP[0];  // used for x/y positions
+    QString zp1 = as->m_internalZP[1];  // used for -ve distance
+    QString zp2 = as->m_internalZP[2];  // used for +ve distance
+
+    // calc -ve width
+    if (!m_node->m_params[4]->isPureNumeric()) {
+        as->Comment("Distance is not a constant, store in zero page addresses");
+        LoadVar(as, 4); // Loads distance
+        as->Asm("sta "+zp2); // Store +ve in zp
+        as->Asm("eor #$ff"); // negate, but don't perform 2's compliment as bcs later needs -ve 1 smaller
+        as->Asm("sta "+zp1); // Store -ve in zp
+    }
+
+    if (m_node->m_params[2]->isPure()) {                    // x2
+        m_node->m_params[0]->Accept(m_dispatcher);          // x1 - this handles pure and complex
+        as->Term();
+        as->Asm("clc");                                     // pure
+        as->Asm("sbc " + m_node->m_params[2]->getValue(as));
+    } else {
+        as->Comment("x2 is complex");                       // complex
+        LoadVar(as, 2);                                     // Loads x2
+        as->Asm("sta "+zp0);                                // Store
+        m_node->m_params[0]->Accept(m_dispatcher);          // x1 - this handles pure and complex
+        as->Term();
+        as->Asm("clc");
+        as->Asm("sbc " + zp0);
+    }
+
+    if (m_node->m_params[4]->isPureNumeric())               // distance on X
+        as->Asm("cmp #" + distNegX );                        // -ve pure
+    else
+        as->Asm("cmp " + zp1 );                             // -ve complex
+
+    as->Asm("bcs "+ lblColXConfirmed);                      // x vector 1 within distance
+
+    if (m_node->m_params[4]->isPureNumeric())               // distance on X
+        as->Asm("cmp "+ m_node->m_params[4]->getValue(as)); // +ve pure
+    else
+        as->Asm("cmp " + zp2 );                             // +ve complex
+
+    as->Asm("bcs "+ lblNoCollision);                        // x vector 2 not within distance
+
+    as->Label(lblColXConfirmed);                            // X is within +/- distance, now check Y
+
+    // calc -ve height
+    if (!m_node->m_params[5]->isPureNumeric()) {
+        as->Comment("Distance is not a constant, store in zero page addresses");
+        LoadVar(as, 5); // Loads distance
+        as->Asm("sta "+zp2); // Store +ve in zp
+        as->Asm("eor #$ff"); // negate, but don't perform 2's compliment as bcs later needs -ve 1 smaller
+        as->Asm("sta "+zp1); // Store -ve in zp
+    }
+
+    if (m_node->m_params[3]->isPure()) {                    // y2
+        m_node->m_params[1]->Accept(m_dispatcher);          // y1 - this handles pure and complex
+        as->Term();
+        as->Asm("clc");
+        as->Asm("sbc " + m_node->m_params[3]->getValue(as));
+    }
+    else {
+        as->Comment("y2 is complex");                       // complex
+        LoadVar(as, 3);                                     // Loads y2
+        as->Asm("sta "+zp0);                                // Store
+        m_node->m_params[1]->Accept(m_dispatcher);          // y1 - this handles pure and complex
+        as->Term();
+        as->Asm("clc");
+        as->Asm("sbc " + zp0);
+    }
+
+    if (m_node->m_params[5]->isPureNumeric())               // distance on Y
+        as->Asm("cmp #" + distNegY );                        // -ve pure
+    else
+        as->Asm("cmp " + zp1 );                             // -ve complex
+
+    as->Asm("bcs "+ lblCollision);                          // y vector 1 within distance, no more checks needed
+
+    if (m_node->m_params[5]->isPureNumeric())               // distance on Y
+        as->Asm("cmp "+ m_node->m_params[5]->getValue(as)); // +ve pure
     else
         as->Asm("cmp " + zp2 );                             // +ve complex
 
@@ -2842,6 +3137,7 @@ void Methods6502::DisableNMI(Assembler *as)
         as->Asm("sta     $dd0e           ; Start timer A CIA (NMI will occur immediately)(*)");
 
         as->Asm("cli");
+
     }
 
 }
@@ -3562,15 +3858,13 @@ void Methods6502::RasterIRQWedge(Assembler *as)
 
 void Methods6502::ClearScreen(Assembler *as)
 {
-    int val = m_node->m_params[1]->numValue();
+    int val = m_node->m_params[1]->numValue();  // start address (offset) to fill
 
     AddMemoryBlock(as,1);
-
 
     if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64 || Syntax::s.m_currentSystem==AbstractSystem::NES || Syntax::s.m_currentSystem==AbstractSystem::PET) {
 
         QString lbl = as->NewLabel("clearloop");
-        //  QString lbl2 = as->NewLabel("clearloop2");
         QString shift = Util::numToHex(val);
         as->Comment("Clear screen with offset");
         LoadVar(as, 0);
@@ -3583,44 +3877,27 @@ void Methods6502::ClearScreen(Assembler *as)
         //    as->Asm("sta $0300+"+shift+",x");
         as->Asm("dex");
         as->Asm("bne "+lbl);
-        /* as->Asm("ldx #232");
-    as->Label(lbl2);
-    as->Asm("sta $02FF+"+shift+",x");
-    as->Asm("dex");
-    as->Asm("bne "+lbl2);
-*/
+
         as->PopLabel("clearloop");
-    }
-    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
-        //ldy $9002
-        ErrorHandler::e.Error("ClearScreen not yet implemented for VIC20", m_node->m_op.m_lineNumber);
-        as->Comment("Clear screen");
+
+    } else if (Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
+
+        //ErrorHandler::e.Error("ClearScreen not yet implemented for VIC20", m_node->m_op.m_lineNumber);
+
+        QString lbl = as->NewLabel("clearloop");
+        QString shift = Util::numToHex(val-1);
+        as->Comment("Clear screen with offset");
         LoadVar(as, 0);
+        as->Asm("ldx #$FD");
+        as->Label(lbl);
+        as->Asm("sta $0000+"+shift+",x");
+        as->Asm("sta $00FD+"+shift+",x");
+        as->Asm("dex");
+        as->Asm("bne "+lbl);
 
-        QString lblOuter = as->NewLabel("clearloopouter");
-        QString lblInner = as->NewLabel("clearloopinner");
-        QString valH = "$" + QString::number((int)val>>8, 16);
-        QString valL = "$" + QString::number((int)val&0xFF, 16);
-
-/*        as->Asm("lda #" + valH);
-        as->Asm("sta " + as->m_internalZP[0]);
-        as->Asm("lda #" + valL);
-        as->Asm("sta " + as->m_internalZP[0] + "+1");
-*/
-        as->Asm("ldy #0 ");
-        as->Label(lblOuter);
-
-
-        as->Asm("ldy #0 ");
-        as->Label(lblOuter);
-        as->Asm("ldx #0");
-        as->Label(lblInner);
-        as->Asm("sta $");
-
-
+        as->PopLabel("clearloop");
 
     }
-//    as->PopLabel("clearloop2");
 
 }
 
@@ -4366,7 +4643,7 @@ void Methods6502::GetBit(Assembler *as)
         as->Asm("beq " + lbl);
         as->Asm("lda #1");
         as->Label(lbl);
-        as->Asm("eor #1");
+//        as->Asm("eor #1");
         as->PopLabel("getbit_false");
         return;
     }

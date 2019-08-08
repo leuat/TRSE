@@ -47,7 +47,7 @@ void Compiler::Parse(QString text, QStringList lst)
         //qDebug() << m_parser.m_preprocessorDefines["ORGASM"];
         //exit(1);
     } catch (FatalErrorException e) {
-        qDebug() << "ERROR parse " << e.message;
+//        qDebug() << "ERROR parse " << e.message;
         HandleError(e, "Error during parsing:");
     }
 
@@ -86,6 +86,7 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
         try {
             dynamic_cast<NodeProgram*>(m_tree)->m_initJumps = m_parser.m_initJumps;
             m_dispatcher->as = m_assembler;
+
             m_tree->Accept(m_dispatcher);
 
         } catch (FatalErrorException e) {
@@ -196,10 +197,10 @@ void Compiler::HandleError(FatalErrorException fe, QString e)
 
     fe.file=file;
 
-    msg +="\nFatal error " + line;
+    msg +="<br><font color=\"#FF0000\">Fatal error " + line+"</font>";
     if (linenr<m_parser.m_lexer->m_lines.count() && linenr>=0)
-        msg+="\nSource: " + m_parser.m_lexer->m_lines[linenr];
-    msg+="\n\nMessage: ";
+//        msg+="<br><i>Source code line</i>: " + m_parser.m_lexer->m_lines[linenr];
+    msg+="<br><i>Message</i>: ";
     Pmm::Data::d.lineNumber = linenr+1;
 
     recentError = fe;

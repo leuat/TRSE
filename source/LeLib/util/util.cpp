@@ -157,6 +157,39 @@ QString Util::BinopString(QString a) {
     return pa+a+pb;
 
 }
+
+bool Util::NumberFromStringHex(QString s, int &num) {
+    bool ok = true;
+    s=s.trimmed();
+
+    int val = 0;
+
+    int type = 0;
+    s = s.remove("#");
+    if (s.startsWith("<")) {
+        type = 1;
+        s = s.replace("<","");
+    }
+    if (s.startsWith(">")) {
+        type = 2;
+        s = s.replace(">","");
+    }
+    if (s.startsWith("$"))
+        val = s.remove("$").toInt(&ok, 16);
+    else
+        if (s.toLower().startsWith("0x"))
+            val = s.remove("0x").toInt(&ok, 16);
+        else
+            if (s.toLower().startsWith("%"))
+                val= s.remove("%").toInt(&ok, 2);
+            else
+                val = s.toInt(&ok,  10);
+
+    if (type==1)  val = (val)&0xFF;
+    if (type==2)  val = (val>>8)&0xFF;
+    num = val;
+    return ok;
+}
 QString Util::ReplaceWords(QString line, QString word) {
 
     return "";
@@ -166,15 +199,15 @@ QString Util::ReplaceWords(QString line, QString word) {
 
 string Util::trim(string strin)
 {
-  string str = strin;
-  string::size_type pos = str.find_last_not_of(' ');
-  if(pos != string::npos) {
-    str.erase(pos + 1);
-    pos = str.find_first_not_of(' ');
-    if(pos != string::npos) str.erase(0, pos);
-  }
-  else str.erase(str.begin(), str.end());
-  return str;
+    string str = strin;
+    string::size_type pos = str.find_last_not_of(' ');
+    if(pos != string::npos) {
+        str.erase(pos + 1);
+        pos = str.find_first_not_of(' ');
+        if(pos != string::npos) str.erase(0, pos);
+    }
+    else str.erase(str.begin(), str.end());
+    return str;
 }
 
 int Util::VerifyHexAddress(QString s)
@@ -185,10 +218,10 @@ int Util::VerifyHexAddress(QString s)
         val=s.replace("$","").toInt(&ok, 16);
     }
     else
-    if (s.startsWith("0x")) {
+        if (s.startsWith("0x")) {
             val=s.replace("0x","").toInt(&ok, 16);
         }
-    else val=s.toInt(&ok, 10);
+        else val=s.toInt(&ok, 10);
     if (!ok)
         return -1;
     return val;

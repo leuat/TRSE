@@ -80,7 +80,8 @@ void SymbolTable::Initialize()
             if (type=="a")
                 m_constants[constant] = new Symbol("^"+value,"ADDRESS", ival);
             if (type=="i")
-                m_constants[constant] = new Symbol("^"+value,"INTEGER", ival);
+                m_constants[constant] = new Symbol(value,"INTEGER", ival);
+
 
 //            reservedWords.append(Token(TokenType::getType(word), word.toUpper()));
         }

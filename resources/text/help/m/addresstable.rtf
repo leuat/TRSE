@@ -1,0 +1,55 @@
+<h3>AddressTable( [address], [byte], [byte] );</h3>
+<ul>
+<li>[address] - Memory address or integer array where to the address table was created</li>
+<li>[byte] - X Offset value</li>
+<li>[byte] - Y Offset value</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+Looks up and address from an address table (see CreateAddressTable) using a Y Offset and adding an optional X Offset.
+</p>
+<p>Useful for quickly referencing the screen or colour memory using X and Y positions.</p>
+
+
+<h3>Example</h3>
+
+<code>
+program MyProgram;
+var  
+        addr: array[25] of integer;  // Screen addresses stored in this array
+        i: byte;
+        
+        // C64 screen start address
+        @define scrn $0400
+begin
+
+        DefineScreen(); // sets up the screenmemory pointer
+        
+        ClearScreen(32, ^@scrn); // clear the screen memory
+
+        CreateAddressTable( addr, @scrn, 40, 25);  // create a table of screen addresses (starting at $0400)
+
+        // Loop through and print the 25 screen addresses (the memory address of the start of each row)
+        fori i := 0 to 24 do
+        begin
+                screenmemory := AddressTable( addr, 0, i ); // get start of row i
+                printdecimal( addr[i], 4 );  // print it (referencing the array directly)
+        end;
+        
+        // plot 25 characters using AddressTable to find the X/Y locations on the screen
+        fori i := 0 to 24 do
+        begin
+                screenmemory := AddressTable( addr, i+6, i); // find the screen address
+                screenmemory[0] := i; // plot the character at this screen address
+        end;
+        
+        // Plot an ! character in the bottom / right corner of the screen
+        screenmemory := AddressTable( addr, 39, 24);
+        screenmemory[0]:=33;
+
+        loop();
+        
+end.
+</code>

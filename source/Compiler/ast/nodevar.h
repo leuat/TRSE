@@ -44,6 +44,7 @@ public:
 
 
     TokenType::Type getType(Assembler* as) override;
+    TokenType::Type getArrayType(Assembler* as) override;
 
     bool isPointer(Assembler* as) override;
 

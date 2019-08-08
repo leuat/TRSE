@@ -113,13 +113,13 @@ public:
      */
 
 
-    void Compare(NodeForLoop* node, NodeVar* var, bool isLarge, QString);
+    void Compare(NodeForLoop* node, NodeVar* var, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive);
 
     void IncreaseCounter(NodeForLoop* node, NodeVar* var);
 
-    void LargeLoop(NodeForLoop* node, NodeVar* var);
+    void LargeLoop(NodeForLoop* node, NodeVar* var, bool inclusive);
 
-    void SmallLoop(NodeForLoop* node, NodeVar* var);
+    void SmallLoop(NodeForLoop* node, NodeVar* var, bool inclusive);
 
     /*
      *
@@ -158,6 +158,8 @@ public:
     bool isSimpleAeqAOpB16Bit(NodeVar *var, NodeAssign* node);
 
     bool IsSimpleIncDec(NodeVar *var, NodeAssign* node);
+
+    bool IsSimpleAndOr(NodeBinaryClause* node, QString labelSuccess, QString labelFail);
 
     QString AssignVariable(NodeAssign* node);
 

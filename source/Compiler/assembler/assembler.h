@@ -39,7 +39,6 @@ class MemoryBlock {
     Type m_type;
     QVector<int> m_zeropages;
     QString m_name;
-
     MemoryBlock() {}
     MemoryBlock(int start, int end, Type type, QString name){
         m_start=start;
@@ -159,6 +158,7 @@ public:
     RegisterStack m_regMem;
     Stack m_varStack;
 
+    QString m_lblFailed, m_lblSuccess;
 
     static QStringList m_internalZP;
     QVector<QString> m_zeroPointers; // org zp input

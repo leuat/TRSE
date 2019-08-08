@@ -41,8 +41,9 @@ public:
     bool m_unroll = false;
     Node* m_step = nullptr;
     int m_loopCounter=0;
+    bool m_inclusive = false;
 
-    NodeForLoop(Node* a, Node* b, Node* block, Node* step, bool unroll, int forcePage, int loopCounter);
+    NodeForLoop(Node* a, Node* b, Node* block, Node* step, bool unroll, int forcePage, int loopCounter, bool inclusive);
 
 
 

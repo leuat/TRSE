@@ -1,0 +1,90 @@
+procedure ClearTheScreen();
+begin
+	ClearScreen(0, ^@SCREEN_ADDR);
+	ClearScreen(WHITE, ^@COLOR_ADDR);
+end;
+
+// Set up initial screen configuration on unepanded Vic20
+// Character map to use, bespoke screen width and height
+procedure ScreenSetup();
+begin
+
+	DefineScreen();
+	ClearTheScreen();
+	//poke( SCREEN_CHAR_REGISTER, 0, 255 ); // set char map to $1c00, leave screen at $1e00
+	SetCharsetLocation( @CHAR_ADDR );
+
+	
+	SCREEN_TEXT_WIDTH := @SCREEN_WIDTH | 128;  // width
+	SCREEN_TEXT_HEIGHT := 48; // 24 (25 rows-1) x 2
+	HSCROLL_REGISTER := peek(HSCROLL_REGISTER, 0) + 2;
+	VSCROLL_REGISTER := peek(VSCROLL_REGISTER, 0) - 2;
+	AUX_COLOR_AND_VOLUME := 12; // volume
+	SCREEN_BG_COLOR := 8;
+	
+	CreateAddressTable( scrm, $1e00, @SCREEN_WIDTH, @SCREEN_HEIGHT ); // bug- constants not accepted @SCREEN_ADDR and @COLOUR_ADDR
+	CreateAddressTable( clrm, $9600, @SCREEN_WIDTH, @SCREEN_HEIGHT );
+	
+end;
+
+// set position of head and tail pointers
+procedure SetupPlayer();
+begin
+	head := $1f9a; //AddressTable( scrm, 11, 21 );
+	tail := $1f95; //AddressTable( scrm, 6, 21 );
+	headc := $979a; //AddressTable( clrm, 11, 21 );
+	tailc := $9795; //AddressTable( clrm, 6, 21 );
+end;
+
+// my version for the vic20
+procedure SetupJoystick();
+var
+	//JoyLast: byte = 0;
+	JoyResult: byte = 0;
+	@define JOY_UP %00000010
+	@define JOY_DOWN         %00000100
+	@define JOY_LEFT         %00001000
+	@define JOY_RIGHT        %00000001
+	@define JOY_FIRE         %00010000
+begin
+	asm("
+
+PORTACASS       = $911F
+PORTBVIA2       = $9120      ; Port B 6522 2 value (joystick)
+PORTBVIA2d      = $9122      ; Port B 6522 2 direction (joystick)
+
+
+	");
+end;
+procedure ReadJoystick();
+begin
+
+	asm("
+
+JoyRead      
+                LDA PORTACASS
+                EOR #$FF
+                AND #$3C
+                LDX #$7F
+                SEI
+                STX PORTBVIA2d
+                LDY PORTBVIA2
+                BMI @jump
+                ORA #$02
+@jump           LDX #$FF
+                STX PORTBVIA2d
+                CLI
+                LSR
+                STA JoyResult
+	");
+end;
+
+// wait for numberOfRastersToWait raster loops
+// uses s variable
+procedure WaitForNRasters();
+var
+	numberOfRastersToWait: byte = 1;
+begin
+	fori s := 1 to numberOfRastersToWait do
+		waitforraster(@WAITVBL_LINE); 
+end;

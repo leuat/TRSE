@@ -37,6 +37,8 @@ DialogHelp::DialogHelp(QWidget *parent, QString txt, QPalette pal) :
     m_helpTypes.append(HelpType("m","Methods"));
     m_helpTypes.append(HelpType("r","Reserved words"));
     m_helpTypes.append(HelpType("c","Constants"));
+    m_helpTypes.append(HelpType("p","Platform Info"));
+    m_helpTypes.append(HelpType("f","Fjong Ray tracer"));
 
     FillTopics();
     LoadItems(0);
@@ -85,8 +87,8 @@ void DialogHelp::LoadItems(int idx)
             QString word = data[1];
             QString system = data[2].toLower();
             if (word.toLower().startsWith("init")) continue;
-
-
+            if (!AbstractSystem::isSupported(Syntax::s.m_currentSystem, system))
+                continue;
             if (system.contains(currentSystem)) {
 /*                QString val = word + "(";
                 for (QString s: params) {
@@ -128,23 +130,27 @@ void DialogHelp::LoadItem(QString findword)
             continue;
         QString type = data[0].toLower();
         m_currentType = type;
-//        QString system = data[2].toLower();
+        QString system = data[2].toLower();
+        if (!AbstractSystem::isSupported(Syntax::s.m_currentSystem, system))
+            continue;
         if (type=="m")
          {
                 QStringList params = data[3].toLower().split(",");
-                QString val = "<h2>"+word + "(";
+                QString val = "<h2 style=\"color: skyblue\">" + word + "( ";
+                int paramNo = 1;
                 for (QString s: params) {
-                    if (s=="b") val+="[byte variable]";
-                    if (s=="i") val+="[integer variable]";
-                    if (s=="n") val+="[numeric value]";
-                    if (s=="a") val+="[address]";
-                    if (s=="s") val+="[string address]";
+                    if (s=="b") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> byte ]";
+                    if (s=="i") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> integer ]";
+                    if (s=="n") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> numeric ]";
+                    if (s=="a") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> address ]";
+                    if (s=="s") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> string address ]";
 
                     val+=", ";
+                    paramNo++;
 
                 }
                 val.remove(val.length()-2,2);
-                val+=");</h2>";
+                val+=" );</h2>";
 
                 QString fn =":resources/text/help/"+type+"/"+word.toLower()+".rtf";
                 if (QFile::exists(fn)) {
@@ -152,9 +158,51 @@ void DialogHelp::LoadItem(QString findword)
                     f.open(QFile::ReadOnly | QFile::Text);
                     QString s = f.readAll();
                     f.close();
-                    s=s.replace("<code>","<pre><code><font color=\"#E0B050\">");
-                    s=s.replace("</code>","</font></code></pre>");
-                    val+=s;
+
+                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
+                    s=s.replace("</code>","</code></pre>");
+
+                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
+
+                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
+
+             //       m_highlighter->HighlightText(val);
+           //         qDebug() << val;
+                }
+
+
+                ui->txtHelp->setText(val);
+
+            }
+        // Fjong type
+        if (type=="f")
+         {
+                QStringList params = data[2].toLower().split(",");
+                QString val = "<h2 style=\"color: skyblue\">" + word + "( ";
+                int paramNo = 1;
+                for (QString s: params) {
+                    if (s=="s") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> float ]";
+                    if (s=="f") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> string ]";
+                    val+=", ";
+                    paramNo++;
+
+                }
+                val.remove(val.length()-2,2);
+                val+=" );</h2>";
+
+                QString fn =":resources/text/help/"+type+"/"+word.toLower()+".rtf";
+                if (QFile::exists(fn)) {
+                    QFile f(fn);
+                    f.open(QFile::ReadOnly | QFile::Text);
+                    QString s = f.readAll();
+                    f.close();
+
+                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
+                    s=s.replace("</code>","</code></pre>");
+
+                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
+
+                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
 
              //       m_highlighter->HighlightText(val);
            //         qDebug() << val;
@@ -165,22 +213,91 @@ void DialogHelp::LoadItem(QString findword)
 
             }
 
+
+
+
         if (type=="c")
          {
-                QString type = data[3].toLower();
+                QString ptype = data[3].toLower();
                 QString value = data[4].toUpper();
 
-                QString val = "<font size=+2>"+word + "</font><br><br>";
-                if (type=="a") val+="Address: ";
-                if (type=="b") val+="Byte value: ";
-                val+=value;
+                QString val = "<h2 style=\"color: skyblue\">" + word + "</h2><h3 style=\"color: yellow\">";
+                if (ptype=="a") val += "Address: ";
+                if (ptype=="b") val += "Byte value: ";
+                val += value + "</h3>";
 
+                QString fn =":resources/text/help/"+type+"/"+word.toLower()+".rtf";
+                if (QFile::exists(fn)) {
+                    QFile f(fn);
+                    f.open(QFile::ReadOnly | QFile::Text);
+                    QString s = f.readAll();
+                    f.close();
+
+                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
+                    s=s.replace("</code>","</code></pre>");
+
+                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
+
+                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
+
+                }
 
                 ui->txtHelp->setText(val);
-
-
-
             }
+
+
+
+        if (type=="r")
+         {
+                QString val = "<h2 style=\"color: skyblue\">" + word + "</h2>";
+                val += "<h3 style=\"color: yellow\">" + data[2] + "</h3>";
+
+                QString fn =":resources/text/help/"+type+"/"+word.toLower()+".rtf";
+                if (QFile::exists(fn)) {
+                    QFile f(fn);
+                    f.open(QFile::ReadOnly | QFile::Text);
+                    QString s = f.readAll();
+                    f.close();
+
+                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
+                    s=s.replace("</code>","</code></pre>");
+
+                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
+
+                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
+
+                }
+
+                ui->txtHelp->setText(val);
+            }
+
+
+
+        if (type=="p")
+         {
+                QString title = QString(word).replace("_", " ");
+                QString val = "<h2 style=\"color: skyblue\">" + title + "</h2>"; //.replace("_", " ")
+
+                QString fn =":resources/text/help/"+type+"/"+word.toLower()+".rtf";
+                if (QFile::exists(fn)) {
+                    QFile f(fn);
+                    f.open(QFile::ReadOnly | QFile::Text);
+                    QString s = f.readAll();
+                    f.close();
+
+                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
+                    s=s.replace("</code>","</code></pre>");
+
+                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
+
+                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
+
+                }
+
+                ui->txtHelp->setText(val);
+            }
+
+
 
          }
     }

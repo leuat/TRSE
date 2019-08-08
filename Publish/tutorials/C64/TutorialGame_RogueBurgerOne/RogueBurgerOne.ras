@@ -585,6 +585,8 @@ begin
 	frameCounter:=0;
 	
 	setmulticolormode();
+	decrunch(leveldata_crunched);
+
 end;
 
 

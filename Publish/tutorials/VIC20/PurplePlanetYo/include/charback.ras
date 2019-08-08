@@ -53,7 +53,7 @@ end;
 
 procedure RenderBackground();
 begin
-	if (dx>250) then return();
+	if (dx>=250) then return();
 	zp:=$1C00;
 	p0:=$1000;
 	p1:=$1E00; // perlin

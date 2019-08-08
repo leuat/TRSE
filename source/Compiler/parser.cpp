@@ -33,7 +33,7 @@ void Parser::Delete()
         Node* s = m_procedures[val];
            // if (s!=nullptr) {
             //s->Delete();
-            delete s;
+//            delete s;
 //        }
     }
     m_procedures.clear();
@@ -93,6 +93,14 @@ void Parser::InitBuiltinFunctions()
 /*    if (Syntax::s.m_currentSystem == Syntax::NES)
         InitBuiltinFunction(QStringList()<< "*", "init8x8mulNes");
     else*/
+    //m; InitP61Player; Amiga;
+    //m; PlayP61Mod; Amiga; a
+
+   if (Syntax::s.m_currentSystem == AbstractSystem::AMIGA) {
+
+       InitBuiltinFunction(QStringList()<< "playp61module"<<"initp61module" , "initp61playerinternal");
+    }
+
     if (Syntax::s.m_currentSystem == AbstractSystem::C64 ||
             Syntax::s.m_currentSystem == AbstractSystem::C128 ||
             Syntax::s.m_currentSystem == AbstractSystem::NES ||
@@ -103,26 +111,26 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "*", "init16x8mul");
         InitBuiltinFunction(QStringList()<< "*", "init8x8div");
         InitBuiltinFunction(QStringList()<< "*", "init16x8div");
-        InitBuiltinFunction(QStringList()<< "rand", "initrandom","init_random_call");
-        InitBuiltinFunction(QStringList()<< "rasterirqwedge" , "init_wedge");
-        InitBuiltinFunction(QStringList()<< "playvic20sid" , "init_vic20_sidplay");
-        InitBuiltinFunction(QStringList()<< "viairq" , "init_viairq");
-        InitBuiltinFunction(QStringList()<< "initmodplayer" , "include_modplayer");
-        InitBuiltinFunction(QStringList()<< "decrunch", "init_decrunch");
+        InitBuiltinFunction(QStringList()<< "rand(", "initrandom","init_random_call");
+        InitBuiltinFunction(QStringList()<< "rasterirqwedge(" , "init_wedge");
+        InitBuiltinFunction(QStringList()<< "playvic20sid(" , "init_vic20_sidplay");
+        InitBuiltinFunction(QStringList()<< "viairq(" , "init_viairq");
+        InitBuiltinFunction(QStringList()<< "initmodplayer(" , "include_modplayer");
+        InitBuiltinFunction(QStringList()<< "decrunch("<<"decrunchfromindex(", "init_decrunch");
         if (Syntax::s.m_currentSystem!=AbstractSystem::NES)
-            InitBuiltinFunction(QStringList()<< "sine", "initsinetable", "initsine_calculate");
-        InitBuiltinFunction(QStringList()<< "log2_table" << "atan2", "initlog2");
+            InitBuiltinFunction(QStringList()<< "sine[", "initsinetable", "initsine_calculate");
+        InitBuiltinFunction(QStringList()<< "log2_table[" << "atan2(", "initlog2");
 
-        InitBuiltinFunction(QStringList()<< "atan2", "initatan2");
+        InitBuiltinFunction(QStringList()<< "atan2(", "initatan2");
 
 
-        InitBuiltinFunction(QStringList()<< "sqrt", "initsqrt16");
-        InitBuiltinFunction(QStringList()<< "printdecimal", "initprintdecimal");
-        InitBuiltinFunction(QStringList()<< "moveto80", "initmoveto80");
-        InitBuiltinFunction(QStringList()<< "moveto" << "printstring", "initmoveto");
-        InitBuiltinFunction(QStringList()<< "printstring" << "printnumber", "initprintstring");
+        InitBuiltinFunction(QStringList()<< "sqrt(", "initsqrt16");
+        InitBuiltinFunction(QStringList()<< "printdecimal(", "initprintdecimal");
+        InitBuiltinFunction(QStringList()<< "moveto80(", "initmoveto80");
+        InitBuiltinFunction(QStringList()<< "moveto(" << "printstring(" << "tile(", "initmoveto");
+        InitBuiltinFunction(QStringList()<< "printstring(" << "printnumber(", "initprintstring");
 
-        InitBuiltinFunction(QStringList()<< "joystick" , "initjoystick");
+        InitBuiltinFunction(QStringList()<< "joystick(" , "initjoystick");
     }
     Node::m_staticBlockInfo.m_blockID = -1;
 //    EndMemoryBlock();
@@ -272,6 +280,19 @@ int Parser::GetParsedInt()
     return val;
 }
 
+int Parser::getIntVal(Token t)
+{
+    int val = t.m_intVal;
+    if (t.m_value!="") {
+        //qDebug() << "parser::getintval " <<t.m_value;
+        Symbol* s = m_symTab->Lookup(t.m_value,t.m_lineNumber);
+        if (s!=nullptr)
+            return s->m_value->m_fVal;
+    }
+
+    return val;
+}
+
 int Parser::findPage()
 {
     int forcePage = 0;
@@ -295,6 +316,12 @@ void Parser::HandlePreprocessorInParsing()
     if (m_currentToken.m_value=="define") {
         Eat();
         Eat();
+        Eat();
+        return;
+    }
+    if (m_currentToken.m_value=="donotremove") {
+        Eat();
+        m_doNotRemoveMethods.append(m_currentToken.m_value);
         Eat();
         return;
     }
@@ -372,6 +399,25 @@ void Parser::HandlePreprocessorInParsing()
         Node::m_staticBlockInfo.m_blockID = -1;
 
     }
+
+}
+
+void Parser::StripWhiteSpaceBeforeParenthesis()
+{
+    m_lexer->m_text = m_lexer->m_text.replace(QRegularExpression("\\s*(\\()"),"\\1");
+}
+
+void Parser::RemoveComments()
+{
+    QRegularExpression rg = QRegularExpression("/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/");
+    //qDebug() << rg;
+    m_lexer->m_text = m_lexer->m_text.replace(rg, "");
+
+    QRegularExpression rg2 = QRegularExpression("//.*?\\n");
+    //qDebug() << rg;
+    m_lexer->m_text = m_lexer->m_text.replace(rg2, "");
+
+    //qDebug() << m_lexer->m_text;
 
 }
 
@@ -464,7 +510,7 @@ Node *Parser::AssignStatement()
 
     if (m_currentToken.m_type!=TokenType::ASSIGN) {
 //        qDebug() << m_currentToken;
-        ErrorHandler::e.Error("Could not find '" + t.m_value+  "', did you forget a colon?" , token.m_lineNumber);
+        ErrorHandler::e.Error("Error assigning variable <b>'" + t.m_value+  "'</b>, did you forget a colon or mistype? Syntax should be: <b>'a := b;'</b>." , token.m_lineNumber);
     }
     Eat(TokenType::ASSIGN);
     Node* right = Expr();
@@ -495,28 +541,15 @@ Node *Parser::Statement()
             node = AssignStatement();
 
     }
-/*    else if (m_currentToken.m_type==TokenType::WRITELN) {
-        Eat(TokenType::WRITELN);
-        Eat(TokenType::LPAREN);
-        NodeString* text = (NodeString*)String();
-        Eat(TokenType::STRING);
-        Node* block = nullptr;
-
-        if (m_currentToken.m_type==TokenType::COMMA) {
-            Eat(TokenType::COMMA);
-            block = Expr();
-        }
-
-        Eat(TokenType::RPAREN);
-        //Eat(TokenType::SEMI);
-        node = ExecuteInternalFunction(TokenType::WRITELN, text, block);
-    }*/
     else if (m_currentToken.m_type == TokenType::IF) {
         Eat(TokenType::IF);
         node = Conditional();
     }
+    else if (m_currentToken.m_type == TokenType::FORI) {
+        node = ForLoop(true);
+    }
     else if (m_currentToken.m_type == TokenType::FOR) {
-        node = ForLoop();
+        node = ForLoop(false);
     }
     else if (m_currentToken.m_type == TokenType::WHILE) {
         Eat(TokenType::WHILE);
@@ -533,7 +566,7 @@ Node *Parser::Statement()
     }
 
     if (node==nullptr)
-        ErrorHandler::e.Error("CAAARGH  ",0);
+        ErrorHandler::e.Error("Node is nullpointer. Should not happen. Contact leuat@irio.co.uk and slap him.",0);
 
 
     return node;
@@ -898,7 +931,6 @@ void Parser::PreprocessReplace()
         QRegularExpression rg = QRegularExpression("@\\b"+k+"\\b");
         //qDebug() << rg;
 
-
 //        m_lexer->m_text = m_lexer->m_text.replace("@" +k, val);
         m_lexer->m_text = m_lexer->m_text.replace(rg, val);
 
@@ -917,6 +949,8 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
 
     m_lexer->m_text = m_lexer->m_orgText;
     m_pass = 0;
+//    RemoveComments();
+    StripWhiteSpaceBeforeParenthesis(); // TODO: make better fix for this
     Preprocess();
 //    PreprocessConstants();
     m_pass = 1;
@@ -940,10 +974,10 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
         QVector<Node*> procs;
         for (Node* n: m_proceduresOnly) {
             NodeProcedureDecl* np = (NodeProcedureDecl*)n;
-            if ((np->m_isUsed==true))
+            if ((np->m_isUsed==true) || m_doNotRemoveMethods.contains(np->m_procName))
                 procs.append(n);
             else {
-                qDebug() << "Removing procedure: " << np->m_procName;
+//                qDebug() << "Removing procedure: " << np->m_procName;
                 //            m_proceduresOnly.removeOne(m_procedures[s]);
             }
         }
@@ -1035,10 +1069,13 @@ QVector<Node *> Parser::Parameters()
     return decl;
 }
 
-Node *Parser::ForLoop()
+Node *Parser::ForLoop(bool inclusive)
 {
     int ln = m_currentToken.m_lineNumber;
-    Eat(TokenType::FOR);
+    if (inclusive)
+        Eat(TokenType::FORI);
+    else
+        Eat(TokenType::FOR);
     Node* a = AssignStatement();
     Eat(TokenType::TO);
     Node* b = Expr();
@@ -1081,7 +1118,7 @@ Node *Parser::ForLoop()
 
 //    qDebug() << m_currentToken.getType();
   //  exit(1);
-    return new NodeForLoop(a,b,block, step, unroll, forcePage,loopType);
+    return new NodeForLoop(a,b,block, step, unroll, forcePage, loopType, inclusive);
 
 }
 
@@ -1306,8 +1343,9 @@ Node *Parser::TypeSpec()
     if (m_currentToken.m_type == TokenType::ARRAY) {
         Eat(TokenType::ARRAY);
         Eat(TokenType::LBRACKET);
-
-        float count = GetParsedInt();
+        float count = 0;
+        if (m_currentToken.m_type != TokenType::RBRACKET)
+            count = GetParsedInt();
 
         Eat(TokenType::RBRACKET);
         Eat(TokenType::OF);
@@ -1319,12 +1357,24 @@ Node *Parser::TypeSpec()
             Eat();
             Eat(TokenType::LPAREN);
             while (m_currentToken.m_type!=TokenType::RPAREN) {
-                data << QString::number(m_currentToken.m_intVal);
+
+                data << "$0"+QString::number(getIntVal(m_currentToken),16);//QString::number(m_currentToken.m_intVal);
                 Eat();
                 if (m_currentToken.m_type==TokenType::COMMA)
                     Eat();
             }
             Eat(TokenType::RPAREN);
+            if (count!=data.count() && count!=0) {
+                if (count>data.count()) {
+                    ErrorHandler::e.Warning("Declared array count ("+QString::number((int)count)+") does not match with data ("+QString::number(data.count())+"). Padding with zeros. ", m_currentToken.m_lineNumber);
+                    for (int i=data.count();i<count;i++)
+                        data.append(QString("0"));
+                }
+                else
+                    ErrorHandler::e.Warning("Declared array count ("+QString::number((int)count)+") does not match with data ("+QString::number(data.count())+"). Adjusting array size to fit data. ", m_currentToken.m_lineNumber);
+
+            }
+
         }
 
         QString position = "";

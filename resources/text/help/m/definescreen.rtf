@@ -1,0 +1,16 @@
+<h3>DefineScreen();</h3>
+
+
+<h3>Description</h3>
+<p>Initialises the screenmemory zero page pointer for use in TRSE.  Some
+    commands such as MoveTo and Tile will automatically initialise this pointer.</p>
+
+
+<h3>Example</h3>
+
+<code>
+DefineScreen();
+
+ScreenMemory := $0400;
+ScreenMemory[0] := 1;  // place the A character at the top left of the display on the C64
+</code>

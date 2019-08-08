@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Turbo Rascal Syntax error, “;” expected but “BEGIN” (TRSE, Turbo Rascal SE)
  * 8 bit software development IDE for the Commodore 64
  * Copyright (C) 2018  Nicolaas Ervik Groeneboom (nicolaas.groeneboom@gmail.com)
@@ -75,6 +75,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         emu = m_iniFile->getString("bbcm_emulator");
     }
 
+//    qDebug() << "Here  "<<emu ;
 
     if (!QFile::exists(emu)) {
         Messages::messages.DisplayMessage(Messages::messages.NO_EMULATOR);
@@ -93,11 +94,20 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     QProcess::execute("taskkill /im \"x64.exe\" /f");
 #endif
 //    qDebug() << emu << " " << params <<  QDir::toNativeSeparators(fileName);
+#ifdef __APPLE__
+    if (emu.endsWith(".app")) {
+        process.setArguments(params);
+        process.setProgram(emu);
+        process.startDetached();
+    }
+    else process.startDetached(emu, params);
 
+#else
     process.startDetached(emu, params);
+#endif
 //    process.pi
     QString output(process.readAllStandardOutput());
-
+//    process.waitForFinished();
 }
 
 void FormRasEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile* pro)
@@ -386,6 +396,9 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         ui->txtEditor->setFocus();
     }
 
+    if (e->key() == Qt::Key_Insert) {
+        ui->txtEditor->setOverwriteMode(!ui->txtEditor->overwriteMode());
+    }
 
     if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier))
         emit requestCloseWindow();
@@ -637,6 +650,13 @@ void FormRasEditor::FillToIni()
 
 void FormRasEditor::MemoryAnalyze()
 {
+    if (!m_currentSourceFile.endsWith(".ras")) {
+        ErrorHandler::e.m_warnings.clear();
+        ErrorHandler::e.m_teOut = "";
+        ErrorHandler::e.Warning("Memory analyzer only works for .ras source files");
+        SetOutputText(ErrorHandler::e.m_teOut);
+        return;
+    }
     int i= m_iniFile->getdouble("perform_crunch");
     m_iniFile->setFloat("perform_crunch",0);
     if (m_builderThread.m_builder==nullptr) {
@@ -655,7 +675,6 @@ void FormRasEditor::MemoryAnalyze()
     QString output = process.readAllStandardOutput();
     int codeEnd=FindEndSymbol(output);
     */
-
     Orgasm orgAsm;
     //orgAsm.LoadCodes();
     orgAsm.Assemble(filename+".asm", filename+".prg");
@@ -664,14 +683,19 @@ void FormRasEditor::MemoryAnalyze()
     int codeEnd=FindEndSymbol(orgAsm);
 
     FindBlockEndSymbols(orgAsm);
+//    qDebug() << "B";
     ConnectBlockSymbols();
+//    qDebug() << "asm " << m_builderThread.m_builder->compiler.m_assembler;
     m_builderThread.m_builder->compiler.m_assembler->blocks.append(new MemoryBlock(Syntax::s.m_startAddress, codeEnd, MemoryBlock::CODE, "code"));
+ //   qDebug() << "B2";
 
     m_mca.ClassifyZP(m_builderThread.m_builder->compiler.m_assembler->blocks);
+    qDebug() << "B1";
 
     DialogMemoryAnalyze* dma = new DialogMemoryAnalyze(m_iniFile);
     dma->Initialize(m_builderThread.m_builder->compiler.m_assembler->blocks, m_iniFile->getInt("memory_analyzer_font_size"));
     dma->resize(m_iniFile->getdouble("memory_analyzer_window_width"),m_iniFile->getdouble("memory_analyzer_window_height"));
+    qDebug() << "C";
 
     dma->exec();
     delete dma;
@@ -754,15 +778,50 @@ void FormRasEditor::on_chkPostOpt_stateChanged(int arg1)
 
 void FormRasEditor::HandleBuildError()
 {
+    m_run = false;
     SetOutputText(ErrorHandler::e.m_teOut);
     m_outputText = ErrorHandler::e.m_teOut;
     int ln = Pmm::Data::d.lineNumber;
-
-    emit OpenOtherFile(m_builderThread.m_builder->compiler.recentError.file, ln);
+    HandleErrorDialogs(ErrorHandler::e.m_teOut);
+    if (m_builderThread.m_builder!=nullptr)
+        emit OpenOtherFile(m_builderThread.m_builder->compiler.recentError.file, ln);
     GotoLine(ln);
     m_builderThread.m_builder->m_system->m_buildSuccess = false;
     SetLights();
 
+
+}
+
+void FormRasEditor::HandleErrorDialogs(QString& output)
+{
+    return;
+    if (output.toLower().contains("branch out of range")) {
+        Messages::messages.DisplayMessage(Messages::messages.BRANCH_ERROR);
+        output += "<br>Please check your <b>onpage/offpage</b> keywords.";
+
+    }
+    else
+        if (output.toLower().contains("reverse-indexed")) {
+            Messages::messages.DisplayMessage(Messages::messages.MEMORY_OVERLAP_ERROR);
+            output += "<br>Please reorganize your binary inclusions in ascending order of memory locations.";
+        }
+        else
+            if (output.toLower().contains("mnemonic")) {
+                output += "<br>Please make sure you have used well-defined labels and variables in your inline assembly code.";
+            }
+
+            else
+                Messages::messages.DisplayMessage(Messages::messages.DASM_COMPILER_ERROR);
+
+
+    if (!output.toLower().contains("complete.")) {
+        if (output=="") {
+        Messages::messages.DisplayMessage(Messages::messages.NO_DASM);
+
+            output = output + "\nCould not find Dasm.exe. Did you set the correct environment variables?";
+        }
+
+    }
 
 }
 void FormRasEditor::HandleUpdateBuildText()
@@ -775,15 +834,16 @@ void FormRasEditor::HandleBuildComplete()
 {
     m_builderThread.msleep(70); // crashes if we don't sleep.. for some reason
     if (m_builderThread.m_builder->compiler.m_assembler!=nullptr)
-    ui->txtEditor->m_cycles =  m_builderThread.m_builder->compiler.m_assembler->m_cycles;
+        ui->txtEditor->m_cycles =  m_builderThread.m_builder->compiler.m_assembler->m_cycles;
     ui->txtEditor->RepaintCycles();
     if (m_builderThread.m_builder->compiler.m_assembler!=nullptr)
 
-    ui->txtEditor->InitCompleter(m_builderThread.m_builder->compiler.m_assembler->m_symTab, &m_builderThread.m_builder->compiler.m_parser);
+        ui->txtEditor->InitCompleter(m_builderThread.m_builder->compiler.m_assembler->m_symTab, &m_builderThread.m_builder->compiler.m_parser);
 
     if (m_projectIniFile->getString("system")=="NES") {
         BuildNes(m_currentSourceFile.split(".")[0]);
     }
+    HandleErrorDialogs(ErrorHandler::e.m_teOut);
 
     SetLights();
     if (m_run) {

@@ -5,13 +5,13 @@
 
 
 <h3>Description</h3>
-<p>Decreases the value at the address by 1.</p>
+<p>Decreases the value at the address by 1.  Creates an inc directive in assembler.</p>
 
 
 <h3>Example</h3>
 
 <code>
-dec(^$d020);
-dec(my_variable);
-dec(my_array[i]);
+dec(^$d020);        // dec $d020 in assembler
+dec(my_variable);   // dec my_variable
+dec(my_array[i]);   // dec my_array,x
 </code>

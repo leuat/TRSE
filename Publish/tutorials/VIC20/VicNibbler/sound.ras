@@ -1,0 +1,55 @@
+
+procedure PlaySFX();
+var
+	hissDuration : byte = 0;
+	
+begin
+	if hissDuration = 0 then
+	begin
+		return();
+	end;
+	if hissDuration = 1 then
+	begin
+		SOUNDFX_REGISTER := 0;
+		hissDuration := 0;
+		return();
+	end;
+	
+	SOUNDFX_REGISTER := @SOUND_HISS;
+	hissDuration := hissDuration - 1;
+
+end;
+
+//SOUND1_REGISTER
+procedure PlaySND1();
+var
+	snd1Freq : byte = 0;
+	
+begin
+
+	//if snd1Freq = 0 then return();
+	if snd1Freq > @SOUND_TJUNCMIN then snd1Freq := snd1Freq -1;
+
+	SOUND1_REGISTER := snd1Freq;
+
+end;
+
+//SOUND2_REGISTER
+procedure PlaySND2();
+var
+	snd2Freq : byte = 0;
+	
+begin
+
+	//if snd2Freq = 0 then return();
+	if snd2Freq = @SOUND_COLLECTEND then
+	begin
+		snd2Freq := 0;
+		SOUND2_REGISTER := 0;
+		return();
+	end;
+	
+	if snd2Freq <> 0 then snd2Freq := snd2Freq + @SOUND_COLLECTINC;
+	SOUND2_REGISTER := snd2Freq;
+
+end;

@@ -547,9 +547,9 @@ void ASTDispather6502::dispatch(NodeNumber *node)
         int hiBit = ((int)node->m_val)>>8;
         int loBit = ((int)node->m_val)&0xff;
         as->ClearTerm();
-        as->Asm("ldy #" + QString::number(hiBit) );
+        as->Asm("ldy #" + Util::numToHex(hiBit) );
         //            as->Asm("tax");
-        as->Asm("lda #" + QString::number(loBit) );
+        as->Asm("lda #" + Util::numToHex(loBit) );
         return;
 
         //qDebug() << m_op.m_value <<":" << m_val << " : " << hiBit << "  , " << loBit;
@@ -578,6 +578,7 @@ void ASTDispather6502::dispatch(NodeBuiltinMethod *node)
     node->VerifyParams(as);
 
     as->PushCounter();
+//    qDebug() <<"Dispatcher::builtin" << as->m_tempZeroPointers;
 
     Methods6502 methods;
     methods.m_node = node;
@@ -976,7 +977,7 @@ void ASTDispather6502::IncSid(NodeVarDecl *node) {
 void ASTDispather6502::IncBin(NodeVarDecl *node) {
     NodeVar* v = (NodeVar*)node->m_varNode;
     NodeVarType* t = (NodeVarType*)node->m_typeNode;
-    QString filename = as->m_projectDir + "/" + t->m_filename;
+    QString filename = as->m_projectDir + "/" + t->m_filename.replace("\\","/");
     if (!QFile::exists(filename))
         ErrorHandler::e.Error("Could not locate binary file for inclusion :" +filename);
 
@@ -1040,8 +1041,13 @@ void ASTDispather6502::BinaryClause(Node *node)
     as->Comment("Binary clause: " + node->m_op.getType());
 
     BuildToCmp(node);
-
-    QString lblFailed = as->NewLabel("binaryclausefailed");
+    as->Comment("BC done");
+    QString lblFailed = as->m_lblFailed;
+    bool isNew= false;
+    if (lblFailed=="") {
+        lblFailed = as->NewLabel("binaryclausefailed");
+        isNew=true;
+    }
     QString lblFinished = as->NewLabel("binaryclausefinished");
 
 
@@ -1049,18 +1055,22 @@ void ASTDispather6502::BinaryClause(Node *node)
         as->Asm("bne " + lblFailed);
     if (node->m_op.m_type==TokenType::NOTEQUALS)
         as->Asm("beq " + lblFailed);
-    if (node->m_op.m_type==TokenType::GREATER)
+    if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::GREATEREQUAL) {
         as->Asm("bcc " + lblFailed);
-    if (node->m_op.m_type==TokenType::LESS)
+    }
+    if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL)
         as->Asm("bcs " + lblFailed);
 
-    as->Asm("lda #1; success");
-    as->Asm("jmp " + lblFinished);
-    as->Label(lblFailed);
-    as->Asm("lda #0 ; failed state");
-    as->Label(lblFinished);
+    if (!node->m_ignoreSuccess) {
+        as->Asm("lda #1; success");
+        as->Asm("jmp " + lblFinished);
+        as->Label(lblFailed);
+        as->Asm("lda #0 ; failed state");
+        as->Label(lblFinished);
+    }
+    if (isNew)
+        as->PopLabel("binaryclausefailed");
 
-    as->PopLabel("binaryclausefailed");
     as->PopLabel("binaryclausefinished");
     // as->PopLabel("binary_clause_temp_var");
     //  as->PopLabel("binary_clause_temp_lab");
@@ -1083,14 +1093,21 @@ void ASTDispather6502::BuildToCmp(Node *node)
     as->Term();
     if (b!="") {
         as->Comment("Compare with pure num / var optimization");
+        if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::LESSEQUAL)
+            as->Asm("sbc #0");
         as->Asm("cmp " + b);
     }
     else {
         // Perform a full compare : create a temp variable
-        QString tmpVar = as->StoreInTempVar("binary_clause_temp");
+        QString tmpVarB = as->StoreInTempVar("binary_clause_temp");
         node->m_right->Accept(this);
         as->Term();
-        as->Asm("cmp " + tmpVar);
+        QString tmpVarA = as->StoreInTempVar("binary_clause_temp_2");
+        as->Asm("lda " + tmpVarB);
+        if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::LESSEQUAL)
+            as->Asm("sbc #0");
+        as->Asm("cmp " + tmpVarA);
+        as->PopTempVar();
         as->PopTempVar();
     }
 
@@ -1109,9 +1126,10 @@ void ASTDispather6502::BuildSimple(Node *node, QString lblFailed)
         as->Asm("bne " + lblFailed);
     if (node->m_op.m_type==TokenType::NOTEQUALS)
         as->Asm("beq " + lblFailed);
-    if (node->m_op.m_type==TokenType::GREATER)
+    if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::GREATEREQUAL) {
         as->Asm("bcc " + lblFailed);
-    if (node->m_op.m_type==TokenType::LESS)
+    }
+    if (node->m_op.m_type==TokenType::LESS  || node->m_op.m_type==TokenType::LESSEQUAL)
         as->Asm("bcs " + lblFailed);
 
 
@@ -1154,7 +1172,7 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
     //as->Term();
 
     if (numb!=nullptr || varb!=nullptr) {
-        if (node->m_op.m_type==TokenType::GREATER) {
+        if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::GREATEREQUAL) {
             as->Comment("Compare INTEGER with pure num / var optimization");
             as->Asm("lda " + vara->value + "+1   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
@@ -1164,7 +1182,7 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
             as->Asm("cmp " + lo);
             as->Asm("bcc " + lbl2);
         }
-        if (node->m_op.m_type==TokenType::LESS) {
+        if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL) {
             as->Comment("Compare INTEGER with pure num / var optimization");
             as->Asm("lda " + vara->value + "+1   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
@@ -1173,6 +1191,16 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
             as->Asm("lda " + vara->value);
             as->Asm("cmp " + lo);
             as->Asm("bcs " + lbl2);
+        }
+        if (node->m_op.m_type==TokenType::EQUALS) {
+            as->Comment("Compare INTEGER with pure num / var optimization");
+            as->Asm("lda " + vara->value + "+1   ; compare high bytes");
+            as->Asm("cmp " + hi + " ;keep");
+            as->Asm("bne " + lbl2);
+            as->Asm("lda " + vara->value);
+            as->Asm("cmp " + lo);
+            as->Asm("bne " + lbl2);
+            as->Asm("jmp " + lbl1);
         }
         as->Label(lbl1); // ok
         as->Asm("lda #1");
@@ -1216,6 +1244,65 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
 }
 
 
+bool ASTDispather6502::IsSimpleAndOr(NodeBinaryClause *node, QString labelSuccess, QString labelFail)
+{
+    if(node==nullptr)
+        return false;
+//    if (dynamic_cast<NodeBinaryClausenode->m_left)
+    NodeBinaryClause* a = dynamic_cast<NodeBinaryClause*>(node->m_left);
+    NodeBinaryClause* b = dynamic_cast<NodeBinaryClause*>(node->m_right);
+//    return false;
+    if (a==nullptr || b==nullptr)
+        return false;
+    if (a->m_op.m_type==TokenType::AND || a->m_op.m_type==TokenType::OR)
+        return false;
+    if (b->m_op.m_type==TokenType::AND || b->m_op.m_type==TokenType::OR)
+        return false;
+
+
+//    return false;
+    if (node->m_op.m_type==TokenType::AND) {
+        a->m_ignoreSuccess = true;
+        b->m_ignoreSuccess = true;
+
+        as->m_lblFailed = labelFail;
+//        as->m_lblSuccess = labelSuccess;
+        a->Accept(this);
+        b->Accept(this);
+        as->m_lblFailed="";
+        as->m_lblSuccess="";
+        return true;
+    }
+
+    if (node->m_op.m_type==TokenType::OR) {
+        a->m_ignoreSuccess = true;
+        b->m_ignoreSuccess = true;
+        QString tempFailLabel = as->NewLabel("tempfail");
+       // as->m_lblSuccess = labelSuccess;
+        as->m_lblFailed = tempFailLabel;
+        a->Accept(this);
+        as->Asm("jmp "+labelSuccess);
+        as->m_lblFailed = labelFail;
+        as->Label(tempFailLabel);
+        b->Accept(this);
+        as->PopLabel("tempfail");
+
+        as->m_lblFailed="";
+        as->m_lblSuccess="";
+        return true;
+
+    }
+    return false;
+
+//    as->m_lblFailed="";
+  //  as->m_lblSuccess="";
+  //  return true;
+}
+
+
+
+
+
 /*
  *
  *
@@ -1231,12 +1318,15 @@ void ASTDispather6502::dispatch(NodeBinaryClause *node)
     //    Node::Build(as);
 
     // First, check the byte
-    if (node->m_op.m_type==TokenType::AND || node->m_op.m_type == TokenType::OR)
+    if (node->m_op.m_type==TokenType::AND || node->m_op.m_type == TokenType::OR) {
         LogicalClause(node);
+        //qDebug() << "NodeBinaryClause dispatch ";
+    }
     else
         if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type == TokenType::GREATER ||
-                node->m_op.m_type==TokenType::EQUALS || node->m_op.m_type == TokenType::NOTEQUALS) {
-            if (node->m_left->getType(as)==TokenType::INTEGER) {
+                node->m_op.m_type==TokenType::EQUALS || node->m_op.m_type == TokenType::NOTEQUALS
+                || node->m_op.m_type==TokenType::LESSEQUAL || node->m_op.m_type == TokenType::GREATEREQUAL ) {
+            if (node->m_left->getType(as)==TokenType::INTEGER || (node->m_left->getType(as)==TokenType::POINTER && !node->m_left->isArrayIndex())) {
                 BinaryClauseInteger(node);
             }
             else
@@ -1258,6 +1348,33 @@ void ASTDispather6502::LogicalClause(Node *node)
         ErrorHandler::e.Error("Logical clause: right hand term must be binary clause");
 
 
+    // Test for optimization : if left and right are pure
+
+
+/*
+    if (node->m_op.m_type==TokenType::OR) {
+        node->m_left->Accept(this);
+        QString tmpVar = as->StoreInTempVar("logical_class_temp");
+        node->m_right->Accept(this);
+        if (node->m_op.m_type==TokenType::AND)
+            as->Asm("and " + tmpVar);
+        if (node->m_op.m_type==TokenType::OR)
+            as->Asm("ora " + tmpVar);
+
+        as->PopTempVar();
+        return;
+    }
+    if (node->m_op.m_type==TokenType::AND) {
+        node->m_left->m_ignoreSuccess=true;
+        node->m_right->m_ignoreSuccess=true;
+        as->m_lblFailed = as->NewLabel("logicalclausefail");
+        node->m_left->Accept(this);
+        node->m_right->Accept(this);
+        as->Label(as->m_lblFailed);
+        as->PopLabel("logicalclausefail");
+        return;
+    }
+*/
 
 
     node->m_left->Accept(this);
@@ -1271,34 +1388,89 @@ void ASTDispather6502::LogicalClause(Node *node)
 
 
     as->PopTempVar();
+
     //as->Asm("lda " + tmpVar);
 
     // Done comparing!
 }
 
-void ASTDispather6502::Compare(NodeForLoop *node, NodeVar* var, bool isLarge, QString loopDone) {
 
+void ASTDispather6502::Compare(NodeForLoop *node, NodeVar* var, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive) {
 
 //    if (!var->isWord(as))
     {
         as->ClearTerm();
         node->m_b->Accept(this);
         as->Term();
-//        as->Asm("clc");
+
         as->Asm("cmp " + as->m_stack["for"].current());
 
-        if (!isLarge) {
-            as->Asm("bne "+as->getLabel("for"));
-            //as->Asm("bcs "+as->getLabel("for"));
+        int stepValue = 1; // do we have a step value?
+        if (node->m_step != nullptr) {
+
+            stepValue = node->m_step->numValue(); //node->m_step->getValue(as);
+
         }
-        else {
-            as->Asm("beq "+loopDone);
+        if (inclusive) {    // inclusive version will END after the TO value
+
+            if (!isLarge) {
+
+                if (stepValue > 0) {
+                    as->Asm("bcs "+as->getLabel("for")); // or FOR index > TO value
+                } else { //if (stepValue < -1) {
+                    as->Asm("bcc "+as->getLabel("for")); // FOR index < TO value
+                    as->Asm("beq "+as->getLabel("for")); // BEQ then the BCC below
+                }
+
+            }
+            else {
+
+                // LargeLoops needs checking
+                if (stepValue > 0) {
+                    as->Asm("bcc "+loopDone); // or FOR index > TO value
+                } else { //if (stepValue < -1) {
+                    as->Asm("beq "+loopNotDone); // BEQ then the BCC below
+                    as->Asm("bcs "+loopDone); // FOR index < TO value
+                }
+
+            }
+
+        } else {            // TRSE version will END on the TO value
+
+            if (!isLarge) {
+
+                if (stepValue == 1 || stepValue == -1) {
+                    // increments / decrements of 1 are safe for BNE
+                    as->Asm("bne "+as->getLabel("for"));
+                } else if (stepValue > 1) {
+                    as->Asm("beq "+loopDone); // FOR index == TO value
+                    as->Asm("bcs "+as->getLabel("for")); // or FOR index > TO value
+                } else { //if (stepValue < -1) {
+                    as->Asm("bcc "+as->getLabel("for")); // FOR index < TO value
+                }
+
+            }
+            else {
+
+                // LargeLoops needs checking
+                //as->Asm("beq "+loopDone);
+                if (stepValue == 1 || stepValue == -1) {
+                    // increments / decrements of 1 are safe for BNE
+                    as->Asm("beq "+loopDone);
+                } else if (stepValue > 1) {
+                    as->Asm("beq "+loopDone); // FOR index == TO value
+                    as->Asm("bcc "+loopDone); // or FOR index > TO value
+                } else { //if (stepValue < -1) {
+                    as->Asm("bcs "+loopDone); // FOR index < TO value
+                }
+
+            }
 
         }
         return;
     }
 
-
+/* // FOR loops with word values not currently supported
     ErrorHandler::e.Error("Compare word not implemented in for loops");
 
     // Is word:
@@ -1328,7 +1500,7 @@ void ASTDispather6502::Compare(NodeForLoop *node, NodeVar* var, bool isLarge, QS
     as->Label(label1);
 // Branches to LABEL2 if NUM1 < NUM2
 
-
+*/
 
 /*    LDA NUM1H  ; compare high bytes
              CMP NUM2H
@@ -1337,77 +1509,86 @@ void ASTDispather6502::Compare(NodeForLoop *node, NodeVar* var, bool isLarge, QS
              LDA NUM1L  ; compare low bytes
              CMP NUM2L
              BCC LABEL2 ; if NUM1L < NUM2L then NUM1 < NUM2
-*/
 
-    as->PopLabel("forWordLabel1");
+
+    as->PopLabel("forWordLabel1");*/
 //    as->PopLabel("forWordVar");
 }
 
 void ASTDispather6502::IncreaseCounter(NodeForLoop *node, NodeVar* var) {
+
+    // no STEP included in FOR TO DO, we assume STEP 1
     if (node->m_step==nullptr) {
-            if (!var->isWord(as)) {
-                as->Asm("inc " + as->m_stack["for"].current());
-            }
-            else {
-                as->Asm("clc");
-                as->Asm("inc " + as->m_stack["for"].current());
-                QString lbl = as->NewLabel("lblCounterWord");
-                as->Asm("bcc "+lbl);
-                as->Asm("inc " + as->m_stack["for"].current() +"+1");
 
-                as->Label(lbl);
+        //if (!var->isWord(as)) {
+            as->Asm("inc " + as->m_stack["for"].current());
+       /* }
+        else {
+            as->Asm("clc");
+            as->Asm("inc " + as->m_stack["for"].current());
+            QString lbl = as->NewLabel("lblCounterWord");
+            as->Asm("bcc "+lbl);
+            as->Asm("inc " + as->m_stack["for"].current() +"+1");
 
-                as->PopLabel("lblCounterWord");
+            as->Label(lbl);
 
-            }
-            return;
-    }
-        if (node->m_step->isMinusOne()) {
-//                as->Asm("dec " + as->m_stack["for"].current());
-                if (!var->isWord(as)) {
-                    as->Asm("dec " + as->m_stack["for"].current());
-                }
-                else {
-                    as->Asm("clc");
-                    as->Asm("dec " + as->m_stack["for"].current());
+            as->PopLabel("lblCounterWord");
+
+        }*/
+
+    } else {
+
+        // STEP included in FOR TO DO statement
+        int stepValue = node->m_step->numValue();
+        //stepValue = node->m_step->getInteger();
+        //qDebug() << node->m_step->numValue();
+        //qDebug() << node->m_step->getInteger();
+
+        // if 1 or -1 we can optimise!
+        if (stepValue == 1) {
+
+            as->Asm("inc " + as->m_stack["for"].current());
+
+        } else if (stepValue == -1) {
+
+            as->Asm("dec " + as->m_stack["for"].current());
+
+        } else {
+            // Larger +ve/-ve STEP
+
+            // Handles a -ve and +ve step as a byte, eg: -1 == 255
+            as->Asm("clc");
+            as->Asm("lda " + as->m_stack["for"].current());
+            as->ClearTerm();
+            as->Term("adc ");
+            node->m_step->Accept(this);
+            //            m_step->Build(as);
+            as->Term();
+
+            if (var->isWord(as)) {
                     QString lbl = as->NewLabel("lblCounterWord");
                     as->Asm("bcc "+lbl);
-                    as->Asm("dec " + as->m_stack["for"].current() +"+1");
-
+                    as->Asm("inc " + as->m_stack["for"].current() +"+1");
                     as->Label(lbl);
-
                     as->PopLabel("lblCounterWord");
-
-                }
-                return;
-
+            }
+            as->Asm("sta "+as->m_stack["for"].current());
 
         }
+
+    }
+
+
+
  //       if (node->m_loopCounter!=0)
    //         ErrorHandler::e.Error("Error: Loop with step other than 1,-1 cannot have loopy/loopx flag");
         // Is word
-        as->Asm("clc");
-        as->Asm("lda " + as->m_stack["for"].current());
-        as->ClearTerm();
-        as->Term("adc ");
-        node->m_step->Accept(this);
-        //            m_step->Build(as);
-        as->Term();
-
-        if (var->isWord(as)) {
-                QString lbl = as->NewLabel("lblCounterWord");
-                as->Asm("bcc "+lbl);
-                as->Asm("inc " + as->m_stack["for"].current() +"+1");
-                as->Label(lbl);
-                as->PopLabel("lblCounterWord");
-        }
-        as->Asm("sta "+as->m_stack["for"].current());
-
 
 
 }
 
-void ASTDispather6502::SmallLoop(NodeForLoop *node, NodeVar* var)
+// handle a small loop
+void ASTDispather6502::SmallLoop(NodeForLoop *node, NodeVar* var, bool inclusive)
 {
     QString loopDone = as->NewLabel("forLoopDone");
     //  Compare(as);
@@ -1416,7 +1597,7 @@ void ASTDispather6502::SmallLoop(NodeForLoop *node, NodeVar* var)
     node->m_block->Accept(this);
     as->m_stack["for"].pop();
     IncreaseCounter(node,var);
-    Compare(node,var,false, loopDone);
+    Compare(node, var, false, loopDone, nullptr, inclusive);
 
 //    as->Asm("jmp " + as->getLabel("for"));
 
@@ -1427,25 +1608,21 @@ void ASTDispather6502::SmallLoop(NodeForLoop *node, NodeVar* var)
 
 }
 
-
-void ASTDispather6502::LargeLoop(NodeForLoop *node, NodeVar* var)
+// handle a large loop
+void ASTDispather6502::LargeLoop(NodeForLoop *node, NodeVar* var, bool inclusive)
 {
     QString loopForFix = as->NewLabel("forLoopFix");
     QString loopDone = as->NewLabel("forLoopDone");
+    QString loopNotDone = as->NewLabel("forLoopNotDone");
 
-    /*    Compare(as);
-        as->Asm("bne "+loopForFix);
-        as->Asm("jmp "+loopDone);*/
     as->Label(loopForFix);
     node->m_block->Accept(this);
-    //        m_block->Build(as);
-    //    as->EndForLoop(m_b);
     as->m_stack["for"].pop();
 
     IncreaseCounter(node,var);
-    Compare(node,var,true,loopDone);
-    //as->Asm("beq "+loopDone);
+    Compare(node, var, true, loopDone, loopNotDone, inclusive);
 
+    as->Label(loopNotDone);
     as->Asm("jmp " + as->getLabel("for"));
 
     as->Label(loopDone);
@@ -1453,6 +1630,7 @@ void ASTDispather6502::LargeLoop(NodeForLoop *node, NodeVar* var)
     as->m_labelStack["for"].pop();
     as->m_labelStack["forLoopFix"].pop();
     as->m_labelStack["forLoopDone"].pop();
+    as->m_labelStack["forLoopNotDone"].pop();
 
 }
 
@@ -1487,10 +1665,12 @@ void ASTDispather6502::dispatch(NodeConditional *node)
 
     // Test all binary clauses:
     bool isSimplified = false;
+    bool isOKBranchSize = true;
     NodeBinaryClause* bn = dynamic_cast<NodeBinaryClause*>(node->m_binaryClause);
     if (node->verifyBlockBranchSize(as, node->m_block)) {
         isSimplified = !bn->cannotBeSimplified(as);
     }
+    else isOKBranchSize = false;
 
     // Then, check m_forcepage
     if (node->m_forcePage==1) // force OFFPAGE
@@ -1503,15 +1683,20 @@ void ASTDispather6502::dispatch(NodeConditional *node)
     }
     if (!isSimplified) {
 //        node->m_binaryClause->Build(as);
-        node->m_binaryClause->Accept(this);
-        // Now, a should be either true or false
+        if (isOKBranchSize && IsSimpleAndOr(dynamic_cast<NodeBinaryClause*>(node->m_binaryClause), lblstartTrueBlock,labelElse)){
+        }
+        else {
 
-        as->Asm("cmp #1");
-        as->Asm("beq " + lblstartTrueBlock); // All conditionals checked out!
-        // Do we have an else block?
-        if (node->m_elseBlock!=nullptr)
-            as->Asm("jmp " + labelElse); // All conditionals false: skip to end (or else block)
-        as->Asm("jmp " + labelElseDone);
+            node->m_binaryClause->Accept(this);
+            // Now, a should be either true or false
+
+            as->Asm("cmp #1");
+            as->Asm("beq " + lblstartTrueBlock); // All conditionals checked out!
+            // Do we have an else block?
+            if (node->m_elseBlock!=nullptr)
+                as->Asm("jmp " + labelElse); // All conditionals false: skip to end (or else block)
+            as->Asm("jmp " + labelElseDone);
+        }
     }
     else {
         // Simplified version <80 instructions & just one clause
@@ -1534,8 +1719,9 @@ void ASTDispather6502::dispatch(NodeConditional *node)
         as->Asm("jmp " + labelStartOverAgain);
 
     // An else block?
+    as->Label(labelElse);
     if (node->m_elseBlock!=nullptr) {
-        as->Label(labelElse);
+//        as->Label(labelElse);
         node->m_elseBlock->Accept(this);
 //        m_elseBlock->Build(as);
 
@@ -1568,31 +1754,25 @@ void ASTDispather6502::dispatch(NodeForLoop *node)
     node->DispatchConstructor();
 
 
-    //QString m_currentVar = ((NodeAssign*)m_a)->m_
     NodeAssign *nVar = dynamic_cast<NodeAssign*>(node->m_a);
 
+    // get the inclusive flag for the method used for the coparison, ie: false is < and true is <=
+    bool inclusive =(node->m_inclusive);
 
+    // left node *must* be an assign statement (e.g a:=10)
     if (nVar==nullptr)
         ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
 
-    QString var = dynamic_cast<NodeVar*>(nVar->m_left)->value;//  m_a->Build(as);
+
+    // Get the variable name
+    QString var = dynamic_cast<NodeVar*>(nVar->m_left)->value;
+    // accept statement (assign variable)
     node->m_a->Accept(this);
-    if (node->m_loopCounter==1) as->Asm("tax");
-    if (node->m_loopCounter==2) as->Asm("tay");
-    //QString to = m_b->Build(as);
-    QString to = "";
-    if (dynamic_cast<const NodeNumber*>(node->m_b) != nullptr)
-        to = QString::number(((NodeNumber*)node->m_b)->m_val);
-    if (dynamic_cast<const NodeVar*>(node->m_b) != nullptr)
-        to = ((NodeVar*)node->m_b)->value;
-  //  if (m_b->m_op.m_type==TokenType::INTEGER ||m_b->m_op.m_type==TokenType::INTEGER_CONST )
-  //      to = "#" + to;
-//    as->StartForLoop(var, to);
+
 
     as->m_stack["for"].push(var);
-//    as->m_labelStack["for"].push();
-    as->Label(as->NewLabel("for"));
 
+    as->Label(as->NewLabel("for"));
 
     bool isSmall = node->verifyBlockBranchSize(as, node->m_block);
 
@@ -1603,9 +1783,9 @@ void ASTDispather6502::dispatch(NodeForLoop *node)
         isSmall = true;
 
     if (isSmall)
-        SmallLoop(node,dynamic_cast<NodeVar*>(nVar->m_left));
+        SmallLoop(node,dynamic_cast<NodeVar*>(nVar->m_left), inclusive);
     else
-        LargeLoop(node,dynamic_cast<NodeVar*>(nVar->m_left));
+        LargeLoop(node,dynamic_cast<NodeVar*>(nVar->m_left), inclusive);
 
 
 }
@@ -1686,16 +1866,28 @@ void ASTDispather6502::dispatch(NodeVar *node)
 
 
 bool ASTDispather6502::LoadXYVarOrNum(NodeVar *node, Node *other, bool isx) {
+    Symbol* s = as->m_symTab->Lookup(node->value, node->m_op.m_lineNumber);
     NodeVar* var = dynamic_cast<NodeVar*>(other);
     NodeNumber* num = dynamic_cast<NodeNumber*>(other);
     QString operand = "ldx ";
     if (!isx) operand="ldy ";
     if (var!=nullptr && var->m_expr == nullptr) {
-        as->Asm(operand + var->value);
+            as->Asm(operand + var->value);
+            if (s->m_arrayType==TokenType::INTEGER) // integer array index is *2 (two bytes per array slot)
+            {
+                as->Asm("txa   ; watch for bug, Integer array has index range of 0 to 127");
+                as->Asm("asl");
+                as->Asm("tax");
+            }
         return true;
     }
     if (num!=nullptr) {
-        as->Asm(operand  + num->StringValue());
+//        qDebug() << "LoadXYVarorNum HERE ";
+        if (s->m_arrayType==TokenType::INTEGER) {
+            as->Asm(operand + "#" + QString::number(num->numValue() * 2) + " ; watch for bug, Integer array has max index of 128");
+        }
+        else
+            as->Asm(operand  + num->StringValue());
         return true;
     }
     return false;
@@ -1704,15 +1896,26 @@ bool ASTDispather6502::LoadXYVarOrNum(NodeVar *node, Node *other, bool isx) {
 
 void ASTDispather6502::LoadByteArray(NodeVar *node) {
     // Optimizer: if expression is number, just return direct
-    as->Comment("Load Byte array");
+
+    Symbol* s = as->m_symTab->Lookup(node->value, node->m_op.m_lineNumber);
+    if (s->m_arrayType==TokenType::INTEGER)
+        as->Comment("Load Integer array");
+    else if (s->m_arrayType==TokenType::BYTE)
+        as->Comment("Load Byte array");
+    else
+        as->Comment("Load Unknown type array");
+
     QString m = as->m_term;
 
     as->ClearTerm();
     if (!LoadXYVarOrNum(node, node->m_expr,true))
     {
+        // calculation version, eg: index+2  or 3+2
         //       as->Asm("pha");
         node->m_expr->Accept(this);
         as->Term();
+        if (s->m_arrayType==TokenType::INTEGER) // integer array index is *2 (two bytes per array slot)
+            as->Asm("asl");
         as->Asm("tax");
         //          as->Asm("pla");
     }
@@ -1720,6 +1923,9 @@ void ASTDispather6502::LoadByteArray(NodeVar *node) {
         m="lda ";
     as->Asm(m+  node->value+",x");
 
+    if (s->m_arrayType==TokenType::INTEGER) { // integer array need to load the high byte also
+        as->Asm("ldy "+  node->value+"+1,x");
+    }
 }
 
 void ASTDispather6502::LoadVariable(Node *node)
@@ -1800,8 +2006,19 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
     // Is array
     if (node->m_expr != nullptr) {
         NodeNumber* number = dynamic_cast<NodeNumber*>(node->m_expr);
-        if (number!=nullptr && node->getType(as)!=TokenType::POINTER) { // IS NUMBER optimize}
-            as->Asm("sta " + node->value + "+"+ QString::number(number->m_val));
+        if (number!=nullptr && node->getType(as)!=TokenType::POINTER)
+        { // IS NUMBER optimize}
+            if (node->getArrayType(as)==TokenType::INTEGER) {
+                // Store integer array
+                int i = number->m_val*2;
+                as->Asm("sta " + node->value + "+"+ QString::number(i));
+                as->Asm("sty "  + node->value +"+"+ QString::number(i+1));
+
+            }
+            else {
+                as->Asm("sta " + node->value + "+"+ QString::number(number->m_val));
+            }
+            //                as->Asm("tya");
             return;
         }
         else {
@@ -1810,7 +2027,6 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
             NodeVar* var = dynamic_cast<NodeVar*>(node->m_expr);
             NodeNumber* num = dynamic_cast<NodeNumber*>(node->m_expr);
 
-            //                qDebug() << "Var name: " << value;
             QString secondReg="x";
             QString pa = "";
             QString pb= "";
@@ -1822,12 +2038,17 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
 
             // Optimize for number or pure var
             if (node->m_expr->getType(as)==TokenType::INTEGER_CONST || var!=nullptr) {
+                //qDebug() << "StoreVariable:: HER";
                 as->ClearTerm();
                 as->Term("ld"+secondReg +" ");
                 node->m_expr->Accept(this);
                 as->Term();
                 as->Asm("sta " +pa + node->value+ pb + "," + secondReg);
-
+                if (node->getArrayType(as)==TokenType::INTEGER) {
+                    as->Asm("in"+secondReg);
+                    as->Asm("tya");
+                    as->Asm("sta "  + node->value + "," + secondReg);
+                }
                 return;
             }
             // Just regular var optimize
@@ -2119,7 +2340,6 @@ bool ASTDispather6502::IsSimpleIncDec(NodeVar *var, NodeAssign *node) {
 
 
 
-
 /*
  *
  *
@@ -2187,8 +2407,9 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
     }
     if (node->m_right==nullptr)
         ErrorHandler::e.Error("Node assign: right hand must be expression", node->m_op.m_lineNumber);
+
     if (node->m_left->getType(as)==TokenType::INTEGER) {
-        as->Asm("ldy #0");
+        as->Asm("ldy #0");    // AH:20190722: Does not appear to serve a purpose - takes up space in prg. Breaks TRSE scroll in 4K C64 demo if take this out
         node->m_right->m_forceType = TokenType::INTEGER; // FORCE integer on right-hand side
     }
     // For constant i:=i+1;

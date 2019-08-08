@@ -47,6 +47,7 @@ public:
     uint level = 0;
     bool m_isUsed = false;
     bool m_forceAddress = false;
+    bool m_ignoreSuccess = false; // Used for binary expressions
 
 
 
@@ -107,6 +108,9 @@ public:
 /*    virtual void LoadVariable(AbstractASTDispatcher* dispatcher) {}
     virtual void StoreVariable(AbstractASTDispatcher* dispatcher) {}*/
     virtual TokenType::Type getType(Assembler* as) {
+        return m_op.m_type;
+    }
+    virtual TokenType::Type getArrayType(Assembler* as) {
         return m_op.m_type;
     }
     virtual bool isArrayIndex() { return false; }

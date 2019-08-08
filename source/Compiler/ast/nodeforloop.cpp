@@ -22,13 +22,15 @@
 #include "nodeforloop.h"
 #include "nodenumber.h"
 
-NodeForLoop::NodeForLoop(Node *a, Node *b, Node *block, Node *step, bool unroll, int forcePage, int loopCounter) :Node(){
+NodeForLoop::NodeForLoop(Node *a, Node *b, Node *block, Node *step, bool unroll, int forcePage, int loopCounter, bool inclusive) :Node(){
     m_a = a;
     m_b = b;
     m_block = block;
+    m_inclusive = false; // to change
     m_forcePage = forcePage;
     m_step = step;
     m_loopCounter = loopCounter;
+    m_inclusive = inclusive;
     //        m_op = op;
 }
 

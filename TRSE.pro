@@ -33,11 +33,12 @@ INCLUDEPATH +=$$PWD/libs/lua/include
 #if USE_LUA
 #LIBS
 DEPENDPATH += $$PWD/../Libs
+ICON = trse.icns
 
 macx {
     QMAKE_CXXFLAGS += -openmp
     #LIBS += -openmp
-    ICON = trse.icns
+#    ICON = trse.icns
     QMAKE_CXXFLAGS += -Ofast
     LIBS += -ldl
     LIBS += -L$$PWD/libs/lua/ -lluamac
@@ -376,6 +377,8 @@ RESOURCES += \
 #LELIB INCLUDES
 
 DISTFILES += \
+    resources/code/amiga/init_p61_player.s \
+    resources/code/amiga/p61-play.i \
     resources/text/about.txt \
     resources/text/Documentation.txt \
     resources/text/builtinmethods.txt \
@@ -437,6 +440,25 @@ DISTFILES += \
     resources/bin/krill/instal_3000-c64.prg \
     resources/bin/krill/new/loader_PAL_NTSCL_0200-c64.prg \
     resources/bin/krill/new/install_PAL_NTSC_5000-c64.prg \
+    resources/text/help/c/aux_color_and_volume.rtf \
+    resources/text/help/c/hpen_register.rtf \
+    resources/text/help/c/hscroll_register.rtf \
+    resources/text/help/c/pal_or_ntsc.rtf \
+    resources/text/help/c/screen_bg_color.rtf \
+    resources/text/help/c/screen_char_loc.rtf \
+    resources/text/help/c/screen_col_loc.rtf \
+    resources/text/help/c/screen_text_height.rtf \
+    resources/text/help/c/screen_text_width.rtf \
+    resources/text/help/c/sound1_register.rtf \
+    resources/text/help/c/sound2_register.rtf \
+    resources/text/help/c/sound3_register.rtf \
+    resources/text/help/c/soundfx_register.rtf \
+    resources/text/help/c/vic_data_loc.rtf \
+    resources/text/help/c/vic_rasterline.rtf \
+    resources/text/help/c/vpen_register.rtf \
+    resources/text/help/c/vscroll_register.rtf \
+    resources/text/help/c/xpaddle_register.rtf \
+    resources/text/help/c/ypaddle_register.rtf \
     resources/text/help/m/abs.rtf \
     resources/text/help/m/atan2.rtf \
     resources/text/help/m/blockmemcpy.rtf \
@@ -469,6 +491,7 @@ DISTFILES += \
     resources/text/help/m/inc.rtf \
     resources/text/help/m/inczp.rtf \
     resources/text/help/m/isoverlapping.rtf \
+    resources/text/help/m/isoverlappingwh.rtf \
     resources/text/help/m/jammer.rtf \
     resources/text/help/m/joystick.rtf \
     resources/text/help/m/keypressed.rtf \
@@ -512,10 +535,61 @@ DISTFILES += \
     resources/text/help/m/startirq.rtf \
     resources/text/help/m/startrasterchain.rtf \
     resources/text/help/m/swap.rtf \
+    resources/text/help/m/tile.rtf \
     resources/text/help/m/togglebit.rtf \
     resources/text/help/m/wait.rtf \
     resources/text/help/m/waitforraster.rtf \
     resources/text/help/m/waitnoraster.rtf \
     resources/images/PET.png \
     resources/code/amiga/end.s \
-    resources/code/amiga/init.s
+    resources/code/amiga/init.s \
+    resources/text/help/p/c64.rtf \
+    resources/text/help/p/getting_started.rtf \
+    resources/text/help/p/pascal.rtf \
+    resources/text/help/p/vic20.rtf \
+    resources/text/help/r/and.rtf \
+    resources/text/help/r/array.rtf \
+    resources/text/help/r/asm.rtf \
+    resources/text/help/r/at.rtf \
+    resources/text/help/r/begin.rtf \
+    resources/text/help/r/byte.rtf \
+    resources/text/help/r/chipmem.rtf \
+    resources/text/help/r/cstring.rtf \
+    resources/text/help/r/define.rtf \
+    resources/text/help/r/do.rtf \
+    resources/text/help/r/else.rtf \
+    resources/text/help/r/end.rtf \
+    resources/text/help/r/endblock.rtf \
+    resources/text/help/r/endif.rtf \
+    resources/text/help/r/error.rtf \
+    resources/text/help/r/for.rtf \
+    resources/text/help/r/if.rtf \
+    resources/text/help/r/ifdef.rtf \
+    resources/text/help/r/ifndef.rtf \
+    resources/text/help/r/ignoremethod.rtf \
+    resources/text/help/r/incbin.rtf \
+    resources/text/help/r/include.rtf \
+    resources/text/help/r/incnsf.rtf \
+    resources/text/help/r/incsid.rtf \
+    resources/text/help/r/integer.rtf \
+    resources/text/help/r/interrupt.rtf \
+    resources/text/help/r/long.rtf \
+    resources/text/help/r/of.rtf \
+    resources/text/help/r/offpage.rtf \
+    resources/text/help/r/onpage.rtf \
+    resources/text/help/r/or.rtf \
+    resources/text/help/r/pointer.rtf \
+    resources/text/help/r/procedure.rtf \
+    resources/text/help/r/program.rtf \
+    resources/text/help/r/startassembler.rtf \
+    resources/text/help/r/startblock.rtf \
+    resources/text/help/r/step.rtf \
+    resources/text/help/r/string.rtf \
+    resources/text/help/r/then.rtf \
+    resources/text/help/r/to.rtf \
+    resources/text/help/r/unroll.rtf \
+    resources/text/help/r/use.rtf \
+    resources/text/help/r/userdata.rtf \
+    resources/text/help/r/var.rtf \
+    resources/text/help/r/wedge.rtf \
+    resources/text/help/r/while.rtf

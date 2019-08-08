@@ -1,0 +1,87 @@
+<p>Turbo Rascal Syntax error, “;” expected but “BEGIN” runs as a stand-alone application on windows, linux and os x.</p>
+<p>You need to go through five hard-core tasks before being able to compile programs for TRSE :</p>
+
+<ol>
+<li>(<strong>Optional</strong>) Download the DASM compiler, or simply use the built-in TRSE assembler &#8220;OrgAsm&#8221;.</li>
+<li>Procure a c64 emulator, such as vice</li>
+<li>Open the Settings page of TRSE and select the location of the DASM executable (optional) and the emulator  (like, x64.exe for VICE)</li>
+<li>Select a project directory, like the one with all the tutorials</li>
+<li>Lots and lots of intoxicating beverages</li>
+</ol>
+
+<h3>How to compile</h3>
+<p>The TRSE editor will display all valid files in the current project directory, which includes the following file types</p>
+<ul>
+<li>.<strong>RAS : </strong> Turbo Rascal source files</li>
+<li><strong>.ASM : </strong>Compiled DASM-style MOS6502 assembler files</li>
+<li><strong>.PRG</strong> : Compiled C64 programs</li>
+<li><strong>.PAW</strong> : TRSE Packing &amp; disk file</li>
+<li><strong>.FLF</strong> : TRSE image format (sprites, charsets, images, amiga, C64, VIC-20)</li>
+<li>.<strong>FJO : </strong>Ray tracer source files.</li>
+</ul>
+
+<p>To open a file, double click it. When clicking on C64 .PRG files, the emulator will automatically run the program.</p>
+<p>To compile a RAS file, press <strong>ctrl+B</strong> to build and <strong>ctrl+R</strong> to run (which will also
+build first). The compile step first produces Dasm .ASM files, before compiling the PRG to a PRG file.</p>
+
+<p>The best way to learn how TRSE works and what it is doing is to examine the ASM files produced from your programs.</p>
+
+<p>Errors in the RAS file will shift the focus to the line where the error occurred. Perhaps. Does&#8217;t always work yet.</p>
+<p><strong><span style="text-decoration: underline;">ctrl-U</span></strong> generates a complete memory map of the
+current project. Here&#8217;s an example from the tutorial game Rogue Burger One:</p>
+
+<h3>A note on the language itself:</h3>
+<p>The Turbo Rascal SE compiler is very much in its infancy, and is filled with bugs and errors.
+While an advanced binary operation might compile fine, it could crash on something far less conspicous
+(such as an open paranthesis, bracket or whatnot). Until I have encountered and tackled most of the severe bugs,
+the code is <strong>considered unstable</strong>, just like myself on a monday morning.</p>
+<h4>Program structure &amp; variable declarations</h4>
+<code>
+program MyProgramName;
+var
+    a,b: byte=0;
+    // allocates array of 8 bytes
+    array1: array[8] of byte;
+    // allocates array of 8 bytes with intialization
+    array2: array[8] of byte = (0,1,2,3,4,5,6,7);
+    // allocates array of 8 bytes at given memory address
+    array3: array[8] of byte = (0,1,2,3,4,5,6,7) at $8000;
+
+    // include (compressed) binary file at $6000
+    myImage: incbin("images/myImage_compressed.bin", $6000);
+
+    myText: string = ("THIS IS A STRING", " ANOTHER PART THAT IS ADDED TO THE PREVIOUS STRING", 5,3 ,$44, "YOU CAN ALSO ADD NUMBERS,0);
+
+    myPointer: pointer; // Zeropage pointer
+</code>
+
+<p>Procedures are declared as such:</p>
+<code>
+procedure MyProcedure();
+begin
+    // Let pointer point to text
+    myPointer:=myText;
+    moveto(0,5, $04); // Move screen pointer to x=0, y=5 on screen bank 0 ($0400)
+    // Loop through text until a zero is found and print to screen
+    while (myPointer[0]&lt;&gt;0) do begin
+        screenmemory[a]:=myPointer[0]; // draw text
+        myPointer:=myPointer+1; // increase pointer value
+    end;
+end;
+</code>
+
+<p>The main code block:</p>
+<code>
+begin
+    // set black background &amp; border
+    SCREEN_BG_COL:=BLACK;
+    SCREEN_FG_COL:=BLACK;
+    // clear screen with space ($20);
+    clearscreen($20,$0400);
+    // call procedure
+    MyProcedure();
+    // .. do some more stuff
+    decrunch(myImage); // decrunch and display binary image
+    Loop(); // infinite loop
+end.
+</code>

@@ -1,7 +1,12 @@
 program VIXMAS_DEMO;
 
 @define BuiltinMethodsLocation $7900
-
+/*
+ VIXMAS requires the following stuff:
+ - DASM
+ - You need to compile the resource file "data.paw" (remembe to tick "exomizer 3.0+ if you have exomizer 3+)
+ 
+*/
 var  
 
 @ignoremethod "init_random_call"
