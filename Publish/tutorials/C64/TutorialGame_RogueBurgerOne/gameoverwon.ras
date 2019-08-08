@@ -87,7 +87,7 @@ begin
 	startirq(@usekernal);
 	spritepos(spritex, spritey, 0);
 
-	if (spritey>80) then 
+	if (spritey>=80) then 
 		dec(spritey)
 	else 
 	begin
@@ -96,7 +96,7 @@ begin
 		spritex:=140;
 		call(SIDFILE_1_PLAY);
 		inc(val2);
-		if val2>10 then 
+		if val2>=10 then 
 			SPRITE_COLOR := WHITE
 		else
 			SPRITE_COLOR:=RED;

@@ -55,7 +55,7 @@ var
 	// Column 2 and 3 are purely optional for extra data (like, displaying same scene multiple times with various
 	// colors or character sets)
 
-	timeStamps: array[64] of byte = (		
+	timeStamps: array[] of byte = (		
 										@scene1, $6, 0,0, 
 										@scene2, $A, 4,0, 
 										@scene1, $10,2,0

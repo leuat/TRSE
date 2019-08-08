@@ -21,7 +21,7 @@ begin
 		// Check if entity is not zero
 			if (@levelpointer[0]<>0 and no_entities<5) then
 		begin
-			entity_pos_x[no_entities] := @levelpointer[1]*4 + 10;
+			entity_pos_x[no_entities] := @levelpointer[1]*4+10;
 			entity_pos_y[no_entities] := @levelpointer[2]*8+45;
 			
 			entity_curpos_x[no_entities] := entity_pos_x[no_entities];
@@ -50,7 +50,7 @@ begin
 			// Positive stuff! For use in blinking!
 				if @levelpointer[@entity_ammo]<>0 then
 			entity_pickup[no_entities]:=1;
-			if @levelpointer[@entity_damage]>128 then
+			if @levelpointer[@entity_damage]>=128 then
 				entity_pickup[no_entities]:=1;
 			if @levelpointer[@entity_upgrade]<>0 then
 				entity_pickup[no_entities]:=1;
@@ -89,7 +89,7 @@ begin
 			toggleBit(SPRITE_BITMASK, i, 1);
 			poke(SPRITE_COLOR,i, entity_color[val]);
 			j:=getbit(zeropage5[@entity_tag], 0);
-			if j=0 then begin
+			if j=1 then begin
 				togglebit(SPRITE_STRETCH_X, i, 1);
 				togglebit(SPRITE_STRETCH_Y, i, 1);
 				
@@ -124,7 +124,7 @@ begin
 				
 				val := entity_curpos_x[i] - entity_pos_x[i];
 				j:=entity_pos_spread[i];
-				if val>j then
+				if val>=j then
 					entity_dd_x[i] := 0 - entity_dd_x[i];
 			end
 			else begin // Aggressive behaviour
@@ -146,7 +146,7 @@ begin
 				
 				val := entity_curpos_y[i] - entity_pos_y[i];
 				j:=entity_pos_spread[i];
-				if val>j then
+				if val>=j then
 					entity_dd_y[i] := 0 - entity_dd_y[i];
 			end
 			
@@ -254,7 +254,7 @@ begin
 	
 	
 	// Entity dies
-	if (entity_health[de_i] =0 or entity_health[de_i]>128) then begin
+	if (entity_health[de_i] =0 or entity_health[de_i]>=128) then begin
 		entity_type[de_i] :=0; // Turn off
 		
 		togglebit(SPRITE_BITMASK, j+1, 0);
@@ -266,17 +266,17 @@ begin
 		// UPGRADES!
 		
 		j:=getbit(val, @upgrade_ammo_bit);
-		if 0=j then bullet_dmg:=bullet_dmg+4;
+		if j=1 then bullet_dmg:=bullet_dmg+4;
 		j:=getbit(val, @upgrade_health_bit);
-		if j=0 then begin
+		if j=1 then begin
 			player_health := player_health + 10;
 			player_maxhealth := player_maxhealth + 10;
 		end;
 		j:=getbit(val, @upgrade_speed_bit);
-		if j=0 then player_speed := player_speed +1;
+		if j=1 then player_speed := player_speed +1;
 		
 		j:=getbit(val, @upgrade_scroll_bit);
-		if j=0 then inc(currentScroll);
+		if j=1 then inc(currentScroll);
 		
 		
 	end

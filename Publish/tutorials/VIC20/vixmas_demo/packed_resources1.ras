@@ -1,20 +1,20 @@
 logoc : IncBin("compressed//logoc_c.bin", $5400);
-charsetc : IncBin("compressed//charsetc_c.bin", $5a01);
-anim1c : IncBin("compressed//anim1c_c.bin", $5dad);
-anim_snowc : IncBin("compressed//anim_snowc_c.bin", $5ef3);
-perlinc : IncBin("compressed//perlinc_c.bin", $6089);
-ballbackgroundc : IncBin("compressed//ballbackgroundc_c.bin", $61aa);
-credzc : IncBin("compressed//credzc_c.bin", $62c2);
-charset_scrollerc : IncBin("compressed//charset_scrollerc_c.bin", $6367);
-vixmasc : IncBin("compressed//vixmasc_c.bin", $6442);
+charsetc : IncBin("compressed//charsetc_c.bin", $59fc);
+anim1c : IncBin("compressed//anim1c_c.bin", $5da7);
+anim_snowc : IncBin("compressed//anim_snowc_c.bin", $5eeb);
+perlinc : IncBin("compressed//perlinc_c.bin", $6080);
+ballbackgroundc : IncBin("compressed//ballbackgroundc_c.bin", $61a1);
+credzc : IncBin("compressed//credzc_c.bin", $62b7);
+charset_scrollerc : IncBin("compressed//charset_scrollerc_c.bin", $635b);
+vixmasc : IncBin("compressed//vixmasc_c.bin", $6439);
 packed_addr : array [18] of byte = (
-	1, 90,
-	173, 93,
-	243, 94,
-	137, 96,
-	170, 97,
-	194, 98,
-	103, 99,
-	66, 100,
-	131, 100
+	252, 89,
+	167, 93,
+	235, 94,
+	128, 96,
+	161, 97,
+	183, 98,
+	91, 99,
+	57, 100,
+	122, 100
 );

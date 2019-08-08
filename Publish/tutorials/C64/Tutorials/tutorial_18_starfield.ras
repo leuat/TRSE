@@ -36,7 +36,7 @@ var
 	// random table
 	rands: array[256] of byte;
 	zp,cp:pointer;
-	starColors:array[8] of byte=(11,1, 2, 10, 6, 14, 7, ,1);//GREY, WHITE, RED, LIGHT_RED, BLUE, YELLOW, LIGHT_BLUE, WHITE);
+	starColors:array[8] of byte=(11,1, 2, 10, 6, 14, 7, 14,1);//GREY, WHITE, RED, LIGHT_RED, BLUE, YELLOW, LIGHT_BLUE, WHITE);
 	
 	text: string = "EAT LOTS OF OATS";
 

@@ -52,7 +52,7 @@ begin
 		// Fetch text character value
 		val := zeropage5[i]; // text value
 		// Only draw letters (>64)
-		if val>64 then begin
+		if val>=64 then begin
 			// Calculate position in character map: (val-64)*8 bytes
 			val:=(val-64)*8;
 			
@@ -98,7 +98,7 @@ begin
 	for i:=0 to 40 offpage do begin // 197 cycles! Force onpage
 		y:=sine[shift]+zpc;
 		val := zeropage5[i]; // text value
-		if val>64 then begin
+		if val>=64 then begin
 			val:=(val-64)*8;
 			k:=val+8;
 			asm("
@@ -209,7 +209,7 @@ begin
 
 	scroll:=scroll-1;
 	// If scroll <0, then fill special, increase text counter (zeropage5+1) and reset scroll
-	if scroll>128 then begin
+	if scroll>=128 then begin
 		fill(zeropage4, 0, 0);
 		scroll:=7;
 		inczp(zeropage5, 1);

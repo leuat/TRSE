@@ -1172,7 +1172,7 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
     //as->Term();
 
     if (numb!=nullptr || varb!=nullptr) {
-        if (node->m_op.m_type==TokenType::GREATER) {
+        if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::GREATEREQUAL) {
             as->Comment("Compare INTEGER with pure num / var optimization");
             as->Asm("lda " + vara->value + "+1   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
@@ -1182,7 +1182,7 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
             as->Asm("cmp " + lo);
             as->Asm("bcc " + lbl2);
         }
-        if (node->m_op.m_type==TokenType::LESS) {
+        if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL) {
             as->Comment("Compare INTEGER with pure num / var optimization");
             as->Asm("lda " + vara->value + "+1   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");

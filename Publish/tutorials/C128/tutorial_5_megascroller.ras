@@ -206,7 +206,6 @@ begin
 end;
 
 begin
-	InitRandom();
 	//	HideborderY(0);
 	// Set color background
 	SCREEN_BG_COL:=BLACK;

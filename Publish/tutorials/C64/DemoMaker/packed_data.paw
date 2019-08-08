@@ -1,6 +1,7 @@
 ras_include_file = packed_resources1.ras
 packed_address = $bb73
 output_dir = compressed/
-use_exomizer3 = 0
+use_exomizer3 = 1
 address_field = packed_data_addresses
 data = ,image1_data, images/jack_data.bin, $6000, image1_color, images/jack_color.bin, $4800, image2_data, images/brain_data.bin, $6000, image2_color, images/brain_color.bin, $4800, charset_c, charsets/charset_8x8.bin, $6800
+data_tinycrunch = ,0, 0, 0, 0, 0

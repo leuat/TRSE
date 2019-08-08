@@ -116,12 +116,12 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "playvic20sid(" , "init_vic20_sidplay");
         InitBuiltinFunction(QStringList()<< "viairq(" , "init_viairq");
         InitBuiltinFunction(QStringList()<< "initmodplayer(" , "include_modplayer");
-        InitBuiltinFunction(QStringList()<< "decrunch(", "init_decrunch");
+        InitBuiltinFunction(QStringList()<< "decrunch("<<"decrunchfromindex(", "init_decrunch");
         if (Syntax::s.m_currentSystem!=AbstractSystem::NES)
             InitBuiltinFunction(QStringList()<< "sine[", "initsinetable", "initsine_calculate");
-        InitBuiltinFunction(QStringList()<< "log2_table[" << "atan2[", "initlog2");
+        InitBuiltinFunction(QStringList()<< "log2_table[" << "atan2(", "initlog2");
 
-        InitBuiltinFunction(QStringList()<< "atan2[", "initatan2");
+        InitBuiltinFunction(QStringList()<< "atan2(", "initatan2");
 
 
         InitBuiltinFunction(QStringList()<< "sqrt(", "initsqrt16");

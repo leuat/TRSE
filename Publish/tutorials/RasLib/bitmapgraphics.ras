@@ -172,7 +172,7 @@ begin
 		bmg_dy := bmg_y1 - bmg_y2;
 	end;
 	@putpixel
-	if bmg_dx > bmg_dy then begin
+	if bmg_dx >= bmg_dy then begin
 		
 		bmg_ai := (bmg_dy - bmg_dx);
 		bmg_bi := bmg_dy;

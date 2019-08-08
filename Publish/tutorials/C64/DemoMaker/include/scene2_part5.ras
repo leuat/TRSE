@@ -1,7 +1,7 @@
 procedure TransitionScene2();
 begin
 	if (transitionMode=0) then begin
-		if (tVal>16) then begin tVal:=24;return(); end;
+		if (tVal>=16) then begin tVal:=24;return(); end;
 		p1:=$7000;
 		p2:=$6800+^@scene2charval*^8;
 		if (tVal<>0) then begin
@@ -13,7 +13,7 @@ begin
 	end
 	else 
 	begin
-		if (tVal>127) then return();
+		if (tVal>=127) then return();
 		moveto(0,tVal,$44);
 		fill(screenmemory,$20,40);
 		dec(tVal);
