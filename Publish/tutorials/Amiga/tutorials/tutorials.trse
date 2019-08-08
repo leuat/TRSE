@@ -32,5 +32,3 @@ d64_paw_file = none
 d64_paw_file_disk2 = none
 override_target_settings_sys = 0
 override_target_settings_prg = 0
-project_path = /home/leuat/code/TRSE/Publish/tutorials/Amiga/tutorials/
-open_files = ,tutorial3.ras, tutorial2.ras, tutorial1.ras, tutorial4_3D.ras

@@ -40,5 +40,3 @@ override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 override_target_settings_sys = 0
 override_target_settings_prg = 0
-project_path = /home/leuat/code/TRSE/Publish/tutorials/VIC20/PurplePlanetYo/
-open_files = ,demo.ras

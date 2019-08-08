@@ -91,14 +91,13 @@ var
 	ro_x1,ro_y1,ro_x2,ro_y2, ro_z2:long = 0;
 	ro_z1,ro_tmp:byte;
 	ro_idx, ro_nidx : integer = 0;
-	ss : pointer of long;
+	ss : pointer;
 	
 begin
 	ss:=screen+40; // Draw every second 
 	ro_idx:=0;
 	ro_nidx:=2;
 	tt:=0;
-
 	for ro_ri:=0 to ro_count do begin
 		tt:=(tt+1)&1;
 
@@ -221,10 +220,23 @@ end;
 	Initializing method. Most TRSE "Init"-methods will be performed automatically in later versions.
 
 */
+procedure InitLineStuff();
+begin
+	asm(" 
+		move.w	#$a4a,LineMode
+		move.l #-$1,$dff044 ;; last word first word mask
+		move.l #-$8000,$dff072
+		move.w #40,$dff060 ; modulo! SET!
+ 		");
+
+
+end;
+
 procedure PerformInit();
 begin
 	SetupScreen();
 	InitLine();
+	InitLineStuff();
 	InitMatmul3x3();
 	InitMatmulVec();
 	InitMatmulVecNormalZ();
@@ -248,7 +260,7 @@ begin
 	poke16(copper_palette,2+4*3,$0FF0);
 
 	// Set line modulo
-	poke16(^$dff060,0,80);
+//	poke16(^$dff060,0,80);
 
 
 end;
@@ -274,13 +286,14 @@ begin
 		MatmulVecNormalZ(rotmat, normals, normals_T, lcount);
 		// Render object as lines with vertices in"vertices_T", normals in "normals_T" and line A/B list in verticesLineList.
 		// Center xyz = 160,100 and a zpos 
-//		RenderObjectLines(vertices_T, normals_T, verticesLineList, lcount, 160,100, zpos);		
+		RenderObjectLines(vertices_T, normals_T, verticesLineList, lcount, 160,128, zpos);		
 		
 
 		// Perform backbuffer flipping etc
 		FlipBuffers();
 		WaitVerticalBlank();	
 		time:=time+1;
+		
 		fill(screen,0,20*256);
 		
 		ApplyCopperList();
