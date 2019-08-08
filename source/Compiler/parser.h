@@ -64,10 +64,10 @@ public:
     QMap<QString, Node*> m_procedures;
     QMap<QString, QString> m_preprocessorDefines;
     QStringList m_diskFiles;
+    QStringList m_doNotRemoveMethods;
     QString m_initAssembler = "";
     QVector<Node*> m_proceduresOnly;
     QVector<QString> m_ignoreMethods;
-    QVector<QString> m_doNotRemoveMethods;
     Lexer* m_lexer;
     Token m_currentToken;
     int m_pass = 0;

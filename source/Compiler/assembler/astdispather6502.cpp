@@ -977,7 +977,7 @@ void ASTDispather6502::IncSid(NodeVarDecl *node) {
 void ASTDispather6502::IncBin(NodeVarDecl *node) {
     NodeVar* v = (NodeVar*)node->m_varNode;
     NodeVarType* t = (NodeVarType*)node->m_typeNode;
-    QString filename = as->m_projectDir + "/" + t->m_filename;
+    QString filename = as->m_projectDir + "/" + t->m_filename.replace("\\","/");
     if (!QFile::exists(filename))
         ErrorHandler::e.Error("Could not locate binary file for inclusion :" +filename);
 
