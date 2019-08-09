@@ -3881,17 +3881,15 @@ void Methods6502::ClearScreen(Assembler *as)
 
     } else if (Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
 
-        //ErrorHandler::e.Error("ClearScreen not yet implemented for VIC20", m_node->m_op.m_lineNumber);
-
         QString lbl = as->NewLabel("clearloop");
-        QString shift = Util::numToHex(val-1);
+        QString shift = Util::numToHex(val);
         as->Comment("Clear screen with offset");
         LoadVar(as, 0);
-        as->Asm("ldx #$FD");
+        as->Asm("ldx #$fe");
         as->Label(lbl);
-        as->Asm("sta $0000+"+shift+",x");
-        as->Asm("sta $00FD+"+shift+",x");
         as->Asm("dex");
+        as->Asm("sta $0000+"+shift+",x");
+        as->Asm("sta $00fd+"+shift+",x");
         as->Asm("bne "+lbl);
 
         as->PopLabel("clearloop");
