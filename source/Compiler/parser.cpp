@@ -244,6 +244,12 @@ int Parser::GetParsedInt()
     bool done = false;
     int val = 0;
     QString op = "plus";
+    if (m_currentToken.m_value!="") {
+        val= getIntVal(m_currentToken);
+        Eat();
+        return val;
+    }
+
     while (!done) {
 //        qDebug() << "ival:"  << QString::number(m_currentToken.m_intVal);
         if (op == "plus")
@@ -500,6 +506,7 @@ Node *Parser::Empty()
     return new NoOp();
 }
 
+
 Node *Parser::AssignStatement()
 {
     Node* arrayIndex = nullptr;
@@ -558,6 +565,8 @@ Node *Parser::Statement()
     else if (m_currentToken.m_type == TokenType::ASM) {
         return InlineAssembler();
 
+    } else if (m_currentToken.m_type == TokenType::CASE) {
+        return Case();
     }
 
     else {
@@ -571,6 +580,30 @@ Node *Parser::Statement()
 
     return node;
 
+
+}
+
+Node *Parser::Case()
+{
+    NodeCase* n = new NodeCase(m_currentToken);
+    Eat(); // Eat "case"
+    n->m_variable = dynamic_cast<NodeVar*>(Variable());
+    Eat(TokenType::OF);
+    while (m_currentToken.m_type != TokenType::END && m_currentToken.m_type != TokenType::ELSE) {
+        Node* expr = Expr();
+        Eat(TokenType::COLON);
+        Node* block = Block(false);
+        n->Append(expr, block);
+        Eat(); // Eat the semicolon
+
+    }
+    if (m_currentToken.m_type == TokenType::ELSE) {
+        Eat();
+        n->m_elseBlock = Block(false);
+    }
+    else
+    Eat(); // Eat final END
+    return n;
 
 }
 
@@ -592,12 +625,23 @@ Node *Parser::BinaryClause()
     }
 
     Node* a = Expr();
-    Token comparetoken = m_currentToken;
-    Eat();
-    Node* b = Expr();
+    Token comparetoken;
+    Node* b;
+    if (m_currentToken.m_type==TokenType::RPAREN || m_currentToken.m_type==TokenType::THEN) {
+        Token t;
+        t.m_type = TokenType::BYTE;
+        t.m_intVal = 1;
+        b = new NodeNumber(t,1);
+        comparetoken.m_type = TokenType::EQUALS;
+    }
+    else
+    {
+        comparetoken = m_currentToken;
+         Eat();
+        b = Expr();
 
+    }
     return new NodeBinaryClause(comparetoken, a, b);
-
 }
 
 
@@ -1339,7 +1383,7 @@ Node *Parser::TypeSpec()
 
     }
 
-
+    // Array [] of blah = (1,2,3);
     if (m_currentToken.m_type == TokenType::ARRAY) {
         Eat(TokenType::ARRAY);
         Eat(TokenType::LBRACKET);
@@ -1357,7 +1401,6 @@ Node *Parser::TypeSpec()
             Eat();
             Eat(TokenType::LPAREN);
             while (m_currentToken.m_type!=TokenType::RPAREN) {
-
                 data << "$0"+QString::number(getIntVal(m_currentToken),16);//QString::number(m_currentToken.m_intVal);
                 Eat();
                 if (m_currentToken.m_type==TokenType::COMMA)
@@ -1441,6 +1484,8 @@ Node *Parser::TypeSpec()
     QString initVal = "";
     if (m_currentToken.m_type == TokenType::EQUALS) {
         Eat();
+//        data << "$0"+QString::number(getIntVal(m_currentToken),16);//QString::number(m_currentToken.m_intVal);
+
         initVal = Util::numToHex(GetParsedInt());
 //        qDebug() << m_currentToken.getType();
   //      Eat();

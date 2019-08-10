@@ -86,10 +86,11 @@ void DialogHelp::LoadItems(int idx)
         if (data[0].toLower()== ht.id) {
             QString word = data[1];
             QString system = data[2].toLower();
+            bool isFjong = data[0]=="f";
             if (word.toLower().startsWith("init")) continue;
-            if (!AbstractSystem::isSupported(Syntax::s.m_currentSystem, system))
+            if (!isFjong && !AbstractSystem::isSupported(Syntax::s.m_currentSystem, system))
                 continue;
-            if (system.contains(currentSystem)) {
+            if (system.contains(currentSystem)||isFjong) {
 /*                QString val = word + "(";
                 for (QString s: params) {
                     if (s=="b") val+="[byte variable]";
@@ -131,8 +132,47 @@ void DialogHelp::LoadItem(QString findword)
         QString type = data[0].toLower();
         m_currentType = type;
         QString system = data[2].toLower();
-        if (!AbstractSystem::isSupported(Syntax::s.m_currentSystem, system))
+        if (type!="f" && !AbstractSystem::isSupported(Syntax::s.m_currentSystem, system))
             continue;
+        if (type=="f")
+         {
+                QStringList params = data[2].toLower().split(",");
+                QString val = "<h2 style=\"color: skyblue\">" + word + "( ";
+                int paramNo = 1;
+                for (QString s: params) {
+                    if (s=="s") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> float ]";
+                    if (s=="f") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> string ]";
+                    val+=", ";
+                    paramNo++;
+
+                }
+                val.remove(val.length()-2,2);
+                val+=" );</h2>";
+
+                QString fn =":resources/text/help/"+type+"/"+word.toLower()+".rtf";
+                if (QFile::exists(fn)) {
+                    QFile f(fn);
+                    f.open(QFile::ReadOnly | QFile::Text);
+                    QString s = f.readAll();
+                    f.close();
+
+                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
+                    s=s.replace("</code>","</code></pre>");
+
+                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
+
+                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
+
+             //       m_highlighter->HighlightText(val);
+           //         qDebug() << val;
+                }
+
+
+                ui->txtHelp->setText(val);
+
+            }
+
+
         if (type=="m")
          {
                 QStringList params = data[3].toLower().split(",");
@@ -175,45 +215,6 @@ void DialogHelp::LoadItem(QString findword)
 
             }
         // Fjong type
-        if (type=="f")
-         {
-                QStringList params = data[2].toLower().split(",");
-                QString val = "<h2 style=\"color: skyblue\">" + word + "( ";
-                int paramNo = 1;
-                for (QString s: params) {
-                    if (s=="s") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> float ]";
-                    if (s=="f") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> string ]";
-                    val+=", ";
-                    paramNo++;
-
-                }
-                val.remove(val.length()-2,2);
-                val+=" );</h2>";
-
-                QString fn =":resources/text/help/"+type+"/"+word.toLower()+".rtf";
-                if (QFile::exists(fn)) {
-                    QFile f(fn);
-                    f.open(QFile::ReadOnly | QFile::Text);
-                    QString s = f.readAll();
-                    f.close();
-
-                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
-                    s=s.replace("</code>","</code></pre>");
-
-                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
-
-                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
-
-             //       m_highlighter->HighlightText(val);
-           //         qDebug() << val;
-                }
-
-
-                ui->txtHelp->setText(val);
-
-            }
-
-
 
 
         if (type=="c")

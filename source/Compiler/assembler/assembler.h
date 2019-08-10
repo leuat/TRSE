@@ -131,11 +131,18 @@ public:
     }
     int m_current = 0;
     QString Get();
+    QString Get(int i) {
+        if (i<m_free.count())
+            return m_free[i];
+        throw QString("RegisterStack::Get internal error: index out of bounds when retrieving stack");
+    }
     void Pop(QString reg);
 
-//    QString getLatest();
+    int count() {
+        return m_free.count();
+    }
 
-//    QString peekLatest();
+    QString operator[] (int i) {return Get(i);}
 
 };
 
@@ -160,7 +167,8 @@ public:
 
     QString m_lblFailed, m_lblSuccess;
 
-    static QStringList m_internalZP;
+//    static QStringList m_internalZP;
+    static RegisterStack m_internalZP;
     QVector<QString> m_zeroPointers; // org zp input
     QVector<QString> m_tempZeroPointers; // org temp zp input
     QVector<QString> m_zpStack; // temp zp stack

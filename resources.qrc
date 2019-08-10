@@ -236,5 +236,7 @@
         <file>resources/text/help/m/createaddresstable.rtf</file>
         <file>resources/code/amiga/init_p61_player.s</file>
         <file>resources/code/amiga/p61-play.i</file>
+        <file>resources/text/help/f/addobject.rtf</file>
+        <file>resources/text/help/r/case.rtf</file>
     </qresource>
 </RCC>

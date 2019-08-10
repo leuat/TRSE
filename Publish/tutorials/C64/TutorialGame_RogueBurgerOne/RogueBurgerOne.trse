@@ -34,3 +34,5 @@ d64_paw_file_disk2 = none
 override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
+project_path = /home/leuat/code/TRSE/Publish/tutorials/C64/TutorialGame_RogueBurgerOne/
+open_files = ,player.ras, RogueBurgerOne.ras

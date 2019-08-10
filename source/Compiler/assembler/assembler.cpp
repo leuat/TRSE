@@ -25,7 +25,7 @@
 
 int Appendix::s_id = 0;
 
-QStringList Assembler::m_internalZP;
+RegisterStack Assembler::m_internalZP;
 
 
 Assembler::Assembler()

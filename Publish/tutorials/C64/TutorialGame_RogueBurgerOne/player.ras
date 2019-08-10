@@ -84,7 +84,7 @@ begin
 		end;
 		
 		BackgroundCollideBullet();
-		if tmp2=1 then begin
+		if tmp2 then begin
 			togglebit(SPRITE_BITMASK, @bulletSprite, 0);
 		end;
 		
@@ -289,7 +289,7 @@ begin
 @endif
 			BackgroundCollide();
 		// If collision, abort abort
-		if tmp2=1 then begin
+		if tmp2 then begin
 			spritex:=spritex - joystickright*player_speed;
 			spritex:=spritex + joystickleft*player_speed;
 			spritey:=spritey - joystickdown*player_speed + joystickup*player_speed;

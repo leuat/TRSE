@@ -77,6 +77,7 @@ win32:RC_ICONS += trse.ico
 SOURCES += main.cpp\
         mainwindow.cpp \
     imageworker.cpp \
+    source/Compiler/ast/nodecase.cpp \
     source/dialogexport3d.cpp \
     source/toolbox.cpp \
     source/toolboxitem.cpp \
@@ -210,6 +211,7 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     imageworker.h \
+    source/Compiler/ast/nodecase.h \
     source/dialogexport3d.h \
     source/toolbox.h \
     source/toolboxitem.h \

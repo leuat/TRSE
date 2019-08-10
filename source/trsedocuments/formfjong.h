@@ -6,6 +6,7 @@
 #include "source/LeLib/luascript.h"
 #include "source/dialogeffects.h"
 #include "source/PmmEdit/highlighter.h"
+#include "source/dialoghelp.h"
 
 namespace Ui {
 class FormFjong;
@@ -21,6 +22,8 @@ public:
     ~FormFjong();
     QFont m_font;
     void Destroy() override {}
+    int m_searchFromPos;
+    int m_currentFromPos = 0;
 
     void SetText(QString txt);
     Highlighter* highlighter = nullptr;
@@ -41,6 +44,12 @@ public:
 
     void SetupHighlighter();
 
+    void SearchInSource();
+
+
+private slots:
+    void on_leSearch_textChanged(const QString &arg1);
+    void on_leSearch_returnPressed();
 
 private:
     Ui::FormFjong *ui;

@@ -44,6 +44,7 @@
 #include "source/Compiler/ast/nodewhileloop.h"
 #include "source/Compiler/ast/nodeasm.h"
 #include "source/Compiler/ast/nodebinaryclause.h"
+#include "source/Compiler/ast/nodecase.h"
 
 class ParserBlock {
 public:
@@ -105,6 +106,7 @@ public:
     Node* Parse(bool removeUnusedDecls, QString param, QString globalDefines);
     Node* Variable();
     Node* Empty();
+    Node* Case();
     Node* AssignStatement();
     Node* Statement();
     QVector<Node*> StatementList();

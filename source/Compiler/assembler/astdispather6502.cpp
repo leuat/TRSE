@@ -2360,6 +2360,44 @@ void ASTDispather6502::dispatch(NodeAssign *node)
 
 }
 
+void ASTDispather6502::dispatch(NodeCase *node)
+{
+    node->DispatchConstructor();
+    as->PushCounter();
+    bool hasElse = node->m_elseBlock!=nullptr;
+    QString labelEnd = as->NewLabel("caseend");
+    for (int i=0;i<node->m_conditionals.count();i++) {
+        QString labelNext = as->NewLabel("casenext");
+        as->PopLabel("casenext");
+        if (node->m_conditionals[i]->isPure()) {
+            node->m_variable->Accept(this);
+            as->Term();
+            as->Asm("cmp " + node->m_conditionals[i]->getValue(as));
+
+        }
+        else { // General term
+            node->m_conditionals[i]->Accept(this);
+            as->Term();
+            QString compare = as->StoreInTempVar("temp1");
+            node->m_variable->Accept(this);
+            as->Term();
+            as->Asm("cmp " + compare );
+        }
+        as->Asm("bne "+labelNext);
+        node->m_statements[i]->Accept(this); // RUN the current block
+        as->Asm("jmp "+labelEnd);
+        as->Label(labelNext);
+    }
+    if (hasElse)
+        node->m_elseBlock->Accept(this);
+
+    as->Label(labelEnd);
+
+    as->PopLabel("caseend");
+
+    as->PopCounter(node->m_op.m_lineNumber);
+}
+
 
 
 QString ASTDispather6502::AssignVariable(NodeAssign *node) {

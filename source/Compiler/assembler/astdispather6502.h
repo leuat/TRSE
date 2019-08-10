@@ -21,6 +21,7 @@
 #include "source/Compiler/ast/nodewhileloop.h"
 #include "source/Compiler/ast/nodeasm.h"
 #include "source/Compiler/ast/nodebinaryclause.h"
+#include "source/Compiler/ast/nodecase.h"
 #include "methods6502.h"
 
 class ASTDispather6502 : public AbstractASTDispatcher
@@ -29,24 +30,25 @@ public:
     ASTDispather6502();
 
 
-    void dispatch(NodeBinOP *node);
-    void dispatch(NodeNumber *node);
-    void dispatch(NodeAsm *node);
-    void dispatch(NodeString *node);
-    void dispatch(NodeUnaryOp *node);
-    void dispatch(NodeCompound *node);
-    void dispatch(NodeVarDecl *node);
-    void dispatch(NodeBlock *node);
-    void dispatch(NodeProgram *node);
-    void dispatch(NodeVarType *node);
-    void dispatch(NodeBinaryClause *node);
-    void dispatch(NodeProcedure *node);
-    void dispatch(NodeProcedureDecl *node);
-    void dispatch(NodeConditional *node);
-    void dispatch(NodeForLoop *node);
-    void dispatch(NodeVar *node);
-    void dispatch(Node *node);
-    void dispatch(NodeAssign *node);
+    void dispatch(NodeBinOP *node) override;
+    void dispatch(NodeNumber *node) override;
+    void dispatch(NodeAsm *node) override;
+    void dispatch(NodeString *node) override;
+    void dispatch(NodeUnaryOp *node) override;
+    void dispatch(NodeCompound *node) override;
+    void dispatch(NodeVarDecl *node) override;
+    void dispatch(NodeBlock *node) override;
+    void dispatch(NodeProgram *node) override;
+    void dispatch(NodeVarType *node) override;
+    void dispatch(NodeBinaryClause *node) override;
+    void dispatch(NodeProcedure *node) override;
+    void dispatch(NodeProcedureDecl *node) override;
+    void dispatch(NodeConditional *node) override;
+    void dispatch(NodeForLoop *node) override;
+    void dispatch(NodeVar *node) override;
+    void dispatch(Node *node) override;
+    void dispatch(NodeAssign *node) override;
+    void dispatch(NodeCase *node) override;
 
 
     void dispatch(NodeBuiltinMethod *node);

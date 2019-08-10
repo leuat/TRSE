@@ -1,0 +1,31 @@
+<ul>
+--  AddObject("cylinder","cyl1", "", "Material0", 0,0,0,    0.2,0.2, 3 )
+
+<li>String 1: type of object. See list of types below.</li>
+<li>String 2: Unique name (ID) of object</li>
+<li>String 3: Parent object ID ("" if none)</li>
+<li>String 4: Material name</li>
+<li>Number 5-7: X/Y/Z position of object/li>
+<li>Number 8-??: Various object parameters, determined by object type</li>
+</ul>
+Here follows a list of valid object types as defined by the first parameter:
+<h3>Sphere</h3>
+Parameter 8 defines the radius of the sphere. Create a sphere of radius 10 at position (0,0,0):
+<code>AddObject("sphere","mySphere","","Material0", 0,0,0, 10,0,0)</code>
+<h3>Torus</h3>
+Parameter 8 and 9 defines the minor and major radius. Create a torus of radius 10/5 at position (0,0,0):
+<code>AddObject("torus","myTorus","","Material0", 0,0,0, 10,5,0)</code>
+<h3>Box</h3>
+Parameter 8,9 and 10 defines the X/Y/Z scaling factor of the box. Create a box of size 1 at position (0,0,0):
+<code>AddObject("box","myBox","","Material0", 0,0,0, 1,1,1)</code>
+<h3>Cylinder</h3>
+Parameter 8,9 and 10 defines the radius / smoothness / length of the cylinder. Create a cylinder with radius 0.3 at position (0,0,0) with length 1 and no smoothness:
+<code>AddObject("cylinder","myCylinder","","Material0", 0,0,0, 0.2,0,1)</code>
+
+
+<h3>Example</h3>
+
+<code>
+ClearScreen($20, ^$0400); // Clears screen bank 1 with a space character ($20)
+ClearScreen(RED, ^$D800); // Fills color ram with red
+</code>

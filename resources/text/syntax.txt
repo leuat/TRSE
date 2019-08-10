@@ -266,16 +266,7 @@ m; VIAIRQ; VIC20; p,b,b
 
 
 
-#
-#
-# F J O N G   raytracer functions (f)
-#
-#
-#
-#
 
-
-f;AddObject;s,s,s,s,f,f,f,f,f,f
 
 
 
@@ -289,6 +280,8 @@ f;AddObject;s,s,s,s,f,f,f,f,f,f
 #
 #
 
+c; TRUE; NES, C64,VIC20,C128,PET, AMIGA; b; 1
+c; FALSE; NES, C64,VIC20,C128,PET, AMIGA; b; 0
 
 
 # NES-specific
@@ -517,6 +510,7 @@ r; WEDGE; C64, C128
 r; USE; C64, C128, VIC, BBCM, AMIGA
 r; STARTASSEMBLER; C64, C128, VIC, BBCM, AMIGA
 r; DONOTREMOVE; C64, C128, VIC, BBCM, AMIGA
+r; CASE; C64, C128, VIC, BBCM, AMIGA
 
 r; CHIPMEM; AMIGA
 
@@ -539,3 +533,12 @@ p; Pascal; C64, C128, VIC20, PET, NES, BBCM, AMIGA
 p; Constants; C64, C128, VIC20, PET, NES, BBCM, AMIGA
 p; Variables; C64, C128, VIC20, PET, NES, BBCM, AMIGA
 p; Screen; C64, VIC20
+
+
+#
+#
+#   F J O N G   R A Y   T R A C E R
+#
+#
+#
+f;AddObject; s,s,s,s, f,f,f,f,f,f
