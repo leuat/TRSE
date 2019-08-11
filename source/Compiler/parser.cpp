@@ -40,6 +40,12 @@ void Parser::Delete()
 
 }
 
+void Parser::InitObsolete()
+{
+    m_obsoleteWarnings.clear();
+    m_obsoleteWarnings.append(QStringList() << "rand"<<"Funtion 'Rand()' is scheduled to be depricated. Please use 'Random()' instead. ");
+}
+
 void Parser::Eat(TokenType::Type t)
 {
     if (m_currentToken.m_type == t) {
@@ -121,8 +127,10 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "viairq(" , "init_viairq");
         InitBuiltinFunction(QStringList()<< "initmodplayer(" , "include_modplayer");
         InitBuiltinFunction(QStringList()<< "decrunch("<<"decrunchfromindex(", "init_decrunch");
+
         if (Syntax::s.m_currentSystem!=AbstractSystem::NES)
             InitBuiltinFunction(QStringList()<< "sine[", "initsinetable", "initsine_calculate");
+
         InitBuiltinFunction(QStringList()<< "log2_table[" << "atan2(", "initlog2");
 
         InitBuiltinFunction(QStringList()<< "atan2(", "initatan2");
@@ -994,10 +1002,10 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
 {
     // Call preprocessor for include files etc
     m_lexer->m_orgText = m_lexer->m_orgText + "\n" + globalDefines+"\n";
-
     m_lexer->m_text = m_lexer->m_orgText;
     m_pass = 0;
 //    RemoveComments();
+    InitObsolete();
     StripWhiteSpaceBeforeParenthesis(); // TODO: make better fix for this
     Preprocess();
 //    PreprocessConstants();
@@ -1551,6 +1559,12 @@ Node *Parser::BuiltinFunction()
             s += "Requires " + QString::number(noParams) + " parameters but has " + QString::number(paramList.count());
 
             ErrorHandler::e.Error(s, m_currentToken.m_lineNumber);
+        }
+
+        // Give obsolete warnings
+        for (QStringList& lst: m_obsoleteWarnings) {
+            if(lst[0].toLower()==procName.toLower())
+                ErrorHandler::e.Warning(lst[1], m_currentToken.m_lineNumber);
         }
 
         return new NodeBuiltinMethod(procName,paramList,&Syntax::s.builtInFunctions[procName]);

@@ -62,6 +62,7 @@ public:
 //    int m_currentParserBlock=-1;
 
     QString m_currentDir;
+    QVector<QStringList> m_obsoleteWarnings;
     QMap<QString, Node*> m_procedures;
     QMap<QString, QString> m_preprocessorDefines;
     QStringList m_diskFiles;
@@ -85,7 +86,7 @@ public:
     QVector<MemoryBlock*> m_userBlocks;
 
     void Delete();
-
+    void InitObsolete();
     void Eat(TokenType::Type t);
     void VerifyToken(Token t);
 

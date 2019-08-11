@@ -54,7 +54,7 @@ void ASTDispather6502::EightBitMul(Node *node) {
 
     as->Asm("jsr multiply_eightbit");
     as->Asm("txa"); // result in a
-    as->Asm("ldy #0");
+    as->Asm("ldy #0 ; ::EightbitMul");
 
 }
 
@@ -75,7 +75,7 @@ void ASTDispather6502::HandleGenericBinop16bit(Node *node) {
         as->Label(lblJmp);*/
 
     as->ClearTerm();
-    as->Asm("ldy #0");
+    as->Asm("ldy #0 ; ::HandleGenericBinop16bit");
 //    qDebug() <<node->m_left->m_op.m_value;
   //  exit(1);
 //    node->m_right->forceWord();
@@ -164,7 +164,7 @@ void ASTDispather6502::HandleVarBinopB16bit(Node *node) {
     //as->Label(lblJmp);
     as->Comment("HandleVarBinopB16bit here");
     as->ClearTerm();
-    as->Asm("ldy #0");
+    as->Asm("ldy #0 ; ::HandleVarBinopB16bit");
     node->m_right->Accept(this);
 
     as->Term();
@@ -1968,7 +1968,7 @@ void ASTDispather6502::LoadVariable(NodeVar *node) {
             LoadByteArray(node);
         else {
             if (node->m_fake16bit)
-                as->Asm("ldy #0");
+                as->Asm("ldy #0 ; ::LoadVariable fake 16 bit ");
             as->Asm("lda " +node->value);
         }
         return;
@@ -2447,7 +2447,7 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
         ErrorHandler::e.Error("Node assign: right hand must be expression", node->m_op.m_lineNumber);
 
     if (node->m_left->getType(as)==TokenType::INTEGER) {
-        as->Asm("ldy #0");    // AH:20190722: Does not appear to serve a purpose - takes up space in prg. Breaks TRSE scroll in 4K C64 demo if take this out
+        as->Asm("ldy #0 ; ::AssignVariable ldy #0");    // AH:20190722: Does not appear to serve a purpose - takes up space in prg. Breaks TRSE scroll in 4K C64 demo if take this out
         node->m_right->m_forceType = TokenType::INTEGER; // FORCE integer on right-hand side
     }
     // For constant i:=i+1;
