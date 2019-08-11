@@ -514,6 +514,9 @@ DISTFILES += \
     resources/text/help/m/printnumber.rtf \
     resources/text/help/m/printstring.rtf \
     resources/text/help/m/rand.rtf \
+    resources/text/help/m/random.rtf \
+    resources/text/help/m/random4.rtf \
+    resources/text/help/m/random8.rtf \
     resources/text/help/m/rasterirq.rtf \
     resources/text/help/m/return.rtf \
     resources/text/help/m/returninterrupt.rtf \

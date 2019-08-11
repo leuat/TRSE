@@ -21,11 +21,44 @@ Parameter 8,9 and 10 defines the X/Y/Z scaling factor of the box. Create a box o
 <h3>Cylinder</h3>
 Parameter 8,9 and 10 defines the radius / smoothness / length of the cylinder. Create a cylinder with radius 0.3 at position (0,0,0) with length 1 and no smoothness:
 <code>AddObject("cylinder","myCylinder","","Material0", 0,0,0, 0.2,0,1)</code>
-
-
-<h3>Example</h3>
-
+<h3>Plane</h3>
+Parameter 8,9 and 10 defines the normal of the plane. Create a plane pointing up (0,1,0) at position (0,0,0):
+<code>AddObject("plane","myPlane","","Material0", 0,0,0, 0,1,0)</code>
+<h3>Mesh (experimental)</h3>
+Adds a wavefile (obj) mash to the scene. Parameter 5 points to the .obj file, while
+paramter 6 is the global scale of the object data. If parameter 7 is set to "1", the object
+normals are inverted, 0 if not. The remaining three parameters are the x/y/z world coordinates of the object.
+Example:
+<code>AddObject("mesh","myTeapot","","Material0", "meshes/teapot.obj",0.5,0   x,y,z)</code>
+<h3>Char</h3>
+This method will create a 3D character from a 8x8 font. You can either load a general TRSE .flf charset, or simply
+specify the C64 ROM font.
+Example that places out a C64 rom character "A" at position (x,y,z) with a given width and stretch.
 <code>
-ClearScreen($20, ^$0400); // Clears screen bank 1 with a space character ($20)
-ClearScreen(RED, ^$D800); // Fills color ram with red
+font ="rom"
+character = 1 -- 1 is "A" in petscii, 2 is B etc
+-- font can also point to a file in the project, such as
+-- font = "charsets/charset1.flf"
+
+AddObject("char","char1", "", "Material2",  font, character,
+x,y,z,            -- position
+width_x,width_y,width_z,      -- width xyz
+stretch_x,stretch_y,stretch_z  -- stretch xyz
+);
+
 </code>
+
+<h3>Perlin</h3>
+This is not really an object type, but acts as a filter. Take any object and transform the surface
+through a 3D perlin noise perturbation field. Example: Create a cylinder, and then transform the
+object through a perlin noise field with scale "20" and amplitude "0.08":
+<code>
+-- create cylinder
+AddObject("cylinder","myObject","","Material0",  0,0,0, 0.5,0.0,1 );
+-- send "myObject" through the perlin filter and name the new object "myPerlinObject"
+-- Amplitude of perlin noise filter is 0.08, while the scale is 20
+AddObject("perlin","myPerlinObject","","Material0",  "myObject",  0.008,20)
+</code>
+You can apply multiple perlin noise filters to a given object.
+
+

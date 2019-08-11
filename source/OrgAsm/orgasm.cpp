@@ -652,8 +652,9 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
     // Override types or pass symbol
 //    if (pass==OrgasmData::PASS_LABELS) {
-        if (m_opCode == "jmp" || m_opCode=="jsr")
+/*        if (m_opCode == "jmp" || m_opCode=="jsr")
             type = OrgasmInstruction::abs;
+*/
 
 //        if (opCode == "ldy" )
 //    }
@@ -661,7 +662,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     int code = cyc.m_opcodes[(int)type];
     if (code==0 && pd==OrgasmData::PASS_SYMBOLS) {
         qDebug() << "ERROR on line : " << m_opCode + " " +expr;
-        throw QString("Opcode type not implemented yet: " + m_opCode + "  type " +type + "        on line " + ol.m_expr );
+        throw QString("Opcode type not implemented or illegal: " + m_opCode + "  type " +type + "        on line " + ol.m_expr );
     }
 
 

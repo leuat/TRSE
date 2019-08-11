@@ -507,6 +507,16 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     if (Command("rand"))
         Rand(as);
+
+    if (Command("random"))
+        Random(as);
+    if (Command("random4"))
+        Random4(as);
+    if (Command("random8"))
+        Random8(as);
+
+
+
     if (Command("scrollx"))
        ScrollX(as);
 
@@ -562,6 +572,13 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     if (Command("initrandom"))
         InitRandom(as);
+
+    if (Command("initrandom256"))
+        InitRandom256(as);
+    if (Command("initrandom8"))
+        InitRandom8(as);
+    if (Command("initrandom4"))
+        InitRandom4(as);
 
     if (Command("transformcolors"))
         TransformColors(as);
@@ -907,6 +924,139 @@ void Methods6502::Rand(Assembler* as)
 
 }
 
+void Methods6502::Random(Assembler* as)
+{
+    VerifyInitialized("random","InitRandom256");
+    as->Asm("jsr Random");
+    //SaveVar(as,2);
+}
+void Methods6502::Random8(Assembler* as)
+{
+    VerifyInitialized("random8","InitRandom8");
+    as->Asm("jsr Random8");
+    //SaveVar(as,2);
+}
+void Methods6502::Random4(Assembler* as)
+{
+    VerifyInitialized("random4","InitRandom4");
+    as->Asm("jsr Random4");
+    //SaveVar(as,2);
+}
+
+void Methods6502::InitRandom256(Assembler *as)
+{
+    if (m_node->m_isInitialized["random"])
+        return;
+    m_node->m_isInitialized["random"] = true;
+
+    QString lblRandomSkip = as->NewLabel("RandomSkip");
+
+    as->Asm ("; init random256");
+    as->Label("Random");
+
+    as->Asm("lda #$01");
+    as->Asm("asl");
+    as->Asm("bcc "+ lblRandomSkip);
+    as->Asm("eor #$4d");
+
+    as->Label(lblRandomSkip);
+    as->Asm("sta Random+1");
+
+    if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64)
+        as->Asm("eor $dc04");
+    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
+        as->Asm("eor $9124");
+
+    //as->Asm("rts");
+
+    as->PopLabel("RandomSkip");
+
+}
+
+
+void Methods6502::InitRandom8(Assembler* as)
+{
+
+    if (m_node->m_isInitialized["random8"])
+        return;
+    m_node->m_isInitialized["random8"] = true;
+
+    QString lblRandomSkip = as->NewLabel("Random8Skip");
+
+    as->Asm ("; init random8");
+    as->Label("Random8");
+
+    as->Asm("lda #$01");
+    as->Asm("asl");
+    as->Asm("bcc "+ lblRandomSkip);
+    as->Asm("eor #$4d");
+
+    as->Label(lblRandomSkip);
+    as->Asm("sta Random8+1");
+
+    if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64)
+        as->Asm("eor $dc04");
+    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
+        as->Asm("eor $9124");
+
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("lsr");
+
+    if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64)
+        as->Asm("eor $dc04");
+    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
+        as->Asm("eor $9124");
+
+    as->Asm("and #%00000111");
+    //as->Asm("rts");
+
+    as->PopLabel("Random8Skip");
+
+}
+void Methods6502::InitRandom4(Assembler* as)
+{
+
+    if (m_node->m_isInitialized["random4"])
+        return;
+    m_node->m_isInitialized["random4"] = true;
+
+    QString lblRandomSkip = as->NewLabel("Random4Skip");
+
+    as->Asm ("; init random4");
+    as->Label("Random4");
+
+    as->Asm("lda #$01");
+    as->Asm("asl");
+    as->Asm("bcc "+ lblRandomSkip);
+    as->Asm("eor #$4d");
+
+    as->Label(lblRandomSkip);
+    as->Asm("sta Random4+1");
+
+    if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64)
+        as->Asm("eor $dc04");
+    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
+        as->Asm("eor $9124");
+
+    as->Asm("lsr");
+    as->Asm("lsr");
+
+    if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64)
+        as->Asm("eor $dc04");
+    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
+        as->Asm("eor $9124");
+
+    as->Asm("lsr");
+    as->Asm("lsr");
+
+    as->Asm("and #%00000011");
+    //as->Asm("rts");
+
+    as->PopLabel("Random4Skip");
+
+}
+
 // Ensure ScreenMemory constant is present
 void Methods6502::DefineScreen(Assembler *as)
 {
@@ -1237,7 +1387,7 @@ void Methods6502::InitPrintDecimal(Assembler *as)
     as->Asm("rol ipd_div_hi");
     as->Asm("dex");
     as->Asm("bne init_printdecimal_loop");
-    as->Asm("rts");
+    //as->Asm("rts");
 }
 
 void Methods6502::InitPlaySidVIC20(Assembler *as)
@@ -3257,7 +3407,7 @@ void Methods6502::InitSinusTable(Assembler *as)
     as->Asm("inx");
     as->Asm("dey");
     as->Asm("bpl initsin_a");
-    as->Asm("rts");
+    //as->Asm("rts");
 
 
     m_node->m_isInitialized["sinetab"]=true;
@@ -3505,7 +3655,7 @@ void Methods6502::InitDiv8x8(Assembler* as) {
     as->Asm("rol div8x8_d");
 
     as->Asm("lda div8x8_d");
-    as->Asm("rts");
+    //as->Asm("rts");
 
 
     as->Label("div8x8_def_end");
@@ -3547,7 +3697,7 @@ void Methods6502::InitDiv16x8(Assembler *as)
     as->Asm("inc initdiv16x8_result	;and INCrement result cause divisor fit in 1 times");
     as->Label("skip16	dex");
     as->Asm("bne divloop16");
-    as->Asm("rts");
+    //as->Asm("rts");
 
 //    as->Label("div16x8_def_end");
 }
@@ -3583,7 +3733,7 @@ void Methods6502::InitSqrt16(Assembler *as)
         as->Label("sqrt16_nomore");
         as->Asm("sty "+as->m_internalZP[0]+" ; all done, store square root");
         as->Asm("stx "+as->m_internalZP[1]+" ; and remainder");
-        as->Asm("rts");
+        //as->Asm("rts");
 
 }
 

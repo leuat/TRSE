@@ -112,6 +112,10 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "/", "init8x8div");
         InitBuiltinFunction(QStringList()<< "/", "init16x8div");
         InitBuiltinFunction(QStringList()<< "rand(", "initrandom","init_random_call");
+        InitBuiltinFunction(QStringList()<< "random(", "initrandom256");
+        InitBuiltinFunction(QStringList()<< "random8(", "initrandom8");
+        InitBuiltinFunction(QStringList()<< "random4(", "initrandom4");
+
         InitBuiltinFunction(QStringList()<< "rasterirqwedge(" , "init_wedge");
         InitBuiltinFunction(QStringList()<< "playvic20sid(" , "init_vic20_sidplay");
         InitBuiltinFunction(QStringList()<< "viairq(" , "init_viairq");
@@ -1021,7 +1025,7 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
             if ((np->m_isUsed==true) || m_doNotRemoveMethods.contains(np->m_procName))
                 procs.append(n);
             else {
-//                qDebug() << "Removing procedure: " << np->m_procName;
+                qDebug() << "Removing procedure: " << np->m_procName;
                 //            m_proceduresOnly.removeOne(m_procedures[s]);
             }
         }

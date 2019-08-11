@@ -49,10 +49,10 @@ begin
 	copyfullscreen(p1, p2);
 
 	// Set charset location based on frame
-	if (frame>0 and frame<4) then setcharsetlocation($2000);
-	if (frame>4 and frame<8) then setcharsetlocation($2800);
-	if (frame>8 and frame<12) then setcharsetlocation($3000);
-	if (frame>12 and frame<16) then setcharsetlocation($3800);
+	if (frame>=0 and frame<4) then setcharsetlocation($2000);
+	if (frame>=4 and frame<8) then setcharsetlocation($2800);
+	if (frame>=8 and frame<12) then setcharsetlocation($3000);
+	if (frame>=12 and frame<16) then setcharsetlocation($3800);
 
 	curBank:=(curBank +1)&1;
 
