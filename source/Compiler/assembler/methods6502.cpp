@@ -510,11 +510,6 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     if (Command("random"))
         Random(as);
-    if (Command("random4"))
-        Random4(as);
-    if (Command("random8"))
-        Random8(as);
-
 
 
     if (Command("scrollx"))
@@ -575,10 +570,6 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     if (Command("initrandom256"))
         InitRandom256(as);
-    if (Command("initrandom8"))
-        InitRandom8(as);
-    if (Command("initrandom4"))
-        InitRandom4(as);
 
     if (Command("transformcolors"))
         TransformColors(as);
@@ -930,18 +921,6 @@ void Methods6502::Random(Assembler* as)
     as->Asm("jsr Random");
     //SaveVar(as,2);
 }
-void Methods6502::Random8(Assembler* as)
-{
-    VerifyInitialized("random8","InitRandom8");
-    as->Asm("jsr Random8");
-    //SaveVar(as,2);
-}
-void Methods6502::Random4(Assembler* as)
-{
-    VerifyInitialized("random4","InitRandom4");
-    as->Asm("jsr Random4");
-    //SaveVar(as,2);
-}
 
 void Methods6502::InitRandom256(Assembler *as)
 {
@@ -970,90 +949,6 @@ void Methods6502::InitRandom256(Assembler *as)
     //as->Asm("rts");
 
     as->PopLabel("RandomSkip");
-
-}
-
-
-void Methods6502::InitRandom8(Assembler* as)
-{
-
-    if (m_node->m_isInitialized["random8"])
-        return;
-    m_node->m_isInitialized["random8"] = true;
-
-    QString lblRandomSkip = as->NewLabel("Random8Skip");
-
-    as->Asm ("; init random8");
-    as->Label("Random8");
-
-    as->Asm("lda #$01");
-    as->Asm("asl");
-    as->Asm("bcc "+ lblRandomSkip);
-    as->Asm("eor #$4d");
-
-    as->Label(lblRandomSkip);
-    as->Asm("sta Random8+1");
-
-    if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64)
-        as->Asm("eor $dc04");
-    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
-        as->Asm("eor $9124");
-
-    as->Asm("lsr");
-    as->Asm("lsr");
-    as->Asm("lsr");
-
-    if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64)
-        as->Asm("eor $dc04");
-    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
-        as->Asm("eor $9124");
-
-    as->Asm("and #%00000111");
-    //as->Asm("rts");
-
-    as->PopLabel("Random8Skip");
-
-}
-void Methods6502::InitRandom4(Assembler* as)
-{
-
-    if (m_node->m_isInitialized["random4"])
-        return;
-    m_node->m_isInitialized["random4"] = true;
-
-    QString lblRandomSkip = as->NewLabel("Random4Skip");
-
-    as->Asm ("; init random4");
-    as->Label("Random4");
-
-    as->Asm("lda #$01");
-    as->Asm("asl");
-    as->Asm("bcc "+ lblRandomSkip);
-    as->Asm("eor #$4d");
-
-    as->Label(lblRandomSkip);
-    as->Asm("sta Random4+1");
-
-    if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64)
-        as->Asm("eor $dc04");
-    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
-        as->Asm("eor $9124");
-
-    as->Asm("lsr");
-    as->Asm("lsr");
-
-    if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64)
-        as->Asm("eor $dc04");
-    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
-        as->Asm("eor $9124");
-
-    as->Asm("lsr");
-    as->Asm("lsr");
-
-    as->Asm("and #%00000011");
-    //as->Asm("rts");
-
-    as->PopLabel("Random4Skip");
 
 }
 

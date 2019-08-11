@@ -16,8 +16,6 @@
 # init functions
 m; initrandom; C64, C128 ;
 m; initrandom256; C64, C128, VIC20 ;
-m; initrandom8; C64, C128, VIC20 ;
-m; initrandom4; C64, C128, VIC20 ;
 m; initsinetable; C64, C128, VIC20, PET,  PET;
 m; DefineScreen; C64, C128, VIC20, PET, NES ;
 m; initmoveto; C64, C128, VIC20, PET,  NES ;
@@ -218,8 +216,7 @@ m; Swap; C64, C128, VIC20, PET,  NES; b,b
 m; Abs;  C64, C128, VIC20, PET,  NES;ib
 m; Rand; C64, C128 ; b,b,b
 m; Random; C64, C128, VIC20;
-m; Random4; C64, C128, VIC20;
-m; Random8; C64, C128, VIC20;
+
 
 
 # Collision routines
