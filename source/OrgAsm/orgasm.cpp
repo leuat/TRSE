@@ -652,8 +652,9 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
     // Override types or pass symbol
 //    if (pass==OrgasmData::PASS_LABELS) {
-        if (m_opCode == "jmp" || m_opCode=="jsr")
+/*        if (m_opCode == "jmp" || m_opCode=="jsr")
             type = OrgasmInstruction::abs;
+*/
 
 //        if (opCode == "ldy" )
 //    }

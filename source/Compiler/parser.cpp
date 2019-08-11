@@ -1021,7 +1021,7 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
             if ((np->m_isUsed==true) || m_doNotRemoveMethods.contains(np->m_procName))
                 procs.append(n);
             else {
-//                qDebug() << "Removing procedure: " << np->m_procName;
+                qDebug() << "Removing procedure: " << np->m_procName;
                 //            m_proceduresOnly.removeOne(m_procedures[s]);
             }
         }

@@ -202,7 +202,7 @@ public:
             m_blockStack.removeLast();
         if (m_blockStack.count()!=0) {
             m_currentBlock = m_blockStack.last();
-            qDebug() << "STILL STACK : " << m_blockStack.count();
+           // qDebug() << "STILL STACK : " << m_blockStack.count();
         }
     }
 
