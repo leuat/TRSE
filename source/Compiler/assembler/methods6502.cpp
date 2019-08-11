@@ -1846,7 +1846,7 @@ void Methods6502::InitRandom(Assembler *as)
     as->Asm("CMP upperRandom  ; compare to");
     as->Asm("BCS RandomLoop   ; branch if value >");
     as->Asm("ADC lowerRandom");
-    as->Asm("RTS");
+    //as->Asm("RTS");
 }
 
 
@@ -3407,7 +3407,7 @@ void Methods6502::InitSinusTable(Assembler *as)
     as->Asm("inx");
     as->Asm("dey");
     as->Asm("bpl initsin_a");
-    as->Asm("rts");
+    //as->Asm("rts");
 
 
     m_node->m_isInitialized["sinetab"]=true;
@@ -3655,7 +3655,7 @@ void Methods6502::InitDiv8x8(Assembler* as) {
     as->Asm("rol div8x8_d");
 
     as->Asm("lda div8x8_d");
-    as->Asm("rts");
+    //as->Asm("rts");
 
 
     as->Label("div8x8_def_end");
@@ -3695,7 +3695,7 @@ void Methods6502::InitDiv16x8(Assembler *as)
     as->Asm("inc initdiv16x8_result	;and INCrement result cause divisor fit in 1 times");
     as->Label("skip16	dex");
     as->Asm("bne divloop16");
-    as->Asm("rts");
+    //as->Asm("rts");
 
 //    as->Label("div16x8_def_end");
 }
@@ -3731,7 +3731,7 @@ void Methods6502::InitSqrt16(Assembler *as)
         as->Label("sqrt16_nomore");
         as->Asm("sty "+as->m_internalZP[0]+" ; all done, store square root");
         as->Asm("stx "+as->m_internalZP[1]+" ; and remainder");
-        as->Asm("rts");
+        //as->Asm("rts");
 
 }
 
