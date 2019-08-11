@@ -1,0 +1,55 @@
+program Fjong_example5;
+var  
+   frame,v: byte = 0; 
+
+@define spriteDataLoc $2000
+   
+/*
+	Example 5 in the "Fjong" tutorial series.
+	Here, the fjong file will generate $2000 bytes of raw sprite data (64 bytes * 128 frames)
+	In this file, we simply load the data in at bank 1 position $2000, and change the 
+	sprite pointer location of prite 1 to the corresponding frame. 
+	
+	While this result looks cool and everything, it is a very wasteful method since there is 
+	no compression involved. 
+	
+
+*/
+
+	// Remember to run the "example5_single_sprite.fjo" fjong file to generate sprite data!
+	spritedata : incbin("data/example5_sprite.bin", @spriteDataLoc);
+
+// Set up 1 sprite in the center of the screen, turn on multicolor
+procedure InitSprites();
+begin
+	// Enable a single sprite
+	SPRITE_BITMASK:=%00000001;
+	SPRITE_MULTICOLOR:=1;
+	SPRITE_MULTICOLOR_REG1:=blue;	
+	SPRITE_MULTICOLOR_REG2:=white;
+	SPRITE_COLOR[0]:=purple;	
+	// Place sprite 1 (0) in the center of the screen 
+	spritepos(160,120,0); 
+
+	// Enable to stretch sprites
+	
+//	SPRITE_STRETCH_X:=1;
+//	SPRITE_STRETCH_Y:=1;
+
+end;
+
+interrupt UpdateRaster();
+begin
+	startirq(1);
+	// Set sprite location		
+	setspriteloc(0,@spriteDataLoc/64 + frame,0);
+	frame:=(frame+1)&127; // Cap frame at 128 frames
+	closeirq();
+end;
+
+begin
+	screen_fg_col:=black;
+	InitSprites();	
+	StartRasterChain(UpdateRaster(),0,1);
+	Loop();
+end.
