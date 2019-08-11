@@ -3514,8 +3514,10 @@ void Methods6502::InitDiv8x8(Assembler* as) {
 
 void Methods6502::InitDiv16x8(Assembler *as)
 {
+/*    qDebug() << as->m_internalZP.count();
+    exit(1);
     if (as->m_internalZP.count()<4)
-        return;
+        return;*/
 //    as->Asm("jmp div16x8_def_end");
 
     as->Label("initdiv16x8_divisor = "+as->m_internalZP[0]+"     ;$59 used for hi-byte");   //0

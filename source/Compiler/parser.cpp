@@ -109,8 +109,8 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "*", "initeightbitmul");
 
         InitBuiltinFunction(QStringList()<< "*", "init16x8mul");
-        InitBuiltinFunction(QStringList()<< "*", "init8x8div");
-        InitBuiltinFunction(QStringList()<< "*", "init16x8div");
+        InitBuiltinFunction(QStringList()<< "/", "init8x8div");
+        InitBuiltinFunction(QStringList()<< "/", "init16x8div");
         InitBuiltinFunction(QStringList()<< "rand(", "initrandom","init_random_call");
         InitBuiltinFunction(QStringList()<< "rasterirqwedge(" , "init_wedge");
         InitBuiltinFunction(QStringList()<< "playvic20sid(" , "init_vic20_sidplay");

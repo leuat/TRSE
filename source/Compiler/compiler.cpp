@@ -250,7 +250,11 @@ void Compiler::Init6502Assembler()
     m_assembler->m_replaceValues["@DECRUNCH_ZP4"] = m_projectIni->getString("zeropage_decrunch4");
 
     m_assembler->m_internalZP =
-            RegisterStack(QStringList()<<m_projectIni->getString("zeropage_internal1")<<m_projectIni->getString("zeropage_internal1")<<m_projectIni->getString("zeropage_internal2")<<m_projectIni->getString("zeropage_internal3")<<m_projectIni->getString("zeropage_internal4"));
+            RegisterStack(QStringList()
+                          <<m_projectIni->getString("zeropage_internal1")
+                          <<m_projectIni->getString("zeropage_internal2")
+                          <<m_projectIni->getString("zeropage_internal3")
+                          <<m_projectIni->getString("zeropage_internal4"));
 
 
 /*    m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal1");
