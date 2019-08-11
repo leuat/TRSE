@@ -1846,7 +1846,7 @@ void Methods6502::InitRandom(Assembler *as)
     as->Asm("CMP upperRandom  ; compare to");
     as->Asm("BCS RandomLoop   ; branch if value >");
     as->Asm("ADC lowerRandom");
-    //as->Asm("RTS");
+    as->Asm("RTS");
 }
 
 

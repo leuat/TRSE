@@ -238,5 +238,8 @@
         <file>resources/code/amiga/p61-play.i</file>
         <file>resources/text/help/f/addobject.rtf</file>
         <file>resources/text/help/r/case.rtf</file>
+        <file>resources/text/help/m/random.rtf</file>
+        <file>resources/text/help/m/random4.rtf</file>
+        <file>resources/text/help/m/random8.rtf</file>
     </qresource>
 </RCC>
