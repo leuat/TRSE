@@ -914,7 +914,8 @@ void MainWindow::LoadProject(QString filename)
 
 //    qDebug() << f;
     if (QFile::exists(getProjectPath() + "/"+ focusFile))
-        LoadDocument(focusFile);
+        if (!(QDir(getProjectPath() + "/"+ focusFile).exists()))
+            LoadDocument(focusFile);
 
 
 }

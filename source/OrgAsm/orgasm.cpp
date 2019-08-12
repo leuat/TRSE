@@ -532,7 +532,6 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     QString orgExpr = expr;
 //    if (pass==OrgasmData::PASS_SYMBOLS)
     {
-//        qDebug() << expr;
 
         QStringList l2 = expr.simplified().split(",");
 
@@ -541,13 +540,10 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
         }
 
-//        qDebug() << "***" << l2;
 
         QString tst = l2[0];
         QString org = l2[0];
         tst = tst.replace("#", "").simplified();
-//        qDebug() << symbols.keys().count();
-        //for (QString& sym : symbols.keys())
         int cur = 0;
         if (!tst.startsWith("$"))
         for (QString& sym : m_symbolsList)
@@ -567,17 +563,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
                     break;
                 }
 
-            //            if (tst.contains(sym)) {
-
-/*                std::regex e ("\\b" +sym.toStdString()+ "\\b");   // matches words beginning by "sub"
-                QString l = "$"+QString::number(i,16);
-                 l2[0] = QString::fromStdString(std::regex_replace (l2[0].toStdString(),e,l.toStdString()));
-*/
- //               l2[0] = l2[0].replace(*exp[sym],"$"+QString::number(i,16));
-//}
-
                 l2[0] = OrgasmData::ReplaceWord(l2[0],sym,"$"+QString::number(i,16));
-                //l2[0] = l2[0].replace(sym,"$"+QString::number(i,16));
                 if (org!=l2[0]) {
                     m_symbolsList.move(cur,0);
                     break;
@@ -633,21 +619,18 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     if (m_opCodes.m_opCycles.contains(m_opCode))
         cyc = m_opCodes.m_opCycles[m_opCode];
     else {
-//        qDebug() << expr;
         throw QString("Uknown opcode: " + m_opCode);
     }
 
     if (cyc.m_opcodes.count()==0)
-        throw QString("Opcode not implemented yet: " + m_opCode + " on line " + orgexpr);
+        throw QString("Opcode illegal or not implemented yet: '" + m_opCode + "' on line '" + orgexpr+"'");
 
 
-//    qDebug() << "BEFORE: " << expr;
     if (expr!="")
         type =  ol.m_instruction.getTypeFromParams(expr);
     else
         type = OrgasmInstruction::none;
 
-//    qDebug() << type;
 
 
     // Override types or pass symbol
@@ -656,8 +639,6 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
             type = OrgasmInstruction::abs;
 */
 
-//        if (opCode == "ldy" )
-//    }
 
     int code = cyc.m_opcodes[(int)type];
     if (code==0 && pd==OrgasmData::PASS_SYMBOLS) {
@@ -670,13 +651,8 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     int val=0;
     if (type!=OrgasmInstruction::none) {
         QString num = expr.split(",")[0].replace("#","").replace("(","").replace(")","");
-        //qDebug() << " NUM " << num << "  with type " << type;
         val = Util::NumberFromStringHex(num);
-//        qDebug() << "EXPR: " << expr << val << " with code "<< Util::numToHex(code);
     }
-//    qDebug() << cyc.m_name;
-  //  qDebug() << cyc.m_opcodes;
-//    m_debug << (" I : " + opCode + " type: " + (int)type  + ":" +Util::numToHex(code) + "    value : " + Util::numToHex(val)) ;
 
 
     data.append(code);
@@ -684,11 +660,9 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
     if (m_opCode=="bpl" || m_opCode=="bne" || m_opCode=="beq" || m_opCode=="bcc" || m_opCode=="bcs" || m_opCode=="bvc" || m_opCode=="bmi" || m_opCode=="bvc" || m_opCode=="bvs") {
         int diff = (val)-m_pCounter-2;
-  //      qDebug() << QString::number(diff);
         if (abs(diff)>=128 && pd==OrgasmData::PASS_SYMBOLS) {
             throw QString("Branch out of range : " +QString::number(diff) + " on line :" + m_opCode + " " +expr);
         }
-//        qDebug() << "Diff: " << Util::numToHex((uchar)diff);
         data.append((uchar)diff);
     }
     else
@@ -704,7 +678,6 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     if (pd != OrgasmData::PASS_SYMBOLS)
         expr = orgExpr;
 
-//    return data;
 
 
 
