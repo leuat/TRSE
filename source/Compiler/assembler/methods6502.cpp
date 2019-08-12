@@ -2664,10 +2664,10 @@ void Methods6502::AddressTable(Assembler *as) {
 }
 
 void Methods6502::InitDrawTextBox(Assembler* as) {
-    as->Comment("----------");
-    as->Comment("InitDrawTextBox");
     if (m_node->m_isInitialized["drawtextbox"])
         return;
+    as->Comment("----------");
+    as->Comment("InitDrawTextBox");
     as->Comment("addr vars: addrtableaddr,petsciitable");
     as->Label("idtb_at_lo dc.b 0");
     as->Label("idtb_at_hi dc.b 0");
@@ -2686,26 +2686,26 @@ void Methods6502::InitDrawTextBox(Assembler* as) {
     as->Label("idtb_t_hei dc.b 0");
     as->Label("idtb_tmp dc.b 0");
 
+    QString zp = as->m_internalZP[0];
+
     as->Label("AddrCalcRowTextBoxDraw");
     as->Comment("Calculate screen offset for row number in A");
-    //QString zp = as->m_internalZP[0];
-    //as->Asm("");
-    as->Asm("asl");
     as->Asm("ldy idtb_at_hi");
+    as->Asm("asl");
     as->Asm("clc");
     as->Asm("adc idtb_at_lo");
-    as->Asm("sta " + as->m_internalZP[0]);
+    as->Asm("sta " + zp);
     as->Asm("bcc NooverflowTextBox");
     as->Asm("iny");
     as->Label("NooverflowTextBox");
-    as->Asm("sty " + as->m_internalZP[0] + "+1");
+    as->Asm("sty " + zp + "+1");
     as->Asm("ldy #0");
-    as->Asm("lda (" + as->m_internalZP[0] +"),y");
+    as->Asm("lda (" + zp +"),y");
     as->Asm("tax");
     as->Asm("iny");
-    as->Asm("lda (" + as->m_internalZP[0] +"),y");
-    as->Asm("sta "+ as->m_internalZP[0] + "+1");
-    as->Asm("stx "+ as->m_internalZP[0]);
+    as->Asm("lda (" + zp +"),y");
+    as->Asm("sta "+ zp + "+1");
+    as->Asm("stx "+ zp);
     as->Asm("rts");
 
     as->Label("PerformTextBoxDraw");
@@ -2714,16 +2714,16 @@ void Methods6502::InitDrawTextBox(Assembler* as) {
     as->Asm("jsr AddrCalcRowTextBoxDraw");
     as->Asm("lda idtb_petscii_tl");
     as->Asm("ldy idtb_t_col");
-    as->Asm("sta (" + as->m_internalZP[0] + "),y");
+    as->Asm("sta (" + zp + "),y");
     as->Asm("lda idtb_petscii_t");
     as->Label("TopLoopTextBox");
     as->Asm("iny");
-    as->Asm("sta (" + as->m_internalZP[0] + "),y");
+    as->Asm("sta (" + zp + "),y");
     as->Asm("cpy idtb_t_wid");
     as->Asm("bne TopLoopTextBox");
     as->Asm("iny");
     as->Asm("lda idtb_petscii_tr");
-    as->Asm("sta (" + as->m_internalZP[0] + "),y");
+    as->Asm("sta (" + zp + "),y");
 
     as->Comment("Draw box center");
     as->Asm("ldx idtb_t_row");
@@ -2734,31 +2734,31 @@ void Methods6502::InitDrawTextBox(Assembler* as) {
     as->Asm("jsr AddrCalcRowTextBoxDraw");
     as->Asm("lda idtb_petscii_l");
     as->Asm("ldy idtb_t_col");
-    as->Asm("sta (" + as->m_internalZP[0] + "),y");
+    as->Asm("sta (" + zp + "),y");
     as->Asm("ldy idtb_t_wid");
     as->Asm("iny");
     as->Asm("lda idtb_petscii_r");
-    as->Asm("sta (" + as->m_internalZP[0] + "),y");
+    as->Asm("sta (" + zp + "),y");
     as->Asm("ldx idtb_tmp");
     as->Asm("cpx idtb_t_hei");
     as->Asm("bne CenterLoopTextBox");
 
-    as->Comment("Draw bottom top");
+    as->Comment("Draw box bottom");
     as->Asm("inc idtb_t_hei");
     as->Asm("lda idtb_t_hei");
     as->Asm("jsr AddrCalcRowTextBoxDraw");
     as->Asm("lda idtb_petscii_bl");
     as->Asm("ldy idtb_t_col");
-    as->Asm("sta (" + as->m_internalZP[0] + "),y");
+    as->Asm("sta (" + zp + "),y");
     as->Asm("lda idtb_petscii_b");
     as->Label("BotLoopTextBox");
     as->Asm("iny");
-    as->Asm("sta (" + as->m_internalZP[0] + "),y");
+    as->Asm("sta (" + zp + "),y");
     as->Asm("cpy idtb_t_wid");
     as->Asm("bne BotLoopTextBox");
     as->Asm("iny");
     as->Asm("lda idtb_petscii_br");
-    as->Asm("sta (" + as->m_internalZP[0] + "),y");
+    as->Asm("sta (" + zp + "),y");
 
     m_node->m_isInitialized["drawtextbox"]=true;
 }
