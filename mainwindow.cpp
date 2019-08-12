@@ -289,7 +289,7 @@ void MainWindow::LoadDocument(QString fileName)
     editor->showMaximized();
     ui->tabMain->setCurrentWidget(editor);
 
-    //m_iniFile.setString("current_file", fileName);
+    m_currentProject.m_ini.setString("current_file", fileName);
     //m_buildSuccess = false;
     ui->tabMain->setTabsClosable(true);
     m_documents.append(editor);
@@ -390,6 +390,9 @@ void MainWindow::OpenProjectSettings()
 
 void MainWindow::OnQuit()
 {
+    m_currentProject.Save();
+//    qDebug() << m_currentProject.m_ini.getString("current_file");
+
     m_iniFile.setVec("splitpos", QVector3D(ui->splitter->sizes()[0],ui->splitter->sizes()[1],0));
     m_iniFile.Save();
 }
@@ -600,19 +603,21 @@ void MainWindow::on_tabMain_currentChanged(int index)
 {
     FormImageEditor* imageedit = dynamic_cast<FormImageEditor*>(ui->tabMain->widget(index));
     FormRasEditor* rasedit = dynamic_cast<FormRasEditor*>(ui->tabMain->widget(index));
+
+
     if (rasedit!=nullptr) {
         //m_updateThread->SetCurrentImage(nullptr, nullptr, nullptr);
-
-
-
     }
     if (imageedit!=nullptr) {
         //m_updateThread->SetCurrentImage(&imageedit->m_work, &imageedit->m_toolBox, imageedit->getLabelImage());
         //connect( imageedit, SIGNAL(EmitMouseEvent()),this, SLOT(onImageMouseMove()));
     }
 
+
+
     if (dynamic_cast<TRSEDocument*>(ui->tabMain->widget(index))!=nullptr) {
         m_currentDoc = dynamic_cast<TRSEDocument*>(ui->tabMain->widget(index));
+        m_currentProject.m_ini.setString("current_file",m_currentDoc->m_currentFileShort);
         if (m_currentDoc!=nullptr && index!=0)
             m_currentDoc->Reload();
 
@@ -899,11 +904,18 @@ void MainWindow::LoadProject(QString filename)
 
 
     QStringList files = m_currentProject.m_ini.getStringList("open_files");
+
+    QString focusFile = m_currentProject.m_ini.getString("current_file");
     for (int i=0;i<files.count();i++) {
         QString f = files[files.count()-1-i];
         if (QFile::exists(getProjectPath() + "/"+ f))
             LoadDocument(f);
     }
+
+//    qDebug() << f;
+    if (QFile::exists(getProjectPath() + "/"+ focusFile))
+        LoadDocument(focusFile);
+
 
 }
 

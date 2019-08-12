@@ -30,3 +30,24 @@ begin
 
 end.
 </code>
+
+
+<code>
+program C64Random;
+
+begin
+        defineScreen();
+        screenmemory := $0400;
+
+        // generate a random number from 0 to 3
+        printdecimal( Random() & 3 , 2);
+
+        screenmemory := screenmemory + 40;
+
+        // generate a random number from 0 to 7
+        printdecimal( Random() & 7 , 2);
+
+        loop();
+
+end.
+</code>

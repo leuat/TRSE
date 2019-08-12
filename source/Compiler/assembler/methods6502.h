@@ -28,8 +28,7 @@ public:
     void MemCpyUnroll(Assembler* as);
     void Rand(Assembler* as);
     void Random(Assembler* as);
-    void Random8(Assembler* as);
-    void Random4(Assembler* as);
+
     void MoveTo(Assembler* as);
     void MoveTo80(Assembler* as);
     void SetFrequency(Assembler *as);
@@ -153,8 +152,7 @@ public:
     void InitJoystick(Assembler* as);
     void InitRandom(Assembler* as);
     void InitRandom256(Assembler* as);
-    void InitRandom8(Assembler* as);
-    void InitRandom4(Assembler* as);
+
     void InitSinusTable(Assembler* as);
     void DefineScreen(Assembler *as);
     void InitMoveto(Assembler *as);
