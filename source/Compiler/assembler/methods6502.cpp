@@ -2815,7 +2815,7 @@ void Methods6502::DrawTextBox(Assembler* as) {
     }
     as->Asm("clc");
     as->Asm("adc idtb_t_col");
-    as->Asm("sbc #2");
+    as->Asm("sbc #1");
     as->Asm("sta idtb_t_wid");
 
     if (m_node->m_params[5]->isPureNumeric()) {
