@@ -27,6 +27,7 @@ m; init8x8div; C64, C128, VIC20, PET,  NES ;
 m; initprintstring; C64, C128  ;
 m; initjoystick; C64, C128, VIC20  ;
 m; initatan2; C64, C128, VIC20  ;
+m; initdrawtextbox; C64, C128, VIC20 ;
 
 
 
@@ -186,6 +187,8 @@ m; Lo; C64, C128, NES, VIC20; a
 m; Hi; C64, C128, NES, VIC20; a
 m; CreateInteger; C64, C128, NES, VIC20; b,b
 m; CreatePointer; C64, C128, NES, VIC20; b,b
+# DrawTextBox params: screenaddrtbl,petsciiarray,column,row,width,height
+m; DrawTextBox; C64, C128, NES, VIC20; a,a,b,b,b,b
 
 # Sprite routines
 
