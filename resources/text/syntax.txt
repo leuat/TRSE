@@ -149,11 +149,6 @@ m; SetSpriteLocation; NES; b
 m; Split; NES;
 m; Scroll; NES; b,b
 m; ToggleSpriteSize; NES; n
-m; ; NES; n
-m; ; NES; n
-m; ; NES; n
-m; ; NES; n
-m; ; NES; n
 
 
 # IO
@@ -444,7 +439,7 @@ c; VB_IRQ; AMIGA; i; %00100000
 c; BLITTER_IRQ; AMIGA; i; %01000000
 
 
-# C128 ktøff
+# C128 schtøff
 
 c; VIC_DATA_LOC; C128;a;$0A2C
 c; MMU ; C128 ; a ; $FF00
@@ -517,7 +512,7 @@ r; WEDGE; C64, C128
 r; USE; C64, C128, VIC, BBCM, AMIGA
 r; STARTASSEMBLER; C64, C128, VIC, BBCM, AMIGA
 r; DONOTREMOVE; C64, C128, VIC, BBCM, AMIGA
-r; CASE; C64, C128, VIC, BBCM, AMIGA
+r; CASE; C64, C128, VIC, BBCM, NES, AMIGA
 
 r; CHIPMEM; AMIGA
 
@@ -548,4 +543,8 @@ p; Screen; C64, VIC20
 #
 #
 #
-f;AddObject; s,s,s,s, f,f,f,f,f,f
+f ; AddObject; s,s,s,s, f,f,f,f,f,f
+f ; SetRotation; s,f,f,f
+f ; SetPosition; s,f,f,f
+f ; AddPosition; s,f,f,f
+

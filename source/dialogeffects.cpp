@@ -507,6 +507,7 @@ static int SaveScreenAndCharset(lua_State* L) {
     f2.close();
     m_screenData.clear();
     return 0;
+
 }
 
 
@@ -772,13 +773,19 @@ void DialogEffects::LoadScript(QString file)
 
 
     lua_register(m_script->L, "AddObject", AddObject);
+    lua_register(m_script->L, "SetRotation", SetRotation);
+    lua_register(m_script->L, "SetPosition", SetPosition);
+    lua_register(m_script->L, "AddPosition", AddPosition);
+
+    // Data registration
+    lua_register(m_script->L, "AddC64LineToData", AddToData);
+
+    lua_register(m_script->L, "SaveRawData", SaveData);
     lua_register(m_script->L, "CompressAndSaveHorizontalData", CompressAndSaveHorizontalData);
     lua_register(m_script->L, "OptimizeScreenAndCharset", OptimizeScreenAndCharset);
     lua_register(m_script->L, "CompressCharset", CompressCharset);
     lua_register(m_script->L, "SaveScreenAndCharset", SaveScreenAndCharset);
     lua_register(m_script->L, "SaveCompressedSpriteData", SaveCompressedSpriteData);
-    lua_register(m_script->L, "SaveRawData", SaveData);
-    lua_register(m_script->L, "AddC64LineToData", AddToData);
     lua_register(m_script->L, "AddRawCharsetData", AddRawCharsetData);
 
     lua_register(m_script->L, "CopyFile", CopyFile);
@@ -794,10 +801,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddScreen", AddScreen);
     lua_register(m_script->L, "AddScreenPetscii", AddScreenPetscii);
     lua_register(m_script->L, "AddScreenBinary", AddScreenBinary);
-    lua_register(m_script->L, "SetRotation", SetRotation);
     lua_register(m_script->L, "SetQuatAxisAngle", SetQuatAxisAngle);
-    lua_register(m_script->L, "SetPosition", SetPosition);
-    lua_register(m_script->L, "AddPosition", AddPosition);
     lua_register(m_script->L, "SetUVShift", SetUVShift);
     lua_register(m_script->L, "sin", LuaSin);
     lua_register(m_script->L, "SetY", SetY);
