@@ -2767,7 +2767,7 @@ void Methods6502::InitDrawTextBox(Assembler* as) {
 void Methods6502::DrawTextBox(Assembler* as) {
     as->Comment("----------");
     as->Comment("DrawTextBox addrtable, petsciiarray, column, row, width, height");
-    QString lblPetsciiCopy = as->NewLabel("petscopy");
+    QString lblPetsciiCopy = as->NewLabel("PetsciiCopy");
     AddMemoryBlock(as,0);
 
     NodeVar* addr = dynamic_cast<NodeVar*>(m_node->m_params[0]);
@@ -2791,6 +2791,7 @@ void Methods6502::DrawTextBox(Assembler* as) {
     as->Asm("dex");
     as->Asm("lda " + petval + ",x");
     as->Asm("sta idtb_petscii_tl,x");
+    as->Asm("cpx #0");
     as->Asm("bne " + lblPetsciiCopy);
 
     if (m_node->m_params[2]->isPureNumeric()) {
@@ -2828,7 +2829,7 @@ void Methods6502::DrawTextBox(Assembler* as) {
     as->Asm("sta idtb_t_hei");
     as->Asm("jsr PerformTextBoxDraw");
 
-    as->PopLabel("petscopy");
+    as->PopLabel("PetsciiCopy");
 }
 
 
