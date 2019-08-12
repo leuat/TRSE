@@ -2824,7 +2824,7 @@ void Methods6502::DrawTextBox(Assembler* as) {
     }
     as->Asm("clc");
     as->Asm("adc idtb_t_row");
-    as->Asm("sbc #2");
+    as->Asm("sbc #1");
     as->Asm("sta idtb_t_hei");
     as->Asm("jsr PerformTextBoxDraw");
 
