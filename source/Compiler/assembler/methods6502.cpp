@@ -388,8 +388,15 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     if (Command("clearbitmap"))
         ClearBitmap(as);
+
     if (Command("clearscreen"))
         ClearScreen(as);
+
+    if (Command("drawtextbox"))
+        DrawTextBox(as);
+
+    if (Command("initdrawtextbox"))
+        InitDrawTextBox(as);
 
     if (Command("peek"))
         Peek(as);
@@ -2655,6 +2662,175 @@ void Methods6502::AddressTable(Assembler *as) {
     as->PopLabel("dtnooverflow");
 
 }
+
+void Methods6502::InitDrawTextBox(Assembler* as) {
+    if (m_node->m_isInitialized["drawtextbox"])
+        return;
+    as->Comment("----------");
+    as->Comment("InitDrawTextBox");
+    as->Comment("addr vars: addrtableaddr,petsciitable");
+    as->Label("idtb_at_lo dc.b 0");
+    as->Label("idtb_at_hi dc.b 0");
+    as->Label("idtb_petscii_tl dc.b 0");
+    as->Label("idtb_petscii_t dc.b 0");
+    as->Label("idtb_petscii_tr dc.b 0");
+    as->Label("idtb_petscii_r dc.b 0");
+    as->Label("idtb_petscii_br dc.b 0");
+    as->Label("idtb_petscii_b dc.b 0");
+    as->Label("idtb_petscii_bl dc.b 0");
+    as->Label("idtb_petscii_l dc.b 0");
+    as->Comment("temp vars: col,row,width,height");
+    as->Label("idtb_t_col dc.b 0");
+    as->Label("idtb_t_row dc.b 0");
+    as->Label("idtb_t_wid dc.b 0");
+    as->Label("idtb_t_hei dc.b 0");
+    as->Label("idtb_tmp dc.b 0");
+
+    QString zp = as->m_internalZP[0];
+
+    as->Label("AddrCalcRowTextBoxDraw");
+    as->Comment("Calculate screen offset for row number in A");
+    as->Asm("ldy idtb_at_hi");
+    as->Asm("asl");
+    as->Asm("clc");
+    as->Asm("adc idtb_at_lo");
+    as->Asm("sta " + zp);
+    as->Asm("bcc NooverflowTextBox");
+    as->Asm("iny");
+    as->Label("NooverflowTextBox");
+    as->Asm("sty " + zp + "+1");
+    as->Asm("ldy #0");
+    as->Asm("lda (" + zp +"),y");
+    as->Asm("tax");
+    as->Asm("iny");
+    as->Asm("lda (" + zp +"),y");
+    as->Asm("sta "+ zp + "+1");
+    as->Asm("stx "+ zp);
+    as->Asm("rts");
+
+    as->Label("PerformTextBoxDraw");
+    as->Comment("Draw box top");
+    as->Asm("lda idtb_t_row");
+    as->Asm("jsr AddrCalcRowTextBoxDraw");
+    as->Asm("lda idtb_petscii_tl");
+    as->Asm("ldy idtb_t_col");
+    as->Asm("sta (" + zp + "),y");
+    as->Asm("lda idtb_petscii_t");
+    as->Label("TopLoopTextBox");
+    as->Asm("iny");
+    as->Asm("sta (" + zp + "),y");
+    as->Asm("cpy idtb_t_wid");
+    as->Asm("bne TopLoopTextBox");
+    as->Asm("iny");
+    as->Asm("lda idtb_petscii_tr");
+    as->Asm("sta (" + zp + "),y");
+
+    as->Comment("Draw box center");
+    as->Asm("ldx idtb_t_row");
+    as->Label("CenterLoopTextBox");
+    as->Asm("inx");
+    as->Asm("stx idtb_tmp");
+    as->Asm("txa");
+    as->Asm("jsr AddrCalcRowTextBoxDraw");
+    as->Asm("lda idtb_petscii_l");
+    as->Asm("ldy idtb_t_col");
+    as->Asm("sta (" + zp + "),y");
+    as->Asm("ldy idtb_t_wid");
+    as->Asm("iny");
+    as->Asm("lda idtb_petscii_r");
+    as->Asm("sta (" + zp + "),y");
+    as->Asm("ldx idtb_tmp");
+    as->Asm("cpx idtb_t_hei");
+    as->Asm("bne CenterLoopTextBox");
+
+    as->Comment("Draw box bottom");
+    as->Asm("inc idtb_t_hei");
+    as->Asm("lda idtb_t_hei");
+    as->Asm("jsr AddrCalcRowTextBoxDraw");
+    as->Asm("lda idtb_petscii_bl");
+    as->Asm("ldy idtb_t_col");
+    as->Asm("sta (" + zp + "),y");
+    as->Asm("lda idtb_petscii_b");
+    as->Label("BotLoopTextBox");
+    as->Asm("iny");
+    as->Asm("sta (" + zp + "),y");
+    as->Asm("cpy idtb_t_wid");
+    as->Asm("bne BotLoopTextBox");
+    as->Asm("iny");
+    as->Asm("lda idtb_petscii_br");
+    as->Asm("sta (" + zp + "),y");
+
+    m_node->m_isInitialized["drawtextbox"]=true;
+}
+
+// Draw PETSCII box using address table
+void Methods6502::DrawTextBox(Assembler* as) {
+    as->Comment("----------");
+    as->Comment("DrawTextBox addrtable, petsciiarray, column, row, width, height");
+    QString lblPetsciiCopy = as->NewLabel("petscopy");
+    AddMemoryBlock(as,0);
+
+    NodeVar* addr = dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    NodeVar* petscii = dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    if (addr==nullptr) {
+        ErrorHandler::e.Error("First parameter must be variable containing address table", m_node->m_op.m_lineNumber);
+    }
+    if (petscii==nullptr) {
+        ErrorHandler::e.Error("Second parameter must be variable containing array of petscii values", m_node->m_op.m_lineNumber);
+    }
+
+    QString addrval = addr->getValue(as);
+    QString petval = petscii->getValue(as);
+    as->Asm("lda #<" + addrval + " ; address table lo");
+    as->Asm("ldx #>"+ addrval + " ; address table hi");
+    as->Asm("sta idtb_at_lo");
+    as->Asm("stx idtb_at_hi");
+
+    as->Asm("ldx #8");
+    as->Label(lblPetsciiCopy);
+    as->Asm("dex");
+    as->Asm("lda " + petval + ",x");
+    as->Asm("sta idtb_petscii_tl,x");
+    as->Asm("bne " + lblPetsciiCopy);
+
+    if (m_node->m_params[2]->isPureNumeric()) {
+        as->Asm("lda " + m_node->m_params[2]->getValue(as) );
+    } else {
+        LoadVar(as, 2);
+    }
+    as->Asm("sta idtb_t_col");
+
+    if (m_node->m_params[3]->isPureNumeric()) {
+        as->Asm("lda " + m_node->m_params[3]->getValue(as) );
+    } else {
+        LoadVar(as, 3);
+    }
+    as->Asm("sta idtb_t_row");
+
+    if (m_node->m_params[4]->isPureNumeric()) {
+        as->Asm("lda " + m_node->m_params[4]->getValue(as) );
+    } else {
+        LoadVar(as, 4);
+    }
+    as->Asm("clc");
+    as->Asm("adc idtb_t_col");
+    as->Asm("sbc #2");
+    as->Asm("sta idtb_t_wid");
+
+    if (m_node->m_params[5]->isPureNumeric()) {
+        as->Asm("lda " + m_node->m_params[5]->getValue(as) );
+    } else {
+        LoadVar(as, 5);
+    }
+    as->Asm("clc");
+    as->Asm("adc idtb_t_row");
+    as->Asm("sbc #1");
+    as->Asm("sta idtb_t_hei");
+    as->Asm("jsr PerformTextBoxDraw");
+
+    as->PopLabel("petscopy");
+}
+
 
 // Calculate if x1,y1 and x2,y2 are with hitbox distance of each other
 void Methods6502::IsOverlapping(Assembler *as)

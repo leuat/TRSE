@@ -140,6 +140,8 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "moveto(" << "printstring(" << "tile(", "initmoveto");
         InitBuiltinFunction(QStringList()<< "printstring(" << "printnumber(", "initprintstring");
 
+        InitBuiltinFunction(QStringList()<< "drawtextbox(", "initdrawtextbox");
+
         InitBuiltinFunction(QStringList()<< "joystick(" , "initjoystick");
     }
     Node::m_staticBlockInfo.m_blockID = -1;
