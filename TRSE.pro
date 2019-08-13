@@ -602,4 +602,5 @@ DISTFILES += \
     resources/text/help/r/var.rtf \
     resources/text/help/r/wedge.rtf \
     resources/text/help/r/while.rtf \
-    resources/text/help/m/drawtextbox.rtf
+    resources/text/help/m/drawtextbox.rtf \
+    resources/text/help/m/drawcolortextbox.rtf

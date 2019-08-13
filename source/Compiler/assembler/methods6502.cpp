@@ -2916,6 +2916,16 @@ void Methods6502::DrawColorTextBox(Assembler* as) {
     as->Asm("sta idtb_at_lo");
     as->Asm("stx idtb_at_hi");
 
+    if (m_node->m_params[6]->isPureNumeric()) {
+        as->Asm("lda " + m_node->m_params[6]->getValue(as) );
+    } else {
+        LoadVar(as, 6);
+    }
+    as->Asm("clc");
+    as->Asm("adc idtb_t_row");
+    as->Asm("sbc #1");
+    as->Asm("sta idtb_t_hei");
+
     if (m_node->m_params[7]->isPureNumeric()) {
         as->Asm("lda " + m_node->m_params[7]->getValue(as) );
     } else {

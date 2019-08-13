@@ -243,5 +243,7 @@
         <file>resources/text/help/m/drawtextbox.rtf</file>
         <file>resources/images/textboxexample.png</file>
         <file>resources/images/PLUS4.png</file>
+        <file>resources/text/help/m/drawcolortextbox.rtf</file>
+        <file>resources/images/colortextboxexample.png</file>
     </qresource>
 </RCC>
