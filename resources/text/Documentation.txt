@@ -184,6 +184,11 @@ Built-in methods
 		<h2>DisableCIAInterrupts();</h2>
 		Disables all CIA interrupts
 
+    drawtextbox
+                <h2>drawtextbox( [ address table ], [ petscii array ], column, row, width, height );</h2>
+
+                Draw box using PETSCII characters and address table created for display size.
+
 	enableallram
                 <h2>EnableAllRam();</h2>
                 Let's all the ram on the C64 be visible (seting the first three bits
