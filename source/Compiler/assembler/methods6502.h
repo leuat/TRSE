@@ -131,7 +131,7 @@ public:
     void Wait(Assembler* as);
     void InitDrawTextBox(Assembler* as);
     void DrawTextBox(Assembler* as);
-
+    void DrawColorTextBox(Assembler* as);
 
 
     QString BitShiftX(Assembler* as);
