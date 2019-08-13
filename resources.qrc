@@ -242,5 +242,6 @@
         <file>resources/text/help/f/setrotation.rtf</file>
         <file>resources/text/help/m/drawtextbox.rtf</file>
         <file>resources/images/textboxexample.png</file>
+        <file>resources/images/PLUS4.png</file>
     </qresource>
 </RCC>

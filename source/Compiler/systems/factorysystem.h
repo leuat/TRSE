@@ -8,6 +8,7 @@
 #include "systemvic20.h"
 #include "systemnes.h"
 #include "systemamiga.h"
+#include "systemplus4.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem
@@ -29,6 +30,8 @@ public:
             return new SystemNES(settings, proj);
         if (type==AbstractSystem::AMIGA)
             return new SystemAmiga(settings, proj);
+        if (type==AbstractSystem::PLUS4)
+            return new SystemPlus4(settings, proj);
 
         return s;
     }

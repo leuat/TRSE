@@ -46,6 +46,7 @@ void DialogTRSESettings::FillFromIni()
     ui->lePETEmulator->setText(m_ini->getString("pet_emulator"));
     ui->leNesEmulator->setText(m_ini->getString("nes_emulator"));
     ui->leBBCMEmulator->setText(m_ini->getString("bbcm_emulator"));
+    ui->lePlus4Emulator->setText(m_ini->getString("plus4_emulator"));
     ui->leC1541->setText(m_ini->getString("c1541"));
     ui->leExomizer->setText(m_ini->getString("exomizer"));
     ui->leTinyCrunch->setText(m_ini->getString("tinycrunch"));
@@ -103,6 +104,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("pet_emulator", ui->lePETEmulator->text());
     m_ini->setString("c128_emulator", ui->leEmulatorC128->text());
     m_ini->setString("bbcm_emulator", ui->leBBCMEmulator->text());
+    m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
     m_ini->setString("c1541", ui->leC1541->text());
 
     m_ini->setString("nes_emulator", ui->leNesEmulator->text());

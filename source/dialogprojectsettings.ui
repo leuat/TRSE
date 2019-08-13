@@ -43,7 +43,7 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -61,6 +61,11 @@
          <item>
           <property name="text">
            <string>C64</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>PLUS4</string>
           </property>
          </item>
          <item>

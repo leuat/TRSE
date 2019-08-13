@@ -74,8 +74,10 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     if (m_projectIniFile->getString("system")=="BBCM") {
         emu = m_iniFile->getString("bbcm_emulator");
     }
+    if (m_projectIniFile->getString("system")=="PLUS4") {
+        emu = m_iniFile->getString("plus4_emulator");
+    }
 
-//    qDebug() << "Here  "<<emu ;
 
     if (!QFile::exists(emu)) {
         Messages::messages.DisplayMessage(Messages::messages.NO_EMULATOR);
@@ -317,8 +319,11 @@ void FormRasEditor::Run()
     if (m_builderThread.m_builder->m_system==nullptr)
         return;
 
+
+
     if (m_builderThread.m_builder->m_system->m_system == AbstractSystem::AMIGA) {
-        Messages::messages.DisplayMessage(Messages::messages.NO_AMIGA_EMULATOR);
+//        Messages::messages.DisplayMessage(Messages::messages.NO_AMIGA_EMULATOR);
+        qDebug() << "No amiga emulator installed";
         return;
     }
 
@@ -336,6 +341,7 @@ void FormRasEditor::Run()
 
     if (!m_projectIniFile->contains("output_type"))
         m_projectIniFile->setString("output_type","prg");
+
 
     QString filename = m_currentSourceFile.split(".")[0] + "."+ m_projectIniFile->getString("output_type");
     if (m_projectIniFile->getString("system")=="NES")
