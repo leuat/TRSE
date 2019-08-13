@@ -462,6 +462,7 @@ DISTFILES += \
     resources/text/help/c/xpaddle_register.rtf \
     resources/text/help/c/ypaddle_register.rtf \
     resources/text/help/m/abs.rtf \
+    resources/text/help/m/addresstable.rtf \
     resources/text/help/m/atan2.rtf \
     resources/text/help/m/blockmemcpy.rtf \
     resources/text/help/m/call.rtf \
@@ -475,6 +476,7 @@ DISTFILES += \
     resources/text/help/m/copyfullscreen.rtf \
     resources/text/help/m/copyhalfscreen.rtf \
     resources/text/help/m/copyimagecolordata.rtf \
+    resources/text/help/m/createaddresstable.rtf \
     resources/text/help/m/createinteger.rtf \
     resources/text/help/m/createpointer.rtf \
     resources/text/help/m/dec.rtf \
@@ -596,4 +598,5 @@ DISTFILES += \
     resources/text/help/r/userdata.rtf \
     resources/text/help/r/var.rtf \
     resources/text/help/r/wedge.rtf \
-    resources/text/help/r/while.rtf
+    resources/text/help/r/while.rtf \
+    resources/text/help/m/drawtextbox.rtf
