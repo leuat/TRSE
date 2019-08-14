@@ -70,6 +70,8 @@ public:
     void LoadItem(QString word);
     void FillTopics();
 
+    void ClickOnItem(QString item);
+
 
     void AppendItem(QListWidget* w, QString s);
     void SearchForItem(QString item);
