@@ -39,8 +39,8 @@ var
 
 begin
     // Change screen color to black
-    poke(SCREEN_BG_COL, 0, BLACK);
-    poke(SCREEN_FG_COL, 0, BLACK);
+    SCREEN_BG_COL := BLACK;
+    SCREEN_FG_COL := BLACK;
 
     // Fill screen memory with space
     clearscreen($20, ^@screen_mem);
