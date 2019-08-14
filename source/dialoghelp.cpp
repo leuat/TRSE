@@ -312,11 +312,6 @@ void DialogHelp::FillTopics()
         AppendItem(ui->lstTopic, ht.name);
 }
 
-void DialogHelp::ClickOnItem(QString item)
-{
-
-}
-
 void DialogHelp::AppendItem(QListWidget *w, QString text)
 {
     QListWidgetItem* item= new QListWidgetItem();
@@ -340,24 +335,29 @@ void DialogHelp::SearchForItem(QString item)
         s=s.replace(" ", "");
 
         QStringList data = s.split(";");
-        if (data[1].toLower() ==item.toLower()) {
+        if (data[1].toLower().contains(item.toLower())) {
             //HelpType ht = m_helpTypes[idx];
             int idx;
             for (int i=0;i<m_helpTypes.count();i++)
                 if (m_helpTypes[i].id.toLower()==data[0].toLower())
                     idx=i;
+
+            if (idx>=0) {
+                ui->lstTopic->setCurrentRow(idx);
+            }
             LoadItems(idx);
+            auto items =  ui->lstItems->findItems(item,Qt::MatchContains);
+            if (m_currentSearchItem>=items.count())
+                m_currentSearchItem=0;
+            if (items.count()!=0) {
+                ui->lstItems->setCurrentItem(items[m_currentSearchItem]);
+                data[1] = items[m_currentSearchItem]->text();
+            }
             LoadItem(data[1]);
             return;
         }
     }
     LoadItems(0);
-}
-
-
-void DialogHelp::on_pushButton_clicked()
-{
-    close();
 }
 
 
@@ -376,7 +376,7 @@ void DialogHelp::on_lstItems_itemClicked(QListWidgetItem *item)
 
 void DialogHelp::on_leSearch_textChanged(const QString &arg1)
 {
-    ClickOnItem(arg1);
+    m_currentSearchItem = 0; // Reset counter
     SearchForItem(arg1);
 }
 
@@ -391,3 +391,9 @@ void DialogHelp::on_lstItems_currentRowChanged(int currentRow)
 
 }
 
+
+void DialogHelp::on_leSearch_returnPressed()
+{
+    m_currentSearchItem++;
+    SearchForItem(ui->leSearch->text());
+}
