@@ -312,6 +312,11 @@ void DialogHelp::FillTopics()
         AppendItem(ui->lstTopic, ht.name);
 }
 
+void DialogHelp::ClickOnItem(QString item)
+{
+
+}
+
 void DialogHelp::AppendItem(QListWidget *w, QString text)
 {
     QListWidgetItem* item= new QListWidgetItem();
@@ -371,6 +376,8 @@ void DialogHelp::on_lstItems_itemClicked(QListWidgetItem *item)
 
 void DialogHelp::on_leSearch_textChanged(const QString &arg1)
 {
+    ClickOnItem(arg1);
+    SearchForItem(arg1);
 }
 
 void DialogHelp::on_lstItems_currentRowChanged(int currentRow)
