@@ -140,7 +140,7 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "moveto(" << "printstring(" << "tile(", "initmoveto");
         InitBuiltinFunction(QStringList()<< "printstring(" << "printnumber(", "initprintstring");
 
-        InitBuiltinFunction(QStringList()<< "drawtextbox(", "initdrawtextbox");
+        InitBuiltinFunction(QStringList()<< "drawtextbox(" << "drawcolortextbox(", "initdrawtextbox");
 
         InitBuiltinFunction(QStringList()<< "joystick(" , "initjoystick");
     }

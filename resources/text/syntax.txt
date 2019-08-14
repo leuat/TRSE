@@ -184,6 +184,8 @@ m; CreateInteger; C64, PLUS4, C128, NES, VIC20; b,b
 m; CreatePointer; C64, PLUS4, C128, NES, VIC20; b,b
 # DrawTextBox params: screenaddrtbl,petsciiarray,column,row,width,height
 m; DrawTextBox; C64, PLUS4, C128, NES, VIC20; a,a,b,b,b,b
+# DrawColorTextBox params: screenaddrtbl,coloraddrtbl,petsciiarray,column,row,width,height,color
+m; DrawColorTextBox; C64, C128, NES, VIC20; a,a,a,b,b,b,b,b
 
 # Sprite routines
 

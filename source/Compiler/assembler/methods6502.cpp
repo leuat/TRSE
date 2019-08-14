@@ -395,6 +395,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("drawtextbox"))
         DrawTextBox(as);
 
+    if (Command("drawcolortextbox"))
+        DrawColorTextBox(as);
+
     if (Command("initdrawtextbox"))
         InitDrawTextBox(as);
 
@@ -2830,6 +2833,114 @@ void Methods6502::DrawTextBox(Assembler* as) {
     as->Asm("jsr PerformTextBoxDraw");
 
     as->PopLabel("PetsciiCopy");
+}
+
+
+// Draw PETSCII box using address table
+void Methods6502::DrawColorTextBox(Assembler* as) {
+    as->Comment("----------");
+    as->Comment("DrawColorTextBox addrtable, coloraddrtable, petsciiarray, column, row, width, height, color");
+    QString lblPetsciiCopy = as->NewLabel("PetsciiCopy");
+    QString lblColorCopy = as->NewLabel("ColorCopy");
+    AddMemoryBlock(as,0);
+
+    NodeVar* addr = dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    NodeVar* coloraddr = dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    NodeVar* petscii = dynamic_cast<NodeVar*>(m_node->m_params[2]);
+
+    if (addr==nullptr) {
+        ErrorHandler::e.Error("First parameter must be variable containing screen address table", m_node->m_op.m_lineNumber);
+    }
+    if (coloraddr==nullptr) {
+        ErrorHandler::e.Error("Second parameter must be variable containing color address table", m_node->m_op.m_lineNumber);
+    }
+    if (petscii==nullptr) {
+        ErrorHandler::e.Error("Third parameter must be variable containing array of petscii values", m_node->m_op.m_lineNumber);
+    }
+
+    QString addrval = addr->getValue(as);
+    QString colorval = coloraddr->getValue(as);
+    QString petval = petscii->getValue(as);
+
+    as->Asm("lda #<" + addrval + " ; address table lo");
+    as->Asm("ldx #>"+ addrval + " ; address table hi");
+    as->Asm("sta idtb_at_lo");
+    as->Asm("stx idtb_at_hi");
+
+    as->Asm("ldx #8");
+    as->Label(lblPetsciiCopy);
+    as->Asm("dex");
+    as->Asm("lda " + petval + ",x");
+    as->Asm("sta idtb_petscii_tl,x");
+    as->Asm("cpx #0");
+    as->Asm("bne " + lblPetsciiCopy);
+
+    if (m_node->m_params[3]->isPureNumeric()) {
+        as->Asm("lda " + m_node->m_params[3]->getValue(as) );
+    } else {
+        LoadVar(as, 3);
+    }
+    as->Asm("sta idtb_t_col");
+
+    if (m_node->m_params[4]->isPureNumeric()) {
+        as->Asm("lda " + m_node->m_params[4]->getValue(as) );
+    } else {
+        LoadVar(as, 4);
+    }
+    as->Asm("sta idtb_t_row");
+
+    if (m_node->m_params[5]->isPureNumeric()) {
+        as->Asm("lda " + m_node->m_params[5]->getValue(as) );
+    } else {
+        LoadVar(as, 5);
+    }
+    as->Asm("clc");
+    as->Asm("adc idtb_t_col");
+    as->Asm("sbc #1");
+    as->Asm("sta idtb_t_wid");
+
+    if (m_node->m_params[6]->isPureNumeric()) {
+        as->Asm("lda " + m_node->m_params[6]->getValue(as) );
+    } else {
+        LoadVar(as, 6);
+    }
+    as->Asm("clc");
+    as->Asm("adc idtb_t_row");
+    as->Asm("sbc #1");
+    as->Asm("sta idtb_t_hei");
+    as->Asm("jsr PerformTextBoxDraw");
+
+    as->Comment("Draw color");
+    as->Asm("lda #<" + colorval + " ; address table lo");
+    as->Asm("ldx #>"+ colorval + " ; address table hi");
+    as->Asm("sta idtb_at_lo");
+    as->Asm("stx idtb_at_hi");
+
+    if (m_node->m_params[6]->isPureNumeric()) {
+        as->Asm("lda " + m_node->m_params[6]->getValue(as) );
+    } else {
+        LoadVar(as, 6);
+    }
+    as->Asm("clc");
+    as->Asm("adc idtb_t_row");
+    as->Asm("sbc #1");
+    as->Asm("sta idtb_t_hei");
+
+    if (m_node->m_params[7]->isPureNumeric()) {
+        as->Asm("lda " + m_node->m_params[7]->getValue(as) );
+    } else {
+        LoadVar(as, 7);
+    }
+
+    as->Asm("ldx #8");
+    as->Label(lblColorCopy);
+    as->Asm("dex");
+    as->Asm("sta idtb_petscii_tl,x");
+    as->Asm("bne " + lblColorCopy);
+    as->Asm("jsr PerformTextBoxDraw");
+
+    as->PopLabel("PetsciiCopy");
+    as->PopLabel("ColorCopy");
 }
 
 
