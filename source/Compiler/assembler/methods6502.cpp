@@ -108,6 +108,8 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("Hi")) {
         LoHi(as,false);
     }
+    if (Command("ToPointer"))
+        ToPointer(as);
 
     if (Command("SetSpriteLocation")) {
         as->Asm("lda #0");
@@ -2664,6 +2666,13 @@ void Methods6502::AddressTable(Assembler *as) {
 
     as->PopLabel("dtnooverflow");
 
+}
+
+void Methods6502::ToPointer(Assembler *as)
+{
+    LoadVar(as, 0);
+    as->Asm("tay");
+    LoadVar(as, 1);
 }
 
 void Methods6502::InitDrawTextBox(Assembler* as) {

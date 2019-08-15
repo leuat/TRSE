@@ -52,7 +52,7 @@ public:
     void Tile(Assembler *as);
     void CreateAddressTable(Assembler *as);
     void AddressTable(Assembler *as);
-
+    void ToPointer(Assembler* as);
 
     void LoHi(Assembler* as, bool isLo);
 

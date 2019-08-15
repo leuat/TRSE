@@ -44,6 +44,7 @@ void Parser::InitObsolete()
 {
     m_obsoleteWarnings.clear();
     m_obsoleteWarnings.append(QStringList() << "rand"<<"Funtion 'Rand()' is scheduled to be depricated. Please use 'Random()' instead. ");
+    m_obsoleteWarnings.append(QStringList() << "writeln"<<"Funtion 'Writeln()' is scheduled to be depricated. Please use 'PrintString()' instead. ");
 }
 
 void Parser::Eat(TokenType::Type t)
