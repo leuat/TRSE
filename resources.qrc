@@ -245,5 +245,6 @@
         <file>resources/images/PLUS4.png</file>
         <file>resources/text/help/m/drawcolortextbox.rtf</file>
         <file>resources/images/colortextboxexample.png</file>
+        <file>resources/images/petscii.png</file>
     </qresource>
 </RCC>
