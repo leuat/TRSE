@@ -156,6 +156,8 @@ void SymbolTable::InitBuiltins()
     Define(new Symbol("joystickleft", "byte"));
     Define(new Symbol("joystickright", "byte"));
     Define(new Symbol("joystickbutton", "byte"));
+    Define(new Symbol("joystick_dir", "byte"));
+    Define(new Symbol("joystick_button", "byte"));
 
 /*    Define(new Symbol("zeropage1", "pointer"));
     Define(new Symbol("zeropage2", "pointer"));

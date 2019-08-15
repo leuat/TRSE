@@ -28,8 +28,7 @@ m; initprintstring; C64, PLUS4, C128  ;
 m; initjoystick; C64, PLUS4, C128, VIC20  ;
 m; initatan2; C64, PLUS4, C128, VIC20  ;
 m; initdrawtextbox; C64, PLUS4, C128, VIC20 ;
-
-
+m; initjoystickdir; C64, C128, VIC20  ;
 
 
 
@@ -241,7 +240,8 @@ m; LeftBitShift; C64, PLUS4, C128, VIC20, PET,  NES; a, n
 
 m; Joystick; C64, PLUS4, C128, VIC20; n
 m; Keypressed; C64, PLUS4, C128, VIC20; b
-
+m; JoystickDir; C64, C128; b
+m; JoystickDir; VIC20;
 
 # IRQ routines
 

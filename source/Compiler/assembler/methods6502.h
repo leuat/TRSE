@@ -46,6 +46,7 @@ public:
     void ScrollY(Assembler* as);
     void RightBitShift(Assembler* as, bool isRight);
     void Joystick(Assembler* as);
+    void JoystickDir(Assembler* as);
     void BitOp(Assembler* as, int type);
     void PlaySound(Assembler* as);
     void CreateInteger(Assembler* as, QString reg);
@@ -152,6 +153,7 @@ public:
     // Initialize
 
     void InitJoystick(Assembler* as);
+    void InitJoystickDir(Assembler* as);
     void InitRandom(Assembler* as);
     void InitRandom256(Assembler* as);
 

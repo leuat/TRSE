@@ -602,6 +602,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("joystick")) {
         Joystick(as);
     }
+    if (Command("joystickdir")) {
+        JoystickDir(as);
+    }
+    if (Command("initjoystickdir")) {
+        InitJoystickDir(as);
+    }
     if (Command("playsound")) {
         PlaySound(as);
     }
@@ -5275,4 +5281,59 @@ void Methods6502::InitJoystick(Assembler *as)
     as->Label("callJoystick_end");
     as->Asm("rts");
 
+}
+
+void Methods6502::InitJoystickDir(Assembler *as)
+{
+    if (m_node->m_isInitialized["initjoystickdir"]) return;
+
+    as->Comment("---------------");
+    as->Comment("InitJoystickDir");
+    as->Label("joystick_dir .byte 0");
+    as->Label("joystick_button .byte 0");
+    as->Label("ijd_butmask dc.b 16 ; button mask");
+    as->Label("ijd_dirs dc.b 0,0,0,0,0,4,2,3,0,6,8,7,0,5,1,0 ; LUT");
+    as->Label("callJoystickDir");
+
+    as->Asm("cmp #1");
+    as->Asm("bne ijd_porttwo");
+    as->Asm("lda #$ff");
+    as->Asm("sta $dc02");
+    as->Asm("lda #0");
+    as->Asm("sta $dc03");
+    as->Asm("lda $dc01");
+    as->Asm("jmp ijd_direction");
+    as->Label("ijd_porttwo");
+    as->Asm("lda #0");
+    as->Asm("sta $dc02");
+    as->Asm("lda #$ff");
+    as->Asm("sta $dc03");
+    as->Asm("lda $dc00");
+    as->Label("ijd_direction");
+    as->Asm("ldy #0");
+    as->Asm("bit ijd_butmask");
+    as->Asm("bne ijd_button");
+    as->Asm("ldy #1");
+    as->Label("ijd_button");
+    as->Asm("sty joystick_button");
+    as->Asm("and #$0f");
+    as->Asm("tax");
+    as->Asm("lda ijd_dirs,x");
+    as->Asm("sta joystick_dir");
+
+    m_node->m_isInitialized["initjoystickdir"] = true;
+}
+
+void Methods6502::JoystickDir(Assembler *as)
+{
+    as->Comment("---------------");
+    as->Comment("JoystickDir");
+
+    if (m_node->m_params[0]->isPureNumeric()) {
+        as->Asm("lda " + m_node->m_params[0]->getValue(as) );
+    } else {
+        LoadVar(as, 0);
+    }
+
+    as->Asm("jsr callJoystickDir");
 }
