@@ -639,12 +639,13 @@ Node *Parser::BinaryClause()
     Node* a = Expr();
     Token comparetoken;
     Node* b;
+    // Nothing : the null test. Check if NOT EQUALS ZERO
     if (m_currentToken.m_type==TokenType::RPAREN || m_currentToken.m_type==TokenType::THEN) {
         Token t;
         t.m_type = TokenType::BYTE;
-        t.m_intVal = 1;
-        b = new NodeNumber(t,1);
-        comparetoken.m_type = TokenType::EQUALS;
+        t.m_intVal = 0;
+        b = new NodeNumber(t,0);
+        comparetoken.m_type = TokenType::NOTEQUALS;
     }
     else
     {
