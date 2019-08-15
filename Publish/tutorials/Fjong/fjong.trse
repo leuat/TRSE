@@ -27,5 +27,5 @@ override_target_settings_org = $810
 override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 project_path = /home/leuat/code/TRSE/Publish/tutorials/Fjong/
-open_files = ,example9_movie.ras, example9_movie.fjo, example_8_logo.fjo, example7_simple_twister.ras, example5_single_sprite.fjo
-current_file = example9_movie.fjo
+open_files = ,example9_movie.ras, example9_movie.fjo, example7_simple_twister.ras, example5_single_sprite.fjo, example_8_logo.fjo
+current_file = example9_movie.ras

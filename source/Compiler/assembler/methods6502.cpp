@@ -2670,9 +2670,11 @@ void Methods6502::AddressTable(Assembler *as) {
 
 void Methods6502::ToPointer(Assembler *as)
 {
+    LoadVar(as, 1);
+    as->Asm("pha");
     LoadVar(as, 0);
     as->Asm("tay");
-    LoadVar(as, 1);
+    as->Asm("pla");
 }
 
 void Methods6502::InitDrawTextBox(Assembler* as) {
