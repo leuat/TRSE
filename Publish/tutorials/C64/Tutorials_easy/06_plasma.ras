@@ -1,0 +1,108 @@
+program Tutorial3_plasma;
+
+var
+	// some plasma variables
+	c,val,c2x, c2y,ax, ay : byte;
+	x,y : byte;
+	colorP: pointer;	
+
+// charset will be placed at $2000 in bank 1	
+@define charsetLocation $2000
+ // look in the character set
+@define baseCharacter $68
+
+	// Use custom charset
+	charset: IncBin("charsets/charset.bin",@charsetLocation);
+	// nice colors
+	fade : array [] of byte = (11,6,12,12,4,14,15,1,1,1,1,15,14,4,12,12,6,11,1,1); 
+	
+
+	// mini sine table
+    siny : array[25] of byte; 
+	sinx : array[40] of byte; 
+
+	// Lookup table for division by 16
+	lookupDiv16 : array[256] of byte;
+
+
+// Define y_start as a global preprocessor constant
+@define y_start "5"
+
+
+
+// Plasma procedure
+
+procedure Plasma();
+begin
+	c2x:=ax;
+	c2y:=ay;
+	
+	// Set up y-sine table
+	for x:=0 to 25 do begin 
+		siny[x]:=  sine[c2x] + sine[c2y];
+		c2x:=c2x+4;
+		c2y:=c2y+9;
+	end;
+
+	ax:=ax+3;
+	ay:=ay-5;
+
+	// Set up x-sine table
+	for x:=0 to 40 do begin 
+		sinx[x] := sine[c2x] + sine[c2y];
+		c2x:=c2x+3;
+		c2y:=c2y+7;
+
+	end;
+	// Move cursor to (1,y) on $0400 on bank 1
+	moveto(1,@y_start, $04);
+	// moveto could also be replaced with : screenmemory:=$0400 + @y_start*40;
+	
+	colorP:=screen_col_loc + @y_start*40;
+	
+	for y:=@y_start to 23 do begin
+		val:=siny[y];
+		for x:=1 to 36 do begin
+			// here, we take (sin[x]+val) and divide by 16. However, since this is a slow procedure,
+			// we have created a lookup table instead!
+			c:=lookupDiv16[ (sinx[x] +val) ];
+			// Set the screen memory
+			screenmemory[x]:=c + @baseCharacter;
+			// Set color memory
+			colorP[x] := fade[ c ];
+
+		end;
+		// Increase screen memory pointer by 40 (next row)
+		screenmemory:=screenmemory+40;
+		// Increase color pointer by 40 (next row)
+		colorP:=colorP+40;
+	end;
+
+end;
+
+
+procedure InitDivision16();
+begin
+	for x:=0 to 256 do lookupDiv16[x]:=x/16; // Simply store values divided by 16
+end;
+
+
+begin
+	// Set color background
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	// Set charmap location at $2000
+	SetCharsetLocation(@charsetLocation);
+	InitDivision16();
+	ax:=1;
+	ay:=5;
+
+	// Clear screen and color memory
+	ClearScreen($20, screen_char_loc);
+	// Main loop
+	while (true) do begin
+		waitForRaster(0);
+		Plasma();
+	end;
+
+end.
