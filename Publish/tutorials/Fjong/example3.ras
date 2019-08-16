@@ -9,7 +9,7 @@ var
 	table: incbin("data/example3_table.bin",@tablepos);
 	charset: incbin("charsets/main.bin", $2000);
 
-	y, i,j,time,k,l, h,frame : byte = 0;
+	y, j,time,l, h,frame : byte = 0;
 	kp,zp,p1:pointer;
 
 

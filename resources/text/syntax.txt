@@ -233,6 +233,7 @@ m; TransformColors; C64, PLUS4, C128; a,a
 m; Call; C64, PLUS4, C128, VIC20, PET,  NES; a
 m; Loop; C64, PLUS4, C128, VIC20, PET,  NES;
 m; Return;  C64, PLUS4, C128, VIC20, PET,  NES, AMIGA;
+m; ReturnByte;  C64, PLUS4, C128, VIC20, PET,  NES, AMIGA; b
 m; Set2MhzMode; C128;
 m; Set1MhzMode; C128;
 m; RightBitShift; C64, PLUS4, C128, VIC20, PET,  NES; a, n

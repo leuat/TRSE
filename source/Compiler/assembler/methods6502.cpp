@@ -66,6 +66,11 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("ToggleVRAM32Inc"))
         ToggleRegisterBit(as,"$2000",2);
 
+    if (Command("ReturnByte")) {
+        LoadVar(as,0);
+        as->Asm("rts");
+    }
+
     if (Command("ToggleSpriteTableAddress"))
         ToggleRegisterBit(as,"$2000",3);
 

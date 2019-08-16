@@ -44,6 +44,8 @@ public:
 
     NodeProcedureDecl(Token t, QString m, QVector<Node*> paramDecl, Node* block, int type);
 
+
+    void AppendBlock(Node* block);
     void Delete() override;
 
     void SetParametersValue(QVector<PVar>& lst);

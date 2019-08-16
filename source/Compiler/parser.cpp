@@ -1278,10 +1278,16 @@ QVector<Node*> Parser::Declarations(bool isMain)
             Eat(TokenType::RPAREN);
 
         Eat(TokenType::SEMI);
-        Node* block = Block(true);
+        Node* block = nullptr;
+        qDebug() << "HERE0 " << procName;
+        NodeProcedureDecl* procDecl = new NodeProcedureDecl(tok, procName, paramDecl, block, type);
+        m_procedures[procName] = procDecl;
+
+
+        // For recursive procedures, it is vital that we forward declare the current procedure
+        block = Block(true);
 //        if (block==nullptr)
   //          qDebug() << "Procedure decl: " << procName;
-        Node* procDecl = new NodeProcedureDecl(tok, procName, paramDecl, block, type);
         //decl.append(procDecl);
         if (block!=nullptr)
             Eat(TokenType::SEMI);
@@ -1289,11 +1295,11 @@ QVector<Node*> Parser::Declarations(bool isMain)
             // Check if already defined
 
         }
-        bool isUsed = false;
         if (m_procedures[procName]!=nullptr)
             procDecl->m_isUsed = m_procedures[procName]->m_isUsed;
+        procDecl->AppendBlock(block);
         //qDebug() <<procName;
-        m_procedures[procName] = procDecl;
+
         if (block!=nullptr) {
             bool ok = true;
              // Check if procedure already declared

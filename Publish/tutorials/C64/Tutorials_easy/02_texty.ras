@@ -1,0 +1,18 @@
+program Text;
+var  
+   x,y,time: byte = 0;  
+begin
+	while(true) do
+	begin
+		waitforraster(0);
+		ClearScreen($20, screen_char_loc);
+
+		x:=sine[time]/12 + 6;		
+		y:=sine[time+64]/16 + 4;		
+
+		moveto(x,y,$04);
+		printstring("WHOOO",0,40);
+		time:=time+2;
+	end;
+
+end.
