@@ -5230,6 +5230,9 @@ void Methods6502::InitJoystick(Assembler *as)
     as->Asm("sta joystickright");
     as->Asm("sta joystickbutton");
 
+    // Store DDR values
+    as->Asm("ldy $dc02");
+    as->Asm("ldx $dc03");
 
     //QString port = "$dc00";
     // UP
@@ -5279,6 +5282,10 @@ void Methods6502::InitJoystick(Assembler *as)
 
 
     as->Label("callJoystick_end");
+
+    // Restore DDR values
+    as->Asm("sty $dc02");
+    as->Asm("stx $dc03");
     as->Asm("rts");
 
 }
