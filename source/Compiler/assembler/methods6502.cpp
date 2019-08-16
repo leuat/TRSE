@@ -5297,18 +5297,26 @@ void Methods6502::InitJoystickDir(Assembler *as)
 
     as->Asm("cmp #1");
     as->Asm("bne ijd_porttwo");
+    as->Asm("ldy $dc02");
+    as->Asm("ldx $dc03");
     as->Asm("lda #$ff");
     as->Asm("sta $dc02");
     as->Asm("lda #0");
     as->Asm("sta $dc03");
     as->Asm("lda $dc01");
+    as->Asm("sty $dc02");
+    as->Asm("stx $dc03");
     as->Asm("jmp ijd_direction");
     as->Label("ijd_porttwo");
+    as->Asm("ldy $dc02");
+    as->Asm("ldx $dc03");
     as->Asm("lda #0");
     as->Asm("sta $dc02");
     as->Asm("lda #$ff");
     as->Asm("sta $dc03");
     as->Asm("lda $dc00");
+    as->Asm("sty $dc02");
+    as->Asm("stx $dc03");
     as->Label("ijd_direction");
     as->Asm("ldy #0");
     as->Asm("bit ijd_butmask");
