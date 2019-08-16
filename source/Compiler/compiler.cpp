@@ -115,6 +115,10 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
         CleanupCycleLinenumbers();
         CleanupBlockLinenumbers();
     }
+
+    WarningUnusedVariables();
+
+
     return true;
 
 }
@@ -281,5 +285,18 @@ void Compiler::Init6502Assembler()
         Syntax::s.m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
     }
 
+
+}
+
+void Compiler::WarningUnusedVariables()
+{
+    QStringList unusedVariables = m_assembler->m_symTab->getUnusedVariables();
+    if (unusedVariables.count()!=0) {
+        QString lstStr= "";
+        for (QString s: unusedVariables)
+            lstStr+= s+ ",";
+        lstStr.remove(lstStr.count()-1,1); // remove last ","
+        ErrorHandler::e.Warning("Unused variables : " +lstStr);
+    }
 
 }

@@ -36,12 +36,21 @@ NodeProcedureDecl::NodeProcedureDecl(Token t, QString m, QVector<Node *> paramDe
     m_procName = m;
     m_block = block;
     m_paramDecl = paramDecl;
+    if (block!=nullptr) {
+        NodeBlock* b = (NodeBlock*)block;
+        for (int i=0;i<m_paramDecl.count();i++)
+            b->m_decl.append(m_paramDecl[i]);
+    }
+    m_type=type;
+
+}
+
+void NodeProcedureDecl::AppendBlock(Node *block)
+{
     NodeBlock* b = (NodeBlock*)block;
     for (int i=0;i<m_paramDecl.count();i++)
         b->m_decl.append(m_paramDecl[i]);
-
-    m_type=type;
-
+    m_block = block;
 }
 
 void NodeProcedureDecl::Delete() {

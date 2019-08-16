@@ -1,9 +1,9 @@
-program Tutorial2_Randomness;
+program Randomness;
 var  
-	 random_color: byte; 
-	random_values : array[255] of byte;
-	x, y : byte;
-	index : byte;
+	random_color,x,y,index: byte; 
+	// Array of random bytes
+	random_values : array[256] of byte; 
+	// Pointer to screen and color ram
 	screenP, colorP : pointer;
 
 

@@ -1,0 +1,27 @@
+<h3>pointer = ToPointer( [ hi byte ], [ lo byte ] );</h3>
+<ul>
+    <li>[  hi byte ] - high byte of address. Example: "$04" is the high byte of the screen address $0400.</li>
+    <li>[  lo byte ] - low byte of address. Example: "$00" is the low byte of the screen address $0400.</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Creates a pointer of two bytes.</p>
+
+
+<h3>Example</h3>
+
+<code>
+var
+    bankAdd:byte=$40;
+    zp: pointer;
+begin
+        // zp points to some bank 0 screen position
+        zp:=$0440;
+
+        // zp points to the same screen position in bank 1
+        zp:=ToPointer( hi(zp) + bankAdd, lo(zp) );
+
+
+end;
+</code>

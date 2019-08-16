@@ -44,6 +44,7 @@ void Parser::InitObsolete()
 {
     m_obsoleteWarnings.clear();
     m_obsoleteWarnings.append(QStringList() << "rand"<<"Funtion 'Rand()' is scheduled to be depricated. Please use 'Random()' instead. ");
+    m_obsoleteWarnings.append(QStringList() << "writeln"<<"Funtion 'Writeln()' is scheduled to be depricated. Please use 'PrintString()' instead. ");
 }
 
 void Parser::Eat(TokenType::Type t)
@@ -457,6 +458,7 @@ Node *Parser::Variable()
         if (s->m_type=="ADDRESS") m_currentToken.m_type=TokenType::ADDRESS;
         if (s->m_type=="LONG") m_currentToken.m_type=TokenType::LONG;
         if (s->m_type=="INTEGER") m_currentToken.m_type=TokenType::INTEGER;
+        if (s->m_type=="WORD") m_currentToken.m_type=TokenType::INTEGER;
         if (s->m_type=="BYTE") m_currentToken.m_type=TokenType::BYTE;
         if (s->m_type=="STRING") m_currentToken.m_type=TokenType::STRING;
         if (s->m_type=="CSTRING") m_currentToken.m_type=TokenType::CSTRING;
@@ -639,12 +641,13 @@ Node *Parser::BinaryClause()
     Node* a = Expr();
     Token comparetoken;
     Node* b;
+    // Nothing : the null test. Check if NOT EQUALS ZERO
     if (m_currentToken.m_type==TokenType::RPAREN || m_currentToken.m_type==TokenType::THEN) {
         Token t;
         t.m_type = TokenType::BYTE;
-        t.m_intVal = 1;
-        b = new NodeNumber(t,1);
-        comparetoken.m_type = TokenType::EQUALS;
+        t.m_intVal = 0;
+        b = new NodeNumber(t,0);
+        comparetoken.m_type = TokenType::NOTEQUALS;
     }
     else
     {
@@ -1057,7 +1060,7 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
     if (m_currentToken.m_type!=TokenType::TEOF)
         ErrorHandler::e.Error("End of file error");
 
-//    root->ExecuteSym(&SymbolTable::s);
+
     return root;
 }
 
@@ -1275,10 +1278,16 @@ QVector<Node*> Parser::Declarations(bool isMain)
             Eat(TokenType::RPAREN);
 
         Eat(TokenType::SEMI);
-        Node* block = Block(true);
+        Node* block = nullptr;
+        qDebug() << "HERE0 " << procName;
+        NodeProcedureDecl* procDecl = new NodeProcedureDecl(tok, procName, paramDecl, block, type);
+        m_procedures[procName] = procDecl;
+
+
+        // For recursive procedures, it is vital that we forward declare the current procedure
+        block = Block(true);
 //        if (block==nullptr)
   //          qDebug() << "Procedure decl: " << procName;
-        Node* procDecl = new NodeProcedureDecl(tok, procName, paramDecl, block, type);
         //decl.append(procDecl);
         if (block!=nullptr)
             Eat(TokenType::SEMI);
@@ -1286,11 +1295,11 @@ QVector<Node*> Parser::Declarations(bool isMain)
             // Check if already defined
 
         }
-        bool isUsed = false;
         if (m_procedures[procName]!=nullptr)
             procDecl->m_isUsed = m_procedures[procName]->m_isUsed;
+        procDecl->AppendBlock(block);
         //qDebug() <<procName;
-        m_procedures[procName] = procDecl;
+
         if (block!=nullptr) {
             bool ok = true;
              // Check if procedure already declared
@@ -1319,7 +1328,7 @@ QVector<Node *> Parser::VariableDeclarations()
     QVector<Node*> vars;
     vars.append(new NodeVar(m_currentToken));
 
-    m_symTab->Define(new Symbol(m_currentToken.m_value,""));
+    m_symTab->Define(new Symbol(m_currentToken.m_value,""),false);
     Eat(TokenType::ID);
 
     while (m_currentToken.m_type == TokenType::COMMA) {

@@ -66,6 +66,11 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("ToggleVRAM32Inc"))
         ToggleRegisterBit(as,"$2000",2);
 
+    if (Command("ReturnByte")) {
+        LoadVar(as,0);
+        as->Asm("rts");
+    }
+
     if (Command("ToggleSpriteTableAddress"))
         ToggleRegisterBit(as,"$2000",3);
 
@@ -108,6 +113,8 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("Hi")) {
         LoHi(as,false);
     }
+    if (Command("ToPointer"))
+        ToPointer(as);
 
     if (Command("SetSpriteLocation")) {
         as->Asm("lda #0");
@@ -2664,6 +2671,15 @@ void Methods6502::AddressTable(Assembler *as) {
 
     as->PopLabel("dtnooverflow");
 
+}
+
+void Methods6502::ToPointer(Assembler *as)
+{
+    LoadVar(as, 1);
+    as->Asm("pha");
+    LoadVar(as, 0);
+    as->Asm("tay");
+    as->Asm("pla");
 }
 
 void Methods6502::InitDrawTextBox(Assembler* as) {

@@ -21,7 +21,7 @@
 
 #include "token.h"
 
-#define no_types 81
+#define no_types 82
 QString TokenType::types[no_types] = {
             "NONE", "INTEGER", "PLUS", "MINUS", "MUL", "DIV", "LPAREN",
             "RPAREN", "TEOF", "ID", "ASSIGN", "BEGIN",
@@ -34,7 +34,7 @@ QString TokenType::types[no_types] = {
             "INCLUDE", "DEFINE", "PREPROCESSOR", "IFDEF", "ENDIF", "IFNDEF", "OFFPAGE", "ONPAGE",
             "STEP", "UNROLL", "LOOPX", "LOOPY", "CSTRING", "USERDATA", "STARTBLOCK", "ENDBLOCK",
             "IGNOREMETHOD", "ERROR", "WEDGE", "USE", "INCNSF", "STARTASSEMBLER", "LONG", "CHIPMEM",
-            "GREATEREQUAL", "LESSEQUAL","DONOTREMOVE", "CASE"
+            "GREATEREQUAL", "LESSEQUAL","DONOTREMOVE", "CASE", "WORD"
 
 };
 

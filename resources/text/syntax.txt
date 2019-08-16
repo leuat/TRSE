@@ -180,6 +180,7 @@ m; ScreenOn; C64, PLUS4, C128;
 m; CopyImageColorData; C64, PLUS4, C128; a,n
 m; Lo; C64, PLUS4, C128, NES, VIC20; a
 m; Hi; C64, PLUS4, C128, NES, VIC20; a
+m; ToPointer;  C64, PLUS4, C128, NES, VIC20, PET; b,b
 m; CreateInteger; C64, PLUS4, C128, NES, VIC20; b,b
 m; CreatePointer; C64, PLUS4, C128, NES, VIC20; b,b
 # DrawTextBox params: screenaddrtbl,petsciiarray,column,row,width,height
@@ -232,6 +233,7 @@ m; TransformColors; C64, PLUS4, C128; a,a
 m; Call; C64, PLUS4, C128, VIC20, PET,  NES; a
 m; Loop; C64, PLUS4, C128, VIC20, PET,  NES;
 m; Return;  C64, PLUS4, C128, VIC20, PET,  NES, AMIGA;
+m; ReturnByte;  C64, PLUS4, C128, VIC20, PET,  NES, AMIGA; b
 m; Set2MhzMode; C128;
 m; Set1MhzMode; C128;
 m; RightBitShift; C64, PLUS4, C128, VIC20, PET,  NES; a, n
@@ -302,7 +304,10 @@ c; OAMDMA; NES; a; $4014
 
 
 
+
+
 # VIC 20-specific constants
+
 c; PAL_OR_NTSC;VIC20; a; $ede4
 c; SCREEN_COL_LOC; VIC20; a; $9600, $9400
 c; SCREEN_CHAR_LOC; VIC20; a; $1E00, $1000
@@ -329,6 +334,7 @@ c; SCREEN_BG_COLOR; VIC20; a; $900F
 
 
 # C64, PLUS4, C128-specific constants
+
 c; SCREEN_BG_COL; C64, PLUS4, C128; a; $D020
 c; SCREEN_FG_COL; C64, PLUS4, C128; a; $D021
 c; SCREEN_CHAR_LOC; C64, PLUS4, C128; a; $0400

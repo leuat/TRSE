@@ -101,6 +101,11 @@ void SymbolTable::Initialize()
 
 }
 
+void SymbolTable::Define(Symbol *s, bool isUsed) {
+    m_symbols[s->m_name] = s;
+    m_symbols[s->m_name]->isUsed = isUsed;
+}
+
 void SymbolTable::Delete() {
     for (QString val : m_symbols.keys()) {
         Symbol* s = m_symbols[val];
@@ -137,6 +142,7 @@ void SymbolTable::InitBuiltins()
 {
 
     Define(new BuiltInTypeSymbol("INTEGER",""));
+    Define(new BuiltInTypeSymbol("WORD",""));
     Define(new BuiltInTypeSymbol("LONG",""));
     Define(new BuiltInTypeSymbol("REAL",""));
     Define(new BuiltInTypeSymbol("BYTE",""));
@@ -149,6 +155,7 @@ void SymbolTable::InitBuiltins()
     Define(new BuiltInTypeSymbol("INCNSF",""));
 
     Define(new Symbol("return",""));
+
     Define(new Symbol("sine", "address"));
     Define(new Symbol("log2_table", "address"));
     Define(new Symbol("joystickup", "byte"));
@@ -157,13 +164,6 @@ void SymbolTable::InitBuiltins()
     Define(new Symbol("joystickright", "byte"));
     Define(new Symbol("joystickbutton", "byte"));
 
-/*    Define(new Symbol("zeropage1", "pointer"));
-    Define(new Symbol("zeropage2", "pointer"));
-    Define(new Symbol("zeropage3", "pointer"));
-    Define(new Symbol("zeropage4", "pointer"));
-    Define(new Symbol("zeropage5", "pointer"));
-    Define(new Symbol("zeropage6", "pointer"));
-    Define(new Symbol("zeropage7", "pointer"));*/
     if (Syntax::s.m_currentSystem==AbstractSystem::C64 ||
             Syntax::s.m_currentSystem==AbstractSystem::C128 ||
             Syntax::s.m_currentSystem==AbstractSystem::VIC20 ||
@@ -207,6 +207,16 @@ bool SymbolTable::exists(QString name) {
     return false;
 }
 
+QStringList SymbolTable::getUnusedVariables()
+{
+    QStringList lst;
+    for (QString s : m_symbols.keys()) {
+        if (!m_symbols[s]->isUsed)
+            lst<<s;
+    }
+    return lst;
+}
+
 Symbol *SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
     //        name = name.toUpper();
     if (m_constants.contains(name.toUpper())) {
@@ -221,6 +231,7 @@ Symbol *SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
     if ((name.startsWith("$")) && !m_symbols.contains(name) ) {
         //            qDebug() << "Creating new symbol:" << name;
         Symbol* s = new Symbol(name, "address");
+        s->isUsed = true;
         m_symbols[name] = s;
         return s;
     }
@@ -232,7 +243,7 @@ Symbol *SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
     }
     //qDebug() << name << " " << m_symbols[name]->m_type;
     //        qDebug() << "FOUND "<< name;
-
+    m_symbols[name]->isUsed = true;
     return m_symbols[name];
 }
 
@@ -241,6 +252,7 @@ Symbol *SymbolTable::LookupVariables(QString name, int lineNumber) {
         ErrorHandler::e.Error("Symbol/variable '" + name + "' does not exist in the current scope", lineNumber);
         return nullptr;
     }
+    m_symbols[name]->isUsed=true;
     return m_symbols[name];
 }
 
@@ -255,6 +267,8 @@ Symbol *SymbolTable::LookupConstants(QString name) {
 TokenType::Type Symbol::getTokenType() {
     //qDebug() << "gettokentype: " <<m_name <<" : "<<m_type;
     if (m_type.toLower()=="integer")
+        return TokenType::INTEGER;
+    if (m_type.toLower()=="word")
         return TokenType::INTEGER;
     if (m_type.toLower()=="float")
         return TokenType::REAL;
@@ -281,13 +295,13 @@ Symbol::Symbol(QString name, QString type) {
     m_name = name;
     m_type = type;
     m_value = new PVar();
-
 }
 
 Symbol::Symbol(QString name, QString type, float var) {
     m_name = name;
     m_type = type;
     m_value = new PVar(var);
+
 }
 
 Symbol::Symbol(QString name, QString type, QString var) {

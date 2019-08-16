@@ -60,7 +60,7 @@ void NodeVarDecl::ExecuteSym(SymbolTable *symTab) {
 
 
     Symbol* varSymbol = new VarSymbol(varName, typeSymbol->m_name);
-    symTab->Define(varSymbol);
+    symTab->Define(varSymbol,false);
     // qDebug() << "Nodevardecl:ExecuteSym " << varName << " " << varSymbol->m_type;
 
 }

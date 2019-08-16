@@ -1,6 +1,6 @@
 program Fjong_example5;
 var  
-   frame,v: byte = 0; 
+   frame: byte = 0; 
 
 @define spriteDataLoc $2000
    

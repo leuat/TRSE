@@ -28,7 +28,9 @@ ErrorHandler::ErrorHandler()
 }
 
 void ErrorHandler::Warning(QString str, int lineNumber) {
-    QString v = "<font color=\"#F0E030\">Warning at line " + QString::number(lineNumber)+" : " +str + "</font>";
+    QString ln ="";
+    if (lineNumber!=0) ln = " at line " + QString::number(lineNumber);
+    QString v = "<font color=\"#F0E030\">Warning"+ln+": " +str + "</font>";
     m_teOut = m_teOut + v + "<br>";
     //        Message(, WARNING);
     //        throw FatalErrorException(str, lineNumber);
