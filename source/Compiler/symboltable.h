@@ -37,7 +37,7 @@ public:
     TokenType::Type m_arrayType;
     int m_org = 0;
     int m_size = 0;
-
+    bool isUsed = false;
     PVar* m_value = nullptr;
     TokenType::Type getTokenType();
     Symbol(QString name, QString type="");
@@ -50,6 +50,7 @@ public:
 class BuiltInTypeSymbol : public Symbol {
 public:
     BuiltInTypeSymbol(QString name, QString type) : Symbol(name, type) {
+        isUsed = true;
     }
 };
 
@@ -78,15 +79,15 @@ public:
     static bool isInitialized;
     static void Initialize();
 
-    void Define(Symbol* s) {
-        m_symbols[s->m_name] = s;
-    }
+    void Define(Symbol* s, bool isUsed=true);
     void Delete();
 
     void setName(QString s);
 
     void InitBuiltins();
     bool exists(QString name);
+
+    QStringList getUnusedVariables();
 
     Symbol* Lookup(QString name, int lineNumber, bool isAddress=false);
     Symbol* LookupVariables(QString name, int lineNumber);

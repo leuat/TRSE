@@ -458,6 +458,7 @@ Node *Parser::Variable()
         if (s->m_type=="ADDRESS") m_currentToken.m_type=TokenType::ADDRESS;
         if (s->m_type=="LONG") m_currentToken.m_type=TokenType::LONG;
         if (s->m_type=="INTEGER") m_currentToken.m_type=TokenType::INTEGER;
+        if (s->m_type=="WORD") m_currentToken.m_type=TokenType::INTEGER;
         if (s->m_type=="BYTE") m_currentToken.m_type=TokenType::BYTE;
         if (s->m_type=="STRING") m_currentToken.m_type=TokenType::STRING;
         if (s->m_type=="CSTRING") m_currentToken.m_type=TokenType::CSTRING;
@@ -1059,7 +1060,7 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
     if (m_currentToken.m_type!=TokenType::TEOF)
         ErrorHandler::e.Error("End of file error");
 
-//    root->ExecuteSym(&SymbolTable::s);
+
     return root;
 }
 
@@ -1321,7 +1322,7 @@ QVector<Node *> Parser::VariableDeclarations()
     QVector<Node*> vars;
     vars.append(new NodeVar(m_currentToken));
 
-    m_symTab->Define(new Symbol(m_currentToken.m_value,""));
+    m_symTab->Define(new Symbol(m_currentToken.m_value,""),false);
     Eat(TokenType::ID);
 
     while (m_currentToken.m_type == TokenType::COMMA) {

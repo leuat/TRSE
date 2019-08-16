@@ -52,6 +52,7 @@ public:
     void HandleError(FatalErrorException fe, QString se);
     void FindLineNumberAndFile(int inLe, QString& file, int& outle);
     void Init6502Assembler();
+    void WarningUnusedVariables();
 };
 
 #endif // Compiler_H
