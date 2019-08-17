@@ -112,7 +112,10 @@ void Parser::InitBuiltinFunctions()
             Syntax::s.m_currentSystem == AbstractSystem::C128 ||
             Syntax::s.m_currentSystem == AbstractSystem::NES ||
             Syntax::s.m_currentSystem == AbstractSystem::VIC20 ||
-            Syntax::s.m_currentSystem == AbstractSystem::BBCM  ) {
+            Syntax::s.m_currentSystem == AbstractSystem::BBCM  ||
+            Syntax::s.m_currentSystem == AbstractSystem::PLUS4)
+
+             {
         InitBuiltinFunction(QStringList()<< "*", "initeightbitmul");
 
         InitBuiltinFunction(QStringList()<< "*", "init16x8mul");

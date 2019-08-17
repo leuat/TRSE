@@ -167,7 +167,10 @@ void SymbolTable::InitBuiltins()
     if (Syntax::s.m_currentSystem==AbstractSystem::C64 ||
             Syntax::s.m_currentSystem==AbstractSystem::C128 ||
             Syntax::s.m_currentSystem==AbstractSystem::VIC20 ||
-            Syntax::s.m_currentSystem==AbstractSystem::PET) {
+            Syntax::s.m_currentSystem==AbstractSystem::PET ||
+            Syntax::s.m_currentSystem==AbstractSystem::PLUS4)
+
+    {
 
         Define(new Symbol("screenmemory", "pointer"));
     }
@@ -212,6 +215,7 @@ QStringList SymbolTable::getUnusedVariables()
     QStringList lst;
     for (QString s : m_symbols.keys()) {
         if (!m_symbols[s]->isUsed)
+            if (m_symbols[s]->m_type.toLower()!="incsid")
             lst<<s;
     }
     return lst;
