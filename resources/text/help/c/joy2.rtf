@@ -1,0 +1,19 @@
+<p>The value joy2 (all lowercase) is created after a readjoy2() call.  It 
+    contains five flags in bits 0 to 4 to represent the directions on the joystick
+    and the fire button in port 2.  The bits will be 1 if that direction/button is currently held.
+</p>
+<p>Use JOY_UP, JOY_LEFT, JOY_DOWN, JOY_RIGHT and JOY_FIRE constants to determine which direction
+    is being held.
+</p>
+<p>Test with:</p>
+
+<code>
+        readjoy2();
+
+		if (joy2 & @JOY_UP) then printstring("UP",0,2);
+		if (joy2 & @JOY_DOWN) then printstring("DOWN",0,4);
+		if (joy2 & @JOY_LEFT) then printstring("LEFT",0,4);
+		if (joy2 & @JOY_RIGHT) then printstring("RIGHT",0,5);
+		if (joy2 & @JOY_FIRE) then printstring("FIRE",0,5);
+		
+</code>

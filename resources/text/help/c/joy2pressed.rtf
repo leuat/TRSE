@@ -1,0 +1,20 @@
+<p>The value joy2pressed (all lowercase) is created after a readjoy2() call.  It 
+    contains five flags in bits 0 to 4 to represent the directions on the joystick
+	and the fire button in port 1.  The bits will be 1 if that direction/button has just been pressed.
+	It will be 0 next time and not return to a value of 1 until the direction/button has been released and pressed again.
+</p>
+<p>Use JOY_UP, JOY_LEFT, JOY_DOWN, JOY_RIGHT and JOY_FIRE constants to determine which direction
+    has just been pressed.
+</p>
+<p>Test with:</p>
+
+<code>
+        readjoy2();
+
+		if (joy2pressed & @JOY_UP) then printstring("UP FIRST PRESS",0,14);
+		if (joy2pressed & @JOY_DOWN) then printstring("DOWN FIRST PRESS",0,16);
+		if (joy2pressed & @JOY_LEFT) then printstring("LEFT FIRST PRESS",0,16);
+		if (joy2pressed & @JOY_RIGHT) then printstring("RIGHT FIRST PRESS",0,17);
+		if (joy2pressed & @JOY_FIRE) then printstring("FIRE FIRST PRESS",0,17);
+		
+</code>
