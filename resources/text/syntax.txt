@@ -555,4 +555,4 @@ f ; AddObject; s,s,s,s, f,f,f,f,f,f
 f ; SetRotation; s,f,f,f
 f ; SetPosition; s,f,f,f
 f ; AddPosition; s,f,f,f
-
+f ; AddC64LineToData; f,f,f,f

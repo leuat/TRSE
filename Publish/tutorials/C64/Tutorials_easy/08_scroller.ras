@@ -1,6 +1,6 @@
 program Scroller;
 var
-	scrollVal,i : byte=0;
+	scrollVal : byte=0;
 	textPointer : pointer;
 	text : cstring = ("                                        ",
 					"THIS IS A SAMPLE SCROLLER TEXT",
@@ -46,6 +46,7 @@ end;
 
 
 // Forward declare "Bottom"
+
 interrupt Bottom();
 
 

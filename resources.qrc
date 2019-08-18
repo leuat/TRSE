@@ -246,5 +246,6 @@
         <file>resources/text/help/m/drawcolortextbox.rtf</file>
         <file>resources/images/colortextboxexample.png</file>
         <file>resources/images/petscii.png</file>
+        <file>resources/text/help/f/addc64linetodata.rtf</file>
     </qresource>
 </RCC>
