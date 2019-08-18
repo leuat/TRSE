@@ -89,7 +89,7 @@ begin
 	screen_bg_col:=black;
 	setmulticolormode();
 	clearscreen(4,screen_col_loc); // Set purple 
-	clearscreen($61,screen_char_loc); // Set  blue and white multicolors
+	clearscreen($63,^$4400); // Set  blue and white multicolors
 	VIC_DATA_LOC:=$18; // Bitmap memory screen starts at $6000
 	setbank(VIC_BANK1); 
 	clearbitmap(^$6000,32);	 // Clear the entire screen

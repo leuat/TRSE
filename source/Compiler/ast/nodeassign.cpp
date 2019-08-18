@@ -30,7 +30,7 @@ NodeAssign::NodeAssign(Node *left, Token t, Node *r):Node() {
     if (m_left->getType(nullptr)==TokenType::INTEGER) {// || m_left->getType(nullptr)==TokenType::POINTER) {
  //       qDebug() << "::NodeAssign INTEGER";
 //        m_right->setForceType(TokenType::INTEGER);
-        m_right->setForceType(m_left->getType(nullptr));
+//        m_right->setForceType(m_left->getType(nullptr));
     }
 
 }

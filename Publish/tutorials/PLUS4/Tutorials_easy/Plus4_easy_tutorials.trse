@@ -34,4 +34,5 @@ override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
 open_files = ,08_scroller.ras, 06_plasma.ras, 04_randomness.ras, 02_texty.ras, 01_hello_world.ras, 03_boxes.ras
-current_file = 08_scroller.ras
+current_file = 06_plasma.ras
+output_debug_symbols = 1
