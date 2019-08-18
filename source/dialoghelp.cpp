@@ -46,7 +46,7 @@ DialogHelp::DialogHelp(QWidget *parent, QString txt, QPalette pal) :
 
     CIniFile colors;
     colors.Load(Util::path + "themes/" + "dark_standard.ini");
-    m_highlighter = new Highlighter(colors, 0, nullptr);
+//    m_highlighter = new Highlighter(colors, 0, nullptr);
 
     if (txt!="")
         SearchForItem(txt);
@@ -140,8 +140,8 @@ void DialogHelp::LoadItem(QString findword)
                 QString val = "<h2 style=\"color: skyblue\">" + word + "( ";
                 int paramNo = 1;
                 for (QString s: params) {
-                    if (s=="s") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> float ]";
-                    if (s=="f") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> string ]";
+                    if (s=="f") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> float ]";
+                    if (s=="s") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> string ]";
                     val+=", ";
                     paramNo++;
 

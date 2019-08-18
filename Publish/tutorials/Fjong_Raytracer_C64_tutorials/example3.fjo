@@ -18,7 +18,7 @@ globals = {
 }
 
 output = {
-	resolution = { width = 64, height=24 },
+	resolution = { width = 32, height=24 },
 	c64_output = 0,
 	aspect = 1,
 	-- 0=charset, 1 = multicolor image 
@@ -46,9 +46,7 @@ Material1 = {
 -- Init is called on start  
  
 function Init()
-
-
-
+	-- add a single torus
 	AddObject("torus","torus1","","Material1",  0,0,0,  0.5, 0.2,0);
 	UpdateGraphics()
 
@@ -59,11 +57,16 @@ distance = 10
 frame = 0
 noFrames = 64
 char = 0
+-- Higher number compresses more, worsen quality
+compressRatio = 5
+dataWidth = 32
+dataHeight = 24
+screenCharacterInCharset = 0xA0
+
 
 function UpdateGraphics()
 
-  	t = ((frame+24)/noFrames)*360
-
+  	t = ((frame)/noFrames)*360
 	SetRotation("torus1",t,0,t);
 
 end
@@ -72,16 +75,15 @@ end
 function Update()
 
 	UpdateGraphics()
-
-
 	if (frame == noFrames) then 
-			CompressAndSaveHorizontalData(32,3, "data/example3_screen.bin","data/example3_table.bin");
+			
+			CompressAndSaveHorizontalData(dataWidth,compressRatio, "data/example3_screen.bin","data/example3_table.bin");
 			Message("Files written to data/example3_...bin")
 			
 	end
 
 	if (frame<noFrames) then
-	     AddScreen(32,24, 0xA0, 32, 40, 48)
+	     AddScreen(dataWidth,dataHeight,  screenCharacterInCharset,  (cos(frame/9.0)+2)*16)
 	end
 
 	frame=frame+1

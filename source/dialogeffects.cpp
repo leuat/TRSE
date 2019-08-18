@@ -457,7 +457,7 @@ static int ClearObjects(lua_State *L) {
 static int AddScreen(lua_State* L) {
 
     if (m_effect!=nullptr)
-        m_compression.AddScreen(m_screenData, m_effect->m_img,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tonumber(L,5),lua_tonumber(L,6));
+        m_compression.AddScreen(m_screenData, m_effect->m_img,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));//, lua_tonumber(L,5),lua_tonumber(L,6));
 
     return 0;
 }

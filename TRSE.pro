@@ -79,6 +79,7 @@ SOURCES += main.cpp\
     imageworker.cpp \
     source/Compiler/ast/nodecase.cpp \
     source/Compiler/systems/systemplus4.cpp \
+    source/PmmEdit/fjonghighlighter.cpp \
     source/dialogexport3d.cpp \
     source/toolbox.cpp \
     source/toolboxitem.cpp \
@@ -214,6 +215,7 @@ HEADERS  += mainwindow.h \
     imageworker.h \
     source/Compiler/ast/nodecase.h \
     source/Compiler/systems/systemplus4.h \
+    source/PmmEdit/fjonghighlighter.h \
     source/dialogexport3d.h \
     source/toolbox.h \
     source/toolboxitem.h \

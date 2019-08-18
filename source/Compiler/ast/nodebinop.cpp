@@ -50,18 +50,24 @@ void NodeBinOP::ApplyFlags()
 //    qDebug() << "::NodeBinop Applying Flags";
     bool a = m_left->isWord(nullptr);
     bool b = m_right->isWord(nullptr);
+
+   // qDebug() << "::NodeBinop a b " << a << b;
+
     if (m_op.m_type==TokenType::MUL) {
-        if (a || b)
+     //   if (a || b)
             flags["mul16"] = true;
-        if (!a && !b)
+       // if (!a && !b)
             flags["mul8"] = true;
     }
     if (m_op.m_type==TokenType::DIV) {
-        if (a || b)
+       // if (a || b)
             flags["div16"] = true;
-        if (!a && !b)
+        //if (!a && !b)
             flags["div8"] = true;
     }
+    m_left->ApplyFlags();
+    m_right->ApplyFlags();
+//    qDebug() << flags.keys();
 }
 
 bool NodeBinOP::isAddress() {

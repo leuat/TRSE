@@ -247,5 +247,7 @@
         <file>resources/images/colortextboxexample.png</file>
         <file>resources/images/petscii.png</file>
         <file>resources/text/help/f/addc64linetodata.rtf</file>
+        <file>resources/text/help/f/saverawdata.rtf</file>
+        <file>resources/text/help/f/compressandsavehorizontaldata.rtf</file>
     </qresource>
 </RCC>

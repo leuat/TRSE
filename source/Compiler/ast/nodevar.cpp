@@ -44,12 +44,12 @@ TokenType::Type NodeVar::getType(Assembler *as) {
         TokenType::Type t = m_op.m_type;
         if (parserSymTab != nullptr) {
             Symbol* s = parserSymTab->Lookup(value, m_op.m_lineNumber);
-         //   qDebug() << "NodeVar::getType "<< s->m_name << TokenType::getType(s->getTokenType());
+//            qDebug() << "NodeVar::getType "<< s->m_name << TokenType::getType(s->getTokenType()) << " with forcetype " << TokenType::getType(m_forceType);
             if (s!=nullptr)
                 t= s->getTokenType();
         }
         //qDebug() << "Forcetype = " << TokenType::getType(m_forceType);
-        if (m_forceType!=TokenType::NADA && t!=TokenType::POINTER)
+        if ((m_forceType!=TokenType::NADA))// && (t!=TokenType::POINTER && m_expr==nullptr))
             return m_forceType;
 
         return t;

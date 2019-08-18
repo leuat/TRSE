@@ -583,8 +583,36 @@ p; Screen; C64, PLUS4, VIC20
 #
 #
 #
+
+
+rf; AND;
+rf; BREAK;
+rf; DO;
+rf; ELSE;
+rf; ELSEIF;
+rf; END;
+rf; FALSE;
+rf; FOR;
+rf; IF;
+rf; IN;
+rf; LOCAL;
+rf; NIL;
+rf; NOT;
+rf; OR;
+rf; REPEAT;
+rf; FUNCTION;
+rf; RETURN;
+rf; THEN;
+rf; TRUE;
+rf; WHILE;
+rf; UNTIL;
+
+
 f ; AddObject; s,s,s,s, f,f,f,f,f,f
 f ; SetRotation; s,f,f,f
 f ; SetPosition; s,f,f,f
 f ; AddPosition; s,f,f,f
 f ; AddC64LineToData; f,f,f,f
+f ; SaveRawData; s
+f ; CompressAndSaveHorizontalData ; f,f,s,s
+

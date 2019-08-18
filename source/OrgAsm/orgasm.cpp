@@ -715,7 +715,6 @@ void Orgasm::SaveSymbolsList(QString filename)
         }
 
 
-
     }
 }
 
