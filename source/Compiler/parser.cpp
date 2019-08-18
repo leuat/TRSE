@@ -110,12 +110,10 @@ void Parser::InitBuiltinFunctions()
 
     if (Syntax::s.m_currentSystem == AbstractSystem::C64 ||
             Syntax::s.m_currentSystem == AbstractSystem::C128 ||
+            Syntax::s.m_currentSystem == AbstractSystem::PLUS4 ||
             Syntax::s.m_currentSystem == AbstractSystem::NES ||
             Syntax::s.m_currentSystem == AbstractSystem::VIC20 ||
-            Syntax::s.m_currentSystem == AbstractSystem::BBCM  ||
-            Syntax::s.m_currentSystem == AbstractSystem::PLUS4)
-
-             {
+            Syntax::s.m_currentSystem == AbstractSystem::BBCM  ) {
         InitBuiltinFunction(QStringList()<< "*", "initeightbitmul");
 
         InitBuiltinFunction(QStringList()<< "*", "init16x8mul");
@@ -1282,10 +1280,8 @@ QVector<Node*> Parser::Declarations(bool isMain)
 
         Eat(TokenType::SEMI);
         Node* block = nullptr;
+        qDebug() << "HERE0 " << procName;
         NodeProcedureDecl* procDecl = new NodeProcedureDecl(tok, procName, paramDecl, block, type);
-        if (m_procedures[procName]!=nullptr) {
-            procDecl->m_isUsed = m_procedures[procName]->m_isUsed;
-        }
         m_procedures[procName] = procDecl;
 
 
@@ -1296,13 +1292,14 @@ QVector<Node*> Parser::Declarations(bool isMain)
         //decl.append(procDecl);
         if (block!=nullptr)
             Eat(TokenType::SEMI);
+        else {
+            // Check if already defined
 
-        if (block==nullptr)  { // Is a forward declaration
-            procDecl->m_isUsed = true;
         }
-
-
+        if (m_procedures[procName]!=nullptr)
+            procDecl->m_isUsed = m_procedures[procName]->m_isUsed;
         procDecl->AppendBlock(block);
+        //qDebug() <<procName;
 
         if (block!=nullptr) {
             bool ok = true;
