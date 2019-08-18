@@ -698,7 +698,7 @@ void Orgasm::SaveSymbolsList(QString filename)
         QTextStream stream( &file );
         stream<<"; labels" << endl;
         for (QString s: m_symbolsList) {
-            stream << "al  " << Util::numToHex(m_symbols[s]) << "  "<< s << endl;
+            stream << "al  " << Util::numToHex(m_symbols[s]) << " ."<< s << endl;
         }
     }
 }
