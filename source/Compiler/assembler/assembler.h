@@ -154,7 +154,6 @@ public:
     QVector<Appendix> m_extraBlocks;
     Appendix m_chipMem;
 
-
     QVector<MemoryBlock> m_userWrittenBlocks;
     QStringList m_startInsertAssembler;
     QString m_zeropageScreenMemory="$fb";

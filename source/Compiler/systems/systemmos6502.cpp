@@ -27,6 +27,11 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
         Orgasm orgAsm;
         orgAsm.Assemble(filename+".asm", filename+".prg");
         output = orgAsm.m_output;
+
+        if (m_projectIni->getdouble("output_debug_symbols")==1.0)
+            orgAsm.SaveSymbolsList(filename+".dup");
+
+
     }
     // Machine Code Analyzer
     VerifyMachineCodeZP(filename+".prg");
@@ -135,6 +140,8 @@ void SystemMOS6502::PostProcess(QString &text, QString filename, QString current
 {
     QString output;
 //    TestForCodeOverwrite(codeEnd,text);
+
+
 
     if (m_projectIni->getString("output_type")=="crt") {
         QByteArray output;

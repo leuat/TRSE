@@ -48,13 +48,20 @@ public:
     bool m_isUsed = false;
     bool m_forceAddress = false;
     bool m_ignoreSuccess = false; // Used for binary expressions
-
-
+    // Used to set various states, such as if binary operations are used etc
+    static QMap<QString, bool> flags;
+    static SymbolTable* parserSymTab;
 
     Node* m_left = nullptr, *m_right = nullptr;
     bool m_isWord = false;
     static MemoryBlockInfo m_staticBlockInfo;
     static MemoryBlock* m_curMemoryBlock;
+
+    virtual void setForceType(TokenType::Type t) {
+        m_forceType  =t;
+    }
+
+    virtual void ApplyFlags() {}
 
     MemoryBlockInfo m_blockInfo;
     Node() {
@@ -132,7 +139,8 @@ public:
     virtual bool isLong(Assembler* as) { return false;}
     virtual bool isByte(Assembler* as) { return false;}
 
-   virtual bool isMinusOne() { return false; }
+
+    virtual bool isMinusOne() { return false; }
     virtual bool isOne() { return false; }
 
     bool verifyBlockBranchSize(Assembler *as, Node* testBlock);
