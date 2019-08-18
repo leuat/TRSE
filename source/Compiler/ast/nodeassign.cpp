@@ -22,6 +22,17 @@
 #include "nodeassign.h"
 
 
+NodeAssign::NodeAssign(Node *left, Token t, Node *r):Node() {
+    m_right = r;
+    m_op = t;
+    m_left = left;
+    if (m_left->getType(nullptr)==TokenType::INTEGER) {
+//        qDebug() << "::NodeAssign INTEGER";
+        m_right->setForceType(TokenType::INTEGER);
+    }
+
+}
+
 void NodeAssign::ExecuteSym(SymbolTable *symTab) {
     QString varName = ((NodeVar*)m_left)->value;
     Symbol* varSymbol = symTab->Lookup(varName, m_op.m_lineNumber);

@@ -101,7 +101,7 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
 
     if (system->m_processor==AbstractSystem::M68000) {
 //        m_assembler->blocks.append(m_assembler->m_chipMem);
-        m_assembler->m_chipMem.m_source.insert(0," 	CNOP 0,4");
+        m_assembler->m_chipMem.m_source.insert(0," 	CkNOP 0,4");
         m_assembler->m_chipMem.m_source.insert(0,"	Section ChipRAM,Data_c");
         m_assembler->m_source <<m_assembler->m_chipMem.m_source;
     }
@@ -235,7 +235,7 @@ void Compiler::FindLineNumberAndFile(int inLe, QString& file, int& outle)
             outle = inLe - fp.m_startLine;
             return;
         }
-        qDebug() << "Include file size : " << (fp.m_endLine-fp.m_startLine);
+//        qDebug() << "Include file size : " << (fp.m_endLine-fp.m_startLine);
         cur=cur - (fp.m_endLine-fp.m_startLine);
     }
     outle = cur;

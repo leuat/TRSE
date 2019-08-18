@@ -42,11 +42,7 @@ public:
     Node* m_arrayIndex = nullptr;
 
 
-    NodeAssign(Node* left, Token t, Node* r):Node() {
-        m_right = r;
-        m_op = t;
-        m_left = left;
-    }
+    NodeAssign(Node* left, Token t, Node* r);
 
     void ExecuteSym(SymbolTable* symTab) override;
 

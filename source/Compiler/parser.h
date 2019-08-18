@@ -89,7 +89,7 @@ public:
     void InitObsolete();
     void Eat(TokenType::Type t);
     void VerifyToken(Token t);
-
+    void InitSystemPreprocessors();
     void HandlePreprocessorInParsing();
     void StripWhiteSpaceBeforeParenthesis();
     void RemoveComments();
