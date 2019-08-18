@@ -43,7 +43,7 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -717,13 +717,6 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="leProgramStartAddress">
-            <property name="text">
-             <string>$1000</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="1">
            <widget class="QCheckBox" name="chkIgnoreBasic">
             <property name="text">
@@ -731,10 +724,24 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="leProgramStartAddress">
+            <property name="text">
+             <string>$1000</string>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="1">
            <widget class="QCheckBox" name="chkStripPrg">
             <property name="text">
              <string>Strip PRG 2-byte header</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QCheckBox" name="chkDebugSymbols">
+            <property name="text">
+             <string>Output debug symbols</string>
             </property>
            </widget>
           </item>

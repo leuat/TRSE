@@ -171,4 +171,5 @@ public:
     void ProcessOrgData(OrgasmLine& ol);
     void ProcessIncBin(OrgasmLine& ol);
     void ProcessInstructionData(OrgasmLine& ol, OrgasmData::PassType pd);
+    void SaveSymbolsList(QString dupFile);
 };

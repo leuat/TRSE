@@ -687,6 +687,21 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     }
 }
 
+void Orgasm::SaveSymbolsList(QString filename)
+{
+    if (QFile::exists(filename))
+        QFile::remove(filename);
+
+    QFile file( filename );
+    if ( file.open(QIODevice::ReadWrite) )
+    {
+        QTextStream stream( &file );
+        stream<<"; labels" << endl;
+        for (QString s: m_symbolsList) {
+            stream << "al  " << Util::numToHex(m_symbols[s]) << "  "<< s << endl;
+        }
+    }
+}
 
 
 

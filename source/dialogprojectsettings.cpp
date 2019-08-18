@@ -107,6 +107,7 @@ void DialogProjectSettings::FillFromIni()
     ui->chkIgnoreBasic->setChecked(m_ini->getdouble("override_target_settings_sys")==1);
     ui->chkStripPrg->setChecked(m_ini->getdouble("override_target_settings_prg")==1);
 
+    ui->chkDebugSymbols->setChecked(m_ini->getdouble("output_debug_symbols")==1);
 
 
 
@@ -220,6 +221,7 @@ void DialogProjectSettings::FillToIni()
 
     m_ini->setStringList("build_list", ui->teBuildList->toPlainText().remove("=").split("\n"));
 
+    m_ini->setFloat("output_debug_symbols",ui->chkDebugSymbols->isChecked());
 
 //    FillTabDataToIni();
 
