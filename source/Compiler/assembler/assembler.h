@@ -154,18 +154,17 @@ public:
     QVector<Appendix> m_extraBlocks;
     Appendix m_chipMem;
 
-
     QVector<MemoryBlock> m_userWrittenBlocks;
     QStringList m_startInsertAssembler;
     QString m_zeropageScreenMemory="$fb";
     QMap<QString, QString> m_replaceValues;
-
 
     RegisterStack m_regAcc;
     RegisterStack m_regMem;
     Stack m_varStack;
 
     QString m_lblFailed, m_lblSuccess;
+    int m_currentBreakpoint = 0;
 
 //    static QStringList m_internalZP;
     static RegisterStack m_internalZP;

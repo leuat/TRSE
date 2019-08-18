@@ -53,6 +53,11 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     QString emu = m_iniFile->getString("emulator");
     QStringList params;
 
+    QString debugFile =fileName.split(".").first()+".dup";
+    if (QFile::exists(debugFile)) {
+        params<<"-moncommands"<<debugFile;
+    }
+
     if (m_projectIniFile->getString("system")=="VIC20") {
         emu = m_iniFile->getString("vic20_emulator");
         params<< "-autostartprgmode" << "1";

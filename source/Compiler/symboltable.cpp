@@ -177,6 +177,7 @@ void SymbolTable::InitBuiltins()
     }
 
     if (Syntax::s.m_currentSystem==AbstractSystem::C64 ||
+            Syntax::s.m_currentSystem==AbstractSystem::PLUS4 ||
             Syntax::s.m_currentSystem==AbstractSystem::C128 ||
             Syntax::s.m_currentSystem==AbstractSystem::VIC20 ||
             Syntax::s.m_currentSystem==AbstractSystem::PET) {

@@ -21,7 +21,7 @@ void Compression::SaveCharset(QString filename, QImage& img,int w, int h, int di
 
 }
 
-void Compression::AddScreen(QByteArray &data, QImage& img,int w, int h, char base, int div, char ca1, char ca2)
+/*void Compression::AddScreenComplicated(QByteArray &data, QImage& img,int w, int h, char base, int div, char ca1, char ca2)
 {
 
     for (int y=0;y<h;y+=1)
@@ -41,6 +41,19 @@ void Compression::AddScreen(QByteArray &data, QImage& img,int w, int h, char bas
         }
 
 }
+*/
+void Compression::AddScreen(QByteArray &data, QImage& img,int w, int h, char base, int div)
+{
+
+    for (int y=0;y<h;y+=1)
+        for (int x=0;x<w;x+=1) {
+            char c1;
+            c1 = QColor(img.pixel(x,y)).red()/div;
+            data.append(c1+base);
+        }
+
+}
+
 
 
 void Compression::AddToDataX(QByteArray &data, MultiColorImage& img, int xp, int yp, int w, int h)

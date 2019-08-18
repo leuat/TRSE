@@ -44,11 +44,14 @@ public:
 
     bool isPureNumeric() override;
 
-
+    void ApplyFlags() override;
     bool isAddress() override;
 
 
     bool isWord(Assembler* as) override;
+
+    void setForceType(TokenType::Type t) override;
+
 
     QString getAddress() override {
         return HexValue();

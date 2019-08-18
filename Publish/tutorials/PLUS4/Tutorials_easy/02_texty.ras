@@ -1,0 +1,39 @@
+program Texty;
+var  
+	// Define three variables : position x, position y and time
+   x,y,time,i: byte = 0;  
+
+begin
+	screen_fg_col := black;
+
+ 	// First, fill color ram with white
+	ClearScreen(white, screen_col_loc);
+	// Set black border
+	screen_bg_col := black;
+	// infinite loop
+	while (true) do
+	begin
+		// Make sure we wait for 1 raster cycle to complete
+		waitforraster(252);
+		// Clear screen with character $20 (space)
+		ClearScreen($20, screen_char_loc);
+		// Calculate x,y some sine values (making a circle)
+		// if sine[x] then sine[x+64] is equal to cosine  
+		x := sine[time] / 12 + 6;		
+		y := sine[time+64] / 16 + 4;		
+		// move "screenmemory" cursor to x,y in screen memory
+		moveto(x, y, hi(screen_char_loc));
+		
+		i:=time / 64; // i will now have values between 0 and 3 (since time is between 0 and 255)
+		// Print some random string
+		case i of
+			0:	printstring("I AM FISH", 0, screen_width);
+			1:	printstring("ARE YOU FISH", 0, screen_width);
+			2:	printstring("ME AM CAT", 0, screen_width);
+			3:	printstring("OM NOM NOM", 0, screen_width);
+		end;
+		// Increase the timer
+		time := time + 1;
+	end;
+
+end.

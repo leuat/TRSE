@@ -47,6 +47,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("CreateInteger"))
         CreateInteger(as,"y");
 
+    if (Command("AddBreakpoint")) {
+        as->Label("trse_breakpoint_"+QString::number(as->m_currentBreakpoint++));
+    }
+
 
     if (Command("CreatePointer"))
         CreateInteger(as,"x");
@@ -207,8 +211,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
             as->Asm("nop");
     }
 
-    if (Command("KernalInterrupt"))
-        as->Asm("jmp $ea81        ; return to kernal interrupt routine");
+    if (Command("KernalInterrupt")) {
+        if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4)
+            as->Asm("jmp $fcc3        ; return to kernal interrupt routine");
+        else
+            as->Asm("jmp $ea81        ; return to kernal interrupt routine");
+    }
 
     if (Command("Loop"))
         as->Asm("jmp * ; loop like (�/%");
@@ -266,7 +274,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         DisableInterrupts(as);
         RasterIRQ(as);
         EnableRasterIRQ(as);
-        as->Asm("asl $d019");
+        if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4)
+            as->Asm("asl $ff09");
+        else
+            as->Asm("asl $d019");
         as->Asm("cli");
     }
 
@@ -340,17 +351,31 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     }
 */
     if (Command("screenoff")) {
-        as->Asm("lda $D011");
-        as->Asm("and #%01101111");
-        as->Asm("sta $D011");
-       }
+        if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4) {
+            as->Asm("lda $ff06");
+            as->Asm("and #%11101111");
+            as->Asm("sta $ff06");
+        }
+        else {
+            as->Asm("lda $D011");
+            as->Asm("and #%01101111");
+            as->Asm("sta $D011");
+        }
+    }
 
     if (Command("screenon")) {
-        as->Asm("lda $D011");
-        as->Asm("ora #%00010000");
-        as->Asm("and #%01111111");
-        as->Asm("sta $D011");
-       }
+        if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4) {
+            as->Asm("lda $ff06");
+            as->Asm("ora #%00010000");
+            as->Asm("sta $ff06");
+        }
+        else {
+            as->Asm("lda $D011");
+            as->Asm("ora #%00010000");
+            as->Asm("and #%01111111");
+            as->Asm("sta $D011");
+        }
+    }
 
     if (Command("decrunch"))
         Decrunch(as);
@@ -425,20 +450,36 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     if (Command("setmulticolormode")) {
         as->Comment("Multicolor mode");
-        as->Asm("lda #16"); // 0000 0000
-        as->Asm("ora $d016");
-        as->Asm("sta $d016");
+        if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4) {
+            as->Asm("lda $ff07");
+            as->Asm("ora #%00010000");
+            as->Asm("sta $ff07");
+        }
+        else {
+            as->Asm("lda #16"); // 0000 0000
+            as->Asm("ora $d016");
+            as->Asm("sta $d016");
+        }
     }
     if (Command("setregularcolormode")) {
         as->Comment("Regularcolor mode");
-        as->Asm("lda $d016");
-        as->Asm("and #%11101111");
-        as->Asm("sta $d016");
-
+        if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4) {
+            as->Asm("lda $ff07");
+            as->Asm("and #%11101111");
+            as->Asm("sta $ff07");
+        }
+        else {
+            as->Asm("lda $d016");
+            as->Asm("and #%11101111");
+            as->Asm("sta $d016");
+        }
     }
 
     if (Command("hideborderx")) {
-        ToggleRegisterBit(as,"$D016",3,false);
+        if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4)
+            ToggleRegisterBit(as,"$ff07",3,false);
+        else
+            ToggleRegisterBit(as,"$D016",3,false);
 /*        as->Comment("Hide y border");
         as->Asm("lda $d011");
         as->Asm("and #$77  ; change bit 4");
@@ -446,7 +487,11 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     }
     if (Command("hidebordery")) {
-        ToggleRegisterBit(as,"$D011",3,false);
+        if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4)
+            ToggleRegisterBit(as,"$ff06",3,false);
+        else
+            ToggleRegisterBit(as,"$D011",3,false);
+
 /*        as->Comment("Hide x border");
         as->Asm("lda $D016");
         as->Asm("and #$f7  ; change bit 4");
@@ -455,9 +500,16 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     }
     if (Command("settextmode")) {
         as->Comment("Regular text mode ");
-        as->Asm("lda $D011");
-        as->Asm("and #%01011111");
-        as->Asm("sta $D011");
+        if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4) {
+            as->Asm("lda $ff06");
+            as->Asm("and #%11011111");
+            as->Asm("sta $ff06");
+        }
+        else {
+            as->Asm("lda $D011");
+            as->Asm("and #%01011111");
+            as->Asm("sta $D011");
+        }
     }
     if (Command("setbank")) {
         SetBank(as);
@@ -975,8 +1027,10 @@ void Methods6502::InitRandom256(Assembler *as)
 
     if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64)
         as->Asm("eor $dc04");
-    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
+    else if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
         as->Asm("eor $9124");
+    else if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4)
+        as->Asm("eor $ff00");
 
     //as->Asm("rts");
 
@@ -1018,7 +1072,7 @@ void Methods6502::InitMoveto(Assembler *as)
     as->Asm("beq sydone");
     as->Label("syloop");
     as->Asm("clc");
-    if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64)
+    if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64 || Syntax::s.m_currentSystem==AbstractSystem::PLUS4)
         as->Asm("adc #40");
     if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
         as->Asm("adc #22");
@@ -1756,12 +1810,18 @@ void Methods6502::InitRandom(Assembler *as)
     m_node->m_isInitialized["rand"] = true;
     as->Asm ("; init random");
     as->Label("init_random_call");
+  if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4) {
+        // Initializing on Plus/4 is unnecessary
+    }
+    else {
     as->Asm("LDA #$FF");
     as->Asm("STA $D40E");
     as->Asm("STA $D40F");
     as->Asm("LDA #$80");
     as->Asm("STA $D412");
+    }
     as->Asm("rts");
+
     as->DeclareVariable("upperRandom", "byte","0");
     as->DeclareVariable("lowerRandom", "byte","0");
     as->Label("callRandom");
@@ -1769,7 +1829,13 @@ void Methods6502::InitRandom(Assembler *as)
     as->Asm("sbc lowerRandom");
     as->Asm("sta upperRandom");
     as->Label("RandomLoop");
-    as->Asm("LDA $D41B ; get random value");
+    if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4) {
+        as->Asm("LDA $ff00 ; get random value");
+        as->Asm("EOR $ff1e");
+    }
+    else {
+        as->Asm("LDA $D41B ; get random value");
+    }
     as->Asm("CMP upperRandom  ; compare to");
     as->Asm("BCS RandomLoop   ; branch if value >");
     as->Asm("ADC lowerRandom");
@@ -1997,10 +2063,18 @@ void Methods6502::ScrollX(Assembler *as)
     as->Comment("ScrollX method");
 
     as->Asm("sta " + as->m_tempZeroPointers[2]);
-    as->Asm("lda $d016  ");
-    as->Asm("and #$F8");
-    as->Asm("ora " +as->m_tempZeroPointers[2]);
-    as->Asm("sta $d016");
+    if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4) {
+        as->Asm("lda $ff07");
+        as->Asm("and #$F8");
+        as->Asm("ora " +as->m_tempZeroPointers[2]);
+        as->Asm("sta $ff07");
+    }
+    else {
+        as->Asm("lda $d016  ");
+        as->Asm("and #$F8");
+        as->Asm("ora " +as->m_tempZeroPointers[2]);
+        as->Asm("sta $d016");
+    }
 }
 
 
@@ -2014,12 +2088,19 @@ void Methods6502::ScrollY(Assembler *as)
     LoadVar(as,0);
     as->Asm("sta " + as->m_tempZeroPointers[2]);
 
-    as->Asm("lda $d011  ");
-    as->Asm("and #$78"); // 8 = 1000
-    as->Asm("ora "+as->m_tempZeroPointers[2]);
-    as->Asm("and #$7F"); // 8 = 1000
-    as->Asm("sta $d011");
-
+    if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4) {
+        as->Asm("lda $ff06");
+        as->Asm("and #$f8");
+        as->Asm("ora "+as->m_tempZeroPointers[2]);
+        as->Asm("sta $ff06");
+    }
+    else {
+        as->Asm("lda $d011  ");
+        as->Asm("and #$78"); // 8 = 1000
+        as->Asm("ora "+as->m_tempZeroPointers[2]);
+        as->Asm("and #$7F"); // 8 = 1000
+        as->Asm("sta $d011");
+    }
 }
 
 void Methods6502::RightBitShift(Assembler *as, bool isRight)
@@ -2420,7 +2501,17 @@ void Methods6502::SetCharsetLocation(Assembler *as)
     as->Asm("ora #"+QString::number(b));
     as->Asm("sta "+addr);
     }
-    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
+    else if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4) {
+        uchar n = ((unsigned int)v->m_val % 0xF800) >> 8;
+        as->Asm("lda $ff12"); // Charset reading from RAM
+        as->Asm("and #%11111011");
+        as->Asm("sta $ff12");
+        as->Asm("lda $ff13"); // Charset location
+        as->Asm("and #%00000111");
+        as->Asm("ora #"+QString::number(n));
+        as->Asm("sta $ff13");
+    }
+    else if (Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
         int n = (unsigned int)v->m_val;
         QString v = "";
         if (n==0x8000) v="0000";
@@ -3329,19 +3420,32 @@ void Methods6502::SetMemoryConfig(Assembler *as)
 
         as->Asm("lda #"+Util::numToHex(v));
         as->Asm("sta $FF00");
-
     }
+    if (Syntax::s.m_currentSystem == AbstractSystem::PLUS4) {
+        m_node->RequireNumber(m_node->m_params[0], "SetMemoryConfig", m_node->m_op.m_lineNumber);
 
+        if (dynamic_cast<NodeNumber*>(m_node->m_params[0])->m_val!=0)
+            as->Asm("sta $ff3f");
+        else
+            as->Asm("sta $ff3e");
+    }
 }
 
 void Methods6502::EnableRasterIRQ(Assembler* as)
 {
     as->Comment("Enable raster IRQ");
-    as->Asm("lda $d01a");
-    as->Asm("ora #$01");
-    as->Asm("sta $d01a");
-    as->Asm("lda #$1B");
-    as->Asm("sta $d011");
+    if (Syntax::s.m_currentSystem == AbstractSystem::PLUS4) {
+        as->Asm("lda $ff09");
+        as->Asm("ora #$02");
+        as->Asm("sta $ff09");
+    }
+    else {
+        as->Asm("lda $d01a");
+        as->Asm("ora #$01");
+        as->Asm("sta $d01a");
+        as->Asm("lda #$1B");
+        as->Asm("sta $d011");
+    }
 }
 
 void Methods6502::StartIRQ(Assembler *as)
@@ -3357,20 +3461,34 @@ void Methods6502::StartIRQ(Assembler *as)
     }
 
     if (Syntax::s.m_currentSystem == AbstractSystem::C64) {
-
-    m_node->RequireNumber(m_node->m_params[0], "StartIRQ", m_node->m_op.m_lineNumber);
-    NodeNumber* n = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
-    if (n->m_val==1) {
-        as->Asm("asl $d019");
+        m_node->RequireNumber(m_node->m_params[0], "StartIRQ", m_node->m_op.m_lineNumber);
+        NodeNumber* n = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+        if (n->m_val==1) {
+            as->Asm("asl $d019");
+        }
+        else {
+            as->Asm("pha");
+            as->Asm("txa");
+            as->Asm("pha");
+            as->Asm("tya");
+            as->Asm("pha");
+            as->Asm("asl $d019");
+        }
     }
-    else {
-        as->Asm("pha");
-        as->Asm("txa");
-        as->Asm("pha");
-        as->Asm("tya");
-        as->Asm("pha");
-        as->Asm("asl $d019");
-    }
+    if (Syntax::s.m_currentSystem == AbstractSystem::PLUS4) {
+        m_node->RequireNumber(m_node->m_params[0], "StartIRQ", m_node->m_op.m_lineNumber);
+        NodeNumber* n = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+        if (n->m_val==1) {
+            as->Asm("asl $ff09");
+        }
+        else {
+            as->Asm("pha");
+            as->Asm("txa");
+            as->Asm("pha");
+            as->Asm("tya");
+            as->Asm("pha");
+            as->Asm("asl $ff09");
+        }
     }
     if (Syntax::s.m_currentSystem == AbstractSystem::C128) {
         as->Asm("lda $d019");
@@ -3397,26 +3515,22 @@ void Methods6502::StartIRQWedge(Assembler *as)
     NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
 
     as->Asm("txs");
-
-
-
     as->Asm("ldx #"+Util::numToHex(num->m_val));
-
     as->Label(lbl1);
-
     as->Asm("dex");
-
     as->Asm("bne "+lbl1);
-
     as->Asm("bit $ea");
 
-
-    as->Asm("lda $d012");
-
-    as->Asm("cmp $d012");
+    if (Syntax::s.m_currentSystem == AbstractSystem::PLUS4) {
+        as->Asm("lda $ff1d");
+        as->Asm("cmp $ff1d");
+    }
+    else {
+        as->Asm("lda $d012");
+        as->Asm("cmp $d012");
+    }
 
     as->Asm("beq "+lbl2);
-
     as->Label(lbl2);
 
     as->PopLabel("startirqwedge_lbl1");
@@ -3441,6 +3555,17 @@ void Methods6502::CloseIRQ(Assembler *as, bool isWedge)
 
         if (isWedge)
             as->Asm("asl $D019");
+
+        as->Asm("pla");
+        as->Asm("tay");
+        as->Asm("pla");
+        as->Asm("tax");
+        as->Asm("pla");
+    }
+    if (Syntax::s.m_currentSystem == AbstractSystem::PLUS4) {
+
+        if (isWedge)
+            as->Asm("asl $ff09");
 
         as->Asm("pla");
         as->Asm("tay");
@@ -4094,9 +4219,13 @@ void Methods6502::RasterIRQ(Assembler *as)
     m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
 
+    if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4)
+        as->Asm("sta $ff0b");
+    else
+        as->Asm("sta $d012");
+
     if (num->m_val==0) {
 //        as->Asm("lda #$(adresstosignalIRQ)
-        as->Asm("sta $d012");
         as->Asm("lda #<"+name);
         as->Asm("sta $fffe");
         as->Asm("lda #>"+name);
@@ -4104,14 +4233,11 @@ void Methods6502::RasterIRQ(Assembler *as)
     }
     else
     {
-        as->Asm("sta $d012");
         as->Asm("lda #<"+name);
         as->Asm("sta $0314");
         as->Asm("lda #>"+name);
         as->Asm("sta $0315");
-
     }
-
 }
 
 void Methods6502::VIAIRQ(Assembler *as)
@@ -4228,7 +4354,7 @@ void Methods6502::ClearScreen(Assembler *as)
 
     AddMemoryBlock(as,1);
 
-    if (Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64 || Syntax::s.m_currentSystem==AbstractSystem::NES || Syntax::s.m_currentSystem==AbstractSystem::PET) {
+    if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4 || Syntax::s.m_currentSystem==AbstractSystem::C128 || Syntax::s.m_currentSystem==AbstractSystem::C64 || Syntax::s.m_currentSystem==AbstractSystem::NES || Syntax::s.m_currentSystem==AbstractSystem::PET) {
 
         QString lbl = as->NewLabel("clearloop");
         QString shift = Util::numToHex(val);
@@ -4311,8 +4437,10 @@ void Methods6502::WaitForRaster(Assembler *as)
  //   as->Label("lblTest");
     if (Syntax::s.m_currentSystem==AbstractSystem::C64 || Syntax::s.m_currentSystem==AbstractSystem::C128)
         as->Asm("cpx $d012");
-    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
+    else if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
         as->Asm("cpx $9004");
+    else if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4)
+        as->Asm("cpx $ff1d");
 
     as->Asm("bne *-3");
 

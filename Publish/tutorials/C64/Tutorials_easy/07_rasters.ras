@@ -1,4 +1,5 @@
 program Rasters;
+var
 
 @define kernal "1"
 

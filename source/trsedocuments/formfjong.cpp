@@ -112,7 +112,7 @@ void FormFjong::SetupHighlighter()
     p.setColor(QPalette::Base, colors.getColor("backgroundcolor"));
     p.setColor(QPalette::Text, colors.getColor("textcolor"));
     ui->txtEditor->setPalette(p);
-    highlighter = new Highlighter(colors, 0, ui->txtEditor->document());
+    highlighter = new FjongHighlighter(colors, 0, ui->txtEditor->document());
 
     //    qDebug() << "UPDATE " << m_iniFile->getString("theme");
 

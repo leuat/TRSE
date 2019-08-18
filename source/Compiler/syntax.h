@@ -74,9 +74,9 @@ public:
 class Syntax
 {
 public:
-    QVector<Token> reservedWords;
+    QVector<Token> reservedWords, reservedWordsFjong;
     //QVector<BuiltInFunction> builtinFunctions;
-    QMap<QString, BuiltInFunction> builtInFunctions;
+    QMap<QString, BuiltInFunction> builtInFunctions, builtinFunctionsFjong;
   //  enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA};
     QString m_syntaxData; // File syntax data
     AbstractSystem::System m_currentSystem;
@@ -87,8 +87,8 @@ public:
     bool m_stripPrg = false;
     Syntax();
     void Init(AbstractSystem::System s,QString p);
-    void SetupReservedWords();
-    void SetupBuiltinFunctions(AbstractSystem::System s);
+    void SetupReservedWords(QVector<Token>& list, QString id, bool ignoreSystem);
+    void SetupBuiltinFunctions(QMap<QString, BuiltInFunction>& lst, AbstractSystem::System s, QString id, bool ignoreSystem);
     void SetupKeys();
     void LoadSyntaxData();
 

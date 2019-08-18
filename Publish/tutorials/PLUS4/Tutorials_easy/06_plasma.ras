@@ -1,0 +1,102 @@
+program Tutorial3_plasma;
+
+var
+	// some plasma variables
+	c,val,c2x, c2y,ax, ay : byte;
+	x,y : byte;
+	colorP : pointer;	
+
+// charset will be placed at $2000 in bank 1	
+@define charsetLocation $2000
+ // look in the character set
+@define baseCharacter $68
+
+	// Use custom charset
+	charset : IncBin("charsets/charset.bin", @charsetLocation);
+	// nice colors
+    fade : array [] of byte = ($41,$3e,$51,$51,$44,$5e,$61,$71,$71,$71,$71,$61,$5e,$44,12,$51,$3e,$41,$71,$71); // PLUS4 colors
+
+	// mini sine table
+    siny : array[25] of byte; 
+	sinx : array[40] of byte; 
+
+	// Lookup table for division by 16
+	lookupDiv16 : array[256] of byte;
+
+// Define plasma area as global preprocessor constants
+@define x_start "2"
+@define x_end "38"
+@define y_start "3"
+@define y_end "22"
+
+// Plasma procedure
+
+procedure Plasma();
+begin
+	c2x := ax;
+	c2y := ay;
+	
+	// Set up y-sine table
+	for x := 0 to 25 do begin 
+		siny[x] := sine[c2x] + sine[c2y];
+		c2x := c2x + 4;
+		c2y := c2y + 9;
+	end;
+
+	ax := ax + 3;
+	ay := ay - 5;
+
+	// Set up x-sine table
+	for x := 0 to 40 do begin 
+		sinx[x] := sine[c2x] + sine[c2y];
+		c2x := c2x + 3;
+		c2y := c2y + 7;
+	end;
+	// Move cursor to (1,y)
+	moveto(0, @y_start, hi(screen_char_loc));
+	// moveto could also be replaced with : screenmemory:=screen_char_loc + @y_start*screen_width;
+	
+	colorP:=screen_col_loc + @y_start* screen_width;
+	
+	for y := @y_start to @y_end do begin
+		val := siny[y];
+		for x := @x_start to @x_end do begin
+			// here, we take (sin[x]+val) and divide by 16. However, since this is a slow procedure,
+			// we have created a lookup table instead!
+			c := lookupDiv16[(sinx[x] + val)];
+			// Set the screen memory
+			screenmemory[x] := c + @baseCharacter;
+			// Set color memory
+			colorP[x] := fade[c];
+		end;
+		// Increase screen memory pointer by 40 (next row)
+		screenmemory := screenmemory + screen_width;
+		// Increase color pointer by screen_width (next row)
+		colorP:=colorP + screen_width;
+	end;
+
+end;
+
+procedure InitDivision16();
+begin
+	for x := 0 to 256 do lookupDiv16[x] := x / 16; // Simply store values divided by 16
+end;
+
+begin
+	// Set color background
+	screen_bg_col := black;
+	screen_fg_col := black;
+	// Set charmap location at $2000
+	SetCharsetLocation(@charsetLocation);
+	InitDivision16();
+	ax := 1;
+	ay := 5;
+
+	// Clear screen and color memory
+	ClearScreen($20, screen_char_loc);
+	// Main loop
+	while (true) do begin
+		waitForRaster(200 - 3*8);
+		Plasma();
+	end;
+end.

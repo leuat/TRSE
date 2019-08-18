@@ -1,0 +1,73 @@
+program Example3;
+
+// Twister data position
+@define twister $2800
+// Twister table position
+@define tablepos $B000
+
+var  
+	// Include data
+	data: incbin("data/example3_screen.bin",@twister);
+	table: incbin("data/example3_table.bin",@tablepos);
+	// Include charset at $2000
+	charset: incbin("charsets/main.bin", $2000);
+
+	y, j,l, h,frame : byte = 0;
+	kp,zp,p1:pointer;
+
+
+/*
+	This method looks up the current frame in the table. Since a single frame consists of 
+	24 rows of data, 24 * 2=48 bytes are used in the lookup table for each frame. 
+*/
+procedure RenderMovie();
+begin
+	// zp will be the location at the screen
+	zp:=screen_char_loc+4; // Place in center of the screen
+	// Set the counter "j" to zero
+	j:=0;
+	// Locate position in table. Each line in the table has 24x2=48 bytes of pointer data
+	kp:=table + 48*frame; 
+	// kp now points to correct frame in table
+	for y:=0 to 24 do begin
+		// Lookup lo and hi byte in table
+		l:=kp[j];
+		h:=kp[j+1];
+		// Assign the pointer p1 to point to twister data + table data lookup. ToPointer
+		// fixes this by creating an pointer from a hi and a lo byte. 
+		p1:=toPointer(hi(^@twister)+h,l);
+		// Now p1 points to the data and zp points to the screen: perform a fast copy
+		memcpyunroll(p1,0,zp,32);
+		// Increase the screen pointer by 1 row
+		zp:=zp+40;
+		// and increase the table counter by 2 (because each row takes up 2 bytes of address space)
+		j:=j+2;
+
+	end;
+
+end;
+
+// Simple interrupt. Render movie, advance frame
+interrupt RasterMain();
+begin
+	StartIRQ(0);
+	RenderMovie();
+	frame:=(frame + 1)&63;
+	closeirq();
+end;
+
+
+begin
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	ClearScreen($20,screen_char_loc);
+	screen_bg_col:=black;
+	screen_fg_col:=black;	
+	clearscreen(light_blue,screen_col_loc);
+
+	setcharsetlocation($2000);
+	setregularcolormode();
+
+	StartRasterChain(RasterMain(),0,0);
+	Loop();
+end.

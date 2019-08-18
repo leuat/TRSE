@@ -257,5 +257,8 @@
         <file>resources/text/help/c/joy_up.rtf</file>
         <file>resources/text/help/m/readjoy1.rtf</file>
         <file>resources/text/help/m/readjoy2.rtf</file>
+        <file>resources/text/help/f/addc64linetodata.rtf</file>
+        <file>resources/text/help/f/saverawdata.rtf</file>
+        <file>resources/text/help/f/compressandsavehorizontaldata.rtf</file>
     </qresource>
 </RCC>

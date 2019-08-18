@@ -110,14 +110,26 @@ void Parser::InitBuiltinFunctions()
 
     if (Syntax::s.m_currentSystem == AbstractSystem::C64 ||
             Syntax::s.m_currentSystem == AbstractSystem::C128 ||
+            Syntax::s.m_currentSystem == AbstractSystem::PLUS4 ||
             Syntax::s.m_currentSystem == AbstractSystem::NES ||
             Syntax::s.m_currentSystem == AbstractSystem::VIC20 ||
             Syntax::s.m_currentSystem == AbstractSystem::BBCM  ) {
-        InitBuiltinFunction(QStringList()<< "*", "initeightbitmul");
+/*        InitBuiltinFunction(QStringList()<< "*", "initeightbitmul");
 
         InitBuiltinFunction(QStringList()<< "*", "init16x8mul");
         InitBuiltinFunction(QStringList()<< "/", "init8x8div");
         InitBuiltinFunction(QStringList()<< "/", "init16x8div");
+        */
+//          qDebug() << Node::flags.keys();
+        if (Node::flags.contains("mul8"))
+            InitBuiltinFunction(QStringList()<< "", "initeightbitmul");
+        if (Node::flags.contains("mul16"))
+            InitBuiltinFunction(QStringList()<< "", "init16x8mul");
+        if (Node::flags.contains("div16"))
+            InitBuiltinFunction(QStringList()<< "", "init16x8div");
+        if (Node::flags.contains("div8"))
+            InitBuiltinFunction(QStringList()<< "", "init8x8div");
+
         InitBuiltinFunction(QStringList()<< "rand(", "initrandom","init_random_call");
         InitBuiltinFunction(QStringList()<< "random(", "initrandom256");
 
@@ -173,6 +185,12 @@ void Parser::VerifyToken(Token t)
     //    return;
 
     // ErrorHandler::e.Error("Does not recognize '"+t.m_value + "'");
+}
+
+void Parser::InitSystemPreprocessors()
+{
+    m_preprocessorDefines[AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem)] = "1";
+
 }
 
 void Parser::PreprocessIfDefs(bool ifdef)
@@ -537,7 +555,9 @@ Node *Parser::AssignStatement()
     }
     Eat(TokenType::ASSIGN);
     Node* right = Expr();
-    return new NodeAssign(left, t, right);
+    NodeAssign* na = dynamic_cast<NodeAssign*>(new NodeAssign(left, t, right));
+    na->m_right->ApplyFlags();// make sure integer:=byte*byte works
+    return na;
 
 
 }
@@ -1012,11 +1032,15 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
 //    RemoveComments();
     InitObsolete();
     StripWhiteSpaceBeforeParenthesis(); // TODO: make better fix for this
+    InitSystemPreprocessors();
     Preprocess();
 //    PreprocessConstants();
     m_pass = 1;
     m_parserBlocks.clear();
     m_symTab = new SymbolTable();
+    Node::parserSymTab = m_symTab; // Clear all node flags
+    Node::flags.clear();
+
     m_lexer->Initialize();
     m_lexer->m_ignorePreprocessor = true;
     m_currentToken = m_lexer->GetNextToken();
@@ -1281,10 +1305,10 @@ QVector<Node*> Parser::Declarations(bool isMain)
 
         Eat(TokenType::SEMI);
         Node* block = nullptr;
-        qDebug() << "HERE0 " << procName;
         NodeProcedureDecl* procDecl = new NodeProcedureDecl(tok, procName, paramDecl, block, type);
+        if (m_procedures[procName]!=nullptr)
+            procDecl->m_isUsed = m_procedures[procName]->m_isUsed;
         m_procedures[procName] = procDecl;
-
 
         // For recursive procedures, it is vital that we forward declare the current procedure
         block = Block(true);
@@ -1294,11 +1318,11 @@ QVector<Node*> Parser::Declarations(bool isMain)
         if (block!=nullptr)
             Eat(TokenType::SEMI);
         else {
-            // Check if already defined
+            // Forward declared variables are used
+            procDecl->m_isUsed = true;
 
         }
-        if (m_procedures[procName]!=nullptr)
-            procDecl->m_isUsed = m_procedures[procName]->m_isUsed;
+
         procDecl->AppendBlock(block);
         //qDebug() <<procName;
 
@@ -1329,19 +1353,27 @@ QVector<Node *> Parser::VariableDeclarations()
 {
     QVector<Node*> vars;
     vars.append(new NodeVar(m_currentToken));
-
-    m_symTab->Define(new Symbol(m_currentToken.m_value,""),false);
+    QString varName = m_currentToken.m_value;
+    QVector<Symbol*> syms;
+    syms.append(new Symbol(m_currentToken.m_value,""));
+    m_symTab->Define(syms.last() ,false);
     Eat(TokenType::ID);
-
+    // Make sure that ALL are defined!
     while (m_currentToken.m_type == TokenType::COMMA) {
         Eat(TokenType::COMMA);
         vars.append(new NodeVar(m_currentToken));
+
+        syms.append(new Symbol(m_currentToken.m_value,""));
+        m_symTab->Define(syms.last() ,false);
 
         Eat(TokenType::ID);
     }
     Eat(TokenType::COLON);
 
-    Node* typeNode = TypeSpec();
+    NodeVarType* typeNode = dynamic_cast<NodeVarType*>(TypeSpec());
+    // Set all types
+    for (Symbol* s: syms)
+       s->m_type = typeNode->m_op.m_value;
 
 
 

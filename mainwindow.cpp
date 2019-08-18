@@ -1245,4 +1245,7 @@ void TRSEProject::VerifyDefaults() {
     if (!m_ini.contains("override_target_settings_ignore_prg"))
         m_ini.setFloat("override_target_settings_ignore_prg",0);
 
+    if (!m_ini.contains("output_debug_symbols"))
+        m_ini.setFloat("output_debug_symbols",1);
+
 }

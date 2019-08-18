@@ -457,7 +457,7 @@ static int ClearObjects(lua_State *L) {
 static int AddScreen(lua_State* L) {
 
     if (m_effect!=nullptr)
-        m_compression.AddScreen(m_screenData, m_effect->m_img,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tonumber(L,5),lua_tonumber(L,6));
+        m_compression.AddScreen(m_screenData, m_effect->m_img,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));//, lua_tonumber(L,5),lua_tonumber(L,6));
 
     return 0;
 }
@@ -781,6 +781,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddC64LineToData", AddToData);
 
     lua_register(m_script->L, "SaveRawData", SaveData);
+
     lua_register(m_script->L, "CompressAndSaveHorizontalData", CompressAndSaveHorizontalData);
     lua_register(m_script->L, "OptimizeScreenAndCharset", OptimizeScreenAndCharset);
     lua_register(m_script->L, "CompressCharset", CompressCharset);
@@ -801,7 +802,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddScreen", AddScreen);
     lua_register(m_script->L, "AddScreenPetscii", AddScreenPetscii);
     lua_register(m_script->L, "AddScreenBinary", AddScreenBinary);
-    lua_register(m_script->L, "SetQuatAxisAngle", SetQuatAxisAngle);
+    lua_register(m_script->L, "Se tQuatAxisAngle", SetQuatAxisAngle);
     lua_register(m_script->L, "SetUVShift", SetUVShift);
     lua_register(m_script->L, "sin", LuaSin);
     lua_register(m_script->L, "SetY", SetY);

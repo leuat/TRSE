@@ -8,7 +8,7 @@ begin
 	// Set black border
 	screen_bg_col:=black;
 	// infinite loop
-	while(true) do
+	while (true) do
 	begin
 		// Make sure we wait for 1 raster cycle to complete
 		waitforraster(0);

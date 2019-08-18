@@ -84,7 +84,8 @@ function Init()
 		0.55*s,0.6*s,0.0,      -- width xyz 
 		w*s,0.31*s,0.27*s  -- stretch xyz
 );          
---]]
+
+]]--
 
 	UpdateGraphics()
 
