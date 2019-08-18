@@ -693,12 +693,16 @@ void Orgasm::SaveSymbolsList(QString filename)
         QFile::remove(filename);
 
     QFile file( filename );
+    QMap<int, bool> isSet;
     if ( file.open(QIODevice::ReadWrite) )
     {
         QTextStream stream( &file );
         stream<<"; labels" << endl;
         for (QString s: m_symbolsList) {
-            stream << "al  " << Util::numToHex(m_symbols[s]) << " ."<< s << endl;
+            if (!isSet[m_symbols[s]]) {
+                stream << "al  " << Util::numToHex(m_symbols[s]) << " ."<< s << endl;
+                isSet[m_symbols[s]]=true;
+            }
         }
     }
 }
