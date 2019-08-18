@@ -333,6 +333,7 @@ c; AUX_COLOR_AND_VOLUME; VIC20; a; $900E
 c; SCREEN_BG_COLOR; VIC20; a; $900F
 
 # PLUS4 specific constants
+
 c; SCREEN_BG_COL; PLUS4; a; $ff19
 c; SCREEN_FG_COL; PLUS4; a; $ff15
 c; SCREEN_CHAR_LOC; PLUS4; a; $0c00
@@ -582,4 +583,4 @@ f ; AddObject; s,s,s,s, f,f,f,f,f,f
 f ; SetRotation; s,f,f,f
 f ; SetPosition; s,f,f,f
 f ; AddPosition; s,f,f,f
-
+f ; AddC64LineToData; f,f,f,f

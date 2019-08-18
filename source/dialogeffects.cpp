@@ -781,6 +781,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddC64LineToData", AddToData);
 
     lua_register(m_script->L, "SaveRawData", SaveData);
+
     lua_register(m_script->L, "CompressAndSaveHorizontalData", CompressAndSaveHorizontalData);
     lua_register(m_script->L, "OptimizeScreenAndCharset", OptimizeScreenAndCharset);
     lua_register(m_script->L, "CompressCharset", CompressCharset);
@@ -801,7 +802,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddScreen", AddScreen);
     lua_register(m_script->L, "AddScreenPetscii", AddScreenPetscii);
     lua_register(m_script->L, "AddScreenBinary", AddScreenBinary);
-    lua_register(m_script->L, "SetQuatAxisAngle", SetQuatAxisAngle);
+    lua_register(m_script->L, "Se tQuatAxisAngle", SetQuatAxisAngle);
     lua_register(m_script->L, "SetUVShift", SetUVShift);
     lua_register(m_script->L, "sin", LuaSin);
     lua_register(m_script->L, "SetY", SetY);
