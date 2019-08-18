@@ -609,6 +609,21 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("joystick")) {
         Joystick(as);
     }
+//    if (Command("initjoy")) {
+//        InitJoy(as);
+//    }
+    if (Command("initjoy1")) {
+        InitJoy1(as);
+    }
+    if (Command("readjoy1")) {
+        ReadJoy1(as);
+    }
+    if (Command("initjoy2")) {
+        InitJoy2(as);
+    }
+    if (Command("readjoy2")) {
+        ReadJoy2(as);
+    }
     if (Command("playsound")) {
         PlaySound(as);
     }
@@ -5291,4 +5306,138 @@ void Methods6502::InitJoystick(Assembler *as)
     as->Label("callJoystick_end");
     as->Asm("rts");
 
+}
+
+
+// the constants are needed for Joy1 and Joy2
+void Methods6502::InitJoy(Assembler *as)
+{
+    if (m_node->m_isInitialized["initjoy"])
+        return;
+    m_node->m_isInitialized["initjoy"] = true;
+
+    as->Comment("----------");
+    as->Comment("ReadJoy1 and ReadJoy2 (on supported platforms)");
+    as->Comment("populates joy1 and joy1pressed which can be tested by AND-ing with the following constants:");
+
+    if (Syntax::s.m_currentSystem==AbstractSystem::C64) {
+        as->Label("JOY_DOWN  = %00000010");
+        as->Label("JOY_UP    = %00000001");
+        as->Label("JOY_LEFT  = %00000100");
+        as->Label("JOY_RIGHT = %00001000");
+        as->Label("JOY_FIRE  = %00010000");
+        as->Label("C64_JOY_CIAPRA = $DC00   ; joy2");
+        as->Label("C64_JOY_CIAPRB = $DC01   ; joy1");
+    } else if (Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
+        as->Label("JOY_DOWN  = %00000100");
+        as->Label("JOY_UP    = %00000010");
+        as->Label("JOY_LEFT  = %00001000");
+        as->Label("JOY_RIGHT = %00000001");
+        as->Label("JOY_FIRE  = %00010000");
+        as->Label("VIC20_PORTACASS = $911F");
+        as->Label("VIC20_PORTBVIA2 = $9120  ; Port B 6522 2 value (joystick)");
+        as->Label("VIC20_PORTBVIA2d = $9122 ; Port B 6522 2 direction (joystick)");
+    }
+}
+
+// If using Joystick port 1 (Vic20 only has one)
+void Methods6502::InitJoy1(Assembler *as)
+{
+    InitJoy(as);
+
+    if (m_node->m_isInitialized["readjoy1"])
+        return;
+    m_node->m_isInitialized["readjoy1"] = true;
+
+
+//    Create bitmasks for results for Joystick, these are read directly by TRSE code (see symboltable.cpp)
+    as->Label("joy1 .byte 0"); // current state (is held)
+    as->Label("joy1last .byte 0");  // previous state
+    as->Label("joy1pressed .byte 0"); // Just pressed state
+
+    as->Label("callReadJoy1");
+
+    if (Syntax::s.m_currentSystem==AbstractSystem::C64) {
+        as->Asm("lda C64_JOY_CIAPRB");
+        as->Asm("eor #255");
+        as->Asm("sta joy1");
+        as->Asm("eor joy1last");
+        as->Asm("and joy1");
+        as->Asm("sta joy1pressed");
+        as->Asm("lda joy1");
+        as->Asm("sta joy1last");
+    } else if (Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
+        QString lblJoySkip = as->NewLabel("JoySkip");
+        as->Asm("LDA VIC20_PORTACASS");
+        as->Asm("EOR #$FF");
+        as->Asm("AND #$3C");
+        as->Asm("LDX #$7F");
+        as->Asm("SEI");
+        as->Asm("STX VIC20_PORTBVIA2d");
+        as->Asm("LDY VIC20_PORTBVIA2");
+        as->Asm("BMI " + lblJoySkip);
+        as->Asm("ORA #$02");
+
+        as->Label(lblJoySkip);
+
+        as->Asm("LDX #$FF");
+        as->Asm("STX VIC20_PORTBVIA2d");
+        as->Asm("CLI");
+        as->Asm("LSR");
+
+        as->Asm("STA joy1");
+        as->Asm("eor joy1last");
+        as->Asm("and joy1");
+        as->Asm("sta joy1pressed");
+        as->Asm("lda joy1");
+        as->Asm("sta joy1last");
+
+        as->PopLabel("JoySkip");
+    }
+
+}
+// If using Joystick port 2 (for C64 and other platforms)
+// Note: separated the code so that the ASM output can be as small as possible if only using one joystick port
+void Methods6502::InitJoy2(Assembler *as)
+{
+    InitJoy(as);
+
+    if (m_node->m_isInitialized["readjoy2"])
+        return;
+    m_node->m_isInitialized["readjoy2"] = true;
+
+
+//    Create bitmasks for results for Joystick, these are read directly by TRSE code (see symboltable.cpp)
+    as->Label("joy2 .byte 0"); // current state (is held)
+    as->Label("joy2last .byte 0");  // previous state
+    as->Label("joy2pressed .byte 0"); // Just pressed state
+
+
+    as->Label("callReadJoy2");
+
+    if (Syntax::s.m_currentSystem==AbstractSystem::C64) {
+        as->Asm("lda C64_JOY_CIAPRA");
+        as->Asm("eor #255");
+        as->Asm("sta joy2");
+        as->Asm("eor joy2last");
+        as->Asm("and joy2");
+        as->Asm("sta joy2pressed");
+        as->Asm("lda joy2");
+        as->Asm("sta joy2last");
+    }
+    // VIC20 does not support a second joystick port
+}
+
+void Methods6502::ReadJoy1(Assembler *as)
+{
+    VerifyInitialized("readjoy1","InitJoy1");
+
+     as->Asm("jsr callReadJoy1");
+}
+
+void Methods6502::ReadJoy2(Assembler *as)
+{
+    VerifyInitialized("readjoy1","InitJoy1");
+
+    as->Asm("jsr callReadJoy2");
 }

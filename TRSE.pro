@@ -448,6 +448,15 @@ DISTFILES += \
     resources/text/help/c/aux_color_and_volume.rtf \
     resources/text/help/c/hpen_register.rtf \
     resources/text/help/c/hscroll_register.rtf \
+    resources/text/help/c/joy1.rtf \
+    resources/text/help/c/joy1pressed.rtf \
+    resources/text/help/c/joy2.rtf \
+    resources/text/help/c/joy2pressed.rtf \
+    resources/text/help/c/joy_down.rtf \
+    resources/text/help/c/joy_fire.rtf \
+    resources/text/help/c/joy_left.rtf \
+    resources/text/help/c/joy_right.rtf \
+    resources/text/help/c/joy_up.rtf \
     resources/text/help/c/pal_or_ntsc.rtf \
     resources/text/help/c/screen_bg_color.rtf \
     resources/text/help/c/screen_char_loc.rtf \
@@ -522,6 +531,8 @@ DISTFILES += \
     resources/text/help/m/random.rtf \
     resources/text/help/m/random4.rtf \
     resources/text/help/m/rasterirq.rtf \
+    resources/text/help/m/readjoy1.rtf \
+    resources/text/help/m/readjoy2.rtf \
     resources/text/help/m/return.rtf \
     resources/text/help/m/returninterrupt.rtf \
     resources/text/help/m/rightbitshift.rtf \

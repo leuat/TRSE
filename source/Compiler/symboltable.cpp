@@ -165,6 +165,18 @@ void SymbolTable::InitBuiltins()
     Define(new Symbol("joystickbutton", "byte"));
 
     if (Syntax::s.m_currentSystem==AbstractSystem::C64 ||
+            Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
+
+        Define(new Symbol("joy1", "byte"));
+        Define(new Symbol("joy1pressed", "byte"));
+    }
+    if (Syntax::s.m_currentSystem==AbstractSystem::C64) {
+
+        Define(new Symbol("joy2", "byte"));
+        Define(new Symbol("joy2pressed", "byte"));
+    }
+
+    if (Syntax::s.m_currentSystem==AbstractSystem::C64 ||
             Syntax::s.m_currentSystem==AbstractSystem::C128 ||
             Syntax::s.m_currentSystem==AbstractSystem::VIC20 ||
             Syntax::s.m_currentSystem==AbstractSystem::PET) {

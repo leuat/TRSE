@@ -144,6 +144,8 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "drawtextbox(" << "drawcolortextbox(", "initdrawtextbox");
 
         InitBuiltinFunction(QStringList()<< "joystick(" , "initjoystick");
+        InitBuiltinFunction(QStringList()<< "readjoy1(" , "initjoy1");
+        InitBuiltinFunction(QStringList()<< "readjoy2(" , "initjoy2");
     }
     Node::m_staticBlockInfo.m_blockID = -1;
 //    EndMemoryBlock();

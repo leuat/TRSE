@@ -246,5 +246,16 @@
         <file>resources/text/help/m/drawcolortextbox.rtf</file>
         <file>resources/images/colortextboxexample.png</file>
         <file>resources/images/petscii.png</file>
+        <file>resources/text/help/c/joy_fire.rtf</file>
+        <file>resources/text/help/c/joy2pressed.rtf</file>
+        <file>resources/text/help/c/joy1pressed.rtf</file>
+        <file>resources/text/help/c/joy2.rtf</file>
+        <file>resources/text/help/c/joy1.rtf</file>
+        <file>resources/text/help/c/joy_right.rtf</file>
+        <file>resources/text/help/c/joy_left.rtf</file>
+        <file>resources/text/help/c/joy_down.rtf</file>
+        <file>resources/text/help/c/joy_up.rtf</file>
+        <file>resources/text/help/m/readjoy1.rtf</file>
+        <file>resources/text/help/m/readjoy2.rtf</file>
     </qresource>
 </RCC>

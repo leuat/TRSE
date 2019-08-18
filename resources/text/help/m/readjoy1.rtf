@@ -1,0 +1,60 @@
+<h3>ReadJoy1( );</h3>
+
+<h3>Description</h3>
+<p>Read joystick in port 1.</p>
+<p>
+Populates two special variables called joy1 and joy1pressed (both lowercase).  Bits 0 - 4 contain a 1 if a
+direction on the joystick is held or the firebutton is held.</p>
+<p>Use JOY_UP, JOY_LEFT, JOY_DOWN, JOY_RIGHT and JOY_FIRE constants to determine which direction or button.</p>
+
+<h3>Example</h3>
+
+<code>
+program C64JoystickExample;
+var  
+
+        
+begin
+        
+        definescreen();
+
+        screenmemory := $0400;
+        ClearScreen(WHITE, ^$D800 );
+
+        
+        while(true) do
+        begin
+                ClearScreen($20, ^$0400);
+                
+                readjoy1();
+
+                screenmemory := $0400;	
+
+                if (joy1 & @JOY_UP) then printstring("UP",0,2);
+                screenmemory := screenmemory + 40;
+                if (joy1 & @JOY_DOWN) then printstring("DOWN",0,4);
+                screenmemory := screenmemory + 40;
+                if (joy1 & @JOY_LEFT) then printstring("LEFT",0,4);
+                screenmemory := screenmemory + 40;
+                if (joy1 & @JOY_RIGHT) then printstring("RIGHT",0,5);
+                screenmemory := screenmemory + 40;
+                if (joy1 & @JOY_FIRE) then printstring("FIRE",0,5);
+                screenmemory := screenmemory + 40;
+                
+                // the following will briefly appear becasue they are only true when a joystick direction or fire button is first pressed
+                if (joy1pressed & @JOY_UP) then printstring("UP FIRST PRESS",0,14);
+                screenmemory := screenmemory + 40;
+                if (joy1pressed & @JOY_DOWN) then printstring("DOWN FIRST PRESS",0,16);
+                screenmemory := screenmemory + 40;
+                if (joy1pressed & @JOY_LEFT) then printstring("LEFT FIRST PRESS",0,16);
+                screenmemory := screenmemory + 40;
+                if (joy1pressed & @JOY_RIGHT) then printstring("RIGHT FIRST PRESS",0,17);
+                screenmemory := screenmemory + 40;
+                if (joy1pressed & @JOY_FIRE) then printstring("FIRE FIRST PRESS",0,17);
+
+                waitforraster(180);
+
+        end;
+end.
+                
+</code>

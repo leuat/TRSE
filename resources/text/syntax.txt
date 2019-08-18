@@ -28,7 +28,8 @@ m; initprintstring; C64, PLUS4, C128  ;
 m; initjoystick; C64, PLUS4, C128, VIC20  ;
 m; initatan2; C64, PLUS4, C128, VIC20  ;
 m; initdrawtextbox; C64, PLUS4, C128, VIC20 ;
-
+m; initJoy1; C64, VIC20 ;
+m; initJoy2; C64 ;
 
 
 
@@ -243,7 +244,8 @@ m; LeftBitShift; C64, PLUS4, C128, VIC20, PET,  NES; a, n
 
 m; Joystick; C64, PLUS4, C128, VIC20; n
 m; Keypressed; C64, PLUS4, C128, VIC20; b
-
+m; ReadJoy1; C64, VIC20;
+m; ReadJoy2; C64;
 
 # IRQ routines
 
@@ -304,6 +306,11 @@ c; OAMDMA; NES; a; $4014
 
 
 
+# Commodore-specific
+c; Joy1; VIC20, C64; ;
+c; Joy2; C64; ;
+c; Joy1Pressed; VIC20, C64; ;
+c; Joy2Pressed; C64; ;
 
 
 # VIC 20-specific constants
@@ -328,8 +335,11 @@ c; SOUND3_REGISTER; VIC20; a; $900C
 c; SOUNDFX_REGISTER; VIC20; a; $900D
 c; AUX_COLOR_AND_VOLUME; VIC20; a; $900E
 c; SCREEN_BG_COLOR; VIC20; a; $900F
-
-
+c; JOY_UP; VIC20; b; %00000010
+c; JOY_DOWN; VIC20; b; %00000100
+c; JOY_LEFT; VIC20; b; %00001000
+c; JOY_RIGHT; VIC20; b; %00000001
+c; JOY_FIRE; VIC20; b; %00010000
 
 
 
@@ -365,6 +375,11 @@ c; SPRITE_COLLISION; C64, PLUS4, C128;a;$D01E
 c; SPRITE_BG_COLLISION; C64, PLUS4, C128;a;$D01F
 c; SPRITE_STRETCH_X; C64, PLUS4, C128;a;$D01D
 c; SPRITE_STRETCH_Y; C64, PLUS4, C128;a;$D017
+c; JOY_UP; C64; b; %00000001
+c; JOY_DOWN; C64; b; %00000010
+c; JOY_LEFT; C64; b; %00000100
+c; JOY_RIGHT; C64; b; %00001000
+c; JOY_FIRE; C64; b; %00010000
 
 c; KEY_A; C64, PLUS4, C128, VIC20; b;$01
 c; KEY_B; C64, PLUS4, C128, VIC20; b;$02
