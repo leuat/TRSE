@@ -697,13 +697,25 @@ void Orgasm::SaveSymbolsList(QString filename)
     if ( file.open(QIODevice::ReadWrite) )
     {
         QTextStream stream( &file );
+        // First breakpoints
+
         stream<<"; labels" << endl;
         for (QString s: m_symbolsList) {
-            if (!isSet[m_symbols[s]]) {
-                stream << "al  " << Util::numToHex(m_symbols[s]) << " ."<< s << endl;
-                isSet[m_symbols[s]]=true;
+            if (!s.startsWith("trse_breakpoint"))
+                if (!isSet[m_symbols[s]]) {
+                    stream << "al  " << Util::numToHex(m_symbols[s]) << " ."<< s << endl;
+                    isSet[m_symbols[s]]=true;
+                }
+        }
+        stream<<"; breakpoints" << endl;
+        for (QString s: m_symbolsList) {
+            if (s.startsWith("trse_breakpoint")) {
+                stream << "break " << Util::numToHex(m_symbols[s])<<endl;
             }
         }
+
+
+
     }
 }
 

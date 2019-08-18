@@ -13,6 +13,10 @@
 # p = procedure
 # ai = address OR integer
 
+# debugger methods
+
+m; addbreakpoint; C64, PLUS4, C128, VIC20, PET;
+
 # init functions
 m; initrandom; C64, PLUS4, C128 ;
 m; initrandom256; C64, PLUS4, C128, VIC20 ;

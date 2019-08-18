@@ -47,6 +47,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("CreateInteger"))
         CreateInteger(as,"y");
 
+    if (Command("AddBreakpoint")) {
+        as->Label("trse_breakpoint_"+QString::number(as->m_currentBreakpoint++));
+    }
+
 
     if (Command("CreatePointer"))
         CreateInteger(as,"x");
