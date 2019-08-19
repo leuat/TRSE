@@ -3,8 +3,10 @@ var
    	org_x, x: integer;
 	y, org_y,i,j, time: byte;
 
+	@define spriteLoc $2000
+
 	// The original sprite is located in sprites/logo.flf
-	sprites: incbin("sprites/logo.bin", $2000);
+	sprites: incbin("sprites/logo.bin", @spriteLoc);
 	// cstring because we mean to just copy the data onto the screen
 	text: cstring=("  SPRITELOGO  ");
 	// A pointer to the text
@@ -24,7 +26,7 @@ begin
 	sprite_multicolor_reg2:=grey;
 	for i:=0 to 8 do begin
 		sprite_color[i]:=blue;
-		setspriteloc(i,$80+i,0);
+		setspriteloc(i,@spriteLoc/64+i,0);
 	end;
 end;
 
@@ -97,7 +99,7 @@ begin
 	screen_fg_col:=black;
 	// Render background text
 	RenderText();
-	
+	org_x:=0;
 	// Setup sprites
 	InitSprites();
 	// Init main raster
