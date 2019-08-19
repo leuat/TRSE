@@ -213,6 +213,7 @@ void Syntax::SetupKeys()
     m_c64keys[0xF7] = C64Key("F7","KEY_F7",0xF7 , row[0], column[3]);
 
     m_c64keys[0x2b] = C64Key("+","KEY_PLUS",0x2b , row[5], column[0]);
+    m_c64keys[0x28] = C64Key("-","KEY_MINUS",0x28 , row[5], column[3]);
     m_c64keys[0x1c] = C64Key("£","KEY_POUND",0x1c , row[6], column[0]);
     m_c64keys[0xF0] = C64Key("ENTER","KEY_ENTER",0xF0 , row[0], column[1]);
     m_c64keys[0x2a] = C64Key("*","KEY_ASTERIX",0x2a , row[6], column[1]);

@@ -53,7 +53,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     QString emu = m_iniFile->getString("emulator");
     QStringList params;
 
-    QString debugFile =fileName.split(".").first()+".dup";
+    QString debugFile =fileName.split(".").first()+".sym";
     if (QFile::exists(debugFile)) {
         params<<"-moncommands"<<debugFile;
     }

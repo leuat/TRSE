@@ -16,7 +16,7 @@ var
 	// Include the sprite binary file. The original 
 	// image is located under sprites/sprites.flf 
 	  	
-	sprites:incbin("sprites/sprites.bin", @spriteLoc); 
+	sprites:incbin("resources/sprites/sprites.bin", @spriteLoc); 
 
 
 // This method initializes the screen
@@ -25,6 +25,8 @@ begin
 	screen_bg_col:=purple;
 	screen_fg_col:=black;
 	clearscreen($20, screen_char_loc);
+	moveto(1,23,$04);
+	printstring("JOYSTICK IN PORT 2 TO MOVE",0,40);
 end;   
 
 // This method initializes the sprites

@@ -6,7 +6,7 @@ var
 	@define spriteLoc $2000
 
 	// The original sprite is located in sprites/logo.flf
-	sprites: incbin("sprites/logo.bin", @spriteLoc);
+	sprites: incbin("resources/sprites/logo.bin", @spriteLoc);
 	// cstring because we mean to just copy the data onto the screen
 	text: cstring=("  SPRITELOGO  ");
 	// A pointer to the text

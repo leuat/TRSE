@@ -29,7 +29,7 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
         output = orgAsm.m_output;
 
         if (m_projectIni->getdouble("output_debug_symbols")==1.0)
-            orgAsm.SaveSymbolsList(filename+".dup");
+            orgAsm.SaveSymbolsList(filename+".sym");
 
 
     }

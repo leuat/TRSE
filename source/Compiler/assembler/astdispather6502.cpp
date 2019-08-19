@@ -898,8 +898,10 @@ void ASTDispather6502::dispatch(NodeVarDecl *node)
         as->DeclareArray(v->value, t->m_arrayVarType.m_value, t->m_op.m_intVal, t->m_data, t->m_position);
         //qDebug() << "IS: " << TokenType::types[as->m_symTab->Lookup(v->value)->getTokenType()];
         node->m_dataSize=t->m_op.m_intVal;
-        as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber)->m_type="address";
-        as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber)->m_arrayType = t->m_arrayVarType.m_type;
+        Symbol* s = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
+        s->isUsed=false;
+        s->m_type="address";
+        s->m_arrayType = t->m_arrayVarType.m_type;
     }else
     if (t->m_op.m_type==TokenType::STRING) {
         as->DeclareString(v->value, t->m_data);

@@ -12,7 +12,7 @@ var
 @define baseCharacter $68
 
 	// Use custom charset
-	charset: IncBin("charsets/charset.bin",@charsetLocation);
+	charset: IncBin("resources/charsets/charset.bin",@charsetLocation);
 	// nice colors
 	fade : array [] of byte = (11,6,12,12,4,14,15,1,1,1,1,15,14,4,12,12,6,11,1,1); 
 	

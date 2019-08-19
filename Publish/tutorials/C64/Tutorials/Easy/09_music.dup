@@ -1,0 +1,6 @@
+; labels
+al  $810 .Music
+al  $813 .Raster1
+al  $82e .block68111
+al  $86f .EndSymbol
+; breakpoints

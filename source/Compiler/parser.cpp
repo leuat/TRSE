@@ -43,8 +43,9 @@ void Parser::Delete()
 void Parser::InitObsolete()
 {
     m_obsoleteWarnings.clear();
-    m_obsoleteWarnings.append(QStringList() << "rand"<<"Funtion 'Rand()' is scheduled to be depricated. Please use 'Random()' instead. ");
-    m_obsoleteWarnings.append(QStringList() << "writeln"<<"Funtion 'Writeln()' is scheduled to be depricated. Please use 'PrintString()' instead. ");
+    m_obsoleteWarnings.append(QStringList() << "rand"<<"Funtion 'Rand()' is scheduled to be deprecated. Please use 'Random()' instead. ");
+    m_obsoleteWarnings.append(QStringList() << "inczp"<<"Funtion 'IncZP()' is scheduled to be deprecated. Please use 'zp:=zp+value;' to increase pointers instead. ");
+    m_obsoleteWarnings.append(QStringList() << "writeln"<<"Funtion 'Writeln()' is scheduled to be deprecated. Please use 'PrintString()' instead. ");
 }
 
 void Parser::Eat(TokenType::Type t)
@@ -1391,8 +1392,9 @@ QVector<Node *> Parser::VariableDeclarations()
 
     NodeVarType* typeNode = dynamic_cast<NodeVarType*>(TypeSpec());
     // Set all types
-    for (Symbol* s: syms)
+    for (Symbol* s: syms) {
        s->m_type = typeNode->m_op.m_value;
+    }
 
 
 
@@ -1422,7 +1424,6 @@ QVector<Node *> Parser::VariableDeclarations()
             decl->InitSid(m_lexer->m_path, sidloc, "nsf");
         }
     }
-
 //    return vars;
     return var_decleratons;
 }
@@ -1634,9 +1635,13 @@ Node *Parser::BuiltinFunction()
 
         // Give obsolete warnings
         for (QStringList& lst: m_obsoleteWarnings) {
-            if(lst[0].toLower()==procName.toLower())
-                ErrorHandler::e.Warning(lst[1], m_currentToken.m_lineNumber);
-        }
+                if(lst[0].toLower() == procName.toLower()) {
+                    if (!m_warningsGiven.contains(procName)) {
+                      m_warningsGiven.append(procName);
+                      ErrorHandler::e.Warning(lst[1], m_currentToken.m_lineNumber);
+                     }
+                 }
+            }
 
         return new NodeBuiltinMethod(procName,paramList,&Syntax::s.builtInFunctions[procName]);
         //p->SetParameters(paramList);

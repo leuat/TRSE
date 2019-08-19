@@ -281,6 +281,7 @@ Symbol *SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
     }
     //qDebug() << name << " " << m_symbols[name]->m_type;
     //        qDebug() << "FOUND "<< name;
+//    qDebug() << "SymbolTable Symbols used : " << name <<m_symbols[name]->isUsed;
     m_symbols[name]->isUsed = true;
     return m_symbols[name];
 }

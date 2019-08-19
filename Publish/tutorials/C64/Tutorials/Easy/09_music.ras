@@ -1,6 +1,6 @@
 program Music;
 var
-	sidfile: incsid("sid/courier.sid","2");
+	sidfile: incsid("resources/sid/courier.sid","2");
 
 @define useKernal 0
 

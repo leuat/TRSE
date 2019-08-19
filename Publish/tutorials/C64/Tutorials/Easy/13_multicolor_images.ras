@@ -1,0 +1,46 @@
+program Display_multicolor_image;
+var
+/*
+	Open your ".flf" 320x200 image and click "export", then type in the "base name" of the files to output.
+	The first file (.. _data.bin) contains pixel data, while the second file (..._color.bin) contains color data. 
+	
+	Image by The Diad / Proxima ^ Hokuto Force
+*/
+
+	image_color: IncBin("resources/images/neo_rider_color.bin", "$5000");
+	image_data: IncBin("resources/images/neo_rider_data.bin", "$6000");
+
+
+// basically the same as the built-in method copyimagecolordatamanually
+procedure CopyImageColordataManually();
+var
+  zp:pointer;
+begin
+	zp:=image_color;
+	screen_bg_col:=zp[0]; // first byte is border color
+	zp:=zp+1;
+	screen_fg_col:=zp[0]; // 2nd byte is foreground color 
+	zp:=zp+1;
+	copyfullscreen(zp,^$4400); // Copy first 1000 bytes (1 screen worth of data) to bank 1
+	zp:=zp+1000; // point to next screen 
+	copyfullscreen(zp,screen_col_loc); // copy 1 screen worth of data to color ram
+end;
+
+
+begin
+	// Turn off multicolor if you want hires! 
+	setmulticolormode();
+	setbitmapmode();
+	// Set data pointer to $6000
+	poke(vic_data_loc, 0,$18);
+	setbank(vic_bank1);
+	// Copy image color data from $5000 to $4400 (on bank 1) and $D800 
+	copyimagecolordata(image_color,1);
+	screen_fg_col:=black;
+	/*
+	// Example of how to copy the color data manually
+	CopyImageColordataManually();
+	*/
+	Loop();
+
+end.
