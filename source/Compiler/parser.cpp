@@ -551,6 +551,25 @@ Node *Parser::AssignStatement()
 
     if (m_currentToken.m_type!=TokenType::ASSIGN) {
 //        qDebug() << m_currentToken;
+        // First, check if similar procedure exists
+        QString val = t.m_value;
+        QString em = "Could not find procedure '<font color=\"#FF8000\">" + val + "</font>'<br>";
+//        QString similarSymbol = m_symTab->findSimilarSymbol(val,70,2,m_procedures.keys());
+        QString similarSymbol = "";
+          for (QString s:m_procedures.keys()) {
+                if (Util::QStringIsSimilar(val,s,65,2,Qt::CaseInsensitive)) {
+                    similarSymbol = s;
+                    break;
+                }
+            }
+
+        if (similarSymbol!="") {
+            em+="Did you mean '<font color=\"#A080FF\">"+similarSymbol+"</font>'?<br>";
+            ErrorHandler::e.Error(em , token.m_lineNumber);
+        }
+
+
+
         ErrorHandler::e.Error("Error assigning variable <b>'" + t.m_value+  "'</b>, did you forget a colon or mistype? Syntax should be: <b>'a := b;'</b>." , token.m_lineNumber);
     }
     Eat(TokenType::ASSIGN);
@@ -1587,7 +1606,13 @@ Node *Parser::BuiltinFunction()
                 try {
                     paramList.append(Expr());
                 } catch (FatalErrorException fe) {
-                    fe.message = "Could not find ID/procedure/variable! '" + prev + "'\n" + fe.message;
+                    QString em = "Could not find symbol '<font color=\"#FF8000\">" + prev + "</font>'<br>";
+                    QString similarSymbol = m_symTab->findSimilarSymbol(prev,65,2,m_procedures.keys());
+                    if (similarSymbol!="") {
+                        em+="Did you mean '<font color=\"#A080FF\">"+similarSymbol+"</font>'?<br>";
+                    }
+                    fe.message = em + fe.message;
+
                     throw fe;
                 }
                 prev = pname;

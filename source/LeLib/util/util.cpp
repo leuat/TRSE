@@ -261,6 +261,15 @@ int Util::getShiftCount(int i) {
     return -1;
 }
 
+QString Util::FindMostSimilar(QString search, QStringList &lst, float percentage, int n)
+{
+/*    for (QString s:lst) {
+        if (Util::QStringIsSimilar(search,s,percentage,n,Qt::CaseInsensitive))
+            return s;
+    }
+  */
+}
+
 QStringList Util::FindFilesOfType(QString dir, QString type)
 {
     QStringList l;

@@ -3,91 +3,105 @@ var
    	org_x, x: integer;
 	y, org_y,i,j, time: byte;
 
+	// The original sprite is located in sprites/logo.flf
 	sprites: incbin("sprites/logo.bin", $2000);
-
+	// cstring because we mean to just copy the data onto the screen
 	text: cstring=("  SPRITELOGO  ");
+	// A pointer to the text
 	tp : pointer;
+
 
 @define useKernal 1
 
+// Set up the sprites
 procedure InitSprites();
 begin
-	SPRITE_MULTICOLOR:=$FF;
-	SPRITE_BITMASK:=$FF;
-	SPRITE_STRETCH_X:=$FF;
-	SPRITE_STRETCH_Y:=$FF;
-	SPRITE_MULTICOLOR_REG1:=LIGHT_BLUE;
-	SPRITE_MULTICOLOR_REG2:=GREY;
+	sprite_multicolor:=$FF;
+	sprite_bitmask:=$FF;
+	sprite_stretch_x:=$FF;
+	sprite_stretch_y:=$FF;
+	sprite_multicolor_reg1:=light_blue;
+	sprite_multicolor_reg2:=grey;
 	for i:=0 to 8 do begin
-		SPRITE_COLOR[i]:=BLUE;
+		sprite_color[i]:=blue;
 		setspriteloc(i,$80+i,0);
 	end;
 end;
 
+// This procedure updates the logo sprite position
 procedure UpdateSprites();
 begin
-	
+	// Copy positions to x/y
 	x:=org_x;
 	y:=org_y;
-
+	// 8 sprites in total
 	for i:=0 to 8 do begin
+		// when the 4th sprite has been reached, then move x and y to the start of the next row on screen
 		if (i=4) then begin
 			x:=org_x;
-			y:=y+21*2;
+			// Sprites are strethed, so double width / height
+			y:=y+21*2; 
 		end;
 		spritepos(x,y,i);
+		// Sprites are strethed, so double width / height
 		x:=x+24*2;
-		
 	end;
-
 end;
 
 
-interrupt Raster1();
+interrupt RasterMain();
 begin
 	StartIRQ(@useKernal);
 
-//	org_x:=100;
-
+	// y and x simply follows a sine curve
 	org_y:=sine[time*5]/4+70;
 	i:=time*4+80;
 	org_x:=sine[i]/4+70;
 
-
 	UpdateSprites();
-    asm(" ; crash");
+	// Update time
 	inc(time);
+	
 	CloseIRQ();
 end;
 
 
 procedure RenderText();
 begin
-	moveto(0,0,$04);
+	// Move screen pointer to upper left pointer
+	moveto(0,0,hi(screen_char_loc));
+	// text pointer pointing to text
 	tp:=text;
+	// go through 25 rows
 	for j:=0 to 25 do begin
+		// and 40 columns 
 		for i:=0 to 40 do begin
+			// if text pointer is zero, the end of string has been reached. If so, reset text pointer
 			if (tp[0]=0) then tp:=text;
+			// copy text char from text to screen
 			screenmemory[i]:=tp[0];
-			inczp(tp,1);
-
-
+			// Increase text pointer
+			tp:=tp+1;
+	
 		end;
-		inczp(screenmemory, 40);
-
+		screenmemory:=screenmemory+40;
 	end
-
 end;
 
 
 begin
-	ClearScreen($20,^$0400);
-	ClearScreen(DARK_GREY,^$D800);
-	SCREEN_BG_COL:=DARK_GREY;	
-	SCREEN_FG_COL:=BLACK;
+	// Set up screen
+	ClearScreen($20,screen_char_loc);
+	ClearScreen(dark_grey,screen_col_loc);
+	screen_bg_col:=dark_grey;	
+	screen_fg_col:=black;
+	// Render background text
 	RenderText();
+	
+	// Setup sprites
 	InitSprites();
-	StartRasterChain(Raster1(), 0, @useKernal);
+	// Init main raster
+	StartRasterChain(RasterMain(), 0, @useKernal);
 
 
 	Loop();

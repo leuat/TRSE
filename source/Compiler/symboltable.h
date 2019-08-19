@@ -86,7 +86,7 @@ public:
 
     void InitBuiltins();
     bool exists(QString name);
-
+    QString findSimilarSymbol(QString sim, float percentage, int n,QStringList procedures);
     QStringList getUnusedVariables();
 
     Symbol* Lookup(QString name, int lineNumber, bool isAddress=false);

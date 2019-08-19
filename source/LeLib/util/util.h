@@ -113,6 +113,28 @@ public:
 
     static int getShiftCount(int i);
 
+    static QString FindMostSimilar(QString search, QStringList& lst,float percentage, int n);
+
+
+    static bool QStringIsSimilar(QString a, QString b, qreal percentage, int n, Qt::CaseSensitivity caseSense)
+               //Iterates substrings in groups of n chars from a und finds these in b.
+               //The number of hits is then divided by the length of the shorter string.
+               //To properly take word beginnings and endings into account
+               //spaces are being inserted before and after the strings.
+       {
+           if (a.isEmpty()||b.isEmpty()) return false;
+           qreal hits=0;
+           a=QString(" ").repeated(n-1)+a+QString(" ").repeated(n-1);
+           b=QString(" ").repeated(n-1)+b+QString(" ").repeated(n-1);
+           QString part;
+           for (int i=0;i<a.count()-(n-1);i++)
+           {
+               part=a.mid(i,n);
+               if (b.contains(part,caseSense)) hits++;
+           }
+           if (a.length()<b.length()) return (percentage < (100*hits/(a.length()-(n-1))));
+           else return (percentage < (100*hits/(b.length()-(n-1))));
+       }
 
     static QStringList FindFilesOfType(QString dir, QString type);
 

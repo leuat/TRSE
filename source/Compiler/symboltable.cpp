@@ -220,6 +220,23 @@ bool SymbolTable::exists(QString name) {
     return false;
 }
 
+QString SymbolTable::findSimilarSymbol(QString sim, float percentage, int n, QStringList procedures)
+{
+    for (QString s:m_symbols.keys()) {
+        if (Util::QStringIsSimilar(sim,s,percentage,n,Qt::CaseInsensitive))
+            return s;
+    }
+    for (QString s:procedures) {
+        if (Util::QStringIsSimilar(sim,s,percentage,n,Qt::CaseInsensitive))
+            return s;
+    }
+    for (QString s:m_constants.keys()) {
+        if (Util::QStringIsSimilar(sim,s,percentage,n,Qt::CaseInsensitive))
+            return s;
+    }
+    return "";
+}
+
 QStringList SymbolTable::getUnusedVariables()
 {
     QStringList lst;
@@ -251,7 +268,15 @@ Symbol *SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
 
 
     if (!m_symbols.contains(name)) {
-        ErrorHandler::e.Error("Could not find variable '" + name + "'.", lineNumber);
+
+        QString similarSymbol = findSimilarSymbol(name,65,2,QStringList());
+        QString em = "";
+        if (similarSymbol!="") {
+            em+="Did you mean '<font color=\"#A080FF\">"+similarSymbol+"</font>'?<br>";
+        }
+
+
+        ErrorHandler::e.Error("Could not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>"+em, lineNumber);
         return nullptr;
     }
     //qDebug() << name << " " << m_symbols[name]->m_type;
