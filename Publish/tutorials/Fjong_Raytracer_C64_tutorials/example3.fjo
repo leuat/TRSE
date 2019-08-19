@@ -81,7 +81,6 @@ function Update()
 			Message("Files written to data/example3_...bin")
 			
 	end
-dsfdsf
 	if (frame<noFrames) then
 	     AddScreen(dataWidth,dataHeight,  screenCharacterInCharset,  (cos(frame/9.0)+2)*16)
 	end
