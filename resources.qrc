@@ -270,5 +270,6 @@
         <file>resources/text/help/f/addscreen.rtf</file>
         <file>resources/text/help/m/memcpyfast.rtf</file>
         <file>resources/text/help/m/memcpyunroll.rtf</file>
+        <file>resources/text/help/p/interrupts.rtf</file>
     </qresource>
 </RCC>
