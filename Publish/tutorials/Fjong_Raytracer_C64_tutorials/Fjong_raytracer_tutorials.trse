@@ -28,3 +28,5 @@ override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 current_file = example3.ras
 output_type = prg
+project_path = tutorials/Fjong_Raytracer_C64_tutorials/
+open_files = ,example3.ras

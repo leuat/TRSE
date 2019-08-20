@@ -83,6 +83,7 @@ SOURCES += main.cpp\
     source/dialogexport3d.cpp \
     source/toolbox.cpp \
     source/toolboxitem.cpp \
+    source/tutorials.cpp \
     source/workerthread.cpp \
     imageeditor.cpp \
     dialognewimage.cpp \
@@ -219,6 +220,7 @@ HEADERS  += mainwindow.h \
     source/dialogexport3d.h \
     source/toolbox.h \
     source/toolboxitem.h \
+    source/tutorials.h \
     source/workerthread.h \
     imageeditor.h \
     dialognewimage.h \
@@ -617,4 +619,5 @@ DISTFILES += \
     resources/text/help/r/wedge.rtf \
     resources/text/help/r/while.rtf \
     resources/text/help/m/drawtextbox.rtf \
-    resources/text/help/m/drawcolortextbox.rtf
+    resources/text/help/m/drawcolortextbox.rtf \
+    resources/text/tutorials.txt

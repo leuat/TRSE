@@ -29,5 +29,5 @@ current_file = easy/14_fullscreen_scroller.ras
 output_type = prg
 data_header_sprites/sprites.flf = 6.92363e-310
 output_debug_symbols = 1
-project_path = /home/leuat/code/TRSE/Publish/tutorials/C64/Tutorials/
+project_path = tutorials/C64/Tutorials/
 open_files = ,easy/14_fullscreen_scroller.ras

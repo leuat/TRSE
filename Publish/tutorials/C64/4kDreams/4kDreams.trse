@@ -39,3 +39,7 @@ override_target_settings = 0
 override_target_settings_org = $810
 override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
+project_path = tutorials/C64/4kDreams/
+output_debug_symbols = 1
+open_files = ,intro.ras
+current_file = intro.ras

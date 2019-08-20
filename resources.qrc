@@ -260,5 +260,12 @@
         <file>resources/text/help/f/addc64linetodata.rtf</file>
         <file>resources/text/help/f/saverawdata.rtf</file>
         <file>resources/text/help/f/compressandsavehorizontaldata.rtf</file>
+        <file>resources/text/tutorials.txt</file>
+        <file>resources/images/tutorials/rb1.png</file>
+        <file>resources/images/tutorials/nibbler.gif</file>
+        <file>resources/images/tutorials/vixmas.png</file>
+        <file>resources/images/tutorials/ppl.png</file>
+        <file>resources/images/tutorials/fjong1.png</file>
+        <file>resources/images/tutorials/4kdreams.png</file>
     </qresource>
 </RCC>
