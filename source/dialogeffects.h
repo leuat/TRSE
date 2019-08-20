@@ -38,7 +38,6 @@ private:
 //    QMap<QString, Material> m_materials;
 
 
-
 public slots:
     void UpdateImage();
 private slots:

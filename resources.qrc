@@ -267,5 +267,6 @@
         <file>resources/images/tutorials/ppl.png</file>
         <file>resources/images/tutorials/fjong1.png</file>
         <file>resources/images/tutorials/4kdreams.png</file>
+        <file>resources/text/help/f/addscreen.rtf</file>
     </qresource>
 </RCC>

@@ -701,12 +701,10 @@ void FormRasEditor::MemoryAnalyze()
  //   qDebug() << "B2";
 
     m_mca.ClassifyZP(m_builderThread.m_builder->compiler.m_assembler->blocks);
-    qDebug() << "B1";
 
     DialogMemoryAnalyze* dma = new DialogMemoryAnalyze(m_iniFile);
     dma->Initialize(m_builderThread.m_builder->compiler.m_assembler->blocks, m_iniFile->getInt("memory_analyzer_font_size"));
     dma->resize(m_iniFile->getdouble("memory_analyzer_window_width"),m_iniFile->getdouble("memory_analyzer_window_height"));
-    qDebug() << "C";
 
     dma->exec();
     delete dma;

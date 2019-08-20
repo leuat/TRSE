@@ -637,4 +637,4 @@ f ; AddPosition; s,f,f,f
 f ; AddC64LineToData; f,f,f,f
 f ; SaveRawData; s
 f ; CompressAndSaveHorizontalData ; f,f,s,s
-
+f ; AddScreen; f,f,f,f

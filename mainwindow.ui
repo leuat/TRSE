@@ -315,7 +315,7 @@ p, li { white-space: pre-wrap; }
                 <widget class="QListWidget" name="lstRecentProjects">
                  <property name="font">
                   <font>
-                   <pointsize>16</pointsize>
+                   <pointsize>14</pointsize>
                   </font>
                  </property>
                 </widget>
