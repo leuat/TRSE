@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Turbo Rascal Syntax error, &quot;;&quot; expected but &quot;BEGIN&quot; Version 0.08</string>
+   <string>Turbo Rascal Syntax error, &quot;;&quot; expected but &quot;BEGIN&quot; Version @version</string>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
@@ -220,29 +220,8 @@
           </attribute>
           <layout class="QGridLayout" name="gridLayout_4">
            <item row="1" column="0">
-            <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,4">
+            <layout class="QGridLayout" name="gridLayout_2" columnstretch="1">
              <item row="0" column="0">
-              <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,2">
-               <item>
-                <widget class="QLabel" name="lblLogo">
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label">
-                 <property name="text">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="0" column="1">
               <layout class="QVBoxLayout" name="verticalLayout_3">
                <item>
                 <widget class="QLabel" name="label_2">
@@ -284,7 +263,7 @@
      <x>0</x>
      <y>0</y>
      <width>1380</width>
-     <height>24</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

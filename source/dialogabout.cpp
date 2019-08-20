@@ -21,6 +21,7 @@
 
 #include "dialogabout.h"
 #include "ui_dialogabout.h"
+#include "source/LeLib/data.h"
 #include <QFile>
 
 DialogAbout::DialogAbout(QWidget *parent) :
@@ -28,7 +29,7 @@ DialogAbout::DialogAbout(QWidget *parent) :
     ui(new Ui::DialogAbout)
 {
     ui->setupUi(this);
-
+    ui->txtAbout->setText( ui->txtAbout->toHtml().replace("@version",Data::data.version));
 
 /*    QFile f(":resources/text/about.txt");
   //  if (QFile::exists(":resources/text/about.txt"))

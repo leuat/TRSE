@@ -106,10 +106,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     SetupFileList();
 
-    QImage img;
+    /*QImage img;
     img.load(":resources/images/trselogo.png");
     ui->lblLogo->setPixmap(QPixmap::fromImage(img));
-
+    */
 
     ui->splitter->setStretchFactor(0,10);
     ui->splitter->setStretchFactor(1,100);
@@ -119,6 +119,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lblSave->setHidden(true);
     ui->lblBuild->setHidden(true);
     this->installEventFilter(this);
+
+
+    setWindowTitle("Turbo Rascal Syntax error, \";\" expected but \"BEGIN\" Version " + Data::data.version);
 }
 
 
