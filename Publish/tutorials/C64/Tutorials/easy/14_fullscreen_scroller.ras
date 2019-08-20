@@ -4,10 +4,10 @@ var
 /*
 	This tutorial is based on chardata cycling, as presented in tutorial 12. 
 	
-	What is basically going on:
+	Whatever is going on here:
 		- decrease the 8-pixel wide hardware scroll register
-		- if it is zero: 
-			- reset scroll register 
+		- if it the scroll value is zero: 
+			- reset scroll value to 7
 			- spend lots of cycles copying*all* screen data 1 column to the right 
 			- draw a new row of random (perlin noise) data at the leftmost column on the screen
 		- whenever the scrollr register is *not* zero, perform the character set shift to create a plasma effect
@@ -100,6 +100,7 @@ end;
 	
 
 begin
+	// Hide column 0 and 39!
 	hideborderx(1);
 	setcharsetlocation(@charsetLoc);
 	StartRasterChain(RasterMain(),100,@useKernal);

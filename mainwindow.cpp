@@ -106,10 +106,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     SetupFileList();
 
-    QImage img;
+    /*QImage img;
     img.load(":resources/images/trselogo.png");
     ui->lblLogo->setPixmap(QPixmap::fromImage(img));
-
+    */
 
     ui->splitter->setStretchFactor(0,10);
     ui->splitter->setStretchFactor(1,100);
@@ -119,7 +119,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lblSave->setHidden(true);
     ui->lblBuild->setHidden(true);
     this->installEventFilter(this);
+
+    m_tutorials.Read();
+    m_tutorials.PopulateTreeList(ui->treeTutorials);
+    setWindowTitle("Turbo Rascal Syntax error, \";\" expected but \"BEGIN\" Version " + Data::data.version);
 }
+
 
 
 
@@ -426,6 +431,8 @@ void MainWindow::UpdateRecentProjects()
 {
     ui->lstRecentProjects->clear();
     QStringList l = m_iniFile.getStringList("recent_projects");
+    l.removeDuplicates();
+    l.removeAll("");
 //    qDebug() << l;
 
     for (QString s: l) {
@@ -435,6 +442,7 @@ void MainWindow::UpdateRecentProjects()
         QString name = s.split("/").last();
         item->setText(name);
 
+        if (name.trimmed()!="")
         ui->lstRecentProjects->addItem(item);
     }
 
@@ -1248,5 +1256,24 @@ void TRSEProject::VerifyDefaults() {
 
     if (!m_ini.contains("output_debug_symbols"))
         m_ini.setFloat("output_debug_symbols",1);
+
+}
+
+void MainWindow::on_treeTutorials_itemDoubleClicked(QTreeWidgetItem *item, int column)
+{
+    if (item->data(0,Qt::UserRole).toString()=="")
+        return;
+    QString dir = "tutorials/"+item->data(0,Qt::UserRole).toString().split(";")[0];
+    QString fileName = Util::findFileInDirectory("",dir,"trse");
+    LoadProject(fileName);
+
+}
+
+void MainWindow::on_treeTutorials_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+{
+    if (current->data(0,Qt::UserRole).toString()=="")
+        return;
+    QString text = current->data(0,Qt::UserRole).toString().split(";")[1];
+    ui->txtTutorials->setText(text+"<p><font color=\"#A0FFA0\">Double click to load the project!</font>");
 
 }

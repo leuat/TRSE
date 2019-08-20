@@ -60,7 +60,11 @@ void NodeVarDecl::ExecuteSym(SymbolTable *symTab) {
 
 
     Symbol* varSymbol = new VarSymbol(varName, typeSymbol->m_name);
-    symTab->Define(varSymbol,false);
+    bool isFlaggedAsUsed = false;
+    if (typeName == "INCSID")
+        isFlaggedAsUsed = true;
+    symTab->Define(varSymbol,isFlaggedAsUsed);
+
     // qDebug() << "Nodevardecl:ExecuteSym " << varName << " " << varSymbol->m_type;
 
 }
@@ -77,7 +81,7 @@ void NodeVarDecl::InitSid(QString projectDir, int VICAddress, QString type) {
         headerShift = val.toInt(&ok);
         if (!ok)
             headerShift = 0;
-        qDebug() << headerShift;
+//        qDebug() << headerShift;
     }
     if (type=="sid") {
         sid.Load(t->m_filename, projectDir);

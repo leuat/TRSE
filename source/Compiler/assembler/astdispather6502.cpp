@@ -1087,9 +1087,10 @@ void ASTDispather6502::BuildToCmp(Node *node)
     if (varb!=nullptr && varb->m_expr==nullptr)
         b = varb->value;
 
-    NodeNumber* numb = dynamic_cast<NodeNumber*>(node->m_right);
-    if (numb!=nullptr)
-        b = numb->StringValue();
+    if (node->m_right->isPureNumeric())
+//    NodeNumber* numb = dynamic_cast<NodeNumber*>(node->m_right);
+  //  if (numb!=nullptr)
+        b = node->m_right->getValue(as);
 
     node->m_left->Accept(this);
     as->Term();

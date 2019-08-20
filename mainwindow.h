@@ -57,7 +57,7 @@
 #include "source/dialogfindfile.h"
 #include "source/dialogexport3d.h"
 #include "source/dialogprojectbuilder.h"
-
+#include "source/tutorials.h"
 namespace Ui {
 class MainWindow;
 
@@ -154,7 +154,7 @@ public:
     QPalette m_defaultPalette;
     QString m_currentPath;
     QVector<TRSEDocument*> m_documents;
-
+    Tutorials m_tutorials;
 
 
 
@@ -324,6 +324,10 @@ private slots:
     void on_actionWavefront_obj_to_amiga_converter_triggered();
 
     void on_btnBuildAll_clicked();
+
+    void on_treeTutorials_itemDoubleClicked(QTreeWidgetItem *item, int column);
+
+    void on_treeTutorials_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 
 private:
 

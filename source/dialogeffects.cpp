@@ -79,6 +79,18 @@ void DialogEffects::Create()
 }
 
 
+static bool ValidateNoParameters(QString p, lua_State *L, int num)
+{
+    int params = lua_gettop (L);
+    if (params <num) {
+        m_error = "Method '"+p+"' requires "+QString::number(num)+" parameters, but has only "+QString::number(params);
+        return false;
+    }
+    return true;
+}
+
+
+
 static int LuaSin(lua_State *L) {
     lua_pushnumber(L, sin(lua_tonumber(L, 1)));
     return 1;
@@ -115,6 +127,7 @@ static int AddLight(lua_State *L) {
 
 static int AddObject(lua_State *L)
 {
+
 //    qDebug();// << text;
     int args = lua_gettop(L);
   //  if (n!=5) {
@@ -129,6 +142,7 @@ static int AddObject(lua_State *L)
     AbstractRayObject* obj = nullptr;
     int N = 5;
     if (object=="torus") {
+        ValidateNoParameters("AddObject (torus)",L,N+4);
         obj =
                     new RayObjectTorus(
                         QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
@@ -885,6 +899,7 @@ void DialogEffects::UpdateGlobals()
     m_rt.m_globals.m_steps = m_script->get<float>("globals.raymarch_steps");
     m_rt.m_globals.m_shadowSteps = m_script->get<float>("globals.raymarch_shadow_steps");
 }
+
 
 void DialogEffects::UpdateImage()
 {
