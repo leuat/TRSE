@@ -40,7 +40,5 @@ override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 override_target_settings_sys = 0
 override_target_settings_prg = 0
-project_path = tutorials/VIC20/PurplePlanetYo/
 output_debug_symbols = 1
-open_files = ,demo.ras
 current_file = demo.ras

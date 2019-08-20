@@ -1,8 +1,0 @@
-; labels
-al  $810 .Rasters
-al  $813 .IRQ0
-al  $830 .IRQ2
-al  $84d .IRQ1
-al  $86a .block65186
-al  $89c .EndSymbol
-; breakpoints
