@@ -54,8 +54,7 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_supports.displayForeground = false;
 
     m_currencChar=0;
-    m_currentMode=Mode::CHARSET2x2;
-
+    m_currentMode=Mode::FULL_IMAGE;
     m_exportParams.clear();
     m_exportParams["Start"] = 0;
     m_exportParams["End"] = 256;

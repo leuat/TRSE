@@ -52,7 +52,7 @@ LImageCharsetRegular::LImageCharsetRegular(LColorList::Type t) : CharsetImage(t)
 
 
     m_currencChar=0;
-    m_currentMode=Mode::CHARSET1x1;
+    m_currentMode=Mode::FULL_IMAGE;
 }
 
 

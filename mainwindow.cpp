@@ -638,6 +638,7 @@ void MainWindow::on_btnSave_3_clicked()
     m_currentDoc->SaveCurrent();
 }
 
+// New source file
 void MainWindow::on_actionRas_source_file_triggered()
 {
     if (m_currentProject.m_filename=="") {
@@ -661,7 +662,7 @@ void MainWindow::on_actionRas_source_file_triggered()
     //filename = filename.split("/").last();
     filename = filename.toLower().remove(getProjectPath().toLower());
 
-//    qDebug() << filename;
+    qDebug() << filename;
   //  qDebug() << getProjectPath().toLower();
     QString fn = getProjectPath() + filename;
     if (QFile::exists(fn))
