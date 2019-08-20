@@ -268,5 +268,7 @@
         <file>resources/images/tutorials/fjong1.png</file>
         <file>resources/images/tutorials/4kdreams.png</file>
         <file>resources/text/help/f/addscreen.rtf</file>
+        <file>resources/text/help/m/memcpyfast.rtf</file>
+        <file>resources/text/help/m/memcpyunroll.rtf</file>
     </qresource>
 </RCC>
