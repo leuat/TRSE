@@ -1,0 +1,26 @@
+; labels
+al  $813 .random_color
+al  $810 .Randomness
+al  $814 .x
+al  $815 .y
+al  $816 .index
+al  $817 .random_values
+al  $917 .Random
+al  $91e .RandomSkip91087
+al  $925 .InitializeRandom
+al  $92a .for669
+al  $93f .forLoopDone16487
+al  $940 .block40435
+al  $94e .while56837
+al  $957 .binaryclausefailed64045
+al  $959 .binaryclausefinished74882
+al  $960 .ConditionalTrueBlock45562
+al  $971 .for4899
+al  $976 .for46092
+al  $994 .forLoopDone79664
+al  $99f .fill88820
+al  $9af .WordAdd98480
+al  $9ba .WordAdd54166
+al  $9c6 .forLoopDone68506
+al  $9c9 .elseblock98089
+; breakpoints

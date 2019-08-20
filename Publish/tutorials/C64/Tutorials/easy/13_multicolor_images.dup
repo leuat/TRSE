@@ -1,0 +1,18 @@
+; labels
+al  $810 .Display_multicolor_image
+al  $816 .block54163
+al  $82e .WordAdd7466
+al  $840 .WordAdd97811
+al  $854 .outer98500
+al  $856 .inner72515
+al  $866 .final66487
+al  $887 .wordAdd26234
+al  $89d .outer82290
+al  $89f .inner45950
+al  $8af .final8693
+al  $8b9 .block1996
+al  $8de .copyimageloop51633
+al  $919 .EndSymbol
+al  $5000 .image_color
+al  $6000 .image_data
+; breakpoints

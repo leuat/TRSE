@@ -1,0 +1,94 @@
+program Sprites;
+var  
+	// sprite_x is an integer since x values range between 0 and 320
+	sprite_x : integer = 160;
+	sprite_y : byte = 100;
+	// joystick_dir is used to display either left or right-pointing sprite
+	joystick_dir : byte;
+	// sprite location is where we keep the sprite in the memory.
+	// also used for setspriteloc that needs this value divided by 64
+   	@define spriteLoc $2000
+   	// In this tuturial, we use sprite "0" as the default one
+   	@define useSprite 0
+   	// Use joystick port 2
+   	@define joystickPort 2
+   	@define useBank 0
+	// Include the sprite binary file. The original 
+	// image is located under sprites/sprites.flf 
+	  	
+	sprites:incbin("resources/sprites/sprites.bin", @spriteLoc); 
+
+
+// This method initializes the screen
+procedure InitScreen();
+begin
+	screen_bg_col:=purple;
+	screen_fg_col:=black;
+	clearscreen($20, screen_char_loc);
+	moveto(1,23,$04);
+	printstring("JOYSTICK IN PORT 2 TO MOVE",0,40);
+end;   
+
+// This method initializes the sprites
+procedure InitSprites();
+begin
+	// Set all sprites to be multicolor
+	sprite_multicolor:=$ff;
+	// Set common sprite multicolor #1 
+	sprite_multicolor_reg1:=green;
+	// Set  common sprite multicolor #2 
+	sprite_multicolor_reg2:=white;
+	// Set sprite "0" individual color value 
+	sprite_color[@useSprite]:=light_red;
+	// Turn on sprite 0 (or @useSprite)
+	togglebit(sprite_bitmask,@useSprite,1);
+end;
+
+// This method is called one time per raster cycle
+procedure UpdateSprite();
+begin
+	// Update sprite position based on joystick values
+	sprite_x:=sprite_x + joystickright - joystickleft;
+	sprite_y:=sprite_y + joystickdown - joystickup;
+	// Update the sprite position on screen for sprite number @useSprite	
+	SpritePos(sprite_x, sprite_y, @useSprite);
+	
+	// Set left/right offset pointer for sprite
+	if (joystickright) then
+		joystick_dir := 1;
+	if (joystickleft) then
+		joystick_dir := 0;
+	
+	// Set the sprite pointer to point to the sprite data + direction offset
+	SetSpriteLoc(@useSprite, @spriteLoc/64 + joystick_dir, @useBank);
+
+	// If any movement is detected, play a random sound
+	if ((joystickright+joystickleft) or (joystickup+joystickdown)) then
+		PlaySound(sid_channel1, 
+				13,  // Volume
+				20+Random()/16,  // Hi byte frequency
+				0*16+0,  // Attack voice 1
+				3*16 + 3,   // Sustain = 16*15 + release=6
+				1 +sid_saw,  // Waveform
+				sid_saw);  // waveform 
+
+end;
+
+// This interrupt is triggered one time pr raster cycle
+interrupt MainRaster();
+begin
+	startirq(1);
+	// Update joystick here
+	Joystick(@joystickPort);
+	// Update sprites
+	UpdateSprite();	
+	closeirq();
+end;
+
+// Main program
+begin
+	InitScreen();
+	InitSprites();
+	StartRasterChain(MainRaster(),0,1);		
+	Loop();
+end.

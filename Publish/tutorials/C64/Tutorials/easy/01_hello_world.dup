@@ -1,0 +1,33 @@
+; labels
+al  $810 .HelloWorld
+al  $813 .text
+al  $81f .mul16x8_procedure
+al  $827 .mul16x8_doAdd
+al  $830 .mul16x8_loop
+al  $834 .mul16x8_enterLoop
+al  $83b .mul16x8_def_end
+al  $83c .multiply_eightbit
+al  $84a .mul_loop
+al  $84c .mul_mod
+al  $84e .mul_skip
+al  $857 .mul_end
+al  $859 .multiply_eightbit93418
+al  $85d .SetScreenPosition
+al  $867 .syloop
+al  $86e .sskip
+al  $871 .sydone
+al  $87c .sxdone
+al  $87f .moveto93141
+al  $880 .print_number_text
+al  $885 .printstring
+al  $887 .printstringloop
+al  $892 .printstring_skip
+al  $89d .printstring_done
+al  $89e .block12496
+al  $8a2 .clearloop48153
+al  $8b5 .clearloop71726
+al  $8f7 .wordAdd25393
+al  $8fe .printstring_text72305
+al  $915 .printstring_call85948
+al  $928 .EndSymbol
+; breakpoints

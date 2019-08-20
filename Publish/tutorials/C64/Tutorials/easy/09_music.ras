@@ -1,0 +1,29 @@
+program Music;
+var
+	sidfile: incsid("resources/sid/courier.sid","2");
+
+@define useKernal 0
+
+/*
+	Sid music is played by calling
+	the sidfile_1_play address for each raster interupt trigger
+
+*/
+interrupt Raster1();
+begin
+	StartIRQ(@useKernal);
+	// Turn on background color only when SID file is playing
+	screen_bg_col:=green;
+	call(sidfile_1_play);
+	// Turn off (black) backgrund color. Now we can see how much raster time has been used!
+	screen_bg_col:=black;
+	CloseIRQ();
+end;
+
+begin
+	InitSid(sidfile_1_init);
+	setmemoryconfig(1,0,@useKernal);
+	StartRasterChain(Raster1(),$50,@useKernal);
+	Loop();
+
+end.

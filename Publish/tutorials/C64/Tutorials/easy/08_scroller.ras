@@ -1,0 +1,109 @@
+program Scroller;
+var
+	scrollVal : byte=0;
+	textPointer : pointer;
+	text : cstring = ("                                        ",
+					"THIS IS A SAMPLE SCROLLER TEXT",
+					 "                                        ");
+	
+@define kernal "1"
+// Position of scroller
+@define ypos 16
+// Position of scroller raster line
+@define yposRaster $A0
+
+
+/*
+  The following method just copes the current contents of textPointer to screenmemory
+*/
+procedure PrintText();
+begin
+	moveto(0,@ypos,$04);
+	memcpy(textPointer, 0, screenmemory, 39);
+end;
+
+/*
+ 	The following method decreases the scroll value. If the value is zero, then
+ 	the scroll value is reset to 7, the text pointer is increased and a new
+ 	text is printed to the screen. 
+*/
+procedure UpdateScrollAndText();
+begin
+	// Scroll has looped 8 pixels
+	if (scrollVal=0) then 
+	begin
+		// Reset scroll value
+		scrollVal:=7; 
+		// Increase text pointer
+		textPointer:=textPointer+1;
+		// Reset scroller text if string termination "0" is encountered
+		if (textPointer[39]=0) then textPointer:=text;
+		// Print new string to the screen
+		PrintText();			
+	end
+	else dec(scrollVal);
+end;
+
+
+// Forward declare "Bottom"
+
+interrupt Bottom();
+
+
+interrupt Top();
+begin
+	StartIRQ(@kernal);
+	screen_bg_col:=red;
+	screen_fg_col:=red;
+	scrollx(0); // make sure that everythingin the "TOP" layer doesn't scroll
+	RasterIRQ(Bottom(),@yposRaster,@kernal);
+	// Update text and etc from the "Top" layer
+	UpdateScrollAndText();		
+	CloseIRQ();
+end;
+
+
+
+interrupt Bottom();
+begin
+	StartIRQ(@kernal);
+	// Wait(3) makes sure that we set the background color when the raster is outside the screen,
+	// removing any artifacts
+	wait(3);
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	// Scroll here!
+	Scrollx(scrollVal);
+	
+	RasterIRQ(Top(),$00,@kernal);
+	CloseIRQ();
+end;
+/*
+	Initializes the screen etc
+*/
+procedure InitScreen();
+begin
+	// Clear screen with spaces
+	ClearScreen($20,screen_char_loc);
+	// Fill the upper screen color ram with black
+	fill(screen_col_loc,black,0);	
+	// Fill the scroll area with light red
+	fill(screen_col_loc+^@ypos*^40,light_red,0);	
+	
+	// Print some static text
+	moveto(6,2,$04);
+	printstring("THIS TEXT IS STATIONARY",0,40);
+	
+	// Removes the 0th and 39th column on the screen, enabling the "smooth" transition at 
+	// the edges. 
+	Hideborderx(1);
+end;
+
+begin
+	InitScreen();
+	// Let the text pointer point to the actual text
+	textPointer:=text;
+	// Start the raster chain!
+	StartRasterChain(Top(), 0,@kernal);
+	Loop(); 
+end.

@@ -1,0 +1,56 @@
+program Boxes;
+var  
+	saddr: array[25] of integer; // Screen address table
+	caddr: array[25] of integer; // Color adress table
+	
+	box: array[8] of byte = ($55, $43, $49, $5d, $4b, $43, $4a, $5d);
+	x,y,dx,dy,t: byte = 0;
+
+/*
+
+	This tutorial draws boxes on the screen using the "drawcolortextbox" method. This method
+	requires pointers to screen address tables, which are set up using the createaddresstable methods.
+
+	createaddresstable lets the user create a lookup table instead of using multiplications. example:
+	to find the adress on the screen, a "address:=position + y*40;" multiplication is required. An adress
+	table eliminates the need of having this multiplication, and relies solely on a lookup.  	
+
+*/
+
+	
+begin
+	// Set screen background/border color
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	
+    clearscreen($20, screen_char_loc);
+    clearscreen(black, screen_col_loc);
+	// Sets up the address tables for the screen & color memory    
+	createaddresstable(saddr,screen_char_loc,40,25);
+	createaddresstable(caddr,screen_col_loc,40,25);
+
+	// dx and dy are initialized to 1
+	dx:=1;
+	dy:=1;
+	while (true) do begin
+		// Make sure we only draw 1 box per frame
+		waitforraster(80);
+		// Add the delta dx and dy to x and y
+		x:=x+dx;
+		y:=y+dy;
+		// Flip dx and dy when borders are reached
+	    case x of
+		    	31: dx := -1;
+		    	0: dx := 1;
+		end;
+	    case y of
+	    		20: dy := -1;
+	    		0: dy := 1;
+		end;
+		// Make sure that t loops from 0-15
+		t:=(t+1)&15;
+		// Draw two boxes in opposing corners
+		drawcolortextbox(saddr, caddr, box, x, y, 9, 5, t);
+		drawcolortextbox(saddr, caddr, box, 31 - x, 20 - y, 9, 5, 16 - t);
+	end;
+end.
