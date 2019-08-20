@@ -284,7 +284,7 @@ end;
 
 procedure DrawUIBonus();
 var
-	bonusString: string = (39,40,41,42);
+//	bonusString: string = (39,40,41,42);
 begin
 	ColourTime(GREEN);
 	p1 := $1e44;//addresstable(scrm,11,3);

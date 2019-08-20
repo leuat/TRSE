@@ -33,3 +33,7 @@ d64_paw_file_disk2 = none
 override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
+project_path = tutorials/VIC20/VicNibbler/
+output_debug_symbols = 1
+open_files = ,nibbler.ras
+current_file = nibbler.ras
