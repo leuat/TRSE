@@ -6,6 +6,9 @@ var
 	
 @define twisterLoc $8000
 
+
+@requirefile "data/example7_twister.bin" "Please run the Fjong raytracer file 'example7_simple_twister.fjo' before compiling this program"
+
 	twisterData : incbin("data/example7_twister.bin",@twisterLoc);
 	twisterTable : array[64*2] of byte;
 

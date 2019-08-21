@@ -372,6 +372,23 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         return;
     }
+    if (m_currentToken.m_value=="requirefile") {
+        Eat();
+        Eat();
+        Eat();
+        return;
+    }
+    if (m_currentToken.m_value=="raisewarning") {
+        Eat();
+        Eat();
+        return;
+    }
+
+    if (m_currentToken.m_value=="raiseerror") {
+        Eat();
+        Eat();
+        return;
+    }
 
     if (m_currentToken.m_value=="ignoremethod") {
         Eat();
@@ -913,6 +930,23 @@ void Parser::Preprocess()
                 Eat(TokenType::PREPROCESSOR);
                 m_initAssembler = m_currentToken.m_value;
                 //m_ignoreMethods.append(m_currentToken.m_value);
+            }
+            else if (m_currentToken.m_value.toLower() =="requirefile") {
+                Eat();
+                QString requiredFile = m_currentToken.m_value;
+                Eat();
+                QString message = m_currentToken.m_value;
+                if (!QFile::exists(m_currentDir+"/"+requiredFile))
+                    ErrorHandler::e.Error("The following file is required for compilation: <font color=\"#FF80A0\">'" + requiredFile + "'</font>.<br><font color=\"#FFB060\">" +message+"</font>", m_currentToken.m_lineNumber);
+
+            }
+            else if (m_currentToken.m_value.toLower() =="raisewarning") {
+                Eat();
+                ErrorHandler::e.Warning(m_currentToken.m_value, m_currentToken.m_lineNumber);
+            }
+            else if (m_currentToken.m_value.toLower() =="raiseerror") {
+                Eat();
+                ErrorHandler::e.Error(m_currentToken.m_value, m_currentToken.m_lineNumber);
             }
             else if (m_currentToken.m_value.toLower() =="use") {
                 Eat();

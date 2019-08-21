@@ -413,10 +413,10 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
 
     if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier))
         emit requestCloseWindow();
+        m_documentIsChanged  = ui->txtEditor->m_textChanged;
     //    Data::data.requestCloseWindow = true;
 
 //    if (ui->txtEditor->m_textChanged)
-        m_documentIsChanged  = ui->txtEditor->m_textChanged;
 
     if (e->key()==Qt::Key_J && (QApplication::keyboardModifiers() & Qt::ControlModifier)) AutoFormat();
     if (e->key()==Qt::Key_F && QApplication::keyboardModifiers() & Qt::ControlModifier) {

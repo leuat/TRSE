@@ -5,6 +5,8 @@ program Example3;
 // Twister table position
 @define tablepos $B000
 
+@requirefile "data/example3_screen.bin" "Please run the Fjong raytracer file 'example3.fjo' before compiling this program"
+
 var  
 	// Include data
 	data: incbin("data/example3_screen.bin",@twister);

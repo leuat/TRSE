@@ -9,6 +9,9 @@ var
 	@userdata "$4400" "$4800" "Bank 1 screen"
 	@userdata "$8400" "$8800" "Bank 2 screen"
 
+@requirefile "data/chadata1.bin" "Please run the Fjong raytracer file 'example9_movie.fjo' before compiling this program"
+
+
 	chardata1:incbin("data/chardata1.bin", $2000);
 	chardata2:incbin("data/chardata2.bin", $6000);
 	chardata3:incbin("data/chardata3.bin", $A000);

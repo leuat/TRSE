@@ -421,8 +421,7 @@ void CodeEditor::highlightCurrentLine()
 
 
 
-void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
-{
+void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event) {
     QPainter painter(lineNumberArea);
     painter.fillRect(event->rect(), lineNumberBackgroundColor);
 

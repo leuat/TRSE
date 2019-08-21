@@ -1,0 +1,10 @@
+<h3>Description</h3>
+<p>Tests whether a file exists or not before compiling starts. If the required file is
+missing, an error error is raised with the custom message.
+</p>The base directory for the file check is the project directory
+
+<h3>Example</h3>
+<code>
+    // Make sure that "myData.bin" is created before compile
+    @requirefile "data/myData.bin"  "Please run the data file generator 'mydata_generator.fjo' before compiling this file."
+</code>

@@ -78,7 +78,7 @@ function Update()
 	if (frame == noFrames) then 
 			
 			CompressAndSaveHorizontalData(dataWidth,compressRatio, "data/example3_screen.bin","data/example3_table.bin");
-			Message("Files written to data/example3_...bin")
+			Message("Data written to data/example3_...bin. You can now close this window.")
 			
 	end
 	if (frame<noFrames) then

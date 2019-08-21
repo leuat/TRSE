@@ -130,9 +130,9 @@ function Update()
 		frame = 0
 		if char == 26 then 
 			globals.isPaused = 1
-			CompressAndSaveHorizontalData(16,1, "data/screen.bin","data/table.bin");
+			CompressAndSaveHorizontalData(16,1, "data/example10_screen.bin","data/example10_table.bin");
 
-			Message("Files written to disk.")
+			Message("Files written to disk. This window can now be closed")
 			
 		end
 		ClearAllObjects()

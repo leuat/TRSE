@@ -87,7 +87,6 @@ public:
 
 protected slots:
     void onTextChanged(){
-//        qDebug() << "HAAA";
         m_textChanged = true;
     }
 

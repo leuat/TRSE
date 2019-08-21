@@ -1,48 +1,56 @@
 program Twister;
 var  
 
+// Location of twister data
 @define twister $3000
+// Location of twister table position
 @define ttablepos $9100
 
 @define rasterMainPos 0
-// POS $8100
+
+@requirefile "data/example10_screen.bin" "Please run the Fjong raytracer file 'example10_text_twister.fjo' before compiling this program"
 
 
-//@define IS_DEMO 1
-
-	twist: incbin("data/screen.bin",@twister);
-	ttable: incbin("data/table.bin",@ttablepos);
+	twist: incbin("data/example10_screen.bin",@twister);
+	ttable: incbin("data/example10_table.bin",@ttablepos);
 	loctab : array[128] of byte;
 	charset: incbin("charsets/main.bin", $2000);
 	
 	ssy:byte=0;
+	
 	ll,y,i,j,time,ttime,k,l,tt, frame,h,shift,sh,a,b, scroll, sx,val : byte = 0;
+	
 	zp,zp2,p1,cp,tp,kp,cp2,tmpp:pointer;
 	
 	sine2 : array[256] of byte;
 
 	keep : byte;
 
-	text : string = ("TURBO RASCAL SYNTAX ERROR",0,0,0);
+	text : cstring = ("TURBO RASCAL SYNTAX ERROR",0,0,0);
 
 
+/*
+	The following method calculates the lookup table position
+	based on the current caracter (gi_c).
+	Each table consists of 2 bytes for each row with a height of 16 rows using a total of 16 frames.
+	In total, each character then takes up 2*16*16 =512 bytes. 
+	Multiplication lookup with 512 is easy - just use your caharacter value (j) 
+	as the high byte of the lookup table (=*256) and then multiply by two (=*512).  
+*/
 procedure getI(gi_c:byte);
 begin
-	cp:=@ttablepos;
+	// Place current character in "j"
 	j:=tp[gi_c];
-	if (j=$20) then begin
+	if (j=$20) then begin // Account for space bar
 		j:=1;
-	end
-	else
-	begin
-		if (j>64) then j:=j-64;
-		if (j=$1A) then j:=1;
 	end;
-	i:=(j-1)*2;
+	i:=(j-1)*2; // since A is 1. Since this is used as the high byte, same as *512
 	cp:=ToPointer(@ttablepos/$100+i,0);
 end;
 
-
+/*
+	Updates the "loctab" used for twisting
+*/
 procedure UpdateTables();
 begin
 	getI(0);
@@ -55,7 +63,7 @@ begin
 	for i:=0 to 50 step 2 do begin
 		j:=(shift*2+i);
 		ll:=j/32;
-
+		
 		k:=val - sine2[i+tt]*1;
 		k:=k/2;
 
@@ -65,7 +73,6 @@ begin
 				j:=0; 
 //				k:=0; 
 			end;
-
 
 			tmpp:=zp;
 			if (j>64) then begin 	
@@ -77,7 +84,7 @@ begin
 				j:=j-32;
 			end; 
 //			kp:=tmpp+32*38;
-			kp:=tmpp+32*k;
+			kp:=tmpp;//+32*k;
 			
 			l:=kp[j];
 			h:=kp[j+1];
@@ -86,12 +93,19 @@ begin
 			l:=0;//lo(empty);
 			h:=$50;//hi(empty);
 		end;
-		
 
+//		loctab[i]:=l;
+//		loctab[i+1]:=h;
 
+/*		zp2:=zp2-1;
+		zp2[0]:=$20;
+		zp2[17]:=$20;
+		zp2:=zp2+1;*/
+		p1:=toPointer(h+$30, l);
+		memcpyunroll(p1,0,zp2,16);
+		zp2:=zp2+40;
+				
 
-		loctab[i]:=l;
-		loctab[i+1]:=h;
 	end;
 
 
@@ -99,7 +113,7 @@ end;
 
 
 
-procedure UpdateTwister();
+/*procedure UpdateTwister();
 begin
 	fill(^$8000,$20,16);
 
@@ -123,7 +137,7 @@ begin
 	end;
 
 end;
-
+*/
 
 
 
@@ -132,24 +146,14 @@ begin
 	StartIRQ(0);
 
 
-	if (time&1=1) then begin
+	//if (time&1=1) 
+//	then
+	 begin
 			i:=(7-(sh));
 			i:=i&7;
 		//	waitnoraster(1);
 			//ssy:=i;
 			scrolly(i);
-		sh:=sh+2;
-		if (sh=8) then begin
-			shift:=shift+1;
-			sh:=0;
-			if (shift=16) then begin
-				tp:=tp+1;
-				shift:=0;
-			if 
-				tp[2]=0 then tp:=text;
-		end;
-
-		end;
 	end;
 
 		scroll:=sine[tt+128]/2;
@@ -163,26 +167,40 @@ begin
 
 
 
-		if (time&1=1) then begin
+//		if (time&1=1) then begin
 			zp2:=$0400;
 			zp2:=zp2+sx;
 			a:=0;
 			b:=25;
-			UpdateTwister();
-	
-		end
-		else begin
+//			UpdateTwister();
+		if(time&1=1) then
 			UpdateTables();
+	
+//		end
+/*		else begin
 
 		end;
-
+*/
 		frame:=(frame + 1)&31;
 
 		
 		inc(time);
-		if (time&1=1) then inc(tt);
+		//if (time&1=1) then 
+		inc(tt);
 		inc(ttime);
 
+		sh:=sh+1;
+		if (sh=8) then begin
+			shift:=shift+1;
+			sh:=0;
+			if (shift=16) then begin
+				tp:=tp+1;
+				shift:=0;
+			if 
+				tp[2]=0 then tp:=text;
+		end;
+
+		end;
 
 
 	closeirq();
