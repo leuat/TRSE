@@ -72,7 +72,7 @@ function Init()
 
 
 --  AddObject("cylinder","cyl1", "", "Material0", 0,0,0,    0.4,0.5, 3 )
-  AddObject("box","cyl1", "", "Material0", 0,0,0,    2.4,12,0.5 )
+  AddObject("box","cyl1", "", "Material0", 0,0,0,    2.4,14,0.5 )
 
 	font = "rom"
 	--font = "charsets/worked_charset.flf"

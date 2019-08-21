@@ -70,7 +70,7 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("ToggleVRAM32Inc"))
         ToggleRegisterBit(as,"$2000",2);
 
-    if (Command("ReturnByte")) {
+    if (Command("ReturnValue")) {
         LoadVar(as,0);
         as->Asm("rts");
     }
@@ -5214,7 +5214,8 @@ void Methods6502::SaveVar(Assembler *as, int paramNo, QString reg, QString extra
 
 void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
 {
-
+    Node* node = m_node->m_params[paramNo];
+    NodeVar* nodevar = dynamic_cast<NodeVar*>(node);
     if (dynamic_cast<NodeVar*>(m_node->m_params[paramNo])!=nullptr ||
         dynamic_cast<NodeNumber*>(m_node->m_params[paramNo])!=nullptr) {
 
@@ -5230,6 +5231,11 @@ void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
             reg = "," + reg;
 
         as->Term(reg, true);
+
+        if (nodevar!=nullptr)
+        if (node->getType(as)==TokenType::POINTER && nodevar->m_expr==nullptr) {
+            as->Asm("ldy " + node->getValue(as)+"+1");
+        }
 
     }
     else
