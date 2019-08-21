@@ -35,5 +35,5 @@ override_target_settings_prg = 0
 build_list = ,
 project_path = tutorials/VIC20/VicNibbler/
 output_debug_symbols = 1
-open_files = ,nibbler.ras
+open_files = -1
 current_file = nibbler.ras

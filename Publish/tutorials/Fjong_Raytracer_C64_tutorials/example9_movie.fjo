@@ -62,7 +62,7 @@ function Init()
 
 	end
 	
-	UpdateScene()
+	UpdateScen()
 
 end
 
@@ -121,6 +121,7 @@ function Update()
 	frame=frame+1
 	if (frame==noFrames) then 
 		hasSaved = 1
+		Message("Saved to disk! You can stop the rendering now");
 
 	end	
 

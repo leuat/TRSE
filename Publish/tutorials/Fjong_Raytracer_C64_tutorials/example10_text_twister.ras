@@ -168,16 +168,10 @@ begin
 			zp2:=zp2+sx;
 			a:=0;
 			b:=25;
-//			SCREEN_BG_COL:=RED;
 			UpdateTwister();
 	
 		end
 		else begin
-/*			zp2:=$0400+16*40;
-			zp2:=zp2+sx;
-			a:=16;
-			b:=25;
-*/
 			UpdateTables();
 
 		end;

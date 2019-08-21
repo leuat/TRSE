@@ -82,7 +82,7 @@ function Update()
 			
 	end
 	if (frame<noFrames) then
-	     AddScreen(dataWidth,dataHeight,  screenCharacterInCharset,  (cos(frame/9.0)+2)*16)
+	     AddScreen(dataWidth,dataHeight,  screenCharacterInCharset,  32)
 	end
 
 	frame=frame+1
