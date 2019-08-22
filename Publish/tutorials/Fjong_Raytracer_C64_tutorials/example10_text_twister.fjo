@@ -65,6 +65,7 @@ messageDisplayed = 0
 
 function Init()
 
+	ClearAllObjects()
 	if (messageDisplayed==0) then
 		Message("Needs to render all characters A...Z and save to disk... please wait");
 		messageDisplayed = 1
@@ -78,13 +79,15 @@ function Init()
 	--font = "charsets/worked_charset.flf"
 
 	z = 1
-	AddObject("char","char1", "", "Material2",  font, char+1,   
+	if (char ~= 0) then	
+
+	AddObject("char","char1", "", "Material2",  font, char,   
 0,0,-z,            -- position
 0.6,0.5,0.5,      -- width xyz 
 0.250,0.26,0.31  -- stretch xyz
 );          
 
-	AddObject("char","char2", "", "Material2",  font, char+1,   
+	AddObject("char","char2", "", "Material2",  font, char,   
 0,0,z,            -- position
 0.6,0.5,0.5,      -- width xyz 
 0.250,0.26,0.31  -- stretch xyz
@@ -95,7 +98,7 @@ function Init()
 	SetRotation("char1",0,45,jj);
 
 	SetRotation("char2",0,45+90,jj);
-
+	end
 	UpdateGraphics()
 
 end
@@ -123,23 +126,22 @@ end
 
 function Update()
 	
-	frame=frame+1
 
 	if frame == noFrames then 
 		char=char+1
 		frame = 0
-		if char == 26 then 
+		if char == 27 then 
 			globals.isPaused = 1
 			CompressAndSaveHorizontalData(16,1, "data/example10_screen.bin","data/example10_table.bin");
 
 			Message("Files written to disk. This window can now be closed")
 			
 		end
-		ClearAllObjects()
 		Init()
 	end
 
 	UpdateGraphics()
+	frame=frame+1
 
 	-- 16 x 16 screen with characters starting at 0xA0     screen values (0-255) are divided by 32,restricting the data between 0xA0 and 0xA8
 	
