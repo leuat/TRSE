@@ -11,14 +11,14 @@ The image is saved to disk
 
 globals = {
  	camera = { x = 23, y=-3, z=-0 },
-     fov = 110,
+    fov = 110,
 	target = { x = 0, y=0, z=-0 },
 	light0 = {   	direction = {x=2, y=2.0, z=-5.5 }, 
 --				color = {x=1, y=1, z=1.0}, 
 				color = {x=2, y=2, z=2.0}, 
 			},
 	ambient = { x = 0.0, y = 0.0, z = 0.0 },
-     raymarch_steps = 90,
+    raymarch_steps = 90,
  	up = { x = 0, y=1, z=0 },
  --	up = { x = -1, y=0.3, z=0 },
 	raymarch_shadow_steps = 30,
@@ -60,6 +60,7 @@ charname = "char"
 -- Init is called on start  
 function Init()
 	UpdateScene()
+	Message("Rendering...");
 	radius = 7
 	x = -5.5*0
 	for i=1, string.len(text) do
@@ -100,7 +101,7 @@ function UpdateScene()
 	globals.camera.z = r*sin(t)
 	globals.camera.y = 10
 	globals.target.y = 0
-nd
+end
 
 
 function Update()

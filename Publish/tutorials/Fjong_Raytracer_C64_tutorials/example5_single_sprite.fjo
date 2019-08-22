@@ -78,7 +78,7 @@ function Init()
 --	AddObject("torus","object1","","Material0",0,0,0,4,1.5,3);
 	
 	UpdateScene()
-
+	Message("Rendering.. please wait")
 end
 
 
@@ -111,7 +111,7 @@ function Update()
 		-- save the noFrames*48 bytes of data as raw data
 		SaveRawData("data/example5_sprite.bin");
 		
-		Message("example 5 sprite data SAVED to disk")
+		Message("example 5 sprite data save to disk. You can now close this window.")
 		
 	end	
 	-- Update scene again

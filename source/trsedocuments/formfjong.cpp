@@ -40,7 +40,8 @@ void FormFjong::Save(QString filename)
     }
     file.close();
     m_iniFile->Save();
-//    ui->txtEditor->m_textChanged = false;
+    ui->txtEditor->m_textChanged = false;
+    m_documentIsChanged = false;
 }
 
 void FormFjong::Load(QString filename)
@@ -52,6 +53,8 @@ void FormFjong::Load(QString filename)
     file.close();
     UpdateFromIni();
     SetupHighlighter();
+    ui->txtEditor->m_textChanged = false;
+    m_documentIsChanged = false;
 }
 
 void FormFjong::UpdateFromIni()
@@ -132,14 +135,14 @@ void FormFjong::keyPressEvent(QKeyEvent *e)
     if (e->key() == Qt::Key_Escape && ui->leSearch->hasFocus()) {
         ui->txtEditor->setFocus();
     }
-
-
-    if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier))
+//    qDebug() << ui->txtEditor->m_textChanged    ;
+    if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+        m_documentIsChanged  = ui->txtEditor->m_textChanged;
         emit requestCloseWindow();
     //    Data::data.requestCloseWindow = true;
 
 //    if (ui->txtEditor->m_textChanged)
-        m_documentIsChanged  = ui->txtEditor->m_textChanged;
+    }
 
     if (e->key()==Qt::Key_J && (QApplication::keyboardModifiers() & Qt::ControlModifier)) AutoFormat();
     if (e->key()==Qt::Key_F && QApplication::keyboardModifiers() & Qt::ControlModifier) {

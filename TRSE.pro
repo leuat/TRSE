@@ -606,6 +606,7 @@ DISTFILES += \
     resources/text/help/r/pointer.rtf \
     resources/text/help/r/procedure.rtf \
     resources/text/help/r/program.rtf \
+    resources/text/help/r/requirefile.rtf \
     resources/text/help/r/startassembler.rtf \
     resources/text/help/r/startblock.rtf \
     resources/text/help/r/step.rtf \

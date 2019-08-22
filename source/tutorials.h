@@ -22,6 +22,7 @@ public:
         m_file = file;
         m_name = name;
     }
+    Tutorial() {}
 };
 
 

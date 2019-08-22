@@ -15,6 +15,7 @@ var
 	
 
 */
+@requirefile "data/example5_sprite.bin" "Please run the Fjong raytracer file 'example5_single_sprite.fjo' before compiling this program"
 
 	// Remember to run the "example5_single_sprite.fjo" fjong file to generate sprite data!
 	spritedata : incbin("data/example5_sprite.bin", @spriteDataLoc);

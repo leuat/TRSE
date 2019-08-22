@@ -62,7 +62,7 @@ function Init()
 
 	end
 	
-	UpdateScene()
+	UpdateScen()
 
 end
 
@@ -114,6 +114,7 @@ function Update()
 		if (frame==5 or frame == 11 or frame == 17 or frame ==19 or frame ==21) then			
 			SaveScreenAndCharset("data/screendata" ..tostring(curSave)..".bin", "data/chardata" ..tostring(curSave)..".bin");
 			curSave=curSave+1
+			Message("Please wait...")
 		end
 
 	end
@@ -121,6 +122,7 @@ function Update()
 	frame=frame+1
 	if (frame==noFrames) then 
 		hasSaved = 1
+		Message("Compressed data saved to disk! You can stop the rendering now");
 
 	end	
 

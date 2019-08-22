@@ -78,11 +78,11 @@ function Update()
 	if (frame == noFrames) then 
 			
 			CompressAndSaveHorizontalData(dataWidth,compressRatio, "data/example3_screen.bin","data/example3_table.bin");
-			Message("Files written to data/example3_...bin")
+			Message("Data written to data/example3_...bin. You can now close this window.")
 			
 	end
 	if (frame<noFrames) then
-	     AddScreen(dataWidth,dataHeight,  screenCharacterInCharset,  (cos(frame/9.0)+2)*16)
+	     AddScreen(dataWidth,dataHeight,  screenCharacterInCharset,  32)
 	end
 
 	frame=frame+1
