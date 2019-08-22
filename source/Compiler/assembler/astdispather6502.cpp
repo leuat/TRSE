@@ -677,8 +677,6 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
 
         //as->Label(m_procName);
     }
-//    if (m_isInterrupt)
-  //      as->Asm("dec $d019        ; acknowledge IRQ");
     if (node->m_block!=nullptr) {
         NodeBlock* b = dynamic_cast<NodeBlock*>(node->m_block);
         if (b!=nullptr)
@@ -691,7 +689,6 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
             as->Asm("rts");
         }
         else as->Asm("rti");
-      //as->Label("afterProc_" + m_procName);
     }
 
     if (node->m_curMemoryBlock!=nullptr) {
@@ -801,7 +798,8 @@ void ASTDispather6502::dispatch(NodeBlock *node)
 
 
     if (node->m_decl.count()!=0) {
-        as->Asm("jmp " + label);
+        if (node->m_isMainBlock)
+            as->Asm("jmp " + label);
         hasLabel = true;
         //           as->PushBlock(m_decl[0]->m_op.m_lineNumber-1);
     }
