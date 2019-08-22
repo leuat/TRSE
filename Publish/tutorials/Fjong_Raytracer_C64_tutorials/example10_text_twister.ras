@@ -18,10 +18,8 @@ var
 	// Used for multiplying with 32
 	table32 : array[32] of byte;
 	// Table used for div 32
-	tableDiv32 : array[256] of byte; 
-	ssy:byte=0;
 	
-	ll,i,j,time,k,l, h,shift,sh, val : byte = 0;
+	i,j,time,k,l, h,shift,sh, val : byte = 0;
 	
 	zp,zp2,p1,cp,tp,kp,cp2,tmpp:pointer;
 	sine2 : array[256] of byte;
@@ -66,8 +64,8 @@ begin
 	val:=time;
 	tmpp:=zp;
 	for i:=0 to 50 step 2 do begin
-		j:=(shift*2+i);
-		ll:=tableDiv32[j];
+		j:=(shift+i);
+		
 		h:=i+time;
 		k:=val +sine2[h];
 		k:=(k/4)&15;
@@ -82,8 +80,10 @@ begin
 		end; 
 		//Lookup mul 32
 		kp:=tmpp+AddressTable(table32,32,k);
+		
 		l:=kp[j];
 		h:=kp[j+1];
+		
 		p1:=toPointer(h+$30, l);
 		memcpyunroll(p1,0,zp2,16);
 			
@@ -99,9 +99,9 @@ procedure UpdateShift();
 begin
 	sh:=sh+1;
 	if (sh=8) then begin
-		shift:=shift+1;
+		shift:=shift+2;
 		sh:=0;
-		if (shift=16) then 
+		if (shift=32) then 
 		begin
 			tp:=tp+1;
 			shift:=0;
@@ -147,9 +147,9 @@ begin
 	setmemoryconfig(1,0,0);
 	
 	ClearScreen($20,screen_char_loc);
-	screen_fg_col:=red;
-	screen_bg_col:=red;
-	clearscreen(black,screen_col_loc);
+	screen_fg_col:=black;
+	screen_bg_col:=black;
+	clearscreen(red,screen_col_loc);
 	setcharsetlocation($2000);
 
 end;
@@ -158,8 +158,7 @@ end;
 begin
 	InitScreen();	
 	tp:=text;
-	for i:=0 to 256 do sine2[i]:=sine[i]/6;
-	for i:=0 to 256 do tableDiv32[i]:=i/32;
+	for i:=0 to 256 do sine2[i]:=sine[i]/5;
 	RasterIRQ(RasterMain(),@rasterMainPos,0);
 	EnableRasterIRQ();
 	enableirq();
