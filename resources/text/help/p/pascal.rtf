@@ -1,3 +1,163 @@
+<h3>A quick primer on Rascal - the Pascal-like language</h3>
 
-<p>A quick primer on the Pascal language and what you need to know to program TRSE.</p>
+<p>Turbo Rascal is a little like Pascal, but there are some differences.  Some due to the design around small 8-bit (and 16-bit)
+    architectures, some due to influences from the C++ approach.  This brief primer outlines some key parts of the Rascal language
+    that will be useful to know.
+</p>
 
+<h3>Progam</h3>
+
+<p>Every Rascal program needs a structure as follows:</p>
+<code>
+    program MyProgram;
+    var  
+        // declare variables, constants and include files here
+
+    // main program
+    begin
+        // put code here
+    end.
+</code>
+
+<p>First define a <b>program</b> with the name of your program.</p>
+<p>Next declare your variables, constants and include files under <b>var</b>.</p>
+<p>Finally declare the main program code with <b>begin</b> and <b>end.</b>  Note end has a full stop.</p>
+
+<h3>Procedures</h3>
+<p>Procedures are smaller units of code that can be called one or more times in your program.  The Procedure
+    should be declared after the var but before the main program's begin.
+</p>
+
+<code>
+    procedure HelloWorld();
+    begin
+        PrintString("Hello", 5);
+    end;
+</code>
+
+<p>Note that a begin and end block marks where the code will go and the end has a semicolon instead of a fullstop.</p>
+<p>A procedure must be defined before it is called, so normally, procedure1() can only call procedure2() if 
+    procedure1() is defined first, above procedure2().  For example:
+</p>
+
+<code>
+    procedure Procedure1();
+    begin
+        Procedure2(); // this is invalid because TRSE does not know about this procedure yet!
+    end;
+
+    procedure Procedure2();
+    begin
+        Procedure1(); // this is valid becuase it has already been defined.
+    end;
+</code>
+
+<p>A forward reference can be created if necessary to overcome this, however, it is advised to plan your code
+    to avoid this.  For example, a forward reference to Procedure2():
+</p>
+
+<code>
+    procedure Procedure2(); // no begin or end, this is just a forward reference to the real Procedure2()
+    procedure Procedure1();
+    begin
+        Procedure2(); // this is now valid becasue TRSE knows something about Procedure2()
+    end;
+
+    procedure Procedure2();
+    begin
+        Procedure1(); // this is valid becuase it has already been defined.
+    end;
+</code>
+
+<p>A procedure can return a value if the following is placed as the last line:</p>
+<code>
+    ReturnByte( 10 ); // returns the number 10
+</code>
+
+
+<h3>Variables</h3>
+<p>
+Variable are usually defined in the main program following the <b>var</b> statement, but can also be defined in a procedure.
+At present all variables are global.  See the Variables topic for more information.
+</p>
+
+<code>
+var
+    score : integer;
+    lives : byte = 3;
+    name : string = "Hello";
+    hiscores : array[] of integer = (1000, 500, 250);
+</code>
+
+
+<h3>FOR and FORI loops</h3>
+<p>
+A for loop will repeat a block of code several times.  There are two types of for loop:  <b>FOR</b> and <b>FORI</b>.
+</p>
+<ol>
+    <li>FOR - counts from the start value and stops when it reaches the end value</li>
+    <li>FORI - counts from the start value and stops after it reaches the end value</li>
+</ol>
+
+<code>
+    for x := 10 to 20 do
+    begin
+        // this code will be run with x = 10, 11, 12, 13, 14, 15, 16, 17, 18 and 19
+    end;
+
+    fori x := 10 to 20 do
+    begin
+        // this code will be run with x = 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 and 20
+    end;
+
+</code>
+
+<p>For loops can also use a <b>step</b> value to increment (or decrement) the counter in different number of steps.</p>
+
+<h3>IF ... THEN ... ELSE</h3>
+<p>
+Use the <b>if</b> statemet to test if a condition is true and if so execute some code.
+</p>
+<code>
+    if ( lives = 0 ) then
+    begin
+        // execute this if lives equals zero
+    end;
+
+    if ( level &gt; 100 ) then
+    begin
+        // execute this if level is greater than 100
+    end;
+</code>
+<p>The above executes the code if the condition is true.  The <b>else</b> statement can be used to execute some other
+code if the condition is false.</p>
+
+
+<h3>WHILE loops</h3>
+<p>
+Execute a block of code until a condition is true.  This is like a for loop and an if statement combined.
+</p>
+<code>
+    while (time &lt; 100) do
+    begin
+        // execute this while loop while the time variable is less than 100
+    end;
+</code>
+
+
+<h3>CASE statements</h3>
+<p>
+Like the if statement, but allows more than one condition and respective code to exexute.
+</p>
+<code>
+    case i of
+        0:	printstring("I AM FISH",0,40);
+        1:	printstring("ARE YOU FISH",0,40);
+        2:	printstring("ME AM CAT",0,40);
+        3:	
+        begin
+            printstring("OM NOM NOM",0,40);
+            EatFishProcedure();
+        end;
+    end;
+</code>
