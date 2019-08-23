@@ -949,12 +949,10 @@ void Methods6502::MemCpyUnroll(Assembler* as)
     if (!m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pure numeric", m_node->m_op.m_lineNumber);
     }
-    NodeNumber* counter = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[3]);
-    if (counter==nullptr) {
+    if (!m_node->m_params[3]->isPureNumeric())
         ErrorHandler::e.Error("Third parameter must be pure numeric", m_node->m_op.m_lineNumber);
-    }
 
-
+    int counter = m_node->m_params[3]->getValue(as).toInt();
     QString ap1 = "";
     QString ap2 = "";
     QString bp1 = "";
@@ -968,7 +966,7 @@ void Methods6502::MemCpyUnroll(Assembler* as)
 
 
     as->Comment("memcpy unrolled");
-    for (int i=0;i<counter->m_val;i++) {
+    for (int i=0;i<counter;i++) {
         as->Asm("ldy #" +QString::number(i));
 
         if (m_node->m_params[0]->getType(as)==TokenType::POINTER)

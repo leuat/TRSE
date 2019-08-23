@@ -1,4 +1,4 @@
-program MyProgram;
+program MatrixEffect;
 var  
    	i,j: byte; 
    	// The ypos array will contain the current pos for each column, ranging from 0-200. These values are divided by 8
@@ -10,7 +10,6 @@ var
 	saddr: array[40] of integer; // Screen address table
 	caddr: array[40] of integer; // Color adress table
    	sp:pointer;
-
 
 /*
 	Method that initializes the lookup tables used in this program

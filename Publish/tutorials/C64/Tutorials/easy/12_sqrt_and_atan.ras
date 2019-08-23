@@ -72,7 +72,6 @@ begin
 	// draw an extra line at the bottom of the screen to illustrate how 
 	// we only draw 16 characters and them shift the character data set instead of actual bytes on the screen
 	for x:=0 to 40 do screenmemory[x]:=x&15 + @charVal;
-	
 end;
 
 

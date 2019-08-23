@@ -19,9 +19,7 @@ var
 @define screen_hi "$04"
 @define screen_f "^$0400"
 // Since textcolor1 sets the $D800 colors, it will be multicolor - 8 - dark blue
-@define textColor1 "LIGHT_GREEN"
-@define textColor2 "LIGHT_GREEN"
-@define textColor3 "DARK_GREY"
+@define textColor1 "GREEN"
 
 
 @define lineColor "DARK_GREY"
@@ -31,9 +29,7 @@ var
 @define scrollerStartRaster 86
 @define scrollerEndRaster 110
 
-
 procedure MainScreen();
-
 
 interrupt MainScreenScrollerEnds();
 begin
