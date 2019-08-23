@@ -29,5 +29,5 @@ current_file = intermediate/starfield.ras
 output_type = prg
 data_header_sprites/sprites.flf = 6.92363e-310
 output_debug_symbols = 1
-project_path = tutorials/C64/Tutorials/
-open_files = ,intermediate/2x2scroller.ras
+project_path = /home/leuat/code/TRSE/Publish/tutorials/C64/Tutorials/
+open_files = ,intermediate/starfield.ras, intermediate/2x2scroller.ras
