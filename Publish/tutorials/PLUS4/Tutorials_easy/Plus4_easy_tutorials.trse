@@ -34,3 +34,5 @@ override_target_settings_prg = 0
 build_list = ,
 current_file = 06_plasma.ras
 output_debug_symbols = 1
+project_path = tutorials/PLUS4/Tutorials_easy/
+open_files = ,06_plasma.ras

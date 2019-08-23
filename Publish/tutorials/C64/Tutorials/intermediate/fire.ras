@@ -1,0 +1,119 @@
+program FireFire;
+
+var
+
+@define charLoc $2000
+@define fireChar 64 // use chars 64-72 as fire chars. You could try others here, like 80
+	val,i : byte;
+	x,y,ystart : byte;
+	// Use custom charset
+	charset: IncBin("resources/charsets/charset.bin",@charLoc);
+	color : array [] of byte = (9, 2,2,8,8, 10,10, 7,7,1, 1,1,1); 
+	
+	shiftx: byte;
+
+	rands : array[256] of byte;
+
+	colorzp: pointer;
+
+// Remove this line to use unoptimized version
+@define OPTIMIZED 1
+
+/*
+ 	This tutorial shows a typical preferred coding method using the TRSE language: 
+	- First prototype in TRSE
+	- Identify slow bottlenecks
+	- Rewrite inner loops to assembler
+	- Turn on / off OPTIMIZED flag to view the effect optimized in assembler and unoptimized
+
+*/
+
+procedure Fire();
+begin
+
+	shiftx:=shiftx+31;
+	ystart:=3;
+	moveto(0, ystart, $04);
+	colorzp:=screen_col_loc;
+	colorzp:=colorzp +ystart*40;
+
+	for y:=0 to 5 do begin // 160*4
+	//	 Original code
+@ifndef OPTIMIZED
+		for x:=0 to 160 onpage do begin
+			// This is the main method for calculating "fire" : current neighbouring values+ lower value
+			val:=screenmemory[x+39]+screenmemory[x+40]+screenmemory[x+41] + screenmemory[x+80];
+			val:=val/4;
+			screenmemory[x]:=val;
+			colorzp[x]:=color[val];
+		end;
+@endif
+@ifdef OPTIMIZED
+			
+			// Optimized
+			for x:=0 to 160 onpage do 
+			asm("
+				lda x
+				adc #38
+				tay
+				lda (screenmemory),y
+				iny
+				adc (screenmemory),y
+				iny
+				adc (screenmemory),y
+				pha
+				tya
+				adc #39
+				tay
+				pla
+				adc (screenmemory),y
+				
+				lsr
+				lsr
+
+				ldy x
+				sta (screenmemory),y		
+				tax
+				lda color,x
+				sta (colorzp),y
+
+			");		
+@endif
+		screenmemory:=screenmemory+160;
+		colorzp:=colorzp+160;
+	end;
+
+	for i:=0 to 40 do begin
+		screenmemory[i]:=rands[i+shiftx];
+		screenmemory[i+40]:=rands[i-shiftx];
+	end;
+//	inc(^$D020);
+end;	
+
+
+
+procedure InitRandom();
+begin
+	for i:=0 to 256 do
+		rands[i]:=Random()/18;
+
+end;
+
+
+begin
+	InitRandom();
+	// Set color background
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	// Set charmap location at $2000
+	// Clear screen and color memory
+	ClearScreen(0, screen_char_loc);
+	ClearScreen(black, screen_col_loc);
+	SetCharsetLocation(@charLoc);
+
+	memcpy(^@charLoc+^@fireChar*^8,0,^@charLoc,0);	
+	fill(^@charLoc+^8*^8,$FF,128);
+	
+	while (true) do 
+		Fire();
+end.

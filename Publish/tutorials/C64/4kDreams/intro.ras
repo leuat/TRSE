@@ -733,6 +733,7 @@ begin
 	end;*/
 end;
 
+
 procedure InitWaves();
 begin
 	Screenoff();
