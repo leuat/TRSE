@@ -92,15 +92,15 @@ begin
 			dx:=posdx[i]/8;
 			screenmemory[x]:=@charPos+7-dx;
 			if x<>39 then
-				screenmemory[x+1]:=$20
+				screenmemory[x+1]:=key_space
 			else
-				screenmemory[0]:=$20;
+				screenmemory[0]:=key_space;
 
 			cp[x]:=color[i];
 
 		end;
-		screenmemory:=screenmemory+40;
-		cp:=cp+40;
+		screenmemory:=screenmemory+screen_width;
+		cp:=cp+screen_width;
 	end;
 end;
 
@@ -150,7 +150,7 @@ begin
 	InitializeStarfield();
 	screen_bg_col:=black;
 	screen_fg_col:=black;
-	clearscreen($20,screen_char_loc);	
+	clearscreen(key_space,screen_char_loc);	
 	//VIC_DATA_LOC:=@charsetVicData;
 	SetCharsetLocation(@charsetPos);
 	copycharsetfromrom(^@charsetPos);

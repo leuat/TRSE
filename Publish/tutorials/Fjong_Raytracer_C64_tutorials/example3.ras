@@ -41,7 +41,7 @@ begin
 		// Now p1 points to the data and zp points to the screen: perform a fast copy
 		memcpyunroll(p1,0,zp,32);
 		// Increase the screen pointer by 1 row
-		zp:=zp+40;
+		zp:=zp+screen_width;
 		// and increase the table counter by 2 (because each row takes up 2 bytes of address space)
 		j:=j+2;
 
@@ -62,7 +62,7 @@ end;
 begin
 	disableciainterrupts();
 	setmemoryconfig(1,0,0);
-	ClearScreen($20,screen_char_loc);
+	ClearScreen(key_space,screen_char_loc);
 	screen_bg_col:=black;
 	screen_fg_col:=black;	
 	clearscreen(light_blue,screen_col_loc);

@@ -43,9 +43,10 @@ void Parser::Delete()
 void Parser::InitObsolete()
 {
     m_obsoleteWarnings.clear();
-    m_obsoleteWarnings.append(QStringList() << "rand"<<"Funtion 'Rand()' is scheduled to be deprecated. Please use 'Random()' instead. ");
-    m_obsoleteWarnings.append(QStringList() << "inczp"<<"Funtion 'IncZP()' is scheduled to be deprecated. Please use 'zp:=zp+value;' to increase pointers instead. ");
-    m_obsoleteWarnings.append(QStringList() << "writeln"<<"Funtion 'Writeln()' is scheduled to be deprecated. Please use 'PrintString()' instead. ");
+    m_obsoleteWarnings.append(QStringList() << "rand"<<"Funtion 'Rand()' is scheduled to be deprecated from 0.09. Please use 'Random()' instead. ");
+    m_obsoleteWarnings.append(QStringList() << "inczp"<<"Funtion 'IncZP()' is scheduled to be deprecated from 0.09. Please use 'zp:=zp+value;' to increase pointers instead. ");
+    m_obsoleteWarnings.append(QStringList() << "writeln"<<"Funtion 'Writeln()' is scheduled to be deprecated from 0.09. Please use 'PrintString()' instead. ");
+    m_obsoleteWarnings.append(QStringList() << "copycharsetfromrom"<<"Funtion 'CopyCharsetFromROM()' is scheduled to be deprecated from 0.09. ");
 }
 
 void Parser::Eat(TokenType::Type t)

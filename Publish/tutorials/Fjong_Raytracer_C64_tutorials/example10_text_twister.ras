@@ -25,8 +25,7 @@ var
 	sine2 : array[256] of byte;
 
 
-//	text : cstring = ("  TURBO RASCAL SYNTAX ERROR",0,0,0);
-	text : cstring = (" PXL TICKER ",0,0,0);
+	text : cstring = ("  TURBO RASCAL SYNTAX ERROR",0,0,0);
 
 
 /*
