@@ -1869,7 +1869,8 @@ void ASTDispather6502::dispatch(NodeVar *node)
 bool ASTDispather6502::LoadXYVarOrNum(NodeVar *node, Node *other, bool isx) {
     Symbol* s = as->m_symTab->Lookup(node->value, node->m_op.m_lineNumber);
     NodeVar* var = dynamic_cast<NodeVar*>(other);
-    NodeNumber* num = dynamic_cast<NodeNumber*>(other);
+    //NodeNumber* num = dynamic_cast<NodeNumber*>(other);
+    bool isNumber = other->isPureNumeric();
     QString operand = "ldx ";
     if (!isx) operand="ldy ";
     if (var!=nullptr && var->m_expr == nullptr) {
@@ -1882,13 +1883,13 @@ bool ASTDispather6502::LoadXYVarOrNum(NodeVar *node, Node *other, bool isx) {
             }
         return true;
     }
-    if (num!=nullptr) {
+    if (isNumber) {
 //        qDebug() << "LoadXYVarorNum HERE ";
         if (s->m_arrayType==TokenType::INTEGER) {
-            as->Asm(operand + "#" + QString::number(num->numValue() * 2) + " ; watch for bug, Integer array has max index of 128");
+            as->Asm(operand + "#" + QString::number(other->getValueAsInt(as) * 2) + " ; watch for bug, Integer array has max index of 128");
         }
         else
-            as->Asm(operand  + num->StringValue());
+            as->Asm(operand  + other->getValue(as));
         return true;
     }
     return false;
@@ -2006,18 +2007,19 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
 
     // Is array
     if (node->m_expr != nullptr) {
-        NodeNumber* number = dynamic_cast<NodeNumber*>(node->m_expr);
-        if (number!=nullptr && node->getType(as)!=TokenType::POINTER)
+//        NodeNumber* number = dynamic_cast<NodeNumber*>(node->m_expr);
+        bool isNumber = node->m_expr->isPureNumeric();
+        if (isNumber && node->getType(as)!=TokenType::POINTER)
         { // IS NUMBER optimize}
             if (node->getArrayType(as)==TokenType::INTEGER) {
                 // Store integer array
-                int i = number->m_val*2;
+                int i = node->m_expr->getValueAsInt(as)*2;
                 as->Asm("sta " + node->value + "+"+ QString::number(i));
                 as->Asm("sty "  + node->value +"+"+ QString::number(i+1));
 
             }
             else {
-                as->Asm("sta " + node->value + "+"+ QString::number(number->m_val));
+                as->Asm("sta " + node->value + "+"+ node->m_expr->getValue(as));
             }
             //                as->Asm("tya");
             return;
@@ -2026,8 +2028,7 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
             //if regular array
 
             NodeVar* var = dynamic_cast<NodeVar*>(node->m_expr);
-            NodeNumber* num = dynamic_cast<NodeNumber*>(node->m_expr);
-
+            //NodeNumber* num = dynamic_cast<NodeNumber*>(node->m_expr);
             QString secondReg="x";
             QString pa = "";
             QString pb= "";
@@ -2054,6 +2055,9 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
             }
             // Just regular var optimize
             // Regular expression
+
+
+
             as->Asm("pha");
             as->ClearTerm();
             node->m_expr->Accept(this);
