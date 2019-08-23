@@ -952,7 +952,7 @@ void Methods6502::MemCpyUnroll(Assembler* as)
     if (!m_node->m_params[3]->isPureNumeric())
         ErrorHandler::e.Error("Third parameter must be pure numeric", m_node->m_op.m_lineNumber);
 
-    int counter = m_node->m_params[3]->getValue(as).toInt();
+    int counter = m_node->m_params[3]->getValueAsInt(as);
     QString ap1 = "";
     QString ap2 = "";
     QString bp1 = "";
@@ -1520,8 +1520,8 @@ void Methods6502::Tile(Assembler *as) {
     {
         ErrorHandler::e.Error("Tile number can only be a variable or number.");
     }
-    QString nextline = Util::numToHex( m_node->m_params[5]->getInteger()  );
-    QString nextline2 = Util::numToHex( m_node->m_params[5]->getInteger()+1  );
+    QString nextline = Util::numToHex( m_node->m_params[5]->getValueAsInt(as)  );
+    QString nextline2 = Util::numToHex( m_node->m_params[5]->getValueAsInt(as)+1  );
 
     as->Comment("Tile tl,tr,bl,br, tileno, screen_width");
 
@@ -2111,7 +2111,7 @@ void Methods6502::RightBitShift(Assembler *as, bool isRight)
 
   //  qDebug() << m_node->m_params[0]->m_op.m_value;
 //    exit(1);
-    int num = m_node->m_params[1]->getInteger();
+    int num = m_node->m_params[1]->getValueAsInt(as);
 
     as->PopLabel("RightBitshift");
     as->Asm("ldx #0");
@@ -2253,9 +2253,9 @@ void Methods6502::LoHi(Assembler *as, bool isLo)
             as->Asm("lda " + m_node->m_params[0]->getValue(as) +"+1");
 
 /*        if (isLo)
-            as->Asm("lda #" + Util::numToHex(m_node->m_params[0]->getInteger()&0xFF));
+            as->Asm("lda #" + Util::numToHex(m_node->m_params[0]->getValueAsInt(as)&0xFF));
         else
-            as->Asm("lda #" + Util::numToHex((m_node->m_params[0]->getInteger()>>8)&0xFF));*/
+            as->Asm("lda #" + Util::numToHex((m_node->m_params[0]->getValueAsInt(as)>>8)&0xFF));*/
     }
 
 }
@@ -2656,9 +2656,9 @@ void Methods6502::CreateAddressTable(Assembler *as) {
     QString lblDTNoOverflow = as->NewLabel("dtnooverflow");
 
 
-    QString startValue = Util::numToHex( m_node->m_params[1]->getInteger()  );
-    QString incrementValue = Util::numToHex( m_node->m_params[2]->getInteger()  );
-    QString tableSize = Util::numToHex( ((m_node->m_params[3]->getInteger()) - 1) * 2 ); //  ; ( 10 * 2 ) - 2     or     10-1 = 9*2 = 18
+    QString startValue = Util::numToHex( m_node->m_params[1]->getValueAsInt(as)  );
+    QString incrementValue = Util::numToHex( m_node->m_params[2]->getValueAsInt(as)  );
+    QString tableSize = Util::numToHex( ((m_node->m_params[3]->getValueAsInt(as)) - 1) * 2 ); //  ; ( 10 * 2 ) - 2     or     10-1 = 9*2 = 18
 
 
     NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
@@ -2734,7 +2734,7 @@ void Methods6502::AddressTable(Assembler *as) {
 
     if (m_node->m_params[2]->isPureNumeric()) {
         // pure numeric
-        as->Asm( "ldx #" + QString::number( m_node->m_params[2]->getInteger() * 2 ) );
+        as->Asm( "ldx #" + QString::number( m_node->m_params[2]->getValueAsInt(as) * 2 ) );
     /*} else if (m_node->m_params[2]->isPure()) {
         // pure
         as->Asm( "ldx " + m_node->m_params[2]->getValue(as) ); */
@@ -2751,7 +2751,7 @@ void Methods6502::AddressTable(Assembler *as) {
 
     if (m_node->m_params[1]->isPure()) {
         // pure
-        if (m_node->m_params[1]->isPureNumeric() && m_node->m_params[1]->getInteger() == 0 ) {} else {
+        if (m_node->m_params[1]->isPureNumeric() && m_node->m_params[1]->getValueAsInt(as) == 0 ) {} else {
             as->Asm("clc");
             as->Asm("adc " + m_node->m_params[1]->getValue(as) );
             as->Asm("bcc " + lblDTNoOverflow );
@@ -3071,7 +3071,7 @@ void Methods6502::IsOverlapping(Assembler *as)
     as->Comment("IsOverlapping collision  =  x1,y1, x2,y2, dist");
 
     // need a negative constant
-    QString distNeg = Util::numToHex( 255 - m_node->m_params[4]->getInteger()  );
+    QString distNeg = Util::numToHex( 255 - m_node->m_params[4]->getValueAsInt(as)  );
 
     QString lblColXConfirmed = as->NewLabel("ColXConfirmed");
     QString lblNoCollision = as->NewLabel("NoCollision");
@@ -3175,8 +3175,8 @@ void Methods6502::IsOverlappingWH(Assembler *as)
     as->Comment("IsOverlapping collision  =  x1,y1, x2,y2, width, height");
 
     // need a negative constant
-    QString distNegX = Util::numToHex( 255 - m_node->m_params[4]->getInteger()  );
-    QString distNegY = Util::numToHex( 255 - m_node->m_params[5]->getInteger()  );
+    QString distNegX = Util::numToHex( 255 - m_node->m_params[4]->getValueAsInt(as)  );
+    QString distNegY = Util::numToHex( 255 - m_node->m_params[5]->getValueAsInt(as)  );
 
     QString lblColXConfirmed = as->NewLabel("ColXConfirmed");
     QString lblNoCollision = as->NewLabel("NoCollision");
@@ -4966,7 +4966,7 @@ void Methods6502::BlockMemCpy(Assembler *as)
         as->Label(lbl);
 
         for (int i=0;i<v;i++) {
-            as->Asm("lda $"+QString::number(m_node->m_params[0]->getInteger() + i*256,16)+",y");
+            as->Asm("lda $"+QString::number(m_node->m_params[0]->getValueAsInt(as) + i*256,16)+",y");
             as->Asm("sta $"+QString::number((int)to->m_val + i*256,16)+",y");
         }
 

@@ -4,7 +4,7 @@ var
 
 begin
 	// Fill the screen (at screen_char_loc) with character $20 - "space"
-	ClearScreen($20, screen_char_loc);
+	ClearScreen(key_space, screen_char_loc);
 	// Fill the color ram with yellow
 	ClearScreen(yellow, screen_col_loc);
 	// Move cursor to x,y position 10,12
@@ -12,7 +12,7 @@ begin
 	// Print the text
 	printstring(text,0,40);
 	// Move cursor 2 rows down (2*40)
-	screenmemory:=screenmemory+2*40;
+	screenmemory:=screenmemory+2*screen_width;
 	// Print something else
 	printstring("THIS IS ANOTHER STRING",0,40);
 	// Infinite loop

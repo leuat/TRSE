@@ -65,9 +65,6 @@ public:
 
     bool DataEquals(Node *other) override;
 
-    int getInteger() override {
-        return m_val;
-    }
 
 
     QString StringValue();

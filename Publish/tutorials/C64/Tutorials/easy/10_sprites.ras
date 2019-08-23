@@ -24,7 +24,7 @@ procedure InitScreen();
 begin
 	screen_bg_col:=purple;
 	screen_fg_col:=black;
-	clearscreen($20, screen_char_loc);
+	clearscreen(key_space, screen_char_loc);
 	moveto(1,23,$04);
 	printstring("JOYSTICK IN PORT 2 TO MOVE",0,40);
 end;   

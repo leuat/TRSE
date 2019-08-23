@@ -1245,9 +1245,12 @@ void TRSEProject::VerifyDefaults() {
     if (!m_ini.contains("override_target_settings"))
         m_ini.setFloat("override_target_settings",0);
 
-    if (!m_ini.contains("override_target_settings_org"))
-        m_ini.setString("override_target_settings_org","$810");
-
+    if (!m_ini.contains("override_target_settings_org")) {
+           if (m_ini.getString("system")=="PLUS4")
+               m_ini.setString("override_target_settings_org","$1010");
+           else
+               m_ini.setString("override_target_settings_org","$810");
+       }
     if (!m_ini.contains("override_target_settings_ignore_sys"))
         m_ini.setFloat("override_target_settings_ignore_sys",0);
 

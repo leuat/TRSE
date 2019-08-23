@@ -75,9 +75,9 @@ begin
 	// text pointer pointing to text
 	tp:=text;
 	// go through 25 rows
-	for j:=0 to 25 do begin
+	for j:=0 to screen_height do begin
 		// and 40 columns 
-		for i:=0 to 40 do begin
+		for i:=0 to screen_width do begin
 			// if text pointer is zero, the end of string has been reached. If so, reset text pointer
 			if (tp[0]=0) then tp:=text;
 			// copy text char from text to screen
@@ -86,14 +86,14 @@ begin
 			tp:=tp+1;
 	
 		end;
-		screenmemory:=screenmemory+40;
+		screenmemory:=screenmemory+screen_width;
 	end
 end;
 
 
 begin
 	// Set up screen
-	ClearScreen($20,screen_char_loc);
+	ClearScreen(key_space,screen_char_loc);
 	ClearScreen(dark_grey,screen_col_loc);
 	screen_bg_col:=dark_grey;	
 	screen_fg_col:=black;

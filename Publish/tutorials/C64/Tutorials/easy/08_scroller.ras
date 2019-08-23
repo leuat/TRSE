@@ -19,7 +19,7 @@ var
 procedure PrintText();
 begin
 	moveto(0,@ypos,$04);
-	memcpy(textPointer, 0, screenmemory, 39);
+	memcpy(textPointer, 0, screenmemory, screen_width-1);
 end;
 
 /*
@@ -84,7 +84,7 @@ end;
 procedure InitScreen();
 begin
 	// Clear screen with spaces
-	ClearScreen($20,screen_char_loc);
+	ClearScreen(key_space,screen_char_loc);
 	// Fill the upper screen color ram with black
 	fill(screen_col_loc,black,0);	
 	// Fill the scroll area with light red

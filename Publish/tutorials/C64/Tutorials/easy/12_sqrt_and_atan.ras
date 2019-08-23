@@ -45,9 +45,9 @@ begin
 	// Set cp to point to color memory
 	cp:=screen_col_loc;
 	// 23 rows
-	for y:=0 to 24 do begin
+	for y:=0 to screen_height-1 do begin
 		//40 columns
-		for x:=0 to 40 do begin
+		for x:=0 to screen_width do begin
 			// calculate delta x and delta y from the center of the screen (20,13)
 			dx:=abs(20-x);
 			dy:=abs(13-y);
@@ -66,12 +66,12 @@ begin
 			// Fill color data with color value based on tangent
 			cp[x]:=lumi[tangent&31];
 		end;
-		screenmemory:=screenmemory+40;
-		cp:=cp+40;
+		screenmemory:=screenmemory+screen_width;
+		cp:=cp+screen_width;
 	end;
 	// draw an extra line at the bottom of the screen to illustrate how 
 	// we only draw 16 characters and them shift the character data set instead of actual bytes on the screen
-	for x:=0 to 40 do screenmemory[x]:=x&15 + @charVal;
+	for x:=0 to screen_width do screenmemory[x]:=x&15 + @charVal;
 end;
 
 

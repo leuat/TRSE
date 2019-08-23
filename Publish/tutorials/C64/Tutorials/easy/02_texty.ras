@@ -13,7 +13,7 @@ begin
 		// Make sure we wait for 1 raster cycle to complete
 		waitforraster(0);
 		// Clear screen with character $20 (space)
-		ClearScreen($20, screen_char_loc);
+		ClearScreen(key_space, screen_char_loc);
 		// Calculate x,y some sine values (making a circle)
 		// if sine[x] then sine[x+64] is equal to cosine  
 		x:=sine[time]/12 + 6;		

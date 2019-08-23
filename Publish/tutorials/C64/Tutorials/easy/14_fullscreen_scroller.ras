@@ -38,20 +38,20 @@ var
 procedure PrintData();
 begin
 // point dst to 39th column of screen
-	dst:=screen_char_loc+39;
+	dst:=screen_char_loc+screen_width-1;
 // src to the current column of the noise data
 	src:=noiseData;
 	src:=src + curColumn;
 	// print 25 rows
-	for i:=0 to 25 do begin
+	for i:=0 to screen_height do begin
 		// divide by some value
 		dst[0]:=src[0]/8 + @charVal-5;
 		// Goto next row
-		dst:=dst+40;
-		src:=src+40;
+		dst:=dst+screen_width;
+		src:=src+screen_width;
 	end;
 	curColumn:=curColumn+1;
-	if (curColumn=40) then curColumn:=0;
+	if (curColumn=screen_width) then curColumn:=0;
 end;
 
 
@@ -59,10 +59,10 @@ procedure CopyScreen();
 begin
 	src:=screen_char_loc+1;
 	dst:=screen_char_loc;
-	for i:=0 to 25 do begin
-		memcpyunroll(src,0,dst,39);	
-		src:=src+40;
-		dst:=dst+40;
+	for i:=0 to screen_height do begin
+		memcpyunroll(src,0,dst,screen_width-1);	
+		src:=src+screen_width;
+		dst:=dst+screen_width;
 	end;
 end;
 

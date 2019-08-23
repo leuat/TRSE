@@ -32,10 +32,10 @@ begin
 		screenP:=screen_char_loc;
 		colorP:=screen_col_loc;
 		// loop y		
-		for y:=0 to 24 do begin
+		for y:=0 to screen_height do begin
 			// moves current screen position
 			// Select some random color
-			for x:=0 to 40 do begin
+			for x:=0 to screen_width do begin
 				// Sets both screen and color values
 				screenP[x] := random_values[index];
 				// increases screen X counter
@@ -45,10 +45,10 @@ begin
 			// Select some random color
 			random_color := random_values[index];
 			// Fill the current line in colorP with 40 bytes of random_color
-			fill(colorP,random_color,40);
+			fill(colorP,random_color,screen_width);
 			// Increase screen and color pointers
-			screenP:=screenP+40;
-			colorP:=colorP+40;
+			screenP:=screenP+screen_width;
+			colorP:=colorP+screen_width;
 			end
 	end;
 

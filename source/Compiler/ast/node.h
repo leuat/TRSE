@@ -95,10 +95,6 @@ public:
     }
 
     virtual QString getAddress() {return "";}
-    virtual int getInteger() {
-   //     ErrorHandler::e.Error("Parameter is required to be pure number",m_op.m_lineNumber);
-        return 0;
-    }
 
     virtual void forceWord() {}
 
@@ -127,6 +123,10 @@ public:
     virtual void AssignPointer(Assembler* as, QString memoryLocation) {}
 
     virtual QString getValue(Assembler* as) {return "";}
+    virtual int getValueAsInt(Assembler* as) {
+        return Util::NumberFromStringHex(getValue(as));
+    }
+
 
     void RequireAddress(Node* n,QString name, int ln);
 
