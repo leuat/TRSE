@@ -13,7 +13,7 @@ VIC20; Vixmas; VIC20/vixmas_demo; <h2>Vixmas (demo)</h2><br><img src=":resources
 
 C128; Main Commodore 128 tutorials; C128/;<h2>Main C128 tutorials</h2><p>C128 tutorials will be overhauled in a future release of TRSE.
 
-PLUS4; Main Commodore PLUS/4 tutorials; PLUS4/Tutorials_easy/;<h2>Main Commodore Plus/4 tutorials</h2><p>Since support for the plus/4 was added in version 0.08, there are currently only 8 simple tutorials available for the plus/4. <p><b>Disclaimer:</b>Most built-in methods are not yet updated to work for the PLUS/4
+PLUS4; Main Commodore PLUS/4 tutorials; PLUS4/Tutorials/;<h2>Main Commodore Plus/4 tutorials</h2><p>Since support for the plus/4 was added in version 0.08, there are currently only 8 simple tutorials available for the plus/4. <p><b>Disclaimer:</b>Most built-in methods are not yet updated to work for the PLUS/4
 
 Amiga; Main Amiga 500 tutorials; Amiga/tutorials/;<h2>Main Amiga 500 tutorials</h2><p>Amiga 500 tutorials will be overhauled in the 0.09 release. Hopefully.
 NES; Main NES tutorials; Amiga/intro_tutorial/;<h2>Main NES tutorials</h2><p>NES tutorials will be overhauled in the 0.09 release. Hopefully.

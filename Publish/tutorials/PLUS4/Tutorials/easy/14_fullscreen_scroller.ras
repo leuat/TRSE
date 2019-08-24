@@ -1,0 +1,109 @@
+program Fullscreen_Scroller;
+var 
+
+/*
+	This tutorial is based on chardata cycling, as presented in tutorial 12. 
+	
+	Whatever is going on here:
+		- decrease the 8-pixel wide hardware scroll register
+		- if it the scroll value is zero: 
+			- reset scroll value to 7
+			- spend lots of cycles copying*all* screen data 1 column to the right 
+			- draw a new row of random (perlin noise) data at the leftmost column on the screen
+		- whenever the scrollr register is *not* zero, perform the character set shift to create a plasma effect
+		
+*/
+
+// Use character 64 as base+16 in the charmap (check out resources/charset/charset.flf)
+@define charVal 64
+@define useKernal 1 
+// Place 40x25 noise data at a random position
+@define noisePos $6000
+@define charsetLoc $2000
+
+// include data
+   	noiseData: incbin("resources/data/perlin40.dat",@noisePos); 
+	charset: incbin("resources/charsets/charset.bin",@charsetLoc);   
+// scroll register
+	scroll : byte=0;
+// pointers used for copying data
+	src,dst:pointer;
+	
+	i, curColumn : byte = 0;
+	
+/*
+	PrintData prints a single column of perlin data on the 39th column on the screen
+	The "curColumn" variable is used to determine where in the data we currently are
+*/
+procedure PrintData();
+begin
+// point dst to 39th column of screen
+	dst:=screen_char_loc+screen_width-1;
+// src to the current column of the noise data
+	src:=noiseData;
+	src:=src + curColumn;
+	// print 25 rows
+	for i:=0 to screen_height do begin
+		// divide by some value
+		dst[0]:=src[0]/8 + @charVal-5;
+		// Goto next row
+		dst:=dst+screen_width;
+		src:=src+screen_width;
+	end;
+	curColumn:=curColumn+1;
+	if (curColumn=screen_width) then curColumn:=0;
+end;
+
+
+procedure CopyScreen();
+begin
+	src:=screen_char_loc+1;
+	dst:=screen_char_loc;
+	for i:=0 to screen_height do begin
+		memcpyunroll(src,0,dst,screen_width-1);	
+		src:=src+screen_width;
+		dst:=dst+screen_width;
+	end;
+end;
+
+procedure UpdateScroll();
+begin
+	if (scroll) then 
+		dec(scroll)
+	else 
+	begin
+		scroll:=7;
+		CopyScreen();
+		PrintData();
+	end;
+end;
+procedure ShiftCharsetData();
+begin
+	// We copy 16 characters * 8 bytes each 128 byte from the original point in memory @charsetLoc  + 8*@charVal
+	// 8 bytes to the rigth, cycling the characters
+	memcpy(^@charsetLoc+^@charVal*^8, 0, ^@charsetLoc+^@charVal*^8+^128,8);
+	memcpy(^@charsetLoc+^@charVal*^8+^8, 0, ^@charsetLoc+^@charVal*^8,128);
+
+end;
+
+
+interrupt RasterMain();
+begin
+	StartIRQ(@useKernal);
+	if (scroll&1=1) then
+	  ShiftCharsetData();	
+
+	UpdateScroll();
+	scrollx(scroll);
+	
+	CloseIRQ();
+end;	
+	
+
+begin
+	// Hide column 0 and 39!
+	hideborderx(1);
+	setcharsetlocation(@charsetLoc);
+	StartRasterChain(RasterMain(),100,@useKernal);
+	Loop();
+end.

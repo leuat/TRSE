@@ -21,16 +21,13 @@ var
 
 // Since textcolor1 sets the $D800 colors, it will be multicolor - 8 - dark blue
 @define textColor1 "green"
-// Bank 1
-@define screen_f "^$0400"
-@define screen_hi "$04"
 
 @define lineColor "DARK_GREY"
 
 // Y pos of scroller (in chars)
 @define scrollerLineY 5
-@define scrollerStartRaster 86
-@define scrollerEndRaster 110
+@define scrollerStartRaster 34
+@define scrollerEndRaster 64
 
 procedure MainScreen();
 
@@ -52,8 +49,8 @@ begin
 	RasterIRQ(MainScreen(),130, @useKernal);
 	// Copy content 1 to the left
 	if (ms_scroll=1) then begin
-		memcpy(@screen_f + ^40*^@scrollerLineY+^1, 0, @screen_f + ^40*^@scrollerLineY, 39);
-		memcpy(@screen_f + ^40*^@scrollerLineY+^40+^1, 0, @screen_f + ^40*^@scrollerLineY +^40, 39);
+		memcpy(screen_char_loc + ^40*^@scrollerLineY+^1, 0, screen_char_loc + ^40*^@scrollerLineY, 39);
+		memcpy(screen_char_loc + ^40*^@scrollerLineY+^40+^1, 0, screen_char_loc + ^40*^@scrollerLineY +^40, 39);
 	end;
 	closeirq();
 	
@@ -100,12 +97,12 @@ begin
 	if (ms_scroll>127) then begin
 		// Lookup character value
 		// Move to y position
-		moveto(0,@scrollerLineY, @screen_hi);
+		moveto(0,@scrollerLineY, hi(screen_char_loc));
 		
 		val:=CalculatePositionInCharset(pText[0]);
 		
-		screenmemory[39]:=val;
-		screenmemory[39+40]:=val+40;
+		screenmemory[screen_width-1]:=val;
+		screenmemory[screen_width-1+screen_width]:=val+40;
 		// Reset scrolling
 
 		UpdateTextScroll();		
@@ -118,15 +115,15 @@ interrupt MainRaster();
 begin
 	// A line drawing trick: wait some cycles, change background color
 	startirq(@useKernal);
-	wait(6);
+	wait(3);
 	screen_fg_col:=@lineColor;
 	waitnoraster(1);
-	wait(10);
+	wait(4);
 	// wait some more, return to black! 
 	screen_fg_col:=black;
 	
 	// Decrease scroll register by 2 (faster scrolling, less boring)
-	ms_scroll:=ms_scroll-2;
+	ms_scroll:=(ms_scroll-2);
 	scrollx(ms_scroll&7);
 	// Update the text	
 	DrawText();
@@ -143,12 +140,17 @@ begin
 	startirq(@useKernal);
 	RasterIRQ(MainRaster(), @scrollerStartRaster, @useKernal);
 	CloseIRQ();
-
 end;
+
 begin
 	screen_fg_col:=black;
 	screen_bg_col:=black;
 	SetCharsetLocation($2000);
+	
+	asm(" lda $ff07");
+	asm(" ora #%10000000");
+	asm(" sta $ff07");
+
 	// Clear screen and color memory
 	ClearScreen(@clearChar, screen_char_loc);
 	ClearScreen(@textColor1, screen_col_loc);
@@ -156,9 +158,10 @@ begin
 	// Initialize text pointer
 	pText:=text;
 	// Hide the 0th and 39th column
-	hideborderx(0);
-	SetMemoryConfig(1,@useKernal,0);
-	StartRasterChain(MainScreen(),1,@useKernal);
+	hideborderx(1);
+	asm(" sei"); // Disable interrupts.
+	SetMemoryConfig(1); // Turn ROM off
+	StartRasterChain(MainScreen(),$fe,@useKernal); // Also enables interrupts
 	Loop();
 
 end.
