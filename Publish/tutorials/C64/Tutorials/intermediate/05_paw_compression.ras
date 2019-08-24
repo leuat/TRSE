@@ -1,0 +1,52 @@
+program paw_pack_and_decrunch;
+var
+   i:byte;	
+
+/*
+	For this tutorial to work, you must first load "05_paw_file.paw" and build
+	the resource. 
+
+	The .paw-file will automatically pack all listed data with their respected unpacking addresses,
+	and create the include file used here. 
+
+	press space to cycle between the two images
+*/
+
+
+// The following include file is automatically generated during paw file build
+@include "05_paw_resources_auto_generated.ras"
+
+
+begin
+	// Data located in high memory area $A000 range, so disable basic and stuff
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+
+	// Set mode
+	setmulticolormode();
+	setbitmapmode();
+	// Bitmap points to $6000 etc
+	vic_data_loc:=$18;
+	setbank(vic_bank1);
+	screen_fg_col:=black;
+	i:=0;
+	while (true) do begin
+		// Turn off screen during decrunching process
+		screenoff(); // turn off screen while decrunching..
+		// unpacks color data to $2000
+		decrunchfromindex(packed_addresses,i+1); 
+		// copy color data to screen + $D800
+		copyimagecolordata(^$2000,1);
+		// Decrunch image data
+		decrunchfromindex(packed_addresses,i); // decrunches to vic 1
+		// Turn on screen
+		screenon();
+		while (keypressed(key_space)=0) do waitforraster(0);
+		i:=i+2;
+		// Reset counter after 3 images + data 
+		if (i=6) then i:=0;
+
+	end;
+	Loop();
+
+end.

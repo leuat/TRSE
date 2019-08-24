@@ -1550,6 +1550,31 @@ void Methods6502::MoveTo(Assembler *as)
 {
     //AddMemoryBlock(as,1);
 
+    if (m_node->m_params[0]->isPureNumeric() && m_node->m_params[1]->isPureNumeric() && as->m_symTab->m_constants.contains("SCREEN_WIDTH")) {
+        // Calculate value directly, much much faster
+        as->Comment("MoveTo optimization");
+        int width = as->m_symTab->m_constants["SCREEN_WIDTH"]->m_value->m_fVal;
+        int shift = m_node->m_params[0]->getValueAsInt(as) + m_node->m_params[1]->getValueAsInt(as)*width;
+        if (m_node->m_params[2]->isPureNumeric()) {
+            // Super optimized!
+            as->Asm("lda #" +Util::numToHex(shift&0xff));
+            as->Asm("sta screenmemory");
+            as->Asm("lda #" +Util::numToHex(m_node->m_params[2]->getValueAsInt(as)+ (shift>>8)));
+            as->Asm("sta screenmemory+1");
+            return;
+        }
+        else {
+            as->Asm("lda #" +Util::numToHex(shift&0xff));
+            as->Asm("sta screenmemory");
+            LoadVar(as, 2);
+            as->Asm("adc #" +Util::numToHex((shift>>8)));
+            as->Asm("sta screenmemory+1");
+            return;
+
+        }
+    }
+
+
     VerifyInitialized("moveto", "InitMoveto");
     LoadVar(as, 0);
     as->Asm("sta screen_x");

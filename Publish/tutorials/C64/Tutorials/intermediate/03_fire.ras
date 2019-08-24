@@ -3,13 +3,15 @@ program FireFire;
 var
 
 @define charLoc $2000
-@define fireChar 64 // use chars 64-72 as fire chars. You could try others here, like 80
+ // use chars 64-72 as fire chars. You could try others here, like 80
+@define fireChar 64
 	val,i : byte;
 	x,y,ystart : byte;
 	// Use custom charset
 	charset: IncBin("resources/charsets/charset.bin",@charLoc);
+	// Fire colors, from low to high brightness
 	color : array [] of byte = (9, 2,2,8,8, 10,10, 7,7,1, 1,1,1); 
-	
+	// Shiftx shifts random values
 	shiftx: byte;
 
 	rands : array[256] of byte;
@@ -87,10 +89,7 @@ begin
 		screenmemory[i]:=rands[i+shiftx];
 		screenmemory[i+40]:=rands[i-shiftx];
 	end;
-//	inc(^$D020);
 end;	
-
-
 
 procedure InitRandom();
 begin

@@ -36,7 +36,6 @@ var
 
 	
 
-//@startblock $8200 "Code far far away!"
 
 procedure RenderScreen();
 begin

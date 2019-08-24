@@ -1,0 +1,7 @@
+ras_include_file = 05_paw_resources_auto_generated.ras
+packed_address = $8000
+output_dir = compressed/
+data = ,image1_data, resources/images/jack_data.bin, $6000, image1_color, resources/images/jack_color.bin, $2000, image2_data, resources/images/moose_data.bin, $6000, image2_color, resources/images/moose_color.bin, $2000, octopus_data, resources/images/octopus_data.bin, $6000, octopus_color, /resources/images/octopus_color.bin, $2000
+use_exomizer3 = 1
+address_field = packed_addresses
+data_tinycrunch = ,0, 0, 0, 0, 0, 0
