@@ -1567,6 +1567,7 @@ void Methods6502::MoveTo(Assembler *as)
             as->Asm("lda #" +Util::numToHex(shift&0xff));
             as->Asm("sta screenmemory");
             LoadVar(as, 2);
+            as->Asm("clc");
             as->Asm("adc #" +Util::numToHex((shift>>8)));
             as->Asm("sta screenmemory+1");
             return;
