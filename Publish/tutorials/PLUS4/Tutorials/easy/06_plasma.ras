@@ -12,7 +12,7 @@ var
 @define baseCharacter $68
 
 	// Use custom charset
-	charset : IncBin("charsets/charset.bin", @charsetLocation);
+	charset : IncBin("resources/charsets/charset.bin", @charsetLocation);
 	// nice colors
     fade : array [] of byte = ($41,$3e,$51,$51,$44,$5e,$61,$71,$71,$71,$71,$61,$5e,$44,12,$51,$3e,$41,$71,$71); // PLUS4 colors
 

@@ -4199,11 +4199,18 @@ void Methods6502::DisableInterrupts(Assembler *as)
     as->Asm("sta $d01a");
 */
 
-    as->Asm("ldy #$7f    ; $7f = %01111111");
-    as->Asm("sty $dc0d   ; Turn off CIAs Timer interrupts");
-    as->Asm("sty $dd0d   ; Turn off CIAs Timer interrupts");
-    as->Asm("lda $dc0d   ; cancel all CIA-IRQs in queue/unprocessed");
-    as->Asm("lda $dd0d   ; cancel all CIA-IRQs in queue/unprocessed");
+    if (Syntax::s.m_currentSystem == AbstractSystem::C64) {
+        as->Asm("ldy #$7f    ; $7f = %01111111");
+        as->Asm("sty $dc0d   ; Turn off CIAs Timer interrupts");
+        as->Asm("sty $dd0d   ; Turn off CIAs Timer interrupts");
+        as->Asm("lda $dc0d   ; cancel all CIA-IRQs in queue/unprocessed");
+        as->Asm("lda $dd0d   ; cancel all CIA-IRQs in queue/unprocessed");
+    }
+    else if (Syntax::s.m_currentSystem == AbstractSystem::PLUS4) {
+        as->Asm("lda #$00");
+        as->Asm("sta $ff09");
+    }
+
 
     as->Asm("");
 }
@@ -4435,6 +4442,8 @@ void Methods6502::WaitNoRasterLines(Assembler *as)
     QString cmp ="$d012";
     if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
         cmp="$9004";
+    else if (Syntax::s.m_currentSystem==AbstractSystem::PLUS4)
+        cmp="$ff1d";
 
 
 

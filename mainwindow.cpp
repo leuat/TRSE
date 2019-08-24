@@ -66,6 +66,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 #endif
 
+#ifdef __linux__
+    Util::path = QCoreApplication::applicationDirPath() + "/../";
+
+#endif
     m_currentPath = "";
     ui->lblCommodoreImage->setAlignment(Qt::AlignCenter);
 
@@ -1266,8 +1270,14 @@ void MainWindow::on_treeTutorials_itemDoubleClicked(QTreeWidgetItem *item, int c
 {
     if (item->data(0,Qt::UserRole).toString()=="")
         return;
+#ifdef __linux__
+    QString dir = Util::path +"tutorials/"+item->data(0,Qt::UserRole).toString().split(";")[0];
+#else
     QString dir = "tutorials/"+item->data(0,Qt::UserRole).toString().split(";")[0];
+
+#endif
     QString fileName = Util::findFileInDirectory("",dir,"trse");
+    qDebug() << dir;
     LoadProject(fileName);
 
 }

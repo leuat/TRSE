@@ -21,7 +21,6 @@
 
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
 #include <QMainWindow>
 #include "imageworker.h"
 #include <QString>
