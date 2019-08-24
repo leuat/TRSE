@@ -25,7 +25,7 @@ begin
 	screen_bg_col:=purple;
 	screen_fg_col:=black;
 	clearscreen(key_space, screen_char_loc);
-	moveto(1,23,$04);
+	moveto(1,23,hi(screen_char_loc));
 	printstring("JOYSTICK IN PORT 2 TO MOVE",0,40);
 end;   
 

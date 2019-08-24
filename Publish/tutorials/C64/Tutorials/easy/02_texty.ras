@@ -19,7 +19,7 @@ begin
 		x:=sine[time]/12 + 6;		
 		y:=sine[time+64]/16 + 4;		
 		// move "screenmemory" cursor to x,y at screen memory $0400
-		moveto(x,y,$04);
+		moveto(x,y,hi(screen_char_loc));
 		
 		i:=time/64; // i will now have values between 0 and 3 (since time is between 0 and 255)
 		// Print some random string

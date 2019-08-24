@@ -18,7 +18,7 @@ var
 */
 procedure PrintText();
 begin
-	moveto(0,@ypos,$04);
+	moveto(0,@ypos,hi(screen_char_loc));
 	memcpy(textPointer, 0, screenmemory, screen_width-1);
 end;
 
@@ -91,7 +91,7 @@ begin
 	fill(screen_col_loc+^@ypos*^40,light_red,0);	
 	
 	// Print some static text
-	moveto(6,2,$04);
+	moveto(6,2,hi(screen_char_loc));
 	printstring("THIS TEXT IS STATIONARY",0,40);
 	
 	// Removes the 0th and 39th column on the screen, enabling the "smooth" transition at 

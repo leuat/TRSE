@@ -5,7 +5,6 @@ var
 // @max defines how many texts can be written on the screen at the same time
 @define max 6
 @define useKernal 1
-@define screenPos $04	
 
 	// Colors to fade between, one per frame
 	colors:  array[] of byte = (0, $06,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06,$06);
@@ -22,7 +21,7 @@ var
 	// x,y, "string", 0, pause time
 	// terminates with 255, restarts
 
-	demotext: string = (5,10, "LEMONSPAWN", 0,8,
+	demotext: string = (5,10, "TURBO RASCAL", 0,8,
 						8,12, "PRESENTS",0,8,
 						3,12, "ALPHA", 0,1,
 						10,12, "BETA", 0,1,
@@ -74,7 +73,7 @@ begin
 	moveto(x,y,hi(screen_col_loc));
 	colorPtr:=screenmemory;
 	// Also, move to screen position
-	moveto(x,y,@screenPos);
+	moveto(x,y,hi(screen_char_loc));
 	i:=0;
 	// Write chars as long as char isn't zero 
 	while (textPtr[0]<>0) do begin

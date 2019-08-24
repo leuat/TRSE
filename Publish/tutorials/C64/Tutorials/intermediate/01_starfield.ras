@@ -9,8 +9,6 @@ program tutorial_14_horizontal_starfield;
 @define charPos 64
 // where to put char ROM data?
 @define charsetPos $2000
-// Use bank 1
-@define screenLoc $04
 
 
 /*
@@ -84,7 +82,7 @@ end;
 // the charpos should be inverted and lose the +7, write in assembler etc
 procedure RenderStarfield();
 begin
-	moveto(0,0,@screenLoc);
+	moveto(0,0,hi(screen_char_loc));
 	cp:=screen_col_loc;
 	for i:=0 to @noStars do begin
 		if i<>12 then begin // ignore stars at line 12
@@ -127,7 +125,7 @@ end;
 
 procedure InitializeText();
 begin
-	moveto(12,12,$04);
+	moveto(12,12,hi(screen_char_loc));
 	printstring(text,0,20);
 end;
 
