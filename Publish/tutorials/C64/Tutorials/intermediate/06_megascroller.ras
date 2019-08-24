@@ -1,0 +1,241 @@
+program MegaScroller;
+//
+var
+	// Various
+	dx,dy,c,val,i,j, scroll,scrollsplit,val2,k : byte = 0;
+	radial : integer;
+	
+	@define charsetLoc1 $2800
+	@define charsetLoc2 $6800
+	@define fontLoc $7000
+	// Place charset on both bank 0 and 1
+	charset: IncBin("resources/charsets/charset.bin",@charsetLoc1);
+	charset1_2: IncBin("resources/charsets/charset.bin",@charsetLoc2);
+	// 2x2 font included at some random position
+	font: IncBin("resources/charsets/charset_16x16.bin",@fontLoc);
+	
+	// Scroll shift
+	shiftx: byte;
+	// Scroller y amplitude
+	text: string=( "THIS IS QUITE THE HUGE SCROLLER   "); // ends with a zero
+	
+	// Banking variable
+	g_currentBank:byte = 0;
+// // use chars 64-72 as fire chars. You could try others here, like 80	g_dataLoc : byte=$1a;
+	
+	textp: pointer;
+	zeropage1:pointer;
+	
+	// Turn ON of off KERNAL (0/1)
+	@define useKernal "0"
+	
+	
+	@define bank2ClearVal "$20"
+	@define charVal 64	
+	// Define some text pointers
+	@define textpointer textp
+	
+	lumi:  array[] of byte = ($06,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06);
+
+	
+	/*
+	
+	This tutorial basically takes a 2x2 charset and converts bit information in the character map
+	to a 16x16 char image.
+	
+	In this tutorial, we render off-screen on an alternate bank, and perform half-page
+	copying on various stages of the scroll. When the scrolling resets, we flip banks and start
+	over again.
+	
+	In addition to this, we cycle the 16 rendering characters using the same method as in previous tutorials
+	*/
+	
+	
+	
+procedure ShiftCharsetData();
+begin
+	memcpy(^@charsetLoc1+^@charVal*^8, 0, ^@charsetLoc1+^@charVal*^8+^128,8);
+	memcpy(^@charsetLoc1+^@charVal*^8+^8, 0, ^@charsetLoc1+^@charVal*^8,128);
+	memcpy(^@charsetLoc2+^@charVal*^8, 0, ^@charsetLoc2+^@charVal*^8+^128,8);
+	memcpy(^@charsetLoc2+^@charVal*^8+^8, 0, ^@charsetLoc2+^@charVal*^8,128);
+end;
+
+	/*
+	The following method copies half upper/lower screen to 1 char left
+	*/
+
+procedure CopyHScreen(ul_:byte);
+begin
+	if g_currentBank=0 offpage then begin
+		if ul_=0 then
+			copyhalfscreen(^$0400 + ^520, ^$4400 -^1 + ^520,9, 1,0)
+		else
+			copyhalfscreen(^$0400, ^$4400 -^1, 13, 1,0);
+		
+	end;
+	if g_currentBank=1 offpage then begin
+		if ul_=0 then
+			copyhalfscreen(^$4400+^520, ^$0400 - ^1 + ^520, 9, 1,0)
+		else
+			copyhalfscreen(^$4400, ^$0400 - ^1,13, 1,0);
+	end;
+	
+end;
+
+/*
+Switches between bank 0 and 1
+*/
+procedure SwitchBank();
+begin
+	if g_currentBank=0 then
+		SetBank(VIC_BANK1)
+	else
+		SetBank(VIC_BANK0);
+
+	setcharsetlocation($2800);	
+	
+	g_currentBank:=(g_currentBank+1)&1;
+end;
+
+
+/*
+Performs the rendering of the 16x16 text, split into 1x8 + 1x8 vertical lines for each stage (shiftx)
+	*/
+
+procedure WriteText();
+begin
+
+	val:=hi(screen_char_loc);
+	if g_currentBank=0 then val:=val+$40;
+
+
+	moveto(0,4,val);
+	// Clear the single byte on the rightmost column
+	screenmemory[39]:=$20;
+	moveto(0,5,val);
+	
+	if (scroll>=127) then begin // if scroll<0, trigger a new line to draw
+		val:=@textpointer[0]; // Look up current char
+		if (val>=64) then val:=val-65; // Look up in charmap
+		
+		zeropage1:=font;
+		if (val=key_space) then begin
+			val:=$40; // Point to an empty location in font space
+		end;	
+		if val>=16 then val:=val+24;   // Align chars (for this particular font)
+		// point to the correct char in memory, each char is 2x2 x 8 bytes, so 16 bytes in total
+		zeropage1:=zeropage1+16*val;
+		
+		
+		// val2 here is the actual character to draw, 74 is semi-filled char
+		val2:=73-shiftx+scrollsplit;
+		// Scrollsplit decides whether we use the first (0) char in a letter or the second (8)
+		zeropage1:=zeropage1+scrollsplit;
+		// Draw upper and lower 8 chars
+		for j:=0 to 2 do 
+		begin
+			for i:=0 to 8 do begin
+			// Default is blank
+				c:=key_space;
+				if (getbit(zeropage1[i], shiftx)=1) then c:=val2;
+				screenmemory[39]:=c;
+				screenmemory:=screenmemory+screen_width;
+			
+			end;
+			// Increase 8 rows (8*40=320)
+			zeropage1:=zeropage1+320;
+		end;
+		dec(shiftx);
+		if (shiftx>=127) then 
+		begin // if shift is less than zero
+			shiftx:=7; // Reset value
+			// Do we increase text pointer or just shift +8 bytes to draw next part of 2x2 char?
+			if (scrollsplit=0) then scrollsplit:=8
+				else begin
+				// Reset and increase text pointer!
+				scrollsplit:=0;
+				@textpointer:=@textpointer+1;
+				if @textpointer[0]=0 then @textpointer:=text;
+			end;
+		end;
+		// Reset scroll
+		scroll:=7;
+	end;
+	
+	
+end;
+
+/*
+	Main raster interrupt.
+*/
+interrupt RasterMain();
+begin
+	StartIRQ(@useKernal);
+	
+	scroll:=scroll - 2; // Scroll speed
+	scrollx(scroll);
+	setregularcolormode();
+	// Prints out the current text on columm 39	
+	WriteText();
+	// If scroll=1 or 3, copy upper or lower screen to the other bank
+	if scroll=1 then CopyHScreen(0);
+	if scroll=3 then CopyHScreen(1);
+	// End of scroll: switch banks, reset scroll
+	if (scroll=7) then SwitchBank();
+	// Shift us some charset data 50% of the frames. For good looks. 	
+	if (scroll=7 or scroll=3) then 
+		ShiftCharsetData();	
+			
+	hideborderx(1);
+	
+	CloseIRQ();
+end;
+
+/* Empty NMI */
+interrupt NMI();
+begin
+end;
+
+// Fill the screen with purdy colors
+procedure InitColors();
+begin
+	zeropage1:=screen_col_loc;
+	for k:=0 to screen_height do
+	begin
+		for i:=0 to screen_width do 
+		begin
+			dx:=abs(20-i);
+			dy:=abs(13-k);
+			// Calculate the "tangential" value of dx,dy. Try to plot this value indepenedntly!
+			radial:=(dx*dx+dy*dy);
+			radial:=radial/3;
+			val:=sqrt(radial);
+			zeropage1[i]:=lumi[val&31];
+		end;
+		zeropage1:=zeropage1+screen_width;
+	end;
+end;
+
+begin
+	// Set color background
+	screen_bg_col:=black;	
+	screen_fg_col:=black;	
+	// Clear screen and color memory
+	ClearScreen(@bank2ClearVal, screen_char_loc+^$4000);
+	ClearScreen(@bank2ClearVal, screen_char_loc);
+	// Fill colors
+	InitColors();	
+	// Initialize text pointer	
+	@textpointer:=text;
+	
+	shiftx:=7;
+	scrollsplit := 0;
+	
+	hideborderx(0);
+	
+	nmiirq(NMI());
+	SetMemoryConfig(1,@useKernal,0);
+	StartRasterChain(RasterMain(),1,@useKernal);
+	Loop();
+end.
+
