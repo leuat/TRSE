@@ -29,5 +29,3 @@ current_file = intermediate/05_paw_compression.ras
 output_type = prg
 data_header_sprites/sprites.flf = 6.92363e-310
 output_debug_symbols = 1
-project_path = /home/leuat/code/TRSE/Publish/tutorials/C64/Tutorials/
-open_files = ,intermediate/04_2x2scroller.ras, intermediate/05_paw_compression.ras, intermediate/05_paw_file.paw, intermediate/06_megascroller.ras, intermediate/paw_packing_tutorial.paw
