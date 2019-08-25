@@ -83,7 +83,7 @@ void TRSEDocument::UserDefined()
     QString cmd = params[0];
     params.removeFirst();
     qDebug() << params;
-    p.execute(cmd,params);
+    p.startDetached(cmd,params);
     p.waitForFinished();
 
 }

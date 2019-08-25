@@ -54,9 +54,14 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     QStringList params;
 
     QString debugFile =fileName.split(".").first()+".sym";
-    if (QFile::exists(debugFile)) {
+    if (QFile::exists(debugFile) && (
+                m_projectIniFile->getString("system")=="VIC20" ||
+                m_projectIniFile->getString("system")=="C64"||
+                m_projectIniFile->getString("system")=="C128"||
+                m_projectIniFile->getString("system")=="PET"
+                ))
         params<<"-moncommands"<<debugFile;
-    }
+
 
     if (m_projectIniFile->getString("system")=="VIC20") {
         emu = m_iniFile->getString("vic20_emulator");
@@ -83,6 +88,9 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         emu = m_iniFile->getString("plus4_emulator");
     }
 
+    if (m_projectIniFile->getString("system")=="OK64") {
+        emu = m_iniFile->getString("ok64_emulator");
+    }
 
     if (!QFile::exists(emu)) {
         Messages::messages.DisplayMessage(Messages::messages.NO_EMULATOR);
@@ -110,6 +118,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     else process.startDetached(emu, params);
 
 #else
+//    qDebug() << emu << params;
     process.startDetached(emu, params);
 #endif
 //    process.pi

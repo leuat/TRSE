@@ -379,6 +379,7 @@ void MainWindow::RefreshFileList()
 
 }
 
+
 void MainWindow::OpenProjectSettings()
 {
     if (m_currentProject.m_filename=="")

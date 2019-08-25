@@ -71,6 +71,10 @@ void Syntax::Init(AbstractSystem::System s, QString param)
         m_startAddress = 0x1000;
         m_programStartAddress = 0x1010;
     }
+    if (s==AbstractSystem::OK64) {
+        m_startAddress = 0x0400;
+        m_programStartAddress = 0x0400;
+    }
 
     LoadSyntaxData();
 

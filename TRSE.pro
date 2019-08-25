@@ -78,6 +78,7 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     imageworker.cpp \
     source/Compiler/ast/nodecase.cpp \
+    source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemplus4.cpp \
     source/PmmEdit/fjonghighlighter.cpp \
     source/dialogexport3d.cpp \
@@ -215,6 +216,7 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     imageworker.h \
     source/Compiler/ast/nodecase.h \
+    source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemplus4.h \
     source/PmmEdit/fjonghighlighter.h \
     source/dialogexport3d.h \
@@ -387,6 +389,8 @@ RESOURCES += \
 DISTFILES += \
     resources/code/amiga/init_p61_player.s \
     resources/code/amiga/p61-play.i \
+    resources/images/OK64.jpg \
+    resources/images/OK64.png \
     resources/images/PLUS4.png \
     resources/text/about.txt \
     resources/text/Documentation.txt \

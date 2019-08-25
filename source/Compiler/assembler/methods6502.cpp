@@ -38,7 +38,53 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
             as->Asm("sta $01");
 
     }
+    /*
+     *
+     *  OK64 methods
+     *
+     *
+     *
+     *
+     * */
 
+    if (Command("DrawPixel")) {
+        as->Comment("Draw pixel");
+        LoadVar(as,0);
+        as->Asm("sta $FF00");
+        LoadVar(as,1);
+        as->Asm("sta $FF01");
+        LoadVar(as,2);
+        as->Asm("sta $FF02");
+        as->Asm("lda #1");
+        as->Asm("sta $FF10"); // Initialize pixel drawing
+    }
+
+    if (Command("DrawLine")) {
+        as->Comment("Draw Line");
+        LoadVar(as,0);
+        as->Asm("sta $FF00");
+        LoadVar(as,1);
+        as->Asm("sta $FF01");
+        LoadVar(as,2);
+        as->Asm("sta $FF04");
+        LoadVar(as,3);
+        as->Asm("sta $FF05");
+        LoadVar(as,4);
+        as->Asm("sta $FF02");
+        as->Asm("lda #2");
+        as->Asm("sta $FF10"); // Initialize pixel drawing
+    }
+
+
+    /*
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     * */
 
     if (Command("VIAIRQ"))
         VIAIRQ(as);

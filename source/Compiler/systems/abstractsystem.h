@@ -16,7 +16,7 @@ public:
     QElapsedTimer timer;
     QString m_orgOutput;
     CIniFile* m_projectIni, *m_settingsIni;
-    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4};
+    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64};
     enum Processor {MOS6502, M68000};
 
     bool m_buildSuccess;
@@ -49,6 +49,8 @@ public:
             return AMIGA;
         if (s.toLower()=="plus4")
             return PLUS4;
+        if (s.toLower()=="ok64")
+            return OK64;
     }
 
     static QString StringFromSystem(System s) {
@@ -60,6 +62,7 @@ public:
         if (s == BBCM) return "BBCM";
         if (s == AMIGA) return "AMIGA";
         if (s == PLUS4) return "PLUS4";
+        if (s == OK64) return "OK64";
     }
 
 
