@@ -3875,8 +3875,12 @@ void Methods6502::InitSinusTable(Assembler *as)
     as->Asm("sta sine+$00,y");
 
     as->Asm("lda delta");
-    as->Asm("adc #$10   ; this value adds up to the proper amplitude");
+    if (Syntax::s.m_currentSystem==AbstractSystem::OK64)
+    as->Asm("adc #$14   ; this value adds up to the proper amplitude");
+    else {
+        as->Asm("adc #$10   ; this value adds up to the proper amplitude");
 
+    }
     as->Asm("sta delta");
     as->Asm("bcc initsin_b");
     as->Asm("inc delta+1");
