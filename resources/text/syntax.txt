@@ -352,13 +352,15 @@ c; JOY_FIRE; VIC20; b; %00010000
 
 # OK64 specific constants
 c; OKVC_RANDOM; OK64; a; $FFF0
-c; OKVC_RASTER; OK64; a; $FFE9
+c; OKVC_VSYNC; OK64; a; $FFEF
 c; OKVC_EXEC; OK64; a; $FF10
 
 m; drawPixel; OK64; b,b,b
 m; drawLine; OK64; b,b,b,b,b
 m; drawCircleFilled; OK64; b,b,b,b
-
+m; ClearScreen; OK64; b
+m; WaitForVsync; OK64;
+m; toColor; OK64; b,b,b
 
 # PLUS4 specific constants
 

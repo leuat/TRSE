@@ -11,6 +11,49 @@ bool Methods6502::Command(QString name)
     return m_node->m_procName.toLower() == name.toLower();
 }
 
+void Methods6502::toColor(Assembler *as)
+{
+/*
+    QString zp = as->m_internalZP[0];
+    LoadVar(as,0);
+    as->Asm("and #3");
+    as->Asm("sta "+zp);
+    LoadVar(as,1);
+    as->Asm("and #3");
+    as->Asm("asl");
+    as->Asm("asl");
+    as->Asm("ora "+zp);
+    as->Asm("sta "+zp);
+    LoadVar(as,2);
+    as->Asm("and #3");
+    as->Asm("asl");
+    as->Asm("asl");
+    as->Asm("asl");
+    as->Asm("asl");
+    as->Asm("ora "+zp);
+    */
+    QString zp = as->m_internalZP[0];
+    LoadVar(as,0);
+    as->Asm("and #7");
+    as->Asm("sta "+zp);
+    LoadVar(as,1);
+    as->Asm("and #3");
+    as->Asm("asl");
+    as->Asm("asl");
+    as->Asm("asl");
+    as->Asm("ora "+zp);
+    as->Asm("sta "+zp);
+    LoadVar(as,2);
+    as->Asm("and #7");
+    as->Asm("asl");
+    as->Asm("asl");
+    as->Asm("asl");
+    as->Asm("asl");
+    as->Asm("asl");
+    as->Asm("ora "+zp);
+
+}
+
 
 
 void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
@@ -58,6 +101,19 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         as->Asm("lda #1");
         as->Asm("sta $FF10"); // Initialize pixel drawing
     }
+    if (Command("drawCircleFilled")) {
+        as->Comment("Fill circle");
+        LoadVar(as,0);
+        as->Asm("sta $FF00");
+        LoadVar(as,1);
+        as->Asm("sta $FF01");
+        LoadVar(as,2);
+        as->Asm("sta $FF03");
+        LoadVar(as,3);
+        as->Asm("sta $FF02");
+        as->Asm("lda #4");
+        as->Asm("sta $FF10"); // Initialize start
+    }
 
     if (Command("DrawLine")) {
         as->Comment("Draw Line");
@@ -74,6 +130,19 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         as->Asm("lda #2");
         as->Asm("sta $FF10"); // Initialize pixel drawing
     }
+    if (Command("ClearScreen")) {
+        as->Comment("ClearScreen");
+        LoadVar(as,0);
+        as->Asm("sta $FF02");
+        as->Asm("lda #3");
+        as->Asm("sta $FF10"); // Initialize pixel drawing
+    }
+    if (Command("WaitForVSync")) {
+        as->Asm("lda #1");
+        as->Asm("sta $FFEF");
+    }
+    if (Command("toColor"))
+        toColor(as);
 
 
     /*
@@ -4427,6 +4496,8 @@ void Methods6502::RasterIRQWedge(Assembler *as)
 
 void Methods6502::ClearScreen(Assembler *as)
 {
+    if (Syntax::s.m_currentSystem==AbstractSystem::OK64)
+        return;
     int val = m_node->m_params[1]->numValue();  // start address (offset) to fill
 
     AddMemoryBlock(as,1);
