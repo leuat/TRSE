@@ -36,6 +36,7 @@
 #include "source/LeLib/limage/limagesprites2.h"
 #include "source/LeLib/limage/limagecga.h"
 #include "source/LeLib/limage/limageamiga4.h"
+#include "source/LeLib/limage/limageok64.h"
 
 class LImageFactory {
 public:
@@ -71,6 +72,8 @@ public:
             return new LImageAmiga(colorType,0);
         if (t == LImage::Type::AMIGA320x256)
             return new LImageAmiga(colorType,1);
+        if (t == LImage::Type::OK64_256x256)
+            return new LImageOK64(colorType);
 
         qDebug() << "ERROR: LImageFactory could not find type " << t;
         return nullptr;

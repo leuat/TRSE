@@ -3,44 +3,65 @@ var
    	i,j,k,l,m,c2x: byte; 
 
 	zp,p1,l1: pointer;
-
+	// Fade colors
 	colorsc1 : array [] of byte = (  0, 11,6,12,12,4,14,15,7,1,7,6,   6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6  );
-	// Background fade colors
+	// border fade colors
 	colorsc2 : array [] of byte = (  0, 11,6,12,12,4,14,14,14,   14,14,14,14,14,14,14,14,14  );
-	
+	// 16x16=256 byte perlin noise data	
 	orgperlin:incbin("resources/data/perlin16.dat");	
 	
+// Random place to store 1000 bytes
+@define dataLoc $5000
+// Turn off to un-optimize
+@define IS_OPTIMIZED 1
 
-
-
-procedure CalculateNewCirclesInit();
+procedure CalculateCircles();
 begin
-	zp:=$5000;
-	
-	for j:=0 to 25 do begin
-		for i:=0 to 40 do begin
+	zp:=@dataLoc;
+	// Since perlin noise repeats every 16 bytes, we add a higher frequency noise with a shifted phase	
+	for j:=0 to screen_height do begin
+		for i:=0 to screen_width do begin
 			m:=j&15;
+			// lookup : val := x+y*16 with x,y confined to 0..15
 			l:=i&15+m*16;	
+			
+			// Original phase
 			k:=orgperlin[l]/8;
-			m:=(j/2);
-			l:=(i/2)+m*16;	
+			m:=(j/2); 
+			l:=(i/2)+m*16; // half phase
+			// This is where we add the half phase to make it look random
 			k:=k+orgperlin[l+133]/8;
 //			k:=k+sine[i+j]/8;
-			zp[i]:=k/2+8;
-
+			zp[i]:=k/2+8; 
 		end;
-		zp:=zp+40;
+		zp:=zp+screen_width;
 	end;
 end;
 
-
+/*
+	Performs the actual perlin noise effect. 
+	Both optimized and unoptimized version are included.
+*/
 procedure PerformPerlin();
 begin
-	zp:=$0400;
-	p1:=$D800;
-	l1:=$5000;
-	for j:=0 to 25 do begin
-		for i:=0 to 40 do begin
+	zp:=screen_char_loc;
+	p1:=screen_col_loc;
+	l1:=@dataLoc;
+		
+
+
+	for j:=0 to screen_height do begin
+		for i:=0 to screen_width do begin
+		
+@ifndef IS_OPTIMIZED
+			k:=l1[i];
+			if (k) then begin
+				dec(k);
+				l1[i]:=k;
+				p1[i]:=colorsc1[k];
+			end;		
+@endif
+@ifdef IS_OPTIMIZED
 			asm("
 				ldy i
 				lda (l1),y
@@ -50,36 +71,29 @@ begin
 				sta (l1),y
 				tax
 				lda colorsc1,x
-				ldy i
 				sta (p1),y
 pp_cont:
 ");			
+@endif
 		end;
-		p1:=p1+40;
-		l1:=l1+40;
+		p1:=p1+screen_width;
+		l1:=l1+screen_width;
 //		inczp(zp,40);
 	end;
 
 end;
 
 
-
-
 begin
-	fill(^$5800,255,8);
-	setcharsetlocation($5800);
-	Clearscreen(BLUE,^$D800);
-	Clearscreen(0,^$4400);
-	setbank(VIC_BANK1);
-
-	CalculateNewCirclesInit();
+	Clearscreen(blue,screen_col_loc);
+	Clearscreen($A0,screen_char_loc); // $A0 is solid block
+	CalculateCircles();
 	c2x:=16;
-	while(1=1) do begin
+	while(true) do begin
 		waitforraster(0);
 		if (c2x<127) then begin
-			SCREEN_BG_COL:=colorsc2[c2x];
+			screen_bg_col:=colorsc2[c2x];
 			dec(c2x);
-
 		end;
 		PerformPerlin();
 	end;

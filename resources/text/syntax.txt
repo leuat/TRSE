@@ -206,7 +206,7 @@ m; SetSpriteLoc; C64, PLUS4, C128; b,b,n
 
 m; PlaySound; C64, PLUS4, C128; b,b,b,b,b,b,b
 m; SetFrequency; C64, PLUS4, C128; b,b
-m; InitSid; C64, PLUS4, C128,VIC20; a
+m; InitSid; C64, PLUS4, C128,VIC20, OK64; a
 m; ClearSound; C64, PLUS4, C128;
 
 # VIC 20 Music routines
@@ -361,6 +361,8 @@ m; drawCircleFilled; OK64; b,b,b,b
 m; ClearScreen; OK64; b
 m; WaitForVsync; OK64;
 m; toColor; OK64; b,b,b
+m; setPalette; OK64; b,b,b,b
+m; blit; OK64; b,b,b,b,b,b
 
 # PLUS4 specific constants
 

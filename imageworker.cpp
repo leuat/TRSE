@@ -40,6 +40,7 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("C64 Level Editor", LImage::Type::LevelEditor,LColorList::Type::C64));
     m_types.append(ImageType("C64 Sprite Editor", LImage::Type::Sprites2,LColorList::Type::C64));
     m_types.append(ImageType("VIC20 Multicolor bitmap", LImage::Type::VIC20_MultiColorbitmap,LColorList::Type::VIC20));
+    m_types.append(ImageType("OK64 Image", LImage::Type::OK64_256x256,LColorList::Type::OK64));
     m_types.append(ImageType("C64 Sprite Editor (deprecated type)", LImage::Type::Sprites,LColorList::Type::C64));
 //    m_types.append(ImageType("C64 Multicolor Charmap Fixed Colors", LImage::Type::CharMapMultiColorFixed,LColorList::Type::C64));
 

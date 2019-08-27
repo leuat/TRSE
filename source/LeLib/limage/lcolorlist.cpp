@@ -60,6 +60,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 6;
   if (t==PICO8)
       return 7;
+  if (t==OK64)
+      return 8;
 
   return 255;
 }
@@ -82,6 +84,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return VIC20;
     if (c==7)
         return PICO8;
+    if (c==8)
+        return OK64;
 
     return UNSUPPORTED;
 
@@ -254,6 +258,8 @@ void LColorList::Initialize(Type t)
         InitVIC20();
     if (m_type == Type::PICO8)
         InitPICO8();
+    if (m_type == Type::OK64)
+        InitOK64();
 
 
     m_metric = new LinearMetric();
@@ -403,6 +409,26 @@ void LColorList::InitCGA1_HIGH()
     m_list.append(LColor(QColor(0xff,0xff,0xff),"Light gray"));
 }
 
+void LColorList::InitOK64()
+{
+    m_list.clear();
+    float s = 1; // saturation
+    for (uchar i=0;i<255;i++) {
+        int b = (i&0b11100000);
+        int g = (i&0b00011000)<<3;
+        int r = (i&0b00000111)<<5;
+
+        int c = (r+g+b)/3;
+        r = Util::minmax(c+(r-c)*s,0,255);
+        g = Util::minmax(c+(g-c)*s,0,255);
+        b = Util::minmax(c+(b-c)*s,0,255);
+
+
+        m_list.append(LColor(QColor(r,g,b),""+QString::number((i))));
+    }
+
+}
+
 void LColorList::InitCGA2_LOW()
 {
     m_list.clear();
@@ -488,6 +514,10 @@ void LColorList::CreateUI(QLayout* ly, int type)
 //    m_buttons.clear();
     int xx=0, yy=0;
     int width=40/(max(m_list.count()/16,1));
+    qDebug() << width;
+    if (m_list.count()>200) {
+        width = 16;
+    }
 //    if (m_list.count())
     for(int j=0; j<m_list.count(); j++)
     {
@@ -505,6 +535,7 @@ void LColorList::CreateUI(QLayout* ly, int type)
         b->setMaximumWidth(width);
         b->setMinimumWidth(width);
         b->setAutoFillBackground( true );
+//        b->setStyleSheet("padding: 0px;");
         if (type==0) {
             QObject::connect( b, &QPushButton::clicked,  [=](){ handleButtonImport(j);} );
         }

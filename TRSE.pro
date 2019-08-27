@@ -80,6 +80,7 @@ SOURCES += main.cpp\
     source/Compiler/ast/nodecase.cpp \
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemplus4.cpp \
+    source/LeLib/limage/limageok64.cpp \
     source/PmmEdit/fjonghighlighter.cpp \
     source/dialogexport3d.cpp \
     source/toolbox.cpp \
@@ -218,6 +219,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/ast/nodecase.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemplus4.h \
+    source/LeLib/limage/limageok64.h \
     source/PmmEdit/fjonghighlighter.h \
     source/dialogexport3d.h \
     source/toolbox.h \

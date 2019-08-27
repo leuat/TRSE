@@ -58,7 +58,8 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
                 m_projectIniFile->getString("system")=="VIC20" ||
                 m_projectIniFile->getString("system")=="C64"||
                 m_projectIniFile->getString("system")=="C128"||
-                m_projectIniFile->getString("system")=="PET"
+                m_projectIniFile->getString("system")=="PET" ||
+                m_projectIniFile->getString("system")=="OK64"
                 ))
         params<<"-moncommands"<<debugFile;
 

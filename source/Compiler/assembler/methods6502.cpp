@@ -91,28 +91,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
      * */
 
     if (Command("DrawPixel")) {
-        as->Comment("Draw pixel");
-        LoadVar(as,0);
-        as->Asm("sta $FF00");
-        LoadVar(as,1);
-        as->Asm("sta $FF01");
-        LoadVar(as,2);
-        as->Asm("sta $FF02");
-        as->Asm("lda #1");
-        as->Asm("sta $FF10"); // Initialize pixel drawing
+        CallOKVC(as,3,1);
     }
     if (Command("drawCircleFilled")) {
-        as->Comment("Fill circle");
-        LoadVar(as,0);
-        as->Asm("sta $FF00");
-        LoadVar(as,1);
-        as->Asm("sta $FF01");
-        LoadVar(as,2);
-        as->Asm("sta $FF03");
-        LoadVar(as,3);
-        as->Asm("sta $FF02");
-        as->Asm("lda #4");
-        as->Asm("sta $FF10"); // Initialize start
+        CallOKVC(as,4,4);
     }
 
     if (Command("DrawLine")) {
@@ -143,7 +125,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     }
     if (Command("toColor"))
         toColor(as);
-
+    if (Command("setPalette")) {
+        CallOKVC(as,4,5);
+    }
+    if (Command("blit")) {
+        CallOKVC(as,6,6);
+    }
 
     /*
      *
@@ -1117,6 +1104,17 @@ void Methods6502::Random(Assembler* as)
     VerifyInitialized("random","InitRandom256");
     as->Asm("jsr Random");
     //SaveVar(as,2);
+}
+
+void Methods6502::CallOKVC(Assembler *as, int noParams, uchar val)
+{
+    for (uchar i=0;i<noParams;i++) {
+        LoadVar(as,i);
+        as->Asm("sta "+Util::numToHex(0xFF00+i));
+    }
+    as->Asm("lda #"+QString::number(val));
+    as->Asm("sta $FF10"); // Start
+
 }
 
 void Methods6502::InitRandom256(Assembler *as)
@@ -3875,12 +3873,12 @@ void Methods6502::InitSinusTable(Assembler *as)
     as->Asm("sta sine+$00,y");
 
     as->Asm("lda delta");
-    if (Syntax::s.m_currentSystem==AbstractSystem::OK64)
-    as->Asm("adc #$14   ; this value adds up to the proper amplitude");
-    else {
+//    if (Syntax::s.m_currentSystem==AbstractSystem::OK64)
+  //  as->Asm("adc #$14   ; this value adds up to the proper amplitude");
+   // else {
         as->Asm("adc #$10   ; this value adds up to the proper amplitude");
 
-    }
+   // }
     as->Asm("sta delta");
     as->Asm("bcc initsin_b");
     as->Asm("inc delta+1");
