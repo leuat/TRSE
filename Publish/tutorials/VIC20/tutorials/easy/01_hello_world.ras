@@ -1,0 +1,32 @@
+program HelloWorld;
+var  
+  	text : string = ("HELLO WORLD");
+
+/*
+	This Vic 20 project is set up for use with a 16K RAM expansion, although
+	most examples will run on the unexpanded Vic 20.
+	
+	Go to the Project Settings and look at the Target Settings section to change the RAM requirements if desired
+*/
+
+begin
+	/*
+		screen_char_loc and screen_col_loc are built in address constants that return the location for screen and colour memory
+		for the current RAM configuration
+	*/
+
+	// Fill the screen (at screen_char_loc) with character $20 - "space"
+	ClearScreen(key_space, screen_char_loc);
+	// Fill the color ram with yellow
+	ClearScreen(blue, screen_col_loc);
+	// Move cursor to x,y position 10,12
+	moveto(8,8,hi(screen_char_loc));
+	// Print the text
+	printstring(text,0,22);
+	// Move cursor 2 rows down (2*22) and back 8 characters
+	screenmemory:=screenmemory+2*screen_width-8;
+	// Print something else
+	printstring("THIS IS ANOTHER STRING",0,22);
+	// Infinite loop
+	Loop(); 
+end.
