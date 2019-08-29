@@ -4634,16 +4634,14 @@ void Methods6502::SetSpriteLoc(Assembler *as)
 
 void Methods6502::ClearBitmap(Assembler *as)
 {
-    NodeNumber* addr = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
-    NodeNumber* cnt = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
 
-    if (addr==nullptr || cnt == nullptr)
+    if (!m_node->m_params[0]->isPureNumeric() || !m_node->m_params[1]->isPureNumeric())
         ErrorHandler::e.Error("ClearBitmap: both parameters must be integer constants");
 
     QString lbl = as->NewLabel("clear");
 
 
-    QString screen = addr->HexValue();
+    QString screen = m_node->m_params[0]->getValue(as);
 
 
     as->Asm("; Clear bitmap method");
@@ -4651,7 +4649,7 @@ void Methods6502::ClearBitmap(Assembler *as)
     as->Asm("ldy #0");
     as->Asm("tya");
     as->Label(lbl);
-    for (int i=0;i<cnt->m_val;i++)
+    for (int i=0;i<m_node->m_params[1]->getValueAsInt(as);i++)
         as->Asm("sta "+screen+"+$" + QString::number(i*256,16) + " ,y");
     as->Asm("dey");
     as->Asm("bne "+lbl);

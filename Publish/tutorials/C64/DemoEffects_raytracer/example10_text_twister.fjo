@@ -1,0 +1,137 @@
+globals = {
+	camera = { x = 0, y=0.3, z=6.0 },
+	fov = 50, 
+	
+	target = { x = 0, y=0.3, z=0 },
+	up = { x = 0, y=1, z=0 },
+	light0 = {   	direction = {x=1, y=0, z=2 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+	ambient = { x = 0, y = 0, z = 0 },
+     raymarch_steps = 80,
+	raymarch_shadow_steps = 40,
+
+	sky = 0,
+	shadow_scale = 0.2,
+	isPaused = 0
+	
+}
+
+
+
+output = {
+	resolution = { width = 16, height=16},
+	c64_output = 0,
+	aspect = 1,
+}
+
+
+Material0 = {
+   color = { x=0.6, y=0.6, z=0.6 },
+	reflection = 0.0,
+	shininess = 1000,
+	shininess_intensity = 0 
+}
+
+
+Material2 = {
+	color = { x=1.0, y=1.0, z=1.0 },
+	reflection = 0.1,
+	shininess = 100,
+	shininess_intensity = 1 
+
+}
+
+
+
+-- Init is called on start  
+
+
+messageDisplayed = 0
+ 
+
+function Init()
+
+	ClearAllObjects()
+	if (messageDisplayed==0) then
+		Message("Needs to render all characters A...Z and save to disk... please wait");
+		messageDisplayed = 1
+	end
+
+
+--  AddObject("cylinder","cyl1", "", "Material0", 0,0,0,    0.4,0.5, 3 )
+  AddObject("box","cyl1", "", "Material0", 0,0,0,    2.4,14,0.5 )
+
+	font = "rom"
+	--font = "charsets/worked_charset.flf"
+
+	z = 1.2
+	if (char ~= 0) then	
+
+	AddObject("char","char1", "", "Material2",  font, char,   
+0,0,-z,            -- position
+0.6,0.5,0.5,      -- width xyz 
+0.250,0.26,0.31  -- stretch xyz
+);          
+
+	AddObject("char","char2", "", "Material2",  font, char,   
+0,0,z,            -- position
+0.6,0.5,0.5,      -- width xyz 
+0.250,0.26,0.31  -- stretch xyz
+);          
+
+--	jj = sin(char+1)*10
+	jj = 0
+	SetRotation("char1",0,45,jj);
+
+	SetRotation("char2",0,45+90,jj);
+	end
+	UpdateGraphics()
+
+end
+
+
+distance = 10
+frame = 0
+noFrames = 16
+char = 0
+
+
+function UpdateGraphics()
+
+  	t = ((frame+24)/noFrames)*3.14159;--*2 
+	r = 6
+	globals.camera.x = sin(t)*r
+	globals.camera.z = cos(t)*r
+	t=t+3.14159/6
+	globals.light0.direction.x = sin(t)
+	globals.light0.direction.z = cos(t)
+
+
+end
+
+
+function Update()
+	
+
+	if frame == noFrames then 
+		char=char+1
+		frame = 0
+		if char == 27 then 
+			globals.isPaused = 1
+			CompressAndSaveHorizontalData(16,1, "data/example10_screen.bin","data/example10_table.bin");
+
+			Message("Files written to disk. This window can now be closed")
+			
+		end
+		Init()
+	end
+
+	UpdateGraphics()
+	frame=frame+1
+
+	-- 16 x 16 screen with characters starting at 0xA0     screen values (0-255) are divided by 32,restricting the data between 0xA0 and 0xA8
+	
+    AddScreen(16,16, 0xA0,32) 
+
+end

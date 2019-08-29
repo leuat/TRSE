@@ -2057,7 +2057,6 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
             // Regular expression
 
 
-
             as->Asm("pha");
             as->ClearTerm();
             node->m_expr->Accept(this);
@@ -2089,7 +2088,6 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
         }
 
     }
-
 }
 
 void ASTDispather6502::AssignString(NodeAssign *node) {
@@ -2459,8 +2457,31 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
     if (IsSimpleIncDec(v,  node))
         return v->value;
 
-    node->m_right->Accept(this);
+    // Special case:
+/*
+    // typically "a[i+1]:=b;" or "a[i+3]:=b+c*2;" but no Y set. Then
+    // execute [expr] first and THEN do a lda # and save! No more pha pla
+    if (!node->m_right->containsPointer(as)) {
+        as->ClearTerm();
+        v->Accept(this);
+        as->Term();
+        QString secondReg="x";
+        QString pa = "";
+        QString pb= "";
+        if (v->getType(as)==TokenType::POINTER) {
+            secondReg="y";
+            pa="(";
+            pb=")";
+        }
 
+        as->Asm("ta" + secondReg);
+        as->Asm("sta " +pa + v->value+pb+","+ secondReg);
+        return v->value;
+
+    }
+*/
+
+    node->m_right->Accept(this);
     as->Term();
     StoreVariable(v);
 

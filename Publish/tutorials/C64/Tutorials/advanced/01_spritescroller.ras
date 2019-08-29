@@ -1,7 +1,7 @@
 Program SpriteScroller;
 var
 	zp,tp, p1,ep,time: pointer;
-	i,j,k,l,m,n,o,p,col : byte;
+	i,j,k,col : byte;
 	temp2: array[256] of byte;
 
 
@@ -31,7 +31,7 @@ var
 // Position of generated chars (right after)
 @define generatedSpritesLoc $2800
 // Sprite loc on vic bank
-@define textSpriteLoc $A0
+@define textSpriteLoc "$2800/64"
 
 @define spriteScrollerWaviness 16
 
@@ -40,15 +40,16 @@ var
 @define spriteTextColor colorsGreen
 
 
-// Generates sprite data from 16x16 font
+// Generates sprite data from 16x16 font 
 
 procedure GenerateSprites();
 begin
 	// Place at p1
 	// Org at zp
 	tp:=zp;
-	tp:=tp+320;
-	for k:=0 to 26 do begin
+	tp:=tp+320;// Next line
+	
+	for k:=0 to 26 do begin 
 		fill(p1, 0, 64); // Clear sprite  
 		// val is pos
 
@@ -79,8 +80,10 @@ end;
 procedure Maintain16x16Sprites();
 begin
 	col:=0;
-	for i:=0 to @maxTextSprites do begin
-		if (textSprite_status[i]=1) then begin
+	for i:=0 to @maxTextSprites do 
+	begin
+		if (textSprite_status[i]=1) then 
+		begin
 			textSprite_x[i]:=textSprite_x[i] -1;
 			k:=textSprite_t[i];
 			textSprite_y[i]:=@spriteScrollerYPos + temp2[k];
@@ -91,11 +94,11 @@ begin
 				inc(textSprite_col[i]);
 //			waitnoraster(1);
 			k:=textSprite_col[i]&15;
-			SPRITE_COLOR[i]:= @spriteTextColor[k];
+			sprite_color[i]:= @spriteTextColor[k];
 
 //			poke(SPRITE_COLOR,i, fadeGreen[k]);
 			if (textSprite_x[i]>253) then begin
-				togglebit(SPRITE_BITMASK,i,0);
+				togglebit(sprite_bitmask,i,0);
 				textSprite_status[i]:=0;
 			end;
 		end;
@@ -112,14 +115,16 @@ begin
 	textSprite_cnt:=0;
 
 	k:=ep[0];
-	if (k=$20) then begin
-		inczp(ep,1);
+	if (k=key_space) then  // skip on $20
+	begin
+		ep:=ep+1;
 		if (ep[0]=0) then ep:=scrollerText;
 		return();
 	end;
 	if (k>64) then begin
 		k:=k-64-1;
 		j:=255;
+		// Find a slot for the sprite
 		for i:=0 to @maxTextSprites do 
 			if textSprite_status[i]=0 then j:=i;
 		
@@ -127,13 +132,13 @@ begin
 			textSprite_x[j]:=176;
 //			textSprite_y[j]:=@spriteScrollerYPos;
 			textSprite_status[j]:=1;
-			togglebit(SPRITE_BITMASK, j, 1);
+			togglebit(sprite_bitmask, j, 1);
 //			SPRITE_COLOR[j]:=GREEN;	
 			textSprite_col[j]:=0;//)&15;
 			setspriteloc(j, @textSpriteLoc +k, 0);
 			//textSprite_loc[j]:=@textSpriteLoc +k;
 			textSprite_t[j]:=time;
-			inczp(ep,1);
+			ep:=ep+1;
 		end;
 
 	end;
@@ -144,14 +149,13 @@ end;
 // Initializes sprites and generates sprite data
 procedure Init16x16Sprites();
 begin
-
 	zp:=@charsetLoc;
 	p1:=@generatedSpritesLoc;
 	GenerateSprites();
 
-	SPRITE_BITMASK:=$00;
-	SPRITE_STRETCH_X:=$FF;
-	SPRITE_STRETCH_Y:=$FF;
+	sprite_bitmask:=$00;
+	sprite_stretch_X:=$FF;
+	sprite_stretch_Y:=$FF;
 
 	fill(textSprite_status,0,@maxTextSprites);
 
