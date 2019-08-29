@@ -1,0 +1,48 @@
+program VIA_interrupt;
+var  
+   i, j, time: byte = 0; 
+
+// define an interrupt routine
+interrupt MyInterrupt();
+begin
+	StartIRQ(0);  // store the processors registers
+
+	// create 32 lines of colour
+	for i:=0 to 32 do
+	begin
+		j:=SCREEN_BG_COLOR;
+		SCREEN_BG_COLOR:=(j+1)&15;	// set the background colour
+		nop(89);		// this number of NOP instructions delays the processor to create a nice steady bar of colour
+	end;
+	// revert to black
+	SCREEN_BG_COLOR:=BLACK;
+		
+	closeIRQ(); // restore the processor registers and complete our interrupt
+end;
+
+begin
+	// first disable all interrupts
+	DisableVIC20IRQ();
+	
+	// clear the screen and colour memory
+	clearscreen(key_space,screen_char_loc);
+	clearscreen(black,screen_col_loc);
+	
+	// Set up an interrupt to call
+	// Time the interrupt directly with the raster (PAL);
+	// 312 scanlines * 71 cycles -2 = $5686
+	VIAIRQ(MyInterrupt(), $86, $56);
+	
+	// Set the colour of the background to create a moving blue bar
+	while (true) do // infinite loop
+	begin
+		i:=sine[time*4]/8+80;	// using a built in sine table, calculate a value
+		waitforraster(i);		// wait for this raster line position
+		SCREEN_BG_COLOR:=BLUE;	// to change the background to blue
+		waitnoraster(32);		// wait an additional 32 lines
+		SCREEN_BG_COLOR:=BLACK;	// before setting background back to black
+
+		inc(time);
+	end;
+
+end.

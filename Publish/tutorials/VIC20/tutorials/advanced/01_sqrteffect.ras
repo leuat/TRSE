@@ -1,0 +1,76 @@
+program Tutorial_1_sqrteffect;
+
+// Define a constant to point to the addres where the generated data will be created.
+@define dataloc $1600
+// Instruct the Memory Map of this area (press Ctrl+U)
+@userdata "$1600" "$17FA" "Generated Table"
+
+var  
+	// Character that builds the circle. Some random petscii ones
+	vals : array[8] of byte = ($20, $2E, $2B, $51, $5A, $56, $5E, $5E );
+
+	x,y,i,time,dx,dy : byte=0;
+	wrk : integer;
+	// Pointers to color, data and screen
+	cp,data,screen:pointer;
+
+/*
+	Fills @dataLoc with 25x22 circles & 7
+*/
+
+// Calculates a bunch of circles with center 11,13
+procedure Calculate();
+begin
+	cp:=@dataloc;
+	for y:=0 to 23 do
+	begin
+		for x:=0 to 22 do
+		begin
+			dx:=abs(11-x);
+			dy:=abs(13-y);
+			wrk := dx*dx + dy*dy;
+			i:=(sqrt(wrk)/16)&7;
+			cp[x]:=i;
+		end;
+		cp := cp + screen_width;
+	end;
+	
+end;
+
+// Loads from dataloc and draws to screen + color screen
+ 
+procedure Update();
+begin
+	screen:=screen_char_loc; // Screen character memory
+	cp:=SCREEN_COL_LOC; // Color memory
+	data:=@dataloc;
+	for y:=0 to 23 do begin
+		for x:=0 to 22 do begin
+			i:=(data[x]-time)&7;
+			screen[x]:=vals[i];
+			cp[x]:=i;
+		end;
+		screen := screen + screen_width;
+		cp := cp + screen_width;
+		data := data + screen_width;
+	end;
+
+	inc(time);
+
+end;
+
+
+
+begin
+	DisableVIC20IRQ();
+	SCREEN_BG_COLOR := 8;
+	time:=0;
+	
+	Calculate();
+	while (1=1) do begin
+		Update();
+	end;
+	Loop();
+
+
+end.
