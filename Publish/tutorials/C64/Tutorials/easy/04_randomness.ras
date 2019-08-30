@@ -49,7 +49,7 @@ begin
 			// Increase screen and color pointers
 			screenP:=screenP+screen_width;
 			colorP:=colorP+screen_width;
-			end
+		end
 	end;
 
 end.

@@ -29,4 +29,4 @@ output_debug_symbols = 1
 current_file = example10_text_twister.ras
 output_type = prg
 project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/DemoEffects_raytracer/
-open_files = ,example10_text_twister.ras, example11_diskette.fjo, example4.ras
+open_files = ,example11_flipdisk.ras, example10_text_twister.ras, example11_diskette.fjo, example4.ras

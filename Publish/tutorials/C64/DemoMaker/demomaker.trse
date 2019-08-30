@@ -26,3 +26,7 @@ override_target_settings = 0
 override_target_settings_org = $810
 override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
+project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/DemoMaker/
+output_debug_symbols = 1
+open_files = ,packed_data.paw, packed_resources1.ras
+current_file = packed_data.paw

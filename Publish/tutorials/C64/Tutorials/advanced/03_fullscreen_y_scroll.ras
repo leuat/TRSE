@@ -6,7 +6,7 @@ var
 	temp_colorCopy : array[40] of byte;
 
 
-   
+@define char 80   
 @define charsetLoc $2800
 
    mainChar: IncBin("resources/charsets/charset.bin",@charsetLoc);
@@ -92,10 +92,9 @@ begin
 	j:=sine[time]/8;
 	k:=sine[j*time/64]/2;
 	for i:=0 to screen_width do begin
-		val:=val/32+64 - 4;
 		// Chose the center of a nice sine functions so that the background looks
 		// like a canal		
-		val:=sine[(i*4 + j+k)+30]/16 + 64;
+		val:=sine[(i*4 + j+k)+30]/16 + @char;
 		
 		if val<64 then
 			val:=key_space;

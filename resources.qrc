@@ -272,5 +272,7 @@
         <file>resources/text/help/m/memcpyunroll.rtf</file>
         <file>resources/text/help/p/interrupts.rtf</file>
         <file>resources/images/OK64.png</file>
+        <file>resources/images/tutorials/trse_game_tuts.png</file>
+        <file>resources/images/tutorials/torus.png</file>
     </qresource>
 </RCC>
