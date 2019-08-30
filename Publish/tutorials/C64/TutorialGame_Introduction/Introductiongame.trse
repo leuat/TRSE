@@ -30,3 +30,6 @@ override_target_settings_org = $810
 override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 current_file = part9.ras
+project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/TutorialGame_Introduction/
+output_debug_symbols = 1
+open_files = ,part8.ras, part9.ras

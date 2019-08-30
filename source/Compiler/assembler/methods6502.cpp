@@ -332,6 +332,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("Abs")) {
         Abs(as);
     }
+    if (Command("mod"))
+        Modulo(as);
+
     if (Command("IsOverlapping")) {
         IsOverlapping(as);
     }
@@ -931,6 +934,36 @@ void Methods6502::Peek(Assembler* as)
     as->Asm("tax");
     LoadVar(as,0,"x");
     //SaveVar(as,2);
+
+}
+
+void Methods6502::Modulo(Assembler *as)
+{
+    as->Comment("Modulo");
+    LoadVar(as,1);
+    QString val = as->StoreInTempVar("val");
+    LoadVar(as,0);
+//    QString mod = as->StoreInTempVar("modulo");
+    as->Asm("sec");
+    QString lbl = as->NewLabel("modulo");
+    as->Label(lbl);
+    as->Asm("sbc "+val);
+    as->Asm("bcs "+lbl);
+    as->Asm("adc "+val);
+
+
+    as->PopLabel("modulo");
+
+  //  as->PopTempVar();
+    as->PopTempVar();
+
+
+/*    LDA $00  ; memory addr A
+    SEC
+Modulus:	SBC $01  ; memory addr B
+    BCS Modulus
+    ADC $01
+  */
 
 }
 

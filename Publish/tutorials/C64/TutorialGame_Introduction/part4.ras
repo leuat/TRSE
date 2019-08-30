@@ -1,22 +1,23 @@
 program part4_charsets;
 var  
 	// Charset at $2000
-   	charset1: incbin("charsets/charset1.bin", $2000);
+@define charLoc $2000
+   	charset1: incbin("charsets/charset1.bin", @charLoc);
 	// Pointer that will point to character data location at $2000+$800=$2800
 	colors : pointer;
-	i,j:byte;
+	i:byte;
 
 // Prints a 2x2 block at position x,y with the upper left value of c, (and c+1, c+40 and c+41)
 // Also prints colors based of the "colors" pointer (which must be initialized first)
 procedure print2x2block(x,y,c:byte);
 begin
-	moveto(x,y,$04);
+	moveto(x,y,hi(screen_char_loc));
 	screenmemory[0]:=c;
 	screenmemory[1]:=c+1;
 	screenmemory[40]:=c+40;
 	screenmemory[41]:=c+41;
 
-	moveto(x,y,$D8);
+	moveto(x,y,hi(screen_col_loc));
 	screenmemory[0]:=colors[c];
 	screenmemory[1]:=colors[c+1];
 	screenmemory[40]:=colors[c+40];;
@@ -27,21 +28,21 @@ end;
 
 begin
 	// Fill the color ram with light blue
-	clearscreen(LIGHT_BLUE, ^$D800);
+	clearscreen(light_blue, screen_col_loc);
 	// Clear screen
-	clearscreen($20, ^$0400);
-	SCREEN_BG_COL:=BLACK;
-	SCREEN_FG_COL:=BLACK;
+	clearscreen(key_space, screen_char_loc);
+	screen_fg_col:=black;
+	screen_bg_col:=black;
 	// Set color pointer
 	colors:=$2800;
 	// Set multicolor characters (grey brown) 
 	// multicolor_char_col[0] is the same as SCREEN_FG_COL
-	MULTICOLOR_CHAR_COL[1]:=GREY;
-	MULTICOLOR_CHAR_COL[2]:=BROWN;
+	multicolor_char_col[1]:=grey;
+	multicolor_char_col[2]:=brown;
 	// Enables multicolor mode!
 	setmulticolormode();
 	// Let the VIC know where the charset is located
-	setcharsetlocation($2000);
+	setcharsetlocation(@charLoc);
 
 	// Draw some lines of blocks
 	for 	i:=0 to 18 do

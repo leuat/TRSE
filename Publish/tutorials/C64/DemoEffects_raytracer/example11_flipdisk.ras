@@ -1,49 +1,48 @@
 program FlipDisk;
 var
-@define colPos $2000
-@define dpos $2200
-@define diskpos $5100
 
+@define dataLoc $5100
+@define spriteLoc $5000
+
+	@requirefile "data/disksprite.bin" "Please run the raytracer file example11_diskette.fjo before compiling this program" 	
+	sprite : incbin("data/disksprite.bin",@dataLoc);
 	
-
-	sprite : incbin("data/disksprite.bin",@diskpos);
-	i,k, curFrame,time: byte = 0;
-	ypos:byte;
-	x,y2 : byte;
-//	fadein,fadeink : byte = 25;	
-	atp3,atp2: pointer;
+	ypos, x,i,k, curFrame,time: byte = 0;
+	zp: pointer;
 
 
-@define useKernal 0
-//@define IS_DEMO 1
-
+@define useKernal 1
 
 procedure UpdateSprites();
 begin
-	atp3:=$5000;
-	atp2:=toPointer($51+curFrame,0);
-	// Copy 256 bytes
+	// Point to sprite #curFrame.
+	// One sprite is 64 bytes, and since we have 4 sprits per frame, 256 bytes. 
+	// This means that we can basically just add the current frame counter to the high
+	// bit of the sprite pointer!
+	zp:=toPointer($51+curFrame,0);
+	// Copy 256 bytes (4 sprites) worth of data
 	//memcpy(atp2,0,atp3,0);
-	memcpyunroll(atp2,0,atp3,256);
-	y2:=ypos;
-	for i:=0 to 4 do begin
-		// Set sprite Y positions
-		poke(^$D001,i*2,y2); 
-		if (i=1) then y2:=y2+42;
-	end;
-	inc(curFrame);
+	memcpyunroll(zp,0,^@spriteLoc,256);
+	// Poke sprite y positions
+	poke(SPRITE_POS,1,ypos); 
+	poke(SPRITE_POS,3,ypos); 
+	poke(SPRITE_POS,5,ypos+42); 
+	poke(SPRITE_POS,7,ypos+42); 
+	
 	// 95 frames in total
-	if (curFrame=95) then curFrame:=0;
+	curFrame:=mod(curFrame+1, 95);
 
 end;
+/*
+	Main raster
 
+*/
 interrupt Update();
 begin
 	startirq(@useKernal);
-	settextmode();
-	setregularcolormode();
 	
 	inc(time);
+	// Set y position of sprits
 	ypos:=sine[time]/6 + 80;
 	UpdateSprites();
 
@@ -56,46 +55,38 @@ begin
 	// Set sprite center of screen
 	k:=70;
 	x:=k;
-	sprite_multicolor_reg1:=blue;
-	sprite_multicolor_reg2:=white;
-	
-
+	// Setup sprites, 4 in total
 	for i:=0 to 4 do begin
-		setspriteloc(i,$40+i,1);
+		setspriteloc(i,(@spriteLoc-bank_size)/64+i,1); // ($5000-1000)/64 = $40
 		spritepos(x*2,0,i);
 		sprite_color[i]:=light_blue;	
 		x:=x+24;
-		if (i=1) then begin
-			x:=k;
-		end;
+		// Reset x
+		if (i=1) then 
+			x:=k
 	end;
+	sprite_multicolor_reg1:=blue;
+	sprite_multicolor_reg2:=white;
 
 	sprite_bitmask:=%00111111;
 	sprite_stretch_X:=%00001111;
 	sprite_stretch_Y:=%00001111;
 	sprite_multicolor:=%00001111;
-
 end;
 
 
 begin
 	screen_fg_col:=black;	
 	screen_bg_col:=black;	
-	// moveto
+	
 	clearscreen(0,screen_char_loc);
 	clearscreen(0,screen_col_loc);
-//	PreventIRQ();
-
-	PreventIRQ();
-	DisableCIAInterrupts();
-	setmemoryconfig(1,@useKernal,0);
-
+	
 	setbank(vic_bank1);
 
 	InitFloppySprites();
-	
 
 	StartRasterChain(Update(),190, @useKernal);
+	setmemoryconfig(1,@useKernal,0);
 	Loop();
 end.
-
