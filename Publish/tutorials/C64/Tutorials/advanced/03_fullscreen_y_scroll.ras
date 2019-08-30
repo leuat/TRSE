@@ -1,0 +1,165 @@
+program fullscreen_scroller_with_colors;
+var  
+	time, val, color, colorShift,i,j,k : byte = 0;  
+	fade : array [16] of byte = (11,6,6,12,4,14,15,1,1,15,14,4,12,6,6,11); 
+	g_currentBank: byte = 0;
+	temp_colorCopy : array[40] of byte;
+
+
+   
+@define charsetLoc $2800
+
+   mainChar: IncBin("resources/charsets/charset.bin",@charsetLoc);
+
+
+procedure SwitchBank();
+begin
+	if g_currentBank=0 then 
+		SetBank(VIC_BANK1)
+	else 
+		SetBank(VIC_BANK0);
+
+	g_currentBank:=(g_currentBank+1)&1;
+end;
+
+procedure CopyColor( ul2_copycolor:byte );
+
+begin
+	 if ul2_copycolor=0 then begin
+		// First, copy the missing line
+		memcpy(screen_col_loc+^$208, 0, temp_colorCopy, 40);
+		copyhalfscreen(screen_col_loc, screen_col_loc+^40,13, 1,1);
+	end
+	else begin 
+		copyhalfscreen(screen_col_loc+^14*^40 , screen_col_loc+^15*^40,10,1,1);
+		memcpy(temp_colorCopy, 0, screen_col_loc + ^14*^40, 40);
+
+	end;
+end;
+
+// Copy screen data
+procedure CopyScreen(ul_:byte);
+begin
+
+	if g_currentBank=0  offpage then begin
+		if ul_=0 then
+			copyhalfscreen(screen_char_loc + ^520, screen_char_loc2 + ^40 + ^520,12, 1,1)
+		else
+			copyhalfscreen(screen_char_loc, screen_char_loc2 + ^40, 13, 1,1);
+
+	end;
+	if g_currentBank=1 offpage then begin
+		if ul_=0 then 
+			copyhalfscreen(screen_char_loc2+^520, screen_char_loc + ^40 + ^520, 12, 1,1)
+		else
+			copyhalfscreen(screen_char_loc2, screen_char_loc + ^40,13, 1,1);
+	end;
+
+end;
+
+
+
+
+procedure VerticalScroll();
+var 
+	g_vscroll : byte;
+begin
+		g_vscroll:=(g_vscroll+1)&7;
+
+		if g_vscroll=0 then begin
+			WaitForRaster(150);
+			CopyColor(0);
+		end;
+
+		waitForRaster(251);
+		if g_vscroll=0 then SwitchBank();
+		if g_vscroll=1 then CopyScreen(1);
+		if g_vscroll=4 then CopyScreen(0);
+
+		if g_vscroll=0 then begin
+			CopyColor(1);
+		end;	
+		scrolly(g_vscroll);
+
+
+end;
+
+
+
+// Print a single line at the top of the screen on the current bank
+procedure PrintLine();
+begin
+	j:=sine[time]/8;
+	k:=sine[j*time/64]/2;
+	for i:=0 to screen_width do begin
+		val:=val/32+64 - 4;
+		// Chose the center of a nice sine functions so that the background looks
+		// like a canal		
+		val:=sine[(i*4 + j+k)+30]/16 + 64;
+		
+		if val<64 then
+			val:=key_space;
+
+		if g_currentBank=1 then
+			poke(screen_char_loc, i, val)
+		else
+			poke(screen_char_loc2, i, val);
+	
+	end;
+
+end;
+
+// Print a line of colors at $D800
+procedure printColor();
+begin
+	colorShift:=0;
+	color:=fade[(time/16 + colorShift)&15];
+	
+	for i:=0 to screen_width do 
+		screen_col_loc[i]:=color;
+
+end;
+
+
+// Raster update
+interrupt Update();
+
+begin
+	startirq(1);
+	hideBorderY(1);
+	time:=time+1;
+
+	VerticalScroll();
+		
+	// Only print a new color line when scrolling index is 0
+	if g_vscroll=0 then 
+		printColor();
+		
+	// Only print a new line when scrolling index is 7
+	if g_vscroll=7 then 
+		PrintLine();
+
+
+
+	closeirq();
+end;
+
+procedure Setup();
+begin
+	copyfullscreen(^@charsetLoc,^@charsetLoc+bank_size);
+
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+
+	setcharsetlocation(@charsetLoc);
+
+	hideBorderY(0);
+end;
+
+
+begin
+	Setup();
+	preventirq();
+	StartRasterChain(Update(), 0,1);
+	Loop();
+end.

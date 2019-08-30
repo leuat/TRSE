@@ -1,0 +1,306 @@
+program Tutorial12_DYCP_scroller;
+var
+
+/*
+	The classic DYCP (Different Y Character Position) effect
+
+	Screen is split into two parts: an upper for an multicolor image, lower is text mode.
+	The lower text mode is filled with the following pattern:
+	0 4 8   ...
+	1 5 9 
+	2 6 10
+	3 7 11
+	
+	This way, the character memory sort of works like a 32-byte high bitmap data. 
+	
+	Fill character data from a (ROM) character set to one of the y-values in row 0 (character 0-4). 
+	Repeat 40 times. Scroll. Optimize. 
+
+
+*/
+
+
+
+	@define charmap $3000
+	@define charLoc $2000
+	@define useKernal 1 
+	@define rasterLine 210
+	@define yrow 21
+	@define noChars 32	
+
+	a,i,val, time, shift, k,y: byte;
+	scroll: byte;
+	text: string = ("                                   ",
+		"DOLOREM IPSUM SAT ON A WALL      DOLOREM IPSUM HAD A GREAT FALL       ",
+    		"ALL THE KINGS HORSES AND ALL THE KINGS MEN      COULDNT PUT DOLOREM IPSUM TOGETHER AGAIN                               ");
+
+	// Put image in bank 3 ($8000) 
+	image_color: IncBin("resources/images/octopus_color.bin", "$7000");
+	image_data: IncBin("resources/images/octopus_data.bin", "$A000");
+
+	zeropage2, zeropage5, zeropage4,p1,p2: pointer;
+
+	
+ 
+	// only need 32*2 chars
+	eightTable : array[@noChars*2] of byte; 
+
+
+// Used to display raster time
+//@define DEBUG_MODE 1
+
+procedure SwitchBank();
+var
+	g_currentBank:byte = 0;
+begin
+	if g_currentBank=0 then 
+		SetBank(VIC_BANK1)
+	else 
+		SetBank(VIC_BANK0);
+		
+	g_currentBank:=(g_currentBank+1)&1;
+end;
+
+
+// Clears space in portions, 256 bytes per frame * 8 frames
+procedure ClearSpaceBeforeAfter();
+begin
+/*			zeropage2[y+0]:=0;
+			zeropage2[y+1]:=0;
+			zeropage2[y+2]:=0;
+			zeropage2[y+12]:=0;
+			zeropage2[y+13]:=0;*/
+	asm("
+			ldy y
+			lda #0
+			sta (zeropage2),y ; 0th
+			iny
+			sta (zeropage2),y ; 0th
+			iny
+			sta (zeropage2),y ; 0th
+			iny
+			lda y
+			adc #12
+			tay
+			lda #0
+			sta (zeropage2),y
+			iny			
+			sta (zeropage2),y
+			
+	");
+
+
+end;
+
+
+/*
+	Original unoptimized version
+	NB doesn't work anymore fix fix
+*/
+procedure DYCP();
+begin
+	// Set current drawing bank: zeropage2 is used as target charmap, either $2 or $4000
+	if g_currentBank=0 then		
+		zeropage2 := @charLoc
+	else
+		zeropage2 := @charLoc+$4000;
+
+	// init shift
+	shift:=0;
+	shift:=time;
+	// Init character position x (4*8=32, so 64 becomes x=2)
+//	inc(zeropage5);
+	// Loop through 36 chars in the text
+	for i:=0 to 40 do begin 
+		// Calculate y value
+		// Fetch text character value
+		val := zeropage5[i]; // text value
+		// Only draw letters (>64)
+		if val>=64 then begin
+			y:=sine[shift];
+			// Calculate position in character map: (val-64)*8 bytes, use address table
+			p1:=addressTable(eightTable,0,val-64);
+			// Copy 8 bytes from the original character location to the char memory space
+			p2:=zeropage2+y+4;
+//			p2:=p2+3;			
+			memcpyunroll(p1,0,p2,8);
+			// Fill in two blank bytes above and below (for clearing)
+			// Bascially, fill 0-2 and 12-13
+			ClearSpaceBeforeAfter()
+		end;
+		// Move the zeropage2 pointer to the next column, or 4 rows down, or 32 bytes
+		zeropage2:=zeropage2+32;
+		// Increase the sine shift with some random variable
+		shift:=shift +11;
+	end;
+	
+end;
+
+
+
+/*
+	Main raster routine
+
+*/
+
+
+procedure ClearPartsOfScreen();
+begin
+	// zeropage4 is used for clearing
+	if g_currentBank=1 then begin
+		zeropage4:=@charLoc;
+		setbank(vic_bank1);
+	end
+	else begin
+		zeropage4:=@charLoc + $4000;
+		setbank(vic_bank0);
+	end;
+	// Set scroll register and decrease
+	scrollx(scroll);
+	scroll:=scroll-1;
+	// Add "scroll" to the zeropage4 pointer for clearing
+	zeropage4:=toPointer(hi(zeropage4)+scroll,lo(zeropage4));
+	// fill 256 bytes of zeroes	
+	fill(zeropage4, 0, 0);
+
+end;
+
+
+// Forward declaration
+interrupt RasterDYCP(); 
+
+interrupt RasterTop();
+begin
+	startirq(@useKernal);
+	// Increase scroller speed
+	time:=time+7;
+	// Display bitmap
+	setbitmapmode();
+	// Display image
+	setbank(vic_bank2);
+	setmulticolormode();
+	// Make sure no scroll while bitmap is displayed
+	scrollx(0);
+
+	RasterIRQ(RasterDYCP(),@rasterLine,@useKernal);
+	// Perform the DYCP here
+@ifdef DEBUG_MODE
+	screen_bg_col:=green;
+@endif
+	// Main DYCP routine
+	DYCP();
+	
+@ifdef DEBUG_MODE
+	screen_bg_col:=black;
+@endif
+
+	closeirq();
+end;
+
+interrupt RasterDYCP();
+begin
+	StartIRQ(@useKernal);
+	setregularcolormode();
+	settextmode();
+	// Make sure we are pointing to correct bank, either 0 or 1
+	// Clear parts of the screen
+@ifdef DEBUG_MODE
+	screen_bg_col:=blue;
+@endif
+	// Clears 256 bytes of the offscreen buffer for each frame
+	ClearPartsOfScreen();
+	
+	// If scroll <0, then switch bank and reset all
+	if scroll>=128 then begin
+		SwitchBank();
+		scroll:=7;
+		zeropage5:=zeropage5+1;
+	end;
+	RasterIRQ(RasterTop(),0,@useKernal);
+
+	closeIRQ();
+end;
+
+
+
+/*
+	This method sets up the screen on bank 0 and 1. Basically, the pattern for DYCP is
+
+	0  4  8  12
+	1  5  9  ..
+	2  6 10
+	3  7 11  
+
+	where all characters are in a narrow 4-row strip, making this like a semi-bitmap mode
+
+*/
+procedure InitScreenCharsAndColor();
+begin
+	k:=0;
+	moveto(0,@yrow,hi(screen_char_loc));
+	zeropage5 := text;
+	scroll := 7;
+	i:=0;
+	for i:=0 to 40 do begin
+		screenmemory[i]:=k;
+		screenmemory[i+screen_width]:=k+1;
+		screenmemory[i+screen_width*2]:=k+2;
+		screenmemory[i+screen_width*3]:=k+3;
+		k:=k+4;
+	end;
+	copyfullscreen(screen_char_loc,^$4400);
+
+	// Color ram, fill with green
+	
+	moveto(0,@yrow,hi(screen_col_loc));
+	fill(screenmemory,cyan, 160); // 4 rows
+
+		
+end;
+
+
+/*
+	Copy charset from rom, sets up sine table (divide by 12), charset loc, clearing screens and colors
+	also fills some greenish colors to the color memory of the scroller
+	copies color memory for image displaying
+
+*/
+
+
+procedure InitAll();
+begin
+	
+	copycharsetfromrom(^@charmap);
+	// change sine table, divide by 12
+	for a:=0 to 256 do sine[a]:=sine[a]/12;
+	// Create a lookup table for character data
+	createaddresstable(eightTable, @charmap, 8, @noChars); // only need 32 chars
+
+	SetCharsetLocation(@charLoc);
+	hideborderx(1);
+	// Clear character locations
+	clearbitmap(^@charLoc,16);
+	clearbitmap(^@charLoc+^$4000,16);
+
+	screen_fg_col:=black;
+	screen_bg_col:=black;
+
+	// copy image data to bank 2 ($8400 etc) 
+	copyimagecolordata(image_color,2);
+	// Initialize screen data (drawing chars, colors)
+	InitScreenCharsAndColor();
+
+end;
+
+/*
+	Main method. Plain.
+*/
+begin
+	InitAll();
+	StartRasterChain(RasterTop(),0,@useKernal);
+	Loop();
+end.
+
+
+
+
