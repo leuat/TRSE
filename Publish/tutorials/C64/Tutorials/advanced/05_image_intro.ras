@@ -1,0 +1,278 @@
+program ImageIntro;
+var
+//	image_color: IncBin("images/cheesy_color.bin", "$5000");
+//	image_data: IncBin("images/cheesy_data.bin", "$6000");
+	image_color: IncBin("resources/images/neo_rider_color.bin", "$5000");
+	image_data: IncBin("resources/images/neo_rider_data.bin", "$6000");
+	time,transition, dy, vy, cclear, val, orgChar,i, cpx,k,l,m,curCol, clearPos, curWait : byte = 0;
+	ypos:byte;
+	tmp:integer;
+	x,y,j : byte;
+	fadeStep, wwait : byte;
+//	fadein,fadeink : byte = 25;	
+	fadein,fadeink : byte = 255;	
+	fadein2 : byte = 50;
+	zp, zp2, zp3,tp, sp : pointer;
+	lumicol : byte = 22;
+	lumi:  array[34] of byte = (0,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06,$06);
+
+
+@define cpause 220
+@define cmoveto 221
+@define ccolor 224
+@define cstop 223
+
+	text : string = (@cmoveto, 4,6, @ccolor,0,
+					"THIS IS A TEXT.", @cpause,32,
+					 @cmoveto, 4,8, @ccolor,0,
+					"PAUSES AND STUFF",@cpause,64,
+					 @cmoveto, 4,10, @ccolor,0,
+					"WAIT. ",@cpause,16, "WHAT? ",@cpause,16, @ccolor,2,"COLORS TOO. ",@cpause,48,
+					@cmoveto, 4,14, @ccolor,3,
+					"TEXT SOON DONE.",@cpause,32,
+					@cmoveto, 4,16, @ccolor,1,
+					"LET'S IMAGE!",
+//					@ccolor,1,"1987",
+					@cpause,32,
+					@cstop);
+
+
+	fade1 : array[16] of byte =
+	(0, 15, 9, 6, 2, 12, 12, 9 ,
+	9,  11, 8, 0, 11, 5, 6, 12);
+
+@define useKernal 0
+//@define TESTTEST 2
+interrupt Update();
+procedure UpdateText();
+
+interrupt RasterText();
+begin
+	startIRQ(@useKernal);
+	UpdateText();
+	screen_bg_col:=lumi[lumicol];
+	if (curCol=1) then 
+	if (lumicol<>0) then dec(lumicol);
+	closeIRQ();
+end;
+
+procedure UpdateText();
+begin
+	if (curWait<>0) then begin
+		dec(curWait);
+		return();
+	end;
+//	poke(^$0400,0,tp[0]);
+	if (tp[0]=@cmoveto) then begin
+		moveto(tp[1], tp[2], hi(screen_col_loc));
+		sp:=screenmemory;
+		moveto(tp[1], tp[2], hi(screen_char_loc));
+		tp:=tp+3;
+		return();
+	end;
+	if (tp[0]=@ccolor) then begin
+		curCol:=tp[1];
+		tp:=tp+2;
+		return();
+	end;
+	if (tp[0]=@cpause) then begin
+		curWait:=tp[1];
+		tp:=tp+2;
+		return();
+	end;
+	if (tp[0]=@cstop) then begin
+		RasterIRQ(Update(),0,@useKernal);
+		return();
+	end;
+	if (tp[0]<>key_space) then begin
+		j:=tp[0];
+		if (j>64) then j:=j-64;
+		screenmemory[0]:=j;
+
+	end;
+	sp[0]:=curCol;
+	tp:=tp+1;
+	sp:=sp+1;
+	screenmemory:=screenmemory+1;
+	curWait:=1;
+
+end;
+
+
+procedure UpdateSprites(u_ypos:byte);
+begin
+	j:=1;
+	for i:=0 to 8 do begin
+		poke(^$D000,j,u_ypos);
+		j:=j+2;
+	end;
+
+end;
+
+
+procedure InitSprites();
+begin
+	zp:=$5000;
+	fill(zp,0,64);
+	for i:=0 to 9 do begin
+		k:=i*3;
+		zp[k]:=$FF;
+		zp[k+1]:=$FF;
+		zp[k+2]:=$FF;
+	end;
+	sprite_stretch_x:=$FF; // Stretch in x dir
+	for i:=0 to 8 do begin
+		setspriteloc(i,$40,1);
+		sprite_color[i]:=black;
+		x:=i*24+4;
+		tmp:=x*2;
+		spritepos(tmp,0,i);
+	end;
+	sprite_bitmask:=$FF;
+end;
+
+interrupt Update();
+begin
+	startirq(@useKernal);
+
+	SCREEN_FG_COL:=LIGHT_BLUE;
+//	SCREEN_BG_COL:=LIGHT_BLUE;
+	SCREEN_BG_COL:=BLACK;
+	
+
+
+	if (lumicol) then dec(lumicol);	
+	
+	if (fadein2) then begin
+		i:=0;
+		while i=0 do begin
+			i:=1-getbit(^$D011,7);
+		end;
+		waitnoraster(fadein2);
+		SCREEN_BG_COL:=black;
+		SCREEN_FG_COL:=light_blue;
+		dec(fadein2);
+		closeirq();
+		returninterrupt();	
+	end;
+
+	if (fadein>20) then begin
+		poke(VIC_DATA_LOC, 0,orgChar);
+		SetBank(VIC_BANK0);
+		setregularcolormode();
+		settextmode();
+		waitnoraster(1);
+//		SCREEN_BG_COL:=LIGHT_BLUE;
+//		SCREEN_FG_COL:=BLUE;
+		zp:=$5000+2+40*25;
+		j:=(fadein)/8-5;
+		zp:=zp + j*40;
+		zp2:=$D800 + j*40;
+		if (j<127 and j<24) then 
+			memcpy(zp,0,zp2,40);	
+
+
+		waitforraster(fadein);
+		dec(fadein);
+//		k:=fadein+8;
+		UpdateSprites(fadein+6);
+	end
+	else fadein:=0;
+	SCREEN_FG_COL:=black;
+//	SCREEN_BG_COL:=BLACK;
+	
+//
+	inc(time);
+	if (keypressed(key_space)) then cclear:=1;
+	if (cclear=1) then begin
+		if (clearPos<25) then begin
+			moveto(0,clearPos,$44);
+			fill(screenmemory,0,40);
+			moveto(0,clearPos,$D8);
+			fill(screenmemory,0,40);
+			if (clearPos<>23) then begin
+				moveto(0,clearPos+1,$D8);
+				fill(screenmemory,2,40);
+				moveto(0,clearPos+1,$44);
+				fill(screenmemory,2,40);
+
+			end;
+			if (clearPos<23) then begin
+				moveto(0,clearPos+2,$D8);
+				fill(screenmemory,LIGHT_RED,40);
+				moveto(0,clearPos+2,$44);
+				fill(screenmemory,LIGHT_RED,40);
+
+			end;
+			if (time&1=0) then 
+			inc(clearPos);
+		end;
+		
+	end;
+	poke(VIC_DATA_LOC, 0,$18);
+	SetBank(VIC_BANK1);
+	SetBitmapMode();
+	setmulticolormode();
+	if (fadein=0) then begin
+		dec(wwait);
+
+	end;
+
+	closeirq();
+end;
+
+
+procedure CopyOrgScreen();
+begin
+//	CopyCharsetFromRom(^$2000);
+	zp2:=$6000;
+	zp:=$2000;
+  
+begin
+//	preventirq();
+	DisableCIAInterrupts();
+	setmemoryconfig(1,@useKernal,0);
+	SCREEN_FG_COL:=LIGHT_BLUE;
+	ypos:=0;
+	dy:=1;
+	vy:=0;
+	wwait:=250;
+	orgChar:=VIC_DATA_LOC;
+//	SCREEN_BG_COL:=YELLOW;
+//	Loop();
+//	clearscreen($20,^$0400);
+//	poke(VIC_DATA_LOC, 0,$18);
+//	zp3:=$5000+2 + 40*24;
+//	copyimagecolordata(image_color,1);
+/*	zp:=image_color;
+	j:=24;
+	zp:=zp+2+40*j;
+	zp2:=$4400;
+	zp2:=zp2+40*j;
+
+*/
+	zp:=image_color;
+	zp:=zp+2;
+	zp2:=$4400;
+	copyfullscreen(zp,zp2);
+	InitSprites();
+
+//	clearscreen(0,^$4400);
+//	clearscreen(0,^$D800);
+//	clearscreen(LIGHT_BLUE,^$D800);
+
+	fadeink:=7;
+//	CopyOrgScreen();
+
+	tp:=text;
+
+	RasterIRQ(RasterText(),0, @useKernal);
+	EnableRasterIRQ();
+	enableirq();
+	while (1=1) do begin
+	@ifdef IS_DEMO
+		call(^@outerCallPos);
+	@endif
+	end;
+end.
+

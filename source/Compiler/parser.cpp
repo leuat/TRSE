@@ -204,10 +204,6 @@ void Parser::PreprocessIfDefs(bool ifdef)
     QString key = m_currentToken.m_value;
 //    Eat();
 
-  /*  for (QString k : m_preprocessorDefines.keys())
-        qDebug() << " key : " << k;
-*/
-//    qDebug() <<"********** IFDEF" <<  key << " " << m_preprocessorDefines.contains(key);
     if (ifdef && m_preprocessorDefines.contains(key)) {
         Eat();
         return; // K
@@ -903,6 +899,9 @@ void Parser::Preprocess()
                 Eat(TokenType::PREPROCESSOR);
                 QString key = m_currentToken.m_value;
                 Eat();
+//                qDebug() << m_currentToken.m_value;
+    //            int i = getIntVal(m_currentToken);
+  //              qDebug() << "After: " << Util::numToHex(i);
                 QString val = m_currentToken.m_value;
                 if (val=="")
                     val = QString::number(m_currentToken.m_intVal);

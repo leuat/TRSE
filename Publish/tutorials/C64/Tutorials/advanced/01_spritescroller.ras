@@ -5,11 +5,23 @@ var
 	temp2: array[256] of byte;
 
 
+/*
+	In this tutorial we first use the 2x2 font to generate
+	sprite data for A-Z.
+
+	There are max 8 sprites displayed on the screen at any time. 
+*/
+
+
+
+
 @define maxTextSprites 8
 
-	// Sprite16x16scroller:
+	// Variables for holding sprite values
+	// x and y
 	textSprite_x:array[@maxTextSprites] of byte;
 	textSprite_y:array[@maxTextSprites] of byte;
+	// Current color
 	textSprite_col:array[@maxTextSprites] of byte;
 	textSprite_status:array[@maxTextSprites] of byte;
 	textSprite_t:array[@maxTextSprites] of byte;
@@ -47,33 +59,34 @@ begin
 	// Place at p1
 	// Org at zp
 	tp:=zp;
-	tp:=tp+320;// Next line
-	
+	// Let tp point to the "next" line in character data (8 bytes *40 chars = 320 )
+	tp:=tp+320; 
+	// Loop through all 26 characters A-Z
 	for k:=0 to 26 do begin 
-		fill(p1, 0, 64); // Clear sprite  
+		fill(p1, 0, 64); // Clear sprite data  
 		// val is pos
 
 		j:=0;
+		// There are 8x4 = 32 bytes of data that we use (the rest of the sprite is unused)
 		for i:=0 to 8 do begin
-			p1[j]:=zp[i];
+			p1[j]:=zp[i]; 
 			p1[j+1]:=zp[i+8];
 			p1[j+24]:=tp[i];
 			p1[j+25]:=tp[i+8];
 			j:=j+3;
 		end;
+		// Advance sprite pointer
 		p1:=p1+64;
+		// Advance pointers to font data
 		zp:=zp+16;
 		tp:=tp+16;
+		// at character 15, set new font positions
 		if (k=15) then begin
-
 			zp:=zp+384;
 			tp:=tp+384;//64+160+160 down
 		end;
 		
 	end;
-	
-
-
 end;
 
 // Maintains the sprites : moving them, setting y pos, color,turns off
@@ -107,7 +120,9 @@ begin
 
 end;
 
-// Renews a new sprite (from text)
+// Renews a new sprite (from text), called whenever a sprite leaves the screen and a
+// new one is chosen
+
 procedure Renew16x16Sprites();
 begin
 	inc(textSprite_cnt);

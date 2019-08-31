@@ -54,7 +54,7 @@ function Init()
 
 	ClearAllObjects()
 	if (messageDisplayed==0) then
-		Message("Needs to render all characters A...Z and save to disk... please wait");
+		Message("Need to render all characters A...Z and save to disk... please wait");
 		messageDisplayed = 1
 	end
 

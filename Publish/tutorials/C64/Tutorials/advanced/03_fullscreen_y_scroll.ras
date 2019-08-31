@@ -6,6 +6,13 @@ var
 	temp_colorCopy : array[40] of byte;
 
 
+/*
+	In this example, a 
+
+
+*/
+
+
 @define char 80   
 @define charsetLoc $2800
 

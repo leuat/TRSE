@@ -43,8 +43,7 @@ begin
 	if (j=key_space) then // Account for space bar
 		j:=0;
 	
-	i:=(j)*2; // since A is 1. Since this is used as the high byte, same as *512
-	returnValue(ToPointer(@ttablepos/$100+i,0));
+	returnValue(ToPointer(@ttablepos/$100+j*2,0));
 end;
 
 /*

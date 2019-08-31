@@ -226,7 +226,7 @@ Token Lexer::String()
         Advance();
     }
     Advance();
-    ErrorHandler::e.DebugLow("Calling Lexer::String with string: " + result);
+//    ErrorHandler::e.DebugLow("Calling Lexer::String with string: " + result);
 
     return Token(TokenType::STRING, result);
 
