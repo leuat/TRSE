@@ -122,7 +122,6 @@ begin
 			p1:=addressTable(eightTable,0,val-64);
 			// Copy 8 bytes from the original character location to the char memory space
 			p2:=zeropage2+y+4;
-//			p2:=p2+3;			
 			memcpyunroll(p1,0,p2,8);
 			// Fill in two blank bytes above and below (for clearing)
 			// Bascially, fill 0-2 and 12-13

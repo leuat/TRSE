@@ -348,6 +348,31 @@ int Parser::findPage()
     return forcePage ;
 }
 
+void Parser::RemoveUnusedProcedures()
+{
+    QString removeProcedures = "Removing unused procedures: ";
+    bool outputUnusedWarning = false;
+    QVector<Node*> procs;
+    for (Node* n: m_proceduresOnly) {
+        NodeProcedureDecl* np = (NodeProcedureDecl*)n;
+        if ((np->m_isUsed==true) || m_doNotRemoveMethods.contains(np->m_procName))
+            procs.append(n);
+        else {
+            outputUnusedWarning = true;
+            removeProcedures+=np->m_procName + ",";
+            //                qDebug() << "Removing procedure: " << np->m_procName;
+            //            m_proceduresOnly.removeOne(m_procedures[s]);
+        }
+    }
+    m_proceduresOnly = procs;
+    if (outputUnusedWarning) {
+        removeProcedures.remove(removeProcedures.count()-1,1);
+        ErrorHandler::e.Warning(removeProcedures);
+    }
+
+
+}
+
 
 void Parser::HandlePreprocessorInParsing()
 {
@@ -1109,22 +1134,10 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
     Node::m_staticBlockInfo.m_blockID=-1;
     NodeProgram* root = (NodeProgram*)Program(param);
     // First add builtin functions
+    if (removeUnusedDecls)
+        RemoveUnusedProcedures();
 
-    if (removeUnusedDecls) {
-        QVector<Node*> procs;
-        for (Node* n: m_proceduresOnly) {
-            NodeProcedureDecl* np = (NodeProcedureDecl*)n;
-            if ((np->m_isUsed==true) || m_doNotRemoveMethods.contains(np->m_procName))
-                procs.append(n);
-            else {
-                qDebug() << "Removing procedure: " << np->m_procName;
-                //            m_proceduresOnly.removeOne(m_procedures[s]);
-            }
-        }
-        m_proceduresOnly = procs;
-    }
     InitBuiltinFunctions();
-
 
     for (QString s: m_procedures.keys())
         if (((NodeProcedureDecl*)m_procedures[s])->m_block==nullptr)

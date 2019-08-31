@@ -1,13 +1,14 @@
 program fullscreen_scroller_with_colors;
 var  
 	time, val, color, colorShift,i,j,k : byte = 0;  
-	fade : array [16] of byte = (11,6,6,12,4,14,15,1,1,15,14,4,12,6,6,11); 
 	g_currentBank: byte = 0;
 	temp_colorCopy : array[40] of byte;
 
+	lumi:  array[] of byte = ($06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06,$06);
 
 /*
-	In this example, a 
+	Full screen y-scrolling.
+	Swapping between two buffers, copying data for each frame
 
 
 */
@@ -34,12 +35,12 @@ procedure CopyColor( ul2_copycolor:byte );
 begin
 	 if ul2_copycolor=0 then begin
 		// First, copy the missing line
-		memcpy(screen_col_loc+^$208, 0, temp_colorCopy, 40);
+		memcpyfast(screen_col_loc+^$208, 0, temp_colorCopy, 40);
 		copyhalfscreen(screen_col_loc, screen_col_loc+^40,13, 1,1);
 	end
 	else begin 
 		copyhalfscreen(screen_col_loc+^14*^40 , screen_col_loc+^15*^40,10,1,1);
-		memcpy(temp_colorCopy, 0, screen_col_loc + ^14*^40, 40);
+		memcpyfast(temp_colorCopy, 0, screen_col_loc + ^14*^40, 40);
 
 	end;
 end;
@@ -119,11 +120,13 @@ end;
 procedure printColor();
 begin
 	colorShift:=0;
-	color:=fade[(time/16 + colorShift)&15];
-	
+	j:=time/8+colorShift;
 	for i:=0 to screen_width do 
+	begin
+		color:=lumi[(j+i)&31];
+	
 		screen_col_loc[i]:=color;
-
+	end;
 end;
 
 

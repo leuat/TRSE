@@ -17,7 +17,7 @@ var
 	// Scroll shift
 	shiftx: byte;
 	// Scroller y amplitude
-	text: string=( "THIS IS QUITE THE HUGE SCROLLER   "); // ends with a zero
+	text: string=( "SCROLL ME TROLL ME    "); // ends with a zero
 	
 	// Banking variable
 	g_currentBank:byte = 0;
@@ -31,7 +31,7 @@ var
 	
 	
 	@define bank2ClearVal "$20"
-	@define charVal 64	
+	@define charVal $68	
 	// Define some text pointers
 	@define textpointer textp
 	
@@ -128,7 +128,7 @@ begin
 		
 		
 		// val2 here is the actual character to draw, 74 is semi-filled char
-		val2:=73-shiftx+scrollsplit;
+		val2:=@charVal+9-shiftx+scrollsplit;
 		// Scrollsplit decides whether we use the first (0) char in a letter or the second (8)
 		zeropage1:=zeropage1+scrollsplit;
 		// Draw upper and lower 8 chars
@@ -221,7 +221,7 @@ begin
 	screen_bg_col:=black;	
 	screen_fg_col:=black;	
 	// Clear screen and color memory
-	ClearScreen(@bank2ClearVal, screen_char_loc+^$4000);
+	ClearScreen(@bank2ClearVal, screen_char_loc+bank_size);
 	ClearScreen(@bank2ClearVal, screen_char_loc);
 	// Fill colors
 	InitColors();	

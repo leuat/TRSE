@@ -162,7 +162,7 @@ void ASTDispather6502::HandleVarBinopB16bit(Node *node) {
     //as->Asm("jmp " + lblJmp);
     //as->Write(lbl +"\t.word\t0");
     //as->Label(lblJmp);
-    as->Comment("HandleVarBinopB16bit here");
+    as->Comment("HandleVarBinopB16bit");
     as->ClearTerm();
     as->Asm("ldy #0 ; ::HandleVarBinopB16bit");
     node->m_right->Accept(this);
@@ -177,7 +177,7 @@ void ASTDispather6502::HandleVarBinopB16bit(Node *node) {
     //as->Variable(v->value, false);
   //  as->Comment(";HEREHERE");
 //    exit(1);
-    if (v->m_op.m_type!=TokenType::ADDRESS)
+    if (v->getType(as)==TokenType::POINTER || (v->m_op.m_type!=TokenType::ADDRESS && !v->m_fake16bit) )
         as->Asm("lda " + v->value + "+1");
     else
         as->Asm("lda #>" + v->value + "");
@@ -187,7 +187,7 @@ void ASTDispather6502::HandleVarBinopB16bit(Node *node) {
     as->Asm("tay");
 //    qDebug() << v->value << v->m_op.getType();
   //  exit(1);
-    if (v->m_op.m_type!=TokenType::ADDRESS)
+    if (v->getType(as)==TokenType::POINTER || (v->m_op.m_type!=TokenType::ADDRESS && !v->m_fake16bit) )
         as->Asm("lda "+ v->value);
     else
         as->Asm("lda #<"+ v->value);
@@ -530,7 +530,7 @@ void ASTDispather6502::dispatch(NodeNumber *node)
         }
 */
 
-
+//    qDebug() << TokenType::types[node->getType(as)];
     if (node->m_op.m_type==TokenType::BYTE)
         val = "#"+QString::number((int)node->m_val);
     if (node->m_op.m_type==TokenType::INTEGER)
@@ -1850,9 +1850,10 @@ void ASTDispather6502::dispatch(NodeVar *node)
 
         if (s->getTokenType()==TokenType::INTEGER)
             isOK = false;
-        if (s->getTokenType()==TokenType::POINTER && as->m_term=="")
+        if (s->getTokenType()==TokenType::POINTER && as->m_term=="") {
             isOK = false;
-        if ((s->getTokenType()==TokenType::ADDRESS || s->getTokenType()==TokenType::INCBIN)  && as->m_term=="") {
+        }
+        if (((s->getTokenType()==TokenType::ADDRESS || s->getTokenType()==TokenType::INCBIN)  && as->m_term=="")) {
             as->Asm("lda #<" + val);
             as->Asm("ldy #>" + val);
             return;
@@ -2129,6 +2130,7 @@ void ASTDispather6502::AssignPointer(NodeAssign *node) {
 
 
     if (bVar==nullptr && !node->m_right->isPureNumeric()) {
+
         //ErrorHandler::e.Error("Error assigning pointer: right-hand must be variable or number", node->m_op.m_lineNumber);
 //        if (!node->m_right->isAddress())
   //          ErrorHandler::e.Error("Error assigning pointer: right-hand must be variable or number", node->m_op.m_lineNumber);
