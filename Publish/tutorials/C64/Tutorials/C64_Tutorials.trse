@@ -29,3 +29,5 @@ current_file = intermediate/06_tech.ras
 output_type = prg
 data_header_sprites/sprites.flf = 6.92363e-310
 output_debug_symbols = 1
+project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/Tutorials/
+open_files = ,advanced/02_dycp.ras, intermediate/06_tech.ras

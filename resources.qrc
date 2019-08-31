@@ -275,5 +275,6 @@
         <file>resources/images/tutorials/trse_game_tuts.png</file>
         <file>resources/images/tutorials/torus.png</file>
         <file>resources/images/tutorials/floppy.jpeg</file>
+        <file>resources/text/help/m/mod.rtf</file>
     </qresource>
 </RCC>

@@ -221,7 +221,6 @@ begin
 end;
 
 
-
 /*
 	This method sets up the screen on bank 0 and 1. Basically, the pattern for DYCP is
 
