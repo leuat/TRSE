@@ -61,7 +61,7 @@ public:
     QString getAddress() override {return value;}
 
     bool isPureVariable() override {
-        return true;
+        return m_expr==nullptr;
     }
 
     bool isArrayIndex() override { return m_expr!=nullptr; }
