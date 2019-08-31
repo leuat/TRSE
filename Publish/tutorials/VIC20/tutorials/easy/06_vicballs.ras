@@ -1,0 +1,93 @@
+/*
+	Vic Balls
+	
+	One of the early code examples in the Vic 20 manual is to make a ball bounce around the screen.
+	
+	The ball has an x and y variable to track its position and a dx and dy variable to set its direction
+	
+	This example demonstrates the same, but using an array for the variables we can have many more balls!
+	
+*/
+program VicBalls;
+var 
+	// defines a constant to specify how many balls we want 
+	@define NUM_BALLS 10
+	
+	// create arrays for the ball data
+   	xp, yp, dx, dy: array[@NUM_BALLS] of byte; // x and y position, delta X and Y moveement
+
+	scr : array[ screen_height ] of integer; // an array to store the address of each row of screen memory
+	
+	i, j : byte;
+
+procedure InitialiseTables();
+begin
+	// create an address table of screen row addresses, we will use this to quickly find the Y position in screen memory
+	// without needing to use costly multiplication
+	createaddresstable(scr, screen_char_loc, screen_width, screen_height);
+end;
+
+procedure InitialiseBalls();
+begin
+	// loop through all items in the array to set their position
+	for i := 0 to @NUM_BALLS do
+	begin
+		xp[ i ] := random() / 12;	// set x position for each ball
+		yp[ i ] := random() / 11;	// set y position for each ball
+		j := random() & 1;			// set starting direction on the x-axis for each ball
+		case j of
+			0 : dx[ i ] := 1;
+			1 : dx[ i ] := -1;
+		end;
+		j := random() & 1;			// set starting direction on the y-axis for each ball
+		case j of
+			0 : dy[ i ] := 1;
+			1 : dy[ i ] := -1;
+		end;
+	end;
+end;
+
+procedure MoveBalls();
+begin
+	for i := 0 to @NUM_BALLS do
+	begin
+		// find screen address where we will draw the ball
+		screenmemory := addresstable(scr, 0, yp[ i ]);
+		screenmemory[xp[ i ]] := 32; // clear the ball in current position by writing 32, a space character
+		// change direction delta (dx / dy) if ball is at screen edges
+		if (xp[i] = 0 ) then dx[i] := 1;
+		if (xp[i] = screen_width -1 ) then dx[i] := -1;
+		if (yp[i] = 0 ) then dy[i] := 1;
+		if (yp[i] = screen_height -1 ) then dy[i] := -1;
+		// update x and y position of ball using the delta
+		xp[i] := xp[i] + dx[i];
+		yp[i] := yp[i] + dy[i];
+		// find new address of ball
+		screenmemory := addresstable(scr, 0, yp[ i ]);
+		screenmemory[xp[ i ]] := 81; // draw the ball in the new position by writing 81, a Petscii ball shape
+	end;
+end;
+
+begin
+	// set up the "screenmemory" pointer
+	definescreen();
+	
+	// set the screen and border colour
+	screen_bg_color := screen_bg_black + cyan;
+	
+	clearscreen($20, SCREEN_CHAR_LOC);  // clear screen
+	clearscreen(white, screen_col_loc); // set character colour memory to white
+	
+	InitialiseTables();  // set up the address table for screen row positions
+	InitialiseBalls(); 	 // initialise the balls
+	
+	// infinite loop
+	while(true) do
+	begin
+		// move the balls
+		MoveBalls();
+		// wait for raster to return to zero
+		waitforraster(0);
+	end;
+	
+end.
