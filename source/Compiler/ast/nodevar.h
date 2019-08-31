@@ -52,7 +52,7 @@ public:
     bool isWord(Assembler* as) override;
     bool isLong(Assembler* as) override;
     bool isByte(Assembler* as) override;
-
+    bool containsPointer(Assembler* as) override;
 
     void forceWord() override {
         m_fake16bit = true;
@@ -61,8 +61,8 @@ public:
     QString getAddress() override {return value;}
 
     bool isPureVariable() override {
-        return true;
-    }
+        return m_expr==nullptr; // only return true if there are no array expressions
+   }
 
     bool isArrayIndex() override { return m_expr!=nullptr; }
 

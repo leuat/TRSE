@@ -8,11 +8,14 @@ var
 // Turn off kernal
 @define useKernal 0
 
+@define spriteLoc $3200
+@define levelpointer levelp
+
    	charset1: incbin("charsets/charset1.bin", @charsetPosition);
-	mySprites:incbin("sprites/sprites.bin", $3200);
+	mySprites:incbin("sprites/sprites.bin", @spriteLoc);
 	levels: incbin("levels/level1.flf", @levelPosition);
 
-	colors, levelpointer, colormemory : pointer;
+	colors, levelp, colormemory : pointer;
 	i,j:byte = 0;
 	curLevel_x, curLevel_y : byte=0;
 	// Defines if x/y directions are being blocked
@@ -22,10 +25,10 @@ var
 
 	// k & l are just two more counters. blockx/y is set to 1 if x/y movement i hindered.
 	// map player direction specifies the (screen) direction of the player: -1, -40, 1, 41 etc
-	k,l,blockx, blocky,map_player_direction : byte = 0;
+	k,blockx, blocky,map_player_direction : byte = 0;
 
 	// Background mask of the character set. 1 means collisions is enabled.
-	background_mask: array[256] of byte=(
+	background_mask: array[240] of byte=(
 	1,1,1,1,1,1,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
 	1,1,1,1,1,1,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
@@ -55,42 +58,42 @@ var
 // Sets up sprite
 procedure InitMainSprite();
 begin
-	// Set sprite position at bank 0 to $C8
-	setspriteloc(@playerSprite,$C8,0);
+	// Set sprite position at bank 0 to $C8=$3200/64
+	setspriteloc(@playerSprite,@spriteLoc/64,0);
 	player_x:=80;
 	player_y:=120;
 	// Set sprite x,y pos
 	spritepos(player_x,player_y,@playerSprite);
 
 	// Turn on only player sprite
-	SPRITE_BITMASK:=%00000001;
+	sprite_bitmask:=%00000001;
 
  	// All sprites are multicolor
-	SPRITE_MULTICOLOR:=$FF;
-	SPRITE_MULTICOLOR_REG1:=LIGHT_GREEN;
-	SPRITE_MULTICOLOR_REG2:=GREY;
+	sprite_multicolor:=$FF;
+	sprite_multicolor_reg1:=light_green;
+	sprite_multicolor_reg2:=grey;
 
-	SPRITE_COLOR[@playerSprite]:=RED;
+	sprite_color[@playerSprite]:=red;
 end;
 
-// Initializes charset, loads level header info
+// This method initializes charset data, and is similar to the one in part 6
 procedure Initialize();
 begin
-	clearscreen(LIGHT_BLUE, ^$D800);
-	clearscreen($20, ^$0400);
-	SCREEN_BG_COL:=BLACK;
-	SCREEN_FG_COL:=BLACK;
+	clearscreen(light_blue, screen_col_loc);
+	clearscreen(key_space, screen_char_loc);
+	screen_bg_col:=black;
+	screen_fg_col:=black;
 	// Pointer to character color definitions
-	colors:=$2800;
+	colors:=@charsetPosition+$800;
 
-	MULTICOLOR_CHAR_COL[1]:=GREY;
-	MULTICOLOR_CHAR_COL[2]:=BROWN;
+	multicolor_char_col[1]:=grey;
+	multicolor_char_col[2]:=brown;
 
 	setmulticolormode();
 
 	setcharsetlocation(@charsetPosition);
 
-	levelpointer:=@levelPosition;
+	levelp:=@levelPosition;
 	ReadHeader();
 end;
 
@@ -108,11 +111,11 @@ begin
 	tmp:=(player_x - 12);
 	i:=tmp/8;
 	j:=(player_y-38)/8;
-	moveto(i-1,j-1, $04);
+	moveto(i-1,j-1, hi(screen_char_loc));
 	blockx:=0;
 	blocky:=0;
 	
-	k:=screenmemory[ map_player_direction +40+1]; // down
+	k:=screenmemory[ map_player_direction +screen_width+1]; // down
 	if (background_mask[k]=1) then begin
 		if (joystickdown=1 or joystickup=1) then blocky:=1;
 		if (joystickleft=1 or joystickright=1) then blockx:=1;
@@ -130,7 +133,6 @@ procedure TraverseLevels();
 var 
    redraw:byte=0;
 begin
-	redraw:=0;
 	
 	if (player_x<@minx) then begin
 		if (curLevel_x<>0) then begin
@@ -173,8 +175,9 @@ begin
 
 
 	if redraw=1 then begin
-		levelpointer:=@levelPosition;
-		RenderCharsetColorLevel(curLevel_x,curLevel_y,$04);
+		levelp:=@levelPosition;
+		RenderCharsetColorLevel(curLevel_x,curLevel_y,hi(screen_char_loc));
+		redraw:=0;
 	end;
 
 
@@ -191,8 +194,8 @@ begin
 	map_player_direction:=0;
 	if (joystickleft=1) then map_player_direction:=map_player_direction-1;
 	if (joystickright=1) then map_player_direction:=map_player_direction+1;
-	if (joystickdown=1) then map_player_direction:=map_player_direction+40;
-	if (joystickup=1) then map_player_direction:=map_player_direction-40;
+	if (joystickdown=1) then map_player_direction:=map_player_direction+screen_width;
+	if (joystickup=1) then map_player_direction:=map_player_direction-screen_width;
 
 	PlayerBackgroundCollide();
 
@@ -222,8 +225,8 @@ begin
 	Initialize();
 	InitMainSprite();
 
-	levelpointer:=@levelPosition;
-	RenderCharsetColorLevel(curLevel_x,curLevel_y,$04);
+	levelp:=@levelPosition;
+	redraw:=1;
 	// Turn off all interrupts
 	DisableCIAInterrupts();
 	// Turn off kernal

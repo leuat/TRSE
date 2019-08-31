@@ -25,6 +25,7 @@ public:
     void AddMemoryBlock(Assembler* as, int param);
     void Poke(Assembler* as);
     void Peek(Assembler* as);
+    void Modulo(Assembler* as);
     void MemCpy(Assembler* as, bool isFast);
     void MemCpyUnroll(Assembler* as);
     void Rand(Assembler* as);

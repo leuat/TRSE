@@ -1,0 +1,123 @@
+program Techtech;
+var  
+	@define useKernal 0 
+	@define charLoc $6000
+
+	charset : incbin("resources/charsets/waveset.bin",@charLoc);
+	i,j,n,k,k2,l,time : byte = 0;
+	zp,p1, zp2, p2:pointer;
+	sine2 : array[256] of byte;
+	
+/*
+
+	The classic techtech effect
+	Check out the charset : resources/charsets/waveset.bin
+	
+	The screen is split in two: on the lower part, the charset is rendered as it is, while
+	the upper part mixes up every second byte.
+	
+	For the techtech part, we then do the following:
+		- set a sine raster scroll value for each raster line (ca)
+		- shift the 16x2 characters that we use 1 bit to the right 
+		- shift the 16x2 charset 1 byte down 
+		
+	Don't be afraid of experimenting with changing these values, dropping the shifts etc. 
+
+
+*/
+
+
+// Renders the tectech pattern in two ways: regular and mixed
+procedure RenderCharEffectBackground();
+begin
+	zp:=screen_char_loc2;
+
+	for j:=0 to screen_height do begin
+		for i:=0 to screen_width do  begin
+			k:=i&7;
+			// Two different effects : above and below line 12
+			if (j>=13) then  
+				n:=(j)&1
+			else
+				n:=(j+i)&1;
+				
+			l:=n*screen_width;
+			zp[i]:=k+l;
+		end;
+		zp:=zp+screen_width;
+	end;
+end;
+
+// Takes all the 16x2 chars and shifts them 1 byte down
+procedure ScrollDown();
+begin
+	zp:=@charLoc;
+	p1:=@charLoc+1;
+	zp2:=@charLoc+40*8;
+	p2:=@charLoc+40*8+1;
+
+	for j:=0 to 16 do begin
+		k2:=zp[0];
+		memcpyunroll(p1,0,zp,7);
+		zp[7]:=zp2[0];
+		memcpyunroll(p2,0,zp2,7);
+		zp2[7]:=k2;
+
+		zp:=zp+8;
+		p1:=p1+8;
+		zp2:=zp2+8;
+		p2:=p2+8;
+	end;
+		
+end;
+
+// Main raster routine
+interrupt RasterMain();
+begin
+	startIRQ(@useKernal);
+
+	hideborderx(1);
+	k:=0-time;
+	// Set scrollx  for each semi-line
+	for i:=0 to 140 do 
+	begin
+		n:=sine2[k];
+		k:=k+11;
+		nop(20);
+		scrollx(n);
+	end;
+	inc(time);
+
+	closeIRQ();
+end;
+
+
+
+// Main block
+begin
+	screen_bg_col:=black;
+	screen_fg_col:=cyan;
+	setcharsetlocation(@charLoc);
+	clearscreen(blue,screen_col_loc);
+
+	RenderCharEffectBackground();
+	
+	// Setup sine table
+	for i:=0 to 0 do 
+		sine2[i]:=sine[i]/32;
+
+	setbank(vic_bank1);
+
+	disableciainterrupts();
+	setmemoryconfig(1,@useKernal,0);
+	StartRasterchain(RasterMain(),0,@useKernal);
+	// Shifting runs outside of rasters
+	while (true) offpage do begin
+		waitforraster(0);
+		// Scroll font down
+		ScrollDown();
+		// Right bit shift all chars!
+		rightbitshift(^@charLoc,16);
+		rightbitshift(^@charLoc+^40*^8,16);
+	end;
+end.

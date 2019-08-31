@@ -89,7 +89,7 @@ begin
 		for y:=0 to 25 do begin
 			for x:=0 to 40 do 
 				p1[x]:=p1[x]+k;
-			inczp(p1,40);
+			p1:=p1+screen_width;
 		end;	
 		
 	end;
@@ -115,7 +115,7 @@ begin
 	SetupScreenShift();
 	SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL:=BLACK;
-	clearscreen(PURPLE+8,^$D800);
+	clearscreen(PURPLE+8,screen_col_loc);
 	setmulticolormode();
 	MULTICOLOR_CHAR_COL[2]:=BLUE;
 	MULTICOLOR_CHAR_COL[1]:=WHITE;

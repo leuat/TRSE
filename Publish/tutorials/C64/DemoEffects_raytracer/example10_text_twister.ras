@@ -5,7 +5,7 @@ var
 @define twister $3000
 // Location of twister table position
 @define ttablepos $8000
-
+@define charLoc $2000
 @define rasterMainPos 0
 
 @requirefile "data/example10_screen.bin" "Please run the Fjong raytracer file 'example10_text_twister.fjo' before compiling this program"
@@ -13,7 +13,7 @@ var
 
 	twist: incbin("data/example10_screen.bin",@twister);
 	ttable: incbin("data/example10_table.bin",@ttablepos);
-	charset: incbin("charsets/main.bin", $2000);
+	charset: incbin("charsets/main.bin", @charLoc);
 	
 	// Used for multiplying with 32
 	table32 : array[32] of byte;
@@ -40,12 +40,10 @@ procedure getI(gi_c:byte);
 begin
 	// Place current character in "j"
 	j:=tp[gi_c];
-	if (j=$20) then begin // Account for space bar
+	if (j=key_space) then // Account for space bar
 		j:=0;
-	end;
 	
-	i:=(j)*2; // since A is 1. Since this is used as the high byte, same as *512
-	returnValue(ToPointer(@ttablepos/$100+i,0));
+	returnValue(ToPointer(@ttablepos/$100+j*2,0));
 end;
 
 /*
@@ -87,7 +85,7 @@ begin
 		p1:=toPointer(h+$30, l);
 		memcpyunroll(p1,0,zp2,16);
 			
-		zp2:=zp2+40;
+		zp2:=zp2+screen_width;
 
 	end;
 
@@ -116,8 +114,7 @@ end;
 
 procedure UpdateScrollTime();
 begin
-	i:=(7-(sh));
-	i:=i&7;
+	i:=(7-(sh))&7;
 	scrolly(i);
 	inc(time);
 end;
@@ -146,11 +143,11 @@ begin
 	disableciainterrupts();
 	setmemoryconfig(1,0,0);
 	
-	ClearScreen($20,screen_char_loc);
+	ClearScreen(key_space,screen_char_loc);
 	screen_fg_col:=black;
 	screen_bg_col:=black;
 	clearscreen(red,screen_col_loc);
-	setcharsetlocation($2000);
+	setcharsetlocation(@charLoc);
 
 end;
 

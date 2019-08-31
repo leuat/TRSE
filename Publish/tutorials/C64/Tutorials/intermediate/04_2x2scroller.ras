@@ -105,7 +105,7 @@ begin
 		val:=CalculatePositionInCharset(pText[0]);
 		
 		screenmemory[39]:=val;
-		screenmemory[39+40]:=val+40;
+		screenmemory[39+screen_width]:=val+screen_width;
 		// Reset scrolling
 
 		UpdateTextScroll();		

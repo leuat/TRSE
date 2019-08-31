@@ -10,6 +10,7 @@ var
 @requirefile "data/example7_twister.bin" "Please run the Fjong raytracer file 'example7_simple_twister.fjo' before compiling this program"
 
 	twisterData : incbin("data/example7_twister.bin",@twisterLoc);
+	// 64 frames * 2 for table addresses
 	twisterTable : array[64*2] of byte;
 
 
@@ -92,7 +93,7 @@ begin
 	screen_bg_col:=black;
 	setmulticolormode();
 	clearscreen(4,screen_col_loc); // Set purple 
-	clearscreen($63,^$4400); // Set  blue and white multicolors
+	clearscreen($63,screen_char_loc2); // Set  blue and white multicolors
 	VIC_DATA_LOC:=$18; // Bitmap memory screen starts at $6000
 	setbank(VIC_BANK1); 
 	clearbitmap(^$6000,32);	 // Clear the entire screen
