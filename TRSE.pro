@@ -527,6 +527,7 @@ DISTFILES += \
     resources/text/help/m/lo.rtf \
     resources/text/help/m/loop.rtf \
     resources/text/help/m/memcpy.rtf \
+    resources/text/help/m/mod.rtf \
     resources/text/help/m/moveto.rtf \
     resources/text/help/m/nmiirq.rtf \
     resources/text/help/m/nop.rtf \

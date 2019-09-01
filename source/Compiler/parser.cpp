@@ -46,7 +46,7 @@ void Parser::InitObsolete()
     m_obsoleteWarnings.append(QStringList() << "rand"<<"Funtion 'Rand()' is scheduled to be deprecated from 0.09. Please use 'Random()' instead. ");
     m_obsoleteWarnings.append(QStringList() << "inczp"<<"Funtion 'IncZP()' is scheduled to be deprecated from 0.09. Please use 'zp:=zp+value;' to increase pointers instead. ");
     m_obsoleteWarnings.append(QStringList() << "writeln"<<"Funtion 'Writeln()' is scheduled to be deprecated from 0.09. Please use 'PrintString()' instead. ");
-    m_obsoleteWarnings.append(QStringList() << "copycharsetfromrom"<<"Funtion 'CopyCharsetFromROM()' is scheduled to be deprecated from 0.09. ");
+//    m_obsoleteWarnings.append(QStringList() << "copycharsetfromrom"<<"Funtion 'CopyCharsetFromROM()' is scheduled to be deprecated from 0.09. ");
 }
 
 void Parser::Eat(TokenType::Type t)
@@ -204,10 +204,6 @@ void Parser::PreprocessIfDefs(bool ifdef)
     QString key = m_currentToken.m_value;
 //    Eat();
 
-  /*  for (QString k : m_preprocessorDefines.keys())
-        qDebug() << " key : " << k;
-*/
-//    qDebug() <<"********** IFDEF" <<  key << " " << m_preprocessorDefines.contains(key);
     if (ifdef && m_preprocessorDefines.contains(key)) {
         Eat();
         return; // K
@@ -350,6 +346,31 @@ int Parser::findPage()
     }
 
     return forcePage ;
+}
+
+void Parser::RemoveUnusedProcedures()
+{
+    QString removeProcedures = "Removing unused procedures: ";
+    bool outputUnusedWarning = false;
+    QVector<Node*> procs;
+    for (Node* n: m_proceduresOnly) {
+        NodeProcedureDecl* np = (NodeProcedureDecl*)n;
+        if ((np->m_isUsed==true) || m_doNotRemoveMethods.contains(np->m_procName))
+            procs.append(n);
+        else {
+            outputUnusedWarning = true;
+            removeProcedures+=np->m_procName + ",";
+            //                qDebug() << "Removing procedure: " << np->m_procName;
+            //            m_proceduresOnly.removeOne(m_procedures[s]);
+        }
+    }
+    m_proceduresOnly = procs;
+    if (outputUnusedWarning) {
+        removeProcedures.remove(removeProcedures.count()-1,1);
+        ErrorHandler::e.Warning(removeProcedures);
+    }
+
+
 }
 
 
@@ -903,6 +924,9 @@ void Parser::Preprocess()
                 Eat(TokenType::PREPROCESSOR);
                 QString key = m_currentToken.m_value;
                 Eat();
+//                qDebug() << m_currentToken.m_value;
+    //            int i = getIntVal(m_currentToken);
+  //              qDebug() << "After: " << Util::numToHex(i);
                 QString val = m_currentToken.m_value;
                 if (val=="")
                     val = QString::number(m_currentToken.m_intVal);
@@ -1110,22 +1134,10 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
     Node::m_staticBlockInfo.m_blockID=-1;
     NodeProgram* root = (NodeProgram*)Program(param);
     // First add builtin functions
+    if (removeUnusedDecls)
+        RemoveUnusedProcedures();
 
-    if (removeUnusedDecls) {
-        QVector<Node*> procs;
-        for (Node* n: m_proceduresOnly) {
-            NodeProcedureDecl* np = (NodeProcedureDecl*)n;
-            if ((np->m_isUsed==true) || m_doNotRemoveMethods.contains(np->m_procName))
-                procs.append(n);
-            else {
-                qDebug() << "Removing procedure: " << np->m_procName;
-                //            m_proceduresOnly.removeOne(m_procedures[s]);
-            }
-        }
-        m_proceduresOnly = procs;
-    }
     InitBuiltinFunctions();
-
 
     for (QString s: m_procedures.keys())
         if (((NodeProcedureDecl*)m_procedures[s])->m_block==nullptr)

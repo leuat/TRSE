@@ -61,6 +61,7 @@ public:
        m_left->forceWord();
        m_right->forceWord();
     }
+    bool containsPointer(Assembler* as);
 
 
     QString getValue(Assembler* as)  override {

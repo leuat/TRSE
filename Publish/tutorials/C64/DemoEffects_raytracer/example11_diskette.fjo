@@ -1,0 +1,165 @@
+globals = {
+ 	camera = { x = 23, y=0, z=0 },
+     fov = 40,
+	target = { x = 0, y=0.0, z=0 },
+	light0 = {   	direction = {x=1, y=0.0, z=-0.2 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+	ambient = { x = 0.0, y = 0.0, z = 0.0 },
+     raymarch_steps = 30,
+	raymarch_shadow_steps = 4,
+	up = {x=0.3, y=1, z=0 },
+	sky = 0,
+	shadow_scale = 0.5,
+	isPaused = 0
+	
+}
+
+output = {
+	-- resolution of 2x2 multicolor sprites (12x21 each)
+	resolution = { width = 24, height=42},
+--	resolution = { width = 320, height=200},
+	aspect = 1.0,
+	c64_output = 1,
+	c64_multicolor = 1,
+	c64_imageType = 0,
+	dither = 0,
+	ditherStrength = { x = 30, y= 1, z= 1},
+
+	c64_colors = { 0,3,1,6 }
+}
+
+
+MaterialBlue = {
+   color = { x=1, y=1, z=2 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+MaterialWhite = {
+   color = { x=2, y=2, z=2 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+
+MaterialBlack = {
+   color = { x=0, y=0.0, z=0 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+
+-- Init is called on start  
+ 
+
+frame = 0
+--noFrames = 24
+noFrames = 95
+
+hasSaved = 0
+
+function Init()
+
+	w = -0.06
+	xx = -0
+	-- Let's draw a diskette! using nothing but boxes and stuff
+	-- cylinder - hole in the center
+	AddObject("cylinder","d1","","MaterialBlack",0,0,0+xx, 0.4,0,0.15);
+	SetRotation("d1",0,0,90);
+
+-- some "text"
+	AddObject("box","l1","","MaterialBlack",w,-2.5,-1.8+xx, 0.11,0.01,0.6);
+	AddObject("box","l2","","MaterialBlack",w,-2.0,-1.8+xx, 0.11,0.01,0.6);
+	AddObject("box","l3","","MaterialBlack",w,-1.5,-1.8+xx, 0.11,0.01,0.6);
+
+	AddObject("box","ll1","","MaterialBlack",w,-2.5,0.9+xx, 0.11,0.01,1.2);
+	AddObject("box","ll2","","MaterialBlack",w,-2.0,0.9+xx, 0.11,0.01,1.2);
+	AddObject("box","ll3","","MaterialBlack",w,-1.5,0.9+xx, 0.11,0.01,1.2);
+-- text ends
+
+-- White "labels"
+	AddObject("box","d2","","MaterialWhite",w,-2.0,-1.8+xx, 0.11,0.8,0.8);
+	AddObject("box","d2","","MaterialWhite",w,-2.0,1+xx,  0.11,0.8,1.6);
+
+	-- lower disk hole
+	AddObject("cylinder","c1","","MaterialBlack",0,2,-0+xx, 0.12, 0,0.6);
+ 	-- Main disk body
+	AddObject("box","disk","","MaterialBlue",0,0,0+xx, 0.1,3,3);
+	
+	UpdateScene()
+
+end
+
+
+
+function UpdateScene()
+
+  	t = ((frame)/(noFrames-1)) 
+
+	tt = t*3.14159*2
+	dt = 0.2
+	globals.light0.direction.x = cos(tt+dt)
+	globals.light0.direction.z = sin(tt+dt)
+	r=11
+	globals.target.z = 0
+	globals.camera.x = cos(tt)
+	
+	globals.camera.z = sin(tt)
+	globals.camera.y = sin(tt+3.14/1.2+3.14)
+
+--  normaliz all
+	l = globals.camera.x*globals.camera.x + globals.camera.y*globals.camera.y + globals.camera.z*globals.camera.z;
+	l = math.sqrt(l)
+	-- Normalize		
+	globals.camera.x = r*globals.camera.x/l
+	globals.camera.y = r*globals.camera.y/l
+	globals.camera.z = r*globals.camera.z/l  
+
+end
+
+
+function Update()
+	
+	if (frame  <noFrames) then
+	-- save 4 sprites! 
+	if (hasSaved == 0) then 
+		--#0
+		AddC64LineToData(0,0,3,21)
+		AddC64LineToData(0,0,1,1)
+		--#1
+		AddC64LineToData(3,0,3,21)
+		AddC64LineToData(0,0,1,1)
+		--#2
+		AddC64LineToData(0,21,3,21)
+		AddC64LineToData(0,0,1,1)
+		--#3
+		AddC64LineToData(3,21,3,21)
+		AddC64LineToData(0,0,1,1)
+
+	end
+	end
+	frame=frame+1
+
+
+	if (frame==noFrames) then 
+		hasSaved = 1
+		SaveRawData("data/disksprite.bin");
+		Message("SAVED")
+		Message("You can exit now");
+	end	
+
+	UpdateScene()
+
+
+	
+
+
+end

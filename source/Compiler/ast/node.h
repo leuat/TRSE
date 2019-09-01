@@ -57,6 +57,9 @@ public:
     static MemoryBlockInfo m_staticBlockInfo;
     static MemoryBlock* m_curMemoryBlock;
 
+
+    virtual bool containsPointer(Assembler* as) {return false;}
+
     virtual void setForceType(TokenType::Type t) {
         m_forceType  =t;
     }

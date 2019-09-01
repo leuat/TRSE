@@ -5,7 +5,7 @@ var
 
 */
 
-
+@define spriteLoc $3200
 // levels are loaded to/from $5000
 @define levelPosition $5000
 // User $2000 for charset (vic 0)
@@ -13,12 +13,14 @@ var
 // Turn off kernal
 @define useKernal 0
 
+@define @levelpointer levelp
+
    	charset1: incbin("charsets/charset1.bin", @charsetPosition);
 	// Sprite locations as in part 3 (at $3200)
-	mySprites:incbin("sprites/sprites.bin", $3200);
+	mySprites:incbin("sprites/sprites.bin", @spriteLoc);
 	levels: incbin("levels/level1.flf", @levelPosition);
 
-	colors, levelpointer, colormemory : pointer;
+	colors, levelp, colormemory : pointer;
 	i,j:byte = 0;
 	curLevel_x, curLevel_y : byte=0;
 
@@ -44,41 +46,41 @@ var
 procedure InitMainSprite();
 begin
 	// Set sprite position at bank 0 to $C8=$3200/64
-	setspriteloc(@playerSprite,$C8,0);
+	setspriteloc(@playerSprite,@spriteLoc/64,0);
 	player_x:=80;
 	player_y:=120;
 	// Set sprite x,y pos
 	spritepos(player_x,player_y,@playerSprite);
 
 	// Turn on only player sprite
-	SPRITE_BITMASK:=%00000001;
+	sprite_bitmask:=%00000001;
 
  	// All sprites are multicolor
-	SPRITE_MULTICOLOR:=$FF;
-	SPRITE_MULTICOLOR_REG1:=LIGHT_GREEN;
-	SPRITE_MULTICOLOR_REG2:=GREY;
+	sprite_multicolor:=$FF;
+	sprite_multicolor_reg1:=light_green;
+	sprite_multicolor_reg2:=grey;
 
-	SPRITE_COLOR[@playerSprite]:=RED;
+	sprite_color[@playerSprite]:=red;
 end;
 
 // This method initializes charset data, and is similar to the one in part 6
 procedure Initialize();
 begin
-	clearscreen(LIGHT_BLUE, ^$D800);
-	clearscreen($20, ^$0400);
-	SCREEN_BG_COL:=BLACK;
-	SCREEN_FG_COL:=BLACK;
+	clearscreen(light_blue, screen_col_loc);
+	clearscreen(key_space, screen_char_loc);
+	screen_bg_col:=black;
+	screen_fg_col:=black;
 	// Pointer to character color definitions
-	colors:=$2800;
+	colors:=@charsetPosition+$800;
 
-	MULTICOLOR_CHAR_COL[1]:=GREY;
-	MULTICOLOR_CHAR_COL[2]:=BROWN;
+	multicolor_char_col[1]:=grey;
+	multicolor_char_col[2]:=brown;
 
 	setmulticolormode();
 
 	setcharsetlocation(@charsetPosition);
 
-	levelpointer:=@levelPosition;
+	levelp:=@levelPosition;
 	ReadHeader();
 end;
 
@@ -92,7 +94,6 @@ procedure TraverseLevels();
 var 
    redraw:byte=0;
 begin
-	redraw:=0; // don't redraw
 
 	if (player_x<@minx) then begin
 		if (curLevel_x<>0) then begin
@@ -135,11 +136,10 @@ begin
 			player_y:=@maxy-1;
 	end;
 
-
-
 	if redraw=1 then begin
-		levelpointer:=@levelPosition;
-		RenderCharsetColorLevel(curLevel_x,curLevel_y,$04);
+		levelp:=@levelPosition;
+		RenderCharsetColorLevel(curLevel_x,curLevel_y,hi(screen_char_loc));
+		redraw:=0;
 	end;
 
 
@@ -161,11 +161,9 @@ end;
 interrupt RasterRenderLevels();
 begin
 	StartIRQ(@useKernal);
-	setbank(VIC_BANK0);
+	setbank(vic_bank0);
 	MovePlayerSprite();	
 	TraverseLevels();
-
-
 	CloseIRQ();
 end;
 
@@ -175,9 +173,8 @@ end;
 begin
 	Initialize();
 	InitMainSprite();
-
-	levelpointer:=@levelPosition;
-	RenderCharsetColorLevel(curLevel_x,curLevel_y,$04);
+	redraw:=1;
+//	RenderCharsetColorLevel(curLevel_x,curLevel_y,hi(screen_char_loc));
 	// Turn off all interrupts
 	DisableCIAInterrupts();
 	// Turn off kernal

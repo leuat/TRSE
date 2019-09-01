@@ -105,6 +105,8 @@ public:
 
     int findPage();
 
+
+    void RemoveUnusedProcedures();
     Node* Parse(bool removeUnusedDecls, QString param, QString globalDefines);
     Node* Variable();
     Node* Empty();

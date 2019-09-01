@@ -332,6 +332,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("Abs")) {
         Abs(as);
     }
+    if (Command("mod"))
+        Modulo(as);
+
     if (Command("IsOverlapping")) {
         IsOverlapping(as);
     }
@@ -931,6 +934,36 @@ void Methods6502::Peek(Assembler* as)
     as->Asm("tax");
     LoadVar(as,0,"x");
     //SaveVar(as,2);
+
+}
+
+void Methods6502::Modulo(Assembler *as)
+{
+    as->Comment("Modulo");
+    LoadVar(as,1);
+    QString val = as->StoreInTempVar("val");
+    LoadVar(as,0);
+//    QString mod = as->StoreInTempVar("modulo");
+    as->Asm("sec");
+    QString lbl = as->NewLabel("modulo");
+    as->Label(lbl);
+    as->Asm("sbc "+val);
+    as->Asm("bcs "+lbl);
+    as->Asm("adc "+val);
+
+
+    as->PopLabel("modulo");
+
+  //  as->PopTempVar();
+    as->PopTempVar();
+
+
+/*    LDA $00  ; memory addr A
+    SEC
+Modulus:	SBC $01  ; memory addr B
+    BCS Modulus
+    ADC $01
+  */
 
 }
 
@@ -4634,16 +4667,14 @@ void Methods6502::SetSpriteLoc(Assembler *as)
 
 void Methods6502::ClearBitmap(Assembler *as)
 {
-    NodeNumber* addr = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
-    NodeNumber* cnt = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
 
-    if (addr==nullptr || cnt == nullptr)
+    if (!m_node->m_params[0]->isPureNumeric() || !m_node->m_params[1]->isPureNumeric())
         ErrorHandler::e.Error("ClearBitmap: both parameters must be integer constants");
 
     QString lbl = as->NewLabel("clear");
 
 
-    QString screen = addr->HexValue();
+    QString screen = m_node->m_params[0]->getValue(as);
 
 
     as->Asm("; Clear bitmap method");
@@ -4651,7 +4682,7 @@ void Methods6502::ClearBitmap(Assembler *as)
     as->Asm("ldy #0");
     as->Asm("tya");
     as->Label(lbl);
-    for (int i=0;i<cnt->m_val;i++)
+    for (int i=0;i<m_node->m_params[1]->getValueAsInt(as);i++)
         as->Asm("sta "+screen+"+$" + QString::number(i*256,16) + " ,y");
     as->Asm("dey");
     as->Asm("bne "+lbl);

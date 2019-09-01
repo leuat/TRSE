@@ -223,7 +223,7 @@ m; Swap; C64, PLUS4, C128, VIC20, PET,  NES, OK64; b,b
 m; Abs;  C64, PLUS4, C128, VIC20, PET,  NES, OK64;ib
 m; Rand; C64, PLUS4, C128 ; b,b,b
 m; Random; C64, PLUS4, C128, VIC20;
-
+m; mod; C64, PLUS4, C128, VIC20, NES, OK64, PET; b,b
 
 
 # Collision routines
@@ -267,6 +267,10 @@ m; DisableCIAInterrupts; C64, PLUS4, C128;
 m; RasterIRQ; C64, PLUS4, C128 ; p,b,n
 m; RasterIRQWedge; C64, PLUS4, C128 ; p,b,n
 m; ReturnInterrupt; C64, PLUS4, C128, OK64;
+
+
+
+
 
 
 m; WaitForRaster; C64, PLUS4, C128, VIC20, OK64; b
@@ -414,6 +418,10 @@ c; MULTICOLOR_CHAR_COL; PLUS4; a; $ff15
 c; SCREEN_BG_COL; C64, C128; a; $D020
 c; SCREEN_FG_COL; C64, C128; a; $D021
 c; SCREEN_CHAR_LOC; C64, C128; a; $0400
+c; SCREEN_CHAR_LOC2; C64, C128; a; $4400
+c; SCREEN_CHAR_LOC3; C64, C128; a; $8400
+c; SCREEN_CHAR_LOC4; C64, C128; a; $C400
+c; BANK_SIZE; C64, C128; a; $4000
 c; SCREEN_COL_LOC; C64, C128; a; $D800
 c; SCREEN_WIDTH; C64; b; 40
 c; SCREEN_HEIGHT; C64; b; 25
