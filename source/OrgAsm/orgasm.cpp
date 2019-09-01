@@ -298,6 +298,9 @@ void Orgasm::Compile(OrgasmData::PassType pt)
 {
     m_pCounter = 0;
 //    return;
+    for (QString k:m_constants.keys())
+        m_constList.append(k);
+
 
     m_data = QByteArray();
     for (OrgasmLine& ol : m_olines) {
@@ -619,7 +622,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     if (m_opCodes.m_opCycles.contains(m_opCode))
         cyc = m_opCodes.m_opCycles[m_opCode];
     else {
-        throw QString("Uknown opcode: " + m_opCode);
+        throw QString("Unknown opcode: " + m_opCode);
     }
 
     if (cyc.m_opcodes.count()==0)

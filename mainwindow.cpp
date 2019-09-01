@@ -1291,3 +1291,41 @@ void MainWindow::on_treeTutorials_currentItemChanged(QTreeWidgetItem *current, Q
     ui->txtTutorials->setText(text+"<p><font color=\"#A0FFA0\">Double click to load the project!</font>");
 
 }
+
+void MainWindow::on_action_Project_Settings_triggered()
+{
+    OpenProjectSettings();
+}
+
+void MainWindow::on_actionBuild_C_b_triggered()
+{
+    if (m_currentDoc!=nullptr)
+        m_currentDoc->Build();
+
+}
+
+void MainWindow::on_actionBuild_All_triggered()
+{
+    BuildAll();
+}
+
+void MainWindow::on_action_Run_triggered()
+{
+    if (m_currentDoc!=nullptr) {
+        FormRasEditor* fre = dynamic_cast<FormRasEditor*>(m_currentDoc);
+        if (fre!=nullptr) {
+            fre->m_run = true;
+            fre->Build();
+            return;
+        }
+        m_currentDoc->Run();
+    }
+
+}
+
+void MainWindow::on_action_Memory_map_C_u_triggered()
+{
+    if (m_currentDoc!=nullptr)
+        m_currentDoc->MemoryAnalyze();
+
+}

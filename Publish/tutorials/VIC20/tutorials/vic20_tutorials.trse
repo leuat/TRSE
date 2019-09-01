@@ -1,4 +1,4 @@
-project_path = C:/OneDrive/Documents/GitHub/build-TRSE-Desktop_Qt_5_13_0_MSVC2017_64bit-Release/tutorials/VIC20/tutorials/
+project_path = /home/leuat/code/TRSE/Release/../tutorials/VIC20/tutorials/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fe
@@ -27,7 +27,7 @@ override_target_settings_org = $810
 override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
-open_files = ,easy/01_hello_world.ras, advanced/image.ras
+open_files = ,easy/02_texty.ras, easy/01_hello_world.ras, advanced/image.ras
 current_file = easy/01_hello_world.ras
 global_defines = ,
 vic_memory_config = 16k

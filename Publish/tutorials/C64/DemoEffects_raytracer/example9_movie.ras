@@ -127,10 +127,9 @@ begin
 		
 		CopyScreen(frame);
 
-		if (time&1=0) then 
-			frame:=frame+1;
 					
-		if (frame>=22) then frame:=frame-22;
+		if (time&1=0) then 
+			frame:=mod(frame+1,22);
 		
 		inc(time);
 

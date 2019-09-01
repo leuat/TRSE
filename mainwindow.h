@@ -328,6 +328,16 @@ private slots:
 
     void on_treeTutorials_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 
+    void on_action_Project_Settings_triggered();
+
+    void on_actionBuild_C_b_triggered();
+
+    void on_actionBuild_All_triggered();
+
+    void on_action_Run_triggered();
+
+    void on_action_Memory_map_C_u_triggered();
+
 private:
 
     QString FindPathInProjectFolders(const QModelIndex &index);
