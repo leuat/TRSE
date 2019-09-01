@@ -79,7 +79,7 @@ bool SourceBuilder::Assemble()
 {
 //    qDebug() << m_filename << m_curDir;
 //    qDebug() << m_system;
-    m_system->Assemble(m_output,m_filename, m_curDir);
+    m_system->Assemble(m_output,m_filename, m_curDir,compiler.m_parser.m_symTab);
     if (m_system->m_buildSuccess)
         m_system->PostProcess(m_output, m_filename, m_curDir);
 

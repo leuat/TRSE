@@ -4,7 +4,9 @@
 #include <QString>
 #include <QFile>
 #include "source/LeLib/util/cinifile.h"
+
 #include <QElapsedTimer>
+class SymbolTable;
 
 class AbstractSystem
 {
@@ -69,7 +71,7 @@ public:
     System m_system = C64;
     Processor m_processor = MOS6502;
 
-    virtual void Assemble(QString& text, QString file, QString currentDir) {}
+    virtual void Assemble(QString& text, QString file, QString currentDir, SymbolTable* symTab) {}
     virtual void PostProcess(QString& text, QString file, QString currentDir) {}
 
 };

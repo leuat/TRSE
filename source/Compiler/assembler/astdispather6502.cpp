@@ -1110,10 +1110,6 @@ void ASTDispather6502::BuildToCmp(Node *node)
     as->Term();
     if (b!="") {
         as->Comment("Compare with pure num / var optimization");
-/*        if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::LESSEQUAL) {
-            as->Asm("sec");
-            as->Asm("sbc #1");
-        }*/
         as->Asm("cmp " + b);
     }
     else {
@@ -1123,10 +1119,6 @@ void ASTDispather6502::BuildToCmp(Node *node)
         as->Term();
         QString tmpVarA = as->StoreInTempVar("binary_clause_temp_2");
         as->Asm("lda " + tmpVarB);
-/*        if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::LESSEQUAL) {
-            as->Asm("sec");
-            as->Asm("sbc #1");
-        }*/
         as->Asm("cmp " + tmpVarA);
         as->PopTempVar();
         as->PopTempVar();
