@@ -1458,7 +1458,7 @@ void Methods6502::InitPrintString(Assembler *as)
     as->Asm("ldy #0");
     as->Label("printstringloop");
     as->Asm("lda (print_text),y");
-    as->Asm("cmp #0");
+    as->Asm("cmp #0 ;keep");
     as->Asm("beq printstring_done");
     as->Asm("cmp #64");
     as->Asm("bcc printstring_skip");
@@ -1623,14 +1623,16 @@ void Methods6502::PrintString(Assembler *as)
 
 
     if (str!=nullptr) {
-        as->Asm("jmp " + lbl);
+//        as->Asm("jmp " + lbl);
         varName = lbl2;
-        as->Label(varName + as->String(str->m_val));
+        as->m_tempVars<<varName + as->String(str->m_val);
+//        as->Label(varName + as->String(str->m_val));
         as->m_term="";
     }
 
     if (str!=nullptr)
         as->Label(lbl);
+
     as->Asm("clc");
     as->Asm("lda #<" +varName);
     as->Term("adc ");

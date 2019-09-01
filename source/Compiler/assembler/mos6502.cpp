@@ -276,7 +276,7 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal)
             //qDebug() << c;
             if (m_cstr.contains(c)) {
                 uchar sc = m_cstr[c].m_screenCode;
-                s+="$"+QString::number(sc,16);
+                s+=Util::numToHex(sc);
                 if (curOut++<8)
                     s+=", ";
                 else {

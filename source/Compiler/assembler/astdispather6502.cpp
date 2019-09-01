@@ -1094,8 +1094,10 @@ void ASTDispather6502::BuildToCmp(Node *node)
     as->Term();
     if (b!="") {
         as->Comment("Compare with pure num / var optimization");
-        if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::LESSEQUAL)
-            as->Asm("sbc #0");
+        if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::LESSEQUAL) {
+            as->Asm("sec");
+            as->Asm("sbc #1");
+        }
         as->Asm("cmp " + b);
     }
     else {
@@ -1105,8 +1107,10 @@ void ASTDispather6502::BuildToCmp(Node *node)
         as->Term();
         QString tmpVarA = as->StoreInTempVar("binary_clause_temp_2");
         as->Asm("lda " + tmpVarB);
-        if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::LESSEQUAL)
-            as->Asm("sbc #0");
+        if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::LESSEQUAL) {
+            as->Asm("sec");
+            as->Asm("sbc #1");
+        }
         as->Asm("cmp " + tmpVarA);
         as->PopTempVar();
         as->PopTempVar();
@@ -2095,21 +2099,23 @@ void ASTDispather6502::AssignString(NodeAssign *node) {
 
     NodeString* right = (NodeString*)dynamic_cast<const NodeString*>(node->m_right);
     NodeVar* left = (NodeVar*)dynamic_cast<const NodeVar*>(node->m_left);
-    QString lbl = as->NewLabel("stringassign");
+//    QString lbl = as->NewLabel("stringassign");
     QString str = as->NewLabel("stringassignstr");
     QString lblCpy=as->NewLabel("stringassigncpy");
-    as->Asm("jmp " + lbl);
-    as->Label(str + "\t.dc \"" + right->m_op.m_value + "\",0");
-    as->Label(lbl);
+//    as->Asm("jmp " + lbl);
+    QString strAssign = str + "\t.dc \"" + right->m_op.m_value + "\",0";
+    as->m_tempVars<<strAssign;
+    //as->Label(str + "\t.dc \"" + right->m_op.m_value + "\",0");
+  //  as->Label(lbl);
     as->Asm("ldx #0");
     as->Label(lblCpy);
     as->Asm("lda " + str+",x");
     as->Asm("sta "+left->value +",x");
     as->Asm("inx");
-    as->Asm("cmp #0");
+    as->Asm("cmp #0 ;keep");
     as->Asm("bne " + lblCpy);
 
-    as->PopLabel("stringassign");
+  //  as->PopLabel("stringassign");
     as->PopLabel("stringassignstr");
     as->PopLabel("stringassigncpy");
 

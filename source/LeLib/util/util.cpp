@@ -230,7 +230,9 @@ int Util::VerifyHexAddress(QString s)
 
 QString Util::numToHex(int v)
 {
-    return "$" + QString::number(v,16);
+    QString o = QString::number(v,16);
+    if (o.count()==1) o="0"+o;
+    return "$" +o;
 }
 
 QColor Util::colorScale(QColor &col, int mean, int std)
