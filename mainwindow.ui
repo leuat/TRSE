@@ -451,8 +451,19 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionClose_current"/>
     <addaction name="actionClose_all"/>
    </widget>
+   <widget class="QMenu" name="menuProject">
+    <property name="title">
+     <string>Project</string>
+    </property>
+    <addaction name="actionBuild_C_b"/>
+    <addaction name="actionBuild_All"/>
+    <addaction name="action_Run"/>
+    <addaction name="action_Memory_map_C_u"/>
+    <addaction name="action_Project_Settings"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuProject"/>
    <addaction name="menuTools"/>
    <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
@@ -596,6 +607,31 @@ p, li { white-space: pre-wrap; }
   <action name="actionWavefront_obj_to_amiga_converter">
    <property name="text">
     <string>Wavefront .obj converter</string>
+   </property>
+  </action>
+  <action name="actionBuild_C_b">
+   <property name="text">
+    <string>&amp;Build (C-b)</string>
+   </property>
+  </action>
+  <action name="actionBuild_All">
+   <property name="text">
+    <string>Build &amp;All</string>
+   </property>
+  </action>
+  <action name="action_Run">
+   <property name="text">
+    <string>&amp;Run (C-r)</string>
+   </property>
+  </action>
+  <action name="action_Memory_map_C_u">
+   <property name="text">
+    <string>&amp;Memory map (C-u)</string>
+   </property>
+  </action>
+  <action name="action_Project_Settings">
+   <property name="text">
+    <string>&amp;Project Settings</string>
    </property>
   </action>
  </widget>
