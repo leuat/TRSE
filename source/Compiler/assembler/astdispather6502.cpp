@@ -2102,17 +2102,19 @@ void ASTDispather6502::AssignString(NodeAssign *node) {
 //    QString lbl = as->NewLabel("stringassign");
     QString str = as->NewLabel("stringassignstr");
     QString lblCpy=as->NewLabel("stringassigncpy");
+
 //    as->Asm("jmp " + lbl);
     QString strAssign = str + "\t.dc \"" + right->m_op.m_value + "\",0";
     as->m_tempVars<<strAssign;
     //as->Label(str + "\t.dc \"" + right->m_op.m_value + "\",0");
   //  as->Label(lbl);
+
     as->Asm("ldx #0");
     as->Label(lblCpy);
     as->Asm("lda " + str+",x");
     as->Asm("sta "+left->value +",x");
     as->Asm("inx");
-    as->Asm("cmp #0 ;keep");
+    as->Asm("cmp #0 ;keep");  // ask post optimiser to not remove this
     as->Asm("bne " + lblCpy);
 
   //  as->PopLabel("stringassign");
