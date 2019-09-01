@@ -1,0 +1,63 @@
+/*
+	Procedures let us put code into it's own block which can be called by our program.  Why would you want to do this?
+	
+	1) It can help make code readable by taking complexity out of the main program to perform a specific task
+	2) It can create commands that we wish to use many times in different places in our code without repeating the code
+	
+	Let's get started...
+*/
+program Procedures;
+var  
+	index : byte;
+
+// in most of the tutorials the screen has been set up, why not put that into a procedure?
+// Helps make the code a little more readable.
+procedure SetUpScreen();
+begin
+	// define the screenmemory pointer
+	definescreen();
+	
+	// clear the screen and colour memory
+	clearscreen(32, screen_char_loc);
+	clearscreen(WHITE, screen_col_loc);
+	
+	// Set the screenmemory pointer to point to the screen memory:
+	screenmemory := screen_char_loc;
+end;
+
+// Here is another procedure, this one is to writing a random character to the screen and then move down one line
+procedure DisplayNumber();
+begin
+	screenmemory[ index ] := random();		// index is a global variable, meaning we can access it anywhere in our program
+	screenmemory := screenmemory + screen_width;
+end;
+
+
+/* MAIN PROGRAM STARTS HERE */
+begin
+	// Let's call the screen set up procedure using it's name
+	SetUpScreen();
+	
+	// let's loop 25 times
+	for index := 0 to 25 do
+	begin		
+		DisplayNumber();	// we're calling the DisplayNumber procedure many times!
+	end;
+	
+	screenmemory := screen_char_loc + 2;	// reset the screen memory point back to the top of the screen, but this time two character to the right
+	
+	// let's loop another 25 times
+	for index := 0 to 25 do
+	begin		
+		DisplayNumber();	// we're calling the DisplayNumber procedure again, but we haven't needed to rewrite the code, just the procedure name
+	end;
+
+	/*
+	
+		We hope this introduction to the language has been helpful.  You know have the tools to make something sensation (and more interesting).
+		Why not start with the Easy, Intemediate and Advanced folders.
+		
+	*/
+
+	loop();
+end.

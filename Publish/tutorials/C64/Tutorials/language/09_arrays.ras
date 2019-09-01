@@ -1,0 +1,43 @@
+/*
+	Arrays are like a list of variables and as such can store many numbers.
+	
+	Once an array has been declared with a size (the example below it is 40), each 'slot' in the array can be accessed
+	using an index.  For example:
+	
+	list[ 0 ]  -  this is the first slot in the array
+	list[ 1 ]  -  this is the second slot
+	...
+	list [ 39 ] - this is the last slot in our example array
+	
+*/
+program Arrays;
+var  
+	list : array[40] of byte;	// creating an array in memory with 40 slots, using 40 bytes
+	index : byte;
+	 
+begin
+	// define the screenmemory pointer
+	definescreen();
+	
+	// clear the screen and colour memory
+	clearscreen(32, screen_char_loc);
+	clearscreen(WHITE, screen_col_loc);
+	
+	// Set the screenmemory pointer to point to the screen memory:
+	screenmemory := screen_char_loc;
+	
+	// lets step through each slot in the array and assign a number.  We'll use "Random" to get a random number to put in each slot:
+	for index := 0 to 40 do
+	begin
+		list[ index ] := random();
+	end;
+	
+	// with the array loaded with random numbers, let's display them on the screen
+	for index := 0 to 40 do
+	begin
+		screenmemory[ index ] := list[ index ];		// display the character from the value in the list
+	end;
+	// Notice that screenmemory, which we have been using a lot, is essentially like an array
+	
+	loop();
+end.
