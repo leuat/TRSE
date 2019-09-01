@@ -1,0 +1,26 @@
+/*
+	When writing programs you will often want to repeat something several times.
+	
+	This tutorial introduces for loops that can be used to repeat a section of code a number of times.
+	
+*/
+program IfThenElse;
+var  
+	val1, val2: byte; 	// Define two variables
+   
+begin
+	// define the screenmemory pointer
+	definescreen();
+	
+	// clear the screen and colour memory
+	clearscreen(32, screen_char_loc);
+	clearscreen(WHITE, screen_col_loc);
+	
+	// Set the screenmemory pointer to point to the screen memory:
+	screenmemory := screen_char_loc;
+
+	
+
+
+	loop();
+end.

@@ -1,0 +1,37 @@
+/*
+	When writing programs you will often want to repeat something several times.
+	
+	This tutorial introduces for loops that can be used to repeat a section of code a number of times.
+	
+*/
+program ForLoops;
+var  
+	index: byte; 	// Yay - we can use the default index variable at last!
+   
+begin
+	// define the screenmemory pointer
+	definescreen();
+	
+	// clear the screen and colour memory
+	clearscreen(32, screen_char_loc);
+	clearscreen(WHITE, screen_col_loc);
+	
+	// Set the screenmemory pointer to point to the screen memory:
+	screenmemory := screen_char_loc;
+
+	// now let's say we want to do something 10 times, a for loop is perfect for this
+	// A for statement is made up of
+	// - a variable to keep a count
+	// - the start value for the counter
+	// - the value to end at for the counter
+	for index := 0 to 10 do		// start counting at 0, end when reach 10 and use the index variable to keep count
+	begin						// using a begin - end; block to define the code attribured to the loop
+		printdecimal(index, 0);				// print the value of the index variable
+		screenmemory := screenmemory + 2;	// move the screen memory point two characters along
+	end;
+	// the result of the for loop is:
+	// 0 1 2 3 4 5 6 7 8 9	
+
+
+	loop();
+end.

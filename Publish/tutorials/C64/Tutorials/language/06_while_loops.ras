@@ -1,0 +1,35 @@
+/*
+	This tutorial introduces another type of loop - a while loop.
+	
+	A while loop will repeat a section of code until a condition is true.
+	
+*/
+program WhileLoops;
+var  
+	index: byte; 	// we'll use the index variable again when testing the condition
+   
+begin
+	// define the screenmemory pointer
+	definescreen();
+	
+	// clear the screen and colour memory
+	clearscreen(32, screen_char_loc);
+	clearscreen(WHITE, screen_col_loc);
+	
+	// Set the screenmemory pointer to point to the screen memory:
+	screenmemory := screen_char_loc;
+
+	// To create a while loop, a condition must be tested.
+
+	while index < 40 do  // repeat this code block while the index variable is less than 40
+	begin
+		printdecimal(index, 1);				// print the value of the index variable
+		screenmemory := screenmemory + 4;	// move the screen memory point four characters along
+		index := index + 1;					// add one to the index variable
+	end;
+	// the result of the for loop is:
+	// 00 01 02 03 04 05 06 07 08 09 ... 38 39
+
+
+	loop();
+end.
