@@ -86,7 +86,7 @@ public:
 
     void IncBin(NodeVarDecl* node);
 
-
+    void PrintCompare(Node* node, QString lblSuccess, QString lblFailed);
     void DeclarePointer(NodeVarDecl* node);
 
 
@@ -100,7 +100,7 @@ public:
 
     void BuildToCmp(Node* node);
 
-    void BuildSimple(Node* node, QString lblFailed);
+    void BuildSimple(Node* node, QString lblSuccess, QString lblFailed);
 
     void BinaryClauseInteger(Node* node);
 

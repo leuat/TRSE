@@ -1017,6 +1017,7 @@ void ASTDispather6502::IncBin(NodeVarDecl *node) {
     }
 }
 
+
 void ASTDispather6502::DeclarePointer(NodeVarDecl *node) {
 
     if (!as->CheckZPAvailability())
@@ -1032,6 +1033,28 @@ void ASTDispather6502::DeclarePointer(NodeVarDecl *node) {
 
     NodeVar* v = (NodeVar*)node->m_varNode;
     as->Label(v->value + "\t= " + initVal);
+
+}
+void ASTDispather6502::PrintCompare(Node *node, QString lblSuccess, QString lblFailed)
+{
+    if (node->m_op.m_type==TokenType::EQUALS)
+        as->Asm("bne " + lblFailed);
+    if (node->m_op.m_type==TokenType::NOTEQUALS)
+        as->Asm("beq " + lblFailed);
+    if (node->m_op.m_type==TokenType::GREATEREQUAL) {
+        as->Asm("bcc " + lblFailed);
+    }
+    if (node->m_op.m_type==TokenType::GREATER) {
+        as->Asm("bcc " + lblFailed);
+        as->Asm("beq " + lblFailed);
+    }
+    if (node->m_op.m_type==TokenType::LESSEQUAL ) {
+        as->Asm("beq " + lblSuccess);
+        as->Asm("bcs " + lblFailed);
+    }
+
+    if (node->m_op.m_type==TokenType::LESS)
+        as->Asm("bcs " + lblFailed);
 
 }
 
@@ -1050,17 +1073,9 @@ void ASTDispather6502::BinaryClause(Node *node)
     }
     QString lblFinished = as->NewLabel("binaryclausefinished");
 
-
-    if (node->m_op.m_type==TokenType::EQUALS)
-        as->Asm("bne " + lblFailed);
-    if (node->m_op.m_type==TokenType::NOTEQUALS)
-        as->Asm("beq " + lblFailed);
-    if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::GREATEREQUAL) {
-        as->Asm("bcc " + lblFailed);
-    }
-    if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL)
-        as->Asm("bcs " + lblFailed);
-
+    QString lblSuccess = as->NewLabel("binaryclausesuccess");
+    PrintCompare(node, lblSuccess,lblFailed);
+    as->Label(lblSuccess);
     if (!node->m_ignoreSuccess) {
         as->Asm("lda #1; success");
         as->Asm("jmp " + lblFinished);
@@ -1072,6 +1087,7 @@ void ASTDispather6502::BinaryClause(Node *node)
         as->PopLabel("binaryclausefailed");
 
     as->PopLabel("binaryclausefinished");
+    as->PopLabel("binaryclausesuccess");
     // as->PopLabel("binary_clause_temp_var");
     //  as->PopLabel("binary_clause_temp_lab");
 
@@ -1094,10 +1110,10 @@ void ASTDispather6502::BuildToCmp(Node *node)
     as->Term();
     if (b!="") {
         as->Comment("Compare with pure num / var optimization");
-        if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::LESSEQUAL) {
+/*        if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::LESSEQUAL) {
             as->Asm("sec");
             as->Asm("sbc #1");
-        }
+        }*/
         as->Asm("cmp " + b);
     }
     else {
@@ -1107,10 +1123,10 @@ void ASTDispather6502::BuildToCmp(Node *node)
         as->Term();
         QString tmpVarA = as->StoreInTempVar("binary_clause_temp_2");
         as->Asm("lda " + tmpVarB);
-        if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::LESSEQUAL) {
+/*        if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::LESSEQUAL) {
             as->Asm("sec");
             as->Asm("sbc #1");
-        }
+        }*/
         as->Asm("cmp " + tmpVarA);
         as->PopTempVar();
         as->PopTempVar();
@@ -1119,7 +1135,7 @@ void ASTDispather6502::BuildToCmp(Node *node)
 
 }
 
-void ASTDispather6502::BuildSimple(Node *node, QString lblFailed)
+void ASTDispather6502::BuildSimple(Node *node, QString lblSuccess, QString lblFailed)
 {
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());
@@ -1127,15 +1143,7 @@ void ASTDispather6502::BuildSimple(Node *node, QString lblFailed)
 
     BuildToCmp(node);
 
-    if (node->m_op.m_type==TokenType::EQUALS)
-        as->Asm("bne " + lblFailed);
-    if (node->m_op.m_type==TokenType::NOTEQUALS)
-        as->Asm("beq " + lblFailed);
-    if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::GREATEREQUAL) {
-        as->Asm("bcc " + lblFailed);
-    }
-    if (node->m_op.m_type==TokenType::LESS  || node->m_op.m_type==TokenType::LESSEQUAL)
-        as->Asm("bcs " + lblFailed);
+    PrintCompare(node, lblSuccess,lblFailed);
 
 
 
@@ -1709,7 +1717,7 @@ void ASTDispather6502::dispatch(NodeConditional *node)
         QString failedLabel = labelElseDone;
         if (node->m_elseBlock!=nullptr)
             failedLabel = labelElse;
-        BuildSimple(bn,  failedLabel);
+        BuildSimple(bn,  lblstartTrueBlock,failedLabel);
     }
     // Start main block
     as->Label(lblstartTrueBlock); // This means skip inside

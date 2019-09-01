@@ -593,7 +593,6 @@ void AsmMOS6502::Optimise(CIniFile& ini)
         OptimisePassLdx("y");
 
     if (ini.getdouble("post_optimizer_passldatax")==1)
-
         OptimisePassLdaTax("x");
     if (ini.getdouble("post_optimizer_passldatax")==1)
         OptimisePassLdaTax("y");
@@ -653,6 +652,7 @@ void AsmMOS6502::OptimisePassLdx(QString x)
         int shift=0;
         for (int i=0;i<m_source.count()-1;i++) {
             QString l0 = getLine(i);
+            QString value = getToken(l0,1);
             if (l0.contains("ld"+x)) {
                 bool done = false;
                 //qDebug() << l0;
@@ -665,7 +665,7 @@ void AsmMOS6502::OptimisePassLdx(QString x)
                     k=j;
                     QString op2 = getToken(l1,1);
                     QString op = getToken(l1,0);
-                    qDebug() << l0 << l1 <<op2;
+//                    qDebug() << l0 << l1 <<value;
                     if (l0==l1 && !op2.startsWith("(") && !op2.contains(",")) {
 //                        if (x=="a")
   //                      qDebug () << "Removing because equal: " << l0 << ", " << l1;
@@ -682,6 +682,17 @@ void AsmMOS6502::OptimisePassLdx(QString x)
 //                        op==("in" +x) || op==("de"+x)|| op==("sta")|| op.length()!=3 ) {
                         //qDebug() << "Done because: " << l1;
                         done=true;
+                    // Stuff like
+                    // ldx i
+                    // inc i
+                    // ldx i
+                    if ((x=="x" || x=="y" )) {
+                        if (op=="inc" || op=="dec" || op=="sta") {
+                            if (op2==value)
+                                done = true;
+                        }
+                    }
+
 
                     ll++;
 
