@@ -21,7 +21,7 @@ begin
 
 	// To create a while loop, a condition must be tested.
 
-	while index < 40 do  // repeat this code block while the index variable is less than 40
+	while index < 40 do  // repeat this code block while the index variable is less than 40.  < means less than
 	begin
 		printdecimal(index, 1);				// print the value of the index variable
 		screenmemory := screenmemory + 4;	// move the screen memory point four characters along
