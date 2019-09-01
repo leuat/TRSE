@@ -1,0 +1,294 @@
+/*
+
+Summary:
+
+	Unit tests in this program are for IF conditional tests.
+
+Description:
+
+	Testing > >= < <= = <>
+	Testing unsigned Bytes
+
+*/
+program IfThenElseTest01;
+var  
+	sc, co : pointer; 			// screen and colour RAM pointers
+	text: string = "TEST    ";	// text to display when writing a test result
+	@define COLUMNWIDTH 10
+
+
+/*--------------------------------------------------------------------------------------------
+
+	VARIABLES FOR USE IN UNIT TESTS
+	
+----------------------------------------------------------------------------------------------*/
+
+	v1, v2 : byte;
+
+//--------------------------------------------------------------------------------------------
+// Initialisation  
+procedure Initialise();
+begin
+	DefineScreen();
+	SCREEN_BG_COL := BLACK;
+	SCREEN_FG_COL := BLACK;
+	sc := SCREEN_CHAR_LOC;
+	co := SCREEN_COL_LOC;
+	clearscreen(32, SCREEN_CHAR_LOC);
+	clearscreen(WHITE, SCREEN_COL_LOC);
+end;
+// Print POSITIVE result of a test - ptext must be 8 characters or less
+procedure PASS();
+begin
+	screenmemory := sc;
+	PrintString(text, 0, 12);
+	sc[8] := $53; // heart
+	co[8] := GREEN;
+	
+	sc := sc + @COLUMNWIDTH;
+	co := co + @COLUMNWIDTH;
+end;
+// Print NEGATIVE result of a test - ftext must be 8 characters or less
+procedure FAIL();
+begin
+	screenmemory := sc;
+	PrintString(text, 0, 12);
+	sc[8] := $56; // cross
+	co[8] := RED;
+	
+	sc := sc + @COLUMNWIDTH;
+	co := co + @COLUMNWIDTH;
+end;
+//--------------------------------------------------------------------------------------------
+
+
+
+
+
+/*--------------------------------------------------------------------------------------------
+
+	UNIT TESTS
+	
+----------------------------------------------------------------------------------------------*/
+
+// when v1 is greater than v2
+procedure GT1_GreaterThan_True();
+begin
+	v1 := 100; v2 := 50;
+	text := "   GT 1:"; if v1 > v2 then begin PASS(); end else begin FAIL(); end;
+end;
+
+// when v1 is not greater than v2
+procedure GT2_GreaterThan_False();
+begin
+	v1 := 10; v2 := 50;
+	text := "   GT 2:"; if v1 > v2 then begin FAIL(); end else begin PASS(); end;
+end;
+
+// when v1 is equal to v2
+procedure GT3_GreaterThan_False();
+begin
+	v1 := 50; v2 := 50;
+	text := "   GT 3:"; if v1 > v2 then begin FAIL(); end else begin PASS(); end;
+end;
+
+// when v1 is zero and v2 is 255
+procedure GT4_GreaterThan_False();
+begin
+	v1 := 0; v2 := 255;
+	text := "   GT 4:"; if v1 > v2 then begin FAIL(); end else begin PASS(); end;
+end;
+
+// when v1 is 255 and v2 is 0
+procedure GT5_GreaterThan_True();
+begin
+	v1 := 255; v2 := 0;
+	text := "   GT 5:"; if v1 > v2 then begin PASS(); end else begin FAIL(); end;
+end;
+
+
+// when v1 is greater than v2
+procedure GTE1_GreaterEqual_True();
+begin
+	v1 := 51; v2 := 50;
+	text := "  GTE 1:"; if v1 >= v2 then begin PASS(); end else begin FAIL(); end;
+end;
+
+// when v1 is not greater than v2
+procedure GTE2_GreaterThan_False();
+begin
+	v1 := 49; v2 := 50;
+	text := "  GTE 2:"; if v1 >= v2 then begin FAIL(); end else begin PASS(); end;
+end;
+
+// when v1 is equal to v2
+procedure GTE3_GreaterThan_True();
+begin
+	v1 := 50; v2 := 50;
+	text := "  GTE 3:"; if v1 >= v2 then begin PASS(); end else begin FAIL(); end;
+end;
+
+// when v1 is zero and v2 is 255
+procedure GTE4_GreaterThan_False();
+begin
+	v1 := 0; v2 := 255;
+	text := "  GTE 4:"; if v1 >= v2 then begin FAIL(); end else begin PASS(); end;
+end;
+
+// when v1 is 255 and v2 is 0
+procedure GTE5_GreaterThan_True();
+begin
+	v1 := 255; v2 := 0;
+	text := "  GTE 5:"; if v1 >= v2 then begin PASS(); end else begin FAIL(); end;
+end;
+
+
+// when v1 is less than v2
+procedure LT1_LessThan_True();
+begin
+	v1 := 49; v2 := 50;
+	text := "   LT 1:"; if v1 < v2 then begin PASS(); end else begin FAIL(); end;
+end;
+
+// when v1 is not less than v2
+procedure LT2_LessThan_False();
+begin
+	v1 := 51; v2 := 50;
+	text := "   LT 2:"; if v1 < v2 then begin FAIL(); end else begin PASS(); end;
+end;
+
+// when v1 is equal to v2
+procedure LT3_LessThan_False();
+begin
+	v1 := 50; v2 := 50;
+	text := "   LT 3:"; if v1 < v2 then begin FAIL(); end else begin PASS(); end;
+end;
+
+// when v1 is zero and v2 is 255
+procedure LT4_LessThan_True();
+begin
+	v1 := 0; v2 := 255;
+	text := "   LT 4:"; if v1 < v2 then begin PASS(); end else begin FAIL(); end;
+end;
+
+// when v1 is 255 and v2 is 0
+procedure LT5_LessThan_False();
+begin
+	v1 := 255; v2 := 0;
+	text := "   LT 5:"; if v1 < v2 then begin FAIL(); end else begin PASS(); end;
+end;
+
+
+// when v1 is less than v2
+procedure LTE1_LessEqual_True();
+begin
+	v1 := 49; v2 := 50;
+	text := "  LTE 1:"; if v1 <= v2 then begin PASS(); end else begin FAIL(); end;
+end;
+
+// when v1 is not less or equal to v2
+procedure LTE2_LessThan_False();
+begin
+	v1 := 51; v2 := 50;
+	text := "  LTE 2:"; if v1 <= v2 then begin FAIL(); end else begin PASS(); end;
+end;
+
+// when v1 is equal to v2
+procedure LTE3_LessThan_True();
+begin
+	v1 := 50; v2 := 50;
+	text := "  LTE 3:"; if v1 <= v2 then begin PASS(); end else begin FAIL(); end;
+end;
+
+// when v1 is zero and v2 is 255
+procedure LTE4_LessThan_True();
+begin
+	v1 := 0; v2 := 255;
+	text := "  LTE 4:"; if v1 <= v2 then begin PASS(); end else begin FAIL(); end;
+end;
+
+// when v1 is 255 and v2 is 0
+procedure LTE5_LessThan_False();
+begin
+	v1 := 255; v2 := 0;
+	text := "  LTE 5:"; if v1 <= v2 then begin FAIL(); end else begin PASS(); end;
+end;
+
+
+// when v1 is equal to v2
+procedure EQ1_EqualTo_True();
+begin
+	v1 := 255; v2 := 255;
+	text := "   EQ 1:"; if v1 = v2 then begin PASS(); end else begin FAIL(); end;
+end;
+
+// when v1 is not equal to v2
+procedure EQ2_EqualTo_False();
+begin
+	v1 := 0; v2 := 255;
+	text := "   EQ 2:"; if v1 = v2 then begin FAIL(); end else begin PASS(); end;
+end;
+
+
+// when v1 is not equal to v2
+procedure NEQ1_NotEqualTo_True();
+begin
+	v1 := 5; v2 := 6;
+	text := "  NEQ 1:"; if v1 <> v2 then begin PASS(); end else begin FAIL(); end;
+end;
+
+// when v1 is not equal to v2
+procedure NEQ2_NotEqualTo_False();
+begin
+	v1 := 5; v2 := 5;
+	text := "  NEQ 2:"; if v1 <> v2 then begin FAIL(); end else begin PASS(); end;
+end;
+
+
+
+
+//--------------------------------------------------------------------------------------------
+/* MAIN PROGRAM */
+begin
+
+	// initialise everything
+	Initialise();
+	
+	// Greater than conditional tests 
+	GT1_GreaterThan_True();
+	GT2_GreaterThan_False();
+	GT3_GreaterThan_False();
+	GT4_GreaterThan_False();
+	GT5_GreaterThan_True();
+	
+	// Greater than or equal to conditional tests
+	GTE1_GreaterEqual_True();
+	GTE2_GreaterThan_False();
+	GTE3_GreaterThan_True();
+	GTE4_GreaterThan_False();
+	GTE5_GreaterThan_True();
+
+	// Less than conditional tests
+	LT1_LessThan_True();
+	LT2_LessThan_False();
+	LT3_LessThan_False();
+	LT4_LessThan_True();
+	LT5_LessThan_False();
+
+	// Less than or equal to conditional tests
+	LTE1_LessEqual_True();
+	LTE2_LessThan_False();
+	LTE3_LessThan_True();
+	LTE4_LessThan_True();
+	LTE5_LessThan_False();
+	
+	// Equal to conditional tests
+	EQ1_EqualTo_True();
+	EQ2_EqualTo_False();
+
+	// Not Equal to conditional tests
+	NEQ1_NotEqualTo_True();
+	NEQ2_NotEqualTo_False();
+
+	loop();
+end.
