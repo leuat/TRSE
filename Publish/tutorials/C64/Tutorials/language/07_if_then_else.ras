@@ -1,0 +1,87 @@
+/*
+	An important requirement of any program will be to make decisions on various things such as user input, 
+	collisions between sprites, checking if the player has run out of lives and so on.
+	
+	This tutorial introduces the IF - THEN - ELSE structure that can be used to test if conditions are true.
+	
+	We have already been introduced to a conditional test with the while loop in the previous tutorial.  Theere we
+	tested:  index < 40  - what we are saying here is while index is less than 40, do the loop.
+	
+	The following can be used when testing a condition:
+	
+	= 		example: a = 3		Means if a equals 3 then the condition is true (note this is different to assignment := )
+	>		example: a > 3		Means if a is greater than 3 then the condition is true
+	<		example: a < 3		Means if a is less than 3 then the condition is true
+	>=		example: a >= 3		Means if a is greater than or equal to 3 then the condition is true
+	<=		example: a <= 3		Means if a is less than or equal to 3 then the condition is true
+	<>		example: a <> 3		Means if a is not equal to 3 then the condition to true
+	
+*/
+program IfThenElse;
+var  
+	val1, val2: byte; 	// Define two variables
+   
+begin
+	// define the screenmemory pointer
+	definescreen();
+	
+	// clear the screen and colour memory
+	clearscreen(32, screen_char_loc);
+	clearscreen(WHITE, screen_col_loc);
+	
+	// Set the screenmemory pointer to point to the screen memory:
+	screenmemory := screen_char_loc;
+
+	// lets set the val1 and val2 variables to some values we can test with:
+	val1 := 10;
+	val2 := 20;
+	
+	// The most simple IF statement can look like the following:
+	if (val1 = 10) then printstring("VAL1 IS EQUAL TO 10",0,40);
+	// IF begins the condition test, we then ask if val1 = 10, and if true, THEN execute the PrintString command and that's it.
+	
+	screenmemory := screenmemory + screen_width;	// move to next line on the screen
+	
+	// An IF statement can also have an ELSE.  Where THEN is executed if the condition is true, the ELSE is executed if it is not
+	// when using ELSE, must put code into blocks marked with a begin and end 
+	if (val1 = 20) then
+	begin		// this will be executed if the condition is true
+		printstring("VAL1 IS EQUAL TO 20",0,40);
+	end			// note this end does not have a semi-colon ; character
+	else
+	begin		// this will be executed if the condition is not true
+		printstring("VAL1 IS NOT EQUAL TO 20",0,40);
+	end;		// but this one does because it marks the end of this structure
+
+	screenmemory := screenmemory + screen_width;	// move to next line on the scree
+
+	// Can test two variables in a condition
+	if (val1 >= val2) then
+	begin
+		printstring("VAL1 IS GREATER OR EQUAL TO VAL2",0,40);
+	end
+	else
+	begin
+		printstring("VAL1 IS NOT GREATER OR EQUAL TO VAL2",0,40);
+	end;
+
+	screenmemory := screenmemory + screen_width;	// move to next line on the screen
+
+	// Now lets combine a FOR loop and an IF statement
+	// val1 will count from 15 to 25
+	for val1 := 15 to 26 do
+	begin
+		// display the values of val1 and val2 side by side on the screen
+		printdecimal(val1,1);
+		screenmemory := screenmemory + 3;
+		printdecimal(val2,1);
+		screenmemory := screenmemory + 3;
+		// now lets do three conditions and print a string when any are true
+		if (val1 < val2) then printstring("VAL1 IS LESS THAN VAL2",0,40);
+		if (val1 = val2) then printstring("VAL1 IS EQUAL TO VAL2",0,40);
+		if (val1 > val2) then printstring("VAL1 IS GREATER THAN VAL2",0,40);
+		screenmemory := screenmemory + screen_width - 6;	// move to next line on the screen
+	end;
+
+	loop();
+end.

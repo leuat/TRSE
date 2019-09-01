@@ -1,0 +1,28 @@
+/*
+	Welcome to Turbo Rascal Syntax error (TRSE)
+	
+	If you are completely new to TRSE or Pascal, then you are in the
+	right place to learn some of the basics.
+	
+	These language tutorials introduce you to what you need to know
+	to write TRSE programs for any target platform such as the
+	Commodore 64, Vic 20 and just about everything else supported by TRSE!
+	These tutorials are focusing on 8-bit systems, however.
+
+	A couple of things before we get started:
+	1) when you see //, what follows are comments for us humans to read, TRSE ignores these
+	2) MOST lines must end with a semi-colon, but not all.
+
+	When you create a new Ras source file it will look like the below: 
+*/
+program MyProgram;  // Every TRSE starts with program followed by the program name.
+var  				// the var section allows us to set up variables, more on that later.  Notice no semi-colon at the end
+   index: byte; 	// a variable called index is created by default, it is a byte which means we can store values from 0 to 255 in it
+begin				// begin marks the start of our actual code and this is the MAIN CODE block, there is no semi-colon at the end
+					// ... we have no code yet in this empty program
+end.				// a begin block must finish with an end and as this is the MAIN CODE block, it must end with a full stop!
+/*
+
+	OK so far?  Lets move on to find out about variables, load the next file.
+
+*/
