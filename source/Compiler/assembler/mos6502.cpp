@@ -646,7 +646,6 @@ void AsmMOS6502::OptimisePassLdx(QString x)
 {
 
     bool allDone = false;
-
     while (!allDone) {
 
         m_removeLines.clear();
@@ -666,10 +665,10 @@ void AsmMOS6502::OptimisePassLdx(QString x)
                     k=j;
                     QString op2 = getToken(l1,1);
                     QString op = getToken(l1,0);
-
+                    qDebug() << l0 << l1 <<op2;
                     if (l0==l1 && !op2.startsWith("(") && !op2.contains(",")) {
-                        if (x=="a")
-//                        qDebug () << "Removing because equal: " << l0 << ", " << l1;
+//                        if (x=="a")
+  //                      qDebug () << "Removing because equal: " << l0 << ", " << l1;
                         m_removeLines.append(j);
                         curCnt++;
                         //qDebug() << "Removing: " << l1 << " on line " << j;
