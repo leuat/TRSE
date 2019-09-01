@@ -88,6 +88,11 @@ void NodeBinOP::setForceType(TokenType::Type t) {
     m_right->setForceType(t);
 }
 
+bool NodeBinOP::containsPointer(Assembler *as)
+{
+    return m_left->containsPointer(as) || m_right->containsPointer(as);
+}
+
 
 
 int NodeBinOP::numValue() {

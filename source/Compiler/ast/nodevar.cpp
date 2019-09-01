@@ -112,6 +112,11 @@ bool NodeVar::isByte(Assembler *as) {
     return getType(as)==TokenType::BYTE  && m_expr==nullptr;
 }
 
+bool NodeVar::containsPointer(Assembler *as)
+{
+    return (getType(as)==TokenType::POINTER && m_expr!=nullptr);
+}
+
 QString NodeVar::getValue(Assembler* as) {
 //    qDebug() << "NodeVar:: getValue : " << value << "  "  << TokenType::getType(getType(as));
     if (m_forceAddress && !(getType(as)==TokenType::POINTER)) return "#" + value;

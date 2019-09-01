@@ -30,15 +30,15 @@ our character set
 // Initializes charsets etc
 procedure Initialize();
 begin
-	clearscreen(LIGHT_BLUE, ^$D800);
-	clearscreen($20, ^$0400);
-	SCREEN_BG_COL:=BLACK;
-	SCREEN_FG_COL:=BLACK;
+	clearscreen(light_blue, screen_col_loc);
+	clearscreen(key_space, screen_char_loc);
+	screen_fg_col:=black;
+	screen_bg_col:=black;
 
-	colors:=$2800;
+	colors:=@charsetPosition+$800;
 
-	MULTICOLOR_CHAR_COL[1]:=GREY;
-	MULTICOLOR_CHAR_COL[2]:=BROWN;
+	multicolor_char_col[1]:=grey;
+	multicolor_char_col[2]:=brown;
 
 	setmulticolormode();
 
@@ -72,7 +72,7 @@ begin
 		RenderCharsetColorLevel(curLevel_x,curLevel_y,$04);
 		screenon();
 	end;
-	if i<>0 then dec(i); // i acts as a counter
+	if (i) then dec(i); // i acts as a counter
 
 	CloseIRQ();
 end;
@@ -83,7 +83,7 @@ begin
 	// Remember to set level location!
 	levelpointer:=@levelPosition;
 	// Render the level to $0400
-	RenderCharsetColorLevel(curLevel_x,curLevel_y,$04);
+	RenderCharsetColorLevel(curLevel_x,curLevel_y,hi(screen_char_loc));
 
 	DisableCIAInterrupts();
 	SetMemoryConfig(1,@useKernal,0);

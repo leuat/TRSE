@@ -9,7 +9,7 @@ var
 	@userdata "$4400" "$4800" "Bank 1 screen"
 	@userdata "$8400" "$8800" "Bank 2 screen"
 
-@requirefile "data/chadata1.bin" "Please run the Fjong raytracer file 'example9_movie.fjo' before compiling this program"
+@requirefile "data/chardata1.bin" "Please run the Fjong raytracer file 'example9_movie.fjo' before compiling this program"
 
 
 	chardata1:incbin("data/chardata1.bin", $2000);
@@ -107,8 +107,7 @@ begin
 			for k:=0 to 2 do begin
 				if (i&1=1) then
 					for j:=0 to 240 do zp[j]:=zp[j]+128;
-
-				inczp(zp,240);
+				zp:=zp+240;
 			end;
 
 	end;	
@@ -149,15 +148,15 @@ begin
 	SCREEN_FG_COL:=BLACK;
 
 	// The three colors: white, purple and blue
-	clearscreen(WHITE+8,^$D800);
-	MULTICOLOR_CHAR_COL[2]:=PURPLE;
-	MULTICOLOR_CHAR_COL[1]:=BLUE;
+	clearscreen(WHITE+8,screen_col_loc);
+	MULTICOLOR_CHAR_COL[2]:=purple;
+	MULTICOLOR_CHAR_COL[1]:=blue;
 
 	keep01:=peek(^$01,0);
 
-	clearscreen(@clearVal, ^$0400);
-	clearscreen(@clearVal, ^$4400);
-	clearscreen(@clearVal, ^$8400);
+	clearscreen(@clearVal, screen_char_loc);
+	clearscreen(@clearVal, screen_char_loc2);
+	clearscreen(@clearVal, screen_char_loc3);
 
 end;
 
