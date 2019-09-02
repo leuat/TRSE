@@ -29,5 +29,5 @@ current_file = language/01_introduction.ras
 output_type = prg
 data_header_sprites/sprites.flf = 6.92363e-310
 output_debug_symbols = 1
-project_path = tutorials/C64/Tutorials/
-open_files = ,easy/01_hello_world.asm
+project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/Tutorials/
+open_files = ,language/01_introduction.ras, language/10_procedures.ras, language/09_arrays.ras, language/08_and_or.ras, easy/01_hello_world.asm
