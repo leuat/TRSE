@@ -74,6 +74,9 @@ void DialogProjectSettings::FillFromIni()
     ui->chkPassStaLda->setChecked(m_ini->getdouble("post_optimizer_passstalda")==1);
     ui->chkPassLdx->setChecked(m_ini->getdouble("post_optimizer_passldx")==1);
 
+    ui->chkLocalVariables->setChecked(m_ini->getdouble("pascal_settings_use_local_variables")==1);
+
+
     ui->chkPassPhaPla->setChecked(m_ini->getdouble("post_optimizer_passphapla")==1);
     ui->chkPassCmp0->setChecked(m_ini->getdouble("post_optimizer_passcmp")==1);
 
@@ -189,7 +192,8 @@ void DialogProjectSettings::FillToIni()
     m_ini->setFloat("post_optimizer_passphapla", ui->chkPassPhaPla->isChecked());
     m_ini->setFloat("post_optimizer_passcmp", ui->chkPassCmp0->isChecked());
 
-    //  m_ini->setFloat("post_optimize", ui->chkPOEnabled->isChecked());
+
+    m_ini->setFloat("pascal_settings_use_local_variables", ui->chkLocalVariables->isChecked());
 
     if (m_ini->getString("system")=="C128") {
         m_ini->setString("columns", ui->cmbColumns->currentText());

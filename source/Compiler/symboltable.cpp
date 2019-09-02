@@ -102,8 +102,8 @@ void SymbolTable::Initialize()
 }
 
 void SymbolTable::Define(Symbol *s, bool isUsed) {
-    m_symbols[s->m_name] = s;
-    m_symbols[s->m_name]->isUsed = isUsed;
+    m_symbols[m_currentProcedure+ s->m_name] = s;
+    m_symbols[m_currentProcedure+ s->m_name]->isUsed = isUsed;
 }
 
 void SymbolTable::Delete() {
@@ -248,7 +248,7 @@ QStringList SymbolTable::getUnusedVariables()
 }
 
 Symbol *SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
-    //        name = name.toUpper();
+//            name = name.toUpper();
     if (m_constants.contains(name.toUpper())) {
         return m_constants[name.toUpper()];
     }
@@ -266,22 +266,31 @@ Symbol *SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
         return s;
     }
 
-
-    if (!m_symbols.contains(name)) {
+    QString localName = m_currentProcedure+name;
+//    qDebug() << "localName: " << localName;
+    if (!m_symbols.contains(name) && !m_symbols.contains(localName)) {
 
         QString similarSymbol = findSimilarSymbol(name,65,2,QStringList());
         QString em = "";
         if (similarSymbol!="") {
             em+="Did you mean '<font color=\"#A080FF\">"+similarSymbol+"</font>'?<br>";
         }
-
-
         ErrorHandler::e.Error("Could not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>"+em, lineNumber);
         return nullptr;
     }
+
     //qDebug() << name << " " << m_symbols[name]->m_type;
     //        qDebug() << "FOUND "<< name;
 //    qDebug() << "SymbolTable Symbols used : " << name <<m_symbols[name]->isUsed;
+    // Prioritize local name
+  //  qDebug() <<m_symbols.keys();
+//    exit(1);
+    if (m_symbols.contains(localName)) {
+    //    qDebug() << "Found local name " << localName;
+        m_symbols[localName]->isUsed = true;
+        return m_symbols[localName];
+
+    }
     m_symbols[name]->isUsed = true;
     return m_symbols[name];
 }

@@ -231,6 +231,8 @@ void MainWindow::VerifyDefaults()
     if (!m_iniFile.contains("memory_analyzer_window_height"))
         m_iniFile.setFloat("memory_analyzer_window_height", 600);
 
+    if (!m_iniFile.contains("pascal_settings_use_local_variables"))
+        m_iniFile.setFloat("pascal_settings_use_local_variables", 0);
 
 
     if (!m_iniFile.contains("optimizer_remove_unused_symbols"))

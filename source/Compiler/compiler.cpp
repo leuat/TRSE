@@ -43,14 +43,15 @@ void Compiler::Parse(QString text, QStringList lst)
     try {
         m_tree = m_parser.Parse( m_ini->getdouble("optimizer_remove_unused_symbols")==1.0 &&
                                  Syntax::s.m_currentSystem!=AbstractSystem::NES
-                                 ,m_projectIni->getString("vic_memory_config"),Util::fromStringList(m_projectIni->getStringList("global_defines")));
+                                 ,m_projectIni->getString("vic_memory_config"),Util::fromStringList(m_projectIni->getStringList("global_defines")),
+                                 m_projectIni->getdouble("pascal_settings_use_local_variables")==1.0);
         //qDebug() << m_parser.m_preprocessorDefines["ORGASM"];
         //exit(1);
     } catch (FatalErrorException e) {
 //        qDebug() << "ERROR parse " << e.message;
         HandleError(e, "Error during parsing:");
     }
-
+    m_parser.m_symTab->SetCurrentProcedure("");
 }
 
 
@@ -80,7 +81,7 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
         return false;
 
     m_assembler->m_projectDir = project_dir;
-
+    m_assembler->m_symTab->m_useLocals = m_parser.m_symTab->m_useLocals;
 
     if (m_tree!=nullptr)
         try {

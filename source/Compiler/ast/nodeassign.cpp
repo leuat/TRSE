@@ -26,7 +26,7 @@ NodeAssign::NodeAssign(Node *left, Token t, Node *r):Node() {
     m_right = r;
     m_op = t;
     m_left = left;
-   // qDebug() << "NodeAssign " <<TokenType::getType(m_left->getType(nullptr)) << ((NodeVar*)m_left)->value;
+   // qDebug() << "NodeAssign " <<TokenType::getType(m_left->getType(nullptr)) << ((NodeVar*)m_left)->getValue(as);
     if (m_left->getType(nullptr)==TokenType::INTEGER) {// || m_left->getType(nullptr)==TokenType::POINTER) {
  //       qDebug() << "::NodeAssign INTEGER";
 //        m_right->setForceType(TokenType::INTEGER);

@@ -107,7 +107,7 @@ public:
 
 
     void RemoveUnusedProcedures();
-    Node* Parse(bool removeUnusedDecls, QString param, QString globalDefines);
+    Node* Parse(bool removeUnusedDecls, QString param, QString globalDefines, bool useLocals);
     Node* Variable();
     Node* Empty();
     Node* Case();
@@ -122,16 +122,16 @@ public:
     Node* FindProcedure();
     Node* BinaryClause();
     //Node* LogicalClause();
-    Node* Block(bool useOwnSymTab);
-    QVector<Node*> Parameters();
+    Node* Block(bool useOwnSymTab, QString blockName="");
+    QVector<Node*> Parameters(QString blockName);
     Node* ForLoop(bool inclusive);
 //    Node* WhileLoop();
     Node* String();
 
     Node* Conditional(bool isWhileLoop=false);
 //    QVector<Node*> Procedure();
-    QVector<Node*> Declarations(bool isMain);
-    QVector<Node*> VariableDeclarations();
+    QVector<Node*> Declarations(bool isMain, QString blockName);
+    QVector<Node*> VariableDeclarations(QString blockName);
     Node* TypeSpec();
     Node* BuiltinFunction();
     Node* Constant();

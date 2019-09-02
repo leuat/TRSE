@@ -322,7 +322,6 @@ int Parser::getIntVal(Token t)
 {
     int val = t.m_intVal;
     if (t.m_value!="") {
-        //qDebug() << "parser::getintval " <<t.m_value;
         Symbol* s = m_symTab->Lookup(t.m_value,t.m_lineNumber);
         if (s!=nullptr)
             return s->m_value->m_fVal;
@@ -510,11 +509,12 @@ Node *Parser::Variable()
     if (SymbolTable::m_constants.contains(m_currentToken.m_value.toUpper())) {
         Symbol* s = SymbolTable::m_constants[m_currentToken.m_value.toUpper()];
 
-      //  qDebug() << "looking for " << m_currentToken.m_value << " , found symbol: " << s->m_name << " with value " << s->m_value->m_fVal;
+//        qDebug() << "looking for " << m_currentToken.m_value << " , found symbol: " << s->m_name << " with value " << s->m_value->m_fVal << " of type " << s->m_type;
 
 //        qDebug() << m_currentToken.m_value;
 
-//        qDebug() << "Parser::Variable  " << m_currentToken.m_value;
+
+
 
         if (s->m_type=="ADDRESS") m_currentToken.m_type=TokenType::ADDRESS;
         if (s->m_type=="LONG") m_currentToken.m_type=TokenType::LONG;
@@ -537,8 +537,10 @@ Node *Parser::Variable()
             t.m_value = "$"+QString::number( (int)s->m_value->m_fVal,16);
             n = new NodeVar(t,expr);
         }
-        else
+        else {
             n = new NodeNumber(t, s->m_value->m_fVal);
+            //qDebug()  << s->m_value->m_fVal;
+        }
 
     }
     else {
@@ -827,6 +829,7 @@ Node *Parser::Program(QString param)
     Eat(TokenType::PROGRAM);
     NodeVar* varNode = (NodeVar*)Variable();
     QString progName = varNode->value;
+
     Eat(TokenType::SEMI);
     NodeBlock* block = (NodeBlock*)Block(true);
     NodeProgram* program = new NodeProgram(progName,  param, block);
@@ -1103,7 +1106,7 @@ void Parser::PreprocessReplace()
 //    qDebug() << m_preprocessorDefines.keys();
 }
 
-Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines)
+Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines, bool useLocals)
 {
     // Call preprocessor for include files etc
     m_lexer->m_orgText = m_lexer->m_orgText + "\n" + globalDefines+"\n";
@@ -1118,6 +1121,9 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
     m_pass = 1;
     m_parserBlocks.clear();
     m_symTab = new SymbolTable();
+    m_symTab->m_useLocals = useLocals;
+
+
     Node::parserSymTab = m_symTab; // Clear all node flags
     Node::flags.clear();
 
@@ -1193,7 +1199,7 @@ Node *Parser::FindProcedure()
 }
 
 
-Node *Parser::Block(bool useOwnSymTab)
+Node *Parser::Block(bool useOwnSymTab, QString blockName)
 {
 
 /*    if (m_currentToken.m_type!=TokenType::VAR  && m_currentToken.m_type!=TokenType::BEGIN)
@@ -1203,18 +1209,18 @@ Node *Parser::Block(bool useOwnSymTab)
     if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type==TokenType::WEDGE)
         return nullptr;
 
-    QVector<Node*> decl =  Declarations(useOwnSymTab);
+    QVector<Node*> decl =  Declarations(useOwnSymTab, blockName);
     Node* vars =  CompoundStatement();
     return new NodeBlock(m_currentToken,decl, vars, useOwnSymTab);
 }
 
-QVector<Node *> Parser::Parameters()
+QVector<Node *> Parser::Parameters(QString blockName)
 {
     QVector<Node*> decl;
     if (m_currentToken.m_type==TokenType::LPAREN) {
         Eat(TokenType::LPAREN);
         while (m_currentToken.m_type==TokenType::ID) {
-            QVector<Node*> ns = VariableDeclarations();
+            QVector<Node*> ns = VariableDeclarations(blockName);
             for (Node* n: ns)
                 decl.append(n);
 
@@ -1316,13 +1322,13 @@ Node *Parser::String()
 }
 
 
-QVector<Node*> Parser::Declarations(bool isMain)
+QVector<Node*> Parser::Declarations(bool isMain, QString blockName)
 {
     QVector<Node*> decl;
     if (m_currentToken.m_type==TokenType::VAR) {
         Eat(TokenType::VAR);
         while (m_currentToken.m_type==TokenType::ID) {
-            QVector<Node*> ns = VariableDeclarations();
+            QVector<Node*> ns = VariableDeclarations(blockName);
             for (Node* n: ns)
                 decl.append(n);
             Eat(TokenType::SEMI);
@@ -1365,7 +1371,7 @@ QVector<Node*> Parser::Declarations(bool isMain)
         //exit(1);
         QVector<Node*> paramDecl;
         if (m_currentToken.m_type==TokenType::LPAREN)
-            paramDecl = Parameters();
+            paramDecl = Parameters(procName);
         //qDebug()<< "current : " << m_currentToken.getType();
         // If no parameters
         if (m_currentToken.m_type==TokenType::RPAREN)
@@ -1379,7 +1385,7 @@ QVector<Node*> Parser::Declarations(bool isMain)
         m_procedures[procName] = procDecl;
 
         // For recursive procedures, it is vital that we forward declare the current procedure
-        block = Block(true);
+        block = Block(true, procName);
 //        if (block==nullptr)
   //          qDebug() << "Procedure decl: " << procName;
         //decl.append(procDecl);
@@ -1417,8 +1423,13 @@ QVector<Node*> Parser::Declarations(bool isMain)
     return decl;
 }
 
-QVector<Node *> Parser::VariableDeclarations()
+QVector<Node *> Parser::VariableDeclarations(QString blockName)
 {
+    if (blockName!="")
+        m_symTab->SetCurrentProcedure(blockName+"_");
+    else
+        m_symTab->SetCurrentProcedure("");
+
     QVector<Node*> vars;
     vars.append(new NodeVar(m_currentToken));
     QString varName = m_currentToken.m_value;

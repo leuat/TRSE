@@ -27,6 +27,8 @@ var
 	@define rasterLine 210
 	@define yrow 21
 	@define noChars 32	
+	
+	g_currentBank:byte = 0;
 
 	a,i,val, time, shift, k,y: byte;
 	scroll: byte;
@@ -50,8 +52,6 @@ var
 //@define DEBUG_MODE 1
 
 procedure SwitchBank();
-var
-	g_currentBank:byte = 0;
 begin
 	if g_currentBank=0 then 
 		SetBank(VIC_BANK1)

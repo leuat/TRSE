@@ -981,7 +981,7 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
     if (m_node->m_params[0]->isPureNumeric())
         addr = m_node->m_params[0]->HexValue();
     if (var!=nullptr)
-        addr = var->value;
+        addr = var->getValue(as);
 
     NodeNumber* num2 = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
     if (!m_node->m_params[1]->isPureNumeric()) {
@@ -1078,7 +1078,7 @@ void Methods6502::MemCpyUnroll(Assembler* as)
     if (m_node->m_params[0]->isPureNumeric())
         addr = m_node->m_params[0]->HexValue();
     if (var!=nullptr)
-        addr = var->value;
+        addr = var->getValue(as);
 
     NodeNumber* num2 = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
     if (!m_node->m_params[1]->isPureNumeric()) {
@@ -1619,7 +1619,7 @@ void Methods6502::PrintString(Assembler *as)
 
     QString varName = "";
     if (var!=nullptr)
-        varName = var->value;
+        varName = var->getValue(as);
 
 
     if (str!=nullptr) {
@@ -1912,13 +1912,13 @@ void Methods6502::KrillLoad(Assembler *as, bool isCompressed)
     }
     QString filename = ->;*/
     if (varName->getType(as)==TokenType::POINTER) {
-        as->Asm("ldx "+varName->value);
-        as->Asm("ldy "+varName->value +"+1");
+        as->Asm("ldx "+varName->getValue(as));
+        as->Asm("ldy "+varName->getValue(as) +"+1");
 
     }
     else {
-        as->Asm("ldx #<"+varName->value);
-        as->Asm("ldy #>"+varName->value);
+        as->Asm("ldx #<"+varName->getValue(as));
+        as->Asm("ldy #>"+varName->getValue(as));
     }
     if (!isCompressed)
         as->Asm("jsr "+as->m_defines["_LoadrawKrill"]);
@@ -2845,7 +2845,7 @@ void Methods6502::CreateAddressTable(Assembler *as) {
     if (m_node->m_params[0]->isPureNumeric())
         addr = m_node->m_params[0]->HexValue();
     if (var!=nullptr)
-        addr = var->value;
+        addr = var->getValue(as);
 
     if (!m_node->m_params[1]->isPure()) {
         ErrorHandler::e.Error("second parameter must be variable or number", m_node->m_op.m_lineNumber);
@@ -2904,7 +2904,7 @@ void Methods6502::AddressTable(Assembler *as) {
     if (m_node->m_params[0]->isPureNumeric())
         addr = m_node->m_params[0]->HexValue();
     if (var!=nullptr)
-        addr = var->value;
+        addr = var->getValue(as);
 
     if (m_node->m_params[2]->isPureNumeric()) {
         // pure numeric
@@ -3527,7 +3527,7 @@ void Methods6502::IncDec(Assembler *as, QString cmd)
         v->m_expr->Accept(m_dispatcher);
         as->Term();
         as->Asm("tax");
-        as->Asm(cmd +" " + v->value + ",x");
+        as->Asm(cmd +" " + v->getValue(as) + ",x");
         return;
 
     }
@@ -3949,23 +3949,23 @@ void Methods6502::IncZp(Assembler *as)
     m_node->m_params[1]->Build(as);
     as->Term();
     as->Asm("sta screen_x");
-    as->Asm("lda "+ var->value);
+    as->Asm("lda "+ var->getValue(as));
     as->Asm("clc");
     as->Asm("adc screen_x");
     as->Asm("bcc " + lbl);
-    as->Asm("inc "+ var->value + " +1");
+    as->Asm("inc "+ var->getValue(as) + " +1");
     as->Label(lbl);
-    as->Asm("sta "+ var->value);
+    as->Asm("sta "+ var->getValue(as));
 */
 
     m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
     as->Asm("clc");
-    as->Asm("adc "+ var->value);
+    as->Asm("adc "+ var->getValue(as));
     as->Asm("bcc " + lbl);
-    as->Asm("inc "+ var->value + " +1");
+    as->Asm("inc "+ var->getValue(as) + " +1");
     as->Label(lbl);
-    as->Asm("sta "+ var->value);
+    as->Asm("sta "+ var->getValue(as));
 
 
     as->m_labelStack["incscreenx"].pop();
@@ -3986,7 +3986,7 @@ void Methods6502::DecZp(Assembler *as)
         ErrorHandler::e.Error("DecZp: Left-hand parameter must be zeropage pointer");
     }
     as->Comment("Decrease zeropage pointer");
-    as->Asm("lda " + var->value);
+    as->Asm("lda " + var->getValue(as));
     as->Asm("clc");
 //    as->Asm("sec");
     as->Term("sbc ");
@@ -3994,9 +3994,9 @@ void Methods6502::DecZp(Assembler *as)
     as->Term();
 
     as->Asm("bcc " + lbl);
-    as->Asm("dec "+ var->value + " +1");
+    as->Asm("dec "+ var->getValue(as) + " +1");
     as->Label(lbl);
-    as->Asm("sta "+ var->value);
+    as->Asm("sta "+ var->getValue(as));
 
 
 
@@ -4585,7 +4585,7 @@ void Methods6502::WaitNoRasterLines(Assembler *as)
             var = "#" + num->HexValue();
     NodeVar* nvar = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
     if (nvar!=nullptr)
-            var = nvar->value;
+            var = nvar->getValue(as);
     if (var=="")
         ErrorHandler::e.Error("WaitNoRasterLines: parameter must be either constant or variable, not expression", m_node->m_op.m_lineNumber);
 */
@@ -4701,7 +4701,7 @@ void Methods6502::Swap(Assembler *as)
         vars[i]=var;
     }
     as->Comment("Swap variables");
-//    as->Asm("lda " + vars[0]->value);
+//    as->Asm("lda " + vars[0]->getValue(as));
     LoadVar(as, 0);
     as->Asm("tay ");
     LoadVar(as, 1);
@@ -4710,7 +4710,7 @@ void Methods6502::Swap(Assembler *as)
     LoadVar(as, 0);
     as->Asm("tya");
     m_dispatcher->StoreVariable(vars[1]);
-    //as->Asm("sta " + vars[1]->value+ ",x");
+    //as->Asm("sta " + vars[1]->getValue(as)+ ",x");
 
 
 }
@@ -4729,12 +4729,12 @@ void Methods6502::MemCpyLarge(Assembler *as)
     QString defs = as->NewLabel("memcpy_defs");
     QString counter = as->NewLabel("memcpy_counter");
     QString carry = as->NewLabel("memcpy_carry");
-    as->Asm("lda <"+var->value);
-    as->Asm("ldy >"+var->value);
+    as->Asm("lda <"+var->getValue(as));
+    as->Asm("ldy >"+var->getValue(as));
     as->Asm("sta print_text+0");
     as->Asm("sty print_text+1");
-    as->Asm("lda <"+var->value);
-    as->Asm("ldy >"+var->value);
+    as->Asm("lda <"+var->getValue(as));
+    as->Asm("ldy >"+var->getValue(as));
     as->Asm("sta print_text+0");
     as->Asm("sty print_text+1");
     as->Asm("jmp " + defs);
@@ -4750,7 +4750,7 @@ void Methods6502::MemCpyLarge(Assembler *as)
     as->Asm("ldx #0");
     as->Label(lbl);
     //LoadVar(as, 0, "x");
-    as->Asm("lda " + var->value + " + #" + num->HexValue() + ",x");
+    as->Asm("lda " + var->getValue(as) + " + #" + num->HexValue() + ",x");
     SaveVar(as, 2, "x");
     as->Asm("inx");
     as->Term("cpx ");
@@ -4795,7 +4795,7 @@ void Methods6502::Decrunch(Assembler *as)
 
 
 
-    Symbol* varS = as->m_symTab->Lookup(var->value, m_node->m_op.m_lineNumber);
+    Symbol* varS = as->m_symTab->Lookup(var->getValue(as), m_node->m_op.m_lineNumber);
     int pos = varS->m_org + varS->m_size;
 
 //    qDebug() <<" DECRUNCH:" << varS->m_org << varS->m_size;
@@ -4843,7 +4843,7 @@ void Methods6502::CopyImageColorData(Assembler *as)
 
         varName = num->HexValue();
     }
-    else varName = var->value;
+    else varName = var->getValue(as);
 
     NodeNumber * bank = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
     if (bank==nullptr)
@@ -5232,7 +5232,7 @@ void Methods6502::TransformColors(Assembler *as)
         as->Asm("lsr");
         as->Asm("lsr");
         as->Asm("tay");
-        as->Asm("lda " + var->value+ ",y");
+        as->Asm("lda " + var->getValue(as)+ ",y");
 
         as->Asm("asl");
         as->Asm("asl");
@@ -5242,13 +5242,13 @@ void Methods6502::TransformColors(Assembler *as)
         as->Asm("pla");
         as->Asm("and #$0F");
         as->Asm("tay");
-        as->Asm("lda " + var->value+ ",y");
+        as->Asm("lda " + var->getValue(as)+ ",y");
         as->Asm("ora " + tempVar);
         as->Asm("sta "+num->StringValue() + shift +",x");
 
         as->Asm("lda $D800"+shift+",x");
         as->Asm("tay");
-        as->Asm("lda " + var->value+ ",y");
+        as->Asm("lda " + var->getValue(as)+ ",y");
         as->Asm("sta $D800"+shift+",x");
 
 

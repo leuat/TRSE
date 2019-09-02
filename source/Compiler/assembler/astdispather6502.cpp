@@ -89,8 +89,8 @@ void ASTDispather6502::HandleGenericBinop16bit(Node *node) {
 //    as->Asm("sty " +lbl+"+1"); // J is stored
     as->Term();
 
-    //as->Variable(v->value, false);
-    //as->Asm("lda " + v->value + "+1");
+    //as->Variable(v->getValue(as), false);
+    //as->Asm("lda " + v->getValue(as) + "+1");
     node->m_left->m_isWord = true;
     node->m_left->Accept(this);
     as->Term();
@@ -174,23 +174,23 @@ void ASTDispather6502::HandleVarBinopB16bit(Node *node) {
 //        qDebug() << as->m_term;
     as->Term();
   //  as->Asm("clc");
-    //as->Variable(v->value, false);
+    //as->Variable(v->getValue(as), false);
   //  as->Comment(";HEREHERE");
 //    exit(1);
     if (v->getType(as)==TokenType::POINTER || (v->m_op.m_type!=TokenType::ADDRESS && !v->m_fake16bit) )
-        as->Asm("lda " + v->value + "+1");
+        as->Asm("lda " + v->getValue(as) + "+1");
     else
-        as->Asm("lda #>" + v->value + "");
+        as->Asm("lda #>" + v->getValue(as) + "");
 
     as->BinOP(node->m_op.m_type);
     as->Term(lbl+"+1", true);
     as->Asm("tay");
-//    qDebug() << v->value << v->m_op.getType();
+//    qDebug() << v->getValue(as) << v->m_op.getType();
   //  exit(1);
     if (v->getType(as)==TokenType::POINTER || (v->m_op.m_type!=TokenType::ADDRESS && !v->m_fake16bit) )
-        as->Asm("lda "+ v->value);
+        as->Asm("lda "+ v->getValue(as));
     else
-        as->Asm("lda #<"+ v->value);
+        as->Asm("lda #<"+ v->getValue(as));
     //as->Asm("clc");
 
     //            as->ClearTerm();
@@ -227,14 +227,14 @@ bool ASTDispather6502::HandleSingleAddSub(Node *node) {
 /*        if (num!=nullptr)
             qDebug() << "Number:"  <<num->m_val;
         if (vnum!=nullptr)
-            qDebug() << "Var:"  <<vnum->value;*/
+            qDebug() << "Var:"  <<vnum->getValue(as);*/
         as->Comment("Add/sub where right value is constant number");
         if (num!=nullptr && num->m_op.m_type==TokenType::ADDRESS && var!=nullptr) {
             //qDebug() << "ADDRESS: " << num->StringValue();
             //exit(1);
             //as->
             as->ClearTerm();
-            as->Term("lda " + var->value + " + " + num->StringValue());
+            as->Term("lda " + var->getValue(as) + " + " + num->StringValue());
             return true;
         }
         node->m_left->Accept(this);
@@ -377,7 +377,7 @@ void ASTDispather6502::HandleRestBinOp(Node* node) {
 
     if ( dynamic_cast<const NodeVar*>(node->m_left) != nullptr) {
         NodeVar* v= (NodeVar*)node->m_left;
-        varName = v->value;
+        varName = v->getValue(as);
         Symbol* s = as->m_symTab->Lookup(varName, node->m_op.m_lineNumber);
     }
     isWord16 = node->isWord(as);
@@ -623,7 +623,7 @@ void ASTDispather6502::dispatch(NodeProcedure *node)
 void ASTDispather6502::dispatch(NodeProcedureDecl *node)
 {
     node->DispatchConstructor();
-
+    as->m_symTab->SetCurrentProcedure(node->m_procName+"_");
 //    if (node->m_curMemoryBlock!=nullptr)
   //      qDebug() << node->m_procName << "IS IN BLOCK " << node->m_curMemoryBlock->m_name << " STARTING AT " << Util::numToHex(node->m_curMemoryBlock->m_start);
 
@@ -694,6 +694,7 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
     if (node->m_curMemoryBlock!=nullptr) {
         node->m_curMemoryBlock->m_end+=10;
     }
+    as->m_symTab->SetCurrentProcedure("");
 
 }
 
@@ -884,17 +885,22 @@ void ASTDispather6502::dispatch(NodeVarDecl *node)
         m_curMemoryBlock = nullptr;
 
     }*/
-    node->ExecuteSym(as->m_symTab);
+
 
     NodeVar* v = (NodeVar*)node->m_varNode;
     NodeVarType* t = (NodeVarType*)node->m_typeNode;
-
+    QString keep = v->value;
+    v->value = as->m_symTab->getCurrentProcedure()+v->getValue(as);
+//    qDebug() << v->value;
+    node->ExecuteSym(as->m_symTab);
+//    qDebug() << as->m_symTab->m_symbols.keys();
+   //   v->value = keep;
     //        v->m_op.m_type =t->m_op.m_type;
     //v->m_type = t;
 
     if (t->m_op.m_type==TokenType::ARRAY) {
         as->DeclareArray(v->value, t->m_arrayVarType.m_value, t->m_op.m_intVal, t->m_data, t->m_position);
-        //qDebug() << "IS: " << TokenType::types[as->m_symTab->Lookup(v->value)->getTokenType()];
+        //qDebug() << "IS: " << TokenType::types[as->m_symTab->Lookup(v->getValue(as))->getTokenType()];
         node->m_dataSize=t->m_op.m_intVal;
         Symbol* s = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
         s->isUsed=false;
@@ -936,8 +942,9 @@ void ASTDispather6502::dispatch(NodeVarDecl *node)
         DeclarePointer(node);
     }else {
         node->m_dataSize=1;
-        if (t->value.toLower()=="integer") node->m_dataSize = 2;
-        as->DeclareVariable(v->value, t->value, t->initVal);
+        if (t->getValue(as).toLower()=="integer") node->m_dataSize = 2;
+
+        as->DeclareVariable(v->value, t->getValue(as), t->initVal);
     }
 
     if (node->m_curMemoryBlock!=nullptr) {
@@ -956,7 +963,7 @@ void ASTDispather6502::IncSid(NodeVarDecl *node) {
     Appendix app("$"+pos);
 
     app.Append("org $" +pos,1);
-    //        as->Appendix(v->value,0);
+    //        as->Appendix(v->getValue(as),0);
     app.Append("incbin \"" + as->m_projectDir + node->sid.m_outFile + "\"",1);
 
     as->m_appendix.append(app);
@@ -994,7 +1001,7 @@ void ASTDispather6502::IncBin(NodeVarDecl *node) {
         as->Asm("incbin \"" + filename + "\"");
     }
     else {
-        //            qDebug() << "bin: "<<v->value << " at " << t->m_position;
+        //            qDebug() << "bin: "<<v->getValue(as) << " at " << t->m_position;
         Appendix app(t->m_position);
 
         Symbol* typeSymbol = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
@@ -1099,7 +1106,7 @@ void ASTDispather6502::BuildToCmp(Node *node)
 
     NodeVar* varb = dynamic_cast<NodeVar*>(node->m_right);
     if (varb!=nullptr && varb->m_expr==nullptr)
-        b = varb->value;
+        b = varb->getValue(as);
 
     if (node->m_right->isPureNumeric())
 //    NodeNumber* numb = dynamic_cast<NodeNumber*>(node->m_right);
@@ -1169,8 +1176,8 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
         hi = "#" + QString::number(((int)numb->m_val>>8) & 255);
     }
     if (varb!=nullptr) {
-        lo = varb->value;
-        hi = varb->value+ "+1";
+        lo = varb->getValue(as);
+        hi = varb->getValue(as)+ "+1";
     }
 
     //m_left->Build(as);
@@ -1179,30 +1186,30 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
     if (numb!=nullptr || varb!=nullptr) {
         if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::GREATEREQUAL) {
             as->Comment("Compare INTEGER with pure num / var optimization");
-            as->Asm("lda " + vara->value + "+1   ; compare high bytes");
+            as->Asm("lda " + vara->getValue(as) + "+1   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
             as->Asm("bcc " + lbl2);
             as->Asm("bne " + lbl1);
-            as->Asm("lda " + vara->value);
+            as->Asm("lda " + vara->getValue(as));
             as->Asm("cmp " + lo);
             as->Asm("bcc " + lbl2);
         }
         if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL) {
             as->Comment("Compare INTEGER with pure num / var optimization");
-            as->Asm("lda " + vara->value + "+1   ; compare high bytes");
+            as->Asm("lda " + vara->getValue(as) + "+1   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
             as->Asm("bcc " + lbl1);
             as->Asm("bne " + lbl2);
-            as->Asm("lda " + vara->value);
+            as->Asm("lda " + vara->getValue(as));
             as->Asm("cmp " + lo);
             as->Asm("bcs " + lbl2);
         }
         if (node->m_op.m_type==TokenType::EQUALS) {
             as->Comment("Compare INTEGER with pure num / var optimization");
-            as->Asm("lda " + vara->value + "+1   ; compare high bytes");
+            as->Asm("lda " + vara->getValue(as) + "+1   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
             as->Asm("bne " + lbl2);
-            as->Asm("lda " + vara->value);
+            as->Asm("lda " + vara->getValue(as));
             as->Asm("cmp " + lo);
             as->Asm("bne " + lbl2);
             as->Asm("jmp " + lbl1);
@@ -1770,7 +1777,7 @@ void ASTDispather6502::dispatch(NodeForLoop *node)
 
 
     // Get the variable name
-    QString var = dynamic_cast<NodeVar*>(nVar->m_left)->value;
+    QString var = dynamic_cast<NodeVar*>(nVar->m_left)->getValue(as);
     // accept statement (assign variable)
     node->m_a->Accept(this);
 
@@ -1817,7 +1824,7 @@ void ASTDispather6502::LoadPointer(NodeVar *node) {
     }
     if (m=="")
         m="lda ";
-    as->Asm(m+  "(" + node->value+"),y");
+    as->Asm(m+  "(" + node->getValue(as)+"),y");
 
 }
 
@@ -1837,9 +1844,9 @@ void ASTDispather6502::dispatch(NodeVar *node)
 
     node->DispatchConstructor();
 
-    QString  val = node->value;
+    QString  val = node->getValue(as);
     Pmm::Data::d.lineNumber = node->m_op.m_lineNumber;
-    Symbol* s = as->m_symTab->Lookup(node->value, node->m_op.m_lineNumber);
+    Symbol* s = as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber);
     //        if (s==nullptr) {
     //          ErrorHandler::e.Error("Could not find variable '" + value +"'.\nDid you mispell?", m_op.m_lineNumber);
     //    }
@@ -1872,14 +1879,14 @@ void ASTDispather6502::dispatch(NodeVar *node)
 
 
 bool ASTDispather6502::LoadXYVarOrNum(NodeVar *node, Node *other, bool isx) {
-    Symbol* s = as->m_symTab->Lookup(node->value, node->m_op.m_lineNumber);
+    Symbol* s = as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber);
     NodeVar* var = dynamic_cast<NodeVar*>(other);
     //NodeNumber* num = dynamic_cast<NodeNumber*>(other);
     bool isNumber = other->isPureNumeric();
     QString operand = "ldx ";
     if (!isx) operand="ldy ";
     if (var!=nullptr && var->m_expr == nullptr) {
-            as->Asm(operand + var->value);
+            as->Asm(operand + var->getValue(as));
             if (s->m_arrayType==TokenType::INTEGER) // integer array index is *2 (two bytes per array slot)
             {
                 as->Asm("txa   ; watch for bug, Integer array has index range of 0 to 127");
@@ -1904,7 +1911,7 @@ bool ASTDispather6502::LoadXYVarOrNum(NodeVar *node, Node *other, bool isx) {
 void ASTDispather6502::LoadByteArray(NodeVar *node) {
     // Optimizer: if expression is number, just return direct
 
-    Symbol* s = as->m_symTab->Lookup(node->value, node->m_op.m_lineNumber);
+    Symbol* s = as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber);
     if (s->m_arrayType==TokenType::INTEGER)
         as->Comment("Load Integer array");
     else if (s->m_arrayType==TokenType::BYTE)
@@ -1928,10 +1935,10 @@ void ASTDispather6502::LoadByteArray(NodeVar *node) {
     }
     if (m=="")
         m="lda ";
-    as->Asm(m+  node->value+",x");
+    as->Asm(m+  node->getValue(as)+",x");
 
     if (s->m_arrayType==TokenType::INTEGER) { // integer array need to load the high byte also
-        as->Asm("ldy "+  node->value+"+1,x");
+        as->Asm("ldy "+  node->getValue(as)+"+1,x");
     }
 }
 
@@ -1960,7 +1967,7 @@ void ASTDispather6502::LoadVariable(NodeVar *node) {
     /*        if (as->m_symTab->Lookup(value)==nullptr)
                 ErrorHandler::e.Error("Could not find variable '" +value +"' for storing.",m_op.m_lineNumber);
     */
-    TokenType::Type t = as->m_symTab->Lookup(node->value, node->m_op.m_lineNumber)->getTokenType();
+    TokenType::Type t = as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber)->getTokenType();
     if (t==TokenType::ADDRESS || t==TokenType::STRING || t==TokenType::CSTRING || t==TokenType::INCBIN) {
         LoadByteArray(node);
         return;
@@ -1976,18 +1983,18 @@ void ASTDispather6502::LoadVariable(NodeVar *node) {
         else {
             if (node->m_fake16bit)
                 as->Asm("ldy #0 ; ::LoadVariable fake 16 bit ");
-            as->Asm("lda " +node->value);
+            as->Asm("lda " +node->getValue(as));
         }
         return;
     }
     if (t == TokenType::INTEGER) {
         node->m_isWord = true;
         as->Comment("Integer assignment in nodevar");
-        as->Asm("ldy " +node->value);
-        as->Asm("lda " +node->value+"+1");
+        as->Asm("ldy " +node->getValue(as));
+        as->Asm("lda " +node->getValue(as)+"+1");
         return;
     }
-    ErrorHandler::e.Error(TokenType::getType(t) + " assignment not supported yet for exp: " + node->value);
+    ErrorHandler::e.Error(TokenType::getType(t) + " assignment not supported yet for exp: " + node->getValue(as));
     return;
 }
 
@@ -2007,7 +2014,7 @@ void ASTDispather6502::LoadVariable(NodeNumber *node)
 
 void ASTDispather6502::StoreVariable(NodeVar *node) {
     //        as->Comment("VarNode StoreVariable");
-    as->m_symTab->Lookup(node->value, node->m_op.m_lineNumber);
+    as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber);
     //          ErrorHandler::e.Error("Could not find variable '" +value +"' for storing.", m_op.m_lineNumber);
 
     // Is array
@@ -2019,12 +2026,12 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
             if (node->getArrayType(as)==TokenType::INTEGER) {
                 // Store integer array
                 int i = node->m_expr->getValueAsInt(as)*2;
-                as->Asm("sta " + node->value + "+"+ QString::number(i));
-                as->Asm("sty "  + node->value +"+"+ QString::number(i+1));
+                as->Asm("sta " + node->getValue(as) + "+"+ QString::number(i));
+                as->Asm("sty "  + node->getValue(as) +"+"+ QString::number(i+1));
 
             }
             else {
-                as->Asm("sta " + node->value + "+"+ node->m_expr->getValue(as));
+                as->Asm("sta " + node->getValue(as) + "+"+ node->m_expr->getValue(as));
             }
             //                as->Asm("tya");
             return;
@@ -2050,11 +2057,11 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
                 as->Term("ld"+secondReg +" ");
                 node->m_expr->Accept(this);
                 as->Term();
-                as->Asm("sta " +pa + node->value+ pb + "," + secondReg);
+                as->Asm("sta " +pa + node->getValue(as)+ pb + "," + secondReg);
                 if (node->getArrayType(as)==TokenType::INTEGER) {
                     as->Asm("in"+secondReg);
                     as->Asm("tya");
-                    as->Asm("sta "  + node->value + "," + secondReg);
+                    as->Asm("sta "  + node->getValue(as) + "," + secondReg);
                 }
                 return;
             }
@@ -2069,26 +2076,26 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
             as->Term();
             as->Asm("ta" + secondReg);
             as->Asm("pla");
-            as->Asm("sta " +pa + node->value+pb+","+ secondReg);
+            as->Asm("sta " +pa + node->getValue(as)+pb+","+ secondReg);
 
         }
         return;
     }
     else {
         // Not array
-        if (as->m_symTab->Lookup(node->value, node->m_op.m_lineNumber)->getTokenType() == TokenType::BYTE) {
+        if (as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber)->getTokenType() == TokenType::BYTE) {
 
-            as->Asm("sta " + node->value);
+            as->Asm("sta " + node->getValue(as));
             return;
         }
-        if (as->m_symTab->Lookup(node->value, node->m_op.m_lineNumber)->getTokenType() == TokenType::ADDRESS) {
+        if (as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber)->getTokenType() == TokenType::ADDRESS) {
 
-            as->Asm("sta " + node->value);
+            as->Asm("sta " + node->getValue(as));
             return;
         }
-        if (as->m_symTab->Lookup(node->value, node->m_op.m_lineNumber)->getTokenType() == TokenType::INTEGER) {
-            as->Asm("sta " + node->value);
-            as->Asm("sty " + node->value + "+1");
+        if (as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber)->getTokenType() == TokenType::INTEGER) {
+            as->Asm("sta " + node->getValue(as));
+            as->Asm("sty " + node->getValue(as) + "+1");
             return;
         }
 
@@ -2112,7 +2119,7 @@ void ASTDispather6502::AssignString(NodeAssign *node) {
     as->Asm("ldx #0");
     as->Label(lblCpy);
     as->Asm("lda " + str+",x");
-    as->Asm("sta "+left->value +",x");
+    as->Asm("sta "+left->getValue(as) +",x");
     as->Asm("inx");
     as->Asm("cmp #0 ;keep");  // ask post optimiser to not remove this
     as->Asm("bne " + lblCpy);
@@ -2147,8 +2154,8 @@ void ASTDispather6502::AssignPointer(NodeAssign *node) {
         node->m_right->Accept(this);
         as->Term();
      //  as->Comment(";end");
-        as->Asm("sta " + aVar->value);
-        as->Asm("sty "+ aVar->value+"+1");
+        as->Asm("sta " + aVar->getValue(as));
+        as->Asm("sty "+ aVar->getValue(as)+"+1");
         return;
     }
 
@@ -2159,19 +2166,19 @@ void ASTDispather6502::AssignPointer(NodeAssign *node) {
 
         if (bVar->getType(as)!=TokenType::POINTER) {
 //            if (bVar->m_op.m_type==TokenType::ADDRESS) {
-                as->Asm("lda #<" + bVar->value);
-                as->Asm("ldx #>" + bVar->value);
-                as->Asm("sta " + aVar->value);
-                as->Asm("stx "+ aVar->value+"+1");
+                as->Asm("lda #<" + bVar->getValue(as));
+                as->Asm("ldx #>" + bVar->getValue(as));
+                as->Asm("sta " + aVar->getValue(as));
+                as->Asm("stx "+ aVar->getValue(as)+"+1");
                 return;
   //          }
         }
         else
         {
-            as->Asm("lda " + bVar->value);
-            as->Asm("ldx " + bVar->value + "+1");
-            as->Asm("sta " + aVar->value);
-            as->Asm("stx "+ aVar->value+"+1");
+            as->Asm("lda " + bVar->getValue(as));
+            as->Asm("ldx " + bVar->getValue(as) + "+1");
+            as->Asm("sta " + aVar->getValue(as));
+            as->Asm("stx "+ aVar->getValue(as)+"+1");
             return;
         }
 
@@ -2179,8 +2186,8 @@ void ASTDispather6502::AssignPointer(NodeAssign *node) {
     if (node->m_right->isPureNumeric()) {
         as->Asm("lda #" + QString::number(((int)node->m_right->numValue()) & 255));
         as->Asm("ldx #" + QString::number(((int)node->m_right->numValue()>>8) & 255) );
-        as->Asm("sta " + aVar->value);
-        as->Asm("stx "+ aVar->value+"+1");
+        as->Asm("sta " + aVar->getValue(as));
+        as->Asm("stx "+ aVar->getValue(as)+"+1");
         return;
 
     }
@@ -2248,7 +2255,7 @@ bool ASTDispather6502::isSimpleAeqAOpB16Bit(NodeVar *var, NodeAssign *node)
         QString lbl = as->NewLabel("WordAdd");
         as->Comment("WORD optimization: a=a+b");
         //var->Accept(this);
-        as->Asm("lda " + var->value + "+0");
+        as->Asm("lda " + var->getValue(as) + "+0");
         as->Term();
 //        as->Asm("clc");
         as->BinOP(rterm->m_op.m_type);
@@ -2257,16 +2264,16 @@ bool ASTDispather6502::isSimpleAeqAOpB16Bit(NodeVar *var, NodeAssign *node)
         as->Term();
         if (rterm->m_op.m_type==TokenType::PLUS) {
             as->Asm("bcc "+lbl);
-            as->Asm("inc " + var->value + "+1");
+            as->Asm("inc " + var->getValue(as) + "+1");
         }
         else {
             as->Asm("bcs "+lbl);
-            as->Asm("dec " + var->value + "+1");
+            as->Asm("dec " + var->getValue(as) + "+1");
         }
 
         as->Label(lbl);
-        as->Asm("sta " + var->value + "+0");
-//        as->Asm("sty " + var->value +"+1");
+        as->Asm("sta " + var->getValue(as) + "+0");
+//        as->Asm("sty " + var->getValue(as) +"+1");
 
         as->PopLabel("WordAdd");
         return true;
@@ -2287,7 +2294,7 @@ bool ASTDispather6502::IsSimpleIncDec(NodeVar *var, NodeAssign *node) {
     if (rvar==nullptr)
         return false;
 
-    if (rvar->value!=var->value)
+    if (rvar->getValue(as)!=var->getValue(as))
         return false;
 
     NodeNumber* num = dynamic_cast<NodeNumber*>(rterm->m_right);
@@ -2322,7 +2329,7 @@ bool ASTDispather6502::IsSimpleIncDec(NodeVar *var, NodeAssign *node) {
 
 
     if (var->m_expr==nullptr && rvar->m_expr==nullptr) {
-        as->Asm(operand +var->value);
+        as->Asm(operand +var->getValue(as));
         return true;
     }
     else {
@@ -2339,7 +2346,7 @@ bool ASTDispather6502::IsSimpleIncDec(NodeVar *var, NodeAssign *node) {
         if (LoadXYVarOrNum(var, var->m_expr,true)) {
             as->Comment("Optimize byte array " + operand);
 
-            as->Asm(operand + var->value+",x");
+            as->Asm(operand + var->getValue(as)+",x");
             return true;
         }
 
@@ -2417,7 +2424,7 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
 
 
     NodeVar* v = (NodeVar*)dynamic_cast<const NodeVar*>(node->m_left);
-    //        qDebug() << "AssignVariable: " <<v->value << " : " << TokenType::getType( v->getType(as));
+    //        qDebug() << "AssignVariable: " <<v->getValue(as) << " : " << TokenType::getType( v->getType(as));
 
     NodeNumber* num = (NodeNumber*)dynamic_cast<const NodeNumber*>(node->m_left);
 
@@ -2426,6 +2433,7 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
     if (num!=nullptr && num->getType(as)!=TokenType::ADDRESS)
         ErrorHandler::e.Error("Left value must be either variable or memory address");
 
+//    qDebug() << TokenType::getType(num->getType(as));
 
 
     if (num!=nullptr) {
@@ -2436,10 +2444,10 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
     }
 
 
-    as->Comment("Assigning single variable : " + v->value);
-    Symbol* s = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber, v->isAddress());
+    as->Comment("Assigning single variable : " + v->getValue(as));
+    Symbol* s = as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber, v->isAddress());
     //        if (s==nullptr)
-    //          ErrorHandler::e.Error("Could not find variable :" + v->value,m_op.m_lineNumber);
+    //          ErrorHandler::e.Error("Could not find variable :" + v->getValue(as),m_op.m_lineNumber);
 
 
 
@@ -2448,13 +2456,13 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
 
     if (node->m_left->getType(as)==TokenType::POINTER && v->m_expr==nullptr) {
         AssignPointer(node);
-        return v->value;
+        return v->getValue(as);
     }
 
     if ((NodeString*)dynamic_cast<const NodeString*>(node->m_right))
     {
         AssignString(node);
-        return v->value;
+        return v->getValue(as);
     }
     if (node->m_right==nullptr)
         ErrorHandler::e.Error("Node assign: right hand must be expression", node->m_op.m_lineNumber);
@@ -2465,7 +2473,7 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
     }
     // For constant i:=i+1;
     if (IsSimpleIncDec(v,  node))
-        return v->value;
+        return v->getValue(as);
 
     // Special case:
 /*
@@ -2485,8 +2493,8 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
         }
 
         as->Asm("ta" + secondReg);
-        as->Asm("sta " +pa + v->value+pb+","+ secondReg);
-        return v->value;
+        as->Asm("sta " +pa + v->getValue(as)+pb+","+ secondReg);
+        return v->getValue(as);
 
     }
 */
@@ -2495,5 +2503,5 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
     as->Term();
     StoreVariable(v);
 
-     return v->value;
+     return v->getValue(as);
 }

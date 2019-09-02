@@ -30,8 +30,10 @@
 #include "source/Compiler/ast/nodevartype.h"
 #include "source/Compiler/assembler/abstractastdispatcher.h"
 class NodeVar : public Node {
+private:
 public:
     QString value;
+
     Node* m_expr = nullptr;
     //NodeVarType* m_type;
     bool m_fake16bit = false;

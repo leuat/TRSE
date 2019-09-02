@@ -63,13 +63,26 @@ public:
 
 class SymbolTable
 {
+private:
+    QString m_currentProcedure = "";
 public:
     QMap<QString, Symbol*> m_symbols;
+
+    QString getCurrentProcedure()  {
+        return m_currentProcedure;
+    }
+    void SetCurrentProcedure(QString pr) {
+        if (m_useLocals)
+            m_currentProcedure= pr;
+    }
+
+//    QMap<QString,SymbolTable*> m_locals;
+
     static QMap<QString, Symbol*> m_constants;
     QString m_name;
     SymbolTable();
     static SymbolTable s;
-
+    bool m_useLocals = false;
 
     static int m_currentSid;
 

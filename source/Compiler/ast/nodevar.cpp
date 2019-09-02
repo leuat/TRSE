@@ -118,9 +118,19 @@ bool NodeVar::containsPointer(Assembler *as)
 }
 
 QString NodeVar::getValue(Assembler* as) {
+    QString v= value;
+//    return v;
+    if (as->m_symTab->getCurrentProcedure()!="") {
+        //value = value.replace(as->m_symTab->getCurrentProcedure(),"");
+        QString tstv = as->m_symTab->getCurrentProcedure()+value;
+        if (as->m_symTab->m_symbols.contains(tstv))
+                v = tstv;
+
+
+    }
 //    qDebug() << "NodeVar:: getValue : " << value << "  "  << TokenType::getType(getType(as));
-    if (m_forceAddress && !(getType(as)==TokenType::POINTER)) return "#" + value;
-    return value;
+    if (m_forceAddress && !(getType(as)==TokenType::POINTER)) return "#" + v;
+    return v;
 }
 
 bool NodeVar::isAddress() {

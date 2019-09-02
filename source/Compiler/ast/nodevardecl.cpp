@@ -44,7 +44,6 @@ void NodeVarDecl::ExecuteSym(SymbolTable *symTab) {
 
     QString typeName = ((NodeVar*)m_typeNode)->value;
     QString varName = ((NodeVar*)m_varNode)->value;
-    //qDebug() << "NodeVarDecl::ExecuteSym " << varName;
     if (symTab->exists(varName))
           ErrorHandler::e.Error("Variable '" + varName +"' is already defined!",m_op.m_lineNumber);
 
@@ -59,6 +58,7 @@ void NodeVarDecl::ExecuteSym(SymbolTable *symTab) {
 
 
 
+    varName = varName.remove(symTab->getCurrentProcedure());
     Symbol* varSymbol = new VarSymbol(varName, typeSymbol->m_name);
     bool isFlaggedAsUsed = false;
     if (typeName == "INCSID")
