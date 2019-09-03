@@ -143,16 +143,16 @@ begin
 end;
 
 begin
-	screen_fg_col:=black;
-	screen_bg_col:=black;
+	//screen_fg_col:=black;
+	//screen_bg_col:=black;
 	SetCharsetLocation($2000);
 	
 	// Turn on 256char mode
 	Set256CharMode();
 
 	// Clear screen and color memory
-	ClearScreen(@clearChar, screen_char_loc);
-	ClearScreen(@textColor1, screen_col_loc);
+	//ClearScreen(@clearChar, screen_char_loc);
+	//ClearScreen(@textColor1, screen_col_loc);
 
 	// Initialize text pointer
 	pText:=text;
