@@ -56,7 +56,7 @@ function Init()
 		t = ((frame)/noFrames)*3.14159*s - 3.14159/2/(1/s) + 3.14159;
 		tt = (cos(t)+1)*0.5;
 		font ="rom"
-		AddObject("char", charname .. tostring(i), "", "Material0",  font, char+1,   
+		AddObject("char", charname .. tostring(i),"", "Material0",  font, char+1,   
 			0,0,x,            -- position
 			1,1.0,0.5,      -- width xyz 
 			2,0.60-ts,0.55-ts  -- stretch xyz

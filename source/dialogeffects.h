@@ -9,6 +9,7 @@
 #include "source/LeLib/luascript.h"
 #include "source/LeLib/limage/compression.h"
 #include <QPixmap>
+#include "source/Compiler/syntax.h"
 
 namespace Ui {
 class DialogEffects;

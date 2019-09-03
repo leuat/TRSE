@@ -64,7 +64,7 @@ function Init()
 
 	AddObject("box","box1","","MaterialG",  -0.0,0,0,1,100,1, 0, 0.01,5);
 	-- send box through a Perlin node to create som variation
-	AddObject("perlin","box1","","MaterialG",  "box1", 0.1,0.45);
+	AddObject("perlin","box1","","MaterialG",  "box1", 0.1,0.45,0);
 
 	size = 0.2
 	dist = 1

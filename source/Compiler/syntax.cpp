@@ -158,6 +158,11 @@ void Syntax::SetupBuiltinFunctions(QMap<QString, BuiltInFunction>& lst, Abstract
                 paramList << BuiltInFunction::Type::STRING;
             if (p=="p")
                 paramList << BuiltInFunction::Type::PROCEDURE;
+            if (p=="f")
+                paramList << BuiltInFunction::Type::NUMBER;
+            if (p=="ignore")
+                paramList << BuiltInFunction::Type::IGNORE;
+
         }
         if (system.contains(currentSystem) || ignoreSystem) {
             lst[method] = BuiltInFunction(method, paramList);
