@@ -17,7 +17,6 @@ output = {
 <ul>
 <li>"resolution" defines pixel resolution, in this example set up as a 63-byte multicolor sprite (24x21 pixels = 63 bytes)
 <li>"aspect" is the aspect ratio
-<li>"c64_output" is the aspect ratio
 <li>"output_type" specifies output type. 0 = regular 24-bit RGB. 1 = C64 format. 2 = Pico8. More to come!
 <li>"c64_multicolor" if c64 output format is toggled, then you need to specify whether to use multicolor mode (1) or not (0). In multicolor mode, you have twice the colors - but at half the X resolution.
 <li>"c64_imagetype" if c64 output format is toggled, you also need to specify whether to use charset mode (0) or multicolor image mode(1). Charset mode uses 4 colors, where 3 are globals, while multicolor mode will require an additional screen buffer, but can store more individual color information per cell.
