@@ -286,5 +286,6 @@
         <file>resources/text/help/f/output.rtf</file>
         <file>resources/text/help/f/globals.rtf</file>
         <file>resources/images/tutorials/plus4_tut.png</file>
+        <file>resources/text/help/f/introduction_to_the_fjong_raytracer.rtf</file>
     </qresource>
 </RCC>

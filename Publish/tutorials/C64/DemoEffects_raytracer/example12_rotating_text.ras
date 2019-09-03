@@ -10,23 +10,38 @@ var
 
 @requireFile "data/textsprites0.bin" "Please run example12_rotating_text.fjo before compiling this file"
 
+/*
+
+	In this example, we pre-render 28 character as rotating sprites with 16 frames each. We then display
+	the sprites in a funky wavy pattern that it totally scientific and stuff. 
+
+
+*/
+
+	// Text data
 	data1: incbin("data/textsprites0.bin", @dPos0);
 	data2: incbin("data/textsprites1.bin", @dPos1);
+	// Array to store som values
 	vals : array[8] of byte;
 	
 
 	xadd,i,k, m,y,time,l,aadd,keep,tt, lStart: byte=0;
+	// y-placement of sprites
 	ypos: byte=128;
-
+	// Text to display
 	text : string=("TORTILLA");
+	// Colors for text
 	colors : array[8] of byte = (1,2,3,4,5,6,7,8);
 
 
 	itmp:integer;
 	zp,p1, p2,tp,psine : pointer;
+	// Empty sprites, used for space 
 	zero:array[64] of byte;
 
-
+/*
+	This is the "main" method of the effect, which copies 64 bytes
+*/
 procedure SetSprite(ss_i, ss_char, ss_frame:byte);
 begin
 	zp:=@spriteLoc + 64*ss_i;
