@@ -88,9 +88,9 @@ begin
 			dx:=posdx[i]/8;
 			screenmemory[x]:=@charPos+7-dx;
 			if x<>screen_width-1 then
-				screenmemory[x+1]:=$20
+				screenmemory[x+1]:=key_space
 			else
-				screenmemory[0]:=$20;
+				screenmemory[0]:=key_space;
 
 			cp[x]:=color[i];
 

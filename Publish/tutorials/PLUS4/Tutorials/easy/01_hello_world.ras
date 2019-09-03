@@ -4,7 +4,7 @@ var
 
 begin
 		// Fill the screen (at screen_char_loc) with character $20 - "space"
-	ClearScreen($20, screen_char_loc);
+	ClearScreen(key_space, screen_char_loc);
 	// Fill the color ram with yellow
 	ClearScreen(red, screen_col_loc);
 	// Move cursor to x,y position 10,12

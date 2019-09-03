@@ -147,6 +147,7 @@ begin
 	screen_bg_col:=black;
 	SetCharsetLocation($2000);
 	
+	// Turn on 256char mode
 	asm(" lda $ff07");
 	asm(" ora #%10000000");
 	asm(" sta $ff07");

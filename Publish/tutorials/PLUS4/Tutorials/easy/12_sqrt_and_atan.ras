@@ -35,15 +35,14 @@ var
 	lumi:  array[32] of byte = ($02,$02,$12,$12,$22,$22,$32,$32,$42,$42,$58,$58,$68,$67,$77,$71,$77,$67,$68,$58,$58,$42,$42,$32,$32,$22,$22,$12,$12,$02,$02,$02);
 	
 
-//@startblock $8200 "Code far far away!"
 
 procedure RenderScreen();
 begin
 	// could equally well have written "screenmemory:=screen_char_loc;"
-	moveto(0, 0, hi(screen_char_loc));
+	moveto(0,0,hi(screen_char_loc));
 	// Set cp to point to color memory
 	cp:=screen_col_loc;
-	// 24 rows
+	// 23 rows
 	for y:=0 to screen_height-1 do begin
 		//40 columns
 		for x:=0 to screen_width do begin
@@ -70,11 +69,7 @@ begin
 	end;
 	// draw an extra line at the bottom of the screen to illustrate how 
 	// we only draw 16 characters and them shift the character data set instead of actual bytes on the screen
-	for x:=0 to screen_width do begin
-	  screenmemory[x]:=x&15 + @charVal;
-	  cp[x] := $71;
-	end;
-	
+	for x:=0 to screen_width do screenmemory[x]:=x&15 + @charVal;
 end;
 
 

@@ -18,8 +18,8 @@ var
 */
 procedure PrintText();
 begin
-	moveto(0, @ypos, hi(screen_char_loc));
-	memcpy(textPointer, 0, screenmemory, 39);
+	moveto(0,@ypos,hi(screen_char_loc));
+	memcpy(textPointer, 0, screenmemory, screen_width-1);
 end;
 
 /*
@@ -30,14 +30,14 @@ end;
 procedure UpdateScrollAndText();
 begin
 	// Scroll has looped 8 pixels
-	if (scrollVal = 0) then 
+	if (scrollVal=0) then 
 	begin
 		// Reset scroll value
-		scrollVal := 7; 
+		scrollVal:=7; 
 		// Increase text pointer
-		textPointer := textPointer + 1;
+		textPointer:=textPointer+1;
 		// Reset scroller text if string termination "0" is encountered
-		if (textPointer[39] = 0) then textPointer:=text;
+		if (textPointer[screen_width-1]=0) then textPointer:=text;
 		// Print new string to the screen
 		PrintText();			
 	end
@@ -50,10 +50,10 @@ interrupt Bottom();
 interrupt Top();
 begin
 	StartIRQ(@kernal);
-	screen_bg_col := red;
-	screen_fg_col := red;
+	screen_bg_col:=red;
+	screen_fg_col:=red;
 	scrollx(0); // make sure that everything in the "TOP" layer doesn't scroll
-	RasterIRQ(Bottom(), @yposRaster,@kernal);
+	RasterIRQ(Bottom(),@yposRaster,@kernal); // bottom is referenced here, so it needs to be forward declared
 	// Update text and etc from the "Top" layer
 	UpdateScrollAndText();		
 	CloseIRQ();
@@ -67,8 +67,8 @@ begin
 	// Wait() makes sure that we set the background color when the raster is outside the screen,
 	// removing any artifacts
 	wait(6);
-	screen_bg_col := black;
-	screen_fg_col := black;
+	screen_bg_col:=black;
+	screen_fg_col:=black;
 	// Scroll here!
 	Scrollx(scrollVal);
 	
@@ -79,18 +79,16 @@ end;
 	Initializes the screen etc
 */
 procedure InitScreen();
-var filladdr : pointer;
 begin
 	// Clear screen with spaces
-	ClearScreen($20, screen_char_loc);
+	ClearScreen(key_space,screen_char_loc);
 	// Fill the upper screen color ram with black
 	fill(screen_col_loc, black, 0);	
 	// Fill the scroll area with light red
-	filladdr := screen_col_loc + @ypos * screen_width;
-	fill(filladdr, light_red, 0);	
+	fill(screen_col_loc+^@ypos*^40,light_red,0);
 	
 	// Print some static text
-	moveto(6, 2, hi(SCREEN_CHAR_LOC));
+	moveto(6,2,hi(screen_char_loc));
 	printstring("THIS TEXT IS STATIONARY", 0, screen_width);
 	
 	// Removes the 0th and 39th column on the screen, enabling the "smooth" transition at 
@@ -101,7 +99,7 @@ end;
 begin
 	InitScreen();
 	// Let the text pointer point to the actual text
-	textPointer := text;
+	textPointer:=text;
 	// Start the raster chain!
 	StartRasterChain(Top(), 252, @kernal);
 	Loop(); 
