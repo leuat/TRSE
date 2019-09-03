@@ -72,9 +72,16 @@ public:
         return m_currentProcedure;
     }
     void SetCurrentProcedure(QString pr) {
-        if (m_useLocals)
-            m_currentProcedure= pr;
+        if (m_useLocals) {
+            if (pr!="") {
+                m_currentProcedure= "localVariable_"+pr;
+            }
+            else m_currentProcedure="";
+        }
+
     }
+
+    void ExitProcedureScope(bool removeSymbols);
 
 //    QMap<QString,SymbolTable*> m_locals;
 

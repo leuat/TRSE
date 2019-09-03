@@ -276,5 +276,12 @@
         <file>resources/images/tutorials/torus.png</file>
         <file>resources/images/tutorials/floppy.jpeg</file>
         <file>resources/text/help/m/mod.rtf</file>
+        <file>resources/text/help/f/compresscharset.rtf</file>
+        <file>resources/text/help/f/savescreenandcharset.rtf</file>
+        <file>resources/text/help/f/setposition.rtf</file>
+        <file>resources/text/help/f/addrawcharsetdata.rtf</file>
+        <file>resources/text/help/f/saveimage.rtf</file>
+        <file>resources/text/help/f/clearallobjects.rtf</file>
+        <file>resources/text/help/f/message.rtf</file>
     </qresource>
 </RCC>

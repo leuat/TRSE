@@ -694,7 +694,8 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
     if (node->m_curMemoryBlock!=nullptr) {
         node->m_curMemoryBlock->m_end+=10;
     }
-    as->m_symTab->SetCurrentProcedure("");
+
+    as->m_symTab->ExitProcedureScope(false);
 
 }
 

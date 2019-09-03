@@ -76,7 +76,7 @@ public:
     int m_pass = 0;
     bool m_ignoreAll = false;
     QStringList  m_initJumps;
-    SymbolTable* m_symTab;
+    SymbolTable* m_symTab = nullptr;
     Parser();
     Parser(Lexer* l) {
         m_lexer = l;

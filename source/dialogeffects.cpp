@@ -608,6 +608,7 @@ static int SaveImage(lua_State* L) {
     if (QFile::exists(fname))
         QFile::remove(fname);
 
+
     m_effect->m_img.save(fname);
 //    f.open()
   //  m_effect->m_mc->SaveBin(f);

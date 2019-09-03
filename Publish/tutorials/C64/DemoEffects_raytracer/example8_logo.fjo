@@ -11,19 +11,19 @@ The image is saved to disk
 
 globals = {
  	camera = { x = 23, y=-3, z=-0 },
-    fov = 110,
+    fov = 80,
 	target = { x = 0, y=0, z=-0 },
-	light0 = {   	direction = {x=2, y=2.0, z=-5.5 }, 
+	light0 = {   	direction = {x=2, y=4.0, z=-5.5 }, 
 --				color = {x=1, y=1, z=1.0}, 
-				color = {x=2, y=2, z=2.0}, 
+				color = {x=1, y=1, z=1.0}, 
 			},
 	ambient = { x = 0.0, y = 0.0, z = 0.0 },
-    raymarch_steps = 90,
+    raymarch_steps = 60,
  	up = { x = 0, y=1, z=0 },
  --	up = { x = -1, y=0.3, z=0 },
-	raymarch_shadow_steps = 30,
+	raymarch_shadow_steps = 15,
 	
-	sky = 0.0,
+	sky = 1,
 	shadow_scale = 0.2,
 	isPaused = 0
 	
@@ -92,15 +92,21 @@ function Init()
 end
 
 
+time = 0
+
 function UpdateScene()
-	t = -0.4
-	r = 15
-	globals.up.x = -0.5
+
+	t = -0.4+time
+	time = time +0.1
+	r = 25
+	globals.up.x = -0.1
 	globals.camera.x = r*cos(t)
-	globals.target.x = -60
 	globals.camera.z = r*sin(t)
 	globals.camera.y = 10
-	globals.target.y = 0
+	
+	globals.target.y = 10
+	
+
 end
 
 
@@ -109,16 +115,10 @@ function Update()
 	-- since light "1" is no defined, it will be added to the scene
     SetLight(1,  1.0, 0.2,  -4,   s,s*0.2,s)
 
-	frame=frame+1
 
 
---	SaveKoalaImage("images/logo.koa");
-	SaveImage("images/logo.png");
-
+	SaveImage("data/logo.png")
+	Message("Saving image...")
 	UpdateScene()
-
-
-	
-
 
 end

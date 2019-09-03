@@ -4,6 +4,7 @@ var
 @define dataLoc $5100
 @define spriteLoc $5000
 
+
 	@requirefile "data/disksprite.bin" "Please run the raytracer file example11_diskette.fjo before compiling this program" 	
 	sprite : incbin("data/disksprite.bin",@dataLoc);
 	

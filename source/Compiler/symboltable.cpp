@@ -26,6 +26,19 @@ bool SymbolTable::isInitialized = false;
 int SymbolTable::m_currentSid = 0;
 QMap<QString, Symbol*> SymbolTable::m_constants;
 
+void SymbolTable::ExitProcedureScope(bool removeSymbols) {
+    // "TRUE" doesn't work
+    if (removeSymbols)
+    for (QString s: m_symbols.keys()) {
+        if (s.startsWith(m_currentProcedure)) {
+            m_symbols.remove(s);
+        }
+    }
+
+
+    m_currentProcedure="";
+}
+
 SymbolTable::SymbolTable()
 {
     m_currentSid = 0;

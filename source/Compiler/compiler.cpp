@@ -51,7 +51,9 @@ void Compiler::Parse(QString text, QStringList lst)
 //        qDebug() << "ERROR parse " << e.message;
         HandleError(e, "Error during parsing:");
     }
-    m_parser.m_symTab->SetCurrentProcedure("");
+
+    if (m_parser.m_symTab!=nullptr)
+        m_parser.m_symTab->SetCurrentProcedure("");
 }
 
 

@@ -679,3 +679,12 @@ f ; AddC64LineToData; f,f,f,f
 f ; SaveRawData; s
 f ; CompressAndSaveHorizontalData ; f,f,s,s
 f ; AddScreen; f,f,f,f
+f ; SaveScreenAndCharset;s,s
+f ; CompressCharset;f,f,f,f,f,f
+f ; Message;s
+f ; ClearAllObjects;
+f ; SaveImage;s
+f ; AddRawCharsetData; f,f
+
+
+

@@ -1,0 +1,134 @@
+program Rotating_text;
+var  
+
+@define dPos0 $8000
+@define dPos1 $1F00
+@define splitChar 18
+@define useKernal 0
+@define sinePos $C800
+@define spriteLoc $4800
+
+@requireFile "data/textsprites0.bin" "Please run example12_rotating_text.fjo before compiling this file"
+
+	data1: incbin("data/textsprites0.bin", @dPos0);
+	data2: incbin("data/textsprites1.bin", @dPos1);
+	vals : array[8] of byte;
+	
+
+	xadd,i,k, m,y,time,l,aadd,keep,tt, lStart: byte=0;
+	ypos: byte=128;
+
+	text : string=("TORTILLA");
+	colors : array[8] of byte = (1,2,3,4,5,6,7,8);
+
+
+	itmp:integer;
+	zp,p1, p2,tp,psine : pointer;
+	zero:array[64] of byte;
+
+
+procedure SetSprite(ss_i, ss_char, ss_frame:byte);
+begin
+	zp:=@spriteLoc + 64*ss_i;
+	if (ss_char=$20) then begin
+		memcpyfast(zero,0,zp,63);
+		return();
+	end;
+	ss_char:=ss_char-65;
+	// Sprites are split between two data sets. If above, set the other one
+	m:=hi(^@dPos0);
+	if (ss_char>=@splitChar) then begin
+		ss_char:=ss_char-@splitChar;
+		m:=hi(^@dPos1);
+	end;
+	// Set current frame
+	p2:=ss_frame*64;
+	// Then add current character (1024 bytes each, representing 16 frames * 64 bytes)
+	p1:=p2 + toPointer(ss_char*4+m ,0);
+	keep:=peek(^$01,0);
+	enableallram();
+	memcpyfast(p1,0,zp,63);
+	poke(^$01,0,keep);
+end;
+
+procedure UpdateSpritePos();
+begin
+	tt:=time;
+	aadd:=psine[64-tt]/12 + 16;
+	l:=lStart;
+	lStart:=lStart+2;
+	xadd:=16+psine[time*2]/12;
+	tt:=tt*3;
+	i:=sine[time]/2;
+	itmp:=i;
+	// Set x/y pos
+	for i:=0 to 8 do begin
+		m:=l-tt*2;
+		k:=psine[m]/4;
+			
+		y:=ypos+k-49;
+		spritepos(itmp,y,i);
+		k:=psine[m+64-9]/16;			
+		vals[i]:=k;
+
+		itmp:=itmp+xadd;
+		l:=l+aadd;		
+	
+	end;
+	// Set rotation
+	for i:=0 to 8 do begin
+		k:=vals[i];
+		m:=(time+i)&1;
+		if (m=0) then 
+			SetSprite(i,tp[i],k);
+
+	end;
+end;
+
+
+procedure InitSprites();
+begin
+	sprite_bitmask:=$ff;
+	zp:=text;
+	memcpy(colors,0,sprite_color,8);
+	sprite_stretch_X:=$FF;
+	sprite_stretch_Y:=$FF;
+	setbank(vic_bank1);
+	for i:=0 to 8 do 
+		setspriteloc(i, (@spriteLoc-bank_size)/64+i,1);
+
+	sprite_multicolor:=0;
+	fill(zero,0,64);
+
+end;
+
+interrupt Raster();
+begin
+	startirq(@useKernal);
+	UpdateSpritePos();
+	inc(time);
+	closeIRQ();
+end;
+
+
+procedure InitSine2();
+begin
+	psine:=@sinePos;
+	memcpy(sine,0,psine,0);
+end;
+
+
+begin	
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	clearscreen(black, screen_char_loc2);	
+	clearscreen(black, screen_col_loc);	
+	tp:=text;
+	InitSprites();
+	InitSine2();
+	disableciainterrupts();
+	setmemoryconfig(1,@useKernal,0);
+	startrasterchain(Raster(),0,@useKernal);
+	Loop();
+end.
+

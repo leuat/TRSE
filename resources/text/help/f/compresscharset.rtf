@@ -1,0 +1,19 @@
+<h3>CompressCharset( [ x0 ], [ x1 ], [ y0 ], [ y1 ], [ compression level ], [ max chars] );</h3>
+This is an advanced method that will do the following:
+<ul>
+  <li>Generate a charset of a 8-bit C64/VIC-20 etc image
+  <li>Will analyze whichever characters are similar based on the compression level
+  <li>Will cap number of characters to parameter 6 (so you can have 2 or 4 images in 1 charset etc)
+  <li>Will output two kinds of data: one character set and one screen data set.
+  <li>The character & screen data will be added to the internal screen/data sets
+  Simply load the charset and then display the screen data to view decompressed image!
+</ul>
+Example: In the Fjong tutorial #9, an image with various toruses is rendered in a total of 22 frames.
+For each frame, the following command is executed:
+<code>
+CompressCharset(0,40,10,22,  7, 128)
+</code>
+This implies that the screen + character data from the window (0,10) - (40,22) is compressed with
+level 7 to a maximum of 128 characters. This way, a single character set can store 2 frames. In
+this tutorial, a total of 11 character sets are generated and placed at various locations in memory for the
+VIC chip to access.

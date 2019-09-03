@@ -17,8 +17,6 @@ globals = {
 }
 
 
-
-
 output = {
 	-- 32 pixels in multicolor = 16 bytes of c64 multicolor data
 	resolution = { width = 32, height=64},

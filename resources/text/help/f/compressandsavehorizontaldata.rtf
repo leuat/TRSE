@@ -1,10 +1,10 @@
-
+<h3>CompressAndSaveHorizontalData( [ data width], [ compression rate ], [ compressed rows ], [ table of rows ] );</h3>
 This is an advanced method that will do the following: <br>
 <ul>
   <li>Operate on a data set consisting of H rows of each W bytes
   <li>Will analyze whichever rows are similar based to a compression level
   <li>Will output two files: one file with all the compressed data, and another
-      file that contains the lookup talbe for the data itself
+      file that contains the lookup table for the data itself
 </ul>
 Example: In the Fjong tutorial #3, a 32x32 pixel torus is ray-traced for 64 frames. If stored
 in raw format, this would total 32x32*64 = 64k of data and would not fit in the C64. Instead, we
@@ -17,6 +17,7 @@ devined by "how similar" each row of data is.
 -- Assume data width is 32 bytes. Then
 dataWidth = 32
 -- more compression ratio = lower quality = reduced data size
+
 compressionRatio = 3
 CompressAndSaveHorizontalData(dataWidth,compressionRatio, "data.bin","table.bin")
 </code>

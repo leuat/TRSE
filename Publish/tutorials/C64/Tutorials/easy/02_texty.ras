@@ -6,7 +6,7 @@ begin
  	// First, fill color ram with white
 	ClearScreen(white, screen_col_loc);
 	// Set black border
-	screen_bg_col:=green;
+	screen_bg_col:=black;
 	// infinite loop
 	while (true) do
 	begin

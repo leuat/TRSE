@@ -231,8 +231,6 @@ void MainWindow::VerifyDefaults()
     if (!m_iniFile.contains("memory_analyzer_window_height"))
         m_iniFile.setFloat("memory_analyzer_window_height", 600);
 
-    if (!m_iniFile.contains("pascal_settings_use_local_variables"))
-        m_iniFile.setFloat("pascal_settings_use_local_variables", 0);
 
 
     if (!m_iniFile.contains("optimizer_remove_unused_symbols"))
@@ -1192,6 +1190,9 @@ void TRSEProject::VerifyDefaults() {
     if (!m_ini.contains("zeropage_decrunch4"))
         m_ini.setString("zeropage_decrunch4","$4B");
 
+
+    if (!m_ini.contains("pascal_settings_use_local_variables"))
+        m_ini.setFloat("pascal_settings_use_local_variables", 0);
 
     if (!m_ini.contains("system"))
         m_ini.setString("system", "C64");
