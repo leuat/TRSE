@@ -148,9 +148,7 @@ begin
 	SetCharsetLocation($2000);
 	
 	// Turn on 256char mode
-	asm(" lda $ff07");
-	asm(" ora #%10000000");
-	asm(" sta $ff07");
+	Set256CharMode();
 
 	// Clear screen and color memory
 	ClearScreen(@clearChar, screen_char_loc);
@@ -160,7 +158,8 @@ begin
 	pText:=text;
 	// Hide the 0th and 39th column
 	hideborderx(1);
-	asm(" sei"); // Disable interrupts.
+	DisableCIAInterrupts();
+	PreventIRQ(); // Disable interrupts.
 	SetMemoryConfig(1); // Turn ROM off
 	StartRasterChain(MainScreen(),$fe,@useKernal); // Also enables interrupts
 	Loop();

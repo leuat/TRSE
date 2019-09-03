@@ -724,6 +724,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("preventirq")) {
         as->Asm("sei");
     }
+    if (Command("Set256CharMode")) {
+        as->Asm(" lda $ff07");
+        as->Asm(" ora #%10000000");
+        as->Asm(" sta $ff07");
+
+    }
 
     if (Command("enableirq")) {
         as->Asm("asl $d019");
