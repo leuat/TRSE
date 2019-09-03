@@ -37,17 +37,10 @@ output = {
 	-- Image output 
 	resolution = { width = 320, height=200 },
 	-- C64 charset image on / off (if "on", resolution must be <160x200)
-	c64_output = 0,
-	aspect = 1,
+	output_type = 0, -- RGB output
+	aspect = 1.2,
 	-- 0=charset, 1 = multicolor image 
 	c64_imageType = 0,
-	dither = 2,
-	-- 160x200 multicolor
-	c64_multicolor=1,
-	-- dither strength plus modulo. only works for dither type 2
-	ditherStrength = { x=20, y= 1, z=1}, 
-	-- Four c64 colors to use (for charsets)
-	c64_colors = { 14,6,4,1 }
 }
 
 

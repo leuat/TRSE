@@ -40,13 +40,13 @@ output = {
 	ditherStrength= {x=30, y=2, z=2},
 	
 	-- Enable c64 output
-	c64_output = 1,
+	output_type = 1, -- c64 image type
      aspect = 1,
      -- Set character set
 	c64_imageType = 0, -- 0 = character set (4 colors, compressable), 1 = multicolor image 
 	c64_multicolor = 1,
 	-- Define the 4 colors (black, purple, white, blue)
-	c64_colors = { 0,4,1,6 }
+	index_colors = { 0,4,1,6 }
 }
 
 -- Two materials in this scene: a regular one and a black one

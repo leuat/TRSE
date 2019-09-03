@@ -21,7 +21,7 @@ globals = {
 
 output = {
 	resolution = { width = 16, height=16},
-	c64_output = 0,
+	output_type = 0, --RGB output
 	aspect = 1,
 }
 

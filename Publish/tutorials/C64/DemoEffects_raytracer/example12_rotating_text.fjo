@@ -22,14 +22,14 @@ globals = {
 output = {
 -- hi-res sprite! 24x21 = 63 bytes
 	resolution = { width = 24, height=21},
-	c64_output = 1,
+	output_type = 1, --C64 image type
 	c64_imageType = 1,
 	c64_multicolor = 0,
 	ditherStrength = { x=40, y=1, z=1 },
 	aspect = 1,
 
 	dither = 0,
-	c64_colors = { 0,1,1,1 }
+	index_colors = { 0,1,1,1 }
 }
 
 

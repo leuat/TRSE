@@ -685,6 +685,7 @@ f ; Message;s
 f ; ClearAllObjects;
 f ; SaveImage;s
 f ; AddRawCharsetData; f,f
-
+f ; globals;
+f ; output;
 
 

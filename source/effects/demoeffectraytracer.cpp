@@ -23,7 +23,7 @@ void DemoEffectRaytracer::Initialize()
        ((CharsetImage*)(m_mc))->m_currentMode = CharsetImage::FULL_IMAGE;
 
    }
-   if (m_rt->m_globals.m_c64Output == 2.0) {
+   if (m_rt->m_globals.m_outputType == RayTracerGlobals::output_type_pico8) {
        m_mc = new LImageQImage(LColorList::PICO8);
        m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
 
@@ -85,10 +85,10 @@ void DemoEffectRaytracer::Render(QImage &img)
     //qDebug() << "FRAME2";
 
     m_elapsedTime = m_timer.elapsed();
-    m_outputType = m_rt->m_globals.m_c64Output;
-    if (m_outputType==1)
+    m_outputType = m_rt->m_globals.m_outputType;
+    if (m_outputType==RayTracerGlobals::output_type_c64)
         ConvertToC64(m_rt->m_globals.m_dither,m_rt->m_globals.m_multicolor==1,m_rt->m_globals.m_ditherStrength);
-    if (m_outputType==2)
+    if (m_outputType==RayTracerGlobals::output_type_pico8)
         ConvertToP8(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
 
     //qDebug() << "FRAME3";

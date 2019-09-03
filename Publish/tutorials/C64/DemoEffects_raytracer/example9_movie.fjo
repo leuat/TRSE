@@ -19,13 +19,13 @@ globals = {
 
 output = {
 	resolution = { width = 160, height=200},
-	c64_output = 1,
+	output_type = 1, -- c64 image type
 	c64_multicolor = 1,
 	c64_imageType = 0, -- 0 = character set (4 colors, compressable), 1 = multicolor image 
 	aspect = 1,
 	dither = 1,
 	ditherStrength = {x=1, y=1, z=1},
-	c64_colors = { 0,4,1,6 }
+	index_colors = { 0,4,1,6 }
 }
 
 

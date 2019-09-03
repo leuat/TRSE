@@ -78,12 +78,14 @@ public:
     RayTracerGlobals();
     SimplexNoise m_noise;
 
+    static const int output_type_c64 = 1;
+    static const int output_type_pico8 = 2;
 
     double m_steps = 120;
     double m_shadowSteps = 60;
     float m_isPaused = 0;
     float m_skyScale = 1;
-    float m_c64Output = 0;
+    float m_outputType = 0;
     float m_multicolor = 1;
     float m_dither = 0;
     float m_aspect = 1;

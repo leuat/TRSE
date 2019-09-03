@@ -6,7 +6,7 @@ globals = {
 				color = {x=1, y=1, z=1}, 
 			},
 	ambient = { x = 0.0, y = 0.0, z = 0.0 },
-     raymarch_steps = 30,
+    raymarch_steps = 30,
 	raymarch_shadow_steps = 4,
 	up = {x=0.3, y=1, z=0 },
 	sky = 0,
@@ -20,13 +20,13 @@ output = {
 	resolution = { width = 24, height=42},
 --	resolution = { width = 320, height=200},
 	aspect = 1.0,
-	c64_output = 1,
+	output_type = 1, -- c64 image type
 	c64_multicolor = 1,
 	c64_imageType = 0,
 	dither = 0,
 	ditherStrength = { x = 30, y= 1, z= 1},
 
-	c64_colors = { 0,3,1,6 }
+	index_colors = { 0,3,1,6 }
 }
 
 

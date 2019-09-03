@@ -1,0 +1,36 @@
+<h3>the "Globals" structure</h3>
+The "globals" structure contains most of the initial camera setup for the scene such as camera and target position,
+field of view, lighting (lights can be added dynamically) and ray marching properties.
+<code>
+globals = {
+        camera = { x = 23, y=0,   z=0 },
+        target = { x = 0,  y=0.0, z=0 },
+        up = {x=0.3, y=1, z=0 },
+
+        fov = 40,
+
+        light0 = {   	direction = {x=1, y=0.0, z=-0.2 },
+                        color = {x=1, y=1, z=1},
+                        },
+
+        ambient = { x = 0.0, y = 0.0, z = 0.0 },
+
+        raymarch_steps = 30,
+        raymarch_shadow_steps = 4,
+        sky = 0,
+        shadow_scale = 0.5,
+        isPaused = 0
+}
+</code>
+<ul>
+<li>"camera" defines camera vec3
+<li>"target" defines target vec3
+<li>"up" defines the up vec3
+<li>"fov" is field-of-view angle, between 0 and 120
+<li>"light0" sets up directional light 0, both direction and color
+<li>"ambient" defines background color
+<li>"raymarch_steps" defines the number of steps per ray marching. Higher values yields more accuary at lower rendering speed.
+<li>"raymarch_shadow_steps" defines the number of steps per shadow ray marching. Higher values yields more shadow accuary at lower rendering speed.
+<li>"sky" defines a global background sky value, between 0 (black) and 1
+<li>"shadow_scale" sets the "strength" of the shadows, 1 for no shadows and 0 for completely black.
+</ul>

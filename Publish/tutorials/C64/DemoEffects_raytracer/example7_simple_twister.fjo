@@ -20,13 +20,13 @@ globals = {
 output = {
 	-- 32 pixels in multicolor = 16 bytes of c64 multicolor data
 	resolution = { width = 32, height=64},
-	c64_output = 1,
+	output_type = 1, -- c64 image type
 	c64_imageType=0,
 	aspect=1,
 	c64_multicolor=1,
 	dither = 2,
 	ditherStrength={x=30,y=1,z=1},
-	c64_colors = { 0,1,4,6 }
+	index_colors = { 0,1,4,6 }
 }
 
 

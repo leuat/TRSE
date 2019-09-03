@@ -18,7 +18,7 @@ globals = {
 
 output = {
 	resolution = { width = 160, height=200 },
-	c64_output = 1,
+	output_type = 1, -- c64 image type
 	aspect = 1,
 	-- 0=charset, 1 = multicolor image 
 	c64_imageType = 0,
@@ -27,7 +27,7 @@ output = {
 	c64_multicolor=1,
 	-- dither strength plus modulo. only works for dither type 2
 	ditherStrength = { x=30, y= 1, z=1}, 
-	c64_colors = { 0,6,4,1 }
+	index_colors = { 0,6,4,1 }
 }
 
 

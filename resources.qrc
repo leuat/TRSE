@@ -283,5 +283,7 @@
         <file>resources/text/help/f/saveimage.rtf</file>
         <file>resources/text/help/f/clearallobjects.rtf</file>
         <file>resources/text/help/f/message.rtf</file>
+        <file>resources/text/help/f/output.rtf</file>
+        <file>resources/text/help/f/globals.rtf</file>
     </qresource>
 </RCC>

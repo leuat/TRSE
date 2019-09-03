@@ -34,7 +34,7 @@ output = {
 	resolution = { width = 128, height=128},
 --	resolution = { width = 64, height=64},
 	aspect = 1.2,
-	c64_output = 0, -- no c64 output
+	output_type = 0, -- no c64 output, RGB
 }
 
 

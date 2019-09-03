@@ -883,9 +883,9 @@ void DialogEffects::UpdateGlobals()
     m_rt.m_globals.m_width = m_script->get<float>("output.resolution.width");
     m_rt.m_globals.m_height = m_script->get<float>("output.resolution.height");
 
-    m_rt.m_globals.m_c64Output = m_script->get<float>("output.c64_output");
+    m_rt.m_globals.m_outputType = m_script->get<float>("output.output_type");
     m_rt.m_globals.m_aspect = m_script->get<float>("output.aspect");
-    if (m_rt.m_globals.m_c64Output)  {
+    if (m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_c64)  {
 
         m_rt.m_globals.m_multicolor = m_script->get<float>("output.c64_multicolor");
         m_rt.m_globals.m_dither = m_script->get<float>("output.dither");
@@ -893,7 +893,7 @@ void DialogEffects::UpdateGlobals()
         //   if (m_script->lua_gettostack("output.c64_imageType"))
         m_rt.m_globals.m_c64ImageType = m_script->get<float>("output.c64_imageType");
 
-        m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.c64_colors");
+        m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.index_colors");
     }
 
 
