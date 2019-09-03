@@ -90,8 +90,7 @@ end;
 interrupt RasterMain();
 begin
 	StartIRQ(@useKernal);
-	if (scroll&1=1) then
-	  ShiftCharsetData();	
+	if (scroll&1=1) then	ShiftCharsetData();
 
 	UpdateScroll();
 	scrollx(scroll);
