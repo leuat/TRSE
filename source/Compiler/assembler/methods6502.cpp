@@ -3562,13 +3562,10 @@ void Methods6502::SetMemoryConfig(Assembler *as)
     m_node->RequireNumber(m_node->m_params[1], "SetMemoryConfig", m_node->m_op.m_lineNumber);
     m_node->RequireNumber(m_node->m_params[2], "SetMemoryConfig", m_node->m_op.m_lineNumber);
 
-    NodeNumber* num1 = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
-    NodeNumber* num2 = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
-    NodeNumber* num3 = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
 
-    int n1 = num1->m_val; // Kernal
-    int n2 = num2->m_val; // Basic
-    int n3 = num3->m_val; // IO
+    int n1 = m_node->m_params[0]->getValueAsInt(as); // Kernal
+    int n2 = m_node->m_params[1]->getValueAsInt(as); // Basic
+    int n3 = m_node->m_params[2]->getValueAsInt(as); // IO
 
     if (n1==1 && n2==0 && n3 == 0)
         n3=1; // Bit 2 must be toggled
@@ -3602,7 +3599,7 @@ void Methods6502::SetMemoryConfig(Assembler *as)
     if (Syntax::s.m_currentSystem == AbstractSystem::PLUS4) {
         m_node->RequireNumber(m_node->m_params[0], "SetMemoryConfig", m_node->m_op.m_lineNumber);
 
-        if (dynamic_cast<NodeNumber*>(m_node->m_params[0])->m_val!=0)
+        if (m_node->m_params[0]->getValueAsInt(as)!=0)
             as->Asm("sta $ff3f");
         else
             as->Asm("sta $ff3e");
