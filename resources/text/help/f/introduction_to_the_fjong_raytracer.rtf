@@ -1,0 +1,42 @@
+<h3>Introduction to the TRSE "Fjong" ray tracer</h3>
+<p>
+What is "Fjong"? Well first of all: it's just a simple real-time ray tracer that is able
+to render scenes and output data to a format that 8/16 bit computers can understand.
+<p>And what does "Fjong" it self mean? Fjong is just a name, a parody of "Phong" from the
+"Phong-blinn" shading model. Fjong was also the name of my 3D engine back in 1996, and also means something
+like "spiffy" in Norwegian.
+<h3>The Ray Tracer and demo effects</h3>
+To explain how the ray tracer works, let's go through an example: <b>Example 7, the twister.</b>
+A twister works in the following manner: Render a single line of a block that is rotating around the Y-axis (up), with
+a input value between 0 and 360 degrees. You can either do this real-time, or you can generate som data
+that you just copy to the screen.
+<p>Now, in order to actually draw the twisting, you just select different values of the rotational angle for each line. You'd
+typically use a sine function for this, and then you'll get the effect that the whole thing "twists".
+<p>In order to make the twister look *good*, you should pre-calculate the data, preferably having
+shadows etc. All you need to do is to render a rotating block, save 1 line of data,
+rotate again, save 1 line.. and repeat until you have saved 1 line for each angle of the block.
+<p>The Fjong framework allows the user to set up this kind of scene, but also make it realistic - with
+reflections and shadows and various material properties. Especially shadows are important for the twister
+to look good. The framework lets the user define a scene, which is then updated for each frame. In addition
+to this, the user can execute various internal commands such as "add data", "compress data", "save to disk" etc.
+<h3>Structure of a Fjong program</h3>
+A fjong ray-tracer file is compiled and run just like a .ras file, and you press ctrl+R to run it. The fjong ".fjo" files
+are written in standard Lua (see http://luatut.com/introduction.html for an introduction to the Lua language), but
+has a lot of custom bindings to TRSE (think of built-in-functions). These functions are typically of the following type:
+<ul>
+<li>Add/remove 3D objects
+<li>Modify position/rotation/properties of 3D objects
+<li>Compress and / or add data to the interal data collection
+<li>Analyse scenes
+<li>Save data/images etc to disk
+</ul>
+A Fjong file *must* contain the following four parts:
+<ul>
+<li>A <b>globals</b> structure that contains camera, scene (lights, sky) and rendering (detail levels etc) information.
+<li>An <b>output</b> structure that contains image properties such as pixel size, c64 type (multicolor etc), list of indexed colors to use, dithering information etc
+<li>An <b>Init()</b> function that will be called on start
+<li>An <b>Update()</b> function that will be called on each frame
+</ul>
+For instance, you set up the initial camera properties in the "globals" structure, buy you can change
+camera movement / lighting etc from the "Update()" method on each frame.
+<p>For more examples, check out the <b>output</b> or <b>globals</b> help texts, or examine the various example files / tutorials within the ray tracer tutorial folder!

@@ -386,6 +386,11 @@ m; toColor; OK64; b,b,b
 m; setPalette; OK64; b,b,b,b
 m; blit; OK64; b,b,b,b,b,b
 
+
+# PLUS4 specific methods
+
+m; Set256CharMode; PLUS4;
+
 # PLUS4 specific constants
 
 c; SCREEN_BG_COL; PLUS4; a; $ff19
@@ -687,5 +692,5 @@ f ; SaveImage;s
 f ; AddRawCharsetData; f,f
 f ; globals;
 f ; output;
-
+f ; introduction_to_the_fjong_raytracer;
 

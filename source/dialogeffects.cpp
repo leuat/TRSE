@@ -51,7 +51,7 @@ static bool VerifyFjongParameters(lua_State* L, QString method) {
 //    qDebug() <<"HERE" << f.m_params.count();
     for (BuiltInFunction::Type t : f.m_params) {
         N++;
-        if (t==BuiltInFunction::IGNORE)
+        if (t==BuiltInFunction::IGNOREPARAM)
             continue;
         if (t==BuiltInFunction::STRING) {
             if (!lua_isstring(L,N)) {

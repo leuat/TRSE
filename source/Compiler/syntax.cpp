@@ -161,7 +161,7 @@ void Syntax::SetupBuiltinFunctions(QMap<QString, BuiltInFunction>& lst, Abstract
             if (p=="f")
                 paramList << BuiltInFunction::Type::NUMBER;
             if (p=="ignore")
-                paramList << BuiltInFunction::Type::IGNORE;
+                paramList << BuiltInFunction::Type::IGNOREPARAM;
 
         }
         if (system.contains(currentSystem) || ignoreSystem) {

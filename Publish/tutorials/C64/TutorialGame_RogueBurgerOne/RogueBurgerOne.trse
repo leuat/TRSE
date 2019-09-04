@@ -36,6 +36,9 @@ override_target_settings_prg = 0
 build_list = ,
 current_file = RogueBurgerOne.ras
 output_debug_symbols = 1
+<<<<<<< HEAD
 project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/TutorialGame_RogueBurgerOne/
 open_files = ,RogueBurgerOne.ras
 pascal_settings_use_local_variables = 0
+=======
+>>>>>>> 5eb6ac8eadfbf502fd2e32183b81644f8b7e85c2

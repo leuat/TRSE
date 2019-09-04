@@ -5,28 +5,57 @@ var
 @define dPos1 $1F00
 @define splitChar 18
 @define useKernal 0
-@define sinePos $C800
 @define spriteLoc $4800
 
 @requireFile "data/textsprites0.bin" "Please run example12_rotating_text.fjo before compiling this file"
 
+/*
+
+	In this example, we pre-render 28 character as rotating sprites with 16 frames each. We then display
+	the sprites in a funky wavy pattern that it totally scientific and stuff. 
+
+
+*/
+
+	// Text data
 	data1: incbin("data/textsprites0.bin", @dPos0);
 	data2: incbin("data/textsprites1.bin", @dPos1);
+	// Array to store som values
 	vals : array[8] of byte;
 	
 
 	xadd,i,k, m,y,time,l,aadd,keep,tt, lStart: byte=0;
+	// y-placement of sprites
 	ypos: byte=128;
-
+	// Text to display
 	text : string=("TORTILLA");
+	// Colors for text
 	colors : array[8] of byte = (1,2,3,4,5,6,7,8);
 
 
 	itmp:integer;
-	zp,p1, p2,tp,psine : pointer;
+	zp,p1, p2,tp : pointer;
+	// Empty sprites, used for space 
 	zero:array[64] of byte;
 
+/*
+	This is the "main" method of the effect, which copies 64 bytes of sprite data
+	to the sprite pointer location. The hard part is finding the current frame of the current letter:
+	- each frame is 64 bytes (1 sprite)
+	- 1 letter has 16 pre-rendered sprites, so 16*64 bytes = 1024 bytes of data per letter
+	So in order to find "frame no N of letter L", you need to find L*1024 + N*64
+	The "64" is multiplied directly, but we use a trick to obtain the *1024: since 
+	adding a 1 to a high byte is the same as 256, then adding 4 bytes to the high byte counts as 1024. Therefore, we
+	can obtain the high byte of the position by : adding 4*L. This is all performed in the following lines:
 
+	// Set p2 to 64*current frame	
+	p2:=ss_frame*64;
+	// Then add current character (1024 bytes each, representing 16 frames * 64 bytes)
+	p1:=p2 + toPointer(ss_char*4+m ,0);
+
+	here, "m" represents the base high byte of the memory address of the data.
+	
+*/
 procedure SetSprite(ss_i, ss_char, ss_frame:byte);
 begin
 	zp:=@spriteLoc + 64*ss_i;
@@ -47,35 +76,40 @@ begin
 	p1:=p2 + toPointer(ss_char*4+m ,0);
 	keep:=peek(^$01,0);
 	enableallram();
+	// Copy 64 bytes of data!
+	// We can use "fast" since the count of bytes is less than 127
 	memcpyfast(p1,0,zp,63);
 	poke(^$01,0,keep);
 end;
-
+/*
+	Magical method that does some funky stuff. Basically
+	calculates both the position and angles. Can be switched out to something very more basic, but this looks way cooler. 
+*/
 procedure UpdateSpritePos();
 begin
 	tt:=time;
-	aadd:=psine[64-tt]/12 + 16;
+	aadd:=sine[64-tt]/12 + 16;
 	l:=lStart;
 	lStart:=lStart+2;
-	xadd:=16+psine[time*2]/12;
+	xadd:=16+sine[time*2]/12;
 	tt:=tt*3;
 	i:=sine[time]/2;
 	itmp:=i;
 	// Set x/y pos
 	for i:=0 to 8 do begin
 		m:=l-tt*2;
-		k:=psine[m]/4;
+		k:=sine[m]/4;
 			
 		y:=ypos+k-49;
 		spritepos(itmp,y,i);
-		k:=psine[m+64-9]/16;			
+		k:=sine[m+64-9]/16;			
 		vals[i]:=k;
 
 		itmp:=itmp+xadd;
 		l:=l+aadd;		
 	
 	end;
-	// Set rotation
+	// Set rotation and sprites
 	for i:=0 to 8 do begin
 		k:=vals[i];
 		m:=(time+i)&1;
@@ -85,7 +119,7 @@ begin
 	end;
 end;
 
-
+// Sets up the sprites, pointer position and colors 
 procedure InitSprites();
 begin
 	sprite_bitmask:=$ff;
@@ -102,6 +136,7 @@ begin
 
 end;
 
+// Main raster, only calls UpdateSpritePos
 interrupt Raster();
 begin
 	startirq(@useKernal);
@@ -111,13 +146,7 @@ begin
 end;
 
 
-procedure InitSine2();
-begin
-	psine:=@sinePos;
-	memcpy(sine,0,psine,0);
-end;
-
-
+// Main block
 begin	
 	screen_bg_col:=black;
 	screen_fg_col:=black;
@@ -125,7 +154,6 @@ begin
 	clearscreen(black, screen_col_loc);	
 	tp:=text;
 	InitSprites();
-	InitSine2();
 	disableciainterrupts();
 	setmemoryconfig(1,@useKernal,0);
 	startrasterchain(Raster(),0,@useKernal);

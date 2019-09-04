@@ -56,7 +56,7 @@ public:
 
 class BuiltInFunction {
 public:
-    enum Type {STRING, NUMBER, ADDRESS, BYTE, INTEGER, PROCEDURE, LONG, IGNORE};
+    enum Type {STRING, NUMBER, ADDRESS, BYTE, INTEGER, PROCEDURE, LONG, IGNOREPARAM};
     QString m_name;
     QList<Type> m_params;
 
