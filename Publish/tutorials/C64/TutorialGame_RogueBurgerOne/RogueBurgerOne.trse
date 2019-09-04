@@ -38,3 +38,4 @@ current_file = RogueBurgerOne.ras
 output_debug_symbols = 1
 project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/TutorialGame_RogueBurgerOne/
 open_files = ,RogueBurgerOne.ras
+pascal_settings_use_local_variables = 0

@@ -43,6 +43,13 @@ public:
     void Delete() override;
 
 
+    void parseConstants(SymbolTable* symTab) override {
+        if (m_procedure!=nullptr)
+            m_procedure->parseConstants(symTab);
+        for (Node* n : m_parameters)
+            n->parseConstants(symTab);
+    }
+
     void ExecuteSym(SymbolTable* symTab) override;
 
     void Accept(AbstractASTDispatcher* dispatcher) override {

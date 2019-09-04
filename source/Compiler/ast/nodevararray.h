@@ -37,6 +37,14 @@ public:
     void StoreAcc(Assembler* as);
 
 
+    void parseConstants(SymbolTable* symTab) override {
+        if (m_var!=nullptr)
+            m_var->parseConstants(symTab);
+        if (m_expr!=nullptr)
+            m_expr->parseConstants(symTab);
+    }
+
+
     void ExecuteSym(SymbolTable* symTab);
 
 

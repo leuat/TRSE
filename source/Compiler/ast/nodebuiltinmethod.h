@@ -53,6 +53,10 @@ public:
         }
     }
 
+    void parseConstants(SymbolTable* symTab) override {
+        for (Node* n:m_params)
+            n->parseConstants(symTab);
+    }
 
 
     void ExecuteSym(SymbolTable* symTab) override {

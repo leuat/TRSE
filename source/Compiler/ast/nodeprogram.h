@@ -44,6 +44,11 @@ public:
         m_param = p;
     }
 
+    void parseConstants(SymbolTable* symTab) override {
+        if (m_NodeBlock!=nullptr)
+            m_NodeBlock->parseConstants(symTab);
+    }
+
 
 
 

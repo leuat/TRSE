@@ -57,6 +57,18 @@ public:
     }*/
     NodeConditional(Token op, int forcePage, Node* clause, Node* block, bool isWhile, Node* elseBlock=nullptr);
 
+
+    void parseConstants(SymbolTable* symTab) override {
+        if (m_block!=nullptr)
+            m_block->parseConstants(symTab);
+        if (m_elseBlock!=nullptr)
+            m_elseBlock->parseConstants(symTab);
+        if (m_binaryClause!=nullptr)
+            m_binaryClause->parseConstants(symTab);
+    }
+
+
+
 /*    void ConditionalTryFail(Assembler* , QString labelFail, int i);
     void ConditionalTrySuccess(Assembler* , QString labelFail, int i);
 */

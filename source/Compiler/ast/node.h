@@ -79,7 +79,7 @@ public:
 
     int MaintainBlocks(Assembler* as);
     virtual bool isPointer(Assembler* as)  { return false;}
-
+    virtual bool is8bitValue(Assembler* as) { return true; }
     TokenType::Type m_forceType = TokenType::NADA;
 
     int m_cycleCounter;
@@ -148,6 +148,10 @@ public:
 
     bool verifyBlockBranchSize(Assembler *as, Node* testBlock);
 
+
+    virtual void parseConstants(SymbolTable* symTab) {
+
+    }
 
 };
 

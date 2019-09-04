@@ -27,6 +27,15 @@ public:
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);
     }
+    void parseConstants(SymbolTable* symTab) override {
+        if (m_variable!=nullptr)
+            m_variable->parseConstants(symTab);
+        for (Node* n:m_conditionals)
+            n->parseConstants(symTab);
+        for (Node* n: m_statements)
+            n->parseConstants(symTab);
+    }
+
 
 };
 
