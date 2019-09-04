@@ -7,9 +7,9 @@ var
 
 /*
 	In this tutorial we first use the 2x2 font to generate
-	sprite data for A-Z.
+	sprite data for A-Z. We therefore start off by copying the 2x2 (16x16 pixel) blocks to the 24x21 pixel sprite blocks.
 
-	There are max 8 sprites displayed on the screen at any time. 
+	There are max 8 sprites displayed on the screen at any time, and the sprites are "recycled" when leaving the screen. 
 */
 
 
@@ -173,7 +173,7 @@ begin
 	sprite_stretch_Y:=$FF;
 
 	fill(textSprite_status,0,@maxTextSprites);
-
+	// Set up sine function
 	for i:=0 to 0 do
 		temp2[i]:=sine[i]/@spriteScrollerWaviness;
 

@@ -68,13 +68,19 @@ end;
 
 
 
+/*
+	Main method. Increases the scroll value. 
+	Makes sure that various parts of the screen are copied
+	for various values of the scroll register (since copying all data + color data would be impossible).
 
+*/
 procedure VerticalScroll();
 begin
 		g_vscroll:=(g_vscroll+1)&7;
 
 		if g_vscroll=0 then begin
 			WaitForRaster(150);
+			// Copy color data on scroll=0, but do it when the raster has passed
 			CopyColor(0);
 		end;
 

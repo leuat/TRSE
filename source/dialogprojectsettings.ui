@@ -43,7 +43,7 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -370,13 +370,13 @@
         <attribute name="title">
          <string>Pascal settings</string>
         </attribute>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
            <x>30</x>
            <y>50</y>
            <width>771</width>
-           <height>71</height>
+           <height>93</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_8">

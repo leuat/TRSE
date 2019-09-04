@@ -37,4 +37,4 @@ override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
 project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/Tutorials/
-open_files = ,intermediate/04_2x2scroller.ras, advanced/06_megascroller.ras
+open_files = ,language/01_introduction.ras, advanced/06_megascroller.ras

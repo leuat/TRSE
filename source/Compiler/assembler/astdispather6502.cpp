@@ -2253,29 +2253,26 @@ bool ASTDispather6502::isSimpleAeqAOpB16Bit(NodeVar *var, NodeAssign *node)
         return false;
 
     // right first is var
-//    NodeVar* rvar = dynamic_cast<NodeVar*>(rterm->m_left);
+     NodeVar* rvar = dynamic_cast<NodeVar*>(rterm->m_left);
 
 //    NodeVar* rrvar = dynamic_cast<NodeVar*>(rterm->m_right);
 //    NodeNumber* rrnum = dynamic_cast<NodeNumber*>(rterm->m_right);
 
+//    qDebug() << "IsPure "<<rterm->m_right->isPure();
 
-    if (!rterm->m_right->isPure())
+    bool variable = rvar!=nullptr;
+
+    if (!variable)
+        if (!rterm->m_right->isPure())
         return false;
 
-    //        if (var->m_expr!=nullptr) {
-    //        return false;
-    //      }
-
-//    qDebug() << "isSimpleAqe : HERE " << TokenType::getType(rterm->m_op.m_type) ;
 
     if (!(rterm->m_op.m_type==TokenType::PLUS || rterm->m_op.m_type==TokenType::MINUS))
         return false;
-//    exit(1);
-//    return false;
-//    qDebug() << "ASTDispather6502::isSimpleAeqAOpB16Bit " <<  rterm->m_right->isPure() <<  rterm->m_right->is8bitValue(as);
+//    qDebug() << "Cont" << var->isWord(as) << rterm->m_right->is8bitValue(as) ;
+        if (var->isWord(as) &&  rterm->m_right->is8bitValue(as)) {
+  //          qDebug() << "Cont";
 
-//    if (var->isWord(as) && !rterm->m_right->isWord(as)) {
-        if (var->isWord(as) && rterm->m_right->isPure() &&  rterm->m_right->is8bitValue(as)) {
  //       qDebug() << "ASTDispather6502::isSimpleAeqAOpB16Bit HERE";
         QString lbl = as->NewLabel("WordAdd");
         as->Comment("WORD optimization: a=a+b");
@@ -2327,6 +2324,7 @@ bool ASTDispather6502::IsSimpleIncDec(NodeVar *var, NodeAssign *node) {
         return false;
 
 
+
 //    NodeNumber* num = dynamic_cast<NodeNumber*>(rterm->m_right);
     bool isPureNumber = rterm->m_right->isPureNumeric();
 
@@ -2341,8 +2339,10 @@ bool ASTDispather6502::IsSimpleIncDec(NodeVar *var, NodeAssign *node) {
             return isSimpleAeqAOpB(var, node);
         }
     }
-    else
+    else {
+
         return isSimpleAeqAOpB16Bit(var, node);
+    }
 
 //    if (var->isWord(as))
   //      return false;

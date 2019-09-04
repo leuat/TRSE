@@ -12,6 +12,12 @@ var
 
 
 /*
+
+	Not yet updated.
+*/
+
+
+/*
   switch between bank 0 and 1
 */
 procedure SwitchDrawBank();

@@ -73,7 +73,9 @@ public:
 
         return m_expr==nullptr; // only return true if there are no array expressions
     }
-    bool is8bitValue(Assembler* as) override { return getType(as)==TokenType::BYTE; }
+    bool is8bitValue(Assembler* as) override {
+        return getType(as)==TokenType::BYTE || getType(as)==TokenType::POINTER;
+    }
 
     bool isArrayIndex() override { return m_expr!=nullptr; }
 
