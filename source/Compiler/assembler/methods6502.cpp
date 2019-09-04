@@ -857,10 +857,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
 void Methods6502::AddMemoryBlock(Assembler *as, int param)
 {
+
     NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[param]);
-    if (num==nullptr)
+    if (!m_node->m_params[param]->isPureNumeric())
         return;
-    MemoryBlock b(num->m_val,num->m_val+1,MemoryBlock::USER,"Memory write");
+    int val = m_node->m_params[param]->getValueAsInt(as);
+    MemoryBlock b(val,val+1,MemoryBlock::USER,"Memory write");
     b.m_lineNumber = m_node->m_op.m_lineNumber;
     as->m_userWrittenBlocks.append(b);
 }
@@ -960,16 +962,7 @@ void Methods6502::Modulo(Assembler *as)
 
     as->PopLabel("modulo");
 
-  //  as->PopTempVar();
     as->PopTempVar();
-
-
-/*    LDA $00  ; memory addr A
-    SEC
-Modulus:	SBC $01  ; memory addr B
-    BCS Modulus
-    ADC $01
-  */
 
 }
 
@@ -989,11 +982,12 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
     if (var!=nullptr)
         addr = var->getValue(as);
 
-    NodeNumber* num2 = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+//    NodeNumber* num2 = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+
     if (!m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pure numeric", m_node->m_op.m_lineNumber);
     }
-
+    int num2 = m_node->m_params[1]->getValueAsInt(as);
     m_node->RequireAddress(m_node->m_params[0], "MemCpy", m_node->m_op.m_lineNumber);
     m_node->RequireAddress(m_node->m_params[2], "MemCpy", m_node->m_op.m_lineNumber);
 
@@ -1021,7 +1015,6 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
         as->Asm("ld"+x+" #0");
     else {
         if (m_node->m_params[3]->isPureNumeric()) {
-            qDebug() << m_node->m_params[3]->getValue(as);
             as->Asm("ld"+x+ " #"+ QString::number((unsigned char)(Util::NumberFromStringHex(m_node->m_params[3]->getValue(as).remove("#"))-1)) );
         }
         else {
@@ -1040,7 +1033,7 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER)
         as->Asm("lda ("+ addr +"),"+x);
     else {
-        QString v = num2->HexValue();
+        QString v = Util::numToHex(num2);
         if (v=="$0") v=""; else v="+ "+v;
 
         as->Asm("lda " +addr + v + ","+x);
@@ -1086,7 +1079,7 @@ void Methods6502::MemCpyUnroll(Assembler* as)
     if (var!=nullptr)
         addr = var->getValue(as);
 
-    NodeNumber* num2 = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+//    int num2 = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
     if (!m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pure numeric", m_node->m_op.m_lineNumber);
     }
@@ -1113,7 +1106,7 @@ void Methods6502::MemCpyUnroll(Assembler* as)
         if (m_node->m_params[0]->getType(as)==TokenType::POINTER)
             as->Asm("lda ("+ addr +"),y");
         else
-            as->Asm("lda " +addr +" +  #" + num2->getLiteral(as) + ",y");
+            as->Asm("lda " +addr +" +  #" + m_node->m_params[1]->getValue(as) + ",y");
 
         as->ClearTerm();
 
