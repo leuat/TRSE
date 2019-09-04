@@ -465,7 +465,15 @@ void ASTDispather6502::dispatch(NodeBinOP *node)
 {
 
     node->DispatchConstructor();
+
+/*    if (node->m_isCollapsed) {
+        as->Asm("lda "+node->getValue(as));
+        return;
+    }
+*/
     // First check if both are consants:
+
+
 
     // First, flip such that anything numeric / pure var is to the right
     if (node->m_op.m_type == TokenType::MUL || node->m_op.m_type == TokenType::PLUS)
@@ -2205,17 +2213,27 @@ bool ASTDispather6502::isSimpleAeqAOpB(NodeVar *var, NodeAssign *node) {
     NodeVar* rvar = dynamic_cast<NodeVar*>(rterm->m_left);
 
     NodeVar* rrvar = dynamic_cast<NodeVar*>(rterm->m_right);
-    NodeNumber* rrnum = dynamic_cast<NodeNumber*>(rterm->m_right);
-
-    if (rrvar==nullptr && rrnum==nullptr)
+    if (!rterm->m_right->isPureNumeric())
         return false;
+  //  int num = rterm->m_right->getValueAsInt(as);
+
+//    NodeNumber* rrnum = dynamic_cast<NodeNumber*>(rterm->m_right);
+
+
+    if (rrvar==nullptr && rvar==nullptr)
+        return false;
+
+//    qDebug() << "HERE1";
 
     if (!(rterm->m_op.m_type==TokenType::PLUS || rterm->m_op.m_type==TokenType::MINUS))
         return false;
+  //  qDebug() << "HERE2";
 
 
     if (var->isWord(as))
         return false;
+
+
 
 //    return false;
 
@@ -2235,24 +2253,30 @@ bool ASTDispather6502::isSimpleAeqAOpB16Bit(NodeVar *var, NodeAssign *node)
         return false;
 
     // right first is var
-    NodeVar* rvar = dynamic_cast<NodeVar*>(rterm->m_left);
+//    NodeVar* rvar = dynamic_cast<NodeVar*>(rterm->m_left);
 
-    NodeVar* rrvar = dynamic_cast<NodeVar*>(rterm->m_right);
-    NodeNumber* rrnum = dynamic_cast<NodeNumber*>(rterm->m_right);
+//    NodeVar* rrvar = dynamic_cast<NodeVar*>(rterm->m_right);
+//    NodeNumber* rrnum = dynamic_cast<NodeNumber*>(rterm->m_right);
 
-    if (rrvar==nullptr && rrnum==nullptr)
+
+    if (!rterm->m_right->isPure())
         return false;
 
     //        if (var->m_expr!=nullptr) {
     //        return false;
     //      }
 
+//    qDebug() << "isSimpleAqe : HERE " << TokenType::getType(rterm->m_op.m_type) ;
 
     if (!(rterm->m_op.m_type==TokenType::PLUS || rterm->m_op.m_type==TokenType::MINUS))
         return false;
 //    exit(1);
 //    return false;
-    if (var->isWord(as) && !rterm->m_right->isWord(as)) {
+//    qDebug() << "ASTDispather6502::isSimpleAeqAOpB16Bit " <<  rterm->m_right->isPure() <<  rterm->m_right->is8bitValue(as);
+
+//    if (var->isWord(as) && !rterm->m_right->isWord(as)) {
+        if (var->isWord(as) && rterm->m_right->isPure() &&  rterm->m_right->is8bitValue(as)) {
+ //       qDebug() << "ASTDispather6502::isSimpleAeqAOpB16Bit HERE";
         QString lbl = as->NewLabel("WordAdd");
         as->Comment("WORD optimization: a=a+b");
         //var->Accept(this);
@@ -2291,20 +2315,31 @@ bool ASTDispather6502::IsSimpleIncDec(NodeVar *var, NodeAssign *node) {
         return false;
 
     // right first is var
+
     NodeVar* rvar = dynamic_cast<NodeVar*>(rterm->m_left);
     if (rvar==nullptr)
         return false;
 
+//    qDebug() << "IsSimpleIncDec test";
+
+
     if (rvar->getValue(as)!=var->getValue(as))
         return false;
 
-    NodeNumber* num = dynamic_cast<NodeNumber*>(rterm->m_right);
 
-    // If a = a + b
+//    NodeNumber* num = dynamic_cast<NodeNumber*>(rterm->m_right);
+    bool isPureNumber = rterm->m_right->isPureNumeric();
+
+    int num = -1;
+    if (isPureNumber)
+        num = rterm->m_right->getValueAsInt(as);
+
+
 
     if (!var->isWord(as)) {
-        if (!(num!=nullptr && num->m_val==1))
+        if ((num!=1)) {
             return isSimpleAeqAOpB(var, node);
+        }
     }
     else
         return isSimpleAeqAOpB16Bit(var, node);
@@ -2312,10 +2347,10 @@ bool ASTDispather6502::IsSimpleIncDec(NodeVar *var, NodeAssign *node) {
 //    if (var->isWord(as))
   //      return false;
 
-    if (num==nullptr)
+    if (!isPureNumber)
         return false;
 
-    if (num->m_val!=1)
+    if (num!=1)
         return false;
 
     // OK: it is i:=i+1;

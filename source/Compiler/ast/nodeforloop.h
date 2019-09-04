@@ -46,6 +46,17 @@ public:
     NodeForLoop(Node* a, Node* b, Node* block, Node* step, bool unroll, int forcePage, int loopCounter, bool inclusive);
 
 
+    void parseConstants(SymbolTable* symTab) override {
+        if (m_a!=nullptr)
+            m_a->parseConstants(symTab);
+        if (m_b!=nullptr)
+            m_b->parseConstants(symTab);
+        if (m_block!=nullptr)
+            m_block->parseConstants(symTab);
+        if (m_step!=nullptr)
+            m_step->parseConstants(symTab);
+    }
+
 
 
     void Delete() override;

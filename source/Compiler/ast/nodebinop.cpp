@@ -26,9 +26,7 @@ NodeBinOP::NodeBinOP(Node *left, Token op, Node *right):Node() {
     m_right = right;
     m_left = left;
     m_op = op;
-
     ApplyFlags();
-
 }
 
 
@@ -43,6 +41,11 @@ bool NodeBinOP::isPureNumeric() {
         return false;
 
     return (m_left->isPureNumeric() && m_right->isPureNumeric());
+}
+
+bool NodeBinOP::is8bitValue(Assembler *as)
+{
+    return (m_right->is8bitValue(as) && m_left->is8bitValue(as));
 }
 
 void NodeBinOP::ApplyFlags()
@@ -91,6 +94,28 @@ void NodeBinOP::setForceType(TokenType::Type t) {
 bool NodeBinOP::containsPointer(Assembler *as)
 {
     return m_left->containsPointer(as) || m_right->containsPointer(as);
+}
+
+void NodeBinOP::parseConstants(SymbolTable *symTab) {
+
+ //   qDebug() << "NodeBinOp :: parse HERE1" << m_left->isPureNumeric() <<m_right->isPureNumeric();
+//    int a = m_left->getValueAsInt(nullptr);
+//    int b = m_right->getValueAsInt(nullptr);
+ //   qDebug() << a << b;
+
+    if (!isPureNumeric()) {
+        if (m_left!=nullptr)
+            m_left->parseConstants(symTab);
+        if (m_right!=nullptr)
+            m_right->parseConstants(symTab);
+        return;
+    }
+//    qDebug() << "NodeBinOp :: parse HERE2";
+//    m_value = numValue();
+  //  m_isCollapsed = true;
+/*    int a = m_left->getValueAsInt(nullptr);
+    int b = m_right->getValueAsInt(nullptr);
+*/
 }
 
 

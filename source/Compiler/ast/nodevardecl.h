@@ -48,6 +48,15 @@ public:
 
     NodeVarDecl(Node* varNode, Node* typeNode);
 
+    void parseConstants(SymbolTable* symTab) override {
+        if (m_varNode!=nullptr)
+            m_varNode->parseConstants(symTab);
+        if (m_typeNode!=nullptr)
+            m_typeNode->parseConstants(symTab);
+    }
+
+
+
     void Delete() override;
 
     int getDataSize() {

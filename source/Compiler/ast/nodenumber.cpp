@@ -44,7 +44,13 @@ bool NodeNumber::isPureNumeric() {
 }
 
 bool NodeNumber::isWord(Assembler *as) {
+//    return (m_val>=256 && m_op.m_type == TokenType::INTEGER_CONST);
     return (m_val>=256 && m_op.m_type == TokenType::INTEGER_CONST);
+}
+
+bool NodeNumber::is8bitValue(Assembler* as)
+{
+    return m_val<256 && m_op.m_type == TokenType::INTEGER_CONST;
 }
 
 /*void NodeNumber::LoadVariable(AbstractASTDispatcher* dispatcher) {
