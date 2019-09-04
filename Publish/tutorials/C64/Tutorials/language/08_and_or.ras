@@ -1,6 +1,6 @@
 /*
 	So far our conditions have been "is this one thing true" but you may also want to sometimes test
-	if more than one condition is true, or if only one condition of several are true.
+	if more than one condition is true, or if at least one condition of several are true.
 	
 	Introducing AND and OR, or is it OR and AND?  We'll never know!  Well yes we will, read on for more...
 	
