@@ -9,7 +9,7 @@ var
 	This effect basically just displays text mode content from bank 0 on the upper part of the screen, while
 	the lower part displays a multicolor image from bank 1. 
 	
-	The transition area is the important part. here, we not only copy image color data for the current 
+	The transition area is the important part. here, we not only copy $D800-image color data for the current 
 	transition row, but we also hide the entire contents using black sprites! 
 
 */
@@ -36,6 +36,12 @@ var
 @define ccolor 224
 @define cstop 223
 
+/*
+	Main text. 
+	@cmoveto moves the cursor to the x/y position
+	@ccolor sets color
+	@cpause initializes a pause
+*/
 	text : string = (@cmoveto, 4,6, @ccolor,0,
 					"THIS IS A TEXT.", @cpause,32,
 					 @cmoveto, 4,8, @ccolor,0,
@@ -62,8 +68,9 @@ interrupt RasterText();
 begin
 	startIRQ(@useKernal);
 	UpdateText();
+	// Set border color 
 	screen_bg_col:=lumi[lumicol];
-
+	// Start to decrease luminosity when "white" (1) is triggered	
 	if (curCol=1) then 
 		if (lumicol) then 
 			dec(lumicol);
@@ -172,9 +179,12 @@ begin
 		setregularcolormode();
 		settextmode();
 		waitnoraster(1);
+		// Copy color information (1 line, below the black sprites)
 		zp:=@imageColorPos+2+screen_width*screen_height;
+		// Find exact position
 		j:=(fadein)/8-5;
 		zp:=zp + j*screen_width;
+		// Find destination, same as moveto
 		zp2:=screen_col_loc+ j*screen_width;
 		// Copy color data!
 		if (j<127 and j<24) then 

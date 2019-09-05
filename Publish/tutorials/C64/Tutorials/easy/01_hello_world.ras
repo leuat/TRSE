@@ -3,7 +3,7 @@ var
   	text : string = ("HELLO WORLD");
 
 begin
-	// Fill the screen (at screen_char_loc) with character $20 - "space"
+	// Fill the screen (at screen_char_loc) with  40*25 bytes of character $20 - "space"
 	ClearScreen(key_space, screen_char_loc);
 	// Fill the color ram with yellow
 	ClearScreen(yellow, screen_col_loc);
