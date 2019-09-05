@@ -2270,7 +2270,7 @@ bool ASTDispather6502::isSimpleAeqAOpB16Bit(NodeVar *var, NodeAssign *node)
     if (!(rterm->m_op.m_type==TokenType::PLUS || rterm->m_op.m_type==TokenType::MINUS))
         return false;
 //    qDebug() << "Cont" << var->isWord(as) << rterm->m_right->is8bitValue(as) ;
-        if (var->isWord(as) &&  rterm->m_right->is8bitValue(as)) {
+        if (var->isWord(as) &&  rterm->m_right->is8bitValue(as) && !node->m_forceType==TokenType::INTEGER) {
   //          qDebug() << "Cont";
 
  //       qDebug() << "ASTDispather6502::isSimpleAeqAOpB16Bit HERE";

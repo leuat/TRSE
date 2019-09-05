@@ -111,7 +111,7 @@ function Update()
 	maxchars = 64
 
 	CompressCharset(0,40,0,25,  compression, maxchars)
-	if (frame<noFrames) then Message("Please wait...") end
+	if (frame==0) then Message("Please wait...") end
 	frame=frame+1
 	if (frame == noFrames) then 
 			Message("Files written to data/example4_bin. You can now close this window")

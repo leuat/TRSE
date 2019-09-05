@@ -39,22 +39,9 @@ In this program, we simply display these 16 screens while updating the character
 procedure SetScreen();
 begin
 	// Ugly but works, sets p1 to point to screen memory location 1000*frame 
-/*	p1:=screen;
-	p1:=ToPointer(hi(p1)+3*frame, lo(p1));
-	p1:=p1 + frame*232;
-	// Quick way of multiplying with 1000:*/
-	p1:=screen;
-	p1:=p1 + frame*250;
-	p1:=p1 + frame*250;
-	p1:=p1 + frame*250;
-	p1:=p1 + frame*250;
-
-	/*	
-		This method is much faster: since 1000 = 256*3 + 232, you can add frame*3 to the hi byte and then do a single 232!
-	p1:=toPointer(hi(p1)+frame*3,lo(p1));
-	p1:=p1 + frame*232;
-	*/
-
+	
+	p1:=screen+frame*4*250;
+	
 
 	// Enable bank switching to remove flickering
 	p2:=$0400;
