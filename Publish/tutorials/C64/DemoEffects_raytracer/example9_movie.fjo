@@ -36,11 +36,19 @@ Material0 = {
 	shininess_intensity = 1 
 }
 
+Material1 = {
+   color = { x=1, y=1.0, z=1 },
+	reflection = 0.6,
+	shininess = 50,
+	shininess_intensity = 1 
+}
+
 
 -- Init is called on start  
  
 
-N = 6
+-- Number of toruses
+N = 16
 distance = 10
 frame = 0
 noFrames = 22.0
@@ -56,13 +64,14 @@ function Init()
      	x= sin(i*3.1415965*2.0/N);
          y= cos(i*3.1415965*2.0/N);
        
+		name = "tor"..tostring(i)
+  		AddObject("torus",name, "", "Material0", x*radius,0,y*radius,    2.3,0.7, 3 )
+  		AddObject("cylinder","cyl"..tostring(i), "", "Material1", x*radius,0,y*radius,    0.3,1, 1.2 )
 
-  		AddObject("torus","tor"..tostring(i), "", "Material0", x*radius,0,y*radius,    2.3,0.7, 3 )
-  		AddObject("cylinder","cyl"..tostring(i), "", "Material0", x*radius,0,y*radius,    0.3,1, 1 )
 
 	end
 	
-	UpdateScen()
+	UpdateScene()
 
 end
 
@@ -104,12 +113,14 @@ function UpdateScene()
 
 end
 
+-- Experiment with the compression level!
+compression = 7
 
 function Update()
 	
 	if (hasSaved == 0) then 
 --		CompressCharset(0,40,13,25,  7, 128)
-		CompressCharset(0,40,10,22,  7, 128)
+		CompressCharset(0,40,10,22,  compression, 128)
 
 		if (frame==5 or frame == 11 or frame == 17 or frame ==19 or frame ==21) then			
 			SaveScreenAndCharset("data/screendata" ..tostring(curSave)..".bin", "data/chardata" ..tostring(curSave)..".bin");
