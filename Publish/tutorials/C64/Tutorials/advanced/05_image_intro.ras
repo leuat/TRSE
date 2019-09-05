@@ -3,8 +3,8 @@ var
 
 /*
 
-	This text intro was originally used for the "Aroused" demo. It starts off
-	by priting some text, when performs the image transition.
+	This intro was originally used for the "Aroused" demo. It starts off
+	by priting some text, then performs the image transition.
 	
 	This effect basically just displays text mode content from bank 0 on the upper part of the screen, while
 	the lower part displays a multicolor image from bank 1. 

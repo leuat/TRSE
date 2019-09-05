@@ -35,3 +35,6 @@ d64_paw_file_disk2 = none
 override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
+project_path = /home/leuat/code/TRSE/Release/../tutorials/VIC20/tutorials/
+pascal_settings_use_local_variables = 0
+open_files = ,easy/01_hello_world.ras

@@ -28,3 +28,6 @@ override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 current_file = demo_part4.ras
+project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/DemoMaker/
+pascal_settings_use_local_variables = 0
+open_files = ,demo_part4.ras

@@ -21,7 +21,7 @@ begin
 	zp:=zp+1;
 	screen_fg_col:=zp[0]; // 2nd byte is foreground color 
 	zp:=zp+1;
-	copyfullscreen(zp,^$4400); // Copy first 1000 bytes (1 screen worth of data) to bank 1
+	copyfullscreen(zp,screen_char_loc2); // Copy first 1000 bytes (1 screen worth of data) to bank 1
 	zp:=zp+1000; // point to next screen 
 	copyfullscreen(zp,screen_col_loc); // copy 1 screen worth of data to color ram
 end;
