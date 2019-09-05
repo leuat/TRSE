@@ -1,7 +1,7 @@
 <h3>Introduction to the TRSE "Fjong" ray tracer</h3>
 <p>
-What is "Fjong"? Well first of all: it's just a simple real-time ray tracer that is able
-to render scenes and output data to a format that 8/16 bit computers can understand.
+What is "Fjong"? Well first of all, it's a minimal, easy-to-use real-time ray tracer that is able
+to render 3D scenes and output data to a format that 8/16 bit computers can understand.
 <p>And what does "Fjong" it self mean? Fjong is just a name, a parody of "Phong" from the
 "Phong-blinn" shading model. Fjong was also the name of my 3D engine back in 1996, and also means something
 like "spiffy" in Norwegian.
@@ -19,6 +19,9 @@ rotate again, save 1 line.. and repeat until you have saved 1 line for each angl
 reflections and shadows and various material properties. Especially shadows are important for the twister
 to look good. The framework lets the user define a scene, which is then updated for each frame. In addition
 to this, the user can execute various internal commands such as "add data", "compress data", "save to disk" etc.
+<p>In a later example (nr 10), we render yet another twister - but this time with letters. Even though raw
+data for all 16 frames for 28 characters exceeds the capacity of the memory of the C64, the Fjong famework
+has specific methods that will compress and export this kind of data to a sensible format that can run on low-end systems
 <h3>Structure of a Fjong program</h3>
 A fjong ray-tracer file is compiled and run just like a .ras file, and you press ctrl+R to run it. The fjong ".fjo" files
 are written in standard Lua (see http://luatut.com/introduction.html for an introduction to the Lua language), but
