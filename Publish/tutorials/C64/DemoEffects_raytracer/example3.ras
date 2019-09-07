@@ -3,7 +3,7 @@ program Example3;
 // Twister data position
 @define twister $2800
 // Twister table position
-@define tablepos $B000
+@define tablepos $E000
 
 @requirefile "data/example3_screen.bin" "Please run the Fjong raytracer file 'example3.fjo' before compiling this program"
 
@@ -14,7 +14,7 @@ var
 	// Include charset at $2000
 	charset: incbin("charsets/main.bin", $2000);
 
-	y, j,l, h,frame : byte = 0;
+	y, j,l, h,frame,time : byte = 0;
 	kp,zp,p1:pointer;
 
 
@@ -54,7 +54,9 @@ interrupt RasterMain();
 begin
 	StartIRQ(0);
 	RenderMovie();
-	frame:=(frame + 1)&63;
+//	frame:=(frame + 1)&63;
+	time:=time+1;
+	frame := mod(sine[time*2]/7-time/4,64);
 	closeirq();
 end;
 

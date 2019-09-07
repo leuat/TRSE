@@ -1,6 +1,6 @@
 program Texty;
 var  
-	// Define three variables : position x, position y and time
+	// Define four variables : position x, position y, time and a counter i
    x,y,time,i: byte = 0;  
 begin
  	// First, fill color ram with white

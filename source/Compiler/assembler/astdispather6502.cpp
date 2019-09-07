@@ -582,18 +582,15 @@ void ASTDispather6502::dispatch(NodeNumber *node)
 void ASTDispather6502::dispatch(NodeBuiltinMethod *node)
 {
     node->DispatchConstructor();
-
     node->VerifyParams(as);
 
-    as->PushCounter();
+//    as->PushCounter();
 //    qDebug() <<"Dispatcher::builtin" << as->m_tempZeroPointers;
 
     Methods6502 methods;
     methods.m_node = node;
     methods.Assemble(as,this);
-
-    as->PopCounter(node->m_op.m_lineNumber-1);
-
+ //   as->PopCounter(node->m_op.m_lineNumber);
 }
 
 
@@ -609,8 +606,8 @@ void ASTDispather6502::dispatch(Node *node)
 void ASTDispather6502::dispatch(NodeProcedure *node)
 {
     node->DispatchConstructor();
-
-
+    as->PushCounter();
+//    int ln = node->m_op.m_lineNumber;
     if (node->m_parameters.count()!=node->m_procedure->m_paramDecl.count())
         ErrorHandler::e.Error("Procedure '" + node->m_procedure->m_procName+"' requires "
                               + QString::number(node->m_procedure->m_paramDecl.count()) +" parameters, not "
@@ -625,6 +622,8 @@ void ASTDispather6502::dispatch(NodeProcedure *node)
     }
 
     as->Asm("jsr " + node->m_procedure->m_procName);
+  //  qDebug() << ln;
+//    as->PopCounter(ln);
 
 }
 
@@ -798,7 +797,9 @@ void ASTDispather6502::dispatch(NodeBlock *node)
     //as->EndMemoryBlock();
     as->PushBlock(node->m_currentLineNumber);
 
+    as->PushCounter();
 
+    int ln = node->m_lineNumber;
 
     bool blockLabel = false;
     bool blockProcedure = false;
@@ -837,7 +838,6 @@ void ASTDispather6502::dispatch(NodeBlock *node)
 
     }
     as->VarDeclEnds();
-    as->PushCounter();
  //   as->EndMemoryBlock();
     if (!blockLabel && hasLabel)
         as->Label(label);
@@ -850,8 +850,7 @@ void ASTDispather6502::dispatch(NodeBlock *node)
     if (node->m_compoundStatement!=nullptr)
         node->m_compoundStatement->Accept(this);
 
-
-    as->PopCounter(node->m_op.m_lineNumber-1);
+    as->PopCounter(ln-1);
     as->PopBlock(node->m_currentLineNumber);
     if (node->m_isMainBlock && Syntax::s.m_currentSystem == AbstractSystem::NES)
         as->IncludeFile(":resources/code/nes_end.asm");
@@ -2408,11 +2407,11 @@ void ASTDispather6502::dispatch(NodeAssign *node)
 {
     node->DispatchConstructor();
 
-    as->PushCounter();
+//    as->PushCounter();
 
     AssignVariable(node);
 
-    as->PopCounter(node->m_op.m_lineNumber);
+  //  as->PopCounter(node->m_op.m_lineNumber);
 
 }
 

@@ -113,11 +113,13 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         as->Asm("sta $FF10"); // Initialize pixel drawing
     }
     if (Command("ClearScreen")) {
-        as->Comment("ClearScreen");
-        LoadVar(as,0);
-        as->Asm("sta $FF02");
-        as->Asm("lda #3");
-        as->Asm("sta $FF10"); // Initialize pixel drawing
+        if (Syntax::s.m_currentSystem==AbstractSystem::OK64) {
+            as->Comment("ClearScreen");
+            LoadVar(as,0);
+            as->Asm("sta $FF02");
+            as->Asm("lda #3");
+            as->Asm("sta $FF10"); // Initialize pixel drawing
+        }
     }
     if (Command("WaitForVSync")) {
         as->Asm("lda #1");

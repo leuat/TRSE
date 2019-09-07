@@ -852,8 +852,10 @@ void FormRasEditor::HandleUpdateBuildText()
 void FormRasEditor::HandleBuildComplete()
 {
     m_builderThread.msleep(70); // crashes if we don't sleep.. for some reason
-    if (m_builderThread.m_builder->compiler.m_assembler!=nullptr)
+    if (m_builderThread.m_builder->compiler.m_assembler!=nullptr) {
         ui->txtEditor->m_cycles =  m_builderThread.m_builder->compiler.m_assembler->m_cycles;
+        ui->txtEditor->m_blockCycles =  m_builderThread.m_builder->compiler.m_assembler->m_blockCycles;
+    }
     ui->txtEditor->RepaintCycles();
     if (m_builderThread.m_builder->compiler.m_assembler!=nullptr)
 

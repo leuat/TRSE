@@ -39,6 +39,7 @@ class MemoryBlock {
     Type m_type;
     QVector<int> m_zeropages;
     QString m_name;
+    int m_currentLineNumber;
     MemoryBlock() {}
     MemoryBlock(int start, int end, Type type, QString name){
         m_start=start;
@@ -218,7 +219,7 @@ public:
 
     void SortAppendix();
 
-    QMap<int, int> m_cycles;
+    QMap<int, int> m_cycles, m_blockCycles;
     QMap<int, int> m_blockIndent;
 
     QVector<int> m_cycleCounter;

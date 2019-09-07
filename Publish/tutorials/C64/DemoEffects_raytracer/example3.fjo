@@ -29,8 +29,8 @@ output = {
 
 Material1 = {
 	color = { x=1.0, y=0.5, z=0.2 },
-	reflection = 0,
-	shininess = 100,
+	reflection = 0.3,
+	shininess = 60,
 	shininess_intensity = 1 
 
 }
@@ -42,6 +42,8 @@ Material1 = {
 function Init()
 	-- add a single torus
 	AddObject("torus","torus1","","Material1",  0,0,0,  0.5, 0.2,0);
+	-- Add some noise to the torus to make it look good!
+	AddObject("perlin","torus1","","Material1",  "torus1", 0.03,5,0);
 	UpdateGraphics()
 
 end
