@@ -44,6 +44,7 @@ public:
         m_params = params;
         m_op.m_type = TokenType::BYTE;
         m_function= bf;
+        m_op.m_lineNumber--;
     }
 
     void Delete() override {

@@ -1208,10 +1208,12 @@ Node *Parser::Block(bool useOwnSymTab, QString blockName)
 
     if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type==TokenType::WEDGE)
         return nullptr;
-
     QVector<Node*> decl =  Declarations(useOwnSymTab, blockName);
+    int pos = m_currentToken.m_lineNumber;
     Node* vars =  CompoundStatement();
-    return new NodeBlock(m_currentToken,decl, vars, useOwnSymTab);
+    NodeBlock* bl =  new NodeBlock(m_currentToken,decl, vars, useOwnSymTab);
+    bl->m_op.m_lineNumber = pos;
+    return bl;
 }
 
 QVector<Node *> Parser::Parameters(QString blockName)

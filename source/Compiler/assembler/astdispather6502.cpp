@@ -606,7 +606,7 @@ void ASTDispather6502::dispatch(Node *node)
 void ASTDispather6502::dispatch(NodeProcedure *node)
 {
     node->DispatchConstructor();
-    as->PushCounter();
+//    as->PushCounter();
 //    int ln = node->m_op.m_lineNumber;
     if (node->m_parameters.count()!=node->m_procedure->m_paramDecl.count())
         ErrorHandler::e.Error("Procedure '" + node->m_procedure->m_procName+"' requires "
@@ -631,6 +631,8 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
 {
     node->DispatchConstructor();
     as->m_symTab->SetCurrentProcedure(node->m_procName+"_");
+    int ln = node->m_currentLineNumber;
+//    as->PushCounter();
 //    if (node->m_curMemoryBlock!=nullptr)
   //      qDebug() << node->m_procName << "IS IN BLOCK " << node->m_curMemoryBlock->m_name << " STARTING AT " << Util::numToHex(node->m_curMemoryBlock->m_start);
 
@@ -703,7 +705,7 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
     }
 
     as->m_symTab->ExitProcedureScope(false);
-
+  //  as->PopCounter(ln);
 }
 
 
@@ -795,11 +797,13 @@ void ASTDispather6502::dispatch(NodeBlock *node)
 
     // In case memory block is acive
     //as->EndMemoryBlock();
+    int ln = node->m_op.m_lineNumber-1;
+    if (ln==0) ln++;
     as->PushBlock(node->m_currentLineNumber);
+
 
     as->PushCounter();
 
-    int ln = node->m_lineNumber;
 
     bool blockLabel = false;
     bool blockProcedure = false;
@@ -850,13 +854,14 @@ void ASTDispather6502::dispatch(NodeBlock *node)
     if (node->m_compoundStatement!=nullptr)
         node->m_compoundStatement->Accept(this);
 
-    as->PopCounter(ln-1);
     as->PopBlock(node->m_currentLineNumber);
     if (node->m_isMainBlock && Syntax::s.m_currentSystem == AbstractSystem::NES)
         as->IncludeFile(":resources/code/nes_end.asm");
 
     node->PopZeroPointers(as);
 
+//    qDebug() << QString::number(ln);
+    as->PopCounter(ln);
 }
 
 
@@ -1672,7 +1677,7 @@ void ASTDispather6502::dispatch(NodeConditional *node)
     node->DispatchConstructor();
 
 
-    as->PushCounter();
+//    as->PushCounter();
     QString labelStartOverAgain = as->NewLabel("while");
     QString lblstartTrueBlock = as->NewLabel("ConditionalTrueBlock");
 
@@ -1754,7 +1759,7 @@ void ASTDispather6502::dispatch(NodeConditional *node)
     as->PopLabel("elsedoneblock");
 //    as->PopLabel("conditionalfailed");
 
-    as->PopCounter(node->m_op.m_lineNumber);
+  //  as->PopCounter(node->m_op.m_lineNumber);
 
 }
 
@@ -2418,7 +2423,7 @@ void ASTDispather6502::dispatch(NodeAssign *node)
 void ASTDispather6502::dispatch(NodeCase *node)
 {
     node->DispatchConstructor();
-    as->PushCounter();
+  //  as->PushCounter();
     bool hasElse = node->m_elseBlock!=nullptr;
     QString labelEnd = as->NewLabel("caseend");
     for (int i=0;i<node->m_conditionals.count();i++) {
@@ -2450,7 +2455,7 @@ void ASTDispather6502::dispatch(NodeCase *node)
 
     as->PopLabel("caseend");
 
-    as->PopCounter(node->m_op.m_lineNumber);
+//    as->PopCounter(node->m_op.m_lineNumber);
 }
 
 

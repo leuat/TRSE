@@ -853,7 +853,7 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     }
 
-    as->PopCounter(m_node->m_op.m_lineNumber-1);
+//    as->PopCounter(m_node->m_op.m_lineNumber-1);
 }
 
 
