@@ -802,7 +802,6 @@ void ASTDispather6502::dispatch(NodeBlock *node)
     as->PushBlock(node->m_currentLineNumber);
 
 
-    as->PushCounter();
 
 
     bool blockLabel = false;
@@ -842,6 +841,8 @@ void ASTDispather6502::dispatch(NodeBlock *node)
 
     }
     as->VarDeclEnds();
+    as->PushCounter();
+
  //   as->EndMemoryBlock();
     if (!blockLabel && hasLabel)
         as->Label(label);
