@@ -394,13 +394,15 @@ void MainWindow::AcceptUpdateSourceFiles(SourceBuilder *sourceBuilder)
         if (t==m_currentDoc)
             continue;
         FormRasEditor* r = dynamic_cast<FormRasEditor*>(t);
-        QString name = r->m_currentFileShort;
-        if (r!=nullptr && files.contains(name)) {
-            sourceBuilder->compiler.CleanupCycleLinenumbers(name, sourceBuilder->compiler.m_assembler->m_cycles, sourceBuilder->compiler.m_assembler->m_cyclesOut);
-            sourceBuilder->compiler.CleanupCycleLinenumbers(name,sourceBuilder->compiler.m_assembler->m_blockCycles,sourceBuilder->compiler.m_assembler->m_blockCyclesOut);
-            r->m_builderThread.m_builder = sourceBuilder;
-            r->HandleBuildComplete();
+        if (r!=nullptr) {
+            QString name = r->m_currentFileShort;
+            if (files.contains(name)) {
+                sourceBuilder->compiler.CleanupCycleLinenumbers(name, sourceBuilder->compiler.m_assembler->m_cycles, sourceBuilder->compiler.m_assembler->m_cyclesOut);
+                sourceBuilder->compiler.CleanupCycleLinenumbers(name,sourceBuilder->compiler.m_assembler->m_blockCycles,sourceBuilder->compiler.m_assembler->m_blockCyclesOut);
+                r->m_builderThread.m_builder = sourceBuilder;
+                r->HandleBuildComplete();
 
+            }
         }
 
     }
