@@ -49,19 +49,19 @@ void Lexer::FindLineNumberAndFile(int inLe, QString &file, int &outle)
 
     //    qDebug() << "input line number: " << inLe;
     //  qDebug() << "Start line: " << m_parser.m_lexer->m_includeFiles[0].m_startLine;
-    if (cur<=m_includeFiles[0].m_startLine) {
+    if (cur<=m_includeFiles[0].m_startLineAcc) {
         return;
     }
 
 
     for (FilePart fp: m_includeFiles) {
-        if (inLe >= fp.m_startLine && inLe<fp.m_endLine) {
+        if (inLe >= fp.m_startLineAcc && inLe<fp.m_endLineAcc) {
             file = fp.m_name;
-            outle = inLe - fp.m_startLine;
+            outle = inLe - fp.m_startLineAcc;
             return;
         }
         //        qDebug() << "Include file size : " << (fp.m_endLine-fp.m_startLine);
-        cur=cur - (fp.m_endLine-fp.m_startLine)+1;
+        cur=cur - (fp.m_endLineAcc-fp.m_startLineAcc)+1;
     }
     outle = cur;
 }

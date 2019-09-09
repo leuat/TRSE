@@ -201,7 +201,8 @@ void FormRasEditor::Build()
 
 void FormRasEditor::SetOutputText(QString txt)
 {
-    ui->txtOutput->setText(ErrorHandler::e.m_teOut);
+    ui->txtOutput->setHtml(ErrorHandler::e.m_teOut);
+//    ui->txtOutput->set
 
 }
 
