@@ -28,7 +28,7 @@ var
 procedure UpdateTwister();
 begin
 	// Point to some place on the (bitmap) screen, start of twister
-	dest:=$66C0;
+	dest:=$6000 + 8*40*6 + 16*8 ;
 
 	// Two opposing sine phases
 	y1:=time*3;
@@ -94,8 +94,8 @@ begin
 	setmulticolormode();
 	clearscreen(4,screen_col_loc); // Set purple 
 	clearscreen($63,screen_char_loc2); // Set  blue and white multicolors
-	VIC_DATA_LOC:=$18; // Bitmap memory screen starts at $6000
-	setbank(VIC_BANK1); 
+	vic_data_loc:=$18; // Bitmap memory screen starts at $6000
+	setbank(vic_bank1); 
 	clearbitmap(^$6000,32);	 // Clear the entire screen
 
 end;

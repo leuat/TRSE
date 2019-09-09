@@ -180,7 +180,8 @@ void Compiler::CleanupCycleLinenumbers(QString currentFile, QMap<int,int>& ocycl
     }
     retcycles.clear();
     for (int i: cycles.keys())
-        retcycles[i] = cycles[i];
+        if (cycles[i]!=0)
+            retcycles[i] = cycles[i];
 //    m_assembler->m_cycles = cycles;
 }
 

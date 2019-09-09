@@ -2146,7 +2146,7 @@ void ASTDispather6502::AssignString(NodeAssign *node) {
 
 void ASTDispather6502::AssignPointer(NodeAssign *node) {
     NodeVar* bVar = dynamic_cast<NodeVar*>(node->m_right);
-    NodeNumber* bNum = dynamic_cast<NodeNumber*>(node->m_right);
+//    NodeNumber* bNum = dynamic_cast<NodeNumber*>(node->m_right);
     NodeVar* aVar = dynamic_cast<NodeVar*>(node->m_left);
 
 
@@ -2272,19 +2272,22 @@ bool ASTDispather6502::isSimpleAeqAOpB16Bit(NodeVar *var, NodeAssign *node)
         return false;
 
 
+
     if (!(rterm->m_op.m_type==TokenType::PLUS || rterm->m_op.m_type==TokenType::MINUS))
         return false;
-//    qDebug() << "Cont" << var->isWord(as) << rterm->m_right->is8bitValue(as) ;
-        if (var->isWord(as) &&  rterm->m_right->is8bitValue(as) && !node->m_forceType==TokenType::INTEGER) {
-  //          qDebug() << "Cont";
+  //  qDebug() << "isSimpleAeqAOpB16Bit" << var->isWord(as) << rterm->m_right->is8bitValue(as) << TokenType::getType(node->m_forceType) ;
 
- //       qDebug() << "ASTDispather6502::isSimpleAeqAOpB16Bit HERE";
+    if (var->isWord(as) &&  rterm->m_right->is8bitValue(as) && !(node->m_forceType==TokenType::INTEGER)) {
+//        qDebug() << "WHOO";
+        //          qDebug() << "Cont";
+
+        //       qDebug() << "ASTDispather6502::isSimpleAeqAOpB16Bit HERE";
         QString lbl = as->NewLabel("WordAdd");
         as->Comment("WORD optimization: a=a+b");
         //var->Accept(this);
         as->Asm("lda " + var->getValue(as) + "+0");
         as->Term();
-//        as->Asm("clc");
+        //        as->Asm("clc");
         as->BinOP(rterm->m_op.m_type);
 
         rterm->m_right->Accept(this);
@@ -2300,7 +2303,7 @@ bool ASTDispather6502::isSimpleAeqAOpB16Bit(NodeVar *var, NodeAssign *node)
 
         as->Label(lbl);
         as->Asm("sta " + var->getValue(as) + "+0");
-//        as->Asm("sty " + var->getValue(as) +"+1");
+        //        as->Asm("sty " + var->getValue(as) +"+1");
 
         as->PopLabel("WordAdd");
         return true;
@@ -2329,15 +2332,16 @@ bool ASTDispather6502::IsSimpleIncDec(NodeVar *var, NodeAssign *node) {
         return false;
 
 
-
 //    NodeNumber* num = dynamic_cast<NodeNumber*>(rterm->m_right);
     bool isPureNumber = rterm->m_right->isPureNumeric();
 
     int num = -1;
+
     if (isPureNumber)
         num = rterm->m_right->getValueAsInt(as);
 
 
+//    qDebug() << "HERE;" << num;
 
     if (!var->isWord(as)) {
         if ((num!=1)) {
@@ -2345,7 +2349,6 @@ bool ASTDispather6502::IsSimpleIncDec(NodeVar *var, NodeAssign *node) {
         }
     }
     else {
-
         return isSimpleAeqAOpB16Bit(var, node);
     }
 
@@ -2496,6 +2499,7 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
     //qDebug() << TokenType::getType(m_left->getType(as)) << " " << v->m_expr;
 
     if (node->m_left->getType(as)==TokenType::POINTER && v->m_expr==nullptr) {
+
         AssignPointer(node);
         return v->getValue(as);
     }
