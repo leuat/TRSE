@@ -53,12 +53,13 @@ class CodeEditor : public QPlainTextEdit
 public:
     bool m_textChanged = false;
     CodeEditor(QWidget *parent = 0);
-    QColor currentLineColor, lineNumberBackgroundColor, cyclesBackgroundColor, cyclesColor, lineNumbersColor;
+    QColor currentLineColor, lineNumberBackgroundColor, cyclesBackgroundColor, cyclesColor, blockCyclesColor, lineNumbersColor;
     void setCompleter(QCompleter *c);
     void InitColors(CIniFile cols) {
         currentLineColor = cols.getColor("currentline");
         lineNumberBackgroundColor = cols.getColor("linenumbersbackground");
         cyclesBackgroundColor = cols.getColor("cyclesbackground");
+        blockCyclesColor = QColor(255,255,80);
         cyclesColor = cols.getColor("cycles");
         lineNumbersColor = cols.getColor("linenumbers");
 
@@ -79,7 +80,7 @@ public:
 
     void InitCompleter(SymbolTable* m_symTab, Parser* parser);
 
-    QMap<int,int> m_cycles;
+    QMap<int,int> m_cycles, m_blockCycles;
 
     void RepaintCycles() {
         cycleNumberArea->repaint();

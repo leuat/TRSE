@@ -437,6 +437,7 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event) {
             painter.setPen(lineNumbersColor);
             painter.drawText(0, top, lineNumberArea->width(), fontMetrics().height(),
                              Qt::AlignRight, number);
+
         }
 
         block = block.next();
@@ -461,7 +462,8 @@ void CodeEditor::cycleNumberAreaPaintEvent(QPaintEvent *event)
     painter.drawText(0, top, cycleNumberArea->width(), fontMetrics().height(),
                  Qt::AlignLeft, "#Cycles");
 
-    top+=30;
+//    top+=20;
+    top+=fontMetrics().height();
     int bottom = top + (int) blockBoundingRect(block).height();
 
     while (block.isValid() && top <= event->rect().bottom()) {
@@ -473,6 +475,17 @@ void CodeEditor::cycleNumberAreaPaintEvent(QPaintEvent *event)
 
                 QString number = QString::number(m_cycles[ln]);
                 painter.setPen(cyclesColor);
+                painter.drawText(0, top, cycleNumberArea->width(), fontMetrics().height(),
+                             Qt::AlignLeft, number);
+            }
+            if (m_blockCycles.contains(ln))
+            {
+
+                int val = 0;
+                if (m_cycles.contains(ln))
+                    val+=m_cycles[ln];
+                QString number = QString::number(m_blockCycles[ln]+val);
+                painter.setPen(blockCyclesColor);
                 painter.drawText(0, top, cycleNumberArea->width(), fontMetrics().height(),
                              Qt::AlignLeft, number);
             }
