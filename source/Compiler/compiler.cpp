@@ -33,7 +33,7 @@ void Compiler::Parse(QString text, QStringList lst)
 
     m_lexer = Lexer(text, lst, m_projectIni->getString("project_path"));
     m_parser.m_lexer = &m_lexer;
-
+    ErrorHandler::e.m_displayWarnings = m_ini->getdouble("display_warnings")==1;
 
 
     m_tree = nullptr;

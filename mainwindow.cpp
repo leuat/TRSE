@@ -190,7 +190,8 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 
     Data::data.forceRedraw = true;
     Data::data.Redraw();
-
+    if (m_currentDoc!=nullptr)
+        m_currentDoc->keyPressEvent(e);
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *e)
@@ -220,8 +221,12 @@ void MainWindow::VerifyDefaults()
         m_iniFile.setString("theme", "dark_standard.ini");
     if (!m_iniFile.contains("theme_fjong"))
         m_iniFile.setString("theme_fjong", "dark_standard.ini");
+
     if (!m_iniFile.contains("post_optimize"))
         m_iniFile.setFloat("post_optimize", 1);
+
+    if (!m_iniFile.contains("display_warnings"))
+        m_iniFile.setFloat("display_warnings", 1);
 
     if (!m_iniFile.contains("memory_analyzer_font_size"))
         m_iniFile.setFloat("memory_analyzer_font_size", 17);

@@ -101,6 +101,13 @@
            </property>
           </widget>
          </item>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="chkWarnings">
+           <property name="text">
+            <string>Show warnings</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>

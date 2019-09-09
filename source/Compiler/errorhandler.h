@@ -65,7 +65,7 @@ public:
 
     QString m_teOut;
     QStringList m_warnings;
-
+    bool m_displayWarnings = true;
 
     void OutputText(QString str) {
         std::cout << str.toStdString() << std::endl;

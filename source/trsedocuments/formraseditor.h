@@ -175,6 +175,7 @@ private slots:
     void HandleBuildError();
     void HandleErrorDialogs(QString& output);
 //    void HandleRun();
+    void on_chkWarnings_stateChanged(int arg1);
 };
 
 #endif // FORMRASEDITOR_H
