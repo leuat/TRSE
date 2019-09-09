@@ -73,7 +73,7 @@ public:
     QVector<QString> m_ignoreMethods;
     Lexer* m_lexer;
     Token m_currentToken;
-    int m_pass = 0;
+    int m_pass = 0, m_acc=0;
     bool m_ignoreAll = false;
     QStringList  m_initJumps;
     SymbolTable* m_symTab = nullptr;

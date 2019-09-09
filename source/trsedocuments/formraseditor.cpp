@@ -27,6 +27,7 @@
 #include "source/LeLib/util/util.h"
 
 
+bool FormRasEditor::m_broadcast = true;
 FormRasEditor::FormRasEditor(QWidget *parent) :
     TRSEDocument(parent),
     ui(new Ui::FormRasEditor)
@@ -853,8 +854,8 @@ void FormRasEditor::HandleBuildComplete()
 {
     m_builderThread.msleep(70); // crashes if we don't sleep.. for some reason
     if (m_builderThread.m_builder->compiler.m_assembler!=nullptr) {
-        ui->txtEditor->m_cycles =  m_builderThread.m_builder->compiler.m_assembler->m_cycles;
-        ui->txtEditor->m_blockCycles =  m_builderThread.m_builder->compiler.m_assembler->m_blockCycles;
+        ui->txtEditor->m_cycles =  m_builderThread.m_builder->compiler.m_assembler->m_cyclesOut;
+        ui->txtEditor->m_blockCycles =  m_builderThread.m_builder->compiler.m_assembler->m_blockCyclesOut;
     }
     ui->txtEditor->RepaintCycles();
     if (m_builderThread.m_builder->compiler.m_assembler!=nullptr)
@@ -867,6 +868,10 @@ void FormRasEditor::HandleBuildComplete()
     HandleErrorDialogs(ErrorHandler::e.m_teOut);
 
     SetLights();
+    if (m_broadcast)
+        emit NotifyOtherSourceFiles(m_builderThread.m_builder);
+
+
     if (m_run) {
         m_builderThread.m_builder->AddMessage("<br>Running program...");
         HandleUpdateBuildText();

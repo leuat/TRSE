@@ -32,9 +32,38 @@ int Lexer::getLineNumber(QString find)
     QStringList  l= m_text.split("\n");
     for (int i=0;i<l.count();i++)
         if (l[i].contains(find))
-            return i;
+            return i;//-m_shiftLines;
 
     return -1;
+}
+
+void Lexer::FindLineNumberAndFile(int inLe, QString &file, int &outle)
+{
+    file="";
+    outle = inLe;
+    if (m_includeFiles.count()==0) {
+        return;
+    }
+
+    int cur = inLe;
+
+    //    qDebug() << "input line number: " << inLe;
+    //  qDebug() << "Start line: " << m_parser.m_lexer->m_includeFiles[0].m_startLine;
+    if (cur<=m_includeFiles[0].m_startLine) {
+        return;
+    }
+
+
+    for (FilePart fp: m_includeFiles) {
+        if (inLe >= fp.m_startLine && inLe<fp.m_endLine) {
+            file = fp.m_name;
+            outle = inLe - fp.m_startLine;
+            return;
+        }
+        //        qDebug() << "Include file size : " << (fp.m_endLine-fp.m_startLine);
+        cur=cur - (fp.m_endLine-fp.m_startLine)+1;
+    }
+    outle = cur;
 }
 
 Lexer::Lexer()

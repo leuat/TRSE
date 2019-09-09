@@ -32,11 +32,13 @@
 class FilePart {
 public:
     QString m_name;
-    int m_startLine, m_endLine, m_count;
+    int m_startLine, m_endLine, m_count, m_startLineAcc, m_endLineAcc;
     FilePart() {}
-    FilePart(QString name, int s, int e, int cnt) {
+    FilePart(QString name, int s, int e,int sa, int ea, int cnt) {
         m_startLine = s;
         m_endLine = e;
+        m_startLineAcc = sa;
+        m_endLineAcc = ea;
         m_name = name;
         m_count = cnt;
     }
@@ -61,6 +63,9 @@ public:
 
 
     int getLineNumber(QString find);
+
+    void FindLineNumberAndFile(int inLe, QString& file, int& outle);
+
 
     Lexer();
     Lexer(QString text, QStringList lines, QString path) {

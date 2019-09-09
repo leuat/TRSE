@@ -32,7 +32,7 @@
 
 class CItem {
 public:
-    QString name, strval;
+    QString name="", strval="";
     QStringList lst;
     double dval;
     QVector3D vec;
@@ -151,8 +151,10 @@ public:
             if (items[i].name==name.toLower().trimmed()) {
                 if (isUnique)
                     AddUniqueString(&items[i], val);
-                else
+                else {
                     items[i].lst<<val;
+                    items[i].strval = "";
+                }
                 return;
             }
 
@@ -163,6 +165,7 @@ public:
   //          AddUniqueString(&items[i], val);
 
         i.lst<<val;
+        i.strval = "";
         items.append(i);
 
     }
@@ -171,6 +174,7 @@ public:
         for (int i=0;i<items.size();i++) {
             if (items[i].name==name.toLower().trimmed()) {
                 items[i].lst = val;
+                items[i].strval = "";
                 return;
             }
 
@@ -182,7 +186,7 @@ public:
 
         i.lst = val;
         items.append(i);
-
+        i.strval="";
     }
 
 
@@ -201,6 +205,7 @@ public:
     void AddUniqueString(CItem* it,QString str) {
         it->lst.removeAll(str);
         it->lst.insert(0, str);
+        it->strval = "";
     }
 
     bool getBool(QString name) {
