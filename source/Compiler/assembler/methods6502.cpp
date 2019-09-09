@@ -2745,9 +2745,9 @@ void Methods6502::SetScreenLocation(Assembler *as)
         as->Asm("ora #%"+v+"0000");
         as->Asm("sta $9005");
 
-        if (w=="1") {
+        if (w!="") {
             as->Asm("lda $9002");
-            as->Asm("ora #%"+v+"0000000");
+            as->Asm("ora #%"+w+"0000000");
             as->Asm("sta $9002");
         }
 /*
