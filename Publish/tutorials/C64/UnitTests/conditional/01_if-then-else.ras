@@ -25,45 +25,7 @@ var
 
 	v1, v2 : byte;
 
-//--------------------------------------------------------------------------------------------
-// Initialisation  
-procedure Initialise();
-begin
-	DefineScreen();
-	SCREEN_BG_COL := BLACK;
-	SCREEN_FG_COL := BLACK;
-	sc := SCREEN_CHAR_LOC;
-	co := SCREEN_COL_LOC;
-	clearscreen(32, SCREEN_CHAR_LOC);
-	clearscreen(WHITE, SCREEN_COL_LOC);
-end;
-// Print POSITIVE result of a test - ptext must be 8 characters or less
-procedure PASS();
-begin
-	screenmemory := sc;
-	PrintString(text, 0, 12);
-	sc[8] := $53; // heart
-	co[8] := GREEN;
-	
-	sc := sc + @COLUMNWIDTH;
-	co := co + @COLUMNWIDTH;
-end;
-// Print NEGATIVE result of a test - ftext must be 8 characters or less
-procedure FAIL();
-begin
-	screenmemory := sc;
-	PrintString(text, 0, 12);
-	sc[8] := $56; // cross
-	co[8] := RED;
-	
-	sc := sc + @COLUMNWIDTH;
-	co := co + @COLUMNWIDTH;
-end;
-//--------------------------------------------------------------------------------------------
-
-
-
-
+@include "common.ras"
 
 /*--------------------------------------------------------------------------------------------
 

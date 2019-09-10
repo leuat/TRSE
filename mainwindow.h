@@ -196,6 +196,7 @@ public:
 
     void RefreshFileList();
 public slots:
+    void AcceptUpdateSourceFiles(SourceBuilder* sourceBuilder);
 
 
     void acceptBuildMain() {
@@ -256,10 +257,11 @@ signals:
    void ValueChanged();
 
 
+
+
 private slots:
 
-   void FindFileDialog();
-
+    void FindFileDialog();
     void onImageMouseMove();
 
     void on_treeFiles_doubleClicked(const QModelIndex &index);

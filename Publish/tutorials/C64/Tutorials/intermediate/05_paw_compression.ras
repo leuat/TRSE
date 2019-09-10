@@ -12,7 +12,7 @@ var
 	press space to cycle between the two images
 */
 
-
+@requirefile "05_paw_resources_auto_generated.ras" "Please compile the corresponding '05_paw_file.paw' before attempting to compile this program." 
 // The following include file is automatically generated during paw file build
 @include "05_paw_resources_auto_generated.ras"
 

@@ -190,7 +190,8 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 
     Data::data.forceRedraw = true;
     Data::data.Redraw();
-
+    if (m_currentDoc!=nullptr)
+        m_currentDoc->keyPressEvent(e);
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *e)
@@ -220,8 +221,12 @@ void MainWindow::VerifyDefaults()
         m_iniFile.setString("theme", "dark_standard.ini");
     if (!m_iniFile.contains("theme_fjong"))
         m_iniFile.setString("theme_fjong", "dark_standard.ini");
+
     if (!m_iniFile.contains("post_optimize"))
         m_iniFile.setFloat("post_optimize", 1);
+
+    if (!m_iniFile.contains("display_warnings"))
+        m_iniFile.setFloat("display_warnings", 1);
 
     if (!m_iniFile.contains("memory_analyzer_font_size"))
         m_iniFile.setFloat("memory_analyzer_font_size", 17);
@@ -334,6 +339,9 @@ void MainWindow::ConnectDocument()
     connect(m_currentDoc, SIGNAL(requestBuildMain()), this, SLOT(acceptBuildMain()));
     connect(m_currentDoc, SIGNAL(requestRunMain()), this, SLOT(acceptRunMain()));
 
+//    connect(m_currentDoc, SIGNAL(NotifyOtherSourceFiles()), this, SLOT(AcceptUpdateSourceFiles()));
+    if (dynamic_cast<FormRasEditor*>(m_currentDoc)!=nullptr)
+       QObject::connect((FormRasEditor*)m_currentDoc, &FormRasEditor::NotifyOtherSourceFiles, this, &MainWindow::AcceptUpdateSourceFiles);
 }
 
 
@@ -379,6 +387,35 @@ void MainWindow::RefreshFileList()
 
 }
 
+void MainWindow::AcceptUpdateSourceFiles(SourceBuilder *sourceBuilder)
+{
+    FormRasEditor::m_broadcast=false;
+
+    QStringList files;
+    if (sourceBuilder==nullptr)
+        return;
+    for (FilePart& fp: sourceBuilder->compiler.m_parser.m_lexer->m_includeFiles)
+        files<<fp.m_name;
+  //  qDebug() << files;
+    for (TRSEDocument* t : m_documents) {
+        if (t==m_currentDoc)
+            continue;
+        FormRasEditor* r = dynamic_cast<FormRasEditor*>(t);
+        if (r!=nullptr) {
+            QString name = r->m_currentFileShort;
+            if (files.contains(name)) {
+                sourceBuilder->compiler.CleanupCycleLinenumbers(name, sourceBuilder->compiler.m_assembler->m_cycles, sourceBuilder->compiler.m_assembler->m_cyclesOut);
+                sourceBuilder->compiler.CleanupCycleLinenumbers(name,sourceBuilder->compiler.m_assembler->m_blockCycles,sourceBuilder->compiler.m_assembler->m_blockCyclesOut);
+                r->m_builderThread.m_builder = sourceBuilder;
+                r->HandleBuildComplete();
+
+            }
+        }
+
+    }
+    FormRasEditor::m_broadcast=true;
+}
+
 
 void MainWindow::OpenProjectSettings()
 {
@@ -401,6 +438,7 @@ void MainWindow::OpenProjectSettings()
 
 void MainWindow::OnQuit()
 {
+//    qDebug() << m_currentProject.m_ini.getStringList("open_files");
     m_currentProject.Save();
 //    qDebug() << m_currentProject.m_ini.getString("current_file");
 

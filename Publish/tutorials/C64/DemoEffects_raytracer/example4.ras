@@ -39,7 +39,6 @@ In this program, we simply display these 16 screens while updating the character
 procedure SetScreen();
 begin
 	// Ugly but works, sets p1 to point to screen memory location 1000*frame 
-	
 	p1:=screen+frame*4*250;
 	
 

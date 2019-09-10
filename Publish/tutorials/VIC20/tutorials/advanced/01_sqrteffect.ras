@@ -15,16 +15,16 @@ var
 	cp,data,screen:pointer;
 
 /*
-	Fills @dataLoc with 25x22 circles & 7
+	Fills @dataLoc with 25xscreen_width circles & 7
 */
 
 // Calculates a bunch of circles with center 11,13
 procedure Calculate();
 begin
 	cp:=@dataloc;
-	for y:=0 to 23 do
+	for y:=0 to screen_height do
 	begin
-		for x:=0 to 22 do
+		for x:=0 to screen_width do
 		begin
 			dx:=abs(11-x);
 			dy:=abs(13-y);
@@ -44,8 +44,10 @@ begin
 	screen:=screen_char_loc; // Screen character memory
 	cp:=SCREEN_COL_LOC; // Color memory
 	data:=@dataloc;
-	for y:=0 to 23 do begin
-		for x:=0 to 22 do begin
+	for y:=0 to screen_height do 
+	begin
+		for x:=0 to screen_width do 
+		begin
 			i:=(data[x]-time)&7;
 			screen[x]:=vals[i];
 			cp[x]:=i;
@@ -67,7 +69,7 @@ begin
 	time:=0;
 	
 	Calculate();
-	while (1=1) do begin
+	while (true) do begin
 		Update();
 	end;
 	Loop();

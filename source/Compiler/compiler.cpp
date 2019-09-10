@@ -33,7 +33,7 @@ void Compiler::Parse(QString text, QStringList lst)
 
     m_lexer = Lexer(text, lst, m_projectIni->getString("project_path"));
     m_parser.m_lexer = &m_lexer;
-
+    ErrorHandler::e.m_displayWarnings = m_ini->getdouble("display_warnings")==1;
 
 
     m_tree = nullptr;
@@ -115,7 +115,10 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
         m_assembler->Connect();
         if (m_ini->getdouble("post_optimize")==1.0)
             m_assembler->Optimise(*m_projectIni);
-        CleanupCycleLinenumbers();
+
+        CleanupCycleLinenumbers("", m_assembler->m_cycles, m_assembler->m_cyclesOut);
+        CleanupCycleLinenumbers("",m_assembler->m_blockCycles,m_assembler->m_blockCyclesOut);
+
         CleanupBlockLinenumbers();
     }
 
@@ -126,32 +129,60 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
 
 }
 
-void Compiler::CleanupCycleLinenumbers()
+void Compiler::CleanupCycleLinenumbers(QString currentFile, QMap<int,int>& ocycles, QMap<int,int>& retcycles )
 {
 
     QMap<int, int> cycles;
+    int acc = 0;
+    if (currentFile=="")
+    for (int i: ocycles.keys()) {
 
-    for (int i: m_assembler->m_cycles.keys()) {
-
-        int count = m_assembler->m_cycles[i];
+        int count = ocycles[i];
         int nl = i;
+        acc = 0;
         for (FilePart& fp : m_parser.m_lexer->m_includeFiles) {
             // Modify bi filepart
             if (nl>fp.m_startLine && nl<fp.m_endLine) {
                 cycles[fp.m_startLine]+=count;
                 count=0;
+ //               acc+=fp.m_startLine;
             }
 
-            if (nl>=fp.m_endLine)
+            if (nl>=fp.m_endLine) {
+//                qDebug() << fp.m_startLine << fp.m_count;
+                acc+=fp.m_count;
                 nl-=fp.m_count-1;
+            }
         }
         if (count!=0)
             cycles[nl] = count;
 
 
     }
+    else {
+        for (int i: ocycles.keys()) {
 
-    m_assembler->m_cycles = cycles;
+            int count = ocycles[i];
+            int nl = i;
+
+            for (FilePart& fp : m_parser.m_lexer->m_includeFiles) {
+                {
+                    if (fp.m_name == currentFile)
+                    if (nl>fp.m_startLineAcc && nl<fp.m_endLineAcc) {
+                        cycles[nl-fp.m_startLineAcc] = count;
+                    }
+
+                }
+            }
+
+
+        }
+    }
+    retcycles.clear();
+    for (int i: cycles.keys())
+        if (cycles[i]!=0)
+            retcycles[i] = cycles[i];
+//    m_assembler->m_cycles = cycles;
 }
 
 void Compiler::CleanupBlockLinenumbers()
@@ -194,7 +225,7 @@ void Compiler::HandleError(FatalErrorException fe, QString e)
     QString msg = "";
     int linenr = fe.linenr;
     QString file = "";
-    FindLineNumberAndFile(fe.linenr, file, linenr);
+    m_parser.m_lexer->FindLineNumberAndFile(fe.linenr, file, linenr);
     //linenr = fe.linenr;
 
 
@@ -215,34 +246,6 @@ void Compiler::HandleError(FatalErrorException fe, QString e)
 
 }
 
-void Compiler::FindLineNumberAndFile(int inLe, QString& file, int& outle)
-{
-    file="";
-    outle = inLe;
-    if (m_parser.m_lexer->m_includeFiles.count()==0) {
-        return;
-    }
-
-    int cur = inLe;
-
-    qDebug() << "input line number: " << inLe;
-    qDebug() << "Start line: " << m_parser.m_lexer->m_includeFiles[0].m_startLine;
-    if (cur<=m_parser.m_lexer->m_includeFiles[0].m_startLine) {
-        return;
-    }
-
-
-    for (FilePart fp: m_parser.m_lexer->m_includeFiles) {
-        if (inLe >= fp.m_startLine && inLe<fp.m_endLine) {
-            file = fp.m_name;
-            outle = inLe - fp.m_startLine;
-            return;
-        }
-//        qDebug() << "Include file size : " << (fp.m_endLine-fp.m_startLine);
-        cur=cur - (fp.m_endLine-fp.m_startLine);
-    }
-    outle = cur;
-}
 
 void Compiler::Init6502Assembler()
 {

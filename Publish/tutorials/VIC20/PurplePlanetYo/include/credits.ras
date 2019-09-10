@@ -61,7 +61,6 @@ begin
 	upper:=timeStamps[currentPos+2];
 	lower:=timeStamps[currentPos+3];
 
-	
 	b:=100;
 	aa:=98;
 

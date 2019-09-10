@@ -46,11 +46,11 @@ public:
     Compiler() {}
     void Parse(QString text, QStringList lst);
     bool Build( AbstractSystem* system, QString projDir);
-    void CleanupCycleLinenumbers();
+    void CleanupCycleLinenumbers(QString currentFile, QMap<int,int>& cycles,QMap<int,int>& retcycles );
     void CleanupBlockLinenumbers();
     void SaveBuild(QString filename);
     void HandleError(FatalErrorException fe, QString se);
-    void FindLineNumberAndFile(int inLe, QString& file, int& outle);
+//    void FindLineNumberAndFile(int inLe, QString& file, int& outle);
     void Init6502Assembler();
     void WarningUnusedVariables();
 };

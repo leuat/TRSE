@@ -13,6 +13,7 @@ begin
 		j:=screenmemory[i];
 		
 		p1:=$1400;
+
 		
 		while (j>=15) then begin inczp(p1,15*16); j:=j-15; end;
 		j:=j*16;

@@ -124,7 +124,8 @@ begin
 		end;	
 		if val>=16 then val:=val+24;   // Align chars (for this particular font)
 		// point to the correct char in memory, each char is 2x2 x 8 bytes, so 16 bytes in total
-		zeropage1:=zeropage1+16*val;
+		
+		zeropage1:=zeropage1+val*16;
 		
 		
 		// val2 here is the actual character to draw, 74 is semi-filled char

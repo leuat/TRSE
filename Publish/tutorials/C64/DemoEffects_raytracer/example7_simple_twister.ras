@@ -15,6 +15,15 @@ var
 
 
 /*
+	Twister splaining : 
+		a) Pre-render a rotating cube with shadows etc (see the corresponding .fjong file). 
+		b) Save 1 line of data from each of the 0-to-90-degree rotations
+		c) You now have a 90-degree set of individual lines of data
+		d) Calculate some funky sine function for each value of y
+		e) use this as a lookup value for which line to copy to the screen.
+		f) Profit! 
+
+
 	Remember to run the corresponding fjong file (example7_simple_twister.fjo) before compiling
 	this tutorial.
 
@@ -28,7 +37,7 @@ var
 procedure UpdateTwister();
 begin
 	// Point to some place on the (bitmap) screen, start of twister
-	dest:=$66C0;
+	dest:=$6000 + 8*40*6 + 16*8 ;
 
 	// Two opposing sine phases
 	y1:=time*3;
@@ -94,8 +103,8 @@ begin
 	setmulticolormode();
 	clearscreen(4,screen_col_loc); // Set purple 
 	clearscreen($63,screen_char_loc2); // Set  blue and white multicolors
-	VIC_DATA_LOC:=$18; // Bitmap memory screen starts at $6000
-	setbank(VIC_BANK1); 
+	vic_data_loc:=$18; // Bitmap memory screen starts at $6000
+	setbank(vic_bank1); 
 	clearbitmap(^$6000,32);	 // Clear the entire screen
 
 end;

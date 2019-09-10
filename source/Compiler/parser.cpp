@@ -903,25 +903,28 @@ void Parser::Preprocess()
 {
     m_lexer->Initialize();
     m_lexer->m_ignorePreprocessor = false;
+    m_acc = 0;
     m_currentToken = m_lexer->GetNextToken();
     //m_preprocessorDefines.clear();
     while (m_currentToken.m_type!=TokenType::TEOF) {
         if (m_currentToken.m_type == TokenType::PREPROCESSOR) {
             if (m_currentToken.m_value.toLower()=="include") {
+
+//                QString str = m_currentToken.m_value;
                 Eat(TokenType::PREPROCESSOR);
-                QString filename =m_lexer->m_path +"/"+ m_currentToken.m_value;
+                QString name = m_currentToken.m_value;
+                QString filename =(m_lexer->m_path +"/"+ m_currentToken.m_value);
+                filename = filename.replace("//","/");
 
                 QString text = m_lexer->loadTextFile(filename);
-                int ln=m_lexer->getLineNumber(m_currentToken.m_value);
+                int ln=m_lexer->getLineNumber(m_currentToken.m_value)+m_acc;
                 m_lexer->m_text.insert(m_lexer->m_pos, text);
                 int count = text.split("\n").count();
-
                 m_lexer->m_includeFiles.append(
-                            FilePart(filename,ln, ln+ count, count));
+                            FilePart(name,ln, ln+ count, ln-m_acc,ln+count-m_acc,count));
+                m_acc-=count-1;
 
                 Eat(TokenType::STRING);
-                //Eat(TokenType::SEMI);
-                //IncludeFile(filename);
             }
             else if (m_currentToken.m_value.toLower() =="define") {
                 Eat(TokenType::PREPROCESSOR);

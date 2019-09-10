@@ -72,25 +72,24 @@ begin
 
 	// Draw 256 chars on the screen from 0 to 256
 	moveto(0,0,$10);
-	for i:=0 to 0 do begin
+	for i:=0 to 0 do 
 		screenmemory[i]:=i;
-	end;
-
+	
 
 	// After this, some random raster effect
-	while (1=1) do begin
+	while (true) do begin
 		time:=time+4;
 		t:=sine[time]/4+32;
 		
 		waitforraster(t);
-		AUX_COLOR_AND_VOLUME:=BLACK*16;
+		aux_color_and_volume:=black*16;
 		for i:=0 to 24 do begin
-			SCREEN_BG_COLOR:=BLUE;
+			screen_bg_color:=blue;
 			waitnoraster(1);
 						
 		end;
-		AUX_COLOR_AND_VOLUME:=PURPLE*16;
-		SCREEN_BG_COLOR:=BLUE*16;
+		aux_color_and_volume:=purple*16;
+		screen_bg_color:=blue*16;
 	end;
 
 end;

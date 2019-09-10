@@ -27,6 +27,7 @@
 #include "source/LeLib/util/util.h"
 
 
+bool FormRasEditor::m_broadcast = true;
 FormRasEditor::FormRasEditor(QWidget *parent) :
     TRSEDocument(parent),
     ui(new Ui::FormRasEditor)
@@ -200,7 +201,8 @@ void FormRasEditor::Build()
 
 void FormRasEditor::SetOutputText(QString txt)
 {
-    ui->txtOutput->setText(ErrorHandler::e.m_teOut);
+    ui->txtOutput->setHtml(ErrorHandler::e.m_teOut);
+//    ui->txtOutput->set
 
 }
 
@@ -645,6 +647,7 @@ void FormRasEditor::FillFromIni()
 {
     ui->chkPostOpt->setChecked(m_iniFile->getdouble("post_optimize")==1);
     ui->chkExomize->setChecked(m_iniFile->getdouble("perform_crunch")==1);
+    ui->chkWarnings->setChecked(m_iniFile->getdouble("display_warnings")==1);
 //    qDebug() << "FillFromIni" << m_iniFile->getdouble("perform_crunch");
     isInitialized=true;
 }
@@ -653,18 +656,9 @@ void FormRasEditor::FillToIni()
 {
     if (!isInitialized)
         return;
-//    qDebug() << "FillToIni A" << m_iniFile->getdouble("perform_crunch");
-    if (ui->chkPostOpt->isChecked())
-        m_iniFile->setFloat("post_optimize",1);
-    else
-        m_iniFile->setFloat("post_optimize",0);
-
-    if (ui->chkExomize->isChecked())
-        m_iniFile->setFloat("perform_crunch",1);
-    else
-        m_iniFile->setFloat("perform_crunch",0);
-
-  //  qDebug() << "FillToIni B" << m_iniFile->getdouble("perform_crunch");
+    m_iniFile->setFloat("post_optimize",ui->chkPostOpt->isChecked()?1:0);
+    m_iniFile->setFloat("perform_crunch",ui->chkExomize->isChecked()?1:0);
+    m_iniFile->setFloat("display_warnings",ui->chkWarnings->isChecked()?1:0);
 
     m_iniFile->Save();
 }
@@ -681,6 +675,11 @@ void FormRasEditor::MemoryAnalyze()
     int i= m_iniFile->getdouble("perform_crunch");
     m_iniFile->setFloat("perform_crunch",0);
     if (m_builderThread.m_builder==nullptr) {
+        ErrorHandler::e.m_warnings.clear();
+        ErrorHandler::e.m_teOut = "";
+        ErrorHandler::e.Warning("Source file must be built before memory analyzer can run.");
+        SetOutputText(ErrorHandler::e.m_teOut);
+
         return;
     }
     if (!m_builderThread.m_builder->Build(ui->txtEditor->toPlainText()))
@@ -853,8 +852,8 @@ void FormRasEditor::HandleBuildComplete()
 {
     m_builderThread.msleep(70); // crashes if we don't sleep.. for some reason
     if (m_builderThread.m_builder->compiler.m_assembler!=nullptr) {
-        ui->txtEditor->m_cycles =  m_builderThread.m_builder->compiler.m_assembler->m_cycles;
-        ui->txtEditor->m_blockCycles =  m_builderThread.m_builder->compiler.m_assembler->m_blockCycles;
+        ui->txtEditor->m_cycles =  m_builderThread.m_builder->compiler.m_assembler->m_cyclesOut;
+        ui->txtEditor->m_blockCycles =  m_builderThread.m_builder->compiler.m_assembler->m_blockCyclesOut;
     }
     ui->txtEditor->RepaintCycles();
     if (m_builderThread.m_builder->compiler.m_assembler!=nullptr)
@@ -867,6 +866,11 @@ void FormRasEditor::HandleBuildComplete()
     HandleErrorDialogs(ErrorHandler::e.m_teOut);
 
     SetLights();
+    if (m_broadcast && m_currentFileShort.toLower().endsWith(".ras")) {
+        emit NotifyOtherSourceFiles(m_builderThread.m_builder);
+    }
+
+
     if (m_run) {
         m_builderThread.m_builder->AddMessage("<br>Running program...");
         HandleUpdateBuildText();
@@ -903,4 +907,10 @@ void BuilderThread::run()
         emit emitError();
     }
     m_isRunning=false;
+}
+
+void FormRasEditor::on_chkWarnings_stateChanged(int arg1)
+{
+    FillToIni();
+
 }

@@ -144,9 +144,9 @@ begin
 	setmemoryconfig(1,0,0);
 	
 	ClearScreen(key_space,screen_char_loc);
-	screen_fg_col:=black;
-	screen_bg_col:=black;
-	clearscreen(red,screen_col_loc);
+	screen_fg_col:=red;
+	screen_bg_col:=red;
+	clearscreen(black,screen_col_loc);
 	setcharsetlocation(@charLoc);
 
 end;
