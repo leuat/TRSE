@@ -64,6 +64,14 @@ public:
 
     void LoadAndStoreInZp(Node* n, Assembler* as, QString zp);
 
+    void BcdAdd(Assembler* as);
+    void BcdSub(Assembler* as);
+    void BcdCompare(Assembler* as);
+    void BcdIsEqual(Assembler* as);
+    void BcdPrint(Assembler* as);
+
+
+
     /*
      * NES
      * */
@@ -174,6 +182,8 @@ public:
     void InitDecrunch(Assembler* as);
     void InitPrintDecimal(Assembler* as);
     void InitPlaySidVIC20(Assembler* as);
+    void InitBcd(Assembler* as);
+
 };
 
 #endif // METHODS6502_H

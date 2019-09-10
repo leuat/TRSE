@@ -768,6 +768,25 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("initmoveto80")) {
         InitMoveto80(as);
     }
+
+    if (Command("initbcd")) {
+        InitBcd(as);
+    }
+    if (Command("bcdadd")) {
+        BcdAdd(as);
+    }
+    if (Command("bcdsub")) {
+        BcdSub(as);
+    }
+    if (Command("bcdcompare")) {
+        BcdCompare(as);
+    }
+    if (Command("bcdisequal")) {
+        BcdIsEqual(as);
+    }
+    if (Command("bcdprint")) {
+        BcdPrint(as);
+    }
     if (Command("initjoystick")) {
         InitJoystick(as);
     }
@@ -5554,6 +5573,275 @@ void Methods6502::FLD(Assembler *as)
     as->Asm("bne " + lbl);
 
     as->PopLabel("fld");
+}
+
+// initialise the Bcd Print Digit code
+void Methods6502::InitBcd(Assembler *as)
+{
+    if (m_node->m_isInitialized["initbcd"])
+        return;
+    m_node->m_isInitialized["initbcd"] = true;
+
+    as->Comment("----------");
+    as->Comment("BCD support");
+    as->Comment("Commands for manipulating and displaying BCD numbers");
+    as->Comment("");
+    as->Comment("a = digit to display");
+    as->Comment("y = screen offset");
+
+    as->Label("bcdplotdigit");
+    as->Asm("clc");
+    as->Asm("adc #48 ; 0 screen code");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("dey");
+    //as->Asm("rts");
+
+}
+
+void Methods6502::BcdAdd(Assembler *as)
+{
+    as->Comment("----------");
+    as->Comment("BcdAdd address, address, number");
+
+    // BCD array address to add to
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    QString srcaddr = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        srcaddr = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        srcaddr = var->getValue(as);
+
+    // BCD array address containing value to add
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+        ErrorHandler::e.Error("Second parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    QString addaddr = "";
+    if (m_node->m_params[1]->isPureNumeric())
+        addaddr = m_node->m_params[1]->HexValue();
+    if (var!=nullptr)
+        addaddr = var->getValue(as);
+
+    NodeNumber* num3 = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+    if (num3==nullptr)
+        ErrorHandler::e.Error("BCD: last parameter, number of digits, required to be pure constant number");
+
+    int numDigits = num3->m_val;
+    if (numDigits < 1 || numDigits > 254)
+        ErrorHandler::e.Error("BCD: last parameter, number of digits, must be greater than 0 but less than 255");
+
+
+    as->Asm("sed");
+    as->Asm("clc");
+    as->Asm("lda " + srcaddr);
+    as->Asm("adc " + addaddr);
+    as->Asm("sta " + srcaddr);
+    if (numDigits > 1) {
+
+        for (int i=1; i<numDigits; i++) {
+
+            as->Asm("lda " + srcaddr + "+" + Util::numToHex(i));
+            as->Asm("adc " + addaddr + "+" + Util::numToHex(i));
+            as->Asm("sta " + srcaddr + "+" + Util::numToHex(i));
+
+        }
+
+    }
+    as->Asm("cld");
+
+}
+
+void Methods6502::BcdSub(Assembler *as)
+{
+
+    as->Comment("----------");
+    as->Comment("BcdSub address, address, number");
+
+    // BCD array address to subtract from
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    QString srcaddr = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        srcaddr = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        srcaddr = var->getValue(as);
+
+    // BCD array address containing value to subtract
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+        ErrorHandler::e.Error("Second parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    QString addaddr = "";
+    if (m_node->m_params[1]->isPureNumeric())
+        addaddr = m_node->m_params[1]->HexValue();
+    if (var!=nullptr)
+        addaddr = var->getValue(as);
+
+    NodeNumber* num3 = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+    if (num3==nullptr)
+        ErrorHandler::e.Error("BCD: last parameter, number of digits, required to be pure constant number");
+
+    int numDigits = num3->m_val;
+    if (numDigits < 1 || numDigits > 254)
+        ErrorHandler::e.Error("BCD: last parameter, number of digits, must be greater than 0 but less than 255");
+
+
+    as->Asm("sed");
+    as->Asm("sec");
+    as->Asm("lda " + srcaddr);
+    as->Asm("sbc " + addaddr);
+    as->Asm("sta " + srcaddr);
+    if (numDigits > 1) {
+
+        for (int i=1; i<numDigits; i++) {
+
+            as->Asm("lda " + srcaddr + "+" + Util::numToHex(i));
+            as->Asm("sbc " + addaddr + "+" + Util::numToHex(i));
+            as->Asm("sta " + srcaddr + "+" + Util::numToHex(i));
+
+        }
+
+    }
+    as->Asm("cld");
+
+}
+
+void Methods6502::BcdCompare(Assembler *as)
+{
+
+    as->Comment("----------");
+    as->Comment("BcdCompare address, address, number");
+
+    // BCD array address to compare
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    QString srcaddr = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        srcaddr = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        srcaddr = var->getValue(as);
+
+    // BCD array address containing value to compare with
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+        ErrorHandler::e.Error("Second parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    QString dstaddr = "";
+    if (m_node->m_params[1]->isPureNumeric())
+        dstaddr = m_node->m_params[1]->HexValue();
+    if (var!=nullptr)
+        dstaddr = var->getValue(as);
+
+    NodeNumber* num3 = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+    if (num3==nullptr)
+        ErrorHandler::e.Error("BCD: last parameter, number of digits, required to be pure constant number");
+
+    int numDigits = num3->m_val;
+    if (numDigits < 1 || numDigits > 254)
+        ErrorHandler::e.Error("BCD: last parameter, number of digits, must be greater than 0 but less than 255");
+    numDigits--;
+
+    QString lblbcdMorethanLoop = as->NewLabel("bcdMorethanLoop");
+    QString lblbcdIsEqual = as->NewLabel("bcdIsEqual");
+    QString lblbcdIsLess = as->NewLabel("bcdIsLess");
+    QString lblbcdIsMore = as->NewLabel("bcdIsMore");
+    QString lblbcdDone = as->NewLabel("bcdDone");
+
+    as->Asm("ldx #" + Util::numToHex(numDigits));
+    as->Label(lblbcdMorethanLoop);
+    as->Asm("lda " + srcaddr +",x");
+    as->Asm("cmp "+dstaddr+",x");
+    as->Asm("bcc "+ lblbcdIsLess);
+    as->Asm("beq "+ lblbcdIsEqual);
+    as->Asm("bcs "+ lblbcdIsMore);
+    as->Label(lblbcdIsEqual);
+    as->Asm("dex");
+    as->Asm("cpx #$ff");
+    as->Asm("bne "+lblbcdMorethanLoop);
+    as->Label(lblbcdIsLess);
+    as->Asm("lda #0");
+    as->Asm("beq "+ lblbcdDone);
+    as->Label(lblbcdIsMore);
+    as->Asm("lda #1");
+    as->Label(lblbcdDone);
+
+    as->PopLabel("bcdMorethanLoop");
+    as->PopLabel("bcdIsEqual");
+    as->PopLabel("bcdIsLess");
+    as->PopLabel("bcdIsMore");
+    as->PopLabel("bcdDone");
+}
+
+void Methods6502::BcdIsEqual(Assembler *as)
+{
+}
+
+void Methods6502::BcdPrint(Assembler *as)
+{
+
+    as->Comment("----------");
+    as->Comment("BcdPrint address, number");
+
+    // BCD array address to add to
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    QString srcaddr = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        srcaddr = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        srcaddr = var->getValue(as);
+
+    NodeNumber* num3 = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    if (num3==nullptr)
+        ErrorHandler::e.Error("BCD: last parameter, number of digits, required to be pure constant number");
+
+    int numDigits = num3->m_val;
+    if (numDigits < 1 || numDigits > 254)
+        ErrorHandler::e.Error("BCD: last parameter, number of digits, must be greater than 0 but less than 255");
+    int numScreen = (numDigits * 2) - 1;
+
+    QString lblLoop = as->NewLabel("bcdprintloop");
+
+    as->Asm("ldy #" + Util::numToHex(numScreen) + " ; screen offset");
+    as->Asm("ldx #0 ; score byte index");
+    as->Label(lblLoop);
+    as->Asm("lda " + srcaddr+",x");
+    as->Asm("inx");
+    as->Asm("pha");
+    as->Asm("and #$0f");
+    as->Asm("jsr bcdplotdigit");
+    as->Asm("pla");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("jsr bcdplotdigit");
+    as->Asm("bpl " + lblLoop);
+
+    as->PopLabel("bcdprintloop");
 }
 
 void Methods6502::InitJoystick(Assembler *as)
