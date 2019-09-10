@@ -48,7 +48,7 @@ Material1 = {
  
 
 -- Number of toruses
-N = 16
+N = 6
 distance = 10
 frame = 0
 noFrames = 22.0

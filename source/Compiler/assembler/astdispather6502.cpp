@@ -2277,6 +2277,10 @@ bool ASTDispather6502::isSimpleAeqAOpB16Bit(NodeVar *var, NodeAssign *node)
         return false;
   //  qDebug() << "isSimpleAeqAOpB16Bit" << var->isWord(as) << rterm->m_right->is8bitValue(as) << TokenType::getType(node->m_forceType) ;
 
+//    qDebug() << "Is pure " <<rterm->m_right->isPure();
+    if (!(rterm->m_right->isPure()))
+        return false;
+
     if (var->isWord(as) &&  rterm->m_right->is8bitValue(as) && !(node->m_forceType==TokenType::INTEGER)) {
 //        qDebug() << "WHOO";
         //          qDebug() << "Cont";

@@ -6,8 +6,8 @@ var
 	
 	Whatever is going on here:
 		- decrease the 8-pixel wide hardware scroll register
-		- if it the scroll value is zero: 
-			- reset scroll value to 7
+		- if the scroll value is zero: 
+			- reset to 7
 			- spend lots of cycles copying*all* screen data 1 column to the right 
 			- draw a new row of random (perlin noise) data at the leftmost column on the screen
 		- whenever the scrollr register is *not* zero, perform the character set shift to create a plasma effect
