@@ -1,13 +1,6 @@
 /*
 
-Summary:
-
-	Unit tests in this program are for IF conditional tests.
-
-Description:
-
-	Testing > >= < <= = <>
-	Testing unsigned Bytes
+Multiplication / division unit testing
 
 */
 program MulDiv;
