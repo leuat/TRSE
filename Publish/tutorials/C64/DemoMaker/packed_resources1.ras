@@ -1,12 +1,12 @@
 image1_data : IncBin("compressed//image1_data_c.bin", $bb73);
-image1_color : IncBin("compressed//image1_color_c.bin", $c419);
-image2_data : IncBin("compressed//image2_data_c.bin", $c59b);
-image2_color : IncBin("compressed//image2_color_c.bin", $d363);
-charset_c : IncBin("compressed//charset_c_c.bin", $d632);
+image1_color : IncBin("compressed//image1_color_c.bin", $c409);
+image2_data : IncBin("compressed//image2_data_c.bin", $c589);
+image2_color : IncBin("compressed//image2_color_c.bin", $d343);
+charset_c : IncBin("compressed//charset_c_c.bin", $d60d);
 packed_data_addresses : array [10] of byte = (
-	25, 196,
-	155, 197,
-	99, 211,
-	50, 214,
-	215, 217
+	9, 196,
+	137, 197,
+	67, 211,
+	13, 214,
+	176, 217
 );

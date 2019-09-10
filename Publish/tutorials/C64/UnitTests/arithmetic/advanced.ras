@@ -109,7 +109,6 @@ begin
 	v1:=3;
 	p2[1]:=$20;
 	p1:=$0400 + toPointer(hi(p2)+$10*v1,lo(p2)*3+p2[1]*2)*2;
-	
 	text := "09:"; if p1=$E486 then PASS() else FAIL();
 end;
 
