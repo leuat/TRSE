@@ -158,12 +158,9 @@ end;
 procedure IntDivPow210();
 begin
 	i1 := 60000;
-	asm(";crash");
 	i1 := i1/4;
 	text := "10:"; 
 	if (i1=15000) then PASS() else FAIL();
-	moveto(5,15,04);
-	printdecimal(i1,4);
 end;
 
 
