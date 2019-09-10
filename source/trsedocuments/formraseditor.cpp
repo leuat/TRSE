@@ -866,8 +866,9 @@ void FormRasEditor::HandleBuildComplete()
     HandleErrorDialogs(ErrorHandler::e.m_teOut);
 
     SetLights();
-    if (m_broadcast)
+    if (m_broadcast && m_currentFileShort.toLower().endsWith(".ras")) {
         emit NotifyOtherSourceFiles(m_builderThread.m_builder);
+    }
 
 
     if (m_run) {

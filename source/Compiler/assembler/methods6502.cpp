@@ -4313,7 +4313,7 @@ void Methods6502::InitMul16x8(Assembler *as)
     as->Asm("lda #$00");
     as->Asm("ldy #$00");
 //    as->Asm("tay");
-    as->Asm("sty mul16x8_num1Hi  ; remove this line for 16*8=16bit multiply");
+  //  as->Asm("sty mul16x8_num1Hi  ; remove this line for 16*8=16bit multiply");
     as->Asm("beq mul16x8_enterLoop");
 
     as->Label("mul16x8_doAdd");
@@ -4333,9 +4333,9 @@ void Methods6502::InitMul16x8(Assembler *as)
     as->Asm("lsr mul16x8_num2");
     as->Asm("bcs mul16x8_doAdd");
     as->Asm("bne mul16x8_loop");
-    as->Asm("rts");
+  //  as->Asm("rts");
 
-    as->Label("mul16x8_def_end");
+//    as->Label("mul16x8_def_end");
 }
 
 void Methods6502::DisableInterrupts(Assembler *as)

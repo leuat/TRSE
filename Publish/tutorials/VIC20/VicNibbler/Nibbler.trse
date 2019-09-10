@@ -37,4 +37,4 @@ output_debug_symbols = 1
 current_file = nibbler.asm
 pascal_settings_use_local_variables = 0
 project_path = /home/leuat/code/TRSE/Release/../tutorials/VIC20/VicNibbler/
-open_files = ,levels.ras, nibbler.asm, nibbler.ras, sound.ras
+open_files = ,levels.ras, nibbler.ras, sound.ras

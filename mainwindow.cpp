@@ -392,6 +392,8 @@ void MainWindow::AcceptUpdateSourceFiles(SourceBuilder *sourceBuilder)
     FormRasEditor::m_broadcast=false;
 
     QStringList files;
+    if (sourceBuilder==nullptr)
+        return;
     for (FilePart& fp: sourceBuilder->compiler.m_parser.m_lexer->m_includeFiles)
         files<<fp.m_name;
   //  qDebug() << files;
