@@ -15,6 +15,15 @@ var
 
 
 /*
+	Twister splaining : 
+		a) Pre-render a rotating cube with shadows etc (see the corresponding .fjong file). 
+		b) Save 1 line of data from each of the 0-to-90-degree rotations
+		c) You now have a 90-degree set of individual lines of data
+		d) Calculate some funky sine function for each value of y
+		e) use this as a lookup value for which line to copy to the screen.
+		f) Profit! 
+
+
 	Remember to run the corresponding fjong file (example7_simple_twister.fjo) before compiling
 	this tutorial.
 

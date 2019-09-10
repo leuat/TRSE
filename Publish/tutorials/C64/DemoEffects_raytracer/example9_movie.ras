@@ -12,6 +12,15 @@ var
 @requirefile "data/chardata1.bin" "Please run the Fjong raytracer file 'example9_movie.fjo' before compiling this program"
 
 
+/*
+
+	22 frames of compressed 128-character charsets + screen data.
+	Two frames are therefore sqeezed into 1 charset
+
+
+*/
+
+
 	chardata1:incbin("data/chardata1.bin", $2000);
 	chardata2:incbin("data/chardata2.bin", $6000);
 	chardata3:incbin("data/chardata3.bin", $A000);

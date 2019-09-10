@@ -675,6 +675,11 @@ void FormRasEditor::MemoryAnalyze()
     int i= m_iniFile->getdouble("perform_crunch");
     m_iniFile->setFloat("perform_crunch",0);
     if (m_builderThread.m_builder==nullptr) {
+        ErrorHandler::e.m_warnings.clear();
+        ErrorHandler::e.m_teOut = "";
+        ErrorHandler::e.Warning("Source file must be built before memory analyzer can run.");
+        SetOutputText(ErrorHandler::e.m_teOut);
+
         return;
     }
     if (!m_builderThread.m_builder->Build(ui->txtEditor->toPlainText()))
