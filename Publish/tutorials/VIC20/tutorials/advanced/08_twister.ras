@@ -31,15 +31,12 @@ begin
 	DefineScreen();
 	screenmemory:=$1000;	
 	k:=64;
-	for y:=0 to 22 do begin
+	for y:=0 to screen_width do begin
 		for x:=0 to 8 do begin
 			screenmemory[x+8]:=k;
-//			screenmemory[x+16]:=k;
-//			screenmemory[x+14]:=k;
 			inc(k);
-//			if k>192 then k:=64;
 		end;
-		inczp(screenmemory,22);
+		screenmemory:=screenmemory+screen_width;
 
 	end;
 
@@ -56,30 +53,14 @@ begin
 
 
 	xp:=0;
-	for y:=0 to 22 do begin
+	for y:=0 to screen_height do begin
 		for x:=0 to 8 do begin
 //			l:=0;
 			tt:=sine2[t1+xp];
 			m:=sine2[t2-xp];
-//			m:=sine2[tt+m];
-//			tt:=(tt-m-k)&%11111110;
 			tt:=(m+tt-k)&%11111110;
-
-			asm("
-				ldx tt
-				lda table,x
-				sta zp
-				inx
-				lda table,x
-				sta zp+1
-
-			");
-
-
-/*			for k:=0 to 8 do begin
-				zp2[l]:=zp[l];
-				l:=l+8;
-			end;*/
+			zp:=toPointer(table[tt+1], table[tt]);
+			
 			asm("
 			ldx #8
 			clc
@@ -91,12 +72,12 @@ blah:
 			dex
 			bne  blah
 			");
-			inczp(zp2,1);
+			zp2:=zp2+1;
 			inc(xp);
 //			inc(xp);
 //			xp:=xp+3;
 		end;
-		inczp(zp2,8*7);		
+		zp2:=zp2+8*7;
 	end;
 
 end;
@@ -108,15 +89,9 @@ begin
 	k:=0;
 	for i:=0 to 128 do begin
 		j:=i*2;
-		asm("
-			ldy j
-			lda zp
-			sta (p1),y
-			iny 
-			lda zp+1
-			sta (p1),y
-		");	
-		inczp(zp,1);
+		p1[j]:=lo(zp);
+		p1[j+1]:=hi(zp);
+		zp:=zp+1;
 		inc(k);
 		if (k=8) then begin
 			k:=0;
@@ -130,7 +105,7 @@ end;
 
 procedure InitSine();
 begin
-	for i:=0 to 0 do sine2[i]:=sine[i]/4;
+	for i:=0 to 256 do sine2[i]:=sine[i]/4;
 
 end;
 
@@ -148,8 +123,7 @@ begin
 	AUX_COLOR_AND_VOLUME:=6*16;
 //	copycharsetfromrom(^$2000);
 	setcharsetlocation($1400);
-	while (1=1) do begin
-		WaitForRaster(0);
+	while (true) do begin
 		UpdateTwister();
 		inc(time);
 		inc(ttime);
@@ -159,12 +133,6 @@ end;
 
 
 @endblock
-
-
-procedure what();
-begin
-
-end;
 
 begin
 	MainRoutine();

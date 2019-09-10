@@ -34,7 +34,8 @@ var
 // Byte mul byte
 procedure ByteMulByte01();
 begin
-	v1 := 15; v2 := 9;
+	v1 := 15; 
+	v2 := 9;
 	rb:=v1*v2;
 	text := "01:"; if rb=135 then PASS() else FAIL();
 end;
