@@ -1,0 +1,170 @@
+/*
+
+Summary:
+
+	Pointer and 16 bit addition + multiplication
+	
+*/
+program AdvancedUnitTest;
+var  
+	sc, co : pointer; 			// screen and colour RAM pointers
+	text: string = "TEST    ";	// text to display when writing a test result
+	@define COLUMNWIDTH 5
+
+
+/*--------------------------------------------------------------------------------------------
+
+	VARIABLES FOR USE IN UNIT TESTS
+	
+----------------------------------------------------------------------------------------------*/
+
+	v1, v2,v3,rb : byte;
+	i1, i2,ri : integer;
+	p1, p2,rp : pointer;
+
+//--------------------------------------------------------------------------------------------
+// Initialisation  
+procedure Initialise();
+begin
+	DefineScreen();
+	SCREEN_BG_COL := BLACK;
+	SCREEN_FG_COL := BLACK;
+	sc := SCREEN_CHAR_LOC;
+	co := SCREEN_COL_LOC;
+	clearscreen(32, SCREEN_CHAR_LOC);
+	clearscreen(WHITE, SCREEN_COL_LOC);
+end;
+// Print POSITIVE result of a test - ptext must be 8 characters or less
+procedure PASS();
+begin
+	screenmemory := sc;
+	PrintString(text, 0, 12);
+	sc[2] := $53; // heart
+	co[2] := GREEN;
+	
+	sc := sc + @COLUMNWIDTH;
+	co := co + @COLUMNWIDTH;
+end;
+// Print NEGATIVE result of a test - ftext must be 8 characters or less
+procedure FAIL();
+begin
+	screenmemory := sc;
+	PrintString(text, 0, 12);
+	sc[2] := $56; // cross
+	co[2] := RED;
+	
+	sc := sc + @COLUMNWIDTH;
+	co := co + @COLUMNWIDTH;
+end;
+//--------------------------------------------------------------------------------------------
+
+
+
+
+
+/*--------------------------------------------------------------------------------------------
+
+	UNIT TESTS
+	
+----------------------------------------------------------------------------------------------*/
+
+procedure Advanced01();
+begin
+	v1:=10;
+	p1:=$0400 + v1;
+	text := "01:"; if p1=$040A then PASS() else FAIL();
+end;
+
+procedure Advanced02();
+begin
+	p1:=$0400 + $50;
+	text := "02:"; if p1=$0450 then PASS() else FAIL();
+end;
+
+procedure Advanced03();
+begin
+	v1:=100;
+	p2:=$100;
+	p1:=$0400 + v1*$20+p2;
+	text := "03:"; if p1=$1180 then PASS() else FAIL();
+end;
+
+procedure Advanced04();
+begin
+	p2:=$4000;
+	p2[1]:=$20;
+	v1:=1;
+	p1:=$0400;
+	p1:=p1 + p2[1];
+	text := "04:"; if p1=$0420 then PASS() else FAIL();
+end;
+
+procedure Advanced05();
+begin
+	p2:=$4000;
+	p2[1]:=$20;
+	v1:=1;
+	p1:=$0400;
+	p1:=p1 + p2[1]*2;
+	text := "05:"; if p1=$0440 then PASS() else FAIL();
+end;
+
+procedure Advanced06();
+begin
+	p2:=$4000;
+	v1:=1;
+	v2:=3;
+	p2[v1]:=$20;
+	p1:=$0400;
+	p1:=p1 + p2[v1]*v2 + $10;
+	text := "06:"; if p1=$0470 then PASS() else FAIL();
+end;
+/*
+	Completely aware that this one fails. Works with *1
+*/
+procedure Advanced07();
+begin
+	p2:=$4000;
+	p2[1]:=$20;
+	v1:=1;
+	p1:=$0400 + p2[1];
+	text := "07:"; if p1=$0420 then PASS() else FAIL();
+end;
+
+procedure Advanced08();
+begin
+	p2:=$4000;
+	p2[1]:=$20;
+	p1:=$0400 + p2[1]*3;
+	text := "08:"; if p1=$0460 then PASS() else FAIL();
+end;
+
+procedure Advanced09();
+begin
+	p2:=$4001;
+	v1:=3;
+	p2[1]:=$20;
+	p1:=$0400 + toPointer(hi(p2)+$10*v1,lo(p2)*3+p2[1]*2)*2;
+	
+	text := "09:"; if p1=$E486 then PASS() else FAIL();
+end;
+
+
+
+//--------------------------------------------------------------------------------------------
+/* MAIN PROGRAM */
+begin
+
+	// initialise everything
+	Initialise();
+	Advanced01();
+	Advanced02();
+	Advanced03();
+	Advanced04();
+	Advanced05();
+	Advanced06();
+	Advanced07(); // fails
+	Advanced08();
+	Advanced09();
+	loop();
+end.
