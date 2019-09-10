@@ -2725,7 +2725,8 @@ void Methods6502::SetScreenLocation(Assembler *as)
     }
     if (Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
         int n = (unsigned int)v->m_val;
-        QString v = "";
+        QString v = ""; // $9005
+        QString w = ""; // $9002
         if (n==0x8000) v="0000";
         if (n==0x8400) v="0001";
         if (n==0x8800) v="0010";
@@ -2734,15 +2735,39 @@ void Methods6502::SetScreenLocation(Assembler *as)
         if (n==0x1400) v="1101";
         if (n==0x1800) v="1110";
         if (n==0x1C00) v="1111";
+        if (n==0x1E00) { v="1111"; w="1"; }
+
         if (v=="")
             ErrorHandler::e.Error("SetScreenLocation parameter must be one of the following values: $8000, $8400, $8800,$8C00, $1000, $1400, $1800, $1C00", m_node->m_op.m_lineNumber);
-
 
         as->Asm("lda $9005");
         as->Asm("and #%00001111");
         as->Asm("ora #%"+v+"0000");
         as->Asm("sta $9005");
 
+        if (w!="") {
+            as->Asm("lda $9002");
+            as->Asm("ora #%"+w+"0000000");
+            as->Asm("sta $9002");
+        }
+/*
+$9005: bit  7   = b15 (inverted),
+$9005: bits 6-4 = b12-b10,
+$9002: bit  7 = b9 of screen and colour memory
+
+BITS  15 14 13 12  11 10 09 08  07 06 05 04  03 02 01 00
+REG   !7  -  -  6   5  4  7  -   -  -  -  -   -  -  -  -
+       $9005------------  $9002
+
+Default
+unexp / 3k
+$9002 = $96 = 1001 0110
+$9005 = $f0 = 1111 0000
+
+8k+
+$9002 = $16 = 0001 0110
+$9005 = $c0 = 1100 0000
+*/
 
     }
 
