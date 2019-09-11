@@ -30,7 +30,7 @@ class Data
 public:
     Data();
 //    float version = 0.01;
-    QString version = "0.08.internal";
+    QString version = "0.08";
 
     bool redrawOutput=false;
     bool redrawInput=false;
