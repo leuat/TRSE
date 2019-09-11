@@ -42,6 +42,8 @@ DialogHelp::DialogHelp(QWidget *parent, QString txt, QPalette pal) :
 
     FillTopics();
     LoadItems(0);
+    if (txt=="")
+        txt="Getting_Started";
     ui->leSearch->setText(txt);
 
     CIniFile colors;

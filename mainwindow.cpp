@@ -119,7 +119,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->splitter->setStretchFactor(1,100);
 
 
-    Messages::messages.DisplayMessage(Messages::messages.ALPHA_WARNING);
+    //Messages::messages.DisplayMessage(Messages::messages.ALPHA_WARNING);
     ui->lblSave->setHidden(true);
     ui->lblBuild->setHidden(true);
     this->installEventFilter(this);
