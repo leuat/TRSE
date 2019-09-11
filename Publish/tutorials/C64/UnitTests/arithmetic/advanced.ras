@@ -84,7 +84,7 @@ begin
 	text := "06:"; if p1=$0470 then PASS() else FAIL();
 end;
 /*
-	Completely aware that this one fails. Works with *1
+	Completely aware that this one fails. Works with *1, also with pointer +
 */
 procedure Advanced07();
 begin

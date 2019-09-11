@@ -149,6 +149,7 @@ begin
 	if (i1=20000) then PASS() else FAIL();
 end;
 
+// Fails. Integer * integer
 procedure IntMulInt14();
 begin
 	i1 := 10;
@@ -160,7 +161,7 @@ end;
 
 
 
-// Fails
+// Fails. Integer * byte * byte
 procedure IntMulAdvancedMix15();
 begin
 	i1 := 10;
