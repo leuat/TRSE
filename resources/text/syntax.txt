@@ -34,7 +34,7 @@ m; initatan2; C64, PLUS4, C128, VIC20, OK64  ;
 m; initdrawtextbox; C64, PLUS4, C128, VIC20 ;
 m; initJoy1; C64, VIC20 ;
 m; initJoy2; C64 ;
-
+m; initBcd; C64, PLUS4, C128, VIC20, PET,  NES, OK64 ;
 
 
 
@@ -193,6 +193,8 @@ m; CreatePointer; C64, PLUS4, C128, NES, VIC20, OK64; b,b
 m; DrawTextBox; C64, PLUS4, C128, NES, VIC20; a,a,b,b,b,b
 # DrawColorTextBox params: screenaddrtbl,coloraddrtbl,petsciiarray,column,row,width,height,color
 m; DrawColorTextBox; C64, PLUS4, C128, NES, VIC20; a,a,a,b,b,b,b,b
+m; BcdPrint; C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a,n
+
 
 # Sprite routines
 
@@ -244,6 +246,10 @@ m; Set2MhzMode; C128;
 m; Set1MhzMode; C128;
 m; RightBitShift; C64, PLUS4, C128, VIC20, PET,  NES, OK64; a, n
 m; LeftBitShift; C64, PLUS4, C128, VIC20, PET,  NES, OK64; a, n
+m; BcdAdd; C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a, a, n
+m; BcdCompare; C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a, a, n
+m; BcdIsEqual; C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a, a, n
+m; BcdSub; C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a, a, n
 
 # IO ports
 

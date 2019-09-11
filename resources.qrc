@@ -287,5 +287,10 @@
         <file>resources/text/help/f/globals.rtf</file>
         <file>resources/images/tutorials/plus4_tut.png</file>
         <file>resources/text/help/f/introduction_to_the_fjong_raytracer.rtf</file>
+        <file>resources/text/help/m/bcdisequal.rtf</file>
+        <file>resources/text/help/m/bcdcompare.rtf</file>
+        <file>resources/text/help/m/bcdprint.rtf</file>
+        <file>resources/text/help/m/bcdsub.rtf</file>
+        <file>resources/text/help/m/bcdadd.rtf</file>
     </qresource>
 </RCC>

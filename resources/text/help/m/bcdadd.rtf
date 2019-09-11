@@ -1,0 +1,26 @@
+<h3>BcdAdd( [address 1], [address 2], [number] );</h3>
+<ul>
+<li>[address 1] - The address of the BCD number</li>
+<li>[address 2] - The address of the BCD number to add</li>
+<li>[number] - The length of the BCD in bytes</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+Adds the second BCD number to the first.
+</p>
+
+
+<h3>Example</h3>
+
+<code>
+var
+    score: array[] of byte = ($12,$34,$56); // number is 563412
+    scoreadd: array[] of byte = ($01,$00,$00);
+
+begin
+    BcdAdd( score, scoreadd, 3 );
+    // result = 563413
+
+</code>
