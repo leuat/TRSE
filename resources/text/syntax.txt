@@ -248,7 +248,7 @@ m; RightBitShift; C64, PLUS4, C128, VIC20, PET,  NES, OK64; a, n
 m; LeftBitShift; C64, PLUS4, C128, VIC20, PET,  NES, OK64; a, n
 m; BcdAdd; C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a, a, n
 m; BcdCompare; C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a, a, n
-m; BcsIsEqual; C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a, a, n
+m; BcdIsEqual; C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a, a, n
 m; BcdSub; C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a, a, n
 
 # IO ports

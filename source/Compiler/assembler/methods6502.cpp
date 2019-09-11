@@ -5779,7 +5779,7 @@ void Methods6502::BcdCompare(Assembler *as)
     as->Asm("bne "+lblbcdMorethanLoop);
     as->Label(lblbcdIsLess);
     as->Asm("lda #0");
-    as->Asm("beq "+ lblbcdDone);
+    as->Asm("beq "+ lblbcdDone + "; skip next with short branch");
     as->Label(lblbcdIsMore);
     as->Asm("lda #1");
     as->Label(lblbcdDone);
@@ -5791,8 +5791,69 @@ void Methods6502::BcdCompare(Assembler *as)
     as->PopLabel("bcdDone");
 }
 
+
 void Methods6502::BcdIsEqual(Assembler *as)
 {
+    as->Comment("----------");
+    as->Comment("BcdIsEqual address, address, number");
+
+    // BCD array address to compare
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    QString srcaddr = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        srcaddr = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        srcaddr = var->getValue(as);
+
+    // BCD array address containing value to compare with
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+        ErrorHandler::e.Error("Second parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    QString dstaddr = "";
+    if (m_node->m_params[1]->isPureNumeric())
+        dstaddr = m_node->m_params[1]->HexValue();
+    if (var!=nullptr)
+        dstaddr = var->getValue(as);
+
+    NodeNumber* num3 = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+    if (num3==nullptr)
+        ErrorHandler::e.Error("BCD: last parameter, number of digits, required to be pure constant number");
+
+    int numDigits = num3->m_val;
+    if (numDigits < 1 || numDigits > 254)
+        ErrorHandler::e.Error("BCD: last parameter, number of digits, must be greater than 0 but less than 255");
+    numDigits--;
+
+    QString lblbcdEqualLoop = as->NewLabel("bcdEqualLoop");
+    QString lblbcdNotEqual = as->NewLabel("bcdNotEqual");
+    QString lblbcdDone = as->NewLabel("bcdDone");
+
+    as->Asm("ldx #" + Util::numToHex(numDigits));
+    as->Label(lblbcdEqualLoop);
+    as->Asm("lda " + srcaddr +",x");
+    as->Asm("cmp "+dstaddr+",x");
+    as->Asm("bne "+ lblbcdNotEqual);
+    as->Asm("dex");
+    as->Asm("cpx #$ff");
+    as->Asm("bne "+lblbcdEqualLoop);
+    as->Asm("lda #1 ; is equal");
+    as->Asm("bne "+ lblbcdDone +" ; skip next with short branch");
+    as->Label(lblbcdNotEqual);
+    as->Asm("lda #0 ; is not equal");
+    as->Label(lblbcdDone);
+
+    as->PopLabel("bcdEqualLoop");
+    as->PopLabel("bcdNotEqual");
+    as->PopLabel("bcdDone");
+
 }
 
 void Methods6502::BcdPrint(Assembler *as)

@@ -1,0 +1,30 @@
+<h3>TRUE or FALSE = BcdIsEqual( [address 1], [address 2], [number] );</h3>
+<ul>
+<li>[address 1] - The address of the BCD number</li>
+<li>[address 2] - The address of the BCD number to compare to</li>
+<li>[number] - The length of the BCD in bytes</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+Compares the two BCD numbers and returns true if both
+numbers are the same.
+</p>
+
+
+<h3>Example</h3>
+
+<code>
+var
+    score: array[] of byte = ($12,$34,$56); // number is 563412
+    scorecompare: array[] of byte = ($12,$34,$56); // number is 563412
+
+begin
+    DefineScreen();
+    screenmemory := screen_char_loc;
+
+    if (BcdIsEqual(score,scorecompare,3)) then printstring("YES",0,2) else printstring("NO",0,1);
+    // Displays "YES" because both numbers are the same
+
+</code>

@@ -486,6 +486,11 @@ DISTFILES += \
     resources/text/help/m/abs.rtf \
     resources/text/help/m/addresstable.rtf \
     resources/text/help/m/atan2.rtf \
+    resources/text/help/m/bcdadd.rtf \
+    resources/text/help/m/bcdcompare.rtf \
+    resources/text/help/m/bcdisequal.rtf \
+    resources/text/help/m/bcdprint.rtf \
+    resources/text/help/m/bcdsub.rtf \
     resources/text/help/m/blockmemcpy.rtf \
     resources/text/help/m/call.rtf \
     resources/text/help/m/clearbitmap.rtf \
