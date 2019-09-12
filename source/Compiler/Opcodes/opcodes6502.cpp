@@ -45,6 +45,8 @@ void Opcodes6502::InitMosOpCycles()
 
     m_opCycles["org"] = MOSOperandCycle("org",0,0,0,0,0,0);
     m_opCycles["nop"] = MOSOperandCycle("nop",2,0,0,0,0,0);
+    m_opCycles["sed"] = MOSOperandCycle("sed",2,0,0,0,0,0);
+    m_opCycles["cld"] = MOSOperandCycle("cld",2,0,0,0,0,0);
 
     m_opCycles["sbc"] = MOSOperandCycle("sbc",0,2,4,4,3,5);
     m_opCycles["adc"] = MOSOperandCycle("adc",0,2,4,4,3,5);

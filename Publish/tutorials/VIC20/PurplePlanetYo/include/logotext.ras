@@ -15,6 +15,7 @@ begin
 	inczp(zp,1);
 
 	g0:=zp[0];
+	
 
 	for pass:=0 to 2 do begin
 

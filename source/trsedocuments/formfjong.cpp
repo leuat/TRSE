@@ -40,7 +40,8 @@ void FormFjong::Save(QString filename)
     }
     file.close();
     m_iniFile->Save();
-//    ui->txtEditor->m_textChanged = false;
+    ui->txtEditor->m_textChanged = false;
+    m_documentIsChanged = false;
 }
 
 void FormFjong::Load(QString filename)
@@ -52,6 +53,8 @@ void FormFjong::Load(QString filename)
     file.close();
     UpdateFromIni();
     SetupHighlighter();
+    ui->txtEditor->m_textChanged = false;
+    m_documentIsChanged = false;
 }
 
 void FormFjong::UpdateFromIni()
@@ -112,34 +115,42 @@ void FormFjong::SetupHighlighter()
     p.setColor(QPalette::Base, colors.getColor("backgroundcolor"));
     p.setColor(QPalette::Text, colors.getColor("textcolor"));
     ui->txtEditor->setPalette(p);
-    highlighter = new Highlighter(colors, 0, ui->txtEditor->document());
+    highlighter = new FjongHighlighter(colors, 0, ui->txtEditor->document());
 
     //    qDebug() << "UPDATE " << m_iniFile->getString("theme");
 
 }
 
+
+void FormFjong::SearchInSource()
+{
+    m_currentFromPos = ui->txtEditor->document()->toPlainText().toLower().indexOf(ui->leSearch->text().toLower(), m_searchFromPos);
+    QTextCursor cursor(ui->txtEditor->document()->findBlock(m_currentFromPos));
+    ui->txtEditor->setTextCursor(cursor);
+}
+
 void FormFjong::keyPressEvent(QKeyEvent *e)
 {
     TRSEDocument::keyPressEvent(e);
-    /*if (e->key() == Qt::Key_Escape && ui->leSearch->hasFocus()) {
+    if (e->key() == Qt::Key_Escape && ui->leSearch->hasFocus()) {
         ui->txtEditor->setFocus();
     }
-*/
-
-    if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier))
+//    qDebug() << ui->txtEditor->m_textChanged    ;
+    if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+        m_documentIsChanged  = ui->txtEditor->m_textChanged;
         emit requestCloseWindow();
     //    Data::data.requestCloseWindow = true;
 
 //    if (ui->txtEditor->m_textChanged)
-        m_documentIsChanged  = ui->txtEditor->m_textChanged;
+    }
 
     if (e->key()==Qt::Key_J && (QApplication::keyboardModifiers() & Qt::ControlModifier)) AutoFormat();
-/*    if (e->key()==Qt::Key_F && QApplication::keyboardModifiers() & Qt::ControlModifier) {
+    if (e->key()==Qt::Key_F && QApplication::keyboardModifiers() & Qt::ControlModifier) {
         ui->leSearch->setText("");
         m_searchFromPos = ui->txtEditor->textCursor().position();
         ui->leSearch->setFocus();
     }
-*/
+
   /*  if (e->key()==Qt::Key_F1) {
         QTextCursor tc = ui->txtEditor->textCursor();
         tc.select(QTextCursor::WordUnderCursor);
@@ -154,6 +165,20 @@ void FormFjong::keyPressEvent(QKeyEvent *e)
     }
 */
 
+    if (e->key()==Qt::Key_F1) {
+        QTextCursor tc = ui->txtEditor->textCursor();
+        tc.select(QTextCursor::WordUnderCursor);
+        QString word = tc.selectedText();
+
+        DialogHelp* dh = new DialogHelp(nullptr, word, m_defaultPalette);
+//        dh->setPalette(m_defaultPalette);
+     //   QApplication::setPalette(m_defaultPalette);
+
+        dh->show();
+
+    }
+
+
     if (e->key() == Qt::Key_R &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
         Build();
   //      Run();
@@ -163,3 +188,15 @@ void FormFjong::keyPressEvent(QKeyEvent *e)
 
 }
 
+
+void FormFjong::on_leSearch_textChanged(const QString &arg1)
+{
+    SearchInSource();
+
+}
+void FormFjong::on_leSearch_returnPressed()
+{
+    m_searchFromPos=m_currentFromPos+1;
+    SearchInSource();
+
+}

@@ -31,5 +31,4 @@ override_target_settings = 0
 override_target_settings_org = $810
 override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
-project_path = C:/Users/leuat/Documents/Github/TRSE/Publish/tutorials/NES/intro_tutorial/
-open_files = ,tutorial_2_hello_sprites.ras
+output_debug_symbols = 1

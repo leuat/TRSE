@@ -27,3 +27,6 @@ override_target_settings = 0
 override_target_settings_org = $810
 override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
+pascal_settings_use_local_variables = 0
+output_debug_symbols = 1
+open_files =, main.ras

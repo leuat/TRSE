@@ -20,7 +20,6 @@
 */
 
 
-
 #include "mainwindow.h"
 #include <QApplication>
 #include <QStyleFactory>
@@ -98,6 +97,7 @@ void fixCurrentDir(QString execFile) {
 
 }
 
+//https://www.c64-wiki.com/wiki/Commodore_Plus/4
 
 int main(int argc, char *argv[])
 {

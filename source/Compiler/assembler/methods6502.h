@@ -21,12 +21,18 @@ public:
 
     bool Command(QString name);
 
+    void toColor(Assembler* as);
     void AddMemoryBlock(Assembler* as, int param);
     void Poke(Assembler* as);
     void Peek(Assembler* as);
+    void Modulo(Assembler* as);
     void MemCpy(Assembler* as, bool isFast);
     void MemCpyUnroll(Assembler* as);
     void Rand(Assembler* as);
+    void Random(Assembler* as);
+
+    void CallOKVC(Assembler* as, int noParams, uchar val);
+
     void MoveTo(Assembler* as);
     void MoveTo80(Assembler* as);
     void SetFrequency(Assembler *as);
@@ -44,17 +50,27 @@ public:
     void ScrollY(Assembler* as);
     void RightBitShift(Assembler* as, bool isRight);
     void Joystick(Assembler* as);
+    void ReadJoy1(Assembler* as);
+    void ReadJoy2(Assembler* as);
     void BitOp(Assembler* as, int type);
     void PlaySound(Assembler* as);
     void CreateInteger(Assembler* as, QString reg);
     void Tile(Assembler *as);
     void CreateAddressTable(Assembler *as);
     void AddressTable(Assembler *as);
-
+    void ToPointer(Assembler* as);
 
     void LoHi(Assembler* as, bool isLo);
 
     void LoadAndStoreInZp(Node* n, Assembler* as, QString zp);
+
+    void BcdAdd(Assembler* as);
+    void BcdSub(Assembler* as);
+    void BcdCompare(Assembler* as);
+    void BcdIsEqual(Assembler* as);
+    void BcdPrint(Assembler* as);
+
+
 
     /*
      * NES
@@ -127,7 +143,9 @@ public:
     void DisableNMI(Assembler* as);
     void KeyPressed(Assembler* as);
     void Wait(Assembler* as);
-
+    void InitDrawTextBox(Assembler* as);
+    void DrawTextBox(Assembler* as);
+    void DrawColorTextBox(Assembler* as);
 
 
     QString BitShiftX(Assembler* as);
@@ -148,7 +166,12 @@ public:
     // Initialize
 
     void InitJoystick(Assembler* as);
+    void InitJoy(Assembler* as);
+    void InitJoy1(Assembler* as);
+    void InitJoy2(Assembler* as);
     void InitRandom(Assembler* as);
+    void InitRandom256(Assembler* as);
+
     void InitSinusTable(Assembler* as);
     void DefineScreen(Assembler *as);
     void InitMoveto(Assembler *as);
@@ -159,6 +182,8 @@ public:
     void InitDecrunch(Assembler* as);
     void InitPrintDecimal(Assembler* as);
     void InitPlaySidVIC20(Assembler* as);
+    void InitBcd(Assembler* as);
+
 };
 
 #endif // METHODS6502_H

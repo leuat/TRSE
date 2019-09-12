@@ -42,6 +42,12 @@ public:
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);
     }
+    void parseConstants(SymbolTable* symTab) override {
+        for (Node* n: children)
+            n->parseConstants(symTab);
+    }
+
+
 
 };
 #endif // NODECOMPOUND_H

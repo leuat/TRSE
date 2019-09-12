@@ -33,7 +33,7 @@ void Compiler::Parse(QString text, QStringList lst)
 
     m_lexer = Lexer(text, lst, m_projectIni->getString("project_path"));
     m_parser.m_lexer = &m_lexer;
-
+    ErrorHandler::e.m_displayWarnings = m_ini->getdouble("display_warnings")==1;
 
 
     m_tree = nullptr;
@@ -43,7 +43,9 @@ void Compiler::Parse(QString text, QStringList lst)
     try {
         m_tree = m_parser.Parse( m_ini->getdouble("optimizer_remove_unused_symbols")==1.0 &&
                                  Syntax::s.m_currentSystem!=AbstractSystem::NES
-                                 ,m_projectIni->getString("vic_memory_config"),Util::fromStringList(m_projectIni->getStringList("global_defines")));
+                                 ,m_projectIni->getString("vic_memory_config"),Util::fromStringList(m_projectIni->getStringList("global_defines")),
+                                 m_projectIni->getdouble("pascal_settings_use_local_variables")==1.0);
+//        m_tree->parseConstants(m_parser.m_symTab);
         //qDebug() << m_parser.m_preprocessorDefines["ORGASM"];
         //exit(1);
     } catch (FatalErrorException e) {
@@ -51,6 +53,8 @@ void Compiler::Parse(QString text, QStringList lst)
         HandleError(e, "Error during parsing:");
     }
 
+    if (m_parser.m_symTab!=nullptr)
+        m_parser.m_symTab->SetCurrentProcedure("");
 }
 
 
@@ -80,13 +84,12 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
         return false;
 
     m_assembler->m_projectDir = project_dir;
-
+    m_assembler->m_symTab->m_useLocals = m_parser.m_symTab->m_useLocals;
 
     if (m_tree!=nullptr)
         try {
             dynamic_cast<NodeProgram*>(m_tree)->m_initJumps = m_parser.m_initJumps;
             m_dispatcher->as = m_assembler;
-
             m_tree->Accept(m_dispatcher);
 
         } catch (FatalErrorException e) {
@@ -101,7 +104,7 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
 
     if (system->m_processor==AbstractSystem::M68000) {
 //        m_assembler->blocks.append(m_assembler->m_chipMem);
-        m_assembler->m_chipMem.m_source.insert(0," 	CNOP 0,4");
+        m_assembler->m_chipMem.m_source.insert(0," 	CkNOP 0,4");
         m_assembler->m_chipMem.m_source.insert(0,"	Section ChipRAM,Data_c");
         m_assembler->m_source <<m_assembler->m_chipMem.m_source;
     }
@@ -112,39 +115,74 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
         m_assembler->Connect();
         if (m_ini->getdouble("post_optimize")==1.0)
             m_assembler->Optimise(*m_projectIni);
-        CleanupCycleLinenumbers();
+
+        CleanupCycleLinenumbers("", m_assembler->m_cycles, m_assembler->m_cyclesOut);
+        CleanupCycleLinenumbers("",m_assembler->m_blockCycles,m_assembler->m_blockCyclesOut);
+
         CleanupBlockLinenumbers();
     }
+
+    WarningUnusedVariables();
+
+
     return true;
 
 }
 
-void Compiler::CleanupCycleLinenumbers()
+void Compiler::CleanupCycleLinenumbers(QString currentFile, QMap<int,int>& ocycles, QMap<int,int>& retcycles )
 {
 
     QMap<int, int> cycles;
+    int acc = 0;
+    if (currentFile=="")
+    for (int i: ocycles.keys()) {
 
-    for (int i: m_assembler->m_cycles.keys()) {
-
-        int count = m_assembler->m_cycles[i];
+        int count = ocycles[i];
         int nl = i;
+        acc = 0;
         for (FilePart& fp : m_parser.m_lexer->m_includeFiles) {
             // Modify bi filepart
             if (nl>fp.m_startLine && nl<fp.m_endLine) {
                 cycles[fp.m_startLine]+=count;
                 count=0;
+ //               acc+=fp.m_startLine;
             }
 
-            if (nl>=fp.m_endLine)
+            if (nl>=fp.m_endLine) {
+//                qDebug() << fp.m_startLine << fp.m_count;
+                acc+=fp.m_count;
                 nl-=fp.m_count-1;
+            }
         }
         if (count!=0)
             cycles[nl] = count;
 
 
     }
+    else {
+        for (int i: ocycles.keys()) {
 
-    m_assembler->m_cycles = cycles;
+            int count = ocycles[i];
+            int nl = i;
+
+            for (FilePart& fp : m_parser.m_lexer->m_includeFiles) {
+                {
+                    if (fp.m_name == currentFile)
+                    if (nl>fp.m_startLineAcc && nl<fp.m_endLineAcc) {
+                        cycles[nl-fp.m_startLineAcc] = count;
+                    }
+
+                }
+            }
+
+
+        }
+    }
+    retcycles.clear();
+    for (int i: cycles.keys())
+        if (cycles[i]!=0)
+            retcycles[i] = cycles[i];
+//    m_assembler->m_cycles = cycles;
 }
 
 void Compiler::CleanupBlockLinenumbers()
@@ -187,7 +225,7 @@ void Compiler::HandleError(FatalErrorException fe, QString e)
     QString msg = "";
     int linenr = fe.linenr;
     QString file = "";
-    FindLineNumberAndFile(fe.linenr, file, linenr);
+    m_parser.m_lexer->FindLineNumberAndFile(fe.linenr, file, linenr);
     //linenr = fe.linenr;
 
 
@@ -208,34 +246,6 @@ void Compiler::HandleError(FatalErrorException fe, QString e)
 
 }
 
-void Compiler::FindLineNumberAndFile(int inLe, QString& file, int& outle)
-{
-    file="";
-    outle = inLe;
-    if (m_parser.m_lexer->m_includeFiles.count()==0) {
-        return;
-    }
-
-    int cur = inLe;
-
-    qDebug() << "input line number: " << inLe;
-    qDebug() << "Start line: " << m_parser.m_lexer->m_includeFiles[0].m_startLine;
-    if (cur<=m_parser.m_lexer->m_includeFiles[0].m_startLine) {
-        return;
-    }
-
-
-    for (FilePart fp: m_parser.m_lexer->m_includeFiles) {
-        if (inLe >= fp.m_startLine && inLe<fp.m_endLine) {
-            file = fp.m_name;
-            outle = inLe - fp.m_startLine;
-            return;
-        }
-        qDebug() << "Include file size : " << (fp.m_endLine-fp.m_startLine);
-        cur=cur - (fp.m_endLine-fp.m_startLine);
-    }
-    outle = cur;
-}
 
 void Compiler::Init6502Assembler()
 {
@@ -249,11 +259,19 @@ void Compiler::Init6502Assembler()
     m_assembler->m_replaceValues["@DECRUNCH_ZP3"] = m_projectIni->getString("zeropage_decrunch3");
     m_assembler->m_replaceValues["@DECRUNCH_ZP4"] = m_projectIni->getString("zeropage_decrunch4");
 
-    m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal1");
+    m_assembler->m_internalZP =
+            RegisterStack(QStringList()
+                          <<m_projectIni->getString("zeropage_internal1")
+                          <<m_projectIni->getString("zeropage_internal2")
+                          <<m_projectIni->getString("zeropage_internal3")
+                          <<m_projectIni->getString("zeropage_internal4"));
+
+
+/*    m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal1");
     m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal2");
     m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal3");
     m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal4");
-
+*/
 
 
     if (m_projectIni->getdouble("override_target_settings")==1) {
@@ -273,5 +291,18 @@ void Compiler::Init6502Assembler()
         Syntax::s.m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
     }
 
+
+}
+
+void Compiler::WarningUnusedVariables()
+{
+    QStringList unusedVariables = m_assembler->m_symTab->getUnusedVariables();
+    if (unusedVariables.count()!=0) {
+        QString lstStr= "";
+        for (QString s: unusedVariables)
+            lstStr+= s+ ",";
+        lstStr.remove(lstStr.count()-1,1); // remove last ","
+        ErrorHandler::e.Warning("Unused variables : " +lstStr);
+    }
 
 }

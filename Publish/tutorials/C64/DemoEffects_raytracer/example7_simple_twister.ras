@@ -1,0 +1,119 @@
+program Example7_simple_twister;
+var  
+   i,j,k,m,l,time,y1,y2: byte = 0;  
+   
+	dest,source : pointer;
+	
+@define twisterLoc $8000
+
+
+@requirefile "data/example7_twister.bin" "Please run the Fjong raytracer file 'example7_simple_twister.fjo' before compiling this program"
+
+	twisterData : incbin("data/example7_twister.bin",@twisterLoc);
+	// 64 frames * 2 for table addresses
+	twisterTable : array[64*2] of byte;
+
+
+/*
+	Twister splaining : 
+		a) Pre-render a rotating cube with shadows etc (see the corresponding .fjong file). 
+		b) Save 1 line of data from each of the 0-to-90-degree rotations
+		c) You now have a 90-degree set of individual lines of data
+		d) Calculate some funky sine function for each value of y
+		e) use this as a lookup value for which line to copy to the screen.
+		f) Profit! 
+
+
+	Remember to run the corresponding fjong file (example7_simple_twister.fjo) before compiling
+	this tutorial.
+
+	Please note that this method is really *slow* and unoptimized.
+	How to optimize: 
+	  - Create a new sine table what is scaled accordingly
+	  - rewrite inner loop & copying method to assembler
+	  - inner loop to use lookup tables as well
+*/
+	
+procedure UpdateTwister();
+begin
+	// Point to some place on the (bitmap) screen, start of twister
+	dest:=$6000 + 8*40*6 + 16*8 ;
+
+	// Two opposing sine phases
+	y1:=time*3;
+	y2:=1-time*2;
+	
+	// Draw 16 x 8 rows
+	for i:=0 to 16 do 
+	begin
+		// For each i, draw 8 rows
+		for k:=0 to 8 do begin
+			// First, let "l" be the combination of the opposing phases, cap with 64 lines (since the 
+			// total number of our twister rows is 64)
+			l:=((sine[y1] - sine[y2])/2)&63;
+			// Then, let source point to row "l*16" in the twister table, since twister rows are 16 bytes wide		
+			/*
+				// We now need to let the source point to the  twister data + l*16, which can be done as such:			
+				
+				source:=@twisterLoc + l*16;
+				
+				// However, the multiplication (or left shift) is a slow operation, so instead we have  
+				// created a lookup table for this exact reason (and runs about 4 times faster!)
+			*/
+			source := AddressTable( twisterTable, 0, l ); 
+	
+			// Use m as row counter
+			m:=k;
+			
+			// Then copy 8 bytes. Remember that data is stored in 8x8 blocks on the screen, so you can't
+			// just do a single memcpy - you need to "skip" the next 8 screen bytes for each byte of source data
+			// (you should *really* rewrite this inner loop into assembly language)
+			for j:=0 to 8 do begin
+				dest[m]:=source[j];
+				m:=m+8;
+			end;
+			// Increase phase values
+			y1:=y1+1;
+			y2:=y2+1;
+		end;
+		// Increase screen pointer to the next row * 8
+		dest:=dest+320;
+	end;
+
+end;
+
+
+interrupt UpdateRaster();
+begin
+	startirq(1);
+	setbitmapmode();
+	
+	inc(time);
+	
+	UpdateTwister();
+	
+	closeirq();
+end;
+
+
+procedure InitScreen();
+begin
+	screen_fg_col:=black;
+	screen_bg_col:=black;
+	setmulticolormode();
+	clearscreen(4,screen_col_loc); // Set purple 
+	clearscreen($63,screen_char_loc2); // Set  blue and white multicolors
+	vic_data_loc:=$18; // Bitmap memory screen starts at $6000
+	setbank(vic_bank1); 
+	clearbitmap(^$6000,32);	 // Clear the entire screen
+
+end;
+
+begin
+	InitScreen();
+	// Create twister address table: Twister consist of 64 rows of 16 byte data starting at @twisterLoc	
+	CreateAddressTable( twisterTable, @twisterLoc, 16, 64 );
+	StartRasterChain(UpdateRaster(),0,1);
+	Loop();
+	
+end.

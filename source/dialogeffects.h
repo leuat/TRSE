@@ -9,6 +9,7 @@
 #include "source/LeLib/luascript.h"
 #include "source/LeLib/limage/compression.h"
 #include <QPixmap>
+#include "source/Compiler/syntax.h"
 
 namespace Ui {
 class DialogEffects;
@@ -36,7 +37,6 @@ private:
     void LoadScript(QString file);
     void UpdateGlobals();
 //    QMap<QString, Material> m_materials;
-
 
 
 public slots:

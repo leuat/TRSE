@@ -1,0 +1,59 @@
+/*
+	You made it to the second tutorial file, we haven't scared you away yet - welcome back!
+	
+	First off, don't run this program as it won't output anything to the screen.  We'll look at doing that in then next tutorial.
+
+	In this file we are creating some variables.  Variables are important and useful to computer
+	programs as they let us store and manipulate information.  Also, variables are super easy to use.
+	
+	Variables tend to store numbers although there are several representaions that TRSE, like other languages,
+	understands to make our life as a programmer easier.
+	
+	For example:
+	- A variable can be a simple number, perhaps to store the score in a game.
+	- It can be a string of text characters, perhaps to store the name of the person who got a high score.
+	- It can also be several other things, we'll come back to that another time.  
+	
+	So what does a variable look like?  The default Ras Source file has a variable already declared called index.
+	This is a 'byte', meaning whole numbers between 0 and 255 can be stored in it.  A byte is 8-bits which is
+	the common memory unit on all these 8-bit computers :)
+	
+	All variables must be first declared and this is done in the var section.  A variable needs a name and a type and optionally a starting value.
+	In the example below 'index' is the name of a variable and 'byte' tells TRSE what type of information it will contain.
+	The type is important because TRSE needs to reserve a space in memory large enough to store the value that is placed in the variable.
+
+	Read on, we've created some more variables with a little explanation about them:
+*/
+program Variables;
+var  
+	index: byte;
+	lives: byte = 5;		// a new variable called lives, and we are being generous and setting it to 5 - wooo!
+	score: integer = 0;		// an integer takes two bytes in memory and can store larger numbers, from 0 to 65535
+	name: string = "TURBO RASCAL";	// a string is a way to represent a list of text characters that we can recognise
+									// and that TRSE can translate to numbers in memory.  A string is defined within
+									// "speech marks" and "TURBO RASCAL" has 12 characters and so will need 12 bytes in memory to store it
+	name2: string;					// A string with no characters ?  more on this later
+
+begin		// OK, now we are going to write some code!
+
+	lives := 3;				// here we are assigning a value to the lives variable, changing it to 3.
+							// TRSE knows we are assigning a value because we are using the := characters followed by a number.
+							
+	score := score + 1;		// Now we're changing the score variable, only this time we are doing a simple calculation.
+							// Instead of just putting a number in score, we are asking TRSE to set score to the current value of score
+							// and then adding 1 to it.  So score will change from 0 to 1.  If we did this again it would change from 1 to 2.
+							
+	name := "TURBO PASCAL";	// strings can be changed, slight name change in this example.  However, remember when we declared the string
+							// it contained 12 characters and thus taking up 12 bytes in memory.  As TRSE is working at a very low level
+							// on 8-bit computer systems with limited memory, handling strings is kept simple.  In this case "TURBO PASCAL"
+							// is also only 12 characters so it will fit perfectly in the same memory space.
+							// DANGER!!!   What happens if the new string is not the same length?
+							// if the new string contains fewer characters it will have enough space to store it over the old string, but 
+							// the rest of the old string will not be overwritten.
+							// if the new string contains more characters it will overflow and write over other variables or even code... so beware!
+
+	name2 := "HELLO";		// We did not declare name2 with an initial string value, so what we have declared is a single character.
+							// This line is assinging "HELLO" which contains 5 characters.  The first character "H" will fit, but the remaining
+							// four "ELLO" will overwrite the code in our main program!!!  In this case the command "lives := 3;" will be overwritten.
+							// Ouch!
+end.

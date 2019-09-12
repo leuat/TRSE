@@ -1,12 +1,32 @@
+<h3>Peek( [address], [byte] );
+</h3>
+<ul>
+<li>[address] - </li>
+<li>[byte] - </li>
+</ul>
+
+
+<h3>Description</h3>
 <p>Peeks the specified address in parameter 1 + parameter 2 and returns the value.</p>
-<p><strong>Examples:</strong></p>
-<p><code>border := peek(^$D020, 0); // Red border color</code></p>
-<p><code>
-some_val = peek(my_array, 3); // Set 3rd element of array to 10.
-// Same as:
-some_val := my_array[3];
-</code><</p>
-<p><code>
-for i:=0 to b do 
-   screenmemory[i]:=peek(my_data, i);
-   </code></p>
+
+
+<h3>Example 1</h3>
+
+<code>
+   border := peek(^$D020, 0); // Red border color<
+</code>
+
+<h3>Example 2</h3>
+
+<code>
+   some_val := peek(my_array, 3); // Set 3rd element of array to 10.
+   // Same as:
+   some_val := my_array[3];
+</code>
+
+<h3>Example 3</h3>
+
+<code>
+   for i:=0 to b do 
+      screenmemory[i] := peek(my_data, i);
+</code>

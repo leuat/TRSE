@@ -1,0 +1,163 @@
+program Twister;
+var  
+
+// Location of twister data
+@define twister $3000
+// Location of twister table position
+@define ttablepos $8000
+@define charLoc $2000
+@define rasterMainPos 0
+
+@requirefile "data/example10_screen.bin" "Please run the Fjong raytracer file 'example10_text_twister.fjo' before compiling this program"
+
+
+	twist: incbin("data/example10_screen.bin",@twister);
+	ttable: incbin("data/example10_table.bin",@ttablepos);
+	charset: incbin("charsets/main.bin", @charLoc);
+	
+	// Used for multiplying with 32
+	table32 : array[32] of byte;
+	// Table used for div 32
+	
+	i,j,time,k,l, h,shift,sh, val : byte = 0;
+	
+	zp,zp2,p1,cp,tp,kp,cp2,tmpp:pointer;
+	sine2 : array[256] of byte;
+
+
+	text : cstring = ("  TURBO RASCAL SYNTAX ERROR",0,0,0);
+
+
+/*
+	The following method calculates the lookup table position
+	based on the current caracter (gi_c).
+	Each table consists of 2 bytes for each row with a height of 16 rows using a total of 16 frames.
+	In total, each character then takes up 2*16*16 =512 bytes. 
+	Multiplication lookup with 512 is easy - just use your caharacter value (j) 
+	as the high byte of the lookup table (=*256) and then multiply by two (=*512).  
+*/
+procedure getI(gi_c:byte);
+begin
+	// Place current character in "j"
+	j:=tp[gi_c];
+	if (j=key_space) then // Account for space bar
+		j:=0;
+	
+	returnValue(ToPointer(@ttablepos/$100+j*2,0));
+end;
+
+/*
+	Updates the "loctab" used for twisting
+*/
+procedure UpdateTwister();
+begin
+	// Get pointers to each letter (always 3 letters on the screen)
+	zp:=getI(0);
+	cp2:=getI(2);
+	cp:=getI(1);
+
+	// Start at the center of the screen
+	zp2:=$040A;
+
+	val:=time;
+	tmpp:=zp;
+	for i:=0 to 50 step 2 do begin
+		j:=(shift+i);
+		
+		h:=i+time;
+		k:=val +sine2[h];
+		k:=(k/4)&15;
+
+		if (j>=64) then begin 	
+			tmpp:=cp2;
+			j:=j-64;
+		end; 
+		if (j>=32) then begin 	
+			tmpp:=cp;
+			j:=j-32;
+		end; 
+		//Lookup mul 32
+		kp:=tmpp+AddressTable(table32,32,k);
+		
+		l:=kp[j];
+		h:=kp[j+1];
+		
+		p1:=toPointer(h+$30, l);
+		memcpyunroll(p1,0,zp2,16);
+			
+		zp2:=zp2+screen_width;
+
+	end;
+
+
+end;
+
+
+procedure UpdateShift();
+begin
+	sh:=sh+1;
+	if (sh=8) then begin
+		shift:=shift+2;
+		sh:=0;
+		if (shift=32) then 
+		begin
+			tp:=tp+1;
+			shift:=0;
+			if  tp[2]=0 then tp:=text;
+		end;
+
+	end;
+
+
+end;
+
+
+procedure UpdateScrollTime();
+begin
+	i:=(7-(sh))&7;
+	scrolly(i);
+	inc(time);
+end;
+
+
+interrupt RasterMain();
+begin
+	StartIRQ(0);
+	hidebordery(1);
+
+	// Updates time and y scroll	
+	UpdateScrollTime();
+	// Renders the twister, 24 rows
+	UpdateTwister();
+	// Updates shift - where in the character y space the twister currently is
+	UpdateShift();
+
+	closeirq();
+end;
+
+procedure InitScreen();
+begin
+	settextmode();	
+	hidebordery(1);
+	CreateAddressTable(table32, 0, 32,16);
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	
+	ClearScreen(key_space,screen_char_loc);
+	screen_fg_col:=red;
+	screen_bg_col:=red;
+	clearscreen(black,screen_col_loc);
+	setcharsetlocation(@charLoc);
+
+end;
+
+
+begin
+	InitScreen();	
+	tp:=text;
+	for i:=0 to 256 do sine2[i]:=sine[i]/5;
+	RasterIRQ(RasterMain(),@rasterMainPos,0);
+	EnableRasterIRQ();
+	enableirq();
+	Loop();
+end.

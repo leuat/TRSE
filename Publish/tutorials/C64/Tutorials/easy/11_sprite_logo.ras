@@ -1,0 +1,110 @@
+program SpriteLogo;
+var  
+   	org_x, x: integer;
+	y, org_y,i,j, time: byte;
+
+	@define spriteLoc $2000
+
+	// The original sprite is located in sprites/logo.flf
+	sprites: incbin("resources/sprites/logo.bin", @spriteLoc);
+	// cstring because we mean to just copy the data onto the screen
+	text: cstring=("  SPRITELOGO  ");
+	// A pointer to the text
+	tp : pointer;
+
+
+@define useKernal 1
+
+// Set up the sprites
+procedure InitSprites();
+begin
+	sprite_multicolor:=$FF;
+	sprite_bitmask:=$FF;
+	sprite_stretch_x:=$FF;
+	sprite_stretch_y:=$FF;
+	sprite_multicolor_reg1:=light_blue;
+	sprite_multicolor_reg2:=grey;
+	for i:=0 to 8 do begin
+		sprite_color[i]:=blue;
+		setspriteloc(i,@spriteLoc/64+i,0);
+	end;
+end;
+
+// This procedure updates the logo sprite position
+procedure UpdateSprites();
+begin
+	// Copy positions to x/y
+	x:=org_x;
+	y:=org_y;
+	// 8 sprites in total
+	for i:=0 to 8 do begin
+		// when the 4th sprite has been reached, then move x and y to the start of the next row on screen
+		if (i=4) then begin
+			x:=org_x;
+			// Sprites are strethed, so double width / height
+			y:=y+21*2; 
+		end;
+		spritepos(x,y,i);
+		// Sprites are strethed, so double width / height
+		x:=x+24*2;
+	end;
+end;
+
+
+interrupt RasterMain();
+begin
+	StartIRQ(@useKernal);
+
+	// y and x simply follows a sine curve
+	org_y:=sine[time*5]/4+70;
+	i:=time*4+80;
+	org_x:=sine[i]/4+70;
+
+	UpdateSprites();
+	// Update time
+	inc(time);
+	
+	CloseIRQ();
+end;
+
+
+procedure RenderText();
+begin
+	// Move screen pointer to upper left pointer
+	moveto(0,0,hi(screen_char_loc));
+	// text pointer pointing to text
+	tp:=text;
+	// go through 25 rows
+	for j:=0 to screen_height do begin
+		// and 40 columns 
+		for i:=0 to screen_width do begin
+			// if text pointer is zero, the end of string has been reached. If so, reset text pointer
+			if (tp[0]=0) then tp:=text;
+			// copy text char from text to screen
+			screenmemory[i]:=tp[0];
+			// Increase text pointer
+			tp:=tp+1;
+	
+		end;
+		screenmemory:=screenmemory+screen_width;
+	end
+end;
+
+
+begin
+	// Set up screen
+	ClearScreen(key_space,screen_char_loc);
+	ClearScreen(dark_grey,screen_col_loc);
+	screen_bg_col:=dark_grey;	
+	screen_fg_col:=black;
+	// Render background text
+	RenderText();
+	org_x:=0;
+	// Setup sprites
+	InitSprites();
+	// Init main raster
+	StartRasterChain(RasterMain(), 0, @useKernal);
+
+
+	Loop();
+end.

@@ -1,0 +1,232 @@
+program ImageIntro;
+var
+
+/*
+
+	This intro was originally used for the "Aroused" demo. It starts off
+	by priting some text, then performs the image transition.
+	
+	This effect basically just displays text mode content from bank 0 on the upper part of the screen, while
+	the lower part displays a multicolor image from bank 1. 
+	
+	The transition area is the important part. here, we not only copy $D800-image color data for the current 
+	transition row, but we also hide the entire contents using black sprites! 
+
+*/
+
+@define imageColorPos $5000
+@define spriteLoc $4800
+
+	image_color: IncBin("resources/images/neo_rider_color.bin", @imageColorPos);
+	image_data: IncBin("resources/images/neo_rider_data.bin", "$6000");
+	time,dy, vy, orgChar,i, k,curCol, curWait : byte = 0;
+	ypos:byte;
+	tmp:integer;
+	x,j : byte;
+	fadein: byte = 255;	
+	zp, zp2, tp, sp : pointer;
+	lumicol : byte = 22;
+	// Background colors fade
+	lumi:  array[] of byte = (0,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06,$06);
+
+
+
+@define cpause 220
+@define cmoveto 221
+@define ccolor 224
+@define cstop 223
+
+/*
+	Main text. 
+	@cmoveto moves the cursor to the x/y position
+	@ccolor sets color
+	@cpause initializes a pause
+*/
+	text : string = (@cmoveto, 4,6, @ccolor,0,
+					"THIS IS A TEXT.", @cpause,32,
+					 @cmoveto, 4,8, @ccolor,0,
+					"PAUSES AND STUFF",@cpause,64,
+					 @cmoveto, 4,10, @ccolor,0,
+					"WAIT. ",@cpause,16, "WHAT? ",@cpause,16, @ccolor,13,"COLORS TOO. ",@cpause,48,
+					@cmoveto, 4,14, @ccolor,3,
+					"TEXT SOON DONE.",@cpause,32,
+					@cmoveto, 4,16, @ccolor,1,
+					"LET'S IMAGE! ",@cpause,16,"WITH",@ccolor,0," BLACK",@ccolor,1, " SPRITES",
+					@cpause,32,
+					@cstop);
+
+
+@define useKernal 0
+
+interrupt Update();
+
+procedure UpdateText();
+
+
+// Text drawing raster during the start of the effect
+interrupt RasterText();
+begin
+	startIRQ(@useKernal);
+	UpdateText();
+	// Set border color 
+	screen_bg_col:=lumi[lumicol];
+	// Start to decrease luminosity when "white" (1) is triggered	
+	if (curCol=1) then 
+		if (lumicol) then 
+			dec(lumicol);
+			
+	closeIRQ();
+end;
+
+/*
+ Updates and prints text on screen
+
+*/
+procedure UpdateText();
+begin
+	if (curWait) then begin
+		dec(curWait);
+		return();
+	end;
+	// Moveto
+	if (tp[0]=@cmoveto) then begin
+		moveto(tp[1], tp[2], hi(screen_col_loc));
+		sp:=screenmemory;
+		moveto(tp[1], tp[2], hi(screen_char_loc));
+		tp:=tp+3;
+		return();
+	end;
+	// Set color
+	if (tp[0]=@ccolor) then begin
+		curCol:=tp[1];
+		tp:=tp+2;
+		return();
+	end;
+	// Pause
+	if (tp[0]=@cpause) then begin
+		curWait:=tp[1];
+		tp:=tp+2;
+		return();
+	end;
+	 // Stop - jump to next IRQ
+	if (tp[0]=@cstop) then begin
+		RasterIRQ(Update(),0,@useKernal);
+		return();
+	end;
+	// Render text
+	if (tp[0]<>key_space) then begin
+		j:=tp[0];
+		// Subtract 64
+		if (j>64) then j:=j-64;
+		screenmemory[0]:=j;
+
+	end;
+	// Set color
+	sp[0]:=curCol;
+	// Increase tex,color and screen pointers
+	tp:=tp+1;
+	sp:=sp+1;
+	screenmemory:=screenmemory+1;
+	curWait:=1;
+
+end;
+
+// Set y-position of the 8 sprites
+procedure UpdateSprites(u_ypos:byte);
+begin
+	j:=1;
+	for i:=0 to 8 do begin
+		poke(^$D000,j,u_ypos);
+		j:=j+2;
+	end;
+
+end;
+
+// Initialize sprites
+procedure InitSprites();
+begin
+	zp:=@spriteLoc;
+	// First, clear sprites (all zero)
+	fill(zp,0,64);
+	// sprite is 9 pixels wide
+	fill(zp,$FF,9*3);
+	sprite_stretch_x:=$FF; // Stretch in x dir
+	// Setup 8 sprites, double stretch
+	for i:=0 to 8 do begin
+		setspriteloc(i,(@spriteLoc-bank_size)/64,1);
+		sprite_color[i]:=black;
+		x:=i*24+4;
+		tmp:=x*2;
+		// Y position doesn't matter
+		spritepos(tmp,0,i);
+	end;
+	// Turn on sprites
+	sprite_bitmask:=$FF;
+end;
+
+
+// Main interrupt when transition is in progress
+interrupt Update();
+begin
+	startirq(@useKernal);
+	screen_fg_col:=blue;
+	screen_bg_col:=black;
+
+	if (fadein>20) then begin
+		// Show the text mode in the upper part of the screen
+		vic_data_loc:=orgChar;
+		SetBank(vic_bank0);
+		setregularcolormode();
+		settextmode();
+		waitnoraster(1);
+		// Copy color information (1 line, below the black sprites)
+		zp:=@imageColorPos+2+screen_width*screen_height;
+		// Find exact position
+		j:=(fadein)/8-5;
+		zp:=zp + j*screen_width;
+		// Find destination, same as moveto
+		zp2:=screen_col_loc+ j*screen_width;
+		// Copy color data!
+		if (j<127 and j<24) then 
+			memcpyunroll(zp,0,zp2,screen_width);	
+
+
+		waitforraster(fadein);
+		dec(fadein);
+		UpdateSprites(fadein+6);
+	end
+	else fadein:=0;
+	screen_fg_col:=black;
+	
+	inc(time);
+	// Set bitmap mode
+	vic_data_loc:=$18;
+	SetBank(vic_bank1);
+	SetBitmapMode();
+	setmulticolormode();
+
+	closeirq();
+end;
+
+
+
+begin
+	DisableCIAInterrupts();
+	setmemoryconfig(1,@useKernal,0);
+	clearscreen(key_space, screen_char_loc);
+	orgChar:=vic_data_loc;
+	
+	// Copy image color data #1 to $4400
+	zp:=image_color+2;
+	copyfullscreen(zp,screen_char_loc2);
+	// Initialize black sprites	
+	InitSprites();
+
+	tp:=text;
+
+	RasterIRQ(RasterText(),0, @useKernal);
+	EnableRasterIRQ();
+	enableirq();
+	Loop();
+end.
+

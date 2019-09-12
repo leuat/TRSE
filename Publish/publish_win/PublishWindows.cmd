@@ -14,13 +14,7 @@ REM mkdir trse
 REM move bin trse
 mkdir trse\tutorials\
 
-xcopy /e  ..\tutorials\RasLib trse\RasLib\
-xcopy /e  ..\tutorials\C64\* trse\tutorials\C64\
-xcopy /e  ..\tutorials\C128\* trse\tutorials\C128\
-xcopy /e  ..\tutorials\Vic20\* trse\tutorials\Vic20\
-xcopy /e  ..\tutorials\NES\* trse\tutorials\NES\
-xcopy /e  ..\tutorials\Fjong\* trse\tutorials\Fjong\
-xcopy /e  ..\tutorials\PET\* trse\tutorials\PET\
-xcopy /e  ..\tutorials\Amiga\* trse\tutorials\Amiga\
+xcopy /e  ..\tutorials\* trse\tutorials\
+del /s trse\tutorials\clear.* 
 xcopy /e dll\* trse\
 REM xcopy start.cmd trse\

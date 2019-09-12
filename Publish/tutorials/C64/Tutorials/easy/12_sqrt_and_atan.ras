@@ -1,0 +1,104 @@
+program tutorial_12_sqrt_and_atan;
+var  
+
+/*
+	In this tutorial, we slowly pre-render a screen that is slowly flled with a spiral. 
+	In order to calculate the value of the spiral, we need to use both radial and tangentinal values,
+	which we obtain by using sqrt() and atan2. The screen is rendered using 16 characters (64-80, 
+	view the character set used in "charsets/charset.flf).
+	
+	After the screen is rendered, the program simply sets up a small raster irq routine that does
+	a simple and neat trick: it "shifts" the data character set by copying the data of the 16 
+	characters used for displaying the image 1 character "to the left" in the character set. By doing
+	this, we obtain the effect that the image is spiraling - even though the only thing that is going
+	on is a small data shift in the character set. 
+	
+
+*/
+
+
+// Let the character set be loacated at $2000 on bank 0
+@define charsetLoc $2000
+// Base of the 16 char value is "64". Check out "charsets/charsets.flf" in order to view the characters at position 64
+@define charVal 64
+// Use kernal
+@define useKernal "1"
+
+	charset: IncBin("resources/charsets/charset.bin", @charsetLoc);
+
+	// Some variables
+	x,y,tangent,i,dx,dy : byte;
+	radial : integer;
+	// Add a color pointer
+	cp:pointer;
+	// Luminosity color values, just for prettiness
+	lumi:  array[32] of byte = ($06,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06);
+
+	
+
+
+procedure RenderScreen();
+begin
+	// could equally well have written "screenmemory:=screen_char_loc;"
+	moveto(0,0,hi(screen_char_loc));
+	// Set cp to point to color memory
+	cp:=screen_col_loc;
+	// 23 rows
+	for y:=0 to screen_height-1 do begin
+		//40 columns
+		for x:=0 to screen_width do begin
+			// calculate delta x and delta y from the center of the screen (20,13)
+			dx:=abs(20-x);
+			dy:=abs(13-y);
+			// Calculate the "tangential" value of dx,dy. Try to plot this value indepenedntly!
+			tangent:=(atan2(20,x,12,y));
+			radial:=(dx*dx+dy*dy);
+			// Calculate the "radial" value of dx,dy. Try to plot this value indepenedntly!
+			radial:=sqrt(radial);
+			// Combine the values to create a spiral. Ideally the (tangent
+			i:=radial/4+tangent;
+			// Ideal, (radial,tangent) should be used to lookup a seamless texture
+			// Divide by 4 (so values are 0-64) and then constrain to 0-15
+			i:=(i/4)&15;
+			// Fill screen memory with the character value
+			screenmemory[x]:=i+@charVal;
+			// Fill color data with color value based on tangent
+			cp[x]:=lumi[tangent&31];
+		end;
+		screenmemory:=screenmemory+screen_width;
+		cp:=cp+screen_width;
+	end;
+	// draw an extra line at the bottom of the screen to illustrate how 
+	// we only draw 16 characters and them shift the character data set instead of actual bytes on the screen
+	for x:=0 to screen_width do screenmemory[x]:=x&15 + @charVal;
+end;
+
+
+procedure ShiftCharsetData();
+begin
+	// We copy 16 characters * 8 bytes each 128 byte from the original point in memory @charsetLoc  + 8*@charVal
+	// 8 bytes to the rigth, cycling the characters
+	memcpy(^@charsetLoc+^@charVal*^8, 0, ^@charsetLoc+^@charVal*^8+^128,8);
+	memcpy(^@charsetLoc+^@charVal*^8+^8, 0, ^@charsetLoc+^@charVal*^8,128);
+
+end;
+// Main raster, called once per raster cycle. Only shifts charset data with 8 bytes
+interrupt MainRaster();
+begin
+	StartIRQ(@useKernal);
+
+	ShiftCharsetData();
+
+	CloseIRQ();
+end;
+
+// Main initialization routine
+begin
+	setcharsetlocation(@charsetLoc);
+	screen_fg_col:=black;
+	screen_bg_col:=black;
+	RenderScreen();
+
+	StartRasterChain(MainRaster(),0,@useKernal);
+	Loop();	
+end.

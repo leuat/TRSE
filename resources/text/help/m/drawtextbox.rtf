@@ -1,0 +1,78 @@
+<h3>DrawTextBox( [addresstable], [chararray], [column], [row], [width], [height] );</h3>
+<ul>
+<li>[addresstable] - Address table for your screen size</li>
+<li>[chararray] - Screen character value array in order of TL,T,TR,R,BR,B,BL,L (8 bytes)</li>
+<li>[column] - Left column, starting from 0</li>
+<li>[row] - Top row, starting from 0</li>
+<li>[width] - Box width</li>
+<li>[height] - Box height</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Draws a box to screen memory, utilizing AddressTable to accomodate different screen sizes.
+
+<p>An array is used to define characters to draw the box (screen values),
+    in order: top left, top, top right, right, bottom right, bottom, bottom left, left.
+</p>
+
+<p>As the method uses AddressTable, it can also be used to write to color memory,
+in that case the [chararray] should contain color values. There is also DrawColorTextBox()
+-method available if one wants to draw single color text boxes to screen.</p>
+
+<p>AddressTable can be created easily with CreateAddressTable().</p>
+
+<h3>Example for C64</h3>
+
+<code>
+program TextBoxExample;
+
+var
+    // Defines for screen addresses and size
+    @define screen_mem $0400
+    @define color_mem $D800
+    @define screen_width 40
+    @define screen_height 25
+
+    s_addr: array[@screen_height] of integer;  // Array to hold address table to screen memory
+    c_addr: array[@screen_height] of integer;  // Array to hold address table to color memory
+
+    petsciibox: array[8] of byte = ($55, $43, $49, $5d, $4b, $43, $4a, $5d);
+    boxcolors: array[8] of byte = (1, 2, 3, 4, 5, 6, 7, 8);
+
+
+begin
+    // Change screen color to black
+    SCREEN_BG_COL := BLACK;
+    SCREEN_FG_COL := BLACK;
+
+    // Fill screen memory with space
+    clearscreen($20, ^@screen_mem);
+
+    // Fill color RAM with black
+    clearscreen(BLACK, ^@color_mem);
+
+    // Create address tables to screen memory and color RAM
+    createaddresstable(s_addr, @screen_mem, @screen_width, @screen_height);
+    createaddresstable(c_addr, @color_mem, @screen_width, @screen_height);
+
+    // Draw text box
+    drawtextbox(s_addr, petsciibox, 10, 5, 20, 15);
+
+    // Draw box colors to color RAM
+    drawtextbox(c_addr, boxcolors, 10, 5, 20, 15);
+
+    // Loop Forever
+    loop();
+end.
+</code>
+
+<h3>Example screenshot</h3>
+
+<p>
+<img src="://resources/images/textboxexample.png" width="400" height="300">
+</p>
+
+<h3>Remarks</h3>
+<p>It is your responsibility to make sure box is not drawn outside screen memory.
+Minimum width and height is 3. Smaller values will explode galaxies and burn forests :(</p>

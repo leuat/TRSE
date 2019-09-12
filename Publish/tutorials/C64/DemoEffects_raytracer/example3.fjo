@@ -1,0 +1,87 @@
+globals = {
+	camera = { x = 0, y=-0.0, z=2.0 },
+	fov = 40, 
+	target = { x = 0, y=0.0, z=0 },
+	up = { x=0, y=1, z=0 },
+	light0 = {   	direction = { x=1, y=1, z=1 }, 
+				color = { x=1, y=1, z=1}, 
+			},
+	ambient = { x = 0, y = 0, z = 0 },
+     
+	sky = 0,
+	shadow_scale = 0.5,
+	isPaused = 0,
+	
+	raymarch_steps = 70,
+	raymarch_shadow_steps = 40
+
+}
+
+output = {
+	resolution = { width = 32, height=24 },
+	output_type = 0, -- RGB output
+	aspect = 1,
+	-- 0=charset, 1 = multicolor image 
+	c64_imageType = 0,
+}
+
+
+
+Material1 = {
+	color = { x=1.0, y=0.5, z=0.2 },
+	reflection = 0.3,
+	shininess = 60,
+	shininess_intensity = 1 
+
+}
+
+
+
+-- Init is called on start  
+ 
+function Init()
+	-- add a single torus
+	AddObject("torus","torus1","","Material1",  0,0,0,  0.5, 0.2,0);
+	-- Add some noise to the torus to make it look good!
+	AddObject("perlin","torus1","","Material1",  "torus1", 0.03,5,0);
+	UpdateGraphics()
+
+end
+
+
+distance = 10
+frame = 0
+noFrames = 64
+char = 0
+-- Higher number compresses more, worsen quality
+compressRatio = 5
+dataWidth = 32
+dataHeight = 24
+screenCharacterInCharset = 0xA0
+
+
+function UpdateGraphics()
+
+  	t = ((frame)/noFrames)*360
+	SetRotation("torus1",t,0,t);
+
+end
+
+
+function Update()
+
+	UpdateGraphics()
+	if (frame == noFrames) then 
+			
+			CompressAndSaveHorizontalData(dataWidth,compressRatio, "data/example3_screen.bin","data/example3_table.bin");
+			Message("Data written to data/example3_...bin. You can now close this window.")
+			
+	end
+	if (frame<noFrames) then
+	     AddScreen(dataWidth,dataHeight,  screenCharacterInCharset,  32)
+	end
+
+	frame=frame+1
+
+
+end

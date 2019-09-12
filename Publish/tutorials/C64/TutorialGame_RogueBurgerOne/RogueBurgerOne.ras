@@ -208,7 +208,7 @@ var
 
 	
 	// Entity sprite locations in memory *64 on current bank
-	entity_sprites : array[8] of byte = (
+	entity_sprites : array[] of byte = (
 	$61, $60, $72, $73, $74, $66, $67, $68, $69,$6A,$6B, $6C,
 	$6D, $6E, $6F, $70, $71, $76 ,    $77 , $78, $79);
 	
@@ -378,7 +378,7 @@ begin
 	setbank(VIC_BANK1);
 	poke(VIC_DATA_LOC, 0, @charmapText);
 	if (keyPressedWait=0) then begin
-		if (keypressed(KEY_SPACE)=1)then begin
+		if (keypressed(KEY_SPACE))then begin
 			copyfullscreen(^$0400, ^$4400);
 			copyfullscreen(^$8000, ^$D800);
 			poke(SPRITE_BITMASK,0, keepbitmask);
@@ -488,24 +488,24 @@ begin
 
 
 	if (keyPressedWait=0) then begin
-		if (keypressed(KEY_SPACE)=1) then begin
+		if (keypressed(KEY_SPACE)) then begin
 			PrepareScrollView();
 			RasterIRQ(RasterUpdateScrollView(), 1, @usekernal);
 			CloseIRQ();
 			returninterrupt();	
 		end;
 @ifdef isDebug
-		if (keypressed(KEY_P)=1) then begin
+		if (keypressed(KEY_P)) then begin
 			keyPressedWait:=16;
 			immortal:=(immortal+1)&1;
 			//poke(SPRITE_MULTICOLOR_REG2,0,WHITE);
 			//Loop();
 		end;
-		if (keypressed(KEY_L)=1) then begin
+		if (keypressed(KEY_L)) then begin
 			keyPressedWait:=16;
 			ignoreCollisions:=(ignoreCollisions+1)&1;
 		end;
-		if (keypressed(KEY_U)=1) then begin
+		if (keypressed(KEY_U)) then begin
 			InitGameWon();
 			RasterIRQ(RasterGameWon(), 1, @usekernal);
 			CloseIRQ();	
@@ -603,7 +603,7 @@ begin
 	val:=0;
 	while val=0 do begin
 		waitforraster(0);
-		if (joystickbutton=1) then val:=1;
+		if (joystickbutton) then val:=1;
 //		waitforraster(200);
 //		call(SIDFILE_1_PLAY);
 		joystick(2);

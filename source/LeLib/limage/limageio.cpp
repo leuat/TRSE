@@ -43,7 +43,7 @@ bool LImageIO::Save(QString filename, LImage* img)
         return false;
 
     unsigned char imageType = LImage::TypeToChar(img->m_type);
-    qDebug() << QString::number(imageType);
+ //   qDebug() << QString::number(imageType);
     unsigned char colorType = LColorList::TypeToChar(img->m_colorList.m_type);
 
     // 7 + 4 + 1 + 1 = 13
@@ -79,12 +79,14 @@ LImage* LImageIO::Load(QString filename)
     file.read( ( char * )( &imageType ),1);
     file.read( ( char * )( &paletteType ),1);
 
-    if (version>Data::data.version) {
+    /*if (version>Data::data.version) {
         qDebug() << "File version higher than current version (" << version << " vs current " << Data::data.version << ")";
         file.close();
         return nullptr;
     }
-
+*/
+   // qDebug() << imageType;
+   // qDebug() << paletteType;
     LImage* img = LImageFactory::Create(LImage::CharToType(imageType), LColorList::CharToType(paletteType));
     if (img==nullptr)
         return nullptr;

@@ -44,6 +44,7 @@
 #include "source/Compiler/ast/nodewhileloop.h"
 #include "source/Compiler/ast/nodeasm.h"
 #include "source/Compiler/ast/nodebinaryclause.h"
+#include "source/Compiler/ast/nodecase.h"
 
 class ParserBlock {
 public:
@@ -61,19 +62,21 @@ public:
 //    int m_currentParserBlock=-1;
 
     QString m_currentDir;
+    QVector<QStringList> m_obsoleteWarnings;
     QMap<QString, Node*> m_procedures;
     QMap<QString, QString> m_preprocessorDefines;
     QStringList m_diskFiles;
+    QStringList m_warningsGiven;
     QStringList m_doNotRemoveMethods;
     QString m_initAssembler = "";
     QVector<Node*> m_proceduresOnly;
     QVector<QString> m_ignoreMethods;
     Lexer* m_lexer;
     Token m_currentToken;
-    int m_pass = 0;
+    int m_pass = 0, m_acc=0;
     bool m_ignoreAll = false;
     QStringList  m_initJumps;
-    SymbolTable* m_symTab;
+    SymbolTable* m_symTab = nullptr;
     Parser();
     Parser(Lexer* l) {
         m_lexer = l;
@@ -84,10 +87,10 @@ public:
     QVector<MemoryBlock*> m_userBlocks;
 
     void Delete();
-
+    void InitObsolete();
     void Eat(TokenType::Type t);
     void VerifyToken(Token t);
-
+    void InitSystemPreprocessors();
     void HandlePreprocessorInParsing();
     void StripWhiteSpaceBeforeParenthesis();
     void RemoveComments();
@@ -102,9 +105,12 @@ public:
 
     int findPage();
 
-    Node* Parse(bool removeUnusedDecls, QString param, QString globalDefines);
+
+    void RemoveUnusedProcedures();
+    Node* Parse(bool removeUnusedDecls, QString param, QString globalDefines, bool useLocals);
     Node* Variable();
     Node* Empty();
+    Node* Case();
     Node* AssignStatement();
     Node* Statement();
     QVector<Node*> StatementList();
@@ -116,16 +122,16 @@ public:
     Node* FindProcedure();
     Node* BinaryClause();
     //Node* LogicalClause();
-    Node* Block(bool useOwnSymTab);
-    QVector<Node*> Parameters();
+    Node* Block(bool useOwnSymTab, QString blockName="");
+    QVector<Node*> Parameters(QString blockName);
     Node* ForLoop(bool inclusive);
 //    Node* WhileLoop();
     Node* String();
 
     Node* Conditional(bool isWhileLoop=false);
 //    QVector<Node*> Procedure();
-    QVector<Node*> Declarations(bool isMain);
-    QVector<Node*> VariableDeclarations();
+    QVector<Node*> Declarations(bool isMain, QString blockName);
+    QVector<Node*> VariableDeclarations(QString blockName);
     Node* TypeSpec();
     Node* BuiltinFunction();
     Node* Constant();

@@ -42,16 +42,20 @@ public:
     Node* m_arrayIndex = nullptr;
 
 
-    NodeAssign(Node* left, Token t, Node* r):Node() {
-        m_right = r;
-        m_op = t;
-        m_left = left;
-    }
+    NodeAssign(Node* left, Token t, Node* r);
 
     void ExecuteSym(SymbolTable* symTab) override;
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);
+    }
+    void parseConstants(SymbolTable* symTab) override {
+        if (m_arrayIndex!=nullptr)
+            m_arrayIndex->parseConstants(symTab);
+        if (m_left!=nullptr)
+            m_left->parseConstants(symTab);
+        if (m_right!=nullptr)
+            m_right->parseConstants(symTab);
     }
 
 };

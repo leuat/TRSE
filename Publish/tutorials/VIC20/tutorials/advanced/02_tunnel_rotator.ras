@@ -1,0 +1,99 @@
+program Tunnel;
+
+// Place to dump generated data.
+@define dataloc $1800
+@define lineloc $19FA
+
+@userdata "$1600" "$17FA" "Generated Table"
+
+@ignoremethod "init16x8div"
+
+@ignoremethod "init16x8mul"
+
+//@ignoremethod "init8x8div"
+
+@ignoremethod "initrandom"
+
+var
+
+	// Character that builds the circle. Some random petscii ones
+	vals : array[8] of byte = ($20, $2E, $2B, $51, $5A, $56, $5E, $5E );
+
+	x,y,i,j,k,l,time,dx,dy,time2 : byte=0;
+	wrk : integer;
+	// Pointers to color, data and screen
+	cp,l1,c1,screen:pointer;
+	perlin: incbin("resources/data/perlin16.dat", "$2A00");
+
+@define charsetLoc $1c00
+
+	charset : incbin("resources/charsets/charset_8x8.bin",@charsetLoc);
+/*
+	Fills @dataLoc with 25xscreen_width circles & 7
+*/
+
+procedure Calculate();
+begin
+	cp:=@dataloc;
+	screen:=@lineloc;
+	for y:=0 to screen_height do begin
+		for x:=0 to screen_width do begin
+			dx:=abs(11-x);
+			dy:=abs(12-y);
+			wrk := dx*dx + dy*dy;
+			i:=(sqrt(wrk)/2);
+//			cp[x]:=255/i;
+			cp[x]:=i/4;
+
+			i:=atan2(11,x,12,y);
+		
+			screen[x]:=i/8;
+		end;
+		screen:=screen+screen_width;
+		cp:=cp+screen_width;
+	end;
+	
+end;
+
+procedure Update();
+begin
+	screen:=screen_char_loc;
+	cp:=screen_col_loc; // Color memory
+	c1:=@dataloc;
+	l1:=@lineloc;
+	for y:=0 to screen_height do begin
+		for x:=0 to screen_width do begin
+			i:=(l1[x]-time);
+			j:=c1[x]+time2;
+			i:=i+sine[j]/8;
+			k:=i&15;
+			screen[x]:=k+80;
+			cp[x]:=(k/4)&1+2;
+		end;
+		screen:=screen+screen_width;
+		cp:=cp+screen_width;
+		l1:=l1+screen_width;
+		c1:=c1+screen_width;
+		
+	end;
+
+	inc(time);
+	time2:=time2+4;
+end;
+
+
+
+begin
+	DisableVIC20IRQ();
+	screen_bg_color:=black;
+	setcharsetlocation(@charsetLoc);
+	time:=0;
+	
+	Calculate();
+	while (true) do begin
+		Update();
+	end;
+	Loop();
+
+
+end.

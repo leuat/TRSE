@@ -1,0 +1,173 @@
+program Scroller;
+var  
+   	i,j,k,scrollx,x,y,scroll,l,time: byte = 0; 
+
+	@define charPos $1C00
+	@define orgChar $58
+
+	@define charCopyPos 64
+
+	tp,h1,h2,zp : pointer;
+
+	charset:incbin("resources/charsets/charset_8x8.bin", @charPos);
+
+	chars: array[16] of byte = (0,1,2, 0,   3,4,5,0);
+
+	text : string = ("SMOOTH SEXY SCROLLING ON THE VIC 20     ");
+	
+	@define ScrollerY 12
+
+
+
+procedure PrintText();
+begin
+	h1:=@charPos+8;//$05D0;
+	k:=tp[0];
+	if (k<>$20) then begin
+	k:=k-65;
+	if (k<>0) then begin
+		if (k>31) then begin
+			inczp(h1,31*8);
+			k:=k-31;
+		end;
+		end;
+	inczp(h1,k*8);
+
+	moveto(21,@ScrollerY,$30);
+	for i:=0 to 8 do begin
+		j:=getbit(h1[i],7-scroll);
+		k:=0;//$20;
+		if (j=1) then k:=1;//@charCopyPos;
+		screenmemory[0]:=k;
+		inczp(screenmemory,22);
+	end;
+	end;
+	inc(scroll);
+
+	if (scroll=8) then begin
+		inczp(tp,1);
+		scroll:=0;
+		if (tp[0]=0) then tp:=text;
+	end;
+end;
+
+
+procedure CopyToScreen();
+begin
+	moveto(0,@ScrollerY,$30);
+	zp:=screenmemory;
+	moveto(0,@ScrollerY,$10);
+
+	for y:=0 to 8 do begin
+		for x:=2 to 20 do begin
+			i:=zp[x]*2 + zp[x+1];
+			k:=$20;
+			if (i<>0) then k:=@charCopyPos+i;
+			screenmemory[x]:=k;
+
+		end;
+		inczp(zp,22);
+		inczp(screenmemory,22);
+	end;
+	
+
+end;
+
+
+procedure Clear();
+begin
+	fill(^$1000,$20,0);
+	fill(^$1100,$20,0);
+	fill(^$3000,$0,0);
+	fill(^$3100,$00,0);
+
+	zp:=$9400;
+	for i:=0 to 23 do begin
+		j:=i+1;
+		if (j&3=0) then
+		fill(zp,YELLOW,22)
+		else
+		fill(zp,YELLOW,22);
+		inczp(zp, 22);
+	end;
+
+	SCREEN_BG_COLOR:=BLACK + BLACK*16;
+end;
+
+
+procedure UpdateChars();
+begin
+
+	
+	k:=(8-scrollx);
+
+	i:=sine[time*6]/48;
+
+	zp:=^@charPos+^$47*^8;
+//	zp:=^@charPos+^$57*^8;
+	if (i<>0) then
+		inczp(zp,i*8);
+	h1:=^@charPos+^@orgChar*^8;
+	memcpy(zp,0,h1,8);
+
+	CopyBytesShift(^@charPos+^@orgChar*^8,^@charPos+^@charCopyPos*^8+^8,8,k,1);
+	CopyBytesShift(^@charPos+^@orgChar*^8,^@charPos+^@charCopyPos*^8+^16,8,scrollx,0);
+	CopyBytesShift(^@charPos+^@orgChar*^8,^@charPos+^@charCopyPos*^8+^24,8,scrollx,2);
+end;
+
+
+interrupt RasterInterrupt();
+begin
+	startirq(0);
+	
+	VSCROLL_REGISTER:=sine[time*2]/32+30;
+
+
+	closeirq();
+end;
+
+
+begin
+	setcharsetlocation(@charPos);
+
+	tp:=@text;
+
+	disablevic20irq();
+	Clear();
+	scroll:=0;
+
+	VIAIRQ(RasterInterrupt(), $86, $56);
+	
+//	poke(^@charPos+^@orgChar*^8,0,0);
+//	poke(^@charPos+^@charCopyPos*^8+^16+^8,0,0);
+	while (1=1) do begin
+		waitforraster(0);
+		SCREEN_BG_COLOR:=BLACK;
+		inc(time);
+		
+
+		if (scrollx=1) then begin	
+			screenmemory:=^$3000+^@ScrollerY*^22;
+			h2:=screenmemory;
+			inczp(h2,1);
+			for i:=0 to 8 do begin
+				memcpy(h2,0,screenmemory,21);
+				inczp(h2,22);
+				inczp(screenmemory,22);
+			end;
+
+		end;
+		if (scrollx=2) then 			PrintText();
+
+		inc(scrollx);
+		if (scrollx=8) then scrollx:=0;
+		UpdateChars();
+		if (scrollx=0) then begin
+			CopyToScreen();
+		end;
+
+
+	end;
+
+
+end.

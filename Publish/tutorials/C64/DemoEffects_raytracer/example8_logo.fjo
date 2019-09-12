@@ -1,0 +1,124 @@
+--[[
+
+This is not really a tutorial, but just displays a rendered scene with a TRSE logo
+The image is saved to disk 
+
+
+
+]]--
+
+
+
+globals = {
+ 	camera = { x = 23, y=-3, z=-0 },
+    fov = 80,
+	target = { x = 0, y=0, z=-0 },
+	light0 = {   	direction = {x=2, y=4.0, z=-5.5 }, 
+--				color = {x=1, y=1, z=1.0}, 
+				color = {x=1, y=1, z=1.0}, 
+			},
+	ambient = { x = 0.0, y = 0.0, z = 0.0 },
+    raymarch_steps = 60,
+ 	up = { x = 0, y=1, z=0 },
+ --	up = { x = -1, y=0.3, z=0 },
+	raymarch_shadow_steps = 15,
+	
+	sky = 1,
+	shadow_scale = 0.2,
+	isPaused = 0
+	
+}
+
+output = {
+--	resolution = { width = 320, height=256},
+	resolution = { width = 128, height=128},
+--	resolution = { width = 64, height=64},
+	aspect = 1.2,
+	output_type = 0, -- no c64 output, RGB
+}
+
+
+Material0 = {
+   color = { x=0.4, y=0.5, z=1 },
+	reflection = 0.2,
+	shininess = 70,
+	shininess_intensity = 0.5 
+}
+
+
+MaterialGround = {
+   color = { x=0.3, y=0.6, z=0.1 },
+	reflection = 0.4,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+ 
+text = "TRSE"
+charname = "char"
+
+-- Init is called on start  
+function Init()
+	UpdateScene()
+	Message("Rendering...");
+	radius = 7
+	x = -5.5*0
+	for i=1, string.len(text) do
+		xi = (i-3.5)/6.0
+		font ="rom"
+		-- you can also load charsets from disk
+----		font ="charsets/camel.bin"
+
+		c = string.sub(text,i,i+1)
+		char = string.byte(c)-65
+		z = 0--cos((xi)*3.14159)*0
+		sy = 1.3
+		name = charname .. tostring(i)
+		AddObject("char", name, "", "Material0",  font, char+1,   
+			z,-10,x,            -- position
+			0.6,1*sy,0.5,      -- width xyz 
+			1.500,0.60*sy,0.35,  -- stretch xyz
+			2,0,0,0 -- skip bytes
+		);          
+       	x=x+5.5
+
+
+
+	end
+	-- add a "ground" object
+	AddObject("box","ground", "","MaterialGround", 0,0,0, 100,4,100)  	
+	-- tilt ground	
+	SetRotation("ground",0,0,8)	
+end
+
+
+time = 0
+
+function UpdateScene()
+
+	t = -0.4+time
+	time = time +0.1
+	r = 25
+	globals.up.x = -0.1
+	globals.camera.x = r*cos(t)
+	globals.camera.z = r*sin(t)
+	globals.camera.y = 10
+	
+	globals.target.y = 10
+	
+
+end
+
+
+function Update()
+	s = 4
+	-- since light "1" is no defined, it will be added to the scene
+    SetLight(1,  1.0, 0.2,  -4,   s,s*0.2,s)
+
+
+
+	SaveImage("data/logo.png")
+	Message("Saving image...")
+	UpdateScene()
+
+end

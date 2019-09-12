@@ -1,0 +1,39 @@
+<h3>Description</h3>
+<p>A case statement tests for whether a list of specific condtitonals are met.</p>
+
+<h4>case variable of</h4>
+
+
+<h3>Example</h3>
+
+<code>
+program Loops;
+var
+    i,a,b: byte;
+begin
+    i:=5;
+    a:=3;
+    b:=0;
+    moveto(0,15,$04);
+    // Case without else statement
+    case i of
+        1: printstring("HI THERE",0,0);
+        5: printstring("HIGH FIVE",0,0);
+    end;
+    // Case with else statement
+    moveto(0,17,$04);
+    case b of
+        a-2: printstring("B IS 1",0,0);
+        3: begin
+             printstring("A is 3",0,0);
+             screen_bg_col:=white;
+           end;
+        2*a: printstring("B IS 2*a",0,0);
+    else
+    begin
+       // None of the cases were valid
+       screen_bg_col:=black;
+    end;
+    Loop();
+end.
+</code>

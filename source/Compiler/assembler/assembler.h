@@ -39,6 +39,7 @@ class MemoryBlock {
     Type m_type;
     QVector<int> m_zeropages;
     QString m_name;
+    int m_currentLineNumber;
     MemoryBlock() {}
     MemoryBlock(int start, int end, Type type, QString name){
         m_start=start;
@@ -131,11 +132,18 @@ public:
     }
     int m_current = 0;
     QString Get();
+    QString Get(int i) {
+        if (i<m_free.count())
+            return m_free[i];
+        throw QString("RegisterStack::Get internal error: index out of bounds when retrieving stack");
+    }
     void Pop(QString reg);
 
-//    QString getLatest();
+    int count() {
+        return m_free.count();
+    }
 
-//    QString peekLatest();
+    QString operator[] (int i) {return Get(i);}
 
 };
 
@@ -147,20 +155,20 @@ public:
     QVector<Appendix> m_extraBlocks;
     Appendix m_chipMem;
 
-
     QVector<MemoryBlock> m_userWrittenBlocks;
     QStringList m_startInsertAssembler;
     QString m_zeropageScreenMemory="$fb";
     QMap<QString, QString> m_replaceValues;
-
 
     RegisterStack m_regAcc;
     RegisterStack m_regMem;
     Stack m_varStack;
 
     QString m_lblFailed, m_lblSuccess;
+    int m_currentBreakpoint = 0;
 
-    static QStringList m_internalZP;
+//    static QStringList m_internalZP;
+    static RegisterStack m_internalZP;
     QVector<QString> m_zeroPointers; // org zp input
     QVector<QString> m_tempZeroPointers; // org temp zp input
     QVector<QString> m_zpStack; // temp zp stack
@@ -194,7 +202,7 @@ public:
             m_blockStack.removeLast();
         if (m_blockStack.count()!=0) {
             m_currentBlock = m_blockStack.last();
-            qDebug() << "STILL STACK : " << m_blockStack.count();
+           // qDebug() << "STILL STACK : " << m_blockStack.count();
         }
     }
 
@@ -211,7 +219,8 @@ public:
 
     void SortAppendix();
 
-    QMap<int, int> m_cycles;
+    QMap<int, int> m_cycles, m_blockCycles;
+    QMap<int, int> m_cyclesOut, m_blockCyclesOut;
     QMap<int, int> m_blockIndent;
 
     QVector<int> m_cycleCounter;

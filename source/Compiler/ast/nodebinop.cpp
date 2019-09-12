@@ -26,6 +26,7 @@ NodeBinOP::NodeBinOP(Node *left, Token op, Node *right):Node() {
     m_right = right;
     m_left = left;
     m_op = op;
+    ApplyFlags();
 }
 
 
@@ -42,6 +43,36 @@ bool NodeBinOP::isPureNumeric() {
     return (m_left->isPureNumeric() && m_right->isPureNumeric());
 }
 
+bool NodeBinOP::is8bitValue(Assembler *as)
+{
+    return (m_right->is8bitValue(as) && m_left->is8bitValue(as));
+}
+
+void NodeBinOP::ApplyFlags()
+{
+//    qDebug() << "::NodeBinop Applying Flags";
+    bool a = m_left->isWord(nullptr);
+    bool b = m_right->isWord(nullptr);
+
+   // qDebug() << "::NodeBinop a b " << a << b;
+
+    if (m_op.m_type==TokenType::MUL) {
+     //   if (a || b)
+            flags["mul16"] = true;
+       // if (!a && !b)
+            flags["mul8"] = true;
+    }
+    if (m_op.m_type==TokenType::DIV) {
+       // if (a || b)
+            flags["div16"] = true;
+        //if (!a && !b)
+            flags["div8"] = true;
+    }
+    m_left->ApplyFlags();
+    m_right->ApplyFlags();
+//    qDebug() << flags.keys();
+}
+
 bool NodeBinOP::isAddress() {
     return m_left->isAddress() && m_right->isAddress();
 }
@@ -51,6 +82,40 @@ bool NodeBinOP::isAddress() {
 
 bool NodeBinOP::isWord(Assembler *as) {
     return ((m_left->isWord(as) || m_right->isWord(as)) || (m_forceType==TokenType::INTEGER));
+}
+
+void NodeBinOP::setForceType(TokenType::Type t) {
+//    qDebug() << "Binop set force type " << TokenType::getType(t);
+    m_forceType  =t;
+    m_left->setForceType(t);
+    m_right->setForceType(t);
+}
+
+bool NodeBinOP::containsPointer(Assembler *as)
+{
+    return m_left->containsPointer(as) || m_right->containsPointer(as);
+}
+
+void NodeBinOP::parseConstants(SymbolTable *symTab) {
+
+ //   qDebug() << "NodeBinOp :: parse HERE1" << m_left->isPureNumeric() <<m_right->isPureNumeric();
+//    int a = m_left->getValueAsInt(nullptr);
+//    int b = m_right->getValueAsInt(nullptr);
+ //   qDebug() << a << b;
+
+    if (!isPureNumeric()) {
+        if (m_left!=nullptr)
+            m_left->parseConstants(symTab);
+        if (m_right!=nullptr)
+            m_right->parseConstants(symTab);
+        return;
+    }
+//    qDebug() << "NodeBinOp :: parse HERE2";
+//    m_value = numValue();
+  //  m_isCollapsed = true;
+/*    int a = m_left->getValueAsInt(nullptr);
+    int b = m_right->getValueAsInt(nullptr);
+*/
 }
 
 

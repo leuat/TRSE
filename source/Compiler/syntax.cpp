@@ -67,22 +67,29 @@ void Syntax::Init(AbstractSystem::System s, QString param)
         m_startAddress = 0x02000;
         m_programStartAddress = 0x2010;
     }
+    if (s==AbstractSystem::PLUS4) {
+        m_startAddress = 0x1000;
+        m_programStartAddress = 0x1010;
+    }
+    if (s==AbstractSystem::OK64) {
+        m_startAddress = 0x0400;
+        m_programStartAddress = 0x0400;
+    }
 
     LoadSyntaxData();
 
-    SetupReservedWords();
-    SetupBuiltinFunctions(s);
+    SetupReservedWords(reservedWords,"r",false);
+    SetupReservedWords(reservedWordsFjong,"rf",true);
+    SetupBuiltinFunctions(builtInFunctions, s,"m",false);
+    SetupBuiltinFunctions(builtinFunctionsFjong, s,"f",true);
     SetupKeys();
 
 }
 
 
-
-
-
-void Syntax::SetupReservedWords()
+void Syntax::SetupReservedWords(QVector<Token>& list, QString id, bool ignoreSystem)
 {
-    reservedWords.clear();
+    list.clear();
     QString currentSystem = AbstractSystem::StringFromSystem(m_currentSystem).toLower();
     for (QString s: m_syntaxData.split('\n')) {
         s= s.simplified();
@@ -91,25 +98,23 @@ void Syntax::SetupReservedWords()
         s=s.replace(" ", "");
 
         QStringList data = s.split(";");
-        if (data[0].toLower()!="r")
+        if (data[0].toLower()!=id)
             continue;
         QString word = data[1].toLower();
         QString system = data[2].toLower();
 
-        if (system.contains(currentSystem)) {
+        if (system.contains(currentSystem) || ignoreSystem) {
 
-            reservedWords.append(Token(TokenType::getType(word), word.toUpper()));
+            list.append(Token(TokenType::getType(word), word.toUpper()));
         }
 
      }
 
 }
 
-void Syntax::SetupBuiltinFunctions(AbstractSystem::System system)
+void Syntax::SetupBuiltinFunctions(QMap<QString, BuiltInFunction>& lst, AbstractSystem::System s, QString id, bool ignoreSystem)
 {
-    builtInFunctions.clear();
-
-
+    lst.clear();
 
     QString currentSystem = AbstractSystem::StringFromSystem(m_currentSystem).toLower();
 
@@ -120,11 +125,19 @@ void Syntax::SetupBuiltinFunctions(AbstractSystem::System system)
         s=s.replace(" ", "");
 
         QStringList data = s.split(";");
-        if (data[0].toLower()!="m")
+        if (data[0].toLower()!=id)
             continue;
+
         QString method = data[1].toLower();
-        QString system = data[2].toLower();
-        QStringList params = data[3].toLower().split(",");
+        QString system="";
+        QStringList params;
+        if (!ignoreSystem) {
+           system = data[2].toLower();
+           params = data[3].toLower().split(",");
+        }
+        else {
+            params = data[2].toLower().split(",");
+        }
 
         // Build parameter list
         QList<BuiltInFunction::Type> paramList;
@@ -145,9 +158,14 @@ void Syntax::SetupBuiltinFunctions(AbstractSystem::System system)
                 paramList << BuiltInFunction::Type::STRING;
             if (p=="p")
                 paramList << BuiltInFunction::Type::PROCEDURE;
+            if (p=="f")
+                paramList << BuiltInFunction::Type::NUMBER;
+            if (p=="ignore")
+                paramList << BuiltInFunction::Type::IGNOREPARAM;
+
         }
-        if (system.contains(currentSystem)) {
-            builtInFunctions[method] = BuiltInFunction(method, paramList);
+        if (system.contains(currentSystem) || ignoreSystem) {
+            lst[method] = BuiltInFunction(method, paramList);
         }
 
 
@@ -204,6 +222,7 @@ void Syntax::SetupKeys()
     m_c64keys[0xF7] = C64Key("F7","KEY_F7",0xF7 , row[0], column[3]);
 
     m_c64keys[0x2b] = C64Key("+","KEY_PLUS",0x2b , row[5], column[0]);
+    m_c64keys[0x28] = C64Key("-","KEY_MINUS",0x28 , row[5], column[3]);
     m_c64keys[0x1c] = C64Key("£","KEY_POUND",0x1c , row[6], column[0]);
     m_c64keys[0xF0] = C64Key("ENTER","KEY_ENTER",0xF0 , row[0], column[1]);
     m_c64keys[0x2a] = C64Key("*","KEY_ASTERIX",0x2a , row[6], column[1]);

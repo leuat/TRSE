@@ -1,0 +1,164 @@
+program Scroller2x2;
+var
+	// Values that will be printed to the screen
+	val : byte;
+	/// Pointer to the text
+	pText : pointer;
+	
+	// ms_scroll corresponds to the scroll register
+	ms_scroll : byte=7;
+	// ms_shift is 0 or 1, corresponding to the current column in the 2x2 character set
+	ms_sshift : byte=0;
+
+	charset: IncBin("resources/charsets/charset_16x16.bin","$2000");
+	// Text to be rendered on-screen
+	text : string=("THIS IS A TWO X TWO CHARACTER SCROLLER           ");
+
+// Character that points to a 2x2 block of black areas in the character map
+@define clearChar $a0
+
+@define useKernal "0" 
+
+// Since textcolor1 sets the $D800 colors, it will be multicolor - 8 - dark blue
+@define textColor1 "green"
+// Bank 1
+@define screen_f "^$0400"
+@define screen_hi "$04"
+
+@define lineColor "DARK_GREY"
+
+// Y pos of scroller (in chars)
+@define scrollerLineY 5
+@define scrollerStartRaster 86
+@define scrollerEndRaster 110
+
+procedure MainScreen();
+
+// bottom raster method. Does two things:
+//  - draws the lower line
+//  - Copies the screen content 1 column to the left when a new line is triggered 
+
+interrupt MainScreenScrollerEnds();
+begin
+	// Line drawing trick : wait a couple of cycles, then change colors
+	startirq(@useKernal);
+	wait(6);
+	screen_fg_col:=@lineColor;
+	scrollx(0);
+	waitnoraster(1);
+	wait(9);
+	screen_fg_col:=black;
+	// point to next raster 
+	RasterIRQ(MainScreen(),130, @useKernal);
+	// Copy content 1 to the left
+	if (ms_scroll=1) then begin
+		memcpy(@screen_f + ^40*^@scrollerLineY+^1, 0, @screen_f + ^40*^@scrollerLineY, 39);
+		memcpy(@screen_f + ^40*^@scrollerLineY+^40+^1, 0, @screen_f + ^40*^@scrollerLineY +^40, 39);
+	end;
+	closeirq();
+	
+end;
+
+procedure CalculatePositionInCharset(cc_val:byte);
+begin
+		// If space then return 
+	if (cc_val=key_space) then 
+		returnValue(@clearChar);
+		
+// Somewhat advanced: convert from string char values to 
+// the position in the character map. 
+	if cc_val>64 then cc_val:=cc_val-65;
+	// If larger than O/P etc
+	if cc_val>16 then cc_val:=cc_val+24;  
+	cc_val:=cc_val*2;
+	// ms_shift is 0 or 1, corresponding to the current column in the 2x2 text		
+	cc_val:=cc_val + ms_sshift;
+	returnvalue(cc_val);
+end;
+/*
+	This method is called whenever the scroll register is reset, and a new character has been drawn.
+	After the character is drawn, the ms_shift register, scroll register and text pointer needs to be updated!
+*/
+procedure UpdateTextScroll();
+begin
+	ms_scroll := 7;
+	inc(ms_sshift);
+	// if column 2 has been rendered, increase pointer to the next character
+	if (ms_sshift=2) then begin
+		ms_sshift:=0;
+		// Point to next character in the text
+		pText:=pText+1;
+		// If the text pointer has reached the string terminal value 0, simply reset the text pointer
+		if (pText[0]=0) then pText:=text;
+	end;
+end;
+
+// Renders the actual text to screen (if the scroll register is <0)
+procedure DrawText();
+begin
+	// same as if scroll<0
+	if (ms_scroll>127) then begin
+		// Lookup character value
+		// Move to y position
+		moveto(0,@scrollerLineY, @screen_hi);
+		
+		val:=CalculatePositionInCharset(pText[0]);
+		
+		screenmemory[39]:=val;
+		screenmemory[39+screen_width]:=val+screen_width;
+		// Reset scrolling
+
+		UpdateTextScroll();		
+	end;
+
+end;
+
+// Main raster routine
+interrupt MainRaster();
+begin
+	// A line drawing trick: wait some cycles, change background color
+	startirq(@useKernal);
+	wait(6);
+	screen_fg_col:=@lineColor;
+	waitnoraster(1);
+	wait(10);
+	// wait some more, return to black! 
+	screen_fg_col:=black;
+	
+	// Decrease scroll register by 2 (faster scrolling, less boring)
+	ms_scroll:=ms_scroll-2;
+	scrollx(ms_scroll&7);
+	// Update the text	
+	DrawText();
+
+	RasterIRQ(MainScreenScrollerEnds(),@scrollerEndRaster, @useKernal);
+
+
+	closeirq();
+end;
+
+
+interrupt MainScreen();
+begin
+	startirq(@useKernal);
+	RasterIRQ(MainRaster(), @scrollerStartRaster, @useKernal);
+	CloseIRQ();
+
+end;
+begin
+	screen_fg_col:=black;
+	screen_bg_col:=black;
+	SetCharsetLocation($2000);
+	// Clear screen and color memory
+	ClearScreen(@clearChar, screen_char_loc);
+	ClearScreen(@textColor1, screen_col_loc);
+
+	// Initialize text pointer
+	pText:=text;
+	// Hide the 0th and 39th column
+	hideborderx(0);
+	SetMemoryConfig(1,@useKernal,0);
+	StartRasterChain(MainScreen(),1,@useKernal);
+	Loop();
+
+end.

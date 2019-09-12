@@ -1,0 +1,149 @@
+<h3>What is an interrupt?</h3>
+<p>Imagine you are painting your apartement in the 20th floor. Since you have to be finished by tomorrow, you have asked three of your friends to come help you. But the problem is that you don't know exactly when each of them will show up.
+
+<p>Now, why is it a problem that you don't know exactly when they show up you may wonder? The door bell on the 1st floor is broken. So you constantly have to run down from the 20th floor, open the door, check for friends, run back up, paint 30 seconds, run down again to the 1st floor, open the door, check for friends, run back up, paint 30 seconds, run do..... ok! You get the point. The only thing you will be busy with is waiting. Ideally, you would like to start painting your apartement and just be INTERRUPTED when each of your friends ring the door bell. But since this interrupt mechanism is broken, you need to find another solution: the mobile phone.
+
+<p>So, instead you call your friends and tell them to use their mobile phones to ring you when they are downstairs. In that way you can constantly keep painting, and be notified (INTERRUPTED) only when you friends are ready downstairs.
+
+<p>What's this story do to with programming the C64 with TRSE? Well, of course this was just an analogy. But if we want to make smart and effective programs we need to have the 6510 CPU work at full speed with real tasks and only be interrupted when something important happens! And when the interrupt routine is completed the CPU goes back to the tasks it was interrupted from.
+
+<p>Ok, let's gets started!
+
+
+<h3>Avoiding busy waits  - our first simple interrupt routine</h3>
+
+<p>In the story above you see that it is possible to constantly run up and down to check for you friends, but it's not very effective. The same goes for the C64 you can have the CPU to just sit and wait for something to happen (BUSY WAIT).
+
+<p>Let's look at an example. Below you find a small program that set the background color to black at line 0, and turn it to yellow at line 150. Copy and paste this sample into TRSE and run it!
+<code>
+program BusyWait;
+var
+
+procedure MainLoop();
+begin
+        WaitForRaster(0);
+        SCREEN_BG_COL:=BLACK;
+
+        WaitForRaster(150);
+        SCREEN_BG_COL:=YELLOW;
+end;
+
+begin
+        while(0<1) then begin
+                MainLoop();
+        end;
+end.
+</code>
+
+<p>What is the problem with this program? It's switching from black to yellow? Well, the function WaitForRaster() prevents the CPU of doing anything else while waiting. In a real program you would like to do a lot of stuff while waiting for a rasterline such as calculating new sprite positions, moving a scrolltext, preparing a new screen in a different videobank etc.
+
+<p>Now, how would this program look if we would like to use interrupts instead? It would look like this:
+<code>
+program RasterInterrupt;
+var
+        @define useKernal 0
+
+interrupt InterruptRoutine02();
+
+interrupt InterruptRoutine01();
+begin
+        StartIRQ(@useKernal);
+        SCREEN_BG_COL:=BLACK;
+        RasterIRQ(InterruptRoutine02(),150,@useKernal);
+        CloseIRQ();
+end;
+
+interrupt InterruptRoutine02();
+begin
+        StartIRQ(@useKernal);
+        SCREEN_BG_COL:=YELLOW;
+        RasterIRQ(InterruptRoutine01(),0,@useKernal);
+        CloseIRQ();
+end;
+
+procedure MainLoop();
+begin
+        // Insert your program here
+end;
+
+
+begin
+        preventirq();
+        disableciainterrupts();
+        setmemoryconfig(1,@useKernal,0);
+        enablerasterirq();
+        rasterirq(InterruptRoutine01(),0,@useKernal);
+        enableirq();
+
+        while (0<1) then begin
+                MainLoop();
+        end;
+end.
+
+</code>
+
+<p>First of all note this: the MainLoop() does NOTHING now! This means that you are now free to do anything you like in the MainLoop, and the background will still be colored black and yellow! The interrupts does this for you!
+
+<p>Lets's go trough the program and explain everything step-by-step!
+
+
+
+<h3>Walkthrough of our first simple interrupt routine</h3>
+
+<p>In this chapter we will look at what the different functions do and also try to explain why we use them the way we do.
+<code>
+        preventirq();
+</code>
+As the name says we want to prevent interrupt requests. This is somewhat of a misnomer because we don't actually prevent the requests, but we stop reacting on the interrupts. The interrupts do actually fire constantly, but we've told the CPU to just ignore them.
+<code>
+        disableciainterrupts();
+</code>
+With this function we actually shut off the CIA#1 interrupt requests. We are already ignoring them, but now we tell CIA#1 to really stop sending any interrupt request. Later in this book we will explain different kind of interrupts available on the C64, but for now we are focusing on the interrupts from the video chip (VIC) so we need to shut off CIA#1 interrupts.
+<code>
+        setmemoryconfig(1,@useKernal,0);
+</code>
+This function set wanted memory configuration. In our sample we have IO on, Kernal Off and BASIC off. IO is turned on so that we can write to all hardware registers (VIC,SID). But why is Kernal turned off? Well, in most demos you don't use the Kernal containing all the C64 OS routines. Nevertheless, if you want to keep the Kernal on, that's just as easy! Just set @define useKernal to "1" and TRSE will automatically convert the necessary functions to be in "Kernal mode".
+<code>
+        enablerasterirq();
+</code>
+Since we want to make the VIC chip send an interrupt at a spesific rasterline (in our example at rasterlines 0 and 150) we need to enable the VIC chip to do that. By default, this interrupt is not turned on!
+<code>
+
+        RasterIRQ(InterruptRoutine01(),0,@useKernal);
+</code>
+With this function we tell the CPU which routine to execute when the rasterbeam hits line 0. Here you see that it will execute the routine called "InterruptRoutine01()". Again, this function can be in two different modes: with or without the C64 ROM Kernal. In our example, we have disabled Kernal, but TRSE will work in both modes.
+<code>
+
+        enableirq();
+</code>
+OK, we have now turned all CIA#1 interrupts off, we have enabled VIC interrupts and we have told the CPU where to find the routine to execute when the VIC hits the specified rasterlines. So we are ready to roll! With this last function we tell the CPU to NOT prevent listening and reacting to interrupt requests! Immediately after this function is executed the interrupts from the VIC will be listened to and "InterruptRoutine01()" will be executed when the rasterline = 0!
+<p>
+
+<h3>Inside the interrupt routine</h3>
+<p>In the previous chapter we saw how to initialize the correct interrupt handling. Now, in this chapter we will take a look at what happens inside the interrupt routine called 'InterruptRoutine01()'.
+
+<code>
+        interrupt InterruptRoutine01();
+</code>
+First of all we need to tell TRSE that this routine is an interrupt routine and NOT a normal subroutine. And why does that matter? Well, the major difference between a normal subroutine (called a 'procedure' in TRSE) and an interrupt routine is that the latter needs to return on exit two very important things: 1) The Program Counter (PC) telling where to continue in the code 2) The Processor Status Word telling the CPU what the status of all the flags (zero, carry, NV etc.) were before the interrupt occured.
+<code>
+
+        StartIRQ(@useKernal);
+</code>
+This function does two things: 1) I make sure that we store all the previous values of the X,Y, and A register 2) It ACKNOWLEDGE the interrupt. The first part is maybe self explanatory, but when an interrupt occur we need to store all relevant registers on entry, and restore them on exit. But the second part may need some more explaining. When we acknowledge an interrupt we tell the CPU that we have received and handled this very interrupt and we are ready for the next interrupt. Hm, wait a minute, you might think. Why do we say we are ready for a new interrupt here? This is just in the beginning of the interrupt routine, and we haven't yet done anything? We're not ready for another interrupt? Well, that is very true, but what happens is that when the interrupt routine is called, the CPU will automatically PREVENT all new interrupts from interfering WHILE the interrupt routine is executed. So this is why we can acknowledge the interrupt in the start of the interrupt routine.
+<code>
+        SCREEN_BG_COL:=BLACK;
+</code>
+Ok, perhaps not the most awesome demo, but with this little instruction we tell the VIC to draw a black border from rasterline 0.
+
+<code>
+        RasterIRQ(InterruptRoutine02(),150,@useKernal);
+</code>
+See the similarity from the initial setup? Then we told the CPU to execute the interrupt routine 'InterruptRoutine01()' at rasterline 0, but now we tell the CPU that next time we will want the VIC to send an interrupt request on rasterline 150 instead! And then to call 'InterruptRoutine02()'!
+<code>
+
+        CloseIRQ();
+</code>
+With this we restore the X,Y,A registers, the status flag register, the program counter and tell the CPU to continue exactly where is was before the interrupt occured.
+
+

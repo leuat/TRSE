@@ -1,0 +1,28 @@
+<h3>BcdPrint( [address 1],[number] );</h3>
+<ul>
+<li>[address 1] - The address of the BCD number</li>
+<li>[number] - The length of the BCD in bytes</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+Prints the BCD number at the current screenaddress memory
+location.
+</p>
+
+
+<h3>Example</h3>
+
+<code>
+var
+    score: array[] of byte = ($12,$34,$56); // number is 563412
+
+begin
+    DefineScreen();
+    screenmemory := screen_char_loc;
+
+    BcdPrint( score, 3 );
+    // displays 563412 on the screen
+
+</code>

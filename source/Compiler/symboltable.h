@@ -37,7 +37,7 @@ public:
     TokenType::Type m_arrayType;
     int m_org = 0;
     int m_size = 0;
-
+    bool isUsed = false;
     PVar* m_value = nullptr;
     TokenType::Type getTokenType();
     Symbol(QString name, QString type="");
@@ -50,6 +50,7 @@ public:
 class BuiltInTypeSymbol : public Symbol {
 public:
     BuiltInTypeSymbol(QString name, QString type) : Symbol(name, type) {
+        isUsed = true;
     }
 };
 
@@ -62,13 +63,33 @@ public:
 
 class SymbolTable
 {
+private:
+    QString m_currentProcedure = "";
 public:
     QMap<QString, Symbol*> m_symbols;
+
+    QString getCurrentProcedure()  {
+        return m_currentProcedure;
+    }
+    void SetCurrentProcedure(QString pr) {
+        if (m_useLocals) {
+            if (pr!="") {
+                m_currentProcedure= "localVariable_"+pr;
+            }
+            else m_currentProcedure="";
+        }
+
+    }
+
+    void ExitProcedureScope(bool removeSymbols);
+
+//    QMap<QString,SymbolTable*> m_locals;
+
     static QMap<QString, Symbol*> m_constants;
     QString m_name;
     SymbolTable();
     static SymbolTable s;
-
+    bool m_useLocals = false;
 
     static int m_currentSid;
 
@@ -78,15 +99,15 @@ public:
     static bool isInitialized;
     static void Initialize();
 
-    void Define(Symbol* s) {
-        m_symbols[s->m_name] = s;
-    }
+    void Define(Symbol* s, bool isUsed=true);
     void Delete();
 
     void setName(QString s);
 
     void InitBuiltins();
     bool exists(QString name);
+    QString findSimilarSymbol(QString sim, float percentage, int n,QStringList procedures);
+    QStringList getUnusedVariables();
 
     Symbol* Lookup(QString name, int lineNumber, bool isAddress=false);
     Symbol* LookupVariables(QString name, int lineNumber);

@@ -1,14 +1,21 @@
-<p>Sets NMI IRQ (break) interrupt
-<p>Usage:
+<h3>NmiIRQ( );</h3>
+
+
+
+<h3>Description</h3>
+<p>Sets NMI IRQ (break) interrupt</p>
+
+
+<h3>Example</h3>
+
 <code>
-// Empty NMI (do nothing)
-interrupt nmi();
-begin
-
-end;
-
-begin
-	NMIIRQ(nmi());
-end;
-
-</code<
+	// Empty NMI (do nothing)
+	interrupt nmi();
+	begin
+	
+	end;
+	
+	begin
+		NMIIRQ(nmi());
+	end;
+</code>

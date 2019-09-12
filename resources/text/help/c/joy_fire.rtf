@@ -1,0 +1,9 @@
+<p>Contains the bit mask for the fire button on the joystick.</p>
+<p>Test with:</p>
+
+<code>
+    readjoy1();
+    
+    if (joy1 & @JOY_FIRE) then printstring("FIRE",0,5);
+    if (joy1pressed & @JOY_FIRE) then printstring("FIRE FIRST PRESS",0,17);
+</code>

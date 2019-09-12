@@ -1,0 +1,12 @@
+<h2>AddScreen( [ width ], [ height ],  [ base character ], [ division ]);</h2>
+<p>AddScreen will add the entire current image to the internal "Screen" array variable, specializing
+in converting to (c64) character data.
+<h3>Example</h3>
+<p>Assume that you have set up an Fjong scene with 16x16 pixel width/height. Also, assume that the
+byte value of the characters you wish to draw on your screen is between $80-$88, representing characters ranging from low-intensity to high. You then type:
+<code>
+AddScreen(16, 16,  0x80,  32);
+</code>
+The "32" here comes from the fact that all values in the image are between 0-255, so a screen value divided with 32
+forces values to stay between 0 and 8, which means that the range will stay between $80 and $88.
+

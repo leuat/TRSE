@@ -77,9 +77,15 @@ win32:RC_ICONS += trse.ico
 SOURCES += main.cpp\
         mainwindow.cpp \
     imageworker.cpp \
+    source/Compiler/ast/nodecase.cpp \
+    source/Compiler/systems/systemok64.cpp \
+    source/Compiler/systems/systemplus4.cpp \
+    source/LeLib/limage/limageok64.cpp \
+    source/PmmEdit/fjonghighlighter.cpp \
     source/dialogexport3d.cpp \
     source/toolbox.cpp \
     source/toolboxitem.cpp \
+    source/tutorials.cpp \
     source/workerthread.cpp \
     imageeditor.cpp \
     dialognewimage.cpp \
@@ -210,9 +216,15 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     imageworker.h \
+    source/Compiler/ast/nodecase.h \
+    source/Compiler/systems/systemok64.h \
+    source/Compiler/systems/systemplus4.h \
+    source/LeLib/limage/limageok64.h \
+    source/PmmEdit/fjonghighlighter.h \
     source/dialogexport3d.h \
     source/toolbox.h \
     source/toolboxitem.h \
+    source/tutorials.h \
     source/workerthread.h \
     imageeditor.h \
     dialognewimage.h \
@@ -379,6 +391,9 @@ RESOURCES += \
 DISTFILES += \
     resources/code/amiga/init_p61_player.s \
     resources/code/amiga/p61-play.i \
+    resources/images/OK64.jpg \
+    resources/images/OK64.png \
+    resources/images/PLUS4.png \
     resources/text/about.txt \
     resources/text/Documentation.txt \
     resources/text/builtinmethods.txt \
@@ -443,6 +458,15 @@ DISTFILES += \
     resources/text/help/c/aux_color_and_volume.rtf \
     resources/text/help/c/hpen_register.rtf \
     resources/text/help/c/hscroll_register.rtf \
+    resources/text/help/c/joy1.rtf \
+    resources/text/help/c/joy1pressed.rtf \
+    resources/text/help/c/joy2.rtf \
+    resources/text/help/c/joy2pressed.rtf \
+    resources/text/help/c/joy_down.rtf \
+    resources/text/help/c/joy_fire.rtf \
+    resources/text/help/c/joy_left.rtf \
+    resources/text/help/c/joy_right.rtf \
+    resources/text/help/c/joy_up.rtf \
     resources/text/help/c/pal_or_ntsc.rtf \
     resources/text/help/c/screen_bg_color.rtf \
     resources/text/help/c/screen_char_loc.rtf \
@@ -460,7 +484,13 @@ DISTFILES += \
     resources/text/help/c/xpaddle_register.rtf \
     resources/text/help/c/ypaddle_register.rtf \
     resources/text/help/m/abs.rtf \
+    resources/text/help/m/addresstable.rtf \
     resources/text/help/m/atan2.rtf \
+    resources/text/help/m/bcdadd.rtf \
+    resources/text/help/m/bcdcompare.rtf \
+    resources/text/help/m/bcdisequal.rtf \
+    resources/text/help/m/bcdprint.rtf \
+    resources/text/help/m/bcdsub.rtf \
     resources/text/help/m/blockmemcpy.rtf \
     resources/text/help/m/call.rtf \
     resources/text/help/m/clearbitmap.rtf \
@@ -473,6 +503,7 @@ DISTFILES += \
     resources/text/help/m/copyfullscreen.rtf \
     resources/text/help/m/copyhalfscreen.rtf \
     resources/text/help/m/copyimagecolordata.rtf \
+    resources/text/help/m/createaddresstable.rtf \
     resources/text/help/m/createinteger.rtf \
     resources/text/help/m/createpointer.rtf \
     resources/text/help/m/dec.rtf \
@@ -501,6 +532,7 @@ DISTFILES += \
     resources/text/help/m/lo.rtf \
     resources/text/help/m/loop.rtf \
     resources/text/help/m/memcpy.rtf \
+    resources/text/help/m/mod.rtf \
     resources/text/help/m/moveto.rtf \
     resources/text/help/m/nmiirq.rtf \
     resources/text/help/m/nop.rtf \
@@ -512,7 +544,11 @@ DISTFILES += \
     resources/text/help/m/printnumber.rtf \
     resources/text/help/m/printstring.rtf \
     resources/text/help/m/rand.rtf \
+    resources/text/help/m/random.rtf \
+    resources/text/help/m/random4.rtf \
     resources/text/help/m/rasterirq.rtf \
+    resources/text/help/m/readjoy1.rtf \
+    resources/text/help/m/readjoy2.rtf \
     resources/text/help/m/return.rtf \
     resources/text/help/m/returninterrupt.rtf \
     resources/text/help/m/rightbitshift.rtf \
@@ -537,6 +573,7 @@ DISTFILES += \
     resources/text/help/m/swap.rtf \
     resources/text/help/m/tile.rtf \
     resources/text/help/m/togglebit.rtf \
+    resources/text/help/m/topointer.rtf \
     resources/text/help/m/wait.rtf \
     resources/text/help/m/waitforraster.rtf \
     resources/text/help/m/waitnoraster.rtf \
@@ -581,6 +618,7 @@ DISTFILES += \
     resources/text/help/r/pointer.rtf \
     resources/text/help/r/procedure.rtf \
     resources/text/help/r/program.rtf \
+    resources/text/help/r/requirefile.rtf \
     resources/text/help/r/startassembler.rtf \
     resources/text/help/r/startblock.rtf \
     resources/text/help/r/step.rtf \
@@ -592,4 +630,7 @@ DISTFILES += \
     resources/text/help/r/userdata.rtf \
     resources/text/help/r/var.rtf \
     resources/text/help/r/wedge.rtf \
-    resources/text/help/r/while.rtf
+    resources/text/help/r/while.rtf \
+    resources/text/help/m/drawtextbox.rtf \
+    resources/text/help/m/drawcolortextbox.rtf \
+    resources/text/tutorials.txt

@@ -1,0 +1,54 @@
+/*
+	So far our conditions have been "is this one thing true" but you may also want to sometimes test
+	if more than one condition is true, or if at least one condition of several are true.
+	
+	Introducing AND and OR, or is it OR and AND?  We'll never know!  Well yes we will, read on for more...
+	
+*/
+program AndOr;
+var  
+	val1, val2: byte; 	// Define two variables
+   
+begin
+	// define the screenmemory pointer
+	definescreen();
+	
+	// clear the screen and colour memory
+	clearscreen(32, screen_char_loc);
+	clearscreen(WHITE, screen_col_loc);
+	
+	// Set the screenmemory pointer to point to the screen memory:
+	screenmemory := screen_char_loc;
+
+	// lets set the val1 and val2 variables to some values we can test with:
+	val1 := 10;
+	val2 := 20;
+	
+	// Using AND we can test for two or more conditions, all of which must be true for the PrintString to execute:
+	if (val1 = 10 and val2 = 20) then printstring("BOTH CONDITIONS ARE TRUE!",0,40);
+
+	screenmemory := screenmemory + screen_width;	// move to next line on the screen
+
+	// In contrast, one of these conditions is NOT true, so the PrintString will not execute in this instance:
+	if (val1 = 20 and val2 = 20) then printstring("ONE CONDITION IS NOT TRUE!",0,40);
+	
+	screenmemory := screenmemory + screen_width;	// move to next line on the screen
+	
+	// Changing the AND to an OR means only one of the conditions must be true:
+	if (val1 = 20 or val2 = 20) then printstring("ONE CONDITION IS TRUE!",0,40);
+
+	screenmemory := screenmemory + screen_width;	// move to next line on the scree
+
+	// Lets use two conditions to repeat while val1 and val2 are not the same, AND val1 is less than 14
+	while (val1 <> val2 and val1 < 14) do
+	begin
+		screenmemory[val1] := 65;	// draw a spade for val1
+		screenmemory[val2] := 83;	// draw a heart for val2
+		val1 := val1 + 1;			// move val1 to the right
+		val2 := val2 - 1;			// move val2 to the left
+	end;
+	// They stop before they meet - but which condidtion became false first?
+	// (hint: it's val1 < 14)
+
+	loop();
+end.

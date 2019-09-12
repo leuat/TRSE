@@ -1,13 +1,13 @@
 program CRTProject;
 var  
    index: byte; 
- // MUST be exomized!
+ // This example file MUST be exomized for the cartridge to work!
 begin
-	clearscreen($20,^$0400);
-	clearscreen(LIGHT_GREEN,^$D800);
-	moveto(4,11,$04);
+	clearscreen(key_space,screen_char_loc);
+	clearscreen(LIGHT_GREEN,screen_col_loc);
+	moveto(4,11,hi(screen_char_loc));
 	printstring("THIS IS A CARTRIDGE PROJECT",0,40);
-	moveto(0,13,$04);
+	moveto(0,13,hi(screen_char_loc));
 	printstring("COLOR AND MEMORY MAP IN PROJECT SETTINGS",0,40);
 	
 	Loop();

@@ -87,6 +87,10 @@ private slots:
 
     void on_btn68kTargetDir_clicked();
 
+    void on_btnOKEmulator_clicked();
+
+    void on_btnPlus4Select_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

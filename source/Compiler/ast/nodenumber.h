@@ -40,15 +40,17 @@ public:
     }
 
     bool isAddress() override;
-
     bool isPureNumeric() override;
+    bool is8bitValue(Assembler* as) override;
 
     bool isWord(Assembler* as) override;
 
     QString getValue(Assembler* as) override {
         if (isAddress()) return HexValue(); else return "#" + HexValue();
     }
-
+    void forceWord() override {
+        m_op.m_type = TokenType::INTEGER_CONST;
+    }
 
     //void LoadVariable(AbstractASTDispatcher* dispatcher) override;
 
@@ -61,13 +63,11 @@ public:
     QString getLiteral(Assembler* as) override {return HexValue();}
 
 
+
     QString HexValue() override;
 
     bool DataEquals(Node *other) override;
 
-    int getInteger() override {
-        return m_val;
-    }
 
 
     QString StringValue();

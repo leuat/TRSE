@@ -1,0 +1,49 @@
+/*
+	You've made it this far - superb.  Let's start using the screen.
+	
+	This tutorial is for the Commodore 64 which has several modes to display a screen.
+	The default and simplest is a character display.  An area of memory starting at $0400
+	is used to display characters on the screen.  The first byte at this address contains the character code
+	displayed at the top left of the display.  The second byte containing the next character code and so on for
+	a total of 40 characters on the first row.  It then repeats for a total of 25 rows.
+	
+	There is another area of memory that defines the colour of each of these characters starting at memory address $D800.
+	
+	So it is really easy to write to the screen on the C64 by just putting numbers (byte values) into these addresses.
+	
+	TRSE also has a useful constants, or labels, for accessing these memory addresses so you don't 
+	have to remember $0400 or $D800.
+	They are: 
+		SCREEN_CHAR_LOC  - screen address $0400
+		SCREEN_COL_LOC   - colour address $D800
+		
+	We'll use these labels in the code below.  So let's get started with a simple exercise to write some things to the screen.
+	
+*/
+program Screen;
+var
+		// no variables!  don't need any for this example
+	 
+begin
+	
+	// TRSE has a special internal zero page pointer to help with fast screen updates called screenmemory
+	// Many commands will initialise it, but it does not hurt to ensure that with a call to definescreen()
+	definescreen();
+	
+	// next order of business is to initialise the screen by setting the screen and colour memory with the values we want to use
+	clearscreen(32, screen_char_loc);		// clearscreen to fill the screen_char_loc screen memory with the character code 32, this is a SPACE character
+	clearscreen(WHITE, screen_col_loc);		// clearscreen to fill the screen_col_loc colour memory with the colour code for WHITE
+
+	// definescreen() above provided the 'screenmemory' pointer.  This pointer can be used to write to the screen or colour memory
+	// There are two ways of using it:
+	screenmemory := screen_char_loc;		// 1) here we assign screenmemory with the address of the screen ($0400)
+	screenmemory[0] := 1;					// 2) by adding [0] to the variable name, we can write to the address screenmemory is pointing to, ie: write to address $0400 
+	
+	screenmemory[1] := 2;					// changing to [1] is the next address of $0401
+	// The above writes a 1 to address $0400 and a 2 to address $0401 
+	// you will see AB at the top left of the screen when we run this program
+	
+	// If you have not done so already, run the program.  Click the 'Run (c-r)' button at the bottom left
+	
+	loop();
+end.

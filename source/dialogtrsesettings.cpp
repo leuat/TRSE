@@ -45,7 +45,8 @@ void DialogTRSESettings::FillFromIni()
     ui->leVic20Emulator->setText(m_ini->getString("vic20_emulator"));
     ui->lePETEmulator->setText(m_ini->getString("pet_emulator"));
     ui->leNesEmulator->setText(m_ini->getString("nes_emulator"));
-    ui->leBBCMEmulator->setText(m_ini->getString("bbcm_emulator"));
+    ui->leOK64Emulator->setText(m_ini->getString("ok64_emulator"));
+    ui->lePlus4Emulator->setText(m_ini->getString("plus4_emulator"));
     ui->leC1541->setText(m_ini->getString("c1541"));
     ui->leExomizer->setText(m_ini->getString("exomizer"));
     ui->leTinyCrunch->setText(m_ini->getString("tinycrunch"));
@@ -102,7 +103,8 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("vic20_emulator", ui->leVic20Emulator->text());
     m_ini->setString("pet_emulator", ui->lePETEmulator->text());
     m_ini->setString("c128_emulator", ui->leEmulatorC128->text());
-    m_ini->setString("bbcm_emulator", ui->leBBCMEmulator->text());
+    m_ini->setString("ok64_emulator", ui->leOK64Emulator->text());
+    m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
     m_ini->setString("c1541", ui->leC1541->text());
 
     m_ini->setString("nes_emulator", ui->leNesEmulator->text());
@@ -231,5 +233,24 @@ void DialogTRSESettings::on_btn68kTargetDir_clicked()
         tr("Vasmm target directory"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->le68kTargetDir->setText(filename);
+
+}
+
+void DialogTRSESettings::on_btnOKEmulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("OK64 executable"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leOK64Emulator->setText(filename);
+
+}
+
+
+void DialogTRSESettings::on_btnPlus4Select_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Plus4 emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->lePlus4Emulator->setText(filename);
 
 }

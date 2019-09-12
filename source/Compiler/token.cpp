@@ -21,7 +21,8 @@
 
 #include "token.h"
 
-QString TokenType::types[] = {
+#define no_types 82
+QString TokenType::types[no_types] = {
             "NONE", "INTEGER", "PLUS", "MINUS", "MUL", "DIV", "LPAREN",
             "RPAREN", "TEOF", "ID", "ASSIGN", "BEGIN",
             "END", "SEMI", "DOT", "VAR", "REAL",
@@ -32,7 +33,10 @@ QString TokenType::types[] = {
             "INTERRUPT", "BITAND", "BITOR", "ELSE", "OR", "AND", "POINTER","AT",
             "INCLUDE", "DEFINE", "PREPROCESSOR", "IFDEF", "ENDIF", "IFNDEF", "OFFPAGE", "ONPAGE",
             "STEP", "UNROLL", "LOOPX", "LOOPY", "CSTRING", "USERDATA", "STARTBLOCK", "ENDBLOCK",
-            "IGNOREMETHOD", "ERROR", "WEDGE", "USE", "INCNSF", "STARTASSEMBLER", "LONG", "CHIPMEM","GREATEREQUAL", "LESSEQUAL","DONOTREMOVE"};
+            "IGNOREMETHOD", "ERROR", "WEDGE", "USE", "INCNSF", "STARTASSEMBLER", "LONG", "CHIPMEM",
+            "GREATEREQUAL", "LESSEQUAL","DONOTREMOVE", "CASE", "WORD"
+
+};
 
 QString Token::getType() {
     return TokenType::types[m_type];
@@ -71,9 +75,8 @@ Token::Token(TokenType::Type t, int val) {
 }
 
 TokenType::Type TokenType::getType(QString s) {
-    //        qDebug()<< types->count();
     //      exit(1);
-    for (int i=0;i<77;i++)
+    for (int i=0;i<no_types;i++)
         if (types[i].toLower()==s.toLower()) {
             return (Type)i;
         }

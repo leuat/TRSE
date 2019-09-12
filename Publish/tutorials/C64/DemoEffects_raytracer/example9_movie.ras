@@ -1,0 +1,181 @@
+program MyProgram;
+var  
+   i,j,time,k,frame,keep01: byte = 0;
+
+	@define useKernal 0
+
+
+	@userdata "$0400" "$0800" "Bank 0 screen"
+	@userdata "$4400" "$4800" "Bank 1 screen"
+	@userdata "$8400" "$8800" "Bank 2 screen"
+
+@requirefile "data/chardata1.bin" "Please run the Fjong raytracer file 'example9_movie.fjo' before compiling this program"
+
+
+/*
+
+	22 frames of compressed 128-character charsets + screen data.
+	Two frames are therefore sqeezed into 1 charset
+
+
+*/
+
+
+	chardata1:incbin("data/chardata1.bin", $2000);
+	chardata2:incbin("data/chardata2.bin", $6000);
+	chardata3:incbin("data/chardata3.bin", $A000);
+	chardata4:incbin("data/chardata4.bin", $4800);
+	chardata5:incbin("data/chardata5.bin", $8800);
+
+
+	data1:incbin("data/screendata1.bin", $C000);
+	data2:incbin("data/screendata2.bin", $5100);
+	data3:incbin("data/screendata3.bin", $9100);
+	data4:incbin("data/screendata4.bin", $3C00);
+	data5:incbin("data/screendata5.bin", $7C00);
+
+
+
+@define clearVal 1
+
+
+	
+	// 22 frames: 22 charsets with 22 screens
+
+	// screen destinations
+	screens : array[22] of byte=($04,$04,$04,$04,$04,$04,
+									$44,$44,$44,$44,$44,$44,									
+									$84,$84,$84,$84,$84,$84,
+									$44,$44,$84,$84);
+
+
+
+	zp,p1: pointer;
+	tab:array[80] of byte;
+
+
+procedure CopyScreen(cs_i:byte);
+begin
+//	cs_i:=frame;
+	j:=cs_i*2;
+	zp:=ToPointer(tab[j+1],tab[j]);	
+
+	j:=cs_i/2;
+	k:=cs_i/6;
+	if (k=0) then Setbank(VIC_BANK0);
+	if (k=1) then Setbank(VIC_BANK1);
+	if (k=2) then Setbank(VIC_BANK2);
+
+	if (j>=3) then j:=j-3;
+	if (j>=3) then j:=j-3;
+
+	if (j=0) then setcharsetlocation($2000); 
+	if (j=1) then setcharsetlocation($2800); 
+	if (j=2) then setcharsetlocation($3000); 
+//	if (j=3) then setcharsetlocation($3800); 
+	if (cs_i=18 or cs_i=19) then begin 
+		Setbank(VIC_BANK1);
+		setcharsetlocation($800); 
+	end;
+	if (cs_i=20 or cs_i=21) then begin
+		Setbank(VIC_BANK2);
+		setcharsetlocation($800); 
+
+	end;
+
+
+
+	enableallram();
+
+	memcpyunroll(zp,0,p1,240);
+	zp:=zp+240;
+	p1:=p1+240;
+	memcpyunroll(zp,0,p1,160);
+	poke(^$01,0,keep01);
+
+end;
+
+/*
+	Since 1 charset stores 2 frames, every second screen data needs to add 128 to all values
+
+*/
+procedure SetupMovie();
+begin
+	zp:=data1;
+
+	for i:=0 to 22 do begin
+		if (i=6) then zp:=data2;
+		if (i=12) then zp:=data3;
+		if (i=18) then zp:=data4;
+		if (i=20) then zp:=data5;
+
+		j:=2*i;
+		tab[j]:=lo(zp);
+		tab[j+1]:=hi(zp);
+
+			for k:=0 to 2 do begin
+				if (i&1=1) then
+					for j:=0 to 240 do zp[j]:=zp[j]+128;
+				zp:=zp+240;
+			end;
+
+	end;	
+
+end;
+
+
+
+
+
+
+interrupt RasterMain();
+begin
+	startirq(@useKernal);
+
+		p1:=ToPointer(screens[frame],240);
+		
+		CopyScreen(frame);
+
+					
+		if (time&1=0) then 
+			frame:=mod(frame+1,22);
+		
+		inc(time);
+
+	closeIRQ();
+end;
+
+
+
+
+procedure InitScene();
+begin
+	DisableCIAInterrupts();
+	setmemoryconfig(1,@useKernal,0);
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+
+	// The three colors: white, purple and blue
+	clearscreen(WHITE+8,screen_col_loc);
+	MULTICOLOR_CHAR_COL[2]:=purple;
+	MULTICOLOR_CHAR_COL[1]:=blue;
+
+	keep01:=peek(^$01,0);
+
+	clearscreen(@clearVal, screen_char_loc);
+	clearscreen(@clearVal, screen_char_loc2);
+	clearscreen(@clearVal, screen_char_loc3);
+
+end;
+
+
+begin
+	InitScene();
+	SetupMovie();
+	frame:=0;
+	
+	StartRasterChain(RasterMain(),220,@useKernal);
+	setcharsetlocation($2000);
+	setmulticolormode();
+	Loop();
+end.

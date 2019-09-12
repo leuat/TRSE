@@ -44,6 +44,7 @@ public:
         m_params = params;
         m_op.m_type = TokenType::BYTE;
         m_function= bf;
+        m_op.m_lineNumber--;
     }
 
     void Delete() override {
@@ -53,6 +54,10 @@ public:
         }
     }
 
+    void parseConstants(SymbolTable* symTab) override {
+        for (Node* n:m_params)
+            n->parseConstants(symTab);
+    }
 
 
     void ExecuteSym(SymbolTable* symTab) override {

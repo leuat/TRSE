@@ -21,7 +21,6 @@
 
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
 #include <QMainWindow>
 #include "imageworker.h"
 #include <QString>
@@ -57,7 +56,7 @@
 #include "source/dialogfindfile.h"
 #include "source/dialogexport3d.h"
 #include "source/dialogprojectbuilder.h"
-
+#include "source/tutorials.h"
 namespace Ui {
 class MainWindow;
 
@@ -154,7 +153,7 @@ public:
     QPalette m_defaultPalette;
     QString m_currentPath;
     QVector<TRSEDocument*> m_documents;
-
+    Tutorials m_tutorials;
 
 
 
@@ -197,6 +196,7 @@ public:
 
     void RefreshFileList();
 public slots:
+    void AcceptUpdateSourceFiles(SourceBuilder* sourceBuilder);
 
 
     void acceptBuildMain() {
@@ -257,10 +257,11 @@ signals:
    void ValueChanged();
 
 
+
+
 private slots:
 
-   void FindFileDialog();
-
+    void FindFileDialog();
     void onImageMouseMove();
 
     void on_treeFiles_doubleClicked(const QModelIndex &index);
@@ -324,6 +325,20 @@ private slots:
     void on_actionWavefront_obj_to_amiga_converter_triggered();
 
     void on_btnBuildAll_clicked();
+
+    void on_treeTutorials_itemDoubleClicked(QTreeWidgetItem *item, int column);
+
+    void on_treeTutorials_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+
+    void on_action_Project_Settings_triggered();
+
+    void on_actionBuild_C_b_triggered();
+
+    void on_actionBuild_All_triggered();
+
+    void on_action_Run_triggered();
+
+    void on_action_Memory_map_C_u_triggered();
 
 private:
 

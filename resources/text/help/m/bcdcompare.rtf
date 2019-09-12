@@ -1,0 +1,30 @@
+<h3>TRUE or FALSE = BcdCompare( [address 1], [address 2], [number] );</h3>
+<ul>
+<li>[address 1] - The address of the BCD number</li>
+<li>[address 2] - The address of the BCD number to compare to</li>
+<li>[number] - The length of the BCD in bytes</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+Compares the two BCD numbers and returns true if the first
+is larger than the second.
+</p>
+
+
+<h3>Example</h3>
+
+<code>
+var
+    score: array[] of byte = ($12,$34,$56); // number is 563412
+    scorecompare: array[] of byte = ($15,$34,$56); // number is 563415
+
+begin
+    DefineScreen();
+    screenmemory := screen_char_loc;
+
+    if (BcdCompare(score,scorecompare,3)) then printstring("MORE",0,4) else printstring("LESS",0,4);
+    // Displays "LESS" on screen because the first number is less than the second
+
+</code>

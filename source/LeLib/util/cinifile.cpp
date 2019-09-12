@@ -92,6 +92,7 @@ void CIniFile::Save(QString fname)
     for (CItem i: items) {
         //  qDebug() << i.name << " " << QString::number(i.dval) << ", " << i.strval << "\n";
         f << i.name << " = ";
+//        qDebug() << i.name <<i.strval;
         if (i.strval!="")
            f << i.strval << "\n";
         else

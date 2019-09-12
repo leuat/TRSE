@@ -1,0 +1,62 @@
+/*
+	There are many ways to write the screen.  So far we have essentially 'poked' two characters A and B on to the screen by writing directly
+	to the screen memory ourselves.  
+	
+	TRSE also has some commands that can help write to the screen.  The easy, intermediate and advanced tutorials demostrate many of these
+	and other techniques of screen manipulation, but for this next tutorial we'll look at using two simple but useful commands:
+	
+	1) PrintDecimal  - to print the value stored in a variable
+	2) PrinteString  - to print the contents of a string of text to the screen
+	
+*/
+program Screen_Numbers;
+var
+	score : integer = 10;				// variable for storing a larger number
+	lives : byte = 3;					// variable for storing a smaller number
+	gameover : string = "GAME OVER";	// a variable for storing the words "GAME OVER"
+	 
+begin
+	
+	// Define the screenmemory pointer
+	definescreen();
+	
+	// clear the screen and colour memory
+	clearscreen(32, screen_char_loc);
+	clearscreen(WHITE, screen_col_loc);
+
+	// Set the screenmemory pointer to point to the screen memory:
+	screenmemory := screen_char_loc;
+
+	// now the exciting bit - let's print the score
+	printdecimal(score, 4);		// PrintDecimal takes two parameters, the variable and the number of digits to display, less one
+	// the score of 00010 is displayed at the top left
+	
+	// Now let's change the score as we did before
+	score := score + 2;		// this time add 2 to the current value of score - should now equal 12
+	
+	// If we used printdecimal now, it would display the new score in the same place on the screen and overwrite the old score
+	// for the purposes of this tutorial we'll display it on the next line down with a simple calculation:
+	screenmemory := screenmemory + screen_width;
+	// screen_width is another constant like screen_char_loc, only this contains the value fo 40 which are the total number of characters on a row.
+	// It's value will be different depending upon what computer you compile this code for.  For the C64 it is 40 and the Vic 20 is 22.
+
+	// By adding the screen_width to the screenmemory, we are moving the address down a row on the screen
+	printdecimal(score, 4);
+	// the score of 00012 is displayed on the next line down
+
+	// We can do the same for the lives, let's display it on the same line to the right
+	screenmemory := screenmemory + 10;
+	printdecimal(lives, 1);					// this time two characters are displayed for the lives
+	
+	// finally, let's print a string of text
+	screenmemory := screenmemory + screen_width - 10;  // move to next line down and back 10 characters
+	printstring(gameover, 0, 9);	// print the gameover string, starting at character 0 and ending at character 9
+
+	// Click the 'Run (c-r)' button at the bottom left to start the program 
+	// The two scores, lives and the text string will be displayed on the screen.
+	
+	// You now know how to write to the screen.  This will be useful for the remainder of the tutorials but can
+	// also be helpful when you are debugging your own programs to display the contents of variables on the screen. 
+
+	loop();
+end.

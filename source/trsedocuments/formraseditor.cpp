@@ -27,6 +27,7 @@
 #include "source/LeLib/util/util.h"
 
 
+bool FormRasEditor::m_broadcast = true;
 FormRasEditor::FormRasEditor(QWidget *parent) :
     TRSEDocument(parent),
     ui(new Ui::FormRasEditor)
@@ -53,6 +54,17 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     QString emu = m_iniFile->getString("emulator");
     QStringList params;
 
+    QString debugFile =fileName.split(".").first()+".sym";
+    if (QFile::exists(debugFile) && (
+                m_projectIniFile->getString("system")=="VIC20" ||
+                m_projectIniFile->getString("system")=="C64"||
+                m_projectIniFile->getString("system")=="C128"||
+                m_projectIniFile->getString("system")=="PET" ||
+                m_projectIniFile->getString("system")=="OK64"
+                ))
+        params<<"-moncommands"<<debugFile;
+
+
     if (m_projectIniFile->getString("system")=="VIC20") {
         emu = m_iniFile->getString("vic20_emulator");
         params<< "-autostartprgmode" << "1";
@@ -74,8 +86,13 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     if (m_projectIniFile->getString("system")=="BBCM") {
         emu = m_iniFile->getString("bbcm_emulator");
     }
+    if (m_projectIniFile->getString("system")=="PLUS4") {
+        emu = m_iniFile->getString("plus4_emulator");
+    }
 
-//    qDebug() << "Here  "<<emu ;
+    if (m_projectIniFile->getString("system")=="OK64") {
+        emu = m_iniFile->getString("ok64_emulator");
+    }
 
     if (!QFile::exists(emu)) {
         Messages::messages.DisplayMessage(Messages::messages.NO_EMULATOR);
@@ -103,6 +120,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     else process.startDetached(emu, params);
 
 #else
+//    qDebug() << emu << params;
     process.startDetached(emu, params);
 #endif
 //    process.pi
@@ -183,7 +201,8 @@ void FormRasEditor::Build()
 
 void FormRasEditor::SetOutputText(QString txt)
 {
-    ui->txtOutput->setText(ErrorHandler::e.m_teOut);
+    ui->txtOutput->setHtml(ErrorHandler::e.m_teOut);
+//    ui->txtOutput->set
 
 }
 
@@ -317,8 +336,11 @@ void FormRasEditor::Run()
     if (m_builderThread.m_builder->m_system==nullptr)
         return;
 
+
+
     if (m_builderThread.m_builder->m_system->m_system == AbstractSystem::AMIGA) {
-        Messages::messages.DisplayMessage(Messages::messages.NO_AMIGA_EMULATOR);
+//        Messages::messages.DisplayMessage(Messages::messages.NO_AMIGA_EMULATOR);
+        qDebug() << "No amiga emulator installed";
         return;
     }
 
@@ -336,6 +358,7 @@ void FormRasEditor::Run()
 
     if (!m_projectIniFile->contains("output_type"))
         m_projectIniFile->setString("output_type","prg");
+
 
     QString filename = m_currentSourceFile.split(".")[0] + "."+ m_projectIniFile->getString("output_type");
     if (m_projectIniFile->getString("system")=="NES")
@@ -402,10 +425,10 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
 
     if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier))
         emit requestCloseWindow();
+        m_documentIsChanged  = ui->txtEditor->m_textChanged;
     //    Data::data.requestCloseWindow = true;
 
 //    if (ui->txtEditor->m_textChanged)
-        m_documentIsChanged  = ui->txtEditor->m_textChanged;
 
     if (e->key()==Qt::Key_J && (QApplication::keyboardModifiers() & Qt::ControlModifier)) AutoFormat();
     if (e->key()==Qt::Key_F && QApplication::keyboardModifiers() & Qt::ControlModifier) {
@@ -624,6 +647,7 @@ void FormRasEditor::FillFromIni()
 {
     ui->chkPostOpt->setChecked(m_iniFile->getdouble("post_optimize")==1);
     ui->chkExomize->setChecked(m_iniFile->getdouble("perform_crunch")==1);
+    ui->chkWarnings->setChecked(m_iniFile->getdouble("display_warnings")==1);
 //    qDebug() << "FillFromIni" << m_iniFile->getdouble("perform_crunch");
     isInitialized=true;
 }
@@ -632,18 +656,9 @@ void FormRasEditor::FillToIni()
 {
     if (!isInitialized)
         return;
-//    qDebug() << "FillToIni A" << m_iniFile->getdouble("perform_crunch");
-    if (ui->chkPostOpt->isChecked())
-        m_iniFile->setFloat("post_optimize",1);
-    else
-        m_iniFile->setFloat("post_optimize",0);
-
-    if (ui->chkExomize->isChecked())
-        m_iniFile->setFloat("perform_crunch",1);
-    else
-        m_iniFile->setFloat("perform_crunch",0);
-
-  //  qDebug() << "FillToIni B" << m_iniFile->getdouble("perform_crunch");
+    m_iniFile->setFloat("post_optimize",ui->chkPostOpt->isChecked()?1:0);
+    m_iniFile->setFloat("perform_crunch",ui->chkExomize->isChecked()?1:0);
+    m_iniFile->setFloat("display_warnings",ui->chkWarnings->isChecked()?1:0);
 
     m_iniFile->Save();
 }
@@ -660,6 +675,11 @@ void FormRasEditor::MemoryAnalyze()
     int i= m_iniFile->getdouble("perform_crunch");
     m_iniFile->setFloat("perform_crunch",0);
     if (m_builderThread.m_builder==nullptr) {
+        ErrorHandler::e.m_warnings.clear();
+        ErrorHandler::e.m_teOut = "";
+        ErrorHandler::e.Warning("Source file must be built before memory analyzer can run.");
+        SetOutputText(ErrorHandler::e.m_teOut);
+
         return;
     }
     if (!m_builderThread.m_builder->Build(ui->txtEditor->toPlainText()))
@@ -690,12 +710,10 @@ void FormRasEditor::MemoryAnalyze()
  //   qDebug() << "B2";
 
     m_mca.ClassifyZP(m_builderThread.m_builder->compiler.m_assembler->blocks);
-    qDebug() << "B1";
 
     DialogMemoryAnalyze* dma = new DialogMemoryAnalyze(m_iniFile);
     dma->Initialize(m_builderThread.m_builder->compiler.m_assembler->blocks, m_iniFile->getInt("memory_analyzer_font_size"));
     dma->resize(m_iniFile->getdouble("memory_analyzer_window_width"),m_iniFile->getdouble("memory_analyzer_window_height"));
-    qDebug() << "C";
 
     dma->exec();
     delete dma;
@@ -833,8 +851,10 @@ void FormRasEditor::HandleUpdateBuildText()
 void FormRasEditor::HandleBuildComplete()
 {
     m_builderThread.msleep(70); // crashes if we don't sleep.. for some reason
-    if (m_builderThread.m_builder->compiler.m_assembler!=nullptr)
-        ui->txtEditor->m_cycles =  m_builderThread.m_builder->compiler.m_assembler->m_cycles;
+    if (m_builderThread.m_builder->compiler.m_assembler!=nullptr) {
+        ui->txtEditor->m_cycles =  m_builderThread.m_builder->compiler.m_assembler->m_cyclesOut;
+        ui->txtEditor->m_blockCycles =  m_builderThread.m_builder->compiler.m_assembler->m_blockCyclesOut;
+    }
     ui->txtEditor->RepaintCycles();
     if (m_builderThread.m_builder->compiler.m_assembler!=nullptr)
 
@@ -846,6 +866,11 @@ void FormRasEditor::HandleBuildComplete()
     HandleErrorDialogs(ErrorHandler::e.m_teOut);
 
     SetLights();
+    if (m_broadcast && m_currentFileShort.toLower().endsWith(".ras")) {
+        emit NotifyOtherSourceFiles(m_builderThread.m_builder);
+    }
+
+
     if (m_run) {
         m_builderThread.m_builder->AddMessage("<br>Running program...");
         HandleUpdateBuildText();
@@ -882,4 +907,10 @@ void BuilderThread::run()
         emit emitError();
     }
     m_isRunning=false;
+}
+
+void FormRasEditor::on_chkWarnings_stateChanged(int arg1)
+{
+    FillToIni();
+
 }

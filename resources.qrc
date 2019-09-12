@@ -236,5 +236,61 @@
         <file>resources/text/help/m/createaddresstable.rtf</file>
         <file>resources/code/amiga/init_p61_player.s</file>
         <file>resources/code/amiga/p61-play.i</file>
+        <file>resources/text/help/f/addobject.rtf</file>
+        <file>resources/text/help/r/case.rtf</file>
+        <file>resources/text/help/m/random.rtf</file>
+        <file>resources/text/help/f/setrotation.rtf</file>
+        <file>resources/text/help/m/drawtextbox.rtf</file>
+        <file>resources/images/textboxexample.png</file>
+        <file>resources/images/PLUS4.png</file>
+        <file>resources/text/help/m/drawcolortextbox.rtf</file>
+        <file>resources/images/colortextboxexample.png</file>
+        <file>resources/images/petscii.png</file>
+        <file>resources/text/help/c/joy_fire.rtf</file>
+        <file>resources/text/help/c/joy2pressed.rtf</file>
+        <file>resources/text/help/c/joy1pressed.rtf</file>
+        <file>resources/text/help/c/joy2.rtf</file>
+        <file>resources/text/help/c/joy1.rtf</file>
+        <file>resources/text/help/c/joy_right.rtf</file>
+        <file>resources/text/help/c/joy_left.rtf</file>
+        <file>resources/text/help/c/joy_down.rtf</file>
+        <file>resources/text/help/c/joy_up.rtf</file>
+        <file>resources/text/help/m/readjoy1.rtf</file>
+        <file>resources/text/help/m/readjoy2.rtf</file>
+        <file>resources/text/help/f/addc64linetodata.rtf</file>
+        <file>resources/text/help/f/saverawdata.rtf</file>
+        <file>resources/text/help/f/compressandsavehorizontaldata.rtf</file>
+        <file>resources/text/tutorials.txt</file>
+        <file>resources/images/tutorials/rb1.png</file>
+        <file>resources/images/tutorials/nibbler.gif</file>
+        <file>resources/images/tutorials/vixmas.png</file>
+        <file>resources/images/tutorials/ppl.png</file>
+        <file>resources/images/tutorials/fjong1.png</file>
+        <file>resources/images/tutorials/4kdreams.png</file>
+        <file>resources/text/help/f/addscreen.rtf</file>
+        <file>resources/text/help/m/memcpyfast.rtf</file>
+        <file>resources/text/help/m/memcpyunroll.rtf</file>
+        <file>resources/text/help/p/interrupts.rtf</file>
+        <file>resources/images/OK64.png</file>
+        <file>resources/images/tutorials/trse_game_tuts.png</file>
+        <file>resources/images/tutorials/torus.png</file>
+        <file>resources/images/tutorials/floppy.jpeg</file>
+        <file>resources/text/help/m/mod.rtf</file>
+        <file>resources/text/help/f/compresscharset.rtf</file>
+        <file>resources/text/help/f/savescreenandcharset.rtf</file>
+        <file>resources/text/help/f/setposition.rtf</file>
+        <file>resources/text/help/f/addrawcharsetdata.rtf</file>
+        <file>resources/text/help/f/saveimage.rtf</file>
+        <file>resources/text/help/f/clearallobjects.rtf</file>
+        <file>resources/text/help/f/message.rtf</file>
+        <file>resources/text/help/f/output.rtf</file>
+        <file>resources/text/help/f/globals.rtf</file>
+        <file>resources/images/tutorials/plus4_tut.png</file>
+        <file>resources/text/help/f/introduction_to_the_fjong_raytracer.rtf</file>
+        <file>resources/text/help/m/bcdisequal.rtf</file>
+        <file>resources/text/help/m/bcdcompare.rtf</file>
+        <file>resources/text/help/m/bcdprint.rtf</file>
+        <file>resources/text/help/m/bcdsub.rtf</file>
+        <file>resources/text/help/m/bcdadd.rtf</file>
     </qresource>
 </RCC>

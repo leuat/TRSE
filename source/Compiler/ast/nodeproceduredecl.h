@@ -40,10 +40,19 @@ public:
 
 
     NodeProcedureDecl(Token t, QString m);
+    void parseConstants(SymbolTable* symTab) override {
+        if (m_block!=nullptr)
+            m_block->parseConstants(symTab);
+        for (Node* n:m_paramDecl)
+            n->parseConstants(symTab);
+    }
+
 
 
     NodeProcedureDecl(Token t, QString m, QVector<Node*> paramDecl, Node* block, int type);
 
+
+    void AppendBlock(Node* block);
     void Delete() override;
 
     void SetParametersValue(QVector<PVar>& lst);

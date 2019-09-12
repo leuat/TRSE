@@ -8,6 +8,7 @@ QByteArray m_screenData, m_charData;
 AbstractDemoEffect* m_effect = nullptr;
 Compression m_compression;
 
+
 DialogEffects::DialogEffects(QString file, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogEffects)
@@ -44,6 +45,31 @@ static RayTracer m_rt;
 
 
 
+static bool VerifyFjongParameters(lua_State* L, QString method) {
+    BuiltInFunction f = Syntax::s.builtinFunctionsFjong[method.toLower()];
+    int N = 0;
+//    qDebug() <<"HERE" << f.m_params.count();
+    for (BuiltInFunction::Type t : f.m_params) {
+        N++;
+        if (t==BuiltInFunction::IGNOREPARAM)
+            continue;
+        if (t==BuiltInFunction::STRING) {
+            if (!lua_isstring(L,N)) {
+                m_error += "<br>Method '"+method+"' requires parameter "+QString::number(N) + " to be a string";
+                return false;
+            }
+        }
+        if (t==BuiltInFunction::NUMBER) {
+            if (!lua_isnumber(L,N)) {
+                m_error += "<br>Method '"+method+"' requires parameter "+QString::number(N) + " to be a number";
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 
 void DialogEffects::Create()
 {
@@ -79,7 +105,20 @@ void DialogEffects::Create()
 }
 
 
+static bool ValidateNoParameters(QString p, lua_State *L, int num)
+{
+    int params = lua_gettop (L);
+    if (params <num) {
+        m_error += "<br>Method '"+p+"' requires "+QString::number(num)+" parameters, but has only "+QString::number(params);
+        return false;
+    }
+    return true;
+}
+
+
+
 static int LuaSin(lua_State *L) {
+
     lua_pushnumber(L, sin(lua_tonumber(L, 1)));
     return 1;
 }
@@ -115,6 +154,9 @@ static int AddLight(lua_State *L) {
 
 static int AddObject(lua_State *L)
 {
+    if (!VerifyFjongParameters(L,"AddObject"))
+        return 0;
+
 //    qDebug();// << text;
     int args = lua_gettop(L);
   //  if (n!=5) {
@@ -129,6 +171,7 @@ static int AddObject(lua_State *L)
     AbstractRayObject* obj = nullptr;
     int N = 5;
     if (object=="torus") {
+        ValidateNoParameters("AddObject (torus)",L,N+4);
         obj =
                     new RayObjectTorus(
                         QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
@@ -221,7 +264,7 @@ static int AddObject(lua_State *L)
         float invertN = lua_tonumber(L,N+2);
         N+=3;
         if (!QFile::exists(fn)) {
-            m_error = "Could not find 3d object file: "+fn;
+            m_error += "<br>Could not find 3d object file: "+fn;
             return 0;
         }
 
@@ -268,7 +311,7 @@ static int AddObject(lua_State *L)
         else {
             QString fname = m_currentDir+"/"+QString(lua_tostring(L,N));
             if (!QFile::exists(fname)) {
-                m_error += "Could not open file: " + fname + "\n";
+                m_error += "<br>Could not open file: " + fname;
                 return 0;
             }
 
@@ -324,7 +367,7 @@ static int AddObject(lua_State *L)
         else {
             AbstractRayObject* aro = m_rt.Find(parent);
             if (aro==nullptr) {
-                m_error +="Error in AddObject: Could not find parent object '" + parent+  "'\n";
+                m_error +="<br>Error in AddObject: Could not find parent object '" + parent+  "'\n";
                 return 0;
             }
             aro->m_children.append(obj);
@@ -347,7 +390,7 @@ static int AddObject(lua_State *L)
         obj->SetMaterial(mat);
 
     }
-    else m_error +="Error in AddObject: Unkown type '" + object+  "'\n";
+    else m_error +="<br>Error in AddObject: Unkown type '" + object+  "'";
 
     return 0;
 
@@ -361,7 +404,7 @@ static int SetRotation(lua_State *L)
     QString name = lua_tostring(L,1);
     AbstractRayObject* aro = m_rt.Find(name);
     if (aro==nullptr) {
-        m_error +="Error in SetRotation : Could not find object '" + name+ "'\n";
+        m_error +="<br>Error in SetRotation : Could not find object '" + name;;
         return 0;
     }
 
@@ -376,7 +419,7 @@ static int SetQuatAxisAngle(lua_State *L)
     QString name = lua_tostring(L,1);
     AbstractRayObject* aro = m_rt.Find(name);
     if (aro==nullptr) {
-        m_error +="Error in SetRotation : Could not find object '" + name+ "'\n";
+        m_error +="<br>Error in SetRotation : Could not find object '" + name+ "'";
         return 0;
     }
 
@@ -387,10 +430,13 @@ static int SetQuatAxisAngle(lua_State *L)
 static int SetPosition(lua_State *L)
 {
 //    int n = lua_gettop(L);
+    if (!VerifyFjongParameters(L,"SetPosition"))
+        return 0;
+
     QString name = lua_tostring(L,1);
     AbstractRayObject* aro = m_rt.Find(name);
     if (aro==nullptr) {
-        m_error +="Error in SetPosition : Could not find object '" + name+ "'\n";
+        m_error +="<br>Error in SetPosition : Could not find object '" + name+ "'";
         return 0;
     }
 
@@ -401,6 +447,9 @@ static int SetPosition(lua_State *L)
 static int AddPosition(lua_State *L)
 {
 //    int n = lua_gettop(L);
+    if (!VerifyFjongParameters(L,"AddPosition"))
+        return 0;
+
     QString name = lua_tostring(L,1);
     AbstractRayObject* aro = m_rt.Find(name);
     if (aro==nullptr) {
@@ -418,7 +467,7 @@ static int SetUVShift(lua_State *L)
     QString name = lua_tostring(L,1);
     AbstractRayObject* aro = m_rt.Find(name);
     if (aro==nullptr) {
-        m_error +="Error in SetRotation : Could not find object '" + name+ "'\n";
+        m_error +="<br>Error in SetRotation : Could not find object '" + name+ "'";
         return 0;
     }
 
@@ -432,7 +481,7 @@ static int SetY(lua_State *L)
     QString name = lua_tostring(L,1);
     AbstractRayObject* aro = m_rt.Find(name);
     if (aro==nullptr) {
-        m_error +="Error in SetRotation : Could not find object '" + name+ "'\n";
+        m_error +="<br>Error in SetRotation : Could not find object '" + name+ "'";
         return 0;
     }
 
@@ -444,6 +493,9 @@ static int SetY(lua_State *L)
 
 int DialogEffects::Message(lua_State *L)
 {
+    if (!VerifyFjongParameters(L,"Message"))
+        return 0;
+
     m_infoText=QString(lua_tostring(L,1)) +"\n"+ m_infoText;
 //    m_infoText+="\n";
     return 0;
@@ -455,14 +507,18 @@ static int ClearObjects(lua_State *L) {
 }
 
 static int AddScreen(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddScreen"))
+        return 0;
 
     if (m_effect!=nullptr)
-        m_compression.AddScreen(m_screenData, m_effect->m_img,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tonumber(L,5),lua_tonumber(L,6));
+        m_compression.AddScreen(m_screenData, m_effect->m_img,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));//, lua_tonumber(L,5),lua_tonumber(L,6));
 
     return 0;
 }
 
 static int AddToData(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddToData"))
+        return 0;
 
     if (m_effect!=nullptr)
        m_compression.AddToDataX(m_charData, *((MultiColorImage*)m_effect->m_mc) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
@@ -471,6 +527,8 @@ static int AddToData(lua_State* L) {
 }
 
 static int AddBitplaneToData(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddBitplaneTodata"))
+        return 0;
 
     if (m_effect!=nullptr)
        m_compression.AddBitplaneToData(m_charData, *((MultiColorImage*)(m_effect->m_mc)) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tonumber(L,5));
@@ -481,6 +539,9 @@ static int AddBitplaneToData(lua_State* L) {
 
 static int CompressCharset(lua_State* L) {
     // 0, 40, 13, 25
+    if (!VerifyFjongParameters(L,"CompressCharset"))
+        return 0;
+
     int noChars;
     MultiColorImage* mc = dynamic_cast<MultiColorImage*>(m_effect->m_mc);
     if (mc==nullptr)
@@ -495,6 +556,9 @@ static int CompressCharset(lua_State* L) {
 
 
 static int SaveScreenAndCharset(lua_State* L) {
+    if (!VerifyFjongParameters(L,"SaveScreenAndCharset"))
+        return 0;
+
     QFile f(m_currentDir+"/"+ lua_tostring(L,2));
     f.open(QFile::WriteOnly);
     f.write(m_charData);
@@ -507,6 +571,7 @@ static int SaveScreenAndCharset(lua_State* L) {
     f2.close();
     m_screenData.clear();
     return 0;
+
 }
 
 
@@ -529,6 +594,9 @@ static int Save2DInfo(lua_State* L) {
 
 
 static int SaveData(lua_State* L) {
+    if (!VerifyFjongParameters(L,"SaveData"))
+        return 0;
+
     QFile f(m_currentDir+"/"+ lua_tostring(L,1));
     f.open(QFile::WriteOnly);
 
@@ -589,9 +657,13 @@ static int SaveKoalaImage(lua_State* L) {
 }
 
 static int SaveImage(lua_State* L) {
+    if (!VerifyFjongParameters(L,"SaveImage"))
+        return 0;
+
     QString fname = m_currentDir+"/"+  lua_tostring(L,1);
     if (QFile::exists(fname))
         QFile::remove(fname);
+
 
     m_effect->m_img.save(fname);
 //    f.open()
@@ -654,6 +726,7 @@ static int AddScreenPetscii(lua_State* L) {
 }
 
 static int AddScreenBinary(lua_State* L) {
+
     m_compression.AddBinaryScreen(m_charData, m_effect->m_img);
 //    m_rt.m_particles.CollideSphere(lua_tonumber(L,1));
     return 0;
@@ -667,6 +740,8 @@ lua_register(m_script->L, "ApplyForce", ApplyForce);
 */
 
 static int OptimizeScreenAndCharset(lua_State* L) {
+    if (!VerifyFjongParameters(L,"OptimizeScreenAndCharset"))
+        return 0;
 
     QByteArray sOut, cOut;
 //    void Compression::OptimizeScreenAndCharset(QByteArray &screen, QByteArray &charset, QByteArray &sOut, QByteArray &cOut, int sw, int sh, int charSize, int compression)
@@ -695,6 +770,8 @@ static int AddRawCharsetData(lua_State* L) {
 }
 
 static int CompressAndSaveHorizontalData(lua_State* L) {
+    if (!VerifyFjongParameters(L,"CompressAndSaveHorizontalData"))
+        return 0;
 
     QByteArray packedData, table;
     table.clear();
@@ -735,6 +812,8 @@ static int CopyFile(lua_State* L) {
 
 static int AddToPng(lua_State* L) {
 //    Util::CopyFile(m_currentDir+"/"+ lua_tostring(L,1), m_currentDir+"/"+lua_tonumber(L,2));
+    if (!VerifyFjongParameters(L,"AddToPng"))
+        return 0;
     QString inFile = m_currentDir+"/"+ lua_tostring(L,1);
     QImage img(inFile);
     int xp = lua_tonumber(L,2);
@@ -772,13 +851,20 @@ void DialogEffects::LoadScript(QString file)
 
 
     lua_register(m_script->L, "AddObject", AddObject);
+    lua_register(m_script->L, "SetRotation", SetRotation);
+    lua_register(m_script->L, "SetPosition", SetPosition);
+    lua_register(m_script->L, "AddPosition", AddPosition);
+
+    // Data registration
+    lua_register(m_script->L, "AddC64LineToData", AddToData);
+
+    lua_register(m_script->L, "SaveRawData", SaveData);
+
     lua_register(m_script->L, "CompressAndSaveHorizontalData", CompressAndSaveHorizontalData);
     lua_register(m_script->L, "OptimizeScreenAndCharset", OptimizeScreenAndCharset);
     lua_register(m_script->L, "CompressCharset", CompressCharset);
     lua_register(m_script->L, "SaveScreenAndCharset", SaveScreenAndCharset);
     lua_register(m_script->L, "SaveCompressedSpriteData", SaveCompressedSpriteData);
-    lua_register(m_script->L, "SaveRawData", SaveData);
-    lua_register(m_script->L, "AddC64LineToData", AddToData);
     lua_register(m_script->L, "AddRawCharsetData", AddRawCharsetData);
 
     lua_register(m_script->L, "CopyFile", CopyFile);
@@ -794,10 +880,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddScreen", AddScreen);
     lua_register(m_script->L, "AddScreenPetscii", AddScreenPetscii);
     lua_register(m_script->L, "AddScreenBinary", AddScreenBinary);
-    lua_register(m_script->L, "SetRotation", SetRotation);
-    lua_register(m_script->L, "SetQuatAxisAngle", SetQuatAxisAngle);
-    lua_register(m_script->L, "SetPosition", SetPosition);
-    lua_register(m_script->L, "AddPosition", AddPosition);
+    lua_register(m_script->L, "Se tQuatAxisAngle", SetQuatAxisAngle);
     lua_register(m_script->L, "SetUVShift", SetUVShift);
     lua_register(m_script->L, "sin", LuaSin);
     lua_register(m_script->L, "SetY", SetY);
@@ -863,18 +946,24 @@ void DialogEffects::UpdateGlobals()
     m_rt.m_globals.m_width = m_script->get<float>("output.resolution.width");
     m_rt.m_globals.m_height = m_script->get<float>("output.resolution.height");
 
-    m_rt.m_globals.m_c64Output = m_script->get<float>("output.c64_output");
-    m_rt.m_globals.m_multicolor = m_script->get<float>("output.c64_multicolor");
+    m_rt.m_globals.m_outputType = m_script->get<float>("output.output_type");
     m_rt.m_globals.m_aspect = m_script->get<float>("output.aspect");
-    m_rt.m_globals.m_dither = m_script->get<float>("output.dither");
-    m_rt.m_globals.m_ditherStrength = m_script->getVec("output.ditherStrength");
- //   if (m_script->lua_gettostack("output.c64_imageType"))
+    if (m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_c64)  {
+
+        m_rt.m_globals.m_multicolor = m_script->get<float>("output.c64_multicolor");
+        m_rt.m_globals.m_dither = m_script->get<float>("output.dither");
+        m_rt.m_globals.m_ditherStrength = m_script->getVec("output.ditherStrength");
+        //   if (m_script->lua_gettostack("output.c64_imageType"))
         m_rt.m_globals.m_c64ImageType = m_script->get<float>("output.c64_imageType");
 
-    m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.c64_colors");
+        m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.index_colors");
+    }
+
+
     m_rt.m_globals.m_steps = m_script->get<float>("globals.raymarch_steps");
     m_rt.m_globals.m_shadowSteps = m_script->get<float>("globals.raymarch_shadow_steps");
 }
+
 
 void DialogEffects::UpdateImage()
 {

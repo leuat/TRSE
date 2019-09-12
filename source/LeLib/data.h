@@ -22,12 +22,16 @@
 #ifndef DATA_H
 #define DATA_H
 
+#include <QString>
+
 
 class Data
 {
 public:
     Data();
-    float version = 0.01;
+//    float version = 0.01;
+    QString version = "0.08";
+
     bool redrawOutput=false;
     bool redrawInput=false;
     bool forceRedraw = false;

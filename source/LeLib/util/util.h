@@ -114,6 +114,9 @@ public:
     static int getShiftCount(int i);
 
 
+
+    static bool QStringIsSimilar(QString a, QString b, qreal percentage, int n, Qt::CaseSensitivity caseSense);
+
     static QStringList FindFilesOfType(QString dir, QString type);
 
     static void ConvertFileWithLoadAddress(QString input, QString output, int address);

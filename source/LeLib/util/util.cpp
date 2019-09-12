@@ -230,7 +230,9 @@ int Util::VerifyHexAddress(QString s)
 
 QString Util::numToHex(int v)
 {
-    return "$" + QString::number(v,16);
+    QString o = QString::number(v,16);
+    if (o.count()==1) o="0"+o;
+    return "$" +o;
 }
 
 QColor Util::colorScale(QColor &col, int mean, int std)
@@ -259,6 +261,27 @@ int Util::getShiftCount(int i) {
     if (i==128) return 7;
     if (i==256) return 8;
     return -1;
+}
+
+
+bool Util::QStringIsSimilar(QString a, QString b, qreal percentage, int n, Qt::CaseSensitivity caseSense)
+//Iterates substrings in groups of n chars from a und finds these in b.
+//The number of hits is then divided by the length of the shorter string.
+//To properly take word beginnings and endings into account
+//spaces are being inserted before and after the strings.
+{
+    if (a.isEmpty()||b.isEmpty()) return false;
+    qreal hits=0;
+    a=QString(" ").repeated(n-1)+a+QString(" ").repeated(n-1);
+    b=QString(" ").repeated(n-1)+b+QString(" ").repeated(n-1);
+    QString part;
+    for (int i=0;i<a.count()-(n-1);i++)
+    {
+        part=a.mid(i,n);
+        if (b.contains(part,caseSense)) hits++;
+    }
+    if (a.length()<b.length()) return (percentage < (100*hits/(a.length()-(n-1))));
+    else return (percentage < (100*hits/(b.length()-(n-1))));
 }
 
 QStringList Util::FindFilesOfType(QString dir, QString type)
@@ -290,8 +313,8 @@ void Util::ConvertFileWithLoadAddress(QString input, QString output, int address
         QFile f(output);
         f.remove();
     }
-//    qDebug() << a.size() << input;
-  //  exit(1);
+    //    qDebug() << a.size() << input;
+    //  exit(1);
     a.insert(0,(address>>8)&0xFF);
     a.insert(0,(address)&0xFF);
 

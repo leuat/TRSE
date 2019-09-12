@@ -1,0 +1,131 @@
+program PetsciiMovie;
+var  
+	i ,k,m,curFrame,g0,g1,maxFrames, pass : byte = 0;
+	hasTimeStamps, compressionType, endChar, skipChar : byte;
+	zp: pointer;
+
+
+	@define screenLoc $1c00
+	@define mpos $3000
+
+	movie: incBin("resources/movie/movie.trm", @mpos);
+
+	@define useKernal 0
+
+
+
+procedure ReadAnimationHeader();
+begin
+	zp:=@mpos;
+	maxFrames := zp[2];
+	compressionType := zp[3];
+	hasTimeStamps:=zp[4];
+	endChar:=zp[5];
+	skipChar:=zp[6];
+	zp := zp + 7; 
+	curFrame:=0;
+
+end;
+
+procedure RenderNextPackedFrameCompressionType2();
+begin
+
+	m:=0;
+	zp := zp + 1; //inczp(zp,1);
+	i:=zp[0];
+	g0:=0;
+
+	for pass:=0 to 2 do begin
+
+		case pass of
+			1:	screenmemory:=screen_col_loc;
+			0:	screenmemory:=@screenLoc;
+		end;
+	
+	while (g0<>endChar) do begin
+	
+		if (zp[0] = skipChar) then begin
+			k:=zp[1];
+			screenmemory := screenmemory + k; 
+			zp:=zp+2; //inczp(zp, 2);
+		
+		end
+		else 
+		begin
+			screenmemory[0]:=zp[0]+128;
+			screenmemory := screenmemory + 1;
+			zp:=zp+1;  //inczp(zp,1);
+		end;
+		g0:=zp[0];
+
+	end;
+	zp:=zp+1; //inczp(zp,1);
+	g0:=0;
+	end;
+
+	if (hasTimeStamps) then zp:=zp+1;
+
+	inc(curFrame);
+
+end;
+
+procedure RenderNextPackedFrameCompressionType3();
+begin
+
+	m:=0;
+	i:=zp[0];
+	g0:=0;
+
+	for pass:=0 to 2 do begin
+
+		case pass of
+			1:	screenmemory:=screen_col_loc;
+			0:	screenmemory:=@screenLoc;
+		end;
+		while (g0<>endChar) do begin
+	
+			g1:=zp[0];
+			i:=zp[1]+128;
+			fill(screenmemory,i,g1);
+			screenmemory:=screenmemory+g1; //inczp(screenmemory,g1);
+			zp:=zp+2;//inczp(zp,2);
+
+			g0:=	zp[0];
+
+		end;
+		zp:=zp+1;
+		g0:=0;
+	end;
+
+	if (hasTimeStamps) then zp:=zp+1; //inczp(zp,1);
+
+	inc(curFrame);
+
+end;
+
+begin
+	DefineScreen();
+	screen_bg_color:=0;
+	setscreenlocation(@screenLoc);
+	
+	while(true) do begin
+		if (compressionType=3) then 
+			RenderNextPackedFrameCompressionType3();
+
+		if (compressionType=2) then 
+			RenderNextPackedFrameCompressionType2();
+	
+		for i:=0 to 18 do 
+			waitforraster(0);
+
+		if (curFrame>=maxFrames) then begin
+			ReadAnimationHeader();
+
+		end;
+	end;
+
+	Loop();
+
+end.
+
+

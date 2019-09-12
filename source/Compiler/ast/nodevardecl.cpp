@@ -44,7 +44,6 @@ void NodeVarDecl::ExecuteSym(SymbolTable *symTab) {
 
     QString typeName = ((NodeVar*)m_typeNode)->value;
     QString varName = ((NodeVar*)m_varNode)->value;
-    //qDebug() << "NodeVarDecl::ExecuteSym " << varName;
     if (symTab->exists(varName))
           ErrorHandler::e.Error("Variable '" + varName +"' is already defined!",m_op.m_lineNumber);
 
@@ -59,8 +58,13 @@ void NodeVarDecl::ExecuteSym(SymbolTable *symTab) {
 
 
 
+    varName = varName.remove(symTab->getCurrentProcedure());
     Symbol* varSymbol = new VarSymbol(varName, typeSymbol->m_name);
-    symTab->Define(varSymbol);
+    bool isFlaggedAsUsed = false;
+    if (typeName == "INCSID")
+        isFlaggedAsUsed = true;
+    symTab->Define(varSymbol,isFlaggedAsUsed);
+
     // qDebug() << "Nodevardecl:ExecuteSym " << varName << " " << varSymbol->m_type;
 
 }
@@ -77,7 +81,7 @@ void NodeVarDecl::InitSid(QString projectDir, int VICAddress, QString type) {
         headerShift = val.toInt(&ok);
         if (!ok)
             headerShift = 0;
-        qDebug() << headerShift;
+//        qDebug() << headerShift;
     }
     if (type=="sid") {
         sid.Load(t->m_filename, projectDir);

@@ -64,6 +64,9 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 12;
     if (t==AMIGA320x256)
         return 13;
+    if (t==OK64_256x256)
+        return 14;
+
 
     return 255;
 }
@@ -98,6 +101,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return AMIGA320x200;
     if (c==13)
         return AMIGA320x256;
+    if (c==14)
+        return OK64_256x256;
 
     return NotSupported;
 

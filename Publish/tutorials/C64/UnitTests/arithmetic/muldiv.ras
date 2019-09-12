@@ -1,0 +1,212 @@
+/*
+
+Multiplication / division unit testing
+
+*/
+program MulDiv;
+var  
+	sc, co : pointer; 			// screen and colour RAM pointers
+	text: string = "TEST    ";	// text to display when writing a test result
+	@define COLUMNWIDTH 5
+
+
+/*--------------------------------------------------------------------------------------------
+
+	VARIABLES FOR USE IN UNIT TESTS
+	
+----------------------------------------------------------------------------------------------*/
+
+	v1, v2,v3,rb : byte;
+	i1, i2,ri : integer;
+	p1, p2,rp : pointer;
+
+@include "common.ras"
+
+
+
+
+/*--------------------------------------------------------------------------------------------
+
+	UNIT TESTS
+	
+----------------------------------------------------------------------------------------------*/
+
+// Byte mul byte
+procedure ByteMulByte01();
+begin
+	v1 := 15; 
+	v2 := 9;
+	rb:=v1*v2;
+	text := "01:"; if rb=135 then PASS() else FAIL();
+end;
+
+// Byte mul byte power of two
+procedure ByteMulBytePow202();
+begin
+	v1 := 15;
+	rb:=v1*4;
+	text := "02:"; if rb=60 then PASS() else FAIL();
+end;
+
+procedure ByteDivBytePow203();
+begin
+	v1 := 100;
+	rb:=v1/4;
+	text := "03:"; if rb=25 then PASS() else FAIL();
+end;
+
+// Byte mul div power
+procedure ByteDivByte04();
+begin
+	v1 := 100;
+	v2 := 5;
+	rb:=v1/v2;
+	text := "04:"; if rb=20 then PASS() else FAIL();
+end;
+
+
+// Byte mul mul
+procedure ByteMulMul05();
+begin
+	v1 := 3;
+	v2 := 4;
+	v3 := 5;
+	rb:=(v1-1)*v2*(v3+1);
+	text := "05:"; if rb=48 then PASS() else FAIL();
+end;
+
+// Byte mul mul
+procedure IntByteMul06();
+begin
+	i1 := 1010;
+	v1 := 3;
+	ri := i1*v1;
+	text := "06:"; 
+	if (ri=3030) then PASS() else FAIL();
+end;
+
+
+procedure IntMulPow07();
+begin
+	i1 := 1010;
+	v1 := 4;
+	ri := i1*v1;
+	text := "07:"; 
+	if (ri=4040) then PASS() else FAIL();
+end;
+
+
+procedure IntDivByte08();
+begin
+	i1 := 615;
+	v1 := 5;
+	v2 := i1/v1;
+	text := "08:"; 
+	if (v2=123) then PASS() else FAIL();
+end;
+
+procedure IntDivInt09();
+begin
+	i1 := 60000;
+	i2 := 1000;
+	i1 := i1/i2;
+	text := "09:"; 
+	if (i1=60) then PASS() else FAIL();
+end;
+
+procedure IntDivPow210();
+begin
+	i1 := 60000;
+	i1 := i1/4;
+	text := "10:"; 
+	if (i1=15000) then PASS() else FAIL();
+end;
+
+procedure IntDivMix11();
+begin
+	i1 := 60000;
+	v1:=100;
+	i1:=i1/v1;
+	text := "11:"; 
+	if (i1=600) then PASS() else FAIL();
+end;
+
+procedure IntDivMix12();
+begin
+	i1 := 20000;
+	v1:=200;
+	v1:=i1/v1;
+	text := "12:"; 
+	if (v1=100) then PASS() else FAIL();
+end;
+
+procedure IntMulMix13();
+begin
+	i1 := 200;
+	v1:=100;
+	i1:=i1*v1;
+	text := "13:"; 
+	if (i1=20000) then PASS() else FAIL();
+end;
+
+// Fails. Integer * integer
+procedure IntMulInt14();
+begin
+	i1 := 10;
+	i2 := 10;
+	i1:=i1*i2;
+	text := "14:"; 
+	if (i1=100) then PASS() else FAIL();
+end;
+
+
+
+// Fails. Integer * byte * byte
+procedure IntMulAdvancedMix15();
+begin
+	i1 := 10;
+	v1 := 10;
+	v2 := 10;
+	i1:=i1*v1*v2;
+	text := "15:";
+	if (i1=1000) then PASS() else FAIL();
+end;
+
+procedure ByteMulAdvanced16();
+begin
+	v1:=2;
+	v2 := 3;
+	v3 := 4;
+	v1:=v1*v2*(v3-1);
+	text := "16:";
+	if (v1=18) then PASS() else FAIL();
+end;
+
+
+//--------------------------------------------------------------------------------------------
+/* MAIN PROGRAM */
+begin
+
+	// initialise everything
+	Initialise();
+	
+	// Mul and div
+
+	ByteMulByte01();
+	ByteMulBytePow202();
+	ByteDivBytePow203();
+	ByteDivByte04();
+	ByteMulMul05();
+	IntByteMul06();
+	IntMulPow07();
+	IntDivByte08();
+	IntDivInt09();
+	IntDivPow210();
+	IntDivMix11();
+	IntDivMix12();
+	IntMulMix13();
+	IntMulInt14(); // Not implemented, fails
+	IntMulAdvancedMix15(); // fails
+	ByteMulAdvanced16();
+	loop();
+end.

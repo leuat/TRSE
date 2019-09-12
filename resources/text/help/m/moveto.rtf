@@ -1,7 +1,20 @@
-<p>Moves the <b>screenmemory</b> pointer to the specified x/y (parameter 1,2 ) position with address high bit specified in parameter 3. <br>
-<br>
-Formula:<br>
-screenmemory = [ param3 *$100] + x +y*40
+<h3>MoveTo( [byte1], [byte2], [byte3] );
+</h3>
+<ul>
+<li>[byte1] - x position</li>
+<li>[byte2] - y position</li>
+<li>[byte3] - address high byte</li>
+</ul>
+<p>Moves the <b>screenmemory</b> pointer to the specified x/y (parameter 1,2 ) position with 
+	address high bit specified in parameter 3. <br>
+	<br>
+	Formula:<br>
+	screenmemory = [ param3 *$100] + x +y*40</p>
+
+<p>While still fast, MoveTo can take some time to complete.  If speed is needed consider using AddressTable instead.</p>
+
+<h3>Example</h3>
+
 <code>
 	// Move to x=4, y=5 in color memory
   	moveto(4,5,$d8);
@@ -16,3 +29,5 @@ screenmemory = [ param3 *$100] + x +y*40
   	end;
 
 </code>
+
+<p>See also PrepareScreen(), screenmemory and AddressTable().</p>

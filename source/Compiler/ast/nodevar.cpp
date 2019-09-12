@@ -39,20 +39,36 @@ NodeVar::NodeVar(Token t, Node *expr) : Node() {
 
 TokenType::Type NodeVar::getType(Assembler *as) {
 
+    if (as==nullptr) {
+        // Use parser symbtab
+        TokenType::Type t = m_op.m_type;
+        if (parserSymTab != nullptr) {
+            Symbol* s = parserSymTab->Lookup(value, m_op.m_lineNumber);
+//            qDebug() << "NodeVar::getType "<< s->m_name << TokenType::getType(s->getTokenType()) << " with forcetype " << TokenType::getType(m_forceType);
+            if (s!=nullptr)
+                t= s->getTokenType();
+        }
+        //qDebug() << "Forcetype = " << TokenType::getType(m_forceType);
+        if ((m_forceType!=TokenType::NADA))// && (t!=TokenType::POINTER && m_expr==nullptr))
+            return m_forceType;
+
+        return t;
+    }
 
     TokenType::Type t = m_op.m_type;
     if (as->m_symTab->Lookup(value, m_op.m_lineNumber)!=nullptr)
         t= as->m_symTab->Lookup(value, m_op.m_lineNumber)->getTokenType();
 
-
     if (m_forceType!=TokenType::NADA && t!=TokenType::POINTER)
         return m_forceType;
+
 
 //    if (as->m_symTab->Lookup(value, m_op.m_lineNumber)!=nullptr)
   //      return as->m_symTab->Lookup(value, m_op.m_lineNumber)->getTokenType();
 
     return t;
 }
+
 
 TokenType::Type NodeVar::getArrayType(Assembler *as)
 {
@@ -81,13 +97,13 @@ bool NodeVar::DataEquals(Node *other) {
 
 bool NodeVar::isWord(Assembler *as) {
 
-
     return getType(as)==TokenType::INTEGER || (getType(as)==TokenType::POINTER && m_expr==nullptr) || m_fake16bit;
 /*    return m_op.m_type==TokenType::INTEGER;
     Symbol* s = as->m_symTab->Lookup(value, m_op.m_lineNumber);
 
     return s->m_type.toLower()=="integer";*/
 }
+
 
 bool NodeVar::isLong(Assembler *as) {
     return getType(as)==TokenType::LONG  && m_expr==nullptr;
@@ -96,10 +112,25 @@ bool NodeVar::isByte(Assembler *as) {
     return getType(as)==TokenType::BYTE  && m_expr==nullptr;
 }
 
+bool NodeVar::containsPointer(Assembler *as)
+{
+    return (getType(as)==TokenType::POINTER && m_expr!=nullptr);
+}
+
 QString NodeVar::getValue(Assembler* as) {
+    QString v= value;
+//    return v;
+    if (as->m_symTab->getCurrentProcedure()!="") {
+        //value = value.replace(as->m_symTab->getCurrentProcedure(),"");
+        QString tstv = as->m_symTab->getCurrentProcedure()+value;
+        if (as->m_symTab->m_symbols.contains(tstv))
+                v = tstv;
+
+
+    }
 //    qDebug() << "NodeVar:: getValue : " << value << "  "  << TokenType::getType(getType(as));
-    if (m_forceAddress && !(getType(as)==TokenType::POINTER)) return "#" + value;
-    return value;
+    if (m_forceAddress && !(getType(as)==TokenType::POINTER)) return "#" + v;
+    return v;
 }
 
 bool NodeVar::isAddress() {

@@ -55,6 +55,13 @@ public:
     void Delete() override;
 
     void PopZeroPointers(Assembler* as);
+    void parseConstants(SymbolTable* symTab) override {
+        for (Node* n: m_decl)
+            if (n!=nullptr)
+            n->parseConstants(symTab);
+        if (m_compoundStatement!=nullptr)
+            m_compoundStatement->parseConstants(symTab);
+    }
 
 
     void ExecuteSym(SymbolTable* symTab) override;

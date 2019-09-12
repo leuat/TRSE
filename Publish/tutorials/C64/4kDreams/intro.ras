@@ -455,7 +455,7 @@ begin
 		zp:=$0400+40*@ypos;
 		p1:=$0400+40*@ypos+1;
 		for i:=0 to 4 do begin
-			memcpy(p1,0,zp,39);
+			memcpyunroll(p1,0,zp,39);
 			inczp(zp,40);
 			inczp(p1,40);
 		end;
@@ -732,6 +732,7 @@ begin
 		roads[i]:=j;
 	end;*/
 end;
+
 
 procedure InitWaves();
 begin

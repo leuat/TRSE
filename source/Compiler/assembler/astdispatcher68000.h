@@ -21,6 +21,7 @@
 #include "source/Compiler/ast/nodewhileloop.h"
 #include "source/Compiler/ast/nodeasm.h"
 #include "source/Compiler/ast/nodebinaryclause.h"
+#include "source/Compiler/ast/nodecase.h"
 #include "methods68000.h"
 
 class ASTDispather68000 : public AbstractASTDispatcher
@@ -48,7 +49,7 @@ public:
     void dispatch(NodeVar *node);
     void dispatch(Node *node);
     void dispatch(NodeAssign *node);
-
+    void dispatch(NodeCase* node);
 
     void dispatch(NodeBuiltinMethod *node);
 

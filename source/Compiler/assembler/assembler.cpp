@@ -20,12 +20,12 @@
 */
 
 #include "assembler.h"
-
+#include "source/Compiler/ast/node.h"
 //QMap<QString, bool> LabelStack::sNumbersUsed;
 
 int Appendix::s_id = 0;
 
-QStringList Assembler::m_internalZP;
+RegisterStack Assembler::m_internalZP;
 
 
 Assembler::Assembler()
@@ -69,9 +69,11 @@ void Assembler::Write(QString str, int level)
 
 
     int cnt = CountCycles(str);
+
     for (int i=0;i<m_cycleCounter.count();i++)
         m_cycleCounter[i] += cnt;
 
+     m_cycles[Node::m_currentLineNumber] += cnt;
 }
 
 bool caseInsensitiveLessThan(const Appendix &s1, const Appendix &s2)
@@ -121,9 +123,13 @@ void Assembler::PopCounter(int ln)
         return;
     int i = m_cycleCounter.last();
     m_cycleCounter.removeLast();
-    if (i>m_cycles[ln]) // Only count largest number
-       m_cycles[ln] = i;
+    m_blockCycles[ln]=+i;
+//    if (i>m_cycles[ln]) // Only count largest number
+//       m_cycles[ln] += i;
     //   return i;
+//    qDebug() << "POP <<"<<ln << m_cycles[ln];
+  //  qDebug() << m_cycles.keys();
+
 }
 
 void Assembler::PushBlock(int ln)

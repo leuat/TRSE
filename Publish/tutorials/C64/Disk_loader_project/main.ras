@@ -2,9 +2,15 @@ program disk_loader_project;
 var  
    i: byte; 
 	@use KrillsLoader $0200 $3000 $5000 
-	// Place initial loader data at $3000 and installer at $4000. 
-	// Loader will be copied to $0200 when "initkrill" is called
+	/* Place initial loader data at $3000 and installer at $4000. 
+	 Loader will be copied to $0200 when "initkrill" is called
 
+	 Files are defined in "d64.paw"
+	
+
+	disk setup under project settings/target setup
+	*/
+	
 begin
 	
 	InitKrill();
@@ -13,11 +19,11 @@ begin
 	setmulticolormode();
 	setbitmapmode();
 	// Bitmap points to $6000 etc
-	VIC_DATA_LOC := $18;
-	SCREEN_FG_COL:=BLACK;
+	vic_data_loc := $18;
+	screen_fg_col:=black;
 	i:=0;
-	setbank(VIC_BANK1);
-	while (1=1) offpage do begin
+	setbank(vic_bank1);
+	while (true) offpage do begin
 		// Display data while loading! cool stuff
 		if (i=0) then KrillLoad(octopus_color);
 		if (i=1) then KrillLoad(moose_color);
@@ -25,11 +31,11 @@ begin
 
 		if (i=0) then KrillLoad(octopus_data);
 		if (i=1) then KrillLoad(moose_data);
-		while (keypressed(KEY_SPACE)=0) do waitforraster(0);
+		while (keypressed(key_space)=false) do 
+			waitforraster(0);
 
-		i:=i+1;
+		i:=mod(i+1,2);
 
-		if (i=2) then i:=0;
 
 	end;
 

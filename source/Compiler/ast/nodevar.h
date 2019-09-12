@@ -30,8 +30,10 @@
 #include "source/Compiler/ast/nodevartype.h"
 #include "source/Compiler/assembler/abstractastdispatcher.h"
 class NodeVar : public Node {
+private:
 public:
     QString value;
+
     Node* m_expr = nullptr;
     //NodeVarType* m_type;
     bool m_fake16bit = false;
@@ -52,7 +54,7 @@ public:
     bool isWord(Assembler* as) override;
     bool isLong(Assembler* as) override;
     bool isByte(Assembler* as) override;
-
+    bool containsPointer(Assembler* as) override;
 
     void forceWord() override {
         m_fake16bit = true;
@@ -60,8 +62,23 @@ public:
 
     QString getAddress() override {return value;}
 
+    void parseConstants(SymbolTable* symTab) override {
+        if (m_expr!=nullptr)
+            m_expr->parseConstants(symTab);
+    }
+
+
+
     bool isPureVariable() override {
-        return true;
+
+        return m_expr==nullptr; // only return true if there are no array expressions
+    }
+    bool is8bitValue(Assembler* as) override {
+        return getType(as)==TokenType::BYTE
+                ||(getType(as)==TokenType::POINTER && m_expr!=nullptr )
+                ||(getType(as)==TokenType::ADDRESS && m_expr!=nullptr )
+                || getType(as)==TokenType::ARRAY
+                ;
     }
 
     bool isArrayIndex() override { return m_expr!=nullptr; }

@@ -44,6 +44,10 @@ public:
     NodeVarType(Token t,  QString filename, QString position );
     NodeVarType(Token t,  QString initvalue );
 
+    QString getValue(Assembler* as) override {
+        return value;
+    }
+
     void ExecuteSym(SymbolTable* symTab) override {};
 
 

@@ -82,6 +82,7 @@ class FormRasEditor : public TRSEDocument
 public:
     explicit FormRasEditor(QWidget *parent = 0);
     ~FormRasEditor();
+    static bool m_broadcast;
     Highlighter* highlighter = nullptr;
     QFont m_font;
     bool m_run = false;
@@ -143,6 +144,8 @@ public:
     void FindBlockEndSymbols(Orgasm& orgAsm);
     void ConnectBlockSymbols();
     void BuildNes(QString prg);
+public slots:
+    void HandleBuildComplete();
 
 private:
 
@@ -151,9 +154,11 @@ private:
     static QString path;
     Ui::FormRasEditor *ui;
 
+
+
 signals:
     void OpenOtherFile(QString filename, int ln);
-
+    void NotifyOtherSourceFiles(SourceBuilder* builder);
 private slots:
     void on_leSearch_textChanged();
 
@@ -167,10 +172,10 @@ private slots:
 
 
     void HandleUpdateBuildText();
-    void HandleBuildComplete();
     void HandleBuildError();
     void HandleErrorDialogs(QString& output);
 //    void HandleRun();
+    void on_chkWarnings_stateChanged(int arg1);
 };
 
 #endif // FORMRASEDITOR_H

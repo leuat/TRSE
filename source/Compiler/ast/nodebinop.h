@@ -43,12 +43,18 @@ public:
     QString BothConstants(Assembler* as);
 
     bool isPureNumeric() override;
+    bool is8bitValue(Assembler* as) override;
 
-
+    void ApplyFlags() override;
     bool isAddress() override;
 
+    bool m_isCollapsed = false;
+    int m_value = 0;
 
     bool isWord(Assembler* as) override;
+
+    void setForceType(TokenType::Type t) override;
+
 
     QString getAddress() override {
         return HexValue();
@@ -58,9 +64,19 @@ public:
        m_left->forceWord();
        m_right->forceWord();
     }
+    bool containsPointer(Assembler* as);
+
+
+    void parseConstants(SymbolTable* symTab) override;
 
 
     QString getValue(Assembler* as)  override {
+        QString hash = "";
+        if (!isAddress())
+            hash="#";
+        if (m_isCollapsed)
+            return hash + "$" + QString::number(m_value, 16);
+
         if (isAddress()) return HexValue();
         return "#" + HexValue();
     }
@@ -77,6 +93,8 @@ public:
     }
 
     bool isPure() override {
+        if (isPureNumeric())
+            return true;
         return false;
     }
 

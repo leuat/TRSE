@@ -26,6 +26,9 @@ int Node::m_currentLineNumber;
 MemoryBlockInfo  Node::m_staticBlockInfo;
 MemoryBlock* Node::m_curMemoryBlock = nullptr;
 
+QMap<QString, bool> Node::flags;
+SymbolTable* Node::parserSymTab;
+
 int Node::MaintainBlocks(Assembler* as)
 {
     if (m_blockInfo.m_blockID == -1) {

@@ -42,11 +42,13 @@ DialogHelp::DialogHelp(QWidget *parent, QString txt, QPalette pal) :
 
     FillTopics();
     LoadItems(0);
+    if (txt=="")
+        txt="Getting_Started";
     ui->leSearch->setText(txt);
 
     CIniFile colors;
     colors.Load(Util::path + "themes/" + "dark_standard.ini");
-    m_highlighter = new Highlighter(colors, 0, nullptr);
+//    m_highlighter = new Highlighter(colors, 0, nullptr);
 
     if (txt!="")
         SearchForItem(txt);
@@ -86,10 +88,11 @@ void DialogHelp::LoadItems(int idx)
         if (data[0].toLower()== ht.id) {
             QString word = data[1];
             QString system = data[2].toLower();
+            bool isFjong = data[0]=="f";
             if (word.toLower().startsWith("init")) continue;
-            if (!AbstractSystem::isSupported(Syntax::s.m_currentSystem, system))
+            if (!isFjong && !AbstractSystem::isSupported(Syntax::s.m_currentSystem, system))
                 continue;
-            if (system.contains(currentSystem)) {
+            if (system.contains(currentSystem)||isFjong) {
 /*                QString val = word + "(";
                 for (QString s: params) {
                     if (s=="b") val+="[byte variable]";
@@ -131,8 +134,47 @@ void DialogHelp::LoadItem(QString findword)
         QString type = data[0].toLower();
         m_currentType = type;
         QString system = data[2].toLower();
-        if (!AbstractSystem::isSupported(Syntax::s.m_currentSystem, system))
+        if (type!="f" && !AbstractSystem::isSupported(Syntax::s.m_currentSystem, system))
             continue;
+        if (type=="f")
+         {
+                QStringList params = data[2].toLower().split(",");
+                QString val = "<h2 style=\"color: skyblue\">" + word + "( ";
+                int paramNo = 1;
+                for (QString s: params) {
+                    if (s=="f") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> float ]";
+                    if (s=="s") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> string ]";
+                    val+=", ";
+                    paramNo++;
+
+                }
+                val.remove(val.length()-2,2);
+                val+=" );</h2>";
+
+                QString fn =":resources/text/help/"+type+"/"+word.toLower()+".rtf";
+                if (QFile::exists(fn)) {
+                    QFile f(fn);
+                    f.open(QFile::ReadOnly | QFile::Text);
+                    QString s = f.readAll();
+                    f.close();
+
+                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
+                    s=s.replace("</code>","</code></pre>");
+
+                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
+
+                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
+
+             //       m_highlighter->HighlightText(val);
+           //         qDebug() << val;
+                }
+
+
+                ui->txtHelp->setText(val);
+
+            }
+
+
         if (type=="m")
          {
                 QStringList params = data[3].toLower().split(",");
@@ -175,45 +217,6 @@ void DialogHelp::LoadItem(QString findword)
 
             }
         // Fjong type
-        if (type=="f")
-         {
-                QStringList params = data[2].toLower().split(",");
-                QString val = "<h2 style=\"color: skyblue\">" + word + "( ";
-                int paramNo = 1;
-                for (QString s: params) {
-                    if (s=="s") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> float ]";
-                    if (s=="f") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> string ]";
-                    val+=", ";
-                    paramNo++;
-
-                }
-                val.remove(val.length()-2,2);
-                val+=" );</h2>";
-
-                QString fn =":resources/text/help/"+type+"/"+word.toLower()+".rtf";
-                if (QFile::exists(fn)) {
-                    QFile f(fn);
-                    f.open(QFile::ReadOnly | QFile::Text);
-                    QString s = f.readAll();
-                    f.close();
-
-                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
-                    s=s.replace("</code>","</code></pre>");
-
-                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
-
-                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
-
-             //       m_highlighter->HighlightText(val);
-           //         qDebug() << val;
-                }
-
-
-                ui->txtHelp->setText(val);
-
-            }
-
-
 
 
         if (type=="c")
@@ -334,24 +337,29 @@ void DialogHelp::SearchForItem(QString item)
         s=s.replace(" ", "");
 
         QStringList data = s.split(";");
-        if (data[1].toLower() ==item.toLower()) {
+        if (data[1].toLower().contains(item.toLower())) {
             //HelpType ht = m_helpTypes[idx];
             int idx;
             for (int i=0;i<m_helpTypes.count();i++)
                 if (m_helpTypes[i].id.toLower()==data[0].toLower())
                     idx=i;
+
+            if (idx>=0) {
+                ui->lstTopic->setCurrentRow(idx);
+            }
             LoadItems(idx);
+            auto items =  ui->lstItems->findItems(item,Qt::MatchContains);
+            if (m_currentSearchItem>=items.count())
+                m_currentSearchItem=0;
+            if (items.count()!=0) {
+                ui->lstItems->setCurrentItem(items[m_currentSearchItem]);
+                data[1] = items[m_currentSearchItem]->text();
+            }
             LoadItem(data[1]);
             return;
         }
     }
     LoadItems(0);
-}
-
-
-void DialogHelp::on_pushButton_clicked()
-{
-    close();
 }
 
 
@@ -370,6 +378,8 @@ void DialogHelp::on_lstItems_itemClicked(QListWidgetItem *item)
 
 void DialogHelp::on_leSearch_textChanged(const QString &arg1)
 {
+    m_currentSearchItem = 0; // Reset counter
+    SearchForItem(arg1);
 }
 
 void DialogHelp::on_lstItems_currentRowChanged(int currentRow)
@@ -383,3 +393,9 @@ void DialogHelp::on_lstItems_currentRowChanged(int currentRow)
 
 }
 
+
+void DialogHelp::on_leSearch_returnPressed()
+{
+    m_currentSearchItem++;
+    SearchForItem(ui->leSearch->text());
+}

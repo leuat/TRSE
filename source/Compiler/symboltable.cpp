@@ -26,6 +26,19 @@ bool SymbolTable::isInitialized = false;
 int SymbolTable::m_currentSid = 0;
 QMap<QString, Symbol*> SymbolTable::m_constants;
 
+void SymbolTable::ExitProcedureScope(bool removeSymbols) {
+    // "TRUE" doesn't work
+    if (removeSymbols)
+    for (QString s: m_symbols.keys()) {
+        if (s.startsWith(m_currentProcedure)) {
+            m_symbols.remove(s);
+        }
+    }
+
+
+    m_currentProcedure="";
+}
+
 SymbolTable::SymbolTable()
 {
     m_currentSid = 0;
@@ -101,6 +114,11 @@ void SymbolTable::Initialize()
 
 }
 
+void SymbolTable::Define(Symbol *s, bool isUsed) {
+    m_symbols[m_currentProcedure+ s->m_name] = s;
+    m_symbols[m_currentProcedure+ s->m_name]->isUsed = isUsed;
+}
+
 void SymbolTable::Delete() {
     for (QString val : m_symbols.keys()) {
         Symbol* s = m_symbols[val];
@@ -137,6 +155,7 @@ void SymbolTable::InitBuiltins()
 {
 
     Define(new BuiltInTypeSymbol("INTEGER",""));
+    Define(new BuiltInTypeSymbol("WORD",""));
     Define(new BuiltInTypeSymbol("LONG",""));
     Define(new BuiltInTypeSymbol("REAL",""));
     Define(new BuiltInTypeSymbol("BYTE",""));
@@ -149,6 +168,7 @@ void SymbolTable::InitBuiltins()
     Define(new BuiltInTypeSymbol("INCNSF",""));
 
     Define(new Symbol("return",""));
+
     Define(new Symbol("sine", "address"));
     Define(new Symbol("log2_table", "address"));
     Define(new Symbol("joystickup", "byte"));
@@ -157,14 +177,20 @@ void SymbolTable::InitBuiltins()
     Define(new Symbol("joystickright", "byte"));
     Define(new Symbol("joystickbutton", "byte"));
 
-/*    Define(new Symbol("zeropage1", "pointer"));
-    Define(new Symbol("zeropage2", "pointer"));
-    Define(new Symbol("zeropage3", "pointer"));
-    Define(new Symbol("zeropage4", "pointer"));
-    Define(new Symbol("zeropage5", "pointer"));
-    Define(new Symbol("zeropage6", "pointer"));
-    Define(new Symbol("zeropage7", "pointer"));*/
     if (Syntax::s.m_currentSystem==AbstractSystem::C64 ||
+            Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
+
+        Define(new Symbol("joy1", "byte"));
+        Define(new Symbol("joy1pressed", "byte"));
+    }
+    if (Syntax::s.m_currentSystem==AbstractSystem::C64) {
+
+        Define(new Symbol("joy2", "byte"));
+        Define(new Symbol("joy2pressed", "byte"));
+    }
+
+    if (Syntax::s.m_currentSystem==AbstractSystem::C64 ||
+            Syntax::s.m_currentSystem==AbstractSystem::PLUS4 ||
             Syntax::s.m_currentSystem==AbstractSystem::C128 ||
             Syntax::s.m_currentSystem==AbstractSystem::VIC20 ||
             Syntax::s.m_currentSystem==AbstractSystem::PET) {
@@ -207,8 +233,35 @@ bool SymbolTable::exists(QString name) {
     return false;
 }
 
+QString SymbolTable::findSimilarSymbol(QString sim, float percentage, int n, QStringList procedures)
+{
+    for (QString s:m_symbols.keys()) {
+        if (Util::QStringIsSimilar(sim,s,percentage,n,Qt::CaseInsensitive))
+            return s;
+    }
+    for (QString s:procedures) {
+        if (Util::QStringIsSimilar(sim,s,percentage,n,Qt::CaseInsensitive))
+            return s;
+    }
+    for (QString s:m_constants.keys()) {
+        if (Util::QStringIsSimilar(sim,s,percentage,n,Qt::CaseInsensitive))
+            return s;
+    }
+    return "";
+}
+
+QStringList SymbolTable::getUnusedVariables()
+{
+    QStringList lst;
+    for (QString s : m_symbols.keys()) {
+        if (!m_symbols[s]->isUsed)
+            lst<<s;
+    }
+    return lst;
+}
+
 Symbol *SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
-    //        name = name.toUpper();
+//            name = name.toUpper();
     if (m_constants.contains(name.toUpper())) {
         return m_constants[name.toUpper()];
     }
@@ -221,18 +274,37 @@ Symbol *SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
     if ((name.startsWith("$")) && !m_symbols.contains(name) ) {
         //            qDebug() << "Creating new symbol:" << name;
         Symbol* s = new Symbol(name, "address");
+        s->isUsed = true;
         m_symbols[name] = s;
         return s;
     }
 
+    QString localName = m_currentProcedure+name;
+//    qDebug() << "localName: " << localName;
+    if (!m_symbols.contains(name) && !m_symbols.contains(localName)) {
 
-    if (!m_symbols.contains(name)) {
-        ErrorHandler::e.Error("Could not find variable '" + name + "'.", lineNumber);
+        QString similarSymbol = findSimilarSymbol(name,65,2,QStringList());
+        QString em = "";
+        if (similarSymbol!="") {
+            em+="Did you mean '<font color=\"#A080FF\">"+similarSymbol+"</font>'?<br>";
+        }
+        ErrorHandler::e.Error("Could not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>"+em, lineNumber);
         return nullptr;
     }
+
     //qDebug() << name << " " << m_symbols[name]->m_type;
     //        qDebug() << "FOUND "<< name;
+//    qDebug() << "SymbolTable Symbols used : " << name <<m_symbols[name]->isUsed;
+    // Prioritize local name
+  //  qDebug() <<m_symbols.keys();
+//    exit(1);
+    if (m_symbols.contains(localName)) {
+    //    qDebug() << "Found local name " << localName;
+        m_symbols[localName]->isUsed = true;
+        return m_symbols[localName];
 
+    }
+    m_symbols[name]->isUsed = true;
     return m_symbols[name];
 }
 
@@ -241,6 +313,7 @@ Symbol *SymbolTable::LookupVariables(QString name, int lineNumber) {
         ErrorHandler::e.Error("Symbol/variable '" + name + "' does not exist in the current scope", lineNumber);
         return nullptr;
     }
+    m_symbols[name]->isUsed=true;
     return m_symbols[name];
 }
 
@@ -255,6 +328,8 @@ Symbol *SymbolTable::LookupConstants(QString name) {
 TokenType::Type Symbol::getTokenType() {
     //qDebug() << "gettokentype: " <<m_name <<" : "<<m_type;
     if (m_type.toLower()=="integer")
+        return TokenType::INTEGER;
+    if (m_type.toLower()=="word")
         return TokenType::INTEGER;
     if (m_type.toLower()=="float")
         return TokenType::REAL;
@@ -281,13 +356,13 @@ Symbol::Symbol(QString name, QString type) {
     m_name = name;
     m_type = type;
     m_value = new PVar();
-
 }
 
 Symbol::Symbol(QString name, QString type, float var) {
     m_name = name;
     m_type = type;
     m_value = new PVar(var);
+
 }
 
 Symbol::Symbol(QString name, QString type, QString var) {

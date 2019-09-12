@@ -1,0 +1,14 @@
+<h3>SaveScreenAndCharset( [ screen data file ], [ character data file] );</h3>
+This is a method that will save the current internal screen data and character data to file,
+and then clear the contents of these internal data sets.
+Example: Compress a full-screen image to 128 bytes, add it to the internal data set,
+render a new frame, compress another full-screen data set and finally save the data
+<code>
+.. render a full 320x200 screen
+CompressCharset(0,40,0,25,  7, 128)  -- compresses and adds to the internal data/charsets
+.. render another frame
+CompressCharset(0,40,0,25,  7, 128)  -- compresses and adds another to the internal data/charsets
+-- character set now contans 128+128 = 256 characters and 2 screens
+-- outputs two screens and 1 256*8-byte charset
+SaveScreenAndCharset("data/screenData.bin","data/charsetData.bin");
+</code>
