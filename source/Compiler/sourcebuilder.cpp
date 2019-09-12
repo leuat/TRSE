@@ -51,7 +51,7 @@ bool SourceBuilder::Build(QString source)
     compiler.Parse(source,lst);
 
     QString path = m_projectIniFile.getString("project_path") + "/";
-    m_filename = m_currentSourceFile.split(".")[0];
+    m_filename = m_currentSourceFile.split(".ras")[0];
 //    m_filename = m_curDir+"/"+ m_currentSourceFile.split(".")[0];
 
     if (m_system != nullptr)
