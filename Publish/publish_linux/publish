@@ -9,7 +9,7 @@ cp -r ../../Release/trse trse/bin
 cp -r ../../Release/lib trse/bin
 cp -r ../../Release/plugins trse/bin
 cp -r ../source/* trse/
-cp -r ../tutorials/RasLib trse/
+cp -r ../tutorials/RasLib trse/tutorials/
 
 cp -r ../tutorials/C64 trse/tutorials/
 cp -r ../tutorials/C128 trse/tutorials/

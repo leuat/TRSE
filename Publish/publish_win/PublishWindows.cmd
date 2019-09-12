@@ -14,7 +14,7 @@ REM mkdir trse
 REM move bin trse
 mkdir trse\tutorials\
 
-xcopy /e  ..\tutorials\RasLib trse\RasLib\
+xcopy /e  ..\tutorials\RasLib trse\tutorials\RasLib\
 xcopy /e  ..\tutorials\C64\* trse\tutorials\C64\
 xcopy /e  ..\tutorials\C128\* trse\tutorials\C128\
 xcopy /e  ..\tutorials\Vic20\* trse\tutorials\Vic20\
