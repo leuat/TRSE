@@ -37,3 +37,4 @@ build_list = ,
 output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
 open_files =, RogueBurgerOne.ras
+open_files =, RogueBurgerOne.ras

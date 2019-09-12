@@ -40,7 +40,7 @@ public:
     bool m_abort = false;
     QMap<QString,DemoEffectParam> m_params;
     //CharsetImage* m_mc;
-    LImage* m_mc;
+    LImage* m_mc = nullptr;
     QVector<int> m_cols;
 //    int m_elapsedTime=0;
     QElapsedTimer m_timer;

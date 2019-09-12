@@ -5,7 +5,7 @@ cp -r  ../source/* trse/trse.app/
 cp -r  ../source/* trse/trse.app/	
 cp -r ../tutorials trse/trse.app/
 cd trse/trse.app
- ~/Qt/5.12.3/clang_64/bin/macdeployqt .
+ ~/Qt/5.13.1/clang_64/bin/macdeployqt .
  rm *.ini
  cd ../../
  find trse -name '*.prg' -delete

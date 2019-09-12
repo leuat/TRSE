@@ -37,3 +37,4 @@ build_list = ,
 pascal_settings_use_local_variables = 0
 charset_resources/movie/tutorial_5_movie.flf = :resources/character.rom
 open_files =, easy/01_hello_world.ras
+open_files =, easy/01_hello_world.ras

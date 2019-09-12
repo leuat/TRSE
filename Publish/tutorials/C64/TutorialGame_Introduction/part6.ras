@@ -12,13 +12,14 @@ our character set
 @define charsetPosition $2000
 // Don't use kernal
 @define useKernal 0
+@define @levelpointer levelp
 
 
 
    	charset1: incbin("charsets/charset1.bin", @charsetPosition);
 	levels: incbin("levels/level1.flf", @levelPosition);
 	// Define some pointers
-	colors, levelpointer, colormemory : pointer;
+	colors, levelp, colormemory : pointer;
 	i,j:byte = 0;
 	// Current level screen x,y
 	curLevel_x, curLevel_y : byte=0;
@@ -44,7 +45,7 @@ begin
 
 	setcharsetlocation(@charsetPosition);
 	// Make sure that the level pointer points to level data location
-	levelpointer:=@levelPosition;
+	levelp:=@levelPosition;
 	// Read header data
 	ReadHeader();
 end;
@@ -67,7 +68,7 @@ begin
 	end;
 
 	if (i=10) then begin
-		levelpointer:=@levelPosition;
+		levelp:=@levelPosition;
 		screenoff();
 		RenderCharsetColorLevel(curLevel_x,curLevel_y,$04);
 		screenon();
@@ -81,7 +82,7 @@ end;
 begin
 	Initialize();
 	// Remember to set level location!
-	levelpointer:=@levelPosition;
+	levelp:=@levelPosition;
 	// Render the level to $0400
 	RenderCharsetColorLevel(curLevel_x,curLevel_y,hi(screen_char_loc));
 

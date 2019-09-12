@@ -36,3 +36,4 @@ override_target_settings_prg = 0
 build_list = ,
 pascal_settings_use_local_variables = 0
 open_files =, Hello.ras
+open_files =, Hello.ras

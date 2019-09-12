@@ -17,7 +17,8 @@ void DemoEffectRaytracer::Initialize()
    m_mc = new MultiColorImage(LColorList::C64);
 
    if (m_rt->m_globals.m_c64ImageType == 0.0) {
-       delete m_mc;
+       if (m_mc==nullptr)
+           delete m_mc;
        m_mc = new CharsetImage(LColorList::C64);
 
        ((CharsetImage*)(m_mc))->m_currentMode = CharsetImage::FULL_IMAGE;
@@ -123,12 +124,12 @@ void DemoEffectRaytracer::Init()
 
     m_cols = m_rt->m_globals.m_c64Colors;
 
-    m_mc->SetColor(m_cols[0],0);
-    m_mc->SetColor(m_cols[1],1);
-    m_mc->SetColor(m_cols[2],3);
-    m_mc->SetColor(m_cols[3],3);
-
-
+    if (m_cols.count()>=4) {
+        m_mc->SetColor(m_cols[0],0);
+        m_mc->SetColor(m_cols[1],1);
+        m_mc->SetColor(m_cols[2],3);
+        m_mc->SetColor(m_cols[3],3);
+    }
 }
 
 
