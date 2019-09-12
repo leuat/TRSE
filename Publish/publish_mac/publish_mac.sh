@@ -2,7 +2,6 @@ rm -rf trse
 mkdir trse
 cp -r ../../release/trse.app trse/
 cp -r  ../source/* trse/trse.app/
-Mkdir trse/tutorials/	
 cp -r  ../source/* trse/trse.app/	
 cp -r ../tutorials trse/trse.app/
 cd trse/trse.app
@@ -12,7 +11,7 @@ cd trse/trse.app
  find trse -name '*.prg' -delete
  find trse -name '*.asm' -delete
  find trse -name '*.sym' -delete
-tar -cvf trse_osx.tar trse/
+tar -cvf trse_osx.tar trse/trse.app
 gzip trse_osx.tar
 scp trse_osx.tar.gz leuat@www.irio.co.uk:www.irio.co.uk/trse/latest_snapshots/
 
