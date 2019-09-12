@@ -1312,11 +1312,13 @@ void MainWindow::on_treeTutorials_itemDoubleClicked(QTreeWidgetItem *item, int c
 {
     if (item->data(0,Qt::UserRole).toString()=="")
         return;
-#ifdef __linux__
-    QString dir = Util::path +"tutorials/"+item->data(0,Qt::UserRole).toString().split(";")[0];
-#else
     QString dir = "tutorials/"+item->data(0,Qt::UserRole).toString().split(";")[0];
 
+#ifdef __linux__
+    dir = Util::path +"tutorials/"+item->data(0,Qt::UserRole).toString().split(";")[0];
+#endif
+#ifdef __APPLE__
+    dir = Util::path +"tutorials/"+item->data(0,Qt::UserRole).toString().split(";")[0];
 #endif
     QString fileName = Util::findFileInDirectory("",dir,"trse");
     qDebug() << dir;
