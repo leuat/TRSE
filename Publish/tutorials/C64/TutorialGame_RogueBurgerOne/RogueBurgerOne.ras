@@ -208,7 +208,7 @@ var
 
 	
 	// Entity sprite locations in memory *64 on current bank
-	entity_sprites : array[8] of byte = (
+	entity_sprites : array[] of byte = (
 	$61, $60, $72, $73, $74, $66, $67, $68, $69,$6A,$6B, $6C,
 	$6D, $6E, $6F, $70, $71, $76 ,    $77 , $78, $79);
 	

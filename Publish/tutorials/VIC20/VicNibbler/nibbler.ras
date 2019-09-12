@@ -226,7 +226,7 @@ begin
 	
 	SetupJoystick();
 
-	while 1=1 do
+	while (true) do
 	begin
 
 		TitleSequence();
