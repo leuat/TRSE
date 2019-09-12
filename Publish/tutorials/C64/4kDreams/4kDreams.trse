@@ -42,4 +42,3 @@ override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
 open_files =, intro.ras
-open_files =, intro.ras
