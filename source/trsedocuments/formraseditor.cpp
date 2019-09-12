@@ -360,9 +360,9 @@ void FormRasEditor::Run()
         m_projectIniFile->setString("output_type","prg");
 
 
-    QString filename = m_currentSourceFile.split(".")[0] + "."+ m_projectIniFile->getString("output_type");
+    QString filename = m_currentSourceFile.split(".ras")[0] + "."+ m_projectIniFile->getString("output_type");
     if (m_projectIniFile->getString("system")=="NES")
-        filename = m_currentSourceFile.split(".")[0] + ".nes";
+        filename = m_currentSourceFile.split(".ras")[0] + ".nes";
 //    qDebug() << filename;
 //    exit(1);
 
