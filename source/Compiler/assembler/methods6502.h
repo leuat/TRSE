@@ -47,6 +47,7 @@ public:
     void PrintNumber(Assembler* as);
     void PrintString(Assembler* as);
     void ScrollX(Assembler* as);
+    void VeraPoke(Assembler* as, bool isExtended);
     void ScrollY(Assembler* as);
     void RightBitShift(Assembler* as, bool isRight);
     void Joystick(Assembler* as);

@@ -103,6 +103,11 @@
            <string>OK64</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>X16</string>
+          </property>
+         </item>
         </widget>
         <widget class="QLabel" name="label">
          <property name="geometry">

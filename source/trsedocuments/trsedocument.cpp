@@ -82,8 +82,10 @@ void TRSEDocument::UserDefined()
     QStringList params = s.split(" ");
     QString cmd = params[0];
     params.removeFirst();
-    qDebug() << params;
+    qDebug() << cmd << params;
     p.startDetached(cmd,params);
     p.waitForFinished();
+    qDebug()  << p.readAllStandardError();
+    qDebug()  << p.readAllStandardOutput();
 
 }

@@ -301,6 +301,14 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         PlayVIC20Sid(as);
     }
 
+
+    if (Command("VeraPoke"))
+        VeraPoke(as,false);
+
+    if (Command("VeraPokeDual"))
+        VeraPoke(as,true);
+
+
     if (Command("init_wedge")) {
         as->IncludeFile(":resources/code/init_wedge_regular.ras");
         as->IncludeFile(":resources/code/init_wedge_bad.ras");
@@ -2266,6 +2274,21 @@ void Methods6502::ScrollX(Assembler *as)
         as->Asm("and #$F8");
         as->Asm("ora " +as->m_tempZeroPointers[2]);
         as->Asm("sta $d016");
+    }
+}
+
+void Methods6502::VeraPoke(Assembler *as, bool isExtended)
+{
+    LoadVar(as,0);
+    as->Asm("sta $9F21");
+    LoadVar(as,1);
+    as->Asm("sta $9F22");
+    LoadVar(as,2);
+    as->Asm("sta $9F23");
+    if (isExtended) {
+        as->Asm("inc $9F22");
+        LoadVar(as,3);
+        as->Asm("sta $9F23");
     }
 }
 
