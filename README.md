@@ -12,6 +12,7 @@ Turbo Rascal Syntax Error full repo
   - On linux, you need to install a library that contains gl.h like **like mesa-common-dev** (sudo apt-get install mesa-common-dev) etc
 - Select "Release", and under the qt project/build make sure you set the build directory to be **TRSE/Release**
 - Copy the two directories in **TRSE/Publish/source/** to the **TRSE/Release** build directory (these directories contain run-time settings files)
+- Make a symbolic link called "tutorials from your build directory to point to Release/tutorials to access tutorial projects from the front page 
 - Compile & run!
 
 ## To do
