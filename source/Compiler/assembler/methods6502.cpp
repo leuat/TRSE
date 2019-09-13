@@ -6134,19 +6134,19 @@ void Methods6502::InitJoy(Assembler *as)
     as->Comment("populates joy1 and joy1pressed which can be tested by AND-ing with the following constants:");
 
     if (Syntax::s.m_currentSystem==AbstractSystem::C64) {
-        as->Label("JOY_DOWN  = %00000010");
-        as->Label("JOY_UP    = %00000001");
-        as->Label("JOY_LEFT  = %00000100");
-        as->Label("JOY_RIGHT = %00001000");
-        as->Label("JOY_FIRE  = %00010000");
+        as->Label(";JOY_DOWN  = %00000010");
+        as->Label(";JOY_UP    = %00000001");
+        as->Label(";JOY_LEFT  = %00000100");
+        as->Label(";JOY_RIGHT = %00001000");
+        as->Label(";JOY_FIRE  = %00010000");
         as->Label("C64_JOY_CIAPRA = $DC00   ; joy2");
         as->Label("C64_JOY_CIAPRB = $DC01   ; joy1");
     } else if (Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
-        as->Label("JOY_DOWN  = %00000100");
-        as->Label("JOY_UP    = %00000010");
-        as->Label("JOY_LEFT  = %00001000");
-        as->Label("JOY_RIGHT = %00000001");
-        as->Label("JOY_FIRE  = %00010000");
+        as->Label(";JOY_DOWN  = %00000100");
+        as->Label(";JOY_UP    = %00000010");
+        as->Label(";JOY_LEFT  = %00001000");
+        as->Label(";JOY_RIGHT = %00000001");
+        as->Label(";JOY_FIRE  = %00010000");
         as->Label("VIC20_PORTACASS = $911F");
         as->Label("VIC20_PORTBVIA2 = $9120  ; Port B 6522 2 value (joystick)");
         as->Label("VIC20_PORTBVIA2d = $9122 ; Port B 6522 2 direction (joystick)");
