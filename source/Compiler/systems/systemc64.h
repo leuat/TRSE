@@ -12,4 +12,14 @@ public:
     }
 };
 
+
+class SystemX16 : public SystemMOS6502
+{
+public:
+    SystemX16(CIniFile* settings, CIniFile* proj) : SystemMOS6502(settings, proj) {
+        m_processor = MOS6502;
+        m_system = X16;
+    }
+};
+
 #endif // SYSTEMC64_H

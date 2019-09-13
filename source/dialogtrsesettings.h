@@ -91,6 +91,8 @@ private slots:
 
     void on_btnPlus4Select_clicked();
 
+    void on_btnX16Emulator_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>880</width>
-    <height>662</height>
+    <width>1022</width>
+    <height>739</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -59,10 +59,10 @@
         <widget class="QLabel" name="label_11">
          <property name="geometry">
           <rect>
-           <x>40</x>
-           <y>20</y>
-           <width>803</width>
-           <height>61</height>
+           <x>690</x>
+           <y>110</y>
+           <width>201</width>
+           <height>151</height>
           </rect>
          </property>
          <property name="text">
@@ -77,9 +77,9 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
          <property name="geometry">
           <rect>
            <x>40</x>
-           <y>460</y>
+           <y>550</y>
            <width>621</width>
-           <height>51</height>
+           <height>63</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -103,7 +103,7 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
          <property name="geometry">
           <rect>
            <x>40</x>
-           <y>420</y>
+           <y>500</y>
            <width>803</width>
            <height>61</height>
           </rect>
@@ -119,9 +119,9 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
          <property name="geometry">
           <rect>
            <x>40</x>
-           <y>80</y>
+           <y>10</y>
            <width>621</width>
-           <height>241</height>
+           <height>371</height>
           </rect>
          </property>
          <property name="title">
@@ -133,41 +133,34 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
             <x>10</x>
             <y>30</y>
             <width>601</width>
-            <height>243</height>
+            <height>320</height>
            </rect>
           </property>
-          <layout class="QGridLayout" name="gridLayout_7" rowstretch="0,0,0,0,0,0,0">
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_16">
+          <layout class="QGridLayout" name="gridLayout_7" rowstretch="0,0,0,0,0,0,0,0">
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_26">
              <property name="text">
-              <string>C128 Emulator location</string>
+              <string>PLUS4 emulator location:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLineEdit" name="leOK64Emulator"/>
+           </item>
+           <item row="5" column="2">
+            <widget class="QPushButton" name="btnNesEmulatr">
+             <property name="text">
+              <string>...</string>
              </property>
             </widget>
            </item>
            <item row="5" column="1">
             <widget class="QLineEdit" name="leNesEmulator"/>
            </item>
-           <item row="6" column="1">
-            <widget class="QLineEdit" name="leOK64Emulator"/>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_7">
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_16">
              <property name="text">
-              <string>VIC 20 emulator location:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>C64 Emulator location</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="0">
-            <widget class="QLabel" name="label_18">
-             <property name="text">
-              <string>OK64 emulator location</string>
+              <string>C128 Emulator location</string>
              </property>
             </widget>
            </item>
@@ -178,50 +171,13 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="leVic20Emulator"/>
-           </item>
-           <item row="5" column="2">
-            <widget class="QPushButton" name="btnNesEmulatr">
-             <property name="text">
-              <string>...</string>
-             </property>
-            </widget>
-           </item>
            <item row="3" column="1">
             <widget class="QLineEdit" name="lePETEmulator"/>
            </item>
-           <item row="6" column="2">
-            <widget class="QPushButton" name="btnOKEmulator">
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_7">
              <property name="text">
-              <string>...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="leEmulator"/>
-           </item>
-           <item row="0" column="2">
-            <widget class="QPushButton" name="btnEmulator">
-             <property name="text">
-              <string>...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
-            <widget class="QPushButton" name="btnVic20Emulator">
-             <property name="text">
-              <string>...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="leEmulatorC128"/>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_23">
-             <property name="text">
-              <string>PET emulator location:</string>
+              <string>VIC 20 emulator location:</string>
              </property>
             </widget>
            </item>
@@ -232,18 +188,83 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
              </property>
             </widget>
            </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_26">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label">
              <property name="text">
-              <string>PLUS4 emulator location:</string>
+              <string>C64 Emulator location</string>
              </property>
             </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_23">
+             <property name="text">
+              <string>PET emulator location:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QPushButton" name="btnVic20Emulator">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_18">
+             <property name="text">
+              <string>OK64 emulator location</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="btnEmulator">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="leEmulatorC128"/>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="leEmulator"/>
+           </item>
+           <item row="4" column="2">
+            <widget class="QPushButton" name="btnPlus4Select">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="leVic20Emulator"/>
            </item>
            <item row="4" column="1">
             <widget class="QLineEdit" name="lePlus4Emulator"/>
            </item>
-           <item row="4" column="2">
-            <widget class="QPushButton" name="btnPlus4Select">
+           <item row="6" column="2">
+            <widget class="QPushButton" name="btnOKEmulator">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="label_79">
+             <property name="text">
+              <string>X16 emulator location</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QLineEdit" name="leX16Emu">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="2">
+            <widget class="QPushButton" name="btnX16Emulator">
              <property name="text">
               <string>...</string>
              </property>
@@ -256,7 +277,7 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
          <property name="geometry">
           <rect>
            <x>40</x>
-           <y>380</y>
+           <y>450</y>
            <width>621</width>
            <height>55</height>
           </rect>
@@ -289,7 +310,7 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
          <property name="geometry">
           <rect>
            <x>40</x>
-           <y>340</y>
+           <y>400</y>
            <width>803</width>
            <height>61</height>
           </rect>
@@ -305,7 +326,7 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
          <property name="geometry">
           <rect>
            <x>50</x>
-           <y>330</y>
+           <y>390</y>
            <width>421</width>
            <height>20</height>
           </rect>

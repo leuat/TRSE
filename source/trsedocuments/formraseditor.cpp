@@ -94,6 +94,23 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         emu = m_iniFile->getString("ok64_emulator");
     }
 
+    if (m_projectIniFile->getString("system")=="X16") {
+        emu = m_iniFile->getString("x16_emulator");
+        QString base = emu;
+#ifdef __linux__
+        base = base.remove("x16emu");
+#endif
+#ifdef __APPLE__
+        base = base.remove("x16emu");
+#endif
+#ifdef _WIN32
+        base = base.toLower();
+        base = base.remove("x16emu.exe");
+#endif
+      //  -rom /home/leuat/code/x16/rom.bin -char /home/leuat/code/x16/chargen.bin -prg @prg -run
+        params << "-rom" << base +"rom.bin" << "-char"<<base+"chargen.bin" << "-run" << "-prg";
+    }
+
     if (!QFile::exists(emu)) {
         Messages::messages.DisplayMessage(Messages::messages.NO_EMULATOR);
         ui->txtOutput->setText("Could not find the emulator for system '"+m_projectIniFile->getString("system")+"'\nMake sure you have set a correct path in the TRSE settings dialoge!\n\n"+
@@ -120,7 +137,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     else process.startDetached(emu, params);
 
 #else
-//    qDebug() << emu << params;
+  //  qDebug() << emu << params;
     process.startDetached(emu, params);
 #endif
 //    process.pi

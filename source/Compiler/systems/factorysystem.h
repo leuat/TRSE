@@ -36,7 +36,7 @@ public:
         if (type==AbstractSystem::OK64)
             return new SystemOK64(settings, proj);
         if (type==AbstractSystem::X16)
-            return new SystemC64(settings, proj);
+            return new SystemX16(settings, proj);
 
         return s;
     }

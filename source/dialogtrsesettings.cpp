@@ -47,6 +47,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leNesEmulator->setText(m_ini->getString("nes_emulator"));
     ui->leOK64Emulator->setText(m_ini->getString("ok64_emulator"));
     ui->lePlus4Emulator->setText(m_ini->getString("plus4_emulator"));
+    ui->leX16Emu->setText(m_ini->getString("x16_emulator"));
     ui->leC1541->setText(m_ini->getString("c1541"));
     ui->leExomizer->setText(m_ini->getString("exomizer"));
     ui->leTinyCrunch->setText(m_ini->getString("tinycrunch"));
@@ -105,6 +106,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("c128_emulator", ui->leEmulatorC128->text());
     m_ini->setString("ok64_emulator", ui->leOK64Emulator->text());
     m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
+    m_ini->setString("x16_emulator", ui->leX16Emu->text());
     m_ini->setString("c1541", ui->leC1541->text());
 
     m_ini->setString("nes_emulator", ui->leNesEmulator->text());
@@ -252,5 +254,15 @@ void DialogTRSESettings::on_btnPlus4Select_clicked()
         tr("Plus4 emulator"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->lePlus4Emulator->setText(filename);
+
+}
+
+
+void DialogTRSESettings::on_btnX16Emulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("X16 emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leX16Emu->setText(filename);
 
 }

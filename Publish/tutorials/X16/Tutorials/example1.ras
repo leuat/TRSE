@@ -1,0 +1,122 @@
+program Example1;
+var  
+   	j,val,k,col,l,c1,m,x,i,shift: byte = 0; 
+   	xx,yy,dy,dx,tangent,v2,v1 : byte;
+   	radial,r2:integer;
+	tanP, radP : pointer;
+
+	perlin : incbin("data/perlin16.dat");
+
+@define tanData $2000
+@define radData $3400
+@define margin 0
+
+procedure SetPalette();
+begin
+	vera_addr_hi:=4 | 16;
+	verapoke(0,10,0);
+	verapoke(0,0,1);
+	l:=2;
+	k:=0;
+	j:=0;
+	for i:=0 to 256 do 
+	begin
+		j:=i/2;
+		c1:=i/2;
+		m:=i;		
+		c1:=c1+j*16;
+
+		verapokedual(l, k,  c1, m);
+		k:=k+2;
+		if (k=0) then inc(l);
+	end;
+
+end;
+
+procedure SetupTables();
+begin
+	tanP:=@tanData;
+	radP:=@radData;
+	for i:=0 to screen_height do begin
+		x:=0;
+		for j:=0 to screen_width do begin
+
+			tangent:=(atan2(40,j,30,i));
+				
+			dx:=abs(40-j);
+			dy:=abs(30-i);
+			
+			radial:=dx*dx;
+			r2:=dy*dy;
+			radial:=radial+r2;
+			radial:=radial/20;
+			m:=sqrt(radial);
+			m:=m+6;
+			m:=256/m;
+			
+
+			tangent:=tangent/4;
+			tanP[j]:=tangent&15;
+			radP[j]:=(m&15)*16;
+		end;
+		tanP:=tanP+80;
+		radP:=radP+80;
+			
+	end;
+
+
+end;
+
+procedure FillScreen(val,color:byte);
+begin
+	vera_addr_hi:=0;
+	for i:=0 to screen_height do
+	begin
+		for j:=0 to screen_width do
+			verapokedual(i,j*2,color,val);
+
+	end;
+end;
+
+
+begin
+	SetPalette();	
+	SetupTables();
+	for i:=0 to 0 do perlin[i]:=perlin[i]/16;
+	
+	FillScreen($A0,0);
+
+	while (true) do 
+	begin
+		col:=0;
+		k:=$100;
+		tanP:=@tanData;
+		radP:=@radData;
+
+		for i:=0 to screen_height do begin
+			m:=val;
+			VERA_ADDR_MID:=i;
+			VERA_ADDR_LO:=@margin+1;
+			vera_addr_hi:=32; // add 1 
+			x:=@margin/2;
+
+			for j:=@margin to 2*screen_width-@margin step 2 do begin
+//				m:=sine[val*2+k]/8+val;
+//				m:=sine[radP[x]/16+val];
+//				col:=(tanP[x]  +(tanP[x]+radP[x]-m)*16) ;
+				xx:=(tanP[x]-m);
+				yy:=(radP[x]+v2);
+				col:=perlin[xx+yy];				
+				inc(x);
+				VERA_DATA1:=col;
+			end;
+			tanP:=tanP+80;
+			radP:=radP+80;
+			
+		end;
+		val:=val+1;
+		v2:=v2+16;
+		inc(shift);
+	end;
+	Loop();
+end.
