@@ -49,6 +49,10 @@ public:
     void ScrollX(Assembler* as);
     void VeraPoke(Assembler* as, bool isExtended);
     void ScrollY(Assembler* as);
+
+    void SetColor(Assembler* as);
+    void SetVideoMode(Assembler* as);
+
     void RightBitShift(Assembler* as, bool isRight);
     void Joystick(Assembler* as);
     void ReadJoy1(Assembler* as);

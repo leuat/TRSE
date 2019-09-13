@@ -581,6 +581,10 @@ c; VERA_ISR; X16; a;$9F27
 m; VeraPoke; X16; b,b,b
 m; VeraPokeDual; X16; b,b,b,b
 
+m; InitPalette;X16;b
+m; SetColor;X16;b,b,b
+m; SetVideoMode;X16;b,b,b
+
 c; SCREEN_WIDTH; X16; b; 80
 c; SCREEN_HEIGHT; X16; b; 60
 

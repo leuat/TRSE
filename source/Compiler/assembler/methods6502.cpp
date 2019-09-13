@@ -174,6 +174,22 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("ToggleVRAM32Inc"))
         ToggleRegisterBit(as,"$2000",2);
 
+    if (Command("SetVideoMode"))
+        SetVideoMode(as);
+
+    if (Command("InitPalette")) {
+        as->Asm("lda #20");
+        as->Asm("sta $9F20");
+        as->Asm("lda #2");
+        as->Asm("sta $9F21");
+//        as->Asm("lda #0");
+        LoadVar(as,0);
+        as->Asm("sta $9F22");
+    }
+    if (Command("SetColor"))
+        SetColor(as);
+
+
     if (Command("ReturnValue")) {
         LoadVar(as,0);
         as->Asm("rts");
@@ -2316,6 +2332,60 @@ void Methods6502::ScrollY(Assembler *as)
         as->Asm("and #$7F"); // 8 = 1000
         as->Asm("sta $d011");
     }
+}
+
+void Methods6502::SetColor(Assembler *as)
+{
+    QString zp = as->m_internalZP[0];
+    LoadVar(as,1);
+    as->Asm("asl");
+    as->Asm("asl");
+    as->Asm("asl");
+    as->Asm("asl");
+    as->Asm("sta "+zp);
+    LoadVar(as,2);
+    as->Asm("ora "+zp);
+    as->Asm("sta $9F23");
+    LoadVar(as,0);
+    as->Asm("sta $9F23");
+}
+
+void Methods6502::SetVideoMode(Assembler *as)
+{
+    // Three bytes
+//vera_addr_hi:=4;
+//verapoke(0,0,%00100001);
+
+    if (!m_node->m_params[1]->isPureNumeric())
+        ErrorHandler::e.Error("Parameter 2 (layer 1/2) must be 1 or 2 ",m_node->m_op.m_lineNumber);
+
+    int num = m_node->m_params[1]->getValueAsInt(as);
+
+    if (!(num==1 || num==2))
+        ErrorHandler::e.Error("Parameter 2 (layer 1/2) must be 1 or 2 ",m_node->m_op.m_lineNumber);
+
+    num = (num-1)*0x10;
+
+    as->Asm("lda #4");
+    as->Asm("sta $9F20");
+    as->Asm("lda #0");
+    as->Asm("sta $9F21");
+    as->Asm("lda #"+Util::numToHex(num));
+    as->Asm("sta $9F22");
+    QString zp = as->m_internalZP[0];
+    LoadVar(as,2);
+    as->Asm("sta "+zp);
+    LoadVar(as,0);
+    as->Asm("asl");
+    as->Asm("asl");
+    as->Asm("asl");
+    as->Asm("asl");
+    as->Asm("asl");
+    as->Asm("ora "+zp);
+    as->Asm("sta $9F23");
+
+
+
 }
 
 void Methods6502::RightBitShift(Assembler *as, bool isRight)
