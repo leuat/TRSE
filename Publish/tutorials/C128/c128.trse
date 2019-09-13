@@ -29,3 +29,7 @@ override_target_settings_org = $810
 override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
+project_path = /home/leuat/code/TRSE/Release/../tutorials/C128/
+pascal_settings_use_local_variables = 0
+open_files = ,tutorial_8_80col_spiral.ras
+current_file = tutorial_8_80col_spiral.ras

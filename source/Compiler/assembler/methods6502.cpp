@@ -2286,7 +2286,7 @@ void Methods6502::VeraPoke(Assembler *as, bool isExtended)
     LoadVar(as,2);
     as->Asm("sta $9F23");
     if (isExtended) {
-        as->Asm("inc $9F22");
+//        as->Asm("inc $9F22");
         LoadVar(as,3);
         as->Asm("sta $9F23");
     }

@@ -1131,7 +1131,7 @@ void ASTDispather6502::BuildToCmp(Node *node)
     as->Term();
     if (b!="") {
         as->Comment("Compare with pure num / var optimization");
-        as->Asm("cmp " + b);
+        as->Asm("cmp " + b+";keep");
     }
     else {
         // Perform a full compare : create a temp variable
@@ -1140,7 +1140,7 @@ void ASTDispather6502::BuildToCmp(Node *node)
         as->Term();
         QString tmpVarA = as->StoreInTempVar("binary_clause_temp_2");
         as->Asm("lda " + tmpVarB);
-        as->Asm("cmp " + tmpVarA);
+        as->Asm("cmp " + tmpVarA +";keep");
         as->PopTempVar();
         as->PopTempVar();
     }
@@ -1205,7 +1205,7 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
             as->Asm("bcc " + lbl2);
             as->Asm("bne " + lbl1);
             as->Asm("lda " + vara->getValue(as));
-            as->Asm("cmp " + lo);
+            as->Asm("cmp " + lo +" ;keep");
             as->Asm("bcc " + lbl2);
         }
         if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL) {
@@ -1215,7 +1215,7 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
             as->Asm("bcc " + lbl1);
             as->Asm("bne " + lbl2);
             as->Asm("lda " + vara->getValue(as));
-            as->Asm("cmp " + lo);
+            as->Asm("cmp " + lo+" ;keep");
             as->Asm("bcs " + lbl2);
         }
         if (node->m_op.m_type==TokenType::EQUALS) {
@@ -1224,7 +1224,7 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
             as->Asm("cmp " + hi + " ;keep");
             as->Asm("bne " + lbl2);
             as->Asm("lda " + vara->getValue(as));
-            as->Asm("cmp " + lo);
+            as->Asm("cmp " + lo+" ;keep");
             as->Asm("bne " + lbl2);
             as->Asm("jmp " + lbl1);
         }
@@ -1429,7 +1429,7 @@ void ASTDispather6502::Compare(NodeForLoop *node, NodeVar* var, bool isLarge, QS
         node->m_b->Accept(this);
         as->Term();
 
-        as->Asm("cmp " + as->m_stack["for"].current());
+        as->Asm("cmp " + as->m_stack["for"].current() +" ;keep");
 
         int stepValue = 1; // do we have a step value?
         if (node->m_step != nullptr) {
@@ -2445,7 +2445,7 @@ void ASTDispather6502::dispatch(NodeCase *node)
         if (node->m_conditionals[i]->isPure()) {
             node->m_variable->Accept(this);
             as->Term();
-            as->Asm("cmp " + node->m_conditionals[i]->getValue(as));
+            as->Asm("cmp " + node->m_conditionals[i]->getValue(as) +" ;keep");
 
         }
         else { // General term
@@ -2454,7 +2454,7 @@ void ASTDispather6502::dispatch(NodeCase *node)
             QString compare = as->StoreInTempVar("temp1");
             node->m_variable->Accept(this);
             as->Term();
-            as->Asm("cmp " + compare );
+            as->Asm("cmp " + compare +" ;keep");
         }
         as->Asm("bne "+labelNext);
         node->m_statements[i]->Accept(this); // RUN the current block
