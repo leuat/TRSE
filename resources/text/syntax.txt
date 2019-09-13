@@ -584,6 +584,8 @@ m; VeraPokeDual; X16; b,b,b,b
 m; InitPalette;X16;b
 m; SetColor;X16;b,b,b
 m; SetVideoMode;X16;b,b,b
+m; SetVeraBank;X16; b
+m; SetVeraIncrement;X16; b
 
 c; SCREEN_WIDTH; X16; b; 80
 c; SCREEN_HEIGHT; X16; b; 60

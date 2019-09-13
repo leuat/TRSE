@@ -277,6 +277,35 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("PPUSingle"))
         PPUSingle(as);
 
+//    m; SetVeraBank;X16; b
+  //  m; SetVeraAddition;X16; b
+
+
+    if (Command("SetVeraBank")) {
+        LoadVar(as,0);
+        QString zp = as->m_internalZP[0];
+        as->Asm("sta "+zp);
+        as->Asm("lda $9F20");
+        as->Asm("and #%11110000");
+        as->Asm("ora "+zp);
+        as->Asm("sta $9F20");
+
+    }
+    if (Command("SetVeraIncrement")) {
+        LoadVar(as,0);
+        QString zp = as->m_internalZP[0];
+        as->Asm("asl");
+        as->Asm("asl");
+        as->Asm("asl");
+        as->Asm("asl");
+        as->Asm("sta "+zp);
+        as->Asm("lda $9F20");
+        as->Asm("and #%00001111");
+        as->Asm("ora "+zp);
+        as->Asm("sta $9F20");
+
+    }
+
 
     if (Command("PPUAttributeDump"))
         PPUDump(as,0x23,0xC0,64,1);

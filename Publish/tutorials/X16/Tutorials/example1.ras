@@ -55,50 +55,57 @@ end;
 
 procedure FillScreen(val,color:byte);
 begin
-	vera_addr_hi:=0;
+	SetVeraBank(0);
+	SetVeraIncrement(2);
 	for i:=0 to screen_height do
 	begin
 		for j:=0 to screen_width do
-			verapokedual(i,j*2,color,val);
+			verapokedual(i,j*2,val,color);
 
 	end;
 end;
 
 
+procedure RenderScreen();
 begin
-	SetVideoMode(1,1,1);
+	tanP:=@tanData;
+	radP:=@radData;
+	SetVeraIncrement(2);
+	SetVeraBank(0);
+
+	m:=val;
+	for i:=0 to screen_height do begin
+		VERA_ADDR_MID:=i;
+		VERA_ADDR_LO:=@margin+1;
+		x:=@margin/2;
+
+		for j:=@margin to screen_width-@margin/2 do 
+		begin
+			xx:=(tanP[j]-m);
+			yy:=(radP[j]+v2);
+			col:=perlin[xx+yy];				
+			VERA_DATA1:=col;
+		end;
+		tanP:=tanP+80;
+		radP:=radP+80;
+			
+	end;
+end;
+
+
+begin
+	// [ video mode, layer (1 or 2), enabled=1, disabled =0 ]
+	SetVideoMode(1,1,true);
 
 	SetPalette();	
 	SetupTables();
 	
 	FillScreen($A0,0);
-	vera_addr_hi:=32; // add 2 
+	
 
 	while (true) do 
 	begin
-		col:=0;
-		k:=$100;
-		tanP:=@tanData;
-		radP:=@radData;
-
-		m:=val;
-		for i:=0 to screen_height do begin
-			VERA_ADDR_MID:=i;
-			VERA_ADDR_LO:=@margin+1;
-			x:=@margin/2;
-
-			for j:=@margin to 2*screen_width-@margin step 2 do 
-			begin
-				xx:=(tanP[x]-m);
-				yy:=(radP[x]+v2);
-				col:=perlin[xx+yy];				
-				inc(x);
-				VERA_DATA1:=col;
-			end;
-			tanP:=tanP+80;
-			radP:=radP+80;
-			
-		end;
+		RenderScreen();
 		val:=val+1;
 		v2:=v2+16;
 	end;
