@@ -7,15 +7,28 @@ var
 
 	perlin : incbin("data/perlin16.dat");
 
+/*
+
+	Commander X16 example. 
+	Disclaimer: Support for the X16 & methods & this example was created the very same
+	day that TRSE 0.08 was released. Expect a huge update for TRSE 0.09.
+
+	No help text yet, no time. 
+	
+*/
+
+
+// Positions for the generated data
 @define tanData $2000
 @define radData $3400
 @define margin 0
 
+// Set som funky palette
 procedure SetPalette();
 begin
 	Initpalette(0);
 	for i:=0 to 256 do 
-		setcolor(i/16,i/30,i/20);
+		SetColor(i/16,i/30,i/20);
 
 end;
 
@@ -37,12 +50,10 @@ begin
 			radial:=radial+r2;
 			radial:=radial/20;
 			m:=sqrt(radial);
-			m:=m+6;
+			m:=m+2;
 			m:=256/m;
 			
-
-			tangent:=tangent/4;
-			tanP[j]:=tangent&15;
+			tanP[j]:=(tangent/4)&15;
 			radP[j]:=(m&15)*16;
 		end;
 		tanP:=tanP+80;
@@ -53,19 +64,18 @@ begin
 
 end;
 
+// Fill screen with a specific value + color
 procedure FillScreen(val,color:byte);
 begin
 	SetVeraBank(0);
 	SetVeraIncrement(2);
 	for i:=0 to screen_height do
-	begin
 		for j:=0 to screen_width do
 			verapokedual(i,j*2,val,color);
 
-	end;
 end;
 
-
+// Render the tunnel!
 procedure RenderScreen();
 begin
 	tanP:=@tanData;
@@ -73,15 +83,14 @@ begin
 	SetVeraIncrement(2);
 	SetVeraBank(0);
 
-	m:=val;
 	for i:=0 to screen_height do begin
-		VERA_ADDR_MID:=i;
-		VERA_ADDR_LO:=@margin+1;
+		vera_addr_mid:=i; // y
+		vera_addr_lo:=@margin+1; // x
 		x:=@margin/2;
 
 		for j:=@margin to screen_width-@margin/2 do 
 		begin
-			xx:=(tanP[j]-m);
+			xx:=(tanP[j]);
 			yy:=(radP[j]+v2);
 			col:=perlin[xx+yy];				
 			VERA_DATA1:=col;
@@ -90,6 +99,7 @@ begin
 		radP:=radP+80;
 			
 	end;
+
 end;
 
 
@@ -101,7 +111,6 @@ begin
 	SetupTables();
 	
 	FillScreen($A0,0);
-	
 
 	while (true) do 
 	begin

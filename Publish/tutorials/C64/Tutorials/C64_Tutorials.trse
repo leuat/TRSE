@@ -28,6 +28,4 @@ override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 output_type = prg
-open_files = ,easy/12_sqrt_and_atan.ras, Hello.ras
-project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/Tutorials/
-current_file = Hello.ras
+open_files =, Hello.ras
