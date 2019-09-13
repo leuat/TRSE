@@ -28,27 +28,27 @@ begin
 		
 		readjoy2();
 
-		if (joy2 & @JOY_UP) then printstring("UP",0,2);
+                if (joy2 & JOY_UP) then printstring("UP",0,2);
 		screenmemory := screenmemory + 40;
-		if (joy2 & @JOY_DOWN) then printstring("DOWN",0,4);
+                if (joy2 & JOY_DOWN) then printstring("DOWN",0,4);
 		screenmemory := screenmemory + 40;
-		if (joy2 & @JOY_LEFT) then printstring("LEFT",0,4);
+                if (joy2 & JOY_LEFT) then printstring("LEFT",0,4);
 		screenmemory := screenmemory + 40;
-		if (joy2 & @JOY_RIGHT) then printstring("RIGHT",0,5);
+                if (joy2 & JOY_RIGHT) then printstring("RIGHT",0,5);
 		screenmemory := screenmemory + 40;
-		if (joy2 & @JOY_FIRE) then printstring("FIRE",0,5);
+                if (joy2 & JOY_FIRE) then printstring("FIRE",0,5);
 		screenmemory := screenmemory + 40;
 		
 		// the following will briefly appear becasue they are only true when a joystick direction or fire button is first pressed
-		if (joy2pressed & @JOY_UP) then printstring("UP FIRST PRESS",0,14);
+                if (joy2pressed & JOY_UP) then printstring("UP FIRST PRESS",0,14);
 		screenmemory := screenmemory + 40;
-		if (joy2pressed & @JOY_DOWN) then printstring("DOWN FIRST PRESS",0,16);
+                if (joy2pressed & JOY_DOWN) then printstring("DOWN FIRST PRESS",0,16);
 		screenmemory := screenmemory + 40;
-		if (joy2pressed & @JOY_LEFT) then printstring("LEFT FIRST PRESS",0,16);
+                if (joy2pressed & JOY_LEFT) then printstring("LEFT FIRST PRESS",0,16);
 		screenmemory := screenmemory + 40;
-		if (joy2pressed & @JOY_RIGHT) then printstring("RIGHT FIRST PRESST",0,17);
+                if (joy2pressed & JOY_RIGHT) then printstring("RIGHT FIRST PRESST",0,17);
 		screenmemory := screenmemory + 40;
-		if (joy2pressed & @JOY_FIRE) then printstring("FIRE FIRST PRESS",0,17);
+                if (joy2pressed & JOY_FIRE) then printstring("FIRE FIRST PRESS",0,17);
 		
 
 		waitforraster(180);
