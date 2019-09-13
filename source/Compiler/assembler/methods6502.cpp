@@ -6250,7 +6250,7 @@ void Methods6502::ReadJoy1(Assembler *as)
 
 void Methods6502::ReadJoy2(Assembler *as)
 {
-    VerifyInitialized("readjoy1","InitJoy1");
+    VerifyInitialized("readjoy2","InitJoy2");
 
     as->Asm("jsr callReadJoy2");
 }
