@@ -194,6 +194,11 @@ int NodeBinOP::BothPureNumbersBinOp(Assembler *as) {
         na&=nb;
     if (m_op.m_type==TokenType::BITOR)
         na|=nb;
+    if (m_op.m_type==TokenType::SHR)
+        na>>=nb;
+    if (m_op.m_type==TokenType::SHL)
+        na<<=nb;
+
 
     return na;
 

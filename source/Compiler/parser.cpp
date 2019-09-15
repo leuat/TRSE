@@ -860,7 +860,7 @@ Node* Parser::Factor()
         return new NodeNumber(t, t.m_intVal);
     }
 
-    if (t.m_type == TokenType::PLUS || t.m_type==TokenType::MINUS) {
+    if (t.m_type == TokenType::PLUS || t.m_type==TokenType::MINUS ){
         Eat(t.m_type);
         return new NodeUnaryOp(t, Factor());
     }
@@ -892,7 +892,10 @@ Node* Parser::Term()
 {
     Node* node = Factor();
     while (m_currentToken.m_type == TokenType::Type::MUL || m_currentToken.m_type == TokenType::Type::DIV
-    || m_currentToken.m_type == TokenType::Type::BITAND || m_currentToken.m_type == TokenType::Type::BITOR){
+    || m_currentToken.m_type == TokenType::Type::BITAND || m_currentToken.m_type == TokenType::Type::BITOR
+     || m_currentToken.m_type == TokenType::Type::SHR || m_currentToken.m_type == TokenType::Type::SHL
+
+           ){
         Token t = m_currentToken;
         Eat(m_currentToken.m_type);
 

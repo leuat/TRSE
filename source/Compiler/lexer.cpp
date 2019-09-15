@@ -376,6 +376,11 @@ Token Lexer::GetNextToken()
                 Advance();
                 return Token(TokenType::GREATEREQUAL, ">=");
             }
+            if (peek()==">") {
+                Advance();
+                Advance();
+                return Token(TokenType::SHR, ">>");
+            }
             Advance();
             return Token(TokenType::GREATER, ">");
         }
@@ -384,6 +389,11 @@ Token Lexer::GetNextToken()
                 Advance();
                 Advance();
                 return Token(TokenType::LESSEQUAL, "<=");
+            }
+            if (peek()=="<") {
+                Advance();
+                Advance();
+                return Token(TokenType::SHL, "<<");
             }
 
             Advance();

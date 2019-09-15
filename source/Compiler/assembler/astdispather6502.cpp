@@ -324,6 +324,35 @@ void ASTDispather6502::RightIsPureNumericMulDiv16bit(Node *node) {
     as->PopTempVar();
 }
 
+void ASTDispather6502::HandleShiftLeftRight(NodeBinOP *node)
+{
+    QString cmd = node->m_op.m_type==TokenType::SHR?"lsr":"asl";
+
+    if (node->m_right->isPureNumeric()) {
+        node->m_left->Accept(this);
+        as->Term();
+
+        int val = node->m_right->getValueAsInt(as);
+        for (int i=0;i<val;i++)
+            as->Asm(cmd);
+        return;
+    }
+
+    node->m_right->Accept(this);
+    as->Term();
+    as->Asm("tax");
+    node->m_left->Accept(this);
+    as->Term();
+    QString lbl = as->NewLabel("lblShift");
+    as->Label(lbl);
+    as->Asm(cmd);
+    as->Asm("dex");
+    as->Asm("cpx #0");
+    as->Asm("bne "+lbl);
+
+    as->PopLabel("lblShift");
+}
+
 void ASTDispather6502::Mul16x8(Node *node) {
     as->Comment("Mul 16x8 setup");
     as->Asm("");
@@ -488,7 +517,6 @@ void ASTDispather6502::dispatch(NodeBinOP *node)
 
     if (node->isPureNumeric()) {
 
-
         int val = node->BothPureNumbersBinOp(as);
         QString s = "#";
         if (node->m_left->isAddress() || node->m_right->isAddress())
@@ -511,6 +539,12 @@ void ASTDispather6502::dispatch(NodeBinOP *node)
         HandleMulDiv(node);
         return;
     }
+    if (node->m_op.m_type==TokenType::SHR || node->m_op.m_type==TokenType::SHL) {
+        HandleShiftLeftRight(node);
+        return;
+    }
+
+
     HandleRestBinOp(node);
     // The rest is only plus and minus, and etc
 

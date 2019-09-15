@@ -67,6 +67,8 @@ public:
     void Div16x8(Node* node);
     void RightIsPureNumericMulDiv16bit(Node* node);
 
+    void HandleShiftLeftRight(NodeBinOP* node);
+
     void HandleGenericBinop16bit(Node* node);
     void HandleVarBinopB16bit(Node* node);
     bool HandleSingleAddSub(Node* node);
