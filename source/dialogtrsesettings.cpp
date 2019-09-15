@@ -41,8 +41,10 @@ void DialogTRSESettings::FillFromIni()
     QFontDatabase d;
     QString keep = m_ini->getString("editor_font");
     ui->cbmFont->clear();
-
-    ui->cbmFont->addItems(d.families());
+    QStringList fam = d.families();
+    if (!fam.contains("Courier"))
+        fam<<"Courier";
+    ui->cbmFont->addItems(fam);
     ui->cbmFont->setCurrentText(keep);
 
 
