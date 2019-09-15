@@ -180,7 +180,7 @@ m; SetMultiColorMode; C64, PLUS4, C128;
 m; SetRegularColorMode; C64, PLUS4, C128;
 m; SetBitmapMode; C64, PLUS4, C128;
 m; SetTextMode; C64, PLUS4, C128;
-m; SetBank; C64, PLUS4, C128; b
+m; SetBank; C64, C128; b
 m; ScreenOff; C64, PLUS4, C128;
 m; ScreenOn; C64, PLUS4, C128;
 m; CopyImageColorData; C64, PLUS4, C128; a,n
