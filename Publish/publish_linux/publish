@@ -19,6 +19,7 @@ cp -r ../tutorials/Amiga trse/tutorials/
 cp -r ../tutorials/PET trse/tutorials/
 cp -r ../tutorials/PLUS4 trse/tutorials/
 cp -r ../tutorials/Fjong_Raytracer_C64_tutorials trse/tutorials/
+cp -r ../tutorials/X16 trse/tutorials/
 cp trse.sh trse
 tar -cvf trse_linux64.tar trse
 gzip trse_linux64.tar

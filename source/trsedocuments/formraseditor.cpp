@@ -108,7 +108,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         base = base.remove("x16emu.exe");
 #endif
       //  -rom /home/leuat/code/x16/rom.bin -char /home/leuat/code/x16/chargen.bin -prg @prg -run
-        params << "-rom" << base +"rom.bin" << "-char"<<base+"chargen.bin" << "-run" << "-prg";
+        params << "-rom" << base +"rom.bin" << "-char"<<base+"chargen.bin" <<"-scale" <<"2" << "-run" << "-prg";
     }
 
     if (!QFile::exists(emu)) {
@@ -157,7 +157,7 @@ void FormRasEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile* pro)
 
 void FormRasEditor::setupEditor()
 {
-    m_font.setFamily("Courier");
+    m_font.setFamily(m_iniFile->getString("editor_font"));
     m_font.setFixedPitch(true);
     m_font.setPointSize(m_iniFile->getdouble("font_size"));
     //ui->txtEditor->setTextColor(QColor(220,210,190));

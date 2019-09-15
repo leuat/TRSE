@@ -577,7 +577,7 @@ c; VERA_DATA2; X16; a;$9F24
 c; VERA_CTRL; X16; a;$9F25
 c; VERA_IEN; X16; a;$9F26
 c; VERA_ISR; X16; a;$9F27
-
+c; RAM_BANK ; X16; a; $9F61
 m; VeraPoke; X16; b,b,b
 m; VeraPokeDual; X16; b,b,b,b
 
@@ -713,6 +713,7 @@ f ; SetPosition; s,f,f,f
 f ; AddPosition; s,f,f,f
 f ; AddC64LineToData; f,f,f,f
 f ; SaveRawData; s
+f ; SaveRawScreen; s
 f ; CompressAndSaveHorizontalData ; f,f,s,s
 f ; AddScreen; f,f,f,f
 f ; SaveScreenAndCharset;s,s

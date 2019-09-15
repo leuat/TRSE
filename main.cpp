@@ -103,6 +103,7 @@ int main(int argc, char *argv[])
 {
 //    ConvertAllObjs();
 //    qDebug() << Util::BinopString("#$C");
+//    ConvertPerlin("perlin512.jpg","perlin64.bin",8);
     QApplication a(argc, argv);
     QString oldCurDir = QDir::currentPath();
     fixCurrentDir(QString(argv[0]));

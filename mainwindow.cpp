@@ -213,6 +213,9 @@ void MainWindow::VerifyDefaults()
     if (!m_iniFile.contains("tab_width"))
         m_iniFile.setFloat("tab_width", 4);
 
+    if (!m_iniFile.contains("editor_font"))
+        m_iniFile.setString("editor_font","Courier");
+
     if (!m_iniFile.contains("auto_inject"))
         m_iniFile.setFloat("auto_inject", 1);
 

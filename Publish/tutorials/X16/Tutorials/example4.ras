@@ -1,0 +1,139 @@
+program Example7_simple_twister;
+var  
+   i,j,k,m,l,time,y1,y2: byte = 0;  
+   
+	dest,source,zp : pointer;
+		
+@define twisterLoc $8000
+
+
+	sine2 : array[256] of byte;
+
+
+	twisterData : incbin("data/twister.bin",@twisterLoc);
+	// 64 frames * 2 for table addresses
+	twisterTable : array[256*2] of byte;
+
+
+// Set som funky palette
+procedure SetPalette(aa,bb,cc:byte);
+var
+  ia,ib,ic: byte;
+begin
+	Initpalette(0);
+	for i:=0 to 256 do 
+	begin
+		ia:=i/aa;
+		ib:=i/bb;
+		ic:=i/cc;
+		SetColor(ia,ib,ic);
+	end;
+
+end;
+	
+procedure UpdateTwister();
+begin
+	// Point to some place on the (bitmap) screen, start of twister
+//	dest:=$6000 + 8*40*6 + 16*8 ;
+
+	// Two opposing sine phases
+	y1:=time*3;
+	y2:=1-time*2;
+	
+	setverabank(0);
+	setveraincrement(1);	
+	// Draw 16 x 8 rows
+	j:=sine[time*2];
+	zp:=320+j;
+	zp:=320;
+	for i:=0 to 24 do 
+	begin
+		
+		// For each i, draw 8 rows
+		for k:=0 to 8 do begin
+			if (hi(zp)>=253) then 
+			begin 
+				setverabank(1);
+//			zp:=zp-640;
+			end;
+//
+			zp:=zp+640;			
+
+			vera_addr_mid := hi(zp);
+			vera_addr_lo := lo(zp);
+		
+
+			l:=((time+sine2[y1] - sine2[y2]))&63;
+			source := AddressTable( twisterTable, 0, l ); 
+	
+			// Use m as row counter
+			
+			// Then copy 8 bytes. Remember that data is stored in 8x8 blocks on the screen, so you can't
+			// just do a single memcpy - you need to "skip" the next 8 screen bytes for each byte of source data
+			// (you should *really* rewrite this inner loop into assembly language)
+/*			vera_data1:=0;
+			vera_data1:=0;
+			vera_data1:=0;
+			vera_data1:=0;
+			vera_data1:=0;*/
+			m:=0;
+			for j:=0 to 8 do begin
+				vera_data1:=source[m];
+				inc(m);
+				vera_data1:=source[m];
+				inc(m);
+				vera_data1:=source[m];
+				inc(m);
+				vera_data1:=source[m];
+				inc(m);
+				vera_data1:=source[m];
+				inc(m);
+				vera_data1:=source[m];
+				inc(m);
+				vera_data1:=source[m];
+				inc(m);
+				vera_data1:=source[m];
+				inc(m);
+//				vera_data1:=source[j];
+			end;
+/*			vera_data1:=0;
+			vera_data1:=0;
+			vera_data1:=0;
+			vera_data1:=0;
+			vera_data1:=0;*/
+			// Increase phase values
+			y1:=y1+1;
+			y2:=y2+1;
+
+		end;
+		// Increase screen pointer to the next row * 8
+//		dest:=dest+320;
+	end;
+
+end;
+
+procedure InitScreen();
+begin
+	setvideomode(7,1,true);
+	verapoke(0,1,%00110000);
+	verapoke(0,4,0);
+	verapoke(0,5,0);
+	SetPalette(30,20,16);
+
+	for i:=0 to 256 do sine2[i]:=sine[i]/3;
+end;
+
+
+begin
+	InitScreen();
+	// Create twister address table: Twister consist of 64 rows of 16 byte data starting at @twisterLoc	
+	CreateAddressTable( twisterTable, @twisterLoc, 64, 256 );
+	
+	while (true) do
+	begin
+		UpdateTwister();
+
+		inc(time);
+	end;
+	
+end.

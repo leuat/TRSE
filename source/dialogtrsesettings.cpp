@@ -37,6 +37,15 @@ DialogTRSESettings::DialogTRSESettings(QWidget *parent) :
 
 void DialogTRSESettings::FillFromIni()
 {
+
+    QFontDatabase d;
+    QString keep = m_ini->getString("editor_font");
+    ui->cbmFont->clear();
+
+    ui->cbmFont->addItems(d.families());
+    ui->cbmFont->setCurrentText(keep);
+
+
     ui->leVasmm->setText(m_ini->getString("vasmm"));
     ui->le68kTargetDir->setText(m_ini->getString("vasmm_target_dir"));
     ui->leDasm->setText(m_ini->getString("dasm"));
@@ -265,4 +274,9 @@ void DialogTRSESettings::on_btnX16Emulator_clicked()
     if (filename!="")
         ui->leX16Emu->setText(filename);
 
+}
+
+void DialogTRSESettings::on_cbmFont_currentIndexChanged(const QString &arg1)
+{
+    m_ini->setString("editor_font", arg1);
 }

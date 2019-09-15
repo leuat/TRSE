@@ -24,7 +24,7 @@
 
 #include <QDialog>
 #include "source/LeLib/util/cinifile.h"
-
+#include <QFontDatabase>
 namespace Ui {
 class DialogTRSESettings;
 }
@@ -92,6 +92,8 @@ private slots:
     void on_btnPlus4Select_clicked();
 
     void on_btnX16Emulator_clicked();
+
+    void on_cbmFont_currentIndexChanged(const QString &arg1);
 
 private:
     Ui::DialogTRSESettings *ui;

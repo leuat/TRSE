@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>551</width>
-    <height>333</height>
+    <width>660</width>
+    <height>368</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>10</y>
      <width>461</width>
-     <height>211</height>
+     <height>232</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout" rowstretch="1,1,1,1,1,0">
@@ -68,6 +68,11 @@
       <item>
        <property name="text">
         <string>7</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>8</string>
        </property>
       </item>
      </widget>
@@ -141,7 +146,7 @@
     <rect>
      <x>20</x>
      <y>270</y>
-     <width>501</width>
+     <width>567</width>
      <height>41</height>
     </rect>
    </property>
@@ -163,7 +168,7 @@
     <item>
      <widget class="QPushButton" name="btnSave_2">
       <property name="text">
-       <string>Export amiga palette</string>
+       <string>Export palette</string>
       </property>
      </widget>
     </item>

@@ -62,6 +62,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 7;
   if (t==OK64)
       return 8;
+  if (t==X16)
+      return 9;
 
   return 255;
 }
@@ -86,6 +88,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return PICO8;
     if (c==8)
         return OK64;
+    if (c==9)
+        return X16;
 
     return UNSUPPORTED;
 
@@ -197,7 +201,10 @@ int LColorList::getNoBitplanes() {
     if (m_list.count()==8) return 3;
     if (m_list.count()==16) return 4;
     if (m_list.count()==32) return 5;
-    return 0;
+    if (m_list.count()==64) return 6;
+    if (m_list.count()==128) return 7;
+    if (m_list.count()==256) return 8;
+    return 8;
 }
 
 void LColorList::setNoBitplanes(int bpl)
@@ -209,12 +216,12 @@ QByteArray LColorList::toArray()
 {
     QByteArray data;
     data.resize(m_list.count()*3+1);
-    data[0] =m_list.count();//(char)getNoBitplanes();
+    data[0] = m_list.count();//(char)getNoBitplanes();
     int i = 0;
     for (LColor c: m_list) {
-        data[3*i+0+1] = (char)c.color.red();
-        data[3*i+1+1] = (char)c.color.green();
-        data[3*i+2+1] = (char)c.color.blue();
+        data[3*i+0+1] = (uchar)c.color.red();
+        data[3*i+1+1] = (uchar)c.color.green();
+        data[3*i+2+1] = (uchar)c.color.blue();
         i++;
 
     }
@@ -224,13 +231,20 @@ QByteArray LColorList::toArray()
 
 void LColorList::fromArray(QByteArray &d)
 {
-    int size = d[0];
+    int size = (uchar)d[0];
+    int shift = 1;
+    qDebug() << size;
+    if (size==0) {
+        size = 256;
+        shift = 0;
+        qDebug() << "HERE";
+    }
     m_list.clear();
-//    setNoBitplanes(size);
+ //    setNoBitplanes(size);
     for (int i=0;i<size;i++) {
-        QColor col((unsigned char)d[3*i+1],
-                (unsigned char)d[3*i+2],
-                (unsigned char)d[3*i+3]);
+        QColor col((unsigned char)d[3*i+0+shift],
+                (unsigned char)d[3*i+1+shift],
+                (unsigned char)d[3*i+2+shift]);
         m_list.append(LColor(col,""));
     }
 }
@@ -260,6 +274,9 @@ void LColorList::Initialize(Type t)
         InitPICO8();
     if (m_type == Type::OK64)
         InitOK64();
+    if (m_type == Type::X16) {
+        InitOK64();
+    }
 
 
     m_metric = new LinearMetric();
@@ -413,7 +430,7 @@ void LColorList::InitOK64()
 {
     m_list.clear();
     float s = 1; // saturation
-    for (uchar i=0;i<255;i++) {
+    for (int i=0;i<256;i++) {
         int b = (i&0b11100000);
         int g = (i&0b00011000)<<3;
         int r = (i&0b00000111)<<5;
@@ -423,11 +440,11 @@ void LColorList::InitOK64()
         g = Util::minmax(c+(g-c)*s,0,255);
         b = Util::minmax(c+(b-c)*s,0,255);
 
-
         m_list.append(LColor(QColor(r,g,b),""+QString::number((i))));
     }
 
 }
+
 
 void LColorList::InitCGA2_LOW()
 {
@@ -475,7 +492,7 @@ void LColorList::ExportAmigaPalette(QString filename)
     QByteArray data;
     for (LColor l: m_list) {
         unsigned short d = l.get12BitValue();
-        qDebug() << QString::number(d,16);
+//        qDebug() << QString::number(d,16);
         data.append((char)((d>>8)&0xFF));
         data.append((char)(d&0xFF));
     }
@@ -514,7 +531,7 @@ void LColorList::CreateUI(QLayout* ly, int type)
 //    m_buttons.clear();
     int xx=0, yy=0;
     int width=40/(max(m_list.count()/16,1));
-    qDebug() << width;
+//    qDebug() << width;
     if (m_list.count()>200) {
         width = 16;
     }

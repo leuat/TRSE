@@ -91,8 +91,10 @@ void LImageAmiga::SaveBin(QFile &file)
 void LImageAmiga::LoadBin(QFile &file)
 {
     LImageQImage::LoadBin(file);
-    char size;
+    uchar size;
+
     file.read((char*)&size,1);
+
     if (!file.atEnd()) {
         QByteArray d = file.read(size*3);
         d.insert(0,size);

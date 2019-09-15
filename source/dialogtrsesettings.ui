@@ -19,7 +19,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
@@ -30,11 +30,18 @@
           <rect>
            <x>30</x>
            <y>50</y>
-           <width>491</width>
+           <width>641</width>
            <height>121</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="leFontSizeMemoryAnalyzer">
+            <property name="inputMask">
+             <string>99</string>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_9">
             <property name="text">
@@ -42,12 +49,15 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="leFontSizeMemoryAnalyzer">
-            <property name="inputMask">
-             <string>99</string>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_27">
+            <property name="text">
+             <string>Code editor font</string>
             </property>
            </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="cbmFont"/>
           </item>
          </layout>
         </widget>

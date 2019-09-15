@@ -24,7 +24,7 @@ void LImageOK64::Initialize(int width, int height)
 
     m_width = width;
     m_height = height;
-    m_data.resize(256*256);
+    m_data.resize(width*height);
     m_data.fill(0);
 
 
@@ -48,11 +48,23 @@ unsigned int LImageOK64::getPixel(int x, int y)
 void LImageOK64::SaveBin(QFile &f)
 {
     f.write(m_data);
+    f.write(m_colorList.toArray());
+
 }
 
 void LImageOK64::LoadBin(QFile &f)
 {
-    m_data = f.readAll();
+    m_data = f.read(m_width*m_height);
+    uchar size;
+    f.read((char*)&size,1);
+    size = 0;
+    if (!f.atEnd()) {
+        QByteArray d = f.read(256*3);
+        d[0]=0;
+        //d.insert(0,256);
+        m_colorList.fromArray(d);
+    }
+
 }
 
 void LImageOK64::ToQImage(LColorList &lst, QImage &img, float zoom, QPointF center)
@@ -97,3 +109,26 @@ void LImageOK64::ImportBin(QFile &file)
 {
     m_data = file.readAll();
 }
+
+/*void LImageAmiga::SaveBin(QFile &file)
+{
+    LImageQImage::SaveBin(file);
+    file.write(m_colorList.toArray());
+}
+
+void LImageAmiga::LoadBin(QFile &file)
+{
+    LImageQImage::LoadBin(file);
+    uchar size;
+
+    file.read((char*)&size,1);
+
+    if (!file.atEnd()) {
+        QByteArray d = file.read(size*3);
+        d.insert(0,size);
+        m_colorList.fromArray(d);
+    }
+}
+
+
+*/

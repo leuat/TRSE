@@ -85,8 +85,8 @@ LImage* LImageIO::Load(QString filename)
         return nullptr;
     }
 */
-   // qDebug() << imageType;
-   // qDebug() << paletteType;
+//    qDebug() << imageType;
+  //  qDebug() << paletteType;
     LImage* img = LImageFactory::Create(LImage::CharToType(imageType), LColorList::CharToType(paletteType));
     if (img==nullptr)
         return nullptr;

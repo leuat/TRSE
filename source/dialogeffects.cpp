@@ -606,6 +606,19 @@ static int SaveData(lua_State* L) {
     return 0;
 }
 
+static int SaveDataScreen(lua_State* L) {
+    if (!VerifyFjongParameters(L,"SaveData"))
+        return 0;
+
+    QFile f(m_currentDir+"/"+ lua_tostring(L,1));
+    f.open(QFile::WriteOnly);
+
+    f.write(m_screenData);
+    f.close();
+    m_screenData.clear();
+    return 0;
+}
+
 static int SaveCompressedSpriteData(lua_State* L) {
 
     m_compression.SaveCompressedSpriteData(m_charData, m_currentDir+"/"+ lua_tostring(L,1), m_currentDir+"/"+ lua_tostring(L,2), lua_tonumber(L,3),lua_tonumber(L,4));
@@ -859,6 +872,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddC64LineToData", AddToData);
 
     lua_register(m_script->L, "SaveRawData", SaveData);
+    lua_register(m_script->L, "SaveRawScreen", SaveDataScreen);
 
     lua_register(m_script->L, "CompressAndSaveHorizontalData", CompressAndSaveHorizontalData);
     lua_register(m_script->L, "OptimizeScreenAndCharset", OptimizeScreenAndCharset);
