@@ -7,7 +7,9 @@ FormFjong::FormFjong(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_font.setFamily(m_iniFile->getString("editor_font"));
+    QString fnt = m_iniFile->getString("editor_font");
+    if (fnt=="") fnt ="Courier";
+    m_font.setFamily(fnt);
     m_font.setFixedPitch(true);
     m_font.setPointSize(14);//m_iniFile->getdouble("font_size"));
 

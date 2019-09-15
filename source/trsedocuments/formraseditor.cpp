@@ -157,7 +157,9 @@ void FormRasEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile* pro)
 
 void FormRasEditor::setupEditor()
 {
-    m_font.setFamily(m_iniFile->getString("editor_font"));
+    QString fnt = m_iniFile->getString("editor_font");
+    if (fnt=="") fnt ="Courier";
+    m_font.setFamily(fnt);
     m_font.setFixedPitch(true);
     m_font.setPointSize(m_iniFile->getdouble("font_size"));
     //ui->txtEditor->setTextColor(QColor(220,210,190));
