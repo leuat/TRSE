@@ -7,12 +7,6 @@ FormFjong::FormFjong(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QString fnt = m_iniFile->getString("editor_font");
-    if (fnt=="") fnt ="Courier";
-    m_font.setFamily(fnt);
-    m_font.setFixedPitch(true);
-    m_font.setPointSize(14);//m_iniFile->getdouble("font_size"));
-
 
 
     ui->txtEditor->setFont(m_font);
@@ -82,6 +76,18 @@ void FormFjong::Init(LuaScript &s)
     lua_pop(s.L, 1);
     //        return result;
 }
+void FormFjong::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile* pro)
+{
+    TRSEDocument::InitDocument(t,ini, pro);
+    QString fnt = m_iniFile->getString("editor_font");
+    if (fnt=="") fnt ="Courier";
+    m_font.setFamily(fnt);
+    m_font.setFixedPitch(true);
+    m_font.setPointSize(m_iniFile->getdouble("font_size"));
+
+
+}
+
 
 
 void FormFjong::Run()

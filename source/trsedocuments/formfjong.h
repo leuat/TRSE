@@ -31,8 +31,10 @@ public:
     void Save(QString filename) override;
     void Load(QString filename) override;
 
-    void UpdateFromIni();
+    void UpdateFromIni() override;
 
+
+    void InitDocument(WorkerThread *t, CIniFile *ini, CIniFile* pro) override;
 
     void Init(LuaScript& s);
 
