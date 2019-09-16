@@ -9,9 +9,10 @@ SystemC64::SystemC64(CIniFile *settings, CIniFile *proj) : SystemMOS6502(setting
     m_labels.append(SystemLabel(SystemLabel::STACK,"Stack",0x0100,0x01FF));
     m_labels.append(SystemLabel(SystemLabel::BASIC,"Basic",0x0200,0x03FF));
     m_labels.append(SystemLabel(SystemLabel::FREE,"Free",0x0800,0xBFFF));
+    m_labels.append(SystemLabel(SystemLabel::SID,"VIC",0xD000,0xD3FF));
     m_labels.append(SystemLabel(SystemLabel::SID,"SID",0xD400,0xD7FF));
     m_labels.append(SystemLabel(SystemLabel::COLOUR,"Colour ram",0xD800,0xDBFF));
-    m_labels.append(SystemLabel(SystemLabel::VIC,"VIC CIA IO",0xDC00,0xDFFF));
+    m_labels.append(SystemLabel(SystemLabel::IO,"CIA IO",0xDC00,0xDFFF));
     m_labels.append(SystemLabel(SystemLabel::FREE,"Free",0xE000,0xFFFE));
     m_labels.append(SystemLabel(SystemLabel::KERNAL,"Kernal ROM",0xE000,0xFFFE));
 
