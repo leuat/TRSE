@@ -176,7 +176,9 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
         QString v = "$"+QString::number(i*4096,16).rightJustified(4, '0');
         int y0=(ysize/16)*i;
         int y1=(ysize/16)*(i+1);
+        p.setPen(QColor(0,0,0,255));
         p.drawText(QRect(0, y0,xstart, y1), Qt::AlignLeft|Qt::AlignTop, v);
+        p.setPen(QColor(0,0,0,0));
         int ysize=1;
         if (i%4==0) ysize=4;
         p.drawRect(QRect(0,y0,xsize,ysize));
