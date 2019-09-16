@@ -54,6 +54,12 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
     if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
         img.fill(QColor(80,110,200));
 
+    if (Syntax::s.m_currentSystem==AbstractSystem::X16)
+        img.fill(QColor(100,60,40));
+
+    if (Syntax::s.m_currentSystem==AbstractSystem::C128)
+        img.fill(QColor(20,100,80));
+
     int xstart = xsize/3;
     int ww = xsize/5;
     int xborder = 40;
