@@ -179,8 +179,9 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
 
     }
     QColor c(0,0,0);
-    p.setPen(c);
-    p.setBrush(c);
+    p.setPen(QColor(0,0,0,0));
+//    p.setBrush(c);
+    p.setBrush(QBrush(c,Qt::Dense4Pattern));
     for (int i=0;i<16;i++) {
         QString v = "$"+QString::number(i*4096,16).rightJustified(4, '0');
         int y0=(ysize/16)*i;

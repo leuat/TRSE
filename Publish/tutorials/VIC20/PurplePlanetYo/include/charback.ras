@@ -177,6 +177,7 @@ begin
 
 	if (g0=0) then 
 		textP:=text2;
+		
 	if (g0=1) then 
 		textP:=text3;
 
