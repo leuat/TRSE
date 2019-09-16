@@ -6,7 +6,22 @@
 #include "source/LeLib/util/cinifile.h"
 
 #include <QElapsedTimer>
+
 class SymbolTable;
+
+class SystemLabel {
+public:
+    enum Type {SCREEN, SID, REGISTERS, ZEROPAGE,STACK, BASIC, FREE, VIC,COLOUR,IO,KERNAL};
+    Type m_type;
+    QString m_name;
+    int m_from, m_to;
+    SystemLabel(Type t, QString name, int from, int to) {
+        m_type =t;
+        m_name =name;
+        m_from = from;
+        m_to = to;
+    }
+};
 
 class AbstractSystem
 {
@@ -14,10 +29,19 @@ public:
     AbstractSystem(CIniFile* settings, CIniFile* proj) {
         m_projectIni = proj;
         m_settingsIni = settings;
+        if (m_labelColors.count()==0)
+            InitLabelColors();
     }
     QElapsedTimer timer;
     QString m_orgOutput;
     CIniFile* m_projectIni, *m_settingsIni;
+
+    QVector<SystemLabel> m_labels;
+
+    static QMap<SystemLabel::Type, QColor> m_labelColors;
+
+    static void InitLabelColors();
+
     enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16};
     enum Processor {MOS6502, M68000};
 

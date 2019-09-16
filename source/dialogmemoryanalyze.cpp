@@ -23,11 +23,12 @@
 #include "ui_dialogmemoryanalyze.h"
 #include "source/LeLib/util/util.h"
 
-DialogMemoryAnalyze::DialogMemoryAnalyze(CIniFile* ini, QWidget *parent) :
+DialogMemoryAnalyze::DialogMemoryAnalyze(CIniFile* ini, AbstractSystem* system,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogMemoryAnalyze)
 {
     ui->setupUi(this);
+    m_system = system;
     m_iniFile = ini;
 }
 
@@ -47,15 +48,40 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
 
     if (Syntax::s.m_currentSystem==AbstractSystem::C64)
         img.fill(QColor(80,110,80));
+
     if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
         img.fill(QColor(80,110,200));
-    int xstart = xsize/4;
+
+    int xstart = xsize/3;
     int ww = xsize/5;
     int xborder = 40;
 
     QPainter p;
     p.begin(&img);
     int i=0;
+
+
+    int xlstart = 100;
+    int xlend = xstart+50;
+
+    for (SystemLabel l:m_system->m_labels) {
+
+        float y0 = (l.m_from/65535.0)*ysize;
+        float y1 = (l.m_to/65535.0)*ysize;
+        QColor c = AbstractSystem::m_labelColors[l.m_type];
+
+        for (int y=y0;y<y1;y+=1)
+            for (int x=xlstart;x<xlend;x+=2)
+                img.setPixel(x+(y&1),y,c.rgba());
+
+
+        p.setPen(QPen(QColor(32,32,48)));
+        p.setFont(QFont("Courier", fontSize, QFont::Bold));
+        p.drawText(QRect(xlstart, y0,xlend, y1-y0), Qt::AlignTop | Qt::AlignLeft, l.m_name);
+
+    }
+
+
 
     for (MemoryBlock* mb:blocks) {
         float y0 = (mb->m_start/65535.0)*ysize;
@@ -87,7 +113,7 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
         int box2 = xsize-xborder-box2s;
 
         p.setPen(QPen(QColor(32,32,48)));
-        p.setFont(QFont("Arial", fontSize, QFont::Bold));
+        p.setFont(QFont("Courier", fontSize, QFont::Bold));
         p.drawText(QRect(xstart, y0,box1, y1-y0), Qt::AlignCenter, mb->m_name);
 
         QString f = "$"+QString::number(mb->m_start,16).rightJustified(4, '0');

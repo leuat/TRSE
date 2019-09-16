@@ -28,7 +28,7 @@
 #include <QImage>
 #include <QPainter>
 #include <QPixmap>
-
+#include "source/Compiler/systems/abstractsystem.h"
 
 namespace Ui {
 class DialogMemoryAnalyze;
@@ -41,8 +41,9 @@ class DialogMemoryAnalyze : public QDialog
     int m_fontSize;
     QVector<MemoryBlock*> m_blocks;
     CIniFile* m_iniFile = nullptr;
+    AbstractSystem *m_system = nullptr;
 public:
-    explicit DialogMemoryAnalyze(CIniFile* ini, QWidget *parent = 0);
+    explicit DialogMemoryAnalyze(CIniFile* ini, AbstractSystem* system, QWidget *parent = 0);
     void Initialize(QVector<MemoryBlock*>& blocks, int fontSize);
     QMap<QString, QColor> m_colors;
     void InitColors();
