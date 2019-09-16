@@ -36,6 +36,8 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
 {
     m_blocks = blocks;
     m_fontSize = fontSize;
+    setMouseTracking(true);
+    ui->lblImage->setMouseTracking(true);
 
     fontSize/=2;
 
@@ -55,32 +57,51 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
     int xstart = xsize/3;
     int ww = xsize/5;
     int xborder = 40;
-
+    QPoint mpos = ui->lblImage->mapFromGlobal(QCursor::pos());
+    mpos.setY(mpos.y());
     QPainter p;
     p.begin(&img);
     int i=0;
+    int round = 5;
+    int shift = 6;
 
 
     int xlstart = 100;
     int xlend = xstart+50;
-
+    QString curT = "";
+    QPoint cur;
     for (SystemLabel l:m_system->m_labels) {
 
         float y0 = (l.m_from/65535.0)*ysize;
         float y1 = (l.m_to/65535.0)*ysize;
         QColor c = AbstractSystem::m_labelColors[l.m_type];
 
-        for (int y=y0;y<y1;y+=1)
-            for (int x=xlstart;x<xlend;x+=2)
-                img.setPixel(x+(y&1),y,c.rgba());
+        int height= y1-y0;
 
+        QRect r(xlstart, y0,xlend, height);
+        QRect r2(xlstart, y0+shift,xlend, height);
+        if ((r2).contains(mpos)) {
+            curT = l.m_name;
+            cur.setX(l.m_from);
+            cur.setY(l.m_to);
+        }
+        p.setPen(c);
+        p.setBrush(QBrush(c,Qt::Dense4Pattern));
+
+        p.drawRoundedRect(r,2,2);
 
         p.setPen(QPen(QColor(32,32,48)));
-        p.setFont(QFont("Courier", fontSize, QFont::Bold));
-        p.drawText(QRect(xlstart, y0,xlend, y1-y0), Qt::AlignTop | Qt::AlignLeft, l.m_name);
 
+        p.setFont(QFont("Courier", min(fontSize,height), QFont::Bold));
+        p.drawText(r, Qt::AlignTop | Qt::AlignLeft, l.m_name);
+
+
+
+//        QToolTip::showText(QCursor::pos(), l.m_name + " ", this, QRect(xlstart, y0,xlend-xlstart, height), 5000);
+//        QToolTip::showText(this->mapToGlobal( QPoint( 0, 0 ) ), l.m_name + " ", this, QRect(xlstart, y0,xlend-xlstart, height), 5000);
     }
 
+//    QToolTip::showText(QCursor::pos(),  "BLAH ", this, QRect(0,0,800,600), 5000);
 
 
     for (MemoryBlock* mb:blocks) {
@@ -93,9 +114,9 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
         c.setRed(min(c.red()*scale,255.0f));
         c.setGreen(min(c.green()*scale,255.0f));
         c.setBlue(min(c.blue()*scale,255.0f));
-        for (int y=y0;y<y1;y++)
-            for (int x=xstart;x<xsize-xborder-ww;x++)
-                img.setPixel(x,y,c.rgba());
+        p.setPen(c);
+        p.setBrush(c);
+        p.drawRoundedRect(QRect(xstart,y0,xsize-xborder-xstart-ww,y1-y0),round,round);
 
         int box2s = ww;
         float s2 = 0.75f;
@@ -103,23 +124,34 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
         c.setGreen(min(c.green()*scale*s2,255.0f));
         c.setBlue(min(c.blue()*scale*s2,255.0f));
 
+        QRect r = QRect(xstart,y0+shift,xsize-xborder,y1-y0);
+        if (r.contains(mpos)) {
+            curT = mb->m_name;
+            cur.setX(mb->m_start);
+            cur.setY(mb->m_end);
+        }
 
-        for (int y=y0;y<y1;y++)
-            for (int x=xsize-xborder-box2s;x<xsize-xborder;x++)
-                img.setPixel(x,y,c.rgba());
 
+
+        p.setPen(c);
+        p.setBrush(c);
+        p.drawRoundedRect(QRect(xsize-xborder-box2s,y0,xsize-xborder,y1-y0),round,round);
 
         int box1 = xsize-xstart-xborder-box2s;
         int box2 = xsize-xborder-box2s;
-
+        int height= y1-y0;
         p.setPen(QPen(QColor(32,32,48)));
-        p.setFont(QFont("Courier", fontSize, QFont::Bold));
-        p.drawText(QRect(xstart, y0,box1, y1-y0), Qt::AlignCenter, mb->m_name);
+        p.setFont(QFont("Courier", min(fontSize,height), QFont::Bold));
+        p.drawText(QRect(xstart, y0,box1, height), Qt::AlignCenter, mb->m_name);
 
         QString f = "$"+QString::number(mb->m_start,16).rightJustified(4, '0');
         QString t = "$"+QString::number(mb->m_end,16).rightJustified(4, '0');
 
-        p.drawText(QRect(xstart, y0,box1, y1-y0), Qt::AlignLeft|Qt::AlignTop, f + " - " + t);
+        p.drawText(QRect(xstart, y0,box1, height), Qt::AlignLeft|Qt::AlignTop, f + " - " + t);
+
+
+
+
 
         // Zeropages
         QString zp = "";
@@ -131,7 +163,7 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
         if (mb->m_zeropages.count()!=0)
             zp = "zp :"+zp;
         zp=zp.trimmed();
-        p.setFont(QFont("Arial", fontSize-1, QFont::Bold));
+        p.setFont(QFont("Courier", min(fontSize,height), QFont::Bold));
 
         p.drawText(QRect(xsize-xborder-box2s+12, y0,box2, y1-y0), Qt::AlignLeft|Qt::AlignTop, zp);
 
@@ -140,6 +172,9 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
         i++;
 
     }
+    QColor c(0,0,0);
+    p.setPen(c);
+    p.setBrush(c);
     for (int i=0;i<16;i++) {
         QString v = "$"+QString::number(i*4096,16).rightJustified(4, '0');
         int y0=(ysize/16)*i;
@@ -147,11 +182,36 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
         p.drawText(QRect(0, y0,xstart, y1), Qt::AlignLeft|Qt::AlignTop, v);
         int ysize=1;
         if (i%4==0) ysize=4;
-        for (int y=y0;y<y0+ysize;y++)
-            for (int x=0;x<xsize;x++)
-                img.setPixel(x,y,QColor(0,0,0).rgba());
+        p.drawRect(QRect(0,y0,xsize,ysize));
+
     }
+
+
+    c = QColor(0,0,0,200);
+    p.setPen(QColor(100,255,255));
+    p.setBrush(c);
+    if (curT!="") {
+       p.drawRoundedRect(QRect(mpos.x(),mpos.y(),500,70),round,round);
+       c = QColor(100,220,255,255);
+       p.setPen(c);
+//       p.setBrush(c);
+       p.setFont(QFont("Courier", 16, QFont::Bold));
+       p.drawText(QRect(mpos.x(),mpos.y(),500,60), curT);
+       p.setFont(QFont("Courier", 12, QFont::Bold));
+       c = QColor(80,130,255,255);
+       p.setPen(c);
+
+       QString address = "$"+QString::number(cur.x(),16).rightJustified(4, '0');
+       address += " - $"+QString::number(cur.y(),16).rightJustified(4, '0');
+       p.drawText(QRect(mpos.x(),mpos.y()+40,500,60), address);
+    }
+
+
+
     p.end();
+
+
+
 
     QPixmap pm;
     pm.convertFromImage(img);
@@ -182,6 +242,8 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
         ui->vLayout->addWidget(b);
     }
 */
+
+
 
 
     VerifyZPMusic(blocks);
@@ -241,6 +303,12 @@ void DialogMemoryAnalyze::VerifyZPMusic(QVector<MemoryBlock*> &blocks)
 DialogMemoryAnalyze::~DialogMemoryAnalyze()
 {
     delete ui;
+}
+
+void DialogMemoryAnalyze::mouseMoveEvent(QMouseEvent *event)
+{
+    Initialize(m_blocks, m_fontSize);
+
 }
 
 void DialogMemoryAnalyze::on_btnClose_clicked()

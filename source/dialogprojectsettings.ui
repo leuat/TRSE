@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>889</width>
-    <height>555</height>
+    <height>605</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -356,19 +356,6 @@
            <string>Amiga</string>
           </attribute>
          </widget>
-        </widget>
-        <widget class="QLabel" name="label_26">
-         <property name="geometry">
-          <rect>
-           <x>430</x>
-           <y>410</y>
-           <width>54</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>System:</string>
-         </property>
         </widget>
        </widget>
        <widget class="QWidget" name="tab_9">

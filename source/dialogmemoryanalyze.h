@@ -29,7 +29,7 @@
 #include <QPainter>
 #include <QPixmap>
 #include "source/Compiler/systems/abstractsystem.h"
-
+#include <QToolTip>
 namespace Ui {
 class DialogMemoryAnalyze;
 }
@@ -50,6 +50,8 @@ public:
     void resizeEvent(QResizeEvent *) override;
     void VerifyZPMusic(QVector<MemoryBlock*> &blocks);
     ~DialogMemoryAnalyze();
+
+    void mouseMoveEvent(QMouseEvent *event) override;
 
 private slots:
     void on_btnClose_clicked();

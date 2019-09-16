@@ -482,7 +482,7 @@ void Orgasm::ProcessOrgData(OrgasmLine &ol)
         int val = Util::NumberFromStringHex(Util::BinopString(ol.m_expr));
         if (val<m_pCounter) {
             QString e = "Origin reversed index. Trying to move program counter backwards to '"+Util::numToHex(val)+"' from current counter " + Util::numToHex(m_pCounter)+". ";
-            e += "Please make sure that your included data does not overlap, and make use of the memory analyzer tool.";
+            e+="<br><br><font color=\"#FF7020\">Oh no! You have included/defined overlapping data!</font><br><font color=\"#60FFFF\">Please make sure that your included data does not overlap, and make use of the memory analyzer tool!</font>";
             throw QString(e);
         }
 
