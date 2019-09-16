@@ -186,6 +186,8 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
     }
 
 
+
+
     c = QColor(0,0,0,200);
     p.setPen(QColor(100,255,255));
     p.setBrush(c);
