@@ -39,6 +39,7 @@ public:
     QVector<SystemLabel> m_labels;
 
     static QMap<SystemLabel::Type, QColor> m_labelColors;
+    QColor m_systemColor = QColor(64,64,128);
 
     static void InitLabelColors();
 

@@ -32,3 +32,4 @@ output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
 project_path = /home/leuat/code/TRSE/Release/../tutorials/C128/
 open_files = ,tutorial_8_80col_spiral.ras
+current_file = images/jack.flf

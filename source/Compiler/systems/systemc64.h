@@ -23,6 +23,8 @@ public:
         m_labels.append(SystemLabel(SystemLabel::SCREEN,"Screen bank 2",0x8400,0x87FF));
         m_labels.append(SystemLabel(SystemLabel::SCREEN,"Screen bank 3",0xC400,0xC7FF));
 
+        m_systemColor = QColor(80,110,80);
+
     }
 };
 
@@ -33,6 +35,8 @@ public:
     SystemX16(CIniFile* settings, CIniFile* proj) : SystemMOS6502(settings, proj) {
         m_processor = MOS6502;
         m_system = X16;
+        m_systemColor = QColor(100,60,40);
+
     }
 };
 

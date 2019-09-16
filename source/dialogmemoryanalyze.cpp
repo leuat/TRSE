@@ -42,23 +42,13 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
     fontSize/=2;
 
     InitColors();
-    float xsize = ui->lblImage->width()-2;
+    float xsize = ui->lblImage->width()-8;
     float ysize= ui->lblImage->height()-8;
 /*    float xsize=this->width()*2;
     float ysize=this->height()*2;*/
     QImage img(QSize(xsize,ysize), QImage::Format_ARGB32);
 
-    if (Syntax::s.m_currentSystem==AbstractSystem::C64)
-        img.fill(QColor(80,110,80));
-
-    if (Syntax::s.m_currentSystem==AbstractSystem::VIC20)
-        img.fill(QColor(80,110,200));
-
-    if (Syntax::s.m_currentSystem==AbstractSystem::X16)
-        img.fill(QColor(100,60,40));
-
-    if (Syntax::s.m_currentSystem==AbstractSystem::C128)
-        img.fill(QColor(20,100,80));
+    img.fill(m_system->m_systemColor);
 
     int xstart = xsize/3;
     int ww = xsize/5;
@@ -197,13 +187,15 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
     c = QColor(0,0,0,200);
     p.setPen(QColor(100,255,255));
     p.setBrush(c);
+    mpos.setX(mpos.x()+16);
+    int width = 800;
     if (curT!="") {
-       p.drawRoundedRect(QRect(mpos.x(),mpos.y(),500,70),round,round);
+       p.drawRoundedRect(QRect(mpos.x(),mpos.y(),width,70),round,round);
        c = QColor(100,220,255,255);
        p.setPen(c);
 //       p.setBrush(c);
-       p.setFont(QFont("Courier", 16, QFont::Bold));
-       p.drawText(QRect(mpos.x(),mpos.y(),500,60), curT);
+       p.setFont(QFont("Courier", 15, QFont::Bold));
+       p.drawText(QRect(mpos.x(),mpos.y(),width,60), curT);
        p.setFont(QFont("Courier", 12, QFont::Bold));
        c = QColor(80,130,255,255);
        p.setPen(c);
@@ -271,9 +263,9 @@ void DialogMemoryAnalyze::resizeEvent(QResizeEvent *e)
  /*   qDebug() << "oldize: " <<e->oldSize();
     qDebug() << "new: " <<e->size();
     if (e->oldSize()!=e->size())*/
-        Initialize(m_blocks, m_fontSize);
-        m_iniFile->setFloat("memory_analyzer_window_width", this->size().width());
-        m_iniFile->setFloat("memory_analyzer_window_height", this->size().height());
+    Initialize(m_blocks, m_fontSize);
+    m_iniFile->setFloat("memory_analyzer_window_width", this->size().width());
+    m_iniFile->setFloat("memory_analyzer_window_height", this->size().height());
 }
 
 void DialogMemoryAnalyze::VerifyZPMusic(QVector<MemoryBlock*> &blocks)

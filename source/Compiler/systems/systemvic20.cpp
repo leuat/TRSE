@@ -4,6 +4,9 @@ SystemVIC20::SystemVIC20(CIniFile *settings, CIniFile *proj) : SystemMOS6502(set
     m_processor = MOS6502;
     m_system = VIC20;
 
+    m_systemColor = QColor(80,110,200);
+
+
     // See SystemC64 for implementation details
     if (proj->getString("vic_memory_config")=="3k") {
 

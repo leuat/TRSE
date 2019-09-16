@@ -14,4 +14,5 @@ void AbstractSystem::InitLabelColors() {
     m_labelColors[SystemLabel::SCREEN] = QColor(64,255,255);
     m_labelColors[SystemLabel::ZEROPAGE] = QColor(64,255,128);
 
+
 }
