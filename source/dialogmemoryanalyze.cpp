@@ -32,40 +32,12 @@ DialogMemoryAnalyze::DialogMemoryAnalyze(CIniFile* ini, AbstractSystem* system,Q
     m_iniFile = ini;
 }
 
-void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize)
+
+void DialogMemoryAnalyze::RenderSystemLabels(QPainter& p, int xstart, int fs )
 {
-    m_blocks = blocks;
-    m_fontSize = fontSize;
-    setMouseTracking(true);
-    ui->lblImage->setMouseTracking(true);
-
-    fontSize/=2;
-
-    InitColors();
-    float xsize = ui->lblImage->width()-8;
-    float ysize= ui->lblImage->height()-8;
-/*    float xsize=this->width()*2;
-    float ysize=this->height()*2;*/
-    QImage img(QSize(xsize,ysize), QImage::Format_ARGB32);
-
-    img.fill(m_system->m_systemColor);
-
-    int xstart = xsize/3;
-    int ww = xsize/5;
-    int xborder = 40;
-    QPoint mpos = ui->lblImage->mapFromGlobal(QCursor::pos());
-    mpos.setY(mpos.y());
-    QPainter p;
-    p.begin(&img);
-    int i=0;
-    int round = 5;
-    int shift = 6;
-
-
     int xlstart = 100;
     int xlend = xstart+50;
-    QString curT = "";
-    QPoint cur;
+
     for (SystemLabel l:m_system->m_labels) {
 
         float y0 = (l.m_from/65535.0)*ysize;
@@ -88,17 +60,49 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
 
         p.setPen(QPen(QColor(32,32,48)));
 
-        p.setFont(QFont("Courier", min(fontSize,height), QFont::Bold));
+        p.setFont(QFont("Courier", min(fs,height)));
         p.drawText(r, Qt::AlignTop | Qt::AlignLeft, l.m_name);
-
-
-
-//        QToolTip::showText(QCursor::pos(), l.m_name + " ", this, QRect(xlstart, y0,xlend-xlstart, height), 5000);
-//        QToolTip::showText(this->mapToGlobal( QPoint( 0, 0 ) ), l.m_name + " ", this, QRect(xlstart, y0,xlend-xlstart, height), 5000);
     }
 
-//    QToolTip::showText(QCursor::pos(),  "BLAH ", this, QRect(0,0,800,600), 5000);
 
+}
+
+
+void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize)
+{
+    m_blocks = blocks;
+    m_fontSize = fontSize;
+    setMouseTracking(true);
+    ui->lblImage->setMouseTracking(true);
+    xsize = ui->lblImage->width()-8;
+    ysize= ui->lblImage->height()-8;
+
+    fontSize/=2;
+
+    InitColors();
+
+    float xsize = ui->lblImage->width()-8;
+    float ysize= ui->lblImage->height()-8;
+/*    float xsize=this->width()*2;
+    float ysize=this->height()*2;*/
+    QImage img(QSize(xsize,ysize), QImage::Format_ARGB32);
+
+    img.fill(m_system->m_systemColor);
+    curT="";
+    int xstart = xsize/3;
+    int ww = xsize/5;
+    int xborder = 40;
+    mpos = ui->lblImage->mapFromGlobal(QCursor::pos());
+    mpos.setY(mpos.y());
+    int i=0;
+    int round = 5;
+    shift = 6;
+
+    QPainter p;
+    p.begin(&img);
+
+
+    RenderSystemLabels(p,xstart,fontSize);
 
     for (MemoryBlock* mb:blocks) {
         float y0 = (mb->m_start/65535.0)*ysize;
@@ -145,10 +149,6 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
 
         p.drawText(QRect(xstart, y0,box1, height), Qt::AlignLeft|Qt::AlignTop, f + " - " + t);
 
-
-
-
-
         // Zeropages
         QString zp = "";
         int cnt=0;
@@ -170,8 +170,8 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
     }
     QColor c(0,0,0);
     p.setPen(QColor(0,0,0,0));
-//    p.setBrush(c);
     p.setBrush(QBrush(c,Qt::Dense4Pattern));
+    // Render lines
     for (int i=0;i<16;i++) {
         QString v = "$"+QString::number(i*4096,16).rightJustified(4, '0');
         int y0=(ysize/16)*i;
@@ -189,6 +189,7 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
     p.setBrush(c);
     mpos.setX(mpos.x()+16);
     int width = 800;
+    // Render "tooltip" text
     if (curT!="") {
        p.drawRoundedRect(QRect(mpos.x(),mpos.y(),width,70),round,round);
        c = QColor(100,220,255,255);
@@ -217,33 +218,6 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
     ui->lblImage->setPixmap(pm.scaled(xsize,ysize, Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
 
     ui->lblImage->setPixmap(pm);
-//label->setPixmap(p.scaled(w,h,Qt::KeepAspectRatio));
-
-/*    for (MemoryBlock& mb:blocks) {
-        QPushButton *b = new QPushButton();
-        //b->setGeometry(0,0,40,40);
-        QPalette p;
-        QColor c=m_colors[mb.Type()];
-        p.setColor(QPalette::Button, c);
-        p.setColor(QPalette::Window, c);
-        QString txtCol = QString::number(c.red()) + ", ";
-        txtCol += QString::number(c.green()) + ", ";
-        txtCol += QString::number(c.blue());
-
-        b->setStyleSheet("background-color: rgb("+txtCol + "); color: rgb(0, 0, 0)");
-        b->setPalette(p);
-        //b->setMaximumWidth(40);
-        //b->setMinimumWidth(40);
-        b->setAutoFillBackground( true );
-        //QObject::connect( b, &QPushButton::clicked,  colorValueChanged );
-
-
-        ui->vLayout->addWidget(b);
-    }
-*/
-
-
-
 
     VerifyZPMusic(blocks);
 }
@@ -258,11 +232,9 @@ void DialogMemoryAnalyze::InitColors()
     m_colors["array"]=QColor(255,127,255);
 }
 
+
 void DialogMemoryAnalyze::resizeEvent(QResizeEvent *e)
 {
- /*   qDebug() << "oldize: " <<e->oldSize();
-    qDebug() << "new: " <<e->size();
-    if (e->oldSize()!=e->size())*/
     Initialize(m_blocks, m_fontSize);
     m_iniFile->setFloat("memory_analyzer_window_width", this->size().width());
     m_iniFile->setFloat("memory_analyzer_window_height", this->size().height());
