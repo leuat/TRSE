@@ -28,6 +28,3 @@ override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 output_type = prg
-open_files = ,easy/06_plasma.ras
-project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/Tutorials/
-current_file = easy/10_sprites.ras
