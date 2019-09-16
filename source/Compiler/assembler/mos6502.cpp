@@ -407,6 +407,9 @@ void AsmMOS6502::BinOP(TokenType::Type t)
     if (t == TokenType::BITOR) {
         m_term = "ora ";
     }
+    if (t == TokenType::XOR) {
+        m_term = "eor ";
+    }
 
 }/*
 

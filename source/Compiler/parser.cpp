@@ -894,6 +894,7 @@ Node* Parser::Term()
     while (m_currentToken.m_type == TokenType::Type::MUL || m_currentToken.m_type == TokenType::Type::DIV
     || m_currentToken.m_type == TokenType::Type::BITAND || m_currentToken.m_type == TokenType::Type::BITOR
      || m_currentToken.m_type == TokenType::Type::SHR || m_currentToken.m_type == TokenType::Type::SHL
+           || m_currentToken.m_type == TokenType::Type::XOR
 
            ){
         Token t = m_currentToken;
