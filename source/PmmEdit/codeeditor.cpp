@@ -286,12 +286,50 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
 
     }
 
+
+//    if (!(e->modifiers() & Qt::ControlModifier))
+    // Tab selection
+    if (e->key()==Qt::Key_Tab || e->key()==Qt::Key_Backtab) {
+        QTextCursor cursor = textCursor();
+        QString txt = cursor.selectedText();
+        txt = txt.replace("\u2029","\n");
+        QStringList lst = txt.split('\n');
+
+        QString str="";
+
+        for (QString& s: lst) {
+            if (e->key()==Qt::Key_Tab) {
+            if (s.trimmed()!="")
+                str+="\t"+s+"\n";
+            }
+            else { // Backtab!
+
+                if (s.trimmed()!="")
+                {
+                    int i = s.indexOf("\t");
+                    if (s[i]=='\t')
+                        str+=s.remove(i,1)+"\n";
+                    else str+=s+"\n";
+
+                }
+
+            }
+        }
+
+        if(cursor.hasSelection())
+        {
+            cursor.insertText(str);
+            return;
+        }
+
+    }
+
+
     if ((e->modifiers() & Qt::ControlModifier)) {
         c->popup()->hide();
         QPlainTextEdit::keyPressEvent(e);
         return;
     }
-
 
     if (!(e->modifiers() & Qt::ControlModifier))
     if (e->key()==Qt::Key_Tab || e->key()==Qt::Key_Backtab || e->key()==Qt::Key_Space || e->key()==Qt::Key_Backspace || e->key()==Qt::Key_Escape) {
