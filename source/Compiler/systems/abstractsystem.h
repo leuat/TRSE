@@ -11,7 +11,7 @@ class SymbolTable;
 
 class SystemLabel {
 public:
-    enum Type {SCREEN, SID, REGISTERS, ZEROPAGE,STACK, BASIC, FREE, VIC,COLOUR,IO,KERNAL};
+    enum Type {SCREEN, SID, REGISTERS, ZEROPAGE,STACK, BASIC, FREE, VIC,COLOUR,IO,KERNAL,UNAVAILABLE};
     Type m_type;
     QString m_name;
     int m_from, m_to;
