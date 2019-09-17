@@ -504,7 +504,7 @@ void FormRasEditor::TestForCodeOverwrite(int codeEnd, QString& output)
 {
     for (MemoryBlock& mb: m_builderThread.m_builder->compiler.m_assembler->m_userWrittenBlocks) {
 //        qDebug() << Util::numToHex(mb.m_start) << " vs " << Util::numToHex(codeEnd) ;
-        if (mb.m_start<codeEnd && mb.m_start>=Syntax::s.m_startAddress) {
+        if (mb.m_start<codeEnd && mb.m_start>=Syntax::s.m_currentSystem->m_startAddress) {
             output +="\n<font color=\"#FF8080\">WARNING:</font>Possible code block overwrite on line <b>" +QString::number(mb.m_lineNumber) + "</b>.&nbsp;";
             output += "<font color=\"#FF8080\">Proceed with caution </font>(writing to <font color=\"#FF8080\">"+Util::numToHex(mb.m_start)+"</font>, code ends at <font color=\"#FF8080\">"+Util::numToHex(codeEnd) +")</font>. <br>";
         }
@@ -728,7 +728,7 @@ void FormRasEditor::MemoryAnalyze()
 //    qDebug() << "B";
     ConnectBlockSymbols();
 //    qDebug() << "asm " << m_builderThread.m_builder->compiler.m_assembler;
-    m_builderThread.m_builder->compiler.m_assembler->blocks.append(new MemoryBlock(Syntax::s.m_startAddress, codeEnd, MemoryBlock::CODE, "code"));
+    m_builderThread.m_builder->compiler.m_assembler->blocks.append(new MemoryBlock(Syntax::s.m_currentSystem->m_startAddress, codeEnd, MemoryBlock::CODE, "code"));
  //   qDebug() << "B2";
 
     m_mca.ClassifyZP(m_builderThread.m_builder->compiler.m_assembler->blocks);

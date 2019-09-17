@@ -32,7 +32,6 @@
 #include "errorhandler.h"
 #include "source/Compiler/systems/abstractsystem.h"
 
-
 class C64Key {
 public:
     QString m_name;
@@ -79,14 +78,11 @@ public:
     QMap<QString, BuiltInFunction> builtInFunctions, builtinFunctionsFjong;
   //  enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA};
     QString m_syntaxData; // File syntax data
-    AbstractSystem::System m_currentSystem;
-    int m_startAddress = 0x800;
-    int m_programStartAddress = m_startAddress+10;
-    int m_memoryType = 0;
+    AbstractSystem* m_currentSystem;
     bool m_ignoreSys = false;
     bool m_stripPrg = false;
     Syntax();
-    void Init(AbstractSystem::System s,QString p);
+    void Init(AbstractSystem::System s, CIniFile* m_ini, CIniFile* m_proj);
     void SetupReservedWords(QVector<Token>& list, QString id, bool ignoreSystem);
     void SetupBuiltinFunctions(QMap<QString, BuiltInFunction>& lst, AbstractSystem::System s, QString id, bool ignoreSystem);
     void SetupKeys();

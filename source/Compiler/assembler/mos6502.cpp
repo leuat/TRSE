@@ -107,13 +107,13 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
 
 
 
-    if (Syntax::s.m_currentSystem==AbstractSystem::BBCM) {
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::BBCM) {
         Asm("ORG "+Util::numToHex(0x2000));
         return;
     }
 
-    if (Syntax::s.m_currentSystem==AbstractSystem::NES) {
-        Asm("ORG "+Util::numToHex(Syntax::s.m_programStartAddress));
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES) {
+        Asm("ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
 //        StartMemoryBlock("$8000");
 
 //        Asm("ORG "+Util::numToHex(0x8000));
@@ -125,14 +125,14 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
 
 
 
-    Asm("ORG "+Util::numToHex(Syntax::s.m_startAddress+1));
+    Asm("ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_startAddress+1));
 
 
 
     if (!Syntax::s.m_ignoreSys) {
         // 2064
         Asm(".byte    $0E, $08, $0A, $00, $9E, $20, $28");
-        QString s = QString::number(Syntax::s.m_programStartAddress);
+        QString s = QString::number(Syntax::s.m_currentSystem->m_programStartAddress);
         QString line = ".byte   ";
         for (int i=0;i<s.count();i++) {
             int val = QString(s[i]).toInt() + 0x30;
@@ -143,7 +143,7 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
 
         Asm(".byte    $29, $00, $00, $00");   // 6, 4, )*/
         Nl();
-        Asm("ORG " + Util::numToHex(Syntax::s.m_programStartAddress));
+        Asm("ORG " + Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
     }
     m_source+=m_startInsertAssembler;
 
@@ -225,7 +225,7 @@ void AsmMOS6502::DeclareVariable(QString name, QString type, QString initval)
     if (type.toLower()=="byte") {
         t = byte;
 
-        if (Syntax::s.m_currentSystem == AbstractSystem::NES) {
+        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES) {
             Write(name +"\t=\t"+Util::numToHex(m_zbyte));
             m_zbyte++;
             return;

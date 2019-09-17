@@ -19,12 +19,11 @@ bool SourceBuilder::Build(QString source)
         m_buildSuccess=true;
        m_assembleSuccess=false;
        m_filename = m_currentSourceFile.split(".")[0];
-       if (m_system != nullptr)
-           delete m_system;
-       m_system = FactorySystem::Create(AbstractSystem::SystemFromString(
+       m_system = Syntax::s.m_currentSystem;
+/*       m_system = FactorySystem::Create(AbstractSystem::SystemFromString(
                                             m_projectIniFile.getString("system")),
                                            &m_iniFile, &m_projectIniFile);
-
+*/
        compiler = Compiler(&m_iniFile, &m_projectIniFile);
        return true;
     }

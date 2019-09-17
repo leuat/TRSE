@@ -42,7 +42,7 @@ void Compiler::Parse(QString text, QStringList lst)
     //qDebug() << "******" << m_ini->getString("assembler").toUpper();
     try {
         m_tree = m_parser.Parse( m_ini->getdouble("optimizer_remove_unused_symbols")==1.0 &&
-                                 Syntax::s.m_currentSystem!=AbstractSystem::NES
+                                 Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES
                                  ,m_projectIni->getString("vic_memory_config"),Util::fromStringList(m_projectIni->getStringList("global_defines")),
                                  m_projectIni->getdouble("pascal_settings_use_local_variables")==1.0);
 //        m_tree->parseConstants(m_parser.m_symTab);
@@ -275,8 +275,8 @@ void Compiler::Init6502Assembler()
 
 
     if (m_projectIni->getdouble("override_target_settings")==1) {
-        Syntax::s.m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
-        Syntax::s.m_programStartAddress = Syntax::s.m_startAddress+0x10;//Util::NumberFromStringHex(m_ini->getString("override_target_settings_org"));
+        Syntax::s.m_currentSystem->m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
+        Syntax::s.m_currentSystem->m_programStartAddress = Syntax::s.m_currentSystem->m_startAddress+0x10;//Util::NumberFromStringHex(m_ini->getString("override_target_settings_org"));
         Syntax::s.m_ignoreSys = m_projectIni->getdouble("override_target_settings_sys")==1;
         Syntax::s.m_stripPrg = m_projectIni->getdouble("override_target_settings_prg")==1;
     } else {
@@ -286,9 +286,9 @@ void Compiler::Init6502Assembler()
     }
 
 
-    if (Syntax::s.m_currentSystem == AbstractSystem::NES) {
-        Syntax::s.m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
-        Syntax::s.m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES) {
+        Syntax::s.m_currentSystem->m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
+        Syntax::s.m_currentSystem->m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
     }
 
 

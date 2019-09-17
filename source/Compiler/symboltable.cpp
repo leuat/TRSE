@@ -66,7 +66,7 @@ void SymbolTable::Initialize()
 
   //  m_constants.clear();
 
-    QString currentSystem = AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem).toLower();
+    QString currentSystem = AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system).toLower();
 //    qDebug() << currentSystem;
     for (QString s: Syntax::s.m_syntaxData.split('\n')) {
         s= s.simplified();
@@ -82,10 +82,11 @@ void SymbolTable::Initialize()
         QString type = data[3].toLower();
         QStringList values = data[4].replace(" ","").split(",");
         QString value;
-        if (Syntax::s.m_memoryType<values.count())
-            value = values[Syntax::s.m_memoryType];
+        if (Syntax::s.m_currentSystem->m_memoryType<values.count())
+            value = values[Syntax::s.m_currentSystem->m_memoryType];
         else
             value = values[0];
+
         if (system.contains(currentSystem)) {
             int ival = Util::NumberFromStringHex(value);
             if (type=="b")
@@ -177,27 +178,27 @@ void SymbolTable::InitBuiltins()
     Define(new Symbol("joystickright", "byte"));
     Define(new Symbol("joystickbutton", "byte"));
 
-    if (Syntax::s.m_currentSystem==AbstractSystem::C64 ||
-            Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 ||
+            Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20) {
 
         Define(new Symbol("joy1", "byte"));
         Define(new Symbol("joy1pressed", "byte"));
     }
-    if (Syntax::s.m_currentSystem==AbstractSystem::C64) {
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64) {
 
         Define(new Symbol("joy2", "byte"));
         Define(new Symbol("joy2pressed", "byte"));
     }
 
-    if (Syntax::s.m_currentSystem==AbstractSystem::C64 ||
-            Syntax::s.m_currentSystem==AbstractSystem::PLUS4 ||
-            Syntax::s.m_currentSystem==AbstractSystem::C128 ||
-            Syntax::s.m_currentSystem==AbstractSystem::VIC20 ||
-            Syntax::s.m_currentSystem==AbstractSystem::PET) {
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 ||
+            Syntax::s.m_currentSystem->m_system==AbstractSystem::PLUS4 ||
+            Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 ||
+            Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20 ||
+            Syntax::s.m_currentSystem->m_system==AbstractSystem::PET) {
 
         Define(new Symbol("screenmemory", "pointer"));
     }
-    if (Syntax::s.m_currentSystem==AbstractSystem::AMIGA) {
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA) {
         Define(new Symbol("copper_bitplane0", "integer"));
         Define(new Symbol("copper_bitplane1", "integer"));
         Define(new Symbol("copper_bitplane2", "integer"));

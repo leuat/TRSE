@@ -431,7 +431,7 @@ void MainWindow::OpenProjectSettings()
     delete dSettings;
 
     // Set compiler syntax based on system
-    Syntax::s.Init(AbstractSystem::SystemFromString(m_currentProject.m_ini.getString("system")),m_currentProject.m_ini.getString("vic_memory_config"));
+    Syntax::s.Init(AbstractSystem::SystemFromString(m_currentProject.m_ini.getString("system")),&m_iniFile, &m_currentProject.m_ini);
 
 
 }
@@ -936,8 +936,8 @@ void MainWindow::LoadProject(QString filename)
 
     // Set compiler syntax based on system
     QString system = m_currentProject.m_ini.getString("system");
-    Syntax::s.Init(AbstractSystem::SystemFromString(system),m_currentProject.m_ini.getString("vic_memory_config"));
-    if (Syntax::s.m_currentSystem==AbstractSystem::AMIGA)
+    Syntax::s.Init(AbstractSystem::SystemFromString(system),&m_iniFile, &m_currentProject.m_ini);
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA)
         Messages::messages.DisplayMessage(Messages::messages.AMIGA_WARNING);
 
     QImage img(":resources/images/" +system+".png");

@@ -269,7 +269,7 @@ void Assembler::Connect()
     QStringList pre;
     for (int i=0;i<m_appendix.count();i++) {
         //        qDebug() << m_appendix[i].m_source;
-        if (Util::NumberFromStringHex(m_appendix[i].m_pos)<Syntax::s.m_programStartAddress)
+        if (Util::NumberFromStringHex(m_appendix[i].m_pos)<Syntax::s.m_currentSystem->m_programStartAddress)
             pre <<m_appendix[i].m_source;
         else m_source << m_appendix[i].m_source;
     }

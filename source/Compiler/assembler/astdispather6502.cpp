@@ -883,14 +883,14 @@ void ASTDispather6502::dispatch(NodeBlock *node)
     if (node->forceLabel!="")
         as->Label(node->forceLabel);
 
-    if (node->m_isMainBlock && Syntax::s.m_currentSystem == AbstractSystem::NES)
+    if (node->m_isMainBlock && Syntax::s.m_currentSystem->m_system == AbstractSystem::NES)
         as->IncludeFile(":resources/code/nes_init.asm");
 
     if (node->m_compoundStatement!=nullptr)
         node->m_compoundStatement->Accept(this);
 
     as->PopBlock(node->m_currentLineNumber);
-    if (node->m_isMainBlock && Syntax::s.m_currentSystem == AbstractSystem::NES)
+    if (node->m_isMainBlock && Syntax::s.m_currentSystem->m_system == AbstractSystem::NES)
         as->IncludeFile(":resources/code/nes_end.asm");
 
     node->PopZeroPointers(as);

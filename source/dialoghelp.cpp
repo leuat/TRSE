@@ -74,7 +74,7 @@ DialogHelp::~DialogHelp()
 void DialogHelp::LoadItems(int idx)
 {
     HelpType ht = m_helpTypes[idx];
-    QString currentSystem = AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem).toLower();
+    QString currentSystem = AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system).toLower();
     m_idx=0;
     ui->lstItems->clear();
     m_currentItems.clear();
@@ -90,7 +90,7 @@ void DialogHelp::LoadItems(int idx)
             QString system = data[2].toLower();
             bool isFjong = data[0]=="f";
             if (word.toLower().startsWith("init")) continue;
-            if (!isFjong && !AbstractSystem::isSupported(Syntax::s.m_currentSystem, system))
+            if (!isFjong && !AbstractSystem::isSupported(Syntax::s.m_currentSystem->m_system, system))
                 continue;
             if (system.contains(currentSystem)||isFjong) {
 /*                QString val = word + "(";
@@ -134,7 +134,7 @@ void DialogHelp::LoadItem(QString findword)
         QString type = data[0].toLower();
         m_currentType = type;
         QString system = data[2].toLower();
-        if (type!="f" && !AbstractSystem::isSupported(Syntax::s.m_currentSystem, system))
+        if (type!="f" && !AbstractSystem::isSupported(Syntax::s.m_currentSystem->m_system, system))
             continue;
         if (type=="f")
          {
@@ -325,7 +325,7 @@ void DialogHelp::AppendItem(QListWidget *w, QString text)
 
 void DialogHelp::SearchForItem(QString item)
 {
-    QString currentSystem = AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem).toLower();
+    QString currentSystem = AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system).toLower();
     m_idx=0;
     ui->lstItems->clear();
     m_currentItems.clear();

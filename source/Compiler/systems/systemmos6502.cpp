@@ -50,14 +50,14 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
         Util::ConvertFileWithLoadAddress(filename+".prg", filename+".prg");
 
 
-    if (m_settingsIni->getdouble("perform_crunch")==1 && (Syntax::s.m_currentSystem!=AbstractSystem::NES)) {
+    if (m_settingsIni->getdouble("perform_crunch")==1 && (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES)) {
         QProcess processCompress;
 
         QString fn = (filename +".prg");
         QString target="-t64";
-        if (Syntax::s.m_currentSystem==AbstractSystem::C128)
+        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C128)
             target="-t128";
-        if (Syntax::s.m_currentSystem==AbstractSystem::VIC20) {
+        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20) {
             target="-t20";
             if (m_projectIni->getString("vic_memory_config")!="none") {
                 target="-t52";
@@ -73,9 +73,9 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
 //            Messages::messages.DisplayMessage(Messages::messages.NO_EXOMIZER);
 
 
-        QString startAddress = Util::numToHex(Syntax::s.m_programStartAddress);
+        QString startAddress = Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
         if (Syntax::s.m_ignoreSys)
-            startAddress = Util::numToHex(Syntax::s.m_startAddress+1);
+            startAddress = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress+1);
 
         QStringList exoParams = QStringList() << "sfx" << startAddress << target << fn<< "-o" << fn ;
 

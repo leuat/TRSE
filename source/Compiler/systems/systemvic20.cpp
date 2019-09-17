@@ -5,9 +5,27 @@ SystemVIC20::SystemVIC20(CIniFile *settings, CIniFile *proj) : SystemMOS6502(set
     m_system = VIC20;
 
     m_systemColor = QColor(80,110,200);
+    QString param = proj->getString("vic_memory_config");
+    if (param=="none") {
+        m_startAddress = 0x1000;
+        m_programStartAddress = 0x1010;
+        m_memoryType = 0;
+    }
+    else if (param=="3k") {
+        m_startAddress = 0x0400;
+        m_programStartAddress = 0x0410;
+        m_memoryType = 0;
+    }
+    else
+    {
+        m_startAddress = 0x1200;
+        m_programStartAddress = 0x1210;
+        m_memoryType = 1;
+   }
 
 
-    if (proj->getString("vic_memory_config")=="3k") {
+
+    if (param=="3k") {
 
         m_labels.append(SystemLabel(SystemLabel::ZEROPAGE,"Zero pages",0,0x00FF));
         m_labels.append(SystemLabel(SystemLabel::STACK,"Stack",0x0100,0x01FF));
@@ -29,10 +47,10 @@ SystemVIC20::SystemVIC20(CIniFile *settings, CIniFile *proj) : SystemMOS6502(set
         m_labels.append(SystemLabel(SystemLabel::KERNAL,"KERNAL ROM",0xE000,0xFFFF));
 
     }
-    else if (proj->getString("vic_memory_config")=="8k" ||
-             proj->getString("vic_memory_config")=="16k" ||
-             proj->getString("vic_memory_config")=="24k" ||
-             proj->getString("vic_memory_config")=="all") {
+    else if (param=="8k" ||
+             param=="16k" ||
+             param=="24k" ||
+             param=="all") {
 
         m_labels.append(SystemLabel(SystemLabel::ZEROPAGE,"Zero pages",0,0x00FF));
         m_labels.append(SystemLabel(SystemLabel::STACK,"Stack",0x0100,0x01FF));

@@ -99,25 +99,25 @@ void Parser::InitBuiltinFunctions()
         Node::m_staticBlockInfo.m_blockName = "BuiltinMethods";
     }
 
-/*    if (Syntax::s.m_currentSystem == Syntax::NES)
+/*    if (Syntax::s.m_currentSystem->m_system == Syntax::NES)
         InitBuiltinFunction(QStringList()<< "*", "init8x8mulNes");
     else*/
     //m; InitP61Player; Amiga;
     //m; PlayP61Mod; Amiga; a
 
-   if (Syntax::s.m_currentSystem == AbstractSystem::AMIGA) {
+   if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMIGA) {
 
        InitBuiltinFunction(QStringList()<< "playp61module"<<"initp61module" , "initp61playerinternal");
     }
 
-    if (Syntax::s.m_currentSystem == AbstractSystem::C64 ||
-            Syntax::s.m_currentSystem == AbstractSystem::C128 ||
-            Syntax::s.m_currentSystem == AbstractSystem::PLUS4 ||
-            Syntax::s.m_currentSystem == AbstractSystem::NES ||
-            Syntax::s.m_currentSystem == AbstractSystem::OK64 ||
-            Syntax::s.m_currentSystem == AbstractSystem::X16 ||
-            Syntax::s.m_currentSystem == AbstractSystem::VIC20 ||
-            Syntax::s.m_currentSystem == AbstractSystem::BBCM  ) {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::C128 ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::PLUS4 ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::NES ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64 ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::X16 ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::VIC20 ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::BBCM  ) {
 /*        InitBuiltinFunction(QStringList()<< "*", "initeightbitmul");
 
         InitBuiltinFunction(QStringList()<< "*", "init16x8mul");
@@ -143,7 +143,7 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "initmodplayer(" , "include_modplayer");
         InitBuiltinFunction(QStringList()<< "decrunch("<<"decrunchfromindex(", "init_decrunch");
 
-        if (Syntax::s.m_currentSystem!=AbstractSystem::NES)
+        if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES)
             InitBuiltinFunction(QStringList()<< "sine[", "initsinetable", "initsine_calculate");
 
         InitBuiltinFunction(QStringList()<< "log2_table[" << "atan2(", "initlog2");
@@ -196,7 +196,7 @@ void Parser::VerifyToken(Token t)
 
 void Parser::InitSystemPreprocessors()
 {
-    m_preprocessorDefines[AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem)] = "1";
+    m_preprocessorDefines[AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)] = "1";
 
 }
 

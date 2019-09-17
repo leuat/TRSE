@@ -21,6 +21,7 @@
 
 #include "syntax.h"
 #include <QtMath>
+#include "source/Compiler/systems/factorysystem.h"
 
 
 Syntax Syntax::s;
@@ -29,56 +30,13 @@ Syntax::Syntax()
 {
 }
 
-void Syntax::Init(AbstractSystem::System s, QString param)
+void Syntax::Init(AbstractSystem::System s, CIniFile* m_ini, CIniFile* m_proj)
 {
-    m_currentSystem = s;
-    if (s==AbstractSystem::VIC20) {
-        if (param=="none") {
-            m_startAddress = 0x1000;
-            m_programStartAddress = 0x1010;
-            m_memoryType = 0;
-        }
-        else if (param=="3k") {
-            m_startAddress = 0x0400;
-            m_programStartAddress = 0x0410;
-            m_memoryType = 0;
-        }
-        else
-        {
-            m_startAddress = 0x1200;
-            m_programStartAddress = 0x1210;
-            m_memoryType = 1;
-       }
-
-    }
-    if (s==AbstractSystem::C64) {
-        m_startAddress = 0x0800;
-        m_programStartAddress = 0x0810;
-    }
-    if (s==AbstractSystem::PET) {
-        m_startAddress = 0x0400;
-        m_programStartAddress = 0x0410;
-    }
-    if (s==AbstractSystem::NES) {
-        m_startAddress = 0xCA00;
-        m_programStartAddress = 0xCA00;
-    }
-    if (s==AbstractSystem::C128) {
-        m_startAddress = 0x01C00;
-        m_programStartAddress = 0x1C10;
-    }
-    if (s==AbstractSystem::BBCM) {
+    m_currentSystem = FactorySystem::Create(s,m_ini, m_proj);
+/*    if (s==AbstractSystem::BBCM) {
         m_startAddress = 0x02000;
         m_programStartAddress = 0x2010;
-    }
-    if (s==AbstractSystem::PLUS4) {
-        m_startAddress = 0x1000;
-        m_programStartAddress = 0x1010;
-    }
-    if (s==AbstractSystem::OK64) {
-        m_startAddress = 0x0400;
-        m_programStartAddress = 0x0400;
-    }
+    }*/
 
     LoadSyntaxData();
 
@@ -94,7 +52,7 @@ void Syntax::Init(AbstractSystem::System s, QString param)
 void Syntax::SetupReservedWords(QVector<Token>& list, QString id, bool ignoreSystem)
 {
     list.clear();
-    QString currentSystem = AbstractSystem::StringFromSystem(m_currentSystem).toLower();
+    QString currentSystem = AbstractSystem::StringFromSystem(m_currentSystem->m_system).toLower();
     for (QString s: m_syntaxData.split('\n')) {
         s= s.simplified();
         if (s.count()==0) continue;
@@ -120,7 +78,7 @@ void Syntax::SetupBuiltinFunctions(QMap<QString, BuiltInFunction>& lst, Abstract
 {
     lst.clear();
 
-    QString currentSystem = AbstractSystem::StringFromSystem(m_currentSystem).toLower();
+    QString currentSystem = AbstractSystem::StringFromSystem(m_currentSystem->m_system).toLower();
 
     for (QString s: m_syntaxData.split('\n')) {
         s= s.simplified();

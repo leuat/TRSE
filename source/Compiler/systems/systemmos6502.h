@@ -14,9 +14,6 @@ public:
 
     }
 
-    int m_startAddress = 0x800;
-    int m_programStartAddress = m_startAddress+10;
-    int m_memoryType = 0;
     bool m_ignoreSys = false;
     bool m_stripPrg = false;
     MachineCodeAnalyzer m_mca;
