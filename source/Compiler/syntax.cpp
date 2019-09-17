@@ -38,12 +38,16 @@ void Syntax::Init(AbstractSystem::System s, QString param)
             m_programStartAddress = 0x1010;
             m_memoryType = 0;
         }
+        else if (param=="3k") {
+            m_startAddress = 0x0400;
+            m_programStartAddress = 0x0410;
+            m_memoryType = 0;
+        }
         else
         {
             m_startAddress = 0x1200;
             m_programStartAddress = 0x1210;
             m_memoryType = 1;
-
        }
 
     }
