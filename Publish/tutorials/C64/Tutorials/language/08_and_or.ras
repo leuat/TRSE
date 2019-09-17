@@ -8,11 +8,11 @@
 program AndOr;
 var  
 	val1, val2: byte; 	// Define two variables
-   
+
 begin
 	// define the screenmemory pointer
 	definescreen();
-	
+
 	// clear the screen and colour memory
 	clearscreen(32, screen_char_loc);
 	clearscreen(WHITE, screen_col_loc);
