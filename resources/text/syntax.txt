@@ -578,9 +578,16 @@ c; VERA_CTRL; X16; a;$9F25
 c; VERA_IEN; X16; a;$9F26
 c; VERA_ISR; X16; a;$9F27
 c; RAM_BANK ; X16; a; $9F61
+
+
+c;CINT;X16;a; $ff81
+c;CLRCHN;X16;a; $ffcc
+c;CHROUT;X16;a; $ffd2
+c;PLOT;X16;a; $fff0
+c;READ_KEYBOARD;X16;a; $ffe4
+
 m; VeraPoke; X16; b,b,b
 m; VeraPokeDual; X16; b,b,b,b
-
 m; InitPalette;X16;b
 m; SetColor;X16;b,b,b
 m; SetVideoMode;X16;b,b,b

@@ -555,6 +555,7 @@ void LColorList::CreateUI(QLayout* ly, int type)
 //        b->setStyleSheet("padding: 0px;");
         if (type==0) {
             QObject::connect( b, &QPushButton::clicked,  [=](){ handleButtonImport(j);} );
+
         }
         if (type==1) {
             QObject::connect( b, &QPushButton::clicked,  [=](){ handleButtonEdit(j);} );
