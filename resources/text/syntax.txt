@@ -166,7 +166,7 @@ m; InitKrill; C64, PLUS4;
 # m; Writeln; C64, PLUS4, C128, VIC20, PET,  NES ; s,b
 
 m; Tile; C64, PLUS4, C128, VIC20, PET ; a,a,a,a,b,n
-m; MoveTo; C64, PLUS4, C128, VIC20, NES, X16 ; b,b,b
+m; MoveTo; C64, PLUS4, C128, VIC20, NES ; b,b,b
 m; ScrollY; C64, PLUS4, C128 ; b
 m; ScrollX; C64, PLUS4, C128 ; b
 m; hideborderx; C64, PLUS4, C128 ; b
@@ -586,6 +586,7 @@ c;CHROUT;X16;a; $ffd2
 c;PLOT;X16;a; $fff0
 c;READ_KEYBOARD;X16;a; $ffe4
 
+m; MoveTo; X16 ; b,b
 m; VeraPoke; X16; b,b,b
 m; VeraPokeDual; X16; b,b,b,b
 m; InitPalette;X16;b

@@ -46,7 +46,7 @@ begin
 	setveraincrement(1);
 	for i := 0 to @NUM_BALLS do
 	begin
-		moveto(xp[i]*2,yp[i],0);
+		moveto(xp[i]*2,yp[i]);
 		vera_data1:=$A0;		
 		vera_data1:=6;
 				
@@ -59,7 +59,7 @@ begin
 		yp[i] := yp[i] + dy[i];
 		
 		
-		moveto(xp[i]*2,yp[i],0);
+		moveto(xp[i]*2,yp[i]);
 		
 		vera_data1:=$A0;		
 		vera_data1:=3;		
