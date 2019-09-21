@@ -56,11 +56,12 @@ begin
 				setverabank(1);
 //			zp:=zp-640;
 			end;
-//
+
 			zp:=zp+640;			
 
 			vera_addr_mid := hi(zp);
 			vera_addr_lo := lo(zp);
+			
 		
 
 			l:=((time+sine2[y1] - sine2[y2]))&63;
@@ -115,11 +116,24 @@ end;
 procedure InitScreen();
 begin
 	setvideomode(7,1,true);
-	verapoke(0,1,%00110000);
-	verapoke(0,4,0);
-	verapoke(0,5,0);
+	setverabank($0F);
+/*	verapoke($20,1,%00110000);
+	verapoke($20,4,100);
+	verapoke($20,5,0);
+	*/
+	SetVeraTileMode(0,0);
 	SetPalette(30,20,16);
 
+
+	setverabank(0);
+	setveraincrement(1);
+	vera_addr_mid:=0;
+	vera_addr_lo:=$00;	
+	for k:=0 to 2 do
+	for j:=0 to 0 do
+	for i:=0 to 0 do
+		vera_data1:=0;
+		
 	for i:=0 to 256 do sine2[i]:=sine[i]/3;
 end;
 

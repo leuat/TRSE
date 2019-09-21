@@ -11,6 +11,20 @@ bool Methods6502::Command(QString name)
     return m_node->m_procName.toLower() == name.toLower();
 }
 
+void Methods6502::PointToVera(Assembler* as, int address, bool initLow)
+{
+    as->Asm("lda #"+Util::numToHex((address>>16)&0xff));
+    as->Asm("sta $9F22");
+    as->Asm("lda #"+Util::numToHex((address>>8)&0xff));
+    as->Asm("sta $9F21");
+//        as->Asm("lda #0");
+    if (initLow) {
+        as->Asm("lda #"+Util::numToHex((address)&0xff));
+        as->Asm("sta $9F20");
+    }
+
+}
+
 void Methods6502::toColor(Assembler *as)
 {
 /*
@@ -177,14 +191,30 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("SetVideoMode"))
         SetVideoMode(as);
 
-    if (Command("InitPalette")) {
-        as->Asm("lda #20");
+    if (Command("SetVeraTileMode")) {
+
+        PointToVera(as,0x0F2001,true);
+        as->Asm("lda #%00110000");
+        as->Asm("sta $9F23");
+        as->Asm("lda #4");
         as->Asm("sta $9F20");
-        as->Asm("lda #2");
-        as->Asm("sta $9F21");
+        as->Asm("lda #0");
+        as->Asm("sta $9F23");
+        as->Asm("inc $9F20");
+        as->Asm("sta $9F23");
+
+
+/*        verapoke(0,1,%00110000);
+        verapoke(0,4,0);
+        verapoke(0,5,0);
+  */
+    }
+
+    if (Command("InitPalette")) {
+        PointToVera(as,0x1F1000,false);
 //        as->Asm("lda #0");
         LoadVar(as,0);
-        as->Asm("sta $9F22");
+        as->Asm("sta $9F20");
     }
     if (Command("SetColor"))
         SetColor(as);
@@ -285,10 +315,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         LoadVar(as,0);
         QString zp = as->m_internalZP[0];
         as->Asm("sta "+zp);
-        as->Asm("lda $9F20");
+        as->Asm("lda $9F22");
         as->Asm("and #%11110000");
         as->Asm("ora "+zp);
-        as->Asm("sta $9F20");
+        as->Asm("sta $9F22");
 
     }
     if (Command("SetVeraIncrement")) {
@@ -299,10 +329,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         as->Asm("asl");
         as->Asm("asl");
         as->Asm("sta "+zp);
-        as->Asm("lda $9F20");
+        as->Asm("lda $9F22");
         as->Asm("and #%00001111");
         as->Asm("ora "+zp);
-        as->Asm("sta $9F20");
+        as->Asm("sta $9F22");
 
     }
 
@@ -2327,7 +2357,7 @@ void Methods6502::VeraPoke(Assembler *as, bool isExtended)
     LoadVar(as,0);
     as->Asm("sta $9F21");
     LoadVar(as,1);
-    as->Asm("sta $9F22");
+    as->Asm("sta $9F20");
     LoadVar(as,2);
     as->Asm("sta $9F23");
     if (isExtended) {
@@ -2394,13 +2424,13 @@ void Methods6502::SetVideoMode(Assembler *as)
         ErrorHandler::e.Error("Parameter 2 (layer 1/2) must be 1 or 2 ",m_node->m_op.m_lineNumber);
 
     num = (num-1)*0x10;
-
-    as->Asm("lda #4");
-    as->Asm("sta $9F20");
-    as->Asm("lda #0");
+//    $0F2000
+    as->Asm("lda #$0F");
+    as->Asm("sta $9F22");
+    as->Asm("lda #$20");
     as->Asm("sta $9F21");
     as->Asm("lda #"+Util::numToHex(num));
-    as->Asm("sta $9F22");
+    as->Asm("sta $9F20");
     QString zp = as->m_internalZP[0];
     LoadVar(as,2);
     as->Asm("sta "+zp);

@@ -36,5 +36,5 @@ override_target_settings_sys = 1
 override_target_settings_prg = 0
 build_list = ,
 data_header_images/image1.flf = 0
-open_files = ,example4.ras
-current_file = example4.ras
+open_files = ,example4.ras, vera_image_not_working.ras, example3.ras, example2.ras, example1.ras, example5.ras
+current_file = example1.ras

@@ -21,6 +21,7 @@ public:
 
     bool Command(QString name);
 
+    void PointToVera(Assembler* as, int address, bool);
     void toColor(Assembler* as);
     void AddMemoryBlock(Assembler* as, int param);
     void Poke(Assembler* as);

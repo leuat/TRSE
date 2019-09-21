@@ -29,5 +29,5 @@ override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 output_type = prg
 project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/Tutorials/
-open_files = ,easy/08_scroller.ras, language/08_and_or.ras, language/03_screen.ras, Hello.ras
-current_file = language/08_and_or.ras
+open_files = -1
+current_file = Hello.ras

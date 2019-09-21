@@ -569,9 +569,9 @@ m; fill80; C128; b,b
 
 # Commander X16 stuff
 
-c; VERA_ADDR_HI; X16; a;$9F20
+c; VERA_ADDR_HI; X16; a;$9F21
 c; VERA_ADDR_MID; X16; a;$9F21
-c; VERA_ADDR_LO; X16; a;$9F22
+c; VERA_ADDR_LO; X16; a;$9F20
 c; VERA_DATA1; X16; a;$9F23
 c; VERA_DATA2; X16; a;$9F24
 c; VERA_CTRL; X16; a;$9F25
@@ -593,6 +593,7 @@ m; SetColor;X16;b,b,b
 m; SetVideoMode;X16;b,b,b
 m; SetVeraBank;X16; b
 m; SetVeraIncrement;X16; b
+m; SetVeraTileMode; X16; b,b
 
 c; SCREEN_WIDTH; X16; b; 80
 c; SCREEN_HEIGHT; X16; b; 60
