@@ -1278,6 +1278,8 @@ void Methods6502::InitRandom256(Assembler *as)
         as->Asm("eor $9124");
     else if (Syntax::s.m_currentSystem->m_system==AbstractSystem::PLUS4)
         as->Asm("eor $ff00");
+    else if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X16)
+        as->Asm("eor $ff00");
 
     //as->Asm("rts");
 
@@ -1800,6 +1802,19 @@ void Methods6502::Tile(Assembler *as) {
 void Methods6502::MoveTo(Assembler *as)
 {
     //AddMemoryBlock(as,1);
+
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X16) {
+//        LoadVar(as, 2);
+/*        as->Asm("and #$0F");
+        as->Asm("ora #$1F");
+        as->Asm("sta $9F22");*/
+        LoadVar(as, 1);
+        as->Asm("sta $9F21");
+        LoadVar(as, 0);
+        as->Asm("sta $9F20");
+        return;
+    }
+
 
     if (m_node->m_params[0]->isPureNumeric() && m_node->m_params[1]->isPureNumeric() && as->m_symTab->m_constants.contains("SCREEN_WIDTH")) {
         // Calculate value directly, much much faster

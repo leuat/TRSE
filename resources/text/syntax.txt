@@ -166,12 +166,12 @@ m; InitKrill; C64, PLUS4;
 # m; Writeln; C64, PLUS4, C128, VIC20, PET,  NES ; s,b
 
 m; Tile; C64, PLUS4, C128, VIC20, PET ; a,a,a,a,b,n
-m; MoveTo; C64, PLUS4, C128, VIC20, NES ; b,b,b
+m; MoveTo; C64, PLUS4, C128, VIC20, NES, X16 ; b,b,b
 m; ScrollY; C64, PLUS4, C128 ; b
 m; ScrollX; C64, PLUS4, C128 ; b
 m; hideborderx; C64, PLUS4, C128 ; b
 m; hidebordery; C64, PLUS4, C128 ; b
-m; PrintString; C64, PLUS4, C128, VIC20, PET,  PET; s,b,b
+m; PrintString; C64, PLUS4, C128, VIC20, PET,  PET, X16; s,b,b
 m; PrintNumber; C64, PLUS4, C128, VIC20, PET,  PET; b
 m; PrintDecimal; C64, PLUS4, C128, VIC20, PET,  PET; i,n
 m; ClearScreen; C64, PLUS4, C128, VIC20, NES, PET; b, a

@@ -1,0 +1,82 @@
+/*
+	X16 Balls
+	
+*/
+program VicBalls;
+var 
+	// defines a constant to specify how many balls we want 
+	@define NUM_BALLS 255
+	
+	// create arrays for the ball data
+   	xp, yp, dx, dy: array[@NUM_BALLS] of byte; // x and y position, delta X and Y moveement
+
+	i, j,rnd : byte;
+
+	rand : incbin("data/random.bin");
+	
+procedure getRand();
+begin
+	inc(rnd);
+	returnValue(rand[rnd]);
+end;
+
+procedure InitialiseBalls();
+begin
+	
+	// loop through all items in the array to set their position
+	for i := 0 to @NUM_BALLS do
+	begin
+		xp[ i ] := getRand()/4;	// set x position for each ball
+		yp[ i ] := getRand()/4;	// set y position for each ball
+		j := getRand() & 1;			// set starting direction on the x-axis for each ball
+		case j of
+			0 : dx[ i ] := 1;
+			1 : dx[ i ] := -1;
+		end;
+		j := getRand() & 1;			// set starting direction on the y-axis for each ball
+		case j of
+			0 : dy[ i ] := 1;
+			1 : dy[ i ] := -1;
+		end;
+	end;
+end;
+
+procedure MoveBalls();
+begin
+	setveraincrement(1);
+	for i := 0 to @NUM_BALLS do
+	begin
+		moveto(xp[i]*2,yp[i],0);
+		vera_data1:=$A0;		
+		vera_data1:=6;
+				
+		if (xp[i] = 0 ) then dx[i] := 1;
+		if (xp[i] = screen_width -1 ) then dx[i] := -1;
+		if (yp[i] = 0 ) then dy[i] := 1;
+		if (yp[i] = screen_height -1 ) then dy[i] := -1;
+		// update x and y position of ball using the delta
+		xp[i] := xp[i] + dx[i];
+		yp[i] := yp[i] + dy[i];
+		
+		
+		moveto(xp[i]*2,yp[i],0);
+		
+		vera_data1:=$A0;		
+		vera_data1:=3;		
+
+	end;
+end;
+
+begin
+	
+	InitialiseBalls(); 	 // initialise the balls
+	
+	// infinite loop
+	while(true) do
+	begin
+		// move the balls
+		MoveBalls();
+		for i:=0 to 255 do wait(160);
+	end;
+	
+end.
