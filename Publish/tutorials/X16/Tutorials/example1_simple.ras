@@ -1,0 +1,60 @@
+program MyProgram;
+var
+
+   @define Space 32
+   i, j: byte;
+   hex: string = (48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 01, 02, 03, 04, 05, 06);
+   
+	procedure DrawCell(X, Y, Fg, Bg: byte);
+		var col: byte;
+	begin
+		col := Fg + 16*Bg;
+		X := X * 2;
+		moveto(X,Y);
+		VERA_DATA1 := @Space;
+		VERA_DATA1 := @Space;
+		VERA_DATA1 := @Space;
+		VERA_DATA1 := @Space;
+
+		VERA_ADDR_LO := X+1;
+		VERA_DATA1 := col;
+		VERA_DATA1 := col;
+		VERA_DATA1 := col;
+		VERA_DATA1 := col;
+
+		VERA_ADDR_MID := Y+1;
+		VERA_ADDR_LO := X;
+		VERA_DATA1 := @Space;
+		VERA_DATA1 := hex[Bg];
+		VERA_DATA1 := hex[Fg];
+		VERA_DATA1 := @Space;
+
+		VERA_ADDR_LO := X+1;
+		VERA_DATA1 := col;
+		VERA_DATA1 := col;
+		VERA_DATA1 := col;
+		VERA_DATA1 := col;
+
+		VERA_ADDR_MID := Y+2;
+		VERA_ADDR_LO := X;
+		VERA_DATA1 := @Space;
+		VERA_DATA1 := @Space;
+		VERA_DATA1 := @Space;
+		VERA_DATA1 := @Space;
+
+		VERA_ADDR_LO := X+1;
+		VERA_DATA1 := col;
+		VERA_DATA1 := col;
+		VERA_DATA1 := col;
+		VERA_DATA1 := col;
+   end; 
+   
+begin
+	VERA_CTRL := 0;
+	setveraincrement(2);
+
+	for j := 0 to 16 do
+		for i := 0 to 16 do
+			DrawCell(4*i, 3*j, i, j);
+	Loop();
+end.
