@@ -28,6 +28,4 @@ override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 output_type = prg
-project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/Tutorials/
-open_files = ,easy/03_boxes.ras, Hello.ras
-current_file = Hello.ras
+open_files =, Hello.ras

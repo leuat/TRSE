@@ -58,6 +58,9 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(m_updateThread, SIGNAL(updateImageSignal()), this, SLOT(updateImage()));
 
 
+    Data::data.version += "   Build  " + QDate::currentDate().toString();
+
+
     this->setMouseTracking(true);
     m_currentDoc = nullptr;
 
