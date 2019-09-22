@@ -7,3 +7,8 @@ NodeRepeatUntil::NodeRepeatUntil(Token op, int forcePage, Node *cond, Node *bloc
     m_block = block;
     m_conditional = cond;
 }
+
+void NodeRepeatUntil::Delete()
+{
+
+}
