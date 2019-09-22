@@ -664,6 +664,9 @@ Node *Parser::Statement()
         Eat(TokenType::WHILE);
         node = Conditional(true);
     }
+    else if (m_currentToken.m_type == TokenType::REPEAT) {
+        node = RepeatUntil();
+    }
     else if (m_currentToken.m_type == TokenType::ASM) {
         return InlineAssembler();
 
@@ -886,6 +889,12 @@ Node* Parser::Factor()
 
     }
     return Variable();
+}
+
+Node *Parser::RepeatUntil()
+{
+    Eat(TokenType::REPEAT);
+
 }
 
 Node* Parser::Term()

@@ -23,6 +23,7 @@ class NodeBuiltinMethod;
 class NodeAsm;
 class NodeBinaryClause;
 class NodeCase;
+class NodeRepeatUntil;
 
 class AbstractASTDispatcher
 {
@@ -52,6 +53,7 @@ public:
     virtual void dispatch(NodeAsm *node) = 0;
     virtual void dispatch(NodeBinaryClause *node) = 0;
     virtual void dispatch(NodeCase *node) = 0;
+    virtual void dispatch(NodeRepeatUntil *node) = 0;
 
     virtual QString getEndType(Assembler* as, Node* v) {return "";}
     virtual QString getEndType(Assembler *as, Node *v1,Node *v2) {return "";}

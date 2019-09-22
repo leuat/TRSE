@@ -117,6 +117,7 @@ public:
     Node* CompoundStatement();
     Node* Program(QString param);
     Node* Factor();
+    Node* RepeatUntil();
     Node* Expr();
     Node* Term();
     Node* FindProcedure();

@@ -600,6 +600,11 @@ void ASTDispather68000::dispatch(NodeCase *node)
     ErrorHandler::e.Error("CASE not implemented for m68K yet...", node->m_op.m_lineNumber);
 }
 
+void ASTDispather68000::dispatch(NodeRepeatUntil *node)
+{
+
+}
+
 void ASTDispather68000::dispatch(NodeBuiltinMethod *node)
 {
     node->DispatchConstructor();

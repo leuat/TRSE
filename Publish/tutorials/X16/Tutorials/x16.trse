@@ -36,5 +36,5 @@ override_target_settings_sys = 1
 override_target_settings_prg = 0
 build_list = ,
 data_header_images/image1.flf = 0
-open_files = ,example2_tunnel.ras, example1_simple.ras, example3.ras, example2.ras, example1.ras, example4.ras, example5.ras
-current_file = example1_simple.ras
+open_files = ,example4_twister.ras, example6_balls.ras, example2_tunnel.ras, example1_simple.ras, example3.ras, example2.ras, example1.ras, example4.ras, example5.ras
+current_file = example6_balls.ras

@@ -78,6 +78,7 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     imageworker.cpp \
     source/Compiler/ast/nodecase.cpp \
+    source/Compiler/ast/noderepeatuntil.cpp \
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemplus4.cpp \
     source/LeLib/limage/limageok64.cpp \
@@ -218,6 +219,7 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     imageworker.h \
     source/Compiler/ast/nodecase.h \
+    source/Compiler/ast/noderepeatuntil.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemplus4.h \
     source/LeLib/limage/limageok64.h \

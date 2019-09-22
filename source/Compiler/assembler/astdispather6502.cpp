@@ -2502,7 +2502,13 @@ void ASTDispather6502::dispatch(NodeCase *node)
 
     as->PopLabel("caseend");
 
-//    as->PopCounter(node->m_op.m_lineNumber);
+    //    as->PopCounter(node->m_op.m_lineNumber);
+}
+
+void ASTDispather6502::dispatch(NodeRepeatUntil *node)
+{
+    qDebug() << "REPEAT UNTIL NOT YET IMPLEMENTED";
+    exit(1);
 }
 
 

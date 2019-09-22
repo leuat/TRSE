@@ -76,7 +76,7 @@ begin
 	begin
 		// move the balls
 		MoveBalls();
-		for i:=0 to 255 do wait(160);
+		for i:=0 to 255 do wait(80);
 	end;
 	
 end.
