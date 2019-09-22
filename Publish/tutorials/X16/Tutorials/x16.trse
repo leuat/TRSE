@@ -35,3 +35,6 @@ override_target_settings_sys = 1
 override_target_settings_prg = 0
 build_list = ,
 data_header_images/image1.flf = 0
+project_path = /home/leuat/code/TRSE/Release/../tutorials/X16/Tutorials/
+open_files = ,images/image1.flf
+current_file = images/image1.flf
