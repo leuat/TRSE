@@ -36,6 +36,4 @@ override_target_settings_prg = 0
 build_list = ,
 output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
-open_files = ,images/titlescreen2.flf, images/intrologo2.flf, sprites/fastfood.flf, RogueBurgerOne.ras
-project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/TutorialGame_RogueBurgerOne/
-current_file = images/intrologo2.flf
+open_files =, RogueBurgerOne.ras
