@@ -261,7 +261,7 @@ void FormImageEditor::UpdateImage()
     ui->lblImage->setVisible(true);
     ui->lblImage->setScaledContents(true);
 //        ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(320, 320, Qt::IgnoreAspectRatio, Qt::FastTransformation));
-    ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(ui->lblImage->size().width(), m_work.m_currentImage->m_image->m_height, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+    ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(ui->lblImage->size().width(), ui->lblImage->size().height(), Qt::IgnoreAspectRatio, Qt::FastTransformation));
 //    ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(16, 16, Qt::IgnoreAspectRatio, Qt::FastTransformation));
   //  ui->lblImage->setPixmap(m_updateThread.m_pixMapImage);
     ui->lblImage->setMaximumHeight(ui->lblImage->size().width()/(320/200.0));

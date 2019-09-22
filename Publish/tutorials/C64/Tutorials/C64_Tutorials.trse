@@ -29,4 +29,6 @@ override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 output_type = prg
 data_header_resources/images/neo_rider_by_the_diad.flf = 6.95212e-310
-open_files =, Hello.ras
+open_files = ,resources/images/jack.flf, resources/charsets/charset_16x16.flf, Hello.ras
+project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/Tutorials/
+current_file = resources/images/jack.flf

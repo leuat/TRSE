@@ -1190,14 +1190,15 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF
 //#pragma omp parallel for
     int height  =min(img.height(), m_height);
     int width  =min(img.width(), m_width);
-
-
+  //  center.setX(floor(center.x()));
+ //   center.setY(floor(center.y()));
     for (int i=0;i<width;i++)
         for (int j=0;j<height;j++) {
 
-            float xp = floor(((i-center.x())*zoom)+ center.x());
-            float yp = floor(((j-center.y())*zoom) + center.y());
-
+//            float xp = floor(((i-center.x())*zoom)+ center.x());
+  //          float yp = floor(((j-center.y())*zoom) + center.y());
+            double xp = (((i-center.x())*(double)zoom)+ center.x());
+            double yp = (((j-center.y())*(double)zoom)+ center.y());
 
             unsigned int col = 0;
             if (xp>=0 && xp<width && yp>=0 && yp<height)
