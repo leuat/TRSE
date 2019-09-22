@@ -45,7 +45,7 @@ void ASTDispather68000::dispatch(NodeBinOP *node) {
 }
 
 
-void ASTDispather68000::dispatchOld(NodeBinOP *node)
+/*void ASTDispather68000::dispatchOld(NodeBinOP *node)
 {
     node->DispatchConstructor();
 
@@ -76,22 +76,6 @@ void ASTDispather68000::dispatchOld(NodeBinOP *node)
     as->BinOP(node->m_op.m_type);
     QString op = as->m_varStack.pop();
 
-
-/*
-    QString d0 = as->m_regAcc.Get();
-  //      as->m_varStack.push(d0);
-        node->m_right->Accept(this);
-        QString right = as->m_varStack.pop();
-        node->m_left->Accept(this);
-        if (op.toLower().contains("mul") || op.toLower().contains("div"))
-            op = op+".w"; else op=op +m_lastSize;//+".l";
-
-        TransformVariable(as,"move"+getEndType(as,node->m_left),d0,as->m_varStack.pop());
-        TransformVariable(as,op,d0,right);
-        as->m_varStack.push(d0);
-    as->m_regAcc.Pop(d0);
-
-*/
 
 //    as->Comment(" ** StartFree registers: " +QString::number(as->m_regAcc.m_free.count()));
     QString d0 = "";
@@ -152,7 +136,7 @@ void ASTDispather68000::dispatchOld(NodeBinOP *node)
     as->m_regAcc.Pop(d0);
 
 }
-
+*/
 
 void ASTDispather68000::dispatch(NodeNumber *node)
 {
