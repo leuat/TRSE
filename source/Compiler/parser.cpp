@@ -385,6 +385,14 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         return;
     }
+    if (m_currentToken.m_value=="export") {
+        Eat();
+        Eat();
+        Eat();
+        Eat();
+        return;
+    }
+
     if (m_currentToken.m_value=="donotremove") {
         Eat();
         m_doNotRemoveMethods.append(m_currentToken.m_value);
@@ -975,6 +983,13 @@ void Parser::Preprocess()
                 Eat(TokenType::PREPROCESSOR);
                 m_ignoreMethods.append(m_currentToken.m_value);
             }
+            else if (m_currentToken.m_value.toLower() =="export") {
+                Eat(TokenType::PREPROCESSOR);
+                HandleExport();
+
+
+            }
+
             else if (m_currentToken.m_value.toLower() =="startassembler") {
                 Eat(TokenType::PREPROCESSOR);
                 m_initAssembler = m_currentToken.m_value;
@@ -1757,6 +1772,34 @@ Node *Parser::InlineAssembler()
     Eat(TokenType::STRING);
     Eat(TokenType::RPAREN);
     return n;
+}
+
+void Parser::HandleExport()
+{
+    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat();
+    QString outFile =m_currentDir+"/"+ m_currentToken.m_value;
+    Eat();
+    int param = m_currentToken.m_intVal;
+    Eat();
+
+    if (!QFile::exists(inFile)) {
+        ErrorHandler::e.Error("File not found : "+inFile,ln);
+    }
+    LImage* img = LImageIO::Load(inFile);
+    if (dynamic_cast<CharsetImage*>(img)!=nullptr) {
+        img->m_exportParams["End"] = param;
+
+    }
+    if (QFile::exists(outFile))
+        QFile::remove(outFile);
+
+    QFile file(outFile);
+    file.open(QFile::WriteOnly);
+    img->ExportBin(file);
+    file.close();
+
 }
 
 Node* Parser::Expr()

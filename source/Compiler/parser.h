@@ -45,6 +45,7 @@
 #include "source/Compiler/ast/nodeasm.h"
 #include "source/Compiler/ast/nodebinaryclause.h"
 #include "source/Compiler/ast/nodecase.h"
+#include "source/LeLib/limage/limageio.h"
 
 class ParserBlock {
 public:
@@ -137,6 +138,7 @@ public:
     Node* BuiltinFunction();
     Node* Constant();
     Node* InlineAssembler();
+    void HandleExport();
     void Eat();
 
 
