@@ -22,6 +22,7 @@
 #include "source/Compiler/ast/nodeasm.h"
 #include "source/Compiler/ast/nodebinaryclause.h"
 #include "source/Compiler/ast/nodecase.h"
+#include "source/Compiler/ast/noderepeatuntil.h"
 #include "methods6502.h"
 
 class ASTDispather6502 : public AbstractASTDispatcher

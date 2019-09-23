@@ -901,8 +901,24 @@ Node* Parser::Factor()
 
 Node *Parser::RepeatUntil()
 {
+    Token t = m_currentToken;
     Eat(TokenType::REPEAT);
-    return nullptr;
+    QVector<Node*> nodes = StatementList();
+    NodeCompound* root = new NodeCompound(t);
+    Eat(TokenType::UNTIL);
+    Node* cond = BinaryClause();
+    QVector<Node*> decl;
+
+    for (Node* n: nodes)
+        root->children.append(n);
+
+    NodeBlock* block = new NodeBlock(t,decl,root);
+
+//    qDebug() << "from begin block : " +m_currentToken.getType();
+//    NodeRepeatUntil(Token op, int forcePage, Node* cond, Node* block);
+
+    return new NodeRepeatUntil(t,false,dynamic_cast<NodeBinaryClause*>(cond),block);
+
 }
 
 Node* Parser::Term()

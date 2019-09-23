@@ -38,11 +38,11 @@ public:
 //    QVector<Node*> m_a, m_b;
 
     Node* m_block = nullptr;
-    Node* m_conditional = nullptr;
+    NodeBinaryClause* m_clause = nullptr;
 
     int m_forcePage = 0;
 
-    NodeRepeatUntil(Token op, int forcePage, Node* cond, Node* block);
+    NodeRepeatUntil(Token op, int forcePage,  NodeBinaryClause* cond, Node* block);
 
 
     void Delete() override;
@@ -55,6 +55,7 @@ public:
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);
     }
+
 
 };
 

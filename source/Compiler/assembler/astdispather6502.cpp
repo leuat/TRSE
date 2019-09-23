@@ -2507,9 +2507,54 @@ void ASTDispather6502::dispatch(NodeCase *node)
 
 void ASTDispather6502::dispatch(NodeRepeatUntil *node)
 {
-    qDebug() << "REPEAT UNTIL NOT YET IMPLEMENTED";
-    exit(1);
+    node->DispatchConstructor();
+    QString lbl = as->NewLabel("repeatUntil");
+    QString lblDone = as->NewLabel("repeatUntil");
+    as->Label(lbl);
+    node->m_block->Accept(this);
+
+    bool isSimplified = false;
+    bool isOKBranchSize = true;
+    if (node->verifyBlockBranchSize(as, node->m_block)) {
+        isSimplified = !node->m_clause->cannotBeSimplified(as);
+    }
+    else isOKBranchSize = false;
+
+    // Then, check m_forcepage
+    if (node->m_forcePage==1) // force OFFPAGE
+        isSimplified = false;
+
+    if (node->m_forcePage==2) {
+        if (!node->m_clause->cannotBeSimplified(as)) // force ONPAGE
+            isSimplified = true;
+        else ErrorHandler::e.Error("keyword onpage can only be used with 1 compare clause (no and, or etc)", node->m_op.m_lineNumber);
+    }
+    if (!isSimplified) {
+//        node->m_binaryClause->Build(as);
+        if (isOKBranchSize && IsSimpleAndOr(dynamic_cast<NodeBinaryClause*>(node->m_clause), lblDone,lbl)){
+        }
+        else {
+
+            node->m_clause->Accept(this);
+
+            as->Asm("cmp #1");
+            as->Asm("beq " + lblDone);
+            // Do we have an else block?
+            as->Asm("jmp " + lbl);
+        }
+    }
+    else {
+        // Simplified version <80 instructions & just one clause
+        BuildSimple(node->m_clause,  lblDone,lbl);
+    }
+    // Start main block
+
+    as->Label(lblDone);
+
+
 }
+
+
 
 
 
