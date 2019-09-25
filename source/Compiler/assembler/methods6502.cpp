@@ -5012,7 +5012,9 @@ void Methods6502::WaitNoRasterLines(Assembler *as)
 void Methods6502::WaitForRaster(Assembler *as)
 {
     as->Comment("wait for raster");
-    LoadVar(as, 0,"", "ldx ");
+//    LoadVar(as, 0,"", "ldx ");
+    LoadVar(as,0);
+    as->Asm("tax");
 //    as->Asm("lda $d012 ; raster line pos");
 //    as->Asm("clc ; clear carry ");
  //   as->Label("lblTest");
