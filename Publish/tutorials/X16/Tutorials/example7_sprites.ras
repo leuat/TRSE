@@ -32,19 +32,27 @@ begin
 //	if (time&1=1) then 
 	curFrame:=(curFrame +1)&15;
 	j:=curFrame;
+	// base ix, iy sprite position
 	ix:=sine[time];
 	iy:=0+sine[time+34]/2;
+	// Set timers
 	k:=time;
 	k2:=time*2;
 	for i:=0 to @noSprites do 
 	begin
+		// Point to sprite i on VERA
 		initsprite(i);
-		j:=(j+3)&15;
+		// Set current frame
+		j:=(j+2)&15;
 		in:=$8200 + j*8;
+		// Set sprite position = $200 = $4000/32 + frame*256 (each frame is 256 byes)
 		setspriteloc(in);
+		// Set x / y position of individuals
 		ia:=100 + ix+sine[k]/2;
 		ib:=iy+sine[k2]/2;
+		// Set position
 		spritepos(ia, ib);
+		// Advance counters with some primes
 		k:=k+11;
 		k2:=k2+7;
 	end;	
@@ -57,7 +65,7 @@ begin
 	// Emulator still only supports 16 sprites	
 	for i:=0 to @noSprites offpage  do begin
 		initsprite(i);
-		
+	    // Set 16x16 (0 = 8, 1=16, 2=32, 3=64)		
 		spritesize(1,1);// 16x16
 		spritedepth(3); // In front ofall
 		
