@@ -1,11 +1,15 @@
 program MyProgram;
 var  
-   i,j,b,k,l: byte; 
-   in : integer;
+   i,j,b,k,l,time,k2: byte; 
+   in,ia,ib,ix,iy : integer;
 	zp:pointer;   
 	@define spritePos $a000
 	curFrame : byte = 0;
-	ix,iy : integer = 0;
+	
+// Emulator only supports 16 sprites
+
+@define noSprites 16
+
 	sprites : incbin("data/example7_sprite.bin",@spritePos);
 	
 // Set som funky palette
@@ -25,16 +29,24 @@ end;
 
 procedure UpdateSprites();
 begin
+//	if (time&1=1) then 
 	curFrame:=(curFrame +1)&15;
-	k:=0;
 	j:=curFrame;
-	for i:=0 to 64 do 
+	ix:=sine[time];
+	iy:=0+sine[time+34]/2;
+	k:=time;
+	k2:=time*2;
+	for i:=0 to @noSprites do 
 	begin
 		initsprite(i);
-		j:=(j+1)&15;
-		asm(";crash");
+		j:=(j+3)&15;
 		in:=$8200 + j*8;
 		setspriteloc(in);
+		ia:=100 + ix+sine[k]/2;
+		ib:=iy+sine[k2]/2;
+		spritepos(ia, ib);
+		k:=k+11;
+		k2:=k2+7;
 	end;	
 
 end;
@@ -42,18 +54,14 @@ end;
 procedure InitSprites();
 begin
 	EnableSprites(1);
-	
-	for i:=0 to 64  do begin
+	// Emulator still only supports 16 sprites	
+	for i:=0 to @noSprites offpage  do begin
 		initsprite(i);
 		
-		ix:=random()*2;
-		iy:=random()*2;
-		
-		spritepos(ix,iy);
-		spritedepth(3); // In front ofall
 		spritesize(1,1);// 16x16
+		spritedepth(3); // In front ofall
 		
-		j:=(random()&3)*4; // 64 colour shift RGB
+		j:=((i*11)&3)*4; // 64 colour shift RGB
 		
 		SpritePaletteOffset(j);	
 	end;
@@ -77,6 +85,7 @@ begin
 	begin
 		UpdateSprites();
 		for i:=0 to 255 do wait(50);
+		time:=time+1;
 	end;
 
 end.

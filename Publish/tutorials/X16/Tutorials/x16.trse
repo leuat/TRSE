@@ -36,5 +36,5 @@ override_target_settings_prg = 0
 build_list = ,
 data_header_images/image1.flf = 0
 project_path = /home/leuat/code/TRSE/Release/../tutorials/X16/Tutorials/
-open_files = ,example7_sprites.asm, example7_sprites.ras, example6_balls.ras
+open_files = ,example7_sprites.fjo, example7_sprites.asm, example7_sprites.ras, example6_balls.ras
 current_file = example7_sprites.ras

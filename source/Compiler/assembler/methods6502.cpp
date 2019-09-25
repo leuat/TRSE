@@ -553,9 +553,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         as->Asm("asl");
         as->Asm("ora "+as->m_internalZP[0]);
         as->Asm("sta $9F23");
-        as->Asm("lda #6");
+        as->Asm("lda $9F20");
         as->Asm("sec");
-        as->Asm("sbc $9F20");
+        as->Asm("sbc #6");
         as->Asm("sta $9F20");
     }
     if (Command("spritesize")) {
@@ -582,9 +582,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         as->Asm("ora "+as->m_internalZP[1]);
         as->Asm("ora "+as->m_internalZP[0]);
         as->Asm("sta $9F23");
-        as->Asm("lda #7");
+        as->Asm("lda $9F20");
         as->Asm("sec");
-        as->Asm("sbc $9F20");
+        as->Asm("sbc #7");
         as->Asm("sta $9F20");
     }
     if (Command("spritepaletteoffset")) {
@@ -598,9 +598,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         LoadVar(as,0);
         as->Asm("ora "+as->m_internalZP[0]);
         as->Asm("sta $9F23");
-        as->Asm("lda #7");
+        as->Asm("lda $9F20");
         as->Asm("sec");
-        as->Asm("sbc $9F20");
+        as->Asm("sbc #7");
         as->Asm("sta $9F20");
     }
 
