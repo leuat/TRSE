@@ -1,10 +1,11 @@
 program MyProgram;
 var  
    i,j,b,k,l: byte; 
+   in : integer;
 	zp:pointer;   
 	@define spritePos $a000
 	curFrame : byte = 0;
-	
+	ix,iy : integer = 0;
 	sprites : incbin("data/example7_sprite.bin",@spritePos);
 	
 // Set som funky palette
@@ -29,7 +30,7 @@ begin
 	zp:=@spritePos;
 	// copy 4096 bytes
 	VERA_ADDR_LO:=$00;
-	VERA_ADDR_HI:=$40;
+	VERA_ADDR_MID:=$40;
 	for j:=0 to 16 do
 	begin
 		for i:=0 to 0 do 
@@ -43,17 +44,36 @@ end;
 procedure UpdateSprites();
 begin
 	curFrame:=(curFrame +1)&15;
-
-	setverabank($0F);
 	k:=0;
 	j:=curFrame;
-	for i:=0 to 31 do 
+	for i:=0 to 64 do 
 	begin
+		initsprite(i);
 		j:=(j+1)&15;
-		verapoke($50,k,j*8); // address LO
-		verapoke($50,k+1,$02 | %10000000); // address HI
-		k:=k+8;
+		in:=$8200 + j*8;
+		setspriteloc(in);
 	end;	
+
+end;
+
+procedure InitSprites();
+begin
+	EnableSprites(1);
+	
+	for i:=0 to 64 offpage do begin
+		initsprite(i);
+		
+		ix:=random()*2;
+		iy:=random()*2;
+		
+		spritepos(ix,iy);
+		spritedepth(3); // In front ofall
+		spritesize(1,1);// 16x16
+		
+		j:=(random()&3)*4; // 64 colour shift RGB
+		
+		SpritePaletteOffset(j);	
+	end;
 
 end;
 
@@ -68,29 +88,12 @@ begin
 	
 	CopyDataToVera();
 	// 32 bytes per address OK
-
-	setverabank($0F);
-	k:=0;
-	l:=$50;
-	verapoke($40,0,1);
-	for i:=0 to 31 offpage do begin
-//	verapoke($40,01,1);
-		verapoke(l,k+2,random()); // Sprite X LO
-	//	verapoke($50,k+3,random()&1); // Sprite X HI
-		verapoke(l,k+4,random()); // Sprite X LO
-	//	verapoke($50,k+5,random()&1); // Sprite X HI
-		verapoke(l,k+6,%00001100); // Infront of all
-		j:=random()&3;
-		j:=j*4;
-		verapoke(l,k+7,%01010000 | j) ; // Sprite W/H
-		k:=k+8;
-//		if (i=15) then inc(l);
-	end;
+	InitSprites();
 
 	while (true) do 
 	begin
 		UpdateSprites();
-		for i:=0 to 255 do wait(50);
+		for i:=0 to 255 do wait(30);
 	end;
 
 end.

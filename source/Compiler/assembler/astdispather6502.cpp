@@ -253,7 +253,7 @@ bool ASTDispather6502::HandleSingleAddSub(Node *node) {
 void ASTDispather6502::HandleMulDiv(Node *node) {
 
     if (node->m_right->isPureNumeric())  {
-        as->Comment("Right is PURE NUMERIC");
+        as->Comment("Right is PURE NUMERIC : Is word ="+ QString::number(node->isWord(as)) );
         //qDebug() << "IS PURE NUMERIC";
         if (node->isWord(as))
             RightIsPureNumericMulDiv16bit(node);
@@ -359,8 +359,8 @@ void ASTDispather6502::Mul16x8(Node *node) {
     if (node->m_left->getType(as)==TokenType::INTEGER) {
         LoadVariable(node->m_left);
         as->Term();
-        as->Asm("sty mul16x8_num1");
-        as->Asm("sta mul16x8_num1Hi");
+        as->Asm("sta mul16x8_num1");
+        as->Asm("sty mul16x8_num1Hi");
     }
     else {
         // 8x8 bit
@@ -2608,7 +2608,8 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
 
     if (node->m_left->getType(as)==TokenType::INTEGER) {
         as->Asm("ldy #0 ; ::AssignVariable ldy #0");    // AH:20190722: Does not appear to serve a purpose - takes up space in prg. Breaks TRSE scroll in 4K C64 demo if take this out
-        node->m_right->m_forceType = TokenType::INTEGER; // FORCE integer on right-hand side
+//        node->m_right->m_forceType = TokenType::INTEGER; // FORCE integer on right-hand side
+        node->m_right->setForceType(TokenType::INTEGER);
     }
     // For constant i:=i+1;
     if (IsSimpleIncDec(v,  node))

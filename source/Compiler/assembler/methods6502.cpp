@@ -191,6 +191,13 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("SetVideoMode"))
         SetVideoMode(as);
 
+    if (Command("enablesprites")) {
+        PointToVera(as,0x0F4000,true);
+        LoadVar(as,0);
+        as->Asm("sta $9F23");
+
+    }
+
     if (Command("SetVeraTileMode")) {
 
         PointToVera(as,0x0F2001,true);
@@ -529,6 +536,73 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     if (Command("setspriteloc"))
         SetSpriteLoc(as);
+
+    if (Command("initsprite"))
+        InitVeraSprite(as);
+
+    if (Command("spritedepth")) {
+        as->Asm("lda #6");
+        as->Asm("clc");
+        as->Asm("adc $9F20");
+        as->Asm("sta $9F20");
+        as->Asm("lda $9F23");
+        as->Asm("and #%11110011");
+        as->Asm("sta "+as->m_internalZP[0]);
+        LoadVar(as,0);
+        as->Asm("asl");
+        as->Asm("asl");
+        as->Asm("ora "+as->m_internalZP[0]);
+        as->Asm("sta $9F23");
+        as->Asm("lda #6");
+        as->Asm("sec");
+        as->Asm("sbc $9F20");
+        as->Asm("sta $9F20");
+    }
+    if (Command("spritesize")) {
+        as->Asm("lda #7");
+        as->Asm("clc");
+        as->Asm("adc $9F20");
+        as->Asm("sta $9F20");
+        as->Asm("lda $9F23");
+        as->Asm("and #%00001111");
+        as->Asm("sta "+as->m_internalZP[0]);
+        LoadVar(as,0);
+        as->Asm("asl");
+        as->Asm("asl");
+        as->Asm("asl");
+        as->Asm("asl");
+        as->Asm("asl");
+        as->Asm("asl");
+        as->Asm("sta "+as->m_internalZP[1]);
+        LoadVar(as,1);
+        as->Asm("asl");
+        as->Asm("asl");
+        as->Asm("asl");
+        as->Asm("asl");
+        as->Asm("ora "+as->m_internalZP[1]);
+        as->Asm("ora "+as->m_internalZP[0]);
+        as->Asm("sta $9F23");
+        as->Asm("lda #7");
+        as->Asm("sec");
+        as->Asm("sbc $9F20");
+        as->Asm("sta $9F20");
+    }
+    if (Command("spritepaletteoffset")) {
+        as->Asm("lda #7");
+        as->Asm("clc");
+        as->Asm("adc $9F20");
+        as->Asm("sta $9F20");
+        as->Asm("lda $9F23");
+        as->Asm("and #%11110000");
+        as->Asm("sta "+as->m_internalZP[0]);
+        LoadVar(as,0);
+        as->Asm("ora "+as->m_internalZP[0]);
+        as->Asm("sta $9F23");
+        as->Asm("lda #7");
+        as->Asm("sec");
+        as->Asm("sbc $9F20");
+        as->Asm("sta $9F20");
+    }
 
     if (Command("jammer"))
         Jammer(as);
@@ -2189,6 +2263,31 @@ void Methods6502::PokeScreenColor(Assembler *as, int hiAddress)
 void Methods6502::SetSpritePos(Assembler *as)
 {
 
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X16) {
+        as->Comment("Set VERA sprite position");
+        as->Asm("lda #2");
+        as->Asm("clc");
+        as->Asm("adc $9F20"); // Point to sprite x
+        as->Asm("sta $9F20"); // Point to sprite x
+        LoadVar(as,0);
+        as->Asm("sta $9F23");
+        as->Asm("inc $9F20");
+        as->Asm("sty $9F23");
+        as->Asm("inc $9F20");
+        LoadVar(as,1);
+        as->Asm("sta $9F23");
+        as->Asm("inc $9F20");
+        as->Asm("sty $9F23");
+        as->Asm("lda $9F20");
+        as->Asm("sec");
+        as->Asm("sbc #5");
+        as->Asm("sta $9F20"); // Reset to zero
+
+        return;
+    }
+
+
+
     QString lbl = as->NewLabel("spritepos");
     QString lbl2 = as->NewLabel("spriteposcontinue");
 
@@ -2406,6 +2505,34 @@ void Methods6502::ScrollY(Assembler *as)
         as->Asm("and #$7F"); // 8 = 1000
         as->Asm("sta $d011");
     }
+}
+
+void Methods6502::InitVeraSprite(Assembler* as)
+{
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::X16) {
+//        PointToVera(as,0x0F5000, true);
+        QString zp = as->m_internalZP[0];
+        as->Asm("lda #0");
+        as->Asm("sta "+zp);
+        LoadVar(as,0);
+        as->Asm("asl");
+        as->Asm("rol "+zp);
+        as->Asm("asl");
+        as->Asm("rol "+zp);
+        as->Asm("asl");
+        as->Asm("rol "+zp);
+
+        as->Asm("sta $9F20");
+        as->Asm("lda "+zp);
+        as->Asm("clc");
+        as->Asm("adc #$50"); // Sprite attribute
+        as->Asm("sta $9F21");
+        as->Asm("lda #$0F"); // Vera data bank
+        as->Asm("sta $9F22");
+
+        return;
+    }
+
 }
 
 void Methods6502::SetColor(Assembler *as)
@@ -4852,6 +4979,19 @@ void Methods6502::SetSpriteLoc(Assembler *as)
     if (num==nullptr)
         ErrorHandler::e.Error("SetSpriteLoc parameter 1 must be constant");
 */
+
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X16) {
+        as->Comment("Set VERA sprite location");
+        LoadVar(as,0);
+        as->Asm("sta $9F23");
+        as->Asm("inc $9F20");
+        as->Asm("sty $9F23");
+        as->Asm("dec $9F20");
+
+        return;
+    }
+
+
     NodeNumber* num3 = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[2]);
     if (num3==nullptr)
         ErrorHandler::e.Error("SetSpriteLoc parameter 2 (bank) must be constant 0-3");
