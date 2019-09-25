@@ -604,6 +604,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         as->Asm("sta $9F20");
     }
 
+    if (Command("copydatatovera"))
+        CopyDataToVera(as);
+
     if (Command("jammer"))
         Jammer(as);
 
@@ -2532,6 +2535,59 @@ void Methods6502::InitVeraSprite(Assembler* as)
 
         return;
     }
+
+}
+
+void Methods6502::CopyDataToVera(Assembler *as)
+{
+//    m; copydatatovera; X16; a, b,b,b, b
+
+        QString lblOuter = as->NewLabel("outer");
+        QString lblInner = as->NewLabel("inner");
+
+        as->Comment("CopyDataToVera");
+
+        LoadVar(as,1);
+        as->Term();
+        as->Asm("and #%00001111");
+        as->Asm("ora #%00010000");
+        as->Asm("sta $9F22");
+        LoadVar(as,2);
+        as->Term();
+        as->Asm("sta $9F21");
+        LoadVar(as,3);
+        as->Term();
+        as->Asm("sta $9F20");
+
+        QString zp = as->m_internalZP[0];
+        LoadAndStoreInZp(m_node->m_params[0],as, zp);
+
+//        as->Asm("sta "+zp);
+  //      as->Asm("sty "+zp+"+1");
+
+        LoadVar(as,4);
+        as->Asm("tax");
+
+        as->Label(lblOuter);
+
+        as->Asm("ldy #0");
+        as->Label(lblInner);
+        as->Asm("lda ("+zp+"),y");
+        as->Asm("sta $9F23");
+        as->Asm("dey");
+        as->Asm("cpy #0");
+        as->Asm("bne "+lblInner);
+        as->Asm("inc "+zp+"+1");
+        as->Asm("dex");
+        as->Asm("cpx #0");
+        as->Asm("bne "+lblOuter);
+
+
+
+        as->PopLabel("outer");
+        as->PopLabel("inner");
+
+//    LoadVar()
 
 }
 
@@ -5748,11 +5804,27 @@ void Methods6502::SaveVar(Assembler *as, int paramNo, QString reg, QString extra
 
 void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
 {
+
     Node* node = m_node->m_params[paramNo];
     NodeVar* nodevar = dynamic_cast<NodeVar*>(node);
-    if (dynamic_cast<NodeVar*>(m_node->m_params[paramNo])!=nullptr ||
-        dynamic_cast<NodeNumber*>(m_node->m_params[paramNo])!=nullptr) {
 
+    if (node->isPureNumeric() && node->getValueAsInt(as)>=256) {
+        as->Asm("lda " + Util::numToHex(node->getValueAsInt(as)&0xff));
+        as->Asm("ldy " + Util::numToHex((node->getValueAsInt(as)>>8)&0xff));
+        return;
+    }
+
+    if (dynamic_cast<NodeVar*>(node)!=nullptr ||
+        dynamic_cast<NodeNumber*>(node)!=nullptr) {
+
+
+/*        if (node->isWord(as)) {
+//            qDebug() << "HERE BALLE" << node->getValue(as);
+//            node->Accept(m_dispatcher);
+ //           as->Term();
+            return;
+        }
+*/
         as->ClearTerm();
         if (lda=="")
             as->Term("lda ");

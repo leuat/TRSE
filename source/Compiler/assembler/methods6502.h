@@ -51,7 +51,7 @@ public:
     void VeraPoke(Assembler* as, bool isExtended);
     void ScrollY(Assembler* as);
     void InitVeraSprite(Assembler* as);
-
+    void CopyDataToVera(Assembler* as);
     void SetColor(Assembler* as);
     void SetVideoMode(Assembler* as);
 

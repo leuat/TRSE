@@ -23,24 +23,6 @@ begin
 
 end;
 
-procedure CopyDataToVera();
-
-begin
-	setverabank($10);
-	zp:=@spritePos;
-	// copy 4096 bytes
-	VERA_ADDR_LO:=$00;
-	VERA_ADDR_MID:=$40;
-	for j:=0 to 16 do
-	begin
-		for i:=0 to 0 do 
-		begin
-			vera_data1:=zp[i];
-		end;
-		zp:=zp+256;
-	end;
-end;
-
 procedure UpdateSprites();
 begin
 	curFrame:=(curFrame +1)&15;
@@ -60,7 +42,7 @@ procedure InitSprites();
 begin
 	EnableSprites(1);
 	
-	for i:=0 to 64 offpage do begin
+	for i:=0 to 64  do begin
 		initsprite(i);
 		
 		ix:=random()*2;
@@ -79,21 +61,23 @@ end;
 
 
 begin
+
+	CopyDataToVera(^@spritePos, $00,$40,$00, 16);  
+
 	Initpalette(0);
-	
 	SetPalette(8,6,4);
 	SetPalette(8,4,8);
 	SetPalette(4,12,12);
 	SetPalette(4,16,4);
 	
-	CopyDataToVera();
+//	CopyDataToVera();
 	// 32 bytes per address OK
 	InitSprites();
 
 	while (true) do 
 	begin
 		UpdateSprites();
-		for i:=0 to 255 do wait(30);
+		for i:=0 to 255 do wait(50);
 	end;
 
 end.
