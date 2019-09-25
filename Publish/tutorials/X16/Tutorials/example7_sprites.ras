@@ -32,6 +32,7 @@ begin
 	begin
 		initsprite(i);
 		j:=(j+1)&15;
+		asm(";crash");
 		in:=$8200 + j*8;
 		setspriteloc(in);
 	end;	
@@ -70,8 +71,6 @@ begin
 	SetPalette(4,12,12);
 	SetPalette(4,16,4);
 	
-//	CopyDataToVera();
-	// 32 bytes per address OK
 	InitSprites();
 
 	while (true) do 

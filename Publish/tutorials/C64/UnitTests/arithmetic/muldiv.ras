@@ -120,6 +120,7 @@ begin
 	i1 := i1/4;
 	text := "10:"; 
 	if (i1=15000) then PASS() else FAIL();
+	
 end;
 
 procedure IntDivMix11();
@@ -182,6 +183,32 @@ begin
 	if (v1=18) then PASS() else FAIL();
 end;
 
+procedure IntMulConst17();
+begin
+	v1:=10;
+	i1:=v1*5;
+	text := "17:";
+	if (i1=50) then PASS() else FAIL();
+end;
+
+
+procedure IntCombConst18();
+begin
+	v1:=10;
+	i1:=200 + 1000+v1*5;
+	text := "18:";
+	if (i1=1250) then PASS() else FAIL();
+end;
+
+
+procedure IntCombConst19();
+begin
+	v1:=10;
+	i1:=(200 + 1000+v1*5)*4;
+	text := "19:";
+	if (i1=5000) then PASS() else FAIL();
+end;
+
 
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
@@ -204,9 +231,12 @@ begin
 	IntDivPow210();
 	IntDivMix11();
 	IntDivMix12();
-	IntMulMix13();
+	IntMulMix13(); // fails?
 	IntMulInt14(); // Not implemented, fails
 	IntMulAdvancedMix15(); // fails
 	ByteMulAdvanced16();
+	IntMulConst17();
+	IntCombConst18();
+	IntCombConst19();
 	loop();
 end.

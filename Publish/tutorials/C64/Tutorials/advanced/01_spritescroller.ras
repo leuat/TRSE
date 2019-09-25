@@ -110,7 +110,7 @@ begin
 			sprite_color[i]:= @spriteTextColor[k];
 
 //			poke(SPRITE_COLOR,i, fadeGreen[k]);
-			if (textSprite_x[i]>253) then begin
+			if (textSprite_x[i]>250) then begin
 				togglebit(sprite_bitmask,i,0);
 				textSprite_status[i]:=0;
 			end;
@@ -147,6 +147,7 @@ begin
 			textSprite_x[j]:=176;
 //			textSprite_y[j]:=@spriteScrollerYPos;
 			textSprite_status[j]:=1;
+			asm(";crash");
 			togglebit(sprite_bitmask, j, 1);
 //			SPRITE_COLOR[j]:=GREEN;	
 			textSprite_col[j]:=0;//)&15;

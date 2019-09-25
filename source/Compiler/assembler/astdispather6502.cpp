@@ -312,14 +312,14 @@ void ASTDispather6502::RightIsPureNumericMulDiv16bit(Node *node) {
 //    as->ClearTerm();
   //  as->Asm("sty "+varName);
    // as->Asm("sta "+varName+"+1");
-    command = "\tlsr " + varName +"+0"+ "\n";
-    command += "\tror " + varName+"+1" + "\n";
+    command = "\tlsr " + varName +"+1"+ "\n";
+    command += "\tror " + varName+"+0" + "\n";
 
     for (int i=0;i<cnt;i++)
         as->Asm(command);
 
-    as->Asm("ldy " + varName);
-    as->Asm("lda " + varName+"+1");
+    as->Asm("lda " + varName);
+    as->Asm("ldy " + varName+"+1");
 
     as->PopTempVar();
 }
@@ -357,7 +357,10 @@ void ASTDispather6502::Mul16x8(Node *node) {
     as->Comment("Mul 16x8 setup");
     as->Asm("");
     if (node->m_left->getType(as)==TokenType::INTEGER) {
+
+        as->Asm("ldy #0");
         LoadVariable(node->m_left);
+//        if (!node->m_left->isWord(as))
         as->Term();
         as->Asm("sta mul16x8_num1");
         as->Asm("sty mul16x8_num1Hi");
@@ -2042,8 +2045,8 @@ void ASTDispather6502::LoadVariable(NodeVar *node) {
     if (t == TokenType::INTEGER) {
         node->m_isWord = true;
         as->Comment("Integer assignment in nodevar");
-        as->Asm("ldy " +node->getValue(as));
-        as->Asm("lda " +node->getValue(as)+"+1");
+        as->Asm("lda " +node->getValue(as));
+        as->Asm("ldy " +node->getValue(as)+"+1");
         return;
     }
     ErrorHandler::e.Error(TokenType::getType(t) + " assignment not supported yet for exp: " + node->getValue(as));

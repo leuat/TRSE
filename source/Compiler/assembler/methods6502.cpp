@@ -2309,9 +2309,9 @@ void Methods6502::SetSpritePos(Assembler *as)
         as->Asm("sta $D000,x");
         if (m_node->m_params[0]->isWord(as)) {
 
-            m_node->m_params[0]->Accept(m_dispatcher);
-            as->Term("+1",true);
-            as->Asm("cmp #0");
+//            m_node->m_params[0]->Accept(m_dispatcher);
+  //          as->Term("+1",true);
+            as->Asm("cpy #0");
             as->Asm("beq " + lbl);
             as->Asm("lda $D010");
             as->Asm("ora #%" + QString::number(v,2) );
@@ -2356,9 +2356,11 @@ void Methods6502::SetSpritePos(Assembler *as)
         LoadVar(as, 0);
         as->Asm("sta $D000,x");
         if (m_node->m_params[0]->isWord(as)) {
-            m_node->m_params[0]->Accept(m_dispatcher);
-            as->Term("+1",true);
-            as->Asm("cmp #0");
+
+//            m_node->m_params[0]->Accept(m_dispatcher);
+
+//            as->Term("+1",true);
+            as->Asm("cpy #0");
             as->Asm("beq " + lbl);
             as->Asm("lda $D010");
             as->Asm("ora " + var );
@@ -5808,7 +5810,7 @@ void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
     Node* node = m_node->m_params[paramNo];
     NodeVar* nodevar = dynamic_cast<NodeVar*>(node);
 
-    if (node->isPureNumeric() && node->getValueAsInt(as)>=256) {
+    if (node->isPureNumeric() && node->getValueAsInt(as)>=256 && !node->isAddress()) {
         as->Asm("lda " + Util::numToHex(node->getValueAsInt(as)&0xff));
         as->Asm("ldy " + Util::numToHex((node->getValueAsInt(as)>>8)&0xff));
         return;

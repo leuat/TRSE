@@ -2,7 +2,7 @@
 	X16 Balls
 	
 */
-program VicBalls;
+program VeraBalls;
 var 
 	// defines a constant to specify how many balls we want 
 	@define NUM_BALLS 255
