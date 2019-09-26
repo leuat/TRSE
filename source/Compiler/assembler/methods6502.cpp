@@ -1075,8 +1075,11 @@ void Methods6502::Poke(Assembler* as)
     LoadVar(as,2);
 
     if (dynamic_cast<NodeVar*>(m_node->m_params[1])!=nullptr ||
-            dynamic_cast<NodeNumber*>(m_node->m_params[1])!=nullptr)
-        LoadVar(as,1, "", "ldx ");
+            dynamic_cast<NodeNumber*>(m_node->m_params[1])!=nullptr) {
+        LoadVar(as,1);
+        as->Asm("tax");
+    }
+
     else {
       as->Asm("pha");
       LoadVar(as,1); // Load expression through a
@@ -4242,7 +4245,8 @@ as->Label(lbl2);
 void Methods6502::Wait(Assembler *as)
 {
     as->Comment("Wait");
-    LoadVar(as,0,"","ldx ");
+    LoadVar(as,0);
+    as->Asm("tax");
 
     as->Asm("dex");
     as->Asm("bne *-1");
@@ -5061,8 +5065,9 @@ void Methods6502::SetSpriteLoc(Assembler *as)
 
     as->Comment("Set sprite location");
 
+    LoadVar(as,0);
+    as->Asm("tax");
     LoadVar(as,1);
-    LoadVar(as,0,"","ldx ");
 
 
 //    SaveVar(as,0,"x");
