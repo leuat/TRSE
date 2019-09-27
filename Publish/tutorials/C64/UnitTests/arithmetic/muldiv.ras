@@ -209,6 +209,23 @@ begin
 	if (i1=5000) then PASS() else FAIL();
 end;
 
+procedure IntShift20();
+begin
+	i1:=10;
+	i1:=i1<<7;
+	text := "20:";
+	if (i1=1280) then PASS() else FAIL();
+//	DebugValue(i1);
+end;
+
+procedure IntShift21();
+begin
+	i1:=1280;
+	i1:=i1>>7;
+	text := "21:";
+	if (i1=10) then PASS() else FAIL();
+end;
+
 
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
@@ -238,5 +255,7 @@ begin
 	IntMulConst17();
 	IntCombConst18();
 	IntCombConst19();
+	IntShift20();
+	IntShift21();
 	loop();
 end.

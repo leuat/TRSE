@@ -108,8 +108,14 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         base = base.remove("x16emu.exe");
 #endif
       //  -rom /home/leuat/code/x16/rom.bin -char /home/leuat/code/x16/chargen.bin -prg @prg -run
-        params <<"-scale" <<"2" << "-run" << "-prg";
-//        params << "-rom" << base +"rom.bin" << "-char"<<base+"chargen.bin" <<"-scale" <<"2" << "-run" << "-prg";
+        QStringList lst = m_iniFile->getString("x16_emulator_params").trimmed().simplified().split(" ");
+        for (QString s: lst) {
+            if (s.trimmed()!="") {
+                params<<s;
+            }
+        }
+        params<< "-run" << "-prg";
+
     }
 
     if (!QFile::exists(emu)) {

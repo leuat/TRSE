@@ -353,6 +353,56 @@ void ASTDispather6502::HandleShiftLeftRight(NodeBinOP *node)
     as->PopLabel("lblShift");
 }
 
+void ASTDispather6502::HandleShiftLeftRightInteger(NodeBinOP *node, bool isSimpleAeqAopB)
+{
+    // Not yet implemented
+    QString varName = "";
+    if (!isSimpleAeqAopB) {
+        node->m_left->Accept(this);
+        as->Term();
+        varName = as->StoreInTempVar("tempVarShift","word");
+    }
+    else
+        varName = node->m_left->getValue(as);
+
+//    QString cmd = node->m_op.m_type==TokenType::SHR?"lsr":"asl";
+    QString command = "";
+    if (node->m_op.m_type==TokenType::SHR) {
+        command = "\tlsr " + varName +"+1"+ "\n";
+        command += "\tror " + varName+"+0" + "\n";
+    }
+    else {
+        command = "\tasl " + varName +"+0"+ "\n";
+        command += "\trol " + varName+"+1" + "\n";
+    }
+    if (node->m_right->isPureNumeric()) {
+
+        int val = node->m_right->getValueAsInt(as);
+        for (int i=0;i<val;i++)
+            as->Asm(command);
+
+
+    }
+    else {
+        node->m_right->Accept(this);
+        as->Term();
+        as->Asm("tax");
+        QString lbl = as->NewLabel("lblShift");
+        as->Label(lbl);
+        as->Asm(command);
+        as->Asm("dex");
+        as->Asm("cpx #0");
+        as->Asm("bne "+lbl);
+
+        as->PopLabel("lblShift");
+    }
+    if (!isSimpleAeqAopB) {
+        as->Asm("lda "+varName);
+        as->Asm("ldy "+varName +"+1");
+        as->PopTempVar();
+    }
+}
+
 void ASTDispather6502::Mul16x8(Node *node) {
     as->Comment("Mul 16x8 setup");
     as->Asm("");
@@ -543,7 +593,14 @@ void ASTDispather6502::dispatch(NodeBinOP *node)
         return;
     }
     if (node->m_op.m_type==TokenType::SHR || node->m_op.m_type==TokenType::SHL) {
-        HandleShiftLeftRight(node);
+//        bool isSimpleAeqAopB = false;
+  //      if (node->)
+
+
+        if (node->isWord(as))
+            HandleShiftLeftRightInteger(node,false);
+        else
+            HandleShiftLeftRight(node);
         return;
     }
 

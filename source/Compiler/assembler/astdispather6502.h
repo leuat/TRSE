@@ -70,6 +70,7 @@ public:
     void RightIsPureNumericMulDiv16bit(Node* node);
 
     void HandleShiftLeftRight(NodeBinOP* node);
+    void HandleShiftLeftRightInteger(NodeBinOP* node, bool isSimpleAeqAopB);
 
     void HandleGenericBinop16bit(Node* node);
     void HandleVarBinopB16bit(Node* node);

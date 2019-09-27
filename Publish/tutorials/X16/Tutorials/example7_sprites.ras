@@ -5,11 +5,12 @@ var
 	zp:pointer;   
 	@define spritePos $a000
 	curFrame : byte = 0;
-	
+	test:array[10] of byte;
 // Emulator only supports 16 sprites
 
 @define noSprites 16
 
+@requirefile "data/example7_sprite.bin" "Please run the ray-tracer file 'example7_sprites.fjo' before compiling this program"
 	sprites : incbin("data/example7_sprite.bin",@spritePos);
 	
 // Set som funky palette
@@ -29,6 +30,7 @@ end;
 
 procedure UpdateSprites();
 begin
+
 //	if (time&1=1) then 
 	curFrame:=(curFrame +1)&15;
 	j:=curFrame;

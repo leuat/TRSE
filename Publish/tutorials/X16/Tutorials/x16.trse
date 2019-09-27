@@ -36,5 +36,5 @@ override_target_settings_prg = 0
 build_list = ,
 data_header_images/image1.flf = 0
 project_path = /home/leuat/code/TRSE/Release/../tutorials/X16/Tutorials/
-open_files = ,example2_tunnel.ras, example7_sprites.ras, vera_image_not_working.asm, vera_image_not_working.ras
-current_file = example2_tunnel.ras
+open_files = ,example7_sprites.ras, vera_image_not_working.ras
+current_file = example7_sprites.ras

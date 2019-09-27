@@ -59,6 +59,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leOK64Emulator->setText(m_ini->getString("ok64_emulator"));
     ui->lePlus4Emulator->setText(m_ini->getString("plus4_emulator"));
     ui->leX16Emu->setText(m_ini->getString("x16_emulator"));
+    ui->leX16EmuParams->setText(m_ini->getString("x16_emulator_params"));
     ui->leC1541->setText(m_ini->getString("c1541"));
     ui->leExomizer->setText(m_ini->getString("exomizer"));
     ui->leTinyCrunch->setText(m_ini->getString("tinycrunch"));
@@ -118,7 +119,9 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("ok64_emulator", ui->leOK64Emulator->text());
     m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
+    m_ini->setString("x16_emulator_params", ui->leX16EmuParams->text());
     m_ini->setString("c1541", ui->leC1541->text());
+
 
     m_ini->setString("nes_emulator", ui->leNesEmulator->text());
     m_ini->setString("theme", ui->cmbTheme->currentText() + ".ini");
