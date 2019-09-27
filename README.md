@@ -9,7 +9,7 @@ Turbo Rascal Syntax Error full repo
 
 - First, download the Qt framework from https://www.qt.io/download. Install the latest framework (desktop application).
 - Clone this repo to a TRSE directory
-  - On linux, you need to install a library that contains gl.h like **like mesa-comhttps://www.facebook.com/mon-dev** (sudo apt-get install mesa-common-dev) etc
+  - On linux, you need to install a library that contains gl.h like mesa-common-dev (sudo apt-get install mesa-common-dev) etc
 - Select "Release", and under the qt project/build make sure you set the build directory to be **TRSE/Release**
 - Copy the directory "themes" in **TRSE/Publish/source/** to the **TRSE/Release** build directory 
 - Make a symbolic link called "tutorials from your build directory to point to Publish/tutorials to access tutorial projects from the front page 
