@@ -147,6 +147,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("blit")) {
         CallOKVC(as,6,6);
     }
+    if (Command("printchar")) {
+        CallOKVC(as,4,7);
+    }
 
     /*
      *

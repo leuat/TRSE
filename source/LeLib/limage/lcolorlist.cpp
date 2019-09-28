@@ -95,6 +95,13 @@ LColorList::Type LColorList::CharToType(unsigned char c)
 
 }
 
+void LColorList::ConstrainTo(int max)
+{
+    for (int i=0;i<m_list.count();i++) {
+        m_list[i].inUse = i<=max;
+    }
+}
+
 void LColorList::SetGreyscale(QVector3D base, bool inverted)
 {
     for (int i=0;i<m_list.count();i++) {

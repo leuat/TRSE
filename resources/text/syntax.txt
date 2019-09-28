@@ -382,6 +382,9 @@ c; JOY_FIRE; VIC20; b; %00010000
 c; OKVC_RANDOM; OK64; a; $FFF0
 c; OKVC_VSYNC; OK64; a; $FFEF
 c; OKVC_EXEC; OK64; a; $FF10
+c; OKVC_FONT_BANK; OK64; a; $FFEE
+c; OKVC_FONT_WIDTH; OK64; a; $FFED
+c; OKVC_FONT_HEIGHT; OK64; a; $FFEC
 
 m; drawPixel; OK64; b,b,b
 m; drawLine; OK64; b,b,b,b,b
@@ -391,6 +394,7 @@ m; WaitForVsync; OK64;
 m; toColor; OK64; b,b,b
 m; setPalette; OK64; b,b,b,b
 m; blit; OK64; b,b,b,b,b,b
+m; PrintChar; OK64; ,b,b,b,b
 
 
 # PLUS4 specific methods

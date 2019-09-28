@@ -129,7 +129,7 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
 
 
 
-    if (!Syntax::s.m_ignoreSys) {
+    if (!Syntax::s.m_ignoreSys && (Syntax::s.m_currentSystem->m_programStartAddress!=Syntax::s.m_currentSystem->m_startAddress)) {
         // 2064
         Asm(".byte    $0E, $08, $0A, $00, $9E, $20, $28");
         QString s = QString::number(Syntax::s.m_currentSystem->m_programStartAddress);
@@ -629,11 +629,13 @@ void AsmMOS6502::OptimisePassStaLda()
         if (l0.contains("sta")) {
             QString l1 = getNextLine(i,j);
             if (l0==l1) {
+                //qDebug() << "Removing " <<l0;
                 m_removeLines.append(j);
                 continue;
             }
             QString var = getToken(l0,1);
             if (getToken(l1,1)==var && getToken(l1,0)=="lda") {
+
               //  qDebug() << "Removing: " << l1 << " on line " << j;
                 m_removeLines.append(j);
                 i++;
@@ -669,7 +671,7 @@ void AsmMOS6502::OptimisePassLdx(QString x)
                     QString op2 = getToken(l1,1);
                     QString op = getToken(l1,0);
 //                    qDebug() << l0 << l1 <<value;
-                    if (l0==l1 && !op2.startsWith("(") && !op2.contains(",")) {
+                    if (l0==l1 && !op2.startsWith("(") && !op2.contains(",") && !op2.startsWith("$")) {
 //                        if (x=="a")
   //                      qDebug () << "Removing because equal: " << l0 << ", " << l1;
                         m_removeLines.append(j);

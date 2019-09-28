@@ -8,7 +8,7 @@
 class BitmapFont
 {
 public:
-    BitmapFont();
+    void Init(int w, int h);
 
     QImage m_image;
 

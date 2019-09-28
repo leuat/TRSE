@@ -10,8 +10,8 @@ public:
     SystemOK64(CIniFile* settings, CIniFile* proj) : SystemMOS6502(settings, proj) {
         m_processor = MOS6502;
         m_system = OK64;
-        m_startAddress = 0x0400;
-        m_programStartAddress = 0x0400;
+        m_startAddress = 0x03FF;
+        m_programStartAddress = 0x03FF;
     }
 };
 

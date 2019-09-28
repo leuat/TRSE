@@ -112,7 +112,7 @@ public:
     QVector<QPushButton*> m_buttonsImport;
     QVector<QPushButton*> m_buttonsEdit;
 
-
+    void ConstrainTo(int max);
     void SetGreyscale(QVector3D base, bool inverted);
     void SetTwoColors(QVector3D base1, QVector3D base2);
     Metric* m_metric = nullptr;

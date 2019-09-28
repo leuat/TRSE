@@ -38,6 +38,8 @@ public:
     CIniFile* m_projectIni, *m_settingsIni;
     int m_startAddress = 0x800;
     int m_programStartAddress = m_startAddress+10;
+//    bool m_hasSysHeader = true;
+
     int m_memoryType = 0;
     QVector<SystemLabel> m_labels;
 

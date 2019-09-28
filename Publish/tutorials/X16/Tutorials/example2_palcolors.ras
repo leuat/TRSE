@@ -1,0 +1,66 @@
+program MyProgram;
+
+var  
+   @define Space $A0
+   i, j: byte;
+   hex: string = (48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 01, 02, 03, 04, 05, 06);
+
+	procedure DrawCell(X, Y, Col: byte);
+	begin
+		X := X * 2;
+		VERA_ADDR_MID := Y;
+		VERA_ADDR_LO := X;
+		VERA_DATA1 := @Space;
+		VERA_DATA1 := @Space;
+		VERA_DATA1 := @Space;
+		VERA_DATA1 := @Space;
+
+		VERA_ADDR_LO := X+1;
+		VERA_DATA1 := Col;
+		VERA_DATA1 := Col;
+		VERA_DATA1 := Col;
+		VERA_DATA1 := Col;
+
+		VERA_ADDR_MID := Y+1;
+		VERA_ADDR_LO := X;
+		VERA_DATA1 := @Space;
+		VERA_DATA1 := hex[Col >> 4];
+		VERA_DATA1 := hex[Col & $F];
+		VERA_DATA1 := @Space;
+
+		VERA_ADDR_LO := X+1;
+		VERA_DATA1 := Col;
+		VERA_DATA1 := Col;
+		VERA_DATA1 := Col;
+		VERA_DATA1 := Col;
+
+		VERA_ADDR_MID := Y+2;
+		VERA_ADDR_LO := X;
+		VERA_DATA1 := @Space;
+		VERA_DATA1 := @Space;
+		VERA_DATA1 := @Space;
+		VERA_DATA1 := @Space;
+
+		VERA_ADDR_LO := X+1;
+		VERA_DATA1 := Col;
+		VERA_DATA1 := Col;
+		VERA_DATA1 := Col;
+		VERA_DATA1 := Col;
+   end; 
+    
+begin
+	VERA_CTRL := 0;
+	Vera_Addr_Hi  := $0F;
+	Vera_Addr_Mid := $20;
+	Vera_Addr_Lo  := $00;
+	Vera_Data1 := %00100001;
+
+	VERA_CTRL := 0;
+	VERA_ADDR_HI := $20;
+
+	for j := 0 to 16 do
+		for i := 0 to 16 do
+			DrawCell(4*i, 3*j, i + j *16);
+	
+	Loop()
+end.
