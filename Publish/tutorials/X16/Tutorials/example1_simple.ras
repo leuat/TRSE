@@ -1,4 +1,6 @@
 program MyProgram;
+@define TEST $1000
+
 var
 
    @define Space 32
@@ -8,6 +10,7 @@ var
 	procedure DrawCell(X, Y, Fg, Bg: byte);
 		var col: byte;
 	begin
+		^@TEST:=10;
 		col := Fg + 16*Bg;
 		X := X * 2;
 		moveto(X,Y);

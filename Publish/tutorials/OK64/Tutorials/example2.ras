@@ -1,0 +1,46 @@
+program MyProgram;
+var  
+ 	j1,j2,j3,x1,i,y1,x2,y2,time: byte=0;
+    //music : incsid("music/courier.sid","2");
+
+	@define count 255
+
+
+
+procedure SetupPalette(i1,i2,i3:byte);
+begin
+	for i:=0 to 256 do begin
+		setpalette(i,i/i1,i/i2,i/i3);
+	end;
+
+end;
+
+
+begin
+
+	while(true) offpage do
+	begin	
+		inc(time);
+		if (time&31=0) then 
+		begin
+			clearscreen(0);
+			j1:=okvc_random;
+			j2:=okvc_random;
+			j3:=okvc_random;
+			SetupPalette(1+j1/64,1+j2/64,1+j3/64);
+		end;	
+		
+		for i:=0 to 256 do
+		begin
+			x1:=okvc_random;
+			y1:=okvc_random;
+			x2:=okvc_random;
+			y2:=okvc_random;
+			DrawLine(x1,y1,x2,y2,(time&31)*8+i/2);
+		end;
+		WaitForVSync();
+
+	end;
+	Loop();	
+	
+end.
