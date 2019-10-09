@@ -72,7 +72,6 @@ end;
 	Main block
 */
 begin
-	// Setup screen foreground / background colors
 	// Clear screens	
 	clearscreen(key_space,screen_char_loc);
 	// Initialize tables	
@@ -80,8 +79,6 @@ begin
 	
 	// Loop effect
 	while(true) do
-	begin
 		RenderMatrix();
 
-	end;
 end.

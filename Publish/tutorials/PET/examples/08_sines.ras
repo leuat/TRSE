@@ -1,0 +1,38 @@
+program Sines;
+var  
+   x,y,i,j,k,v: byte; 
+   zp,tp:pointer;
+   
+//   vals : array[8] of byte = ($20, $2E, $25,  $A6, $A0);
+   vals : array[8] of byte = ($20, $2E,  $A6, $A0, $A0, $A6, $2E, $20);
+   list : array[256] of byte;
+
+procedure InitTabs();
+begin
+	for i:=0 to 0 do list[i]:=vals[(sine[i]/13)&7];
+end;
+
+procedure Render();
+begin
+	j:=k;
+	zp:=screen_char_loc;
+	k:=k+3;
+	
+	for i:=0 to screen_height do 
+	begin
+		j:=sine[k+i*2]/2;
+		j:=j+sine[k+j*2]/4;
+		
+		tp:=list + j;
+		memcpy(tp,0,zp,screen_width);
+		zp:=zp+screen_width;
+		inc(j);
+	end;
+end;
+
+
+begin
+	InitTabs();
+	while (true) do
+		Render();
+end.

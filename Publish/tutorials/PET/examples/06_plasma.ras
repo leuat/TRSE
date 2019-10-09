@@ -23,8 +23,6 @@ var
 
    vals : array[8] of byte = ($20, $2E,  $A6, $A0, $A0, $A6, $2E, $20);
 
-// Define y_start as a global preprocessor constant
-@define y_start "5"
 
 
 
@@ -53,18 +51,19 @@ begin
 
 	end;
 	// Move cursor to (1,y) on $0400 on bank 1
-	moveto(1,@y_start, hi(screen_char_loc));
+	moveto(0,screen_height/4, hi(screen_char_loc));
 	// moveto could also be replaced with : screenmemory:=$0400 + @y_start*40;
 	
 	
-	for y:=@y_start to 23 do begin
+	for y:=0 to screen_height/2 do begin
 		val:=siny[y];
-		for x:=1 to 76 do begin
+		for x:=0 to screen_width do begin
+		
 			// here, we take (sin[x]+val) and divide by 16. However, since this is a slow procedure,
 			// we have created a lookup table instead!
 			c:=lookupDiv[ (sinx[x] +val) ];
 			// Set the screen memory
-			screenmemory[x]:=vals[c]; 
+			screenmemory[x]:=vals[c];
 
 		end;
 		// Increase screen memory pointer by 40 (next row)
