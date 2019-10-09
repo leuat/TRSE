@@ -47,6 +47,8 @@ bool SourceBuilder::Build(QString source)
     compiler.m_parser.m_diskFiles = getFileList();
     compiler.m_parser.m_currentDir = m_curDir;
 
+//    qDebug() << lst;
+
     compiler.Parse(source,lst);
 
     QString path = m_projectIniFile.getString("project_path") + "/";

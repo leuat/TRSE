@@ -28,7 +28,7 @@
 #include "source/Compiler/data_pmm.h"
 #include <stdio.h>
 #include <iostream>
-#include <QTextEdit>
+//#include <QTextEdit>
 #include <exception>
 using namespace std;
 

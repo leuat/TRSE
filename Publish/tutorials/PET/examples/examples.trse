@@ -34,5 +34,5 @@ override_target_settings_prg = 0
 project_path = /home/leuat/code/TRSE/Release/../tutorials/PET/examples/
 pascal_settings_use_local_variables = 0
 output_debug_symbols = 1
-open_files = ,06_plasma.ras, 07_sqrt_and_atan.ras, 08_sines.ras, 05_matrix.ras, 01_hello_world.ras, example1.ras
-current_file = 06_plasma.ras
+open_files = ,example1.ras
+current_file = 01_hello_world.ras

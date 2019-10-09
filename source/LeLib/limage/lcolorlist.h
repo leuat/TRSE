@@ -25,11 +25,13 @@
 #include <QColor>
 #include <QVector>
 #include <QString>
+//#ifndef NO_GUI
 #include <QComboBox>
 #include <QPushButton>
+#include <QLayout>
+//#endif
 #include <QIcon>
 #include <QPixmap>
-#include <QLayout>
 #include "source/LeLib/data.h"
 #include <math.h>
 class Metric {
