@@ -1410,6 +1410,8 @@ void Methods6502::InitMoveto(Assembler *as)
         as->Asm("adc #22");
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES)
         as->Asm("adc #32");
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::PET)
+        as->Asm("adc #80");
     as->Asm("bcc sskip");
     as->Asm("inc screenmemory+1");
     as->Label("sskip");
@@ -4953,11 +4955,19 @@ void Methods6502::ClearScreen(Assembler *as)
         as->Asm("sta $00fa+"+shift+",x");
         as->Asm("sta $01f4+"+shift+",x");
         as->Asm("sta $02ee+"+shift+",x");
+        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::PET) {
+            as->Asm("sta $03e8+"+shift+",x");
+            as->Asm("sta $04e2+"+shift+",x");
+            as->Asm("sta $05dc+"+shift+",x");
+            as->Asm("sta $06d6+"+shift+",x");
+
+        }
         as->Asm("bne "+lbl);
 
         as->PopLabel("clearloop");
 
-    } else if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20) {
+    }
+    else if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20) {
 
         QString lbl = as->NewLabel("clearloop");
         QString shift = Util::numToHex(val);
