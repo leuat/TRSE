@@ -1075,23 +1075,21 @@ void Methods6502::Poke(Assembler* as)
     }
 
 
-    LoadVar(as,2);
 
-    if (dynamic_cast<NodeVar*>(m_node->m_params[1])!=nullptr ||
-            dynamic_cast<NodeNumber*>(m_node->m_params[1])!=nullptr) {
+    if (m_node->m_params[2]->isPure()) {
         LoadVar(as,1);
         as->Asm("tax");
+        LoadVar(as,2);
+        SaveVar(as,0,"x");
+        return;
     }
 
-    else {
-      as->Asm("pha");
-      LoadVar(as,1); // Load expression through a
-
-      as->Asm("tax");
-      as->Asm("pla");
-    }
-
-
+    // Generic case
+    LoadVar(as,1);
+    QString zp = as->m_internalZP[2];
+    as->Asm("sta "+zp);
+    LoadVar(as,2);
+    as->Asm("ldx "+zp);
     SaveVar(as,0,"x");
 
 }

@@ -670,8 +670,9 @@ void AsmMOS6502::OptimisePassLdx(QString x)
                     k=j;
                     QString op2 = getToken(l1,1);
                     QString op = getToken(l1,0);
-//                    qDebug() << l0 << l1 <<value;
+//                    qDebug() << op2 <<value;
                     if (l0==l1 && !op2.startsWith("(") && !op2.contains(",") && !op2.startsWith("$")) {
+//                      if (l0==l1 && !op2.startsWith("(") && !op2.contains(",")) {
 //                        if (x=="a")
   //                      qDebug () << "Removing because equal: " << l0 << ", " << l1;
                         m_removeLines.append(j);
@@ -745,7 +746,6 @@ void AsmMOS6502::OptimisePassLdaTax(QString x)
     for (int i=0;i<m_source.count()-1;i++) {
         QString l0 = getLine(i);
         if (l0.contains("lda") && !l0.contains(",")) {
-            //qDebug() << l0;
             int k=i;
             int n;
                 QString l1 = getNextLine(k,j);
@@ -757,12 +757,12 @@ void AsmMOS6502::OptimisePassLdaTax(QString x)
                     QString tst = getToken(l2,0);
                     if (tst.startsWith("ta") || tst=="sta")
                         perform=false;
-
+//                    qDebug() << "TEST " << perform << tst ;
                     if (perform) {
                         m_removeLines.append(j);
                         QString org = m_source[i];
                         m_source[i] = m_source[i].replace("lda", "ld"+x)+" ; optimized, look out for bugs";
-                        //qDebug() << "Changed : "<< org << " to " <<m_source[i] << " with op " <<op;
+  //                      qDebug() << "Changed : "<< org << " to " <<m_source[i] << " with op " <<op;
                     }
                     //m_removeLines.append(i);
 

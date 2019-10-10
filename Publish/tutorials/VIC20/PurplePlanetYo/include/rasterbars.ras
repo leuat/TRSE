@@ -67,7 +67,7 @@ begin
 	noBalls:=1;
 	for i:=0 to 9 do rasterCol[i]:=rasterCol[i]| rasterCol[i]*16;
 	//printstring("HALLA",0,40);
-		
+	asm(";wtf");		
 	for i:=0 to 0 do poke(^@table2, i, sine[i]/rasterSpread);
 
 	textP:=text1;

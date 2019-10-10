@@ -660,7 +660,6 @@ begin
 	for i:=0 to 5 do begin
 		int:=int+24;
 		poke(^$D000,j,int);		
-//		if (int>256) then togglebit(^$D010,i,1);
 
 		j:=j+2;
 	end;
