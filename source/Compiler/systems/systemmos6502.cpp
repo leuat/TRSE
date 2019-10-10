@@ -253,6 +253,13 @@ bool SystemMOS6502::BuildDiskFiles(QString currentDir, QStringList &d64Params, Q
             isCrunched = data_tc[i]=="1";
 
         QString name = data[3*i];
+
+        for (int i=0;i<256;i++) {
+            QString r = "#P"+QString::number(i)+";";
+            name = name.replace(r,QChar(i));
+        }
+
+
         int address = Util::NumberFromStringHex( data[3*i+2]);
         QString fn = currentDir+"/"+orgFileName;
         if (!QFile::exists(fn)) {

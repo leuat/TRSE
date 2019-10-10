@@ -1096,8 +1096,19 @@ void Parser::Preprocess()
                     outFile = outFolderShort+"krill_installer.bin";
                     replaceLine += "\n_Installer_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(installerPos,16)+");";
 
-                    for (QString s: m_diskFiles)
-                        replaceLine+= s + ": string=(\""+s.toUpper()+"\");";
+                    for (QString s: m_diskFiles) {
+                        QString var = s;
+                        for (int i=0;i<256;i++) {
+                            QString r = "#P"+QString::number(i)+";";
+                            var = var.replace(r,"");
+//                            s = s.replace(r,QChar(i));
+ //                           s = s.replace(r,"\""  +QString::number(i)  + "\"");
+                        }
+
+                        replaceLine+= var + ": string=(\""+s.toUpper()+"\");";
+
+                    }
+//                    qDebug() << replaceLine;
 
                     // Now load all disk files
 //                    CIniFile paw;
@@ -1108,6 +1119,9 @@ void Parser::Preprocess()
   //                  qDebug() << replaceLine;
 //                    qDebug() << Util::numToHex(loaderPos);
                     QString orgL =  m_lexer->m_lines[ln];
+
+
+
                     m_lexer->m_text.replace(orgL,replaceLine+"\n\t");
                     m_lexer->m_pos-=orgL.count();
 

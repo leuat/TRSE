@@ -51,7 +51,8 @@ void Orgasm::ProcessSource()
     //t.start();
     for (int i=0;i<256;i++) {
         QString r = "#P"+QString::number(i)+";";
-        m_source = m_source.replace(r,QChar(i));
+//        m_source = m_source.replace(r,QChar(i));
+        m_source = m_source.replace(r,"\"," + QString::number(i) + ",\"");
     }
 //    qDebug() << "Orgasm::Processources took " << Util::MilisecondToString(t.elapsed());
 }

@@ -260,7 +260,9 @@ void DialogImport::on_btnImport_2_clicked()
     m_bf.Init(m_image->m_width, m_image->m_height);
     m_bf.RenderFont(ui->cmbFonts->currentText(),ui->leFontSize->text().toInt(),QFont::Normal,
                     ui->leFontCharsPerLine->text().toInt(),
-                    ui->leFontCharsPerLColumn->text().toInt());
+                    ui->leFontCharsPerLColumn->text().toInt(),
+                    ui->leStart->text().toInt()
+                    );
     m_input.m_qImage = &m_bf.m_image;
     int fc = ui->leUseColors->text().toInt();
     m_image->m_colorList.ConstrainTo(fc);
