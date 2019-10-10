@@ -29,11 +29,14 @@ public:
 
     void PrintUsage();
 
-    QTextStream& out()
+    void Out(QString m);
+
+/*    QTextStream& out()
     {
         static QTextStream ts( stdout );
         return ts;
-    }
+ //       return qDebug;
+    }*/
 };
 
 

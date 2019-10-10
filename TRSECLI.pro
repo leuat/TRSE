@@ -4,10 +4,12 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets
+QT       += core widgets
+
+CONFIG+=console
 
 
-TARGET = clasc
+TARGET = trc
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -75,7 +77,7 @@ win32:RC_ICONS += trse.ico
 
 
 
-SOURCES += clasc.cpp \
+SOURCES += trc.cpp \
     source/Compiler/ast/nodecase.cpp \
     source/Compiler/ast/noderepeatuntil.cpp \
     source/Compiler/systems/systemok64.cpp \
@@ -171,7 +173,7 @@ SOURCES += clasc.cpp \
     source/Compiler/projectbuilder.cpp
 
 
-HEADERS  +=  clasc.h \
+HEADERS  +=  trc.h \
     source/Compiler/ast/nodecase.h \
     source/Compiler/ast/noderepeatuntil.h \
     source/Compiler/systems/systemok64.h \

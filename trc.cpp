@@ -1,15 +1,21 @@
-#include "clasc.h"
+#include "trc.h"
+#include <windows.h>
 #include <QDebug>
 #include <QTextDocument>
+#include <stdio.h>
 
 int main(int argc, char *argv[])
 {
-    std::cout << "Welcome to clasc, the TRSE command-line assembler/compiler!"<<endl<<endl;
+//    QCoreApplication app(argc, argv);
     ClascExec ras(argc, argv);
     return ras.Perform();
+  //  return app.exec();
 }
 
 ClascExec::ClascExec(int argc, char *argv[]) {
+    Out("Welcome to trc, the TRSE command-line assembler/compiler!");
+    Out("");
+
     for (int i=1;i<argc;i++) {
         m_args.append(QString(argv[i]));
         QStringList l = QString(argv[i]).split("=");
@@ -26,7 +32,7 @@ ClascExec::ClascExec(int argc, char *argv[]) {
 void ClascExec::RequireParam(QString param)
 {
     if (!m_vals.contains(param))
-        throw QString("Parameter '"+param+"' is required to be defined.");
+        throw QString("Parameter '"+param+"' is required.");
 }
 
 void ClascExec::RequireFile(QString param)
@@ -56,15 +62,20 @@ int ClascExec::Perform()
             m_project.Load(m_vals["project"]);
             m_failure = CompileFromProject(m_vals["input_file"]);
         }
-        else if (op=="orgasm") {
+        else
+            if (op=="orgasm") {
             m_failure= Assemble(m_vals["input_file"]);
+        }
+        else {
+            m_failure = 1;
+            Out("Unknown operation: " +op);
         }
 
     }
     catch (QString s) {
         PrintUsage();
-        out() << "Fatal error:" << endl;
-        out() << s <<endl;
+        Out("Fatal error:");
+        Out(s);
         return 1;
     }
 
@@ -75,20 +86,23 @@ int ClascExec::Perform()
 int ClascExec::CompileFromProject(QString sourceFile)
 {
     QString system = m_project.getString("system");
-    out() << "Compiling '"<<sourceFile<<"' for system: " <<system <<endl;
+    Out("Compiling '"+sourceFile+"' for system: " +system);
+    Out("");
     Syntax::s.Init(AbstractSystem::SystemFromString(system),&m_settings, &m_project);
     QString source = Util::loadTextFile(sourceFile);
-    m_builder = new SourceBuilder(&m_settings, &m_project, QDir::currentPath(), sourceFile);
+//    Out(QDir::currentPath());
+    m_builder = new SourceBuilder(&m_settings, &m_project, QDir::currentPath()+"/", sourceFile);
+    int failure=0;
     if (!m_builder->Build(source)) {
-        return 1;
+        failure=1;
     }
     if (m_outputFile!="")
         QFile::rename(m_builder->m_filename+".asm", m_outputFile);
 
     QTextDocument doc;
     doc.setHtml( m_builder->getOutput() );
-    out() << doc.toPlainText() << endl;
-    return 0;
+    Out(doc.toPlainText());
+    return failure;
 }
 
 int ClascExec::Assemble(QString file)
@@ -101,9 +115,9 @@ int ClascExec::Assemble(QString file)
         orgAsm.m_constants[k] = Util::numToHex(symTab->m_constants[k]->m_value->m_fVal);
     }
 */
-    out()<< "Assembling file:'"<< filename<<endl;
+    Out("Assembling file:'"+filename);
     orgAsm.Assemble(file, filename);
-    out() << orgAsm.m_output << endl;
+    Out(orgAsm.m_output);
     if (orgAsm.m_output.contains("Complete"))
         return 0;
 
@@ -112,14 +126,23 @@ int ClascExec::Assemble(QString file)
 
 void ClascExec::PrintUsage()
 {
-    out() << endl;
-    out() << "Usage: " << endl;
-    out() << "clasc op=[ operation types ] input_file=[ source file ] output_file=[ optional output file ].... [ type specific operation parameters ]"<<endl;
-    out() << "Valid operation types are: project, orgasm"<<endl<<endl;
-    out() << "Examples: " <<endl;
-    out() << "  compile a project with a main source file: " <<endl;
-    out() << "     clasc op=project   settings=~/.TRSE/fluff64.ini project=myDemo.trse input_file=main_demo.ras" <<endl <<endl;
-    out() << "  Use OrgAsm to assemble an .asm to .prg: " <<endl;
-    out() << "     clasc op=orgasm   input_file=main_demo.asm" <<endl;
-    out() << endl;
+    Out("Usage: ");
+    Out("");
+    Out("trc op=[ operation types ] input_file=[ source file ] output_file=[ optional output file ].... [ type specific operation parameters ]");
+    Out("Valid operation types are: project, orgasm");
+    Out("");
+    Out("Examples: ");
+    Out("  compile a project with a main source file: ");
+    Out("     trc op=project   settings=~/.TRSE/fluff64.ini project=myDemo.trse input_file=main_demo.ras");
+    Out("");
+    Out("  Use OrgAsm to assemble an .asm to .prg: ");
+    Out("     trc op=orgasm   input_file=main_demo.asm");
+    Out("");;
+}
+
+void ClascExec::Out(QString m)
+{
+ //   qInfo() << m << endl;
+//    printf(m.toStdString().c_str());
+    std::cout << m.toStdString() << std::endl;
 }

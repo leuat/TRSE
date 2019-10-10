@@ -40,6 +40,7 @@ bool SourceBuilder::Build(QString source)
     ErrorHandler::e.m_level = ErrorHandler::e.ERROR_ONLY;
     ErrorHandler::e.m_teOut = "";
     ErrorHandler::e.exitOnError = false;
+    source= source.replace("\r","");
     QStringList lst = source.split("\n");
 
 
@@ -51,7 +52,7 @@ bool SourceBuilder::Build(QString source)
 
     compiler.Parse(source,lst);
 
-    QString path = m_projectIniFile.getString("project_path") + "/";
+    QString path = m_curDir+"/";//m_projectIniFile.getString("project_path") + "/";
     m_filename = m_currentSourceFile.split(".ras")[0];
 //    m_filename = m_curDir+"/"+ m_currentSourceFile.split(".")[0];
 
@@ -66,6 +67,7 @@ bool SourceBuilder::Build(QString source)
     m_system->timer.start();
     m_system->m_buildSuccess = true;
     m_buildSuccess = compiler.Build(m_system, path);
+//    qDebug() << lst;
     if (m_buildSuccess)
         BuildSuccesString();
 

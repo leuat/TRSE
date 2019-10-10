@@ -955,9 +955,8 @@ void Parser::Preprocess()
 //                QString str = m_currentToken.m_value;
                 Eat(TokenType::PREPROCESSOR);
                 QString name = m_currentToken.m_value;
-                QString filename =(m_lexer->m_path +"/"+ m_currentToken.m_value);
+                QString filename =(m_currentDir +"/"+ m_currentToken.m_value);
                 filename = filename.replace("//","/");
-
                 QString text = m_lexer->loadTextFile(filename);
                 int ln=m_lexer->getLineNumber(m_currentToken.m_value)+m_acc;
                 m_lexer->m_text.insert(m_lexer->m_pos, text);
@@ -1531,12 +1530,12 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
                 //qDebug() << sidloc;
             }
 //            exit(1);
-            decl->InitSid(m_lexer->m_path, sidloc, "sid");
+            decl->InitSid(m_currentDir, sidloc, "sid");
         }
         if (typeNode->m_op.m_type == TokenType::INCNSF) {
             int sidloc = 0;
  //           exit(1);
-            decl->InitSid(m_lexer->m_path, sidloc, "nsf");
+            decl->InitSid(m_currentDir, sidloc, "nsf");
         }
     }
 //    return vars;
