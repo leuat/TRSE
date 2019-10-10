@@ -1,5 +1,4 @@
 #include "trc.h"
-#include <windows.h>
 #include <QDebug>
 #include <QTextDocument>
 #include <stdio.h>
