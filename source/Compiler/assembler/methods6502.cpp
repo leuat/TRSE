@@ -5076,10 +5076,17 @@ void Methods6502::SetSpriteLoc(Assembler *as)
 
     as->Comment("Set sprite location");
 
-    LoadVar(as,0);
-    as->Asm("tax");
-    LoadVar(as,1);
-
+    if (m_node->m_params[1]->isPure()) {
+        LoadVar(as,0);
+        as->Asm("tax");
+        LoadVar(as,1);
+    } else {
+        LoadVar(as,0);
+        QString zp = as->m_internalZP[2];
+        as->Asm("sta "+zp);
+        LoadVar(as,1);
+        as->Asm("ldx "+zp);
+    }
 
 //    SaveVar(as,0,"x");
     as->Asm("sta $07f8 + "+bank+",x");

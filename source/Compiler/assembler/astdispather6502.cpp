@@ -2635,7 +2635,7 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
 
 
     if (num!=nullptr) {
-        as->Comment("Assigning memory location (poke replacement)");
+        as->Comment("Assigning memory location");
         v = new NodeVar(num->m_op); // Create a variable copy
         v->value = num->HexValue();
         //return num->HexValue();

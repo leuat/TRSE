@@ -17,6 +17,7 @@ begin
 	
 	i:=sprite1_counter/4;
 	k:=moveSprite[i];
+	asm(";wtfs");
 	setspriteloc(@playerSprite, moveSprite[i], @spritebank);
 	
 	

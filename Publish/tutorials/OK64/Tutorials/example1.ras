@@ -8,12 +8,6 @@ var
 	xpos : array[@count] of byte;
 	sz : array[@count] of byte;
 
-/*
-procedure Balle();
-begin
-	inc(i);
-end;
-*/
 
 procedure Setup();
 begin
