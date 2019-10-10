@@ -8,6 +8,9 @@ void Orgasm::LoadFile(QString filename) {
     QFile f(filename);
     f.open(QFile::ReadOnly);
     m_source=f.readAll();
+
+    ProcessSource();
+
     f.close();
     m_lines = m_source.split("\n");
     m_pCounter = 0;
@@ -40,6 +43,17 @@ void Orgasm::LoadCodes()
     }
 
 
+}
+
+void Orgasm::ProcessSource()
+{
+  //  QElapsedTimer t;
+    //t.start();
+    for (int i=0;i<256;i++) {
+        QString r = "#P"+QString::number(i)+";";
+        m_source = m_source.replace(r,QChar(i));
+    }
+//    qDebug() << "Orgasm::Processources took " << Util::MilisecondToString(t.elapsed());
 }
 
 OrgasmLine Orgasm::LexLine(int i) {

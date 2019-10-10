@@ -50,7 +50,7 @@ void Compiler::Parse(QString text, QStringList lst)
         //exit(1);
     } catch (FatalErrorException e) {
 //        qDebug() << "ERROR parse " << e.message;
-        HandleError(e, "Error during parsing:");
+        HandleError(e, "Error during parsing");
     }
 
     if (m_parser.m_symTab!=nullptr)
@@ -61,7 +61,7 @@ void Compiler::Parse(QString text, QStringList lst)
 bool Compiler::Build(AbstractSystem* system, QString project_dir)
 {
     if (m_tree==nullptr) {
-        qDebug() << "Compiler::Build : tree not parsed!";
+        //qDebug() << "Compiler::Build : tree not parsed!";
         return false;
     }
     if (m_assembler)
@@ -238,7 +238,8 @@ void Compiler::HandleError(FatalErrorException fe, QString e)
     msg +="<br><font color=\"#FF0000\">Fatal error " + line+"</font>";
     if (linenr<m_parser.m_lexer->m_lines.count() && linenr>=0)
 //        msg+="<br><i>Source code line</i>: " + m_parser.m_lexer->m_lines[linenr];
-    msg+="<br><i>Message</i>: ";
+    msg+="<br>";
+//    msg+="<br><i>Message</i>: ";
     Pmm::Data::d.lineNumber = linenr+1;
 
     recentError = fe;

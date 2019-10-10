@@ -7,7 +7,7 @@
 QT       += core gui widgets
 
 
-TARGET = cras
+TARGET = clasc
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -75,7 +75,7 @@ win32:RC_ICONS += trse.ico
 
 
 
-SOURCES += cras.cpp \
+SOURCES += clasc.cpp \
     source/Compiler/ast/nodecase.cpp \
     source/Compiler/ast/noderepeatuntil.cpp \
     source/Compiler/systems/systemok64.cpp \
@@ -171,7 +171,7 @@ SOURCES += cras.cpp \
     source/Compiler/projectbuilder.cpp
 
 
-HEADERS  +=  cras.h \
+HEADERS  +=  clasc.h \
     source/Compiler/ast/nodecase.h \
     source/Compiler/ast/noderepeatuntil.h \
     source/Compiler/systems/systemok64.h \

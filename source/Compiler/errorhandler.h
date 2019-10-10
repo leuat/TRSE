@@ -78,7 +78,7 @@ public:
             s+=" ";
 
         s = s + str + "\n";
-        std::cout << s.toStdString();
+        //std::cout << s.toStdString();
         m_teOut = m_teOut + s;
 
     }

@@ -1,5 +1,5 @@
-#ifndef CRAS_H
-#define CRAS_H
+#ifndef clasc_H
+#define clasc_H
 
 #include <QCoreApplication>
 
@@ -7,21 +7,27 @@
 #include <QString>
 #include "source/LeLib/util/cinifile.h"
 #include "source/Compiler/sourcebuilder.h"
+#include "source/OrgAsm/orgasm.h"
 
-class CRasExec {
+class ClascExec {
 public:
     QStringList m_args;
     CIniFile m_project, m_settings;
     QMap<QString,QString> m_vals;
     SourceBuilder* m_builder = nullptr;
+    QString m_outputFile = "";
     bool m_hasError = false;
-    CRasExec(int argc, char *argv[]);
+    int m_failure = 0;
+    ClascExec(int argc, char *argv[]);
 
     void RequireParam(QString param);
     void RequireFile(QString param);
 
     int Perform();
     int CompileFromProject(QString sourceFile);
+    int Assemble(QString file);
+
+    void PrintUsage();
 
     QTextStream& out()
     {
@@ -32,4 +38,4 @@ public:
 
 
 
-#endif // CRAS_H
+#endif // clasc_H

@@ -149,11 +149,13 @@ public:
     QString m_output;
 
 
+
     int m_pCounter = 0;
     bool m_done = false;
     void LoadFile(QString filename);
 
     void LoadCodes();
+    void ProcessSource();
 
 
     OrgasmLine LexLine(int i);
