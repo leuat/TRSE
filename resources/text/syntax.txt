@@ -109,7 +109,7 @@ M; CopyBytesShift; X16,C64, PLUS4,C128, VIC20, PET,  NES, OK64; a,a,b,b,n
 m; CreateAddressTable; X16,C64, PLUS4,C128, VIC20, PET, NES, OK64; a,n,b,b
 m; AddressTable; X16,C64, PLUS4,C128, VIC20, PET, NES, OK64; a,b,b
 
-m; Nop; X16,C128, C64, PLUS4, VIC20, PET, NES; n
+m; Nop; X16,C128, C64, PLUS4, VIC20, PET, NES, OK64; n
 
 m; SetMemoryConfig ; C128 ; n,n,n,n,n
 m; SetMemoryConfig ; PLUS4 ; b
@@ -171,9 +171,6 @@ m; ScrollY; C64, PLUS4, C128 ; b
 m; ScrollX; C64, PLUS4, C128 ; b
 m; hideborderx; C64, PLUS4, C128 ; b
 m; hidebordery; C64, PLUS4, C128 ; b
-m; PrintString; C64, PLUS4, C128, VIC20, PET,  PET, X16; s,b,b
-m; PrintNumber; C64, PLUS4, C128, VIC20, PET,  PET; b
-m; PrintDecimal; C64, PLUS4, C128, VIC20, PET,  PET; i,n
 m; ClearScreen; C64, PLUS4, C128, VIC20, NES, PET; b, a
 m; ClearBitmap; C64, PLUS4, C128; a, b
 m; SetMultiColorMode; C64, PLUS4, C128;
@@ -195,6 +192,14 @@ m; DrawTextBox; C64, PLUS4, C128, NES, VIC20, PET; a,a,b,b,b,b
 m; DrawColorTextBox; C64, PLUS4, C128, NES, VIC20, PET; a,a,a,b,b,b,b,b
 m; BcdPrint; C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a,n
 
+# String routines
+
+m; PrintString; C64, PLUS4, C128, VIC20, PET, X16; s,b,b
+m; PrintNumber; C64, PLUS4, C128, VIC20, PET,  X16; b
+m; PrintDecimal; C64, PLUS4, C128, VIC20, PET,  X16; i,n
+m; StrToLower; C64, PLUS4, C128, VIC20, PET, X16, OK64; a
+m; StrToUpper; C64, PLUS4, C128, VIC20, PET, X16, OK64; a
+m; StrCmp; C64, PLUS4, C128, VIC20, PET, X16, OK64; a, a
 
 # Sprite routines
 
@@ -260,12 +265,12 @@ m; ReadJoy2; C64;
 
 # IRQ routines
 
-m; NmiIRQ; C64, PLUS4, C128, VIC20, PET,  PET ; p
+m; NmiIRQ; C64, PLUS4, C128, VIC20, PET,  PET, OK64 ; p
 m; EnableRasterIRQ; C64, PLUS4, C128;
-m; StartIRQ; C64, PLUS4, C128, VIC20, PET,  NES; b
+m; StartIRQ; C64, PLUS4, C128, VIC20, PET,  NES,OK64; b
 m; StartIRQWedge; C64, PLUS4, C128; b
 m; StartRasterChain; C64, PLUS4, C128; p,b,n
-m; CloseIRQ; C64, PLUS4, C128, VIC20, PET,  NES;
+m; CloseIRQ; C64, PLUS4, C128, VIC20, PET,  NES, OK64;
 m; CloseIRQWedge; C64, PLUS4, C128;
 m; EnableIRQ; C64, PLUS4, C128;
 m; PreventIRQ; C64, PLUS4, C128;
@@ -388,18 +393,20 @@ c; OKVC_FONT_HEIGHT; OK64; a; $FFEC
 c; OKVC_BORDER_WIDTH; OK64; a; $FFEB
 c; OKVC_BORDER_HEIGHT; OK64; a; $FFEA
 c; OKVC_BORDER_COLOR; OK64; a; $FFE9
+c; OKVC_INPUT_KEY; OK64; a; $FFE8
 
 
 m; drawPixel; OK64; b,b,b
 m; drawLine; OK64; b,b,b,b,b
 m; drawCircleFilled; OK64; b,b,b,b
+m; drawRect; OK64; b,b,b,b,b
 m; ClearScreen; OK64; b
 m; WaitForVsync; OK64;
 m; toColor; OK64; b,b,b
 m; setPalette; OK64; b,b,b,b
 m; blit; OK64; b,b,b,b,b,b
 m; PrintChar; OK64; ,b,b,b,b
-
+m; InputIRQ; OK64; p
 
 # PLUS4 specific methods
 

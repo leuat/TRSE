@@ -157,7 +157,7 @@ public:
      *
     */
 
-    void AssignString(NodeAssign* node);
+    void AssignString(NodeAssign* node, bool isPointer);
 
     void AssignPointer(NodeAssign* node);
 

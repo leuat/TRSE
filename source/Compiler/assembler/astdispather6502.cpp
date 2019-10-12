@@ -2214,7 +2214,7 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
     }
 }
 
-void ASTDispather6502::AssignString(NodeAssign *node) {
+void ASTDispather6502::AssignString(NodeAssign *node, bool isPointer) {
 
     NodeString* right = (NodeString*)dynamic_cast<const NodeString*>(node->m_right);
     NodeVar* left = (NodeVar*)dynamic_cast<const NodeVar*>(node->m_left);
@@ -2228,14 +2228,24 @@ void ASTDispather6502::AssignString(NodeAssign *node) {
     //as->Label(str + "\t.dc \"" + right->m_op.m_value + "\",0");
   //  as->Label(lbl);
 
-    as->Asm("ldx #0");
-    as->Label(lblCpy);
-    as->Asm("lda " + str+",x");
-    as->Asm("sta "+left->getValue(as) +",x");
-    as->Asm("inx");
-    as->Asm("cmp #0 ;keep");  // ask post optimiser to not remove this
-    as->Asm("bne " + lblCpy);
+//    qDebug() << "IS POINTER " << isPointer;
+    if (isPointer) {
+  //      qDebug() << "HERE";
+        as->Asm("lda #<"+str);
+        as->Asm("sta "+left->getValue(as));
+        as->Asm("lda #>"+str);
+        as->Asm("sta "+left->getValue(as)+"+1");
+    }
+    else {
 
+        as->Asm("ldx #0");
+        as->Label(lblCpy);
+        as->Asm("lda " + str+",x");
+        as->Asm("sta "+left->getValue(as) +",x");
+        as->Asm("inx");
+        as->Asm("cmp #0 ;keep");  // ask post optimiser to not remove this
+        as->Asm("bne " + lblCpy);
+    }
   //  as->PopLabel("stringassign");
     as->PopLabel("stringassignstr");
     as->PopLabel("stringassigncpy");
@@ -2655,13 +2665,19 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
 
     if (node->m_left->getType(as)==TokenType::POINTER && v->m_expr==nullptr) {
 
+        if (dynamic_cast<const NodeString*>(node->m_right)) {
+            AssignString(node,node->m_left->isPointer(as));
+            return v->getValue(as);
+
+        }
+
         AssignPointer(node);
         return v->getValue(as);
     }
 
-    if ((NodeString*)dynamic_cast<const NodeString*>(node->m_right))
+    if (dynamic_cast<const NodeString*>(node->m_right))
     {
-        AssignString(node);
+        AssignString(node,node->m_left->isPointer(as));
         return v->getValue(as);
     }
     if (node->m_right==nullptr)

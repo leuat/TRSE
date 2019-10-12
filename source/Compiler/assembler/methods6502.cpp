@@ -95,6 +95,14 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
             as->Asm("sta $01");
 
     }
+    if (Command("strtolower"))
+        StrToLower(as,true);
+    if (Command("strtoupper"))
+        StrToLower(as,false);
+    if (Command("strcmp"))
+        StrCmp(as);
+
+
     /*
      *
      *  OK64 methods
@@ -106,6 +114,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     if (Command("DrawPixel")) {
         CallOKVC(as,3,1);
+    }
+    if (Command("DrawRect")) {
+        CallOKVC(as,5,8);
     }
     if (Command("drawCircleFilled")) {
         CallOKVC(as,4,4);
@@ -198,6 +209,22 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         PointToVera(as,0x0F4000,true);
         LoadVar(as,0);
         as->Asm("sta $9F23");
+
+    }
+
+    if (Command("inputIRQ")) {
+
+        NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_node->m_params[0]);
+        if (addr==nullptr)
+            ErrorHandler::e.Error("First parameter must be interrupt procedure!", m_node->m_op.m_lineNumber);
+
+        QString name = addr->m_procedure->m_procName;
+
+//        as->Asm("sei");
+        as->Asm("lda     #<"+name);
+        as->Asm("sta     $FFF8");
+        as->Asm("lda     #>"+name);
+        as->Asm("sta     $FFF9");
 
     }
 
@@ -2987,6 +3014,119 @@ void Methods6502::SetFrequency(Assembler *as)
 
 }
 
+void Methods6502::StrToLower(Assembler *as, bool toLower)
+{
+    as->Comment("String To Lower");
+    bool isPointer= m_node->m_params[0]->isPointer(as);
+    QString v = m_node->m_params[0]->getValue(as);
+    QString lbl = as->NewLabel("lower");
+    QString lblEnd = as->NewLabel("lowerEnd");
+    QString lblSkip = as->NewLabel("lowerSkip");
+    QString zp = as->m_internalZP[0];
+
+    QString low = "#$41";
+    QString high = "#$5B";
+    QString add = "#$20";
+
+    if (!toLower) {
+        low = "#$61";
+        high = "#$7B";
+        add = "#$E0";
+    }
+
+    QString x="x";
+    QString p1 = "";
+    QString p2 = "";
+    if (isPointer) {
+        x= "y";
+        p1 ="(";
+        p2 =")";
+    }
+
+    as->Asm("ld"+x+" #0");
+    as->Label(lbl);
+    as->Asm("lda "+p1+v+p2+","+x);
+    as->Asm("cmp #0");
+    as->Asm("beq "+lblEnd);
+    as->Asm("cmp "+low);
+    as->Asm("bcc "+lblSkip);
+    as->Asm("cmp "+high);
+    as->Asm("bcs "+lblSkip);
+    as->Asm("clc");
+    as->Asm("adc "+add);
+    as->Asm("sta "+p1+v+p2+","+x);
+    as->Label(lblSkip);
+    as->Asm("in"+x);
+    as->Asm("jmp "+lbl);
+
+    as->Label(lblEnd);
+
+    as->PopLabel("lower");
+
+    as->PopLabel("lowerEnd");
+    as->PopLabel("lowerSkip");
+}
+
+void Methods6502::StrCmp(Assembler *as)
+{
+    as->Comment("Compare two strings");
+    bool isPointerA= m_node->m_params[0]->isPointer(as);
+    bool isPointerB= m_node->m_params[1]->isPointer(as);
+    QString av = m_node->m_params[0]->getValue(as);
+    QString bv = m_node->m_params[1]->getValue(as);
+    QString lbl = as->NewLabel("strcmp");
+    QString lblFalse = as->NewLabel("endTrue");
+    QString lblTrue = as->NewLabel("endFalse");
+    QString lblFinal = as->NewLabel("endFinal");
+    QString zp = as->m_internalZP[0];
+
+    QString ax="x";
+    QString ap1 = "";
+    QString ap2 = "";
+
+    QString bx="x";
+    QString bp1 = "";
+    QString bp2 = "";
+    if (isPointerA) {
+        ax= "y";
+        ap1 ="(";
+        ap2 =")";
+    }
+    if (isPointerB) {
+        bx= "y";
+        bp1 ="(";
+        bp2 =")";
+    }
+
+    as->Asm("ld"+ax+" #0");
+    if (ax!=bx)
+        as->Asm("ld"+bx+" #0");
+
+    as->Label(lbl);
+    as->Asm("lda "+ap1+av+ap2+","+ax);
+    as->Asm("cmp "+bp1+bv+bp2+","+bx);
+    as->Asm("bne "+lblFalse);
+    as->Asm("cmp #0 ;keep");
+    as->Asm("beq "+lblTrue);
+    as->Asm("in"+ax);
+    if (ax!=bx)
+        as->Asm("in"+bx);
+    as->Asm("jmp "+lbl);
+
+    as->Label(lblFalse);
+    as->Asm("lda #0");
+    as->Asm("jmp "+lblFinal);
+    as->Label(lblTrue);
+    as->Asm("lda #1");
+    as->Label(lblFinal);
+
+    as->PopLabel("strcmp");
+    as->PopLabel("endTrue");
+
+    as->PopLabel("endFalse");
+    as->PopLabel("endFinal");
+}
+
 
 void Methods6502::Clearsound(Assembler *as)
 {
@@ -4024,7 +4164,7 @@ void Methods6502::StartIRQ(Assembler *as)
 {
     as->Comment("StartIRQ");
 
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES) {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES || Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64) {
         as->Asm("pha");
         as->Asm("txa");
         as->Asm("pha");
@@ -4113,7 +4253,7 @@ void Methods6502::StartIRQWedge(Assembler *as)
 void Methods6502::CloseIRQ(Assembler *as, bool isWedge)
 {
     as->Comment("CloseIRQ");
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES) {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES || Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64) {
 
 
         as->Asm("pla");
@@ -4167,7 +4307,7 @@ void Methods6502::CloseIRQ(Assembler *as, bool isWedge)
 
 void Methods6502::DisableNMI(Assembler *as)
 {
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64) {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 ) {
 
         as->Comment("Hook NMI");
 
