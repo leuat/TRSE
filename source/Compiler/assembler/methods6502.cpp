@@ -111,6 +111,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
      *
      *
      * */
+    if (Command("ResetFileList"))
+        CallOKVC(as,0,9);
+    if (Command("ReadNextFile"))
+        CallOKVC(as,0,10);
 
     if (Command("DrawPixel")) {
         CallOKVC(as,3,1);

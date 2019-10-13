@@ -394,7 +394,7 @@ c; OKVC_BORDER_WIDTH; OK64; a; $FFEB
 c; OKVC_BORDER_HEIGHT; OK64; a; $FFEA
 c; OKVC_BORDER_COLOR; OK64; a; $FFE9
 c; OKVC_INPUT_KEY; OK64; a; $FFE8
-
+c; OKVC_FILE; OK64; a; $FF20
 
 m; drawPixel; OK64; b,b,b
 m; drawLine; OK64; b,b,b,b,b
@@ -407,6 +407,14 @@ m; setPalette; OK64; b,b,b,b
 m; blit; OK64; b,b,b,b,b,b
 m; PrintChar; OK64; ,b,b,b,b
 m; InputIRQ; OK64; p
+m; ResetFileList; OK64;
+m; ReadNextFile; OK64;
+m; Load; OK64; s
+
+
+
+
+
 
 # PLUS4 specific methods
 
