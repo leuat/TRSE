@@ -200,7 +200,8 @@ m; PrintDecimal; C64, PLUS4, C128, VIC20, PET,  X16; i,n
 m; StrToLower; C64, PLUS4, C128, VIC20, PET, X16, OK64; a
 m; StrToUpper; C64, PLUS4, C128, VIC20, PET, X16, OK64; a
 m; StrCmp; C64, PLUS4, C128, VIC20, PET, X16, OK64; a, a
-
+m; StrSplit; C64, PLUS4, C128, VIC20, PET, X16, OK64;a,a,b
+m; StrGetFromIndex;C64, PLUS4, C128, VIC20, PET, X16, OK64; a, b
 # Sprite routines
 
 m; SpritePos; C64, PLUS4, C128 ; ib,b,b
@@ -409,7 +410,7 @@ m; PrintChar; OK64; ,b,b,b,b
 m; InputIRQ; OK64; p
 m; ResetFileList; OK64;
 m; ReadNextFile; OK64;
-m; Load; OK64; s
+m; LoadFile; OK64;
 
 
 

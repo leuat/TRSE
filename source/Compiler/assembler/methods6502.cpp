@@ -101,6 +101,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         StrToLower(as,false);
     if (Command("strcmp"))
         StrCmp(as);
+    if (Command("strsplit"))
+        StrSplit(as);
+    if (Command("strgetfromindex"))
+        StrGetFromIndex(as);
 
 
     /*
@@ -158,6 +162,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         toColor(as);
     if (Command("setPalette")) {
         CallOKVC(as,4,5);
+    }
+    if (Command("loadfile")) {
+        CallOKVC(as,0,11);
     }
     if (Command("blit")) {
         CallOKVC(as,6,6);
@@ -3131,6 +3138,117 @@ void Methods6502::StrCmp(Assembler *as)
     as->PopLabel("endFinal");
 }
 
+void Methods6502::StrSplit(Assembler *as)
+{
+    if (!m_node->m_params[0]->isPure())
+        ErrorHandler::e.Error("Parameter 0 is required to be a pure address");
+    if (!m_node->m_params[1]->isPure())
+        ErrorHandler::e.Error("Parameter 1 is required to be a pure address");
+    if (!m_node->m_params[2]->isPure())
+        ErrorHandler::e.Error("Parameter 2 is required to be a pure variable or constant");
+    QString c = m_node->m_params[2]->getValue(as);
+
+    QString s1 = m_node->m_params[0]->getValue(as);
+    QString s2 = m_node->m_params[1]->getValue(as);
+
+    as->Comment("StrSplit");
+    QString lbl = as->NewLabel("loop");
+    QString lblSkip = as->NewLabel("skip");
+    QString lblEnd = as->NewLabel("end");
+    QString lbl2 = as->NewLabel("loopi");
+    as->Asm("ldx #0");
+    as->Asm("ldy #0");
+    as->Label(lbl);
+    as->Asm("lda "+s1+",x");
+    as->Asm("cmp #0; keep");
+    as->Asm("beq "+lblEnd);
+    as->Asm("lda "+s1+",x");
+    as->Asm("cmp "+c);
+    as->Asm("bne "+lblSkip);
+    as->Asm("lda #0"); // String stop
+    as->Label(lblSkip);
+    as->Asm("sta "+s2+",y");
+    as->Asm("iny");
+    as->Label(lbl2);
+    as->Asm("inx");
+/*    as->Asm("lda "+s1+",x");
+    as->Asm("cmp "+c);
+    as->Asm("beq "+lbl2);
+*/
+    as->Asm("jmp "+lbl);
+    as->Label(lblEnd);
+    as->Asm("sta "+s2+",y");
+
+    as->PopLabel("loop");
+    as->PopLabel("loopi");
+    as->PopLabel("skip");
+    as->PopLabel("end");
+
+}
+
+void Methods6502::StrGetFromIndex(Assembler *as)
+{
+//    a, i
+    QString zp = as->m_internalZP[0];
+   // LoadVar(as,0);
+//    m_node->m_params[0]->Accept(m_dispatcher);
+ //   as->Term();
+    LoadAddress(as,0);
+    as->Term();
+    as->Asm("sta "+zp+"+0");
+    as->Asm("sty "+zp+"+1");
+
+    QString lbl = as->NewLabel("cloop");
+    QString lblSkip = as->NewLabel("cskip");
+    QString lblSkipZP = as->NewLabel("cskipzp");
+    QString lblSkipZP2 = as->NewLabel("cskipzp2");
+    QString lblEnd = as->NewLabel("cend");
+    LoadVar(as,1);
+    as->Asm("tax");
+    as->Asm("dex");
+    as->Asm("cpx #255");
+    as->Asm("beq "+lblSkipZP2);
+    as->Asm("ldy #0");
+    as->Label(lbl);
+    as->Asm("lda ("+zp+"),y");
+    as->Asm("cmp #0 ;keep");
+    as->Asm("bne "+lblSkip);
+    as->Asm("dex");
+//    as->Asm("lda #0");
+//    as->Asm("inc $FFe9");
+    as->Asm("cpx #255");
+//    as->Asm("jmp "+lblEnd);
+    as->Asm("beq "+lblEnd);
+
+    as->Label(lblSkip);
+    as->Asm("clc");
+    as->Asm("inc "+zp);
+    as->Asm("bcc " + lblSkipZP);
+    as->Asm("inc "+ zp + " +1");
+    as->Label(lblSkipZP);
+    as->Asm("jmp "+lbl);
+    as->Label(lblEnd);
+
+    // point to NEXT
+    as->Asm("clc");
+    as->Asm("inc "+zp);
+    as->Asm("bcc " + lblSkipZP2);
+    as->Asm("inc "+ zp + " +1");
+    as->Label(lblSkipZP2);
+
+
+    as->Asm("lda "+zp);
+    as->Asm("ldy "+zp+"+1");
+
+//    qDebug() << "Methods LoadAddress ETF";
+    as->PopLabel("cloop");
+    as->PopLabel("cskip");
+    as->PopLabel("cskipzp");
+    as->PopLabel("cskipzp2");
+    as->PopLabel("cend");
+
+}
+
 
 void Methods6502::Clearsound(Assembler *as)
 {
@@ -4417,6 +4535,24 @@ QString Methods6502::BitShiftX(Assembler *as)
     as->PopLabel("shiftbitdone");
     return as->StoreInTempVar("bitmask");
 
+}
+
+void Methods6502::LoadAddress(Assembler *as, int paramNo)
+{
+    Node* node = m_node->m_params[paramNo];
+
+    if (node->isPureNumeric()) {
+        as->Asm("lda " + Util::numToHex(node->getValueAsInt(as)&0xff));
+        as->Asm("ldy " + Util::numToHex((node->getValueAsInt(as)>>8)&0xff));
+        return;
+    }
+    if (node->isPointer(as) && (!node->isArrayIndex())) {
+        as->Asm("lda "+node->getValue(as));
+        as->Asm("ldy "+node->getValue(as)+"+1");
+        return;
+    }
+    as->Asm("lda #<"+node->getValue(as));
+    as->Asm("ldy #>"+node->getValue(as));
 }
 
 

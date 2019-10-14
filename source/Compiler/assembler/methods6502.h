@@ -39,7 +39,8 @@ public:
     void SetFrequency(Assembler *as);
     void StrToLower(Assembler* as, bool);
     void StrCmp(Assembler* as);
-
+    void StrSplit(Assembler* as);
+    void StrGetFromIndex(Assembler* as);
     void CopyBytesShift(Assembler* as, bool isLeft);
     void PokeScreen(Assembler* as, int hiAddress);
     void PokeScreenColor(Assembler* as, int hiAddress);
@@ -158,6 +159,7 @@ public:
 
     QString BitShiftX(Assembler* as);
 
+    void LoadAddress(Assembler* as, int paramNo);
     void LoadVar(Assembler* as, int paramNo, QString registe, QString load="");
     void LoadVar(Assembler* as, int paramNo);
     void SaveVar(Assembler* as, int paramNo, QString registe, QString load="");
