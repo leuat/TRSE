@@ -76,7 +76,7 @@ begin
 	//		DrawLine(x1,y1,x2,y2,j);
 		end;
 
-	//	call(sidfile_1_play);
+		call(sidfile_1_play);
 //		call(sidfile_1_play);
 /*		for k:=0 to 255 do begin
 			x1:=okvc_random;
