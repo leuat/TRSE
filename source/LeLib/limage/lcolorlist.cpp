@@ -240,11 +240,11 @@ void LColorList::fromArray(QByteArray &d)
 {
     int size = (uchar)d[0];
     int shift = 1;
-    qDebug() << size;
+  //  qDebug() << size;
     if (size==0) {
         size = 256;
         shift = 0;
-        qDebug() << "HERE";
+//        qDebug() << "HERE";
     }
     m_list.clear();
  //    setNoBitplanes(size);

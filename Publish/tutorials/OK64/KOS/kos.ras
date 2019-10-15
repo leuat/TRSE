@@ -1,0 +1,225 @@
+program MyProgram;
+var  
+
+	i,time,t2:byte=0;
+	@define basex 16
+	@define bgCol $21
+	cx:byte = @basex;
+	cy:byte = 16;
+	curCol : byte=$15;
+	curPos : byte = 0;
+	curKey : byte=$20;
+	zp,tp,cmd,arg:pointer;
+
+	// String commands
+	cmdList : string = "ls";
+	cmdHelp : string = "help";
+	cmdLoad : string = "load";
+	
+	
+@export "images/logo.flf" "images/logo.bin"  256
+	logo : incbin("images/logo.bin",$20F00);    
+
+	sInput : array[64] of byte;
+	sSplit : array[64] of byte;
+
+/*
+  Scrolls the screen down 
+*/
+procedure Scroll();
+begin
+	if (cy>=29*8) then
+	begin
+		blit(0,1, 0,0,255,255);
+/*		for i:=0 to 16 step 2 do
+		begin
+			blit(0,1, 0,14,255,255);
+//			waitforvsync();
+		end;*/
+		drawrect(0,8*28,255,17,@bgCol);		
+		cy:=cy-16;
+	end;
+end;
+
+procedure printText(s:pointer);
+var
+	 i:byte=0;
+begin
+	i:=0;
+	while (s[i]<>0) do
+	begin
+		PrintChar(s[i],curCol, cx,cy);
+		cx:=cx+8;
+		inc(i);
+	end;
+	cx:=@basex;
+	cy:=cy+8;
+	Scroll();	
+
+end;
+
+
+procedure printSingleChar(p:byte);
+begin
+	PrintChar(p,curCol, cx,cy);
+	cx:=cx+8;
+	if (cx>=29*8) then
+	begin
+		cx:=@basex;
+		cy:=cy+8;
+	end;
+	sInput[curPos]:=p;
+	inc(curPos);
+
+end;
+
+
+procedure ListFiles();
+begin
+	ResetFileList();
+	zp:=OKVC_FILE;
+	i:=curCol;
+	curCol:=37;
+	while (zp[0]<>0) do
+	begin
+		printText(zp);
+		ReadNextFile();
+	end;
+	curCol:=i;
+end;
+
+
+procedure PrintHelp();
+begin
+	printText("KOS 0.01 commands:");
+	printText("  ls : list files");
+	printText("  load [file] : load file");
+	printText("  help: this text");
+
+end;
+
+
+procedure Execute();
+var 
+  ok:byte=false;
+begin
+	ok:=false;
+	zp:=sInput;
+	if (zp[0]=0) then
+		return();
+	
+	StrToLower(sInput);
+	strSplit(sInput, sSplit, key_space);
+
+	//printText(sSplit);
+	
+	cmd:=strgetfromindex(sSplit,0);
+	arg:=strgetfromindex(sSplit,1);
+	
+	if (strcmp(cmd,cmdList)) then 
+	begin
+		ListFiles();
+		ok:=true;
+	end;		
+	if (strcmp(cmd,cmdHelp)) then 
+	begin
+		PrintHelp();
+		ok:=true;
+	end;		
+	if (strcmp(cmd,cmdLoad)) then 
+	begin
+		printText("Loading file:");
+		printText(arg);
+		memcpy(arg,0,okvc_file,16);
+		LoadFile();
+		ok:=true;
+	end;		
+	
+	if (ok=false) then
+		printText("Syntax error");
+
+//	if (StrCmp(sInput,"")
+
+end;
+
+
+interrupt Input();
+var 
+	key,ok:byte;
+begin
+	StartIRQ(0);
+//	okvc_border_color:=okvc_input_key;
+	key := okvc_input_key;
+	drawRect(cx,cy,8,8,@bgCol);
+	ok:=true;
+	//PrintChar(curKey,curCol, cx,cy);
+	if (key=13) then
+	begin
+		cx:=@basex;
+		cy:=cy+8;
+		Scroll();
+
+		ok:=false;
+		sInput[curPos]:=0;
+		curPos:=0;
+		Execute();
+	end;
+	if (key=8) then
+	begin
+		cx:=cx-8;
+		if (cx<@basex) then cx:=@basex;
+		ok:=false;
+		curPos:=curPos-1;
+	end;
+	
+	if (ok)then
+	begin
+		curKey:=key;	
+		printSingleChar(key);
+	end;
+	CloseIRQ();
+end;
+
+
+procedure SetupScreen();
+begin
+	okvc_border_color:=$41;
+	clearscreen(@bgCol);
+	blit(0,16, 0,0, 255,80);	
+	asm(";wtf");
+	printText("64k ram + 1024k vram");
+	printText("MOS6502 + SID");
+	printText("OK64 KOS v0.01");
+	printText("Ready.");
+end;
+
+
+procedure Main();
+begin
+	while(true) do 
+	begin
+		t2:=t2+1;
+		if (t2&1=0) then
+			time:=time+1;
+		
+	
+		if (time=128) then
+		begin
+			drawRect(cx,cy,8,8,@bgCol);
+		end;
+		if (time=0) then
+		begin
+			drawRect(cx,cy,8,8,curCol);
+		end;
+
+	end;
+end;
+
+
+begin
+	InputIRQ(Input());
+
+	SetupScreen();
+	Main();
+	
+end.

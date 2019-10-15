@@ -20,6 +20,7 @@ PLUS4; Main Commodore PLUS/4 tutorials; PLUS4/Tutorials/;<h2>Main Commodore Plus
 X16; Main X16 examples; X16/Tutorials/; <h2>Main Commander X16 tutorials</h2>Please note: These are extremely preliminary examples. X16 support was implemented on sept 13th 2019, so very little is yet possible.
 PET; Main Commodore PET tutorials; PET/examples/;<h2>Main Commodore PET tutorials</h2>The official PET tutorials!
 OK64; Main OK64 examples ; OK64/Tutorials/; <h2>Main OK64 tutorials</h2>Prelimiary tutorials, prone to change. OK64 is Leuat's very own fake 6502 computer!
+OK64; OK Operating System (KOS) ; OK64/KOS/; <h2>KOS: OK64 OS Operating system source</h2>Simple source code for the extremely basic KOS - (O)K Operating System.
 Amiga; Main Amiga 500 tutorials; Amiga/tutorials/;<h2>Main Amiga 500 tutorials</h2><p>Amiga 500 tutorials will be overhauled in the 0.09 release. Hopefully.
 C128; Main Commodore 128 tutorials; C128/;<h2>Main C128 tutorials</h2><p>C128 tutorials will be overhauled in a future release of TRSE.
 NES; Main NES tutorials; NES/intro_tutorial/;<h2>Main NES tutorials</h2><p>NES tutorials will be overhauled in the 0.09 release. Hopefully.

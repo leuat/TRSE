@@ -36,4 +36,4 @@ override_target_settings_prg = 0
 build_list = ,
 project_path = tutorials/OK64/Tutorials/
 open_files = ,example2.ras, example1.ras, example3.ras
-current_file = example1.ras
+current_file = example3.ras

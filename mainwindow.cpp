@@ -243,6 +243,15 @@ void MainWindow::VerifyDefaults()
         m_iniFile.setFloat("memory_analyzer_window_height", 600);
 
 
+    //    qDebug() << m_ini.getString("ok64_emulator");
+   if (!m_iniFile.contains("ok64_emulator") || m_iniFile.getString("ok64_emulator")=="")
+    #ifdef __linux__
+            m_ini.setString("ok64_emulator","ok64");
+    #endif
+    #ifdef _WIN32
+        m_iniFile.setString("ok64_emulator","ok64.exe");
+    #endif
+
 
     if (!m_iniFile.contains("optimizer_remove_unused_symbols"))
      m_iniFile.setFloat("optimizer_remove_unused_symbols",0);
