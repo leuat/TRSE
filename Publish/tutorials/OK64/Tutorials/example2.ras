@@ -16,7 +16,8 @@ end;
 
 
 begin
-
+	okvc_border_color:=0;
+	okvc_src_page:=16;
 	while(true) offpage do
 	begin	
 		inc(time);

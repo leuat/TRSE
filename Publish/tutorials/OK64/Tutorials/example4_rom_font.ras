@@ -1,0 +1,111 @@
+program MyProgram;
+var  
+ 	x1,i,k,l,y1,x2,y2,j,m,g,time,t: byte=0;
+	
+@export "images/font2.flf" "images/font2.bin"  256
+	// Font2 is made with TRSE. Image->Import->Generate font 
+	image1 : incbin("images/font2.bin",$E0200);    
+
+	@define count 128
+
+	text1 : string = ("HELLO World! ROM font",0);
+	text2 : string = ("Custom font",0);
+
+	xpos : array[@count] of byte;
+	ypos : array[@count] of byte;
+	ydy : array[@count] of byte;
+	sz : array[@count] of byte;
+	zp:pointer;
+	
+
+procedure SetupPalette();
+begin
+	for i:=0 to 64 do begin
+		j:=i*4;
+		setpalette(i,j/2,j/3,j);
+		setpalette(127-i,j/2,j/3,j);
+	end;
+	for i:=0 to 64 do begin
+		j:=i*4;
+		setpalette(i+128,j,j/3,j/2);
+		setpalette(255-i,j,j/3,j/2);
+	end;
+
+end;
+
+procedure Setup();
+begin
+	for i:=0 to @count do 
+	begin
+		xpos[i]:=okvc_random;
+		ypos[i]:=okvc_random;
+		ydy[i]:=okvc_random;
+		ydy[i]:=ydy[i]/80+1;
+	end;
+	for i:=0 to @count do begin 
+		sz[i]:=okvc_random;
+	end;
+		
+end;
+
+procedure PrintCustomText(tp:pointer;y,sx,sy, bank : byte);
+var 
+ x: byte;
+begin
+	okvc_font_bank:=bank;
+	okvc_font_width:=sx;
+	okvc_font_height:=sy;
+	j:=0;
+	x:=32;
+	while (tp[0]<>0) do 
+	begin
+		PrintChar(tp[0], j*15+time,  x,y+sine[(j*8+time)]/4);
+		j:=j+1;
+		x:=x+sx;
+		tp:=tp+1;
+	end;
+		
+
+
+end;
+
+
+procedure RenderBackground();
+begin
+	for k:=0 to @count do
+	begin
+		x1 := xpos[k];
+		y2 := 0; 
+		y2:=y2+sine[time+x1]/4;
+		y2:=y2+sine[time+k/4]/2+32;
+		xpos[k]:=xpos[k]-1;
+		ypos[k]:=ypos[k]+ydy[k];
+		sz[k]:=sz[k]-2;
+		i:=sine[sz[k]]/16;
+
+		DrawCircleFilled(xpos[k],ypos[k],i,k/8);
+		DrawLine(xpos[k],ypos[k],xpos[k+1],ypos[k+1],140);
+	end;
+end;
+
+
+begin
+	okvc_border_color:=0;
+	okvc_src_page:=16;
+	Setup();
+	SetupPalette();
+	j:=120;
+	m:=0;
+	while(true) offpage do
+	begin	
+		clearscreen(0);
+		time:=time+2;
+		RenderBackground();	
+		PrintCustomText(text1,32,8,8,$F);
+		PrintCustomText(text2,128,16,16,$D);
+		WaitForVSync();
+
+	end;
+	Loop();	
+	
+end.

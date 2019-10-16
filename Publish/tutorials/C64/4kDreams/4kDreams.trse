@@ -41,6 +41,4 @@ override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
-open_files = ,intro.ras
-project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/4kDreams/
-current_file = intro.ras
+open_files =, intro.ras

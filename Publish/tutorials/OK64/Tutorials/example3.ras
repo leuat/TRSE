@@ -5,20 +5,14 @@ var
     music : incsid("music/fliptape36.sid","2");
 	
 
+@export "images/ok1.flf" "images/ok1.bin" 256
+	image1 : incbin("images/ok1.bin","$20000");    
 
-	image1 : incbin("images/image1.bin","$20000");    
-
-	@define count 255
+	@define count 200
 
 	xpos : array[@count] of byte;
 	sz : array[@count] of byte;
 
-/*
-procedure Balle();
-begin
-	inc(i);
-end;
-*/
 
 procedure SetupPalette();
 begin
@@ -49,8 +43,8 @@ begin
 	begin	
 		clearscreen(0);
 	//	SetupPalette();
-		j:=sine[time*2]/8+48;
-		Blit(0,16, 0,j, 255,164);
+		j:=sine[time*2]/8;
+		Blit(0,0, sine[time]/8,j, 255,255-j);
 //		SetupPalette();
 		time:=time+2;
 //		ClearScreen(0);
@@ -69,21 +63,12 @@ begin
 			y2:=y2+sine[time+k/4]/2+32;
 			xpos[k]:=xpos[k]-1;
 			sz[k]:=sz[k]-2;
-//			inc(j);
 			i:=sine[sz[k]]/8;
 
 			DrawCircleFilled(x1,y2,i,k);
-	//		DrawLine(x1,y1,x2,y2,j);
 		end;
 
 		call(sidfile_1_play);
-//		call(sidfile_1_play);
-/*		for k:=0 to 255 do begin
-			x1:=okvc_random;
-			y1:=10;
-			y1:=okvc_random;
-			DrawPixel(x1,y1,OKVC_RANDOM);
-		end;*/
 		
 		WaitForVSync();
 

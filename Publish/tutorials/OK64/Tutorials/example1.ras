@@ -1,49 +1,18 @@
 program MyProgram;
 var  
- 	x1,i,k,l,y1,x2,y2,j,m,g,time,t: byte=0;
+ 	time,j: byte=0;
 	image1 : incbin("images/image1.bin","$20000");    
 
-	@define count 255
-
-	xpos : array[@count] of byte;
-	sz : array[@count] of byte;
-
-
-procedure Setup();
-begin
-	for i:=0 to @count do 
-		xpos[i]:=okvc_random;
-	for i:=0 to @count do begin 
-		sz[i]:=okvc_random;
-	end;
-		
-end;
 
 begin
-	Setup();
-	j:=120;
-	m:=0;
+
 	while(true) offpage do
 	begin	
 		clearscreen(0);
-		j:=sine[time*2]/8+48;
-		Blit(0,16, 0,j, 255,164);
+		j:=sine[time]/8;
+		Blit(0,j, 0,40, 255,180);
 		time:=time+2;
 		
-		for k:=0 to @count do
-		begin
-			x1 := xpos[k];
-			y2:=sine[time+x1]/4;
-			y2:=y2+sine[time+k/4]/2+32;
-			// Decrease x position
-			xpos[k]:=x1-1;
-			sz[k]:=sz[k]-2;
-			
-			i:=sine[sz[k]]/8;
-
-			DrawCircleFilled(x1,y2,i,k);
-		end;
-
 		WaitForVSync();
 
 	end;
