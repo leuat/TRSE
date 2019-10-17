@@ -1,4 +1,4 @@
-program MyProgram;
+program KOS;
 var  
 
 	i,time,t2:byte=0;
@@ -13,7 +13,7 @@ var
 
 	// String commands
 	cmdList : string = "ls";
-	cmdHelp : string = "help";
+	cmdHelp : string = "?";
 	cmdLoad : string = "load";
 	cmdCls : string = "cls";
 	
@@ -142,10 +142,11 @@ begin
 	end;		
 	if (strcmp(cmd,cmdLoad)) then 
 	begin
-		printText("Loading file:");
-		printText(arg);
 		memcpy(arg,0,okvc_file,16);
 		LoadFile();
+		printText("Could not load:");
+		printText(arg);
+
 		ok:=true;
 	end;		
 	
@@ -162,7 +163,8 @@ var
 	key,ok:byte;
 begin
 	StartIRQ(0);
-//	okvc_border_color:=okvc_input_key;
+	clearsound();
+	
 	key := okvc_input_key;
 	drawRect(cx,cy,8,8,@bgCol);
 	ok:=true;
@@ -211,8 +213,10 @@ begin
 	curCol:=curCol+2;
 	printText("MOS6502 + SID");
 	curCol:=curCol+2;
-	printText("OK64 KOS v0.01");
-	curCol:=curCol+2;
+	printText("OK64 KOS v0.01.");
+	curCol:=curCol+1;
+	printText("'?' for help");
+	curCol:=curCol+1;
 	printText("Ready.");
 	curCol:=curCol+2;
 	curCol:=i;
@@ -225,7 +229,7 @@ begin
 	begin
 		t2:=t2+1;
 		if (t2&1=0) then
-			time:=time+1;
+			time:=time+16;
 		
 	
 		if (time=128) then
@@ -236,15 +240,42 @@ begin
 		begin
 			drawRect(cx,cy,8,8,curCol);
 		end;
-
+		waitforvsync();
 	end;
 end;
+
+
+procedure StartupSound();
+var 
+  i:byte;
+begin
+	poke(^$D415,0,0);
+	poke(^$D416,0,0);
+	poke(^$D417,0,0);
+	poke(^$D418,0,15);
+	
+	fill(^$D400,15,$17);
+	for i:=0 to 2 do
+	begin
+PlaySound(SID_CHANNEL1, 
+				15,  // Volume
+				20,  // Hi byte frequency
+				5*16+5,  // Attack voice 1
+				5*16 + 5,   // Sustain = 16*15 + release=6
+				1 +SID_TRI,  // Waveform
+				SID_TRI);  // waveform 
+		
+		waitforvsync();		
+	end;
+end;
+
 
 
 begin
 	InputIRQ(Input());
 
 	SetupScreen();
+//	StartupSound();
 	Main();
 	
 end.

@@ -7,6 +7,13 @@ xcopy /s %dir%\release\iconengines trse\
 xcopy /s %dir%\release\platforms trse\
 xcopy /s %dir%\release\*.dll trse\
 xcopy /s ..\source\* trse
+xcopy /S ..\..\..\OK64\Release\release\ok64 trse\ /y
+xcopy /s ..\..\..\OK64\Release\release\*.exe trse\ /y
+xcopy /s ..\..\..\OK64\Release\release\iconengines trse\ /y
+xcopy /s ..\..\..\OK64\Release\release\platforms trse\ /y
+xcopy /s ..\..\..\OK64\Release\release\*.dll trse\ /y
+
+
 xcopy 7z.exe trse\
 REM move trse\fluff64.exe trse\trse.exe
 REM move trse bin
