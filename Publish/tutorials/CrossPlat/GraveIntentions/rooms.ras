@@ -1,0 +1,19 @@
+
+      
+/*
+     Firelit room
+     
+       cold 
+       
+*/
+
+items : string= ("A branch        ",@item_branch,16,15,
+				"A book          ", @item_book, 16,16);
+
+
+room1 : string = (@roomID, 16,16,@ccol,@c1,
+				"A firelit roomz.",@cnl,
+				"Dark shadows dancing on the wall.",@cnl,@cnl,
+				@cexit, @dir_N,0);
+     
+      
