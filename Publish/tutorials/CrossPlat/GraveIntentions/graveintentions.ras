@@ -19,29 +19,29 @@ var
 @define clearChar $20
 
 
-@define startx 0
-@define starty 0
+@define startx 1
+@define starty 1
 @define commandY 16
 
 
 @define item_branch 1
 
 
-    i,j,k,time,key: byte = 0;  
+    i,j,k,time,key,prevKey: byte = 0;  
    	// Player start position
 	player_x:byte = 16;
 	player_y:byte = 16;   
 	cx, cy, curCol,curExits,row,col: byte = 0;
 	columntab : array[256] of byte;
 	chartab : array[64] of byte = (
-	$00,$51,$00,$20, 0,0,0,0,
-	$6f,$51,$7d,$00, 0,0,0,0,
-	$6c,$40,$7a,$20, 0,0,0,0,
-	$4E,$4F,$4b,$20, 0,0,0,0,
-	$56,$55,$48,$20, 0,0,0,0,
-	$58,$54,$46,$20, 0,0,0,0,
-	$00,$45,$53,$20, 0,0,0,0,
-	$00,$51,$00,$20, 0,0,0,0);
+	$00,$51,$00,$20, $32,0,0,0,
+	$6f,$51,$7d,$00, $72,0,0,0,
+	$6c,$40,$7a,$6e, $00,0,0,0,
+	$4E,$4F,$4b,$4D, $30,0,0,0,
+	$56,$55,$48,$42, $00,0,0,0,
+	$58,$54,$46,$43, $00,0,0,0,
+	$00,$45,$53,$5a, $00,0,0,0,
+	$00,$51,$00,$00, $00,0,0,0);
 
 	commandNotOK : byte=true;
 	roomP : pointer;
@@ -150,9 +150,14 @@ begin
 			moveto(cx,cy,hi(screen_char_loc));
 			if (i>96 and i<123) then
 			  i:=i-96;
+//			if (i>240 and i<250) then
+//			  i:=i-240;
+			  
+
 			screenmemory[0]:=i;
 			moveto(cx,cy,hi(screen_col_loc));
 		 	screenmemory[0]:=curCol;
+		 	
 			inc(cx);
 			zp:=zp+1;
 		end;
@@ -274,6 +279,7 @@ nokey2:
 	ror
 	ror
 	sta col			
+	ora row
 ;	sec
 	jmp cont
 nokey:
@@ -284,7 +290,11 @@ cont:
 
 		");
 //			screenmemory[cur]:=1;
-		if (key=0) then reset:=0;
+		if (prevKey<>0 and key<>0) then
+			if (key<>prevKey) then reset:=0;
+		
+		prevKey:=key;
+		
 		if (key<>0 and reset=0) then
 		begin
 //			key:=columntab[key];
@@ -296,7 +306,15 @@ cont:
 			screenmemory[cur]:=key;
 			reset:=16;
 			inc(cur);
+//			moveto(10,18,$04);
+//			printdecimal(key,3);
+
 		end;
+		
+
+
+
+
 		if (reset<>0) then dec(reset);
 //		i:=keypressed();
 //		if (i=0
