@@ -29,6 +29,4 @@ override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 output_type = prg
 data_header_resources/images/neo_rider_by_the_diad.flf = 0
-open_files = ,Hello.ras
-project_path = tutorials/C64/Tutorials/
-current_file = easy/10_sprites.ras
+open_files =, Hello.ras
