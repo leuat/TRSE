@@ -153,16 +153,19 @@ void DialogNewImage::on_comboBox_currentIndexChanged(int index)
 {
     ui->grpLevelDesignerParams->setVisible(false);
     ui->grpImageSize->setVisible(false);
-
-    if (index==7)
+/*    m_types.append(ImageType("Screen animation", LImage::Type::FullScreenChar,LColorList::Type::C64));
+    m_types.append(ImageType("C64 Level Editor", LImage::Type::LevelEditor,LColorList::Type::C64));
+    m_types.append(ImageType("VIC20 Multicolor bitmap", LImage::Type::VIC20_MultiColorbitmap,LColorList::Type::VIC20));
+*/
+    if (ui->comboBox->currentText()=="C64 Level Editor")
         ui->grpLevelDesignerParams->setVisible(true);
 
-    if (index==9) {
+    if (ui->comboBox->currentText()=="VIC20 Multicolor bitmap") {
         ui->grpImageSize->setVisible(true);
         VICImageToData();
     }
 
-    if (index==6) {
+    if (ui->comboBox->currentText()=="Screen animation") {
         ui->grpImageSize->setVisible(true);
         CharImageToData();
  //       exit(1);

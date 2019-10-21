@@ -1820,14 +1820,22 @@ void Parser::HandleExport()
     LImage* img = LImageIO::Load(inFile);
     if (dynamic_cast<CharsetImage*>(img)!=nullptr) {
         img->m_exportParams["End"] = param;
-
     }
     if (QFile::exists(outFile))
         QFile::remove(outFile);
 
+
+
     QFile file(outFile);
     file.open(QFile::WriteOnly);
+
+    if (dynamic_cast<C64FullScreenChar*>(img)!=nullptr) {
+        C64FullScreenChar* c = dynamic_cast<C64FullScreenChar*>(img);
+        c->ExportMovie(file);
+    }
+    else
     img->ExportBin(file);
+
     file.close();
 
 }

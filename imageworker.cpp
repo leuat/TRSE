@@ -29,7 +29,6 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("Fake C64 png Palette 1", LImage::Type::QImageBitmap, LColorList::Type::C64));
     m_types.append(ImageType("Fake C64 png Palette 2", LImage::Type::QImageBitmap, LColorList::Type::C64_ORG));
     m_types.append(ImageType("CGA png Palette 1", LImage::Type::CGA, LColorList::Type::CGA1_HIGH));
-    m_types.append(ImageType("PICO 8", LImage::Type::QImageBitmap, LColorList::Type::PICO8));
     m_types.append(ImageType("Amiga 320x256", LImage::Type::AMIGA320x256, LColorList::Type::C64));
     m_types.append(ImageType("Amiga 320x200", LImage::Type::AMIGA320x200, LColorList::Type::C64));
     m_types.append(ImageType("C64 MultiColor bitmap", LImage::Type::MultiColorBitmap,LColorList::Type::C64));
@@ -42,6 +41,7 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("VIC20 Multicolor bitmap", LImage::Type::VIC20_MultiColorbitmap,LColorList::Type::VIC20));
     m_types.append(ImageType("OK64 Image", LImage::Type::OK64_256x256,LColorList::Type::OK64));
     m_types.append(ImageType("X16 640x480 Image", LImage::Type::X16_640x480,LColorList::Type::X16));
+    m_types.append(ImageType("PICO 8", LImage::Type::QImageBitmap, LColorList::Type::PICO8));
     m_types.append(ImageType("C64 Sprite Editor (deprecated type)", LImage::Type::Sprites,LColorList::Type::C64));
 //    m_types.append(ImageType("C64 Multicolor Charmap Fixed Colors", LImage::Type::CharMapMultiColorFixed,LColorList::Type::C64));
 

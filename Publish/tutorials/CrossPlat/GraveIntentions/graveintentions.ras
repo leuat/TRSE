@@ -20,18 +20,23 @@ var
 
 
 @define startx 1
-@define starty 1
-@define commandY 16
-
+@define starty 12
+@define commandY 20
 
 @define item_branch 1
+@define animPos $4000
+
+//@export "screens/room1.flf" "screens/room1.trm" 256
+
+
+
 
 
     i,j,k,time,key,prevKey: byte = 0;  
    	// Player start position
 	player_x:byte = 16;
 	player_y:byte = 16;   
-	cx, cy, curCol,curExits,row,col: byte = 0;
+	cx, cy, curCol,curExits,row,col,bgCol, fgCol, decrunchIndex: byte = 0;
 	columntab : array[256] of byte;
 	chartab : array[64] of byte = (
 	$00,$51,$00,$20, $32,0,0,0,
@@ -44,14 +49,19 @@ var
 	$00,$51,$00,$00, $00,0,0,0);
 
 	commandNotOK : byte=true;
-	roomP : pointer;
+	roomP,zp : pointer;
 
-@export "charset/charset.flf" "charset/charset.bin" 256   
-@ifdef C64
+
+	maxFrames, compressionType, hasTimeStamps, endChar, skipChar, curFrame : byte = 0;
+	roomTest: incbin("screens/room1.trm",@animPos);
+@include "packed_resources1.ras"
+
+//@export "charset/charset.flf" "charset/charset.bin" 256   
+/*@ifdef C64
 @define charsetPos $2000
 @endif
-
-	charset:incbin("charset/charset.bin",@charsetPos);
+*/
+//	charset:incbin("charset/charset.bin",@charsetPos);
 
 @include "rooms.ras"
 
@@ -60,10 +70,13 @@ var
 
 @endif
 
+@include "trm.ras"
+
 procedure MainInput();
 begin
 
 end;
+
 
 procedure FindRoom();
 var
@@ -74,14 +87,16 @@ begin
 	begin
 		if (roomP[0]=@roomID) do
 		begin
+			bgCol:=roomP[3];
+			fgCol:=roomP[4];
+			decrunchIndex:=roomP[5];
 			if (roomP[1]=player_x and roomP[2]=player_y) then
 				return();
-			roomP:=roomP+1;
+			roomP:=roomP+5;
 		end;
 
 	end;
 	roomP:=0;
-
 end;
 
 procedure NewLine(i:byte);
@@ -89,6 +104,7 @@ begin
 	cx:=@startx;
 	cy:=cy+i;
 end;
+
 
 
 procedure PrintLine(tp:pointer);
@@ -116,7 +132,7 @@ var
 	zp:pointer;
 begin
 	zp:=roomP;
-	zp:=zp+3;
+	zp:=zp+6;
 	cx:=@startx;
 	curCol:=@c1;
 	cy:=@starty;
@@ -176,12 +192,26 @@ begin
 	if (curExits & @dir_W=@dir_W) then
 		PrintLine("West ");
 		
-end;
+end;	
+
+
 
 
 procedure InitializeRoom();
 begin
 	FindRoom();
+	decrunchfromindex(resources,decrunchIndex);
+	ReadAnimationHeader();
+	clearscreen(fgCol, screen_col_loc);	
+	screen_fg_col:=bgCol;
+/*	moveto(5,5,$04);
+	printdecimal(maxFrames,2);
+	moveto(5,6,$04);
+	printdecimal(compressionType,2);
+	moveto(5,7,$04);
+	printdecimal(endChar,2);
+	Loop();
+*/
 	PrintRoomText();
 end;
 
@@ -209,7 +239,7 @@ begin
 	
 	ClearScreen(key_space,screen_char_loc);
 @ifdef C64	
-	SetCharsetLocation(@charsetPos);
+	SetCharsetLocation($1800);
 	screen_bg_col:=black;
 @endif
 end;
@@ -234,12 +264,13 @@ end;
 procedure WaitForCommand();
 var
 	isNotDone : byte=true;
-	cur,reset: byte = 0;
+	cur,reset,time: byte = 0;
 begin
 	isNotDone:=true;
 	while (isNotDone) do
 	begin
 		waitforraster(0);
+		waitforraster(255);
 		asm("
 		lda #$0
 	sta $dc03	; port b ddr (input)
@@ -304,20 +335,22 @@ cont:
 			printdecimal(col,2);*/
 			key:=chartab[63-col-row*8];
 			screenmemory[cur]:=key;
-			reset:=16;
+			reset:=12;
 			inc(cur);
 //			moveto(10,18,$04);
 //			printdecimal(key,3);
 
 		end;
-		
-
-
-
 
 		if (reset<>0) then dec(reset);
 //		i:=keypressed();
 //		if (i=0
+		if (time=0) then
+		begin
+			RenderNextPackedFrameCompressionType2();
+			time := 16;
+		end;
+		dec(time);
 
 	end;
 end;

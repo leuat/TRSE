@@ -47,7 +47,7 @@
 #include "source/Compiler/ast/noderepeatuntil.h"
 #include "source/Compiler/ast/nodecase.h"
 #include "source/LeLib/limage/limageio.h"
-
+#include "source/LeLib/limage/c64fullscreenchar.h"
 class ParserBlock {
 public:
     int m_blockID;
