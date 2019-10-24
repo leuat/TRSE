@@ -58,11 +58,21 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
     }
     LImageSprites2* sprite = dynamic_cast<LImageSprites2*>(img);
 
+
+
+
+
     if (sprite!=nullptr) {
         m_image->CopyFrom(sprite);
 //        qDebug() << QString::number(sprite->m_items[sprite->m_current].m_header[0]);
 //        qDebug() << "BLOCKS: " << sprite->m_sprites[sprite->m_currencChar].m_blocksWidth;
     }
+
+    C64FullScreenChar* petscii = dynamic_cast<C64FullScreenChar*>(img);
+    if (petscii!=nullptr) {
+        // Start with petscii
+    }
+
 
 
     m_image->m_colorList.CreateUI(ui->layoutColors,0);

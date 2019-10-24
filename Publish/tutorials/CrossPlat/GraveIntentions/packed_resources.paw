@@ -3,5 +3,5 @@ packed_address = $8000
 output_dir = packed/
 use_exomizer3 = 1
 address_field = resources
-data = ,trm_room1, screens/room1.trm, $4000, trm_room2, screens/room2.trm, $4000
-data_tinycrunch = ,0, 0
+data = ,trm_room1, screens/room1.trm, $4000, trm_room2, screens/room2.trm, $4000, trm_room3, screens/room3.trm, $ffffffffffffffff
+data_tinycrunch = ,0, 0, 0
