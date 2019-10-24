@@ -397,6 +397,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("InitKrill")) {
         InitKrill(as);
     }
+    if (Command("initGetKey")) {
+        as->IncludeFile(":resources/code/c64_keyboard_input.asm");
+    }
+    if (Command("getKey")) {
+        as->Asm("jsr c64_getKey");
+    }
 
     if (Command("init_viairq"))
         InitVIAIRQ(as);
@@ -1858,13 +1864,18 @@ void Methods6502::PrintString(Assembler *as)
 
     if (str!=nullptr)
         as->Label(lbl);
-
-    as->Asm("clc");
-    as->Asm("lda #<" +varName);
-    as->Term("adc ");
-    m_node->m_params[1]->Accept(m_dispatcher);
-    as->Term();
-    as->Asm("ldy #>" +varName);
+    if (var!=nullptr && var->isPointer(as)) {
+        as->Asm("lda "+var->getValue(as));
+        as->Asm("ldy "+var->getValue(as)+"+1");
+    }
+    else {
+        as->Asm("clc");
+        as->Asm("lda #<" +varName);
+        as->Term("adc ");
+        m_node->m_params[1]->Accept(m_dispatcher);
+        as->Term();
+        as->Asm("ldy #>" +varName);
+    }
     as->Asm("sta print_text+0");
     as->Asm("sty print_text+1");
 
@@ -2691,6 +2702,22 @@ void Methods6502::SetVideoMode(Assembler *as)
 
 }
 
+QString Methods6502::checkAndInitStringParameter(Assembler *as, int n)
+{
+    NodeString* str = (NodeString*)dynamic_cast<NodeString*>(m_node->m_params[n]);
+
+    if (str!=nullptr) {
+        QString name= as->NewLabel("new_string_define");
+
+        as->m_tempVars<< name + as->String(str->m_val);
+    //        as->Label(varName + as->String(str->m_val));
+        as->m_term="";
+        as->PopLabel("new_string_define");
+        return name;
+    }
+    return "";
+}
+
 void Methods6502::RightBitShift(Assembler *as, bool isRight)
 {
     as->Comment("Right bitshift");
@@ -3082,8 +3109,15 @@ void Methods6502::StrCmp(Assembler *as)
     as->Comment("Compare two strings");
     bool isPointerA= m_node->m_params[0]->isPointer(as);
     bool isPointerB= m_node->m_params[1]->isPointer(as);
-    QString av = m_node->m_params[0]->getValue(as);
-    QString bv = m_node->m_params[1]->getValue(as);
+
+    QString av = checkAndInitStringParameter(as,0);
+    QString bv = checkAndInitStringParameter(as,1);
+
+    if (av=="") av = m_node->m_params[0]->getValue(as);
+    if (bv=="") bv = m_node->m_params[1]->getValue(as);
+
+
+
     QString lbl = as->NewLabel("strcmp");
     QString lblFalse = as->NewLabel("endTrue");
     QString lblTrue = as->NewLabel("endFalse");

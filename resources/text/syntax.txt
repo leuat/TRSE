@@ -35,6 +35,7 @@ m; initdrawtextbox; C64, PLUS4, C128, VIC20 ;
 m; initJoy1; C64, VIC20 ;
 m; initJoy2; C64 ;
 m; initBcd; C64, PLUS4, C128, VIC20, PET,  NES, OK64 ;
+m; initGetKey; C64, C128  ;
 
 
 
@@ -65,7 +66,7 @@ m; memcpy; Amiga; a, l,a,l, l
 m; setpalette; Amiga; a, a, l
 m; ablit; Amiga; a,a,i, i,i,i,i,l,i,i,i
 m; fblit; Amiga; a,a,i, i,i,i,i,l,i,i,i
-
+m; getKey; C64, C128;
 m; EnableInterrupt; Amiga;i
 
 m; InitCustomCopperList; Amiga;
@@ -199,7 +200,7 @@ m; PrintNumber; C64, PLUS4, C128, VIC20, PET,  X16; b
 m; PrintDecimal; C64, PLUS4, C128, VIC20, PET,  X16; i,n
 m; StrToLower; C64, PLUS4, C128, VIC20, PET, X16, OK64; a
 m; StrToUpper; C64, PLUS4, C128, VIC20, PET, X16, OK64; a
-m; StrCmp; C64, PLUS4, C128, VIC20, PET, X16, OK64; a, a
+m; StrCmp; C64, PLUS4, C128, VIC20, PET, X16, OK64; s, s
 m; StrSplit; C64, PLUS4, C128, VIC20, PET, X16, OK64;a,a,b
 m; StrGetFromIndex;C64, PLUS4, C128, VIC20, PET, X16, OK64; a, b
 # Sprite routines

@@ -1,0 +1,52 @@
+program String_manipulation;
+var
+	longString : string ="I MEOW YOU KNOW";
+	splitString : array[64] of byte;
+	// Could also have been
+	// splitString : string = "                                                                ";
+	sp: pointer; // Pointer to a string
+
+
+/*
+	In this example, we use various string methods to manipulate
+	the string "longString". Examples include:
+		- String splitting
+		- Comparing strings
+		- getting strings from index in string lists
+
+
+*/
+
+
+begin
+	clearscreen(key_space,screen_char_loc);
+	
+	moveto(5,2,hi(screen_char_loc));
+	printstring(longString,0,40);
+
+	// Splits "longstring" with token " ", save in "splitString"
+	strsplit(longString,splitString,key_space);
+	// sp now points to the first word in the string list
+	sp:=strgetfromindex(splitString,0);
+	// strcmp compares a string/pointer to another string/pointer
+	if (strcmp(sp,"I")) then 
+	begin
+		moveto(5,5,hi(screen_char_loc));
+		printstring("ALWAYS ABOUT YOURSELF...",0,40);
+	end;	
+	
+	moveto(7,8,hi(screen_char_loc));
+	sp:=strgetfromindex(splitString,1);
+	printstring(	sp,0,40);
+
+	moveto(9,10,hi(screen_char_loc));
+	sp:=strgetfromindex(splitString,3);
+	printstring(	sp,0,40);
+
+	moveto(11,12,hi(screen_char_loc));
+	sp:=strgetfromindex(splitString,2);
+	printstring(	sp,0,40);
+	
+	Loop();
+
+end.

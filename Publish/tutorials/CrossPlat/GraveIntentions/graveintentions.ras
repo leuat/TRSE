@@ -36,20 +36,12 @@ var
    	// Player start position
 	player_x:byte = 16;
 	player_y:byte = 16;   
-	cx, cy, curCol,curExits,row,col,bgCol, fgCol, decrunchIndex: byte = 0;
-	columntab : array[256] of byte;
-	chartab : array[64] of byte = (
-	$00,$51,$00,$20, $32,0,0,0,
-	$6f,$51,$7d,$00, $72,0,0,0,
-	$6c,$40,$7a,$6e, $00,0,0,0,
-	$4E,$4F,$4b,$4D, $30,0,0,0,
-	$56,$55,$48,$42, $00,0,0,0,
-	$58,$54,$46,$43, $00,0,0,0,
-	$00,$45,$53,$5a, $00,0,0,0,
-	$00,$51,$00,$00, $00,0,0,0);
+	cx, cy, curCol,curExits,row,col,bgCol, fgCol, decrunchIndex,clearMessage: byte = 0;
 
-	commandNotOK : byte=true;
+	commandNotOK, redraw : byte=true;
 	roomP,zp : pointer;
+	command : array[41] of byte;
+	sSplit : array[41] of byte;
 
 
 	maxFrames, compressionType, hasTimeStamps, endChar, skipChar, curFrame : byte = 0;
@@ -72,17 +64,14 @@ var
 
 @include "trm.ras"
 
-procedure MainInput();
-begin
-
-end;
-
 
 procedure FindRoom();
 var
 	notDone : byte = true;
 begin
+	notDone:=true;
 	roomP := room1;
+//	inc(^$D020);
 	while (notDone) do
 	begin
 		if (roomP[0]=@roomID) do
@@ -94,7 +83,7 @@ begin
 				return();
 			roomP:=roomP+5;
 		end;
-
+		roomP:=roomP+1;
 	end;
 	roomP:=0;
 end;
@@ -166,8 +155,6 @@ begin
 			moveto(cx,cy,hi(screen_char_loc));
 			if (i>96 and i<123) then
 			  i:=i-96;
-//			if (i>240 and i<250) then
-//			  i:=i-240;
 			  
 
 			screenmemory[0]:=i;
@@ -184,13 +171,13 @@ begin
 	curCol:=@c2;
 	
 	if (curExits & @dir_N=@dir_N) then
-		PrintLine("North ");
+		PrintLine("N ");
 	if (curExits & @dir_S=@dir_S) then
-		PrintLine("South ");
+		PrintLine("S ");
 	if (curExits & @dir_E=@dir_E) then
-		PrintLine("East ");
+		PrintLine("E ");
 	if (curExits & @dir_W=@dir_W) then
-		PrintLine("West ");
+		PrintLine("W");
 		
 end;	
 
@@ -204,14 +191,6 @@ begin
 	ReadAnimationHeader();
 	clearscreen(fgCol, screen_col_loc);	
 	screen_fg_col:=bgCol;
-/*	moveto(5,5,$04);
-	printdecimal(maxFrames,2);
-	moveto(5,6,$04);
-	printdecimal(compressionType,2);
-	moveto(5,7,$04);
-	printdecimal(endChar,2);
-	Loop();
-*/
 	PrintRoomText();
 end;
 
@@ -220,22 +199,6 @@ end;
 
 procedure Init();
 begin
-	k:=$FF;
-	fill(columntab,$ff,0);
-	for i:=0 to 0 do 
-	begin
-		if (i=$ff-$80) then k:=$70;
-		if (i=$ff-$40) then k:=$60;
-		if (i=$ff-$20) then k:=$50;
-		if (i=$ff-$10) then k:=$40;
-		if (i=$ff-$08) then k:=$30;
-		if (i=$ff-$04) then k:=$20;
-		if (i=$ff-$02) then k:=$10;
-		if (i=$ff-$01) then k:=$00;
-		
-		columntab[i]:=k;
-
-	end;
 	
 	ClearScreen(key_space,screen_char_loc);
 @ifdef C64	
@@ -251,103 +214,123 @@ var
 begin
 
 	moveto(0,@commandY,hi(screen_char_loc));
-	for i:=0 to screen_height-@commandY do
+	for i:=0 to screen_height-@commandY-clearMessage do
 	begin
 		fill(screenmemory,@clearChar,screen_width);
 		screenmemory:=screenmemory+screen_width;
 	end;
+	clearMessage:=0;
 	moveto(@startx,@commandY,hi(screen_char_loc));
 	cx:=@startx;
 	cy:=@commandY;
 end;
 
+procedure Message(p:pointer);
+var 
+	i:byte;
+begin
+	moveto(0,24,hi(screen_char_loc));
+	i:=cy;
+	cy:=24;
+	PrintLine(p);
+	cy:=i;
+	clearMessage:=1;
+end;
+
+
+procedure ExecuteCommand();
+var
+	cmd, arg1 : pointer;
+	cmdGo : string="go";
+	cmdN : string="n";
+	ok : byte=false;
+begin
+	ok:=false;
+	if (command[0]=0) then return();
+	StrToLower(command);
+	strSplit(command, sSplit, key_space);
+	// Command
+	cmd:=strgetfromindex(sSplit,0);
+	arg1:=strgetfromindex(sSplit,1);
+
+	if (strcmp(cmd,cmdGo)) then
+	begin
+		if (strcmp(arg1,cmdN)) then
+		begin
+			player_y:=player_y-1;
+			ok:=true;
+			redraw:=true;
+		end;
+		
+		if (ok=false) then
+		begin
+			Message("I don't know where to go");			
+		end;
+	end;
+	commandNotOK:=1-ok;
+end;
+
+
+
 procedure WaitForCommand();
 var
-	isNotDone : byte=true;
-	cur,reset,time: byte = 0;
+	isNotDone, renderChar : byte=true;
+	cur,reset,time, curPos, firstKey, blink: byte = 0;
 begin
 	isNotDone:=true;
 	while (isNotDone) do
 	begin
 		waitforraster(0);
-		waitforraster(255);
-		asm("
-		lda #$0
-	sta $dc03	; port b ddr (input)
-	lda #$ff
-	sta $dc02	; port a ddr (output)
 			
-	lda #$00
-	sta $dc00	; port a
-	lda $dc01       ; port b
-	cmp #$ff
-	beq nokey
-	; got column
-	tay
-			
-	lda #$7f
-	sta nokey2+1
-	ldx #8
-nokey2:
-	lda #0
-	sta $dc00	; port a
-	
-	sec
-	ror nokey2+1
-	dex
-	bmi nokey
-			
-	lda $dc01       ; port b
-	cmp #$ff
-	beq nokey2
-			
-	; got row in X
-	stx row
-	txa
-	lda columntab,y
-	ror
-	ror
-	ror
-	ror
-	sta col			
-	ora row
-;	sec
-	jmp cont
-nokey:
-	lda #0
-cont:	
-	sta key
-	
-
-		");
-//			screenmemory[cur]:=1;
-		if (prevKey<>0 and key<>0) then
-			if (key<>prevKey) then reset:=0;
-		
+		renderChar:=true;
+		key:=getKey();
+		if (key=$FF) then
+			firstKey:=0;
 		prevKey:=key;
 		
-		if (key<>0 and reset=0) then
+		if (key<>$FF and reset=0) then
 		begin
-//			key:=columntab[key];
-/*			moveto(5,18,$04);
-			printdecimal(row,2);
-			moveto(9,18,$04);
-			printdecimal(col,2);*/
-			key:=chartab[63-col-row*8];
-			screenmemory[cur]:=key;
-			reset:=12;
-			inc(cur);
-//			moveto(10,18,$04);
-//			printdecimal(key,3);
+			if (firstKey=0) then
+				reset:=16
+			else
+				reset:=8;
+				
+			firstKey:=1;
+
+			if (key=$F7) then // backspace
+			begin
+				screenmemory[cur]:=key_space;
+				if (cur<>0) then
+					cur:=cur-1;
+				screenmemory[cur]:=key_space;
+			
+				renderChar:=false;		
+			end;
+			if (key=$8E) then // return 
+			begin
+				renderChar:=false;
+				memcpy(screenmemory,0,command,40);
+				command[cur]:=0;
+				cur:=0;
+				ExecuteCommand();
+				isNotDone:=false;							
+			end;
+
+			if (renderChar) then
+			begin
+				screenmemory[cur]:=key;
+				inc(cur);
+			end;
 
 		end;
-
+		inc(blink);
+		if (blink=16) then screenmemory[cur]:=key_space+$80;
+		if (blink=32) then begin screenmemory[cur]:=key_space; blink:=0; end;
+		
 		if (reset<>0) then dec(reset);
-//		i:=keypressed();
-//		if (i=0
 		if (time=0) then
 		begin
-			RenderNextPackedFrameCompressionType2();
+			RenderNextPackedFrameCompressionType2(22,8,0);
 			time := 16;
 		end;
 		dec(time);
@@ -367,7 +350,6 @@ begin
 		begin
 			PrepareCommand();
 			WaitForCommand();
-//			ExecuteCommand();
 		end;
 	end;
 end;

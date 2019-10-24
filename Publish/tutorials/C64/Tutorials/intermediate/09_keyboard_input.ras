@@ -1,0 +1,111 @@
+program Keyboard_input;
+var  
+   	index: byte; 
+	command : array[64] of byte;
+
+procedure ReadLine();
+var
+	isNotDone, renderChar : byte=true;
+	cur,reset,firstKey, blink, key, prevKey: byte = 0;
+	
+begin
+	isNotDone:=true;
+	moveto(0,4,hi(screen_char_loc));
+	
+
+	while (isNotDone) do
+	begin
+		waitforraster(0);
+			
+		renderChar:=true;
+		key:=getKey();
+//		if (key>64 and key<80) then key:=key-64;
+
+		if (key=$FF) then
+			firstKey:=0;
+			
+		prevKey:=key;
+		
+		if (key<>$FF and reset=0) then
+		begin
+			if (firstKey=0) then
+				reset:=16
+			else
+				reset:=8;
+				
+			firstKey:=1;
+
+			if (key=$F7) then // backspace
+			begin
+				screenmemory[cur]:=key_space;
+				if (cur<>0) then
+					cur:=cur-1;
+				screenmemory[cur]:=key_space;
+			
+				renderChar:=false;		
+			end;
+			if (key=$8E) then // return 
+			begin
+				renderChar:=false;
+				command[cur]:=0;
+				cur:=0;
+				isNotDone:=false;							
+			end;
+
+			if (renderChar) then
+			begin
+				command[cur]:=key;
+				if (key>64 and key<80) then key:=key-64;
+				screenmemory[cur]:=key;
+				inc(cur);
+			end;
+
+		end;
+		inc(blink);
+		if (blink=16) then screenmemory[cur]:=key_space+$80;
+		if (blink=32) then begin screenmemory[cur]:=key_space; blink:=0; end;
+		
+		if (reset<>0) then dec(reset);
+
+	end;
+end;
+
+procedure Message(p:pointer);
+begin
+	moveto(0,7,hi(screen_char_loc));
+	printstring(p,0,40);
+
+end;
+
+
+procedure ExecuteCommand();
+begin
+	fill(screenmemory,key_space,40);
+		Message(command);
+	
+	if (strcmp(command,"HELLO")) then
+		Message("HELLO TO YOU");
+
+	if (strcmp(command,"HOW ARE YOU")) then
+		Message("FINE INDEED");
+
+end;
+
+
+   
+begin
+	clearscreen(key_space,screen_char_loc);
+	moveto(0,1,hi(screen_char_loc));
+	printstring("HI THERE!",0,40);
+	screenmemory:=screenmemory+screen_width;
+	printstring("SPEAK YOUR MIND",0,40);
+	screenmemory:=screenmemory+screen_width*2;
+	
+	while (true) do
+	begin
+		ReadLine();
+		ExecuteCommand();
+	end;
+	
+
+end.

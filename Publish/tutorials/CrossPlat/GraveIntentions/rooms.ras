@@ -13,8 +13,15 @@ items : string= ("A branch        ",@item_branch,16,15,
 
 room1 : string = (@roomID, 16,16, 6, 0,0,
 				 @ccol,@c1,
-				"A firelit roomz.",@cnl,
+				"A firelit room.",@cnl,
 				"Dark shadows dancing on the wall.",@cnl,@cnl,
+				@cexit, @dir_N,0);
+     
+
+room2 : string = (@roomID, 16,15, 0, 0,0,
+				 @ccol,@c2,
+				"Shadow woods.",@cnl,
+				"You are surrounded by darkness and branches.",@cnl,@cnl,
 				@cexit, @dir_N,0);
      
       

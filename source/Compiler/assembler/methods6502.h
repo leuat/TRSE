@@ -57,6 +57,8 @@ public:
     void SetColor(Assembler* as);
     void SetVideoMode(Assembler* as);
 
+    QString checkAndInitStringParameter(Assembler* as, int n);
+
     void RightBitShift(Assembler* as, bool isRight);
     void Joystick(Assembler* as);
     void ReadJoy1(Assembler* as);

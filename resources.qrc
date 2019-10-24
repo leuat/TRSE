@@ -294,5 +294,7 @@
         <file>resources/text/help/m/bcdadd.rtf</file>
         <file>resources/images/X16.png</file>
         <file>resources/text/help/r/export.rtf</file>
+        <file>resources/bin/columntab.bin</file>
+        <file>resources/code/c64_keyboard_input.asm</file>
     </qresource>
 </RCC>

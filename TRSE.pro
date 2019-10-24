@@ -392,6 +392,7 @@ RESOURCES += \
 DISTFILES += \
     resources/code/amiga/init_p61_player.s \
     resources/code/amiga/p61-play.i \
+    resources/code/c64_keyboard_input.asm \
     resources/images/OK64.jpg \
     resources/images/OK64.png \
     resources/images/PLUS4.png \

@@ -86,6 +86,30 @@ void TanTable(QString fn) {
 
 }
 
+void ColumnTab()
+{
+    int k=0xFF;
+    QByteArray columntab;
+    columntab.resize(256);
+    for (int i=0;i<256;i++) {
+        if (i==0xff-0x80)  k=0x70;
+        if (i==0xff-0x40)  k=0x60;
+        if (i==0xff-0x20)  k=0x50;
+        if (i==0xff-0x10)  k=0x40;
+        if (i==0xff-0x08)  k=0x30;
+        if (i==0xff-0x04)  k=0x20;
+        if (i==0xff-0x02)  k=0x10;
+        if (i==0xff-0x01) k=0x00;
+
+        columntab[i]=k/16;
+    }
+    QFile f("columntab.bin");
+    f.open(QFile::WriteOnly);
+    f.write(columntab);
+    f.close();
+
+}
+
 void fixCurrentDir(QString execFile) {
     QStringList al = execFile.split(QDir::separator());
     al.removeLast();
@@ -104,6 +128,7 @@ int main(int argc, char *argv[])
 //    ConvertAllObjs();
 //    qDebug() << Util::BinopString("#$C");
 //    ConvertPerlin("perlin512.jpg","perlin64.bin",8);
+//    ColumnTab();
     QApplication a(argc, argv);
     QString oldCurDir = QDir::currentPath();
     fixCurrentDir(QString(argv[0]));
