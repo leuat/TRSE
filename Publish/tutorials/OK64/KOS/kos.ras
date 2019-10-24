@@ -17,6 +17,7 @@ var
 	cmdLoad : string = "load";
 	cmdCls : string = "cls";
 	
+	music : incsid("music/jingle.sid","2");
 	
 @export "images/logo.flf" "images/logo.bin"  256
 	logo : incbin("images/logo.bin",$21F00);    
@@ -241,6 +242,8 @@ begin
 			drawRect(cx,cy,8,8,curCol);
 		end;
 		waitforvsync();
+		call(SIDFILE_1_PLAY);		
+
 	end;
 end;
 
@@ -249,23 +252,24 @@ procedure StartupSound();
 var 
   i:byte;
 begin
-	poke(^$D415,0,0);
+	/*poke(^$D415,0,0);
 	poke(^$D416,0,0);
 	poke(^$D417,0,0);
 	poke(^$D418,0,15);
 	
 	fill(^$D400,15,$17);
-	for i:=0 to 2 do
+	*/
+	for i:=0 to 200 do
 	begin
-PlaySound(SID_CHANNEL1, 
+/*PlaySound(SID_CHANNEL1, 
 				15,  // Volume
 				20,  // Hi byte frequency
 				5*16+5,  // Attack voice 1
 				5*16 + 5,   // Sustain = 16*15 + release=6
 				1 +SID_TRI,  // Waveform
 				SID_TRI);  // waveform 
-		
-		waitforvsync();		
+*/
+//		waitforvsync();		
 	end;
 end;
 
@@ -273,7 +277,8 @@ end;
 
 begin
 	InputIRQ(Input());
-
+	initsid(SIDFILE_1_INIT);
+//	StartupSound();
 	SetupScreen();
 //	StartupSound();
 	Main();

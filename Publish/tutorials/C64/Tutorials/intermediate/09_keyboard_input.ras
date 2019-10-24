@@ -55,7 +55,7 @@ begin
 			if (renderChar) then
 			begin
 				command[cur]:=key;
-				if (key>64 and key<80) then key:=key-64;
+				if (key>64 and key<91) then key:=key-64;
 				screenmemory[cur]:=key;
 				inc(cur);
 			end;
@@ -88,6 +88,12 @@ begin
 
 	if (strcmp(command,"HOW ARE YOU")) then
 		Message("FINE INDEED");
+
+	if (strcmp(command,"GO AWAY")) then
+		Message("NO I WON'T");
+
+	if (strcmp(command,"WHO ARE YOU")) then
+		Message("I AM COMPUTER");
 
 end;
 

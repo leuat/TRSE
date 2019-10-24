@@ -10,10 +10,13 @@ var
 @define c1 14
 @define c2 1
 @define c3 0
-@define dir_N %00001000
-@define dir_S %00000100
-@define dir_E %00000010
-@define dir_W %00000001
+@define c4 6
+@define c5 5
+@define dir_N  %00001000
+@define dir_S  %00000100
+@define dir_E  %00000010
+@define dir_W  %00000001
+@define dir_SW %00000101
 
 @define cursorChar $a0
 @define clearChar $20
@@ -27,6 +30,7 @@ var
 @define animPos $4000
 
 //@export "screens/room1.flf" "screens/room1.trm" 256
+//@export "screens/room2.flf" "screens/room2.trm" 256
 
 
 
@@ -36,7 +40,7 @@ var
    	// Player start position
 	player_x:byte = 16;
 	player_y:byte = 16;   
-	cx, cy, curCol,curExits,row,col,bgCol, fgCol, decrunchIndex,clearMessage: byte = 0;
+	cx, cy, curCol,curExits,row,col,bgCol, fgCol, decrunchIndex,clearMessage,inputColor: byte = 0;
 
 	commandNotOK, redraw : byte=true;
 	roomP,zp : pointer;
@@ -78,10 +82,11 @@ begin
 		begin
 			bgCol:=roomP[3];
 			fgCol:=roomP[4];
+			inputColor:=roomP[6];
 			decrunchIndex:=roomP[5];
 			if (roomP[1]=player_x and roomP[2]=player_y) then
 				return();
-			roomP:=roomP+5;
+			roomP:=roomP+6;
 		end;
 		roomP:=roomP+1;
 	end;
@@ -121,7 +126,7 @@ var
 	zp:pointer;
 begin
 	zp:=roomP;
-	zp:=zp+6;
+	zp:=zp+7;
 	cx:=@startx;
 	curCol:=@c1;
 	cy:=@starty;
@@ -158,9 +163,10 @@ begin
 			  
 
 			screenmemory[0]:=i;
+			@ifdef C64
 			moveto(cx,cy,hi(screen_col_loc));
 		 	screenmemory[0]:=curCol;
-		 	
+			@endif		 	
 			inc(cx);
 			zp:=zp+1;
 		end;
@@ -220,6 +226,10 @@ begin
 		screenmemory:=screenmemory+screen_width;
 	end;
 	clearMessage:=0;
+@ifdef C64
+	moveto(@startx,@commandY,hi(screen_col_loc));
+	fill(screenmemory,inputColor,40);
+@endif
 	moveto(@startx,@commandY,hi(screen_char_loc));
 	cx:=@startx;
 	cy:=@commandY;
@@ -232,9 +242,92 @@ begin
 	moveto(0,24,hi(screen_char_loc));
 	i:=cy;
 	cy:=24;
+	fill(screenmemory,key_space,screen_width);
 	PrintLine(p);
 	cy:=i;
 	clearMessage:=1;
+end;
+
+
+procedure CommandGO(arg1:pointer);
+var
+   ok,unknown:byte;
+//	cmdN : string="n";
+begin
+	unknown:=true;
+	ok:=false;
+	moveto(30,24,04);
+	printstring(arg1,0,40);
+	if (strcmp(arg1,"n")) then
+	begin
+		if (curExits & @dir_N=@dir_N) then
+		begin
+			player_y:=player_y-1;
+			ok:=true;
+			redraw:=true;
+		end
+		else
+		begin
+			Message("Can't go north.");
+			ok:=false;
+			unknown:=false;
+			redraw:=true;
+		end;
+	end;
+	if (strcmp(arg1,"s")) then
+	begin
+		if (curExits & @dir_S=@dir_S) then
+		begin
+			player_y:=player_y+1;
+			ok:=true;
+			redraw:=true;
+		end
+		else
+		begin
+			Message("Can't go south.");
+			ok:=false;
+			unknown:=false;
+			redraw:=true;
+		end;
+	end;
+	if (strcmp(arg1,"e")) then
+	begin
+		if (curExits & @dir_E=@dir_E) then
+		begin
+			player_x:=player_x+1;
+			ok:=true;
+			redraw:=true;
+		end
+		else
+		begin
+			Message("Can't go east.");
+			ok:=false;
+			unknown:=false;
+			redraw:=true;
+		end;
+	end;
+	if (strcmp(arg1,"w")) then
+	begin
+		if (curExits & @dir_W=@dir_W) then
+		begin
+			player_x:=player_x-1;
+			ok:=true;
+			redraw:=true;
+		end
+		else
+		begin
+			Message("Can't go west.");
+			ok:=false;
+			unknown:=false;
+			redraw:=true;
+		end;
+	end;
+	
+	if (ok=false and unknown) then
+	begin
+		Message("I don't know where to go");			
+	end;
+	returnvalue(ok);
 end;
 
 
@@ -242,7 +335,6 @@ procedure ExecuteCommand();
 var
 	cmd, arg1 : pointer;
 	cmdGo : string="go";
-	cmdN : string="n";
 	ok : byte=false;
 begin
 	ok:=false;
@@ -254,19 +346,8 @@ begin
 	arg1:=strgetfromindex(sSplit,1);
 
 	if (strcmp(cmd,cmdGo)) then
-	begin
-		if (strcmp(arg1,cmdN)) then
-		begin
-			player_y:=player_y-1;
-			ok:=true;
-			redraw:=true;
-		end;
-		
-		if (ok=false) then
-		begin
-			Message("I don't know where to go");			
-		end;
-	end;
+		ok:=CommandGO(arg1);
+	
 	commandNotOK:=1-ok;
 end;
 

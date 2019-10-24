@@ -1,0 +1,6 @@
+trm_room1 : IncBin("packed//trm_room1_c.bin", $8000);
+trm_room2 : IncBin("packed//trm_room2_c.bin", $80e4);
+resources : array [4] of byte = (
+	228, 128,
+	19, 130
+);

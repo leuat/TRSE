@@ -39,3 +39,7 @@ build_list = ,
 data_header_screens/room1.flf = 0
 data_header_charset/mixed.flf = 6.92369e-310
 charset_screens/room1.flf = /home/leuat/code/TRSE/tutorials/CrossPlat/GraveIntentions/charset/mixed.flf
+project_path = /home/leuat/code/TRSE/tutorials/CrossPlat/GraveIntentions/
+open_files = ,screens/room1.flf, packed_resources.paw, rooms.ras, graveintentions.ras
+current_file = graveintentions.ras
+data_header_screens/room2.flf = 6.90186e-310
