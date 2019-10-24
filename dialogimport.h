@@ -50,7 +50,7 @@ public:
     float m_blur = 0;
     QPointF m_scale = QPointF(1,1);
 
-
+    bool isPetscii = false;
     LImageQImage m_input;
     LImageQImage m_work;
     LImageQImage m_output;

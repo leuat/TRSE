@@ -11,7 +11,7 @@ items : string= ("A branch        ",@item_branch,16,15,
 				"A book          ", @item_book, 16,16);
 
 //                          x y   bg fg movie   input
-room1 : string = (@roomID, 16,16, 6, 0,   0,      0,
+room1 : string = (@roomID, 16,16, 0, 0,   0,      11,
 				 @ccol,@c1,
 				"A firelit room.",@cnl,
 				"Dark shadows dancing on the wall.",@cnl,@cnl,

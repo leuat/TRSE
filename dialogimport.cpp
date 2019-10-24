@@ -49,6 +49,7 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
     m_image = LImageFactory::Create(m_imageType, colorType);
     m_image->m_colorList.m_list = img->m_colorList.m_list;
 
+
     LImageVIC20* vic = dynamic_cast<LImageVIC20*>(img);
     if (vic!=nullptr) {
         LImageVIC20* i = dynamic_cast<LImageVIC20*>(m_image);
@@ -71,6 +72,10 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
     C64FullScreenChar* petscii = dynamic_cast<C64FullScreenChar*>(img);
     if (petscii!=nullptr) {
         // Start with petscii
+        isPetscii=true;
+        C64FullScreenChar* target = dynamic_cast<C64FullScreenChar*>(m_image);
+        target->CopyFrom(img);
+//        m_image = img;
     }
 
 
@@ -123,9 +128,9 @@ void DialogImport::Convert()
 //        chr->set
 
     }
+   // for (int i=0;i<200;i++)
+   //     qDebug() << QColor(m_image->getPixel(rand()%320, rand()%200));
     m_image->ToQImage(m_image->m_colorList,*m_output.m_qImage,1, QPoint(0.0,0.0));
-
-
 
 }
 

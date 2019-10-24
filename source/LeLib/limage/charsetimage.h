@@ -51,6 +51,7 @@ public:
         return "Full image mode";
     }
 
+    int FindClosestChar(PixelChar p);
 
     Mode m_currentMode = FULL_IMAGE;
 

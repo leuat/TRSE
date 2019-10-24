@@ -75,6 +75,21 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
 
 }
 
+int CharsetImage::FindClosestChar(PixelChar p)
+{
+    int topScore=1E9;
+    int winner = 0;
+    for (int i=0;i<256;i++) {
+        int score = p.CompareLength2(m_data[i]);
+        if (score<topScore) {
+            topScore = score;
+            winner = i;
+        }
+
+    }
+    return winner;
+}
+
 
 void CharsetImage::SetColor(uchar col, uchar idx)
 {

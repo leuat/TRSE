@@ -145,6 +145,49 @@ void C64FullScreenChar::ExportBin(QFile &f)
 
 }
 
+void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
+{
+    float sx = img->width()/m_charWidth;
+    float sy = img->height()/m_charHeight;
+//    qDebug() <<m_charWidth << m_charHeight;
+
+    for (float i=0;i<m_charWidth;i++)
+        for (float j=0;j<m_charHeight;j++) {
+            PixelChar pc;
+            QVector<int> winner;
+            winner.resize(lst.m_list.count());
+            for (int y=0;y<8;y++)
+                for (int x=0;x<8;x++) {
+                    uchar col = lst.getIndex(QColor(img->pixel((i)*sx+x, (j)*sy+y)));
+                    if (col!=0) {
+                        pc.p[y] |= 1<<x;
+                        winner[col]++;
+                    }
+             }
+            m_currencChar = m_charset->FindClosestChar(pc);
+            int w=0;
+            int iw = 0;
+            for (int i=0;i<winner.count();i++)
+                if (winner[i]>w) {
+                    w=winner[i];
+                    iw = i;
+                }
+            uchar col = iw;
+
+ /*           if (col==0)
+                m_currencChar = 0x20;
+            else
+                m_currencChar=0xA0;
+*/
+            m_writeType=Color;
+            setPixel(i*sx,j*sy,col);
+            m_writeType=Character;
+            setPixel(i*sx,j*sx,col);
+        }
+    //   Reorganize();
+
+}
+
 bool C64FullScreenChar::KeyPress(QKeyEvent *e)
 {
 
@@ -196,14 +239,19 @@ void C64FullScreenChar::setPixel(int x, int y, unsigned int color)
         ((C64Screen*)m_items[m_current])->m_rawData[x/8+ (y/8)*m_charWidth] = m_currencChar;
     if (m_writeType==Color)
         ((C64Screen*)m_items[m_current])->m_rawColors[x/8+ (y/8)*m_charWidth] = color;
+
+
+
     //BuildImage();
 }
 
 unsigned int C64FullScreenChar::getPixel(int x, int y)
 {
     m_width=320;
-    if (m_charset==nullptr)
+    if (m_charset==nullptr) {
+        qDebug() << "C64FullScreenChar::getPixel m_charset is nullptr";
         return 0;
+         }
     if (x>=320 || x<0 || y>=200 || y<0)
         return 0;
 
@@ -212,11 +260,14 @@ unsigned int C64FullScreenChar::getPixel(int x, int y)
 
     uchar v = ((C64Screen*)m_items[m_current])->m_rawData[(x/8) + (y/8)*m_charWidth];
     uchar col = ((C64Screen*)m_items[m_current])->m_rawColors[(x/8) + (y/8)*m_charWidth];
+
+//    if (rand()%100>98)
+  //      qDebug() <<QString::number(col);
+
     int ix = (x % 8);//- (dx*40);
     int iy = (y % 8);//- (dy*25);
 
  //   return pc.get(m_scale*ix, iy, m_bitMask);
-
 
 
     int pos = v;

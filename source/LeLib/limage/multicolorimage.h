@@ -88,6 +88,25 @@ public:
 
     }
 
+    int CompareLength2(PixelChar& other) {
+        int l = 0;
+        for (int i=0;i<8;i++)
+            for (int j=0;j<8;j++) {
+                char a = (p[i]>>(j))&0b1;
+                char b = (other.p[i]>>(j))&0b1;
+                if ( a != b )
+                    l++;
+                if (a==0 && b!=0) l++;
+                if (b==0 && a!=0) l++;
+
+            }
+//            if (other.p[i]!=p[i])
+  //          l+=other.p[i] != p[i];
+
+        return l;
+
+    }
+
     static uchar SwapColor(uchar data, uchar c1, uchar c2);
 
 
@@ -149,6 +168,8 @@ public:
     CharsetImage* m_charset = nullptr;
     virtual void setMultiColor(bool doSet) override;
     void ForceBackgroundColor(int col, int swapCol);
+
+
 
     void CalculateCharIndices();
     int Eat(int start, int add);

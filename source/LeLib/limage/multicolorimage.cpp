@@ -1214,6 +1214,7 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF
                 if ((int)(xp) %4==0 || (int)(yp+1)%4==0)
                     scol = c;
             }
+//            scol = QColor(255,0,0,255);
             QRgb rgbCol = (scol).rgb();
             //for (int k=0;k<m_scale;k++)
  //               img->setPixel(m_scale*i + k,j,rgbCol);

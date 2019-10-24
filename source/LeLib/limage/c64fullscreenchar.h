@@ -91,6 +91,10 @@ public:
     void Clear() override;
     void ImportBin(QFile& f) override;
     void ExportBin(QFile& f) override;
+
+    void fromQImage(QImage *img, LColorList &lst) override;
+
+
 //    void FromRaw(QByteArray& arr);
 //    void ToRaw(QByteArray& arr);
     QString GetCurrentDataString() override {
