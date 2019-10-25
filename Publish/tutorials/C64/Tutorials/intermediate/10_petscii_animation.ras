@@ -1,3 +1,11 @@
+program PetsciiAnimations;
+var  
+	zp: pointer;   
+	maxFrames, compressionType, hasTimeStamps, endChar, skipChar, curFrame: byte=0;	
+
+@define animPos $4000
+
+
 procedure ReadAnimationHeader();
 begin
 	zp:=@animPos;
@@ -76,3 +84,8 @@ begin
 
 	end;
 end;
+
+
+begin
+	Loop();
+end.

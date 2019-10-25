@@ -81,10 +81,10 @@ C64FullScreenChar::C64FullScreenChar(LColorList::Type t) : MultiColorImage(t)
     m_supports.koalaExport = false;
     m_supports.koalaImport = false;
     m_exportParams.clear();
-    m_exportParams["EndChar"] = 254;
-    m_exportParams["SkipChar"] = 255;
-    m_exportParamsComments["EndChar"]  ="Make sure you didn't use this char in any of the screens.";
-    m_exportParamsComments["SkipChar"]  ="Make sure you didn't use this char in any of the screens.";
+//    m_exportParams["EndChar"] = 254;
+  //  m_exportParams["SkipChar"] = 255;
+   //m_exportParamsComments["EndChar"]  ="Make sure you didn't use this char in any of the screens.";
+   // m_exportParamsComments["SkipChar"]  ="Make sure you didn't use this char in any of the screens.";
     m_exportParams["ExportTimeStamps"] = 1;
 
 
@@ -249,7 +249,7 @@ unsigned int C64FullScreenChar::getPixel(int x, int y)
 {
     m_width=320;
     if (m_charset==nullptr) {
-        qDebug() << "C64FullScreenChar::getPixel m_charset is nullptr";
+//        qDebug() << "C64FullScreenChar::getPixel m_charset is nullptr";
         return 0;
          }
     if (x>=320 || x<0 || y>=200 || y<0)
@@ -339,16 +339,23 @@ void C64FullScreenChar::ExportMovie(QFile &file)
         msgBox.exec();
         return;
     }
+
+
     QVector<QByteArray> screens;
     QByteArray mty;
     mty.resize(m_charWidth*m_charHeight*2);
     mty.fill(0);
     screens.append(mty);
+    QVector<bool> used;
+    used.resize(256);
+    used.fill(0);
     for (LImageContainerItem* li :m_items) {
         C64Screen* screen = dynamic_cast<C64Screen*>(li);
         QByteArray s;
         for (int i=0;i<m_charWidth*m_charHeight;i++) {
             s.append(screen->m_rawData[i]);
+            //qDebug() << QString::number(screen->m_rawData[i]);
+            used[(uchar)screen->m_rawData[i]]=1;
             s.append(screen->m_rawColors[i]);
         }
         screens.append(s);
@@ -359,8 +366,22 @@ void C64FullScreenChar::ExportMovie(QFile &file)
 
     QByteArray header;
 
-    char endChar = (char)m_exportParams["EndChar"];
-    char skipChar = (char)m_exportParams["SkipChar"];
+    int cur=255;
+    while (used[cur]!=0) {
+        cur--;
+    }
+    uchar endChar = cur;
+    cur--;
+    while (used[cur]!=0) {
+        cur--;
+    }
+    uchar skipChar = cur;
+
+
+    qDebug() << "endChar " << endChar;
+    qDebug() << "skipChar " << skipChar;
+//    char endChar = (char)m_exportParams["EndChar"];
+  //  char skipChar = (char)m_exportParams["SkipChar"];
 
     header.append(m_charWidth);
     header.append(m_charHeight);

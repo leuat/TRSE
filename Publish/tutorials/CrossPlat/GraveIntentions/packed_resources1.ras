@@ -1,8 +1,8 @@
-trm_room1 : IncBin("packed//trm_room1_c.bin", $8000);
-trm_room2 : IncBin("packed//trm_room2_c.bin", $81e0);
-trm_room3 : IncBin("packed//trm_room3_c.bin", $830f);
+trm_room1 : IncBin("packed//trm_room1_c.bin", $6000);
+trm_room2 : IncBin("packed//trm_room2_c.bin", $61e0);
+trm_room3 : IncBin("packed//trm_room3_c.bin", $630f);
 resources : array [6] of byte = (
-	224, 129,
-	15, 131,
-	188, 131
+	224, 97,
+	15, 99,
+	188, 99
 );

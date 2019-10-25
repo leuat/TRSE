@@ -1,5 +1,5 @@
 ras_include_file = packed_resources1.ras
-packed_address = $8000
+packed_address = $6000
 output_dir = packed/
 use_exomizer3 = 1
 address_field = resources

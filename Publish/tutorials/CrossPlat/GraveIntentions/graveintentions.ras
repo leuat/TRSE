@@ -364,7 +364,9 @@ begin
 		waitforraster(0);
 			
 		renderChar:=true;
+		@ifdef C64
 		key:=getKey();
+		@endif
 		if (key=$FF) then
 			firstKey:=0;
 		prevKey:=key;
@@ -411,7 +413,12 @@ begin
 		if (reset<>0) then dec(reset);
 		if (time=0) then
 		begin
+		@ifdef C64
 			RenderNextPackedFrameCompressionType2(22,8,0);
+		@endif
+		@ifdef VIC20
+			RenderNextPackedFrameCompressionType2(22,0,0);
+		@endif
 			time := 16;
 		end;
 		dec(time);
