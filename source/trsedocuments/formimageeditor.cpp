@@ -1008,7 +1008,7 @@ void FormImageEditor::UpdateLevels()
 
 void FormImageEditor::GenericExportImage(QString type, QString ext)
 {
-    if (m_work.m_currentImage->m_image->m_exportParams.keys().count()!=0) {
+    if (m_work.m_currentImage->m_image->m_exportParams.keys().count()!=0 && !m_work.m_currentImage->m_image->m_silentExport) {
         DialogExport* de = new DialogExport();
         de->Init(m_work.m_currentImage->m_image);
         de->exec();

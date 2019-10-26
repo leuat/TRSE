@@ -334,7 +334,9 @@ void C64FullScreenChar::ExportMovie(QFile &file)
 
     int compressionType = m_exportParams["CompressionType"];
 
+    if (!m_silentExport)
     if (compressionType<2 || compressionType>3) {
+
         QMessageBox msgBox;
         msgBox.setText("CompressionType must be either 2 or 3");
         msgBox.exec();
@@ -431,7 +433,8 @@ void C64FullScreenChar::ExportMovie(QFile &file)
     s += "Compression: " + QString::number((1-cnt/total)*100)+ " %\n";
 
     msgBox.setText(s);
-    msgBox.exec();
+    if (!m_silentExport)
+        msgBox.exec();
 
 
 

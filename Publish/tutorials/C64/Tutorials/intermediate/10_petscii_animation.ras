@@ -5,6 +5,8 @@ var
 
 @define animPos $4000
 
+@export "resources/images/petscii_animation.flf" "resources/images/petscii_animation.trm" 0
+
 	anim: incbin("resources/images/petscii_animation.trm",@animPos);
 	
 procedure ReadAnimationHeader();
