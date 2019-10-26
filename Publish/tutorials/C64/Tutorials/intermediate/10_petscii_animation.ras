@@ -5,7 +5,8 @@ var
 
 @define animPos $4000
 
-
+	anim: incbin("resources/images/petscii_animation.trm",@animPos);
+	
 procedure ReadAnimationHeader();
 begin
 	zp:=@animPos;
@@ -26,15 +27,14 @@ var
 begin
 	
 	m:=0;
-	zp := zp + 1; //inczp(zp,1);
+	zp := zp + 1;
 	i:=zp[0];
 	g0:=0;
 
-	dw:=22;
+	dw:=data_width;
 	sw:=screen_width-dw;
 	
 	for pass:=0 to 2 do begin
-
 		case pass of
 			1:	s:=screen_col_loc+xpos;
 			0:	s:=screen_char_loc+xpos;
@@ -52,14 +52,14 @@ begin
 				cnt:=cnt-dw;
 				s:=s+sw;
 			end;
-			zp:=zp+2; //inczp(zp, 2);
+			zp:=zp+2; 
 		
 		end
 		else 
 		begin
 			s[0]:=zp[0];
 			s := s + 1;
-			zp:=zp+1;  //inczp(zp,1);
+			zp:=zp+1; 
 			cnt:=cnt+1;
 			while (cnt>=dw) do
 			begin
@@ -85,7 +85,27 @@ begin
 	end;
 end;
 
+procedure Render();
+var
+  i,j:byte;
+begin
+	while (true) do
+	begin
+	
+		
+//		screenoff();
+		RenderNextPackedFrameCompressionType2(40,0,0);
+//		screenon();
+		for i:=0 to 20 do
+			for j:=0 to 10 do 
+				waitforraster(1);
+	end;
+end;
+
 
 begin
-	Loop();
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	ReadAnimationHeader();
+	Render();	
 end.

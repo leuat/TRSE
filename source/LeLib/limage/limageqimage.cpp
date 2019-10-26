@@ -236,9 +236,9 @@ QImage* LImageQImage::Resize(int x, int y, LColorList& lst, float gamma, float s
             color = QColor::fromHsl(hsv, saturation, r.lightness());
             QVector3D v = Util::fromColor(color);
 
-            v.setX( pow(color.red() + shift, gamma));
-            v.setY( pow(color.green() + shift, gamma));
-            v.setZ( pow(color.blue()+ shift, gamma));
+            v.setX( pow(fmax(color.red() + shift,0), gamma));
+            v.setY( pow(fmax(color.green() + shift,0), gamma));
+            v.setZ( pow(fmax(color.blue()+ shift,0), gamma));
 
             v = Util::clamp(v,0,255);
             int winner = 0;

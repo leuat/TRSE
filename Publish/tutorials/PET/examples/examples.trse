@@ -34,3 +34,5 @@ override_target_settings_prg = 0
 pascal_settings_use_local_variables = 0
 output_debug_symbols = 1
 build_list = ,
+project_path = /home/leuat/code/TRSE/Release/../tutorials/PET/examples/
+open_files = ,08_sines.ras

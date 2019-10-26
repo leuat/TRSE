@@ -148,7 +148,8 @@ void C64FullScreenChar::ExportBin(QFile &f)
 void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
 {
     float sx = img->width()/m_charWidth;
-    float sy = img->height()/m_charHeight;
+//    float sy = img->height()/m_charHeight;
+    float sy = img->height()/25;
 //    qDebug() <<m_charWidth << m_charHeight;
 
     for (float i=0;i<m_charWidth;i++)

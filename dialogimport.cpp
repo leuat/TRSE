@@ -86,6 +86,10 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
     m_image->m_colorList.FillComboBox(ui->cmbMC1);
     m_image->m_colorList.FillComboBox(ui->cmbMC2);
 
+    if (isPetscii)
+        ui->cmbMC1->setCurrentIndex(6);
+
+
     //QObject::connect(this, LColorList::colorValueChanged, UpdateOutput);
     connect(&m_image->m_colorList, SIGNAL(colorValueChanged()), this, SLOT(UpdateOutput()));
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(slotOk()));
