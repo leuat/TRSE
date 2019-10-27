@@ -1,0 +1,7 @@
+ras_include_file = packed_resources1.ras
+packed_address = $6000
+output_dir = packed/
+use_exomizer3 = 1
+address_field = resources
+data = ,trm_room1, screens/croom1.trm, $4000, trm_room2, screens/croom2.trm, $4000, trm_room3, screens/croom3.trm, $4000, trm_room4, screens/croom4.trm, $4000, trm_room5, screens/croom5.trm, $4000
+data_tinycrunch = ,0, 0, 0, 0, 0

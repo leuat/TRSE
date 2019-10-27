@@ -46,7 +46,7 @@ var
     specialRoom : byte =255;
    	// Player start position
 	player_x:byte = 16;
-	player_y:byte = 15;   
+	player_y:byte = 16;   
 	cx, cy, curCol,curExits,row,col,bgCol, fgCol, decrunchIndex,clearMessage,inputColor: byte = 0;
 
 	commandNotOK, redraw : byte=true;
