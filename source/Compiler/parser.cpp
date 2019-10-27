@@ -514,6 +514,41 @@ void Parser::RemoveComments()
 
 }
 
+bool Parser::PreprocessIncludeFiles()
+{
+    m_lexer->Initialize();
+    m_lexer->m_ignorePreprocessor = false;
+    m_acc = 0;
+    bool done = true;
+    m_currentToken = m_lexer->GetNextToken();
+    //m_preprocessorDefines.clear();
+    while (m_currentToken.m_type!=TokenType::TEOF) {
+        if (m_currentToken.m_type == TokenType::PREPROCESSOR) {
+            if (m_currentToken.m_value.toLower()=="include") {
+
+//                QString str = m_currentToken.m_value;
+                Eat(TokenType::PREPROCESSOR);
+                QString name = m_currentToken.m_value;
+                QString filename =(m_currentDir +"/"+ m_currentToken.m_value);
+                filename = filename.replace("//","/");
+                QString text = m_lexer->loadTextFile(filename);
+                int ln=m_lexer->getLineNumber(m_currentToken.m_value)+m_acc;
+                m_lexer->m_text.insert(m_lexer->m_pos, text);
+                int count = text.split("\n").count();
+                m_lexer->m_includeFiles.append(
+                            FilePart(name,ln, ln+ count, ln-m_acc,ln+count-m_acc,count));
+                m_acc-=count-1;
+                done = false;
+                Eat(TokenType::STRING);
+            }
+        }
+        Eat();
+//        qDebug() << m_currentToken.m_value;
+
+    }
+    return done;
+}
+
 
 
 Node *Parser::Variable()
@@ -951,7 +986,7 @@ void Parser::Preprocess()
     //m_preprocessorDefines.clear();
     while (m_currentToken.m_type!=TokenType::TEOF) {
         if (m_currentToken.m_type == TokenType::PREPROCESSOR) {
-            if (m_currentToken.m_value.toLower()=="include") {
+/*            if (m_currentToken.m_value.toLower()=="include") {
 
 //                QString str = m_currentToken.m_value;
                 Eat(TokenType::PREPROCESSOR);
@@ -967,8 +1002,8 @@ void Parser::Preprocess()
                 m_acc-=count-1;
 
                 Eat(TokenType::STRING);
-            }
-            else if (m_currentToken.m_value.toLower() =="define") {
+            }*/
+            if (m_currentToken.m_value.toLower() =="define") {
                 Eat(TokenType::PREPROCESSOR);
                 QString key = m_currentToken.m_value;
                 Eat();
@@ -1182,6 +1217,10 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
     InitObsolete();
     StripWhiteSpaceBeforeParenthesis(); // TODO: make better fix for this
     InitSystemPreprocessors();
+    bool done = false;
+    //while (!done)
+        done = PreprocessIncludeFiles();
+
     Preprocess();
 //    PreprocessConstants();
     m_pass = 1;
@@ -1194,6 +1233,8 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
     Node::flags.clear();
 
     m_lexer->Initialize();
+    qDebug() << m_lexer->m_text;
+
     m_lexer->m_ignorePreprocessor = true;
     m_currentToken = m_lexer->GetNextToken();
    /* qDebug() << m_lexer->m_pos;

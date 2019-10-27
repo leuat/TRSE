@@ -148,9 +148,10 @@ void C64FullScreenChar::ExportBin(QFile &f)
 void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
 {
     float sx = img->width()/m_charWidth;
-//    float sy = img->height()/m_charHeight;
-    float sy = img->height()/25;
+    float sy = img->height()/m_charHeight;
+ //   float sy = img->height()/25;
 //    qDebug() <<m_charWidth << m_charHeight;
+
 
     for (float i=0;i<m_charWidth;i++)
         for (float j=0;j<m_charHeight;j++) {
@@ -159,7 +160,15 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
             winner.resize(lst.m_list.count());
             for (int y=0;y<8;y++)
                 for (int x=0;x<8;x++) {
-                    uchar col = lst.getIndex(QColor(img->pixel((i)*sx+x, (j)*sy+y)));
+                    float xx = (i)*sx+x;
+                    float yy = (j)*sy+y;
+                    xx = (xx-img->width()/2)*m_importScaleX + img->width()/2;
+                    yy = (yy-img->height()/2)*m_importScaleY + img->height()/2;
+
+
+                    uchar col = 0;
+                    if (xx>0 && xx<img->width() && yy>0 && yy<img->height())
+                        col = lst.getIndex(QColor(img->pixel(xx,yy)));
                     if (col!=0) {
                         pc.p[y] |= 1<<x;
                         winner[col]++;
@@ -183,7 +192,7 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
             m_writeType=Color;
             setPixel(i*sx,j*sy,col);
             m_writeType=Character;
-            setPixel(i*sx,j*sx,col);
+            setPixel(i*sx,j*sy,col);
         }
     //   Reorganize();
 

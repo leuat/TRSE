@@ -105,6 +105,9 @@ private slots:
 
     void on_hsDither_sliderMoved(int position);
 
+    void on_hsScaleX_sliderMoved(int position);
+    void on_hsScaleY_sliderMoved(int position);
+
 private:
     Ui::DialogImport *ui;
 };

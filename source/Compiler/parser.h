@@ -96,6 +96,7 @@ public:
     void HandlePreprocessorInParsing();
     void StripWhiteSpaceBeforeParenthesis();
     void RemoveComments();
+    bool PreprocessIncludeFiles();
     void Preprocess();
     void PreprocessReplace();
     void PreprocessIfDefs(bool ifdef);

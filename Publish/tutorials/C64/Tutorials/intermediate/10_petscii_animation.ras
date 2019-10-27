@@ -24,14 +24,13 @@ end;
 
 procedure RenderNextPackedFrameCompressionType2(data_width, xpos, ypos:byte);
 var
-   m,i,g0,pass,k,cnt,dw,sw: byte;
+   m,i,pass,dw,sw: byte;
    s : pointer;
 begin
 	
 	m:=0;
 	zp := zp + 1;
 	i:=zp[0];
-	g0:=0;
 
 	dw:=data_width;
 	sw:=screen_width-dw;
@@ -41,39 +40,23 @@ begin
 			1:	s:=screen_col_loc+xpos;
 			0:	s:=screen_char_loc+xpos;
 		end;
-	cnt:=0;
 	s:=s+screen_width*ypos;
-	while (g0<>endChar) do begin
-	
+	while (zp[0]<>endChar) do begin
 		if (zp[0] = skipChar) then begin
-			k:=zp[1];
-			s := s + k; 
-			cnt:=cnt+k;
-			while (cnt>=dw) do
-			begin
-				cnt:=cnt-dw;
-				s:=s+sw;
-			end;
+			s := s + zp[1]; 
 			zp:=zp+2; 
-		
 		end
 		else 
 		begin
 			s[0]:=zp[0];
 			s := s + 1;
 			zp:=zp+1; 
-			cnt:=cnt+1;
-			while (cnt>=dw) do
-			begin
-				cnt:=cnt-dw;
-				s:=s+sw;
-			end;
 		end;
-		g0:=zp[0];
+//		g0:=zp[0];
 
 	end;
 	zp:=zp+1; //inczp(zp,1);
-	g0:=0;
+//	g0:=0;
 	end;
 
 	if (hasTimeStamps) then zp:=zp+1;
@@ -93,8 +76,6 @@ var
 begin
 	while (true) do
 	begin
-	
-		
 //		screenoff();
 		RenderNextPackedFrameCompressionType2(40,0,0);
 //		screenon();

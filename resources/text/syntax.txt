@@ -116,8 +116,8 @@ m; SetMemoryConfig ; C128 ; n,n,n,n,n
 m; SetMemoryConfig ; PLUS4 ; b
 
 
-m; Decrunch; C64, PLUS4, C128, VIC20 ; a
-m; DecrunchFromIndex; C64, PLUS4, C128, VIC20 ; a,b
+m; Decrunch; C64, PLUS4, C128, VIC20, PET ; a
+m; DecrunchFromIndex; C64, PLUS4, C128, VIC20, PET ; a,b
 
 m; IncZP; C64, PLUS4, C128, VIC20, PET,  NES ; a, b
 #m; DecZP; C64, PLUS4, C128, VIC20, PET,  NES ; a, b

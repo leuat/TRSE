@@ -17,6 +17,8 @@ var
 @define dir_E  %00000010
 @define dir_W  %00000001
 @define dir_SW %00000101
+@define dir_NE %00001010
+@define dir_NS %00001100
 
 @define cursorChar $a0
 @define clearChar $20
@@ -29,17 +31,22 @@ var
 @define item_branch 1
 @define animPos $4000
 
-//@export "screens/room1.flf" "screens/room1.trm" 256
-//@export "screens/room2.flf" "screens/room2.trm" 256
+//@export "screens/croom1.flf" "screens/croom1.trm" 256
+//@export "screens/croom3.flf" "screens/croom3.trm" 256
+//
+//@export "screens/croom4.flf" "screens/croom4.trm" 256
 
+//@export "screens/croom5.flf" "screens/croom5.trm" 256
 
+@define specialRoomFire 0
 
 
 
     i,j,k,time,key,prevKey: byte = 0;  
+    specialRoom : byte =255;
    	// Player start position
 	player_x:byte = 16;
-	player_y:byte = 16;   
+	player_y:byte = 15;   
 	cx, cy, curCol,curExits,row,col,bgCol, fgCol, decrunchIndex,clearMessage,inputColor: byte = 0;
 
 	commandNotOK, redraw : byte=true;
@@ -67,7 +74,7 @@ var
 @endif
 
 @include "trm.ras"
-
+@include "fire.ras"
 
 procedure FindRoom();
 var
@@ -112,8 +119,10 @@ begin
 		  i:=i-96;
 		moveto(cx,cy,hi(screen_char_loc));
 	 	screenmemory[0]:=i;
+	 	@ifdef C64
 		moveto(cx,cy,hi(screen_col_loc));
 	 	screenmemory[0]:=curCol;
+	 	@endif
 		inc(cx);
 		tp:=tp+1;
 	end;
@@ -192,11 +201,22 @@ end;
 
 procedure InitializeRoom();
 begin
+	specialRoom:=255;
 	FindRoom();
-	decrunchfromindex(resources,decrunchIndex);
-	ReadAnimationHeader();
+	
+/*	if (decrunchIndex=@specialRoomFire) then
+	begin
+		specialRoom:=@specialRoomFire;
+	end;*/
+	if (specialRoom=255) then
+	begin
+		decrunchfromindex(resources,decrunchIndex);
+		ReadAnimationHeader();
+	end;
+	@ifdef C64
 	clearscreen(fgCol, screen_col_loc);	
 	screen_fg_col:=bgCol;
+	@endif
 	PrintRoomText();
 end;
 
@@ -361,11 +381,20 @@ begin
 	isNotDone:=true;
 	while (isNotDone) do
 	begin
+		@ifdef C64
 		waitforraster(0);
+		@endif
+		@ifdef PET
+		for i:=0 to 4 do
+			wait(200);
+		@endif
 			
 		renderChar:=true;
 		@ifdef C64
 		key:=getKey();
+		@endif
+		@ifdef PET
+		key:=$FF;
 		@endif
 		if (key=$FF) then
 			firstKey:=0;
@@ -414,13 +443,22 @@ begin
 		if (time=0) then
 		begin
 		@ifdef C64
-			RenderNextPackedFrameCompressionType2(22,8,0);
+//			RenderNextPackedFrameCompressionType2(22,8,0);
+			if (specialRoom=255) then
+				RenderNextPackedFrameCompressionType2(40,0,0);
+		@endif
+		@ifdef PET
+//			RenderNextPackedFrameCompressionType2(22,8,0);
+			if (specialRoom=255) then
+				RenderNextPackedFrameCompressionType2(40,20,0);
 		@endif
 		@ifdef VIC20
-			RenderNextPackedFrameCompressionType2(22,0,0);
+			if (specialRoom=255) then
+				RenderNextPackedFrameCompressionType2(22,0,0);
 		@endif
 			time := 16;
 		end;
+
 		dec(time);
 
 	end;

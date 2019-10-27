@@ -107,6 +107,8 @@ void DialogImport::Convert()
   //  qDebug() << m_image->m_width;
     //exit(1);
     m_image->Clear();
+    m_image->m_importScaleX = 1+ (ui->hsScaleX->value()/100.0 - 0.5)*4;
+    m_image->m_importScaleY = 1+ (ui->hsScaleY->value()/100.0 - 0.5)*4;
 //    m_image->setPixel(10,10,1);
     SetColors();
     QVector3D strength = QVector3D(1,1,1);
@@ -295,6 +297,18 @@ void DialogImport::on_btnImport_2_clicked()
 void DialogImport::on_hsDither_sliderMoved(int position)
 {
     Blur();
+    UpdateOutput();
+
+}
+
+void DialogImport::on_hsScaleX_sliderMoved(int position)
+{
+    UpdateOutput();
+
+}
+
+void DialogImport::on_hsScaleY_sliderMoved(int position)
+{
     UpdateOutput();
 
 }

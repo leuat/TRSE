@@ -30,5 +30,21 @@ room3 : string = (@roomID, 15,15, 0, 6, 2,2,
 				 @ccol,@c5,
 				"Squishy leaves. Moss.",@cnl,@cnl,
 				"You see a light in the distance.",@cnl,@cnl,
-				@cexit, @dir_E,0);
+				@cexit, @dir_NE,0);
+				
+room4 : string = (@roomID, 15,14, 0, 6, 3,2,
+				 @ccol,@c5,
+				"Wooden lodge in the cold night.",@cnl,
+				"Dim lights from the window.",@cnl,
+				"The smell of cooked food.",@cnl,
+				@cexit, @dir_NS,0);
+				
+
+room5 : string = (@roomID, 15,13, 0, 6, 4,2,
+				 @ccol,@c5,
+				"Fireplace craclking with hot sparks.",@cnl,
+				"Mouth-watering smell of roast.",@cnl,
+				"Muffled sounds from somewhere below.",@cnl,
+				@cexit, @dir_S,0);
+
       
