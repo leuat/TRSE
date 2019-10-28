@@ -7,6 +7,8 @@ var
 @define cexit 242
 @define ppos 238
 
+@define vicTempScreen $3000
+
 @define c1 14
 @define c2 1
 @define c3 0
@@ -53,7 +55,10 @@ var
 	roomP,zp : pointer;
 	command : array[41] of byte;
 	sSplit : array[41] of byte;
-
+ 	roomColor : byte = 0;
+	dataScale : byte = 1;
+	dataXStart : byte = 0;
+	dataUseColors : byte = true;
 
 	maxFrames, compressionType, hasTimeStamps, endChar, skipChar, curFrame : byte = 0;
 	roomTest: incbin("screens/room1.trm",@animPos);
@@ -90,6 +95,7 @@ begin
 			bgCol:=roomP[3];
 			fgCol:=roomP[4];
 			inputColor:=roomP[6];
+			roomColor:=roomP[7];
 			decrunchIndex:=roomP[5];
 			if (roomP[1]=player_x and roomP[2]=player_y) then
 				return();
@@ -217,6 +223,9 @@ begin
 	clearscreen(fgCol, screen_col_loc);	
 	screen_fg_col:=bgCol;
 	@endif
+	@ifdef VIC20
+	clearscreen(roomColor, screen_col_loc);
+	@endif
 	PrintRoomText();
 end;
 
@@ -231,6 +240,23 @@ begin
 	SetCharsetLocation($1800);
 	screen_bg_col:=black;
 @endif
+
+
+
+@ifdef VIC20
+	dataScale :=2;
+	screen_bg_color:=8;
+	clearscreen(yellow,screen_col_loc);
+	aux_color_and_volume:=black;
+	SetCharsetLocation($8800);
+//	screen_fg_col:=red;
+@endif
+@ifdef PET
+	dataXStart:=20;
+	dataUseColors:=false;
+@endif
+
+
 end;
 
 // Clear command stuff
@@ -385,8 +411,11 @@ begin
 		waitforraster(0);
 		@endif
 		@ifdef PET
-		for i:=0 to 4 do
+		for i:=0 to 8 do
 			wait(200);
+		@endif
+		@ifdef VIC20
+			waitforraster(0);
 		@endif
 			
 		renderChar:=true;
@@ -394,6 +423,9 @@ begin
 		key:=getKey();
 		@endif
 		@ifdef PET
+		key:=$FF;
+		@endif
+		@ifdef VIC20
 		key:=$FF;
 		@endif
 		if (key=$FF) then
@@ -442,20 +474,9 @@ begin
 		if (reset<>0) then dec(reset);
 		if (time=0) then
 		begin
-		@ifdef C64
 //			RenderNextPackedFrameCompressionType2(22,8,0);
 			if (specialRoom=255) then
-				RenderNextPackedFrameCompressionType2(40,0,0);
-		@endif
-		@ifdef PET
-//			RenderNextPackedFrameCompressionType2(22,8,0);
-			if (specialRoom=255) then
-				RenderNextPackedFrameCompressionType2(40,20,0);
-		@endif
-		@ifdef VIC20
-			if (specialRoom=255) then
-				RenderNextPackedFrameCompressionType2(22,0,0);
-		@endif
+				RenderNextPackedFrameCompressionType2(40,dataXStart,0);
 			time := 16;
 		end;
 

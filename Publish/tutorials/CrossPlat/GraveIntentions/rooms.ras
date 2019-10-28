@@ -10,8 +10,8 @@
 items : string= ("A branch        ",@item_branch,16,15,
 				"A book          ", @item_book, 16,16);
 
-//                          x y   bg fg movie   input
-room1 : string = (@roomID, 16,16, 0, 0,   0,      11,
+//                          x y   bg fg movie   input  roomcolor
+room1 : string = (@roomID, 16,16, 0, 0,   0,      11,   7,
 				 @ccol,@c1,
 				"A firelit room.",@cnl,
 				"Dark shadows dancing on the wall.",@cnl,
@@ -19,7 +19,7 @@ room1 : string = (@roomID, 16,16, 0, 0,   0,      11,
 				@cexit, @dir_N,0);
      
 
-room2 : string = (@roomID, 16,15, 0, 6, 1,2,
+room2 : string = (@roomID, 16,15, 0, 6, 1,2, 6,
 				 @ccol,@c4,
 //				"Shadow woods.",@cnl,
 				"You are surrounded by the deep night.",@cnl,@cnl,
@@ -27,7 +27,7 @@ room2 : string = (@roomID, 16,15, 0, 6, 1,2,
 				"Door with warm dim lights south.",@cnl,@cnl,
 				@cexit, @dir_SW,0);
      
-room3 : string = (@roomID, 15,15, 0, 6, 2,2,
+room3 : string = (@roomID, 15,15, 0, 6, 2,2,4,
 				 @ccol,@c5,
 				"Squishy leaves. Moss. Cold breath. ",@cnl,
 				"You are engulfed by darkness.",@cnl,
@@ -35,7 +35,7 @@ room3 : string = (@roomID, 15,15, 0, 6, 2,2,
 				"There is a dim light to the east.",@cnl,
 				@cexit, @dir_NE,0);
 				
-room4 : string = (@roomID, 15,14, 0, 6, 3,2,
+room4 : string = (@roomID, 15,14, 0, 6, 3,2,6, 
 				 @ccol,@c5,
 				"Wooden lodge, frozen planks.",@cnl,
 				"Flickering lights from the window.",@cnl,
@@ -43,7 +43,7 @@ room4 : string = (@roomID, 15,14, 0, 6, 3,2,
 				@cexit, @dir_NS,0);
 				
 
-room5 : string = (@roomID, 15,13, 0, 6, 4,2,
+room5 : string = (@roomID, 15,13, 0, 6, 4,2,7,
 				 @ccol,@c5,
 				"Fireplace craclking with hot sparks.",@cnl,
 				"Mouth-watering smell of roast.",@cnl,

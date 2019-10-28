@@ -443,8 +443,8 @@ void MainWindow::OpenProjectSettings()
     delete dSettings;
 
     // Set compiler syntax based on system
-    Syntax::s.Init(AbstractSystem::SystemFromString(m_currentProject.m_ini.getString("system")),&m_iniFile, &m_currentProject.m_ini);
-
+//    Syntax::s.Init(AbstractSystem::SystemFromString(m_currentProject.m_ini.getString("system")),&m_iniFile, &m_currentProject.m_ini);
+    LoadProject(m_currentProject.m_filename);
 
 }
 
@@ -872,6 +872,8 @@ void MainWindow::on_actionTRSE_Settings_triggered()
 
     dSettings->exec();
 
+
+
     for (TRSEDocument* doc : m_documents) {
         doc->UpdateColors();
         doc->UpdateFromIni();
@@ -884,6 +886,9 @@ void MainWindow::on_actionTRSE_Settings_triggered()
         SetDarkPalette();
     if (m_iniFile.getdouble("windowpalette")==1)
         QApplication::setPalette(m_defaultPalette);
+
+
+
 }
 
 void MainWindow::on_actionNew_project_triggered()
