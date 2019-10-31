@@ -79,7 +79,7 @@ var
 @endif
 
 @include "trm.ras"
-@include "fire.ras"
+//@include "fire.ras"
 
 procedure FindRoom();
 var
