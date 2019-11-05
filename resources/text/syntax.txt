@@ -406,6 +406,7 @@ m; drawPixel; OK64; b,b,b
 m; drawLine; OK64; b,b,b,b,b
 m; drawCircleFilled; OK64; b,b,b,b
 m; drawRect; OK64; b,b,b,b,b
+m; drawPoly; OK64; b,b,b,b,b,b,b
 m; ClearScreen; OK64; b
 m; WaitForVsync; OK64;
 m; toColor; OK64; b,b,b
