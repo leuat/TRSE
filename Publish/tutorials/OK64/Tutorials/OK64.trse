@@ -35,6 +35,4 @@ override_target_settings_sys = 1
 override_target_settings_prg = 0
 build_list = ,
 data_header_images/ok1.flf = 6.93207e-310
-project_path = tutorials/OK64/Tutorials/
-open_files = -1
-current_file = example1.ras
+open_files =, example1.ras

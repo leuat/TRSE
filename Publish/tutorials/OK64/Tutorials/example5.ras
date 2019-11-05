@@ -1,4 +1,4 @@
-program MyProgram;
+program Example5;
 var  
  	x1,i,k,y1,x2,y2,x3,y3,x4,y4,j,time,t,cx,cy: byte=0;
 
@@ -69,7 +69,8 @@ begin
 		okvc_border_width:=sine[time]/8;
 		okvc_border_height:=sine[32+time*2]/8;
 
-		PrintText("OK 64 WHOO",time&127,70,120);
+		PrintText("OK 64 whooo",time&127,70,120);
+		PrintText("Color Cycling",time&127,60,140);
 
 		waitforvsync();
 
