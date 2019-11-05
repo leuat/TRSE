@@ -1045,8 +1045,8 @@ void ASTDispather6502::dispatch(NodeVarDecl *node)
     }
     else
     if (t->m_op.m_type==TokenType::POINTER) {
-        if (node->m_curMemoryBlock!=nullptr)
-            ErrorHandler::e.Error("Pointers can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
+        //if (node->m_curMemoryBlock!=nullptr)
+        //    ErrorHandler::e.Error("Pointers can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
         DeclarePointer(node);
     }else {
         node->m_dataSize=1;
