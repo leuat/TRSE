@@ -141,7 +141,7 @@ var
 	zp:pointer;
 begin
 	zp:=roomP;
-	zp:=zp+7;
+	zp:=zp+8;
 	cx:=@startx;
 	curCol:=@c1;
 	cy:=@starty;
