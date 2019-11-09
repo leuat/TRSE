@@ -3,6 +3,11 @@
 	By Andy H @ hewco.uk - visit hewco.uk for more games
 	
 	Project settings: Vic 20 + 16k RAM
+	
+	Exomizer 3 required to compress the PRG and data (see screens.paw)
+	
+	CharPad used to create the screens and characterset data
+
 */
 program Pumpkid;
 var  
