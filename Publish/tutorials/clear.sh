@@ -20,3 +20,9 @@ echo "open_files =, demo.ras" >> VIC20/PurplePlanetYo/vicdemo.trse
 echo "open_files =, nibbler.ras" >> VIC20/VicNibbler/Nibbler.trse
 
 echo "open_files =, Hello.ras" >> PLUS4/Tutorials/PLUS4_Tutorials.trse
+echo "open_files =, example1.ras" >> OK64/Tutorials/OK64.trse
+echo "open_files =, kos.ras" >> OK64/KOS/kos.trse
+
+echo "open_files =, graveintentions.ras" >> CrossPlat/GraveIntentions/GraveIntentions.trse
+
+echo "open_files =, 01_hello_world.ras" >> PET/examples/examples.trse

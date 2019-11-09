@@ -1,0 +1,86 @@
+program Example5;
+var  
+ 	x1,i,k,y1,x2,y2,x3,y3,x4,y4,j,time,t,cx,cy: byte=0;
+
+procedure SetupPalette();
+var 
+   k,i,j: byte;
+begin
+	k:=0-(time&127)+128;
+	for i:=0 to 128 do begin
+		j:=(k)&127;
+		setpalette(i+128,j/2,j/3,j*2);
+		inc(k);
+	end;
+end;
+
+
+procedure PrintText(tp:pointer;k, sx,sy: byte);
+var 
+ x,i,v: byte;
+ 
+begin
+	i:=0;
+	x:=sx;
+	
+	while (tp[i]<>0) do
+	begin
+		v:=tp[i];
+		
+		if (v<>32) then
+			PrintChar(v, k,  x, sy);
+		i:=i+1;
+		x:=x+8;
+		k:=k+1;
+	end;
+		
+
+
+end;
+
+
+procedure RenderPolygons();
+begin
+	while (true) do
+	begin
+		// Cycles palette
+		SetupPalette();
+		
+		cx:=sine[time]/3+32;
+		cy:=sine[time*2]/3+32;
+		t:=time*2;
+		x1:=cx+sine[t]/4;
+		y1:=cy+sine[t+64]/4;
+		t:=t+64;
+		x2:=cx+sine[t]/3;
+		y2:=cy+sine[t+64]/3;
+		t:=t+64;
+		x3:=cx+sine[t]/3;
+		y3:=cy+sine[t+64]/3;
+		t:=t+64;
+		x4:=cx+sine[t]/3;
+		y4:=cy+sine[t+64]/3;
+		k:=(time+127)&127+128;
+		DrawPoly(x1,y1,x2,y2,x3,y3,k);
+		DrawPoly(x1,y1,x4,y4,x3,y3,k);
+
+
+		okvc_border_width:=sine[time]/8;
+		okvc_border_height:=sine[32+time*2]/8;
+
+		PrintText("OK 64 whooo",time&127,70,120);
+		PrintText("Color Cycling",time&127,60,140);
+
+		waitforvsync();
+
+		inc(time);
+	end;
+
+end;
+
+
+begin
+	clearscreen(0);
+	okvc_border_color:=%01000001; // blue + red
+	RenderPolygons();
+end.

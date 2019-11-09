@@ -129,6 +129,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("drawCircleFilled")) {
         CallOKVC(as,4,4);
     }
+    if (Command("drawPoly")) {
+        CallOKVC(as,7,12);
+    }
 
     if (Command("DrawLine")) {
         as->Comment("Draw Line");

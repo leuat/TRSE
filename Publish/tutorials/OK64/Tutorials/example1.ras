@@ -1,4 +1,4 @@
-program MyProgram;
+program Example1;
 var  
  	time,j: byte=0;
 	image1 : incbin("images/image1.bin","$20000");    

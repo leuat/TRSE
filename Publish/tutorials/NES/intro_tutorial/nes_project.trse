@@ -34,5 +34,5 @@ override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
 project_path = /home/leuat/code/TRSE/Release/../tutorials/NES/intro_tutorial/
-open_files = ,tutorial_2_hello_sprites.ras
+open_files = ,tutorial_1_hello_nes.ras, tutorial_2_hello_sprites.ras
 current_file = tutorial_2_hello_sprites.ras

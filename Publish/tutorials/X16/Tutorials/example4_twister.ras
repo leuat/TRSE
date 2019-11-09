@@ -140,6 +140,7 @@ end;
 
 begin
 	InitScreen();
+
 	// Create twister address table: Twister consist of 64 rows of 16 byte data starting at @twisterLoc	
 	CreateAddressTable( twisterTable, @twisterLoc, 64, 256 );
 	

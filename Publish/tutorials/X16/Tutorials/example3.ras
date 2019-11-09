@@ -1,8 +1,9 @@
 program MyProgram;
 var  
    i,j,k,time,m,x,y: byte; 
-   
-	perlin : incbin("data/perlin64.bin",$A000);
+
+	@define dataPos $2000   
+	perlin : incbin("data/perlin64.bin",@dataPos);
 	
 	zp:pointer;
    
@@ -11,38 +12,40 @@ procedure SetPalette();
 begin
 	Initpalette(0);
 	for i:=0 to 256 do 
-		SetColor(i/20,i/40,i/16);
+		SetColor(i/3,i/3,i/3);
 
 end;
 
 
 procedure FillStuff();
 begin
-	setverabank(0);
+	//setverabank(0);
 	k:=time;
-	vera_addr_mid:=0;
-	vera_addr_lo:=0;
-	zp:=$A000;
-	ram_bank:=0;
+	//vera_addr_mid:=0;
+	//vera_addr_lo:=0;
+	zp:=@dataPos;
+//	ram_bank:=0;
 	
 	
 	for m:=0 to 2 do 
 	begin
-		vera_addr_hi:=m;
+		
+		vera_addr_hi:=m | 1<<4;
+	//	setverabank(0);
+		//setveraincrement(1);
 		vera_addr_mid:=0;
 		vera_addr_lo:=0;
 
-		setveraincrement(1);
 
-		for k:=0 to 256 do
+		for k:=0 to 127 do
 		begin
 				y:=k/4;
 				for j:=0 to 256 do 
 				begin
 					x:=j/4;
-					zp:=$A000 + 64*y + x;				
+					//zp:=@dataPos + 64*y + x;				
 					
-					vera_data1:=zp[0];
+					vera_data1:=j+k;//zp[0];
 			
 				end;
 
@@ -50,10 +53,40 @@ begin
 	end;
 end;
 
+
+procedure InitScreen();
 begin
-	SetPalette();
-	setvideomode(7,1,1);
+	setvideomode(7,1,0);
+	setverabank($0F);
+/*	verapoke($20,1,%00110000);
+	verapoke($20,4,100);
+	verapoke($20,5,0);
+	*/
 	SetVeraTileMode(0,0);
+
+
+	setverabank(0);
+	setveraincrement(1);
+	vera_addr_mid:=0;
+	vera_addr_lo:=$00;	
+	for k:=0 to 1 do
+	for j:=0 to 0 do
+	for i:=0 to 0 do
+		vera_data1:=0;
+		
+//	for i:=0 to 256 do sine2[i]:=sine[i]/3;
+end;
+
+
+
+begin
+//	SetPalette();
+	InitScreen();
+//	setvideomode(7,1,1);
+//	SetVeraTileMode(0,0);
+	setverabank(0);
+	FillStuff();
+	Loop();
 	while (true) do 
 	begin
 		FillStuff();

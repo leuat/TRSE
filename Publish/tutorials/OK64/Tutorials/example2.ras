@@ -1,4 +1,4 @@
-program MyProgram;
+program Example2;
 var  
  	j1,j2,j3,x1,i,y1,x2,y2,time: byte=0;
 

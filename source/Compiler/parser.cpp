@@ -1233,7 +1233,7 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
     Node::flags.clear();
 
     m_lexer->Initialize();
-    qDebug() << m_lexer->m_text;
+//    qDebug() << m_lexer->m_text;
 
     m_lexer->m_ignorePreprocessor = true;
     m_currentToken = m_lexer->GetNextToken();
