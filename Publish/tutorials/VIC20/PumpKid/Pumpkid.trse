@@ -1,4 +1,4 @@
-project_path = tutorials/VIC20/Pumpkid/
+project_path = /home/leuat/code/TRSE/Release/../tutorials/VIC20/PumpKid/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fe
@@ -28,7 +28,7 @@ override_target_settings_org = $1600
 override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
-open_files = ,pumpkid.ras
+open_files = ,screens.paw, pumpkid.ras
 current_file = pumpkid.ras
 global_defines = ,
 vic_memory_config = 16k

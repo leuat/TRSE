@@ -270,7 +270,7 @@ procedure HitZombie();
 @include "zombie.ras"
 @include "candy.ras"
 @include "player.ras"
-@include "gameTimer.ras"
+@include "gametimer.ras"
 @include "collisions.ras"
 @include "game.ras"
 @include "titles.ras"
