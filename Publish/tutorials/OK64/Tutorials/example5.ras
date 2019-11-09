@@ -8,9 +8,8 @@ var
 begin
 	k:=0-(time&127)+128;
 	for i:=0 to 128 do begin
-		j:=(k*4)&127;
+		j:=(k)&127;
 		setpalette(i+128,j/2,j/3,j*2);
-//		setpalette(i+128+64,j/2,j/1,j);
 		inc(k);
 	end;
 end;

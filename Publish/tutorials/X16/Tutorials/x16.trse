@@ -1,5 +1,5 @@
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
-temp_zeropages = ,$54, $56, $58, $5A
+temp_zeropages = ,$24, $26, $28, $2A
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $47
 zeropage_decrunch2 = $48
@@ -35,3 +35,6 @@ override_target_settings_sys = 1
 override_target_settings_prg = 0
 build_list = ,
 data_header_images/image1.flf = 0
+project_path = /home/leuat/code/TRSE/Release/../tutorials/X16/Tutorials/
+open_files = -1
+current_file = example8_tunnel.ras

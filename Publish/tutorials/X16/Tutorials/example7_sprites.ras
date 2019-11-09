@@ -8,7 +8,7 @@ var
 	test:array[10] of byte;
 // Emulator only supports 16 sprites
 
-@define noSprites 16
+@define noSprites 127
 
 @requirefile "data/example7_sprite.bin" "Please run the ray-tracer file 'example7_sprites.fjo' before compiling this program"
 	sprites : incbin("data/example7_sprite.bin",@spritePos);
@@ -50,8 +50,8 @@ begin
 		// Set sprite position = $200 = $4000/32 + frame*256 (each frame is 256 byes)
 		setspriteloc(in);
 		// Set x / y position of individuals
-		ia:=100 + ix+sine[k]/2;
-		ib:=iy+sine[k2]/2;
+		ia:=100 + ix+sine[k];
+		ib:=sine[k2]*1+iy;
 		// Set position
 		spritepos(ia, ib);
 		// Advance counters with some primes
