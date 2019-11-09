@@ -1,0 +1,146 @@
+
+procedure BeatWitchWait();
+begin
+
+	gameMode := @GAMEMODE_BEATWITCH;
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK;
+
+	screenmemory := $102e;
+	printstring("THE@WITCH@RETREATS",0 ,18)	;
+	
+	p1 := $942e;
+	
+	readjoy1();
+	readjoy1();
+	joy1pressed := 0;
+	
+	x := 1;
+	y := 1;
+	
+	while joy1pressed & JOY_FIRE = false do
+	begin
+	
+		x := y;
+		y := y + 1;
+		if y > 7 then y := 1;
+		
+		readjoy1();
+		for t:= 0 to 18 do
+		begin
+			p1[ t ] := x;
+
+			x := x + 1;
+			if x > 7 then x := 1;
+		end;
+
+		// wait for a VBL		
+		//while (ticks = oldTick) do;
+		//oldTick := ticks;	
+
+	end;
+	
+
+end;
+
+
+
+// Main game play loop
+procedure GameLoop();
+begin
+
+	while (gameMode = @GAMEMODE_PLAY) do
+	begin
+	
+		// debug - check how much time is used for game loop
+		//SCREEN_BG_COLOR := SCREEN_BG_BLACK + CYAN;
+		
+		UpdateTimer();
+
+		readjoy1();
+		UpdatePlayer();
+		CollisionPlayer(); // check collision after player move
+
+		UpdateWitch();
+		UpdateGhosts();
+		UpdateZombies();
+		
+		if gameMode = @GAMEMODE_PLAY then CollisionPlayer(); // check again after spookies move (belt and braces)
+		
+		UpdateCandy();
+		CollisionCandy(); 	// only have to check candy collisions once,
+							// because when spookies move they check too
+
+		if (lostchildlevel <= level) then UpdateLostChild();
+
+		if witchHits = 6 then BeatWitchWait();
+
+		// todo:  sound
+
+		// cheat
+		//if (peek(^@KEYB, 0) <> 64) then gameMode := @GAMEMODE_BEATWITCH;
+
+		i := SCREEN_BG_BLACK + BLUE; // the after midnight
+		if moonPos < 6 then
+			i := SCREEN_BG_BLACK + PURPLE;
+		if moonPos > 17 then
+			i := SCREEN_BG_BLACK + RED;
+
+		SCREEN_BG_COLOR := i; 
+		
+		// wait for a VBL		
+		while (ticks = oldTick) do;
+		oldTick := ticks;
+
+	end;
+
+end;
+
+
+
+// set up game level
+procedure SetUpGameLevel();
+begin
+	
+	BlankScreen();
+
+	// draw screen
+	decrunchfromindex(packedScreens,level+15); // level
+	decrunchfromindex(packedScreens,14); // header
+	ColourScreen();
+	ColourHeader();
+	
+	// draw header items - this might be continuing after lost a life
+	DisplayTime();
+	DrawCandyCounter();
+	
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK + PURPLE;
+
+	SetupTimer(); 		// show timer
+	
+	gameMode := @GAMEMODE_PLAY;
+
+	zNumZombies := 0;	// start with no zombies
+	ztime := lzombie[ level ];
+	
+	cx := 0; cy := 0; cdx := 0;
+	lx := 0; ly := 0; // clear lost child position
+
+	candy := 0;			// start with no candy
+	candyscr := 0;		// number of candy on screen
+	clife := 0;			// ensure no candy stuck in fire mode
+
+	DrawCandyCounter();
+	DisplayScore();
+	
+	wdspeed := lwitch[ level ]; // normal witch speed
+	wdcount := 0;
+
+	pd := @PD_LEFT;
+	wd := @WD_LEFT;
+	FindStartPos();
+
+	gNumGhosts := lghosts[ level ];
+	PlaceAllGhosts();
+	
+end;
+

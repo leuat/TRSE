@@ -1,0 +1,150 @@
+// Set up game timer for a new level or restarting
+// assume header has been drawn
+procedure SetupTimer();
+begin
+
+	gameTimer := 0;
+	moonPos := 2;
+	cloudPos := 0;
+
+	// show cloud
+	screenmemory := $942c;
+	screenmemory[ cloudPos ] := WHITE;	
+	// show moon
+	screenmemory := $9416;
+	screenmemory[ moonPos ] := YELLOW;
+	
+end;
+
+
+// Advance the moon one space along
+// used by UpdateTimer
+procedure MoveMoon();
+begin
+
+	p1 := $9416;
+	p1[ moonPos ] := BLACK;
+	moonPos := moonPos + 1;  // note, when moonPos == the skull char, game over
+	p1[ moonPos ] := YELLOW;
+	
+	// spawn a zombie (if possible) from midnight
+	if moonPos >= 6 then SpawnAZombie();
+	
+	// score
+	bcdadd(score, scMoon, 4);
+	DisplayScore();
+
+end;
+
+// crear the space where the time is displayed
+procedure ClearTime();
+begin
+	
+	for i :=0 to 8 do
+		screenmemory[ i ] := 0;
+	
+	screenmemory := screenmemory + 2;
+
+end;
+
+// display the time screen
+procedure DisplayTime();
+begin
+
+	screenmemory := $1008;	// position on screen for time
+	
+	case moonPos of
+
+		4 : 
+		begin
+			ClearTime();
+			printstring(t11, 0, 4);
+		end;
+		
+		6 : 
+		begin
+			ClearTime();
+			screenmemory := screenmemory - 2;
+			printstring(t12, 0, 8);
+		end;
+
+		8 : 
+		begin
+			ClearTime();
+			printstring(t01, 0, 4);
+		end;
+
+		10: 
+		begin
+			ClearTime();
+			printstring(t02, 0, 4);
+		end;
+
+		12: 
+		begin
+			ClearTime();
+			printstring(t03, 0, 4);
+		end;
+
+		14: 
+		begin
+			ClearTime();
+			printstring(t04, 0, 4);
+		end;
+
+		16: 
+		begin
+			ClearTime();
+			printstring(t05, 0, 4);
+		end;
+
+		18: 
+		begin
+			ClearTime();
+			printstring(t06, 0, 4);
+		end;
+
+	end;
+	
+end;
+
+// Update the timer every frame.  Moves the cloud which also moves the moon
+procedure UpdateTimer();
+begin
+
+	gameTimer := gameTimer + 1;
+	
+	if (gameTimer = GAMETIMERMAX) then
+	begin
+
+		// one loop
+		gameTimer := 0;
+		screenmemory := $942c;
+		screenmemory[ cloudPos ] := BLACK;
+		cloudPos := cloudPos + 1;
+
+		if cloudPos = 11 then
+		begin
+		
+			// spawn candy
+			if candyscr < 3 then SpawnCandy();
+
+		end;
+	
+		if cloudPos = 22 then
+		begin
+			
+			cloudPos := 0;
+			MoveMoon();
+			DisplayTime();
+			// spawn candy
+			if candyscr < 3 then SpawnCandy();
+
+		end;
+		screenmemory := $942c;
+		screenmemory[ cloudPos ] := WHITE;
+		
+	end;
+
+end;
+

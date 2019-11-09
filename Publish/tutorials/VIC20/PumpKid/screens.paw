@@ -1,0 +1,7 @@
+ras_include_file = screens_packed.ras
+packed_address = $4800
+output_dir = compressed/
+use_exomizer3 = 1
+address_field = packedScreens
+data = ,titleScrn, screens/titlescrn.bin, $1000, gameChars, pumpkid.bin, $1400, titleChars, titleschar.bin, $1400, scr00, screens/00.bin, $1042, gameoverChars, gameover-char.bin, $1400, gamewonChars, gamewon-char.bin, $1400, scrgameover, screens/gameover-map.bin, $1000, scrgamewon, screens/gamewon-map.bin, $1000, titlestory, screens/titlestory.bin, $1000, titlecast, screens/titlecast.bin, $1000, scrhowto, screens/gamehowto.bin, $1000, titlestory2, screens/titlestory2.bin, $1000, failchars, screens/failchars.bin, $1400, failscr, screens/failscr.bin, $1000, scrheader, screens/header.bin, $1000, scr01, screens/01.bin, $1042, scr02, screens/02.bin, $1042, scr03, screens/03.bin, $1042, scr04, screens/04.bin, $1042, scr05, screens/05.bin, $1042, scr06, screens/06.bin, $1042, scr07, screens/07.bin, $1042, scr08, screens/08.bin, $1042, scr09, screens/09.bin, $1042, scr10, screens/10.bin, $1042, scr11, screens/11.bin, $1042, scr12, screens/12.bin, $1042, scr13, screens/13.bin, $1042, gamenextchars, screens\gamenext-chars.bin, $1400, gamenextscr, screens\gamenext-scr.bin, $1000, lastscorescr, screens\lastscore.bin, $1000, creditschar, screens\credits-chars.bin, $1400, creditscr, screens\credits-scr.bin, $1000
+data_tinycrunch = ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0

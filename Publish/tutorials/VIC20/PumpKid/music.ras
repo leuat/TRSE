@@ -1,0 +1,56 @@
+procedure SetupMusic();
+var
+	tuneTitle : array[] of byte = (
+		219, 225, 231, 232, 225, 231, 215
+		);
+	@define TUNELEN 7
+	
+	musicStep : byte = 0;
+	@define MUSICLEN 19
+	@define MUSICRESET 20
+	
+	musicNote : byte = 0;		// which note on in the array
+	musicRepeat : byte = 0;
+	
+begin
+
+	musicNote := 0;
+	musicStep := 0;
+	musicRepeat := 0;
+	poke(^@VICvolume,0,11);
+
+end;
+
+
+
+procedure UpdateTitleMusic();
+begin
+
+	if musicRepeat = 4 then return();
+
+	//PlaySnd3(sndNoteShort,225);
+	if (musicStep = 0) then
+	begin
+		// start note
+		psnd3 := sndMNoteShort;
+		PlaySnd3( tuneTitle[ musicNote ] );
+		musicNote := musicNote + 1;
+		if (musicNote = @TUNELEN) then
+		begin
+		
+			musicNote := 0;
+			musicRepeat := musicRepeat + 1;
+			if musicRepeat = 1 then poke(^@VICvolume,0,8);
+			if musicRepeat = 2 then poke(^@VICvolume,0,5);
+			if musicRepeat = 3 then poke(^@VICvolume,0,2);
+			
+		end;
+
+	end;	
+
+	musicStep := musicStep + 1;
+
+	if (musicStep = @MUSICLEN) then psnd3 := noSound;
+	if (musicStep = @MUSICRESET) then musicStep := 0;
+	 
+end;

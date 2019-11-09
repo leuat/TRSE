@@ -1,0 +1,488 @@
+procedure PlaySnd1( /*psnd1x:pointer,*/ vsnd1: byte );
+var
+	vsnd1Time: byte = 0;
+begin
+
+	vsnd1Time := 0;
+	//psnd1 := psnd1x;
+	
+end;
+
+procedure PlaySnd2( /*psnd2x:pointer,*/ vsnd2: byte );
+var
+	vsnd2Time: byte = 0;
+begin
+
+	vsnd2Time := 0;
+	//psnd2 := psnd2x;
+	
+end;
+
+procedure PlaySnd3( /*psnd3x:pointer,*/ vsnd3: byte );
+var
+	vsnd3Time: byte = 0;
+begin
+
+	vsnd3Time := 0;
+	//psnd3 := psnd3x;
+	
+end;
+
+procedure PlaySndfx( /*psndfxx:pointer,*/ vsndfx: byte );
+var
+	vsndfxTime: byte = 0;
+begin
+
+	vsndfxTime := 0;
+	//psndfx := psndfxx;
+	
+end;
+
+
+
+// set up Vic Sounds
+procedure StopSounds();
+procedure SetupSound();
+var
+	// need local variables set OFF in the TRSE project settings
+	@define VICvolume	$900e
+	@define VICsnd1		$900a
+	@define VICsnd2		$900b
+	@define VICsnd3		$900c
+	@define VICsndfx	$900d
+
+	// bitwise settings
+	@define VSA_IDLE	0	// 
+							// values 1-31 (low nibble) = duration
+	@define VSA_INC		$80	// play incremental note, low nibble contains increment value
+	@define VSA_DEC		$40	// play decremental note, low nibble contains decrement value
+	@define VSA_NOTE	$20	// play note
+	@define VSA_PAUSE	$10	// no sound
+							// note value 128 - 255	
+
+	// sound definitions
+	// format:  action, duration
+	noSound : byte = @VSA_IDLE;  // used to point all sounds to stop / idle
+
+	sndGhostAppear : array[] of byte = (
+		$81,7, $20,2, $43,4,
+		@VSA_IDLE);
+	
+	sndPumpkidFootsteps : array[] of byte = (
+		$4F,3,
+		@VSA_IDLE);
+		
+	sndWitchDive : array[] of byte = (
+		$41,35,	$42,8, $41,6, $20,12, $83,25,
+		@VSA_IDLE);
+		
+	sndWitchSpell : array[] of byte = (
+		$8f,4, $42,12, $41,2,
+		@VSA_IDLE);
+		
+	sndDead : array[] of byte = (
+		$41,10, $10,3, $41,8, $10,3, $41,6,
+		@VSA_IDLE);
+
+	sndPickup : array[] of byte = (
+		$42,4, $10,3, $8f,4,
+		@VSA_IDLE);
+		
+	sndCAppear : array[] of byte = (
+		$20,1, $10,1, $20,1,
+		@VSA_IDLE);
+
+	sndShoot : array[] of byte = (
+		$20,1, $10,1, $41,10,
+		@VSA_IDLE);
+		
+	sndGrave : array[] of byte = (
+		$20,13, $10,5,  $89,1, $20,12, $10,5,  $89,1, $20,12,
+		@VSA_IDLE);
+
+	sndExplode : array[] of byte = (
+		$10,2, $20,5, $44,4,
+		@VSA_IDLE);	
+
+	sndMNoteShort : array[] of byte = (
+		$41,1, $81,1, $41,1, $81,1, $20,1,
+		$41,1, $81,1, $41,1, $81,1, $20,2,
+		$41,1, $81,1, $41,1, $81,1, $20,1,
+		$41,1, $81,1, $41,1, $81,1, $20,2, 
+		@VSA_IDLE);
+
+	sndSWitch : array[] of byte = (
+		$20,1,
+		@VSA_IDLE);
+begin
+
+	StopSounds();
+	poke(^@VICvolume, 0, 15);
+
+end;
+
+
+
+// stop all sounds playing
+procedure StopSounds();
+begin
+
+	vsnd1 := 0;
+	vsnd1Time := 0;
+	psnd1 := noSound;
+	poke(^@VICsnd1, 0, 0);
+
+	vsnd2 := 0;
+	vsnd2Time := 0;
+	psnd2 := noSound;
+	poke(^@VICsnd2, 0, 0);
+	
+	vsnd3 := 0;
+	vsnd3Time := 0;
+	psnd3 := noSound;
+	poke(^@VICsnd3, 0, 0);
+	
+	vsndfx := 0;
+	vsndfxTime := 0;
+	psndfx := noSound;
+	poke(^@VICsndfx, 0, 0);
+
+end;
+
+
+
+// count down for sound timers
+procedure Snd1Time();
+begin
+		// decrease time
+		if (vsnd1Time > 0) then vsnd1Time := vsnd1Time - 1;
+		// after decreasing time, if now = 0 then go to next command
+		if (vsnd1Time = 0) then psnd1 := psnd1 + 2; // goto next command
+
+end;
+procedure Snd2Time();
+begin
+		// decrease time
+		if (vsnd2Time > 0) then vsnd2Time := vsnd2Time - 1;
+		// after decreasing time, if now = 0 then go to next command
+		if (vsnd2Time = 0) then psnd2 := psnd2 + 2; // goto next command
+
+end;
+procedure Snd3Time();
+begin
+		// decrease time
+		if (vsnd3Time > 0) then vsnd3Time := vsnd3Time - 1;
+		// after decreasing time, if now = 0 then go to next command
+		if (vsnd3Time = 0) then psnd3 := psnd3 + 2; // goto next command
+
+end;
+procedure SndfxTime();
+begin
+		// decrease time
+		if (vsndfxTime > 0) then vsndfxTime := vsndfxTime - 1;
+		// after decreasing time, if now = 0 then go to next command
+		if (vsndfxTime = 0) then psndfx := psndfx + 2; // goto next command
+
+end;
+
+
+
+// Play active sounds on voice 1
+procedure UpdateSound1();
+begin
+
+	// idle
+	if (psnd1[ 0 ] = @VSA_IDLE) then
+	begin
+
+		if (vsnd1 <> 0) then
+		begin
+		
+			//addbreakpoint(); nop(2);
+			// ensure sound is off
+			vsnd1 := 0;
+			poke(^@VICsnd1, 0, 0);
+			
+		end;	
+		return();		
+
+	end;
+	
+	// play note
+	if (psnd1[ 0 ] = @VSA_NOTE or psnd1[ 0 ] = @VSA_PAUSE) then
+	begin
+			
+		//addbreakpoint(); nop(3);
+		// if time = 0 at start, then this is a new note command			
+		if (vsnd1Time = 0) then
+		begin
+			 
+			vsnd1Time := psnd1[ 1 ]; // get duration
+			if psnd1[ 0 ] = @VSA_NOTE then poke(^@VICsnd1, 0, vsnd1);
+			if psnd1[ 0 ] = @VSA_PAUSE then poke(^@VICsnd1, 0, 0);			
+
+		end;
+
+		Snd1Time();
+
+	end;
+
+	// increment
+	if (psnd1[ 0 ] & @VSA_INC = @VSA_INC) then
+	begin
+		
+		// if time = 0 at start, then this is a new note command			
+		if (vsnd1Time = 0) then vsnd1Time := psnd1[ 1 ]; // get duration
+
+		vsnd1 := vsnd1 + (psnd1[ 0 ] - @VSA_INC);
+		poke(^@VICsnd1, 0, vsnd1);
+
+		Snd1Time();
+
+	end;
+
+	// decrement
+	if (psnd1[ 0 ] & @VSA_DEC = @VSA_DEC) then
+	begin
+	
+		// if time = 0 at start, then this is a new note command			
+		if (vsnd1Time = 0) then vsnd1Time := psnd1[ 1 ]; // get duration
+
+		vsnd1 := vsnd1 - (psnd1[ 0 ] - @VSA_DEC);
+		poke(^@VICsnd1, 0, vsnd1);
+
+		Snd1Time();
+
+	end;
+
+end;
+
+
+
+// Play active sounds on voice 2
+procedure UpdateSound2();
+begin
+
+	// idle
+	if (psnd2[ 0 ] = @VSA_IDLE) then
+	begin
+
+		if (vsnd2 <> 0) then
+		begin
+		
+			//addbreakpoint(); nop(2);
+			// ensure sound is off
+			vsnd2 := 0;
+			poke(^@VICsnd2, 0, 0);
+			
+		end;	
+		return();		
+
+	end;
+	
+	// play note
+	if (psnd2[ 0 ] = @VSA_NOTE or psnd2[ 0 ] = @VSA_PAUSE) then
+	begin
+			
+		//addbreakpoint(); nop(3);
+		// if time = 0 at start, then this is a new note command			
+		if (vsnd2Time = 0) then
+		begin
+			 
+			vsnd2Time := psnd2[ 1 ]; // get duration
+			if psnd2[ 0 ] = @VSA_NOTE then poke(^@VICsnd2, 0, vsnd2);
+			if psnd2[ 0 ] = @VSA_PAUSE then poke(^@VICsnd2, 0, 0);			
+
+		end;
+
+		Snd2Time();
+
+	end;
+
+	// increment
+	if (psnd2[ 0 ] & @VSA_INC = @VSA_INC) then
+	begin
+	
+		// if time = 0 at start, then this is a new note command			
+		if (vsnd2Time = 0) then vsnd2Time := psnd2[ 1 ]; // get duration
+
+		vsnd2 := vsnd2 + (psnd2[ 0 ] - @VSA_INC);
+		poke(^@VICsnd2, 0, vsnd2);
+
+		Snd2Time();
+
+	end;
+
+	// decrement
+	if (psnd2[ 0 ] & @VSA_DEC = @VSA_DEC) then
+	begin
+	
+		// if time = 0 at start, then this is a new note command			
+		if (vsnd2Time = 0) then vsnd2Time := psnd2[ 1 ]; // get duration
+
+		vsnd2 := vsnd2 - (psnd2[ 0 ] - @VSA_DEC);
+		poke(^@VICsnd2, 0, vsnd2);
+
+		Snd2Time();
+
+	end;
+
+end;
+
+
+
+// Play active sounds on voice 3
+procedure UpdateSound3();
+begin
+
+	// idle
+	if (psnd3[ 0 ] = @VSA_IDLE) then
+	begin
+
+		if (vsnd3 <> 0) then
+		begin
+		
+			//addbreakpoint(); nop(2);
+			// ensure sound is off
+			vsnd3 := 0;
+			poke(^@VICsnd3, 0, 0);
+			
+		end;	
+		return();		
+
+	end;
+	
+	// play note
+	if (psnd3[ 0 ] = @VSA_NOTE or psnd3[ 0 ] = @VSA_PAUSE) then
+	begin
+
+		//addbreakpoint(); nop(3);
+		// if time = 0 at start, then this is a new note command			
+		if (vsnd3Time = 0) then
+		begin
+			 
+			vsnd3Time := psnd3[ 1 ]; // get duration
+			if psnd3[ 0 ] = @VSA_NOTE then poke(^@VICsnd3, 0, vsnd3);
+			if psnd3[ 0 ] = @VSA_PAUSE then poke(^@VICsnd3, 0, 0);			
+
+		end;
+
+		Snd3Time();
+
+	end;
+
+	// increment
+	if (psnd3[ 0 ] & @VSA_INC = @VSA_INC) then
+	begin
+
+		// if time = 0 at start, then this is a new note command			
+		if (vsnd3Time = 0) then vsnd3Time := psnd3[ 1 ]; // get duration
+
+		vsnd3 := vsnd3 + (psnd3[ 0 ] - @VSA_INC);
+		poke(^@VICsnd3, 0, vsnd3);
+
+		Snd3Time();
+
+	end;
+
+	// decrement
+	if (psnd3[ 0 ] & @VSA_DEC = @VSA_DEC) then
+	begin
+	
+		// if time = 0 at start, then this is a new note command			
+		if (vsnd3Time = 0) then vsnd3Time := psnd3[ 1 ]; // get duration
+
+		vsnd3 := vsnd3 - (psnd3[ 0 ] - @VSA_DEC);
+		poke(^@VICsnd3, 0, vsnd3);
+
+		Snd3Time();
+
+	end;
+
+end;
+
+
+
+// Play active sounds on voice 4 - FX
+procedure UpdateSoundfx();
+begin
+
+	// idle
+	if (psndfx[ 0 ] = @VSA_IDLE) then
+	begin
+
+		if (vsndfx <> 0) then
+		begin
+		
+			//addbreakpoint(); nop(2);
+			// ensure sound is off
+			vsndfx := 0;
+			poke(^@VICsndfx, 0, 0);
+			
+		end;	
+		return();		
+
+	end;
+	
+	// play note
+	if (psndfx[ 0 ] = @VSA_NOTE or psndfx[ 0 ] = @VSA_PAUSE) then
+	begin
+			
+		//addbreakpoint(); nop(3);
+		// if time = 0 at start, then this is a new note command			
+		if (vsndfxTime = 0) then
+		begin
+			 
+			vsndfxTime := psndfx[ 1 ]; // get duration
+			if psndfx[ 0 ] = @VSA_NOTE then poke(^@VICsndfx, 0, vsndfx);
+			if psndfx[ 0 ] = @VSA_PAUSE then poke(^@VICsndfx, 0, 0);			
+
+		end;
+
+		SndfxTime();
+
+	end;
+
+	// increment
+	if (psndfx[ 0 ] & @VSA_INC = @VSA_INC) then
+	begin
+		
+		// if time = 0 at start, then this is a new note command			
+		if (vsndfxTime = 0) then vsndfxTime := psndfx[ 1 ]; // get duration
+
+		vsndfx := vsndfx + (psndfx[ 0 ] - @VSA_INC);
+		poke(^@VICsndfx, 0, vsndfx);
+
+		SndfxTime();
+
+	end;
+
+	// decrement
+	if (psndfx[ 0 ] & @VSA_DEC = @VSA_DEC) then
+	begin
+		
+		// if time = 0 at start, then this is a new note command			
+		if (vsndfxTime = 0) then vsndfxTime := psndfx[ 1 ]; // get duration
+
+		vsndfx := vsndfx - (psndfx[ 0 ] - @VSA_DEC);
+		poke(^@VICsndfx, 0, vsndfx);
+
+		SndfxTime();
+
+	end;
+
+end;
+
+
+
+// ----------------------------------------------------------------------
+// Play active sounds
+procedure UpdateSound();
+begin
+
+	UpdateSound1();
+	UpdateSound2();
+	UpdateSound3();
+	UpdateSoundfx();
+
+end;

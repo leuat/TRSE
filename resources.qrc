@@ -296,5 +296,6 @@
         <file>resources/text/help/r/export.rtf</file>
         <file>resources/bin/columntab.bin</file>
         <file>resources/code/c64_keyboard_input.asm</file>
+        <file>resources/images/tutorials/pumpkid.png</file>
     </qresource>
 </RCC>

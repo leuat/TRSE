@@ -1,0 +1,421 @@
+/*
+	PUMPKID for the 16K expanded Vic 20
+	By Andy H @ hewco.uk - visit hewco.uk for more games
+	
+	Project settings: Vic 20 + 16k RAM
+*/
+program Pumpkid;
+var  
+
+	// I need to save some bytes, I don't use these
+	@ignoremethod "init16x8mul"
+	@ignoremethod "init16x8div"
+	@ignoremethod "init8x8div"
+	@ignoremethod "initeightbitmul"
+	@ignoremethod "initjoystick"
+	@ignoremethod "initmoveto"
+
+//	
+//------------------------------------------------------------------------------
+//
+
+	@define WAITVBL_LINE 130 		// 130 works for NTSC 150 // 155 appears to be max on PAL
+	
+	@define KEYB 197				// Read current key pressed
+
+//	
+//------------------------------------------------------------------------------
+//
+
+// Can uncomment these to see on Memory Analyzer
+//@userdata "$1000" "$11FF" "SCREEN"
+//@userdata "$1400" "$1600" "Charset data"
+//@userdata "$4800" "$5fff" "Compressed Level data"
+
+
+//	
+//------------------------------------------------------------------------------
+//
+	credits : string = "CREATED BY ANDY H - HEWCO.UK 2019";
+
+// Includes for packed data generates ORG addresses
+@requirefile "screens_packed.ras" "Please compile the corresponding 'screens.paw' before attempting to compile this program." 
+// The following include file is automatically generated during paw file build
+@include "screens_packed.ras"
+
+
+//	
+//------------------------------------------------------------------------------
+//
+
+// NOTE 1: Room from $1200 to $1399 for variables
+
+	// look up tables to speed up locating positions on the screen
+	scr : array[ SCREEN_HEIGHT ] of integer; // screen memory start addresses
+	clr : array[ SCREEN_HEIGHT ] of integer; // colour memory start addresses
+
+	// collision mask
+	@define CSPACE 0
+	@define CPKID  1
+	@define CCANDY 2
+	@define CSKULL 3
+	@define CMONSTER 5
+	@define CWALL 10
+	cMask : array [] of byte = (
+	@CSPACE, @CSPACE, @CSPACE, @CSPACE, @CSPACE, @CSPACE, @CSPACE, @CSPACE, 
+	@CSPACE, @CSPACE, @CSPACE, @CSPACE, @CSPACE, @CSPACE, @CSPACE, @CSPACE,
+	@CSPACE, @CSPACE, @CSPACE, @CSPACE, @CSPACE, @CSPACE, @CSPACE, @CSPACE, 
+	@CSPACE, @CSPACE, @CSPACE, @CWALL, @CWALL, @CWALL, @CWALL, @CWALL,
+	@CMONSTER, @CMONSTER, @CMONSTER, @CMONSTER, @CMONSTER, @CMONSTER, @CSKULL, @CSKULL, 
+	@CMONSTER, @CMONSTER, @CMONSTER, @CSPACE, @CSPACE, @CSPACE, @CCANDY, @CCANDY,
+	@CSPACE, @CSPACE, @CSPACE, @CSPACE, @CSPACE, @CSPACE, @CSPACE, @CSPACE, 
+	@CSPACE, @CSPACE, @CPKID, @CPKID, @CPKID, @CPKID, @CPKID, @CPKID);
+	
+	i,j,x,y,t : byte = 0;
+	n,s,e,w : byte = 0;
+	
+	p1 : pointer;
+
+	//------ Sound ------
+	psnd1, psnd2, psnd3, psndfx : pointer; // pointer to sound bytes in a definition	
+	sndFlag : byte = true;
+
+	//------ Game ------
+	ticks : byte = 0;		// a counter increases each frame on interrupt
+	oldTick : byte = 0;		// used to check when timer increases
+	
+	gameTimer : byte = 0;	// timer used for cloud movement
+	GAMETIMERMAX : byte = 50;
+	
+	@define GAMEMODE_PLAY		0
+	@define GAMEMODE_LOSTLIFE	1
+	@define GAMEMODE_BEATWITCH	2
+	gameMode : byte = @GAMEMODE_PLAY;
+
+	moonPos : byte = 2;		// position of moon, every move is 30 mins game time
+	cloudPos : byte = 0;	// position of cloud, every lap of screen makes moon move 1 space
+	
+	@define NUMBEROFLIVES 5
+
+	level : byte = 0;								// level number (also used on titles)
+	lives : byte = @NUMBEROFLIVES;					// number of player lives
+	
+	score : array[4] of byte = ($00,$00,$00,$00); 		// BCD score
+	scCandy : array[4] of byte = ($01,$00,$00,$00);		// score add for moon
+	scMoon : array[4] of byte = ($00,$01,$00,$00);		// score add for moon
+	scZombie : array[4] of byte = ($10,$00,$00,$00);	// score add for zombie
+	scGhost : array[4] of byte = ($05,$00,$00,$00);		// score add for ghost
+	scWitch : array[4] of byte = ($00,$10,$00,$00);		// score add for witch
+	
+	t11 : string = "11PM";
+	t12 : string = "MIDNIGHT";
+	t01 : string = "1@AM";
+	t02 : string = "2@AM";
+	t03 : string = "3@AM";
+	t04 : string = "4@AM";
+	t05 : string = "5@AM";
+	t06 : string = "6@AM";
+
+	//------ Player ------
+	px, py, pan, pd : byte = 0;	// player x, y, animation frame and player direction
+	panFrames : array[] of byte = (0,0,1,2,2,1);
+	pstep   : byte = 0;		// player step counter (how fast can move)
+	pbgchar : byte = 0;		// background character under player (use to restore when move out)
+	pbgcol  : byte = 0;		// background colour under player
+	@define PSTEPMAX 5
+	@define PANFRAMESMAX 5
+	@define PD_LEFT 58
+	@define PD_RIGHT 61	
+
+	//------ Witch ------
+	wx, wy, wd : byte = 0;	// witch x, y and direction
+	wbgchar : byte = 0;		// background char under witch
+	wbgcol  : byte = 0;		// background colour under witch
+	wsteps  : byte = 0;		// number of spaces to move
+	wdelay  : byte = 0;		// time to wait when turning
+	wdspeed : byte = 0;		// speed witch moves
+	wdcount : byte = 0;					// number of moves until fast witch slows down
+	@define WITCHCHAR 32	// start char for witch
+	@define WD_UP 0
+	@define WD_RIGHT 1
+	@define WD_DOWN 2
+	@define WD_LEFT 3
+
+	@define DATA_ADDR 	$1818		// where the additional data block starts
+@startblock @DATA_ADDR data 
+ 
+	//----- Ghosts -----
+	@define GHOSTSMAX 10
+	gNumGhosts : byte = 6;	// number of ghosts in play
+	gx, gy : array[ @GHOSTSMAX ] of byte;	// ghost x and y pos
+	gbgchar, gbgcol : array[ @GHOSTSMAX ] of byte;	// ghost bg char and colour
+	gmode : array[ @GHOSTSMAX ] of byte;	// ghost mode: hunt, candy, gone
+	@define GMODE_HUNT 0
+	@define GMODE_GONE 1
+	gtime : byte;			// Ghost delay counter
+	@define GHOSTTIMEDELAY 20	// time to wait before each ghost is moved
+	@define GHOSTRESPAWNDELAY 15 // time until dead ghost respawns
+	gcurrent : byte = 0;	// current ghost number processing
+	@define GHOSTCHAR 36
+	@define CGHOST_WIDTH 8	// how many chars on the horizontal a ghost will detect player
+	@define CGHOST_HEIGHT 5	// how many chars on the vertical a ghost will detect player
+
+	// ----- Zombies ------
+	@define ZOMBIEMAX 10
+	zNumZombies : byte = 0; // number of zombies in play
+	zx, zy : array[ @ZOMBIEMAX ] of byte; // zombie x and y
+	zbgchar, zbgcol : array[ @ZOMBIEMAX ] of byte; // background char and colour under zombie
+	ztime : byte = 10;		// how many frames to wait until a zombie moves
+	@define ZOMBIECHAR 34
+	@define TOMBSTONECHAR 27	// char zombies spawn at
+	zcurrent : byte = 0;	// current zombie number processing
+	zspawn : array[ @ZOMBIEMAX ] of byte; // zombie is spawning if not 0.  If >10 then has been hit by candy and counting down to spawn back up
+	@define ZOMBIESPAWNDELAY 10
+
+
+	// ----- Candy -----
+	@define CANDYCHAR 46
+	@define SKULLCHAR 38
+	cx, cy, cdx : byte = 0;			// candy x,y and dx/dy values
+	clife : byte = 0;				// how far candy can travel
+	@define CANDYLIFE 6				// distance for candy travel
+	cbgchar, cbgcol : byte = 0;		// background char/colour
+
+	candy : byte = 0;				// number of candy you have
+	candyscr : byte = 0;			// number of candy on screen
+	witchHits : byte = 0;			// number of witch hits made
+	@define CANDYMAX 6				// max candy and witch hits
+
+	// ------ LEVEL progression ------
+	lghosts : array[] of byte =  (3,4,4,5,5,6,6,7,7,8,9,10,10);
+	lwitch :  array[] of byte =  (7,7,7,7,6,6,6,5,5,5,5,4,4);
+	lzombie :  array[] of byte = (11,10,9,8,8,7,7,6,6,5,5,4,4);
+
+	// lost child
+	lostchildlevel: byte = 0;			// the level the next lost child will appear on
+	lx, ly : byte = 0;				// x and y post of lost child
+
+	stepsnd : byte = 0;
+
+@endblock
+
+
+//	
+//------------------------------------------------------------------------------
+//
+
+	// memory map addresses
+	@define CHAR_ADDR	$1400		// character address
+	@define COLOUR_ADDR	$1600		// Colour data address
+	@define TCOLOUR_ADDR	$1640	// where the main code will start
+//	@define SKULL_ADDR	$1674		// Skull address
+	@define GOCOLOUR_ADDR	$16B4	// Game Over Colour data address
+	@define GWCOLOUR_ADDR	$16F4	// Game Won Colour data address
+	@define FAILCOLOUR_ADDR	$1734	// Fail - lost life Colour data address
+	@define NEXTCOLOUR_ADDR	$1774	// Next level Colour data address
+	@define CREDITSCOLOUR_ADDR	$17B4	// Credits Colour data address
+	// note: variable block above starts at $17AA DATA2_ADDR-------------------
+	@define CODE_ADDR 		$1900	// where the main code will start
+
+// NOTE 2: $1400-$1599 = 64 Custom characters BIN
+
+	// 64 chars (64*8=512 bytes) $1400+$200 = $1600
+	charset           : incbin("pumpkid.bin", @CHAR_ADDR);  // custom character set
+
+	// 64 bytes ($40) - colour map for each character (Derived from CharPad app)
+	colordata         : incbin( "colour.bin", @COLOUR_ADDR );
+	// 52 bytes ($40) - colour map for each character (Derived from CharPad app)
+	tcolordata        : incbin( "titlescol.bin", @TCOLOUR_ADDR );
+	// 64 bytes ($40) - colour map for Game Over (Derived from CharPad app)
+	gameovercolordata : incbin( "gameover-col.bin", @GOCOLOUR_ADDR );
+	// 64 bytes ($40) - colour map for game won (Derived from CharPad app)
+	gamewoncolordata  :	incbin( "gamewon-col.bin", @GWCOLOUR_ADDR );
+	// 64 bytes ($40) - colour map for game won (Derived from CharPad app)
+	gamefailcolordata : incbin( "fail-col.bin", @FAILCOLOUR_ADDR );
+	// 64 bytes ($40) - colour map for game won (Derived from CharPad app)
+	gamenextcolordata : incbin( "gamenext-col.bin", @NEXTCOLOUR_ADDR );
+	// 64 bytes ($40) - colour map for credits screens
+	tcolorcrdata      : incbin( "credits-col.bin", @CREDITSCOLOUR_ADDR );
+	// skull data to swap in
+//	skull             : incbin("skull-gfx.bin", @SKULL_ADDR );
+
+
+
+//	
+//------------------------------------------------------------------------------
+//
+
+// NOTE 3: Then all variables and main code to continue after
+@startblock @CODE_ADDR MainCode  
+
+// forward references
+procedure HitWitch();
+procedure HitGhost();
+procedure HitZombie();
+
+
+
+@include "sound.ras"
+@include "music.ras"
+@include "lostchild.ras"
+@include "setup.ras"
+@include "screen.ras"
+@include "witch.ras"
+@include "ghost.ras"
+@include "zombie.ras"
+@include "candy.ras"
+@include "player.ras"
+@include "gameTimer.ras"
+@include "collisions.ras"
+@include "game.ras"
+@include "titles.ras"
+
+
+
+//	
+//------------------------------------------------------------------------------
+//
+
+interrupt vbl();
+begin
+	StartIRQ(0);
+
+	ticks := mod(ticks + 1, 100);
+	if sndFlag = true then UpdateSound();
+		
+	closeIRQ();
+end;
+
+
+
+// **** MAIN PROGRAM ****
+begin
+
+	Initialise();
+	SetupSound();
+
+	level := 0;		// use to determine which title screen showing
+
+	while (true) do
+	begin
+
+		BlankScreen(); // ensure screen is black before changing
+		
+		case level of
+			0 : TitleCredits();
+			1 : TitleScreen();
+			2 : LastScore();
+			3 : TitleStory();
+			4 : TitleStory2();
+			5 : TitleCast();
+			6 : TitleHowTo();
+		end;
+
+			
+		// check for if joy1 & JOY_FIRE to start game, or go to next title page
+		if (joy1 & JOY_FIRE) then
+		begin
+		
+			// Play shoot sound
+			psndfx:=sndShoot;
+			PlaySndfx(254);
+				
+			// todo: reset score ----------------------------------------
+			lives := @NUMBEROFLIVES;
+			score := bcdsub(score, score, 4);
+			level := 0;		// start level
+			witchHits := 0;		// start with no hits on the witch
+			
+			lostchildlevel := mod( random(), 3 ) + 1;
+			//lostchildlevel := 0;
+
+			// game can start, repeat while have lives
+			while ( lives > 0 ) do
+			begin
+				// randomize
+				asm("
+					lda $9004
+					sta Random+1
+				");
+
+				SetupTimer();
+				LevelStart(); // animate player entering game
+
+				SetUpGameLevel();
+
+				// The main game loop
+				GameLoop();
+
+//addbreakpoint();				
+
+				if (gameMode = @GAMEMODE_LOSTLIFE) then
+				begin
+
+					lives := lives - 1;
+				
+					if ( lives = 0 ) then
+					
+						// Game over man, game over 
+						TitleGameOver()
+						
+					else
+					begin
+					
+						// display try again fail screen
+						TitleFail();
+						//level := level + 1;
+						
+					end;
+					
+				end;
+				
+				if (gameMode = @GAMEMODE_BEATWITCH) then
+				begin
+				
+					level := level + 1;
+					
+					if level = 13 then
+					begin
+					
+						// beaten game
+						TitleGameWon();
+						lives := 0; // end game
+
+					end
+					else
+					begin
+					
+						// beat level, start new level
+						TitleGameNext();
+						witchHits := 0;		// start with no hits on the witch
+						
+						if (lives < 5) then
+						begin
+						
+							if level = 2 then lives := lives + 1;
+							if level = 5 then lives := lives + 1;
+							if level = 9 then lives := lives + 1;
+							if level = 11 then lives := lives + 1;
+							
+						end;
+					
+					end;
+					
+				end;
+			
+			end;
+			
+			// no more lives left, get ready to return to the titles
+			level := 0;		// next title screen to show
+			
+		end;
+		
+		// next title screen
+		level := level + 1;
+		if (level > 6) then level := 0;
+		
+	end;
+
+end.
+
+

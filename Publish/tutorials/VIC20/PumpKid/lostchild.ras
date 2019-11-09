@@ -1,0 +1,44 @@
+// check if put lost child in
+procedure UpdateLostChild();
+begin
+
+	if (moonPos = 8) then	// moon pos allows spawn
+	if (lx = 0) then 		// lx lost child x is 0 - not spawned
+	if (level < 12) then	// don't spawn on last level
+	begin
+	
+		i := 0;
+		while i = 0 do
+		begin
+		
+			lx := mod(random(), 19)+1;
+			ly := mod(random(), 18)+4;
+			screenmemory := addresstable(scr, 0, ly);
+			if (cMask[ screenmemory[ lx ] ] = @CSPACE) then
+			begin
+			
+				i := 1;
+				screenmemory[ lx ] := 39;
+				p1 := addresstable(clr, 0, ly);
+				p1[ lx ] := YELLOW;
+			
+			end;
+
+		end;
+
+	end;
+	
+	if (moonPos = 10) then
+	if (lx <> 0) then
+	begin
+	
+		// next time will appear
+		screenmemory := addresstable(scr, 0, ly);
+		lostchildlevel := lostchildlevel + ( mod(random(),2) + 1 );
+		screenmemory[ lx ] := 0;
+		lx := 0;
+		ly := 0;
+
+	end;
+
+end;

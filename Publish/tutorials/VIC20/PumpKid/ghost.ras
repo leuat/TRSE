@@ -1,0 +1,264 @@
+// Respawn gcurrent ghost to somewhere on the screen
+procedure Ghost_Respawn();
+begin
+
+	if (gcurrent >= gNumGhosts) then
+	begin
+	
+		gmode[ gcurrent ] := @GMODE_HUNT;
+		gx[ gcurrent ] := 1;
+		gy[ gcurrent ] := 1;
+		return();
+
+	end;
+
+	// find free space
+	j := 0;
+	while ( j = 0 ) do
+	begin
+
+		x := mod( random(), 20 ) + 1;
+		y := mod( random(), 18 ) + 4;
+		
+		screenmemory := addresstable(scr, 0, y);
+		p1 := addresstable(scr, x-1, y-1);
+		
+		// check top, left, centre, right and bottom
+		
+		n := cMask[ p1[ 1 ] ];
+		w := cMask[ p1[ 22 ] ];
+		e := cMask[ p1[ 24 ] ];
+		s := cMask[ p1[ 45 ] ];
+		i := cMask[ p1[ 23 ] ] + n + s + e + w;
+		
+		if i=0 then
+		begin
+
+			// Found a free space
+			p1 := addresstable(clr, 0, y);
+			
+			j := 1; // can now exit this loop
+			
+			gx[ gcurrent ] := x;
+			gy[ gcurrent ] := y;
+			
+			gbgchar[ gcurrent ] := screenmemory[ x ];
+			gbgcol[ gcurrent ] := p1[ x ];
+			
+			// Any ghost not in play set to Gone
+			if gcurrent < gNumGhosts then
+			begin
+
+				gmode[ gcurrent ] := @GMODE_HUNT;
+	
+				screenmemory[ x ] := @GHOSTCHAR;
+				p1[ x ] := WHITE;
+				
+			end
+			else
+			begin
+			
+				gmode[ gcurrent ] := @GMODE_GONE;
+				gx[ gcurrent ] := 0;
+			
+			end;
+			
+		end;
+
+	end;
+
+end;
+
+
+
+// Find a location for each ghost on the map
+procedure PlaceAllGhosts();
+begin
+
+	for gcurrent := 0 to @GHOSTSMAX do
+	begin
+
+		Ghost_Respawn();
+		
+		if gcurrent < gNumGhosts then
+		begin
+
+			// play spawn sound
+			psnd3 := sndGhostAppear;
+			PlaySnd3( 200 );
+		
+			for i := 0 to 30 do
+			begin
+
+				// wait for a VBL		
+				while (ticks = oldTick) do;
+				oldTick := ticks;		
+
+			end;
+			
+		end;
+		
+	end;
+
+	gcurrent := 0;
+
+end;
+
+
+
+// Display all ghosts
+procedure DisplayGhosts();
+begin
+
+	for i := 0 to gNumGhosts do
+	begin
+	
+		// Ghosts GONE in limbo will have a y pos < 3
+		if (gy[ i ] > 3) then
+		begin
+		
+			screenmemory := addresstable( scr, 0, gy[ i ] );
+			p1 := addresstable( clr, 0, gy[ i ] );
+			screenmemory[ gx[ i ] ] := @GHOSTCHAR + ((gcurrent + i) >> 1 & 1);
+			p1[ gx[ i ] ] := WHITE;
+		
+		end;
+	end;
+
+end;
+
+
+
+// move gcurrent ghost
+procedure Ghost_Move();
+begin
+
+	x := gx[ gcurrent ];
+	y := gy[ gcurrent ];
+	
+	n := x; // store current location, in case decide cannot move to new space
+	s := y;
+
+	screenmemory := addresstable(scr, 0, y );
+	p1 := addresstable(clr, 0, y );
+
+	// restore the bg
+	screenmemory[ x ] := gbgchar[ gcurrent ];
+	p1[ x ] := gbgcol[ gcurrent ];
+	
+	// move
+	if (isoverlappingwh(x,y,px,py, @CGHOST_WIDTH, @CGHOST_HEIGHT))	then
+	begin
+	
+		if gmode[ gcurrent ] = @GMODE_HUNT then
+		begin
+
+			if x > px then x := x - 1;
+			if x < px then x := x + 1;
+
+		end;
+
+		// is new space free?  If not move back
+		p1 := addresstable(scr, x, y);
+		if cMask[ p1[ 0 ] ] > @CPKID then x := n; 
+
+		if gmode[ gcurrent ] = @GMODE_HUNT then
+		begin
+
+			if y > py then y := y - 1;
+			if y < py then y := y + 1;
+
+		end;
+		
+		// is new space free?  If not move back
+		p1 := addresstable(scr, x, y);
+		if cMask[ p1[ 0 ] ] > @CPKID then y := s; 		
+
+	end
+	else
+	begin
+
+		i := random();
+		
+		// x movement
+		if (i & 1) then x := x + 1 else x := x - 1;
+		p1 := addresstable(scr, x, y);
+		if cMask[ p1[ 0 ] ] > @CPKID then x := n; 
+		
+		// y movement
+		if (i & 2) then y := y - 1 else y := y + 1;
+		// is new space free?  If not move back
+		p1 := addresstable(scr, x, y);
+		if cMask[ p1[ 0 ] ] > @CPKID then y := s; 		
+
+	end;
+
+	gx[ gcurrent ] := x;
+	gy[ gcurrent ] := y;
+	
+	// get new bg
+	screenmemory := addresstable(scr, 0, y );
+	p1 := addresstable(clr, 0, y );
+	gbgchar[ gcurrent ] := screenmemory[ x ];
+	gbgcol[ gcurrent ] := p1[ x ];
+	
+	// check if ghost has walked into Candy
+	if (cx = gx[ gcurrent ]) then
+		if (cy = gy[ gcurrent ]) then
+		begin
+		
+			i := gcurrent;
+			HitGhost(); // destroy candy and put ghost into limbo (GONE)
+		
+		end;
+
+end;
+
+
+
+// Update ghosts
+procedure UpdateGhosts();
+begin
+
+	gtime := gtime + 1;
+
+	if gtime > @GHOSTTIMEDELAY then
+	begin
+	
+		// time to move a ghost
+		gtime := 0;
+		
+		if ( gcurrent < gNumGhosts ) then
+		begin
+
+			// move ghost - but only when not GONE in limbo
+			if gmode[ gcurrent ] = @GMODE_HUNT then Ghost_Move();
+
+			// if ghost does not exist, count down until it can be respawned
+			if gmode[ gcurrent ] > @GMODE_GONE then
+			begin
+
+				gmode[ gcurrent ] := gmode[ gcurrent ] - 1;
+				if gmode[ gcurrent ] = @GMODE_GONE then 
+				begin
+				
+					Ghost_Respawn();
+					// play spawn sound
+					psnd3 := sndGhostAppear;
+					PlaySnd3( 200 );
+					
+				end;
+
+			end;
+
+		end;
+
+		DisplayGhosts();
+
+		// set gcurrent to the next ghost to be moved (next time gtime is up)
+		gcurrent := gcurrent + 1;
+		if gcurrent = @GHOSTSMAX then gcurrent := 0;
+
+	end;
+	
+end;

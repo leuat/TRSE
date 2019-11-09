@@ -1,0 +1,212 @@
+
+
+// Find a tombstone to spawn a zombie at
+procedure SpawnAZombie();
+begin
+
+	if zNumZombies >= @ZOMBIEMAX then return(); //can't spawn any more
+
+	// position of found tombstone
+	n := 0;
+	s := 0;
+
+	i := 0;
+	t := mod(random(), 12); // which tombstone
+
+	// look for a tombstone
+	for y := 3 to 22 do
+		for x := 1 to 21 do
+		begin
+		
+			screenmemory := addresstable(scr, 0, y);
+			if screenmemory[ x ] = @TOMBSTONECHAR then
+			begin
+			
+				n := x;
+				s := y;
+				
+				if (i = t) then
+				begin
+				
+					x := 20;
+					y := 21;
+
+				end;
+				
+				i := i + 1;
+
+			end;
+
+		end;
+
+		// n and s contain spawn pos, or last tombstone found
+		// or 0 if none found
+		if (n > 0) then
+		begin
+		
+			zx[ zNumZombies ] := n;
+			zy[ zNumZombies ] := s;
+			zbgchar[ zNumZombies ] := 0;
+			zbgcol[ zNumZombies ] := black;
+			zspawn[ zNumZombies ] := 5;
+			
+			zNumZombies := zNumZombies + 1;
+			
+			// play zombie appearing sound
+			psnd2 := sndGrave;
+			PlaySnd2(128);
+
+		end;
+
+end;
+
+
+
+// Display all zombies
+procedure DisplayZombies();
+begin
+
+	for i := 0 to zNumZombies do
+	begin
+	
+		screenmemory := addresstable( scr, 0, zy[ i ] );
+		p1 := addresstable( clr, 0, zy[ i ] );
+		
+		// Draw zombie based on state
+		t := zspawn[ i ];
+		x := zx[ i ];
+		case t of
+			
+			0 : screenmemory[ x ] := @ZOMBIECHAR + (random() & 1);
+			1 : screenmemory[ x ] := 40; // rising from the grave
+			2 : screenmemory[ x ] := 41;
+			3 : screenmemory[ x ] := 42;
+			
+		else
+		begin
+			
+			screenmemory[ x ] := 42;
+
+		end;
+		
+		p1[ x ] := GREEN;
+
+	end;
+
+end;
+
+
+
+// move zcurrent zombie
+procedure Zombie_Move();
+begin
+
+	x := zx[ zcurrent ];
+	n := x; // store current location, in case decide cannot move to new space
+
+	y := zy[ zcurrent ];
+	s := y;
+
+	screenmemory := addresstable(scr, 0, y );
+	p1 := addresstable(clr, 0, y );
+
+	// restore the bg
+	screenmemory[ x ] := zbgchar[ zcurrent ];
+	p1[ x ] := zbgcol[ zcurrent ];
+	
+
+	t := random() & 3;
+	if (t <= 1) then
+	begin
+
+		if x > px then x := x - 1;
+		if x < px then x := x + 1;
+
+		// is new space free?  If not move back
+		p1 := addresstable(scr, x, y);
+		if cMask[ p1[ 0 ] ] > @CPKID then x := n; 
+
+
+		if y > py then y := y - 1;
+		if y < py then y := y + 1;
+
+		// is new space free?  If not move back
+		p1 := addresstable(scr, x, y);
+		if cMask[ p1[ 0 ] ] > @CPKID then y := s;
+		
+	end;
+
+	if (t = 2) then
+	begin
+
+		i := random();
+		
+		// x movement
+		if (i & 1) then x := x + 1 else x := x - 1;
+		p1 := addresstable(scr, x, y);
+		if cMask[ p1[ 0 ] ] > @CPKID then x := n; 
+		
+		// y movement
+		if (i & 2) then y := y - 1 else y := y + 1;
+		// is new space free?  If not move back
+		p1 := addresstable(scr, x, y);
+		if cMask[ p1[ 0 ] ] > @CPKID then y := s; 		
+
+	end;
+	// else if = 3 don't move
+
+
+	zx[ zcurrent ] := x;
+	zy[ zcurrent ] := y;
+	
+	// get new bg
+	screenmemory := addresstable(scr, 0, y );
+	p1 := addresstable(clr, 0, y );
+	
+	zbgchar[ zcurrent ] := screenmemory[ x ];
+	zbgcol[ zcurrent ] := p1[ x ];
+	
+	// check if zombie has walked into players candy
+	if (cx = zx[ zcurrent ]) then
+		if (cy = zy[ zcurrent ]) then 
+		begin
+		
+			i := zcurrent;
+			HitZombie(); // stun the zombie
+		
+		end;
+
+end;
+
+
+
+// Update zombies
+procedure UpdateZombies();
+begin
+
+
+	if zNumZombies = 0 then return();
+
+	// only move every ztime in ticks
+	if mod(ticks, ztime) = 1 then
+	begin
+	
+		// time to move a zombir
+		
+		if ( zcurrent < zNumZombies ) then
+		begin
+		
+			if ( zspawn[ zcurrent ] = 0 ) then Zombie_Move();
+			if ( zspawn[ zcurrent ] > 0 ) then zspawn[ zcurrent ] := zspawn[ zcurrent ] - 1;
+
+		end;
+
+		DisplayZombies();
+
+		// set zcurrent to the next zombie to be moved (next time gtime is up)
+		zcurrent := zcurrent + 1;
+		if zcurrent = @ZOMBIEMAX then zcurrent := 0;
+
+	end;
+	
+end;

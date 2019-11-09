@@ -1,0 +1,202 @@
+
+procedure SpawnCandy();
+begin
+
+	x := mod(random(), 20) + 1;
+	y := mod(random(), 16) + 4;
+	
+	t := 0;
+
+	screenmemory := addresstable(scr, 0, y);
+	while (t = 0) do
+	begin
+	
+		if ( cMask[ screenmemory[ x ] ] = @CSPACE ) then t := 1;
+		
+		if (t = 0) then
+		begin
+		
+			x := x + 1;
+			if x > 20 then
+			begin
+		
+				x := 1;
+				y := y + 1;
+				if (y > 22) then y := 4;
+		
+			end;
+
+		end;
+		
+	end;
+
+	p1 := addresstable(clr, 0, y);
+	screenmemory[ x ] := @CANDYCHAR;
+	p1[ x ] := CYAN;
+	candyscr := candyscr + 1;
+	
+	// play appear sound
+	if (psnd2[ 0 ] = @VSA_IDLE) then
+	begin
+		
+		psnd2 := sndCAppear;
+		PlaySnd2(250);
+	
+	end;
+	
+end;
+
+
+
+// remove the candy in flight
+procedure EndCandy();
+begin
+
+	p1 := addresstable(clr, 0, cy);
+	if (cy > 3) then p1[ cx ] := CYAN;
+
+	cx := 0;
+	cy := 0;
+	clife := 0;
+	
+end;
+
+
+// draw the number of candy and witch hits
+procedure DrawCandyCounter();
+begin
+
+	// draw candy counter
+	screenmemory := $100F;
+	p1 := $940F;
+	
+	fori i := 1 to 6 do
+		screenmemory[ i ] := 0;
+
+
+	fori i := 1 to 6 do
+	begin
+
+		if (candy >= i) then
+		begin
+
+			screenmemory[ 7 - i ] := @CANDYCHAR;
+			p1[ 7 - i ] := CYAN;
+
+		end;
+		
+		if (witchHits >= i) then
+		begin
+			
+			screenmemory[ i ] := @SKULLCHAR;
+			p1[ i ] := WHITE;
+		
+		end;
+	
+	end;
+	
+	// draw witch hit counter
+
+end;
+
+
+
+// move the candy when fired
+procedure MoveCandy();
+begin
+
+	screenmemory := addresstable(scr, 0, cy);
+	p1 := addresstable(clr, 0, cy);
+
+	screenmemory[ cx ] := cbgchar;
+	p1[ cx ] := cbgcol;
+	
+	x := cx;
+	if (cdx = 1) then cx := cx + 1;
+	if (cdx <> 1) then cx := cx - 1;
+	//cx := cx + cdx;
+	
+	if (cMask[ screenmemory[ cx ] ] = @CWALL) then 
+	begin
+		
+		cx := x;
+		if candyscr < 4 then candyscr := candyscr + 1;
+	
+	end;
+
+	cbgchar := screenmemory[ cx ];
+	cbgcol  := p1[ cx ];
+		
+	screenmemory[ cx ] := @CANDYCHAR + ((ticks >> 1) & 1);
+	p1[ cx ] := YELLOW;
+		
+
+	clife := clife - 1;
+	if (cx = x or clife = 0) then EndCandy();
+
+end;
+
+
+
+// process the candy
+procedure UpdateCandy();
+begin
+
+	if (joy1pressed & JOY_FIRE) then
+	begin
+	
+		// pressed fire
+		if (clife = 0) then
+		if (candy > 0) then
+		begin
+		
+			// candy is not currently on screen
+			cy := py;
+			
+			if (pd = @PD_LEFT) then cdx := -1;
+			if (pd = @PD_RIGHT) then cdx := 1;
+
+			screenmemory := addresstable(scr, 0, cy);
+			p1 := addresstable(clr, 0, cy);
+
+			if (cdx = 1) then x := px + 1;
+			if (cdx <> 1) then x := px - 1;
+			
+			if ( cMask[ screenmemory[ x ] ] = @CWALL ) then
+			begin
+			
+				cy := 0; // next to wall, don't fire
+				cx := 0;
+				cdx := 0;
+				
+			end
+			else
+			begin
+
+				// ok to fire
+				cbgchar := pbgchar;//0;//screenmemory[ cx ];
+				cbgcol := white;//p1[ cx ];
+			
+				cx := px;
+
+				clife := @CANDYLIFE;
+			
+				candy := candy - 1;
+				DrawCandyCounter();
+				
+				// Play shoot sound
+				psndfx:=sndShoot;
+				PlaySndfx(254);
+			
+			end;
+
+		end;
+
+	end;
+	
+	if (clife > 0) then
+		// candy has been fired
+		if (ticks & 1 = 0) then MoveCandy();
+
+
+end;

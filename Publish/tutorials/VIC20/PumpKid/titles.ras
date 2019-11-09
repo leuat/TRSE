@@ -1,0 +1,434 @@
+// Animate 2 chars on title screen
+procedure DrawTitleFrame1();
+begin
+	screenmemory[0] := 14;
+	screenmemory[1] := 15;
+end;
+
+
+
+// Animate 2 chars on title screen
+procedure DrawTitleFrame2();
+begin
+	screenmemory[0] := 30;
+	screenmemory[1] := 31;
+end;
+
+
+
+// Stay on screen for 't' time or until fire pressed
+procedure ScreenPause();
+begin
+
+	while (t > 0) do
+	begin
+			
+		// how long to stay on screen
+		t := t - 1;
+
+		for i := 0 to 30 do
+		begin
+	
+			// wait for a VBL		
+			while (ticks = oldTick) do;
+			oldTick := ticks;
+
+			// check joystick
+			readjoy1();
+			if (joy1pressed & JOY_FIRE) then
+			begin
+				t := 0;
+				i := 29;
+			end;
+			
+		end;
+
+	end;
+	
+end;
+
+
+// Main title screen
+procedure TitleScreen();
+begin
+
+	// clear fire pressed from game over
+	readjoy1();
+
+	decrunchfromindex(packedScreens,2);	// chars for title screen
+	decrunchfromindex(packedScreens,0);	// title screen
+	ColourTitleScreen();
+
+	SetupMusic(); // reset music vars
+
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK;
+		
+	screenmemory := $1187;
+
+	t := 20;
+
+	while (t > 0) do
+	begin
+			
+		// 14 and 30
+		j := j + 1;
+		if (j & 1 = 1) then DrawTitleFrame1() else DrawTitleFrame2();		
+
+		// how long to stay on title screen
+		t := t - 1;
+
+		for i := 0 to 30 do
+		begin
+	
+			// wait for a VBL		
+			while (ticks = oldTick) do;
+			oldTick := ticks;
+
+			UpdateTitleMusic(); // play music
+
+			// check joystick
+			readjoy1();
+			if (joy1pressed & JOY_FIRE) then
+			begin
+				t := 0;
+				i := 29;
+			end;
+			
+		end;
+
+	end;
+	
+	poke(^@VICvolume,0,15);  // restore volume to max, music brings it down
+	
+end;
+
+
+
+// Story screen
+procedure TitleCredits();
+begin
+
+	decrunchfromindex(packedScreens,31);	// chars
+	decrunchfromindex(packedScreens,32);	// screen
+	ColourCreditsScreen();
+
+	t := 10;
+
+	ScreenPause();
+	
+end;
+
+
+
+// Story screen
+procedure TitleStory();
+begin
+
+	decrunchfromindex(packedScreens,1);	// chars for game
+	decrunchfromindex(packedScreens,8);	// story screen
+	ColourTitleScreen2();
+
+	t := 20;
+
+	ScreenPause();
+	
+end;
+
+
+
+// Story screen
+procedure TitleStory2();
+begin
+
+	decrunchfromindex(packedScreens,1);	// chars for game
+	decrunchfromindex(packedScreens,11);	// story screen 2
+	ColourTitleScreen2();
+
+	t := 20;
+
+	ScreenPause();
+	
+end;
+
+
+
+// Cast of characters screen
+procedure TitleCast();
+begin
+
+	BlankScreen();
+
+	decrunchfromindex(packedScreens,1);	// chars for game
+	decrunchfromindex(packedScreens,9);	// cast screen
+	ColourTitleScreen2();
+	
+	t := 20;
+
+	ScreenPause();
+	
+end;
+
+
+
+// How to play screen
+procedure TitleHowTo();
+begin
+
+	BlankScreen();
+
+	decrunchfromindex(packedScreens,1);	// chars for game
+	decrunchfromindex(packedScreens,10);	// How to play screen
+	ColourTitleScreen2();
+	
+	t := 20;
+
+	ScreenPause();
+	
+end;
+
+
+
+// last score
+procedure LastScore();
+begin
+
+	BlankScreen();
+	
+	decrunchfromindex(packedScreens,1);	// chars for game
+	decrunchfromindex(packedScreens,30);	// How to play screen
+	
+	screenmemory := addresstable(scr, 7, 12);
+	bcdprint(score, 4);
+	ColourTitleScreen2();
+
+	t := 5;
+
+	ScreenPause();
+
+end;
+
+
+
+// level start sequence
+procedure LevelStart();
+begin
+
+	BlankScreen();
+
+	decrunchfromindex(packedScreens,1);	// charset for game
+	decrunchfromindex(packedScreens,3);	// level start screen
+	decrunchfromindex(packedScreens,14);	// header
+	ColourScreen();
+	ColourHeader();
+
+	screenmemory := $1086;
+
+	if level < 12 then
+	begin
+
+		// draw date
+		i := 12 - level;
+		printdecimal(i, 1);
+		
+	end
+	else
+	begin
+	
+		// HALLOWEEN
+		printstring("GET@READY@FOR",0,13);	
+
+	end;
+	
+	DisplayScore();
+
+	// draw number of lives
+	screenmemory := $111e;
+	n := lives + 5;
+	for i:= 5 to n do
+		screenmemory[ i ] := 39;
+	n := n - 1;
+
+	// witch
+	x := 0;
+	y := 7;
+	screenmemory := addresstable(scr, 0 , y);
+	p1 := addresstable(clr, 0 , y);
+
+	pan := 0;
+
+	psnd1 := sndWitchDive;
+	PlaySnd1( 255 );
+
+	t := 80;
+
+	while (t > 0) do
+	begin
+			
+		// how long to stay on level start screen
+		t := t - 1;
+
+		// draw witch
+		if x<21 then
+		begin
+					
+			// draw and colour
+			screenmemory[ x ] := 0;
+			
+			x := x + 1;
+			if (y<12) then y := y + 1;
+			screenmemory := addresstable(scr, 0 , y);
+			p1 := addresstable(clr, 0 , y);
+
+			screenmemory[ x ] := 33;
+			p1[ x ] := GREEN;
+			
+			// when x pos = n (pos of last player life) - change to pumpkid
+			if ( x = n ) then
+			begin
+
+				screenmemory[ x+22 ] := 62;
+				p1[ x+22 ] := RED;
+				
+				psnd3 := sndWitchSpell;
+				PlaySnd3( 195 );
+
+			end;
+			
+			// inc x, when end of screen, wipe and no longer draw
+			if x = 21 then
+			begin
+
+				screenmemory[ x ] := 0;
+				screenmemory := $111e;
+				p1 := $951e;
+				pd := @PD_RIGHT;
+				n := n << 2;
+
+			end;
+
+		end;
+
+		// when pumpkid has been transformed, animated (look around) then move ->
+		if x = 21 then
+		if n < 88 then
+		begin
+
+			// update animation frame
+			pan := pan + 1;
+			if pan > @PANFRAMESMAX then pan := 0;
+
+			screenmemory[ n >> 2 ] := 0;
+			n := n + 1;
+			screenmemory[ n >> 2 ] := panFrames[ pan ] + pd;
+			p1[ n >> 2 ] := red;
+			s := s + 1;
+			if s = 64 then s := 61;
+			if n = 88 then screenmemory[ n >> 2 ] := 0;
+			
+			if (mod(n,4) = 0) then
+			begin
+			
+				psnd1 := sndPumpkidFootsteps;
+				PlaySnd1( 160 + stepsnd );
+				if stepsnd = 0 then stepsnd := 30 else stepsnd := 0;
+				
+			end;
+			
+		end;
+
+
+		for i := 0 to 4 do
+		begin
+	
+			// wait for a VBL		
+			while (ticks = oldTick) do;
+			oldTick := ticks;
+
+			// check joystick
+			readjoy1();
+			if (t < 60 ) then // force short delay before can skip
+				if (joy1 & JOY_FIRE) then t := 0;
+			
+		end;
+
+	end;
+
+end;
+
+
+
+// Fail screen - just lost a life
+procedure TitleFail();
+begin
+
+	BlankScreen();
+	
+	decrunchfromindex(packedScreens,12);	// chars for screen
+	decrunchfromindex(packedScreens,13);	// screen map
+	ColourFailScreen();
+
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK;
+		
+	t := 10;
+
+	ScreenPause();
+	
+end;
+
+// Game Over screen - no more lives
+procedure TitleGameOver();
+begin
+
+	BlankScreen();
+	
+	decrunchfromindex(packedScreens,4);	// chars for screen
+	decrunchfromindex(packedScreens,6);	// screen map
+	ColourGameOverScreen();
+
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK;
+		
+	t := 10;
+
+	ScreenPause();
+	
+end;
+
+
+
+// Game Won screen - beaten the witch
+procedure TitleGameWon();
+begin
+
+	BlankScreen();
+	
+	decrunchfromindex(packedScreens,5);	// chars for screen
+	decrunchfromindex(packedScreens,7);	// screen map
+	ColourGameWonScreen();
+
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK;
+		
+	t := 100;
+
+	ScreenPause();
+	
+end;
+
+
+
+// Game Next screen - beaten the witch but not on halloween
+procedure TitleGameNext();
+begin
+
+	BlankScreen();
+	
+	decrunchfromindex(packedScreens,28);	// chars for screen
+	decrunchfromindex(packedScreens,29);	// screen map
+	ColourGameNextScreen();
+
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK;
+		
+	t := 10;
+
+	ScreenPause();
+	
+end;

@@ -1,0 +1,285 @@
+
+procedure CollisionWait();
+begin
+
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK + RED;
+	
+	p1 := $9430;
+
+	readjoy1();
+	readjoy1();
+	joy1pressed := 0;
+	
+	x := 1;
+	y := 1;
+	
+	while (psnd1[ 0 ] <> @VSA_IDLE) do
+	begin
+	end;
+	StopSounds();
+
+	sndFlag := false; // stop sounds
+	
+	while joy1pressed & JOY_FIRE = false do
+	begin
+	
+		x := y;
+		y := y + 1;
+		if y > 7 then y := 1;
+
+		readjoy1();
+		for t:= 0 to 14 do
+		begin
+			p1[ t ] := x;
+
+			x := x + 1;
+			if x > 7 then x := 1;
+		end;
+
+		// wait for a VBL		
+		//while (ticks = oldTick) do;
+		//oldTick := ticks;	
+
+	end;
+	
+	sndFlag := true;
+
+	// Play shoot sound
+	psndfx:=sndShoot;
+	PlaySndfx(254);
+
+end;
+
+
+
+// Player collided with monster?
+procedure CollisionPlayer();
+begin
+
+	// special case - check for time up
+	if (moonPos = 19) then
+		if (cloudPos = 21) then
+		begin
+		
+			gameMode := @GAMEMODE_LOSTLIFE;
+			screenmemory := $1030;
+			printstring("@OUT@OF@TIME@@",0 ,14);
+			psnd1 := sndDead;
+			PlaySnd1(160);			 
+			CollisionWait();
+			return();
+			
+		end;
+
+	// lost child
+	if (px = lx) then
+		if (py = ly) then
+		begin
+			
+			// next time will appear
+			screenmemory := addresstable(scr, 0, ly);
+			screenmemory[ lx ] := 0;
+			pbgchar := 0;
+			lostchildlevel := lostchildlevel + ( mod(random(),2) + 1 );
+			lx := 0;
+			ly := 0;
+			if (lives < 10) then lives := lives + 1;
+			bcdadd(score, scWitch, 4);
+			DisplayScore();
+			
+			psnd3:= sndPickup;
+			PlaySnd3(230);
+			
+		end;
+
+	screenmemory := addresstable(scr, 0, py);
+
+	if px = wx then
+		if py = wy then
+		begin
+
+			gameMode := @GAMEMODE_LOSTLIFE;
+			screenmemory := $1030;
+			printstring("@GOT@BY@WITCH@",0 ,14);
+			psnd1 := sndDead;
+			PlaySnd1(160);			 
+			CollisionWait();
+			return();
+
+		end;
+		
+	if pbgchar = @SKULLCHAR then
+	begin
+	
+			gameMode := @GAMEMODE_LOSTLIFE;
+			screenmemory := $1030;
+			printstring("POISONED@SKULL",0 ,14);			 
+			psnd1 := sndDead;
+			PlaySnd1(160);			 
+			CollisionWait();
+			return();
+
+	end;
+
+	for i := 0 to gNumGhosts do
+	begin
+	
+		if px = gx[ i ] then
+			if py = gy[ i ] then
+			begin
+
+				gameMode := @GAMEMODE_LOSTLIFE;
+				screenmemory := $1030;
+				printstring("@GOT@BY@GHOST@",0 ,14);
+				psnd1 := sndDead;
+				PlaySnd1(160);			 
+				CollisionWait();
+				return();
+			
+			end;
+
+	end;
+
+	if zNumZombies > 0 then
+	begin
+	
+		for i := 0 to zNumZombies do
+		begin
+	
+			if px = zx[ i ] then
+				if py = zy[ i ] then
+				begin
+
+					gameMode := @GAMEMODE_LOSTLIFE;
+					screenmemory := $1030;
+					printstring("@GOT@BY@ZOMBIE@",0 ,15);
+					psnd1 := sndDead;
+					PlaySnd1(160);			 
+					CollisionWait();
+					return();
+			
+				end;
+
+		end;
+		
+	end;
+
+end;
+
+
+
+
+// hit witch with candy
+procedure HitWitch();
+begin
+
+	wbgchar := @SKULLCHAR;
+	wbgcol := YELLOW;
+	wdelay := 50;	// time to wait until moves again
+	wsteps := 0;	// ensure no longer moving
+	// speed up witch
+	wdcount := 7;
+	wdspeed := 2;
+	// count witch hits
+	witchHits := witchHits + 1;
+	DrawCandyCounter();
+			
+	// draw skull
+	screenmemory := addresstable(scr, 0, cy);
+	screenmemory[ cx ] := wbgchar;
+	p1 := addresstable(clr, 0, cy);
+	p1[ cx ] := wbgcol;
+
+	// end candy
+	EndCandy();
+
+	// score
+	bcdadd(score, scWitch, 4);
+	DisplayScore();
+
+	// play hit sound
+	psndfx := sndExplode;
+	PlaySndfx(160);
+	
+end;
+
+
+//hit ghost with candy
+// needs i = ghost number
+procedure HitGhost();
+begin
+
+	gbgchar[ i ] := 0;
+	gbgcol[ i ] := black;
+	gmode[ i ] := @GHOSTRESPAWNDELAY;
+	gx[ i ] := 1;
+	gy[ i ] := 1;
+		
+	// clear space
+	screenmemory := addresstable(scr, 0, cy);
+	screenmemory[ cx ] := 0;
+
+	// end candy
+	EndCandy();
+	
+	// score
+	bcdadd(score, scGhost, 4);
+	DisplayScore();
+
+	// play hit sound
+	psndfx := sndExplode;
+	PlaySndfx(160);
+
+end;
+
+
+
+//Hit Zombie with candy
+// needs i = zombie number
+procedure HitZombie();
+begin
+
+	zspawn[ i ] := @ZOMBIESPAWNDELAY; // stun zombie for a while	
+
+	// clear space
+	screenmemory := addresstable(scr, 0, cy);
+	screenmemory[ cx ] := 42; // zombie in ground
+
+	// end candy
+	EndCandy();
+
+	// score
+	bcdadd(score, scZombie, 4);
+	DisplayScore();
+
+	// play hit sound
+	psndfx := sndExplode;
+	PlaySndfx(160);
+	
+end;
+
+
+
+// Candy hit monster?
+procedure CollisionCandy();
+begin
+
+	if (clife = 0) then return(); // no candy in flight
+	
+	// candy hit witch?
+	if (cx = wx) then
+		if (cy = wy) then HitWitch();
+
+	// ghosts - will destroy but will respawn when gmode[ gcurrent ] counts down
+	for i := 0 to gNumGhosts do
+		if (cx = gx[ i ]) then
+			if (cy = gy[ i ]) then HitGhost();
+
+	if (zNumZombies > 0) then
+		// Zombies - will stun only zspawn[ ]
+		for i := 0 to zNumZombies do
+			if (cx = zx[ i ]) then
+				if (cy = zy[ i ]) then HitZombie();
+
+end;
+

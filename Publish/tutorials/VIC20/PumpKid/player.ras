@@ -1,0 +1,141 @@
+
+// Test for joystick input and move player
+procedure MovePlayer();
+begin
+	
+	if (joy1 & JOY_LEFT) then
+	begin
+
+		pd := @PD_LEFT;
+		screenmemory := AddressTable( scr, px-1, py );
+		p1 := AddressTable( clr, px-1, py );
+		if ( cMask[ screenmemory[ 0 ] ] < @CWALL ) then
+		begin
+			screenmemory[ 1 ] := pbgchar;
+			p1[ 1 ] := pbgcol;
+			px := px - 1;
+			pbgchar := screenmemory[ 0 ];
+			pbgcol := p1[ 0 ];
+			
+			pstep := @PSTEPMAX;
+		end;
+		return();
+
+	end;
+	 
+	if (joy1 & JOY_RIGHT) then
+	begin
+
+		pd := @PD_RIGHT;
+		screenmemory := AddressTable( scr, 0, py );
+		p1 := AddressTable( clr, 0, py );
+		if ( cMask[ screenmemory[ px + 1 ] ] < @CWALL ) then
+		begin
+			screenmemory[ px ] := pbgchar;
+			p1[ px ] := pbgcol;
+			px := px + 1;
+			pbgchar := screenmemory[ px ];
+			pbgcol := p1[ px ];
+			
+			pstep := @PSTEPMAX;
+		end;
+		return();
+
+	end;	 
+	if (joy1 & JOY_UP) then
+	begin
+	
+		screenmemory := AddressTable( scr, 0, py - 1 );
+		p1 := AddressTable( clr, 0, py - 1 );
+		if ( cMask[ screenmemory[ px ] ] < @CWALL ) then
+		begin
+			screenmemory[ px + SCREEN_WIDTH ] := pbgchar;
+			p1[ px + SCREEN_WIDTH ] := pbgcol;
+			py := py - 1;
+			pbgchar := screenmemory[ px ];
+			pbgcol := p1[ px ];
+			
+			pstep := @PSTEPMAX;
+		end;
+		return();
+
+	end;	 
+	if (joy1 & JOY_DOWN) then
+	begin
+	
+		screenmemory := AddressTable( scr, 0, py );
+		p1 := AddressTable( clr, 0, py );
+		if ( cMask[ screenmemory[ px + SCREEN_WIDTH ] ] < @CWALL ) then
+		begin
+			screenmemory[ px ] := pbgchar;
+			p1[ px ] := pbgcol;
+			py := py + 1;
+			pbgchar := screenmemory[ px + SCREEN_WIDTH ];
+			pbgcol := p1[ px + SCREEN_WIDTH ];
+			
+			pstep := @PSTEPMAX;
+		end;
+		return();
+
+	end;
+	
+end;
+
+
+
+// Update the player animation and movement
+procedure UpdatePlayer();
+begin
+
+	// update animation frame
+	if (mod(ticks, 2) = 0) then pan := pan + 1;
+	if pan > @PANFRAMESMAX then pan := 0;
+	
+	// detect if moving
+	if joy1 = 0 then pstep := 0; // cancel move delay if no held
+	if pstep > 0 then pstep := pstep - 1;
+	if (pstep = 0) then 
+		if (joy1 & JOY_FIRE = FALSE) then 
+		begin
+			MovePlayer();
+			if (pstep > 0) then
+			begin
+				// play a footstep noise
+				psnd1 := sndPumpkidFootsteps;
+				PlaySnd1( 160 + stepsnd );
+				if stepsnd = 0 then stepsnd := 30 else stepsnd := 0;
+			end;
+		end;
+
+	screenmemory := AddressTable( scr, 0, py );
+	p1 := AddressTable( clr, 0, py );
+	
+	screenmemory[ px ] := panFrames[ pan ] + pd;
+	p1[ px ] := RED;
+	
+	// collisions
+	if (cMask[ pbgchar ] = @CCANDY) then
+	begin
+	
+		if (candy < 6 - witchHits) then 
+		begin
+		
+			pbgchar := 0;
+			candy := candy + 1;
+			DrawCandyCounter();
+			if ( candyscr > 0 ) then candyscr := candyscr - 1;
+			
+			// score
+			bcdadd(score, scCandy, 4);
+			DisplayScore();
+			
+			//play pick up sound
+			psnd3:= sndPickup;
+			PlaySnd3(230);
+		
+		end;
+
+	end;
+	
+end;
+

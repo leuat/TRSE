@@ -1,0 +1,175 @@
+
+procedure WitchPickDirection();
+begin
+
+	if (mod(random(), 3) <> 1) then
+	begin
+		// if player and witch are on same row or column, dive towards
+		if (wy = py) then
+		begin
+			if (wx > px) then wd := @WD_LEFT else wd := @WD_RIGHT;
+			return();
+		end;	
+		if (wx = px) then
+		begin
+			if (wy > py) then wd := @WD_UP else wd := @WD_DOWN;
+			return();
+		end;	
+	end;
+	
+	// otherwise go clockwise
+	wd := wd + 1;
+	if wd > @WD_LEFT then wd := @WD_UP;
+
+end;
+
+
+
+// move witch hazel around the screen
+procedure UpdateWitch();
+begin
+
+	// witch is stationary, pick a direction
+	if wsteps = 0 then
+	begin
+
+		if wdelay = 0 then // calculate the delay before the witch moves again
+		begin
+			
+			wdelay := mod( random(), 40 ) + 15;
+			// play stop noise
+			psndfx := sndSWitch;
+			PlaySndfx(254);
+		
+		end;
+
+		wdelay :=wdelay - 1;
+		if (wdelay > 0) then return(); // do not move
+		
+		WitchPickDirection();
+				
+		wsteps := mod( random(), 10 ) + 2;
+		
+		// when witch is fast, after a hit, this will count until time to normal speed again
+		if (wdcount > 0) then
+		begin
+		
+			wdcount := wdcount - 1;
+			if (wdcount = 0) then wdspeed := lwitch[ level ];
+
+		end;
+		
+	end;
+	
+	// speed of witch
+	if (mod(ticks, wdspeed) <> 0) then return();
+
+	wsteps := wsteps - 1;
+	
+	case wd of
+	
+		@WD_UP :
+		begin
+
+			screenmemory := addresstable( scr, 0, wy - 1);
+			p1 := AddressTable( clr, 0, wy - 1 );
+			i := @WITCHCHAR; // direction
+			if ( cMask[ screenmemory[ wx ] ] < @CMONSTER ) then
+			begin
+			
+				screenmemory[ wx + SCREEN_WIDTH ] := wbgchar;
+				p1[ wx + SCREEN_WIDTH ] := wbgcol;
+				wy := wy - 1;
+				wbgchar := screenmemory[ wx ];
+				wbgcol := p1[ wx ];
+			
+			end
+			else
+			begin
+				wsteps := 0; // cannot move anymore
+			end;
+			
+		end;
+		
+		@WD_RIGHT :
+		begin
+
+			screenmemory := addresstable( scr, 0, wy );
+			p1 := AddressTable( clr, 0, wy );
+			i := @WITCHCHAR + 1; // direction
+			if ( cMask[ screenmemory[ wx + 1 ] ] < @CMONSTER ) then
+			begin
+			
+				screenmemory[ wx ] := wbgchar;
+				p1[ wx ] := wbgcol;
+				wx := wx + 1;
+				wbgchar := screenmemory[ wx ];
+				wbgcol := p1[ wx ];
+			
+			end
+			else
+			begin
+				wsteps := 0; // cannot move anymore
+			end;
+			
+		end;
+
+		@WD_DOWN :
+		begin
+
+			screenmemory := addresstable( scr, 0, wy );
+			p1 := AddressTable( clr, 0, wy );
+			i := @WITCHCHAR; // direction
+			if ( cMask[ screenmemory[ wx + SCREEN_WIDTH ] ] < @CMONSTER ) then
+			begin
+			
+				screenmemory[ wx ] := wbgchar;
+				p1[ wx ] := wbgcol;
+				wy := wy + 1;
+				wbgchar := screenmemory[ wx + SCREEN_WIDTH ];
+				wbgcol := p1[ wx + SCREEN_WIDTH ];
+			
+			end
+			else
+			begin
+				wsteps := 0; // cannot move anymore
+			end;
+			
+		end;
+
+		@WD_LEFT :
+		begin
+
+			screenmemory := addresstable( scr, wx-1, wy );
+			p1 := AddressTable( clr, wx-1, wy );
+			i := @WITCHCHAR; // direction
+			if ( cMask[ screenmemory[ 0 ] ] < @CMONSTER ) then
+			begin
+			
+				screenmemory[ 1 ] := wbgchar;
+				p1[ 1 ] := wbgcol;
+				wx := wx - 1;
+				wbgchar := screenmemory[ 0 ];
+				wbgcol := p1[ 0 ];
+			
+			end
+			else
+			begin
+				wsteps := 0; // cannot move anymore
+			end;
+			
+		end;
+		
+	end;
+
+	screenmemory := AddressTable( scr, 0, wy );
+	p1 := AddressTable( clr, 0, wy );
+
+	screenmemory[ wx ] := i; // show witch in correct direction
+	p1[ wx ] := GREEN; 
+	
+	// check if witch has walked into Candy
+	if (cx = wx) then
+		if (cy = wy) then HitWitch(); // destroy candy and register hit on witch	
+
+end;

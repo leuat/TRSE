@@ -1,0 +1,324 @@
+// display score
+procedure DisplayScore();
+begin
+
+	screenmemory := $1000;
+	bcdprint(score, 4);
+
+end;
+
+
+
+// Using the colourdata, colour the characters on the screen
+procedure ColourTitleScreen();
+begin
+	screenmemory := $1000;
+	p1 := $9400;
+	
+	for i := 0 to 23 do // rows
+	begin
+	
+		for j := 0 to 22 do // columns
+		begin
+		
+			// using char from screenmemory, look up corresponding colour
+			// and write it to the colour memory
+			p1[ j ] := tcolordata[ screenmemory[ j ] ];
+			
+		end;
+		
+		// next row
+		p1 := p1 + 22;
+		screenmemory := screenmemory + 22;
+		
+	end;
+
+end;
+
+
+
+// Using the colourdata, colour the characters on the screen
+procedure ColourCreditsScreen();
+begin
+	screenmemory := $1000;
+	p1 := $9400;
+	
+	for i := 0 to 23 do // rows
+	begin
+	
+		for j := 0 to 22 do // columns
+		begin
+		
+			// using char from screenmemory, look up corresponding colour
+			// and write it to the colour memory
+			p1[ j ] := tcolorcrdata[ screenmemory[ j ] ];
+			
+		end;
+		
+		// next row
+		p1 := p1 + 22;
+		screenmemory := screenmemory + 22;
+		
+	end;
+
+end;
+
+
+
+// Using the colourdata, colour the characters on the screen
+procedure ColourTitleScreen2();
+begin
+	screenmemory := $1000;
+	p1 := $9400;
+	
+	for i := 0 to 23 do // rows
+	begin
+	
+		for j := 0 to 22 do // columns
+		begin
+		
+			// using char from screenmemory, look up corresponding colour
+			// and write it to the colour memory
+			p1[ j ] := colordata[ screenmemory[ j ] ];
+			
+		end;
+		
+		// next row
+		p1 := p1 + 22;
+		screenmemory := screenmemory + 22;
+		
+	end;
+
+end;
+
+
+
+// Using the colourdata, colour the characters on the screen
+procedure ColourFailScreen();
+begin
+	screenmemory := $1000;
+	p1 := $9400;
+	
+	for i := 0 to 23 do // rows
+	begin
+	
+		for j := 0 to 22 do // columns
+		begin
+		
+			// using char from screenmemory, look up corresponding colour
+			// and write it to the colour memory
+			p1[ j ] := gamefailcolordata[ screenmemory[ j ] ];
+			
+		end;
+		
+		// next row
+		p1 := p1 + 22;
+		screenmemory := screenmemory + 22;
+		
+	end;
+
+end;
+
+
+
+// Using the colourdata, colour the characters on the screen
+procedure ColourGameOverScreen();
+begin
+	screenmemory := $1000;
+	p1 := $9400;
+	
+	for i := 0 to 23 do // rows
+	begin
+	
+		for j := 0 to 22 do // columns
+		begin
+		
+			// using char from screenmemory, look up corresponding colour
+			// and write it to the colour memory
+			p1[ j ] := gameovercolordata[ screenmemory[ j ] ];
+			
+		end;
+		
+		// next row
+		p1 := p1 + 22;
+		screenmemory := screenmemory + 22;
+		
+	end;
+
+end;
+
+
+
+// Using the colourdata, colour the characters on the screen
+procedure ColourGameWonScreen();
+begin
+	screenmemory := $1000;
+	p1 := $9400;
+	
+	for i := 0 to 23 do // rows
+	begin
+	
+		for j := 0 to 22 do // columns
+		begin
+		
+			// using char from screenmemory, look up corresponding colour
+			// and write it to the colour memory
+			p1[ j ] := gamewoncolordata[ screenmemory[ j ] ];
+			
+		end;
+		
+		// next row
+		p1 := p1 + 22;
+		screenmemory := screenmemory + 22;
+		
+	end;
+
+end;
+
+
+
+// Using the colourdata, colour the characters on the screen
+procedure ColourGameNextScreen();
+begin
+	screenmemory := $1000;
+	p1 := $9400;
+	
+	for i := 0 to 23 do // rows
+	begin
+	
+		for j := 0 to 22 do // columns
+		begin
+		
+			// using char from screenmemory, look up corresponding colour
+			// and write it to the colour memory
+			p1[ j ] := gamenextcolordata[ screenmemory[ j ] ];
+			
+		end;
+		
+		// next row
+		p1 := p1 + 22;
+		screenmemory := screenmemory + 22;
+		
+	end;
+
+end;
+
+
+
+// blank screen colour
+procedure BlankScreen();
+begin
+	p1 := $9400;
+	
+	for i := 0 to 23 do // rows
+	begin
+	
+		for j := 0 to 22 do // columns
+		begin
+		
+			p1[ j ] := BLACK;
+			
+		end;
+		
+		// next row
+		p1 := p1 + 22;
+		
+	end;
+
+end;
+
+
+
+// Using the colourdata, colour the characters on the screen
+procedure ColourScreen();
+begin
+
+	// 3*22 lines down = 66
+	// screen = $1000 + $42  (screen_char_loc)
+	// colour = $9400 + $42  (screen_col_loc)
+	screenmemory := $1042;
+	p1 := $9442;
+	
+	for i := 0 to 20 do // rows
+	begin
+	
+		for j := 0 to 22 do // columns
+		begin
+		
+			// using char from screenmemory, look up corresponding colour
+			// and write it to the colour memory
+			p1[ j ] := colordata[ screenmemory[ j ] ];
+			
+		end;
+		
+		// next row
+		p1 := p1 + 22;
+		screenmemory := screenmemory + 22;
+		
+	end;
+
+end;
+
+
+
+// Colour Header area of screen (used for score, moon and clouds)
+procedure ColourHeader();
+begin
+	screenmemory := screen_col_loc;
+	// top row cyan
+	for i := 0 to 22 do
+	begin
+		screenmemory[ i ] := CYAN;
+	end;
+	// second and third row black, to hide the moon and cloud chars
+	for i := 22 to 66 do
+	begin
+		screenmemory[ i ] := BLACK;
+	end;
+	// Time text area to red
+	screenmemory := $9408;
+	for i :=0 to 8 do
+		screenmemory[ i ] := RED;
+
+end;
+
+
+
+// Find the player on the map
+procedure FindStartPos();
+begin
+
+	screenmemory := AddressTable( scr, 0, 3 );
+	for y := 3 to 23 do
+	begin
+
+		for x := 1 to 21 do
+		begin
+
+			// found player
+			if screenmemory[ x ] = 58 then
+			begin
+
+				px := x;
+				py := y;
+
+			end;
+			
+			if screenmemory[ x ] = 32 then
+			begin
+
+				wx := x;
+				wy := y;
+
+			end;
+
+		end;
+
+		screenmemory := screenmemory + SCREEN_WIDTH;
+		pbgchar := 0;
+		pbgcol := black;
+		wbgchar := 0;
+		wbgcol := black;
+	end;
+	
+end;

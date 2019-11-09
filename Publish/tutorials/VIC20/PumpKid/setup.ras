@@ -1,0 +1,36 @@
+
+interrupt vbl(); // forward reference
+// Initialse system, set up interrupt
+procedure Initialise();
+begin
+
+	DisableVIC20IRQ();
+	
+	if (HSCROLL_REGISTER = 12) then
+	begin
+	
+		// Time the interrupt directly with the raster (PAL);
+		// 312 scanlines * 71 cycles -2 = $5686
+		VIAIRQ(vbl(), $86, $56);
+		GAMETIMERMAX := 25;
+	
+	end
+	else
+	begin
+	
+		// Time the interrupt directly with the raster (NTSC);
+		VIAIRQ(vbl(), $43, $42);
+		GAMETIMERMAX := 28;
+		
+	end;
+	
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK;
+	definescreen();
+	SetScreenLocation( SCREEN_CHAR_LOC );
+	SetCharsetLocation( @CHAR_ADDR );	
+		
+	CreateAddressTable( scr, SCREEN_CHAR_LOC, SCREEN_WIDTH, SCREEN_HEIGHT ); // bug- constants not accepted @SCREEN_ADDR and @COLOUR_ADDR
+	CreateAddressTable( clr, SCREEN_COL_LOC, SCREEN_WIDTH, SCREEN_HEIGHT );
+
+	
+end;
