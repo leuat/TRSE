@@ -175,6 +175,11 @@ public:
     void Jammer(Assembler *as);
     void FLD(Assembler* as);
 
+    // Vic20 Bitmap Mode
+    void initVbm(Assembler* as);
+    void vbmSetDisplayMode(Assembler* as);
+
+
     // Initialize
 
     void InitJoystick(Assembler* as);

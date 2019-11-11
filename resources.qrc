@@ -297,5 +297,6 @@
         <file>resources/bin/columntab.bin</file>
         <file>resources/code/c64_keyboard_input.asm</file>
         <file>resources/images/tutorials/pumpkid.png</file>
+        <file>resources/code/vic20_vbm.asm</file>
     </qresource>
 </RCC>

@@ -39,6 +39,18 @@ m; initGetKey; C64, C128  ;
 
 
 
+# ************** Vic20 Bitmap Mode ROUTINES
+
+# *** INIT METHODS
+m; initVbm; VIC20 ;
+
+# *** CALL METHODS
+
+m; vbmSetDisplayMode; VIC20 ;
+
+
+
+
 # ************** AMIGA ROUTINES
 
 # *** INIT METHODS

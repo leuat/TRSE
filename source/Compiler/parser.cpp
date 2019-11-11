@@ -167,6 +167,9 @@ void Parser::InitBuiltinFunctions()
 
         InitBuiltinFunction(QStringList()<< "bcdprint(", "initbcd");
 
+        InitBuiltinFunction(QStringList()<< "vbmsetdisplaymode(", "initVbm");
+
+
     }
     Node::m_staticBlockInfo.m_blockID = -1;
 //    EndMemoryBlock();

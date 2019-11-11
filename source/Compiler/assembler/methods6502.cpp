@@ -106,6 +106,22 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("strgetfromindex"))
         StrGetFromIndex(as);
 
+    /*
+     * Vic20 Bitmap Mode
+     *
+     */
+
+    if (Command("initVbm"))
+        initVbm(as);
+
+    if (Command("vbmSetDisplayMode"))
+        vbmSetDisplayMode(as);
+    /*
+     *
+     *
+     */
+
+
 
     /*
      *
@@ -1084,6 +1100,37 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
 //    as->PopCounter(m_node->m_op.m_lineNumber-1);
 }
+
+
+
+/*
+ * vbm
+ */
+
+void Methods6502::initVbm(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbm"])
+        return;
+
+    m_node->m_isInitialized["vbm"] = true;
+
+    as->Comment("Initialise the core VBM (Vic20 Bitmap Mode) library");
+    as->IncludeFile(":resources/code/vic20_vbm.asm");
+
+}
+
+void Methods6502::vbmSetDisplayMode(Assembler* as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+
+    as->Comment("Set special display mode for VBM bitmap graphics");
+}
+
+/*
+ *
+ */
+
 
 
 void Methods6502::AddMemoryBlock(Assembler *as, int param)
