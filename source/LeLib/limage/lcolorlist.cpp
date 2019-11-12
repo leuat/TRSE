@@ -470,6 +470,25 @@ void LColorList::InitCGA2_HIGH()
     m_list.append(LColor(QColor(0xff,0xff,0x55),"Brown"));
 }
 
+void LColorList::LoadFromFile(QString fileName)
+{
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly)) {
+        return;
+    }
+    QByteArray blob = file.readAll();
+    m_list.clear();
+    for (int i=0;i<blob.size()/3;i++) {
+        m_list.append(LColor(QColor((unsigned char)blob[3*i],
+                             (unsigned char)blob[3*i+1],
+                             (unsigned char)blob[3*i+2]),"Color"+QString::number(i)));
+//        qDebug() << "WHOO "<<i;
+
+    }
+    file.close();
+
+}
+
 QColor LColorList::getClosestColor(QColor col, int& winner)
 {
     float d = 1E20;
@@ -520,8 +539,9 @@ void LColorList::FillComboBox(QComboBox *cmb)
 int LColorList::getIndex(QColor c)
 {
     for (int i=0;i<m_list.count();i++) {
-//        qDebug() << "   Testing: " << c << m_list[i].color;
+        qDebug() << "   Testing: " << c << m_list[i].color;
         if (m_list[i].color == c) {
+//            qDebug() << "found" << i <<  c << m_list[i].color;
             return i;
         }
     }

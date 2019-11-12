@@ -169,6 +169,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("loadfile")) {
         CallOKVC(as,0,11);
     }
+    if (Command("memcpyokvc")) {
+        CallOKVC(as,8,13);
+    }
     if (Command("blit")) {
         CallOKVC(as,6,6);
     }

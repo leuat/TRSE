@@ -69,6 +69,23 @@ void Compression::AddToDataX(QByteArray &data, MultiColorImage& img, int xp, int
 
 }
 
+
+void Compression::AddToDataVGA(QByteArray &data, LImageQImage& img, int xp, int yp, int w, int h)
+{
+    for (int y=0;y<h;y+=1)
+        for (int x=0;x<w;x+=1) {
+            int xx = xp+x;
+            int yy = yp+y;
+
+//            uchar val  = img.m_colorList.getIndex(QColor(img.getPixel(xx,yy)));
+            uchar val  = QColor(img.getPixel(xx,yy)).blue();
+//            qDebug() << QString::number(val) << QColor(img.getPixel(xx,yy));
+            data.append(val);
+        }
+
+}
+
+
 void Compression::AddBitplaneToData(QByteArray &data, MultiColorImage &img, int xp, int yp, int w, int h, int bpl)
 {
     for (int y=0;y<h;y+=1)

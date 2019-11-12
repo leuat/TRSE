@@ -526,6 +526,16 @@ static int AddToData(lua_State* L) {
     return 0;
 }
 
+static int AddToDataVGA(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddToData"))
+        return 0;
+
+    if (m_effect!=nullptr)
+       m_compression.AddToDataVGA(m_charData, *((LImageQImage*)m_effect->m_mc) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+
+    return 0;
+}
+
 static int AddBitplaneToData(lua_State* L) {
     if (!VerifyFjongParameters(L,"AddBitplaneTodata"))
         return 0;
@@ -790,7 +800,7 @@ static int CompressAndSaveHorizontalData(lua_State* L) {
     table.clear();
 //    qDebug() <<m_count*16 << " but is " <<m_screenData.count()/ww;
     if (m_screenData.count()!=0)
-    m_compression.OptimizeAndPackCharsetData(m_screenData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
+        m_compression.OptimizeAndPackCharsetData(m_screenData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
     else
         m_compression.OptimizeAndPackCharsetData(m_charData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
   //  qDebug() << "Table should be : " << (m_noChars-1)*1024;
@@ -870,6 +880,7 @@ void DialogEffects::LoadScript(QString file)
 
     // Data registration
     lua_register(m_script->L, "AddC64LineToData", AddToData);
+    lua_register(m_script->L, "AddVGALineToData", AddToDataVGA);
 
     lua_register(m_script->L, "SaveRawData", SaveData);
     lua_register(m_script->L, "SaveRawScreen", SaveDataScreen);
@@ -962,6 +973,21 @@ void DialogEffects::UpdateGlobals()
 
     m_rt.m_globals.m_outputType = m_script->get<float>("output.output_type");
     m_rt.m_globals.m_aspect = m_script->get<float>("output.aspect");
+
+    if (m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_VGA)  {
+        QString f = m_script->get<QString>("output.palette_file");
+
+  //      qDebug() << "Here "<<f;
+        if (m_effect!=nullptr)
+            if (m_effect->m_mc!=nullptr)
+               m_effect->m_mc->m_colorList.LoadFromFile(m_currentDir+"/"+f);
+
+        m_rt.m_globals.m_dither = m_script->get<float>("output.dither");
+        m_rt.m_globals.m_ditherStrength = m_script->getVec("output.ditherStrength");
+        m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.index_colors");
+
+    }
+
     if (m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_c64)  {
 
         m_rt.m_globals.m_multicolor = m_script->get<float>("output.c64_multicolor");
@@ -971,6 +997,16 @@ void DialogEffects::UpdateGlobals()
         m_rt.m_globals.m_c64ImageType = m_script->get<float>("output.c64_imageType");
 
         m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.index_colors");
+    }
+
+
+    if (m_rt.m_globals.m_c64Colors.count()==1) {
+        int p = m_rt.m_globals.m_c64Colors[0];
+        m_rt.m_globals.m_c64Colors.clear();
+        if (m_effect)
+            if (m_effect->m_mc)
+                for (int i=0;i<m_effect->m_mc->m_colorList.m_list.count();i+=p)
+                    m_rt.m_globals.m_c64Colors.append(i);
     }
 
 
@@ -1007,52 +1043,4 @@ void DialogEffects::UpdateImage()
 
 
     m_effect->m_ready = true;
-//    m_effect->Render(m_effect->m_img);
-//    m_effect->start();
-//    m_effect->Render(m_effect->m_img);
 }
-
-/*void DialogEffects::on_pushButton_clicked()
-{
-    Abort();
-    close();
-}
-
-void DialogEffects::on_btnToggleAnim_clicked()
-{
-    if (m_effect==nullptr)
-        return;
-    m_effect->ToggleAnim();
-//    m_effect->m_toggleAnim=!m_effect->m_toggleAnim;
- //   m_effect->m_time = 0;
-}
-
-void DialogEffects::on_btnToggleC64_clicked()
-{
-    if (m_effect==nullptr)
-        return;
-    m_effect->m_toggleC64=!m_effect->m_toggleC64;
-
-}
-
-void DialogEffects::on_btnSave_clicked()
-{
-    if (m_effect==nullptr)
-        return;
-    bool c64=m_effect->m_toggleC64;
-    bool anim=m_effect->m_toggleAnim;
-    m_effect->m_toggleC64 = true;
-    m_effect->m_toggleAnim = false;
-
-//    m_effect->Save("twister.bin");
-
-    m_effect->m_toggleC64 = c64;
-    m_effect->m_toggleAnim = anim;
-
-}
-
-void DialogEffects::on_comboBox_activated(const QString &arg1)
-{
-    Create();
-}
-*/

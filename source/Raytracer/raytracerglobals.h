@@ -80,6 +80,7 @@ public:
 
     static const int output_type_c64 = 1;
     static const int output_type_pico8 = 2;
+    static const int output_type_VGA = 3;
 
     double m_steps = 120;
     double m_shadowSteps = 60;

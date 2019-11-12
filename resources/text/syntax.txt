@@ -417,7 +417,7 @@ m; InputIRQ; OK64; p
 m; ResetFileList; OK64;
 m; ReadNextFile; OK64;
 m; LoadFile; OK64;
-
+m; MemCpyOKVC; OK64; b,b,b,b,b,b,b,b
 
 
 
@@ -775,6 +775,7 @@ f ; SetRotation; s,f,f,f
 f ; SetPosition; s,f,f,f
 f ; AddPosition; s,f,f,f
 f ; AddC64LineToData; f,f,f,f
+f ; AddVGALineToData; f,f,f,f
 f ; SaveRawData; s
 f ; SaveRawScreen; s
 f ; CompressAndSaveHorizontalData ; f,f,s,s

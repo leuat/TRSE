@@ -140,6 +140,7 @@ public:
     void InitCGA2_LOW();
     void InitCGA2_HIGH();
     void UpdateColors();
+    void LoadFromFile(QString fileName);
     QColor getClosestColor(QColor col, int& winner);
 
     void ExportAmigaPalette(QString filename);
