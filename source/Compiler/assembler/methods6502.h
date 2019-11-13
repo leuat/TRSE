@@ -178,7 +178,10 @@ public:
     // Vic20 Bitmap Mode
     void initVbm(Assembler* as);
     void vbmSetDisplayMode(Assembler* as);
-
+    void vbmSetColumn(Assembler *as);
+    void initVbmClear(Assembler* as);
+    void vbmClear(Assembler* as);
+    void vbcDrawTile(Assembler *as);
 
     // Initialize
 

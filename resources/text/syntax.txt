@@ -47,6 +47,9 @@ m; initVbm; VIC20 ;
 # *** CALL METHODS
 
 m; vbmSetDisplayMode; VIC20 ;
+m; vbmSetColumn; VIC20 ; b
+m; vbmClear; VIC20 ;
+m; vbmDrawTile; VIC20 ; a
 
 
 

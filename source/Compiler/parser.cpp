@@ -168,6 +168,7 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "bcdprint(", "initbcd");
 
         InitBuiltinFunction(QStringList()<< "vbmsetdisplaymode(", "initVbm");
+        InitBuiltinFunction(QStringList()<< "vbmclear(", "initVbmClear");
 
 
     }

@@ -297,6 +297,7 @@
         <file>resources/bin/columntab.bin</file>
         <file>resources/code/c64_keyboard_input.asm</file>
         <file>resources/images/tutorials/pumpkid.png</file>
-        <file>resources/code/vic20_vbm.asm</file>
+        <file>resources/code/vbm/init_vbm.asm</file>
+        <file>resources/code/vbm/vbmClear.asm</file>
     </qresource>
 </RCC>

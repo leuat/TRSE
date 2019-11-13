@@ -111,11 +111,29 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
      *
      */
 
+    // initialise
     if (Command("initVbm"))
         initVbm(as);
 
+    // Set up bitmap mode, adjust screen size, screen/char address and draw characters used for bitmap
+    // 20 x 24 characters (12 double height characters) -- 160 x 194 pixels
     if (Command("vbmSetDisplayMode"))
         vbmSetDisplayMode(as);
+
+    // Set the screenmemory pointer to start of a bitmap column.  There are 20 columns
+    if (Command("vbmSetColumn"))
+        vbmSetColumn(as);
+
+    // clear the bitmap area that starts at $1100
+    if (Command("initVbmClear"))
+        initVbmClear(as);
+    if (Command("vbmClear"))
+        vbmClear(as);
+
+    // Draw a tile at screenmemory position
+    if (Command("vbmDrawTile"))
+        vbcDrawTile(as);
+
     /*
      *
      *
@@ -1115,18 +1133,136 @@ void Methods6502::initVbm(Assembler* as)
     m_node->m_isInitialized["vbm"] = true;
 
     as->Comment("Initialise the core VBM (Vic20 Bitmap Mode) library");
-    as->IncludeFile(":resources/code/vic20_vbm.asm");
+    as->IncludeFile(":resources/code/vbm/init_vbm.asm");
 
 }
 
 void Methods6502::vbmSetDisplayMode(Assembler* as)
 {
+    DefineScreen(as);
 
     VerifyInitialized("vbm","InitVbm");
 
     as->Comment("Set special display mode for VBM bitmap graphics");
+    as->Asm("jsr vbmSetDisplayMode");
+
 }
 
+void Methods6502::initVbmClear(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmClear"])
+        return;
+
+    m_node->m_isInitialized["vbmClear"] = true;
+
+    as->Comment("VBM Clear bitmap routine");
+    as->IncludeFile(":resources/code/vbm/vbmClear.asm");
+
+}
+void Methods6502::vbmClear(Assembler* as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmClear","InitVbmClear");
+
+    as->Comment("Clear VBM bitmap");
+    as->Asm("jsr vbmClear");
+
+}
+
+void Methods6502::vbmSetColumn(Assembler *as) {
+
+    as->Comment("----------");
+    as->Comment("vbmSetColumn in ScreenMemory ZP - column offset");
+
+    QString lblDTNoOverflow = as->NewLabel("dtnooverflow");
+
+    // ypos
+    if (m_node->m_params[0]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "ldx #" + QString::number( m_node->m_params[0]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("column is complex");
+        LoadVar(as, 0);
+        as->Asm("tax");
+    }
+
+    as->Asm("lda vbmScrL,x   ; Address of table lo");
+    as->Asm("ldy vbmScrH,x   ; Address of table hi");
+
+    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
+    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
+
+
+}
+
+void Methods6502::vbcDrawTile(Assembler *as) {
+
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    //NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    QString addr = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr = var->getValue(as);
+
+    as->Asm("ldy #$0");
+
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("sta (screenmemory),y");
+    } else {
+        as->Asm("lda " + addr +",y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("sta (screenmemory),y");
+    }
+}
 /*
  *
  */
