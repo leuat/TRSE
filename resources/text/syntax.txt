@@ -418,7 +418,7 @@ m; ResetFileList; OK64;
 m; ReadNextFile; OK64;
 m; LoadFile; OK64;
 m; MemCpyOKVC; OK64; b,b,b,b,b,b,b,b
-
+m; setDefaultPalette; OK64;
 
 
 

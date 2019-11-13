@@ -123,6 +123,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("DrawPixel")) {
         CallOKVC(as,3,1);
     }
+    if (Command("SetDefaultPalette")) {
+        CallOKVC(as,0,14);
+    }
     if (Command("DrawRect")) {
         CallOKVC(as,5,8);
     }
