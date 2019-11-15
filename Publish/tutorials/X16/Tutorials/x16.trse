@@ -36,5 +36,5 @@ override_target_settings_prg = 0
 build_list = ,
 data_header_images/image1.flf = 0
 project_path = /home/leuat/code/TRSE/Release/../tutorials/X16/Tutorials/
-open_files = -1
-current_file = example8_tunnel.ras
+open_files = ,example3.ras, example4_twister.ras, example4_twister.fjo, example6_balls.ras, example8_tunnel.ras
+current_file = example4_twister.ras

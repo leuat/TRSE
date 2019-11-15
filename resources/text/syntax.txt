@@ -401,6 +401,12 @@ c; OKVC_SRC_PAGE; OK64; a; 0xFFE7
 c; OKVC_DST_PAGE; OK64; a; 0xFFE6
 c; OKVC_CURRENT_STRIP; OK64; a; 0xFFE5
 c; OKVC_STRIP; OK64; a; 0xFE00
+c; OKVC_BLIT_TYPE; OK64; a; 0xFFE4
+c; OKVC_BLIT_ALPHAVAL; OK64; a; 0xFFE3
+c; OKVC_BLIT_ALPHA ; OK64; b; 1
+c; OKVC_BLIT_ADD ; OK64; b; 2
+
+
 
 m; drawPixel; OK64; b,b,b
 m; drawLine; OK64; b,b,b,b,b

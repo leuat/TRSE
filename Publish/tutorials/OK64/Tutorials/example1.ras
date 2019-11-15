@@ -5,8 +5,7 @@ var
 
 
 begin
-	OKVC_SRC_PAGE:=16;
-	OKVC_DST_PAGE:=0;
+
 	while(true) offpage do
 	begin	
 		clearscreen(0);
