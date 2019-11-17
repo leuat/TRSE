@@ -299,5 +299,6 @@
         <file>resources/images/tutorials/pumpkid.png</file>
         <file>resources/code/vbm/init_vbm.asm</file>
         <file>resources/code/vbm/vbmClear.asm</file>
+        <file>resources/text/help/p/vbm_vic_bitmap_mode.rtf</file>
     </qresource>
 </RCC>

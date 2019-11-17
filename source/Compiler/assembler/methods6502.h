@@ -182,6 +182,16 @@ public:
     void initVbmClear(Assembler* as);
     void vbmClear(Assembler* as);
     void vbcDrawTile(Assembler *as);
+    void vbmDrawDot(Assembler *as);
+    void vbmClearDot(Assembler *as);
+    void initVbmDot(Assembler* as);
+    void initVbmBlot(Assembler* as);
+    void vbmDrawDotE(Assembler *as);
+    void vbmDrawBlot(Assembler *as);
+    void vbmClearBlot(Assembler *as);
+    void vbmDrawBlotE(Assembler *as);
+
+
 
     // Initialize
 

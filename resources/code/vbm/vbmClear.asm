@@ -12,7 +12,7 @@ vbmClearForX
 	sta vbmY
 vbmClearForY
 
-	lda #0
+        lda vbmI ; vbmI contains byte to clear bitmap with
 	ldy vbmY
 	sta (screenmemory),y
 	inc vbmY

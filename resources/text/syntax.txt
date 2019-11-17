@@ -48,9 +48,15 @@ m; initVbm; VIC20 ;
 
 m; vbmSetDisplayMode; VIC20 ;
 m; vbmSetColumn; VIC20 ; b
-m; vbmClear; VIC20 ;
+m; vbmClear; VIC20 ; b
 m; vbmDrawTile; VIC20 ; a
 
+m; vbmDrawDot; VIC20 ; b,b
+m; vbmClearDot; VIC20 ; b,b
+m; vbmDrawDotE; VIC20 ; b,b
+m; vbmDrawBlot; VIC20 ; b,b
+m; vbmClearBlot; VIC20 ; b,b
+m; vbmDrawBlotE; VIC20 ; b,b
 
 
 
@@ -752,6 +758,7 @@ p; Constants; X16,C64, PLUS4, C128, VIC20, PET, NES, BBCM, AMIGA, OK64
 p; Variables; X16,C64, PLUS4, C128, VIC20, PET, NES, BBCM, AMIGA, OK64
 p; Screen; X16,C64, PLUS4, VIC20
 p; interrupts; X16,C64, VIC20, PLUS4, C128
+p; vbm_Vic_Bitmap_Mode; VIC20
 
 
 #

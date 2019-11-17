@@ -134,6 +134,32 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("vbmDrawTile"))
         vbcDrawTile(as);
 
+    // Dot commands
+    if (Command("initVbmDot"))
+        initVbmDot(as);
+    // Draw dot
+    if (Command("vbmDrawDot"))
+        vbmDrawDot(as);
+    // Clear dot
+    if (Command("vbmClearDot"))
+        vbmClearDot(as);
+    // Draw dot with Eor
+    if (Command("vbmDrawDotE"))
+        vbmDrawDotE(as);
+
+    // Blot commands
+    if (Command("initVbmBlot"))
+        initVbmBlot(as);
+    // Draw Blot
+    if (Command("vbmDrawBlot"))
+        vbmDrawBlot(as);
+    // Clear Blot
+    if (Command("vbmClearBlot"))
+        vbmClearBlot(as);
+    // Draw Blot with Eor
+    if (Command("vbmDrawBlotE"))
+        vbmDrawBlotE(as);
+
     /*
      *
      *
@@ -1166,11 +1192,25 @@ void Methods6502::vbmClear(Assembler* as)
     VerifyInitialized("vbmClear","InitVbmClear");
 
     as->Comment("Clear VBM bitmap");
+
+    if (m_node->m_params[0]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[0]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("column is complex");
+        LoadVar(as, 0);
+    }
+
+    as->Asm("sta vbmI ; byte to clear bitmap with");
+
     as->Asm("jsr vbmClear");
 
 }
 
 void Methods6502::vbmSetColumn(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
 
     as->Comment("----------");
     as->Comment("vbmSetColumn in ScreenMemory ZP - column offset");
@@ -1194,10 +1234,11 @@ void Methods6502::vbmSetColumn(Assembler *as) {
     as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
     as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
 
-
 }
 
 void Methods6502::vbcDrawTile(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
 
     NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
     //NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
@@ -1262,6 +1303,331 @@ void Methods6502::vbcDrawTile(Assembler *as) {
         as->Asm("lda " + addr +",y");
         as->Asm("sta (screenmemory),y");
     }
+
+}
+
+void Methods6502::initVbmDot(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmDot"])
+        return;
+
+    m_node->m_isInitialized["vbmDot"] = true;
+
+    as->Comment("VBM Dot mask");
+    as->Label("vbmDotBit    dc.b $80, $40, $20, $10, $08, $04, $02, $01");
+
+}
+void Methods6502::initVbmBlot(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmBlot"])
+        return;
+
+    m_node->m_isInitialized["vbmBlot"] = true;
+
+    as->Comment("VBM Blot mask");
+    as->Label("vbmBlotBit    dc.b $c0, $30, $0c, $03");
+
+}
+
+void Methods6502::vbmDrawDot(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmDot","InitVbmDot");
+
+    as->Comment("----------");
+    as->Comment("vbmDrawDot x, y");
+
+    // ypos
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("sta vbmY");
+    // xpos
+    if (m_node->m_params[0]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[0]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 0);
+    }
+    as->Asm("sta vbmX");
+
+
+    as->Asm("lsr   ; divide by 8 to find column number");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmScrL,x   ; Address of table lo");
+    as->Asm("ldy vbmScrH,x   ; Address of table hi");
+    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
+    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
+    as->Asm("lda vbmX");
+    as->Asm("and #7   ; find offset for dot");
+    as->Asm("tax");
+    as->Asm("lda vbmDotBit,x   ; get dot pattern");
+    as->Asm("ldy vbmY  ; draw dot in row");
+    as->Asm("ora (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
+
+}
+void Methods6502::vbmClearDot(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmDot","InitVbmDot");
+
+    as->Comment("----------");
+    as->Comment("vbmClearDot x, y");
+
+    // ypos
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("sta vbmY");
+    // xpos
+    if (m_node->m_params[0]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[0]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 0);
+    }
+    as->Asm("sta vbmX");
+
+
+    as->Asm("lsr   ; divide by 8 to find column number");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmScrL,x   ; Address of table lo");
+    as->Asm("ldy vbmScrH,x   ; Address of table hi");
+    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
+    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
+    as->Asm("lda vbmX");
+    as->Asm("and #7   ; find offset for dot");
+    as->Asm("tax");
+    as->Asm("lda vbmDotBit,x   ; get dot pattern");
+    as->Asm("eor #$ff  ; invert it");
+    as->Asm("ldy vbmY  ; clear dot in row");
+    as->Asm("and (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
+
+}
+void Methods6502::vbmDrawDotE(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmDot","InitVbmDot");
+
+    as->Comment("----------");
+    as->Comment("vbmDrawDotE x, y  - draw with Eor");
+
+    // ypos
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("sta vbmY");
+    // xpos
+    if (m_node->m_params[0]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[0]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 0);
+    }
+    as->Asm("sta vbmX");
+
+
+    as->Asm("lsr   ; divide by 8 to find column number");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmScrL,x   ; Address of table lo");
+    as->Asm("ldy vbmScrH,x   ; Address of table hi");
+    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
+    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
+    as->Asm("lda vbmX");
+    as->Asm("and #7   ; find offset for dot");
+    as->Asm("tax");
+    as->Asm("lda vbmDotBit,x   ; get dot pattern");
+    as->Asm("ldy vbmY  ; draw dot in row");
+    as->Asm("eor (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
+
+}
+void Methods6502::vbmDrawBlot(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmBlot","InitVbmBlot");
+
+    as->Comment("----------");
+    as->Comment("vbmDrawBlot x, y");
+
+    // ypos
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("sta vbmY");
+    // xpos
+    if (m_node->m_params[0]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[0]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 0);
+    }
+    as->Asm("sta vbmX");
+
+
+    as->Asm("lsr   ; divide by 8 to find column number");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmScrL,x   ; Address of table lo");
+    as->Asm("ldy vbmScrH,x   ; Address of table hi");
+    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
+    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
+    as->Asm("lda vbmX");
+    as->Asm("and #6   ; find offset for dot");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmBlotBit,x   ; get blot pattern");
+    as->Asm("ldy vbmY  ; draw dot in row");
+    as->Asm("ora (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("iny");
+    as->Asm("lda vbmBlotBit,x   ; get blot pattern for second row");
+    as->Asm("ora (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
+
+}
+void Methods6502::vbmClearBlot(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmBlot","InitVbmBlot");
+
+    as->Comment("----------");
+    as->Comment("vbmClearBlot x, y");
+
+    // ypos
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("sta vbmY");
+    // xpos
+    if (m_node->m_params[0]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[0]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 0);
+    }
+    as->Asm("sta vbmX");
+
+
+    as->Asm("lsr   ; divide by 8 to find column number");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmScrL,x   ; Address of table lo");
+    as->Asm("ldy vbmScrH,x   ; Address of table hi");
+    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
+    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
+    as->Asm("lda vbmX");
+    as->Asm("and #6   ; find offset for dot");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmBlotBit,x   ; get blot pattern");
+    as->Asm("eor #$ff  ; invert");
+    as->Asm("ldy vbmY  ; draw dot in row");
+    as->Asm("and (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("iny");
+    as->Asm("lda vbmBlotBit,x   ; get blot pattern for second row");
+    as->Asm("eor #$ff  ; invert");
+    as->Asm("and (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
+
+}
+void Methods6502::vbmDrawBlotE(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmBlot","InitVbmBlot");
+
+    as->Comment("----------");
+    as->Comment("vbmDrawBlotE x, y - Eor");
+
+    // ypos
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("sta vbmY");
+    // xpos
+    if (m_node->m_params[0]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[0]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 0);
+    }
+    as->Asm("sta vbmX");
+
+
+    as->Asm("lsr   ; divide by 8 to find column number");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmScrL,x   ; Address of table lo");
+    as->Asm("ldy vbmScrH,x   ; Address of table hi");
+    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
+    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
+    as->Asm("lda vbmX");
+    as->Asm("and #6   ; find offset for dot");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmBlotBit,x   ; get blot pattern");
+    as->Asm("ldy vbmY  ; draw dot in row");
+    as->Asm("eor (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("iny");
+    as->Asm("lda vbmBlotBit,x   ; get blot pattern for second row");
+    as->Asm("eor (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
+
 }
 /*
  *

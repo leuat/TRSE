@@ -584,8 +584,13 @@ DISTFILES += \
     resources/code/amiga/end.s \
     resources/code/amiga/init.s \
     resources/text/help/p/c64.rtf \
+    resources/text/help/p/constants.rtf \
     resources/text/help/p/getting_started.rtf \
+    resources/text/help/p/interrupts.rtf \
     resources/text/help/p/pascal.rtf \
+    resources/text/help/p/screen.rtf \
+    resources/text/help/p/variables.rtf \
+    resources/text/help/p/vbm_vic_bitmap_mode.rtf \
     resources/text/help/p/vic20.rtf \
     resources/text/help/r/and.rtf \
     resources/text/help/r/array.rtf \
