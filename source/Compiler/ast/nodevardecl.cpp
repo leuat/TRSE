@@ -85,12 +85,14 @@ void NodeVarDecl::InitSid(QString projectDir, int VICAddress, QString type) {
     }
     if (type=="sid") {
         sid.Load(t->m_filename, projectDir);
-        sid.Convert(headerShift,VICAddress,type,0x7C);
+        sid.Convert(headerShift,VICAddress,type,0x7C,Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64);
     }
     if (type=="nsf") {
         sid.LoadNSF(t->m_filename, projectDir);
-        sid.Convert(headerShift,VICAddress,type,0x80);
+        sid.Convert(headerShift,VICAddress,type,0x80,false);
     }
+
+
 /*            qDebug() << "SID LOAD: " << QString::number(sid.m_loadAddress,16);
                 qDebug() << "SID INIT: " << QString::number(sid.m_initAddress,16);
                qDebug() << "SID PLAY: " << QString::number(sid.m_playAddress,16);
