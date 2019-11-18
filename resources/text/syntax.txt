@@ -50,6 +50,10 @@ m; vbmSetDisplayMode; VIC20 ;
 m; vbmSetColumn; VIC20 ; b
 m; vbmClear; VIC20 ; b
 m; vbmDrawTile; VIC20 ; a
+m; vbmDrawTileO; VIC20 ; a
+m; vbmDrawTileE; VIC20 ; a
+m; vbmClearTile; VIC20 ; a
+m; vbmClearBlock; VIC20 ;
 
 m; vbmDrawDot; VIC20 ; b,b
 m; vbmClearDot; VIC20 ; b,b

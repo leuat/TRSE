@@ -181,7 +181,11 @@ public:
     void vbmSetColumn(Assembler *as);
     void initVbmClear(Assembler* as);
     void vbmClear(Assembler* as);
-    void vbcDrawTile(Assembler *as);
+    void vbmDrawTile(Assembler *as);
+    void vbmDrawTileO(Assembler *as);
+    void vbmDrawTileE(Assembler *as);
+    void vbmClearTile(Assembler *as);
+    void vbmClearBlock(Assembler *as);
     void vbmDrawDot(Assembler *as);
     void vbmClearDot(Assembler *as);
     void initVbmDot(Assembler* as);

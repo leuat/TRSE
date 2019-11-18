@@ -132,7 +132,19 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     // Draw a tile at screenmemory position
     if (Command("vbmDrawTile"))
-        vbcDrawTile(as);
+        vbmDrawTile(as);
+    // Draw a tile with OR operation at screenmemory position
+    if (Command("vbmDrawTileO"))
+        vbmDrawTileO(as);
+    // Draw a tile with EOR operation at screenmemory position
+    if (Command("vbmDrawTileE"))
+        vbmDrawTileE(as);
+    // Clear a tile at screenmemory position
+    if (Command("vbmClearTile"))
+        vbmClearTile(as);
+    // Clear an 8x8 block at screenmemory position
+    if (Command("vbmClearBlock"))
+        vbmClearBlock(as);
 
     // Dot commands
     if (Command("initVbmDot"))
@@ -1236,7 +1248,7 @@ void Methods6502::vbmSetColumn(Assembler *as) {
 
 }
 
-void Methods6502::vbcDrawTile(Assembler *as) {
+void Methods6502::vbmDrawTile(Assembler *as) {
 
     VerifyInitialized("vbm","InitVbm");
 
@@ -1303,6 +1315,305 @@ void Methods6502::vbcDrawTile(Assembler *as) {
         as->Asm("lda " + addr +",y");
         as->Asm("sta (screenmemory),y");
     }
+
+}
+
+void Methods6502::vbmDrawTileO(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
+
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    //NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    QString addr = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr = var->getValue(as);
+
+    as->Asm("ldy #$0");
+
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+    } else {
+        as->Asm("lda " + addr +",y");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+    }
+
+}
+
+void Methods6502::vbmDrawTileE(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
+
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    //NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    QString addr = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr = var->getValue(as);
+
+    as->Asm("ldy #$0");
+
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+    } else {
+        as->Asm("lda " + addr +",y");
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+    }
+
+}
+
+void Methods6502::vbmClearTile(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
+
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    //NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
+    }
+
+    QString addr = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr = var->getValue(as);
+
+    as->Asm("ldy #$0");
+
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + addr +"),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+    } else {
+        as->Asm("lda " + addr +",y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda " + addr +",y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+    }
+
+}
+
+void Methods6502::vbmClearBlock(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
+
+    as->Asm("ldy #$0");
+    as->Asm("tya");
+
+    as->Asm("sta (screenmemory),y");
+    as->Asm("iny");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("iny");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("iny");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("iny");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("iny");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("iny");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("iny");
+    as->Asm("sta (screenmemory),y");
 
 }
 
