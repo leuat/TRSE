@@ -5,7 +5,7 @@
 	.byte    $29, $00, $00, $00
 	ORG $1210
 Pumpkid
-	jmp block6219
+	jmp block73591
 credits		dc.b	"CREATED BY ANDY H - HEWCO.UK 2019"
 	dc.b	0
 packedScreens	dc.b $077, $048, $0e4, $049, $040, $04b, $0a7, $04b
@@ -94,19 +94,19 @@ wdelay	dc.b	$00
 wdspeed	dc.b	$00
 wdcount	dc.b	$00
  ; Temp vars section
-printstring_text78491	dc.b	"@OUT@OF@TIME@@"
+printstring_text51678	dc.b	"@OUT@OF@TIME@@"
 	dc.b	0
-printstring_text11577	dc.b	"@GOT@BY@WITCH@"
+printstring_text76701	dc.b	"@GOT@BY@WITCH@"
 	dc.b	0
-printstring_text5751	dc.b	"POISONED@SKULL"
+printstring_text48002	dc.b	"POISONED@SKULL"
 	dc.b	0
-printstring_text53694	dc.b	"@GOT@BY@GHOST@"
+printstring_text97521	dc.b	"@GOT@BY@GHOST@"
 	dc.b	0
-printstring_text57771	dc.b	"@GOT@BY@ZOMBIE@"
+printstring_text2122	dc.b	"@GOT@BY@ZOMBIE@"
 	dc.b	0
-printstring_text94828	dc.b	"THE@WITCH@RETREATS"
+printstring_text69111	dc.b	"THE@WITCH@RETREATS"
 	dc.b	0
-printstring_text13606	dc.b	"GET@READY@FOR"
+printstring_text29886	dc.b	"GET@READY@FOR"
 	dc.b	0
  ; Temp vars section ends
 EndSymbol
@@ -180,7 +180,7 @@ lostchildlevel	dc.b	$00
 lx	dc.b	$00
 ly	dc.b	$00
 stepsnd	dc.b	$00
-EndBlock52
+EndBlock10400
 	org $1900
 	
 	
@@ -579,9 +579,9 @@ callReadJoy1
 	SEI
 	STX VIC20_PORTBVIA2d
 	LDY VIC20_PORTBVIA2
-	BMI JoySkip28624
+	BMI JoySkip56002
 	ORA #$02
-JoySkip28624
+JoySkip56002
 	LDX #$FF
 	STX VIC20_PORTBVIA2d
 	CLI
@@ -652,9 +652,9 @@ printstring_done
 Random
 	lda #$01
 	asl
-	bcc RandomSkip51528
+	bcc RandomSkip89009
 	eor #$4d
-RandomSkip51528
+RandomSkip89009
 	sta Random+1
 	eor $9124
 	rts
@@ -665,7 +665,7 @@ RandomSkip51528
 	
 vsnd1Time	dc.b	$00
 vsnd1	dc.b	
-block32871
+block99348
 PlaySnd1
 	; Assigning single variable : vsnd1Time
 	lda #0
@@ -678,7 +678,7 @@ PlaySnd1
 	
 vsnd2Time	dc.b	$00
 vsnd2	dc.b	
-block5732
+block98338
 PlaySnd2
 	; Assigning single variable : vsnd2Time
 	lda #0
@@ -691,7 +691,7 @@ PlaySnd2
 	
 vsnd3Time	dc.b	$00
 vsnd3	dc.b	
-block48829
+block49978
 PlaySnd3
 	; Assigning single variable : vsnd3Time
 	lda #0
@@ -704,7 +704,7 @@ PlaySnd3
 	
 vsndfxTime	dc.b	$00
 vsndfx	dc.b	
-block9503
+block27375
 PlaySndfx
 	; Assigning single variable : vsndfxTime
 	lda #0
@@ -736,7 +736,7 @@ sndMNoteShort	dc.b $041, $01, $081, $01, $041, $01, $081, $01
 	dc.b $081, $01, $041, $01, $081, $01, $020, $02
 	dc.b $00
 sndSWitch	dc.b $020, $01, $00
-block30019
+block60576
 SetupSound
 	jsr StopSounds
 	; Poke
@@ -811,31 +811,31 @@ Snd1Time
 	lda vsnd1Time
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bcc elsedoneblock18149
-	beq elsedoneblock18149
-ConditionalTrueBlock86715
+	bcc elsedoneblock79192
+	beq elsedoneblock79192
+ConditionalTrueBlock18111
 	; Assigning single variable : vsnd1Time
 	dec vsnd1Time
-elseblock26340
-elsedoneblock18149
+elseblock75205
+elsedoneblock79192
 	; Binary clause Simplified: EQUALS
 	lda vsnd1Time
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock93451
-ConditionalTrueBlock2245
+	bne elsedoneblock81870
+ConditionalTrueBlock79641
 	; Assigning single variable : psnd1
 	; WORD optimization: a=a+b
 	lda psnd1+0
 	
 	clc
 	adc #2
-	bcc WordAdd97488
+	bcc WordAdd34281
 	inc psnd1+1
-WordAdd97488
+WordAdd34281
 	sta psnd1+0
-elseblock22846
-elsedoneblock93451
+elseblock51792
+elsedoneblock81870
 	rts
 	
 	
@@ -847,31 +847,31 @@ Snd2Time
 	lda vsnd2Time
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bcc elsedoneblock65193
-	beq elsedoneblock65193
-ConditionalTrueBlock69841
+	bcc elsedoneblock97325
+	beq elsedoneblock97325
+ConditionalTrueBlock44920
 	; Assigning single variable : vsnd2Time
 	dec vsnd2Time
-elseblock92350
-elsedoneblock65193
+elseblock71272
+elsedoneblock97325
 	; Binary clause Simplified: EQUALS
 	lda vsnd2Time
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock36987
-ConditionalTrueBlock70124
+	bne elsedoneblock2968
+ConditionalTrueBlock57119
 	; Assigning single variable : psnd2
 	; WORD optimization: a=a+b
 	lda psnd2+0
 	
 	clc
 	adc #2
-	bcc WordAdd22227
+	bcc WordAdd32386
 	inc psnd2+1
-WordAdd22227
+WordAdd32386
 	sta psnd2+0
-elseblock24914
-elsedoneblock36987
+elseblock67788
+elsedoneblock2968
 	rts
 	
 	
@@ -883,31 +883,31 @@ Snd3Time
 	lda vsnd3Time
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bcc elsedoneblock52551
-	beq elsedoneblock52551
-ConditionalTrueBlock81936
+	bcc elsedoneblock20876
+	beq elsedoneblock20876
+ConditionalTrueBlock92576
 	; Assigning single variable : vsnd3Time
 	dec vsnd3Time
-elseblock51432
-elsedoneblock52551
+elseblock91279
+elsedoneblock20876
 	; Binary clause Simplified: EQUALS
 	lda vsnd3Time
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock76121
-ConditionalTrueBlock75407
+	bne elsedoneblock62645
+ConditionalTrueBlock4252
 	; Assigning single variable : psnd3
 	; WORD optimization: a=a+b
 	lda psnd3+0
 	
 	clc
 	adc #2
-	bcc WordAdd61237
+	bcc WordAdd94197
 	inc psnd3+1
-WordAdd61237
+WordAdd94197
 	sta psnd3+0
-elseblock1474
-elsedoneblock76121
+elseblock60890
+elsedoneblock62645
 	rts
 	
 	
@@ -919,31 +919,31 @@ SndfxTime
 	lda vsndfxTime
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bcc elsedoneblock66143
-	beq elsedoneblock66143
-ConditionalTrueBlock65818
+	bcc elsedoneblock23139
+	beq elsedoneblock23139
+ConditionalTrueBlock23607
 	; Assigning single variable : vsndfxTime
 	dec vsndfxTime
-elseblock94428
-elsedoneblock66143
+elseblock77620
+elsedoneblock23139
 	; Binary clause Simplified: EQUALS
 	lda vsndfxTime
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock64443
-ConditionalTrueBlock18776
+	bne elsedoneblock86057
+ConditionalTrueBlock24553
 	; Assigning single variable : psndfx
 	; WORD optimization: a=a+b
 	lda psndfx+0
 	
 	clc
 	adc #2
-	bcc WordAdd18606
+	bcc WordAdd74217
 	inc psndfx+1
-WordAdd18606
+WordAdd74217
 	sta psndfx+0
-elseblock22404
-elsedoneblock64443
+elseblock35856
+elsedoneblock86057
 	rts
 	
 	
@@ -958,25 +958,25 @@ UpdateSound1
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock70688
-ConditionalTrueBlock44818
+	bne elsedoneblock17328
+ConditionalTrueBlock19887
 	; Binary clause Simplified: NOTEQUALS
 	lda vsnd1
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	beq elsedoneblock6725
-ConditionalTrueBlock95499
+	beq elsedoneblock90584
+ConditionalTrueBlock95591
 	; Assigning single variable : vsnd1
 	lda #0
 	sta vsnd1
 	; Poke
 	; Optimization: shift is zero
 	sta $900a
-elseblock89772
-elsedoneblock6725
+elseblock70728
+elsedoneblock90584
 	rts
-elseblock35128
-elsedoneblock70688
+elseblock48980
+elsedoneblock17328
 	; Binary clause: EQUALS
 	; Load pointer array
 	ldy #$0
@@ -985,10 +985,10 @@ elsedoneblock70688
 	; Compare with pure num / var optimization
 	cmp #$20;keep
 	; BC done
-	bne tempfail3465
-binaryclausesuccess73416
-	jmp ConditionalTrueBlock68139
-tempfail3465
+	bne tempfail83179
+binaryclausesuccess41046
+	jmp ConditionalTrueBlock86949
+tempfail83179
 	; Binary clause: EQUALS
 	; Load pointer array
 	ldy #$0
@@ -997,15 +997,15 @@ tempfail3465
 	; Compare with pure num / var optimization
 	cmp #$10;keep
 	; BC done
-	bne elseblock2954
-binaryclausesuccess13258
-ConditionalTrueBlock68139
+	bne elseblock31620
+binaryclausesuccess18198
+ConditionalTrueBlock86949
 	; Binary clause Simplified: EQUALS
 	lda vsnd1Time
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock62600
-ConditionalTrueBlock42062
+	bne elsedoneblock56111
+ConditionalTrueBlock25166
 	; Assigning single variable : vsnd1Time
 	; Load pointer array
 	ldy #$1
@@ -1019,14 +1019,14 @@ ConditionalTrueBlock42062
 	
 	; Compare with pure num / var optimization
 	cmp #$20;keep
-	bne elsedoneblock48899
-ConditionalTrueBlock57199
+	bne elsedoneblock53328
+ConditionalTrueBlock86810
 	; Poke
 	; Optimization: shift is zero
 	lda vsnd1
 	sta $900a
-elseblock87981
-elsedoneblock48899
+elseblock45857
+elsedoneblock53328
 	; Binary clause Simplified: EQUALS
 	; Load pointer array
 	ldy #$0
@@ -1034,19 +1034,19 @@ elsedoneblock48899
 	
 	; Compare with pure num / var optimization
 	cmp #$10;keep
-	bne elsedoneblock87190
-ConditionalTrueBlock72813
+	bne elsedoneblock36270
+ConditionalTrueBlock64301
 	; Poke
 	; Optimization: shift is zero
 	lda #0
 	sta $900a
-elseblock39668
-elsedoneblock87190
-elseblock5624
-elsedoneblock62600
+elseblock60580
+elsedoneblock36270
+elseblock43786
+elsedoneblock56111
 	jsr Snd1Time
-elseblock2954
-elsedoneblock69786
+elseblock31620
+elsedoneblock63293
 	; Binary clause Simplified: EQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -1059,22 +1059,22 @@ elsedoneblock69786
 	
 	; Compare with pure num / var optimization
 	cmp #$80;keep
-	bne elsedoneblock22090
-ConditionalTrueBlock65084
+	bne elsedoneblock60622
+ConditionalTrueBlock57367
 	; Binary clause Simplified: EQUALS
 	lda vsnd1Time
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock3348
-ConditionalTrueBlock6887
+	bne elsedoneblock75293
+ConditionalTrueBlock15038
 	; Assigning single variable : vsnd1Time
 	; Load pointer array
 	ldy #$1
 	lda (psnd1),y
 	
 	sta vsnd1Time
-elseblock89412
-elsedoneblock3348
+elseblock46597
+elsedoneblock75293
 	; Assigning single variable : vsnd1
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -1097,8 +1097,8 @@ elsedoneblock3348
 	; Optimization: shift is zero
 	sta $900a
 	jsr Snd1Time
-elseblock11340
-elsedoneblock22090
+elseblock20297
+elsedoneblock60622
 	; Binary clause Simplified: EQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -1111,22 +1111,22 @@ elsedoneblock22090
 	
 	; Compare with pure num / var optimization
 	cmp #$40;keep
-	bne elsedoneblock66342
-ConditionalTrueBlock2336
+	bne elsedoneblock85705
+ConditionalTrueBlock3147
 	; Binary clause Simplified: EQUALS
 	lda vsnd1Time
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock39811
-ConditionalTrueBlock29904
+	bne elsedoneblock49075
+ConditionalTrueBlock3458
 	; Assigning single variable : vsnd1Time
 	; Load pointer array
 	ldy #$1
 	lda (psnd1),y
 	
 	sta vsnd1Time
-elseblock55939
-elsedoneblock39811
+elseblock36846
+elsedoneblock49075
 	; Assigning single variable : vsnd1
 	; 8 bit binop
 	; Add/sub right value is variable/expression
@@ -1140,19 +1140,19 @@ elsedoneblock39811
 	sbc #64
 	 ; end add / sub var with constant
 	
-rightvarAddSub_var11705 = $54
-	sta rightvarAddSub_var11705
+rightvarAddSub_var98387 = $54
+	sta rightvarAddSub_var98387
 	lda vsnd1
 	sec
-	sbc rightvarAddSub_var11705
+	sbc rightvarAddSub_var98387
 	
 	sta vsnd1
 	; Poke
 	; Optimization: shift is zero
 	sta $900a
 	jsr Snd1Time
-elseblock25210
-elsedoneblock66342
+elseblock45558
+elsedoneblock85705
 	rts
 	
 	
@@ -1167,25 +1167,25 @@ UpdateSound2
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock96658
-ConditionalTrueBlock29150
+	bne elsedoneblock77234
+ConditionalTrueBlock2042
 	; Binary clause Simplified: NOTEQUALS
 	lda vsnd2
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	beq elsedoneblock73850
-ConditionalTrueBlock11972
+	beq elsedoneblock54818
+ConditionalTrueBlock593
 	; Assigning single variable : vsnd2
 	lda #0
 	sta vsnd2
 	; Poke
 	; Optimization: shift is zero
 	sta $900b
-elseblock7672
-elsedoneblock73850
+elseblock82260
+elsedoneblock54818
 	rts
-elseblock65984
-elsedoneblock96658
+elseblock79176
+elsedoneblock77234
 	; Binary clause: EQUALS
 	; Load pointer array
 	ldy #$0
@@ -1194,10 +1194,10 @@ elsedoneblock96658
 	; Compare with pure num / var optimization
 	cmp #$20;keep
 	; BC done
-	bne tempfail62754
-binaryclausesuccess54259
-	jmp ConditionalTrueBlock39299
-tempfail62754
+	bne tempfail8300
+binaryclausesuccess91449
+	jmp ConditionalTrueBlock99201
+tempfail8300
 	; Binary clause: EQUALS
 	; Load pointer array
 	ldy #$0
@@ -1206,15 +1206,15 @@ tempfail62754
 	; Compare with pure num / var optimization
 	cmp #$10;keep
 	; BC done
-	bne elseblock6640
-binaryclausesuccess28202
-ConditionalTrueBlock39299
+	bne elseblock21929
+binaryclausesuccess96019
+ConditionalTrueBlock99201
 	; Binary clause Simplified: EQUALS
 	lda vsnd2Time
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock22842
-ConditionalTrueBlock36784
+	bne elsedoneblock30818
+ConditionalTrueBlock86569
 	; Assigning single variable : vsnd2Time
 	; Load pointer array
 	ldy #$1
@@ -1228,14 +1228,14 @@ ConditionalTrueBlock36784
 	
 	; Compare with pure num / var optimization
 	cmp #$20;keep
-	bne elsedoneblock17567
-ConditionalTrueBlock72890
+	bne elsedoneblock56419
+ConditionalTrueBlock62769
 	; Poke
 	; Optimization: shift is zero
 	lda vsnd2
 	sta $900b
-elseblock99754
-elsedoneblock17567
+elseblock74748
+elsedoneblock56419
 	; Binary clause Simplified: EQUALS
 	; Load pointer array
 	ldy #$0
@@ -1243,19 +1243,19 @@ elsedoneblock17567
 	
 	; Compare with pure num / var optimization
 	cmp #$10;keep
-	bne elsedoneblock73788
-ConditionalTrueBlock14500
+	bne elsedoneblock27616
+ConditionalTrueBlock63620
 	; Poke
 	; Optimization: shift is zero
 	lda #0
 	sta $900b
-elseblock38046
-elsedoneblock73788
-elseblock2021
-elsedoneblock22842
+elseblock72080
+elsedoneblock27616
+elseblock71840
+elsedoneblock30818
 	jsr Snd2Time
-elseblock6640
-elsedoneblock6042
+elseblock21929
+elsedoneblock91890
 	; Binary clause Simplified: EQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -1268,22 +1268,22 @@ elsedoneblock6042
 	
 	; Compare with pure num / var optimization
 	cmp #$80;keep
-	bne elsedoneblock5363
-ConditionalTrueBlock73303
+	bne elsedoneblock52247
+ConditionalTrueBlock77989
 	; Binary clause Simplified: EQUALS
 	lda vsnd2Time
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock95436
-ConditionalTrueBlock49157
+	bne elsedoneblock22356
+ConditionalTrueBlock58908
 	; Assigning single variable : vsnd2Time
 	; Load pointer array
 	ldy #$1
 	lda (psnd2),y
 	
 	sta vsnd2Time
-elseblock3729
-elsedoneblock95436
+elseblock61583
+elsedoneblock22356
 	; Assigning single variable : vsnd2
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -1306,8 +1306,8 @@ elsedoneblock95436
 	; Optimization: shift is zero
 	sta $900b
 	jsr Snd2Time
-elseblock3033
-elsedoneblock5363
+elseblock87373
+elsedoneblock52247
 	; Binary clause Simplified: EQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -1320,22 +1320,22 @@ elsedoneblock5363
 	
 	; Compare with pure num / var optimization
 	cmp #$40;keep
-	bne elsedoneblock60028
-ConditionalTrueBlock70460
+	bne elsedoneblock33010
+ConditionalTrueBlock3028
 	; Binary clause Simplified: EQUALS
 	lda vsnd2Time
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock6403
-ConditionalTrueBlock32002
+	bne elsedoneblock72237
+ConditionalTrueBlock96980
 	; Assigning single variable : vsnd2Time
 	; Load pointer array
 	ldy #$1
 	lda (psnd2),y
 	
 	sta vsnd2Time
-elseblock90428
-elsedoneblock6403
+elseblock61491
+elsedoneblock72237
 	; Assigning single variable : vsnd2
 	; 8 bit binop
 	; Add/sub right value is variable/expression
@@ -1349,19 +1349,19 @@ elsedoneblock6403
 	sbc #64
 	 ; end add / sub var with constant
 	
-rightvarAddSub_var17647 = $54
-	sta rightvarAddSub_var17647
+rightvarAddSub_var43606 = $54
+	sta rightvarAddSub_var43606
 	lda vsnd2
 	sec
-	sbc rightvarAddSub_var17647
+	sbc rightvarAddSub_var43606
 	
 	sta vsnd2
 	; Poke
 	; Optimization: shift is zero
 	sta $900b
 	jsr Snd2Time
-elseblock26304
-elsedoneblock60028
+elseblock10125
+elsedoneblock33010
 	rts
 	
 	
@@ -1376,25 +1376,25 @@ UpdateSound3
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock82134
-ConditionalTrueBlock95151
+	bne elsedoneblock39196
+ConditionalTrueBlock42890
 	; Binary clause Simplified: NOTEQUALS
 	lda vsnd3
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	beq elsedoneblock76335
-ConditionalTrueBlock36429
+	beq elsedoneblock56409
+ConditionalTrueBlock64205
 	; Assigning single variable : vsnd3
 	lda #0
 	sta vsnd3
 	; Poke
 	; Optimization: shift is zero
 	sta $900c
-elseblock95343
-elsedoneblock76335
+elseblock57250
+elsedoneblock56409
 	rts
-elseblock22535
-elsedoneblock82134
+elseblock68694
+elsedoneblock39196
 	; Binary clause: EQUALS
 	; Load pointer array
 	ldy #$0
@@ -1403,10 +1403,10 @@ elsedoneblock82134
 	; Compare with pure num / var optimization
 	cmp #$20;keep
 	; BC done
-	bne tempfail26057
-binaryclausesuccess73168
-	jmp ConditionalTrueBlock7971
-tempfail26057
+	bne tempfail70662
+binaryclausesuccess38704
+	jmp ConditionalTrueBlock55104
+tempfail70662
 	; Binary clause: EQUALS
 	; Load pointer array
 	ldy #$0
@@ -1415,15 +1415,15 @@ tempfail26057
 	; Compare with pure num / var optimization
 	cmp #$10;keep
 	; BC done
-	bne elseblock16949
-binaryclausesuccess90358
-ConditionalTrueBlock7971
+	bne elseblock25152
+binaryclausesuccess55521
+ConditionalTrueBlock55104
 	; Binary clause Simplified: EQUALS
 	lda vsnd3Time
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock2726
-ConditionalTrueBlock65100
+	bne elsedoneblock10189
+ConditionalTrueBlock49212
 	; Assigning single variable : vsnd3Time
 	; Load pointer array
 	ldy #$1
@@ -1437,14 +1437,14 @@ ConditionalTrueBlock65100
 	
 	; Compare with pure num / var optimization
 	cmp #$20;keep
-	bne elsedoneblock39214
-ConditionalTrueBlock41312
+	bne elsedoneblock97219
+ConditionalTrueBlock47906
 	; Poke
 	; Optimization: shift is zero
 	lda vsnd3
 	sta $900c
-elseblock61886
-elsedoneblock39214
+elseblock89052
+elsedoneblock97219
 	; Binary clause Simplified: EQUALS
 	; Load pointer array
 	ldy #$0
@@ -1452,19 +1452,19 @@ elsedoneblock39214
 	
 	; Compare with pure num / var optimization
 	cmp #$10;keep
-	bne elsedoneblock9610
-ConditionalTrueBlock14412
+	bne elsedoneblock40478
+ConditionalTrueBlock76360
 	; Poke
 	; Optimization: shift is zero
 	lda #0
 	sta $900c
-elseblock59479
-elsedoneblock9610
-elseblock4346
-elsedoneblock2726
+elseblock87486
+elsedoneblock40478
+elseblock47497
+elsedoneblock10189
 	jsr Snd3Time
-elseblock16949
-elsedoneblock60289
+elseblock25152
+elsedoneblock20817
 	; Binary clause Simplified: EQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -1477,22 +1477,22 @@ elsedoneblock60289
 	
 	; Compare with pure num / var optimization
 	cmp #$80;keep
-	bne elsedoneblock56620
-ConditionalTrueBlock6355
+	bne elsedoneblock32024
+ConditionalTrueBlock48665
 	; Binary clause Simplified: EQUALS
 	lda vsnd3Time
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock25849
-ConditionalTrueBlock606
+	bne elsedoneblock52816
+ConditionalTrueBlock44840
 	; Assigning single variable : vsnd3Time
 	; Load pointer array
 	ldy #$1
 	lda (psnd3),y
 	
 	sta vsnd3Time
-elseblock72260
-elsedoneblock25849
+elseblock39142
+elsedoneblock52816
 	; Assigning single variable : vsnd3
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -1515,8 +1515,8 @@ elsedoneblock25849
 	; Optimization: shift is zero
 	sta $900c
 	jsr Snd3Time
-elseblock47641
-elsedoneblock56620
+elseblock8571
+elsedoneblock32024
 	; Binary clause Simplified: EQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -1529,22 +1529,22 @@ elsedoneblock56620
 	
 	; Compare with pure num / var optimization
 	cmp #$40;keep
-	bne elsedoneblock34945
-ConditionalTrueBlock35217
+	bne elsedoneblock95780
+ConditionalTrueBlock4356
 	; Binary clause Simplified: EQUALS
 	lda vsnd3Time
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock45729
-ConditionalTrueBlock49314
+	bne elsedoneblock9436
+ConditionalTrueBlock98838
 	; Assigning single variable : vsnd3Time
 	; Load pointer array
 	ldy #$1
 	lda (psnd3),y
 	
 	sta vsnd3Time
-elseblock34471
-elsedoneblock45729
+elseblock33247
+elsedoneblock9436
 	; Assigning single variable : vsnd3
 	; 8 bit binop
 	; Add/sub right value is variable/expression
@@ -1558,19 +1558,19 @@ elsedoneblock45729
 	sbc #64
 	 ; end add / sub var with constant
 	
-rightvarAddSub_var23618 = $54
-	sta rightvarAddSub_var23618
+rightvarAddSub_var93805 = $54
+	sta rightvarAddSub_var93805
 	lda vsnd3
 	sec
-	sbc rightvarAddSub_var23618
+	sbc rightvarAddSub_var93805
 	
 	sta vsnd3
 	; Poke
 	; Optimization: shift is zero
 	sta $900c
 	jsr Snd3Time
-elseblock48518
-elsedoneblock34945
+elseblock81324
+elsedoneblock95780
 	rts
 	
 	
@@ -1585,25 +1585,25 @@ UpdateSoundfx
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock31233
-ConditionalTrueBlock11388
+	bne elsedoneblock26099
+ConditionalTrueBlock62968
 	; Binary clause Simplified: NOTEQUALS
 	lda vsndfx
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	beq elsedoneblock28794
-ConditionalTrueBlock68363
+	beq elsedoneblock83356
+ConditionalTrueBlock15824
 	; Assigning single variable : vsndfx
 	lda #0
 	sta vsndfx
 	; Poke
 	; Optimization: shift is zero
 	sta $900d
-elseblock92622
-elsedoneblock28794
+elseblock61964
+elsedoneblock83356
 	rts
-elseblock33074
-elsedoneblock31233
+elseblock20318
+elsedoneblock26099
 	; Binary clause: EQUALS
 	; Load pointer array
 	ldy #$0
@@ -1612,10 +1612,10 @@ elsedoneblock31233
 	; Compare with pure num / var optimization
 	cmp #$20;keep
 	; BC done
-	bne tempfail39862
-binaryclausesuccess35379
-	jmp ConditionalTrueBlock17462
-tempfail39862
+	bne tempfail64127
+binaryclausesuccess28397
+	jmp ConditionalTrueBlock42618
+tempfail64127
 	; Binary clause: EQUALS
 	; Load pointer array
 	ldy #$0
@@ -1624,15 +1624,15 @@ tempfail39862
 	; Compare with pure num / var optimization
 	cmp #$10;keep
 	; BC done
-	bne elseblock56682
-binaryclausesuccess92685
-ConditionalTrueBlock17462
+	bne elseblock74551
+binaryclausesuccess97358
+ConditionalTrueBlock42618
 	; Binary clause Simplified: EQUALS
 	lda vsndfxTime
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock79207
-ConditionalTrueBlock24176
+	bne elsedoneblock95778
+ConditionalTrueBlock68913
 	; Assigning single variable : vsndfxTime
 	; Load pointer array
 	ldy #$1
@@ -1646,14 +1646,14 @@ ConditionalTrueBlock24176
 	
 	; Compare with pure num / var optimization
 	cmp #$20;keep
-	bne elsedoneblock63291
-ConditionalTrueBlock41805
+	bne elsedoneblock80817
+ConditionalTrueBlock17257
 	; Poke
 	; Optimization: shift is zero
 	lda vsndfx
 	sta $900d
-elseblock19934
-elsedoneblock63291
+elseblock91627
+elsedoneblock80817
 	; Binary clause Simplified: EQUALS
 	; Load pointer array
 	ldy #$0
@@ -1661,19 +1661,19 @@ elsedoneblock63291
 	
 	; Compare with pure num / var optimization
 	cmp #$10;keep
-	bne elsedoneblock28993
-ConditionalTrueBlock33589
+	bne elsedoneblock41861
+ConditionalTrueBlock94569
 	; Poke
 	; Optimization: shift is zero
 	lda #0
 	sta $900d
-elseblock43768
-elsedoneblock28993
-elseblock33483
-elsedoneblock79207
+elseblock27935
+elsedoneblock41861
+elseblock45757
+elsedoneblock95778
 	jsr SndfxTime
-elseblock56682
-elsedoneblock39390
+elseblock74551
+elsedoneblock96912
 	; Binary clause Simplified: EQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -1686,22 +1686,22 @@ elsedoneblock39390
 	
 	; Compare with pure num / var optimization
 	cmp #$80;keep
-	bne elsedoneblock26717
-ConditionalTrueBlock44822
+	bne elsedoneblock51218
+ConditionalTrueBlock66527
 	; Binary clause Simplified: EQUALS
 	lda vsndfxTime
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock78179
-ConditionalTrueBlock27814
+	bne elsedoneblock52638
+ConditionalTrueBlock24007
 	; Assigning single variable : vsndfxTime
 	; Load pointer array
 	ldy #$1
 	lda (psndfx),y
 	
 	sta vsndfxTime
-elseblock34713
-elsedoneblock78179
+elseblock36204
+elsedoneblock52638
 	; Assigning single variable : vsndfx
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -1724,8 +1724,8 @@ elsedoneblock78179
 	; Optimization: shift is zero
 	sta $900d
 	jsr SndfxTime
-elseblock76982
-elsedoneblock26717
+elseblock26911
+elsedoneblock51218
 	; Binary clause Simplified: EQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -1738,22 +1738,22 @@ elsedoneblock26717
 	
 	; Compare with pure num / var optimization
 	cmp #$40;keep
-	bne elsedoneblock35710
-ConditionalTrueBlock27088
+	bne elsedoneblock59150
+ConditionalTrueBlock39641
 	; Binary clause Simplified: EQUALS
 	lda vsndfxTime
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock49291
-ConditionalTrueBlock66328
+	bne elsedoneblock65168
+ConditionalTrueBlock49041
 	; Assigning single variable : vsndfxTime
 	; Load pointer array
 	ldy #$1
 	lda (psndfx),y
 	
 	sta vsndfxTime
-elseblock925
-elsedoneblock49291
+elseblock80322
+elsedoneblock65168
 	; Assigning single variable : vsndfx
 	; 8 bit binop
 	; Add/sub right value is variable/expression
@@ -1767,19 +1767,19 @@ elsedoneblock49291
 	sbc #64
 	 ; end add / sub var with constant
 	
-rightvarAddSub_var77217 = $54
-	sta rightvarAddSub_var77217
+rightvarAddSub_var13674 = $54
+	sta rightvarAddSub_var13674
 	lda vsndfx
 	sec
-	sbc rightvarAddSub_var77217
+	sbc rightvarAddSub_var13674
 	
 	sta vsndfx
 	; Poke
 	; Optimization: shift is zero
 	sta $900d
 	jsr SndfxTime
-elseblock32919
-elsedoneblock35710
+elseblock65560
+elsedoneblock59150
 	rts
 	
 	
@@ -1801,7 +1801,7 @@ tuneTitle	dc.b $0db, $0e1, $0e7, $0e8, $0e1, $0e7, $0d7
 musicStep	dc.b	$00
 musicNote	dc.b	$00
 musicRepeat	dc.b	$00
-block96963
+block21239
 SetupMusic
 	; Assigning single variable : musicNote
 	lda #0
@@ -1825,17 +1825,17 @@ UpdateTitleMusic
 	lda musicRepeat
 	; Compare with pure num / var optimization
 	cmp #$4;keep
-	bne elsedoneblock14904
-ConditionalTrueBlock63858
+	bne elsedoneblock65236
+ConditionalTrueBlock22258
 	rts
-elseblock78130
-elsedoneblock14904
+elseblock41689
+elsedoneblock65236
 	; Binary clause Simplified: EQUALS
 	lda musicStep
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock13073
-ConditionalTrueBlock89685
+	bne elsedoneblock99436
+ConditionalTrueBlock6765
 	; Assigning single variable : psnd3
 	lda #<sndMNoteShort
 	ldx #>sndMNoteShort
@@ -1854,8 +1854,8 @@ ConditionalTrueBlock89685
 	lda musicNote
 	; Compare with pure num / var optimization
 	cmp #$7;keep
-	bne elsedoneblock57522
-ConditionalTrueBlock53714
+	bne elsedoneblock83717
+ConditionalTrueBlock66847
 	; Assigning single variable : musicNote
 	lda #0
 	sta musicNote
@@ -1865,68 +1865,68 @@ ConditionalTrueBlock53714
 	lda musicRepeat
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	bne elsedoneblock27335
-ConditionalTrueBlock49122
+	bne elsedoneblock4106
+ConditionalTrueBlock85959
 	; Poke
 	; Optimization: shift is zero
 	lda #8
 	sta $900e
-elseblock54154
-elsedoneblock27335
+elseblock10962
+elsedoneblock4106
 	; Binary clause Simplified: EQUALS
 	lda musicRepeat
 	; Compare with pure num / var optimization
 	cmp #$2;keep
-	bne elsedoneblock11776
-ConditionalTrueBlock2747
+	bne elsedoneblock15118
+ConditionalTrueBlock32000
 	; Poke
 	; Optimization: shift is zero
 	lda #5
 	sta $900e
-elseblock91171
-elsedoneblock11776
+elseblock3233
+elsedoneblock15118
 	; Binary clause Simplified: EQUALS
 	lda musicRepeat
 	; Compare with pure num / var optimization
 	cmp #$3;keep
-	bne elsedoneblock9933
-ConditionalTrueBlock21703
+	bne elsedoneblock82596
+ConditionalTrueBlock47085
 	; Poke
 	; Optimization: shift is zero
 	lda #2
 	sta $900e
-elseblock14653
-elsedoneblock9933
-elseblock86059
-elsedoneblock57522
-elseblock4789
-elsedoneblock13073
+elseblock92841
+elsedoneblock82596
+elseblock80935
+elsedoneblock83717
+elseblock61851
+elsedoneblock99436
 	; Assigning single variable : musicStep
 	inc musicStep
 	; Binary clause Simplified: EQUALS
 	lda musicStep
 	; Compare with pure num / var optimization
 	cmp #$13;keep
-	bne elsedoneblock48720
-ConditionalTrueBlock62806
+	bne elsedoneblock33268
+ConditionalTrueBlock28953
 	; Assigning single variable : psnd3
 	lda #<noSound
 	ldx #>noSound
 	sta psnd3
 	stx psnd3+1
-elseblock15797
-elsedoneblock48720
+elseblock4846
+elsedoneblock33268
 	; Binary clause Simplified: EQUALS
 	lda musicStep
 	; Compare with pure num / var optimization
 	cmp #$14;keep
-	bne elsedoneblock76376
-ConditionalTrueBlock42698
+	bne elsedoneblock29958
+ConditionalTrueBlock82335
 	; Assigning single variable : musicStep
 	lda #0
 	sta musicStep
-elseblock10991
-elsedoneblock76376
+elseblock1293
+elsedoneblock29958
 	rts
 	
 	
@@ -1939,82 +1939,82 @@ UpdateLostChild
 	; Compare with pure num / var optimization
 	cmp #$8;keep
 	; BC done
-	bne binaryclausefailed87334
-binaryclausesuccess48159
+	bne binaryclausefailed91483
+binaryclausesuccess42741
 	lda #1; success
-	jmp binaryclausefinished88421
-binaryclausefailed87334
+	jmp binaryclausefinished16380
+binaryclausefailed91483
 	lda #0 ; failed state
-binaryclausefinished88421
+binaryclausefinished16380
 	cmp #1
-	beq ConditionalTrueBlock18189
-	jmp elsedoneblock52506
-ConditionalTrueBlock18189
+	beq ConditionalTrueBlock3544
+	jmp elsedoneblock46129
+ConditionalTrueBlock3544
 	; Binary clause: EQUALS
 	lda lx
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	bne binaryclausefailed74295
-binaryclausesuccess4313
+	bne binaryclausefailed66374
+binaryclausesuccess23787
 	lda #1; success
-	jmp binaryclausefinished1877
-binaryclausefailed74295
+	jmp binaryclausefinished95428
+binaryclausefailed66374
 	lda #0 ; failed state
-binaryclausefinished1877
+binaryclausefinished95428
 	cmp #1
-	beq ConditionalTrueBlock1354
-	jmp elsedoneblock78762
-ConditionalTrueBlock1354
+	beq ConditionalTrueBlock61557
+	jmp elsedoneblock8946
+ConditionalTrueBlock61557
 	; Binary clause: LESS
 	lda level
 	; Compare with pure num / var optimization
 	cmp #$c;keep
 	; BC done
-	bcs binaryclausefailed61956
-binaryclausesuccess32475
+	bcs binaryclausefailed4364
+binaryclausesuccess44508
 	lda #1; success
-	jmp binaryclausefinished65981
-binaryclausefailed61956
+	jmp binaryclausefinished78734
+binaryclausefailed4364
 	lda #0 ; failed state
-binaryclausefinished65981
+binaryclausefinished78734
 	cmp #1
-	beq ConditionalTrueBlock94949
-	jmp elsedoneblock65155
-ConditionalTrueBlock94949
+	beq ConditionalTrueBlock14755
+	jmp elsedoneblock98154
+ConditionalTrueBlock14755
 	; Assigning single variable : i
 	lda #0
 	sta i
-while68011
+while15501
 	; Binary clause: EQUALS
 	lda i
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	bne binaryclausefailed38957
-binaryclausesuccess76125
+	bne binaryclausefailed52352
+binaryclausesuccess10207
 	lda #1; success
-	jmp binaryclausefinished25062
-binaryclausefailed38957
+	jmp binaryclausefinished16293
+binaryclausefailed52352
 	lda #0 ; failed state
-binaryclausefinished25062
+binaryclausefinished16293
 	cmp #1
-	beq ConditionalTrueBlock88967
-	jmp elsedoneblock90192
-ConditionalTrueBlock88967
+	beq ConditionalTrueBlock92616
+	jmp elsedoneblock4938
+ConditionalTrueBlock92616
 	; Assigning single variable : lx
 	; 8 bit binop
 	; Add/sub where right value is constant number
 	; Modulo
 	lda #19
-val_var66797 = $54
-	sta val_var66797
+val_var38578 = $54
+	sta val_var38578
 	jsr Random
 	sec
-modulo12496
-	sbc val_var66797
-	bcs modulo12496
-	adc val_var66797
+modulo90808
+	sbc val_var38578
+	bcs modulo90808
+	adc val_var38578
 	
 	clc
 	adc #1
@@ -2026,14 +2026,14 @@ modulo12496
 	; Add/sub where right value is constant number
 	; Modulo
 	lda #18
-val_var93418 = $54
-	sta val_var93418
+val_var49658 = $54
+	sta val_var49658
 	jsr Random
 	sec
-modulo93141
-	sbc val_var93418
-	bcs modulo93141
-	adc val_var93418
+modulo46839
+	sbc val_var49658
+	bcs modulo46839
+	adc val_var49658
 	
 	clc
 	adc #4
@@ -2063,8 +2063,8 @@ modulo93141
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock25393
-ConditionalTrueBlock75474
+	bne elsedoneblock42790
+ConditionalTrueBlock41925
 	; Assigning single variable : i
 	lda #1
 	sta i
@@ -2089,29 +2089,29 @@ ConditionalTrueBlock75474
 	lda #7
 	ldy lx
 	sta (p1),y
-elseblock96980
-elsedoneblock25393
-	jmp while68011
-elseblock46912
-elsedoneblock90192
-elseblock99355
-elsedoneblock65155
-elseblock91761
-elsedoneblock78762
-elseblock71559
-elsedoneblock52506
+elseblock64614
+elsedoneblock42790
+	jmp while15501
+elseblock74771
+elsedoneblock4938
+elseblock10110
+elsedoneblock98154
+elseblock135
+elsedoneblock8946
+elseblock19065
+elsedoneblock46129
 	; Binary clause Simplified: EQUALS
 	lda moonPos
 	; Compare with pure num / var optimization
 	cmp #$a;keep
-	bne elsedoneblock52160
-ConditionalTrueBlock69559
+	bne elsedoneblock79222
+ConditionalTrueBlock50209
 	; Binary clause Simplified: NOTEQUALS
 	lda lx
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	beq elsedoneblock10431
-ConditionalTrueBlock32557
+	beq elsedoneblock27730
+ConditionalTrueBlock87153
 	; Assigning single variable : screenmemory
 	
 	; ----------
@@ -2132,14 +2132,14 @@ ConditionalTrueBlock32557
 	; Add/sub where right value is constant number
 	; Modulo
 	lda #2
-val_var63638 = $54
-	sta val_var63638
+val_var61807 = $54
+	sta val_var61807
 	jsr Random
 	sec
-modulo38270
-	sbc val_var63638
-	bcs modulo38270
-	adc val_var63638
+modulo38765
+	sbc val_var61807
+	bcs modulo38765
+	adc val_var61807
 	
 	clc
 	adc #1
@@ -2158,10 +2158,10 @@ modulo38270
 	sta lx
 	; Assigning single variable : ly
 	sta ly
-elseblock52493
-elsedoneblock10431
-elseblock6898
-elsedoneblock52160
+elseblock91687
+elsedoneblock27730
+elseblock36560
+elsedoneblock79222
 	rts
 	
 	
@@ -2176,8 +2176,8 @@ Initialise
 	lda $9000
 	; Compare with pure num / var optimization
 	cmp #$c;keep
-	bne elseblock2671
-ConditionalTrueBlock7829
+	bne elseblock91413
+ConditionalTrueBlock5326
 	lda #<vbl
 	sta pointers_vic_raster+1
 	lda #>vbl
@@ -2190,8 +2190,8 @@ ConditionalTrueBlock7829
 	; Assigning single variable : GAMETIMERMAX
 	lda #25
 	sta GAMETIMERMAX
-	jmp elsedoneblock96180
-elseblock2671
+	jmp elsedoneblock67570
+elseblock91413
 	lda #<vbl
 	sta pointers_vic_raster+1
 	lda #>vbl
@@ -2204,7 +2204,7 @@ elseblock2671
 	; Assigning single variable : GAMETIMERMAX
 	lda #28
 	sta GAMETIMERMAX
-elsedoneblock96180
+elsedoneblock67570
 	; Assigning memory location
 	; Assigning single variable : $900f
 	lda #8
@@ -2225,21 +2225,21 @@ screenmemory =  $fe
 	sta scr,x   ; Address of table
 	tya
 	sta scr+1,x
-dtloop43024
+dtloop81740
 	tay
 	lda scr,x
 	inx
 	inx
 	clc
 	adc #$16
-	bcc dtnooverflow37088
+	bcc dtnooverflow77644
 	iny
-dtnooverflow37088
+dtnooverflow77644
 	sta scr,x
 	tya
 	sta scr+1,x
 	cpx #$2c
-	bcc dtloop43024
+	bcc dtloop81740
 	; ----------
 	; DefineAddressTable address, StartValue, IncrementValue, TableSize
 	ldy #>$9400
@@ -2248,21 +2248,21 @@ dtnooverflow37088
 	sta clr,x   ; Address of table
 	tya
 	sta clr+1,x
-dtloop49154
+dtloop25163
 	tay
 	lda clr,x
 	inx
 	inx
 	clc
 	adc #$16
-	bcc dtnooverflow52386
+	bcc dtnooverflow72554
 	iny
-dtnooverflow52386
+dtnooverflow72554
 	sta clr,x
 	tya
 	sta clr+1,x
 	cpx #$2c
-	bcc dtloop49154
+	bcc dtloop25163
 	rts
 	
 	
@@ -2279,7 +2279,7 @@ DisplayScore
 	; BcdPrint address, number
 	ldy #$07 ; screen offset
 	ldx #0 ; score byte index
-bcdprintloop58232
+bcdprintloop34830
 	lda score,x
 	inx
 	pha
@@ -2291,7 +2291,7 @@ bcdprintloop58232
 	lsr
 	lsr
 	jsr bcdplotdigit
-	bpl bcdprintloop58232
+	bpl bcdprintloop34830
 	rts
 	
 	
@@ -2310,11 +2310,11 @@ ColourTitleScreen
 	stx p1+1
 	; Assigning single variable : i
 	sta i
-for55710
+for20275
 	; Assigning single variable : j
 	lda #0
 	sta j
-for22351
+for88123
 	; Assigning single variable : p1
 	; Load Unknown type array
 	; Load pointer array
@@ -2328,17 +2328,17 @@ for22351
 	inc j
 	lda #22
 	cmp j ;keep
-	bne for22351
-forLoopDone57464
+	bne for88123
+forLoopDone53609
 	; Assigning single variable : p1
 	; WORD optimization: a=a+b
 	lda p1+0
 	
 	clc
 	adc #22
-	bcc WordAdd87330
+	bcc WordAdd48536
 	inc p1+1
-WordAdd87330
+WordAdd48536
 	sta p1+0
 	; Assigning single variable : screenmemory
 	; WORD optimization: a=a+b
@@ -2346,15 +2346,15 @@ WordAdd87330
 	
 	clc
 	adc #22
-	bcc WordAdd12086
+	bcc WordAdd8726
 	inc screenmemory+1
-WordAdd12086
+WordAdd8726
 	sta screenmemory+0
 	inc i
 	lda #23
 	cmp i ;keep
-	bne for55710
-forLoopDone29649
+	bne for20275
+forLoopDone98505
 	rts
 	
 	
@@ -2373,11 +2373,11 @@ ColourCreditsScreen
 	stx p1+1
 	; Assigning single variable : i
 	sta i
-for31349
+for36884
 	; Assigning single variable : j
 	lda #0
 	sta j
-for6773
+for82527
 	; Assigning single variable : p1
 	; Load Unknown type array
 	; Load pointer array
@@ -2391,17 +2391,17 @@ for6773
 	inc j
 	lda #22
 	cmp j ;keep
-	bne for6773
-forLoopDone81519
+	bne for82527
+forLoopDone3939
 	; Assigning single variable : p1
 	; WORD optimization: a=a+b
 	lda p1+0
 	
 	clc
 	adc #22
-	bcc WordAdd95354
+	bcc WordAdd5705
 	inc p1+1
-WordAdd95354
+WordAdd5705
 	sta p1+0
 	; Assigning single variable : screenmemory
 	; WORD optimization: a=a+b
@@ -2409,15 +2409,15 @@ WordAdd95354
 	
 	clc
 	adc #22
-	bcc WordAdd90244
+	bcc WordAdd81082
 	inc screenmemory+1
-WordAdd90244
+WordAdd81082
 	sta screenmemory+0
 	inc i
 	lda #23
 	cmp i ;keep
-	bne for31349
-forLoopDone12722
+	bne for36884
+forLoopDone62646
 	rts
 	
 	
@@ -2436,11 +2436,11 @@ ColourTitleScreen2
 	stx p1+1
 	; Assigning single variable : i
 	sta i
-for10139
+for84361
 	; Assigning single variable : j
 	lda #0
 	sta j
-for26799
+for77263
 	; Assigning single variable : p1
 	; Load Unknown type array
 	; Load pointer array
@@ -2454,17 +2454,17 @@ for26799
 	inc j
 	lda #22
 	cmp j ;keep
-	bne for26799
-forLoopDone54819
+	bne for77263
+forLoopDone82149
 	; Assigning single variable : p1
 	; WORD optimization: a=a+b
 	lda p1+0
 	
 	clc
 	adc #22
-	bcc WordAdd40435
+	bcc WordAdd7215
 	inc p1+1
-WordAdd40435
+WordAdd7215
 	sta p1+0
 	; Assigning single variable : screenmemory
 	; WORD optimization: a=a+b
@@ -2472,15 +2472,15 @@ WordAdd40435
 	
 	clc
 	adc #22
-	bcc WordAdd91087
+	bcc WordAdd12554
 	inc screenmemory+1
-WordAdd91087
+WordAdd12554
 	sta screenmemory+0
 	inc i
 	lda #23
 	cmp i ;keep
-	bne for10139
-forLoopDone5404
+	bne for84361
+forLoopDone5442
 	rts
 	
 	
@@ -2499,11 +2499,11 @@ ColourFailScreen
 	stx p1+1
 	; Assigning single variable : i
 	sta i
-for669
+for11669
 	; Assigning single variable : j
 	lda #0
 	sta j
-for66704
+for7211
 	; Assigning single variable : p1
 	; Load Unknown type array
 	; Load pointer array
@@ -2517,17 +2517,17 @@ for66704
 	inc j
 	lda #22
 	cmp j ;keep
-	bne for66704
-forLoopDone2557
+	bne for7211
+forLoopDone42448
 	; Assigning single variable : p1
 	; WORD optimization: a=a+b
 	lda p1+0
 	
 	clc
 	adc #22
-	bcc WordAdd23403
+	bcc WordAdd30049
 	inc p1+1
-WordAdd23403
+WordAdd30049
 	sta p1+0
 	; Assigning single variable : screenmemory
 	; WORD optimization: a=a+b
@@ -2535,15 +2535,15 @@ WordAdd23403
 	
 	clc
 	adc #22
-	bcc WordAdd18816
+	bcc WordAdd97916
 	inc screenmemory+1
-WordAdd18816
+WordAdd97916
 	sta screenmemory+0
 	inc i
 	lda #23
 	cmp i ;keep
-	bne for669
-forLoopDone85205
+	bne for11669
+forLoopDone7278
 	rts
 	
 	
@@ -2562,11 +2562,11 @@ ColourGameOverScreen
 	stx p1+1
 	; Assigning single variable : i
 	sta i
-for821
+for84754
 	; Assigning single variable : j
 	lda #0
 	sta j
-for64045
+for74846
 	; Assigning single variable : p1
 	; Load Unknown type array
 	; Load pointer array
@@ -2580,17 +2580,17 @@ for64045
 	inc j
 	lda #22
 	cmp j ;keep
-	bne for64045
-forLoopDone23787
+	bne for74846
+forLoopDone5397
 	; Assigning single variable : p1
 	; WORD optimization: a=a+b
 	lda p1+0
 	
 	clc
 	adc #22
-	bcc WordAdd75551
+	bcc WordAdd86103
 	inc p1+1
-WordAdd75551
+WordAdd86103
 	sta p1+0
 	; Assigning single variable : screenmemory
 	; WORD optimization: a=a+b
@@ -2598,15 +2598,15 @@ WordAdd75551
 	
 	clc
 	adc #22
-	bcc WordAdd42589
+	bcc WordAdd46184
 	inc screenmemory+1
-WordAdd42589
+WordAdd46184
 	sta screenmemory+0
 	inc i
 	lda #23
 	cmp i ;keep
-	bne for821
-forLoopDone34447
+	bne for84754
+forLoopDone50867
 	rts
 	
 	
@@ -2625,11 +2625,11 @@ ColourGameWonScreen
 	stx p1+1
 	; Assigning single variable : i
 	sta i
-for50353
+for58070
 	; Assigning single variable : j
 	lda #0
 	sta j
-for15921
+for22672
 	; Assigning single variable : p1
 	; Load Unknown type array
 	; Load pointer array
@@ -2643,17 +2643,17 @@ for15921
 	inc j
 	lda #22
 	cmp j ;keep
-	bne for15921
-forLoopDone98480
+	bne for22672
+forLoopDone17227
 	; Assigning single variable : p1
 	; WORD optimization: a=a+b
 	lda p1+0
 	
 	clc
 	adc #22
-	bcc WordAdd5994
+	bcc WordAdd14218
 	inc p1+1
-WordAdd5994
+WordAdd14218
 	sta p1+0
 	; Assigning single variable : screenmemory
 	; WORD optimization: a=a+b
@@ -2661,15 +2661,15 @@ WordAdd5994
 	
 	clc
 	adc #22
-	bcc WordAdd86354
+	bcc WordAdd89079
 	inc screenmemory+1
-WordAdd86354
+WordAdd89079
 	sta screenmemory+0
 	inc i
 	lda #23
 	cmp i ;keep
-	bne for50353
-forLoopDone65417
+	bne for58070
+forLoopDone83063
 	rts
 	
 	
@@ -2688,11 +2688,11 @@ ColourGameNextScreen
 	stx p1+1
 	; Assigning single variable : i
 	sta i
-for8437
+for35138
 	; Assigning single variable : j
 	lda #0
 	sta j
-for91608
+for9000
 	; Assigning single variable : p1
 	; Load Unknown type array
 	; Load pointer array
@@ -2706,17 +2706,17 @@ for91608
 	inc j
 	lda #22
 	cmp j ;keep
-	bne for91608
-forLoopDone1745
+	bne for9000
+forLoopDone57552
 	; Assigning single variable : p1
 	; WORD optimization: a=a+b
 	lda p1+0
 	
 	clc
 	adc #22
-	bcc WordAdd67422
+	bcc WordAdd85919
 	inc p1+1
-WordAdd67422
+WordAdd85919
 	sta p1+0
 	; Assigning single variable : screenmemory
 	; WORD optimization: a=a+b
@@ -2724,15 +2724,15 @@ WordAdd67422
 	
 	clc
 	adc #22
-	bcc WordAdd1171
+	bcc WordAdd70848
 	inc screenmemory+1
-WordAdd1171
+WordAdd70848
 	sta screenmemory+0
 	inc i
 	lda #23
 	cmp i ;keep
-	bne for8437
-forLoopDone25165
+	bne for35138
+forLoopDone9041
 	rts
 	
 	
@@ -2747,11 +2747,11 @@ BlankScreen
 	stx p1+1
 	; Assigning single variable : i
 	sta i
-for48569
+for85064
 	; Assigning single variable : j
 	lda #0
 	sta j
-for20172
+for14817
 	; Assigning single variable : p1
 	lda #0
 	ldy j
@@ -2759,23 +2759,23 @@ for20172
 	inc j
 	lda #22
 	cmp j ;keep
-	bne for20172
-forLoopDone74089
+	bne for14817
+forLoopDone60522
 	; Assigning single variable : p1
 	; WORD optimization: a=a+b
 	lda p1+0
 	
 	clc
 	adc #22
-	bcc WordAdd3566
+	bcc WordAdd8858
 	inc p1+1
-WordAdd3566
+WordAdd8858
 	sta p1+0
 	inc i
 	lda #23
 	cmp i ;keep
-	bne for48569
-forLoopDone58925
+	bne for85064
+forLoopDone26602
 	rts
 	
 	
@@ -2795,11 +2795,11 @@ ColourScreen
 	; Assigning single variable : i
 	lda #0
 	sta i
-for55812
+for94182
 	; Assigning single variable : j
 	lda #0
 	sta j
-for95568
+for64095
 	; Assigning single variable : p1
 	; Load Unknown type array
 	; Load pointer array
@@ -2813,17 +2813,17 @@ for95568
 	inc j
 	lda #22
 	cmp j ;keep
-	bne for95568
-forLoopDone86141
+	bne for64095
+forLoopDone81845
 	; Assigning single variable : p1
 	; WORD optimization: a=a+b
 	lda p1+0
 	
 	clc
 	adc #22
-	bcc WordAdd82639
+	bcc WordAdd87231
 	inc p1+1
-WordAdd82639
+WordAdd87231
 	sta p1+0
 	; Assigning single variable : screenmemory
 	; WORD optimization: a=a+b
@@ -2831,15 +2831,15 @@ WordAdd82639
 	
 	clc
 	adc #22
-	bcc WordAdd82437
+	bcc WordAdd29190
 	inc screenmemory+1
-WordAdd82437
+WordAdd29190
 	sta screenmemory+0
 	inc i
 	lda #20
 	cmp i ;keep
-	bne for55812
-forLoopDone63370
+	bne for94182
+forLoopDone42479
 	rts
 	
 	
@@ -2854,7 +2854,7 @@ ColourHeader
 	stx screenmemory+1
 	; Assigning single variable : i
 	sta i
-for63198
+for37366
 	; Assigning single variable : screenmemory
 	lda #3
 	ldy i
@@ -2862,12 +2862,12 @@ for63198
 	inc i
 	lda #22
 	cmp i ;keep
-	bne for63198
-forLoopDone69939
+	bne for37366
+forLoopDone13357
 	; Assigning single variable : i
 	lda #22
 	sta i
-for26513
+for47101
 	; Assigning single variable : screenmemory
 	lda #0
 	ldy i
@@ -2875,8 +2875,8 @@ for26513
 	inc i
 	lda #66
 	cmp i ;keep
-	bne for26513
-forLoopDone65128
+	bne for47101
+forLoopDone84251
 	; Assigning single variable : screenmemory
 	lda #8
 	ldx #148
@@ -2885,7 +2885,7 @@ forLoopDone65128
 	; Assigning single variable : i
 	lda #0
 	sta i
-for11804
+for25764
 	; Assigning single variable : screenmemory
 	lda #2
 	ldy i
@@ -2893,8 +2893,8 @@ for11804
 	inc i
 	lda #8
 	cmp i ;keep
-	bne for11804
-forLoopDone52346
+	bne for25764
+forLoopDone53927
 	rts
 	
 	
@@ -2915,11 +2915,11 @@ FindStartPos
 	; Assigning single variable : y
 	lda #3
 	sta y
-for90495
+for40194
 	; Assigning single variable : x
 	lda #1
 	sta x
-for33292
+for30540
 	; Binary clause Simplified: EQUALS
 	; Load pointer array
 	ldy x
@@ -2927,16 +2927,16 @@ for33292
 	
 	; Compare with pure num / var optimization
 	cmp #$3a;keep
-	bne elsedoneblock99492
-ConditionalTrueBlock20083
+	bne elsedoneblock97319
+ConditionalTrueBlock49785
 	; Assigning single variable : px
 	lda x
 	sta px
 	; Assigning single variable : py
 	lda y
 	sta py
-elseblock14800
-elsedoneblock99492
+elseblock82850
+elsedoneblock97319
 	; Binary clause Simplified: EQUALS
 	; Load pointer array
 	ldy x
@@ -2944,30 +2944,30 @@ elsedoneblock99492
 	
 	; Compare with pure num / var optimization
 	cmp #$20;keep
-	bne elsedoneblock5735
-ConditionalTrueBlock22939
+	bne elsedoneblock90436
+ConditionalTrueBlock12039
 	; Assigning single variable : wx
 	lda x
 	sta wx
 	; Assigning single variable : wy
 	lda y
 	sta wy
-elseblock12763
-elsedoneblock5735
+elseblock65969
+elsedoneblock90436
 	inc x
 	lda #21
 	cmp x ;keep
-	bne for33292
-forLoopDone32540
+	bne for30540
+forLoopDone34312
 	; Assigning single variable : screenmemory
 	; WORD optimization: a=a+b
 	lda screenmemory+0
 	
 	clc
 	adc #22
-	bcc WordAdd2606
+	bcc WordAdd46249
 	inc screenmemory+1
-WordAdd2606
+WordAdd46249
 	sta screenmemory+0
 	; Assigning single variable : pbgchar
 	lda #0
@@ -2981,8 +2981,8 @@ WordAdd2606
 	inc y
 	lda #23
 	cmp y ;keep
-	bne for90495
-forLoopDone48860
+	bne for40194
+forLoopDone22040
 	rts
 	
 	
@@ -2993,85 +2993,85 @@ WitchPickDirection
 	; Binary clause Simplified: NOTEQUALS
 	; Modulo
 	lda #3
-val_var76505 = $54
-	sta val_var76505
+val_var72471 = $54
+	sta val_var72471
 	jsr Random
 	sec
-modulo63179
-	sbc val_var76505
-	bcs modulo63179
-	adc val_var76505
+modulo8567
+	sbc val_var72471
+	bcs modulo8567
+	adc val_var72471
 	
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	beq elsedoneblock82751
-ConditionalTrueBlock52251
+	beq elsedoneblock17436
+ConditionalTrueBlock76789
 	; Binary clause Simplified: EQUALS
 	lda wy
 	; Compare with pure num / var optimization
 	cmp py;keep
-	bne elsedoneblock71472
-ConditionalTrueBlock68098
+	bne elsedoneblock97317
+ConditionalTrueBlock68172
 	; Binary clause Simplified: GREATER
 	lda wx
 	; Compare with pure num / var optimization
 	cmp px;keep
-	bcc elseblock89877
-	beq elseblock89877
-ConditionalTrueBlock65159
+	bcc elseblock48017
+	beq elseblock48017
+ConditionalTrueBlock59935
 	; Assigning single variable : wd
 	lda #3
 	sta wd
-	jmp elsedoneblock61900
-elseblock89877
+	jmp elsedoneblock80796
+elseblock48017
 	; Assigning single variable : wd
 	lda #1
 	sta wd
-elsedoneblock61900
+elsedoneblock80796
 	rts
-elseblock94425
-elsedoneblock71472
+elseblock91032
+elsedoneblock97317
 	; Binary clause Simplified: EQUALS
 	lda wx
 	; Compare with pure num / var optimization
 	cmp px;keep
-	bne elsedoneblock18107
-ConditionalTrueBlock62035
+	bne elsedoneblock77469
+ConditionalTrueBlock441
 	; Binary clause Simplified: GREATER
 	lda wy
 	; Compare with pure num / var optimization
 	cmp py;keep
-	bcc elseblock81763
-	beq elseblock81763
-ConditionalTrueBlock6797
+	bcc elseblock89643
+	beq elseblock89643
+ConditionalTrueBlock29398
 	; Assigning single variable : wd
 	lda #0
 	sta wd
-	jmp elsedoneblock63633
-elseblock81763
+	jmp elsedoneblock47625
+elseblock89643
 	; Assigning single variable : wd
 	lda #2
 	sta wd
-elsedoneblock63633
+elsedoneblock47625
 	rts
-elseblock55951
-elsedoneblock18107
-elseblock64349
-elsedoneblock82751
+elseblock10834
+elsedoneblock77469
+elseblock6505
+elsedoneblock17436
 	; Assigning single variable : wd
 	inc wd
 	; Binary clause Simplified: GREATER
 	lda wd
 	; Compare with pure num / var optimization
 	cmp #$3;keep
-	bcc elsedoneblock32100
-	beq elsedoneblock32100
-ConditionalTrueBlock85185
+	bcc elsedoneblock37710
+	beq elsedoneblock37710
+ConditionalTrueBlock67745
 	; Assigning single variable : wd
 	lda #0
 	sta wd
-elseblock20897
-elsedoneblock32100
+elseblock80713
+elsedoneblock37710
 	rts
 	
 	
@@ -3084,36 +3084,36 @@ UpdateWitch
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	bne binaryclausefailed28826
-binaryclausesuccess97565
+	bne binaryclausefailed7687
+binaryclausesuccess91297
 	lda #1; success
-	jmp binaryclausefinished6518
-binaryclausefailed28826
+	jmp binaryclausefinished25302
+binaryclausefailed7687
 	lda #0 ; failed state
-binaryclausefinished6518
+binaryclausefinished25302
 	cmp #1
-	beq ConditionalTrueBlock91313
-	jmp elsedoneblock52634
-ConditionalTrueBlock91313
+	beq ConditionalTrueBlock82239
+	jmp elsedoneblock47708
+ConditionalTrueBlock82239
 	; Binary clause Simplified: EQUALS
 	lda wdelay
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock16908
-ConditionalTrueBlock87134
+	bne elsedoneblock89900
+ConditionalTrueBlock68436
 	; Assigning single variable : wdelay
 	; 8 bit binop
 	; Add/sub where right value is constant number
 	; Modulo
 	lda #40
-val_var93842 = $54
-	sta val_var93842
+val_var66942 = $54
+	sta val_var66942
 	jsr Random
 	sec
-modulo48432
-	sbc val_var93842
-	bcs modulo48432
-	adc val_var93842
+modulo50209
+	sbc val_var66942
+	bcs modulo50209
+	adc val_var66942
 	
 	clc
 	adc #15
@@ -3129,34 +3129,34 @@ modulo48432
 	lda #254
 	sta vsndfx
 	jsr PlaySndfx
-elseblock51546
-elsedoneblock16908
+elseblock75927
+elsedoneblock89900
 	; Assigning single variable : wdelay
 	dec wdelay
 	; Binary clause Simplified: GREATER
 	lda wdelay
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bcc elsedoneblock18834
-	beq elsedoneblock18834
-ConditionalTrueBlock39807
+	bcc elsedoneblock88640
+	beq elsedoneblock88640
+ConditionalTrueBlock75461
 	rts
-elseblock49810
-elsedoneblock18834
+elseblock45399
+elsedoneblock88640
 	jsr WitchPickDirection
 	; Assigning single variable : wsteps
 	; 8 bit binop
 	; Add/sub where right value is constant number
 	; Modulo
 	lda #10
-val_var95815 = $54
-	sta val_var95815
+val_var2607 = $54
+	sta val_var2607
 	jsr Random
 	sec
-modulo27984
-	sbc val_var95815
-	bcs modulo27984
-	adc val_var95815
+modulo93725
+	sbc val_var2607
+	bcs modulo93725
+	adc val_var2607
 	
 	clc
 	adc #2
@@ -3167,53 +3167,53 @@ modulo27984
 	lda wdcount
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bcc elsedoneblock94465
-	beq elsedoneblock94465
-ConditionalTrueBlock52324
+	bcc elsedoneblock68323
+	beq elsedoneblock68323
+ConditionalTrueBlock53072
 	; Assigning single variable : wdcount
 	dec wdcount
 	; Binary clause Simplified: EQUALS
 	lda wdcount
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock73879
-ConditionalTrueBlock5360
+	bne elsedoneblock84800
+ConditionalTrueBlock73520
 	; Assigning single variable : wdspeed
 	; Load Byte array
 	ldx level
 	lda lwitch,x
 	
 	sta wdspeed
-elseblock64088
-elsedoneblock73879
-elseblock11382
-elsedoneblock94465
-elseblock95879
-elsedoneblock52634
+elseblock69797
+elsedoneblock84800
+elseblock99504
+elsedoneblock68323
+elseblock36498
+elsedoneblock47708
 	; Binary clause Simplified: NOTEQUALS
 	; Modulo
 	lda wdspeed
-val_var83162 = $54
-	sta val_var83162
+val_var56804 = $54
+	sta val_var56804
 	lda ticks
 	sec
-modulo56942
-	sbc val_var83162
-	bcs modulo56942
-	adc val_var83162
+modulo86077
+	sbc val_var56804
+	bcs modulo86077
+	adc val_var56804
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	beq elsedoneblock17135
-ConditionalTrueBlock22924
+	beq elsedoneblock10615
+ConditionalTrueBlock15504
 	rts
-elseblock86628
-elsedoneblock17135
+elseblock80051
+elsedoneblock10615
 	; Assigning single variable : wsteps
 	dec wsteps
 	lda wd
 	cmp #$0 ;keep
-	bne casenext54163
+	bne casenext38083
 	; Assigning single variable : screenmemory
 	
 	; ----------
@@ -3264,8 +3264,8 @@ elsedoneblock17135
 	
 	; Compare with pure num / var optimization
 	cmp #$5;keep
-	bcs elseblock26234
-ConditionalTrueBlock66487
+	bcs elseblock47665
+ConditionalTrueBlock33827
 	; Assigning single variable : screenmemory
 	lda wbgchar
 	pha
@@ -3305,17 +3305,17 @@ ConditionalTrueBlock66487
 	lda (p1),y
 	
 	sta wbgcol
-	jmp elsedoneblock83332
-elseblock26234
+	jmp elsedoneblock7158
+elseblock47665
 	; Assigning single variable : wsteps
 	lda #0
 	sta wsteps
-elsedoneblock83332
-	jmp caseend1996
-casenext54163
+elsedoneblock7158
+	jmp caseend45444
+casenext38083
 	lda wd
 	cmp #$1 ;keep
-	bne casenext51633
+	bne casenext47180
 	; Assigning single variable : screenmemory
 	
 	; ----------
@@ -3365,8 +3365,8 @@ casenext54163
 	
 	; Compare with pure num / var optimization
 	cmp #$5;keep
-	bcs elseblock32854
-ConditionalTrueBlock85213
+	bcs elseblock2527
+ConditionalTrueBlock28137
 	; Assigning single variable : screenmemory
 	lda wbgchar
 	ldy wx
@@ -3387,17 +3387,17 @@ ConditionalTrueBlock85213
 	lda (p1),y
 	
 	sta wbgcol
-	jmp elsedoneblock66382
-elseblock32854
+	jmp elsedoneblock92712
+elseblock2527
 	; Assigning single variable : wsteps
 	lda #0
 	sta wsteps
-elsedoneblock66382
-	jmp caseend1996
-casenext51633
+elsedoneblock92712
+	jmp caseend45444
+casenext47180
 	lda wd
 	cmp #$2 ;keep
-	bne casenext98738
+	bne casenext72962
 	; Assigning single variable : screenmemory
 	
 	; ----------
@@ -3446,8 +3446,8 @@ casenext51633
 	
 	; Compare with pure num / var optimization
 	cmp #$5;keep
-	bcs elseblock89168
-ConditionalTrueBlock16465
+	bcs elseblock69654
+ConditionalTrueBlock7043
 	; Assigning single variable : screenmemory
 	lda wbgchar
 	ldy wx
@@ -3485,17 +3485,17 @@ ConditionalTrueBlock16465
 	lda (p1),y
 	
 	sta wbgcol
-	jmp elsedoneblock68681
-elseblock89168
+	jmp elsedoneblock23687
+elseblock69654
 	; Assigning single variable : wsteps
 	lda #0
 	sta wsteps
-elsedoneblock68681
-	jmp caseend1996
-casenext98738
+elsedoneblock23687
+	jmp caseend45444
+casenext72962
 	lda wd
 	cmp #$3 ;keep
-	bne casenext48977
+	bne casenext33243
 	; Assigning single variable : screenmemory
 	
 	; ----------
@@ -3516,9 +3516,9 @@ casenext98738
 	 ; end add / sub var with constant
 	clc
 	adc $4c
-	bcc dtnooverflow65014
+	bcc dtnooverflow20281
 	iny  ; overflow into high byte
-dtnooverflow65014
+dtnooverflow20281
 	
 	sta screenmemory
 	sty screenmemory+1
@@ -3542,9 +3542,9 @@ dtnooverflow65014
 	 ; end add / sub var with constant
 	clc
 	adc $4c
-	bcc dtnooverflow15464
+	bcc dtnooverflow67070
 	iny  ; overflow into high byte
-dtnooverflow15464
+dtnooverflow67070
 	
 	sta p1
 	sty p1+1
@@ -3562,8 +3562,8 @@ dtnooverflow15464
 	
 	; Compare with pure num / var optimization
 	cmp #$5;keep
-	bcs elseblock14107
-ConditionalTrueBlock48346
+	bcs elseblock74078
+ConditionalTrueBlock27439
 	; Assigning single variable : screenmemory
 	lda wbgchar
 	ldy #1
@@ -3584,15 +3584,15 @@ ConditionalTrueBlock48346
 	lda (p1),y
 	
 	sta wbgcol
-	jmp elsedoneblock63072
-elseblock14107
+	jmp elsedoneblock31407
+elseblock74078
 	; Assigning single variable : wsteps
 	lda #0
 	sta wsteps
-elsedoneblock63072
-	jmp caseend1996
-casenext48977
-caseend1996
+elsedoneblock31407
+	jmp caseend45444
+casenext33243
+caseend45444
 	; Assigning single variable : screenmemory
 	
 	; ----------
@@ -3630,19 +3630,19 @@ caseend1996
 	lda cx
 	; Compare with pure num / var optimization
 	cmp wx;keep
-	bne elsedoneblock73439
-ConditionalTrueBlock37836
+	bne elsedoneblock84941
+ConditionalTrueBlock16912
 	; Binary clause Simplified: EQUALS
 	lda cy
 	; Compare with pure num / var optimization
 	cmp wy;keep
-	bne elsedoneblock4697
-ConditionalTrueBlock49764
+	bne elsedoneblock64897
+ConditionalTrueBlock88747
 	jsr HitWitch
-elseblock73567
-elsedoneblock4697
-elseblock58793
-elsedoneblock73439
+elseblock18211
+elsedoneblock64897
+elseblock69144
+elsedoneblock84941
 	rts
 	
 	
@@ -3654,8 +3654,8 @@ Ghost_Respawn
 	lda gcurrent
 	; Compare with pure num / var optimization
 	cmp gNumGhosts;keep
-	bcc elsedoneblock17457
-ConditionalTrueBlock47433
+	bcc elsedoneblock88652
+ConditionalTrueBlock36291
 	; Assigning single variable : gmode
 	lda #0
 	ldx gcurrent
@@ -3666,41 +3666,41 @@ ConditionalTrueBlock47433
 	; Assigning single variable : gy
 	sta gy,x
 	rts
-elseblock85490
-elsedoneblock17457
+elseblock81562
+elsedoneblock88652
 	; Assigning single variable : j
 	lda #0
 	sta j
-while80529
+while20060
 	; Binary clause: EQUALS
 	lda j
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	bne binaryclausefailed65169
-binaryclausesuccess47227
+	bne binaryclausefailed49290
+binaryclausesuccess28189
 	lda #1; success
-	jmp binaryclausefinished19170
-binaryclausefailed65169
+	jmp binaryclausefinished6255
+binaryclausefailed49290
 	lda #0 ; failed state
-binaryclausefinished19170
+binaryclausefinished6255
 	cmp #1
-	beq ConditionalTrueBlock85523
-	jmp elsedoneblock85292
-ConditionalTrueBlock85523
+	beq ConditionalTrueBlock33241
+	jmp elsedoneblock73022
+ConditionalTrueBlock33241
 	; Assigning single variable : x
 	; 8 bit binop
 	; Add/sub where right value is constant number
 	; Modulo
 	lda #20
-val_var11520 = $54
-	sta val_var11520
+val_var71506 = $54
+	sta val_var71506
 	jsr Random
 	sec
-modulo39563
-	sbc val_var11520
-	bcs modulo39563
-	adc val_var11520
+modulo83469
+	sbc val_var71506
+	bcs modulo83469
+	adc val_var71506
 	
 	clc
 	adc #1
@@ -3712,14 +3712,14 @@ modulo39563
 	; Add/sub where right value is constant number
 	; Modulo
 	lda #18
-val_var39221 = $54
-	sta val_var39221
+val_var70873 = $54
+	sta val_var70873
 	jsr Random
 	sec
-modulo93660
-	sbc val_var39221
-	bcs modulo93660
-	adc val_var39221
+modulo21698
+	sbc val_var70873
+	bcs modulo21698
+	adc val_var70873
 	
 	clc
 	adc #4
@@ -3763,9 +3763,9 @@ modulo93660
 	 ; end add / sub var with constant
 	clc
 	adc $4c
-	bcc dtnooverflow68616
+	bcc dtnooverflow384
 	iny  ; overflow into high byte
-dtnooverflow68616
+dtnooverflow384
 	
 	sta p1
 	sty p1+1
@@ -3846,8 +3846,8 @@ dtnooverflow68616
 	; Binary clause Simplified: EQUALS
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock84292
-ConditionalTrueBlock28223
+	bne elsedoneblock37705
+ConditionalTrueBlock54651
 	; Assigning single variable : p1
 	
 	; ----------
@@ -3886,8 +3886,8 @@ ConditionalTrueBlock28223
 	lda gcurrent
 	; Compare with pure num / var optimization
 	cmp gNumGhosts;keep
-	bcs elseblock62173
-ConditionalTrueBlock41009
+	bcs elseblock29771
+ConditionalTrueBlock0
 	; Assigning single variable : gmode
 	lda #0
 	ldx gcurrent
@@ -3899,8 +3899,8 @@ ConditionalTrueBlock41009
 	; Assigning single variable : p1
 	lda #1
 	sta (p1),y
-	jmp elsedoneblock89503
-elseblock62173
+	jmp elsedoneblock91366
+elseblock29771
 	; Assigning single variable : gmode
 	lda #1
 	ldx gcurrent
@@ -3908,12 +3908,12 @@ elseblock62173
 	; Assigning single variable : gx
 	lda #0
 	sta gx,x
-elsedoneblock89503
-elseblock55382
-elsedoneblock84292
-	jmp while80529
-elseblock81690
-elsedoneblock85292
+elsedoneblock91366
+elseblock28197
+elsedoneblock37705
+	jmp while20060
+elseblock93250
+elsedoneblock73022
 	rts
 	
 	
@@ -3924,14 +3924,14 @@ PlaceAllGhosts
 	; Assigning single variable : gcurrent
 	lda #0
 	sta gcurrent
-for18481
+for96836
 	jsr Ghost_Respawn
 	; Binary clause Simplified: LESS
 	lda gcurrent
 	; Compare with pure num / var optimization
 	cmp gNumGhosts;keep
-	bcs elsedoneblock79117
-ConditionalTrueBlock72525
+	bcs elsedoneblock75918
+ConditionalTrueBlock62836
 	; Assigning single variable : psnd3
 	lda #<sndGhostAppear
 	ldx #>sndGhostAppear
@@ -3944,32 +3944,32 @@ ConditionalTrueBlock72525
 	; Assigning single variable : i
 	lda #0
 	sta i
-for39833
-while23446
+for44534
+while10898
 	; Binary clause Simplified: EQUALS
 	lda ticks
 	; Compare with pure num / var optimization
 	cmp oldTick;keep
-	bne elsedoneblock13605
-ConditionalTrueBlock85374
-	jmp while23446
-elseblock27458
-elsedoneblock13605
+	bne elsedoneblock56184
+ConditionalTrueBlock44406
+	jmp while10898
+elseblock6427
+elsedoneblock56184
 	; Assigning single variable : oldTick
 	lda ticks
 	sta oldTick
 	inc i
 	lda #30
 	cmp i ;keep
-	bne for39833
-forLoopDone86128
-elseblock82894
-elsedoneblock79117
+	bne for44534
+forLoopDone34724
+elseblock93330
+elsedoneblock75918
 	inc gcurrent
 	lda #10
 	cmp gcurrent ;keep
-	bne for18481
-forLoopDone3807
+	bne for96836
+forLoopDone17723
 	; Assigning single variable : gcurrent
 	lda #0
 	sta gcurrent
@@ -3983,8 +3983,8 @@ DisplayGhosts
 	; Assigning single variable : i
 	lda #0
 	sta i
-for38989
-forLoopFix42348
+for62051
+forLoopFix13830
 	; Binary clause Simplified: GREATER
 	; Load Byte array
 	ldx i
@@ -3992,9 +3992,9 @@ forLoopFix42348
 	
 	; Compare with pure num / var optimization
 	cmp #$3;keep
-	bcc elsedoneblock32538
-	beq elsedoneblock32538
-ConditionalTrueBlock72497
+	bcc elsedoneblock87241
+	beq elsedoneblock87241
+ConditionalTrueBlock22968
 	; Assigning single variable : screenmemory
 	
 	; ----------
@@ -4059,15 +4059,15 @@ ConditionalTrueBlock72497
 	ldy gx,x
 	
 	sta (p1),y
-elseblock80569
-elsedoneblock32538
+elseblock25748
+elsedoneblock87241
 	inc i
 	lda gNumGhosts
 	cmp i ;keep
-	beq forLoopDone43461
-forLoopNotDone30017
-	jmp for38989
-forLoopDone43461
+	beq forLoopDone71121
+forLoopNotDone15976
+	jmp for62051
+forLoopDone71121
 	rts
 	
 	
@@ -4136,39 +4136,39 @@ Ghost_Move
 	clc
 	sbc px
 	cmp #$f7
-	bcs ColXConfirmed40353
+	bcs ColXConfirmed33930
 	cmp #$8
-	bcs NoCollision49299
-ColXConfirmed40353
+	bcs NoCollision29139
+ColXConfirmed33930
 	lda y
 	clc
 	sbc py
 	cmp #$fa
-	bcs Collision92724
+	bcs Collision75752
 	cmp #$5
-	bcs NoCollision49299
-Collision92724
+	bcs NoCollision29139
+Collision75752
 	lda #1
-	jmp CollisionDone754
-NoCollision49299
+	jmp CollisionDone20850
+NoCollision29139
 	lda #0
-CollisionDone754
+CollisionDone20850
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	beq binaryclausefailed46350
-binaryclausesuccess37710
+	beq binaryclausefailed1268
+binaryclausesuccess68382
 	lda #1; success
-	jmp binaryclausefinished13236
-binaryclausefailed46350
+	jmp binaryclausefinished86550
+binaryclausefailed1268
 	lda #0 ; failed state
-binaryclausefinished13236
+binaryclausefinished86550
 	cmp #1
-	beq ConditionalTrueBlock41707
-	jmp elseblock75743
-	jmp elsedoneblock34400
-ConditionalTrueBlock41707
+	beq ConditionalTrueBlock68879
+	jmp elseblock87862
+	jmp elsedoneblock21581
+ConditionalTrueBlock68879
 	; Binary clause Simplified: EQUALS
 	; Load Byte array
 	ldx gcurrent
@@ -4176,31 +4176,31 @@ ConditionalTrueBlock41707
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock86023
-ConditionalTrueBlock6158
+	bne elsedoneblock67204
+ConditionalTrueBlock93938
 	; Binary clause Simplified: GREATER
 	lda x
 	; Compare with pure num / var optimization
 	cmp px;keep
-	bcc elsedoneblock65375
-	beq elsedoneblock65375
-ConditionalTrueBlock18017
+	bcc elsedoneblock92574
+	beq elsedoneblock92574
+ConditionalTrueBlock32763
 	; Assigning single variable : x
 	dec x
-elseblock57806
-elsedoneblock65375
+elseblock60218
+elsedoneblock92574
 	; Binary clause Simplified: LESS
 	lda x
 	; Compare with pure num / var optimization
 	cmp px;keep
-	bcs elsedoneblock77377
-ConditionalTrueBlock8978
+	bcs elsedoneblock39333
+ConditionalTrueBlock37220
 	; Assigning single variable : x
 	inc x
-elseblock15265
-elsedoneblock77377
-elseblock35164
-elsedoneblock86023
+elseblock31351
+elsedoneblock39333
+elseblock59597
+elsedoneblock67204
 	; Assigning single variable : p1
 	
 	; ----------
@@ -4213,9 +4213,9 @@ elsedoneblock86023
 	ldy scr+1,x   ; Address of table hi
 	clc
 	adc x
-	bcc dtnooverflow17669
+	bcc dtnooverflow39531
 	iny  ; overflow into high byte
-dtnooverflow17669
+dtnooverflow39531
 	
 	sta p1
 	sty p1+1
@@ -4230,14 +4230,14 @@ dtnooverflow17669
 	
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	bcc elsedoneblock94536
-	beq elsedoneblock94536
-ConditionalTrueBlock59134
+	bcc elsedoneblock67418
+	beq elsedoneblock67418
+ConditionalTrueBlock26375
 	; Assigning single variable : x
 	lda n
 	sta x
-elseblock52833
-elsedoneblock94536
+elseblock99128
+elsedoneblock67418
 	; Binary clause Simplified: EQUALS
 	; Load Byte array
 	ldx gcurrent
@@ -4245,31 +4245,31 @@ elsedoneblock94536
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock89260
-ConditionalTrueBlock67697
+	bne elsedoneblock99643
+ConditionalTrueBlock15342
 	; Binary clause Simplified: GREATER
 	lda y
 	; Compare with pure num / var optimization
 	cmp py;keep
-	bcc elsedoneblock87096
-	beq elsedoneblock87096
-ConditionalTrueBlock95367
+	bcc elsedoneblock57592
+	beq elsedoneblock57592
+ConditionalTrueBlock55147
 	; Assigning single variable : y
 	dec y
-elseblock50212
-elsedoneblock87096
+elseblock76073
+elsedoneblock57592
 	; Binary clause Simplified: LESS
 	lda y
 	; Compare with pure num / var optimization
 	cmp py;keep
-	bcs elsedoneblock73950
-ConditionalTrueBlock26095
+	bcs elsedoneblock12603
+ConditionalTrueBlock95483
 	; Assigning single variable : y
 	inc y
-elseblock78674
-elsedoneblock73950
-elseblock83316
-elsedoneblock89260
+elseblock18533
+elsedoneblock12603
+elseblock25723
+elsedoneblock99643
 	; Assigning single variable : p1
 	
 	; ----------
@@ -4282,9 +4282,9 @@ elsedoneblock89260
 	ldy scr+1,x   ; Address of table hi
 	clc
 	adc x
-	bcc dtnooverflow27208
+	bcc dtnooverflow82415
 	iny  ; overflow into high byte
-dtnooverflow27208
+dtnooverflow82415
 	
 	sta p1
 	sty p1+1
@@ -4299,16 +4299,16 @@ dtnooverflow27208
 	
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	bcc elsedoneblock99242
-	beq elsedoneblock99242
-ConditionalTrueBlock12851
+	bcc elsedoneblock63443
+	beq elsedoneblock63443
+ConditionalTrueBlock64070
 	; Assigning single variable : y
 	lda s
 	sta y
-elseblock10525
-elsedoneblock99242
-	jmp elsedoneblock34400
-elseblock75743
+elseblock8138
+elsedoneblock63443
+	jmp elsedoneblock21581
+elseblock87862
 	; Assigning single variable : i
 	jsr Random
 	
@@ -4321,15 +4321,15 @@ elseblock75743
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	beq elseblock84169
-ConditionalTrueBlock27934
+	beq elseblock31605
+ConditionalTrueBlock57206
 	; Assigning single variable : x
 	inc x
-	jmp elsedoneblock84795
-elseblock84169
+	jmp elsedoneblock58189
+elseblock31605
 	; Assigning single variable : x
 	dec x
-elsedoneblock84795
+elsedoneblock58189
 	; Assigning single variable : p1
 	
 	; ----------
@@ -4342,9 +4342,9 @@ elsedoneblock84795
 	ldy scr+1,x   ; Address of table hi
 	clc
 	adc x
-	bcc dtnooverflow27351
+	bcc dtnooverflow16375
 	iny  ; overflow into high byte
-dtnooverflow27351
+dtnooverflow16375
 	
 	sta p1
 	sty p1+1
@@ -4359,14 +4359,14 @@ dtnooverflow27351
 	
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	bcc elsedoneblock85900
-	beq elsedoneblock85900
-ConditionalTrueBlock41320
+	bcc elsedoneblock17679
+	beq elsedoneblock17679
+ConditionalTrueBlock32573
 	; Assigning single variable : x
 	lda n
 	sta x
-elseblock62297
-elsedoneblock85900
+elseblock44745
+elsedoneblock17679
 	; Binary clause Simplified: NOTEQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -4376,15 +4376,15 @@ elsedoneblock85900
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	beq elseblock48401
-ConditionalTrueBlock86974
+	beq elseblock29328
+ConditionalTrueBlock15694
 	; Assigning single variable : y
 	dec y
-	jmp elsedoneblock94114
-elseblock48401
+	jmp elsedoneblock88747
+elseblock29328
 	; Assigning single variable : y
 	inc y
-elsedoneblock94114
+elsedoneblock88747
 	; Assigning single variable : p1
 	
 	; ----------
@@ -4397,9 +4397,9 @@ elsedoneblock94114
 	ldy scr+1,x   ; Address of table hi
 	clc
 	adc x
-	bcc dtnooverflow50052
+	bcc dtnooverflow6783
 	iny  ; overflow into high byte
-dtnooverflow50052
+dtnooverflow6783
 	
 	sta p1
 	sty p1+1
@@ -4414,15 +4414,15 @@ dtnooverflow50052
 	
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	bcc elsedoneblock1433
-	beq elsedoneblock1433
-ConditionalTrueBlock11625
+	bcc elsedoneblock77011
+	beq elsedoneblock77011
+ConditionalTrueBlock83766
 	; Assigning single variable : y
 	lda s
 	sta y
-elseblock43682
-elsedoneblock1433
-elsedoneblock34400
+elseblock70583
+elsedoneblock77011
+elsedoneblock21581
 	; Assigning single variable : gx
 	lda x
 	ldx gcurrent
@@ -4469,40 +4469,40 @@ elsedoneblock34400
 	sta gbgcol,x
 	; Binary clause Simplified: EQUALS
 	lda cx
-binary_clause_temp_var80589 = $54
-	sta binary_clause_temp_var80589
+binary_clause_temp_var51141 = $54
+	sta binary_clause_temp_var51141
 	; Load Byte array
 	ldx gcurrent
 	lda gx,x
 	
-binary_clause_temp_2_var39013 = $56
-	sta binary_clause_temp_2_var39013
-	lda binary_clause_temp_var80589
-	cmp binary_clause_temp_2_var39013;keep
-	bne elsedoneblock30960
-ConditionalTrueBlock30151
+binary_clause_temp_2_var69981 = $56
+	sta binary_clause_temp_2_var69981
+	lda binary_clause_temp_var51141
+	cmp binary_clause_temp_2_var69981;keep
+	bne elsedoneblock38457
+ConditionalTrueBlock92603
 	; Binary clause Simplified: EQUALS
 	lda cy
-binary_clause_temp_var74759 = $54
-	sta binary_clause_temp_var74759
+binary_clause_temp_var89208 = $54
+	sta binary_clause_temp_var89208
 	; Load Byte array
 	ldx gcurrent
 	lda gy,x
 	
-binary_clause_temp_2_var47036 = $56
-	sta binary_clause_temp_2_var47036
-	lda binary_clause_temp_var74759
-	cmp binary_clause_temp_2_var47036;keep
-	bne elsedoneblock96984
-ConditionalTrueBlock3766
+binary_clause_temp_2_var17500 = $56
+	sta binary_clause_temp_2_var17500
+	lda binary_clause_temp_var89208
+	cmp binary_clause_temp_2_var17500;keep
+	bne elsedoneblock10717
+ConditionalTrueBlock99310
 	; Assigning single variable : i
 	lda gcurrent
 	sta i
 	jsr HitGhost
-elseblock73990
-elsedoneblock96984
-elseblock97235
-elsedoneblock30960
+elseblock71505
+elsedoneblock10717
+elseblock40480
+elsedoneblock38457
 	rts
 	
 	
@@ -4517,18 +4517,18 @@ UpdateGhosts
 	; Compare with pure num / var optimization
 	cmp #$14;keep
 	; BC done
-	bcc binaryclausefailed36335
-	beq binaryclausefailed36335
-binaryclausesuccess92631
+	bcc binaryclausefailed79967
+	beq binaryclausefailed79967
+binaryclausesuccess51174
 	lda #1; success
-	jmp binaryclausefinished6892
-binaryclausefailed36335
+	jmp binaryclausefinished77573
+binaryclausefailed79967
 	lda #0 ; failed state
-binaryclausefinished6892
+binaryclausefinished77573
 	cmp #1
-	beq ConditionalTrueBlock37209
-	jmp elsedoneblock82700
-ConditionalTrueBlock37209
+	beq ConditionalTrueBlock53476
+	jmp elsedoneblock71166
+ConditionalTrueBlock53476
 	; Assigning single variable : gtime
 	lda #0
 	sta gtime
@@ -4536,8 +4536,8 @@ ConditionalTrueBlock37209
 	lda gcurrent
 	; Compare with pure num / var optimization
 	cmp gNumGhosts;keep
-	bcs elsedoneblock82313
-ConditionalTrueBlock33007
+	bcs elsedoneblock82832
+ConditionalTrueBlock71550
 	; Binary clause Simplified: EQUALS
 	; Load Byte array
 	ldx gcurrent
@@ -4545,11 +4545,11 @@ ConditionalTrueBlock33007
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock70210
-ConditionalTrueBlock62251
+	bne elsedoneblock1396
+ConditionalTrueBlock18563
 	jsr Ghost_Move
-elseblock77724
-elsedoneblock70210
+elseblock75535
+elsedoneblock1396
 	; Binary clause Simplified: GREATER
 	; Load Byte array
 	ldx gcurrent
@@ -4557,9 +4557,9 @@ elsedoneblock70210
 	
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	bcc elsedoneblock90626
-	beq elsedoneblock90626
-ConditionalTrueBlock3193
+	bcc elsedoneblock48753
+	beq elsedoneblock48753
+ConditionalTrueBlock58171
 	; Assigning single variable : gmode
 	ldx gcurrent
 	; Optimize byte array dec 
@@ -4570,8 +4570,8 @@ ConditionalTrueBlock3193
 	
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	bne elsedoneblock72784
-ConditionalTrueBlock62795
+	bne elsedoneblock3333
+ConditionalTrueBlock14868
 	jsr Ghost_Respawn
 	; Assigning single variable : psnd3
 	lda #<sndGhostAppear
@@ -4582,12 +4582,12 @@ ConditionalTrueBlock62795
 	lda #200
 	sta vsnd3
 	jsr PlaySnd3
-elseblock99826
-elsedoneblock72784
-elseblock25834
-elsedoneblock90626
-elseblock19353
-elsedoneblock82313
+elseblock46497
+elsedoneblock3333
+elseblock53381
+elsedoneblock48753
+elseblock10925
+elsedoneblock82832
 	jsr DisplayGhosts
 	; Assigning single variable : gcurrent
 	inc gcurrent
@@ -4595,15 +4595,15 @@ elsedoneblock82313
 	lda gcurrent
 	; Compare with pure num / var optimization
 	cmp #$a;keep
-	bne elsedoneblock573
-ConditionalTrueBlock33882
+	bne elsedoneblock31593
+ConditionalTrueBlock2095
 	; Assigning single variable : gcurrent
 	lda #0
 	sta gcurrent
-elseblock78155
-elsedoneblock573
-elseblock41238
-elsedoneblock82700
+elseblock83632
+elsedoneblock31593
+elseblock81230
+elsedoneblock71166
 	rts
 	
 	
@@ -4615,11 +4615,11 @@ SpawnAZombie
 	lda zNumZombies
 	; Compare with pure num / var optimization
 	cmp #$a;keep
-	bcc elsedoneblock99067
-ConditionalTrueBlock97946
+	bcc elsedoneblock54258
+ConditionalTrueBlock79505
 	rts
-elseblock39366
-elsedoneblock99067
+elseblock25162
+elsedoneblock54258
 	; Assigning single variable : n
 	lda #0
 	sta n
@@ -4630,24 +4630,24 @@ elsedoneblock99067
 	; Assigning single variable : t
 	; Modulo
 	lda #12
-val_var73790 = $54
-	sta val_var73790
+val_var4437 = $54
+	sta val_var4437
 	jsr Random
 	sec
-modulo78408
-	sbc val_var73790
-	bcs modulo78408
-	adc val_var73790
+modulo98164
+	sbc val_var4437
+	bcs modulo98164
+	adc val_var4437
 	
 	sta t
 	; Assigning single variable : y
 	lda #3
 	sta y
-for77290
+for46821
 	; Assigning single variable : x
 	lda #1
 	sta x
-for43294
+for37585
 	; Assigning single variable : screenmemory
 	
 	; ----------
@@ -4668,8 +4668,8 @@ for43294
 	
 	; Compare with pure num / var optimization
 	cmp #$1b;keep
-	bne elsedoneblock46286
-ConditionalTrueBlock83852
+	bne elsedoneblock88974
+ConditionalTrueBlock86993
 	; Assigning single variable : n
 	lda x
 	sta n
@@ -4680,37 +4680,37 @@ ConditionalTrueBlock83852
 	lda i
 	; Compare with pure num / var optimization
 	cmp t;keep
-	bne elsedoneblock74729
-ConditionalTrueBlock84200
+	bne elsedoneblock45430
+ConditionalTrueBlock45429
 	; Assigning single variable : x
 	lda #20
 	sta x
 	; Assigning single variable : y
 	lda #21
 	sta y
-elseblock80878
-elsedoneblock74729
+elseblock56278
+elsedoneblock45430
 	; Assigning single variable : i
 	inc i
-elseblock97508
-elsedoneblock46286
+elseblock88931
+elsedoneblock88974
 	inc x
 	lda #21
 	cmp x ;keep
-	bne for43294
-forLoopDone43370
+	bne for37585
+forLoopDone43470
 	inc y
 	lda #22
 	cmp y ;keep
-	bne for77290
-forLoopDone80297
+	bne for46821
+forLoopDone15357
 	; Binary clause Simplified: GREATER
 	lda n
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bcc elsedoneblock42772
-	beq elsedoneblock42772
-ConditionalTrueBlock33179
+	bcc elsedoneblock7754
+	beq elsedoneblock7754
+ConditionalTrueBlock75273
 	; Assigning single variable : zx
 	lda n
 	ldx zNumZombies
@@ -4737,8 +4737,8 @@ ConditionalTrueBlock33179
 	lda #128
 	sta vsnd2
 	jsr PlaySnd2
-elseblock46007
-elsedoneblock42772
+elseblock32630
+elsedoneblock7754
 	rts
 	
 	
@@ -4749,8 +4749,8 @@ DisplayZombies
 	; Assigning single variable : i
 	lda #0
 	sta i
-for5904
-forLoopFix54833
+for31473
+forLoopFix23180
 	; Assigning single variable : screenmemory
 	
 	; ----------
@@ -4796,7 +4796,7 @@ forLoopFix54833
 	sta x
 	lda t
 	cmp #$0 ;keep
-	bne casenext53150
+	bne casenext71754
 	; Assigning single variable : screenmemory
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -4813,40 +4813,40 @@ forLoopFix54833
 	
 	ldy x
 	sta (screenmemory),y
-	jmp caseend82271
-casenext53150
+	jmp caseend47869
+casenext71754
 	lda t
 	cmp #$1 ;keep
-	bne casenext23381
+	bne casenext38641
 	; Assigning single variable : screenmemory
 	lda #40
 	ldy x
 	sta (screenmemory),y
-	jmp caseend82271
-casenext23381
+	jmp caseend47869
+casenext38641
 	lda t
 	cmp #$2 ;keep
-	bne casenext38287
+	bne casenext15854
 	; Assigning single variable : screenmemory
 	lda #41
 	ldy x
 	sta (screenmemory),y
-	jmp caseend82271
-casenext38287
+	jmp caseend47869
+casenext15854
 	lda t
 	cmp #$3 ;keep
-	bne casenext54328
+	bne casenext46318
 	; Assigning single variable : screenmemory
 	lda #42
 	ldy x
 	sta (screenmemory),y
-	jmp caseend82271
-casenext54328
+	jmp caseend47869
+casenext46318
 	; Assigning single variable : screenmemory
 	lda #42
 	ldy x
 	sta (screenmemory),y
-caseend82271
+caseend47869
 	; Assigning single variable : p1
 	lda #5
 	ldy x
@@ -4854,10 +4854,10 @@ caseend82271
 	inc i
 	lda zNumZombies
 	cmp i ;keep
-	beq forLoopDone11410
-forLoopNotDone70448
-	jmp for5904
-forLoopDone11410
+	beq forLoopDone21737
+forLoopNotDone60304
+	jmp for31473
+forLoopDone21737
 	rts
 	
 	
@@ -4931,39 +4931,39 @@ Zombie_Move
 	; Compare with pure num / var optimization
 	cmp #$1;keep
 	; BC done
-	beq binaryclausesuccess61120
-	bcs binaryclausefailed92300
-binaryclausesuccess61120
+	beq binaryclausesuccess21785
+	bcs binaryclausefailed14682
+binaryclausesuccess21785
 	lda #1; success
-	jmp binaryclausefinished99950
-binaryclausefailed92300
+	jmp binaryclausefinished34363
+binaryclausefailed14682
 	lda #0 ; failed state
-binaryclausefinished99950
+binaryclausefinished34363
 	cmp #1
-	beq ConditionalTrueBlock2345
-	jmp elsedoneblock94861
-ConditionalTrueBlock2345
+	beq ConditionalTrueBlock68905
+	jmp elsedoneblock30428
+ConditionalTrueBlock68905
 	; Binary clause Simplified: GREATER
 	lda x
 	; Compare with pure num / var optimization
 	cmp px;keep
-	bcc elsedoneblock60056
-	beq elsedoneblock60056
-ConditionalTrueBlock46550
+	bcc elsedoneblock73897
+	beq elsedoneblock73897
+ConditionalTrueBlock27909
 	; Assigning single variable : x
 	dec x
-elseblock41549
-elsedoneblock60056
+elseblock72444
+elsedoneblock73897
 	; Binary clause Simplified: LESS
 	lda x
 	; Compare with pure num / var optimization
 	cmp px;keep
-	bcs elsedoneblock83458
-ConditionalTrueBlock65914
+	bcs elsedoneblock41335
+ConditionalTrueBlock53524
 	; Assigning single variable : x
 	inc x
-elseblock21924
-elsedoneblock83458
+elseblock92039
+elsedoneblock41335
 	; Assigning single variable : p1
 	
 	; ----------
@@ -4976,9 +4976,9 @@ elsedoneblock83458
 	ldy scr+1,x   ; Address of table hi
 	clc
 	adc x
-	bcc dtnooverflow658
+	bcc dtnooverflow39568
 	iny  ; overflow into high byte
-dtnooverflow658
+dtnooverflow39568
 	
 	sta p1
 	sty p1+1
@@ -4993,35 +4993,35 @@ dtnooverflow658
 	
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	bcc elsedoneblock53319
-	beq elsedoneblock53319
-ConditionalTrueBlock31554
+	bcc elsedoneblock85493
+	beq elsedoneblock85493
+ConditionalTrueBlock81805
 	; Assigning single variable : x
 	lda n
 	sta x
-elseblock99281
-elsedoneblock53319
+elseblock91222
+elsedoneblock85493
 	; Binary clause Simplified: GREATER
 	lda y
 	; Compare with pure num / var optimization
 	cmp py;keep
-	bcc elsedoneblock85506
-	beq elsedoneblock85506
-ConditionalTrueBlock96499
+	bcc elsedoneblock85955
+	beq elsedoneblock85955
+ConditionalTrueBlock95364
 	; Assigning single variable : y
 	dec y
-elseblock24763
-elsedoneblock85506
+elseblock84457
+elsedoneblock85955
 	; Binary clause Simplified: LESS
 	lda y
 	; Compare with pure num / var optimization
 	cmp py;keep
-	bcs elsedoneblock26701
-ConditionalTrueBlock11305
+	bcs elsedoneblock5291
+ConditionalTrueBlock96181
 	; Assigning single variable : y
 	inc y
-elseblock59970
-elsedoneblock26701
+elseblock42290
+elsedoneblock5291
 	; Assigning single variable : p1
 	
 	; ----------
@@ -5034,9 +5034,9 @@ elsedoneblock26701
 	ldy scr+1,x   ; Address of table hi
 	clc
 	adc x
-	bcc dtnooverflow80129
+	bcc dtnooverflow31720
 	iny  ; overflow into high byte
-dtnooverflow80129
+dtnooverflow31720
 	
 	sta p1
 	sty p1+1
@@ -5051,32 +5051,32 @@ dtnooverflow80129
 	
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	bcc elsedoneblock72417
-	beq elsedoneblock72417
-ConditionalTrueBlock10012
+	bcc elsedoneblock36842
+	beq elsedoneblock36842
+ConditionalTrueBlock8891
 	; Assigning single variable : y
 	lda s
 	sta y
-elseblock40186
-elsedoneblock72417
-elseblock51514
-elsedoneblock94861
+elseblock21969
+elsedoneblock36842
+elseblock42848
+elsedoneblock30428
 	; Binary clause: EQUALS
 	lda t
 	; Compare with pure num / var optimization
 	cmp #$2;keep
 	; BC done
-	bne binaryclausefailed22835
-binaryclausesuccess43058
+	bne binaryclausefailed81515
+binaryclausesuccess11231
 	lda #1; success
-	jmp binaryclausefinished43483
-binaryclausefailed22835
+	jmp binaryclausefinished84762
+binaryclausefailed81515
 	lda #0 ; failed state
-binaryclausefinished43483
+binaryclausefinished84762
 	cmp #1
-	beq ConditionalTrueBlock78979
-	jmp elsedoneblock80237
-ConditionalTrueBlock78979
+	beq ConditionalTrueBlock55712
+	jmp elsedoneblock85290
+ConditionalTrueBlock55712
 	; Assigning single variable : i
 	jsr Random
 	
@@ -5089,15 +5089,15 @@ ConditionalTrueBlock78979
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	beq elseblock25315
-ConditionalTrueBlock58053
+	beq elseblock29155
+ConditionalTrueBlock59749
 	; Assigning single variable : x
 	inc x
-	jmp elsedoneblock99213
-elseblock25315
+	jmp elsedoneblock85052
+elseblock29155
 	; Assigning single variable : x
 	dec x
-elsedoneblock99213
+elsedoneblock85052
 	; Assigning single variable : p1
 	
 	; ----------
@@ -5110,9 +5110,9 @@ elsedoneblock99213
 	ldy scr+1,x   ; Address of table hi
 	clc
 	adc x
-	bcc dtnooverflow35680
+	bcc dtnooverflow41175
 	iny  ; overflow into high byte
-dtnooverflow35680
+dtnooverflow41175
 	
 	sta p1
 	sty p1+1
@@ -5127,14 +5127,14 @@ dtnooverflow35680
 	
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	bcc elsedoneblock71564
-	beq elsedoneblock71564
-ConditionalTrueBlock58641
+	bcc elsedoneblock1999
+	beq elsedoneblock1999
+ConditionalTrueBlock46769
 	; Assigning single variable : x
 	lda n
 	sta x
-elseblock71006
-elsedoneblock71564
+elseblock71652
+elsedoneblock1999
 	; Binary clause Simplified: NOTEQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -5144,15 +5144,15 @@ elsedoneblock71564
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	beq elseblock85752
-ConditionalTrueBlock131
+	beq elseblock59288
+ConditionalTrueBlock41588
 	; Assigning single variable : y
 	dec y
-	jmp elsedoneblock30242
-elseblock85752
+	jmp elsedoneblock30740
+elseblock59288
 	; Assigning single variable : y
 	inc y
-elsedoneblock30242
+elsedoneblock30740
 	; Assigning single variable : p1
 	
 	; ----------
@@ -5165,9 +5165,9 @@ elsedoneblock30242
 	ldy scr+1,x   ; Address of table hi
 	clc
 	adc x
-	bcc dtnooverflow17824
+	bcc dtnooverflow92515
 	iny  ; overflow into high byte
-dtnooverflow17824
+dtnooverflow92515
 	
 	sta p1
 	sty p1+1
@@ -5182,16 +5182,16 @@ dtnooverflow17824
 	
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	bcc elsedoneblock61002
-	beq elsedoneblock61002
-ConditionalTrueBlock34463
+	bcc elsedoneblock74718
+	beq elsedoneblock74718
+ConditionalTrueBlock77383
 	; Assigning single variable : y
 	lda s
 	sta y
-elseblock6071
-elsedoneblock61002
-elseblock34589
-elsedoneblock80237
+elseblock18093
+elsedoneblock74718
+elseblock55937
+elsedoneblock85290
 	; Assigning single variable : zx
 	lda x
 	ldx zcurrent
@@ -5238,40 +5238,40 @@ elsedoneblock80237
 	sta zbgcol,x
 	; Binary clause Simplified: EQUALS
 	lda cx
-binary_clause_temp_var33766 = $54
-	sta binary_clause_temp_var33766
+binary_clause_temp_var72456 = $54
+	sta binary_clause_temp_var72456
 	; Load Byte array
 	ldx zcurrent
 	lda zx,x
 	
-binary_clause_temp_2_var838 = $56
-	sta binary_clause_temp_2_var838
-	lda binary_clause_temp_var33766
-	cmp binary_clause_temp_2_var838;keep
-	bne elsedoneblock28656
-ConditionalTrueBlock99174
+binary_clause_temp_2_var5855 = $56
+	sta binary_clause_temp_2_var5855
+	lda binary_clause_temp_var72456
+	cmp binary_clause_temp_2_var5855;keep
+	bne elsedoneblock54839
+ConditionalTrueBlock59816
 	; Binary clause Simplified: EQUALS
 	lda cy
-binary_clause_temp_var54461 = $54
-	sta binary_clause_temp_var54461
+binary_clause_temp_var93392 = $54
+	sta binary_clause_temp_var93392
 	; Load Byte array
 	ldx zcurrent
 	lda zy,x
 	
-binary_clause_temp_2_var65135 = $56
-	sta binary_clause_temp_2_var65135
-	lda binary_clause_temp_var54461
-	cmp binary_clause_temp_2_var65135;keep
-	bne elsedoneblock30959
-ConditionalTrueBlock2942
+binary_clause_temp_2_var37154 = $56
+	sta binary_clause_temp_2_var37154
+	lda binary_clause_temp_var93392
+	cmp binary_clause_temp_2_var37154;keep
+	bne elsedoneblock28287
+ConditionalTrueBlock65143
 	; Assigning single variable : i
 	lda zcurrent
 	sta i
 	jsr HitZombie
-elseblock84284
-elsedoneblock30959
-elseblock11544
-elsedoneblock28656
+elseblock4815
+elsedoneblock28287
+elseblock25585
+elsedoneblock54839
 	rts
 	
 	
@@ -5283,33 +5283,33 @@ UpdateZombies
 	lda zNumZombies
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock113
-ConditionalTrueBlock83598
+	bne elsedoneblock87559
+ConditionalTrueBlock46657
 	rts
-elseblock99356
-elsedoneblock113
+elseblock25381
+elsedoneblock87559
 	; Binary clause Simplified: EQUALS
 	; Modulo
 	lda ztime
-val_var68232 = $54
-	sta val_var68232
+val_var14845 = $54
+	sta val_var14845
 	lda ticks
 	sec
-modulo92331
-	sbc val_var68232
-	bcs modulo92331
-	adc val_var68232
+modulo64896
+	sbc val_var14845
+	bcs modulo64896
+	adc val_var14845
 	
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	bne elsedoneblock32110
-ConditionalTrueBlock19962
+	bne elsedoneblock68082
+ConditionalTrueBlock98658
 	; Binary clause Simplified: LESS
 	lda zcurrent
 	; Compare with pure num / var optimization
 	cmp zNumZombies;keep
-	bcs elsedoneblock25413
-ConditionalTrueBlock45820
+	bcs elsedoneblock89121
+ConditionalTrueBlock42061
 	; Binary clause Simplified: EQUALS
 	; Load Byte array
 	ldx zcurrent
@@ -5317,11 +5317,11 @@ ConditionalTrueBlock45820
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock63193
-ConditionalTrueBlock9439
+	bne elsedoneblock63903
+ConditionalTrueBlock18038
 	jsr Zombie_Move
-elseblock59619
-elsedoneblock63193
+elseblock93231
+elsedoneblock63903
 	; Binary clause Simplified: GREATER
 	; Load Byte array
 	ldx zcurrent
@@ -5329,17 +5329,17 @@ elsedoneblock63193
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bcc elsedoneblock76850
-	beq elsedoneblock76850
-ConditionalTrueBlock61770
+	bcc elsedoneblock66779
+	beq elsedoneblock66779
+ConditionalTrueBlock12904
 	; Assigning single variable : zspawn
 	ldx zcurrent
 	; Optimize byte array dec 
 	dec zspawn,x
-elseblock69528
-elsedoneblock76850
-elseblock74446
-elsedoneblock25413
+elseblock49343
+elsedoneblock66779
+elseblock88690
+elsedoneblock89121
 	jsr DisplayZombies
 	; Assigning single variable : zcurrent
 	inc zcurrent
@@ -5347,15 +5347,15 @@ elsedoneblock25413
 	lda zcurrent
 	; Compare with pure num / var optimization
 	cmp #$a;keep
-	bne elsedoneblock55148
-ConditionalTrueBlock76229
+	bne elsedoneblock42709
+ConditionalTrueBlock22711
 	; Assigning single variable : zcurrent
 	lda #0
 	sta zcurrent
-elseblock24031
-elsedoneblock55148
-elseblock80744
-elsedoneblock32110
+elseblock72653
+elsedoneblock42709
+elseblock33155
+elsedoneblock68082
 	rts
 	
 	
@@ -5368,14 +5368,14 @@ SpawnCandy
 	; Add/sub where right value is constant number
 	; Modulo
 	lda #20
-val_var69906 = $54
-	sta val_var69906
+val_var72457 = $54
+	sta val_var72457
 	jsr Random
 	sec
-modulo91568
-	sbc val_var69906
-	bcs modulo91568
-	adc val_var69906
+modulo96745
+	sbc val_var72457
+	bcs modulo96745
+	adc val_var72457
 	
 	clc
 	adc #1
@@ -5387,14 +5387,14 @@ modulo91568
 	; Add/sub where right value is constant number
 	; Modulo
 	lda #16
-val_var53954 = $54
-	sta val_var53954
+val_var79443 = $54
+	sta val_var79443
 	jsr Random
 	sec
-modulo62508
-	sbc val_var53954
-	bcs modulo62508
-	adc val_var53954
+modulo9034
+	sbc val_var79443
+	bcs modulo9034
+	adc val_var79443
 	
 	clc
 	adc #4
@@ -5417,13 +5417,13 @@ modulo62508
 	
 	sta screenmemory
 	sty screenmemory+1
-while21698
+while8008
 	; Binary clause Simplified: EQUALS
 	lda t
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock52470
-ConditionalTrueBlock34303
+	bne elsedoneblock14147
+ConditionalTrueBlock42220
 	; Binary clause Simplified: EQUALS
 	; Load Byte array
 	; Load pointer array
@@ -5435,28 +5435,28 @@ ConditionalTrueBlock34303
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock82649
-ConditionalTrueBlock41138
+	bne elsedoneblock16980
+ConditionalTrueBlock60862
 	; Assigning single variable : t
 	lda #1
 	sta t
-elseblock99958
-elsedoneblock82649
+elseblock53323
+elsedoneblock16980
 	; Binary clause Simplified: EQUALS
 	lda t
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock10720
-ConditionalTrueBlock38146
+	bne elsedoneblock93661
+ConditionalTrueBlock76985
 	; Assigning single variable : x
 	inc x
 	; Binary clause Simplified: GREATER
 	lda x
 	; Compare with pure num / var optimization
 	cmp #$14;keep
-	bcc elsedoneblock83348
-	beq elsedoneblock83348
-ConditionalTrueBlock15033
+	bcc elsedoneblock94750
+	beq elsedoneblock94750
+ConditionalTrueBlock11973
 	; Assigning single variable : x
 	lda #1
 	sta x
@@ -5466,21 +5466,21 @@ ConditionalTrueBlock15033
 	lda y
 	; Compare with pure num / var optimization
 	cmp #$16;keep
-	bcc elsedoneblock23221
-	beq elsedoneblock23221
-ConditionalTrueBlock64303
+	bcc elsedoneblock1248
+	beq elsedoneblock1248
+ConditionalTrueBlock69510
 	; Assigning single variable : y
 	lda #4
 	sta y
-elseblock46387
-elsedoneblock23221
-elseblock1842
-elsedoneblock83348
-elseblock9428
-elsedoneblock10720
-	jmp while21698
-elseblock987
-elsedoneblock52470
+elseblock14688
+elsedoneblock1248
+elseblock75584
+elsedoneblock94750
+elseblock10977
+elsedoneblock93661
+	jmp while8008
+elseblock73909
+elsedoneblock14147
 	; Assigning single variable : p1
 	
 	; ----------
@@ -5510,8 +5510,8 @@ elsedoneblock52470
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock870
-ConditionalTrueBlock29462
+	bne elsedoneblock27897
+ConditionalTrueBlock30535
 	; Assigning single variable : psnd2
 	lda #<sndCAppear
 	ldx #>sndCAppear
@@ -5521,8 +5521,8 @@ ConditionalTrueBlock29462
 	lda #250
 	sta vsnd2
 	jsr PlaySnd2
-elseblock30386
-elsedoneblock870
+elseblock45013
+elsedoneblock27897
 	rts
 	
 	
@@ -5547,15 +5547,15 @@ EndCandy
 	lda cy
 	; Compare with pure num / var optimization
 	cmp #$3;keep
-	bcc elsedoneblock8766
-	beq elsedoneblock8766
-ConditionalTrueBlock68824
+	bcc elsedoneblock67318
+	beq elsedoneblock67318
+ConditionalTrueBlock80173
 	; Assigning single variable : p1
 	lda #3
 	ldy cx
 	sta (p1),y
-elseblock19117
-elsedoneblock8766
+elseblock15943
+elsedoneblock67318
 	; Assigning single variable : cx
 	lda #0
 	sta cx
@@ -5582,7 +5582,7 @@ DrawCandyCounter
 	; Assigning single variable : i
 	lda #1
 	sta i
-for97893
+for16351
 	; Assigning single variable : screenmemory
 	lda #0
 	ldy i
@@ -5590,18 +5590,18 @@ for97893
 	inc i
 	lda #6
 	cmp i ;keep
-	bcs for97893
-forLoopDone60186
+	bcs for16351
+forLoopDone70938
 	; Assigning single variable : i
 	lda #1
 	sta i
-for14057
+for78210
 	; Binary clause Simplified: GREATEREQUAL
 	lda candy
 	; Compare with pure num / var optimization
 	cmp i;keep
-	bcc elsedoneblock98817
-ConditionalTrueBlock84506
+	bcc elsedoneblock10504
+ConditionalTrueBlock41303
 	; Assigning single variable : screenmemory
 	lda #46
 	pha
@@ -5628,14 +5628,14 @@ ConditionalTrueBlock84506
 	tay
 	pla
 	sta (p1),y
-elseblock3163
-elsedoneblock98817
+elseblock54358
+elsedoneblock10504
 	; Binary clause Simplified: GREATEREQUAL
 	lda witchHits
 	; Compare with pure num / var optimization
 	cmp i;keep
-	bcc elsedoneblock38893
-ConditionalTrueBlock51352
+	bcc elsedoneblock70715
+ConditionalTrueBlock93921
 	; Assigning single variable : screenmemory
 	lda #38
 	ldy i
@@ -5643,13 +5643,13 @@ ConditionalTrueBlock51352
 	; Assigning single variable : p1
 	lda #1
 	sta (p1),y
-elseblock88549
-elsedoneblock38893
+elseblock72484
+elsedoneblock70715
 	inc i
 	lda #6
 	cmp i ;keep
-	bcs for14057
-forLoopDone75260
+	bcs for78210
+forLoopDone72005
 	rts
 	
 	
@@ -5697,22 +5697,22 @@ MoveCandy
 	lda cdx
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	bne elsedoneblock89944
-ConditionalTrueBlock57692
+	bne elsedoneblock15359
+ConditionalTrueBlock16425
 	; Assigning single variable : cx
 	inc cx
-elseblock57302
-elsedoneblock89944
+elseblock82965
+elsedoneblock15359
 	; Binary clause Simplified: NOTEQUALS
 	lda cdx
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	beq elsedoneblock14526
-ConditionalTrueBlock66256
+	beq elsedoneblock32709
+ConditionalTrueBlock9337
 	; Assigning single variable : cx
 	dec cx
-elseblock1101
-elsedoneblock14526
+elseblock61281
+elsedoneblock32709
 	; Binary clause Simplified: EQUALS
 	; Load Byte array
 	; Load pointer array
@@ -5724,8 +5724,8 @@ elsedoneblock14526
 	
 	; Compare with pure num / var optimization
 	cmp #$a;keep
-	bne elsedoneblock66796
-ConditionalTrueBlock93054
+	bne elsedoneblock71092
+ConditionalTrueBlock12855
 	; Assigning single variable : cx
 	lda x
 	sta cx
@@ -5733,14 +5733,14 @@ ConditionalTrueBlock93054
 	lda candyscr
 	; Compare with pure num / var optimization
 	cmp #$4;keep
-	bcs elsedoneblock82346
-ConditionalTrueBlock38157
+	bcs elsedoneblock86710
+ConditionalTrueBlock76448
 	; Assigning single variable : candyscr
 	inc candyscr
-elseblock92203
-elsedoneblock82346
-elseblock53939
-elsedoneblock66796
+elseblock24337
+elsedoneblock86710
+elseblock76630
+elsedoneblock71092
 	; Assigning single variable : cbgchar
 	; Load pointer array
 	ldy cx
@@ -5778,21 +5778,21 @@ elsedoneblock66796
 	; Compare with pure num / var optimization
 	cmp x;keep
 	; BC done
-	bne tempfail78440
-binaryclausesuccess82584
-	jmp ConditionalTrueBlock75927
-tempfail78440
+	bne tempfail3118
+binaryclausesuccess68677
+	jmp ConditionalTrueBlock42532
+tempfail3118
 	; Binary clause: EQUALS
 	lda clife
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	bne elseblock86252
-binaryclausesuccess36010
-ConditionalTrueBlock75927
+	bne elseblock97581
+binaryclausesuccess87773
+ConditionalTrueBlock42532
 	jsr EndCandy
-elseblock86252
-elsedoneblock17553
+elseblock97581
+elsedoneblock46816
 	rts
 	
 	
@@ -5810,50 +5810,50 @@ UpdateCandy
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	beq binaryclausefailed62638
-binaryclausesuccess98187
+	beq binaryclausefailed91791
+binaryclausesuccess11067
 	lda #1; success
-	jmp binaryclausefinished49476
-binaryclausefailed62638
+	jmp binaryclausefinished3187
+binaryclausefailed91791
 	lda #0 ; failed state
-binaryclausefinished49476
+binaryclausefinished3187
 	cmp #1
-	beq ConditionalTrueBlock95513
-	jmp elsedoneblock52277
-ConditionalTrueBlock95513
+	beq ConditionalTrueBlock47514
+	jmp elsedoneblock69029
+ConditionalTrueBlock47514
 	; Binary clause: EQUALS
 	lda clife
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	bne binaryclausefailed66768
-binaryclausesuccess97797
+	bne binaryclausefailed82391
+binaryclausesuccess14065
 	lda #1; success
-	jmp binaryclausefinished30540
-binaryclausefailed66768
+	jmp binaryclausefinished46868
+binaryclausefailed82391
 	lda #0 ; failed state
-binaryclausefinished30540
+binaryclausefinished46868
 	cmp #1
-	beq ConditionalTrueBlock82199
-	jmp elsedoneblock85770
-ConditionalTrueBlock82199
+	beq ConditionalTrueBlock81420
+	jmp elsedoneblock8081
+ConditionalTrueBlock81420
 	; Binary clause: GREATER
 	lda candy
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	bcc binaryclausefailed42587
-	beq binaryclausefailed42587
-binaryclausesuccess62196
+	bcc binaryclausefailed70051
+	beq binaryclausefailed70051
+binaryclausesuccess53170
 	lda #1; success
-	jmp binaryclausefinished51295
-binaryclausefailed42587
+	jmp binaryclausefinished52463
+binaryclausefailed70051
 	lda #0 ; failed state
-binaryclausefinished51295
+binaryclausefinished52463
 	cmp #1
-	beq ConditionalTrueBlock9341
-	jmp elsedoneblock47223
-ConditionalTrueBlock9341
+	beq ConditionalTrueBlock39945
+	jmp elsedoneblock70622
+ConditionalTrueBlock39945
 	; Assigning single variable : cy
 	lda py
 	sta cy
@@ -5861,24 +5861,24 @@ ConditionalTrueBlock9341
 	lda pd
 	; Compare with pure num / var optimization
 	cmp #$3a;keep
-	bne elsedoneblock22256
-ConditionalTrueBlock71166
+	bne elsedoneblock71097
+ConditionalTrueBlock14692
 	; Assigning single variable : cdx
 	lda #255
 	sta cdx
-elseblock84129
-elsedoneblock22256
+elseblock31993
+elsedoneblock71097
 	; Binary clause Simplified: EQUALS
 	lda pd
 	; Compare with pure num / var optimization
 	cmp #$3d;keep
-	bne elsedoneblock75429
-ConditionalTrueBlock44718
+	bne elsedoneblock57714
+ConditionalTrueBlock48217
 	; Assigning single variable : cdx
 	lda #1
 	sta cdx
-elseblock12055
-elsedoneblock75429
+elseblock85554
+elsedoneblock57714
 	; Assigning single variable : screenmemory
 	
 	; ----------
@@ -5909,8 +5909,8 @@ elsedoneblock75429
 	lda cdx
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	bne elsedoneblock56737
-ConditionalTrueBlock22715
+	bne elsedoneblock37961
+ConditionalTrueBlock14514
 	; Assigning single variable : x
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -5920,14 +5920,14 @@ ConditionalTrueBlock22715
 	 ; end add / sub var with constant
 	
 	sta x
-elseblock72878
-elsedoneblock56737
+elseblock7023
+elsedoneblock37961
 	; Binary clause Simplified: NOTEQUALS
 	lda cdx
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	beq elsedoneblock75805
-ConditionalTrueBlock13882
+	beq elsedoneblock53525
+ConditionalTrueBlock95285
 	; Assigning single variable : x
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -5937,8 +5937,8 @@ ConditionalTrueBlock13882
 	 ; end add / sub var with constant
 	
 	sta x
-elseblock13308
-elsedoneblock75805
+elseblock50853
+elsedoneblock53525
 	; Binary clause Simplified: EQUALS
 	; Load Byte array
 	; Load pointer array
@@ -5950,8 +5950,8 @@ elsedoneblock75805
 	
 	; Compare with pure num / var optimization
 	cmp #$a;keep
-	bne elseblock47069
-ConditionalTrueBlock33257
+	bne elseblock49318
+ConditionalTrueBlock97233
 	; Assigning single variable : cy
 	lda #0
 	sta cy
@@ -5959,8 +5959,8 @@ ConditionalTrueBlock33257
 	sta cx
 	; Assigning single variable : cdx
 	sta cdx
-	jmp elsedoneblock40881
-elseblock47069
+	jmp elsedoneblock18593
+elseblock49318
 	; Assigning single variable : cbgchar
 	lda pbgchar
 	sta cbgchar
@@ -5985,20 +5985,20 @@ elseblock47069
 	lda #254
 	sta vsndfx
 	jsr PlaySndfx
-elsedoneblock40881
-elseblock93053
-elsedoneblock47223
-elseblock77140
-elsedoneblock85770
-elseblock93554
-elsedoneblock52277
+elsedoneblock18593
+elseblock51094
+elsedoneblock70622
+elseblock92453
+elsedoneblock8081
+elseblock79315
+elsedoneblock69029
 	; Binary clause Simplified: GREATER
 	lda clife
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bcc elsedoneblock92118
-	beq elsedoneblock92118
-ConditionalTrueBlock70879
+	bcc elsedoneblock96344
+	beq elsedoneblock96344
+ConditionalTrueBlock22897
 	; Binary clause Simplified: EQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -6008,13 +6008,13 @@ ConditionalTrueBlock70879
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock97219
-ConditionalTrueBlock41976
+	bne elsedoneblock32819
+ConditionalTrueBlock15453
 	jsr MoveCandy
-elseblock51304
-elsedoneblock97219
-elseblock85889
-elsedoneblock92118
+elseblock31998
+elsedoneblock32819
+elseblock26036
+elsedoneblock96344
 	rts
 	
 	
@@ -6032,17 +6032,17 @@ MovePlayer
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	beq binaryclausefailed14403
-binaryclausesuccess66131
+	beq binaryclausefailed6168
+binaryclausesuccess35156
 	lda #1; success
-	jmp binaryclausefinished40418
-binaryclausefailed14403
+	jmp binaryclausefinished40114
+binaryclausefailed6168
 	lda #0 ; failed state
-binaryclausefinished40418
+binaryclausefinished40114
 	cmp #1
-	beq ConditionalTrueBlock35706
-	jmp elsedoneblock26508
-ConditionalTrueBlock35706
+	beq ConditionalTrueBlock52594
+	jmp elsedoneblock89199
+ConditionalTrueBlock52594
 	; Assigning single variable : pd
 	lda #58
 	sta pd
@@ -6066,9 +6066,9 @@ ConditionalTrueBlock35706
 	 ; end add / sub var with constant
 	clc
 	adc $4c
-	bcc dtnooverflow87377
+	bcc dtnooverflow30719
 	iny  ; overflow into high byte
-dtnooverflow87377
+dtnooverflow30719
 	
 	sta screenmemory
 	sty screenmemory+1
@@ -6092,9 +6092,9 @@ dtnooverflow87377
 	 ; end add / sub var with constant
 	clc
 	adc $4c
-	bcc dtnooverflow86656
+	bcc dtnooverflow49758
 	iny  ; overflow into high byte
-dtnooverflow86656
+dtnooverflow49758
 	
 	sta p1
 	sty p1+1
@@ -6109,8 +6109,8 @@ dtnooverflow86656
 	
 	; Compare with pure num / var optimization
 	cmp #$a;keep
-	bcs elsedoneblock4852
-ConditionalTrueBlock19944
+	bcs elsedoneblock2235
+ConditionalTrueBlock30576
 	; Assigning single variable : screenmemory
 	lda pbgchar
 	ldy #1
@@ -6134,11 +6134,11 @@ ConditionalTrueBlock19944
 	; Assigning single variable : pstep
 	lda #5
 	sta pstep
-elseblock62069
-elsedoneblock4852
+elseblock65698
+elsedoneblock2235
 	rts
-elseblock90212
-elsedoneblock26508
+elseblock96777
+elsedoneblock89199
 	; Binary clause: NOTEQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -6149,17 +6149,17 @@ elsedoneblock26508
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	beq binaryclausefailed17809
-binaryclausesuccess32074
+	beq binaryclausefailed39155
+binaryclausesuccess25926
 	lda #1; success
-	jmp binaryclausefinished48473
-binaryclausefailed17809
+	jmp binaryclausefinished76396
+binaryclausefailed39155
 	lda #0 ; failed state
-binaryclausefinished48473
+binaryclausefinished76396
 	cmp #1
-	beq ConditionalTrueBlock66026
-	jmp elsedoneblock68784
-ConditionalTrueBlock66026
+	beq ConditionalTrueBlock87549
+	jmp elsedoneblock772
+ConditionalTrueBlock87549
 	; Assigning single variable : pd
 	lda #61
 	sta pd
@@ -6208,8 +6208,8 @@ ConditionalTrueBlock66026
 	
 	; Compare with pure num / var optimization
 	cmp #$a;keep
-	bcs elsedoneblock38020
-ConditionalTrueBlock59772
+	bcs elsedoneblock53469
+ConditionalTrueBlock63292
 	; Assigning single variable : screenmemory
 	lda pbgchar
 	ldy px
@@ -6233,11 +6233,11 @@ ConditionalTrueBlock59772
 	; Assigning single variable : pstep
 	lda #5
 	sta pstep
-elseblock55866
-elsedoneblock38020
+elseblock16245
+elsedoneblock53469
 	rts
-elseblock16123
-elsedoneblock68784
+elseblock93376
+elsedoneblock772
 	; Binary clause: NOTEQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -6248,17 +6248,17 @@ elsedoneblock68784
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	beq binaryclausefailed60396
-binaryclausesuccess61591
+	beq binaryclausefailed31565
+binaryclausesuccess4701
 	lda #1; success
-	jmp binaryclausefinished56298
-binaryclausefailed60396
+	jmp binaryclausefinished4722
+binaryclausefailed31565
 	lda #0 ; failed state
-binaryclausefinished56298
+binaryclausefinished4722
 	cmp #1
-	beq ConditionalTrueBlock83445
-	jmp elsedoneblock44815
-ConditionalTrueBlock83445
+	beq ConditionalTrueBlock40939
+	jmp elsedoneblock73352
+ConditionalTrueBlock40939
 	; Assigning single variable : screenmemory
 	
 	; ----------
@@ -6306,8 +6306,8 @@ ConditionalTrueBlock83445
 	
 	; Compare with pure num / var optimization
 	cmp #$a;keep
-	bcs elsedoneblock95150
-ConditionalTrueBlock10762
+	bcs elsedoneblock33535
+ConditionalTrueBlock9427
 	; Assigning single variable : screenmemory
 	lda pbgchar
 	pha
@@ -6350,11 +6350,11 @@ ConditionalTrueBlock10762
 	; Assigning single variable : pstep
 	lda #5
 	sta pstep
-elseblock17267
-elsedoneblock95150
+elseblock18104
+elsedoneblock33535
 	rts
-elseblock20943
-elsedoneblock44815
+elseblock48054
+elsedoneblock73352
 	; Binary clause: NOTEQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -6365,17 +6365,17 @@ elsedoneblock44815
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	beq binaryclausefailed48250
-binaryclausesuccess94814
+	beq binaryclausefailed27731
+binaryclausesuccess41034
 	lda #1; success
-	jmp binaryclausefinished20263
-binaryclausefailed48250
+	jmp binaryclausefinished72798
+binaryclausefailed27731
 	lda #0 ; failed state
-binaryclausefinished20263
+binaryclausefinished72798
 	cmp #1
-	beq ConditionalTrueBlock6240
-	jmp elsedoneblock25259
-ConditionalTrueBlock6240
+	beq ConditionalTrueBlock79546
+	jmp elsedoneblock31951
+ConditionalTrueBlock79546
 	; Assigning single variable : screenmemory
 	
 	; ----------
@@ -6421,8 +6421,8 @@ ConditionalTrueBlock6240
 	
 	; Compare with pure num / var optimization
 	cmp #$a;keep
-	bcs elsedoneblock93624
-ConditionalTrueBlock95765
+	bcs elsedoneblock20932
+ConditionalTrueBlock48838
 	; Assigning single variable : screenmemory
 	lda pbgchar
 	ldy px
@@ -6463,11 +6463,11 @@ ConditionalTrueBlock95765
 	; Assigning single variable : pstep
 	lda #5
 	sta pstep
-elseblock86865
-elsedoneblock93624
+elseblock82097
+elsedoneblock20932
 	rts
-elseblock95572
-elsedoneblock25259
+elseblock15439
+elsedoneblock31951
 	rts
 	
 	
@@ -6478,63 +6478,63 @@ UpdatePlayer
 	; Binary clause Simplified: EQUALS
 	; Modulo
 	lda #2
-val_var9831 = $54
-	sta val_var9831
+val_var60409 = $54
+	sta val_var60409
 	lda ticks
 	sec
-modulo54228
-	sbc val_var9831
-	bcs modulo54228
-	adc val_var9831
+modulo3447
+	sbc val_var60409
+	bcs modulo3447
+	adc val_var60409
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock47988
-ConditionalTrueBlock89325
+	bne elsedoneblock23901
+ConditionalTrueBlock8731
 	; Assigning single variable : pan
 	inc pan
-elseblock22591
-elsedoneblock47988
+elseblock65576
+elsedoneblock23901
 	; Binary clause Simplified: GREATER
 	lda pan
 	; Compare with pure num / var optimization
 	cmp #$5;keep
-	bcc elsedoneblock313
-	beq elsedoneblock313
-ConditionalTrueBlock23969
+	bcc elsedoneblock28133
+	beq elsedoneblock28133
+ConditionalTrueBlock9709
 	; Assigning single variable : pan
 	lda #0
 	sta pan
-elseblock62697
-elsedoneblock313
+elseblock21158
+elsedoneblock28133
 	; Binary clause Simplified: EQUALS
 	lda joy1
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock28386
-ConditionalTrueBlock93916
+	bne elsedoneblock37423
+ConditionalTrueBlock84249
 	; Assigning single variable : pstep
 	lda #0
 	sta pstep
-elseblock18732
-elsedoneblock28386
+elseblock21467
+elsedoneblock37423
 	; Binary clause Simplified: GREATER
 	lda pstep
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bcc elsedoneblock48473
-	beq elsedoneblock48473
-ConditionalTrueBlock59385
+	bcc elsedoneblock72205
+	beq elsedoneblock72205
+ConditionalTrueBlock29393
 	; Assigning single variable : pstep
 	dec pstep
-elseblock94814
-elsedoneblock48473
+elseblock54733
+elsedoneblock72205
 	; Binary clause Simplified: EQUALS
 	lda pstep
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock7396
-ConditionalTrueBlock46977
+	bne elsedoneblock44929
+ConditionalTrueBlock15655
 	; Binary clause Simplified: EQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -6544,16 +6544,16 @@ ConditionalTrueBlock46977
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock3604
-ConditionalTrueBlock21414
+	bne elsedoneblock23094
+ConditionalTrueBlock12549
 	jsr MovePlayer
 	; Binary clause Simplified: GREATER
 	lda pstep
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bcc elsedoneblock32247
-	beq elsedoneblock32247
-ConditionalTrueBlock66146
+	bcc elsedoneblock6070
+	beq elsedoneblock6070
+ConditionalTrueBlock10538
 	; Assigning single variable : psnd1
 	lda #<sndPumpkidFootsteps
 	ldx #>sndPumpkidFootsteps
@@ -6573,23 +6573,23 @@ ConditionalTrueBlock66146
 	lda stepsnd
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elseblock81616
-ConditionalTrueBlock1568
+	bne elseblock19869
+ConditionalTrueBlock97327
 	; Assigning single variable : stepsnd
 	lda #30
 	sta stepsnd
-	jmp elsedoneblock49966
-elseblock81616
+	jmp elsedoneblock43681
+elseblock19869
 	; Assigning single variable : stepsnd
 	lda #0
 	sta stepsnd
-elsedoneblock49966
-elseblock30872
-elsedoneblock32247
-elseblock97161
-elsedoneblock3604
-elseblock81337
-elsedoneblock7396
+elsedoneblock43681
+elseblock14208
+elsedoneblock6070
+elseblock29238
+elsedoneblock23094
+elseblock1792
+elsedoneblock44929
 	; Assigning single variable : screenmemory
 	
 	; ----------
@@ -6639,12 +6639,12 @@ elsedoneblock7396
 	
 	; Compare with pure num / var optimization
 	cmp #$2;keep
-	bne elsedoneblock41751
-ConditionalTrueBlock18466
+	bne elsedoneblock14545
+ConditionalTrueBlock69575
 	; Binary clause Simplified: LESS
 	lda candy
-binary_clause_temp_var66392 = $54
-	sta binary_clause_temp_var66392
+binary_clause_temp_var93914 = $54
+	sta binary_clause_temp_var93914
 	; 8 bit binop
 	; Add/sub where right value is constant number
 	lda #6
@@ -6652,12 +6652,12 @@ binary_clause_temp_var66392 = $54
 	sbc witchHits
 	 ; end add / sub var with constant
 	
-binary_clause_temp_2_var88018 = $56
-	sta binary_clause_temp_2_var88018
-	lda binary_clause_temp_var66392
-	cmp binary_clause_temp_2_var88018;keep
-	bcs elsedoneblock56396
-ConditionalTrueBlock33518
+binary_clause_temp_2_var72631 = $56
+	sta binary_clause_temp_2_var72631
+	lda binary_clause_temp_var93914
+	cmp binary_clause_temp_2_var72631;keep
+	bcs elsedoneblock71665
+ConditionalTrueBlock68313
 	; Assigning single variable : pbgchar
 	lda #0
 	sta pbgchar
@@ -6668,13 +6668,13 @@ ConditionalTrueBlock33518
 	lda candyscr
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bcc elsedoneblock97004
-	beq elsedoneblock97004
-ConditionalTrueBlock44543
+	bcc elsedoneblock30159
+	beq elsedoneblock30159
+ConditionalTrueBlock65866
 	; Assigning single variable : candyscr
 	dec candyscr
-elseblock64825
-elsedoneblock97004
+elseblock97644
+elsedoneblock30159
 	; ----------
 	; BcdAdd address, address, number
 	sed
@@ -6702,10 +6702,10 @@ elsedoneblock97004
 	lda #230
 	sta vsnd3
 	jsr PlaySnd3
-elseblock93662
-elsedoneblock56396
-elseblock42196
-elsedoneblock41751
+elseblock30305
+elsedoneblock71665
+elseblock24592
+elsedoneblock14545
 	rts
 	
 	
@@ -6765,11 +6765,11 @@ MoveMoon
 	lda moonPos
 	; Compare with pure num / var optimization
 	cmp #$6;keep
-	bcc elsedoneblock15304
-ConditionalTrueBlock60908
+	bcc elsedoneblock10953
+ConditionalTrueBlock86308
 	jsr SpawnAZombie
-elseblock56387
-elsedoneblock15304
+elseblock81442
+elsedoneblock10953
 	; ----------
 	; BcdAdd address, address, number
 	sed
@@ -6798,7 +6798,7 @@ ClearTime
 	; Assigning single variable : i
 	lda #0
 	sta i
-for73032
+for30748
 	; Assigning single variable : screenmemory
 	lda #0
 	ldy i
@@ -6806,17 +6806,17 @@ for73032
 	inc i
 	lda #8
 	cmp i ;keep
-	bne for73032
-forLoopDone16347
+	bne for30748
+forLoopDone16631
 	; Assigning single variable : screenmemory
 	; WORD optimization: a=a+b
 	lda screenmemory+0
 	
 	clc
 	adc #2
-	bcc WordAdd65366
+	bcc WordAdd62603
 	inc screenmemory+1
-WordAdd65366
+WordAdd62603
 	sta screenmemory+0
 	rts
 	
@@ -6832,7 +6832,7 @@ DisplayTime
 	stx screenmemory+1
 	lda moonPos
 	cmp #$4 ;keep
-	bne casenext48050
+	bne casenext46494
 	jsr ClearTime
 	clc
 	lda #<t11
@@ -6842,11 +6842,11 @@ DisplayTime
 	sty print_text+1
 	ldx #4 ; optimized, look out for bugs
 	jsr printstring
-	jmp caseend38326
-casenext48050
+	jmp caseend23048
+casenext46494
 	lda moonPos
 	cmp #$6 ;keep
-	bne casenext77950
+	bne casenext52173
 	jsr ClearTime
 	; Assigning single variable : screenmemory
 	; WORD optimization: a=a+b
@@ -6854,9 +6854,9 @@ casenext48050
 	
 	sec
 	sbc #2
-	bcs WordAdd55229
+	bcs WordAdd38844
 	dec screenmemory+1
-WordAdd55229
+WordAdd38844
 	sta screenmemory+0
 	clc
 	lda #<t12
@@ -6866,11 +6866,11 @@ WordAdd55229
 	sty print_text+1
 	ldx #8 ; optimized, look out for bugs
 	jsr printstring
-	jmp caseend38326
-casenext77950
+	jmp caseend23048
+casenext52173
 	lda moonPos
 	cmp #$8 ;keep
-	bne casenext20804
+	bne casenext56022
 	jsr ClearTime
 	clc
 	lda #<t01
@@ -6880,11 +6880,11 @@ casenext77950
 	sty print_text+1
 	ldx #4 ; optimized, look out for bugs
 	jsr printstring
-	jmp caseend38326
-casenext20804
+	jmp caseend23048
+casenext56022
 	lda moonPos
 	cmp #$a ;keep
-	bne casenext70847
+	bne casenext6263
 	jsr ClearTime
 	clc
 	lda #<t02
@@ -6894,11 +6894,11 @@ casenext20804
 	sty print_text+1
 	ldx #4 ; optimized, look out for bugs
 	jsr printstring
-	jmp caseend38326
-casenext70847
+	jmp caseend23048
+casenext6263
 	lda moonPos
 	cmp #$c ;keep
-	bne casenext77108
+	bne casenext78400
 	jsr ClearTime
 	clc
 	lda #<t03
@@ -6908,11 +6908,11 @@ casenext70847
 	sty print_text+1
 	ldx #4 ; optimized, look out for bugs
 	jsr printstring
-	jmp caseend38326
-casenext77108
+	jmp caseend23048
+casenext78400
 	lda moonPos
 	cmp #$e ;keep
-	bne casenext19677
+	bne casenext31901
 	jsr ClearTime
 	clc
 	lda #<t04
@@ -6922,11 +6922,11 @@ casenext77108
 	sty print_text+1
 	ldx #4 ; optimized, look out for bugs
 	jsr printstring
-	jmp caseend38326
-casenext19677
+	jmp caseend23048
+casenext31901
 	lda moonPos
 	cmp #$10 ;keep
-	bne casenext87854
+	bne casenext23376
 	jsr ClearTime
 	clc
 	lda #<t05
@@ -6936,11 +6936,11 @@ casenext19677
 	sty print_text+1
 	ldx #4 ; optimized, look out for bugs
 	jsr printstring
-	jmp caseend38326
-casenext87854
+	jmp caseend23048
+casenext23376
 	lda moonPos
 	cmp #$12 ;keep
-	bne casenext26210
+	bne casenext89034
 	jsr ClearTime
 	clc
 	lda #<t06
@@ -6950,9 +6950,9 @@ casenext87854
 	sty print_text+1
 	ldx #4 ; optimized, look out for bugs
 	jsr printstring
-	jmp caseend38326
-casenext26210
-caseend38326
+	jmp caseend23048
+casenext89034
+caseend23048
 	rts
 	
 	
@@ -6966,8 +6966,8 @@ UpdateTimer
 	lda gameTimer
 	; Compare with pure num / var optimization
 	cmp GAMETIMERMAX;keep
-	bne elsedoneblock61689
-ConditionalTrueBlock84471
+	bne elsedoneblock48952
+ConditionalTrueBlock3447
 	; Assigning single variable : gameTimer
 	lda #0
 	sta gameTimer
@@ -6986,25 +6986,25 @@ ConditionalTrueBlock84471
 	lda cloudPos
 	; Compare with pure num / var optimization
 	cmp #$b;keep
-	bne elsedoneblock19019
-ConditionalTrueBlock53696
+	bne elsedoneblock76846
+ConditionalTrueBlock61018
 	; Binary clause Simplified: LESS
 	lda candyscr
 	; Compare with pure num / var optimization
 	cmp #$3;keep
-	bcs elsedoneblock20752
-ConditionalTrueBlock17565
+	bcs elsedoneblock79021
+ConditionalTrueBlock58507
 	jsr SpawnCandy
-elseblock55662
-elsedoneblock20752
-elseblock61811
-elsedoneblock19019
+elseblock71786
+elsedoneblock79021
+elseblock99076
+elsedoneblock76846
 	; Binary clause Simplified: EQUALS
 	lda cloudPos
 	; Compare with pure num / var optimization
 	cmp #$16;keep
-	bne elsedoneblock72296
-ConditionalTrueBlock80396
+	bne elsedoneblock36975
+ConditionalTrueBlock66900
 	; Assigning single variable : cloudPos
 	lda #0
 	sta cloudPos
@@ -7014,13 +7014,13 @@ ConditionalTrueBlock80396
 	lda candyscr
 	; Compare with pure num / var optimization
 	cmp #$3;keep
-	bcs elsedoneblock40322
-ConditionalTrueBlock27367
+	bcs elsedoneblock20277
+ConditionalTrueBlock93148
 	jsr SpawnCandy
-elseblock36665
-elsedoneblock40322
-elseblock36404
-elsedoneblock72296
+elseblock82521
+elsedoneblock20277
+elseblock37368
+elsedoneblock36975
 	; Assigning single variable : screenmemory
 	lda #44
 	ldx #148
@@ -7030,8 +7030,8 @@ elsedoneblock72296
 	lda #1
 	ldy cloudPos
 	sta (screenmemory),y
-elseblock19439
-elsedoneblock61689
+elseblock34326
+elsedoneblock48952
 	rts
 	
 	
@@ -7059,7 +7059,7 @@ CollisionWait
 	sta x
 	; Assigning single variable : y
 	sta y
-while91977
+while15293
 	; Binary clause Simplified: NOTEQUALS
 	; Load pointer array
 	ldy #$0
@@ -7067,16 +7067,16 @@ while91977
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	beq elsedoneblock84908
-ConditionalTrueBlock92061
-	jmp while91977
-elseblock34271
-elsedoneblock84908
+	beq elsedoneblock64095
+ConditionalTrueBlock98013
+	jmp while15293
+elseblock89599
+elsedoneblock64095
 	jsr StopSounds
 	; Assigning single variable : sndFlag
 	lda #0
 	sta sndFlag
-while94996
+while49841
 	; Binary clause Simplified: EQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -7086,8 +7086,8 @@ while94996
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock15749
-ConditionalTrueBlock40066
+	bne elsedoneblock45215
+ConditionalTrueBlock21897
 	; Assigning single variable : x
 	lda y
 	sta x
@@ -7096,19 +7096,19 @@ ConditionalTrueBlock40066
 	; Binary clause Simplified: GREATER
 	; Compare with pure num / var optimization
 	cmp #$7;keep
-	bcc elsedoneblock87186
-	beq elsedoneblock87186
-ConditionalTrueBlock8254
+	bcc elsedoneblock59401
+	beq elsedoneblock59401
+ConditionalTrueBlock16081
 	; Assigning single variable : y
 	lda #1
 	sta y
-elseblock55630
-elsedoneblock87186
+elseblock49449
+elsedoneblock59401
 	jsr callReadJoy1
 	; Assigning single variable : t
 	lda #0
 	sta t
-for19287
+for4616
 	; Assigning single variable : p1
 	lda x
 	ldy t
@@ -7118,22 +7118,22 @@ for19287
 	; Binary clause Simplified: GREATER
 	; Compare with pure num / var optimization
 	cmp #$7;keep
-	bcc elsedoneblock65509
-	beq elsedoneblock65509
-ConditionalTrueBlock89992
+	bcc elsedoneblock29626
+	beq elsedoneblock29626
+ConditionalTrueBlock30430
 	; Assigning single variable : x
 	lda #1
 	sta x
-elseblock82424
-elsedoneblock65509
+elseblock65141
+elsedoneblock29626
 	inc t
 	lda #14
 	cmp t ;keep
-	bne for19287
-forLoopDone81776
-	jmp while94996
-elseblock58780
-elsedoneblock15749
+	bne for4616
+forLoopDone60186
+	jmp while49841
+elseblock78788
+elsedoneblock45215
 	; Assigning single variable : sndFlag
 	lda #1
 	sta sndFlag
@@ -7157,14 +7157,14 @@ CollisionPlayer
 	lda moonPos
 	; Compare with pure num / var optimization
 	cmp #$13;keep
-	bne elsedoneblock2720
-ConditionalTrueBlock66083
+	bne elsedoneblock83828
+ConditionalTrueBlock20305
 	; Binary clause Simplified: EQUALS
 	lda cloudPos
 	; Compare with pure num / var optimization
 	cmp #$15;keep
-	bne elsedoneblock90371
-ConditionalTrueBlock28651
+	bne elsedoneblock44709
+ConditionalTrueBlock12419
 	; Assigning single variable : gameMode
 	lda #1
 	sta gameMode
@@ -7173,11 +7173,11 @@ ConditionalTrueBlock28651
 	ldx #16
 	sta screenmemory
 	stx screenmemory+1
-printstring_call45032
+printstring_call36101
 	clc
-	lda #<printstring_text78491
+	lda #<printstring_text51678
 	adc #0
-	ldy #>printstring_text78491
+	ldy #>printstring_text51678
 	sta print_text+0
 	sty print_text+1
 	ldx #14 ; optimized, look out for bugs
@@ -7193,42 +7193,42 @@ printstring_call45032
 	jsr PlaySnd1
 	jsr CollisionWait
 	rts
-elseblock14398
-elsedoneblock90371
-elseblock17027
-elsedoneblock2720
+elseblock84420
+elsedoneblock44709
+elseblock70918
+elsedoneblock83828
 	; Binary clause: EQUALS
 	lda px
 	; Compare with pure num / var optimization
 	cmp lx;keep
 	; BC done
-	bne binaryclausefailed30058
-binaryclausesuccess80437
+	bne binaryclausefailed91127
+binaryclausesuccess51187
 	lda #1; success
-	jmp binaryclausefinished22328
-binaryclausefailed30058
+	jmp binaryclausefinished85800
+binaryclausefailed91127
 	lda #0 ; failed state
-binaryclausefinished22328
+binaryclausefinished85800
 	cmp #1
-	beq ConditionalTrueBlock10541
-	jmp elsedoneblock51503
-ConditionalTrueBlock10541
+	beq ConditionalTrueBlock65727
+	jmp elsedoneblock22670
+ConditionalTrueBlock65727
 	; Binary clause: EQUALS
 	lda py
 	; Compare with pure num / var optimization
 	cmp ly;keep
 	; BC done
-	bne binaryclausefailed92905
-binaryclausesuccess56675
+	bne binaryclausefailed35737
+binaryclausesuccess1173
 	lda #1; success
-	jmp binaryclausefinished10196
-binaryclausefailed92905
+	jmp binaryclausefinished85439
+binaryclausefailed35737
 	lda #0 ; failed state
-binaryclausefinished10196
+binaryclausefinished85439
 	cmp #1
-	beq ConditionalTrueBlock14375
-	jmp elsedoneblock93259
-ConditionalTrueBlock14375
+	beq ConditionalTrueBlock10515
+	jmp elsedoneblock75640
+ConditionalTrueBlock10515
 	; Assigning single variable : screenmemory
 	
 	; ----------
@@ -7255,14 +7255,14 @@ ConditionalTrueBlock14375
 	; Add/sub where right value is constant number
 	; Modulo
 	lda #2
-val_var19639 = $54
-	sta val_var19639
+val_var40193 = $54
+	sta val_var40193
 	jsr Random
 	sec
-modulo49319
-	sbc val_var19639
-	bcs modulo49319
-	adc val_var19639
+modulo89370
+	sbc val_var40193
+	bcs modulo89370
+	adc val_var40193
 	
 	clc
 	adc #1
@@ -7282,12 +7282,12 @@ modulo49319
 	lda lives
 	; Compare with pure num / var optimization
 	cmp #$a;keep
-	bcs elsedoneblock73960
-ConditionalTrueBlock87454
+	bcs elsedoneblock32286
+ConditionalTrueBlock84108
 	; Assigning single variable : lives
 	inc lives
-elseblock22667
-elsedoneblock73960
+elseblock19626
+elsedoneblock32286
 	; ----------
 	; BcdAdd address, address, number
 	sed
@@ -7315,10 +7315,10 @@ elsedoneblock73960
 	lda #230
 	sta vsnd3
 	jsr PlaySnd3
-elseblock37023
-elsedoneblock93259
-elseblock76021
-elsedoneblock51503
+elseblock40400
+elsedoneblock75640
+elseblock73855
+elsedoneblock22670
 	; Assigning single variable : screenmemory
 	
 	; ----------
@@ -7336,14 +7336,14 @@ elsedoneblock51503
 	lda px
 	; Compare with pure num / var optimization
 	cmp wx;keep
-	bne elsedoneblock28875
-ConditionalTrueBlock32038
+	bne elsedoneblock70659
+ConditionalTrueBlock99330
 	; Binary clause Simplified: EQUALS
 	lda py
 	; Compare with pure num / var optimization
 	cmp wy;keep
-	bne elsedoneblock88131
-ConditionalTrueBlock38228
+	bne elsedoneblock52400
+ConditionalTrueBlock56747
 	; Assigning single variable : gameMode
 	lda #1
 	sta gameMode
@@ -7352,11 +7352,11 @@ ConditionalTrueBlock38228
 	ldx #16
 	sta screenmemory
 	stx screenmemory+1
-printstring_call44230
+printstring_call96798
 	clc
-	lda #<printstring_text11577
+	lda #<printstring_text76701
 	adc #0
-	ldy #>printstring_text11577
+	ldy #>printstring_text76701
 	sta print_text+0
 	sty print_text+1
 	ldx #14 ; optimized, look out for bugs
@@ -7372,16 +7372,16 @@ printstring_call44230
 	jsr PlaySnd1
 	jsr CollisionWait
 	rts
-elseblock77125
-elsedoneblock88131
-elseblock95397
-elsedoneblock28875
+elseblock39620
+elsedoneblock52400
+elseblock53718
+elsedoneblock70659
 	; Binary clause Simplified: EQUALS
 	lda pbgchar
 	; Compare with pure num / var optimization
 	cmp #$26;keep
-	bne elsedoneblock10947
-ConditionalTrueBlock18190
+	bne elsedoneblock6122
+ConditionalTrueBlock29085
 	; Assigning single variable : gameMode
 	lda #1
 	sta gameMode
@@ -7390,11 +7390,11 @@ ConditionalTrueBlock18190
 	ldx #16
 	sta screenmemory
 	stx screenmemory+1
-printstring_call63007
+printstring_call25267
 	clc
-	lda #<printstring_text5751
+	lda #<printstring_text48002
 	adc #0
-	ldy #>printstring_text5751
+	ldy #>printstring_text48002
 	sta print_text+0
 	sty print_text+1
 	ldx #14 ; optimized, look out for bugs
@@ -7410,40 +7410,40 @@ printstring_call63007
 	jsr PlaySnd1
 	jsr CollisionWait
 	rts
-elseblock61690
-elsedoneblock10947
+elseblock72754
+elsedoneblock6122
 	; Assigning single variable : i
 	lda #0
 	sta i
-for99083
+for49390
 	; Binary clause Simplified: EQUALS
 	lda px
-binary_clause_temp_var90306 = $54
-	sta binary_clause_temp_var90306
+binary_clause_temp_var17348 = $54
+	sta binary_clause_temp_var17348
 	; Load Byte array
 	ldx i
 	lda gx,x
 	
-binary_clause_temp_2_var1418 = $56
-	sta binary_clause_temp_2_var1418
-	lda binary_clause_temp_var90306
-	cmp binary_clause_temp_2_var1418;keep
-	bne elsedoneblock5611
-ConditionalTrueBlock58976
+binary_clause_temp_2_var73735 = $56
+	sta binary_clause_temp_2_var73735
+	lda binary_clause_temp_var17348
+	cmp binary_clause_temp_2_var73735;keep
+	bne elsedoneblock35124
+ConditionalTrueBlock15623
 	; Binary clause Simplified: EQUALS
 	lda py
-binary_clause_temp_var51477 = $54
-	sta binary_clause_temp_var51477
+binary_clause_temp_var72896 = $54
+	sta binary_clause_temp_var72896
 	; Load Byte array
 	ldx i
 	lda gy,x
 	
-binary_clause_temp_2_var94218 = $56
-	sta binary_clause_temp_2_var94218
-	lda binary_clause_temp_var51477
-	cmp binary_clause_temp_2_var94218;keep
-	bne elsedoneblock82353
-ConditionalTrueBlock31367
+binary_clause_temp_2_var49644 = $56
+	sta binary_clause_temp_2_var49644
+	lda binary_clause_temp_var72896
+	cmp binary_clause_temp_2_var49644;keep
+	bne elsedoneblock94287
+ConditionalTrueBlock77619
 	; Assigning single variable : gameMode
 	lda #1
 	sta gameMode
@@ -7452,11 +7452,11 @@ ConditionalTrueBlock31367
 	ldx #16
 	sta screenmemory
 	stx screenmemory+1
-printstring_call86226
+printstring_call4939
 	clc
-	lda #<printstring_text53694
+	lda #<printstring_text97521
 	adc #0
-	ldy #>printstring_text53694
+	ldy #>printstring_text97521
 	sta print_text+0
 	sty print_text+1
 	ldx #14 ; optimized, look out for bugs
@@ -7472,54 +7472,54 @@ printstring_call86226
 	jsr PlaySnd1
 	jsr CollisionWait
 	rts
-elseblock6647
-elsedoneblock82353
-elseblock21738
-elsedoneblock5611
+elseblock5908
+elsedoneblock94287
+elseblock98077
+elsedoneblock35124
 	inc i
 	lda gNumGhosts
 	cmp i ;keep
-	bne for99083
-forLoopDone24150
+	bne for49390
+forLoopDone92235
 	; Binary clause Simplified: GREATER
 	lda zNumZombies
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bcc elsedoneblock73924
-	beq elsedoneblock73924
-ConditionalTrueBlock7964
+	bcc elsedoneblock44015
+	beq elsedoneblock44015
+ConditionalTrueBlock19368
 	; Assigning single variable : i
 	lda #0
 	sta i
-for87633
+for42425
 	; Binary clause Simplified: EQUALS
 	lda px
-binary_clause_temp_var58289 = $54
-	sta binary_clause_temp_var58289
+binary_clause_temp_var36254 = $54
+	sta binary_clause_temp_var36254
 	; Load Byte array
 	ldx i
 	lda zx,x
 	
-binary_clause_temp_2_var58790 = $56
-	sta binary_clause_temp_2_var58790
-	lda binary_clause_temp_var58289
-	cmp binary_clause_temp_2_var58790;keep
-	bne elsedoneblock56181
-ConditionalTrueBlock29793
+binary_clause_temp_2_var7565 = $56
+	sta binary_clause_temp_2_var7565
+	lda binary_clause_temp_var36254
+	cmp binary_clause_temp_2_var7565;keep
+	bne elsedoneblock27950
+ConditionalTrueBlock53086
 	; Binary clause Simplified: EQUALS
 	lda py
-binary_clause_temp_var1666 = $54
-	sta binary_clause_temp_var1666
+binary_clause_temp_var64276 = $54
+	sta binary_clause_temp_var64276
 	; Load Byte array
 	ldx i
 	lda zy,x
 	
-binary_clause_temp_2_var50231 = $56
-	sta binary_clause_temp_2_var50231
-	lda binary_clause_temp_var1666
-	cmp binary_clause_temp_2_var50231;keep
-	bne elsedoneblock26130
-ConditionalTrueBlock25327
+binary_clause_temp_2_var90811 = $56
+	sta binary_clause_temp_2_var90811
+	lda binary_clause_temp_var64276
+	cmp binary_clause_temp_2_var90811;keep
+	bne elsedoneblock54382
+ConditionalTrueBlock23463
 	; Assigning single variable : gameMode
 	lda #1
 	sta gameMode
@@ -7528,11 +7528,11 @@ ConditionalTrueBlock25327
 	ldx #16
 	sta screenmemory
 	stx screenmemory+1
-printstring_call16454
+printstring_call80820
 	clc
-	lda #<printstring_text57771
+	lda #<printstring_text2122
 	adc #0
-	ldy #>printstring_text57771
+	ldy #>printstring_text2122
 	sta print_text+0
 	sty print_text+1
 	ldx #15 ; optimized, look out for bugs
@@ -7548,17 +7548,17 @@ printstring_call16454
 	jsr PlaySnd1
 	jsr CollisionWait
 	rts
-elseblock91009
-elsedoneblock26130
-elseblock35587
-elsedoneblock56181
+elseblock19319
+elsedoneblock54382
+elseblock73504
+elsedoneblock27950
 	inc i
 	lda zNumZombies
 	cmp i ;keep
-	bne for87633
-forLoopDone7603
-elseblock59305
-elsedoneblock73924
+	bne for42425
+forLoopDone36779
+elseblock48997
+elsedoneblock44015
 	rts
 	
 	
@@ -7782,121 +7782,121 @@ CollisionCandy
 	lda clife
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock97917
-ConditionalTrueBlock78847
+	bne elsedoneblock62861
+ConditionalTrueBlock57432
 	rts
-elseblock62975
-elsedoneblock97917
+elseblock870
+elsedoneblock62861
 	; Binary clause Simplified: EQUALS
 	lda cx
 	; Compare with pure num / var optimization
 	cmp wx;keep
-	bne elsedoneblock91953
-ConditionalTrueBlock30758
+	bne elsedoneblock74859
+ConditionalTrueBlock29946
 	; Binary clause Simplified: EQUALS
 	lda cy
 	; Compare with pure num / var optimization
 	cmp wy;keep
-	bne elsedoneblock9428
-ConditionalTrueBlock66092
+	bne elsedoneblock20025
+ConditionalTrueBlock7451
 	jsr HitWitch
-elseblock87849
-elsedoneblock9428
-elseblock91586
-elsedoneblock91953
+elseblock7710
+elsedoneblock20025
+elseblock64735
+elsedoneblock74859
 	; Assigning single variable : i
 	lda #0
 	sta i
-for77822
+for74350
 	; Binary clause Simplified: EQUALS
 	lda cx
-binary_clause_temp_var65979 = $54
-	sta binary_clause_temp_var65979
+binary_clause_temp_var58006 = $54
+	sta binary_clause_temp_var58006
 	; Load Byte array
 	ldx i
 	lda gx,x
 	
-binary_clause_temp_2_var91647 = $56
-	sta binary_clause_temp_2_var91647
-	lda binary_clause_temp_var65979
-	cmp binary_clause_temp_2_var91647;keep
-	bne elsedoneblock26409
-ConditionalTrueBlock2050
+binary_clause_temp_2_var94308 = $56
+	sta binary_clause_temp_2_var94308
+	lda binary_clause_temp_var58006
+	cmp binary_clause_temp_2_var94308;keep
+	bne elsedoneblock57075
+ConditionalTrueBlock41178
 	; Binary clause Simplified: EQUALS
 	lda cy
-binary_clause_temp_var10076 = $54
-	sta binary_clause_temp_var10076
+binary_clause_temp_var17314 = $54
+	sta binary_clause_temp_var17314
 	; Load Byte array
 	ldx i
 	lda gy,x
 	
-binary_clause_temp_2_var5979 = $56
-	sta binary_clause_temp_2_var5979
-	lda binary_clause_temp_var10076
-	cmp binary_clause_temp_2_var5979;keep
-	bne elsedoneblock67455
-ConditionalTrueBlock94215
+binary_clause_temp_2_var31929 = $56
+	sta binary_clause_temp_2_var31929
+	lda binary_clause_temp_var17314
+	cmp binary_clause_temp_2_var31929;keep
+	bne elsedoneblock29924
+ConditionalTrueBlock59821
 	jsr HitGhost
-elseblock38993
-elsedoneblock67455
-elseblock62918
-elsedoneblock26409
+elseblock69252
+elsedoneblock29924
+elseblock56569
+elsedoneblock57075
 	inc i
 	lda gNumGhosts
 	cmp i ;keep
-	bne for77822
-forLoopDone45482
+	bne for74350
+forLoopDone10274
 	; Binary clause Simplified: GREATER
 	lda zNumZombies
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bcc elsedoneblock55895
-	beq elsedoneblock55895
-ConditionalTrueBlock35811
+	bcc elsedoneblock86147
+	beq elsedoneblock86147
+ConditionalTrueBlock66925
 	; Assigning single variable : i
 	lda #0
 	sta i
-for27303
+for91511
 	; Binary clause Simplified: EQUALS
 	lda cx
-binary_clause_temp_var469 = $54
-	sta binary_clause_temp_var469
+binary_clause_temp_var14356 = $54
+	sta binary_clause_temp_var14356
 	; Load Byte array
 	ldx i
 	lda zx,x
 	
-binary_clause_temp_2_var27459 = $56
-	sta binary_clause_temp_2_var27459
-	lda binary_clause_temp_var469
-	cmp binary_clause_temp_2_var27459;keep
-	bne elsedoneblock82669
-ConditionalTrueBlock58825
+binary_clause_temp_2_var47494 = $56
+	sta binary_clause_temp_2_var47494
+	lda binary_clause_temp_var14356
+	cmp binary_clause_temp_2_var47494;keep
+	bne elsedoneblock10362
+ConditionalTrueBlock65784
 	; Binary clause Simplified: EQUALS
 	lda cy
-binary_clause_temp_var77207 = $54
-	sta binary_clause_temp_var77207
+binary_clause_temp_var8183 = $54
+	sta binary_clause_temp_var8183
 	; Load Byte array
 	ldx i
 	lda zy,x
 	
-binary_clause_temp_2_var47408 = $56
-	sta binary_clause_temp_2_var47408
-	lda binary_clause_temp_var77207
-	cmp binary_clause_temp_2_var47408;keep
-	bne elsedoneblock81851
-ConditionalTrueBlock83190
+binary_clause_temp_2_var59298 = $56
+	sta binary_clause_temp_2_var59298
+	lda binary_clause_temp_var8183
+	cmp binary_clause_temp_2_var59298;keep
+	bne elsedoneblock98616
+ConditionalTrueBlock5135
 	jsr HitZombie
-elseblock1665
-elsedoneblock81851
-elseblock17357
-elsedoneblock82669
+elseblock16215
+elsedoneblock98616
+elseblock78322
+elsedoneblock10362
 	inc i
 	lda zNumZombies
 	cmp i ;keep
-	bne for27303
-forLoopDone99088
-elseblock91975
-elsedoneblock55895
+	bne for91511
+forLoopDone54879
+elseblock91808
+elsedoneblock86147
 	rts
 	
 	
@@ -7916,11 +7916,11 @@ BeatWitchWait
 	ldx #16
 	sta screenmemory
 	stx screenmemory+1
-printstring_call82206
+printstring_call36241
 	clc
-	lda #<printstring_text94828
+	lda #<printstring_text69111
 	adc #0
-	ldy #>printstring_text94828
+	ldy #>printstring_text69111
 	sta print_text+0
 	sty print_text+1
 	ldx #18 ; optimized, look out for bugs
@@ -7940,7 +7940,7 @@ printstring_call82206
 	sta x
 	; Assigning single variable : y
 	sta y
-while87760
+while42173
 	; Binary clause Simplified: EQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -7950,8 +7950,8 @@ while87760
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock31354
-ConditionalTrueBlock10085
+	bne elsedoneblock5777
+ConditionalTrueBlock29614
 	; Assigning single variable : x
 	lda y
 	sta x
@@ -7960,19 +7960,19 @@ ConditionalTrueBlock10085
 	; Binary clause Simplified: GREATER
 	; Compare with pure num / var optimization
 	cmp #$7;keep
-	bcc elsedoneblock87307
-	beq elsedoneblock87307
-ConditionalTrueBlock46290
+	bcc elsedoneblock15320
+	beq elsedoneblock15320
+ConditionalTrueBlock93084
 	; Assigning single variable : y
 	lda #1
 	sta y
-elseblock53642
-elsedoneblock87307
+elseblock7647
+elsedoneblock15320
 	jsr callReadJoy1
 	; Assigning single variable : t
 	lda #0
 	sta t
-for35013
+for37449
 	; Assigning single variable : p1
 	lda x
 	ldy t
@@ -7982,22 +7982,22 @@ for35013
 	; Binary clause Simplified: GREATER
 	; Compare with pure num / var optimization
 	cmp #$7;keep
-	bcc elsedoneblock42789
-	beq elsedoneblock42789
-ConditionalTrueBlock80300
+	bcc elsedoneblock50144
+	beq elsedoneblock50144
+ConditionalTrueBlock60218
 	; Assigning single variable : x
 	lda #1
 	sta x
-elseblock10471
-elsedoneblock42789
+elseblock63806
+elsedoneblock50144
 	inc t
 	lda #18
 	cmp t ;keep
-	bne for35013
-forLoopDone15638
-	jmp while87760
-elseblock10268
-elsedoneblock31354
+	bne for37449
+forLoopDone23980
+	jmp while42173
+elseblock40342
+elsedoneblock5777
 	rts
 	
 	
@@ -8005,23 +8005,23 @@ elsedoneblock31354
 	;    Procedure type : User-defined procedure
 	
 GameLoop
-while63904
+while93389
 	; Binary clause: EQUALS
 	lda gameMode
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	bne binaryclausefailed77773
-binaryclausesuccess86128
+	bne binaryclausefailed96801
+binaryclausesuccess91267
 	lda #1; success
-	jmp binaryclausefinished63558
-binaryclausefailed77773
+	jmp binaryclausefinished17837
+binaryclausefailed96801
 	lda #0 ; failed state
-binaryclausefinished63558
+binaryclausefinished17837
 	cmp #1
-	beq ConditionalTrueBlock40579
-	jmp elsedoneblock64227
-ConditionalTrueBlock40579
+	beq ConditionalTrueBlock5883
+	jmp elsedoneblock90934
+ConditionalTrueBlock5883
 	jsr UpdateTimer
 	jsr callReadJoy1
 	jsr UpdatePlayer
@@ -8033,32 +8033,32 @@ ConditionalTrueBlock40579
 	lda gameMode
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock90546
-ConditionalTrueBlock87989
+	bne elsedoneblock86855
+ConditionalTrueBlock91397
 	jsr CollisionPlayer
-elseblock35591
-elsedoneblock90546
+elseblock84931
+elsedoneblock86855
 	jsr UpdateCandy
 	jsr CollisionCandy
 	; Binary clause Simplified: LESSEQUAL
 	lda lostchildlevel
 	; Compare with pure num / var optimization
 	cmp level;keep
-	beq ConditionalTrueBlock70159
-	bcs elsedoneblock61679
-ConditionalTrueBlock70159
+	beq ConditionalTrueBlock50397
+	bcs elsedoneblock31938
+ConditionalTrueBlock50397
 	jsr UpdateLostChild
-elseblock69532
-elsedoneblock61679
+elseblock91720
+elsedoneblock31938
 	; Binary clause Simplified: EQUALS
 	lda witchHits
 	; Compare with pure num / var optimization
 	cmp #$6;keep
-	bne elsedoneblock18509
-ConditionalTrueBlock66429
+	bne elsedoneblock34114
+ConditionalTrueBlock3798
 	jsr BeatWitchWait
-elseblock41497
-elsedoneblock18509
+elseblock32008
+elsedoneblock34114
 	; Assigning single variable : i
 	lda #14
 	
@@ -8067,47 +8067,47 @@ elsedoneblock18509
 	lda moonPos
 	; Compare with pure num / var optimization
 	cmp #$6;keep
-	bcs elsedoneblock11058
-ConditionalTrueBlock44146
+	bcs elsedoneblock70041
+ConditionalTrueBlock11133
 	; Assigning single variable : i
 	lda #12
 	
 	sta i
-elseblock16336
-elsedoneblock11058
+elseblock22820
+elsedoneblock70041
 	; Binary clause Simplified: GREATER
 	lda moonPos
 	; Compare with pure num / var optimization
 	cmp #$11;keep
-	bcc elsedoneblock16220
-	beq elsedoneblock16220
-ConditionalTrueBlock96827
+	bcc elsedoneblock68485
+	beq elsedoneblock68485
+ConditionalTrueBlock94873
 	; Assigning single variable : i
 	lda #10
 	
 	sta i
-elseblock19332
-elsedoneblock16220
+elseblock46461
+elsedoneblock68485
 	; Assigning memory location
 	; Assigning single variable : $900f
 	lda i
 	sta $900f
-while90048
+while10057
 	; Binary clause Simplified: EQUALS
 	lda ticks
 	; Compare with pure num / var optimization
 	cmp oldTick;keep
-	bne elsedoneblock41991
-ConditionalTrueBlock61927
-	jmp while90048
-elseblock9802
-elsedoneblock41991
+	bne elsedoneblock13264
+ConditionalTrueBlock93889
+	jmp while10057
+elseblock11553
+elsedoneblock13264
 	; Assigning single variable : oldTick
 	lda ticks
 	sta oldTick
-	jmp while63904
-elseblock90591
-elsedoneblock64227
+	jmp while93389
+elseblock94128
+elsedoneblock90934
 	rts
 	
 	
@@ -8242,30 +8242,30 @@ DrawTitleFrame2
 	;    Procedure type : User-defined procedure
 	
 ScreenPause
-while16204
+while26704
 	; Binary clause Simplified: GREATER
 	lda t
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bcc elsedoneblock80685
-	beq elsedoneblock80685
-ConditionalTrueBlock77538
+	bcc elsedoneblock94068
+	beq elsedoneblock94068
+ConditionalTrueBlock39316
 	; Assigning single variable : t
 	dec t
 	; Assigning single variable : i
 	lda #0
 	sta i
-for80957
-while42227
+for60953
+while78552
 	; Binary clause Simplified: EQUALS
 	lda ticks
 	; Compare with pure num / var optimization
 	cmp oldTick;keep
-	bne elsedoneblock2944
-ConditionalTrueBlock92983
-	jmp while42227
-elseblock34455
-elsedoneblock2944
+	bne elsedoneblock75857
+ConditionalTrueBlock82565
+	jmp while78552
+elseblock11183
+elsedoneblock75857
 	; Assigning single variable : oldTick
 	lda ticks
 	sta oldTick
@@ -8279,24 +8279,24 @@ elsedoneblock2944
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	beq elsedoneblock202
-ConditionalTrueBlock92819
+	beq elsedoneblock61451
+ConditionalTrueBlock19847
 	; Assigning single variable : t
 	lda #0
 	sta t
 	; Assigning single variable : i
 	lda #29
 	sta i
-elseblock96683
-elsedoneblock202
+elseblock60355
+elsedoneblock61451
 	inc i
 	lda #30
 	cmp i ;keep
-	bne for80957
-forLoopDone4018
-	jmp while16204
-elseblock63593
-elsedoneblock80685
+	bne for60953
+forLoopDone80003
+	jmp while26704
+elseblock1287
+elsedoneblock94068
 	rts
 	
 	
@@ -8339,14 +8339,14 @@ TitleScreen
 	; Assigning single variable : t
 	lda #20
 	sta t
-while50128
+while89802
 	; Binary clause Simplified: GREATER
 	lda t
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bcc elsedoneblock94223
-	beq elsedoneblock94223
-ConditionalTrueBlock62649
+	bcc elsedoneblock20255
+	beq elsedoneblock20255
+ConditionalTrueBlock86250
 	; Assigning single variable : j
 	inc j
 	; Binary clause Simplified: EQUALS
@@ -8358,29 +8358,29 @@ ConditionalTrueBlock62649
 	
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	bne elseblock10799
-ConditionalTrueBlock43493
+	bne elseblock36860
+ConditionalTrueBlock37523
 	jsr DrawTitleFrame1
-	jmp elsedoneblock40584
-elseblock10799
+	jmp elsedoneblock95949
+elseblock36860
 	jsr DrawTitleFrame2
-elsedoneblock40584
+elsedoneblock95949
 	; Assigning single variable : t
 	dec t
 	; Assigning single variable : i
 	lda #0
 	sta i
-for86034
-while96382
+for16958
+while1718
 	; Binary clause Simplified: EQUALS
 	lda ticks
 	; Compare with pure num / var optimization
 	cmp oldTick;keep
-	bne elsedoneblock90800
-ConditionalTrueBlock86058
-	jmp while96382
-elseblock21820
-elsedoneblock90800
+	bne elsedoneblock10744
+ConditionalTrueBlock38010
+	jmp while1718
+elseblock47734
+elsedoneblock10744
 	; Assigning single variable : oldTick
 	lda ticks
 	sta oldTick
@@ -8395,24 +8395,24 @@ elsedoneblock90800
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	beq elsedoneblock46276
-ConditionalTrueBlock16246
+	beq elsedoneblock11548
+ConditionalTrueBlock72484
 	; Assigning single variable : t
 	lda #0
 	sta t
 	; Assigning single variable : i
 	lda #29
 	sta i
-elseblock91412
-elsedoneblock46276
+elseblock98573
+elsedoneblock11548
 	inc i
 	lda #30
 	cmp i ;keep
-	bne for86034
-forLoopDone34660
-	jmp while50128
-elseblock97783
-elsedoneblock94223
+	bne for16958
+forLoopDone16259
+	jmp while89802
+elseblock21992
+elsedoneblock20255
 	; Poke
 	; Optimization: shift is zero
 	lda #15
@@ -8616,9 +8616,9 @@ LastScore
 	ldy scr+1,x   ; Address of table hi
 	clc
 	adc #$7
-	bcc dtnooverflow87891
+	bcc dtnooverflow22661
 	iny  ; overflow into high byte
-dtnooverflow87891
+dtnooverflow22661
 	
 	sta screenmemory
 	sty screenmemory+1
@@ -8626,7 +8626,7 @@ dtnooverflow87891
 	; BcdPrint address, number
 	ldy #$07 ; screen offset
 	ldx #0 ; score byte index
-bcdprintloop20567
+bcdprintloop21751
 	lda score,x
 	inx
 	pha
@@ -8638,7 +8638,7 @@ bcdprintloop20567
 	lsr
 	lsr
 	jsr bcdplotdigit
-	bpl bcdprintloop20567
+	bpl bcdprintloop21751
 	jsr ColourTitleScreen2
 	; Assigning single variable : t
 	lda #5
@@ -8693,8 +8693,8 @@ LevelStart
 	lda level
 	; Compare with pure num / var optimization
 	cmp #$c;keep
-	bcs elseblock12109
-ConditionalTrueBlock78009
+	bcs elseblock47254
+ConditionalTrueBlock65616
 	; Assigning single variable : i
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -8709,24 +8709,24 @@ ConditionalTrueBlock78009
 	sta ipd_div_lo
 	sty ipd_div_hi
 	ldy #1 ; optimized, look out for bugs
-printdecimal17223
+printdecimal11815
 	jsr init_printdecimal_div10 
 	ora #$30
 	sta (screenmemory),y
 	dey
-	bpl printdecimal17223
-	jmp elsedoneblock81019
-elseblock12109
-printstring_call44298
+	bpl printdecimal11815
+	jmp elsedoneblock56574
+elseblock47254
+printstring_call57213
 	clc
-	lda #<printstring_text13606
+	lda #<printstring_text29886
 	adc #0
-	ldy #>printstring_text13606
+	ldy #>printstring_text29886
 	sta print_text+0
 	sty print_text+1
 	ldx #13 ; optimized, look out for bugs
 	jsr printstring
-elsedoneblock81019
+elsedoneblock56574
 	jsr DisplayScore
 	; Assigning single variable : screenmemory
 	lda #30
@@ -8745,7 +8745,7 @@ elsedoneblock81019
 	; Assigning single variable : i
 	lda #5
 	sta i
-for43016
+for65342
 	; Assigning single variable : screenmemory
 	lda #39
 	ldy i
@@ -8753,8 +8753,8 @@ for43016
 	inc i
 	lda n
 	cmp i ;keep
-	bne for43016
-forLoopDone20758
+	bne for65342
+forLoopDone56982
 	; Assigning single variable : n
 	dec n
 	; Assigning single variable : x
@@ -8803,24 +8803,24 @@ forLoopDone20758
 	; Assigning single variable : t
 	lda #80
 	sta t
-while96228
+while10641
 	; Binary clause: GREATER
 	lda t
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	bcc binaryclausefailed21008
-	beq binaryclausefailed21008
-binaryclausesuccess30123
+	bcc binaryclausefailed9847
+	beq binaryclausefailed9847
+binaryclausesuccess41397
 	lda #1; success
-	jmp binaryclausefinished15005
-binaryclausefailed21008
+	jmp binaryclausefinished7369
+binaryclausefailed9847
 	lda #0 ; failed state
-binaryclausefinished15005
+binaryclausefinished7369
 	cmp #1
-	beq ConditionalTrueBlock2073
-	jmp elsedoneblock39626
-ConditionalTrueBlock2073
+	beq ConditionalTrueBlock87223
+	jmp elsedoneblock36337
+ConditionalTrueBlock87223
 	; Assigning single variable : t
 	dec t
 	; Binary clause: LESS
@@ -8828,17 +8828,17 @@ ConditionalTrueBlock2073
 	; Compare with pure num / var optimization
 	cmp #$15;keep
 	; BC done
-	bcs binaryclausefailed19640
-binaryclausesuccess54062
+	bcs binaryclausefailed83632
+binaryclausesuccess99262
 	lda #1; success
-	jmp binaryclausefinished50768
-binaryclausefailed19640
+	jmp binaryclausefinished27482
+binaryclausefailed83632
 	lda #0 ; failed state
-binaryclausefinished50768
+binaryclausefinished27482
 	cmp #1
-	beq ConditionalTrueBlock69586
-	jmp elsedoneblock42428
-ConditionalTrueBlock69586
+	beq ConditionalTrueBlock83380
+	jmp elsedoneblock76075
+ConditionalTrueBlock83380
 	; Assigning single variable : screenmemory
 	lda #0
 	ldy x
@@ -8849,12 +8849,12 @@ ConditionalTrueBlock69586
 	lda y
 	; Compare with pure num / var optimization
 	cmp #$c;keep
-	bcs elsedoneblock66829
-ConditionalTrueBlock66036
+	bcs elsedoneblock68612
+ConditionalTrueBlock59171
 	; Assigning single variable : y
 	inc y
-elseblock8675
-elsedoneblock66829
+elseblock70015
+elsedoneblock68612
 	; Assigning single variable : screenmemory
 	
 	; ----------
@@ -8892,8 +8892,8 @@ elsedoneblock66829
 	lda x
 	; Compare with pure num / var optimization
 	cmp n;keep
-	bne elsedoneblock72699
-ConditionalTrueBlock37215
+	bne elsedoneblock52858
+ConditionalTrueBlock89832
 	; Assigning single variable : screenmemory
 	lda #62
 	pha
@@ -8929,14 +8929,14 @@ ConditionalTrueBlock37215
 	lda #195
 	sta vsnd3
 	jsr PlaySnd3
-elseblock78726
-elsedoneblock72699
+elseblock98442
+elsedoneblock52858
 	; Binary clause Simplified: EQUALS
 	lda x
 	; Compare with pure num / var optimization
 	cmp #$15;keep
-	bne elsedoneblock994
-ConditionalTrueBlock9246
+	bne elsedoneblock36618
+ConditionalTrueBlock824
 	; Assigning single variable : screenmemory
 	lda #0
 	ldy x
@@ -8959,56 +8959,56 @@ ConditionalTrueBlock9246
 	asl
 	
 	sta n
-elseblock87660
-elsedoneblock994
-elseblock15215
-elsedoneblock42428
+elseblock51044
+elsedoneblock36618
+elseblock33654
+elsedoneblock76075
 	; Binary clause: EQUALS
 	lda x
 	; Compare with pure num / var optimization
 	cmp #$15;keep
 	; BC done
-	bne binaryclausefailed24081
-binaryclausesuccess49294
+	bne binaryclausefailed54394
+binaryclausesuccess67701
 	lda #1; success
-	jmp binaryclausefinished60707
-binaryclausefailed24081
+	jmp binaryclausefinished74241
+binaryclausefailed54394
 	lda #0 ; failed state
-binaryclausefinished60707
+binaryclausefinished74241
 	cmp #1
-	beq ConditionalTrueBlock79145
-	jmp elsedoneblock54353
-ConditionalTrueBlock79145
+	beq ConditionalTrueBlock57330
+	jmp elsedoneblock15407
+ConditionalTrueBlock57330
 	; Binary clause: LESS
 	lda n
 	; Compare with pure num / var optimization
 	cmp #$58;keep
 	; BC done
-	bcs binaryclausefailed12977
-binaryclausesuccess86264
+	bcs binaryclausefailed96502
+binaryclausesuccess94190
 	lda #1; success
-	jmp binaryclausefinished57817
-binaryclausefailed12977
+	jmp binaryclausefinished30876
+binaryclausefailed96502
 	lda #0 ; failed state
-binaryclausefinished57817
+binaryclausefinished30876
 	cmp #1
-	beq ConditionalTrueBlock23315
-	jmp elsedoneblock5917
-ConditionalTrueBlock23315
+	beq ConditionalTrueBlock53801
+	jmp elsedoneblock77669
+ConditionalTrueBlock53801
 	; Assigning single variable : pan
 	inc pan
 	; Binary clause Simplified: GREATER
 	lda pan
 	; Compare with pure num / var optimization
 	cmp #$5;keep
-	bcc elsedoneblock71275
-	beq elsedoneblock71275
-ConditionalTrueBlock57142
+	bcc elsedoneblock42399
+	beq elsedoneblock42399
+ConditionalTrueBlock66267
 	; Assigning single variable : pan
 	lda #0
 	sta pan
-elseblock15709
-elsedoneblock71275
+elseblock93288
+elsedoneblock42399
 	; Assigning single variable : screenmemory
 	lda #0
 	pha
@@ -9056,19 +9056,19 @@ elsedoneblock71275
 	lda s
 	; Compare with pure num / var optimization
 	cmp #$40;keep
-	bne elsedoneblock78849
-ConditionalTrueBlock42902
+	bne elsedoneblock25556
+ConditionalTrueBlock14067
 	; Assigning single variable : s
 	lda #61
 	sta s
-elseblock52101
-elsedoneblock78849
+elseblock96391
+elsedoneblock25556
 	; Binary clause Simplified: EQUALS
 	lda n
 	; Compare with pure num / var optimization
 	cmp #$58;keep
-	bne elsedoneblock62720
-ConditionalTrueBlock44267
+	bne elsedoneblock13148
+ConditionalTrueBlock26144
 	; Assigning single variable : screenmemory
 	lda #0
 	pha
@@ -9079,24 +9079,24 @@ ConditionalTrueBlock44267
 	tay
 	pla
 	sta (screenmemory),y
-elseblock11548
-elsedoneblock62720
+elseblock14057
+elsedoneblock13148
 	; Binary clause Simplified: EQUALS
 	; Modulo
 	lda #4
-val_var36066 = $54
-	sta val_var36066
+val_var89930 = $54
+	sta val_var89930
 	lda n
 	sec
-modulo52777
-	sbc val_var36066
-	bcs modulo52777
-	adc val_var36066
+modulo74104
+	sbc val_var89930
+	bcs modulo74104
+	adc val_var89930
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elsedoneblock33213
-ConditionalTrueBlock33907
+	bne elsedoneblock1276
+ConditionalTrueBlock98022
 	; Assigning single variable : psnd1
 	lda #<sndPumpkidFootsteps
 	ldx #>sndPumpkidFootsteps
@@ -9116,37 +9116,37 @@ ConditionalTrueBlock33907
 	lda stepsnd
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elseblock50063
-ConditionalTrueBlock40404
+	bne elseblock93821
+ConditionalTrueBlock16503
 	; Assigning single variable : stepsnd
 	lda #30
 	sta stepsnd
-	jmp elsedoneblock43281
-elseblock50063
+	jmp elsedoneblock39906
+elseblock93821
 	; Assigning single variable : stepsnd
 	lda #0
 	sta stepsnd
-elsedoneblock43281
-elseblock37271
-elsedoneblock33213
-elseblock49115
-elsedoneblock5917
-elseblock12843
-elsedoneblock54353
+elsedoneblock39906
+elseblock32172
+elsedoneblock1276
+elseblock33911
+elsedoneblock77669
+elseblock19758
+elsedoneblock15407
 	; Assigning single variable : i
 	lda #0
 	sta i
-for48628
-while88229
+for98840
+while60763
 	; Binary clause Simplified: EQUALS
 	lda ticks
 	; Compare with pure num / var optimization
 	cmp oldTick;keep
-	bne elsedoneblock36857
-ConditionalTrueBlock35786
-	jmp while88229
-elseblock78198
-elsedoneblock36857
+	bne elsedoneblock75956
+ConditionalTrueBlock88550
+	jmp while60763
+elseblock73861
+elsedoneblock75956
 	; Assigning single variable : oldTick
 	lda ticks
 	sta oldTick
@@ -9155,8 +9155,8 @@ elsedoneblock36857
 	lda t
 	; Compare with pure num / var optimization
 	cmp #$3c;keep
-	bcs elsedoneblock21992
-ConditionalTrueBlock17140
+	bcs elsedoneblock40634
+ConditionalTrueBlock10231
 	; Binary clause Simplified: NOTEQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -9166,23 +9166,23 @@ ConditionalTrueBlock17140
 	
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	beq elsedoneblock1876
-ConditionalTrueBlock52742
+	beq elsedoneblock55051
+ConditionalTrueBlock2461
 	; Assigning single variable : t
 	lda #0
 	sta t
-elseblock89423
-elsedoneblock1876
-elseblock86254
-elsedoneblock21992
+elseblock2498
+elsedoneblock55051
+elseblock49866
+elsedoneblock40634
 	inc i
 	lda #4
 	cmp i ;keep
-	bne for48628
-forLoopDone10116
-	jmp while96228
-elseblock69818
-elsedoneblock39626
+	bne for98840
+forLoopDone47958
+	jmp while10641
+elseblock58907
+elsedoneblock36337
 	rts
 	
 	
@@ -9347,8 +9347,8 @@ vbl
 	; Assigning single variable : ticks
 	; Modulo
 	lda #100
-val_var89571 = $54
-	sta val_var89571
+val_var25516 = $54
+	sta val_var25516
 	; 8 bit binop
 	; Add/sub where right value is constant number
 	lda ticks
@@ -9356,21 +9356,21 @@ val_var89571 = $54
 	adc #1
 	 ; end add / sub var with constant
 	sec
-modulo46575
-	sbc val_var89571
-	bcs modulo46575
-	adc val_var89571
+modulo72005
+	sbc val_var25516
+	bcs modulo72005
+	adc val_var25516
 	
 	sta ticks
 	; Binary clause Simplified: EQUALS
 	lda sndFlag
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	bne elsedoneblock15945
-ConditionalTrueBlock25357
+	bne elsedoneblock61803
+ConditionalTrueBlock14066
 	jsr UpdateSound
-elseblock24773
-elsedoneblock15945
+elseblock62218
+elsedoneblock61803
 	; CloseIRQ
 	pla
 	tay
@@ -9379,73 +9379,73 @@ elsedoneblock15945
 	pla
 	 jmp $eabf     ; return to normal IRQ	
 	rti
-block6219
+block73591
 	jsr Initialise
 	jsr SetupSound
 	; Assigning single variable : level
 	lda #0
 	sta level
-while22186
+while47172
 	; Binary clause: NOTEQUALS
 	lda #1
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	beq binaryclausefailed56446
-binaryclausesuccess62271
+	beq binaryclausefailed77419
+binaryclausesuccess86696
 	lda #1; success
-	jmp binaryclausefinished69022
-binaryclausefailed56446
+	jmp binaryclausefinished14343
+binaryclausefailed77419
 	lda #0 ; failed state
-binaryclausefinished69022
+binaryclausefinished14343
 	cmp #1
-	beq ConditionalTrueBlock79531
-	jmp elsedoneblock60530
-ConditionalTrueBlock79531
+	beq ConditionalTrueBlock60615
+	jmp elsedoneblock4158
+ConditionalTrueBlock60615
 	jsr BlankScreen
 	lda level
 	cmp #$0 ;keep
-	bne casenext2039
+	bne casenext58247
 	jsr TitleCredits
-	jmp caseend1478
-casenext2039
+	jmp caseend32197
+casenext58247
 	lda level
 	cmp #$1 ;keep
-	bne casenext3419
+	bne casenext34622
 	jsr TitleScreen
-	jmp caseend1478
-casenext3419
+	jmp caseend32197
+casenext34622
 	lda level
 	cmp #$2 ;keep
-	bne casenext22439
+	bne casenext56105
 	jsr LastScore
-	jmp caseend1478
-casenext22439
+	jmp caseend32197
+casenext56105
 	lda level
 	cmp #$3 ;keep
-	bne casenext23537
+	bne casenext32459
 	jsr TitleStory
-	jmp caseend1478
-casenext23537
+	jmp caseend32197
+casenext32459
 	lda level
 	cmp #$4 ;keep
-	bne casenext75451
+	bne casenext27626
 	jsr TitleStory2
-	jmp caseend1478
-casenext75451
+	jmp caseend32197
+casenext27626
 	lda level
 	cmp #$5 ;keep
-	bne casenext681
+	bne casenext24959
 	jsr TitleCast
-	jmp caseend1478
-casenext681
+	jmp caseend32197
+casenext24959
 	lda level
 	cmp #$6 ;keep
-	bne casenext40296
+	bne casenext77002
 	jsr TitleHowTo
-	jmp caseend1478
-casenext40296
-caseend1478
+	jmp caseend32197
+casenext77002
+caseend32197
 	; Binary clause: NOTEQUALS
 	; 8 bit binop
 	; Add/sub where right value is constant number
@@ -9456,17 +9456,17 @@ caseend1478
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	beq binaryclausefailed56880
-binaryclausesuccess62161
+	beq binaryclausefailed58371
+binaryclausesuccess1822
 	lda #1; success
-	jmp binaryclausefinished23201
-binaryclausefailed56880
+	jmp binaryclausefinished7913
+binaryclausefailed58371
 	lda #0 ; failed state
-binaryclausefinished23201
+binaryclausefinished7913
 	cmp #1
-	beq ConditionalTrueBlock13081
-	jmp elsedoneblock52512
-ConditionalTrueBlock13081
+	beq ConditionalTrueBlock29412
+	jmp elsedoneblock84903
+ConditionalTrueBlock29412
 	; Assigning single variable : psndfx
 	lda #<sndShoot
 	ldx #>sndShoot
@@ -9509,38 +9509,38 @@ ConditionalTrueBlock13081
 	; Add/sub where right value is constant number
 	; Modulo
 	lda #3
-val_var39441 = $54
-	sta val_var39441
+val_var97786 = $54
+	sta val_var97786
 	jsr Random
 	sec
-modulo66229
-	sbc val_var39441
-	bcs modulo66229
-	adc val_var39441
+modulo72460
+	sbc val_var97786
+	bcs modulo72460
+	adc val_var97786
 	
 	clc
 	adc #1
 	 ; end add / sub var with constant
 	
 	sta lostchildlevel
-while85046
+while92613
 	; Binary clause: GREATER
 	lda lives
 	; Compare with pure num / var optimization
 	cmp #$0;keep
 	; BC done
-	bcc binaryclausefailed38558
-	beq binaryclausefailed38558
-binaryclausesuccess24136
+	bcc binaryclausefailed99132
+	beq binaryclausefailed99132
+binaryclausesuccess82211
 	lda #1; success
-	jmp binaryclausefinished85923
-binaryclausefailed38558
+	jmp binaryclausefinished85085
+binaryclausefailed99132
 	lda #0 ; failed state
-binaryclausefinished85923
+binaryclausefinished85085
 	cmp #1
-	beq ConditionalTrueBlock50266
-	jmp elsedoneblock27320
-ConditionalTrueBlock50266
+	beq ConditionalTrueBlock85844
+	jmp elsedoneblock3391
+ConditionalTrueBlock85844
 	; 
 	; ****** Inline assembler section
 					lda $9004
@@ -9555,43 +9555,43 @@ ConditionalTrueBlock50266
 	lda gameMode
 	; Compare with pure num / var optimization
 	cmp #$1;keep
-	bne elsedoneblock38867
-ConditionalTrueBlock38783
+	bne elsedoneblock84287
+ConditionalTrueBlock31585
 	; Assigning single variable : lives
 	dec lives
 	; Binary clause Simplified: EQUALS
 	lda lives
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	bne elseblock16029
-ConditionalTrueBlock68681
+	bne elseblock45028
+ConditionalTrueBlock18191
 	jsr TitleGameOver
-	jmp elsedoneblock11703
-elseblock16029
+	jmp elsedoneblock8599
+elseblock45028
 	jsr TitleFail
-elsedoneblock11703
-elseblock95160
-elsedoneblock38867
+elsedoneblock8599
+elseblock41103
+elsedoneblock84287
 	; Binary clause Simplified: EQUALS
 	lda gameMode
 	; Compare with pure num / var optimization
 	cmp #$2;keep
-	bne elsedoneblock28807
-ConditionalTrueBlock25765
+	bne elsedoneblock71917
+ConditionalTrueBlock46649
 	; Assigning single variable : level
 	inc level
 	; Binary clause Simplified: EQUALS
 	lda level
 	; Compare with pure num / var optimization
 	cmp #$d;keep
-	bne elseblock13027
-ConditionalTrueBlock41876
+	bne elseblock99810
+ConditionalTrueBlock14198
 	jsr TitleGameWon
 	; Assigning single variable : lives
 	lda #0
 	sta lives
-	jmp elsedoneblock84211
-elseblock13027
+	jmp elsedoneblock37356
+elseblock99810
 	jsr TitleGameNext
 	; Assigning single variable : witchHits
 	lda #0
@@ -9600,79 +9600,79 @@ elseblock13027
 	lda lives
 	; Compare with pure num / var optimization
 	cmp #$5;keep
-	bcs elsedoneblock68189
-ConditionalTrueBlock34697
+	bcs elsedoneblock56579
+ConditionalTrueBlock20204
 	; Binary clause Simplified: EQUALS
 	lda level
 	; Compare with pure num / var optimization
 	cmp #$2;keep
-	bne elsedoneblock1064
-ConditionalTrueBlock77468
+	bne elsedoneblock4625
+ConditionalTrueBlock84232
 	; Assigning single variable : lives
 	inc lives
-elseblock49265
-elsedoneblock1064
+elseblock53787
+elsedoneblock4625
 	; Binary clause Simplified: EQUALS
 	lda level
 	; Compare with pure num / var optimization
 	cmp #$5;keep
-	bne elsedoneblock76362
-ConditionalTrueBlock31249
+	bne elsedoneblock77681
+ConditionalTrueBlock89124
 	; Assigning single variable : lives
 	inc lives
-elseblock97406
-elsedoneblock76362
+elseblock94209
+elsedoneblock77681
 	; Binary clause Simplified: EQUALS
 	lda level
 	; Compare with pure num / var optimization
 	cmp #$9;keep
-	bne elsedoneblock91800
-ConditionalTrueBlock57917
+	bne elsedoneblock44598
+ConditionalTrueBlock50017
 	; Assigning single variable : lives
 	inc lives
-elseblock69538
-elsedoneblock91800
+elseblock27973
+elsedoneblock44598
 	; Binary clause Simplified: EQUALS
 	lda level
 	; Compare with pure num / var optimization
 	cmp #$b;keep
-	bne elsedoneblock95020
-ConditionalTrueBlock92045
+	bne elsedoneblock85690
+ConditionalTrueBlock35992
 	; Assigning single variable : lives
 	inc lives
-elseblock4310
-elsedoneblock95020
-elseblock22386
-elsedoneblock68189
-elsedoneblock84211
-elseblock3595
-elsedoneblock28807
-	jmp while85046
-elseblock55284
-elsedoneblock27320
+elseblock19460
+elsedoneblock85690
+elseblock59025
+elsedoneblock56579
+elsedoneblock37356
+elseblock64427
+elsedoneblock71917
+	jmp while92613
+elseblock22640
+elsedoneblock3391
 	; Assigning single variable : level
 	lda #0
 	sta level
-elseblock51498
-elsedoneblock52512
+elseblock3489
+elsedoneblock84903
 	; Assigning single variable : level
 	inc level
 	; Binary clause Simplified: GREATER
 	lda level
 	; Compare with pure num / var optimization
 	cmp #$6;keep
-	bcc elsedoneblock67046
-	beq elsedoneblock67046
-ConditionalTrueBlock29098
+	bcc elsedoneblock30274
+	beq elsedoneblock30274
+ConditionalTrueBlock89734
 	; Assigning single variable : level
 	lda #0
 	sta level
-elseblock78851
-elsedoneblock67046
-	jmp while22186
-elseblock95655
-elsedoneblock60530
-EndBlock61
+elseblock1171
+elsedoneblock30274
+	jmp while47172
+elseblock91447
+elsedoneblock4158
+EndBlock10409
 	org $4800
 titleScrn
 	incbin "/home/leuat/code/TRSE/tutorials/VIC20/PumpKid///compressed//titleScrn_c.bin"

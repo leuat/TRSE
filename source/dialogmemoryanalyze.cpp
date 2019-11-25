@@ -40,8 +40,8 @@ void DialogMemoryAnalyze::RenderSystemLabels(QPainter& p, int xstart, int fs )
 
     for (SystemLabel l:m_system->m_labels) {
 
-        float y0 = (l.m_from/65535.0)*ysize;
-        float y1 = (l.m_to/65535.0)*ysize;
+        float y0 = (l.m_from/(float)m_system->m_memorySize)*ysize;
+        float y1 = (l.m_to/(float)m_system->m_memorySize)*ysize;
         QColor c = AbstractSystem::m_labelColors[l.m_type];
 
         int height= y1-y0;
@@ -105,8 +105,8 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
     RenderSystemLabels(p,xstart,fontSize);
 
     for (MemoryBlock* mb:blocks) {
-        float y0 = (mb->m_start/65535.0)*ysize;
-        float y1 = (mb->m_end/65535.0)*ysize;
+        float y0 = (mb->m_start/(float)m_system->m_memorySize)*ysize;
+        float y1 = (mb->m_end/(float)m_system->m_memorySize)*ysize;
         QColor c = m_colors[mb->Type()];
         //float scale=(0.5 + (rand()%100/100.0));
         float scale = 0.9;
@@ -173,7 +173,7 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
     p.setBrush(QBrush(c,Qt::Dense4Pattern));
     // Render lines
     for (int i=0;i<16;i++) {
-        QString v = "$"+QString::number(i*4096,16).rightJustified(4, '0');
+        QString v = "$"+QString::number(i*m_system->m_memorySize/16,16).rightJustified(4, '0');
         int y0=(ysize/16)*i;
         int y1=(ysize/16)*(i+1);
         p.setPen(QColor(0,0,0,255));

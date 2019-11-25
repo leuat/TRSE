@@ -405,7 +405,9 @@ c; OKVC_BLIT_TYPE; OK64; a; 0xFFE4
 c; OKVC_BLIT_ALPHAVAL; OK64; a; 0xFFE3
 c; OKVC_BLIT_ALPHA ; OK64; b; 1
 c; OKVC_BLIT_ADD ; OK64; b; 2
-
+c; OKVC_CHANNEL1_VOL ; OK64; a; 0xFFE1
+c; OKVC_CHANNEL2_VOL ; OK64; a; 0xFFE2
+c; OKVC_OUTVAL ; OK64; a; 0xFFE0
 
 
 m; drawPixel; OK64; b,b,b
@@ -425,7 +427,7 @@ m; ReadNextFile; OK64;
 m; LoadFile; OK64;
 m; MemCpyOKVC; OK64; b,b,b,b,b,b,b,b
 m; setDefaultPalette; OK64;
-
+m; fmul;OK64;b,b
 
 
 

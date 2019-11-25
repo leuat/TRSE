@@ -356,6 +356,7 @@ void ASTDispather6502::HandleShiftLeftRight(NodeBinOP *node)
 void ASTDispather6502::HandleShiftLeftRightInteger(NodeBinOP *node, bool isSimpleAeqAopB)
 {
     // Not yet implemented
+
     QString varName = "";
     if (!isSimpleAeqAopB) {
         node->m_left->Accept(this);

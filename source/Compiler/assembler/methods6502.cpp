@@ -120,6 +120,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("ReadNextFile"))
         CallOKVC(as,0,10);
 
+    if (Command("fmul"))
+        CallOKVC(as,2,15);
+
     if (Command("DrawPixel")) {
         CallOKVC(as,3,1);
     }
