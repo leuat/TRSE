@@ -178,14 +178,17 @@ public:
     // Vic20 Bitmap Mode
     void initVbm(Assembler* as);
     void vbmSetDisplayMode(Assembler* as);
+    void vbmDebug(Assembler* as);
     void vbmSetColumn(Assembler *as);
     void initVbmClear(Assembler* as);
     void vbmClear(Assembler* as);
+
     void vbmDrawTile(Assembler *as);
     void vbmDrawTileO(Assembler *as);
     void vbmDrawTileE(Assembler *as);
     void vbmClearTile(Assembler *as);
     void vbmClearBlock(Assembler *as);
+
     void vbmDrawDot(Assembler *as);
     void vbmClearDot(Assembler *as);
     void initVbmDot(Assembler* as);
@@ -195,6 +198,17 @@ public:
     void vbmClearBlot(Assembler *as);
     void vbmDrawBlotE(Assembler *as);
 
+    void initVbmScrollLeft(Assembler *as);
+    void initVbmScrollRight(Assembler *as);
+    void initVbmScrollFixTop(Assembler *as);
+    void initVbmScrollFixBottom(Assembler *as);
+    void vbmScrollLeft(Assembler *as);
+    void vbmScrollRight(Assembler *as);
+    void vbmScrollFixTop(Assembler *as);
+    void vbmScrollFixBottom(Assembler *as);
+
+    void initVbmSpriteStitch(Assembler* as);
+    void vbmSpriteStitch(Assembler* as);
 
 
     // Initialize

@@ -48,7 +48,10 @@ m; initVbm; VIC20 ;
 
 m; vbmSetDisplayMode; VIC20 ;
 m; vbmSetColumn; VIC20 ; b
+m; vbmDebug; VIC20 ; n
+
 m; vbmClear; VIC20 ; b
+
 m; vbmDrawTile; VIC20 ; a
 m; vbmDrawTileO; VIC20 ; a
 m; vbmDrawTileE; VIC20 ; a
@@ -62,7 +65,12 @@ m; vbmDrawBlot; VIC20 ; b,b
 m; vbmClearBlot; VIC20 ; b,b
 m; vbmDrawBlotE; VIC20 ; b,b
 
+m; vbmScrollLeft; VIC20 ;
+m; vbmScrollRight; VIC20 ;
+m; vbmScrollFixTop; VIC20 ;
+m; vbmScrollFixBottom; VIC20 ;
 
+m; vbmSpriteStitch; VIC20 ; a, a, b
 
 # ************** AMIGA ROUTINES
 

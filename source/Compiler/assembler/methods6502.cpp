@@ -120,6 +120,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("vbmSetDisplayMode"))
         vbmSetDisplayMode(as);
 
+    // Enable or disable debug mode - switches off characterset
+    if (Command("vbmDebug"))
+        vbmDebug(as);
+
     // Set the screenmemory pointer to start of a bitmap column.  There are 20 columns
     if (Command("vbmSetColumn"))
         vbmSetColumn(as);
@@ -171,6 +175,32 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     // Draw Blot with Eor
     if (Command("vbmDrawBlotE"))
         vbmDrawBlotE(as);
+
+    // Horizontal Scrolling
+    if (Command("initVbmScrollLeft"))
+        initVbmScrollLeft(as);
+    if (Command("initVbmScrollRight"))
+        initVbmScrollRight(as);
+    if (Command("initVbmScrollFixTop"))
+        initVbmScrollFixTop(as);
+    if (Command("initVbmScrollFixBottom"))
+        initVbmScrollFixBottom(as);
+
+    if (Command("vbmScrollLeft"))
+        vbmScrollLeft(as);
+    if (Command("vbmScrollRight"))
+        vbmScrollRight(as);
+    if (Command("vbmScrollFixTop"))
+        vbmScrollFixTop(as);
+    if (Command("vbmScrollFixBottom"))
+        vbmScrollFixBottom(as);
+
+    // Sprites
+    if (Command("initVbmSpriteStitch"))
+        initVbmSpriteStitch(as);
+    if (Command("vbmSpriteStitch"))
+        vbmSpriteStitch(as);
+
 
     /*
      *
@@ -1186,6 +1216,43 @@ void Methods6502::vbmSetDisplayMode(Assembler* as)
 
 }
 
+void Methods6502::vbmDebug(Assembler* as)
+{
+    int mode = 0;
+
+    VerifyInitialized("vbm","InitVbm");
+
+    as->Comment("Set debug mode on / off to check character layout");
+
+    if ( m_node->m_params[0]->isPureNumeric() ) {
+
+        // pure numeric
+        mode = m_node->m_params[0]->getValueAsInt(as);
+
+        if (mode !=0 && mode != 1)
+            ErrorHandler::e.Error("vbmDebug - Please pass in a constant: 0 = off, 1 = on", m_node->m_op.m_lineNumber);
+
+    } else {
+
+        // complex not supported
+        ErrorHandler::e.Error("vbmDebug - Please pass in a constant: 0 = off, 1 = on", m_node->m_op.m_lineNumber);
+
+    }
+
+    if (mode == 0) {
+
+        as->Asm("lda #%11001100	; 204 (CC) - set screen and character to $1000");
+        as->Asm("sta $9005");
+
+    } else {
+
+        as->Asm("lda #%11000000	; 192 (C0) - set screen and character to $1000");
+        as->Asm("sta $9005");
+
+    }
+
+}
+
 void Methods6502::initVbmClear(Assembler* as)
 {
     if (m_node->m_isInitialized["vbmClear"])
@@ -1940,9 +2007,129 @@ void Methods6502::vbmDrawBlotE(Assembler *as) {
     as->Asm("sta (screenmemory),y");
 
 }
+
+// vbm Scrolling
+
+void Methods6502::initVbmScrollLeft(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmScrollLeft"])
+        return;
+
+    m_node->m_isInitialized["vbmScrollLeft"] = true;
+
+    as->Comment("VBM Scroll Left routine");
+    as->IncludeFile(":resources/code/vbm/vbmScrollLeft.asm");
+
+}
+void Methods6502::vbmScrollLeft(Assembler* as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmScrollLeft","InitVbmScrollLeft");
+
+    as->Comment("Scroll VBM bitmap to the left");
+    as->Asm("jsr vbmScrollLeft");
+
+}
+
+void Methods6502::initVbmScrollRight(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmScrollRight"])
+        return;
+
+    m_node->m_isInitialized["vbmScrollRight"] = true;
+
+    as->Comment("VBM Scroll Right routine");
+    as->IncludeFile(":resources/code/vbm/vbmScrollRight.asm");
+
+}
+void Methods6502::vbmScrollRight(Assembler* as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmScrollRight","InitVbmScrollRight");
+
+    as->Comment("Scroll VBM bitmap to the Right");
+    as->Asm("jsr vbmScrollRight");
+
+}
+
+void Methods6502::initVbmScrollFixTop(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmScrollFixTop"])
+        return;
+
+    m_node->m_isInitialized["vbmScrollFixTop"] = true;
+
+    as->Comment("VBM redraw top line so is not scrolling");
+    as->IncludeFile(":resources/code/vbm/vbmScrollFixTop.asm");
+
+}
+void Methods6502::vbmScrollFixTop(Assembler* as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmScrollFixTop","InitVbmScrollFixTop");
+
+    as->Comment("Redraw top line characters so not scrolled");
+    as->Asm("jsr vbmScrollFixTop");
+
+}
+
+void Methods6502::initVbmScrollFixBottom(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmScrollFixBottom"])
+        return;
+
+    m_node->m_isInitialized["vbmScrollFixBottom"] = true;
+
+    as->Comment("VBM redraw Bottom line so is not scrolling");
+    as->IncludeFile(":resources/code/vbm/vbmScrollFixBottom.asm");
+
+}
+void Methods6502::vbmScrollFixBottom(Assembler* as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmScrollFixBottom","InitVbmScrollFixBottom");
+
+    as->Comment("Redraw Bottom line characters so not scrolled");
+    as->Asm("jsr vbmScrollFixBottom");
+
+}
+
+
+void Methods6502::initVbmSpriteStitch(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmSpriteStitch"])
+        return;
+
+    m_node->m_isInitialized["vbmSpriteStitch"] = true;
+
+    as->Comment("VBM - stictch two sprites together");
+    //as->IncludeFile(":resources/code/vbm/vbmScrollLeft.asm");
+
+}
+void Methods6502::vbmSpriteStitch(Assembler* as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmSpriteStitch","InitVbmSpriteStitch");
+
+    as->Comment("Stitch two sprites together");
+    // load addr 1, addr 2 and height
+    as->Asm("jsr vbmScrollLeft");
+
+}
+
+
+
 /*
  *
  */
+
+
+
 
 
 

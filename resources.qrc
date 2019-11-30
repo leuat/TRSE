@@ -300,5 +300,9 @@
         <file>resources/code/vbm/init_vbm.asm</file>
         <file>resources/code/vbm/vbmClear.asm</file>
         <file>resources/text/help/p/vbm_vic_bitmap_mode.rtf</file>
+        <file>resources/code/vbm/vbmScrollFixBottom.asm</file>
+        <file>resources/code/vbm/vbmScrollFixTop.asm</file>
+        <file>resources/code/vbm/vbmScrollLeft.asm</file>
+        <file>resources/code/vbm/vbmScrollRight.asm</file>
     </qresource>
 </RCC>
