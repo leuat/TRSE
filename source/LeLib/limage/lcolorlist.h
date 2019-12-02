@@ -34,6 +34,7 @@
 #include <QPixmap>
 #include "source/LeLib/data.h"
 #include <math.h>
+#include <QStringLiteral>
 class Metric {
 public:
     virtual float getDistance(QColor& a, QColor& b) = 0;
@@ -98,7 +99,7 @@ private:
 public:
     QVector<LColor> m_list;
 
-    enum Type{ C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8,OK64,X16 };
+    enum Type{ NES, C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8,OK64,X16 };
 
     Type m_type = Type::C64;
     LColorList();
@@ -137,6 +138,7 @@ public:
     void InitCGA1_LOW();
     void InitCGA1_HIGH();
     void InitOK64();
+    void InitNES();
     void InitCGA2_LOW();
     void InitCGA2_HIGH();
     void UpdateColors();

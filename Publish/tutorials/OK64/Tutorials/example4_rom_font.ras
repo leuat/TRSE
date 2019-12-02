@@ -59,7 +59,7 @@ begin
 	x:=32;
 	while (tp[0]<>0) do 
 	begin
-		PrintChar(tp[0], j*15+time,  x,y+sine[(j*8+time)]/4);
+		PrintChar(tp[0], j*15+time,  x,y+sine[(j*8-time)]/4);
 		j:=j+1;
 		x:=x+sx;
 		tp:=tp+1;

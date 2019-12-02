@@ -36,6 +36,8 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     m_width = 160;
     m_height = 200;
     m_scaleX = 2.5f;
+    //m_data.resize(m_charWidth*m_charHeight);
+
     Clear();
     m_type = LImage::Type::MultiColorBitmap;
     m_supports.asmExport = true;
@@ -68,6 +70,10 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     m_exportParams["StartY"] = 0;
     m_exportParams["EndY"] = m_charHeight;
     m_exportParams["Compression"] = 0;
+
+    //m_data.resize(m_charWidth*m_charHeight);
+
+//    qDebug() << m_charWidth*m_charHeight;
 
     for (int i=0;i<4;i++)
         m_extraCols[i] = 0;
@@ -178,7 +184,8 @@ void MultiColorImage::LoadBin(QFile& file)
     file.read( ( char * )( &m_background ),1 );
     file.read( ( char * )( &m_border ), 1);
     file.read( ( char * )( &m_data ),  m_charHeight*m_charWidth*12 );
-
+//    QByteArray data = file.read(m_charHeight*m_charWidth*12);
+  //  memcpy(&m_data, &data, m_charHeight*m_charWidth*12);
 }
 
 void MultiColorImage::ImportKoa(QFile &f)
@@ -191,7 +198,8 @@ void MultiColorImage::ImportKoa(QFile &f)
     bg = f.read(1);
     int pos = 0;
 
-    for (PixelChar& pc: m_data) {
+    for (int j=0;j<m_charWidth*m_charHeight;j++) {
+        PixelChar& pc =  m_data[j];
         for (int i=0;i<8;i++)
             pc.p[i] = PixelChar::reverse(data[pos*8+i]);
         pc.c[1] = screen[pos]&15;
@@ -212,7 +220,8 @@ void MultiColorImage::ExportKoa(QFile &f)
     int pos = 0;
     screen.resize(1000);
     color.resize(1000);
-    for (PixelChar& pc: m_data) {
+    for (int j=0;j<m_charWidth*m_charHeight;j++) {
+        PixelChar& pc =  m_data[j];
         pc.Reorganize(m_bitMask, m_scale,m_minCol, m_noColors, m_background);
         for (int i=0;i<8;i++)
             data.append(PixelChar::reverse(pc.p[i]));
@@ -289,7 +298,10 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
 
 //            color.R = color.R + bayer8x8[x % 8, y % 8] * GAP / 65;
 
-            QColor color = QColor(img.pixel(x,y));
+            int xx = (x-img.width()/2)*m_importScaleX + img.width()/2;
+            int yy = (y-img.height()/2)*m_importScaleY + img.height()/2;
+
+            QColor color = QColor(img.pixel(xx,yy));
             int yp = y + x%(int)strength.y();
             int xp = x + y%(int)strength.z();
             color.setRed(min(color.red() + bayer4x4(xp % 4,yp % 4),255.0f));
@@ -328,7 +340,12 @@ void MultiColorImage::CopyFrom(LImage* img)
         MultiColorImage* mc = (MultiColorImage*)img;
          m_background = mc->m_background;
          m_border = mc->m_border;
-
+         m_charWidth = mc->m_charWidth;
+         m_charHeight = mc->m_charHeight;
+         m_scale = mc->m_scale;
+         m_width = mc->m_width;
+         m_height = mc->m_height;
+         m_scaleX = mc->m_scaleX;
         // qDebug() << "COPY FROM";
 #pragma omp parallel for
          for(int i=0;i<m_charHeight*m_charWidth;i++) {

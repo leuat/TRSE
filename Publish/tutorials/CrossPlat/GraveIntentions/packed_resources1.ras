@@ -1,12 +1,12 @@
 trm_room1 : IncBin("packed//trm_room1_c.bin", $6000);
 trm_room2 : IncBin("packed//trm_room2_c.bin", $64aa);
-trm_room3 : IncBin("packed//trm_room3_c.bin", $685c);
-trm_room4 : IncBin("packed//trm_room4_c.bin", $6b8e);
+trm_room3 : IncBin("packed//trm_room3_c.bin", $685d);
+trm_room4 : IncBin("packed//trm_room4_c.bin", $6b8f);
 trm_room5 : IncBin("packed//trm_room5_c.bin", $6ce7);
 resources : array [10] of byte = (
 	170, 100,
-	92, 104,
-	142, 107,
+	93, 104,
+	143, 107,
 	231, 108,
 	124, 114
 );

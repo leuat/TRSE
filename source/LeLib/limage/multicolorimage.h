@@ -160,7 +160,9 @@ public:
     int m_charHeight=25;
 
     MultiColorImage(LColorList::Type t);
-    PixelChar m_data[40*25];
+//    QVector<PixelChar> m_data;
+    PixelChar m_data[40*25*2];
+ //   QVector<PixelChar> m_data;
     PixelChar& getPixelChar(int x, int y);
     virtual void Clear() override;
 

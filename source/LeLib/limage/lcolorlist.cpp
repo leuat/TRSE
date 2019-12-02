@@ -64,6 +64,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 8;
   if (t==X16)
       return 9;
+  if (t==NES)
+      return 10;
 
   return 255;
 }
@@ -90,6 +92,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return OK64;
     if (c==9)
         return X16;
+    if (c==10)
+        return NES;
 
     return UNSUPPORTED;
 
@@ -281,6 +285,8 @@ void LColorList::Initialize(Type t)
         InitPICO8();
     if (m_type == Type::OK64)
         InitOK64();
+    if (m_type == Type::NES)
+        InitNES();
     if (m_type == Type::X16) {
         InitOK64();
     }
@@ -452,6 +458,33 @@ void LColorList::InitOK64()
 
 }
 
+void LColorList::InitNES()
+{
+    m_list.clear();
+    m_list.resize(64);
+//    LoadFromFile(":resources/palette/nes.pal");
+    QStringList pal = Util::loadTextFile(":resources/palette/nes.txt").split("\n");
+    int i=0;
+    int k = 0;
+    int d = 0;
+    for (QString s: pal) {
+//        qDebug() << i++ << s << " " <<Util::NumberFromStringHex("$"+s.mid(2,2)) << " " <<Util::NumberFromStringHex("$"+s.mid(4,2)) << " "<<  << "  : "<< "$"+s.mid(6,2);
+      //  qDebug() << i++ << s << " " <<Util::NumberFromStringHex(QString("$"+s.mid(6,2)));
+        m_list[i++] = (LColor(QColor(Util::NumberFromStringHex(QString("$"+s.mid(2,2))),
+                                    Util::NumberFromStringHex(QString("$"+s.mid(4,2))),
+                                    Util::NumberFromStringHex(QString("$"+s.mid(6,2)))
+                                    ),"Color"));
+//        qDebug() << k+d;
+        k=k+4;
+        if (k>=64) {
+            d++;
+            k=0;
+
+        }
+
+    }
+}
+
 
 void LColorList::InitCGA2_LOW()
 {
@@ -539,7 +572,7 @@ void LColorList::FillComboBox(QComboBox *cmb)
 int LColorList::getIndex(QColor c)
 {
     for (int i=0;i<m_list.count();i++) {
-        qDebug() << "   Testing: " << c << m_list[i].color;
+//        qDebug() << "   Testing: " << c << m_list[i].color;
         if (m_list[i].color == c) {
 //            qDebug() << "found" << i <<  c << m_list[i].color;
             return i;

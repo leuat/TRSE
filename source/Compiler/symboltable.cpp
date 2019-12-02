@@ -194,7 +194,9 @@ void SymbolTable::InitBuiltins()
             Syntax::s.m_currentSystem->m_system==AbstractSystem::PLUS4 ||
             Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 ||
             Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20 ||
-            Syntax::s.m_currentSystem->m_system==AbstractSystem::PET) {
+            Syntax::s.m_currentSystem->m_system==AbstractSystem::PET ||
+            Syntax::s.m_currentSystem->m_system==AbstractSystem::NES
+            ) {
 
         Define(new Symbol("screenmemory", "pointer"));
     }

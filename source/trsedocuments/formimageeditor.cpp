@@ -477,6 +477,8 @@ void FormImageEditor::UpdatePalette()
     ui->cmbBorderMain_3->setVisible(m_work.m_currentImage->m_image->m_supports.displayForeground);
     ui->layoutColorsEdit_3->setEnabled(m_work.m_currentImage->m_image->m_supports.displayColors);
 
+    ui->cmbNesPalette->setEnabled(m_work.m_currentImage->m_image->m_supports.nesPalette);
+
     ui->lblTimeStamp->setVisible(m_work.m_currentImage->m_image->m_supports.displayTimestamp);
     ui->leTimeStamp->setVisible(m_work.m_currentImage->m_image->m_supports.displayTimestamp);
 
@@ -952,11 +954,13 @@ void FormImageEditor::SetMCColors()
 {
     int a = ui->cmbMC1->currentIndex();
     int b = ui->cmbMC2->currentIndex();
+    int c = ui->cmbBorderMain_3->currentIndex();
     int back = ui->cmbBackgroundMain_3->currentIndex();
 
     m_work.m_currentImage->m_image->SetColor(back, 0);
     m_work.m_currentImage->m_image->SetColor(a, 1);
     m_work.m_currentImage->m_image->SetColor(b, 2);
+    m_work.m_currentImage->m_image->SetColor(c, 3);
 
     updateCharSet();
     emit onImageMouseEvent();
@@ -1605,4 +1609,35 @@ void FormImageEditor::on_btnPalette_clicked()
     dc->Initialize(&m_work.m_currentImage->m_image->m_colorList, m_projectPath);
     dc->exec();
     UpdatePalette();
+}
+
+void FormImageEditor::on_cmbBorderMain_3_currentIndexChanged(int index)
+{
+//    SetMCColors();
+
+}
+
+void FormImageEditor::on_cmbMC1_currentIndexChanged(int index)
+{
+
+}
+
+void FormImageEditor::on_cmbBorderMain_3_activated(int index)
+{
+    SetMCColors();
+    emit onImageMouseEvent();
+
+}
+
+void FormImageEditor::on_cmbNesPalette_currentIndexChanged(int index)
+{
+    if (index==1) {
+        ui->cmbMC1->setCurrentIndex(35);
+        ui->cmbMC2->setCurrentIndex(34);
+        ui->cmbBorderMain_3->setCurrentIndex(31);
+        ui->cmbBackgroundMain_3->setCurrentIndex(54);
+    }
+    SetMCColors();
+    emit onImageMouseEvent();
+
 }

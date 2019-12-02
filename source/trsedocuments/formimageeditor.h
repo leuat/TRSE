@@ -223,6 +223,10 @@ private slots:
     void on_cmbZoomLevel_activated(const QString &arg1);
     void on_btnExportCompressed_clicked();
     void on_btnPalette_clicked();
+    void on_cmbBorderMain_3_currentIndexChanged(int index);
+    void on_cmbMC1_currentIndexChanged(int index);
+    void on_cmbBorderMain_3_activated(int index);
+    void on_cmbNesPalette_currentIndexChanged(int index);
 };
 
 

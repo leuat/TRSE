@@ -297,5 +297,7 @@
         <file>resources/bin/columntab.bin</file>
         <file>resources/code/c64_keyboard_input.asm</file>
         <file>resources/images/tutorials/pumpkid.png</file>
+        <file>resources/palette/nes.txt</file>
+        <file>resources/palette/nes.pal</file>
     </qresource>
 </RCC>

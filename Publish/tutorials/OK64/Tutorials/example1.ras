@@ -3,7 +3,6 @@ var
  	time,j: byte=0;
 	image1 : incbin("images/image1.bin","$20000");    
 
-
 begin
 
 	while(true) offpage do

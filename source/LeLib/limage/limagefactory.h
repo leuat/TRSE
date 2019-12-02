@@ -38,6 +38,7 @@
 #include "source/LeLib/limage/limageamiga4.h"
 #include "source/LeLib/limage/limageok64.h"
 #include "source/LeLib/limage/limagex16.h"
+#include "source/LeLib/limage/limagenes.h"
 
 class LImageFactory {
 public:
@@ -77,6 +78,8 @@ public:
             return new LImageOK64(colorType);
         if (t == LImage::Type::X16_640x480)
             return new LImageX16(colorType);
+        if (t == LImage::Type::NES)
+            return new LImageNES(colorType);
 
         qDebug() << "ERROR: LImageFactory could not find type " << t;
         return nullptr;
