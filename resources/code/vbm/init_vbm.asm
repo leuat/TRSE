@@ -10,9 +10,10 @@ vbmX dc.b 0 ; x position
 vbmY dc.b 0 ; y position
 vbmI dc.b 0 ; index
 vbmT dc.b 0 ; index
-vbmScroll dc.b 16 ; character scroll start
+vbmScroll dc.b 16       ; character scroll start
 vbmScrLstart dc.b $00   ; start address for bitmap L
 vbmScrHstart dc.b $11   ; start address for bitmap H
+vbmNumColumns dc.b 20        ; number of columns
 
 vbmSetDisplayMode
 
@@ -38,8 +39,17 @@ vbmIsNtsc
     lda #25		; (12x2) + 1
     sta $9003	; set screen height to 12 double height chars
 
-    lda #20
+    lda vbmNumColumns ;#20
     sta $9002	; set screen width to 20 characters
+    cmp #20
+    beq vbmSDM_noadjust
+
+    lda $9000	; 19 column mode, move horiz position another 4 pixels right to centre
+    clc
+    adc #1
+    sta $9000
+
+vbmSDM_noadjust
 
     lda $9001
     sec
@@ -118,13 +128,14 @@ vbmYDrawForLoop
     lda vbmI
     ldy vbmX
     sta (screenmemory),y
-    ; add 20 for next row
+    ; add 20 for next row (or 19)
     lda screenmemory
     clc
-    adc #20
+    adc vbmNumColumns ; 20
     sta screenmemory
     bcc vbmYDrawForLoopOverflow
     inc screenmemory+1
+
 vbmYDrawForLoopOverflow
 
     inc vbmY
@@ -140,6 +151,6 @@ vbmDrawForLoopResetChar
     bne vbmYDrawForLoop ; loop rows
 
     inc vbmX
-    lda #20	; compare 20 columns
+    lda vbmNumColumns	; compare 20 columns
     cmp vbmX ;keep
     bne vbmXDrawForLoop	; loop columns

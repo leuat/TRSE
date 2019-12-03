@@ -46,7 +46,7 @@ m; initVbm; VIC20 ;
 
 # *** CALL METHODS
 
-m; vbmSetDisplayMode; VIC20 ;
+m; vbmSetDisplayMode; VIC20 ; n
 m; vbmSetColumn; VIC20 ; b
 m; vbmDebug; VIC20 ; n
 

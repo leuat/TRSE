@@ -1209,9 +1209,35 @@ void Methods6502::vbmSetDisplayMode(Assembler* as)
 {
     DefineScreen(as);
 
+    int mode = 0;
+
     VerifyInitialized("vbm","InitVbm");
 
     as->Comment("Set special display mode for VBM bitmap graphics");
+
+    if ( m_node->m_params[0]->isPureNumeric() ) {
+
+        // pure numeric
+        mode = m_node->m_params[0]->getValueAsInt(as);
+
+        if (mode !=0 && mode != 1)
+            ErrorHandler::e.Error("vbmSetDisplayMode - Please pass in a constant: 0 = normal 20 columns, 1 = scrolling 19 columns", m_node->m_op.m_lineNumber);
+
+    } else {
+
+        // complex not supported
+        ErrorHandler::e.Error("vbmSetDisplayMode - Please pass in a constant: 0 = normal 20 columns, 1 = scrolling 19 columns", m_node->m_op.m_lineNumber);
+
+    }
+
+    if (mode == 0) {
+        as->Asm("lda #20");
+        as->Asm("sta vbmNumColumns");
+    } else {
+        as->Asm("lda #19");
+        as->Asm("sta vbmNumColumns");
+    }
+
     as->Asm("jsr vbmSetDisplayMode");
 
 }

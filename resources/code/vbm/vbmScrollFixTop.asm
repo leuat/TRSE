@@ -11,8 +11,8 @@ vbmScrollFixTop
     lda #16
     sta vbmI
     
-	ldy #0
-    ldx #20
+    ldy #0
+    ldx vbmNumColumns ; #20
 
 vbmSFT_loop
 
