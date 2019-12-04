@@ -128,6 +128,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("vbmSetColumn"))
         vbmSetColumn(as);
 
+    // Set the screenmemory pointer to an exact address and load vbmX with the 0-7 x offset
+    if (Command("initvbmSetPosition"))
+        initvbmSetPosition(as);
+    if (Command("vbmSetPosition"))
+        vbmSetPosition(as);
+
     // clear the bitmap area that starts at $1100
     if (Command("initVbmClear"))
         initVbmClear(as);
@@ -1320,7 +1326,7 @@ void Methods6502::vbmSetColumn(Assembler *as) {
     as->Comment("----------");
     as->Comment("vbmSetColumn in ScreenMemory ZP - column offset");
 
-    QString lblDTNoOverflow = as->NewLabel("dtnooverflow");
+//    QString lblDTNoOverflow = as->NewLabel("dtnooverflow");
 
     // ypos
     if (m_node->m_params[0]->isPureNumeric()) {
@@ -1338,6 +1344,55 @@ void Methods6502::vbmSetColumn(Assembler *as) {
 
     as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
     as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
+
+}
+
+void Methods6502::initvbmSetPosition(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
+//    VerifyInitialized("vbmSetPos","InitVbmSetPosition");
+
+    if (m_node->m_isInitialized["vbmSetPos"])
+        return;
+
+    m_node->m_isInitialized["vbmSetPos"] = true;
+
+    as->Comment("----------");
+    as->Comment("init vbmSetPosition");
+    as->IncludeFile(":resources/code/vbm/vbmSetPosition.asm");
+
+}
+
+void Methods6502::vbmSetPosition(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmSetPos","InitVbmSetPosition");
+
+    as->Comment("----------");
+    as->Comment("vbmSetPosition x, y");
+
+    // ypos
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as) ) );
+    } else {
+        // complex
+        as->Comment("y is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("sta vbmY");
+    // xpos
+    if (m_node->m_params[0]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[0]->getValueAsInt(as) ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 0);
+    }
+    as->Asm("sta vbmX");
+
+    as->Asm("jsr vbmSetPosition");
 
 }
 
@@ -1747,7 +1802,7 @@ void Methods6502::vbmDrawDot(Assembler *as) {
         as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
     } else {
         // complex
-        as->Comment("x is complex");
+        as->Comment("yx is complex");
         LoadVar(as, 1);
     }
     as->Asm("sta vbmY");
@@ -1794,7 +1849,7 @@ void Methods6502::vbmClearDot(Assembler *as) {
         as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
     } else {
         // complex
-        as->Comment("x is complex");
+        as->Comment("y is complex");
         LoadVar(as, 1);
     }
     as->Asm("sta vbmY");
@@ -1842,7 +1897,7 @@ void Methods6502::vbmDrawDotE(Assembler *as) {
         as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
     } else {
         // complex
-        as->Comment("x is complex");
+        as->Comment("y is complex");
         LoadVar(as, 1);
     }
     as->Asm("sta vbmY");
@@ -1889,7 +1944,7 @@ void Methods6502::vbmDrawBlot(Assembler *as) {
         as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
     } else {
         // complex
-        as->Comment("x is complex");
+        as->Comment("y is complex");
         LoadVar(as, 1);
     }
     as->Asm("sta vbmY");
@@ -1941,7 +1996,7 @@ void Methods6502::vbmClearBlot(Assembler *as) {
         as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
     } else {
         // complex
-        as->Comment("x is complex");
+        as->Comment("y is complex");
         LoadVar(as, 1);
     }
     as->Asm("sta vbmY");
@@ -1995,7 +2050,7 @@ void Methods6502::vbmDrawBlotE(Assembler *as) {
         as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
     } else {
         // complex
-        as->Comment("x is complex");
+        as->Comment("y is complex");
         LoadVar(as, 1);
     }
     as->Asm("sta vbmY");

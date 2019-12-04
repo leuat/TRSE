@@ -180,6 +180,8 @@ public:
     void vbmSetDisplayMode(Assembler* as);
     void vbmDebug(Assembler* as);
     void vbmSetColumn(Assembler *as);
+    void initvbmSetPosition(Assembler *as);
+    void vbmSetPosition(Assembler *as);
     void initVbmClear(Assembler* as);
     void vbmClear(Assembler* as);
 

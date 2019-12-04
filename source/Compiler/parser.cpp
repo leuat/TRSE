@@ -168,6 +168,7 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "bcdprint(", "initbcd");
 
         InitBuiltinFunction(QStringList()<< "vbmsetdisplaymode(", "initVbm");
+        InitBuiltinFunction(QStringList()<< "vbmsetposition(", "initVbmSetPosition");
         InitBuiltinFunction(QStringList()<< "vbmclear(", "initVbmClear");
         InitBuiltinFunction(QStringList()<< "vbmdrawdot(" << "vbmcleardot(" << "vbmdrawdote(", "initVbmDot");
         InitBuiltinFunction(QStringList()<< "vbmdrawblot(" << "vbmclearblot(" << "vbmdrawblote(", "initVbmBlot");

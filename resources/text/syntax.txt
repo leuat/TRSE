@@ -48,6 +48,7 @@ m; initVbm; VIC20 ;
 
 m; vbmSetDisplayMode; VIC20 ; n
 m; vbmSetColumn; VIC20 ; b
+m; vbmSetPosition; VIC20; b,b
 m; vbmDebug; VIC20 ; n
 
 m; vbmClear; VIC20 ; b

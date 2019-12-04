@@ -304,5 +304,6 @@
         <file>resources/code/vbm/vbmScrollFixTop.asm</file>
         <file>resources/code/vbm/vbmScrollLeft.asm</file>
         <file>resources/code/vbm/vbmScrollRight.asm</file>
+        <file>resources/code/vbm/vbmSetPosition.asm</file>
     </qresource>
 </RCC>
