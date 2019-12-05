@@ -206,6 +206,14 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         initVbmSpriteStitch(as);
     if (Command("vbmSpriteStitch"))
         vbmSpriteStitch(as);
+    if (Command("initvbmSpriteShiftR"))
+        initvbmSpriteShiftR(as);
+    if (Command("vbmSpriteShiftR"))
+        vbmSpriteShiftR(as);
+    if (Command("initvbmSpriteShiftL"))
+        initvbmSpriteShiftL(as);
+    if (Command("vbmSpriteShiftL"))
+        vbmSpriteShiftL(as);
 
 
     /*
@@ -2187,8 +2195,23 @@ void Methods6502::initVbmSpriteStitch(Assembler* as)
 
     m_node->m_isInitialized["vbmSpriteStitch"] = true;
 
-    as->Comment("VBM - stictch two sprites together");
-    //as->IncludeFile(":resources/code/vbm/vbmScrollLeft.asm");
+    if (as->m_tempZeroPointers.count()==0)
+        return;
+
+    as->Comment("VBM - stitch two sprites together");
+
+    as->Label("vbmSpriteStitch");
+
+    as->Asm("ldy #0");
+
+    as->Label("vbmSSt_loop");
+
+    as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+    as->Asm("ora (" + as->m_tempZeroPointers[1] + "),y");
+    as->Asm("sta (" + as->m_tempZeroPointers[1] + "),y");
+    as->Asm("iny");
+    as->Asm("cpy vbmY");
+    as->Asm("bne vbmSSt_loop");
 
 }
 void Methods6502::vbmSpriteStitch(Assembler* as)
@@ -2197,12 +2220,386 @@ void Methods6502::vbmSpriteStitch(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmSpriteStitch","InitVbmSpriteStitch");
 
+    if (as->m_tempZeroPointers.count()==0)
+        return;
+
+    // address 1
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    // address 2
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+        ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr2= "";
+    if (m_node->m_params[1]->isPureNumeric())
+        addr2 = m_node->m_params[1]->HexValue();
+    if (var!=nullptr)
+        addr2 = var->getValue(as);
+
     as->Comment("Stitch two sprites together");
     // load addr 1, addr 2 and height
-    as->Asm("jsr vbmScrollLeft");
+
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda " + addr1 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda #>" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    }
+
+    if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda " + addr2 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda #>" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    }
+    // height
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[2]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("height is complex");
+        LoadVar(as, 2);
+    }
+    as->Asm("sta vbmY");
+    as->Asm("jsr vbmSpriteStitch");
 
 }
 
+void Methods6502::initvbmSpriteShiftL(Assembler *as)
+{
+    if (m_node->m_isInitialized["vbmSpriteShiftL"])
+        return;
+
+    m_node->m_isInitialized["vbmSpriteShiftL"] = true;
+
+    if (as->m_tempZeroPointers.count()==0)
+        return;
+
+    // p1 (src) p2 (dest)
+    // vbmX and vbmY
+    as->Comment("VBM - create left shifted positions for a sprite");
+    as->Comment("Source = "+ as->m_tempZeroPointers[0]);
+    as->Comment("Destination = "+ as->m_tempZeroPointers[1]);
+    as->Comment("vbmX = shift increment value 1, 2 or 4 for 8, 4 or 2 shifted sprites respectively");
+    as->Comment("vbmY = height of sprite to shift");
+
+
+    as->Label("vbmSpriteShiftL");
+
+    as->Asm("lda #0");
+    as->Asm("sta vbmI	; current shift iteration");
+
+    as->Comment("copy char");
+    as->Label("vbmSSLCopyChar");
+    as->Asm("ldy #0");
+
+    as->Label("vbmSSLCopyCharLoop");
+    as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y	; read");
+    as->Asm("sta (" + as->m_tempZeroPointers[1] + "),y	; copy to 1st column");
+    as->Asm("iny");
+    as->Asm("cpy vbmY");
+    as->Asm("bne vbmSSLCopyCharLoop");
+
+    as->Comment("shift char");
+    as->Asm("lda vbmI	; skip first shift");
+    as->Asm("cmp #9");
+    as->Asm("beq vbmSSLShiftDone");
+
+    as->Asm("ldy #0");
+    as->Label("vbmSSLShiftLoop");
+    as->Asm("clc");
+    as->Asm("lda #8");
+    as->Asm("sbc vbmI");
+    as->Asm("sta vbmT	; number of times to shift");
+
+    as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y ; read");
+
+    as->Label("vbmSSLShiftLoop2");
+    as->Asm("asl");
+    as->Asm("dec vbmT");
+    as->Asm("bpl vbmSSLShiftLoop2");
+
+    as->Asm("sta (" + as->m_tempZeroPointers[1] + "),y ; store");
+
+    as->Asm("iny");
+    as->Asm("cpy vbmY");
+    as->Asm("bne vbmSSLShiftLoop ; repeat rotating all rows");
+
+    as->Label("vbmSSLShiftDone");
+    as->Comment("add y to vbmP2");
+    as->Asm("lda " + as->m_tempZeroPointers[1]);
+    as->Asm("clc");
+    as->Asm("adc vbmY");
+    as->Asm("bcc vbmSSL_p2overflow");
+    as->Asm("inc " + as->m_tempZeroPointers[1] + "+1");
+    as->Label("vbmSSL_p2overflow");
+    as->Asm("sta " + as->m_tempZeroPointers[1]);
+
+    as->Comment("increment iteration");
+    as->Asm("lda vbmI");
+    as->Asm("adc vbmX");
+    as->Asm("sta vbmI");
+    as->Asm("cmp #9");
+    as->Asm("bcc vbmSSLCopyChar ; do next char iteration");
+    //; done
+}
+void Methods6502::initvbmSpriteShiftR(Assembler *as)
+{
+    if (m_node->m_isInitialized["vbmSpriteShiftR"])
+        return;
+
+    m_node->m_isInitialized["vbmSpriteShiftR"] = true;
+
+    if (as->m_tempZeroPointers.count()==0)
+        return;
+
+    // p1 (src) p2 (dest)
+    // vbmX and vbmY
+    as->Comment("VBM - create right shifted positions for a sprite");
+    as->Comment("Source = "+ as->m_tempZeroPointers[0]);
+    as->Comment("Destination = "+ as->m_tempZeroPointers[1]);
+    as->Comment("vbmX = shift increment value 1, 2 or 4 for 8, 4 or 2 shifted sprites respectively");
+    as->Comment("vbmY = height of sprite to shift");
+
+
+    as->Label("vbmSpriteShiftR");
+
+    as->Asm("lda #0");
+    as->Asm("sta vbmI	; current shift iteration");
+
+    as->Comment("copy char");
+    as->Label("vbmSSRCopyChar");
+    as->Asm("ldy #0");
+
+    as->Label("vbmSSRCopyCharLoop");
+    as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y	; read");
+    as->Asm("sta (" + as->m_tempZeroPointers[1] + "),y	; copy to 1st column");
+    as->Asm("iny");
+    as->Asm("cpy vbmY");
+    as->Asm("bne vbmSSRCopyCharLoop");
+
+    as->Comment("shift char");
+    as->Asm("lda vbmI	; skip first shift");
+    as->Asm("beq vbmSSRShiftDone");
+
+    as->Asm("ldy #0");
+    as->Label("vbmSSRShiftLoop");
+    as->Asm("lda vbmI");
+    as->Asm("sta vbmT	; number of times to shift");
+
+    as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y ; read");
+
+    as->Label("vbmSSRShiftLoop2");
+    as->Asm("lsr");
+    as->Asm("dec vbmT");
+    as->Asm("bne vbmSSRShiftLoop2");
+
+    as->Asm("sta (" + as->m_tempZeroPointers[1] + "),y ; store");
+
+    as->Asm("iny");
+    as->Asm("cpy vbmY");
+    as->Asm("bne vbmSSRShiftLoop ; repeat rotating all rows");
+
+    as->Label("vbmSSRShiftDone");
+    as->Comment("add y to vbmP2");
+    as->Asm("lda " + as->m_tempZeroPointers[1]);
+    as->Asm("clc");
+    as->Asm("adc vbmY");
+    as->Asm("bcc vbmSSR_p2overflow");
+    as->Asm("inc " + as->m_tempZeroPointers[1] + "+1");
+    as->Label("vbmSSR_p2overflow");
+    as->Asm("sta " + as->m_tempZeroPointers[1]);
+
+    as->Comment("increment iteration");
+    as->Asm("lda vbmI");
+    as->Asm("adc vbmX");
+    as->Asm("sta vbmI");
+    as->Asm("cmp #9");
+    as->Asm("bcc vbmSSRCopyChar ; do next char iteration");
+    //; done
+}
+void Methods6502::vbmSpriteShiftL(Assembler* as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmSpriteShiftL","InitVbmSpriteShiftL");
+
+    if (as->m_tempZeroPointers.count()==0)
+        return;
+
+    // address 1
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    // address 2
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+        ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr2= "";
+    if (m_node->m_params[1]->isPureNumeric())
+        addr2 = m_node->m_params[1]->HexValue();
+    if (var!=nullptr)
+        addr2 = var->getValue(as);
+
+    as->Comment("Sprite Shift Left");
+    // load addr 1, addr 2 and height
+
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda " + addr1 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda #>" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    }
+
+    if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda " + addr2 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda #>" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    }
+    // Shift increments
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[2]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("shift increment is complex");
+        LoadVar(as, 2);
+    }
+    as->Asm("sta vbmX");
+    // Height of sprite
+    if (m_node->m_params[3]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[3]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("sprite height is complex");
+        LoadVar(as, 3);
+    }
+    as->Asm("sta vbmY");
+
+    as->Asm("jsr vbmSpriteShiftL");
+
+}
+void Methods6502::vbmSpriteShiftR(Assembler* as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmSpriteShiftR","InitVbmSpriteShiftR");
+
+    if (as->m_tempZeroPointers.count()==0)
+        return;
+
+    // address 1
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    // address 2
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+        ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr2= "";
+    if (m_node->m_params[1]->isPureNumeric())
+        addr2 = m_node->m_params[1]->HexValue();
+    if (var!=nullptr)
+        addr2 = var->getValue(as);
+
+    as->Comment("Sprite Shift Right");
+    // load addr 1, addr 2 and height
+
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda " + addr1 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda #>" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    }
+
+    if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda " + addr2 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda #>" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    }
+    // Shift increments
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[2]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("shift increment is complex");
+        LoadVar(as, 2);
+    }
+    as->Asm("sta vbmX");
+    // Height of sprite
+    if (m_node->m_params[3]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[3]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("sprite height is complex");
+        LoadVar(as, 3);
+    }
+    as->Asm("sta vbmY");
+
+    as->Asm("jsr vbmSpriteShiftR");
+
+}
 
 
 /*

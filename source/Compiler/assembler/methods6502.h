@@ -211,6 +211,10 @@ public:
 
     void initVbmSpriteStitch(Assembler* as);
     void vbmSpriteStitch(Assembler* as);
+    void initvbmSpriteShiftR(Assembler* as);
+    void vbmSpriteShiftR(Assembler* as);
+    void initvbmSpriteShiftL(Assembler* as);
+    void vbmSpriteShiftL(Assembler* as);
 
 
     // Initialize
