@@ -201,6 +201,15 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("vbmScrollFixBottom"))
         vbmScrollFixBottom(as);
 
+    if (Command("initVbmScreenShiftLeft"))
+        initVbmScreenShiftLeft(as);
+    if (Command("initVbmScreenShiftRight"))
+        initVbmScreenShiftRight(as);
+    if (Command("vbmScreenShiftLeft"))
+        vbmScreenShiftLeft(as);
+    if (Command("vbmScreenShiftRight"))
+        vbmScreenShiftRight(as);
+
     // Sprites
     if (Command("initVbmSpriteStitch"))
         initVbmSpriteStitch(as);
@@ -2187,6 +2196,102 @@ void Methods6502::vbmScrollFixBottom(Assembler* as)
 
 }
 
+void Methods6502::initVbmScreenShiftLeft(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmScreenShiftLeft"])
+        return;
+
+    m_node->m_isInitialized["vbmScreenShiftLeft"] = true;
+
+    if (as->m_tempZeroPointers.count()==0)
+        return;
+
+    as->Comment("VBM - Shift the screen to the left");
+    as->Comment("x reg = start line, vbmY = end line");
+    as->IncludeFile(":resources/code/vbm/vbmScreenShiftLeft.asm");
+
+}
+void Methods6502::initVbmScreenShiftRight(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmScreenShiftRight"])
+        return;
+
+    m_node->m_isInitialized["vbmScreenShiftRight"] = true;
+
+    if (as->m_tempZeroPointers.count()==0)
+        return;
+
+    as->Comment("VBM - Shift the screen to the left");
+    as->Comment("x reg = start line, vbmY = end line");
+    as->IncludeFile(":resources/code/vbm/vbmScreenShiftRight.asm");
+
+}
+void Methods6502::vbmScreenShiftLeft(Assembler* as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmScreenShiftLeft","InitVbmScreenShiftLeft");
+
+    as->Comment("Screen Shift Left");
+
+    // end line
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("end line is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("sta vbmY");
+
+    // start line
+    if (m_node->m_params[0]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[0]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("start line is complex");
+        LoadVar(as, 0);
+        as->Asm("tax");
+    }
+
+    as->Asm("jsr vbmScreenShiftLeft");
+
+}
+void Methods6502::vbmScreenShiftRight(Assembler* as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmScreenShiftRight","InitVbmScreenShiftRight");
+
+    as->Comment("Screen Shift Left");
+
+    // end line
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("end line is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("sta vbmY");
+
+    // start line
+    if (m_node->m_params[0]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[0]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("start line is complex");
+        LoadVar(as, 0);
+        as->Asm("tax");
+    }
+
+    as->Asm("jsr vbmScreenShiftRight");
+
+}
 
 void Methods6502::initVbmSpriteStitch(Assembler* as)
 {

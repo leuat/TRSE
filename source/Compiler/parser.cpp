@@ -177,6 +177,9 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "vbmscrollfixtop(", "initVbmScrollFixTop");
         InitBuiltinFunction(QStringList()<< "vbmscrollfixbottom(", "initVbmScrollFixBottom");
 
+        InitBuiltinFunction(QStringList()<< "vbmscreenshiftleft(", "initVbmScreenShiftLeft");
+        InitBuiltinFunction(QStringList()<< "vbmscreenshiftright(", "initVbmScreenShiftRight");
+
         InitBuiltinFunction(QStringList()<< "vbmspritestitch(", "initVbmSpriteStitch");
         InitBuiltinFunction(QStringList()<< "vbmspriteshiftr(", "initvbmSpriteShiftR");
         InitBuiltinFunction(QStringList()<< "vbmspriteshiftl(", "initvbmSpriteShiftL");

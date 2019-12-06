@@ -71,6 +71,9 @@ m; vbmScrollRight; VIC20 ;
 m; vbmScrollFixTop; VIC20 ;
 m; vbmScrollFixBottom; VIC20 ;
 
+m; vbmScreenShiftLeft; VIC20 ; b, b
+m; vbmScreenShiftRight; VIC20 ; b, b
+
 m; vbmSpriteStitch; VIC20 ; a, a, b
 m; vbmSpriteShiftR; VIC20 ; a, a, b, b
 m; vbmSpriteShiftL; VIC20 ; a, a, b, b

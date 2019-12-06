@@ -305,5 +305,7 @@
         <file>resources/code/vbm/vbmScrollLeft.asm</file>
         <file>resources/code/vbm/vbmScrollRight.asm</file>
         <file>resources/code/vbm/vbmSetPosition.asm</file>
+        <file>resources/code/vbm/vbmScreenShiftLeft.asm</file>
+        <file>resources/code/vbm/vbmScreenShiftRight.asm</file>
     </qresource>
 </RCC>
