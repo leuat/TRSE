@@ -135,7 +135,10 @@ void Parser::InitBuiltinFunctions()
         if (Node::flags.contains("div8"))
             InitBuiltinFunction(QStringList()<< "", "init8x8div");
 
-        InitBuiltinFunction(QStringList()<< "getkey(", "initgetkey");
+        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 ||
+                Syntax::s.m_currentSystem->m_system == AbstractSystem::C128) {
+            InitBuiltinFunction(QStringList()<< "getkey(", "initgetkey");
+        }
         InitBuiltinFunction(QStringList()<< "rand(", "initrandom","init_random_call");
         InitBuiltinFunction(QStringList()<< "random(", "initrandom256");
 

@@ -525,11 +525,17 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("InitKrill")) {
         InitKrill(as);
     }
-    if (Command("initGetKey")) {
-        as->IncludeFile(":resources/code/c64_keyboard_input.asm");
-    }
-    if (Command("getKey")) {
-        as->Asm("jsr c64_getKey");
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C128
+            || Syntax::s.m_currentSystem->m_system==AbstractSystem::C64) {
+
+        if (Command("initGetKey")) {
+            as->IncludeFile(":resources/code/c64_keyboard_input.asm");
+        }
+        if (Command("getKey")) {
+            as->Asm("jsr c64_getKey");
+        }
+    } else if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20) {
+        as->Asm("lda 197");
     }
 
     if (Command("init_viairq"))
