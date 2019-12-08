@@ -535,7 +535,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
             as->Asm("jsr c64_getKey");
         }
     } else if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20) {
-        as->Asm("lda 197");
+        if (Command("getKey")) {
+            as->Asm("lda 197");
+        }
     }
 
     if (Command("init_viairq"))
@@ -2331,8 +2333,9 @@ void Methods6502::vbmSpriteStitch(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmSpriteStitch","InitVbmSpriteStitch");
 
-    if (as->m_tempZeroPointers.count()==0)
-        return;
+    if (as->m_tempZeroPointers.count() < 2) {
+        ErrorHandler::e.Error("This TRSE command needs at least 2 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
 
     // address 1
     NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
@@ -2403,8 +2406,9 @@ void Methods6502::initvbmSpriteShiftL(Assembler *as)
 
     m_node->m_isInitialized["vbmSpriteShiftL"] = true;
 
-    if (as->m_tempZeroPointers.count()==0)
-        return;
+    if (as->m_tempZeroPointers.count() < 3) {
+        ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
 
     // p1 (src) p2 (dest)
     // vbmX and vbmY
@@ -2456,7 +2460,25 @@ void Methods6502::initvbmSpriteShiftL(Assembler *as)
     as->Asm("cpy vbmY");
     as->Asm("bne vbmSSLShiftLoop ; repeat rotating all rows");
 
+    // completed a single shifted sprite
     as->Label("vbmSSLShiftDone");
+    as->Comment("store address of pre-shifted sprite in look up table");
+    // copy temp pointer 1 (destination) into temp pointer 2 (lookup table)
+    as->Asm("ldy #0");
+    as->Asm("lda " + as->m_tempZeroPointers[1]);
+    as->Asm("sta (" + as->m_tempZeroPointers[2] + "),y");
+    as->Asm("iny");
+    as->Asm("lda " + as->m_tempZeroPointers[1] + "+1");
+    as->Asm("sta (" + as->m_tempZeroPointers[2] + "),y");
+    // add 2 (as we are storing low/high in serial list for simplicity)
+    as->Asm("lda " + as->m_tempZeroPointers[2]);
+    as->Asm("clc");
+    as->Asm("adc #2");
+    as->Asm("bcc vbmSSL_p3overflow");
+    as->Asm("inc " + as->m_tempZeroPointers[2] + "+1");
+    as->Label("vbmSSL_p3overflow");
+    as->Asm("sta " + as->m_tempZeroPointers[2]);
+
     as->Comment("add y to vbmP2");
     as->Asm("lda " + as->m_tempZeroPointers[1]);
     as->Asm("clc");
@@ -2466,6 +2488,7 @@ void Methods6502::initvbmSpriteShiftL(Assembler *as)
     as->Label("vbmSSL_p2overflow");
     as->Asm("sta " + as->m_tempZeroPointers[1]);
 
+    // do next shifted sprite
     as->Comment("increment iteration");
     as->Asm("lda vbmI");
     as->Asm("adc vbmX");
@@ -2481,8 +2504,9 @@ void Methods6502::initvbmSpriteShiftR(Assembler *as)
 
     m_node->m_isInitialized["vbmSpriteShiftR"] = true;
 
-    if (as->m_tempZeroPointers.count()==0)
-        return;
+    if (as->m_tempZeroPointers.count() < 3) {
+        ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
 
     // p1 (src) p2 (dest)
     // vbmX and vbmY
@@ -2531,7 +2555,25 @@ void Methods6502::initvbmSpriteShiftR(Assembler *as)
     as->Asm("cpy vbmY");
     as->Asm("bne vbmSSRShiftLoop ; repeat rotating all rows");
 
+    // completed a single shifted sprite
     as->Label("vbmSSRShiftDone");
+    as->Comment("store address of pre-shifted sprite in look up table");
+    // copy temp pointer 1 (destination) into temp pointer 2 (lookup table)
+    as->Asm("ldy #0");
+    as->Asm("lda " + as->m_tempZeroPointers[1]);
+    as->Asm("sta (" + as->m_tempZeroPointers[2] + "),y");
+    as->Asm("iny");
+    as->Asm("lda " + as->m_tempZeroPointers[1] + "+1");
+    as->Asm("sta (" + as->m_tempZeroPointers[2] + "),y");
+    // add 2 (as we are storing low/high in serial list for simplicity)
+    as->Asm("lda " + as->m_tempZeroPointers[2]);
+    as->Asm("clc");
+    as->Asm("adc #2");
+    as->Asm("bcc vbmSSR_p3overflow");
+    as->Asm("inc " + as->m_tempZeroPointers[2] + "+1");
+    as->Label("vbmSSR_p3overflow");
+    as->Asm("sta " + as->m_tempZeroPointers[2]);
+
     as->Comment("add y to vbmP2");
     as->Asm("lda " + as->m_tempZeroPointers[1]);
     as->Asm("clc");
@@ -2541,6 +2583,7 @@ void Methods6502::initvbmSpriteShiftR(Assembler *as)
     as->Label("vbmSSR_p2overflow");
     as->Asm("sta " + as->m_tempZeroPointers[1]);
 
+    // do next shifted sprite
     as->Comment("increment iteration");
     as->Asm("lda vbmI");
     as->Asm("adc vbmX");
@@ -2559,6 +2602,7 @@ void Methods6502::vbmSpriteShiftL(Assembler* as)
         return;
 
     // address 1
+    as->Comment("Read address 1");
     NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
@@ -2570,6 +2614,7 @@ void Methods6502::vbmSpriteShiftL(Assembler* as)
         addr1 = var->getValue(as);
 
     // address 2
+    as->Comment("Read address 2");
     var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
@@ -2579,6 +2624,18 @@ void Methods6502::vbmSpriteShiftL(Assembler* as)
         addr2 = m_node->m_params[1]->HexValue();
     if (var!=nullptr)
         addr2 = var->getValue(as);
+
+    // address 3
+    as->Comment("Read address 3");
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[4]);
+    if (var==nullptr && !m_node->m_params[4]->isPureNumeric()) {
+        ErrorHandler::e.Error("fifth parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr3= "";
+    if (m_node->m_params[4]->isPureNumeric())
+        addr3 = m_node->m_params[4]->HexValue();
+    if (var!=nullptr)
+        addr3 = var->getValue(as);
 
     as->Comment("Sprite Shift Left");
     // load addr 1, addr 2 and height
@@ -2606,6 +2663,7 @@ void Methods6502::vbmSpriteShiftL(Assembler* as)
         as->Asm("lda #>" + addr2 );
         as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
     }
+
     // Shift increments
     if (m_node->m_params[2]->isPureNumeric()) {
         // pure numeric
@@ -2627,6 +2685,19 @@ void Methods6502::vbmSpriteShiftL(Assembler* as)
     }
     as->Asm("sta vbmY");
 
+    // address where to store lookups
+    if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr3 );
+        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("lda " + addr3 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr3 );
+        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("lda #>" + addr3 );
+        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+    }
+
     as->Asm("jsr vbmSpriteShiftL");
 
 }
@@ -2640,6 +2711,7 @@ void Methods6502::vbmSpriteShiftR(Assembler* as)
         return;
 
     // address 1
+    as->Comment("Read address 1");
     NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
@@ -2651,6 +2723,7 @@ void Methods6502::vbmSpriteShiftR(Assembler* as)
         addr1 = var->getValue(as);
 
     // address 2
+    as->Comment("Read address 2");
     var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
@@ -2660,6 +2733,18 @@ void Methods6502::vbmSpriteShiftR(Assembler* as)
         addr2 = m_node->m_params[1]->HexValue();
     if (var!=nullptr)
         addr2 = var->getValue(as);
+
+    // address 3
+    as->Comment("Read address 3");
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[4]);
+    if (var==nullptr && !m_node->m_params[4]->isPureNumeric()) {
+        ErrorHandler::e.Error("fifth parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr3= "";
+    if (m_node->m_params[4]->isPureNumeric())
+        addr3 = m_node->m_params[4]->HexValue();
+    if (var!=nullptr)
+        addr3 = var->getValue(as);
 
     as->Comment("Sprite Shift Right");
     // load addr 1, addr 2 and height
@@ -2707,6 +2792,19 @@ void Methods6502::vbmSpriteShiftR(Assembler* as)
         LoadVar(as, 3);
     }
     as->Asm("sta vbmY");
+
+    // address where to store lookups
+    if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr3 );
+        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("lda " + addr3 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr3 );
+        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("lda #>" + addr3 );
+        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+    }
 
     as->Asm("jsr vbmSpriteShiftR");
 
