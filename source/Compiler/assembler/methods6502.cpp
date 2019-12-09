@@ -232,12 +232,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         initVbmDrawSprite8E(as);
     if (Command("vbmDrawSprite8E"))
         vbmDrawSprite8E(as);
-/*    if (Command("initVbmClearSprite8"))
+    if (Command("initVbmClearSprite8"))
         initVbmClearSprite8(as);
     if (Command("vbmClearSprite8"))
         vbmClearSprite8(as);
 
-    if (Command("initVbmDrawSprite16"))
+/*    if (Command("initVbmDrawSprite16"))
         initVbmDrawSprite16(as);
     if (Command("vbmDrawSprite16"))
         vbmDrawSprite16(as);
@@ -2968,38 +2968,44 @@ void Methods6502::vbmDrawSprite8(Assembler* as)
     if (var!=nullptr)
         addr2 = var->getValue(as);
 
+
+    as->Asm("lda vbmX ; x offset 0-7");
+    as->Asm("asl ; for simplicty, storing lo, hi in one array");
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER
             || m_node->m_params[1]->getType(as)==TokenType::POINTER) {
-        as->Asm("lda vbmX ; x offset 0-7");
-        as->Asm("asl ; for simplicty, storing lo, hi in one array");
+        as->Asm("tay");
+    }
+    if (m_node->m_params[0]->getType(as)!=TokenType::POINTER
+            || m_node->m_params[1]->getType(as)!=TokenType::POINTER) {
         as->Asm("tax");
     }
 
+
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
-        as->Asm("lda " + addr1 +",x" );
+        as->Asm("lda (" + addr1 +"),y" );
         as->Asm("sta " + as->m_tempZeroPointers[0] );
-        as->Asm("inx");
-        as->Asm("lda " + addr1 +",x" );
+        as->Asm("iny");
+        as->Asm("lda (" + addr1 +"),y" );
         as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
         if (m_node->m_params[1]->getType(as)==TokenType::POINTER)
-        { as->Asm("dex"); }
+        { as->Asm("dey"); }
     } else {
-        as->Asm("lda #<" + addr1 );
+        as->Asm("lda " + addr1 +",x" ); //#<
         as->Asm("sta " + as->m_tempZeroPointers[0] );
-        as->Asm("lda #>" + addr1 );
+        as->Asm("lda " + addr1 +"+1,x" ); //#>
         as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
     }
 
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
-        as->Asm("lda " + addr2 +",x" );
+        as->Asm("lda (" + addr2 +"),y" );
         as->Asm("sta " + as->m_tempZeroPointers[1] );
-        as->Asm("inx");
-        as->Asm("lda " + addr2 +",x" );
+        as->Asm("iny");
+        as->Asm("lda (" + addr2 +"),y" );
         as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
     } else {
-        as->Asm("lda #<" + addr2 );
+        as->Asm("lda " + addr2 +",x" ); //#<
         as->Asm("sta " + as->m_tempZeroPointers[1] );
-        as->Asm("lda #>" + addr2 );
+        as->Asm("lda " + addr2 +"+1,x" ); //#>
         as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
     }
 
@@ -3141,8 +3147,14 @@ void Methods6502::vbmDrawSprite8E(Assembler* as)
 
     as->Asm("lda vbmX ; x offset 0-7");
     as->Asm("asl ; for simplicty, storing lo, hi in one array");
-    as->Asm("tay");
-    as->Asm("tax");
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER
+            || m_node->m_params[1]->getType(as)==TokenType::POINTER) {
+        as->Asm("tay");
+    }
+    if (m_node->m_params[0]->getType(as)!=TokenType::POINTER
+            || m_node->m_params[1]->getType(as)!=TokenType::POINTER) {
+        as->Asm("tax");
+    }
 
 
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
@@ -3154,17 +3166,10 @@ void Methods6502::vbmDrawSprite8E(Assembler* as)
         if (m_node->m_params[1]->getType(as)==TokenType::POINTER)
         { as->Asm("dey"); }
     } else {
-        /*if (m_node->m_params[0]->isPureNumeric()) {
-            as->Asm("lda #<" + addr1 ); //#<
-            as->Asm("sta " + as->m_tempZeroPointers[0] );
-            as->Asm("lda #>" + addr1 ); //#>
-            as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
-        } else {*/
-            as->Asm("lda " + addr1 +",x" ); //#<
-            as->Asm("sta " + as->m_tempZeroPointers[0] );
-            as->Asm("lda " + addr1 +"+1,x" ); //#>
-            as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
-        //}
+        as->Asm("lda " + addr1 +",x" ); //#<
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda " + addr1 +"+1,x" ); //#>
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
     }
 
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
@@ -3174,22 +3179,206 @@ void Methods6502::vbmDrawSprite8E(Assembler* as)
         as->Asm("lda (" + addr2 +"),y" );
         as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
     } else {
-        /*if (m_node->m_params[1]->isPureNumeric()) {
-            as->Asm("lda #<" + addr1 ); //#<
-            as->Asm("sta " + as->m_tempZeroPointers[1] );
-            as->Asm("lda #>" + addr1 ); //#>
-            as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
-        } else {*/
-            as->Asm("lda " + addr2 +",x" ); //#<
-            as->Asm("sta " + as->m_tempZeroPointers[1] );
-            as->Asm("lda " + addr2 +"+1,x" ); //#>
-            as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
-       // }
+        as->Asm("lda " + addr2 +",x" ); //#<
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda " + addr2 +"+1,x" ); //#>
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
     }
     as->Asm("jsr vbmDrawSprite8E");
 
 }
 
+void Methods6502::initVbmClearSprite8(Assembler *as)
+{
+    if (m_node->m_isInitialized["vbmClearSprite8"])
+        return;
+
+    m_node->m_isInitialized["vbmClearSprite8"] = true;
+
+    if (as->m_tempZeroPointers.count() < 2) {
+        ErrorHandler::e.Error("This TRSE command needs at least 2 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
+
+    // p1 (src) p2 (dest)
+    // vbmX and vbmY
+    as->Comment("VBM - clear (cut out) an 8x8 sprite - use vbmSetPosition first");
+    as->Comment("Left Side = "+ as->m_tempZeroPointers[0]);
+    as->Comment("Right side = "+ as->m_tempZeroPointers[1]);
+
+    as->Label("vbmClearSprite8");
+
+        as->Comment("draw left side");
+        as->Asm("ldy #0");
+        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+
+        as->Comment("move screenmemory to next column");
+        as->Asm("lda screenmemory");
+        as->Asm("clc");
+        as->Asm("adc #192 ; next column");
+        as->Asm("bcc vbmCS8_overflow");
+        as->Asm("inc screenmemory+1");
+    as->Label("vbmCS8_overflow");
+        as->Asm("sta screenmemory");
+
+        as->Comment("draw right side");
+        as->Asm("ldy #0");
+        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+
+    //; done
+}
+void Methods6502::vbmClearSprite8(Assembler* as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmClearSprite8","InitVbmClearSprite8");
+
+    if (as->m_tempZeroPointers.count()==0)
+        return;
+
+    // address 1
+    as->Comment("Read address 1");
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    // address 2
+    as->Comment("Read address 2");
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+        ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr2= "";
+    if (m_node->m_params[1]->isPureNumeric())
+        addr2 = m_node->m_params[1]->HexValue();
+    if (var!=nullptr)
+        addr2 = var->getValue(as);
+
+
+    as->Asm("lda vbmX ; x offset 0-7");
+    as->Asm("asl ; for simplicty, storing lo, hi in one array");
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER
+            || m_node->m_params[1]->getType(as)==TokenType::POINTER) {
+        as->Asm("tay");
+    }
+    if (m_node->m_params[0]->getType(as)!=TokenType::POINTER
+            || m_node->m_params[1]->getType(as)!=TokenType::POINTER) {
+        as->Asm("tax");
+    }
+
+
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda (" + addr1 +"),y" );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("iny");
+        as->Asm("lda (" + addr1 +"),y" );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        if (m_node->m_params[1]->getType(as)==TokenType::POINTER)
+        { as->Asm("dey"); }
+    } else {
+        as->Asm("lda " + addr1 +",x" ); //#<
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda " + addr1 +"+1,x" ); //#>
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    }
+
+    if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda (" + addr2 +"),y" );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("iny");
+        as->Asm("lda (" + addr2 +"),y" );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    } else {
+        as->Asm("lda " + addr2 +",x" ); //#<
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda " + addr2 +"+1,x" ); //#>
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    }
+
+    as->Asm("jsr vbmClearSprite8");
+
+}
 
 
 /*
