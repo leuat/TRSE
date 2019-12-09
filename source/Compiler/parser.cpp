@@ -184,8 +184,16 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "vbmscreenshiftright(", "initVbmScreenShiftRight");
 
         InitBuiltinFunction(QStringList()<< "vbmspritestitch(", "initVbmSpriteStitch");
-        InitBuiltinFunction(QStringList()<< "vbmspriteshiftr(", "initvbmSpriteShiftR");
-        InitBuiltinFunction(QStringList()<< "vbmspriteshiftl(", "initvbmSpriteShiftL");
+        InitBuiltinFunction(QStringList()<< "vbmspriteshiftr(", "initVbmSpriteShiftR");
+        InitBuiltinFunction(QStringList()<< "vbmspriteshiftl(", "initVbmSpriteShiftL");
+
+        InitBuiltinFunction(QStringList()<< "vbmdrawsprite8(", "initVbmDrawSprite8");
+        InitBuiltinFunction(QStringList()<< "vbmdrawsprite8e(", "initVbmDrawSprite8E");
+        InitBuiltinFunction(QStringList()<< "vbmclearsprite8(", "initVbmClearSprite8");
+
+        InitBuiltinFunction(QStringList()<< "vbmdrawsprite16(", "initVbmDrawSprite16");
+        InitBuiltinFunction(QStringList()<< "vbmdrawsprite16e(", "initVbmDrawSprite16E");
+        InitBuiltinFunction(QStringList()<< "vbmclearsprite16(", "initVbmClearSprite16");
 
 
     }

@@ -175,6 +175,7 @@ public:
     void Jammer(Assembler *as);
     void FLD(Assembler* as);
 
+
     // Vic20 Bitmap Mode
     void initVbm(Assembler* as);
     void vbmSetDisplayMode(Assembler* as);
@@ -216,11 +217,24 @@ public:
 
     void initVbmSpriteStitch(Assembler* as);
     void vbmSpriteStitch(Assembler* as);
-    void initvbmSpriteShiftR(Assembler* as);
+    void initVbmSpriteShiftR(Assembler* as);
     void vbmSpriteShiftR(Assembler* as);
-    void initvbmSpriteShiftL(Assembler* as);
+    void initVbmSpriteShiftL(Assembler* as);
     void vbmSpriteShiftL(Assembler* as);
 
+    void initVbmDrawSprite8(Assembler *as);
+    void vbmDrawSprite8(Assembler *as);
+    void initVbmDrawSprite8E(Assembler *as);
+    void vbmDrawSprite8E(Assembler *as);
+    void initVbmClearSprite8(Assembler *as);
+    void vbmClearSprite8(Assembler *as);
+
+    void initVbmDrawSprite16(Assembler *as);
+    void vbmDrawSprite16(Assembler *as);
+    void initVbmDrawSprite16E(Assembler *as);
+    void vbmDrawSprite16E(Assembler *as);
+    void initVbmClearSprite16(Assembler *as);
+    void vbmClearSprite16(Assembler *as);
 
     // Initialize
 

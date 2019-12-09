@@ -78,6 +78,15 @@ m; vbmSpriteStitch; VIC20 ; a, a, b
 m; vbmSpriteShiftR; VIC20 ; a, a, b, b, a
 m; vbmSpriteShiftL; VIC20 ; a, a, b, b, a
 
+m; vbmDrawSprite8; VIC20 ; a, a
+m; vbmDrawSprite8E; VIC20 ; a, a
+m; vbmClearSprite8; VIC20 ; a, a
+
+m; vbmDrawSprite16; VIC20 ; a, a, a
+m; vbmDrawSprite16E; VIC20 ; a, a, a
+m; vbmClearSprite16; VIC20 ; a, a, a
+
+
 
 # ************** AMIGA ROUTINES
 
