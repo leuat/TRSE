@@ -3138,41 +3138,54 @@ void Methods6502::vbmDrawSprite8E(Assembler* as)
     if (var!=nullptr)
         addr2 = var->getValue(as);
 
-    if (m_node->m_params[0]->getType(as)==TokenType::POINTER
-            || m_node->m_params[1]->getType(as)==TokenType::POINTER) {
-        as->Asm("lda vbmX ; x offset 0-7");
-        as->Asm("asl ; for simplicty, storing lo, hi in one array");
-        as->Asm("tax");
-    }
+
+    as->Asm("lda vbmX ; x offset 0-7");
+    as->Asm("asl ; for simplicty, storing lo, hi in one array");
+    as->Asm("tay");
+    as->Asm("tax");
+
 
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
-        as->Asm("lda " + addr1 +",x" );
+        as->Asm("lda (" + addr1 +"),y" );
         as->Asm("sta " + as->m_tempZeroPointers[0] );
-        as->Asm("inx");
-        as->Asm("lda " + addr1 +",x" );
+        as->Asm("iny");
+        as->Asm("lda (" + addr1 +"),y" );
         as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
         if (m_node->m_params[1]->getType(as)==TokenType::POINTER)
-        { as->Asm("dex"); }
+        { as->Asm("dey"); }
     } else {
-        as->Asm("lda #<" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
-        as->Asm("lda #>" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        /*if (m_node->m_params[0]->isPureNumeric()) {
+            as->Asm("lda #<" + addr1 ); //#<
+            as->Asm("sta " + as->m_tempZeroPointers[0] );
+            as->Asm("lda #>" + addr1 ); //#>
+            as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        } else {*/
+            as->Asm("lda " + addr1 +",x" ); //#<
+            as->Asm("sta " + as->m_tempZeroPointers[0] );
+            as->Asm("lda " + addr1 +"+1,x" ); //#>
+            as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        //}
     }
 
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
-        as->Asm("lda " + addr2 +",x" );
+        as->Asm("lda (" + addr2 +"),y" );
         as->Asm("sta " + as->m_tempZeroPointers[1] );
-        as->Asm("inx");
-        as->Asm("lda " + addr2 +",x" );
+        as->Asm("iny");
+        as->Asm("lda (" + addr2 +"),y" );
         as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
     } else {
-        as->Asm("lda #<" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
-        as->Asm("lda #>" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        /*if (m_node->m_params[1]->isPureNumeric()) {
+            as->Asm("lda #<" + addr1 ); //#<
+            as->Asm("sta " + as->m_tempZeroPointers[1] );
+            as->Asm("lda #>" + addr1 ); //#>
+            as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        } else {*/
+            as->Asm("lda " + addr2 +",x" ); //#<
+            as->Asm("sta " + as->m_tempZeroPointers[1] );
+            as->Asm("lda " + addr2 +"+1,x" ); //#>
+            as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+       // }
     }
-
     as->Asm("jsr vbmDrawSprite8E");
 
 }
