@@ -115,6 +115,10 @@ public:
     unsigned int m_currencChar;
 
 
+
+    virtual void ConstrainColours(QVector<int> cols) {
+
+    }
     virtual int GetWidth() {
         return m_width;
     }
@@ -181,7 +185,7 @@ public:
     virtual void SaveBin(QFile &file) = 0;
     virtual void LoadBin(QFile &file) = 0;
 
-    void ApplyColor() {
+    virtual void ApplyColor() {
        SetColor(m_extraCols[0],0);
        SetColor(m_extraCols[1],1);
        SetColor(m_extraCols[2],2);

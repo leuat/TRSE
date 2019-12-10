@@ -52,6 +52,8 @@ class LColor {
 public:
     QColor color;
     bool inUse = true;
+    bool displayList = true;
+  //  int currentIndex; // used for NES and other fixed-palette stuff
     QString name;
     LColor() {}
     LColor(QColor col, QString n) {
@@ -105,9 +107,15 @@ public:
     LColorList();
     ~LColorList();
 
+    QByteArray m_nesPPU;
+    int m_curPal = 0;
+
     LColor& get(int i);
     QColor m_cblack = QColor(0,0,0,255);
     LColor m_black = LColor(m_cblack,"black");
+
+
+    void SetPPUColors(char c1, int idx);
 
     static unsigned char TypeToChar(Type t);
     static Type CharToType(unsigned char c);

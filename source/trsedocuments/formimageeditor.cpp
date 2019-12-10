@@ -348,6 +348,9 @@ void FormImageEditor::Load(QString filename)
         Messages::messages.DisplayMessage(Messages::messages.OLD_SPRITE_FILE);
     }
 
+    if (dynamic_cast<LImageNES*>(m_work.m_currentImage->m_image)!=nullptr) {
+        on_cmbNesPalette_currentIndexChanged(0);
+    }
 
     onImageMouseEvent();
     updateCharSet();
@@ -481,6 +484,7 @@ void FormImageEditor::UpdatePalette()
 
     ui->lblTimeStamp->setVisible(m_work.m_currentImage->m_image->m_supports.displayTimestamp);
     ui->leTimeStamp->setVisible(m_work.m_currentImage->m_image->m_supports.displayTimestamp);
+
 
     m_work.m_currentImage->m_image->ApplyColor();
 
@@ -952,15 +956,28 @@ void FormImageEditor::PrepareClose()
 
 void FormImageEditor::SetMCColors()
 {
+
+
+
     int a = ui->cmbMC1->currentIndex();
     int b = ui->cmbMC2->currentIndex();
     int c = ui->cmbBorderMain_3->currentIndex();
     int back = ui->cmbBackgroundMain_3->currentIndex();
 
-    m_work.m_currentImage->m_image->SetColor(back, 0);
-    m_work.m_currentImage->m_image->SetColor(a, 1);
-    m_work.m_currentImage->m_image->SetColor(b, 2);
-    m_work.m_currentImage->m_image->SetColor(c, 3);
+    if (!m_ignoreMC) {
+        m_work.m_currentImage->m_image->SetColor(back, 0);
+        m_work.m_currentImage->m_image->SetColor(a, 1);
+        m_work.m_currentImage->m_image->SetColor(b, 2);
+        m_work.m_currentImage->m_image->SetColor(c, 3);
+
+        QVector<int> lst;
+        lst.append(a);
+        lst.append(b);
+        lst.append(c);
+        lst.append(back);
+        m_work.m_currentImage->m_image->ConstrainColours(lst);
+        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1);
+    }
 
     updateCharSet();
     emit onImageMouseEvent();
@@ -1631,13 +1648,20 @@ void FormImageEditor::on_cmbBorderMain_3_activated(int index)
 
 void FormImageEditor::on_cmbNesPalette_currentIndexChanged(int index)
 {
-    if (index==1) {
-        ui->cmbMC1->setCurrentIndex(35);
-        ui->cmbMC2->setCurrentIndex(34);
-        ui->cmbBorderMain_3->setCurrentIndex(31);
-        ui->cmbBackgroundMain_3->setCurrentIndex(54);
-    }
+//    m_ignoreMC = true;
+    m_work.m_currentImage->m_image->m_colorList.m_curPal = index;
+    m_ignoreMC = false;
+    int idx = m_work.m_currentImage->m_image->m_colorList.m_curPal*4+1;
+    ui->cmbMC2->setCurrentIndex(m_work.m_currentImage->m_image->m_colorList.m_nesPPU[idx+1]);
+    ui->cmbMC1->setCurrentIndex(m_work.m_currentImage->m_image->m_colorList.m_nesPPU[idx+0]);
+    ui->cmbBorderMain_3->setCurrentIndex(m_work.m_currentImage->m_image->m_colorList.m_nesPPU[idx+2]);
+    ui->cmbBackgroundMain_3->setCurrentIndex(m_work.m_currentImage->m_image->m_colorList.m_nesPPU[0]);
+    m_ignoreMC = false;
+
+
+
     SetMCColors();
+
     emit onImageMouseEvent();
 
 }

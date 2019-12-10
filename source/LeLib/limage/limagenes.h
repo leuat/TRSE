@@ -10,6 +10,7 @@ public:
     uchar m_cols[4];
     LImageNES(LColorList::Type t);
     void ImportBin(QFile &file) override;
+    void ExportBin(QFile &file) override;
     void setMultiColor(bool doSet) override;
     void ForceColor();
     unsigned int getPixel(int x, int y) override;
@@ -17,6 +18,15 @@ public:
     void SetColor(uchar col, uchar idx) override;
     void CopyFrom(LImage* img) override;
     void setForeground(unsigned int col) override;
+
+    void ConstrainColours(QVector<int> cols) override;
+
+    void SaveBin(QFile& file) override;
+
+    void LoadBin(QFile& file) override;
+    void ApplyColor() override {
+
+    }
 
 
 };
