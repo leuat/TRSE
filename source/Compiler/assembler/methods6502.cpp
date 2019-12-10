@@ -2899,6 +2899,13 @@ void Methods6502::initVbmDrawSprite8(Assembler *as)
     as->Label("vbmDS8_overflow");
         as->Asm("sta screenmemory");
 
+        // may not need to draw right side of 8x8 sprite
+        as->Asm("lda vbmX");
+        as->Asm("bne vbmDS8_Right");
+        as->Asm("rts ; in position 0 there is no right side to draw");
+
+    as->Label("vbmDS8_Right");
+
         as->Comment("draw right side");
         as->Asm("ldy #0");
         as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
@@ -3074,6 +3081,13 @@ void Methods6502::initVbmDrawSprite8E(Assembler *as)
         as->Asm("inc screenmemory+1");
     as->Label("vbmDS8E_overflow");
         as->Asm("sta screenmemory");
+
+        // may not need to draw right side of 8x8 sprite
+        as->Asm("lda vbmX");
+        as->Asm("bne vbmDS8E_Right");
+        as->Asm("rts ; in position 0 there is no right side to draw");
+
+    as->Label("vbmDS8E_Right");
 
         as->Comment("draw right side");
         as->Asm("ldy #0");
@@ -3257,6 +3271,13 @@ void Methods6502::initVbmClearSprite8(Assembler *as)
         as->Asm("inc screenmemory+1");
     as->Label("vbmCS8_overflow");
         as->Asm("sta screenmemory");
+
+        // may not need to draw right side of 8x8 sprite
+        as->Asm("lda vbmX");
+        as->Asm("bne vbmCS8_Right");
+        as->Asm("rts ; in position 0 there is no right side to draw");
+
+    as->Label("vbmCS8_Right");
 
         as->Comment("draw right side");
         as->Asm("ldy #0");
