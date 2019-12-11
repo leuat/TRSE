@@ -196,37 +196,37 @@
            <widget class="QComboBox" name="cmbNesPalette">
             <item>
              <property name="text">
-              <string>1</string>
+              <string>Tiles 1</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>2</string>
+              <string>Tiles 2</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>3</string>
+              <string>Tiles 3</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>4</string>
+              <string>Tiles 4</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>5</string>
+              <string>Sprites 1</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>6</string>
+              <string>Sprites 2</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>7</string>
+              <string>Sprites 3</string>
              </property>
             </item>
             <item>
