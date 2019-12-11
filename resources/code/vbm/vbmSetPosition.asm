@@ -16,5 +16,24 @@ vbmSPos_noOverflow
     sta screenmemory   ; set screenmemory to the correct address in the bitmap
     sty screenmemory+1
     pla      ; retrieve x position
+    rts
+
+vbmSetPosition1
+    jsr vbmSetPosition
     and #7   ; get x offset 0-7
+    sta vbmX ; for use in sprite routines
+    rts
+
+vbmSetPosition2
+    jsr vbmSetPosition
+    and #7   ; get x offset 0-7
+    lsr
+    sta vbmX ; for use in sprite routines
+    rts
+
+vbmSetPosition4
+    jsr vbmSetPosition
+    and #7   ; get x offset 0-7
+    lsr
+    lsr
     sta vbmX ; for use in sprite routines

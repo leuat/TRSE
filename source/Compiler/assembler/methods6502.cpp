@@ -131,8 +131,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     // Set the screenmemory pointer to an exact address and load vbmX with the 0-7 x offset
     if (Command("initvbmSetPosition"))
         initvbmSetPosition(as);
-    if (Command("vbmSetPosition"))
-        vbmSetPosition(as);
+    if (Command("vbmSetPosition1"))
+        vbmSetPosition1(as);
+    if (Command("vbmSetPosition2"))
+        vbmSetPosition2(as);
+    if (Command("vbmSetPosition4"))
+        vbmSetPosition4(as);
 
     // clear the bitmap area that starts at $1100
     if (Command("initVbmClear"))
@@ -1415,13 +1419,13 @@ void Methods6502::initvbmSetPosition(Assembler *as) {
 
 }
 
-void Methods6502::vbmSetPosition(Assembler *as) {
+void Methods6502::vbmSetPosition1(Assembler *as) {
 
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmSetPos","InitVbmSetPosition");
 
     as->Comment("----------");
-    as->Comment("vbmSetPosition x, y");
+    as->Comment("vbmSetPosition1 x, y");
 
     // ypos
     if (m_node->m_params[1]->isPureNumeric()) {
@@ -1444,7 +1448,71 @@ void Methods6502::vbmSetPosition(Assembler *as) {
     }
     as->Asm("sta vbmX");
 
-    as->Asm("jsr vbmSetPosition");
+    as->Asm("jsr vbmSetPosition1");
+
+}
+void Methods6502::vbmSetPosition2(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmSetPos","InitVbmSetPosition");
+
+    as->Comment("----------");
+    as->Comment("vbmSetPosition2 x, y");
+
+    // ypos
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as) ) );
+    } else {
+        // complex
+        as->Comment("y is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("sta vbmY");
+    // xpos
+    if (m_node->m_params[0]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[0]->getValueAsInt(as) ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 0);
+    }
+    as->Asm("sta vbmX");
+
+    as->Asm("jsr vbmSetPosition2");
+
+}
+void Methods6502::vbmSetPosition4(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmSetPos","InitVbmSetPosition");
+
+    as->Comment("----------");
+    as->Comment("vbmSetPosition4 x, y");
+
+    // ypos
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as) ) );
+    } else {
+        // complex
+        as->Comment("y is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("sta vbmY");
+    // xpos
+    if (m_node->m_params[0]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[0]->getValueAsInt(as) ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 0);
+    }
+    as->Asm("sta vbmX");
+
+    as->Asm("jsr vbmSetPosition4");
 
 }
 
