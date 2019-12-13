@@ -144,11 +144,11 @@ void LImageNES::LoadBin(QFile &file)
 {
     file.read( ( char * )( &m_data ),  m_charWidth*m_charHeight*12 );
     m_colorList.m_nesPPU = file.read(0x20);
-/*    m_cols[0] = m_colorList.m_nesPPU[0];
+    m_cols[0] = m_colorList.m_nesPPU[0];
     m_cols[1] = m_colorList.m_nesPPU[1];
     m_cols[2] = m_colorList.m_nesPPU[2];
     m_cols[3] = m_colorList.m_nesPPU[3];
-*/
+
 }
 
 

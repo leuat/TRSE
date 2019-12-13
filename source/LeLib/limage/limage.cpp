@@ -70,6 +70,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 15;
     if (t==NES)
         return 16;
+    if (t==LMetaChunk)
+        return 17;
 
 
     return 255;
@@ -111,6 +113,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return X16_640x480;
     if (c==16)
         return NES;
+    if (c==17)
+        return LMetaChunk;
 
     return NotSupported;
 

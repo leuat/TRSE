@@ -3,6 +3,7 @@
 
 #include "source/LeLib/limage/limagecontainer.h"
 #include "source/LeLib/limage/limagenes.h"
+#include "source/LeLib/limage/limageqimage.h"
 
 class LMetaChunkItem : public LImageContainerItem {
 public:
@@ -13,6 +14,8 @@ public:
 //    QByteArray m_header;
 
     QByteArray m_data;
+
+    LImageNES* m_charImage;
 
     LMetaChunkItem() {
   //      m_header.resize(HEADER_SIZE);
@@ -25,7 +28,7 @@ public:
     }
 
     LMetaChunkItem(QByteArray& a, int index) {
-        Init(1,1);
+        Init(2,2);
     }
 
     void FillColor(int color, int idx) {
@@ -42,10 +45,11 @@ public:
     uchar getPixel(float x, float y, uchar bitMask);
 
 
+
 };
 
 
-class LImageMetaChunk : public LImageNES, public LImageContainer
+class LImageMetaChunk : public LImageQImage, public LImageContainer
 {
 public:
     LImageMetaChunk(LColorList::Type t);
@@ -57,12 +61,16 @@ public:
     LMetaChunkItem m_copy;
 
 
+    LImage* m_img, *m_charset;
 
-    void ImportBin(QFile& f) override;
+    QPoint getPos(int x, int y);
+/*    void ImportBin(QFile& f) override;
     void ExportBin(QFile& f) override;
 
-
+*/
     void CopyFrom(LImage* mc) override;
+    int m_pixelWidth = 8, m_pixelHeight = 8;
+
 
     QString GetCurrentDataString() override {
         if (m_current<0) return "";
@@ -76,6 +84,7 @@ public:
    void Copy();
 
    void setPixel(int x, int y, unsigned int color) override;
+   void LoadCharset(QString file, int skipBytes) override;
 
    unsigned int getPixel(int x, int y) override;
 
@@ -94,11 +103,9 @@ public:
 
 
 
-   void ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center) override;
+//   void ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center) override;
 
 
-   void ToggleSpriteMulticolor();
-   void MegaTransform(int flip, int x, int y);
 
    void AddNew(int w, int h) override;
 

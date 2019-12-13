@@ -313,7 +313,7 @@ void FormImageEditor::Load(QString filename)
 
 
     PrepareImageTypeGUI();
-    if (dynamic_cast<ImageLevelEditor*>(img)!=nullptr || dynamic_cast<C64FullScreenChar*>(img)!=nullptr)
+    if (dynamic_cast<ImageLevelEditor*>(img)!=nullptr || dynamic_cast<C64FullScreenChar*>(img)!=nullptr ||dynamic_cast<LImageMetaChunk*>(img)!=nullptr)
         img->LoadCharset(m_projectIniFile->getString("charset_"+m_currentFileShort),0);
     updateCharSet();
 
