@@ -149,6 +149,7 @@ public:
 
 class ImageLevelEditor : public MultiColorImage
 {
+
 public:
     QPoint m_currentLevelPos = QPoint(0,0);
     CharmapLevel* m_currentLevel = nullptr;

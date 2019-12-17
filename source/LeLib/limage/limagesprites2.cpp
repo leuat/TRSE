@@ -17,6 +17,7 @@ LImageSprites2::LImageSprites2(LColorList::Type t) : CharsetImage(t) {
 
     m_exportParams.clear();
 
+
     AddNew(1,1);
     //Data::data.currentColor=0;
 

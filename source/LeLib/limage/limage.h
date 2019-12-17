@@ -60,6 +60,7 @@ public:
     bool displayForeground = true;
     bool displayMC1 = true;
     bool displayMC2 = true;
+    bool displayBank = false;
 
 
 
@@ -75,7 +76,7 @@ public:
     enum Type { QImageBitmap, MultiColorBitmap, HiresBitmap,
                 NotSupported, Tiff, CharMapMulticolor, FullScreenChar, LevelEditor, CharmapRegular, CharMapMultiColorFixed,
               Sprites, VIC20_MultiColorbitmap, Sprites2, CGA, AMIGA320x200, AMIGA320x256,
-                OK64_256x256,X16_640x480, NES, LMetaChunk};
+                OK64_256x256,X16_640x480, NES, LMetaChunk, LevelEditorNES};
 
 
     enum WriteType { Color, Character };
@@ -98,6 +99,19 @@ public:
     QMap<QString, QString> m_exportParamsComments;
 
     QMap<GUIType, QString> m_GUIParams;
+
+    virtual LColorList::Type getColorType() {
+        return m_colorList.m_type;
+    }
+
+
+    int m_charWidthDisplay = 40;
+    int m_currentBank = 0;
+
+    virtual void SetBank(int bnk) {
+        m_currentBank = bnk;
+    }
+
 
     bool m_silentExport=false;
     int m_width;

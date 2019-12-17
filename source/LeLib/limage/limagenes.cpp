@@ -15,7 +15,11 @@ LImageNES::LImageNES(LColorList::Type t) : CharsetImage(t)
     m_charWidth = 32;
     m_charHeight = 32;
 
+    m_charCount = 512;
+
+
     //m_data = new PixelChar[m_charWidth*m_charHeight];
+    m_charWidthDisplay=16;
 
     Clear();
     m_type = LImage::Type::NES;
@@ -148,6 +152,43 @@ void LImageNES::LoadBin(QFile &file)
     m_cols[1] = m_colorList.m_nesPPU[1];
     m_cols[2] = m_colorList.m_nesPPU[2];
     m_cols[3] = m_colorList.m_nesPPU[3];
+
+    for (PixelChar& pc: m_data)
+        for (int i=0;i<4;i++)
+            pc.c[i] = m_cols[i];
+}
+
+QPixmap LImageNES::ToQPixMap(int chr)
+{
+    //QImage img = m_data[chr].toQImage(64, m_bitMask, m_colorList, m_scale);
+    int sz = 64;
+    QImage img = QImage(sz,sz,QImage::Format_RGB32);
+    int w = 16*8;
+//    qDebug() << (chr*8)%16;
+    int xx = 0;
+    int yy = m_currentBank*16;
+
+
+    int c= 0;
+    while (c<chr) {
+        if (xx++>=15) {
+            xx=0;
+            yy++;
+        }
+        c++;
+    }
+    xx*=8;
+    yy*=8;
+//    qDebug() << xx << yy;
+    for (int i=0;i<sz;i++)
+        for (int j=0;j<sz;j++)
+            img.setPixel(i,j,m_colorList.get(getPixel(
+                                                 (int)(i/(float)sz*8)+xx,
+                                                 (int)(j/(float)sz*8)+yy)
+                         ).color.rgb());
+
+
+    return QPixmap::fromImage(img);
 
 }
 

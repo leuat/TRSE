@@ -82,6 +82,7 @@ SOURCES += main.cpp\
     source/Compiler/ast/noderepeatuntil.cpp \
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemplus4.cpp \
+    source/LeLib/limage/limagelevelnes.cpp \
     source/LeLib/limage/limagemetachunk.cpp \
     source/LeLib/limage/limagenes.cpp \
     source/LeLib/limage/limageok64.cpp \
@@ -225,6 +226,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/ast/noderepeatuntil.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemplus4.h \
+    source/LeLib/limage/limagelevelnes.h \
     source/LeLib/limage/limagemetachunk.h \
     source/LeLib/limage/limagenes.h \
     source/LeLib/limage/limageok64.h \

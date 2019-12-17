@@ -4,6 +4,7 @@
 #include "source/LeLib/limage/limagecontainer.h"
 #include "source/LeLib/limage/limagenes.h"
 #include "source/LeLib/limage/limageqimage.h"
+#include "source/LeLib/limage/charsetimage.h"
 
 class LMetaChunkItem : public LImageContainerItem {
 public:
@@ -31,6 +32,9 @@ public:
         Init(2,2);
     }
 
+
+
+
     void FillColor(int color, int idx) {
         m_data.fill(color);
     }
@@ -49,19 +53,22 @@ public:
 };
 
 
-class LImageMetaChunk : public LImageQImage, public LImageContainer
+//class LImageMetaChunk : public LImageQImage, public LImageContainer
+class LImageMetaChunk : public LImageNES, public LImageContainer
 {
 public:
     LImageMetaChunk(LColorList::Type t);
 //    LImageSprites(LColorList::Type t);
+/*    LImageMetaChunk() : CharsetImage() {
 
+    }*/
 //    LImageSprites2() {}
 
 
     LMetaChunkItem m_copy;
 
 
-    LImage* m_img, *m_charset;
+    LImage* m_img = nullptr, *m_charset = nullptr;
 
     QPoint getPos(int x, int y);
 /*    void ImportBin(QFile& f) override;
@@ -93,6 +100,14 @@ public:
    void SetColor(uchar col, uchar idx) override;
    void SetColor(uchar col, uchar idx, LImageMetaChunk& s);
 
+   LMetaChunkItem* getCur();
+   LColorList::Type getColorType() override {
+       if (m_charset==nullptr)
+           return LColorList::C64;
+
+       return m_charset->m_colorList.m_type;
+   }
+
    bool KeyPress(QKeyEvent *e) override;
 
    void CopyChar() override;
@@ -105,6 +120,11 @@ public:
 
 //   void ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center) override;
 
+   void SetBank(int bnk) override {
+       m_currentBank = bnk;
+       if (m_charset!=nullptr)
+           m_charset->SetBank(bnk);
+   }
 
 
    void AddNew(int w, int h) override;
@@ -114,7 +134,10 @@ public:
    virtual void Transform(int x, int y) override;
    virtual int getContainerCount() override {return m_items.count();}
 
+   CharsetImage* getCharset() override { return (CharsetImage*)m_charset; }
 
+
+    void setForeground(unsigned int col) override;
 
 
 };

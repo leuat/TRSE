@@ -27,6 +27,8 @@ public:
     void ApplyColor() override {
 
     }
+    QPixmap ToQPixMap(int chr) override;
+
 
 
 };

@@ -72,6 +72,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 16;
     if (t==LMetaChunk)
         return 17;
+    if (t==LevelEditorNES)
+        return 18;
 
 
     return 255;
@@ -115,6 +117,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return NES;
     if (c==17)
         return LMetaChunk;
+    if (c==18)
+        return LevelEditorNES;
 
     return NotSupported;
 

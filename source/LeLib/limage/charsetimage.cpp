@@ -392,9 +392,9 @@ void CharsetImage::ToQPixMaps(QVector<QPixmap> &map)
 {
     map.clear();
     for (int i=0;i<m_charCount;i++) {
-        QImage img = m_data[i].toQImage(64, m_bitMask, m_colorList, m_scale);
-        QPixmap p = QPixmap::fromImage(img);
-        map.append(p);
+        //QImage img = m_data[i].toQImage(64, m_bitMask, m_colorList, m_scale);
+        //QPixmap p = QPixmap::fromImage(img);
+        map.append(ToQPixMap(i));
     }
 }
 

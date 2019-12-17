@@ -33,7 +33,7 @@ void ImageLevelEditor::SetLevel(QPoint f)
         return;
     m_currentLevel = m_levels[f.x() + f.y()*m_meta.m_sizex];
 
-
+https://e24.no/
 //    qDebug() << "Current colors:";
 
     for (int i=0;i<3;i++)
@@ -137,6 +137,8 @@ void ImageLevelEditor::SaveBin(QFile &file)
 
     file.write(m_meta.toHeader());
     int i=0;
+    if (m_levels.count()==0)
+        return;
     CharmapLevel* ll = m_levels[0];
 
     for (CharmapLevel* l : m_levels) {
@@ -216,6 +218,8 @@ void ImageLevelEditor::BuildData(QTableWidget *tbl, QStringList header)
         tbl->setColumnWidth(i,55);
     int i=0;
     int j=0;
+    if (m_currentLevel == nullptr)
+        return;
     for (int k=3;k<m_currentLevel->m_ExtraData.count();k++) {
         tbl->setItem(i,j,new QTableWidgetItem(QString::number(m_currentLevel->m_ExtraData[k])));
         if (++i>=size) {
@@ -231,7 +235,8 @@ void ImageLevelEditor::StoreData(QTableWidget *tbl)
 {
     int i=0;
     int j=0;
-
+    if (m_currentLevel==nullptr)
+        return;
     for (int k=3;k<m_currentLevel->m_ExtraData.count();k++) {
         if (tbl->item(i,j)==nullptr)
                 return;

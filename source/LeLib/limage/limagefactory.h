@@ -40,6 +40,7 @@
 #include "source/LeLib/limage/limagex16.h"
 #include "source/LeLib/limage/limagenes.h"
 #include "source/LeLib/limage/limagemetachunk.h"
+#include "source/LeLib/limage/limagelevelnes.h"
 
 class LImageFactory {
 public:
@@ -83,6 +84,8 @@ public:
             return new LImageNES(colorType);
         if (t == LImage::Type::LMetaChunk)
             return new LImageMetaChunk(colorType);
+        if (t == LImage::Type::LevelEditorNES)
+            return new LImageLevelNES(colorType);
 
         qDebug() << "ERROR: LImageFactory could not find type " << t;
         return nullptr;

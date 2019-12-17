@@ -227,6 +227,7 @@ private slots:
     void on_cmbMC1_currentIndexChanged(int index);
     void on_cmbBorderMain_3_activated(int index);
     void on_cmbNesPalette_currentIndexChanged(int index);
+    void on_cmbBank_currentIndexChanged(int index);
 };
 
 

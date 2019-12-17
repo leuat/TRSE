@@ -37,6 +37,7 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("C64 Regular Charmap", LImage::Type::CharmapRegular,LColorList::Type::C64));
     m_types.append(ImageType("Screen animation", LImage::Type::FullScreenChar,LColorList::Type::C64));
     m_types.append(ImageType("C64 Level Editor", LImage::Type::LevelEditor,LColorList::Type::C64));
+    m_types.append(ImageType("NES Level Editor", LImage::Type::LevelEditorNES,LColorList::Type::NES));
     m_types.append(ImageType("C64 Sprite Editor", LImage::Type::Sprites2,LColorList::Type::C64));
     m_types.append(ImageType("VIC20 Multicolor bitmap", LImage::Type::VIC20_MultiColorbitmap,LColorList::Type::VIC20));
     m_types.append(ImageType("OK64 Image", LImage::Type::OK64_256x256,LColorList::Type::OK64));
@@ -115,7 +116,7 @@ void ImageWorker::New(int image, CharmapGlobalData gd = CharmapGlobalData())
 {
 //    exit(1);
     m_currentImage = new ImageEdit(&m_types[image], "New Image");
-    if (m_types[image].type==LImage::Type::LevelEditor)
+    if (m_types[image].type==LImage::Type::LevelEditor || m_types[image].type==LImage::Type::LevelEditorNES)
         dynamic_cast<ImageLevelEditor*>(m_currentImage->m_image)->Initialize(gd);
     if (m_types[image].type==LImage::Type::VIC20_MultiColorbitmap) {
         LImageVIC20* lv =  dynamic_cast<LImageVIC20*>(m_currentImage->m_image);

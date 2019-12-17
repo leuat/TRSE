@@ -157,7 +157,7 @@ void DialogNewImage::on_comboBox_currentIndexChanged(int index)
     m_types.append(ImageType("C64 Level Editor", LImage::Type::LevelEditor,LColorList::Type::C64));
     m_types.append(ImageType("VIC20 Multicolor bitmap", LImage::Type::VIC20_MultiColorbitmap,LColorList::Type::VIC20));
 */
-    if (ui->comboBox->currentText()=="C64 Level Editor")
+    if (ui->comboBox->currentText().toLower().contains("level editor"))
         ui->grpLevelDesignerParams->setVisible(true);
 
     if (ui->comboBox->currentText()=="VIC20 Multicolor bitmap") {

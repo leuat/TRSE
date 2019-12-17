@@ -1029,7 +1029,7 @@ QImage PixelChar::toQImage(int size, uchar bmask, LColorList& lst, int scale)
             int y = j/(float)(size)*8;
             uchar c = get(ix,y, bmask);
 
-         //   if (rand()%100==0 && c!=0)
+           // if (rand()%100==0 && c!=0)
            //     qDebug() << lst.m_list[c].color;
             img.setPixel(i,j,lst.get(c).color.rgba());
         }

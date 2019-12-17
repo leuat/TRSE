@@ -236,6 +236,20 @@
             </item>
            </widget>
           </item>
+          <item row="8" column="1">
+           <widget class="QComboBox" name="cmbBank">
+            <item>
+             <property name="text">
+              <string>Bank 0</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Bank 1</string>
+             </property>
+            </item>
+           </widget>
+          </item>
          </layout>
          <zorder>btnImport</zorder>
          <zorder>btnImportBin</zorder>
@@ -250,6 +264,7 @@
          <zorder>btnExportCompressed</zorder>
          <zorder>btnPalette</zorder>
          <zorder>cmbNesPalette</zorder>
+         <zorder>cmbBank</zorder>
         </widget>
        </widget>
        <widget class="QWidget" name="tabCharset">

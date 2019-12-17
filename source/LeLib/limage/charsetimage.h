@@ -81,8 +81,8 @@ public:
     void ExportBin(QFile& f) override;
     virtual void FromRaw(QByteArray& arr);
     virtual void ToRaw(QByteArray& arr);
-    void ToQPixMaps(QVector<QPixmap>& map);
-    QPixmap ToQPixMap(int chr);
+    virtual void ToQPixMaps(QVector<QPixmap>& map);
+    virtual QPixmap ToQPixMap(int chr);
     virtual void setPixel(int x, int y, unsigned int color) override;
 
 
