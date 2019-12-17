@@ -2586,9 +2586,10 @@ void Methods6502::initVbmSpriteShiftL(Assembler *as)
     // do next shifted sprite
     as->Comment("increment iteration");
     as->Asm("lda vbmI");
+    as->Asm("clc");
     as->Asm("adc vbmX");
     as->Asm("sta vbmI");
-    as->Asm("cmp #9");
+    as->Asm("cmp #8"); //9
     as->Asm("bcc vbmSSLCopyChar ; do next char iteration");
     //; done
 }
@@ -2681,9 +2682,10 @@ void Methods6502::initVbmSpriteShiftR(Assembler *as)
     // do next shifted sprite
     as->Comment("increment iteration");
     as->Asm("lda vbmI");
+    as->Asm("clc");
     as->Asm("adc vbmX");
     as->Asm("sta vbmI");
-    as->Asm("cmp #9");
+    as->Asm("cmp #8"); //9
     as->Asm("bcc vbmSSRCopyChar ; do next char iteration");
     //; done
 }

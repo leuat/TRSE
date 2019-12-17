@@ -18,12 +18,14 @@ vbmSPos_noOverflow
     pla      ; retrieve x position
     rts
 
+; call to set position on bitmap supporting 8 shifted x positions
 vbmSetPosition1
     jsr vbmSetPosition
     and #7   ; get x offset 0-7
     sta vbmX ; for use in sprite routines
     rts
 
+; call to set position on bitmap supporting 4 shifted x positions
 vbmSetPosition2
     jsr vbmSetPosition
     and #7   ; get x offset 0-7
@@ -31,6 +33,7 @@ vbmSetPosition2
     sta vbmX ; for use in sprite routines
     rts
 
+; call to set position on bitmap supporting 2 shifted x positions
 vbmSetPosition4
     jsr vbmSetPosition
     and #7   ; get x offset 0-7
