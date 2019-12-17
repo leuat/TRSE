@@ -51,9 +51,11 @@ m; vbmSetColumn; VIC20 ; b
 m; vbmSetPosition1; VIC20; b,b
 m; vbmSetPosition2; VIC20; b,b
 m; vbmSetPosition4; VIC20; b,b
+m; vbmNextColumn; VIC20;
 m; vbmDebug; VIC20 ; n
 
 m; vbmClear; VIC20 ; b
+m; vbmClearColor; VIC20; b
 
 m; vbmDrawTile; VIC20 ; a
 m; vbmDrawTileO; VIC20 ; a
@@ -87,6 +89,10 @@ m; vbmClearSprite8; VIC20 ; a, a
 m; vbmDrawSprite16; VIC20 ; a, a, a
 m; vbmDrawSprite16E; VIC20 ; a, a, a
 m; vbmClearSprite16; VIC20 ; a, a, a
+
+m; vbmDrawSpriteSlice; VIC20; a, b, b
+m; vbmDrawSpriteSliceE; VIC20; a, b, b
+m; vbmClearSpriteSlice; VIC20; a, b, b
 
 
 

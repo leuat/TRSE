@@ -173,6 +173,7 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "vbmsetdisplaymode(", "initVbm");
         InitBuiltinFunction(QStringList()<< "vbmsetposition1(" << "vbmsetposition2(" << "vbmsetposition4(", "initVbmSetPosition");
         InitBuiltinFunction(QStringList()<< "vbmclear(", "initVbmClear");
+        InitBuiltinFunction(QStringList()<< "vbmnextcolumn(", "initVbmNextColumn");
         InitBuiltinFunction(QStringList()<< "vbmdrawdot(" << "vbmcleardot(" << "vbmdrawdote(", "initVbmDot");
         InitBuiltinFunction(QStringList()<< "vbmdrawblot(" << "vbmclearblot(" << "vbmdrawblote(", "initVbmBlot");
         InitBuiltinFunction(QStringList()<< "vbmscrollleft(", "initVbmScrollLeft");
@@ -194,6 +195,10 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "vbmdrawsprite16(", "initVbmDrawSprite16");
         InitBuiltinFunction(QStringList()<< "vbmdrawsprite16e(", "initVbmDrawSprite16E");
         InitBuiltinFunction(QStringList()<< "vbmclearsprite16(", "initVbmClearSprite16");
+
+        InitBuiltinFunction(QStringList()<< "vbmdrawspriteslice(", "initVbmDrawSpriteSlice");
+        InitBuiltinFunction(QStringList()<< "vbmdrawspriteslicee(", "initVbmDrawSpriteSliceE");
+        InitBuiltinFunction(QStringList()<< "vbmclearspriteslice(", "initVbmClearSpriteSlice");
 
 
     }

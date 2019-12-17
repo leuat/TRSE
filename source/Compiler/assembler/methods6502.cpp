@@ -128,6 +128,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("vbmSetColumn"))
         vbmSetColumn(as);
 
+    // Set the screenmemory pointer to next bitmap column.  ie: add 192
+    if (Command("initVbmNextColumn"))
+        initVbmNextColumn(as);
+    if (Command("vbmNextColumn"))
+        vbmNextColumn(as);
+
     // Set the screenmemory pointer to an exact address and load vbmX with the 0-7 x offset
     if (Command("initvbmSetPosition"))
         initvbmSetPosition(as);
@@ -143,6 +149,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         initVbmClear(as);
     if (Command("vbmClear"))
         vbmClear(as);
+
+    // clear the colour memory
+    if (Command("vbmClearColor"))
+        vbmClearColor(as);
 
     // Draw a tile at screenmemory position
     if (Command("vbmDrawTile"))
@@ -253,6 +263,19 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         initVbmClearSprite16(as);
     if (Command("vbmClearSprite16"))
         vbmClearSprite16(as);
+
+    if (Command("initVbmDrawSpriteSlice"))
+        initVbmDrawSpriteSlice(as);
+    if (Command("vbmDrawSpriteSlice"))
+        vbmDrawSpriteSlice(as);
+    if (Command("initVbmDrawSpriteSliceE"))
+        initVbmDrawSpriteSliceE(as);
+    if (Command("vbmDrawSpriteSliceE"))
+        vbmDrawSpriteSliceE(as);
+    if (Command("initVbmClearSpriteSlice"))
+        initVbmClearSpriteSlice(as);
+    if (Command("vbmClearSpriteSlice"))
+        vbmClearSpriteSlice(as);
 
 
 
@@ -1514,6 +1537,63 @@ void Methods6502::vbmSetPosition4(Assembler *as) {
 
     as->Asm("jsr vbmSetPosition4");
 
+}
+
+void Methods6502::initVbmNextColumn(Assembler *as)
+{
+    if (m_node->m_isInitialized["vbmNextColumn"])
+        return;
+
+    m_node->m_isInitialized["vbmNextColumn"] = true;
+
+    as->Label("vbmNextColumn");
+    as->Comment("move screenmemory to next column");
+    as->Asm("lda screenmemory");
+    as->Asm("clc");
+    as->Asm("adc #192 ; next column");
+    as->Asm("bcc vbmCSS_overflow");
+    as->Asm("inc screenmemory+1");
+    as->Label("vbmCSS_overflow");
+    as->Asm("sta screenmemory");
+
+}
+void Methods6502::vbmNextColumn(Assembler* as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmNextColumn","InitVbmNextColumn");
+
+    as->Asm("jsr vbmNextColumn");
+}
+
+void Methods6502::vbmClearColor(Assembler* as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+
+    QString lbl = as->NewLabel("vbmCC_loop");
+        as->Asm("lda #$94");
+        as->Asm("sta screenmemory+1");
+        as->Asm("lda #$00");
+        as->Asm("sta screenmemory");
+
+        // load A with colour value to clear with
+        if (m_node->m_params[0]->isPureNumeric()) {
+            // pure numeric
+            as->Asm( "lda #" + QString::number( m_node->m_params[0]->getValueAsInt(as)  ) );
+        } else {
+            // complex
+            as->Comment("colour is complex");
+            LoadVar(as, 0);
+        }
+
+        as->Asm("ldy #240 ; colour mem to clear");
+    as->Label(lbl);
+        as->Asm("sta (screenmemory),y");
+        as->Asm("dey");
+        as->Asm("bne " + lbl);
+
+    as->PopLabel("vbmCC_loop");
 }
 
 void Methods6502::vbmDrawTile(Assembler *as) {
@@ -4596,6 +4676,296 @@ void Methods6502::vbmClearSprite16(Assembler* as)
     as->Asm("jsr vbmClearSprite16");
 
 }
+
+void Methods6502::initVbmDrawSpriteSlice(Assembler *as)
+{
+    if (m_node->m_isInitialized["vbmDrawSpriteSlice"])
+        return;
+
+    m_node->m_isInitialized["vbmDrawSpriteSlice"] = true;
+
+    if (as->m_tempZeroPointers.count() < 1) {
+        ErrorHandler::e.Error("This TRSE command needs at least 1 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
+
+    as->Comment("VBM - draw an 8 x h sprite with OR - use vbmSetPosition first");
+    as->Comment("Shifted sprite address = "+ as->m_tempZeroPointers[0]);
+
+    as->Label("vbmDrawSpriteSlice");
+
+        as->Asm("ldy vbmI	; line in sprite to start drawing from");
+
+    as->Label("vbmDSS_draw");
+
+        as->Comment("draw one slice");
+        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("cpy vbmT	; line is sprite to draw to (height)");
+        as->Asm("bne vbmDSS_draw");
+
+    //; done
+}
+void Methods6502::vbmDrawSpriteSlice(Assembler* as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmDrawSpriteSlice","InitVbmDrawSpriteSlice");
+
+    if (as->m_tempZeroPointers.count()==0)
+        return;
+
+    // address 1
+    as->Comment("Read address 1");
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    as->Comment("read out the address");
+    as->Asm("lda vbmX	; x offset");
+    as->Asm("asl");
+
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("tay");
+        as->Asm("lda (" + addr1 + "),y	; look up shifted sprite");
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("iny");
+        as->Asm("lda (" + addr1 +"),y ;keep");
+        as->Asm("sta " + as->m_tempZeroPointers[0] +"+1");
+    } else {
+        as->Asm("tax");
+        as->Asm("lda " + addr1 +",x" ); //#<
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda " + addr1 +"+1,x" ); //#>
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    }
+
+    // draw from line (start)
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("start line is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("sta vbmI");
+
+    // draw to line (end)
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[2]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("end line is complex");
+        LoadVar(as, 2);
+    }
+    as->Asm("sta vbmT");
+
+    as->Asm("jsr vbmDrawSpriteSlice");
+
+}
+
+void Methods6502::initVbmDrawSpriteSliceE(Assembler *as)
+{
+    if (m_node->m_isInitialized["vbmDrawSpriteSliceE"])
+        return;
+
+    m_node->m_isInitialized["vbmDrawSpriteSliceE"] = true;
+
+    if (as->m_tempZeroPointers.count() < 1) {
+        ErrorHandler::e.Error("This TRSE command needs at least 1 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
+
+    as->Comment("VBM - draw an 8 x h sprite with EOR - use vbmSetPosition first");
+    as->Comment("Shifted sprite address = "+ as->m_tempZeroPointers[0]);
+
+    as->Label("vbmDrawSpriteSliceE");
+
+        as->Asm("ldy vbmI	; line in sprite to start drawing from");
+
+    as->Label("vbmDSSE_draw");
+
+        as->Comment("draw one slice");
+        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y");
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("cpy vbmT	; line is sprite to draw to (height)");
+        as->Asm("bne vbmDSSE_draw");
+
+    //; done
+}
+void Methods6502::vbmDrawSpriteSliceE(Assembler* as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmDrawSpriteSliceE","InitVbmDrawSpriteSliceE");
+
+    if (as->m_tempZeroPointers.count()==0)
+        return;
+
+    // address 1
+    as->Comment("Read address 1");
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    as->Comment("read out the address");
+    as->Asm("lda vbmX	; x offset");
+    as->Asm("asl");
+
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("tay");
+        as->Asm("lda (" + addr1 + "),y	; look up shifted sprite");
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("iny");
+        as->Asm("lda (" + addr1 +"),y ;keep");
+        as->Asm("sta " + as->m_tempZeroPointers[0] +"+1");
+    } else {
+        as->Asm("tax");
+        as->Asm("lda " + addr1 +",x" ); //#<
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda " + addr1 +"+1,x" ); //#>
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    }
+
+    // draw from line (start)
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("start line is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("sta vbmI");
+
+    // draw to line (end)
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[2]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("end line is complex");
+        LoadVar(as, 2);
+    }
+    as->Asm("sta vbmT");
+
+    as->Asm("jsr vbmDrawSpriteSliceE");
+
+}
+
+void Methods6502::initVbmClearSpriteSlice(Assembler *as)
+{
+    if (m_node->m_isInitialized["vbmClearSpriteSlice"])
+        return;
+
+    m_node->m_isInitialized["vbmClearSpriteSlice"] = true;
+
+    if (as->m_tempZeroPointers.count() < 1) {
+        ErrorHandler::e.Error("This TRSE command needs at least 1 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
+
+    as->Comment("VBM - Clear an 8 x h sprite with AND - use vbmSetPosition first");
+    as->Comment("Shifted sprite address = "+ as->m_tempZeroPointers[0]);
+
+    as->Label("vbmClearSpriteSlice");
+
+        as->Asm("ldy vbmI	; line in sprite to start drawing from");
+
+    as->Label("vbmCSS_draw");
+
+        as->Comment("draw one slice");
+        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y");
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("cpy vbmT	; line is sprite to draw to (height)");
+        as->Asm("bne vbmCSS_draw");
+
+    //; done
+}
+void Methods6502::vbmClearSpriteSlice(Assembler* as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmClearSpriteSlice","InitVbmClearSpriteSlice");
+
+    if (as->m_tempZeroPointers.count()==0)
+        return;
+
+    // address 1
+    as->Comment("Read address 1");
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    as->Comment("read out the address");
+    as->Asm("lda vbmX	; x offset");
+    as->Asm("asl");
+
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("tay");
+        as->Asm("lda (" + addr1 + "),y	; look up shifted sprite");
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("iny");
+        as->Asm("lda (" + addr1 +"),y ;keep");
+        as->Asm("sta " + as->m_tempZeroPointers[0] +"+1");
+    } else {
+        as->Asm("tax");
+        as->Asm("lda " + addr1 +",x" ); //#<
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda " + addr1 +"+1,x" ); //#>
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    }
+
+    // draw from line (start)
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("start line is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("sta vbmI");
+
+    // draw to line (end)
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[2]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("end line is complex");
+        LoadVar(as, 2);
+    }
+    as->Asm("sta vbmT");
+
+    as->Asm("jsr vbmClearSpriteSlice");
+
+}
+
 
 
 /*

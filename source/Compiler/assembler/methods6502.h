@@ -181,12 +181,15 @@ public:
     void vbmSetDisplayMode(Assembler* as);
     void vbmDebug(Assembler* as);
     void vbmSetColumn(Assembler *as);
+    void initVbmNextColumn(Assembler *as);
+    void vbmNextColumn(Assembler *as);
     void initvbmSetPosition(Assembler *as);
     void vbmSetPosition1(Assembler *as);
     void vbmSetPosition2(Assembler *as);
     void vbmSetPosition4(Assembler *as);
     void initVbmClear(Assembler* as);
     void vbmClear(Assembler* as);
+    void vbmClearColor(Assembler* as);
 
     void vbmDrawTile(Assembler *as);
     void vbmDrawTileO(Assembler *as);
@@ -237,6 +240,14 @@ public:
     void vbmDrawSprite16E(Assembler *as);
     void initVbmClearSprite16(Assembler *as);
     void vbmClearSprite16(Assembler *as);
+
+    void initVbmDrawSpriteSlice(Assembler *as);
+    void vbmDrawSpriteSlice(Assembler *as);
+    void initVbmDrawSpriteSliceE(Assembler *as);
+    void vbmDrawSpriteSliceE(Assembler *as);
+    void initVbmClearSpriteSlice(Assembler *as);
+    void vbmClearSpriteSlice(Assembler *as);
+
 
     // Initialize
 
