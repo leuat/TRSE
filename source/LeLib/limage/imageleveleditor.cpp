@@ -33,7 +33,6 @@ void ImageLevelEditor::SetLevel(QPoint f)
         return;
     m_currentLevel = m_levels[f.x() + f.y()*m_meta.m_sizex];
 
-https://e24.no/
 //    qDebug() << "Current colors:";
 
     for (int i=0;i<3;i++)

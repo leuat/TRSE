@@ -69,7 +69,7 @@ public:
 
 
     LImage* m_img = nullptr, *m_charset = nullptr;
-
+    QString m_charsetFilename ="";
     QPoint getPos(int x, int y);
 /*    void ImportBin(QFile& f) override;
     void ExportBin(QFile& f) override;

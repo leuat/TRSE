@@ -38,3 +38,10 @@ LImageLevelNES::LImageLevelNES(LColorList::Type t) : ImageLevelEditor(t)
 
 
 }
+
+void LImageLevelNES::SetColor(uchar col, uchar idx)
+{
+    if (m_charset==nullptr)
+        return;
+    m_charset->SetColor(col, idx);
+}

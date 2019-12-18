@@ -125,7 +125,7 @@ void LImageMetaChunk::LoadCharset(QString file, int skipBytes)
     m_colorList.m_nesPPU = m_charset->m_colorList.m_nesPPU;
     m_colorList.m_curPal = m_charset->m_colorList.m_curPal;
 
-
+    m_charsetFilename = file;
 //    qDebug() << "charset " << m_charset;
 //    m_charset = LImageIO::
 }
@@ -168,6 +168,10 @@ void LImageMetaChunk::SaveBin(QFile &file)
         file.write(m->m_data);
     }
 
+    QByteArray fd =  QByteArray(m_charsetFilename.toLatin1());
+    uchar len = fd.count();
+    file.write( ( char * )( &len ),  1 );
+    file.write(fd);
 }
 
 void LImageMetaChunk::LoadBin(QFile &file)
@@ -184,6 +188,15 @@ void LImageMetaChunk::LoadBin(QFile &file)
         AddNew(w,h);
         getCur()->m_data = file.read(w*h);
     }
+    if (file.atEnd())
+        return;
+    uchar len;
+    file.read( ( char * )( &len ),  1 );
+    QByteArray data = file.read(len);
+    m_charsetFilename = QString::fromLatin1(data);
+    qDebug() << m_charsetFilename;
+    if (QFile::exists(m_charsetFilename))
+        LoadCharset(m_charsetFilename,0);
 
 }
 
