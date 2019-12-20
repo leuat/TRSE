@@ -106,6 +106,7 @@ public:
 
 
     int m_charWidthDisplay = 40;
+    int m_charHeightDisplay = 25;
     int m_currentBank = 0;
 
     virtual void SetBank(int bnk) {
@@ -205,6 +206,8 @@ public:
        SetColor(m_extraCols[2],2);
 
     }
+
+    virtual void SetPalette(int pal) {}
 
     virtual void BuildData(QTableWidget* tbl, QStringList header) {}
     virtual void StoreData(QTableWidget* tbl) {}

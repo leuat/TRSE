@@ -17,10 +17,12 @@ LImageNES::LImageNES(LColorList::Type t) : CharsetImage(t)
 
     m_charCount = 512;
 
-
+    m_currentBank = 1;
     //m_data = new PixelChar[m_charWidth*m_charHeight];
     m_charWidthDisplay=16;
+    m_charHeightDisplay=16;
 
+//    m_double=false;
     Clear();
     m_type = LImage::Type::NES;
     m_supports.asmExport = true;
@@ -31,8 +33,9 @@ LImageNES::LImageNES(LColorList::Type t) : CharsetImage(t)
     m_supports.koalaExport = false;
     m_supports.flfSave = true;
     m_supports.flfLoad = true;
-    m_supports.compressedExport = true;
+    m_supports.compressedExport = false;
     m_supports.displayForeground = true;
+    m_supports.displayBank = true;
 
     m_GUIParams[btnLoadCharset] ="";
     m_GUIParams[btn1x1] = "";
@@ -98,6 +101,7 @@ void LImageNES::ExportBin(QFile &file)
     QByteArray ba = m_colorList.m_nesPPU;
 
     for (int i=0;i<8;i++) {
+        ba[i*4+0] = m_colorList.m_nesPPU[0];
         ba[i*4+1] = m_colorList.m_nesPPU[i*4+2];
         ba[i*4+2] = m_colorList.m_nesPPU[i*4+1];
         ba[i*4+3] = m_colorList.m_nesPPU[i*4+3];
@@ -192,14 +196,29 @@ QPixmap LImageNES::ToQPixMap(int chr)
 
 }
 
+void LImageNES::SetPalette(int pal)
+{
+     m_cols[2-1] = m_colorList.m_nesPPU[pal*4 +1 +0];
+     m_cols[2-0] = m_colorList.m_nesPPU[pal*4 +1 +1];
+     m_cols[2-2] = m_colorList.m_nesPPU[pal*4 +1 +2];
+     m_cols[3] = m_colorList.m_nesPPU[0];
+}
+
 
 unsigned int LImageNES::getPixel(int x, int y)
 {
-    if (x>=m_width/2 || x<0 || y>=m_height || y<0)
-        return m_cols[1];
+    if (x>=m_width || x<0 || y>=m_height || y<0)
+        return m_cols[0];
+
+    if (m_double) {
+        x=x/2;
+        y=y/2;
+    }
 
     int r = x/(float)8;
     x=x+r*8;
+    if (m_double)
+        y=y+128*m_currentBank;
 
     PixelChar& pc1 = getPixelChar((x/2),y);
     PixelChar& pc2 = getPixelChar((x/2)+4,y);
@@ -225,13 +244,18 @@ unsigned int LImageNES::getPixel(int x, int y)
 
 void LImageNES::setPixel(int x, int y, unsigned int col)
 {
-    if (x>=m_width/2 || x<0 || y>=m_height || y<0)
+    if (x>=m_width || x<0 || y>=m_height || y<0)
         return;
 
-
+    if (m_double) {
+        x=x/2;
+        y=y/2;
+    }
 
     int r = x/(float)8;
     x=x+r*8;
+    if (m_double)
+        y=y+128*m_currentBank;
     PixelChar& pc1 = getPixelChar((x/2),y);
     PixelChar& pc2 = getPixelChar((x/2)+4,y);
 
@@ -271,6 +295,7 @@ void LImageNES::SetColor(uchar col, uchar idx)
     else
         if (li==3)
             li=0;
+
     m_cols[li] = col;
     if (idx!=0)
         m_colorList.SetPPUColors(col, idx-1);
@@ -289,5 +314,6 @@ void LImageNES::CopyFrom(LImage *img)
     LImageNES* n = dynamic_cast<LImageNES*>(img);
     for (int i=0;i<4;i++)
         m_cols[i] = n->m_cols[i];
+    m_currentBank = n->m_currentBank;
     CharsetImage::CopyFrom(img);
 }

@@ -192,8 +192,11 @@ void ImageLevelEditor::LoadBin(QFile &file)
 
 */
     Initialize(m_meta);
+    m_width = m_meta.m_width*16;
+    m_height = m_meta.m_height*16;
 /*    qDebug() << "INChardata: " <<m_meta.dataSize();
     qDebug() << "INExtraData: " <<m_meta.m_extraDataSize;*/
+//    qDebug() << " WIDTH " << m_meta.m_width;
     for (CharmapLevel* l : m_levels) {
 
         l->m_CharData = file.read(m_meta.dataSize());
@@ -303,7 +306,7 @@ QVector<QPixmap> ImageLevelEditor::CreateIcons()
 
 bool ImageLevelEditor::PixelToPos(int x, float y, int& pos)
 {
-    if (x>=320 || x<0 || y>=200 || y<0)
+    if (x>=m_width || x<0 || y>=m_height || y<0)
         return false;
 
     x/=16.0;
@@ -314,9 +317,13 @@ bool ImageLevelEditor::PixelToPos(int x, float y, int& pos)
     y=(y-(m_meta.m_starty*0.5-0.01));
     if (y<0) return false;
     if (x<0) return false;
+
     if (x>=m_meta.m_width)
         return false;
 
+//    if (rand()%100>98)
+
+  //  qDebug() <<m_meta.m_width;
 
     pos = x + (int)y*m_meta.m_width;
     if ((pos<0 || pos>=m_meta.dataSize()))
@@ -413,7 +420,8 @@ void ImageLevelEditor::CopyFrom(LImage *mc)
         if (c->m_charset==nullptr)
             return;
 
-
+        m_width = c->m_width;
+        m_height = c->m_height;
         CharmapGlobalData d = c->m_meta;
         //d.m_sizex = 1;
         //d.m_sizey = 1;

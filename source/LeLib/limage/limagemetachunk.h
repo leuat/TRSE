@@ -138,6 +138,13 @@ public:
 
 
     void setForeground(unsigned int col) override;
+    unsigned int getCharPixel(int pos,  int pal,int x, int y) override;
+
+
+    QPixmap ToQPixMap(int chr) override;
+
+    void ExportBin(QFile &file) override;
+//    virtual void ImportBin(QFile &file) {}
 
 
 };

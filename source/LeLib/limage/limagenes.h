@@ -13,6 +13,7 @@ public:
     void ExportBin(QFile &file) override;
     void setMultiColor(bool doSet) override;
     void ForceColor();
+    bool m_double = true;
     unsigned int getPixel(int x, int y) override;
     void setPixel(int x, int y, unsigned int col) override;
     void SetColor(uchar col, uchar idx) override;
@@ -28,6 +29,7 @@ public:
 
     }
     QPixmap ToQPixMap(int chr) override;
+    void SetPalette(int pal) override;
 
 
 

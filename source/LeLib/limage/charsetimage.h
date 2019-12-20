@@ -85,6 +85,8 @@ public:
     virtual QPixmap ToQPixMap(int chr);
     virtual void setPixel(int x, int y, unsigned int color) override;
 
+    virtual unsigned int getCharPixel(int pos, int pal, int x, int y);
+
 
     void RenderEffect(QMap<QString, float> params) override;
 
