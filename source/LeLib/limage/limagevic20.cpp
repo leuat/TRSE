@@ -51,6 +51,11 @@ LImageVIC20::LImageVIC20(LColorList::Type t)  : CharsetImage (t)
     m_exportParams["IncludeColors"] = 1;
 
 
+    m_metaParams.append(new MetaParameter("screen_width","Screen width",20,2,1000));
+    m_metaParams.append(new MetaParameter("screen_height","Screen height",19,2,1000));
+
+
+
 }
 
 
@@ -164,5 +169,24 @@ void LImageVIC20::ToRaw(QByteArray &arr)
         }
         arr.append(cols);
     }
+}
+
+QString LImageVIC20::getMetaInfo()
+{
+    QString txt="";
+    m_charWidth = getMetaParameter("screen_width")->value;
+    m_charHeight = getMetaParameter("screen_height")->value;
+    int chars = m_charWidth*m_charHeight/2;
+    txt+= "Chars (8x16) used: " + QString::number(chars) +"\n";
+    if (chars>192)
+        txt+= "WARNING more than 192 chars! Will be truncated. \n";
+
+    txt+= "Data size: " + QString::number(m_charWidth*m_charHeight*8) + " bytes\n";
+    txt+= "Color size: " + QString::number(m_charWidth*m_charHeight) + " bytes\n";
+    txt+= "Total size: " + QString::number(m_charWidth*m_charHeight*9) + " bytes\n";
+    txt+= "Pixel dimensions " + QString::number(m_charWidth*4) + "x" +QString::number(m_charHeight*8);
+
+
+    return txt;
 }
 

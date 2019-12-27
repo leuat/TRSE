@@ -257,11 +257,13 @@ void DialogMemoryAnalyze::VerifyZPMusic(QVector<MemoryBlock*> &blocks)
         QString overlapString="";
         for (MemoryBlock* o : blocks)
             if (o!=mb) {
-                for (int j: o->m_zeropages)
+                for (int j: o->m_zeropages) {
+
                     if (mb->m_zeropages.contains(j)) {
                         overlaps = true;
                         overlapString += Util::numToHex(j)+" ";
                     }
+                }
 
 
             }

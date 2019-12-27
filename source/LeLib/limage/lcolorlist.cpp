@@ -509,6 +509,17 @@ void LColorList::InitNES()
 
 }
 
+void LColorList::InitNES4()
+{
+    m_list.clear();
+    m_list.resize(64);
+    m_list.append(LColor(QColor(0,0,255),"Black"));
+    m_list.append(LColor(QColor(0,255,0),"Green"));
+    m_list.append(LColor(QColor(255,0,255),"Red"));
+    m_list.append(LColor(QColor(255,0,255),"Brown"));
+
+}
+
 
 void LColorList::InitCGA2_LOW()
 {
@@ -607,19 +618,25 @@ int LColorList::getIndex(QColor c)
 
 void LColorList::CreateUI(QLayout* ly, int type)
 {
-
     Util::clearLayout(ly, true);
+    int m=0;
+    for (int i=0;i<m_list.count();i++)
+        if (m_list[i].displayList)
+            m++;
+
 
     m_buttonsEdit.clear();
     m_buttonsImport.clear();
 //    m_buttons.clear();
     int xx=0, yy=0;
-    int width=40/(max(m_list.count()/16,1));
+    int width=40/(max(m/16,1));
 //    qDebug() << width;
-    if (m_list.count()>200) {
+    if (m>200) {
         width = 16;
     }
 //    if (m_list.count())
+
+
     for(int j=0; j<m_list.count(); j++)
     {
         if (!m_list[j].displayList)

@@ -95,6 +95,8 @@ public:
     void fromQImage(QImage *img, LColorList &lst) override;
 
 
+    void Initialize() override;
+
 //    void FromRaw(QByteArray& arr);
 //    void ToRaw(QByteArray& arr);
     QString GetCurrentDataString() override {
@@ -150,6 +152,10 @@ public:
     }
 
     void Transform(int x, int y) override;
+
+
+    QString getMetaInfo();
+
 
 };
 

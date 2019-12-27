@@ -90,6 +90,7 @@ public:
     void ReadInput(Assembler* as);
     void PPUDump(Assembler* as, int hi, int lo,int x, int y);
     void PPUSingle(Assembler* as);
+    void PPURead(Assembler* as);
     void LoadSong(Assembler *as);
     void PPUDrawColumn(Assembler* as);
     void Clearsound(Assembler* as);

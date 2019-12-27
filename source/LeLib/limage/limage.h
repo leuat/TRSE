@@ -37,6 +37,23 @@
 
 class CharsetImage;
 
+class MetaParameter {
+public:
+    QString name;
+    QString text;
+    float value;
+    float pmin;
+    float pmax;
+    MetaParameter(QString n, QString t, float val, float mi, float ma) {
+        name = n;
+        text = t;
+        value = val;
+        pmin = mi;
+        pmax = ma;
+    }
+};
+
+
 class LImageSupports {
 public:
     bool binarySave = false;
@@ -51,11 +68,12 @@ public:
     bool compressedExport = false;
 
     bool editPalette = true;
+    bool displayColors = true;
+    bool displayCmbColors = true;
 
     bool exportc = false;
     bool importc = false;
 
-    bool displayColors = true;
     bool displayBackground = true;
     bool displayForeground = true;
     bool displayMC1 = true;
@@ -76,7 +94,7 @@ public:
     enum Type { QImageBitmap, MultiColorBitmap, HiresBitmap,
                 NotSupported, Tiff, CharMapMulticolor, FullScreenChar, LevelEditor, CharmapRegular, CharMapMultiColorFixed,
               Sprites, VIC20_MultiColorbitmap, Sprites2, CGA, AMIGA320x200, AMIGA320x256,
-                OK64_256x256,X16_640x480, NES, LMetaChunk, LevelEditorNES};
+                OK64_256x256,X16_640x480, NES, LMetaChunk, LevelEditorNES, SpritesNES};
 
 
     enum WriteType { Color, Character };
@@ -86,6 +104,7 @@ public:
         Release();
     }
     LImageSupports m_supports;
+
 
     static unsigned char TypeToChar(Type t);
     static Type CharToType(unsigned char c);
@@ -100,6 +119,10 @@ public:
 
     QMap<GUIType, QString> m_GUIParams;
 
+    QVector<MetaParameter*> m_metaParams;
+    MetaParameter* getMetaParameter(QString name);
+    virtual QString getMetaInfo() { return "";}
+
     virtual LColorList::Type getColorType() {
         return m_colorList.m_type;
     }
@@ -113,7 +136,15 @@ public:
         m_currentBank = bnk;
     }
 
+    virtual void onFocus()  {
 
+    }
+
+    virtual void Initialize() {
+
+    }
+
+    int m_constrainDisplay = -1;
     bool m_silentExport=false;
     int m_width;
     int m_height;
@@ -131,9 +162,6 @@ public:
 
 
 
-    virtual void ConstrainColours(QVector<int> cols) {
-
-    }
     virtual int GetWidth() {
         return m_width;
     }
@@ -151,6 +179,26 @@ public:
     unsigned char m_extraCols[4];
 
     LColorList m_colorList;
+
+
+    void PerformConstrainColours(QVector<int>& cols) {
+        int j=0;
+        for (int i=0;i<m_colorList.m_list.count();i++)
+            if (cols.contains(i)) {
+                m_colorList.m_list[i].displayList = true;
+    //            m_colorList.m_list[i].currentIndex = j++;
+            }
+            else
+                m_colorList.m_list[i].displayList = false;
+
+    }
+
+
+    virtual void ConstrainColours(QVector<int>& cols) {
+
+
+    }
+
 
     virtual void FloydSteinbergDither(QImage& img, LColorList& colors, bool dither);
     virtual void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength);

@@ -112,7 +112,8 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
 
     if (system->m_processor==AbstractSystem::MOS6502) {
         m_assembler->EndMemoryBlock();
-        m_assembler->Label("EndSymbol");
+        if (system->m_system!=AbstractSystem::NES)
+            m_assembler->Label("EndSymbol");
         m_assembler->Connect();
         if (m_ini->getdouble("post_optimize")==1.0)
             m_assembler->Optimise(*m_projectIni);
@@ -252,6 +253,7 @@ void Compiler::HandleError(FatalErrorException fe, QString e)
 void Compiler::Init6502Assembler()
 {
     m_assembler->m_startInsertAssembler << m_parser.m_initAssembler;
+//    qDebug() << m_parser.m_initAssembler;
     m_assembler->m_defines = m_parser.m_preprocessorDefines;
 
     m_assembler->InitZeroPointers(m_projectIni->getStringList("zeropages"),m_projectIni->getStringList("temp_zeropages"));

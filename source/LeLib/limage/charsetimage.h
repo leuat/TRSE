@@ -95,6 +95,8 @@ public:
 
     void setLimitedPixel(int x, int y, unsigned int color);
 
+    void onFocus() override;
+
     void FlipHorizontal() override;
     void FlipVertical() override;
 

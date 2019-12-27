@@ -53,7 +53,7 @@ end;
 procedure MovePlayer();
 begin
 	ReadInput();
-	sprite_x:=sprite_x-getbit(buttons,0)+getbit(buttons,1); // x axis
+	sprite_x:=sprite_x+getbit(buttons,0)-getbit(buttons,1); // x axis
 	sprite_y:=sprite_y-getbit(buttons,2)+getbit(buttons,3); // y axis
 	// Set sprite location after update
 	SetSpritePosition();	

@@ -57,6 +57,7 @@ public:
 
     //LColorList* m_colorList = nullptr;
     void Initialize();
+    void Initialize(LImage* img);
 
     LImage* m_image;
     LImage* m_temp;

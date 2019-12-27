@@ -8,16 +8,17 @@ LImageMetaChunk::LImageMetaChunk(LColorList::Type t) : LImageNES(t)
     m_GUIParams[btnLoadCharset] ="Load Charset";
     m_width = 256;
     m_height = 256;
+    m_supports.displayColors = false;
 
     Initialize(m_width,m_height);
     if (t==LColorList::NES) {
         m_img = new LImageNES(t);
+
     }
     m_type = LImage::Type::LMetaChunk;
     m_colorList.m_type = m_img->m_colorList.m_type;
     m_colorList.m_list = m_img->m_colorList.m_list;
     AddNew(2,2);
-
 
     m_supports.displayBank = true;
 
@@ -32,7 +33,8 @@ LImageMetaChunk::LImageMetaChunk(LColorList::Type t) : LImageNES(t)
     m_supports.flfLoad = true;
     m_supports.compressedExport = false;
     m_supports.displayForeground = true;
-
+    m_supports.displayCmbColors = false;
+    m_supports.displayColors = true;
 
     m_GUIParams[btnLoadCharset] ="Load charset";
     m_GUIParams[btn1x1] = "";
@@ -81,6 +83,7 @@ void LImageMetaChunk::CopyFrom(LImage *mc)
         }*/
         m_items.clear();
         AddNew(img->getCur()->m_width, img->getCur()->m_height);
+        getCur()->m_attributes = img->getCur()->m_attributes;
         getCur()->m_data = img->getCur()->m_data;
         //m_items[0] = img->m_items[img->m_current];
 
@@ -108,15 +111,6 @@ void LImageMetaChunk::Copy()
 
 }
 
-void LImageMetaChunk::setPixel(int x, int y, unsigned int color)
-{
-    QPoint p = getPos(x,y);
-//    if (rand()%100>98)
-  //      qDebug() << QString::number(m_currencChar);
-
-    ((LMetaChunkItem*)m_items[m_current])->setPixel(p.x(),p.y(),m_currencChar,m_img->m_bitMask);
-
-}
 
 void LImageMetaChunk::LoadCharset(QString file, int skipBytes)
 {
@@ -138,6 +132,17 @@ void LImageMetaChunk::LoadCharset(QString file, int skipBytes)
 //    qDebug() << "charset " << m_charset;
 //    m_charset = LImageIO::
 }
+
+void LImageMetaChunk::setPixel(int x, int y, unsigned int color)
+{
+    QPoint p = getPos(x,y);
+//    if (rand()%100>98)
+  //      qDebug() << QString::number(m_currencChar);
+
+    ((LMetaChunkItem*)m_items[m_current])->setPixel(p.x(),p.y(),m_currencChar,m_img->m_bitMask);
+
+}
+
 
 unsigned int LImageMetaChunk::getPixel(int x, int y)
 {
@@ -165,13 +170,10 @@ unsigned int LImageMetaChunk::getPixel(int x, int y)
     }
     else return m_charset->getPixel(xx,yy);
 
-
-
 }
 
 void LImageMetaChunk::SaveBin(QFile &file)
 {
-//    unsigned short N = m_items.count();
     uchar no = m_items.count();
     file.write( ( char * )( &no ),  1 );
     for (LImageContainerItem* li : m_items) {
@@ -209,7 +211,6 @@ void LImageMetaChunk::LoadBin(QFile &file)
     file.read( ( char * )( &len ),  1 );
     QByteArray data = file.read(len);
     m_charsetFilename = QString::fromLatin1(data);
-    qDebug() << m_charsetFilename;
     if (QFile::exists(m_charsetFilename))
         LoadCharset(m_charsetFilename,0);
 
@@ -217,9 +218,9 @@ void LImageMetaChunk::LoadBin(QFile &file)
 
 void LImageMetaChunk::SetColor(uchar col, uchar idx)
 {
-/*    if (m_charset==nullptr)
+    if (m_charset==nullptr)
         return;
-    m_charset->SetColor(col, idx);*/
+    m_charset->SetColor(col, idx);
 }
 
 void LImageMetaChunk::SetColor(uchar col, uchar idx, LImageMetaChunk &s)
@@ -302,6 +303,13 @@ void LMetaChunkItem::setPixel(float x, float y, uchar color, uchar bitMask)
     m_data[(int)(y*m_width+x)] = color;
 }
 
+void LMetaChunkItem::setPixelAttrib(float x, float y, uchar color, uchar bitMask)
+{
+    if (x<0 || x>=m_width || y<0 || y>=m_height)
+        return;
+    m_attributes[(int)(y*m_width+x)] = color;
+}
+
 uchar LMetaChunkItem::getPixel(float x, float y, uchar bitMask)
 {
     if (x<0 || x>=m_width || y<0 || y>=m_height)
@@ -310,6 +318,16 @@ uchar LMetaChunkItem::getPixel(float x, float y, uchar bitMask)
 
 
 }
+
+uchar LMetaChunkItem::getPixelAttrib(float x, float y, uchar bitMask)
+{
+    if (x<0 || x>=m_width || y<0 || y>=m_height)
+        return 0;
+    return m_attributes[(int)(y*m_width+x)];
+
+
+}
+
 
 void LImageMetaChunk::setForeground(unsigned int col)
 {
@@ -326,7 +344,7 @@ unsigned int LImageMetaChunk::getCharPixel(int pos,  int pal,int x, int y)
 
     m_current = pos;
 
-    int w=(getCur()->m_width)*8;
+    int w=16;//(getCur()->m_width);
     int h=(getCur()->m_height)*8;
 
     x=(x%w)*w;

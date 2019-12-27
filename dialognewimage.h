@@ -25,6 +25,8 @@
 #include <QDialog>
 #include <QDebug>
 #include "source/LeLib/limage/imageleveleditor.h"
+#include "imageworker.h"
+#include "source/LeLib/limage/limagefactory.h"
 
 namespace Ui {
 class DialogNewImage;
@@ -36,54 +38,30 @@ class DialogNewImage : public QDialog
 
 public:
     explicit DialogNewImage(QWidget *parent = 0);
-    void Initialize(QStringList cmbData);
+    //void Initialize(QStringList cmbData);
+    void Initialize(QVector<ImageType>);
     int retVal = -1;
     bool isResize = false;
     bool started = true;
+    LImage* m_metaImage = nullptr;
+
+    QVector<ImageType> m_types;
+
     CharmapGlobalData m_meta;
     void SetResizeMeta(CharmapGlobalData gd);
     void ToMeta();
-    void CreateInfo();
+    void FromMeta();
 
-    void VICImageToData();
 
-    void CharImageToData();
 
-    int m_charWidth=40;
-    int m_charHeight=25;
+//    int m_charWidth=40;
+  //  int m_charHeight=25;
 
     ~DialogNewImage();
 private slots:
     void slotOk();
 
     void on_comboBox_currentIndexChanged(int index);
-
-    void on_leScreenWidth_textChanged(const QString &arg1);
-
-    void on_leScreenHeight_textChanged(const QString &arg1);
-
-    void on_leLevelsX_textChanged(const QString &arg1);
-
-    void on_leLevelsY_textChanged(const QString &arg1);
-
-    void on_leExtraDataSize_textChanged(const QString &arg1);
-
-    void on_leStartX_textChanged(const QString &arg1);
-
-    void on_leStartY_textChanged(const QString &arg1);
-
-    void on_leChunkSize_textChanged(const QString &arg1);
-
-    void on_leDataChunks_textChanged(const QString &arg1);
-
-    void on_checkBox_clicked();
-
-    void on_chkUseColors_stateChanged(int arg1);
-
-    void on_leCharWidth_textChanged(const QString &arg1);
-
-    void on_leCharHeight_textChanged(const QString &arg1);
-
 private:
     Ui::DialogNewImage *ui;
 };

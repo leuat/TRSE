@@ -62,6 +62,8 @@ void MachineCodeAnalyzer::AnalyzeZP()
 //                if (d==0xB1 || d==0x91) {
            m_mczp.append(MCZP(n,addr));
         }
+//            qDebug() <<"Appending " << n;
+
         addr++;
     }
 }

@@ -15,6 +15,7 @@ public:
 //    QByteArray m_header;
 
     QByteArray m_data;
+    QByteArray m_attributes;
 
     LImageNES* m_charImage;
 
@@ -43,10 +44,13 @@ public:
         m_height = h;
         m_width = w;
         m_data.resize(m_height*m_width);
+        m_attributes.resize(m_height*m_width);
     }
 
     void setPixel(float x, float y, uchar color, uchar bitMask);
+    void setPixelAttrib(float x, float y, uchar color, uchar bitMask);
     uchar getPixel(float x, float y, uchar bitMask);
+    uchar getPixelAttrib(float x, float y, uchar bitMask);
 
 
 
@@ -69,7 +73,6 @@ public:
 
 
     LImage* m_img = nullptr, *m_charset = nullptr;
-    QString m_charsetFilename ="";
     QPoint getPos(int x, int y);
 /*    void ImportBin(QFile& f) override;
     void ExportBin(QFile& f) override;
@@ -81,8 +84,8 @@ public:
 
     QString GetCurrentDataString() override {
         if (m_current<0) return "";
-        QString blockSize = " block size (" +QString::number(m_items[m_current]->m_width);
-        blockSize += ", " +QString::number(m_items[m_current]->m_height)+")";
+        QString blockSize = " char: " + Util::numToHex(m_currencChar);
+//        blockSize += ", " +QString::number(m_items[m_current]->m_height)+")";
         return "  Sprite : " + QString::number(m_current) + "/" +
                 QString::number(m_items.count()) + blockSize;
     }

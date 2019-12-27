@@ -672,7 +672,14 @@ void MultiColorImage::LoadCharset(QString file, int skipBytes)
         }
 //        m_charset =
     }
+    m_charsetFilename = file;
 
+}
+
+void MultiColorImage::onFocus()
+{
+    if (m_charsetFilename!="")
+        LoadCharset(m_charsetFilename,0);
 }
 
 void MultiColorImage::Clear()

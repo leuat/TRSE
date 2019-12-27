@@ -61,6 +61,16 @@ QString Util::toString(QStringList lst) {
     return ret;
 }
 
+unsigned long Util::Endian_DWord_Conversion(unsigned long dword)
+{
+    return ((dword>>24)&0x000000FF) | ((dword>>8)&0x0000FF00) | ((dword<<8)&0x00FF0000) | ((dword<<24)&0xFF000000);
+}
+
+unsigned long Util::Endian_Word_Conversion(unsigned short dword)
+{
+    return ((dword>>24)&0x000000FF) | ((dword>>8)&0x0000FF00) | ((dword<<8)&0x00FF0000) | ((dword<<24)&0xFF000000);
+}
+
 
 
 const char* Util::read_textfile(string filename) {
@@ -190,6 +200,83 @@ bool Util::NumberFromStringHex(QString s, int &num) {
     num = val;
     return ok;
 }
+
+QVector3D Util::fromSpherical(float r, float t, float p) {
+    return QVector3D( r*sin(t)*cos(p), r*sin(t)*sin(p), r*cos(t)  );
+}
+
+QVector3D Util::floor(const QVector3D v) {
+    return QVector3D( max(0.0f, v.x()), max(0.0f,v.y()), max(0.0f,v.z())  );
+}
+
+QVector3D Util::Rotate2D(QVector3D point, QVector3D center, float angle) {
+    QVector3D rot;
+    point = point - center;
+    rot.setX(point.x()*cos(angle)-point.y()*sin(angle));
+    rot.setY(point.y()*cos(angle)+point.x()*sin(angle));
+    return rot + center;
+
+}
+
+bool Util::IntersectSphere(QVector3D o, QVector3D d, QVector3D r, QVector3D &isp1, QVector3D &isp2, double &t0, double &t1) {
+
+    r.setX(1.0/(r.x()*r.x()));
+    r.setY(1.0/(r.y()*r.y()));
+    r.setZ(1.0/(r.z()*r.z()));
+
+
+    QVector3D rD = QVector3D(d.x()*r.x(), d.y()*r.y(), d.z()*r.z());
+    QVector3D rO = QVector3D(o.x()*r.x(), o.y()*r.y(), o.z()*r.z());
+
+
+    double A = QVector3D::dotProduct(d,rD);
+    double B = 2.0*(QVector3D::dotProduct(d, rO));
+    double C = QVector3D::dotProduct(o, rO) - 1.0;
+
+    double S = (B*B - 4.0f*A*C);
+
+    if (S<=0) {
+        isp1 = QVector3D(0,0,0);
+        isp2 = QVector3D(0,0,0);
+        t0 = 0;
+        t1 = 0;
+        return false;
+    }
+
+    t0 =  (-B - sqrt(S))/(2.0*A);
+    t1 =  (-B + sqrt(S))/(2.0*A);
+
+    isp1 = o+d*t0;
+    isp2 = o+d*t1;
+
+    return true;
+}
+
+void Util::clearLayout(QLayout *layout, bool deleteWidgets)
+{
+    while (QLayoutItem* item = layout->takeAt(0))
+    {
+        if (deleteWidgets)
+        {
+            if (QWidget* widget = item->widget())
+                widget->deleteLater();
+        }
+        if (QLayout* childLayout = item->layout())
+            clearLayout(childLayout, deleteWidgets);
+        delete item;
+    }
+}
+
+QColor Util::toColor(QVector3D c) {
+    if (c.x()>255) c.setX(255);
+    if (c.y()>255) c.setY(255);
+    if (c.z()>255) c.setZ(255);
+    if (c.x()<0) c.setX(0);
+    if (c.y()<0) c.setY(0);
+    if (c.z()<0) c.setZ(0);
+
+    return QColor(c.x(),c.y(),c.z());
+}
 QString Util::ReplaceWords(QString line, QString word) {
 
     return "";
@@ -248,6 +335,17 @@ QColor Util::colorScale(QColor &col, int mean, int std)
     c = clamp(c,0,255);
     return QColor(c.x(), c.y(), c.z());
 
+}
+
+int Util::isEqual(QColor a, QColor b) {
+    if (a.red()!=b.red())
+        return 0;
+    if (a.green()!=b.green())
+        return 0;
+    if (a.blue()!=b.blue())
+        return 0;
+
+    return 1;
 }
 
 int Util::getShiftCount(int i) {
@@ -353,6 +451,41 @@ QVector3D Util::maxx(QVector3D a, QVector3D b)
     return QVector3D(max(a.x(),b.x()), max(a.y(),b.y()), max(a.z(),b.z()));
 }
 
+int Util::C64StringToInt(QString f) {
+    int val;
+    bool ok;
+    if (f.contains("$")) {
+        val = f.replace("$","0x").toInt(&ok,16);
+    }
+    else
+        val = f.toInt(&ok,10);
+
+    return val;
+
+}
+
+bool Util::SameSide(const QVector3D &p1, const QVector3D &p2, const QVector3D &a, const QVector3D &b) {
+    QVector3D cp1 = QVector3D::crossProduct(b-a, p1-a);
+    QVector3D cp2 = QVector3D::crossProduct(b-a, p2-a);
+    return QVector3D::dotProduct (cp1, cp2) >= 0;
+    //        else return false
+}
+
+QString Util::fixFolder(QString folderName) {
+    if (folderName[folderName.count()-1]=='\\')
+        return folderName;
+    if (folderName[folderName.count()-1]=='/')
+        return folderName;
+    return folderName + "/";
+}
+
+string Util::c2x(int x, int y) {
+    std::string s;
+    s = char('A' + y);
+    s += std::to_string(x+1);
+    return s;
+}
+
 float Util::minmax(float v, float a, float b)
 {
     v = max(v,a);
@@ -389,6 +522,19 @@ QString Util::listFiles(QDir directory, QString searchFile)
         return "";
 }
 
+float Util::floatRandom(const float &min, const float &max) {
+    static std::mt19937 generator;
+    std::uniform_real_distribution<float> distribution(min, max);
+    return distribution(generator);
+}
+
+wchar_t *Util::QStringToWchar(QString t) {
+    wchar_t* arr = new wchar_t[t.size()+1];
+    t.toWCharArray(arr);
+    arr[t.size()]=0;
+    return arr;
+}
+
 void Util::SaveByteArray(QByteArray &data, QString file) {
     QFile f(file);
     f.open(QFile::WriteOnly);
@@ -409,6 +555,12 @@ QString Util::fromStringList(QStringList lst)
     }
 
     return ret;
+}
+
+int Util::NumberFromStringHex(QString s) {
+    int val = 0;
+    bool ok = NumberFromStringHex(s,val);
+    return val;
 }
 
 QString Util::findFileInSubDirectories(QString search, QString dir, QString extension)
@@ -436,6 +588,24 @@ QColor Util::Gamma(QColor c, float xexp, float shift)
     y = clamp(y,0,255);
     z = clamp(z,0,255);
     return QColor(x,y,z);
+}
+
+float Util::ColorLength(QColor &c) {
+    return sqrt(c.red()*c.red() + c.green()*c.green() + c.blue()*c.blue());
+}
+
+void Util::drawBox(QImage *backImage, QImage *img, int i, int j, int size, QRgb color) {
+    int imageSize = img->width();
+    QRgb mark = QColor(1,1,1).rgba();
+    for (int x=max(0, i-size/2);x<=min(imageSize-1, i+size/2);x++)
+        for (int y=max(0, j-size/2);y<=min(imageSize-1, j+size/2);y++) {
+            QColor col = QColor::fromRgba(backImage->pixel(x,y));
+            if (col.red()==0) {
+                img->setPixel(x,y,color);
+                if (x==i && y== j)
+                    backImage->setPixel(x,y,mark);
+            }
+        }
 }
 
 QVector3D Util::clamp(const QVector3D val, const float min, const float max)
@@ -466,6 +636,68 @@ QString Util::getFileName(QString dir, QString baseName, QString type)
     maxNumber++;
     return baseName + QString::number(maxNumber).rightJustified(4, '0');// + "." + type;
 
+}
+
+QString Util::loadTextFile(QString filename) {
+    QFile file(filename);
+    file.open(QIODevice::ReadOnly);
+    QTextStream in(&file);
+    QString data = in.readAll();
+    file.close();
+    return data;
+}
+
+QString Util::MilisecondToString(int ms) {
+    //        ms+=1000;
+    int ds = ms/100;
+    int s = (ms/1000);
+    int m = (s/60);
+    int h = (m/60);
+    int d = h/24;
+    ds = ds % 10;
+    s = s % 60;
+    m = m % 60;
+    h = h % 24;
+    QString str = "";
+    if (d!=0)
+        str+= QString::number(d) + "d ";
+    if (h!=0)
+        str+= QString::number(h) + "h ";
+    if (m!=0)
+        str+= QString::number(m) + "m ";
+    str+= QString::number(s) + "." + QString::number(ds) + "s ";
+    return str;
+}
+
+QVector3D Util::maxQvector3D(const QVector3D a, const QVector3D b) {
+    return QVector3D(max(a.x(), b.x()),max(a.y(), b.y()),max(a.z(), b.z()));
+}
+
+bool Util::Mollweide(QVector3D &out, float i, float j, float l0, float R, float size) {
+
+    /*        float x = 4*R*sqrt(2)*(2*i/(float)size-1);
+        float yy = j*2 - size/2;
+        float y = R*sqrt(2)*(2*yy/(float)size-1);
+
+
+        float t = asin(y/(R*sqrt(2.0)));
+        out = QVector3D( asin( (2.0*t + sin(2.0*t))/M_PI),l0 + M_PI*x / (2*R*sqrt(2.0)*cos(t)),0  );
+        out.setX(out.x()+M_PI/2);
+        out.setY(-out.y()*0.5);
+        if (out.y()>-M_PI && out.y()<M_PI)
+            return true;
+*/
+    return false;
+
+}
+
+QPoint Util::mapToWindow(QWidget *from, QPoint pt) {
+    QWidget *wnd = from->window();
+    while(from && from!=wnd){
+        pt = from->mapToParent(pt);
+        from = from->parentWidget();
+    }
+    return pt;
 }
 
 

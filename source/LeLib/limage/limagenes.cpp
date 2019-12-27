@@ -36,17 +36,18 @@ LImageNES::LImageNES(LColorList::Type t) : CharsetImage(t)
     m_supports.compressedExport = false;
     m_supports.displayForeground = true;
     m_supports.displayBank = true;
+    m_supports.displayCmbColors = true;
 
     m_GUIParams[btnLoadCharset] ="";
-    m_GUIParams[btn1x1] = "";
-    m_GUIParams[btn2x2] = "";
-    m_GUIParams[btn2x2repeat] = "";
-    m_GUIParams[btnCopy] = "";
-    m_GUIParams[btnPaste] = "";
-    m_GUIParams[btnFlipH] = "";
-    m_GUIParams[btnFlipV] = "";
+    m_GUIParams[btn1x1] = "8x8";
+    m_GUIParams[btn2x2] = "16x16";
+    m_GUIParams[btn2x2repeat] = "16x16 tiled";
+    m_GUIParams[btnCopy] = "Copy";
+    m_GUIParams[btnPaste] = "Paste";
+    m_GUIParams[btnFlipH] = "Flip H";
+    m_GUIParams[btnFlipV] = "Flip V";
 
-    m_GUIParams[tabCharset] = "";
+    m_GUIParams[tabCharset] = "Charset";
     m_GUIParams[tabData] = "";
     m_GUIParams[tabLevels] = "";
     m_GUIParams[tabEffects] = "Effects";
@@ -58,7 +59,6 @@ LImageNES::LImageNES(LColorList::Type t) : CharsetImage(t)
     m_exportParams["StartY"] = 0;
     m_exportParams["EndY"] = m_charHeight;
     m_exportParams["Compression"] = 0;
-
 
 
     for (int i=0;i<4;i++)
@@ -128,18 +128,6 @@ void LImageNES::setForeground(unsigned int col)
  //   qDebug() << "HERE";
 }
 
-void LImageNES::ConstrainColours(QVector<int> cols) {
-
-    int j=0;
-    for (int i=0;i<m_colorList.m_list.count();i++)
-        if (cols.contains(i)) {
-            m_colorList.m_list[i].displayList = true;
-//            m_colorList.m_list[i].currentIndex = j++;
-        }
-        else
-            m_colorList.m_list[i].displayList = false;
-
-}
 
 void LImageNES::SaveBin(QFile &file)
 {
@@ -205,6 +193,7 @@ void LImageNES::SetPalette(int pal)
 }
 
 
+
 unsigned int LImageNES::getPixel(int x, int y)
 {
     if (x>=m_width || x<0 || y>=m_height || y<0)
@@ -214,6 +203,9 @@ unsigned int LImageNES::getPixel(int x, int y)
         x=x/2;
         y=y/2;
     }
+
+
+
 
     int r = x/(float)8;
     x=x+r*8;

@@ -122,6 +122,7 @@ public:
 
     QVector<QPushButton*> m_buttonsImport;
     QVector<QPushButton*> m_buttonsEdit;
+    int m_constrainDisplay = -1;
 
     void ConstrainTo(int max);
     void SetGreyscale(QVector3D base, bool inverted);
@@ -147,6 +148,7 @@ public:
     void InitCGA1_HIGH();
     void InitOK64();
     void InitNES();
+    void InitNES4();
     void InitCGA2_LOW();
     void InitCGA2_HIGH();
     void UpdateColors();

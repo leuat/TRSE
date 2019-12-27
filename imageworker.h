@@ -44,7 +44,7 @@ public:
 
     //LColorList m_colorList;
 
-    ImageEdit* m_currentImage;// = ImageEdit(LImageFactory::HiresBitmap);
+    ImageEdit* m_currentImage = nullptr;// = ImageEdit(LImageFactory::HiresBitmap);
     QVector<ImageEdit*> m_images;
     QVector<ImageType> m_types;
 
@@ -54,7 +54,8 @@ public:
 
     QStringList getImageTypes();
 
-    void New(int type, CharmapGlobalData gd);
+//    void New(int type, CharmapGlobalData gd);
+    void New(LImage* img, int image);
     void New(LImage* image, QString name);
     void SetImage(int cur);
 

@@ -42,6 +42,7 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
     m_grid.ApplyToLabel(ui->lblGrid);
     updateCharSet();
     ui->lblGrid->setVisible(ui->chkGrid->isChecked());
+
 /*    ui->lblImage->setMouseTracking(true);
     ui->lblGrid->setMouseTracking(true);
     setMouseTracking(true);
@@ -61,7 +62,7 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
 
     m_updateThread.SetCurrentImage(&m_work, &m_toolBox, getLabelImage());
 
-
+//    setFocusPolicy(Qt::StrongFocus);
 
 
 }
@@ -295,6 +296,9 @@ void FormImageEditor::UpdateImage()
 
 void FormImageEditor::UpdateGrid()
 {
+    if (m_work.m_currentImage==nullptr)
+        return;
+
     m_grid.CreateGrid(m_work.m_currentImage->m_image->m_charWidthDisplay,m_work.m_currentImage->m_image->m_charHeightDisplay,m_updateThread.m_gridColor,4, m_updateThread.m_zoom, QPoint(m_updateThread.m_zoomCenter.x(), m_updateThread.m_zoomCenter.y()));
     m_grid.ApplyToLabel(ui->lblGrid);
 
@@ -316,9 +320,12 @@ void FormImageEditor::Load(QString filename)
 
 
     PrepareImageTypeGUI();
-    if (dynamic_cast<ImageLevelEditor*>(img)!=nullptr || dynamic_cast<C64FullScreenChar*>(img)!=nullptr ||dynamic_cast<LImageMetaChunk*>(img)!=nullptr)
-        img->LoadCharset(m_projectIniFile->getString("charset_"+m_currentFileShort),0);
-    updateCharSet();
+    if (QFile::exists(m_projectIniFile->getString("charset_"+m_currentFileShort))) {
+        if (dynamic_cast<ImageLevelEditor*>(img)!=nullptr || dynamic_cast<C64FullScreenChar*>(img)!=nullptr ||dynamic_cast<LImageMetaChunk*>(img)!=nullptr)
+            img->LoadCharset(m_projectIniFile->getString("charset_"+m_currentFileShort),0);
+
+        updateCharSet();
+    }
 
     Data::data.redrawFileList = true;
     Data::data.Redraw();
@@ -352,7 +359,7 @@ void FormImageEditor::Load(QString filename)
     }
 
 //    if (dynamic_cast<LImageNES*>(m_work.m_currentImage->m_image)!=nullptr) {
-     if (m_work.m_currentImage->m_image->getColorType()==LColorList::NES) {
+     if (m_work.m_currentImage->m_image->m_type==LImage::NES) {
         on_cmbNesPalette_currentIndexChanged(0);
     }
 
@@ -440,16 +447,22 @@ QLabel* FormImageEditor::getLabelImage()
 
 void FormImageEditor::UpdateCurrentMode()
 {
+    if (m_work.m_currentImage==nullptr)
+        return;
     ui->lblMode->setText(m_work.m_currentImage->m_image->GetCurrentModeString());
 }
 void FormImageEditor::UpdatePalette()
 {
     if (m_work.m_currentImage==nullptr)
         return;
+    if (m_work.m_currentImage->m_image == nullptr)
+        return;
     LColorList* l = &m_work.m_currentImage->m_image->m_colorList;
     //if (m_currentColorList!=l)
     //{
-        l->CreateUI(ui->layoutColorsEdit_3,1);
+
+        if (m_work.m_currentImage->m_image->m_supports.displayColors)
+            l->CreateUI(ui->layoutColorsEdit_3,1);
         l->FillComboBox(ui->cmbBackgroundMain_3);
         l->FillComboBox(ui->cmbBorderMain_3);
         l->FillComboBox(ui->cmbMC1);
@@ -491,6 +504,12 @@ void FormImageEditor::UpdatePalette()
 
     ui->lblTimeStamp->setVisible(m_work.m_currentImage->m_image->m_supports.displayTimestamp);
     ui->leTimeStamp->setVisible(m_work.m_currentImage->m_image->m_supports.displayTimestamp);
+    if (!m_work.m_currentImage->m_image->m_supports.displayCmbColors) {
+        ui->cmbMC1->setVisible(false);
+        ui->cmbMC2->setVisible(false);
+        ui->cmbBorderMain_3->setVisible(false);
+        ui->cmbBackgroundMain_3->setVisible(false);
+    }
 
 
     m_work.m_currentImage->m_image->ApplyColor();
@@ -507,6 +526,16 @@ void FormImageEditor::FillCMBColors()
     ui->cmbBackgroundMain_3->setCurrentIndex(m_work.m_currentImage->m_image->m_background);
     ui->cmbMC1->setCurrentIndex(m_work.m_currentImage->m_image->m_extraCols[1]);
     ui->cmbMC2->setCurrentIndex(m_work.m_currentImage->m_image->m_extraCols[2]);
+
+}
+
+void FormImageEditor::focusInEvent(QFocusEvent *)
+{
+}
+
+void FormImageEditor::Reload()
+{
+    m_work.m_currentImage->m_image->onFocus();
 
 }
 
@@ -785,6 +814,9 @@ void FormImageEditor::on_btnSaveAs_clicked()
 
 void FormImageEditor::updateCharSet()
 {
+    if (m_work.m_currentImage==nullptr)
+        return;
+
     UpdateCurrentMode();
     CharsetImage* charmap = m_work.m_currentImage->m_image->getCharset();
 
@@ -986,7 +1018,8 @@ void FormImageEditor::SetMCColors()
         lst.append(c);
         lst.append(back);
         m_work.m_currentImage->m_image->ConstrainColours(lst);
-        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1);
+        if (m_work.m_currentImage->m_image->m_supports.displayColors)
+            m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1);
     }
 
     updateCharSet();
@@ -1307,9 +1340,8 @@ void FormImageEditor::on_btnResizeData_clicked()
     if (img==nullptr)
         return;
 
-
     DialogNewImage* dResize = new DialogNewImage(this);
-    dResize->Initialize(m_work.getImageTypes());
+    dResize->Initialize(m_work.m_types);
     dResize->setModal(true);
     dResize->SetResizeMeta(img->m_meta);
 
@@ -1679,5 +1711,10 @@ void FormImageEditor::on_cmbBank_currentIndexChanged(int index)
 {
     m_work.m_currentImage->m_image->SetBank(index);
     updateCharSet();
+
+}
+
+void FormImageEditor::on_cmbNesPalette_activated(int index)
+{
 
 }

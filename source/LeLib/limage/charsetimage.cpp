@@ -168,6 +168,7 @@ uchar CharsetImage::getVariableColor(PixelChar *pc)
 
 void CharsetImage::LoadCharset(QString file, int skipBytes)
 {
+    m_charsetFilename = file;
     MultiColorImage::LoadCharset(file, skipBytes);
     if (m_charset!=nullptr)
         CopyFrom(m_charset);
@@ -559,6 +560,11 @@ void CharsetImage::setLimitedPixel(int x, int y, unsigned int color)
 
 //    qDebug() << color;
 
+}
+
+void CharsetImage::onFocus() {
+    if (m_charsetFilename!="")
+        LoadCharset(m_charsetFilename,0);
 }
 
 void CharsetImage::CopyChar()

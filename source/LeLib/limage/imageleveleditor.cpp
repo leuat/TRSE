@@ -40,7 +40,7 @@ void ImageLevelEditor::SetLevel(QPoint f)
     m_background = m_currentLevel->m_ExtraData[0];
 //        qDebug() << QString::number(m_currentLevel->m_ExtraData[i]);
 
-    if (m_charset!=nullptr) {
+    if (m_charset!=nullptr && m_type!=LImage::LevelEditorNES) {
         m_charset->SetColor(m_currentLevel->m_ExtraData[0], 0);
         m_charset->SetColor(m_currentLevel->m_ExtraData[1], 1);
         m_charset->SetColor(m_currentLevel->m_ExtraData[2], 2);
@@ -50,6 +50,8 @@ void ImageLevelEditor::SetLevel(QPoint f)
     SetColor(m_currentLevel->m_ExtraData[1], 1);
     SetColor(m_currentLevel->m_ExtraData[2], 2);
 */
+
+
 }
 
 ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
@@ -89,12 +91,20 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_GUIParams[tabLevels] = "1";
 
 
+    m_metaParams.append(new MetaParameter("screen_width","Screen width",20,2,1000));
+    m_metaParams.append(new MetaParameter("screen_height","Screen height",10,2,1000));
+    m_metaParams.append(new MetaParameter("levels_x","Levels x",4,1,100));
+    m_metaParams.append(new MetaParameter("levels_y","Levels y",4,1,100));
+    m_metaParams.append(new MetaParameter("data_width","Data width",8,0,100));
+    m_metaParams.append(new MetaParameter("data_count","Data count",8,0,100));
+    m_metaParams.append(new MetaParameter("data_extra","Extra data",3,0,1000));
+    m_metaParams.append(new MetaParameter("use_colors","Use charset colors",1,1,1));
 
 }
 
-void ImageLevelEditor::Initialize(CharmapGlobalData meta)
+void ImageLevelEditor::Initialize()
 {
-    m_meta = meta;
+//    m_meta = meta;
     m_meta.Calculate();
 //    qDebug() << meta.m_width;
   //  qDebug() << meta.dataSize();
@@ -145,58 +155,23 @@ void ImageLevelEditor::SaveBin(QFile &file)
         if (m_meta.m_useColors)
            file.write( l->m_ColorData);
 
-        file.write( l->m_ExtraData);
+//        qDebug() << "LevelEditor::savebin count " <<l->m_ColorData.count();
+        if (l->m_ExtraData.count()!=0)
+            file.write( l->m_ExtraData);
 
-        if (l->m_CharData.size()!= ll->m_CharData.size()) {
-            qDebug() << "1";
-            exit(1);
-        }
-        if (l->m_ColorData.size()!= ll->m_ColorData.size()) {
-            qDebug() << "1";
-            exit(1);
-        }
-        if (l->m_ExtraData.size()!= ll->m_ExtraData.size()) {
-            qDebug() << "1";
-            exit(1);
-        }
     }
 
 }
 
 void ImageLevelEditor::LoadBin(QFile &file)
 {
-    // Make sure
-    //QByteArray header = file.read(32);
-/*    QByteArray h1 = file.read(9);
+    QByteArray h1 = file.read(32);
     m_meta.fromHeader(h1);
-//    m_meta.m_useColors = true;
     m_meta.Calculate();
-    int actualSize = m_meta.totalSize() + 13;
-    // Test for old or new version of file type
-    qDebug() << "Actual file size : " << QString::number(file.size());
-    qDebug() << "Should be file size : " << QString::number(actualSize);
-    if (file.size()==actualSize) {
-        qDebug() << "NEW type of file!";
-        // NEW version:
-        */
-        QByteArray h1 = file.read(32);
-//        h1.append(h2);
-        m_meta.fromHeader(h1);
-        m_meta.Calculate();
 
-/*    }
-    else {
-        qDebug() << "OLD type of file!";
-        m_meta.m_useColors = true;
-     }
-
-*/
-    Initialize(m_meta);
+    Initialize();
     m_width = m_meta.m_width*16;
     m_height = m_meta.m_height*16;
-/*    qDebug() << "INChardata: " <<m_meta.dataSize();
-    qDebug() << "INExtraData: " <<m_meta.m_extraDataSize;*/
-//    qDebug() << " WIDTH " << m_meta.m_width;
     for (CharmapLevel* l : m_levels) {
 
         l->m_CharData = file.read(m_meta.dataSize());
@@ -303,30 +278,57 @@ QVector<QPixmap> ImageLevelEditor::CreateIcons()
     return lst;
 }
 
+QString ImageLevelEditor::getMetaInfo()
+{
+    QString txt="";
+    m_meta.m_sizex = getMetaParameter("levels_x")->value;
+    m_meta.m_sizey = getMetaParameter("levels_y")->value;
+    m_meta.m_width = getMetaParameter("screen_width")->value;
+    m_meta.m_height = getMetaParameter("screen_height")->value;
+    m_meta.m_dataChunks = getMetaParameter("data_count")->value;
+    m_meta.m_dataChunkSize = getMetaParameter("data_width")->value;
+    m_meta.m_extraDataSize = getMetaParameter("data_extra")->value;
+    m_meta.m_useColors = getMetaParameter("use_colors")->value==1.0;
+    m_meta.Calculate();
+//    m_meta.m_data = getMetaParameter("screen_height")->value;
+ //   m_meta.m_height = getMetaParameter("screen_height")->value;
 
-bool ImageLevelEditor::PixelToPos(int x, float y, int& pos)
+    txt+= "Char Data & color size: " + QString::number(m_meta.dataSize()) + " bytes\n";
+    txt+= "Extra data size: " + QString::number(m_meta.m_extraDataSize) + " bytes\n";
+    txt+= "Level size: " + QString::number(m_meta.levelSize()) + " bytes\n";
+    txt+= "Total no levels: " + QString::number(m_meta.m_sizex*m_meta.m_sizey) + " \n";
+    txt+= "Total size: " + QString::number(m_meta.totalSize()) + " bytes\n";
+
+    return txt;
+}
+
+
+bool ImageLevelEditor::PixelToPos(int x, float y, int& pos, int w, int h)
 {
     if (x>=m_width || x<0 || y>=m_height || y<0)
         return false;
 
-    x/=16.0;
+/*    x/=16.0;
     y/=16.0;
+*/
 
+    x=x/(float)m_width*w;
+    y=y/(float)m_height*h;
 
     x=x-m_meta.m_startx;
     y=(y-(m_meta.m_starty*0.5-0.01));
     if (y<0) return false;
     if (x<0) return false;
 
-    if (x>=m_meta.m_width)
+    if (x>=w)
         return false;
 
 //    if (rand()%100>98)
 
   //  qDebug() <<m_meta.m_width;
 
-    pos = x + (int)y*m_meta.m_width;
-    if ((pos<0 || pos>=m_meta.dataSize()))
+    pos = x + (int)y*w;
+    if ((pos<0 || pos>=w*h))
         return false;
 
     return true;
@@ -353,7 +355,7 @@ void ImageLevelEditor::Fix()
 void ImageLevelEditor::setPixel(int x, int y, unsigned int color)
 {
     int pos;
-    if (!PixelToPos(x,y, pos))
+    if (!PixelToPos(x,y, pos,m_meta.m_width, m_meta.m_height))
         return; // out of bounds
 
 //    qDebug() << (m_writeType==Color);
@@ -371,7 +373,7 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
     if (m_charset==nullptr)
         return 0;
     int pos;
-    if (!PixelToPos(x,y, pos))
+    if (!PixelToPos(x,y, pos,m_meta.m_width, m_meta.m_height))
         return 0; // out of bounds
 
 
@@ -425,7 +427,8 @@ void ImageLevelEditor::CopyFrom(LImage *mc)
         CharmapGlobalData d = c->m_meta;
         //d.m_sizex = 1;
         //d.m_sizey = 1;
-        Initialize(c->m_meta);
+        m_meta = c->m_meta;
+        Initialize();
 
         m_currencChar = c->m_currencChar;
 
@@ -454,6 +457,12 @@ void ImageLevelEditor::CopyFrom(LImage *mc)
     else
     LImage::CopyFrom(mc);
 
+}
+
+void ImageLevelEditor::onFocus()
+{
+    if (m_charsetFilename!="")
+        LoadCharset(m_charsetFilename,0);
 }
 
 

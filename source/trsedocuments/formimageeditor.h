@@ -83,6 +83,10 @@ public:
     void SetMCColors();
     void UpdateLevels();
     void FillCMBColors();
+    virtual void focusInEvent( QFocusEvent* ) override;
+
+    void Reload() override;
+
 
     void resizeEvent(QResizeEvent *event) override;
 
@@ -228,6 +232,7 @@ private slots:
     void on_cmbBorderMain_3_activated(int index);
     void on_cmbNesPalette_currentIndexChanged(int index);
     void on_cmbBank_currentIndexChanged(int index);
+    void on_cmbNesPalette_activated(int index);
 };
 
 

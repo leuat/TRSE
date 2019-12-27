@@ -367,6 +367,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("PPUSingle"))
         PPUSingle(as);
 
+    if (Command("PPURead"))
+        PPURead(as);
+
 //    m; SetVeraBank;X16; b
   //  m; SetVeraAddition;X16; b
 
@@ -2935,7 +2938,7 @@ void Methods6502::LoadPalette(Assembler* as)
 
     QString lbl = as->NewLabel("LoadPalette");
 
-  as->Asm("LDA $2002");
+//  as->Asm("LDA $2002");
   as->Asm("LDA #$3F");
   as->Asm("STA $2006");
   as->Asm("LDA #$00");
@@ -2989,14 +2992,28 @@ void Methods6502::PPUDump(Assembler *as, int hi, int lo, int x, int y)
 
 void Methods6502::PPUSingle(Assembler *as)
 {
-    as->Asm("lda $2002");
+//    as->Asm("lda $2002");
     LoadVar(as,0);
     as->Asm("sta $2006");
     LoadVar(as,1);
-    QString addr = m_node->m_params[0]->getAddress();
+//    QString addr = m_node->m_params[0]->getAddress();
     as->Asm("sta $2006");
     LoadVar(as,2);
     as->Asm("sta $2007");
+
+}
+
+void Methods6502::PPURead(Assembler *as)
+{
+//    return;
+//    as->Asm("lda $2002");
+    LoadVar(as,0);
+    as->Asm("sta $2006");
+    LoadVar(as,1);
+    as->Asm("sta $2006");
+//    QString addr = m_node->m_params[0]->getAddress();
+//    as->Asm("sta $2006");
+    as->Asm("lda $2007");
 
 }
 

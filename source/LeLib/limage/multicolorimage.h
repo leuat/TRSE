@@ -167,9 +167,13 @@ public:
     virtual void Clear() override;
 
     int LookUp(PixelChar pc);
+    QString m_charsetFilename ="";
+
     CharsetImage* m_charset = nullptr;
     virtual void setMultiColor(bool doSet) override;
     void ForceBackgroundColor(int col, int swapCol);
+
+
 
 
 
@@ -178,6 +182,8 @@ public:
     void SaveCharRascal(QString file, QString name);
     void LoadCharset(QString file, int skipBttes) override;
     bool isMultiColor() override { return m_bitMask==0b11; }
+
+    void onFocus() override;
 
 //    unsigned char m_border=0, m_background=0;
 

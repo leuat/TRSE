@@ -45,6 +45,7 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("PICO 8", LImage::Type::QImageBitmap, LColorList::Type::PICO8));
     m_types.append(ImageType("NES CHR", LImage::Type::NES, LColorList::Type::NES));
     m_types.append(ImageType("NES Meta chunk editor", LImage::Type::LMetaChunk, LColorList::Type::NES));
+    m_types.append(ImageType("NES Sprite editor", LImage::Type::SpritesNES, LColorList::Type::NES));
     m_types.append(ImageType("C64 Sprite Editor (deprecated type)", LImage::Type::Sprites,LColorList::Type::C64));
 //    m_types.append(ImageType("C64 Multicolor Charmap Fixed Colors", LImage::Type::CharMapMultiColorFixed,LColorList::Type::C64));
 
@@ -55,7 +56,7 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("TIFF", LImage::Type::Tiff,LColorList::Type::TIFF));
 */
 
-    New(5,CharmapGlobalData());
+    //New(5,);
 }
 
 ImageWorker::~ImageWorker()
@@ -104,7 +105,6 @@ void ImageWorker::New(LImage *image, QString name)
         qDebug() << "WTF NULLPTR imagetype ";
         return;
     }
-
     m_currentImage = new ImageEdit(image, imageType, name);
     //m_currentImage = new ImageEdit(imageType, "New Image");
     m_images.append(m_currentImage);
@@ -112,23 +112,13 @@ void ImageWorker::New(LImage *image, QString name)
     Data::data.Redraw();
 }
 
-void ImageWorker::New(int image, CharmapGlobalData gd = CharmapGlobalData())
+void ImageWorker::New(LImage* img, int image)
 {
 //    exit(1);
-    m_currentImage = new ImageEdit(&m_types[image], "New Image");
-    if (m_types[image].type==LImage::Type::LevelEditor || m_types[image].type==LImage::Type::LevelEditorNES)
-        dynamic_cast<ImageLevelEditor*>(m_currentImage->m_image)->Initialize(gd);
-    if (m_types[image].type==LImage::Type::VIC20_MultiColorbitmap) {
-        LImageVIC20* lv =  dynamic_cast<LImageVIC20*>(m_currentImage->m_image);
-        lv->SetCharSize(gd.m_width, gd.m_height);
-    }
-    if (m_types[image].type==LImage::Type::FullScreenChar) {
-        C64FullScreenChar* lv =  dynamic_cast<C64FullScreenChar*>(m_currentImage->m_image);
-        lv->SetCharSize(gd.m_width, gd.m_height);
-        lv->DeleteAll();
-        lv->AddNew(gd.m_width, gd.m_height);
-    }
 
+    m_currentImage = new ImageEdit(&m_types[image], "New Image");
+
+    m_currentImage->Initialize(img);
     m_images.append(m_currentImage);
     m_currentImage->m_fileName="";
 

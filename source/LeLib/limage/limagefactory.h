@@ -41,11 +41,16 @@
 #include "source/LeLib/limage/limagenes.h"
 #include "source/LeLib/limage/limagemetachunk.h"
 #include "source/LeLib/limage/limagelevelnes.h"
+#include "source/LeLib/limage/limagemetablocksprites.h"
 
 class LImageFactory {
 public:
 
     static LImage* Create(LImage::Type t, LColorList::Type colorType) {
+
+//        qDebug() << "LIMageIO :: create " << colorType;
+
+
         if (t == LImage::Type::QImageBitmap)
             return new LImageQImage(colorType);
         if (t == LImage::Type::MultiColorBitmap)
@@ -86,6 +91,9 @@ public:
             return new LImageMetaChunk(colorType);
         if (t == LImage::Type::LevelEditorNES)
             return new LImageLevelNES(colorType);
+        if (t == LImage::Type::SpritesNES) {
+            return new LImageMetaBlockSprites(colorType);
+        }
 
         qDebug() << "ERROR: LImageFactory could not find type " << t;
         return nullptr;

@@ -20,6 +20,15 @@ public:
     void ExportBin(QFile &file);
 
 
+    void setPixel(int x, int y, unsigned int color) override;
+
+    QString getMetaInfo();
+
+    void Initialize() override;
+
+    void LoadBin(QFile &file) override;
+
+
 };
 
 #endif // LIMAGELEVELNES_H

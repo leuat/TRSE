@@ -20,9 +20,12 @@ public:
     void CopyFrom(LImage* img) override;
     void setForeground(unsigned int col) override;
 
-    void ConstrainColours(QVector<int> cols) override;
 
     void SaveBin(QFile& file) override;
+    void ConstrainColours(QVector<int>& cols) override {
+        PerformConstrainColours(cols);
+
+    }
 
     void LoadBin(QFile& file) override;
     void ApplyColor() override {
