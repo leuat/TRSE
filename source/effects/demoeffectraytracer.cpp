@@ -104,7 +104,8 @@ void DemoEffectRaytracer::Render(QImage &img)
     if (m_img.width()<321)
         m_pixmap = m_pixmap.scaled(320, 200, Qt::IgnoreAspectRatio, Qt::FastTransformation);
 
-
+//    msleep(1000);
+    m_ready = false;
     emit SignalImageUpdate();
 
     }

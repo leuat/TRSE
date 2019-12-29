@@ -56,37 +56,10 @@ public:
 
     void ForceBackgroundColor(int col, int swapcol);
 
-    int Compare(PixelChar& other) {
-        int l = 0;
-        for (int i=0;i<8;i++)
-            l+=other.p[i] != p[i];
-
-/*        for (int i=0;i<4;i++)
-            l+=other.c[i]!=c[i];
-*/
-        return l;
-
-    }
+    int Compare(PixelChar& other);
 
 
-    int CompareLength(PixelChar& other) {
-        int l = 0;
-        for (int i=0;i<8;i++)
-            for (int j=0;j<4;j++) {
-                char a = (p[i]>>(2*j))&0b11;
-                char b = (other.p[i]>>(2*j))&0b11;
-                if ( a != b )
-                    l++;
-                if (a==0 && b!=0) l++;
-                if (b==0 && a!=0) l++;
-
-            }
-//            if (other.p[i]!=p[i])
-  //          l+=other.p[i] != p[i];
-
-        return l;
-
-    }
+    int CompareLength(PixelChar& other);
 
     int CompareLength2(PixelChar& other) {
         int l = 0;
@@ -234,7 +207,7 @@ public:
 
    void ExportCompressed(QString f1, QString f2) override;
 
-   void CompressAndSave(QByteArray& chars, QByteArray& screen, int x0,int x1, int y0, int y1, int& noChars, int compression, int maxChars);
+   void CompressAndSave(QByteArray& chars, QVector<int>& screen, int x0,int x1, int y0, int y1, int& noChars, int compression, int maxChars);
 
    void SetColor(uchar col, uchar idx) override;
 

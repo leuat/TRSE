@@ -91,6 +91,8 @@ public:
     static QString numToHex(int v);
     static QString path;
 
+    static QByteArray toQByteArray(QVector<int>& data);
+
     static QColor colorScale(QColor& col, int mean, int std);
 
     static int isEqual(QColor a, QColor b);

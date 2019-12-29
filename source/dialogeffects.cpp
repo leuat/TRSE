@@ -4,7 +4,8 @@
 LuaScript* m_script = nullptr;
 QString m_infoText = "", m_error="";
 QString m_currentDir;
-QByteArray m_screenData, m_charData;
+QByteArray m_charData;
+QVector<int> m_screenData;
 AbstractDemoEffect* m_effect = nullptr;
 Compression m_compression;
 
@@ -301,6 +302,19 @@ static int AddObject(lua_State *L)
 
     }
 
+    if (object=="triangleprism") {
+        obj =
+                    new RayObjectTrianglePrism(
+                        QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
+                        QVector3D(lua_tonumber(L,N+6),lua_tonumber(L,N+7),lua_tonumber(L,N+8)),
+                        QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
+                        mat);
+
+//        obj->m_flatten = false;
+
+    }
+
+
     if (object=="char") {
 
         CharsetImage* charset = new CharsetImage(LColorList::C64);
@@ -510,8 +524,10 @@ static int AddScreen(lua_State* L) {
     if (!VerifyFjongParameters(L,"AddScreen"))
         return 0;
 
-    if (m_effect!=nullptr)
-        m_compression.AddScreen(m_screenData, m_effect->m_img,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));//, lua_tonumber(L,5),lua_tonumber(L,6));
+    if (m_effect!=nullptr) {
+        QByteArray ba = Util::toQByteArray(m_screenData);
+        m_compression.AddScreen(ba, m_effect->m_img,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));//, lua_tonumber(L,5),lua_tonumber(L,6));
+    }
 
     return 0;
 }
@@ -577,7 +593,8 @@ static int SaveScreenAndCharset(lua_State* L) {
 
     QFile f2(m_currentDir+"/"+lua_tostring(L,1));
     f2.open(QFile::WriteOnly);
-    f2.write(m_screenData);
+    QByteArray d = Util::toQByteArray(m_screenData);
+    f2.write(d);
     f2.close();
     m_screenData.clear();
     return 0;
@@ -623,7 +640,9 @@ static int SaveDataScreen(lua_State* L) {
     QFile f(m_currentDir+"/"+ lua_tostring(L,1));
     f.open(QFile::WriteOnly);
 
-    f.write(m_screenData);
+    QByteArray ba = Util::toQByteArray(m_screenData);
+
+    f.write(ba);
     f.close();
     m_screenData.clear();
     return 0;
@@ -762,12 +781,22 @@ lua_register(m_script->L, "ApplyForce", ApplyForce);
 
 */
 
+
 static int OptimizeScreenAndCharset(lua_State* L) {
     if (!VerifyFjongParameters(L,"OptimizeScreenAndCharset"))
         return 0;
 
-    QByteArray sOut, cOut;
+    QByteArray cOut;
+    QVector<int> sOut;
 //    void Compression::OptimizeScreenAndCharset(QByteArray &screen, QByteArray &charset, QByteArray &sOut, QByteArray &cOut, int sw, int sh, int charSize, int compression)
+
+/*
+    long j=0;
+    for (int i=0;i<m_charData.count();i++ )
+        j=j+m_charData[i];
+
+    qDebug() << "Num: " << j;
+*/
 
     m_compression.OptimizeScreenAndCharset(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
 //    m_charData.clear();
@@ -796,13 +825,15 @@ static int CompressAndSaveHorizontalData(lua_State* L) {
     if (!VerifyFjongParameters(L,"CompressAndSaveHorizontalData"))
         return 0;
 
-    QByteArray packedData, table;
+    QByteArray table,packedData;
     table.clear();
+    QByteArray ba = Util::toQByteArray(m_screenData);
+
 //    qDebug() <<m_count*16 << " but is " <<m_screenData.count()/ww;
     if (m_screenData.count()!=0)
-        m_compression.OptimizeAndPackCharsetData(m_screenData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
+        m_compression.OptimizeAndPackCharsetData(ba, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
     else
-        m_compression.OptimizeAndPackCharsetData(m_charData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
+        m_compression.OptimizeAndPackCharsetData(ba, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
   //  qDebug() << "Table should be : " << (m_noChars-1)*1024;
     //qDebug() << "Table is : " << table.count();
 
@@ -1017,6 +1048,7 @@ void DialogEffects::UpdateGlobals()
 
 void DialogEffects::UpdateImage()
 {
+
     if (m_effect==nullptr)
         return;
 
@@ -1024,7 +1056,6 @@ void DialogEffects::UpdateImage()
         ui->txtOutput->setText(m_error);
         return;
     }
-
 
 
     ui->lblImage->setPixmap( m_effect->m_pixmap );

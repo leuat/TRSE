@@ -494,3 +494,16 @@ float RayObjectHoles::intersect(Ray *ray)
     return max(mm,cut);// + amp*deltay;
 
 }
+
+QVector3D RayObjectTrianglePrism::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D &tangent)
+{
+
+}
+
+float RayObjectTrianglePrism::intersect(Ray *ray)
+{
+    QVector3D p = m_localPos+ ray->m_currentPos;
+    QVector3D q = Util::abss(m_localPos+ ray->m_currentPos);// +ray->m_currentPos;
+      return max(q.z()-m_box.y(),max(q.x()*0.866025f+p.y()*0.5f,-p.y())-m_box.x()*0.5f);
+
+}

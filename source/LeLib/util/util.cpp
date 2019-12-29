@@ -322,6 +322,14 @@ QString Util::numToHex(int v)
     return "$" +o;
 }
 
+QByteArray Util::toQByteArray(QVector<int> &data)
+{
+    QByteArray a;
+    for (int& i: data)
+        a.append((uchar)i);
+    return a;
+}
+
 QColor Util::colorScale(QColor &col, int mean, int std)
 {
     float f = 1.0/(2*std)*255;

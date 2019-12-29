@@ -24,7 +24,7 @@ public:
 
     int CompareSprites(QByteArray& d1,QByteArray& d2, int sprite1, int sprite2);
 
-    void OptimizeScreenAndCharset(QByteArray& screen, QByteArray& charset, QByteArray &sOut, QByteArray& cOut, int sw, int sh, int charSize, int compression);
+    void OptimizeScreenAndCharset(QVector<int>& screen, QByteArray& charset, QVector<int> &sOut, QByteArray& cOut, int sw, int sh, int charSize, int compression);
 
     void SaveCompressedSpriteData(QByteArray& data, QString dataFile, QString tableFile, int address, int compressionLevel);
 
