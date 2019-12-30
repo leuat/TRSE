@@ -299,6 +299,12 @@ cnt SHOULD be  576*/
 
 }
 
+void Compression::AddCharsetScreen(QByteArray &data, QImage &img, CharsetImage *charset, int w, int h)
+{
+
+
+}
+
 void Compression::AddPetsciiScreen(QByteArray &data, QImage &img)
 {
 

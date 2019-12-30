@@ -74,7 +74,7 @@ public:
         if (dither==1)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
         if (dither==2)
-            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength);
+            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,1);
         if (dither==0)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
 
@@ -90,7 +90,39 @@ public:
         if (dither==1)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
         if (dither==2)
-            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength);
+            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,1);
+        if (dither==0)
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
+
+        m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
+
+    }
+
+    void ConvertToBIN(int dither, QVector3D ditherStrength)
+    {
+/*        if (m_outputType!=1)
+            return;*/
+        m_mc->m_colorList.EnableColors(m_cols);
+        if (dither==1)
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
+        if (dither==2)
+            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,1.0);
+        if (dither==0)
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
+
+        m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
+
+    }
+
+    void ConvertToStandard(int dither, QVector3D ditherStrength)
+    {
+/*        if (m_outputType!=1)
+            return;*/
+//        m_mc->m_colorList.EnableColors(m_cols);
+        if (dither==1)
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
+        if (dither==2)
+            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,1);
         if (dither==0)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
 

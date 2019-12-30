@@ -317,10 +317,15 @@ public:
 class RayObjectPerlin : public AbstractRayObject {
 public:
     QVector3D m_perlinVals;
-    AbstractRayObject* m_obj;
+//    AbstractRayObject* m_obj;
     RayObjectPerlin(QVector3D vals, AbstractRayObject* obj) {
         m_perlinVals = vals;
-        m_obj = obj;
+  //      m_obj = obj;
+        m_children.append(obj);
+        m_position = obj->m_position;
+        m_localPos = obj->m_localPos;
+        m_rotation = obj->m_rotation;
+        m_bbRadius = obj->m_bbRadius;
     }
 
     float intersect(Ray* ray) override;

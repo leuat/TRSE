@@ -173,7 +173,7 @@ public:
     void ExportKoa(QFile& f) override;
 
     void FloydSteinbergDither(QImage& img, LColorList& colors, bool dither) override;
-    void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength) override;
+    void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength, float gamma) override;
 
     void Initialize(int width, int height) override {}
 

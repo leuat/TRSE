@@ -11,6 +11,8 @@
 #include <QImage>
 #include <math.h>
 #include <QtMath>
+#include "source/LeLib/limage/charsetimage.h"
+
 class Compression
 {
 public:
@@ -33,6 +35,11 @@ public:
     void OptimizeAndPackCharsetData(QByteArray& dataIn, QByteArray& out, QByteArray& table, int width, int compression, bool invertTable);
 
     void ConvertToC64(bool dither);
+
+    void AddCharsetScreen(QByteArray& data, QImage& img, CharsetImage* charset,int w, int h);
+
+ //   void m_compression.AddCharsetScreen(ba, m_effect->m_img, charset, lua_tonumber(L,1),lua_tonumber(L,2));
+
 
     void AddPetsciiScreen(QByteArray& data, QImage& img);
     void AddBinaryScreen(QByteArray& data, QImage& img);

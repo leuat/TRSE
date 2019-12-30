@@ -32,6 +32,10 @@ void DemoEffectRaytracer::Initialize()
        m_mc = new LImageQImage(LColorList::PICO8);
        m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
    }
+   if (m_rt->m_globals.m_outputType == RayTracerGlobals::output_type_BINARY) {
+       m_mc = new LImageQImage(LColorList::PICO8);
+       m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
+   }
    m_mc->setMultiColor(true);
 
 
@@ -97,8 +101,13 @@ void DemoEffectRaytracer::Render(QImage &img)
         ConvertToP8(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
     if (m_outputType==RayTracerGlobals::output_type_VGA)
         ConvertToP8(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
+    if (m_outputType==RayTracerGlobals::output_type_BINARY)
+        ConvertToBIN(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
 
-    //qDebug() << "FRAME3";
+//    if (m_outputType==RayTracerGlobals::output_type_STANDARD)
+  //      ConvertToStandard(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
+
+
 
     m_pixmap.convertFromImage(m_img);
     if (m_img.width()<321)

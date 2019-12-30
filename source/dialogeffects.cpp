@@ -532,6 +532,36 @@ static int AddScreen(lua_State* L) {
     return 0;
 }
 
+static int AddCharsetScreen(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddCharsetScreen"))
+        return 0;
+
+
+    CharsetImage* charset = new CharsetImage(LColorList::C64);
+    int N = 3;
+    QString charName = lua_tostring(L,N);
+    if (charName.toLower()=="rom") {
+        charset->LoadCharset(":resources/character.rom",0);
+    }
+    else {
+        QString fname = m_currentDir+"/"+QString(lua_tostring(L,N));
+        if (!QFile::exists(fname)) {
+            m_error += "<br>Could not open file: " + fname;
+            return 0;
+        }
+
+        charset->LoadCharset(fname,0);
+    }
+
+    if (m_effect!=nullptr) {
+        QByteArray ba = Util::toQByteArray(m_screenData);
+        //m_compression.AddScreen(ba, m_effect->m_img,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));//, lua_tonumber(L,5),lua_tonumber(L,6));
+        m_compression.AddCharsetScreen(ba, m_effect->m_img, charset, lua_tonumber(L,1),lua_tonumber(L,2));
+    }
+
+    return 0;
+}
+
 static int AddToData(lua_State* L) {
     if (!VerifyFjongParameters(L,"AddToData"))
         return 0;
@@ -934,6 +964,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "SaveCompressedTRM", SaveCompressedTRM);
 
     lua_register(m_script->L, "AddScreen", AddScreen);
+    lua_register(m_script->L, "AddCharsetScreen", AddCharsetScreen);
     lua_register(m_script->L, "AddScreenPetscii", AddScreenPetscii);
     lua_register(m_script->L, "AddScreenBinary", AddScreenBinary);
     lua_register(m_script->L, "Se tQuatAxisAngle", SetQuatAxisAngle);
@@ -1018,6 +1049,15 @@ void DialogEffects::UpdateGlobals()
         m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.index_colors");
 
     }
+
+    if (m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_BINARY)  {
+
+        m_rt.m_globals.m_dither = m_script->get<float>("output.dither");
+        m_rt.m_globals.m_ditherStrength = m_script->getVec("output.ditherStrength");
+        m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.index_colors");
+    }
+
+
 
     if (m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_c64)  {
 

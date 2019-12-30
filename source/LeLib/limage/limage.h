@@ -201,7 +201,7 @@ public:
 
 
     virtual void FloydSteinbergDither(QImage& img, LColorList& colors, bool dither);
-    virtual void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength);
+    virtual void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength, float gamma);
 
 
     virtual int getContainerCount() {return 1;}
