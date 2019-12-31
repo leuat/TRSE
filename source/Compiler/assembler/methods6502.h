@@ -197,6 +197,9 @@ public:
     void vbmClearTile(Assembler *as);
     void vbmClearBlock(Assembler *as);
 
+    void initVbmDrawTileMapScreen(Assembler *as);
+    void vbmDrawTileMapScreen(Assembler *as);
+
     void vbmDrawDot(Assembler *as);
     void vbmClearDot(Assembler *as);
     void initVbmDot(Assembler* as);

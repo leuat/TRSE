@@ -170,6 +170,13 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("vbmClearBlock"))
         vbmClearBlock(as);
 
+    // TileMap - full screen
+    if (Command("initVbmDrawTileMapScreen"))
+        initVbmDrawTileMapScreen(as);
+    // Draw TileMap
+    if (Command("vbmDrawTileMapScreen"))
+        vbmDrawTileMapScreen(as);
+
     // Dot commands
     if (Command("initVbmDot"))
         initVbmDot(as);
@@ -1286,6 +1293,8 @@ void Methods6502::initVbm(Assembler* as)
     m_node->m_isInitialized["vbm"] = true;
 
     as->Comment("Initialise the core VBM (Vic20 Bitmap Mode) library");
+    as->Comment("Created by Andy H - Hewco.uk for use in Turbo Rascal");
+    as->Comment("See help to get started, all commmands begin with 'vbm'");
     as->IncludeFile(":resources/code/vbm/init_vbm.asm");
 
 }
@@ -1548,6 +1557,7 @@ void Methods6502::initVbmNextColumn(Assembler *as)
 
     as->Label("vbmNextColumn");
     as->Comment("move screenmemory to next column");
+    as->Comment("WARNING: This is not safe to use with Screen Scrolling as the character map position is unknown");
     as->Asm("lda screenmemory");
     as->Asm("clc");
     as->Asm("adc #192 ; next column");
@@ -1563,6 +1573,10 @@ void Methods6502::vbmNextColumn(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmNextColumn","InitVbmNextColumn");
 
+    if (m_node->m_isInitialized["vbmScrollLeft"] || m_node->m_isInitialized["vbmScrollRight"])
+        ErrorHandler::e.Error("vbmscrollright and vbmscrollleft are not compatible with vbmNextColumn. Use vbmSetPosition? or vbmSetColumn instead.", m_node->m_op.m_lineNumber);
+
+    as->Comment("WARNING: Do not use if using character screen scrolling commands");
     as->Asm("jsr vbmNextColumn");
 }
 
@@ -1572,9 +1586,9 @@ void Methods6502::vbmClearColor(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
 
     QString lbl = as->NewLabel("vbmCC_loop");
-        as->Asm("lda #$94");
+        as->Asm("lda #$93");
         as->Asm("sta screenmemory+1");
-        as->Asm("lda #$00");
+        as->Asm("lda #$ff");
         as->Asm("sta screenmemory");
 
         // load A with colour value to clear with
@@ -1587,7 +1601,7 @@ void Methods6502::vbmClearColor(Assembler* as)
             LoadVar(as, 0);
         }
 
-        as->Asm("ldy #240 ; colour mem to clear");
+        as->Asm("ldy #241 ; colour mem to clear (stops at zero so +1)");
     as->Label(lbl);
         as->Asm("sta (screenmemory),y");
         as->Asm("dey");
@@ -1965,6 +1979,180 @@ void Methods6502::vbmClearBlock(Assembler *as) {
 
 }
 
+void Methods6502::initVbmDrawTileMapScreen(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmTileMapScreen"])
+        return;
+
+    m_node->m_isInitialized["vbmTileMapScreen"] = true;
+
+    as->Comment("Draw tile characters to the bitmap using a tilemap array (columns,rows)");
+    as->Comment("Tilemap    = " + as->m_tempZeroPointers[0]);
+    as->Comment("Tile chars = " + as->m_tempZeroPointers[1]);
+    as->Comment("Temp addr  = " + as->m_tempZeroPointers[2] + " - used to calculate tile address");
+    as->Label("vbmDrawTileMapScreen");
+
+        as->Asm("lda #0");
+        as->Asm("sta vbmX ; tilemap x position");
+        as->Asm("sta vbmY ; tilemap y position");
+
+    as->Label("vbmDTM_Xloop");
+
+        as->Comment("calculate next screen memory position");
+        as->Asm("ldx vbmX");
+        as->Asm("lda vbmScrL,x   ; Address of table lo");
+        as->Asm("ldy vbmScrH,x   ; Address of table hi");
+        as->Asm("clc");
+        as->Asm("adc vbmY		; Add Y offset");
+        as->Asm("bcc vbmDTM_NSP_NoOverflow");
+        as->Asm("iny");
+
+    as->Label("vbmDTM_NSP_NoOverflow");
+        as->Asm("sta screenmemory");
+        as->Asm("sty screenmemory+1");
+
+    as->Label("vbmDTM_GetTileNum");
+        as->Comment("convert tile number (0-255) * 8 = memory offset");
+// 54 = tilemap, 56 = tiles, 58 = selected tile
+        as->Asm("ldy #0");
+        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y		; get tile from current position on tilemap");
+        as->Asm("sta " + as->m_tempZeroPointers[2]);
+        as->Asm("sty " + as->m_tempZeroPointers[2] + "+1");
+
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x2");
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x4");
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x8");
+
+        as->Asm("lda " + as->m_tempZeroPointers[2] );
+        as->Asm("clc");
+        as->Asm("adc "+ as->m_tempZeroPointers[1] + "  ; add tile low address");
+        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("lda " + as->m_tempZeroPointers[2] + "1");
+        as->Asm("adc " + as->m_tempZeroPointers[1] +"+1 ;#>tiles ; add tile high address");
+    as->Label("vbmDTM_GTN_Overflow");
+        as->Asm("sta " + as->m_tempZeroPointers[2] +"+1" );
+
+    as->Label("vbmDTM_DrawTile");
+        as->Comment("y reg is ZERO from ldy #0 in GetTileNum");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("sta (screenmemory),y");
+
+// 54 = tilemap, 56 = tiles, 58 = selected tile
+    as->Label("vbmDTM_NextTileMap");
+        as->Asm("clc");
+        as->Asm("inc " + as->m_tempZeroPointers[0] + "  ; low byte");
+        as->Asm("bne vbmDTM_NTM_NoOverflow");
+        as->Asm("inc " + as->m_tempZeroPointers[0] + "+1  ; high byte");
+    as->Label("vbmDTM_NTM_NoOverflow");
+        as->Comment("next x pos on screen");
+        as->Asm("inc vbmX");
+        as->Asm("lda #20   ; screen width");
+        as->Asm("cmp vbmX  ; have we reached this?");
+        as->Asm("bne vbmDTM_Xloop  ; no, draw next column");
+
+        as->Comment("yes, set x back to 0 and inc vbmY by 8 rows (pixels)");
+        as->Asm("lda #0");
+        as->Asm("sta vbmX");
+
+        as->Comment("check if y pos at end and loop if not");
+        as->Asm("lda vbmY");
+        as->Asm("clc");
+        as->Asm("adc #8");
+        as->Asm("sta vbmY");
+
+        as->Asm("lda #192   ; screen height in pixels");
+        as->Asm("cmp vbmY  ; have we reached this?");
+        as->Asm("beq vbmDTM_Done");
+        as->Asm("jmp vbmDTM_Xloop");
+
+    as->Label("vbmDTM_Done");
+
+}
+void Methods6502::vbmDrawTileMapScreen(Assembler* as)
+{
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmTileMapScreen","InitVbmDrawTileMapScreen");
+
+    if (as->m_tempZeroPointers.count() < 3) {
+        ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
+
+    // address 1 - tilemap
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    // address 2 - tiles
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+        ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr2= "";
+    if (m_node->m_params[1]->isPureNumeric())
+        addr2 = m_node->m_params[1]->HexValue();
+    if (var!=nullptr)
+        addr2 = var->getValue(as);
+
+    as->Comment("Using a tilemap, draw a screenfull of tiles to the bitmap");
+
+    as->Comment("Tilemap to use:");
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda " + addr1 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda #>" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    }
+    as->Comment("Tile characters to use:");
+    if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda " + addr2 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda #>" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    }
+    as->Asm("jsr vbmDrawTileMapScreen");
+
+}
+
 void Methods6502::initVbmDot(Assembler* as)
 {
     if (m_node->m_isInitialized["vbmDot"])
@@ -1974,6 +2162,63 @@ void Methods6502::initVbmDot(Assembler* as)
 
     as->Comment("VBM Dot mask");
     as->Label("vbmDotBit    dc.b $80, $40, $20, $10, $08, $04, $02, $01");
+
+    as->Label("vbmDrawDot");
+    as->Comment("Accumulator contains X position");
+    as->Asm("lsr   ; divide by 8 to find column number");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmScrL,x   ; Address of table lo");
+    as->Asm("ldy vbmScrH,x   ; Address of table hi");
+    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
+    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
+    as->Asm("lda vbmX");
+    as->Asm("and #7   ; find offset for dot");
+    as->Asm("tax");
+    as->Asm("lda vbmDotBit,x   ; get dot pattern");
+    as->Asm("ldy vbmY  ; draw dot in row");
+    as->Asm("ora (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("rts");
+
+    as->Label("vbmClearDot");
+    as->Comment("Accumulator contains X position");
+    as->Asm("lsr   ; divide by 8 to find column number");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmScrL,x   ; Address of table lo");
+    as->Asm("ldy vbmScrH,x   ; Address of table hi");
+    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
+    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
+    as->Asm("lda vbmX");
+    as->Asm("and #7   ; find offset for dot");
+    as->Asm("tax");
+    as->Asm("lda vbmDotBit,x   ; get dot pattern");
+    as->Asm("eor #$ff  ; invert it");
+    as->Asm("ldy vbmY  ; clear dot in row");
+    as->Asm("and (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("rts");
+
+    as->Label("vbmDrawDotE");
+    as->Comment("Accumulator contains X position");
+    as->Asm("lsr   ; divide by 8 to find column number");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmScrL,x   ; Address of table lo");
+    as->Asm("ldy vbmScrH,x   ; Address of table hi");
+    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
+    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
+    as->Asm("lda vbmX");
+    as->Asm("and #7   ; find offset for dot");
+    as->Asm("tax");
+    as->Asm("lda vbmDotBit,x   ; get dot pattern");
+    as->Asm("ldy vbmY  ; draw dot in row");
+    as->Asm("eor (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
 
 }
 void Methods6502::initVbmBlot(Assembler* as)
@@ -1986,6 +2231,78 @@ void Methods6502::initVbmBlot(Assembler* as)
     as->Comment("VBM Blot mask");
     as->Label("vbmBlotBit    dc.b $c0, $30, $0c, $03");
 
+    as->Label("vbmDrawBlot");
+    as->Comment("Accumulator contains X position");
+    as->Asm("lsr   ; divide by 8 to find column number");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmScrL,x   ; Address of table lo");
+    as->Asm("ldy vbmScrH,x   ; Address of table hi");
+    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
+    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
+    as->Asm("lda vbmX");
+    as->Asm("and #6   ; find offset for dot");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmBlotBit,x   ; get blot pattern");
+    as->Asm("ldy vbmY  ; draw dot in row");
+    as->Asm("ora (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("iny");
+    as->Asm("lda vbmBlotBit,x   ; get blot pattern for second row");
+    as->Asm("ora (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("rts");
+
+    as->Label("vbmClearBlot");
+    as->Comment("Accumulator contains X position");
+    as->Asm("lsr   ; divide by 8 to find column number");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmScrL,x   ; Address of table lo");
+    as->Asm("ldy vbmScrH,x   ; Address of table hi");
+    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
+    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
+    as->Asm("lda vbmX");
+    as->Asm("and #6   ; find offset for dot");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmBlotBit,x   ; get blot pattern");
+    as->Asm("eor #$ff  ; invert");
+    as->Asm("ldy vbmY  ; draw dot in row");
+    as->Asm("and (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("iny");
+    as->Asm("lda vbmBlotBit,x   ; get blot pattern for second row");
+    as->Asm("eor #$ff  ; invert");
+    as->Asm("and (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("rts");
+
+    as->Label("vbmDrawBlotE");
+    as->Comment("Accumulator contains X position");
+    as->Asm("lsr   ; divide by 8 to find column number");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmScrL,x   ; Address of table lo");
+    as->Asm("ldy vbmScrH,x   ; Address of table hi");
+    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
+    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
+    as->Asm("lda vbmX");
+    as->Asm("and #6   ; find offset for dot");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmBlotBit,x   ; get blot pattern");
+    as->Asm("ldy vbmY  ; draw dot in row");
+    as->Asm("eor (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
+    as->Asm("iny");
+    as->Asm("lda vbmBlotBit,x   ; get blot pattern for second row");
+    as->Asm("eor (screenmemory),y");
+    as->Asm("sta (screenmemory),y");
 }
 
 void Methods6502::vbmDrawDot(Assembler *as) {
@@ -2016,23 +2333,8 @@ void Methods6502::vbmDrawDot(Assembler *as) {
         LoadVar(as, 0);
     }
     as->Asm("sta vbmX");
+    as->Asm("jsr vbmDrawDot");
 
-
-    as->Asm("lsr   ; divide by 8 to find column number");
-    as->Asm("lsr");
-    as->Asm("lsr");
-    as->Asm("tax");
-    as->Asm("lda vbmScrL,x   ; Address of table lo");
-    as->Asm("ldy vbmScrH,x   ; Address of table hi");
-    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
-    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
-    as->Asm("lda vbmX");
-    as->Asm("and #7   ; find offset for dot");
-    as->Asm("tax");
-    as->Asm("lda vbmDotBit,x   ; get dot pattern");
-    as->Asm("ldy vbmY  ; draw dot in row");
-    as->Asm("ora (screenmemory),y");
-    as->Asm("sta (screenmemory),y");
 
 }
 void Methods6502::vbmClearDot(Assembler *as) {
@@ -2063,24 +2365,8 @@ void Methods6502::vbmClearDot(Assembler *as) {
         LoadVar(as, 0);
     }
     as->Asm("sta vbmX");
+    as->Asm("jsr vbmClearDot");
 
-
-    as->Asm("lsr   ; divide by 8 to find column number");
-    as->Asm("lsr");
-    as->Asm("lsr");
-    as->Asm("tax");
-    as->Asm("lda vbmScrL,x   ; Address of table lo");
-    as->Asm("ldy vbmScrH,x   ; Address of table hi");
-    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
-    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
-    as->Asm("lda vbmX");
-    as->Asm("and #7   ; find offset for dot");
-    as->Asm("tax");
-    as->Asm("lda vbmDotBit,x   ; get dot pattern");
-    as->Asm("eor #$ff  ; invert it");
-    as->Asm("ldy vbmY  ; clear dot in row");
-    as->Asm("and (screenmemory),y");
-    as->Asm("sta (screenmemory),y");
 
 }
 void Methods6502::vbmDrawDotE(Assembler *as) {
@@ -2111,23 +2397,7 @@ void Methods6502::vbmDrawDotE(Assembler *as) {
         LoadVar(as, 0);
     }
     as->Asm("sta vbmX");
-
-
-    as->Asm("lsr   ; divide by 8 to find column number");
-    as->Asm("lsr");
-    as->Asm("lsr");
-    as->Asm("tax");
-    as->Asm("lda vbmScrL,x   ; Address of table lo");
-    as->Asm("ldy vbmScrH,x   ; Address of table hi");
-    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
-    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
-    as->Asm("lda vbmX");
-    as->Asm("and #7   ; find offset for dot");
-    as->Asm("tax");
-    as->Asm("lda vbmDotBit,x   ; get dot pattern");
-    as->Asm("ldy vbmY  ; draw dot in row");
-    as->Asm("eor (screenmemory),y");
-    as->Asm("sta (screenmemory),y");
+    as->Asm("jsr vbmDrawDotE");
 
 }
 void Methods6502::vbmDrawBlot(Assembler *as) {
@@ -2158,28 +2428,7 @@ void Methods6502::vbmDrawBlot(Assembler *as) {
         LoadVar(as, 0);
     }
     as->Asm("sta vbmX");
-
-
-    as->Asm("lsr   ; divide by 8 to find column number");
-    as->Asm("lsr");
-    as->Asm("lsr");
-    as->Asm("tax");
-    as->Asm("lda vbmScrL,x   ; Address of table lo");
-    as->Asm("ldy vbmScrH,x   ; Address of table hi");
-    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
-    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
-    as->Asm("lda vbmX");
-    as->Asm("and #6   ; find offset for dot");
-    as->Asm("lsr");
-    as->Asm("tax");
-    as->Asm("lda vbmBlotBit,x   ; get blot pattern");
-    as->Asm("ldy vbmY  ; draw dot in row");
-    as->Asm("ora (screenmemory),y");
-    as->Asm("sta (screenmemory),y");
-    as->Asm("iny");
-    as->Asm("lda vbmBlotBit,x   ; get blot pattern for second row");
-    as->Asm("ora (screenmemory),y");
-    as->Asm("sta (screenmemory),y");
+    as->Asm("jsr vbmDrawBlot");
 
 }
 void Methods6502::vbmClearBlot(Assembler *as) {
@@ -2210,30 +2459,7 @@ void Methods6502::vbmClearBlot(Assembler *as) {
         LoadVar(as, 0);
     }
     as->Asm("sta vbmX");
-
-
-    as->Asm("lsr   ; divide by 8 to find column number");
-    as->Asm("lsr");
-    as->Asm("lsr");
-    as->Asm("tax");
-    as->Asm("lda vbmScrL,x   ; Address of table lo");
-    as->Asm("ldy vbmScrH,x   ; Address of table hi");
-    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
-    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
-    as->Asm("lda vbmX");
-    as->Asm("and #6   ; find offset for dot");
-    as->Asm("lsr");
-    as->Asm("tax");
-    as->Asm("lda vbmBlotBit,x   ; get blot pattern");
-    as->Asm("eor #$ff  ; invert");
-    as->Asm("ldy vbmY  ; draw dot in row");
-    as->Asm("and (screenmemory),y");
-    as->Asm("sta (screenmemory),y");
-    as->Asm("iny");
-    as->Asm("lda vbmBlotBit,x   ; get blot pattern for second row");
-    as->Asm("eor #$ff  ; invert");
-    as->Asm("and (screenmemory),y");
-    as->Asm("sta (screenmemory),y");
+    as->Asm("jsr vbmClearBlot");
 
 }
 void Methods6502::vbmDrawBlotE(Assembler *as) {
@@ -2264,28 +2490,7 @@ void Methods6502::vbmDrawBlotE(Assembler *as) {
         LoadVar(as, 0);
     }
     as->Asm("sta vbmX");
-
-
-    as->Asm("lsr   ; divide by 8 to find column number");
-    as->Asm("lsr");
-    as->Asm("lsr");
-    as->Asm("tax");
-    as->Asm("lda vbmScrL,x   ; Address of table lo");
-    as->Asm("ldy vbmScrH,x   ; Address of table hi");
-    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
-    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
-    as->Asm("lda vbmX");
-    as->Asm("and #6   ; find offset for dot");
-    as->Asm("lsr");
-    as->Asm("tax");
-    as->Asm("lda vbmBlotBit,x   ; get blot pattern");
-    as->Asm("ldy vbmY  ; draw dot in row");
-    as->Asm("eor (screenmemory),y");
-    as->Asm("sta (screenmemory),y");
-    as->Asm("iny");
-    as->Asm("lda vbmBlotBit,x   ; get blot pattern for second row");
-    as->Asm("eor (screenmemory),y");
-    as->Asm("sta (screenmemory),y");
+    as->Asm("jsr vbmDrawBlotE");
 
 }
 
@@ -3049,6 +3254,7 @@ void Methods6502::initVbmDrawSprite8(Assembler *as)
     as->Label("vbmDS8_overflow");
         as->Asm("sta screenmemory");
 
+
         // may not need to draw right side of 8x8 sprite
         as->Asm("lda vbmX");
         as->Asm("bne vbmDS8_Right");
@@ -3097,6 +3303,9 @@ void Methods6502::vbmDrawSprite8(Assembler* as)
 
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmDrawSprite8","InitVbmDrawSprite8");
+
+    if (m_node->m_isInitialized["vbmScrollLeft"] || m_node->m_isInitialized["vbmScrollRight"])
+        ErrorHandler::e.Error("vbmscrollright and vbmscrollleft are not compatible with this sprite command. Use Sprite Slices instead.", m_node->m_op.m_lineNumber);
 
     if (as->m_tempZeroPointers.count()==0)
         return;
@@ -3280,6 +3489,9 @@ void Methods6502::vbmDrawSprite8E(Assembler* as)
 
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmDrawSprite8E","InitVbmDrawSprite8E");
+
+    if (m_node->m_isInitialized["vbmScrollLeft"] || m_node->m_isInitialized["vbmScrollRight"])
+        ErrorHandler::e.Error("vbmscrollright and vbmscrollleft are not compatible with this sprite command. Use Sprite Slices instead.", m_node->m_op.m_lineNumber);
 
     if (as->m_tempZeroPointers.count()==0)
         return;
@@ -3478,6 +3690,9 @@ void Methods6502::vbmClearSprite8(Assembler* as)
 
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmClearSprite8","InitVbmClearSprite8");
+
+    if (m_node->m_isInitialized["vbmScrollLeft"] || m_node->m_isInitialized["vbmScrollRight"])
+        ErrorHandler::e.Error("vbmscrollright and vbmscrollleft are not compatible with this sprite command. Use Sprite Slices instead.", m_node->m_op.m_lineNumber);
 
     if (as->m_tempZeroPointers.count()==0)
         return;
@@ -3808,6 +4023,9 @@ void Methods6502::vbmDrawSprite16(Assembler* as)
 
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmDrawSprite16","InitVbmDrawSprite16");
+
+    if (m_node->m_isInitialized["vbmScrollLeft"] || m_node->m_isInitialized["vbmScrollRight"])
+        ErrorHandler::e.Error("vbmscrollright and vbmscrollleft are not compatible with this sprite command. Use Sprite Slices instead.", m_node->m_op.m_lineNumber);
 
     if (as->m_tempZeroPointers.count()==0)
         return;
@@ -4167,6 +4385,9 @@ void Methods6502::vbmDrawSprite16E(Assembler* as)
 
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmDrawSprite16E","InitVbmDrawSprite16E");
+
+    if (m_node->m_isInitialized["vbmScrollLeft"] || m_node->m_isInitialized["vbmScrollRight"])
+        ErrorHandler::e.Error("vbmscrollright and vbmscrollleft are not compatible with this sprite command. Use Sprite Slices instead.", m_node->m_op.m_lineNumber);
 
     if (as->m_tempZeroPointers.count()==0)
         return;
@@ -4574,6 +4795,9 @@ void Methods6502::vbmClearSprite16(Assembler* as)
 
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmClearSprite16","InitVbmClearSprite16");
+
+    if (m_node->m_isInitialized["vbmScrollLeft"] || m_node->m_isInitialized["vbmScrollRight"])
+        ErrorHandler::e.Error("vbmscrollright and vbmscrollleft are not compatible with this sprite command. Use Sprite Slices instead.", m_node->m_op.m_lineNumber);
 
     if (as->m_tempZeroPointers.count()==0)
         return;

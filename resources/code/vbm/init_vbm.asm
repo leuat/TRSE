@@ -6,11 +6,11 @@ vbmScrH
     dc.b 0,0,0,0,0,0,0,0,0,0
     dc.b 0,0,0,0,0,0,0,0,0,0
 
-vbmX dc.b 0 ; x position
-vbmY dc.b 0 ; y position
-vbmI dc.b 0 ; index
-vbmT dc.b 0 ; index
-vbmScroll dc.b 16       ; character scroll start
+vbmX        dc.b 0 ; x position
+vbmY        dc.b 0 ; y position
+vbmI        dc.b 0 ; index
+vbmT        dc.b 0 ; index
+vbmScroll   dc.b 16       ; character scroll start
 vbmScrLstart dc.b $00   ; start address for bitmap L
 vbmScrHstart dc.b $11   ; start address for bitmap H
 vbmNumColumns dc.b 20        ; number of columns

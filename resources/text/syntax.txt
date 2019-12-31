@@ -63,6 +63,8 @@ m; vbmDrawTileE; VIC20 ; a
 m; vbmClearTile; VIC20 ; a
 m; vbmClearBlock; VIC20 ;
 
+m; vbmDrawTileMapScreen; VIC20 ; a,a
+
 m; vbmDrawDot; VIC20 ; b,b
 m; vbmClearDot; VIC20 ; b,b
 m; vbmDrawDotE; VIC20 ; b,b
