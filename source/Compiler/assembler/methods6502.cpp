@@ -188,6 +188,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     // Draw TileMap
     if (Command("vbmDrawTileMapE"))
         vbmDrawTileMapE(as);
+    // TileMap AND
+    if (Command("initVbmClearTileMap"))
+        initVbmClearTileMap(as);
+    // Draw TileMap
+    if (Command("vbmClearTileMap"))
+        vbmClearTileMap(as);
 
 
     // Dot commands
@@ -2650,6 +2656,241 @@ void Methods6502::vbmDrawTileMapE(Assembler* as)
     as->Asm("sta vbmJ ; y end position in pixels");
 
     as->Asm("jsr vbmDrawTileMapE");
+
+}
+
+void Methods6502::initVbmClearTileMap(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmClearTileMap"])
+        return;
+
+    m_node->m_isInitialized["vbmClearTileMap"] = true;
+
+    as->Comment("Clear tile characters to the bitmap using a tilemap array (columns,rows) - AND operation");
+    as->Comment("Tilemap    = " + as->m_tempZeroPointers[0]);
+    as->Comment("Tile chars = " + as->m_tempZeroPointers[1]);
+    as->Comment("Temp addr  = " + as->m_tempZeroPointers[2] + " - used to calculate tile address");
+    as->Label("vbmClearTileMap");
+
+    as->Label("vbmCTM_Xloop");
+
+        as->Comment("calculate next screen memory position");
+        as->Asm("ldx vbmX");
+        as->Asm("lda vbmScrL,x   ; Address of table lo");
+        as->Asm("ldy vbmScrH,x   ; Address of table hi");
+        as->Asm("clc");
+        as->Asm("adc vbmY		; Add Y offset");
+        as->Asm("bcc vbmCTM_NSP_NoOverflow");
+        as->Asm("iny");
+
+    as->Label("vbmCTM_NSP_NoOverflow");
+        as->Asm("sta screenmemory");
+        as->Asm("sty screenmemory+1");
+
+    as->Label("vbmCTM_GetTileNum");
+        as->Comment("convert tile number (0-255) * 8 = memory offset");
+// 54 = tilemap, 56 = tiles, 58 = selected tile
+        as->Asm("ldy #0");
+        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y		; get tile from current position on tilemap");
+        as->Asm("sta " + as->m_tempZeroPointers[2]);
+        as->Asm("sty " + as->m_tempZeroPointers[2] + "+1");
+
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x2");
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x4");
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x8");
+
+        as->Asm("lda " + as->m_tempZeroPointers[2] );
+        as->Asm("clc");
+        as->Asm("adc "+ as->m_tempZeroPointers[1] + "  ; add tile low address");
+        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("lda " + as->m_tempZeroPointers[2] + "+1");
+        as->Asm("adc " + as->m_tempZeroPointers[1] + "+1 ; add tile high address");
+        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+
+    as->Label("vbmCTM_DrawTile");
+        as->Comment("y reg is ZERO from ldy #0 in GetTileNum");
+        as->Asm("jsr vbmCTM_Clear");
+
+// 54 = tilemap, 56 = tiles, 58 = selected tile
+    as->Label("vbmCTM_NextTileMap");
+        as->Asm("clc");
+        as->Asm("inc " + as->m_tempZeroPointers[0] + "  ; low byte");
+        as->Asm("bne vbmCTM_NTM_NoOverflow");
+        as->Asm("inc " + as->m_tempZeroPointers[0] + "+1  ; high byte");
+    as->Label("vbmCTM_NTM_NoOverflow");
+        as->Comment("next x pos on screen");
+        as->Asm("inc vbmX");
+        as->Asm("lda vbmI   ; tilemap end x pos");
+        as->Asm("cmp vbmX   ; have we reached this?");
+        as->Asm("bne vbmCTM_Xloop  ; no, draw next column");
+
+        as->Comment("yes, set x back to start x and inc vbmY by 8 rows (pixels)");
+        as->Asm("lda vbmT");
+        as->Asm("sta vbmX");
+
+        as->Comment("check if y pos at end and loop if not");
+        as->Asm("lda vbmY");
+        as->Asm("clc");
+        as->Asm("adc #8");
+        as->Asm("sta vbmY");
+
+        as->Asm("lda vbmJ   ; tilemap end Y pos in pixels");
+        as->Asm("cmp vbmY   ; have we reached this?");
+        as->Asm("bcc vbmCTM_Done");
+        as->Asm("jmp vbmCTM_Xloop");
+
+    as->Label("vbmCTM_Done");
+        as->Asm("rts");
+
+    as->Label("vbmCTM_Clear");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+
+}
+void Methods6502::vbmClearTileMap(Assembler* as)
+{
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmClearTileMap","InitVbmClearTileMap");
+
+    if (as->m_tempZeroPointers.count() < 3) {
+        ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
+
+    // address 1 - tilemap
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    // address 2 - tiles
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+        ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr2= "";
+    if (m_node->m_params[1]->isPureNumeric())
+        addr2 = m_node->m_params[1]->HexValue();
+    if (var!=nullptr)
+        addr2 = var->getValue(as);
+
+    as->Comment("Using a tilemap, clear a screenfull of tiles to the bitmap (AND drawing operation)");
+
+    as->Comment("Tilemap to use:");
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda " + addr1 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda #>" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    }
+    as->Comment("Tile characters to use:");
+    if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda " + addr2 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda #>" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    }
+
+    // start X
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[2]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x start is complex");
+        LoadVar(as, 2);
+    }
+    as->Asm("sta vbmX ; x start position");
+    as->Asm("sta vbmT ; x start position reset");
+
+    // start Y
+    if (m_node->m_params[3]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[3]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("y start is complex");
+        LoadVar(as, 3);
+    }
+    as->Asm("sta vbmY ; y start position in pixels");
+
+    // end X
+    if (m_node->m_params[4]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[4]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x end is complex");
+        LoadVar(as, 4);
+    }
+    as->Asm("sta vbmI ; x end position");
+
+    // end Y
+    if (m_node->m_params[5]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[5]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("y end is complex");
+        LoadVar(as, 5);
+    }
+    as->Asm("sta vbmJ ; y end position in pixels");
+
+    as->Asm("jsr vbmClearTileMap");
 
 }
 

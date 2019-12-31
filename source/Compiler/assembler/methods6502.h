@@ -203,6 +203,8 @@ public:
     void vbmDrawTileMapO(Assembler *as);
     void initVbmDrawTileMapE(Assembler *as);
     void vbmDrawTileMapE(Assembler *as);
+    void initVbmClearTileMap(Assembler *as);
+    void vbmClearTileMap(Assembler *as);
 
     void vbmDrawDot(Assembler *as);
     void vbmClearDot(Assembler *as);
