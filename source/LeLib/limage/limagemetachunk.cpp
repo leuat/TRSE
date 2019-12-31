@@ -249,6 +249,7 @@ bool LImageMetaChunk::KeyPress(QKeyEvent *e)
         m_currencChar--;
 
 
+    return false;
 }
 
 void LImageMetaChunk::CopyChar()
@@ -293,7 +294,7 @@ void LImageMetaChunk::Transform(int x, int y)
 
 QByteArray LMetaChunkItem::ToQByteArray(int mask)
 {
-
+    return QByteArray();
 }
 
 void LMetaChunkItem::setPixel(float x, float y, uchar color, uchar bitMask)

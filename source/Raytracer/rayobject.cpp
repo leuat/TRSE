@@ -518,7 +518,7 @@ float RayObjectHoles::intersect(Ray *ray)
 
 QVector3D RayObjectTrianglePrism::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D &tangent)
 {
-
+    return QVector3D(0,0,0);
 }
 
 float RayObjectTrianglePrism::intersect(Ray *ray)

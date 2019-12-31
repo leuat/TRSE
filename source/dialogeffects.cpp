@@ -737,7 +737,12 @@ static int SaveImage(lua_State* L) {
         QFile::remove(fname);
 
 
-    m_effect->m_img.save(fname);
+    if (fname.toLower().endsWith(".png") ||fname.toLower().endsWith(".jpg") )
+        m_effect->m_img.save(fname);
+    if (fname.toLower().endsWith(".flf")) {
+        LImageIO::Save(fname,m_effect->m_mc);
+    }
+
 //    f.open()
   //  m_effect->m_mc->SaveBin(f);
 //    m_charData.clear();
