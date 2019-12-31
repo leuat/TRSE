@@ -9,6 +9,7 @@ vbmScrH
 vbmX        dc.b 0 ; x position
 vbmY        dc.b 0 ; y position
 vbmI        dc.b 0 ; index
+vbmJ        dc.b 0 ; index
 vbmT        dc.b 0 ; index
 vbmScroll   dc.b 16       ; character scroll start
 vbmScrLstart dc.b $00   ; start address for bitmap L
