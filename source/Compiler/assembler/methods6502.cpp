@@ -303,6 +303,24 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("vbmClearSpriteSlice"))
         vbmClearSpriteSlice(as);
 
+    // 8x8 text commands
+    if (Command("initVbmDrawText"))
+        initVbmDrawText(as);
+    if (Command("vbmDrawText"))
+        vbmDrawText(as);
+    if (Command("initVbmDrawTextO"))
+        initVbmDrawTextO(as);
+    if (Command("vbmDrawTextO"))
+        vbmDrawTextO(as);
+    if (Command("initVbmDrawTextE"))
+        initVbmDrawTextE(as);
+    if (Command("vbmDrawTextE"))
+        vbmDrawTextE(as);
+    if (Command("initVbmClearText"))
+        initVbmClearText(as);
+    if (Command("vbmClearText"))
+        vbmClearText(as);
+
 
 
     /*
@@ -5928,6 +5946,844 @@ void Methods6502::vbmClearSpriteSlice(Assembler* as)
     as->Asm("sta vbmT");
 
     as->Asm("jsr vbmClearSpriteSlice");
+
+}
+
+void Methods6502::initVbmDrawText(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmDrawText"])
+        return;
+
+    m_node->m_isInitialized["vbmDrawText"] = true;
+
+    as->Comment("Draw text characters to the bitmap using a zero terminated CSTRING");
+    as->Comment("CSTRING    = " + as->m_tempZeroPointers[0]);
+    as->Comment("Font chars = " + as->m_tempZeroPointers[1]);
+    as->Comment("Temp addr  = " + as->m_tempZeroPointers[2] + " - used to calculate char address");
+    as->Label("vbmDrawText");
+
+    as->Label("vbmDTX_Xloop");
+
+        as->Comment("calculate next screen memory position");
+        as->Asm("ldx vbmX");
+        as->Asm("lda vbmScrL,x   ; Address of table lo");
+        as->Asm("ldy vbmScrH,x   ; Address of table hi");
+        as->Asm("clc");
+        as->Asm("adc vbmY		; Add Y offset");
+        as->Asm("bcc vbmDTX_NSP_NoOverflow");
+        as->Asm("iny");
+
+    as->Label("vbmDTX_NSP_NoOverflow");
+        as->Asm("sta screenmemory");
+        as->Asm("sty screenmemory+1");
+
+    as->Label("vbmDTX_GetCharNum");
+        as->Comment("convert text number (0-255) * 8 = memory offset");
+        as->Asm("ldy #0");
+        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y		; get char from current position in CSTRING");
+        as->Asm("bne vbmDTX_NotEnd");
+        as->Asm("rts ; if =0, we are end of the cstring");
+
+    as->Label("vbmDTX_NotEnd");
+
+        as->Asm("sta " + as->m_tempZeroPointers[2]);
+        as->Asm("sty " + as->m_tempZeroPointers[2] + "+1");
+
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x2");
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x4");
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x8");
+
+        as->Asm("lda " + as->m_tempZeroPointers[2] );
+        as->Asm("clc");
+        as->Asm("adc "+ as->m_tempZeroPointers[1] + "  ; add tile low address");
+        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("lda " + as->m_tempZeroPointers[2] + "+1");
+        as->Asm("adc " + as->m_tempZeroPointers[1] + "+1 ; add tile high address");
+        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+
+    as->Label("vbmDTX_DrawChar");
+        as->Comment("y reg is ZERO from ldy #0 in GetTileNum");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("sta (screenmemory),y");
+
+    as->Label("vbmDTX_NextChar");
+        as->Asm("clc");
+        as->Asm("inc " + as->m_tempZeroPointers[0] + "  ; low byte");
+        as->Asm("bne vbmDTX_NTM_NoOverflow");
+        as->Asm("inc " + as->m_tempZeroPointers[0] + "+1  ; high byte");
+    as->Label("vbmDTX_NTM_NoOverflow");
+        as->Comment("next x pos on screen");
+        as->Asm("inc vbmX");
+        as->Asm("lda #20   ; 0-19 columns, 20 means exceeded right of screen");
+        as->Asm("cmp vbmX  ; has x pos exceeded?");
+        as->Asm("bne vbmDTX_Xloop  ; no, draw next char");
+
+        as->Comment("yes, set x back to 0 and inc vbmY by line height (pixels)");
+        as->Asm("lda #0");
+        as->Asm("sta vbmX");
+
+        as->Asm("lda vbmY");
+        as->Asm("clc");
+        as->Asm("adc vbmI");
+        as->Asm("sta vbmY");
+
+        as->Asm("jmp vbmDTX_Xloop");
+
+}
+void Methods6502::vbmDrawText(Assembler* as)
+{
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmDrawText","InitVbmDrawText");
+
+    if (as->m_tempZeroPointers.count() < 3) {
+        ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
+
+    // address 1 - text
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    // address 2 - chars (font)
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+        ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr2= "";
+    if (m_node->m_params[1]->isPureNumeric())
+        addr2 = m_node->m_params[1]->HexValue();
+    if (var!=nullptr)
+        addr2 = var->getValue(as);
+
+    as->Comment("Draw 8x8 text to the bitmap");
+
+    as->Comment("Text to use:");
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda " + addr1 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda #>" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    }
+    as->Comment("Font characters to use:");
+    if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda " + addr2 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda #>" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    }
+
+    //  X
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[2]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 2);
+    }
+    as->Asm("sta vbmX ; x position");
+
+    //  Y
+    if (m_node->m_params[3]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[3]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("y is complex");
+        LoadVar(as, 3);
+    }
+    as->Asm("sta vbmY ; y position in pixels");
+
+    // Line height
+    if (m_node->m_params[4]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[4]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("Line height is complex");
+        LoadVar(as, 4);
+    }
+    as->Asm("sta vbmI ; line height in pixels");
+
+    as->Asm("jsr vbmDrawText");
+
+}
+
+void Methods6502::initVbmDrawTextO(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmDrawTextO"])
+        return;
+
+    m_node->m_isInitialized["vbmDrawTextO"] = true;
+
+    as->Comment("Draw text characters to the bitmap using a zero terminated CSTRING with OR operation");
+    as->Comment("CSTRING    = " + as->m_tempZeroPointers[0]);
+    as->Comment("Font chars = " + as->m_tempZeroPointers[1]);
+    as->Comment("Temp addr  = " + as->m_tempZeroPointers[2] + " - used to calculate char address");
+    as->Label("vbmDrawTextO");
+
+    as->Label("vbmDTXO_Xloop");
+
+        as->Comment("calculate next screen memory position");
+        as->Asm("ldx vbmX");
+        as->Asm("lda vbmScrL,x   ; Address of table lo");
+        as->Asm("ldy vbmScrH,x   ; Address of table hi");
+        as->Asm("clc");
+        as->Asm("adc vbmY		; Add Y offset");
+        as->Asm("bcc vbmDTXO_NSP_NoOverflow");
+        as->Asm("iny");
+
+    as->Label("vbmDTXO_NSP_NoOverflow");
+        as->Asm("sta screenmemory");
+        as->Asm("sty screenmemory+1");
+
+    as->Label("vbmDTXO_GetCharNum");
+        as->Comment("convert text number (0-255) * 8 = memory offset");
+        as->Asm("ldy #0");
+        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y		; get char from current position in CSTRING");
+        as->Asm("bne vbmDTXO_NotEnd");
+        as->Asm("rts ; if =0, we are end of the cstring");
+
+    as->Label("vbmDTXO_NotEnd");
+
+        as->Asm("sta " + as->m_tempZeroPointers[2]);
+        as->Asm("sty " + as->m_tempZeroPointers[2] + "+1");
+
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x2");
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x4");
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x8");
+
+        as->Asm("lda " + as->m_tempZeroPointers[2] );
+        as->Asm("clc");
+        as->Asm("adc "+ as->m_tempZeroPointers[1] + "  ; add tile low address");
+        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("lda " + as->m_tempZeroPointers[2] + "+1");
+        as->Asm("adc " + as->m_tempZeroPointers[1] + "+1 ; add tile high address");
+        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+
+    as->Label("vbmDTXO_DrawChar");
+        as->Comment("y reg is ZERO from ldy #0 in GetTileNum");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+
+    as->Label("vbmDTXO_NextChar");
+        as->Asm("clc");
+        as->Asm("inc " + as->m_tempZeroPointers[0] + "  ; low byte");
+        as->Asm("bne vbmDTXO_NTM_NoOverflow");
+        as->Asm("inc " + as->m_tempZeroPointers[0] + "+1  ; high byte");
+    as->Label("vbmDTXO_NTM_NoOverflow");
+        as->Comment("next x pos on screen");
+        as->Asm("inc vbmX");
+        as->Asm("lda #20   ; 0-19 columns, 20 means exceeded right of screen");
+        as->Asm("cmp vbmX  ; has x pos exceeded?");
+        as->Asm("beq vbmDTXO_NextLine  ;");
+        as->Asm("jmp vbmDTXO_Xloop  ; no, draw next char");
+
+        as->Label("vbmDTXO_NextLine");
+        as->Comment("yes, set x back to 0 and inc vbmY by line height (pixels)");
+        as->Asm("lda #0");
+        as->Asm("sta vbmX");
+
+        as->Asm("lda vbmY");
+        as->Asm("clc");
+        as->Asm("adc vbmI");
+        as->Asm("sta vbmY");
+
+        as->Asm("jmp vbmDTXO_Xloop");
+
+}
+void Methods6502::vbmDrawTextO(Assembler* as)
+{
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmDrawTextO","InitVbmDrawTextO");
+
+    if (as->m_tempZeroPointers.count() < 3) {
+        ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
+
+    // address 1 - text
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    // address 2 - chars (font)
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+        ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr2= "";
+    if (m_node->m_params[1]->isPureNumeric())
+        addr2 = m_node->m_params[1]->HexValue();
+    if (var!=nullptr)
+        addr2 = var->getValue(as);
+
+    as->Comment("Draw 8x8 text to the bitmap with OR operation");
+
+    as->Comment("Text to use:");
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda " + addr1 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda #>" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    }
+    as->Comment("Font characters to use:");
+    if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda " + addr2 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda #>" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    }
+
+    //  X
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[2]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 2);
+    }
+    as->Asm("sta vbmX ; x position");
+
+    //  Y
+    if (m_node->m_params[3]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[3]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("y is complex");
+        LoadVar(as, 3);
+    }
+    as->Asm("sta vbmY ; y position in pixels");
+
+    // Line height
+    if (m_node->m_params[4]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[4]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("Line height is complex");
+        LoadVar(as, 4);
+    }
+    as->Asm("sta vbmI ; line height in pixels");
+
+    as->Asm("jsr vbmDrawTextO");
+
+}
+
+void Methods6502::initVbmDrawTextE(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmDrawTextE"])
+        return;
+
+    m_node->m_isInitialized["vbmDrawTextE"] = true;
+
+    as->Comment("Draw text characters to the bitmap using a zero terminated CSTRING with EOR operation");
+    as->Comment("CSTRING    = " + as->m_tempZeroPointers[0]);
+    as->Comment("Font chars = " + as->m_tempZeroPointers[1]);
+    as->Comment("Temp addr  = " + as->m_tempZeroPointers[2] + " - used to calculate char address");
+    as->Label("vbmDrawTextE");
+
+    as->Label("vbmDTXE_Xloop");
+
+        as->Comment("calculate next screen memory position");
+        as->Asm("ldx vbmX");
+        as->Asm("lda vbmScrL,x   ; Address of table lo");
+        as->Asm("ldy vbmScrH,x   ; Address of table hi");
+        as->Asm("clc");
+        as->Asm("adc vbmY		; Add Y offset");
+        as->Asm("bcc vbmDTXE_NSP_NoOverflow");
+        as->Asm("iny");
+
+    as->Label("vbmDTXE_NSP_NoOverflow");
+        as->Asm("sta screenmemory");
+        as->Asm("sty screenmemory+1");
+
+    as->Label("vbmDTXE_GetCharNum");
+        as->Comment("convert text number (0-255) * 8 = memory offset");
+        as->Asm("ldy #0");
+        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y		; get char from current position in CSTRING");
+        as->Asm("bne vbmDTXE_NotEnd");
+        as->Asm("rts ; if =0, we are end of the cstring");
+
+    as->Label("vbmDTXE_NotEnd");
+
+        as->Asm("sta " + as->m_tempZeroPointers[2]);
+        as->Asm("sty " + as->m_tempZeroPointers[2] + "+1");
+
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x2");
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x4");
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x8");
+
+        as->Asm("lda " + as->m_tempZeroPointers[2] );
+        as->Asm("clc");
+        as->Asm("adc "+ as->m_tempZeroPointers[1] + "  ; add tile low address");
+        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("lda " + as->m_tempZeroPointers[2] + "+1");
+        as->Asm("adc " + as->m_tempZeroPointers[1] + "+1 ; add tile high address");
+        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+
+    as->Label("vbmDTXE_DrawChar");
+        as->Comment("y reg is ZERO from ldy #0 in GetTileNum");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+
+    as->Label("vbmDTXE_NextChar");
+        as->Asm("clc");
+        as->Asm("inc " + as->m_tempZeroPointers[0] + "  ; low byte");
+        as->Asm("bne vbmDTXE_NTM_NoOverflow");
+        as->Asm("inc " + as->m_tempZeroPointers[0] + "+1  ; high byte");
+    as->Label("vbmDTXE_NTM_NoOverflow");
+        as->Comment("next x pos on screen");
+        as->Asm("inc vbmX");
+        as->Asm("lda #20   ; 0-19 columns, 20 means exceeded right of screen");
+        as->Asm("cmp vbmX  ; has x pos exceeded?");
+        as->Asm("beq vbmDTXE_NextLine");
+        as->Asm("jmp vbmDTXE_Xloop  ; no, draw next char");
+
+        as->Label("vbmDTXE_NextLine");
+        as->Comment("yes, set x back to 0 and inc vbmY by line height (pixels)");
+        as->Asm("lda #0");
+        as->Asm("sta vbmX");
+
+        as->Asm("lda vbmY");
+        as->Asm("clc");
+        as->Asm("adc vbmI");
+        as->Asm("sta vbmY");
+
+        as->Asm("jmp vbmDTXE_Xloop");
+
+}
+void Methods6502::vbmDrawTextE(Assembler* as)
+{
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmDrawTextE","InitVbmDrawTextE");
+
+    if (as->m_tempZeroPointers.count() < 3) {
+        ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
+
+    // address 1 - text
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    // address 2 - chars (font)
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+        ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr2= "";
+    if (m_node->m_params[1]->isPureNumeric())
+        addr2 = m_node->m_params[1]->HexValue();
+    if (var!=nullptr)
+        addr2 = var->getValue(as);
+
+    as->Comment("Draw 8x8 text to the bitmap with EOR operation");
+
+    as->Comment("Text to use:");
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda " + addr1 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda #>" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    }
+    as->Comment("Font characters to use:");
+    if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda " + addr2 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda #>" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    }
+
+    //  X
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[2]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 2);
+    }
+    as->Asm("sta vbmX ; x position");
+
+    //  Y
+    if (m_node->m_params[3]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[3]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("y is complex");
+        LoadVar(as, 3);
+    }
+    as->Asm("sta vbmY ; y position in pixels");
+
+    // Line height
+    if (m_node->m_params[4]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[4]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("Line height is complex");
+        LoadVar(as, 4);
+    }
+    as->Asm("sta vbmI ; line height in pixels");
+
+    as->Asm("jsr vbmDrawTextE");
+
+}
+
+void Methods6502::initVbmClearText(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmClearText"])
+        return;
+
+    m_node->m_isInitialized["vbmClearText"] = true;
+
+    as->Comment("Clear text characters to the bitmap using a zero terminated CSTRING");
+    as->Comment("CSTRING    = " + as->m_tempZeroPointers[0]);
+    as->Comment("Font chars = " + as->m_tempZeroPointers[1]);
+    as->Comment("Temp addr  = " + as->m_tempZeroPointers[2] + " - used to calculate char address");
+    as->Label("vbmClearText");
+
+    as->Label("vbmCTX_Xloop");
+
+        as->Comment("calculate next screen memory position");
+        as->Asm("ldx vbmX");
+        as->Asm("lda vbmScrL,x   ; Address of table lo");
+        as->Asm("ldy vbmScrH,x   ; Address of table hi");
+        as->Asm("clc");
+        as->Asm("adc vbmY		; Add Y offset");
+        as->Asm("bcc vbmCTX_NSP_NoOverflow");
+        as->Asm("iny");
+
+    as->Label("vbmCTX_NSP_NoOverflow");
+        as->Asm("sta screenmemory");
+        as->Asm("sty screenmemory+1");
+
+    as->Label("vbmCTX_GetCharNum");
+        as->Comment("convert text number (0-255) * 8 = memory offset");
+        as->Asm("ldy #0");
+        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y		; get char from current position in CSTRING");
+        as->Asm("bne vbmCTX_NotEnd");
+        as->Asm("rts ; if =0, we are end of the cstring");
+
+    as->Label("vbmCTX_NotEnd");
+
+        as->Asm("sta " + as->m_tempZeroPointers[2]);
+        as->Asm("sty " + as->m_tempZeroPointers[2] + "+1");
+
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x2");
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x4");
+        as->Asm("asl " + as->m_tempZeroPointers[2]);
+        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x8");
+
+        as->Asm("lda " + as->m_tempZeroPointers[2] );
+        as->Asm("clc");
+        as->Asm("adc "+ as->m_tempZeroPointers[1] + "  ; add tile low address");
+        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("lda " + as->m_tempZeroPointers[2] + "+1");
+        as->Asm("adc " + as->m_tempZeroPointers[1] + "+1 ; add tile high address");
+        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+
+    as->Label("vbmCTX_DrawChar");
+        as->Comment("y reg is ZERO from ldy #0 in GetTileNum");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("eor #$ff");
+        as->Asm("and (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+
+    as->Label("vbmCTX_NextChar");
+        as->Asm("clc");
+        as->Asm("inc " + as->m_tempZeroPointers[0] + "  ; low byte");
+        as->Asm("bne vbmCTX_NTM_NoOverflow");
+        as->Asm("inc " + as->m_tempZeroPointers[0] + "+1  ; high byte");
+    as->Label("vbmCTX_NTM_NoOverflow");
+        as->Comment("next x pos on screen");
+        as->Asm("inc vbmX");
+        as->Asm("lda #20   ; 0-19 columns, 20 means exceeded right of screen");
+        as->Asm("cmp vbmX  ; has x pos exceeded?");
+        as->Asm("beq vbmCTX_NextLine");
+        as->Asm("jmp vbmCTX_Xloop  ; no, draw next char");
+
+        as->Label("vbmCTX_NextLine");
+        as->Comment("yes, set x back to 0 and inc vbmY by line height (pixels)");
+        as->Asm("lda #0");
+        as->Asm("sta vbmX");
+
+        as->Asm("lda vbmY");
+        as->Asm("clc");
+        as->Asm("adc vbmI");
+        as->Asm("sta vbmY");
+
+        as->Asm("jmp vbmCTX_Xloop");
+
+}
+void Methods6502::vbmClearText(Assembler* as)
+{
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmClearText","InitVbmClearText");
+
+    if (as->m_tempZeroPointers.count() < 3) {
+        ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
+
+    // address 1 - text
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    // address 2 - chars (font)
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+        ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr2= "";
+    if (m_node->m_params[1]->isPureNumeric())
+        addr2 = m_node->m_params[1]->HexValue();
+    if (var!=nullptr)
+        addr2 = var->getValue(as);
+
+    as->Comment("Clear 8x8 text to the bitmap");
+
+    as->Comment("Text to use:");
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda " + addr1 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("lda #>" + addr1 );
+        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+    }
+    as->Comment("Font characters to use:");
+    if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda " + addr2 +"+1" );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("lda #>" + addr2 );
+        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+    }
+
+    //  X
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[2]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 2);
+    }
+    as->Asm("sta vbmX ; x position");
+
+    //  Y
+    if (m_node->m_params[3]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[3]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("y is complex");
+        LoadVar(as, 3);
+    }
+    as->Asm("sta vbmY ; y position in pixels");
+
+    // Line height
+    if (m_node->m_params[4]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[4]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("Line height is complex");
+        LoadVar(as, 4);
+    }
+    as->Asm("sta vbmI ; line height in pixels");
+
+    as->Asm("jsr vbmClearText");
 
 }
 

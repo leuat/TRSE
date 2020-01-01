@@ -205,6 +205,11 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "vbmdrawspriteslicee(", "initVbmDrawSpriteSliceE");
         InitBuiltinFunction(QStringList()<< "vbmclearspriteslice(", "initVbmClearSpriteSlice");
 
+        InitBuiltinFunction(QStringList()<< "vbmdrawtext(", "initVbmDrawText");
+        InitBuiltinFunction(QStringList()<< "vbmdrawtexto(", "initVbmDrawTextO");
+        InitBuiltinFunction(QStringList()<< "vbmdrawtexte(", "initVbmDrawTextE");
+        InitBuiltinFunction(QStringList()<< "vbmcleartext(", "initVbmClearText");
+
 
     }
     Node::m_staticBlockInfo.m_blockID = -1;

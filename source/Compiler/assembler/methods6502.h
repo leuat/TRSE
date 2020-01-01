@@ -257,6 +257,17 @@ public:
     void initVbmClearSpriteSlice(Assembler *as);
     void vbmClearSpriteSlice(Assembler *as);
 
+    void initVbmDrawText(Assembler *as);
+    void vbmDrawText(Assembler *as);
+    void initVbmDrawTextO(Assembler *as);
+    void vbmDrawTextO(Assembler *as);
+    void initVbmDrawTextE(Assembler *as);
+    void vbmDrawTextE(Assembler *as);
+    void initVbmClearText(Assembler *as);
+    void vbmClearText(Assembler *as);
+
+
+
 
     // Initialize
 

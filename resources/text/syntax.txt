@@ -99,6 +99,10 @@ m; vbmDrawSpriteSlice; VIC20; a, b, b
 m; vbmDrawSpriteSliceE; VIC20; a, b, b
 m; vbmClearSpriteSlice; VIC20; a, b, b
 
+m; vbmDrawText; VIC20; a, a, b, b, b
+m; vbmDrawTextO; VIC20; a, a, b, b, b
+m; vbmDrawTextE; VIC20; a, a, b, b, b
+m; vbmClearText; VIC20; a, a, b, b, b
 
 
 # ************** AMIGA ROUTINES
