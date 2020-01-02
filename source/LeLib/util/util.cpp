@@ -655,6 +655,14 @@ QString Util::loadTextFile(QString filename) {
     return data;
 }
 
+QByteArray Util::loadBinaryFile(QString filename) {
+    QFile file(filename);
+    file.open(QIODevice::ReadOnly);
+    QByteArray ba = file.readAll();
+    file.close();
+    return ba;
+}
+
 QString Util::MilisecondToString(int ms) {
     //        ms+=1000;
     int ds = ms/100;

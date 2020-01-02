@@ -206,8 +206,8 @@ void FormRasEditor::Build()
 
     emit requestBuild();
 
-    if (m_builderThread.m_builder!=nullptr)
-        delete m_builderThread.m_builder;
+//    if (m_builderThread.m_builder!=nullptr)
+  //      delete m_builderThread.m_builder;
 
   //  if (m_builderThread.m_builder==nullptr)
         m_builderThread.m_builder = new SourceBuilder(m_iniFile, m_projectIniFile, m_currentDir, m_currentSourceFile);
@@ -305,39 +305,22 @@ void FormRasEditor::BuildNes(QString prg)
     header[6] = 0b00000001;
 
 
-    QFile f(prg+ ".prg");
-    f.open(QFile::ReadOnly);
-    QByteArray data = f.readAll();
+    QByteArray data = Util::loadBinaryFile(prg+ ".prg");
     data = data.remove(0,2);
-    f.close();
-//    qDebug() << prg;
 
     data.insert(0,header);
     int dc = data.count();
-//    qDebug() << dc;
-//    exit(1);
     int j=pow(2,14)*m_projectIniFile->getdouble("nes_16k_blocks")-dc+16;
-//    qDebug() << "Appending: " <<j;
     for (int i=0;i<j;i++)
         data.append((char)0);
 
 
+    data.append(Util::loadBinaryFile(m_currentDir+"/"+m_projectIniFile->getString("nes_8k_file")));
+    if (m_projectIniFile->getdouble("nes_8k_blocks")>=2) {
+        data.append(Util::loadBinaryFile(m_currentDir+"/"+m_projectIniFile->getString("nes_8k_file_2")));
+    }
 
-    //qDebug() << data.size();
 
-    QByteArray chr;
-    QFile mmm(m_currentDir+"/"+m_projectIniFile->getString("nes_8k_file"));
-    mmm.open(QFile::ReadOnly);
-    chr = mmm.readAll();
-    //qDebug() << chr.size();
-    //chr.fill(255);
-    mmm.close();
-
-    data.append(chr);
-
-    /*for (int i=0;i<pow(2,13);i++)
-        data.append((char)rand()%255);
-*/
     if (QFile::exists(prg+".nes"))
         QFile::remove(prg+".nes");
 

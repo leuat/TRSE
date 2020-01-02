@@ -88,6 +88,7 @@ void DialogProjectSettings::FillFromIni()
         ui->cmbNES16KBlocks->setCurrentText(QString::number(m_ini->getdouble("nes_16k_blocks")));
         ui->cmbNES8KBlocks->setCurrentText(QString::number(m_ini->getdouble("nes_8k_blocks")));
         ui->leNESCharFile->setText(m_ini->getString("nes_8k_file"));
+        ui->leNESCharFile_2->setText(m_ini->getString("nes_8k_file_2"));
         ui->leNESCodeStart->setText(m_ini->getString("nes_code_start"));
     }
 
@@ -208,6 +209,7 @@ void DialogProjectSettings::FillToIni()
         m_ini->setFloat("nes_16k_blocks",ui->cmbNES16KBlocks->currentText().toInt());
         m_ini->setFloat("nes_8k_blocks",ui->cmbNES8KBlocks->currentText().toInt());
         m_ini->setString("nes_8k_file",ui->leNESCharFile->text());
+        m_ini->setString("nes_8k_file_2",ui->leNESCharFile_2->text());
         m_ini->setString("nes_code_start",ui->leNESCodeStart->text());
     }
 
@@ -268,4 +270,9 @@ void DialogProjectSettings::on_pushButton_2_clicked()
 void DialogProjectSettings::on_pushButton_clicked()
 {
     Messages::messages.DisplayMessage(Messages::messages.PROJECT_BUILDER_HELP,true);
+}
+
+void DialogProjectSettings::on_btnNESLoadCharFile_2_clicked()
+{
+
 }

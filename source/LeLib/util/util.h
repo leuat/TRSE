@@ -109,6 +109,7 @@ public:
     static void ConvertFileWithLoadAddress(QString input, QString output, int address);
     static void ConvertFileWithLoadAddress(QString input, QString output);
 
+    static QByteArray loadBinaryFile(QString filename);
 
     static void CopyFile(QString i, QString o);
 

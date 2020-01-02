@@ -60,7 +60,7 @@ public:
     ImageWorker m_work;
 
     WorkerThread m_updateThread;
-    bool m_ignoreMC = true;
+    bool m_ignoreMC = false;
     LImageQImage m_grid;
     Toolbox m_toolBox;
     LColorList* m_currentColorList = nullptr;

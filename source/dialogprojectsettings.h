@@ -71,6 +71,8 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_btnNESLoadCharFile_2_clicked();
+
 private:
     void FillFromIni();
     void FillToIni();
