@@ -202,6 +202,15 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("vbmTestPixel2"))
         vbmTestPixel2(as);
 
+    if (Command("initVbmTestTilePixel"))
+        initVbmTestTilePixel(as);
+    if (Command("initVbmTestTilePixel2"))
+        initVbmTestTilePixel2(as);
+    if (Command("vbmTestTilePixel"))
+        vbmTestTilePixel(as);
+    if (Command("vbmTestTilePixel2"))
+        vbmTestTilePixel2(as);
+
     // Dot commands
     if (Command("initVbmDot"))
         initVbmDot(as);
@@ -2035,9 +2044,9 @@ void Methods6502::initVbmDrawTileMap(Assembler* as)
     m_node->m_isInitialized["vbmTileMap"] = true;
 
     as->Comment("Draw tile characters to the bitmap using a tilemap array (columns,rows)");
-    as->Comment("Tilemap    = " + as->m_tempZeroPointers[0]);
-    as->Comment("Tile chars = " + as->m_tempZeroPointers[1]);
-    as->Comment("Temp addr  = " + as->m_tempZeroPointers[2] + " - used to calculate tile address");
+    as->Comment("Tilemap    = " + as->m_internalZP[0]);
+    as->Comment("Tile chars = " + as->m_internalZP[1]);
+    as->Comment("Temp addr  = " + as->m_internalZP[2] + " - used to calculate tile address");
     as->Label("vbmDrawTileMap");
 
     as->Label("vbmDTM_Xloop");
@@ -2059,57 +2068,57 @@ void Methods6502::initVbmDrawTileMap(Assembler* as)
         as->Comment("convert tile number (0-255) * 8 = memory offset");
 // 54 = tilemap, 56 = tiles, 58 = selected tile
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y		; get tile from current position on tilemap");
-        as->Asm("sta " + as->m_tempZeroPointers[2]);
-        as->Asm("sty " + as->m_tempZeroPointers[2] + "+1");
+        as->Asm("lda (" + as->m_internalZP[0] +"),y		; get tile from current position on tilemap");
+        as->Asm("sta " + as->m_internalZP[2]);
+        as->Asm("sty " + as->m_internalZP[2] + "+1");
 
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x2");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x4");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x8");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x2");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x4");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x8");
 
-        as->Asm("lda " + as->m_tempZeroPointers[2] );
+        as->Asm("lda " + as->m_internalZP[2] );
         as->Asm("clc");
-        as->Asm("adc "+ as->m_tempZeroPointers[1] + "  ; add tile low address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
-        as->Asm("lda " + as->m_tempZeroPointers[2] + "+1");
-        as->Asm("adc " + as->m_tempZeroPointers[1] + "+1 ; add tile high address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("adc "+ as->m_internalZP[1] + "  ; add tile low address");
+        as->Asm("sta " + as->m_internalZP[2] );
+        as->Asm("lda " + as->m_internalZP[2] + "+1");
+        as->Asm("adc " + as->m_internalZP[1] + "+1 ; add tile high address");
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
 
     as->Label("vbmDTM_DrawTile");
         as->Comment("y reg is ZERO from ldy #0 in GetTileNum");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
 
 // 54 = tilemap, 56 = tiles, 58 = selected tile
     as->Label("vbmDTM_NextTileMap");
         as->Asm("clc");
-        as->Asm("inc " + as->m_tempZeroPointers[0] + "  ; low byte");
+        as->Asm("inc " + as->m_internalZP[0] + "  ; low byte");
         as->Asm("bne vbmDTM_NTM_NoOverflow");
-        as->Asm("inc " + as->m_tempZeroPointers[0] + "+1  ; high byte");
+        as->Asm("inc " + as->m_internalZP[0] + "+1  ; high byte");
     as->Label("vbmDTM_NTM_NoOverflow");
         as->Comment("next x pos on screen");
         as->Asm("inc vbmX");
@@ -2140,7 +2149,9 @@ void Methods6502::vbmDrawTileMap(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmTileMap","InitVbmDrawTileMap");
 
-    if (as->m_tempZeroPointers.count() < 3) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 3) {
         ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
@@ -2171,26 +2182,26 @@ void Methods6502::vbmDrawTileMap(Assembler* as)
     as->Comment("Tilemap to use:");
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     } else {
         as->Asm("lda #<" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda #>" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
     as->Comment("Tile characters to use:");
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     } else {
         as->Asm("lda #<" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda #>" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
 
     // start X
@@ -2250,9 +2261,9 @@ void Methods6502::initVbmDrawTileMapO(Assembler* as)
     m_node->m_isInitialized["vbmTileMapO"] = true;
 
     as->Comment("Draw tile characters to the bitmap using a tilemap array (columns,rows) with OR draw operation");
-    as->Comment("Tilemap    = " + as->m_tempZeroPointers[0]);
-    as->Comment("Tile chars = " + as->m_tempZeroPointers[1]);
-    as->Comment("Temp addr  = " + as->m_tempZeroPointers[2] + " - used to calculate tile address");
+    as->Comment("Tilemap    = " + as->m_internalZP[0]);
+    as->Comment("Tile chars = " + as->m_internalZP[1]);
+    as->Comment("Temp addr  = " + as->m_internalZP[2] + " - used to calculate tile address");
     as->Label("vbmDrawTileMapO");
 
     as->Label("vbmDTMO_Xloop");
@@ -2274,65 +2285,65 @@ void Methods6502::initVbmDrawTileMapO(Assembler* as)
         as->Comment("convert tile number (0-255) * 8 = memory offset");
 // 54 = tilemap, 56 = tiles, 58 = selected tile
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y		; get tile from current position on tilemap");
-        as->Asm("sta " + as->m_tempZeroPointers[2]);
-        as->Asm("sty " + as->m_tempZeroPointers[2] + "+1");
+        as->Asm("lda (" + as->m_internalZP[0] +"),y		; get tile from current position on tilemap");
+        as->Asm("sta " + as->m_internalZP[2]);
+        as->Asm("sty " + as->m_internalZP[2] + "+1");
 
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x2");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x4");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x8");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x2");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x4");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x8");
 
-        as->Asm("lda " + as->m_tempZeroPointers[2] );
+        as->Asm("lda " + as->m_internalZP[2] );
         as->Asm("clc");
-        as->Asm("adc " + as->m_tempZeroPointers[1] + "  ; add tile low address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
-        as->Asm("lda " + as->m_tempZeroPointers[2] + "+1"); ////////
-        as->Asm("adc " + as->m_tempZeroPointers[1] + "+1 ; add tile high address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("adc " + as->m_internalZP[1] + "  ; add tile low address");
+        as->Asm("sta " + as->m_internalZP[2] );
+        as->Asm("lda " + as->m_internalZP[2] + "+1"); ////////
+        as->Asm("adc " + as->m_internalZP[1] + "+1 ; add tile high address");
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
 
     as->Label("vbmDTMO_DrawTile");
         as->Comment("y reg is ZERO from ldy #0 in GetTileNum");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
 // 54 = tilemap, 56 = tiles, 58 = selected tile
     as->Label("vbmDTMO_NextTileMap");
         as->Asm("clc");
-        as->Asm("inc " + as->m_tempZeroPointers[0] + "  ; low byte");
+        as->Asm("inc " + as->m_internalZP[0] + "  ; low byte");
         as->Asm("bne vbmDTMO_NTM_NoOverflow");
-        as->Asm("inc " + as->m_tempZeroPointers[0] + "+1  ; high byte");
+        as->Asm("inc " + as->m_internalZP[0] + "+1  ; high byte");
     as->Label("vbmDTMO_NTM_NoOverflow");
         as->Comment("next x pos on screen");
         as->Asm("inc vbmX");
@@ -2363,7 +2374,9 @@ void Methods6502::vbmDrawTileMapO(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmTileMapO","InitVbmDrawTileMapO");
 
-    if (as->m_tempZeroPointers.count() < 3) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 3) {
         ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
@@ -2394,26 +2407,26 @@ void Methods6502::vbmDrawTileMapO(Assembler* as)
     as->Comment("Tilemap to use:");
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     } else {
         as->Asm("lda #<" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda #>" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
     as->Comment("Tile characters to use:");
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     } else {
         as->Asm("lda #<" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda #>" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
 
     // start X
@@ -2473,9 +2486,9 @@ void Methods6502::initVbmDrawTileMapE(Assembler* as)
     m_node->m_isInitialized["vbmTileMapE"] = true;
 
     as->Comment("Draw tile characters to the bitmap using a tilemap array (columns,rows) with EOR draw operation");
-    as->Comment("Tilemap    = " + as->m_tempZeroPointers[0]);
-    as->Comment("Tile chars = " + as->m_tempZeroPointers[1]);
-    as->Comment("Temp addr  = " + as->m_tempZeroPointers[2] + " - used to calculate tile address");
+    as->Comment("Tilemap    = " + as->m_internalZP[0]);
+    as->Comment("Tile chars = " + as->m_internalZP[1]);
+    as->Comment("Temp addr  = " + as->m_internalZP[2] + " - used to calculate tile address");
     as->Label("vbmDrawTileMapE");
 
     as->Label("vbmDTME_Xloop");
@@ -2497,65 +2510,65 @@ void Methods6502::initVbmDrawTileMapE(Assembler* as)
         as->Comment("convert tile number (0-255) * 8 = memory offset");
 // 54 = tilemap, 56 = tiles, 58 = selected tile
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y		; get tile from current position on tilemap");
-        as->Asm("sta " + as->m_tempZeroPointers[2]);
-        as->Asm("sty " + as->m_tempZeroPointers[2] + "+1");
+        as->Asm("lda (" + as->m_internalZP[0] +"),y		; get tile from current position on tilemap");
+        as->Asm("sta " + as->m_internalZP[2]);
+        as->Asm("sty " + as->m_internalZP[2] + "+1");
 
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x2");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x4");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x8");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x2");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x4");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x8");
 
-        as->Asm("lda " + as->m_tempZeroPointers[2] );
+        as->Asm("lda " + as->m_internalZP[2] );
         as->Asm("clc");
-        as->Asm("adc " + as->m_tempZeroPointers[1] + "  ; add tile low address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
-        as->Asm("lda " + as->m_tempZeroPointers[2] + "+1"); //////////////
-        as->Asm("adc " + as->m_tempZeroPointers[1] + "+1 ; add tile high address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("adc " + as->m_internalZP[1] + "  ; add tile low address");
+        as->Asm("sta " + as->m_internalZP[2] );
+        as->Asm("lda " + as->m_internalZP[2] + "+1"); //////////////
+        as->Asm("adc " + as->m_internalZP[1] + "+1 ; add tile high address");
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
 
     as->Label("vbmDTME_DrawTile");
         as->Comment("y reg is ZERO from ldy #0 in GetTileNum");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
 // 54 = tilemap, 56 = tiles, 58 = selected tile
     as->Label("vbmDTME_NextTileMap");
         as->Asm("clc");
-        as->Asm("inc " + as->m_tempZeroPointers[0] + "  ; low byte");
+        as->Asm("inc " + as->m_internalZP[0] + "  ; low byte");
         as->Asm("bne vbmDTME_NTM_NoOverflow");
-        as->Asm("inc " + as->m_tempZeroPointers[0] + "+1  ; high byte");
+        as->Asm("inc " + as->m_internalZP[0] + "+1  ; high byte");
     as->Label("vbmDTME_NTM_NoOverflow");
         as->Comment("next x pos on screen");
         as->Asm("inc vbmX");
@@ -2586,7 +2599,9 @@ void Methods6502::vbmDrawTileMapE(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmTileMapE","InitVbmDrawTileMapE");
 
-    if (as->m_tempZeroPointers.count() < 3) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 3) {
         ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
@@ -2617,26 +2632,26 @@ void Methods6502::vbmDrawTileMapE(Assembler* as)
     as->Comment("Tilemap to use:");
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     } else {
         as->Asm("lda #<" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda #>" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
     as->Comment("Tile characters to use:");
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     } else {
         as->Asm("lda #<" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda #>" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
 
     // start X
@@ -2696,9 +2711,9 @@ void Methods6502::initVbmClearTileMap(Assembler* as)
     m_node->m_isInitialized["vbmClearTileMap"] = true;
 
     as->Comment("Clear tile characters to the bitmap using a tilemap array (columns,rows) - AND operation");
-    as->Comment("Tilemap    = " + as->m_tempZeroPointers[0]);
-    as->Comment("Tile chars = " + as->m_tempZeroPointers[1]);
-    as->Comment("Temp addr  = " + as->m_tempZeroPointers[2] + " - used to calculate tile address");
+    as->Comment("Tilemap    = " + as->m_internalZP[0]);
+    as->Comment("Tile chars = " + as->m_internalZP[1]);
+    as->Comment("Temp addr  = " + as->m_internalZP[2] + " - used to calculate tile address");
     as->Label("vbmClearTileMap");
 
     as->Label("vbmCTM_Xloop");
@@ -2720,24 +2735,24 @@ void Methods6502::initVbmClearTileMap(Assembler* as)
         as->Comment("convert tile number (0-255) * 8 = memory offset");
 // 54 = tilemap, 56 = tiles, 58 = selected tile
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y		; get tile from current position on tilemap");
-        as->Asm("sta " + as->m_tempZeroPointers[2]);
-        as->Asm("sty " + as->m_tempZeroPointers[2] + "+1");
+        as->Asm("lda (" + as->m_internalZP[0] +"),y		; get tile from current position on tilemap");
+        as->Asm("sta " + as->m_internalZP[2]);
+        as->Asm("sty " + as->m_internalZP[2] + "+1");
 
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x2");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x4");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x8");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x2");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x4");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x8");
 
-        as->Asm("lda " + as->m_tempZeroPointers[2] );
+        as->Asm("lda " + as->m_internalZP[2] );
         as->Asm("clc");
-        as->Asm("adc "+ as->m_tempZeroPointers[1] + "  ; add tile low address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
-        as->Asm("lda " + as->m_tempZeroPointers[2] + "+1");
-        as->Asm("adc " + as->m_tempZeroPointers[1] + "+1 ; add tile high address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("adc "+ as->m_internalZP[1] + "  ; add tile low address");
+        as->Asm("sta " + as->m_internalZP[2] );
+        as->Asm("lda " + as->m_internalZP[2] + "+1");
+        as->Asm("adc " + as->m_internalZP[1] + "+1 ; add tile high address");
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
 
     as->Label("vbmCTM_DrawTile");
         as->Comment("y reg is ZERO from ldy #0 in GetTileNum");
@@ -2746,9 +2761,9 @@ void Methods6502::initVbmClearTileMap(Assembler* as)
 // 54 = tilemap, 56 = tiles, 58 = selected tile
     as->Label("vbmCTM_NextTileMap");
         as->Asm("clc");
-        as->Asm("inc " + as->m_tempZeroPointers[0] + "  ; low byte");
+        as->Asm("inc " + as->m_internalZP[0] + "  ; low byte");
         as->Asm("bne vbmCTM_NTM_NoOverflow");
-        as->Asm("inc " + as->m_tempZeroPointers[0] + "+1  ; high byte");
+        as->Asm("inc " + as->m_internalZP[0] + "+1  ; high byte");
     as->Label("vbmCTM_NTM_NoOverflow");
         as->Comment("next x pos on screen");
         as->Asm("inc vbmX");
@@ -2775,42 +2790,42 @@ void Methods6502::initVbmClearTileMap(Assembler* as)
         as->Asm("rts");
 
     as->Label("vbmCTM_Clear");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
@@ -2821,7 +2836,9 @@ void Methods6502::vbmClearTileMap(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmClearTileMap","InitVbmClearTileMap");
 
-    if (as->m_tempZeroPointers.count() < 3) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 3) {
         ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
@@ -2852,26 +2869,26 @@ void Methods6502::vbmClearTileMap(Assembler* as)
     as->Comment("Tilemap to use:");
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     } else {
         as->Asm("lda #<" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda #>" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
     as->Comment("Tile characters to use:");
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     } else {
         as->Asm("lda #<" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda #>" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
 
     // start X
@@ -2920,6 +2937,165 @@ void Methods6502::vbmClearTileMap(Assembler* as)
     as->Asm("sta vbmJ ; y end position in pixels");
 
     as->Asm("jsr vbmClearTileMap");
+
+}
+
+void Methods6502::initVbmTestTilePixel(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmTestTilePixel"])
+        return;
+
+    m_node->m_isInitialized["vbmTestTilePixel"] = true;
+
+    as->Comment("VBM pixel mask");
+    as->Label("vbmTestTilePixelBit    dc.b $80, $40, $20, $10, $08, $04, $02, $01");
+
+    as->Label("vbmTestTilePixel");
+    as->Comment("Accumulator contains X position and y reg required (offset in tile a / y)");
+    as->Asm("and #7   ; find offset for dot");
+    as->Asm("tax");
+    as->Asm("lda vbmTestTilePixelBit,x   ; get dot pattern");
+    as->Asm("and ("+as->m_internalZP[0]+"),y ; AND with screenmemory to get pixel value");
+}
+void Methods6502::initVbmTestTilePixel2(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmTestTilePixel2"])
+        return;
+
+    m_node->m_isInitialized["vbmTestTilePixel2"] = true;
+
+    as->Comment("VBM 2 pixel mask");
+    as->Label("vbmTestTilePixel2Bit    dc.b $c0, $30, $0c, $03");
+
+    as->Label("vbmTestTilePixel2");
+    as->Comment("Accumulator contains X position and y reg required (offset in tile a / y)");
+    as->Asm("and #6   ; find offset for dot");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmTestTilePixel2Bit,x   ; get blot pattern (double pixel, even aligned)");
+    as->Asm("and ("+as->m_internalZP[0]+"),y");
+
+}
+void Methods6502::vbmTestTilePixel(Assembler* as)
+{
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmTestTilePixel","initVbmTestTilePixel");
+
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 1) {
+        ErrorHandler::e.Error("This TRSE command needs at least 1 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
+
+    // address 1 - tile
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    as->Comment("test pixel in an 8x8 tile");
+
+    as->Comment("Tile to use:");
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr1 );
+        as->Asm("sta " + as->m_internalZP[0] );
+        as->Asm("lda " + addr1 +"+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr1 );
+        as->Asm("sta " + as->m_internalZP[0] );
+        as->Asm("lda #>" + addr1 );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
+    }
+
+    //  Y
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "ldy #" + QString::number( m_node->m_params[2]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("y is complex");
+        LoadVar(as, 2);
+        as->Asm("tay");
+    }
+
+    //  X
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 1);
+    }
+
+    as->Asm("jsr vbmTestTilePixel");
+
+}
+void Methods6502::vbmTestTilePixel2(Assembler* as)
+{
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmTestTilePixel2","initVbmTestTilePixel2");
+
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 1) {
+        ErrorHandler::e.Error("This TRSE command needs at least 1 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
+
+    // address 1 - tile
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    as->Comment("test pixel in an 8x8 tile");
+
+    as->Comment("Tile to use:");
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr1 );
+        as->Asm("sta " + as->m_internalZP[0] );
+        as->Asm("lda " + addr1 +"+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr1 );
+        as->Asm("sta " + as->m_internalZP[0] );
+        as->Asm("lda #>" + addr1 );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
+    }
+
+    //  Y
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "ldy #" + QString::number( m_node->m_params[2]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("y is complex");
+        LoadVar(as, 2);
+        as->Asm("tay");
+    }
+
+    //  X
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 1);
+    }
+
+    as->Asm("jsr vbmTestTilePixel2");
 
 }
 
@@ -3126,7 +3302,7 @@ void Methods6502::vbmTestPixel(Assembler *as) {
         as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
     } else {
         // complex
-        as->Comment("yx is complex");
+        as->Comment("y is complex");
         LoadVar(as, 1);
     }
     as->Asm("sta vbmY");
@@ -3189,7 +3365,7 @@ void Methods6502::vbmDrawDot(Assembler *as) {
         as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
     } else {
         // complex
-        as->Comment("yx is complex");
+        as->Comment("y is complex");
         LoadVar(as, 1);
     }
     as->Asm("sta vbmY");
@@ -3459,7 +3635,7 @@ void Methods6502::initVbmScreenShiftLeft(Assembler* as)
 
     m_node->m_isInitialized["vbmScreenShiftLeft"] = true;
 
-    if (as->m_tempZeroPointers.count()==0)
+    if (as->m_internalZP.count()==0)
         return;
 
     as->Comment("VBM - Shift the screen to the left");
@@ -3474,7 +3650,7 @@ void Methods6502::initVbmScreenShiftRight(Assembler* as)
 
     m_node->m_isInitialized["vbmScreenShiftRight"] = true;
 
-    if (as->m_tempZeroPointers.count()==0)
+    if (as->m_internalZP.count()==0)
         return;
 
     as->Comment("VBM - Shift the screen to the left");
@@ -3556,7 +3732,7 @@ void Methods6502::initVbmSpriteStitch(Assembler* as)
 
     m_node->m_isInitialized["vbmSpriteStitch"] = true;
 
-    if (as->m_tempZeroPointers.count()==0)
+    if (as->m_internalZP.count()==0)
         return;
 
     as->Comment("VBM - stitch two sprites together");
@@ -3567,9 +3743,9 @@ void Methods6502::initVbmSpriteStitch(Assembler* as)
 
     as->Label("vbmSSt_loop");
 
-    as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
-    as->Asm("ora (" + as->m_tempZeroPointers[1] + "),y");
-    as->Asm("sta (" + as->m_tempZeroPointers[1] + "),y");
+    as->Asm("lda (" + as->m_internalZP[0] + "),y");
+    as->Asm("ora (" + as->m_internalZP[1] + "),y");
+    as->Asm("sta (" + as->m_internalZP[1] + "),y");
     as->Asm("iny");
     as->Asm("cpy vbmY");
     as->Asm("bne vbmSSt_loop");
@@ -3581,7 +3757,9 @@ void Methods6502::vbmSpriteStitch(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmSpriteStitch","InitVbmSpriteStitch");
 
-    if (as->m_tempZeroPointers.count() < 2) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 2) {
         ErrorHandler::e.Error("This TRSE command needs at least 2 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
@@ -3612,26 +3790,26 @@ void Methods6502::vbmSpriteStitch(Assembler* as)
 
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     } else {
         as->Asm("lda #<" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda #>" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
 
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     } else {
         as->Asm("lda #<" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda #>" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
     // height
     if (m_node->m_params[2]->isPureNumeric()) {
@@ -3654,15 +3832,17 @@ void Methods6502::initVbmSpriteShiftL(Assembler *as)
 
     m_node->m_isInitialized["vbmSpriteShiftL"] = true;
 
-    if (as->m_tempZeroPointers.count() < 3) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 3) {
         ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
     // p1 (src) p2 (dest)
     // vbmX and vbmY
     as->Comment("VBM - create left shifted positions for a sprite");
-    as->Comment("Source = "+ as->m_tempZeroPointers[0]);
-    as->Comment("Destination = "+ as->m_tempZeroPointers[1]);
+    as->Comment("Source = "+ as->m_internalZP[0]);
+    as->Comment("Destination = "+ as->m_internalZP[1]);
     as->Comment("vbmX = shift increment value 1, 2 or 4 for 8, 4 or 2 shifted sprites respectively");
     as->Comment("vbmY = height of sprite to shift");
 
@@ -3677,8 +3857,8 @@ void Methods6502::initVbmSpriteShiftL(Assembler *as)
     as->Asm("ldy #0");
 
     as->Label("vbmSSLCopyCharLoop");
-    as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y	; read");
-    as->Asm("sta (" + as->m_tempZeroPointers[1] + "),y	; copy to 1st column");
+    as->Asm("lda (" + as->m_internalZP[0] + "),y	; read");
+    as->Asm("sta (" + as->m_internalZP[1] + "),y	; copy to 1st column");
     as->Asm("iny");
     as->Asm("cpy vbmY");
     as->Asm("bne vbmSSLCopyCharLoop");
@@ -3695,14 +3875,14 @@ void Methods6502::initVbmSpriteShiftL(Assembler *as)
     as->Asm("sbc vbmI");
     as->Asm("sta vbmT	; number of times to shift");
 
-    as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y ; read");
+    as->Asm("lda (" + as->m_internalZP[1] + "),y ; read");
 
     as->Label("vbmSSLShiftLoop2");
     as->Asm("asl");
     as->Asm("dec vbmT");
     as->Asm("bpl vbmSSLShiftLoop2");
 
-    as->Asm("sta (" + as->m_tempZeroPointers[1] + "),y ; store");
+    as->Asm("sta (" + as->m_internalZP[1] + "),y ; store");
 
     as->Asm("iny");
     as->Asm("cpy vbmY");
@@ -3713,28 +3893,28 @@ void Methods6502::initVbmSpriteShiftL(Assembler *as)
     as->Comment("store address of pre-shifted sprite in look up table");
     // copy temp pointer 1 (destination) into temp pointer 2 (lookup table)
     as->Asm("ldy #0");
-    as->Asm("lda " + as->m_tempZeroPointers[1]);
-    as->Asm("sta (" + as->m_tempZeroPointers[2] + "),y");
+    as->Asm("lda " + as->m_internalZP[1]);
+    as->Asm("sta (" + as->m_internalZP[2] + "),y");
     as->Asm("iny");
-    as->Asm("lda " + as->m_tempZeroPointers[1] + "+1");
-    as->Asm("sta (" + as->m_tempZeroPointers[2] + "),y");
+    as->Asm("lda " + as->m_internalZP[1] + "+1");
+    as->Asm("sta (" + as->m_internalZP[2] + "),y");
     // add 2 (as we are storing low/high in serial list for simplicity)
-    as->Asm("lda " + as->m_tempZeroPointers[2]);
+    as->Asm("lda " + as->m_internalZP[2]);
     as->Asm("clc");
     as->Asm("adc #2");
     as->Asm("bcc vbmSSL_p3overflow");
-    as->Asm("inc " + as->m_tempZeroPointers[2] + "+1");
+    as->Asm("inc " + as->m_internalZP[2] + "+1");
     as->Label("vbmSSL_p3overflow");
-    as->Asm("sta " + as->m_tempZeroPointers[2]);
+    as->Asm("sta " + as->m_internalZP[2]);
 
     as->Comment("add y to vbmP2");
-    as->Asm("lda " + as->m_tempZeroPointers[1]);
+    as->Asm("lda " + as->m_internalZP[1]);
     as->Asm("clc");
     as->Asm("adc vbmY");
     as->Asm("bcc vbmSSL_p2overflow");
-    as->Asm("inc " + as->m_tempZeroPointers[1] + "+1");
+    as->Asm("inc " + as->m_internalZP[1] + "+1");
     as->Label("vbmSSL_p2overflow");
-    as->Asm("sta " + as->m_tempZeroPointers[1]);
+    as->Asm("sta " + as->m_internalZP[1]);
 
     // do next shifted sprite
     as->Comment("increment iteration");
@@ -3753,15 +3933,17 @@ void Methods6502::initVbmSpriteShiftR(Assembler *as)
 
     m_node->m_isInitialized["vbmSpriteShiftR"] = true;
 
-    if (as->m_tempZeroPointers.count() < 3) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 3) {
         ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
     // p1 (src) p2 (dest)
     // vbmX and vbmY
     as->Comment("VBM - create right shifted positions for a sprite");
-    as->Comment("Source = "+ as->m_tempZeroPointers[0]);
-    as->Comment("Destination = "+ as->m_tempZeroPointers[1]);
+    as->Comment("Source = "+ as->m_internalZP[0]);
+    as->Comment("Destination = "+ as->m_internalZP[1]);
     as->Comment("vbmX = shift increment value 1, 2 or 4 for 8, 4 or 2 shifted sprites respectively");
     as->Comment("vbmY = height of sprite to shift");
 
@@ -3776,8 +3958,8 @@ void Methods6502::initVbmSpriteShiftR(Assembler *as)
     as->Asm("ldy #0");
 
     as->Label("vbmSSRCopyCharLoop");
-    as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y	; read");
-    as->Asm("sta (" + as->m_tempZeroPointers[1] + "),y	; copy to 1st column");
+    as->Asm("lda (" + as->m_internalZP[0] + "),y	; read");
+    as->Asm("sta (" + as->m_internalZP[1] + "),y	; copy to 1st column");
     as->Asm("iny");
     as->Asm("cpy vbmY");
     as->Asm("bne vbmSSRCopyCharLoop");
@@ -3791,14 +3973,14 @@ void Methods6502::initVbmSpriteShiftR(Assembler *as)
     as->Asm("lda vbmI");
     as->Asm("sta vbmT	; number of times to shift");
 
-    as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y ; read");
+    as->Asm("lda (" + as->m_internalZP[1] + "),y ; read");
 
     as->Label("vbmSSRShiftLoop2");
     as->Asm("lsr");
     as->Asm("dec vbmT");
     as->Asm("bne vbmSSRShiftLoop2");
 
-    as->Asm("sta (" + as->m_tempZeroPointers[1] + "),y ; store");
+    as->Asm("sta (" + as->m_internalZP[1] + "),y ; store");
 
     as->Asm("iny");
     as->Asm("cpy vbmY");
@@ -3809,28 +3991,28 @@ void Methods6502::initVbmSpriteShiftR(Assembler *as)
     as->Comment("store address of pre-shifted sprite in look up table");
     // copy temp pointer 1 (destination) into temp pointer 2 (lookup table)
     as->Asm("ldy #0");
-    as->Asm("lda " + as->m_tempZeroPointers[1]);
-    as->Asm("sta (" + as->m_tempZeroPointers[2] + "),y");
+    as->Asm("lda " + as->m_internalZP[1]);
+    as->Asm("sta (" + as->m_internalZP[2] + "),y");
     as->Asm("iny");
-    as->Asm("lda " + as->m_tempZeroPointers[1] + "+1");
-    as->Asm("sta (" + as->m_tempZeroPointers[2] + "),y");
+    as->Asm("lda " + as->m_internalZP[1] + "+1");
+    as->Asm("sta (" + as->m_internalZP[2] + "),y");
     // add 2 (as we are storing low/high in serial list for simplicity)
-    as->Asm("lda " + as->m_tempZeroPointers[2]);
+    as->Asm("lda " + as->m_internalZP[2]);
     as->Asm("clc");
     as->Asm("adc #2");
     as->Asm("bcc vbmSSR_p3overflow");
-    as->Asm("inc " + as->m_tempZeroPointers[2] + "+1");
+    as->Asm("inc " + as->m_internalZP[2] + "+1");
     as->Label("vbmSSR_p3overflow");
-    as->Asm("sta " + as->m_tempZeroPointers[2]);
+    as->Asm("sta " + as->m_internalZP[2]);
 
     as->Comment("add y to vbmP2");
-    as->Asm("lda " + as->m_tempZeroPointers[1]);
+    as->Asm("lda " + as->m_internalZP[1]);
     as->Asm("clc");
     as->Asm("adc vbmY");
     as->Asm("bcc vbmSSR_p2overflow");
-    as->Asm("inc " + as->m_tempZeroPointers[1] + "+1");
+    as->Asm("inc " + as->m_internalZP[1] + "+1");
     as->Label("vbmSSR_p2overflow");
-    as->Asm("sta " + as->m_tempZeroPointers[1]);
+    as->Asm("sta " + as->m_internalZP[1]);
 
     // do next shifted sprite
     as->Comment("increment iteration");
@@ -3848,7 +4030,7 @@ void Methods6502::vbmSpriteShiftL(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmSpriteShiftL","InitVbmSpriteShiftL");
 
-    if (as->m_tempZeroPointers.count()<3)
+    if (as->m_internalZP.count()<3)
         return;
 
     // address 1
@@ -3892,26 +4074,26 @@ void Methods6502::vbmSpriteShiftL(Assembler* as)
 
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     } else {
         as->Asm("lda #<" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda #>" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
 
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     } else {
         as->Asm("lda #<" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda #>" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
 
     // Shift increments
@@ -3938,14 +4120,14 @@ void Methods6502::vbmSpriteShiftL(Assembler* as)
     // address where to store lookups
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr3 );
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("sta " + as->m_internalZP[2] );
         as->Asm("lda " + addr3 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
     } else {
         as->Asm("lda #<" + addr3 );
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("sta " + as->m_internalZP[2] );
         as->Asm("lda #>" + addr3 );
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
     }
 
     as->Asm("jsr vbmSpriteShiftL");
@@ -3957,7 +4139,7 @@ void Methods6502::vbmSpriteShiftR(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmSpriteShiftR","InitVbmSpriteShiftR");
 
-    if (as->m_tempZeroPointers.count()<3)
+    if (as->m_internalZP.count()<3)
         return;
 
     // address 1
@@ -4001,26 +4183,26 @@ void Methods6502::vbmSpriteShiftR(Assembler* as)
 
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     } else {
         as->Asm("lda #<" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda #>" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
 
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     } else {
         as->Asm("lda #<" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda #>" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
     // Shift increments
     if (m_node->m_params[2]->isPureNumeric()) {
@@ -4046,14 +4228,14 @@ void Methods6502::vbmSpriteShiftR(Assembler* as)
     // address where to store lookups
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr3 );
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("sta " + as->m_internalZP[2] );
         as->Asm("lda " + addr3 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
     } else {
         as->Asm("lda #<" + addr3 );
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("sta " + as->m_internalZP[2] );
         as->Asm("lda #>" + addr3 );
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
     }
 
     as->Asm("jsr vbmSpriteShiftR");
@@ -4067,49 +4249,51 @@ void Methods6502::initVbmDrawSprite8(Assembler *as)
 
     m_node->m_isInitialized["vbmDrawSprite8"] = true;
 
-    if (as->m_tempZeroPointers.count() < 2) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 2) {
         ErrorHandler::e.Error("This TRSE command needs at least 2 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
     // p1 (src) p2 (dest)
     // vbmX and vbmY
     as->Comment("VBM - draw an 8x8 sprite - use vbmSetPosition first");
-    as->Comment("Left Side = "+ as->m_tempZeroPointers[0]);
-    as->Comment("Right side = "+ as->m_tempZeroPointers[1]);
+    as->Comment("Left Side = "+ as->m_internalZP[0]);
+    as->Comment("Right side = "+ as->m_internalZP[1]);
 
     as->Label("vbmDrawSprite8");
 
         as->Comment("draw left side");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
@@ -4132,35 +4316,35 @@ void Methods6502::initVbmDrawSprite8(Assembler *as)
 
         as->Comment("draw right side");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
@@ -4175,7 +4359,7 @@ void Methods6502::vbmDrawSprite8(Assembler* as)
     if (m_node->m_isInitialized["vbmScrollLeft"] || m_node->m_isInitialized["vbmScrollRight"])
         ErrorHandler::e.Error("vbmscrollright and vbmscrollleft are not compatible with this sprite command. Use Sprite Slices instead.", m_node->m_op.m_lineNumber);
 
-    if (as->m_tempZeroPointers.count()==0)
+    if (as->m_internalZP.count()==0)
         return;
 
     // address 1
@@ -4217,30 +4401,30 @@ void Methods6502::vbmDrawSprite8(Assembler* as)
 
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("lda (" + addr1 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("iny");
         as->Asm("lda (" + addr1 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
         if (m_node->m_params[1]->getType(as)==TokenType::POINTER)
         { as->Asm("dey"); }
     } else {
         as->Asm("lda " + addr1 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
 
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda (" + addr2 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("iny");
         as->Asm("lda (" + addr2 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     } else {
         as->Asm("lda " + addr2 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
 
     as->Asm("jsr vbmDrawSprite8");
@@ -4254,49 +4438,51 @@ void Methods6502::initVbmDrawSprite8E(Assembler *as)
 
     m_node->m_isInitialized["vbmDrawSprite8E"] = true;
 
-    if (as->m_tempZeroPointers.count() < 2) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 2) {
         ErrorHandler::e.Error("This TRSE command needs at least 2 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
     // p1 (src) p2 (dest)
     // vbmX and vbmY
     as->Comment("VBM - draw an 8x8 sprite with EOR - use vbmSetPosition first");
-    as->Comment("Left Side = "+ as->m_tempZeroPointers[0]);
-    as->Comment("Right side = "+ as->m_tempZeroPointers[1]);
+    as->Comment("Left Side = "+ as->m_internalZP[0]);
+    as->Comment("Right side = "+ as->m_internalZP[1]);
 
     as->Label("vbmDrawSprite8E");
 
         as->Comment("draw left side");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
@@ -4318,35 +4504,35 @@ void Methods6502::initVbmDrawSprite8E(Assembler *as)
 
         as->Comment("draw right side");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
@@ -4361,7 +4547,7 @@ void Methods6502::vbmDrawSprite8E(Assembler* as)
     if (m_node->m_isInitialized["vbmScrollLeft"] || m_node->m_isInitialized["vbmScrollRight"])
         ErrorHandler::e.Error("vbmscrollright and vbmscrollleft are not compatible with this sprite command. Use Sprite Slices instead.", m_node->m_op.m_lineNumber);
 
-    if (as->m_tempZeroPointers.count()==0)
+    if (as->m_internalZP.count()==0)
         return;
 
     // address 1
@@ -4403,30 +4589,30 @@ void Methods6502::vbmDrawSprite8E(Assembler* as)
 
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("lda (" + addr1 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("iny");
         as->Asm("lda (" + addr1 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
         if (m_node->m_params[1]->getType(as)==TokenType::POINTER)
         { as->Asm("dey"); }
     } else {
         as->Asm("lda " + addr1 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
 
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda (" + addr2 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("iny");
         as->Asm("lda (" + addr2 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     } else {
         as->Asm("lda " + addr2 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
     as->Asm("jsr vbmDrawSprite8E");
 
@@ -4439,56 +4625,58 @@ void Methods6502::initVbmClearSprite8(Assembler *as)
 
     m_node->m_isInitialized["vbmClearSprite8"] = true;
 
-    if (as->m_tempZeroPointers.count() < 2) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 2) {
         ErrorHandler::e.Error("This TRSE command needs at least 2 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
     // p1 (src) p2 (dest)
     // vbmX and vbmY
     as->Comment("VBM - clear (cut out) an 8x8 sprite - use vbmSetPosition first");
-    as->Comment("Left Side = "+ as->m_tempZeroPointers[0]);
-    as->Comment("Right side = "+ as->m_tempZeroPointers[1]);
+    as->Comment("Left Side = "+ as->m_internalZP[0]);
+    as->Comment("Right side = "+ as->m_internalZP[1]);
 
     as->Label("vbmClearSprite8");
 
         as->Comment("draw left side");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
@@ -4511,42 +4699,42 @@ void Methods6502::initVbmClearSprite8(Assembler *as)
 
         as->Comment("draw right side");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
@@ -4562,7 +4750,7 @@ void Methods6502::vbmClearSprite8(Assembler* as)
     if (m_node->m_isInitialized["vbmScrollLeft"] || m_node->m_isInitialized["vbmScrollRight"])
         ErrorHandler::e.Error("vbmscrollright and vbmscrollleft are not compatible with this sprite command. Use Sprite Slices instead.", m_node->m_op.m_lineNumber);
 
-    if (as->m_tempZeroPointers.count()==0)
+    if (as->m_internalZP.count()==0)
         return;
 
     // address 1
@@ -4604,30 +4792,30 @@ void Methods6502::vbmClearSprite8(Assembler* as)
 
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("lda (" + addr1 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("iny");
         as->Asm("lda (" + addr1 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
         if (m_node->m_params[1]->getType(as)==TokenType::POINTER)
         { as->Asm("dey"); }
     } else {
         as->Asm("lda " + addr1 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
 
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda (" + addr2 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("iny");
         as->Asm("lda (" + addr2 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     } else {
         as->Asm("lda " + addr2 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
 
     as->Asm("jsr vbmClearSprite8");
@@ -4642,83 +4830,85 @@ void Methods6502::initVbmDrawSprite16(Assembler *as)
 
     m_node->m_isInitialized["vbmDrawSprite16"] = true;
 
-    if (as->m_tempZeroPointers.count() < 3) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 3) {
         ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
     // p1 (src) p2 (dest)
     // vbmX and vbmY
     as->Comment("VBM - draw a 16x16 sprite with OR - use vbmSetPosition first");
-    as->Comment("Left Side = "+ as->m_tempZeroPointers[0]);
-    as->Comment("middle = "+ as->m_tempZeroPointers[1]);
-    as->Comment("Right side = "+ as->m_tempZeroPointers[2]);
+    as->Comment("Left Side = "+ as->m_internalZP[0]);
+    as->Comment("middle = "+ as->m_internalZP[1]);
+    as->Comment("Right side = "+ as->m_internalZP[2]);
 
     as->Label("vbmDrawSprite16");
 
         as->Comment("draw left side");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
@@ -4736,68 +4926,68 @@ void Methods6502::initVbmDrawSprite16(Assembler *as)
 
         as->Comment("draw middle");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
@@ -4819,68 +5009,68 @@ void Methods6502::initVbmDrawSprite16(Assembler *as)
 
         as->Comment("draw right side");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
@@ -4895,7 +5085,7 @@ void Methods6502::vbmDrawSprite16(Assembler* as)
     if (m_node->m_isInitialized["vbmScrollLeft"] || m_node->m_isInitialized["vbmScrollRight"])
         ErrorHandler::e.Error("vbmscrollright and vbmscrollleft are not compatible with this sprite command. Use Sprite Slices instead.", m_node->m_op.m_lineNumber);
 
-    if (as->m_tempZeroPointers.count()==0)
+    if (as->m_internalZP.count()==0)
         return;
 
     // address 1
@@ -4952,46 +5142,46 @@ void Methods6502::vbmDrawSprite16(Assembler* as)
 
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("lda (" + addr1 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("iny");
         as->Asm("lda (" + addr1 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
         if (m_node->m_params[1]->getType(as)==TokenType::POINTER
                 || m_node->m_params[2]->getType(as)==TokenType::POINTER)
         { as->Asm("dey"); }
     } else {
         as->Asm("lda " + addr1 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
 
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda (" + addr2 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("iny");
         as->Asm("lda (" + addr2 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
         if (m_node->m_params[2]->getType(as)==TokenType::POINTER)
         { as->Asm("dey"); }
     } else {
         as->Asm("lda " + addr2 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
 
     if (m_node->m_params[2]->getType(as)==TokenType::POINTER) {
         as->Asm("lda (" + addr3 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("sta " + as->m_internalZP[2] );
         as->Asm("iny");
         as->Asm("lda (" + addr3 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
     } else {
         as->Asm("lda " + addr3 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("sta " + as->m_internalZP[2] );
         as->Asm("lda " + addr3 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
     }
     as->Asm("jsr vbmDrawSprite16");
 
@@ -5004,83 +5194,85 @@ void Methods6502::initVbmDrawSprite16E(Assembler *as)
 
     m_node->m_isInitialized["vbmDrawSprite16E"] = true;
 
-    if (as->m_tempZeroPointers.count() < 3) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 3) {
         ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
     // p1 (src) p2 (dest)
     // vbmX and vbmY
     as->Comment("VBM - draw a 16x16 sprite with EOR - use vbmSetPosition first");
-    as->Comment("Left Side = "+ as->m_tempZeroPointers[0]);
-    as->Comment("middle = "+ as->m_tempZeroPointers[1]);
-    as->Comment("Right side = "+ as->m_tempZeroPointers[2]);
+    as->Comment("Left Side = "+ as->m_internalZP[0]);
+    as->Comment("middle = "+ as->m_internalZP[1]);
+    as->Comment("Right side = "+ as->m_internalZP[2]);
 
     as->Label("vbmDrawSprite16E");
 
         as->Comment("draw left side");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
@@ -5098,68 +5290,68 @@ void Methods6502::initVbmDrawSprite16E(Assembler *as)
 
         as->Comment("draw middle");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
@@ -5181,68 +5373,68 @@ void Methods6502::initVbmDrawSprite16E(Assembler *as)
 
         as->Comment("draw right side");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
@@ -5257,7 +5449,7 @@ void Methods6502::vbmDrawSprite16E(Assembler* as)
     if (m_node->m_isInitialized["vbmScrollLeft"] || m_node->m_isInitialized["vbmScrollRight"])
         ErrorHandler::e.Error("vbmscrollright and vbmscrollleft are not compatible with this sprite command. Use Sprite Slices instead.", m_node->m_op.m_lineNumber);
 
-    if (as->m_tempZeroPointers.count()==0)
+    if (as->m_internalZP.count()==0)
         return;
 
     // address 1
@@ -5314,46 +5506,46 @@ void Methods6502::vbmDrawSprite16E(Assembler* as)
 
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("lda (" + addr1 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("iny");
         as->Asm("lda (" + addr1 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
         if (m_node->m_params[1]->getType(as)==TokenType::POINTER
                 || m_node->m_params[2]->getType(as)==TokenType::POINTER)
         { as->Asm("dey"); }
     } else {
         as->Asm("lda " + addr1 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
 
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda (" + addr2 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("iny");
         as->Asm("lda (" + addr2 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
         if (m_node->m_params[2]->getType(as)==TokenType::POINTER)
         { as->Asm("dey"); }
     } else {
         as->Asm("lda " + addr2 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
 
     if (m_node->m_params[2]->getType(as)==TokenType::POINTER) {
         as->Asm("lda (" + addr3 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("sta " + as->m_internalZP[2] );
         as->Asm("iny");
         as->Asm("lda (" + addr3 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
     } else {
         as->Asm("lda " + addr3 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("sta " + as->m_internalZP[2] );
         as->Asm("lda " + addr3 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
     }
     as->Asm("jsr vbmDrawSprite16E");
 
@@ -5366,98 +5558,100 @@ void Methods6502::initVbmClearSprite16(Assembler *as)
 
     m_node->m_isInitialized["vbmClearSprite16"] = true;
 
-    if (as->m_tempZeroPointers.count() < 3) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 3) {
         ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
     // p1 (src) p2 (dest)
     // vbmX and vbmY
     as->Comment("VBM - Clear a 16x16 sprite with AND - use vbmSetPosition first");
-    as->Comment("Left Side = "+ as->m_tempZeroPointers[0]);
-    as->Comment("middle = "+ as->m_tempZeroPointers[1]);
-    as->Comment("Right side = "+ as->m_tempZeroPointers[2]);
+    as->Comment("Left Side = "+ as->m_internalZP[0]);
+    as->Comment("middle = "+ as->m_internalZP[1]);
+    as->Comment("Right side = "+ as->m_internalZP[2]);
 
     as->Label("vbmClearSprite16");
 
         as->Comment("draw left side");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] + "),y");
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
@@ -5476,83 +5670,83 @@ void Methods6502::initVbmClearSprite16(Assembler *as)
 
         as->Comment("draw middle");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[1] + "),y");
+        as->Asm("lda (" + as->m_internalZP[1] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
@@ -5575,83 +5769,83 @@ void Methods6502::initVbmClearSprite16(Assembler *as)
 
         as->Comment("draw right side");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
@@ -5667,7 +5861,7 @@ void Methods6502::vbmClearSprite16(Assembler* as)
     if (m_node->m_isInitialized["vbmScrollLeft"] || m_node->m_isInitialized["vbmScrollRight"])
         ErrorHandler::e.Error("vbmscrollright and vbmscrollleft are not compatible with this sprite command. Use Sprite Slices instead.", m_node->m_op.m_lineNumber);
 
-    if (as->m_tempZeroPointers.count()==0)
+    if (as->m_internalZP.count()==0)
         return;
 
     // address 1
@@ -5724,46 +5918,46 @@ void Methods6502::vbmClearSprite16(Assembler* as)
 
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("lda (" + addr1 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("iny");
         as->Asm("lda (" + addr1 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
         if (m_node->m_params[1]->getType(as)==TokenType::POINTER
                 || m_node->m_params[2]->getType(as)==TokenType::POINTER)
         { as->Asm("dey"); }
     } else {
         as->Asm("lda " + addr1 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
 
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda (" + addr2 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("iny");
         as->Asm("lda (" + addr2 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
         if (m_node->m_params[2]->getType(as)==TokenType::POINTER)
         { as->Asm("dey"); }
     } else {
         as->Asm("lda " + addr2 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
 
     if (m_node->m_params[2]->getType(as)==TokenType::POINTER) {
         as->Asm("lda (" + addr3 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("sta " + as->m_internalZP[2] );
         as->Asm("iny");
         as->Asm("lda (" + addr3 +"),y" );
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
     } else {
         as->Asm("lda " + addr3 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
+        as->Asm("sta " + as->m_internalZP[2] );
         as->Asm("lda " + addr3 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
     }
     as->Asm("jsr vbmClearSprite16");
 
@@ -5776,12 +5970,14 @@ void Methods6502::initVbmDrawSpriteSlice(Assembler *as)
 
     m_node->m_isInitialized["vbmDrawSpriteSlice"] = true;
 
-    if (as->m_tempZeroPointers.count() < 1) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 1) {
         ErrorHandler::e.Error("This TRSE command needs at least 1 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
     as->Comment("VBM - draw an 8 x h sprite with OR - use vbmSetPosition first");
-    as->Comment("Shifted sprite address = "+ as->m_tempZeroPointers[0]);
+    as->Comment("Shifted sprite address = "+ as->m_internalZP[0]);
 
     as->Label("vbmDrawSpriteSlice");
 
@@ -5790,7 +5986,7 @@ void Methods6502::initVbmDrawSpriteSlice(Assembler *as)
     as->Label("vbmDSS_draw");
 
         as->Comment("draw one slice");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y");
+        as->Asm("lda (" + as->m_internalZP[0] +"),y");
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
@@ -5805,7 +6001,7 @@ void Methods6502::vbmDrawSpriteSlice(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmDrawSpriteSlice","InitVbmDrawSpriteSlice");
 
-    if (as->m_tempZeroPointers.count()==0)
+    if (as->m_internalZP.count()==0)
         return;
 
     // address 1
@@ -5827,16 +6023,16 @@ void Methods6502::vbmDrawSpriteSlice(Assembler* as)
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("tay");
         as->Asm("lda (" + addr1 + "),y	; look up shifted sprite");
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("iny");
         as->Asm("lda (" + addr1 +"),y ;keep");
-        as->Asm("sta " + as->m_tempZeroPointers[0] +"+1");
+        as->Asm("sta " + as->m_internalZP[0] +"+1");
     } else {
         as->Asm("tax");
         as->Asm("lda " + addr1 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
 
     // draw from line (start)
@@ -5872,12 +6068,14 @@ void Methods6502::initVbmDrawSpriteSliceE(Assembler *as)
 
     m_node->m_isInitialized["vbmDrawSpriteSliceE"] = true;
 
-    if (as->m_tempZeroPointers.count() < 1) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 1) {
         ErrorHandler::e.Error("This TRSE command needs at least 1 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
     as->Comment("VBM - draw an 8 x h sprite with EOR - use vbmSetPosition first");
-    as->Comment("Shifted sprite address = "+ as->m_tempZeroPointers[0]);
+    as->Comment("Shifted sprite address = "+ as->m_internalZP[0]);
 
     as->Label("vbmDrawSpriteSliceE");
 
@@ -5886,7 +6084,7 @@ void Methods6502::initVbmDrawSpriteSliceE(Assembler *as)
     as->Label("vbmDSSE_draw");
 
         as->Comment("draw one slice");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y");
+        as->Asm("lda (" + as->m_internalZP[0] +"),y");
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
@@ -5901,7 +6099,7 @@ void Methods6502::vbmDrawSpriteSliceE(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmDrawSpriteSliceE","InitVbmDrawSpriteSliceE");
 
-    if (as->m_tempZeroPointers.count()==0)
+    if (as->m_internalZP.count()==0)
         return;
 
     // address 1
@@ -5923,16 +6121,16 @@ void Methods6502::vbmDrawSpriteSliceE(Assembler* as)
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("tay");
         as->Asm("lda (" + addr1 + "),y	; look up shifted sprite");
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("iny");
         as->Asm("lda (" + addr1 +"),y ;keep");
-        as->Asm("sta " + as->m_tempZeroPointers[0] +"+1");
+        as->Asm("sta " + as->m_internalZP[0] +"+1");
     } else {
         as->Asm("tax");
         as->Asm("lda " + addr1 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
 
     // draw from line (start)
@@ -5968,12 +6166,14 @@ void Methods6502::initVbmClearSpriteSlice(Assembler *as)
 
     m_node->m_isInitialized["vbmClearSpriteSlice"] = true;
 
-    if (as->m_tempZeroPointers.count() < 1) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 1) {
         ErrorHandler::e.Error("This TRSE command needs at least 1 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
     as->Comment("VBM - Clear an 8 x h sprite with AND - use vbmSetPosition first");
-    as->Comment("Shifted sprite address = "+ as->m_tempZeroPointers[0]);
+    as->Comment("Shifted sprite address = "+ as->m_internalZP[0]);
 
     as->Label("vbmClearSpriteSlice");
 
@@ -5982,7 +6182,7 @@ void Methods6502::initVbmClearSpriteSlice(Assembler *as)
     as->Label("vbmCSS_draw");
 
         as->Comment("draw one slice");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y");
+        as->Asm("lda (" + as->m_internalZP[0] +"),y");
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
@@ -5998,7 +6198,7 @@ void Methods6502::vbmClearSpriteSlice(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmClearSpriteSlice","InitVbmClearSpriteSlice");
 
-    if (as->m_tempZeroPointers.count()==0)
+    if (as->m_internalZP.count()==0)
         return;
 
     // address 1
@@ -6020,16 +6220,16 @@ void Methods6502::vbmClearSpriteSlice(Assembler* as)
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("tay");
         as->Asm("lda (" + addr1 + "),y	; look up shifted sprite");
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("iny");
         as->Asm("lda (" + addr1 +"),y ;keep");
-        as->Asm("sta " + as->m_tempZeroPointers[0] +"+1");
+        as->Asm("sta " + as->m_internalZP[0] +"+1");
     } else {
         as->Asm("tax");
         as->Asm("lda " + addr1 +",x" ); //#<
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1,x" ); //#>
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
 
     // draw from line (start)
@@ -6066,9 +6266,9 @@ void Methods6502::initVbmDrawText(Assembler* as)
     m_node->m_isInitialized["vbmDrawText"] = true;
 
     as->Comment("Draw text characters to the bitmap using a zero terminated CSTRING");
-    as->Comment("CSTRING    = " + as->m_tempZeroPointers[0]);
-    as->Comment("Font chars = " + as->m_tempZeroPointers[1]);
-    as->Comment("Temp addr  = " + as->m_tempZeroPointers[2] + " - used to calculate char address");
+    as->Comment("CSTRING    = " + as->m_internalZP[0]);
+    as->Comment("Font chars = " + as->m_internalZP[1]);
+    as->Comment("Temp addr  = " + as->m_internalZP[2] + " - used to calculate char address");
     as->Label("vbmDrawText");
 
     as->Label("vbmDTX_Xloop");
@@ -6089,61 +6289,61 @@ void Methods6502::initVbmDrawText(Assembler* as)
     as->Label("vbmDTX_GetCharNum");
         as->Comment("convert text number (0-255) * 8 = memory offset");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y		; get char from current position in CSTRING");
+        as->Asm("lda (" + as->m_internalZP[0] +"),y		; get char from current position in CSTRING");
         as->Asm("bne vbmDTX_NotEnd");
         as->Asm("rts ; if =0, we are end of the cstring");
 
     as->Label("vbmDTX_NotEnd");
 
-        as->Asm("sta " + as->m_tempZeroPointers[2]);
-        as->Asm("sty " + as->m_tempZeroPointers[2] + "+1");
+        as->Asm("sta " + as->m_internalZP[2]);
+        as->Asm("sty " + as->m_internalZP[2] + "+1");
 
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x2");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x4");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x8");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x2");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x4");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x8");
 
-        as->Asm("lda " + as->m_tempZeroPointers[2] );
+        as->Asm("lda " + as->m_internalZP[2] );
         as->Asm("clc");
-        as->Asm("adc "+ as->m_tempZeroPointers[1] + "  ; add tile low address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
-        as->Asm("lda " + as->m_tempZeroPointers[2] + "+1");
-        as->Asm("adc " + as->m_tempZeroPointers[1] + "+1 ; add tile high address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("adc "+ as->m_internalZP[1] + "  ; add tile low address");
+        as->Asm("sta " + as->m_internalZP[2] );
+        as->Asm("lda " + as->m_internalZP[2] + "+1");
+        as->Asm("adc " + as->m_internalZP[1] + "+1 ; add tile high address");
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
 
     as->Label("vbmDTX_DrawChar");
         as->Comment("y reg is ZERO from ldy #0 in GetTileNum");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
 
     as->Label("vbmDTX_NextChar");
         as->Asm("clc");
-        as->Asm("inc " + as->m_tempZeroPointers[0] + "  ; low byte");
+        as->Asm("inc " + as->m_internalZP[0] + "  ; low byte");
         as->Asm("bne vbmDTX_NTM_NoOverflow");
-        as->Asm("inc " + as->m_tempZeroPointers[0] + "+1  ; high byte");
+        as->Asm("inc " + as->m_internalZP[0] + "+1  ; high byte");
     as->Label("vbmDTX_NTM_NoOverflow");
         as->Comment("next x pos on screen");
         as->Asm("inc vbmX");
@@ -6168,7 +6368,9 @@ void Methods6502::vbmDrawText(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmDrawText","InitVbmDrawText");
 
-    if (as->m_tempZeroPointers.count() < 3) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 3) {
         ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
@@ -6199,26 +6401,26 @@ void Methods6502::vbmDrawText(Assembler* as)
     as->Comment("Text to use:");
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     } else {
         as->Asm("lda #<" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda #>" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
     as->Comment("Font characters to use:");
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     } else {
         as->Asm("lda #<" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda #>" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
 
     //  X
@@ -6266,9 +6468,9 @@ void Methods6502::initVbmDrawTextO(Assembler* as)
     m_node->m_isInitialized["vbmDrawTextO"] = true;
 
     as->Comment("Draw text characters to the bitmap using a zero terminated CSTRING with OR operation");
-    as->Comment("CSTRING    = " + as->m_tempZeroPointers[0]);
-    as->Comment("Font chars = " + as->m_tempZeroPointers[1]);
-    as->Comment("Temp addr  = " + as->m_tempZeroPointers[2] + " - used to calculate char address");
+    as->Comment("CSTRING    = " + as->m_internalZP[0]);
+    as->Comment("Font chars = " + as->m_internalZP[1]);
+    as->Comment("Temp addr  = " + as->m_internalZP[2] + " - used to calculate char address");
     as->Label("vbmDrawTextO");
 
     as->Label("vbmDTXO_Xloop");
@@ -6289,69 +6491,69 @@ void Methods6502::initVbmDrawTextO(Assembler* as)
     as->Label("vbmDTXO_GetCharNum");
         as->Comment("convert text number (0-255) * 8 = memory offset");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y		; get char from current position in CSTRING");
+        as->Asm("lda (" + as->m_internalZP[0] +"),y		; get char from current position in CSTRING");
         as->Asm("bne vbmDTXO_NotEnd");
         as->Asm("rts ; if =0, we are end of the cstring");
 
     as->Label("vbmDTXO_NotEnd");
 
-        as->Asm("sta " + as->m_tempZeroPointers[2]);
-        as->Asm("sty " + as->m_tempZeroPointers[2] + "+1");
+        as->Asm("sta " + as->m_internalZP[2]);
+        as->Asm("sty " + as->m_internalZP[2] + "+1");
 
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x2");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x4");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x8");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x2");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x4");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x8");
 
-        as->Asm("lda " + as->m_tempZeroPointers[2] );
+        as->Asm("lda " + as->m_internalZP[2] );
         as->Asm("clc");
-        as->Asm("adc "+ as->m_tempZeroPointers[1] + "  ; add tile low address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
-        as->Asm("lda " + as->m_tempZeroPointers[2] + "+1");
-        as->Asm("adc " + as->m_tempZeroPointers[1] + "+1 ; add tile high address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("adc "+ as->m_internalZP[1] + "  ; add tile low address");
+        as->Asm("sta " + as->m_internalZP[2] );
+        as->Asm("lda " + as->m_internalZP[2] + "+1");
+        as->Asm("adc " + as->m_internalZP[1] + "+1 ; add tile high address");
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
 
     as->Label("vbmDTXO_DrawChar");
         as->Comment("y reg is ZERO from ldy #0 in GetTileNum");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("ora (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
     as->Label("vbmDTXO_NextChar");
         as->Asm("clc");
-        as->Asm("inc " + as->m_tempZeroPointers[0] + "  ; low byte");
+        as->Asm("inc " + as->m_internalZP[0] + "  ; low byte");
         as->Asm("bne vbmDTXO_NTM_NoOverflow");
-        as->Asm("inc " + as->m_tempZeroPointers[0] + "+1  ; high byte");
+        as->Asm("inc " + as->m_internalZP[0] + "+1  ; high byte");
     as->Label("vbmDTXO_NTM_NoOverflow");
         as->Comment("next x pos on screen");
         as->Asm("inc vbmX");
@@ -6378,7 +6580,9 @@ void Methods6502::vbmDrawTextO(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmDrawTextO","InitVbmDrawTextO");
 
-    if (as->m_tempZeroPointers.count() < 3) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 3) {
         ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
@@ -6409,26 +6613,26 @@ void Methods6502::vbmDrawTextO(Assembler* as)
     as->Comment("Text to use:");
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     } else {
         as->Asm("lda #<" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda #>" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
     as->Comment("Font characters to use:");
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     } else {
         as->Asm("lda #<" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda #>" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
 
     //  X
@@ -6476,9 +6680,9 @@ void Methods6502::initVbmDrawTextE(Assembler* as)
     m_node->m_isInitialized["vbmDrawTextE"] = true;
 
     as->Comment("Draw text characters to the bitmap using a zero terminated CSTRING with EOR operation");
-    as->Comment("CSTRING    = " + as->m_tempZeroPointers[0]);
-    as->Comment("Font chars = " + as->m_tempZeroPointers[1]);
-    as->Comment("Temp addr  = " + as->m_tempZeroPointers[2] + " - used to calculate char address");
+    as->Comment("CSTRING    = " + as->m_internalZP[0]);
+    as->Comment("Font chars = " + as->m_internalZP[1]);
+    as->Comment("Temp addr  = " + as->m_internalZP[2] + " - used to calculate char address");
     as->Label("vbmDrawTextE");
 
     as->Label("vbmDTXE_Xloop");
@@ -6499,69 +6703,69 @@ void Methods6502::initVbmDrawTextE(Assembler* as)
     as->Label("vbmDTXE_GetCharNum");
         as->Comment("convert text number (0-255) * 8 = memory offset");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y		; get char from current position in CSTRING");
+        as->Asm("lda (" + as->m_internalZP[0] +"),y		; get char from current position in CSTRING");
         as->Asm("bne vbmDTXE_NotEnd");
         as->Asm("rts ; if =0, we are end of the cstring");
 
     as->Label("vbmDTXE_NotEnd");
 
-        as->Asm("sta " + as->m_tempZeroPointers[2]);
-        as->Asm("sty " + as->m_tempZeroPointers[2] + "+1");
+        as->Asm("sta " + as->m_internalZP[2]);
+        as->Asm("sty " + as->m_internalZP[2] + "+1");
 
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x2");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x4");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x8");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x2");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x4");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x8");
 
-        as->Asm("lda " + as->m_tempZeroPointers[2] );
+        as->Asm("lda " + as->m_internalZP[2] );
         as->Asm("clc");
-        as->Asm("adc "+ as->m_tempZeroPointers[1] + "  ; add tile low address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
-        as->Asm("lda " + as->m_tempZeroPointers[2] + "+1");
-        as->Asm("adc " + as->m_tempZeroPointers[1] + "+1 ; add tile high address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("adc "+ as->m_internalZP[1] + "  ; add tile low address");
+        as->Asm("sta " + as->m_internalZP[2] );
+        as->Asm("lda " + as->m_internalZP[2] + "+1");
+        as->Asm("adc " + as->m_internalZP[1] + "+1 ; add tile high address");
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
 
     as->Label("vbmDTXE_DrawChar");
         as->Comment("y reg is ZERO from ldy #0 in GetTileNum");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
     as->Label("vbmDTXE_NextChar");
         as->Asm("clc");
-        as->Asm("inc " + as->m_tempZeroPointers[0] + "  ; low byte");
+        as->Asm("inc " + as->m_internalZP[0] + "  ; low byte");
         as->Asm("bne vbmDTXE_NTM_NoOverflow");
-        as->Asm("inc " + as->m_tempZeroPointers[0] + "+1  ; high byte");
+        as->Asm("inc " + as->m_internalZP[0] + "+1  ; high byte");
     as->Label("vbmDTXE_NTM_NoOverflow");
         as->Comment("next x pos on screen");
         as->Asm("inc vbmX");
@@ -6588,7 +6792,9 @@ void Methods6502::vbmDrawTextE(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmDrawTextE","InitVbmDrawTextE");
 
-    if (as->m_tempZeroPointers.count() < 3) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 3) {
         ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
@@ -6619,26 +6825,26 @@ void Methods6502::vbmDrawTextE(Assembler* as)
     as->Comment("Text to use:");
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     } else {
         as->Asm("lda #<" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda #>" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
     as->Comment("Font characters to use:");
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     } else {
         as->Asm("lda #<" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda #>" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
 
     //  X
@@ -6686,9 +6892,9 @@ void Methods6502::initVbmClearText(Assembler* as)
     m_node->m_isInitialized["vbmClearText"] = true;
 
     as->Comment("Clear text characters to the bitmap using a zero terminated CSTRING");
-    as->Comment("CSTRING    = " + as->m_tempZeroPointers[0]);
-    as->Comment("Font chars = " + as->m_tempZeroPointers[1]);
-    as->Comment("Temp addr  = " + as->m_tempZeroPointers[2] + " - used to calculate char address");
+    as->Comment("CSTRING    = " + as->m_internalZP[0]);
+    as->Comment("Font chars = " + as->m_internalZP[1]);
+    as->Comment("Temp addr  = " + as->m_internalZP[2] + " - used to calculate char address");
     as->Label("vbmClearText");
 
     as->Label("vbmCTX_Xloop");
@@ -6709,77 +6915,77 @@ void Methods6502::initVbmClearText(Assembler* as)
     as->Label("vbmCTX_GetCharNum");
         as->Comment("convert text number (0-255) * 8 = memory offset");
         as->Asm("ldy #0");
-        as->Asm("lda (" + as->m_tempZeroPointers[0] +"),y		; get char from current position in CSTRING");
+        as->Asm("lda (" + as->m_internalZP[0] +"),y		; get char from current position in CSTRING");
         as->Asm("bne vbmCTX_NotEnd");
         as->Asm("rts ; if =0, we are end of the cstring");
 
     as->Label("vbmCTX_NotEnd");
 
-        as->Asm("sta " + as->m_tempZeroPointers[2]);
-        as->Asm("sty " + as->m_tempZeroPointers[2] + "+1");
+        as->Asm("sta " + as->m_internalZP[2]);
+        as->Asm("sty " + as->m_internalZP[2] + "+1");
 
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x2");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x4");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x8");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x2");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x4");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x8");
 
-        as->Asm("lda " + as->m_tempZeroPointers[2] );
+        as->Asm("lda " + as->m_internalZP[2] );
         as->Asm("clc");
-        as->Asm("adc "+ as->m_tempZeroPointers[1] + "  ; add tile low address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
-        as->Asm("lda " + as->m_tempZeroPointers[2] + "+1");
-        as->Asm("adc " + as->m_tempZeroPointers[1] + "+1 ; add tile high address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("adc "+ as->m_internalZP[1] + "  ; add tile low address");
+        as->Asm("sta " + as->m_internalZP[2] );
+        as->Asm("lda " + as->m_internalZP[2] + "+1");
+        as->Asm("adc " + as->m_internalZP[1] + "+1 ; add tile high address");
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
 
     as->Label("vbmCTX_DrawChar");
         as->Comment("y reg is ZERO from ldy #0 in GetTileNum");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("eor #$ff");
         as->Asm("and (screenmemory),y");
         as->Asm("sta (screenmemory),y");
 
     as->Label("vbmCTX_NextChar");
         as->Asm("clc");
-        as->Asm("inc " + as->m_tempZeroPointers[0] + "  ; low byte");
+        as->Asm("inc " + as->m_internalZP[0] + "  ; low byte");
         as->Asm("bne vbmCTX_NTM_NoOverflow");
-        as->Asm("inc " + as->m_tempZeroPointers[0] + "+1  ; high byte");
+        as->Asm("inc " + as->m_internalZP[0] + "+1  ; high byte");
     as->Label("vbmCTX_NTM_NoOverflow");
         as->Comment("next x pos on screen");
         as->Asm("inc vbmX");
@@ -6806,7 +7012,9 @@ void Methods6502::vbmClearText(Assembler* as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmClearText","InitVbmClearText");
 
-    if (as->m_tempZeroPointers.count() < 3) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 3) {
         ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
@@ -6837,26 +7045,26 @@ void Methods6502::vbmClearText(Assembler* as)
     as->Comment("Text to use:");
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda " + addr1 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     } else {
         as->Asm("lda #<" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] );
+        as->Asm("sta " + as->m_internalZP[0] );
         as->Asm("lda #>" + addr1 );
-        as->Asm("sta " + as->m_tempZeroPointers[0] + "+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
     }
     as->Comment("Font characters to use:");
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     } else {
         as->Asm("lda #<" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda #>" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
 
     //  X
@@ -6904,8 +7112,8 @@ void Methods6502::initVbmDrawBCD(Assembler* as)
     m_node->m_isInitialized["vbmDrawBCD"] = true;
 
     as->Comment("Draw text characters to the bitmap using a zero terminated CSTRING");
-    as->Comment("Font chars = " + as->m_tempZeroPointers[1]);
-    as->Comment("Temp addr  = " + as->m_tempZeroPointers[2] + " - used to calculate char address");
+    as->Comment("Font chars = " + as->m_internalZP[1]);
+    as->Comment("Temp addr  = " + as->m_internalZP[2] + " - used to calculate char address");
     as->Label("vbmDrawBCDDigit");
 
         as->Comment("calculate next screen memory position");
@@ -6926,48 +7134,48 @@ void Methods6502::initVbmDrawBCD(Assembler* as)
         as->Asm("ldy #0");
         as->Asm("lda vbmI ; get digit to display");
 
-        as->Asm("sta " + as->m_tempZeroPointers[2]);
-        as->Asm("sty " + as->m_tempZeroPointers[2] + "+1");
+        as->Asm("sta " + as->m_internalZP[2]);
+        as->Asm("sty " + as->m_internalZP[2] + "+1");
 
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x2");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x4");
-        as->Asm("asl " + as->m_tempZeroPointers[2]);
-        as->Asm("rol " + as->m_tempZeroPointers[2] + "+1 ;x8");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x2");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x4");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x8");
 
-        as->Asm("lda " + as->m_tempZeroPointers[2] );
+        as->Asm("lda " + as->m_internalZP[2] );
         as->Asm("clc");
-        as->Asm("adc "+ as->m_tempZeroPointers[1] + "  ; add char low address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] );
-        as->Asm("lda " + as->m_tempZeroPointers[2] + "+1");
-        as->Asm("adc " + as->m_tempZeroPointers[1] + "+1 ; add char high address");
-        as->Asm("sta " + as->m_tempZeroPointers[2] + "+1" );
+        as->Asm("adc "+ as->m_internalZP[1] + "  ; add char low address");
+        as->Asm("sta " + as->m_internalZP[2] );
+        as->Asm("lda " + as->m_internalZP[2] + "+1");
+        as->Asm("adc " + as->m_internalZP[1] + "+1 ; add char high address");
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
 
     as->Label("vbmDBCD_DrawDigit");
         as->Comment("y reg is ZERO from ldy #0 in GetTileNum");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
         as->Asm("iny");
-        as->Asm("lda (" + as->m_tempZeroPointers[2] + "),y" );
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
         as->Asm("sta (screenmemory),y");
 
     as->Label("vbmDBCD_Done");
@@ -6980,7 +7188,9 @@ void Methods6502::vbmDrawBCD(Assembler *as)
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmDrawBCD","InitVbmDrawBCD");
 
-    if (as->m_tempZeroPointers.count() < 3) {
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 3) {
         ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
     }
 
@@ -7012,14 +7222,14 @@ void Methods6502::vbmDrawBCD(Assembler *as)
     as->Comment("Font characters to use:");
     if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
         as->Asm("lda " + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda " + addr2 +"+1" );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     } else {
         as->Asm("lda #<" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] );
+        as->Asm("sta " + as->m_internalZP[1] );
         as->Asm("lda #>" + addr2 );
-        as->Asm("sta " + as->m_tempZeroPointers[1] + "+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
     }
 
     //  X

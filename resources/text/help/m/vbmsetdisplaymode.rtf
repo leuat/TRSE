@@ -1,0 +1,33 @@
+<h3>vbmSetDisplayMode( [byte] );</h3>
+<ul>
+    <li>[byte] - (0)=20 or (1)=19 display mode</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Set up the Vic Bitmap Mode (VBM) with either 20 or 19 displayed columns.</p>
+
+<p>The display mode needs to be set up before any other VBM command is executed.</p>
+
+<ul>
+<li>0 - Display mode 0 creates a full screen bitmap of 20 columns (160 pixels) and 192 pixel rows.</li>
+<li>1 - Display mode 1 creates the same size bitmap, but only displays 19 columns on screen.
+The 20th column is hidden and can be used for scrolling games.  See vbmScreenShiftLeft and vbmScreenShiftRight.</li>
+</ul>
+
+<h3>How it works</h3>
+<p>VBM creates a full screen bitmap using 240 (20 x 12) double heigh characters.  This presents 160 x 192 pixels to
+display on screen</p>
+
+<h3>Example</h3>
+
+<code>
+
+</code>
+
+<h3>See also</h3>
+<p>
+todo:
+
+set column, set poisition, scrolling (shift and char), tiles, dots, blots, sprites, tilemaps, text, bcd and test pixel.
+</p>

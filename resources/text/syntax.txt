@@ -70,6 +70,8 @@ m; vbmClearTileMap; VIC20 ; a,a,b,b,b,b
 
 m; vbmTestPixel; VIC20 ; b,b
 m; vbmTestPixel2; VIC20 ; b,b
+m; vbmTestTilePixel; VIC20 ; a,b,b
+m; vbmTestTilePixel2; VIC20 ; a,b,b
 
 m; vbmDrawDot; VIC20 ; b,b
 m; vbmClearDot; VIC20 ; b,b

@@ -170,6 +170,9 @@ void Parser::InitBuiltinFunctions()
 
         InitBuiltinFunction(QStringList()<< "bcdprint(", "initbcd");
 
+        InitBuiltinFunction(QStringList()<< "vbmtesttilepixel(", "initVbmTestTilePixel");
+        InitBuiltinFunction(QStringList()<< "vbmtesttilepixel2(", "initVbmTestTilePixel2");
+
         InitBuiltinFunction(QStringList()<< "vbmsetdisplaymode(", "initVbm");
         InitBuiltinFunction(QStringList()<< "vbmsetposition1(" << "vbmsetposition2(" << "vbmsetposition4(", "initVbmSetPosition");
         InitBuiltinFunction(QStringList()<< "vbmclear(", "initVbmClear");

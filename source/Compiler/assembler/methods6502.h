@@ -206,6 +206,11 @@ public:
     void initVbmClearTileMap(Assembler *as);
     void vbmClearTileMap(Assembler *as);
 
+    void initVbmTestTilePixel(Assembler *as);
+    void initVbmTestTilePixel2(Assembler *as);
+    void vbmTestTilePixel(Assembler *as);
+    void vbmTestTilePixel2(Assembler *as);
+
     void initVbmDot(Assembler* as);
     void initVbmBlot(Assembler* as);
     void vbmTestPixel(Assembler *as);

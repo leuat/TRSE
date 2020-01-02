@@ -307,5 +307,6 @@
         <file>resources/code/vbm/vbmSetPosition.asm</file>
         <file>resources/code/vbm/vbmScreenShiftLeft.asm</file>
         <file>resources/code/vbm/vbmScreenShiftRight.asm</file>
+        <file>resources/text/help/m/vbmsetdisplaymode.rtf</file>
     </qresource>
 </RCC>
