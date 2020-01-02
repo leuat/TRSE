@@ -196,6 +196,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         vbmClearTileMap(as);
 
 
+    // Test pixel commands
+    if (Command("vbmTestPixel"))
+        vbmTestPixel(as);
+    if (Command("vbmTestPixel2"))
+        vbmTestPixel2(as);
+
     // Dot commands
     if (Command("initVbmDot"))
         initVbmDot(as);
@@ -2983,7 +2989,24 @@ void Methods6502::initVbmDot(Assembler* as)
     as->Asm("ldy vbmY  ; draw dot in row");
     as->Asm("eor (screenmemory),y");
     as->Asm("sta (screenmemory),y");
+    as->Asm("rts");
 
+    as->Label("vbmTestPixel");
+    as->Comment("Accumulator contains X position");
+    as->Asm("lsr   ; divide by 8 to find column number");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmScrL,x   ; Address of table lo");
+    as->Asm("ldy vbmScrH,x   ; Address of table hi");
+    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
+    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
+    as->Asm("lda vbmX");
+    as->Asm("and #7   ; find offset for dot");
+    as->Asm("tax");
+    as->Asm("lda vbmDotBit,x   ; get dot pattern");
+    as->Asm("ldy vbmY  ; get row");
+    as->Asm("and (screenmemory),y ; AND with screenmemory to get pixel value");
 }
 void Methods6502::initVbmBlot(Assembler* as)
 {
@@ -3067,6 +3090,89 @@ void Methods6502::initVbmBlot(Assembler* as)
     as->Asm("lda vbmBlotBit,x   ; get blot pattern for second row");
     as->Asm("eor (screenmemory),y");
     as->Asm("sta (screenmemory),y");
+    as->Asm("rts");
+
+    as->Label("vbmTestPixel2");
+    as->Comment("Accumulator contains X position");
+    as->Asm("lsr   ; divide by 8 to find column number");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmScrL,x   ; Address of table lo");
+    as->Asm("ldy vbmScrH,x   ; Address of table hi");
+    as->Asm("sta screenmemory   ; Set sceenmemory to start of column lo");
+    as->Asm("sty screenmemory+1 ; Set sceenmemory to start of column hi");
+    as->Asm("lda vbmX");
+    as->Asm("and #6   ; find offset for dot");
+    as->Asm("lsr");
+    as->Asm("tax");
+    as->Asm("lda vbmBlotBit,x   ; get blot pattern (double pixel, even aligned)");
+    as->Asm("ldy vbmY  ; draw dot in row");
+    as->Asm("and (screenmemory),y");
+
+}
+
+void Methods6502::vbmTestPixel(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmDot","InitVbmDot");
+
+    as->Comment("----------");
+    as->Comment("vbmTestPixel x, y");
+
+    // ypos
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("yx is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("sta vbmY");
+    // xpos
+    if (m_node->m_params[0]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[0]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 0);
+    }
+    as->Asm("sta vbmX");
+    as->Asm("jsr vbmTestPixel ; returns A = 1 or 0");
+
+}
+void Methods6502::vbmTestPixel2(Assembler *as) {
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmBlot","InitVbmBlot");
+
+    as->Comment("----------");
+    as->Comment("vbmTestPixel2 x, y  - can be used to test for multi-color mode pixels");
+
+    // ypos
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("y is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("sta vbmY");
+    // xpos
+    if (m_node->m_params[0]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[0]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 0);
+    }
+    as->Asm("sta vbmX");
+    as->Asm("jsr vbmTestPixel2");
+
 }
 
 void Methods6502::vbmDrawDot(Assembler *as) {
@@ -3099,7 +3205,6 @@ void Methods6502::vbmDrawDot(Assembler *as) {
     as->Asm("sta vbmX");
     as->Asm("jsr vbmDrawDot");
 
-
 }
 void Methods6502::vbmClearDot(Assembler *as) {
 
@@ -3130,7 +3235,6 @@ void Methods6502::vbmClearDot(Assembler *as) {
     }
     as->Asm("sta vbmX");
     as->Asm("jsr vbmClearDot");
-
 
 }
 void Methods6502::vbmDrawDotE(Assembler *as) {

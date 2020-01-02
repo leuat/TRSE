@@ -206,10 +206,12 @@ public:
     void initVbmClearTileMap(Assembler *as);
     void vbmClearTileMap(Assembler *as);
 
-    void vbmDrawDot(Assembler *as);
-    void vbmClearDot(Assembler *as);
     void initVbmDot(Assembler* as);
     void initVbmBlot(Assembler* as);
+    void vbmTestPixel(Assembler *as);
+    void vbmTestPixel2(Assembler *as);
+    void vbmDrawDot(Assembler *as);
+    void vbmClearDot(Assembler *as);
     void vbmDrawDotE(Assembler *as);
     void vbmDrawBlot(Assembler *as);
     void vbmClearBlot(Assembler *as);

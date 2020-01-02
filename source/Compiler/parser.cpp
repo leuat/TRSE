@@ -174,8 +174,8 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "vbmsetposition1(" << "vbmsetposition2(" << "vbmsetposition4(", "initVbmSetPosition");
         InitBuiltinFunction(QStringList()<< "vbmclear(", "initVbmClear");
         InitBuiltinFunction(QStringList()<< "vbmnextcolumn(", "initVbmNextColumn");
-        InitBuiltinFunction(QStringList()<< "vbmdrawdot(" << "vbmcleardot(" << "vbmdrawdote(", "initVbmDot");
-        InitBuiltinFunction(QStringList()<< "vbmdrawblot(" << "vbmclearblot(" << "vbmdrawblote(", "initVbmBlot");
+        InitBuiltinFunction(QStringList()<< "vbmdrawdot(" << "vbmcleardot(" << "vbmdrawdote(" << "vbmtestpixel(", "initVbmDot");
+        InitBuiltinFunction(QStringList()<< "vbmdrawblot(" << "vbmclearblot(" << "vbmdrawblote(" << "vbmtestpixel2(", "initVbmBlot");
         InitBuiltinFunction(QStringList()<< "vbmscrollleft(", "initVbmScrollLeft");
         InitBuiltinFunction(QStringList()<< "vbmscrollright(", "initVbmScrollRight");
         InitBuiltinFunction(QStringList()<< "vbmscrollfixtop(", "initVbmScrollFixTop");
