@@ -5,7 +5,9 @@
 
 
 <h3>Description</h3>
-<p>Set up the Vic Bitmap Mode (VBM) with either 20 or 19 displayed columns.</p>
+<p>Set up the Vic Bitmap Mode (VBM) with either 20 or 19 displayed columns. 8K or more
+    of RAM is required to use this mode.
+</p>
 
 <p>The display mode needs to be set up before any other VBM command is executed.</p>
 
@@ -16,18 +18,122 @@ The 20th column is hidden and can be used for scrolling games.  See vbmScreenShi
 </ul>
 
 <h3>How it works</h3>
-<p>VBM creates a full screen bitmap using 240 (20 x 12) double heigh characters.  This presents 160 x 192 pixels to
-display on screen</p>
+<p>VBM creates a full screen bitmap using 240 (20 x 12) double heigh characters.  This presents a 160 x 192
+pixel display on screen.</p>
+<p>They way characters are laid out is a little differently to what you may be used to
+    on the standard Vic 20 character screen. This is to make manipulating the bitmap
+    simpler and easier to understand.
+</p>
+<p>The first double height character is 16 (a space and ! character) and this is placed
+    at the top left of the screen.  Beneath that character 17 is placed (a " and # character"),
+    then 18 (a $ and %) and so on unit character 27 (a 6 and a 7 character) which is the 12th character.
+</p>
+<p>Character 28 (an 8 and a 9) is printed in the next column back at the top. This pattern is
+    repeated, filling each column in turn until all 20 columns have been populated.
+</p>
+<p>Try the following code snippet to see the character pattern created on the screen:</p>
+<code>
+    vbmSetDisplayMode(0);
+    vbmDebug(1);
+</code>
+<p>vbmDebug with a parameter of 1 will show the original ROM character set.</p>
+
+<h3>Screen and Character memory</h3>
+<p>The Vic 20 is set up to have both the screen memory and character memory start at
+    address $1000 (4096).  It is also set to use double height characters which allows
+    the screen memory to be completely filled with 240 characters.
+</p>
+
+<h3>$1000 to $10FF</h3>
+<p>The screen memory occupies $1000 through to $10FF.  $1100 through to $1FFF is
+    therefore free for the bitmap.</p>
+
+<h3>$1100 to $1FFF</h3>
+<p>The character memory occupies $1000 through to $1FFF, however, as this overlaps
+    with the screen memory, the first 256 bytes cannot be used.  This is why the
+    first character printed to the screen memory is number 16 (space and !) and not number 0.
+    The usable character memory therefore starts at $1100 (character 16) and this
+    extends to $1FFF.  Writing to this area of memory will modify the bitmap.</p>
+    
+<h3>Working with the bitmap</h3>
+<p>You are free to write your own routines to modify the btimap memory ($1100 through
+    to $1FFF) should you wish to.  However, in Turbo Rascal, there are a number of
+    commands that make some common bitmap tasks easier to do, so you can concentrate
+    on creating your game or demo.
+</p>
 
 <h3>Example</h3>
-
+<p>The following code sets up the Vic Bitmap mode, clears the screen and initialises 
+    color memory with green, then writes a message to the screen over a number of lines.
+</p>
 <code>
-
+    program HelloWorld;
+    var  
+    
+    // declare all your include files here
+    font: incbin( "font8x8.bin", $4000 ); // character set for first 64 PETSCII Screen Codes
+    
+    
+    @startblock $2000 "CODE"
+    // declare all your variables and procedures here
+        message: CSTRING = "HELLO WORLD";
+    
+        i : byte;
+    
+    begin
+    
+        // set the default display mode showing all 20 columns
+        vbmSetDisplayMode( 0 );
+        
+        // Clear the bitmap with a value of 0
+        vbmClear( 0 );
+        
+        // set the colour memory to GREEN
+        vbmClearColor( GREEN );
+        
+    
+        fori i := 0 to 9 do
+        begin
+        
+            // write a message to the screen
+            // using the font (character set)
+            // params are: text, characterset, x, y, line spacing
+            vbmDrawText( message, font, i, i &lt;&lt; 4, 8 );
+            
+        end;
+        
+        loop();
+    
+    end.        
 </code>
 
 <h3>See also</h3>
 <p>
-todo:
+To find out more, take a look through the help file for any commands beginning with 'vbm'.
+Some useful commands to get started are:
+</p>
 
-set column, set poisition, scrolling (shift and char), tiles, dots, blots, sprites, tilemaps, text, bcd and test pixel.
+<ul>
+    <li>vbmDebug - switch off the bitmap to reveal the ROM characters used to fill the screen</li>
+    <li>vbmSetColumn - set the built in screenmemory zero page pointer to the address for a column from 0 to 19. This is used for Tile commands and others.</li>
+    <li>vbmNextColumn - add 192 to the screenmemory pointer - effectively goes to the next column</li>
+    <li>vbmSetPosition1, vbmSetPosition2 and vbmSetPosition4 - used to set the position to draw a sprite</li>
+    <li>vbmClear - clear the bitmap memory with a byte value, usually 0</li>
+    <li>vbmClearColor - clear the color memory with a value</li>
+    <li>vbmDrawTile - Draw a single 8x8 tile character on the screen. Use with vbmSetColumn and manipulation of the screenmemory pointer</li>
+    <li>vbmDrawTileMap - Draws a tilemap of characters of any size to the screen</li>
+    <li>vbmTestPixel and vbmTestPixel2 - Test a pixel value at a position on the screen</li>
+    <li>vbmTestTilePixel and vbmTestTilePixel2 - Test a pixel value within an 8x8 tile. Can also be used with sprite slices</li>
+    <li>vbmDot and vbmBlot - draw dot pixels on the screen</li>
+    <li>vbmSrollLeft and vbmScrollRight - rearrange the characters on screen to quickly scroll 8 pixels left or right. Note that there are some restrictions when using this feature</li>
+    <li>vbmScreenShiftLeft and vbmScreenShiftRight - scroll an area of the screen 1 pixel at a time - slower than vbmScrollLeft/Right but no restrictions on use</li>
+    <li>vbmSpriteShiftL, vbmSpriteShiftR and vbmSpriteStitch - prepare pre-shifted characters for use with the sprite commands</li>
+    <li>vbmDrawSprite8 and vbmDrawSprite16 - simple sprite drawing commands</li>
+    <li>vbmDrawSpriteSlice - complex sprite command giving precise control and allowing for sprites of any size</li>
+    <li>vbmDrawText - draw text to the screen</li>
+    <li>vbmDrawBCD - draw numbers (eg: scores) to the screen. Use with the BCD commands</li>
+</ul>
+
+<p>More commands will be added over time. If you create something that you think would
+    work well as a new command, please let me know: <a href="mailto:andy@hewco.uk">andy@hewco.uk</a>
 </p>
