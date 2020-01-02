@@ -135,7 +135,10 @@ void Parser::InitBuiltinFunctions()
         if (Node::flags.contains("div8"))
             InitBuiltinFunction(QStringList()<< "", "init8x8div");
 
-        InitBuiltinFunction(QStringList()<< "getkey(", "initgetkey");
+        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 ||
+                Syntax::s.m_currentSystem->m_system == AbstractSystem::C128) {
+            InitBuiltinFunction(QStringList()<< "getkey(", "initgetkey");
+        }
         InitBuiltinFunction(QStringList()<< "rand(", "initrandom","init_random_call");
         InitBuiltinFunction(QStringList()<< "random(", "initrandom256");
 
@@ -166,6 +169,52 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "readjoy2(" , "initjoy2");
 
         InitBuiltinFunction(QStringList()<< "bcdprint(", "initbcd");
+
+        InitBuiltinFunction(QStringList()<< "vbmtesttilepixel(", "initVbmTestTilePixel");
+        InitBuiltinFunction(QStringList()<< "vbmtesttilepixel2(", "initVbmTestTilePixel2");
+
+        InitBuiltinFunction(QStringList()<< "vbmsetdisplaymode(", "initVbm");
+        InitBuiltinFunction(QStringList()<< "vbmsetposition1(" << "vbmsetposition2(" << "vbmsetposition4(", "initVbmSetPosition");
+        InitBuiltinFunction(QStringList()<< "vbmclear(", "initVbmClear");
+        InitBuiltinFunction(QStringList()<< "vbmnextcolumn(", "initVbmNextColumn");
+        InitBuiltinFunction(QStringList()<< "vbmdrawdot(" << "vbmcleardot(" << "vbmdrawdote(" << "vbmtestpixel(", "initVbmDot");
+        InitBuiltinFunction(QStringList()<< "vbmdrawblot(" << "vbmclearblot(" << "vbmdrawblote(" << "vbmtestpixel2(", "initVbmBlot");
+        InitBuiltinFunction(QStringList()<< "vbmscrollleft(", "initVbmScrollLeft");
+        InitBuiltinFunction(QStringList()<< "vbmscrollright(", "initVbmScrollRight");
+        InitBuiltinFunction(QStringList()<< "vbmscrollfixtop(", "initVbmScrollFixTop");
+        InitBuiltinFunction(QStringList()<< "vbmscrollfixbottom(", "initVbmScrollFixBottom");
+
+        InitBuiltinFunction(QStringList()<< "vbmdrawtilemap(", "initVbmDrawTileMap");
+        InitBuiltinFunction(QStringList()<< "vbmdrawtilemapo(", "initVbmDrawTileMapO");
+        InitBuiltinFunction(QStringList()<< "vbmdrawtilemape(", "initVbmDrawTileMapE");
+        InitBuiltinFunction(QStringList()<< "vbmcleartilemap(", "initVbmClearTileMap");
+
+        InitBuiltinFunction(QStringList()<< "vbmscreenshiftleft(", "initVbmScreenShiftLeft");
+        InitBuiltinFunction(QStringList()<< "vbmscreenshiftright(", "initVbmScreenShiftRight");
+
+        InitBuiltinFunction(QStringList()<< "vbmspritestitch(", "initVbmSpriteStitch");
+        InitBuiltinFunction(QStringList()<< "vbmspriteshiftr(", "initVbmSpriteShiftR");
+        InitBuiltinFunction(QStringList()<< "vbmspriteshiftl(", "initVbmSpriteShiftL");
+
+        InitBuiltinFunction(QStringList()<< "vbmdrawsprite8(", "initVbmDrawSprite8");
+        InitBuiltinFunction(QStringList()<< "vbmdrawsprite8e(", "initVbmDrawSprite8E");
+        InitBuiltinFunction(QStringList()<< "vbmclearsprite8(", "initVbmClearSprite8");
+
+        InitBuiltinFunction(QStringList()<< "vbmdrawsprite16(", "initVbmDrawSprite16");
+        InitBuiltinFunction(QStringList()<< "vbmdrawsprite16e(", "initVbmDrawSprite16E");
+        InitBuiltinFunction(QStringList()<< "vbmclearsprite16(", "initVbmClearSprite16");
+
+        InitBuiltinFunction(QStringList()<< "vbmdrawspriteslice(", "initVbmDrawSpriteSlice");
+        InitBuiltinFunction(QStringList()<< "vbmdrawspriteslicee(", "initVbmDrawSpriteSliceE");
+        InitBuiltinFunction(QStringList()<< "vbmclearspriteslice(", "initVbmClearSpriteSlice");
+
+        InitBuiltinFunction(QStringList()<< "vbmdrawtext(", "initVbmDrawText");
+        InitBuiltinFunction(QStringList()<< "vbmdrawtexto(", "initVbmDrawTextO");
+        InitBuiltinFunction(QStringList()<< "vbmdrawtexte(", "initVbmDrawTextE");
+        InitBuiltinFunction(QStringList()<< "vbmcleartext(", "initVbmClearText");
+
+        InitBuiltinFunction(QStringList()<< "vbmdrawbcd(", "initVbmDrawBCD");
+
 
     }
     Node::m_staticBlockInfo.m_blockID = -1;

@@ -35,7 +35,81 @@ m; initdrawtextbox; C64, PLUS4, C128, VIC20 ;
 m; initJoy1; C64, VIC20 ;
 m; initJoy2; C64 ;
 m; initBcd; C64, PLUS4, C128, VIC20, PET,  NES, OK64 ;
-m; initGetKey; C64, C128  ;
+m; initGetKey; C64, C128 ;
+
+
+
+# ************** Vic20 Bitmap Mode ROUTINES
+
+# *** INIT METHODS
+m; initVbm; VIC20 ;
+
+# *** CALL METHODS
+
+m; vbmSetDisplayMode; VIC20 ; n
+m; vbmSetColumn; VIC20 ; b
+m; vbmSetPosition1; VIC20; b,b
+m; vbmSetPosition2; VIC20; b,b
+m; vbmSetPosition4; VIC20; b,b
+m; vbmNextColumn; VIC20;
+m; vbmDebug; VIC20 ; n
+
+m; vbmClear; VIC20 ; b
+m; vbmClearColor; VIC20; b
+
+m; vbmDrawTile; VIC20 ; a
+m; vbmDrawTileO; VIC20 ; a
+m; vbmDrawTileE; VIC20 ; a
+m; vbmClearTile; VIC20 ; a
+m; vbmClearBlock; VIC20 ;
+
+m; vbmDrawTileMap; VIC20 ; a,a,b,b,b,b
+m; vbmDrawTileMapO; VIC20 ; a,a,b,b,b,b
+m; vbmDrawTileMapE; VIC20 ; a,a,b,b,b,b
+m; vbmClearTileMap; VIC20 ; a,a,b,b,b,b
+
+m; vbmTestPixel; VIC20 ; b,b
+m; vbmTestPixel2; VIC20 ; b,b
+m; vbmTestTilePixel; VIC20 ; a,b,b
+m; vbmTestTilePixel2; VIC20 ; a,b,b
+
+m; vbmDrawDot; VIC20 ; b,b
+m; vbmClearDot; VIC20 ; b,b
+m; vbmDrawDotE; VIC20 ; b,b
+m; vbmDrawBlot; VIC20 ; b,b
+m; vbmClearBlot; VIC20 ; b,b
+m; vbmDrawBlotE; VIC20 ; b,b
+
+m; vbmScrollLeft; VIC20 ;
+m; vbmScrollRight; VIC20 ;
+m; vbmScrollFixTop; VIC20 ;
+m; vbmScrollFixBottom; VIC20 ;
+
+m; vbmScreenShiftLeft; VIC20 ; b, b
+m; vbmScreenShiftRight; VIC20 ; b, b
+
+m; vbmSpriteStitch; VIC20 ; a, a, b
+m; vbmSpriteShiftR; VIC20 ; a, a, b, b, a
+m; vbmSpriteShiftL; VIC20 ; a, a, b, b, a
+
+m; vbmDrawSprite8; VIC20 ; a, a
+m; vbmDrawSprite8E; VIC20 ; a, a
+m; vbmClearSprite8; VIC20 ; a, a
+
+m; vbmDrawSprite16; VIC20 ; a, a, a
+m; vbmDrawSprite16E; VIC20 ; a, a, a
+m; vbmClearSprite16; VIC20 ; a, a, a
+
+m; vbmDrawSpriteSlice; VIC20; a, b, b
+m; vbmDrawSpriteSliceE; VIC20; a, b, b
+m; vbmClearSpriteSlice; VIC20; a, b, b
+
+m; vbmDrawText; VIC20; a, a, b, b, b
+m; vbmDrawTextO; VIC20; a, a, b, b, b
+m; vbmDrawTextE; VIC20; a, a, b, b, b
+m; vbmClearText; VIC20; a, a, b, b, b
+
+m; vbmDrawBCD; VIC20; a, a, b, b, b
 
 
 
@@ -66,7 +140,7 @@ m; memcpy; Amiga; a, l,a,l, l
 m; setpalette; Amiga; a, a, l
 m; ablit; Amiga; a,a,i, i,i,i,i,l,i,i,i
 m; fblit; Amiga; a,a,i, i,i,i,i,l,i,i,i
-m; getKey; C64, C128;
+m; getKey; C64, C128, VIC20;
 m; EnableInterrupt; Amiga;i
 
 m; InitCustomCopperList; Amiga;
@@ -507,59 +581,126 @@ c; JOY_LEFT; C64; b; %00000100
 c; JOY_RIGHT; C64; b; %00001000
 c; JOY_FIRE; C64; b; %00010000
 
-c; KEY_A; C64, PLUS4, C128, VIC20; b;$01
-c; KEY_B; C64, PLUS4, C128, VIC20; b;$02
-c; KEY_C; C64, PLUS4, C128, VIC20; b;$03
-c; KEY_D; C64, PLUS4, C128, VIC20; b;$04
-c; KEY_E; C64, PLUS4, C128, VIC20; b;$05
-c; KEY_F; C64, PLUS4, C128, VIC20; b;$06
-c; KEY_G; C64, PLUS4, C128, VIC20; b;$07
-c; KEY_H; C64, PLUS4, C128, VIC20; b;$08
-c; KEY_I; C64, PLUS4, C128, VIC20; b;$09
-c; KEY_J; C64, PLUS4, C128, VIC20; b;$0A
-c; KEY_K; C64, PLUS4, C128, VIC20; b;$0B
-c; KEY_L; C64, PLUS4, C128, VIC20; b;$0C
-c; KEY_M; C64, PLUS4, C128, VIC20; b;$0D
-c; KEY_N; C64, PLUS4, C128, VIC20; b;$0E
-c; KEY_O; C64, PLUS4, C128, VIC20; b;$0F
-c; KEY_P; C64, PLUS4, C128, VIC20; b;$10
-c; KEY_Q; C64, PLUS4, C128, VIC20; b;$11
-c; KEY_R; C64, PLUS4, C128, VIC20; b;$12
-c; KEY_S; C64, PLUS4, C128, VIC20; b;$13
-c; KEY_T; C64, PLUS4, C128, VIC20; b;$14
-c; KEY_U; C64, PLUS4, C128, VIC20; b;$15
-c; KEY_V; C64, PLUS4, C128, VIC20; b;$16
-c; KEY_W; C64, PLUS4, C128, VIC20; b;$17
-c; KEY_X; C64, PLUS4, C128, VIC20; b;$18
-c; KEY_Y; C64, PLUS4, C128, VIC20; b;$19
-c; KEY_Z; C64, PLUS4, C128, VIC20; b;$1A
-c; KEY_0; C64, PLUS4, C128, VIC20; b;$30
-c; KEY_1; C64, PLUS4, C128, VIC20; b;$31
-c; KEY_2; C64, PLUS4, C128, VIC20; b;$32
-c; KEY_3; C64, PLUS4, C128, VIC20; b;$33
-c; KEY_4; C64, PLUS4, C128, VIC20; b;$34
-c; KEY_5; C64, PLUS4, C128, VIC20; b;$35
-c; KEY_6; C64, PLUS4, C128, VIC20; b;$36
-c; KEY_7; C64, PLUS4, C128, VIC20; b;$37
-c; KEY_8; C64, PLUS4, C128, VIC20; b;$38
-c; KEY_9; C64, PLUS4, C128, VIC20; b;$39
+c; KEY_A; C64, PLUS4, C128; b;$01
+c; KEY_B; C64, PLUS4, C128; b;$02
+c; KEY_C; C64, PLUS4, C128; b;$03
+c; KEY_D; C64, PLUS4, C128; b;$04
+c; KEY_E; C64, PLUS4, C128; b;$05
+c; KEY_F; C64, PLUS4, C128; b;$06
+c; KEY_G; C64, PLUS4, C128; b;$07
+c; KEY_H; C64, PLUS4, C128; b;$08
+c; KEY_I; C64, PLUS4, C128; b;$09
+c; KEY_J; C64, PLUS4, C128; b;$0A
+c; KEY_K; C64, PLUS4, C128; b;$0B
+c; KEY_L; C64, PLUS4, C128; b;$0C
+c; KEY_M; C64, PLUS4, C128; b;$0D
+c; KEY_N; C64, PLUS4, C128; b;$0E
+c; KEY_O; C64, PLUS4, C128; b;$0F
+c; KEY_P; C64, PLUS4, C128; b;$10
+c; KEY_Q; C64, PLUS4, C128; b;$11
+c; KEY_R; C64, PLUS4, C128; b;$12
+c; KEY_S; C64, PLUS4, C128; b;$13
+c; KEY_T; C64, PLUS4, C128; b;$14
+c; KEY_U; C64, PLUS4, C128; b;$15
+c; KEY_V; C64, PLUS4, C128; b;$16
+c; KEY_W; C64, PLUS4, C128; b;$17
+c; KEY_X; C64, PLUS4, C128; b;$18
+c; KEY_Y; C64, PLUS4, C128; b;$19
+c; KEY_Z; C64, PLUS4, C128; b;$1A
+c; KEY_0; C64, PLUS4, C128; b;$30
+c; KEY_1; C64, PLUS4, C128; b;$31
+c; KEY_2; C64, PLUS4, C128; b;$32
+c; KEY_3; C64, PLUS4, C128; b;$33
+c; KEY_4; C64, PLUS4, C128; b;$34
+c; KEY_5; C64, PLUS4, C128; b;$35
+c; KEY_6; C64, PLUS4, C128; b;$36
+c; KEY_7; C64, PLUS4, C128; b;$37
+c; KEY_8; C64, PLUS4, C128; b;$38
+c; KEY_9; C64, PLUS4, C128; b;$39
 
-c; KEY_F1; C64, PLUS4, C128, VIC20; b;$F1
-c; KEY_F3; C64, PLUS4, C128, VIC20; b;$F3
-c; KEY_F5; C64, PLUS4, C128, VIC20; b;$F5
-c; KEY_F7; C64, PLUS4, C128, VIC20; b;$F7
+c; KEY_F1; C64, PLUS4, C128; b;$F1
+c; KEY_F3; C64, PLUS4, C128; b;$F3
+c; KEY_F5; C64, PLUS4, C128; b;$F5
+c; KEY_F7; C64, PLUS4, C128; b;$F7
 
-c; KEY_PLUS; C64, PLUS4, C128, VIC20; b;$2b
-c; KEY_MINUS; C64, PLUS4, C128, VIC20; b;$28
-c; KEY_POUND; C64, PLUS4, C128, VIC20; b;$1c
-c; KEY_ENTER; C64, PLUS4, C128, VIC20; b;$F0
-c; KEY_ASTERIX; C64, PLUS4, C128, VIC20; b;$2a
-c; KEY_SEMI; C64, PLUS4, C128, VIC20; b;$3b
-c; KEY_HOME; C64, PLUS4, C128, VIC20; b;$EF
-c; KEY_SPACE; C64, PLUS4, C128, VIC20; b;$20
-c; KEY_COMMODORE; C64, PLUS4, C128, VIC20; b;$EE
-c; KEY_COLON; C64, PLUS4, C128, VIC20; b;$3a
-c; KEY_EQUALS; C64, PLUS4, C128, VIC20; b;$3d
+c; KEY_PLUS; C64, PLUS4, C128; b;$2b
+c; KEY_MINUS; C64, PLUS4, C128; b;$28
+c; KEY_POUND; C64, PLUS4, C128; b;$1c
+c; KEY_ENTER; C64, PLUS4, C128; b;$F0
+c; KEY_ASTERIX; C64, PLUS4, C128; b;$2a
+c; KEY_SEMI; C64, PLUS4, C128; b;$3b
+c; KEY_HOME; C64, PLUS4, C128; b;$EF
+c; KEY_SPACE; C64, PLUS4, C128; b;$20
+c; KEY_COMMODORE; C64, PLUS4, C128; b;$EE
+c; KEY_COLON; C64, PLUS4, C128; b;$3a
+c; KEY_EQUALS; C64, PLUS4, C128; b;$3d
+
+# Vic 20 keys returned from address 197
+c; KEY_NONE; VIC20; b;64
+c; KEY_1; VIC20; b;0
+c; KEY_3; VIC20; b;1
+c; KEY_5; VIC20; b;2
+c; KEY_7; VIC20; b;3
+c; KEY_9; VIC20; b;4
+c; KEY_PLUS; VIC20; b;5
+c; KEY_POUND; VIC20; b;6
+c; KEY_DEL; VIC20; b;7
+c; KEY_LEFTARROW; VIC20; b;8
+c; KEY_W; VIC20; b;9
+c; KEY_R; VIC20; b;10
+c; KEY_Y; VIC20; b;11
+c; KEY_I; VIC20; b;12
+c; KEY_P; VIC20; b;13
+c; KEY_ASTERISK; VIC20; b;14
+c; KEY_RETURN; VIC20; b;15
+
+c; KEY_A; VIC20; b;17
+c; KEY_D; VIC20; b;18
+c; KEY_G; VIC20; b;19
+c; KEY_J; VIC20; b;20
+c; KEY_L; VIC20; b;21
+c; KEY_SEMICOLON; VIC20; b;22
+c; KEY_CURSORHORIZ; VIC20; b;23
+c; KEY_RUNSTOP; VIC20; b;24
+
+c; KEY_X; VIC20; b;26
+c; KEY_V; VIC20; b;27
+c; KEY_N; VIC20; b;28
+c; KEY_COMMA; VIC20; b;29
+c; KEY_SLASH; VIC20; b;30
+c; KEY_CURSORVERT; VIC20; b;31
+c; KEY_SPACE; VIC20; b;32
+c; KEY_Z; VIC20; b;33
+c; KEY_C; VIC20; b;34
+c; KEY_B; VIC20; b;35
+c; KEY_M; VIC20; b;36
+c; KEY_FULLSTOP; VIC20; b;37
+
+c; KEY_F1; VIC20; b;39
+
+c; KEY_S; VIC20; b;41
+c; KEY_F; VIC20; b;42
+c; KEY_H; VIC20; b;43
+c; KEY_K; VIC20; b;44
+c; KEY_COLON; VIC20; b;45
+c; KEY_EQUALS; VIC20; b;46
+c; KEY_F3; VIC20; b;47
+c; KEY_Q; VIC20; b;48
+c; KEY_E; VIC20; b;49
+c; KEY_T; VIC20; b;50
+c; KEY_U; VIC20; b;51
+c; KEY_O; VIC20; b;52
+c; KEY_AT; VIC20; b;53
+c; KEY_UPARROW; VIC20; b;54
+c; KEY_F5; VIC20; b;55
+c; KEY_2; VIC20; b;56
+c; KEY_4; VIC20; b;57
+c; KEY_6; VIC20; b;58
+c; KEY_8; VIC20; b;59
+c; KEY_0; VIC20; b;60
+c; KEY_MINUS; VIC20; b;61
+c; KEY_HOME; VIC20; b;62
+c; KEY_F7; VIC20; b;63
 
 c; SPRITE_MULTICOLOR; C64, C128;a;$D01C
 c; SPRITE_MULTICOLOR_REG1; C64, C128;a;$D025
@@ -746,6 +887,7 @@ p; Constants; X16,C64, PLUS4, C128, VIC20, PET, NES, BBCM, AMIGA, OK64
 p; Variables; X16,C64, PLUS4, C128, VIC20, PET, NES, BBCM, AMIGA, OK64
 p; Screen; X16,C64, PLUS4, VIC20
 p; interrupts; X16,C64, VIC20, PLUS4, C128
+p; vbm_Vic_Bitmap_Mode; VIC20
 
 
 #

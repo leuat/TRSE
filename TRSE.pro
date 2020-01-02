@@ -401,6 +401,7 @@ DISTFILES += \
     resources/code/amiga/init_p61_player.s \
     resources/code/amiga/p61-play.i \
     resources/code/c64_keyboard_input.asm \
+    resources/code/vbm/vic20_vbm.asm \
     resources/images/OK64.jpg \
     resources/images/OK64.png \
     resources/images/PLUS4.png \
@@ -584,6 +585,7 @@ DISTFILES += \
     resources/text/help/m/tile.rtf \
     resources/text/help/m/togglebit.rtf \
     resources/text/help/m/topointer.rtf \
+    resources/text/help/m/vbmsetdisplaymode.rtf \
     resources/text/help/m/wait.rtf \
     resources/text/help/m/waitforraster.rtf \
     resources/text/help/m/waitnoraster.rtf \
@@ -591,8 +593,13 @@ DISTFILES += \
     resources/code/amiga/end.s \
     resources/code/amiga/init.s \
     resources/text/help/p/c64.rtf \
+    resources/text/help/p/constants.rtf \
     resources/text/help/p/getting_started.rtf \
+    resources/text/help/p/interrupts.rtf \
     resources/text/help/p/pascal.rtf \
+    resources/text/help/p/screen.rtf \
+    resources/text/help/p/variables.rtf \
+    resources/text/help/p/vbm_vic_bitmap_mode.rtf \
     resources/text/help/p/vic20.rtf \
     resources/text/help/r/and.rtf \
     resources/text/help/r/array.rtf \
