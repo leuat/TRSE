@@ -68,6 +68,14 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 14;
     if (t==X16_640x480)
         return 15;
+    if (t==NES)
+        return 16;
+    if (t==LMetaChunk)
+        return 17;
+    if (t==LevelEditorNES)
+        return 18;
+    if (t==SpritesNES)
+        return 19;
 
 
     return 255;
@@ -107,9 +115,26 @@ LImage::Type LImage::CharToType(unsigned char c)
         return OK64_256x256;
     if (c==15)
         return X16_640x480;
+    if (c==16)
+        return NES;
+    if (c==17)
+        return LMetaChunk;
+    if (c==18)
+        return LevelEditorNES;
+    if (c==19)
+        return SpritesNES;
 
     return NotSupported;
 
+}
+
+MetaParameter *LImage::getMetaParameter(QString name)
+{
+    for (MetaParameter* mp: m_metaParams)
+        if (mp->name==name)
+            return mp;
+
+    return nullptr;
 }
 
 void LImage::FloydSteinbergDither(QImage &img, LColorList &colors, bool dither)
@@ -140,24 +165,27 @@ void LImage::FloydSteinbergDither(QImage &img, LColorList &colors, bool dither)
 
 }
 
-void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength)
+void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, float gamma=1.0)
 {
     int height  =min(img.height(), m_height);
     int width  =min(img.width(), m_width);
     QMatrix4x4 bayer4x4 = QMatrix4x4(0,8,2,10,  12,4,14,6, 3,11,1,9, 15,7,13,5);
     bayer4x4 = bayer4x4*1/16.0*strength.x();
-
     for (int y=0;y<height;y++) {
         for (int x=0;x<width;x++) {
 
 //            color.R = color.R + bayer8x8[x % 8, y % 8] * GAP / 65;
 
-            QColor color = QColor(img.pixel(x,y));
-            int yp = y + x%(int)strength.y();
-            int xp = x + y%(int)strength.z();
-            color.setRed(min(color.red() + bayer4x4(xp % 4,yp % 4),255.0f));
-            color.setGreen(min(color.green() + bayer4x4(xp % 4,yp % 4),255.0f));
-            color.setBlue(min(color.blue() + bayer4x4(xp % 4,yp % 4),255.0f));
+            int xx = (x-img.width()/2)*m_importScaleX + img.width()/2;
+            int yy = (y-img.height()/2)*m_importScaleY + img.height()/2;
+
+
+            QColor color = QColor(img.pixel(xx,yy));
+            int yp = yy + xx%(int)strength.y();
+            int xp = xx + yy%(int)strength.z();
+            color.setRed(min((float)pow(color.red(),gamma) + bayer4x4(xp % 4,yp % 4),255.0f));
+            color.setGreen(min((float)pow(color.green(),gamma) + bayer4x4(xp % 4,yp % 4),255.0f));
+            color.setBlue(min((float)pow(color.blue(),gamma) + bayer4x4(xp % 4,yp % 4),255.0f));
 
             int winner = 0;
             QColor newPixel = colors.getClosestColor(color, winner);

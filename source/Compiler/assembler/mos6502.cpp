@@ -113,7 +113,10 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
     }
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES) {
+        m_source+=m_startInsertAssembler;
         Asm("ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
+
+
 //        StartMemoryBlock("$8000");
 
 //        Asm("ORG "+Util::numToHex(0x8000));

@@ -246,6 +246,29 @@ public:
 
 };
 
+class RayObjectTrianglePrism : public AbstractRayObject {
+public:
+    QVector3D m_pNormal = QVector3D(0,1,0);
+    QVector3D m_box = QVector3D(1,1,1);
+
+    RayObjectTrianglePrism(QVector3D pos, QVector3D normal, QVector3D box, Material material) {
+        m_pNormal = normal;
+        m_position = pos;
+        m_box = box;
+        m_material = material;
+        m_bbRadius = m_box.length();
+    }
+    RayObjectTrianglePrism(QVector3D pos, QVector3D normal,Material material) {
+        m_pNormal = normal;
+        m_position = pos;
+        m_material = material;
+        m_bbRadius = m_box.length();
+    }
+    QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) override;
+    float intersect(Ray* ray) override;
+
+};
+
 
 class RayObjectTorus : public AbstractRayObject {
 public:
@@ -294,10 +317,15 @@ public:
 class RayObjectPerlin : public AbstractRayObject {
 public:
     QVector3D m_perlinVals;
-    AbstractRayObject* m_obj;
+//    AbstractRayObject* m_obj;
     RayObjectPerlin(QVector3D vals, AbstractRayObject* obj) {
         m_perlinVals = vals;
-        m_obj = obj;
+  //      m_obj = obj;
+        m_children.append(obj);
+        m_position = obj->m_position;
+        m_localPos = obj->m_localPos;
+        m_rotation = obj->m_rotation;
+        m_bbRadius = obj->m_bbRadius;
     }
 
     float intersect(Ray* ray) override;

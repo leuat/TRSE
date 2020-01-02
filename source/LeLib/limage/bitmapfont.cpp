@@ -2,6 +2,7 @@
 
 void BitmapFont::Init(int w, int h)
 {
+
     m_image = QImage(QSize(w,h),QImage::Format_ARGB32);
     m_image.fill(QColor(0,0,0,255));
 

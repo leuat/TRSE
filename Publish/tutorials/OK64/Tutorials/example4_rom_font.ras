@@ -4,7 +4,7 @@ var
 	
 @export "images/font2.flf" "images/font2.bin"  256
 	// Font2 is made with TRSE. Image->Import->Generate font 
-	image1 : incbin("images/font2.bin",$E0200);    
+	image1 : incbin("images/font2.bin",$E0000);    
 
 	@define count 128
 
@@ -59,7 +59,7 @@ begin
 	x:=32;
 	while (tp[0]<>0) do 
 	begin
-		PrintChar(tp[0], j*15+time,  x,y+sine[(j*8+time)]/4);
+		PrintChar(tp[0], j*15+time,  x,y+sine[(j*8-time)]/4);
 		j:=j+1;
 		x:=x+sx;
 		tp:=tp+1;

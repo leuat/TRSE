@@ -21,6 +21,7 @@
 
 #include "dialognewimage.h"
 #include "ui_dialognewimage.h"
+#include <QLineEdit>
 
 DialogNewImage::DialogNewImage(QWidget *parent) :
     QDialog(parent),
@@ -29,15 +30,21 @@ DialogNewImage::DialogNewImage(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->btnResult, SIGNAL(accepted()), this, SLOT(slotOk()));
 
-    ui->grpLevelDesignerParams->setVisible(false);
-    ui->grpImageSize->setVisible(false);
+//    ui->grpLevelDesignerParams->setVisible(false);
 
 
 }
 
-void DialogNewImage::Initialize(QStringList cmbData)
+void DialogNewImage::Initialize(QVector<ImageType> types)
 {
+    m_types = types;
+    QStringList cmbData;
+    for (ImageType& it: m_types)
+        cmbData<<it.name;
     ui->comboBox->addItems(cmbData);
+
+    // Fill parameters
+
 }
 
 void DialogNewImage::SetResizeMeta(CharmapGlobalData gd)
@@ -47,14 +54,6 @@ void DialogNewImage::SetResizeMeta(CharmapGlobalData gd)
     m_meta = gd;
 
     started = false; // prevent triggering
-    ui->leScreenWidth->setText(QString::number(m_meta.m_width));
-    ui->leScreenHeight->setText(QString::number(m_meta.m_height));
-    ui->leLevelsX->setText(QString::number(m_meta.m_sizex));
-    ui->leLevelsY->setText(QString::number(m_meta.m_sizey));
-    ui->leDataChunks->setText(QString::number(m_meta.m_dataChunks));
-    ui->leChunkSize->setText(QString::number(m_meta.m_dataChunkSize));
-    ui->leStartX->setText(QString::number(m_meta.m_startx));
-    ui->leStartY->setText(QString::number(m_meta.m_starty));
     started = true;
 
 
@@ -64,56 +63,37 @@ void DialogNewImage::ToMeta()
 {
     if (!started)
         return;
-    m_meta.m_useColors = !ui->chkUseColors->isChecked();
-    m_meta.m_width = ui->leScreenWidth->text().toInt();
-    m_meta.m_height = ui->leScreenHeight->text().toInt();
-    m_meta.m_sizex = ui->leLevelsX->text().toInt();
-    m_meta.m_sizey = ui->leLevelsY->text().toInt();
-    m_meta.m_startx = ui->leStartX->text().toInt();
-    m_meta.m_starty = ui->leStartY->text().toInt();
-//    m_meta.m_extraDataSize = ui->leExtraDataSize->text().toInt();
-    m_meta.m_dataChunks = ui->leDataChunks->text().toInt();
-    m_meta.m_dataChunkSize = ui->leChunkSize->text().toInt();
-    m_meta.m_extraDataSize = m_meta.m_dataChunkSize*m_meta.m_dataChunks + 3;
-    CreateInfo();
 }
 
-void DialogNewImage::CreateInfo()
+
+void DialogNewImage::FromMeta()
 {
-    m_meta.Calculate();
-    QString txt="";
-    txt+= "Char Data & color size: " + QString::number(m_meta.dataSize()) + " bytes\n";
-    txt+= "Extra data size: " + QString::number(m_meta.m_extraDataSize) + " bytes\n";
-    txt+= "Level size: " + QString::number(m_meta.levelSize()) + " bytes\n";
-    txt+= "Total no levels: " + QString::number(m_meta.m_sizex*m_meta.m_sizey) + " \n";
-    txt+= "Total size: " + QString::number(m_meta.totalSize()) + " bytes\n";
-    ui->lblInfo->setText(txt);
-}
+    if (m_metaImage==nullptr)
+        return;
 
-void DialogNewImage::VICImageToData()
-{
-    m_charWidth = ui->leCharWidth->text().toInt();
-    m_charHeight = ui->leCharHeight->text().toInt();
+    Util::clearLayout(ui->grdParams);
+    int y=0;
+    for (MetaParameter* mp:m_metaImage->m_metaParams) {
+        ui->grdParams->addWidget(new QLabel(mp->text),y,0);
+        QLineEdit* le = new QLineEdit(QString::number(mp->value));
+        ui->grdParams->addWidget(le,y,1);
 
-    QString txt="";
-    int chars = m_charWidth*m_charHeight/2;
-    txt+= "Chars (8x16) used: " + QString::number(chars) +"\n";
-    if (chars>192)
-            txt+= "WARNING more than 192 chars! Will be truncated. \n";
+        QObject::connect(le, &QLineEdit::editingFinished, [=]() {
+            mp->value = le->text().toFloat();
+            FromMeta();
+        });
+        y++;
 
-    txt+= "Data size: " + QString::number(m_charWidth*m_charHeight*8) + " bytes\n";
-    txt+= "Color size: " + QString::number(m_charWidth*m_charHeight) + " bytes\n";
-    txt+= "Total size: " + QString::number(m_charWidth*m_charHeight*9) + " bytes\n";
-    txt+= "Pixel dimensions " + QString::number(m_charWidth*4) + "x" +QString::number(m_charHeight*8);
-    ui->lblInfo->setText(txt);
-
+    }
+    ui->lblInfo->setText(m_metaImage->getMetaInfo());
 
 }
 
-void DialogNewImage::CharImageToData()
+
+/*void DialogNewImage::CharImageToData()
 {
-    m_charWidth = ui->leCharWidth->text().toInt();
-    m_charHeight = ui->leCharHeight->text().toInt();
+//    m_charWidth = ui->leCharWidth->text().toInt();
+  //  m_charHeight = ui->leCharHeight->text().toInt();
 
     QString txt="";
     int chars = m_charWidth*m_charHeight;
@@ -124,7 +104,7 @@ void DialogNewImage::CharImageToData()
     ui->lblInfo->setText(txt);
 
 }
-
+*/
 DialogNewImage::~DialogNewImage()
 {
     delete ui;
@@ -134,30 +114,37 @@ DialogNewImage::~DialogNewImage()
 void DialogNewImage::slotOk()
 {
     //VICImageToData();
+/*
     if (ui->comboBox->currentIndex() == 9) {
          m_meta.m_width = m_charWidth;
         m_meta.m_height = m_charHeight;
     }
     if (ui->comboBox->currentIndex()==6) {
-        ui->grpImageSize->setVisible(true);
-        CharImageToData();
+//        ui->grpImageSize->setVisible(true);
+//        CharImageToData();
         m_meta.m_width = m_charWidth;
        m_meta.m_height = m_charHeight;
  //       exit(1);
     }
-
+*/
     retVal = ui->comboBox->currentIndex();
 }
 
 void DialogNewImage::on_comboBox_currentIndexChanged(int index)
 {
-    ui->grpLevelDesignerParams->setVisible(false);
+    if (m_metaImage!=nullptr)
+        delete m_metaImage;
+
+    m_metaImage = LImageFactory::Create(m_types[index].type, m_types[index].colorType);
+//    qDebug() << m_types[index];
+
+
+
+    FromMeta();
+
+/*    ui->grpLevelDesignerParams->setVisible(false);
     ui->grpImageSize->setVisible(false);
-/*    m_types.append(ImageType("Screen animation", LImage::Type::FullScreenChar,LColorList::Type::C64));
-    m_types.append(ImageType("C64 Level Editor", LImage::Type::LevelEditor,LColorList::Type::C64));
-    m_types.append(ImageType("VIC20 Multicolor bitmap", LImage::Type::VIC20_MultiColorbitmap,LColorList::Type::VIC20));
-*/
-    if (ui->comboBox->currentText()=="C64 Level Editor")
+    if (ui->comboBox->currentText().toLower().contains("level editor"))
         ui->grpLevelDesignerParams->setVisible(true);
 
     if (ui->comboBox->currentText()=="VIC20 Multicolor bitmap") {
@@ -172,70 +159,6 @@ void DialogNewImage::on_comboBox_currentIndexChanged(int index)
     }
 
 
-    ToMeta();
-}
+    ToMeta();*/
 
-void DialogNewImage::on_leScreenWidth_textChanged(const QString &arg1)
-{
-    ToMeta();
-}
-
-void DialogNewImage::on_leScreenHeight_textChanged(const QString &arg1)
-{
-      ToMeta();
-}
-
-void DialogNewImage::on_leLevelsX_textChanged(const QString &arg1)
-{
-      ToMeta();
-}
-
-void DialogNewImage::on_leLevelsY_textChanged(const QString &arg1)
-{
-      ToMeta();
-}
-
-void DialogNewImage::on_leExtraDataSize_textChanged(const QString &arg1)
-{
-      ToMeta();
-}
-
-void DialogNewImage::on_leStartX_textChanged(const QString &arg1)
-{
-      ToMeta();
-}
-
-void DialogNewImage::on_leStartY_textChanged(const QString &arg1)
-{
-      ToMeta();
-}
-
-void DialogNewImage::on_leChunkSize_textChanged(const QString &arg1)
-{
-    ToMeta();
-}
-
-void DialogNewImage::on_leDataChunks_textChanged(const QString &arg1)
-{
-    ToMeta();
-}
-
-void DialogNewImage::on_checkBox_clicked()
-{
-    ToMeta();
-}
-
-void DialogNewImage::on_chkUseColors_stateChanged(int arg1)
-{
-    ToMeta();
-}
-
-void DialogNewImage::on_leCharWidth_textChanged(const QString &arg1)
-{
-    VICImageToData();
-}
-
-void DialogNewImage::on_leCharHeight_textChanged(const QString &arg1)
-{
-    VICImageToData();
 }

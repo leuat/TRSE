@@ -42,7 +42,7 @@ public:
 
     int m_memoryType = 0;
     QVector<SystemLabel> m_labels;
-
+    int m_memorySize = 65536;
     static QMap<SystemLabel::Type, QColor> m_labelColors;
     QColor m_systemColor = QColor(64,64,128);
 

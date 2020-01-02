@@ -78,8 +78,11 @@ public:
     RayTracerGlobals();
     SimplexNoise m_noise;
 
+    static const int output_type_STANDARD = 0;
     static const int output_type_c64 = 1;
     static const int output_type_pico8 = 2;
+    static const int output_type_VGA = 3;
+    static const int output_type_BINARY = 4;
 
     double m_steps = 120;
     double m_shadowSteps = 60;

@@ -52,13 +52,16 @@ public:
         m_CharData.resize(sizeChar);
         m_ColorData.resize(sizeChar);
         m_ExtraData.resize(sizeExtraData);
-        m_ExtraData.fill(0);
+        if (sizeExtraData!=0)
+            m_ExtraData.fill(0);
+        m_CharData.fill(0);
+        m_ColorData.fill(0);
 
-
-        m_ExtraData[0] = 0;
-        m_ExtraData[1] = 1; // Colors
-        m_ExtraData[2] = 2;
-
+        if (m_ExtraData.size()>=3) {
+            m_ExtraData[0] = 0;
+            m_ExtraData[1] = 1; // Colors
+            m_ExtraData[2] = 2;
+        }
         Clear();
     }
 
@@ -78,6 +81,7 @@ public:
     bool m_useColors=true;
     int m_width=40, m_height=25;
     int m_sizex, m_sizey;
+    int m_colSizex=-1, m_colSizey=-1;
     int m_startx, m_starty;
     int m_extraDataSize;
     int m_dataChunks;
@@ -92,20 +96,28 @@ public:
 
     void Calculate()
     {
-        m_dataSize = m_width*m_height;
         if (m_useColors)
-            m_levelSize = 2*m_dataSize + m_extraDataSize;
-        else
-            m_levelSize = m_dataSize + m_extraDataSize;
+        if (m_colSizex <=0 || m_colSizey <=0) {
+            m_colSizex = m_sizex;
+            m_colSizey = m_sizey;
+        }
+        m_dataSize = m_width*m_height;
+        m_levelSize = m_dataSize + m_extraDataSize;
+        if (m_useColors)
+            m_levelSize +=m_colSizex*m_colSizey + m_extraDataSize;
+
 //        m_headerSize = 1 + 1 + 1 + 1 + 1 + 1 + 2 + 1;
         m_headerSize = 32;
         // w/h sx/sy  stx/sty   levelSize
         m_totalSize = m_levelSize*m_sizex*m_sizey + m_headerSize;
     }
 
+
+
     QByteArray toHeader() {
         QByteArray ba;
         ba.resize(32);
+        ba.fill(0);
         ba[0] = (uint)m_sizex;
         ba[1] = (uint)m_sizey;
         ba[2] = (uint)m_width;
@@ -118,12 +130,21 @@ public:
         ba[7] = (uint)m_dataChunkSize;
         ba[8] = (uint)m_extraDataSize;
         ba[9] = m_useColors==true ? 1:0;
+        ba[10] = (uint)m_colSizex;
+        ba[11] = (uint)m_colSizey;
         return ba;
     }
 
     void fromHeader(QByteArray ba) {
         m_sizex = (uchar)ba[0];
         m_sizey = (uchar)ba[1];
+        m_colSizex = (uchar)ba[10];
+        m_colSizey = (uchar)ba[11];
+
+//        m_colSizex = 16;
+  //      m_colSizey = 10;
+
+
         m_width = (uchar)ba[2];
         m_height = (uchar)ba[3];
         m_startx = (uchar)ba[4];
@@ -135,6 +156,12 @@ public:
         m_extraDataSize = (uchar)ba[8];
 
         m_useColors = ((uchar)ba[9]==1);
+
+        if (m_useColors)
+        if (m_colSizex <=0 || m_colSizey <=0) {
+            m_colSizex = m_sizex;
+            m_colSizey = m_sizey;
+        }
     }
 
 
@@ -149,6 +176,7 @@ public:
 
 class ImageLevelEditor : public MultiColorImage
 {
+
 public:
     QPoint m_currentLevelPos = QPoint(0,0);
     CharmapLevel* m_currentLevel = nullptr;
@@ -161,7 +189,8 @@ public:
 
     void SetLevel(QPoint f);
     ImageLevelEditor(LColorList::Type t);
-    void Initialize(CharmapGlobalData meta);
+//    void Initialize(CharmapGlobalData meta);
+    void Initialize() override;
 
 
     void SetColor(uchar col, uchar idx) override;
@@ -185,15 +214,18 @@ public:
     }
     QVector<QPixmap> CreateIcons();
 
+    QString getMetaInfo() override;
+
     void setPixel(int x, int y, unsigned int color) override;
     unsigned int getPixel(int x, int y) override;
     void CopyFrom(LImage* mc) override;
     void setMultiColor(bool doSet) override {}
 
+    void onFocus() override;
 
     void Resize(CharmapGlobalData newMeta);
 
-    bool PixelToPos(int x, float y, int& pos);
+    bool PixelToPos(int x, float y, int& pos, int w, int h);
 
     void Fix() override; // Fix data doccuption
 

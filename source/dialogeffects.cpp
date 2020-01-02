@@ -4,7 +4,8 @@
 LuaScript* m_script = nullptr;
 QString m_infoText = "", m_error="";
 QString m_currentDir;
-QByteArray m_screenData, m_charData;
+QByteArray m_charData;
+QVector<int> m_screenData;
 AbstractDemoEffect* m_effect = nullptr;
 Compression m_compression;
 
@@ -301,6 +302,19 @@ static int AddObject(lua_State *L)
 
     }
 
+    if (object=="triangleprism") {
+        obj =
+                    new RayObjectTrianglePrism(
+                        QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
+                        QVector3D(lua_tonumber(L,N+6),lua_tonumber(L,N+7),lua_tonumber(L,N+8)),
+                        QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
+                        mat);
+
+//        obj->m_flatten = false;
+
+    }
+
+
     if (object=="char") {
 
         CharsetImage* charset = new CharsetImage(LColorList::C64);
@@ -510,8 +524,40 @@ static int AddScreen(lua_State* L) {
     if (!VerifyFjongParameters(L,"AddScreen"))
         return 0;
 
-    if (m_effect!=nullptr)
-        m_compression.AddScreen(m_screenData, m_effect->m_img,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));//, lua_tonumber(L,5),lua_tonumber(L,6));
+    if (m_effect!=nullptr) {
+        QByteArray ba = Util::toQByteArray(m_screenData);
+        m_compression.AddScreen(ba, m_effect->m_img,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));//, lua_tonumber(L,5),lua_tonumber(L,6));
+    }
+
+    return 0;
+}
+
+static int AddCharsetScreen(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddCharsetScreen"))
+        return 0;
+
+
+    CharsetImage* charset = new CharsetImage(LColorList::C64);
+    int N = 3;
+    QString charName = lua_tostring(L,N);
+    if (charName.toLower()=="rom") {
+        charset->LoadCharset(":resources/character.rom",0);
+    }
+    else {
+        QString fname = m_currentDir+"/"+QString(lua_tostring(L,N));
+        if (!QFile::exists(fname)) {
+            m_error += "<br>Could not open file: " + fname;
+            return 0;
+        }
+
+        charset->LoadCharset(fname,0);
+    }
+
+    if (m_effect!=nullptr) {
+        QByteArray ba = Util::toQByteArray(m_screenData);
+        //m_compression.AddScreen(ba, m_effect->m_img,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));//, lua_tonumber(L,5),lua_tonumber(L,6));
+        m_compression.AddCharsetScreen(ba, m_effect->m_img, charset, lua_tonumber(L,1),lua_tonumber(L,2));
+    }
 
     return 0;
 }
@@ -522,6 +568,16 @@ static int AddToData(lua_State* L) {
 
     if (m_effect!=nullptr)
        m_compression.AddToDataX(m_charData, *((MultiColorImage*)m_effect->m_mc) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+
+    return 0;
+}
+
+static int AddToDataVGA(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddToData"))
+        return 0;
+
+    if (m_effect!=nullptr)
+       m_compression.AddToDataVGA(m_charData, *((LImageQImage*)m_effect->m_mc) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
 
     return 0;
 }
@@ -567,7 +623,8 @@ static int SaveScreenAndCharset(lua_State* L) {
 
     QFile f2(m_currentDir+"/"+lua_tostring(L,1));
     f2.open(QFile::WriteOnly);
-    f2.write(m_screenData);
+    QByteArray d = Util::toQByteArray(m_screenData);
+    f2.write(d);
     f2.close();
     m_screenData.clear();
     return 0;
@@ -613,7 +670,9 @@ static int SaveDataScreen(lua_State* L) {
     QFile f(m_currentDir+"/"+ lua_tostring(L,1));
     f.open(QFile::WriteOnly);
 
-    f.write(m_screenData);
+    QByteArray ba = Util::toQByteArray(m_screenData);
+
+    f.write(ba);
     f.close();
     m_screenData.clear();
     return 0;
@@ -678,7 +737,12 @@ static int SaveImage(lua_State* L) {
         QFile::remove(fname);
 
 
-    m_effect->m_img.save(fname);
+    if (fname.toLower().endsWith(".png") ||fname.toLower().endsWith(".jpg") )
+        m_effect->m_img.save(fname);
+    if (fname.toLower().endsWith(".flf")) {
+        LImageIO::Save(fname,m_effect->m_mc);
+    }
+
 //    f.open()
   //  m_effect->m_mc->SaveBin(f);
 //    m_charData.clear();
@@ -752,12 +816,22 @@ lua_register(m_script->L, "ApplyForce", ApplyForce);
 
 */
 
+
 static int OptimizeScreenAndCharset(lua_State* L) {
     if (!VerifyFjongParameters(L,"OptimizeScreenAndCharset"))
         return 0;
 
-    QByteArray sOut, cOut;
+    QByteArray cOut;
+    QVector<int> sOut;
 //    void Compression::OptimizeScreenAndCharset(QByteArray &screen, QByteArray &charset, QByteArray &sOut, QByteArray &cOut, int sw, int sh, int charSize, int compression)
+
+/*
+    long j=0;
+    for (int i=0;i<m_charData.count();i++ )
+        j=j+m_charData[i];
+
+    qDebug() << "Num: " << j;
+*/
 
     m_compression.OptimizeScreenAndCharset(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
 //    m_charData.clear();
@@ -786,13 +860,15 @@ static int CompressAndSaveHorizontalData(lua_State* L) {
     if (!VerifyFjongParameters(L,"CompressAndSaveHorizontalData"))
         return 0;
 
-    QByteArray packedData, table;
+    QByteArray table,packedData;
     table.clear();
+    QByteArray ba = Util::toQByteArray(m_screenData);
+
 //    qDebug() <<m_count*16 << " but is " <<m_screenData.count()/ww;
     if (m_screenData.count()!=0)
-    m_compression.OptimizeAndPackCharsetData(m_screenData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
+        m_compression.OptimizeAndPackCharsetData(ba, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
     else
-        m_compression.OptimizeAndPackCharsetData(m_charData, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
+        m_compression.OptimizeAndPackCharsetData(ba, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
   //  qDebug() << "Table should be : " << (m_noChars-1)*1024;
     //qDebug() << "Table is : " << table.count();
 
@@ -870,6 +946,7 @@ void DialogEffects::LoadScript(QString file)
 
     // Data registration
     lua_register(m_script->L, "AddC64LineToData", AddToData);
+    lua_register(m_script->L, "AddVGALineToData", AddToDataVGA);
 
     lua_register(m_script->L, "SaveRawData", SaveData);
     lua_register(m_script->L, "SaveRawScreen", SaveDataScreen);
@@ -892,6 +969,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "SaveCompressedTRM", SaveCompressedTRM);
 
     lua_register(m_script->L, "AddScreen", AddScreen);
+    lua_register(m_script->L, "AddCharsetScreen", AddCharsetScreen);
     lua_register(m_script->L, "AddScreenPetscii", AddScreenPetscii);
     lua_register(m_script->L, "AddScreenBinary", AddScreenBinary);
     lua_register(m_script->L, "Se tQuatAxisAngle", SetQuatAxisAngle);
@@ -962,6 +1040,30 @@ void DialogEffects::UpdateGlobals()
 
     m_rt.m_globals.m_outputType = m_script->get<float>("output.output_type");
     m_rt.m_globals.m_aspect = m_script->get<float>("output.aspect");
+
+    if (m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_VGA)  {
+        QString f = m_script->get<QString>("output.palette_file");
+
+  //      qDebug() << "Here "<<f;
+        if (m_effect!=nullptr)
+            if (m_effect->m_mc!=nullptr)
+               m_effect->m_mc->m_colorList.LoadFromFile(m_currentDir+"/"+f);
+
+        m_rt.m_globals.m_dither = m_script->get<float>("output.dither");
+        m_rt.m_globals.m_ditherStrength = m_script->getVec("output.ditherStrength");
+        m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.index_colors");
+
+    }
+
+    if (m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_BINARY)  {
+
+        m_rt.m_globals.m_dither = m_script->get<float>("output.dither");
+        m_rt.m_globals.m_ditherStrength = m_script->getVec("output.ditherStrength");
+        m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.index_colors");
+    }
+
+
+
     if (m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_c64)  {
 
         m_rt.m_globals.m_multicolor = m_script->get<float>("output.c64_multicolor");
@@ -974,6 +1076,16 @@ void DialogEffects::UpdateGlobals()
     }
 
 
+    if (m_rt.m_globals.m_c64Colors.count()==1) {
+        int p = m_rt.m_globals.m_c64Colors[0];
+        m_rt.m_globals.m_c64Colors.clear();
+        if (m_effect)
+            if (m_effect->m_mc)
+                for (int i=0;i<m_effect->m_mc->m_colorList.m_list.count();i+=p)
+                    m_rt.m_globals.m_c64Colors.append(i);
+    }
+
+
     m_rt.m_globals.m_steps = m_script->get<float>("globals.raymarch_steps");
     m_rt.m_globals.m_shadowSteps = m_script->get<float>("globals.raymarch_shadow_steps");
 }
@@ -981,6 +1093,7 @@ void DialogEffects::UpdateGlobals()
 
 void DialogEffects::UpdateImage()
 {
+
     if (m_effect==nullptr)
         return;
 
@@ -988,7 +1101,6 @@ void DialogEffects::UpdateImage()
         ui->txtOutput->setText(m_error);
         return;
     }
-
 
 
     ui->lblImage->setPixmap( m_effect->m_pixmap );
@@ -1007,52 +1119,4 @@ void DialogEffects::UpdateImage()
 
 
     m_effect->m_ready = true;
-//    m_effect->Render(m_effect->m_img);
-//    m_effect->start();
-//    m_effect->Render(m_effect->m_img);
 }
-
-/*void DialogEffects::on_pushButton_clicked()
-{
-    Abort();
-    close();
-}
-
-void DialogEffects::on_btnToggleAnim_clicked()
-{
-    if (m_effect==nullptr)
-        return;
-    m_effect->ToggleAnim();
-//    m_effect->m_toggleAnim=!m_effect->m_toggleAnim;
- //   m_effect->m_time = 0;
-}
-
-void DialogEffects::on_btnToggleC64_clicked()
-{
-    if (m_effect==nullptr)
-        return;
-    m_effect->m_toggleC64=!m_effect->m_toggleC64;
-
-}
-
-void DialogEffects::on_btnSave_clicked()
-{
-    if (m_effect==nullptr)
-        return;
-    bool c64=m_effect->m_toggleC64;
-    bool anim=m_effect->m_toggleAnim;
-    m_effect->m_toggleC64 = true;
-    m_effect->m_toggleAnim = false;
-
-//    m_effect->Save("twister.bin");
-
-    m_effect->m_toggleC64 = c64;
-    m_effect->m_toggleAnim = anim;
-
-}
-
-void DialogEffects::on_comboBox_activated(const QString &arg1)
-{
-    Create();
-}
-*/

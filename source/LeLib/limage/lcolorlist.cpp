@@ -42,6 +42,11 @@ LColor &LColorList::get(int i) {
     return m_black;
 }
 
+void LColorList::SetPPUColors(char c1, int idx)
+{
+    m_nesPPU[1+m_curPal*4+idx] = c1;
+}
+
 unsigned char LColorList::TypeToChar(LColorList::Type t)
 {
     if (t==C64)
@@ -64,6 +69,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 8;
   if (t==X16)
       return 9;
+  if (t==NES)
+      return 10;
 
   return 255;
 }
@@ -90,6 +97,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return OK64;
     if (c==9)
         return X16;
+    if (c==10)
+        return NES;
 
     return UNSUPPORTED;
 
@@ -281,6 +290,8 @@ void LColorList::Initialize(Type t)
         InitPICO8();
     if (m_type == Type::OK64)
         InitOK64();
+    if (m_type == Type::NES)
+        InitNES();
     if (m_type == Type::X16) {
         InitOK64();
     }
@@ -452,6 +463,63 @@ void LColorList::InitOK64()
 
 }
 
+void LColorList::InitNES()
+{
+    m_list.clear();
+    m_list.resize(64);
+//    LoadFromFile(":resources/palette/nes.pal");
+    QStringList pal = Util::loadTextFile(":resources/palette/nes.txt").split("\n");
+    int i=3;
+    int k = 0;
+    int d = 0;
+
+    for (int l=0;l<64;l++) {
+        int idx = i+k*4;
+        if (idx<pal.count()) {
+
+            QString s = pal[idx];
+            m_list[l] = (LColor(QColor(Util::NumberFromStringHex(QString("$"+s.mid(2,2))),
+                                       Util::NumberFromStringHex(QString("$"+s.mid(4,2))),
+                                       Util::NumberFromStringHex(QString("$"+s.mid(6,2)))
+                                       ),"Color"));
+        }
+        k++;
+        if (k>=16) {
+            k=0;
+            i--;
+        }
+
+/*
+//        qDebug() << k+d;
+        k=k+4;
+        if (k>=64)
+        {
+            d++;
+            k=0;
+
+        }
+*/
+    }
+    m_nesPPU.resize(0x20);
+    m_nesPPU.fill(0xF); // fill black
+    m_nesPPU[1] = 0x3;
+    m_nesPPU[2] = 0x27;
+    m_nesPPU[3] = 0x6;
+
+
+}
+
+void LColorList::InitNES4()
+{
+    m_list.clear();
+    m_list.resize(64);
+    m_list.append(LColor(QColor(0,0,255),"Black"));
+    m_list.append(LColor(QColor(0,255,0),"Green"));
+    m_list.append(LColor(QColor(255,0,255),"Red"));
+    m_list.append(LColor(QColor(255,0,255),"Brown"));
+
+}
+
 
 void LColorList::InitCGA2_LOW()
 {
@@ -468,6 +536,25 @@ void LColorList::InitCGA2_HIGH()
     m_list.append(LColor(QColor(0x55,0xff,0x55),"Green"));
     m_list.append(LColor(QColor(0xff,0x55,0x55),"Red"));
     m_list.append(LColor(QColor(0xff,0xff,0x55),"Brown"));
+}
+
+void LColorList::LoadFromFile(QString fileName)
+{
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly)) {
+        return;
+    }
+    QByteArray blob = file.readAll();
+    m_list.clear();
+    for (int i=0;i<blob.size()/3;i++) {
+        m_list.append(LColor(QColor((unsigned char)blob[3*i],
+                             (unsigned char)blob[3*i+1],
+                             (unsigned char)blob[3*i+2]),"Color"+QString::number(i)));
+//        qDebug() << "WHOO "<<i;
+
+    }
+    file.close();
+
 }
 
 QColor LColorList::getClosestColor(QColor col, int& winner)
@@ -522,6 +609,7 @@ int LColorList::getIndex(QColor c)
     for (int i=0;i<m_list.count();i++) {
 //        qDebug() << "   Testing: " << c << m_list[i].color;
         if (m_list[i].color == c) {
+//            qDebug() << "found" << i <<  c << m_list[i].color;
             return i;
         }
     }
@@ -530,21 +618,29 @@ int LColorList::getIndex(QColor c)
 
 void LColorList::CreateUI(QLayout* ly, int type)
 {
-
     Util::clearLayout(ly, true);
+    int m=0;
+    for (int i=0;i<m_list.count();i++)
+        if (m_list[i].displayList)
+            m++;
+
 
     m_buttonsEdit.clear();
     m_buttonsImport.clear();
 //    m_buttons.clear();
     int xx=0, yy=0;
-    int width=40/(max(m_list.count()/16,1));
+    int width=40/(max(m/16,1));
 //    qDebug() << width;
-    if (m_list.count()>200) {
+    if (m>200) {
         width = 16;
     }
 //    if (m_list.count())
+
+
     for(int j=0; j<m_list.count(); j++)
     {
+        if (!m_list[j].displayList)
+            continue;
         QPushButton *b = new QPushButton();
         //b->setGeometry(0,0,40,40);
         QPalette p;

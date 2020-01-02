@@ -96,6 +96,10 @@ C64FullScreenChar::C64FullScreenChar(LColorList::Type t) : MultiColorImage(t)
     m_exportParams["Fullscreen_Colors"] = 1;
     m_exportParams["Fullscreen_Chars"] = 1;
 
+    m_metaParams.append(new MetaParameter("screen_width","Screen width",20,2,1000));
+    m_metaParams.append(new MetaParameter("screen_height","Screen height",19,2,1000));
+
+
 }
 
 void C64FullScreenChar::SetColor(uchar col, uchar idx)
@@ -195,6 +199,13 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
             setPixel(i*sx,j*sy,col);
         }
     //   Reorganize();
+
+}
+
+void C64FullScreenChar::Initialize()
+{
+    DeleteAll();
+    AddNew(m_charWidth, m_charHeight);
 
 }
 
@@ -495,6 +506,18 @@ void C64FullScreenChar::Transform(int x, int y)
         }
 }
 
+QString C64FullScreenChar::getMetaInfo()
+{
+    QString txt="";
+    m_charWidth = getMetaParameter("screen_width")->value;
+    m_charHeight = getMetaParameter("screen_height")->value;
+
+    txt+= "The screen animation...";
+
+
+    return txt;
+}
+
 void C64FullScreenChar::CopyChar()
 {
     if (m_current<0) return;
@@ -506,7 +529,7 @@ void C64FullScreenChar::PasteChar()
     if (m_copy.m_data.count()==0)
         return;
 
-//    if (m_items[m_current].m_height == m_copy.m_height)
+    //    if (m_items[m_current].m_height == m_copy.m_height)
     *((C64Screen*)m_items[m_current])=m_copy;
 
 }
@@ -523,8 +546,8 @@ void C64FullScreenChar::SaveBin(QFile& file)
     file.write( ( char * )( &v), 1 );
 
 
-//    qDebug() << "w h " << QString::number(m_charWidth) << " " << QString::number(m_charHeight);
-  //  qDebug() << "cnt " << QString::number(v);
+    //    qDebug() << "w h " << QString::number(m_charWidth) << " " << QString::number(m_charHeight);
+    //  qDebug() << "cnt " << QString::number(v);
 
     char tmp = 0;
     for (int i=0;i<11;i++)

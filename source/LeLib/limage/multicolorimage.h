@@ -56,37 +56,10 @@ public:
 
     void ForceBackgroundColor(int col, int swapcol);
 
-    int Compare(PixelChar& other) {
-        int l = 0;
-        for (int i=0;i<8;i++)
-            l+=other.p[i] != p[i];
-
-/*        for (int i=0;i<4;i++)
-            l+=other.c[i]!=c[i];
-*/
-        return l;
-
-    }
+    int Compare(PixelChar& other);
 
 
-    int CompareLength(PixelChar& other) {
-        int l = 0;
-        for (int i=0;i<8;i++)
-            for (int j=0;j<4;j++) {
-                char a = (p[i]>>(2*j))&0b11;
-                char b = (other.p[i]>>(2*j))&0b11;
-                if ( a != b )
-                    l++;
-                if (a==0 && b!=0) l++;
-                if (b==0 && a!=0) l++;
-
-            }
-//            if (other.p[i]!=p[i])
-  //          l+=other.p[i] != p[i];
-
-        return l;
-
-    }
+    int CompareLength(PixelChar& other);
 
     int CompareLength2(PixelChar& other) {
         int l = 0;
@@ -160,14 +133,20 @@ public:
     int m_charHeight=25;
 
     MultiColorImage(LColorList::Type t);
-    PixelChar m_data[40*25];
+//    QVector<PixelChar> m_data;
+    PixelChar m_data[40*25*2];
+ //   QVector<PixelChar> m_data;
     PixelChar& getPixelChar(int x, int y);
     virtual void Clear() override;
 
     int LookUp(PixelChar pc);
+    QString m_charsetFilename ="";
+
     CharsetImage* m_charset = nullptr;
     virtual void setMultiColor(bool doSet) override;
     void ForceBackgroundColor(int col, int swapCol);
+
+
 
 
 
@@ -176,6 +155,8 @@ public:
     void SaveCharRascal(QString file, QString name);
     void LoadCharset(QString file, int skipBttes) override;
     bool isMultiColor() override { return m_bitMask==0b11; }
+
+    void onFocus() override;
 
 //    unsigned char m_border=0, m_background=0;
 
@@ -192,7 +173,7 @@ public:
     void ExportKoa(QFile& f) override;
 
     void FloydSteinbergDither(QImage& img, LColorList& colors, bool dither) override;
-    void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength) override;
+    void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength, float gamma) override;
 
     void Initialize(int width, int height) override {}
 
@@ -226,7 +207,7 @@ public:
 
    void ExportCompressed(QString f1, QString f2) override;
 
-   void CompressAndSave(QByteArray& chars, QByteArray& screen, int x0,int x1, int y0, int y1, int& noChars, int compression, int maxChars);
+   void CompressAndSave(QByteArray& chars, QVector<int>& screen, int x0,int x1, int y0, int y1, int& noChars, int compression, int maxChars);
 
    void SetColor(uchar col, uchar idx) override;
 

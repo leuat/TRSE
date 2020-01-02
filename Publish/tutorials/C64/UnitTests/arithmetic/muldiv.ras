@@ -3,6 +3,7 @@
 Multiplication / division unit testing
 
 */
+
 program MulDiv;
 var  
 	sc, co : pointer; 			// screen and colour RAM pointers
@@ -189,6 +190,8 @@ begin
 	i1:=v1*5;
 	text := "17:";
 	if (i1=50) then PASS() else FAIL();
+
+
 end;
 
 

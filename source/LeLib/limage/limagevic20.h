@@ -17,6 +17,7 @@ public:
     void setPixel(int x, int y, unsigned int color) override;
     void ToRaw(QByteArray &arr) override;
 
+    QString getMetaInfo() override;
 
 };
 

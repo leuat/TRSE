@@ -60,7 +60,7 @@ public:
     ImageWorker m_work;
 
     WorkerThread m_updateThread;
-
+    bool m_ignoreMC = true;
     LImageQImage m_grid;
     Toolbox m_toolBox;
     LColorList* m_currentColorList = nullptr;
@@ -83,6 +83,10 @@ public:
     void SetMCColors();
     void UpdateLevels();
     void FillCMBColors();
+    virtual void focusInEvent( QFocusEvent* ) override;
+
+    void Reload() override;
+
 
     void resizeEvent(QResizeEvent *event) override;
 
@@ -223,6 +227,12 @@ private slots:
     void on_cmbZoomLevel_activated(const QString &arg1);
     void on_btnExportCompressed_clicked();
     void on_btnPalette_clicked();
+    void on_cmbBorderMain_3_currentIndexChanged(int index);
+    void on_cmbMC1_currentIndexChanged(int index);
+    void on_cmbBorderMain_3_activated(int index);
+    void on_cmbNesPalette_currentIndexChanged(int index);
+    void on_cmbBank_currentIndexChanged(int index);
+    void on_cmbNesPalette_activated(int index);
 };
 
 

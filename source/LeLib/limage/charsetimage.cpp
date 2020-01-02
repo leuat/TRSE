@@ -33,6 +33,8 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_scale = 2;
     m_width = 160;
     m_minCol = 0;
+//    m_data = new PixelChar[m_charWidth*m_charHeight];
+
     Clear();
     m_type = LImage::Type::CharMapMulticolor;
     SetColor(1,1);
@@ -166,6 +168,7 @@ uchar CharsetImage::getVariableColor(PixelChar *pc)
 
 void CharsetImage::LoadCharset(QString file, int skipBytes)
 {
+    m_charsetFilename = file;
     MultiColorImage::LoadCharset(file, skipBytes);
     if (m_charset!=nullptr)
         CopyFrom(m_charset);
@@ -390,9 +393,7 @@ void CharsetImage::ToQPixMaps(QVector<QPixmap> &map)
 {
     map.clear();
     for (int i=0;i<m_charCount;i++) {
-        QImage img = m_data[i].toQImage(64, m_bitMask, m_colorList, m_scale);
-        QPixmap p = QPixmap::fromImage(img);
-        map.append(p);
+        map.append(ToQPixMap(i));
     }
 }
 
@@ -458,6 +459,11 @@ void CharsetImage::setPixel(int x, int y, unsigned int color)
 
 
 
+}
+
+unsigned int CharsetImage::getCharPixel(int pos,  int pal,int x, int y)
+{
+    return 0;
 }
 
 void CharsetImage::RenderEffect(QMap<QString, float> params)
@@ -554,6 +560,11 @@ void CharsetImage::setLimitedPixel(int x, int y, unsigned int color)
 
 //    qDebug() << color;
 
+}
+
+void CharsetImage::onFocus() {
+    if (m_charsetFilename!="")
+        LoadCharset(m_charsetFilename,0);
 }
 
 void CharsetImage::CopyChar()

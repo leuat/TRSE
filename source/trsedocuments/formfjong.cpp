@@ -27,6 +27,7 @@ void FormFjong::Save(QString filename)
 {
     if (QFile::exists(filename))
         QFile::remove(filename);
+
     QString txt = ui->txtEditor->document()->toPlainText();
     QFile file(filename);
     if (file.open(QIODevice::ReadWrite | QIODevice::Truncate))

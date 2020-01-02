@@ -115,11 +115,11 @@ void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, float zoom
     int width = m_qImage->width();
     int height = m_qImage->height();
     m_qImage->fill(QColor(0,0,0,0));
-    center.setX(center.x()/320.0*width);
-    center.setY(center.y()/m_height*height);
+    center.setX(center.x()/m_width*width);
+    center.setY(center.y()/(float)m_height*height);
     for (int i=1;i<x;i++)
         for (int j = 0;j<height;j++) {
-            float xp = (width/(x))*(i);
+            float xp = (width/((float)x))*(i);
 
             xp = (xp - 2*center.x())/zoom + 2*center.x();
            float yp = (j - center.y())/zoom + center.y();
@@ -133,7 +133,7 @@ void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, float zoom
     // width lines
     for (int i=1;i<y;i++)
         for (int j = 0;j<width;j++) {
-            float yp = (height/(y))*(i);
+            float yp = (height/(float)(y))*(i);
 
             yp = (yp - center.y())/zoom + center.y();
             float xp = (j - 2*center.x())/zoom + 2*center.x();

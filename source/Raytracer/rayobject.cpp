@@ -462,12 +462,33 @@ float RayObjectPerlin::intersect(Ray *ray)
 {
     float amp=m_perlinVals.x();
     float scale=m_perlinVals.y();
+//    qDebug() << m_obj->m_children.count();
+    AbstractRayObject* m_obj = m_children[0];
+    Ray r = *ray;// = new Ray();
+    r = r.Rotate(m_obj->m_localRotmat,m_obj->m_localPos);
 
     QVector3D d2 =  ray->m_currentPos;// +ray->m_currentPos;
-    float mm = m_obj->intersect(ray);
-    if (mm>0.2) return mm;
+  //  if (m_obj->m_children.count()==0) {
+        float mm = m_obj->intersect(ray);
+        if (mm>0.2) return mm;
+        return mm + amp*m_sn.noise(d2.x()*scale, d2.y()*scale, d2.z()*scale);
 
-    return mm + amp*m_sn.noise(d2.x()*scale, d2.y()*scale, d2.z()*scale);
+    /*
+    float d = 0;
+
+    for (AbstractRayObject* aro: m_obj->m_children) {
+        Ray r = *ray;// = new Ray();
+        r = r.Rotate(aro->m_localRotmat,aro->m_localPos);
+        d = min(aro->intersect(&r),d);
+        if (d<=0)
+            return d+ amp*m_sn.noise(d2.x()*scale, d2.y()*scale, d2.z()*scale);;
+    }
+*/
+
+/*    if (m_children.count()!=0)
+        for (AbstractRayObject* ro: m_children)
+            ro->intersect()
+  */
 
 }
 
@@ -492,5 +513,18 @@ float RayObjectHoles::intersect(Ray *ray)
     float deltay = fmod(abs(d2.x()),m_vals.x())>m_vals.x()/5.0;
 */
     return max(mm,cut);// + amp*deltay;
+
+}
+
+QVector3D RayObjectTrianglePrism::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D &tangent)
+{
+    return QVector3D(0,0,0);
+}
+
+float RayObjectTrianglePrism::intersect(Ray *ray)
+{
+    QVector3D p = m_localPos+ ray->m_currentPos;
+    QVector3D q = Util::abss(m_localPos+ ray->m_currentPos);// +ray->m_currentPos;
+      return max(q.z()-m_box.y(),max(q.x()*0.866025f+p.y()*0.5f,-p.y())-m_box.x()*0.5f);
 
 }

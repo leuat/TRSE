@@ -272,10 +272,11 @@ void Assembler::Connect()
         if (Util::NumberFromStringHex(m_appendix[i].m_pos)<Syntax::s.m_currentSystem->m_programStartAddress)
             pre <<m_appendix[i].m_source;
         else m_source << m_appendix[i].m_source;
+
     }
 
     m_source = QStringList() << " processor 6502" <<pre << m_source;
-
+    m_source.removeAll("");
     m_appendix.clear();
 }
 

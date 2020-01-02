@@ -99,7 +99,7 @@ void SidFile::LoadNSF(QString filename, QString path)
     file.close();
 }
 
-void SidFile::Convert(int headerShift, int newAddress, QString fileEnding, int hsz)
+void SidFile::Convert(int headerShift, int newAddress, QString fileEnding, int hsz, bool isOK64)
 {
     QString org = m_fileName;
     m_outFile = m_fileName.remove("."+fileEnding);
@@ -128,7 +128,7 @@ void SidFile::Convert(int headerShift, int newAddress, QString fileEnding, int h
 
     // Replace all d400 with newaddress
     //if (org.toLower().trimmed().endsWith(".vsid"))
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20)
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::OK64)
     {
         qDebug() << "VSID CONVERSION: ";
         for (int i=0;i<m_blob.count()-1;i++) {
@@ -137,15 +137,15 @@ void SidFile::Convert(int headerShift, int newAddress, QString fileEnding, int h
             if (hi==0xD4) {
 //                lo=lo&31;
                 if (lo<0x1F) {
-                    int addr = newAddress+lo;
-                    qDebug() << "SID Moving: " << Util::numToHex((unsigned short)((hi<<8)|lo)) << " to " << Util::numToHex(addr);
+                    int addr = 0xFF20+lo;
+//                    qDebug() << "SID Moving: " << Util::numToHex((unsigned short)((hi<<8)|lo)) << " to " << Util::numToHex(addr);
                     m_blob[i+1]=(uchar)((addr>>8));
                     m_blob[i]=(uchar)((addr));
-                    qDebug() << "SID Moved to: " << Util::numToHex((unsigned short)((m_blob[i+1]<<8)|m_blob[i])) << " to " << Util::numToHex(addr);
+  //                  qDebug() << "SID Moved to: " << Util::numToHex((unsigned short)((m_blob[i+1]<<8)|m_blob[i])) << " to " << Util::numToHex(addr);
                 }
                  else {
-                    qDebug() << "IG:" << Util::numToHex((hi));
-                    qDebug() << "IGNORING : " << Util::numToHex((unsigned short)((hi<<8)|lo));
+                //    qDebug() << "IG:" << Util::numToHex((hi));
+                  //  qDebug() << "IGNORING : " << Util::numToHex((unsigned short)((hi<<8)|lo));
                 }
             }
         }

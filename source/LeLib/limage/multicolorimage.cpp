@@ -36,6 +36,8 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     m_width = 160;
     m_height = 200;
     m_scaleX = 2.5f;
+    //m_data.resize(m_charWidth*m_charHeight);
+
     Clear();
     m_type = LImage::Type::MultiColorBitmap;
     m_supports.asmExport = true;
@@ -68,6 +70,10 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     m_exportParams["StartY"] = 0;
     m_exportParams["EndY"] = m_charHeight;
     m_exportParams["Compression"] = 0;
+
+    //m_data.resize(m_charWidth*m_charHeight);
+
+//    qDebug() << m_charWidth*m_charHeight;
 
     for (int i=0;i<4;i++)
         m_extraCols[i] = 0;
@@ -178,7 +184,8 @@ void MultiColorImage::LoadBin(QFile& file)
     file.read( ( char * )( &m_background ),1 );
     file.read( ( char * )( &m_border ), 1);
     file.read( ( char * )( &m_data ),  m_charHeight*m_charWidth*12 );
-
+//    QByteArray data = file.read(m_charHeight*m_charWidth*12);
+  //  memcpy(&m_data, &data, m_charHeight*m_charWidth*12);
 }
 
 void MultiColorImage::ImportKoa(QFile &f)
@@ -191,7 +198,8 @@ void MultiColorImage::ImportKoa(QFile &f)
     bg = f.read(1);
     int pos = 0;
 
-    for (PixelChar& pc: m_data) {
+    for (int j=0;j<m_charWidth*m_charHeight;j++) {
+        PixelChar& pc =  m_data[j];
         for (int i=0;i<8;i++)
             pc.p[i] = PixelChar::reverse(data[pos*8+i]);
         pc.c[1] = screen[pos]&15;
@@ -212,7 +220,8 @@ void MultiColorImage::ExportKoa(QFile &f)
     int pos = 0;
     screen.resize(1000);
     color.resize(1000);
-    for (PixelChar& pc: m_data) {
+    for (int j=0;j<m_charWidth*m_charHeight;j++) {
+        PixelChar& pc =  m_data[j];
         pc.Reorganize(m_bitMask, m_scale,m_minCol, m_noColors, m_background);
         for (int i=0;i<8;i++)
             data.append(PixelChar::reverse(pc.p[i]));
@@ -277,7 +286,7 @@ void MultiColorImage::FloydSteinbergDither(QImage &img, LColorList& colors, bool
 
 }
 
-void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength)
+void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, float gamma = 1.0)
 {
     int height  =min(img.height(), m_height);
     int width  =min(img.width(), m_width);
@@ -289,12 +298,15 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
 
 //            color.R = color.R + bayer8x8[x % 8, y % 8] * GAP / 65;
 
-            QColor color = QColor(img.pixel(x,y));
+            int xx = (x-img.width()/2)*m_importScaleX + img.width()/2;
+            int yy = (y-img.height()/2)*m_importScaleY + img.height()/2;
+
+            QColor color = QColor(img.pixel(xx,yy));
             int yp = y + x%(int)strength.y();
             int xp = x + y%(int)strength.z();
-            color.setRed(min(color.red() + bayer4x4(xp % 4,yp % 4),255.0f));
-            color.setGreen(min(color.green() + bayer4x4(xp % 4,yp % 4),255.0f));
-            color.setBlue(min(color.blue() + bayer4x4(xp % 4,yp % 4),255.0f));
+            color.setRed(min((float)pow(color.red(),gamma) + bayer4x4(xp % 4,yp % 4),255.0f));
+            color.setGreen(min((float)pow(color.green(),gamma) + bayer4x4(xp % 4,yp % 4),255.0f));
+            color.setBlue(min((float)pow(color.blue(),gamma) + bayer4x4(xp % 4,yp % 4),255.0f));
 
             int winner = 0;
             QColor newPixel = colors.getClosestColor(color, winner);
@@ -328,7 +340,12 @@ void MultiColorImage::CopyFrom(LImage* img)
         MultiColorImage* mc = (MultiColorImage*)img;
          m_background = mc->m_background;
          m_border = mc->m_border;
-
+         m_charWidth = mc->m_charWidth;
+         m_charHeight = mc->m_charHeight;
+         m_scale = mc->m_scale;
+         m_width = mc->m_width;
+         m_height = mc->m_height;
+         m_scaleX = mc->m_scaleX;
         // qDebug() << "COPY FROM";
 #pragma omp parallel for
          for(int i=0;i<m_charHeight*m_charWidth;i++) {
@@ -605,15 +622,17 @@ void MultiColorImage::ExportCompressed(QString f1, QString f2)
     Compression c;
 //    c.OptimizeAndPackCharsetData()
     QByteArray charData, screenData;
+    QVector<int> i_screenData;
     int noChars;
 
     ForceColorFlattening();
 
-    CompressAndSave(charData, screenData,
+    CompressAndSave(charData, i_screenData,
                     m_exportParams["StartX"],m_exportParams["EndX"],
                     m_exportParams["StartY"],m_exportParams["EndY"],
                     noChars,    m_exportParams["Compression"],255 );
 //    qDebug() << "No chars :" << noChars;
+    screenData = Util::toQByteArray(i_screenData);
     Util::SaveByteArray(screenData, f1);
     Util::SaveByteArray(charData, f2);
 
@@ -655,7 +674,14 @@ void MultiColorImage::LoadCharset(QString file, int skipBytes)
         }
 //        m_charset =
     }
+    m_charsetFilename = file;
 
+}
+
+void MultiColorImage::onFocus()
+{
+    if (m_charsetFilename!="")
+        LoadCharset(m_charsetFilename,0);
 }
 
 void MultiColorImage::Clear()
@@ -1012,7 +1038,7 @@ QImage PixelChar::toQImage(int size, uchar bmask, LColorList& lst, int scale)
             int y = j/(float)(size)*8;
             uchar c = get(ix,y, bmask);
 
-         //   if (rand()%100==0 && c!=0)
+           // if (rand()%100==0 && c!=0)
            //     qDebug() << lst.m_list[c].color;
             img.setPixel(i,j,lst.get(c).color.rgba());
         }
@@ -1109,6 +1135,37 @@ void PixelChar::ForceBackgroundColor(int col, int swapcol)
 
 }
 
+int PixelChar::Compare(PixelChar &other) {
+    int l = 0;
+    for (int i=0;i<8;i++)
+        l+=other.p[i] != p[i];
+
+    /*        for (int i=0;i<4;i++)
+            l+=other.c[i]!=c[i];
+*/
+    return l;
+
+}
+
+int PixelChar::CompareLength(PixelChar &other) {
+    int l = 0;
+    for (int i=0;i<8;i++)
+        for (int j=0;j<8;j++) {
+            char a = (p[i]>>(j))&0b1;
+            char b = (other.p[i]>>(j))&0b1;
+            if ( a != b )
+                l++;
+            //                if (a==0 && b!=0) l++;
+            //              if (b==0 && a!=0) l++;
+
+        }
+    //            if (other.p[i]!=p[i])
+    //          l+=other.p[i] != p[i];
+
+    return l;
+
+}
+
 uchar PixelChar::SwapColor(uchar data, uchar c1, uchar c2)
 {
     for (int i=0;i<4;i++) {
@@ -1116,7 +1173,7 @@ uchar PixelChar::SwapColor(uchar data, uchar c1, uchar c2)
         uchar k1 = (data>>j)&0b11;
         uchar k2 = k1;
         if (k1==c1) { k2=c2;}
-//        else
+        //        else
 
         if (k1==c2) { k2=c1;}
         uchar mask = ~(0b11<<j);
@@ -1244,42 +1301,50 @@ void MultiColorImage::RenderEffect(QMap<QString, float> params)
 
 }
 
-void MultiColorImage::CompressAndSave(QByteArray& chardata, QByteArray& screen, int x0,int x1, int y0, int y1, int& noChars, int compression, int maxChars) {
+void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen, int x0,int x1, int y0, int y1, int& noChars, int compression, int maxChars) {
     CharsetImage* ni = new CharsetImage(m_colorList.m_type);
 
 
     QVector<PixelChar> chars;
-    QByteArray data;
+//    QByteArray data;
+    QVector<int> data;
     int sx = x1-x0;
     int sy = y1-y0;
     data.resize(sx*sy);
     data.fill(0x0);
-    noChars = 2;
+    noChars = 4;
     PixelChar p0;
     PixelChar p1;
+    PixelChar p2;
+    PixelChar p3;
     for (int i=0;i<8;i++) {
         p0.p[i]=0xFF;
         p1.p[i]=0x00;
+        p2.p[i]=0b10101010;
+        p3.p[i]=0b01010101;
     }
     chars.append(p0);
     chars.append(p1);
+    chars.append(p2);
+    chars.append(p3);
     for (int j=0;j<sy;j++) {
 
         for (int i=0;i<sx;i++)
         {
-            bool add = true;
             PixelChar& pc = m_data[i+x0 + (j+y0)*40];
             int pi = 0;
             bool found = false;
+            int cur = 1E5;
             for (PixelChar& p : chars) {
-                if (found)
-                    break;
+//                if (found)
+  //                  break;
                 int metric = pc.CompareLength(p);
 //                int metric = pc.Compare(p);
-                if (metric <compression) {
+                if (metric <compression && metric<cur ) {
                     data[i + j*sx] = pi;
+                    cur=metric;
                     found = true;
-                    break;
+//                    break;
 
                 }
                 pi++;
@@ -1318,6 +1383,7 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QByteArray& screen, 
     f.close();
 */
 
+    qDebug() << "CHARDATA : " << chardata.count()/8;
     delete ni;
 
    // return out;

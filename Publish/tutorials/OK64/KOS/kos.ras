@@ -243,35 +243,12 @@ begin
 		end;
 		waitforvsync();
 		call(SIDFILE_1_PLAY);		
-
+		
+		okvc_channel1_vol:=sine[t2*4];
+		okvc_channel2_vol:=sine[t2*4+128];
 	end;
 end;
 
-
-procedure StartupSound();
-var 
-  i:byte;
-begin
-	/*poke(^$D415,0,0);
-	poke(^$D416,0,0);
-	poke(^$D417,0,0);
-	poke(^$D418,0,15);
-	
-	fill(^$D400,15,$17);
-	*/
-	for i:=0 to 200 do
-	begin
-/*PlaySound(SID_CHANNEL1, 
-				15,  // Volume
-				20,  // Hi byte frequency
-				5*16+5,  // Attack voice 1
-				5*16 + 5,   // Sustain = 16*15 + release=6
-				1 +SID_TRI,  // Waveform
-				SID_TRI);  // waveform 
-*/
-//		waitforvsync();		
-	end;
-end;
 
 
 

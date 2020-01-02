@@ -356,6 +356,7 @@ void ASTDispather6502::HandleShiftLeftRight(NodeBinOP *node)
 void ASTDispather6502::HandleShiftLeftRightInteger(NodeBinOP *node, bool isSimpleAeqAopB)
 {
     // Not yet implemented
+
     QString varName = "";
     if (!isSimpleAeqAopB) {
         node->m_left->Accept(this);
@@ -1066,6 +1067,14 @@ void ASTDispather6502::IncSid(NodeVarDecl *node) {
 
     // Init address or load address? hmmm
 
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES) {
+        if (node->sid.m_loadAddress!=0x8000) {
+            Appendix app("$8000");
+            app.Append("org $8000",1);
+            app.Append("NSFfiller dc.b 0",0);
+            as->m_appendix.append(app);
+        }
+    }
 
     QString pos = QString::number(node->sid.m_loadAddress,16);
     Appendix app("$"+pos);
@@ -1084,6 +1093,7 @@ void ASTDispather6502::IncSid(NodeVarDecl *node) {
     }
     node->m_fileSize = size;
 
+    qDebug() << "LOAD ADDRESS **** " << node->sid.m_loadAddress;
     as->blocks.append(new MemoryBlock(node->sid.m_loadAddress,node->sid.m_loadAddress+size, MemoryBlock::MUSIC, node->sid.m_fileName));
 
 

@@ -10,7 +10,7 @@
 #include "source/LeLib/limage/compression.h"
 #include <QPixmap>
 #include "source/Compiler/syntax.h"
-
+#include "source/LeLib/limage/limageio.h"
 namespace Ui {
 class DialogEffects;
 }

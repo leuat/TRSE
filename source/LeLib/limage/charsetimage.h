@@ -81,9 +81,11 @@ public:
     void ExportBin(QFile& f) override;
     virtual void FromRaw(QByteArray& arr);
     virtual void ToRaw(QByteArray& arr);
-    void ToQPixMaps(QVector<QPixmap>& map);
-    QPixmap ToQPixMap(int chr);
+    virtual void ToQPixMaps(QVector<QPixmap>& map);
+    virtual QPixmap ToQPixMap(int chr);
     virtual void setPixel(int x, int y, unsigned int color) override;
+
+    virtual unsigned int getCharPixel(int pos, int pal, int x, int y);
 
 
     void RenderEffect(QMap<QString, float> params) override;
@@ -92,6 +94,8 @@ public:
     bool KeyPress(QKeyEvent *e) override;
 
     void setLimitedPixel(int x, int y, unsigned int color);
+
+    void onFocus() override;
 
     void FlipHorizontal() override;
     void FlipVertical() override;

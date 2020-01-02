@@ -212,6 +212,7 @@ m; ReadInput; NES;
 m; PPUBackgroundDump; NES; a,b,b
 m; PPUAttributeDump; NES; a,b,b
 m; PPUSingle; NES; b,b,b
+m; PPURead; NES; b,b
 m; LoadSong; NES; b
 m; PlaySong; NES;
 m; PPUDrawColumn; NES; a,b,b,b
@@ -475,6 +476,14 @@ c; OKVC_SRC_PAGE; OK64; a; 0xFFE7
 c; OKVC_DST_PAGE; OK64; a; 0xFFE6
 c; OKVC_CURRENT_STRIP; OK64; a; 0xFFE5
 c; OKVC_STRIP; OK64; a; 0xFE00
+c; OKVC_BLIT_TYPE; OK64; a; 0xFFE4
+c; OKVC_BLIT_ALPHAVAL; OK64; a; 0xFFE3
+c; OKVC_BLIT_ALPHA ; OK64; b; 1
+c; OKVC_BLIT_ADD ; OK64; b; 2
+c; OKVC_CHANNEL1_VOL ; OK64; a; 0xFFE1
+c; OKVC_CHANNEL2_VOL ; OK64; a; 0xFFE2
+c; OKVC_OUTVAL ; OK64; a; 0xFFE0
+
 
 m; drawPixel; OK64; b,b,b
 m; drawLine; OK64; b,b,b,b,b
@@ -491,9 +500,9 @@ m; InputIRQ; OK64; p
 m; ResetFileList; OK64;
 m; ReadNextFile; OK64;
 m; LoadFile; OK64;
-
-
-
+m; MemCpyOKVC; OK64; b,b,b,b,b,b,b,b
+m; setDefaultPalette; OK64;
+m; fmul;OK64;b,b
 
 
 
@@ -849,7 +858,7 @@ r; IGNOREMETHOD; X16,C64, PLUS4, C128, VIC20, PET,  NES, BBCM, AMIGA, OK64
 r; ERROR; X16,C64, PLUS4, C128, VIC20, PET,  NES, BBCM, AMIGA, OK64, PET
 r; WEDGE; X16,C64, PLUS4, C128
 r; USE; X16,C64, PLUS4, C128, VIC20, BBCM, AMIGA, OK64, PET
-r; STARTASSEMBLER; X16,C64, PLUS4, C128, VIC20, BBCM, AMIGA, OK64, PET
+r; STARTASSEMBLER; X16,C64, PLUS4, C128, VIC20, BBCM, AMIGA, OK64, PET, NES
 r; DONOTREMOVE; X16,C64, PLUS4, C128, VIC20, BBCM, AMIGA, OK64, PET
 r; CASE; X16,C64, PLUS4, C128, VIC20, BBCM, NES, AMIGA, OK64, PET
 r; REQUIREFILE; X16,C64, PLUS4, C128, VIC20, BBCM, NES, AMIGA, OK64, PET
@@ -917,10 +926,12 @@ f ; SetRotation; s,f,f,f
 f ; SetPosition; s,f,f,f
 f ; AddPosition; s,f,f,f
 f ; AddC64LineToData; f,f,f,f
+f ; AddVGALineToData; f,f,f,f
 f ; SaveRawData; s
 f ; SaveRawScreen; s
 f ; CompressAndSaveHorizontalData ; f,f,s,s
 f ; AddScreen; f,f,f,f
+f ; AddCharsetScreen; f,f,s
 f ; SaveScreenAndCharset;s,s
 f ; CompressCharset;f,f,f,f,f,f
 f ; Message;s
