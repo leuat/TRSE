@@ -210,6 +210,8 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "vbmdrawtexte(", "initVbmDrawTextE");
         InitBuiltinFunction(QStringList()<< "vbmcleartext(", "initVbmClearText");
 
+        InitBuiltinFunction(QStringList()<< "vbmdrawbcd(", "initVbmDrawBCD");
+
 
     }
     Node::m_staticBlockInfo.m_blockID = -1;
