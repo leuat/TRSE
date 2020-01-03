@@ -1,0 +1,43 @@
+<h3>vbmDrawTileMapO( [address-map], [address-chars], [byte-X1], [byte-Y1], [byte-X2], [byte-Y2] );</h3>
+<ul>
+    <li>[address-map] - Address of the tilemap</li>
+    <li>[address-chars] - Address of the tile characters</li>
+    <li>[byte-X1] - Column on bitmap to start drawing</li>
+    <li>[byte-Y1] - Y pixel position on bitmap to start drawing</li>
+    <li>[byte-X2] - Column on bitmap to end drawing</li>
+    <li>[byte-Y2] - Y pixel position on bitmap to end drawing</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+Draws a tilemap on the bitmap.  The map can be any size but the co-ordinates on the
+bitmap must equal the width and height of the map.
+</p>
+<p>X1 and X2 are columns which equate directly to the bytes in the map data.
+    X2 = X1 + width of tilemap.
+</p>
+<p>Y1 and Y2 are pixel positions on the bitmap.
+    Y2 = Y1 + (height of tilemap * 8)
+</p>
+
+<p>There are four ways to draw a tilemap:</p>
+<ul>
+    <li>vbmDrawTileMap - draws a tilemap overwriting the bitmap</li>
+    <li>vbmDrawTileMapO - draws a tilemap merging with the bitmap</li>
+    <li>vbmDrawTileMapE - draws a tilemap merging with EOR operation</li>
+    <li>vbmClearTileMap - Cuts out the tilemap from the bitmap</li>
+</ul>
+
+<h3>Example</h3>
+<code>
+    tiles: incbin("tiles.bin", $4000);  // tiles / characterset
+    map: incbin("tilemap.bin", $4050);  // a full screen tilemap 20 x 24
+    map10: incbin("tilemap10x10.bin", $4230); // a small tilemap 10 x 10
+        
+    ...
+
+	vbmDrawTileMapO( map, tiles, 0, 0, 20, 184 );     // draw a full screen tilemap
+	vbmDrawTileMapO( map10, tiles, 5, 100, 15, 172 ); // draw a smaller tilemap
+
+</code>

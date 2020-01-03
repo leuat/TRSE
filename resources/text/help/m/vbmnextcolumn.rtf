@@ -1,0 +1,27 @@
+<h3>vbmSetColumn( );</h3>
+
+<h3>Description</h3>
+<p>
+Simply adds 192 to the built in zero page pointer called screenmemory.  
+Useful for moving to the next column quickly for tiles or sprite slices.
+<strong>WARNING:</strong> this should not be used in conjunction with vbmScrollLeft / Right because these
+commands rearrange the character map on screen and you cannot be guaranteed where the last column in 
+memory will be. 
+</p>
+
+<h3>Example</h3>
+<code>
+    gfx : array[] of byte = (
+        %11111111, %10000001, %10000001, %10011001, 
+        %10011001, %10000001, %10000001, %11111111
+    ); 	
+
+    ...
+
+    vbmSetColumn( 3 ); // set the fourth column (remember, starts at 0)
+    screenmemory := screenmemory + 20; // move 20 pixels down
+    vbmDrawTile( gfx );
+
+    vbmNextColumn();
+    vbmDrawTile( gfx ); // draws tile in next column along at same Y position
+</code>

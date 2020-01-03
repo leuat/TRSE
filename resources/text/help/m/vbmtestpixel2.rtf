@@ -1,0 +1,17 @@
+<h3>[byte] = vbmTestPixel2( [byte-X], [byte-Y] );</h3>
+<ul>
+    <li>[byte-X] - X position 0 - 159</li>
+    <li>[byte-Y] - Y position 0 - 191</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+Tests a pixel pair on the bitmap.  Returns 0 if no pixels, otherwise returns a non-zero value indicated in the position of the pixel pair.
+  Useful for testing multi-color pixels.  The x position is constrained to even numbers.
+</p>
+
+<h3>Example</h3>
+<code>
+    if (vbmTestPixel2(12,10)) then // pixel pair is present at x=12 and y=10
+</code>

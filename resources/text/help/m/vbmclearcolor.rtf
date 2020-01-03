@@ -1,0 +1,19 @@
+<h3>vbmClearColor( [byte] );</h3>
+<ul>
+    <li>[byte] - value to use to clear the color memory.</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+Clears the foreground colour memory with the given color value.
+</p>
+
+<h3>Example</h3>
+<code>
+    vbmSetScreenMode( 0 );
+
+    vbmClear( 255 ); // clears the bitmap with solid pixels
+
+    vbmClearColor( GREEN ); // sets the colour of the bitmap to green
+</code>

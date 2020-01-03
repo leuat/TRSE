@@ -311,5 +311,22 @@
         <file>resources/palette/nes.txt</file>
         <file>resources/palette/nes.pal</file>
         <file>resources/text/help/m/vbmdebug.rtf</file>
+        <file>resources/text/help/m/vbmsetposition4.rtf</file>
+        <file>resources/text/help/m/vbmsetposition1.rtf</file>
+        <file>resources/text/help/m/vbmsetposition2.rtf</file>
+        <file>resources/text/help/m/vbmnextcolumn.rtf</file>
+        <file>resources/text/help/m/vbmsetcolumn.rtf</file>
+        <file>resources/text/help/m/vbmcleartile.rtf</file>
+        <file>resources/text/help/m/vbmdrawtilee.rtf</file>
+        <file>resources/text/help/m/vbmdrawtileo.rtf</file>
+        <file>resources/text/help/m/vbmdrawtile.rtf</file>
+        <file>resources/text/help/m/vbmclearcolor.rtf</file>
+        <file>resources/text/help/m/vbmclear.rtf</file>
+        <file>resources/text/help/m/vbmcleartilemap.rtf</file>
+        <file>resources/text/help/m/vbmdrawtilemape.rtf</file>
+        <file>resources/text/help/m/vbmdrawtilemapo.rtf</file>
+        <file>resources/text/help/m/vbmdrawtilemap.rtf</file>
+        <file>resources/text/help/m/vbmtestpixel2.rtf</file>
+        <file>resources/text/help/m/vbmtestpixel.rtf</file>
     </qresource>
 </RCC>

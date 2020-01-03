@@ -1,0 +1,32 @@
+<h3>vbmSetPosition1( [x-byte], [y-byte] );</h3>
+<ul>
+    <li>[x-byte] - X location in pixels</li>
+    <li>[y-byte] - Y location in pixels</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+Sets the inbuilt zero page pointer called ScreenMemory to the address in the bitmap corresponding
+to the location for the given X and Y position.  The built in variable called vbmX is set to a value
+between 0 and 7 which is the pre-shifted offset to use to correctly display a sprite.
+</p>
+<p>There are three vbmSetPosition commands, one for each type of pre-shifted sprites you wish to use:</p>
+<ul>
+    <li>vbmSetPosition1 - for sprites that are pre-shifted 1 pixel at a time</li>
+    <li>vbmSetPosition2 - for sprites that are pre-shifted 2 pixels at a time</li>
+    <li>vbmSetPosition4 - for sprites that are pre-shifted 4 pixels at a time</li>
+</ul>
+<p>Ensure you use the correct command for your pre-shifted sprites.</p>
+
+<h3>Example</h3>
+<code>
+    // assume using 1 pixel pre-shifted sprites, therefore a total of 8 pre-shifted positions
+
+    vbmSetPosition1( 35, 100 );
+    vbmDrawSprite8( sprLeftSide, sprRightSide ); // 8x8 sprites need two character columns
+
+    vbmSetPosition1( 100, 100 );
+    vbmDrawSprite16( sprLeftSide, sprMiddle, sprRightSide ); // 16x16 sprites need three character columns
+
+</code>

@@ -1,0 +1,36 @@
+<h3>vbmDrawTileE( [address] );</h3>
+<ul>
+    <li>[address] - address of a tile to draw to the bitmap.</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+Draws an 8x8 tile to the current location pointed to by screenmemory.  EOR mode will 'toggle' pixels.
+Can be used to draw a tile, then draw again to restore the bitmap to what it was before.
+</p>
+<p>There are four ways to draw a tile:</p>
+<ul>
+    <li>vbmDrawTile - draws a tile, replacing the pixels at the current position on the bitmap</li>
+    <li>vbmDrawTileO - draws a tile and merges it over the current pixels on the bitmap</li>
+    <li>vbmDrawTileE - draws a tile and merges it using the EOR operation with the bitmap</li>
+    <li>vbmClearTile - clears, or 'cuts out' the tile shape from the pixels on the bitmap</li>
+</ul>
+
+<h3>Example</h3>
+<code>
+    gfx : array[] of byte = (
+        %11111111, %10000001, %10000001, %10011001, 
+        %10011001, %10000001, %10000001, %11111111
+    ); 	
+
+    ...
+
+    vbmSetColumn( 3 ); // set the fourth column (remember, starts at 0)
+    screenmemory := screenmemory + 20; // move 20 pixels down
+
+    vbmDrawTileE( gfx ); // draws the tile, merge with any pixels underneath it using an EOR operation
+</code>
+
+<h3>See also</h3>
+<ul><li>vbmDrawTileMap</li></ul>
