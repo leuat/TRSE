@@ -1,48 +1,64 @@
 <h3>vbm - Vic Bitmap Mode</h3>
 <p>
-    The Vic 20 does not have a true bitmap display mode like the Commodore 64 but it does have some tricks up its sleeve to allow a bitmap to be created out of characters.
+    The Vic 20 does not have a true bitmap display mode like the Commodore 64 but it does have some tricks 
+    up its sleeve to allow a bitmap to be created out of characters.
 </p>
 
 <p>
     The vic chip which is used to generate what you see on the screen has the following properties:
 </p>
 <ol>
-    <li>The address for how to display characters can either be RAM between $1000 and $1FFF or the default ROM from $8000</li>
-    <li>The screen can be set to RAM between $1000 and $1FFF</li>
+    <li>The address for how to display characters can either be RAM between $1000 and $1FFF or the default 
+        ROM from $8000</li>
+    <li>The screen can be set to RAM between $1000 and $1FFF at specific increments</li>
 </ol>
 <p>
-    By setting the character address to RAM we can redefine the default Vic 20 characters from A, B, C etc to a spaceship, pacman or a sheep.  Most Vic 20 programmers would have done this when making a game.
+    By setting the character address to RAM we can redefine the default Vic 20 characters from A, B, C etc 
+    to a spaceship, pacman or a sheep.  Most Vic 20 programmers would have done this when making a game.
 </p>
 <p>
     The Vic Bitmap Mode works as follows:  
 </p>
 <ol>
     <li>The screen and the character addresses are both set to $1000</li>
-    <li>Double sized character mode is enabled, so one byte in screen memory displays two characters (one on top of the other)</li>
+    <li>Double sized character mode is enabled, so one byte in screen memory displays two characters 
+        (one on top of the other)</li>
     <li>The Vic 20 screen is set to 20 character wide by 12 double characters high (or 24 single characters)</li>
-    <li>Characters 0 - 15 are skipped, the space in memory these characters occupy is equivalent to the number of bytes needed for the screen display</li>
-    <li>Characters are drawn into screen memory at $1000 (the top left) downwards, starting from character 16 (which is a space and an "), then 17 underneath, 18, 19 and so of and repeated for each column. A total of 240 characters are written to screen memory in this pattern</li>
+    <li>Characters 0 - 15 are skipped, the space in memory these characters occupy is equivalent to 
+        the number of bytes needed for the screen display</li>
+    <li>Characters are drawn into screen memory at $1000 (the top left) downwards, starting from 
+        character 16 (which is a space and an "), then 17 underneath, 18, 19 and so of and repeated for each column. A total of 240 characters are written to screen memory in this pattern</li>
     <li>Addresses from $1100 to $1FFF point to a character definintions, starting at character 16.</li>
 </ol>
 
 <p>
-    So with the above set up, writing to any address between $1100 through to $1FFF will draw onto the bitmap by redefining characters.
+    So with the above set up, writing to any address between $1100 through to $1FFF will draw onto the 
+    bitmap by redefining characters.
 </p>
 
 <p>
-    The double height characters are drawn to the screen in rows rather than columns to make it simplier to draw to the bitmap.  Writing 255 ($ff or %11111111) to address $1100 will show a line of 8 pixels at the top left of the screen.  Writing to $1101 will do the same for the next pixel row down. Each consecutive byte from $1100 to $11C0 (192) makes up a row of 8 pixels in the first column.  The next column then starts at $11C1 and ends at $1280, each of the 20 columns are accessible in this way.
+    The double height characters are drawn to the screen a column at a time to make it simplier 
+    to draw to the bitmap.  Writing 255 ($ff or %11111111) to address $1100 will show a line of 8 pixels at 
+    the top left of the screen.  Writing to $1101 will do the same for the next pixel row down. Each 
+    consecutive byte from $1100 to $11C0 (192) makes up a row of 8 pixels in the first column.  The next 
+    column then starts at $11C1 and ends at $1280, each of the 20 columns are accessible in this way.
 </p>
 
 <p>
-    In Turbo Rascal there are a number of vbm commands to help you make the most of this bitmap, so you don't have to figure out how to write to it yourself.  There are commands to set up the screen, locate a column address in the bitmap, draw dots (pixels), tiles, sprites and text.  You can, of course, create your own routines in Turbo Rascal or assembler to draw to the bitmap - the choice is yours!
+    In Turbo Rascal there are a number of vbm commands to help you make the most of this bitmap, so you 
+    don't have to figure out how to write to it yourself.  There are commands to set up the screen, locate 
+    a column address in the bitmap, draw dots (pixels), tiles, sprites and text.  You can, of course, 
+    create your own routines in Turbo Rascal or assembler to draw to the bitmap - the choice is yours!
 </p>
 
 <p>
-    There is documentation for each vbm command and a selection of tutorials to get you started.  The power to make the next Omega Race is now in your hands.  Have fun!
+    There is documentation for each vbm command and a selection of tutorials to get you started.  The power 
+    to make the next Omega Race is now in your hands.  Have fun!
 </p>
 
 <h3>Example</h3>
-<p>Here is an example program that sets up vbm and draws a pattern to the bitmap which you will see on the screen.</p>
+<p>Here is an example program that sets up vbm and draws a pattern to the bitmap which you will see on 
+    the screen.</p>
 <pre>
 program DrawOnBitmap;
 var
@@ -52,31 +68,17 @@ var
     x,y :byte;
     p1 : pointer;
 
-// Fill the colour memory with 0 (Black)
-procedure ScreenClearColour();
-begin
-
-    for y := 0 to 192 do
-    begin
-    
-        screenmemory := $9400 + (y * 20);
-        for x := 0 to 20 do
-            screenmemory[ x ] := 0;
-
-    end;
-
-end;
 
 
 begin  /* MAIN PROGRAM */
 
     SCREEN_BG_COLOR := SCREEN_BG_WHITE + WHITE;
 
-    vbmSetDisplayMode();        // set up the Vic Bitmap Mode - this must be done first
+    vbmSetDisplayMode(0);        // set up the Vic Bitmap Mode - this must be done first
 
     vbmClear(0);                // clear the bitmap with byte 0 (empty)
 
-    ScreenClearColour();        // set the colour map to black
+    vbmClearColor( BLACK );        // set the colour map to black
 
     // draw pattern 
     for x:= 0 to 20 do	        // there are 8-pixel 20 columns
@@ -93,6 +95,45 @@ begin  /* MAIN PROGRAM */
 end.
 </pre>
 
+<p>Next up, take a look at the documentation for the vbmSetDisplayMode command which goes into further detail.
+</p>
+
+<h3>See also</h3>
 <p>
-    VBM was created by Andy H and integrated into Turbo Rascal for every Vic 20 programmer to use.  Thanks must go to Mike and DarwinNE from the Vic 20 Denial forum who pointed me in the right direction to make use of this trick to allow a full screen bitmap to be laid out.
+Take a look through the help file for any commands beginning with 'vbm'.
+Some useful commands to get started are:
+</p>
+
+<ul>
+    <li>vbmSetDisplayMode - sets up VBM as either 20 columns (0) or 19 columns (1). The latter is useful for horizontal scrolling games</li>
+    <li>vbmDebug - switch off the bitmap to reveal the ROM characters used to fill the screen</li>
+    <li>vbmSetColumn - set the built in screenmemory zero page pointer to the address for a column from 0 to 19. This is used for Tile commands and others.</li>
+    <li>vbmNextColumn - add 192 to the screenmemory pointer - effectively goes to the next column</li>
+    <li>vbmSetPosition1, vbmSetPosition2 and vbmSetPosition4 - used to set the position to draw a sprite</li>
+    <li>vbmClear - clear the bitmap memory with a byte value, usually 0</li>
+    <li>vbmClearColor - clear the color memory with a value</li>
+    <li>vbmDrawTile - Draw a single 8x8 tile character on the screen. Use with vbmSetColumn and manipulation of the screenmemory pointer</li>
+    <li>vbmDrawTileMap - Draws a tilemap of characters of any size to the screen</li>
+    <li>vbmTestPixel and vbmTestPixel2 - Test a pixel value at a position on the screen</li>
+    <li>vbmTestTilePixel and vbmTestTilePixel2 - Test a pixel value within an 8x8 tile. Can also be used with sprite slices</li>
+    <li>vbmDot and vbmBlot - draw dot pixels on the screen</li>
+    <li>vbmScrollLeft and vbmScrollRight - rearrange the characters on screen to quickly scroll 8 pixels left or right. Note that there are some restrictions when using this feature</li>
+    <li>vbmScreenShiftLeft and vbmScreenShiftRight - scroll an area of the screen 1 pixel at a time - slower than vbmScrollLeft/Right but no restrictions on use</li>
+    <li>vbmSpriteShiftL, vbmSpriteShiftR and vbmSpriteStitch - prepare pre-shifted characters for use with the sprite commands</li>
+    <li>vbmDrawSprite8 and vbmDrawSprite16 - simple sprite drawing commands</li>
+    <li>vbmDrawSpriteSlice - complex sprite command giving precise control and allowing for sprites of any size</li>
+    <li>vbmDrawText - draw text to the screen</li>
+    <li>vbmDrawBCD - draw numbers (eg: scores) to the screen. Use with the BCD commands</li>
+</ul>
+
+<p>More commands will be added over time. If you create something that you think would
+    work well as a new command, please let me know: <a href="mailto:andy@hewco.uk">andy@hewco.uk</a>
+</p>
+
+
+<h3>Credits</h3>
+<p>
+    VBM was created by Andy H (hewco.uk) and integrated into Turbo Rascal for every Vic 20 programmer to use.  Thanks 
+    must go to Mike and DarwinNE from the Vic 20 Denial forum who pointed me in the right direction to make 
+    use of this trick to allow a full screen bitmap to be laid out.
 </p>

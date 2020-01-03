@@ -310,5 +310,6 @@
         <file>resources/text/help/m/vbmsetdisplaymode.rtf</file>
         <file>resources/palette/nes.txt</file>
         <file>resources/palette/nes.pal</file>
+        <file>resources/text/help/m/vbmdebug.rtf</file>
     </qresource>
 </RCC>
