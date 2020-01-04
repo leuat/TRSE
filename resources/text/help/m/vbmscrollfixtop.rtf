@@ -1,0 +1,25 @@
+<h3>vbmScrollFixTop( );</h3>
+
+
+
+<h3>Description</h3>
+<p>
+Optionally used with vbmScrollLeft / Right commands to fix the top row of characters (16 pixels) in place
+and prent them from being scrolled with the rest of the screen.  To be used for scores, statuses 
+that you wish to remain stationary.
+</p>
+<p>Call vbmScrollFixTop after every vbmScrollLeft / Right command to fix the top row in place.</p>
+
+<h3>Example</h3>
+<code>
+    vbmDebug(1); // show the ROM characters for this demonstration
+    vbmScrollLeft(); // scroll one column to the left
+    vbmScrollFixTop(); // restore the top row of characters so they do not scroll
+</code>
+
+<h3>See also</h3>
+<ul>
+    <li>vbmScrollRight</li>
+    <li>vbmScrollLeft</li>
+    <li>vbmScrollFixBottom</li>
+</ul>

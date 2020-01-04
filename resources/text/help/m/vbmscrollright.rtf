@@ -1,0 +1,28 @@
+<h3>vbmScrollRight( );</h3>
+
+
+
+<h3>Description</h3>
+<p>
+Rearranges the character map used to display the bitmap to make the screen appear to 
+scroll to the right by 8 pixels (1 column).  This form of scrolling is quite fast but does
+pose some limitations to be aware of.
+</p>
+<p>Specifically, address $1100 will not necessarily be at the top left of the bitmap. After the first
+    vbmScrollRight this address will have moved to the next column.  Therefore, commands such as
+    vbmNextColumn, vbmDrawSprite8 and vbmDrawSprite16 will not work correctly. Use vbmSetColumn and 
+    vbmDrawSpriteSlice instead.
+</p>
+
+<h3>Example</h3>
+<code>
+    vbmDebug(1); // show the ROM characters for this demonstration
+    vbmScrollRight(); // scroll one column to the left
+</code>
+
+<h3>See also</h3>
+<ul>
+    <li>vbmScrollLeft</li>
+    <li>vbmScrollFixTop</li>
+    <li>vbmScrollFixBottom</li>
+</ul>

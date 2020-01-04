@@ -1,0 +1,28 @@
+<h3>vbmScreenShiftLeft( [byte-start], [byte-end] );</h3>
+<ul>
+    <li>[byte-start] - row in the bitmap to start scrolling from</li>
+    <li>[byte-end] - row in the bitmap to end scrolling</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+Scrolls the bitmap, between the start row and end row, by 1 pixel to the left.  The whole screen can be scrolled
+with a start of 0 and end of 192, however, this will take some time to do and the best your game will
+perform is 25/30 frames per second. Reducing the area of the bitmap that is scrolled will improve
+the speed.
+</p>
+<p>Pixels that move off one side will emerge on the other.</p>
+<p>Use vbmSetDisplayMode(1) to hide the last column (19) on the screen. The column will still
+    be present in the bitmap but will not be displayed on the Vic 20 screen. Use this last column
+    to draw new tiles / graphics to scroll in to view, rather than 'popping' into view if column
+    19 was visible.
+</p>
+
+<h3>Example</h3>
+<code>
+    vbmScreenShiftLeft( 16, 192 ); // scroll from line 16, end at line 192 
+</code>
+
+<h3>See also</h3>
+<ul><li>vbmScreenShiftRight</li></ul>
