@@ -1,0 +1,106 @@
+<h3>vbmClearSprite8( [address1], [address2] );</h3>
+<ul>
+    <li>[address1] - pre-shifted address table for the left side of an 8x8 sprite</li>
+    <li>[address2] - pre-shifted address table for the left side of an 8x8 sprite</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+    A simple sprite routine to clear or cut-out an 8x8 sprite from the bitmap.
+</p>
+<p>
+    This has two useful purposes. It can be used to clear a sprite that has been previously drawn 
+    (see example below) or it can be used to 'cut out' a mask of a sprite to then draw the real sprite
+    within.  You may wish to do this for multicolor sprites or if you want your sprites to be more
+    visible when moving over background graphics.
+</p>
+<p>
+    Only two parameters are required; the addresses of the pre-shifted 'address table' for the left and right
+    side of a sprite. The pre-shifted address table is a list of addresses to point to where each pre-shifted
+    frame can be found in memory.
+</p>
+<p>
+    For example: $a000, $a080, $a1000, $a180
+</p>
+<p>
+    The address table will need to be defined if you import your sprites already pre-shifted.  If you use
+    the vbmSpriteShiftL / R commands, these will build the address table for you. 
+</p>
+
+<h3>Limitations</h3>
+<p>
+    Some compromises have been made for the basic 8x8 sprite command.
+</p>
+<p>
+    Firstly, it will write the sprite to
+    wherever the built in screenmemory zero page pointer is pointing to.  This could be partly outside of
+    the bitmap memory ($1100 to $1FFF) if you position your sprite off of the screen edges.
+    Therefore, <strong>do not</strong> use this command if you wish to place sprite your sprite partly off the screen.
+</p>
+<p>
+    Secondly, this sprite command cannot be used with the vbmScrollLeft / Right commands which re-arrange
+    the character map used for the bitmap.
+</p>
+<p>
+    Should either of the above be requirements, use vbmSpriteSlice instead which allows you to draw each
+    sprite column seperately and you can specify the start and end line of the sprite to draw.  As such
+    you can only draw the columns and lines as needed in the correct locations.
+</p>
+
+<p>There are three ways to draw a sprite:</p>
+<ul>
+    <li>vbmDrawSprite8 - draws a sprite, merging it with the bitmap</li>
+    <li>vbmDrawSprite8E - draws a sprite, merging it with the bitmap using the EOR operation</li>
+    <li>vbmClearSprite8 - clears a sprite from the bitmap, effectively 'cutting it out'</li>
+ </ul>
+
+<h3>Example</h3>
+<code>
+    x,y :byte;
+
+    // define a sprite character
+    spr8 : array[] of byte = (
+        %11111111,
+        %10000001,
+        %00111100,
+        %00100100,
+        %00100100,
+        %00111100,
+        %10000001,
+        %11111111
+    );
+    
+    // where to store the pre-shifted addresses of the sprite
+    spr8L0 : array[8] of integer; // to store the low addresses of pre-shifted sprites for spr8
+    spr8R0 : array[8] of integer; // to store the high addresses of pre-shifted sprites for spr8
+
+    ...
+
+    // sprite 8x8 - pre-shift in 8 positions, using 64 bytes ($40)
+    // pre-shift the right side
+    vbmSpriteShiftR( spr8, ^$a000, 1, 8, spr8L0 ); // spr8 into addr A000, 1 pixel increments, 8 lines
+    // pre-shift the left side
+    vbmSpriteShiftL( spr8, ^$a040, 1, 8, spr8R0 ); // spr8 into addr A040, 1 pixel increments, 8 lines
+
+    y := 10;
+
+    for x := 0 to 100 do
+    begin
+
+        vbmSetPosition1( x, y ); // position the sprite, 1 pixel increments
+        vbmDrawSprite8( spr8L0, spr8R0 );  // draw the sprite
+        
+        waitforraster( 0 ); // wait for raster
+
+        vbmSetPosition1( x, y ); // position the sprite, 1 pixel increments
+        vbmClearSprite8( spr8L0, spr8R0 );  // erase the sprite     
+
+    end;    
+</code>
+
+<h3>See also</h3>
+<ul>
+    <li>vbmDrawSprite16</li>
+    <li>vbmSetPosition1 / 2 / 4</li>
+</ul>
