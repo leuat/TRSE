@@ -5,7 +5,6 @@ LImageVIC20::LImageVIC20(LColorList::Type t)  : CharsetImage (t)
 {
     m_width = 88;
     m_height = 184;
-    m_scaleX = 2.5f;
     Clear();
     m_type = LImage::Type::VIC20_MultiColorbitmap;
     m_supports.asmExport = false;
@@ -61,9 +60,10 @@ LImageVIC20::LImageVIC20(LColorList::Type t)  : CharsetImage (t)
 
 void LImageVIC20::setMultiColor(bool doSet)
 {
+    m_charWidthDisplay = m_charWidth;
+    m_charHeightDisplay = m_charHeight;
     if (doSet) {
         m_width = m_charWidth*4;
-        m_scaleX = 2.5f;
         m_bitMask = 0b11;
         m_noColors = 4;
         m_scale = 2;
@@ -71,7 +71,6 @@ void LImageVIC20::setMultiColor(bool doSet)
     }
     else {
         m_width = m_charWidth*8;
-        m_scaleX = 1.2f;
         m_bitMask = 0b1;
         m_noColors = 2;
         m_scale = 1;

@@ -85,6 +85,7 @@ public:
     void FillCMBColors();
     virtual void focusInEvent( QFocusEvent* ) override;
 
+
     void Reload() override;
 
 
