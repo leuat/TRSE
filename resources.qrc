@@ -345,5 +345,6 @@
         <file>resources/text/help/m/vbmscrollleft.rtf</file>
         <file>resources/text/help/m/vbmspriteshiftl.rtf</file>
         <file>resources/text/help/m/vbmspriteshiftr.rtf</file>
+        <file>resources/text/help/m/vbmspritestitch.rtf</file>
     </qresource>
 </RCC>

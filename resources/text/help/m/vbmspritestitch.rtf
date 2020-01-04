@@ -1,0 +1,127 @@
+<h3>vbmSpriteStitch( [address 1-src], [address 2-dest], [byte-length] );</h3>
+<ul>
+    <li>[address 1-src] - source sprite character graphic</li>
+    <li>[address 2-dest] - destination address where to stitch the source sprite into</li>
+    <li>[byte-length] - how many bytes to stitch, max 255 at a time</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+    Stitches two sets of pre-shifted sprites together (source and destination) into one (destination).  
+    Typically this will be the right side of one sprite column with the left side of a second sprite column.  
+    Used primarily for preparing sprites that are 16 pixels or wider.
+</p>
+<h3>What is a pre-shifted sprite?</h3>
+<p>
+    Read the vbmSpriteShiftL / R documentation to find out more. Those commands deal with 8 bits at a time.
+    Sprite stitching allows you to 'stitch' two 8 pixel sprites together to make bigger sprites.
+</p>
+<p>
+    The sprite stitch commands require 3 parameters:
+</p>
+<ul>
+    <li>The address of the first pre-shifted sprite character data</li>
+    <li>The address of the second pre-shifted sprite character data</li>
+    <li>The number of bytes in the pre-shifted data</li>
+</ul>
+<p>
+    In the following example, a 16x16 sprite is pre-shifted with stitching.
+    First, the right and left side of the first 8 bits (pixels) are pre-shifted.  
+    Next, the left side of the second 8 bits are pre-shifted, then these are stitched over the left side of
+    the first 8-bits.
+    Finally the right side of the second 8 bits are pre-shifted.  For even wider sprites, repeat these steps,
+    stitching subsequent columns.
+</p>
+
+<h3>Example</h3>
+<code>
+    x,y :byte;
+    
+    // define a sprite character - the first 8 bits (pixels)
+	spr16L : array[] of byte = (
+		%11111111,
+		%10000001,
+		%00111100,
+		%00100100,
+		%00100100,
+		%00111100,
+		%10000001,
+		%11111111,
+		
+		%01100110,
+		%10011001,
+		%01100110,
+		%10011001,
+		%01100110,
+		%10011001,
+		%01100110,
+		%10011001
+    );
+    // the second 8 bits (pixels)
+	spr16R : array[] of byte = (		
+		%01100110,
+		%10011001,
+		%01100110,
+		%10011001,
+		%01100110,
+		%10011001,
+		%01100110,
+		%10011001,
+		
+		%11111111,
+		%10000001,
+		%00111100,
+		%00100100,
+		%00100100,
+		%00111100,
+		%10000001,
+		%11111111
+	);
+	
+    // where to store the pre-shifted addresses of the sprite
+    // a 16x16 sprite is made up of two columns of characters but needs three columns to allow it to move smoothly
+	spr16L0 : array[8] of integer;  // the left 8-pixels
+	spr16M0 : array[8] of integer;  // the middle 8-pixels
+	spr16R0 : array[8] of integer;  // the right 8-pixels
+
+    ...
+
+    // sprite 16x16 - pre-shift in 8 positions, using 128 bytes ($80)
+
+    // pre-shift the left side of the first 8 bits - addresses into 'Left' array
+	vbmSpriteShiftR( spr16L, ^$a000, 1, 16, spr16L0 ); // spr16L into addr A000, 1 pixel increments, 16 lines
+    // pre-shift the right side of the first 8 bits - addresses into 'Middle' array
+    vbmSpriteShiftL( spr16L, ^$a080, 1, 16, spr16M0 ); // spr16L into addr A080, 1 pixel increments, 16 lines
+    
+    // pre-shift the left side of the second 8 bits - addresses into 'Right' array temporarily
+    vbmSpriteShiftR( spr16R, ^$a100, 1, 16, spr16R0 ); // spr16R into addr A100, 1 pixel increments, 16 lines
+
+    // Now stitch all 8 pre-shifted from the second 8 bits onto the right side of the first 8 bits
+    vbmSpriteStitch( ^$a100, ^$a080, 128 );  // 8 x 16 = 128 ($80) bytes to stitch
+
+    // Finally pre-shift the right side of the second 8-bits addresses into the 'Right' array
+	vbmSpriteShiftL( spr16R, ^$a100, 1, 16, spr16R0 ); // spr16R into addr A100, 1 pixel increments, 16 lines
+
+    y := 10;
+
+    for x := 0 to 100 do
+    begin
+
+        vbmSetPosition1( x, y ); // position the sprite, 1 pixel increments
+        vbmDrawSprite16( spr16L0, spr16M0, spr16R0 );  // draw the sprite
+        
+        waitforraster( 0 ); // wait for raster
+
+        vbmSetPosition1( x, y ); // position the sprite, 1 pixel increments
+        vbmClearSprite16( spr16L0, spr16M0, spr16R0 );  // erase the sprite     
+
+    end;
+
+</code>
+
+<h3>See also</h3>
+<ul>
+    <li>vbmSpriteShiftR</li>
+    <li>vbmSpriteShiftL/li>
+</ul>
