@@ -330,5 +330,12 @@
         <file>resources/text/help/m/vbmtestpixel.rtf</file>
         <file>resources/text/help/m/vbmtesttilepixel2.rtf</file>
         <file>resources/text/help/m/vbmtesttilepixel.rtf</file>
+        <file>resources/text/help/m/vbmclearblot.rtf</file>
+        <file>resources/text/help/m/vbmcleardot.rtf</file>
+        <file>resources/text/help/m/vbmdrawblote.rtf</file>
+        <file>resources/text/help/m/vbmdrawdote.rtf</file>
+        <file>resources/text/help/m/vbmdrawblot.rtf</file>
+        <file>resources/text/help/m/vbmdrawdot.rtf</file>
+        <file>resources/text/help/m/vbmclearblock.rtf</file>
     </qresource>
 </RCC>
