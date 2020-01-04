@@ -148,7 +148,7 @@ public:
     bool m_silentExport=false;
     int m_width;
     int m_height;
-    float m_scaleX = 0.6f;
+    float m_scaleX = 1.0f;
     unsigned int m_border=0, m_background=0;
     Type m_type = Type::QImageBitmap;
     WriteType m_writeType = WriteType::Color;

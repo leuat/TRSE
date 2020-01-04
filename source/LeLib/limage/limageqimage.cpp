@@ -109,38 +109,44 @@ QImage* LImageQImage::ApplyEffectToImage(QImage& src, QGraphicsBlurEffect *effec
     return res;
 }
 
-void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, float zoom, QPointF center)
+void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, float zoom, QPointF center, float scale)
 {
 
     int width = m_qImage->width();
     int height = m_qImage->height();
+    QColor col2=QColor(20,30,40,255);
+    QColor c;
     m_qImage->fill(QColor(0,0,0,0));
-    center.setX(center.x()/m_width*width);
-    center.setY(center.y()/(float)m_height*height);
-    for (int i=1;i<x;i++)
-        for (int j = 0;j<height;j++) {
+    center.setX(-0.1+center.x()/(float)m_width*width/scale);
+    center.setY(-0.1+center.y()/(float)m_height*height);
+    for (float i=1;i<x;i++)
+        for (float j = 0;j<height;j++) {
             float xp = (width/((float)x))*(i);
 
-            xp = (xp - 2*center.x())/zoom + 2*center.x();
-           float yp = (j - center.y())/zoom + center.y();
+            xp = (xp - scale*center.x())/zoom + scale*center.x();
+           float yp = j;
 
 
-       //     if (j%strip>strip/2)
+            c = color;
+            if ((int)j%strip>=strip/2)
+                c= col2;
            if (xp>=0 && xp<width && yp>=0 && yp<height)
-            m_qImage->setPixel(xp, yp, color.rgba());
+            m_qImage->setPixel(xp, yp, c.rgba());
         }
 
     // width lines
-    for (int i=1;i<y;i++)
-        for (int j = 0;j<width;j++) {
+    for (float i=1;i<y;i++)
+        for (float j = 0;j<width;j++) {
             float yp = (height/(float)(y))*(i);
 
             yp = (yp - center.y())/zoom + center.y();
-            float xp = (j - 2*center.x())/zoom + 2*center.x();
+            float xp = j;
 
-     //       if (j%strip>strip/2)
+            c = color;
+            if ((int)j%strip>=strip/2)
+                c= col2;
             if (xp>=0 && xp<width && yp>=0 && yp<height)
-                m_qImage->setPixel(xp, yp, color.rgba());
+                m_qImage->setPixel(xp, yp, c.rgba());
         }
 
 

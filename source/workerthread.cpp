@@ -207,14 +207,8 @@ void WorkerThread::UpdateImage(LImage * mc)
     }
 
     if (m_isPanning)
-        m_grid->CreateGrid(40,25,QColor(1,0,0),4, m_zoom, QPointF(m_zoomCenter.x(), m_zoomCenter.y()));
+        CreateGrid();
 
-   //m_tmpImage->fill(QColor(255,0,0,255));
-
-    //qDebug() << "Updating image "<< m_work->m_currentImage;
-//    qDebug() << "ToQImage";
-
-//    qDebug() << m_tmpImage->width();
     if (mc==nullptr)
         return;
     if (m_work->m_currentImage==nullptr)
@@ -289,6 +283,11 @@ void WorkerThread::Park()
 void WorkerThread::Continue()
 {
     m_park = false;
+}
+
+void WorkerThread::CreateGrid()
+{
+    m_grid->CreateGrid(m_work->m_currentImage->m_image->m_charWidthDisplay,m_work->m_currentImage->m_image->m_charHeightDisplay,m_gridColor,2, m_zoom, QPointF(m_zoomCenter.x(), m_zoomCenter.y())*m_gridScale,m_work->m_currentImage->m_image->m_scaleX);
 }
 
 void WorkerThread::RunContents()

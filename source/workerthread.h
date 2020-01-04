@@ -47,6 +47,7 @@ public:
     Toolbox* m_toolBox = nullptr;
   //  QLabel* m_imgLabel = nullptr;
     int m_blinkTimer = 0;
+    float m_gridScale  = 2;
     QPalette m_pal, m_orgPal;
 
     bool m_hasLeft = false;
@@ -69,6 +70,7 @@ public:
 //    QPointF pos;
 
     LImageQImage* m_grid=nullptr;
+    void CreateGrid();
 
     QPointF m_currentPos, m_prevPos;
     int m_currentButton = 0;

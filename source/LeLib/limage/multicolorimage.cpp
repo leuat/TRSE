@@ -35,7 +35,7 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
 {
     m_width = 160;
     m_height = 200;
-    m_scaleX = 2.5f;
+    m_scaleX = 2;
     //m_data.resize(m_charWidth*m_charHeight);
 
     Clear();
@@ -708,7 +708,7 @@ void MultiColorImage::setMultiColor(bool doSet)
     if (doSet) {
         m_width = 160;
         m_height = 200;
-        m_scaleX = 2.5f;
+      //  m_scaleX = 2.5f;
         m_bitMask = 0b11;
         m_noColors = 4;
         m_scale = 2;
@@ -717,7 +717,7 @@ void MultiColorImage::setMultiColor(bool doSet)
     else {
         m_width = 320;
         m_height = 200;
-        m_scaleX = 1.2f;
+        //m_scaleX = 1.2f;
         m_bitMask = 0b1;
         m_noColors = 2;
         m_scale = 1;

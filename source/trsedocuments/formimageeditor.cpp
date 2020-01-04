@@ -97,6 +97,7 @@ void FormImageEditor::onImageMouseEvent()
 
     //    updateCharSet();
     updateSingleCharSet();
+//    UpdateGrid();
 }
 
 FormImageEditor::~FormImageEditor()
@@ -139,9 +140,9 @@ void FormImageEditor::wheelEvent(QWheelEvent *event)
         float t = 0.0f;
         m_updateThread.m_zoomCenter = (m_updateThread.m_zoomCenter*t + (1-t)*m_updateThread.m_currentPos);//*(2-2*m_zoom);
         Data::data.redrawOutput = true;
-
+        UpdateGrid();
 //        m_grid.CreateGrid(40,25,m_updateThread.m_gridColor,4, m_updateThread.m_zoom, QPoint(m_updateThread.m_zoomCenter.x(), m_updateThread.m_zoomCenter.y()));
-        m_grid.CreateGrid(m_work.m_currentImage->m_image->m_charWidthDisplay,m_work.m_currentImage->m_image->m_charHeightDisplay,m_updateThread.m_gridColor,4, m_updateThread.m_zoom, QPoint(m_updateThread.m_zoomCenter.x(), m_updateThread.m_zoomCenter.y()));
+//        m_grid.CreateGrid(m_work.m_currentImage->m_image->m_charWidthDisplay,m_work.m_currentImage->m_image->m_charHeightDisplay,m_updateThread.m_gridColor,4, m_updateThread.m_zoom, QPoint(m_updateThread.m_zoomCenter.x(), m_updateThread.m_zoomCenter.y()));
 
     }
     else {
@@ -299,7 +300,9 @@ void FormImageEditor::UpdateGrid()
     if (m_work.m_currentImage==nullptr)
         return;
 
-    m_grid.CreateGrid(m_work.m_currentImage->m_image->m_charWidthDisplay,m_work.m_currentImage->m_image->m_charHeightDisplay,m_updateThread.m_gridColor,4, m_updateThread.m_zoom, QPoint(m_updateThread.m_zoomCenter.x(), m_updateThread.m_zoomCenter.y()));
+    m_grid.Initialize(m_updateThread.m_gridScale *m_work.m_currentImage->m_image->m_width,m_updateThread.m_gridScale*m_work.m_currentImage->m_image->m_height);
+//    qDebug() << m_work.m_currentImage->m_image->m_scaleX;
+    m_updateThread.CreateGrid();
     m_grid.ApplyToLabel(ui->lblGrid);
 
 }
@@ -532,6 +535,7 @@ void FormImageEditor::FillCMBColors()
 void FormImageEditor::focusInEvent(QFocusEvent *)
 {
 }
+
 
 void FormImageEditor::Reload()
 {
