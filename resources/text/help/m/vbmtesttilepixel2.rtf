@@ -1,0 +1,43 @@
+<h3>[byte] = vbmTestTilePixel2( [address-tile], [byte-X], [byte-Y] );</h3>
+<ul>
+    <li>[address-tile] - Character tile address to test</li>
+    <li>[byte-X] - X position 0 - 7</li>
+    <li>[byte-Y] - Y position 0 - 7</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+Tests a pixel pair within a tile character.  
+Returns 0 if no pixel, otherwise returns a non-zero value indicated in the position of the pixel pair.
+</p>
+
+<h3>Example</h3>
+<code>
+    tiles: incbin("tiles.bin", $4000);
+
+	i, j :byte;
+
+	ok:cstring="1";
+	no:cstring="0";
+
+    p1 : pointer;
+     
+    ...
+
+    p1 := $4008; // address of second character tile
+
+    // draw the tile as 0 and 1 characters
+	for j := 0 to 8 do
+	begin
+
+        for i := 0 to 8 step 2 do
+        begin
+            if ( vbmTestTilePixel2( p1, i, j ) ) then
+                vbmDrawText( ok, font, i, j*8, 8 )
+            else
+                vbmDrawText( no, font, i, j*8, 8 );
+        end;
+	
+	end;
+</code>

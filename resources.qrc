@@ -328,5 +328,7 @@
         <file>resources/text/help/m/vbmdrawtilemap.rtf</file>
         <file>resources/text/help/m/vbmtestpixel2.rtf</file>
         <file>resources/text/help/m/vbmtestpixel.rtf</file>
+        <file>resources/text/help/m/vbmtesttilepixel2.rtf</file>
+        <file>resources/text/help/m/vbmtesttilepixel.rtf</file>
     </qresource>
 </RCC>
