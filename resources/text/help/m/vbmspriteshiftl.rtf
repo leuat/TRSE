@@ -1,0 +1,140 @@
+<h3>vbmSpriteShiftL( [address-src], [address-dest], [btye-inc], [byte-height], [address-pre] );</h3>
+<ul>
+    <li>[address-src] - source sprite character graphic</li>
+    <li>[address-dest] - destination address where to store pre-shifted sprite</li>
+    <li>[byte-inc] - how many pixels the sprite will be shifted, 1, 2 or 4 are allowed</li>
+    <li>[byte-height] - height of the sprite, for example 8, 16, 100, etc</li>
+    <li>[address-pre] - where to store the address of each pre-shifted sprite</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+    Create a number of pre-shifted sprite frames for use with the sprite drawing commands. Shifts to the left
+    to create the 'right' side frames of a pre-shifted sprite.
+</p>
+<h3>What is a pre-shifted sprite?</h3>
+<p>
+    To draw a sprite at any x position on the bitmap, the pixels will need to be shifted into the
+    correct position. The bitmap is made up of columns of bytes, a byte containing 8 bits and each bit
+    represents a pixel.
+    If you want a sprite to be able to move smoothly across the screen, the sprite data
+    needs to contain a version of it shifted in all 8-pixel positions.
+</p>
+<p>Ideally you should aim to do this using a tool and simply import the data ready to use.
+    However, VBM provides three commands to calculate this at runtime, on the Vic 20, at the
+    start of your program.
+</p>
+<p>To move an 8x8 sprite across the screen, two characters are needed for each sprite position;
+    a left side and a right side. The left side will initially contain the whole sprite. 
+    Move the sprite 1 pixel to the right and 7 pixels are now in the left side and 1 pixel has moved
+    over to right side. Move another and now 6 pixels are in the left and 2 in the right. This
+    is repeated until only 1 pixel is in the left and 7 in the right. We now have a pre-shifted sprite
+    in all 8 poisitions that the sprite drawing commands can use.
+</p>
+<h3>How to pre-shift</h3>
+<p>
+    This help file demonstrates how to pre-shift an 8x8 sprite which is the simplest to do. 
+    Refer to vbmSpriteStitch for how to pre-shift sprites that are 16 pixels wide or larger.
+</p>
+<p>
+    The sprite shift commands require 5 parameters:
+</p>
+<ul>
+    <li>The address of the sprite character data - this is just a normal 8x8 character</li>
+    <li>The address where the pre-shifted data is to be stored</li>
+    <li>The number of pixels (increments) the sprite will be shifted each time</li>
+    <li>The height of the sprite, here we will use 8 but can be upto 192</li>
+    <li>The address of a table to store the addresses of each pre-shifted sprite</li>
+</ul>
+<p>
+    A single 8x8 sprite character needs just 8 bytes of memory to define it.  However, an 8x8
+    pre-shifted sprite, where the increment allows it to move 1 pixel at a time will need 
+    2 characters (16 bytes) X 8 shifted positions = 128 bytes ($80).
+</p>
+<p>
+    Alternatively, to use less memory you could choose an increment of 2 which will need
+    2 characters (16 bytes) X 4 shifted positions = 64 bytes ($40). The sprite will not move
+    as smoothly, as it will jump two pixels at a time when moving horizontally. An increment of 
+    2 is required for multicolor sprites because two bit pairs are used for each pixel. 
+</p>
+<p>
+    Finally, to save even more memory at the expense of even rougher movement, an increment of 4
+    pixels can be chosen. This will require 2 characters (16 bytes) X 2 shifted positions = 32 bytes ($20).
+</p>
+<p>To allow the sprite commands to quickly locate the correct pre-shifted sprite to use, a table needs 
+    to be created with the start address of each pre-shifted position. The final parameter specifies where
+    this table will be created.
+</p>
+<p>
+    To completely pre-shift an 8x8 sprite, both the left side and the right side pre-shifted positions
+    need to be calculated.
+</p>
+<p>
+    Once an 8x8 sprite has been pre-shifted, it can be rendered onto the bitmap in two stages:
+</p>
+<ul>
+    <li><strong>Set position</strong><br />
+        It's position on screen and the pre-shifted sprite to use is calculated with vbmSetPosition1, 
+        vbmSetPosition2 or vbmSetPosition4. The choice is dependant upon what increment your
+        sprite has been pre-shifted with.
+    </li>
+    <li><strong>Draw Sprite</strong><br />
+        One of the sprite drwawing commands can now be used to render the sprite to the bitmap.
+        The simpler vbmDrawSprite8 or more flexible vbmDrawSpriteSlice.
+    </li>
+</ul>
+<p>
+
+</p>
+
+<h3>Example</h3>
+<code>
+    x,y :byte;
+    
+    // define a sprite character
+	spr8 : array[] of byte = (
+		%11111111,
+		%10000001,
+		%00111100,
+		%00100100,
+		%00100100,
+		%00111100,
+		%10000001,
+		%11111111
+	);
+    
+    // where to store the pre-shifted addresses of the sprite
+	spr8L0 : array[8] of integer; // to store the low addresses of pre-shifted sprites for spr8
+	spr8R0 : array[8] of integer; // to store the high addresses of pre-shifted sprites for spr8
+
+    ...
+
+    // sprite 8x8 - pre-shift in 8 positions, using 64 bytes ($40)
+    // pre-shift the right side
+    vbmSpriteShiftR( spr8, ^$a000, 1, 8, spr8L0 ); // spr8 into addr A000, 1 pixel increments, 8 lines
+    // pre-shift the left side
+	vbmSpriteShiftL( spr8, ^$a040, 1, 8, spr8R0 ); // spr8 into addr A040, 1 pixel increments, 8 lines
+
+    y := 10;
+
+    for x := 0 to 100 do
+    begin
+
+        vbmSetPosition1( x, y ); // position the sprite, 1 pixel increments
+        vbmDrawSprite8( spr8L0, spr8R0 );  // draw the sprite
+        
+        waitforraster( 0 ); // wait for raster
+
+        vbmSetPosition1( x, y ); // position the sprite, 1 pixel increments
+        vbmClearSprite8( spr8L0, spr8R0 );  // erase the sprite     
+
+    end;
+
+</code>
+
+<h3>See also</h3>
+<ul>
+    <li>vbmSpriteShiftR</li>
+    <li>vbmSpriteStitch</li>
+</ul>

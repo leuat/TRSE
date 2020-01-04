@@ -343,5 +343,7 @@
         <file>resources/text/help/m/vbmscrollfixbottom.rtf</file>
         <file>resources/text/help/m/vbmscrollright.rtf</file>
         <file>resources/text/help/m/vbmscrollleft.rtf</file>
+        <file>resources/text/help/m/vbmspriteshiftl.rtf</file>
+        <file>resources/text/help/m/vbmspriteshiftr.rtf</file>
     </qresource>
 </RCC>
