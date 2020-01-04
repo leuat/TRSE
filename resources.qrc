@@ -337,5 +337,11 @@
         <file>resources/text/help/m/vbmdrawblot.rtf</file>
         <file>resources/text/help/m/vbmdrawdot.rtf</file>
         <file>resources/text/help/m/vbmclearblock.rtf</file>
+        <file>resources/text/help/m/vbmscreenshiftright.rtf</file>
+        <file>resources/text/help/m/vbmscreenshiftleft.rtf</file>
+        <file>resources/text/help/m/vbmscrollfixtop.rtf</file>
+        <file>resources/text/help/m/vbmscrollfixbottom.rtf</file>
+        <file>resources/text/help/m/vbmscrollright.rtf</file>
+        <file>resources/text/help/m/vbmscrollleft.rtf</file>
     </qresource>
 </RCC>
