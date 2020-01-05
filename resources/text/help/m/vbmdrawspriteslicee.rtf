@@ -1,4 +1,4 @@
-<h3>vbmDrawSpriteSlice( [address1], [byte-start], [byte-end] );</h3>
+<h3>vbmDrawSpriteSliceE( [address1], [byte-start], [byte-end] );</h3>
 <ul>
     <li>[address1] - pre-shifted address table</li>
     <li>[byte-start] - the row in the sprite to start drawing from, usually 0</li>
@@ -8,7 +8,21 @@
 
 <h3>Description</h3>
 <p>
-    A flexible sprite routine to display a single 'slice' of a sprite on the bitmap.
+    A flexible sprite routine to display a single 'slice' of a sprite on the bitmap using an EOR operation.  The
+    EOR operation will merge the sprite with the bitmap without destroying the bitmap, but it will 
+    look 'noisy' when pixels overlap.  The way EOR works is:
+</p>
+<ul>
+    <li>If both the sprite and bitmap have no pixel - no pixel is drawn</li>
+    <li>If the sprite has a pixel but the bitmap does not - a pixel is drawn</li>
+    <li>If the bitmap has a pixel but the sprite does not - a pixel is drawn</li>
+    <li>If both the sprite and the bitmap has a pixel - a pixel is cleared</li>
+</ul>
+<p>
+    A side effect of this is that EOR can be used to both draw and remove the sprite without
+    destroying what was already on the bitmap. When a sprite overlaps other pixels, the pxiel will clear
+    which will look a bit noisy, but when drawn again, the sprite is removed and previous pixels
+    restored.  See example below.
 </p>
 <p>
     The first parameter is an address table pointing to where each pre-shifted
@@ -66,25 +80,28 @@
     for x := 0 to 100 do
     begin
 
+        // draw a large sprite
         vbmSetPosition2( x, y ); // position the sprite, 2 pixel increments
-        vbmDrawSpriteSlice( spr0, 0, 40 );
+        vbmDrawSpriteSliceE( spr0, 0, 40 );
 		vbmNextColumn();
-		vbmDrawSpriteSlice( spr1, 0, 40 );
+		vbmDrawSpriteSliceE( spr1, 0, 40 );
 		vbmNextColumn();
-		vbmDrawSpriteSlice( spr2, 0, 40 );
+		vbmDrawSpriteSliceE( spr2, 0, 40 );
 		vbmNextColumn();
-        vbmDrawSpriteSlice( spr3, 0, 40 ); 
-               
+        vbmDrawSpriteSliceE( spr3, 0, 40 );  
+              
         waitforraster( 0 ); // wait for raster
 
+        // drawing the large sprite again at the same position 'wipes' it out, restoring anything
+        // prevuiously on the bitmap
         vbmSetPosition2( x, y ); // position the sprite, 2 pixel increments
-		vbmClearSpriteSlice( spr0, 0, 40 );
+		vbmDrawSpriteSliceE( spr0, 0, 40 );
 		vbmNextColumn();
-		vbmClearSpriteSlice( spr1, 0, 40 );
+		vbmDrawSpriteSliceE( spr1, 0, 40 );
 		vbmNextColumn();
-		vbmClearSpriteSlice( spr2, 0, 40 );
+		vbmDrawSpriteSliceE( spr2, 0, 40 );
 		vbmNextColumn();
-		vbmClearSpriteSlice( spr3, 0, 40 );
+		vbmDrawSpriteSliceE( spr3, 0, 40 );
 
     end;    
 </code>

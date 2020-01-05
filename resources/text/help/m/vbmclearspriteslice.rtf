@@ -1,4 +1,4 @@
-<h3>vbmDrawSpriteSlice( [address1], [byte-start], [byte-end] );</h3>
+<h3>vbmClearSpriteSlice( [address1], [byte-start], [byte-end] );</h3>
 <ul>
     <li>[address1] - pre-shifted address table</li>
     <li>[byte-start] - the row in the sprite to start drawing from, usually 0</li>
@@ -8,8 +8,15 @@
 
 <h3>Description</h3>
 <p>
-    A flexible sprite routine to display a single 'slice' of a sprite on the bitmap.
+    A flexible sprite routine to erase or cut-out a single 'slice' of a sprite on the bitmap.
 </p>
+<p>
+    Clearing a sprite slice has two useful features:
+</p>
+<ul>
+    <li>It can be used to erase a sprite so it can be moved if you do not need to preserve the background</li>
+    <li>It can be used to draw a mask by cutting out the sprite shape before drawing the real sprite</li>
+</ul>
 <p>
     The first parameter is an address table pointing to where each pre-shifted
     frame can be found in memory.
