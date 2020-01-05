@@ -35,4 +35,4 @@ output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
 project_path = /home/leuat/code/TRSE/Release/../tutorials/NES/intro_tutorial/
 open_files = ,tutorial_1_hello_nes.ras
-current_file = tutorial_1_hello_nes.ras
+current_file = 0

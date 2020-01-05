@@ -138,7 +138,12 @@ void DialogNewImage::slotOk()
  //       exit(1);
     }
 */
-//    retVal = ui->comboBox->currentIndex();
+
+    retVal = 0;
+    for (int i=0;i<m_types.count();i++)
+        if (m_types[i].name == ui->cmbImageType->currentText())
+            retVal = i;
+
 }
 
 void DialogNewImage::on_cmbImageType_currentIndexChanged(int index)

@@ -377,3 +377,13 @@ void LImageMetaChunk::ExportBin(QFile &file)
         file.write(m->m_data);
     }
 }
+
+QString LImageMetaChunk::getMetaInfo()
+{
+    QString txt ="Since NES sprites and tiles are only defined as 8x8 chuncks, it is customary to assemble these 8x8 blocks into larger meta-blocks that can be used as tiles or sprites. \n\n";
+    txt+="With NES meta block tile and sprites, you first load a NES CHR image as your base charset before you can define your own NxM meta blocks consisting of 8x8 pixel blocks from the CHR image. Not only does this allow for ";
+    txt+="smaller-sized data files (where you previously needed N*M bytes to specify a NxM block, you only need 1 byte now), it also allows for more internal variation since ";
+    txt+="the 8x8 blocks can be shuffled around at will.\n\n";
+    txt+="NES Metablocks are required for creating NES levels using the TRSE NES Level editor. Sprites are exported to the native NES PPU format.";
+    return txt;
+}

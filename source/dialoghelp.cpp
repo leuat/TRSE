@@ -40,7 +40,7 @@ DialogHelp::DialogHelp(QWidget *parent, QString txt, QPalette pal) :
     m_helpTypes.append(HelpType("p","Platform Info"));
     m_helpTypes.append(HelpType("f","Fjong Ray tracer"));
 
-     setWindowFlags(Qt::Window); // add this.
+     setWindowFlags(Qt::Window);
     FillTopics();
     LoadItems(0);
     if (txt=="")

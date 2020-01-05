@@ -84,6 +84,7 @@ public:
     void ImportBin(QFile& f) override;
     void ExportBin(QFile& f) override;
 
+    virtual QString getMetaInfo() override;
 
     void CopyFrom(LImage* mc) override;
 

@@ -34,18 +34,19 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("C64 Multicolor Charmap", "c64",LImage::Type::CharMapMulticolor,LColorList::Type::C64));
     m_types.append(ImageType("C64 Hires Charmap", "c64",LImage::Type::CharmapRegular,LColorList::Type::C64));
     m_types.append(ImageType("Screen animation (C64, VIC20, NES etc)", "general",LImage::Type::FullScreenChar,LColorList::Type::C64));
-    m_types.append(ImageType("C64 Level Editor", "c64",LImage::Type::LevelEditor,LColorList::Type::C64));
-    m_types.append(ImageType("NES Level Editor", "nes",LImage::Type::LevelEditorNES,LColorList::Type::NES));
+    m_types.append(ImageType("C64/VIC20 Level Editor", "c64",LImage::Type::LevelEditor,LColorList::Type::C64));
     m_types.append(ImageType("C64 Sprite Editor", "c64",LImage::Type::Sprites2,LColorList::Type::C64));
     m_types.append(ImageType("VIC20 Multicolor bitmap", "vic20",LImage::Type::VIC20_MultiColorbitmap,LColorList::Type::VIC20));
+    m_types.append(ImageType("C64/VIC20 Level Editor", "vic20",LImage::Type::LevelEditor,LColorList::Type::C64));
     m_types.append(ImageType("OK64 Image", "ok64",LImage::Type::OK64_256x256,LColorList::Type::OK64));
     m_types.append(ImageType("X16 640x480 Image", "x16",LImage::Type::X16_640x480,LColorList::Type::X16));
     m_types.append(ImageType("PICO 8", "pico-8",LImage::Type::QImageBitmap, LColorList::Type::PICO8));
     m_types.append(ImageType("NES CHR", "nes",LImage::Type::NES, LColorList::Type::NES));
     m_types.append(ImageType("NES Meta chunk editor", "nes",LImage::Type::LMetaChunk, LColorList::Type::NES));
-    m_types.append(ImageType("NES Sprite editor", "c64",LImage::Type::SpritesNES, LColorList::Type::NES));
-    m_types.append(ImageType("Fake C64 png Palette 1", "general",LImage::Type::QImageBitmap, LColorList::Type::C64));
-    m_types.append(ImageType("Fake C64 png Palette 2", "general",LImage::Type::QImageBitmap, LColorList::Type::C64_ORG));
+    m_types.append(ImageType("NES Sprite editor", "nes",LImage::Type::SpritesNES, LColorList::Type::NES));
+    m_types.append(ImageType("NES Level Editor", "nes",LImage::Type::LevelEditorNES,LColorList::Type::NES));
+    m_types.append(ImageType("Fake C64 png Palette 1", "c64",LImage::Type::QImageBitmap, LColorList::Type::C64));
+    m_types.append(ImageType("Fake C64 png Palette 2", "c64",LImage::Type::QImageBitmap, LColorList::Type::C64_ORG));
 //    m_types.append(ImageType("C64 Sprite Editor (deprecated type)", LImage::Type::Sprites,LColorList::Type::C64));
 //    m_types.append(ImageType("C64 Multicolor Charmap Fixed Colors", LImage::Type::CharMapMultiColorFixed,LColorList::Type::C64));
 

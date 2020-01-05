@@ -34,6 +34,7 @@ public:
     QPixmap ToQPixMap(int chr) override;
     void SetPalette(int pal) override;
 
+    virtual QString getMetaInfo() override;
 
 
 };

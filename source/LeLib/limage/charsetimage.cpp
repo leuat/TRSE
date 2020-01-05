@@ -92,6 +92,14 @@ int CharsetImage::FindClosestChar(PixelChar p)
     return winner;
 }
 
+QString CharsetImage::getMetaInfo()
+{
+    QString txt="A C64 charset is very similar to a multicolor/hires image, with the exception of having no stored ";
+    txt+="colour information. In addition to regular full-screen editing, you can also edit each individual characters, or a grid of 2x2 characters, in either regular or tiled mode. ";
+    txt+="\nWhen exported, a C64 charset of 256 characters will take up 256*8 =2048 bytes, but the export method (either by clicking the button or using the TRSE @export command) allows for exporting fewer characters. ";
+    return txt;
+}
+
 
 void CharsetImage::SetColor(uchar col, uchar idx)
 {

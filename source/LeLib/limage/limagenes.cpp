@@ -191,6 +191,15 @@ void LImageNES::SetPalette(int pal)
      m_cols[3] = m_colorList.m_nesPPU[0];
 }
 
+QString LImageNES::getMetaInfo() {
+    QString txt = "The NES CHR image is your standard 8kb sprite/tileset (2x256 8x8 pixels) for any 40kb NES project. \n\n";
+    txt+="Data are stored in 2 bitplanes, allowing for a total of 4 colours. The NES CHR consists of 2 \"pages\", where one contains sprite data while the other tile data (can be set programmatically on the NES).\n\n ";
+    txt+="Each of these pages consists of 256 8x8 pixel characters that are usually combined into 16x16 or larger blocks. \n\n";
+    txt+="From a palette of 54 unique colors, you can define 8 attribute palettes of 4 colours each (4 for sprites, 4 for tiles). This palette file is exported ";
+    txt+="as a binary file, and can be used directly TRSE's built-in SetPalette NES method. ";
+    return txt;
+}
+
 
 
 unsigned int LImageNES::getPixel(int x, int y)

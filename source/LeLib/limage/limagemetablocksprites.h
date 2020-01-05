@@ -25,6 +25,7 @@ public:
 
     void ExportBin(QFile &file);
 
+
 };
 
 #endif // LIMAGEMETABLOCKSPRITES_H

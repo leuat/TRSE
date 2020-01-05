@@ -55,6 +55,14 @@ void LImageSprites2::ExportBin(QFile &f)
     }
 }
 
+QString LImageSprites2::getMetaInfo() {
+    QString txt = "C64 sprites consist of 64-byte blocks. This editor lets you create both hires (24x21) or multicolor (12x21, 4(3) colour) sprites. \n";
+    txt +="\nYou can also create meta-blocks of NxM sprites for larger images. Cycle through sprites by pressing A/D, and use the \"Sprites\" tab to create new (blocks of) sprites, rearrange or perform other operations. \n";
+    txt+="\nWhen exported (either by clicking the \"export\" button or by using the TRSE @export command), the sprites are saved seqentially as 64-byte blocks.";
+
+    return txt;
+}
+
 void LImageSprites2::CopyFrom(LImage *img)
 {
     LImageSprites2* mc = dynamic_cast<LImageSprites2*>(img);

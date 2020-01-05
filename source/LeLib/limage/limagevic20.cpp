@@ -172,7 +172,7 @@ void LImageVIC20::ToRaw(QByteArray &arr)
 
 QString LImageVIC20::getMetaInfo()
 {
-    QString txt="A VIC-20 Bitmap is made up of NxM chars. \nColours are severely restricted, with a\n selection of 3 global colors (background,\n multicolor 1 and multicolor 2).\n";
+    QString txt="A VIC-20 Bitmap is made up of NxM chars. Colours are severely restricted, with a selection of 3 global colors (background, multicolor 1 and multicolor 2).\n";
     txt+="In addition to this, you also have 1 available color (0-7) for each 8x8 cell.\n\n";
     m_charWidth = getMetaParameter("screen_width")->value;
     m_charHeight = getMetaParameter("screen_height")->value;

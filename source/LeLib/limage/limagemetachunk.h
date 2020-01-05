@@ -150,6 +150,8 @@ public:
 //    virtual void ImportBin(QFile &file) {}
 
 
+    virtual QString getMetaInfo() override;
+
 };
 
 #endif // LIMAGEMETACHUNK_H

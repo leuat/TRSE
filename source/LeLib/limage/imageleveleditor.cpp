@@ -281,6 +281,18 @@ QVector<QPixmap> ImageLevelEditor::CreateIcons()
 QString ImageLevelEditor::getMetaInfo()
 {
     QString txt="";
+
+    txt+= "Char Data & color size: " + QString::number(m_meta.dataSize()) + " bytes\n";
+    txt+= "Extra data size: " + QString::number(m_meta.m_extraDataSize) + " bytes\n";
+    txt+= "Level size: " + QString::number(m_meta.levelSize()) + " bytes\n";
+    txt+= "Total no levels: " + QString::number(m_meta.m_sizex*m_meta.m_sizey) + " \n";
+    txt+= "Total size: " + QString::number(m_meta.totalSize()) + " bytes\n";
+
+    txt+="\n\nThe TRSE Level Editor comes in two flavors (for now): One for the Commodore computers, and one for NES.\n\n";
+    txt+="A level file consists of (levels x*levels y) levels of size (screen width*screen height) bytes. ";
+    txt+="These bytes correspond to a specific tile in a charset or metablock charset. The levels can in addition to tile data also contain colour data, ";
+    txt+="which can vary depending on the current system (NES/C64) etc. For instance, the NES level editor will export colour attributes directly in the native format. \n\n";
+    txt+="In addition to having colour/tile data, you can also specify a user-defined matrix (data_width*data_count + extra_data) of byte data for custom use - monster positions, items etc, for each of your levels. \n";
     m_meta.m_sizex = getMetaParameter("levels_x")->value;
     m_meta.m_sizey = getMetaParameter("levels_y")->value;
     m_meta.m_width = getMetaParameter("screen_width")->value;
@@ -293,11 +305,6 @@ QString ImageLevelEditor::getMetaInfo()
 //    m_meta.m_data = getMetaParameter("screen_height")->value;
  //   m_meta.m_height = getMetaParameter("screen_height")->value;
 
-    txt+= "Char Data & color size: " + QString::number(m_meta.dataSize()) + " bytes\n";
-    txt+= "Extra data size: " + QString::number(m_meta.m_extraDataSize) + " bytes\n";
-    txt+= "Level size: " + QString::number(m_meta.levelSize()) + " bytes\n";
-    txt+= "Total no levels: " + QString::number(m_meta.m_sizex*m_meta.m_sizey) + " \n";
-    txt+= "Total size: " + QString::number(m_meta.totalSize()) + " bytes\n";
 
     return txt;
 }

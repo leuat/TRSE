@@ -60,6 +60,7 @@ public:
     }
 
 
+    virtual QString getMetaInfo() override;
 
 
     void SetColor(uchar col, uchar idx) override;

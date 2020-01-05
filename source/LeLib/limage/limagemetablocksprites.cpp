@@ -143,3 +143,4 @@ void LImageMetaBlockSprites::ExportBin(QFile &file)
     }
     file.write(d);
 }
+
