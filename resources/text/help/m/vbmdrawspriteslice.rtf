@@ -1,0 +1,96 @@
+<h3>vbmDrawSpriteSlice( [address1], [byte-start], [byte-end] );</h3>
+<ul>
+    <li>[address1] - pre-shifted address table</li>
+    <li>[byte-start] - the row in the sprite to start drawing from, usually 0</li>
+    <li>[byte-end] - the row in the sprite to end drawing, usually the height of the sprite</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+    A flexible sprite routine to display a single 'slice' of a sprite on the bitmap.
+</p>
+<p>
+    The first parameter is an address table pointing to where each pre-shifted
+    frame can be found in memory.
+</p>
+<p>
+    For example: $a000, $a080, $a1000, $a180
+</p>
+<p>
+    The address table will need to be defined if you import your sprites already pre-shifted.  If you use
+    the vbmSpriteShiftL / R commands, these will build the address table for you. 
+</p>
+
+<p>There are three ways to draw a sprite:</p>
+<ul>
+    <li>vbmDrawSpriteSlice - draws a sprite slice, merging it with the bitmap</li>
+    <li>vbmDrawSpriteSliceE - draws a sprite slice, merging it with the bitmap using the EOR operation</li>
+    <li>vbmClearSpriteSlice - clears a sprite slice from the bitmap, effectively 'cutting it out'</li>
+ </ul>
+
+<h3>Example</h3>
+<code>
+    spr: incbin("spr24x40.bin", $4000); // this sprite is 24 x 40
+    @define spra0 $4000
+    @define spra1 $4028
+    @define spra2 $4050
+
+    ...    
+
+    x,y :byte;
+
+    // our sprite is 24 x 40.  So need 4 bytes for pre-shifted data
+    // will pre-shift in increments of 2 so 4 addresess per byte required
+	spr0 : array[4] of integer; 
+	spr1 : array[4] of integer; 
+	spr2 : array[4] of integer; 
+	spr3 : array[4] of integer; 
+
+    ...
+
+	// sprite is 24 x 40.  Need 40 bytes per shift ($28) x 4 shifts = $A0
+	vbmSpriteShiftR( ^@spra0, ^$a000, 2, 40, spr0 ); 
+	vbmSpriteShiftL( ^@spra0, ^$a0A0, 2, 40, spr1 ); 
+
+	vbmSpriteShiftR( ^@spra1, ^$a140, 2, 40, spr2 ); 
+	vbmSpriteStitch( ^$a140, ^$a0a0, 160 );  // 40 high * 4 = 160
+	vbmSpriteShiftL( ^@spra1, ^$a140, 2, 40, spr2 ); 
+
+	vbmSpriteShiftR( ^@spra2, ^$a1E0, 2, 40, spr3 ); 
+	vbmSpriteStitch( ^$a1E0, ^$a140, 160 );
+	vbmSpriteShiftL( ^@spra2, ^$a1E0, 2, 40, spr3 ); 
+
+    y := 10;
+
+    for x := 0 to 100 do
+    begin
+
+        vbmSetPosition2( x, y ); // position the sprite, 2 pixel increments
+        vbmDrawSpriteSlice( spr0, 0, 40 );
+		vbmNextColumn();
+		vbmDrawSpriteSlice( spr1, 0, 40 );
+		vbmNextColumn();
+		vbmDrawSpriteSlice( spr2, 0, 40 );
+		vbmNextColumn();
+		vbmDrawSpriteSlice( spr3, 0, 40 );        
+        waitforraster( 0 ); // wait for raster
+
+        vbmSetPosition2( x, y ); // position the sprite, 2 pixel increments
+		vbmClearSpriteSlice( spr0, 0, 40 );
+		vbmNextColumn();
+		vbmClearSpriteSlice( spr1, 0, 40 );
+		vbmNextColumn();
+		vbmClearSpriteSlice( spr2, 0, 40 );
+		vbmNextColumn();
+		vbmClearSpriteSlice( spr3, 0, 40 );
+
+    end;    
+</code>
+
+<h3>See also</h3>
+<ul>
+    <li>vbmDrawSprite8</li>
+    <li>vbmDrawSprite16</li>
+    <li>vbmSetPosition1 / 2 / 4</li>
+</ul>

@@ -345,5 +345,13 @@
         <file>resources/text/help/m/vbmscrollleft.rtf</file>
         <file>resources/text/help/m/vbmspriteshiftl.rtf</file>
         <file>resources/text/help/m/vbmspriteshiftr.rtf</file>
+        <file>resources/text/help/m/vbmspritestitch.rtf</file>
+        <file>resources/text/help/m/vbmclearsprite8.rtf</file>
+        <file>resources/text/help/m/vbmdrawsprite8e.rtf</file>
+        <file>resources/text/help/m/vbmdrawsprite8.rtf</file>
+        <file>resources/text/help/m/vbmclearsprite16.rtf</file>
+        <file>resources/text/help/m/vbmdrawsprite16e.rtf</file>
+        <file>resources/text/help/m/vbmdrawsprite16.rtf</file>
+        <file>resources/text/help/m/vbmdrawspriteslice.rtf</file>
     </qresource>
 </RCC>

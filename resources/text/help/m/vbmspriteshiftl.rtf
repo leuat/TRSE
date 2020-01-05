@@ -1,4 +1,4 @@
-<h3>vbmSpriteShiftL( [address-src], [address-dest], [btye-inc], [byte-height], [address-pre] );</h3>
+<h3>vbmSpriteShiftL( [address-src], [address-dest], [byte-inc], [byte-height], [address-pre] );</h3>
 <ul>
     <li>[address-src] - source sprite character graphic</li>
     <li>[address-dest] - destination address where to store pre-shifted sprite</li>
@@ -85,7 +85,10 @@
     </li>
 </ul>
 <p>
-
+    The example below demonstrates how an 8x8 sprite is pre-shifted into 8 positions (allowing 1 pixel 
+    movement) and drawn and cleared from the screen as it is moved.  There is also an EOR drawing method
+    for sprites which merges and un-merges with the bitmap, without destroying the bitmap. See the
+    vbmDrawSprite8E for more information.
 </p>
 
 <h3>Example</h3>
@@ -105,8 +108,8 @@
 	);
     
     // where to store the pre-shifted addresses of the sprite
-	spr8L0 : array[8] of integer; // to store the low addresses of pre-shifted sprites for spr8
-	spr8R0 : array[8] of integer; // to store the high addresses of pre-shifted sprites for spr8
+	spr8L0 : array[8] of integer; // to store the left addresses of pre-shifted sprites for spr8
+	spr8R0 : array[8] of integer; // to store the right addresses of pre-shifted sprites for spr8
 
     ...
 
