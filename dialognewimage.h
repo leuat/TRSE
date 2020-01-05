@@ -46,22 +46,26 @@ public:
     LImage* m_metaImage = nullptr;
 
     QVector<ImageType> m_types;
+    QVector<ImageType> m_currentTypes;
+    QStringList m_categories;
 
     CharmapGlobalData m_meta;
+    void CreateCategories();
     void SetResizeMeta(CharmapGlobalData gd);
     void ToMeta();
     void FromMeta();
 
 
 
-//    int m_charWidth=40;
-  //  int m_charHeight=25;
 
     ~DialogNewImage();
 private slots:
     void slotOk();
 
-    void on_comboBox_currentIndexChanged(int index);
+    void on_cmbImageType_currentIndexChanged(int index);
+
+    void on_cmbSystem_currentIndexChanged(const QString &arg1);
+
 private:
     Ui::DialogNewImage *ui;
 };

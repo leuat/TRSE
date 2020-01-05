@@ -87,6 +87,10 @@ void SymbolTable::Initialize()
         else
             value = values[0];
 
+
+    //    if (constant=="KEY_2")
+      //      qDebug() << system << currentSystem << system.contains(currentSystem);
+
         if (system.contains(currentSystem)) {
             int ival = Util::NumberFromStringHex(value);
             if (type=="b")
@@ -96,22 +100,26 @@ void SymbolTable::Initialize()
             if (type=="i")
                 m_constants[constant] = new Symbol(value,"INTEGER", ival);
 
+//            if (constant=="KEY_2")
+  //              qDebug() << constant << Util::numToHex(value.toInt());
 
 //            reservedWords.append(Token(TokenType::getType(word), word.toUpper()));
         }
 
      }
     if (!m_constants.contains("SIDFILE_1_INIT")) {
-        m_constants["SIDFILE_1_INIT"] = new Symbol("","ADDRESS", 0);
+       m_constants["SIDFILE_1_INIT"] = new Symbol("","ADDRESS", 0);
       m_constants["SIDFILE_2_INIT"] = new Symbol("","ADDRESS", 0);
       m_constants["SIDFILE_1_PLAY"] = new Symbol("","ADDRESS", 0);
       m_constants["SIDFILE_2_PLAY"] = new Symbol("","ADDRESS", 0);
     }
 
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 )
     for (unsigned char key: Syntax::s.m_c64keys.keys()) {
         C64Key k = Syntax::s.m_c64keys[key];
         m_constants[k.m_key] = new Symbol(QString::number(k.m_value), "BYTE",  k.m_value);
     }
+//    qDebug()  << Util::numToHex(m_constants["KEY_2"]->m_value->m_fVal);
 
 }
 

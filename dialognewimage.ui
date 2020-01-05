@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>845</width>
-    <height>435</height>
+    <width>1200</width>
+    <height>486</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>New image</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,3,20,0" columnstretch="1,1" rowminimumheight="1,1,1,1">
-   <item row="2" column="0">
+  <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,3,3,20,0" columnstretch="1,1" rowminimumheight="1,1,1,1,0">
+   <item row="3" column="0">
     <widget class="QGroupBox" name="grpLevelDesignerParams">
      <property name="enabled">
       <bool>true</bool>
@@ -35,30 +35,7 @@
      </widget>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>Info</string>
-     </property>
-     <widget class="QLabel" name="lblInfo">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>30</y>
-        <width>331</width>
-        <height>221</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-      </property>
-     </widget>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="2">
+   <item row="4" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="btnResult">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -73,12 +50,52 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>New image:</string>
+        <string>System</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox"/>
+      <widget class="QComboBox" name="cmbSystem"/>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="1">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Info</string>
+     </property>
+     <widget class="QLabel" name="lblInfo">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>30</y>
+        <width>541</width>
+        <height>221</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,2">
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Image type:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cmbImageType"/>
      </item>
     </layout>
    </item>

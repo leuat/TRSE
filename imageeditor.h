@@ -30,15 +30,17 @@
 class ImageType {
 public:
     QString name;
+    QString category="";
     LImage::Type type;
     LColorList::Type colorType;
     ImageType() {
 
     }
 
-    ImageType(QString n,LImage::Type t, LColorList::Type colType) {
+    ImageType(QString n,QString cat,LImage::Type t, LColorList::Type colType) {
         type = t;
         name = n;
+        category = cat;
         colorType = colType;
     }
 };

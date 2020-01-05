@@ -953,6 +953,7 @@ void MainWindow::LoadProject(QString filename)
 
     // Set compiler syntax based on system
     QString system = m_currentProject.m_ini.getString("system");
+    Syntax::s.m_systemString = system;
     Syntax::s.Init(AbstractSystem::SystemFromString(system),&m_iniFile, &m_currentProject.m_ini);
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA)
         Messages::messages.DisplayMessage(Messages::messages.AMIGA_WARNING);

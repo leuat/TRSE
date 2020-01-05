@@ -78,6 +78,8 @@ public:
     QMap<QString, BuiltInFunction> builtInFunctions, builtinFunctionsFjong;
   //  enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA};
     QString m_syntaxData; // File syntax data
+    QString m_systemString;
+
     AbstractSystem* m_currentSystem;
     bool m_ignoreSys = false;
     bool m_stripPrg = false;
