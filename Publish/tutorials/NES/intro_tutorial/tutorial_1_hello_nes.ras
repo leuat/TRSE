@@ -16,7 +16,7 @@ var
    	i: byte; 
 	// Must include dummy at $8000 due to the fact we are using 2 16kb blocks. For a larger project,
 	// this is where the music will go
-	dummy: incbin("palette/palette.dat",$8000);
+	dummy:incbin("palette/palette.dat", $8000);
 	// Standard palette. Use YYchr (https://www.romhacking.net/utilities/119/) to create and edit.
 	palette: incbin("palette/palette.dat");
 	zp:pointer;

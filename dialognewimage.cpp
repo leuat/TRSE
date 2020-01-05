@@ -22,6 +22,7 @@
 #include "dialognewimage.h"
 #include "ui_dialognewimage.h"
 #include <QLineEdit>
+#include "source/Compiler/syntax.h"
 
 DialogNewImage::DialogNewImage(QWidget *parent) :
     QDialog(parent),
@@ -31,26 +32,36 @@ DialogNewImage::DialogNewImage(QWidget *parent) :
     connect(ui->btnResult, SIGNAL(accepted()), this, SLOT(slotOk()));
 
 //    ui->grpLevelDesignerParams->setVisible(false);
-
+    CreateCategories();
 
 }
 
 void DialogNewImage::Initialize(QVector<ImageType> types)
 {
     m_types = types;
-    QStringList cmbData;
-    for (ImageType& it: m_types)
-        cmbData<<it.name;
-    ui->comboBox->addItems(cmbData);
+
+ //   ui->comboBox->addItems(cmbData);
 
     // Fill parameters
+   CreateCategories();
+}
 
+void DialogNewImage::CreateCategories()
+{
+    m_categories.clear();
+    for (ImageType& it: m_types)
+        if (!m_categories.contains(it.category))
+            m_categories << it.category;
+
+
+   ui->cmbSystem->addItems(m_categories);
+   ui->cmbSystem->setCurrentText(Syntax::s.m_systemString.toLower());
 }
 
 void DialogNewImage::SetResizeMeta(CharmapGlobalData gd)
 {
     isResize = true;
-    ui->comboBox->setCurrentIndex(7);
+//    ui->comboBox->setCurrentIndex(7);
     m_meta = gd;
 
     started = false; // prevent triggering
@@ -127,15 +138,15 @@ void DialogNewImage::slotOk()
  //       exit(1);
     }
 */
-    retVal = ui->comboBox->currentIndex();
+//    retVal = ui->comboBox->currentIndex();
 }
 
-void DialogNewImage::on_comboBox_currentIndexChanged(int index)
+void DialogNewImage::on_cmbImageType_currentIndexChanged(int index)
 {
     if (m_metaImage!=nullptr)
         delete m_metaImage;
 
-    m_metaImage = LImageFactory::Create(m_types[index].type, m_types[index].colorType);
+    m_metaImage = LImageFactory::Create(m_currentTypes[index].type, m_currentTypes[index].colorType);
 //    qDebug() << m_types[index];
 
 
@@ -161,4 +172,18 @@ void DialogNewImage::on_comboBox_currentIndexChanged(int index)
 
     ToMeta();*/
 
+}
+
+void DialogNewImage::on_cmbSystem_currentIndexChanged(const QString &arg1)
+{
+    m_currentTypes.clear();
+    QStringList data;
+    for (ImageType& it: m_types)
+        if (it.category==arg1) {
+            m_currentTypes.append(it);
+            data.append(it.name);
+        }
+
+    ui->cmbImageType->clear();
+   ui->cmbImageType->addItems(data);
 }

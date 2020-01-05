@@ -243,6 +243,16 @@ void MultiColorImage::ExportKoa(QFile &f)
     f.write(fdata);
 }
 
+QString MultiColorImage::getMetaInfo() {
+    QString txt = "Multicolor/hires images are the backbone of any C64 project. \n";
+    txt+="A c64 hires image consist of a screen of 40x25 bytes (characters 0-255 at a total of 1000 bytes), ";
+    txt+="with an additional 40x25 bytes of color data for each cell. \n";
+    txt+="However, a multicolor image allows for 2 extra colours per color cell, using another 1000 bytes of data (the 4-bit colour data are stored as hi/low nybbles).";
+    txt+="In addition to this, the background and border colour are also used and stored together with the raw data.";
+    return txt;
+
+}
+
 
 
 

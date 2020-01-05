@@ -172,6 +172,9 @@ public:
     void ImportKoa(QFile& f) override;
     void ExportKoa(QFile& f) override;
 
+    virtual QString getMetaInfo() override;
+
+
     void FloydSteinbergDither(QImage& img, LColorList& colors, bool dither) override;
     void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength, float gamma) override;
 

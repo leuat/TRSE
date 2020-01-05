@@ -608,16 +608,13 @@ void FormImageEditor::on_btnExportAsm_clicked()
                                                     tr("Bin (*.bin);"));
 
 
-//    m_work.m_currentImage->m_image->ExportAsm(fileName);
     MultiColorImage* mi = (MultiColorImage*)dynamic_cast<MultiColorImage*>(m_work.m_currentImage->m_image);
 
     if (mi==nullptr)
         return;
 
-    //fileName.remove(".bin");
 
     mi->ExportAsm(fileName);
-    //    mi->ExportRasBin(fileName, "");
 }
 
 void FormImageEditor::on_btnGenerate_clicked()
