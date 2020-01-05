@@ -352,5 +352,6 @@
         <file>resources/text/help/m/vbmclearsprite16.rtf</file>
         <file>resources/text/help/m/vbmdrawsprite16e.rtf</file>
         <file>resources/text/help/m/vbmdrawsprite16.rtf</file>
+        <file>resources/text/help/m/vbmdrawspriteslice.rtf</file>
     </qresource>
 </RCC>
