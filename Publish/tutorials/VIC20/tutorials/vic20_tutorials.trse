@@ -38,5 +38,5 @@ pascal_settings_use_local_variables = 0
 charset_resources/movie/tutorial_5_movie.flf = :resources/character.rom
 open_files = ,resources/charsets/charset_8x8.flf, vbm/03-tilemap2.ras, vbm/02-tilemap.ras, vbm/01-helloworld.ras, easy/01_hello_world.ras
 project_path = /home/leuat/code/TRSE/Release/../tutorials/VIC20/tutorials/
-current_file = resources/charsets/charset_8x8.flf
+current_file = resources/charsets/tiles.flf
 data_header_resources/charsets/tiles.flf = 6.94483e-310
