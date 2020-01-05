@@ -27,10 +27,8 @@ begin
 
 	vbmDrawTileMap( map, chars, 0,0, 20,184 );
 
-	screenmemory := $9414;
-	fill(screenmemory, yellow, 20);
-	screenmemory := $94b4;
-	fill(screenmemory, white, 20);
+	fill(^$9414, yellow, 20);
+	fill(^$94b4, white, 20);
 	
 	i := 72;
 
