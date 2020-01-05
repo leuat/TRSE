@@ -2,6 +2,7 @@ program TileMap;
 var  
 
 // declare all your include files here
+@export "resources/charsets/tiles.flf" "resources/charsets/tiles.bin" 10
 tiles: incbin( "resources/charsets/tiles.bin", $4000 ); // individual tile characters
 map: incbin( "resources/charsets/tilemap.bin", $4050 ); // full screen map of tiles
 map10: incbin( "resources/charsets/tilemap10x10.bin", $4230 ); // small tilemap
