@@ -1,0 +1,43 @@
+<h3>vbmDrawBCD( [address-bcd], [address-chars], [byte-x], [byte-y], [byte-lineheight]);</h3>
+<ul>
+    <li>[address-bcd] - address of a BCD array (number)</li>
+    <li>[address-chars] - address of the characterset to use for the font</li>
+    <li>[byte-x] - X column (0-19) to display the message</li>
+    <li>[byte-y] - Y line (0-183) to display the message</li>
+    <li>[byte-bcdlength] - length of the BCD number in bytes</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+Writes a Binary Coded Decimal (BCD) number to the bitmap.
+</p>
+<p>To be used with the BCD commands to set, add, subtract and compare BCD numbers.  Useful for 
+    scores and allows numbers of any size, much larger than integer numbers!
+</p>
+
+<h3>Example</h3>
+<code>
+    font: incbin("font8x8.bin", $4000); // first 64 PETSCII Screen Codes
+
+    @define nums $4180  // this is the address where the 0 character data starts in the above font
+        
+    ...
+
+    // create a BCD number
+	score : array[] of byte = ($56, $34, $12);  // low bytes first - number is 123456
+
+    ...
+
+    // draws the number 123456 to the screen at column 2, row 10 (pixels)
+    // with a length of 3 bytes (size of BCD number in memory)
+    vbmDrawBCD( score, ^@nums, 2, 10, 3 );
+</code>
+
+<h3>See also</h3>
+<ul>
+    <li>vbmCompare</li>
+    <li>bcdIsEqual</li>
+    <li>bcdSub</li>
+    <li>bcdAdd</li>
+</ul>

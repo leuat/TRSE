@@ -1,0 +1,40 @@
+<h3>vbmClearText( [address-text], [address-chars], [byte-x], [byte-y], [byte-lineheight]);</h3>
+<ul>
+    <li>[address-text] - address of a CSTRING, the message to display</li>
+    <li>[address-chars] - address of the characterset to use for the font</li>
+    <li>[byte-x] - X column (0-19) to display the message</li>
+    <li>[byte-y] - Y line (0-183) to display the message</li>
+    <li>[byte-lineheight] - Line spacing when text wraps</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+Cuts-out a text message on the bitmap using the given font. Text will wrap around when the end of
+a line is reached and move down by the number of pixels specified by the line height parameter.
+The character font will erase or cut-out pixels on the bitmap.
+</p>
+<p>There are four ways to draw text:</p>
+<ul>
+    <li>vbmDrawText - draws the text message, replacing the pixels at the current position on the bitmap</li>
+    <li>vbmDrawTextO - draws the text message and merges it over the current pixels on the bitmap</li>
+    <li>vbmDrawTextE - draws the text message and merges it using the EOR operation with the bitmap</li>
+    <li>vbmClearText - clears, or 'cuts out' the text message from the pixels on the bitmap</li>
+</ul>
+
+<h3>Example</h3>
+<code>
+    font: incbin("font8x8.bin", $4000); // first 64 PETSCII Screen Codes
+
+    ...
+
+    message: cstring = "HELLO WORLD - IN CAPS";
+
+    ...
+
+    // draw text at column 2, line 10 (pixels) with a line height of 14
+    vbmClearText( message, font, 2, 10, 14 );
+</code>
+
+<h3>See also</h3>
+<ul><li>vbmDrawBCD</li></ul>

@@ -51,6 +51,14 @@
     create your own routines in Turbo Rascal or assembler to draw to the bitmap - the choice is yours!
 </p>
 
+<p style="color: red">
+    <strong>Word or warning</strong><br />
+    The Turbo Rascal VBM commands have been made to alter the bitmap memory as quickly as possible. As such,
+    there is no error or boundary checking. It is possible to write outside of the bitmap memory area 
+    ($1100 - $1FFF) and this could overwrite your code or data causing your program to crash.<br /><br />
+    It is your responsibility to ensure you work within the bitmap memory area.
+</p>
+
 <p>
     There is documentation for each vbm command and a selection of tutorials to get you started.  The power 
     to make the next Omega Race is now in your hands.  Have fun!

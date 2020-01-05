@@ -355,5 +355,11 @@
         <file>resources/text/help/m/vbmdrawspriteslice.rtf</file>
         <file>resources/text/help/m/vbmclearspriteslice.rtf</file>
         <file>resources/text/help/m/vbmdrawspriteslicee.rtf</file>
+        <file>resources/text/help/m/getkey.rtf</file>
+        <file>resources/text/help/m/vbmdrawbcd.rtf</file>
+        <file>resources/text/help/m/vbmcleartext.rtf</file>
+        <file>resources/text/help/m/vbmdrawtexte.rtf</file>
+        <file>resources/text/help/m/vbmdrawtexto.rtf</file>
+        <file>resources/text/help/m/vbmdrawtext.rtf</file>
     </qresource>
 </RCC>
