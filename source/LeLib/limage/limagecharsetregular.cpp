@@ -44,7 +44,7 @@ LImageCharsetRegular::LImageCharsetRegular(LColorList::Type t) : CharsetImage(t)
     m_supports.flfLoad = true;
     m_supports.asmExport = false;
 
-    m_supports.displayColors = true;
+    m_supports.displayColors = false;
     m_supports.displayMC1 = true;
     m_supports.displayForeground = false;
     m_supports.displayMC2 = false;

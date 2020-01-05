@@ -472,13 +472,13 @@ void FormImageEditor::UpdatePalette()
     //if (m_currentColorList!=l)
     //{
 
-        if (m_work.m_currentImage->m_image->m_supports.displayColors)
-            l->CreateUI(ui->layoutColorsEdit_3,1);
-        l->FillComboBox(ui->cmbBackgroundMain_3);
-        l->FillComboBox(ui->cmbBorderMain_3);
-        l->FillComboBox(ui->cmbMC1);
-        l->FillComboBox(ui->cmbMC2);
-        m_currentColorList = l;
+    if (m_work.m_currentImage->m_image->m_supports.displayColors)
+        l->CreateUI(ui->layoutColorsEdit_3,1);
+    l->FillComboBox(ui->cmbBackgroundMain_3);
+    l->FillComboBox(ui->cmbBorderMain_3);
+    l->FillComboBox(ui->cmbMC1);
+    l->FillComboBox(ui->cmbMC2);
+    m_currentColorList = l;
     //}
 
     if (m_work.m_currentImage==nullptr)

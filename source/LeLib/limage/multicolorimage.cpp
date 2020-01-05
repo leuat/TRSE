@@ -1270,7 +1270,18 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF
             unsigned int col = 0;
             if (xp>=0 && xp<width && yp>=0 && yp<height)
                 col = getPixel(xp,yp);
+            else {
+                if (((i+j)&1)==0)
+                    img.setPixel(i,j,QColor(40,50,70).rgb());
+                else
+                    img.setPixel(i,j,QColor(0,0,00).rgb());
+                continue;
+
+            }
+
+
             // Has transparency?
+
             QColor c=QColor(0,0,0);
             if (col>=1000) {
                 col-=1000;
@@ -1285,7 +1296,7 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF
             QRgb rgbCol = (scol).rgb();
             //for (int k=0;k<m_scale;k++)
  //               img->setPixel(m_scale*i + k,j,rgbCol);
-                img.setPixel(i,j,rgbCol);
+             img.setPixel(i,j,rgbCol);
         }
     //return img;
 }

@@ -21,6 +21,7 @@
 
 #include "charsetimage.h"
 #include "source/LeLib/util/util.h"
+#include "source/Compiler/syntax.h"
 #include <QKeyEvent>
 
 CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
@@ -42,6 +43,8 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     SetColor(5,3);
 
 
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20)
+        m_colorList.InitVIC20();
 
     m_supports.koalaExport = false;
     m_supports.koalaImport = false;
@@ -52,8 +55,9 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_supports.flfLoad = true;
     m_supports.asmExport = false;
 
-    m_supports.displayColors = true;
+    m_supports.displayColors = false;
     m_supports.displayForeground = false;
+    m_supports.displayMC2 = false;
 
     m_currencChar=0;
     m_currentMode=Mode::FULL_IMAGE;
