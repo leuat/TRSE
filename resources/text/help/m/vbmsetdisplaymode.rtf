@@ -6,7 +6,9 @@
 
 <h3>Description</h3>
 <p>Set up the Vic Bitmap Mode (VBM) with either 20 or 19 displayed columns. 8K or more
-    of RAM is required to use this mode.
+    of RAM is required to use this mode. <strong>More information about the Vic Bitmap Mode (VBM)
+        can be found in the Platform help section.
+    </strong>
 </p>
 
 <p>The display mode needs to be set up before any other VBM command is executed.</p>
@@ -20,13 +22,13 @@ The 20th column is hidden and can be used for scrolling games.  See vbmScreenShi
 <h3>How it works</h3>
 <p>VBM creates a full screen bitmap using 240 (20 x 12) double heigh characters.  This presents a 160 x 192
 pixel display on screen.</p>
-<p>They way characters are laid out is a little differently to what you may be used to
+<p>The way characters are laid out is a little differently to what you may be used to
     on the standard Vic 20 character screen. This is to make manipulating the bitmap
     simpler and easier to understand.
 </p>
 <p>The first double height character is 16 (a space and ! character) and this is placed
-    at the top left of the screen.  Beneath that character 17 is placed (a " and # character"),
-    then 18 (a $ and %) and so on unit character 27 (a 6 and a 7 character) which is the 12th character.
+    at the top left of the screen.  Beneath that character 17 is placed (a " and # character),
+    then 18 (a $ and %) and so on unit character 27 (a 6 and a 7 character) which is in the 12th row.
 </p>
 <p>Character 28 (an 8 and a 9) is printed in the next column back at the top. This pattern is
     repeated, filling each column in turn until all 20 columns have been populated.
@@ -44,13 +46,13 @@ pixel display on screen.</p>
     the screen memory to be completely filled with 240 characters.
 </p>
 
-<h3>$1000 to $10FF</h3>
-<p>The screen memory occupies $1000 through to $10FF.  $1100 through to $1FFF is
+<h3>$1000 to $10F0</h3>
+<p>The screen memory occupies $1000 through to $10F0.  $1100 through to $1FFF is
     therefore free for the bitmap.</p>
 
 <h3>$1100 to $1FFF</h3>
 <p>The character memory occupies $1000 through to $1FFF, however, as this overlaps
-    with the screen memory, the first 256 bytes cannot be used.  This is why the
+    with the screen memory, the first 240 bytes cannot be used.  This is why the
     first character printed to the screen memory is number 16 (space and !) and not number 0.
     The usable character memory therefore starts at $1100 (character 16) and this
     extends to $1FFF.  Writing to this area of memory will modify the bitmap.</p>

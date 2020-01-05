@@ -1,0 +1,38 @@
+program HelloWorld;
+var  
+
+// declare all your include files here
+font: incbin( "resources/charsets/font8x8.bin", $4000 ); // character set for first 64 PETSCII Screen Codes
+
+
+@startblock $2000 "CODE"
+// declare all your variables and procedures here
+	message: CSTRING = "HELLO WORLD";
+
+	i : byte;
+
+begin
+
+	// set the default display mode showing all 20 columns
+	vbmSetDisplayMode( 0 );
+	
+	// Clear the bitmap with a value of 0
+	vbmClear( 0 );
+	
+	// set the colour memory to GREEN
+	vbmClearColor( GREEN );
+	
+
+	fori i := 0 to 9 do
+	begin
+	
+		// write a message to the screen
+		// using the font (character set)
+		// params are: text, characterset, x, y, line spacing
+		vbmDrawText( message, font, i, i << 4, 8 );
+		
+	end;
+	
+	loop();
+
+end.
