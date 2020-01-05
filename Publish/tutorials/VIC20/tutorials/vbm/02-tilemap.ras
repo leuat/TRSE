@@ -38,10 +38,10 @@ begin
 		case i of 
 			
 			// draw a complete tilemap if key 1 is pressed
-			0: vbmDrawTileMap( map, tiles, 0,0, 20,184 );
+			KEY_1: vbmDrawTileMap( map, tiles, 0,0, 20,184 );
 			
-			// draw a small tilemap if key 2 is pressed
-			56:
+			// draw a small tilemap if key 2 is pressed (56)
+			KEY_2:
 			begin
 				vbmClear( 0 );
  				vbmDrawTileMap( map10, tiles, 5,100, 15,172 );

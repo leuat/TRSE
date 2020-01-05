@@ -1,0 +1,62 @@
+program TileMap;
+var  
+
+// declare all your include files here
+chars: incbin( "resources/tilemap/vbm-char.bin", $4000 ); // individual tile characters
+map: incbin( "resources/tilemap/vbm-map.bin", $4490 ); // full screen map of tiles
+circle: incbin( "resources/tilemap/circle.bin", $4670 ); // circle char
+
+@startblock $2000 "CODE"
+// declare all your variables and procedures here
+
+	i, j : byte;
+
+begin
+
+	// set the default display mode showing all 20 columns
+	vbmSetDisplayMode( 0 );
+	
+	// Clear the bitmap with a value of 0
+	vbmClear( 0 );
+	
+	// set the colour memory to GREEN
+	vbmClearColor( GREEN );
+	
+	// set screen colour
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK + BLACK;
+
+	vbmDrawTileMap( map, chars, 0,0, 20,184 );
+
+	screenmemory := $9414;
+	for i := 0 to 20 do
+	begin
+	
+		screenmemory[i] := YELLOW;
+
+	end;
+	screenmemory := $94b4;
+	for i := 0 to 20 do
+	begin
+	
+		screenmemory[i] := WHITE;
+
+	end;
+	
+	i := 72;
+
+	while (true) do
+	begin
+	
+		vbmDrawTileE( circle );
+		waitforraster( 125 );
+		vbmDrawTileE( circle );
+		
+		i := i - 3;
+
+		vbmSetColumn( 10 );
+		j := sine[ i ] >> 3;
+		screenmemory := screenmemory + j + 40;
+
+	end;
+	
+end.
