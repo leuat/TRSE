@@ -399,7 +399,7 @@ void CharsetImage::ToQPixMaps(QVector<QPixmap> &map)
 
 QPixmap CharsetImage::ToQPixMap(int chr)
 {
-    QImage img = m_data[chr].toQImage(64, m_bitMask, m_colorList, m_scale);
+    QImage img = m_data[chr].toQImage(32, m_bitMask, m_colorList, m_scale);
     return QPixmap::fromImage(img);
 
 }

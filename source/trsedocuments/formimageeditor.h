@@ -86,6 +86,7 @@ public:
     virtual void focusInEvent( QFocusEvent* ) override;
 
 
+    void OpenSelectCharset();
     void Reload() override;
 
 
@@ -234,6 +235,7 @@ private slots:
     void on_cmbNesPalette_currentIndexChanged(int index);
     void on_cmbBank_currentIndexChanged(int index);
     void on_cmbNesPalette_activated(int index);
+    void on_btnCharSelect_clicked();
 };
 
 
