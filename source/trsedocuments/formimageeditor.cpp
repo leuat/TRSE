@@ -26,7 +26,7 @@
 #include <QPushButton>
 #include "source/LeLib/limage/charsetimage.h"
 #include "source/messages.h"
-
+#include "source/dialogselectcharset.h"
 
 FormImageEditor::FormImageEditor(QWidget *parent) :
     TRSEDocument(parent),
@@ -42,6 +42,7 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
     m_grid.ApplyToLabel(ui->lblGrid);
     updateCharSet();
     ui->lblGrid->setVisible(ui->chkGrid->isChecked());
+
 
 /*    ui->lblImage->setMouseTracking(true);
     ui->lblGrid->setMouseTracking(true);
@@ -166,12 +167,19 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             Data::data.forceRedraw = true;
         }
 
+
+
+
         if (!(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
             if (e->key()==Qt::Key_D) {
                 m_updateThread.m_zoomCenter.setX(m_updateThread.m_zoomCenter.x() + 1);
                 emit onImageMouseEvent();
                 Data::data.forceRedraw = true;
                 Data::data.Redraw();
+            }
+            if (e->key()==Qt::Key_C) {
+                OpenSelectCharset();
+                return;
             }
             if (e->key()==Qt::Key_A) {
                 m_updateThread.m_zoomCenter.setX(m_updateThread.m_zoomCenter.x() - 1);
@@ -535,6 +543,26 @@ void FormImageEditor::FillCMBColors()
 void FormImageEditor::focusInEvent(QFocusEvent *)
 {
 }
+
+void FormImageEditor::OpenSelectCharset()
+{
+    if (m_work.m_currentImage->m_image->getCharset()==nullptr)
+        return;
+    DialogSelectCharset* ds = new DialogSelectCharset(m_work.m_currentImage->m_image->getCharset());
+    ds->exec();
+    if (ds->result() == QDialog::Rejected) {
+        return;
+    }
+
+    SelectCharacter(ds->m_char);
+
+    Data::data.Redraw();
+    Data::data.forceRedraw = true;
+    onImageMouseEvent();
+
+
+}
+
 
 
 void FormImageEditor::Reload()
@@ -906,6 +934,20 @@ void FormImageEditor::updateCharSet()
 //    ui->lstCharMap->
 //    int size = (ui->lstCharMap->rect().width()-ui->lstCharMap->spacing())/8;
   //  ui->lstCharMap->setIconSize(QSize(size,size));
+
+    ui->lstCharMap->horizontalHeader()->setMinimumSectionSize(1);
+    ui->lstCharMap->verticalHeader()->setMinimumSectionSize(1);
+    for (int i=0;i<ui->lstCharMap->rowCount();i++) {
+         ui->lstCharMap->setRowHeight(i,size);
+        //ui->lstCharMap->setCol
+    }
+    for (int i=0;i<width;i++) {
+        ui->lstCharMap->setColumnWidth(i,size);
+        //ui->lstCharMap->setCol
+
+    }
+    ui->lstCharMap->setShowGrid(false);
+    ui->lstCharMap->verticalHeader()->setVisible(false);
 
     onImageMouseEvent();
 }
@@ -1290,11 +1332,8 @@ void FormImageEditor::on_lstCharMap_currentItemChanged(QTableWidgetItem *current
 
     if (current==nullptr)
         return;
-    int idx = current->data(Qt::UserRole).toInt();
-    m_work.m_currentImage->m_image->SetCurrentType(LImage::WriteType::Character);
-   // Data::data.currentColor = idx;
 
-    m_work.m_currentImage->m_image->setCurrentChar(idx);
+    SelectCharacter(current->data(Qt::UserRole).toInt());
 
     Data::data.Redraw();
     Data::data.forceRedraw = true;
@@ -1721,4 +1760,9 @@ void FormImageEditor::on_cmbBank_currentIndexChanged(int index)
 void FormImageEditor::on_cmbNesPalette_activated(int index)
 {
 
+}
+
+void FormImageEditor::on_btnCharSelect_clicked()
+{
+    OpenSelectCharset();
 }

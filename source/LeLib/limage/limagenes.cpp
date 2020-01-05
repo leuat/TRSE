@@ -153,9 +153,8 @@ void LImageNES::LoadBin(QFile &file)
 QPixmap LImageNES::ToQPixMap(int chr)
 {
     //QImage img = m_data[chr].toQImage(64, m_bitMask, m_colorList, m_scale);
-    int sz = 64;
+    int sz = 32;
     QImage img = QImage(sz,sz,QImage::Format_RGB32);
-    int w = 16*8;
 //    qDebug() << (chr*8)%16;
     int xx = 0;
     int yy = m_currentBank*16;

@@ -1033,7 +1033,7 @@ QImage PixelChar::toQImage(int size, uchar bmask, LColorList& lst, int scale)
     QImage img= QImage(size,size,QImage::Format_RGB32);
     for (int i=0;i<size;i++)
         for (int j=0;j<size;j++) {
-            int x = i/(float)(size-8)*8;
+            int x = i/(float)(size)*8;
             int ix = (x % (8)/scale)*scale;
             int y = j/(float)(size)*8;
             uchar c = get(ix,y, bmask);

@@ -44,4 +44,4 @@ output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
 open_files = ,include/image.ras, data.paw, include/modmusic.ras, demo.ras
 project_path = /home/leuat/code/TRSE/Release/../tutorials/VIC20/PurplePlanetYo/
-current_file = include/modmusic.ras
+current_file = include/image.ras
