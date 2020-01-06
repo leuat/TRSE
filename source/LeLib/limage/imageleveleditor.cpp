@@ -89,7 +89,10 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_GUIParams[tabCharset] = "1";
     m_GUIParams[tabData] = "1";
     m_GUIParams[tabLevels] = "1";
-
+    m_GUIParams[col3] = "Multicolor 1";
+    m_GUIParams[col4] = "Multicolor 2";
+    m_supports.displayMC1 = true;
+    m_supports.displayMC2 = true;
 
     m_metaParams.append(new MetaParameter("screen_width","Screen width",20,2,1000));
     m_metaParams.append(new MetaParameter("screen_height","Screen height",10,2,1000));
@@ -365,7 +368,8 @@ void ImageLevelEditor::setPixel(int x, int y, unsigned int color)
     if (!PixelToPos(x,y, pos,m_meta.m_width, m_meta.m_height))
         return; // out of bounds
 
-//    qDebug() << (m_writeType==Color);
+    if (m_currentLevel==nullptr)
+        return;
 
     if (m_writeType==Character)
         m_currentLevel->m_CharData[pos] = m_currencChar;

@@ -148,9 +148,11 @@ void DialogNewImage::slotOk()
 
 void DialogNewImage::on_cmbImageType_currentIndexChanged(int index)
 {
-    if (m_metaImage!=nullptr)
-        delete m_metaImage;
+//    if (m_metaImage!=nullptr)
+  //      delete m_metaImage;
 
+    if (index>=m_currentTypes.count() ||index<0)
+        return;
     m_metaImage = LImageFactory::Create(m_currentTypes[index].type, m_currentTypes[index].colorType);
 //    qDebug() << m_types[index];
 
