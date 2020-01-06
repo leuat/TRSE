@@ -1590,7 +1590,6 @@ QVector<Node*> Parser::Declarations(bool isMain, QString blockName)
 
 QVector<Node*> Parser::ConstDeclaration()
 {
-//    qDebug() << "HERE";
     Eat(TokenType::CONST);
     QString name = m_currentToken.m_value;
     Eat();
@@ -1603,7 +1602,7 @@ QVector<Node*> Parser::ConstDeclaration()
     if (m_currentToken.m_type == TokenType::INTEGER)
         type="integer";
     if (type=="") {
-        ErrorHandler::e.Error("Constant declaration error: unknown type '"+m_currentToken.getType()+"'",m_currentToken.m_lineNumber);
+        ErrorHandler::e.Error("Unknown or illegal type when defining constant of type: '"+m_currentToken.m_value+"' ("+m_currentToken.getType()+")<br>Allowed types are : <b>address, byte, integer.</b> ",m_currentToken.m_lineNumber);
     }
     Eat();
     Eat(TokenType::EQUALS);
