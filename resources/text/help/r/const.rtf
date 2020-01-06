@@ -1,0 +1,18 @@
+<h3>Description</h3>
+Constants in TRSE can be defined as addresses, bytes or integers.
+Assigning an address constant (such as the built-in "screen_bg_col") will change the value at the
+memory address.
+
+<h3>Example</h3>
+
+<code>
+var
+  i,j,k : byte = 0; // some regular variables
+
+  const someAddress : address = $D020; // Background value
+  const someValue : byte = 1;
+
+begin
+    someAddress := 2 + someValue*2; // same as 2+2 = 4 = purple border
+end.
+</code>

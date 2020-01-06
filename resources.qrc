@@ -361,5 +361,6 @@
         <file>resources/text/help/m/vbmdrawtexte.rtf</file>
         <file>resources/text/help/m/vbmdrawtexto.rtf</file>
         <file>resources/text/help/m/vbmdrawtext.rtf</file>
+        <file>resources/text/help/r/const.rtf</file>
     </qresource>
 </RCC>

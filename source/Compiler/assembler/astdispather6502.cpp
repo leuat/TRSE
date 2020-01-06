@@ -2648,9 +2648,9 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
     NodeNumber* num = (NodeNumber*)dynamic_cast<const NodeNumber*>(node->m_left);
 
     if (v==nullptr && num == nullptr)
-        ErrorHandler::e.Error("Left value not variable or memory address! ");
+        ErrorHandler::e.Error("Left value not variable or memory address! ", node->m_op.m_lineNumber);
     if (num!=nullptr && num->getType(as)!=TokenType::ADDRESS)
-        ErrorHandler::e.Error("Left value must be either variable or memory address");
+        ErrorHandler::e.Error("Left value must be either variable or memory address, not a constant.", node->m_op.m_lineNumber);
 
 //    qDebug() << TokenType::getType(num->getType(as));
 
