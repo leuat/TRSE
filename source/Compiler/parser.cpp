@@ -1755,10 +1755,14 @@ Node *Parser::TypeSpec()
             Eat();
             Eat(TokenType::LPAREN);
             while (m_currentToken.m_type!=TokenType::RPAREN) {
-                data << "$0"+QString::number(getIntVal(m_currentToken),16);//QString::number(m_currentToken.m_intVal);
-                Eat();
-                if (m_currentToken.m_type==TokenType::COMMA)
+                data << "$0"+QString::number(GetParsedInt(),16);//QString::number(m_currentToken.m_intVal);
+                //data << "$0"+QString::number(GetParsedInt(),16);//QString::number(m_currentToken.m_intVal);
+                if (m_currentToken.m_type!=TokenType::RPAREN) {
+
                     Eat();
+                    if (m_currentToken.m_type==TokenType::COMMA)
+                        Eat();
+                }
             }
             Eat(TokenType::RPAREN);
             if (count!=data.count() && count!=0) {
