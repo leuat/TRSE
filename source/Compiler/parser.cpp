@@ -1497,9 +1497,9 @@ QVector<Node*> Parser::Declarations(bool isMain, QString blockName)
     QVector<Node*> decl;
     if (m_currentToken.m_type==TokenType::VAR) {
         Eat(TokenType::VAR);
-        while (m_currentToken.m_type==TokenType::ID || m_currentToken.m_type == TokenType::CONST) {
+        while (m_currentToken.m_type==TokenType::ID || m_currentToken.m_type == TokenType::CONSTANT) {
 
-            if (m_currentToken.m_type == TokenType::CONST) {
+            if (m_currentToken.m_type == TokenType::CONSTANT) {
                 ConstDeclaration();
             }
             else {
@@ -1602,7 +1602,7 @@ QVector<Node*> Parser::Declarations(bool isMain, QString blockName)
 
 QVector<Node*> Parser::ConstDeclaration()
 {
-    Eat(TokenType::CONST);
+    Eat(TokenType::CONSTANT);
     QString name = m_currentToken.m_value;
     Eat();
     Eat(TokenType::COLON);
