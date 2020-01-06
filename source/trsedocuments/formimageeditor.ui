@@ -76,6 +76,103 @@
        <property name="currentIndex">
         <number>0</number>
        </property>
+       <widget class="QWidget" name="tabCharset">
+        <property name="maximumSize">
+         <size>
+          <width>400</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <attribute name="title">
+         <string>Charset</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_9">
+         <item row="0" column="0">
+          <layout class="QGridLayout" name="gridLayout_8">
+           <item row="2" column="0">
+            <widget class="QTableWidget" name="lstCharMap"/>
+           </item>
+           <item row="0" column="0">
+            <widget class="QPushButton" name="btnLoadCharmap">
+             <property name="toolTip">
+              <string>Load a charmap to use in a level editor</string>
+             </property>
+             <property name="text">
+              <string>Load Charset</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <layout class="QGridLayout" name="gridLayout_11">
+             <item row="3" column="0">
+              <widget class="QPushButton" name="btnCharset2x2Repeat">
+               <property name="text">
+                <string>2x2 charset repeat</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QPushButton" name="btnCharset2x2">
+               <property name="text">
+                <string>2x2 character set</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QPushButton" name="btnCharsetPaste">
+               <property name="text">
+                <string>Paste</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QPushButton" name="btnCharset1x1">
+               <property name="text">
+                <string>1x1 character set</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QPushButton" name="btnCharsetCopy">
+               <property name="text">
+                <string>Copy</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QPushButton" name="btnCharsetFull">
+               <property name="text">
+                <string>Full character set</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QPushButton" name="btnFlipVert">
+               <property name="text">
+                <string>Flip vertical</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QPushButton" name="btnFlipHorisontal">
+               <property name="text">
+                <string>Flip horizontal</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="1" column="0">
+            <widget class="QPushButton" name="btnImportRom">
+             <property name="text">
+              <string>Import C64 ROM charset</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
          <string>Import/Export</string>
@@ -89,7 +186,7 @@
            <height>261</height>
           </rect>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0,0,0,0,0" columnstretch="0,0">
+         <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0,0,0,0" columnstretch="0,0">
           <item row="3" column="1">
            <widget class="QPushButton" name="btnExportKoala">
             <property name="text">
@@ -192,64 +289,6 @@
             </property>
            </widget>
           </item>
-          <item row="8" column="0">
-           <widget class="QComboBox" name="cmbNesPalette">
-            <item>
-             <property name="text">
-              <string>Tiles 1</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Tiles 2</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Tiles 3</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Tiles 4</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Sprites 1</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Sprites 2</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Sprites 3</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>8</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="8" column="1">
-           <widget class="QComboBox" name="cmbBank">
-            <item>
-             <property name="text">
-              <string>Bank 0</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Bank 1</string>
-             </property>
-            </item>
-           </widget>
-          </item>
          </layout>
          <zorder>btnImport</zorder>
          <zorder>btnImportBin</zorder>
@@ -263,106 +302,7 @@
          <zorder>btnImportC</zorder>
          <zorder>btnExportCompressed</zorder>
          <zorder>btnPalette</zorder>
-         <zorder>cmbNesPalette</zorder>
-         <zorder>cmbBank</zorder>
         </widget>
-       </widget>
-       <widget class="QWidget" name="tabCharset">
-        <property name="maximumSize">
-         <size>
-          <width>400</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <attribute name="title">
-         <string>Charset</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_9">
-         <item row="0" column="0">
-          <layout class="QGridLayout" name="gridLayout_8">
-           <item row="2" column="0">
-            <widget class="QTableWidget" name="lstCharMap"/>
-           </item>
-           <item row="0" column="0">
-            <widget class="QPushButton" name="btnLoadCharmap">
-             <property name="toolTip">
-              <string>Load a charmap to use in a level editor</string>
-             </property>
-             <property name="text">
-              <string>Load Charset</string>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0">
-            <layout class="QGridLayout" name="gridLayout_11">
-             <item row="3" column="0">
-              <widget class="QPushButton" name="btnCharset2x2Repeat">
-               <property name="text">
-                <string>2x2 charset repeat</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QPushButton" name="btnCharset2x2">
-               <property name="text">
-                <string>2x2 character set</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QPushButton" name="btnCharsetPaste">
-               <property name="text">
-                <string>Paste</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QPushButton" name="btnCharset1x1">
-               <property name="text">
-                <string>1x1 character set</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QPushButton" name="btnCharsetCopy">
-               <property name="text">
-                <string>Copy</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QPushButton" name="btnCharsetFull">
-               <property name="text">
-                <string>Full character set</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="0">
-              <widget class="QPushButton" name="btnFlipVert">
-               <property name="text">
-                <string>Flip vertical</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="1">
-              <widget class="QPushButton" name="btnFlipHorisontal">
-               <property name="text">
-                <string>Flip horizontal</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="1" column="0">
-            <widget class="QPushButton" name="btnImportRom">
-             <property name="text">
-              <string>Import C64 ROM charset</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
        </widget>
        <widget class="QWidget" name="tabSprites">
         <attribute name="title">
@@ -778,7 +718,7 @@
         <layout class="QGridLayout" name="layoutColorsEdit_3"/>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,1,1,1,1,1,1,1,1,0">
+        <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0">
          <item>
           <widget class="QLabel" name="label_13">
            <property name="font">
@@ -819,7 +759,79 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_10">
+          <widget class="QLabel" name="lblPalette">
+           <property name="text">
+            <string>Palette:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cmbNesPalette">
+           <item>
+            <property name="text">
+             <string>Tiles 1</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Tiles 2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Tiles 3</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Tiles 4</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Sprites 1</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Sprites 2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Sprites 3</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Sprites 4</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblBank">
+           <property name="text">
+            <string>Bank:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cmbBank">
+           <item>
+            <property name="text">
+             <string>Bank 0</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Bank 1</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblBackground">
            <property name="font">
             <font>
              <pointsize>7</pointsize>
@@ -838,7 +850,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_11">
+          <widget class="QLabel" name="lblForeground">
            <property name="font">
             <font>
              <pointsize>7</pointsize>
@@ -860,7 +872,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_12">
+          <widget class="QLabel" name="lblMC1">
            <property name="font">
             <font>
              <pointsize>7</pointsize>
@@ -879,7 +891,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_14">
+          <widget class="QLabel" name="lblMC2">
            <property name="font">
             <font>
              <pointsize>7</pointsize>
@@ -896,6 +908,19 @@
             <string>Set multicolor #1 (charsets, sprites)</string>
            </property>
           </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>4000</height>
+            </size>
+           </property>
+          </spacer>
          </item>
          <item>
           <layout class="QGridLayout" name="lyToolbox_3">

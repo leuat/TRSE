@@ -509,6 +509,12 @@ void FormImageEditor::UpdatePalette()
     ui->layoutColorsEdit_3->setEnabled(m_work.m_currentImage->m_image->m_supports.displayColors);
 
     ui->cmbBank->setVisible(m_work.m_currentImage->m_image->m_supports.displayBank);
+    if (!m_work.m_currentImage->m_image->m_supports.displayBank) {
+        // NES stuff: turn off tiles, bank
+        ui->lblBank->setVisible(false);
+        ui->lblPalette->setVisible(false);
+        ui->cmbNesPalette->setVisible(false);
+    }
 
 
     ui->cmbNesPalette->setEnabled(m_work.m_currentImage->m_image->m_supports.nesPalette);
@@ -990,6 +996,10 @@ void FormImageEditor::PrepareImageTypeGUI()
     SetButton(ui->btnFlipHorisontal,LImage::GUIType::btnFlipH);
     SetButton(ui->btnFlipVert,LImage::GUIType::btnFlipV);
     SetButton(ui->btnCharsetFull,LImage::GUIType::btnEditFullCharset);
+    SetLabel(ui->lblBackground, LImage::GUIType::col1);
+    SetLabel(ui->lblForeground, LImage::GUIType::col2);
+    SetLabel(ui->lblMC1, LImage::GUIType::col3);
+    SetLabel(ui->lblMC2, LImage::GUIType::col4);
 
     int idx=0;
 //    qDebug() << m_work.m_currentImage->m_image->m_GUIParams;
@@ -1026,6 +1036,15 @@ void FormImageEditor::PrepareImageTypeGUI()
 }
 
 void FormImageEditor::SetButton(QPushButton *btn, LImage::GUIType type)
+{
+    if (m_work.m_currentImage->m_image->m_GUIParams[type]=="")
+        btn->setVisible(false);
+    else
+        btn->setText(m_work.m_currentImage->m_image->m_GUIParams[type]);
+
+}
+
+void FormImageEditor::SetLabel(QLabel *btn, LImage::GUIType type)
 {
     if (m_work.m_currentImage->m_image->m_GUIParams[type]=="")
         btn->setVisible(false);

@@ -37,6 +37,7 @@ LImageNES::LImageNES(LColorList::Type t) : CharsetImage(t)
     m_supports.displayForeground = true;
     m_supports.displayBank = true;
     m_supports.displayCmbColors = true;
+    m_supports.displayColors = true;
 
     m_GUIParams[btnLoadCharset] ="";
     m_GUIParams[btn1x1] = "8x8";
@@ -59,6 +60,11 @@ LImageNES::LImageNES(LColorList::Type t) : CharsetImage(t)
     m_exportParams["StartY"] = 0;
     m_exportParams["EndY"] = m_charHeight;
     m_exportParams["Compression"] = 0;
+
+    m_GUIParams[col1] = "Background";
+    m_GUIParams[col2] = "Color 1";
+    m_GUIParams[col3] = "Color 2";
+    m_GUIParams[col4] = "Color 3";
 
 
     for (int i=0;i<4;i++)

@@ -111,7 +111,7 @@ public:
 
     enum GUIType { btnLoadCharset, btnEditFullCharset, btn1x1, btn2x2,
                    btn2x2repeat, btnFlipV, btnFlipH, btnCopy, btnPaste,
-                   tabLevels, tabCharset, tabData, tabSprites, tabEffects};
+                   tabLevels, tabCharset, tabData, tabSprites, tabEffects, col1,col2,col3,col4};
 
 
     QMap<QString, float> m_exportParams;

@@ -636,7 +636,7 @@ void LColorList::CreateUI(QLayout* ly, int type)
     }
 //    if (m_list.count())
 
-
+    int maxy=0;
     for(int j=0; j<m_list.count(); j++)
     {
         if (!m_list[j].displayList)
@@ -677,11 +677,17 @@ void LColorList::CreateUI(QLayout* ly, int type)
             m_buttonsImport.append(b);
 
         yy++;
+        maxy++;
         if (yy==16) {
             yy=0;
             xx++;
+            maxy=17;
         }
     }
+/*    QGridLayout* gly = dynamic_cast<QGridLayout*>(ly);
+    if (gly!=nullptr) {
+        gly->addItem(new QSpacerItem(1,200),maxy,xx);
+    }*/
 }
 
 void LColorList::handleButtonEdit(int data)

@@ -50,6 +50,9 @@ LImageCharsetRegular::LImageCharsetRegular(LColorList::Type t) : CharsetImage(t)
     m_supports.displayMC2 = false;
 
 
+    m_GUIParams[col2] = "";
+    m_GUIParams[col3] = "Color";
+    m_GUIParams[col4] = "";
 
     m_currencChar=0;
     m_currentMode=Mode::FULL_IMAGE;

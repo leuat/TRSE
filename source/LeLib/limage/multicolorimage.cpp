@@ -65,6 +65,15 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
 
     m_GUIParams[btnEditFullCharset] = "";
 
+    m_supports.displayMC1 = false;
+    m_supports.displayMC2 = false;
+
+
+    m_GUIParams[col1] ="Background";
+    m_GUIParams[col2] = "Border";
+    m_GUIParams[col3] = "";
+    m_GUIParams[col4] = "";
+
     m_exportParams["StartX"] = 0;
     m_exportParams["EndX"] = m_charWidth;
     m_exportParams["StartY"] = 0;

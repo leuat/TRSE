@@ -55,9 +55,13 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_supports.flfLoad = true;
     m_supports.asmExport = false;
 
-    m_supports.displayColors = false;
+    m_supports.displayColors = true;
     m_supports.displayForeground = false;
-    m_supports.displayMC2 = false;
+    m_supports.displayMC2 = true;
+    m_supports.displayMC1 = true;
+    m_GUIParams[col2] = "";
+    m_GUIParams[col3] = "Multicolor 1";
+    m_GUIParams[col4] = "Multicolor 2";
 
     m_currencChar=0;
     m_currentMode=Mode::FULL_IMAGE;

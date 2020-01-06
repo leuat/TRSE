@@ -77,6 +77,7 @@ public:
     void PrepareImageTypeGUI();
 
     void SetButton(QPushButton* btn, LImage::GUIType type);
+    void SetLabel(QLabel* btn, LImage::GUIType type);
 
     void PrepareClose() override;
 
