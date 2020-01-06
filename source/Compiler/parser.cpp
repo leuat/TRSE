@@ -777,6 +777,7 @@ Node *Parser::Statement()
     if (node==nullptr)
         ErrorHandler::e.Error("Node is nullpointer. Should not happen. Contact leuat@irio.co.uk and slap him.",0);
 
+    AppendComment(node);
 
     return node;
 
@@ -845,7 +846,8 @@ Node *Parser::BinaryClause()
     return new NodeBinaryClause(comparetoken, a, b);
 }
 
-/*void Parser::AppendComment(Node *n)
+
+void Parser::AppendComment(Node *n)
 {
     if (m_lexer->m_currentComment=="")
         return;
@@ -854,7 +856,7 @@ Node *Parser::BinaryClause()
     n->m_comment = m_lexer->m_currentComment;
     m_lexer->m_currentComment="";
 }
-*/
+
 
 
 Node *Parser::Conditional(bool isWhileLoop)
@@ -1505,6 +1507,7 @@ QVector<Node*> Parser::Declarations(bool isMain, QString blockName)
             else {
 
                 QVector<Node*> ns = VariableDeclarations(blockName);
+
                 for (Node* n: ns)
                     decl.append(n);
             }
@@ -1557,6 +1560,8 @@ QVector<Node*> Parser::Declarations(bool isMain, QString blockName)
         Eat(TokenType::SEMI);
         Node* block = nullptr;
         NodeProcedureDecl* procDecl = new NodeProcedureDecl(tok, procName, paramDecl, block, type);
+        AppendComment(procDecl);
+
         if (m_procedures[procName]!=nullptr)
             procDecl->m_isUsed = m_procedures[procName]->m_isUsed;
         m_procedures[procName] = procDecl;
@@ -1650,6 +1655,7 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
     while (m_currentToken.m_type == TokenType::COMMA) {
         Eat(TokenType::COMMA);
         vars.append(new NodeVar(m_currentToken));
+        AppendComment(vars[vars.count()-1]);
 
         syms.append(new Symbol(m_currentToken.m_value,""));
         m_symTab->Define(syms.last() ,false);

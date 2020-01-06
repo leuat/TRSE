@@ -127,6 +127,8 @@ public:
     Node* FindProcedure();
     Node* BinaryClause();
 
+    void AppendComment(Node* n);
+
 //    void AppendComment(Node* n);
 
     QVector<Node*> ConstDeclaration();

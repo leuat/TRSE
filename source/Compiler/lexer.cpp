@@ -306,10 +306,10 @@ Token Lexer::GetNextToken()
                 Advance();
                 Advance();
                 SkipComment();
-                QString s = m_currentComment;
-                m_currentComment = "";
-                return new Token(TokenType::COMMENT,s);
-  //              continue;
+      //          QString s = m_currentComment;
+        //        m_currentComment = "";
+          //      return Token(TokenType::COMMENT,s);
+                continue;
             }
 
         }
@@ -317,10 +317,10 @@ Token Lexer::GetNextToken()
         if (m_currentChar=="/") {
             if (peek()=="/") {
                 SkipUntilNewLine();
-                QString s = m_currentComment;
-                m_currentComment = "";
-                return new Token(TokenType::COMMENT,s);
-//                continue;
+    //            QString s = m_currentComment;
+  //              m_currentComment = "";
+//                return Token(TokenType::COMMENT,s);
+                continue;
             }
 
         }

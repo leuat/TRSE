@@ -45,6 +45,7 @@ public:
     Token m_op;
     int m_lineNumber;
     uint level = 0;
+    QString m_comment = "";
     bool m_isUsed = false;
     bool m_forceAddress = false;
     bool m_ignoreSuccess = false; // Used for binary expressions
