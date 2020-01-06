@@ -53,7 +53,7 @@ LImageNES::LImageNES(LColorList::Type t) : CharsetImage(t)
     m_GUIParams[tabLevels] = "";
     m_GUIParams[tabEffects] = "Effects";
 
-    m_GUIParams[btnEditFullCharset] = "";
+    m_GUIParams[btnEditFullCharset] = "Full charset";
 
     m_exportParams["StartX"] = 0;
     m_exportParams["EndX"] = m_charWidth;
@@ -176,7 +176,10 @@ QPixmap LImageNES::ToQPixMap(int chr)
     }
     xx*=8;
     yy*=8;
-//    qDebug() << xx << yy;
+    bool isDouble = m_double;
+    m_double = false;
+    Mode m = m_currentMode;
+    m_currentMode = Mode::FULL_IMAGE;
     for (int i=0;i<sz;i++)
         for (int j=0;j<sz;j++)
             img.setPixel(i,j,m_colorList.get(getPixel(
@@ -184,7 +187,8 @@ QPixmap LImageNES::ToQPixMap(int chr)
                                                  (int)(j/(float)sz*8)+yy)
                          ).color.rgb());
 
-
+    m_double = isDouble;
+    m_currentMode = m;
     return QPixmap::fromImage(img);
 
 }
@@ -195,6 +199,60 @@ void LImageNES::SetPalette(int pal)
      m_cols[2-0] = m_colorList.m_nesPPU[pal*4 +1 +1];
      m_cols[2-2] = m_colorList.m_nesPPU[pal*4 +1 +2];
      m_cols[3] = m_colorList.m_nesPPU[0];
+}
+
+bool LImageNES::getXY(QPoint& xy)
+{
+    int x = xy.x();
+    int y = xy.y();
+    if (m_double) {
+        x=x/2;
+        y=y/2;
+    }
+
+    if (m_currentMode==Mode::CHARSET1x1) {
+        int sx = (m_currencChar%m_charWidth)*8;
+        int sy = (m_currencChar/m_charWidth)*16;
+        x = (x / (float)m_width)*16+sx;
+        y = (y / (float)m_height)*16+sy;
+    }
+
+    if (m_currentMode==Mode::CHARSET2x2) {
+        int sx = (m_currencChar%m_charWidth)*8;
+        int sy = (m_currencChar/m_charWidth)*16;
+        x = (x / (float)m_width)*32+sx;
+        y = (y / (float)m_height)*32+sy;
+    }
+    if (m_currentMode==Mode::CHARSET2x2_REPEAT) {
+        int sx = (m_currencChar%m_charWidth)*8;
+        int sy = (m_currencChar/m_charWidth)*16;
+        x = (int)((x / (float)m_width)*96)%16+sx;
+        y = (int)((y / (float)m_height)*96)%16+sy;
+    }
+
+
+    int r = x/(float)8;
+    x=x+r*8;
+    if (m_double)
+        y=y+128*m_currentBank;
+
+    m_pc1 = &getPixelChar((x/2),y);
+    m_pc2 = &getPixelChar((x/2)+4,y);
+
+
+
+    int ix = x %8;//- (dx*m_charWidth);
+    int iy = y % 8;//- (dy*m_charHeight);
+
+    x = ix;
+    y = iy;
+
+    if (x<0 || x>=16 || y<0 || y>=8)
+        return false;
+
+
+    xy = QPoint(x,y);
+    return true;
 }
 
 QString LImageNES::getMetaInfo() {
@@ -213,33 +271,12 @@ unsigned int LImageNES::getPixel(int x, int y)
     if (x>=m_width || x<0 || y>=m_height || y<0)
         return m_cols[0];
 
-    if (m_double) {
-        x=x/2;
-        y=y/2;
-    }
+    QPoint xy = QPoint(x,y);
 
+    if (!getXY(xy))
+        return m_cols[0];
 
-
-
-    int r = x/(float)8;
-    x=x+r*8;
-    if (m_double)
-        y=y+128*m_currentBank;
-
-    PixelChar& pc1 = getPixelChar((x/2),y);
-    PixelChar& pc2 = getPixelChar((x/2)+4,y);
-
-    int ix = x %8;//- (dx*m_charWidth);
-    int iy = y % 8;//- (dy*m_charHeight);
-
-    x = ix;
-    y = iy;
-
-    if (x<0 || x>=16 || y<0 || y>=8)
-        return 0;
-
-
-    unsigned char pp = 3-((((pc1.p[y])>>x) & 0b1) | (((pc2.p[y])>>x) & 0b1)*2);
+    unsigned char pp = 3-((((m_pc1->p[xy.y()])>>xy.x()) & 0b1) | (((m_pc2->p[xy.y()])>>xy.x()) & 0b1)*2);
 
     return m_cols[pp];
 
@@ -253,25 +290,9 @@ void LImageNES::setPixel(int x, int y, unsigned int col)
     if (x>=m_width || x<0 || y>=m_height || y<0)
         return;
 
-    if (m_double) {
-        x=x/2;
-        y=y/2;
-    }
+    QPoint xy = QPoint(x,y);
 
-    int r = x/(float)8;
-    x=x+r*8;
-    if (m_double)
-        y=y+128*m_currentBank;
-    PixelChar& pc1 = getPixelChar((x/2),y);
-    PixelChar& pc2 = getPixelChar((x/2)+4,y);
-
-    int ix = x %8;//- (dx*m_charWidth);
-    int iy = y % 8;//- (dy*m_charHeight);
-
-    x = ix;
-    y = iy;
-
-    if (x<0 || x>=16 || y<0 || y>=8)
+    if (!getXY(xy))
         return;
 
 //    if (rand()%100>98)
@@ -284,10 +305,10 @@ void LImageNES::setPixel(int x, int y, unsigned int col)
         if (m_cols[i]==col)
             j=3-i;
 
-     pc1.p[y] &= ~(1<<x);
-     pc2.p[y] &= ~(1<<x);
-     pc1.p[y] |= (j&1)<<x;
-     pc2.p[y] |= ((j&3)>>1)<<x;
+     m_pc1->p[xy.y()] &= ~(1<<xy.x());
+     m_pc2->p[xy.y()] &= ~(1<<xy.x());
+     m_pc1->p[xy.y()] |= (j&1)<<xy.x();
+     m_pc2->p[xy.y()] |= ((j&3)>>1)<<xy.x();
     //return m_cols[pp];
 
 

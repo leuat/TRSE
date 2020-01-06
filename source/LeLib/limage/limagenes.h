@@ -20,7 +20,7 @@ public:
     void CopyFrom(LImage* img) override;
     void setForeground(unsigned int col) override;
 
-
+    PixelChar *m_pc1, *m_pc2;
     void SaveBin(QFile& file) override;
     void ConstrainColours(QVector<int>& cols) override {
         PerformConstrainColours(cols);
@@ -33,6 +33,8 @@ public:
     }
     QPixmap ToQPixMap(int chr) override;
     void SetPalette(int pal) override;
+
+    bool getXY(QPoint& xy);
 
     virtual QString getMetaInfo() override;
 
