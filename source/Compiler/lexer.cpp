@@ -136,9 +136,10 @@ void Lexer::SkipWhiteSpace()
 
 void Lexer::SkipComment()
 {
-    while (!(m_currentChar== "*" && peek()=="/") && !m_finished)
-
+    while (!(m_currentChar== "*" && peek()=="/") && !m_finished) {
+        m_currentComment+=m_currentChar;
         Advance();
+    }
 
     Advance();
     Advance();
@@ -147,9 +148,11 @@ void Lexer::SkipComment()
 
 void Lexer::SkipUntilNewLine()
 {
-    while (!(m_currentChar== "\n") && !m_finished)
+    while (!(m_currentChar== "\n") && !m_finished) {
+        m_currentComment+=m_currentChar;
 
         Advance();
+    }
 
 }
 
@@ -303,7 +306,10 @@ Token Lexer::GetNextToken()
                 Advance();
                 Advance();
                 SkipComment();
-                continue;
+                QString s = m_currentComment;
+                m_currentComment = "";
+                return new Token(TokenType::COMMENT,s);
+  //              continue;
             }
 
         }
@@ -311,7 +317,10 @@ Token Lexer::GetNextToken()
         if (m_currentChar=="/") {
             if (peek()=="/") {
                 SkipUntilNewLine();
-                continue;
+                QString s = m_currentComment;
+                m_currentComment = "";
+                return new Token(TokenType::COMMENT,s);
+//                continue;
             }
 
         }

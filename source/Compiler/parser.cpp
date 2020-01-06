@@ -552,6 +552,7 @@ void Parser::StripWhiteSpaceBeforeParenthesis()
 void Parser::RemoveComments()
 {
     QRegularExpression rg = QRegularExpression("/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/");
+
     //qDebug() << rg;
     m_lexer->m_text = m_lexer->m_text.replace(rg, "");
 
@@ -844,6 +845,16 @@ Node *Parser::BinaryClause()
     return new NodeBinaryClause(comparetoken, a, b);
 }
 
+/*void Parser::AppendComment(Node *n)
+{
+    if (m_lexer->m_currentComment=="")
+        return;
+    if (n==nullptr)
+        return;
+    n->m_comment = m_lexer->m_currentComment;
+    m_lexer->m_currentComment="";
+}
+*/
 
 
 Node *Parser::Conditional(bool isWhileLoop)
@@ -888,6 +899,7 @@ QVector<Node*> Parser::StatementList()
     while (m_currentToken.m_type == TokenType::SEMI) {
         Eat(TokenType::SEMI);
         Node* n = Statement();
+
         results.append(n);
 
     }

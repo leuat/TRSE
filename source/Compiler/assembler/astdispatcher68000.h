@@ -52,6 +52,7 @@ public:
     void dispatch(NodeCase* node) override;
     void dispatch(NodeRepeatUntil *node) override;
     void dispatch(NodeBuiltinMethod *node) override;
+    void dispatch(NodeComment *node) override;
 
 
 

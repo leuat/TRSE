@@ -72,10 +72,7 @@ public:
     }
 
 
-    void DispatchConstructor() {
-//        m_blockInfo = m_staticBlockInfo;
-        m_currentLineNumber = m_op.m_lineNumber;
-    }
+    void DispatchConstructor(Assembler* as);
 
     int MaintainBlocks(Assembler* as);
     virtual bool isPointer(Assembler* as)  { return false;}
@@ -166,5 +163,22 @@ class NoOp : public Node {
     }
 
 };
+
+class NodeComment : public Node {
+    public:
+    QString m_comment="";
+    NodeComment(QString com) {
+        m_comment = com;
+    }
+    void ExecuteSym(SymbolTable* symTab) override {
+
+    }
+    void Accept(AbstractASTDispatcher* dispatcher) override {
+        dispatcher->dispatch(this);
+    }
+
+
+};
+
 
 #endif // NODE_H

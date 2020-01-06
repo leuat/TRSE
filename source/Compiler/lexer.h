@@ -60,6 +60,7 @@ public:
     QVector<FilePart> m_includeFiles;
     bool m_ignorePreprocessor;
 
+    QString m_currentComment="";
 
 
     int getLineNumber(QString find);
