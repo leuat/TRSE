@@ -13,6 +13,7 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
     Q_OBJECT
     QOpenGLShaderProgram * m_program = nullptr;
     QOpenGLTexture       * m_texture = nullptr;
+    QOpenGLTexture       * m_grid = nullptr;
 public:
 
 
@@ -31,7 +32,7 @@ public:
     void initializeGL() override;
     void paintGL() override ;
 //    void paintEvent(QPaintEvent *event) override ;
-    void setTexture(QImage& img);
+    void setTexture(QImage& img, QImage& grid);
     void resizeGL(int width, int height) override;
 
 
@@ -49,6 +50,7 @@ public:
 
 signals:
     void EmitMouseMove();
+    void EmitMouseRelease();
 
 
 

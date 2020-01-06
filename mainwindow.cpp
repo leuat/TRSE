@@ -160,8 +160,9 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
     FormImageEditor* fe = dynamic_cast<FormImageEditor*>(m_currentDoc);
     if (fe==nullptr)
         return;
+
+
 //    m_updateThread->pos = mapToGlobal( fe->getLabelImage()->rect().topLeft());
-  //  qDebug() << m_updateThread->pos;
 }
 
 

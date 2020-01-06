@@ -136,6 +136,7 @@ private:
 private slots:
 
     void onImageMouseEvent();
+    void onImageMouseReleaseEvent();
 
     void on_btnExportAsm_clicked();
 

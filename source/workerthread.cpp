@@ -290,7 +290,10 @@ void WorkerThread::Continue()
 
 void WorkerThread::CreateGrid()
 {
-    m_grid->CreateGrid(m_work->m_currentImage->m_image->m_charWidthDisplay,m_work->m_currentImage->m_image->m_charHeightDisplay,m_gridColor,2, m_zoom, QPointF(m_zoomCenter.x(), m_zoomCenter.y())*m_gridScale,m_work->m_currentImage->m_image->m_scaleX);
+    if (m_drawGrid)
+        m_grid->CreateGrid(m_work->m_currentImage->m_image->m_charWidthDisplay,m_work->m_currentImage->m_image->m_charHeightDisplay,m_gridColor,2, m_zoom, QPointF(m_zoomCenter.x(), m_zoomCenter.y())*m_gridScale,m_work->m_currentImage->m_image->m_scaleX);
+    else
+        m_grid->m_qImage->fill(0);
 }
 
 void WorkerThread::RunContents()

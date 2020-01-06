@@ -60,6 +60,8 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
 //    void EmitMouseMove();
 
     connect(ui->lblImage, SIGNAL(EmitMouseMove()), this, SLOT(onImageMouseEvent()));
+    connect(ui->lblImage, SIGNAL(EmitMouseRelease()), this, SLOT(onImageMouseReleaseEvent()));
+
 
     m_updateThread.SetCurrentImage(&m_work, &m_toolBox);
 //    ui->lblImage->initializeGL();
@@ -98,7 +100,12 @@ void FormImageEditor::onImageMouseEvent()
 
     //    updateCharSet();
     updateSingleCharSet();
-//    UpdateGrid();
+    //    UpdateGrid();
+}
+
+void FormImageEditor::onImageMouseReleaseEvent()
+{
+    updateCharSet();
 }
 
 FormImageEditor::~FormImageEditor()
@@ -275,7 +282,7 @@ void FormImageEditor::UpdateImage()
     et.start();
     ui->lblImage->setVisible(true);
     QImage txt = m_updateThread.m_pixMapImage.toImage();
-    ui->lblImage->setTexture(txt);
+    ui->lblImage->setTexture(txt,*m_updateThread.m_grid->m_qImage);
     //ui->lblImage->setScaledContents(true);
     //ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(ui->lblImage->size().width()-16, ui->lblImage->size().height()-16, Qt::IgnoreAspectRatio, Qt::FastTransformation));
   //  ui->lblImage->setPixmap(m_updateThread.m_pixMapImage);
@@ -308,13 +315,13 @@ void FormImageEditor::UpdateGrid()
 {
     if (m_work.m_currentImage==nullptr)
         return;
-    if (!m_updateThread.m_drawGrid)
+/*    if (!m_updateThread.m_drawGrid)
         return;
-
+*/
     m_grid.Initialize(m_updateThread.m_gridScale *m_work.m_currentImage->m_image->m_width,m_updateThread.m_gridScale*m_work.m_currentImage->m_image->m_height);
 //    qDebug() << m_work.m_currentImage->m_image->m_scaleX;
     m_updateThread.CreateGrid();
-    m_grid.ApplyToLabel(ui->lblGrid);
+//    m_grid.ApplyToLabel(ui->lblGrid);
 
 }
 

@@ -201,7 +201,7 @@ void LImageNES::SetPalette(int pal)
      m_cols[3] = m_colorList.m_nesPPU[0];
 }
 
-bool LImageNES::getXY(QPoint& xy)
+bool LImageNES::getXY(QPoint& xy,QPoint& p1, QPoint& p2)
 {
     int x = xy.x();
     int y = xy.y();
@@ -236,9 +236,11 @@ bool LImageNES::getXY(QPoint& xy)
     if (m_double)
         y=y+128*m_currentBank;
 
-    m_pc1 = &getPixelChar((x/2),y);
-    m_pc2 = &getPixelChar((x/2)+4,y);
+//    m_pc1 = &getPixelChar((x/2),y);
+  //  m_pc2 = &getPixelChar((x/2)+4,y);
 
+    p1 = QPoint(x/2,y);
+    p2 = QPoint((x/2)+4,y);
 
 
     int ix = x %8;//- (dx*m_charWidth);
@@ -273,10 +275,14 @@ unsigned int LImageNES::getPixel(int x, int y)
 
     QPoint xy = QPoint(x,y);
 
-    if (!getXY(xy))
+    QPoint p1, p2;
+    if (!getXY(xy, p1, p2))
         return m_cols[0];
 
-    unsigned char pp = 3-((((m_pc1->p[xy.y()])>>xy.x()) & 0b1) | (((m_pc2->p[xy.y()])>>xy.x()) & 0b1)*2);
+    PixelChar& m_pc1 = getPixelChar(p1.x(), p1.y());
+    PixelChar& m_pc2 = getPixelChar(p2.x(), p2.y());
+
+    unsigned char pp = 3-((((m_pc1.p[xy.y()])>>xy.x()) & 0b1) | (((m_pc2.p[xy.y()])>>xy.x()) & 0b1)*2);
 
     return m_cols[pp];
 
@@ -292,23 +298,22 @@ void LImageNES::setPixel(int x, int y, unsigned int col)
 
     QPoint xy = QPoint(x,y);
 
-    if (!getXY(xy))
+    QPoint p1, p2;
+    if (!getXY(xy, p1, p2))
         return;
 
-//    if (rand()%100>98)
-  //  qDebug() << col;
-
-    //unsigned char pp = (((pc1.p[y])>>x) & 0b1) | (((pc2.p[y])>>x) & 0b1)*2;
+    PixelChar& m_pc1 = getPixelChar(p1.x(), p1.y());
+    PixelChar& m_pc2 = getPixelChar(p2.x(), p2.y());
 
     int j=0;
     for (int i=0;i<4;i++)
         if (m_cols[i]==col)
             j=3-i;
 
-     m_pc1->p[xy.y()] &= ~(1<<xy.x());
-     m_pc2->p[xy.y()] &= ~(1<<xy.x());
-     m_pc1->p[xy.y()] |= (j&1)<<xy.x();
-     m_pc2->p[xy.y()] |= ((j&3)>>1)<<xy.x();
+     m_pc1.p[xy.y()] &= ~(1<<xy.x());
+     m_pc2.p[xy.y()] &= ~(1<<xy.x());
+     m_pc1.p[xy.y()] |= (j&1)<<xy.x();
+     m_pc2.p[xy.y()] |= ((j&3)>>1)<<xy.x();
     //return m_cols[pp];
 
 

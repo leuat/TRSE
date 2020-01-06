@@ -25,6 +25,7 @@ void GLWidget::initializeGL()
  //   initializeGL()
     QImage image(320,200,QImage::Format_RGB32);
     m_texture = new QOpenGLTexture( image );
+    m_grid = new QOpenGLTexture( image );
 
     m_program = new QOpenGLShaderProgram;
     m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, Util::loadTextFile(":/resources/shaders/screen.vert"));
@@ -51,10 +52,14 @@ void GLWidget::paintGL()
     m_texture->bind( texture_unit );
     m_texture->setMinificationFilter(QOpenGLTexture::Nearest);
     m_texture->setMagnificationFilter(QOpenGLTexture::Nearest);
+    m_grid->bind( texture_unit+1 );
+    m_grid->setMinificationFilter(QOpenGLTexture::Nearest);
+    m_grid->setMagnificationFilter(QOpenGLTexture::Nearest);
     // activate the shader
     m_program->bind();
 
     m_program->setUniformValue( "screen", texture_unit );
+    m_program->setUniformValue( "grid", texture_unit+1 );
     /*m_program->setUniformValue("CD", CD.x(), CD.y());
     m_program->setUniformValue("barrelScale", barrelScale.x(), barrelScale.y());
     m_program->setUniformValue("chromatic",chromatic);
@@ -81,9 +86,14 @@ void GLWidget::paintGL()
 
 }
 
-void GLWidget::setTexture(QImage &img)
+void GLWidget::setTexture(QImage &img, QImage& grid)
 {
+    if (m_texture!=nullptr)
+        delete m_texture;
+    if (m_grid!=nullptr)
+        delete m_grid;
     m_texture = new QOpenGLTexture( img );
+    m_grid = new QOpenGLTexture(grid);
     update();
   //  update();
 }
@@ -178,7 +188,8 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *e)
 
 
 
-    emit EmitMouseMove();
+//    emit EmitMouseMove();
+    emit EmitMouseRelease();
 
 }
 

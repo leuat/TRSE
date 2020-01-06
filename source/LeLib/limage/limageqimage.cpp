@@ -78,6 +78,8 @@ void LImageQImage::SaveBin(QFile& file)
 
 void LImageQImage::Initialize(int width, int height)
 {
+    if (m_width==width && m_height==height && m_qImage!=nullptr)
+        return;
     if (m_qImage != nullptr)
         delete m_qImage;
 
