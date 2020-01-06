@@ -61,8 +61,8 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
 
     connect(ui->lblImage, SIGNAL(EmitMouseMove()), this, SLOT(onImageMouseEvent()));
 
-    m_updateThread.SetCurrentImage(&m_work, &m_toolBox, getLabelImage());
-
+    m_updateThread.SetCurrentImage(&m_work, &m_toolBox);
+//    ui->lblImage->initializeGL();
 //    setFocusPolicy(Qt::StrongFocus);
 
 
@@ -270,25 +270,22 @@ void FormImageEditor::keyReleaseEvent(QKeyEvent *e)
 
 void FormImageEditor::UpdateImage()
 {
-//    return;
-//    m_updateThread.m_
-   // m_updateThread.m_pixMapImage.fill(QColor(0,255,0));
 
-
+    QElapsedTimer et;
+    et.start();
     ui->lblImage->setVisible(true);
-    ui->lblImage->setScaledContents(true);
-//        ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(320, 320, Qt::IgnoreAspectRatio, Qt::FastTransformation));
-    ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(ui->lblImage->size().width()-16, ui->lblImage->size().height()-16, Qt::IgnoreAspectRatio, Qt::FastTransformation));
-//    ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(16, 16, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+    QImage txt = m_updateThread.m_pixMapImage.toImage();
+    ui->lblImage->setTexture(txt);
+    //ui->lblImage->setScaledContents(true);
+    //ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(ui->lblImage->size().width()-16, ui->lblImage->size().height()-16, Qt::IgnoreAspectRatio, Qt::FastTransformation));
   //  ui->lblImage->setPixmap(m_updateThread.m_pixMapImage);
-    ui->lblImage->setMaximumHeight(ui->lblImage->size().width()/(320/200.0));
 
+//    ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(320, 200, Qt::IgnoreAspectRatio, Qt::FastTransformation));
 
     m_documentIsChanged = ui->lblImage->m_imageChanged;
 
     if (!ui->tblData->hasFocus())
         ui->lblImage->setFocus();
-
 
 
     QString currentChar = m_work.m_currentImage->m_image->GetCurrentDataString();
@@ -304,12 +301,14 @@ void FormImageEditor::UpdateImage()
         Data::data.redrawFileList = false;
     }
 
-
+//    qDebug() << "FormImageEditor :: UpdateImage "<< et.elapsed();
 }
 
 void FormImageEditor::UpdateGrid()
 {
     if (m_work.m_currentImage==nullptr)
+        return;
+    if (!m_updateThread.m_drawGrid)
         return;
 
     m_grid.Initialize(m_updateThread.m_gridScale *m_work.m_currentImage->m_image->m_width,m_updateThread.m_gridScale*m_work.m_currentImage->m_image->m_height);
@@ -455,7 +454,7 @@ Ui::Formimageeditor *FormImageEditor::getUi() const
     return ui;
 }
 
-QLabel* FormImageEditor::getLabelImage()
+GLWidget* FormImageEditor::getLabelImage()
 {
     return ui->lblImage;
 }

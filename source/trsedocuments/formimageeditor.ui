@@ -23,20 +23,7 @@
        </property>
        <layout class="QGridLayout" name="gridLayout_4">
         <item row="0" column="0">
-         <widget class="QLabelLImage" name="lblImage">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="autoFillBackground">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="scaledContents">
-           <bool>true</bool>
-          </property>
-         </widget>
+         <widget class="GLWidget" name="lblImage" native="true"/>
         </item>
        </layout>
        <widget class="QLabel" name="lblGrid">
@@ -58,8 +45,6 @@
          <bool>true</bool>
         </property>
        </widget>
-       <zorder>lblImage</zorder>
-       <zorder>lblGrid</zorder>
       </widget>
      </item>
      <item row="0" column="2">
@@ -977,9 +962,10 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QLabelLImage</class>
-   <extends>QLabel</extends>
-   <header>source/qlabellimage.h</header>
+   <class>GLWidget</class>
+   <extends>QWidget</extends>
+   <header>source/LeLib/glwidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

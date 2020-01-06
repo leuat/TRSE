@@ -27,12 +27,12 @@ class QLabelLImage : public QLabel
 {
     Q_OBJECT
 public:
-    bool m_imageChanged = false;
     QLabelLImage();
     QLabelLImage(QWidget* parent) : QLabel(parent) {
         setMouseTracking(true);
         installEventFilter(this);
     }
+    bool m_imageChanged = false;
     int m_time=0;
     WorkerThread* m_updateThread = nullptr;
     ImageWorker* m_work = nullptr;

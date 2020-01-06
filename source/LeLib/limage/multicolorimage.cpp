@@ -1263,16 +1263,20 @@ uchar PixelChar::VIC20Swap(uchar c)
 void MultiColorImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center)
 {
 //    return;
-//#pragma omp parallel for
     int height  =min(img.height(), m_height);
     int width  =min(img.width(), m_width);
-  //  center.setX(floor(center.x()));
- //   center.setY(floor(center.y()));
-    for (int i=0;i<width;i++)
-        for (int j=0;j<height;j++) {
+    //  center.setX(floor(center.x()));
+    //   center.setY(floor(center.y()));
 
-//            float xp = floor(((i-center.x())*zoom)+ center.x());
-  //          float yp = floor(((j-center.y())*zoom) + center.y());
+
+#pragma omp parallel for
+    for (int j=0;j<height;j++) {
+        int* yline =(int*)img.scanLine(j);
+        for (int i=0;i<width;i++) {
+
+
+            //            float xp = floor(((i-center.x())*zoom)+ center.x());
+            //          float yp = floor(((j-center.y())*zoom) + center.y());
             double xp = (((i-center.x())*(double)zoom)+ center.x());
             double yp = (((j-center.y())*(double)zoom)+ center.y());
 
@@ -1281,9 +1285,11 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF
                 col = getPixel(xp,yp);
             else {
                 if (((i+j)&1)==0)
-                    img.setPixel(i,j,QColor(40,50,70).rgb());
+                    //img.setPixel(i,j,QColor(40,50,70).rgb());
+                    yline[i] = QColor(40,50,70).rgb();
                 else
-                    img.setPixel(i,j,QColor(0,0,00).rgb());
+                    yline[i] = QColor(0,0,0).rgb();
+                //img.setPixel(i,j,QColor(0,0,00).rgb());
                 continue;
 
             }
@@ -1291,7 +1297,7 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF
 
             // Has transparency?
 
-            QColor c=QColor(0,0,0);
+/*            QColor c=QColor(0,0,0);
             if (col>=1000) {
                 col-=1000;
                 c = QColor(255, 128, 128);
@@ -1301,12 +1307,14 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF
                 if ((int)(xp) %4==0 || (int)(yp+1)%4==0)
                     scol = c;
             }
-//            scol = QColor(255,0,0,255);
+            //            scol = QColor(255,0,0,255);
             QRgb rgbCol = (scol).rgb();
             //for (int k=0;k<m_scale;k++)
- //               img->setPixel(m_scale*i + k,j,rgbCol);
-             img.setPixel(i,j,rgbCol);
+            //               img->setPixel(m_scale*i + k,j,rgbCol);*/
+            //img.setPixel(i,j,rgbCol);
+            yline[i] = lst.get(col).color.rgb();
         }
+    }
     //return img;
 }
 

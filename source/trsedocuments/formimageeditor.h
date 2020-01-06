@@ -42,7 +42,7 @@
 #include "source/LeLib/limage/limagefactory.h"
 #include "source/LeLib/limage/limagecontainer.h"
 #include "source/dialogcolors.h"
-
+#include "source/LeLib/glwidget.h"
 #include <QLineEdit>
 namespace Ui {
 class Formimageeditor;
@@ -115,7 +115,7 @@ public:
 
     Ui::Formimageeditor *getUi() const;
 
-    QLabel* getLabelImage();
+    GLWidget* getLabelImage();
 
     void UpdateCurrentMode();
 

@@ -61,7 +61,7 @@ public:
     void Park();
     void Continue();
 
-    void SetCurrentImage(ImageWorker* work, Toolbox* tb, QLabel* lbl) {
+    void SetCurrentImage(ImageWorker* work, Toolbox* tb) {
         m_work = work;
         m_toolBox = tb;
         //m_imgLabel = lbl;

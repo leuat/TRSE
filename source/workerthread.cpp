@@ -192,6 +192,8 @@ void WorkerThread::UpdatePanning()
 
 void WorkerThread::UpdateImage(LImage * mc)
 {
+    QElapsedTimer ep;
+    ep.start();
    if (m_work == nullptr)
        return;
    if (mc==nullptr)
@@ -235,6 +237,7 @@ void WorkerThread::UpdateImage(LImage * mc)
 
 //    qDebug() << "Emit " << rand()%100;
     emit updateImageSignal();
+//    qDebug() << "UpdateImage : " <<ep.elapsed();
     //ui->lblImage->setPixmap(m_pixMapImage);
 }
 
@@ -329,7 +332,7 @@ void WorkerThread::run()
             RunContents();
         }
 
-        QThread::msleep(15);
+        QThread::msleep(10);
     }
 
 }

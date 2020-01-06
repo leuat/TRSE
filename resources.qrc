@@ -362,5 +362,7 @@
         <file>resources/text/help/m/vbmdrawtexto.rtf</file>
         <file>resources/text/help/m/vbmdrawtext.rtf</file>
         <file>resources/text/help/r/const.rtf</file>
+        <file>resources/shaders/screen.frag</file>
+        <file>resources/shaders/screen.vert</file>
     </qresource>
 </RCC>
