@@ -134,14 +134,18 @@ void FormImageEditor::wheelEvent(QWheelEvent *event)
 {
     float f = event->delta()/100.0f;
 
-    if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
+    if (QApplication::keyboardModifiers() & Qt::ShiftModifier) {
         m_updateThread.m_zoom -=f*0.05;
         m_updateThread.m_zoom = std::min(m_updateThread.m_zoom, 1.0f);
         m_updateThread.m_zoom = std::max(m_updateThread.m_zoom, 0.1f);
         float t = 0.0f;
         m_updateThread.m_zoomCenter = (m_updateThread.m_zoomCenter*t + (1-t)*m_updateThread.m_currentPos);//*(2-2*m_zoom);
-        Data::data.redrawOutput = true;
+      //  m_updateThread.m_zoomCenter = (m_updateThread.m_currentPos);//*(2-2*m_zoom);
         UpdateGrid();
+        emit onImageMouseEvent();
+        Data::data.forceRedraw = true;
+        Data::data.Redraw();
+
 //        m_grid.CreateGrid(40,25,m_updateThread.m_gridColor,4, m_updateThread.m_zoom, QPoint(m_updateThread.m_zoomCenter.x(), m_updateThread.m_zoomCenter.y()));
 //        m_grid.CreateGrid(m_work.m_currentImage->m_image->m_charWidthDisplay,m_work.m_currentImage->m_image->m_charHeightDisplay,m_updateThread.m_gridColor,4, m_updateThread.m_zoom, QPoint(m_updateThread.m_zoomCenter.x(), m_updateThread.m_zoomCenter.y()));
 
