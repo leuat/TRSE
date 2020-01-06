@@ -561,6 +561,7 @@ void FormImageEditor::OpenSelectCharset()
     }
 
     SelectCharacter(ds->m_char);
+    SetSingleCharsetEdit();
 
     Data::data.Redraw();
     Data::data.forceRedraw = true;
@@ -992,7 +993,7 @@ void FormImageEditor::PrepareImageTypeGUI()
     int idx=0;
 //    qDebug() << m_work.m_currentImage->m_image->m_GUIParams;
     if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabCharset]=="") {
-        ui->tabMain->removeTab(1);
+        ui->tabMain->removeTab(0);
         idx++;
     }
     if (m_work.m_currentImage->m_image->m_GUIParams[LImage::GUIType::tabSprites]=="") {

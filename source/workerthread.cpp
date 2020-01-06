@@ -175,7 +175,7 @@ void WorkerThread::UpdatePanning()
                                     m_work->m_currentImage->m_image->m_height)/2
                                      - (m_currentPos-m_prevPos));*/
             QPointF delta = (m_currentPos-m_prevPos);
-            m_zoomCenter-=(QPointF)delta*0.25;
+            m_zoomCenter-=(QPointF)delta*m_zoom;
             //        qDebug() << delta;
             m_isPanning = true;
             Data::data.Redraw();

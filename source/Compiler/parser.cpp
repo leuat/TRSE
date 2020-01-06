@@ -1379,9 +1379,9 @@ QVector<Node *> Parser::Parameters(QString blockName)
         Eat(TokenType::LPAREN);
         while (m_currentToken.m_type==TokenType::ID) {
             QVector<Node*> ns = VariableDeclarations(blockName);
+
             for (Node* n: ns)
                 decl.append(n);
-
             Eat(m_currentToken.m_type);
         }
     }
@@ -1485,10 +1485,17 @@ QVector<Node*> Parser::Declarations(bool isMain, QString blockName)
     QVector<Node*> decl;
     if (m_currentToken.m_type==TokenType::VAR) {
         Eat(TokenType::VAR);
-        while (m_currentToken.m_type==TokenType::ID) {
-            QVector<Node*> ns = VariableDeclarations(blockName);
-            for (Node* n: ns)
-                decl.append(n);
+        while (m_currentToken.m_type==TokenType::ID || m_currentToken.m_type == TokenType::CONST) {
+
+            if (m_currentToken.m_type == TokenType::CONST) {
+                ConstDeclaration();
+            }
+            else {
+
+                QVector<Node*> ns = VariableDeclarations(blockName);
+                for (Node* n: ns)
+                    decl.append(n);
+            }
             Eat(TokenType::SEMI);
         }
     }
@@ -1581,12 +1588,42 @@ QVector<Node*> Parser::Declarations(bool isMain, QString blockName)
     return decl;
 }
 
+QVector<Node*> Parser::ConstDeclaration()
+{
+//    qDebug() << "HERE";
+    Eat(TokenType::CONST);
+    QString name = m_currentToken.m_value;
+    Eat();
+    Eat(TokenType::COLON);
+    QString type = "";
+    if (m_currentToken.m_type == TokenType::ADDRESS)
+        type="address";
+    if (m_currentToken.m_type == TokenType::BYTE)
+        type="byte";
+    if (m_currentToken.m_type == TokenType::INTEGER)
+        type="integer";
+    if (type=="") {
+        ErrorHandler::e.Error("Constant declaration error: unknown type '"+m_currentToken.getType()+"'",m_currentToken.m_lineNumber);
+    }
+    Eat();
+    Eat(TokenType::EQUALS);
+    int value = GetParsedInt();
+
+    m_symTab->m_constants[name.toUpper()] = new Symbol(name.toUpper(),type.toUpper(),value);
+    return QVector<Node*>();
+}
+
+
+
 QVector<Node *> Parser::VariableDeclarations(QString blockName)
 {
     if (blockName!="")
         m_symTab->SetCurrentProcedure(blockName+"_");
     else
         m_symTab->SetCurrentProcedure("");
+
+
+
 
     QVector<Node*> vars;
     vars.append(new NodeVar(m_currentToken));
@@ -1595,6 +1632,9 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
     syms.append(new Symbol(m_currentToken.m_value,""));
     m_symTab->Define(syms.last() ,false);
     Eat(TokenType::ID);
+
+
+
     // Make sure that ALL are defined!
     while (m_currentToken.m_type == TokenType::COMMA) {
         Eat(TokenType::COMMA);

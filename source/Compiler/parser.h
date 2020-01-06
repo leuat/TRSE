@@ -79,6 +79,7 @@ public:
     bool m_ignoreAll = false;
     QStringList  m_initJumps;
     SymbolTable* m_symTab = nullptr;
+
     Parser();
     Parser(Lexer* l) {
         m_lexer = l;
@@ -125,6 +126,8 @@ public:
     Node* Term();
     Node* FindProcedure();
     Node* BinaryClause();
+
+    QVector<Node*> ConstDeclaration();
     //Node* LogicalClause();
     Node* Block(bool useOwnSymTab, QString blockName="");
     QVector<Node*> Parameters(QString blockName);

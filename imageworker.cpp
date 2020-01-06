@@ -33,6 +33,8 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("C64 Hires Bitmap", "c64",LImage::Type::HiresBitmap,LColorList::Type::C64));
     m_types.append(ImageType("C64 Multicolor Charmap", "c64",LImage::Type::CharMapMulticolor,LColorList::Type::C64));
     m_types.append(ImageType("C64 Hires Charmap", "c64",LImage::Type::CharmapRegular,LColorList::Type::C64));
+    m_types.append(ImageType("C64 Multicolor Charmap", "vic20",LImage::Type::CharMapMulticolor,LColorList::Type::C64));
+    m_types.append(ImageType("C64 Hires Charmap", "vic20",LImage::Type::CharmapRegular,LColorList::Type::C64));
     m_types.append(ImageType("Screen animation (C64, VIC20, NES etc)", "general",LImage::Type::FullScreenChar,LColorList::Type::C64));
     m_types.append(ImageType("C64/VIC20 Level Editor", "c64",LImage::Type::LevelEditor,LColorList::Type::C64));
     m_types.append(ImageType("C64 Sprite Editor", "c64",LImage::Type::Sprites2,LColorList::Type::C64));
