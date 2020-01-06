@@ -70,11 +70,15 @@ public:
     QString m_projectPath;
     QVector<int> m_keepSpriteChar;
 
+    CharsetImage::Mode m_prefMode = CharsetImage::Mode::CHARSET1x1;
+
     void UpdatePalette();
     void updateCharSet();
     void updateSingleCharSet();
 
     void PrepareImageTypeGUI();
+
+    void SetSingleCharsetEdit();
 
     void SetButton(QPushButton* btn, LImage::GUIType type);
     void SetLabel(QLabel* btn, LImage::GUIType type);

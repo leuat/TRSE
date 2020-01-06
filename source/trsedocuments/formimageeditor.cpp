@@ -754,12 +754,8 @@ void FormImageEditor::on_btnCharsetFull_clicked()
 
 void FormImageEditor::on_btnCharset1x1_clicked()
 {
-    CharsetImage* ci = dynamic_cast<CharsetImage*>(m_work.m_currentImage->m_image);
-    if (ci==nullptr)
-        return;
-
-    m_updateThread.m_zoom = 1.0;
-    ci->m_currentMode = CharsetImage::Mode::CHARSET1x1;
+    m_prefMode = CharsetImage::Mode::CHARSET1x1;
+    SetSingleCharsetEdit();
     Data::data.forceRedraw = true;
     onImageMouseEvent();
 
@@ -767,12 +763,8 @@ void FormImageEditor::on_btnCharset1x1_clicked()
 
 void FormImageEditor::on_btnCharset2x2_clicked()
 {
-    CharsetImage* ci = dynamic_cast<CharsetImage*>(m_work.m_currentImage->m_image);
-    if (ci==nullptr)
-        return;
-
-    m_updateThread.m_zoom = 1.0;
-    ci->m_currentMode = CharsetImage::Mode::CHARSET2x2;
+    m_prefMode = CharsetImage::Mode::CHARSET2x2;
+    SetSingleCharsetEdit();
     Data::data.forceRedraw = true;
     UpdateCurrentMode();
     onImageMouseEvent();
@@ -780,12 +772,8 @@ void FormImageEditor::on_btnCharset2x2_clicked()
 
 void FormImageEditor::on_btnCharset2x2Repeat_clicked()
 {
-    CharsetImage* ci = dynamic_cast<CharsetImage*>(m_work.m_currentImage->m_image);
-    if (ci==nullptr)
-        return;
-    m_updateThread.m_zoom = 1.0;
-
-    ci->m_currentMode = CharsetImage::Mode::CHARSET2x2_REPEAT;
+    m_prefMode = CharsetImage::Mode::CHARSET2x2_REPEAT;
+    SetSingleCharsetEdit();
     UpdateCurrentMode();
     Data::data.forceRedraw = true;
     onImageMouseEvent();
@@ -1032,6 +1020,17 @@ void FormImageEditor::PrepareImageTypeGUI()
         }
 
 
+
+}
+
+void FormImageEditor::SetSingleCharsetEdit()
+{
+    CharsetImage* ci = dynamic_cast<CharsetImage*>(m_work.m_currentImage->m_image);
+    if (ci==nullptr)
+        return;
+
+    m_updateThread.m_zoom = 1.0;
+    ci->m_currentMode = m_prefMode;
 
 }
 
@@ -1350,7 +1349,7 @@ void FormImageEditor::on_lstCharMap_currentItemChanged(QTableWidgetItem *current
         return;
 
     SelectCharacter(current->data(Qt::UserRole).toInt());
-
+    SetSingleCharsetEdit();
     Data::data.Redraw();
     Data::data.forceRedraw = true;
     onImageMouseEvent();
