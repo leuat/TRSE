@@ -33,7 +33,7 @@ void Node::DispatchConstructor(Assembler *as) {
     //        m_blockInfo = m_staticBlockInfo;s
     m_currentLineNumber = m_op.m_lineNumber;
     if (m_comment!="") {
-        as->Comment(m_comment.replace("\n","\n; "));
+        as->Comment(m_comment.replace("\n","\n; ").replace("//","\n//"));
     }
 
 }
