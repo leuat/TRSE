@@ -6,14 +6,28 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
-    <height>486</height>
+    <width>1297</width>
+    <height>513</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>New image</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,3,3,20,0" columnstretch="1,1" rowminimumheight="1,1,1,1,0">
+  <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,3,3,20,0" columnstretch="1,1">
+   <item row="2" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,2">
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Image type:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cmbImageType"/>
+     </item>
+    </layout>
+   </item>
    <item row="3" column="0">
     <widget class="QGroupBox" name="grpLevelDesignerParams">
      <property name="enabled">
@@ -27,22 +41,12 @@
        <rect>
         <x>20</x>
         <y>40</y>
-        <width>371</width>
-        <height>271</height>
+        <width>591</width>
+        <height>281</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="grdParams"/>
      </widget>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="2">
-    <widget class="QDialogButtonBox" name="btnResult">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
     </widget>
    </item>
    <item row="1" column="0">
@@ -64,31 +68,22 @@
      <property name="title">
       <string>Info</string>
      </property>
-     <widget class="QTextBrowser" name="lblInfo">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>30</y>
-        <width>571</width>
-        <height>281</height>
-       </rect>
-      </property>
-     </widget>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QTextBrowser" name="lblInfo"/>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="2" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,2">
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Image type:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="cmbImageType"/>
-     </item>
-    </layout>
+   <item row="4" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="btnResult">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
