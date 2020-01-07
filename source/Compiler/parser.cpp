@@ -441,6 +441,8 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         Eat();
         Eat();
+        if (m_currentToken.m_type==TokenType::INTEGER_CONST)
+            Eat();
         return;
     }
 
@@ -1961,18 +1963,30 @@ void Parser::HandleExport()
 {
     int ln = m_currentToken.m_lineNumber;
     QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
-    Eat();
+    Eat(TokenType::STRING);
     QString outFile =m_currentDir+"/"+ m_currentToken.m_value;
-    Eat();
-    int param = m_currentToken.m_intVal;
-    Eat();
+    Eat(TokenType::STRING);
+    int param1 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param2 = 0;
+    if (m_currentToken.m_type==TokenType::INTEGER_CONST) {
+        param2 = m_currentToken.m_intVal;
+        Eat(TokenType::INTEGER_CONST);
+
+    }
+    else {
+        param2 = param1;
+        param1 = 0;
+    }
+
 
     if (!QFile::exists(inFile)) {
         ErrorHandler::e.Error("File not found : "+inFile,ln);
     }
     LImage* img = LImageIO::Load(inFile);
     if (dynamic_cast<CharsetImage*>(img)!=nullptr) {
-        img->m_exportParams["End"] = param;
+        img->m_exportParams["Start"] = param1;
+        img->m_exportParams["End"] = param2;
     }
     if (QFile::exists(outFile))
         QFile::remove(outFile);
