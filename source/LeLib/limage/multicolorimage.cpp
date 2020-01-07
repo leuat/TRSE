@@ -697,10 +697,15 @@ void MultiColorImage::LoadCharset(QString file, int skipBytes)
 
 }
 
-int MultiColorImage::getCharAtPos(QPoint p)
+int MultiColorImage::getCharAtPos(QPoint p, float zoom, QPointF center)
 {
-    int y = p.y()/(float)m_height*m_charHeight;
-    return p.x()/(float)m_width*m_charWidth + y*m_charWidth;
+
+    int xp = (((p.x()-center.x())*(double)zoom)+ center.x());
+    int yp = (((p.y()-center.y())*(double)zoom)+ center.y());
+
+
+    int y = yp/(float)m_height*m_charHeight;
+    return xp/(float)m_width*m_charWidth + y*m_charWidth;
 }
 
 void MultiColorImage::onFocus()

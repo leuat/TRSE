@@ -133,9 +133,12 @@ void FormImageEditor::onImageMouseReleaseEvent()
 void FormImageEditor::SelectFromLeftClick()
 {
     m_prefMode = m_keepMode;
-    SetSingleCharsetEdit();
-    m_work.m_currentImage->m_image->m_currencChar = m_work.m_currentImage->m_image->getCharAtPos((QPoint(m_updateThread.m_currentPos.x(),m_updateThread.m_currentPos.y())));
+    m_work.m_currentImage->m_image->m_currencChar =
+            m_work.m_currentImage->m_image->getCharAtPos(
+                (QPoint(m_updateThread.m_currentPos.x(),m_updateThread.m_currentPos.y())),
+                m_updateThread.m_zoom,m_updateThread.m_zoomCenter);
     showDetailCharButtons(true);
+    SetSingleCharsetEdit();
     Data::data.forceRedraw = true;
     onImageMouseEvent();
 }
