@@ -30,7 +30,6 @@
 class CharsetImage : public MultiColorImage
 {
 public:
-    int m_charCount = 256;
     QByteArray m_rawData;
     bool m_isMultiColor = false;
     PixelChar m_color;

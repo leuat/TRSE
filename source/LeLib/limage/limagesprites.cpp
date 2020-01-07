@@ -25,7 +25,6 @@
 
 LImageSprites::LImageSprites(LColorList::Type t) : CharsetImage(t) {
     m_type = LImage::Type::Sprites;
-    m_charCount = 1024;
     m_currentMode = Mode::CHARSET1x1;
     m_currencChar=0;
 
@@ -201,7 +200,7 @@ bool LImageSprites::KeyPress(QKeyEvent *e)
     if (e->key()==Qt::Key_D)
         m_currencChar+=1*s;
 
-    m_currencChar = Util::clamp(m_currencChar,0,m_charCount);
+    m_currencChar = Util::clamp(m_currencChar,0,m_charWidth*m_charHeight);
 
     return true;
 

@@ -89,7 +89,7 @@ int CharsetImage::FindClosestChar(PixelChar p)
 {
     int topScore=1E9;
     int winner = 0;
-    for (int i=0;i<256;i++) {
+    for (int i=0;i<m_charWidth*m_charHeight;i++) {
         int score = p.CompareLength2(m_data[i]);
         if (score<topScore) {
             topScore = score;
@@ -408,7 +408,7 @@ void CharsetImage::ToRaw(QByteArray &arr)
 void CharsetImage::ToQPixMaps(QVector<QPixmap> &map)
 {
     map.clear();
-    for (int i=0;i<m_charCount;i++) {
+    for (int i=0;i<m_charWidth*m_charHeight;i++) {
         map.append(ToQPixMap(i));
     }
 }
@@ -560,7 +560,7 @@ bool CharsetImage::KeyPress(QKeyEvent *e)
     if (m_currencChar>=m_charHeight*m_charWidth)
         m_currencChar=0;
 
-    m_currencChar = Util::clamp(m_currencChar,0,255);
+    m_currencChar = Util::clamp(m_currencChar,0,m_charWidth*m_charHeight-1);
 
 
     return true;

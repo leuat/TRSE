@@ -927,9 +927,11 @@ void FormImageEditor::updateCharSet()
 
 
     int width = charmap->m_charWidthDisplay;
+    int height = charmap->m_charHeightDisplay;
 //   ui->lstCharMap->setViewMode(QListView::IconMode);
    ui->lstCharMap->setColumnCount(width);
-   ui->lstCharMap->setRowCount(1+maps.count()/width);
+//   ui->lstCharMap->setRowCount(1+maps.count()/width);
+   ui->lstCharMap->setRowCount(height);
     int cnt=0;
     int j=0;
     int i=0;
