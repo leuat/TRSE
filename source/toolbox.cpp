@@ -31,6 +31,7 @@ Toolbox::Toolbox()
 void Toolbox::Initialize(QGridLayout* ly)
 {
     m_items.clear();
+    m_ly = ly;
     m_items.append(new ShapeBox("",":/resources/images/brush_circle.png"));
     m_items.append(new Spray("",":/resources/images/brush_spray.png"));
     m_items.append(new Dither("",":/resources/images/brush_dither.png"));
@@ -52,13 +53,15 @@ void Toolbox::BuildGUI(QGridLayout *ly)
     int size = 40;
     int row=0;
     int col=0;
+    Util::clearLayout(ly);
     for (int i=0;i<m_items.count();i++) {
         QPushButton *b = new QPushButton();
         //b->setGeometry(0,0,40,40);
-/*        QPalette p;
-        p.setColor(QPalette::Button, m_list[j].color);
-        p.setColor(QPalette::Window, m_list[j].color);*/
-//        b->setStyleSheet("background-color: rgb("+txtCol + "); color: rgb(0, 0, 0)");
+        QPalette p;
+  //      p.setColor(QPalette::Button, m_list[j].color);
+//        p.setColor(QPalette::Window, m_list[j].color);*/
+        if (m_current==m_items[i])
+            b->setStyleSheet("background-color: #204080");
   //      b->setPalette(p);
         b->setMaximumWidth(20);
         b->setMinimumWidth(20);
@@ -86,5 +89,6 @@ void Toolbox::handleButton(int data)
 {
     m_current = m_items[data];
     m_current->Init();
+    BuildGUI(m_ly);
 //    qDebug() << "Setting toolbox "<< data;
 }
