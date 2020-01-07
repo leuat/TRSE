@@ -364,5 +364,8 @@
         <file>resources/text/help/r/const.rtf</file>
         <file>resources/shaders/screen.frag</file>
         <file>resources/shaders/screen.vert</file>
+        <file>resources/images/brush_circle_background.png</file>
+        <file>resources/images/brush_rotate.png</file>
+        <file>resources/images/brush_copy.png</file>
     </qresource>
 </RCC>

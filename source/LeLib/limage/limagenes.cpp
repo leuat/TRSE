@@ -141,6 +141,17 @@ void LImageNES::SaveBin(QFile &file)
 
 }
 
+bool LImageNES::KeyPress(QKeyEvent *e)
+{
+    CharsetImage::KeyPress(e);
+
+    if (e->key()==Qt::Key_0 ) { Data::data.currentColor = m_cols[3];}
+    if (e->key()==Qt::Key_1 ) { Data::data.currentColor = m_cols[0];}
+    if (e->key()==Qt::Key_2 ) { Data::data.currentColor = m_cols[1];}
+    if (e->key()==Qt::Key_3 ) { Data::data.currentColor = m_cols[2];}
+
+}
+
 void LImageNES::LoadBin(QFile &file)
 {
     file.read( ( char * )( &m_data ),  m_charWidth*m_charHeight*12 );

@@ -154,20 +154,15 @@ bool GLWidget::eventFilter(QObject *object, QEvent *event) {
     if (m_cancel)
         return true;
     if(object==this) {
-        //        if  (event->type()==QEvent::Move)
-        //    qDebug() << "Move event";
+  //      qDebug() << event;
         mouseMoveEvent((QMouseEvent*)event);
-        /*        mousePressEvent((QMouseEvent*)event);
-            mouseReleaseEvent((QMouseEvent*)event);*/
-        //mousePressEvent((QMouseEvent*)event);
-        //mouseReleaseEvent((QMouseEvent*)event);
-        //m_updateThread->
-        if (event->type()==QEvent::Enter) Data::data.imageEvent = 1;
+        if (event->type()==QEvent::Enter) {
+            Data::data.imageEvent = 1;
+//            qDebug() << "ENTER EVENT";
+        }
         if (event->type()==QEvent::Leave) Data::data.imageEvent = 0;
-
-        //        Data::data.Redraw();
-
-        //        qDebug() << this;
+        if (m_buttonDown)
+            m_updateThread->m_currentButton=1;
 
         return false;
     }
@@ -187,7 +182,7 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *e)
     else
         m_updateThread->m_currentButton = 0;
 
-
+    m_buttonDown = false;
 
 //    emit EmitMouseMove();
     emit EmitMouseRelease();
@@ -222,8 +217,10 @@ void GLWidget::mousePressEvent(QMouseEvent *e)
 
     if(e->buttons() == Qt::LeftButton) {
         m_updateThread->m_currentButton = 1;
+        m_buttonDown = true;
         m_imageChanged = true;
     }
+
     emit EmitMouseMove();
 
 }

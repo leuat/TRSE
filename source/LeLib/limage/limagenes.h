@@ -3,6 +3,7 @@
 
 #include "source/LeLib/limage/multicolorimage.h"
 #include "source/LeLib/limage/charsetimage.h"
+#include <QKeyEvent>
 
 class LImageNES : public CharsetImage
 {
@@ -26,6 +27,7 @@ public:
 
     }
 
+    bool KeyPress(QKeyEvent *e) override;
     void LoadBin(QFile& file) override;
     void ApplyColor() override {
 

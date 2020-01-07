@@ -47,6 +47,7 @@ void WorkerThread::UpdateDrawing()
     if (Data::data.imageEvent == 0 && !m_hasLeft) {
         m_hasLeft = true;
         isPreview=false;
+
         Data::data.Redraw();
         //qDebug() << "HASLEFT " << m_time << m_currentPos;
         return;

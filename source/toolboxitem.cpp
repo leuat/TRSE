@@ -49,12 +49,19 @@ ToolboxItem::ToolboxItem(QString name, QString imagefile)
 void ShapeBox::Perform(int x, int y, unsigned char color, LImage* img, bool isPreview, int button)
 {
     float m= m_size;
+    float ll = 0.66;
+    MultiColorImage* mci = dynamic_cast<MultiColorImage*>(img);
+    if (mci!=nullptr) {
+        if (mci->isMultiColor())
+            ll = 2.4;
+    }
+
     for (int i=0;i<m;i++)
         for (int j=0;j<m;j++) {
             int d = m/2;
             float xx = i-d;
             float yy = (j-d);
-            float l = sqrt(xx*xx*img->m_scaleX + yy*yy);
+            float l = sqrt(xx*xx*ll + yy*yy);
 
             bool ok = l<m/2.5;
             if (m_type==1)

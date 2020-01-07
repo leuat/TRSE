@@ -9,9 +9,6 @@
 class LMetaChunkItem : public LImageContainerItem {
 public:
 
-    int HEADER_SIZE = 16;
-    int HEADER_MULTICOLOR = 0;
-
 //    QByteArray m_header;
 
     QByteArray m_data;

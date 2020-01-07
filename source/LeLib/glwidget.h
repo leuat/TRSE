@@ -24,7 +24,7 @@ public:
     ImageWorker* m_work = nullptr;
     bool m_active=false;
     bool m_cancel = false;
-
+    bool m_buttonDown = false;
     int m_prevButton = 0;
 
 

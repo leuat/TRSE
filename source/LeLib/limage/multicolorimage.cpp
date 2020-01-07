@@ -1287,7 +1287,7 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF
     //   center.setY(floor(center.y()));
 
 
-#pragma omp parallel for
+//#pragma omp parallel for
     for (int j=0;j<height;j++) {
         int* yline =(int*)img.scanLine(j);
         for (int i=0;i<width;i++) {

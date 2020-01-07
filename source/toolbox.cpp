@@ -37,9 +37,9 @@ void Toolbox::Initialize(QGridLayout* ly)
     m_items.append(new Dither("",":/resources/images/brush_dither.png"));
     m_items.append(new Filler("",":/resources/images/brush_fill.png"));
     m_items.append(new Line("",":/resources/images/brush_line.png"));
-    m_items.append(new CopyStamp("Copy",""));
-    m_items.append(new RotateAround("Rotate",""));
-    m_items.append(new ShapeBoxFilter("Non-bg",""));
+    m_items.append(new CopyStamp("",":/resources/images/brush_copy.png"));
+    m_items.append(new RotateAround("",":/resources/images/brush_rotate.png"));
+    m_items.append(new ShapeBoxFilter("",":/resources/images/brush_circle_background.png"));
 
 
     m_current = m_items[0];
@@ -50,7 +50,7 @@ void Toolbox::Initialize(QGridLayout* ly)
 
 void Toolbox::BuildGUI(QGridLayout *ly)
 {
-    int size = 40;
+    int size = 64;
     int row=0;
     int col=0;
     Util::clearLayout(ly);
@@ -73,7 +73,7 @@ void Toolbox::BuildGUI(QGridLayout *ly)
         ly->addWidget(b,row,col);
 
         b->setIcon(m_items[i]->m_icon);
-        b->setIconSize(QSize(b->width(), b->height()*2));
+        b->setIconSize(QSize(b->width(), b->height())*0.8);
 
         m_buttons.append(b);
         col++;

@@ -109,6 +109,9 @@ void FormImageEditor::onImageMouseEvent()
 
     showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
 
+    // This will update the current cell
+    if (dynamic_cast<LImageMetaChunk*>(m_work.m_currentImage->m_image)==nullptr)
+
     if (ui->lstCharMap->currentItem()!=nullptr) {
         int i = ui->lstCharMap->currentItem()->data(Qt::UserRole).toInt();
         CharsetImage* charmap = m_work.m_currentImage->m_image->getCharset();
@@ -1425,7 +1428,9 @@ void FormImageEditor::on_lstCharMap_currentItemChanged(QTableWidgetItem *current
     SetSingleCharsetEdit();
     Data::data.Redraw();
     Data::data.forceRedraw = true;
+//    qDebug() << m_work.m_currentImage->m_image->m_currencChar;
     onImageMouseEvent();
+  //  qDebug() << m_work.m_currentImage->m_image->m_currencChar;
 
 
 }
