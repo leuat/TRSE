@@ -81,6 +81,13 @@ void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *ini
     //ui->lblGrid->m_updateThread = t;
     m_updateThread.m_grid = &m_grid;
 //    m_grid.CreateGrid(40,25,m_updateThread.m_gridColor,4, 1, QPoint(0,0));
+
+    if (m_work.m_currentImage!=nullptr) {
+        bool is = m_work.m_currentImage->m_image->isMultiColor();
+        ui->chkDisplayMulticolor->setChecked(is);
+    }
+
+
     UpdateGrid();
 
 
@@ -117,35 +124,26 @@ void FormImageEditor::onImageMouseEvent()
 void FormImageEditor::onImageMouseReleaseEvent()
 {
     updateCharSet();
+
+    if (ui->lblImage->m_prevButton==2  && (QApplication::keyboardModifiers() & Qt::ControlModifier))
+        SelectFromLeftClick();
+
 }
+
+void FormImageEditor::SelectFromLeftClick()
+{
+    m_prefMode = m_keepMode;
+    SetSingleCharsetEdit();
+    m_work.m_currentImage->m_image->m_currencChar = m_work.m_currentImage->m_image->getCharAtPos((QPoint(m_updateThread.m_currentPos.x(),m_updateThread.m_currentPos.y())));
+    showDetailCharButtons(true);
+    Data::data.forceRedraw = true;
+    onImageMouseEvent();
+}
+
 
 FormImageEditor::~FormImageEditor()
 {
     delete ui;
-}
-
-void FormImageEditor::mousePressEvent(QMouseEvent *e)
-{
-/*    if(e->buttons() == Qt::LeftButton) {
-
-        m_work.m_currentImage->AddUndo();
-    }
-    if(e->buttons() == Qt::RightButton)
-        m_updateThread.m_currentButton = 2;
-    if(e->buttons() == Qt::LeftButton) {
-        m_updateThread.m_currentButton = 1;
-    }
-*/
-}
-
-void FormImageEditor::mouseReleaseEvent(QMouseEvent *e)
-{
-/*    if (m_updateThread.m_currentButton==2)
-        m_updateThread.m_currentButton = 0;
-    else
-        m_updateThread.m_currentButton = -1;
-*/
-    updateCharSet();
 }
 
 void FormImageEditor::wheelEvent(QWheelEvent *event)
@@ -649,23 +647,6 @@ void FormImageEditor::resizeEvent(QResizeEvent *event)
     //  ui->lblImage->setVisible(false);
 }
 
-void FormImageEditor::mouseMoveEvent(QMouseEvent *e)
-{
-    /*  if (m_work==nullptr)
-              return;
-          if (m_imgLabel==nullptr)
-              return;
-          if (m_work==nullptr)
-              return;
-          if (m_quit)
-              return;
-          if (m_work->m_currentImage==nullptr)
-              return;
-      */
-
-
-
-}
 
 
 void FormImageEditor::on_btnExportAsm_clicked()
@@ -1355,6 +1336,8 @@ void FormImageEditor::onSwapDisplayMode()
     else
         m_prefMode = CharsetImage::Mode::FULL_IMAGE;
 
+
+    showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
     SetSingleCharsetEdit();
     emit onImageMouseEvent();
     Data::data.forceRedraw = true;

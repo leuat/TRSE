@@ -99,9 +99,8 @@ public:
 
     void resizeEvent(QResizeEvent *event) override;
 
-    void mouseMoveEvent(QMouseEvent* e) override;
-    void mousePressEvent(QMouseEvent *e) override;
-    void mouseReleaseEvent(QMouseEvent *e) override;
+    void SelectFromLeftClick();
+
     void wheelEvent(QWheelEvent *event) override;
     void keyPressEvent(QKeyEvent* e) override;
     void keyReleaseEvent(QKeyEvent *e) override;

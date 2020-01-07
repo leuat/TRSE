@@ -34,7 +34,7 @@
 #include <QPointF>
 #include <QLabel>
 #include <source/toolbox.h>
-
+#include <QApplication>
 
 
 class WorkerThread : public QThread {

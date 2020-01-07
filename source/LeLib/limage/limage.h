@@ -296,6 +296,9 @@ public:
 
     virtual void CopyFrom(LImage* img);
 
+
+    virtual int getCharAtPos(QPoint p) { return 0;}
+
     virtual void SetCurrentType(WriteType wt) {
         m_writeType = wt;
     }
