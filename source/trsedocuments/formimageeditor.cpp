@@ -905,10 +905,10 @@ void FormImageEditor::updateCharSet()
     CharsetImage* charmap = m_work.m_currentImage->m_image->getCharset();
 
     ImageLevelEditor* le = dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image);
-    if (le!=nullptr && charmap==nullptr) {
+/*    if (le!=nullptr && charmap==nullptr) {
         Messages::messages.DisplayMessage(Messages::messages.CHARSET_WARNING);
         return;
-    }
+    }*/
     if (charmap == nullptr)
         return;
 
@@ -992,10 +992,10 @@ void FormImageEditor::updateSingleCharSet()
     UpdateCurrentMode();
     CharsetImage* charmap = m_work.m_currentImage->m_image->getCharset();
     ImageLevelEditor* le = dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image);
-    if (le!=nullptr && charmap==nullptr) {
+/*    if (le!=nullptr && charmap==nullptr) {
         Messages::messages.DisplayMessage(Messages::messages.CHARSET_WARNING);
         return;
-    }
+    }*/
     if (charmap == nullptr)
         return;
     if (charmap->m_currencChar<0)
