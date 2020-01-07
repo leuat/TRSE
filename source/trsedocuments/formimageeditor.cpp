@@ -98,12 +98,21 @@ void FormImageEditor::onImageMouseEvent()
         UpdateSpriteImages();
     if (dynamic_cast<LImageMetaChunk*>(m_work.m_currentImage->m_image)!=nullptr)
         UpdateSpriteImages();
-//    if (dynamic_cast<LImageCharsetRegular*>(m_work.m_currentImage->m_image)!=nullptr)
-  //      updateCharSet();
-
-    //    updateCharSet();
     updateSingleCharSet();
-    //    UpdateGrid();
+
+    if (ui->lstCharMap->currentItem()!=nullptr) {
+        int i = ui->lstCharMap->currentItem()->data(Qt::UserRole).toInt();
+        CharsetImage* charmap = m_work.m_currentImage->m_image->getCharset();
+
+        if (charmap->m_currencChar!=i) {
+            i = charmap->m_currencChar;
+            int x = i%charmap->m_charWidth;
+            int y = (i)/charmap->m_charWidth;
+            qDebug() << x << y << charmap->m_charWidth<<i;;
+            ui->lstCharMap->setCurrentCell(y,x);
+        }
+
+    }
 }
 
 void FormImageEditor::onImageMouseReleaseEvent()
@@ -263,6 +272,8 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             m_work.m_currentImage->m_image->renderPathGrid =!m_work.m_currentImage->m_image->renderPathGrid;
             ui->chkBackgroundArea->setChecked(m_work.m_currentImage->m_image->renderPathGrid);
         }
+
+
 
         emit onImageMouseEvent();
         Data::data.forceRedraw = true;

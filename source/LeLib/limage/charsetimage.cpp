@@ -549,11 +549,11 @@ bool CharsetImage::KeyPress(QKeyEvent *e)
         s=2;
 
     if (e->key()==Qt::Key_W)
-        m_currencChar-=m_charHeight*s;
+        m_currencChar-=m_charWidth*s;
     if (e->key()==Qt::Key_A)
         m_currencChar-=1*s;
     if (e->key()==Qt::Key_S)
-        m_currencChar+=m_charHeight*s;
+        m_currencChar+=m_charWidth*s;
     if (e->key()==Qt::Key_D)
         m_currencChar+=1*s;
 
