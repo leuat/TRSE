@@ -107,6 +107,8 @@ void FormImageEditor::onImageMouseEvent()
         UpdateSpriteImages();
     updateSingleCharSet();
 
+    showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
+
     if (ui->lstCharMap->currentItem()!=nullptr) {
         int i = ui->lstCharMap->currentItem()->data(Qt::UserRole).toInt();
         CharsetImage* charmap = m_work.m_currentImage->m_image->getCharset();
@@ -356,7 +358,7 @@ void FormImageEditor::Load(QString filename)
         return;
     m_work.New(img, filename);
 
-
+    m_prefMode = CharsetImage::Mode::FULL_IMAGE;
     PrepareImageTypeGUI();
     if (QFile::exists(m_projectIniFile->getString("charset_"+m_currentFileShort))) {
         if (dynamic_cast<ImageLevelEditor*>(img)!=nullptr || dynamic_cast<C64FullScreenChar*>(img)!=nullptr ||dynamic_cast<LImageMetaChunk*>(img)!=nullptr)
@@ -800,8 +802,10 @@ void FormImageEditor::on_btnCharsetFull_clicked()
     if (ci==nullptr)
         return;
 
+    ui->lblImage->setFocus();
+    ui->lstCharMap->setCurrentItem(nullptr);
+
     ci->m_currentMode = CharsetImage::Mode::FULL_IMAGE;
-    showDetailCharButtons(false);
     Data::data.forceRedraw = true;
     UpdateCurrentMode();
     onImageMouseEvent();
@@ -812,7 +816,6 @@ void FormImageEditor::on_btnCharset1x1_clicked()
     m_prefMode = CharsetImage::Mode::CHARSET1x1;
     m_keepMode = m_prefMode;
     SetSingleCharsetEdit();
-    showDetailCharButtons(true);
     Data::data.forceRedraw = true;
     onImageMouseEvent();
 
@@ -823,7 +826,6 @@ void FormImageEditor::on_btnCharset2x2_clicked()
     m_prefMode = CharsetImage::Mode::CHARSET2x2;
     m_keepMode = m_prefMode;
     SetSingleCharsetEdit();
-    showDetailCharButtons(true);
     Data::data.forceRedraw = true;
     UpdateCurrentMode();
     onImageMouseEvent();
@@ -1336,8 +1338,12 @@ void FormImageEditor::onSwapDisplayMode()
 //    m_keepMode = m_prefMode;
     if (m_prefMode==CharsetImage::Mode::FULL_IMAGE)
         m_prefMode = m_keepMode;
-    else
+    else {
         m_prefMode = CharsetImage::Mode::FULL_IMAGE;
+        ui->lblImage->setFocus();
+        ui->lstCharMap->setCurrentItem(nullptr);
+
+    }
 
 
     showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
