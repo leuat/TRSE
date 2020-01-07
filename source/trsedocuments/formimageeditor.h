@@ -142,6 +142,8 @@ private slots:
 
     void on_btnGenerate_clicked();
 
+    void showDetailCharButtons(bool doShow);
+
     void on_btnFlipVert_clicked();
     void on_btnFlipHorisontal_clicked();
 

@@ -333,6 +333,7 @@ void FormImageEditor::Load(QString filename)
     if (filename=="")
         return;
 */
+    showDetailCharButtons(false);
 
     LImage* img = LImageIO::Load(filename);
     if (img==nullptr)
@@ -644,6 +645,14 @@ void FormImageEditor::on_btnGenerate_clicked()
 
 }
 
+void FormImageEditor::showDetailCharButtons(bool doShow)
+{
+    ui->btnCharsetCopy->setVisible(doShow);
+    ui->btnCharsetPaste->setVisible(doShow);
+    ui->btnFlipVert->setVisible(doShow);
+    ui->btnFlipHorisontal->setVisible(doShow);
+}
+
 
 void FormImageEditor::on_btnFlipVert_clicked()
 {
@@ -758,6 +767,7 @@ void FormImageEditor::on_btnCharsetFull_clicked()
         return;
 
     ci->m_currentMode = CharsetImage::Mode::FULL_IMAGE;
+    showDetailCharButtons(false);
     Data::data.forceRedraw = true;
     UpdateCurrentMode();
     onImageMouseEvent();
@@ -767,6 +777,7 @@ void FormImageEditor::on_btnCharset1x1_clicked()
 {
     m_prefMode = CharsetImage::Mode::CHARSET1x1;
     SetSingleCharsetEdit();
+    showDetailCharButtons(true);
     Data::data.forceRedraw = true;
     onImageMouseEvent();
 
@@ -776,6 +787,7 @@ void FormImageEditor::on_btnCharset2x2_clicked()
 {
     m_prefMode = CharsetImage::Mode::CHARSET2x2;
     SetSingleCharsetEdit();
+    showDetailCharButtons(true);
     Data::data.forceRedraw = true;
     UpdateCurrentMode();
     onImageMouseEvent();
@@ -785,6 +797,7 @@ void FormImageEditor::on_btnCharset2x2Repeat_clicked()
 {
     m_prefMode = CharsetImage::Mode::CHARSET2x2_REPEAT;
     SetSingleCharsetEdit();
+    showDetailCharButtons(true);
     UpdateCurrentMode();
     Data::data.forceRedraw = true;
     onImageMouseEvent();
@@ -865,28 +878,11 @@ void FormImageEditor::updateCharSet()
     QVector<QPixmap> maps;
     charmap->ToQPixMaps(maps);
 
+    ui->lstCharMap->setSelectionMode(QAbstractItemView::SingleSelection);
 
 
 
-  /*  Util::clearLayout(ui->grdChars);
-    int i=0;
-    int j=0;
-    for (int cnt=0;cnt<maps.count();cnt++) {
-        QPushButton* item = new QPushButton(this);
-        item->setAutoFillBackground(true);
-        item->setText("");
-        item->setIcon(maps[cnt]);
-        QObject::connect( item, &QPushButton::clicked,  [=](){ SelectCharacter(cnt);} );
 
-        ui->grdChars->addWidget(item, j,i);
-
-        i++;
-        if (i>=8) {
-            i=0;
-            j++;
-        }
-    }
-*/
     int width = charmap->m_charWidthDisplay;
 //   ui->lstCharMap->setViewMode(QListView::IconMode);
    ui->lstCharMap->setColumnCount(width);
