@@ -91,7 +91,7 @@ public:
 
     void RenderEffect(QMap<QString, float> params) override;
 
-    void CopyFrom(LImage* mc);
+    void CopyFrom(LImage* mc) override;
     bool KeyPress(QKeyEvent *e) override;
 
     void setLimitedPixel(int x, int y, unsigned int color);

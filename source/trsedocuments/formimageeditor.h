@@ -71,6 +71,7 @@ public:
     QVector<int> m_keepSpriteChar;
 
     CharsetImage::Mode m_prefMode = CharsetImage::Mode::CHARSET1x1;
+    CharsetImage::Mode m_keepMode = CharsetImage::Mode::CHARSET1x1;
 
     void UpdatePalette();
     void updateCharSet();
@@ -94,6 +95,7 @@ public:
     void OpenSelectCharset();
     void Reload() override;
 
+    bool eventFilter(QObject *ob, QEvent *e) override;
 
     void resizeEvent(QResizeEvent *event) override;
 
@@ -134,7 +136,7 @@ private:
     Ui::Formimageeditor *ui;
 
 private slots:
-
+    void onSwapDisplayMode();
     void onImageMouseEvent();
     void onImageMouseReleaseEvent();
 

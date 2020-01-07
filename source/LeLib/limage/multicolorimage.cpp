@@ -1224,6 +1224,13 @@ void MultiColorImage::ForceBackgroundColor(int col, int swapCol)
         */
 }
 
+void MultiColorImage::SwapChars(int p1, int p2)
+{
+    PixelChar a = m_data[p1];
+    m_data[p1] = m_data[p2];
+    m_data[p2] = a;
+}
+
 uchar PixelChar::Swap(int a, int b, uchar c)
 {
         // damn

@@ -193,6 +193,13 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *e)
 
 }
 
+/*void GLWidget::keyPressEvent(QKeyEvent *e)
+{
+    if (e->key() == Qt::Key_Space)  {
+        emit EmitSwapDisplayMode();
+    }
+}
+*/
 void GLWidget::mousePressEvent(QMouseEvent *e)
 {
     if (m_cancel)

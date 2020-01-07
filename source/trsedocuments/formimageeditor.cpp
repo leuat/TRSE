@@ -61,13 +61,16 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
 
     connect(ui->lblImage, SIGNAL(EmitMouseMove()), this, SLOT(onImageMouseEvent()));
     connect(ui->lblImage, SIGNAL(EmitMouseRelease()), this, SLOT(onImageMouseReleaseEvent()));
+    connect(ui->lblImage, SIGNAL(EmitSwapDisplayMode()), this, SLOT(onSwapDisplayMode()));
 
 
     m_updateThread.SetCurrentImage(&m_work, &m_toolBox);
 //    ui->lblImage->initializeGL();
 //    setFocusPolicy(Qt::StrongFocus);
 
-
+//    ui->lblImage->setFocusPolicy(Qt::StrongFocus);
+  //  setFocusPolicy(Qt::StrongFocus);
+    installEventFilter(this);
 }
 
 void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *iniProject) {
@@ -171,6 +174,8 @@ void FormImageEditor::wheelEvent(QWheelEvent *event)
 void FormImageEditor::keyPressEvent(QKeyEvent *e)
 {
     TRSEDocument::keyPressEvent(e);
+
+
     //    qDebug() << (QApplication::keyboardModifiers() & Qt::ShiftModifier) << " + "  << rand()%100;
         if (e->key()==Qt::Key_Shift) {
             m_toolBox.m_current->m_type = 1;
@@ -589,13 +594,48 @@ void FormImageEditor::Reload()
 
 }
 
+bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
+{
+    if(e->type() == QEvent::KeyPress || e->type()==QEvent::ShortcutOverride) {
+        const QKeyEvent *ke = static_cast<QKeyEvent *>(e);
+//        qDebug() << "HOO" << (ke->key()==Qt::Key_Space) << ke->key()   ;
+        if(ke->key()== Qt::Key_Space) {
+            onSwapDisplayMode();
+            return true;
+        }
+        if (ke->key() == Qt::Key_F1) {
+            ui->cmbZoomLevel->setCurrentIndex(0);
+            on_cmbZoomLevel_activated("1x");
+            return true;
+        }
+        if (ke->key() == Qt::Key_F2) {
+            ui->cmbZoomLevel->setCurrentIndex(1);
+            on_cmbZoomLevel_activated("2x");
+            return true;
+        }
+        if (ke->key() == Qt::Key_F3) {
+            ui->cmbZoomLevel->setCurrentIndex(2);
+            on_cmbZoomLevel_activated("4x");
+            return true;
+        }
+        if (ke->key() == Qt::Key_F4) {
+            ui->cmbZoomLevel->setCurrentIndex(3);
+            on_cmbZoomLevel_activated("8x");
+            return true;
+        }
+
+       return false;
+    }
+    return QWidget::eventFilter(ob, e);
+}
+
 void FormImageEditor::resizeEvent(QResizeEvent *event)
 {
     ui->lblImage->setVisible(true);
     ui->lblGrid->setGeometry(ui->lblImage->geometry());
     ui->lblGrid->repaint();
-   // qDebug() <<
-//    qDebug() << ui->lblImage->geometry();
+    // qDebug() <<
+    //    qDebug() << ui->lblImage->geometry();
     //  ui->lblImage->setVisible(false);
 }
 
@@ -776,6 +816,7 @@ void FormImageEditor::on_btnCharsetFull_clicked()
 void FormImageEditor::on_btnCharset1x1_clicked()
 {
     m_prefMode = CharsetImage::Mode::CHARSET1x1;
+    m_keepMode = m_prefMode;
     SetSingleCharsetEdit();
     showDetailCharButtons(true);
     Data::data.forceRedraw = true;
@@ -786,6 +827,7 @@ void FormImageEditor::on_btnCharset1x1_clicked()
 void FormImageEditor::on_btnCharset2x2_clicked()
 {
     m_prefMode = CharsetImage::Mode::CHARSET2x2;
+    m_keepMode = m_prefMode;
     SetSingleCharsetEdit();
     showDetailCharButtons(true);
     Data::data.forceRedraw = true;
@@ -796,6 +838,7 @@ void FormImageEditor::on_btnCharset2x2_clicked()
 void FormImageEditor::on_btnCharset2x2Repeat_clicked()
 {
     m_prefMode = CharsetImage::Mode::CHARSET2x2_REPEAT;
+    m_keepMode = m_prefMode;
     SetSingleCharsetEdit();
     showDetailCharButtons(true);
     UpdateCurrentMode();
@@ -1294,6 +1337,21 @@ void FormImageEditor::UpdateSpriteImages()
 
 }
 
+void FormImageEditor::onSwapDisplayMode()
+{
+//    m_keepMode = m_prefMode;
+    if (m_prefMode==CharsetImage::Mode::FULL_IMAGE)
+        m_prefMode = m_keepMode;
+    else
+        m_prefMode = CharsetImage::Mode::FULL_IMAGE;
+
+    SetSingleCharsetEdit();
+    emit onImageMouseEvent();
+    Data::data.forceRedraw = true;
+    Data::data.Redraw();
+
+}
+
 
 void FormImageEditor::on_btnExportKoala_clicked()
 {
@@ -1354,7 +1412,7 @@ void FormImageEditor::on_lstCharMap_currentItemChanged(QTableWidgetItem *current
 
     if (current==nullptr)
         return;
-
+    m_prefMode = m_keepMode;
     SelectCharacter(current->data(Qt::UserRole).toInt());
     SetSingleCharsetEdit();
     Data::data.Redraw();
@@ -1788,3 +1846,4 @@ void FormImageEditor::on_btnCharSelect_clicked()
 {
     OpenSelectCharset();
 }
+

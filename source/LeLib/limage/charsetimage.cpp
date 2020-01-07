@@ -538,6 +538,13 @@ bool CharsetImage::KeyPress(QKeyEvent *e)
 
     int s = 1;
 
+    int add = 0;
+    if (e->key()==Qt::Key_0 ) { Data::data.currentColor = m_color.c[0];}
+    if (e->key()==Qt::Key_1 ) { Data::data.currentColor = m_color.c[1];}
+    if (e->key()==Qt::Key_2 ) { Data::data.currentColor = m_color.c[2];}
+    if (e->key()==Qt::Key_3 ) { Data::data.currentColor = m_color.c[3];}
+
+
     if (m_currentMode==CHARSET2x2 || m_currentMode==CHARSET2x2_REPEAT)
         s=2;
 

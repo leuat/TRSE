@@ -148,6 +148,7 @@ public:
 
 
 
+    void SwapChars(int p1, int p2);
 
 
     void CalculateCharIndices();
@@ -164,7 +165,7 @@ public:
     unsigned int getPixel(int x, int y) override;
 
     void Reorganize();
-    bool KeyPress(QKeyEvent *e) override;
+    virtual bool KeyPress(QKeyEvent *e) override;
 
     void SaveBin(QFile& f) override;
     void LoadBin(QFile& f) override;

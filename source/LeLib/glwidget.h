@@ -44,6 +44,7 @@ public:
     bool eventFilter(QObject *object, QEvent *event) override;
 
     void mouseReleaseEvent(QMouseEvent *e) override;
+//    void keyPressEvent(QKeyEvent *e) override;
 
     void mousePressEvent(QMouseEvent *e) override;
 
@@ -51,7 +52,7 @@ public:
 signals:
     void EmitMouseMove();
     void EmitMouseRelease();
-
+    void EmitSwapDisplayMode();
 
 
 };
