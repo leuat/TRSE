@@ -108,7 +108,6 @@ void FormImageEditor::onImageMouseEvent()
             i = charmap->m_currencChar;
             int x = i%charmap->m_charWidth;
             int y = (i)/charmap->m_charWidth;
-            qDebug() << x << y << charmap->m_charWidth<<i;;
             ui->lstCharMap->setCurrentCell(y,x);
         }
 
