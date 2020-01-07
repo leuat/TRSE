@@ -150,6 +150,7 @@ bool LImageNES::KeyPress(QKeyEvent *e)
     if (e->key()==Qt::Key_2 ) { Data::data.currentColor = m_cols[1];}
     if (e->key()==Qt::Key_3 ) { Data::data.currentColor = m_cols[2];}
 
+    return true;
 }
 
 void LImageNES::LoadBin(QFile &file)
