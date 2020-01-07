@@ -25,6 +25,7 @@ public:
     bool m_active=false;
     bool m_cancel = false;
 
+    int m_prevButton = 0;
 
 
     GLWidget();

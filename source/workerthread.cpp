@@ -124,8 +124,8 @@ void WorkerThread::UpdateDrawing()
 
 //        pos.setX(pos.x()-0.25f);
 //        pos.setY(pos.y()-0.25f);
-
-        m_toolBox->m_current->Perform(pos.x(), pos.y(), col, img, isPreview, m_currentButton);
+        if (!(QApplication::keyboardModifiers() & Qt::ControlModifier))
+            m_toolBox->m_current->Perform(pos.x(), pos.y(), col, img, isPreview, m_currentButton);
         m_currentPosInImage = img->GetCurrentPosInImage(pos.x(), pos.y());
         Data::data.Redraw();
     }

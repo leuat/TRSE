@@ -157,6 +157,9 @@ public:
     void LoadCharset(QString file, int skipBttes) override;
     bool isMultiColor() override { return m_bitMask==0b11; }
 
+    virtual int getCharAtPos(QPoint p) override;
+
+
     void onFocus() override;
 
 //    unsigned char m_border=0, m_background=0;

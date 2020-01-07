@@ -180,6 +180,7 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *e)
         return;
     if (m_updateThread==nullptr)
         return;
+    m_prevButton = m_updateThread->m_currentButton;
     if (m_updateThread->m_currentButton==1) {
         m_updateThread->m_currentButton = -1;
     }
