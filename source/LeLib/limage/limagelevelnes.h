@@ -28,6 +28,9 @@ public:
 
     void LoadBin(QFile &file) override;
 
+    void SetBank(int bank) override;
+
+    void LoadCharset(QString file, int skipBttes) override;
 
 };
 

@@ -120,6 +120,7 @@ void LImageMetaChunk::LoadCharset(QString file, int skipBytes)
         m_charset = nullptr;
 
     }
+//    qDebug() << "LOADING : " << file;
     m_colorList.m_list = m_charset->m_colorList.m_list;
     m_colorList.m_nesPPU = m_charset->m_colorList.m_nesPPU;
     m_colorList.m_curPal = m_charset->m_colorList.m_curPal;

@@ -115,6 +115,11 @@ void LImageNES::ExportBin(QFile &file)
     wf.write(ba);
     wf.close();
 
+    QByteArray d2;
+    d2.append(data);
+    d2.append(ba);
+    Util::SaveByteArray(d2,f.split(".")[0] + ".chr");
+
 }
 
 void LImageNES::setMultiColor(bool doSet)
@@ -140,6 +145,7 @@ void LImageNES::SaveBin(QFile &file)
     file.write(m_colorList.m_nesPPU);
 
 }
+
 
 bool LImageNES::KeyPress(QKeyEvent *e)
 {

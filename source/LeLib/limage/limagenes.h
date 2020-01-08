@@ -27,6 +27,9 @@ public:
 
     }
 
+
+
+
     bool KeyPress(QKeyEvent *e) override;
     void LoadBin(QFile& file) override;
     void ApplyColor() override {

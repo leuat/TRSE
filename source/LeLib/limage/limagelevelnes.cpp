@@ -16,7 +16,7 @@ LImageLevelNES::LImageLevelNES(LColorList::Type t) : ImageLevelEditor(t)
     m_supports.compressedExport = false;
     m_supports.displayForeground = false;
 
-
+    m_currentBank = 1;
     m_GUIParams[btnLoadCharset] ="Load charset";
     m_GUIParams[btn1x1] = "";
     m_GUIParams[btn2x2] = "";
@@ -130,6 +130,7 @@ void LImageLevelNES::Initialize()
             m_levels[p]->m_CharData.fill(0);
             m_levels[p]->m_ColorData.fill(0);
         }
+    SetBank(m_currentBank);
 
 }
 
@@ -158,6 +159,18 @@ void LImageLevelNES::LoadBin(QFile &file)
     }
 
     SetLevel(QPoint(0,0));
+}
+
+void LImageLevelNES::SetBank(int bank)
+{
+    if (m_charset!=nullptr)
+        m_charset->SetBank(bank);
+}
+
+void LImageLevelNES::LoadCharset(QString file, int skipBttes)
+{
+    ImageLevelEditor::LoadCharset(file,skipBttes);
+    m_colorList.m_nesPPU = m_charset->m_colorList.m_nesPPU;
 }
 
 void LImageLevelNES::ExportBin(QFile &file)

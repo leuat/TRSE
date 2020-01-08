@@ -184,6 +184,7 @@ void ImageLevelEditor::LoadBin(QFile &file)
     }
 
     SetLevel(QPoint(0,0));
+
 }
 
 void ImageLevelEditor::BuildData(QTableWidget *tbl, QStringList header)

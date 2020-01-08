@@ -598,7 +598,7 @@ void LColorList::FillComboBox(QComboBox *cmb)
         QPixmap pixmap(16,16);
         pixmap.fill(m_list[i].color);
         QIcon icon(pixmap);
-        cmb->addItem(icon,"");
+        cmb->addItem(icon,Util::numToHex(i));
     }
 }
 

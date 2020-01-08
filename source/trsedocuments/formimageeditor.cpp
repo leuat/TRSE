@@ -111,6 +111,7 @@ void FormImageEditor::onImageMouseEvent()
 
     // This will update the current cell
     if (dynamic_cast<LImageMetaChunk*>(m_work.m_currentImage->m_image)==nullptr)
+        if (dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image)==nullptr)
 
     if (ui->lstCharMap->currentItem()!=nullptr) {
         int i = ui->lstCharMap->currentItem()->data(Qt::UserRole).toInt();
@@ -409,6 +410,7 @@ void FormImageEditor::Load(QString filename)
      if (m_work.m_currentImage->m_image->m_type==LImage::NES) {
         on_cmbNesPalette_currentIndexChanged(0);
     }
+    ui->cmbBank->setCurrentIndex(1);
 
     onImageMouseEvent();
     updateCharSet();
@@ -543,7 +545,6 @@ void FormImageEditor::UpdatePalette()
     ui->cmbMC2->setVisible(m_work.m_currentImage->m_image->m_supports.displayMC2);
     ui->cmbBorderMain_3->setVisible(m_work.m_currentImage->m_image->m_supports.displayForeground);
     ui->layoutColorsEdit_3->setEnabled(m_work.m_currentImage->m_image->m_supports.displayColors);
-
     ui->cmbBank->setVisible(m_work.m_currentImage->m_image->m_supports.displayBank);
     if (!m_work.m_currentImage->m_image->m_supports.displayBank) {
         // NES stuff: turn off tiles, bank
