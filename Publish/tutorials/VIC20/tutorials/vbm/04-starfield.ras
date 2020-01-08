@@ -26,8 +26,8 @@ procedure StarsOffScreen();
 begin
 
 	// x and y posistions cover one quadrant only
-	if (xp[ i ] > 78) then returnvalue( true ); // 160 / 2 - 2
-	if (yp[ i ] > 94) then returnvalue( true ); // 192 / 2 - 2
+	if (xp[ i ] > 158) then returnvalue( true ); // 160 / 2 - 2
+	if (yp[ i ] > 190) then returnvalue( true ); // 192 / 2 - 2
 
 	returnvalue( false );
 
@@ -45,14 +45,14 @@ begin
 		//begin
 		
 		if (xd[ i ] = 0) then
-			x := 78 + xp[ i ]
+			x := 78 + (xp[ i ] >> 1)
 		else
-			x := 81 - xp[ i ];
+			x := 81 - (xp[ i ] >> 1);
 			
 		if (yd[ i ] = 0) then
-			y := 94 + yp[ i ]
+			y := 94 + (yp[ i ] >> 1)
 		else
-			y := 99 - yp[ i ];
+			y := 99 - (yp[ i ] >> 1);
 	
 		if (tm[ i ] < 11) then
 			vbmDrawDotE( x, y )
@@ -70,8 +70,8 @@ end;
 procedure SetupStar();
 begin
 
-	xp[ i ] := random() >> 2;
-	yp[ i ] := random() >> 2;
+	xp[ i ] := 3+(random() >> 1);
+	yp[ i ] := 2+(random() >> 1);
 	tm[ i ] := 0;
 	xd[ i ] := random() & 1;
 	yd[ i ] := random() & 1;	
