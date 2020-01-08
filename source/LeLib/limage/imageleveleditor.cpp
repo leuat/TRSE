@@ -323,11 +323,11 @@ bool ImageLevelEditor::PixelToPos(int x, float y, int& pos, int w, int h)
     y/=16.0;
 */
 
-    x=x/(float)m_width*w;
-    y=y/(float)m_height*h;
+    x=x/(float)m_width*(float)w;
+    y=y/(float)m_height*(float)h;
 
-    x=x-m_meta.m_startx;
-    y=(y-(m_meta.m_starty*0.5-0.01));
+//    x=x-m_meta.m_startx;
+  //  y=(y-(m_meta.m_starty*0.5-0.01));
     if (y<0) return false;
     if (x<0) return false;
 
@@ -366,11 +366,15 @@ void ImageLevelEditor::Fix()
 void ImageLevelEditor::setPixel(int x, int y, unsigned int color)
 {
     int pos;
+
     if (!PixelToPos(x,y, pos,m_meta.m_width, m_meta.m_height))
         return; // out of bounds
 
+
     if (m_currentLevel==nullptr)
         return;
+
+    m_currencChar = 1;
 
     if (m_writeType==Character)
         m_currentLevel->m_CharData[pos] = m_currencChar;
