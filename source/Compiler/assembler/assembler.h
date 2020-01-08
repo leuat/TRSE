@@ -178,7 +178,7 @@ public:
     Appendix* m_currentBlock = nullptr;
     QVector<Appendix*> m_blockStack;
 
-    int m_zbyte = 0;
+    int m_zbyte = 0x80;
 
     void StartMemoryBlock(QString pos) {
         //EndMemoryBlock();

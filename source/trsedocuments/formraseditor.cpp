@@ -310,7 +310,10 @@ void FormRasEditor::BuildNes(QString prg)
 
     data.insert(0,header);
     int dc = data.count();
-    int j=pow(2,14)*m_projectIniFile->getdouble("nes_16k_blocks")-dc+16;
+//    int dCount = m_projectIniFile->getdouble("nes_16k_blocks");
+    //if (dc<pow(2,14))
+    int j=pow(2,14)*2-dc+16;
+//    qDebug() << "j";
     for (int i=0;i<j;i++)
         data.append((char)0);
 

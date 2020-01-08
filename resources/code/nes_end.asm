@@ -1,6 +1,5 @@
-EndSymbol:
 
-    org $FFFA     ;first of the three vectors starts here
+;    org $FFFA     ;first of the three vectors starts here
 ;  org $BFF8     ;first of the three vectors starts here
   .word NMI        ;when an NMI happens (once per frame if enabled) the 
                    ;processor will jump to the label NMI:
