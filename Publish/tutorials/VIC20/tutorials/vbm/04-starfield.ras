@@ -2,8 +2,8 @@ program StarField;
 var  
 
 // declare all your include files here
-chars: incbin( "resources/tilemap/vbm-char.bin", $4000 ); // individual tile characters
-map: incbin( "resources/tilemap/vbm-map.bin", $4490 ); // full screen map of tiles
+chars: incbin( "resources/tilemap/sshipchar.bin", $4000 ); // individual tile characters
+map: incbin( "resources/tilemap/sshipmap.bin", $4148 ); // full screen map of tiles
 
 @startblock $2000 "CODE"
 // declare all your variables and procedures here
@@ -129,6 +129,9 @@ begin
 	
 	// set screen colour
 	SCREEN_BG_COLOR := SCREEN_BG_BLACK + BLACK;
+
+	// draw vic 20 ship
+	vbmDrawTileMap( map, chars, 6,114, 18,170 ); //12,7
 
 	// set up all stars with random locations and direction
 	for i := 0 to @NUM_STARS do
