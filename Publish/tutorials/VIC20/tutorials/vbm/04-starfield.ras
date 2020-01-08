@@ -1,0 +1,166 @@
+program StarField;
+var  
+
+// declare all your include files here
+chars: incbin( "resources/tilemap/sshipchar.bin", $4000 ); // individual tile characters
+map: incbin( "resources/tilemap/sshipmap.bin", $4148 ); // full screen map of tiles
+
+@startblock $2000 "CODE"
+// declare all your variables and procedures here
+
+@define NUM_STARS 20
+
+	i, j : byte;
+	x, y, dx, dy : byte;
+	
+	xp : array[ @NUM_STARS ] of byte;  // x positions
+	yp : array[ @NUM_STARS ] of byte;	// y positions
+	tm : array[ @NUM_STARS ] of byte;	// time alive counter
+	xd : array[ @NUM_STARS ] of byte;	// x direction 0=right, 1=left
+	yd : array[ @NUM_STARS ] of byte;	// y direction 0=down, 1=up
+
+
+
+// return true if star at index i has left the screen boundary
+procedure StarsOffScreen();
+begin
+
+	// x and y posistions cover one quadrant only
+	if (xp[ i ] > 158) then returnvalue( true ); // 160 / 2 - 2
+	if (yp[ i ] > 190) then returnvalue( true ); // 192 / 2 - 2
+
+	returnvalue( false );
+
+end;
+
+
+// Draw all stars with EOR operation
+procedure DrawStars();
+begin
+
+	for i := 0 to @NUM_STARS do
+	begin
+	
+		//if (StarsOffScreen() = false) then
+		//begin
+		
+		if (xd[ i ] = 0) then
+			x := 78 + (xp[ i ] >> 1)
+		else
+			x := 81 - (xp[ i ] >> 1);
+			
+		if (yd[ i ] = 0) then
+			y := 94 + (yp[ i ] >> 1)
+		else
+			y := 99 - (yp[ i ] >> 1);
+	
+		if (tm[ i ] < 11) then
+			vbmDrawDotE( x, y )
+		else
+			vbmDrawBlotE( x, y );
+			
+		//end;
+
+	end;
+
+end;
+
+
+// Set up a new star location and direction
+procedure SetupStar();
+begin
+
+	xp[ i ] := 3+(random() >> 1);
+	yp[ i ] := 2+(random() >> 1);
+	tm[ i ] := 0;
+	xd[ i ] := random() & 1;
+	yd[ i ] := random() & 1;	
+
+end;
+
+
+// Move stars using their current position
+procedure MoveStars();
+begin
+
+	for i := 0 to @NUM_STARS do
+	begin
+			
+		dx := xp[ i ] ;//-80;
+		dy := yp[ i ] ;//-96;
+		
+		dx := dx >> 4;
+		dy := dy >> 4;
+		if (dx = 0) then dx := 1;
+		if (dy = 0) then dy := 1;
+		
+		xp[ i ] := xp[ i ] + dx;
+		yp[ i ] := yp[ i ] + dy;
+		tm[ i ] := tm[ i ] + 1;
+
+		if (StarsOffScreen()) then
+		begin
+		
+			SetupStar();
+			x := xp[ i ] ;
+			y := yp[ i ] ;
+			
+		end;
+		
+	end;
+
+end;
+
+
+
+//
+// **** MAIN PROGRAM ****
+//
+begin
+
+	// set the default display mode showing all 20 columns
+	vbmSetDisplayMode( 0 );
+	
+	// Clear the bitmap with a value of 0
+	vbmClear( 0 );
+	
+	// set the colour memory to WHITE
+	vbmClearColor( WHITE );
+	
+	// set screen colour
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK + BLACK;
+
+	// draw vic 20 ship
+	vbmDrawTileMap( map, chars, 6,114, 18,170 ); //12,7
+
+	// set up all stars with random locations and direction
+	for i := 0 to @NUM_STARS do
+		SetupStar();
+
+
+	// Main loop
+	while (true) do
+	begin
+	
+		// draw star with EOR
+		DrawStars();
+		
+		// wait for raster beam reaching further down the screen
+		waitforraster( 125 );
+		/* uncomment to slow down
+		waitforraster( 124 );
+		waitforraster( 123 );
+		waitforraster( 122 );
+		waitforraster( 121 );
+		waitforraster( 120 );
+		*/
+
+		// erase stars by redrawing with EOR
+		DrawStars();
+
+		// move all stars to a new position
+		MoveStars();
+
+	end;
+	
+end.
