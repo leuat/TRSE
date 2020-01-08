@@ -951,8 +951,12 @@ void ASTDispather6502::dispatch(NodeBlock *node)
         node->m_compoundStatement->Accept(this);
 
     as->PopBlock(node->m_currentLineNumber);
-    if (node->m_isMainBlock && Syntax::s.m_currentSystem->m_system == AbstractSystem::NES)
+    if (node->m_isMainBlock && Syntax::s.m_currentSystem->m_system == AbstractSystem::NES) {
+        as->Label("EndSymbol");
+        as->StartMemoryBlock("$FFFA");
         as->IncludeFile(":resources/code/nes_end.asm");
+        as->EndMemoryBlock();
+    }
 
     node->PopZeroPointers(as);
 
@@ -1068,11 +1072,12 @@ void ASTDispather6502::IncSid(NodeVarDecl *node) {
     // Init address or load address? hmmm
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES) {
-        if (node->sid.m_loadAddress!=0x8000) {
-            Appendix app("$8000");
-            app.Append("org $8000",1);
-            app.Append("NSFfiller dc.b 0",0);
-            as->m_appendix.append(app);
+
+        if (node->sid.m_loadAddress!=0x8000 && Syntax::s.m_currentSystem->m_programStartAddress!=0x8000) {
+          Appendix app("$8000");
+          app.Append("org $8000",1);
+          app.Append("NSFfiller dc.b 0",0);
+          as->m_appendix.append(app);
         }
     }
 
@@ -1093,7 +1098,7 @@ void ASTDispather6502::IncSid(NodeVarDecl *node) {
     }
     node->m_fileSize = size;
 
-    qDebug() << "LOAD ADDRESS **** " << node->sid.m_loadAddress;
+//    qDebug() << "LOAD ADDRESS **** " << Util::numToHex(node->sid.m_loadAddress);
     as->blocks.append(new MemoryBlock(node->sid.m_loadAddress,node->sid.m_loadAddress+size, MemoryBlock::MUSIC, node->sid.m_fileName));
 
 
