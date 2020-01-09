@@ -78,13 +78,9 @@ void LImageMetaChunk::CopyFrom(LImage *mc)
         m_img = img->m_img;
         m_charset= img->m_charset;
         m_currencChar = img->m_currencChar;
-/*        for (LImageContainerItem* mci : img->m_items) {
-            LMetaChunkItem *m = dynamic_cast<LMetaChunkItem*>(mci);
-            AddNew(m->m_width, m->m_height);
-            m_current = m_items.count()-1;
-            getCur()->m_data = m->m_data;
-        }*/
+
         m_items.clear();
+
         AddNew(img->getCur()->m_width, img->getCur()->m_height);
         getCur()->m_attributes = img->getCur()->m_attributes;
         getCur()->m_data = img->getCur()->m_data;
@@ -101,6 +97,7 @@ void LImageMetaChunk::CopyFrom(LImage *mc)
 //        m_current = img->m_current;
         m_current = 0;
         m_currentBank = img->m_currentBank;
+        m_charWidthDisplay = img->m_charWidthDisplay;
  /*       m_colorList.m_list.clear();
         for (LColor l :  img->m_colorList.m_list)
             m_colorList.m_list.append(l);
@@ -167,6 +164,7 @@ unsigned int LImageMetaChunk::getPixel(int x, int y)
   //  qDebug() << "Vals : " << QString::number(val);
 //    val = 4;
 
+//    qDebug() << m_charset->m_scale;
     int xp = x/(float)m_width*m_pixelWidth*getCur()->m_width;
     int yp = y/(float)m_height*m_pixelHeight*getCur()->m_height;
 

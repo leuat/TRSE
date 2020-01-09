@@ -464,8 +464,9 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 
     if (dynamic_cast<LImageMetaChunk*>(m_charset)!=nullptr) {
         val = m_charset->getCharPixel(v, col, x,y);
-        if (val!=m_charset->m_background)
-            val = col;
+            if (!m_charset->m_isMultiColor)
+                if (val!=m_charset->m_background)
+                    val = col;
     }
 
 
