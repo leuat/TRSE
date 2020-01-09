@@ -952,11 +952,13 @@ void ASTDispather6502::dispatch(NodeBlock *node)
 
     as->PopBlock(node->m_currentLineNumber);
     if (node->m_isMainBlock && Syntax::s.m_currentSystem->m_system == AbstractSystem::NES) {
-        as->Label("EndSymbol");
         as->StartMemoryBlock("$FFFA");
         as->IncludeFile(":resources/code/nes_end.asm");
         as->EndMemoryBlock();
     }
+    if (node->m_isMainBlock)
+        as->Label("EndSymbol");
+
 
     node->PopZeroPointers(as);
 
