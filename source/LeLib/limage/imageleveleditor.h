@@ -219,7 +219,7 @@ public:
     void setPixel(int x, int y, unsigned int color) override;
     unsigned int getPixel(int x, int y) override;
     void CopyFrom(LImage* mc) override;
-    void setMultiColor(bool doSet) override {}
+//    void setMultiColor(bool doSet) override { }
 
     void onFocus() override;
 
@@ -228,6 +228,8 @@ public:
     bool PixelToPos(int x, float y, int& pos, int w, int h);
 
     void Fix() override; // Fix data doccuption
+
+    void setMultiColor(bool doSet) override;
 
 };
 

@@ -363,6 +363,33 @@ void ImageLevelEditor::Fix()
 
 }
 
+void ImageLevelEditor::setMultiColor(bool doSet)
+{
+    if (doSet) {
+//        m_width = 320;
+  //      m_height = 200;
+        //  m_scaleX = 2.5f;
+    //    m_bitMask = 0b11;
+    //    m_noColors = 4;
+        m_scale = 2;
+        m_minCol = 0;
+    }
+    else {
+    //    m_width = 320;
+      //  m_height = 200;
+        //m_scaleX = 1.2f;
+//        m_bitMask = 0b1;
+  //      m_noColors = 2;
+        m_scale = 1;
+        m_minCol = 0;
+
+    }
+    //    for (int i=0;i<1000;i++)
+    //      m_data->c[0] = m_extraCols[0];
+    if (m_charset!=nullptr)
+        m_charset->setMultiColor(doSet);
+}
+
 void ImageLevelEditor::setPixel(int x, int y, unsigned int color)
 {
     int pos;
@@ -374,7 +401,6 @@ void ImageLevelEditor::setPixel(int x, int y, unsigned int color)
     if (m_currentLevel==nullptr)
         return;
 
-    m_currencChar = 1;
 
     if (m_writeType==Character)
         m_currentLevel->m_CharData[pos] = m_currencChar;
@@ -402,8 +428,9 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
     uchar col=0;
     if (m_meta.m_useColors)
         col = m_currentLevel->m_ColorData[pos];
-    int ix = (x % (8)/2)*2;//- (dx*40);
-    int iy = y % 8;//- (dy*25);
+
+    int ix = ((x) % (8)/m_scale)*m_scale;//- (dx*40);
+    int iy = (y) % 8;//- (dy*25);
 
  //   return pc.get(m_scale*ix, iy, m_bitMask);
 
@@ -469,6 +496,7 @@ void ImageLevelEditor::CopyFrom(LImage *mc)
         m_currentLevelPos = c->m_currentLevelPos;
         SetLevel(m_currentLevelPos);
         renderPathGrid = c->renderPathGrid;
+        m_scale = c->m_scale;
     }
     else
     LImage::CopyFrom(mc);

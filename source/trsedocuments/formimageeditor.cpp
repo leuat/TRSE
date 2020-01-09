@@ -270,6 +270,7 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             ui->chkDisplayMulticolor->setChecked(is);
 
             Data::data.Redraw();
+            onImageMouseEvent();
         }
 
         if (e->key() == Qt::Key_Z  && !(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
@@ -401,6 +402,7 @@ void FormImageEditor::Load(QString filename)
 
     m_work.m_currentImage->m_image->BuildData(ui->tblData,lst);
 
+    m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
 
     if (dynamic_cast<LImageSprites*>(m_work.m_currentImage->m_image)!=nullptr) {
         Messages::messages.DisplayMessage(Messages::messages.OLD_SPRITE_FILE);
@@ -412,8 +414,10 @@ void FormImageEditor::Load(QString filename)
     }
     ui->cmbBank->setCurrentIndex(1);
 
+
     onImageMouseEvent();
     updateCharSet();
+
 
 
 }
@@ -1503,6 +1507,7 @@ void FormImageEditor::on_chkDisplayMulticolor_stateChanged(int arg1)
     m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
     Data::data.Redraw();
     onImageMouseEvent();
+    updateCharSet();
 
 }
 
