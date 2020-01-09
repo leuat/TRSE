@@ -166,8 +166,9 @@ unsigned int LImageMetaChunk::getPixel(int x, int y)
 //    if (rand()%100>97 && val!=0)
   //  qDebug() << "Vals : " << QString::number(val);
 //    val = 4;
+
     int xp = x/(float)m_width*m_pixelWidth*getCur()->m_width;
-    int yp = y/(float)m_height*m_pixelHeight*getCur()->m_height;;
+    int yp = y/(float)m_height*m_pixelHeight*getCur()->m_height;
 
     int xx = ((val%m_charWidthDisplay)*m_pixelWidth) + xp%m_pixelWidth;
     int yy = ((val/(int)m_charWidthDisplay)*m_pixelHeight)  +yp%m_pixelHeight;
