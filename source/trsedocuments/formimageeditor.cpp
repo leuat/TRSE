@@ -1037,6 +1037,10 @@ void FormImageEditor::updateSingleCharSet()
 void FormImageEditor::PrepareImageTypeGUI()
 {
     // Only display "load charset" for levels
+    if (m_work.m_currentImage == nullptr)
+        return;
+    if (m_work.m_currentImage->m_image==nullptr)
+        return;
     SetButton(ui->btnLoadCharmap,LImage::GUIType::btnLoadCharset);
     SetButton(ui->btnCharset1x1,LImage::GUIType::btn1x1);
     SetButton(ui->btnCharset2x2,LImage::GUIType::btn2x2);
@@ -1098,6 +1102,8 @@ void FormImageEditor::SetSingleCharsetEdit()
 
 void FormImageEditor::SetButton(QPushButton *btn, LImage::GUIType type)
 {
+    if (m_work.m_currentImage->m_image->m_GUIParams.contains(type))
+        return;
     if (m_work.m_currentImage->m_image->m_GUIParams[type]=="")
         btn->setVisible(false);
     else
