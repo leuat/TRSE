@@ -303,7 +303,7 @@ void LImageSprites::CopyPasteChar(int type)
 
 }
 
-
+/*
 void LImageSprites::CopyChar()
 {
     CopyPasteChar(0);
@@ -314,3 +314,4 @@ void LImageSprites::PasteChar()
     CopyPasteChar(1);
 
 }
+*/

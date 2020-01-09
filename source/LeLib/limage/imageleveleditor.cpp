@@ -210,6 +210,8 @@ void ImageLevelEditor::LoadBin(QFile &file)
 
     }
     LoadBinCharsetFilename(file);
+    m_width = m_meta.m_width*16;
+    m_height = m_meta.m_height*16;
 
     SetLevel(QPoint(0,0));
 

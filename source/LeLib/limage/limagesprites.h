@@ -39,7 +39,7 @@ public:
     QPoint getXY(int x, int y);
 
     void CopyPasteChar(int type);
-
+    PixelChar m_copy[64];
 
     bool KeyPress(QKeyEvent *e) override;
 
@@ -48,9 +48,9 @@ public:
     void FlipVertical() override;
     void FlipHorizontal() override;
 
-    void CopyChar();
+//    void CopyChar();
 
-    void PasteChar();
+  //  void PasteChar();
 
 
 };
