@@ -157,7 +157,6 @@ void LColorList::EnableColors(QVector<int> &cols)
 void LColorList::GeneratePaletteFromQImage(QImage &img)
 {
     QVector<QVector3D> m_colorList;
-    qDebug() << "Building color list..";
     for (int i=0;i<10000;i++) {
             int x  = rand()%img.width();
             int y  = rand()%img.height();
@@ -673,6 +672,8 @@ void LColorList::CreateUI(QLayout* ly, int type)
 
         if (type==0)
             m_buttonsImport.append(b);
+        else
+            m_buttonsEdit.append(b);
 
         yy++;
         maxy++;
@@ -690,6 +691,9 @@ void LColorList::CreateUI(QLayout* ly, int type)
 
 void LColorList::handleButtonEdit(int data)
 {
+    for (int i=0;i<m_buttonsEdit.count();i++)
+        m_buttonsEdit[i]->setText("");
+    m_buttonsEdit[data]->setText("X");
     Data::data.currentColor = data;
     Data::data.currentIsColor=true;
 

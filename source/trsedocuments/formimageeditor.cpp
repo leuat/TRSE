@@ -270,6 +270,7 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             ui->chkDisplayMulticolor->setChecked(is);
 
             Data::data.Redraw();
+            onImageMouseEvent();
         }
 
         if (e->key() == Qt::Key_Z  && !(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
@@ -368,16 +369,17 @@ void FormImageEditor::Load(QString filename)
 
     m_prefMode = CharsetImage::Mode::FULL_IMAGE;
     PrepareImageTypeGUI();
-    if (QFile::exists(m_projectIniFile->getString("charset_"+m_currentFileShort))) {
+/*    if (QFile::exists(m_projectIniFile->getString("charset_"+m_currentFileShort))) {
         if (dynamic_cast<ImageLevelEditor*>(img)!=nullptr || dynamic_cast<C64FullScreenChar*>(img)!=nullptr ||dynamic_cast<LImageMetaChunk*>(img)!=nullptr)
             img->LoadCharset(m_projectIniFile->getString("charset_"+m_currentFileShort),0);
 
         updateCharSet();
     }
-
+*/
     Data::data.redrawFileList = true;
     Data::data.Redraw();
     UpdatePalette();
+    updateCharSet();
     FillCMBColors();
 
     m_work.m_currentImage->m_image->BuildData(ui->tblData, m_projectIniFile->getStringList("data_header"));
@@ -401,19 +403,23 @@ void FormImageEditor::Load(QString filename)
 
     m_work.m_currentImage->m_image->BuildData(ui->tblData,lst);
 
+    m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
 
-    if (dynamic_cast<LImageSprites*>(m_work.m_currentImage->m_image)!=nullptr) {
+/*    if (dynamic_cast<LImageSprites*>(m_work.m_currentImage->m_image)!=nullptr) {
         Messages::messages.DisplayMessage(Messages::messages.OLD_SPRITE_FILE);
-    }
+    }*/
 
-//    if (dynamic_cast<LImageNES*>(m_work.m_currentImage->m_image)!=nullptr) {
-     if (m_work.m_currentImage->m_image->m_type==LImage::NES) {
+     if (m_work.m_currentImage->m_image->m_type==LImage::NES || m_work.m_currentImage->m_image->m_type==LImage::LevelEditor || m_work.m_currentImage->m_image->m_type==LImage::LMetaChunk) {
         on_cmbNesPalette_currentIndexChanged(0);
     }
     ui->cmbBank->setCurrentIndex(1);
+    ui->cmbBank->setCurrentIndex(0);
+    ui->cmbBank->setCurrentIndex(1);
+
+    updateCharSet();
 
     onImageMouseEvent();
-    updateCharSet();
+
 
 
 }
@@ -1503,6 +1509,7 @@ void FormImageEditor::on_chkDisplayMulticolor_stateChanged(int arg1)
     m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
     Data::data.Redraw();
     onImageMouseEvent();
+    updateCharSet();
 
 }
 
@@ -1827,6 +1834,8 @@ void FormImageEditor::on_cmbBorderMain_3_activated(int index)
 
 void FormImageEditor::on_cmbNesPalette_currentIndexChanged(int index)
 {
+    if (!m_work.m_currentImage->m_image->isNes())
+        return;
 //    m_ignoreMC = true;
     m_work.m_currentImage->m_image->m_colorList.m_curPal = index;
     m_ignoreMC = false;

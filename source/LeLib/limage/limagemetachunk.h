@@ -16,6 +16,7 @@ public:
 
     LImageNES* m_charImage;
 
+
     LMetaChunkItem() {
   //      m_header.resize(HEADER_SIZE);
     }
@@ -55,7 +56,8 @@ public:
 
 
 //class LImageMetaChunk : public LImageQImage, public LImageContainer
-class LImageMetaChunk : public LImageNES, public LImageContainer
+//class LImageMetaChunk : public LImageNES, public LImageContainer
+class LImageMetaChunk : public CharsetImage, public LImageContainer
 {
 public:
     LImageMetaChunk(LColorList::Type t);
@@ -95,6 +97,12 @@ public:
 
    unsigned int getPixel(int x, int y) override;
 
+   virtual bool isNes() override {
+       if (m_charset!=nullptr)
+           return m_charset->isNes();
+       return false;
+   }
+
    void SaveBin(QFile& file) override;
    void LoadBin(QFile& file) override;
    void SetColor(uchar col, uchar idx) override;
@@ -113,7 +121,8 @@ public:
    void CopyChar() override;
    void PasteChar() override;
    void setMultiColor(bool doSet) override {
-
+       if (m_charset!=nullptr)
+           m_charset->setMultiColor(doSet);
    }
 
 

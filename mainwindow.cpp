@@ -943,6 +943,7 @@ void MainWindow::LoadProject(QString filename)
     CloseAll();
     m_currentProject.Load(filename);
     m_currentPath = QFileInfo(QFile(filename)).absolutePath();
+    Data::data.currentPath = m_currentPath;
     VerifyProjectDefaults();
 //    m_iniFile.setString("project_path", getProjectPath());
     m_iniFile.addStringList("recent_projects", filename, true);
