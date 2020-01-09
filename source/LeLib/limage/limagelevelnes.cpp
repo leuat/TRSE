@@ -157,6 +157,7 @@ void LImageLevelNES::LoadBin(QFile &file)
 //        l->m_CharData.fill(0);
 
     }
+    LoadBinCharsetFilename(file);
 
     SetLevel(QPoint(0,0));
 }

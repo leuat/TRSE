@@ -119,6 +119,8 @@ public:
 
     QMap<GUIType, QString> m_GUIParams;
 
+    virtual bool isNes() {return false;}
+
     QVector<MetaParameter*> m_metaParams;
     MetaParameter* getMetaParameter(QString name);
     virtual QString getMetaInfo() { return "";}

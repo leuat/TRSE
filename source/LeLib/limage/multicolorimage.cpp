@@ -688,10 +688,6 @@ void MultiColorImage::LoadCharset(QString file, int skipBytes)
     if (file.toLower().endsWith(".flf")) {
         LImage* img =LImageIO::Load(file);
         m_charset = dynamic_cast<CharsetImage*>(img);
-        if (m_charset==nullptr) {
-
-        }
-//        m_charset =
     }
     m_charsetFilename = file;
 
@@ -1235,6 +1231,34 @@ void MultiColorImage::ForceBackgroundColor(int col, int swapCol)
         */
 }
 
+void MultiColorImage::AppendSaveBinCharsetFilename(QFile &file)
+{
+    QString  fn = m_charsetFilename;
+    QByteArray fd =  QByteArray(fn.remove(Data::data.currentPath).toLatin1());
+
+    uchar len = fd.count();
+    file.write( ( char * )( &len ),  1 );
+    file.write(fd);
+
+
+}
+
+void MultiColorImage::LoadBinCharsetFilename(QFile &file)
+{
+    if (file.atEnd())
+        return;
+    uchar len;
+    file.read( ( char * )( &len ),  1 );
+    QByteArray data = file.read(len);
+
+    m_charsetFilename = Data::data.currentPath+QString::fromLatin1(data);
+
+
+    if (QFile::exists(m_charsetFilename))
+        LoadCharset(m_charsetFilename,0);
+
+}
+
 void MultiColorImage::SwapChars(int p1, int p2)
 {
     PixelChar a = m_data[p1];
@@ -1315,7 +1339,7 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF
 
             // Has transparency?
 
-/*            QColor c=QColor(0,0,0);
+            QColor c=QColor(0,0,0);
             if (col>=1000) {
                 col-=1000;
                 c = QColor(255, 128, 128);
@@ -1330,7 +1354,7 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF
             //for (int k=0;k<m_scale;k++)
             //               img->setPixel(m_scale*i + k,j,rgbCol);*/
             //img.setPixel(i,j,rgbCol);
-            yline[i] = lst.get(col).color.rgb();
+            yline[i] = rgbCol;//lst.get(col).color.rgb();
         }
     }
     //return img;

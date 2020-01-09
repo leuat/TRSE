@@ -2,13 +2,14 @@
 #include "source/LeLib/limage/limageio.h"
 
 
-LImageMetaChunk::LImageMetaChunk(LColorList::Type t) : LImageNES(t)
+LImageMetaChunk::LImageMetaChunk(LColorList::Type t) : CharsetImage(t)
 {
     m_GUIParams[tabCharset] = "1";
     m_GUIParams[btnLoadCharset] ="Load Charset";
     m_width = 256;
     m_height = 256;
     m_supports.displayColors = false;
+    m_currentBank = 1;
 
     Initialize(m_width,m_height);
     if (t==LColorList::NES) {
@@ -22,7 +23,9 @@ LImageMetaChunk::LImageMetaChunk(LColorList::Type t) : LImageNES(t)
 
     m_supports.displayBank = true;
 
-    m_charWidthDisplay = 16;
+    if (isNes())
+        m_charWidthDisplay = 16;
+    else m_charWidthDisplay = 40;
     m_supports.asmExport = false;
     m_supports.binaryLoad = true;
     m_supports.binarySave = true;
@@ -87,7 +90,6 @@ void LImageMetaChunk::CopyFrom(LImage *mc)
         getCur()->m_data = img->getCur()->m_data;
         //m_items[0] = img->m_items[img->m_current];
 
-
 //        m_items = img->m_items;
         m_colorList.m_nesPPU = img->m_colorList.m_nesPPU;
             m_type = img->m_type;
@@ -115,21 +117,27 @@ void LImageMetaChunk::Copy()
 void LImageMetaChunk::LoadCharset(QString file, int skipBytes)
 {
     m_charset = LImageIO::Load(file);
-    if (m_charset->m_colorList.m_type!=m_img->m_colorList.m_type) {
+/*    if (m_charset->m_colorList.m_type!=m_img->m_colorList.m_type) {
         qDebug() << "Incompatible charset type!";
         m_charset = nullptr;
 
-    }
+    }*/
 //    qDebug() << "LOADING : " << file;
-    m_colorList.m_list = m_charset->m_colorList.m_list;
+    if (m_charset==nullptr)
+        return;
+//    m_colorList.m_list = m_charset->m_colorList.m_list;
     m_colorList.m_nesPPU = m_charset->m_colorList.m_nesPPU;
     m_colorList.m_curPal = m_charset->m_colorList.m_curPal;
     LImageNES* nes = dynamic_cast<LImageNES*>(m_charset);
-    if (nes!=nullptr) {
+
+    if (nes!=nullptr)
         nes->m_double = false;
-        nes->m_currentBank=0;
-    }
+
     m_charsetFilename = file;
+    if (isNes())
+        m_charWidthDisplay = 16;
+    else m_charWidthDisplay = 40;
+
 //    qDebug() << "charset " << m_charset;
 //    m_charset = LImageIO::
 }
@@ -137,9 +145,9 @@ void LImageMetaChunk::LoadCharset(QString file, int skipBytes)
 void LImageMetaChunk::setPixel(int x, int y, unsigned int color)
 {
     QPoint p = getPos(x,y);
-//    if (rand()%100>98)
-  //      qDebug() << QString::number(m_currencChar);
-
+/*    if (rand()%100>98)
+        qDebug() << QString::number(m_currencChar);
+*/
     ((LMetaChunkItem*)m_items[m_current])->setPixel(p.x(),p.y(),m_currencChar,m_img->m_bitMask);
 
 }
@@ -162,8 +170,10 @@ unsigned int LImageMetaChunk::getPixel(int x, int y)
     int yp = y/(float)m_height*m_pixelHeight*getCur()->m_height;;
 
     int xx = ((val%m_charWidthDisplay)*m_pixelWidth) + xp%m_pixelWidth;
-    int yy = ((val/(int)16)*m_pixelHeight)  +yp%m_pixelHeight;
-    yy=yy+ 16*8*m_currentBank;
+    int yy = ((val/(int)m_charWidthDisplay)*m_pixelHeight)  +yp%m_pixelHeight;
+    if (isNes())
+        yy=yy+ 16*8*m_currentBank;
+
 
 
     if (m_charset==nullptr) {
@@ -185,11 +195,7 @@ void LImageMetaChunk::SaveBin(QFile &file)
         file.write( ( char * )( &h ),  1 );
         file.write(m->m_data);
     }
-
-    QByteArray fd =  QByteArray(m_charsetFilename.toLatin1());
-    uchar len = fd.count();
-    file.write( ( char * )( &len ),  1 );
-    file.write(fd);
+    AppendSaveBinCharsetFilename(file);
 }
 
 void LImageMetaChunk::LoadBin(QFile &file)
@@ -206,15 +212,7 @@ void LImageMetaChunk::LoadBin(QFile &file)
         AddNew(w,h);
         getCur()->m_data = file.read(w*h);
     }
-    if (file.atEnd())
-        return;
-    uchar len;
-    file.read( ( char * )( &len ),  1 );
-    QByteArray data = file.read(len);
-    m_charsetFilename = QString::fromLatin1(data);
-    if (QFile::exists(m_charsetFilename))
-        LoadCharset(m_charsetFilename,0);
-
+    LoadBinCharsetFilename(file);
 }
 
 void LImageMetaChunk::SetColor(uchar col, uchar idx)
@@ -341,12 +339,13 @@ void LImageMetaChunk::setForeground(unsigned int col)
 
 unsigned int LImageMetaChunk::getCharPixel(int pos,  int pal,int x, int y)
 {
+    if (m_charset==nullptr)
+        return 0;
     if (pos>=m_items.count())
         return 0;
 
     m_current = pos;
-
-    int w=16;//(getCur()->m_width);
+    int w=16;//(getCur()->m_width)*8;
     int h=(getCur()->m_height)*8;
 
     x=(x%w)*w;
@@ -357,6 +356,8 @@ unsigned int LImageMetaChunk::getCharPixel(int pos,  int pal,int x, int y)
 
 QPixmap LImageMetaChunk::ToQPixMap(int chr)
 {
+    if (m_charset==nullptr)
+        return QPixmap();
     int sz = 64;
     QImage img = QImage(sz,sz,QImage::Format_RGB32);
     m_current = chr;

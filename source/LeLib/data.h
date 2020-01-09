@@ -41,6 +41,7 @@ public:
     bool requestSaveAs = false;
     bool requestCloseWindow = false;
     bool blink = false;
+    QString currentPath;
     float percent = 0;
     unsigned char currentColor = 0;
     bool currentIsColor = false;

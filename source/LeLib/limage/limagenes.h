@@ -28,6 +28,7 @@ public:
     }
 
 
+    virtual bool isNes() {return true;}
 
 
     bool KeyPress(QKeyEvent *e) override;

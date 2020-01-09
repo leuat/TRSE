@@ -37,21 +37,32 @@ void ImageLevelEditor::SetLevel(QPoint f)
 
     for (int i=0;i<3;i++)
         m_extraCols[i] = m_currentLevel->m_ExtraData[i];
+
+
+
     m_background = m_currentLevel->m_ExtraData[0];
 //        qDebug() << QString::number(m_currentLevel->m_ExtraData[i]);
+    if (m_charset==nullptr)
+        return;
 
-    if (m_charset!=nullptr && m_type!=LImage::LevelEditorNES) {
+
+    if (m_type!=LImage::LevelEditorNES) {
         m_charset->SetColor(m_currentLevel->m_ExtraData[0], 0);
         m_charset->SetColor(m_currentLevel->m_ExtraData[1], 1);
         m_charset->SetColor(m_currentLevel->m_ExtraData[2], 2);
     }
+    else {
+        SetColor(m_currentLevel->m_ExtraData[0], 0);
+        SetColor(m_currentLevel->m_ExtraData[1], 1);
+        SetColor(m_currentLevel->m_ExtraData[2], 2);
+    }
 
-/*    SetColor(m_currentLevel->m_ExtraData[0], 0);
-    SetColor(m_currentLevel->m_ExtraData[1], 1);
-    SetColor(m_currentLevel->m_ExtraData[2], 2);
+
+/*    for (int i=0;i<3;i++) {
+        if (m_extraCols[i]!=0)
+            qDebug() << "Extra data" << QString::number(m_extraCols[i]);
+    }
 */
-
-
 }
 
 ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
@@ -130,7 +141,9 @@ void ImageLevelEditor::SetColor(uchar col, uchar idx)
 
 //    qDebug() << "SetColor being set..." << QString::number(col) << " and " << QString::number(idx);
 
-    m_currentLevel->m_ExtraData[idx] = col;
+    if (m_currentLevel->m_ExtraData.count()>=3) {
+        m_currentLevel->m_ExtraData[idx] = col;
+    }
     m_extraCols[idx] = col;
     if (idx==0)
         m_background = col;
@@ -148,7 +161,6 @@ void ImageLevelEditor::SaveBin(QFile &file)
 
 
     file.write(m_meta.toHeader());
-    int i=0;
     if (m_levels.count()==0)
         return;
     CharmapLevel* ll = m_levels[0];
@@ -159,10 +171,16 @@ void ImageLevelEditor::SaveBin(QFile &file)
            file.write( l->m_ColorData);
 
 //        qDebug() << "LevelEditor::savebin count " <<l->m_ColorData.count();
+
         if (l->m_ExtraData.count()!=0)
-            file.write( l->m_ExtraData);
+            file.write( l->m_ExtraData,m_meta.m_extraDataSize);
+      //  for (int i=0;i<m_meta.m_extraDataSize;i++)
+    //        qDebug() << "Saving extracol: " <<QString::number(l->m_ExtraData[i]);
 
     }
+//    qDebug() << "POS : " <<file.pos();
+    AppendSaveBinCharsetFilename(file);
+
 
 }
 
@@ -175,13 +193,23 @@ void ImageLevelEditor::LoadBin(QFile &file)
     Initialize();
     m_width = m_meta.m_width*16;
     m_height = m_meta.m_height*16;
+    m_meta.m_startx = 0;
+    m_meta.m_starty = 0;
+    m_meta.Calculate();
     for (CharmapLevel* l : m_levels) {
 
         l->m_CharData = file.read(m_meta.dataSize());
         if (m_meta.m_useColors)
-        l->m_ColorData = file.read(m_meta.dataSize());
+            l->m_ColorData = file.read(m_meta.dataSize());
+        if (m_meta.m_extraDataSize!=0)
             l->m_ExtraData = file.read(m_meta.m_extraDataSize);
+
+//        for (int i=0;i<m_meta.m_extraDataSize;i++)
+  //          qDebug() << "Saving extracol: " <<QString::number(l->m_ExtraData[i]);
+
+
     }
+    LoadBinCharsetFilename(file);
 
     SetLevel(QPoint(0,0));
 
@@ -295,7 +323,7 @@ QString ImageLevelEditor::getMetaInfo()
     txt+="\n\nThe TRSE Level Editor comes in two flavors (for now): One for the Commodore computers, and one for NES.\n\n";
     txt+="A level file consists of (levels x*levels y) levels of size (screen width*screen height) bytes. ";
     txt+="These bytes correspond to a specific tile in a charset or metablock charset. The levels can in addition to tile data also contain colour data, ";
-    txt+="which can vary depending on the current system (NES/C64) etc. For instance, the NES level editor will export colour attributes directly in the native format. \n\n";
+    txt+="which can vary depending on the current system (NES/C64) etc. For instance, the NES level editor will export colour attributes directly in the native at. \n\n";
     txt+="In addition to having colour/tile data, you can also specify a user-defined matrix (data_width*data_count + extra_data) of byte data for custom use - monster positions, items etc, for each of your levels. \n";
     m_meta.m_sizex = getMetaParameter("levels_x")->value;
     m_meta.m_sizey = getMetaParameter("levels_y")->value;
@@ -366,22 +394,10 @@ void ImageLevelEditor::Fix()
 void ImageLevelEditor::setMultiColor(bool doSet)
 {
     if (doSet) {
-//        m_width = 320;
-  //      m_height = 200;
-        //  m_scaleX = 2.5f;
-    //    m_bitMask = 0b11;
-    //    m_noColors = 4;
         m_scale = 2;
-        m_minCol = 0;
     }
     else {
-    //    m_width = 320;
-      //  m_height = 200;
-        //m_scaleX = 1.2f;
-//        m_bitMask = 0b1;
-  //      m_noColors = 2;
         m_scale = 1;
-        m_minCol = 0;
 
     }
     //    for (int i=0;i<1000;i++)
@@ -446,6 +462,11 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 //    return m_charset->m_data[pos].get(v + (2*x)&7, v+ y&7,m_bitMask);
     uint val = m_charset->m_data[pos].get(ix, iy,m_charset->m_bitMask);
 
+    if (dynamic_cast<LImageMetaChunk*>(m_charset)!=nullptr) {
+        val = m_charset->getCharPixel(v, col, x,y);
+    }
+
+
     if (m_meta.m_useColors) {
         if (val==m_charset->m_data[pos].c[3]) {
             val = col&0b00000111;
@@ -453,6 +474,8 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
         if ((col&0b00001000)==0b00001000)
             val+=1000;
     }
+
+
 
     return val;
 

@@ -42,6 +42,8 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     SetColor(2,2);
     SetColor(5,3);
 
+    // Needed for NES stuff
+    m_currentBank = 1;
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20)
         m_colorList.InitVIC20();

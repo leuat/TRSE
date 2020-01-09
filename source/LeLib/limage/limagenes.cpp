@@ -15,8 +15,8 @@ LImageNES::LImageNES(LColorList::Type t) : CharsetImage(t)
     m_charWidth = 32;
     m_charHeight = 32;
 
-
     m_currentBank = 1;
+
     //m_data = new PixelChar[m_charWidth*m_charHeight];
     m_charWidthDisplay=16;
     m_charHeightDisplay=16;

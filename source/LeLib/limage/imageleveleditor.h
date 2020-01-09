@@ -27,7 +27,7 @@
 #include <QByteArray>
 #include <QVector>
 #include <QKeyEvent>
-
+#include "source/LeLib/limage/limagemetachunk.h"
 
 class CharmapLevel {
 public:
@@ -57,11 +57,8 @@ public:
         m_CharData.fill(0);
         m_ColorData.fill(0);
 
-        if (m_ExtraData.size()>=3) {
-            m_ExtraData[0] = 0;
-            m_ExtraData[1] = 1; // Colors
-            m_ExtraData[2] = 2;
-        }
+        for (int i=0;i<m_ExtraData.size();i++)
+            m_ExtraData[i]=i;
         Clear();
     }
 
@@ -193,6 +190,12 @@ public:
     void Initialize() override;
 
 
+    virtual bool isNes() override {
+        if (m_charset!=nullptr)
+            return m_charset->isNes();
+        return false;
+    }
+
     void SetColor(uchar col, uchar idx) override;
     void Clear() override;
     void SaveBin(QFile& f) override;
@@ -219,7 +222,6 @@ public:
     void setPixel(int x, int y, unsigned int color) override;
     unsigned int getPixel(int x, int y) override;
     void CopyFrom(LImage* mc) override;
-//    void setMultiColor(bool doSet) override { }
 
     void onFocus() override;
 

@@ -147,6 +147,8 @@ public:
     void ForceBackgroundColor(int col, int swapCol);
 
 
+    void AppendSaveBinCharsetFilename(QFile& file);
+    void LoadBinCharsetFilename(QFile& file);
 
     void SwapChars(int p1, int p2);
 
