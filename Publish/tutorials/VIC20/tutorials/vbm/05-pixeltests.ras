@@ -1,0 +1,63 @@
+program MoonBuggy;
+var  
+
+// declare all your include files here
+buggy: incbin( "resources/charsets/moonspr.bin", $4000 ); // moon buggy
+chars: incbin( "resources/charsets/moonchar.bin", $4008 ); // individual tile characters
+map: incbin( "resources/charsets/moonmap.bin", $42d8 ); // full screen map of tiles
+
+@startblock $2000 "CODE"
+// declare all your variables and procedures here
+
+	i, j : byte;
+	y : byte;
+
+begin
+
+	// set the default display mode showing all 20 columns
+	vbmSetDisplayMode( 0 );
+		
+	// set the colour memory to RED
+	vbmClearColor( RED );
+	
+	// change colour of moon buggy title
+	fill(^$9414, WHITE, 20);
+	fill(^$9428, CYAN, 20);
+	fill(^$943c, PURPLE, 20);
+
+
+	// set screen colour
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK + BLACK;
+
+	// draw tilemap of main screen
+	vbmDrawTileMap( map, chars, 0,0, 20,191 );
+
+	y := 100;
+
+	while (true) offpage do
+	begin
+	
+		// draw buggy
+		vbmSetPosition1( 76, y );
+		vbmDrawTileE( buggy );
+
+		waitforraster( 0 );	
+
+		// erase buggy
+		vbmDrawTileE( buggy );
+		
+		// scroll screen
+		//vbmScreenShiftLeft( 168, 176);
+
+		asm(" ldx #152;keep");
+		vbmScreenShiftLeft( 152, 191 );
+		
+		// calculate new y position for buggy
+		if (vbmTestPixel2( 76, y+8 ) = 0) then
+			y := y + 1
+		else
+			y := y - 1;
+
+	end;
+	
+end.
