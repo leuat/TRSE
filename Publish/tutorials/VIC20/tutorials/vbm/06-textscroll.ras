@@ -9,17 +9,16 @@ map: incbin( "resources/tilemap/monsmap.bin", $4db0 ); // full screen map of til
 
 @startblock $2000 "CODE"
 // declare all your variables and procedures here
-/*	message: CSTRING = ("HELLO WORLD!  . . . THIS IS AN AWESOME TEXT SCROLLER ",
+	message: CSTRING = ("HELLO WORLD!  . . . THIS IS AN AWESOME TEXT SCROLLER ",
 						"... CONTAIN YOUR EXCITEMENT MADAME!  ",
 						"LONG CSTRING MESSAGES CAN BE CONSTRUCTED IN THE CODE ",
-						"BY ASSIGNING WITH (PARENTHESES) AND COMMAS.   COOL    ");
-*/
-	message: CSTRING = (
-		"WELL HELLO THERE FACEBOOK FRIENDS . . . ",
-		"THIS IS ANOTHER EXAMPLE TUTORIAL FILE THAT WILL COME WITH ",
-		"THE NEXT RELEASE OF TURBO RASCAL TO SHOW SOME OF THE CAPABILITIES ",
-		"OF THE VIC 20 BITMAP MODE                     "
-	);
+						"BY ASSIGNING WITH (PARENTHESES) AND COMMAS.   COOL    ",
+						"EVERY SCROLLER NEEDS SOME GREETS: BIG HELLO TO NICOLAAS ",
+						"WHOM WITHOUT WE WOULD NEVER HAVE THE WONDERFUL TURBO ",
+						"RASCAL   -   R, A AND l - LOVE YOU!   -  AND OF COURSE ",
+						"YOU WONDERFUL LOT WHO HAVE COME HERE TO HAVE A GO AT ",
+						"MAKING SOMETHING COOL WITH TURBO RASCAL!         ");
+
 	char: byte = 1;
 
 	i, j : byte = 0;
@@ -62,12 +61,12 @@ begin
 		if ( i = 8 ) then
 		begin
 			
-			char := p1[ j ];
-			j := j + 1;
+			char := p1[ 0 ];
+			p1 := p1 + 1;
 			if (char = 0) then
 			begin
 			
-				j := 0;
+				p1 := message;
 				char := 32;
 
 			end;
