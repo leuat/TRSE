@@ -1,0 +1,89 @@
+program TextScroller;
+var  
+
+// declare all your include files here
+font: incbin( "resources/charsets/font8x8.bin", $4000 ); // character set for first 64 PETSCII Screen Codes
+chars: incbin( "resources/tilemap/monschar.bin", $4800 ); // individual tile characters
+map: incbin( "resources/tilemap/monsmap.bin", $4db0 ); // full screen map of tiles
+
+
+@startblock $2000 "CODE"
+// declare all your variables and procedures here
+/*	message: CSTRING = ("HELLO WORLD!  . . . THIS IS AN AWESOME TEXT SCROLLER ",
+						"... CONTAIN YOUR EXCITEMENT MADAME!  ",
+						"LONG CSTRING MESSAGES CAN BE CONSTRUCTED IN THE CODE ",
+						"BY ASSIGNING WITH (PARENTHESES) AND COMMAS.   COOL    ");
+*/
+	message: CSTRING = (
+		"WELL HELLO THERE FACEBOOK FRIENDS . . . ",
+		"THIS IS ANOTHER EXAMPLE TUTORIAL FILE THAT WILL COME WITH ",
+		"THE NEXT RELEASE OF TURBO RASCAL TO SHOW SOME OF THE CAPABILITIES ",
+		"OF THE VIC 20 BITMAP MODE                     "
+	);
+	char: byte = 1;
+
+	i, j : byte = 0;
+	p1 : pointer;
+
+begin
+
+	// set the smaller display mode showing 19 columns, the 20th is hidden
+	vbmSetDisplayMode( 1 );
+	
+	// Clear the bitmap with a value of 0
+	vbmClear( 0 );
+	
+	// set the colour memory to WHITE
+	vbmClearColor( WHITE );
+	
+	// set screen colour
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK + BLACK;
+	
+	screenmemory := $94d1;
+	screenmemory[ 0 ] := BLUE;
+	screenmemory[ 18 ] := BLUE;
+	screenmemory[ 1 ] := PURPLE;
+	screenmemory[ 17 ] := PURPLE;
+	screenmemory[ 2 ] := CYAN;
+	screenmemory[ 16 ] := CYAN;
+
+	vbmDrawTileMap( map, chars, 0,10, 20,146 );
+
+	p1 := message;
+
+	while (true) offpage do
+	begin
+	
+// uncomment this line and the similar one below to see how much time it is taking
+//	SCREEN_BG_COLOR := SCREEN_BG_BLACK + red;
+		asm(" ldx #184");
+		vbmScreenShiftLeft( 184, 191 );
+		i := i + 1;
+		if ( i = 8 ) then
+		begin
+			
+			char := p1[ j ];
+			j := j + 1;
+			if (char = 0) then
+			begin
+			
+				j := 0;
+				char := 32;
+
+			end;
+			
+			i := 0;
+			vbmDrawText( char, font, 19, 184, 8 );
+			
+		end;
+// uncomment this line and the similar one above to see how much time it is taking
+//	SCREEN_BG_COLOR := SCREEN_BG_BLACK + BLACK;
+		
+		waitforraster( 20 );
+		
+		
+	end;
+	
+	loop();
+
+end.
