@@ -49,7 +49,6 @@ bool SourceBuilder::Build(QString source)
     compiler.m_parser.m_currentDir = m_curDir;
 
 //    qDebug() << lst;
-
     compiler.Parse(source,lst);
 
     QString path = m_curDir+"/";//m_projectIniFile.getString("project_path") + "/";
@@ -66,6 +65,7 @@ bool SourceBuilder::Build(QString source)
 
     m_system->timer.start();
     m_system->m_buildSuccess = true;
+
     m_buildSuccess = compiler.Build(m_system, path);
 //    qDebug() << lst;
     if (m_buildSuccess)

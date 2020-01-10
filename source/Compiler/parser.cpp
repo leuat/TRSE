@@ -1278,7 +1278,7 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
     m_lexer->m_orgText = m_lexer->m_orgText + "\n" + globalDefines+"\n";
     m_lexer->m_text = m_lexer->m_orgText;
     m_pass = 0;
-//    RemoveComments();
+    RemoveComments();
     InitObsolete();
     StripWhiteSpaceBeforeParenthesis(); // TODO: make better fix for this
     InitSystemPreprocessors();

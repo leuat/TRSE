@@ -32,14 +32,16 @@ SymbolTable* Node::parserSymTab;
 void Node::DispatchConstructor(Assembler *as) {
     //        m_blockInfo = m_staticBlockInfo;s
     m_currentLineNumber = m_op.m_lineNumber;
-    if (m_comment!="") {
+    if (m_comment!="")
+       qDebug() << m_comment;
+/*    if (m_comment!="") {
         QString c = m_comment.replace("//","\n").replace("/*","\n").replace("\n","\n; //");
         if (!c.trimmed().startsWith(";"))
             c = ";" + c;
 
         as->Asm(c);
     }
-
+*/
 }
 
 int Node::MaintainBlocks(Assembler* as)
