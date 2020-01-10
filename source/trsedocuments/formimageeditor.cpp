@@ -659,6 +659,7 @@ bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
 void FormImageEditor::resizeEvent(QResizeEvent *event)
 {
     ui->lblImage->setVisible(true);
+    UpdateAspect();
     ui->lblGrid->setGeometry(ui->lblImage->geometry());
     ui->lblGrid->repaint();
     // qDebug() <<
@@ -1355,6 +1356,27 @@ void FormImageEditor::UpdateSpriteImages()
 
 }
 
+void FormImageEditor::UpdateAspect()
+{
+    int val = ui->cmbAspect->currentIndex();
+    if (val==0) {
+        ui->lblImage->setMinimumHeight(0);
+        ui->lblImage->setMaximumHeight(100000);
+
+    }
+    if (val==1) {
+        ui->lblImage->setMinimumHeight(ui->lblImage->width());
+        ui->lblImage->setMaximumHeight(ui->lblImage->width());
+    }
+    if (val==2) {
+        ui->lblImage->setMinimumHeight(ui->lblImage->width()/1.6);
+        ui->lblImage->setMaximumHeight(ui->lblImage->width()/1.6);
+    }
+    this->resize(this->geometry().width(), this->geometry().height());
+    onImageMouseEvent();
+
+}
+
 void FormImageEditor::onSwapDisplayMode()
 {
 //    m_keepMode = m_prefMode;
@@ -1876,3 +1898,10 @@ void FormImageEditor::on_btnCharSelect_clicked()
     OpenSelectCharset();
 }
 
+
+
+void FormImageEditor::on_cmbAspect_currentIndexChanged(int index)
+{
+    UpdateAspect();
+
+}

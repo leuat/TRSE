@@ -128,6 +128,8 @@ public:
 
     void UpdateSpriteImages();
 
+    void UpdateAspect();
+
 /*signals:
     void EmitMouseEvent();
 */
@@ -245,6 +247,7 @@ private slots:
     void on_cmbBank_currentIndexChanged(int index);
     void on_cmbNesPalette_activated(int index);
     void on_btnCharSelect_clicked();
+    void on_cmbAspect_currentIndexChanged(int index);
 };
 
 
