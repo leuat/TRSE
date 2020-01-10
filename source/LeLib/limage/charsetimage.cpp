@@ -593,7 +593,14 @@ void CharsetImage::onFocus() {
 
 void CharsetImage::CopyChar()
 {
-    if (m_currentMode == CHARSET1x1)
+
+    for (int y=0;y<m_copySize;y++)
+        for (int x=0;x<m_copySize;x++) {
+            m_copy[x+y*m_copySize] = getPixel(x/(float)m_copySize*m_width,y/(float)m_copySize*m_height);
+        }
+    m_copyFromMode = m_currentMode;
+
+/*    if (m_currentMode == CHARSET1x1)
         m_copy[0] = m_data[m_currencChar];
 
     if (m_currentMode == CHARSET2x2 || m_currentMode == CHARSET2x2_REPEAT) {
@@ -603,12 +610,18 @@ void CharsetImage::CopyChar()
         m_copy[3] = m_data[m_currencChar+41];
 
     }
-
+*/
 }
 
 void CharsetImage::PasteChar()
 {
-    if (m_currentMode == CHARSET1x1)
+    if (m_currentMode!=m_copyFromMode)
+        return;
+    for (int y=0;y<m_copySize;y++)
+        for (int x=0;x<m_copySize;x++) {
+             setPixel(x/(float)m_copySize*m_width,y/(float)m_copySize*m_height,m_copy[x+y*m_copySize]);
+        }
+  /*  if (m_currentMode == CHARSET1x1)
         m_data[m_currencChar]=m_copy[0];
 
     if (m_currentMode == CHARSET2x2 || m_currentMode == CHARSET2x2_REPEAT) {
@@ -619,5 +632,5 @@ void CharsetImage::PasteChar()
         m_data[m_currencChar+41] = m_copy[3];
 
     }
-
+*/
 }

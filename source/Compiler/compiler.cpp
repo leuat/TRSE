@@ -90,17 +90,16 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
 
     if (m_tree!=nullptr)
         try {
-            dynamic_cast<NodeProgram*>(m_tree)->m_initJumps = m_parser.m_initJumps;
-            m_dispatcher->as = m_assembler;
-            m_tree->Accept(m_dispatcher);
+        dynamic_cast<NodeProgram*>(m_tree)->m_initJumps = m_parser.m_initJumps;
+        m_dispatcher->as = m_assembler;
+        m_tree->Accept(m_dispatcher);
 
-        } catch (FatalErrorException e) {
-            HandleError(e,"Error during build");
-            return false;
-         }
+    } catch (FatalErrorException e) {
+        HandleError(e,"Error during build");
+        return false;
+    }
 
     for (MemoryBlock* mb:m_parser.m_userBlocks) {
-
         m_assembler->blocks.append(mb);
     }
 

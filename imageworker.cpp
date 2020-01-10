@@ -49,7 +49,7 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("NES Level Editor", "nes",LImage::Type::LevelEditorNES,LColorList::Type::NES));
     m_types.append(ImageType("Fake C64 png Palette 1", "c64",LImage::Type::QImageBitmap, LColorList::Type::C64));
     m_types.append(ImageType("Fake C64 png Palette 2", "c64",LImage::Type::QImageBitmap, LColorList::Type::C64_ORG));
-//    m_types.append(ImageType("C64 Sprite Editor (deprecated type)", LImage::Type::Sprites,LColorList::Type::C64));
+    m_types.append(ImageType("C64 Sprite Editor (deprecated type)","c64", LImage::Type::Sprites,LColorList::Type::C64));
 //    m_types.append(ImageType("C64 Multicolor Charmap Fixed Colors", LImage::Type::CharMapMultiColorFixed,LColorList::Type::C64));
 
     /*    m_types.append(ImageType("CGA Palette 1 Lo", LImage::Type::QImageBitmap,LColorList::Type::CGA1_LOW));

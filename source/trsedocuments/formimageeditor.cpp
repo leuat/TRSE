@@ -403,7 +403,7 @@ void FormImageEditor::Load(QString filename)
 
     m_work.m_currentImage->m_image->BuildData(ui->tblData,lst);
 
-    m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
+//r    m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
 
 /*    if (dynamic_cast<LImageSprites*>(m_work.m_currentImage->m_image)!=nullptr) {
         Messages::messages.DisplayMessage(Messages::messages.OLD_SPRITE_FILE);
@@ -659,6 +659,7 @@ bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
 void FormImageEditor::resizeEvent(QResizeEvent *event)
 {
     ui->lblImage->setVisible(true);
+    UpdateAspect();
     ui->lblGrid->setGeometry(ui->lblImage->geometry());
     ui->lblGrid->repaint();
     // qDebug() <<
@@ -1037,6 +1038,10 @@ void FormImageEditor::updateSingleCharSet()
 void FormImageEditor::PrepareImageTypeGUI()
 {
     // Only display "load charset" for levels
+    if (m_work.m_currentImage == nullptr)
+        return;
+    if (m_work.m_currentImage->m_image==nullptr)
+        return;
     SetButton(ui->btnLoadCharmap,LImage::GUIType::btnLoadCharset);
     SetButton(ui->btnCharset1x1,LImage::GUIType::btn1x1);
     SetButton(ui->btnCharset2x2,LImage::GUIType::btn2x2);
@@ -1098,6 +1103,8 @@ void FormImageEditor::SetSingleCharsetEdit()
 
 void FormImageEditor::SetButton(QPushButton *btn, LImage::GUIType type)
 {
+    if (m_work.m_currentImage->m_image->m_GUIParams.contains(type))
+        return;
     if (m_work.m_currentImage->m_image->m_GUIParams[type]=="")
         btn->setVisible(false);
     else
@@ -1346,6 +1353,27 @@ void FormImageEditor::UpdateSpriteImages()
 //    ui->lblSprite2->setPixmap(m_updateThread.m_pixMapImage.scaled(40, 32, Qt::IgnoreAspectRatio, Qt::FastTransformation));
 
 
+
+}
+
+void FormImageEditor::UpdateAspect()
+{
+    int val = ui->cmbAspect->currentIndex();
+    if (val==0) {
+        ui->lblImage->setMinimumHeight(0);
+        ui->lblImage->setMaximumHeight(100000);
+
+    }
+    if (val==1) {
+        ui->lblImage->setMinimumHeight(ui->lblImage->width());
+        ui->lblImage->setMaximumHeight(ui->lblImage->width());
+    }
+    if (val==2) {
+        ui->lblImage->setMinimumHeight(ui->lblImage->width()/1.6);
+        ui->lblImage->setMaximumHeight(ui->lblImage->width()/1.6);
+    }
+    this->resize(this->geometry().width(), this->geometry().height());
+    onImageMouseEvent();
 
 }
 
@@ -1870,3 +1898,10 @@ void FormImageEditor::on_btnCharSelect_clicked()
     OpenSelectCharset();
 }
 
+
+
+void FormImageEditor::on_cmbAspect_currentIndexChanged(int index)
+{
+    UpdateAspect();
+
+}

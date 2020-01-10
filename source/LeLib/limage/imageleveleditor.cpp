@@ -210,9 +210,11 @@ void ImageLevelEditor::LoadBin(QFile &file)
 
     }
     LoadBinCharsetFilename(file);
+    m_width = m_meta.m_width*16;
+    m_height = m_meta.m_height*16;
 
     SetLevel(QPoint(0,0));
-
+    setMultiColor(m_meta.m_displayMultiColor);
 }
 
 void ImageLevelEditor::BuildData(QTableWidget *tbl, QStringList header)
@@ -400,6 +402,8 @@ void ImageLevelEditor::setMultiColor(bool doSet)
         m_scale = 1;
 
     }
+
+    m_meta.m_displayMultiColor = doSet;
     //    for (int i=0;i<1000;i++)
     //      m_data->c[0] = m_extraCols[0];
     if (m_charset!=nullptr)
@@ -531,8 +535,10 @@ void ImageLevelEditor::CopyFrom(LImage *mc)
 
 void ImageLevelEditor::onFocus()
 {
-    if (m_charsetFilename!="")
+    if (m_charsetFilename!="") {
         LoadCharset(m_charsetFilename,0);
+        setMultiColor(m_meta.m_displayMultiColor);
+    }
 }
 
 

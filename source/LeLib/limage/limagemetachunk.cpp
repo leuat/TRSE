@@ -345,7 +345,7 @@ unsigned int LImageMetaChunk::getCharPixel(int pos,  int pal,int x, int y)
 
     m_current = pos;
     int w=16;//(getCur()->m_width)*8;
-    int h=(getCur()->m_height)*8;
+    int h=16;//(getCur()->m_height)*8;
 
     x=(x%w)*w;
     y=(y%h)*h;
