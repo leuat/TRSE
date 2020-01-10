@@ -626,6 +626,8 @@ bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
     if(e->type() == QEvent::KeyPress || e->type()==QEvent::ShortcutOverride) {
         const QKeyEvent *ke = static_cast<QKeyEvent *>(e);
 //        qDebug() << "HOO" << (ke->key()==Qt::Key_Space) << ke->key()   ;
+
+        if (!(QApplication::keyboardModifiers() & Qt::ShiftModifier)) {
         if(ke->key()== Qt::Key_Space) {
             onSwapDisplayMode();
             return true;
@@ -650,8 +652,27 @@ bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
             on_cmbZoomLevel_activated("8x");
             return true;
         }
+        }
+        else
+         {
+            if (ke->key() == Qt::Key_F1) {
+                ui->tabMain->setCurrentIndex(0);
+            }
+            if (ke->key() == Qt::Key_F2) {
+                ui->tabMain->setCurrentIndex(1);
+            }
+            if (ke->key() == Qt::Key_F3) {
+                ui->tabMain->setCurrentIndex(2);
+            }
+            if (ke->key() == Qt::Key_F4) {
+                ui->tabMain->setCurrentIndex(3);
+            }
+        }
 
-       return false;
+
+
+
+        return false;
     }
     return QWidget::eventFilter(ob, e);
 }
