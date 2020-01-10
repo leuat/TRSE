@@ -91,6 +91,8 @@ public:
     int levelSize() const;
     int totalSize() const;
 
+    uchar m_displayMultiColor = 1;
+
     void Calculate()
     {
         if (m_useColors)
@@ -129,6 +131,7 @@ public:
         ba[9] = m_useColors==true ? 1:0;
         ba[10] = (uint)m_colSizex;
         ba[11] = (uint)m_colSizey;
+        ba[12] = (uint)m_displayMultiColor;
         return ba;
     }
 
@@ -151,6 +154,8 @@ public:
         m_dataChunks = (uchar)ba[6];
         m_dataChunkSize = (uchar)ba[7];
         m_extraDataSize = (uchar)ba[8];
+
+        m_displayMultiColor = ba[12];
 
         m_useColors = ((uchar)ba[9]==1);
 
@@ -222,6 +227,7 @@ public:
     void setPixel(int x, int y, unsigned int color) override;
     unsigned int getPixel(int x, int y) override;
     void CopyFrom(LImage* mc) override;
+    bool isMultiColor() override { return m_meta.m_displayMultiColor; }
 
     void onFocus() override;
 

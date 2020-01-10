@@ -403,7 +403,7 @@ void FormImageEditor::Load(QString filename)
 
     m_work.m_currentImage->m_image->BuildData(ui->tblData,lst);
 
-    m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
+//r    m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
 
 /*    if (dynamic_cast<LImageSprites*>(m_work.m_currentImage->m_image)!=nullptr) {
         Messages::messages.DisplayMessage(Messages::messages.OLD_SPRITE_FILE);
