@@ -131,6 +131,14 @@ void ImageLevelEditor::Initialize()
     //SetLevel(QPoint(0,0));
 
     m_currentLevel = m_levels[0];
+    m_charWidthDisplay = m_meta.m_width;
+    m_charHeightDisplay = m_meta.m_height;
+    m_width = m_meta.m_width*16;
+    m_height = m_meta.m_height*16;
+    setMultiColor(m_meta.m_displayMultiColor);
+
+    m_charWidthDisplay = m_meta.m_width;
+    m_charHeightDisplay = m_meta.m_height;
 
 }
 
@@ -191,11 +199,8 @@ void ImageLevelEditor::LoadBin(QFile &file)
     m_meta.Calculate();
 
     Initialize();
-    m_width = m_meta.m_width*16;
-    m_height = m_meta.m_height*16;
     m_meta.m_startx = 0;
     m_meta.m_starty = 0;
-    m_meta.Calculate();
     for (CharmapLevel* l : m_levels) {
 
         l->m_CharData = file.read(m_meta.dataSize());
@@ -210,11 +215,10 @@ void ImageLevelEditor::LoadBin(QFile &file)
 
     }
     LoadBinCharsetFilename(file);
-    m_width = m_meta.m_width*16;
-    m_height = m_meta.m_height*16;
 
     SetLevel(QPoint(0,0));
-    setMultiColor(m_meta.m_displayMultiColor);
+
+
 }
 
 void ImageLevelEditor::BuildData(QTableWidget *tbl, QStringList header)
