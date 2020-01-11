@@ -367,12 +367,5 @@
         <file>resources/images/brush_circle_background.png</file>
         <file>resources/images/brush_rotate.png</file>
         <file>resources/images/brush_copy.png</file>
-        <file>resources/images/fx-trans.png</file>
-        <file>resources/images/data-trans.png</file>
-        <file>resources/images/levels-trans.png</file>
-        <file>resources/images/import-export-trans.png</file>
-        <file>resources/images/charset-trans.png</file>
-        <file>resources/images/tabs-meta-trans.png</file>
-        <file>resources/images/tabs-meta.png</file>
     </qresource>
 </RCC>
