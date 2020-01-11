@@ -81,6 +81,54 @@ unsigned char LImage::TypeToChar(LImage::Type t)
     return 255;
 }
 
+QString LImage::TypeToString(LImage::Type t)
+{
+    if (t==QImageBitmap)
+        return "Bitmap image";
+    if (t==MultiColorBitmap)
+        return "C64 Image";
+    if (t==HiresBitmap)
+        return "C64 Image";
+    if (t==LevelEditor)
+        return "Level editor";
+    if (t==CharMapMulticolor)
+        return "Character map";
+    if (t==Sprites)
+        return "Sprites";
+    if (t==CharmapRegular)
+        return "Character map";
+    if (t==FullScreenChar)
+        return "Screen Animation";
+    if (t==CharMapMultiColorFixed)
+        return "Character map";
+    if (t==VIC20_MultiColorbitmap)
+        return "VIC Image";
+    if (t==Sprites2)
+        return "Sprites";
+    if (t==CGA)
+        return "CGA Image";
+    if (t==AMIGA320x200)
+        return "Amiga image";
+    if (t==AMIGA320x256)
+        return "Amiga image";
+    if (t==OK64_256x256)
+        return "OK64 image";
+    if (t==X16_640x480)
+        return "X16 image";
+    if (t==NES)
+        return "NES character map";
+    if (t==LMetaChunk)
+        return "Meta tiles";
+    if (t==LevelEditorNES)
+        return "NES level editor";
+    if (t==SpritesNES)
+        return "NES sprites";
+
+    return "Unknown image type";
+
+
+}
+
 LImage::Type LImage::CharToType(unsigned char c)
 {
     if (c==0)

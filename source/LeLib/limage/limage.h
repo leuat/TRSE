@@ -107,6 +107,7 @@ public:
 
 
     static unsigned char TypeToChar(Type t);
+    static QString TypeToString(Type t);
     static Type CharToType(unsigned char c);
 
     enum GUIType { btnLoadCharset, btnEditFullCharset, btn1x1, btn2x2,

@@ -39,9 +39,9 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
     m_grid.Initialize(320,200);
     m_fileExtension = "flf";
     Data::data.currentColor=1;
-    m_grid.ApplyToLabel(ui->lblGrid);
+    //m_grid.ApplyToLabel(ui->lblGrid);
     updateCharSet();
-    ui->lblGrid->setVisible(ui->chkGrid->isChecked());
+    //ui->lblGrid->setVisible(ui->chkGrid->isChecked());
 
 
 /*    ui->lblImage->setMouseTracking(true);
@@ -401,6 +401,7 @@ void FormImageEditor::Load(QString filename)
     s.remove(s.count()-1,1);
     ui->leHeaders->setText(s);
 
+    ui->lblName->setText(LImage::TypeToString(m_work.m_currentImage->m_image->m_type));
     m_work.m_currentImage->m_image->BuildData(ui->tblData,lst);
 
 //r    m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
@@ -681,8 +682,8 @@ void FormImageEditor::resizeEvent(QResizeEvent *event)
 {
     ui->lblImage->setVisible(true);
     UpdateAspect();
-    ui->lblGrid->setGeometry(ui->lblImage->geometry());
-    ui->lblGrid->repaint();
+    //ui->lblGrid->setGeometry(ui->lblImage->geometry());
+    //ui->lblGrid->repaint();
     // qDebug() <<
     //    qDebug() << ui->lblImage->geometry();
     //  ui->lblImage->setVisible(false);
@@ -1383,13 +1384,20 @@ void FormImageEditor::UpdateAspect()
     if (val==0) {
         ui->lblImage->setMinimumHeight(0);
         ui->lblImage->setMaximumHeight(100000);
+        ui->lblImage->setMinimumWidth(0);
+        ui->lblImage->setMaximumWidth(100000);
 
     }
     if (val==1) {
-        ui->lblImage->setMinimumHeight(ui->lblImage->width());
-        ui->lblImage->setMaximumHeight(ui->lblImage->width());
+        int size = min((double)ui->lblImage->width(),height()/1.25);
+        ui->lblImage->setMinimumHeight(size);
+        ui->lblImage->setMaximumHeight(size);
+        ui->lblImage->setMinimumWidth(size);
+        ui->lblImage->setMaximumWidth(size);
     }
     if (val==2) {
+        ui->lblImage->setMinimumWidth(0);
+        ui->lblImage->setMaximumWidth(100000);
         ui->lblImage->setMinimumHeight(ui->lblImage->width()/1.6);
         ui->lblImage->setMaximumHeight(ui->lblImage->width()/1.6);
     }
