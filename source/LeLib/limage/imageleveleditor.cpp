@@ -510,6 +510,7 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
         if ((col&0b00001000)==0b00001000)
             val+=1000;
     }
+    m_charset->setMultiColor(m_meta.m_displayMultiColor);
 
 
 
