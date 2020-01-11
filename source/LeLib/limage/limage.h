@@ -82,6 +82,7 @@ public:
 
 
 
+
     bool displayTimestamp = false;
 
 
@@ -164,7 +165,7 @@ public:
     unsigned int m_currencChar;
     // Updates charset position in editor
     bool m_updateCharsetPosition = false;
-
+    bool m_forcePaintColorAndChar = true;
 
     static const int m_copySize = 320;
     uchar m_copy[m_copySize*m_copySize];

@@ -429,9 +429,9 @@ void ImageLevelEditor::setPixel(int x, int y, unsigned int color)
         return;
 
 
-    if (m_writeType==Character)
+    if (m_writeType==Character || m_forcePaintColorAndChar)
         m_currentLevel->m_CharData[pos] = m_currencChar;
-    if (m_writeType==Color)
+    if (m_writeType==Color || m_forcePaintColorAndChar)
         m_currentLevel->m_ColorData[pos] = color;
 
     //BuildImage();
@@ -534,7 +534,7 @@ void ImageLevelEditor::CopyFrom(LImage *mc)
         Initialize();
 
         m_currencChar = c->m_currencChar;
-
+        m_forcePaintColorAndChar = c->m_forcePaintColorAndChar;
         for (int i=0;i<m_meta.m_sizex*m_meta.m_sizey;i++) {
             m_levels[i]->m_CharData = c->m_levels[i]->m_CharData;
             m_levels[i]->m_ColorData = c->m_levels[i]->m_ColorData;

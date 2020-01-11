@@ -248,6 +248,7 @@ private slots:
     void on_cmbNesPalette_activated(int index);
     void on_btnCharSelect_clicked();
     void on_cmbAspect_currentIndexChanged(int index);
+    void on_chkPaintSeparately_stateChanged(int arg1);
 };
 
 

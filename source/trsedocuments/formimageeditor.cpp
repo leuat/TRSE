@@ -219,6 +219,14 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
                 OpenSelectCharset();
                 return;
             }
+
+            if (e->key()==Qt::Key_P) {
+                ui->chkPaintSeparately->click();
+                emit onImageMouseEvent();
+                return;
+            }
+
+
             if (e->key()==Qt::Key_A) {
                 m_updateThread.m_zoomCenter.setX(m_updateThread.m_zoomCenter.x() - 1*scale);
                 emit onImageMouseEvent();
@@ -1940,4 +1948,9 @@ void FormImageEditor::on_cmbAspect_currentIndexChanged(int index)
 {
     UpdateAspect();
 
+}
+
+void FormImageEditor::on_chkPaintSeparately_stateChanged(int arg1)
+{
+    m_work.m_currentImage->m_image->m_forcePaintColorAndChar = !ui->chkPaintSeparately->isChecked();
 }
