@@ -315,6 +315,12 @@
        <property name="currentIndex">
         <number>0</number>
        </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
        <widget class="QWidget" name="tabCharset">
         <property name="maximumSize">
          <size>
@@ -322,8 +328,12 @@
           <height>16777215</height>
          </size>
         </property>
+        <attribute name="icon">
+         <iconset resource="../../resources.qrc">
+          <normaloff>:/resources/images/charset-trans.png</normaloff>:/resources/images/charset-trans.png</iconset>
+        </attribute>
         <attribute name="title">
-         <string>Charset</string>
+         <string/>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_9">
          <item row="0" column="0">
@@ -413,8 +423,12 @@
         </layout>
        </widget>
        <widget class="QWidget" name="tab_3">
+        <attribute name="icon">
+         <iconset resource="../../resources.qrc">
+          <normaloff>:/resources/images/import-export-trans.png</normaloff>:/resources/images/import-export-trans.png</iconset>
+        </attribute>
         <attribute name="title">
-         <string>Import/Export</string>
+         <string/>
         </attribute>
         <widget class="QWidget" name="gridLayoutWidget_7">
          <property name="geometry">
@@ -544,8 +558,12 @@
         </widget>
        </widget>
        <widget class="QWidget" name="tabSprites">
+        <attribute name="icon">
+         <iconset resource="../../resources.qrc">
+          <normaloff>:/resources/images/tabs-meta-trans.png</normaloff>:/resources/images/tabs-meta-trans.png</iconset>
+        </attribute>
         <attribute name="title">
-         <string>Sprites</string>
+         <string/>
         </attribute>
         <widget class="QWidget" name="verticalLayoutWidget_3">
          <property name="geometry">
@@ -814,8 +832,12 @@
         </widget>
        </widget>
        <widget class="QWidget" name="tab_6">
+        <attribute name="icon">
+         <iconset resource="../../resources.qrc">
+          <normaloff>:/resources/images/levels-trans.png</normaloff>:/resources/images/levels-trans.png</iconset>
+        </attribute>
         <attribute name="title">
-         <string>Levels</string>
+         <string/>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_5">
          <item row="0" column="0">
@@ -824,8 +846,12 @@
         </layout>
        </widget>
        <widget class="QWidget" name="tab_7">
+        <attribute name="icon">
+         <iconset resource="../../resources.qrc">
+          <normaloff>:/resources/images/data-trans.png</normaloff>:/resources/images/data-trans.png</iconset>
+        </attribute>
         <attribute name="title">
-         <string>Data</string>
+         <string/>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_7">
          <item row="0" column="0">
@@ -858,8 +884,12 @@
         </layout>
        </widget>
        <widget class="QWidget" name="tab">
+        <attribute name="icon">
+         <iconset resource="../../resources.qrc">
+          <normaloff>:/resources/images/fx-trans.png</normaloff>:/resources/images/fx-trans.png</iconset>
+        </attribute>
         <attribute name="title">
-         <string>Effects</string>
+         <string/>
         </attribute>
         <widget class="QWidget" name="horizontalLayoutWidget">
          <property name="geometry">
@@ -1005,6 +1035,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../../resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
