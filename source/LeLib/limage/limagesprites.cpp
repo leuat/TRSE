@@ -34,8 +34,8 @@ LImageSprites::LImageSprites(LColorList::Type t) : CharsetImage(t) {
     m_GUIParams[btn2x2repeat] = "";
     m_GUIParams[btnCopy] = "Copy";
     m_GUIParams[btnPaste] = "Paste";
-    m_GUIParams[btnFlipH] = "Flip Horizontal";
-    m_GUIParams[btnFlipV] = "Flip Vertical";
+    m_GUIParams[btnFlipH] = "Mirror X";
+    m_GUIParams[btnFlipV] = "Mirror Y";
     m_GUIParams[btnEditFullCharset] = "";
 
 

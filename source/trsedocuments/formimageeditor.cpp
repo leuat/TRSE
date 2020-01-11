@@ -720,6 +720,11 @@ void FormImageEditor::on_btnGenerate_clicked()
 
 void FormImageEditor::showDetailCharButtons(bool doShow)
 {
+/*    if (m_work.m_currentImage!=nullptr)
+    if (dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image)!=nullptr)
+        return;
+
+    return;*/
     ui->btnCharsetCopy->setVisible(doShow);
     ui->btnCharsetPaste->setVisible(doShow);
     ui->btnFlipVert->setVisible(doShow);
@@ -1125,8 +1130,9 @@ void FormImageEditor::SetSingleCharsetEdit()
 
 void FormImageEditor::SetButton(QPushButton *btn, LImage::GUIType type)
 {
-    if (m_work.m_currentImage->m_image->m_GUIParams.contains(type))
-        return;
+    //if (m_work.m_currentImage->m_image->m_GUIParams.contains(type))
+      //  return;
+
     if (m_work.m_currentImage->m_image->m_GUIParams[type]=="")
         btn->setVisible(false);
     else

@@ -21,6 +21,7 @@
 
 #include "imageleveleditor.h"
 #include "source/LeLib/util/util.h"
+#include "source/Compiler/syntax.h"
 
 void ImageLevelEditor::SetLevel(QPoint f)
 {
@@ -91,8 +92,8 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_GUIParams[btn1x1] = "";
     m_GUIParams[btn2x2] = "";
     m_GUIParams[btn2x2repeat] = "";
-    m_GUIParams[btnCopy] = "Copy";
-    m_GUIParams[btnPaste] = "Paste";
+    m_GUIParams[btnCopy] = "";
+    m_GUIParams[btnPaste] = "";
     m_GUIParams[btnFlipH] = "";
     m_GUIParams[btnFlipV] = "";
     m_GUIParams[btnEditFullCharset] = "";
@@ -113,6 +114,9 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_metaParams.append(new MetaParameter("data_count","Data count",8,0,100));
     m_metaParams.append(new MetaParameter("data_extra","Extra data",3,0,1000));
     m_metaParams.append(new MetaParameter("use_colors","Use charset colors",1,1,1));
+
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20)
+        m_colorList.InitVIC20();
 
 }
 

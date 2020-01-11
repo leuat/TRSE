@@ -44,8 +44,8 @@ LImageNES::LImageNES(LColorList::Type t) : CharsetImage(t)
     m_GUIParams[btn2x2repeat] = "16x16 tiled";
     m_GUIParams[btnCopy] = "Copy";
     m_GUIParams[btnPaste] = "Paste";
-    m_GUIParams[btnFlipH] = "Flip H";
-    m_GUIParams[btnFlipV] = "Flip V";
+    m_GUIParams[btnFlipH] = "Mirror X";
+    m_GUIParams[btnFlipV] = "Mirror Y";
 
     m_GUIParams[tabCharset] = "Charset";
     m_GUIParams[tabData] = "";

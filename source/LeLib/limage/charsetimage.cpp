@@ -79,8 +79,8 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_GUIParams[btn2x2repeat] = "2x2 Character repeat";
     m_GUIParams[btnCopy] = "Copy";
     m_GUIParams[btnPaste] = "Paste";
-    m_GUIParams[btnFlipH] = "Flip Horizontal";
-    m_GUIParams[btnFlipV] = "Flip Vertical";
+    m_GUIParams[btnFlipH] = "Mirror X";
+    m_GUIParams[btnFlipV] = "Mirror Y";
     m_GUIParams[btnEditFullCharset] = "Full charset";
 
     m_GUIParams[tabCharset] = "1";
@@ -237,7 +237,7 @@ unsigned int CharsetImage::getPixel(int x, int y)
 }
 
 
-void CharsetImage::FlipVertical()
+/*void CharsetImage::FlipVertical()
 {
 
 
@@ -264,77 +264,8 @@ void CharsetImage::FlipVertical()
 
 
 
- /*   if (m_currentMode==CHARSET2x2) {
-        float i = 160/16.0;
-        float j = 200.0/16.0;
-
-        for (int x=0;x<16;x++)
-            for (int y=0;y<16;y++) {
-                tmp[16*y + x]=getPixel(x*i,y*j+1);
-            }
-        for (int y=0;y<16;y++)
-            for (int x=0;x<16;x++)
-            setPixel( x*i ,y*j+1, tmp[16*y + 15-x]);
-
-    }
-    if (m_currentMode==CHARSET1x1) {
-
-        int n = 8/m_bitMask;
-
-        float i = 320/8.0*m_bitMask;
-        float j = 200.0/8.0;
-
-        for (int x=0;x<n;x++)
-            for (int y=0;y<8;y++) {
-                tmp[n*y + x]=getPixel(x*i,y*j+1);
-            }
-        for (int y=0;y<8;y++)
-            for (int x=0;x<n;x++)
-            setPixel( x*i ,y*j+1, tmp[n*y + n-1-x]);
-
-    }
-
-    */
 }
-
-void CharsetImage::FlipHorizontal()
-{
-/*    uint tmp[24*24];
-    if (m_currentMode==CHARSET2x2) {
-        float i = 160/16.0;
-        float j = 200.0/16.0;
-
-        for (int x=0;x<16;x++)
-            for (int y=0;y<16;y++) {
-                tmp[16*y + x]=getPixel(x*i,y*j+1);
-            }
-        for (int y=0;y<16;y++)
-            for (int x=0;x<16;x++)
-                setPixel( x*i ,y*j+1, tmp[16*(15-y) +x]);
-
-    }*/
-
-    uint tmp[64*64];
-    float i = 160/4.0;
-    float j = 200.0/8.0;
-    int n = 8/m_scale;
-    int ny = 8;
-    if (m_currentMode==CHARSET2x2) {
-        i = 160/16.0;
-        j = 200.0/16.0;
-        n =32/m_scale;
-        ny = 16;
-    }
-
-    for (int x=0;x<n;x++)
-        for (int y=0;y<ny;y++) {
-            tmp[n*y + x]=getPixel(x*i,y*j+1);
-        }
-    for (int y=0;y<ny;y++)
-        for (int x=0;x<n;x++)
-        setPixel( x*i ,y*j+1, tmp[ny*(ny-1-y) + x]);
-
-}
+*/
 
 
 void CharsetImage::FromRaw(QByteArray &arr)
@@ -591,46 +522,3 @@ void CharsetImage::onFocus() {
         LoadCharset(m_charsetFilename,0);
 }
 
-void CharsetImage::CopyChar()
-{
-
-    for (int y=0;y<m_copySize;y++)
-        for (int x=0;x<m_copySize;x++) {
-            m_copy[x+y*m_copySize] = getPixel(x/(float)m_copySize*m_width,y/(float)m_copySize*m_height);
-        }
-    m_copyFromMode = m_currentMode;
-
-/*    if (m_currentMode == CHARSET1x1)
-        m_copy[0] = m_data[m_currencChar];
-
-    if (m_currentMode == CHARSET2x2 || m_currentMode == CHARSET2x2_REPEAT) {
-        m_copy[0] = m_data[m_currencChar];
-        m_copy[1] = m_data[m_currencChar+1];
-        m_copy[2] = m_data[m_currencChar+40];
-        m_copy[3] = m_data[m_currencChar+41];
-
-    }
-*/
-}
-
-void CharsetImage::PasteChar()
-{
-    if (m_currentMode!=m_copyFromMode)
-        return;
-    for (int y=0;y<m_copySize;y++)
-        for (int x=0;x<m_copySize;x++) {
-             setPixel(x/(float)m_copySize*m_width,y/(float)m_copySize*m_height,m_copy[x+y*m_copySize]);
-        }
-  /*  if (m_currentMode == CHARSET1x1)
-        m_data[m_currencChar]=m_copy[0];
-
-    if (m_currentMode == CHARSET2x2 || m_currentMode == CHARSET2x2_REPEAT) {
-        m_data[m_currencChar] = m_copy[0];
-        m_data[m_currencChar+1] = m_copy[1];
-//        m_data[m_currencChar+m_charHeight] = m_copy[2];
-        m_data[m_currencChar+40] = m_copy[2];
-        m_data[m_currencChar+41] = m_copy[3];
-
-    }
-*/
-}

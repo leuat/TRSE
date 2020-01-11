@@ -37,26 +37,13 @@ public:
 
     int m_skipImportBytes = 0;
 //    PixelChar m_copy[64];
-    static const int m_copySize = 64;
-    uchar m_copy[m_copySize*m_copySize];
 
     int m_colorOrderType = 0; // C64
 
-    enum Mode{ FULL_IMAGE, CHARSET1x1, CHARSET2x2, CHARSET2x2_REPEAT};
 
-    Mode m_copyFromMode;
-
-    QString GetCurrentModeString() override {
-        if (m_currentMode==CHARSET1x1) return "1x1 charset mode";
-        if (m_currentMode==CHARSET2x2) return "2x2 charset mode";
-        if (m_currentMode==CHARSET2x2_REPEAT) return "2x2 charset repeat mode";
-
-        return "Full image mode";
-    }
 
     int FindClosestChar(PixelChar p);
 
-    Mode m_currentMode = FULL_IMAGE;
 
     QString GetCurrentDataString() override {
         return "  Character : " + Util::numToHex(m_currencChar);
@@ -101,12 +88,12 @@ public:
 
     void onFocus() override;
 
-    void FlipHorizontal() override;
+/*    void FlipHorizontal() override;
     void FlipVertical() override;
 
     void CopyChar() override;
     void PasteChar() override;
-
+*/
 };
 
 #endif // CHARSETIMAGE_H

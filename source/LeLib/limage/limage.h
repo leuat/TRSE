@@ -165,6 +165,17 @@ public:
 
 
 
+    static const int m_copySize = 320;
+    uchar m_copy[m_copySize*m_copySize];
+    enum Mode{ FULL_IMAGE, CHARSET1x1, CHARSET2x2, CHARSET2x2_REPEAT};
+    Mode m_currentMode = FULL_IMAGE;
+    QString GetCurrentModeString();
+
+
+    Mode m_copyFromMode;
+
+
+
     virtual int GetWidth() {
         return m_width;
     }
@@ -213,14 +224,15 @@ public:
 
     virtual void RenderEffect(QMap<QString, float> params) {}
 
-    virtual void CopyChar() {}
-    virtual void PasteChar() {}
+    virtual void CopyChar();
+
+    virtual void PasteChar();
 
   //  virtual void Delete() {}
 
 
-    virtual void FlipHorizontal() {}
-    virtual void FlipVertical() {}
+    virtual void FlipHorizontal();
+    virtual void FlipVertical();
 
 //    virtual void Next() {}
   //  virtual void Prev() {}
@@ -231,9 +243,6 @@ public:
 
     virtual void Initialize(int width, int height) = 0;
 
-    virtual QString GetCurrentModeString() {
-        return "Full image mode";
-    }
 
     virtual QString GetCurrentDataString() {
         return "";
@@ -312,6 +321,9 @@ public:
     virtual void fromQImage(QImage* img, LColorList& lst) = 0;
 
     virtual void ExportAsm(QString filename)  { qDebug() << "ASM Write not supported"; }
+
+
+
 
 };
 

@@ -185,6 +185,14 @@ MetaParameter *LImage::getMetaParameter(QString name)
     return nullptr;
 }
 
+QString LImage::GetCurrentModeString() {
+    if (m_currentMode==CHARSET1x1) return "1x1 charset mode";
+    if (m_currentMode==CHARSET2x2) return "2x2 charset mode";
+    if (m_currentMode==CHARSET2x2_REPEAT) return "2x2 charset repeat mode";
+
+    return "Full image mode";
+}
+
 void LImage::FloydSteinbergDither(QImage &img, LColorList &colors, bool dither)
 {
     int height  =min(img.height(), m_height);
@@ -243,6 +251,40 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
         }
     }
 
+
+}
+
+void LImage::CopyChar()
+{
+
+    for (int y=0;y<m_copySize;y++)
+        for (int x=0;x<m_copySize;x++) {
+            m_copy[x+y*m_copySize] = getPixel(x/(float)m_copySize*m_width,y/(float)m_copySize*m_height);
+        }
+    m_copyFromMode = m_currentMode;
+
+}
+
+void LImage::PasteChar()
+{
+    if (m_currentMode!=m_copyFromMode)
+        return;
+    for (int y=0;y<m_copySize;y++)
+        for (int x=0;x<m_copySize;x++) {
+            setPixel(x/(float)m_copySize*m_width,y/(float)m_copySize*m_height,m_copy[x+y*m_copySize]);
+        }
+}
+
+void LImage::FlipHorizontal() {
+    CopyChar();
+    for (int y=0;y<m_copySize;y++)
+        for (int x=0;x<m_copySize;x++) {
+            setPixel(x/(float)m_copySize*m_width,y/(float)m_copySize*m_height,m_copy[m_copySize-1-x+y*m_copySize]);
+        }
+
+}
+
+void LImage::FlipVertical() {
 
 }
 
