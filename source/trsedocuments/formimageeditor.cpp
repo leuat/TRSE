@@ -227,6 +227,7 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             }
 
 
+
             if (e->key()==Qt::Key_A) {
                 m_updateThread.m_zoomCenter.setX(m_updateThread.m_zoomCenter.x() - 1*scale);
                 emit onImageMouseEvent();
@@ -288,6 +289,8 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
                 ui->chkGrid->setChecked(!ui->chkGrid->isChecked());
                 //ui->lblGrid->setVisible(ui->chkGrid->isChecked());
                 m_updateThread.m_drawGrid=!m_updateThread.m_drawGrid;
+                Data::data.Redraw();
+                emit onImageMouseEvent();
 
         }
         if (e->key() == Qt::Key_X) {
@@ -1090,6 +1093,11 @@ void FormImageEditor::PrepareImageTypeGUI()
     SetLabel(ui->lblForeground, LImage::GUIType::col2);
     SetLabel(ui->lblMC1, LImage::GUIType::col3);
     SetLabel(ui->lblMC2, LImage::GUIType::col4);
+
+
+    if (m_work.m_currentImage->m_image->isNes())
+        ui->btnImportRom->setVisible(false);
+
 
     int idx=0;
 //    qDebug() << m_work.m_currentImage->m_image->m_GUIParams;

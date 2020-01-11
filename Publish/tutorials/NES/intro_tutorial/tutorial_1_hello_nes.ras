@@ -12,14 +12,16 @@ program Tutorial_1_hello_nes;
 
 */
 
+@export "tiles/game_tiles.flf" "tiles/game_tiles.bin" 256
+
 var  
-   	i: byte; 
+   	i,j,k: byte; 
 	// Must include dummy at $8000 due to the fact we are using 2 16kb blocks. For a larger project,
 	// this is where the music will go
-	dummy:incbin("palette/palette.dat", $8000);
-	// Standard palette. Use YYchr (https://www.romhacking.net/utilities/119/) to create and edit.
-	palette: incbin("palette/palette.dat");
+	dummy:array[1] of byte at $8000;
+	palette: incbin("tiles/game_tiles.pal");
 	zp:pointer;
+	
 
 
 
@@ -28,7 +30,8 @@ var
 
 interrupt NMI();
 begin
-
+	startirq(0);
+	closeirq();
 end;
 
 
@@ -41,8 +44,6 @@ end;
 
 /*
 	Sets up the background screen by filling 32x30 rows with
-    some values to a temp address at $0400, then dumping to nametable 1 ($2000) on the PPU 
-
     Afterwards, creating 64 random attribute (color) values and dumping them to the attribute 
 
 */
@@ -52,22 +53,20 @@ end;
 
 procedure InitScreen();
 begin
-	zp:=@storage;
+//	zp:=@storage;
 	// fill 30 lines with same value i+50
+	zp:=$2000;
+	k:=0;
 	for i:=0 to 30 do begin
-		fill(zp,i+50,32);
-		inczp(zp,32);
+		for j:=0 to 32 do
+		begin
+			ppusingle(hi(zp),lo(zp),2+j&1 +(i&1)*16);
+			zp:=zp+1;
+		end;
 	end;
 	// Dump from storage to PPU nametable 0 ($2000 = ($20, $00));
-	PPUBackgroundDump(^@storage,$20,0);
-
-	// Same as above, create 64 "random" attribute (color) values
-	for i:=0 to 64 do begin
-		poke(^@storage,i,%11011000);
-	end;
-	// Dump from storage to PPU nametable 0 ($23C0 = ($23, $C0));
-
-	PPUAttributeDump(^@storage,$23,$C0);
+	fill(^@storage,%00011011,64);
+	PPUBackgroundDump(^@storage,$23,$C0);
 
 end;
 
@@ -83,6 +82,9 @@ begin
 	ToggleBackground(1);
 	// Display background in border 0
 	ToggleBorderBackground(1);
+	
+	PPUCTRL:=%10010000;// set sprites on bank 0, tiles on bank 1;
+
 	// set nametable 0 = $2000 (where we dumped the background data)
 	SetNametable(0);
 	// Turn on NMI

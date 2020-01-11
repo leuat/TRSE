@@ -639,10 +639,12 @@ void LColorList::CreateUI(QLayout* ly, int type)
 //    if (m_list.count())
 
     int maxy=0;
+    int cur = 0;
     for(int j=0; j<m_list.count(); j++)
     {
         if (!m_list[j].displayList)
             continue;
+
         QPushButton *b = new QPushButton();
         //b->setGeometry(0,0,40,40);
         QPalette p;
@@ -663,7 +665,7 @@ void LColorList::CreateUI(QLayout* ly, int type)
 
         }
         if (type==1) {
-            QObject::connect( b, &QPushButton::clicked,  [=](){ handleButtonEdit(j);} );
+            QObject::connect( b, &QPushButton::clicked,  [=](){ handleButtonEdit(j,cur);} );
         }
         //QObject::connect( b, &QPushButton::clicked,  colorValueChanged );
 
@@ -681,6 +683,7 @@ void LColorList::CreateUI(QLayout* ly, int type)
             m_buttonsEdit.append(b);
 
         yy++;
+        cur++;
         maxy++;
         if (yy==16) {
             yy=0;
@@ -694,12 +697,14 @@ void LColorList::CreateUI(QLayout* ly, int type)
     }*/
 }
 
-void LColorList::handleButtonEdit(int data)
+void LColorList::handleButtonEdit(int val, int data)
 {
     for (int i=0;i<m_buttonsEdit.count();i++)
         m_buttonsEdit[i]->setText("");
-    m_buttonsEdit[data]->setText("X");
-    Data::data.currentColor = data;
+    //if (data<m_buttonsEdit.count())
+//    qDebug() << data;
+        m_buttonsEdit[data]->setText("X");
+    Data::data.currentColor = val;
     Data::data.currentIsColor=true;
 
 }

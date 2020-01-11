@@ -40,7 +40,7 @@ public:
 
     int m_colorOrderType = 0; // C64
 
-
+    int m_displayGridKeep;
 
     int FindClosestChar(PixelChar p);
 
@@ -87,6 +87,9 @@ public:
     void setLimitedPixel(int x, int y, unsigned int color);
 
     void onFocus() override;
+
+    virtual int getCharWidthDisplay() override;
+    virtual int getCharHeightDisplay() override;
 
 /*    void FlipHorizontal() override;
     void FlipVertical() override;

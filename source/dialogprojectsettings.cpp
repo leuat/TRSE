@@ -20,6 +20,7 @@
 */
 #include "dialogprojectsettings.h"
 #include "ui_dialogprojectsettings.h"
+#include <QFileDialog>
 
 DialogProjectSettings::DialogProjectSettings(QString dir, QWidget *parent) :
     QDialog(parent),
@@ -274,5 +275,17 @@ void DialogProjectSettings::on_pushButton_clicked()
 
 void DialogProjectSettings::on_btnNESLoadCharFile_2_clicked()
 {
+
+}
+
+void DialogProjectSettings::on_btnNESLoadCharFile_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Tile bin file"), m_ini->getString("project_path"), "*");
+    if (filename!="") {
+        filename.remove(m_currentDir);
+       ui->leNESCharFile->setText(filename);
+       m_ini->getString("nes_8k_file") = filename;
+    }
 
 }

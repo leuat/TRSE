@@ -35,7 +35,7 @@ void DialogSelectCharset::UpdateCharSet()
 
 
 
-    int width = charmap->m_charWidthDisplay;
+    int width = charmap->getCharWidthDisplay();
     //   ui->lstCharMap->setViewMode(QListView::IconMode);
     ui->lstCharMap->setColumnCount(width);
     ui->lstCharMap->setRowCount(1+maps.count()/width);

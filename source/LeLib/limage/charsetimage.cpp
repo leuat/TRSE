@@ -520,3 +520,29 @@ void CharsetImage::onFocus() {
         LoadCharset(m_charsetFilename,0);
 }
 
+int CharsetImage::getCharWidthDisplay()
+{
+    if (m_currentMode==Mode::FULL_IMAGE)
+        return m_charWidthDisplay;
+    if (m_currentMode==Mode::CHARSET1x1)
+        return 8;
+    if (m_currentMode==Mode::CHARSET2x2)
+        return 16;
+    if (m_currentMode==Mode::CHARSET2x2_REPEAT)
+        return 16*3;
+    return m_charWidthDisplay;
+}
+
+int CharsetImage::getCharHeightDisplay()
+{
+    if (m_currentMode==Mode::FULL_IMAGE)
+        return m_charHeightDisplay;
+    if (m_currentMode==Mode::CHARSET1x1)
+        return 8;
+    if (m_currentMode==Mode::CHARSET2x2)
+        return 16;
+    if (m_currentMode==Mode::CHARSET2x2_REPEAT)
+        return 16*3;
+    return m_charHeightDisplay;
+}
+

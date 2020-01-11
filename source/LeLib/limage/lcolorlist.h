@@ -164,7 +164,7 @@ public:
 
     int getIndex(QColor c);
 
-    void handleButtonEdit(int data);
+    void handleButtonEdit(int val, int data);
 
     void CreateUI(QLayout* ly, int type);
 

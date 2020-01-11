@@ -186,6 +186,16 @@ MetaParameter *LImage::getMetaParameter(QString name)
     return nullptr;
 }
 
+int LImage::getCharWidthDisplay()
+{
+    return m_charWidthDisplay;
+}
+
+int LImage::getCharHeightDisplay()
+{
+    return m_charHeightDisplay;
+}
+
 QString LImage::GetCurrentModeString() {
     if (m_currentMode==CHARSET1x1) return "1x1 charset mode";
     if (m_currentMode==CHARSET2x2) return "2x2 charset mode";

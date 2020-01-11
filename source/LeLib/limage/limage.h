@@ -91,6 +91,9 @@ public:
 
 class LImage
 {
+
+
+
 public:
     enum Type { QImageBitmap, MultiColorBitmap, HiresBitmap,
                 NotSupported, Tiff, CharMapMulticolor, FullScreenChar, LevelEditor, CharmapRegular, CharMapMultiColorFixed,
@@ -132,8 +135,12 @@ public:
     }
 
 
-    int m_charWidthDisplay = 40;
+    virtual int getCharWidthDisplay();
+    virtual int getCharHeightDisplay();
+
     int m_charHeightDisplay = 25;
+    int m_charWidthDisplay = 40;
+
     int m_currentBank = 0;
 
     virtual void SetBank(int bnk) {
