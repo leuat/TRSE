@@ -70,6 +70,8 @@ public:
     QString m_projectPath;
     QVector<int> m_keepSpriteChar;
 
+    int m_oldWidth = 600;
+
     CharsetImage::Mode m_prefMode = CharsetImage::Mode::CHARSET1x1;
     CharsetImage::Mode m_keepMode = CharsetImage::Mode::CHARSET1x1;
 
@@ -137,6 +139,7 @@ private:
     Ui::Formimageeditor *ui;
 
 private slots:
+    void InitAspect();
     void onSwapDisplayMode();
     void onImageMouseEvent();
     void onImageMouseReleaseEvent();

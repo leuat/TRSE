@@ -81,9 +81,12 @@ void DialogNewImage::FromMeta()
 {
     if (m_metaImage==nullptr)
         return;
-
+//    setTabOrder()
     Util::clearLayout(ui->grdParams);
     int y=0;
+    //setFocusPolicy(Qt::StrongFocus);
+    //setFocus();
+    QWidget* prev = ui->cmbImageType;
     for (MetaParameter* mp:m_metaImage->m_metaParams) {
         ui->grdParams->addWidget(new QLabel(mp->text),y,0);
         QLineEdit* le = new QLineEdit(QString::number(mp->value));
@@ -93,6 +96,9 @@ void DialogNewImage::FromMeta()
             mp->value = le->text().toFloat();
             FromMeta();
         });
+        setTabOrder(prev, le);
+        prev = le;
+
         y++;
 
     }

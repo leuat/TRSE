@@ -10,6 +10,9 @@
     <height>513</height>
    </rect>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::TabFocus</enum>
+  </property>
   <property name="windowTitle">
    <string>New image</string>
   </property>
@@ -70,7 +73,11 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
-       <widget class="QTextBrowser" name="lblInfo"/>
+       <widget class="QTextBrowser" name="lblInfo">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -87,6 +94,11 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>cmbSystem</tabstop>
+  <tabstop>cmbImageType</tabstop>
+  <tabstop>lblInfo</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

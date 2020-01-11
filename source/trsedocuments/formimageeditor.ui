@@ -10,12 +10,15 @@
     <height>600</height>
    </rect>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::NoFocus</enum>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3" rowstretch="16,1,0">
    <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout" rowstretch="1,0" columnstretch="2,1,1,1">
+    <layout class="QGridLayout" name="gridLayout" rowstretch="1" columnstretch="2,1,1,1">
      <item row="0" column="0" colspan="2">
       <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,1,200">
        <item>

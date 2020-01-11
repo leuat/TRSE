@@ -27,6 +27,7 @@
 #include "source/LeLib/limage/charsetimage.h"
 #include "source/messages.h"
 #include "source/dialogselectcharset.h"
+#include <QTimer>
 
 FormImageEditor::FormImageEditor(QWidget *parent) :
     TRSEDocument(parent),
@@ -89,7 +90,7 @@ void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *ini
 
 
     UpdateGrid();
-
+    ui->chkBackgroundArea->setVisible(false);
 
 }
 
@@ -428,14 +429,25 @@ void FormImageEditor::Load(QString filename)
     ui->cmbBank->setCurrentIndex(1);
     ui->cmbBank->setCurrentIndex(0);
     ui->cmbBank->setCurrentIndex(1);
+//    m_oldWidth = ui->lblImage->width();
+//    this->resize(this->geometry().width(), this->geometry().height());
+
 
     updateCharSet();
 
     onImageMouseEvent();
 
-
+    QTimer::singleShot(50, this, SLOT(InitAspect()));
 
 }
+
+
+void FormImageEditor::InitAspect()
+{
+    if (m_projectIniFile->contains("aspect_ratio"))
+        ui->cmbAspect->setCurrentIndex(m_projectIniFile->getdouble("aspect_ratio"));
+}
+
 
 void FormImageEditor::Save(QString filename)
 {
@@ -693,6 +705,7 @@ bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
 void FormImageEditor::resizeEvent(QResizeEvent *event)
 {
     ui->lblImage->setVisible(true);
+    m_oldWidth = ui->lblImage->width();
     UpdateAspect();
     //ui->lblGrid->setGeometry(ui->lblImage->geometry());
     //ui->lblGrid->repaint();
@@ -1409,10 +1422,11 @@ void FormImageEditor::UpdateAspect()
         ui->lblImage->setMaximumHeight(100000);
         ui->lblImage->setMinimumWidth(0);
         ui->lblImage->setMaximumWidth(100000);
-
+//        m_oldWidth = width();
     }
     if (val==1) {
-        int size = min((double)ui->lblImage->width(),height()/1.25);
+//        qDebug() << m_oldWidth;
+        int size = min((double)m_oldWidth,height()/1.25);
         ui->lblImage->setMinimumHeight(size);
         ui->lblImage->setMaximumHeight(size);
         ui->lblImage->setMinimumWidth(size);
@@ -1421,13 +1435,14 @@ void FormImageEditor::UpdateAspect()
     if (val==2) {
         ui->lblImage->setMinimumWidth(0);
         ui->lblImage->setMaximumWidth(100000);
-        ui->lblImage->setMinimumHeight(ui->lblImage->width()/1.6);
-        ui->lblImage->setMaximumHeight(ui->lblImage->width()/1.6);
+        ui->lblImage->setMinimumHeight(m_oldWidth/1.6);
+        ui->lblImage->setMaximumHeight(m_oldWidth/1.6);
     }
     this->resize(this->geometry().width(), this->geometry().height());
     onImageMouseEvent();
 
 }
+
 
 void FormImageEditor::onSwapDisplayMode()
 {
@@ -1955,6 +1970,8 @@ void FormImageEditor::on_btnCharSelect_clicked()
 
 void FormImageEditor::on_cmbAspect_currentIndexChanged(int index)
 {
+    m_projectIniFile->setFloat("aspect_ratio",index);
+
     UpdateAspect();
 
 }

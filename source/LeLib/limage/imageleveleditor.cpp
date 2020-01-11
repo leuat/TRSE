@@ -509,8 +509,8 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
         if (val==m_charset->m_data[pos].c[3]) {
             val = col&0b00000111;
         }
-        if ((col&0b00001000)==0b00001000)
-            val+=1000;
+  //      if ((col&0b00001000)==0b00001000)
+    //        val+=1000;
     }
     m_charset->setMultiColor(m_meta.m_displayMultiColor);
 
