@@ -324,7 +324,7 @@ public:
     virtual void ExportAsm(QString filename)  { qDebug() << "ASM Write not supported"; }
 
 
-
+    void EnsureSystemColours();
 
 };
 

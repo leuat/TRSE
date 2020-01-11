@@ -142,6 +142,7 @@ public:
     void CopyFrom(LColorList* other);
     void InitC64_org();
     void InitC64();
+    void InitC64Multicolor();
     void InitPICO8();
     void InitVIC20();
     void InitCGA1_LOW();

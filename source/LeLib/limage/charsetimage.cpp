@@ -45,9 +45,7 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     // Needed for NES stuff
     m_currentBank = 1;
 
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20)
-        m_colorList.InitVIC20();
-
+    EnsureSystemColours();
     m_supports.koalaExport = false;
     m_supports.koalaImport = false;
     m_supports.asmExport = false;

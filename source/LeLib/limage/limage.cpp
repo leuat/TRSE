@@ -28,6 +28,7 @@
 #include <QGraphicsPixmapItem>
 #include <QPainter>
 #include <QMatrix4x4>
+#include "source/Compiler/syntax.h"
 
 LImage::LImage(LColorList::Type t)
 {
@@ -347,5 +348,16 @@ void LImage::CopyFrom(LImage *img) {
         qDebug() << "LImage copyfrom  count : " <<img->m_colorList.m_list.count();
     }
     */
+}
+
+void LImage::EnsureSystemColours()
+{
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20)
+        m_colorList.InitVIC20();
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64)
+        m_colorList.InitC64();
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES)
+        m_colorList.InitNES();
+
 }
 

@@ -115,9 +115,7 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_metaParams.append(new MetaParameter("data_extra","Extra data",3,0,1000));
     m_metaParams.append(new MetaParameter("use_colors","Use charset colors",1,1,1));
 
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20)
-        m_colorList.InitVIC20();
-
+    EnsureSystemColours();
 }
 
 void ImageLevelEditor::Initialize()
@@ -457,14 +455,6 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
     if (m_meta.m_useColors)
         col = m_currentLevel->m_ColorData[pos];
 
-    int ix = ((x) % (8)/m_scale)*m_scale;//- (dx*40);
-    int iy = (y) % 8;//- (dy*25);
-
- //   return pc.get(m_scale*ix, iy, m_bitMask);
-
-//    if (ix>m_meta.m_width)
-  //      return 0;
-
     pos = v + shift;
 
 
@@ -472,9 +462,34 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
         col = m_charset->m_data[pos].c[3];
 
 //    return m_charset->m_data[pos].get(v + (2*x)&7, v+ y&7,m_bitMask);
+    int ss = m_scale;
+
+    if (col>=8)
+        m_charset->setMultiColor(true);
+    else {
+        m_charset->setMultiColor(false);
+        ss = 1;
+    }
+
+
+    int ix = ((x) % (8)/ss)*ss;//- (dx*40);
+    int iy = (y) % 8;//- (dy*25);
+
+ //   return pc.get(m_scale*ix, iy, m_bitMask);
+
+//    if (ix>m_meta.m_width)
+  //      return 0;
+
+
+
     uint val = m_charset->m_data[pos].get(ix, iy,m_charset->m_bitMask);
+    if (col<8) // Non-multicolor
+        if (val!=m_charset->m_background)
+            val = col;
 
     if (dynamic_cast<LImageMetaChunk*>(m_charset)!=nullptr) {
+
+
         val = m_charset->getCharPixel(v, col, x,y);
             if (!m_charset->m_isMultiColor)
                 if (val!=m_charset->m_background)

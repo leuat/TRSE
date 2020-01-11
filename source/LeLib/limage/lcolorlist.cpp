@@ -353,6 +353,11 @@ void LColorList::InitC64()
 
 }
 
+void LColorList::InitC64Multicolor()
+{
+
+}
+
 void LColorList::InitPICO8()
 {
     m_list.clear();

@@ -40,6 +40,7 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
 
     Clear();
     m_type = LImage::Type::MultiColorBitmap;
+
     m_supports.asmExport = true;
     m_supports.binaryLoad = true;
     m_supports.binarySave = true;
@@ -84,6 +85,7 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
 
 //    qDebug() << m_charWidth*m_charHeight;
 
+    EnsureSystemColours();
     for (int i=0;i<4;i++)
         m_extraCols[i] = 0;
 }
