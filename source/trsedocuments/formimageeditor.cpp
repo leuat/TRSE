@@ -1535,6 +1535,7 @@ void FormImageEditor::on_cmbBackgroundMain_3_activated(int index)
 {
     m_work.m_currentImage->m_image->setBackground(index);
     SetMCColors();
+    updateCharSet();
     emit onImageMouseEvent();
     Data::data.redrawOutput = true;
 

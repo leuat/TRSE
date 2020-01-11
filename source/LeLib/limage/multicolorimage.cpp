@@ -140,6 +140,8 @@ void MultiColorImage::setBackground(unsigned int col)
     for (int i=0;i<m_charWidth*m_charHeight;i++) {
         m_data[i].c[0] = col;
     }
+    if (m_charset!=nullptr)
+        m_charset->setBackground(col);
 }
 
 void MultiColorImage::Reorganize()

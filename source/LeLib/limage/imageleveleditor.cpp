@@ -1,4 +1,4 @@
-/*
+/*c
  * Turbo Rascal Syntax error, “;” expected but “BEGIN” (TRSE, Turbo Rascal SE)
  * 8 bit software development IDE for the Commodore 64
  * Copyright (C) 2018  Nicolaas Ervik Groeneboom (nicolaas.groeneboom@gmail.com)
@@ -157,7 +157,8 @@ void ImageLevelEditor::SetColor(uchar col, uchar idx)
     m_extraCols[idx] = col;
     if (idx==0)
         m_background = col;
-    m_charset->SetColor(col, idx);
+
+//    m_charset->SetColor(col, idx);
 }
 
 void ImageLevelEditor::Clear()
@@ -445,6 +446,8 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
         return 0; // out of bounds
 
 
+
+
     int shift=0;
     if (x%16>=8) shift+=1;
     if (y%16>=8) shift+=40;
@@ -464,11 +467,13 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 //    return m_charset->m_data[pos].get(v + (2*x)&7, v+ y&7,m_bitMask);
     int ss = m_scale;
 
-    if (col>=8)
-        m_charset->setMultiColor(true);
-    else {
-        m_charset->setMultiColor(false);
-        ss = 1;
+    if (m_meta.m_displayMultiColor) {
+        if (col>=8)
+            m_charset->setMultiColor(true);
+        else {
+            m_charset->setMultiColor(false);
+            ss = 1;
+        }
     }
 
 
@@ -483,16 +488,17 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 
 
     uint val = m_charset->m_data[pos].get(ix, iy,m_charset->m_bitMask);
-    if (col<8) // Non-multicolor
-        if (val!=m_charset->m_background)
-            val = col;
-
+    if (m_meta.m_displayMultiColor) {
+        if (col<8) // Non-multicolor
+            if (val!=m_background)
+                val = col;
+    }
     if (dynamic_cast<LImageMetaChunk*>(m_charset)!=nullptr) {
 
 
         val = m_charset->getCharPixel(v, col, x,y);
             if (!m_charset->m_isMultiColor)
-                if (val!=m_charset->m_background)
+                if (val!=m_background)
                     val = col;
     }
 
