@@ -84,7 +84,7 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_GUIParams[btnEditFullCharset] = "Full charset";
 
     m_GUIParams[tabCharset] = "1";
-
+    m_updateCharsetPosition = true;
 }
 
 int CharsetImage::FindClosestChar(PixelChar p)

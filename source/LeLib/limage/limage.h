@@ -162,7 +162,8 @@ public:
     float m_importScaleX = 1;
     float m_importScaleY = 1;
     unsigned int m_currencChar;
-
+    // Updates charset position in editor
+    bool m_updateCharsetPosition = false;
 
 
     static const int m_copySize = 320;

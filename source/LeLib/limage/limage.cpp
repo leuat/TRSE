@@ -285,6 +285,11 @@ void LImage::FlipHorizontal() {
 }
 
 void LImage::FlipVertical() {
+    CopyChar();
+    for (int y=0;y<m_copySize;y++)
+        for (int x=0;x<m_copySize;x++) {
+            setPixel(x/(float)m_copySize*m_width,y/(float)m_copySize*m_height,m_copy[x+(m_copySize -1 -y)*m_copySize]);
+        }
 
 }
 

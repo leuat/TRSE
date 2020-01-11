@@ -1257,6 +1257,7 @@ void MultiColorImage::LoadBinCharsetFilename(QFile &file)
     if (QFile::exists(m_charsetFilename))
         LoadCharset(m_charsetFilename,0);
 
+
 }
 
 void MultiColorImage::SwapChars(int p1, int p2)

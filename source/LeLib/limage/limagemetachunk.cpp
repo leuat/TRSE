@@ -57,6 +57,7 @@ LImageMetaChunk::LImageMetaChunk(LColorList::Type t) : CharsetImage(t)
 
     m_GUIParams[tabSprites] ="Metachunks";
 
+    m_updateCharsetPosition = false;
 
 
 }
@@ -135,16 +136,11 @@ void LImageMetaChunk::LoadCharset(QString file, int skipBytes)
         m_charWidthDisplay = 16;
     else m_charWidthDisplay = 40;
 
-//    qDebug() << "charset " << m_charset;
-//    m_charset = LImageIO::
 }
 
 void LImageMetaChunk::setPixel(int x, int y, unsigned int color)
 {
     QPoint p = getPos(x,y);
-/*    if (rand()%100>98)
-        qDebug() << QString::number(m_currencChar);
-*/
     ((LMetaChunkItem*)m_items[m_current])->setPixel(p.x(),p.y(),m_currencChar,m_img->m_bitMask);
 
 }
@@ -160,11 +156,6 @@ unsigned int LImageMetaChunk::getPixel(int x, int y)
 
     uchar val = ((LMetaChunkItem*)m_items[m_current])->getPixel(p.x(),p.y(),m_img->m_bitMask);
 
-//    if (rand()%100>97 && val!=0)
-  //  qDebug() << "Vals : " << QString::number(val);
-//    val = 4;
-
-//    qDebug() << m_charset->m_scale;
     int xp = x/(float)m_width*m_pixelWidth*getCur()->m_width;
     int yp = y/(float)m_height*m_pixelHeight*getCur()->m_height;
 

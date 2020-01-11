@@ -557,6 +557,7 @@ void C64FullScreenChar::SaveBin(QFile& file)
 //        qDebug() << "Size: " << li->ToQByteArray(0).count();
         file.write(li->ToQByteArray(0));
     }
+    AppendSaveBinCharsetFilename(file);
 
 
 }
@@ -586,6 +587,7 @@ void C64FullScreenChar::LoadBin(QFile& file)
         m_items.append(s);
     }
     m_current = 0;
+    LoadBinCharsetFilename(file);
 
 
 }

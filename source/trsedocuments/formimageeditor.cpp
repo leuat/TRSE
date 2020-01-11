@@ -110,9 +110,12 @@ void FormImageEditor::onImageMouseEvent()
     showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
 
     // This will update the current cell
-    if (dynamic_cast<LImageMetaChunk*>(m_work.m_currentImage->m_image)==nullptr)
-        if (dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image)==nullptr)
+//    if (dynamic_cast<LImageMetaChunk*>(m_work.m_currentImage->m_image)==nullptr)
+  //      if (dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image)==nullptr)
 
+
+//    if (dynamic_cast<CharsetImage*>(m_work.m_currentImage->m_image)!=nullptr)
+    if (m_work.m_currentImage->m_image->m_updateCharsetPosition)
     if (ui->lstCharMap->currentItem()!=nullptr) {
         int i = ui->lstCharMap->currentItem()->data(Qt::UserRole).toInt();
         CharsetImage* charmap = m_work.m_currentImage->m_image->getCharset();
@@ -404,11 +407,9 @@ void FormImageEditor::Load(QString filename)
     ui->lblName->setText(LImage::TypeToString(m_work.m_currentImage->m_image->m_type));
     m_work.m_currentImage->m_image->BuildData(ui->tblData,lst);
 
-//r    m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
+    if (!dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image))
+        m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
 
-/*    if (dynamic_cast<LImageSprites*>(m_work.m_currentImage->m_image)!=nullptr) {
-        Messages::messages.DisplayMessage(Messages::messages.OLD_SPRITE_FILE);
-    }*/
 
      if (m_work.m_currentImage->m_image->m_type==LImage::NES || m_work.m_currentImage->m_image->m_type==LImage::LevelEditor || m_work.m_currentImage->m_image->m_type==LImage::LMetaChunk) {
         on_cmbNesPalette_currentIndexChanged(0);
@@ -720,11 +721,10 @@ void FormImageEditor::on_btnGenerate_clicked()
 
 void FormImageEditor::showDetailCharButtons(bool doShow)
 {
-/*    if (m_work.m_currentImage!=nullptr)
+    if (m_work.m_currentImage!=nullptr)
     if (dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image)!=nullptr)
         return;
 
-    return;*/
     ui->btnCharsetCopy->setVisible(doShow);
     ui->btnCharsetPaste->setVisible(doShow);
     ui->btnFlipVert->setVisible(doShow);
