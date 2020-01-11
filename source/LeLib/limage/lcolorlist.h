@@ -97,6 +97,7 @@ class LColorList : public QObject
     Q_OBJECT
 private:
 
+    QVector<int> m_multicolors;
 
 public:
     QVector<LColor> m_list;
@@ -114,6 +115,7 @@ public:
     QColor m_cblack = QColor(0,0,0,255);
     LColor m_black = LColor(m_cblack,"black");
 
+    void SetMulticolor(int index, int col);
 
     void SetPPUColors(char c1, int idx);
 
@@ -166,6 +168,7 @@ public:
 
     void handleButtonEdit(int val, int data);
 
+    QLayout* m_layout = nullptr;
     void CreateUI(QLayout* ly, int type);
 
 public slots:

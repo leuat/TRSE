@@ -158,6 +158,8 @@ void ImageLevelEditor::SetColor(uchar col, uchar idx)
     if (idx==0)
         m_background = col;
 
+    m_colorList.SetMulticolor(idx,col);
+
 //    m_charset->SetColor(col, idx);
 }
 

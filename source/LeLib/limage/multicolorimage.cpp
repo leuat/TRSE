@@ -1479,6 +1479,7 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen
 void MultiColorImage::SetColor(uchar col, uchar idx)
 {
     m_extraCols[idx] = col;
+    m_colorList.SetMulticolor(idx,col);
 //    qDebug()<< m_extraCols[idx];
 
 }

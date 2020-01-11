@@ -31,7 +31,7 @@ class ToolboxItem
 {
 public:
     ToolboxItem();
-    ToolboxItem(QString name, QString imagefile);
+    ToolboxItem(QString name, QString imagefile, QString tooltip);
 
     float m_size = 4;
     float m_type = 0;
@@ -45,7 +45,7 @@ public:
     void setSize(float f);
     void setRadius(float f);
 
-    QString m_name;
+    QString m_name, m_tooltip;
     QString m_imageFilename;
 
     QIcon m_icon;
@@ -58,7 +58,7 @@ public:
     void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
 
     ShapeBox();
-    ShapeBox(QString name, QString imagefile) : ToolboxItem(name, imagefile) { }
+    ShapeBox(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile, tooltip) { }
 
 };
 
@@ -70,7 +70,7 @@ public:
     void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
 
     ShapeBoxFilter();
-    ShapeBoxFilter(QString name, QString imagefile) : ToolboxItem(name, imagefile) { }
+    ShapeBoxFilter(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile,tooltip) { }
 
 };
 
@@ -79,7 +79,7 @@ public:
     void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
 
     Circle() {}
-    Circle(QString name, QString imagefile) : ToolboxItem(name, imagefile) { }
+    Circle(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile,tooltip) { }
 
 };
 
@@ -88,7 +88,7 @@ public:
     void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
 
     Spray() {}
-    Spray(QString name, QString imagefile) : ToolboxItem(name, imagefile) { }
+    Spray(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile,tooltip) { }
 
 };
 
@@ -97,7 +97,7 @@ public:
     void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
 
     Dither() {}
-    Dither(QString name, QString imagefile) : ToolboxItem(name, imagefile) { }
+    Dither(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile, tooltip) { }
 
 };
 
@@ -106,7 +106,7 @@ public:
     void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
 
     Filler() {}
-    Filler(QString name, QString imagefile) : ToolboxItem(name, imagefile) { }
+    Filler(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile,tooltip) { }
 
     void Fill(int i, int j, unsigned char col, unsigned char testCol, LImage *img );
 };
@@ -116,7 +116,7 @@ public:
     void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
     QPoint m_start;
     Line() {}
-    Line(QString name, QString imagefile) : ToolboxItem(name, imagefile) { }
+    Line(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile,tooltip) { }
     void IsPreview(int button, bool& isPreview) override {
         if (button==1)
         isPreview = true;
@@ -134,7 +134,7 @@ public:
     static LImage* m_copy;
 
     CopyStamp() {m_status=Idle;}
-    CopyStamp(QString name, QString imagefile) : ToolboxItem(name, imagefile) { }
+    CopyStamp(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile,tooltip) { }
     void IsPreview(int button, bool& isPreview) override {
         if (button==1)
         isPreview = true;
@@ -159,7 +159,7 @@ public:
     LImage* m_copy=nullptr;
 
     RotateAround() {}
-    RotateAround(QString name, QString imagefile) : ToolboxItem(name, imagefile) { }
+    RotateAround(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile,tooltip) { }
     void IsPreview(int button, bool& isPreview) override {
         //if (button==1)
         //isPreview = true;

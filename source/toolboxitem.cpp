@@ -34,10 +34,11 @@ void ToolboxItem::setSize(float f)
 }
 
 
-ToolboxItem::ToolboxItem(QString name, QString imagefile)
+ToolboxItem::ToolboxItem(QString name, QString imagefile, QString tooltip)
 {
     m_name= name;
     m_imageFilename = imagefile;
+    m_tooltip = tooltip;
     if (m_imageFilename!="") {
         m_image.load(m_imageFilename);
         m_icon.addPixmap( QPixmap::fromImage(m_image) );

@@ -42,6 +42,18 @@ LColor &LColorList::get(int i) {
     return m_black;
 }
 
+void LColorList::SetMulticolor(int index, int col)
+{
+    int i = index-1;
+    if (i<0) return;
+    if (i>=m_multicolors.count())
+        m_multicolors.resize(i+1);
+    m_multicolors[i] = col;
+    if (m_layout!=nullptr)
+        CreateUI(m_layout,1);
+
+}
+
 void LColorList::SetPPUColors(char c1, int idx)
 {
     m_nesPPU[1+m_curPal*4+idx] = c1;
@@ -620,6 +632,7 @@ int LColorList::getIndex(QColor c)
 
 void LColorList::CreateUI(QLayout* ly, int type)
 {
+    m_layout = ly;
     Util::clearLayout(ly, true);
     int m=0;
     for (int i=0;i<m_list.count();i++)
@@ -659,6 +672,13 @@ void LColorList::CreateUI(QLayout* ly, int type)
         b->setMaximumWidth(width);
         b->setMinimumWidth(width);
         b->setAutoFillBackground( true );
+        for (int k=0;k<m_multicolors.count();k++)
+            if (m_multicolors[k]==j){
+                if (k!=2)
+                    b->setText("" + QString::number(k+1));
+                else
+                    b->setText("X");
+            }
 //        b->setStyleSheet("padding: 0px;");
         if (type==0) {
             QObject::connect( b, &QPushButton::clicked,  [=](){ handleButtonImport(j);} );
@@ -699,13 +719,14 @@ void LColorList::CreateUI(QLayout* ly, int type)
 
 void LColorList::handleButtonEdit(int val, int data)
 {
-    for (int i=0;i<m_buttonsEdit.count();i++)
+/*    for (int i=0;i<m_buttonsEdit.count();i++)
         m_buttonsEdit[i]->setText("");
     //if (data<m_buttonsEdit.count())
 //    qDebug() << data;
-        m_buttonsEdit[data]->setText("X");
+        m_buttonsEdit[data]->setText("X");*/
     Data::data.currentColor = val;
     Data::data.currentIsColor=true;
+    SetMulticolor(3,val);
 
 }
 

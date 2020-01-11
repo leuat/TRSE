@@ -1184,7 +1184,8 @@ void FormImageEditor::SetMCColors()
         m_work.m_currentImage->m_image->SetColor(back, 0);
         m_work.m_currentImage->m_image->SetColor(a, 1);
         m_work.m_currentImage->m_image->SetColor(b, 2);
-        m_work.m_currentImage->m_image->SetColor(c, 3);
+        if (m_work.m_currentImage->m_image->isNes())
+          m_work.m_currentImage->m_image->SetColor(c, 3);
 
         QVector<int> lst;
         lst.append(a);

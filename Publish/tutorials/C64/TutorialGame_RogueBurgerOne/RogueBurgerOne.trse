@@ -37,6 +37,6 @@ build_list = ,
 output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
 data_header_levels/levels.flf = ,id, x, y, life, color, spread, sx, sy, isdead, damage, ammo, sound, upgrade
-open_files = ,levels/levels.flf, charsets/charset_level.flf, RogueBurgerOne.ras
+open_files = ,charsets/charset_level.flf
 project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/TutorialGame_RogueBurgerOne/
 current_file = charsets/charset_level.flf

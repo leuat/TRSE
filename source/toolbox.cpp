@@ -32,14 +32,14 @@ void Toolbox::Initialize(QGridLayout* ly)
 {
     m_items.clear();
     m_ly = ly;
-    m_items.append(new ShapeBox("",":/resources/images/brush_circle.png"));
-    m_items.append(new Spray("",":/resources/images/brush_spray.png"));
-    m_items.append(new Dither("",":/resources/images/brush_dither.png"));
-    m_items.append(new Filler("",":/resources/images/brush_fill.png"));
-    m_items.append(new Line("",":/resources/images/brush_line.png"));
-    m_items.append(new CopyStamp("",":/resources/images/brush_copy.png"));
-    m_items.append(new RotateAround("",":/resources/images/brush_rotate.png"));
-    m_items.append(new ShapeBoxFilter("",":/resources/images/brush_circle_background.png"));
+    m_items.append(new ShapeBox("",":/resources/images/brush_circle.png","Brush"));
+    m_items.append(new Spray("",":/resources/images/brush_spray.png","Spray"));
+    m_items.append(new Dither("",":/resources/images/brush_dither.png","Dither"));
+    m_items.append(new Filler("",":/resources/images/brush_fill.png","Fill"));
+    m_items.append(new Line("",":/resources/images/brush_line.png","Line"));
+    m_items.append(new CopyStamp("",":/resources/images/brush_copy.png","Copy/Paste"));
+    m_items.append(new RotateAround("",":/resources/images/brush_rotate.png","Rotate"));
+    m_items.append(new ShapeBoxFilter("",":/resources/images/brush_circle_background.png", "Background brush"));
 
 
     m_current = m_items[0];
@@ -68,6 +68,7 @@ void Toolbox::BuildGUI(QGridLayout *ly)
         b->setAutoFillBackground( true );
         b->setText(m_items[i]->m_name);
         b->setFixedSize(QSize(size, size));
+        b->setToolTip(m_items[i]->m_tooltip);
         QObject::connect( b, &QPushButton::clicked,  [=](){ handleButton(i); } );
 
         ly->addWidget(b,row,col);

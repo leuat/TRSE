@@ -116,8 +116,12 @@ void CharsetImage::SetColor(uchar col, uchar idx)
     if (idx==0)
         m_background = col;
 
+//    qDebug() << QString::number(idx) << QString::number(col);
     for (int i=0;i<m_charHeight*m_charWidth;i++)
         m_data[i].c[idx] = col;
+
+    m_colorList.SetMulticolor(idx,col);
+
 
     m_extraCols[idx] = col;
 }
