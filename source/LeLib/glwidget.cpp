@@ -81,9 +81,8 @@ void GLWidget::paintGL()
     m_program->disableAttributeArray(0);
 
     // release the shader
-    m_program->release();
-
-
+//    m_program->release();
+    update();
 }
 
 void GLWidget::setTexture(QImage &img, QImage& grid)
