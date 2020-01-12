@@ -230,7 +230,6 @@ void ImageLevelEditor::BuildData(QTableWidget *tbl, QStringList header)
 {
     int chunks = m_meta.m_dataChunks;
     int size = m_meta.m_dataChunkSize;
-
     tbl->setColumnCount(chunks);
     tbl->setRowCount(size);
     tbl->setVerticalHeaderLabels(header);

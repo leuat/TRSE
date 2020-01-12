@@ -72,6 +72,7 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
 //    ui->lblImage->setFocusPolicy(Qt::StrongFocus);
   //  setFocusPolicy(Qt::StrongFocus);
     installEventFilter(this);
+    ui->tblData->setItemDelegate(new ByteDelegate());
 }
 
 void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *iniProject) {
@@ -1617,12 +1618,6 @@ void FormImageEditor::on_leHeaders_editingFinished()
     m_projectIniFile->setStringList("data_header_"+m_currentFileShort,lst);
     m_projectIniFile->Save(m_projectIniFile->filename);
 
-
-}
-
-void FormImageEditor::on_tblData_cellChanged(int row, int column)
-{
-    //m_work.m_currentImage->m_image->StoreData(ui->tblData);
 
 }
 
