@@ -31,6 +31,4 @@ override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
-open_files = ,sprites/Sprites.flf, levels/level1.flf, charsets/charset1.flf, part3.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/TutorialGame_Introduction/
-current_file = levels/level1.flf
+open_files =, part3.ras

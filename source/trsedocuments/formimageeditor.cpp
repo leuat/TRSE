@@ -434,6 +434,9 @@ void FormImageEditor::Load(QString filename)
     m_prefMode = (CharsetImage::Mode)GetFooterData(LImageFooter::POS_CURRENT_MODE);
     m_keepMode = (CharsetImage::Mode)GetFooterData(LImageFooter::POS_KEEP_MODE);
 
+    if (m_prefMode==m_keepMode)
+        m_keepMode = CharsetImage::Mode::CHARSET1x1;
+
     showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
     SetSingleCharsetEdit();
 
