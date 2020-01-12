@@ -44,10 +44,25 @@
 #include "source/dialogcolors.h"
 #include "source/LeLib/glwidget.h"
 #include <QLineEdit>
+#include <QItemDelegate>
 namespace Ui {
 class Formimageeditor;
 }
 
+
+class ByteDelegate : public QItemDelegate
+{
+public:
+    QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem & option,
+                      const QModelIndex & index) const
+    {
+        QLineEdit *lineEdit = new QLineEdit(parent);
+        // Set validator
+        QIntValidator *validator = new QIntValidator(0, 255, lineEdit);
+        lineEdit->setValidator(validator);
+        return lineEdit;
+    }
+};
 
 
 class FormImageEditor :  public TRSEDocument
@@ -214,7 +229,6 @@ private slots:
 
     void on_chkDisplayMulticolor_stateChanged(int arg1);
     void on_leHeaders_editingFinished();
-    void on_tblData_cellChanged(int row, int column);
 
     void on_btnHelpImage_clicked();
 
