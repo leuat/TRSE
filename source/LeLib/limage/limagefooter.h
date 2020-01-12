@@ -52,9 +52,11 @@ public:
             return false;
         }
         m_data =b;
+        return true;
     }
     bool Save(QFile& f) {
         f.write(m_data);
+        return true;
     }
 
 };
