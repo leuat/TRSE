@@ -124,6 +124,16 @@ void CharsetImage::SetColor(uchar col, uchar idx)
 
 
     m_extraCols[idx] = col;
+//    qDebug() << m_colorList.m_type;
+
+    if (m_colorList.m_type == LColorList::VIC20) {
+  //      qDebug() << "HERE";
+        for (int i=0;i<m_colorList.m_list.count();i++) {
+            if (i<8)
+                m_colorList.m_list[i].inUse = true;
+        }
+    }
+
 }
 
 void CharsetImage::ImportBin(QFile &file)
