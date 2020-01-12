@@ -174,6 +174,52 @@ void Filler::Fill(int i, int j, unsigned char col, unsigned char testCol, LImage
 {
     if (i<0 || j<0 || j>=img->m_height || i>=img->m_width)
         return;
+
+    QVector<QPoint> queue;
+    queue.append(QPoint(i,j));
+    int maxx = img->m_width*img->m_height;
+    QVector<QPoint> done;
+    QByteArray mark;
+    mark.resize(maxx);
+    mark.fill(0);
+    while (queue.count()!=0 && queue.count()<2*maxx) {
+        QPoint q = queue.last();
+        queue.removeLast();
+  //      if (rand()%1000>990)
+//        qDebug() << queue.count() << q << img->m_width << img->m_height << QString::number(testCol) << QString::number(img->getPixel(q.x(),q.y()));
+
+//        if (QColor(m_index->getPixel(q.x(),q.y())) == unset) {
+  //          m_index->setPixel(q.x(),q.y(),set.rgba());
+        int pos = q.x() + q.y()*img->m_width;
+//        qDebug() << pos << maxx <<q << img->m_width << img->m_height;
+
+        if (testCol == img->getPixel(q.x(),q.y()) && mark.at(pos)==0) {
+            img->setPixel(q.x(),q.y(), col);
+            done.append(q);
+            mark[pos]=1;
+
+            if (q.x()<img->m_width-1)
+                queue.append(QPoint(q.x()+1,q.y()));
+            if (q.x()>0)
+                 queue.append(QPoint(q.x()-1,q.y()));
+            if (q.y()<img->m_height-1)
+                 queue.append(QPoint(q.x(),q.y()+1));
+            if (q.y()>0)
+                 queue.append(QPoint(q.x(),q.y()-1));
+            }
+        }
+
+  //  qDebug() << "******************** DONE";
+
+}
+
+/*
+ *
+ * Fill old
+void Filler::Fill(int i, int j, unsigned char col, unsigned char testCol, LImage *img)
+{
+    if (i<0 || j<0 || j>=img->m_height || i>=img->m_width)
+        return;
     if (testCol == img->getPixel(i,j)) {
         img->setPixel(i,j, col);
         if (i<img->m_width-1)
@@ -187,6 +233,7 @@ void Filler::Fill(int i, int j, unsigned char col, unsigned char testCol, LImage
     }
 
 }
+*/
 
 void Line::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
 {

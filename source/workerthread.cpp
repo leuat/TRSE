@@ -123,10 +123,17 @@ void WorkerThread::UpdateDrawing()
         if (isPreview)
             img = (LImage*)m_work->m_currentImage->m_temp;
 
+        bool perform = true;
+
 //        pos.setX(pos.x()-0.25f);
 //        pos.setY(pos.y()-0.25f);
-        if (!(QApplication::keyboardModifiers() & Qt::ControlModifier))
+        if (!(QApplication::keyboardModifiers() & Qt::ControlModifier) && perform) {
             m_toolBox->m_current->Perform(pos.x(), pos.y(), col, img, isPreview, m_currentButton);
+            //if (dynamic_cast<Filler*>(m_toolBox->m_current)!=nullptr) {
+            //    msleep(10);
+           // }
+        }
+
         m_currentPosInImage = img->GetCurrentPosInImage(pos.x(), pos.y());
         Data::data.Redraw();
     }
