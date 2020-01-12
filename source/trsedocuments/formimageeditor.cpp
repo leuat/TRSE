@@ -76,13 +76,9 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
 }
 
 void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *iniProject) {
-//    m_updateThread = t;
     m_iniFile = ini;
     m_projectIniFile = iniProject;
-//    ui->lblImage->m_updateThread = t;
-    //ui->lblGrid->m_updateThread = t;
     m_updateThread.m_grid = &m_grid;
-//    m_grid.CreateGrid(40,25,m_updateThread.m_gridColor,4, 1, QPoint(0,0));
 
     if (m_work.m_currentImage!=nullptr) {
         bool is = m_work.m_currentImage->m_image->isMultiColor();
@@ -291,6 +287,8 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
                 ui->chkGrid->setChecked(!ui->chkGrid->isChecked());
                 //ui->lblGrid->setVisible(ui->chkGrid->isChecked());
                 m_updateThread.m_drawGrid=!m_updateThread.m_drawGrid;
+                SetFooterData(LImageFooter::POS_DISPLAY_GRID,m_updateThread.m_drawGrid);
+
                 Data::data.Redraw();
                 emit onImageMouseEvent();
 
@@ -434,6 +432,18 @@ void FormImageEditor::Load(QString filename)
 //    this->resize(this->geometry().width(), this->geometry().height());
 
 
+    ui->chkGrid->setChecked(GetFooterData(LImageFooter::POS_DISPLAY_GRID));
+    on_chkGrid_clicked(GetFooterData(LImageFooter::POS_DISPLAY_GRID));
+
+    ui->chkPaintSeparately->setChecked(GetFooterData(LImageFooter::POS_DOUBLE_PAINT));
+    on_chkPaintSeparately_stateChanged(GetFooterData(LImageFooter::POS_DOUBLE_PAINT));
+
+    m_prefMode = (CharsetImage::Mode)GetFooterData(LImageFooter::POS_CURRENT_MODE);
+    m_keepMode = (CharsetImage::Mode)GetFooterData(LImageFooter::POS_KEEP_MODE);
+
+    showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
+    SetSingleCharsetEdit();
+
     updateCharSet();
 
     onImageMouseEvent();
@@ -445,8 +455,9 @@ void FormImageEditor::Load(QString filename)
 
 void FormImageEditor::InitAspect()
 {
-    if (m_projectIniFile->contains("aspect_ratio"))
-        ui->cmbAspect->setCurrentIndex(m_projectIniFile->getdouble("aspect_ratio"));
+//    if (m_projectIniFile->contains("aspect_ratio"))
+  //      ui->cmbAspect->setCurrentIndex(m_projectIniFile->getdouble("aspect_ratio"));
+    ui->cmbAspect->setCurrentIndex(GetFooterData(LImageFooter::POS_ASPECT));
 }
 
 
@@ -649,38 +660,38 @@ void FormImageEditor::Reload()
 
 bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
 {
-    if(e->type() == QEvent::KeyPress || e->type()==QEvent::ShortcutOverride) {
+    if(/*e->type() == QEvent::KeyPress || */e->type()==QEvent::ShortcutOverride) {
         const QKeyEvent *ke = static_cast<QKeyEvent *>(e);
-//        qDebug() << "HOO" << (ke->key()==Qt::Key_Space) << ke->key()   ;
+//        qDebug() << "KEY EVENT "<<rand()%100;
 
         if (!(QApplication::keyboardModifiers() & Qt::ShiftModifier)) {
-        if(ke->key()== Qt::Key_Space) {
-            onSwapDisplayMode();
-            return true;
-        }
-        if (ke->key() == Qt::Key_F1) {
-            ui->cmbZoomLevel->setCurrentIndex(0);
-            on_cmbZoomLevel_activated("1x");
-            return true;
-        }
-        if (ke->key() == Qt::Key_F2) {
-            ui->cmbZoomLevel->setCurrentIndex(1);
-            on_cmbZoomLevel_activated("2x");
-            return true;
-        }
-        if (ke->key() == Qt::Key_F3) {
-            ui->cmbZoomLevel->setCurrentIndex(2);
-            on_cmbZoomLevel_activated("4x");
-            return true;
-        }
-        if (ke->key() == Qt::Key_F4) {
-            ui->cmbZoomLevel->setCurrentIndex(3);
-            on_cmbZoomLevel_activated("8x");
-            return true;
-        }
+            if(ke->key()== Qt::Key_Space) {
+                onSwapDisplayMode();
+                return true;
+            }
+            if (ke->key() == Qt::Key_F1) {
+                ui->cmbZoomLevel->setCurrentIndex(0);
+                on_cmbZoomLevel_activated("1x");
+                return true;
+            }
+            if (ke->key() == Qt::Key_F2) {
+                ui->cmbZoomLevel->setCurrentIndex(1);
+                on_cmbZoomLevel_activated("2x");
+                return true;
+            }
+            if (ke->key() == Qt::Key_F3) {
+                ui->cmbZoomLevel->setCurrentIndex(2);
+                on_cmbZoomLevel_activated("4x");
+                return true;
+            }
+            if (ke->key() == Qt::Key_F4) {
+                ui->cmbZoomLevel->setCurrentIndex(3);
+                on_cmbZoomLevel_activated("8x");
+                return true;
+            }
         }
         else
-         {
+        {
             if (ke->key() == Qt::Key_F1) {
                 ui->tabMain->setCurrentIndex(0);
             }
@@ -799,9 +810,11 @@ void FormImageEditor::on_chkGrid_clicked(bool checked)
 {
 //    if (checked)
 //    ui->lblGrid->setVisible(checked);
-    m_updateThread.m_drawGrid=!m_updateThread.m_drawGrid;
+    m_updateThread.m_drawGrid=checked;
+    SetFooterData(LImageFooter::POS_DISPLAY_GRID,m_updateThread.m_drawGrid);
+
     Data::data.Redraw();
-    onImageMouseEvent();
+    emit onImageMouseEvent();
 
 }
 
@@ -1153,8 +1166,32 @@ void FormImageEditor::SetSingleCharsetEdit()
     if (ci==nullptr)
         return;
 
+    SetFooterData(LImageFooter::POS_CURRENT_MODE, m_prefMode);
+    SetFooterData(LImageFooter::POS_KEEP_MODE, m_keepMode);
+
+
+
     m_updateThread.m_zoom = 1.0;
     ci->m_currentMode = m_prefMode;
+
+}
+
+void FormImageEditor::SetFooterData(int pos, uchar val)
+{
+    if (m_work.m_currentImage==nullptr)
+        return;
+    if (m_work.m_currentImage->m_image==nullptr)
+        return;
+    m_work.m_currentImage->m_image->m_footer.set(pos,val);
+}
+
+uchar FormImageEditor::GetFooterData(int pos)
+{
+    if (m_work.m_currentImage==nullptr)
+        return 0;
+    if (m_work.m_currentImage->m_image==nullptr)
+        return 0;
+    return m_work.m_currentImage->m_image->m_footer.get(pos);
 
 }
 
@@ -1423,6 +1460,7 @@ void FormImageEditor::UpdateAspect()
         ui->lblImage->setMaximumHeight(100000);
         ui->lblImage->setMinimumWidth(0);
         ui->lblImage->setMaximumWidth(100000);
+        ui->vImageSpacer->changeSize(0,0);
 //        m_oldWidth = width();
     }
     if (val==1) {
@@ -1432,12 +1470,14 @@ void FormImageEditor::UpdateAspect()
         ui->lblImage->setMaximumHeight(size);
         ui->lblImage->setMinimumWidth(size);
         ui->lblImage->setMaximumWidth(size);
+        ui->vImageSpacer->changeSize(0,200,QSizePolicy::Expanding,QSizePolicy::Expanding);
     }
     if (val==2) {
         ui->lblImage->setMinimumWidth(0);
         ui->lblImage->setMaximumWidth(100000);
         ui->lblImage->setMinimumHeight(m_oldWidth/1.6);
         ui->lblImage->setMaximumHeight(m_oldWidth/1.6);
+        ui->vImageSpacer->changeSize(0,200,QSizePolicy::Expanding,QSizePolicy::Expanding);
     }
     this->resize(this->geometry().width(), this->geometry().height());
     onImageMouseEvent();
@@ -1456,6 +1496,8 @@ void FormImageEditor::onSwapDisplayMode()
         ui->lstCharMap->setCurrentItem(nullptr);
 
     }
+
+//    qDebug() << "HERE " <<m_prefMode;
 
 
     showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
@@ -1965,7 +2007,8 @@ void FormImageEditor::on_btnCharSelect_clicked()
 
 void FormImageEditor::on_cmbAspect_currentIndexChanged(int index)
 {
-    m_projectIniFile->setFloat("aspect_ratio",index);
+//    m_projectIniFile->setFloat("aspect_ratio",index);
+    SetFooterData(LImageFooter::POS_ASPECT,index);
 
     UpdateAspect();
 
@@ -1974,4 +2017,6 @@ void FormImageEditor::on_cmbAspect_currentIndexChanged(int index)
 void FormImageEditor::on_chkPaintSeparately_stateChanged(int arg1)
 {
     m_work.m_currentImage->m_image->m_forcePaintColorAndChar = !ui->chkPaintSeparately->isChecked();
+    SetFooterData(LImageFooter::POS_DOUBLE_PAINT,!m_work.m_currentImage->m_image->m_forcePaintColorAndChar);
+
 }

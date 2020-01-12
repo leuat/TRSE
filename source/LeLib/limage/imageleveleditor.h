@@ -223,6 +223,7 @@ public:
     QVector<QPixmap> CreateIcons();
 
     QString getMetaInfo() override;
+    void ExportBin(QFile &file) override;
 
     void setPixel(int x, int y, unsigned int color) override;
     unsigned int getPixel(int x, int y) override;

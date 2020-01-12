@@ -24,7 +24,6 @@
 
 #include <QString>
 #include <QImage>
-#include "source/LeLib/limage/lcolorlist.h"
 #include <QVector3D>
 #include <QGraphicsEffect>
 #include <QGraphicsBlurEffect>
@@ -33,6 +32,9 @@
 #include <QDebug>
 #include <QLabel>
 #include <QTableWidget>
+#include "source/LeLib/limage/limagefooter.h"
+#include "source/LeLib/limage/lcolorlist.h"
+// Footer contains image-state specific data
 
 
 class CharsetImage;
@@ -109,7 +111,7 @@ public:
     }
     LImageSupports m_supports;
 
-
+    LImageFooter m_footer;
     static unsigned char TypeToChar(Type t);
     static QString TypeToString(Type t);
     static Type CharToType(unsigned char c);

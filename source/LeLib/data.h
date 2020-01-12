@@ -29,7 +29,7 @@ class Data
 {
 public:
     Data();
-//    float version = 0.01;
+    int flfVersion = 2;
     QString version = "0.09.internal";
 
     bool redrawOutput=false;

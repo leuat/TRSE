@@ -197,6 +197,26 @@ void ImageLevelEditor::SaveBin(QFile &file)
 
 }
 
+void ImageLevelEditor::ExportBin(QFile &file)
+{
+    file.write(m_meta.toHeader());
+    if (m_levels.count()==0)
+        return;
+    CharmapLevel* ll = m_levels[0];
+
+    for (CharmapLevel* l : m_levels) {
+        file.write( l->m_CharData);
+        if (m_meta.m_useColors)
+           file.write( l->m_ColorData);
+
+
+        if (l->m_ExtraData.count()!=0)
+            file.write( l->m_ExtraData,m_meta.m_extraDataSize);
+
+    }
+
+}
+
 void ImageLevelEditor::LoadBin(QFile &file)
 {
     QByteArray h1 = file.read(32);

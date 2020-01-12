@@ -18,39 +18,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_3" rowstretch="16,1,0">
    <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout" rowstretch="1" columnstretch="10,2,2,4">
-     <item row="0" column="0" colspan="2">
-      <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,1,200">
-       <item>
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QLabel" name="lblName">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="GLWidget" name="lblImage" native="true"/>
-       </item>
-      </layout>
-     </item>
+    <layout class="QGridLayout" name="gridLayout" rowstretch="1" columnstretch="10,0,0,0">
      <item row="0" column="2">
       <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,1">
        <property name="sizeConstraint">
@@ -958,6 +926,38 @@
         </widget>
        </widget>
       </widget>
+     </item>
+     <item row="0" column="0" colspan="2">
+      <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1,200,0">
+       <item>
+        <widget class="QLabel" name="lblName">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="GLWidget" name="lblImage" native="true"/>
+       </item>
+       <item>
+        <spacer name="vImageSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>

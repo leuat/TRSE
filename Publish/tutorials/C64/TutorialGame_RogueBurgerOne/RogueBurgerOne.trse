@@ -40,5 +40,5 @@ data_header_levels/levels.flf = ,id, x, y, life, color, spread, sx, sy, isdead, 
 open_files = ,charsets/charset_level.flf
 project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/TutorialGame_RogueBurgerOne/
 current_file = charsets/charset_level.flf
-aspect_ratio = 0
+aspect_ratio = 1
 data_header_charsets/charset_level.flf = 0

@@ -1,0 +1,2 @@
+#include "limagefooter.h"
+

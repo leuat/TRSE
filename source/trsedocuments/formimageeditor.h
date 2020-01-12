@@ -98,6 +98,10 @@ public:
 
     void SetSingleCharsetEdit();
 
+    void SetFooterData(int pos, uchar val);
+    uchar GetFooterData(int pos);
+
+
     void SetButton(QPushButton* btn, LImage::GUIType type);
     void SetLabel(QLabel* btn, LImage::GUIType type);
 

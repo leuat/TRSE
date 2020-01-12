@@ -85,6 +85,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemplus4.cpp \
     source/LeLib/glwidget.cpp \
+    source/LeLib/limage/limagefooter.cpp \
     source/LeLib/limage/limagelevelnes.cpp \
     source/LeLib/limage/limagemetablocksprites.cpp \
     source/LeLib/limage/limagemetachunk.cpp \
@@ -232,6 +233,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemplus4.h \
     source/LeLib/glwidget.h \
+    source/LeLib/limage/limagefooter.h \
     source/LeLib/limage/limagelevelnes.h \
     source/LeLib/limage/limagemetablocksprites.h \
     source/LeLib/limage/limagemetachunk.h \
