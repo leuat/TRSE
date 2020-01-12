@@ -18,7 +18,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_3" rowstretch="16,1,0">
    <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout" rowstretch="1" columnstretch="10,2,2,3">
+    <layout class="QGridLayout" name="gridLayout" rowstretch="1" columnstretch="10,2,2,4">
      <item row="0" column="0" colspan="2">
       <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,1,200">
        <item>
@@ -305,6 +305,12 @@
       <widget class="QTabWidget" name="tabMain">
        <property name="enabled">
         <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>420</width>
+         <height>0</height>
+        </size>
        </property>
        <property name="maximumSize">
         <size>
