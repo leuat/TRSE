@@ -82,7 +82,6 @@ void GLWidget::paintGL()
 
     // release the shader
 //    m_program->release();
-    update();
 }
 
 void GLWidget::setTexture(QImage &img, QImage& grid)

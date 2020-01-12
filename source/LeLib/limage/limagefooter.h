@@ -25,6 +25,7 @@ public:
         m_data.fill(0);
         m_data[POS_ID0] = LImageID0;
         m_data[POS_ID1] = LImageID1;
+        m_data[POS_KEEP_MODE] = 1;
     }
 
     uchar get(int pos) {
