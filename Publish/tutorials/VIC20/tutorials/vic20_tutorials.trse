@@ -36,6 +36,4 @@ override_target_settings_prg = 0
 build_list = ,
 pascal_settings_use_local_variables = 0
 charset_resources/movie/tutorial_5_movie.flf = :resources/character.rom
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/tutorials/
-open_files = ,resources/charsets/charset_8x8.flf, vbm/05-pixeltests.ras, vbm/06-textscroll.ras
-current_file = resources/charsets/tiles.flf
+open_files =, easy/01_hello_world.ras
