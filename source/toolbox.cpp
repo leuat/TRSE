@@ -51,7 +51,7 @@ void Toolbox::Initialize(QGridLayout* ly, int windowWidth)
 void Toolbox::BuildGUI(QGridLayout *ly, int windowWidth)
 {
     int size = 64;
-    size = 64*(windowWidth/1920.0);
+    size = 80*(windowWidth/1920.0);
     int row=0;
     int col=0;
     m_windowWidth = windowWidth;
