@@ -126,7 +126,6 @@ void FormImageEditor::onImageMouseEvent()
         }
 
     }
-    ui->lblImage->update();
 }
 
 void FormImageEditor::onImageMouseReleaseEvent()
@@ -859,7 +858,7 @@ void FormImageEditor::on_lstImages_clicked(const QModelIndex &index)
 void FormImageEditor::on_btnImport_clicked()
 {
     DialogImport* di = new DialogImport(this);
-    di->Initialize(m_work.m_currentImage->m_imageType->type, m_work.m_currentImage->m_image->m_colorList.m_type, m_work.m_currentImage->m_image);
+    di->Initialize(m_work.m_currentImage->m_image->m_type, m_work.m_currentImage->m_image->m_colorList.m_type, m_work.m_currentImage->m_image);
     di->exec();
     if (di->m_ok) {
         m_work.m_currentImage->m_image->CopyFrom(di->m_image);

@@ -53,7 +53,7 @@ public:
     ImageEdit(LImage* image, ImageType* it,QString name);
 
 
-    ImageType* m_imageType;
+    //ImageType* m_imageType;
     QString m_name;
     QString m_fileName;
 

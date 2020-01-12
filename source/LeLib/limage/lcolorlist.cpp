@@ -420,7 +420,6 @@ void LColorList::InitVIC20()
 
 
 
-
  /*   m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));
     m_list.append(LColor(QColor(0xFF, 0xFF, 0xFF),""));
     m_list.append(LColor(QColor(103, 55, 43),""));
@@ -632,6 +631,9 @@ int LColorList::getIndex(QColor c)
 
 void LColorList::CreateUI(QLayout* ly, int type)
 {
+    if (ly==nullptr)
+        return;
+
     m_layout = ly;
     Util::clearLayout(ly, true);
     int m=0;

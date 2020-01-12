@@ -80,6 +80,9 @@ void GLWidget::paintGL()
     glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
     m_program->disableAttributeArray(0);
 
+
+//    qDebug() <<"TEST " <<rand()%100;
+
     // release the shader
 //    m_program->release();
 }

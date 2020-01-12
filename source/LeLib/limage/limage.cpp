@@ -362,12 +362,18 @@ void LImage::CopyFrom(LImage *img) {
 
 void LImage::EnsureSystemColours()
 {
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20)
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20) {
         m_colorList.InitVIC20();
+        m_colorList.m_type = LColorList::VIC20;
+
+    }
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64)
         m_colorList.InitC64();
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES)
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES) {
         m_colorList.InitNES();
+        m_colorList.m_type = LColorList::NES;
+
+    }
 
 }
 

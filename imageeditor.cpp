@@ -24,7 +24,7 @@
 
 ImageEdit::ImageEdit(ImageType* t, QString name)
 {
-    m_imageType = t;
+    //m_imageType = t;
     m_fileName = name;
     setName();
     Initialize();
@@ -32,25 +32,25 @@ ImageEdit::ImageEdit(ImageType* t, QString name)
 
 ImageEdit::ImageEdit(LImage* image, ImageType* it, QString name)
 {
-    m_imageType = it;
+//    m_imageType = it;
     m_fileName = name;
     setName();
     m_image = image;
-    m_temp = LImageFactory::Create(m_imageType->type,m_imageType->colorType);
+    m_temp = LImageFactory::Create(m_image->m_type,m_image->m_colorList.m_type);
     m_temp->Initialize(m_image->m_width, m_image->m_height);
 
 }
 
 void ImageEdit::Initialize()
 {
-    m_image = LImageFactory::Create(m_imageType->type, m_imageType->colorType);
-    m_temp = LImageFactory::Create(m_imageType->type,m_imageType->colorType);
+    m_image = LImageFactory::Create(m_image->m_type,m_image->m_colorList.m_type);
+    m_temp = LImageFactory::Create(m_image->m_type,m_image->m_colorList.m_type);
 }
 
 void ImageEdit::Initialize(LImage* img)
 {
     m_image = img;
-    m_temp = LImageFactory::Create(m_imageType->type,m_imageType->colorType);
+    m_temp = LImageFactory::Create(m_image->m_type,m_image->m_colorList.m_type);
     img->Initialize();
 }
 
@@ -65,7 +65,7 @@ void ImageEdit::Undo()
 
 void ImageEdit::AddUndo()
 {
-    m_undo.append(LImageFactory::Create(m_imageType->type, m_imageType->colorType));
+    m_undo.append(LImageFactory::Create(m_image->m_type, m_image->m_colorList.m_type));
     m_undo.last()->CopyFrom(m_image);
     if (m_undo.count()>m_undoMax) {
         m_undo.removeFirst();

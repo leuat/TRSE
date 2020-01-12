@@ -105,13 +105,13 @@ QStringList ImageWorker::getImageTypes()
 
 void ImageWorker::New(LImage *image, QString name)
 {
-    ImageType* imageType = findType(image->m_type, image->m_colorList.m_type);
+/*    ImageType* imageType = findType(image->m_type, image->m_colorList.m_type);
 
     if (imageType == nullptr) {
         qDebug() << "WTF NULLPTR imagetype ";
         return;
-    }
-    m_currentImage = new ImageEdit(image, imageType, name);
+    }*/
+    m_currentImage = new ImageEdit(image, nullptr, name);
     //m_currentImage = new ImageEdit(imageType, "New Image");
     m_images.append(m_currentImage);
     Data::data.redrawFileList = true;
