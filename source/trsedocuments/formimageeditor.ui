@@ -276,13 +276,13 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>420</width>
+         <width>330</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>400</width>
+         <width>420</width>
          <height>16777215</height>
         </size>
        </property>
@@ -296,9 +296,15 @@
         </size>
        </property>
        <widget class="QWidget" name="tabCharset">
+        <property name="minimumSize">
+         <size>
+          <width>330</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
-          <width>400</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
