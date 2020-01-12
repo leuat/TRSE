@@ -50,7 +50,6 @@ class Formimageeditor;
 }
 
 
-
 class ByteDelegate : public QItemDelegate
 {
 public:
@@ -64,6 +63,7 @@ public:
         return lineEdit;
     }
 };
+
 
 class FormImageEditor :  public TRSEDocument
 {
