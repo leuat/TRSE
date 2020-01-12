@@ -324,11 +324,6 @@ void FormImageEditor::UpdateImage()
     ui->lblImage->setVisible(true);
     QImage txt = m_updateThread.m_pixMapImage.toImage();
     ui->lblImage->setTexture(txt,*m_updateThread.m_grid->m_qImage);
-    //ui->lblImage->setScaledContents(true);
-    //ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(ui->lblImage->size().width()-16, ui->lblImage->size().height()-16, Qt::IgnoreAspectRatio, Qt::FastTransformation));
-  //  ui->lblImage->setPixmap(m_updateThread.m_pixMapImage);
-
-//    ui->lblImage->setPixmap(m_updateThread.m_pixMapImage.scaled(320, 200, Qt::IgnoreAspectRatio, Qt::FastTransformation));
 
     m_documentIsChanged = ui->lblImage->m_imageChanged;
 
@@ -345,11 +340,9 @@ void FormImageEditor::UpdateImage()
     UpdateGrid();
 
     if (Data::data.redrawFileList) {
-        //m_work.UpdateListView(ui->lstImages);
         Data::data.redrawFileList = false;
     }
 
-//    qDebug() << "FormImageEditor :: UpdateImage "<< et.elapsed();
 }
 
 void FormImageEditor::UpdateGrid()
@@ -888,6 +881,9 @@ void FormImageEditor::on_btnCharsetFull_clicked()
     ci->m_currentMode = CharsetImage::Mode::FULL_IMAGE;
     Data::data.forceRedraw = true;
     UpdateCurrentMode();
+    UpdateGrid();
+    emit onImageMouseEvent();
+
     onImageMouseEvent();
 }
 
@@ -908,6 +904,7 @@ void FormImageEditor::on_btnCharset2x2_clicked()
     SetSingleCharsetEdit();
     Data::data.forceRedraw = true;
     UpdateCurrentMode();
+
     onImageMouseEvent();
 }
 
@@ -1169,10 +1166,11 @@ void FormImageEditor::SetSingleCharsetEdit()
     SetFooterData(LImageFooter::POS_CURRENT_MODE, m_prefMode);
     SetFooterData(LImageFooter::POS_KEEP_MODE, m_keepMode);
 
-
+    UpdateGrid();
 
     m_updateThread.m_zoom = 1.0;
     ci->m_currentMode = m_prefMode;
+    emit onImageMouseEvent();
 
 }
 
