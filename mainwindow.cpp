@@ -1395,3 +1395,11 @@ void MainWindow::on_action_Memory_map_C_u_triggered()
         m_currentDoc->MemoryAnalyze();
 
 }
+
+void MainWindow::on_actionSave_triggered()
+{
+    if (m_currentDoc==nullptr)
+        return;
+    m_currentDoc->SaveCurrent();
+
+}

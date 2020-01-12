@@ -340,6 +340,8 @@ private slots:
 
     void on_action_Memory_map_C_u_triggered();
 
+    void on_actionSave_triggered();
+
 private:
 
     QString FindPathInProjectFolders(const QModelIndex &index);
