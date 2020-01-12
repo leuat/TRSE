@@ -697,9 +697,10 @@ bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
             if (ke->key() == Qt::Key_F4) {
                 ui->tabMain->setCurrentIndex(3);
             }
+            if (ke->key() == Qt::Key_F5) {
+                ui->tabMain->setCurrentIndex(4);
+            }
         }
-
-
 
 
         return false;
