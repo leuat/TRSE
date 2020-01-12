@@ -28,7 +28,7 @@ Toolbox::Toolbox()
 }
 
 
-void Toolbox::Initialize(QGridLayout* ly)
+void Toolbox::Initialize(QGridLayout* ly, int windowWidth)
 {
     m_items.clear();
     m_ly = ly;
@@ -44,15 +44,17 @@ void Toolbox::Initialize(QGridLayout* ly)
 
     m_current = m_items[0];
 
-    BuildGUI(ly);
+    BuildGUI(ly, windowWidth);
 
 }
 
-void Toolbox::BuildGUI(QGridLayout *ly)
+void Toolbox::BuildGUI(QGridLayout *ly, int windowWidth)
 {
     int size = 64;
+    size = 64*(windowWidth/1920.0);
     int row=0;
     int col=0;
+    m_windowWidth = windowWidth;
     Util::clearLayout(ly);
     for (int i=0;i<m_items.count();i++) {
         QPushButton *b = new QPushButton();
@@ -63,8 +65,8 @@ void Toolbox::BuildGUI(QGridLayout *ly)
         if (m_current==m_items[i])
             b->setStyleSheet("background-color: #204080");
   //      b->setPalette(p);
-        b->setMaximumWidth(20);
-        b->setMinimumWidth(20);
+   //     b->setMaximumWidth(20);
+   //     b->setMinimumWidth(20);
         b->setAutoFillBackground( true );
         b->setText(m_items[i]->m_name);
         b->setFixedSize(QSize(size, size));
@@ -74,7 +76,7 @@ void Toolbox::BuildGUI(QGridLayout *ly)
         ly->addWidget(b,row,col);
 
         b->setIcon(m_items[i]->m_icon);
-        b->setIconSize(QSize(b->width(), b->height())*0.8);
+        b->setIconSize(QSize(b->width(), b->height())*0.9);
 
         m_buttons.append(b);
         col++;
@@ -90,6 +92,6 @@ void Toolbox::handleButton(int data)
 {
     m_current = m_items[data];
     m_current->Init();
-    BuildGUI(m_ly);
+    BuildGUI(m_ly,m_windowWidth);
 //    qDebug() << "Setting toolbox "<< data;
 }

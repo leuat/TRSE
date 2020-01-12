@@ -35,11 +35,11 @@ public:
 
     QVector<ToolboxItem*> m_items;
     QVector<QPushButton*> m_buttons;
-
+    int m_windowWidth;
     QGridLayout *m_ly;
-    void Initialize(QGridLayout* layout);
+    void Initialize(QGridLayout* layout, int windowWidth);
 
-    void BuildGUI(QGridLayout* ly);
+    void BuildGUI(QGridLayout* ly, int windowWidth);
     ToolboxItem* m_current;
 
     void handleButton(int data);
