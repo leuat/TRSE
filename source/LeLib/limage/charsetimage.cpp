@@ -357,6 +357,13 @@ QPixmap CharsetImage::ToQPixMap(int chr)
 
 void CharsetImage::setPixel(int x, int y, unsigned int color)
 {
+        if (m_bitMask==1)
+            if (color!=m_background) {
+                color = m_extraCols[1];
+//                if (rand()%100>98)
+  //              qDebug() << QString::number(color);
+            }
+
 
     if (m_currentMode==FULL_IMAGE) {
         if (x>=m_width || x<0 || y>=m_height || y<0)
