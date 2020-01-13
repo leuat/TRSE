@@ -149,9 +149,6 @@ void GLWidget::wheelEvent(QWheelEvent *e)
 }
 
 bool GLWidget::eventFilter(QObject *object, QEvent *event) {
-    /*    if ( !dynamic_cast<QInputEvent*>( event ) )
-               return false;
-    */
     if (m_cancel)
         return true;
     if(object==this) {
@@ -159,7 +156,6 @@ bool GLWidget::eventFilter(QObject *object, QEvent *event) {
         mouseMoveEvent((QMouseEvent*)event);
         if (event->type()==QEvent::Enter) {
             Data::data.imageEvent = 1;
-//            qDebug() << "ENTER EVENT";
         }
         if (event->type()==QEvent::Leave) Data::data.imageEvent = 0;
         if (m_buttonDown)
