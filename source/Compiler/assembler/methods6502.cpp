@@ -601,14 +601,23 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     }
 
     if (Command("PPUBackgroundDump"))
-//        PPUDump(as,0x20,00,32,30);
        PPUDump(as,0x20,00,240,4);
+
+    if (Command("PPUAttributeDump"))
+        PPUDump(as,0x23,0xC0,64,1);
 
     if (Command("PPUDrawColumn"))
         PPUDrawColumn(as);
 
     if (Command("PPUSingle"))
-        PPUSingle(as);
+        PPUSingle(as,0);
+
+    if (Command("PPUPoint"))
+        PPUSingle(as,1);
+
+
+    if (Command("PPUWrite"))
+        PPUSingle(as,2);
 
     if (Command("PPURead"))
         PPURead(as);
@@ -643,8 +652,6 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     }
 
 
-    if (Command("PPUAttributeDump"))
-        PPUDump(as,0x23,0xC0,64,1);
 
     if (Command("KrillLoad")) {
         KrillLoad(as,false);
@@ -9182,7 +9189,7 @@ void Methods6502::ReadInput(Assembler *as)
 
 void Methods6502::PPUDump(Assembler *as, int hi, int lo, int x, int y)
 {
-  as->Asm("lda $2002");
+//  as->Asm("lda $2002");
   //m_node->m_params[0]->Accept(m_dispatcher);
   LoadVar(as,1);
 //  as->Asm("lda #"+Util::numToHex(hi));
@@ -9206,16 +9213,22 @@ void Methods6502::PPUDump(Assembler *as, int hi, int lo, int x, int y)
   as->ClearTerm();
 }
 
-void Methods6502::PPUSingle(Assembler *as)
+void Methods6502::PPUSingle(Assembler *as, int type )
 {
-//    as->Asm("lda $2002");
-    LoadVar(as,0);
-    as->Asm("sta $2006");
-    LoadVar(as,1);
-//    QString addr = m_node->m_params[0]->getAddress();
-    as->Asm("sta $2006");
-    LoadVar(as,2);
-    as->Asm("sta $2007");
+    if (type==0 || type==1) {
+        LoadVar(as,0);
+        as->Asm("sta $2006");
+        LoadVar(as,1);
+        as->Asm("sta $2006");
+    }
+    if (type==0) {
+        LoadVar(as,2);
+        as->Asm("sta $2007");
+    }
+    if (type==2) {
+        LoadVar(as,0);
+        as->Asm("sta $2007");
+    }
 
 }
 
