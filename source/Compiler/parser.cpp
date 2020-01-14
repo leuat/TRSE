@@ -199,6 +199,9 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "vbmdrawsprite8(", "initVbmDrawSprite8");
         InitBuiltinFunction(QStringList()<< "vbmdrawsprite8e(", "initVbmDrawSprite8E");
         InitBuiltinFunction(QStringList()<< "vbmclearsprite8(", "initVbmClearSprite8");
+        InitBuiltinFunction(QStringList()<< "vbmdrawsprite(", "initVbmDrawSprite");
+        InitBuiltinFunction(QStringList()<< "vbmdrawspritee(", "initVbmDrawSpriteE");
+        InitBuiltinFunction(QStringList()<< "vbmclearsprite(", "initVbmClearSprite");
 
         InitBuiltinFunction(QStringList()<< "vbmdrawsprite16(", "initVbmDrawSprite16");
         InitBuiltinFunction(QStringList()<< "vbmdrawsprite16e(", "initVbmDrawSprite16E");
