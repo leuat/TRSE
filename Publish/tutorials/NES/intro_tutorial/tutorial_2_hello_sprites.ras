@@ -11,29 +11,28 @@ program Tutorial_2_hello_sprites;
 
 
 var  
-   	i,k: byte; 
+   	i,k,j: byte; 
 	// Must include dummy at $8000 due to the fact we are using 2 16kb blocks. For a larger project,
 	// this is where the music will go
 	music: incnsf("music/zelda.nsf");
 	// Standard palette. Use YYchr (https://www.romhacking.net/utilities/119/) to create and edit.
-	palette: incbin("palette/palette.dat");
 
 
 	// Location of the sprite
 	sprite_x, sprite_y : byte;
 
 	// Data location of the sprite (at $0200)
-	@define spriteLocHi $02
-	@define spriteLoc $0204
-
+//	@define spriteLocHi $03
+	@define spriteLoc $204
+	palette: incbin("tiles/game_tiles.pal");
 	
-	// Format: Y, sprite, palette, X
-	spritedata : array[16] of byte=(
-		0,2,1,0,
-		0,3,1,8,
-		8,18,0,0,
-		8,19,0,8);
+// Make sure game tiles are being exported
+@export "tiles/game_tiles.flf" "tiles/game_tiles.bin" 256
 
+
+@export "tiles/game_sprite_meta.flf" "tiles/spritedata.bin" 3
+	spriteData : incbin("tiles/spritedata.bin");	
+	// Format: Y, sprite, palette, X
 
 
 	zp:pointer;
@@ -53,7 +52,7 @@ end;
 procedure MovePlayer();
 begin
 	ReadInput();
-	sprite_x:=sprite_x+getbit(buttons,0)-getbit(buttons,1); // x axis
+	sprite_x:=sprite_x+getbit(buttons,1)-getbit(buttons,0); // x axis
 	sprite_y:=sprite_y-getbit(buttons,2)+getbit(buttons,3); // y axis
 	// Set sprite location after update
 	SetSpritePosition();	
@@ -71,7 +70,7 @@ begin
 	// Startirq pushes a,x,y onto the stack
 	Startirq(0);
 	// First, make sure that the PPU knows that sprites are located at @spriteLoc
-	SetSpriteLocation(@spriteLocHi);
+	SetSpriteLocation(hi(^@spriteLoc));
 	SetNametable(0);
 
 	// Play the song!
@@ -81,14 +80,14 @@ begin
 	// Make sure that sprite properties are set, re-enable NMI
 	ToggleSpriteSize(0);
 	ToggleSpriteTableAddress(0);
-	ToggleNMI(1);
+	ToggleBackgroundTableAddress(1);
+	
+	//ToggleNMI(1);
 	// Closeirq pops a,x,y from the stack
 	CloseIRQ();
 end;
 
 
-// use $0400 as temp storage area
-@define storage $0400
 
 
 /*
@@ -100,10 +99,18 @@ end;
 procedure SetSpritePosition();
 begin
 	k:=0;
+	j:=0;
+//	zp:=^@spriteLoc;
+
 	for i:=0 to 4 do begin
-		poke(^@spriteLoc,k+0,spritedata[k+0]+sprite_y);
-		poke(^@spriteLoc,k+3,spritedata[k+3]+sprite_x);
+		poke(^@spriteLoc,k+0,spriteData[j+0]+sprite_y);
+		poke(^@spriteLoc,k+3,spriteData[j+3]+sprite_x);
+
+		poke(^@spriteLoc,k+0+16,spriteData[j+0]+255-sprite_y);
+		poke(^@spriteLoc,k+3+16,spriteData[j+3]+255-sprite_x);
+		
 		k:=k+4;
+		j:=j+4;
 	end;
 
 end;
@@ -112,7 +119,8 @@ end;
 */
 procedure InitSprites();
 begin
-	memcpy(spritedata, 0,^@spriteLoc,16);
+	fill(^$200,$FF,0);
+	memcpy(spriteData, 0,^@spriteLoc,6*16);
 	SetSpritePosition();
 end;
 
@@ -123,21 +131,18 @@ end;
 */
 procedure InitScreen();
 begin
-	zp:=@storage;
-
-	// Same as above, create 64 "random" attribute (color) values
-	for i:=0 to 64 do begin
-		poke(^@storage,i,%10101010);
-	end;
-	// Dump from storage to PPU nametable 0 ($23C0 = ($23, $C0));
-
-	PPUAttributeDump(^@storage,$23,$C0);
-
+	
+	PPUCTRL:=%00010000;
 	// fill 30 lines with same value i+50
-	clearscreen($34, ^@storage);
-	fill(^@storage+^32*^20,$32+16,96);
-	// Dump from storage to PPU nametable 0 ($2000 = ($20, $00));
-	PPUBackgroundDump(^@storage,$20,0);
+//	clearscreen($34, ^@storage);
+	// Fill colour attributes
+	// Fill screen
+	asm(" lda $2002");
+	ppupoint($20,$00);
+	for j:=0 to 30 do
+	for i:=0 to 32 do ppuwrite(i&5+2 + ((j&5)*16));
+	ppupoint($23,$C0);
+	for i:=0 to 63 do ppuwrite(i|01010100);
 	
 
 
@@ -156,20 +161,26 @@ end;
 
 // Starting point after resetting the NES
 begin
+
+
+
+
 	// Load palette
 	LoadPalette(palette);
 	// Set up background & color values
+	
 	InitScreen();
 	InitSprites();
 
 
 	// Turn on background
 	ToggleBackground(1);
-	// Turn on sprites
-	ToggleSprites(1);
 	// Display background in border 0
 	ToggleBorderBackground(1);
-	// set nametable 0 = $2000 (where we dumped the background data)
+
+	// Press F1 on PPUCTRL for detailed info	
+	PPUCTRL:=%00010000;// set sprites on bank 0, tiles on bank 1;
+
 
 	// Load music
 	LoadSong(1);

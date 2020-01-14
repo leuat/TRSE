@@ -20,7 +20,6 @@ var
 	// this is where the music will go
 	dummy:array[1] of byte at $8000;
 	palette: incbin("tiles/game_tiles.pal");
-	zp:pointer;
 	
 
 
@@ -55,19 +54,18 @@ procedure InitScreen();
 begin
 //	zp:=@storage;
 	// fill 30 lines with same value i+50
-	zp:=$2000;
-	k:=0;
+	ppupoint($20,00);
 	for i:=0 to 30 do begin
 		for j:=0 to 32 do
 		begin
-			ppusingle(hi(zp),lo(zp),2+j&1 +(i&1)*16);
-			zp:=zp+1;
+			ppuwrite(2+j&1 +(i&1)*16);
 		end;
 	end;
-	// Dump from storage to PPU nametable 0 ($2000 = ($20, $00));
-	fill(^@storage,%00011011,64);
-	PPUBackgroundDump(^@storage,$23,$C0);
-
+	// Fill nametable with : Palette 0 (00), 1(01), 2(10) and 3 (11)
+	fill(^@storage,%00011110,64);
+	// Dump 64 bytes from storage to PPU nametable 0 color ram ($2000 + $3C0);
+	PPUAttributeDump(^@storage,$23,$C0);
+	
 end;
 
 
@@ -82,8 +80,9 @@ begin
 	ToggleBackground(1);
 	// Display background in border 0
 	ToggleBorderBackground(1);
-	
-	PPUCTRL:=%10010000;// set sprites on bank 0, tiles on bank 1;
+
+	// Press F1 on PPUCTRL for detailed info	
+	PPUCTRL:=%00010000;// set sprites on bank 0, tiles on bank 1;
 
 	// set nametable 0 = $2000 (where we dumped the background data)
 	SetNametable(0);

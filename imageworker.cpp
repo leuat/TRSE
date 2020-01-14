@@ -122,7 +122,7 @@ void ImageWorker::New(LImage* img, int image)
 {
 //    exit(1);
 
-    m_currentImage = new ImageEdit(&m_types[image], "New Image");
+    m_currentImage = new ImageEdit(img, &m_types[image], "New Image");
 
     m_currentImage->Initialize(img);
     m_images.append(m_currentImage);

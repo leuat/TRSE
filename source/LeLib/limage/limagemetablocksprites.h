@@ -17,13 +17,18 @@ public:
     void setPixel(int x, int y, unsigned int color) override;
 
 
+
+
     unsigned int getPixel(int x, int y) override;
 
     void ConstrainColours(QVector<int>& cols) override {
 
     }
 
-    void ExportBin(QFile &file);
+    void ExportBin(QFile &file) override;
+
+    virtual void FlipHorizontal() override;
+    virtual void FlipVertical() override;
 
 
 };

@@ -376,5 +376,6 @@
         <file>resources/images/tabs-meta.png</file>
         <file>resources/text/help/m/vbmcopytobuffer.rtf</file>
         <file>resources/text/help/m/vbmcopyfrombuffer.rtf</file>
+        <file>resources/text/help/c/ppuctrl.rtf</file>
     </qresource>
 </RCC>
