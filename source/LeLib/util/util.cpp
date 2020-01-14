@@ -201,6 +201,19 @@ bool Util::NumberFromStringHex(QString s, int &num) {
     return ok;
 }
 
+uchar Util::flipBit(uchar val, int bit)
+{
+    uchar v = 1<<bit;
+    if ((val & v) == v)
+        val = val ^v;
+    else
+        val = val | v;
+
+    return v;
+}
+
+
+
 QVector3D Util::fromSpherical(float r, float t, float p) {
     return QVector3D( r*sin(t)*cos(p), r*sin(t)*sin(p), r*cos(t)  );
 }

@@ -100,6 +100,7 @@ public:
 
     static int getShiftCount(int i);
 
+    static uchar flipBit(uchar val, int bit);
 
 
     static bool QStringIsSimilar(QString a, QString b, qreal percentage, int n, Qt::CaseSensitivity caseSense);

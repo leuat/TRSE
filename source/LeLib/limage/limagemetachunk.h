@@ -42,7 +42,9 @@ public:
         m_height = h;
         m_width = w;
         m_data.resize(m_height*m_width);
+        m_data.fill(0);
         m_attributes.resize(m_height*m_width);
+        m_attributes.fill(0);
     }
 
     void setPixel(float x, float y, uchar color, uchar bitMask);
@@ -69,6 +71,7 @@ public:
 
 
     LMetaChunkItem m_copy;
+    uchar m_currentAttribute = 0;
 
 
     LImage* m_img = nullptr, *m_charset = nullptr;

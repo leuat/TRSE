@@ -48,7 +48,7 @@ end;
 */
 
 // use $0400 as temp storage area
-@define storage $800
+@define storage $0400
 
 procedure InitScreen();
 begin
@@ -62,8 +62,9 @@ begin
 		end;
 	end;
 	// Fill nametable with : Palette 0 (00), 1(01), 2(10) and 3 (11)
-	ppupoint($23,$C0);
-	for i:=0 to 64 do ppuwrite(%00011110);
+	fill(^@storage,%00011110,64);
+	// Dump 64 bytes from storage to PPU nametable 0 color ram ($2000 + $3C0);
+	PPUAttributeDump(^@storage,$23,$C0);
 	
 end;
 

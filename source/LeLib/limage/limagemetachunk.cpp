@@ -82,9 +82,24 @@ void LImageMetaChunk::CopyFrom(LImage *mc)
 
         m_items.clear();
 
-        AddNew(img->getCur()->m_width, img->getCur()->m_height);
+/*        AddNew(img->getCur()->m_width, img->getCur()->m_height);
         getCur()->m_attributes = img->getCur()->m_attributes;
-        getCur()->m_data = img->getCur()->m_data;
+        getCur()->m_data = img->getCur()->m_data;*/
+
+        DeleteAll();
+        for (LImageContainerItem* li: img->m_items) {
+            LMetaChunkItem* s= (LMetaChunkItem*)li;
+            LMetaChunkItem* s2= new LMetaChunkItem();
+            *s2 = *s;
+
+            m_items.append(s2);
+        }
+
+
+        m_current = img->m_current;
+
+
+
         //m_items[0] = img->m_items[img->m_current];
 
 //        m_items = img->m_items;
@@ -96,9 +111,12 @@ void LImageMetaChunk::CopyFrom(LImage *mc)
 //             m_currentBank = img->m_charset->m_currentBank;
         }
 //        m_current = img->m_current;
-        m_current = 0;
+//        m_current = 0;
+        m_currentAttribute = img->m_currentAttribute;
+        m_writeType = img->m_writeType;
         m_currentBank = img->m_currentBank;
         m_charWidthDisplay = img->m_charWidthDisplay;
+        m_currencChar = img->m_currencChar;
  /*       m_colorList.m_list.clear();
         for (LColor l :  img->m_colorList.m_list)
             m_colorList.m_list.append(l);
@@ -243,12 +261,12 @@ bool LImageMetaChunk::KeyPress(QKeyEvent *e)
 
 void LImageMetaChunk::CopyChar()
 {
-
+    m_copy = *getCur();
 }
 
 void LImageMetaChunk::PasteChar()
 {
-
+    *getCur() = m_copy;
 }
 
 /*void LImageMetaChunk::ToQImage(LColorList &lst, QImage &img, float zoom, QPointF center)
