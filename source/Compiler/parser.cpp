@@ -215,6 +215,9 @@ void Parser::InitBuiltinFunctions()
 
         InitBuiltinFunction(QStringList()<< "vbmdrawbcd(", "initVbmDrawBCD");
 
+        InitBuiltinFunction(QStringList()<< "vbmcopytobuffer(", "initVbmCopyToBuffer");
+        InitBuiltinFunction(QStringList()<< "vbmcopyfrombuffer(", "initVbmCopyFromBuffer");
+
 
     }
     Node::m_staticBlockInfo.m_blockID = -1;

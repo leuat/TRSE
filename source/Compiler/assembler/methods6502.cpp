@@ -342,6 +342,19 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("vbmDrawBCD"))
         vbmDrawBCD(as);
 
+    // bitmap buffers
+    if (Command("initVbmCopyToBuffer"))
+        initVbmCopyToBuffer(as);
+    if (Command("vbmCopyToBuffer"))
+        vbmCopyToBuffer(as);
+
+    if (Command("initVbmCopyFromBuffer"))
+        initVbmCopyFromBuffer(as);
+    if (Command("vbmCopyFromBuffer"))
+        vbmCopyFromBuffer(as);
+
+
+
 
     /*
      *
@@ -7207,7 +7220,7 @@ void Methods6502::vbmDrawBCD(Assembler *as)
     }
 
     as->Comment("----------");
-    as->Comment("VBM BcdPrint address, number of BCD bytes");
+    as->Comment("VBM DrawBCD BCD array, Font, X, Y, number of BCD bytes");
 
     // address 1 - BCD array
     NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
@@ -7298,6 +7311,232 @@ void Methods6502::vbmDrawBCD(Assembler *as)
     as->Asm("bpl " + lblLoop +" ; loop until all bytes displayed");
 
     as->PopLabel("vbmDrawBCDloop");
+}
+
+
+void Methods6502::initVbmCopyToBuffer(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmCopyToBuffer"])
+        return;
+
+    m_node->m_isInitialized["vbmCopyToBuffer"] = true;
+
+    as->Comment("Copy bitmap data to a buffer in memory");
+    as->Comment("buffer address = " + as->m_internalZP[0]);
+
+    as->Label("vbmCopyToBuffer");
+
+        as->Comment("X and Y regs to be loaded with width / height");
+        as->Asm("sty vbmI");
+        as->Asm("dey ; need one less on Y as will go from 0 - number");
+        as->Asm("sty vbmY");
+
+
+    as->Label("vbmCTB_Loop");
+
+        as->Asm("lda (screenmemory),y");
+        as->Asm("sta (" + as->m_internalZP[0] + "),y");
+        as->Asm("dey");
+
+        as->Asm("bpl vbmCTB_Loop");
+
+        as->Asm("lda screenmemory");
+        as->Asm("clc");
+        as->Asm("adc #192 ; note - not compatible with screen scroll");
+        as->Asm("sta screenmemory");
+        as->Asm("bcc vbmCTB_NoOverflow");
+        as->Asm("inc screenmemory+1");
+    as->Label("vbmCTB_NoOverflow");
+
+        as->Asm("lda " + as->m_internalZP[0]);
+        as->Asm("clc");
+        as->Asm("adc vbmI ; height of buffer");
+        as->Asm("sta " + as->m_internalZP[0]);
+        as->Asm("bcc vbmCTB_NoOverflow2");
+        as->Asm("inc " + as->m_internalZP[0] +"+1");
+    as->Label("vbmCTB_NoOverflow2");
+
+        as->Asm("ldy vbmY");
+
+        as->Asm("dex");
+        as->Asm("bne vbmCTB_Loop");
+
+}
+void Methods6502::vbmCopyToBuffer(Assembler *as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmCopyToBuffer","InitVbmCopyToBuffer");
+
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 1) {
+        ErrorHandler::e.Error("This TRSE command needs at least 1 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
+
+    as->Comment("----------");
+    as->Comment("VBM CopyToBuffer address, width-in-chars, height-in-pixels");
+
+    // address 1 - Buffer address
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    as->Comment("Buffer to use:");
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr1 );
+        as->Asm("sta " + as->m_internalZP[0] );
+        as->Asm("lda " + addr1 +"+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr1 );
+        as->Asm("sta " + as->m_internalZP[0] );
+        as->Asm("lda #>" + addr1 );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
+    }
+
+    //  Width - chars
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("width is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("tax ; x width in chars");
+
+    //  Height - pixels
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[2]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("height is complex");
+        LoadVar(as, 2);
+    }
+    as->Asm("tay ; y height in pixels");
+
+    as->Asm("jsr vbmCopyToBuffer");
+
+}
+
+void Methods6502::initVbmCopyFromBuffer(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmCopyFromBuffer"])
+        return;
+
+    m_node->m_isInitialized["vbmCopyFromBuffer"] = true;
+
+    as->Comment("Copy buffer data in memory to the bitmap");
+    as->Comment("buffer address = " + as->m_internalZP[0]);
+
+    as->Label("vbmCopyFromBuffer");
+
+        as->Comment("X and Y regs to be loaded with width / height");
+        as->Asm("sty vbmI");
+        as->Asm("dey ; need one less on Y as will go from 0 - number");
+        as->Asm("sty vbmY");
+
+    as->Label("vbmCFB_Loop");
+
+        as->Asm("lda (" + as->m_internalZP[0] + "),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("dey");
+
+        as->Asm("bpl vbmCFB_Loop");
+
+        as->Asm("lda screenmemory");
+        as->Asm("clc");
+        as->Asm("adc #192 ; note - not compatible with screen scroll");
+        as->Asm("sta screenmemory");
+        as->Asm("bcc vbmCFB_NoOverflow");
+        as->Asm("inc screenmemory+1");
+    as->Label("vbmCFB_NoOverflow");
+
+        as->Asm("lda " + as->m_internalZP[0]);
+        as->Asm("clc");
+        as->Asm("adc vbmI ; height of buffer");
+        as->Asm("sta " + as->m_internalZP[0]);
+        as->Asm("bcc vbmCFB_NoOverflow2");
+        as->Asm("inc " + as->m_internalZP[0] +"+1");
+    as->Label("vbmCFB_NoOverflow2");
+
+        as->Asm("ldy vbmY");
+
+        as->Asm("dex");
+        as->Asm("bne vbmCFB_Loop");
+
+}
+void Methods6502::vbmCopyFromBuffer(Assembler *as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmCopyFromBuffer","InitVbmCopyFromBuffer");
+
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 1) {
+        ErrorHandler::e.Error("This TRSE command needs at least 1 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
+
+    as->Comment("----------");
+    as->Comment("VBM CopyFromBuffer address, width-in-chars, height-in-pixels");
+
+    // address 1 - Buffer address
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    as->Comment("Buffer to use:");
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr1 );
+        as->Asm("sta " + as->m_internalZP[0] );
+        as->Asm("lda " + addr1 +"+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr1 );
+        as->Asm("sta " + as->m_internalZP[0] );
+        as->Asm("lda #>" + addr1 );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
+    }
+
+    //  Width - chars
+    if (m_node->m_params[1]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[1]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("width is complex");
+        LoadVar(as, 1);
+    }
+    as->Asm("tax ; x width in chars");
+
+    //  Height - pixels
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[2]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("height is complex");
+        LoadVar(as, 2);
+    }
+    as->Asm("tay ; y height in pixels");
+
+    as->Asm("jsr vbmCopyFromBuffer");
+
 }
 
 

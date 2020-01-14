@@ -374,5 +374,7 @@
         <file>resources/images/charset-trans.png</file>
         <file>resources/images/tabs-meta-trans.png</file>
         <file>resources/images/tabs-meta.png</file>
+        <file>resources/text/help/m/vbmcopytobuffer.rtf</file>
+        <file>resources/text/help/m/vbmcopyfrombuffer.rtf</file>
     </qresource>
 </RCC>

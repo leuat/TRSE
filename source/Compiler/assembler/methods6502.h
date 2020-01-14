@@ -277,6 +277,11 @@ public:
     void initVbmDrawBCD(Assembler *as);
     void vbmDrawBCD(Assembler *as);
 
+    void initVbmCopyToBuffer(Assembler *as);
+    void vbmCopyToBuffer(Assembler *as);
+    void initVbmCopyFromBuffer(Assembler *as);
+    void vbmCopyFromBuffer(Assembler *as);
+
 
 
 

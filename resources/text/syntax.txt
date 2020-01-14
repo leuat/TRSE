@@ -111,6 +111,12 @@ m; vbmClearText; VIC20; a, a, b, b, b
 
 m; vbmDrawBCD; VIC20; a, a, b, b, b
 
+m; vbmCopyToBuffer; VIC20 ; a,b,b
+m; vbmCopyFromBuffer; VIC20 ; a,b,b
+
+m; vbmDrawSprite; VIC20 ; a, a
+m; vbmDrawSpriteE; VIC20 ; a, a
+m; vbmClearSprite; VIC20 ; a, a
 
 
 # ************** AMIGA ROUTINES

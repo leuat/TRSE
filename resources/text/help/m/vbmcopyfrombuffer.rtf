@@ -1,0 +1,27 @@
+<h3>vbmCopyFromBuffer( [address], [byte-w], [byte-h] );</h3>
+<ul>
+    <li>[address] - address of the buffer</li>
+    <li>[byte-w] - width - number of character columns to copy</li>
+    <li>[byte-h] - height - number of pixels high to copy</li>
+</ul>
+
+
+
+<h3>Description</h3>
+<p>
+Copies a previously created buffer back to the bitmap using the current location of the built in zero
+page pointer called screenmemory.  When copying the buffer back to the bitmap the same width and height
+should be specified as used with the vbmCoptToBuffer command.  
+</p>
+<p>Please note, only copy 1 column at a time if using the vbmScrollLeft or vbmScrollRight as this
+    command uses a simple addition of 192 to get to the next column.
+</p>
+
+<h3>Example</h3>
+<code>
+    // set the screenmemory pointer to a location on the bitmap to start copying to
+    screenmemory := $1100; // can also use vbmSetPosition1 and vbmSetColumn
+
+    // copy 2 character columns of 8 pixels from the buffer at address $a000 to the bitmap
+    vbmCopyFromBuffer( ^$a000 , 2, 8);
+</code>
