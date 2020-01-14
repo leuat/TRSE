@@ -15,7 +15,6 @@ LImageNES::LImageNES(LColorList::Type t) : CharsetImage(t)
     m_charWidth = 32;
     m_charHeight = 32;
 
-    m_currentBank = 1;
 
     //m_data = new PixelChar[m_charWidth*m_charHeight];
     m_charWidthDisplay=16;
@@ -179,7 +178,7 @@ QPixmap LImageNES::ToQPixMap(int chr)
     QImage img = QImage(sz,sz,QImage::Format_RGB32);
 //    qDebug() << (chr*8)%16;
     int xx = 0;
-    int yy = m_currentBank*16;
+    int yy = m_footer.get(LImageFooter::POS_CURRENT_BANK)*16;
 
 
     int c= 0;
@@ -250,7 +249,7 @@ bool LImageNES::getXY(QPoint& xy,QPoint& p1, QPoint& p2)
     int r = x/(float)8;
     x=x+r*8;
     if (m_double)
-        y=y+128*m_currentBank;
+        y=y+128*m_footer.get(LImageFooter::POS_CURRENT_BANK);
 
 //    m_pc1 = &getPixelChar((x/2),y);
   //  m_pc2 = &getPixelChar((x/2)+4,y);
@@ -362,6 +361,6 @@ void LImageNES::CopyFrom(LImage *img)
     LImageNES* n = dynamic_cast<LImageNES*>(img);
     for (int i=0;i<4;i++)
         m_cols[i] = n->m_cols[i];
-    m_currentBank = n->m_currentBank;
+    m_footer = n->m_footer;
     CharsetImage::CopyFrom(img);
 }

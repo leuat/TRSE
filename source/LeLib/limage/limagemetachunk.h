@@ -132,11 +132,6 @@ public:
 
 //   void ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center) override;
 
-   void SetBank(int bnk) override {
-       m_currentBank = bnk;
-       if (m_charset!=nullptr)
-           m_charset->SetBank(bnk);
-   }
 
 
    void AddNew(int w, int h) override;

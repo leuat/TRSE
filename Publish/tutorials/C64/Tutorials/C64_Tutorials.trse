@@ -37,6 +37,4 @@ override_target_settings_prg = 0
 build_list = ,
 data_header_resources/images/petscii_animation.flf = 0
 charset_resources/images/petscii_animation.flf = :resources/character.rom
-open_files = ,easy/07_rasters.ras, Hello.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
-current_file = Hello.ras
+open_files =, Hello.ras

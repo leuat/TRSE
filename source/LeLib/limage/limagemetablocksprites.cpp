@@ -7,12 +7,15 @@ LImageMetaBlockSprites::LImageMetaBlockSprites(LColorList::Type t) : LImageMetaC
     if (m_charset!=nullptr) {
         m_colorList.m_type = m_charset->m_colorList.m_type;
         m_colorList.m_list = m_charset->m_colorList.m_list;
-        m_charset->m_currentBank=0;
+        //m_charset->m_currentBank=0;
     }
 
     m_supports.displayCmbColors = false;
 
-    m_currentBank = 0;
+    m_GUIParams[btnFlipH] = "Paint mirror X";
+    m_GUIParams[btnFlipV] = "Paint mirror Y";
+
+//    m_currentBank = 0;
     PerformConstrainColours(QVector<int>() <<0<<1<<2<<3);
 
 }
@@ -61,8 +64,8 @@ void LImageMetaBlockSprites::LoadBin(QFile &file)
     //  qDebug() << m_charsetFilename;
     if (QFile::exists(m_charsetFilename)) {
         LoadCharset(m_charsetFilename,0);
-        m_charset->m_currentBank=0;
-        m_currentBank = 0;
+        //m_charset->m_currentBank=0;
+        //m_currentBank = 0;
         m_charset->PerformConstrainColours(QVector<int>() <<0<<1<<2<<3);
 
     }
@@ -112,7 +115,7 @@ unsigned int LImageMetaBlockSprites::getPixel(int x, int y)
     }
     int xx = ((val%m_charWidthDisplay)*m_pixelWidth) + xp%m_pixelWidth;
     int yy = ((val/(int)16)*m_pixelHeight)  +yp%m_pixelHeight;
-    yy=yy+ 16*8*m_currentBank;
+    yy=yy+ 16*8*m_footer.get(LImageFooter::POS_CURRENT_BANK);
 
 
     if (m_charset==nullptr) {

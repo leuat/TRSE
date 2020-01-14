@@ -43,7 +43,6 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     SetColor(5,3);
 
     // Needed for NES stuff
-    m_currentBank = 1;
 
     EnsureSystemColours();
     m_supports.koalaExport = false;
@@ -432,6 +431,12 @@ void CharsetImage::setPixel(int x, int y, unsigned int color)
 
 
 
+}
+
+void CharsetImage::SetBank(int bnk) {
+    m_footer.set(LImageFooter::POS_CURRENT_BANK,bnk);
+    if (m_charset!=nullptr)
+        m_charset->SetBank(bnk);
 }
 
 unsigned int CharsetImage::getCharPixel(int pos,  int pal,int x, int y)

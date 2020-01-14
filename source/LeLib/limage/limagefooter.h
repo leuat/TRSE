@@ -20,6 +20,8 @@ public:
     const static uchar POS_DOUBLE_PAINT = 6;
     const static uchar POS_CURRENT_MODE = 7;
     const static uchar POS_KEEP_MODE = 8;
+    const static uchar POS_CURRENT_PALETTE = 9;
+    const static uchar POS_CURRENT_BANK = 10;
     LImageFooter() {
         m_data.resize(256);
         m_data.fill(0);

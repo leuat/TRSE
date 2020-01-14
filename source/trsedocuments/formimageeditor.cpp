@@ -415,12 +415,12 @@ void FormImageEditor::Load(QString filename)
         m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
 
 
-     if (m_work.m_currentImage->m_image->m_type==LImage::NES || m_work.m_currentImage->m_image->m_type==LImage::LevelEditor || m_work.m_currentImage->m_image->m_type==LImage::LMetaChunk) {
-        on_cmbNesPalette_currentIndexChanged(0);
-    }
-    ui->cmbBank->setCurrentIndex(1);
-    ui->cmbBank->setCurrentIndex(0);
-    ui->cmbBank->setCurrentIndex(1);
+//     if (m_work.m_currentImage->m_image->m_type==LImage::NES || m_work.m_currentImage->m_image->m_type==LImage::LevelEditor || m_work.m_currentImage->m_image->m_type==LImage::LMetaChunk) {
+  //      on_cmbNesPalette_currentIndexChanged(0);
+    //}
+//    ui->cmbBank->setCurrentIndex(1);
+//    ui->cmbBank->setCurrentIndex(0);
+//    ui->cmbBank->setCurrentIndex(1);
 //    m_oldWidth = ui->lblImage->width();
 //    this->resize(this->geometry().width(), this->geometry().height());
 
@@ -434,13 +434,26 @@ void FormImageEditor::Load(QString filename)
     m_prefMode = (CharsetImage::Mode)GetFooterData(LImageFooter::POS_CURRENT_MODE);
     m_keepMode = (CharsetImage::Mode)GetFooterData(LImageFooter::POS_KEEP_MODE);
 
+    ui->cmbNesPalette->setCurrentIndex(GetFooterData(LImageFooter::POS_CURRENT_PALETTE));
+    on_cmbNesPalette_currentIndexChanged(GetFooterData(LImageFooter::POS_CURRENT_PALETTE));
+
+    int bank = GetFooterData(LImageFooter::POS_CURRENT_BANK);
+//    ui->cmbBank->setCurrentIndex(0);
+//    ui->cmbBank->setCurrentIndex(1);
+//    ui->cmbBank->setCurrentIndex(0);
+    ui->cmbBank->setCurrentIndex(bank);
+//    m_work.m_currentImage->m_image->SetBank(bank);
+//    on_cmbBank_currentIndexChanged(bank);
+    //m_work.m_currentImage->m_image->m_currentBank = bank;
 
     showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
     SetSingleCharsetEdit();
 
     updateCharSet();
 
-    onImageMouseEvent();
+//    onImageMouseEvent();
+
+    emit onImageMouseEvent();
 
     QTimer::singleShot(50, this, SLOT(InitAspect()));
 
@@ -1970,6 +1983,7 @@ void FormImageEditor::on_cmbNesPalette_currentIndexChanged(int index)
     if (!m_work.m_currentImage->m_image->isNes())
         return;
 //    m_ignoreMC = true;
+//    qDebug() << index;
     m_work.m_currentImage->m_image->m_colorList.m_curPal = index;
     m_ignoreMC = false;
     int idx = m_work.m_currentImage->m_image->m_colorList.m_curPal*4+1;
@@ -1978,6 +1992,10 @@ void FormImageEditor::on_cmbNesPalette_currentIndexChanged(int index)
     ui->cmbBorderMain_3->setCurrentIndex(m_work.m_currentImage->m_image->m_colorList.m_nesPPU[idx+2]);
     ui->cmbBackgroundMain_3->setCurrentIndex(m_work.m_currentImage->m_image->m_colorList.m_nesPPU[0]);
     m_ignoreMC = false;
+
+    SetFooterData(LImageFooter::POS_CURRENT_PALETTE,index);
+
+    qDebug() << "on_cmbNesPalette "<< index;
 
 
     SetMCColors();
@@ -1989,6 +2007,9 @@ void FormImageEditor::on_cmbNesPalette_currentIndexChanged(int index)
 void FormImageEditor::on_cmbBank_currentIndexChanged(int index)
 {
     m_work.m_currentImage->m_image->SetBank(index);
+    SetFooterData(LImageFooter::POS_CURRENT_BANK,index);
+//    qDebug() << "Setting :" << index;
+
     updateCharSet();
 
 }

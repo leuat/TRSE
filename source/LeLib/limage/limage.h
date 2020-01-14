@@ -143,10 +143,9 @@ public:
     int m_charHeightDisplay = 25;
     int m_charWidthDisplay = 40;
 
-    int m_currentBank = 0;
 
     virtual void SetBank(int bnk) {
-        m_currentBank = bnk;
+        m_footer.set(LImageFooter::POS_CURRENT_BANK,bnk);
     }
 
     virtual void onFocus()  {

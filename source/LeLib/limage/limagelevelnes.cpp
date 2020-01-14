@@ -16,7 +16,6 @@ LImageLevelNES::LImageLevelNES(LColorList::Type t) : ImageLevelEditor(t)
     m_supports.compressedExport = false;
     m_supports.displayForeground = false;
 
-    m_currentBank = 1;
     m_GUIParams[btnLoadCharset] ="Load charset";
     m_GUIParams[btn1x1] = "";
     m_GUIParams[btn2x2] = "";
@@ -130,7 +129,7 @@ void LImageLevelNES::Initialize()
             m_levels[p]->m_CharData.fill(0);
             m_levels[p]->m_ColorData.fill(0);
         }
-    SetBank(m_currentBank);
+    SetBank(m_footer.get(LImageFooter::POS_CURRENT_BANK));
 
 }
 

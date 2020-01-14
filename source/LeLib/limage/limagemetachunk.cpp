@@ -9,7 +9,6 @@ LImageMetaChunk::LImageMetaChunk(LColorList::Type t) : CharsetImage(t)
     m_width = 256;
     m_height = 256;
     m_supports.displayColors = false;
-    m_currentBank = 1;
 
     Initialize(m_width,m_height);
     if (t==LColorList::NES) {
@@ -108,13 +107,15 @@ void LImageMetaChunk::CopyFrom(LImage *mc)
 
         if (m_charset!=nullptr) {
              m_colorList.m_curPal = m_charset->m_colorList.m_curPal;
+             m_charset->SetBank(m_footer.get(LImageFooter::POS_CURRENT_BANK));
 //             m_currentBank = img->m_charset->m_currentBank;
         }
 //        m_current = img->m_current;
 //        m_current = 0;
         m_currentAttribute = img->m_currentAttribute;
         m_writeType = img->m_writeType;
-        m_currentBank = img->m_currentBank;
+        //m_currentBank = img->m_currentBank;
+        m_footer = img->m_footer;
         m_charWidthDisplay = img->m_charWidthDisplay;
         m_currencChar = img->m_currencChar;
  /*       m_colorList.m_list.clear();
@@ -180,7 +181,7 @@ unsigned int LImageMetaChunk::getPixel(int x, int y)
     int xx = ((val%m_charWidthDisplay)*m_pixelWidth) + xp%m_pixelWidth;
     int yy = ((val/(int)m_charWidthDisplay)*m_pixelHeight)  +yp%m_pixelHeight;
     if (isNes())
-        yy=yy+ 16*8*m_currentBank;
+        yy=yy+ 16*8*m_footer.get(LImageFooter::POS_CURRENT_BANK);
 
 
 
