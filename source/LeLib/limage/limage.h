@@ -156,6 +156,9 @@ public:
 
     }
 
+
+    virtual void VBMExport(QFile& file, int p1, int p2, int p3) {}
+
     int m_constrainDisplay = -1;
     bool m_silentExport=false;
     int m_width;

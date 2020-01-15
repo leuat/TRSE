@@ -148,6 +148,7 @@ public:
     Node* Constant();
     Node* InlineAssembler();
     void HandleExport();
+    void HandleVBMExport();
     void Eat();
 
 

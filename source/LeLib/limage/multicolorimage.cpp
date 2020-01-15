@@ -626,6 +626,28 @@ void MultiColorImage::ImportBin(QFile &file)
 
 }
 
+void MultiColorImage::VBMExport(QFile &file, int start, int end, int height)
+{
+    QByteArray data;
+    QVector<PixelChar*> pcList;
+    for (int i=start;i<end;i++) {
+        // Convert to POS in charset:
+        int x = i%m_charWidthDisplay;
+        int y = height*((i/m_charWidthDisplay));
+        int pos = x+y*m_charWidthDisplay;
+        for (int j=0;j<height;j++) {
+            if (pos>=0 && pos< m_charWidth*m_charHeight) {
+                PixelChar& pc = m_data[pos];
+                for (int i=0;i<8;i++)
+                    data.append( PixelChar::reverse(pc.p[i]));
+            }
+            pos +=m_charWidthDisplay;
+        }
+        //        qDebug() << x << y;
+    }
+    file.write(data);
+}
+
 void MultiColorImage::SetCharSize(int x, int y)
 {
     m_width = x*8;

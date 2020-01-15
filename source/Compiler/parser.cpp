@@ -452,6 +452,17 @@ void Parser::HandlePreprocessorInParsing()
         return;
     }
 
+    if (m_currentToken.m_value=="vbmexport") {
+        Eat();
+        Eat(TokenType::STRING);
+        Eat(TokenType::STRING);
+        Eat(TokenType::INTEGER_CONST);
+        Eat(TokenType::INTEGER_CONST);
+        Eat(TokenType::INTEGER_CONST);
+        return;
+    }
+
+
     if (m_currentToken.m_value=="donotremove") {
         Eat();
         m_doNotRemoveMethods.append(m_currentToken.m_value);
@@ -1109,8 +1120,10 @@ void Parser::Preprocess()
             else if (m_currentToken.m_value.toLower() =="export") {
                 Eat(TokenType::PREPROCESSOR);
                 HandleExport();
-
-
+            }
+            else if (m_currentToken.m_value.toLower() =="vbmexport") {
+                Eat(TokenType::PREPROCESSOR);
+                HandleVBMExport();
             }
 
             else if (m_currentToken.m_value.toLower() =="startassembler") {
@@ -1972,6 +1985,9 @@ void Parser::HandleExport()
     Eat(TokenType::STRING);
     QString outFile =m_currentDir+"/"+ m_currentToken.m_value;
     Eat(TokenType::STRING);
+
+
+
     int param1 = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
     int param2 = 0;
@@ -2009,6 +2025,43 @@ void Parser::HandleExport()
     }
     else
         img->ExportBin(file);
+
+
+
+
+    file.close();
+
+}
+
+void Parser::HandleVBMExport()
+{
+    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile =m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    int param1 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param2 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param3 = m_currentToken.m_intVal;
+
+    if (!QFile::exists(inFile)) {
+        ErrorHandler::e.Error("File not found : "+inFile,ln);
+    }
+    LImage* img = LImageIO::Load(inFile);
+    if (QFile::exists(outFile))
+        QFile::remove(outFile);
+
+    QFile file(outFile);
+
+    file.open(QFile::WriteOnly);
+    img->m_silentExport = true;
+
+    img->VBMExport(file,param1,param2,param3);
+
+
+
 
     file.close();
 
