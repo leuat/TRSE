@@ -49,7 +49,6 @@ begin
 		// scroll screen
 		//vbmScreenShiftLeft( 168, 176);
 
-		asm(" ldx #152;keep");
 		vbmScreenShiftLeft( 152, 191 );
 		
 		// calculate new y position for buggy

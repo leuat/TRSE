@@ -3730,8 +3730,8 @@ void Methods6502::vbmScreenShiftLeft(Assembler* as)
         // complex
         as->Comment("start line is complex");
         LoadVar(as, 0);
-        as->Asm("tax");
     }
+    as->Asm("tax");
 
     as->Asm("jsr vbmScreenShiftLeft");
 
@@ -3763,8 +3763,8 @@ void Methods6502::vbmScreenShiftRight(Assembler* as)
         // complex
         as->Comment("start line is complex");
         LoadVar(as, 0);
-        as->Asm("tax");
     }
+    as->Asm("tax");
 
     as->Asm("jsr vbmScreenShiftRight");
 

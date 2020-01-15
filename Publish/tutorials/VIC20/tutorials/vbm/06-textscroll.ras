@@ -55,7 +55,7 @@ begin
 	
 // uncomment this line and the similar one below to see how much time it is taking
 //	SCREEN_BG_COLOR := SCREEN_BG_BLACK + red;
-		asm(" ldx #184");
+
 		vbmScreenShiftLeft( 184, 191 );
 		i := i + 1;
 		if ( i = 8 ) then
