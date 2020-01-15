@@ -84,6 +84,7 @@ public:
     LImageEffect* m_currentImageEffect = nullptr;
     QString m_projectPath;
     QVector<int> m_keepSpriteChar;
+    QString m_currentFilename = "";
 
     int m_oldWidth = 600;
 
@@ -270,6 +271,7 @@ private slots:
     void on_btnCharSelect_clicked();
     void on_cmbAspect_currentIndexChanged(int index);
     void on_chkPaintSeparately_stateChanged(int arg1);
+    void on_pushButton_clicked();
 };
 
 

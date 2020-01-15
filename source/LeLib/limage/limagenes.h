@@ -27,6 +27,8 @@ public:
 
     }
 
+    void CopySingleChar(LImage* src, int srcChar, int dstChar) override;
+
 
     virtual bool isNes() {return true;}
 

@@ -45,6 +45,9 @@
 
 class LImageFactory {
 public:
+    static LImage* Create(LImage* img) {
+        return Create(img->m_type, img->m_colorList.m_type);
+    }
 
     static LImage* Create(LImage::Type t, LColorList::Type colorType) {
 

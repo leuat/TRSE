@@ -364,3 +364,25 @@ void LImageNES::CopyFrom(LImage *img)
     m_footer = n->m_footer;
     CharsetImage::CopyFrom(img);
 }
+
+void LImageNES::CopySingleChar(LImage *src, int srcChar, int dstChar)
+{
+    LImageNES* other = dynamic_cast<LImageNES*>(src);
+    if (other==nullptr) {
+        qDebug() << "LImageNES::CopySingleChar only works with other NES images";
+        return;
+    }
+    PixelChar& m_s1 = other->m_data[srcChar*2];
+    PixelChar& m_s2 = other->m_data[srcChar*2+1];
+
+    PixelChar& m_d1 = m_data[dstChar*2];
+    PixelChar& m_d2 = m_data[dstChar*2+1];
+
+    qDebug() << "HERE";
+
+    for (int i=0;i<8;i++) {
+        m_d1.p[i] = m_s1.p[i];
+        m_d2.p[i] = m_s2.p[i];
+    }
+
+}

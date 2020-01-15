@@ -150,6 +150,7 @@ public:
     void HandleExport();
     void HandleVBMExport();
     void Eat();
+    void HandleImportChar();
 
 
     int findSymbolLineNumber(QString symbol);

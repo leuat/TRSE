@@ -389,6 +389,8 @@ void FormImageEditor::Load(QString filename)
     updateCharSet();
     FillCMBColors();
 
+    m_currentFilename = filename;
+
     m_work.m_currentImage->m_image->BuildData(ui->tblData, m_projectIniFile->getStringList("data_header"));
 
     m_imageEffects.Init(m_work.m_currentImage->m_image);
@@ -435,6 +437,7 @@ void FormImageEditor::Load(QString filename)
     m_keepMode = (CharsetImage::Mode)GetFooterData(LImageFooter::POS_KEEP_MODE);
 
     ui->cmbNesPalette->setCurrentIndex(GetFooterData(LImageFooter::POS_CURRENT_PALETTE));
+    on_cmbNesPalette_currentIndexChanged(GetFooterData(LImageFooter::POS_CURRENT_PALETTE));
     on_cmbNesPalette_currentIndexChanged(GetFooterData(LImageFooter::POS_CURRENT_PALETTE));
 
     int bank = GetFooterData(LImageFooter::POS_CURRENT_BANK);
@@ -1995,7 +1998,7 @@ void FormImageEditor::on_cmbNesPalette_currentIndexChanged(int index)
 
     SetFooterData(LImageFooter::POS_CURRENT_PALETTE,index);
 
-    qDebug() << "on_cmbNesPalette "<< index;
+//    qDebug() << "on_cmbNesPalette "<< index;
 
 
     SetMCColors();
@@ -2040,4 +2043,19 @@ void FormImageEditor::on_chkPaintSeparately_stateChanged(int arg1)
     m_work.m_currentImage->m_image->m_forcePaintColorAndChar = !ui->chkPaintSeparately->isChecked();
     SetFooterData(LImageFooter::POS_DOUBLE_PAINT,!m_work.m_currentImage->m_image->m_forcePaintColorAndChar);
 
+}
+
+void FormImageEditor::on_pushButton_clicked()
+{
+//    Reload();
+    if (m_currentFilename!="") {
+//        Load(m_currentFilename);
+        m_work.m_currentImage->m_image = LImageIO::Load(m_currentFilename);
+        ui->cmbNesPalette->setCurrentIndex(GetFooterData(LImageFooter::POS_CURRENT_PALETTE));
+        on_cmbNesPalette_currentIndexChanged(GetFooterData(LImageFooter::POS_CURRENT_PALETTE));
+        on_cmbNesPalette_currentIndexChanged(GetFooterData(LImageFooter::POS_CURRENT_PALETTE));
+
+        onImageMouseEvent();
+
+    }
 }

@@ -73,6 +73,7 @@ void Parser::Eat()
     Eat(m_currentToken.m_type);
 }
 
+
 int Parser::findSymbolLineNumber(QString symbol)
 {
     int i=1;
@@ -449,6 +450,14 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         if (m_currentToken.m_type==TokenType::INTEGER_CONST)
             Eat();
+        return;
+    }
+    if (m_currentToken.m_value=="importchar") {
+        Eat();
+        Eat();
+        Eat();
+        Eat();
+        Eat();
         return;
     }
 
@@ -1124,6 +1133,10 @@ void Parser::Preprocess()
             else if (m_currentToken.m_value.toLower() =="vbmexport") {
                 Eat(TokenType::PREPROCESSOR);
                 HandleVBMExport();
+            }
+            else if (m_currentToken.m_value.toLower() =="importchar") {
+                Eat(TokenType::PREPROCESSOR);
+                HandleImportChar();
             }
 
             else if (m_currentToken.m_value.toLower() =="startassembler") {
@@ -1976,6 +1989,43 @@ Node *Parser::InlineAssembler()
     Eat(TokenType::STRING);
     Eat(TokenType::RPAREN);
     return n;
+}
+
+void Parser::HandleImportChar()
+{
+    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile =m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    int param1 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param2 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    LImage* imgB = LImageIO::Load(outFile);
+
+    LImage* imgA = nullptr;
+    if (inFile.toLower().endsWith(".bin") || inFile.toLower().endsWith(".chr")) {
+        imgA = LImageFactory::Create(imgB);
+        QFile f(inFile);
+        f.open(QFile::ReadOnly);
+        imgA->ImportBin(f);
+        f.close();
+    }
+    if (inFile.toLower().endsWith(".flf"))
+      imgA = LImageIO::Load(inFile);
+
+    if (imgA == nullptr) {
+        ErrorHandler::e.Error("Importing char error : unknown filetype for '"+inFile +"'");
+    }
+
+//    qDebug() << "HERE";
+    imgB->CopySingleChar(imgA, param1, param2);
+
+    LImageIO::Save(outFile,imgB);
+
+
 }
 
 void Parser::HandleExport()

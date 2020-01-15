@@ -287,7 +287,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="iconSize">
         <size>
@@ -1013,7 +1013,7 @@
     </layout>
    </item>
    <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0,4">
+    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0,0,4">
      <item>
       <widget class="QPushButton" name="btnHelpImage">
        <property name="text">
@@ -1025,6 +1025,13 @@
       <widget class="QPushButton" name="btnCharSelect">
        <property name="text">
         <string>Char selector (c)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>Reload</string>
        </property>
       </widget>
      </item>

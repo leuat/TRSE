@@ -188,6 +188,12 @@ public:
     CharmapGlobalData m_meta;
 
 
+    void SetBank(int bnk) override {
+        m_footer.set(LImageFooter::POS_CURRENT_BANK,bnk);
+        if (m_charset!=nullptr)
+            m_charset->SetBank(bnk);
+    }
+
 
     void SetLevel(QPoint f);
     ImageLevelEditor(LColorList::Type t);

@@ -159,6 +159,8 @@ public:
 
     virtual void VBMExport(QFile& file, int p1, int p2, int p3) {}
 
+    virtual void CopySingleChar(LImage* src, int srcChar, int dstChar) {qDebug() << "CopySingleChar not implemented";}
+
     int m_constrainDisplay = -1;
     bool m_silentExport=false;
     int m_width;

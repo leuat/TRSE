@@ -569,6 +569,7 @@ void ImageLevelEditor::CopyFrom(LImage *mc)
             m_currentLevel->m_ExtraData[i] = c->m_currentLevel->m_ExtraData[i];
         }
         */
+        m_footer = c->m_footer;
         m_charset = c->m_charset;
         m_writeType = c->m_writeType;
         for (int i=0;i<4;i++)
