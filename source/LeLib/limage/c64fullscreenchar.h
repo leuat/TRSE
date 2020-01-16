@@ -107,6 +107,17 @@ public:
         return curChar +  screen;
     }
 
+    virtual bool isNes() override {
+        if (m_charset!=nullptr)
+            return m_charset->isNes();
+        return false;
+    }
+
+    void SetBank(int bank)
+    {
+        if (m_charset!=nullptr)
+            m_charset->SetBank(bank);
+    }
 
 
     //    virtual void setMultiColor(bool doSet) override {}

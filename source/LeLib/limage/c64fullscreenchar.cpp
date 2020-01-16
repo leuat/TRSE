@@ -20,6 +20,7 @@
 */
 
 #include "c64fullscreenchar.h"
+#include "source/LeLib/limage/limagenes.h"
 
 C64FullScreenChar::C64FullScreenChar(LColorList::Type t) : MultiColorImage(t)
 {
@@ -99,7 +100,7 @@ C64FullScreenChar::C64FullScreenChar(LColorList::Type t) : MultiColorImage(t)
     m_metaParams.append(new MetaParameter("screen_width","Screen width",20,2,1000));
     m_metaParams.append(new MetaParameter("screen_height","Screen height",19,2,1000));
 
-
+    EnsureSystemColours();
 }
 
 void C64FullScreenChar::SetColor(uchar col, uchar idx)
@@ -270,7 +271,6 @@ unsigned int C64FullScreenChar::getPixel(int x, int y)
 {
     m_width=320;
     if (m_charset==nullptr) {
-//        qDebug() << "C64FullScreenChar::getPixel m_charset is nullptr";
         return 0;
          }
     if (x>=320 || x<0 || y>=200 || y<0)
@@ -282,22 +282,24 @@ unsigned int C64FullScreenChar::getPixel(int x, int y)
     uchar v = ((C64Screen*)m_items[m_current])->m_rawData[(x/8) + (y/8)*m_charWidth];
     uchar col = ((C64Screen*)m_items[m_current])->m_rawColors[(x/8) + (y/8)*m_charWidth];
 
-//    if (rand()%100>98)
-  //      qDebug() <<QString::number(col);
 
     int ix = (x % 8);//- (dx*40);
     int iy = (y % 8);//- (dy*25);
 
- //   return pc.get(m_scale*ix, iy, m_bitMask);
+
+    if (dynamic_cast<LImageNES*>(m_charset)!=nullptr) {
+        ix = (x % 8);//- (dx*40);
+        iy = (y % 8);//- (dy*25);
+
+        int xx = (v*16)%m_charset->m_charWidthDisplay;
+        int yy = (v/m_charset->m_charWidthDisplay)*16 + m_footer.get(LImageFooter::POS_CURRENT_BANK)*16;
+        m_charset->SetPalette(col);
+        m_charset->m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
+        return m_charset->getPixel(xx+ix,yy+iy);
+    }
 
 
     int pos = v;
-//    return m_charset->m_data[pos].get(v + (2*x)&7, v+ y&7,m_bitMask);
-//    uchar val = m_charset->m_data[pos].get(ix, iy,m_charset->m_bitMask);
-
-//    if (rand()%100==0)
-  //  qDebug() << m_bitMask;
-
     uchar val = m_charset->m_data[pos].get(ix, iy,m_bitMask);
 
     if (m_bitMask==0b11) {
@@ -317,6 +319,7 @@ unsigned int C64FullScreenChar::getPixel(int x, int y)
 
 void C64FullScreenChar::CopyFrom(LImage *mc)
 {
+    m_footer = mc->m_footer;
     C64FullScreenChar* c = dynamic_cast<C64FullScreenChar*>(mc);
     if (c!=nullptr) {
         if (c->m_charset==nullptr)

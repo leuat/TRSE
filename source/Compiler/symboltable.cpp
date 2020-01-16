@@ -178,7 +178,8 @@ void SymbolTable::InitBuiltins()
 
     Define(new Symbol("return",""));
 
-    Define(new Symbol("sine", "address"));
+    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES)
+        Define(new Symbol("sine", "address"));
     Define(new Symbol("log2_table", "address"));
     Define(new Symbol("joystickup", "byte"));
     Define(new Symbol("joystickdown", "byte"));

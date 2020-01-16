@@ -209,7 +209,8 @@ uchar Util::flipBit(uchar val, int bit)
     else
         val = val | v;
 
-    return v;
+
+    return val;
 }
 
 

@@ -428,6 +428,8 @@ void LImage::EnsureSystemColours()
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES) {
         m_colorList.InitNES();
         m_colorList.m_type = LColorList::NES;
+        m_supports.nesPalette = true;
+        m_supports.displayBank = true;
 
     }
 
