@@ -772,10 +772,10 @@ void FormImageEditor::on_btnGenerate_clicked()
 
 void FormImageEditor::showDetailCharButtons()
 {
-    if (m_work.m_currentImage!=nullptr)
+/*    if (m_work.m_currentImage!=nullptr)
     if (dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image)!=nullptr)
         return;
-
+*/
     bool doShow = (GetFooterData(LImageFooter::POS_DISPLAY_CHAR))==1 && m_work.m_currentImage->m_image->m_supports.displayCharOperations;
 
 
