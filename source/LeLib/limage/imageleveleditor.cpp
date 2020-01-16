@@ -105,7 +105,7 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_GUIParams[col4] = "Multicolor 2";
     m_supports.displayMC1 = true;
     m_supports.displayMC2 = true;
-
+    m_supports.displayCharOperations = false;
     m_metaParams.append(new MetaParameter("screen_width","Screen width",20,2,1000));
     m_metaParams.append(new MetaParameter("screen_height","Screen height",10,2,1000));
     m_metaParams.append(new MetaParameter("levels_x","Levels x",4,1,100));
@@ -473,21 +473,27 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
     if (x%16>=8) shift+=1;
     if (y%16>=8) shift+=40;
 
+    int ss = m_scale;
 
     uchar v = m_currentLevel->m_CharData[pos];
     uchar col=0;
-    if (m_meta.m_useColors)
+    if (m_meta.m_useColors) {
+        // Colors per level
         col = m_currentLevel->m_ColorData[pos];
+    }
+//    else {
+        // COlors per CHAR
+//        m_charset->setMultiColor(true);
+
+  //  }
 
     pos = v + shift;
-
-
-    if (!m_meta.m_useColors)
+    if (!m_meta.m_useColors) {
         col = m_charset->m_data[pos].c[3];
+        ss = 2;
+    }
 
-//    return m_charset->m_data[pos].get(v + (2*x)&7, v+ y&7,m_bitMask);
-    int ss = m_scale;
-
+/*    if (!m_meta.m_useColors)
     if (m_meta.m_displayMultiColor) {
         if (col>=8)
             m_charset->setMultiColor(true);
@@ -496,8 +502,9 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
             ss = 1;
         }
     }
+*/
 
-
+//    m_charset->setMultiColor(true);
     int ix = ((x) % (8)/ss)*ss;//- (dx*40);
     int iy = (y) % 8;//- (dy*25);
 
@@ -509,11 +516,18 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 
 
     uint val = m_charset->m_data[pos].get(ix, iy,m_charset->m_bitMask);
+
+    if (m_meta.m_useColors) {
     if (m_meta.m_displayMultiColor) {
         if (col<8) // Non-multicolor
             if (val!=m_background)
                 val = col;
     }
+    else
+        if (val!=m_background)
+            val = col;
+    }
+
     if (dynamic_cast<LImageMetaChunk*>(m_charset)!=nullptr) {
 
 
@@ -531,7 +545,7 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
   //      if ((col&0b00001000)==0b00001000)
     //        val+=1000;
     }
-    m_charset->setMultiColor(m_meta.m_displayMultiColor);
+//    m_charset->setMultiColor(m_meta.m_displayMultiColor);
 
 
 

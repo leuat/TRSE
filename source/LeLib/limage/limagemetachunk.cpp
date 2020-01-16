@@ -13,11 +13,13 @@ LImageMetaChunk::LImageMetaChunk(LColorList::Type t) : CharsetImage(t)
     Initialize(m_width,m_height);
     if (t==LColorList::NES) {
         m_img = new LImageNES(t);
-
     }
     m_type = LImage::Type::LMetaChunk;
-    m_colorList.m_type = m_img->m_colorList.m_type;
-    m_colorList.m_list = m_img->m_colorList.m_list;
+    if (m_img!=nullptr) {
+        m_colorList.m_type = m_img->m_colorList.m_type;
+        m_colorList.m_list = m_img->m_colorList.m_list;
+
+    }
     AddNew(2,2);
 
     m_supports.displayBank = true;
@@ -57,6 +59,7 @@ LImageMetaChunk::LImageMetaChunk(LColorList::Type t) : CharsetImage(t)
     m_GUIParams[tabSprites] ="Metachunks";
 
     m_updateCharsetPosition = false;
+    m_supports.displayCharOperations = false;
 
 
 }
@@ -183,8 +186,8 @@ unsigned int LImageMetaChunk::getPixel(int x, int y)
     if (isNes())
         yy=yy+ 16*8*m_footer.get(LImageFooter::POS_CURRENT_BANK);
 
-
-
+    m_charset->m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
+//    qDebug() << xx << yy
     if (m_charset==nullptr) {
         return 0;
     }

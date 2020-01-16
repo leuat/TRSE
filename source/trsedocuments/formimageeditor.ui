@@ -287,7 +287,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="iconSize">
         <size>
@@ -333,61 +333,150 @@
            </item>
            <item row="7" column="0">
             <layout class="QGridLayout" name="gridLayout_11">
-             <item row="3" column="0">
-              <widget class="QPushButton" name="btnCharset2x2Repeat">
-               <property name="text">
-                <string>2x2 charset repeat</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QPushButton" name="btnCharset2x2">
-               <property name="text">
-                <string>2x2 character set</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QPushButton" name="btnCharsetPaste">
-               <property name="text">
-                <string>Paste</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QPushButton" name="btnCharset1x1">
-               <property name="text">
-                <string>1x1 character set</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
+             <item row="5" column="0">
               <widget class="QPushButton" name="btnCharsetCopy">
                <property name="text">
                 <string>Copy</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
-              <widget class="QPushButton" name="btnCharsetFull">
+             <item row="5" column="1">
+              <widget class="QPushButton" name="btnCharsetPaste">
                <property name="text">
-                <string>Full character set</string>
+                <string>Paste</string>
                </property>
               </widget>
              </item>
-             <item row="5" column="0">
+             <item row="4" column="0">
+              <widget class="QPushButton" name="btnCharsetFull">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../resources.qrc">
+                 <normaloff>:/resources/images/charset-trans.png</normaloff>:/resources/images/charset-trans.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QComboBox" name="cmbCharY">
+               <item>
+                <property name="text">
+                 <string>1</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>2</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>3</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>4</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>5</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="8" column="0">
               <widget class="QPushButton" name="btnFlipVert">
                <property name="text">
                 <string>Flip vertical</string>
                </property>
               </widget>
              </item>
-             <item row="5" column="1">
+             <item row="2" column="0">
+              <widget class="QComboBox" name="cmbCharX">
+               <item>
+                <property name="text">
+                 <string>1</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>2</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>3</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>4</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>5</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>6</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="8" column="1">
               <widget class="QPushButton" name="btnFlipHorisontal">
                <property name="text">
                 <string>Flip horizontal</string>
                </property>
               </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QPushButton" name="btnRepeating">
+               <property name="text">
+                <string>Repeat</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <item>
+                <widget class="QPushButton" name="btnShiftLeft">
+                 <property name="text">
+                  <string>&lt;&lt;</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnShiftRight">
+                 <property name="text">
+                  <string>&gt;&gt;</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="7" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_7">
+               <item>
+                <widget class="QPushButton" name="btnShiftUp">
+                 <property name="text">
+                  <string>^</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnShiftDown">
+                 <property name="text">
+                  <string>*</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </item>

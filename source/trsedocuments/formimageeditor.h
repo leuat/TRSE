@@ -88,8 +88,9 @@ public:
 
     int m_oldWidth = 600;
 
-    CharsetImage::Mode m_prefMode = CharsetImage::Mode::CHARSET1x1;
-    CharsetImage::Mode m_keepMode = CharsetImage::Mode::CHARSET1x1;
+    int m_prefMode=1, m_keepMode=0;
+//    CharsetImage::Mode m_prefMode = CharsetImage::Mode::CHARSET1x1;
+//    CharsetImage::Mode m_keepMode = CharsetImage::Mode::CHARSET1x1;
 
     void UpdatePalette();
     void updateCharSet();
@@ -152,6 +153,8 @@ public:
 
     void UpdateAspect();
 
+    void Update();
+
 /*signals:
     void EmitMouseEvent();
 */
@@ -168,7 +171,7 @@ private slots:
 
     void on_btnGenerate_clicked();
 
-    void showDetailCharButtons(bool doShow);
+    void showDetailCharButtons();
 
     void on_btnFlipVert_clicked();
     void on_btnFlipHorisontal_clicked();
@@ -198,9 +201,6 @@ private slots:
     void on_btnImport_clicked();
 
     void on_btnCharsetFull_clicked();
-    void on_btnCharset1x1_clicked();
-    void on_btnCharset2x2_clicked();
-    void on_btnCharset2x2Repeat_clicked();
     void on_btnCharsetCopy_clicked();
     void on_btnCharsetPaste_clicked();
 
@@ -272,6 +272,13 @@ private slots:
     void on_cmbAspect_currentIndexChanged(int index);
     void on_chkPaintSeparately_stateChanged(int arg1);
     void on_pushButton_clicked();
+    void on_cmbCharX_currentIndexChanged(int index);
+    void on_cmbCharY_currentIndexChanged(int index);
+    void on_btnRepeating_clicked();
+    void on_btnShiftLeft_clicked();
+    void on_btnShiftRight_clicked();
+    void on_btnShiftDown_clicked();
+    void on_btnShiftUp_clicked();
 };
 
 

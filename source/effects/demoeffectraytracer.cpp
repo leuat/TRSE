@@ -21,7 +21,7 @@ void DemoEffectRaytracer::Initialize()
            delete m_mc;
        m_mc = new CharsetImage(LColorList::C64);
 
-       ((CharsetImage*)(m_mc))->m_currentMode = CharsetImage::FULL_IMAGE;
+       //((CharsetImage*)(m_mc))->m_currentMode = CharsetImage::FULL_IMAGE;
 
    }
    if (m_rt->m_globals.m_outputType == RayTracerGlobals::output_type_pico8) {

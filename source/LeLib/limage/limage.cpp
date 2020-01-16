@@ -30,6 +30,9 @@
 #include <QMatrix4x4>
 #include "source/Compiler/syntax.h"
 
+uchar LImage::m_copy[1024*1024];
+bool LImage::m_hasCopy = false;
+
 LImage::LImage(LColorList::Type t)
 {
     m_colorList.Initialize(t);
@@ -197,11 +200,11 @@ int LImage::getCharHeightDisplay()
 }
 
 QString LImage::GetCurrentModeString() {
-    if (m_currentMode==CHARSET1x1) return "1x1 charset mode";
+/*    if (m_currentMode==CHARSET1x1) return "1x1 charset mode";
     if (m_currentMode==CHARSET2x2) return "2x2 charset mode";
     if (m_currentMode==CHARSET2x2_REPEAT) return "2x2 charset repeat mode";
-
-    return "Full image mode";
+*/
+    return "";
 }
 
 void LImage::FloydSteinbergDither(QImage &img, LColorList &colors, bool dither)
@@ -268,41 +271,93 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
 void LImage::CopyChar()
 {
 
-    for (int y=0;y<m_copySize;y++)
-        for (int x=0;x<m_copySize;x++) {
-            m_copy[x+y*m_copySize] = getPixel(x/(float)m_copySize*m_width,y/(float)m_copySize*m_height);
+ //   m_copySize = 1;
+/*    if (m_footer.isFullscreen()) {
+        m_copySize = QPoint(m_width,m_height);
+    }
+    else {
+        m_copySize = QPoint(m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X)*8,
+                            m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y)*8);
+    }
+*/
+//   m_copySize = QPoint(m_width,m_height);
+//    qDebug() << m_copySize << m_width << m_height;
+   m_copySize = QPoint(m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X)*32,
+                       m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y)*32);
+
+//   m_copySize = QPoint(256,256);
+    for (int y=0;y<m_copySize.y();y++)
+        for (int x=0;x<m_copySize.x();x++) {
+            m_copy[x+y*m_copySize.x()] = getPixel((float)x/(float)m_copySize.x()*(float)m_width,
+                                                  (float)y/(float)m_copySize.y()*(float)m_height);
         }
-    m_copyFromMode = m_currentMode;
+    m_hasCopy = true;
 
 }
 
 void LImage::PasteChar()
 {
-    if (m_currentMode!=m_copyFromMode)
+    if (!m_hasCopy)
         return;
-    for (int y=0;y<m_copySize;y++)
-        for (int x=0;x<m_copySize;x++) {
-            setPixel(x/(float)m_copySize*m_width,y/(float)m_copySize*m_height,m_copy[x+y*m_copySize]);
+    for (int y=0;y<m_copySize.y();y++)
+        for (int x=0;x<m_copySize.x();x++) {
+            setPixel(x/(float)m_copySize.x()*m_width,y/(float)m_copySize.y()*m_height,m_copy[x+y*m_copySize.x()]);
         }
 }
 
 void LImage::FlipHorizontal() {
     CopyChar();
-    for (int y=0;y<m_copySize;y++)
-        for (int x=0;x<m_copySize;x++) {
-            setPixel(x/(float)m_copySize*m_width,y/(float)m_copySize*m_height,m_copy[m_copySize-1-x+y*m_copySize]);
+    for (int y=0;y<m_copySize.y();y++)
+        for (int x=0;x<m_copySize.x();x++) {
+            setPixel((float)(x+0.2)/(float)m_copySize.x()*(float)m_width,
+                     (float)(y+0.2)/(float)m_copySize.y()*(float)m_height,
+                     m_copy[m_copySize.x()-1-x+y*m_copySize.x()]);
         }
 
 }
 
 void LImage::FlipVertical() {
     CopyChar();
-    for (int y=0;y<m_copySize;y++)
-        for (int x=0;x<m_copySize;x++) {
-            setPixel(x/(float)m_copySize*m_width,y/(float)m_copySize*m_height,m_copy[x+(m_copySize -1 -y)*m_copySize]);
+    for (int y=0;y<m_copySize.y();y++)
+        for (int x=0;x<m_copySize.x();x++) {
+            setPixel((float)(x*m_width)/(float)m_copySize.x(),
+                     ((float)(m_copySize.y()-1-y)*m_height/(float)m_copySize.y()),
+                     m_copy[x+y*m_copySize.x()]);
+        }
+
+
+
+}
+
+void LImage::ShiftXY(int dx, int dy)
+{
+    CopyChar();
+   // qDebug() <<m_copySize;
+
+    dx*=m_bitMask==0b11?2:1;
+
+    if (!m_footer.isFullscreen()) {
+        int sx = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X)*8;
+        int sy = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y)*8;
+
+  //      if (dx!=0)
+            dx = dx*(float)m_width/(float)sx;
+            if (dx>0) dx+=1;
+            dy = dy*(float)m_height/(float)sy;
+            if (dy>0) dy+=1;
+
+    }
+//    qDebug() << dx << dy << m_copySize << m_width << m_height;
+    for (int y=0;y<m_copySize.y();y++)
+        for (int x=0;x<m_copySize.x();x++) {
+            setPixel((int)((x/(float)m_copySize.x()*(float)m_width)+dx+m_width)%m_width ,
+                     (int)(((y)/(float)m_copySize.y()*(float)m_height)+dy+m_height)%m_height,
+
+                     m_copy[x+y*m_copySize.x()]);
         }
 
 }
+
 
 void LImage::Rotate(QPoint center, float angle, float scale, LImage* img)
 {
@@ -359,6 +414,7 @@ void LImage::CopyFrom(LImage *img) {
     }
     */
 }
+
 
 void LImage::EnsureSystemColours()
 {

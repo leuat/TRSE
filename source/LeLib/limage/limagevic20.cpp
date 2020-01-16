@@ -29,7 +29,7 @@ LImageVIC20::LImageVIC20(LColorList::Type t)  : CharsetImage (t)
     m_GUIParams[tabData] = "";
     m_GUIParams[tabLevels] = "";
 
-    m_currentMode = FULL_IMAGE;
+    //m_currentMode = FULL_IMAGE;
 
     m_GUIParams[btnEditFullCharset] = "Full image/charset";
 
