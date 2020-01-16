@@ -743,7 +743,7 @@ void FormImageEditor::resizeEvent(QResizeEvent *event)
 
 
 
-void FormImageEditor::on_btnExportAsm_clicked()
+/*void FormImageEditor::on_btnExportAsm_clicked()
 {
 
     QString fileName = QFileDialog::getSaveFileName(this,
@@ -759,7 +759,7 @@ void FormImageEditor::on_btnExportAsm_clicked()
 
     mi->ExportAsm(fileName);
 }
-
+*/
 void FormImageEditor::on_btnGenerate_clicked()
 {
     FillToImageParams();
@@ -883,15 +883,6 @@ void FormImageEditor::on_btnExportImage_clicked()
 }
 
 
-void FormImageEditor::on_lstImages_clicked(const QModelIndex &index)
-{
-    m_work.SetImage(index.row());
-    Data::data.redrawFileList = true;
-    UpdatePalette();
-
-    onImageMouseEvent();
-
-}
 
 void FormImageEditor::on_btnImport_clicked()
 {
@@ -1740,42 +1731,11 @@ void FormImageEditor::on_btnFlipYSprite_clicked()
     onImageMouseEvent();
 }
 
-void FormImageEditor::on_sliderX_actionTriggered(int action)
-{
-/*    int v = ui->sliderX->value();
-    if (v>60) {
-        m_work.m_currentImage->m_image->Transform(1,0);
-//        ui->sliderX->setValue(50);
-
-    }
-    if (v>40) {
-        m_work.m_currentImage->m_image->Transform(-1,0);
-  //      ui->sliderX->setValue(50);
-
-    }
-    onImageMouseEvent();
-*/
-}
-
-void FormImageEditor::on_btnPanLeft_clicked()
-{
-    m_work.m_currentImage->AddUndo();
-    m_work.m_currentImage->m_image->Transform(-1,0);
-    onImageMouseEvent();
-}
 
 void FormImageEditor::on_btnPanRight_clicked()
 {
     m_work.m_currentImage->AddUndo();
     m_work.m_currentImage->m_image->Transform(1,0);
-    onImageMouseEvent();
-
-}
-
-void FormImageEditor::on_btnPanUp_clicked()
-{
-    m_work.m_currentImage->AddUndo();
-    m_work.m_currentImage->m_image->Transform(0,-1);
     onImageMouseEvent();
 
 }

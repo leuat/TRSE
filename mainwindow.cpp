@@ -984,6 +984,7 @@ void MainWindow::LoadProject(QString filename)
     QString focusFile = m_currentProject.m_ini.getString("current_file");
     for (int i=0;i<files.count();i++) {
         QString f = files[files.count()-1-i];
+        qDebug() << f;
         if (QFile::exists(getProjectPath() + "/"+ f))
             LoadDocument(f);
     }

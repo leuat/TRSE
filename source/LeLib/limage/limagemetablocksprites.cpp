@@ -117,6 +117,7 @@ unsigned int LImageMetaBlockSprites::getPixel(int x, int y)
     int yy = ((val/(int)16)*m_pixelHeight)  +yp%m_pixelHeight;
     yy=yy+ 16*8*m_footer.get(LImageFooter::POS_CURRENT_BANK);
 
+    m_charset->m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
 
     if (m_charset==nullptr) {
         return 0;

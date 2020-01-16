@@ -167,7 +167,7 @@ private slots:
     void onImageMouseEvent();
     void onImageMouseReleaseEvent();
 
-    void on_btnExportAsm_clicked();
+//    void on_btnExportAsm_clicked();
 
     void on_btnGenerate_clicked();
 
@@ -195,7 +195,6 @@ private slots:
 
     void on_btnExportImage_clicked();
 
-    void on_lstImages_clicked(const QModelIndex &index);
 
 
     void on_btnImport_clicked();
@@ -245,10 +244,7 @@ private slots:
     void on_btnPasteSprite_clicked();
     void on_btnFlipXSprite_clicked();
     void on_btnFlipYSprite_clicked();
-    void on_sliderX_actionTriggered(int action);
-    void on_btnPanLeft_clicked();
     void on_btnPanRight_clicked();
-    void on_btnPanUp_clicked();
     void on_btnPanDown_clicked();
     void on_lblSprite1_clicked();
     void on_lblSprite3_clicked();
