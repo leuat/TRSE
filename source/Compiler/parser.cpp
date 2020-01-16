@@ -196,6 +196,8 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "vbmspritestitch(", "initVbmSpriteStitch");
         InitBuiltinFunction(QStringList()<< "vbmspriteshiftr(", "initVbmSpriteShiftR");
         InitBuiltinFunction(QStringList()<< "vbmspriteshiftl(", "initVbmSpriteShiftL");
+        InitBuiltinFunction(QStringList()<< "vbmspriteshiftsr(", "initVbmSpriteShiftSR");
+        InitBuiltinFunction(QStringList()<< "vbmspriteshiftsl(", "initVbmSpriteShiftSL");
 
         InitBuiltinFunction(QStringList()<< "vbmdrawsprite8(", "initVbmDrawSprite8");
         InitBuiltinFunction(QStringList()<< "vbmdrawsprite8e(", "initVbmDrawSprite8E");

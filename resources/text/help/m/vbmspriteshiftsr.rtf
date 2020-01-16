@@ -1,0 +1,35 @@
+<h3>vbmSpriteShiftSR( [address-src], [address-dest], [btye-inc], [byte-height], [address-pre] );</h3>
+<ul>
+    <li>[address-src] - source sprite character graphic</li>
+    <li>[address-dest] - destination address where to store pre-shifted sprite</li>
+    <li>[byte-inc] - number of pixels to shift, 0-7 are allowed</li>
+    <li>[byte-height] - height of the sprite, for example 8, 16, 100, etc</li>
+    <li>[address-pre] - where to store the address of the pre-shifted sprite</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+    Create a single pre-shifted sprite frame for use with the sprite drawing commands. Shifts to the right
+    to create a 'left' side frame of a pre-shifted sprite.  This version of the Sprite Shift command
+    only performs one shift operation. Can be used if different sprite characters are to be used for
+    each shifted position to create animation as the sprite moves.
+</p>
+
+<h3>Example</h3>
+<code>
+    // presift a character, found at address $4000
+    // stores the pre-shifted result in $a000
+    // shift into position 3
+    // set 16 pixel rows to shift (height of character sprite)
+    // Store the address of the pre-shifted frame in $4400
+	vbmSpriteShiftSR( ^$4000, ^$a000, 3, 16, ^$4400 );
+</code>
+
+<h3>See also</h3>
+<ul>
+    <li>vbmSpriteShiftSL</li>
+    <li>vbmSpriteShiftR</li>
+    <li>vbmSpriteShiftL</li>
+    <li>vbmSpriteStitch</li>
+</ul>

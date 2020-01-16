@@ -244,6 +244,11 @@ public:
     void initVbmSpriteShiftL(Assembler* as);
     void vbmSpriteShiftL(Assembler* as);
 
+    void initVbmSpriteShiftSR(Assembler* as);
+    void vbmSpriteShiftSR(Assembler* as);
+    void initVbmSpriteShiftSL(Assembler* as);
+    void vbmSpriteShiftSL(Assembler* as);
+
     void initVbmDrawSprite(Assembler *as);
     void vbmDrawSprite(Assembler *as);
     void initVbmDrawSpriteE(Assembler *as);
