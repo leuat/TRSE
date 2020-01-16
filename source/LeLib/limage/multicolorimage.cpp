@@ -49,6 +49,7 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     m_supports.flfSave = true;
     m_supports.flfLoad = true;
     m_supports.compressedExport = true;
+    m_supports.displayCharOperations = false;
 
     m_GUIParams[btnLoadCharset] ="";
     m_GUIParams[btn1x1] = "";
@@ -84,6 +85,8 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     //m_data.resize(m_charWidth*m_charHeight);
 
 //    qDebug() << m_charWidth*m_charHeight;
+
+
 
     EnsureSystemColours();
     for (int i=0;i<4;i++)

@@ -105,7 +105,7 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_GUIParams[col4] = "Multicolor 2";
     m_supports.displayMC1 = true;
     m_supports.displayMC2 = true;
-
+    m_supports.displayCharOperations = false;
     m_metaParams.append(new MetaParameter("screen_width","Screen width",20,2,1000));
     m_metaParams.append(new MetaParameter("screen_height","Screen height",10,2,1000));
     m_metaParams.append(new MetaParameter("levels_x","Levels x",4,1,100));

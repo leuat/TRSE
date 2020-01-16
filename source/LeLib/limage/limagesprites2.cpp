@@ -16,6 +16,7 @@ LImageSprites2::LImageSprites2(LColorList::Type t) : CharsetImage(t) {
     m_GUIParams[tabSprites] ="Sprites";
 
     m_exportParams.clear();
+    m_supports.displayCharOperations = false;
 
 
     AddNew(1,1);

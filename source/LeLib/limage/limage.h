@@ -83,12 +83,13 @@ public:
     bool displayBank = false;
 
 
-
+    bool displayCharOperations = false;
 
     bool displayTimestamp = false;
 
 
 };
+
 
 
 class LImage
@@ -180,15 +181,17 @@ public:
     bool m_updateCharsetPosition = false;
     bool m_forcePaintColorAndChar = true;
 
-    static const int m_copySize = 320;
-    uchar m_copy[m_copySize*m_copySize];
-    enum Mode{ FULL_IMAGE, CHARSET1x1, CHARSET2x2, CHARSET2x2_REPEAT};
-    Mode m_currentMode = FULL_IMAGE;
+    QPoint m_copySize = QPoint(512,512);
+    static uchar m_copy[];
+
+//    enum Mode{ FULL_IMAGE, CHARSET1x1, CHARSET2x2, CHARSET2x2_REPEAT};
+  //  Mode m_currentMode = FULL_IMAGE;
     QString GetCurrentModeString();
 
 
-    Mode m_copyFromMode;
+//    Mode m_copyFromMode;
 
+    static bool m_hasCopy;// = false;
 
 
     virtual int GetWidth() {
@@ -336,7 +339,7 @@ public:
     virtual void fromQImage(QImage* img, LColorList& lst) = 0;
 
     virtual void ExportAsm(QString filename)  { qDebug() << "ASM Write not supported"; }
-
+    virtual void ShiftXY(int x, int y);
 
     void EnsureSystemColours();
 

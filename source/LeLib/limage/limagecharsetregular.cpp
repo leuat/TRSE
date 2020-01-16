@@ -55,7 +55,7 @@ LImageCharsetRegular::LImageCharsetRegular(LColorList::Type t) : CharsetImage(t)
     m_GUIParams[col4] = "";
 
     m_currencChar=0;
-    m_currentMode=Mode::FULL_IMAGE;
+    //m_currentMode=Mode::FULL_IMAGE;
 }
 
 

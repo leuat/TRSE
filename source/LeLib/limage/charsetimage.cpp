@@ -63,12 +63,14 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_GUIParams[col4] = "Multicolor 2";
 
     m_currencChar=0;
-    m_currentMode=Mode::FULL_IMAGE;
+    //m_currentMode=Mode::FULL_IMAGE;
     m_exportParams.clear();
     m_exportParams["Start"] = 0;
     m_exportParams["End"] = 256;
     m_exportParams["IncludeColors"] = 0;
     m_exportParams["VIC20mode"] = 0;
+
+    m_supports.displayCharOperations = true;
 
     m_GUIParams[btnLoadCharset] ="";
     m_GUIParams[btn1x1] = "1x1 Character set";
@@ -210,46 +212,12 @@ void CharsetImage::LoadCharset(QString file, int skipBytes)
 
 unsigned int CharsetImage::getPixel(int x, int y)
 {
-    if (m_currencChar>m_charWidth*m_charHeight)
-        return 0;
 
-    if (m_currentMode==FULL_IMAGE)
-        return MultiColorImage::getPixel(x,y);
+    QPoint p = getXY(x,y);
 
+    return MultiColorImage::getPixel(p.x(),p.y());
 
 
-    int bp = 8;
-    if (m_currentMode==CHARSET2x2)
-        bp=16;
-
-
-
-    if (m_currentMode == CHARSET1x1 || m_currentMode == CHARSET2x2) {
-        int i = x/320.0*bp;
-        int j = y/200.0*bp;
-        int shiftx = (m_currencChar*8)%320;
-        int shifty = (m_currencChar/(int)m_charWidth)*8;
-
-
-        shiftx/=m_scale;
-
-        return MultiColorImage::getPixel(i+shiftx,j+shifty);
-    }
-    if (m_currentMode == CHARSET2x2_REPEAT) {
-        int i = x/320.0*16*3;
-        int j = y/200.0*16*3;
-        int shiftx = (m_currencChar*8)%320;
-        int shifty = (m_currencChar/(int)m_charWidth)*8;
-
-        shiftx/=m_scale;
-
-        int xx = i%8+shiftx;
-        int yy = j%16+shifty;
-
-        return MultiColorImage::getPixel(xx,yy);
-
-    }
-    return 1;
 }
 
 
@@ -371,7 +339,11 @@ QPixmap CharsetImage::ToQPixMap(int chr)
 
 void CharsetImage::setPixel(int x, int y, unsigned int color)
 {
-        if (m_bitMask==1)
+    QPoint p = getXY(x,y);
+
+    MultiColorImage::setPixel(p.x(),p.y(),color);
+
+/*        if (m_bitMask==1)
             if (color!=m_background) {
                 color = m_extraCols[1];
 //                if (rand()%100>98)
@@ -426,7 +398,9 @@ void CharsetImage::setPixel(int x, int y, unsigned int color)
 
     }
 
+
     setLimitedPixel(xx,yy,color);
+    */
 //    MultiColorImage::setPixel(xx,yy, color);
 
 
@@ -437,6 +411,33 @@ void CharsetImage::SetBank(int bnk) {
     m_footer.set(LImageFooter::POS_CURRENT_BANK,bnk);
     if (m_charset!=nullptr)
         m_charset->SetBank(bnk);
+}
+
+QPoint CharsetImage::getXY(int x, int y)
+{
+    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1) {
+        int cx = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X)*8;
+        int cy = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y)*8;
+
+        int s = m_bitMask==0b11?2:1;
+
+        cx/=s;
+
+        int sx = (m_currencChar%m_charWidth)*8/s;
+        int sy = (m_currencChar/m_charWidth)*8;
+
+        if (!m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_REPEAT)) {
+            x = (x / (float)m_width)*cx+sx;
+            y = (y / (float)m_height)*cy+sy;
+        }
+        else
+        {
+            x = (int)(x / ((float)m_width)*3*cx)%(cx)+sx;
+            y = (int)(y / ((float)m_height)*3*cy)%(cy)+sy;
+
+        }
+    }
+    return QPoint(x,y);
 }
 
 unsigned int CharsetImage::getCharPixel(int pos,  int pal,int x, int y)
@@ -457,11 +458,12 @@ void CharsetImage::CopyFrom(LImage *img)
     CharsetImage* mc = dynamic_cast<CharsetImage*>(img);
     //if ((typeid(*img) == typeid(MultiColorImage)) || (typeid(*img) == typeid(StandardColorImage))
     //        || (typeid(*img) == typeid(CharsetImage)))
+    m_footer = img->m_footer;
     if (mc!=nullptr)
     {
         m_background = mc->m_background;
         m_border = mc->m_border;
-        m_currentMode = mc->m_currentMode;
+        //m_currentMode = mc->m_currentMode;
         m_currencChar = mc->m_currencChar;
 
         m_width = mc->m_width;
@@ -477,7 +479,7 @@ void CharsetImage::CopyFrom(LImage *img)
         for (int i=0;i<4;i++)
             m_extraCols[i]  = mc->m_extraCols[i];
         // qDebug() << "COPY FROM";
-#pragma omp parallel for
+//#pragma omp parallel for
         for(int i=0;i<m_charWidth*m_charHeight;i++) {
             for (int j=0;j<8;j++)
                 m_data[i].p[j] = mc->m_data[i].p[j];
@@ -498,7 +500,6 @@ bool CharsetImage::KeyPress(QKeyEvent *e)
 {
     QPoint dir(0,0);
 
-    int s = 1;
 
     if (e->key()==Qt::Key_0 ) { Data::data.currentColor = m_color.c[0];}
     if (e->key()==Qt::Key_1 ) { Data::data.currentColor = m_color.c[1];}
@@ -506,17 +507,20 @@ bool CharsetImage::KeyPress(QKeyEvent *e)
     if (e->key()==Qt::Key_3 ) { Data::data.currentColor = m_color.c[3];}
 
 
-    if (m_currentMode==CHARSET2x2 || m_currentMode==CHARSET2x2_REPEAT)
-        s=2;
+
+    int sx = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X);
+    int sy = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y);
+//    if (m_currentMode==CHARSET2x2 || m_currentMode==CHARSET2x2_REPEAT)
+  //      s=2;
 
     if (e->key()==Qt::Key_W)
-        m_currencChar-=m_charWidth*s;
+        m_currencChar-=m_charWidthDisplay*sy;
     if (e->key()==Qt::Key_A)
-        m_currencChar-=1*s;
+        m_currencChar-=sx;
     if (e->key()==Qt::Key_S)
-        m_currencChar+=m_charWidth*s;
+        m_currencChar+=m_charWidthDisplay*sy;
     if (e->key()==Qt::Key_D)
-        m_currencChar+=1*s;
+        m_currencChar+=sx;
 
     if (m_currencChar>=m_charHeight*m_charWidth)
         m_currencChar=0;
@@ -553,27 +557,23 @@ void CharsetImage::onFocus() {
 
 int CharsetImage::getCharWidthDisplay()
 {
-    if (m_currentMode==Mode::FULL_IMAGE)
-        return m_charWidthDisplay;
-    if (m_currentMode==Mode::CHARSET1x1)
-        return 8;
-    if (m_currentMode==Mode::CHARSET2x2)
-        return 16;
-    if (m_currentMode==Mode::CHARSET2x2_REPEAT)
-        return 16*3;
+    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1) {
+        int i =1;
+        if (m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_REPEAT)==1)
+            i=3;
+        return i*8*m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X);
+    }
     return m_charWidthDisplay;
 }
 
 int CharsetImage::getCharHeightDisplay()
 {
-    if (m_currentMode==Mode::FULL_IMAGE)
-        return m_charHeightDisplay;
-    if (m_currentMode==Mode::CHARSET1x1)
-        return 8;
-    if (m_currentMode==Mode::CHARSET2x2)
-        return 16;
-    if (m_currentMode==Mode::CHARSET2x2_REPEAT)
-        return 16*3;
+    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1) {
+        int i =1;
+        if (m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_REPEAT)==1)
+            i=3;
+        return i*8*m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y);
+    }
     return m_charHeightDisplay;
 }
 

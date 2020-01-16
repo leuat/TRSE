@@ -105,7 +105,7 @@ void FormImageEditor::onImageMouseEvent()
         UpdateSpriteImages();
     updateSingleCharSet();
 
-    showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
+    //showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
 
     // This will update the current cell
 //    if (dynamic_cast<LImageMetaChunk*>(m_work.m_currentImage->m_image)==nullptr)
@@ -126,6 +126,8 @@ void FormImageEditor::onImageMouseEvent()
         }
 
     }
+    showDetailCharButtons();
+//    qDebug() << m_work.m_currentImage->m_image->m_footer.isFullscreen();
 }
 
 void FormImageEditor::onImageMouseReleaseEvent()
@@ -144,7 +146,7 @@ void FormImageEditor::SelectFromLeftClick()
             m_work.m_currentImage->m_image->getCharAtPos(
                 (QPoint(m_updateThread.m_currentPos.x(),m_updateThread.m_currentPos.y())),
                 m_updateThread.m_zoom,m_updateThread.m_zoomCenter);
-    showDetailCharButtons(true);
+    //showDetailCharButtons(true);
     SetSingleCharsetEdit();
     Data::data.forceRedraw = true;
     onImageMouseEvent();
@@ -367,14 +369,13 @@ void FormImageEditor::Load(QString filename)
     if (filename=="")
         return;
 */
-    showDetailCharButtons(false);
 
     LImage* img = LImageIO::Load(filename);
     if (img==nullptr)
         return;
     m_work.New(img, filename);
 
-    m_prefMode = CharsetImage::Mode::FULL_IMAGE;
+    //m_prefMode = CharsetImage::Mode::FULL_IMAGE;
     PrepareImageTypeGUI();
 /*    if (QFile::exists(m_projectIniFile->getString("charset_"+m_currentFileShort))) {
         if (dynamic_cast<ImageLevelEditor*>(img)!=nullptr || dynamic_cast<C64FullScreenChar*>(img)!=nullptr ||dynamic_cast<LImageMetaChunk*>(img)!=nullptr)
@@ -433,12 +434,15 @@ void FormImageEditor::Load(QString filename)
     ui->chkPaintSeparately->setChecked(GetFooterData(LImageFooter::POS_DOUBLE_PAINT));
     on_chkPaintSeparately_stateChanged(GetFooterData(LImageFooter::POS_DOUBLE_PAINT));
 
-    m_prefMode = (CharsetImage::Mode)GetFooterData(LImageFooter::POS_CURRENT_MODE);
-    m_keepMode = (CharsetImage::Mode)GetFooterData(LImageFooter::POS_KEEP_MODE);
+//    m_prefMode = (CharsetImage::Mode)GetFooterData(LImageFooter::POS_CURRENT_MODE);
+  //  m_keepMode = (CharsetImage::Mode)GetFooterData(LImageFooter::POS_KEEP_MODE);
 
     ui->cmbNesPalette->setCurrentIndex(GetFooterData(LImageFooter::POS_CURRENT_PALETTE));
     on_cmbNesPalette_currentIndexChanged(GetFooterData(LImageFooter::POS_CURRENT_PALETTE));
     on_cmbNesPalette_currentIndexChanged(GetFooterData(LImageFooter::POS_CURRENT_PALETTE));
+
+    ui->cmbCharX->setCurrentIndex(GetFooterData(LImageFooter::POS_CURRENT_DISPLAY_X)-1);
+    ui->cmbCharY->setCurrentIndex(GetFooterData(LImageFooter::POS_CURRENT_DISPLAY_Y)-1);
 
     int bank = GetFooterData(LImageFooter::POS_CURRENT_BANK);
 //    ui->cmbBank->setCurrentIndex(0);
@@ -449,7 +453,7 @@ void FormImageEditor::Load(QString filename)
 //    on_cmbBank_currentIndexChanged(bank);
     //m_work.m_currentImage->m_image->m_currentBank = bank;
 
-    showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
+    //showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
     SetSingleCharsetEdit();
 
     updateCharSet();
@@ -766,21 +770,38 @@ void FormImageEditor::on_btnGenerate_clicked()
 
 }
 
-void FormImageEditor::showDetailCharButtons(bool doShow)
+void FormImageEditor::showDetailCharButtons()
 {
     if (m_work.m_currentImage!=nullptr)
     if (dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image)!=nullptr)
         return;
 
+    bool doShow = (GetFooterData(LImageFooter::POS_DISPLAY_CHAR))==1 && m_work.m_currentImage->m_image->m_supports.displayCharOperations;
+
+
+
     ui->btnCharsetCopy->setVisible(doShow);
     ui->btnCharsetPaste->setVisible(doShow);
     ui->btnFlipVert->setVisible(doShow);
     ui->btnFlipHorisontal->setVisible(doShow);
+    ui->btnShiftUp->setVisible(doShow);
+    ui->btnShiftDown->setVisible(doShow);
+    ui->btnShiftLeft->setVisible(doShow);
+    ui->btnShiftRight->setVisible(doShow);
+    ui->btnRepeating->setVisible(doShow);
+    ui->cmbCharX->setVisible(doShow);
+    ui->cmbCharY->setVisible(doShow);
+
+    if (doShow)
+        ui->btnCharsetFull->setText("Full");
+    else
+        ui->btnCharsetFull->setText("Char");
 }
 
 
 void FormImageEditor::on_btnFlipVert_clicked()
 {
+    m_work.m_currentImage->AddUndo();
     m_work.m_currentImage->m_image->FlipVertical();
 
     Data::data.forceRedraw = true;
@@ -791,6 +812,7 @@ void FormImageEditor::on_btnFlipVert_clicked()
 
 void FormImageEditor::on_btnFlipHorisontal_clicked()
 {
+    m_work.m_currentImage->AddUndo();
     m_work.m_currentImage->m_image->FlipHorizontal();
 
     Data::data.forceRedraw = true;
@@ -889,14 +911,19 @@ void FormImageEditor::on_btnImport_clicked()
 
 void FormImageEditor::on_btnCharsetFull_clicked()
 {
-    CharsetImage* ci = dynamic_cast<CharsetImage*>(m_work.m_currentImage->m_image);
-    if (ci==nullptr)
-        return;
+
+    m_work.m_currentImage->m_image->m_footer.toggle(LImageFooter::POS_DISPLAY_CHAR);
 
     ui->lblImage->setFocus();
     ui->lstCharMap->setCurrentItem(nullptr);
 
+/*    CharsetImage* ci = dynamic_cast<CharsetImage*>(m_work.m_currentImage->m_image);
+    if (ci==nullptr)
+        return;
+
+
     ci->m_currentMode = CharsetImage::Mode::FULL_IMAGE;
+    */
     Data::data.forceRedraw = true;
     UpdateCurrentMode();
     UpdateGrid();
@@ -905,38 +932,6 @@ void FormImageEditor::on_btnCharsetFull_clicked()
     onImageMouseEvent();
 }
 
-void FormImageEditor::on_btnCharset1x1_clicked()
-{
-    m_prefMode = CharsetImage::Mode::CHARSET1x1;
-    m_keepMode = m_prefMode;
-    SetSingleCharsetEdit();
-    Data::data.forceRedraw = true;
-    onImageMouseEvent();
-
-}
-
-void FormImageEditor::on_btnCharset2x2_clicked()
-{
-    m_prefMode = CharsetImage::Mode::CHARSET2x2;
-    m_keepMode = m_prefMode;
-    SetSingleCharsetEdit();
-    Data::data.forceRedraw = true;
-    UpdateCurrentMode();
-
-    onImageMouseEvent();
-}
-
-void FormImageEditor::on_btnCharset2x2Repeat_clicked()
-{
-    m_prefMode = CharsetImage::Mode::CHARSET2x2_REPEAT;
-    m_keepMode = m_prefMode;
-    SetSingleCharsetEdit();
-    showDetailCharButtons(true);
-    UpdateCurrentMode();
-    Data::data.forceRedraw = true;
-    onImageMouseEvent();
-
-}
 
 void FormImageEditor::on_btnCharsetCopy_clicked()
 {
@@ -1123,9 +1118,9 @@ void FormImageEditor::PrepareImageTypeGUI()
     if (m_work.m_currentImage->m_image==nullptr)
         return;
     SetButton(ui->btnLoadCharmap,LImage::GUIType::btnLoadCharset);
-    SetButton(ui->btnCharset1x1,LImage::GUIType::btn1x1);
-    SetButton(ui->btnCharset2x2,LImage::GUIType::btn2x2);
-    SetButton(ui->btnCharset2x2Repeat,LImage::GUIType::btn2x2repeat);
+    //SetButton(ui->btnCharset1x1,LImage::GUIType::btn1x1);
+    //SetButton(ui->btnCharset2x2,LImage::GUIType::btn2x2);
+    //SetButton(ui->btnCharset2x2Repeat,LImage::GUIType::btn2x2repeat);
     SetButton(ui->btnCharsetCopy,LImage::GUIType::btnCopy);
     SetButton(ui->btnCharsetPaste,LImage::GUIType::btnPaste);
     SetButton(ui->btnFlipHorisontal,LImage::GUIType::btnFlipH);
@@ -1177,17 +1172,11 @@ void FormImageEditor::PrepareImageTypeGUI()
 
 void FormImageEditor::SetSingleCharsetEdit()
 {
-    CharsetImage* ci = dynamic_cast<CharsetImage*>(m_work.m_currentImage->m_image);
-    if (ci==nullptr)
-        return;
 
-    SetFooterData(LImageFooter::POS_CURRENT_MODE, m_prefMode);
-    SetFooterData(LImageFooter::POS_KEEP_MODE, m_keepMode);
 
     UpdateGrid();
-
+    SetFooterData(LImageFooter::POS_DISPLAY_CHAR,1);
     m_updateThread.m_zoom = 1.0;
-    ci->m_currentMode = m_prefMode;
     emit onImageMouseEvent();
 
 }
@@ -1500,24 +1489,28 @@ void FormImageEditor::UpdateAspect()
 
 }
 
+void FormImageEditor::Update()
+{
+    Data::data.forceRedraw = true;
+    Data::data.Redraw();
+    onImageMouseEvent();
+
+}
+
 
 void FormImageEditor::onSwapDisplayMode()
 {
-//    m_keepMode = m_prefMode;
-    if (m_prefMode==CharsetImage::Mode::FULL_IMAGE)
-        m_prefMode = m_keepMode;
-    else {
-        m_prefMode = CharsetImage::Mode::FULL_IMAGE;
-        ui->lblImage->setFocus();
-        ui->lstCharMap->setCurrentItem(nullptr);
-
-    }
+    m_work.m_currentImage->m_image->m_footer.toggle(LImageFooter::POS_DISPLAY_CHAR);
+    ui->lblImage->setFocus();
+    ui->lstCharMap->setCurrentItem(nullptr);
 
 //    qDebug() << "HERE " <<m_prefMode;
 
 
-    showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
-    SetSingleCharsetEdit();
+ //   showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
+    m_updateThread.m_zoom = 1.0;
+
+//    SetSingleCharsetEdit();
     emit onImageMouseEvent();
     Data::data.forceRedraw = true;
     Data::data.Redraw();
@@ -2055,7 +2048,62 @@ void FormImageEditor::on_pushButton_clicked()
         on_cmbNesPalette_currentIndexChanged(GetFooterData(LImageFooter::POS_CURRENT_PALETTE));
         on_cmbNesPalette_currentIndexChanged(GetFooterData(LImageFooter::POS_CURRENT_PALETTE));
 
-        onImageMouseEvent();
+        Update();
 
     }
+}
+
+void FormImageEditor::on_cmbCharX_currentIndexChanged(int index)
+{
+    SetFooterData(LImageFooter::POS_CURRENT_DISPLAY_X,ui->cmbCharX->currentText().toInt());
+    SetFooterData(LImageFooter::POS_DISPLAY_CHAR,0);
+    on_btnCharsetFull_clicked();
+    Update();
+}
+
+void FormImageEditor::on_cmbCharY_currentIndexChanged(int index)
+{
+    SetFooterData(LImageFooter::POS_CURRENT_DISPLAY_Y,ui->cmbCharY->currentText().toInt());
+    SetFooterData(LImageFooter::POS_DISPLAY_CHAR,0);
+    on_btnCharsetFull_clicked();
+    Update();
+}
+
+void FormImageEditor::on_btnRepeating_clicked()
+{
+    m_work.m_currentImage->m_image->m_footer.toggle(LImageFooter::POS_CURRENT_DISPLAY_REPEAT);
+    Update();
+
+}
+
+void FormImageEditor::on_btnShiftLeft_clicked()
+{
+    m_work.m_currentImage->AddUndo();
+    m_work.m_currentImage->m_image->ShiftXY(-1,0);
+    Update();
+
+}
+
+void FormImageEditor::on_btnShiftRight_clicked()
+{
+    m_work.m_currentImage->AddUndo();
+    m_work.m_currentImage->m_image->ShiftXY(1,0);
+    Update();
+
+}
+
+void FormImageEditor::on_btnShiftDown_clicked()
+{
+    m_work.m_currentImage->AddUndo();
+    m_work.m_currentImage->m_image->ShiftXY(0,1);
+    Update();
+
+}
+
+void FormImageEditor::on_btnShiftUp_clicked()
+{
+    m_work.m_currentImage->AddUndo();
+    m_work.m_currentImage->m_image->ShiftXY(0,-1);
+    Update();
+
 }

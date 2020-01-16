@@ -51,7 +51,7 @@ LImageNES::LImageNES(LColorList::Type t) : CharsetImage(t)
     m_GUIParams[tabLevels] = "";
     m_GUIParams[tabEffects] = "Effects";
 
-    m_GUIParams[btnEditFullCharset] = "Full charset";
+    m_GUIParams[btnEditFullCharset] = "Char";
 
     m_exportParams["StartX"] = 0;
     m_exportParams["EndX"] = m_charWidth;
@@ -193,8 +193,8 @@ QPixmap LImageNES::ToQPixMap(int chr)
     yy*=8;
     bool isDouble = m_double;
     m_double = false;
-    Mode m = m_currentMode;
-    m_currentMode = Mode::FULL_IMAGE;
+    int m = !m_footer.isFullscreen();
+    m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
     for (int i=0;i<sz;i++)
         for (int j=0;j<sz;j++)
             img.setPixel(i,j,m_colorList.get(getPixel(
@@ -203,7 +203,7 @@ QPixmap LImageNES::ToQPixMap(int chr)
                          ).color.rgb());
 
     m_double = isDouble;
-    m_currentMode = m;
+    m_footer.set(LImageFooter::POS_DISPLAY_CHAR,m);
     return QPixmap::fromImage(img);
 
 }
@@ -225,24 +225,24 @@ bool LImageNES::getXY(QPoint& xy,QPoint& p1, QPoint& p2)
         y=y/2;
     }
 
-    if (m_currentMode==Mode::CHARSET1x1) {
-        int sx = (m_currencChar%m_charWidth)*8;
-        int sy = (m_currencChar/m_charWidth)*16;
-        x = (x / (float)m_width)*16+sx;
-        y = (y / (float)m_height)*16+sy;
-    }
+        if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1) {
 
-    if (m_currentMode==Mode::CHARSET2x2) {
+        int cx = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X);
+        int cy = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y);
+
         int sx = (m_currencChar%m_charWidth)*8;
         int sy = (m_currencChar/m_charWidth)*16;
-        x = (x / (float)m_width)*32+sx;
-        y = (y / (float)m_height)*32+sy;
-    }
-    if (m_currentMode==Mode::CHARSET2x2_REPEAT) {
-        int sx = (m_currencChar%m_charWidth)*8;
-        int sy = (m_currencChar/m_charWidth)*16;
-        x = (int)((x / (float)m_width)*96)%16+sx;
-        y = (int)((y / (float)m_height)*96)%16+sy;
+
+        if (!m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_REPEAT)) {
+            x = (x / (float)m_width)*16*cx+sx;
+            y = (y / (float)m_height)*16*cy+sy;
+        }
+        else
+        {
+            x = (int)(x / ((float)m_width)*3*16*cx)%(8*cx)+sx;
+            y = (int)(y / ((float)m_height)*3*16*cy)%(8*cy)+sy;
+
+        }
     }
 
 
@@ -361,7 +361,11 @@ void LImageNES::CopyFrom(LImage *img)
     LImageNES* n = dynamic_cast<LImageNES*>(img);
     for (int i=0;i<4;i++)
         m_cols[i] = n->m_cols[i];
-    m_footer = n->m_footer;
+
+    m_footer.m_data = img->m_footer.m_data;
+
+//    qDebug() << m_footer.isFullscreen() << img->m_footer.isFullscreen();
+
     CharsetImage::CopyFrom(img);
 }
 

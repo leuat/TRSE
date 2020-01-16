@@ -7,8 +7,8 @@
 
 class LImageFooter {
 private:
-    QByteArray m_data;
 public:
+    QByteArray m_data;
     const static uchar LImageID0 = 64;
     const static uchar LImageID1 = 69;
     const static uchar POS_ID0 = 0;
@@ -22,45 +22,25 @@ public:
     const static uchar POS_KEEP_MODE = 8;
     const static uchar POS_CURRENT_PALETTE = 9;
     const static uchar POS_CURRENT_BANK = 10;
-    LImageFooter() {
-        m_data.resize(256);
-        m_data.fill(0);
-        m_data[POS_ID0] = LImageID0;
-        m_data[POS_ID1] = LImageID1;
-        m_data[POS_KEEP_MODE] = 1;
+    const static uchar POS_CURRENT_DISPLAY_X = 11;
+    const static uchar POS_CURRENT_DISPLAY_Y = 12;
+    const static uchar POS_CURRENT_DISPLAY_MIRROR = 13;
+    const static uchar POS_CURRENT_DISPLAY_REPEAT = 14;
+    const static uchar POS_DISPLAY_CHAR = 15;
+
+
+    bool isFullscreen() {
+        return get(POS_DISPLAY_CHAR)==0;
     }
 
-    uchar get(int pos) {
-        if (pos<m_data.count())
-            return m_data[pos];
-        return 0;
-    }
-    void set(int pos, uchar val) {
-        if (pos<m_data.count())
-            m_data[pos] = val;
-    }
+    LImageFooter();
 
-    bool Load(QFile& f) {
-        if (f.atEnd()) {
-            qDebug() << "No footer in .flf file "<<f.fileName();
-            return false;
-        }
-        QByteArray b = f.readAll();
-        if (b.size()!=256) {
-            qDebug() << "Incorrect footer size in .flf file "<<f.fileName();
-            return false;
-        }
-        if (b[POS_ID0]!=(char)LImageID0 || b[POS_ID1]!=(char)LImageID1) {
-            qDebug() << "Incorrect footer ID";
-            return false;
-        }
-        m_data =b;
-        return true;
-    }
-    bool Save(QFile& f) {
-        f.write(m_data);
-        return true;
-    }
+    uchar get(int pos);
+    void set(int pos, uchar val);
+    void toggle(int pos);
+
+    bool Load(QFile& f);
+    bool Save(QFile& f);
 
 };
 

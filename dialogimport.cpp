@@ -128,7 +128,8 @@ void DialogImport::Convert()
 
     CharsetImage* chr = dynamic_cast<CharsetImage*>(m_image);
     if (chr!=nullptr) {
-        chr->m_currentMode=CharsetImage::Mode::FULL_IMAGE;
+        //chr->m_currentMode=CharsetImage::Mode::FULL_IMAGE;
+        chr->m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
         chr->SetColor(0,0);
         chr->SetColor(1,1);
 //        chr->set
