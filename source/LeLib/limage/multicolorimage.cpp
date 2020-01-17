@@ -739,13 +739,13 @@ void MultiColorImage::onFocus()
         LoadCharset(m_charsetFilename,0);
 }
 
-void MultiColorImage::Clear()
+/*void MultiColorImage::Clear()
 {
     for (int i=0;i<m_charWidth*m_charHeight;i++) {
         m_data[i].Clear(m_background);
     }
 }
-
+*/
 int MultiColorImage::LookUp(PixelChar pc)
 {
     for (int i=0;i<m_organized.count();i++) {

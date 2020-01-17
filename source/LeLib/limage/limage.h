@@ -335,7 +335,7 @@ public:
 
     void CopyTo(LImage* img);
 
-    virtual void Clear() = 0;
+    virtual void Clear();
     virtual void fromQImage(QImage* img, LColorList& lst) = 0;
 
     virtual void ExportAsm(QString filename)  { qDebug() << "ASM Write not supported"; }

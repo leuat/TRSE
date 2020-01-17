@@ -137,7 +137,7 @@ public:
     PixelChar m_data[40*25*2];
  //   QVector<PixelChar> m_data;
     PixelChar& getPixelChar(int x, int y);
-    virtual void Clear() override;
+//    virtual void Clear() override;
 
     int LookUp(PixelChar pc);
     QString m_charsetFilename ="";

@@ -329,6 +329,15 @@ void LImage::FlipVertical() {
 
 }
 
+void LImage::Clear() {
+    for (int y=0;y<m_height;y++)
+        for (int x=0;x<m_width;x++) {
+            setPixel(x,y,0);
+        }
+
+}
+
+
 void LImage::ShiftXY(int dx, int dy)
 {
     CopyChar();

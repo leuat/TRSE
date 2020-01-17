@@ -2086,3 +2086,9 @@ void FormImageEditor::on_btnShiftUp_clicked()
     Update();
 
 }
+
+void FormImageEditor::on_btnClear_clicked()
+{
+    m_work.m_currentImage->m_image->Clear();
+    Update();
+}
