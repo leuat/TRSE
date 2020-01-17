@@ -1089,16 +1089,22 @@ void FormImageEditor::updateSingleCharSet()
         return;
     if (charmap->m_currencChar<0)
         return;
-    QPixmap pmap = charmap->ToQPixMap(charmap->m_currencChar);
+    int c = charmap->m_currencChar;
+    for (int i=0;i<GetFooterData(LImageFooter::POS_CURRENT_DISPLAY_Y);i++) {
+        for (int j=0;j<GetFooterData(LImageFooter::POS_CURRENT_DISPLAY_X);j++) {
+            int k = c+j;
 
-    int kk= 0;
-    int i = charmap->m_currencChar/(int)charmap->m_charWidthDisplay;
-    int j = charmap->m_currencChar%(int)charmap->m_charWidthDisplay;
-    QTableWidgetItem *itm = ui->lstCharMap->item(i,j);
-    if (itm!=nullptr)
-        itm->setIcon(pmap);
+            QPixmap pmap = charmap->ToQPixMap(k);
 
+            int y = k/(int)charmap->m_charWidthDisplay;
+            int x = k%(int)charmap->m_charWidthDisplay;
+            QTableWidgetItem *itm = ui->lstCharMap->item(y,x);
+            if (itm!=nullptr)
+                itm->setIcon(pmap);
 
+        }
+        c = c + charmap->m_charWidthDisplay;
+    }
 }
 
 
@@ -1491,6 +1497,7 @@ void FormImageEditor::Update()
 {
     Data::data.forceRedraw = true;
     Data::data.Redraw();
+//    updateCharSet();
     onImageMouseEvent();
 
 }
