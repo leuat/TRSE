@@ -134,7 +134,7 @@ void FormImageEditor::onImageMouseReleaseEvent()
 {
     updateCharSet();
 
-    if (ui->lblImage->m_prevButton==2  && (QApplication::keyboardModifiers() & Qt::ControlModifier))
+    if (ui->lblImage->m_prevButton==2  && (QApplication::keyboardModifiers() & Qt::ControlModifier) && GetFooterData(LImageFooter::POS_DISPLAY_CHAR)==0)
         SelectFromLeftClick();
 
 }
@@ -1168,6 +1168,9 @@ void FormImageEditor::SetSingleCharsetEdit()
     UpdateGrid();
     SetFooterData(LImageFooter::POS_DISPLAY_CHAR,1);
     m_updateThread.m_zoom = 1.0;
+    int c = m_work.m_currentImage->m_image->m_currencChar;
+    int w = m_work.m_currentImage->m_image->m_charWidthDisplay;
+    ui->lstCharMap->setCurrentCell(c/w, c%w);
     emit onImageMouseEvent();
 
 }
@@ -1494,6 +1497,16 @@ void FormImageEditor::onSwapDisplayMode()
     m_work.m_currentImage->m_image->m_footer.toggle(LImageFooter::POS_DISPLAY_CHAR);
     ui->lblImage->setFocus();
     ui->lstCharMap->setCurrentItem(nullptr);
+    if (GetFooterData(LImageFooter::POS_DISPLAY_CHAR)==1) {
+        int c = m_work.m_currentImage->m_image->m_currencChar;
+        int w = m_work.m_currentImage->m_image->m_charWidthDisplay;
+
+
+        ui->lstCharMap->setCurrentCell(c/w, c%w);
+//        ui->lstCharMap->itemAt(c/w, c%w)->setSelected(true);
+  //      qDebug() << c%w << c/w;
+    }
+
 
 //    qDebug() << "HERE " <<m_prefMode;
 

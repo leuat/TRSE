@@ -34,7 +34,8 @@ void DialogSelectCharset::UpdateCharSet()
     CharsetImage* charmap = m_charset;
 
 
-
+    int keep = charmap->m_footer.get(LImageFooter::POS_DISPLAY_CHAR);
+    charmap->m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
     int width = charmap->getCharWidthDisplay();
     //   ui->lstCharMap->setViewMode(QListView::IconMode);
     ui->lstCharMap->setColumnCount(width);
@@ -86,6 +87,8 @@ void DialogSelectCharset::UpdateCharSet()
     }
     ui->lstCharMap->setShowGrid(false);
     ui->lstCharMap->verticalHeader()->setVisible(false);
+    charmap->m_footer.set(LImageFooter::POS_DISPLAY_CHAR,keep);
+
     m_start=true;
 }
 

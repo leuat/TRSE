@@ -276,6 +276,8 @@ unsigned int C64FullScreenChar::getPixel(int x, int y)
     if (x>=320 || x<0 || y>=200 || y<0)
         return 0;
 
+    int ox = x;
+    int oy = y;
     x=x*m_charWidth/40.0;
     y=y*m_charHeight/25.0;
 
@@ -288,11 +290,13 @@ unsigned int C64FullScreenChar::getPixel(int x, int y)
 
 
     if (dynamic_cast<LImageNES*>(m_charset)!=nullptr) {
-        ix = (x % 8);//- (dx*40);
-        iy = (y % 8);//- (dy*25);
+//        m_width=m_charWidth*8;
+  //      m_height = m_charHeight*8;
+        ix = ((x*2) % 16);//- (dx*40);
+        iy = ((y*2) % 16);//- (dy*25);
 
-        int xx = (v*16)%m_charset->m_charWidthDisplay;
-        int yy = (v/m_charset->m_charWidthDisplay)*16 + m_footer.get(LImageFooter::POS_CURRENT_BANK)*16;
+        int xx = (v%m_charset->m_charWidthDisplay)*16;
+        int yy = (v/m_charset->m_charWidthDisplay-1)*16 + m_footer.get(LImageFooter::POS_CURRENT_BANK)*16;
         m_charset->SetPalette(col);
         m_charset->m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
         return m_charset->getPixel(xx+ix,yy+iy);
