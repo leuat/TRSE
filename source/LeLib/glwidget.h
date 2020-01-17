@@ -26,7 +26,7 @@ public:
     bool m_cancel = false;
     bool m_buttonDown = false;
     int m_prevButton = 0;
-
+    int m_keepButton = 1;
 
     GLWidget();
     GLWidget(QWidget* );

@@ -159,7 +159,7 @@ bool GLWidget::eventFilter(QObject *object, QEvent *event) {
         }
         if (event->type()==QEvent::Leave) Data::data.imageEvent = 0;
         if (m_buttonDown)
-            m_updateThread->m_currentButton=1;
+            m_updateThread->m_currentButton=m_keepButton;
 
         return false;
     }
@@ -210,14 +210,22 @@ void GLWidget::mousePressEvent(QMouseEvent *e)
             m_updateThread->m_prevPos = m_updateThread->m_currentPos;
             m_updateThread->m_currentButton = 4;
         }
+        m_keepButton = 2;
+        m_buttonDown = true;
     }
 
     if(e->buttons() == Qt::LeftButton) {
         m_updateThread->m_currentButton = 1;
+        m_keepButton = 1;
         m_buttonDown = true;
         m_imageChanged = true;
     }
-
+/*    if(e->buttons() == Qt::RightButton) {
+        m_updateThread->m_currentButton = 2;
+        m_buttonDown = true;
+        m_imageChanged = true;
+    }
+*/
     emit EmitMouseMove();
 
 }
