@@ -201,8 +201,12 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             Data::data.forceRedraw = true;
         }
 
-
-
+        if ((QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+            if (e->key()==Qt::Key_C)
+                on_btnCharsetCopy_clicked();
+            if (e->key()==Qt::Key_V)
+                on_btnCharsetPaste_clicked();
+        }
 
         if (!(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
             int j = 0;
