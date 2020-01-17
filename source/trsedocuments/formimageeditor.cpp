@@ -1838,8 +1838,10 @@ void FormImageEditor::on_btnImportRom_clicked()
         return;
 
     QString fileName = ":resources/character.rom";
-    m_work.m_currentImage->m_image->LoadCharset(fileName,0);
 
+    m_work.m_currentImage->m_image->LoadCharset(fileName,0);
+    ui->cmbCharX->setCurrentIndex(0);
+    ui->cmbCharY->setCurrentIndex(0);
     m_projectIniFile->setString("charset_"+m_currentFileShort, fileName);
     m_projectIniFile->Save();
     updateCharSet();
