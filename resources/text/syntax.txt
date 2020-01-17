@@ -91,6 +91,8 @@ m; vbmScreenShiftRight; VIC20 ; b, b
 m; vbmSpriteStitch; VIC20 ; a, a, b
 m; vbmSpriteShiftR; VIC20 ; a, a, b, b, a
 m; vbmSpriteShiftL; VIC20 ; a, a, b, b, a
+m; vbmSpriteShiftSR; VIC20 ; a, a, b, b, a
+m; vbmSpriteShiftSL; VIC20 ; a, a, b, b, a
 
 m; vbmDrawSprite8; VIC20 ; a, a
 m; vbmDrawSprite8E; VIC20 ; a, a

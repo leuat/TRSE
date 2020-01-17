@@ -380,5 +380,7 @@
         <file>resources/text/help/m/vbmdrawsprite.rtf</file>
         <file>resources/text/help/m/vbmclearsprite.rtf</file>
         <file>resources/text/help/m/vbmdrawspritee.rtf</file>
+        <file>resources/text/help/m/vbmspriteshiftsl.rtf</file>
+        <file>resources/text/help/m/vbmspriteshiftsr.rtf</file>
     </qresource>
 </RCC>
