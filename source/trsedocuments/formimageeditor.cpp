@@ -83,6 +83,8 @@ void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *ini
     if (m_work.m_currentImage!=nullptr) {
         bool is = m_work.m_currentImage->m_image->isMultiColor();
         ui->chkDisplayMulticolor->setChecked(is);
+        ui->lblName->setText(LImage::TypeToString(m_work.m_currentImage->m_image->m_type));
+
     }
 
 
@@ -127,6 +129,7 @@ void FormImageEditor::onImageMouseEvent()
 
     }
     showDetailCharButtons();
+
 //    qDebug() << m_work.m_currentImage->m_image->m_footer.isFullscreen();
 }
 
@@ -351,6 +354,22 @@ void FormImageEditor::UpdateImage()
 
 }
 
+void FormImageEditor::UpdateButtonIcons()
+{
+    if (GetFooterData(LImageFooter::POS_DISPLAY_CHAR)==0) // fullscreen
+        ui->btnCharsetFull->setIcon(QPixmap(":resources/images/charset_icons/btn-1-FullView.png"));
+    else
+        ui->btnCharsetFull->setIcon(QPixmap(":resources/images/charset_icons/btn-2-CharView.png"));
+
+    if (GetFooterData(LImageFooter::POS_CURRENT_DISPLAY_REPEAT)==0) // fullscreen
+        ui->btnRepeating->setIcon(QPixmap(":resources/images/charset_icons/btn-3-RepeatTile.png"));
+    else
+        ui->btnRepeating->setIcon(QPixmap(":resources/images/charset_icons/btn-4-NoRepeatTile.png"));
+
+    ui->btnCharsetFull->setIconSize(QSize(32,32));
+    ui->btnRepeating->setIconSize(QSize(32,32));
+}
+
 void FormImageEditor::UpdateGrid()
 {
     if (m_work.m_currentImage==nullptr)
@@ -465,6 +484,7 @@ void FormImageEditor::Load(QString filename)
 //    onImageMouseEvent();
 
     emit onImageMouseEvent();
+
 
     QTimer::singleShot(50, this, SLOT(InitAspect()));
 
@@ -796,10 +816,11 @@ void FormImageEditor::showDetailCharButtons()
     ui->cmbCharX->setVisible(doShow);
     ui->cmbCharY->setVisible(doShow);
 
-    if (doShow)
+/*    if (doShow)
         ui->btnCharsetFull->setText("Full");
     else
         ui->btnCharsetFull->setText("Char");
+        */
 }
 
 
@@ -906,7 +927,7 @@ void FormImageEditor::on_btnImport_clicked()
 
 void FormImageEditor::on_btnCharsetFull_clicked()
 {
-
+    UpdateButtonIcons();
     m_work.m_currentImage->m_image->m_footer.toggle(LImageFooter::POS_DISPLAY_CHAR);
 
     ui->lblImage->setFocus();
@@ -1122,11 +1143,11 @@ void FormImageEditor::PrepareImageTypeGUI()
     //SetButton(ui->btnCharset1x1,LImage::GUIType::btn1x1);
     //SetButton(ui->btnCharset2x2,LImage::GUIType::btn2x2);
     //SetButton(ui->btnCharset2x2Repeat,LImage::GUIType::btn2x2repeat);
-    SetButton(ui->btnCharsetCopy,LImage::GUIType::btnCopy);
-    SetButton(ui->btnCharsetPaste,LImage::GUIType::btnPaste);
-    SetButton(ui->btnFlipHorisontal,LImage::GUIType::btnFlipH);
-    SetButton(ui->btnFlipVert,LImage::GUIType::btnFlipV);
-    SetButton(ui->btnCharsetFull,LImage::GUIType::btnEditFullCharset);
+//    SetButton(ui->btnCharsetCopy,LImage::GUIType::btnCopy);
+//    SetButton(ui->btnCharsetPaste,LImage::GUIType::btnPaste);
+//    SetButton(ui->btnFlipHorisontal,LImage::GUIType::btnFlipH);
+//    SetButton(ui->btnFlipVert,LImage::GUIType::btnFlipV);
+//    SetButton(ui->btnCharsetFull,LImage::GUIType::btnEditFullCharset);
     SetLabel(ui->lblBackground, LImage::GUIType::col1);
     SetLabel(ui->lblForeground, LImage::GUIType::col2);
     SetLabel(ui->lblMC1, LImage::GUIType::col3);

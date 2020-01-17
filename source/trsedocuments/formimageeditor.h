@@ -129,6 +129,8 @@ public:
     void keyReleaseEvent(QKeyEvent *e) override;
     void UpdateImage();
 
+    void UpdateButtonIcons();
+
     void UpdateGrid();
 
     void Load(QString filename) override;

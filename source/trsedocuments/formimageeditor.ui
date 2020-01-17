@@ -335,12 +335,17 @@
             <layout class="QGridLayout" name="gridLayout_11">
              <item row="4" column="0">
               <widget class="QPushButton" name="btnCharsetFull">
+               <property name="toolTip">
+                <string>Toggle fullscreen / character mode</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
-               <property name="icon">
-                <iconset resource="../../resources.qrc">
-                 <normaloff>:/resources/images/charset-trans.png</normaloff>:/resources/images/charset-trans.png</iconset>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
                </property>
               </widget>
              </item>
@@ -382,8 +387,21 @@
              </item>
              <item row="6" column="1">
               <widget class="QPushButton" name="btnCharsetPaste">
+               <property name="toolTip">
+                <string>Paste screen</string>
+               </property>
                <property name="text">
-                <string>Paste</string>
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../resources.qrc">
+                 <normaloff>:/resources/images/charset_icons/btn-6-Paste.png</normaloff>:/resources/images/charset_icons/btn-6-Paste.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
                </property>
               </widget>
              </item>
@@ -423,8 +441,21 @@
              </item>
              <item row="6" column="0">
               <widget class="QPushButton" name="btnCharsetCopy">
+               <property name="toolTip">
+                <string>Copy screen</string>
+               </property>
                <property name="text">
-                <string>Copy</string>
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../../resources/images/charset_icons/btn-5-Copy.png</normaloff>../../resources/images/charset_icons/btn-5-Copy.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
                </property>
               </widget>
              </item>
@@ -433,14 +464,34 @@
                <item>
                 <widget class="QPushButton" name="btnShiftLeft">
                  <property name="text">
-                  <string>&lt;&lt;</string>
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../resources.qrc">
+                   <normaloff>:/resources/images/charset_icons/btn-9-ShiftLeft.png</normaloff>:/resources/images/charset_icons/btn-9-ShiftLeft.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>32</width>
+                   <height>32</height>
+                  </size>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QPushButton" name="btnShiftRight">
                  <property name="text">
-                  <string>&gt;&gt;</string>
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../resources.qrc">
+                   <normaloff>:/resources/images/charset_icons/btn-9-ShiftRightt.png</normaloff>:/resources/images/charset_icons/btn-9-ShiftRightt.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>32</width>
+                   <height>32</height>
+                  </size>
                  </property>
                 </widget>
                </item>
@@ -451,6 +502,12 @@
                <property name="text">
                 <string>Flip vertical</string>
                </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
               </widget>
              </item>
              <item row="8" column="1">
@@ -458,14 +515,34 @@
                <item>
                 <widget class="QPushButton" name="btnShiftUp">
                  <property name="text">
-                  <string>^</string>
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../resources.qrc">
+                   <normaloff>:/resources/images/charset_icons/btn-8-ShiftDown.png</normaloff>:/resources/images/charset_icons/btn-8-ShiftDown.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>32</width>
+                   <height>32</height>
+                  </size>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QPushButton" name="btnShiftDown">
                  <property name="text">
-                  <string>*</string>
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../resources.qrc">
+                   <normaloff>:/resources/images/charset_icons/btn-7-ShiftUp.png</normaloff>:/resources/images/charset_icons/btn-7-ShiftUp.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>32</width>
+                   <height>32</height>
+                  </size>
                  </property>
                 </widget>
                </item>
@@ -473,13 +550,29 @@
              </item>
              <item row="5" column="0">
               <widget class="QPushButton" name="btnRepeating">
+               <property name="toolTip">
+                <string>Toggle repeating tiles</string>
+               </property>
                <property name="text">
-                <string>Repeat</string>
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../resources.qrc">
+                 <normaloff>:/resources/images/charset_icons/btn-3-RepeatTile.png</normaloff>:/resources/images/charset_icons/btn-3-RepeatTile.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
                </property>
               </widget>
              </item>
              <item row="4" column="1">
               <widget class="QPushButton" name="btnClear">
+               <property name="toolTip">
+                <string>Clear the current screen</string>
+               </property>
                <property name="text">
                 <string>Clear</string>
                </property>

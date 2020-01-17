@@ -382,5 +382,15 @@
         <file>resources/text/help/m/vbmdrawspritee.rtf</file>
         <file>resources/text/help/m/vbmspriteshiftsl.rtf</file>
         <file>resources/text/help/m/vbmspriteshiftsr.rtf</file>
+        <file>resources/images/charset_icons/btn-1-FullView.png</file>
+        <file>resources/images/charset_icons/btn-2-CharView.png</file>
+        <file>resources/images/charset_icons/btn-3-RepeatTile.png</file>
+        <file>resources/images/charset_icons/btn-4-NoRepeatTile.png</file>
+        <file>resources/images/charset_icons/btn-5-Copy.png</file>
+        <file>resources/images/charset_icons/btn-6-Paste.png</file>
+        <file>resources/images/charset_icons/btn-7-ShiftUp.png</file>
+        <file>resources/images/charset_icons/btn-8-ShiftDown.png</file>
+        <file>resources/images/charset_icons/btn-9-ShiftLeft.png</file>
+        <file>resources/images/charset_icons/btn-9-ShiftRightt.png</file>
     </qresource>
 </RCC>
