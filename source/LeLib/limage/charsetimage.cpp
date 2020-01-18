@@ -341,7 +341,8 @@ void CharsetImage::setPixel(int x, int y, unsigned int color)
 {
     QPoint p = getXY(x,y);
 
-    MultiColorImage::setPixel(p.x(),p.y(),color);
+//    MultiColorImage::setPixel(p.x(),p.y(),color);
+    setLimitedPixel(p.x(),p.y(),color);
 
 /*        if (m_bitMask==1)
             if (color!=m_background) {

@@ -61,24 +61,9 @@ public:
 
     int CompareLength(PixelChar& other);
 
-    int CompareLength2(PixelChar& other) {
-        int l = 0;
-        for (int i=0;i<8;i++)
-            for (int j=0;j<8;j++) {
-                char a = (p[i]>>(j))&0b1;
-                char b = (other.p[i]>>(j))&0b1;
-                if ( a != b )
-                    l++;
-                if (a==0 && b!=0) l++;
-                if (b==0 && a!=0) l++;
+    int CompareLength2(PixelChar& other);
 
-            }
-//            if (other.p[i]!=p[i])
-  //          l+=other.p[i] != p[i];
-
-        return l;
-
-    }
+    int CompareLength3(PixelChar& other);
 
     static uchar SwapColor(uchar data, uchar c1, uchar c2);
 

@@ -1210,8 +1210,22 @@ int PixelChar::CompareLength(PixelChar &other) {
             char b = (other.p[i]>>(j))&0b1;
             if ( a != b )
                 l++;
-            //                if (a==0 && b!=0) l++;
-            //              if (b==0 && a!=0) l++;
+
+        }
+    return l;
+
+}
+
+int PixelChar::CompareLength2(PixelChar &other) {
+    int l = 0;
+    for (int i=0;i<8;i++)
+        for (int j=0;j<8;j++) {
+            char a = (p[i]>>(j))&0b1;
+            char b = (other.p[i]>>(j))&0b1;
+            if ( a != b )
+                l++;
+            if (a==0 && b!=0) l++;
+            if (b==0 && a!=0) l++;
 
         }
     //            if (other.p[i]!=p[i])
@@ -1219,6 +1233,32 @@ int PixelChar::CompareLength(PixelChar &other) {
 
     return l;
 
+}
+
+int PixelChar::CompareLength3(PixelChar &other)
+{
+    // C = sum(Pij*Qij)^2/(sum(Pij^2)*sum(Qij^2)).
+    int ap = 0;
+    int bp = 0;
+    int s = 0;
+    for (int i=0;i<8;i++) {
+        for (int j=0;j<8;j++) {
+            char a = (p[i]>>(j))&0b1;
+            char b = (other.p[i]>>(j))&0b1;
+            s+=pow(a-b,2);
+        }
+    }
+
+/*    for (int i=0;i<8;i+=2) {
+        for (int j=0;j<8;j+=2) {
+            char a = (p[i]>>(j))&0b11 + (p[i+1]>>(j))&0b11;
+            char b = (other.p[i]>>(j))&0b11 + (other.p[i+1]>>(j))&0b11;
+            s+=pow(a-b,2);
+        }
+    }
+
+*/
+    return s;
 }
 
 uchar PixelChar::SwapColor(uchar data, uchar c1, uchar c2)
@@ -1414,7 +1454,6 @@ void MultiColorImage::RenderEffect(QMap<QString, float> params)
 void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen, int x0,int x1, int y0, int y1, int& noChars, int compression, int maxChars) {
     CharsetImage* ni = new CharsetImage(m_colorList.m_type);
 
-
     QVector<PixelChar> chars;
 //    QByteArray data;
     QVector<int> data;
@@ -1422,7 +1461,7 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen
     int sy = y1-y0;
     data.resize(sx*sy);
     data.fill(0x0);
-    noChars = 4;
+    noChars = 0;
     PixelChar p0;
     PixelChar p1;
     PixelChar p2;
@@ -1448,9 +1487,9 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen
             for (PixelChar& p : chars) {
 //                if (found)
   //                  break;
-                int metric = pc.CompareLength(p);
+                int metric = pc.CompareLength3(p);
 //                int metric = pc.Compare(p);
-                if (metric <compression && metric<cur ) {
+                if (metric <=compression && metric<cur ) {
                     data[i + j*sx] = pi;
                     cur=metric;
                     found = true;
