@@ -392,5 +392,8 @@
         <file>resources/images/charset_icons/btn-8-ShiftDown.png</file>
         <file>resources/images/charset_icons/btn-9-ShiftLeft.png</file>
         <file>resources/images/charset_icons/btn-9-ShiftRightt.png</file>
+        <file>resources/images/charset_icons/btn-c-cleart.png</file>
+        <file>resources/images/charset_icons/btn-b-mirror-vert.png</file>
+        <file>resources/images/charset_icons/btn-a-mirror-horiz.png</file>
     </qresource>
 </RCC>

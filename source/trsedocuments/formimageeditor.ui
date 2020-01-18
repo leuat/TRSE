@@ -333,80 +333,11 @@
            </item>
            <item row="7" column="0">
             <layout class="QGridLayout" name="gridLayout_11">
-             <item row="4" column="0">
-              <widget class="QPushButton" name="btnCharsetFull">
-               <property name="toolTip">
-                <string>Toggle fullscreen / character mode</string>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>32</width>
-                 <height>32</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QComboBox" name="cmbCharY">
-               <item>
-                <property name="text">
-                 <string>1</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>2</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>3</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>4</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>5</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="9" column="1">
-              <widget class="QPushButton" name="btnFlipHorisontal">
-               <property name="text">
-                <string>Flip horizontal</string>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="1">
-              <widget class="QPushButton" name="btnCharsetPaste">
-               <property name="toolTip">
-                <string>Paste screen</string>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../../resources.qrc">
-                 <normaloff>:/resources/images/charset_icons/btn-6-Paste.png</normaloff>:/resources/images/charset_icons/btn-6-Paste.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>32</width>
-                 <height>32</height>
-                </size>
-               </property>
-              </widget>
-             </item>
              <item row="2" column="0">
               <widget class="QComboBox" name="cmbCharX">
+               <property name="toolTip">
+                <string>Meta character width</string>
+               </property>
                <item>
                 <property name="text">
                  <string>1</string>
@@ -437,19 +368,45 @@
                  <string>6</string>
                 </property>
                </item>
+               <item>
+                <property name="text">
+                 <string>7</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>8</string>
+                </property>
+               </item>
               </widget>
              </item>
-             <item row="6" column="0">
-              <widget class="QPushButton" name="btnCharsetCopy">
+             <item row="4" column="0">
+              <widget class="QPushButton" name="btnCharsetFull">
                <property name="toolTip">
-                <string>Copy screen</string>
+                <string>Toggle fullscreen / character mode (space bar)</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="2">
+              <widget class="QPushButton" name="btnFlipVert">
+               <property name="toolTip">
+                <string>Mirror around Y-axis</string>
                </property>
                <property name="text">
                 <string/>
                </property>
                <property name="icon">
-                <iconset>
-                 <normaloff>../../resources/images/charset_icons/btn-5-Copy.png</normaloff>../../resources/images/charset_icons/btn-5-Copy.png</iconset>
+                <iconset resource="../../resources.qrc">
+                 <normaloff>:/resources/images/charset_icons/btn-a-mirror-horiz.png</normaloff>:/resources/images/charset_icons/btn-a-mirror-horiz.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -478,29 +435,66 @@
                  </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QPushButton" name="btnShiftRight">
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../../resources.qrc">
-                   <normaloff>:/resources/images/charset_icons/btn-9-ShiftRightt.png</normaloff>:/resources/images/charset_icons/btn-9-ShiftRightt.png</iconset>
-                 </property>
-                 <property name="iconSize">
-                  <size>
-                   <width>32</width>
-                   <height>32</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
               </layout>
              </item>
-             <item row="9" column="0">
-              <widget class="QPushButton" name="btnFlipVert">
+             <item row="2" column="1">
+              <widget class="QComboBox" name="cmbCharY">
+               <property name="toolTip">
+                <string>Meta character height</string>
+               </property>
+               <item>
+                <property name="text">
+                 <string>1</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>2</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>3</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>4</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>5</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>6</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>7</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>8</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QPushButton" name="btnCharsetCopy">
+               <property name="toolTip">
+                <string>Copy screen (Ctrl-C)</string>
+               </property>
                <property name="text">
-                <string>Flip vertical</string>
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../resources.qrc">
+                 <normaloff>:/resources/images/charset_icons/btn-5-Copy.png</normaloff>:/resources/images/charset_icons/btn-5-Copy.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -510,45 +504,7 @@
                </property>
               </widget>
              </item>
-             <item row="8" column="1">
-              <layout class="QHBoxLayout" name="horizontalLayout_7">
-               <item>
-                <widget class="QPushButton" name="btnShiftUp">
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../../resources.qrc">
-                   <normaloff>:/resources/images/charset_icons/btn-8-ShiftDown.png</normaloff>:/resources/images/charset_icons/btn-8-ShiftDown.png</iconset>
-                 </property>
-                 <property name="iconSize">
-                  <size>
-                   <width>32</width>
-                   <height>32</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnShiftDown">
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../../resources.qrc">
-                   <normaloff>:/resources/images/charset_icons/btn-7-ShiftUp.png</normaloff>:/resources/images/charset_icons/btn-7-ShiftUp.png</iconset>
-                 </property>
-                 <property name="iconSize">
-                  <size>
-                   <width>32</width>
-                   <height>32</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="5" column="0">
+             <item row="4" column="1">
               <widget class="QPushButton" name="btnRepeating">
                <property name="toolTip">
                 <string>Toggle repeating tiles</string>
@@ -568,13 +524,114 @@
                </property>
               </widget>
              </item>
-             <item row="4" column="1">
+             <item row="6" column="1">
+              <widget class="QPushButton" name="btnCharsetPaste">
+               <property name="toolTip">
+                <string>Paste screen ((Ctrl-V)</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../resources.qrc">
+                 <normaloff>:/resources/images/charset_icons/btn-6-Paste.png</normaloff>:/resources/images/charset_icons/btn-6-Paste.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="3">
+              <widget class="QPushButton" name="btnFlipHorisontal">
+               <property name="toolTip">
+                <string>Mirror around X-axis</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../resources.qrc">
+                 <normaloff>:/resources/images/charset_icons/btn-b-mirror-vert.png</normaloff>:/resources/images/charset_icons/btn-b-mirror-vert.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="3">
+              <widget class="QPushButton" name="btnShiftDown">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../resources.qrc">
+                 <normaloff>:/resources/images/charset_icons/btn-7-ShiftUp.png</normaloff>:/resources/images/charset_icons/btn-7-ShiftUp.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="2">
+              <widget class="QPushButton" name="btnShiftUp">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../resources.qrc">
+                 <normaloff>:/resources/images/charset_icons/btn-8-ShiftDown.png</normaloff>:/resources/images/charset_icons/btn-8-ShiftDown.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="1">
+              <widget class="QPushButton" name="btnShiftRight">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../resources.qrc">
+                 <normaloff>:/resources/images/charset_icons/btn-9-ShiftRightt.png</normaloff>:/resources/images/charset_icons/btn-9-ShiftRightt.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="2">
               <widget class="QPushButton" name="btnClear">
                <property name="toolTip">
                 <string>Clear the current screen</string>
                </property>
                <property name="text">
-                <string>Clear</string>
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../resources.qrc">
+                 <normaloff>:/resources/images/charset_icons/btn-c-cleart.png</normaloff>:/resources/images/charset_icons/btn-c-cleart.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
                </property>
               </widget>
              </item>

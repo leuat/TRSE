@@ -2117,6 +2117,9 @@ void FormImageEditor::on_btnShiftUp_clicked()
 
 void FormImageEditor::on_btnClear_clicked()
 {
+    m_work.m_currentImage->AddUndo();
     m_work.m_currentImage->m_image->Clear();
+    updateCharSet();
+
     Update();
 }
