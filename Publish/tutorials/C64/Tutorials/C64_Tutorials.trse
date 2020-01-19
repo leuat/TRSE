@@ -38,4 +38,4 @@ build_list = ,
 data_header_resources/images/petscii_animation.flf = 0
 charset_resources/images/petscii_animation.flf = :resources/character.rom
 open_files = ,Hello.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
+project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/Tutorials/
