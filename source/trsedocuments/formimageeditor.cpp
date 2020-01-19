@@ -105,6 +105,7 @@ void FormImageEditor::onImageMouseEvent()
         UpdateSpriteImages();
     if (dynamic_cast<LImageMetaChunk*>(m_work.m_currentImage->m_image)!=nullptr)
         UpdateSpriteImages();
+
     updateSingleCharSet();
 
     //showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
@@ -121,10 +122,11 @@ void FormImageEditor::onImageMouseEvent()
         CharsetImage* charmap = m_work.m_currentImage->m_image->getCharset();
 
         if (charmap->m_currentChar!=i) {
-            i = charmap->m_currentChar;
-            int x = i%charmap->m_charWidth;
-            int y = (i)/charmap->m_charWidth;
-            ui->lstCharMap->setCurrentCell(y,x);
+/*            i = charmap->m_currentChar;
+            int x = i%charmap->m_charWidthDisplay;
+            int y = (i)/charmap->m_charWidthDisplay;
+            ui->lstCharMap->setCurrentCell(y,x);*/
+            UpdateCurrentCell();
         }
 
     }
@@ -1065,7 +1067,7 @@ void FormImageEditor::updateCharSet()
             ui->lstCharMap->setItem(j,i,itm);
 
         }
-        //qDebug() << kk;
+//        qDebug() << kk;
         itm->setIcon(q);
         itm->setData(Qt::UserRole, kk);
         cnt++;
@@ -1204,9 +1206,7 @@ void FormImageEditor::SetSingleCharsetEdit()
     UpdateGrid();
     SetFooterData(LImageFooter::POS_DISPLAY_CHAR,1);
     m_updateThread.m_zoom = 1.0;
-    int c = m_work.m_currentImage->m_image->m_currentChar;
-    int w = m_work.m_currentImage->m_image->m_charWidthDisplay;
-    ui->lstCharMap->setCurrentCell(c/w, c%w);
+    UpdateCurrentCell();
     emit onImageMouseEvent();
 
 }
@@ -1227,6 +1227,22 @@ uchar FormImageEditor::GetFooterData(int pos)
     if (m_work.m_currentImage->m_image==nullptr)
         return 0;
     return m_work.m_currentImage->m_image->m_footer.get(pos);
+
+}
+
+void FormImageEditor::UpdateCurrentCell()
+{
+    int c = m_work.m_currentImage->m_image->m_currentChar;
+    int w = m_work.m_currentImage->m_image->m_charWidthDisplay;
+    ui->lstCharMap->setCurrentCell(c/w, c%w);
+
+  /*              int i = m_work.m_currentImage->m_image->m_currentChar;
+                int x = i%m_work.m_currentImage->m_image->m_charWidthDisplay;
+                int y = (i-x)/m_work.m_currentImage->m_image->m_charWidthDisplay;
+                qDebug() << "Setting current cell "<<y<<x;
+                ui->lstCharMap->setCurrentCell(y,x);
+*/
+
 
 }
 
@@ -1620,6 +1636,7 @@ void FormImageEditor::on_lstCharMap_currentItemChanged(QTableWidgetItem *current
         return;
     m_prefMode = m_keepMode;
     SelectCharacter(current->data(Qt::UserRole).toInt());
+    qDebug() << "on_lstCharmap: " <<QString::number(m_work.m_currentImage->m_image->m_currentChar) << current->data(Qt::UserRole).toInt();
     SetSingleCharsetEdit();
     Data::data.Redraw();
     Data::data.forceRedraw = true;

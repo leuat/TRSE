@@ -133,8 +133,8 @@ void ImageLevelEditor::Initialize()
     //SetLevel(QPoint(0,0));
 
     m_currentLevel = m_levels[0];
-    m_charWidthDisplay = m_meta.m_width;
-    m_charHeightDisplay = m_meta.m_height;
+    m_charWidthDisplay = 40;//m_meta.m_width;
+    m_charHeightDisplay = 25;//m_meta.m_height;
     m_width = m_meta.m_width*16;
     m_height = m_meta.m_height*16;
     setMultiColor(m_meta.m_displayMultiColor);
@@ -374,9 +374,12 @@ QString ImageLevelEditor::getMetaInfo()
 
 bool ImageLevelEditor::PixelToPos(int x, float y, int& pos, int w, int h)
 {
+    pos = 0;
     if (x>=m_width || x<0 || y>=m_height || y<0)
         return false;
 
+
+//    return (x)%m_charWidthDisplay + (y)*m_charWidthDisplay;
 /*    x/=16.0;
     y/=16.0;
 */
@@ -446,6 +449,8 @@ void ImageLevelEditor::setPixel(int x, int y, unsigned int color)
         return; // out of bounds
 
 
+
+//    qDebug() << QString::number(m_currentChar);
     if (m_currentLevel==nullptr)
         return;
 
@@ -523,14 +528,14 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
     uint val = m_charset->m_data[pos].get(ix, iy,m_charset->m_bitMask);
 
     if (m_meta.m_useColors) {
-    if (m_meta.m_displayMultiColor) {
-        if (col<8) // Non-multicolor
+        if (m_meta.m_displayMultiColor) {
+            if (col<8) // Non-multicolor
+                if (val!=m_background)
+                    val = col;
+        }
+        else
             if (val!=m_background)
                 val = col;
-    }
-    else
-        if (val!=m_background)
-            val = col;
     }
 
     if (dynamic_cast<LImageMetaChunk*>(m_charset)!=nullptr) {
@@ -544,7 +549,7 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 
 
     if (m_meta.m_useColors) {
-        if (val==m_charset->m_data[pos].c[3]) {
+        if (val==m_charset->m_data[pos].c[3] && val!=m_background) {
             val = col&0b00000111;
         }
   //      if ((col&0b00001000)==0b00001000)
@@ -610,6 +615,7 @@ void ImageLevelEditor::onFocus()
         LoadCharset(m_charsetFilename,0);
         setMultiColor(m_meta.m_displayMultiColor);
     }
+
 }
 
 

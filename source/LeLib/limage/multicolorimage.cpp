@@ -719,6 +719,9 @@ void MultiColorImage::LoadCharset(QString file, int skipBytes)
         m_charset = dynamic_cast<CharsetImage*>(img);
     }
     m_charsetFilename = file;
+    m_charWidthDisplay = m_charset->m_charWidthDisplay;
+    m_charHeightDisplay = m_charset->m_charHeightDisplay;;//m_meta.m_height;
+
 
 }
 

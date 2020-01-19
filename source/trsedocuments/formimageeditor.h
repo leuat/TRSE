@@ -104,6 +104,8 @@ public:
     uchar GetFooterData(int pos);
 
 
+    void UpdateCurrentCell();
+
     void SetButton(QPushButton* btn, LImage::GUIType type);
     void SetLabel(QLabel* btn, LImage::GUIType type);
 
