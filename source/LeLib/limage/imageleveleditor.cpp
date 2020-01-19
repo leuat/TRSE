@@ -466,12 +466,15 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
     if (!PixelToPos(x,y, pos,m_meta.m_width, m_meta.m_height))
         return 0; // out of bounds
 
-
-
+    int cx = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X);
+    int cy = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y);
 
     int shift=0;
-    if (x%16>=8) shift+=1;
-    if (y%16>=8) shift+=40;
+    shift += (x%16)/(16/cx);
+    shift += ((y%16)/(16/cy))*40;
+  //  shift += ((y%cy)/8)*40;
+//    if (x%cx>=8) shift+=1;
+//    if (y%cy>=8) shift+=40;
 
     int ss = m_scale;
 
@@ -505,8 +508,10 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 */
 
 //    m_charset->setMultiColor(true);
-    int ix = ((x) % (8)/ss)*ss;//- (dx*40);
-    int iy = (y) % 8;//- (dy*25);
+//    int scaleX = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X);
+//    int scaleY = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y);
+    int ix = ((x*cx/2) % (8)/ss)*ss;//- (dx*40);
+    int iy = (y*cy/2) % 8;//- (dy*25);
 
  //   return pc.get(m_scale*ix, iy, m_bitMask);
 

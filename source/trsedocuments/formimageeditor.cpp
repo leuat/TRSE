@@ -813,6 +813,11 @@ void FormImageEditor::showDetailCharButtons()
     ui->btnShiftLeft->setVisible(doShow);
     ui->btnShiftRight->setVisible(doShow);
     ui->btnRepeating->setVisible(doShow);
+
+
+    if (dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image)!=nullptr) {
+        doShow = true;
+    }
     ui->cmbCharX->setVisible(doShow);
     ui->cmbCharY->setVisible(doShow);
 
