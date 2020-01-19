@@ -101,7 +101,7 @@ public:
 //    void ToRaw(QByteArray& arr);
     QString GetCurrentDataString() override {
         if (m_current<0) return "";
-        QString curChar =  "  Character : " + Util::numToHex(m_currencChar);
+        QString curChar =  "  Character : " + Util::numToHex(m_currentChar);
         QString screen = "  Screen : " + QString::number(m_current) + "/" +
                 QString::number(m_items.count()) ;
         return curChar +  screen;

@@ -179,7 +179,7 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
                         winner[col]++;
                     }
              }
-            m_currencChar = m_charset->FindClosestChar(pc);
+            m_currentChar = m_charset->FindClosestChar(pc);
             int w=0;
             int iw = 0;
             for (int i=0;i<winner.count();i++)
@@ -190,9 +190,9 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
             uchar col = iw;
 
  /*           if (col==0)
-                m_currencChar = 0x20;
+                m_currentChar = 0x20;
             else
-                m_currencChar=0xA0;
+                m_currentChar=0xA0;
 */
             m_writeType=Color;
             setPixel(i*sx,j*sy,col);
@@ -223,12 +223,12 @@ bool C64FullScreenChar::KeyPress(QKeyEvent *e)
 
     if (e->key()==Qt::Key_C) {
         m_writeType=Character;
-        if (m_currencChar==0x20) {
-            m_currencChar = m_tempChar;
+        if (m_currentChar==0x20) {
+            m_currentChar = m_tempChar;
         }
         else {
-            m_tempChar = m_currencChar;
-            m_currencChar = 0x20;
+            m_tempChar = m_currentChar;
+            m_currentChar = 0x20;
 
         }
 
@@ -258,7 +258,7 @@ void C64FullScreenChar::setPixel(int x, int y, unsigned int color)
     y=y*m_charHeight/25.0;
 
     if (m_writeType==Character)
-        ((C64Screen*)m_items[m_current])->m_rawData[x/8+ (y/8)*m_charWidth] = m_currencChar;
+        ((C64Screen*)m_items[m_current])->m_rawData[x/8+ (y/8)*m_charWidth] = m_currentChar;
     if (m_writeType==Color)
         ((C64Screen*)m_items[m_current])->m_rawColors[x/8+ (y/8)*m_charWidth] = color;
 
@@ -348,7 +348,7 @@ void C64FullScreenChar::CopyFrom(LImage *mc)
 
         m_charset = c->m_charset;
         m_writeType = c->m_writeType;
-        m_currencChar = c->m_currencChar;
+        m_currentChar = c->m_currentChar;
 
     }
     else

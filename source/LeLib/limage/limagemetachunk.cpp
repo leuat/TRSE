@@ -80,7 +80,7 @@ void LImageMetaChunk::CopyFrom(LImage *mc)
     if (img!=nullptr) {
         m_img = img->m_img;
         m_charset= img->m_charset;
-        m_currencChar = img->m_currencChar;
+        m_currentChar = img->m_currentChar;
 
         m_items.clear();
 
@@ -120,7 +120,7 @@ void LImageMetaChunk::CopyFrom(LImage *mc)
         //m_currentBank = img->m_currentBank;
         m_footer = img->m_footer;
         m_charWidthDisplay = img->m_charWidthDisplay;
-        m_currencChar = img->m_currencChar;
+        m_currentChar = img->m_currentChar;
  /*       m_colorList.m_list.clear();
         for (LColor l :  img->m_colorList.m_list)
             m_colorList.m_list.append(l);
@@ -163,7 +163,7 @@ void LImageMetaChunk::LoadCharset(QString file, int skipBytes)
 void LImageMetaChunk::setPixel(int x, int y, unsigned int color)
 {
     QPoint p = getPos(x,y);
-    ((LMetaChunkItem*)m_items[m_current])->setPixel(p.x(),p.y(),m_currencChar,m_img->m_bitMask);
+    ((LMetaChunkItem*)m_items[m_current])->setPixel(p.x(),p.y(),m_currentChar,m_img->m_bitMask);
 
 }
 
@@ -236,7 +236,7 @@ void LImageMetaChunk::SetColor(uchar col, uchar idx)
 
 void LImageMetaChunk::SetColor(uchar col, uchar idx, LImageMetaChunk &s)
 {
-    m_currencChar = col;
+    m_currentChar = col;
 }
 
 LMetaChunkItem *LImageMetaChunk::getCur()
@@ -255,9 +255,9 @@ bool LImageMetaChunk::KeyPress(QKeyEvent *e)
         Next();
 
     if (e->key()==Qt::Key_Plus)
-        m_currencChar++;
+        m_currentChar++;
     if (e->key()==Qt::Key_Minus)
-        m_currencChar--;
+        m_currentChar--;
 
 
     return false;

@@ -26,7 +26,7 @@
 LImageSprites::LImageSprites(LColorList::Type t) : CharsetImage(t) {
     m_type = LImage::Type::Sprites;
     //m_currentMode = Mode::CHARSET1x1;
-    m_currencChar=0;
+    m_currentChar=0;
 
     m_GUIParams[btnLoadCharset] ="";
     m_GUIParams[btn1x1] = "1x1 Sprite";
@@ -142,9 +142,9 @@ QPoint LImageSprites::getXY(int x, int y)
     if (m_currentMode!=CHARSET2x2) {
 
 
-        shiftx = ((m_currencChar%40)*4)%320;
+        shiftx = ((m_currentChar%40)*4)%320;
 
-        shifty = ((int)((m_currencChar-m_currencChar%40)/(int)40))*8;
+        shifty = ((int)((m_currentChar-m_currentChar%40)/(int)40))*8;
 
         i = x/320.0*24;
         j = y/200.0*21;
@@ -156,8 +156,8 @@ QPoint LImageSprites::getXY(int x, int y)
     {
 
 
-        shiftx = ((m_currencChar%40)*4)%320;
-        shifty = ((int)((m_currencChar-m_currencChar%40)/(int)40))*8;
+        shiftx = ((m_currentChar%40)*4)%320;
+        shifty = ((int)((m_currentChar-m_currentChar%40)/(int)40))*8;
 
         i = x/320.0*24*3;
         j = y/200.0*21*2;
@@ -191,16 +191,16 @@ bool LImageSprites::KeyPress(QKeyEvent *e)
 
 
 
-    if (e->key()==Qt::Key_W && m_currencChar>=40*s)
-        m_currencChar-=40*s;
-    if (e->key()==Qt::Key_A && m_currencChar>=s)
-        m_currencChar-=1*s;
+    if (e->key()==Qt::Key_W && m_currentChar>=40*s)
+        m_currentChar-=40*s;
+    if (e->key()==Qt::Key_A && m_currentChar>=s)
+        m_currentChar-=1*s;
     if (e->key()==Qt::Key_S)
-        m_currencChar+=40*s;
+        m_currentChar+=40*s;
     if (e->key()==Qt::Key_D)
-        m_currencChar+=1*s;
+        m_currentChar+=1*s;
 
-    m_currencChar = Util::clamp(m_currencChar,0,m_charWidth*m_charHeight);
+    m_currentChar = Util::clamp(m_currentChar,0,m_charWidth*m_charHeight);
 
     return true;
 
@@ -279,9 +279,9 @@ void LImageSprites::CopyPasteChar(int type)
         int add=k;
         for (int i=0;i<9;i++) {
             if (type==0)
-            m_copy[x]=m_data[m_currencChar+add];
+            m_copy[x]=m_data[m_currentChar+add];
             if (type==1)
-            m_data[m_currencChar+add]=m_copy[x];
+            m_data[m_currentChar+add]=m_copy[x];
 
             x++;
             j++;

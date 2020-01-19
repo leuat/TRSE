@@ -62,7 +62,7 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_GUIParams[col3] = "Multicolor 1";
     m_GUIParams[col4] = "Multicolor 2";
 
-    m_currencChar=0;
+    m_currentChar=0;
     //m_currentMode=Mode::FULL_IMAGE;
     m_exportParams.clear();
     m_exportParams["Start"] = 0;
@@ -99,6 +99,10 @@ int CharsetImage::FindClosestChar(PixelChar p)
 
     }
     return winner;
+}
+
+QString CharsetImage::GetCurrentDataString() {
+    return "  Character : " + Util::numToHex(m_currentChar) + " (" + QString::number(m_currentChar)+ ")";
 }
 
 QString CharsetImage::getMetaInfo()
@@ -370,8 +374,8 @@ void CharsetImage::setPixel(int x, int y, unsigned int color)
         bp=16;
 
     int xx,yy;
-    int shiftx = (m_currencChar*8)%320;
-    int shifty = (m_currencChar/(int)m_charWidth)*8;
+    int shiftx = (m_currentChar*8)%320;
+    int shifty = (m_currentChar/(int)m_charWidth)*8;
     shiftx/=m_scale;
 
     if (m_currentMode == CHARSET1x1 || m_currentMode == CHARSET2x2) {
@@ -424,8 +428,8 @@ QPoint CharsetImage::getXY(int x, int y)
 
         cx/=s;
 
-        int sx = (m_currencChar%m_charWidth)*8/s;
-        int sy = (m_currencChar/m_charWidth)*8;
+        int sx = (m_currentChar%m_charWidth)*8/s;
+        int sy = (m_currentChar/m_charWidth)*8;
 
         if (!m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_REPEAT)) {
             x = (x / (float)m_width)*cx+sx;
@@ -465,7 +469,7 @@ void CharsetImage::CopyFrom(LImage *img)
         m_background = mc->m_background;
         m_border = mc->m_border;
         //m_currentMode = mc->m_currentMode;
-        m_currencChar = mc->m_currencChar;
+        m_currentChar = mc->m_currentChar;
 
         m_width = mc->m_width;
         m_height = mc->m_height;
@@ -515,18 +519,18 @@ bool CharsetImage::KeyPress(QKeyEvent *e)
   //      s=2;
 
     if (e->key()==Qt::Key_W)
-        m_currencChar-=m_charWidthDisplay*sy;
+        m_currentChar-=m_charWidthDisplay*sy;
     if (e->key()==Qt::Key_A)
-        m_currencChar-=sx;
+        m_currentChar-=sx;
     if (e->key()==Qt::Key_S)
-        m_currencChar+=m_charWidthDisplay*sy;
+        m_currentChar+=m_charWidthDisplay*sy;
     if (e->key()==Qt::Key_D)
-        m_currencChar+=sx;
+        m_currentChar+=sx;
 
-    if (m_currencChar>=m_charHeight*m_charWidth)
-        m_currencChar=0;
+    if (m_currentChar>=m_charHeight*m_charWidth)
+        m_currentChar=0;
 
-    m_currencChar = Util::clamp(m_currencChar,0,m_charWidth*m_charHeight-1);
+    m_currentChar = Util::clamp(m_currentChar,0,m_charWidth*m_charHeight-1);
 
 
     return true;

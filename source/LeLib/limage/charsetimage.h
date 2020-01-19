@@ -45,9 +45,7 @@ public:
     int FindClosestChar(PixelChar p);
 
 
-    QString GetCurrentDataString() override {
-        return "  Character : " + Util::numToHex(m_currencChar);
-    }
+    QString GetCurrentDataString() override;
 
 
     virtual QString getMetaInfo() override;

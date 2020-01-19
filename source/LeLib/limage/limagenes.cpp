@@ -230,8 +230,8 @@ bool LImageNES::getXY(QPoint& xy,QPoint& p1, QPoint& p2)
         int cx = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X);
         int cy = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y);
 
-        int sx = (m_currencChar%m_charWidth)*8;
-        int sy = (m_currencChar/m_charWidth)*16;
+        int sx = (m_currentChar%m_charWidth)*8;
+        int sy = (m_currentChar/m_charWidth)*16;
 
         if (!m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_REPEAT)) {
             x = (x / (float)m_width)*16*cx+sx;

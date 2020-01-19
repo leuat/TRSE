@@ -34,7 +34,7 @@ void LImageCharsetFixedColor::SetColor(uchar col, uchar idx)
 {
     CharsetImage::SetColor(col,idx);
 /*    if (idx==3)
-        m_colors[m_currencChar] = col;
+        m_colors[m_currentChar] = col;
         */
 }
 

@@ -106,7 +106,7 @@ void LImageEffects::RenderCircles(LImageEffect *le)
 
                 m_image->m_writeType=LImage::Character;
 
-                m_image->m_currencChar = k;
+                m_image->m_currentChar = k;
                 m_image->setPixel(x,y,k);
 
             }
@@ -148,7 +148,7 @@ void LImageEffects::RenderWaves(LImageEffect *le)
                 k=2;
 
 
-//            m_image->m_currencChar = k;
+//            m_image->m_currentChar = k;
             m_image->setPixel(x,y,k);
 
         }

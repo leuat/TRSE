@@ -35,7 +35,7 @@ LImageLevelNES::LImageLevelNES(LColorList::Type t) : ImageLevelEditor(t)
     m_writeType = Character;
 
 //    m_GUIParams[tabSprites] ="Metachunks";
-    m_currencChar = 1;
+    m_currentChar = 1;
 
 
     m_GUIParams[btnCopy] = "Copy";
@@ -101,7 +101,7 @@ void LImageLevelNES::setPixel(int x, int y, unsigned int color)
     //    qDebug() << (m_writeType==Color);
 
     if (m_writeType==Character)
-        m_currentLevel->m_CharData[pos] = m_currencChar;
+        m_currentLevel->m_CharData[pos] = m_currentChar;
     if (m_writeType==Color)
         m_currentLevel->m_ColorData[posC] = color;
 

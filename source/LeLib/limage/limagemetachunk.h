@@ -86,9 +86,9 @@ public:
 
     QString GetCurrentDataString() override {
         if (m_current<0) return "";
-        QString blockSize = " char: " + Util::numToHex(m_currencChar);
+        QString blockSize = " char: " + Util::numToHex(m_currentChar);
 //        blockSize += ", " +QString::number(m_items[m_current]->m_height)+")";
-        return "  Sprite : " + QString::number(m_current) + "/" +
+        return "  Char : " + QString::number(m_current) + "/" +
                 QString::number(m_items.count()) + blockSize;
     }
 

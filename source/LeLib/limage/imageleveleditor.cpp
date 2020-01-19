@@ -309,7 +309,7 @@ bool ImageLevelEditor::KeyPress(QKeyEvent *e)
 
 
     if (e->key()==Qt::Key_C) {
-        m_currencChar=0x20;
+        m_currentChar=0x20;
     }
 
     if (dir.x()!=0 || dir.y()!=0) {
@@ -451,7 +451,7 @@ void ImageLevelEditor::setPixel(int x, int y, unsigned int color)
 
 
     if (m_writeType==Character || m_forcePaintColorAndChar)
-        m_currentLevel->m_CharData[pos] = m_currencChar;
+        m_currentLevel->m_CharData[pos] = m_currentChar;
     if (m_writeType==Color || m_forcePaintColorAndChar)
         m_currentLevel->m_ColorData[pos] = color;
 
@@ -568,7 +568,7 @@ void ImageLevelEditor::CopyFrom(LImage *mc)
         m_meta = c->m_meta;
         Initialize();
 
-        m_currencChar = c->m_currencChar;
+        m_currentChar = c->m_currentChar;
         m_forcePaintColorAndChar = c->m_forcePaintColorAndChar;
         for (int i=0;i<m_meta.m_sizex*m_meta.m_sizey;i++) {
             m_levels[i]->m_CharData = c->m_levels[i]->m_CharData;

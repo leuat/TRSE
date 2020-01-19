@@ -120,8 +120,8 @@ void FormImageEditor::onImageMouseEvent()
         int i = ui->lstCharMap->currentItem()->data(Qt::UserRole).toInt();
         CharsetImage* charmap = m_work.m_currentImage->m_image->getCharset();
 
-        if (charmap->m_currencChar!=i) {
-            i = charmap->m_currencChar;
+        if (charmap->m_currentChar!=i) {
+            i = charmap->m_currentChar;
             int x = i%charmap->m_charWidth;
             int y = (i)/charmap->m_charWidth;
             ui->lstCharMap->setCurrentCell(y,x);
@@ -145,7 +145,7 @@ void FormImageEditor::onImageMouseReleaseEvent()
 void FormImageEditor::SelectFromLeftClick()
 {
     m_prefMode = m_keepMode;
-    m_work.m_currentImage->m_image->m_currencChar =
+    m_work.m_currentImage->m_image->m_currentChar =
             m_work.m_currentImage->m_image->getCharAtPos(
                 (QPoint(m_updateThread.m_currentPos.x(),m_updateThread.m_currentPos.y())),
                 m_updateThread.m_zoom,m_updateThread.m_zoomCenter);
@@ -827,7 +827,7 @@ void FormImageEditor::showDetailCharButtons()
 void FormImageEditor::on_btnFlipVert_clicked()
 {
     m_work.m_currentImage->AddUndo();
-    m_work.m_currentImage->m_image->FlipVertical();
+    m_work.m_currentImage->m_image->FlipHorizontal();
 
     Data::data.forceRedraw = true;
     Data::data.Redraw();
@@ -838,7 +838,7 @@ void FormImageEditor::on_btnFlipVert_clicked()
 void FormImageEditor::on_btnFlipHorisontal_clicked()
 {
     m_work.m_currentImage->AddUndo();
-    m_work.m_currentImage->m_image->FlipHorizontal();
+    m_work.m_currentImage->m_image->FlipVertical();
 
     Data::data.forceRedraw = true;
     Data::data.Redraw();
@@ -1108,9 +1108,9 @@ void FormImageEditor::updateSingleCharSet()
     }*/
     if (charmap == nullptr)
         return;
-    if (charmap->m_currencChar<0)
+    if (charmap->m_currentChar<0)
         return;
-    int c = charmap->m_currencChar;
+    int c = charmap->m_currentChar;
     for (int i=0;i<GetFooterData(LImageFooter::POS_CURRENT_DISPLAY_Y);i++) {
         for (int j=0;j<GetFooterData(LImageFooter::POS_CURRENT_DISPLAY_X);j++) {
             int k = c+j;
@@ -1199,7 +1199,7 @@ void FormImageEditor::SetSingleCharsetEdit()
     UpdateGrid();
     SetFooterData(LImageFooter::POS_DISPLAY_CHAR,1);
     m_updateThread.m_zoom = 1.0;
-    int c = m_work.m_currentImage->m_image->m_currencChar;
+    int c = m_work.m_currentImage->m_image->m_currentChar;
     int w = m_work.m_currentImage->m_image->m_charWidthDisplay;
     ui->lstCharMap->setCurrentCell(c/w, c%w);
     emit onImageMouseEvent();
@@ -1475,7 +1475,7 @@ void FormImageEditor::UpdateSpriteImages()
 
     }
 
-//    img->m_currencChar = keep;
+//    img->m_currentChar = keep;
 //    ui->lblSprite2->setPixmap(m_updateThread.m_pixMapImage.scaled(40, 32, Qt::IgnoreAspectRatio, Qt::FastTransformation));
 
 
@@ -1530,7 +1530,7 @@ void FormImageEditor::onSwapDisplayMode()
     ui->lblImage->setFocus();
     ui->lstCharMap->setCurrentItem(nullptr);
     if (GetFooterData(LImageFooter::POS_DISPLAY_CHAR)==1) {
-        int c = m_work.m_currentImage->m_image->m_currencChar;
+        int c = m_work.m_currentImage->m_image->m_currentChar;
         int w = m_work.m_currentImage->m_image->m_charWidthDisplay;
 
 
@@ -1618,9 +1618,9 @@ void FormImageEditor::on_lstCharMap_currentItemChanged(QTableWidgetItem *current
     SetSingleCharsetEdit();
     Data::data.Redraw();
     Data::data.forceRedraw = true;
-//    qDebug() << m_work.m_currentImage->m_image->m_currencChar;
+//    qDebug() << m_work.m_currentImage->m_image->m_currentChar;
     onImageMouseEvent();
-  //  qDebug() << m_work.m_currentImage->m_image->m_currencChar;
+  //  qDebug() << m_work.m_currentImage->m_image->m_currentChar;
 
 
 }
