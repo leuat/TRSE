@@ -113,6 +113,7 @@ m; vbmClearText; VIC20; a, a, b, b, b
 
 m; vbmDrawSmallTextO; VIC20; a, a, b, b, b
 m; vbmDrawSmallTextE; VIC20; a, a, b, b, b
+m; vbmClearSmallText; VIC20; a, a, b, b, b
 
 m; vbmDrawBCD; VIC20; a, a, b, b, b
 

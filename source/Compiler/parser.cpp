@@ -221,6 +221,7 @@ void Parser::InitBuiltinFunctions()
 
         InitBuiltinFunction(QStringList()<< "vbmdrawsmalltexto(", "initVbmDrawSmallTextO");
         InitBuiltinFunction(QStringList()<< "vbmdrawsmalltexte(", "initVbmDrawSmallTextE");
+        InitBuiltinFunction(QStringList()<< "vbmclearsmalltext(", "initVbmClearSmallText");
 
         InitBuiltinFunction(QStringList()<< "vbmdrawbcd(", "initVbmDrawBCD");
 
