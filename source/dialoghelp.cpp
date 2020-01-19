@@ -111,8 +111,7 @@ void DialogHelp::LoadItems(int idx)
                 m_currentItems.append(word);
 
 //                ui->txtHelp->setText(txt);
-
-            }
+ }
 
          }
     }
