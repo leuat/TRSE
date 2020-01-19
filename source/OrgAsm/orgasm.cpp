@@ -118,7 +118,8 @@ OrgasmLine Orgasm::LexLine(int i) {
 
     }
 
-    if (!(line[0]==" ") && !line.contains("=")) {
+//    qDebug() << line.contains("\"") << line;
+    if (!(line[0]==" ") && !(line.contains("=") && !line.contains("\""))) {
         QString lbl = line.replace(":", " ").trimmed().split(" ")[0];
         l.m_label = lbl;
         line.remove(0, lbl.length()).replace(":", " ");
@@ -151,7 +152,7 @@ OrgasmLine Orgasm::LexLine(int i) {
         l.m_expr = lst[1];
         return l;
     }
-    if (line.contains("=")) {
+    if (line.contains("=") && !line.contains("\"")) {
         l.m_type = OrgasmLine::CONSTANT;
         QStringList cl = line.split("=");
         l.m_label = cl[0].trimmed();

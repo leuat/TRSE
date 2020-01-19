@@ -39,4 +39,5 @@ pascal_settings_use_local_variables = 0
 data_header_levels/levels.flf = ,id, x, y, life, color, spread, sx, sy, isdead, damage, ammo, sound, upgrade
 aspect_ratio = 1
 data_header_charsets/charset_level.flf = 0
-open_files =, RogueBurgerOne.ras
+open_files = ,RogueBurgerOne.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/TutorialGame_RogueBurgerOne/
