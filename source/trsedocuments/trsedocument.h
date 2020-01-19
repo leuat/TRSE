@@ -92,6 +92,8 @@ public:
 
 signals:
     void emitFindFile();
+    void emitNewRas();
+    void emitNewImage();
     void requestCloseWindow();
     void updatePaletteSignal();
     void requestBuild();

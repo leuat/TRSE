@@ -355,6 +355,10 @@ void MainWindow::ConnectDocument()
     connect(m_currentDoc, SIGNAL(requestBuildMain()), this, SLOT(acceptBuildMain()));
     connect(m_currentDoc, SIGNAL(requestRunMain()), this, SLOT(acceptRunMain()));
 
+    connect(m_currentDoc, SIGNAL(emitNewRas()), this, SLOT(on_actionRas_source_file_triggered()));
+    connect(m_currentDoc, SIGNAL(emitNewImage()), this, SLOT(on_actionImage_triggered()));
+
+
 //    connect(m_currentDoc, SIGNAL(NotifyOtherSourceFiles()), this, SLOT(AcceptUpdateSourceFiles()));
     if (dynamic_cast<FormRasEditor*>(m_currentDoc)!=nullptr)
        QObject::connect((FormRasEditor*)m_currentDoc, &FormRasEditor::NotifyOtherSourceFiles, this, &MainWindow::AcceptUpdateSourceFiles);
@@ -821,21 +825,20 @@ void MainWindow::on_actionImage_triggered()
         return;
     }
 
+    ImageWorker tmp;
 
-    FormImageEditor* editor = new FormImageEditor(this);
     DialogNewImage* dNewFile = new DialogNewImage(this);
-    dNewFile->Initialize(editor->m_work.m_types);
+    dNewFile->Initialize(tmp.m_types);
     dNewFile->setModal(true);
     dNewFile->exec();
-    if (dNewFile->retVal!=-1) {
-
-        editor->m_work.New(dNewFile->m_metaImage,dNewFile->retVal);
-    } else {
-        delete editor;
+    if (dNewFile->retVal==-1) {
         delete dNewFile;
         return;
     }
+    FormImageEditor* editor = new FormImageEditor(this);
+    editor->m_work.New(dNewFile->m_metaImage,dNewFile->retVal);
     delete dNewFile;
+
 
     editor->UpdatePalette();
     editor->InitDocument(nullptr, &m_iniFile, &m_currentProject.m_ini);

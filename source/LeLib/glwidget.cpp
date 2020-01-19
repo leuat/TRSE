@@ -206,11 +206,13 @@ void GLWidget::mousePressEvent(QMouseEvent *e)
     if(e->buttons() == Qt::RightButton) {
         m_imageChanged = true;
         m_updateThread->m_currentButton = 2;
+        m_keepButton = 2;
         if (e->modifiers() & Qt::ShiftModifier) {
             m_updateThread->m_prevPos = m_updateThread->m_currentPos;
             m_updateThread->m_currentButton = 4;
+            m_keepButton = 4;
+
         }
-        m_keepButton = 2;
         m_buttonDown = true;
     }
 

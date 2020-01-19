@@ -66,6 +66,12 @@ void TRSEDocument::keyPressEvent(QKeyEvent *e) {
         emit emitFindFile();
     }
 
+    if (e->key() == Qt::Key_N &&  (QApplication::keyboardModifiers() & Qt::ControlModifier))
+        emit emitNewRas();
+
+    if (e->key() == Qt::Key_I &&  (QApplication::keyboardModifiers() & Qt::ControlModifier))
+        emit emitNewImage();
+
 }
 
 void TRSEDocument::UserDefined()
