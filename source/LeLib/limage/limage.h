@@ -184,6 +184,13 @@ public:
     QPoint m_copySize = QPoint(512,512);
     static uchar m_copy[];
 
+    virtual int getGridWidth() {
+        return getCharWidthDisplay();
+    }
+    virtual int getGridHeight() {
+        return getCharHeightDisplay();
+    }
+
 //    enum Mode{ FULL_IMAGE, CHARSET1x1, CHARSET2x2, CHARSET2x2_REPEAT};
   //  Mode m_currentMode = FULL_IMAGE;
     QString GetCurrentModeString();
