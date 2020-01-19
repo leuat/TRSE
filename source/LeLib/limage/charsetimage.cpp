@@ -102,7 +102,10 @@ int CharsetImage::FindClosestChar(PixelChar p)
 }
 
 QString CharsetImage::GetCurrentDataString() {
-    return "  Character : " + Util::numToHex(m_currentChar) + " (" + QString::number(m_currentChar)+ ")";
+    char chr = m_currentChar;
+    if (chr<32) chr+=64;
+    if (m_currentChar>=0x40) chr=0;
+    return "  Character : " + QString(chr) + "  "+ Util::numToHex(m_currentChar) + " (" + QString::number(m_currentChar)+ ")";
 }
 
 QString CharsetImage::getMetaInfo()
