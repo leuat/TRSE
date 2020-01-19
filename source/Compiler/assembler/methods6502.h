@@ -286,6 +286,9 @@ public:
     void initVbmClearText(Assembler *as);
     void vbmClearText(Assembler *as);
 
+    void initVbmDrawSmallTextO(Assembler *as);
+    void vbmDrawSmallTextO(Assembler *as);
+
     void initVbmDrawBCD(Assembler *as);
     void vbmDrawBCD(Assembler *as);
 

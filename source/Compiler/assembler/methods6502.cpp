@@ -357,6 +357,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("vbmClearText"))
         vbmClearText(as);
 
+    // 4x8 text commands
+    if (Command("initVbmDrawSmallTextO"))
+        initVbmDrawSmallTextO(as);
+    if (Command("vbmDrawSmallTextO"))
+        vbmDrawSmallTextO(as);
+
     // 8x8 Draw BCD numbers
     if (Command("initVbmDrawBCD"))
         initVbmDrawBCD(as);
@@ -8329,6 +8335,237 @@ void Methods6502::vbmClearText(Assembler* as)
     as->Asm("jsr vbmClearText");
 
 }
+
+void Methods6502::initVbmDrawSmallTextO(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmDrawSmallTextO"])
+        return;
+
+    m_node->m_isInitialized["vbmDrawSmallTextO"] = true;
+
+    as->Comment("Draw text characters to the bitmap using a zero terminated CSTRING with OR operation");
+    as->Comment("CSTRING    = " + as->m_internalZP[0]);
+    as->Comment("Font chars = " + as->m_internalZP[1]);
+    as->Comment("Temp addr  = " + as->m_internalZP[2] + " - used to calculate char address");
+    as->Label("vbmDrawSmallTextO");
+
+    as->Label("vbmDSTXO_Xloop");
+
+        as->Comment("calculate next screen memory position");
+        as->Asm("lda vbmX");
+        as->Asm("lsr ; divde x by 2 (2 chars per character cell)");
+        as->Asm("tax");
+        as->Comment("Wor out from LSR if odd or even pattern");
+        as->Asm("bcs vbmDSTX_Odd");
+        as->Asm("lda #$f0 ; even, use left side of font");
+        as->Asm("bcc vbmDSTX_Even ; we know carry will be clear");
+    as->Label("vbmDSTX_Odd");
+        as->Asm("lda #$0f ; odd, use right side of font");
+    as->Label("vbmDSTX_Even");
+        as->Asm("sta vbmT ; store mask to use for later");
+        as->Asm("lda vbmScrL,x   ; Address of table lo");
+        as->Asm("ldy vbmScrH,x   ; Address of table hi");
+        as->Asm("clc");
+        as->Asm("adc vbmY		; Add Y offset");
+        as->Asm("bcc vbmDSTXO_NSP_NoOverflow");
+        as->Asm("iny");
+
+    as->Label("vbmDSTXO_NSP_NoOverflow");
+        as->Asm("sta screenmemory");
+        as->Asm("sty screenmemory+1");
+
+    as->Label("vbmDSTXO_GetCharNum");
+        as->Comment("convert text number (0-255) * 8 = memory offset");
+        as->Asm("ldy #0");
+        as->Asm("lda (" + as->m_internalZP[0] +"),y		; get char from current position in CSTRING");
+        as->Asm("bne vbmDSTXO_NotEnd");
+        as->Asm("rts ; if =0, we are end of the cstring");
+
+    as->Label("vbmDSTXO_NotEnd");
+
+        as->Asm("sta " + as->m_internalZP[2]);
+        as->Asm("sty " + as->m_internalZP[2] + "+1");
+
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x2");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x4");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x8");
+
+        as->Asm("lda " + as->m_internalZP[2] );
+        as->Asm("clc");
+        as->Asm("adc "+ as->m_internalZP[1] + "  ; add tile low address");
+        as->Asm("sta " + as->m_internalZP[2] );
+        as->Asm("lda " + as->m_internalZP[2] + "+1");
+        as->Asm("adc " + as->m_internalZP[1] + "+1 ; add tile high address");
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
+
+    as->Label("vbmDSTXO_DrawChar");
+        as->Comment("y reg is ZERO from ldy #0 in GetTileNum");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
+        as->Asm("and vbmT");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
+        as->Asm("and vbmT");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
+        as->Asm("and vbmT");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
+        as->Asm("and vbmT");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
+        as->Asm("and vbmT");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
+        as->Asm("and vbmT");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
+        as->Asm("and vbmT");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
+        as->Asm("and vbmT");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+
+    as->Label("vbmDSTXO_NextChar");
+        as->Asm("clc");
+        as->Asm("inc " + as->m_internalZP[0] + "  ; low byte");
+        as->Asm("bne vbmDSTXO_NTM_NoOverflow");
+        as->Asm("inc " + as->m_internalZP[0] + "+1  ; high byte");
+    as->Label("vbmDSTXO_NTM_NoOverflow");
+        as->Comment("next x pos on screen");
+        as->Asm("inc vbmX");
+        as->Asm("lda #40   ; 0-39 columns, 40 means exceeded right of screen");
+        as->Asm("cmp vbmX  ; has x pos exceeded?");
+        as->Asm("beq vbmDSTXO_NextLine  ;");
+        as->Asm("jmp vbmDSTXO_Xloop  ; no, draw next char");
+
+    as->Label("vbmDSTXO_NextLine");
+        as->Comment("yes, set x back to 0 and inc vbmY by line height (pixels)");
+        as->Asm("lda #0");
+        as->Asm("sta vbmX");
+
+        as->Asm("lda vbmY");
+        as->Asm("clc");
+        as->Asm("adc vbmI");
+        as->Asm("sta vbmY");
+
+        as->Asm("jmp vbmDSTXO_Xloop");
+
+}
+void Methods6502::vbmDrawSmallTextO(Assembler* as)
+{
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmDrawSmallTextO","InitVbmDrawSmallTextO");
+
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 3) {
+        ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
+
+    // address 1 - text
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    // address 2 - chars (font)
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+        ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr2= "";
+    if (m_node->m_params[1]->isPureNumeric())
+        addr2 = m_node->m_params[1]->HexValue();
+    if (var!=nullptr)
+        addr2 = var->getValue(as);
+
+    as->Comment("Draw 4x8 text to the bitmap with OR operation");
+
+    as->Comment("Text to use:");
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr1 );
+        as->Asm("sta " + as->m_internalZP[0] );
+        as->Asm("lda " + addr1 +"+1" );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr1 );
+        as->Asm("sta " + as->m_internalZP[0] );
+        as->Asm("lda #>" + addr1 );
+        as->Asm("sta " + as->m_internalZP[0] + "+1" );
+    }
+    as->Comment("Font characters to use:");
+    if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr2 );
+        as->Asm("sta " + as->m_internalZP[1] );
+        as->Asm("lda " + addr2 +"+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr2 );
+        as->Asm("sta " + as->m_internalZP[1] );
+        as->Asm("lda #>" + addr2 );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
+    }
+
+    //  X
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[2]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 2);
+    }
+    as->Asm("sta vbmX ; x position");
+
+    //  Y
+    if (m_node->m_params[3]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[3]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("y is complex");
+        LoadVar(as, 3);
+    }
+    as->Asm("sta vbmY ; y position in pixels");
+
+    // Line height
+    if (m_node->m_params[4]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[4]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("Line height is complex");
+        LoadVar(as, 4);
+    }
+    as->Asm("sta vbmI ; line height in pixels");
+
+    as->Asm("jsr vbmDrawSmallTextO");
+
+}
+
 
 void Methods6502::initVbmDrawBCD(Assembler* as)
 {

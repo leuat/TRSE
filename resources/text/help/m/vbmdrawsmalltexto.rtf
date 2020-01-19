@@ -1,0 +1,50 @@
+<h3>vbmDrawSmallTextO( [address-text], [address-chars], [byte-x], [byte-y], [byte-lineheight]);</h3>
+<ul>
+    <li>[address-text] - address of a CSTRING, the message to display</li>
+    <li>[address-chars] - address of the characterset to use for the font</li>
+    <li>[byte-x] - X column (0-39) to display the message</li>
+    <li>[byte-y] - Y line (0-183) to display the message</li>
+    <li>[byte-lineheight] - Line spacing when text wraps</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+Draws a text message to the bitmap using the given small font. Text will wrap around when the end of
+a line is reached and move down by the number of pixels specified by the line height parameter.
+The character font will merge with the bitmap.
+</p>
+<p>Small text is like its larger sibbling except two text letters are squeezed into one character cell
+    on the screen.  This allows twice as many small text characters on a line than regular text, but at
+    the expense of the resolution of the text characters.
+</p>
+<p>You must draw your small text character set in a specific way.  The characters can be up to 8 pixels in
+    height, as for normal text, but the width must not exceed four pixels.  Furthermore, you must draw the same
+    small 4x8 letter twice in the character.  Eg: for the letter A, you would draw this twice in character 1
+    so that it looks like 'AA'.  The small text routine simply masks out the left or right side depending
+    upon where that character would appear on the screen. For variety, you could draw the characters slightly
+    differently on the left and right side.
+</p>
+<p>There are three ways to draw small text:</p>
+<ul>
+    <li>vbmDrawSmallTextO - draws the text message and merges it over the current pixels on the bitmap</li>
+    <li>vbmDrawSmallTextE - draws the text message and merges it using the EOR operation with the bitmap</li>
+    <li>vbmClearSmallText - clears, or 'cuts out' the text message from the pixels on the bitmap</li>
+</ul>
+
+<h3>Example</h3>
+<code>
+    font: incbin("font4x8.bin", $4000); // first 64 PETSCII Screen Codes
+
+    ...
+
+    message: cstring = "HELLO WORLD - IN CAPS";
+
+    ...
+
+    // draw text at column 2, line 10 (pixels) with a line height of 6
+    vbmDrawSmallTextO( message, font, 2, 10, 6 );
+</code>
+
+<h3>See also</h3>
+<ul><li>vbmDrawText</li></ul>

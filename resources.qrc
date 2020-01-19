@@ -395,5 +395,6 @@
         <file>resources/images/charset_icons/btn-c-cleart.png</file>
         <file>resources/images/charset_icons/btn-b-mirror-vert.png</file>
         <file>resources/images/charset_icons/btn-a-mirror-horiz.png</file>
+        <file>resources/text/help/m/vbmdrawsmalltexto.rtf</file>
     </qresource>
 </RCC>
