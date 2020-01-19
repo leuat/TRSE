@@ -245,6 +245,13 @@ public:
     void Fix() override; // Fix data doccuption
 
     void setMultiColor(bool doSet) override;
+    virtual int getGridWidth() override {
+        return m_meta.m_width;
+    }
+    virtual int getGridHeight()  override{
+        return m_meta.m_height;
+    }
+
 
 };
 
