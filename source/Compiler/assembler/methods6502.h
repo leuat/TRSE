@@ -288,6 +288,8 @@ public:
 
     void initVbmDrawSmallTextO(Assembler *as);
     void vbmDrawSmallTextO(Assembler *as);
+    void initVbmDrawSmallTextE(Assembler *as);
+    void vbmDrawSmallTextE(Assembler *as);
 
     void initVbmDrawBCD(Assembler *as);
     void vbmDrawBCD(Assembler *as);
