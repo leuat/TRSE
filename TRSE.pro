@@ -559,6 +559,7 @@ DISTFILES += \
     resources/text/help/m/peek.rtf \
     resources/text/help/m/playsound.rtf \
     resources/text/help/m/poke.rtf \
+    resources/text/help/m/ppupoint.rtf \
     resources/text/help/m/preventirq.rtf \
     resources/text/help/m/printdecimal.rtf \
     resources/text/help/m/printnumber.rtf \

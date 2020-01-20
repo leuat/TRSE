@@ -36,6 +36,13 @@ override_target_settings_prg = 0
 build_list = ,
 pascal_settings_use_local_variables = 0
 charset_resources/movie/tutorial_5_movie.flf = :resources/character.rom
+<<<<<<< HEAD
 open_files = ,vbm/05-pixeltests.ras, vbm/06-textscroll.ras, easy/01_hello_world.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/tutorials/
 current_file = vbm/06-textscroll.ras
+=======
+open_files = ,vbm/07-smalltext.ras, vbm/05-pixeltests.ras, vbm/06-textscroll.ras, easy/01_hello_world.ras
+project_path = C:/OneDrive/Documents/GitHub/TRSE/Publish/tutorials/VIC20/tutorials/
+current_file = resources/charsets/font4x8.flf
+data_header_resources/charsets/font4x8.flf = 2.04176e-312
+>>>>>>> 817aec2e457bdbb094546062c736f49787e7bf81

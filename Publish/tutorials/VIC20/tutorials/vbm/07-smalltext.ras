@@ -1,0 +1,122 @@
+program SmallText;
+var
+
+@export "resources/charsets/font4x8.flf" "resources/charsets/font4x8.bin" 0 64 // start end height
+font: incbin("resources/charsets/font4x8.bin", $4000); // first 64 PETSCII Screen Codes
+lfchar: incbin("resources/images/lf-char.bin", $4200); // Llama face chars
+lfmap : incbin("resources/images/lf-map.bin", $46d0);  // Llama face tilemap
+
+@startblock $2000 "CODE"
+// declare all your variables and procedures here
+	message: CSTRING = (
+		"-IN THE YEAR 2020, THE LLAMANIAN SYSTEM*",
+		"---DEVELOPED A METHOD OF TRAINING ITS*",
+		"-----WARRIORS TO PROTECT THEIR STAR*",
+		"----COLONIES. OVER THE CITY OF KOMAR,*",
+		"----ANDROID CONTROLLED FIGHTERS RACED*",
+		"-------TO ENGAGE AND DESTROY THESE*",
+		"-----------LLAMANIAN WARRIORS.***",
+		"THE LLAMANIAN METHOD IS SO SUCCESSFUL IT",
+		"---COMMANDS FEAR AND RESPECT FROM ALL*",
+		"-----THROUGHOUT THE GALAXIES. THE*",
+		"--------METHOD IS CODE NAMED ..."
+	);
+
+	i, vbl : byte;
+	
+	p1 : pointer;
+	
+	char : byte = 1;
+	charNull: byte = 0;
+	
+	x, y: byte;
+
+begin
+
+	// set the default display mode showing all 20 columns
+	vbmSetDisplayMode( 0 );
+	
+	// Clear the bitmap with a value of 0
+	vbmClear( 0 );
+	
+	// set the colour memory to GREEN
+	vbmClearColor( WHITE );
+	
+	// set the screen colour to black
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK;
+	
+
+	p1 := message; // point to address of message
+
+	i := 0;
+	x := 0;
+	y := 40;
+	char := 1;
+
+	while (char <> 0) offpage do
+	begin
+			
+		while (i = 0) do
+		begin
+		
+			i := 1;
+			
+			char := p1[0];
+			p1 := p1 + 1;
+			
+			if (char = 42) then
+			begin
+			
+				x := 0;
+				y := y + 8;
+				i := 0;
+
+			end;
+			if (char = 45) then
+			begin
+			
+				x := x + 1;
+				i := 0;
+
+			end;
+		end;
+		i := 0;
+
+		vbmDrawSmallTextO( char, font, x, y, 8 );
+		x := x + 1;
+		
+		if (x > 39) then
+		begin
+			x := 0;
+			y := y + 8;
+		end;
+
+		vbl := 0;
+		while (vbl < 6) do
+		begin
+		
+			wait(100);
+			waitforraster(0);
+			vbl := vbl + 1;
+			
+		end;
+
+	end;
+	
+	vbl := 0;
+	while (vbl < 140) do
+	begin
+		
+		wait(100);
+		waitforraster(0);
+		vbl := vbl + 1;
+			
+	end;
+
+	fill(^$943c, RED, 20);
+	fill(^$9450, YELLOW, 24);
+	vbmDrawTileMap( lfmap, lfchar, 0,0, 20,184 );
+
+	loop();
+
+end.
