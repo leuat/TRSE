@@ -40,3 +40,6 @@ d64_paw_file_disk2 = none
 override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/NES/intro_tutorial/
+open_files = ,tutorial_2_hello_sprites.ras, tutorial_1_hello_nes.ras
+current_file = tutorial_1_hello_nes.ras

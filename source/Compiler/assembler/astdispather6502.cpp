@@ -1462,7 +1462,9 @@ void ASTDispather6502::dispatch(NodeBinaryClause *node)
     else
         if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type == TokenType::GREATER ||
                 node->m_op.m_type==TokenType::EQUALS || node->m_op.m_type == TokenType::NOTEQUALS
-                || node->m_op.m_type==TokenType::LESSEQUAL || node->m_op.m_type == TokenType::GREATEREQUAL ) {
+                || node->m_op.m_type==TokenType::LESSEQUAL || node->m_op.m_type == TokenType::GREATEREQUAL )
+        {
+
             if (node->m_left->getType(as)==TokenType::INTEGER || (node->m_left->getType(as)==TokenType::POINTER && !node->m_left->isArrayIndex())) {
                 BinaryClauseInteger(node);
             }
@@ -1470,7 +1472,7 @@ void ASTDispather6502::dispatch(NodeBinaryClause *node)
                 BinaryClause(node);
         }
         else
-            ErrorHandler::e.Error("Binary clause: Unknown compare token : " + node->m_op.getType());
+            ErrorHandler::e.Error("Unknown compare type : '" + node->m_op.m_value+"'. Did you mean '=' or '>' etc?",node->m_op.m_lineNumber);
 
 }
 

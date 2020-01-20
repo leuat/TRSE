@@ -873,6 +873,16 @@ Node *Parser::BinaryClause()
     else
     {
         comparetoken = m_currentToken;
+
+        if (!(comparetoken.m_type==TokenType::EQUALS || comparetoken.m_type==TokenType::NOTEQUALS ||
+            comparetoken.m_type==TokenType::GREATER || comparetoken.m_type==TokenType::LESS ||
+            comparetoken.m_type==TokenType::GREATEREQUAL || comparetoken.m_type==TokenType::LESSEQUAL))
+        {
+            ErrorHandler::e.Error("Unknown compare type : '" + comparetoken.m_value+"'. Did you mean '=' or '>' etc?",comparetoken.m_lineNumber);
+        }
+
+
+
          Eat();
         b = Expr();
 

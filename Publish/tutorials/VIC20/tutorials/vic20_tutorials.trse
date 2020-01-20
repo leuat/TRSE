@@ -38,4 +38,4 @@ pascal_settings_use_local_variables = 0
 charset_resources/movie/tutorial_5_movie.flf = :resources/character.rom
 open_files = ,vbm/05-pixeltests.ras, vbm/06-textscroll.ras, easy/01_hello_world.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/tutorials/
-current_file = vbm/05-pixeltests.ras
+current_file = vbm/06-textscroll.ras

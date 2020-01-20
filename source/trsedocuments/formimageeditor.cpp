@@ -1636,7 +1636,6 @@ void FormImageEditor::on_lstCharMap_currentItemChanged(QTableWidgetItem *current
         return;
     m_prefMode = m_keepMode;
     SelectCharacter(current->data(Qt::UserRole).toInt());
-    qDebug() << "on_lstCharmap: " <<QString::number(m_work.m_currentImage->m_image->m_currentChar) << current->data(Qt::UserRole).toInt();
     SetSingleCharsetEdit();
     Data::data.Redraw();
     Data::data.forceRedraw = true;
