@@ -96,7 +96,7 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     }
 
-    if (Command("waitforvb"))
+    if (Command("waitforverticalblank"))
         WaitForVerticalBlank(as);
 
 
@@ -9769,12 +9769,8 @@ void Methods6502::CallOKVC(Assembler *as, int noParams, uchar val)
 void Methods6502::WaitForVerticalBlank(Assembler* as)
 {
     QString l1 = as->NewLabel("verticalblank1");
-    QString l2 = as->NewLabel("verticalblank1");
+    QString l2 = as->NewLabel("verticalblank2");
 
-/*    int* val;
-    for (int i=0;i<1000;i++)
-        val[i]=i;
-*/
     as->Label(l1);
     as->Asm("bit $D011");
     as->Asm("bpl "+l1);

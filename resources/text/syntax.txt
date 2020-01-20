@@ -377,7 +377,7 @@ m; ReturnInterrupt; C64, PLUS4, C128, OK64;
 
 m; WaitForRaster; C64, PLUS4, C128, VIC20, OK64; b
 m; WaitNoRaster; C64, PLUS4, C128, VIC20, OK64; b
-m; WaitForVB; C64, C128 ; b
+m; WaitForVerticalBlank; C64, C128 ;
 
 
 m; DisableVIC20IRQ; VIC20;
