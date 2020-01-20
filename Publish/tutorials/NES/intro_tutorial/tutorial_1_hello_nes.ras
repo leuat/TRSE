@@ -48,6 +48,7 @@ end;
 */
 
 // use $0400 as temp storage area
+
 @define storage $0400
 
 procedure InitScreen();

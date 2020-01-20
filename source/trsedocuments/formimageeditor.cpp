@@ -1631,7 +1631,6 @@ void FormImageEditor::on_btnLoadCharmap_clicked()
 
 void FormImageEditor::on_lstCharMap_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous)
 {
-
     if (current==nullptr)
         return;
     m_prefMode = m_keepMode;

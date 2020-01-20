@@ -194,12 +194,11 @@ void DialogHelp::LoadItem(QString findword)
                 val.remove(val.length()-2,2);
                 val+=" );</h2>";
 
+
                 QString fn =":resources/text/help/"+type+"/"+word.toLower()+".rtf";
+                qDebug() << QFile::exists(fn) << fn;
                 if (QFile::exists(fn)) {
-                    QFile f(fn);
-                    f.open(QFile::ReadOnly | QFile::Text);
-                    QString s = f.readAll();
-                    f.close();
+                    QString s = Util::loadTextFile(fn);
 
                     s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
                     s=s.replace("</code>","</code></pre>");

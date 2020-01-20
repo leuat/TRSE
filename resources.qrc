@@ -398,5 +398,8 @@
         <file>resources/text/help/m/vbmdrawsmalltexto.rtf</file>
         <file>resources/text/help/m/vbmclearsmalltext.rtf</file>
         <file>resources/text/help/m/vbmdrawsmalltexte.rtf</file>
+        <file>resources/text/help/m/ppuwrite.rtf</file>
+        <file>resources/text/help/m/ppusingle.rtf</file>
+        <file>resources/text/help/m/ppupoint.rtf</file>
     </qresource>
 </RCC>
