@@ -33,7 +33,7 @@ public:
     void Random(Assembler* as);
 
     void CallOKVC(Assembler* as, int noParams, uchar val);
-
+    void WaitForVerticalBlank(Assembler* as);
     void MoveTo(Assembler* as);
     void MoveTo80(Assembler* as);
     void SetFrequency(Assembler *as);

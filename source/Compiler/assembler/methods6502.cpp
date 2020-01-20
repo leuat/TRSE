@@ -95,6 +95,11 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
             as->Asm("sta $01");
 
     }
+
+    if (Command("waitforvb"))
+        WaitForVerticalBlank(as);
+
+
     if (Command("strtolower"))
         StrToLower(as,true);
     if (Command("strtoupper"))
@@ -9759,6 +9764,27 @@ void Methods6502::CallOKVC(Assembler *as, int noParams, uchar val)
     as->Asm("lda #"+QString::number(val));
     as->Asm("sta $FF10"); // Start
 
+}
+
+void Methods6502::WaitForVerticalBlank(Assembler* as)
+{
+    QString l1 = as->NewLabel("verticalblank1");
+    QString l2 = as->NewLabel("verticalblank1");
+
+/*    int* val;
+    for (int i=0;i<1000;i++)
+        val[i]=i;
+*/
+    as->Label(l1);
+    as->Asm("bit $D011");
+    as->Asm("bpl "+l1);
+    as->Label(l2);
+    as->Asm("bit $D011");
+    as->Asm("bmi "+l2);
+
+
+    as->PopLabel("verticalblank1");
+    as->PopLabel("verticalblank2");
 }
 
 void Methods6502::InitRandom256(Assembler *as)
