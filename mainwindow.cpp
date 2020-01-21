@@ -1412,14 +1412,12 @@ void MainWindow::on_actionSave_triggered()
 
 void MainWindow::on_actionOpen_project_location_triggered()
 {
-#ifdef _WIN32
-    QString path = "C:/exampleDir/example.txt";
+    if (m_currentPath=="")
+        return;
+    QDesktopServices::openUrl( QUrl::fromLocalFile(m_currentPath) );
+}
 
-       QStringList args;
-
-       args << "/select," << QDir::toNativeSeparators(path);
-
-       QProcess *process = new QProcess(this);
-       process->start("explorer.exe", args);
-#endif
+void MainWindow::on_btnProjectDir_clicked()
+{
+    on_actionOpen_project_location_triggered();
 }

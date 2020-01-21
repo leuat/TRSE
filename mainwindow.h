@@ -57,6 +57,7 @@
 #include "source/dialogexport3d.h"
 #include "source/dialogprojectbuilder.h"
 #include "source/tutorials.h"
+#include <QDesktopServices>
 namespace Ui {
 class MainWindow;
 
@@ -343,6 +344,8 @@ private slots:
     void on_actionSave_triggered();
 
     void on_actionOpen_project_location_triggered();
+
+    void on_btnProjectDir_clicked();
 
 private:
 
