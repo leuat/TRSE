@@ -571,7 +571,7 @@
                </property>
                <property name="icon">
                 <iconset resource="../../resources.qrc">
-                 <normaloff>:/resources/images/charset_icons/btn-7-ShiftUp.png</normaloff>:/resources/images/charset_icons/btn-7-ShiftUp.png</iconset>
+                 <normaloff>:/resources/images/charset_icons/btn-8-ShiftDown.png</normaloff>:/resources/images/charset_icons/btn-8-ShiftDown.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -588,7 +588,7 @@
                </property>
                <property name="icon">
                 <iconset resource="../../resources.qrc">
-                 <normaloff>:/resources/images/charset_icons/btn-8-ShiftDown.png</normaloff>:/resources/images/charset_icons/btn-8-ShiftDown.png</iconset>
+                 <normaloff>:/resources/images/charset_icons/btn-7-ShiftUp.png</normaloff>:/resources/images/charset_icons/btn-7-ShiftUp.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
