@@ -108,12 +108,20 @@ bool AbstractImageEditor::AIE_mouseMoveEvent(QMouseEvent *e, QWidget* p)
     QPointF pos = QCursor::pos() -p->mapToGlobal(QPoint(0,0));
     pos.setX(pos.x()*(float)m_work->m_currentImage->m_image->m_width/p->width());
     pos.setY(pos.y()*(float)m_work->m_currentImage->m_image->m_height/p->height());
+    QPointF f = m_updateThread->m_prevPos;
 
-    m_updateThread->m_prevPos = m_updateThread->m_currentPos;
-    m_updateThread->m_currentPos = QPointF(pos.x(), pos.y());
-
-    if ((m_updateThread->m_prevPos-m_updateThread->m_currentPos).manhattanLength()>0.0)
+//    if ((m_updateThread->m_prevPos-m_updateThread->m_currentPos).manhattanLength()!=0) {
+        m_updateThread->m_prevPos = m_updateThread->m_currentPos;
+        m_updateThread->m_currentPos = pos;//QPointF(pos.x(), pos.y());
+  //  }
+       m_updateThread->m_delta = pos-f;
+//    if ((m_updateThread->m_prevPos-m_updateThread->m_currentPos).manhattanLength()>0.0)
+        if ((pos-f).manhattanLength()>0.0)
         return true;
+
+
+
+//    qDebug() << pos - f;
 
     return false;
     //    emit EmitMouseMove();

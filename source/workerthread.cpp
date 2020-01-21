@@ -150,24 +150,6 @@ void WorkerThread::UpdateDrawing()
 
 void WorkerThread::UpdateMousePosition()
 {
-  /*  if (m_work==nullptr)
-        return;
-    if (m_imgLabel==nullptr)
-        return;
-    if (m_work==nullptr)
-        return;
-    if (m_quit)
-        return;
-    if (m_work->m_currentImage==nullptr)
-        return;
-
-    QPointF pos = QCursor::pos() -m_imgLabel->mapToGlobal(QPoint(0,0));
-    pos.setX(pos.x()/(float)m_imgLabel->width()*m_work->m_currentImage->m_image->m_width);
-    pos.setY(pos.y()/(float)m_imgLabel->height()*m_work->m_currentImage->m_image->m_height);
-    m_prevPos = m_currentPos;
-    m_currentPos = QPoint(pos.x(), pos.y());
-*/
-//    m_prevPos = m_currentPos;
 
 }
 
@@ -182,8 +164,8 @@ void WorkerThread::UpdatePanning()
    /*         QPointF delta = (QPoint(m_work->m_currentImage->m_image->m_width,
                                     m_work->m_currentImage->m_image->m_height)/2
                                      - (m_currentPos-m_prevPos));*/
-            QPointF delta = (m_currentPos-m_prevPos);
-            m_zoomCenter-=(QPointF)delta*m_zoom;
+          //  QPointF delta = (m_currentPos-m_prevPos);
+            m_zoomCenter-=(QPointF)m_delta*m_zoom;
             //        qDebug() << delta;
             m_isPanning = true;
             Data::data.Redraw();
