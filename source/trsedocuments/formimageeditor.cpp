@@ -58,11 +58,12 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
     ui->lblImage->m_work = &m_work;
     ui->lblImage->setMouseTracking(true);
     ui->lblImage->m_updateThread = &m_updateThread;
-//    void EmitMouseMove();
 
-    connect(ui->lblImage, SIGNAL(EmitMouseMove()), this, SLOT(onImageMouseEvent()));
-    connect(ui->lblImage, SIGNAL(EmitMouseRelease()), this, SLOT(onImageMouseReleaseEvent()));
-    connect(ui->lblImage, SIGNAL(EmitSwapDisplayMode()), this, SLOT(onSwapDisplayMode()));
+    ui->lblImageQt->m_work = &m_work;
+    ui->lblImageQt->setMouseTracking(true);
+    ui->lblImageQt->m_updateThread = &m_updateThread;
+
+//    void EmitMouseMove();
 
 
     m_updateThread.SetCurrentImage(&m_work, &m_toolBox);
@@ -95,10 +96,23 @@ void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *ini
     UpdateGrid();
     ui->chkBackgroundArea->setVisible(false);
 
-//    if (m_painterType==QtPaint)
-  //      delete ui->lblImage;
-//        InitQtPainter();
-    delete ui->lblImageQt;
+    if (m_painterType==QtPaint) {
+        delete ui->lblImage;
+
+        connect(ui->lblImageQt, SIGNAL(EmitMouseMove()), this, SLOT(onImageMouseEvent()));
+        connect(ui->lblImageQt, SIGNAL(EmitMouseRelease()), this, SLOT(onImageMouseReleaseEvent()));
+        connect(ui->lblImageQt, SIGNAL(EmitSwapDisplayMode()), this, SLOT(onSwapDisplayMode()));
+    }
+    else {
+        delete ui->lblImageQt;
+
+        connect(ui->lblImage, SIGNAL(EmitMouseMove()), this, SLOT(onImageMouseEvent()));
+        connect(ui->lblImage, SIGNAL(EmitMouseRelease()), this, SLOT(onImageMouseReleaseEvent()));
+        connect(ui->lblImage, SIGNAL(EmitSwapDisplayMode()), this, SLOT(onSwapDisplayMode()));
+
+
+    }
+
 
 }
 
@@ -341,14 +355,38 @@ void FormImageEditor::UpdateImage()
 
     QElapsedTimer et;
     et.start();
-    ui->lblImage->setVisible(true);
-    QImage txt = m_updateThread.m_pixMapImage.toImage();
-    ui->lblImage->setTexture(txt,*m_updateThread.m_grid->m_qImage);
 
-    m_documentIsChanged = ui->lblImage->m_imageChanged;
+    if (m_painterType==OpenGL) {
+        QImage txt = m_updateThread.m_pixMapImage.toImage();
 
-    if (!ui->tblData->hasFocus())
-        ui->lblImage->setFocus();
+        ui->lblImage->setVisible(true);
+        ui->lblImage->setTexture(txt,*m_updateThread.m_grid->m_qImage);
+
+        m_documentIsChanged = ui->lblImage->m_imageChanged;
+
+        if (!ui->tblData->hasFocus())
+            ui->lblImage->setFocus();
+
+    } else
+    {
+
+        ui->lblImageQt->setVisible(true);
+        //ui->lblImage->setTexture(txt,*m_updateThread.m_grid->m_qImage);
+//        ui->lblImageQt->setPixmap(QPixmap::fromImage(txt));
+        m_documentIsChanged = ui->lblImageQt->m_imageChanged;
+
+
+        ui->lblImageQt->setScaledContents(true);
+        ui->lblImageQt->setPixmap(m_updateThread.m_pixMapImage.scaled(ui->lblImageQt->size().width()-16, ui->lblImageQt->size().height()-16, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+//        ui->lblImage->setMaximumHeight(ui->lblImage->size().width()/(320/200.0));
+
+
+
+        if (!ui->tblData->hasFocus())
+            ui->lblImageQt->setFocus();
+
+    }
+
 
 
     QString currentChar = m_work.m_currentImage->m_image->GetCurrentDataString();
@@ -766,8 +804,9 @@ bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
 
 void FormImageEditor::resizeEvent(QResizeEvent *event)
 {
-    ui->lblImage->setVisible(true);
-    m_oldWidth = ui->lblImage->width();
+    QWidget* w = getCurrentPainter();
+    w->setVisible(true);
+    m_oldWidth = w->width();
     UpdateAspect();
     //ui->lblGrid->setGeometry(ui->lblImage->geometry());
     //ui->lblGrid->repaint();
@@ -946,7 +985,7 @@ void FormImageEditor::on_btnCharsetFull_clicked()
     UpdateButtonIcons();
     m_work.m_currentImage->m_image->m_footer.toggle(LImageFooter::POS_DISPLAY_CHAR);
 
-    ui->lblImage->setFocus();
+    getCurrentPainter()->setFocus();
     ui->lstCharMap->setCurrentItem(nullptr);
 
 /*    CharsetImage* ci = dynamic_cast<CharsetImage*>(m_work.m_currentImage->m_image);
@@ -1147,7 +1186,7 @@ void FormImageEditor::updateSingleCharSet()
 void FormImageEditor::InitQtPainter()
 {
 //    ui->lblImage->setVisible(false);
-    delete ui->lblImageQt;
+//    delete ui->lblImageQt;
 }
 
 
@@ -1520,29 +1559,30 @@ void FormImageEditor::UpdateSpriteImages()
 
 void FormImageEditor::UpdateAspect()
 {
+    QWidget* w = getCurrentPainter();
     int val = ui->cmbAspect->currentIndex();
     if (val==0) {
-        ui->lblImage->setMinimumHeight(0);
-        ui->lblImage->setMaximumHeight(100000);
-        ui->lblImage->setMinimumWidth(0);
-        ui->lblImage->setMaximumWidth(100000);
+        w->setMinimumHeight(0);
+        w->setMaximumHeight(100000);
+        w->setMinimumWidth(0);
+        w->setMaximumWidth(100000);
         ui->vImageSpacer->changeSize(0,0);
 //        m_oldWidth = width();
     }
     if (val==1) {
 //        qDebug() << m_oldWidth;
         int size = min((double)m_oldWidth,height()/1.25);
-        ui->lblImage->setMinimumHeight(size);
-        ui->lblImage->setMaximumHeight(size);
-        ui->lblImage->setMinimumWidth(size);
-        ui->lblImage->setMaximumWidth(size);
+        w->setMinimumHeight(size);
+        w->setMaximumHeight(size);
+        w->setMinimumWidth(size);
+        w->setMaximumWidth(size);
         ui->vImageSpacer->changeSize(0,200,QSizePolicy::Expanding,QSizePolicy::Expanding);
     }
     if (val==2) {
-        ui->lblImage->setMinimumWidth(0);
-        ui->lblImage->setMaximumWidth(100000);
-        ui->lblImage->setMinimumHeight(m_oldWidth/1.6);
-        ui->lblImage->setMaximumHeight(m_oldWidth/1.6);
+        w->setMinimumWidth(0);
+        w->setMaximumWidth(100000);
+        w->setMinimumHeight(m_oldWidth/1.6);
+        w->setMaximumHeight(m_oldWidth/1.6);
         ui->vImageSpacer->changeSize(0,200,QSizePolicy::Expanding,QSizePolicy::Expanding);
     }
     this->resize(this->geometry().width(), this->geometry().height());
@@ -1557,6 +1597,13 @@ void FormImageEditor::Update()
 //    updateCharSet();
     onImageMouseEvent();
 
+}
+
+QWidget *FormImageEditor::getCurrentPainter()
+{
+    if (m_painterType==OpenGL)
+        return ui->lblImage;
+    return ui->lblImageQt;
 }
 
 

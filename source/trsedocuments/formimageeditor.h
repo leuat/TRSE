@@ -169,6 +169,7 @@ public:
 */
 private:
     Ui::Formimageeditor *ui;
+    QWidget* getCurrentPainter();
 
 private slots:
     void InitAspect();
@@ -181,6 +182,8 @@ private slots:
     void on_btnGenerate_clicked();
 
     void showDetailCharButtons();
+
+
 
     void on_btnFlipVert_clicked();
     void on_btnFlipHorisontal_clicked();
