@@ -21,24 +21,14 @@
 
 #pragma once
 #include <QLabel>
-#include "source/workerthread.h"
+#include "abstractimageeditor.h"
 
-class QLabelLImage : public QLabel
+class QLabelLImage : public QLabel, public AbstractImageEditor
 {
     Q_OBJECT
 public:
     QLabelLImage();
-    QLabelLImage(QWidget* parent) : QLabel(parent) {
-        setMouseTracking(true);
-        installEventFilter(this);
-    }
-    bool m_imageChanged = false;
-    int m_time=0;
-    WorkerThread* m_updateThread = nullptr;
-    ImageWorker* m_work = nullptr;
-    bool m_active=false;
-    bool m_cancel = false;
-
+    QLabelLImage(QWidget* parent);
     void mouseMoveEvent(QMouseEvent *e) override;
     void wheelEvent(QWheelEvent* e) override;
 //    void mouseLeaveEvent(QMouseEvent* e) override;
@@ -50,5 +40,7 @@ public:
 
 signals:
     void EmitMouseMove();
+    void EmitMouseRelease();
+    void EmitSwapDisplayMode();
 };
 

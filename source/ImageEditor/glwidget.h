@@ -5,9 +5,10 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
 #include <QOpenGLFunctions>
-#include "source/qlabellimage.h"
+//#include "qlabellimage.h"
+#include "abstractimageeditor.h"
 
-class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
+class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions, public AbstractImageEditor
 {
 
     Q_OBJECT
@@ -18,15 +19,6 @@ public:
 
 
 
-    bool m_imageChanged = false;
-    int m_time=0;
-    WorkerThread* m_updateThread = nullptr;
-    ImageWorker* m_work = nullptr;
-    bool m_active=false;
-    bool m_cancel = false;
-    bool m_buttonDown = false;
-    int m_prevButton = 0;
-    int m_keepButton = 1;
 
     GLWidget();
     GLWidget(QWidget* );
@@ -40,7 +32,6 @@ public:
     void mouseMoveEvent(QMouseEvent *e) override;
 
     void wheelEvent(QWheelEvent *e) override;
-    void CancelAll() {m_cancel=true; m_active=false;}
 
     bool eventFilter(QObject *object, QEvent *event) override;
 

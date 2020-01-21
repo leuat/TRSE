@@ -38,11 +38,11 @@
 #include "source/LeLib/util/util.h"
 #include "source/LeLib/limage/limageeffects.h"
 #include "source/dialogimagehelp.h"
-#include "source/qlabellimage.h"
+#include "source/ImageEditor/qlabellimage.h"
 #include "source/LeLib/limage/limagefactory.h"
 #include "source/LeLib/limage/limagecontainer.h"
 #include "source/dialogcolors.h"
-#include "source/LeLib/glwidget.h"
+#include "source/ImageEditor/glwidget.h"
 #include <QLineEdit>
 #include <QItemDelegate>
 namespace Ui {

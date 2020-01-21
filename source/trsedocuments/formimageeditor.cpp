@@ -98,7 +98,9 @@ void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *ini
 
     if (m_painterType==QtPaint) {
         delete ui->lblImage;
-
+        qDebug() << "A";
+        qDebug() << ui->lblImageQt;
+        qDebug() << "B";
         connect(ui->lblImageQt, SIGNAL(EmitMouseMove()), this, SLOT(onImageMouseEvent()));
         connect(ui->lblImageQt, SIGNAL(EmitMouseRelease()), this, SLOT(onImageMouseReleaseEvent()));
         connect(ui->lblImageQt, SIGNAL(EmitSwapDisplayMode()), this, SLOT(onSwapDisplayMode()));

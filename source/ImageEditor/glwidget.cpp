@@ -5,14 +5,15 @@
 GLWidget::GLWidget()
 {
     setMouseTracking(true);
-    installEventFilter(this);
+    QOpenGLWidget::installEventFilter((QOpenGLWidget*)this);
+
 
 }
 
 GLWidget::GLWidget(QWidget *)
 {
     setMouseTracking(true);
-    installEventFilter(this);
+    QOpenGLWidget::installEventFilter((QOpenGLWidget*)this);
 
 }
 
@@ -116,30 +117,15 @@ void GLWidget::resizeGL(int width, int height)
 
 void GLWidget::mouseMoveEvent(QMouseEvent *e)
 {
-    if (m_cancel)
-        return;
-    if (m_work==nullptr)
-        return;
-    if (m_work->m_currentImage==nullptr)
-        return;
-    if (m_work->m_currentImage->m_image==nullptr)
-        return;
-    if (m_updateThread==nullptr)
-        return;
+    AIE_mouseMoveEvent(e,this);
 
 
-    m_active=true;
+//    if ((m_updateThread->m_prevPos-m_updateThread->m_currentPos).manhattanLength()>0.0)
 
-    QPointF pos = QCursor::pos() -mapToGlobal(QPoint(0,0));
-    pos.setX(pos.x()*(float)m_work->m_currentImage->m_image->m_width/width());
-    pos.setY(pos.y()*(float)m_work->m_currentImage->m_image->m_height/height());
+//           emit EmitMouseMove();
 
-    m_updateThread->m_prevPos = m_updateThread->m_currentPos;
-    m_updateThread->m_currentPos = QPointF(pos.x(), pos.y());
 
-    if ((m_updateThread->m_prevPos-m_updateThread->m_currentPos).manhattanLength()>0.0)
-
-        emit EmitMouseMove();
+    emit EmitMouseMove();
 
 }
 
@@ -148,87 +134,30 @@ void GLWidget::wheelEvent(QWheelEvent *e)
     emit EmitMouseMove();
 }
 
-bool GLWidget::eventFilter(QObject *object, QEvent *event) {
+bool GLWidget::eventFilter(QObject *object, QEvent *event)
+{
+
     if (m_cancel)
         return true;
     if(object==this) {
-  //      qDebug() << event;
-        mouseMoveEvent((QMouseEvent*)event);
-        if (event->type()==QEvent::Enter) {
-            Data::data.imageEvent = 1;
-        }
-        if (event->type()==QEvent::Leave) Data::data.imageEvent = 0;
-        if (m_buttonDown)
-            m_updateThread->m_currentButton=m_keepButton;
-
+        AIE_eventFilter(object,event,this);
         return false;
     }
     return true;
+
 }
 
 void GLWidget::mouseReleaseEvent(QMouseEvent *e)
 {
-    if (m_cancel)
-        return;
-    if (m_updateThread==nullptr)
-        return;
-    m_prevButton = m_updateThread->m_currentButton;
-    if (m_updateThread->m_currentButton==1) {
-        m_updateThread->m_currentButton = -1;
-    }
-    else
-        m_updateThread->m_currentButton = 0;
-
-    m_buttonDown = false;
-
-//    emit EmitMouseMove();
+    AIE_mouseReleaseEvent(e);
     emit EmitMouseRelease();
-
 }
 
-/*void GLWidget::keyPressEvent(QKeyEvent *e)
-{
-    if (e->key() == Qt::Key_Space)  {
-        emit EmitSwapDisplayMode();
-    }
-}
-*/
 void GLWidget::mousePressEvent(QMouseEvent *e)
 {
-    if (m_cancel)
-        return;
-    if (m_updateThread==nullptr)
-        return;
-    m_updateThread->m_work->m_currentImage->AddUndo();
-
-
-
-    if(e->buttons() == Qt::RightButton) {
-        m_imageChanged = true;
-        m_updateThread->m_currentButton = 2;
-        m_keepButton = 2;
-        if (e->modifiers() & Qt::ShiftModifier) {
-            m_updateThread->m_prevPos = m_updateThread->m_currentPos;
-            m_updateThread->m_currentButton = 4;
-            m_keepButton = 4;
-
-        }
-        m_buttonDown = true;
-    }
-
-    if(e->buttons() == Qt::LeftButton) {
-        m_updateThread->m_currentButton = 1;
-        m_keepButton = 1;
-        m_buttonDown = true;
-        m_imageChanged = true;
-    }
-/*    if(e->buttons() == Qt::RightButton) {
-        m_updateThread->m_currentButton = 2;
-        m_buttonDown = true;
-        m_imageChanged = true;
-    }
-*/
+    AIE_mousePressEvent(e);
     emit EmitMouseMove();
-
 }
+
+
 
