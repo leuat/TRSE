@@ -117,15 +117,17 @@ void GLWidget::resizeGL(int width, int height)
 
 void GLWidget::mouseMoveEvent(QMouseEvent *e)
 {
-    AIE_mouseMoveEvent(e,this);
+    if (AIE_mouseMoveEvent(e,this))
 
+
+  //  qDebug() << (m_updateThread->m_prevPos- m_updateThread->m_currentPos);
 
 //    if ((m_updateThread->m_prevPos-m_updateThread->m_currentPos).manhattanLength()>0.0)
 
-//           emit EmitMouseMove();
+           emit EmitMouseMove();
 
 
-    emit EmitMouseMove();
+//    emit EmitMouseMove();
 
 }
 

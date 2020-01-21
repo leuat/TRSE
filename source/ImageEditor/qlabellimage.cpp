@@ -36,8 +36,7 @@ void QLabelLImage::mouseMoveEvent(QMouseEvent *e)
 {
     if (m_updateThread==nullptr)
         return;
-    AIE_mouseMoveEvent(e,this);
-
+    if (AIE_mouseMoveEvent(e,this))
 //    if ((m_updateThread->m_prevPos-m_updateThread->m_currentPos).manhattanLength()>0.0)
 
        emit EmitMouseMove();

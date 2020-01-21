@@ -72,7 +72,7 @@ public:
     LImageQImage* m_grid=nullptr;
     void CreateGrid();
 
-    QPointF m_currentPos, m_prevPos;
+    QPointF m_currentPos, m_prevPos, m_delta;
     int m_currentButton = 0;
     float m_zoom = 1;
     bool m_drawGrid = false;
