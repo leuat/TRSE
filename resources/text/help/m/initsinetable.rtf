@@ -1,0 +1,9 @@
+<p>
+Sine is table of 256 bytes that contains a sine value with amplitude 127 ($7f). The value of the sine table repeats
+around 256, meaning that the values in 0-255 corresponds to a full 360 degree rotation (2*pi).
+<p>
+The sine table is initialized and pre-calculated by calling the hidden initialization method "initsinetable"
+at program start. You do not need to call this method yourself, as it will be initialized automatically.
+<p>Please note that the initialization of a sine table requires RAM, and will therefore not
+work on the NES where program is ROM only.
+<p>See example 17 of the C64 "easy" tutorials on how to use the sine table.

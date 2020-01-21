@@ -86,6 +86,10 @@ public:
     QVector<int> m_keepSpriteChar;
     QString m_currentFilename = "";
 
+    enum PainterType {OpenGL, QtPaint };
+    PainterType m_painterType = OpenGL;
+
+
     int m_oldWidth = 600;
 
     int m_prefMode=1, m_keepMode=0;
@@ -95,6 +99,7 @@ public:
     void UpdatePalette();
     void updateCharSet();
     void updateSingleCharSet();
+    void InitQtPainter();
 
     void PrepareImageTypeGUI();
 

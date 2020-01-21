@@ -242,6 +242,9 @@ void MainWindow::VerifyDefaults()
         m_iniFile.setFloat("memory_analyzer_window_width", 600);
     if (!m_iniFile.contains("memory_analyzer_window_height"))
         m_iniFile.setFloat("memory_analyzer_window_height", 600);
+    if (!m_iniFile.contains("image_painter"))
+        m_iniFile.setFloat("image_painter", 0);
+
 
 
     //    qDebug() << m_ini.getString("ok64_emulator");

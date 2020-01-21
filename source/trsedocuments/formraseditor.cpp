@@ -454,6 +454,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         tc.select(QTextCursor::WordUnderCursor);
         QString word = tc.selectedText();
 
+
         DialogHelp* dh = new DialogHelp(nullptr, word, m_defaultPalette);
 //        dh->setPalette(m_defaultPalette);
      //   QApplication::setPalette(m_defaultPalette);

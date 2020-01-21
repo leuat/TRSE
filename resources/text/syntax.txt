@@ -888,6 +888,10 @@ r; CONST; X16,C64, PLUS4, C128, VIC20, BBCM, NES, AMIGA, OK64, PET
 r; ADDRESS; X16,C64, PLUS4, C128, VIC20, BBCM, NES, AMIGA, OK64, PET
 
 
+# Reserved names
+#r; SINE; X16,C64, PLUS4, C128, VIC20, BBCM, AMIGA, OK64, PET
+
+
 
 #
 #
@@ -960,4 +964,9 @@ f ; AddRawCharsetData; f,f
 f ; globals;
 f ; output;
 f ; introduction_to_the_fjong_raytracer;
+
+
+
+
+
 

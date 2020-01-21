@@ -1180,7 +1180,7 @@
       </widget>
      </item>
      <item row="0" column="0" colspan="2">
-      <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1,200,0">
+      <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1,200,200,0">
        <item>
         <widget class="QLabel" name="lblName">
          <property name="font">
@@ -1195,6 +1195,9 @@
        </item>
        <item>
         <widget class="GLWidget" name="lblImage" native="true"/>
+       </item>
+       <item>
+        <widget class="QLabelLImage" name="lblImageQt" native="true"/>
        </item>
        <item>
         <spacer name="vImageSpacer">
@@ -1297,6 +1300,12 @@
    <class>GLWidget</class>
    <extends>QWidget</extends>
    <header>source/LeLib/glwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QLabelLImage</class>
+   <extends>QWidget</extends>
+   <header>source/qlabellimage.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

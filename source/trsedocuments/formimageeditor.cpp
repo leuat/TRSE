@@ -66,6 +66,8 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
 
 
     m_updateThread.SetCurrentImage(&m_work, &m_toolBox);
+
+
 //    ui->lblImage->initializeGL();
 //    setFocusPolicy(Qt::StrongFocus);
 
@@ -80,6 +82,8 @@ void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *ini
     m_projectIniFile = iniProject;
     m_updateThread.m_grid = &m_grid;
 
+    m_painterType = (PainterType)m_iniFile->getdouble("image_painter");
+
     if (m_work.m_currentImage!=nullptr) {
         bool is = m_work.m_currentImage->m_image->isMultiColor();
         ui->chkDisplayMulticolor->setChecked(is);
@@ -90,6 +94,9 @@ void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *ini
 
     UpdateGrid();
     ui->chkBackgroundArea->setVisible(false);
+
+    if (m_painterType==QtPaint)
+        InitQtPainter();
 
 }
 
@@ -1133,6 +1140,12 @@ void FormImageEditor::updateSingleCharSet()
         }
         c = c + charmap->m_charWidthDisplay;
     }
+}
+
+void FormImageEditor::InitQtPainter()
+{
+//    ui->lblImage->setVisible(false);
+    delete ui->lblImageQt;
 }
 
 

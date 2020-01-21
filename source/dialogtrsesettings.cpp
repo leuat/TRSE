@@ -98,6 +98,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leUserDefined->setText(m_ini->getString("user_defined_command"));
 
     ui->cmbAssembler->setCurrentText(m_ini->getString("assembler"));
+    ui->cmbPainter->setCurrentIndex((int)m_ini->getdouble("image_painter"));
 
 }
 
@@ -133,6 +134,7 @@ void DialogTRSESettings::FillToIni()
 
     m_ini->setFloat("hide_exomizer_footprint", ui->chkExomizerFootprint->isChecked()?1:0);
 
+    m_ini->setFloat("image_painter",ui->cmbPainter->currentIndex());
 
     m_ini->setFloat("auto_inject", ui->chkAutoInject->isChecked()?1:0);
     m_ini->setString("user_defined_command",ui->leUserDefined->text());
