@@ -83,7 +83,7 @@ void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *ini
     m_projectIniFile = iniProject;
     m_updateThread.m_grid = &m_grid;
 
-    m_painterType = (PainterType)m_iniFile->getdouble("image_painter");
+    m_painterType = m_iniFile->getdouble("image_painter")==0?OpenGL:QtPaint;
 
     if (m_work.m_currentImage!=nullptr) {
         bool is = m_work.m_currentImage->m_image->isMultiColor();
