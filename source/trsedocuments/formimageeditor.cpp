@@ -98,9 +98,6 @@ void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *ini
 
     if (m_painterType==QtPaint) {
         delete ui->lblImage;
-        qDebug() << "A";
-        qDebug() << ui->lblImageQt;
-        qDebug() << "B";
         connect(ui->lblImageQt, SIGNAL(EmitMouseMove()), this, SLOT(onImageMouseEvent()));
         connect(ui->lblImageQt, SIGNAL(EmitMouseRelease()), this, SLOT(onImageMouseReleaseEvent()));
         connect(ui->lblImageQt, SIGNAL(EmitSwapDisplayMode()), this, SLOT(onSwapDisplayMode()));
@@ -163,8 +160,8 @@ void FormImageEditor::onImageMouseEvent()
 void FormImageEditor::onImageMouseReleaseEvent()
 {
     updateCharSet();
-
-    if (ui->lblImage->m_prevButton==2  && (QApplication::keyboardModifiers() & Qt::ControlModifier) && GetFooterData(LImageFooter::POS_DISPLAY_CHAR)==0)
+    AbstractImageEditor* a = (AbstractImageEditor*)getCurrentPainter();
+    if (a->m_prevButton==2  && (QApplication::keyboardModifiers() & Qt::ControlModifier) && GetFooterData(LImageFooter::POS_DISPLAY_CHAR)==0)
         SelectFromLeftClick();
 
 }
@@ -621,11 +618,11 @@ Ui::Formimageeditor *FormImageEditor::getUi() const
     return ui;
 }
 
-GLWidget* FormImageEditor::getLabelImage()
+/*GLWidget* FormImageEditor::getLabelImage()
 {
     return ui->lblImage;
 }
-
+*/
 void FormImageEditor::UpdateCurrentMode()
 {
     if (m_work.m_currentImage==nullptr)
@@ -1325,7 +1322,8 @@ void FormImageEditor::SetLabel(QLabel *btn, LImage::GUIType type)
 
 void FormImageEditor::PrepareClose()
 {
-    ui->lblImage->CancelAll();
+    AbstractImageEditor*a = dynamic_cast<AbstractImageEditor*>(getCurrentPainter());
+    a->CancelAll();
 }
 
 void FormImageEditor::SetMCColors()
@@ -1612,7 +1610,7 @@ QWidget *FormImageEditor::getCurrentPainter()
 void FormImageEditor::onSwapDisplayMode()
 {
     m_work.m_currentImage->m_image->m_footer.toggle(LImageFooter::POS_DISPLAY_CHAR);
-    ui->lblImage->setFocus();
+    getCurrentPainter()->setFocus();
     ui->lstCharMap->setCurrentItem(nullptr);
     if (GetFooterData(LImageFooter::POS_DISPLAY_CHAR)==1) {
         int c = m_work.m_currentImage->m_image->m_currentChar;

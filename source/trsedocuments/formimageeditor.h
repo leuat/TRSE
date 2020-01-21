@@ -148,7 +148,7 @@ public:
 
     Ui::Formimageeditor *getUi() const;
 
-    GLWidget* getLabelImage();
+//    GLWidget* getLabelImage();
 
     void UpdateCurrentMode();
 
