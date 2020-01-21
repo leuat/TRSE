@@ -95,8 +95,10 @@ void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *ini
     UpdateGrid();
     ui->chkBackgroundArea->setVisible(false);
 
-    if (m_painterType==QtPaint)
-        InitQtPainter();
+//    if (m_painterType==QtPaint)
+  //      delete ui->lblImage;
+//        InitQtPainter();
+    delete ui->lblImageQt;
 
 }
 
