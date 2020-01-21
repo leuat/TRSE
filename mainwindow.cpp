@@ -1409,3 +1409,17 @@ void MainWindow::on_actionSave_triggered()
     m_currentDoc->SaveCurrent();
 
 }
+
+void MainWindow::on_actionOpen_project_location_triggered()
+{
+#ifdef _WIN32
+    QString path = "C:/exampleDir/example.txt";
+
+       QStringList args;
+
+       args << "/select," << QDir::toNativeSeparators(path);
+
+       QProcess *process = new QProcess(this);
+       process->start("explorer.exe", args);
+#endif
+}

@@ -1,25 +1,12 @@
-<h3>PPU</h3>
-<ul>
-    <li>[address] - address to query</li>
-</ul>
-
-
-<h3>Description</h3>
-<p>Gets the high byte of an address or zero page pointer.</p>
-
-
-<h3>Example</h3>
+<h3>PPUPoint([hi] , [lo])</h3>
+PPUpoints sets up the PPU registers to point to address [hi][lo] :
 
 <code>
-var
-   data : incbin("myData.bin", $2050);
-   i:byte;
-   zp: pointer;
-begin
-        zp:=data;
-        i:=hi(data); // will be $20
-        i:=hi(zp); // will be $20
-        i:=lo(data); // will be $50
-        i:=lo(zp); // will be $50
-end;
+    // Point to first colour attribute in first nametable $23C0
+    PPUPoint($23,$C0);
+    // Write walue zero
+    PPUWrite(0);
+    // PPU now points to $23C1.
+    i:=PPURead(); // Reads value of $23C1 into I, increments to $23C2
+    PPUWrite(i); // Writes value of "i" to $23C2
 </code>

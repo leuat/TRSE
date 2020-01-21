@@ -402,5 +402,6 @@
         <file>resources/text/help/m/ppusingle.rtf</file>
         <file>resources/text/help/m/ppupoint.rtf</file>
         <file>resources/text/help/m/initsinetable.rtf</file>
+        <file>resources/text/help/m/ppuread.rtf</file>
     </qresource>
 </RCC>

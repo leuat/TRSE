@@ -408,6 +408,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="menuNew"/>
     <addaction name="actionNew_project"/>
     <addaction name="actionOpen_project"/>
+    <addaction name="actionOpen_project_location"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
     <addaction name="actionDelete_file"/>
@@ -541,7 +542,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionClose_current_project">
    <property name="text">
-    <string>CClose current project</string>
+    <string>&amp;Close current project</string>
    </property>
   </action>
   <action name="actionHelp_F1">
@@ -631,6 +632,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionSave">
    <property name="text">
     <string>&amp;Save</string>
+   </property>
+  </action>
+  <action name="actionOpen_project_location">
+   <property name="text">
+    <string>O&amp;pen project location</string>
    </property>
   </action>
  </widget>
