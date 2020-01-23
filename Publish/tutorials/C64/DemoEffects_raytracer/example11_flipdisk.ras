@@ -11,6 +11,7 @@ var
 	ypos, x,i,k, curFrame,time: byte = 0;
 	zp: pointer;
 
+	const maxFrames:byte = 95;
 
 @define useKernal 1
 
@@ -31,7 +32,7 @@ begin
 	poke(SPRITE_POS,7,ypos+42); 
 	
 	// 95 frames in total
-	curFrame:=mod(curFrame+1, 95);
+	curFrame:=mod(curFrame+1, maxFrames);
 
 end;
 /*

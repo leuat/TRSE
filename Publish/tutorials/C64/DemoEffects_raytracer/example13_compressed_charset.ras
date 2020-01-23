@@ -25,7 +25,7 @@ var
 	
 	@define screenLoc $4400
 	
-	maxFrames : byte=8;
+	const maxFrames : byte=8;
 	//text : string=("         OFFENCE     JEG HAR TISS    HAR DU TISS KANSKJE     ",0,"         ");
 
 @startblock $8000 "Unrolled copy"

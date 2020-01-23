@@ -26,7 +26,7 @@ var
 
 	xadd,i,k, m,y,time,l,aadd,keep,tt, lStart: byte=0;
 	// y-placement of sprites
-	ypos: byte=128;
+	const ypos: byte=128;
 	// Text to display
 	text : string=("TORTILLA");
 	// Colors for text

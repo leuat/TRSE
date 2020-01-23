@@ -339,27 +339,41 @@ void Parser::PreprocessConstants()
     m_lexer->m_text = txt;
 }
 
+int Parser::getParsedNumberOrConstant() {
+    int val = 0;
+
+    if (m_currentToken.m_value=="") {
+        return m_currentToken.m_intVal;
+    }
+    Symbol* s = m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
+    if (s==nullptr)
+        ErrorHandler::e.Error("Value required to be a number or a constant.",m_currentToken.m_lineNumber);
+
+    return s->m_value->m_fVal;
+}
+
+
 int Parser::GetParsedInt()
 {
     bool done = false;
     int val = 0;
     QString op = "plus";
-    if (m_currentToken.m_value!="") {
+/*    if (m_currentToken.m_value!="") {
         val= getIntVal(m_currentToken);
         Eat();
         return val;
     }
-
+*/
     while (!done) {
 //        qDebug() << "ival:"  << QString::number(m_currentToken.m_intVal);
         if (op == "plus")
-            val = val + m_currentToken.m_intVal;
+            val = val + getParsedNumberOrConstant();
         if (op == "mul")
-            val = val * m_currentToken.m_intVal;
+            val = val * getParsedNumberOrConstant();
         if (op == "div")
-            val = val / m_currentToken.m_intVal;
+            val = val / getParsedNumberOrConstant();
         if (op == "minus")
-            val = val - m_currentToken.m_intVal;
+            val = val - getParsedNumberOrConstant();
 
 
         Eat();
@@ -385,7 +399,7 @@ int Parser::GetParsedInt()
 
     }
 //    qDebug() << QString::number(val);
-//    qDebug() << "Middle val " << Util::numToHex(val);
+//    qDebug() << "End " << Util::numToHex(val);
 
     return val;
 }
@@ -1760,6 +1774,8 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
     return var_decleratons;
 }
 
+
+
 Node *Parser::TypeSpec()
 {
     Token t = m_currentToken;
@@ -1772,21 +1788,7 @@ Node *Parser::TypeSpec()
         QString position ="";
         if (m_currentToken.m_type==TokenType::COMMA) {
             Eat();
-            position = m_currentToken.m_value;
-
-            if (position=="") {
-                position = Util::numToHex(GetParsedInt());//  "$"+QString::number(m_currentToken.m_intVal,16);
-//                qDebug() << position;
-            }
-            else
-            {
-                Symbol* s = m_symTab->LookupConstants(position.toUpper());
-                if (s==nullptr)
-                    ErrorHandler::e.Error("Memory address location needs to be a number or a constant.",m_currentToken.m_lineNumber);
-
-                position = Util::numToHex(s->m_value->m_fVal);
-                Eat();
-            }
+            position = Util::numToHex(GetParsedInt());
         }
         Eat(TokenType::RPAREN);
 

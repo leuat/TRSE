@@ -36,8 +36,8 @@ var
 
 
 
-@define clearVal 1
-
+	const clearVal:byte= 1;
+	const maxFrames: byte  = 22;
 
 	
 	// 22 frames: 22 charsets with 22 screens
@@ -138,7 +138,7 @@ begin
 
 					
 		if (time&1=0) then 
-			frame:=mod(frame+1,22);
+			frame:=mod(frame+1,maxFrames);
 		
 		inc(time);
 

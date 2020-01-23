@@ -152,6 +152,7 @@ public:
     void Eat();
     void HandleImportChar();
 
+    int getParsedNumberOrConstant();
 
     int findSymbolLineNumber(QString symbol);
 
