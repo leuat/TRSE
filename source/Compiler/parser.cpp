@@ -53,8 +53,15 @@ void Parser::Eat(TokenType::Type t)
 {
     if (m_currentToken.m_type == t) {
         m_currentToken = m_lexer->GetNextToken();
-        if (m_currentToken.m_type==TokenType::PREPROCESSOR && m_pass==1)
+//        if (m_pass==1)
+  //          qDebug() << "Token : " <<m_currentToken.m_value <<(m_currentToken.m_type==TokenType::PREPROCESSOR) << m_pass;
+        int cnt =0;
+        while (m_currentToken.m_type==TokenType::PREPROCESSOR && m_pass==1) {
             HandlePreprocessorInParsing();
+          //  qDebug() << "Inside handle: " << m_currentToken.m_value;
+
+         //   qDebug() <<cnt++;
+        }
 
     }
     else {
@@ -549,6 +556,7 @@ void Parser::HandlePreprocessorInParsing()
     if (m_currentToken.m_value=="include") {
         Eat();
         Eat();
+        return;
     }
     if (m_currentToken.m_value=="endif") {
         Eat();
@@ -572,7 +580,23 @@ void Parser::HandlePreprocessorInParsing()
             return;
     }
 
+
+
+    if (m_currentToken.m_value=="endblock") {
+        int i = m_pass;
+        m_pass = 2;
+        Eat();
+        m_pass=i;
+//        qDebug() << "HandleCurrent Endblock " << Node::m_staticBlockInfo.m_blockPos;
+        Node::m_staticBlockInfo.m_blockID = -1;
+        Node::m_staticBlockInfo.m_blockPos = "";
+        Node::m_staticBlockInfo.m_blockName="";
+        m_pass = i;
+        return;
+    }
     if (m_currentToken.m_value=="startblock") {
+        int i = m_pass;
+        m_pass = 2;
         Eat();
         QString startPos = m_currentToken.getNumAsHexString();
         Eat();
@@ -585,14 +609,12 @@ void Parser::HandlePreprocessorInParsing()
         Node::m_staticBlockInfo.m_blockID = pb.m_blockID;
         Node::m_staticBlockInfo.m_blockPos = pb.pos;
         Node::m_staticBlockInfo.m_blockName = name;
+//        qDebug() << "HandleCurrent StartBlock " << Node::m_staticBlockInfo.m_blockPos;
+        m_pass = i;
 
-//        qDebug() << "Starting block: " << Node::m_currentBlockPos;
+        return;
     }
-    if (m_currentToken.m_value=="endblock") {
-        Eat();
-        Node::m_staticBlockInfo.m_blockID = -1;
 
-    }
 
 }
 
@@ -1782,6 +1804,7 @@ Node *Parser::TypeSpec()
 
     if (m_currentToken.m_type == TokenType::INCBIN || m_currentToken.m_type == TokenType::INCSID || m_currentToken.m_type == TokenType::INCNSF) {
         Eat();
+//        qDebug() << Node::m_staticBlockInfo.m_blockPos;
         Eat(TokenType::LPAREN);
         QString binFile = m_currentToken.m_value;
         Eat();

@@ -165,11 +165,6 @@ var
 @endblock
 */
 
-procedure WHOO2();
-begin
-
-end;
-
 
 //@startblock $21FC Code2
 @startblock $2000 Code2

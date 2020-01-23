@@ -9,7 +9,7 @@
 procedure PrintOrgText();
 begin
 	i:=0;
-	while (tp[0]<>0) then begin
+	while (tp[0]<>0) offpage then begin
 		j:=screenmemory[i];
 		
 		p1:=$1400;

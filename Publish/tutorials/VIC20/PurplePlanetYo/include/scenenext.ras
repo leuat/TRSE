@@ -32,7 +32,7 @@ begin
 	zp:=$1400;
 	if tp[0]=0 then return();
 	j:=tp[0];
-	if (j<>$20) then begin
+	if (j<>$20) offpage then begin
 	if j>=64 then j:=j-64;
 
 	zp:=$1400 + j*8;

@@ -209,6 +209,7 @@ bool Orgasm::Assemble(QString filename, QString outFile)
 
     for (int i=0;i<m_lines.count();i++) {
         OrgasmLine ol = LexLine(i);
+        ol.m_lineNumber = i;
         if (!ol.m_ignore)
             m_olines.append(ol);
     }
@@ -680,7 +681,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     if (m_opCode=="bpl" || m_opCode=="bne" || m_opCode=="beq" || m_opCode=="bcc" || m_opCode=="bcs" || m_opCode=="bvc" || m_opCode=="bmi" || m_opCode=="bvc" || m_opCode=="bvs") {
         int diff = (val)-m_pCounter-2;
         if (abs(diff)>=128 && pd==OrgasmData::PASS_SYMBOLS) {
-            throw QString("Branch out of range : " +QString::number(diff) + " on line :" + m_opCode + " " +expr);
+            throw QString("Branch out of range : " +QString::number(diff) + " :" + m_opCode + " " +expr + " on line " + QString::number(ol.m_lineNumber));
         }
         data.append((uchar)diff);
     }

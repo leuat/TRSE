@@ -99,7 +99,7 @@ public:
     enum OLType {INSTRUCTION, ORG, INCBIN, CONSTANT, BYTE, WORD, LABELONLY, PADBYTE};
 
     OLType m_type;
-    int m_pos;
+    int m_pos, m_lineNumber=0;
     QString m_expr="";
     QString m_label="";
     QString m_orgLine="";

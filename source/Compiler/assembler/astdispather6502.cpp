@@ -747,8 +747,9 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
             as->blocks.append(node->m_curMemoryBlock);
         }
     }
-    else
+    else {
         node->m_curMemoryBlock=nullptr;
+    }
 
 
 
@@ -912,6 +913,14 @@ void ASTDispather6502::dispatch(NodeBlock *node)
         hasLabel = true;
         //           as->PushBlock(m_decl[0]->m_op.m_lineNumber-1);
     }
+
+/*    if (node->m_isMainBlock) {
+        int ret = node->MaintainBlocks(as);
+        if (ret==2)
+            as->m_currentBlock = nullptr;
+    }
+*/
+
     for (Node* n: node->m_decl) {
         // Print label at end of vardecl
         if (dynamic_cast<NodeVarDecl*>(n)==nullptr) {
@@ -938,6 +947,13 @@ void ASTDispather6502::dispatch(NodeBlock *node)
     as->VarDeclEnds();
     as->PushCounter();
 
+    if (node->m_isMainBlock) {
+        int ret = node->MaintainBlocks(as);
+        if (ret==2)
+            as->m_currentBlock = nullptr;
+    }
+
+
  //   as->EndMemoryBlock();
     if (!blockLabel && hasLabel)
         as->Label(label);
@@ -946,6 +962,7 @@ void ASTDispather6502::dispatch(NodeBlock *node)
 
     if (node->m_isMainBlock && Syntax::s.m_currentSystem->m_system == AbstractSystem::NES)
         as->IncludeFile(":resources/code/nes_init.asm");
+
 
     if (node->m_compoundStatement!=nullptr)
         node->m_compoundStatement->Accept(this);
@@ -984,8 +1001,12 @@ void ASTDispather6502::dispatch(NodeVarDecl *node)
 
     int ret = node->MaintainBlocks(as);
 
-    if (ret==3) node->m_curMemoryBlock=nullptr;
+    if (ret==3) node->m_curMemoryBlock = nullptr;
+//    qDebug() << "NodeVarDecl new memory block "  << ret;
+    if (node->m_curMemoryBlock!=nullptr)
+  //      qDebug() << node->m_curMemoryBlock->m_start;
     if (as->m_currentBlock!=nullptr) {
+    //    qDebug() <<as->m_currentBlock->m_pos;
         if (node->m_curMemoryBlock==nullptr) {
             bool ok;
             QString p = as->m_currentBlock->m_pos;
@@ -1039,8 +1060,8 @@ void ASTDispather6502::dispatch(NodeVarDecl *node)
     }
     else
     if (t->m_op.m_type==TokenType::INCBIN) {
-        if (node->m_curMemoryBlock!=nullptr)
-            ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
+        if (node->m_curMemoryBlock!=nullptr && ((NodeVarType*)node->m_typeNode)->m_position!="")
+             ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block with an abslute address. :",node->m_op.m_lineNumber);
 
         IncBin(node);
     }
@@ -1809,6 +1830,8 @@ void ASTDispather6502::dispatch(NodeConditional *node)
     bool isSimplified = false;
     bool isOKBranchSize = true;
     NodeBinaryClause* bn = dynamic_cast<NodeBinaryClause*>(node->m_binaryClause);
+
+//    qDebug() << "TESTVERIFY BRANCH SIZE ";
     if (node->verifyBlockBranchSize(as, node->m_block)) {
         isSimplified = !bn->cannotBeSimplified(as);
     }
