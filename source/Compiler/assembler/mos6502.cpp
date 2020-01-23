@@ -170,6 +170,11 @@ void AsmMOS6502::DeclareArray(QString name, QString type, int count, QStringList
     if (type.toLower()=="string")
         t = byte;
 
+     if (data.count()==0 && pos!="") {
+         Write(name + " = " + pos);
+         return;
+     }
+
 
     if (data.count()==0 && pos=="") {
         Write(name +"\t" + t + "\t ");
