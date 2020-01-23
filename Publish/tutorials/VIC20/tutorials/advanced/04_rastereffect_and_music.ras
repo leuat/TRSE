@@ -18,14 +18,15 @@ NB: This no longer appears to work
 @ignoremethod "initrandom"
 
 
-@define screen 2000
+const screen:address = 2000;
+const chrset:address = $1c00;
 
 // We actually multiply eightbit
 //@ignoremethod "initeightbitmul"
 
 	i,j,time,time4,t,k : byte;
 	
-	charset : IncBin("resources/charsets/charset_8x8.bin", $1C00);
+	charset : IncBin("resources/charsets/charset_8x8.bin", chrset);
 	zp1,zp2 : pointer;
 	text1 : cstring = ("YAAAY VIC 20");
 	perlin : incbin("resources/data/perlin16.dat");
