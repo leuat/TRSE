@@ -1,0 +1,20 @@
+ <p>Turbo Rascal supports bitwise operations</p>
+
+<code>
+var
+  a : byte = %11001100;
+  b : byte = $10101010;
+  c : byte;
+
+begin
+
+  c := a & b;  // perform a bitwise AND operation between a and b, storing result in c
+               // result is %10001000
+
+  c := a | b;  // perform a bitwise OR operation between a and b, storing result in c
+               // result is %11101110
+
+  c := a xor b; // perform a bitwise XOR (EOR) operation between a and b, storing result in c
+                // result is %01100110
+
+</code>

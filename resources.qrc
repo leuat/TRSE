@@ -403,5 +403,7 @@
         <file>resources/text/help/m/ppupoint.rtf</file>
         <file>resources/text/help/m/initsinetable.rtf</file>
         <file>resources/text/help/m/ppuread.rtf</file>
+        <file>resources/text/help/p/bitwise_operations.rtf</file>
+        <file>resources/text/help/r/vbmexport.rtf</file>
     </qresource>
 </RCC>

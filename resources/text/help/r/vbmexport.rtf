@@ -1,0 +1,33 @@
+<h3>Description</h3>
+<p>Preprocessor that exports a TRSE image file (.flf) to binary on build in a format suitable for the
+    Vic Bitmap Mode (VBM).</p>
+<p>
+    VBM export takes five parameters.  
+</p>
+<ul>
+    <li>The source flf file</li>
+    <li>The destination bin file to create</li>
+    <li>The start character (see character height)</li>
+    <li>The end character (see character height)</li>
+    <li>The character height</li>
+</ul>
+<p>The character height allows taller characters to be exported.  If set to 1, characters are exported
+    normally as 1x1 characters.  If set at 2, characters are exported as 1x2 from the FLF bitmap.
+</p>
+<p>The character height also changes how the start and end characters are calculated.
+</p>
+
+<h3>Example</h3>
+The follow example will export 10 characters, starting at character 0, with a character height of 2 characters 
+from the .flf charset file to a binary file.
+<code>
+program VBMExport;
+
+@export "sprite/mySprite.flf" "sprite/mySprite.bin" 0 10 2
+var
+    mySprite : incbin("sprite/mySprite.bin",$2000);
+
+begin
+    Loop();
+end.
+</code>

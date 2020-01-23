@@ -80,3 +80,18 @@ begin
     enemyy[0] := 10;   // assign array index 0 a value of 10
 end.
 </code>
+
+<h3>Variables at memory locations</h3>
+<p>When declaring variables they will usually create a dc.b or dc.w to reserve a byte or word in memory.
+    It is possible to declare variables that simply point to a memory location.  This could be a zero page 
+    address (take care!) or anywhere in memory.  With the 'at' or 'absolute' modifier to specify the address.
+    Both at and absolute do exactly the same thing.
+</p>
+<p>Arrays can also be declared to any address in memory, but not that you should not set declare their 
+    initial values to avoid dc.b and dc.w's being created.
+</p>
+<code>
+    lives : byte at $01; // variable will live in the zero page
+    score : integer absolute $a000; // variable will live at the absolute address $a000
+    enemyx : array[4] of byte at $4000;  // array is created at address $4000 and must be initialised via code 
+</code>

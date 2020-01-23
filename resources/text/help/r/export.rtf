@@ -17,3 +17,18 @@ begin
     Loop();
 end.
 </code>
+
+<h3>Example</h3>
+The follow example will export characters between 32 and 128 from the .flf charset file to a binary file.
+<code>
+program CharsetDisplayer2;
+
+@export "charsets/someCharset.flf" "charsets/someCharset.bin" 32 128
+var
+    myCharset : incbin("charsets/someCharset.bin",$2000);
+
+begin
+    setcharsetlocation($2000);
+    Loop();
+end.
+</code>
