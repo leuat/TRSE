@@ -1058,8 +1058,11 @@ void ASTDispather6502::dispatch(NodeVarDecl *node)
     }else {
         node->m_dataSize=1;
         if (t->getValue(as).toLower()=="integer") node->m_dataSize = 2;
+        QString typeVal = t->getValue(as);
+        if (t->m_flag==1)
+            typeVal="const";
 
-        as->DeclareVariable(v->value, t->getValue(as), t->initVal);
+        as->DeclareVariable(v->value, typeVal, t->initVal);
     }
 
     if (node->m_curMemoryBlock!=nullptr) {

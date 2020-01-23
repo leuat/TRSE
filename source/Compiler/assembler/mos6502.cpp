@@ -223,6 +223,13 @@ void AsmMOS6502::VarDeclHeader()
 void AsmMOS6502::DeclareVariable(QString name, QString type, QString initval)
 {
     QString t = "";
+
+    if (type.toLower()=="const") {
+        Write(name + " = " + initval);
+        return;
+    }
+
+
     if (type.toLower()=="integer")
         t = word;
     if (type.toLower()=="byte") {

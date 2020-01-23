@@ -1906,6 +1906,17 @@ Node *Parser::TypeSpec()
     Eat();
     // Is regular single byte / pointer
 
+    QString position = "";
+    if (m_currentToken.m_type==TokenType::AT) {
+        Eat(TokenType::AT);
+        position = m_currentToken.getNumAsHexString();
+
+        Eat(m_currentToken.m_type);
+        NodeVarType* nt = new NodeVarType(t,position);
+        nt->m_position = position;
+        nt->m_flag = 1;
+        return nt;
+    }
 
 
     QString initVal = "";
@@ -1914,22 +1925,8 @@ Node *Parser::TypeSpec()
 //        data << "$0"+QString::number(getIntVal(m_currentToken),16);//QString::number(m_currentToken.m_intVal);
 
         initVal = Util::numToHex(GetParsedInt());
-//        qDebug() << m_currentToken.getType();
-  //      Eat();
-/*        if (initVal.count()>0 && initVal[0]=='@' ) {
-            ErrorHandler::e.Error("Could not find preprocessor : " + initVal);
-        }*/
-/*        if (initVal=="") {
-            bool ok=true;
-            initVal = QString::number(m_currentToken.m_intVal);
-        }else
-        {
-            ErrorHandler::e.Error("Unknown initialization value : " + initVal, m_currentToken.m_lineNumber);
 
-        }
-*/
 
-  //      Eat(m_currentToken.m_type);
 
     }
 

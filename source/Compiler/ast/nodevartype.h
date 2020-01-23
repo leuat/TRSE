@@ -36,8 +36,9 @@ public:
     Token m_arrayVarType;
     QStringList m_data;
     QStringList m_flags;
-    QString m_filename, m_position;
+    QString m_filename, m_position="";
     QString initVal ="0";
+    int m_flag = 0;
 
     NodeVarType(Token t, QString position,   Token arrayVarType,QStringList data);
     NodeVarType(Token t, QStringList data);
