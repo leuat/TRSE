@@ -775,7 +775,7 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
         as->Comment("   Requires initialization : " + type);
     }
     as->Asm("");
-
+    as->m_currentBlockName = node->m_procName;
 
     if (!isInitFunction) {
         //as->Asm("jmp afterProc_" + m_procName);
@@ -952,6 +952,8 @@ void ASTDispather6502::dispatch(NodeBlock *node)
         int ret = node->MaintainBlocks(as);
         if (ret==2)
             as->m_currentBlock = nullptr;
+
+        as->m_currentBlockName="MainProgram";
     }
 
 

@@ -155,6 +155,8 @@ public:
     QVector<Appendix> m_extraBlocks;
     Appendix m_chipMem;
 
+    QString m_currentBlockName="";
+
     QVector<MemoryBlock> m_userWrittenBlocks;
     QStringList m_startInsertAssembler;
     QString m_zeropageScreenMemory="$fb";
@@ -235,7 +237,10 @@ public:
 
     QString NewLabel(QString s) {
         m_labelStack[s].push();
-        return s+m_labelStack[s].m_current;
+        QString pre ="";
+        if (m_currentBlockName!="")
+            pre = m_currentBlockName+"_";
+        return pre+ s+m_labelStack[s].m_current;
     }
 
     void PopLabel(QString s) {
