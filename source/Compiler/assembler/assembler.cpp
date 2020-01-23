@@ -129,7 +129,7 @@ void Assembler::EndMemoryBlock() {
         m_currentBlock = m_blockStack.last();
         // qDebug() << "STILL STACK : " << m_blockStack.count();
     }
-    else m_currentBlock = nullptr;
+//    else m_currentBlock = nullptr;
 
 }
 
@@ -209,6 +209,21 @@ int Assembler::CountCycles(QString s)
     }
     return n;
 
+}
+
+QString Assembler::getLabel(QString s) {
+    QString pre ="";
+    if (m_currentBlockName!="")
+        pre = m_currentBlockName+"_";
+    return pre+s+m_labelStack[s].m_current;
+}
+
+QString Assembler::NewLabel(QString s) {
+    m_labelStack[s].push();
+    QString pre ="";
+    if (m_currentBlockName!="")
+        pre = m_currentBlockName+"_";
+    return pre+ s+m_labelStack[s].m_current;
 }
 
 

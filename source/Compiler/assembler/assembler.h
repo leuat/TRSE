@@ -231,17 +231,9 @@ public:
     }
     virtual bool CheckZPAvailability() {return false;}
 
-    QString getLabel(QString s) {
-        return s+m_labelStack[s].m_current;
-    }
+    QString getLabel(QString s);
 
-    QString NewLabel(QString s) {
-        m_labelStack[s].push();
-        QString pre ="";
-        if (m_currentBlockName!="")
-            pre = m_currentBlockName+"_";
-        return pre+ s+m_labelStack[s].m_current;
-    }
+    QString NewLabel(QString s);
 
     void PopLabel(QString s) {
         m_labelStack[s].pop();

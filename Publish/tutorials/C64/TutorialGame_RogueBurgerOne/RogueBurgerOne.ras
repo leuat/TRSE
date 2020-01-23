@@ -30,26 +30,26 @@ var
 	*/
 
 	// Text charsets (bank 1)
-	mainChar: IncBin("charsets/charset_text.bin","$4800"); // $800 bytes
+	mainChar: IncBin("charsets/charset_text.bin",$4800); // $800 bytes
 	
 	// Level multicolor charsets (bank 1)
-	levelChar: IncBin("charsets/charset_level.bin","$5000");// $800 bytes
+	levelChar: IncBin("charsets/charset_level.bin",$5000);// $800 bytes
 	// Sprite data bank 1
-	sprite0data : incbin("sprites/fastfood.bin", "$5800"); // will be $1000 bytes // locally 2000
-	music1 : incsid("music/fliptape60.sid", "2");
+	sprite0data : incbin("sprites/fastfood.bin", $5800); // will be $1000 bytes // locally 2000
+	music1 : incsid("music/fliptape60.sid", 2);
 	
 	// image and logo color data (should be compressed really..)
-	imagedata_colors:IncBin("images/introscreen_color.bin","$7000");
-	logodata_colors:IncBin("images/logoscreen_color.bin","$7800");
+	imagedata_colors:IncBin("images/introscreen_color.bin",$7000);
+	logodata_colors:IncBin("images/logoscreen_color.bin",$7800);
 
 	// Scroller multicolor charset (bank 2)
-	multiColorChar: IncBin("charsets/lcharsetMC.bin", "$8800");
+	multiColorChar: IncBin("charsets/lcharsetMC.bin", $8800);
 
 //Compressed image & logo data (about $800 bytes each)
-	logodata_crunched:IncBin("images/logoscreen_data_compressed.bin","$9000");
-	imagedata_crunched:IncBin("images/introscreen_data_compressed.bin","$C000");
+	logodata_crunched:IncBin("images/logoscreen_data_compressed.bin",$9000);
+	imagedata_crunched:IncBin("images/introscreen_data_compressed.bin",$C000);
 // Compressed image data at $E000
-	leveldata_crunched: IncBin("levels/levels_compressed.bin", "$E000"); // 2400 in hex
+	leveldata_crunched: IncBin("levels/levels_compressed.bin", $E000); // 2400 in hex
 
 // Unpack levels to:
 	@define levels $9000
@@ -705,7 +705,6 @@ begin
 	
 	//	Intro();
 	// TURN OFF Kernal Basic! WHOO!
-
 
 
 	preventirq();

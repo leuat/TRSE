@@ -77,11 +77,8 @@ void NodeVarDecl::InitSid(QString projectDir, int VICAddress, QString type) {
     int headerShift = 0;
     if (t->m_position!="") {
         QString val = t->m_position;
-        bool ok;
-        headerShift = val.toInt(&ok);
-        if (!ok)
-            headerShift = 0;
-//        qDebug() << headerShift;
+
+        headerShift = Util::NumberFromStringHex(val);;
     }
     if (type=="sid") {
         sid.Load(t->m_filename, projectDir);

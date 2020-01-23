@@ -733,8 +733,10 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
 
     // In case memory block is acive
 
-    int ret = node->MaintainBlocks(as);
 
+//    qDebug() << node->m_procName << node->m_curMemoryBlock << as->m_currentBlock;
+
+    int ret = node->MaintainBlocks(as);
     if (ret==3) node->m_curMemoryBlock=nullptr;
     if (as->m_currentBlock!=nullptr) {
         if (node->m_curMemoryBlock==nullptr) {
@@ -747,7 +749,7 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
         }
     }
     else {
-        node->m_curMemoryBlock=nullptr;
+        //node->m_curMemoryBlock=nullptr;
     }
 
 
@@ -761,7 +763,7 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
     if (Syntax::s.builtInFunctions.contains(node->m_procName)) {
         isBuiltinFunction = true;
         isInitFunction = Syntax::s.builtInFunctions[node->m_procName].m_initFunction;
-        as->EndMemoryBlock();
+//        as->EndMemoryBlock();
 
     }
 
@@ -954,6 +956,7 @@ void ASTDispather6502::dispatch(NodeBlock *node)
             as->m_currentBlock = nullptr;
 
         as->m_currentBlockName="MainProgram";
+//        as->EndMemoryBlock();
     }
 
 
@@ -1114,7 +1117,7 @@ void ASTDispather6502::IncSid(NodeVarDecl *node) {
 
     QString pos = QString::number(node->sid.m_loadAddress,16);
     Appendix* app = new Appendix("$"+pos);
-
+//    qDebug() << "INCSID DISPATCHER"<< pos;
     app->Append("org $" +pos,1);
     //        as->Appendix(v->getValue(as),0);
     app->Append("incbin \"" + as->m_projectDir + node->sid.m_outFile + "\"",1);
