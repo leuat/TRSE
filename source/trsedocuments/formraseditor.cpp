@@ -158,6 +158,7 @@ void FormRasEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile* pro)
     FillFromIni();
 
     setupEditor();
+
 }
 
 
@@ -174,6 +175,8 @@ void FormRasEditor::setupEditor()
 //    highlighter->Save("dark_standard.ini");
 
     UpdateFromIni();
+    ui->txtEditor->setCursorWidth(m_iniFile->getdouble("editor_cursor_width"));
+
 //    ui->txtEditor->setTabStopWidth(m_iniFile->getInt("tab_width") * metrics.width(' '));
 
 }

@@ -223,6 +223,8 @@ void MainWindow::VerifyDefaults()
     if (!m_iniFile.contains("auto_inject"))
         m_iniFile.setFloat("auto_inject", 1);
 
+    if (!m_iniFile.contains("editor_cursor_width"))
+        m_iniFile.setFloat("editor_cursor_width",1);
 
     if (!m_iniFile.contains("theme"))
         m_iniFile.setString("theme", "dark_standard.ini");

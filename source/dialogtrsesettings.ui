@@ -518,20 +518,10 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="leTabWidth">
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="leFontSize">
              <property name="inputMask">
               <string>99</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="cbmFont"/>
-           </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="label_9">
-             <property name="text">
-              <string>Memory Analyzer Font Size</string>
              </property>
             </widget>
            </item>
@@ -549,8 +539,32 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="leFontSize">
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="leTabWidth">
+             <property name="inputMask">
+              <string>99</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QComboBox" name="cbmFont"/>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_9">
+             <property name="text">
+              <string>Memory Analyzer Font Size</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_29">
+             <property name="text">
+              <string>Text editor cursor width</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLineEdit" name="leCursorWidth">
              <property name="inputMask">
               <string>99</string>
              </property>

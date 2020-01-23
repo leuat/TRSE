@@ -63,6 +63,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leC1541->setText(m_ini->getString("c1541"));
     ui->leExomizer->setText(m_ini->getString("exomizer"));
     ui->leTinyCrunch->setText(m_ini->getString("tinycrunch"));
+    ui->leCursorWidth->setText(QString::number((int)m_ini->getdouble("editor_cursor_width")));
     ui->chkAutoInject->setChecked(m_ini->getdouble("auto_inject")==1.0);
 //    if (ui->cmbPalette->currentText()=="Dark")
     if (m_ini->getdouble("windowpalette")==0)
@@ -107,7 +108,7 @@ void DialogTRSESettings::FillToIni()
 {
 
 
-
+    m_ini->setFloat("editor_cursor_width",ui->leCursorWidth->text().toInt());
     m_ini->setString("vasmm_target_dir", ui->le68kTargetDir->text());
     m_ini->setString("vasmm", ui->leVasmm->text());
     m_ini->setString("dasm", ui->leDasm->text());

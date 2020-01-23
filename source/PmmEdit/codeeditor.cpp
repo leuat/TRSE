@@ -43,6 +43,7 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     updateCycleNumberAreaWidth(0);
     highlightCurrentLine();
     InitCompleter(nullptr, nullptr);
+
 }
 
 void CodeEditor::setCompleter(QCompleter *c)
