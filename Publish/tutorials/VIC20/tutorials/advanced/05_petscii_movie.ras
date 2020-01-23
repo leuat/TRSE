@@ -8,6 +8,7 @@ var
 	@define screenLoc $1c00
 	@define mpos $3000
 
+@export "resources/movie/tutorial_5_movie.flf" "resources/movie/movie.trm" 0
 	movie: incBin("resources/movie/movie.trm", @mpos);
 
 	@define useKernal 0
@@ -107,6 +108,7 @@ begin
 	DefineScreen();
 	screen_bg_color:=0;
 	setscreenlocation(@screenLoc);
+	ReadAnimationHeader();
 	
 	while(true) do begin
 		if (compressionType=3) then 
