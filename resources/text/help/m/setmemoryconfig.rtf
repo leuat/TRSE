@@ -1,12 +1,20 @@
 <h2>C64</h2>
 On the C64, this method configures the current memory setup. 
 <ul>
-<li><b>Parameter 1:</b> Enables/disables BASIC</li>
-<li><b>Parameter 2:</b> Enables/disables IO</li>
-<li><b>Parameter 3:</b> Enables/disables Kernal</li>
+<li><b>Parameter 1:</b> Enables/disables IO</li>
+<li><b>Parameter 2:</b> Enables/disables Kernal</li>
+<li><b>Parameter 3:</b> Enables/disables BASIC</li>
 </ul>
 For instance, if you wish to disable Kernal and basic but keep IO, use
-<code>SetMemoryConfig(0,1,0);</code>
+<code>SetMemoryConfig(1,0,0);</code>
+Valid combinations are:
+<code>SetMemoryConfig(1,1,1);  //	IO area visible at $D000-$DFFF, BASIC ROM visible at $A000-$BFFF and KERNAL ROM visible at $E000-$FFFF. This is the default memory configuration on the C64.</code>
+
+<code>SetMemoryConfig(1,1,0);  //	IO area visible at $D000-$DFFF, RAM visible at $A000-$BFFF (NO BASIC) and KERNAL ROM visible at $E000-$FFFF</code>
+
+<code>SetMemoryConfig(1,0,0);	//	IO area visible at $D000-$DFFF, RAM visible at $A000-$BFFF (NO BASIC) and RAM visible at $E000-$FFFF (NO KERNAL). This is the typical memory configuration for demo/game development.</code>
+
+<code>SetMemoryConfig(0,0,0);	//	RAM visible in all three areas: $A000-$BFFF, $D000-$DFFF and $E000-$FFFF</code>
 
 
 
@@ -23,4 +31,6 @@ For instance: Make all ram except IO visible, and use the "other" memory bank:
 <code>
 SetMemoryConfig(0,1,1,1,1);
 </code>
+
+
 
