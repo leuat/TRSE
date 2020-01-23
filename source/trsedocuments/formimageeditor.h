@@ -109,6 +109,7 @@ public:
     uchar GetFooterData(int pos);
 
 
+
     void UpdateCurrentCell();
 
     void SetButton(QPushButton* btn, LImage::GUIType type);

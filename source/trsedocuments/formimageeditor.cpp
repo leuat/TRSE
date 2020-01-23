@@ -1615,23 +1615,16 @@ void FormImageEditor::onSwapDisplayMode()
     getCurrentPainter()->setFocus();
     ui->lstCharMap->setCurrentItem(nullptr);
     if (GetFooterData(LImageFooter::POS_DISPLAY_CHAR)==1) {
-        int c = m_work.m_currentImage->m_image->m_currentChar;
+/*        int c = m_work.m_currentImage->m_image->m_currentChar;
         int w = m_work.m_currentImage->m_image->m_charWidthDisplay;
 
 
-        ui->lstCharMap->setCurrentCell(c/w, c%w);
-//        ui->lstCharMap->itemAt(c/w, c%w)->setSelected(true);
-  //      qDebug() << c%w << c/w;
+        ui->lstCharMap->setCurrentCell(c/w, c%w);*/
+        UpdateCurrentCell();
     }
 
-
-//    qDebug() << "HERE " <<m_prefMode;
-
-
- //   showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
     m_updateThread.m_zoom = 1.0;
 
-//    SetSingleCharsetEdit();
     emit onImageMouseEvent();
     Data::data.forceRedraw = true;
     Data::data.Redraw();
@@ -2149,7 +2142,10 @@ void FormImageEditor::on_cmbCharX_currentIndexChanged(int index)
     SetFooterData(LImageFooter::POS_CURRENT_DISPLAY_X,ui->cmbCharX->currentText().toInt());
     SetFooterData(LImageFooter::POS_DISPLAY_CHAR,0);
     on_btnCharsetFull_clicked();
+
     Update();
+    UpdateCurrentCell();
+
 }
 
 void FormImageEditor::on_cmbCharY_currentIndexChanged(int index)
@@ -2157,7 +2153,10 @@ void FormImageEditor::on_cmbCharY_currentIndexChanged(int index)
     SetFooterData(LImageFooter::POS_CURRENT_DISPLAY_Y,ui->cmbCharY->currentText().toInt());
     SetFooterData(LImageFooter::POS_DISPLAY_CHAR,0);
     on_btnCharsetFull_clicked();
+
     Update();
+    UpdateCurrentCell();
+
 }
 
 void FormImageEditor::on_btnRepeating_clicked()
