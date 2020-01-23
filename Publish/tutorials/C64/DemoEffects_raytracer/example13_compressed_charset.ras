@@ -1,13 +1,13 @@
 program Full_screen_char_compression;
 var  
    	
-@define charLoc1 $5000
 @define charLoc2 $5800
 @define charLoc3 $6000
 @define charLoc4 $6800
 
 
-
+	const charLoc1:address=$5000;
+	
 	@requirefile "data/13_screen0.bin" "Please run the raytracer file example13_compressed_chars.fjo before compiling this program" 	
 
 	screens1: incbin("data/13_screen0.bin",6000);
@@ -15,7 +15,7 @@ var
 	screens3: incbin("data/13_screen2.bin",10000);
 	screens4: incbin("data/13_screen3.bin",12000);
 	
-	charset1 : incbin("data/13_charset0.bin",@charLoc1);
+	charset1 : incbin("data/13_charset0.bin",charLoc1);
 	charset2 : incbin("data/13_charset1.bin",@charLoc2);
 	charset3 : incbin("data/13_charset2.bin",@charLoc3);
 	charset4 : incbin("data/13_charset3.bin",@charLoc4);

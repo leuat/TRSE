@@ -360,6 +360,8 @@ int Parser::GetParsedInt()
             val = val / m_currentToken.m_intVal;
         if (op == "minus")
             val = val - m_currentToken.m_intVal;
+
+
         Eat();
         done = true;
         if (m_currentToken.m_type == TokenType::MUL) {
@@ -383,6 +385,8 @@ int Parser::GetParsedInt()
 
     }
 //    qDebug() << QString::number(val);
+//    qDebug() << "Middle val " << Util::numToHex(val);
+
     return val;
 }
 
@@ -1769,9 +1773,20 @@ Node *Parser::TypeSpec()
         if (m_currentToken.m_type==TokenType::COMMA) {
             Eat();
             position = m_currentToken.m_value;
-            if (position=="")
-                position="$"+QString::number(m_currentToken.m_intVal,16);
-            Eat();
+
+            if (position=="") {
+                position = Util::numToHex(GetParsedInt());//  "$"+QString::number(m_currentToken.m_intVal,16);
+//                qDebug() << position;
+            }
+            else
+            {
+                Symbol* s = m_symTab->LookupConstants(position.toUpper());
+                if (s==nullptr)
+                    ErrorHandler::e.Error("Memory address location needs to be a number or a constant.",m_currentToken.m_lineNumber);
+
+                position = Util::numToHex(s->m_value->m_fVal);
+                Eat();
+            }
         }
         Eat(TokenType::RPAREN);
 
