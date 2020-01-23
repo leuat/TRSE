@@ -34,7 +34,7 @@ begin
 	dy:=1;
 	while (true) do begin
 		// Make sure we only draw 1 box per frame
-		waitforraster(80);
+		waitforverticalblank();
 		// Add the delta dx and dy to x and y
 		x:=x+dx;
 		y:=y+dy;

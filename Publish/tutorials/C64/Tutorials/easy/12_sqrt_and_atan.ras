@@ -22,7 +22,7 @@ var
 // Base of the 16 char value is "64". Check out "charsets/charsets.flf" in order to view the characters at position 64
 @define charVal 64
 // Use kernal
-@define useKernal "1"
+ 	const useKernal: byte = 1;
 
 	charset: IncBin("resources/charsets/charset.bin", @charsetLoc);
 
@@ -85,7 +85,7 @@ end;
 // Main raster, called once per raster cycle. Only shifts charset data with 8 bytes
 interrupt MainRaster();
 begin
-	StartIRQ(@useKernal);
+	StartIRQ(useKernal);
 
 	ShiftCharsetData();
 
@@ -99,6 +99,6 @@ begin
 	screen_bg_col:=black;
 	RenderScreen();
 
-	StartRasterChain(MainRaster(),0,@useKernal);
+	StartRasterChain(MainRaster(),0,useKernal);
 	Loop();	
 end.

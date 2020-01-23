@@ -5,12 +5,11 @@ var
 	text : cstring = ("                                        ",
 					"THIS IS A SAMPLE SCROLLER TEXT",
 					 "                                        ");
-	
-@define kernal "1"
+	const kernal : byte = 1;	
 // Position of scroller
-@define ypos 16
+   @define ypos 16
 // Position of scroller raster line
-@define yposRaster $A0
+	const yposRaster:byte=$A0;
 
 
 /*
@@ -104,6 +103,6 @@ begin
 	// Let the text pointer point to the actual text
 	textPointer:=text;
 	// Start the raster chain!
-	StartRasterChain(Top(), 0,@kernal);
+	StartRasterChain(Top(), 0,kernal);
 	Loop(); 
 end.

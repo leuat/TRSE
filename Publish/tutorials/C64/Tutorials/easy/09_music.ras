@@ -1,8 +1,7 @@
 program Music;
 var
 	sidfile: incsid("resources/sid/courier.sid",2);
-
-@define useKernal 0
+	const useKernal:byte=0;
 
 /*
 	Sid music is played by calling
@@ -11,7 +10,7 @@ var
 */
 interrupt Raster1();
 begin
-	StartIRQ(@useKernal);
+	StartIRQ(useKernal);
 	// Turn on background color only when SID file is playing
 	screen_bg_col:=green;
 	call(sidfile_1_play);
@@ -23,7 +22,7 @@ end;
 begin
 	InitSid(sidfile_1_init);
 	setmemoryconfig(1,0,@useKernal);
-	StartRasterChain(Raster1(),$50,@useKernal);
+	StartRasterChain(Raster1(),$50,useKernal);
 	Loop();
 
 end.

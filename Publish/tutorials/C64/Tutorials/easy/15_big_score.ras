@@ -44,8 +44,7 @@ begin
 	begin
 		BcdAdd( score, scoreAdd, 5 );	// add scoreAdd to score
 		BcdPrint( score, 5 ); // print the current score
-		
-		waitforraster(140);	// wait for the VBL (slow the program down to synchronise with the screen refresh)
+		waitforverticalblank();	
 	end;
 	loop();
 end.

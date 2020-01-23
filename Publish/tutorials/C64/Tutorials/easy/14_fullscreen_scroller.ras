@@ -13,10 +13,9 @@ var
 		- whenever the scrollr register is *not* zero, perform the character set shift to create a plasma effect
 		
 */
-
+	const useKernal:byte = 1;
 // Use character 64 as base+16 in the charmap (check out resources/charset/charset.flf)
 @define charVal 64
-@define useKernal 1 
 // Place 40x25 noise data at a random position
 @define noisePos $8000
 @define charsetLoc $2000
@@ -89,8 +88,9 @@ end;
 
 interrupt RasterMain();
 begin
-	StartIRQ(@useKernal);
-	if (scroll&1=1) then	ShiftCharsetData();	
+	StartIRQ(useKernal);
+	if (scroll&1=1) then	
+		ShiftCharsetData();	
 
 	UpdateScroll();
 	scrollx(scroll);
@@ -103,6 +103,6 @@ begin
 	// Hide column 0 and 39!
 	hideborderx(1);
 	setcharsetlocation(@charsetLoc);
-	StartRasterChain(RasterMain(),100,@useKernal);
+	StartRasterChain(RasterMain(),100,useKernal);
 	Loop();
 end.

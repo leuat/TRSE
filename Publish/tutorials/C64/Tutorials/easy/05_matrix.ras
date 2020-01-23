@@ -10,6 +10,8 @@ var
 	saddr: array[screen_width] of integer; // Screen address table
 	caddr: array[screen_width] of integer; // Color adress table
    	sp:pointer;
+   	
+	const ymax:byte = 240;
 
 /*
 	Method that initializes the lookup tables used in this program
@@ -33,7 +35,7 @@ end;
 */
 procedure FillColor(xx,yy,cc:byte);
 begin
-	if (yy>240) then yy:=yy+screen_height;
+	if (yy>ymax) then yy:=yy+screen_height;
 	if (yy<screen_height) then 
 	begin
 		sp:=AddressTable(caddr,xx,yy);
@@ -66,7 +68,7 @@ begin
 		// increase ypos[i] with yadd[i]		
 		ypos[i]:=ypos[i]+yadd[i];
 		// Reset values when ypos is outside of the screen
-		if (ypos[i]>=240) then
+		if (ypos[i]>=ymax) then
 		begin 
 			ypos[i]:=0;
 			yadd[i]:=random()/80+1;
@@ -90,7 +92,7 @@ begin
 	// Loop effect
 	while(true) do
 	begin
-		waitforraster(0);	
+		waitforverticalblank();
 		RenderMatrix();
 
 	end;

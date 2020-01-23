@@ -9,10 +9,10 @@ var
 	// also used for setspriteloc that needs this value divided by 64
    	@define spriteLoc $2000
    	// In this tuturial, we use sprite "0" as the default one
-   	@define useSprite 0
+   	const useSprite:byte = 0;
    	// Use joystick port 2
-   	@define joystickPort 2
-   	@define useBank 0
+   	const joystickPort: byte = 2;
+   	const useBank:byte = 0;
 	// Include the sprite binary file. The original 
 	// image is located under sprites/sprites.flf 
 	  	
@@ -39,9 +39,9 @@ begin
 	// Set  common sprite multicolor #2 
 	sprite_multicolor_reg2:=white;
 	// Set sprite "0" individual color value 
-	sprite_color[@useSprite]:=light_red;
+	sprite_color[useSprite]:=light_red;
 	// Turn on sprite 0 (or @useSprite)
-	togglebit(sprite_bitmask,@useSprite,1);
+	togglebit(sprite_bitmask,useSprite,1);
 end;
 
 // This method is called one time per raster cycle
@@ -51,7 +51,7 @@ begin
 	sprite_x:=sprite_x + joystickright - joystickleft;
 	sprite_y:=sprite_y + joystickdown - joystickup;
 	// Update the sprite position on screen for sprite number @useSprite	
-	SpritePos(sprite_x, sprite_y, @useSprite);
+	SpritePos(sprite_x, sprite_y, useSprite);
 	
 	// Set left/right offset pointer for sprite
 	if (joystickright) then
@@ -60,7 +60,7 @@ begin
 		joystick_dir := 0;
 	
 	// Set the sprite pointer to point to the sprite data + direction offset
-	SetSpriteLoc(@useSprite, @spriteLoc/64 + joystick_dir, @useBank);
+	SetSpriteLoc(useSprite, @spriteLoc/64 + joystick_dir, useBank);
 
 	// If any movement is detected, play a random sound
 	if ((joystickright+joystickleft) or (joystickup+joystickdown)) then
@@ -79,7 +79,7 @@ interrupt MainRaster();
 begin
 	startirq(1);
 	// Update joystick here
-	Joystick(@joystickPort);
+	Joystick(joystickPort);
 	// Update sprites
 	UpdateSprite();	
 	closeirq();
