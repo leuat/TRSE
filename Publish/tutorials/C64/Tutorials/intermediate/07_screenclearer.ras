@@ -9,15 +9,15 @@ var
 	colorsc2 : array [] of byte = (  0, 11,6,12,12,4,14,14,14,   14,14,14,14,14,14,14,14,14  );
 	// 16x16=256 byte perlin noise data	
 	orgperlin:incbin("resources/data/perlin16.dat");	
-	
+
 // Random place to store 1000 bytes
-@define dataLoc $5000
+	const dataLoc : address = $5000;	
 // Turn off to un-optimize
 @define IS_OPTIMIZED 1
 
 procedure CalculateCircles();
 begin
-	zp:=@dataLoc;
+	zp:=dataLoc;
 	// Since perlin noise repeats every 16 bytes, we add a higher frequency noise with a shifted phase	
 	for j:=0 to screen_height do begin
 		for i:=0 to screen_width do begin
@@ -90,7 +90,7 @@ begin
 	CalculateCircles();
 	c2x:=16;
 	while(true) do begin
-		waitforraster(0);
+		waitforverticalblank();
 		if (c2x<127) then begin
 			screen_bg_col:=colorsc2[c2x];
 			dec(c2x);

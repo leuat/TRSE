@@ -1,15 +1,15 @@
 program tutorial_14_horizontal_starfield;
 
-
+var
 
 // number of stars
-@define noStars 25
-@define useKernal 0
+	const noStars : byte = 25;
+	const useKernal : byte = 0;
 // Which character to use?
-@define charPos 64
+	const charPos : byte = 64;
 // where to put char ROM data?
-@define charsetPos $2000
-
+	const charsetPos : address = $2000;
+	
 
 /*
 	This effect assumes 1 star per horizontal line, in total 25
@@ -18,19 +18,18 @@ program tutorial_14_horizontal_starfield;
 */
 
 
-var  
    	i,j,x,dx, time: byte = 0; 
 	// a star can have 8 values in a single char
 	charsetVals: array[8] of byte =(1,2,4,8,16,32,64,128);	
 		// Star position in memory (0-40)
-	posx: array[@noStars] of byte;
+	posx: array[noStars] of byte;
 	// Star position in char pos (0-64) / 8 with range 0-7
-	posdx: array[@noStars] of byte;
+	posdx: array[noStars] of byte;
 	// speed of star, subtracted to posdx, range 0-64 divided by 8
-	posddx: array[@noStars] of byte;
+	posddx: array[noStars] of byte;
 
 	// Star color
-	color: array[@noStars] of byte;
+	color: array[noStars] of byte;
 	// random table
 	rands: array[256] of byte;
 	zp,cp:pointer;
@@ -43,7 +42,7 @@ var
 // Creates 8 characters with 1 dot in each char from @charPos
 procedure GenerateCharset();
 begin
-	zp:=@charsetPos + @charPos*8;
+	zp:=charsetPos + charPos*8;
 	for i:=0 to 8 do begin
 		for j:=0 to 8 do begin
 			zp[j]:=0;
@@ -58,7 +57,7 @@ end;
 procedure InitializeStarfield();
 begin
 	j:=42;
-	for i:=0 to @noStars do begin
+	for i:=0 to noStars do begin
 		posx[i]:=rands[i]/2;  // 0-40
 		posdx[i]:=rands[j]&63; // 0-64 (will be divided by 8)
 		color[i]:=starColors[j&7];  // 0-7
@@ -84,11 +83,11 @@ procedure RenderStarfield();
 begin
 	moveto(0,0,hi(screen_char_loc));
 	cp:=screen_col_loc;
-	for i:=0 to @noStars do begin
+	for i:=0 to noStars do begin
 		if i<>12 then begin // ignore stars at line 12
 			x:=posx[i];
 			dx:=posdx[i]/8;
-			screenmemory[x]:=@charPos+7-dx;
+			screenmemory[x]:=charPos+7-dx;
 			if x<>39 then
 				screenmemory[x+1]:=key_space
 			else
@@ -106,7 +105,7 @@ end;
 
 procedure UpdateStarfield();
 begin
-	for i:=0 to @noStars do begin
+	for i:=0 to noStars do begin
 		dx:=posdx[i]-posddx[i];
 		if dx>127 then begin
 			posx[i]:=posx[i]-1;
@@ -134,7 +133,7 @@ end;
 
 interrupt Raster1();
 begin
-	StartIRQ(@useKernal);
+	StartIRQ(useKernal);
 	inc(time);
 	RenderStarfield();	
 	UpdateStarfield();
@@ -150,13 +149,13 @@ begin
 	screen_fg_col:=black;
 	clearscreen(key_space,screen_char_loc);	
 	//VIC_DATA_LOC:=@charsetVicData;
-	SetCharsetLocation(@charsetPos);
-	copycharsetfromrom(^@charsetPos);
+	SetCharsetLocation(charsetPos);
+	copycharsetfromrom(charsetPos);
 	GenerateCharset();
 	InitializeText();
 
-	SetMemoryConfig(1,@useKernal,0);
-	StartRasterChain(Raster1(),$00,@useKernal);
+	SetMemoryConfig(1,useKernal,0);
+	StartRasterChain(Raster1(),$00,useKernal);
 	Loop(); 
 
 end.

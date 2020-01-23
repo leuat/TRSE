@@ -15,15 +15,13 @@ var
 	text : string=("THIS IS A TWO X TWO CHARACTER SCROLLER           ");
 
 // Character that points to a 2x2 block of black areas in the character map
-@define clearChar $a0
+	const clearChar : byte = $a0;
+	const useKernal : byte = 0;
 
-@define useKernal "0" 
 
 // Since textcolor1 sets the $D800 colors, it will be multicolor - 8 - dark blue
 @define textColor1 "green"
 // Bank 1
-@define screen_f "^$0400"
-@define screen_hi "$04"
 
 @define lineColor "DARK_GREY"
 
@@ -52,8 +50,8 @@ begin
 	RasterIRQ(MainScreen(),130, @useKernal);
 	// Copy content 1 to the left
 	if (ms_scroll=1) then begin
-		memcpy(@screen_f + ^40*^@scrollerLineY+^1, 0, @screen_f + ^40*^@scrollerLineY, 39);
-		memcpy(@screen_f + ^40*^@scrollerLineY+^40+^1, 0, @screen_f + ^40*^@scrollerLineY +^40, 39);
+		memcpy(screen_char_loc + ^40*^@scrollerLineY+^1, 0, screen_char_loc + ^40*^@scrollerLineY, 39);
+		memcpy(screen_char_loc + ^40*^@scrollerLineY+^40+^1, 0, screen_char_loc + ^40*^@scrollerLineY +^40, 39);
 	end;
 	closeirq();
 	
@@ -100,7 +98,7 @@ begin
 	if (ms_scroll>127) then begin
 		// Lookup character value
 		// Move to y position
-		moveto(0,@scrollerLineY, @screen_hi);
+		moveto(0,@scrollerLineY, hi(screen_char_loc));
 		
 		val:=CalculatePositionInCharset(pText[0]);
 		

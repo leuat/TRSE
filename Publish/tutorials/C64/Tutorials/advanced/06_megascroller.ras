@@ -30,7 +30,7 @@ var
 	@define useKernal "0"
 	
 	
-	@define bank2ClearVal "$20"
+	@define bank2ClearVal $20
 	@define charVal $68	
 	// Define some text pointers
 	@define textpointer textp

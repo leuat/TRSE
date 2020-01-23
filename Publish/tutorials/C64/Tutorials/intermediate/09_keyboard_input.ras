@@ -102,9 +102,9 @@ end;
 begin
 	clearscreen(key_space,screen_char_loc);
 	moveto(0,1,hi(screen_char_loc));
-	printstring("HI THERE!",0,40);
+	printstring("HI THERE!",0,screen_width);
 	screenmemory:=screenmemory+screen_width;
-	printstring("SPEAK YOUR MIND",0,40);
+	printstring("SPEAK YOUR MIND",0,screen_width);
 	screenmemory:=screenmemory+screen_width*2;
 	
 	while (true) do

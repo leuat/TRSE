@@ -14,8 +14,8 @@ var
 
 */
 
-
-@define char 80   
+	const char : byte = 80;
+	
 @define charsetLoc $2800
 
    mainChar: IncBin("resources/charsets/charset.bin",@charsetLoc);
@@ -107,7 +107,7 @@ begin
 	for i:=0 to screen_width do begin
 		// Chose the center of a nice sine functions so that the background looks
 		// like a canal		
-		val:=sine[(i*4 + j+k)+30]/16 + @char;
+		val:=sine[(i*4 + j+k)+30]/16 + char;
 		
 		if val<64 then
 			val:=key_space;

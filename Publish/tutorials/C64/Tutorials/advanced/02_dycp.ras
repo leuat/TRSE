@@ -23,10 +23,10 @@ var
 
 	@define charmap $3000
 	@define charLoc $2000
-	@define useKernal 1 
-	@define rasterLine 210
-	@define yrow 21
-	@define noChars 32	
+	const useKernal : byte = 1;
+	const rasterLine : byte = 210;
+	const yrow : byte = 21;
+	const noChars : byte = 32;
 	
 	g_currentBank:byte = 0;
 
@@ -45,7 +45,7 @@ var
 	
  
 	// only need 32*2 chars
-	eightTable : array[@noChars*2] of byte; 
+	eightTable : array[noChars*2] of byte; 
 
 
 // Used to display raster time
@@ -170,7 +170,7 @@ interrupt RasterDYCP();
 
 interrupt RasterTop();
 begin
-	startirq(@useKernal);
+	startirq(useKernal);
 	// Increase scroller speed
 	time:=time+7;
 	// Display bitmap
@@ -181,7 +181,7 @@ begin
 	// Make sure no scroll while bitmap is displayed
 	scrollx(0);
 
-	RasterIRQ(RasterDYCP(),@rasterLine,@useKernal);
+	RasterIRQ(RasterDYCP(),rasterLine,useKernal);
 	// Perform the DYCP here
 @ifdef DEBUG_MODE
 	screen_bg_col:=green;
@@ -239,19 +239,19 @@ begin
 	zeropage5 := text;
 	scroll := 7;
 	i:=0;
-	for i:=0 to 40 do begin
+	for i:=0 to screen_width do begin
 		screenmemory[i]:=k;
 		screenmemory[i+screen_width]:=k+1;
 		screenmemory[i+screen_width*2]:=k+2;
 		screenmemory[i+screen_width*3]:=k+3;
 		k:=k+4;
 	end;
-	copyfullscreen(screen_char_loc,^$4400);
+	copyfullscreen(screen_char_loc,screen_char_loc2);
 
 	// Color ram, fill with green
 	
 	moveto(0,@yrow,hi(screen_col_loc));
-	fill(screenmemory,cyan, 160); // 4 rows
+	fill(screenmemory,cyan, screen_width*4); // 4 rows
 
 		
 end;
@@ -295,7 +295,7 @@ end;
 */
 begin
 	InitAll();
-	StartRasterChain(RasterTop(),0,@useKernal);
+	StartRasterChain(RasterTop(),0,useKernal);
 	Loop();
 end.
 

@@ -3,8 +3,8 @@ var
    	time1, waitTime,x,y,i,j,val : byte = 0; 
 
 // @max defines how many texts can be written on the screen at the same time
-@define max 6
-@define useKernal 1
+	const max : byte = 6;
+	const useKernal : byte = 1;
 
 	// Colors to fade between, one per frame
 	colors:  array[] of byte = (0, $06,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06,$06);
@@ -100,7 +100,7 @@ end;
 */
 procedure UpdateTextColors();
 begin
-	for i:=0 to @max do begin
+	for i:=0 to max do begin
 		if (text_time[i]<>0) then begin // is active: update color 
 			text_time[i]:=text_time[i]-1; // damn dec doesn't work
 			val:=colors[text_time[i]];
@@ -136,7 +136,7 @@ end;
 // Main raster, enables Update to be called once per raster cycle
 interrupt RasterMain();
 begin
-	StartIRQ(@useKernal);
+	StartIRQ(useKernal);
 	Update();
 
 	CloseIRQ();
@@ -150,6 +150,6 @@ begin
 	ClearScreen(key_space,screen_char_loc);
 	ClearScreen(black,screen_col_loc);
 
-	StartRasterChain(RasterMain(),0,@useKernal);
+	StartRasterChain(RasterMain(),0,useKernal);
 	Loop();
 end.

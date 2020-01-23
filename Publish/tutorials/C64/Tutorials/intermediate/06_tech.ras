@@ -1,6 +1,7 @@
 program Techtech;
 var  
 	@define useKernal 0 
+	
 	@define charLoc $6000
 
 	charset : incbin("resources/charsets/waveset.bin",@charLoc);
@@ -113,7 +114,7 @@ begin
 	StartRasterchain(RasterMain(),0,@useKernal);
 	// Shifting runs outside of rasters
 	while (true) offpage do begin
-		waitforraster(0);
+		waitforverticalblank();
 		// Scroll font down
 		ScrollDown();
 		// Right bit shift all chars!

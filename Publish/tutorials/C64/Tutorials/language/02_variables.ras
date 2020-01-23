@@ -34,6 +34,9 @@ var
 									// "speech marks" and "TURBO RASCAL" has 12 characters and so will need 12 bytes in memory to store it
 	name2: string;					// A string with no characters ?  more on this later
 
+	const maxValue : byte = 30; 		// A constant value must be initialized where it is defined
+	const myAddress : byte = $2000; 	// A constant address must be initialized where it is defined
+
 begin		// OK, now we are going to write some code!
 
 	lives := 3;				// here we are assigning a value to the lives variable, changing it to 3.
