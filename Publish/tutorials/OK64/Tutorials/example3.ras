@@ -1,12 +1,11 @@
 program Example3;
 var  
  	x1,i,k,l,y1,x2,y2,j,m,g,time,t: byte=0;
-    //music : incsid("music/courier.sid","2");
-    music : incsid("music/fliptape36.sid","2");
+    music : incsid("music/fliptape36.sid",2);
 	
 
 @export "images/ok1.flf" "images/ok1.bin" 256
-	image1 : incbin("images/ok1.bin","$20000");    
+	image1 : incbin("images/ok1.bin",$20000);    
 
 	@define count 200
 
