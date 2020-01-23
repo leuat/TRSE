@@ -49,7 +49,8 @@ var
    	// Player start position
 	player_x:byte = 16;
 	player_y:byte = 16;   
-	cx, cy, curCol,curExits,row,col,bgCol, fgCol, decrunchIndex,clearMessage,inputColor: byte = 0;
+	cx, cy, curCol,curExits,row,col,bgCol, fgCol, decrunchIndex,inputColor: byte = 0;
+	clearMessage : byte = 1;
 
 	commandNotOK, redraw : byte=true;
 	roomP,zp : pointer;
@@ -272,6 +273,7 @@ begin
 		screenmemory:=screenmemory+screen_width;
 	end;
 	clearMessage:=0;
+	
 @ifdef C64
 	moveto(@startx,@commandY,hi(screen_col_loc));
 	fill(screenmemory,inputColor,40);
