@@ -76,10 +76,10 @@ void Assembler::Write(QString str, int level)
      m_cycles[Node::m_currentLineNumber] += cnt;
 }
 
-bool caseInsensitiveLessThan(const Appendix &s1, const Appendix &s2)
+bool caseInsensitiveLessThan(const Appendix *s1, const Appendix *s2)
 {
-    QString sa = s1.m_pos.toLower().replace("$","0x");
-    QString sb = s2.m_pos.toLower().replace("$","0x");
+    QString sa = s1->m_pos.toLower().replace("$","0x");
+    QString sb = s2->m_pos.toLower().replace("$","0x");
 
     int a,b;
     bool ok;
@@ -105,11 +105,39 @@ bool caseInsensitiveLessThan(const Appendix &s1, const Appendix &s2)
     qStableSort(list.begin(), list.end(), caseInsensitiveLessThan);
     // list: [ "AlPha", "beTA", "DELTA", "gamma" ]
 }*/
+void Assembler::StartMemoryBlock(QString pos) {
+    //EndMemoryBlock();
+    //        qDebug() << "Starting emory pos: "<< pos;
+    Appendix app(pos);
+    m_currentBlock = new Appendix(pos);
+    m_appendix.append(m_currentBlock);
+    m_currentBlock->Append("org "+pos,1);
+    m_blockStack.append(m_currentBlock);
+    //        m_currentBlockCount = m_appendix.count()-1;
+}
+
+void Assembler::EndMemoryBlock() {
+    //        qDebug() << "Trying to end memory block.. ";
+    if (m_currentBlock!=nullptr) {
+        Label("EndBlock"+QString::number(m_currentBlock->m_id));
+
+    }
+    m_currentBlock=nullptr;
+    if (m_blockStack.count()>0)
+        m_blockStack.removeLast();
+    if (m_blockStack.count()!=0) {
+        m_currentBlock = m_blockStack.last();
+        // qDebug() << "STILL STACK : " << m_blockStack.count();
+    }
+    else m_currentBlock = nullptr;
+
+}
+
 void Assembler::SortAppendix()
 {
- /*   for (int i=0;i<m_appendix.count();i++)
+    /*   for (int i=0;i<m_appendix.count();i++)
         qDebug() << "appos:" << m_appendix[i].m_pos;*/
-   qSort(m_appendix.begin(), m_appendix.end(), caseInsensitiveLessThan);
+    qSort(m_appendix.begin(), m_appendix.end(), caseInsensitiveLessThan);
 }
 
 void Assembler::PushCounter()
@@ -124,8 +152,8 @@ void Assembler::PopCounter(int ln)
     int i = m_cycleCounter.last();
     m_cycleCounter.removeLast();
     m_blockCycles[ln]=+i;
-//    if (i>m_cycles[ln]) // Only count largest number
-//       m_cycles[ln] += i;
+    //    if (i>m_cycles[ln]) // Only count largest number
+    //       m_cycles[ln] += i;
     //   return i;
 //    qDebug() << "POP <<"<<ln << m_cycles[ln];
   //  qDebug() << m_cycles.keys();
@@ -269,9 +297,9 @@ void Assembler::Connect()
     QStringList pre;
     for (int i=0;i<m_appendix.count();i++) {
 //                qDebug() << (m_appendix[i].m_pos);
-        if (Util::NumberFromStringHex(m_appendix[i].m_pos)<Syntax::s.m_currentSystem->m_programStartAddress)
-            pre <<m_appendix[i].m_source;
-        else m_source << m_appendix[i].m_source;
+        if (Util::NumberFromStringHex(m_appendix[i]->m_pos)<Syntax::s.m_currentSystem->m_programStartAddress)
+            pre <<m_appendix[i]->m_source;
+        else m_source << m_appendix[i]->m_source;
 
     }
 

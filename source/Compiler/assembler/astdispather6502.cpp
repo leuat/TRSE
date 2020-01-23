@@ -732,7 +732,6 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
   //      qDebug() << node->m_procName << "IS IN BLOCK " << node->m_curMemoryBlock->m_name << " STARTING AT " << Util::numToHex(node->m_curMemoryBlock->m_start);
 
     // In case memory block is acive
-//    as->EndMemoryBlock();
 
     int ret = node->MaintainBlocks(as);
 
@@ -762,6 +761,8 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
     if (Syntax::s.builtInFunctions.contains(node->m_procName)) {
         isBuiltinFunction = true;
         isInitFunction = Syntax::s.builtInFunctions[node->m_procName].m_initFunction;
+        as->EndMemoryBlock();
+
     }
 
     as->Asm("");
@@ -1100,19 +1101,19 @@ void ASTDispather6502::IncSid(NodeVarDecl *node) {
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES) {
 
         if (node->sid.m_loadAddress!=0x8000 && Syntax::s.m_currentSystem->m_programStartAddress!=0x8000) {
-          Appendix app("$8000");
-          app.Append("org $8000",1);
-          app.Append("NSFfiller dc.b 0",0);
+          Appendix* app = new Appendix("$8000");
+          app->Append("org $8000",1);
+          app->Append("NSFfiller dc.b 0",0);
           as->m_appendix.append(app);
         }
     }
 
     QString pos = QString::number(node->sid.m_loadAddress,16);
-    Appendix app("$"+pos);
+    Appendix* app = new Appendix("$"+pos);
 
-    app.Append("org $" +pos,1);
+    app->Append("org $" +pos,1);
     //        as->Appendix(v->getValue(as),0);
-    app.Append("incbin \"" + as->m_projectDir + node->sid.m_outFile + "\"",1);
+    app->Append("incbin \"" + as->m_projectDir + node->sid.m_outFile + "\"",1);
 
     as->m_appendix.append(app);
 
@@ -1151,15 +1152,15 @@ void ASTDispather6502::IncBin(NodeVarDecl *node) {
     }
     else {
         //            qDebug() << "bin: "<<v->getValue(as) << " at " << t->m_position;
-        Appendix app(t->m_position);
+        Appendix* app = new Appendix(t->m_position);
 
         Symbol* typeSymbol = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
         typeSymbol->m_org = Util::C64StringToInt(t->m_position);
         typeSymbol->m_size = size;
         //            qDebug() << "POS: " << typeSymbol->m_org;
-        app.Append("org " +t->m_position,1);
-        app.Append(v->value,0);
-        app.Append("incbin \"" + filename + "\"",1);
+        app->Append("org " +t->m_position,1);
+        app->Append(v->value,0);
+        app->Append("incbin \"" + filename + "\"",1);
         as->m_appendix.append(app);
         bool ok;
         int start=0;
