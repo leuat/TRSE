@@ -14,7 +14,10 @@ bool AbstractImageEditor::AIE_eventFilter(QObject *object, QEvent *event, QWidge
         if (event->type()==QEvent::Enter) {
             Data::data.imageEvent = 1;
         }
-        if (event->type()==QEvent::Leave) Data::data.imageEvent = 0;
+        if (event->type()==QEvent::Leave) {
+            Data::data.imageEvent = 0;
+            return true;
+        }
         if (m_buttonDown)
             m_updateThread->m_currentButton=m_keepButton;
 

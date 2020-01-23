@@ -142,7 +142,10 @@ bool GLWidget::eventFilter(QObject *object, QEvent *event)
     if (m_cancel)
         return true;
     if(object==this) {
-        AIE_eventFilter(object,event,this);
+        if (AIE_eventFilter(object,event,this)) {
+            emit EmitMouseMove();
+
+        }
         return false;
     }
     return true;
