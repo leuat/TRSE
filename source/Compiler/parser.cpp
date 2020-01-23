@@ -1339,6 +1339,7 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
     m_pass = 1;
     m_lexer->m_currentComment = "";
     m_parserBlocks.clear();
+    SymbolTable::m_constants.clear();
     m_symTab = new SymbolTable();
     m_symTab->m_useLocals = useLocals;
 

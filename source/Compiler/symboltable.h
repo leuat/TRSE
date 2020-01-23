@@ -106,6 +106,7 @@ public:
 
     void InitBuiltins();
     bool exists(QString name);
+    void ReInitialize();
     QString findSimilarSymbol(QString sim, float percentage, int n,QStringList procedures);
     QStringList getUnusedVariables();
 
