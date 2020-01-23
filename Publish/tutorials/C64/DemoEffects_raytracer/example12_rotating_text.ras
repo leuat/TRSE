@@ -1,11 +1,13 @@
 program Rotating_text;
 var  
 
-@define dPos0 $8000
-@define dPos1 $1F00
-@define splitChar 18
-@define useKernal 0
-@define spriteLoc $4800
+	const dPos0 : address = $8000;
+	const dPos1 : address = $1F00;
+
+	const splitChar:byte = 18;
+	const useKernal:byte=0;
+	const spriteLoc:integer = $4800;
+	
 
 @requireFile "data/textsprites0.bin" "Please run example12_rotating_text.fjo before compiling this file"
 
@@ -18,8 +20,8 @@ var
 */
 
 	// Text data
-	data1: incbin("data/textsprites0.bin", @dPos0);
-	data2: incbin("data/textsprites1.bin", @dPos1);
+	data1: incbin("data/textsprites0.bin", dPos0);
+	data2: incbin("data/textsprites1.bin", dPos1);
 	// Array to store som values
 	vals : array[8] of byte;
 	
@@ -58,17 +60,17 @@ var
 */
 procedure SetSprite(ss_i, ss_char, ss_frame:byte);
 begin
-	zp:=@spriteLoc + 64*ss_i;
+	zp:=spriteLoc + 64*ss_i;
 	if (ss_char=$20) then begin
 		memcpyfast(zero,0,zp,63);
 		return();
 	end;
 	ss_char:=ss_char-65;
 	// Sprites are split between two data sets. If above, set the other one
-	m:=hi(^@dPos0);
-	if (ss_char>=@splitChar) then begin
-		ss_char:=ss_char-@splitChar;
-		m:=hi(^@dPos1);
+	m:=hi(dPos0);
+	if (ss_char>=splitChar) then begin
+		ss_char:=ss_char-splitChar;
+		m:=hi(dPos1);
 	end;
 	// Set current frame
 	p2:=ss_frame*64;

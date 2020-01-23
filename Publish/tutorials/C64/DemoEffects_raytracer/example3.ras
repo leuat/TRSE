@@ -1,6 +1,6 @@
 program Example3;
 
-// Twister data position
+// data position
 @define twister $2800
 // Twister table position
 @define tablepos $E000
@@ -29,7 +29,7 @@ begin
 	// Set the counter "j" to zero
 	j:=0;
 	// Locate position in table. Each line in the table has 24x2=48 bytes of pointer data
-	kp:=table + 48*frame; 
+	kp:=table + frame*48; 
 	// kp now points to correct frame in table
 	for y:=0 to 24 do begin
 		// Lookup lo and hi byte in table
@@ -56,7 +56,7 @@ begin
 	RenderMovie();
 //	frame:=(frame + 1)&63;
 	time:=time+1;
-	frame := mod(sine[time*2]/7-time/4,64);
+	frame := mod(frame+1,64);
 	closeirq();
 end;
 

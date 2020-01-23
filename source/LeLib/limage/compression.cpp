@@ -248,14 +248,10 @@ void Compression::OptimizeAndPackCharsetData(QByteArray &dataIn, QByteArray &out
 {
     out.clear();
     table.clear();
-/*Width :  3
-total rows:  4032
-total chars x frames:  1344
-total chars:  42
-cnt SHOULD be  576*/
 
     int cnt = dataIn.count()/width;
     qDebug() << "Width : " << width;
+    qDebug() << "Data count : " <<dataIn.count();
     qDebug() << "total rows: " << cnt;
     qDebug() << "total chars x frames: " << (cnt/width);
     qDebug() << "total chars: " << (cnt/32)/width;

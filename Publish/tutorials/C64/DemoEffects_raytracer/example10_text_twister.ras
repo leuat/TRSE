@@ -2,18 +2,20 @@ program Twister;
 var  
 
 // Location of twister data
-@define twister $3000
+	const twister: address = $3000;
 // Location of twister table position
-@define ttablepos $8000
-@define charLoc $2000
-@define rasterMainPos 0
+	const ttablepos : address = $8000;
+	const ttableposHi : byte = $80;
+	const charLoc : address = $2000;
+
+	const rasterMainPos : byte = 0;
 
 @requirefile "data/example10_screen.bin" "Please run the Fjong raytracer file 'example10_text_twister.fjo' before compiling this program"
 
 
-	twist: incbin("data/example10_screen.bin",@twister);
-	ttable: incbin("data/example10_table.bin",@ttablepos);
-	charset: incbin("charsets/main.bin", @charLoc);
+	twist: incbin("data/example10_screen.bin",twister);
+	ttable: incbin("data/example10_table.bin",ttablepos);
+	charset: incbin("charsets/main.bin", charLoc);
 	
 	// Used for multiplying with 32
 	table32 : array[32] of byte;
@@ -43,7 +45,7 @@ begin
 	if (j=key_space) then // Account for space bar
 		j:=0;
 	
-	returnValue(ToPointer(@ttablepos/$100+j*2,0));
+	returnValue(ToPointer(ttableposHi+j*2,0));
 end;
 
 /*
@@ -147,7 +149,7 @@ begin
 	screen_fg_col:=red;
 	screen_bg_col:=red;
 	clearscreen(black,screen_col_loc);
-	setcharsetlocation(@charLoc);
+	setcharsetlocation(charLoc);
 
 end;
 
@@ -156,7 +158,7 @@ begin
 	InitScreen();	
 	tp:=text;
 	for i:=0 to 256 do sine2[i]:=sine[i]/5;
-	RasterIRQ(RasterMain(),@rasterMainPos,0);
+	RasterIRQ(RasterMain(),rasterMainPos,0);
 	EnableRasterIRQ();
 	enableirq();
 	Loop();

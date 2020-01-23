@@ -525,8 +525,10 @@ static int AddScreen(lua_State* L) {
         return 0;
 
     if (m_effect!=nullptr) {
-        QByteArray ba = Util::toQByteArray(m_screenData);
+        QByteArray ba;
         m_compression.AddScreen(ba, m_effect->m_img,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));//, lua_tonumber(L,5),lua_tonumber(L,6));
+        for (char c:ba)
+            m_screenData.append(c);
     }
 
     return 0;
@@ -823,16 +825,6 @@ static int OptimizeScreenAndCharset(lua_State* L) {
 
     QByteArray cOut;
     QVector<int> sOut;
-//    void Compression::OptimizeScreenAndCharset(QByteArray &screen, QByteArray &charset, QByteArray &sOut, QByteArray &cOut, int sw, int sh, int charSize, int compression)
-
-/*
-    long j=0;
-    for (int i=0;i<m_charData.count();i++ )
-        j=j+m_charData[i];
-
-    qDebug() << "Num: " << j;
-*/
-
     m_compression.OptimizeScreenAndCharset(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
 //    m_charData.clear();
     m_charData = cOut;
@@ -862,15 +854,15 @@ static int CompressAndSaveHorizontalData(lua_State* L) {
 
     QByteArray table,packedData;
     table.clear();
-    QByteArray ba = Util::toQByteArray(m_screenData);
-
-//    qDebug() <<m_count*16 << " but is " <<m_screenData.count()/ww;
+    QByteArray ba;
     if (m_screenData.count()!=0)
-        m_compression.OptimizeAndPackCharsetData(ba, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
+        ba = Util::toQByteArray(m_screenData);
     else
+        ba = m_charData;
+
+
+
         m_compression.OptimizeAndPackCharsetData(ba, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
-  //  qDebug() << "Table should be : " << (m_noChars-1)*1024;
-    //qDebug() << "Table is : " << table.count();
 
 
     QFile f(m_currentDir+"/"+lua_tostring(L,3));

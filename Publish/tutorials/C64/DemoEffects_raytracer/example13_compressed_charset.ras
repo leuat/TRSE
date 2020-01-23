@@ -1,12 +1,13 @@
 program Full_screen_char_compression;
 var  
    	
-@define charLoc2 $5800
-@define charLoc3 $6000
-@define charLoc4 $6800
 
 
 	const charLoc1:address=$5000;
+	const charLoc2:address=charLoc1 + $800;
+	const charLoc3:address=charLoc2 + $800;
+	const charLoc4:address=charLoc3 + $800;
+
 	
 	@requirefile "data/13_screen0.bin" "Please run the raytracer file example13_compressed_chars.fjo before compiling this program" 	
 
@@ -16,14 +17,14 @@ var
 	screens4: incbin("data/13_screen3.bin",12000);
 	
 	charset1 : incbin("data/13_charset0.bin",charLoc1);
-	charset2 : incbin("data/13_charset1.bin",@charLoc2);
-	charset3 : incbin("data/13_charset2.bin",@charLoc3);
-	charset4 : incbin("data/13_charset3.bin",@charLoc4);
+	charset2 : incbin("data/13_charset1.bin",charLoc2);
+	charset3 : incbin("data/13_charset2.bin",charLoc3);
+	charset4 : incbin("data/13_charset3.bin",charLoc4);
 	sp:pointer;
 	frame:byte=0;
 	time:byte=0;
-	
-	@define screenLoc $4400
+
+	const screenLoc:address= $4400;	
 	
 	const maxFrames : byte=8;
 	//text : string=("         OFFENCE     JEG HAR TISS    HAR DU TISS KANSKJE     ",0,"         ");
@@ -40,13 +41,13 @@ begin
 	if (frame=0) then setcharsetlocation($1000);// 2x frames
 	
 	// FAST full-screen copying using unrolled loops
-	memcpyunroll(sp,0,^@screenLoc,^256);
+	memcpyunroll(sp,0,screenLoc,^256);
 	asm(" inc sp+1 "); // Quick way of saying sp:=sp+256;
-	memcpyunroll(sp,0,^@screenLoc+^256,256);
+	memcpyunroll(sp,0,screenLoc+^256,256);
 	asm(" inc sp+1 ");
-	memcpyunroll(sp,0,^@screenLoc+^256*^2,256);
+	memcpyunroll(sp,0,screenLoc+^256*^2,256);
 	asm(" inc sp+1 ");
-	memcpyunroll(sp,0,^@screenLoc+^256*^3,232);
+	memcpyunroll(sp,0,screenLoc+^256*^3,232);
 	
 	sp:=sp+232; // Add upp to 40x25 = 1000
  	inc(frame);
@@ -81,7 +82,7 @@ begin
 	screen_fg_col:=black;
 	multicolor_char_col[1]:=cyan;
 	multicolor_char_col[2]:=blue;
-	clearscreen(purple+8,^$D800);
+	clearscreen(purple+8,screen_col_loc);
 
 	setcharsetlocation(@charLoc1);
 	disableciainterrupts();

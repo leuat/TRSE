@@ -2,6 +2,7 @@ program Example4;
 var  
 	i,k,y,x,frame,time,curBank: byte = 0;
 	p1,p2 : pointer;
+	const maxFrames:byte=15;
 
 @requirefile "data/example4_chardata.bin" "Please run the Fjong raytracer file 'example4.fjo' before compiling this program"
 
@@ -87,7 +88,7 @@ begin
 
 	SetScreen();	
 	if (time&3=0) then 
-		frame:=(frame + 1)&15;
+		frame:=(frame + 1)&maxFrames;
 		
 	inc(time);
 

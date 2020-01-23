@@ -2,8 +2,8 @@ program Fjong_example5;
 var  
    frame: byte = 0; 
    const maxFrames:byte=127;
+	const spriteDataLoc: address = $2000;
 
-@define spriteDataLoc $2000
    
 /*
 	Example 5 in the "Fjong" tutorial series.
@@ -19,7 +19,7 @@ var
 @requirefile "data/example5_sprite.bin" "Please run the Fjong raytracer file 'example5_single_sprite.fjo' before compiling this program"
 
 	// Remember to run the "example5_single_sprite.fjo" fjong file to generate sprite data!
-	spritedata : incbin("data/example5_sprite.bin", @spriteDataLoc);
+	spritedata : incbin("data/example5_sprite.bin", spriteDataLoc);
 
 // Set up 1 sprite in the center of the screen, turn on multicolor
 procedure InitSprites();
