@@ -42,6 +42,8 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
     Data::data.currentColor=1;
     //m_grid.ApplyToLabel(ui->lblGrid);
     updateCharSet();
+
+
     //ui->lblGrid->setVisible(ui->chkGrid->isChecked());
 
 

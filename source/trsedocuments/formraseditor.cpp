@@ -176,7 +176,9 @@ void FormRasEditor::setupEditor()
 
     UpdateFromIni();
     ui->txtEditor->setCursorWidth(m_iniFile->getdouble("editor_cursor_width"));
-
+    ui->splitter->setSizes(QList<int>() << 10000 << 3500);
+//    ui->splitter->setStretchFactor(0, 10);
+  //  ui->splitter->setStretchFactor(1, 0);
 //    ui->txtEditor->setTabStopWidth(m_iniFile->getInt("tab_width") * metrics.width(' '));
 
 }
