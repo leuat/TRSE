@@ -1848,8 +1848,8 @@ Node *Parser::TypeSpec()
         }
 
         QString position = "";
-        if (m_currentToken.m_type==TokenType::AT) {
-            Eat(TokenType::AT);
+        if (m_currentToken.m_type==TokenType::AT || m_currentToken.m_type==TokenType::ABSOLUTE) {
+            Eat();
             position = m_currentToken.getNumAsHexString();
 
             Eat(m_currentToken.m_type);
@@ -1907,8 +1907,8 @@ Node *Parser::TypeSpec()
     // Is regular single byte / pointer
 
     QString position = "";
-    if (m_currentToken.m_type==TokenType::AT) {
-        Eat(TokenType::AT);
+    if (m_currentToken.m_type==TokenType::AT || m_currentToken.m_type==TokenType::ABSOLUTE) {
+        Eat();
         position = m_currentToken.getNumAsHexString();
 
         Eat(m_currentToken.m_type);
