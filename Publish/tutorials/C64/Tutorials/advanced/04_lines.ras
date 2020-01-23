@@ -1,8 +1,8 @@
 program Tutorial11_Lines;
 var
+	@define addr zeropage1
 	i, j,k,val: byte=5;
 	zeropage1: pointer;
-	@define address zeropage1
 	@define bitmapstart "$2000"
 	
 	// Currently, putpixel2 and putpixel3 are supported

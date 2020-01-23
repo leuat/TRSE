@@ -37,8 +37,8 @@ var
     		"ALL THE KINGS HORSES AND ALL THE KINGS MEN      COULDNT PUT DOLOREM IPSUM TOGETHER AGAIN                               ");
 
 	// Put image in bank 3 ($8000) 
-	image_color: IncBin("resources/images/octopus_color.bin", "$7000");
-	image_data: IncBin("resources/images/octopus_data.bin", "$A000");
+	image_color: IncBin("resources/images/octopus_color.bin", $7000);
+	image_data: IncBin("resources/images/octopus_data.bin", $A000);
 
 	zeropage2, zeropage5, zeropage4,p1,p2: pointer;
 

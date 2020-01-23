@@ -18,7 +18,7 @@ var
 @define spriteLoc $4800
 
 	image_color: IncBin("resources/images/neo_rider_color.bin", @imageColorPos);
-	image_data: IncBin("resources/images/neo_rider_data.bin", "$6000");
+	image_data: IncBin("resources/images/neo_rider_data.bin", $6000);
 	time,dy, vy, orgChar,i, k,curCol, curWait : byte = 0;
 	ypos:byte;
 	tmp:integer;

@@ -56,11 +56,11 @@ void Parser::Eat(TokenType::Type t)
 //        if (m_pass==1)
   //          qDebug() << "Token : " <<m_currentToken.m_value <<(m_currentToken.m_type==TokenType::PREPROCESSOR) << m_pass;
         int cnt =0;
-        while (m_currentToken.m_type==TokenType::PREPROCESSOR && m_pass==1) {
+        while (m_currentToken.m_type==TokenType::PREPROCESSOR && m_pass==1 && cnt++<32 ) {
             HandlePreprocessorInParsing();
           //  qDebug() << "Inside handle: " << m_currentToken.m_value;
 
-         //   qDebug() <<cnt++;
+//            qDebug() <<cnt++ <<m_currentToken.m_value;
         }
 
     }
@@ -470,6 +470,7 @@ void Parser::RemoveUnusedProcedures()
 
 void Parser::HandlePreprocessorInParsing()
 {
+
     if (m_currentToken.m_value=="define") {
         Eat();
         Eat();

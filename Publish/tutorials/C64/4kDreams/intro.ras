@@ -80,15 +80,9 @@ var
 	// Used in main
 	p3,p4,zp2 : pointer;
 
-	uct: incsid("music/exhale2B.sid","2");
+	uct: incsid("music/exhale2B.sid",2);
 	
 //	cs: incbin("charsets/waves.bin",$2800);
-
-	fontTable : array[16] of byte = ($20, $7e, $7C, $E2, 
-									$6C, $7f, $E1,  $Fb,
-									$7b, $61, $ff, $ec,
-									$62, $fc, $fe, $53);
-
 
 
 	fadeBlue : array [16] of byte = (11,6,6,12,4,14,15,1,1,15,14,4,12,6,6,11); 
@@ -97,6 +91,13 @@ var
 
 	text : string = ("         LEMONSPAWN PRESENTS      $4K DREAMS       A SMALL CRACKTRO          PARTICIPATING IN THE 2018 CSDB INTRO CREATION COMPETITION                ",
 					" CODE LEUAT      MUSIC WARLORD       THANKS TO EVERYONE WHO ARE SUPPORTING THE CONTINUOUS DEVELOPMENT OF TRSE                 ");
+
+	fontTable : array[16] of byte = ($20, $7e, $7C, $E2, 
+									$6C, $7f, $E1,  $Fb,
+									$7b, $61, $ff, $ec,
+									$62, $fc, $fe, $53);
+
+
 
 @startblock @FontTabPos FontTab
 	FontTab : array[256] of byte;
@@ -198,20 +199,27 @@ begin
 	for y:=0 to 8 step 2 do begin
 		for x:=l to m step 2 do begin
 			
-			k:=getbit(zp[y],7-x);
+/*			k:=getbit(zp[y],7-x);
 			k:=k+getbit(zp[y],6-x)*2;
 			k:=k+getbit(zp[y+1],6-x)*4;
 			k:=k+getbit(zp[y+1],7-x)*8;
-//			k:=k&15;
+	*/		
+			k:=1-getbit(zp[y],7-x);
+//			k:=k+getbit(zp[y],6-x)*2;
+	//		k:=k+getbit(zp[y+1],6-x)*4;
+		//	k:=k+getbit(zp[y+1],7-x)*8;
+
+
+			k:=k&15;
 			if (tp[0]=$20) then k:=0;
 			screenmemory[0]:=fontTable[k];
 //			h2[x/2]:=cx;
 		end;
-		inczp(screenmemory,40);
+		screenmemory:=screenmemory+40;
 	end;
 	inc(scroll);
 	if (scroll=4) then begin
-		inczp(tp,1);
+		tp:=tp+1;
 		scroll:=0;
 	end;
 
@@ -456,8 +464,8 @@ begin
 		p1:=$0400+40*@ypos+1;
 		for i:=0 to 4 do begin
 			memcpyunroll(p1,0,zp,39);
-			inczp(zp,40);
-			inczp(p1,40);
+			zp:=zp+40;
+			p1:=p1+40;
 		end;
 		zp:=$D800+40*@ypos;
 		p1:=$D800+40*@ypos+1;
@@ -547,7 +555,6 @@ begin
 	SCREEN_BG_COL:=colorsRedhues[idx];
 	SCREEN_FG_COL:=SCREEN_BG_COL;
 //	j:=idx-cur_start;
-
 
 
 //	setmulticolormode();

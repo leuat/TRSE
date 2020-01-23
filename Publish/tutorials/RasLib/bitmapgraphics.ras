@@ -20,18 +20,18 @@ begin
 	ldx bmg_x1
 	
 	lda ytablelow,y
-	sta @address
+	sta @addr
 	
 	lda ytablehigh,y
 	clc
 	adc bmg_currbank
-	sta @address+1
+	sta @addr+1
 	
 	ldy xtablelow,x
 	
-	lda (@address),y
+	lda (@addr),y
 	ora bmg_mask,x
-	sta (@address),y
+	sta (@addr),y
 	
 	");
 	
@@ -48,18 +48,18 @@ begin
 	lda ytablelow,y
 	clc
 	adc xtablelow,x
-	sta @address
+	sta @addr
 	
 	lda ytablehigh,y
 	adc bmg_currbank
 	adc xtablehigh,x
-	sta @address+1
+	sta @addr+1
 	
 	ldy #$00
-	lda (@address),y
+	lda (@addr),y
 	
 	ora bmg_mask,x
-	sta (@address),y
+	sta (@addr),y
 	");
 	
 end;
@@ -74,25 +74,25 @@ begin
 	lda ytablelow,y
 	clc
 	adc xtablelow,x
-	sta @address
+	sta @addr
 	
 	lda ytablehigh,y
 	adc xtablehigh,x
-	sta @address+1
+	sta @addr+1
 	
-	lda @address
+	lda @addr
 	clc
 	adc <@bitmapstart
-	sta @address
+	sta @addr
 	
-	lda @address+1
+	lda @addr+1
 	adc >@bitmapstart
-	sta @address+1
+	sta @addr+1
 	
 	ldy $00
-	lda (@address),y
+	lda (@addr),y
 	ora (zeropage5),y
-	sta (@address),y
+	sta (@addr),y
 	");
 end;
 */

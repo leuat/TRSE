@@ -10,8 +10,8 @@ var
 // Exports flf image directly to binary with each build
 @export "resources/images/neo_rider_by_the_diad.flf" "resources/images/neo_rider.bin" 0
 
-	image_color: IncBin("resources/images/neo_rider_color.bin", "$5000");
-	image_data: IncBin("resources/images/neo_rider_data.bin", "$6000");
+	image_color: IncBin("resources/images/neo_rider_color.bin", $5000);
+	image_data: IncBin("resources/images/neo_rider_data.bin", $6000);
 
 
 // basically the same as the built-in method copyimagecolordatamanually

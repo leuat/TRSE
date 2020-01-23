@@ -8,18 +8,18 @@ var
 
 begin
 
-	clearscreen($20,^$0400);
+	clearscreen(key_space,screen_char_loc);
 	
 	// Create a sinewave table - to be used as a fast lookup table later
 	
-	for i:=0 to 255 do begin
+	for i:=0 to 256 do begin
 		precalculated_sinewave_table[i]:=sine[i]/16;	
 	end;
 
 	// Use the table in real time to calculate a sine wave value on the fly
 	
 	while (true) do begin
-		waitforraster(255);
+		waitforverticalblank();
 		moveto(x_position, precalculated_sinewave_table[i] ,hi(SCREEN_CHAR_LOC));
 		printstring(symbol,0,1);
 		
@@ -28,7 +28,7 @@ begin
 		x_position:=x_position+1;		
 		if (x_position=40) then begin
 			x_position:=0;
-			clearscreen($20,^$0400);
+			clearscreen(key_space,screen_char_loc);
 		end;
 
 		
