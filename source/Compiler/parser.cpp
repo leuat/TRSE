@@ -51,6 +51,7 @@ void Parser::InitObsolete()
 
 void Parser::Eat(TokenType::Type t)
 {
+//    qDebug() << m_currentToken.m_value << m_currentToken.m_intVal;
     if (m_currentToken.m_type == t) {
         m_currentToken = m_lexer->GetNextToken();
 //        if (m_pass==1)
@@ -366,19 +367,29 @@ int Parser::GetParsedInt() {
     bool done = false;
     QString op = "plus";
     QString str = "";
+    int p = 0;
     while (!done) {
 //        qDebug() << "ival:"  << QString::number(m_currentToken.m_intVal);
 //        qDebug() << m_currentToken.getType();
         if (m_currentToken.m_type==TokenType::LPAREN) {
             str = str+ "(";
+            p++;
             Eat();
             continue;
         }
         if (m_currentToken.m_type==TokenType::RPAREN) {
+            if (p==0) {
+//                Eat();
+                done=true;
+                continue;
+
+            }
             str = str+ ")";
+            p--;
             Eat();
             continue;
         }
+
         if (m_currentToken.m_type==TokenType::PLUS) {
             str = str+ "+";
             Eat();
@@ -416,10 +427,12 @@ int Parser::GetParsedInt() {
 
         }
     }
-
+    if (p!=0)
+        for (int i=0;i<p;i++)
+            str+=")";
     QJSEngine myEngine;
     QJSValue ret = myEngine.evaluate(str);
-  //  qDebug() << str << ret.toInt();
+//    qDebug() << str << ret.toInt();
     return ret.toInt();
 }
 
