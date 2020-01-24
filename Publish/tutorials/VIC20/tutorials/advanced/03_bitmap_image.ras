@@ -13,16 +13,18 @@ program BitmapImage;
 
 // Image in images/logo.flf
 
-// Size of image. Defined when creating and drawing the flf file
-@define imageWidth 20
-@define imageHeight 20
-// Bitmap will be loaded as a charset
-@define charsetAndBitmap $1400
-
 var  
+
+// Size of image. Defined when creating and drawing the flf file
+const imageWidth:byte = 20;
+const imageHeight:byte = 20;
+
+// Bitmap will be loaded as a charset
+const charsetAndBitmap:address = $1400;
+
 	i,j,k, time,t:byte;
 	zp: pointer;
-	charset : incbin("resources/images/logo.bin", @charsetAndBitmap);
+	charset : incbin("resources/images/logo.bin", charsetAndBitmap);
 
 
 // Put all code at $2400
@@ -32,16 +34,16 @@ var
 procedure CopyImageColor();
 begin
 
-	zp:=@charsetAndBitmap + @imageWidth*@imageHeight*8;
+	zp:=charsetAndBitmap + imageWidth*imageHeight*8;
 //	
 	moveto(0,0,$94);
-	for j:=0 to @imageHeight do begin
-		for i:=0 to @imageWidth do begin
-			k:=zp[i]	 | zp[i+@imageWidth];
+	for j:=0 to imageHeight do begin
+		for i:=0 to imageWidth do begin
+			k:=zp[i]	 | zp[i+imageWidth];
 			screenmemory[i]:=k;
 		end;
-		inczp(screenmemory,@imageWidth);
-		inczp(zp,@imageWidth*2);
+		screenmemory := screenmemory + imageWidth;
+		zp := zp + imageWidth*2;
 
 	end;
 
@@ -58,11 +60,11 @@ begin
 	// Screen to $1000
 	setscreenlocation($1000);
 	// Set charset location to where bitmap data is
-	setcharsetlocation(@charsetAndBitmap);
+	setcharsetlocation(charsetAndBitmap);
 	// Set height of columns (-1, needs to be odd)
-	SCREEN_TEXT_HEIGHT:=@imageHeight-1;
+	SCREEN_TEXT_HEIGHT:=imageHeight-1;
 	// Width of screen same as bitmap
-	SCREEN_TEXT_WIDTH:=@imageWidth;
+	SCREEN_TEXT_WIDTH:=imageWidth;
 
 	// Copy color data
 	CopyImageColor();

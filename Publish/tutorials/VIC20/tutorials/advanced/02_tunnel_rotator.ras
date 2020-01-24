@@ -1,41 +1,34 @@
 program Tunnel;
 
-// Place to dump generated data.
-@define dataloc $1800
-@define lineloc $19FA
 
 @userdata "$1600" "$17FA" "Generated Table"
 
 @ignoremethod "init16x8div"
-
-@ignoremethod "init16x8mul"
-
-//@ignoremethod "init8x8div"
-
 @ignoremethod "initrandom"
 
 var
 
-	// Character that builds the circle. Some random petscii ones
-	vals : array[8] of byte = ($20, $2E, $2B, $51, $5A, $56, $5E, $5E );
+// Place to dump generated data.
+const dataloc:address = $1800;
+const lineloc:address = $19FA;
 
-	x,y,i,j,k,l,time,dx,dy,time2 : byte=0;
+	x,y,i,j,k,time,dx,dy,time2 : byte=0;
 	wrk : integer;
 	// Pointers to color, data and screen
 	cp,l1,c1,screen:pointer;
-	perlin: incbin("resources/data/perlin16.dat", "$2A00");
+	perlin: incbin("resources/data/perlin16.dat", $2A00);
 
-@define charsetLoc $1c00
+const charsetLoc:address = $1c00;
 
-	charset : incbin("resources/charsets/charset_8x8.bin",@charsetLoc);
+	charset : incbin("resources/charsets/charset_8x8.bin", charsetLoc);
 /*
-	Fills @dataLoc with 25xscreen_width circles & 7
+	Fills dataLoc with 25xscreen_width circles & 7
 */
 
 procedure Calculate();
 begin
-	cp:=@dataloc;
-	screen:=@lineloc;
+	cp:=dataloc;
+	screen:=lineloc;
 	for y:=0 to screen_height do begin
 		for x:=0 to screen_width do begin
 			dx:=abs(11-x);
@@ -59,8 +52,8 @@ procedure Update();
 begin
 	screen:=screen_char_loc;
 	cp:=screen_col_loc; // Color memory
-	c1:=@dataloc;
-	l1:=@lineloc;
+	c1:=dataloc;
+	l1:=lineloc;
 	for y:=0 to screen_height do begin
 		for x:=0 to screen_width do begin
 			i:=(l1[x]-time);
@@ -86,7 +79,7 @@ end;
 begin
 	DisableVIC20IRQ();
 	screen_bg_color:=black;
-	setcharsetlocation(@charsetLoc);
+	setcharsetlocation(charsetLoc);
 	time:=0;
 	
 	Calculate();
