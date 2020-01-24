@@ -71,11 +71,12 @@ begin
 	Startirq(0);
 	// First, make sure that the PPU knows that sprites are located at @spriteLoc
 	SetSpriteLocation(hi(^@spriteLoc));
+	
 	SetNametable(0);
 
 	// Play the song!
 	PlaySong();
-	// MovePlayer should really be called outside the NMI, waste of time
+	// MovePlayer should really be called outside the NMI, waste of raster time
 	MovePlayer();
 	// Make sure that sprite properties are set, re-enable NMI
 	ToggleSpriteSize(0);

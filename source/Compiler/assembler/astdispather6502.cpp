@@ -1091,7 +1091,8 @@ void ASTDispather6502::dispatch(NodeVarDecl *node)
 
         as->DeclareVariable(v->value, typeVal, t->initVal);
         // Increase by 1 if byte
-        t->initVal = Util::numToHex(Util::NumberFromStringHex(t->initVal)+node->m_dataSize);
+        if (t->m_flag==1)
+            t->initVal = Util::numToHex(Util::NumberFromStringHex(t->initVal)+node->m_dataSize);
     }
 
     if (node->m_curMemoryBlock!=nullptr) {

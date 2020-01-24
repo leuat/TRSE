@@ -18,7 +18,7 @@ var
    	i,j,k: byte; 
 	// Must include dummy at $8000 due to the fact we are using 2 16kb blocks. For a larger project,
 	// this is where the music will go
-	dummy:array[1] of byte at $8000;
+	dummy: incbin("tiles/game_tiles.pal", $8000);
 	palette: incbin("tiles/game_tiles.pal");
 	
 

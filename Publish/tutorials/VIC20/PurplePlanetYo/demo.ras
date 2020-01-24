@@ -484,7 +484,7 @@ procedure MainDemo();
 begin
 //	Loop();
 	InitMainDemo();
-	while (1=1) do begin
+	while (true) do begin
 //		waitforraster(0);
 
 		waitforraster(0);

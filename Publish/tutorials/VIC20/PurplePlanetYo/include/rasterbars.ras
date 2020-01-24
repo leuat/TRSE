@@ -67,7 +67,6 @@ begin
 	noBalls:=1;
 	for i:=0 to 9 do rasterCol[i]:=rasterCol[i]| rasterCol[i]*16;
 	//printstring("HALLA",0,40);
-	asm(";wtf");		
 	for i:=0 to 0 do poke(^@table2, i, sine[i]/rasterSpread);
 
 	textP:=text1;
@@ -81,7 +80,9 @@ begin
 	l:=0;
 //	if (k<>j) then
 	zp:=@table;
-	inczp(zp, k+rasterStart);
+	zp:=zp+k+rasterStart;
+//	inczp(zp, k+rasterStart);
+	
 	memcpy(rCol,0, zp,9);
 /*	for i:=k to j do begin
 		table[i]:=rCol[l];
@@ -109,14 +110,14 @@ begin
 	PrintText();
 
 	if (startEffect=0) then return();
-
 	x:=time;
 	if (transition=0) then begin
-		if (time&7=7) then 
+		if (time&7=7) then begin
 			if (cx<9) then begin		
 				rCol[cx]:=rasterCol[cx];
 				inc(cx);	
 			end;
+		end;
 	end
 	else
 	begin
