@@ -349,7 +349,6 @@ void Parser::PreprocessConstants()
 }
 
 int Parser::getParsedNumberOrConstant() {
-    int val = 0;
 
     if (m_currentToken.m_value=="") {
         return m_currentToken.m_intVal;
@@ -361,8 +360,71 @@ int Parser::getParsedNumberOrConstant() {
     return s->m_value->m_fVal;
 }
 
+int Parser::GetParsedInt() {
 
-int Parser::GetParsedInt()
+
+    bool done = false;
+    QString op = "plus";
+    QString str = "";
+    while (!done) {
+//        qDebug() << "ival:"  << QString::number(m_currentToken.m_intVal);
+//        qDebug() << m_currentToken.getType();
+        if (m_currentToken.m_type==TokenType::LPAREN) {
+            str = str+ "(";
+            Eat();
+            continue;
+        }
+        if (m_currentToken.m_type==TokenType::RPAREN) {
+            str = str+ ")";
+            Eat();
+            continue;
+        }
+        if (m_currentToken.m_type==TokenType::PLUS) {
+            str = str+ "+";
+            Eat();
+            continue;
+        }
+        if (m_currentToken.m_type==TokenType::MINUS) {
+            str = str+ "-";
+            Eat();
+            continue;
+        }
+        if (m_currentToken.m_type==TokenType::MUL) {
+            str = str+ "*";
+            Eat();
+            continue;
+        }
+        if (m_currentToken.m_type==TokenType::DIV) {
+            str = str+ "/";
+            Eat();
+            continue;
+        }
+
+        if (m_currentToken.m_value=="") {
+            str+=QString::number(m_currentToken.m_intVal);
+            Eat();
+        }
+        else {
+            Symbol* s = m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
+              if (s==nullptr)
+                  done=true;
+              else {
+               str+=QString::number(s->m_value->m_fVal);
+               Eat();
+              }
+     //             ErrorHandler::e.Error("Value required to be a number or a constant.",m_currentToken.m_lineNumber);
+
+        }
+    }
+
+    QJSEngine myEngine;
+    QJSValue ret = myEngine.evaluate(str);
+  //  qDebug() << str << ret.toInt();
+    return ret.toInt();
+}
+
+
+int Parser::GetParsedIntOld()
 {
     bool done = false;
     int val = 0;
@@ -1876,9 +1938,9 @@ Node *Parser::TypeSpec()
         QString position = "";
         if (m_currentToken.m_type==TokenType::AT || m_currentToken.m_type==TokenType::ABSOLUT) {
             Eat();
-            position = m_currentToken.getNumAsHexString();
-
-            Eat(m_currentToken.m_type);
+            //position = m_currentToken.getNumAsHexString();
+            position = Util::numToHex(GetParsedInt());
+           // Eat(m_currentToken.m_type);
         }
         QStringList flags;
         if (m_currentToken.m_type==TokenType::CHIPMEM) {

@@ -22,6 +22,8 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include <QJSEngine>
+
 #include "source/Compiler/ast/ast.h"
 #include "source/Compiler/lexer.h"
 #include <QRegularExpression>
@@ -48,6 +50,8 @@
 #include "source/Compiler/ast/nodecase.h"
 #include "source/LeLib/limage/limageio.h"
 #include "source/LeLib/limage/c64fullscreenchar.h"
+
+
 class ParserBlock {
 public:
     int m_blockID;
@@ -103,6 +107,7 @@ public:
     void PreprocessIfDefs(bool ifdef);
     void PreprocessConstants();
 
+    int GetParsedIntOld();
     int GetParsedInt();
 
     int getIntVal(Token t);
