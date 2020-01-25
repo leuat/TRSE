@@ -36,6 +36,3 @@ override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
 charset_ = :resources/character.rom
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/PumpKid/
-open_files = ,pumpkid.asm, pumpkid.ras
-current_file = pumpkid.ras

@@ -37,6 +37,4 @@ override_target_settings_prg = 0
 build_list = ,
 data_header_resources/images/petscii_animation.flf = 0
 charset_resources/images/petscii_animation.flf = :resources/character.rom
-open_files = ,05_paw_resources_auto_generated.ras, intermediate/05_paw_compression.ras, intermediate/05_paw_compression.asm, advanced/01_spritescroller.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
-current_file = intermediate/05_paw_compression.ras
+open_files =, Hello.ras

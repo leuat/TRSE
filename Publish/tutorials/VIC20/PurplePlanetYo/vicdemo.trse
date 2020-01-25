@@ -42,6 +42,4 @@ override_target_settings_sys = 0
 override_target_settings_prg = 0
 output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
-open_files = ,packed_resources1.ras, demo.ras, include/rasterbars.ras, include/scenenext.ras, include/image.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/PurplePlanetYo/
-current_file = demo.ras
+open_files =, demo.ras
