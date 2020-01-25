@@ -11810,6 +11810,7 @@ void Methods6502::SetCharsetLocation(Assembler *as)
 
 }
 
+
 void Methods6502::SetScreenLocation(Assembler *as)
 {
     NodeNumber* v = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
@@ -11818,7 +11819,35 @@ void Methods6502::SetScreenLocation(Assembler *as)
 
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 || Syntax::s.m_currentSystem->m_system==AbstractSystem::C64) {
-        ErrorHandler::e.Error("SetScreenLocation not implemented for C64 yet", m_node->m_op.m_lineNumber);
+ //       ErrorHandler::e.Error("SetScreenLocation not implemented for C64 yet", m_node->m_op.m_lineNumber);
+        int n = (unsigned int)v->m_val % 0x4000;
+        bool ok=false;
+        uchar b = 0;
+        if (n==0x00) { b=0b0000; ok=true;}
+        if (n==0x0400) { b=0b0001; ok=true;}
+        if (n==0x0800) { b=0b0010; ok=true;}
+        if (n==0x0C00) { b=0b0011; ok=true;}
+        if (n==0x1000) { b=0b0100; ok=true;}
+        if (n==0x1400) { b=0b0101; ok=true;}
+        if (n==0x1800) { b=0b0110; ok=true;}
+        if (n==0x1C00) { b=0b0111; ok=true;}
+        if (n==0x2000) { b=0b1000; ok=true;}
+        if (n==0x2400) { b=0b1001; ok=true;}
+        if (n==0x2800) { b=0b1010; ok=true;}
+        if (n==0x2C00) { b=0b1011; ok=true;}
+        if (n==0x3000) { b=0b1100; ok=true;}
+        if (n==0x3400) { b=0b1101; ok=true;}
+        if (n==0x3800) { b=0b1110; ok=true;}
+        if (n==0x3C00) { b=0b1111; ok=true;}
+        if (!ok)
+            ErrorHandler::e.Error("SetScreenLocation parameter must be one of the following values: $0000,$0400,$0800,$0C00.. repeating every $1000 bytes", m_node->m_op.m_lineNumber);
+
+        QString addr = Util::numToHex(as->m_symTab->m_constants["VIC_DATA_LOC"]->m_value->m_fVal);
+        as->Asm("lda "+addr);
+        as->Asm("and #%00001111");
+        as->Asm("ora #"+QString::number(b<<4));
+        as->Asm("sta "+addr);
+
     }
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20) {
         int n = (unsigned int)v->m_val;

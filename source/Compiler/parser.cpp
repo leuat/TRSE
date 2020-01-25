@@ -365,7 +365,6 @@ int Parser::GetParsedInt() {
 
 
     bool done = false;
-    QString op = "plus";
     QString str = "";
     int p = 0;
     while (!done) {
@@ -380,6 +379,7 @@ int Parser::GetParsedInt() {
         if (m_currentToken.m_type==TokenType::RPAREN) {
             if (p==0) {
 //                Eat();
+                // OOps! Hit a ")" that is not part of an equation!
                 done=true;
                 continue;
 
@@ -427,9 +427,9 @@ int Parser::GetParsedInt() {
 
         }
     }
-    if (p!=0)
-        for (int i=0;i<p;i++)
-            str+=")";
+//    if (p!=0)
+    for (int i=0;i<p;i++)
+        str+=")";
     QJSEngine myEngine;
     QJSValue ret = myEngine.evaluate(str);
 //    qDebug() << str << ret.toInt();
