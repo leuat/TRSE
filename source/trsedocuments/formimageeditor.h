@@ -88,7 +88,7 @@ public:
 
     enum PainterType {OpenGL, QtPaint };
     PainterType m_painterType = OpenGL;
-
+    bool m_isInitialized = false;
 
     int m_oldWidth = 600;
 
