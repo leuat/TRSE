@@ -1,21 +1,24 @@
 ; Screen address table Low byte / high byte
-vbmScrL = $0a ; 20 bytes
+vbmScrL = $0c ; 20 bytes
 ;    dc.b 0,0,0,0,0,0,0,0,0,0
 ;    dc.b 0,0,0,0,0,0,0,0,0,0
-vbmScrH = $1e ; 20 bytes
+vbmScrH = $20 ; 20 bytes
 ;    dc.b 0,0,0,0,0,0,0,0,0,0
 ;    dc.b 0,0,0,0,0,0,0,0,0,0
 ; ends at $32
 
-vbmX        = $01 ; x position
-vbmY        = $02 ; y position
-vbmI        = $03 ; index
-vbmJ        = $04 ; index
-vbmT        = $05 ; index
-vbmScroll   = $06    ; 16 - character scroll start
-vbmNumColumns = $07  ; 20 -number of columns
-vbmScrLstart = $08   ; $00 - start address for bitmap L
-vbmScrHstart = $09   ; $11 - start address for bitmap H
+vbm9000     = $00 ; store $9000 address value
+vbm9001     = $01 ; store $9001 address value
+vbm9005     = $02 ; store $9005 address value
+vbmX        = $03 ; x position
+vbmY        = $04 ; y position
+vbmI        = $05 ; index
+vbmJ        = $06 ; index
+vbmT        = $07 ; index
+vbmScroll   = $08    ; 16 - character scroll start
+vbmNumColumns = $09  ; 20 -number of columns
+vbmScrLstart = $0a   ; $00 - start address for bitmap L
+vbmScrHstart = $0b   ; $11 - start address for bitmap H
 
 vbmSetDisplayMode
 
@@ -28,6 +31,7 @@ vbmSetDisplayMode
     sta vbmScrHstart
 
     lda $9000
+    sta vbm9000
     cmp #$c;keep
     beq vbmIsPal
 
@@ -62,10 +66,13 @@ vbmIsNtsc
 vbmSDM_noadjust
 
     lda $9001
+    sta vbm9001
     sec
     sbc #1
     sta $9001	; adjust vertical position
 
+    lda $9005
+    sta vbm9005
     lda #%11001100	; 204 - set screen and character to $1000
     sta $9005
 
