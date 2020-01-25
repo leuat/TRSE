@@ -448,8 +448,9 @@ void FormImageEditor::Load(QString filename)
     LImage* img = LImageIO::Load(filename);
     if (img==nullptr)
         return;
-    m_work.New(img, filename);
-
+    if (!m_isInitialized)
+       m_work.New(img, filename);
+    else m_work.m_currentImage->m_image = img;
     //m_prefMode = CharsetImage::Mode::FULL_IMAGE;
     PrepareImageTypeGUI();
 /*    if (QFile::exists(m_projectIniFile->getString("charset_"+m_currentFileShort))) {
@@ -531,6 +532,7 @@ void FormImageEditor::Load(QString filename)
 //    onImageMouseEvent();
 
     emit onImageMouseEvent();
+    m_isInitialized = true;
 
 
     QTimer::singleShot(50, this, SLOT(InitAspect()));
@@ -608,6 +610,8 @@ void FormImageEditor::SelectCharacter(int idx)
 
 void FormImageEditor::on_cmbEffect_currentIndexChanged(int index)
 {
+    if (index==-1)
+        return;
     m_currentImageEffect = m_imageEffects.m_effects[index];
     FillImageEffect();
 }
@@ -2137,7 +2141,8 @@ void FormImageEditor::on_pushButton_clicked()
 //    Reload();
     if (m_currentFilename!="") {
 //        Load(m_currentFilename);
-        m_work.m_currentImage->m_image = LImageIO::Load(m_currentFilename);
+        //m_work.m_currentImage->m_image = LImageIO::Load(m_currentFilename);
+        Load(m_currentFilename);
         ui->cmbNesPalette->setCurrentIndex(GetFooterData(LImageFooter::POS_CURRENT_PALETTE));
         on_cmbNesPalette_currentIndexChanged(GetFooterData(LImageFooter::POS_CURRENT_PALETTE));
         on_cmbNesPalette_currentIndexChanged(GetFooterData(LImageFooter::POS_CURRENT_PALETTE));
