@@ -1358,6 +1358,7 @@ void FormImageEditor::SetMCColors()
     }
 
     updateCharSet();
+    UpdateMulticolorImageSettings();
     emit onImageMouseEvent();
 
     Data::data.Redraw();
@@ -1611,6 +1612,7 @@ QWidget *FormImageEditor::getCurrentPainter()
 }
 
 
+
 void FormImageEditor::onSwapDisplayMode()
 {
     m_work.m_currentImage->m_image->m_footer.toggle(LImageFooter::POS_DISPLAY_CHAR);
@@ -1767,17 +1769,22 @@ void FormImageEditor::on_btnResizeData_clicked()
 
 }
 
-void FormImageEditor::on_chkDisplayMulticolor_stateChanged(int arg1)
+void FormImageEditor::UpdateMulticolorImageSettings()
 {
-    m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
-    Data::data.Redraw();
     if (m_work.m_currentImage->m_image->m_supports.displayColors) {
         m_work.m_currentImage->m_image->m_colorList.SetIsMulticolor(ui->chkDisplayMulticolor->isChecked());
         m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1);
     }
 
-    onImageMouseEvent();
+}
+
+void FormImageEditor::on_chkDisplayMulticolor_stateChanged(int arg1)
+{
+    m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
+    UpdateMulticolorImageSettings();
     updateCharSet();
+    Data::data.Redraw();
+    onImageMouseEvent();
 
 }
 

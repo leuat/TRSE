@@ -548,7 +548,7 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 
 
         val = m_charset->getCharPixel(v, col, x,y);
-            if (!m_charset->m_isMultiColor)
+            if (!m_charset->m_colorList.m_isMulticolor)
                 if (val!=m_background)
                     val = col;
     }

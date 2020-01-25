@@ -173,6 +173,7 @@ private:
     QWidget* getCurrentPainter();
 
 private slots:
+    void UpdateMulticolorImageSettings();
     void InitAspect();
     void onSwapDisplayMode();
     void onImageMouseEvent();

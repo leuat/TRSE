@@ -45,13 +45,30 @@ LColor &LColorList::get(int i) {
 void LColorList::SetIsMulticolor(bool mult)
 {
     m_isMulticolor = mult;
+    if (m_list.count()==0)
+        return;
+    qDebug() << m_list.count();
+
+    for (int i=0;i<m_list.count();i++)
+        m_list[i].ignoreAltColour = false;
+
+
+
     if (m_isMulticolor) {
         if (m_type==LColorList::C64 || m_type==LColorList::VIC20) {
             for (int i=0;i<8;i++) {
                 m_list[i].ignoreAltColour = true;
             }
-            m_list[ m_multicolors[1]].ignoreAltColour = false;
-            m_list[ m_multicolors[2]].ignoreAltColour = false;
+            if (m_multicolors.count()>=2) {
+                if (m_multicolors[0]<m_list.count() && m_multicolors[0]>8)
+                m_list[ m_multicolors[0]&7].ignoreAltColour = false;
+            }
+            if (m_multicolors.count()>=3) {
+  //              qDebug() << m_multicolors[2];
+
+                if (m_multicolors[1]<m_list.count() && m_multicolors[1]>8)
+                m_list[ m_multicolors[1]&7].ignoreAltColour = false;
+            }
         }
     }
 }

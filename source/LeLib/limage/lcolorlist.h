@@ -102,10 +102,10 @@ class LColorList : public QObject
 private:
 
     QVector<int> m_multicolors;
-    bool m_isMulticolor = true;
 
 public:
     QVector<LColor> m_list;
+    bool m_isMulticolor = true;
 
     enum Type{ NES, C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8,OK64,X16 };
 

@@ -145,8 +145,8 @@ void CharsetImage::SetColor(uchar col, uchar idx)
         for (int i=0;i<4;i++)
             m_colorList.m_list[m_extraCols[i]].displayList=true;
 
-        m_colorList.CreateUI(m_colorList.m_layout,1);
     }
+    m_colorList.CreateUI(m_colorList.m_layout,1);
 
 
 }
@@ -224,7 +224,13 @@ unsigned int CharsetImage::getPixel(int x, int y)
 
     QPoint p = getXY(x,y);
 
-    return MultiColorImage::getPixel(p.x(),p.y());
+    if (m_colorList.m_isMulticolor)
+        return MultiColorImage::getPixel(p.x(),p.y());
+
+    PixelChar&pc = getPixelChar(p.x(),p.y());
+    if (MultiColorImage::getPixel(p.x(),p.y())==1)
+        return pc.c[3];
+    return pc.c[0];
 
 
 }
@@ -350,69 +356,7 @@ void CharsetImage::setPixel(int x, int y, unsigned int color)
 {
     QPoint p = getXY(x,y);
 
-//    MultiColorImage::setPixel(p.x(),p.y(),color);
     setLimitedPixel(p.x(),p.y(),color);
-
-/*        if (m_bitMask==1)
-            if (color!=m_background) {
-                color = m_extraCols[1];
-//                if (rand()%100>98)
-  //              qDebug() << QString::number(color);
-            }
-
-
-    if (m_currentMode==FULL_IMAGE) {
-        if (x>=m_width || x<0 || y>=m_height || y<0)
-            return;
-        PixelChar& pc = getPixelChar(x,y);
-
-
-        int ix = x % (8/m_scale);//- (dx*m_charHeight);
-        int iy = y % 8;//- (dy*m_charWidth);
-
-        pc.set(m_scale*ix, iy, color, m_bitMask);
-        return;
-    }
-
-    int bp = 8;
-    if (m_currentMode==CHARSET2x2)
-        bp=16;
-
-    int xx,yy;
-    int shiftx = (m_currentChar*8)%320;
-    int shifty = (m_currentChar/(int)m_charWidth)*8;
-    shiftx/=m_scale;
-
-    if (m_currentMode == CHARSET1x1 || m_currentMode == CHARSET2x2) {
-        int i = x/320.0*bp;
-        int j = y/200.0*bp;
-
-        if (j<0 || j>=16 || i<0 || i>=16/m_scale)
-            return;
-        xx = i+shiftx;
-        yy = j+shifty;
-
-
-
-    }
-    if (m_currentMode == CHARSET2x2_REPEAT) {
-        int i = x/320.0*16*3;
-        int j = y/200.0*16*3;
-
-        if (j<0 || j>=16*3 || i<0 || i>=8*3)
-            return;
-
-        xx = i%8+shiftx;
-        yy = j%16+shifty;
-
-
-    }
-
-
-    setLimitedPixel(xx,yy,color);
-    */
-//    MultiColorImage::setPixel(xx,yy, color);
-
 
 
 }
@@ -466,6 +410,7 @@ void CharsetImage::CopyFrom(LImage *img)
    // return LImage::CopyFrom(img);
 
     CharsetImage* mc = dynamic_cast<CharsetImage*>(img);
+    m_colorList.m_isMulticolor = img->m_colorList.m_isMulticolor;
     //if ((typeid(*img) == typeid(MultiColorImage)) || (typeid(*img) == typeid(StandardColorImage))
     //        || (typeid(*img) == typeid(CharsetImage)))
     m_footer = img->m_footer;
@@ -549,6 +494,9 @@ void CharsetImage::setLimitedPixel(int x, int y, unsigned int color)
     PixelChar& pc = getPixelChar(x,y);
 
  //   pc.Reorganize(m_bitMask, m_scale,m_minCol, m_noColors);
+
+//    if (rand()%100>90)
+  //      qDebug() << QString::number(color) << QString::number(pc.c[0]) << QString::number(pc.c[1]) << QString::number(pc.c[2]) << QString::number(pc.c[3]);
 
     int ix = x % (8/m_scale);//- (dx*m_charHeight);
     int iy = y % 8;//- (dy*m_charWidth);

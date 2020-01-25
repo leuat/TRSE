@@ -31,7 +31,6 @@ class CharsetImage : public MultiColorImage
 {
 public:
     QByteArray m_rawData;
-    bool m_isMultiColor = false;
     PixelChar m_color;
     CharsetImage(LColorList::Type t);
 
