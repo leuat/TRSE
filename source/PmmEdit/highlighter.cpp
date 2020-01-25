@@ -67,6 +67,13 @@ Highlighter::Highlighter(CIniFile ini, int type, QTextDocument *parent)
             highlightingRules.append(rule);
         }
 
+
+
+
+
+
+
+
         /* CONSTANTS */
 
         SymbolTable::Initialize();
@@ -181,6 +188,39 @@ void Highlighter::highlightBlock(const QString &text)
         setFormat(startIndex, commentLength, multiLineCommentFormat);
         startIndex = text.indexOf(commentStartExpression, startIndex + commentLength);
     }
+}
+
+void Highlighter::AppendSymboltable(QList<QString> procs)
+{
+    if (m_isUpdated)
+        while (highlightingRules.count()>m_cur)
+            highlightingRules.removeLast();
+    else
+    {
+    // Procedures
+        m_isUpdated = true;
+        m_cur = highlightingRules.count();
+    }
+    QStringList keywordPatterns;
+
+    procedureFormat.setForeground(m_colors.getColor("builtinfunctioncolor"));
+//    procedureFormat.setFontWeight(QFont::Bold);
+    keywordPatterns.clear();
+
+    for (QString k: procs) {
+        //qDebug() << QString::number(i) << TokenType::types[i].toLower();
+        QString name = k;
+        QString s = "\\b" + name.toLower() + "\\b";
+        keywordPatterns<<s;
+    }
+    HighlightingRule rule;
+
+    foreach (const QString &pattern, keywordPatterns) {
+        rule.pattern = QRegularExpression(pattern,QRegularExpression::CaseInsensitiveOption);
+        rule.format = procedureFormat;
+        highlightingRules.append(rule);
+    }
+
 }
 
 void Highlighter::Save(QString fn)

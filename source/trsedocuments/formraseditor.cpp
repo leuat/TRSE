@@ -891,6 +891,9 @@ void FormRasEditor::HandleBuildComplete()
         emit NotifyOtherSourceFiles(m_builderThread.m_builder);
     }
 
+    highlighter->AppendSymboltable(m_builderThread.m_builder->compiler.m_parser.m_procedures.keys());
+    highlighter->rehighlight();
+//    ui->txtEditor->viewport()->update();
 
     if (m_run) {
         m_builderThread.m_builder->AddMessage("<br>Running program...");

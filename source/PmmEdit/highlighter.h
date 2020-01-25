@@ -27,7 +27,7 @@
 #include <QRegularExpression>
 #include <QString>
 #include "source/LeLib/util/cinifile.h"
-
+#include "source/Compiler/symboltable.h"
 
 
 class Highlighter : public QSyntaxHighlighter
@@ -38,8 +38,10 @@ public:
     Highlighter(CIniFile ini, int type, QTextDocument *parent = 0);
     CIniFile m_colors;
     void Save(QString fn);
-
+    bool m_isUpdated = false;
+    int m_cur = -1;
     void HighlightText(QString &text);
+    void AppendSymboltable(QList<QString> procs);
 
 protected:
     void highlightBlock(const QString &text) override;
@@ -57,6 +59,8 @@ private:
     QRegularExpression commentStartExpression;
     QRegularExpression commentEndExpression;
 
+
+
     QTextCharFormat keywordFormat;
     QTextCharFormat classFormat;
     QTextCharFormat numberFormat;
@@ -67,6 +71,7 @@ private:
     QTextCharFormat quotationFormat;
     QTextCharFormat functionFormat;
     QTextCharFormat builtinFunctionFormat;
+    QTextCharFormat procedureFormat;
     QTextCharFormat constantsFormat;
 };
 
