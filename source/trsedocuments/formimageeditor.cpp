@@ -476,7 +476,7 @@ void FormImageEditor::Load(QString filename)
     ui->cmbEffect->clear();
     ui->cmbEffect->addItems(m_imageEffects.getStringList());
 
-    ui->chkDisplayMulticolor->setChecked(m_work.m_currentImage->m_image->isMultiColor());
+//    ui->chkDisplayMulticolor->setChecked(m_work.m_currentImage->m_image->isMultiColor());
 
     QString s = "";
     QStringList lst = m_projectIniFile->getStringList("data_header_"+m_currentFileShort);
@@ -488,19 +488,6 @@ void FormImageEditor::Load(QString filename)
 
     ui->lblName->setText(LImage::TypeToString(m_work.m_currentImage->m_image->m_type));
     m_work.m_currentImage->m_image->BuildData(ui->tblData,lst);
-
-    if (!dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image))
-        m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
-
-
-//     if (m_work.m_currentImage->m_image->m_type==LImage::NES || m_work.m_currentImage->m_image->m_type==LImage::LevelEditor || m_work.m_currentImage->m_image->m_type==LImage::LMetaChunk) {
-  //      on_cmbNesPalette_currentIndexChanged(0);
-    //}
-//    ui->cmbBank->setCurrentIndex(1);
-//    ui->cmbBank->setCurrentIndex(0);
-//    ui->cmbBank->setCurrentIndex(1);
-//    m_oldWidth = ui->lblImage->width();
-//    this->resize(this->geometry().width(), this->geometry().height());
 
 
     ui->chkGrid->setChecked(GetFooterData(LImageFooter::POS_DISPLAY_GRID));
@@ -518,6 +505,14 @@ void FormImageEditor::Load(QString filename)
 
     ui->cmbCharX->setCurrentIndex(GetFooterData(LImageFooter::POS_CURRENT_DISPLAY_X)-1);
     ui->cmbCharY->setCurrentIndex(GetFooterData(LImageFooter::POS_CURRENT_DISPLAY_Y)-1);
+
+//    qDebug() << GetFooterData(LImageFooter::POS_DISPLAY_MULTICOLOR);
+    ui->chkDisplayMulticolor->setChecked(GetFooterData(LImageFooter::POS_DISPLAY_MULTICOLOR));
+    on_chkDisplayMulticolor_stateChanged(GetFooterData(LImageFooter::POS_DISPLAY_MULTICOLOR));
+//    if (!dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image))
+  //      m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
+
+
 
     int bank = GetFooterData(LImageFooter::POS_CURRENT_BANK);
 //    ui->cmbBank->setCurrentIndex(0);
@@ -1781,6 +1776,7 @@ void FormImageEditor::UpdateMulticolorImageSettings()
 void FormImageEditor::on_chkDisplayMulticolor_stateChanged(int arg1)
 {
     m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
+    SetFooterData(LImageFooter::POS_DISPLAY_MULTICOLOR,ui->chkDisplayMulticolor->isChecked());
     UpdateMulticolorImageSettings();
     updateCharSet();
     Data::data.Redraw();

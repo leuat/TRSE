@@ -388,6 +388,10 @@
                <property name="text">
                 <string/>
                </property>
+               <property name="icon">
+                <iconset resource="../../resources.qrc">
+                 <normaloff>:/resources/images/charset_icons/btn-1-FullView.png</normaloff>:/resources/images/charset_icons/btn-1-FullView.png</iconset>
+               </property>
                <property name="iconSize">
                 <size>
                  <width>32</width>

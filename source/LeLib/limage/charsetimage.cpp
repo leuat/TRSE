@@ -531,7 +531,6 @@ void CharsetImage::setLimitedPixel(int x, int y, unsigned int color)
 
  //   pc.Reorganize(m_bitMask, m_scale,m_minCol, m_noColors);
 
-//    if (rand()%100>90)
   //      qDebug() << QString::number(color) << QString::number(pc.c[0]) << QString::number(pc.c[1]) << QString::number(pc.c[2]) << QString::number(pc.c[3]);
 
     int ix = x % (8/m_scale);//- (dx*m_charHeight);

@@ -999,13 +999,11 @@ void PixelChar::set(int x, int y, unsigned char color, unsigned char bitMask)
 
     }
 
-
-
     // Clear
     unsigned int f = ~(bitMask << x);
     p[y] &= f;
     // Add
-    p[y] |= index<<x;
+    p[y] |= (index&bitMask)<<x;
 
 }
 
