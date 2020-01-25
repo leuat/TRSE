@@ -53,6 +53,7 @@ public:
     QColor color;
     bool inUse = true;
     bool displayList = true;
+    bool ignoreAltColour = false;;
 
     int m_altColour = -1;
 
@@ -101,6 +102,7 @@ class LColorList : public QObject
 private:
 
     QVector<int> m_multicolors;
+    bool m_isMulticolor = true;
 
 public:
     QVector<LColor> m_list;
@@ -117,6 +119,7 @@ public:
     LColor& get(int i);
     QColor m_cblack = QColor(0,0,0,255);
     LColor m_black = LColor(m_cblack,"black");
+    void SetIsMulticolor(bool mult);
 
     void SetMulticolor(int index, int col);
 

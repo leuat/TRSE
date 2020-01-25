@@ -1771,6 +1771,11 @@ void FormImageEditor::on_chkDisplayMulticolor_stateChanged(int arg1)
 {
     m_work.m_currentImage->m_image->setMultiColor(ui->chkDisplayMulticolor->isChecked());
     Data::data.Redraw();
+    if (m_work.m_currentImage->m_image->m_supports.displayColors) {
+        m_work.m_currentImage->m_image->m_colorList.SetIsMulticolor(ui->chkDisplayMulticolor->isChecked());
+        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1);
+    }
+
     onImageMouseEvent();
     updateCharSet();
 

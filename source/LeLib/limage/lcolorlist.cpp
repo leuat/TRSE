@@ -42,6 +42,20 @@ LColor &LColorList::get(int i) {
     return m_black;
 }
 
+void LColorList::SetIsMulticolor(bool mult)
+{
+    m_isMulticolor = mult;
+    if (m_isMulticolor) {
+        if (m_type==LColorList::C64 || m_type==LColorList::VIC20) {
+            for (int i=0;i<8;i++) {
+                m_list[i].ignoreAltColour = true;
+            }
+            m_list[ m_multicolors[1]].ignoreAltColour = false;
+            m_list[ m_multicolors[2]].ignoreAltColour = false;
+        }
+    }
+}
+
 void LColorList::SetMulticolor(int index, int col)
 {
     int i = index-1;
@@ -316,7 +330,7 @@ QPixmap LColorList::CreateColorIcon(int col, int s)
 {
     QImage img(s,s,QImage::Format_RGB32);
     int c2 = col;
-    if (m_list[col].m_altColour!=-1)
+    if (m_list[col].m_altColour!=-1 && (!m_list[col].ignoreAltColour))
         c2 = m_list[col].m_altColour;
     for (int y=0;y<s;y++)
     for (int x=0;x<s;x++) {
@@ -782,6 +796,7 @@ void LColorList::handleButtonEdit(int val, int data, QPushButton* btn)
 //    qDebug() << (QCursor::pos() - btn->mapToGlobal(QPoint(0,0))) << btn->mapToGlobal(QPoint(0,0))  <<m_buttonsEdit[data]->cursor().pos();
 //    qDebug() <<fp;
     // Select alternative colour
+    if (!m_list[val].ignoreAltColour)
     if (m_list[val].m_altColour!=-1)
         if (1-fp.y()<fp.x())
             Data::data.currentColor = m_list[val].m_altColour;
