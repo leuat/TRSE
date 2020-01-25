@@ -47,7 +47,6 @@ void LColorList::SetIsMulticolor(bool mult)
     m_isMulticolor = mult;
     if (m_list.count()==0)
         return;
-    qDebug() << m_list.count();
 
     for (int i=0;i<m_list.count();i++)
         m_list[i].ignoreAltColour = false;
