@@ -144,6 +144,12 @@ void ImageLevelEditor::Initialize()
 
 }
 
+QString ImageLevelEditor::GetCurrentDataString() {
+    int curPos = (m_currentLevelPos.x() + m_currentLevelPos.y()*m_meta.m_sizex);
+    return " Room " + QString::number(m_currentLevelPos.x())+","+QString::number(m_currentLevelPos.y())
+            + " ("+ QString::number(curPos) +  ")";
+}
+
 void ImageLevelEditor::SetColor(uchar col, uchar idx)
 {
     if (m_charset==nullptr)

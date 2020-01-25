@@ -200,6 +200,9 @@ public:
 //    void Initialize(CharmapGlobalData meta);
     void Initialize() override;
 
+    QString GetCurrentDataString() override;
+
+
 
     virtual bool isNes() override {
         if (m_charset!=nullptr)
