@@ -21,3 +21,58 @@
 
 #include "limagefactory.h"
 
+
+LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
+
+    //        qDebug() << "LIMageIO :: create " << colorType;
+
+
+    if (t == LImage::Type::QImageBitmap)
+        return new LImageQImage(colorType);
+    if (t == LImage::Type::MultiColorBitmap)
+        return new MultiColorImage(colorType);
+    if (t == LImage::Type::HiresBitmap)
+        return new StandardColorImage(colorType);
+    //      if (t == LImage::Type::Tiff)
+    //        return new LImageTiff(colorType);
+    if (t == LImage::Type::CharMapMulticolor)
+        return new CharsetImage(colorType);
+
+    if (t == LImage::Type::CharmapRegular)
+//        return new LImageCharsetRegular(colorType);
+      return new CharsetImage(colorType);
+    if (t == LImage::Type::FullScreenChar)
+        return new C64FullScreenChar(colorType);
+    if (t == LImage::Type::LevelEditor)
+        return new ImageLevelEditor(colorType);
+    if (t == LImage::Type::Sprites)
+        return new LImageSprites(colorType);
+    if (t == LImage::Type::CharMapMultiColorFixed)
+        return new LImageCharsetFixedColor(colorType);
+    if (t == LImage::Type::VIC20_MultiColorbitmap)
+        return new LImageVIC20(colorType);
+    if (t == LImage::Type::Sprites2)
+        return new LImageSprites2(colorType);
+    if (t == LImage::Type::CGA)
+        return new LImageCGA(colorType);
+    if (t == LImage::Type::AMIGA320x200)
+        return new LImageAmiga(colorType,0);
+    if (t == LImage::Type::AMIGA320x256)
+        return new LImageAmiga(colorType,1);
+    if (t == LImage::Type::OK64_256x256)
+        return new LImageOK64(colorType);
+    if (t == LImage::Type::X16_640x480)
+        return new LImageX16(colorType);
+    if (t == LImage::Type::NES)
+        return new LImageNES(colorType);
+    if (t == LImage::Type::LMetaChunk)
+        return new LImageMetaChunk(colorType);
+    if (t == LImage::Type::LevelEditorNES)
+        return new LImageLevelNES(colorType);
+    if (t == LImage::Type::SpritesNES) {
+        return new LImageMetaBlockSprites(colorType);
+    }
+
+    qDebug() << "ERROR: LImageFactory could not find type " << t;
+    return nullptr;
+}

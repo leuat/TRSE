@@ -32,7 +32,7 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_bitMask = 0b11;
     m_noColors = 4;
     m_scale = 2;
-    m_width = 160;
+    m_width = 320;
     m_minCol = 0;
 //    m_data = new PixelChar[m_charWidth*m_charHeight];
     m_background = 0;
@@ -170,6 +170,17 @@ void CharsetImage::ExportBin(QFile &f)
     ToRaw(m_rawData);
     f.write(m_rawData);
 
+    QByteArray colorData;
+    for (int i=0;i<m_charWidth*m_charHeight;i++)
+        colorData.append(m_data[i].c[3]);
+
+    QString filenameBase = f.fileName().split(".")[0];
+    QString fColor = filenameBase + "_color.bin";
+    QFile f2(fColor);
+    f2.open(QFile::WriteOnly);
+    f2.write(colorData);
+    f2.close();
+
 }
 
 
@@ -193,6 +204,9 @@ void CharsetImage::LoadBin(QFile& file)
     file.read( ( char * )( &m_extraCols[2] ), 1 );
     file.read( ( char * )( &m_extraCols[3] ), 1 );
     file.read( ( char * )( &m_data ),  m_charWidth*m_charHeight*12 );
+
+//    for (int i=0;i<m_charWidth*m_charHeight;i++)
+  //      m_data[i].c[3]=5;
 
 }
 
@@ -228,8 +242,9 @@ unsigned int CharsetImage::getPixel(int x, int y)
         return MultiColorImage::getPixel(p.x(),p.y());
 
     PixelChar&pc = getPixelChar(p.x(),p.y());
-    if (MultiColorImage::getPixel(p.x(),p.y())==1)
+    if (MultiColorImage::getPixel(p.x(),p.y())!=0)
         return pc.c[3];
+
     return pc.c[0];
 
 
@@ -356,8 +371,29 @@ void CharsetImage::setPixel(int x, int y, unsigned int color)
 {
     QPoint p = getXY(x,y);
 
-    setLimitedPixel(p.x(),p.y(),color);
+    if (!m_forcePaintColorAndChar) {
+        PixelChar& pc = getPixelChar(x,y);
+        pc.c[3] = color;
+        return;
 
+    }
+
+
+    if (m_colorList.m_isMulticolor)
+        setLimitedPixel(p.x(),p.y(),color);
+    else {
+/*        if (color!=m_background)
+            color = 1;
+        else
+            color = 0;*/
+//        m_bitMask = 1;
+  //      m_scale = 1;
+    //    PixelChar& pc = getPixelChar(x,y);
+   //     pc.c[3] = color;
+
+        setLimitedPixel(p.x(),p.y(),color);
+
+    }
 
 }
 
