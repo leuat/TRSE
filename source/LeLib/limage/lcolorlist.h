@@ -53,6 +53,9 @@ public:
     QColor color;
     bool inUse = true;
     bool displayList = true;
+
+    int m_altColour = -1;
+
   //  int currentIndex; // used for NES and other fixed-palette stuff
     QString name;
     LColor() {}
@@ -141,6 +144,8 @@ public:
 
     void Initialize(Type t);
 
+    QPixmap CreateColorIcon(int col, int s);
+
     void CopyFrom(LColorList* other);
     void InitC64_org();
     void InitC64();
@@ -166,7 +171,7 @@ public:
 
     int getIndex(QColor c);
 
-    void handleButtonEdit(int val, int data);
+    void handleButtonEdit(int val, int data, QPushButton* btn);
 
     QLayout* m_layout = nullptr;
     void CreateUI(QLayout* ly, int type);

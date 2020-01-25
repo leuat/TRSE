@@ -312,6 +312,24 @@ void LColorList::Initialize(Type t)
 
 }
 
+QPixmap LColorList::CreateColorIcon(int col, int s)
+{
+    QImage img(s,s,QImage::Format_RGB32);
+    int c2 = col;
+    if (m_list[col].m_altColour!=-1)
+        c2 = m_list[col].m_altColour;
+    for (int y=0;y<s;y++)
+    for (int x=0;x<s;x++) {
+        if (s-1-y>x)
+            img.setPixelColor(x,y, m_list[col].color);
+        else
+            img.setPixelColor(x,y, m_list[c2].color);
+
+    }
+    return QPixmap::fromImage(img);
+
+}
+
 void LColorList::CopyFrom(LColorList *other)
 {
     m_list.resize(other->m_list.count());
@@ -360,6 +378,11 @@ void LColorList::InitC64()
     m_list.append(LColor(QColor(0x9a, 0xd2, 0x84),""));
     m_list.append(LColor(QColor(0x6c, 0x5e, 0xb5),""));
     m_list.append(LColor(QColor(0x95, 0x95, 0x95),""));
+
+
+    for (int i=0;i<8;i++)
+        m_list[i].m_altColour = i+8;
+
 
     m_background = m_list[0];
 
@@ -416,6 +439,9 @@ void LColorList::InitVIC20()
     m_list.append(LColor(QColor(0x80, 0x71, 0xcc),""));
     m_list.append(LColor(QColor(0xff, 0xff, 0xb2),""));
 
+
+    for (int i=0;i<8;i++)
+        m_list[i].m_altColour = i+8;
 
 
 
@@ -662,18 +688,35 @@ void LColorList::CreateUI(QLayout* ly, int type)
 
         QPushButton *b = new QPushButton();
         //b->setGeometry(0,0,40,40);
+
+
         QPalette p;
-        p.setColor(QPalette::Button, m_list[j].color);
-        p.setColor(QPalette::Window, m_list[j].color);
+//        p.setColor(QPalette::Button, m_list[j].color);
+  //      p.setColor(QPalette::Window, m_list[j].color);
         QString txtCol = QString::number(m_list[j].color.red()) + ", ";
         txtCol += QString::number(m_list[j].color.green()) + ", ";
         txtCol += QString::number(m_list[j].color.blue());
 
-        b->setStyleSheet("background-color: rgb("+txtCol + "); color: rgb(0, 0, 0)");
-        b->setPalette(p);
+
+        b->setFlat(true);
+        QPixmap pm = CreateColorIcon(j,width);
+
+
+
+
+        b->setAutoFillBackground(true);
+
+//        p.set
+        p.setBrush(b->backgroundRole(), QBrush(pm));
+
+
+//        b->setStyleSheet("background-color: rgb("+txtCol + "); color: rgb(0, 0, 0)");
+//        b->setIcon(CreateColorIcon(j,width));
         b->setMaximumWidth(width);
         b->setMinimumWidth(width);
-        b->setAutoFillBackground( true );
+        b->setMaximumHeight(width);
+        b->setMinimumHeight(width);
+        b->setPalette(p);
         for (int k=0;k<m_multicolors.count();k++)
             if (m_multicolors[k]==j){
                 if (k!=2)
@@ -687,7 +730,7 @@ void LColorList::CreateUI(QLayout* ly, int type)
 
         }
         if (type==1) {
-            QObject::connect( b, &QPushButton::clicked,  [=](){ handleButtonEdit(j,cur);} );
+            QObject::connect( b, &QPushButton::clicked,  [=](){ handleButtonEdit(j,cur,b);} );
         }
         //QObject::connect( b, &QPushButton::clicked,  colorValueChanged );
 
@@ -704,6 +747,10 @@ void LColorList::CreateUI(QLayout* ly, int type)
         else
             m_buttonsEdit.append(b);
 
+
+
+
+
         yy++;
         cur++;
         maxy++;
@@ -719,7 +766,7 @@ void LColorList::CreateUI(QLayout* ly, int type)
     }*/
 }
 
-void LColorList::handleButtonEdit(int val, int data)
+void LColorList::handleButtonEdit(int val, int data, QPushButton* btn)
 {
 /*    for (int i=0;i<m_buttonsEdit.count();i++)
         m_buttonsEdit[i]->setText("");
@@ -729,6 +776,15 @@ void LColorList::handleButtonEdit(int val, int data)
     Data::data.currentColor = val;
     Data::data.currentIsColor=true;
     SetMulticolor(3,val);
+    QPoint p = (QCursor::pos() - btn->mapToGlobal(QPoint(0,0)));
+    QPointF fp = QPointF(p.x()/(float)btn->width(),
+            p.y()/(float)btn->height());
+//    qDebug() << (QCursor::pos() - btn->mapToGlobal(QPoint(0,0))) << btn->mapToGlobal(QPoint(0,0))  <<m_buttonsEdit[data]->cursor().pos();
+//    qDebug() <<fp;
+    // Select alternative colour
+    if (m_list[val].m_altColour!=-1)
+        if (1-fp.y()<fp.x())
+            Data::data.currentColor = m_list[val].m_altColour;
 
 }
 

@@ -133,7 +133,7 @@ void CharsetImage::SetColor(uchar col, uchar idx)
 
     m_extraCols[idx] = col;
 
-    if (m_colorList.m_type == LColorList::VIC20) {
+    if (m_colorList.m_type == LColorList::VIC20 ||  m_colorList.m_type == LColorList::C64) {
 //        qDebug() << "HERE";
         for (int i=0;i<m_colorList.m_list.count();i++) {
             if (i<8)
@@ -144,8 +144,10 @@ void CharsetImage::SetColor(uchar col, uchar idx)
         }
         for (int i=0;i<4;i++)
             m_colorList.m_list[m_extraCols[i]].displayList=true;
+
         m_colorList.CreateUI(m_colorList.m_layout,1);
     }
+
 
 }
 
