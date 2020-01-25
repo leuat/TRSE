@@ -43,7 +43,7 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -590,7 +590,7 @@ p, li { white-space: pre-wrap; }
           <rect>
            <x>20</x>
            <y>20</y>
-           <width>641</width>
+           <width>791</width>
            <height>231</height>
           </rect>
          </property>
@@ -602,15 +602,25 @@ p, li { white-space: pre-wrap; }
            <rect>
             <x>0</x>
             <y>20</y>
-            <width>641</width>
-            <height>211</height>
+            <width>689</width>
+            <height>217</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
-           <item row="2" column="1">
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_11">
+             <property name="toolTip">
+              <string>Internal zeropages used when decrunching (exomizer)</string>
+             </property>
+             <property name="text">
+              <string>Decrunch zero pages</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
             <widget class="QLineEdit" name="leZeropageScreenMemory"/>
            </item>
-           <item row="1" column="1">
+           <item row="3" column="1">
             <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="2,2">
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -656,7 +666,53 @@ p, li { white-space: pre-wrap; }
              </item>
             </layout>
            </item>
-           <item row="3" column="1">
+           <item row="6" column="1">
+            <widget class="QLineEdit" name="leTempZP"/>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_16">
+             <property name="toolTip">
+              <string>Temporary variables are needed in longer expressions. If no temp var zeropages are left, a regular variable is used instead.</string>
+             </property>
+             <property name="text">
+              <string>Temp vars zeropages</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_7">
+             <property name="toolTip">
+              <string>These are the zeropages that will be used when declaring &quot;pointers&quot;</string>
+             </property>
+             <property name="text">
+              <string>Pointer zeropages</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_12">
+             <property name="toolTip">
+              <string>The built-in &quot;screenmemory&quot; pointer</string>
+             </property>
+             <property name="text">
+              <string>Screenmemory zero page</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_14">
+             <property name="toolTip">
+              <string>Zeropages used in internal methods such as division, multiplication, sqrt etc</string>
+             </property>
+             <property name="text">
+              <string>Workhorse zeropages</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="leZeropages"/>
+           </item>
+           <item row="5" column="1">
             <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="2,2">
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_14">
@@ -702,61 +758,12 @@ p, li { white-space: pre-wrap; }
              </item>
             </layout>
            </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_11">
-             <property name="toolTip">
-              <string>Internal zeropages used when decrunching (exomizer)</string>
-             </property>
+           <item row="1" column="1">
+            <widget class="QPushButton" name="btnDefaultZP">
              <property name="text">
-              <string>Decrunch zero pages</string>
+              <string>Set default recommended zeropages for the current platform</string>
              </property>
             </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_7">
-             <property name="toolTip">
-              <string>These are the zeropages that will be used when declaring &quot;pointers&quot;</string>
-             </property>
-             <property name="text">
-              <string>Pointer zeropages</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_12">
-             <property name="toolTip">
-              <string>The built-in &quot;screenmemory&quot; pointer</string>
-             </property>
-             <property name="text">
-              <string>Screenmemory zero page</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_14">
-             <property name="toolTip">
-              <string>Zeropages used in internal methods such as division, multiplication, sqrt etc</string>
-             </property>
-             <property name="text">
-              <string>Workhorse zeropages</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="leZeropages"/>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_16">
-             <property name="toolTip">
-              <string>Temporary variables are needed in longer expressions. If no temp var zeropages are left, a regular variable is used instead.</string>
-             </property>
-             <property name="text">
-              <string>Temp vars zeropages</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QLineEdit" name="leTempZP"/>
            </item>
           </layout>
          </widget>

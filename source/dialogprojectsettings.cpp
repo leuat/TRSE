@@ -289,3 +289,29 @@ void DialogProjectSettings::on_btnNESLoadCharFile_clicked()
     }
 
 }
+
+void DialogProjectSettings::on_btnDefaultZP_clicked()
+{
+    QMessageBox::StandardButton reply;
+      reply = QMessageBox::question(this, "Reset to default recommended zeropages?", "Reset zeropages to the default recommended values for this system? Any current zeropage settings will be replaced. ",
+                                    QMessageBox::Yes|QMessageBox::No);
+      if (reply == QMessageBox::No)
+          return;
+
+
+      if (m_ini->getString("system")=="VIC20") {
+          ui->leTempZP->setText("$84, $86, $88, $8A");
+          ui->leInternalZp1->setText("$7C");
+          ui->leInternalZp1->setText("$7E");
+          ui->leInternalZp1->setText("$80");
+          ui->leInternalZp1->setText("$82");
+          ui->leZeropageScreenMemory->setText("$FE");
+          ui->leDecrunchZp1->setText("$78");
+          ui->leDecrunchZp2->setText("$79");
+          ui->leDecrunchZp3->setText("$7A");
+          ui->leDecrunchZp4->setText("$7B");
+          ui->leZeropages->setText("$60, $62, $64, $66, $68, $6A, $6C, $6E, $70, $72, $74, $76");
+      }
+
+
+}

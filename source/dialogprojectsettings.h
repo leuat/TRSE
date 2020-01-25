@@ -26,6 +26,7 @@
 #include "source/LeLib/util/util.h"
 #include "source/LeLib/util/cinifile.h"
 #include "source/messages.h"
+#include <QMessageBox>
 
 namespace Ui {
 class DialogProjectSettings;
@@ -74,6 +75,8 @@ private slots:
     void on_btnNESLoadCharFile_2_clicked();
 
     void on_btnNESLoadCharFile_clicked();
+
+    void on_btnDefaultZP_clicked();
 
 private:
     void FillFromIni();
