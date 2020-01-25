@@ -300,17 +300,17 @@ void DialogProjectSettings::on_btnDefaultZP_clicked()
 
 
       if (m_ini->getString("system")=="VIC20") {
-          ui->leTempZP->setText("$84, $86, $88, $8A");
-          ui->leInternalZp1->setText("$7C");
-          ui->leInternalZp1->setText("$7E");
+          ui->leTempZP->setText("$88, $8A, $8C, $8E");
           ui->leInternalZp1->setText("$80");
           ui->leInternalZp1->setText("$82");
+          ui->leInternalZp1->setText("$84");
+          ui->leInternalZp1->setText("$86");
           ui->leZeropageScreenMemory->setText("$FE");
-          ui->leDecrunchZp1->setText("$78");
-          ui->leDecrunchZp2->setText("$79");
-          ui->leDecrunchZp3->setText("$7A");
-          ui->leDecrunchZp4->setText("$7B");
-          ui->leZeropages->setText("$60, $62, $64, $66, $68, $6A, $6C, $6E, $70, $72, $74, $76");
+          ui->leDecrunchZp1->setText("$7C");
+          ui->leDecrunchZp2->setText("$7D");
+          ui->leDecrunchZp3->setText("$7E");
+          ui->leDecrunchZp4->setText("$7F");
+          ui->leZeropages->setText("$64, $66, $68, $6A, $6C, $6E, $70, $72, $74, $76, $78, $7A");
       }
 
 
