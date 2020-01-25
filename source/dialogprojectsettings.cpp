@@ -302,9 +302,9 @@ void DialogProjectSettings::on_btnDefaultZP_clicked()
       if (m_ini->getString("system")=="VIC20") {
           ui->leTempZP->setText("$88, $8A, $8C, $8E");
           ui->leInternalZp1->setText("$80");
-          ui->leInternalZp1->setText("$82");
-          ui->leInternalZp1->setText("$84");
-          ui->leInternalZp1->setText("$86");
+          ui->leInternalZp2->setText("$82");
+          ui->leInternalZp3->setText("$84");
+          ui->leInternalZp4->setText("$86");
           ui->leZeropageScreenMemory->setText("$FE");
           ui->leDecrunchZp1->setText("$7C");
           ui->leDecrunchZp2->setText("$7D");
