@@ -180,6 +180,7 @@ public:
     // Vic20 Bitmap Mode
     void initVbm(Assembler* as);
     void vbmSetDisplayMode(Assembler* as);
+    void vbmResetDisplayMode(Assembler* as);
     void vbmDebug(Assembler* as);
     void vbmSetColumn(Assembler *as);
     void initVbmNextColumn(Assembler *as);

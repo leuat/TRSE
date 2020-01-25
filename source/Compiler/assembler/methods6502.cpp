@@ -124,6 +124,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     // 20 x 24 characters (12 double height characters) -- 160 x 194 pixels
     if (Command("vbmSetDisplayMode"))
         vbmSetDisplayMode(as);
+    // Restore regular mode
+    if (Command("vbmResetDisplayMode"))
+        vbmResetDisplayMode(as);
 
     // Enable or disable debug mode - switches off characterset
     if (Command("vbmDebug"))
@@ -1462,6 +1465,24 @@ void Methods6502::vbmSetDisplayMode(Assembler* as)
     }
 
     as->Asm("jsr vbmSetDisplayMode");
+
+}
+void Methods6502::vbmResetDisplayMode(Assembler* as)
+{
+    VerifyInitialized("vbm","InitVbm");
+
+    as->Comment("Restore graphics mode");
+
+    as->Asm("lda vbm9005;keep");
+    as->Asm("sta $9005");
+    as->Asm("lda vbm9001;keep");
+    as->Asm("sta $9001");
+    as->Asm("lda vbm9000;keep");
+    as->Asm("sta $9000");
+    as->Asm("lda #22;keep");
+    as->Asm("sta $9002");
+    as->Asm("lda #46;keep");
+    as->Asm("sta $9003");
 
 }
 
