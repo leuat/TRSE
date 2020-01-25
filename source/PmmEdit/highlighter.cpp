@@ -192,6 +192,7 @@ void Highlighter::highlightBlock(const QString &text)
 
 void Highlighter::AppendSymboltable(QList<QString> procs)
 {
+
     if (m_isUpdated)
         while (highlightingRules.count()>m_cur)
             highlightingRules.removeLast();
