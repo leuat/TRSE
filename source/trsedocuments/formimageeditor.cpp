@@ -161,10 +161,12 @@ void FormImageEditor::onImageMouseEvent()
 
 void FormImageEditor::onImageMouseReleaseEvent()
 {
+    AbstractImageEditor* a = dynamic_cast<AbstractImageEditor*>(getCurrentPainter());
+
     updateCharSet();
-    AbstractImageEditor* a = (AbstractImageEditor*)getCurrentPainter();
-    if (a->m_prevButton==2  && (QApplication::keyboardModifiers() & Qt::ControlModifier) && GetFooterData(LImageFooter::POS_DISPLAY_CHAR)==0)
+    if (a->m_prevButton==2  && (QApplication::keyboardModifiers() & Qt::ControlModifier) && GetFooterData(LImageFooter::POS_DISPLAY_CHAR)==0) {
         SelectFromLeftClick();
+    }
 
 }
 

@@ -72,6 +72,8 @@ public:
     LImageQImage* m_grid=nullptr;
     void CreateGrid();
 
+    float m_panningScale = 2;
+
     QPointF m_currentPos, m_prevPos, m_delta;
     int m_currentButton = 0;
     float m_zoom = 1;

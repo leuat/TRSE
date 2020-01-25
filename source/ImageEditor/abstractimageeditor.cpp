@@ -41,8 +41,6 @@ void AbstractImageEditor::AIE_mouseReleaseEvent(QMouseEvent *e)
 
     m_buttonDown = false;
 
-//    emit EmitMouseMove();
-//    emit EmitMouseRelease();
 
 }
 
