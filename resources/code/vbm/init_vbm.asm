@@ -1,22 +1,31 @@
 ; Screen address table Low byte / high byte
-vbmScrL
-    dc.b 0,0,0,0,0,0,0,0,0,0
-    dc.b 0,0,0,0,0,0,0,0,0,0
-vbmScrH
-    dc.b 0,0,0,0,0,0,0,0,0,0
-    dc.b 0,0,0,0,0,0,0,0,0,0
+vbmScrL = $0a ; 20 bytes
+;    dc.b 0,0,0,0,0,0,0,0,0,0
+;    dc.b 0,0,0,0,0,0,0,0,0,0
+vbmScrH = $1e ; 20 bytes
+;    dc.b 0,0,0,0,0,0,0,0,0,0
+;    dc.b 0,0,0,0,0,0,0,0,0,0
+; ends at $32
 
-vbmX        dc.b 0 ; x position
-vbmY        dc.b 0 ; y position
-vbmI        dc.b 0 ; index
-vbmJ        dc.b 0 ; index
-vbmT        dc.b 0 ; index
-vbmScroll   dc.b 16       ; character scroll start
-vbmScrLstart dc.b $00   ; start address for bitmap L
-vbmScrHstart dc.b $11   ; start address for bitmap H
-vbmNumColumns dc.b 20        ; number of columns
+vbmX        = $01 ; x position
+vbmY        = $02 ; y position
+vbmI        = $03 ; index
+vbmJ        = $04 ; index
+vbmT        = $05 ; index
+vbmScroll   = $06    ; 16 - character scroll start
+vbmNumColumns = $07  ; 20 -number of columns
+vbmScrLstart = $08   ; $00 - start address for bitmap L
+vbmScrHstart = $09   ; $11 - start address for bitmap H
 
 vbmSetDisplayMode
+
+    ; initialise
+    lda #16 ; start char
+    sta vbmScroll
+    lda #$00 ; address L
+    sta vbmScrLstart
+    lda #$11 ; address H
+    sta vbmScrHstart
 
     lda $9000
     cmp #$c;keep
