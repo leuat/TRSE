@@ -10784,10 +10784,12 @@ void Methods6502::SetSpritePos(Assembler *as)
     if (spriteNum!=nullptr) {
         as->Comment("isi-pisi: value is constant");
         uchar v = 1 << (uchar)spriteNum->m_val;
-        as->Asm("ldx #" +QString::number((int)spriteNum->m_val*2) );
         LoadVar(as, 0);
+//        as->Comment("BALLE");
         //as->Asm("tax");
+        as->Asm("ldx #" +QString::number((int)spriteNum->m_val*2) );
         as->Asm("sta $D000,x");
+//        qDebug() << "Spritepos : " << m_node->m_params[0]->isWord(as);
         if (m_node->m_params[0]->isWord(as)) {
 
 //            m_node->m_params[0]->Accept(m_dispatcher);
@@ -10821,9 +10823,14 @@ void Methods6502::SetSpritePos(Assembler *as)
 
     }
     else {
+        // Shift left number of blah
+
+        LoadVar(as, 0);
+        as->Asm("pha");
+
         m_node->m_params[2]->Accept(m_dispatcher);
         as->Term();
-        // Shift left number of blah
+
         as->Asm("pha");
         as->Asm("tax");
 
@@ -10833,8 +10840,8 @@ void Methods6502::SetSpritePos(Assembler *as)
 
         as->Asm("asl"); // Multiply by two in the end
         as->Asm("tax"); // X is the counter
+        as->Asm("pla");
 
-        LoadVar(as, 0);
         as->Asm("sta $D000,x");
         if (m_node->m_params[0]->isWord(as)) {
 

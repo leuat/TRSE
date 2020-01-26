@@ -73,6 +73,8 @@ TokenType::Type NodeVar::getType(Assembler *as) {
 TokenType::Type NodeVar::getArrayType(Assembler *as)
 {
     TokenType::Type t = m_op.m_type;
+    if (as==nullptr)
+        return t;
     if (as->m_symTab->Lookup(value, m_op.m_lineNumber)!=nullptr)
         t= as->m_symTab->Lookup(value, m_op.m_lineNumber)->m_arrayType;
 
@@ -97,6 +99,12 @@ bool NodeVar::DataEquals(Node *other) {
 
 bool NodeVar::isWord(Assembler *as) {
 
+//    if (getType(as)==TokenType::POINTER)
+//    qDebug() << "NodeVar isWord : is array: " << (getType(as)==TokenType::ADDRESS) << TokenType::getType(getType(as));
+    if (getType(as)==TokenType::ADDRESS)
+        return (getArrayType(as)==TokenType::INTEGER);
+        //qDebug() << "  Array type : " << getArrayType(as);
+   // qDebug() << "NodeVar is Word : " << (getType(as)==TokenType::ARRAY) << getArrayType(as);
     return getType(as)==TokenType::INTEGER || (getType(as)==TokenType::POINTER && m_expr==nullptr) || m_fake16bit;
 /*    return m_op.m_type==TokenType::INTEGER;
     Symbol* s = as->m_symTab->Lookup(value, m_op.m_lineNumber);

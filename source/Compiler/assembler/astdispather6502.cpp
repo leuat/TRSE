@@ -645,6 +645,11 @@ void ASTDispather6502::dispatch(NodeNumber *node)
         val = "$" + QString::number((int)node->m_val,16);
     }
 
+    if (node->m_forceType==TokenType::INTEGER && node->m_val<=255) {
+        as->Asm("ldy #0   ; Force integer assignment, set y = 0 for values lower than 255");
+    }
+
+
     if (node->m_op.m_type==TokenType::INTEGER_CONST && node->m_val>255) {
         as->Comment("Integer constant assigning");
         int hiBit = ((int)node->m_val)>>8;
@@ -2104,7 +2109,9 @@ void ASTDispather6502::LoadByteArray(NodeVar *node) {
     as->Asm(m+  node->getValue(as)+",x");
 
     if (s->m_arrayType==TokenType::INTEGER) { // integer array need to load the high byte also
-        as->Asm("ldy "+  node->getValue(as)+"+1,x");
+//        as->Asm("ldy "+  node->getValue(as)+",x");
+        as->Asm("inx");
+        as->Asm("ldy "+  node->getValue(as)+",x");
     }
 }
 
@@ -2747,7 +2754,8 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
     if (node->m_right==nullptr)
         ErrorHandler::e.Error("Node assign: right hand must be expression", node->m_op.m_lineNumber);
 
-    if (node->m_left->getType(as)==TokenType::INTEGER) {
+    if (node->m_left->isWord(as)) {
+//        qDebug() << "AssignVariable HERE " << v->getValue(as);
         as->Asm("ldy #0 ; ::AssignVariable ldy #0");    // AH:20190722: Does not appear to serve a purpose - takes up space in prg. Breaks TRSE scroll in 4K C64 demo if take this out
 //        node->m_right->m_forceType = TokenType::INTEGER; // FORCE integer on right-hand side
         node->m_right->setForceType(TokenType::INTEGER);
