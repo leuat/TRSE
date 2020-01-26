@@ -1,7 +1,12 @@
 <h3>Description</h3>
 <p>A while-do loop statement repeats a block of code until a condition is met.</p>
 
-<h4>while (condition) do | then</h4>
+<h4>while (condition) [ offpage | onpage ] do | then</h4>
+
+<p>The optional offpage and onpage force either a JMP or BCC/BCS at the end of the block. Sometimes
+    TRSE is not able to accurately calculate if a larger JMP is needed when the assembled content in the block is
+    getting close to 256 bytes in length.
+</p>
 
 
 <h3>Example</h3>
