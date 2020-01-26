@@ -304,13 +304,13 @@ void ImageLevelEditor::StoreData(QTableWidget *tbl)
 bool ImageLevelEditor::KeyPress(QKeyEvent *e)
 {
     QPoint dir(0,0);
-    if (e->key()==Qt::Key_W)
+    if (e->key()==Qt::Key_Up)
         dir.setY(-1);
-    if (e->key()==Qt::Key_A)
+    if (e->key()==Qt::Key_Left)
         dir.setX(-1);
-    if (e->key()==Qt::Key_S)
+    if (e->key()==Qt::Key_Down)
         dir.setY(1);
-    if (e->key()==Qt::Key_D)
+    if (e->key()==Qt::Key_Right)
         dir.setX(1);
 
 
