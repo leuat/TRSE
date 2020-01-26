@@ -2110,8 +2110,8 @@ void ASTDispather6502::LoadByteArray(NodeVar *node) {
 
     if (s->m_arrayType==TokenType::INTEGER) { // integer array need to load the high byte also
 //        as->Asm("ldy "+  node->getValue(as)+",x");
-        as->Asm("inx");
-        as->Asm("ldy "+  node->getValue(as)+",x");
+  //      as->Asm("inx");
+        as->Asm("ldy "+  node->getValue(as)+"+1,x");
     }
 }
 
