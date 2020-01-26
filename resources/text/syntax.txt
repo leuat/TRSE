@@ -913,6 +913,8 @@ p; Variables; X16,C64, PLUS4, C128, VIC20, PET, NES, BBCM, AMIGA, OK64
 p; Screen; X16,C64, PLUS4, VIC20
 p; interrupts; X16,C64, VIC20, PLUS4, C128
 p; vbm_Vic_Bitmap_Mode; VIC20
+p; vbm_memory; VIC20
+p; bitwise_operations; VIC20
 
 
 #

@@ -604,6 +604,7 @@ DISTFILES += \
     resources/images/PET.png \
     resources/code/amiga/end.s \
     resources/code/amiga/init.s \
+    resources/text/help/p/bitwise_operations.rtf \
     resources/text/help/p/c64.rtf \
     resources/text/help/p/constants.rtf \
     resources/text/help/p/getting_started.rtf \
@@ -611,6 +612,7 @@ DISTFILES += \
     resources/text/help/p/pascal.rtf \
     resources/text/help/p/screen.rtf \
     resources/text/help/p/variables.rtf \
+    resources/text/help/p/vbm_memory.rtf \
     resources/text/help/p/vbm_vic_bitmap_mode.rtf \
     resources/text/help/p/vic20.rtf \
     resources/text/help/r/and.rtf \

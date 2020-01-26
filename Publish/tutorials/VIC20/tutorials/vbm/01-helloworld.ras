@@ -1,16 +1,33 @@
 program HelloWorld;
 var  
 
+// Take a look at the VBM commands in the help (press F1)
+// and also in the platform section of the help file
+//
+// Note that TRSE for VIC 20 is using zero pages from $8F downwards
+// and VBM uses zero pages from $00 upwards.
+// The Zero page memory in between can be used by your programs.
+// See VBM Memory in the Platforms help section for details. 
+
+
+
 // declare all your include files here
+
 font: incbin( "resources/charsets/font8x8.bin", $4000 ); // character set for first 64 PETSCII Screen Codes
 
 
+
+// The main code and variables starts here at $2000
 @startblock $2000 "CODE"
 // declare all your variables and procedures here
+
 	message: CSTRING = "HELLO WORLD";
 
 	i : byte;
 
+
+
+/* **** MAIN PROGRAM **** */
 begin
 
 	// set the default display mode showing all 20 columns

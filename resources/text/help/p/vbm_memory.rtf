@@ -1,0 +1,52 @@
+<h3>VBM Memory layout</h3>
+
+<p>The Vic Bitmap Mode (VBM) occupies the majority of the unexpanded memory in the Vic 20 to produce a
+    full screen bitmap.  Therefore, either extra RAM or cartridge ROM is needed for the game or demo code.
+</p>
+<p>In the case of a cartridge, additional RAM will be required for variables.  Fortunately, there is
+    255 bytes available scattered across the unexpanded RAM.
+</p>
+<code>
+Zero page
+
+$00 - $8F - BASIC workspace - can be re-used
+$90 - $FA - Kernal workspace - do not touch (unless sure)
+$FB - $FF - Free (BASIC uses $FF)
+
+$00 = $02 - VMB previous register settings
+$03       - VBM X
+$04       - VBM Y
+$05       - VBM I
+$06       - VBM J
+$07       - VBM T
+$08       - VBM starting character (scrolling)
+$09       - VBM Number of columns 19 or 20
+$0A       - VBM ScreenStart Low byte
+$0B       - VBM ScreenStart High byte
+$0c - $1F - VBM Column addresses Low byte
+$20 - $34 - VBM Column addresses High byte
+
+$35 - $63 - Free for user program data (46 bytes)
+
+$64 - $7B - TRSE User Pointers
+$7C - $7F - TRSE Decrunch
+$80 - $87 - TRSE Workhorse zeropages
+$88 - $8F - TRSE Temp vars zeropages
+
+$FB - $FD - Free for user program data (3 bytes)
+
+$FE - $FF - TRSE ScreenMemory pointer
+
+
+Cassette buffer
+
+$033C - $03FB - Free for user program data (191 bytes)
+
+
+Unexpanded BASIC RAM
+
+$1000 - $10F0 - Screen character data
+$10F1 - $10FF - Free for user program data (15 bytes)
+$1100 - $1FFF - Bitmap data
+
+</code>

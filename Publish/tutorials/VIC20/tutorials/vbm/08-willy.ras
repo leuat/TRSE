@@ -1,0 +1,24 @@
+program VicWilly;
+var  
+
+// declare all your include files here
+
+
+@startblock $2000 "CODE"
+// declare all your variables and procedures here
+
+	
+
+begin
+
+	// set the default display mode showing all 20 columns
+	vbmSetDisplayMode( 0 );
+	vbmClear( 0 );
+	vbmClearColor( WHITE );
+	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
+
+
+	
+	loop();
+
+end.
