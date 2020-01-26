@@ -1,0 +1,39 @@
+<p>The Vic 20 interrupt is done with the VIA timers.</p>
+    
+<p>PAL and NTSC require different timings. Here is an example to set up an interrupt
+    that runs every frame (either 50Hz for PAL or 60Hz for NTSC):
+</p>
+
+<code>
+interrupt vbl();
+begin
+	StartIRQ(0);
+
+	// do something such as update sound / music
+		
+	CloseIRQ();
+end;
+
+procedure initVbl();
+begin
+
+	DisableVIC20IRQ();
+	
+	if (HSCROLL_REGISTER = 12) then
+	begin
+	
+		// Time the interrupt directly with the raster (PAL);
+		// 312 scanlines * 71 cycles -2 = $5686
+		VIAIRQ(vbl(), $86, $56);
+	
+	end
+	else
+	begin
+	
+		// Time the interrupt directly with the raster (NTSC);
+		VIAIRQ(vbl(), $43, $42);
+		
+	end;
+
+end;
+</code>

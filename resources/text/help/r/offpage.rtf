@@ -1,8 +1,18 @@
 <h3>Description</h3>
-<p></p>
+<p>Add to code blocks to force an off-page JMP (jump). Off-page branches will work at any time but take up 
+    one additional byte for an absolute address.  They are needed when the code block is more than 256 bytes 
+    in length. This is the default option when TRSE thinks the code block is more than 256 bytes.
+</p>
+<p>Can be added to IF, WHILE and FOR loops.</p>
 
 
 <h3>Example</h3>
 
 <code>
+while (true) offpage do
+begin
+
+  // more than 256 bytes of code
+
+end;
 </code>

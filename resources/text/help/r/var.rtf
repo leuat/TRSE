@@ -12,10 +12,14 @@
         ptr : Pointer;	
         myStr : string;
 
+        absVar : byte = $02; // variable is created at this address 
+
         myArr1 : array[2] of byte = (1,2);
         myArr2 : array[2] of integer = (1000, 2000);
 
         @define screen 40
+        const screenheigh: byte = 25;
+        
         @userdata "$1000" "$1700" "MemoryBlock"
 
         mySprites : incbin("sprites.bin", $3200);
