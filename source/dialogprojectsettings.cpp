@@ -147,7 +147,6 @@ void DialogProjectSettings::FillFromIni()
     ui->cmbPawInclude2->clear();
     ui->cmbPawInclude2->addItem("none");
     ui->cmbPawInclude2->addItems(paw);
-
     ui->teBuildList->document()->setPlainText(Util::fromStringList(    m_ini->getStringList("build_list")));
 
 

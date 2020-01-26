@@ -957,8 +957,14 @@ void MainWindow::LoadProject(QString filename)
     m_iniFile.addStringList("recent_projects", filename, true);
 
     RefreshFileList();
+/*
+    qDebug() << m_currentProject.m_ini.contains("build_list");
+    qDebug() << m_currentProject.m_ini.getStringList("build_list");
 
+    for (int i=0;i<m_currentProject.m_ini.items.size();i++)
+        qDebug() << m_currentProject.m_ini.items[i].name << m_currentProject.m_ini.items[i].lst;
 
+*/
     m_iniFile.Save();
 
     // Set compiler syntax based on system

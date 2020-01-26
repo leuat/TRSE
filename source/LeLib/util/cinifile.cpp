@@ -70,10 +70,12 @@ void CIniFile::Load(QString fname) {
                 it.lst.removeFirst();
                 for (QString& s : it.lst) {
                     s = s.trimmed();
+
   //                  qDebug() <<s;
                  //   qDebug() << s;
                 }
             }
+//            qDebug() << it.name << it.lst;
             items.push_back(it);
         }
     }
@@ -121,4 +123,190 @@ void CIniFile::Save(QString fname)
     }
     file.close();
 
+}
+
+bool CIniFile::contains(QString name) {
+    for (int i=0;i<items.size();i++)
+        if (items[i].name==name.toLower().trimmed())
+            return true;
+
+    return false;
+
+}
+
+QString CIniFile::getString(QString name) {
+    for (int i=0;i<items.size();i++) {
+        if (items[i].name==name.toLower().trimmed())
+            return items[i].strval;
+    }
+    return "";
+}
+
+QVector3D CIniFile::getVec(QString name) {
+    for (int i=0;i<items.size();i++) {
+        if (items[i].name==name.toLower().trimmed())
+            return items[i].vec;
+    }
+    return QVector3D(0,0,0);
+}
+
+QColor CIniFile::getColor(QString name) {
+    for (int i=0;i<items.size();i++) {
+        if (items[i].name==name.toLower().trimmed()) {
+            QColor c;
+            c.setRed(items[i].vec.x());
+            c.setGreen(items[i].vec.y());
+            c.setBlue(items[i].vec.z());
+            return c;
+        }
+    }
+    return QColor(0,0,0);
+}
+
+QStringList CIniFile::getStringList(QString name) {
+
+    for (int i=0;i<items.size();i++) {
+        qDebug() << items[i].name << items[i].lst;
+        if (items[i].name==name.toLower().trimmed()) {
+            return items[i].lst;
+        }
+    }
+    return QStringList();
+}
+
+void CIniFile::setString(QString name, QString val) {
+    for (int i=0;i<items.size();i++) {
+        if (items[i].name==name.toLower().trimmed()) {
+            items[i].strval = val;
+            return;
+        }
+
+    }
+    CItem i;
+    i.name = name;
+    i.strval  = val;
+    items.append(i);
+
+}
+
+void CIniFile::setFloat(QString name, float val) {
+    for (int i=0;i<items.size();i++) {
+        if (items[i].name==name.toLower().trimmed()) {
+            items[i].dval = val;
+            items[i].strval = "";
+            return;
+        }
+
+    }
+    CItem i;
+    i.name = name;
+    i.dval  = val;
+    i.strval = "";
+    items.append(i);
+
+}
+
+void CIniFile::setVec(QString name, QVector3D val) {
+    for (int i=0;i<items.size();i++) {
+        if (items[i].name==name.toLower().trimmed()) {
+            items[i].vec = val;
+            return;
+        }
+
+    }
+    CItem i;
+    i.name = name;
+    i.vec  = val;
+    items.append(i);
+
+}
+
+void CIniFile::addStringList(QString name, QString val, bool isUnique) {
+    for (int i=0;i<items.size();i++) {
+        if (items[i].name==name.toLower().trimmed()) {
+            if (isUnique)
+                AddUniqueString(&items[i], val);
+            else {
+                items[i].lst<<val;
+                items[i].strval = "";
+            }
+            return;
+        }
+
+    }
+    CItem i;
+    i.name = name;
+    //        if (isUnique)
+    //          AddUniqueString(&items[i], val);
+
+    i.lst<<val;
+    i.strval = "";
+    items.append(i);
+
+}
+
+void CIniFile::setStringList(QString name, QStringList val) {
+    for (int i=0;i<items.size();i++) {
+        if (items[i].name==name.toLower().trimmed()) {
+            items[i].lst = val;
+            items[i].strval = "";
+            return;
+        }
+
+    }
+    CItem i;
+    i.name = name;
+    //        if (isUnique)
+    //          AddUniqueString(&items[i], val);
+
+    i.lst = val;
+    items.append(i);
+    i.strval="";
+}
+
+void CIniFile::removeFromList(QString name, QString val) {
+    for (int i=0;i<items.size();i++) {
+        if (items[i].name==name.toLower().trimmed()) {
+            items[i].lst.removeAll(val);
+            return;
+        }
+
+    }
+
+}
+
+void CIniFile::AddUniqueString(CItem *it, QString str) {
+    it->lst.removeAll(str);
+    it->lst.insert(0, str);
+    it->strval = "";
+}
+
+bool CIniFile::getBool(QString name) {
+    for (int i=0;i<items.size();i++) {
+        if (items[i].name==name.toLower().trimmed()) {
+            if (items[i].strval=="true")
+                return true;
+            return false;
+        }
+    }
+    qDebug() << "CIniFile: Could not find parameter " + name;
+    return false;
+}
+
+int CIniFile::getInt(QString name) {
+    for (int i=0;i<items.size();i++) {
+        if (items[i].name==name.toLower().trimmed())
+            return (int)items[i].dval;
+    }
+    qDebug() << "CIniFile: Could not find parameter " + name;
+    return 0;
+}
+
+double CIniFile::getdouble(QString name) {
+    for (int i=0;i<items.size();i++) {
+        if (items[i].name==name.toLower().trimmed())
+            return items[i].dval;
+    }
+    qDebug() << "CIniFile: Could not find parameter " + name;
+    return 0;
 }

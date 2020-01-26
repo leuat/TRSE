@@ -51,7 +51,7 @@ void Parser::InitObsolete()
 
 void Parser::Eat(TokenType::Type t)
 {
-//    qDebug() << m_currentToken.m_value << m_currentToken.m_intVal;
+ //   qDebug() << m_currentToken.m_value << m_currentToken.m_intVal;
     if (m_currentToken.m_type == t) {
         m_currentToken = m_lexer->GetNextToken();
 //        if (m_pass==1)
