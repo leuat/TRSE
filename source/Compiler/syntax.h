@@ -80,6 +80,8 @@ public:
     QString m_syntaxData; // File syntax data
     QString m_systemString;
 
+    QMap<QString, bool> m_reservedWordsRegularFont;
+
     AbstractSystem* m_currentSystem;
     bool m_ignoreSys = false;
     bool m_stripPrg = false;

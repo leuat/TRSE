@@ -34,12 +34,16 @@ Highlighter::Highlighter(CIniFile ini, int type, QTextDocument *parent)
     m_colors = ini;
     keywordFormat.setForeground(m_colors.getColor("keywordcolor"));
     keywordFormat.setFontWeight(QFont::Bold);
-    QStringList keywordPatterns;
-
+    QStringList keywordPatterns, kwpattern2;
+    // First,bold font
     for (Token t: Syntax::s.reservedWords) {
+
         //qDebug() << QString::number(i) << TokenType::types[i].toLower();
         QString s = "\\b" + t.m_value.toLower() + "\\b";
-        keywordPatterns<<s;
+        if (Syntax::s.m_reservedWordsRegularFont.contains(t.m_value.toUpper()))
+            kwpattern2 << s;
+        else
+            keywordPatterns<<s;
     }
 
     foreach (const QString &pattern, keywordPatterns) {
@@ -47,6 +51,15 @@ Highlighter::Highlighter(CIniFile ini, int type, QTextDocument *parent)
         rule.format = keywordFormat;
         highlightingRules.append(rule);
     }
+    keywordFormat.setFontWeight(QFont::Thin);
+
+    foreach (const QString &pattern, kwpattern2) {
+        rule.pattern = QRegularExpression(pattern,QRegularExpression::CaseInsensitiveOption);
+        rule.format = keywordFormat;
+        highlightingRules.append(rule);
+    }
+
+
 
     if (type==0)
     {

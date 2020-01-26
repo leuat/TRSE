@@ -66,7 +66,10 @@ void Syntax::SetupReservedWords(QVector<Token>& list, QString id, bool ignoreSys
         QString system = data[2].toLower();
 
         if (system.contains(currentSystem) || ignoreSystem) {
-
+            if (data.count()>3) {
+                if (data[3].trimmed()=="f")
+                    m_reservedWordsRegularFont[word.toUpper()] = true;
+             }
             list.append(Token(TokenType::getType(word), word.toUpper()));
         }
 
