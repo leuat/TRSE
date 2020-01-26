@@ -3,10 +3,12 @@
 <p>The Vic Bitmap Mode (VBM) occupies the majority of the unexpanded memory in the Vic 20 to produce a
     full screen bitmap.  Therefore, either extra RAM or cartridge ROM is needed for the game or demo code.
 </p>
+
 <p>In the case of a cartridge, additional RAM will be required for variables.  Fortunately, there is
     255 bytes available scattered across the unexpanded RAM.
 </p>
-<pre>
+
+<code>
 Zero page
 
 $00 - $8F - BASIC workspace - can be re-used
@@ -49,4 +51,4 @@ $1000 - $10F0 - Screen character data
 $10F1 - $10FF - Free for user program data (15 bytes)
 $1100 - $1FFF - Bitmap data
 
-</pre>
+</code>

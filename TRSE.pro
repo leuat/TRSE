@@ -607,6 +607,7 @@ DISTFILES += \
     resources/text/help/p/bitwise_operations.rtf \
     resources/text/help/p/c64.rtf \
     resources/text/help/p/constants.rtf \
+    resources/text/help/p/forward_references.rtf \
     resources/text/help/p/getting_started.rtf \
     resources/text/help/p/interrupts.rtf \
     resources/text/help/p/pascal.rtf \
