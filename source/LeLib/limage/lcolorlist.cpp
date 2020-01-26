@@ -348,12 +348,17 @@ QPixmap LColorList::CreateColorIcon(int col, int s)
     int c2 = col;
     if (m_list[col].m_altColour!=-1 && (!m_list[col].ignoreAltColour))
         c2 = m_list[col].m_altColour;
+    if (!m_list[col].color.isValid())
+        m_list[col].color = QColor(0,0,0);
+
+
     for (int y=0;y<s;y++)
     for (int x=0;x<s;x++) {
         if (s-1-y>x)
             img.setPixelColor(x,y, m_list[col].color);
         else
             img.setPixelColor(x,y, m_list[c2].color);
+
 
     }
     return QPixmap::fromImage(img);

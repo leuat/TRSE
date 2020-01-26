@@ -83,7 +83,7 @@ begin
 	ToggleBorderBackground(1);
 
 	// Press F1 on PPUCTRL for detailed info	
-	PPUCTRL:=%00010000;// set sprites on bank 0, tiles on bank 1;
+	togglebackgroundtableaddress(1);
 
 	// set nametable 0 = $2000 (where we dumped the background data)
 	SetNametable(0);
