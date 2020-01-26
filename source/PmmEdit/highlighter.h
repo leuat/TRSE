@@ -42,6 +42,13 @@ public:
     int m_cur = -1;
     void HighlightText(QString &text);
     void AppendSymboltable(QList<QString> procs);
+    void ApplyCustomKeywordList();
+
+    QStringList m_customList;
+    QColor m_customColour;
+    bool m_customBold = false;
+    bool m_customItalic = false;
+
 
 protected:
     void highlightBlock(const QString &text) override;

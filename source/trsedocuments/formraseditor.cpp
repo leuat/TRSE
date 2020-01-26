@@ -418,7 +418,20 @@ void FormRasEditor::SetupHighlighter()
     p.setColor(QPalette::Text, colors.getColor("textcolor"));
     ui->txtEditor->setPalette(p);
     highlighter = new Highlighter(colors, 0, ui->txtEditor->document());
+    QStringList ls = m_iniFile->getStringList("custom_keyword_colour");
+    QColor col= Qt::white;
+    if (ls.count()==3)
+        col = QColor(ls[0].toInt(), ls[1].toInt(), ls[2].toInt());
 
+
+
+    highlighter->m_customColour = col;
+    highlighter->m_customList = m_iniFile->getStringList("custom_keyword_list");
+    highlighter->m_customItalic = m_iniFile->getdouble("custom_keyword_italic")==1.0;
+    highlighter->m_customBold = m_iniFile->getdouble("custom_keyword_bold")==1.0;
+
+
+    highlighter->ApplyCustomKeywordList();
 //    qDebug() << "UPDATE " << m_iniFile->getString("theme");
 
 }

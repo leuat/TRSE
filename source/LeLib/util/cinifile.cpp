@@ -166,7 +166,6 @@ QColor CIniFile::getColor(QString name) {
 QStringList CIniFile::getStringList(QString name) {
 
     for (int i=0;i<items.size();i++) {
-        qDebug() << items[i].name << items[i].lst;
         if (items[i].name==name.toLower().trimmed()) {
             return items[i].lst;
         }

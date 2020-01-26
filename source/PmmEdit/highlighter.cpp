@@ -26,6 +26,33 @@
 
 #include <QDebug>
 
+void Highlighter::ApplyCustomKeywordList()
+{
+    HighlightingRule rule;
+    QStringList keywordPatterns;
+    if (m_customBold)
+        keywordFormat.setFontWeight(QFont::Bold);
+    else
+        keywordFormat.setFontWeight(QFont::Thin);
+
+
+    keywordFormat.setFontItalic(m_customItalic);
+    keywordFormat.setForeground(m_customColour);
+
+    for (QString t:  m_customList) {
+
+        QString s = "\\b" + t.toLower() + "\\b";
+         keywordPatterns<<s;
+    }
+
+
+    foreach (const QString &pattern, keywordPatterns) {
+        rule.pattern = QRegularExpression(pattern,QRegularExpression::CaseInsensitiveOption);
+        rule.format = keywordFormat;
+        highlightingRules.append(rule);
+    }
+
+}
 
 Highlighter::Highlighter(CIniFile ini, int type, QTextDocument *parent)
     : QSyntaxHighlighter(parent)
@@ -40,10 +67,10 @@ Highlighter::Highlighter(CIniFile ini, int type, QTextDocument *parent)
 
         //qDebug() << QString::number(i) << TokenType::types[i].toLower();
         QString s = "\\b" + t.m_value.toLower() + "\\b";
-        if (Syntax::s.m_reservedWordsRegularFont.contains(t.m_value.toUpper()))
-            kwpattern2 << s;
-        else
-            keywordPatterns<<s;
+//        if (Syntax::s.m_reservedWordsRegularFont.contains(t.m_value.toUpper()))
+  //          kwpattern2 << s;
+    //    else
+         keywordPatterns<<s;
     }
 
     foreach (const QString &pattern, keywordPatterns) {
@@ -51,15 +78,31 @@ Highlighter::Highlighter(CIniFile ini, int type, QTextDocument *parent)
         rule.format = keywordFormat;
         highlightingRules.append(rule);
     }
-    keywordFormat.setFontWeight(QFont::Thin);
+    /*
+    if (m_customBold)
+        keywordFormat.setFontWeight(QFont::Bold);
+    else
+        keywordFormat.setFontWeight(QFont::Thin);
 
-    foreach (const QString &pattern, kwpattern2) {
+
+    keywordFormat.setFontItalic(m_customItalic);
+    keywordFormat.setForeground(m_customColour);
+
+    keywordPatterns.clear();
+    for (QString t:  m_customList) {
+
+        QString s = "\\b" + t.toLower() + "\\b";
+         keywordPatterns<<s;
+    }
+
+
+    foreach (const QString &pattern, keywordPatterns) {
         rule.pattern = QRegularExpression(pattern,QRegularExpression::CaseInsensitiveOption);
         rule.format = keywordFormat;
         highlightingRules.append(rule);
     }
 
-
+*/
 
     if (type==0)
     {
@@ -236,6 +279,7 @@ void Highlighter::AppendSymboltable(QList<QString> procs)
     }
 
 }
+
 
 void Highlighter::Save(QString fn)
 {

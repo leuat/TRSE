@@ -72,6 +72,10 @@ void DialogTRSESettings::FillFromIni()
         ui->cmbPalette->setCurrentText("Light");
 
 
+    ui->leKeywords->setText( Util::toString(m_ini->getStringList("custom_keyword_list")));
+    ui->leColour->setText( Util::toString(m_ini->getStringList("custom_keyword_colour")));
+    ui->chkBold->setChecked(m_ini->getdouble("custom_keyword_bold")==1.0);
+    ui->chkItalic->setChecked(m_ini->getdouble("custom_keyword_italic")==1.0);
     QDir directory(Util::path+"themes/");
     QStringList  themes = directory.entryList(QStringList() << "*.ini");
     ui->cmbTheme->clear();
@@ -150,6 +154,12 @@ void DialogTRSESettings::FillToIni()
 
 
     m_ini->setString("assembler", ui->cmbAssembler->currentText());
+
+    m_ini->setStringList("custom_keyword_list", ui->leKeywords->text().split(","));
+    m_ini->setStringList("custom_keyword_colour", ui->leColour->text().split(","));
+    m_ini->setFloat("custom_keyword_bold",ui->chkBold->isChecked());
+    m_ini->setFloat("custom_keyword_italic",ui->chkItalic->isChecked());
+
 
 }
 

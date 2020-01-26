@@ -229,6 +229,8 @@ void DialogProjectSettings::FillToIni()
 
     m_ini->setFloat("output_debug_symbols",ui->chkDebugSymbols->isChecked());
 
+
+
 //    FillTabDataToIni();
 
 }
