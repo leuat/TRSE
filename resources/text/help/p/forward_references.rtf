@@ -1,0 +1,48 @@
+<p>In Pascal, procedures can only call other procedures that have already been defined.  This can sometimes
+    pose a problem, for example:
+</p>
+
+<code>
+procedure proc1();
+begin
+
+    proc2();  // ERROR!
+
+end;
+
+procedure proc2();
+begin
+
+    //stuff
+
+end;
+</code>
+
+<p>One solution is to simply move proc2 before proc1, however, sometimes that may not be possible.
+    An alternative is to use a forward reference.  For example:
+</p>
+
+<code>
+procedure proc2();
+
+procedure proc1();
+begin
+
+    proc2();  // No longer an ERROR - yay!
+
+end;
+
+procedure proc2();
+begin
+
+    //stuff
+
+end;
+</code>
+
+<p>A forward reference is essentially just a declaration of a procedure's name.  There is no 
+    begin or end and no code other than the procedure and name.
+</p>
+<p>In the above example, proc2() is declared and now proc1() knows about it and can call it.  Proc2() is
+    declared later in the code which does contain the begin and end.
+</p>
