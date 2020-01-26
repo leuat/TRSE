@@ -170,6 +170,8 @@ void LImageMetaChunk::setPixel(int x, int y, unsigned int color)
 
 unsigned int LImageMetaChunk::getPixel(int x, int y)
 {
+    if (m_charset==nullptr)
+        return 0;
     QPoint p = getPos(x,y);
 //    qDebug() << p;
     if (m_current>=m_items.count())
