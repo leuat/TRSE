@@ -404,5 +404,6 @@
         <file>resources/text/help/m/ppuread.rtf</file>
         <file>resources/text/help/p/bitwise_operations.rtf</file>
         <file>resources/text/help/r/vbmexport.rtf</file>
+        <file>resources/text/help/p/vbm_memory.rtf</file>
     </qresource>
 </RCC>

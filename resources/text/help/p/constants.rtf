@@ -1,9 +1,39 @@
-<p>Constants can be defined in the var area of your main program or procedures.</p>
+<p>Constants are values that will never change.  They are defined in the var area of your
+main program or procedures.  They are useful to help create readable code.  MAXLIVES is more
+descriptive that 3 for example.  Also, if you decide you want to use a different value, you only need
+to change the constant declaration and not hunt through your code for the number you want to change - even
+more useful if you refer to this number many times.</p>
+
+<p>Once a constant has been declared it cannot be changed.  The compiler will work out the value (calculations
+can be used) and use this throughout the ASM produced.</p>
+
+<p>There are now two ways to declare a constant:</p>
 
 <code>@define SCREENWIDTH 40</code>
+<code>const SCREENHEIGHT: byte = 25;</code>
 
-<p>Once a constant has been defined, it can be used anywhere in your code by prefixing with the '@'' symbol:</p>
+<p>It is recommended that you use 'const' going forward.</p>
+
+<p>To reference 'define' constants add a '@' symbol to the beginning.  Anything declared with 'const' will not
+require this and can be referenced directly as if it was a variable.</p>
 
 <code>
-    pos := pos + @SCREENWIDTH;
+    pos := pos + @SCREENWIDTH;   // need the @ symbol
+    pos := pos + SCREENHEIGHT;   // look mom, no @ !
 </code>
+
+<p>There is another form of constant for memory addresses.  If a memory address constant is declared, it can
+be used to write to that address with a simple assignment.  For example:</p>
+
+<code>
+var
+  const xpos: address = $05;
+
+begin
+  xpos := 100;
+</code>
+
+<p>On first inspection you may think we are trying to assing a value to 'xpos' ... but didn't you just say
+we cannot reassign constants when declared, I hear you ask? Yes, but as this is an address constant, we are not
+changing the constant itself, which is still address $05 (in zero page memory), we are changing the byte stored
+as address $05! </p>
