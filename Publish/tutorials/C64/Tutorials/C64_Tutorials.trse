@@ -38,4 +38,6 @@ build_list = ,
 data_header_resources/images/petscii_animation.flf = 0
 charset_resources/images/petscii_animation.flf = :resources/character.rom
 data_header_resources/charsets/charset.flf = 0
-open_files =, Hello.ras
+open_files = ,intermediate/05_paw_file.paw, intermediate/05_paw_compression.ras, easy/11_sprite_logo.ras, easy/06_plasma.ras, resources/charsets/charset_16x16.flf, Hello.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
+current_file = easy/10_sprites.ras

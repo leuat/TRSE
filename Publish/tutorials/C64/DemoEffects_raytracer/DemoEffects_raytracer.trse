@@ -34,4 +34,6 @@ d64_paw_file_disk2 = none
 override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
-open_files =, example5_single_sprite.ras, example5_single_sprite.fjo
+open_files = ,example13_compressed_charset.ras, example5_single_sprite.ras, example5_single_sprite.fjo
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/DemoEffects_raytracer/
+current_file = example5_single_sprite.ras

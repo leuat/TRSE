@@ -430,6 +430,8 @@ int Parser::GetParsedInt() {
 //    if (p!=0)
     for (int i=0;i<p;i++)
         str+=")";
+    str = str.remove("()");
+
     QJSEngine myEngine;
     QJSValue ret = myEngine.evaluate(str);
 //    qDebug() << str << ret.toInt();

@@ -44,7 +44,7 @@ interrupt UpdateRaster();
 begin
 	startirq(1);
 	// Set sprite location		
-	setspriteloc(0,@spriteDataLoc/64 + frame,0);
+	setspriteloc(0,spriteDataLoc/64 + frame,0);
 	frame:=(frame+1)&maxFrames; // Cap frame at 128 frames
 	closeirq();
 end;

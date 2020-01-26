@@ -5,7 +5,8 @@ var
 	text : cstring = ("                                        ",
 					"THIS IS A SAMPLE SCROLLER TEXT",
 					 "                                        ");
-	const kernal : byte = 1;	
+	const kernal : byte = 1;
+	
 // Position of scroller
    @define ypos 16
 // Position of scroller raster line
@@ -51,11 +52,11 @@ interrupt Bottom();
 
 interrupt Top();
 begin
-	StartIRQ(@kernal);
+	StartIRQ(kernal);
 	screen_bg_col:=red;
 	screen_fg_col:=red;
 	scrollx(0); // make sure that everythingin the "TOP" layer doesn't scroll
-	RasterIRQ(Bottom(),@yposRaster,@kernal); // bottom os referenced here, so it needs to be forward declared
+	RasterIRQ(Bottom(),@yposRaster,kernal); // bottom os referenced here, so it needs to be forward declared
 	// Update text and etc from the "Top" layer
 	UpdateScrollAndText();		
 	CloseIRQ();
@@ -65,7 +66,7 @@ end;
 
 interrupt Bottom();
 begin
-	StartIRQ(@kernal);
+	StartIRQ(kernal);
 	// Wait(3) makes sure that we set the background color when the raster is outside the screen,
 	// removing any artifacts
 	wait(3);
@@ -74,7 +75,7 @@ begin
 	// Scroll here!
 	Scrollx(scrollVal);
 	
-	RasterIRQ(Top(),$00,@kernal);
+	RasterIRQ(Top(),$00,kernal);
 	CloseIRQ();
 end;
 /*

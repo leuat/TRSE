@@ -1,36 +1,35 @@
 program Rasters;
 var
-	const kernal:byte=1;
-
+	const useKernal:byte=1;
 
 
 interrupt IRQ1();
 
 interrupt IRQ0();
 begin
-	StartIRQ(@kernal);
+	StartIRQ(useKernal);
 	screen_bg_col:=red;
-	RasterIRQ(IRQ1(),$40,kernal);
+	RasterIRQ(IRQ1(),$40,useKernal);
 	CloseIRQ();
 end;
 
 interrupt IRQ2();
 begin
-	StartIRQ(@kernal);
+	StartIRQ(useKernal);
 	screen_bg_col:=yellow;
-	RasterIRQ(IRQ0(),$00,kernal);
+	RasterIRQ(IRQ0(),$00,useKernal);
 	CloseIRQ();
 end;
 
 interrupt IRQ1();
 begin
-	StartIRQ(@kernal);
+	StartIRQ(useKernal);
 	screen_bg_col:=green;
-	RasterIRQ(IRQ2(),$80,kernal);
+	RasterIRQ(IRQ2(),$80,useKernal);
 	CloseIRQ();
 end;
 
 begin
-	StartRasterChain(IRQ0(), 0,kernal);
+	StartRasterChain(IRQ0(), 0,useKernal);
 	Loop(); 
 end.
