@@ -395,8 +395,8 @@ m; VIAIRQ; VIC20; p,b,b
 m; SetScreenMode;X86;b
 m; VGAClearScreen32; X86;b
 m; VGAClearScreen16; X86;b
-
-
+m; ScrollX; X86; b
+m; SetPalette; X86; b,b,b,b
 
 #
 #
