@@ -80,10 +80,14 @@ win32:RC_ICONS += trse.ico
 SOURCES += main.cpp\
         mainwindow.cpp \
     imageworker.cpp \
+    source/Compiler/assembler/asmx86.cpp \
+    source/Compiler/assembler/astdispatcherx86.cpp \
+    source/Compiler/assembler/methodsx86.cpp \
     source/Compiler/ast/nodecase.cpp \
     source/Compiler/ast/noderepeatuntil.cpp \
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemplus4.cpp \
+    source/Compiler/systems/systemx86.cpp \
     source/ImageEditor/abstractimageeditor.cpp \
     source/ImageEditor/glwidget.cpp \
     source/ImageEditor/qlabellimage.cpp \
@@ -229,10 +233,14 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     imageworker.h \
+    source/Compiler/assembler/asmx86.h \
+    source/Compiler/assembler/astdispatcherx86.h \
+    source/Compiler/assembler/methodsx86.h \
     source/Compiler/ast/nodecase.h \
     source/Compiler/ast/noderepeatuntil.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemplus4.h \
+    source/Compiler/systems/systemx86.h \
     source/ImageEditor/abstractimageeditor.h \
     source/ImageEditor/glwidget.h \
     source/ImageEditor/qlabellimage.h \

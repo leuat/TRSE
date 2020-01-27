@@ -94,6 +94,10 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         emu = m_iniFile->getString("ok64_emulator");
     }
 
+    if (m_projectIniFile->getString("system")=="X86")
+        emu = m_iniFile->getString("dosbox");
+
+
     if (m_projectIniFile->getString("system")=="X16") {
         emu = m_iniFile->getString("x16_emulator");
         QString base = emu;
@@ -121,7 +125,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     if (!QFile::exists(emu)) {
         Messages::messages.DisplayMessage(Messages::messages.NO_EMULATOR);
         ui->txtOutput->setText("Could not find the emulator for system '"+m_projectIniFile->getString("system")+"'\nMake sure you have set a correct path in the TRSE settings dialoge!\n\n"+
-        "Example: VICE 'c64','c128','xvic' or NES 'mednafen'.");
+        "Example: VICE 'c64','c128','xvic', 'dosbox' or NES 'mednafen'.");
         return;
     }
     QProcess process;
@@ -129,6 +133,8 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         if (m_iniFile->getdouble("auto_inject")==1.0) {
            params << "-autostartprgmode" << "1";
         }
+
+
     params << QDir::toNativeSeparators(fileName);
     process.waitForFinished();
 #ifdef _WIN32
@@ -145,6 +151,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 
 #else
   //  qDebug() << emu << params;
+    qDebug() << "FormRasEditor params" << emu << params;
     process.startDetached(emu, params);
 #endif
 //    process.pi
@@ -380,7 +387,9 @@ void FormRasEditor::Run()
     QString filename = m_currentSourceFile.split(".ras")[0] + "."+ m_projectIniFile->getString("output_type");
     if (m_projectIniFile->getString("system")=="NES")
         filename = m_currentSourceFile.split(".ras")[0] + ".nes";
-//    qDebug() << filename;
+    if (m_projectIniFile->getString("system")=="X86")
+        filename = m_currentSourceFile.split(".ras")[0] + ".com";
+
 //    exit(1);
 
     ExecutePrg(filename, m_projectIniFile->getString("system"));

@@ -81,6 +81,11 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
         m_dispatcher = new ASTDispather68000();
     }
 
+    if (system->m_processor==AbstractSystem::PX86) {
+        m_assembler = new AsmX86();//
+        m_dispatcher = new ASTDispatcherX86();
+    }
+
 
     if (m_assembler==nullptr)
         return false;

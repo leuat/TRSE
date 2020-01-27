@@ -26,6 +26,7 @@
 QString Util::path = "";
 QElapsedTimer Util::globalTimer;
 bool Util::CancelSignal = false;
+int Util::hexType = 0;
 
 
 void Util::Tokenize(const string& str,

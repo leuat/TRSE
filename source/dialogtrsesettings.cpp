@@ -48,7 +48,9 @@ void DialogTRSESettings::FillFromIni()
     ui->cbmFont->setCurrentText(keep);
 
 
+    ui->leDosbox->setText(m_ini->getString("dosbox"));
     ui->leVasmm->setText(m_ini->getString("vasmm"));
+    ui->leNasm->setText(m_ini->getString("nasm"));
     ui->le68kTargetDir->setText(m_ini->getString("vasmm_target_dir"));
     ui->leDasm->setText(m_ini->getString("dasm"));
     ui->leEmulator->setText(m_ini->getString("emulator"));
@@ -115,6 +117,8 @@ void DialogTRSESettings::FillToIni()
     m_ini->setFloat("editor_cursor_width",ui->leCursorWidth->text().toInt());
     m_ini->setString("vasmm_target_dir", ui->le68kTargetDir->text());
     m_ini->setString("vasmm", ui->leVasmm->text());
+    m_ini->setString("nasm", ui->leNasm->text());
+    m_ini->setString("dosbox", ui->leDosbox->text());
     m_ini->setString("dasm", ui->leDasm->text());
     m_ini->setString("exomizer", ui->leExomizer->text());
     m_ini->setString("tinycrunch", ui->leTinyCrunch->text());
@@ -297,4 +301,22 @@ void DialogTRSESettings::on_btnX16Emulator_clicked()
 void DialogTRSESettings::on_cbmFont_currentIndexChanged(const QString &arg1)
 {
     m_ini->setString("editor_font", arg1);
+}
+
+void DialogTRSESettings::on_btnDosbox_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Dosbox"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leDosbox->setText(filename);
+
+}
+
+void DialogTRSESettings::on_btnNasm_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("NASM location"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leNasm->setText(filename);
+
 }
