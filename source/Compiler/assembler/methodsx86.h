@@ -26,6 +26,8 @@ public:
 
     void WaitForVerticalBlank(Assembler* as);
 
+    void ScrollX(Assembler* as);
+
 };
 
 #endif // METHODSX86_H

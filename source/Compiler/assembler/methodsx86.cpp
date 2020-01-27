@@ -29,6 +29,23 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("VGAclearScreen32")) {
         ClearScreen(as,32);
     }
+    if (Command("scrollx")) {
+        ScrollX(as);
+    }
+    if (Command("setpalette")) {
+        as->Asm("mov dx,3c8h");
+        LoadVar(as,0);
+        as->Asm("out dx,al");
+        as->Asm("inc dx");
+        LoadVar(as,1);
+        as->Asm("out dx,al");
+        LoadVar(as,2);
+        as->Asm("out dx,al");
+        LoadVar(as,3);
+        as->Asm("out dx,al");
+        as->Asm("Sti");
+
+    }
 
 }
 
@@ -94,4 +111,23 @@ void MethodsX86::WaitForVerticalBlank(Assembler *as)
 
     as->PopLabel("vblank2");
     as->PopLabel("vblank1");
+}
+
+void MethodsX86::ScrollX(Assembler *as)
+{
+    LoadVar(as,0);
+    as->Asm("push ax");
+    as->Asm("mov dx,$3d4");
+    as->Asm("mov al,$0d");
+    as->Asm("out dx,al");
+    as->Asm("inc dx");
+    as->Asm("pop ax");
+    as->Asm("out dx,al");
+    as->Asm("dec dx");
+    as->Asm("mov al,$00");
+    as->Asm("out dx,al");
+    as->Asm("inc dx");
+    as->Asm("mov al,ah");
+    as->Asm("out dx,al");
+
 }

@@ -360,6 +360,47 @@ void ASTDispatcherX86::dispatch(NodeConditional *node)
 
 void ASTDispatcherX86::dispatch(NodeForLoop *node)
 {
+    node->DispatchConstructor(as);
+
+
+    //QString m_currentVar = ((NodeAssign*)m_a)->m_
+    NodeAssign *nVar = dynamic_cast<NodeAssign*>(node->m_a);
+
+
+    if (nVar==nullptr)
+        ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
+
+    QString var = dynamic_cast<NodeVar*>(nVar->m_left)->getValue(as);//  m_a->Build(as);
+//    qDebug() << "Starting for";
+    node->m_a->Accept(this);
+  //  qDebug() << "accepted";
+
+//    LoadVariable(node->m_a);
+  //  TransformVariable()
+    //QString to = m_b->Build(as);
+    QString to = "";
+    if (dynamic_cast<const NodeNumber*>(node->m_b) != nullptr)
+        to = QString::number(((NodeNumber*)node->m_b)->m_val);
+    if (dynamic_cast<const NodeVar*>(node->m_b) != nullptr)
+        to = ((NodeVar*)node->m_b)->getValue(as);
+
+//    as->m_stack["for"].push(var);
+    QString lblFor =as->NewLabel("forloop");
+    as->Label(lblFor);
+//    qDebug() << "end for";
+
+
+
+    node->m_block->Accept(this);
+    as->Asm("mov dl,["+var+"]");
+    as->Asm("add dl,1");
+    as->Asm("mov ["+var+"],dl");
+    LoadVariable(node->m_b);
+    as->Asm("cmp "+getAx(node->m_b)+",dl");
+
+    as->Asm("jne "+lblFor);
+
+    as->PopLabel("forloop");
 
 }
 
