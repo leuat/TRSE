@@ -95,6 +95,10 @@ private slots:
 
     void on_cbmFont_currentIndexChanged(const QString &arg1);
 
+    void on_btnDosbox_clicked();
+
+    void on_btnNasm_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

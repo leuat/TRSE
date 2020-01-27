@@ -213,9 +213,7 @@ begin
 end;
 
 
-// NMI will automatically be called on every vblank. Update PPU gfx here! For now,
-// it is emtpy. 
-
+// NMI will automatically be called on every vblank. 
 
 interrupt NMI();
 begin

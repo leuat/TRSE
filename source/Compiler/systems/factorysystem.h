@@ -10,6 +10,7 @@
 #include "systemamiga.h"
 #include "systemplus4.h"
 #include "systemok64.h"
+#include "systemx86.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem
@@ -37,6 +38,8 @@ public:
             return new SystemOK64(settings, proj);
         if (type==AbstractSystem::X16)
             return new SystemX16(settings, proj);
+        if (type==AbstractSystem::X86)
+            return new SystemX86(settings, proj);
 
         return s;
     }

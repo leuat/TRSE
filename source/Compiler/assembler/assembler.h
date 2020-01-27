@@ -232,7 +232,7 @@ public:
     virtual bool CheckZPAvailability() {return false;}
 
     QString getLabel(QString s);
-
+    QString m_hash = "#";
     QString NewLabel(QString s);
 
     void PopLabel(QString s) {
@@ -242,7 +242,7 @@ public:
     Assembler();
     void Save(QString filename);
     void Nl();
-    void Write(QString str, int level=0);
+    virtual void Write(QString str, int level=0);
 
 
 
@@ -282,7 +282,7 @@ public:
 //    virtual void EndForLoop(QString endVal) {}
 
     void Asm(QString s, QString comment="");
-    void Label(QString s);
+    virtual void Label(QString s);
     virtual void Optimise(CIniFile& ini) {}
 
     virtual void IncludeFile(QString pfile);

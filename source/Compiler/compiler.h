@@ -26,8 +26,10 @@
 #include "source/Compiler/assembler/mos6502.h"
 #include "source/Compiler/assembler/AsmM68000.h"
 #include "source/Compiler/assembler/asmpascal.h"
+#include "source/Compiler/assembler/asmx86.h"
 #include "source/Compiler/assembler/astdispather6502.h"
 #include "source/Compiler/assembler/astdispatcher68000.h"
+#include "source/Compiler/assembler/astdispatcherx86.h"
 #include "source/LeLib/util/cinifile.h"
 
 #include "source/Compiler/systems/abstractsystem.h"
