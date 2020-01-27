@@ -449,7 +449,7 @@ void ASTDispatcherX86::LoadVariable(NodeNumber *n)
 
 QString ASTDispatcherX86::getEndType(Assembler *as, Node *v)
 {
-
+return "";
 }
 
 QString ASTDispatcherX86::AssignVariable(NodeAssign *node)
