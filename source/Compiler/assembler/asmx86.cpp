@@ -84,7 +84,7 @@ void AsmX86::BinOP(TokenType::Type t)
 
 QString AsmX86::String(QStringList lst)
 {
-
+    return "";
 }
 
 void AsmX86::Label(QString s)

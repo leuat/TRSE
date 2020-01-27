@@ -5,7 +5,6 @@
 
 #include "source/Compiler/assembler/assembler.h"
 
-
 class AsmX86 : public Assembler
 {
 public:
@@ -31,6 +30,7 @@ public:
 
     QString String(QStringList lst) override;
     void Label(QString s) override;
+
 
 
 };

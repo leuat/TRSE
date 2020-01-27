@@ -20,6 +20,12 @@ public:
 
     bool Command(QString name);
 
+    void LoadVar(Assembler *as, int paramNo);
+
+    void ClearScreen(Assembler* as, int bits);
+
+    void WaitForVerticalBlank(Assembler* as);
+
 };
 
 #endif // METHODSX86_H

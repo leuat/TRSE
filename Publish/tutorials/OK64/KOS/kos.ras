@@ -17,7 +17,7 @@ var
 	cmdLoad : string = "load";
 	cmdCls : string = "cls";
 	
-	music : incsid("music/jingle.sid","2");
+	music : incsid("music/jingle.sid",2);
 	
 @export "images/logo.flf" "images/logo.bin"  256
 	logo : incbin("images/logo.bin",$21F00);    

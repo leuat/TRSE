@@ -378,7 +378,7 @@ m; ReturnInterrupt; C64, PLUS4, C128, OK64;
 
 m; WaitForRaster; C64, PLUS4, C128, VIC20, OK64; b
 m; WaitNoRaster; C64, PLUS4, C128, VIC20, OK64; b
-m; WaitForVerticalBlank; C64, C128 ;
+m; WaitForVerticalBlank; C64, C128, X86 ;
 
 
 m; DisableVIC20IRQ; VIC20;
@@ -388,9 +388,13 @@ m; VIAIRQ; VIC20; p,b,b
 
 
 
+##############################################################################
+########################### X86 METHOD #######################################
+##############################################################################
 
-
-
+m; SetScreenMode;X86;b
+m; VGAClearScreen32; X86;b
+m; VGAClearScreen16; X86;b
 
 
 
@@ -402,8 +406,8 @@ m; VIAIRQ; VIC20; p,b,b
 #
 #
 
-c; TRUE; X16,NES, C64, PLUS4,VIC20,C128,PET, AMIGA, OK64; b; 1
-c; FALSE; X16,NES, C64, PLUS4,VIC20,C128,PET, AMIGA, OK64; b; 0
+c; TRUE; X16,NES, C64, PLUS4,VIC20,C128,PET, AMIGA, OK64,X86;  b; 1
+c; FALSE; X16,NES, C64, PLUS4,VIC20,C128,PET, AMIGA, OK64,X86; b; 0
 
 
 # NES-specific

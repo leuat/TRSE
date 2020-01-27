@@ -92,14 +92,20 @@ public:
     QString getEndType(Assembler* as, Node* v) override;
 
     QString AssignVariable(NodeAssign *node);
+
+
+
+    void DeclarePointer(NodeVarDecl *node);
+    QString getEndType(Assembler *as, Node *v1,Node *v2) override;
+
+
+
     void IncBin(Assembler* as, NodeVarDecl *node);
 
     void BuildSimple(Node *node, QString lblFailed);
 
     void BuildToCmp(Node *node);
 
-    void DeclarePointer(NodeVarDecl *node);
-    QString getEndType(Assembler *as, Node *v1,Node *v2) override;
 
 };
 #endif // ASTDISPATCHERX86_H
