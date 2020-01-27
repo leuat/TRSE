@@ -67,6 +67,28 @@ public:
     void LoadVariable(NodeNumber* n) override;
 
 
+    int m_lvl = 0;
+    QStringList m_regs = QStringList({"a","b","c","d"});
+
+    QString getAx(Node* n) {
+        QString a = m_regs[m_lvl];
+        if (n->m_forceType==TokenType::INTEGER)
+            return a+"x";
+        if (n->getType(as)==TokenType::INTEGER)
+            return a+"x";
+        return a+"l";
+
+    }
+    void PushX() {
+        if (m_lvl==3)
+            ErrorHandler::e.Error("Error in X86 dispatcher PopX : trying to push regstack from max");
+        m_lvl++;
+    }
+    void PopX() {
+        if (m_lvl==0)
+            ErrorHandler::e.Error("Error in X86 dispatcher PopX : trying to pop regstack from zero");
+        m_lvl--;
+    }
     QString getEndType(Assembler* as, Node* v) override;
 
     QString AssignVariable(NodeAssign *node);

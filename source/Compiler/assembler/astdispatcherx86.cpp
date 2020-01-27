@@ -8,11 +8,72 @@ ASTDispatcherX86::ASTDispatcherX86()
 
 void ASTDispatcherX86::dispatch(NodeBinOP *node)
 {
+    if (node->isPureNumeric()) {
+        as->Asm("mov "+getAx(node)+", " + node->getValue(as) + "; binop is pure numeric");
+        return;
+    }
+    if (node->isPureVariable()) {
+        as->Asm("mov "+getAx(node)+", [" + node->getValue(as)+"] ; binop is pure variable");
+        return;
+    }
+/*    if (!node->m_left->isPure() && node->m_right->isPure()) {
+        Node* t = node->m_right;
+        node->m_right = node->m_left;
+        node->m_left = t;
+        qDebug() << "SWITCH";
+    }
+*/
+    if (node->m_op.m_type == TokenType::MUL || node->m_op.m_type == TokenType::DIV) {
+        node->m_left->Accept(this);
+        QString bx = getAx(node->m_left);
+
+        PushX();
+        node->m_right->Accept(this);
+
+        QString ax = getAx(node->m_right);
+        PopX();
+        as->BinOP(node->m_op.m_type);
+
+        as->Asm(as->m_term + " " +  ax);
+        as->m_term = "";
+        return;
+    }
+    node->m_left->Accept(this);
+    QString bx = getAx(node->m_left);
+
+    PushX();
+    node->m_right->Accept(this);
+
+    QString ax = getAx(node->m_right);
+    PopX();
+    as->BinOP(node->m_op.m_type);
+
+    as->Asm(as->m_term + " " +  bx +"," +ax);
+    as->m_term = "";
+
 
 }
 
 void ASTDispatcherX86::dispatch(NodeNumber *node)
 {
+    QString ax = getAx(node);
+    if (as->m_term!="") {
+        as->m_term +=node->getValue(as);
+        return;
+    }
+
+    as->Asm("mov "+ax+", " + node->getValue(as));
+}
+
+void ASTDispatcherX86::dispatch(NodeVar *node)
+{
+    QString ax = getAx(node);
+    if (as->m_term!="") {
+        as->m_term +=node->getValue(as);
+        return;
+    }
+
+    as->Asm("mov "+ax+", [" + node->getValue(as)+"]");
 
 }
 
@@ -55,6 +116,50 @@ void ASTDispatcherX86::dispatch(NodeCompound *node)
 
 void ASTDispatcherX86::dispatch(NodeVarDecl *node)
 {
+    node->DispatchConstructor(as);
+
+
+    node->ExecuteSym(as->m_symTab);
+
+
+
+    NodeVar* v = (NodeVar*)node->m_varNode;
+    NodeVarType* t = (NodeVarType*)node->m_typeNode;
+
+    if (t->m_op.m_type==TokenType::ARRAY) {
+        as->DeclareArray(v->getValue(as), t->m_arrayVarType.m_value, t->m_op.m_intVal, t->m_data, t->m_position);
+        node->m_dataSize=t->m_op.m_intVal;
+        as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_type="address";
+        as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
+    }else
+    if (t->m_op.m_type==TokenType::STRING) {
+        as->DeclareString(v->getValue(as), t->m_data);
+    }
+    else
+    if (t->m_op.m_type==TokenType::INCBIN) {
+        if (node->m_curMemoryBlock!=nullptr)
+            ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
+
+        IncBin(as,node);
+
+    }
+    else
+    if (t->m_op.m_type==TokenType::POINTER) {
+        if (node->m_curMemoryBlock!=nullptr)
+            ErrorHandler::e.Error("Pointers can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
+        DeclarePointer(node);
+        as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
+
+    }else {
+        node->m_dataSize=1;
+        if (t->getValue(as).toLower()=="integer") node->m_dataSize = 2;
+        if (t->getValue(as).toLower()=="long") node->m_dataSize = 4;
+        as->DeclareVariable(v->getValue(as), t->value, t->initVal);
+    }
+
+
+
+    as->m_currentBlock = nullptr;
 
 }
 
@@ -210,10 +315,6 @@ void ASTDispatcherX86::dispatch(NodeForLoop *node)
 
 }
 
-void ASTDispatcherX86::dispatch(NodeVar *node)
-{
-
-}
 
 void ASTDispatcherX86::dispatch(Node *node)
 {
@@ -222,6 +323,9 @@ void ASTDispatcherX86::dispatch(Node *node)
 
 void ASTDispatcherX86::dispatch(NodeAssign *node)
 {
+    node->DispatchConstructor(as);
+
+    AssignVariable(node);
 
 }
 
@@ -297,6 +401,13 @@ QString ASTDispatcherX86::getEndType(Assembler *as, Node *v)
 
 QString ASTDispatcherX86::AssignVariable(NodeAssign *node)
 {
+
+    if (node->m_left->isWord(as)) {
+        node->m_right->m_forceType == TokenType::INTEGER;
+    }
+
+    node->m_right->Accept(this);
+    as->Asm("mov ["+dynamic_cast<NodeVar*>(node->m_left)->getValue(as) + "], "+getAx(node));
 
 }
 

@@ -232,7 +232,7 @@ public:
     virtual bool CheckZPAvailability() {return false;}
 
     QString getLabel(QString s);
-
+    QString m_hash = "#";
     QString NewLabel(QString s);
 
     void PopLabel(QString s) {

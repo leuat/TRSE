@@ -32,7 +32,14 @@ SymbolTable* Node::parserSymTab;
 void Node::DispatchConstructor(Assembler *as) {
     //        m_blockInfo = m_staticBlockInfo;s
     m_currentLineNumber = m_op.m_lineNumber;
-    if (m_comment!="") {
+    bool ok = true;
+/*    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA)
+        ok = false;
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X86)
+        ok = false;
+*/
+//    qDebug() << Syntax::s.m_currentSystem->m_system << m_comment;
+    if ((m_comment!="") && ok) {
         QString c = m_comment;//.replace("//","\n").replace("/*","\n").replace("\n","\n; //");
         c = c.replace("//","\n").replace("/*","\n").replace("\n","\n; //");
         if (!c.trimmed().startsWith(";"))

@@ -11,16 +11,16 @@ class AsmX86 : public Assembler
 public:
     AsmX86();
 
-    QString byte = "dc.b";
-    QString word = "dc.w";
-    QString llong = "dc.l";
+    QString byte = "db";
+    QString word = "dw";
+    QString llong = "dl";
 
 
     void Connect() override {}
 
     void Program(QString name, QString vicParam) override;
     void EndProgram() override;
-    void Write(QString str, int level) override;
+    void Write(QString str, int level=1) override;
 
 
     void DeclareArray(QString name, QString type, int count, QStringList data, QString pos) override;
