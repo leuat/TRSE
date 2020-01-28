@@ -26,6 +26,65 @@ void AsmX86::Write(QString str, int level)
 
 void AsmX86::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
 {
+    QString t = byte;
+    if (type.toLower()=="integer")
+        t = word;
+    if (type.toLower()=="byte")
+        t = byte;
+
+    if (type.toLower()=="string")
+        t = byte;
+// array  resb  251*256  ;251 ROWS X 256 COLUMNS.
+
+     if (data.count()==0 && pos!="") {
+         Write(name + " = " + pos);
+         return;
+     }
+
+
+    if (data.count()==0 && pos=="") {
+
+/*        QString t = "resb";
+        if (type.toLower()=="integer")
+            t = "resw";
+
+        Write(name+":" +"\t array " + t + "\t "+QString::number(count),0);
+  */
+        Write(name+":" +"\t times "+QString::number(count) +" "+t+" 0",0);
+
+    }
+    else {
+        QString s="";
+        s=s+name+":" + "\t"+t+" ";
+
+        for (int i=0;i<data.count();i++) {
+            s=s+data[i];
+            if (i%8==7) {
+                s=s+"\n";
+                s=s + "\t" +t + " ";
+            }
+            else if (i!=data.count()-1) s=s+", ";
+
+        }
+        QStringList lst = s.split("\n");
+        if (pos=="") {
+            for (int i=0;i<lst.count();i++)
+                Write(lst[i],0);
+        }
+        else {
+            Appendix* app = new Appendix(pos);
+            app->Append("org [" + pos +"]",1);
+            for (int i=0;i<lst.count();i++)
+                app->Append(lst[i],0);
+
+            int p = Util::NumberFromStringHex(pos);
+
+            blocks.append(new MemoryBlock(p,p+count, MemoryBlock::ARRAY, name));
+
+            m_appendix.append(app);
+        }
+
+    }
 
 }
 

@@ -37,6 +37,30 @@ NodeVar::NodeVar(Token t, Node *expr) : Node() {
 }
 
 
+TokenType::Type NodeVar::getOrgType(Assembler *as) {
+
+    if (as==nullptr) {
+        // Use parser symbtab
+        TokenType::Type t = m_op.m_type;
+        if (parserSymTab != nullptr) {
+            Symbol* s = parserSymTab->Lookup(value, m_op.m_lineNumber);
+//            qDebug() << "NodeVar::getType "<< s->m_name << TokenType::getType(s->getTokenType()) << " with forcetype " << TokenType::getType(m_forceType);
+            if (s!=nullptr)
+                t= s->getTokenType();
+        }
+
+        return t;
+    }
+
+    TokenType::Type t = m_op.m_type;
+    if (as->m_symTab->Lookup(value, m_op.m_lineNumber)!=nullptr)
+        t= as->m_symTab->Lookup(value, m_op.m_lineNumber)->getTokenType();
+
+    return t;
+}
+
+
+
 TokenType::Type NodeVar::getType(Assembler *as) {
 
     if (as==nullptr) {

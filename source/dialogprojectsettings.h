@@ -78,6 +78,8 @@ private slots:
 
     void on_btnDefaultZP_clicked();
 
+    void on_cmbSystem_currentIndexChanged(int index);
+
 private:
     void FillFromIni();
     void FillToIni();

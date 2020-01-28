@@ -8,6 +8,12 @@ ASTDispatcherX86::ASTDispatcherX86()
 
 void ASTDispatcherX86::dispatch(NodeBinOP *node)
 {
+    if (node->m_left->isWord(as))
+        node->m_right->setForceType(TokenType::INTEGER);
+    if (node->m_right->isWord(as))
+        node->m_left->setForceType(TokenType::INTEGER);
+
+
     if (node->isPureNumeric()) {
         as->Asm("mov "+getAx(node)+", " + node->getValue(as) + "; binop is pure numeric");
         return;
@@ -28,6 +34,10 @@ void ASTDispatcherX86::dispatch(NodeBinOP *node)
         QString bx = getAx(node->m_left);
 
         PushX();
+        if (node->m_op.m_type == TokenType::DIV) {
+//            node->m_right->setForceType(TokenType::BYTE);
+            as->Asm("cwd");
+        }
         node->m_right->Accept(this);
 
         QString ax = getAx(node->m_right);
@@ -67,13 +77,32 @@ void ASTDispatcherX86::dispatch(NodeNumber *node)
 
 void ASTDispatcherX86::dispatch(NodeVar *node)
 {
-    QString ax = getAx(node);
+    QString ending = "]";
+    if (node->m_expr!=nullptr) {
+        as->Asm("mov ah,0");
+        node->m_expr->Accept(this);
+        as->Asm("mov di,ax");
+        if (node->getArrayType(as)==TokenType::INTEGER)
+            as->Asm("shl di,1 ; Accomodate for word");
+        ending = "+di]";
+    }
+
     if (as->m_term!="") {
         as->m_term +=node->getValue(as);
         return;
     }
+    QString ax = getAx(node);
 
-    as->Asm("mov "+ax+", [" + node->getValue(as)+"]");
+
+    as->Asm("mov "+ax+", [" + node->getValue(as)+ending);
+//    if (node->isArrayIndex())
+//        qDebug() << TokenType::getType(node->getArrayType(as));
+    if (node->m_forceType==TokenType::INTEGER &&
+            (node->getOrgType(as)!=TokenType::INTEGER))
+        as->Asm("mov ah,0 ; forcetype clear high bit");
+
+    qDebug() << "ORG " <<TokenType::getType(node->getOrgType(as)) << "   : " << node->getValue(as);
+    qDebug() << "FT " <<TokenType::getType(node->m_forceType);
 
 }
 
@@ -390,13 +419,18 @@ void ASTDispatcherX86::dispatch(NodeForLoop *node)
 //    qDebug() << "end for";
 
 
+    if (nVar->m_left->isWord(as))
+        node->m_b->setForceType(TokenType::INTEGER);
 
     node->m_block->Accept(this);
-    as->Asm("mov dl,["+var+"]");
-    as->Asm("add dl,1");
-    as->Asm("mov ["+var+"],dl");
+    PushX();
+    QString ax = getAx(nVar->m_left);
+    PopX();
+    as->Asm("mov "+ax+",["+var+"]");
+    as->Asm("add "+ax+",1");
+    as->Asm("mov ["+var+"],"+ax);
     LoadVariable(node->m_b);
-    as->Asm("cmp "+getAx(node->m_b)+",dl");
+    as->Asm("cmp "+getAx(node->m_b)+","+ax);
 
     as->Asm("jne "+lblFor);
 
@@ -497,11 +531,27 @@ QString ASTDispatcherX86::AssignVariable(NodeAssign *node)
 {
 
     if (node->m_left->isWord(as)) {
-        node->m_right->m_forceType = TokenType::INTEGER;
+        node->m_right->setForceType(TokenType::INTEGER);
+    }
+
+    NodeVar* var = dynamic_cast<NodeVar*>(node->m_left);
+
+    if (var->isArrayIndex()) {
+        // Is an array
+        node->m_right->Accept(this);
+        as->Asm("push ax");
+        var->m_expr->Accept(this);
+        as->Asm("mov di,ax");
+        if (var->isWord(as))
+            as->Asm("shl di,1");
+        as->Asm("pop ax");
+        as->Asm("mov ["+var->getValue(as) + "+di], "+getAx(node->m_left));
+        return "";
     }
 
     node->m_right->Accept(this);
-    as->Asm("mov ["+dynamic_cast<NodeVar*>(node->m_left)->getValue(as) + "], "+getAx(node));
+
+    as->Asm("mov ["+dynamic_cast<NodeVar*>(node->m_left)->getValue(as) + "], "+getAx(node->m_left));
     return "";
 }
 

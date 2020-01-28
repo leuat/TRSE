@@ -1,0 +1,78 @@
+program Hello_IBM_XT_CGA;
+var  
+   	index,i,j,k,time: byte = $10; 
+   	x,y,z,aa,l,centerx,centery : integer = 0;
+   	ka,kb : byte = 0;
+   	
+	sine : incbin("data/sine.bin");
+
+	cols : array[4] of byte=(cga_color1, cga_color2, cga_color3, cga_color4);
+
+	
+/*
+
+	4.77 mhz IBM XT!
+
+	First DOS example. Compiler still extremely inefficient, no optimizations yet. Binary
+	expression will fail at will. Have fun! 
+	
+	Setup DOXBOX 
+	
+*/
+
+
+procedure SetupBackgroundScreen();
+begin
+	for x:=0 to 160 do
+	begin
+		for y:=0 to 100 do
+		begin
+			setpixelcga(^$B800,x,y,cga_color2);
+			setpixelcga(^$B800,x+160,y,cga_color1);
+			setpixelcga(^$B800,x,y+100,cga_color3);
+		end;
+		k:=k+1;
+	end;
+end;
+
+
+procedure RenderEffect();
+begin
+	ka:=ka+3;
+	kb:=kb+2;
+
+	time:=time+1;
+		
+	if (time=10) then 
+	begin
+		kb:=kb+3;
+		WaitForVerticalBlank();
+	end;
+
+	centerx:=sine[kb]/2 + 50;
+	centery:=sine[kb+64]/3;
+
+	x:=sine[ka]/3;
+	y:=sine[ka+64]/3;
+		
+	setpixelcga(^$B800, x+centerx,y+centery, cols[i]);
+		
+	i:=(i+1)&3;
+end;
+
+
+	
+begin
+	init_cga_scanlines(); // Calculate CGA screen tables for setpixelcga
+	SetScreenMode($4); // CGA mode
+
+
+	SetupBackgroundScreen();
+	
+	kb:=ka+64;
+	while (true) do
+	begin
+		RenderEffect();			
+	
+	end;
+end.

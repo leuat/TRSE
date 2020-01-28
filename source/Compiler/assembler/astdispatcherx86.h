@@ -76,6 +76,10 @@ public:
             return a+"x";
         if (n->getType(as)==TokenType::INTEGER)
             return a+"x";
+        if (n->getType(as)==TokenType::ADDRESS)
+            return a+"x";
+//        if (n->isPureNumeric())
+  //          if (n->getValue()
         return a+"l";
 
     }

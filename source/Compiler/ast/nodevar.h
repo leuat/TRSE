@@ -44,6 +44,7 @@ public:
     NodeVar(Token t, Node* expr);
 
 
+    TokenType::Type getOrgType(Assembler *as);
 
     TokenType::Type getType(Assembler* as) override;
     TokenType::Type getArrayType(Assembler* as) override;

@@ -1259,6 +1259,7 @@ void TRSEProject::VerifyDefaults() {
     if (!m_ini.contains("zeropage_decrunch2"))
         m_ini.setString("zeropage_decrunch2","$48");
 
+
     if (!m_ini.contains("zeropage_decrunch3"))
         m_ini.setString("zeropage_decrunch3","$4A");
 
@@ -1306,6 +1307,13 @@ void TRSEProject::VerifyDefaults() {
         if (!m_ini.contains("columns")) {
             m_ini.setString("columns","40");
         }
+
+    }
+
+    if (m_ini.getString("system")=="X86") {
+        if (!m_ini.contains("dosbox_x86_system"))
+            m_ini.setString("dosbox_x86_system","default");
+
 
     }
 

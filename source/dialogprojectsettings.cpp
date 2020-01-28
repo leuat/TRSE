@@ -64,6 +64,8 @@ void DialogProjectSettings::FillFromIni()
     ui->leTempZP->setText(  fromStringList(m_ini->getStringList("temp_zeropages")));
 
     ui->cmbSystem->setCurrentText(m_ini->getString("system"));
+//    on_cmbSystem_currentIndexChanged(ui->cmbSystem)
+
 
     ui->cmbOutputType->setCurrentText(m_ini->getString("output_type"));
     //ui->leMainFile->setText(m_ini->getString("main_ras_file"));
@@ -99,6 +101,8 @@ void DialogProjectSettings::FillFromIni()
     }
 
     ui->cmbVic20Config->setCurrentText(m_ini->getString("vic_memory_config"));
+
+    ui->cmbX86Type->setCurrentText(m_ini->getString("dosbox_x86_system"));
 
 
     QStringList files = m_ini->getStringList("disk_files");
@@ -193,6 +197,7 @@ void DialogProjectSettings::FillToIni()
     m_ini->setFloat("post_optimizer_passphapla", ui->chkPassPhaPla->isChecked());
     m_ini->setFloat("post_optimizer_passcmp", ui->chkPassCmp0->isChecked());
 
+    m_ini->setString("dosbox_x86_system", ui->cmbX86Type->currentText());
 
     m_ini->setFloat("pascal_settings_use_local_variables", ui->chkLocalVariables->isChecked());
 
@@ -315,4 +320,20 @@ void DialogProjectSettings::on_btnDefaultZP_clicked()
       }
 
 
+}
+
+void DialogProjectSettings::on_cmbSystem_currentIndexChanged(int index)
+{
+    if (index==0)
+        ui->tabConfigs->setCurrentIndex(0);
+    if (index==2)
+        ui->tabConfigs->setCurrentIndex(1);
+    if (index==3)
+        ui->tabConfigs->setCurrentIndex(2);
+    if (index==4)
+        ui->tabConfigs->setCurrentIndex(3);
+    if (index==8)
+        ui->tabConfigs->setCurrentIndex(4);
+    if (index==6)
+        ui->tabConfigs->setCurrentIndex(5);
 }

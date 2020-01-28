@@ -94,8 +94,12 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         emu = m_iniFile->getString("ok64_emulator");
     }
 
-    if (m_projectIniFile->getString("system")=="X86")
+    if (m_projectIniFile->getString("system")=="X86") {
         emu = m_iniFile->getString("dosbox");
+        QString type = m_projectIniFile->getString("dosbox_x86_system");
+        if (type.toLower()!="default")
+            params << "-machine" << type;
+    }
 
 
     if (m_projectIniFile->getString("system")=="X16") {
@@ -136,6 +140,8 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 
 
     params << QDir::toNativeSeparators(fileName);
+
+
     process.waitForFinished();
 #ifdef _WIN32
     QProcess::execute("taskkill /im \"x64.exe\" /f");
@@ -150,7 +156,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     else process.startDetached(emu, params);
 
 #else
-  //  qDebug() << emu << params;
+    qDebug() << emu << params;
     qDebug() << "FormRasEditor params" << emu << params;
     process.startDetached(emu, params);
 #endif

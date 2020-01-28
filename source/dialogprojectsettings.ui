@@ -150,7 +150,7 @@
           </rect>
          </property>
          <property name="currentIndex">
-          <number>3</number>
+          <number>5</number>
          </property>
          <widget class="QWidget" name="tabC64">
           <attribute name="title">
@@ -381,6 +381,69 @@
           <attribute name="title">
            <string>Amiga</string>
           </attribute>
+         </widget>
+         <widget class="QWidget" name="tab_10">
+          <attribute name="title">
+           <string>X86</string>
+          </attribute>
+          <widget class="QWidget" name="gridLayoutWidget_2">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>10</y>
+             <width>781</width>
+             <height>71</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_10">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_27">
+              <property name="text">
+               <string>DOSBOX emulator system</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="cmbX86Type">
+              <item>
+               <property name="text">
+                <string>default</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>svga_s3</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>hercules</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>cga</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>ega</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>pcjr</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>tandy</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </widget>
        </widget>

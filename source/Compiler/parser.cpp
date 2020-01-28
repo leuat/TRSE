@@ -119,6 +119,11 @@ void Parser::InitBuiltinFunctions()
        InitBuiltinFunction(QStringList()<< "playp61module"<<"initp61module" , "initp61playerinternal");
     }
 
+   if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::X86) {
+       InitBuiltinFunction(QStringList()<< "SetPixelCGA", "init_cga_scanlines");
+   }
+
+
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 ||
             Syntax::s.m_currentSystem->m_system == AbstractSystem::C128 ||
             Syntax::s.m_currentSystem->m_system == AbstractSystem::PLUS4 ||

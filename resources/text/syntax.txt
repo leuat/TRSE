@@ -397,6 +397,20 @@ m; VGAClearScreen32; X86;b
 m; VGAClearScreen16; X86;b
 m; ScrollX; X86; b
 m; SetPalette; X86; b,b,b,b
+m; SetPixel; X86; a, i,i,b
+m; SetPixelCGA; X86; a, i,i,b
+m; init_cga_scanlines; X86;
+
+
+const cga_color_0:byte = $00;
+const cga_color_1:byte = $55;
+const cga_color_2:byte = $AA;
+const cga_color_3:byte = $FF;
+
+c; CGA_COLOR0; X86; b; 0
+c; CGA_COLOR1; X86; b; $55
+c; CGA_COLOR2; X86; b; $AA
+c; CGA_COLOR3; X86; b; $FF
 
 #
 #

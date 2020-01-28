@@ -2,6 +2,7 @@
 #define METHODSX86_H
 
 #include "abstractastdispatcher.h"
+#include "astdispatcherx86.h"
 //#include "astdispatcher68000.h"
 #include "source/Compiler/ast/nodebuiltinmethod.h"
 #include "source/Compiler/ast/nodenumber.h"
@@ -27,6 +28,8 @@ public:
     void WaitForVerticalBlank(Assembler* as);
 
     void ScrollX(Assembler* as);
+
+    void AddInitMethod(Assembler* as, QString name, QString file);
 
 };
 
