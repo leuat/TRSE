@@ -1,7 +1,7 @@
 program Hello_IBM_XT_CGA;
 var  
-   	index,i,j,k,time: byte = $10; 
-   	x,y,z,aa,l,centerx,centery : integer = 0;
+    i,time: byte = 0; 
+   	x,y,centerx,centery : integer = 0;
    	ka,kb : byte = 0;
    	
 	sine : incbin("data/sine.bin");
@@ -31,7 +31,6 @@ begin
 			setpixelcga(^$B800,x+160,y,cga_color1);
 			setpixelcga(^$B800,x,y+100,cga_color3);
 		end;
-		k:=k+1;
 	end;
 end;
 
@@ -65,13 +64,11 @@ begin
 	init_cga_scanlines(); // Calculate CGA screen tables for setpixelcga
 	SetScreenMode($4); // CGA mode
 
-
 	SetupBackgroundScreen();
 	
 	kb:=ka+64;
 	while (true) do
 	begin
 		RenderEffect();			
-	
 	end;
 end.
