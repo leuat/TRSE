@@ -642,7 +642,7 @@ void MultiColorImage::VBMExport(QFile &file, int start, int end, int height)
             if (pos>=0 && pos< m_charWidth*m_charHeight) {
                 PixelChar& pc = m_data[pos];
                 for (int i=0;i<8;i++)
-                    data.append( PixelChar::reverse(pc.p[i]));
+                    data.append( PixelChar::reverse(PixelChar::VIC20Swap(pc.p[i])));
             }
             pos +=m_charWidthDisplay;
         }
