@@ -6,7 +6,7 @@ var
    	
 	sine : incbin("data/sine.bin");
 
-	cols : array[4] of byte=(cga_color1, cga_color2, cga_color3, cga_color4);
+	cols : array[4] of byte=(cga_color0, cga_color1, cga_color2, cga_color3);
 
 	
 /*
