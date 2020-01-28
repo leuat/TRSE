@@ -29,6 +29,4 @@ override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
-open_files = ,main.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Disk_loader_project/
-current_file = main.ras
+open_files =, main.ras

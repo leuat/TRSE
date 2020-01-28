@@ -45,7 +45,7 @@ begin
 		
 	if (time=10) then 
 	begin
-		kb:=kb+3;
+		kb:=kb+1;
 		WaitForVerticalBlank();
 	end;
 
@@ -54,7 +54,6 @@ begin
 
 	x:=sine[ka]/3;
 	y:=sine[ka+64]/3;
-		
 	setpixelcga(^$B800, x+centerx,y+centery, cols[i]);
 		
 	i:=(i+1)&3;
