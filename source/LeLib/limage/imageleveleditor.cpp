@@ -507,10 +507,28 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
   //  }
 
     pos = v + shift;
+
+    int bitmask = 1;
+    if (m_meta.m_displayMultiColor)
+        bitmask  = 3;
+
     if (!m_meta.m_useColors) {
+//        qDebug() << "WOOR";
         col = m_charset->m_data[pos].c[3];
-        ss = 2;
     }
+    else {
+        // Check if level colour is >8 etc, set hires or mc
+        if (col>=8)
+            ss = 2;
+        else {
+            ss = 1;
+            bitmask = 1;
+        }
+
+    }
+
+
+
 
 /*    if (!m_meta.m_useColors)
     if (m_meta.m_displayMultiColor) {
@@ -536,7 +554,7 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 
 
 
-    uint val = m_charset->m_data[pos].get(ix, iy,m_charset->m_bitMask);
+    uint val = m_charset->m_data[pos].get(ix, iy,bitmask);
 
     if (m_meta.m_useColors) {
         if (m_meta.m_displayMultiColor) {
