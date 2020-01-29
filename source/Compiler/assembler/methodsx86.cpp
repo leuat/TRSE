@@ -90,6 +90,7 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->Asm("mov  es, ax");
 //        as->Asm("mov  ax, x");
         LoadVar(as,1); // Load x into ax
+
         as->Asm("mov  di, ax");
         as->Asm("shr  di, 1");
         as->Asm("shr  di, 1");
@@ -131,6 +132,10 @@ bool MethodsX86::Command(QString name)
 
 void MethodsX86::LoadVar(Assembler *as, int paramNo)
 {
+    if (m_node->m_params[paramNo]->m_builtInFunctionParameterType==BuiltInFunction::INTEGER
+            && !m_node->m_params[paramNo]->isWord(as))
+        m_node->m_params[paramNo]->setForceType(TokenType::INTEGER);
+
     m_node->m_params[paramNo]->Accept(m_dispatcher);
 
 }

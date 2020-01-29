@@ -46,6 +46,7 @@ public:
     int m_lineNumber;
     uint level = 0;
     QString m_comment = "";
+    BuiltInFunction::Type m_builtInFunctionParameterType = BuiltInFunction::BYTE;
     bool m_isUsed = false;
     bool m_forceAddress = false;
     bool m_ignoreSuccess = false; // Used for binary expressions

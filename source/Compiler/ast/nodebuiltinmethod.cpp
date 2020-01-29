@@ -38,6 +38,8 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
     QString error = "Error: "+m_procName +" requires parameter ";
 
     for (int p=0;p<m_params.count();p++) {
+        m_params[p]->m_builtInFunctionParameterType = m_function->m_params[p];
+//        qDebug() << "NodeBuiltinMethod " << m_function->m_params[p] << m_procName;
         QString cp = QString::number(p+1);
         if (m_function->m_params[p]==BuiltInFunction::ADDRESS) {
             if (!m_params[p]->isAddress()) {
