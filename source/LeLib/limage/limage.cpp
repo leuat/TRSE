@@ -431,6 +431,13 @@ void LImage::EnsureSystemColours()
         m_colorList.InitVIC20();
         m_colorList.m_type = LColorList::VIC20;
 
+
+        m_GUIParams[col1] ="Background";
+        m_GUIParams[col2] = "Border & MC";
+        m_GUIParams[col4] = "Aux Colour";
+        m_GUIParams[col3] = "";
+//        m_GUIParams[col4] = "";
+
     }
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64)
         m_colorList.InitC64();

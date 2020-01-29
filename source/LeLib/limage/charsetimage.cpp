@@ -44,7 +44,6 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
 
     // Needed for NES stuff
 
-    EnsureSystemColours();
     m_supports.koalaExport = false;
     m_supports.koalaImport = false;
     m_supports.asmExport = false;
@@ -72,6 +71,9 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
 
     m_supports.displayCharOperations = true;
 
+    for (int i=0;i<m_charWidth*m_charHeight;i++)
+        m_data[i].c[3]=1;
+
     m_GUIParams[btnLoadCharset] ="";
     m_GUIParams[btn1x1] = "1x1 Character set";
     m_GUIParams[btn2x2] = "2x2 Character set";
@@ -84,6 +86,8 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
 
     m_GUIParams[tabCharset] = "1";
     m_updateCharsetPosition = true;
+    EnsureSystemColours();
+
 }
 
 int CharsetImage::FindClosestChar(PixelChar p)
@@ -278,7 +282,7 @@ void CharsetImage::FromRaw(QByteArray &arr)
         }
     }
     // Contains colors as well
-    if (arr.size()>256*8) {
+/*    if (arr.size()>256*8) {
         int val = 256*8;
      //   qDebug() << "Charset contains colors";
         for (int i=0;i<m_charHeight*m_charWidth;i++) {
@@ -289,7 +293,7 @@ void CharsetImage::FromRaw(QByteArray &arr)
         }
     }
     else SetColor(5, 3); // Set default green
-
+    */
 }
 
 void CharsetImage::ToRaw(QByteArray &arr)
