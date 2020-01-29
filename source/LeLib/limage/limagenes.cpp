@@ -382,7 +382,7 @@ void LImageNES::CopySingleChar(LImage *src, int srcChar, int dstChar)
     PixelChar& m_d1 = m_data[dstChar*2];
     PixelChar& m_d2 = m_data[dstChar*2+1];
 
-    qDebug() << "HERE";
+//    qDebug() << "HERE";
 
     for (int i=0;i<8;i++) {
         m_d1.p[i] = m_s1.p[i];

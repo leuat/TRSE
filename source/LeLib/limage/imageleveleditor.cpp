@@ -46,6 +46,7 @@ void ImageLevelEditor::SetLevel(QPoint f)
     if (m_charset==nullptr)
         return;
 
+    m_colorList.m_ignoreSetIsMulti = true;
 
     if (m_type!=LImage::LevelEditorNES) {
         m_charset->SetColor(m_currentLevel->m_ExtraData[0], 0);
@@ -165,6 +166,10 @@ void ImageLevelEditor::SetColor(uchar col, uchar idx)
         m_background = col;
 
     m_colorList.SetMulticolor(idx,col);
+
+//    UpdateColorList();
+
+
 
 //    m_charset->SetColor(col, idx);
 }

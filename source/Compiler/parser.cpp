@@ -1217,7 +1217,14 @@ void Parser::Preprocess()
     m_currentToken = m_lexer->GetNextToken();
     //m_preprocessorDefines.clear();
     while (m_currentToken.m_type!=TokenType::TEOF) {
+//        qDebug() << m_currentToken.getType() << m_currentToken.m_value;
+
+
+
         if (m_currentToken.m_type == TokenType::PREPROCESSOR) {
+  //          qDebug() << "***PRE" << m_currentToken.m_value;
+
+
 /*            if (m_currentToken.m_value.toLower()=="include") {
 
 //                QString str = m_currentToken.m_value;
@@ -1406,6 +1413,7 @@ void Parser::Preprocess()
                     ErrorHandler::e.Error("Uknown @use parameter : "+type, m_currentToken.m_lineNumber);
                 }
             }
+            else Eat();
 
 
           /*  else if (m_currentToken.m_value.toLower() =="error") {
@@ -1414,8 +1422,9 @@ void Parser::Preprocess()
 
             }*/
         }
-
-        Eat();
+        else Eat();
+//        if (m_currentToken.m_type!=TokenType::PREPROCESSOR)
+  //          Eat();
         //qDebug() << "VAL: " << m_currentToken.m_value << m_currentToken.getType();
 
     }
@@ -2159,7 +2168,7 @@ void Parser::HandleImportChar()
         ErrorHandler::e.Error("Importing char error : unknown filetype for '"+inFile +"'");
     }
 
-//    qDebug() << "HERE";
+//    qDebug() << "HERE" << param1 << param2;
     imgB->CopySingleChar(imgA, param1, param2);
 
     LImageIO::Save(outFile,imgB);

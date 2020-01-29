@@ -137,6 +137,8 @@ public:
 
     void SwapChars(int p1, int p2);
 
+    void UpdateColorList();
+
 
     void CalculateCharIndices();
     int Eat(int start, int add);

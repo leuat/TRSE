@@ -115,7 +115,7 @@ public:
 
     QByteArray m_nesPPU;
     int m_curPal = 0;
-
+    bool m_ignoreSetIsMulti = false;
     LColor& get(int i);
     QColor m_cblack = QColor(0,0,0,255);
     LColor m_black = LColor(m_cblack,"black");

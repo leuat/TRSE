@@ -1337,6 +1337,26 @@ void MultiColorImage::SwapChars(int p1, int p2)
     m_data[p2] = a;
 }
 
+void MultiColorImage::UpdateColorList()
+{
+
+    if (m_colorList.m_type == LColorList::VIC20 ||  m_colorList.m_type == LColorList::C64) {
+
+        for (int i=0;i<m_colorList.m_list.count();i++) {
+            if (i<8)
+                m_colorList.m_list[i].displayList = true;
+            else
+                m_colorList.m_list[i].displayList = false;
+
+        }
+        for (int i=0;i<4;i++)
+            m_colorList.m_list[m_extraCols[i]].displayList=true;
+
+    }
+    m_colorList.CreateUI(m_colorList.m_layout,1);
+
+}
+
 uchar PixelChar::Swap(int a, int b, uchar c)
 {
         // damn

@@ -51,18 +51,20 @@ void LColorList::SetIsMulticolor(bool mult)
     for (int i=0;i<m_list.count();i++)
         m_list[i].ignoreAltColour = false;
 
+    if (m_ignoreSetIsMulti)
+        for (int i=0;i<8;i++)
+            m_list[i+8].displayList = false;
 
-
-    if (m_isMulticolor) {
+    if (m_isMulticolor && !m_ignoreSetIsMulti) {
         if (m_type==LColorList::C64 || m_type==LColorList::VIC20) {
             for (int i=0;i<8;i++) {
                 m_list[i].ignoreAltColour = true;
             }
-            if (m_multicolors.count()>=2) {
+            if (m_multicolors.count()>=1) {
                 if (m_multicolors[0]<m_list.count() && m_multicolors[0]>8)
                 m_list[ m_multicolors[0]&7].ignoreAltColour = false;
             }
-            if (m_multicolors.count()>=3) {
+            if (m_multicolors.count()>=2) {
   //              qDebug() << m_multicolors[2];
 
                 if (m_multicolors[1]<m_list.count() && m_multicolors[1]>8)
@@ -76,8 +78,9 @@ void LColorList::SetMulticolor(int index, int col)
 {
     int i = index-1;
     if (i<0) return;
-    if (i>=m_multicolors.count())
+    if (i>=m_multicolors.count()) {
         m_multicolors.resize(i+1);
+    }
     m_multicolors[i] = col;
     if (m_layout!=nullptr)
         CreateUI(m_layout,1);
@@ -724,6 +727,7 @@ void LColorList::CreateUI(QLayout* ly, int type)
         QPushButton *b = new QPushButton();
         //b->setGeometry(0,0,40,40);
 
+//        qDebug() <<j<<m_list[j].m_altColour <<m_list[j].ignoreAltColour;
 
         QPalette p;
 //        p.setColor(QPalette::Button, m_list[j].color);
