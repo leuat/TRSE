@@ -58,7 +58,7 @@ public:
         m_ColorData.fill(0);
 
         for (int i=0;i<m_ExtraData.size();i++)
-            m_ExtraData[i]=i;
+            m_ExtraData[i]=0;
         Clear();
     }
 

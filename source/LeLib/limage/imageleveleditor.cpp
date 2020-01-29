@@ -195,6 +195,7 @@ void ImageLevelEditor::SaveBin(QFile &file)
            file.write( l->m_ColorData);
 
 //        qDebug() << "LevelEditor::savebin count " <<l->m_ColorData.count();
+        qDebug() << "ImageLevelEditor exportbin " << l->m_ExtraData.count();
 
         if (l->m_ExtraData.count()!=0)
             file.write( l->m_ExtraData,m_meta.m_extraDataSize);
@@ -220,7 +221,6 @@ void ImageLevelEditor::ExportBin(QFile &file)
         if (m_meta.m_useColors)
            file.write( l->m_ColorData);
 
-
         if (l->m_ExtraData.count()!=0)
             file.write( l->m_ExtraData,m_meta.m_extraDataSize);
 
@@ -244,6 +244,8 @@ void ImageLevelEditor::LoadBin(QFile &file)
             l->m_ColorData = file.read(m_meta.dataSize());
         if (m_meta.m_extraDataSize!=0)
             l->m_ExtraData = file.read(m_meta.m_extraDataSize);
+
+
 
 //        for (int i=0;i<m_meta.m_extraDataSize;i++)
   //          qDebug() << "Saving extracol: " <<QString::number(l->m_ExtraData[i]);
@@ -372,7 +374,7 @@ QString ImageLevelEditor::getMetaInfo()
     m_meta.m_height = getMetaParameter("screen_height")->value;
     m_meta.m_dataChunks = getMetaParameter("data_count")->value;
     m_meta.m_dataChunkSize = getMetaParameter("data_width")->value;
-    m_meta.m_extraDataSize = getMetaParameter("data_extra")->value;
+    m_meta.m_extraDataSize = getMetaParameter("data_extra")->value + m_meta.m_dataChunkSize*m_meta.m_dataChunks;
     m_meta.m_useColors = getMetaParameter("use_colors")->value==1.0;
     m_meta.Calculate();
 //    m_meta.m_data = getMetaParameter("screen_height")->value;

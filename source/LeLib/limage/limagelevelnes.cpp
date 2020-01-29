@@ -149,6 +149,7 @@ void LImageLevelNES::LoadBin(QFile &file)
         if (m_meta.m_useColors)
             l->m_ColorData = file.read(m_meta.m_colSizex*m_meta.m_colSizey);
 
+        qDebug() << "ImageLevelEditor loadbin " << m_meta.m_extraDataSize;
         if (m_meta.m_extraDataSize!=0)
             l->m_ExtraData = file.read(m_meta.m_extraDataSize);
 
@@ -200,18 +201,6 @@ void LImageLevelNES::ExportBin(QFile &file)
                         ((l->m_ColorData[p+1]&3)<<2) |
                         ((l->m_ColorData[p+w]&3)<<4)|
                                    ((l->m_ColorData[p+w+1]&3)<<6);
-
-         /*       d[j++]  = (l->m_ColorData[p]&3) |
-                        ((l->m_ColorData[p]&3)<<2) |
-                        ((l->m_ColorData[p+m_meta.m_width]&3)<<4)|
-                        ((l->m_ColorData[p+m_meta.m_width]&3)<<6);
-
-                d[j++]  = (l->m_ColorData[p+1]&3) |
-                        ((l->m_ColorData[p+1]&3)<<2) |
-                        ((l->m_ColorData[p+m_meta.m_width+1]&3)<<4)|
-                        ((l->m_ColorData[p+m_meta.m_width+1]&3)<<6);
-*/
-                //            p++;
 
 
             }
