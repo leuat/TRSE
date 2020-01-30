@@ -198,7 +198,7 @@ public:
     void ExportBin(QFile& file) override;
     void ForceExportBin(QFile& file);
     void ImportBin(QFile& file) override;
-    void VBMExport(QFile& file, int p1, int p2, int p3) override;
+    void VBMExport(QFile& file, int p1, int p2, int p3, int p4) override;
 
     void SetCharSize(int x, int y);
 
