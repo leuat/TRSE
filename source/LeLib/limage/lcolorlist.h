@@ -124,6 +124,7 @@ public:
     void SetMulticolor(int index, int col);
 
     void SetPPUColors(char c1, int idx);
+    QSize m_windowSize;
 
     static unsigned char TypeToChar(Type t);
     static Type CharToType(unsigned char c);
@@ -178,6 +179,7 @@ public:
 
     QLayout* m_layout = nullptr;
     void CreateUI(QLayout* ly, int type);
+    void CreateUI(QLayout* ly, int type, QSize windowSize);
 
 public slots:
     void handleButtonImport(int data);

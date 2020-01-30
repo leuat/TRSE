@@ -643,7 +643,7 @@ void FormImageEditor::UpdatePalette()
     //{
 
     if (m_work.m_currentImage->m_image->m_supports.displayColors)
-        l->CreateUI(ui->layoutColorsEdit_3,1);
+        l->CreateUI(ui->layoutColorsEdit_3,1, this->size());
     l->FillComboBox(ui->cmbBackgroundMain_3);
     l->FillComboBox(ui->cmbBorderMain_3);
     l->FillComboBox(ui->cmbMC1);
@@ -810,6 +810,7 @@ void FormImageEditor::resizeEvent(QResizeEvent *event)
     w->setVisible(true);
     m_oldWidth = w->width();
     UpdateAspect();
+    SetMCColors();
     //ui->lblGrid->setGeometry(ui->lblImage->geometry());
     //ui->lblGrid->repaint();
     // qDebug() <<
@@ -1353,7 +1354,7 @@ void FormImageEditor::SetMCColors()
         lst.append(back);
         m_work.m_currentImage->m_image->ConstrainColours(lst);
         if (m_work.m_currentImage->m_image->m_supports.displayColors)
-            m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1);
+            m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1, this->size());
     }
 
     updateCharSet();
@@ -1772,7 +1773,7 @@ void FormImageEditor::UpdateMulticolorImageSettings()
 {
     if (m_work.m_currentImage->m_image->m_supports.displayColors) {
         m_work.m_currentImage->m_image->m_colorList.SetIsMulticolor(ui->chkDisplayMulticolor->isChecked());
-        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1);
+        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,this->size());
     }
 
 }

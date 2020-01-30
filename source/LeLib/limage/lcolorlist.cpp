@@ -83,7 +83,7 @@ void LColorList::SetMulticolor(int index, int col)
     }
     m_multicolors[i] = col;
     if (m_layout!=nullptr)
-        CreateUI(m_layout,1);
+        CreateUI(m_layout,1,m_windowSize);
 
 }
 
@@ -693,10 +693,19 @@ int LColorList::getIndex(QColor c)
     return 0;
 }
 
-void LColorList::CreateUI(QLayout* ly, int type)
+void LColorList::CreateUI(QLayout *ly, int type)
 {
+    CreateUI(ly, type, QSize(1980,1024));
+}
+
+
+void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize)
+{
+    m_windowSize = windowSize;
     if (ly==nullptr)
         return;
+
+    qDebug() << "LColorList::CreateUI" << windowSize;
 
     m_layout = ly;
     Util::clearLayout(ly, true);
@@ -710,10 +719,10 @@ void LColorList::CreateUI(QLayout* ly, int type)
     m_buttonsImport.clear();
 //    m_buttons.clear();
     int xx=0, yy=0;
-    int width=40/(max(m/16,1));
+    int width=40/(max(m/16,1))*(windowSize.width()/(float)1400);
 //    qDebug() << width;
     if (m>200) {
-        width = 16;
+        width = 16*(windowSize.width()/(float)1400);;
     }
 //    if (m_list.count())
 
