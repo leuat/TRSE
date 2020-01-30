@@ -105,6 +105,11 @@ void DialogProjectSettings::FillFromIni()
     ui->cmbX86Type->setCurrentText(m_ini->getString("dosbox_x86_system"));
 
 
+
+    ui->cmbX86CPU->setCurrentText(m_ini->getString("cpu_x86_system"));
+//    qDebug() <<"PROJECTSETTINGS OUT" << m_ini->getString("cpu_x86_system");
+
+
     QStringList files = m_ini->getStringList("disk_files");
     QStringList names = m_ini->getStringList("disk_names");
 
@@ -198,6 +203,7 @@ void DialogProjectSettings::FillToIni()
     m_ini->setFloat("post_optimizer_passcmp", ui->chkPassCmp0->isChecked());
 
     m_ini->setString("dosbox_x86_system", ui->cmbX86Type->currentText());
+    m_ini->setString("cpu_x86_system", ui->cmbX86CPU->currentText());
 
     m_ini->setFloat("pascal_settings_use_local_variables", ui->chkLocalVariables->isChecked());
 

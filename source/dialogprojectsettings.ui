@@ -442,6 +442,47 @@
               </item>
              </widget>
             </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_28">
+              <property name="text">
+               <string>ASM CPU Target</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QComboBox" name="cmbX86CPU">
+              <item>
+               <property name="text">
+                <string>8086</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>186</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>286</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>386</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>486</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>PENTIUM</string>
+               </property>
+              </item>
+             </widget>
+            </item>
            </layout>
           </widget>
          </widget>

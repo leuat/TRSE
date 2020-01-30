@@ -79,7 +79,7 @@ public:
     void InitZeroPointers(QStringList lst, QStringList tmpList) override;
 
     void VarDeclHeader();
-    void DeclareVariable(QString name, QString type, QString initval) override;
+    void DeclareVariable(QString name, QString type, QString initval, QString position) override;
     void DeclareString(QString name, QStringList initval) override;
     void DeclareCString(QString name, QStringList initval) override;
 
@@ -101,6 +101,7 @@ public:
     void PopAllZeroPointers() override { m_curZeroPointer=0;}
     bool CheckZPAvailability() override;
 
+    QString GetOrg(int pos);
 
 
     QString StoreInTempVar(QString name, QString type="byte") override;

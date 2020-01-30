@@ -225,7 +225,7 @@ void AsmMOS6502::VarDeclHeader()
     Asm("jmp "+ getLabel("block"));
 }
 
-void AsmMOS6502::DeclareVariable(QString name, QString type, QString initval)
+void AsmMOS6502::DeclareVariable(QString name, QString type, QString initval, QString position)
 {
     QString t = "";
 
@@ -465,6 +465,11 @@ bool AsmMOS6502::CheckZPAvailability()
     if (m_curZeroPointer<m_zeroPointers.count())
         return true;
     return false;
+}
+
+QString AsmMOS6502::GetOrg(int pos)
+{
+    return "org " + Util::numToHex(pos);
 }
 
 QString AsmMOS6502::StoreInTempVar(QString name, QString type)

@@ -40,7 +40,7 @@
 #include "source/dialogeffects.h"
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/parser.h"
-#include "source/Compiler/compiler.h"
+#include "source/Compiler/compilers/compiler.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -419,7 +419,7 @@ void MainWindow::AcceptUpdateSourceFiles(SourceBuilder *sourceBuilder)
     QStringList files;
     if (sourceBuilder==nullptr)
         return;
-    for (FilePart& fp: sourceBuilder->compiler.m_parser.m_lexer->m_includeFiles)
+    for (FilePart& fp: sourceBuilder->compiler->m_parser.m_lexer->m_includeFiles)
         files<<fp.m_name;
   //  qDebug() << files;
     for (TRSEDocument* t : m_documents) {
@@ -429,8 +429,8 @@ void MainWindow::AcceptUpdateSourceFiles(SourceBuilder *sourceBuilder)
         if (r!=nullptr) {
             QString name = r->m_currentFileShort;
             if (files.contains(name)) {
-                sourceBuilder->compiler.CleanupCycleLinenumbers(name, sourceBuilder->compiler.m_assembler->m_cycles, sourceBuilder->compiler.m_assembler->m_cyclesOut);
-                sourceBuilder->compiler.CleanupCycleLinenumbers(name,sourceBuilder->compiler.m_assembler->m_blockCycles,sourceBuilder->compiler.m_assembler->m_blockCyclesOut);
+                sourceBuilder->compiler->CleanupCycleLinenumbers(name, sourceBuilder->compiler->m_assembler->m_cycles, sourceBuilder->compiler->m_assembler->m_cyclesOut);
+                sourceBuilder->compiler->CleanupCycleLinenumbers(name,sourceBuilder->compiler->m_assembler->m_blockCycles,sourceBuilder->compiler->m_assembler->m_blockCyclesOut);
                 r->m_builderThread.m_builder = sourceBuilder;
                 r->HandleBuildComplete();
 
@@ -1314,6 +1314,8 @@ void TRSEProject::VerifyDefaults() {
         if (!m_ini.contains("dosbox_x86_system"))
             m_ini.setString("dosbox_x86_system","default");
 
+        if (!m_ini.contains("cpu_x86_system"))
+            m_ini.setString("cpu_x86_system","8086");
 
     }
 

@@ -85,6 +85,10 @@ SOURCES += main.cpp\
     source/Compiler/assembler/methodsx86.cpp \
     source/Compiler/ast/nodecase.cpp \
     source/Compiler/ast/noderepeatuntil.cpp \
+    source/Compiler/compilers/compiler6502.cpp \
+    source/Compiler/compilers/compilerm68k.cpp \
+    source/Compiler/compilers/compilerx86.cpp \
+    source/Compiler/compilers/factorycompiler.cpp \
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemplus4.cpp \
     source/Compiler/systems/systemx86.cpp \
@@ -123,7 +127,7 @@ SOURCES += main.cpp\
     source/dialogmemoryanalyze.cpp \
     source/Compiler/data_pmm.cpp \
     source/Compiler/errorhandler.cpp \
-    source/Compiler/compiler.cpp \
+    source/Compiler/compilers/compiler.cpp \
     source/Compiler/lexer.cpp \
     source/Compiler/parser.cpp \
     source/Compiler/pvar.cpp \
@@ -238,6 +242,10 @@ HEADERS  += mainwindow.h \
     source/Compiler/assembler/methodsx86.h \
     source/Compiler/ast/nodecase.h \
     source/Compiler/ast/noderepeatuntil.h \
+    source/Compiler/compilers/compiler6502.h \
+    source/Compiler/compilers/compilerm68k.h \
+    source/Compiler/compilers/compilerx86.h \
+    source/Compiler/compilers/factorycompiler.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemplus4.h \
     source/Compiler/systems/systemx86.h \
@@ -276,7 +284,7 @@ HEADERS  += mainwindow.h \
     source/dialogmemoryanalyze.h \
     source/Compiler/data_pmm.h \
     source/Compiler/errorhandler.h \
-    source/Compiler/compiler.h \
+    source/Compiler/compilers/compiler.h \
     source/Compiler/lexer.h \
     source/Compiler/parser.h \
     source/Compiler/pvar.h \

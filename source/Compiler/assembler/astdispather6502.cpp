@@ -1094,7 +1094,7 @@ void ASTDispather6502::dispatch(NodeVarDecl *node)
         if (t->m_flag==1)
             typeVal="const";
 
-        as->DeclareVariable(v->value, typeVal, t->initVal);
+        as->DeclareVariable(v->value, typeVal, t->initVal,t->m_position);
         // Increase by data counter IF
         if (t->m_flag==1)
             t->initVal = Util::numToHex(Util::NumberFromStringHex(t->initVal)+node->m_dataSize);

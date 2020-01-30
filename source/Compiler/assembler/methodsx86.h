@@ -19,9 +19,12 @@ public:
     void Assemble(Assembler* as, AbstractASTDispatcher* dispenser);
 
 
+
+
     bool Command(QString name);
 
     void LoadVar(Assembler *as, int paramNo);
+    void LoadAddress(Assembler *as, int paramNo, bool isSource);
 
     void ClearScreen(Assembler* as, int bits);
 
@@ -31,6 +34,7 @@ public:
 
     void AddInitMethod(Assembler* as, QString name, QString file);
 
+    void MemCpy(Assembler* as, QString type);
 };
 
 #endif // METHODSX86_H

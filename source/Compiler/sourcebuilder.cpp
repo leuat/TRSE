@@ -24,7 +24,7 @@ bool SourceBuilder::Build(QString source)
                                             m_projectIniFile.getString("system")),
                                            &m_iniFile, &m_projectIniFile);
 */
-       compiler = Compiler(&m_iniFile, &m_projectIniFile);
+       compiler = FactoryCompiler::CreateCompiler(&m_iniFile, &m_projectIniFile);
        return true;
     }
 
@@ -44,12 +44,12 @@ bool SourceBuilder::Build(QString source)
     QStringList lst = source.split("\n");
 
 
-    compiler = Compiler(&m_iniFile, &m_projectIniFile);
-    compiler.m_parser.m_diskFiles = getFileList();
-    compiler.m_parser.m_currentDir = m_curDir;
+    compiler = FactoryCompiler::CreateCompiler(&m_iniFile, &m_projectIniFile);
+    compiler->m_parser.m_diskFiles = getFileList();
+    compiler->m_parser.m_currentDir = m_curDir;
 
 //    qDebug() << lst;
-    compiler.Parse(source,lst);
+    compiler->Parse(source,lst);
 
     QString path = m_curDir+"/";//m_projectIniFile.getString("project_path") + "/";
     m_filename = m_currentSourceFile.split(".ras")[0];
@@ -66,12 +66,12 @@ bool SourceBuilder::Build(QString source)
     m_system->timer.start();
     m_system->m_buildSuccess = true;
 
-    m_buildSuccess = compiler.Build(m_system, path);
+    m_buildSuccess = compiler->Build(m_system, path);
 //    qDebug() << lst;
     if (m_buildSuccess)
         BuildSuccesString();
 
-     compiler.SaveBuild(m_filename + ".asm");
+     compiler->SaveBuild(m_filename + ".asm");
 //     qDebug() << "Saving to "+m_filename + ".asm";
 
      return m_buildSuccess;
@@ -82,7 +82,7 @@ bool SourceBuilder::Assemble()
 {
 //    qDebug() << m_filename << m_curDir;
 //    qDebug() << m_system;
-    m_system->Assemble(m_output,m_filename, m_curDir,compiler.m_parser.m_symTab);
+    m_system->Assemble(m_output,m_filename, m_curDir,compiler->m_parser.m_symTab);
     if (m_system->m_buildSuccess)
         m_system->PostProcess(m_output, m_filename, m_curDir);
 
@@ -127,11 +127,11 @@ void SourceBuilder::BuildSuccesString()
 {
     QString text ="Build <b><font color=\"#90FF90\">Successful</font>!</b> ( "+  (Util::MilisecondToString(m_system->timer.elapsed())) +")<br>";
     text+="Assembler file saved to : <b>" + m_filename+".asm</b><br>";
-    text+="Compiled <b>" + QString::number(compiler.m_parser.m_lexer->m_lines.count()) +"</b> lines of Turbo Rascal to <b>";
-    text+=QString::number(compiler.m_assembler->getLineCount()) + "</b> lines of assembler instructions (and variables/labels)<br>";
+    text+="Compiled <b>" + QString::number(compiler->m_parser.m_lexer->m_lines.count()) +"</b> lines of Turbo Rascal to <b>";
+    text+=QString::number(compiler->m_assembler->getLineCount()) + "</b> lines of assembler instructions (and variables/labels)<br>";
     if (m_iniFile.getdouble("post_optimize")==1) {
-        text+="Post-optimized away <b>" + QString::number(compiler.m_assembler->m_totalOptimizedLines) +"</b> lines of assembler instructions ";
-        text=text+"(<font color=\"#70FF40\"> " + QString::number((int)(100.0*(float)compiler.m_assembler->m_totalOptimizedLines/(float)compiler.m_assembler->getLineCount()))+  " % </font> of total ) <br>";
+        text+="Post-optimized away <b>" + QString::number(compiler->m_assembler->m_totalOptimizedLines) +"</b> lines of assembler instructions ";
+        text=text+"(<font color=\"#70FF40\"> " + QString::number((int)(100.0*(float)compiler->m_assembler->m_totalOptimizedLines/(float)compiler->m_assembler->getLineCount()))+  " % </font> of total ) <br>";
 
     }
     else

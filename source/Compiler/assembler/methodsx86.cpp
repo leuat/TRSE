@@ -15,6 +15,8 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->EndWriteln();
     }
 */
+     ASTDispatcherX86* disp = dynamic_cast<ASTDispatcherX86*>(m_dispatcher);
+
     if (Command("waitforverticalblank"))
         WaitForVerticalBlank(as);
 
@@ -95,9 +97,9 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->Asm("shr  di, 1");
         as->Asm("shr  di, 1");
 //        as->Asm("mov  bx, y");
-        dynamic_cast<ASTDispatcherX86*>(m_dispatcher)->PushX();
+        disp->PushX();
         LoadVar(as,2); // Load x into bx
-        dynamic_cast<ASTDispatcherX86*>(m_dispatcher)->PopX();
+        disp->PopX();
         as->Asm("shl  bx, 1");
         as->Asm("add  di, [bx + table_cga_scanlines]");
 /*        as->Asm("push ax");
@@ -122,6 +124,36 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
 
     }
 
+    if (Command("memcpyb"))
+        MemCpy(as, "b");
+
+    if (Command("memcpyw"))
+        MemCpy(as,"w");
+
+    if (Command("setcgapalette")) {
+        as->Asm("mov ah, 0Bh");
+        disp->PushX();
+        LoadVar(as,0);
+        disp->PopX();
+        as->Asm("int 10h");
+    }
+
+    if (Command("topointer")) {
+        LoadVar(as,0);
+        disp->PushX();
+        LoadVar(as,1);
+        disp->PopX();
+    }
+
+    if (Command("hi")) {
+        LoadAddress(as,0,true);
+        as->Asm("mov "+disp->getAx(m_node)+",ds");
+    }
+    if (Command("lo")) {
+        LoadAddress(as,0,true);
+        as->Asm("mov "+disp->getAx(m_node)+",si");
+    }
+
 }
 
 bool MethodsX86::Command(QString name)
@@ -132,11 +164,51 @@ bool MethodsX86::Command(QString name)
 
 void MethodsX86::LoadVar(Assembler *as, int paramNo)
 {
+//    qDebug() << "LOADVAR FORCE WORD  TYPE "<<paramNo <<m_node->m_params[paramNo]->m_builtInFunctionParameterType  <<m_node->m_params[paramNo]->isWord(as);
     if (m_node->m_params[paramNo]->m_builtInFunctionParameterType==BuiltInFunction::INTEGER
-            && !m_node->m_params[paramNo]->isWord(as))
+            && !m_node->m_params[paramNo]->isWord(as)) {
         m_node->m_params[paramNo]->setForceType(TokenType::INTEGER);
+  //      qDebug() << "LOADVAR FORCE WORD "<<paramNo ;
+    }
 
     m_node->m_params[paramNo]->Accept(m_dispatcher);
+
+}
+
+void MethodsX86::LoadAddress(Assembler *as, int paramNo, bool isSource)
+{
+
+
+    QString es ="es";
+    QString di = "di";
+    if (isSource) {
+        es = "ds";
+        di = "si";
+   }
+
+
+        if (m_node->m_params[paramNo]->isPureVariable()) {
+            if (m_node->m_params[paramNo]->isPointer(as)) {
+                as->Asm("push ax");
+                as->Asm("mov ax,["+m_node->m_params[paramNo]->getValue(as)+"]");
+                as->Asm("mov "+es+",ax");
+                as->Asm("pop ax");
+                as->Asm("mov "+di+",["+m_node->m_params[paramNo]->getValue(as)+"+2]");
+                return;
+            }
+
+
+        as->Asm("lea "+di+",["+m_node->m_params[paramNo]->getValue(as)+"]");
+        return;
+    }
+    if (m_node->m_params[paramNo]->isPureNumeric()) {
+        as->Asm("mov ax, "+m_node->m_params[paramNo]->getValue(as));
+        as->Asm("mov "+es+",ax");
+        as->Asm("xor "+di+","+di);
+        return;
+    }
+    ErrorHandler::e.Error("Parameter "+QString::number(paramNo)+" must be address (variable, number or pointer)");
+  //  m_node->m_params[paramNo]->Accept(m_dispatcher);
 
 }
 
@@ -221,5 +293,18 @@ void MethodsX86::AddInitMethod(Assembler *as, QString name, QString file)
     as->IncludeFile(file);
     m_node->m_isInitialized[name] = true;
 
+
+}
+
+void MethodsX86::MemCpy(Assembler *as, QString type)
+{
+    as->Comment("Memcpy");
+    LoadVar(as,2);
+    as->Asm("push ax");
+    LoadAddress(as, 0,true);
+    LoadAddress(as, 1,false);
+    as->Asm("pop cx");
+
+    as->Asm("rep movs"+type);
 
 }

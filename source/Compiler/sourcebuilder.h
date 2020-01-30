@@ -2,8 +2,7 @@
 #define SOURCEBUILDER_H
 
 #include <QString>
-#include "source/Compiler/compiler.h"
-
+#include "source/Compiler/compilers/factorycompiler.h"
 #include "source/Compiler/systems/abstractsystem.h"
 #include "source/Compiler/systems/factorysystem.h"
 #include <QThread>
@@ -24,7 +23,7 @@ public:
 
 
     AbstractSystem* m_system = nullptr;
-    Compiler compiler;
+    Compiler* compiler = nullptr;
     bool Build(QString source);
 
 

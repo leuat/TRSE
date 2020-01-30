@@ -288,7 +288,7 @@ void FormRasEditor::ConnectBlockSymbols()
         int winner = 0xFFFF;
         MemoryBlock* winnerBlock=nullptr;
 
-        for (MemoryBlock* mb: m_builderThread.m_builder->compiler.m_assembler->blocks) {
+        for (MemoryBlock* mb: m_builderThread.m_builder->compiler->m_assembler->blocks) {
 //            if (mb->m_type==MemoryBlock::CODE &&  sym>mb->m_start)
                 if (sym>mb->m_start)
                 if (sym-mb->m_start<winner) {
@@ -500,7 +500,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         QTextCursor tc = ui->txtEditor->textCursor();
         tc.select(QTextCursor::WordUnderCursor);
         QString word = tc.selectedText();
-        for (Node*n : m_builderThread.m_builder->compiler.m_parser.m_proceduresOnly) {
+        for (Node*n : m_builderThread.m_builder->compiler->m_parser.m_proceduresOnly) {
             NodeProcedureDecl* np = dynamic_cast<NodeProcedureDecl*>(n);
             if (np->m_procName.toLower()==word.toLower()) {
                 int ln=np->m_op.m_lineNumber;
@@ -529,7 +529,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
 
 void FormRasEditor::TestForCodeOverwrite(int codeEnd, QString& output)
 {
-    for (MemoryBlock& mb: m_builderThread.m_builder->compiler.m_assembler->m_userWrittenBlocks) {
+    for (MemoryBlock& mb: m_builderThread.m_builder->compiler->m_assembler->m_userWrittenBlocks) {
 //        qDebug() << Util::numToHex(mb.m_start) << " vs " << Util::numToHex(codeEnd) ;
         if (mb.m_start<codeEnd && mb.m_start>=Syntax::s.m_currentSystem->m_startAddress) {
             output +="\n<font color=\"#FF8080\">WARNING:</font>Possible code block overwrite on line <b>" +QString::number(mb.m_lineNumber) + "</b>.&nbsp;";
@@ -735,7 +735,7 @@ void FormRasEditor::MemoryAnalyze()
         return;
 
     m_iniFile->setFloat("perform_crunch",i);
-    m_builderThread.m_builder->compiler.SaveBuild(filename + ".asm");
+    m_builderThread.m_builder->compiler->SaveBuild(filename + ".asm");
 
     /*QProcess process;
     process.start(m_iniFile->getString("dasm"), QStringList()<<(filename +".asm") << ("-o"+filename+".prg") << "-v3");
@@ -754,14 +754,14 @@ void FormRasEditor::MemoryAnalyze()
     FindBlockEndSymbols(orgAsm);
 //    qDebug() << "B";
     ConnectBlockSymbols();
-//    qDebug() << "asm " << m_builderThread.m_builder->compiler.m_assembler;
-    m_builderThread.m_builder->compiler.m_assembler->blocks.append(new MemoryBlock(Syntax::s.m_currentSystem->m_startAddress, codeEnd, MemoryBlock::CODE, "code"));
+//    qDebug() << "asm " << m_builderThread.m_builder->compiler->m_assembler;
+    m_builderThread.m_builder->compiler->m_assembler->blocks.append(new MemoryBlock(Syntax::s.m_currentSystem->m_startAddress, codeEnd, MemoryBlock::CODE, "code"));
  //   qDebug() << "B2";
 
-    m_mca.ClassifyZP(m_builderThread.m_builder->compiler.m_assembler->blocks);
+    m_mca.ClassifyZP(m_builderThread.m_builder->compiler->m_assembler->blocks);
 
     DialogMemoryAnalyze* dma = new DialogMemoryAnalyze(m_iniFile,m_builderThread.m_builder->m_system);
-    dma->Initialize(m_builderThread.m_builder->compiler.m_assembler->blocks, m_iniFile->getInt("memory_analyzer_font_size"));
+    dma->Initialize(m_builderThread.m_builder->compiler->m_assembler->blocks, m_iniFile->getInt("memory_analyzer_font_size"));
     dma->resize(m_iniFile->getdouble("memory_analyzer_window_width"),m_iniFile->getdouble("memory_analyzer_window_height"));
 
     dma->exec();
@@ -851,7 +851,7 @@ void FormRasEditor::HandleBuildError()
     int ln = Pmm::Data::d.lineNumber;
     HandleErrorDialogs(ErrorHandler::e.m_teOut);
     if (m_builderThread.m_builder!=nullptr)
-        emit OpenOtherFile(m_builderThread.m_builder->compiler.recentError.file, ln);
+        emit OpenOtherFile(m_builderThread.m_builder->compiler->recentError.file, ln);
     GotoLine(ln);
     m_builderThread.m_builder->m_system->m_buildSuccess = false;
     SetLights();
@@ -900,14 +900,14 @@ void FormRasEditor::HandleUpdateBuildText()
 void FormRasEditor::HandleBuildComplete()
 {
     m_builderThread.msleep(70); // crashes if we don't sleep.. for some reason
-    if (m_builderThread.m_builder->compiler.m_assembler!=nullptr) {
-        ui->txtEditor->m_cycles =  m_builderThread.m_builder->compiler.m_assembler->m_cyclesOut;
-        ui->txtEditor->m_blockCycles =  m_builderThread.m_builder->compiler.m_assembler->m_blockCyclesOut;
+    if (m_builderThread.m_builder->compiler->m_assembler!=nullptr) {
+        ui->txtEditor->m_cycles =  m_builderThread.m_builder->compiler->m_assembler->m_cyclesOut;
+        ui->txtEditor->m_blockCycles =  m_builderThread.m_builder->compiler->m_assembler->m_blockCyclesOut;
     }
     ui->txtEditor->RepaintCycles();
-    if (m_builderThread.m_builder->compiler.m_assembler!=nullptr)
+    if (m_builderThread.m_builder->compiler->m_assembler!=nullptr)
 
-        ui->txtEditor->InitCompleter(m_builderThread.m_builder->compiler.m_assembler->m_symTab, &m_builderThread.m_builder->compiler.m_parser);
+        ui->txtEditor->InitCompleter(m_builderThread.m_builder->compiler->m_assembler->m_symTab, &m_builderThread.m_builder->compiler->m_parser);
 
     if (m_projectIniFile->getString("system")=="NES") {
         BuildNes(m_currentSourceFile.split(".")[0]);
@@ -919,7 +919,7 @@ void FormRasEditor::HandleBuildComplete()
         emit NotifyOtherSourceFiles(m_builderThread.m_builder);
     }
 
-    highlighter->AppendSymboltable(m_builderThread.m_builder->compiler.m_parser.m_procedures.keys());
+    highlighter->AppendSymboltable(m_builderThread.m_builder->compiler->m_parser.m_procedures.keys());
     highlighter->rehighlight();
 //    ui->txtEditor->viewport()->update();
 
@@ -939,7 +939,7 @@ void BuilderThread::run()
     if (m_builder->Build( m_source ))
     {
         if (!m_builder->m_currentSourceFile.toLower().endsWith(".asm"))
-            m_builder->compiler.SaveBuild(m_filename + ".asm");
+            m_builder->compiler->SaveBuild(m_filename + ".asm");
 //        else {
   //          m_builder->m_filename = m_builder->m_currentSourceFile.split(".asm")[0];
     //    }

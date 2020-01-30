@@ -5,6 +5,40 @@ AsmX86::AsmX86()
     m_hash = "";
 }
 
+void AsmX86::Connect() {
+    // Connect with temp vars
+    QStringList newSource;
+    for (int i=0;i<m_varDeclEndsLineNumber;i++) {
+        newSource<<m_source[i];
+    }
+    newSource << " ; Temp vars section";
+    newSource<< m_tempVars;
+    newSource << " ; Temp vars section ends";
+    for (int i=m_varDeclEndsLineNumber;i<m_source.count(); i++) {
+        newSource<<m_source[i];
+    }
+    m_source = newSource;
+
+    //m_source<<m_appendix;
+    //    m_appendix.append(m_ extraBlocks);
+    SortAppendix();
+
+    //  qDebug() << m_appendix[0].m_source;
+    QStringList pre;
+    for (int i=0;i<m_appendix.count();i++) {
+//                qDebug() << (m_appendix[i].m_pos);
+        if (Util::NumberFromStringHex(m_appendix[i]->m_pos)<Syntax::s.m_currentSystem->m_programStartAddress)
+            pre <<m_appendix[i]->m_source;
+        else m_source << m_appendix[i]->m_source;
+
+    }
+
+    m_source.removeAll("");
+    m_appendix.clear();
+
+
+}
+
 void AsmX86::Program(QString name, QString vicParam)
 {
     m_source+=m_startInsertAssembler;
@@ -88,12 +122,12 @@ void AsmX86::DeclareArray(QString name, QString type, int count, QStringList dat
 
 }
 
-void AsmX86::DeclareVariable(QString name, QString type, QString initval)
+void AsmX86::DeclareVariable(QString name, QString type, QString initval, QString position)
 {
     QString t = "";
 
     if (type.toLower()=="const") {
-        Write(name + " = " + initval,0);
+        Write(name + " equ " + initval,0);
         return;
     }
 
@@ -107,8 +141,23 @@ void AsmX86::DeclareVariable(QString name, QString type, QString initval)
     if (t=="")
         ErrorHandler::e.Error("Cannot declare variable of type: " + type);
 
-    Write(name+":" +"\t" + t + "\t"+initval,0);
 
+    if (position=="")
+        Write(name+":" +"\t" + t + "\t"+initval,0);
+    else
+    {
+        Write(name +"\t equ \t"+position,0);
+/*        Appendix* app = new Appendix(position);
+        app->Append(GetOrg(Util::NumberFromStringHex(position)),1);
+
+        app->Append(name+":" +"\t" + t + "\t"+initval,0);
+
+        int p = Util::NumberFromStringHex(position);
+
+        blocks.append(new MemoryBlock(p,p+2, MemoryBlock::ARRAY, name));
+
+        m_appendix.append(app);*/
+    }
 }
 
 void AsmX86::BinOP(TokenType::Type t)
@@ -149,4 +198,9 @@ QString AsmX86::String(QStringList lst)
 void AsmX86::Label(QString s)
 {
     Write(s+":",0);
+}
+
+QString AsmX86::GetOrg(int pos)
+{
+    return "[org " + Util::numToHex(pos).replace("$","0x") + "]";
 }

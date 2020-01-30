@@ -245,11 +245,12 @@ public:
     virtual void Write(QString str, int level=0);
 
 
+    virtual QString GetOrg(int pos ) = 0;
 
     virtual void Program(QString name, QString vicParam) {};
     virtual void EndProgram() {}
     virtual void VarDeclHeader() {}
-    virtual void DeclareVariable(QString name, QString type, QString initVal){}
+    virtual void DeclareVariable(QString name, QString type, QString initVal, QString position){}
     virtual void DeclareString(QString name, QStringList initVal) {}
     virtual void DeclareCString(QString name, QStringList initVal) {}
     virtual void DeclareArray(QString name, QString type, int count, QStringList lst, QString position) {}

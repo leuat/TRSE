@@ -29,7 +29,7 @@
 #include "source/messages.h"
 #include "source/Compiler/lexer.h"
 #include "source/Compiler/parser.h"
-#include "source/Compiler/compiler.h"
+#include "source/Compiler/compilers/compiler.h"
 #include <QElapsedTimer>
 #include "source/dialoghelp.h"
 #include "source/dialogmemoryanalyze.h"

@@ -111,7 +111,7 @@ void Assembler::StartMemoryBlock(QString pos) {
     Appendix app(pos);
     m_currentBlock = new Appendix(pos);
     m_appendix.append(m_currentBlock);
-    m_currentBlock->Append("org "+pos,1);
+    m_currentBlock->Append(GetOrg(Util::NumberFromStringHex(pos)),1);
     m_blockStack.append(m_currentBlock);
     //        m_currentBlockCount = m_appendix.count()-1;
 }

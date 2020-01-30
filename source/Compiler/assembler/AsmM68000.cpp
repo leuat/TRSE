@@ -73,7 +73,7 @@ void AsmM68000::DeclareArray(QString name, QString type, int count, QStringList 
     }
 }
 
-void AsmM68000::DeclareVariable(QString name, QString type, QString initval)
+void AsmM68000::DeclareVariable(QString name, QString type, QString initval, QString position)
 {
     QString t = "";
     if (type.toLower()=="integer")
@@ -147,4 +147,9 @@ QString AsmM68000::String(QStringList lst)
     res=res + "\t"+mark+"\t0";
     m_term +=res;
     return res;
+}
+
+QString AsmM68000::GetOrg(int pos)
+{
+    return "org " + Util::numToHex(pos);
 }

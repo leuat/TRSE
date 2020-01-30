@@ -1,0 +1,41 @@
+program CGA2;
+
+// Open this image, experiment with importing your own!
+@export "images/image1.flf" "images/image1.bin" 0
+
+var
+	time:byte = 0;
+	y: integer = 0;
+	p1, p2 : pointer;
+	data : incbin("images/image1.bin");
+	sine : incbin("data/sine.bin");
+	
+
+begin
+	// Set CGA screen mode
+	SetScreenMode(mode_cga_320x200);
+	// Set p2 to point to the center of the screen somewhere	
+	p2:=toPointer($B850,0);
+	
+	while (true) do
+	begin
+		// Cycle the two palettes at various intervals
+		if (time=  0) then setcgapalette($101);
+		if (time=128) then setcgapalette($100);
+
+		// Calculate an y sine				
+		y:=sine[time]/8;
+		// Multiply with scanlines
+		y:=y*80;
+		
+		p1:=toPointer(hi(data), lo(data)+y);		
+		// Copy image data (only every single scanline, )
+		memcpyw(p1,p2, 40*70); // Copy the data, 70 lines in total (70*40 words = 70*40*2 bytes)
+		// Wait for vertical blank		
+		waitforverticalblank();
+
+		// Increase time counter		
+		time:=time+4;
+
+	end;
+end.

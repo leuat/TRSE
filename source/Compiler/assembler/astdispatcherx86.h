@@ -78,6 +78,9 @@ public:
             return a+"x";
         if (n->getType(as)==TokenType::ADDRESS)
             return a+"x";
+        if (n->getType(as)==TokenType::INTEGER_CONST)
+            if (n->isWord(as))
+            return a+"x";
 //        if (n->isPureNumeric())
   //          if (n->getValue()
         return a+"l";

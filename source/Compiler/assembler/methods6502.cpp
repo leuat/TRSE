@@ -10670,8 +10670,8 @@ void Methods6502::InitRandom(Assembler *as)
     }
     as->Asm("rts");
 
-    as->DeclareVariable("upperRandom", "byte","0");
-    as->DeclareVariable("lowerRandom", "byte","0");
+    as->DeclareVariable("upperRandom", "byte","0","");
+    as->DeclareVariable("lowerRandom", "byte","0","");
     as->Label("callRandom");
     as->Asm("lda upperRandom");
     as->Asm("sbc lowerRandom");

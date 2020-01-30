@@ -248,7 +248,7 @@ void ASTDispather68000::dispatch(NodeVarDecl *node)
         node->m_dataSize=1;
         if (t->getValue(as).toLower()=="integer") node->m_dataSize = 2;
         if (t->getValue(as).toLower()=="long") node->m_dataSize = 4;
-        as->DeclareVariable(v->getValue(as), t->value, t->initVal);
+        as->DeclareVariable(v->getValue(as), t->value, t->initVal, t->m_position);
     }
 
 

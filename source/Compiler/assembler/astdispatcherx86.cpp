@@ -150,6 +150,30 @@ void ASTDispatcherX86::dispatch(NodeVarDecl *node)
 
     node->ExecuteSym(as->m_symTab);
 
+    int ret = node->MaintainBlocks(as);
+
+    if (ret==3) node->m_curMemoryBlock = nullptr;
+//    qDebug() << "NodeVarDecl new memory block "  << ret;
+    if (node->m_curMemoryBlock!=nullptr)
+  //      qDebug() << node->m_curMemoryBlock->m_start;
+    if (as->m_currentBlock!=nullptr) {
+    //    qDebug() <<as->m_currentBlock->m_pos;
+        if (node->m_curMemoryBlock==nullptr) {
+            bool ok;
+            QString p = as->m_currentBlock->m_pos;
+            int pos = p.remove("$").toInt(&ok, 16);
+            node->m_curMemoryBlock = new MemoryBlock(pos,pos,MemoryBlock::ARRAY, node->m_blockInfo.m_blockName);
+            as->blocks.append(node->m_curMemoryBlock);
+        }
+    }
+    else
+        node->m_curMemoryBlock=nullptr;
+ /*   if (ret==2) {
+        m_curMemoryBlock = nullptr;
+
+    }*/
+
+
 
 
     NodeVar* v = (NodeVar*)node->m_varNode;
@@ -176,17 +200,23 @@ void ASTDispatcherX86::dispatch(NodeVarDecl *node)
     if (t->m_op.m_type==TokenType::POINTER) {
         if (node->m_curMemoryBlock!=nullptr)
             ErrorHandler::e.Error("Pointers can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
-        DeclarePointer(node);
+//        DeclarePointer(node);
+        as->Asm(v->getValue(as)+ ": dw  0,0" );
+//        as->DeclareVariable(v->getValue(as), "long", "0", t->m_position);
+
         as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
 
     }else {
         node->m_dataSize=1;
         if (t->getValue(as).toLower()=="integer") node->m_dataSize = 2;
         if (t->getValue(as).toLower()=="long") node->m_dataSize = 4;
-        as->DeclareVariable(v->getValue(as), t->value, t->initVal);
+        as->DeclareVariable(v->getValue(as), t->value, t->initVal, t->m_position);
     }
 
 
+    if (node->m_curMemoryBlock!=nullptr) {
+        node->m_curMemoryBlock->m_end+=node->m_dataSize;
+    }
 
     as->m_currentBlock = nullptr;
 
@@ -534,7 +564,26 @@ QString ASTDispatcherX86::AssignVariable(NodeAssign *node)
         node->m_right->setForceType(TokenType::INTEGER);
     }
 
+
+
+
     NodeVar* var = dynamic_cast<NodeVar*>(node->m_left);
+
+    if (var->isPointer(as)) {
+        if (node->m_right->isPureVariable()) {
+            as->Asm("lea si, ["+node->m_right->getValue(as)+"]");
+            as->Asm("mov ["+var->getValue(as)+"], ds");
+            as->Asm("mov ["+var->getValue(as)+"+2], si");
+            return "";
+        }
+        else{
+            node->m_right->Accept(this);
+
+            as->Asm("mov ["+var->getValue(as)+"], ax");
+            as->Asm("mov ["+var->getValue(as)+"+2], bx");
+        }
+        return "";
+    }
 
     if (var->isArrayIndex()) {
         // Is an array
