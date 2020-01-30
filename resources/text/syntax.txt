@@ -472,7 +472,49 @@ c; NOTE_Af2 ; X86;b; 34
 c; NOTE_B2 ; X86;b; 35
 
 
+c; NOTE_C0 ; VIC20;b; 135
+c; NOTE_Cf0 ; VIC20;b; 143
+c; NOTE_D0 ; VIC20;b; 147
+c; NOTE_Df0 ; VIC20;b; 151
+c; NOTE_E0 ; VIC20; b; 159
+c; NOTE_F0 ; VIC20;b; 163
+c; NOTE_Ff0 ; VIC20;b; 167
+c; NOTE_G0 ; VIC20;b; 175
+c; NOTE_Gf0 ; VIC20;b; 179
+c; NOTE_A0 ; VIC20;b; 183
+c; NOTE_Af0 ; VIC20;b; 187
+c; NOTE_B0 ; VIC20;b; 191
 
+c; NOTE_C1 ; VIC20; b; 195
+c; NOTE_Cf1 ; VIC20;b; 199
+c; NOTE_D1 ; VIC20;b; 201
+c; NOTE_Df1 ; VIC20;b; 203
+c; NOTE_E1 ; VIC20; b; 207
+c; NOTE_F1 ; VIC20;b; 209
+c; NOTE_Ff1 ; VIC20;b; 212
+c; NOTE_G1 ; VIC20;b; 215
+c; NOTE_Gf1 ; VIC20;b; 217
+c; NOTE_A1 ; VIC20;b; 219
+c; NOTE_Af1 ; VIC20;b; 221
+c; NOTE_B1 ; VIC20;b; 223
+
+c; NOTE_C2 ; VIC20; b; 225
+c; NOTE_Cf2 ; VIC20;b; 227
+c; NOTE_D2 ; VIC20;b; 228
+c; NOTE_Df2 ; VIC20; b; 229
+c; NOTE_E2 ; VIC20;b; 231
+c; NOTE_F2 ; VIC20; b; 232
+c; NOTE_Ff2 ; VIC20; b; 233
+c; NOTE_G2 ; VIC20;b; 235
+c; NOTE_Gf2 ; VIC20;b; 236
+c; NOTE_A2 ; VIC20; b; 237
+c; NOTE_Af2 ; VIC20;b; 238
+c; NOTE_B2 ; VIC20;b; 239
+
+c; NOTE_C3 ; VIC20; b; 240
+c; NOTE_Cf3 ; VIC20;b; 241
+c; NOTE_D3 ; VIC20;b; 242
+c; NOTE_Df3 ; VIC20; b; 243
 
 
 
