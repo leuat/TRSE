@@ -97,12 +97,22 @@ void ASTDispatcherX86::dispatch(NodeVar *node)
     as->Asm("mov "+ax+", [" + node->getValue(as)+ending);
 //    if (node->isArrayIndex())
 //        qDebug() << TokenType::getType(node->getArrayType(as));
-    if (node->m_forceType==TokenType::INTEGER &&
-            (node->getOrgType(as)!=TokenType::INTEGER))
-        as->Asm("mov ah,0 ; forcetype clear high bit");
+    if (node->m_forceType==TokenType::INTEGER) {
+        bool accomodate = false;
+        if (node->isArrayIndex()) {
+            if (node->getArrayType(as)!=TokenType::INTEGER) {
+            accomodate = true;
+            }
+        }
+        else
+        if (node->getOrgType(as)!=TokenType::INTEGER)
+            accomodate = true;
 
-    qDebug() << "ORG " <<TokenType::getType(node->getOrgType(as)) << "   : " << node->getValue(as);
-    qDebug() << "FT " <<TokenType::getType(node->m_forceType);
+        if (accomodate)
+            as->Asm("mov ah,0 ; forcetype clear high bit");
+    }
+//    qDebug() << "ORG " <<TokenType::getType(node->getOrgType(as)) << "   : " << node->getValue(as);
+  //  qDebug() << "FT " <<TokenType::getType(node->m_forceType);
 
 }
 

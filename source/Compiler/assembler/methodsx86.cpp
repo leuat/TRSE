@@ -153,6 +153,21 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         LoadAddress(as,0,true);
         as->Asm("mov "+disp->getAx(m_node)+",si");
     }
+    if (Command("nosound")) {
+        as->Comment("No sound");
+        as->Asm("in al,61h");
+        as->Asm("and al,0xfc");
+        as->Asm("out 61h, al");
+    }
+    if (Command("playnote")) {
+    }
+    if (Command("init_playnote"))
+        AddInitMethod(as,"init_playnote","init_playnote.asm");
+    if (Command("playnote")) {
+        LoadVar(as,0);
+        as->Asm("call init_playnote_call");
+
+    }
 
 }
 
@@ -308,3 +323,4 @@ void MethodsX86::MemCpy(Assembler *as, QString type)
     as->Asm("rep movs"+type);
 
 }
+

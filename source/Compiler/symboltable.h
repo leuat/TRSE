@@ -43,6 +43,7 @@ public:
     Symbol(QString name, QString type="");
     Symbol(QString name, QString type, float var);
     Symbol(QString name, QString type, QString var);
+    int getLength();
 
 };
 

@@ -126,6 +126,8 @@ void AsmX86::DeclareVariable(QString name, QString type, QString initval, QStrin
 {
     QString t = "";
 
+    if (initval=="")
+        initval = "0";
     if (type.toLower()=="const") {
         Write(name + " equ " + initval,0);
         return;

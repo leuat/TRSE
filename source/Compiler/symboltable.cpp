@@ -382,3 +382,11 @@ Symbol::Symbol(QString name, QString type, QString var) {
     m_type = type;
     m_value = new PVar(var);
 }
+
+int Symbol::getLength() {
+    int l = 1;
+    if (m_value->m_type == TokenType::INTEGER ||TokenType::INTEGER_CONST)
+        l = 2;
+ //   qDebug() << m_type << m_size <<l;
+    return m_size;
+}

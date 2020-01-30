@@ -430,6 +430,7 @@ DISTFILES += \
     resources/code/c64_keyboard_input.asm \
     resources/code/vbm/vic20_vbm.asm \
     resources/code/x86/init_cga_scanlines.asm \
+    resources/code/x86/init_playnote.asm \
     resources/images/OK64.jpg \
     resources/images/OK64.png \
     resources/images/PLUS4.png \

@@ -410,5 +410,6 @@
         <file>resources/text/help/m/addbreakpoint.rtf</file>
         <file>resources/images/X86.png</file>
         <file>resources/code/x86/init_cga_scanlines.asm</file>
+        <file>resources/code/x86/init_playnote.asm</file>
     </qresource>
 </RCC>

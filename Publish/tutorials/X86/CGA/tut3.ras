@@ -1,0 +1,115 @@
+program Notes;
+var  
+   k,l: byte = 0;  
+   x,j,idx,m:integer = 0;
+
+	cols : array[4] of byte=(cga_color1, cga_color1, cga_color2, cga_color3);
+
+	// Length of a note
+	const len: byte = 8;
+	// Half notes length etc
+	const n1: byte = len;
+	const n2: byte = len/2;
+	const n4: byte = len/4;
+	const n3: byte = (len/4)*3;
+	const stop:byte = 255;
+
+	// Notes for the tune!
+tune : array[] of byte=(
+	
+	NOTE_C1,n3,
+	stop, n4,	
+	NOTE_E1,n1,
+	NOTE_g1,n1,
+	stop, n1,	
+
+	NOTE_C1,n3,
+	stop, n4,	
+	NOTE_E1,n1,
+	NOTE_g1,n1,
+	stop, n1,	
+
+	NOTE_F1,n3,
+	stop, n4,	
+	NOTE_A1,n1,
+	NOTE_C2,n1,
+	stop, n1,	
+
+	NOTE_F1,n3,
+	stop, n4,	
+	NOTE_A1,n1,
+	NOTE_C2,n1,
+	stop, n1,	
+
+	NOTE_G1,n3,
+	stop, n4,	
+	NOTE_B1,n1,
+	NOTE_D2,n1,
+	stop, n1,	
+
+	NOTE_G1,n3,
+	stop, n4,	
+	NOTE_B1,n1,
+	NOTE_D2,n1,
+	stop, n1,	
+
+	NOTE_F1,n3,
+	stop, n4,	
+	NOTE_A1,n1,
+	NOTE_C2,n1,
+	stop, n1,	
+
+	NOTE_F1,n3,
+	stop, n4,	
+	NOTE_A1,n1,
+	NOTE_C2,n1,
+	stop, n1,	
+	
+);
+
+
+// Draws a vertical column. Slow as hell, but works
+procedure DrawVLine(xx,yy:integer; w,h,col:byte);
+begin
+	if (h<>0) then
+	for k:=0 to h do
+	begin
+		for m:=0 to w do
+		begin
+			setpixelcga(screen_cga, xx+m, yy, col);
+		end;
+		yy:=yy-1;
+	end;
+end;
+
+
+begin
+	init_cga_scanlines();
+	init_playnote();
+	
+	setscreenmode(mode_cga_320x200);
+	
+	while(true) do
+	begin
+	
+		j:=tune[idx];
+		l:=tune[idx+1];
+		if (j=stop) then
+			NoSound()
+		else	
+		begin
+			PlayNote(j);
+			j:=j*4;
+			k:=cols[(x/4)&3];
+			DrawVLine(x,160,4,j,k);
+			x:=x+4;
+
+		end;		
+		for k:=0 to l do
+			waitforverticalblank();
+			
+		idx:=idx+2;
+		if (idx=length(tune)) then idx:=0;
+	end;
+	
+end.

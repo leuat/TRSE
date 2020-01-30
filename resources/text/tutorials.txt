@@ -19,7 +19,7 @@ VIC20; PumpKid;  VIC20/PumpKid/; <h2>PumpKid</h2><p>Created by <b>AndyH [ Hewco 
 PLUS4; Main Commodore PLUS/4 tutorials; PLUS4/Tutorials/;<h2>Main Commodore Plus/4 tutorials</h2>Support for the Plus/4 was added in version 0.08, with a bunch of fresh and new tutorials!<br><img src=":resources/images/tutorials/plus4_tut.png" width="300"><p><i>Small disclaimer: </i>Most built-in methods are not yet updated to work for the PLUS/4. This will be added later, within a larger project setting.
 
 NES; Main NES tutorials; NES/intro_tutorial/;<h2>Main NES tutorials</h2><p>The NES tutorials + editor + graphics support has in this version of TRSE received a complete overhaul!
-X86; IBM XT (CGA) tutorials; X86/CGA/; <h2>Main IBM XT (CGA) tutorials</h2><p>Preliminary X86 DOS tutorials for the IBM XT with CGA running at 4.77 mhz. Extremely early development, compiler is totally incomplete and inefficient. <p>Proof of concept.
+X86; IBM 8086 AT (CGA) tutorials; X86/CGA/; <h2>Main IBM AT (CGA) tutorials</h2><p>Preliminary X86 DOS tutorials for the IBM XT with CGA running at 4.77 mhz. Extremely early development, compiler is totally incomplete and inefficient. <p>Proof of concept.
 PET; Main Commodore PET tutorials; PET/examples/;<h2>Main Commodore PET tutorials</h2>The official PET tutorials!
 CrossPlatform; Grave Intentions; CrossPlat/GraveIntentions; <h2>Grave Intentions</h2>A C64/VIC-20/PET/PLUS4 cross-platform text-based adventure engine/ game. Still under construction.
 X16; Main X16 examples; X16/Tutorials/; <h2>Main Commander X16 tutorials</h2>Please note: These are extremely preliminary examples. X16 support was implemented on sept 13th 2019, so very little is yet possible.

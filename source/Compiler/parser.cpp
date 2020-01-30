@@ -1125,6 +1125,22 @@ Node *Parser::Program(QString param)
 
 Node* Parser::Factor()
 {
+    if (m_currentToken.m_type == TokenType::LENGTH) {
+        Eat();
+        Eat(TokenType::LPAREN);
+        QString varName = m_currentToken.m_value;
+        Symbol* s = m_symTab->Lookup(varName,m_currentToken.m_lineNumber);
+        if (s==nullptr) {
+            ErrorHandler::e.Error("Internal function 'Length' reqruires a variable");
+        }
+        Token t = m_currentToken;
+        t.m_intVal = s->getLength();
+        t.m_type  = TokenType::INTEGER_CONST;
+        Eat();
+        Eat(TokenType::RPAREN);
+        return new NodeNumber(t,s->getLength());
+
+    }
 
 
     Token t = m_currentToken;
@@ -1854,6 +1870,15 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
     // Set all types
     for (Symbol* s: syms) {
        s->m_type = typeNode->m_op.m_value;
+       if (typeNode->m_data.count()!=0)
+           s->m_size = typeNode->m_data.count();
+       else {
+           s->m_size = 1;
+           if (s->m_type=="integer")
+               s->m_size =2;
+           if (s->m_type=="long")
+               s->m_size =4;
+       }
     }
 
 
@@ -2268,6 +2293,9 @@ void Parser::HandleVBMExport()
 Node* Parser::Expr()
 {
     Node* node = Term();
+
+
+
 
     while (m_currentToken.m_type == TokenType::Type::PLUS || m_currentToken.m_type == TokenType::Type::MINUS
             || m_currentToken.m_type == TokenType::Type::BITAND || m_currentToken.m_type == TokenType::Type::BITOR) {

@@ -406,6 +406,10 @@ m; SetCgaPalette; X86; i
 m; toPointer;x86;i,i
 m; hi; x86;a
 m; lo; x86;a
+m; init_playnote; x86;
+m; nosound; x86;
+
+m; playnote; x86; b
 
 c; CGA_COLOR0; X86; b; 0
 c; CGA_COLOR1; X86; b; $55
@@ -427,6 +431,51 @@ c; SCREEN_CGA; X86; a; $B800
 c; SCREEN_TEXT; X86; a; $B800
 c; SCREEN_EGA; X86; a; $B800
 c; SCREEN_VGA; X86; a; $A000
+
+c; NOTE_C0 ; X86;b; 0
+c; NOTE_Cf0 ; X86;b; 1
+c; NOTE_D0 ; X86;b; 2
+c; NOTE_Df0 ; X86;b; 3
+c; NOTE_E0 ; X86; b;4
+c; NOTE_F0 ; X86;b; 5
+c; NOTE_Ff0 ; X86;b; 6
+c; NOTE_G0 ; X86;b; 7
+c; NOTE_Gf0 ; X86;b; 8
+c; NOTE_A0 ; X86;b; 9
+c; NOTE_Af0 ; X86;b; 10
+c; NOTE_B0 ; X86;b; 11
+
+c; NOTE_C1 ; X86; b;12
+c; NOTE_Cf1 ; X86;b; 13
+c; NOTE_D1 ; X86;b; 14
+c; NOTE_Df1 ; X86;b; 15
+c; NOTE_E1 ; X86; b;16
+c; NOTE_F1 ; X86;b; 17
+c; NOTE_Ff1 ; X86;b; 18
+c; NOTE_G1 ; X86;b; 19
+c; NOTE_Gf1 ; X86;b; 20
+c; NOTE_A1 ; X86;b; 21
+c; NOTE_Af1 ; X86;b; 22
+c; NOTE_B1 ; X86;b; 23
+
+c; NOTE_C2 ; X86; b;24
+c; NOTE_Cf2 ; X86;b; 25
+c; NOTE_D2 ; X86;b; 26
+c; NOTE_Df2 ; X86; b;27
+c; NOTE_E2 ; X86;b; 28
+c; NOTE_F2 ; X86; b;29
+c; NOTE_Ff2 ; X86; b;30
+c; NOTE_G2 ; X86;b; 31
+c; NOTE_Gf2 ; X86;b; 32
+c; NOTE_A2 ; X86; b;33
+c; NOTE_Af2 ; X86;b; 34
+c; NOTE_B2 ; X86;b; 35
+
+
+
+
+
+
 
 #
 #
@@ -922,7 +971,7 @@ r; VBMEXPORT; X16,C64, PLUS4, C128, VIC20, BBCM, NES, AMIGA, OK64, PET
 r; CHIPMEM; AMIGA, OK64
 r; CONST; X16,C64, PLUS4, C128, VIC20, BBCM, NES, AMIGA, OK64, PET, X86
 r; ADDRESS; X16,C64, PLUS4, C128, VIC20, BBCM, NES, AMIGA, OK64, PET, X86
-
+r; LENGTH; X16,C64, PLUS4, C128, VIC20, BBCM, NES, AMIGA, OK64, PET, X86
 
 # Reserved names
 #r; SINE; X16,C64, PLUS4, C128, VIC20, BBCM, AMIGA, OK64, PET, X86

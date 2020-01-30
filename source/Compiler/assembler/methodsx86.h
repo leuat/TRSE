@@ -35,6 +35,9 @@ public:
     void AddInitMethod(Assembler* as, QString name, QString file);
 
     void MemCpy(Assembler* as, QString type);
+
+    void InitPlaynote(Assembler* as);
+
 };
 
 #endif // METHODSX86_H
