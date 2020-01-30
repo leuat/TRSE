@@ -576,6 +576,15 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         return;
     }
+    if (m_currentToken.m_value=="spritecompiler") {
+        Eat(); // Preprocessor
+        Eat(); // Filename
+        Eat(); // Name
+        Eat(); // X
+        Eat(); // Y
+        Eat(); // W
+        Eat(); // H
+    }
 
     if (m_currentToken.m_value=="vbmexport") {
         Eat();
@@ -1298,6 +1307,11 @@ void Parser::Preprocess()
                 Eat(TokenType::PREPROCESSOR);
                 HandleVBMExport();
             }
+            else if (m_currentToken.m_value.toLower() =="spritecompiler") {
+                Eat(TokenType::PREPROCESSOR);
+                HandleSpriteCompiler();
+            }
+
             else if (m_currentToken.m_value.toLower() =="importchar") {
                 Eat(TokenType::PREPROCESSOR);
                 HandleImportChar();
@@ -2288,6 +2302,30 @@ void Parser::HandleVBMExport()
 
     file.close();
 
+}
+
+void Parser::HandleSpriteCompiler()
+{
+
+    QString filename = m_currentToken.m_value;
+    Eat(TokenType::STRING); // Filename
+    QString name = m_currentToken.m_value;
+    Eat(TokenType::STRING); // Name
+    int x = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST); // X
+    int y = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST); // Y
+    int w = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST); // W
+    int h = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST); // H
+
+    LImage* img = LImageIO::Load(m_currentDir +"/"+filename);
+    m_parserAppendix << img->SpriteCompiler(name,x,y,w,h);
+
+
+
+    delete img;
 }
 
 Node* Parser::Expr()

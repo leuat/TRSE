@@ -152,8 +152,13 @@ public:
     Node* BuiltinFunction();
     Node* Constant();
     Node* InlineAssembler();
+
+    QStringList m_parserAppendix;
+
+
     void HandleExport();
     void HandleVBMExport();
+    void HandleSpriteCompiler();
     void Eat();
     void HandleImportChar();
 
