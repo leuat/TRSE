@@ -99,6 +99,9 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         QString type = m_projectIniFile->getString("dosbox_x86_system");
         if (type.toLower()!="default")
             params << "-machine" << type;
+#ifdef _WIN32
+        params << "-noconsole";
+#endif
     }
 
 

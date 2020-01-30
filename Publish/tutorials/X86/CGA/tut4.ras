@@ -1,0 +1,66 @@
+program Tutorial4;
+var  
+    time,i,delta,k,t: byte;
+    x,y,z,ddx: integer = 0; 
+	src,dst : pointer;   
+	sine : incbin("data/sine.bin");
+	
+@export "images/image2.flf" "images/image2.bin" 0
+	data : incbin("images/image2.bin");
+
+@spritecompiler "images/sprites.flf" "cat" 0 0 5 3
+
+procedure DrawSprite(xx,yy : integer);
+begin
+	ddx:=(xx);
+	ddx:=(ddx/2)&1;
+	
+	xx:=xx/4;
+	yy:=yy*80;
+	src:=toPointer(hi(data),lo(data)+xx+yy);
+	dst:=toPointer($B800,xx+yy);
+	asm("
+		mov ax,[dst]
+		mov es,ax
+		mov di, [dst+2]
+		
+		mov ax,[src]
+		mov ds,ax
+		mov si, [src+2]
+		");
+	if (ddx=0) then
+		asm(" call cat_sprite1");
+	if (ddx=1) then
+		asm(" call cat_sprite0");
+//	if (ddx=2) then
+	//	asm(" call cat_sprite1");
+//	if (ddx=3) then
+	//	asm(" call cat_sprite0");
+
+end;
+
+
+begin
+	setscreenmode(mode_cga_320x200);
+	time:=0;
+	delta:=0;
+	// Copy image to screen
+		memcpyw(data,screen_cga,8000);
+	while(true) do
+	begin
+		for t:=0 to 4 do
+		begin
+			k:=t*64;
+			y:=sine[time+k]/4 + 10;
+			x:=sine[time+64+delta+k]/2+50;
+			DrawSprite(x,y);
+		end;
+//		DrawSprite(320-x,y);
+		
+		time:=time+1;
+		k:=time&3;
+		if (k=2) then delta:=delta+1;
+		waitforverticalblank();
+		
+	end;
+end.
