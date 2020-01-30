@@ -90,6 +90,7 @@ void LImageAmiga::SaveBin(QFile &file)
 
 void LImageAmiga::LoadBin(QFile &file)
 {
+    m_height  = 256;
     LImageQImage::LoadBin(file);
     uchar size;
 

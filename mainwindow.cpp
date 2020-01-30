@@ -447,6 +447,8 @@ void MainWindow::OpenProjectSettings()
     if (m_currentProject.m_filename=="")
         return;
 
+    QString oldSystem = m_currentProject.m_ini.getString("system");
+
     DialogProjectSettings* dSettings = new DialogProjectSettings(m_currentPath, this);
     dSettings->SetInit(&m_currentProject.m_ini);
     dSettings->exec();
@@ -454,7 +456,8 @@ void MainWindow::OpenProjectSettings()
 
     // Set compiler syntax based on system
 //    Syntax::s.Init(AbstractSystem::SystemFromString(m_currentProject.m_ini.getString("system")),&m_iniFile, &m_currentProject.m_ini);
-    LoadProject(m_currentProject.m_filename);
+    if (oldSystem != m_currentProject.m_ini.getString("system"))
+        LoadProject(m_currentProject.m_filename);
 
 }
 
@@ -749,7 +752,7 @@ void MainWindow::on_actionRas_source_file_triggered()
         QTextStream s(&file);
         s<< "program MyProgram;\n";
         s<< "var  \n";
-        s<< "   index: byte; \n";
+        s<< "   i: byte; \n";
         s<< "begin\n\n";
         s<< "end.\n";
         qDebug() << "Done writing;";

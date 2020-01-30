@@ -179,6 +179,8 @@ unsigned int LImageQImage::getPixel(int x, int y)
     if (x>=0 && x<m_qImage->width() && y>=0 && y<m_qImage->height())
         return m_qImage->pixel(x,y);
 
+
+    return 0;
 }
 
 void LImageQImage::Release()

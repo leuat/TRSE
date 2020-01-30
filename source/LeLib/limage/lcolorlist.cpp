@@ -705,7 +705,6 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize)
     if (ly==nullptr)
         return;
 
-    qDebug() << "LColorList::CreateUI" << windowSize;
 
     m_layout = ly;
     Util::clearLayout(ly, true);

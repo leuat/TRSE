@@ -409,6 +409,12 @@ void LImage::Box(int x, int y, unsigned char col, int size)
 
 
 void LImage::CopyFrom(LImage *img) {
+
+    if (m_width!=img->m_width || m_height!=img->m_height) {
+        m_width = img->m_width;
+        m_height = img->m_height;
+    }
+
 #pragma omp parallel for
 
     for (int i=0;i<m_width;i++)
