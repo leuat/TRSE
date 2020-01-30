@@ -27,9 +27,9 @@ begin
 	begin
 		for y:=0 to 100 do
 		begin
-			setpixelcga(^$B800,x,y,cga_color2);
-			setpixelcga(^$B800,x+160,y,cga_color1);
-			setpixelcga(^$B800,x,y+100,cga_color3);
+			setpixelcga(screen_cga,x,y,cga_color2);
+			setpixelcga(screen_cga,x+160,y,cga_color1);
+			setpixelcga(screen_cga,x,y+100,cga_color3);
 		end;
 	end;
 end;
@@ -53,7 +53,7 @@ begin
 
 	x:=sine[ka]/3;
 	y:=sine[ka+64]/3;
-	setpixelcga(^$B800, x+centerx,y+centery, cols[i]);
+	setpixelcga(screen_cga, x+centerx,y+centery, cols[i]);
 		
 	i:=(i+1)&3;
 end;
@@ -62,7 +62,7 @@ end;
 	
 begin
 	init_cga_scanlines(); // Calculate CGA screen tables for setpixelcga
-	SetScreenMode($4); // CGA mode
+	SetScreenMode(mode_cga_320x200); // CGA mode
 
 	SetupBackgroundScreen();
 	
