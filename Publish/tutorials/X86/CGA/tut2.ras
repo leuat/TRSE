@@ -39,13 +39,19 @@ begin
 		y:=y*80;
 
 
-			
-		p1:=toPointer(hi(data), lo(data)+y);		
+		// Copy scanlines 0 data			
+		p1:=toPointer(hi(data), lo(data) + y);		
 		// Copy image data (only every single scanline, )
 		memcpyw(p1,p2, 40*70); // Copy the data, 70 lines in total (70*40 words = 70*40*2 bytes)
 
 
+		// Calculate an y sine with shift
+		y:=sine[time+64]/8;
+		// Multiply with scanlines
+		y:=y*80;
 
+
+		// Copy scanlines 2 data			
 		p1:=toPointer(hi(data), lo(data)+70*80-y);		
 		// Copy image data (only every single scanline, )
 		memcpyw(p1,p3, 40*70); // Copy the data, 70 lines in total (70*40 words = 70*40*2 bytes)
