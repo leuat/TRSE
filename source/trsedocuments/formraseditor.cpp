@@ -100,7 +100,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         if (type.toLower()!="default")
             params << "-machine" << type;
 #ifdef _WIN32
-        params << "-noconsole";
+//        params << "-noconsole";
 #endif
     }
 
