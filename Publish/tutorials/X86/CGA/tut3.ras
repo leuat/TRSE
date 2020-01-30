@@ -14,7 +14,12 @@ var
 	const n3: byte = (len/4)*3;
 	const stop:byte = 255;
 
+
+
+
+
 	// Notes for the tune!
+	// Format : note, length
 tune : array[] of byte=(
 	
 	NOTE_C1,n3,
@@ -105,6 +110,7 @@ begin
 			x:=x+4;
 
 		end;		
+		// Pause the current note / silence
 		for k:=0 to l do
 			waitforverticalblank();
 			
