@@ -18,7 +18,6 @@ void AsmX86::Connect() {
         newSource<<m_source[i];
     }
     m_source = newSource;
-
     //m_source<<m_appendix;
     //    m_appendix.append(m_ extraBlocks);
     SortAppendix();

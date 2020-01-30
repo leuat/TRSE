@@ -7,10 +7,14 @@ void CompilerX86::InitAssemblerAndDispatcher(AbstractSystem *system)
     m_dispatcher = new ASTDispatcherX86();
     m_assembler->Asm("CPU "+m_projectIni->getString("cpu_x86_system"));
 
+
+
 }
 
 void CompilerX86::Connect()
 {
+    m_assembler->m_source<<m_parser.m_parserAppendix;
+
     m_assembler->EndMemoryBlock();
     m_assembler->Connect();
 
