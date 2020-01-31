@@ -13659,24 +13659,27 @@ void Methods6502::VIARasterIRQ(Assembler *as)
     LoadVar(as,1);
     as->Asm("tax");
 
+    QString lbl1 = as->NewLabel("viarasterirq_ntsc_timing");
+    QString lbl2 = as->NewLabel("viarasterirq_end");
+
     LoadVar(as,2);
     as->Asm("cmp #0");
-    as->Asm("bne viarasterirq_ntsc_timing");
+    as->Asm("bne " + lbl1);
     as->Asm("lda #$86");
     as->Asm("sta timers_vic_raster+1");
     as->Asm("lda #$56");
     as->Asm("sta timers_vic_raster+3");
     as->Asm("jsr A0_vic_raster");
-    as->Asm("jmp viarasterirq_end");
+    as->Asm("jmp " + lbl2);
 
-    as->Label("viarasterirq_ntsc_timing");
+    as->Label(lbl1);
     as->Asm("lda #$43");
     as->Asm("sta timers_vic_raster+1");
     as->Asm("lda #$42");
     as->Asm("sta timers_vic_raster+3");
     as->Asm("jsr A0_vic_raster");
 
-    as->Label("viarasterirq_end");
+    as->Label(lbl2);
 }
 
 
