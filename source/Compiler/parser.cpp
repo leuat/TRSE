@@ -159,6 +159,7 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "rasterirqwedge(" , "init_wedge");
         InitBuiltinFunction(QStringList()<< "playvic20sid(" , "init_vic20_sidplay");
         InitBuiltinFunction(QStringList()<< "viairq(" , "init_viairq");
+        InitBuiltinFunction(QStringList()<< "viarasterirq(" , "init_viairq");
         InitBuiltinFunction(QStringList()<< "initmodplayer(" , "include_modplayer");
         InitBuiltinFunction(QStringList()<< "decrunch("<<"decrunchfromindex(", "init_decrunch");
 
