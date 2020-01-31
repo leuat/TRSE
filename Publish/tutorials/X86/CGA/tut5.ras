@@ -1,0 +1,80 @@
+program InputMe;
+var  
+    i: byte; 
+	ddx : integer;
+	src, dst : pointer;
+	px, py : integer = 30;
+	
+	
+/*
+
+	TEST with movement
+	W A S D   to move around. WORK IN PROGRESS
+
+*/
+
+
+@export "images/image2.flf" "images/image2.bin" 0
+	data : incbin("images/image2.bin");
+
+
+
+@spritecompiler "images/sprites.flf" "cat" 0 0 5 3
+
+procedure DrawSprite(xx,yy : integer);
+begin
+	ddx:=(xx/2)&1;
+	xx:=xx/4;
+	yy:=yy*80;
+	src:=toPointer(hi(data),lo(data)+xx+yy);
+//	src:=toPointer($6800,xx+yy);
+	dst:=toPointer($B800,xx+yy);
+	asm("
+		mov ax,[dst]
+		mov es,ax
+		mov di, [dst+2]
+		
+		mov ax,[src]
+		mov ds,ax
+		mov si, [src+2]
+		");
+	if (ddx=0) then
+		asm(" call cat_sprite1");
+	if (ddx=1) then
+		asm(" call cat_sprite0");
+
+end;
+
+
+
+begin
+	setscreenmode(mode_cga_320x200);
+	
+	fillw(screen_cga+^25*^10,$AA55,2000);
+	fillw(screen_cga+^25*^10+^$200,$55AA,2000);
+	
+	// Overwrite  data. for now!
+	fillw(data,0,8000);
+	
+
+	px:=50;
+	py:=30;
+	while (true) do
+	begin
+		waitforverticalblank();
+		i:=KeyPressed();
+		if (i=1) then 
+		begin
+			i:=ReadKey();	
+	
+			if (i=100) then px:=px+2;
+			if (i=97) then px:=px-2;
+			if (i=115) then py:=py+1;
+			if (i=119) then py:=py-1;
+	
+		end;
+		DrawSprite(px,py);
+	
+end;
+
+end.

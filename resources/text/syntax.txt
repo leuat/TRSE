@@ -408,6 +408,10 @@ m; hi; x86;a
 m; lo; x86;a
 m; init_playnote; x86;
 m; nosound; x86;
+m; FillW; X86; a, i, i
+m; ReadKey; X86;
+m; KeyPressed; X86;
+
 
 m; playnote; x86; b
 
@@ -925,6 +929,7 @@ m; SpriteDepth; X16; b
 m; SpriteSize; X16; b,b
 m; SpritePaletteOffset; X16; b
 m; copydatatovera; X16; a,b,b,b,b
+
 
 c; SCREEN_WIDTH; X16; b; 80
 c; SCREEN_HEIGHT; X16; b; 60

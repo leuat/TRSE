@@ -166,7 +166,33 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("playnote")) {
         LoadVar(as,0);
         as->Asm("call init_playnote_call");
-
+    }
+    if (Command("fillw")) {
+       LoadAddress(as,0,false);
+       disp->PushX();
+       disp->PushX();
+       LoadVar(as,2);
+       disp->PopX();
+       disp->PopX();
+       LoadVar(as,1);
+       as->Asm(" rep stosw");
+    }
+    if (Command("ReadKey")) {
+        as->Asm(" mov ah, 0h");
+        as->Asm(" int 0x16");
+    }
+    if (Command("KeyPressed")) {
+        QString lbl1 = as->NewLabel("nochar");
+        QString lbl2 = as->NewLabel("cont");
+        as->Asm(" Mov Dx,1");
+        as->Asm(" Mov Ah,01h");
+        as->Asm(" Int 16h");
+        as->Asm(" Jz "+lbl1);
+        as->Asm(" Jmp "+lbl2);
+        as->Label(lbl1);
+        as->Asm(" Mov Dx,0");
+        as->Label(lbl2);
+        as->Asm(" Mov Al,Dl");
     }
 
 }
@@ -212,6 +238,8 @@ void MethodsX86::LoadAddress(Assembler *as, int paramNo, bool isSource)
                 return;
             }
 
+        as->Asm("mov ax,ds");
+        as->Asm("mov es,ax");
 
         as->Asm("lea "+di+",["+m_node->m_params[paramNo]->getValue(as)+"]");
         return;

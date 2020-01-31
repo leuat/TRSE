@@ -681,9 +681,9 @@ void ASTDispatcherX86::BuildSimple(Node *node, QString lblFailed)
     if (node->m_op.m_type==TokenType::NOTEQUALS)
         as->Asm("je " + lblFailed);
     if (node->m_op.m_type==TokenType::LESS)
-        as->Asm("jgt " + lblFailed);
+        as->Asm("jg " + lblFailed);
     if (node->m_op.m_type==TokenType::GREATER)
-        as->Asm("jlt " + lblFailed);
+        as->Asm("jl " + lblFailed);
 
 
 
