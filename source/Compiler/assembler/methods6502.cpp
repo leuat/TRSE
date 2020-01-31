@@ -497,6 +497,8 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("VIAIRQ"))
         VIAIRQ(as);
 
+    if (Command("VIARasterIRQ"))
+        VIARasterIRQ(as);
 
     if (Command("CreateInteger"))
         CreateInteger(as,"y");
@@ -13639,9 +13641,47 @@ void Methods6502::VIAIRQ(Assembler *as)
     as->Term();
     as->Asm("sta timers_vic_raster+3");
 
-
+    as->Asm("ldx #0"); // Start timer from raster line 0
     as->Asm("jsr init_via_irq");
 }
+
+void Methods6502::VIARasterIRQ(Assembler *as)
+{
+    NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_node->m_params[0]);
+    QString name = addr->m_procedure->m_procName;
+    m_node->RequireNumber(m_node->m_params[2], "RasterIRQ", m_node->m_op.m_lineNumber);
+
+    as->Asm("lda #<"+name);
+    as->Asm("sta pointers_vic_raster+1");
+    as->Asm("lda #>"+name);
+    as->Asm("sta pointers_vic_raster+6");
+
+    LoadVar(as,1);
+    as->Asm("tax");
+
+    QString lbl1 = as->NewLabel("viarasterirq_ntsc_timing");
+    QString lbl2 = as->NewLabel("viarasterirq_end");
+
+    LoadVar(as,2);
+    as->Asm("cmp #0");
+    as->Asm("bne " + lbl1);
+    as->Asm("lda #$86");
+    as->Asm("sta timers_vic_raster+1");
+    as->Asm("lda #$56");
+    as->Asm("sta timers_vic_raster+3");
+    as->Asm("jsr A0_vic_raster");
+    as->Asm("jmp " + lbl2);
+
+    as->Label(lbl1);
+    as->Asm("lda #$43");
+    as->Asm("sta timers_vic_raster+1");
+    as->Asm("lda #$42");
+    as->Asm("sta timers_vic_raster+3");
+    as->Asm("jsr A0_vic_raster");
+
+    as->Label(lbl2);
+}
+
 
 void Methods6502::InitVIAIRQ(Assembler *as)
 {

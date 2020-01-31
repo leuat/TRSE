@@ -117,6 +117,7 @@ public:
 //    void EnableInterrupts(Assembler* as);
     void RasterIRQ(Assembler* as);
     void VIAIRQ(Assembler* as);
+    void VIARasterIRQ(Assembler* as);
     void InitVIAIRQ(Assembler* as);
     void RasterIRQWedge(Assembler* as);
     void ClearScreen(Assembler* as);

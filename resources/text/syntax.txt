@@ -385,6 +385,7 @@ m; DisableVIC20IRQ; VIC20;
 #m; StartVIAIRQ; VIC20;
 #m; CloseVIAIRQ; VIC20;
 m; VIAIRQ; VIC20; p,b,b
+m; VIARasterIRQ; VIC20; p,b,b
 
 
 
