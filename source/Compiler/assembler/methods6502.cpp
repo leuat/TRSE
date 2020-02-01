@@ -630,7 +630,7 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     }
     if (Command("ToPointer"))
         ToPointer(as);
-    if (Command("ptr")) {
+    if (Command("int2ptr")) {
         LoadVar(as, 0);
 
     }

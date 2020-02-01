@@ -275,7 +275,7 @@ m; CopyImageColorData; C64, PLUS4, C128; a,n
 m; Lo; X16,C64, PLUS4, C128, NES, VIC20, OK64, PET; a
 m; Hi; X16,C64, PLUS4, C128, NES, VIC20, OK64, PET; a
 m; ToPointer;  X16,C64, PLUS4, C128, NES, VIC20, PET, OK64; b,b
-m; ptr;  X16,C64, PLUS4, C128, NES, VIC20, PET, OK64; i
+m; int2ptr;  X16,C64, PLUS4, C128, NES, VIC20, PET, OK64; i
 m; CreateInteger; X16,C64, PLUS4, C128, NES, VIC20, OK64; b,b
 m; CreatePointer; X16,C64, PLUS4, C128, NES, VIC20, OK64; b,b
 # DrawTextBox params: screenaddrtbl,petsciiarray,column,row,width,height
