@@ -3,7 +3,7 @@ var
     i, time,t: byte; 
     update,trigger: byte=0;
 	ddx,delta : integer;
-	src, dst : pointer;
+	src, dst,zp : pointer;
 	px, py,x,y,z : integer = 30;
 		sine : incbin("data/sine.bin");
 
@@ -30,7 +30,7 @@ var
 
 @spritecompiler "images/sprites.flf" "cat" 0 0 5 3
 
-procedure DrawSprite(xx,yy : integer);
+procedure DrawSprite(xx,yy : integer; p:pointer);
 begin
 	ddx:=(xx/2)&1;
 	xx:=xx/4;
@@ -163,24 +163,8 @@ begin
 			update:=2;
 			trigger:=2;
 		end;		
-		DrawSprite(px,py);
+		DrawSprite(px,py,zp);
 		RenderTriggerLandscape();	
-//		setcgapalette($011);
-/*		x:=sine[time]/8;
-		y:=sine[time+64]/8;
-		x:=x-16;
-		y:=y-16;
-		drawlinecga(^$B800, 160,100,160+x,100+y, cga_color0);
-		time:=time+1;
-		x:=sine[time]/8;
-		y:=sine[time+64]/8;
-		x:=x-16;
-		y:=y-16;
-		drawlinecga(^$B800, 160,100,160+x,100+y, cga_color1);
-*/
-//		drawLineCGA(^$B800, 100,80, 110,90, cga_color3);
-
-	//		setcgapalette($010);
-end;
+	end;
 
 end.
