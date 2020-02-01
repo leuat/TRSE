@@ -1,5 +1,5 @@
-zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
-temp_zeropages = ,$54, $56, $58, $5A
+zeropages = ,$02,   $04,   $08,   $16,   $0B,   $0D,   $10,   $12,   $22,   $24,   $68
+temp_zeropages = ,$54,   $56,   $58,   $5A
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $47
 zeropage_decrunch2 = $48
@@ -39,3 +39,6 @@ data_header_images/image1.flf = 6.90365e-310
 cpu_x86_system = 8086
 data_header_images/sprites.flf = 0
 data_header_images/image2.flf = 6.93427e-310
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/X86/CGA/
+open_files = ,tut5.asm, tut3.ras, tut5.ras
+current_file = tut5.ras

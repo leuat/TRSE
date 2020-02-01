@@ -1,11 +1,20 @@
 program InputMe;
 var  
-    i: byte; 
-	ddx : integer;
+    i, time,t: byte; 
+    update: byte;
+	ddx,delta : integer;
 	src, dst : pointer;
-	px, py : integer = 30;
-	
-	
+	px, py,x,y,z : integer = 30;
+		sine : incbin("data/sine.bin");
+
+		cols : array[4] of byte=(cga_color1, cga_color1, cga_color2, cga_color3);
+		
+	perlin : incbin("data/perlin64.dat");
+	const landscapeWidth : byte = 32;
+	const landscapeLength : integer = 1024;
+	landscape : array[landscapeLength] of byte;
+	curPos : integer = 0;
+
 /*
 
 	TEST with movement
@@ -46,35 +55,86 @@ begin
 end;
 
 
+procedure InitLandscape();
+begin
+	for x:=0 to landscapeLength do 
+	begin
+		y:=perlin[x]/2;
+		y:=200-y;
+		if (y>190) then y:=190;
+		landscape[x]:=y;
+	end;
+
+end;
+
+procedure RenderLandscape(rl_color:byte);
+begin
+	if (update=false) 
+		return();
+	x:=delta;
+	xx := 320 / landscapeWidth;
+	z:=curPos;
+	for i:=0 to landscapeWidth do
+	begin
+		y:=landscape[z];
+		yy:=landscape[z+1];
+		DrawLineCGA(^$B800, x, y, x+xx,yy , rl_color);
+		x:=x+xx;
+		z:=z+1;
+	end;
+
+end;
+
 
 begin
+	init_cga_scanlines();
+	init_drawline_cga();
 	setscreenmode(mode_cga_320x200);
-	
-	fillw(screen_cga+^25*^10,$AA55,2000);
-	fillw(screen_cga+^25*^10+^$200,$55AA,2000);
+	InitLandscape();	
+//	fillw(screen_cga+^25*^10,$AA55,2000);
+//	fillw(screen_cga+^25*^10+^$200,$55AA,2000);
 	
 	// Overwrite  data. for now!
 	fillw(data,0,8000);
-	
+//	DrawLine(0,0,160,100, cga_color2);
 
 	px:=50;
 	py:=30;
 	while (true) do
 	begin
+//		for i:=0 to 10 do 
+		
+//			waitforverticalblank();
 		waitforverticalblank();
+		setcgapalette($011);
+		RenderLandscape(cga_color0);
+		setcgapalette($010);
 		i:=KeyPressed();
 		if (i=1) then 
 		begin
 			i:=ReadKey();	
-	
 			if (i=100) then px:=px+2;
 			if (i=97) then px:=px-2;
 			if (i=115) then py:=py+1;
 			if (i=119) then py:=py-1;
 	
 		end;
+		if (px>100) then
+		begin
+			px:=98;
+			delta:=delta +1;
+			if (delta>=landscapeWidth) then
+			begin
+				curPos:=curPos+1;
+				delta:=0;
+			end;
+			update:=true;
+		end;		
 		DrawSprite(px,py);
-	
+		
+		setcgapalette($011);
+		RenderLandscape(cga_color1);
+		setcgapalette($010);
 end;
 
 end.

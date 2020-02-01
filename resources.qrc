@@ -411,5 +411,6 @@
         <file>resources/images/X86.png</file>
         <file>resources/code/x86/init_cga_scanlines.asm</file>
         <file>resources/code/x86/init_playnote.asm</file>
+        <file>resources/code/x86/init_drawline_cga.asm</file>
     </qresource>
 </RCC>

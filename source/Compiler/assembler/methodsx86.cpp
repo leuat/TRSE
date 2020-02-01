@@ -159,10 +159,30 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->Asm("and al,0xfc");
         as->Asm("out 61h, al");
     }
-    if (Command("playnote")) {
-    }
     if (Command("init_playnote"))
         AddInitMethod(as,"init_playnote","init_playnote.asm");
+
+    if (Command("init_drawline_cga"))
+        AddInitMethod(as,"init_drawline_cga","init_drawline_cga.asm");
+
+    if (Command("drawlinecga")) {
+        LoadAddress(as,0,false);
+        LoadVar(as,1);
+        as->Asm("mov [pointX1], ax");
+        LoadVar(as,2);
+        as->Asm("mov [pointY1], ax");
+        LoadVar(as,3);
+        as->Asm("mov [pointX2], ax");
+        LoadVar(as,4);
+        as->Asm("mov [pointY2], ax");
+        LoadVar(as,5);
+        as->Asm("mov [drawline_color], al");
+        as->Asm("call CGA_DrawLine");
+    }
+    if (Command("return")) {
+        as->Asm("ret");
+    }
+
     if (Command("playnote")) {
         LoadVar(as,0);
         as->Asm("call init_playnote_call");

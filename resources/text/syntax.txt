@@ -337,7 +337,7 @@ m; FLD ; C64, PLUS4, C128 ; b,n
 m; TransformColors; C64, PLUS4, C128; a,a
 m; Call; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64; a
 m; Loop; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64;
-m; Return;  X16,C64, PLUS4, C128, VIC20, PET,  NES, AMIGA, OK64;
+m; Return;  X16,C64, PLUS4, C128, VIC20, PET,  NES, AMIGA, OK64, X86;
 m; ReturnValue;  X16,C64, PLUS4, C128, VIC20, PET,  NES, AMIGA, OK64; b
 m; Set2MhzMode; C128;
 m; Set1MhzMode; C128;
@@ -393,6 +393,9 @@ m; VIARasterIRQ; VIC20; p,b,b
 ########################### X86 METHOD #######################################
 ##############################################################################
 
+m; init_cga_scanlines; X86;
+m; init_playnote; x86;
+m; init_drawline_cga; X86;
 m; SetScreenMode;X86;b
 m; VGAClearScreen32; X86;b
 m; VGAClearScreen16; X86;b
@@ -400,18 +403,17 @@ m; ScrollX; X86; b
 m; SetPalette; X86; b,b,b,b
 m; SetPixel; X86; a, i,i,b
 m; SetPixelCGA; X86; a, i,i,b
-m; init_cga_scanlines; X86;
 m; memcpyb; X86; a,a,i
 m; memcpyw; X86; a,a,i
 m; SetCgaPalette; X86; i
 m; toPointer;x86;i,i
 m; hi; x86;a
 m; lo; x86;a
-m; init_playnote; x86;
 m; nosound; x86;
 m; FillW; X86; a, i, i
 m; ReadKey; X86;
 m; KeyPressed; X86;
+m; DrawLineCGA; X86; a, i,i,i,i, b
 
 
 m; playnote; x86; b
