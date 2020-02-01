@@ -164,7 +164,14 @@ void ASTDispather6502::HandleVarBinopB16bit(Node *node) {
     //as->Label(lblJmp);
     as->Comment("HandleVarBinopB16bit");
     as->ClearTerm();
-    as->Asm("ldy #0 ; ::HandleVarBinopB16bit");
+    as->Asm("ldy #0 ; ::HandleVarBinopB16bit 0");
+
+//    qDebug() << node->m_right
+    //qDebug() << "NodeBinop : " << TokenType::getType(node->m_right->getType(as)) <<TokenType::getType(node->m_left->getType(as)) ;
+
+    if (node->m_right->getType(as)==TokenType::ADDRESS && node->m_left->getType(as)==TokenType::ADDRESS )
+        ErrorHandler::e.Warning("You are adding together two addresses. Is this really what you indend?", node->m_op.m_lineNumber);
+
     node->m_right->Accept(this);
 
     as->Term();
