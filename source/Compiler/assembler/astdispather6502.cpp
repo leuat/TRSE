@@ -474,6 +474,9 @@ void ASTDispather6502::HandleRestBinOp(Node* node) {
     if (node->m_isWord)
         isWord16 = true;
 
+//    if (node->)
+
+
 //    qDebug() << node->m_op.m_value;
 
     // check if both are constant values:
@@ -2340,6 +2343,7 @@ void ASTDispather6502::AssignPointer(NodeAssign *node) {
 //        if (!node->m_right->isAddress())
   //          ErrorHandler::e.Error("Error assigning pointer: right-hand must be variable or number", node->m_op.m_lineNumber);
         node->m_right->forceWord();
+        node->m_right->setForceType(TokenType::INTEGER);
         as->Term();
         node->m_right->Accept(this);
         as->Term();
