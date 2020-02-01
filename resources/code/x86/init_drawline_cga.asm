@@ -4,12 +4,16 @@
 	push ax
 	push bx
 	mov ax, %1
-	mov  di, ax
-	shr  di, 1
-	shr  di, 1
-	mov bx, %2
-	shl  bx, 1
-	add  di, [bx + table_cga_scanlines]
+        shr  ax, 1
+        shr  ax, 1
+        mov  di, ax
+        shr  di, 1
+        shr  di, 1
+        mov bx, %2
+;        shl  bx, 1
+        shr  bx, 1
+        and bx, 0xFFFE
+        add  di, [bx + table_cga_scanlines]
 	and  ax, 3
 	mov  bx, table_cga_masks
 	xlat
@@ -18,7 +22,7 @@
 	not  al
 	and  al, [es:di]
 	or   al, ah
-	stosb
+        stosb
 	pop bx
 	pop ax
 
@@ -151,7 +155,7 @@ CGA_DrawLine:
 	mov [pointX2], bx		; x2
 	mov [pointY1], cx		; y1
 	mov [pointY2], dx		; y2
-	DrawLine2DDY 
+        DrawLine2DDY
 	jmp @@DrawLine2D_exit	; return
 @@DrawLine2Dp1:
 	mov ax, [pointX1]		; x1

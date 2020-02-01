@@ -168,12 +168,20 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("drawlinecga")) {
         LoadAddress(as,0,false);
         LoadVar(as,1);
+        as->Asm("shl ax,1");
+        as->Asm("shl ax,1");
         as->Asm("mov [pointX1], ax");
         LoadVar(as,2);
+        as->Asm("shl ax,1");
+        as->Asm("shl ax,1");
         as->Asm("mov [pointY1], ax");
         LoadVar(as,3);
+        as->Asm("shl ax,1");
+        as->Asm("shl ax,1");
         as->Asm("mov [pointX2], ax");
         LoadVar(as,4);
+        as->Asm("shl ax,1");
+        as->Asm("shl ax,1");
         as->Asm("mov [pointY2], ax");
         LoadVar(as,5);
         as->Asm("mov [drawline_color], al");

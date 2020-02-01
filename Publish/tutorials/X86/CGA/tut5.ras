@@ -1,7 +1,7 @@
 program InputMe;
 var  
     i, time,t: byte; 
-    update: byte;
+    update,trigger: byte=0;
 	ddx,delta : integer;
 	src, dst : pointer;
 	px, py,x,y,z : integer = 30;
@@ -10,7 +10,7 @@ var
 		cols : array[4] of byte=(cga_color1, cga_color1, cga_color2, cga_color3);
 		
 	perlin : incbin("data/perlin64.dat");
-	const landscapeWidth : byte = 32;
+	const landscapeWidth : byte = 16;
 	const landscapeLength : integer = 1024;
 	landscape : array[landscapeLength] of byte;
 	curPos : integer = 0;
@@ -57,31 +57,63 @@ end;
 
 procedure InitLandscape();
 begin
+	xx:=0;
 	for x:=0 to landscapeLength do 
 	begin
-		y:=perlin[x]/2;
-		y:=200-y;
+		
+		yy:=perlin[x];
+		y:=perlin[xx]/4;
+		y:=yy-y;
+		y:=260-y;
 		if (y>190) then y:=190;
 		landscape[x]:=y;
+		xx:=xx+4
 	end;
 
 end;
 
 procedure RenderLandscape(rl_color:byte);
 begin
-	if (update=false) 
+	if (update=0) then
 		return();
-	x:=delta;
+	x:=landscapeWidth- delta;
 	xx := 320 / landscapeWidth;
 	z:=curPos;
-	for i:=0 to landscapeWidth do
+	xx:=xx;
+	
+	for i:=0 to landscapeWidth-1 do
 	begin
-		y:=landscape[z];
-		yy:=landscape[z+1];
-		DrawLineCGA(^$B800, x, y, x+xx,yy , rl_color);
+		DrawLineCGA(^$B800, x, landscape[z], x+xx,landscape[z+1] , rl_color);
 		x:=x+xx;
 		z:=z+1;
 	end;
+	update:=update-1;
+
+end;
+
+procedure RenderTriggerLandscape();
+begin
+	RenderLandscape(cga_color0);
+	if (trigger=1) then
+	begin
+		delta:=delta +8;
+		if (delta=landscapeWidth) then
+		begin
+			curPos:=curPos+1;
+			delta:=0;
+		end;
+	end;
+	if (trigger=2) then
+	begin
+		if (delta=0) then
+		begin
+			curPos:=curPos-1;
+			delta:=landscapeWidth;
+		end;
+		delta:=delta -8;
+	end;
+	trigger:=0;
+	RenderLandscape(cga_color1);
 
 end;
 
@@ -98,17 +130,17 @@ begin
 	fillw(data,0,8000);
 //	DrawLine(0,0,160,100, cga_color2);
 
-	px:=50;
+	px:=90;
 	py:=30;
+	update:=2;
 	while (true) do
 	begin
 //		for i:=0 to 10 do 
 		
 //			waitforverticalblank();
 		waitforverticalblank();
-		setcgapalette($011);
-		RenderLandscape(cga_color0);
-		setcgapalette($010);
+//		setcgapalette($011);
+//		setcgapalette($010);
 		i:=KeyPressed();
 		if (i=1) then 
 		begin
@@ -122,19 +154,33 @@ begin
 		if (px>100) then
 		begin
 			px:=98;
-			delta:=delta +1;
-			if (delta>=landscapeWidth) then
-			begin
-				curPos:=curPos+1;
-				delta:=0;
-			end;
-			update:=true;
+			update:=2;
+			trigger:=1;
+		end;		
+		if (px<80) then
+		begin
+			px:=82;
+			update:=2;
+			trigger:=2;
 		end;		
 		DrawSprite(px,py);
-		
-		setcgapalette($011);
-		RenderLandscape(cga_color1);
-		setcgapalette($010);
+		RenderTriggerLandscape();	
+//		setcgapalette($011);
+/*		x:=sine[time]/8;
+		y:=sine[time+64]/8;
+		x:=x-16;
+		y:=y-16;
+		drawlinecga(^$B800, 160,100,160+x,100+y, cga_color0);
+		time:=time+1;
+		x:=sine[time]/8;
+		y:=sine[time+64]/8;
+		x:=x-16;
+		y:=y-16;
+		drawlinecga(^$B800, 160,100,160+x,100+y, cga_color1);
+*/
+//		drawLineCGA(^$B800, 100,80, 110,90, cga_color3);
+
+	//		setcgapalette($010);
 end;
 
 end.
