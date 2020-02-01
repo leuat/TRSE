@@ -630,6 +630,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     }
     if (Command("ToPointer"))
         ToPointer(as);
+    if (Command("pointerfrominteger")) {
+        LoadVar(as, 0);
+
+    }
 
     if (Command("SetSpriteLocation")) {
         as->Asm("lda #0");
