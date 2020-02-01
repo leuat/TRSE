@@ -23,6 +23,9 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("init_cga_scanlines"))
         AddInitMethod(as,"init_cga_scanlines","init_cga_scanlines.asm");
 
+    if (Command("init_keyboard_irq"))
+        AddInitMethod(as,"init_keyboard_irq","init_keyboard_irq.asm");
+
     if (Command("setscreenmode")) {
         LoadVar(as,0);
         as->Asm("mov ah,0");
@@ -221,6 +224,22 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->Asm(" Mov Dx,0");
         as->Label(lbl2);
         as->Asm(" Mov Al,Dl");
+    }
+    if (Command("installKeyboardIRQ")) {
+
+        as->Asm("cli");
+//        NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_node->m_params[0]);
+  //      QString name = addr->m_procedure->m_procName;
+
+        as->Comment("Install new ISR");
+        as->Asm("mov al,9h");
+        as->Asm("mov ah,25h");
+//        as->Asm("lea dx, ["+name+"]");
+        as->Asm("lea dx, [init_keyboard_irq]");
+        as->Asm("int 21h");
+
+        as->Asm("sti");
+
     }
 
 }

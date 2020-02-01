@@ -178,6 +178,10 @@ void SymbolTable::InitBuiltins()
 
     Define(new Symbol("return",""));
 
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X86) {
+        Define(new Symbol("currentKey", "integer"));
+    }
+
     if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES && Syntax::s.m_currentSystem->m_system!=AbstractSystem::X86)
         Define(new Symbol("sine", "address"));
     Define(new Symbol("log2_table", "address"));

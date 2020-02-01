@@ -118,39 +118,32 @@ begin
 end;
 
 
+
+
 begin
 	init_cga_scanlines();
 	init_drawline_cga();
+	init_keyboard_irq();
 	setscreenmode(mode_cga_320x200);
 	InitLandscape();	
-//	fillw(screen_cga+^25*^10,$AA55,2000);
-//	fillw(screen_cga+^25*^10+^$200,$55AA,2000);
-	
-	// Overwrite  data. for now!
+d
 	fillw(data,0,8000);
-//	DrawLine(0,0,160,100, cga_color2);
 
 	px:=90;
 	py:=30;
 	update:=2;
+
+
+	InstallKeyboardIRQ();	
+
+
 	while (true) do
 	begin
-//		for i:=0 to 10 do 
-		
-//			waitforverticalblank();
 		waitforverticalblank();
-//		setcgapalette($011);
-//		setcgapalette($010);
-		i:=KeyPressed();
-		if (i=1) then 
-		begin
-			i:=ReadKey();	
-			if (i=100) then px:=px+2;
-			if (i=97) then px:=px-2;
-			if (i=115) then py:=py+1;
-			if (i=119) then py:=py-1;
-	
-		end;
+
+		if (currentKey=key_d) then px:=px+2;
+		if (currentKey=key_a) then px:=px-2;
+		
 		if (px>100) then
 		begin
 			px:=98;

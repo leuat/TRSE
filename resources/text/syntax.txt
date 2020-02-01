@@ -397,6 +397,8 @@ m; VIARasterIRQ; VIC20; p,b,b
 m; init_cga_scanlines; X86;
 m; init_playnote; x86;
 m; init_drawline_cga; X86;
+m; init_drawline_cga; X86;
+m; init_keyboard_irq; X86;
 m; SetScreenMode;X86;b
 m; VGAClearScreen32; X86;b
 m; VGAClearScreen16; X86;b
@@ -415,7 +417,7 @@ m; FillW; X86; a, i, i
 m; ReadKey; X86;
 m; KeyPressed; X86;
 m; DrawLineCGA; X86; a, i,i,i,i, b
-
+m; InstallKeyboardIRQ; X86;
 
 m; playnote; x86; b
 
@@ -479,6 +481,90 @@ c; NOTE_A2 ; X86; b;33
 c; NOTE_Af2 ; X86;b; 34
 c; NOTE_B2 ; X86;b; 35
 
+#c; KEY_; X86; b; $
+
+c; KEY_A; X86; b; $1E
+c; KEY_B; X86; b; $30
+c; KEY_C; X86; b; $2E
+c; KEY_D; X86; b; $20
+c; KEY_E; X86; b; $12
+c; KEY_F; X86; b; $21
+c; KEY_G; X86; b; $22
+c; KEY_H; X86; b; $23
+c; KEY_I; X86; b; $17
+c; KEY_J; X86; b; $24
+c; KEY_K; X86; b; $25
+c; KEY_L; X86; b; $26
+c; KEY_M; X86; b; $32
+c; KEY_N; X86; b; $31
+c; KEY_O; X86; b; $18
+c; KEY_P; X86; b; $19
+c; KEY_Q; X86; b; $10
+c; KEY_R; X86; b; $13
+c; KEY_S; X86; b; $1f
+c; KEY_T; X86; b; $14
+c; KEY_U; X86; b; $16
+c; KEY_V; X86; b; $2F
+c; KEY_W; X86; b; $11
+c; KEY_X; X86; b; $2D
+c; KEY_Y; X86; b; $15
+c; KEY_Z; X86; b; $2C
+c; KEY_BACKSPACE; X86; b; $0E
+c; KEY_DEL; X86; b; $53
+c; KEY_DOWNARROW; X86; b; $50
+c; KEY_ENTER; X86; b; $1C
+c; KEY_ESC; X86; b; $01
+c; KEY_LEFTARROW; X86; b; $4B
+c; KEY_RIGHTARROW; X86; b; $4D
+c; KEY_SPACEBAR; X86; b; $39
+
+c; KEY_TAB; X86; b; $0F
+c; KEY_UPARROW; X86; b; $48
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 c; NOTE_C0 ; VIC20;b; 135
 c; NOTE_Cf0 ; VIC20;b; 143
@@ -523,6 +609,8 @@ c; NOTE_C3 ; VIC20; b; 240
 c; NOTE_Cf3 ; VIC20;b; 241
 c; NOTE_D3 ; VIC20;b; 242
 c; NOTE_Df3 ; VIC20; b; 243
+
+
 
 
 
