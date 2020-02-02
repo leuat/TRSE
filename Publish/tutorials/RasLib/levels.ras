@@ -47,17 +47,10 @@ begin
 	// Calculate position in level layout
 
 	m_rl_pos := m_rl_sizex*m_lj + m_li;
-	
+	// Calculate data size of map 
 	m_rl_val := m_rl_width*m_rl_height;
-//	m_rl_val := m_rl_val;// + m_width; 
 
-	// Skip levels
-	if m_rl_pos<>0 then
-	for m_rl_j:=0 to m_rl_pos do begin
-		@levelpointer := @levelpointer +m_rl_val*2;
-		@levelpointer := @levelpointer +m_rl_dataSize;
-	end;
-
+	// Locate level
 	@levelpointer := @levelpointer +m_rl_val*2*m_rl_pos;
 	@levelpointer := @levelpointer +m_rl_dataSize*m_rl_pos;
 
@@ -66,7 +59,6 @@ begin
 	moveto(m_rl_startx, m_rl_starty, m_screen);
 	
 	// Fill screen with chars
-	//call(SIDFILE_1_PLAY);
 	
 	for m_rl_j:=0 to m_rl_height do begin
 		for m_rl_i:=0 to m_rl_width do begin
@@ -80,11 +72,10 @@ begin
 		 end;
 		 screenmemory:=screenmemory+screen_width*2;
 		 @levelpointer:=@levelpointer+m_rl_width;
-//		inczp(levelpointer,m_rl_width);
 	end;
 	// Then colors
 	moveto(m_rl_startx, m_rl_starty, $D8);
-//	call(SIDFILE_1_PLAY);
+
 	@colorpointer:=@levelpointer;
 	for m_rl_j:=0 to m_rl_height do begin
 		for m_rl_i:=0 to m_rl_width do begin
@@ -100,17 +91,15 @@ begin
 	 	screenmemory:=screenmemory+screen_width*2;
 		 @levelpointer:=@levelpointer+m_rl_width;
 
-//		inczp(levelpointer, m_rl_width);
 	
 	end;
 	// Set multicolor colors
-	//call(SIDFILE_1_PLAY);
 	poke(MULTICOLOR_CHAR_COL, 0, @levelpointer[0]);
 	poke(MULTICOLOR_CHAR_COL, 2, @levelpointer[1]); 
 	poke(MULTICOLOR_CHAR_COL, 1, @levelpointer[2]);
 
 	@levelpointer:=@levelpointer+3;
-	// levelpointer now points to following data cun!
+	// levelpointer now points to the data
 
 end;
 
@@ -123,24 +112,18 @@ begin
 //	inczp(@levelpointer, 32+13);
 
 	m_rl_pos := m_rl_sizex*m_lj2 + m_li2;
-	
+	// Calculate data size of levels	
 	m_rl_val := m_rl_width*m_rl_height;
-//	m_rl_val := m_rl_val;// + m_width; 
 
-	// Skip levels
-	if m_rl_pos<>0 then
-	for m_rl_j:=0 to m_rl_pos do begin
-		@levelpointer:=@levelpointer+m_rl_val;
-		@levelpointer:=@levelpointer+m_rl_dataSize;
-	end;
+	// Locate level 
+	@levelpointer := @levelpointer +m_rl_val*m_rl_pos;
+	@levelpointer := @levelpointer +m_rl_dataSize*m_rl_pos;
 
 	moveto(m_rl_startx, m_rl_starty, $D8);
 	colormemory:=screenmemory;
 	moveto(m_rl_startx, m_rl_starty, m_screen2);
 	
 	// Fill screen with chars
-	//if current_game_mode=@gameModeMap then
-	//call(SIDFILE_1_PLAY);
 
 	for m_rl_j:=0 to m_rl_height do begin
 		m_rl_idx:=0;
