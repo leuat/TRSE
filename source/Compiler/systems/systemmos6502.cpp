@@ -50,7 +50,7 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
         Util::ConvertFileWithLoadAddress(filename+".prg", filename+".prg");
 
 
-    if (m_settingsIni->getdouble("perform_crunch")==1 && (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES)) {
+    if (m_projectIni->getdouble("exomizer_toggle")==1 && (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES)) {
         QProcess processCompress;
 
         QString fn = (filename +".prg");
@@ -125,7 +125,7 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
     if (m_buildSuccess) {
 
         output ="Assembled file size: <b>" + QString::number(size) + "</b> bytes";
-        if (m_settingsIni->getdouble("perform_crunch")==1) {
+        if (m_projectIni->getdouble("exomizer_toggle")==1) {
             output=output+" (<font color=\"#70FF40\"> " + QString::number((int)(100.0*(float)size/(float)orgFileSize))+  " % </font> of original size ) <br>";
             output=output+"Original file size: " + QString::number(orgFileSize) + " bytes";
         }

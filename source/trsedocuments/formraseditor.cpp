@@ -725,8 +725,8 @@ void FormRasEditor::MemoryAnalyze()
         SetOutputText(ErrorHandler::e.m_teOut);
         return;
     }
-    int i= m_iniFile->getdouble("perform_crunch");
-    m_iniFile->setFloat("perform_crunch",0);
+    int i= m_projectIniFile->getdouble("exomizer_toggle");
+    m_projectIniFile->setFloat("exomizer_toggle",0);
     if (m_builderThread.m_builder==nullptr) {
         ErrorHandler::e.m_warnings.clear();
         ErrorHandler::e.m_teOut = "";
@@ -738,7 +738,7 @@ void FormRasEditor::MemoryAnalyze()
     if (!m_builderThread.m_builder->Build(ui->txtEditor->toPlainText()))
         return;
 
-    m_iniFile->setFloat("perform_crunch",i);
+    m_projectIniFile->setFloat("exomizer_toggle",i);
     m_builderThread.m_builder->compiler->SaveBuild(filename + ".asm");
 
     /*QProcess process;
