@@ -114,7 +114,7 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_metaParams.append(new MetaParameter("data_width","Data width",8,0,100));
     m_metaParams.append(new MetaParameter("data_count","Data count",8,0,100));
     m_metaParams.append(new MetaParameter("data_extra","Extra data",3,0,1000));
-    m_metaParams.append(new MetaParameter("use_colors","Use charset colors",1,1,1));
+    m_metaParams.append(new MetaParameter("use_colors","Colour data is stored with level data",1,1,1));
 
     EnsureSystemColours();
 }
