@@ -162,7 +162,7 @@ public:
 
     virtual void CopySingleChar(LImage* src, int srcChar, int dstChar) {qDebug() << "CopySingleChar not implemented";}
 
-    virtual QStringList SpriteCompiler(QString name, int x, int y, int w, int h) {return QStringList();}
+    virtual QStringList SpriteCompiler(QString name, QString src, QString dst, int x, int y, int w, int h) {return QStringList();}
 
     int m_constrainDisplay = -1;
     bool m_silentExport=false;

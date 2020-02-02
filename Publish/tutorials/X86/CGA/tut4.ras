@@ -3,12 +3,13 @@ var
     time,i,delta,k,t: byte;
     x,y,z,ddx: integer = 0; 
 	src,dst : pointer;   
+	ds_xx, ds_yy, ds_ddx : integer;
 	sine : incbin("data/sine.bin");
 	
 @export "images/image2.flf" "images/image2.bin" 0
 	data : incbin("images/image2.bin");
 
-@spritecompiler "images/sprites.flf" "cat" 0 0 5 3
+@spritecompiler "images/sprites.flf" "cat" "$B800" "data" 0 0 5 3
 
 procedure DrawSprite(xx,yy : integer);
 begin
@@ -54,9 +55,16 @@ begin
 			k:=t*44;
 			y:=sine[time+k]/4 + 10;
 			x:=sine[time+64+delta+k]/2+120;
-			DrawSprite(x,y);
+			asm("
+				mov ax,[x]
+				mov [ds_xx],ax
+				mov ax,[y]
+				mov [ds_yy],ax
+				call drawsprite_cat
+
+			");
+//			DrawSprite(x,y);
 		end;
-//		DrawSprite(320-x,y);
 		
 		time:=time+1;
 		k:=time&3;

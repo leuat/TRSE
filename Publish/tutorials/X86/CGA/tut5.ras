@@ -2,9 +2,10 @@ program InputMe;
 var  
     i, time,t: byte; 
     update,trigger: byte=0;
-	ddx,delta : integer;
+	ds_ddx,delta,xx,yy : integer;
 	src, dst,zp : pointer;
 	px, py,x,y,z : integer = 30;
+	ds_xx, ds_yy : integer;
 		sine : incbin("data/sine.bin");
 
 		cols : array[4] of byte=(cga_color1, cga_color1, cga_color2, cga_color3);
@@ -28,31 +29,7 @@ var
 
 
 
-@spritecompiler "images/sprites.flf" "cat" 0 0 5 3
-
-procedure DrawSprite(xx,yy : integer; p:pointer);
-begin
-	ddx:=(xx/2)&1;
-	xx:=xx/4;
-	yy:=yy*80;
-	src:=toPointer(hi(data),lo(data)+xx+yy);
-//	src:=toPointer($6800,xx+yy);
-	dst:=toPointer($B800,xx+yy);
-	asm("
-		mov ax,[dst]
-		mov es,ax
-		mov di, [dst+2]
-		
-		mov ax,[src]
-		mov ds,ax
-		mov si, [src+2]
-		");
-	if (ddx=0) then
-		asm(" call cat_sprite1");
-	if (ddx=1) then
-		asm(" call cat_sprite0");
-
-end;
+@spritecompiler "images/sprites.flf" "cat" "$B800" "data" 0 0 5 3
 
 
 procedure InitLandscape();
@@ -126,7 +103,7 @@ begin
 	init_keyboard_irq();
 	setscreenmode(mode_cga_320x200);
 	InitLandscape();	
-d
+
 	fillw(data,0,8000);
 
 	px:=90;
@@ -135,7 +112,12 @@ d
 
 
 	InstallKeyboardIRQ();	
+	asm("
+		lea di, [cat_sprite1]
+		mov [zp],ds
+		mov [zp+2],di
 
+	");
 
 	while (true) do
 	begin
@@ -156,7 +138,17 @@ d
 			update:=2;
 			trigger:=2;
 		end;		
-		DrawSprite(px,py,zp);
+//		DrawSprite(px,py);
+		asm("
+		mov ax,[px]
+		mov [ds_xx], ax		
+		mov ax,[py]
+		mov [ds_yy], ax		
+		
+		call drawsprite_cat
+		
+		");
+		
 		RenderTriggerLandscape();	
 	end;
 

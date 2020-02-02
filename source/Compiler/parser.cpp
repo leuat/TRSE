@@ -582,6 +582,8 @@ void Parser::HandlePreprocessorInParsing()
         Eat(); // Filename
         Eat(); // Name
         Eat(); // X
+        Eat(); // Name
+        Eat(); // X
         Eat(); // Y
         Eat(); // W
         Eat(); // H
@@ -2315,6 +2317,10 @@ void Parser::HandleSpriteCompiler()
     Eat(TokenType::STRING); // Filename
     QString name = m_currentToken.m_value;
     Eat(TokenType::STRING); // Name
+    QString dst = m_currentToken.m_value;
+    Eat(TokenType::STRING); // Name
+    QString src = m_currentToken.m_value;
+    Eat(TokenType::STRING); // Name
     int x = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST); // X
     int y = m_currentToken.m_intVal;
@@ -2325,7 +2331,7 @@ void Parser::HandleSpriteCompiler()
     Eat(TokenType::INTEGER_CONST); // H
 
     LImage* img = LImageIO::Load(m_currentDir +"/"+filename);
-    m_parserAppendix << img->SpriteCompiler(name,x,y,w,h);
+    m_parserAppendix << img->SpriteCompiler(name,src,dst,x,y,w,h);
 
 
 

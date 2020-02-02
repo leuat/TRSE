@@ -22,7 +22,7 @@ void LImageCGA::ExportBin(QFile &file)
     file.write(odd);
 }
 
-QStringList LImageCGA::SpriteCompiler(QString name, int xp, int yp, int w, int h) {
+QStringList LImageCGA::SpriteCompiler(QString name, QString source, QString dst, int xp, int yp, int w, int h) {
     QStringList src;
 
     src<<";Sprite Compiler appendix CGA for : "+name;
@@ -30,6 +30,9 @@ QStringList LImageCGA::SpriteCompiler(QString name, int xp, int yp, int w, int h
     for (int i=0;i<2;i++)
     {
         src<<name+"_sprite" + QString::number(i) + ":";
+
+//        src<<"mov ds,ax";
+  //      src<<"mov di,bx";
         // Build bytes
         QByteArray even,odd, evenMask,oddMask;
         toCGA(even,odd,evenMask, oddMask, xp*4+i*2,yp*8,w*8,h*8);
@@ -66,6 +69,51 @@ QStringList LImageCGA::SpriteCompiler(QString name, int xp, int yp, int w, int h
         }
         src << "ret";
     }
+    src << "drawsprite_"+name+":";
+    src<< "mov ax, [ds_xx]";
+    src<< "shr ax,1";
+    src<< "and ax,1";
+    src<< "mov [ds_ddx],ax";
+
+    src<< "mov ax, [ds_xx]";
+    src<< "shr ax,1";
+    src<< "shr ax,1";
+    src<< "mov [ds_xx],ax";
+
+    src<< "mov ax,[ds_yy]";
+    src<< "mov bh, 80";
+    src<< "mul bh";
+    src<< "mov [ds_yy],ax";
+
+
+
+
+    src<< "mov ax, 0xB800";
+    src<< "mov es, ax";
+    src<< "xor di,di";
+
+    src<< "mov di, [ds_xx]";
+    src<< "add di,[ds_yy]";
+
+    src<< "lea si, [data]";
+
+//    src<< "xor si,si";
+
+    src<< "add si, [ds_xx]";
+    src<< "add si,[ds_yy]";
+
+    src<< "mov ax,1";
+    src<< "cmp [ds_ddx],ax";
+    src<< "jne "+name+"_cont";
+
+    src<< "call "+name+"_sprite0";
+    src<< "jmp "+name+"_endd";
+src<< name+"_cont:	";
+    src<< "call "+name+"_sprite1";
+src<< name+"_endd:";
+    src<<"ret";
+
+
 
     return src;
 }

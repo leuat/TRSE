@@ -11,7 +11,7 @@ public:
 
     void ExportBin(QFile &file) override;
 
-    QStringList SpriteCompiler(QString name, int x, int y, int w, int h) override;
+    QStringList SpriteCompiler(QString name, QString src, QString dst, int x, int y, int w, int h) override;
 
     void toCGA(QByteArray& even, QByteArray& odd,QByteArray& evenMask, QByteArray& oddMask, int x1, int y1, int w, int h);
 
