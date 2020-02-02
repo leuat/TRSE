@@ -455,6 +455,7 @@ void LImage::EnsureSystemColours()
         m_GUIParams[col4] = "Border & MC";
         m_GUIParams[col2] = "Aux Colour";
         m_GUIParams[col3] = "";
+        m_supports.displayForeground = false;
 //        m_GUIParams[col4] = "";
 
     }

@@ -646,8 +646,9 @@ void FormImageEditor::UpdatePalette()
         l->CreateUI(ui->layoutColorsEdit_3,1, this->size());
     l->FillComboBox(ui->cmbBackgroundMain_3);
     l->FillComboBox(ui->cmbBorderMain_3);
-    l->FillComboBox(ui->cmbMC1);
+        l->FillComboBox(ui->cmbMC1);
     l->FillComboBox(ui->cmbMC2);
+
     m_currentColorList = l;
     //}
 
@@ -1339,6 +1340,9 @@ void FormImageEditor::SetMCColors()
     int b = ui->cmbMC2->currentIndex();
     int c = ui->cmbBorderMain_3->currentIndex();
     int back = ui->cmbBackgroundMain_3->currentIndex();
+
+
+//    qDebug() << a << b << c;
 
     if (!m_ignoreMC) {
         m_work.m_currentImage->m_image->SetColor(back, 0);
