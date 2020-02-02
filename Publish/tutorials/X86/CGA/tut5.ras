@@ -19,7 +19,7 @@ var
 /*
 
 	TEST with movement
-	W A S D   to move around. WORK IN PROGRESS
+	W A S D   to move around.
 
 */
 
@@ -28,9 +28,9 @@ var
 	data : incbin("images/image2.bin");
 
 
-
-@spritecompiler "images/sprites.flf" "cat" "$B800" "data" 0 0 5 3
-
+//@spritecompiler "images/sprites.flf" "cat" 0 0 5 3
+@spritecompiler "images/sprites.flf" "plane" 0 5 4 3
+// Spritecompiler outputs a method named drawsprite_cga_cat(source,dest, x,y)
 
 procedure InitLandscape();
 begin
@@ -60,7 +60,7 @@ begin
 	
 	for i:=0 to landscapeWidth-1 do
 	begin
-		DrawLineCGA(^$B800, x, landscape[z], x+xx,landscape[z+1] , rl_color);
+		DrawLineCGA(screen_cga, x, landscape[z], x+xx,landscape[z+1] , rl_color);
 		x:=x+xx;
 		z:=z+1;
 	end;
@@ -112,12 +112,6 @@ begin
 
 
 	InstallKeyboardIRQ();	
-	asm("
-		lea di, [cat_sprite1]
-		mov [zp],ds
-		mov [zp+2],di
-
-	");
 
 	while (true) do
 	begin
@@ -125,6 +119,8 @@ begin
 
 		if (currentKey=key_d) then px:=px+2;
 		if (currentKey=key_a) then px:=px-2;
+		if (currentKey=key_s) then py:=py+2;
+		if (currentKey=key_w) then py:=py-2;
 		
 		if (px>100) then
 		begin
@@ -138,17 +134,7 @@ begin
 			update:=2;
 			trigger:=2;
 		end;		
-//		DrawSprite(px,py);
-		asm("
-		mov ax,[px]
-		mov [ds_xx], ax		
-		mov ax,[py]
-		mov [ds_yy], ax		
-		
-		call drawsprite_cat
-		
-		");
-		
+		drawsprite_cga_plane(data,screen_cga,px,py);
 		RenderTriggerLandscape();	
 	end;
 

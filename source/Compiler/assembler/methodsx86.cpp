@@ -84,6 +84,18 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
 //        END;
 
     }
+    if (m_node->m_procName.toLower().startsWith("drawsprite_cga_")) {
+        LoadAddress(as,0,true);
+        LoadAddress(as,1,false);
+        LoadVar(as,2);
+        as->Asm("mov [ds_xx],ax");
+        LoadVar(as,3);
+        as->Asm("mov [ds_yy],ax");
+
+        as->Asm("call "+m_node->m_procName);
+
+    }
+
     if (Command("setpixelcga")) {
         LoadVar(as,3);
 //        as->Asm("mov al,ah");

@@ -9,37 +9,7 @@ var
 @export "images/image2.flf" "images/image2.bin" 0
 	data : incbin("images/image2.bin");
 
-@spritecompiler "images/sprites.flf" "cat" "$B800" "data" 0 0 5 3
-
-procedure DrawSprite(xx,yy : integer);
-begin
-	ddx:=(xx/2)&1;
-	xx:=xx/4;
-	yy:=yy*80;
-	src:=toPointer(hi(data),lo(data)+xx+yy);
-	dst:=toPointer($B800,xx+yy);
-	asm("
-	
-		mov ax, 10
-
-		mov ax,[dst]
-		mov es,ax
-		mov di, [dst+2]
-		
-		mov ax,[src]
-		mov ds,ax
-		mov si, [src+2]
-		");
-	if (ddx=0) then
-		asm(" call cat_sprite1");
-	if (ddx=1) then
-		asm(" call cat_sprite0");
-//	if (ddx=2) then
-	//	asm(" call cat_sprite1");
-//	if (ddx=3) then
-	//	asm(" call cat_sprite0");
-
-end;
+@spritecompiler "images/sprites.flf" "cat" 0 0 5 3
 
 
 begin
@@ -55,15 +25,7 @@ begin
 			k:=t*44;
 			y:=sine[time+k]/4 + 10;
 			x:=sine[time+64+delta+k]/2+120;
-			asm("
-				mov ax,[x]
-				mov [ds_xx],ax
-				mov ax,[y]
-				mov [ds_yy],ax
-				call drawsprite_cat
-
-			");
-//			DrawSprite(x,y);
+			drawsprite_cga_cat(data, screen_cga,x,y);
 		end;
 		
 		time:=time+1;

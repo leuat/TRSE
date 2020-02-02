@@ -29,7 +29,7 @@ QStringList LImageCGA::SpriteCompiler(QString name, QString source, QString dst,
     w+=1;
     for (int i=0;i<2;i++)
     {
-        src<<name+"_sprite" + QString::number(i) + ":";
+        src<<"drawsprite_cga_"+name+"_sprite" + QString::number(i) + ":";
 
 //        src<<"mov ds,ax";
   //      src<<"mov di,bx";
@@ -49,10 +49,18 @@ QStringList LImageCGA::SpriteCompiler(QString name, QString source, QString dst,
 //                    src << " mov al,"+Util::numToHex(~((uchar)(*data)[cur++])).replace("$","0x");
   //                  src << " and al, [ds:si+"+QString::number(siAdd++)+"]";
 
+                    if (((*mask)[cur])==(char)0x0) {
+                        src<<"mov al, [ds:si+"+QString::number(siAdd++)+"]";
+                        src << "stosb";
+                    }
+                    else {
                     src << " mov al,"+Util::numToHex(((uchar)(*mask)[cur])^0xFF).replace("$","0x");
                     src << " and al, [ds:si+"+QString::number(siAdd++)+"]";
-                    src << " or al,"+Util::numToHex(((uchar)(*data)[cur++])).replace("$","0x");
+                    src << " or al,"+Util::numToHex(((uchar)(*data)[cur])).replace("$","0x");
                     src << " stosb";
+                    }
+                    cur++;
+
 //                    src << " inc si";
                 }
                 src << " add di, " + Util::numToHex(80-w*2).replace("$","0x");
@@ -69,7 +77,7 @@ QStringList LImageCGA::SpriteCompiler(QString name, QString source, QString dst,
         }
         src << "ret";
     }
-    src << "drawsprite_"+name+":";
+    src << "drawsprite_cga_"+name+":";
     src<< "mov ax, [ds_xx]";
     src<< "shr ax,1";
     src<< "and ax,1";
@@ -88,14 +96,14 @@ QStringList LImageCGA::SpriteCompiler(QString name, QString source, QString dst,
 
 
 
-    src<< "mov ax, 0xB800";
-    src<< "mov es, ax";
-    src<< "xor di,di";
+//    src<< "mov ax, 0xB800";
+//    src<< "mov es, ax";
+//    src<< "xor di,di";
 
-    src<< "mov di, [ds_xx]";
+    src<< "add di, [ds_xx]";
     src<< "add di,[ds_yy]";
 
-    src<< "lea si, [data]";
+//    src<< "lea si, [data]";
 
 //    src<< "xor si,si";
 
@@ -106,10 +114,10 @@ QStringList LImageCGA::SpriteCompiler(QString name, QString source, QString dst,
     src<< "cmp [ds_ddx],ax";
     src<< "jne "+name+"_cont";
 
-    src<< "call "+name+"_sprite0";
+    src<< "call drawsprite_cga_"+name+"_sprite0";
     src<< "jmp "+name+"_endd";
 src<< name+"_cont:	";
-    src<< "call "+name+"_sprite1";
+    src<< "call drawsprite_cga_"+name+"_sprite1";
 src<< name+"_endd:";
     src<<"ret";
 
