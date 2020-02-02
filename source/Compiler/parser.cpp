@@ -1982,6 +1982,13 @@ Node *Parser::TypeSpec()
             Eat();
             Eat(TokenType::LPAREN);
             while (m_currentToken.m_type!=TokenType::RPAREN) {
+                // First check if symbol exists:
+                if (m_currentToken.m_value!="") {
+                    if (m_symTab->m_symbols.contains(m_currentToken.m_value))
+                        data<<m_currentToken.m_value;
+                 }
+
+                else
                 data << "$0"+QString::number(GetParsedInt(),16);//QString::number(m_currentToken.m_intVal);
                 //data << "$0"+QString::number(GetParsedInt(),16);//QString::number(m_currentToken.m_intVal);
                 if (m_currentToken.m_type!=TokenType::RPAREN) {

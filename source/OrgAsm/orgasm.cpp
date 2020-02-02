@@ -466,6 +466,7 @@ void Orgasm::ProcessWordData(OrgasmLine &ol)
     QStringList lst = ol.m_expr.split(",");
     for (QString s: lst) {
         if (s.trimmed()=="") continue;
+        s = s.trimmed().simplified();
         if (m_symbolsList.contains(s)) {
             m_data.append(m_symbols[s]&0xFF);
             m_data.append((m_symbols[s]>>8)&0xFF);
