@@ -1313,6 +1313,11 @@ void TRSEProject::VerifyDefaults() {
 
     }
 
+    if (!m_ini.contains("exomize_toggle")) {
+        m_ini.setFloat("exomize_toggle",0);
+    }
+
+
     if (m_ini.getString("system")=="X86") {
         if (!m_ini.contains("dosbox_x86_system"))
             m_ini.setString("dosbox_x86_system","default");

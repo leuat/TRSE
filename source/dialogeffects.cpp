@@ -534,6 +534,18 @@ static int AddScreen(lua_State* L) {
     return 0;
 }
 
+static int Translate(lua_State* L) {
+    if (!VerifyFjongParameters(L,"Translate"))
+        return 0;
+
+    if (m_effect!=nullptr) {
+        m_effect->m_mc->Transform(lua_tonumber(L,1),lua_tonumber(L,2));
+        ///m_compression.AddScreen(ba, m_effect->m_img,lua_tonumber(L,1),lua_tonumber(L,2));
+    }
+
+    return 0;
+}
+
 static int AddCharsetScreen(lua_State* L) {
     if (!VerifyFjongParameters(L,"AddCharsetScreen"))
         return 0;
@@ -961,6 +973,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "SaveCompressedTRM", SaveCompressedTRM);
 
     lua_register(m_script->L, "AddScreen", AddScreen);
+    lua_register(m_script->L, "Translate", Translate);
     lua_register(m_script->L, "AddCharsetScreen", AddCharsetScreen);
     lua_register(m_script->L, "AddScreenPetscii", AddScreenPetscii);
     lua_register(m_script->L, "AddScreenBinary", AddScreenBinary);
@@ -1033,6 +1046,9 @@ void DialogEffects::UpdateGlobals()
     m_rt.m_globals.m_outputType = m_script->get<float>("output.output_type");
     m_rt.m_globals.m_aspect = m_script->get<float>("output.aspect");
 
+    if (m_script->lua_exists("globals.translate"))
+        m_rt.m_globals.m_translate = m_script->getVec("globals.translate");
+
     if (m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_VGA)  {
         QString f = m_script->get<QString>("output.palette_file");
 
@@ -1046,6 +1062,10 @@ void DialogEffects::UpdateGlobals()
         m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.index_colors");
 
     }
+
+
+  //  if (m_script->lua_exists(material+".checkerboard")) {
+
 
     if (m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_BINARY)  {
 

@@ -695,7 +695,8 @@ bool FormRasEditor::BuildStep()
 void FormRasEditor::FillFromIni()
 {
     ui->chkPostOpt->setChecked(m_iniFile->getdouble("post_optimize")==1);
-    ui->chkExomize->setChecked(m_iniFile->getdouble("perform_crunch")==1);
+//    ui->chkExomize->setChecked(m_iniFile->getdouble("perform_crunch")==1);
+    ui->chkExomize->setChecked(m_projectIniFile->getdouble("exomizer_toggle")==1);
     ui->chkWarnings->setChecked(m_iniFile->getdouble("display_warnings")==1);
 //    qDebug() << "FillFromIni" << m_iniFile->getdouble("perform_crunch");
     isInitialized=true;
@@ -706,7 +707,7 @@ void FormRasEditor::FillToIni()
     if (!isInitialized)
         return;
     m_iniFile->setFloat("post_optimize",ui->chkPostOpt->isChecked()?1:0);
-    m_iniFile->setFloat("perform_crunch",ui->chkExomize->isChecked()?1:0);
+    m_projectIniFile->setFloat("exomizer_toggle",ui->chkExomize->isChecked()?1:0);
     m_iniFile->setFloat("display_warnings",ui->chkWarnings->isChecked()?1:0);
 
     m_iniFile->Save();

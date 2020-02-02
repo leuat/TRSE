@@ -147,7 +147,9 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
             RayMarchSingle(ray, Image, nullptr,m_globals.m_steps,tid, QPoint(x,y));
   //          tmp[i+j*w] = ray.m_intensity;
             QColor c = Util::toColor(ray.m_intensity*256 + m_globals.m_ambient);
-            img.setPixel(i,j,c.rgba());
+            img.setPixel((i+(int)m_globals.m_translate.x())%img.width(),
+                         (j+(int)m_globals.m_translate.y())%img.height(),
+                         c.rgba());
 
         }
 

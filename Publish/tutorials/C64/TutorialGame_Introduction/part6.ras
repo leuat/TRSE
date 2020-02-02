@@ -48,6 +48,7 @@ begin
 	levelp:=@levelPosition;
 	// Read header data
 	ReadHeader();
+	m_rl_starty:=2;
 end;
 
 

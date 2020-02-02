@@ -264,7 +264,7 @@ public:
 //    virtual void Next() {}
   //  virtual void Prev() {}
 
-    virtual void Transform(int x, int y) { }
+    virtual void Transform(int x, int y);
 
     virtual void Fix() {} // Used to fix problems. Really? Yeah. Character level corruptions etc.
 

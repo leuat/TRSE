@@ -95,6 +95,8 @@ begin
 
 	levelp:=@levelPosition;
 	ReadHeader();
+	m_rl_starty:=2;
+
 end;
 
 

@@ -373,6 +373,9 @@ int Parser::GetParsedInt() {
     bool done = false;
     QString str = "";
     int p = 0;
+
+
+
     while (!done) {
 //        qDebug() << "ival:"  << QString::number(m_currentToken.m_intVal);
 //        qDebug() << m_currentToken.getType();
@@ -429,6 +432,7 @@ int Parser::GetParsedInt() {
                str+=QString::number(s->m_value->m_fVal);
                Eat();
               }
+
      //             ErrorHandler::e.Error("Value required to be a number or a constant.",m_currentToken.m_lineNumber);
 
         }
@@ -1982,14 +1986,17 @@ Node *Parser::TypeSpec()
             Eat();
             Eat(TokenType::LPAREN);
             while (m_currentToken.m_type!=TokenType::RPAREN) {
+                bool found = false;
                 // First check if symbol exists:
                 if (m_currentToken.m_value!="") {
-                    if (m_symTab->m_symbols.contains(m_currentToken.m_value))
+                    if (m_symTab->m_symbols.contains(m_currentToken.m_value) && (m_symTab->LookupConstants(m_currentToken.m_value.toUpper())==nullptr)) {
                         data<<m_currentToken.m_value;
+                        found = true;
+                    }
+//                    qDebug() << "ADDRESS " << m_currentToken.m_value <<m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
                  }
-
-                else
-                data << "$0"+QString::number(GetParsedInt(),16);//QString::number(m_currentToken.m_intVal);
+                if (!found)
+                    data << "$0"+QString::number(GetParsedInt(),16);//QString::number(m_currentToken.m_intVal);
                 //data << "$0"+QString::number(GetParsedInt(),16);//QString::number(m_currentToken.m_intVal);
                 if (m_currentToken.m_type!=TokenType::RPAREN) {
 

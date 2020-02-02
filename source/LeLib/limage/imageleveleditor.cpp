@@ -171,7 +171,7 @@ void ImageLevelEditor::SetColor(uchar col, uchar idx)
 
 
 
-//    m_charset->SetColor(col, idx);
+    m_charset->SetColor(col, idx);
 }
 
 void ImageLevelEditor::Clear()
