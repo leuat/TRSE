@@ -30,6 +30,7 @@ var
 	// can use some bytes in ZERO PAGE memory ($35 to $63)
 	xp : byte at $35;
 	yp : byte at $36;
+	i, j : byte at $37;
 
 
 @startblock $2000 "CODE"
@@ -64,11 +65,6 @@ begin
 		
 		waitForRaster( 122 );
 
-		waitForRaster( 121 );
-
-		waitForRaster( 120 );
-
-		waitForRaster( 119 );
 
 		vbmsetposition2( xp, yp );
 		vbmDrawSpriteE( adrWillyR_A, adrWillyR_B );
