@@ -21,16 +21,24 @@ var
 // declare all your include files here
 @vbmexport "resources/charsets/sprWilly.flf" "resources/charsets/sprWillyR.bin" 0 8 2 0
 @vbmexport "resources/charsets/sprWilly.flf" "resources/charsets/sprWillyL.bin" 40 48 2 0
+@vbmexport "resources/charsets/chrWilly.flf" "resources/charsets/chrWilly.bin" 0 46 1 0
 
 	const adrWillyR : address = $4000; // willy = 4 frames * 16 rows * 2 chars = 128 bytes
 	const adrWillyL : address = adrWillyR + 128; // 128 bytes
+	const adrChars   : address = adrWillyL +128;
+	const adrLevel  : address = adrChars + (46 * 8);
+	const lvlData   : address = adrLevel + 45;
+
 	willyR: incbin("resources/charsets/sprWillyR.bin", adrWillyR);
 	willyL: incbin("resources/charsets/sprWillyL.bin", adrWillyL);
+	chars : incbin("resources/charsets/chrWilly.bin", adrChars);
+	level : incbin("resources/tilemap/lvlWilly.flf", adrLevel);
 
 	// can use some bytes in ZERO PAGE memory ($35 to $63)
 	xp : byte at $35;
 	yp : byte at $36;
-	i, j : byte at $37;
+	dir : byte at $37;
+	i, j : byte at $38;
 
 
 @startblock $2000 "CODE"
@@ -46,6 +54,15 @@ var
 		adrWillyR+O0b, adrWillyR+O1b, adrWillyR+O2b, adrWillyR+O3b
 	);
 
+	// pre-shifted addresses for Player Left - side A
+	adrWillyL_A: array[] of integer = (
+		adrWillyL+O0a, adrWillyL+O1a, adrWillyL+O2a, adrWillyL+O3a
+	);
+	// pre-shifted addresses for Player Left - side B
+	adrWillyL_B: array[] of integer = (
+		adrWillyL+O0b, adrWillyL+O1b, adrWillyL+O2b, adrWillyL+O3b
+	);
+
 
 begin
 
@@ -55,22 +72,57 @@ begin
 	vbmClearColor( WHITE );
 	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
 
-	xp := 10; yp := 100;
+	vbmDrawTileMap(lvlData, adrChars, 0,0, 20,184);
+
+	xp := 64; yp := 160; dir := 1;
+	
+	i := 0;
 
 	while ( true ) offpage do
 	begin
 	
 		vbmsetposition2( xp, yp );
-		vbmDrawSpriteE( adrWillyR_A, adrWillyR_B );
-		
+		if dir = 1 then
+			vbmDrawSpriteE( adrWillyR_A, adrWillyR_B )
+		else
+			vbmDrawSpriteE( adrWillyL_A, adrWillyL_B );
+
+	
 		waitForRaster( 122 );
 
 
 		vbmsetposition2( xp, yp );
-		vbmDrawSpriteE( adrWillyR_A, adrWillyR_B );
+		if dir = 1 then
+			vbmDrawSpriteE( adrWillyR_A, adrWillyR_B )
+		else
+			vbmDrawSpriteE( adrWillyL_A, adrWillyL_B );
 		
-		xp := xp + 2;
-		if xp > 152 then xp := 0;
+		i := i + 1;
+		
+		if (i & 3 = 3) then
+		begin
+		
+			// update Willy
+			readjoy1();
+		
+			if (joy1 & joy_right) then
+			begin
+			
+				dir := 1;
+				if xp< 136 then xp := xp + 2;
+				
+			end;
+			
+			if (joy1 & joy_left) then
+			begin
+			
+				dir := 0;
+				if xp> 0 then xp := xp - 2;
+				
+			end;
+
+		end;
+		
 
 	end;
 	
