@@ -1,13 +1,50 @@
 program VicWilly;
 var  
 
+// these constants are used to calculate positions of sprite data
+	// pre-shift sprite address offests for 8x16 sprites
+	const sprHeight16:byte = 16;
+	// side A
+	const O0a:byte = 0;
+	const O1a:byte = O0a+(sprHeight16*2);
+	const O2a:byte = O1a+(sprHeight16*2);
+	const O3a:byte = O2a+(sprHeight16*2);
+
+	// side B
+	const O0b:byte = sprHeight16;
+	const O1b:byte = O0b+(sprHeight16*2);
+	const O2b:byte = O1b+(sprHeight16*2);
+	const O3b:byte = O2b+(sprHeight16*2);
+
+
+
 // declare all your include files here
+@vbmexport "resources/charsets/sprWilly.flf" "resources/charsets/sprWillyR.bin" 0 8 2 0
+@vbmexport "resources/charsets/sprWilly.flf" "resources/charsets/sprWillyL.bin" 40 48 2 0
+
+	const adrWillyR : address = $4000; // willy = 4 frames * 16 rows * 2 chars = 128 bytes
+	const adrWillyL : address = adrWillyR + 128; // 128 bytes
+	willyR: incbin("resources/charsets/sprWillyR.bin", adrWillyR);
+	willyL: incbin("resources/charsets/sprWillyL.bin", adrWillyL);
+
+	// can use some bytes in ZERO PAGE memory ($35 to $63)
+	xp : byte at $35;
+	yp : byte at $36;
 
 
 @startblock $2000 "CODE"
 // declare all your variables and procedures here
-
 	
+
+	// pre-shifted addresses for Player Right - side A
+	adrWillyR_A: array[] of integer = (
+		adrWillyR+O0a, adrWillyR+O1a, adrWillyR+O2a, adrWillyR+O3a
+	);
+	// pre-shifted addresses for Player Right - side B
+	adrWillyR_B: array[] of integer = (
+		adrWillyR+O0b, adrWillyR+O1b, adrWillyR+O2b, adrWillyR+O3b
+	);
+
 
 begin
 
@@ -17,7 +54,29 @@ begin
 	vbmClearColor( WHITE );
 	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
 
+	xp := 10; yp := 100;
 
+	while ( true ) offpage do
+	begin
+	
+		vbmsetposition2( xp, yp );
+		vbmDrawSpriteE( adrWillyR_A, adrWillyR_B );
+		
+		waitForRaster( 122 );
+
+		waitForRaster( 121 );
+
+		waitForRaster( 120 );
+
+		waitForRaster( 119 );
+
+		vbmsetposition2( xp, yp );
+		vbmDrawSpriteE( adrWillyR_A, adrWillyR_B );
+		
+		xp := xp + 2;
+		if xp > 152 then xp := 0;
+
+	end;
 	
 	loop();
 

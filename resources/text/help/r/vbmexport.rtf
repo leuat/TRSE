@@ -10,11 +10,14 @@
     <li>The start character (see character height)</li>
     <li>The end character (see character height)</li>
     <li>The character height</li>
+    <li>Hires (0) or multicolour (1)</li>
 </ul>
 <p>The character height allows taller characters to be exported.  If set to 1, characters are exported
     normally as 1x1 characters.  If set at 2, characters are exported as 1x2 from the FLF bitmap.
 </p>
-<p>The character height also changes how the start and end characters are calculated.
+<p>The character height also changes how the start and end characters are calculated.  Setting at height of 2
+characters will means the second row is position 40, but in counting single characters it would have otherwaise
+be 80.
 </p>
 
 <h3>Example</h3>
@@ -23,7 +26,7 @@ from the .flf charset file to a binary file.
 <code>
 program VBMExport;
 
-@export "sprite/mySprite.flf" "sprite/mySprite.bin" 0 10 2
+@export "sprite/mySprite.flf" "sprite/mySprite.bin" 0 10 2 0
 var
     mySprite : incbin("sprite/mySprite.bin",$2000);
 
