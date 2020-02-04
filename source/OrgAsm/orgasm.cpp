@@ -157,6 +157,9 @@ OrgasmLine Orgasm::LexLine(int i) {
         QStringList cl = line.split("=");
         l.m_label = cl[0].trimmed();
         l.m_expr = cl[1].trimmed();
+        if (l.m_label.toLower()=="x" ||  l.m_label.toLower()=="y") {
+            throw QString("Orgasm does not support constants (or absolute addresses) that uses the name 'x' or 'y'! Please use a different name.");
+        }
         //qDebug() << l.m_expr;
         return l;
     }
@@ -596,6 +599,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         if (l2.count()>1)
             expr+=","+l2[1];
 
+//        qDebug() << "ORGASM " <<expr << org << ol.m_expr;
 
         if (expr!="") {
             int val = 0;
@@ -757,6 +761,8 @@ QString OrgasmData::ReplaceWord(QString& line, QString& word, QString replacemen
 
     QRegularExpression rg("\\b" + word + "\\b");
     return line.replace(rg,replacement);
+
+    return line;
 }
 
 QString OrgasmData::BinopExpr(QString& expr, int& val, QString rep)
