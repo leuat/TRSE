@@ -37,9 +37,9 @@ end;
 
 procedure RenderEffect();
 begin
+	asm(";here");
 	ka:=ka+3;
 	kb:=kb+2;
-
 	time:=time+1;
 		
 	if (time=10) then 

@@ -66,6 +66,8 @@ public:
     }
     bool containsPointer(Assembler* as);
 
+    bool ContainsVariable(Assembler* as, QString var);
+
 
     void parseConstants(SymbolTable* symTab) override;
 

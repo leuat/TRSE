@@ -579,6 +579,10 @@ QString ASTDispatcherX86::AssignVariable(NodeAssign *node)
 
     NodeVar* var = dynamic_cast<NodeVar*>(node->m_left);
 
+
+
+
+
     if (var->isPointer(as)) {
         if (node->m_right->isPureVariable()) {
             as->Asm("lea si, ["+node->m_right->getValue(as)+"]");
@@ -607,6 +611,46 @@ QString ASTDispatcherX86::AssignVariable(NodeAssign *node)
         as->Asm("mov ["+var->getValue(as) + "+di], "+getAx(node->m_left));
         return "";
     }
+
+//    if (var->getValue())
+    // Simple a:=b;
+    QString type ="byte";
+    if (var->isWord(as))
+        type = "word";
+
+    if (node->m_right->isPureNumeric()) {
+        as->Asm("mov ["+var->getValue(as)+ "], "+type+ " "+node->m_right->getValue(as));
+        return "";
+    }
+    // Check for a:=a+2;
+    NodeBinOP* bop =  dynamic_cast<NodeBinOP*>(node->m_right);
+   // as->Comment("Testing for : a:=a+ expr " + QString::number(bop!=nullptr));
+   // if (bop!=nullptr)
+     //  as->Comment(TokenType::getType(bop->getType(as)));
+    if (bop!=nullptr && (bop->m_op.m_type==TokenType::PLUS || bop->m_op.m_type==TokenType::MINUS)) {
+  //      as->Comment("PREBOP searching for "+var->getValue(as));
+        if (bop->ContainsVariable(as,var->getValue(as))) {
+            // We are sure that a:=a ....
+            // first, check if a:=a + number
+//            as->Comment("In BOP");
+            if (bop->m_right->isPureNumeric()) {
+                as->Comment("'a:=a + const'  optimization ");
+                as->Asm(getBinaryOperation(bop) + " ["+var->getValue(as)+"], "+type + " "+bop->m_right->getValue(as));
+                return "";
+            }
+            as->Comment("'a:=a + expression'  optimization ");
+            bop->m_right->Accept(this);
+            as->Asm(getBinaryOperation(bop) + " ["+var->getValue(as)+"], "+getAx(var));
+            return "";
+        }
+        // Check for a:=a+
+
+    }
+/*    if (node->m_right->isPureVariable()) {
+        as->Asm("mov ["+var->getValue(as)+ "],   " +getX86Value(as,node->m_right));
+        return "";
+    }
+*/
 
     node->m_right->Accept(this);
 

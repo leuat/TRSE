@@ -86,6 +86,25 @@ public:
         return a+"l";
 
     }
+    QString getX86Value(Assembler* as, Node* n) {
+        if (n->isPureVariable())
+            return "["+n->getValue(as)+"]";
+        return n->getValue(as);
+
+    }
+
+    QString getBinaryOperation(NodeBinOP* bop) {
+        if (bop->m_op.m_type == TokenType::PLUS)
+            return "add";
+        if (bop->m_op.m_type == TokenType::MINUS)
+            return "sub";
+        if (bop->m_op.m_type == TokenType::DIV)
+            return "div";
+        if (bop->m_op.m_type == TokenType::MUL)
+            return "mul";
+        return " UNKNOWN BINARY OPERATION";
+    }
+
     void PushX() {
         if (m_lvl==3)
             ErrorHandler::e.Error("Error in X86 dispatcher PopX : trying to push regstack from max");

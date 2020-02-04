@@ -12713,29 +12713,83 @@ void Methods6502::CopyCharsetFromRom(Assembler *as)
 
 void Methods6502::IncDec(Assembler *as, QString cmd)
 {
+    QString lbl = as->NewLabel("incdec");
 //    m_node->RequireAddress(m_node->m_params[0], "Inc/Dec", m_node->m_op.m_lineNumber);
     NodeNumber* n = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
     NodeVar* v = dynamic_cast<NodeVar*>(m_node->m_params[0]);
-    if (v!=nullptr && v->m_expr!=nullptr) {
-        as->ClearTerm();
-        v->m_expr->Accept(m_dispatcher);
-        as->Term();
-        as->Asm("tax");
-        as->Asm(cmd +" " + v->getValue(as) + ",x");
-        return;
 
-    }
     if (n==nullptr && v==nullptr)
         ErrorHandler::e.Error("Inc / Dec requires an address / variable", m_node->m_op.m_lineNumber);
 
     if (n!=nullptr && n->getType(as)!=TokenType::ADDRESS)
         ErrorHandler::e.Error("Inc / Dec requires an address / variable", m_node->m_op.m_lineNumber);
 
-    as->ClearTerm();
+    /*
+    if (v!=nullptr && v->m_expr!=nullptr) {
+        as->ClearTerm();
+        v->m_expr->Accept(m_dispatcher);
+        as->Term();
+        as->Asm("tax");
+        as->Asm(cmd +" " + v->getValue(as) + ",x");
+        if (v->isWord(as)) {
+            as->Asm("bcc " + lbl);
+            as->Asm("inx");
+            as->Asm(cmd+ " " + v->getValue(as) + ",x");
+            as->Label(lbl);
+
+        }
+        return;
+
+    }
+
+    */
+    bool fix = false;
+    // isWord doesn't work
+    QString addx="";
+    if (v!=nullptr && v->m_expr!=nullptr) {
+        as->ClearTerm();
+        v->m_expr->Accept(m_dispatcher);
+        as->Term();
+        addx=",x";
+        fix = v->getArrayType(as)==TokenType::INTEGER;
+        if (fix)
+            as->Asm("asl");
+        as->Asm("tax");
+    }
+
+    if (cmd.toLower()=="inc") {
+        as->Asm(cmd +" " + m_node->m_params[0]->getValue(as)+addx);
+        if (v!=nullptr)
+        if (v->isWord(as) || fix) {
+                as->Asm("bne " + lbl);
+                as->Asm(cmd+ " " + v->getValue(as) + " +1"+addx);
+                as->Label(lbl);
+            }
+    }
+//    qDebug() << "INCDEC TYPE " << TokenType::getType(m_node->getType(as));
+    if (cmd.toLower()=="dec") {
+        if (v!=nullptr)
+        if (v->isWord(as) || fix) {
+                as->Asm("lda " + v->getValue(as)+addx);
+                as->Asm("bne " + lbl);
+                as->Asm("dec " + v->getValue(as) + " +1"+addx);
+                as->Label(lbl);
+            }
+        as->Asm(cmd +" " + m_node->m_params[0]->getValue(as)+addx);
+
+    }
+
+
+
+    /*as->ClearTerm();
     as->Term(cmd + " ");
     m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();
+*/
 
+
+
+    as->PopLabel("incdec");
 
 }
 

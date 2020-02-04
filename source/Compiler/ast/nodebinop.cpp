@@ -96,6 +96,23 @@ bool NodeBinOP::containsPointer(Assembler *as)
     return m_left->containsPointer(as) || m_right->containsPointer(as);
 }
 
+bool NodeBinOP::ContainsVariable(Assembler *as, QString var)
+{
+    if (m_right->isPureVariable() && m_right->getValue(as)==var) {
+        // Only switch if PLUS
+        if (m_op.m_type == TokenType::PLUS) {
+            Node* n = m_left;
+            m_left = m_right;
+            m_right = n;
+            return true;
+        }
+    }
+
+    if (m_left->isPureVariable() && m_left->getValue(as)==var) {
+        return true;
+    }
+}
+
 void NodeBinOP::parseConstants(SymbolTable *symTab) {
 
  //   qDebug() << "NodeBinOp :: parse HERE1" << m_left->isPureNumeric() <<m_right->isPureNumeric();

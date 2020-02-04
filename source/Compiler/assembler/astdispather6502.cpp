@@ -164,7 +164,7 @@ void ASTDispather6502::HandleVarBinopB16bit(Node *node) {
     //as->Label(lblJmp);
     as->Comment("HandleVarBinopB16bit");
     as->ClearTerm();
-    as->Asm("ldy #0");
+    as->Asm("ldy #0 ; ::HandleVarBinopB16bit 0");
 
 //    qDebug() << node->m_right
     //qDebug() << "NodeBinop : " << TokenType::getType(node->m_right->getType(as)) <<TokenType::getType(node->m_left->getType(as)) ;
@@ -656,7 +656,7 @@ void ASTDispather6502::dispatch(NodeNumber *node)
     }
 
     if (node->m_forceType==TokenType::INTEGER && node->m_val<=255) {
-        as->Asm("ldy #0");
+        as->Asm("ldy #0   ; Force integer assignment, set y = 0 for values lower than 255");
     }
 
 
@@ -2221,7 +2221,6 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
         }
         else {
             //if regular array
-
             NodeVar* var = dynamic_cast<NodeVar*>(node->m_expr);
             //NodeNumber* num = dynamic_cast<NodeNumber*>(node->m_expr);
             QString secondReg="x";
@@ -2234,12 +2233,13 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
             }
 
             // Optimize for number or pure var
-            if (node->m_expr->getType(as)==TokenType::INTEGER_CONST || var!=nullptr) {
+            if (node->m_expr->getType(as)==TokenType::INTEGER_CONST) {
                 //qDebug() << "StoreVariable:: HER";
                 as->ClearTerm();
                 as->Term("ld"+secondReg +" ");
                 node->m_expr->Accept(this);
                 as->Term();
+//                as->Asm("COMMENT BUT WHY DOES IT DISAPPEAR");
                 as->Asm("sta " +pa + node->getValue(as)+ pb + "," + secondReg);
                 if (node->getArrayType(as)==TokenType::INTEGER) {
                     as->Asm("in"+secondReg);
@@ -2257,10 +2257,15 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
             node->m_expr->Accept(this);
             //                node->m_expr->Build(as);
             as->Term();
+            if (node->getArrayType(as)==TokenType::INTEGER)
+                as->Asm("asl");
             as->Asm("ta" + secondReg);
             as->Asm("pla");
             as->Asm("sta " +pa + node->getValue(as)+pb+","+ secondReg);
-
+            if (node->getArrayType(as)==TokenType::INTEGER)
+                as->Asm("in"+secondReg);
+             as->Asm("tya");
+             as->Asm("sta " +pa + node->getValue(as)+pb+","+ secondReg);
         }
         return;
     }
@@ -2801,6 +2806,7 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
 
     node->m_right->Accept(this);
     as->Term();
+    as->Comment("Calling STOREVARIABLE");
     StoreVariable(v);
 
      return v->getValue(as);
