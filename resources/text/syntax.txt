@@ -186,6 +186,7 @@ m; MemCpyFast; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a,b,a,b
 m; MemCpyUnroll; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a,b,a,b
 m; BlockMemCpy; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a,a,n
 m; Inc; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a
+m; IncMax; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a
 m; Dec; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a
 m; Fill; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a, b, b
 m; SetMemoryConfig ; C64,  VIC20, PET,  NES ; b,b,b

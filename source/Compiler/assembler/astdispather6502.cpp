@@ -2262,10 +2262,11 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
             as->Asm("ta" + secondReg);
             as->Asm("pla");
             as->Asm("sta " +pa + node->getValue(as)+pb+","+ secondReg);
-            if (node->getArrayType(as)==TokenType::INTEGER)
+            if (node->getArrayType(as)==TokenType::INTEGER) {
                 as->Asm("in"+secondReg);
              as->Asm("tya");
              as->Asm("sta " +pa + node->getValue(as)+pb+","+ secondReg);
+            }
         }
         return;
     }
@@ -2288,6 +2289,10 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
         }
 
     }
+
+
+
+
 }
 
 void ASTDispather6502::AssignString(NodeAssign *node, bool isPointer) {

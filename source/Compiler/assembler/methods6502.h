@@ -8,6 +8,13 @@
 #include "source/Compiler/ast/nodebuiltinmethod.h"
 #include "source/Compiler/ast/nodestring.h"
 #include "source/Compiler/ast/nodeprocedure.h"
+#include "source/Compiler/ast/nodeconditional.h"
+#include "source/Compiler/ast/nodeassign.h"
+#include "source/Compiler/ast/nodeconditional.h"
+#include "source/Compiler/ast/nodeblock.h"
+#include "source/Compiler/ast/nodebinaryclause.h"
+#include "source/Compiler/ast/nodevar.h"
+#include "source/Compiler/ast/nodenumber.h"
 
 class Methods6502
 {
@@ -148,6 +155,7 @@ public:
     void IsOverlappingWH(Assembler* as);
     void CopyCharsetFromRom(Assembler* as);
     void IncDec(Assembler* as, QString cmd);
+    void IncMax(Assembler* as, QString cmd);
     void SetMemoryConfig(Assembler* as);
     void EnableRasterIRQ(Assembler* as);
     void StartIRQ(Assembler* as);
