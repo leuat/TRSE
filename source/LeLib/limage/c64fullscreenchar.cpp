@@ -174,7 +174,7 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
                     uchar col = 0;
                     if (xx>0 && xx<img->width() && yy>0 && yy<img->height())
                         col = lst.getIndex(QColor(img->pixel(xx,yy)));
-                    if (col!=0) {
+                    if (col!=m_background) {
                         pc.p[y] |= 1<<x;
                         winner[col]++;
                     }

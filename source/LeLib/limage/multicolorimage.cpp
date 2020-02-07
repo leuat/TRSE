@@ -547,7 +547,9 @@ void MultiColorImage::ExportBin(QFile& ofile)
     colorData.append(m_border);
     data.clear();
     int charC = 3;
-    if (m_bitMask== 0b1) { // Regular color
+
+
+    if (m_bitMask== 0b1 || m_type==LImage::Type::HiresBitmap) { // Regular color
         charC = 1;
         qDebug() << "REGULAR COLOR";
     }
@@ -1329,6 +1331,10 @@ void MultiColorImage::LoadBinCharsetFilename(QFile &file)
     QByteArray data = file.read(len);
 
     m_charsetFilename = Data::data.currentPath+QString::fromLatin1(data);
+    if (data.startsWith(":"))
+        m_charsetFilename = QString::fromLatin1(data); // ROM etc
+
+//    qDebug() << "Found charset : " << m_charsetFilename;
 
 
     if (QFile::exists(m_charsetFilename))

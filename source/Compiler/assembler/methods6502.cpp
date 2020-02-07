@@ -1194,9 +1194,11 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("inc"))
         IncDec(as, "inc");
 
-    if (Command("incmax"))
-        IncMax(as, "incmax");
+    if (Command("incrange"))
+        IncMax(as, "inc");
 
+    if (Command("decrange"))
+        IncMax(as, "dec");
 
 
     if (Command("printdecimal"))
@@ -12719,23 +12721,24 @@ void Methods6502::CopyCharsetFromRom(Assembler *as)
 void Methods6502::IncMax(Assembler *as, QString cmd)
 {
     IncDec(as,cmd);
-    QString lbl = as->getLabel("incmax");
-    as->Asm("lda "+m_node->m_params[0]->getValue(as));
-    as->Asm("cmp "+m_node->m_params[1]->getValue(as));
-    as->Asm("bcc "+lbl);
-    as->Asm("lda #0");
-    as->Asm("sta "+m_node->m_params[0]->getValue(as));
-    as->Label(lbl);
+    QString lbl = as->NewLabel("incmax");
+    if (cmd=="inc") {
+        as->Asm("lda "+m_node->m_params[0]->getValue(as));
+        as->Asm("cmp "+m_node->m_params[2]->getValue(as));
+        as->Asm("bcc "+lbl);
+        LoadVar(as,1);
+        as->Asm("sta "+m_node->m_params[0]->getValue(as));
+        as->Label(lbl);
+    }
 
-
-/*    NodeBinaryClause* clause = new NodeBinaryClause(Token(TokenType::EQUALS,0),
-                                  new NodeVar(Token(TokenType::ID, m_node->m_params[0]->getValue(as))),
-            new NodeNumber(Token(TokenType::INTEGER_CONST,Util::NumberFromStringHex( m_node->m_params[0]->getValue(as))),m_node->m_params[0]->getValue(as)));
-    NodeAssign* assign = new NodeAssign(new NodeVar(Token(TokenType::ID, m_node->m_params[0]->getValue(as))),
-                                        Token(TokenType::ASSIGN),
-            new NodeNumber(Token(TokenType::ID, m_node->m_params[0]->getValue(as))));
-    NodeConditional* nc = new NodeConditional(Token(TokenType::IF,"IF"),false,clause,block,false,nullptr);
-*/
+   if (cmd=="dec") {
+        as->Asm("lda "+m_node->m_params[0]->getValue(as));
+        as->Asm("cmp "+m_node->m_params[1]->getValue(as));
+        as->Asm("bcs "+lbl);
+        LoadVar(as,2);
+        as->Asm("sta "+m_node->m_params[0]->getValue(as));
+        as->Label(lbl);
+    }
     as->PopLabel("incmax");
 }
 
