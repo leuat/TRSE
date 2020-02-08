@@ -7540,7 +7540,7 @@ void Methods6502::initVbmDrawSprite2E(Assembler *as)
     as->Comment("middle = "+ as->m_internalZP[1]);
     as->Comment("Right side = "+ as->m_internalZP[2]);
 
-    as->Label("vbmDrawSprite8E");
+    as->Label("vbmDrawSprite2E");
 
         as->Comment("draw left side");
         as->Asm("ldy #0");
