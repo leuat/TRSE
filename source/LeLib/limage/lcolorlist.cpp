@@ -83,7 +83,7 @@ void LColorList::SetMulticolor(int index, int col)
     }
     m_multicolors[i] = col;
     if (m_layout!=nullptr)
-        CreateUI(m_layout,1,m_windowSize);
+        CreateUI(m_layout,m_currentType,m_windowSize);
 
 }
 
@@ -705,7 +705,7 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize)
     if (ly==nullptr)
         return;
 
-
+    m_currentType = type;
     m_layout = ly;
     Util::clearLayout(ly, true);
     int m=0;
@@ -727,6 +727,7 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize)
 
     int maxy=0;
     int cur = 0;
+
     for(int j=0; j<m_list.count(); j++)
     {
         if (!m_list[j].displayList)
@@ -764,6 +765,7 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize)
         b->setMaximumHeight(width);
         b->setMinimumHeight(width);
         b->setPalette(p);
+        if (type==1)
         for (int k=0;k<m_multicolors.count();k++)
             if (m_multicolors[k]==j){
                 if (k!=2)

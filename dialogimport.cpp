@@ -48,7 +48,13 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 
     m_image = LImageFactory::Create(m_imageType, colorType);
     m_image->m_colorList.m_list = img->m_colorList.m_list;
-
+/*    m_image->m_footer = img->m_footer;
+    m_image->setMultiColor(img->isMultiColor());
+    for (int i=0;i<)
+    m_image->m_extraCols = img->m_extraCols;
+*/
+    m_image->CopyFrom(img);
+    m_image->Clear();
 
     LImageVIC20* vic = dynamic_cast<LImageVIC20*>(img);
     if (vic!=nullptr) {
@@ -103,8 +109,8 @@ void DialogImport::Convert()
 //    qDebug()<< "Type" << m_imageType;
     m_output.Release();
     bool useDither = ui->chkDither->isChecked();
-    qDebug() << m_image->m_width;
     m_output.m_qImage = m_work.Resize(m_image->m_width, m_image->m_height, m_image->m_colorList, m_contrast, m_shift, m_hsv, m_saturation, m_scale, useDither);
+//    qDebug() << m_image->m_width << m_output.m_qImage->width();
     //exit(1);
     m_image->Clear();
     m_image->m_importScaleX = 1+ (ui->hsScaleX->value()/100.0 - 0.5)*4;

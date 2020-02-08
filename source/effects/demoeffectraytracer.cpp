@@ -1,12 +1,10 @@
 #include "demoeffectraytracer.h"
-
+#include "source/LeLib/limage/standardcolorimage.h"
 DemoEffectRaytracer::DemoEffectRaytracer() : AbstractDemoEffect (nullptr)
 {
 
 
 }
-
-
 void DemoEffectRaytracer::Initialize()
 {
     SetParameters(0);
@@ -15,6 +13,9 @@ void DemoEffectRaytracer::Initialize()
 
 
    m_mc = new MultiColorImage(LColorList::C64);
+
+    if (!m_rt->m_globals.m_multicolor)
+        m_mc = new StandardColorImage(LColorList::C64);
 
    if (m_rt->m_globals.m_c64ImageType == 0.0) {
        if (m_mc==nullptr)

@@ -102,7 +102,7 @@ class LColorList : public QObject
 private:
 
     QVector<int> m_multicolors;
-
+    int m_currentType = 0;
 public:
     QVector<LColor> m_list;
     bool m_isMulticolor = true;
