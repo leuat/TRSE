@@ -259,11 +259,11 @@ bool ASTDispather6502::HandleSingleAddSub(Node *node) {
 
 void ASTDispather6502::HandleMulDiv(Node *node) {
 
-    if (node->m_left->isPureNumeric() && !node->m_right->isPureNumeric()) {
+    if (node->m_left->isPureNumeric() && !node->m_right->isPureNumeric() && node->m_op.m_type==TokenType::MUL ) {
         Node* tmp = node->m_left;
         node->m_left = node->m_right;
         node->m_right = tmp;
-        as->Comment("Swapping nodes :  num * expr -> exp*num");
+        as->Comment("Swapping nodes :  num * expr -> exp*num (mul only)");
     }
 
 
