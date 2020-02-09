@@ -62,7 +62,7 @@ begin
 		return();
 	end;
 	
-	if tail[0] = @TAILRIGHT then // right
+	if tail[0] = @TAILRIGHT onpage then // right
 	begin
 		tail[0] := 0;
 		tail := tail + 1;
@@ -83,7 +83,7 @@ begin
 		return();
 	end;
 	
-	if tail[0] = @TAILDOWN then // down
+	if tail[0] = @TAILDOWN onpage then // down
 	begin
 		tail[0] := 0;
 		tail := tail + @SCREEN_WIDTH;

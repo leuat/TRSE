@@ -1884,6 +1884,7 @@ void ASTDispather6502::dispatch(NodeConditional *node)
         if (isOKBranchSize && IsSimpleAndOr(dynamic_cast<NodeBinaryClause*>(node->m_binaryClause), lblstartTrueBlock,labelElse)){
         }
         else {
+            as->Comment("Full binary clause");
 //            as->Comment(" Here : " + QString::number(isOKBranchSize) +" "  +
   //                      QString::number(IsSimpleAndOr(dynamic_cast<NodeBinaryClause*>(node->m_binaryClause), lblstartTrueBlock,labelElse)));
             node->m_binaryClause->Accept(this);
