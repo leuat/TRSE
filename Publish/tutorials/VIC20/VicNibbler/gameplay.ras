@@ -41,7 +41,7 @@ begin
 		return();
 	end;
 	
-	if tail[0] = @TAILUP then // up
+	if tail[0] = @TAILUP onpage then // up
 	begin
 		tail[0] := 0;
 		tail := tail - @SCREEN_WIDTH;

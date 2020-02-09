@@ -130,6 +130,7 @@ public:
     void OptimisePhaPla1();
     void OptimisePhaPla2();
     void OptimisePhaLdxPla();
+    void OptimiseLdLd();
 
     QString getLine(int i);
     QString getNextLine(int i, int &j);

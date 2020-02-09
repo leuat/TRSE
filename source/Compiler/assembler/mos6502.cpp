@@ -635,6 +635,7 @@ void AsmMOS6502::Optimise(CIniFile& ini)
         OptimisePhaPla1();
 
     OptimisePhaLdxPla();
+    OptimiseLdLd();
 //        OptimisePhaPla2();
   //      OptimiseCmp("cpy");
   //      OptimiseCmp("cpx");
@@ -947,6 +948,24 @@ void AsmMOS6502::OptimisePhaLdxPla()
         }
     }
     RemoveLines();
+}
+
+void AsmMOS6502::OptimiseLdLd()
+{
+    m_removeLines.clear();
+    int j,k;
+    for (int i=0;i<m_source.count()-1;i++) {
+        QString l0 = getLine(i).toLower().trimmed();
+        if (l0.startsWith("ld")) {
+            QString a = QString(l0[2]);
+            QString l1 = getNextLine(i,j);
+            if (l1.toLower().trimmed().startsWith("ld"+a)) {
+               m_removeLines.append(i);
+            }
+        }
+    }
+    RemoveLines();
+
 }
 
 QString AsmMOS6502::getLine(int i)

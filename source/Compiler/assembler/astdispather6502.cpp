@@ -1878,12 +1878,14 @@ void ASTDispather6502::dispatch(NodeConditional *node)
             isSimplified = true;
         else ErrorHandler::e.Error("keyword onpage can only be used with 1 compare clause (no and, or etc)", node->m_op.m_lineNumber);
     }
+
     if (!isSimplified) {
 //        node->m_binaryClause->Build(as);
         if (isOKBranchSize && IsSimpleAndOr(dynamic_cast<NodeBinaryClause*>(node->m_binaryClause), lblstartTrueBlock,labelElse)){
         }
         else {
-
+//            as->Comment(" Here : " + QString::number(isOKBranchSize) +" "  +
+  //                      QString::number(IsSimpleAndOr(dynamic_cast<NodeBinaryClause*>(node->m_binaryClause), lblstartTrueBlock,labelElse)));
             node->m_binaryClause->Accept(this);
             // Now, a should be either true or false
 
