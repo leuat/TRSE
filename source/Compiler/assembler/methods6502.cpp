@@ -13557,7 +13557,7 @@ void Methods6502::IncMax(Assembler *as, QString cmd)
     if (cmd=="inc") {
         LoadVar(as,0);
         //as->Asm("lda "+m_node->m_params[0]->getValue(as));
-        as->Asm("cmp "+m_node->m_params[2]->getValue(as));
+        as->Asm("cmp "+m_node->m_params[2]->getValue(as)+" ; keep");
         as->Asm("bcc "+lbl);
         LoadVar(as,1);
         SaveVar(as,0);
@@ -13569,7 +13569,7 @@ void Methods6502::IncMax(Assembler *as, QString cmd)
 //        as->Asm("lda "+m_node->m_params[0]->getValue(as));
        LoadVar(as,0);
 
-        as->Asm("cmp "+m_node->m_params[1]->getValue(as));
+        as->Asm("cmp "+m_node->m_params[1]->getValue(as) + " ; keep");
         as->Asm("bcs "+lbl);
         LoadVar(as,2);
         SaveVar(as,0);
