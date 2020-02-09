@@ -125,6 +125,10 @@ m; vbmDrawSprite; VIC20 ; a, a
 m; vbmDrawSpriteE; VIC20 ; a, a
 m; vbmClearSprite; VIC20 ; a, a
 
+m; vbmDrawSprite2; VIC20 ; a, a, a
+m; vbmDrawSprite2E; VIC20 ; a, a, a
+m; vbmClearSprite2; VIC20 ; a, a, a
+
 
 # ************** AMIGA ROUTINES
 

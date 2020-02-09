@@ -266,6 +266,13 @@ public:
     void initVbmClearSprite(Assembler *as);
     void vbmClearSprite(Assembler *as);
 
+    void initVbmDrawSprite2(Assembler *as);
+    void vbmDrawSprite2(Assembler *as);
+    void initVbmDrawSprite2E(Assembler *as);
+    void vbmDrawSprite2E(Assembler *as);
+    void initVbmClearSprite2(Assembler *as);
+    void vbmClearSprite2(Assembler *as);
+
     void initVbmDrawSprite8(Assembler *as);
     void vbmDrawSprite8(Assembler *as);
     void initVbmDrawSprite8E(Assembler *as);
