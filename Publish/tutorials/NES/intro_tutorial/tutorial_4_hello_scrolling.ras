@@ -1,0 +1,430 @@
+program Tutorial_4_hello_level;
+
+/*
+	
+	This example shows how to render levels as single screens and use a sprite to traverse the dungeon 
+
+	Level can be found/edited under levels/game_level.flf
+	
+	Level uses 2x2 meta tiles that are defined in tiles/game_meta_tiles.flf
+	
+	Meta tiles uses main 8kb tileset located in tiles/game_tiles.flf
+	
+*/
+
+
+
+var  
+   	kp,shift,i,k,j,colorSize,scrollx,scrolly,curShift, curColumn: byte; 
+   	// Use the original zelda music score
+	music: incnsf("music/zelda.nsf");
+	// Standard palette. Use YYchr (https://www.romhacking.net/utilities/119/) to create and edit.
+
+	const centerX : byte = 158;
+	// Location of the player sprite
+	sprite_x, sprite_y : byte;
+
+	@define spriteLoc $204
+
+// Make sure game tiles are being automatically exported
+@export "tiles/game_tiles.flf" "tiles/game_tiles.bin" 256
+
+// Include the palette defined in game_tiles.pal. Automatically exported with @export
+	palette: incbin("tiles/game_tiles.pal");
+	
+
+// Make sure that the sprites are automatically exported! 
+@export "tiles/game_sprite_meta.flf" "tiles/spritedata.bin" 0
+	spriteData : incbin("tiles/spritedata.bin");	
+	// Format: Y, sprite, palette, X
+
+// Export & include level data
+@export "levels/game_levels.flf" "levels/game_levels.bin" 0
+	levels : incbin("levels/game_levels.bin");	
+	
+
+// Export & include meta tiles
+@export "tiles/game_meta_tiles.flf" "tiles/metatiles.bin" 0
+	meta : incbin("tiles/metatiles.bin");	
+
+
+
+@define levelpointer lp
+
+	// Level information
+    m_rl_width, m_rl_height : byte;
+    m_rl_sizex, m_rl_sizey : byte;
+    m_rl_startx, m_rl_starty : byte;
+    m_rl_dataSize, m_rl_pos : byte;
+    m_rl_i, m_rl_j, m_rl_val, m_rl_idx: byte;
+    m_rl_chunksize, m_rl_chunks : byte;
+    // Current position in level x,y
+    m_li, m_lj : byte;
+
+
+	isRendering: byte;
+	zp2,zp, lp,dp,zp3:pointer;
+
+
+
+procedure PrintNumber(xxx, yyy, num : byte);
+begin
+	zp:=$2400 + yyy*32 +xxx;
+	i:=num & $0F;
+	ppusingle(hi(zp),lo(zp)+1, i+$50);
+	i:=(num&$F0)>>4;
+	ppusingle(hi(zp),lo(zp), i+$50);
+//	ppusingle(hi(zp),lo(zp)+2, num+$50);
+end;
+
+
+
+procedure ReadHeader();
+
+begin
+	@levelpointer := levels;
+
+	// Read level header info
+
+	m_rl_sizex := @levelpointer[0];
+	m_rl_sizey := @levelpointer[1];
+
+	m_rl_width := @levelpointer[2];
+	m_rl_height := @levelpointer[3];
+
+	m_rl_startx := @levelpointer[4];
+	m_rl_starty := @levelpointer[5];
+
+	m_rl_chunks := @levelpointer[6];
+	m_rl_chunksize := @levelpointer[7];
+
+	m_rl_dataSize := @levelpointer[8];
+
+end;
+
+
+
+procedure RenderMetaBlock(zz : pointer);
+begin
+	
+	zp2:=zz;
+	for i:=0 to 2 do
+	begin	
+		ppusingle(hi(zp2),lo(zp2), dp[0]);
+		zp2:=zp2+1;
+		ppusingle(hi(zp2),lo(zp2), dp[1]);
+		zp2:=zp2+31;
+		dp:=dp+2;
+	end;
+
+end;
+
+procedure RenderMetaBlock1X(r_shift:byte;zz2 : pointer);
+begin
+	
+	zp2:=zz2;
+	ppusingle(hi(zp2),lo(zp2), dp[r_shift]);
+	zp2:=zp2+32;
+	ppusingle(hi(zp2),lo(zp2), dp[r_shift+2]);
+
+end;
+
+
+
+
+procedure RenderLevel();
+begin
+	// Turn off NMI, or else everything will crash while rendering...
+	ToggleNMI(0);
+	ToggleSprites(0);
+	ToggleBackground(0);
+	isRendering:=true;
+	togglevram32inc(false);
+	
+	
+	// Go past header
+	@levelpointer := levels;
+	@levelpointer := @levelpointer +32;
+
+	// Calculate position in level layout
+
+	m_rl_pos := m_rl_sizex*m_lj + m_li;
+	
+	m_rl_val := m_rl_width*m_rl_height;
+	colorSize:=m_rl_val/4;
+
+	@levelpointer := @levelpointer +m_rl_val*m_rl_pos;
+	@levelpointer := @levelpointer +colorSize*m_rl_pos;
+	@levelpointer := @levelpointer +m_rl_dataSize*m_rl_pos;
+
+	zp:=$2000;
+	for m_rl_j:=0 to m_rl_height do begin
+		for m_rl_i:=0 to m_rl_width do begin
+			dp:=meta + lp[m_rl_i]*4;
+	
+			RenderMetaBlock(zp);
+			zp:=zp+2;
+						
+		 end;
+		 zp:=zp+32;
+		 @levelpointer:=@levelpointer+m_rl_width;
+		 
+	end;
+	ppupoint($23,$C0);
+	// Print color attribute data
+	for k:=0 to colorSize do
+		ppuWrite(lp[k]);
+		
+	@levelpointer:=@levelpointer+3 + m_rl_val/4;
+	ppusingle($3F,00, $E); // Set background color to black
+	// Turn on NMI again, and resume the game!
+	ToggleNMI(1);
+	isRendering:=false;
+
+end;
+
+procedure RenderLevelColumn();
+begin
+	// Turn off NMI, or else everything will crash while rendering...
+//	ToggleNMI(0);
+	ToggleSprites(0);
+	ToggleBackground(0);
+	isRendering:=true;
+	togglevram32inc(false);
+	
+	
+	// Go past header
+	@levelpointer := levels;
+	@levelpointer := @levelpointer +32;
+
+	// Calculate position in level layout
+
+	m_rl_pos := m_rl_sizex*m_lj + m_li;
+	
+	m_rl_val := m_rl_width*m_rl_height;
+	colorSize:=m_rl_val/4;
+
+	@levelpointer := @levelpointer +m_rl_val*m_rl_pos;
+	@levelpointer := @levelpointer +colorSize*m_rl_pos;
+	@levelpointer := @levelpointer +m_rl_dataSize*m_rl_pos;
+
+	i:=curColumn&$FE;
+	shift:=1-((scrollx&15)/8);
+	
+	i:=i+shift;
+	zp:=$2400+i;
+	zp3:=$2000+i;
+
+
+	m_rl_i:=curColumn/2;
+	for m_rl_j:=0 to m_rl_height do begin
+			dp:=meta + lp[m_rl_i]*4;
+	
+			RenderMetaBlock1X(shift,zp);
+			dp:=meta + lp[m_rl_i]*4;
+			RenderMetaBlock1X(shift,zp3);
+			
+		 zp3:=zp3+64;
+		 zp:=zp+64;		
+		 @levelpointer:=@levelpointer+m_rl_width;
+		 
+	end;
+	i:=((curColumn/2))/2;
+	zp3:=$23C0+i;
+	zp:=$27C0+i;
+//	i:=lp[i
+	k:=curColumn/4;
+	for m_rl_j:=0 to m_rl_height/2 do 
+	begin
+		ppusingle(hi(zp),lo(zp),lp[k]);
+		ppusingle(hi(zp3),lo(zp3),lp[k]);
+		k:=k+8;
+		zp:=zp+8;
+		zp3:=zp3+8;
+	end;
+	ToggleNMI(1);
+	isRendering:=false;
+
+end;
+
+
+
+// Forward decleration
+procedure SetSpritePosition();
+procedure MovePlayer();
+// Empty
+interrupt IRQ();
+begin
+
+end;
+
+
+// Moves the player. ReadInput populates the "buttons" variable
+procedure MovePlayer();
+begin
+	ReadInput();
+	sprite_x:=sprite_x+getbit(buttons,1)-getbit(buttons,0); // x axis
+	sprite_y:=sprite_y-getbit(buttons,2)+getbit(buttons,3); // y axis
+	// Set sprite location after update
+	SetSpritePosition();	
+
+	if (sprite_x>160) then 
+	begin
+		sprite_x:=159;
+		scrollx:=scrollx+2;
+		curShift:=curShift+2;
+		if (curShift=8) then
+		begin
+			curShift:=0;
+			m_li:=m_li+1;
+			RenderLevelColumn();
+			m_li:=m_li-1;
+			curColumn:=curColumn+1;
+			if (curColumn=32) then
+			begin
+				m_li:=m_li+1;
+				curColumn:=0;
+			
+			end;
+			
+		end;
+		
+	end;
+	if (sprite_x<158) then 
+	begin
+		sprite_x:=159;
+		scrollx:=scrollx-2;
+		curShift:=curShift-2;
+		if (curShift>250) then
+		begin
+			curShift:=7;
+//			m_li:=m_li-1;
+			kp:=curColumn;
+			//curColumn:=31-curColumn;
+			RenderLevelColumn();
+			curColumn:=kp;
+	//		m_li:=m_li+1;
+			curColumn:=curColumn-1;
+			if (curColumn>250) then
+			begin
+				m_li:=m_li-1;
+				curColumn:=31;
+			
+			end;
+			
+		end;
+
+
+	end;
+	//	PrintNumber(2,0, curColumn);
+
+
+end;
+
+
+// NMI will automatically be called on every vblank. 
+
+interrupt NMI();
+begin
+	// Startirq pushes a,x,y onto the stack
+	Startirq(0);
+	scroll(scrollx,scrolly);
+	if (isRendering=true) then
+	begin
+		closeirq();
+		asm("rti");
+	end;
+
+	// First, make sure that the PPU knows that sprites are located at @spriteLoc
+	SetSpriteLocation(hi(^@spriteLoc));
+	// Make sure nametable 0 is set
+	SetNametable(0);
+	// Play the tune!
+	PlaySong();
+
+	ToggleSpriteSize(0);
+	ToggleSpriteTableAddress(0);
+	ToggleBackgroundTableAddress(1);
+
+	// Set colours
+	PPUMASK:=%00011000;
+	MovePlayer();
+	
+	CloseIRQ();
+end;
+
+
+
+
+/*
+	SetSpritePosition sets the sprite location (x,y) for the four sprites
+	to (sprite_x, sprite_y)+(offset_x, offset_y), where the offsets are defined in colum 0,3 in 
+ 	the spritedata table. 
+	
+*/
+procedure SetSpritePosition();
+begin
+	k:=0;
+	j:=0;
+	for i:=0 to 4 do begin
+		poke(^@spriteLoc,k+0,spriteData[j+0]+sprite_y);
+		poke(^@spriteLoc,k+3,spriteData[j+3]+sprite_x);
+		k:=k+4;
+		j:=j+4;
+	end;
+
+end;
+/*
+ 	Simple sprite initialization: Copy sprite data, update sprite position
+*/
+procedure InitSprites();
+begin
+	fill(^$200,$FF,0);
+	memcpy(spriteData, 0,^@spriteLoc,250);
+	SetSpritePosition();
+end;
+
+/*
+	Initializes variables
+*/
+procedure InitVariables();
+begin
+	sprite_x:=centerX;
+	sprite_y:=120;
+	// Initialize level at 0,0	
+	m_li:=1;
+	m_lj:=0;
+
+	scrollx:=0;
+	scrolly:=200;
+	
+	curShift:=0;
+	curColumn:=0;
+end;
+
+
+// Starting point after resetting the NES
+begin
+
+	DefineScreen();	
+	// Load palette
+	LoadPalette(palette);
+	// Read level header data	
+	ReadHeader();
+	// Initialize sprite data
+	InitSprites();
+
+	// Turn on background
+	ToggleBackground(1);
+	// Display background in border 0
+	ToggleBorderBackground(1);
+
+	// Load music
+	LoadSong(0);
+	InitVariables();
+	// Render initial level
+	RenderLevel();
+	// Turn on NMI and RUN!
+	ToggleNMI(1);
+	Loop();
+end.
