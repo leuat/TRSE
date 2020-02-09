@@ -158,6 +158,7 @@ public:
 
     void HandleExport();
     void HandleVBMExport();
+    void HandleVBMExportChunk();
     void HandleSpriteCompiler();
     void Eat();
     void HandleImportChar();

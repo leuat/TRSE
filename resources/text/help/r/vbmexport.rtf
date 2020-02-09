@@ -2,7 +2,7 @@
 <p>Preprocessor that exports a TRSE image file (.flf) to binary on build in a format suitable for the
     Vic Bitmap Mode (VBM).</p>
 <p>
-    VBM export takes five parameters.  
+    VBM export takes six parameters.  
 </p>
 <ul>
     <li>The source flf file</li>
@@ -26,7 +26,7 @@ from the .flf charset file to a binary file.
 <code>
 program VBMExport;
 
-@export "sprite/mySprite.flf" "sprite/mySprite.bin" 0 10 2 0
+@vbmexport "sprite/mySprite.flf" "sprite/mySprite.bin" 0 10 2 0
 var
     mySprite : incbin("sprite/mySprite.bin",$2000);
 
