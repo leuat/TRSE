@@ -149,6 +149,7 @@ public:
     void LoadVariable(NodeNumber* node) override;
 
     void StoreVariable(NodeVar* node) override;
+    void StoreVariableSimplified(NodeVar* node, Node* expr);
 
     /*
      *

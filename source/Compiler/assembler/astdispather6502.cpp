@@ -259,6 +259,14 @@ bool ASTDispather6502::HandleSingleAddSub(Node *node) {
 
 void ASTDispather6502::HandleMulDiv(Node *node) {
 
+    if (node->m_left->isPureNumeric() && !node->m_right->isPureNumeric()) {
+        Node* tmp = node->m_left;
+        node->m_left = node->m_right;
+        node->m_right = tmp;
+        as->Comment("Swapping nodes :  num * expr -> exp*num");
+    }
+
+
     if (node->m_right->isPureNumeric())  {
         as->Comment("Right is PURE NUMERIC : Is word ="+ QString::number(node->isWord(as)) );
         //qDebug() << "IS PURE NUMERIC";
@@ -2252,7 +2260,14 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
             // Regular expression
 
 
-            as->Asm("pha");
+
+            bool usePush = true;
+
+//            if (node->m_expr->isPure())
+  //              usePush = false;
+
+            if (usePush)
+                as->Asm("pha");
             as->ClearTerm();
             node->m_expr->Accept(this);
             //                node->m_expr->Build(as);
@@ -2260,7 +2275,8 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
             if (node->getArrayType(as)==TokenType::INTEGER)
                 as->Asm("asl");
             as->Asm("ta" + secondReg);
-            as->Asm("pla");
+            if (usePush)
+                as->Asm("pla");
             as->Asm("sta " +pa + node->getValue(as)+pb+","+ secondReg);
             if (node->getArrayType(as)==TokenType::INTEGER) {
                 as->Asm("in"+secondReg);
@@ -2294,6 +2310,7 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
 
 
 }
+
 
 void ASTDispather6502::AssignString(NodeAssign *node, bool isPointer) {
 
@@ -2809,10 +2826,45 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
     }
 */
 
+    // Optimization : a[2*b]:=2; -> no need for pha/pla
+
+    if (!v->isWord(as) && node->m_right->isPure() && v->m_expr!=nullptr) {
+        StoreVariableSimplified(v, node->m_right);
+        return v->getValue(as);
+    }
+
+
     node->m_right->Accept(this);
     as->Term();
-    as->Comment("Calling STOREVARIABLE");
+//    as->Comment("Calling STOREVARIABLE");
     StoreVariable(v);
 
      return v->getValue(as);
+}
+
+void ASTDispather6502::StoreVariableSimplified(NodeVar *node, Node* expr)
+{
+    //NodeNumber* num = dynamic_cast<NodeNumber*>(node->m_expr);
+    QString secondReg="x";
+    QString pa = "";
+    QString pb= "";
+    if (node->getType(as)==TokenType::POINTER) {
+        secondReg="y";
+        pa="(";
+        pb=")";
+    }
+    as->Comment("Store Variable simplified optimization : right-hand term is pure");
+    as->ClearTerm();
+    node->m_expr->Accept(this);
+    //                node->m_expr->Build(as);
+    as->Term();
+    if (node->getArrayType(as)==TokenType::INTEGER)
+        as->Asm("asl");
+
+    as->Asm("ta" + secondReg);
+    as->ClearTerm();
+    expr->Accept(this);
+    as->Term();
+    as->Asm("sta " +pa + node->getValue(as)+pb+","+ secondReg);
+
 }

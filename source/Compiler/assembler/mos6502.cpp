@@ -633,6 +633,8 @@ void AsmMOS6502::Optimise(CIniFile& ini)
             // 6157
     if (ini.getdouble("post_optimizer_passphapla")==1)
         OptimisePhaPla1();
+
+    OptimisePhaLdxPla();
 //        OptimisePhaPla2();
   //      OptimiseCmp("cpy");
   //      OptimiseCmp("cpx");
@@ -665,6 +667,7 @@ void AsmMOS6502::OptimisePassStaLda()
     }
     RemoveLines();
 }
+
 
 void AsmMOS6502::OptimisePassLdx(QString x)
 {
@@ -923,6 +926,27 @@ void AsmMOS6502::OptimisePhaPla2()
     }
     RemoveLines();
 
+}
+
+void AsmMOS6502::OptimisePhaLdxPla()
+{
+
+    m_removeLines.clear();
+    int j,k;
+    for (int i=0;i<m_source.count()-1;i++) {
+        QString l0 = getLine(i).toLower().trimmed();
+        if (l0 == "pha") {
+            QString l1 = getNextLine(i,j);
+            if (l1.toLower().trimmed().startsWith("ldx") || l1.toLower().trimmed().startsWith("ldy")) {
+                l1= getNextLine(j,k);
+                if (l1.toLower().trimmed()=="pla") {
+                    m_removeLines.append(i);
+                    m_removeLines.append(k);
+                }
+            }
+        }
+    }
+    RemoveLines();
 }
 
 QString AsmMOS6502::getLine(int i)

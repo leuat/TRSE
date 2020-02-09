@@ -129,6 +129,8 @@ public:
     void OptimiseCmp(QString op);
     void OptimisePhaPla1();
     void OptimisePhaPla2();
+    void OptimisePhaLdxPla();
+
     QString getLine(int i);
     QString getNextLine(int i, int &j);
     QString getToken(QString, int t);
