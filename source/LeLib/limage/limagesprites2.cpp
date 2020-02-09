@@ -341,7 +341,7 @@ void LImageSprites2::SetColor(uchar col, uchar idx)
     if (idx==0)
         m_background = col;
 
-    if (m_current>=0)
+    if (m_current>=0 && idx==3)
 
     for (int i=0;i<((LSprite*)m_items[m_current])->m_data.count();i++)
         ((LSprite*)m_items[m_current])->m_data[i].c[idx] = col;

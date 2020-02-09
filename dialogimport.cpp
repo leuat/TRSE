@@ -56,6 +56,7 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
     m_image->CopyFrom(img);
     m_image->Clear();
 
+
     LImageVIC20* vic = dynamic_cast<LImageVIC20*>(img);
     if (vic!=nullptr) {
         LImageVIC20* i = dynamic_cast<LImageVIC20*>(m_image);
@@ -92,6 +93,11 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
     m_image->m_colorList.FillComboBox(ui->cmbMC1);
     m_image->m_colorList.FillComboBox(ui->cmbMC2);
 
+    ui->cmbForeground->setCurrentIndex(m_image->m_extraCols[3]);
+    ui->cmbBackground->setCurrentIndex(m_image->m_extraCols[0]);
+    ui->cmbMC1->setCurrentIndex(m_image->m_extraCols[1]);
+    ui->cmbMC2->setCurrentIndex(m_image->m_extraCols[2]);
+
     if (isPetscii)
         ui->cmbMC1->setCurrentIndex(6);
 
@@ -112,13 +118,17 @@ void DialogImport::Convert()
     m_output.m_qImage = m_work.Resize(m_image->m_width, m_image->m_height, m_image->m_colorList, m_contrast, m_shift, m_hsv, m_saturation, m_scale, useDither);
 //    qDebug() << m_image->m_width << m_output.m_qImage->width();
     //exit(1);
-    m_image->Clear();
+//    m_image->Clear();
     m_image->m_importScaleX = 1+ (ui->hsScaleX->value()/100.0 - 0.5)*4;
     m_image->m_importScaleY = 1+ (ui->hsScaleY->value()/100.0 - 0.5)*4;
 //    m_image->setPixel(10,10,1);
     SetColors();
     QVector3D strength = QVector3D(1,1,1);
     strength.setX( (ui->hsDither->value()/100.0)*100.0);
+//    m_output.m_qImage->save("temp.png");
+
+    for (int i=0;i<4;i++)
+        qDebug() << "COLS : S " <<QString::number(m_image->m_extraCols[i]);
     if (!useDither)
        m_image->fromQImage(m_output.m_qImage, m_image->m_colorList);
     else

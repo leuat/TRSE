@@ -978,6 +978,8 @@ void FormImageEditor::on_btnImport_clicked()
         m_work.m_currentImage->m_image->m_colorList.m_list = di->m_image->m_colorList.m_list;
         UpdatePalette();
         FillCMBColors();
+        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1, this->size());
+
         Data::data.redrawOutput = true;
     }
     onImageMouseEvent();

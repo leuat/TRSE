@@ -28,6 +28,11 @@ FormPaw::FormPaw(QWidget *parent) :
     ui(new Ui::FormPaw)
 {
     ui->setupUi(this);
+    ui->tabData->setColumnWidth(0, 200);
+    ui->tabData->setColumnWidth(1, 500);
+    ui->tabData->setColumnWidth(2, 160);
+    ui->tabData->setColumnWidth(3, 40);
+
 }
 
 FormPaw::~FormPaw()
@@ -68,6 +73,8 @@ void FormPaw::FillToIni()
     }
     m_pawData.setStringList("data",data);
     m_pawData.setStringList("data_tinycrunch", data_tinycrunch);
+
+
 
 }
 

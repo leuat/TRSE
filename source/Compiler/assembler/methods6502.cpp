@@ -12723,20 +12723,26 @@ void Methods6502::IncMax(Assembler *as, QString cmd)
     IncDec(as,cmd);
     QString lbl = as->NewLabel("incmax");
     if (cmd=="inc") {
-        as->Asm("lda "+m_node->m_params[0]->getValue(as));
+        LoadVar(as,0);
+        //as->Asm("lda "+m_node->m_params[0]->getValue(as));
         as->Asm("cmp "+m_node->m_params[2]->getValue(as));
         as->Asm("bcc "+lbl);
         LoadVar(as,1);
-        as->Asm("sta "+m_node->m_params[0]->getValue(as));
+        SaveVar(as,0);
+        //as->Asm("sta "+m_node->m_params[0]->getValue(as));
         as->Label(lbl);
     }
 
    if (cmd=="dec") {
-        as->Asm("lda "+m_node->m_params[0]->getValue(as));
+//        as->Asm("lda "+m_node->m_params[0]->getValue(as));
+       LoadVar(as,0);
+
         as->Asm("cmp "+m_node->m_params[1]->getValue(as));
         as->Asm("bcs "+lbl);
         LoadVar(as,2);
-        as->Asm("sta "+m_node->m_params[0]->getValue(as));
+        SaveVar(as,0);
+
+//        as->Asm("sta "+m_node->m_params[0]->getValue(as));
         as->Label(lbl);
     }
     as->PopLabel("incmax");
