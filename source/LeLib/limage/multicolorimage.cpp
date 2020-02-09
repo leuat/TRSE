@@ -657,6 +657,37 @@ void MultiColorImage::VBMExport(QFile &file, int start, int end, int height, int
     }
     file.write(data);
 }
+void MultiColorImage::VBMExportChunk(QFile &file, int start, int width, int height, int isMulticolor)
+{
+    QByteArray data;
+    QVector<PixelChar*> pcList;
+
+    for (int i=0;i<width;i++) { // x
+        for (int j=0; j<height; j++) { // y
+            // Convert to POS in charset:
+            int x = i; // % m_charWidthDisplay;
+            int y = j; // ((i/m_charWidthDisplay));
+            int pos = x+(y*m_charWidthDisplay) + start;
+
+            //qDebug() <<i <<j <<"-" << x << y << pos;
+
+            // check in bounds
+            if (pos>=0 && pos< m_charWidth*m_charHeight) {
+                PixelChar& pc = m_data[pos];
+                for (int i=0;i<8;i++) {
+                    // VIC20 and Multicolor mode - swap bit
+                    if (m_colorList.m_type == LColorList::VIC20 && isMulticolor ==1)
+                        data.append( PixelChar::reverse(PixelChar::VIC20Swap(pc.p[i])));
+                    else
+                        data.append( PixelChar::reverse(pc.p[i]));
+                }
+                pos +=m_charWidthDisplay;
+            }
+
+        }
+    }
+    file.write(data);
+}
 
 void MultiColorImage::SetCharSize(int x, int y)
 {

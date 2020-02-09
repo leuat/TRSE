@@ -200,6 +200,8 @@ public:
     void ImportBin(QFile& file) override;
     void VBMExport(QFile& file, int p1, int p2, int p3, int p4) override;
 
+    void VBMExportChunk(QFile& file, int p1, int p2, int p3, int p4) override;
+
     void SetCharSize(int x, int y);
 
    void ExportCompressed(QString f1, QString f2) override;
