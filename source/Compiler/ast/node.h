@@ -107,7 +107,10 @@ public:
     virtual bool isPureNumeric() {
         return false;
     }
-    virtual bool isPureVariable() {
+    virtual bool isPureVariable() { // Variable with no expressions
+        return false;
+    }
+    virtual bool isVariable() { // Variable with possible expressions
         return false;
     }
 /*    virtual void LoadVariable(AbstractASTDispatcher* dispatcher) {}

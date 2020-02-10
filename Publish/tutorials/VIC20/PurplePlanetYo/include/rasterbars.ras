@@ -53,6 +53,7 @@ begin
 	InitCharset();
 	for i:=0 to 0 do begin
 		j:=i&3;
+		asm(";pokebug");
 		poke(^@table,i,0);//table[i]:=0;//j | j*16;
 	end;
 	fill(^$1000,$20+128,0);
