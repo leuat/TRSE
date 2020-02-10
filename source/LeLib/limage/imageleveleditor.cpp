@@ -769,9 +769,16 @@ void ImageLevelEditor::ExportFrame(QFile &file, int frame, int type, int col, in
     ///
     ///
     ///
-    QByteArray data;
+    QByteArray data;  // output data
     QVector<PixelChar*> pcList;
 
+
+    CharmapLevel* lv = m_levels[ frame ];
+
+    data.append(lv->m_CharData[0]);
+
+
+    /*
     for (int i=0;i<width;i++) { // x
         for (int j=0; j<height; j++) { // y
             // Convert to POS in charset:
@@ -795,6 +802,6 @@ void ImageLevelEditor::ExportFrame(QFile &file, int frame, int type, int col, in
             }
 
         }
-    }
+    }*/
     file.write(data);
 }
