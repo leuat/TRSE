@@ -187,6 +187,7 @@ public:
     CharmapLevel* getLevel(int i, int j);
     CharmapGlobalData m_meta;
 
+    virtual void ExportFrame(QFile& file, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {}
 
     void SetBank(int bnk) override {
         m_footer.set(LImageFooter::POS_CURRENT_BANK,bnk);

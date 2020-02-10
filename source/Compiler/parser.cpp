@@ -616,7 +616,19 @@ void Parser::HandlePreprocessorInParsing()
         Eat(TokenType::INTEGER_CONST);
         return;
     }
-
+    if (m_currentToken.m_value=="exportframe") {
+        Eat();
+        Eat(TokenType::STRING);
+        Eat(TokenType::STRING);
+        Eat(TokenType::INTEGER_CONST);
+        Eat(TokenType::INTEGER_CONST);
+        Eat(TokenType::INTEGER_CONST);
+        Eat(TokenType::INTEGER_CONST);
+        Eat(TokenType::INTEGER_CONST);
+        Eat(TokenType::INTEGER_CONST);
+        Eat(TokenType::INTEGER_CONST);
+        return;
+    }
 
 
     if (m_currentToken.m_value=="donotremove") {
@@ -1332,6 +1344,10 @@ void Parser::Preprocess()
             else if (m_currentToken.m_value.toLower() =="vbmexportchunk") {
                 Eat(TokenType::PREPROCESSOR);
                 HandleVBMExportChunk();
+            }
+            else if (m_currentToken.m_value.toLower() =="exportframe") {
+                Eat(TokenType::PREPROCESSOR);
+                HandleExportFrame();
             }
             else if (m_currentToken.m_value.toLower() =="spritecompiler") {
                 Eat(TokenType::PREPROCESSOR);
@@ -2372,6 +2388,45 @@ void Parser::HandleVBMExportChunk()
 
 }
 
+void Parser::HandleExportFrame()
+{
+    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile =m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    int param1 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param2 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param3 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param4 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param5 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param6 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param7 = m_currentToken.m_intVal;
+
+    if (!QFile::exists(inFile)) {
+        ErrorHandler::e.Error("File not found : "+inFile,ln);
+    }
+    ImageLevelEditor* img = ImageLevelEditor::LoadBin(inFile);
+//    LImage* img = LImageIO::Load(inFile);
+    if (QFile::exists(outFile))
+        QFile::remove(outFile);
+
+    QFile file(outFile);
+
+    file.open(QFile::WriteOnly);
+    img->m_silentExport = true;
+
+    img->ExportFrame(file,param1,param2,param3,param4,param5,param6,param7);
+
+    file.close();
+
+}
 void Parser::HandleSpriteCompiler()
 {
 
