@@ -195,7 +195,7 @@ void ImageLevelEditor::SaveBin(QFile &file)
            file.write( l->m_ColorData);
 
 //        qDebug() << "LevelEditor::savebin count " <<l->m_ColorData.count();
-        qDebug() << "ImageLevelEditor exportbin " << l->m_ExtraData.count();
+//        qDebug() << "ImageLevelEditor exportbin " << l->m_ExtraData.count();
 
         if (l->m_ExtraData.count()!=0)
             file.write( l->m_ExtraData,m_meta.m_extraDataSize);

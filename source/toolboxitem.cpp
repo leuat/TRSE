@@ -309,7 +309,7 @@ void CopyStamp::StampImage(int x, int y, LImage* img)
             if (m_type==1)
                 img->setPixel(i-w/2+x,j-h/2+y, col);
             else
-            if (col!=img->m_background)
+            if (col!=Data::data.currentColor)
                 img->setPixel(i-w/2+x,j-h/2+y, col);
 //                for (int xd=0;xd<m_copy->m_scale;xd++)
   //                  img->setPixel(i-w/2.0+x + xd,j-h/2.0+y, col);
