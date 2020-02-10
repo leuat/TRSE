@@ -13558,7 +13558,7 @@ void Methods6502::IncMax(Assembler *as, QString cmd)
         LoadVar(as,0);
         //as->Asm("lda "+m_node->m_params[0]->getValue(as));
         as->Asm("cmp "+m_node->m_params[2]->getValue(as)+" ; keep");
-        as->Asm("bcc "+lbl);
+        as->Asm("bne "+lbl);
         LoadVar(as,1);
         SaveVar(as,0);
         //as->Asm("sta "+m_node->m_params[0]->getValue(as));
@@ -13570,7 +13570,7 @@ void Methods6502::IncMax(Assembler *as, QString cmd)
        LoadVar(as,0);
 
         as->Asm("cmp "+m_node->m_params[1]->getValue(as) + " ; keep");
-        as->Asm("bcs "+lbl);
+        as->Asm("bne "+lbl);
         LoadVar(as,2);
         SaveVar(as,0);
 
@@ -15593,7 +15593,9 @@ void Methods6502::SaveVar(Assembler *as, int paramNo, QString reg, QString extra
         as->Term("sta ");
     else
         as->Term(extra);
+
     m_node->m_params[paramNo]->Accept(m_dispatcher);
+
     if (reg!="")
         reg = "," + reg;
     as->Term(reg, true);
