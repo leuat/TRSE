@@ -2412,8 +2412,8 @@ void Parser::HandleExportFrame()
     if (!QFile::exists(inFile)) {
         ErrorHandler::e.Error("File not found : "+inFile,ln);
     }
-    ImageLevelEditor* img = ImageLevelEditor::LoadBin(inFile);
-//    LImage* img = LImageIO::Load(inFile);
+//    ImageLevelEditor* img = ImageLevelEditor::LoadBin(inFile);
+    LImage* img = LImageIO::Load(inFile);
     if (QFile::exists(outFile))
         QFile::remove(outFile);
 
