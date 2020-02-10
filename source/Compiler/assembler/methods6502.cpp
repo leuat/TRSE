@@ -13558,7 +13558,7 @@ void Methods6502::IncMax(Assembler *as, QString cmd)
         LoadVar(as,0);
         //as->Asm("lda "+m_node->m_params[0]->getValue(as));
         as->Asm("cmp "+m_node->m_params[2]->getValue(as)+" ; keep");
-        as->Asm("bcc "+lbl);
+        as->Asm("bne "+lbl);
         LoadVar(as,1);
         SaveVar(as,0);
         //as->Asm("sta "+m_node->m_params[0]->getValue(as));
@@ -13570,7 +13570,7 @@ void Methods6502::IncMax(Assembler *as, QString cmd)
        LoadVar(as,0);
 
         as->Asm("cmp "+m_node->m_params[1]->getValue(as) + " ; keep");
-        as->Asm("bcs "+lbl);
+        as->Asm("bne "+lbl);
         LoadVar(as,2);
         SaveVar(as,0);
 
@@ -15588,16 +15588,60 @@ void Methods6502::EnableInterrupts(Assembler* as) {
 */
 void Methods6502::SaveVar(Assembler *as, int paramNo, QString reg, QString extra)
 {
-    as->ClearTerm();
+
+//    qDebug() << "SAVEVAR: " <<  TokenType::getType(m_node->m_params[paramNo]->getType(as));
+
+    if (!(m_node->m_params[paramNo]->isVariable() || m_node->m_params[paramNo]->isAddress()))
+        ErrorHandler::e.Error("Parameter "+QString::number(paramNo) + " must be a variable or address", m_node->m_op.m_lineNumber);
+
+    QString vName = m_node->m_params[paramNo]->getValue(as);
+    NodeVar* v = dynamic_cast<NodeVar*>(m_node->m_params[paramNo]);
+    as->Term();
+
+    if (v==nullptr || v->m_expr==nullptr) {
+//        qDebug() << "SAVEVAR extra " << reg << extra;
+        if (reg!="")
+            vName+=","+reg;
+        as->Asm("sta "+vName);
+        return;
+    }
+    QString pa = "";
+    QString pb = "";
+    QString x = "x";
+    if (v->isPointer(as)) {
+        pa = "(";
+        pb = ")";
+        x = "y";
+    }
+
+    // Has expression
+    if (v->m_expr->isPure()) {
+        as->Asm("ld"+x+" "+v->m_expr->getValue(as));
+        as->Asm("sta "+pa+vName+pb + ","+x);
+        return;
+    }
+    // Not pure. Must evaluate
+    as->Asm("pha");
+
+    v->m_expr->Accept(m_dispatcher);
+    as->Term();
+    as->Asm("ta"+x);
+    as->Asm("pla");
+    as->Asm("sta "+pa+vName+pb + ","+x);
+
+
+/*    as->ClearTerm();
     if (extra=="")
         as->Term("sta ");
     else
         as->Term(extra);
+
     m_node->m_params[paramNo]->Accept(m_dispatcher);
+
     if (reg!="")
         reg = "," + reg;
     as->Term(reg, true);
-
+*/
 }
 
 

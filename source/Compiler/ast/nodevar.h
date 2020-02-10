@@ -69,6 +69,9 @@ public:
     }
 
 
+    bool isVariable() override {
+        return true;
+    }
 
     bool isPureVariable() override {
 
