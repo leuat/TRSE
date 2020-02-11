@@ -785,6 +785,9 @@ void ImageLevelEditor::ExportFrame(QFile &file, int frame, int frameCount, int t
     //      2 = column order, half (double height) colour map
     //      3 = row order, half (double height) colour map
 
+    if (height == 0) height = m_charHeight;
+    if (width == 0) width = m_charWidth;
+
     QByteArray data;  // output data
     QVector<PixelChar*> pcList;
     for (int l = frame; l < frame+frameCount; l++) {
