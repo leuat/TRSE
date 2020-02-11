@@ -762,46 +762,68 @@ QImage CharmapLevel::createImage(int size, LColorList& lst, int width, int heigh
     return img;
 }
 
-void ImageLevelEditor::ExportFrame(QFile &file, int frame, int type, int col, int row, int width, int height, int rowOrder)
+void ImageLevelEditor::ExportFrame(QFile &file, int frame, int frameCount, int type, int col, int row, int width, int height, int rowOrder)
 {
 
-    /////////////////// TO BE IMPLEMENTED!!!!!!!!!!!
-    ///
-    ///
-    ///
+    // Export level data in a number of formats
+    //
+    // frame = level number
+    // frameCount = how many levels
+    // type =
+    //      0=export level data
+    //      1=colour data
+    //      2=extra data
+    //      3=all data in sequential order
+    //
+    // col = column to start (eg: 0 - 39)
+    // row = row to start from
+    // width = number of columns to export (0 for all)
+    // height = number of rows to export (0 for all)
+    // rowOrder = 0 for column order, 1 for row order (VBM compatible for char data only)
+
     QByteArray data;  // output data
     QVector<PixelChar*> pcList;
+    for (int l = frame; l < frame+frameCount; l++) {
 
+        CharmapLevel* lv = m_levels[ l ];
 
-    CharmapLevel* lv = m_levels[ frame ];
+        if (type == 0 || type == 3) {
+            // Export level data
 
-    data.append(lv->m_CharData[0]);
+            if (rowOrder == 0) {
+                // column order
 
+                for(int y = row; y < row+height; y++)
+                    for (int x = col; x < col+width; x++) {
+                        int pos = x+(y*m_charWidthDisplay);
+                        if (pos>=0 && pos< m_charWidth*m_charHeight)
+                            data.append(lv->m_CharData[pos]);
+                    }
 
-    /*
-    for (int i=0;i<width;i++) { // x
-        for (int j=0; j<height; j++) { // y
-            // Convert to POS in charset:
-            int x = i; // % m_charWidthDisplay;
-            int y = j; // ((i/m_charWidthDisplay));
-            int pos = x+(y*m_charWidthDisplay) ;//+ start;
+            } else {
+                // row order
 
-            //qDebug() <<i <<j <<"-" << x << y << pos;
+                for (int x = col; x < col+width; x++)
+                    for(int y = row; y < row+height; y++) {
+                        int pos = x+(y*m_charWidthDisplay);
+                        if (pos>=0 && pos< m_charWidth*m_charHeight)
+                            data.append(lv->m_CharData[pos]);
+                    }
 
-            // check in bounds
-            if (pos>=0 && pos< m_charWidth*m_charHeight) {
-                PixelChar& pc = m_data[pos];
-                for (int i=0;i<8;i++) {
-                    // VIC20 and Multicolor mode - swap bit
-                    //if (m_colorList.m_type == LColorList::VIC20 && isMulticolor ==1)
-                      //  data.append( PixelChar::reverse(PixelChar::VIC20Swap(pc.p[i])));
-                   // else
-                    //    data.append( PixelChar::reverse(pc.p[i]));
-                }
-                pos +=m_charWidthDisplay;
             }
-
         }
-    }*/
+
+        if (type == 1 || type == 3) {
+            // Export colour data
+        }
+
+        if (type == 2 || type == 3) {
+            // Export extra data
+        }
+
+    }
+
+    // done, write the output data file
     file.write(data);
+
 }

@@ -627,6 +627,7 @@ void Parser::HandlePreprocessorInParsing()
         Eat(TokenType::INTEGER_CONST);
         Eat(TokenType::INTEGER_CONST);
         Eat(TokenType::INTEGER_CONST);
+        Eat(TokenType::INTEGER_CONST);
         return;
     }
 
@@ -2408,6 +2409,8 @@ void Parser::HandleExportFrame()
     int param6 = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
     int param7 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param8 = m_currentToken.m_intVal;
 
     if (!QFile::exists(inFile)) {
         ErrorHandler::e.Error("File not found : "+inFile,ln);
@@ -2421,7 +2424,7 @@ void Parser::HandleExportFrame()
     file.open(QFile::WriteOnly);
     img->m_silentExport = true;
 
-    img->ExportFrame(file,param1,param2,param3,param4,param5,param6,param7);
+    img->ExportFrame(file,param1,param2,param3,param4,param5,param6,param7,param8);
 
     file.close();
 
