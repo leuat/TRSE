@@ -772,14 +772,18 @@ void ImageLevelEditor::ExportFrame(QFile &file, int frame, int frameCount, int t
     // type =
     //      0=export level data
     //      1=colour data
-    //      2=extra data
+    //      2=extra data  (bg col, aux1 col, aux2 col, extra data all rows per column)
     //      3=all data in sequential order
     //
     // col = column to start (eg: 0 - 39)
     // row = row to start from
     // width = number of columns to export (0 for all)
     // height = number of rows to export (0 for all)
-    // rowOrder = 0 for column order, 1 for row order (VBM compatible for char data only)
+    // rowOrder =
+    //      0 = column order, full colour map
+    //      1 = row order, full colour map
+    //      2 = column order, half (double height) colour map
+    //      3 = row order, half (double height) colour map
 
     QByteArray data;  // output data
     QVector<PixelChar*> pcList;
@@ -790,7 +794,7 @@ void ImageLevelEditor::ExportFrame(QFile &file, int frame, int frameCount, int t
         if (type == 0 || type == 3) {
             // Export level data
 
-            if (rowOrder == 0) {
+            if (rowOrder == 0 || rowOrder == 2) {
                 // column order
 
                 for(int y = row; y < row+height; y++)
@@ -815,10 +819,36 @@ void ImageLevelEditor::ExportFrame(QFile &file, int frame, int frameCount, int t
 
         if (type == 1 || type == 3) {
             // Export colour data
+
+            if (rowOrder == 0 || rowOrder == 1) {
+                // full colour map
+
+                for(int y = row; y < row+height; y++)
+                    for (int x = col; x < col+width; x++) {
+                        int pos = x+(y*m_charWidthDisplay);
+                        if (pos>=0 && pos< m_charWidth*m_charHeight)
+                            data.append(lv->m_ColorData[pos]);
+                    }
+
+            } else {
+                // half (double height) colour map
+
+                for(int y = row; y < row+height; y=y+2)
+                    for (int x = col; x < col+width; x++) {
+                        int pos = x+(y*m_charWidthDisplay);
+                        if (pos>=0 && pos< m_charWidth*m_charHeight)
+                            data.append(lv->m_ColorData[pos]);
+                    }
+
+            }
         }
 
         if (type == 2 || type == 3) {
             // Export extra data
+
+            for (int x = col; x < lv->m_ExtraData.length(); x++)
+                    data.append(lv->m_ExtraData[x]);
+
         }
 
     }
