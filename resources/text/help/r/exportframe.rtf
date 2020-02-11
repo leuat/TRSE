@@ -1,0 +1,74 @@
+<h3>Description</h3>
+<p>Preprocessor that exports a TRSE Level Editor file (.flf) to binary on build.</p>
+
+<h3>Example</h3>
+<p>Use to export all or parts of a level editor file into raw bin (binary) files.
+</p>
+
+<h3>Parameters</h3>
+
+<ul>
+    <li>"source.flf"</li>
+    <li>"destination.bin"</li>
+    <li>Level number to export</li>
+    <li>Number of levels to export</li>
+    <li>Export type - 0=level, 1=colour, 2=extra data, 3=all</li>
+    <li>Column char to start exporting (eg: 0)</li>
+    <li>Row char to start exporting (eg: 0)</li>
+    <li>Width in chars to export (eg: 40) or 0 for full width</li>
+    <li>Height in chars to expoer (eg: 25) or 0 for full height</li>
+    <li>Export order - 0=column order (default), 1=row order (VBM), 2=column order with half height colour, 3=row order with half height colour</li>
+</ul>
+
+<p><strong>Exporting partial level data</strong><br />
+When exporting level data, can choose to export a portion of the level characters defined by the start column and row at a given
+width and height.  If column, row, width and height are zero the entire level is selected for export.
+</p>
+
+<p><strong>Export type</strong><br />
+    If the Export type = 3 all level data is exported in sequence:</p>
+<ul>
+    <li>Level 1 data</li>
+    <li>Colour 1 data</li>
+    <li>Extra 1 data</li>
+    <li>Level 2 data</li>
+    <li>Colour 2 data</li>
+    <li>Extra 2 data</li>
+</ul>
+
+<p><strong>Extra data format</strong><br />
+Extra data begins with the background colour and the two aux colours.  Then the extra data defined for the level 
+for all rows, one column at a time.
+</p>
+
+<p>
+    <strong>Export order</strong><br />
+    Use 0 for the default column order. This is character 0, 1, 2, 3 and so on on the first row, then 40, 41, 42, 43 and so on.<br />
+    For Vic Bitmap Mode (VBM), the row order can be used.  THis is character 0, 40, 80, 120 and so on of the first column, 
+    then 1, 41, 81, 121 and so on from the second column.
+</p>
+<p>
+    <strong>Export order - half height colour data</strong><br />
+    The Vic 20 has a double height character mode.  To export the colour data at half height (miss out odd rows - half the data), 
+    set the export order to 2 or 3.
+</p>
+
+<h3>Examples</h3>
+
+<code>
+    // export level 0, only 1, type 0 (level data), export 0,0 at smaller size 6x1, in column order 
+    @exportframe "level.flf" "sub-level.bin" 0 1 0 0 0 6 1 0
+    
+    // export level 1-5, type 0 (level data), the whole level data, in column order
+    @exportframe "level.flf" "whole-level.bin" 1 4 0 0 0 0 0 0
+
+    // export the colour data for level 0
+    @exportframe "level.flf" "colour.bin" 0 1 1 0 0 40 25 0
+
+    // export the extra data for levels 0-4
+    @exportframe "level.flf" "extra-data.bin" 0 5 2 0 0 0 0 0
+
+    // export all data
+    @exportframe "level.flf" "all-data.bin" 0 5 3 0 0 0 0 0
+    
+</code>
