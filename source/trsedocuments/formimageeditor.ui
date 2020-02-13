@@ -1290,7 +1290,7 @@
     </layout>
    </item>
    <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0,0,4">
+    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0,0,0,4">
      <item>
       <widget class="QPushButton" name="btnHelpImage">
        <property name="text">
@@ -1302,6 +1302,13 @@
       <widget class="QPushButton" name="btnCharSelect">
        <property name="text">
         <string>Char selector (c)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnSelectDefaultClearItm">
+       <property name="text">
+        <string>Select default clear item (B)</string>
        </property>
       </widget>
      </item>

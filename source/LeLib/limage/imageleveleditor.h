@@ -183,7 +183,7 @@ public:
     QPoint m_currentLevelPos = QPoint(0,0);
     CharmapLevel* m_currentLevel = nullptr;
     QVector<CharmapLevel*> m_levels;
-
+    bool m_isRightButtonClick = false;
     CharmapLevel* getLevel(int i, int j);
     CharmapGlobalData m_meta;
 
@@ -203,6 +203,12 @@ public:
 
     QString GetCurrentDataString() override;
 
+
+    void BeforeRightButton() override { m_isRightButtonClick = true;}
+    void AfterRightButton()  override{m_isRightButtonClick = false;}
+
+
+    void CtrlLeftShift(int x, int y ) override;
 
 
     virtual bool isNes() override {

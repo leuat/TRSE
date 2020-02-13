@@ -107,6 +107,8 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_supports.displayMC1 = true;
     m_supports.displayMC2 = true;
     m_supports.displayCharOperations = false;
+    m_supports.displayDefaultClearButton = true;
+
     m_metaParams.append(new MetaParameter("screen_width","Screen width",20,2,1000));
     m_metaParams.append(new MetaParameter("screen_height","Screen height",10,2,1000));
     m_metaParams.append(new MetaParameter("levels_x","Levels x",4,1,100));
@@ -149,6 +151,18 @@ QString ImageLevelEditor::GetCurrentDataString() {
     int curPos = (m_currentLevelPos.x() + m_currentLevelPos.y()*m_meta.m_sizex);
     return " Room " + QString::number(m_currentLevelPos.x())+","+QString::number(m_currentLevelPos.y())
             + " ("+ QString::number(curPos) +  ")";
+}
+
+void ImageLevelEditor::CtrlLeftShift(int x, int y)
+{
+    int pos;
+
+    if (!PixelToPos(x,y, pos,m_meta.m_width, m_meta.m_height))
+        return; // out of bounds
+
+    m_currentChar = m_currentLevel->m_CharData[pos];
+
+
 }
 
 void ImageLevelEditor::SetColor(uchar col, uchar idx)
@@ -321,8 +335,8 @@ bool ImageLevelEditor::KeyPress(QKeyEvent *e)
         dir.setX(1);
 
 
-    if (e->key()==Qt::Key_C) {
-        m_currentChar=0x20;
+    if (e->key()==Qt::Key_B) {
+        m_currentChar=m_footer.get(LImageFooter::POS_CLEAR_VALUE);
     }
 
     if (dir.x()!=0 || dir.y()!=0) {
@@ -466,6 +480,11 @@ void ImageLevelEditor::setPixel(int x, int y, unsigned int color)
 //    qDebug() << QString::number(m_currentChar);
     if (m_currentLevel==nullptr)
         return;
+
+    if (m_isRightButtonClick) { // CLEAR only
+        m_currentLevel->m_CharData[pos] = m_footer.get(LImageFooter::POS_CLEAR_VALUE);
+        return;
+    }
 
 
     if (m_writeType==Character || m_forcePaintColorAndChar)

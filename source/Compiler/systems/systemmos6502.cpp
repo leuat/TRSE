@@ -145,7 +145,27 @@ void SystemMOS6502::PostProcess(QString &text, QString filename, QString current
     QString output;
 //    TestForCodeOverwrite(codeEnd,text);
 
-
+   /*
+    *
+    *
+    * VIC-20
+    * $A000-A001 contains start address of the program at reset
+$A002-A003 contains address where to jump pressing restore
+$A004 -> contains
+a0CBM
+10:56
+or
+65,48,195,194,205
+as decimal
+10:56
+@Leuat it's difference in the sense that you have different blocks
+10:56
+and ONLY BLK5 can autostart cart
+10:56
+BLK5 = $A000-$BFFF
+    *
+    *
+    * */
 
     if (m_projectIni->getString("output_type")=="crt") {
         QByteArray output;

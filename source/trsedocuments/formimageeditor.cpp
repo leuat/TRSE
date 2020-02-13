@@ -122,6 +122,8 @@ void FormImageEditor::onImageMouseEvent()
 {
 //    emit EmitMouseEvent();
     m_updateThread.RunContents();
+
+
     UpdateImage();
     if (dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image)!=nullptr)
         UpdateSpriteImages();
@@ -155,6 +157,8 @@ void FormImageEditor::onImageMouseEvent()
 
     }
     showDetailCharButtons();
+
+
 
 //    qDebug() << m_work.m_currentImage->m_image->m_footer.isFullscreen();
 }
@@ -673,6 +677,8 @@ void FormImageEditor::UpdatePalette()
     ui->btnImportKoala->setVisible(m_work.m_currentImage->m_image->m_supports.koalaImport);
 
     ui->btnExportMovie->setVisible(m_work.m_currentImage->m_image->m_supports.movieExport);
+
+    ui->btnSelectDefaultClearItm->setVisible(m_work.m_currentImage->m_image->m_supports.displayDefaultClearButton);
 
     ui->cmbMC1->setVisible(m_work.m_currentImage->m_image->m_supports.displayMC1);
     ui->cmbMC2->setVisible(m_work.m_currentImage->m_image->m_supports.displayMC2);
@@ -2227,4 +2233,18 @@ void FormImageEditor::on_btnClear_clicked()
     updateCharSet();
 
     Update();
+}
+
+void FormImageEditor::on_btnSelectDefaultClearItm_clicked()
+{
+    if (m_work.m_currentImage->m_image->getCharset()==nullptr)
+        return;
+    DialogSelectCharset* ds = new DialogSelectCharset(m_work.m_currentImage->m_image->getCharset());
+    ds->exec();
+    if (ds->result() == QDialog::Rejected) {
+        return;
+    }
+    SetFooterData(LImageFooter::POS_CLEAR_VALUE,ds->m_char);
+
+
 }

@@ -290,6 +290,7 @@ private slots:
     void on_btnShiftDown_clicked();
     void on_btnShiftUp_clicked();
     void on_btnClear_clicked();
+    void on_btnSelectDefaultClearItm_clicked();
 };
 
 

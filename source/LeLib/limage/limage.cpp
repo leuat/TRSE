@@ -199,8 +199,12 @@ int LImage::getCharHeightDisplay()
     return m_charHeightDisplay;
 }
 
+void LImage::CtrlLeftShift(int x, int y) {
+    Data::data.currentColor = getPixel(x,y);
+}
+
 QString LImage::GetCurrentModeString() {
-/*    if (m_currentMode==CHARSET1x1) return "1x1 charset mode";
+    /*    if (m_currentMode==CHARSET1x1) return "1x1 charset mode";
     if (m_currentMode==CHARSET2x2) return "2x2 charset mode";
     if (m_currentMode==CHARSET2x2_REPEAT) return "2x2 charset repeat mode";
 */

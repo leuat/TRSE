@@ -99,6 +99,8 @@ void DialogSelectCharset::on_lstCharMap_currentItemChanged(QTableWidgetItem *cur
     m_char = current->data(Qt::UserRole).toInt();
     if (m_char==-1)
         return;
+
+
     setResult(QDialog::Accepted);
     accept();
 }

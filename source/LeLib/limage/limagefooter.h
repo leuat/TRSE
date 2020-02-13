@@ -27,7 +27,7 @@ public:
     const static uchar POS_CURRENT_DISPLAY_MIRROR = 13;
     const static uchar POS_CURRENT_DISPLAY_REPEAT = 14;
     const static uchar POS_DISPLAY_CHAR = 15;
-
+    const static uchar POS_CLEAR_VALUE = 16;
 
     bool isFullscreen() {
         return get(POS_DISPLAY_CHAR)==0;

@@ -117,8 +117,18 @@ void WorkerThread::UpdateDrawing()
         }
         m_toolBox->m_current->IsPreview(m_currentButton, isPreview);
         unsigned int col = Data::data.currentColor;
-        if (m_currentButton == 2) // draw background
-            col = img->m_background;
+        if (m_currentButton == 2) {// draw background
+            col = img->getBackground();
+            img->BeforeRightButton();
+        }
+
+
+        // Check if left click + ctrl
+        if (m_currentButton == 1  && (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+            img->CtrlLeftShift(pos.x(), pos.y());
+            return;
+        }
+
 
         if (isPreview)
             img = (LImage*)m_work->m_currentImage->m_temp;
@@ -133,6 +143,8 @@ void WorkerThread::UpdateDrawing()
             //    msleep(10);
            // }
         }
+        if (m_currentButton == 2)
+            img->AfterRightButton();
 
         m_currentPosInImage = img->GetCurrentPosInImage(pos.x(), pos.y());
         Data::data.Redraw();

@@ -82,7 +82,7 @@ public:
     bool displayMC2 = true;
     bool displayBank = false;
 
-
+    bool displayDefaultClearButton = false;
     bool displayCharOperations = false;
 
     bool displayTimestamp = false;
@@ -157,6 +157,10 @@ public:
 
     }
 
+    virtual int getBackground() {
+        return m_background;
+    }
+
     virtual void ExportFrame(QFile& file, int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8) {}
 
     virtual void VBMExport(QFile& file, int p1, int p2, int p3, int p4) {}
@@ -165,6 +169,10 @@ public:
     virtual void CopySingleChar(LImage* src, int srcChar, int dstChar) {qDebug() << "CopySingleChar not implemented";}
 
     virtual QStringList SpriteCompiler(QString name, QString src, QString dst, int x, int y, int w, int h) {return QStringList();}
+
+    virtual void BeforeRightButton() {}
+    virtual void AfterRightButton() {}
+    virtual void CtrlLeftShift(int x, int y );
 
     int m_constrainDisplay = -1;
     bool m_silentExport=false;
