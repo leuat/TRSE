@@ -759,6 +759,11 @@ void MultiColorImage::LoadCharset(QString file, int skipBytes)
     m_charsetFilename = file;
     if (m_charset==nullptr)
         return;
+
+    if (m_footer.get(LImageFooter::POS_CHARSET_WIDTH)!=0) {
+        m_charset->m_charWidthDisplay = m_footer.get(LImageFooter::POS_CHARSET_WIDTH);
+    }
+
     m_charWidthDisplay = m_charset->m_charWidthDisplay;
     m_charHeightDisplay = m_charset->m_charHeightDisplay;;//m_meta.m_height;
 

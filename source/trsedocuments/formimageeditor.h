@@ -291,6 +291,7 @@ private slots:
     void on_btnShiftUp_clicked();
     void on_btnClear_clicked();
     void on_btnSelectDefaultClearItm_clicked();
+    void on_cmbCharWidth_currentIndexChanged(const QString &arg1);
 };
 
 

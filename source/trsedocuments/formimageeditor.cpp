@@ -464,6 +464,15 @@ void FormImageEditor::Load(QString filename)
         updateCharSet();
     }
 */
+
+
+    if (GetFooterData(LImageFooter::POS_CHARSET_WIDTH)!=0) {
+        m_work.m_currentImage->m_image->getCharset()->m_charWidthDisplay = GetFooterData(LImageFooter::POS_CHARSET_WIDTH);
+//        SetFooterData(LImageFooter::POS_CHARSET_WIDTH, ui->cmbCharWidth->currentText().toInt());
+        ui->cmbCharWidth->setCurrentText(QString::number(GetFooterData(LImageFooter::POS_CHARSET_WIDTH)));
+    }
+
+
     Data::data.redrawFileList = true;
     Data::data.Redraw();
     UpdatePalette();
@@ -531,6 +540,7 @@ void FormImageEditor::Load(QString filename)
     //showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
     SetSingleCharsetEdit();
 
+
     updateCharSet();
 
 //    onImageMouseEvent();
@@ -540,6 +550,7 @@ void FormImageEditor::Load(QString filename)
 
 
     QTimer::singleShot(50, this, SLOT(InitAspect()));
+
 
 }
 
@@ -1079,6 +1090,8 @@ void FormImageEditor::updateCharSet()
     UpdateCurrentMode();
     CharsetImage* charmap = m_work.m_currentImage->m_image->getCharset();
 
+
+
     ImageLevelEditor* le = dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image);
 /*    if (le!=nullptr && charmap==nullptr) {
         Messages::messages.DisplayMessage(Messages::messages.CHARSET_WARNING);
@@ -1086,6 +1099,8 @@ void FormImageEditor::updateCharSet()
     }*/
     if (charmap == nullptr)
         return;
+
+    ui->cmbCharWidth->setCurrentText(QString::number(charmap->m_charWidthDisplay));
 
     QVector<QPixmap> maps;
     charmap->ToQPixMaps(maps);
@@ -1131,6 +1146,7 @@ void FormImageEditor::updateCharSet()
         itm->setIcon(q);
         itm->setData(Qt::UserRole, kk);
         cnt++;
+        if (cnt>=256) break;
         i++;
         kk++;
         if (i>=width) {
@@ -2246,5 +2262,19 @@ void FormImageEditor::on_btnSelectDefaultClearItm_clicked()
     }
     SetFooterData(LImageFooter::POS_CLEAR_VALUE,ds->m_char);
 
+
+}
+
+void FormImageEditor::on_cmbCharWidth_currentIndexChanged(const QString &arg1)
+{
+    if (m_work.m_currentImage->m_image->getCharset()==nullptr)
+        return;
+
+    qDebug() << "LIMAGE WOOT "<<arg1;
+
+    m_work.m_currentImage->m_image->getCharset()->m_charWidthDisplay = arg1.toInt();
+    SetFooterData(LImageFooter::POS_CHARSET_WIDTH, ui->cmbCharWidth->currentText().toInt());
+    qDebug() << "LIMAGE FORMIMAGEEDITOR "<< QString::number(GetFooterData(LImageFooter::POS_CHARSET_WIDTH));
+    updateCharSet();
 
 }
