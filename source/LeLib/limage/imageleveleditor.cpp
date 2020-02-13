@@ -534,7 +534,6 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
         bitmask  = 3;
 
     if (!m_meta.m_useColors) {
-//        qDebug() << "WOOR";
         col = m_charset->m_data[pos].c[3];
     }
     else {
@@ -599,7 +598,8 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 
 
     if (m_meta.m_useColors) {
-        if (val==m_charset->m_data[pos].c[3] && val!=m_background) {
+//        if (val==m_charset->m_data[pos].c[3] && val!=m_background) {
+        if (val == m_currentLevel->m_ColorData[pos] && val!=m_background) {
             val = col&0b00000111;
         }
   //      if ((col&0b00001000)==0b00001000)
