@@ -305,16 +305,18 @@ void LImage::PasteChar()
         return;
     for (int y=0;y<m_copySize.y();y++)
         for (int x=0;x<m_copySize.x();x++) {
-            setPixel(x/(float)m_copySize.x()*m_width,y/(float)m_copySize.y()*m_height,m_copy[x+y*m_copySize.x()]);
+            setPixel(x/(float)m_copySize.x()*m_width,
+                     y/(float)m_copySize.y()*m_height,
+                     m_copy[x+y*m_copySize.x()]);
         }
 }
 
 void LImage::FlipHorizontal() {
     CopyChar();
     for (int y=0;y<m_copySize.y();y++)
-        for (int x=0;x<m_copySize.x();x++) {
-            setPixel((float)(x+0.2)/(float)m_copySize.x()*(float)m_width,
-                     (float)(y+0.2)/(float)m_copySize.y()*(float)m_height,
+        for (int x=m_copySize.x()-1;x>=0;x--) {
+                     setPixel(x*m_width/m_copySize.x(),
+                              y*m_height/m_copySize.y(),
                      m_copy[m_copySize.x()-1-x+y*m_copySize.x()]);
         }
 
