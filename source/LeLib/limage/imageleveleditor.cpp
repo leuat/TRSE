@@ -573,6 +573,7 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
   //      return 0;
 
 
+    m_charset->m_data[pos].c[3] = col;
 
     uint val = m_charset->m_data[pos].get(ix, iy,bitmask);
 
@@ -598,8 +599,9 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 
 
     if (m_meta.m_useColors) {
-//        if (val==m_charset->m_data[pos].c[3] && val!=m_background) {
-        if (val == m_currentLevel->m_ColorData[pos] && val!=m_background) {
+        if (val==m_charset->m_data[pos].c[3] && val!=m_background)
+        //if (val !=0  && val!=m_background)
+        {
             val = col&0b00000111;
         }
   //      if ((col&0b00001000)==0b00001000)
