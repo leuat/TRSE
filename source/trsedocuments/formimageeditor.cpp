@@ -1107,7 +1107,7 @@ void FormImageEditor::updateCharSet()
 
     ui->lstCharMap->setSelectionMode(QAbstractItemView::SingleSelection);
 
-
+    ui->lstCharMap->clearContents();
 
 
     int width = charmap->m_charWidthDisplay;
@@ -1316,6 +1316,7 @@ void FormImageEditor::UpdateCurrentCell()
 {
     int c = m_work.m_currentImage->m_image->m_currentChar;
     int w = m_work.m_currentImage->m_image->m_charWidthDisplay;
+//    qDebug() << "UpdateCurrentCell " << c << w << c/w << c%w;
     ui->lstCharMap->setCurrentCell(c/w, c%w);
 
   /*              int i = m_work.m_currentImage->m_image->m_currentChar;
@@ -2270,11 +2271,10 @@ void FormImageEditor::on_cmbCharWidth_currentIndexChanged(const QString &arg1)
     if (m_work.m_currentImage->m_image->getCharset()==nullptr)
         return;
 
-    qDebug() << "LIMAGE WOOT "<<arg1;
 
     m_work.m_currentImage->m_image->getCharset()->m_charWidthDisplay = arg1.toInt();
+    m_work.m_currentImage->m_image->m_charWidthDisplay = arg1.toInt();
     SetFooterData(LImageFooter::POS_CHARSET_WIDTH, ui->cmbCharWidth->currentText().toInt());
-    qDebug() << "LIMAGE FORMIMAGEEDITOR "<< QString::number(GetFooterData(LImageFooter::POS_CHARSET_WIDTH));
     updateCharSet();
 
 }
