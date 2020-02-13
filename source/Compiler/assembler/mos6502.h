@@ -135,7 +135,7 @@ public:
     void OptimisePhaPla2();
     void OptimisePhaLdxPla();
     void OptimiseLdLd();
-
+    void OptimisePassStaLdx(QString x);
     QString getLine(int i);
     QString getNextLine(int i, int &j);
     QString getToken(QString, int t);

@@ -45,4 +45,4 @@ pascal_settings_use_local_variables = 0
 open_files = ,include/rasterbars.ras, demo.asm, demo.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/PurplePlanetYo/
 exomize_toggle = 0
-current_file = demo.ras
+current_file = demo.asm

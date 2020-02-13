@@ -647,6 +647,9 @@ void AsmMOS6502::Optimise(CIniFile& ini)
 
     OptimisePhaLdxPla();
     OptimiseLdLd();
+
+    OptimisePassStaLdx("x");
+    OptimisePassStaLdx("y");
 //        OptimisePhaPla2();
   //      OptimiseCmp("cpy");
   //      OptimiseCmp("cpx");
@@ -679,6 +682,35 @@ void AsmMOS6502::OptimisePassStaLda()
     }
     RemoveLines();
 }
+
+void AsmMOS6502::OptimisePassStaLdx(QString x)
+{
+    m_removeLines.clear();
+    int j;
+    for (int i=0;i<m_source.count()-1;i++) {
+        QString l0 = getLine(i);
+        if (l0.contains("sta")) {
+            QString l1 = getNextLine(i,j);
+            if (l0==l1) {
+                //qDebug() << "Removing " <<l0;
+                m_removeLines.append(j);
+                continue;
+            }
+            QString var = getToken(l0,1);
+            if (getToken(l1,1)==var && getToken(l1,0)=="ld"+x) {
+
+              //  qDebug() << "Removing: " << l1 << " on line " << j;
+//                m_removeLines.append(j);
+                m_source[j] = "\tta"+x+" ; optimized "+x+", look out for bugs L22";
+
+                i++;
+                continue;
+            }
+        }
+    }
+    RemoveLines();
+}
+
 
 
 void AsmMOS6502::OptimisePassLdx(QString x)
