@@ -62,6 +62,7 @@ void DialogProjectSettings::FillFromIni()
     ui->txtGlobalDefines->setPlainText(Util::fromStringList( m_ini->getStringList("global_defines")));
 
     ui->leTempZP->setText(  fromStringList(m_ini->getStringList("temp_zeropages")));
+    ui->levarZP->setText(  fromStringList(m_ini->getStringList("var_zeropages")));
 
     ui->cmbSystem->setCurrentText(m_ini->getString("system"));
 //    on_cmbSystem_currentIndexChanged(ui->cmbSystem)
@@ -171,6 +172,7 @@ void DialogProjectSettings::FillToIni()
 {
     m_ini->setStringList("zeropages", toStringList(ui->leZeropages->text()));
     m_ini->setStringList("temp_zeropages", toStringList(ui->leTempZP->text()));
+    m_ini->setStringList("var_zeropages", toStringList(ui->levarZP->text()));
 
     m_ini->setString("zeropage_screenmemory", Util::numToHex(Util::NumberFromStringHex(ui->leZeropageScreenMemory->text())));
 

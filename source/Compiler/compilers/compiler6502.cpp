@@ -85,7 +85,7 @@ void Compiler6502::Init6502Assembler()
     //    qDebug() << m_parser.m_initAssembler;
     m_assembler->m_defines = m_parser.m_preprocessorDefines;
 
-    m_assembler->InitZeroPointers(m_projectIni->getStringList("zeropages"),m_projectIni->getStringList("temp_zeropages"));
+    m_assembler->InitZeroPointers(m_projectIni->getStringList("zeropages"),m_projectIni->getStringList("temp_zeropages"),m_projectIni->getStringList("var_zeropages"));
     m_assembler->m_zeropageScreenMemory = m_projectIni->getString("zeropage_screenmemory");
     m_assembler->m_replaceValues["@DECRUNCH_ZP1"] = m_projectIni->getString("zeropage_decrunch1");
     m_assembler->m_replaceValues["@DECRUNCH_ZP2"] = m_projectIni->getString("zeropage_decrunch2");

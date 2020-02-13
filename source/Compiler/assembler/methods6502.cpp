@@ -11006,8 +11006,11 @@ void Methods6502::InitDecrunch(Assembler *as)
 
 void Methods6502::InitPrintDecimal(Assembler *as)
 {
-    as->Label("ipd_div_lo dc.b 0");
-    as->Label("ipd_div_hi dc.b 0");
+//    as->Label("ipd_div_lo dc.b 0");
+//    as->Label("ipd_div_hi dc.b 0");
+
+    as->DeclareInternalVariable("ipd_div_hi");
+    as->DeclareInternalVariable("ipd_div_lo");
     as->Label("init_printdecimal_div10");
 //div10:
     as->Asm("ldx #$11");

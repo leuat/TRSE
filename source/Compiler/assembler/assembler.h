@@ -212,8 +212,10 @@ public:
     void PushBlock(int ln);
     void PopBlock(int ln);
 
+    virtual void DeclareInternalVariable(QString name) {}
 
-    virtual void InitZeroPointers(QStringList list1, QStringList list2) {
+
+    virtual void InitZeroPointers(QStringList list1, QStringList list2, QStringList list3) {
 
     }
 

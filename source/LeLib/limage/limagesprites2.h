@@ -12,8 +12,8 @@ public:
     int m_pcWidth = 3;
     int m_pcHeight = 3;
 
-    int HEADER_SIZE = 16;
-    int HEADER_MULTICOLOR = 0;
+    static const int HEADER_SIZE = 16;
+    static const int HEADER_MULTICOLOR = 0;
 
     QByteArray m_header;
 

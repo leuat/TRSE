@@ -43,7 +43,7 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -709,15 +709,21 @@ p, li { white-space: pre-wrap; }
          <layout class="QGridLayout" name="gridLayout_9">
           <item row="0" column="0">
            <layout class="QGridLayout" name="gridLayout_3">
-            <item row="1" column="1">
-             <widget class="QPushButton" name="btnDefaultZP">
-              <property name="text">
-               <string>Set platform default values</string>
-              </property>
-             </widget>
+            <item row="4" column="1">
+             <widget class="QLineEdit" name="leZeropageScreenMemory"/>
             </item>
             <item row="6" column="1">
              <widget class="QLineEdit" name="leTempZP"/>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="toolTip">
+               <string>These are the zeropages that will be used when declaring &quot;pointers&quot;</string>
+              </property>
+              <property name="text">
+               <string>Pointer zeropages</string>
+              </property>
+             </widget>
             </item>
             <item row="6" column="0">
              <widget class="QLabel" name="label_16">
@@ -729,8 +735,32 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="4" column="1">
-             <widget class="QLineEdit" name="leZeropageScreenMemory"/>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_12">
+              <property name="toolTip">
+               <string>The built-in &quot;screenmemory&quot; pointer</string>
+              </property>
+              <property name="text">
+               <string>Screenmemory zero page</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="0">
+             <widget class="QLabel" name="label_29">
+              <property name="toolTip">
+               <string>Temporary variables are needed in longer expressions. If no temp var zeropages are left, a regular variable is used instead.</string>
+              </property>
+              <property name="text">
+               <string>Internal variable zeropages</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QPushButton" name="btnDefaultZP">
+              <property name="text">
+               <string>Set platform default values</string>
+              </property>
+             </widget>
             </item>
             <item row="3" column="0">
              <widget class="QLabel" name="label_11">
@@ -741,6 +771,62 @@ p, li { white-space: pre-wrap; }
                <string>Decrunch zero pages</string>
               </property>
              </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_14">
+              <property name="toolTip">
+               <string>Zeropages used in internal methods such as division, multiplication, sqrt etc</string>
+              </property>
+              <property name="text">
+               <string>Workhorse zeropages</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="2,2">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_14">
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0">
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_15">
+                    <item>
+                     <widget class="QLineEdit" name="leInternalZp1"/>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="leInternalZp2"/>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="leInternalZp3"/>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="leInternalZp4"/>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_15">
+                <property name="font">
+                 <font>
+                  <pointsize>6</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>These are used internally in TRSE for increased speed. Note that these are used in 4 pairs, 8 addresses in total</string>
+                </property>
+                <property name="scaledContents">
+                 <bool>false</bool>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item row="3" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="2,2">
@@ -791,81 +877,8 @@ p, li { white-space: pre-wrap; }
             <item row="2" column="1">
              <widget class="QLineEdit" name="leZeropages"/>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_7">
-              <property name="toolTip">
-               <string>These are the zeropages that will be used when declaring &quot;pointers&quot;</string>
-              </property>
-              <property name="text">
-               <string>Pointer zeropages</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="2,2">
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_14">
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0">
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_15">
-                    <item>
-                     <widget class="QLineEdit" name="leInternalZp1"/>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="leInternalZp2"/>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="leInternalZp3"/>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="leInternalZp4"/>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_15">
-                <property name="font">
-                 <font>
-                  <pointsize>6</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>These are used internally in TRSE for increased speed. Note that these are used in 4 pairs, 8 addresses in total</string>
-                </property>
-                <property name="scaledContents">
-                 <bool>false</bool>
-                </property>
-                <property name="wordWrap">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_12">
-              <property name="toolTip">
-               <string>The built-in &quot;screenmemory&quot; pointer</string>
-              </property>
-              <property name="text">
-               <string>Screenmemory zero page</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_14">
-              <property name="toolTip">
-               <string>Zeropages used in internal methods such as division, multiplication, sqrt etc</string>
-              </property>
-              <property name="text">
-               <string>Workhorse zeropages</string>
-              </property>
-             </widget>
+            <item row="7" column="1">
+             <widget class="QLineEdit" name="levarZP"/>
             </item>
            </layout>
           </item>

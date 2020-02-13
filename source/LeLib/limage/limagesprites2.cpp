@@ -15,6 +15,8 @@ LImageSprites2::LImageSprites2(LColorList::Type t) : CharsetImage(t) {
     m_GUIParams[btnEditFullCharset] = "";
     m_GUIParams[tabSprites] ="Sprites";
 
+//    m_supports.displayForeground = true;
+
     m_exportParams.clear();
     m_supports.displayCharOperations = false;
 
@@ -51,7 +53,10 @@ void LImageSprites2::ImportBin(QFile &f)
 
 void LImageSprites2::ExportBin(QFile &f)
 {
+
     for (int i=0;i<m_items.count();i++) {
+        m_bitMask = ((LSprite*) m_items[i])->m_header[LSprite::HEADER_MULTICOLOR];
+        if (m_bitMask ==0) m_bitMask = 0b1; else m_bitMask=0b11;
         f.write(m_items[i]->ToQByteArray(m_bitMask));
     }
 }
@@ -122,6 +127,10 @@ void LImageSprites2::setPixel(int x, int y, unsigned int color)
         if (m_extraCols[i]==color)
             fillColor = false;
     }
+
+
+
+
     if (fillColor)
         ((LSprite*)m_items[m_current])->FillColor(color,3);
 
@@ -145,13 +154,15 @@ unsigned int LImageSprites2::getPixel(int x, int y)
     float fx = x/(float)m_width;
     float fy = y/(float)m_height;
 
+//    if (rand()%100>98)
+  //      qDebug() <<s->getPixel(fx,fy,m_bitMask);
+
     return s->getPixel(fx,fy,m_bitMask);
 
 }
 
 QByteArray LSprite::ToQByteArray(int mask) {
     QByteArray data;
-
 
     QVector<QByteArray> grid;
 
@@ -341,12 +352,17 @@ void LImageSprites2::SetColor(uchar col, uchar idx)
     if (idx==0)
         m_background = col;
 
-    if (m_current>=0 && idx==3)
+//    qDebug() << "SETCOLOR index " +QString::number(idx) << "  " << QString::number(col)  << "   " <<QString::number(m_current);
+    //if (m_current>=0 && idx==3)
 
-    for (int i=0;i<((LSprite*)m_items[m_current])->m_data.count();i++)
-        ((LSprite*)m_items[m_current])->m_data[i].c[idx] = col;
+    {
+
+        for (int i=0;i<((LSprite*)m_items[m_current])->m_data.count();i++)
+            ((LSprite*)m_items[m_current])->m_data[i].c[idx] = col;
 
 
+
+    }
     m_extraCols[idx] = col;
 }
 

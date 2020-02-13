@@ -50,6 +50,9 @@ public:
 
     static QString m_defaultZeroPointers;
     static QString m_defaultTempZeroPointers;
+
+    QStringList m_varZeroPointers;
+
     QMap<QString, CStringItem> m_cstr;
 
     Opcodes6502 m_opCycles;
@@ -76,7 +79,7 @@ public:
     void Program(QString name, QString vicParams) override;
     void EndProgram() override;
     void DeclareArray(QString name, QString type, int count, QStringList lst, QString pos) override;
-    void InitZeroPointers(QStringList lst, QStringList tmpList) override;
+    void InitZeroPointers(QStringList lst, QStringList tmpList, QStringList varList) override;
 
     void VarDeclHeader();
     void DeclareVariable(QString name, QString type, QString initval, QString position) override;
@@ -102,6 +105,7 @@ public:
     bool CheckZPAvailability() override;
 
     QString GetOrg(int pos);
+    void DeclareInternalVariable(QString name) override;
 
 
     QString StoreInTempVar(QString name, QString type="byte") override;

@@ -472,6 +472,17 @@ QString AsmMOS6502::GetOrg(int pos)
     return "org " + Util::numToHex(pos);
 }
 
+void AsmMOS6502::DeclareInternalVariable(QString name)
+{
+    if (m_varZeroPointers.count()!=0) {
+        QString addr = m_varZeroPointers[0];
+        m_varZeroPointers.removeFirst();
+        m_tempVars << (name + " = " + addr);
+        return;
+    }
+    m_tempVars << (name + " dc.b 0");
+}
+
 QString AsmMOS6502::StoreInTempVar(QString name, QString type)
 {
     if (m_zpStack.count()<m_tempZeroPointers.count()) {
@@ -1108,7 +1119,7 @@ int AsmMOS6502::CalculateCycles(MOSOperation op)
 
 
 
-void AsmMOS6502::InitZeroPointers(QStringList lst, QStringList tmpList)
+void AsmMOS6502::InitZeroPointers(QStringList lst, QStringList tmpList, QStringList varList)
 {
     m_zeroPointers.clear();
     for (QString s: lst) {
@@ -1128,6 +1139,7 @@ void AsmMOS6502::InitZeroPointers(QStringList lst, QStringList tmpList)
             m_tempZeroPointers.append(zp);
         }
     }
+    m_varZeroPointers = varList;
 //       qDebug() << "ASMMos6502 initzero " <<m_tempZeroPointers;
 
 
