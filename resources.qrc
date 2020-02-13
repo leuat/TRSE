@@ -414,5 +414,6 @@
         <file>resources/code/x86/init_drawline_cga.asm</file>
         <file>resources/code/x86/init_keyboard_irq.asm</file>
         <file>resources/text/help/r/vbmexportchunk.rtf</file>
+        <file>resources/text/help/r/exportframe.rtf</file>
     </qresource>
 </RCC>
