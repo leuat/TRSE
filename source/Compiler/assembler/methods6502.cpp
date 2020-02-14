@@ -398,6 +398,13 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("vbmDrawBCD"))
         vbmDrawBCD(as);
 
+    // 4x8 Draw BCD numbers
+    if (Command("initVbmDrawSmallBCD"))
+        initVbmDrawSmallBCD(as);
+    if (Command("vbmDrawSmallBCD"))
+        vbmDrawSmallBCD(as);
+
+
     // bitmap buffers
     if (Command("initVbmCopyToBuffer"))
         initVbmCopyToBuffer(as);
@@ -9234,7 +9241,7 @@ void Methods6502::initVbmDrawSmallTextO(Assembler* as)
         as->Asm("lda vbmX");
         as->Asm("lsr ; divde x by 2 (2 chars per character cell)");
         as->Asm("tax");
-        as->Comment("Wor out from LSR if odd or even pattern");
+        as->Comment("Work out from LSR if odd or even pattern");
         as->Asm("bcs vbmDSTXO_Odd");
         as->Asm("lda #$f0 ; even, use left side of font");
         as->Asm("bcc vbmDSTXO_Even ; we know carry will be clear");
@@ -9464,7 +9471,7 @@ void Methods6502::initVbmDrawSmallTextE(Assembler* as)
         as->Asm("lda vbmX");
         as->Asm("lsr ; divde x by 2 (2 chars per character cell)");
         as->Asm("tax");
-        as->Comment("Wor out from LSR if odd or even pattern");
+        as->Comment("Work out from LSR if odd or even pattern");
         as->Asm("bcs vbmDSTXE_Odd");
         as->Asm("lda #$f0 ; even, use left side of font");
         as->Asm("bcc vbmDSTXE_Even ; we know carry will be clear");
@@ -9694,7 +9701,7 @@ void Methods6502::initVbmClearSmallText(Assembler* as)
         as->Asm("lda vbmX");
         as->Asm("lsr ; divde x by 2 (2 chars per character cell)");
         as->Asm("tax");
-        as->Comment("Wor out from LSR if odd or even pattern");
+        as->Comment("Work out from LSR if odd or even pattern");
         as->Asm("bcs vbmCSTX_Odd");
         as->Asm("lda #$f0 ; even, use left side of font");
         as->Asm("bcc vbmCSTX_Even ; we know carry will be clear");
@@ -10095,6 +10102,219 @@ void Methods6502::vbmDrawBCD(Assembler *as)
     as->Asm("bpl " + lblLoop +" ; loop until all bytes displayed");
 
     as->PopLabel("vbmDrawBCDloop");
+}
+
+void Methods6502::initVbmDrawSmallBCD(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmDrawSmallBCD"])
+        return;
+
+    m_node->m_isInitialized["vbmDrawSmallBCD"] = true;
+
+    as->Comment("Draw small text characters to the bitmap using a zero terminated CSTRING");
+    as->Comment("Font chars = " + as->m_internalZP[1]);
+    as->Comment("Temp addr  = " + as->m_internalZP[2] + " - used to calculate char address");
+    as->Label("vbmDrawSmallBCDDigit");
+
+        as->Comment("calculate next screen memory position");
+        as->Asm("ldx vbmX");
+
+        as->Asm("lsr ; divde x by 2 (2 chars per character cell)");
+        as->Asm("tax");
+
+        as->Comment("Work out from LSR if odd or even pattern");
+        as->Asm("bcs vbmDSBCD_Odd");
+        as->Asm("lda #$f0 ; even, use left side of font");
+        as->Asm("bcc vbmDSBCD_Even ; we know carry will be clear");
+as->Label("vbmDSBCD_Odd");
+        as->Asm("lda #$0f ; odd, use right side of font");
+as->Label("vbmDSBCD_Even");
+        as->Asm("sta vbmJ ; store mask to use for later");
+
+        as->Asm("lda vbmScrL,x   ; Address of table lo");
+        as->Asm("ldy vbmScrH,x   ; Address of table hi");
+        as->Asm("clc");
+        as->Asm("adc vbmY		; Add Y offset");
+        as->Asm("bcc vbmDSBCD_NSP_NoOverflow");
+        as->Asm("iny");
+
+    as->Label("vbmDSBCD_NSP_NoOverflow");
+        as->Asm("sta screenmemory");
+        as->Asm("sty screenmemory+1");
+
+    as->Label("vbmDSBCD_GetCharNum");
+        as->Comment("convert text number (0-255) * 8 = memory offset");
+        as->Asm("ldy #0");
+        as->Asm("lda vbmI ; get digit to display");
+
+        as->Asm("sta " + as->m_internalZP[2]);
+        as->Asm("sty " + as->m_internalZP[2] + "+1");
+
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x2");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x4");
+        as->Asm("asl " + as->m_internalZP[2]);
+        as->Asm("rol " + as->m_internalZP[2] + "+1 ;x8");
+
+        as->Asm("lda " + as->m_internalZP[2] );
+        as->Asm("clc");
+        as->Asm("adc "+ as->m_internalZP[1] + "  ; add char low address");
+        as->Asm("sta " + as->m_internalZP[2] );
+        as->Asm("lda " + as->m_internalZP[2] + "+1");
+        as->Asm("adc " + as->m_internalZP[1] + "+1 ; add char high address");
+        as->Asm("sta " + as->m_internalZP[2] + "+1" );
+
+    as->Label("vbmDSBCD_DrawDigit");
+        as->Comment("y reg is ZERO from ldy #0 in GetTileNum");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
+        as->Asm("and vbmJ");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
+        as->Asm("and vbmJ");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
+        as->Asm("and vbmJ");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
+        as->Asm("and vbmJ");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
+        as->Asm("and vbmJ");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
+        as->Asm("and vbmJ");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
+        as->Asm("and vbmJ");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+        as->Asm("iny");
+        as->Asm("lda (" + as->m_internalZP[2] + "),y" );
+        as->Asm("and vbmJ");
+        as->Asm("ora (screenmemory),y");
+        as->Asm("sta (screenmemory),y");
+
+    as->Label("vbmDSBCD_Done");
+        as->Asm("inc vbmX");
+
+}
+void Methods6502::vbmDrawSmallBCD(Assembler *as)
+{
+
+    VerifyInitialized("vbm","InitVbm");
+    VerifyInitialized("vbmDrawSmallBCD","InitVbmDrawSmallBCD");
+
+    if (as->m_internalZP.count()==0)
+        return;
+    if (as->m_internalZP.count() < 3) {
+        ErrorHandler::e.Error("This TRSE command needs at least 3 temporary ZP pointers but has less. Check the TRSE settings for temporary pointers.", m_node->m_op.m_lineNumber);
+    }
+
+    as->Comment("----------");
+    as->Comment("VBM DrawSBCD BCD array, Font, X, Y, number of BCD bytes");
+
+    // address 1 - BCD array
+    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+        ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr1 = "";
+    if (m_node->m_params[0]->isPureNumeric())
+        addr1 = m_node->m_params[0]->HexValue();
+    if (var!=nullptr)
+        addr1 = var->getValue(as);
+
+    // address 2 - chars (font)
+    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+        ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
+    }
+    QString addr2= "";
+    if (m_node->m_params[1]->isPureNumeric())
+        addr2 = m_node->m_params[1]->HexValue();
+    if (var!=nullptr)
+        addr2 = var->getValue(as);
+
+    as->Comment("Font characters to use:");
+    if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
+        as->Asm("lda " + addr2 );
+        as->Asm("sta " + as->m_internalZP[1] );
+        as->Asm("lda " + addr2 +"+1" );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
+    } else {
+        as->Asm("lda #<" + addr2 );
+        as->Asm("sta " + as->m_internalZP[1] );
+        as->Asm("lda #>" + addr2 );
+        as->Asm("sta " + as->m_internalZP[1] + "+1" );
+    }
+
+    //  X
+    if (m_node->m_params[2]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[2]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("x is complex");
+        LoadVar(as, 2);
+    }
+    as->Asm("sta vbmX ; x position");
+
+    //  Y
+    if (m_node->m_params[3]->isPureNumeric()) {
+        // pure numeric
+        as->Asm( "lda #" + QString::number( m_node->m_params[3]->getValueAsInt(as)  ) );
+    } else {
+        // complex
+        as->Comment("y is complex");
+        LoadVar(as, 3);
+    }
+    as->Asm("sta vbmY ; y position in pixels");
+
+    // Number of digits in BCD number
+    NodeNumber* numBytes = dynamic_cast<NodeNumber*>(m_node->m_params[4]);
+    if (numBytes==nullptr)
+        ErrorHandler::e.Error("BCD: last parameter, number of digits, required to be pure constant number");
+
+    int numDigits = numBytes->m_val;
+    if (numDigits < 1 || numDigits > 254)
+        ErrorHandler::e.Error("BCD: last parameter, number of BCD bytes, must be greater than 0 but less than 255");
+    numDigits--;
+
+    QString lblLoop = as->NewLabel("vbmDrawSBCDloop");
+
+    as->Asm("lda #" + Util::numToHex(numDigits) + " ; BCD array - highest byte (in reverse order)");
+    as->Asm("sta vbmT");
+    as->Label(lblLoop);
+    as->Asm("ldx vbmT");
+    as->Asm("lda " + addr1+",x");
+    as->Asm("pha");
+    as->Asm("lsr ; get high nibble"); // get high nibble
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("lsr");
+    as->Asm("sta vbmI ; digit to display");
+    as->Asm("jsr vbmDrawSmallBCDDigit");
+    as->Asm("pla");
+    as->Asm("and #$0f ; get low nibble"); // get low nibble
+    as->Asm("sta vbmI ; digit to display");
+    as->Asm("jsr vbmDrawSmallBCDDigit");
+    as->Asm("dec vbmT");
+    as->Asm("bpl " + lblLoop +" ; loop until all bytes displayed");
+
+    as->PopLabel("vbmDrawSBCDloop");
 }
 
 

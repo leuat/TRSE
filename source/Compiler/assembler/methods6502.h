@@ -312,6 +312,8 @@ public:
 
     void initVbmDrawBCD(Assembler *as);
     void vbmDrawBCD(Assembler *as);
+    void initVbmDrawSmallBCD(Assembler *as);
+    void vbmDrawSmallBCD(Assembler *as);
 
     void initVbmCopyToBuffer(Assembler *as);
     void vbmCopyToBuffer(Assembler *as);
