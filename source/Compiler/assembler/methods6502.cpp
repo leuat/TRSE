@@ -10117,7 +10117,7 @@ void Methods6502::initVbmDrawSmallBCD(Assembler* as)
     as->Label("vbmDrawSmallBCDDigit");
 
         as->Comment("calculate next screen memory position");
-        as->Asm("ldx vbmX");
+        as->Asm("lda vbmX");
 
         as->Asm("lsr ; divde x by 2 (2 chars per character cell)");
         as->Asm("tax");
