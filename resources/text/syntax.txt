@@ -117,6 +117,7 @@ m; vbmDrawSmallTextE; VIC20; a, a, b, b, b
 m; vbmClearSmallText; VIC20; a, a, b, b, b
 
 m; vbmDrawBCD; VIC20; a, a, b, b, b
+m; vbmDrawSmallBCD; VIC20; a, a, b, b, b
 
 m; vbmCopyToBuffer; VIC20 ; a,b,b
 m; vbmCopyFromBuffer; VIC20 ; a,b,b
