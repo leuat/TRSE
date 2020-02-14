@@ -335,6 +335,22 @@ bool ImageLevelEditor::KeyPress(QKeyEvent *e)
         dir.setX(1);
 
 
+    int sx = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X);
+    int sy = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y);
+//    if (m_currentMode==CHARSET2x2 || m_currentMode==CHARSET2x2_REPEAT)
+  //      s=2;
+
+    if (e->key()==Qt::Key_W)
+        m_currentChar-=m_charWidthDisplay*sy;
+    if (e->key()==Qt::Key_A)
+        m_currentChar-=sx;
+    if (e->key()==Qt::Key_S)
+        m_currentChar+=m_charWidthDisplay*sy;
+    if (e->key()==Qt::Key_D)
+        m_currentChar+=sx;
+
+
+
     if (e->key()==Qt::Key_B) {
         m_currentChar=m_footer.get(LImageFooter::POS_CLEAR_VALUE);
     }

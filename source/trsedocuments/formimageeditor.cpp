@@ -294,6 +294,7 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
         }
 
         if (!ui->tblData->hasFocus() && !(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+
             m_work.m_currentImage->m_image->StoreData(ui->tblData);
             m_work.m_currentImage->m_image->KeyPress(e);
             QStringList lst = m_projectIniFile->getStringList("data_header_"+m_currentFileShort);
@@ -340,7 +341,7 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
         }
 
 
-
+        UpdateCurrentCell();
         emit onImageMouseEvent();
         Data::data.forceRedraw = true;
         Data::data.Redraw();
@@ -1319,6 +1320,7 @@ void FormImageEditor::UpdateCurrentCell()
     int w = m_work.m_currentImage->m_image->m_charWidthDisplay;
 //    qDebug() << "UpdateCurrentCell " << c << w << c/w << c%w;
     ui->lstCharMap->setCurrentCell(c/w, c%w);
+  //  qDebug() << "Current cell set to " << ui->lstCharMap->currentRow() << " , " << ui->lstCharMap->currentColumn();
 
   /*              int i = m_work.m_currentImage->m_image->m_currentChar;
                 int x = i%m_work.m_currentImage->m_image->m_charWidthDisplay;
