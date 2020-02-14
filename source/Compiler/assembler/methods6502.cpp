@@ -16267,9 +16267,12 @@ void Methods6502::InitJoy1(Assembler *as)
 
 
 //    Create bitmasks for results for Joystick, these are read directly by TRSE code (see symboltable.cpp)
-    as->Label("joy1 .byte 0"); // current state (is held)
-    as->Label("joy1last .byte 0");  // previous state
-    as->Label("joy1pressed .byte 0"); // Just pressed state
+//    as->Label("joy1 .byte 0"); // current state (is held)
+//    as->Label("joy1last .byte 0");  // previous state
+//    as->Label("joy1pressed .byte 0"); // Just pressed state
+    as->DeclareInternalVariable("joy1");
+    as->DeclareInternalVariable("joy1last");
+    as->DeclareInternalVariable("joy1pressed");
 
     as->Label("callReadJoy1");
 
@@ -16324,9 +16327,12 @@ void Methods6502::InitJoy2(Assembler *as)
 
 
 //    Create bitmasks for results for Joystick, these are read directly by TRSE code (see symboltable.cpp)
-    as->Label("joy2 .byte 0"); // current state (is held)
-    as->Label("joy2last .byte 0");  // previous state
-    as->Label("joy2pressed .byte 0"); // Just pressed state
+//    as->Label("joy2 .byte 0"); // current state (is held)
+//    as->Label("joy2last .byte 0");  // previous state
+//    as->Label("joy2pressed .byte 0"); // Just pressed state
+    as->DeclareInternalVariable("joy2");
+    as->DeclareInternalVariable("joy2last");
+    as->DeclareInternalVariable("joy2pressed");
 
 
     as->Label("callReadJoy2");
