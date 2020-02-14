@@ -508,7 +508,7 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 
     int shift=0;
     shift += (x%16)/(16/cx);
-    shift += ((y%16)/(16/cy))*40;
+    shift += ((y%16)/(16/cy))*m_charWidthDisplay;
   //  shift += ((y%cy)/8)*40;
 //    if (x%cx>=8) shift+=1;
 //    if (y%cy>=8) shift+=40;
@@ -647,6 +647,7 @@ void ImageLevelEditor::CopyFrom(LImage *mc)
         */
         m_footer = c->m_footer;
         m_charset = c->m_charset;
+        m_charWidthDisplay = c->m_charWidthDisplay;
         m_writeType = c->m_writeType;
         for (int i=0;i<4;i++)
             m_extraCols[i] = c->m_extraCols[i];
