@@ -80,6 +80,8 @@ class LabelStack {
 public:
     QVector<QString> m_vars;
     QString m_current;
+    static int m_labelCount;
+
     QMap<QString, bool> sNumbersUsed;
     void push();
     void pop() {

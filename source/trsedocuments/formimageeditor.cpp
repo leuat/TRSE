@@ -1194,6 +1194,7 @@ void FormImageEditor::updateSingleCharSet()
     if (charmap->m_currentChar<0)
         return;
     int c = charmap->m_currentChar;
+
     for (int i=0;i<GetFooterData(LImageFooter::POS_CURRENT_DISPLAY_Y);i++) {
         for (int j=0;j<GetFooterData(LImageFooter::POS_CURRENT_DISPLAY_X);j++) {
             int k = c+j;

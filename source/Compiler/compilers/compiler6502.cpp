@@ -7,6 +7,7 @@ void Compiler6502::InitAssemblerAndDispatcher(AbstractSystem *system)
     m_assembler->m_zbyte = 0x10;
     m_dispatcher = new ASTDispather6502();
     Init6502Assembler();
+    LabelStack::m_labelCount = 0;
 }
 
 void Compiler6502::Connect()

@@ -384,10 +384,13 @@ QString RegisterStack::peekLatest() {
 
 }
 */
+
+int LabelStack::m_labelCount =0;
 void LabelStack::push() {
     bool ok=false;
     while (!ok) {
-        m_current = QString::number(rand()%100000);
+        m_labelCount++;
+        m_current = QString::number(m_labelCount);//QString::number(rand()%100000);
         ok=true;
         if (sNumbersUsed.contains(m_current))
             ok = false;
