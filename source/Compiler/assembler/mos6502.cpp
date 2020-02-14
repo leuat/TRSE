@@ -477,10 +477,12 @@ void AsmMOS6502::DeclareInternalVariable(QString name)
     if (m_varZeroPointers.count()!=0) {
         QString addr = m_varZeroPointers[0];
         m_varZeroPointers.removeFirst();
-        m_tempVars << (name + " = " + addr);
+//        m_tempVars << (name + " = " + addr);
+        Label(name + " = " + addr);
         return;
     }
-    m_tempVars << (name + " dc.b 0");
+    Label(name + " dc.b 0");
+//    m_tempVars << (name + " dc.b 0");
 }
 
 QString AsmMOS6502::StoreInTempVar(QString name, QString type)
