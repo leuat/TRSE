@@ -35,10 +35,11 @@ void Toolbox::Initialize(QGridLayout* ly, int windowWidth)
     m_items.append(new ShapeBox("",":/resources/images/brush_circle.png","Brush"));
     m_items.append(new Spray("",":/resources/images/brush_spray.png","Spray"));
     m_items.append(new Dither("",":/resources/images/brush_dither.png","Dither"));
+    m_items.append(new WetBrush("",":/resources/images/brush_wet.png","Wet"));
     m_items.append(new Filler("",":/resources/images/brush_fill.png","Fill"));
     m_items.append(new Line("",":/resources/images/brush_line.png","Line"));
-    m_items.append(new Circle("C","","Circle"));
-    m_items.append(new Box("Box","","Box"));
+    m_items.append(new Circle("",":/resources/images/brush_drawcircle.png","Circle"));
+    m_items.append(new Box("",":/resources/images/brush_rect.png","Box"));
     m_items.append(new CopyStamp("",":/resources/images/brush_copy.png","Copy/Paste"));
     m_items.append(new RotateAround("",":/resources/images/brush_rotate.png","Rotate"));
     m_items.append(new ShapeBoxFilter("",":/resources/images/brush_circle_background.png", "Background brush"));

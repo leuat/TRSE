@@ -63,6 +63,19 @@ public:
 };
 
 
+class WetBrush : public ToolboxItem {
+public:
+    void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
+
+    int len = 0;
+    static const int maxLen = 300;
+    uchar curCol =-1, prevCol = -1;
+
+    WetBrush();
+    WetBrush(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile, tooltip) { }
+
+};
+
 
 
 class ShapeBoxFilter : public ToolboxItem {
