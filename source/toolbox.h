@@ -32,12 +32,14 @@ class Toolbox
 {
 public:
     Toolbox();
-
+    QGridLayout* m_optionsLayout = nullptr;
+    QGridLayout* m_buttonsLayout = nullptr;
     QVector<ToolboxItem*> m_items;
     QVector<QPushButton*> m_buttons;
     int m_windowWidth;
     QGridLayout *m_ly;
     void Initialize(QGridLayout* layout, int windowWidth);
+    void BuildToolOptions();
 
     void BuildGUI(QGridLayout* ly, int windowWidth);
     ToolboxItem* m_current;

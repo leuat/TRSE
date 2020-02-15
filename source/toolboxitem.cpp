@@ -56,6 +56,7 @@ void ShapeBox::Perform(int x, int y, unsigned char color, LImage* img, bool isPr
         if (mci->isMultiColor())
             ll = 2.4;
     }
+    float lw = m_options["lwidth"]->val/10.0;
 
     for (int i=0;i<m;i++)
         for (int j=0;j<m;j++) {
@@ -66,12 +67,10 @@ void ShapeBox::Perform(int x, int y, unsigned char color, LImage* img, bool isPr
 
             bool ok = l<m/2.5;
             if (m_type==1)
-                ok = abs(l-m/3)<0.75;
+                ok = abs(l-m/3)<lw;
             if (ok)
-            {
 
                 img->setPixel(x+xx,y+yy,color);
-            }
         }
 }
 
@@ -406,8 +405,13 @@ void WetBrush::Perform(int x, int y, unsigned char color, LImage *img, bool isPr
 
     float r = len / (float)maxLen;
 //    qDebug() << "TOOLBOX " <<len << button;
+
+    int val = 100-m_options["length"]->val;
+
     if (len>0 && !isPreview)
-        len-=8;
+        len-=val/4;
+
+    if (len<0) len = 0;
 
 
 /*    float matrix[16] = {
