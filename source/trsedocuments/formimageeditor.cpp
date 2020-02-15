@@ -1652,6 +1652,17 @@ void FormImageEditor::UpdateAspect()
     w->setMaximumWidth(100000);
     ui->vImageSpacer->changeSize(0,0);
 
+    int a = 100;
+    int b = 100;
+    if (val==1) {
+        ui->splitter->setSizes(QList<int>()<<a*5<<b );
+    }
+    if (val==2) {
+        ui->splitter->setSizes(QList<int>()<<a*5*1.6<<b );
+    }
+
+    return;
+
     if (val==0) {
         w->setVisible(true);
         return;
