@@ -292,16 +292,18 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
                 mc->ForceBackgroundColor(0,3);
             }
         }
+        bool pressed = false;
 
         if (!ui->tblData->hasFocus() && !(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
 
             m_work.m_currentImage->m_image->StoreData(ui->tblData);
             m_work.m_currentImage->m_image->KeyPress(e);
             QStringList lst = m_projectIniFile->getStringList("data_header_"+m_currentFileShort);
-
+            pressed = true;
             m_work.m_currentImage->m_image->BuildData(ui->tblData, lst);
 
         }
+        if (!pressed)
         if (!((QApplication::keyboardModifiers() & Qt::ControlModifier)))
             m_work.m_currentImage->m_image->KeyPress(e);
 
