@@ -273,6 +273,14 @@ bool LImageNES::getXY(QPoint& xy,QPoint& p1, QPoint& p2)
     return true;
 }
 
+PixelChar &LImageNES::getPixelChar(int x, int y)
+{
+    int dx = x/(8/m_scale);
+    int dy = y/8;
+    int i = Util::clamp(dx + m_charWidth*dy,0,m_charWidth*m_charHeight);
+    return m_data[i];
+}
+
 QString LImageNES::getMetaInfo() {
     QString txt = "The NES CHR image is your standard 8kb sprite/tileset (2x256 8x8 pixels) for any 40kb NES project. \n\n";
     txt+="Data are stored in 2 bitplanes, allowing for a total of 4 colours. The NES CHR consists of 2 \"pages\", where one contains sprite data while the other tile data (can be set programmatically on the NES).\n\n ";

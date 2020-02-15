@@ -372,6 +372,7 @@ void MultiColorImage::CopyFrom(LImage* img)
          m_width = mc->m_width;
          m_height = mc->m_height;
          m_scaleX = mc->m_scaleX;
+         m_charWidthDisplay = mc->m_charWidthDisplay;
         // qDebug() << "COPY FROM";
 #pragma omp parallel for
          for(int i=0;i<m_charHeight*m_charWidth;i++) {
@@ -951,11 +952,8 @@ PixelChar &MultiColorImage::getPixelChar(int x, int y)
 {
     int dx = x/(8/m_scale);
     int dy = y/8;
-    int i = Util::clamp(dx + m_charWidth*dy,0,m_charWidth*m_charHeight);
-    if (i>=0 && i<m_charWidth*m_charHeight)
-        return m_data[i];
-    else
-        return m_data[0];
+    int i = Util::clamp(dx + m_charWidthDisplay*dy,0,m_charWidth*m_charHeight);
+    return m_data[i];
 
 }
 

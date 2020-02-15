@@ -455,6 +455,7 @@ void CharsetImage::CopyFrom(LImage *img)
         m_charWidth = mc->m_charWidth;
         m_charHeight = mc->m_charHeight;
         m_gridWidthDisplay = mc->m_gridWidthDisplay;
+        m_charWidthDisplay = mc->m_charWidthDisplay;
 
         for (int i=0;i<4;i++)
             m_extraCols[i]  = mc->m_extraCols[i];

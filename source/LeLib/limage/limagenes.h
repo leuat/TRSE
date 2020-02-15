@@ -43,6 +43,9 @@ public:
 
     bool getXY(QPoint& xy,QPoint& p1, QPoint& p2);
 
+    PixelChar &getPixelChar(int x, int y) override;
+
+
 
     virtual QString getMetaInfo() override;
 
