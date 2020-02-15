@@ -27,6 +27,24 @@
 #include <QString>
 
 
+class ToolBoxItemOption {
+public:
+    QString name;
+    float tmin;
+    float tmax;
+    float val;
+    ToolBoxItemOption(QString n, float mi, float ma, float v) {
+        name = n;
+        tmin = mi;
+        tmax = ma;
+        val = v;
+    }
+    ToolBoxItemOption() {
+
+    }
+};
+
+
 class ToolboxItem
 {
 public:
@@ -35,6 +53,8 @@ public:
 
     float m_size = 4;
     float m_type = 0;
+
+    QMap<QString, ToolBoxItemOption*> m_options;
 
     virtual void IsPreview(int button, bool& isPreview) { }
 
@@ -58,7 +78,11 @@ public:
     void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
 
     ShapeBox();
-    ShapeBox(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile, tooltip) { }
+    ShapeBox(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile, tooltip) {
+        m_options["lwidth"] = new ToolBoxItemOption("Line width",0,50,10);
+//        m_options["size"] = new ToolBoxItemOption("Size",0,60,4);
+
+    }
 
 };
 
@@ -72,7 +96,9 @@ public:
     uchar curCol =-1, prevCol = -1;
 
     WetBrush();
-    WetBrush(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile, tooltip) { }
+    WetBrush(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile, tooltip) {
+        m_options["length"] = new ToolBoxItemOption("Length",0,100,50);
+    }
 
 };
 

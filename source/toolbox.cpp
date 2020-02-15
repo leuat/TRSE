@@ -47,7 +47,60 @@ void Toolbox::Initialize(QGridLayout* ly, int windowWidth)
 
     m_current = m_items[0];
 
-    BuildGUI(ly, windowWidth);
+    m_buttonsLayout = new QGridLayout();
+    m_optionsLayout = new QGridLayout();
+    m_ly->addLayout(m_optionsLayout,0,0);
+    m_ly->addLayout(m_buttonsLayout,1,0);
+
+
+    BuildGUI(m_buttonsLayout, windowWidth);
+    BuildToolOptions();
+}
+
+void Toolbox::BuildToolOptions()
+{
+    if (m_optionsLayout==nullptr)
+        return;
+    Util::clearLayout(m_optionsLayout);
+    if (m_current->m_options.keys().count()==0)
+        return;
+    int row = 2;
+    m_optionsLayout->addWidget(new QLabel(m_current->m_tooltip+" options"),0,0);
+    QFrame* hFrame = new QFrame;
+    hFrame->setFrameShape(QFrame::HLine);
+    m_optionsLayout->addWidget(hFrame,1,0);
+ /*    m_optionsLayout->addWidget(hFrame,1,0);
+    QPushButton* help = new QPushButton("Help");
+    m_optionsLayout->addWidget(help,2,0);*/
+    m_optionsLayout->setColumnStretch(0,10);
+    m_optionsLayout->setColumnStretch(1,1);
+    for (QString name: m_current->m_options.keys()) {
+        ToolBoxItemOption* t = m_current->m_options[name];
+        QLabel* l = new QLabel(t->name);
+        QSlider* sl = new QSlider(Qt::Horizontal);
+        QLabel* val = new QLabel(QString::number(t->val));
+        sl->setMaximum(t->tmax);
+        sl->setMinimum(t->tmin);
+        sl->setValue(t->val);
+        QObject::connect( sl, &QSlider::sliderMoved,  [=](){
+            t->val = sl->value();
+            val->setText(QString::number(t->val));
+        } );
+        m_optionsLayout->addWidget(l,row,0);
+        m_optionsLayout->addWidget(sl,row+1,0);
+
+         QPushButton* help = new QPushButton("?");
+         help->setMaximumWidth(16);
+         m_optionsLayout->addWidget(help,row,1);
+
+         m_optionsLayout->addWidget(val,row+1,1);
+
+        row+=2;
+    }
+    QFrame* hFrame2 = new QFrame;
+    hFrame2->setFrameShape(QFrame::HLine);
+    m_optionsLayout->addWidget(hFrame2,row,0);
+
 
 }
 
@@ -74,7 +127,7 @@ void Toolbox::BuildGUI(QGridLayout *ly, int windowWidth)
         b->setText(m_items[i]->m_name);
         b->setFixedSize(QSize(size, size));
         b->setToolTip(m_items[i]->m_tooltip);
-        QObject::connect( b, &QPushButton::clicked,  [=](){ handleButton(i); } );
+        QObject::connect( b, &QPushButton::clicked,  [=](){ handleButton(i);  } );
 
         ly->addWidget(b,row,col);
 
@@ -95,6 +148,7 @@ void Toolbox::handleButton(int data)
 {
     m_current = m_items[data];
     m_current->Init();
-    BuildGUI(m_ly,m_windowWidth);
+    BuildGUI(m_buttonsLayout,m_windowWidth);
+    BuildToolOptions();
 //    qDebug() << "Setting toolbox "<< data;
 }
