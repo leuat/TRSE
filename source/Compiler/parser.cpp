@@ -244,6 +244,7 @@ void Parser::InitBuiltinFunctions()
 
         InitBuiltinFunction(QStringList()<< "vbmdrawbcd(", "initVbmDrawBCD");
         InitBuiltinFunction(QStringList()<< "vbmdrawsmallbcd(", "initVbmDrawSmallBCD");
+        InitBuiltinFunction(QStringList()<< "vbmdrawsmallbcdo(", "initVbmDrawSmallBCDO");
 
         InitBuiltinFunction(QStringList()<< "vbmcopytobuffer(", "initVbmCopyToBuffer");
         InitBuiltinFunction(QStringList()<< "vbmcopyfrombuffer(", "initVbmCopyFromBuffer");
