@@ -418,11 +418,36 @@ void LImage::drawLine(float x0, float y0, float x1, float y1, unsigned int col, 
         }
 }
 
+void LImage::drawCircle(float x0, float y0, float r, unsigned int col)
+{
+    int size = r;
+    float as = m_height/(float)m_width;
+    int sizex = r/as;
+    for (int i=0;i<sizex;i++)
+        for (int j=0;j<size;j++) {
+            int dx = i-sizex/2;
+            int dy = j-size/2;
+            int d = sqrt( 4*as*dx*dx +4*dy*dy );
+            if (d<r)
+                setPixel(x0+dx, y0+dy, col);
+        }
+}
+
 void LImage::Box(int x, int y, unsigned char col, int size)
 {
     for (int i=0;i<size;i++)
         for (int j=0;j<size;j++) {
             setPixel(x+i-size/2, y+j-size/2, col);
+        }
+}
+
+void LImage::RBox(int x0, int y0, int x1, int y1, unsigned char col)
+{
+    if (x0>x1) swap(x0,x1);
+    if (y0>y1) swap(y0,y1);
+    for (int i=0;i<x1-x0;i++)
+        for (int j=0;j<y1-y0;j++) {
+            setPixel(x0+i, y0+j, col);
         }
 }
 

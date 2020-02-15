@@ -74,15 +74,6 @@ public:
 
 };
 
-class Circle : public ToolboxItem {
-public:
-    void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
-
-    Circle() {}
-    Circle(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile,tooltip) { }
-
-};
-
 class Spray : public ToolboxItem {
 public:
     void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
@@ -120,6 +111,33 @@ public:
     void IsPreview(int button, bool& isPreview) override {
         if (button==1)
         isPreview = true;
+    }
+
+};
+
+
+class Circle : public ToolboxItem {
+public:
+    void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
+    QPoint m_start;
+    Circle() {}
+    Circle(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile,tooltip) { }
+    void IsPreview(int button, bool& isPreview) override {
+        if (button==1)
+            isPreview = true;
+    }
+
+};
+
+class Box : public ToolboxItem {
+public:
+    void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
+    QPoint m_start;
+    Box() {}
+    Box(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile,tooltip) { }
+    void IsPreview(int button, bool& isPreview) override {
+        if (button==1)
+            isPreview = true;
     }
 
 };

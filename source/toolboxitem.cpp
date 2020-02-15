@@ -113,10 +113,6 @@ void ShapeBoxFilter::Perform(int x, int y, unsigned char color, LImage* img, boo
 
 
 
-void Circle::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
-{
-
-}
 
 void Spray::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
 {
@@ -350,5 +346,35 @@ void RotateAround::Perform(int x, int y, unsigned char color, LImage *img, bool 
         m_copy->Rotate(m_start, angle, 1, img);
 
     }
+
+}
+
+void Circle::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
+{
+    if (button==0) {
+        m_start = QPoint(x,y);
+        return;
+    }
+//    if (m_type==1) {
+        int dx = m_start.x() - x;
+        int dy = m_start.y() - y;
+
+        int r = sqrt(dx*dx + dy*dy);
+
+  //  }
+    if (r>0)
+    img->drawCircle(m_start.x(), m_start.y(), r, color);
+
+
+}
+
+void Box::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
+{
+    if (button==0) {
+        m_start = QPoint(x,y);
+        return;
+    }
+    img->RBox(m_start.x(), m_start.y(), x,y, color);
+
 
 }
