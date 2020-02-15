@@ -1,8 +1,8 @@
-<h3>vbmDrawBCD( [address-bcd], [address-chars], [byte-x], [byte-y], [byte-lineheight]);</h3>
+<h3>vbmDrawSmallBCD( [address-bcd], [address-chars], [byte-x], [byte-y], [byte-lineheight]);</h3>
 <ul>
     <li>[address-bcd] - address of a BCD array (number)</li>
     <li>[address-chars] - address of the characterset to use for the font</li>
-    <li>[byte-x] - X column (0-19) to display the message</li>
+    <li>[byte-x] - X column (0-39) to display the message</li>
     <li>[byte-y] - Y line (0-183) to display the message</li>
     <li>[byte-bcdlength] - length of the BCD number in bytes</li>
 </ul>
@@ -10,7 +10,13 @@
 
 <h3>Description</h3>
 <p>
-Writes a Binary Coded Decimal (BCD) number to the bitmap.
+Writes a Binary Coded Decimal (BCD) number to the bitmap using a small 4x5 or 4x8 bitmap font.
+</p>
+<p>Small bitmap fonts require two copies of the digits in each character, each 4 pixels wide. See the VBM
+    examples in the Vic 20 tutorials for an example.
+</p>
+<p>This command will blank out a 4x5 or 4x8 space to draw each digit.  If pixel row 6 is empty in the font bitmap
+    it will clear and draw only a 4x5 small number, otherwise it will draw a 4x8 small number.
 </p>
 <p>To be used with the BCD commands to set, add, subtract and compare BCD numbers.  Useful for 
     scores and allows numbers of any size, much larger than integer numbers!
@@ -18,7 +24,7 @@ Writes a Binary Coded Decimal (BCD) number to the bitmap.
 
 <h3>Example</h3>
 <code>
-    font: incbin("font8x8.bin", $4000); // first 64 PETSCII Screen Codes
+    font: incbin("font4x8.bin", $4000); // first 64 PETSCII Screen Codes
 
     @define nums $4180  // this is the address where the 0 character data starts in the above font
         

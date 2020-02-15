@@ -418,5 +418,11 @@
         <file>resources/images/brush_drawcircle.png</file>
         <file>resources/images/brush_rect.png</file>
         <file>resources/images/brush_wet.png</file>
+        <file>resources/text/help/m/vbmresetdisplaymode.rtf</file>
+        <file>resources/text/help/m/vbmdrawsmallbcdoy.rtf</file>
+        <file>resources/text/help/m/vbmdrawsmallbcd.rtf</file>
+        <file>resources/text/help/m/vbmclearsprite2.rtf</file>
+        <file>resources/text/help/m/vbmdrawsprite2E.rtf</file>
+        <file>resources/text/help/m/vbmdrawsprite2.rtf</file>
     </qresource>
 </RCC>

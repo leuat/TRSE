@@ -1,0 +1,58 @@
+<h3>vbmDrawSprite2( [address1], [address2] );</h3>
+<ul>
+    <li>[address1] - pre-shifted address table for the left side of an 16x8 sprite</li>
+    <li>[address2] - pre-shifted address table for the middle of an 16x8 sprite</li>
+    <li>[address3] - pre-shifted address table for the right side of an 16x8 sprite</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+    A simple sprite routine to display an 16x8 sprite on the bitmap.
+</p>
+<p>
+    Only three parameters are required; the addresses of the pre-shifted 'address table' for the left, middle and right
+    side of a sprite. The pre-shifted address table is a list of addresses to point to where each pre-shifted
+    frame can be found in memory.
+</p>
+<p>
+    For example: $a000, $a080, $a1000, $a180
+</p>
+<p>
+    The address table will need to be defined if you import your sprites already pre-shifted.  If you use
+    the vbmSpriteShiftL / R commands, these will build the address table for you. 
+</p>
+
+<h3>Limitations</h3>
+<p>
+    Some compromises have been made for the basic 16x8 sprite command.
+</p>
+<p>
+    Firstly, it will write the sprite to
+    wherever the built in screenmemory zero page pointer is pointing to.  This could be partly outside of
+    the bitmap memory ($1100 to $1FFF) if you position your sprite off of the screen edges.
+    Therefore, <strong>do not</strong> use this command if you wish to place sprite your sprite partly off the screen.
+</p>
+<p>
+    Secondly, this sprite command cannot be used with the vbmScrollLeft / Right commands which re-arrange
+    the character map used for the bitmap.
+</p>
+<p>
+    Should either of the above be requirements, use vbmSpriteSlice instead which allows you to draw each
+    sprite column seperately and you can specify the start and end line of the sprite to draw.  As such
+    you can only draw the columns and lines as needed in the correct locations.
+</p>
+
+<p>There are three ways to draw a sprite:</p>
+<ul>
+    <li>vbmDrawSprite2 - draws a sprite, merging it with the bitmap</li>
+    <li>vbmDrawSprite2E - draws a sprite, merging it with the bitmap using the EOR operation</li>
+    <li>vbmClearSprite2 - clears a sprite from the bitmap, effectively 'cutting it out'</li>
+ </ul>
+
+<h3>See also</h3>
+<ul>
+    <li>vbmDrawSprite8</li>
+    <li>vbmDrawSprite16</li>
+    <li>vbmSetPosition1 / 2 / 4</li>
+</ul>
