@@ -454,6 +454,7 @@ void CharsetImage::CopyFrom(LImage *img)
         m_minCol = mc->m_minCol;
         m_charWidth = mc->m_charWidth;
         m_charHeight = mc->m_charHeight;
+        m_gridWidthDisplay = mc->m_gridWidthDisplay;
 
         for (int i=0;i<4;i++)
             m_extraCols[i]  = mc->m_extraCols[i];
@@ -556,5 +557,16 @@ int CharsetImage::getCharHeightDisplay()
         return i*8*m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y);
     }
     return m_charHeightDisplay;
+}
+
+int CharsetImage::getGridWidth()
+{
+    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1) {
+        int i =1;
+        if (m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_REPEAT)==1)
+            i=3;
+        return i*8*m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X);
+    }
+    return m_gridWidthDisplay;
 }
 

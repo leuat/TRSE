@@ -144,6 +144,7 @@ public:
     int m_charHeightDisplay = 25;
     int m_charWidthDisplay = 40;
 
+    int m_gridWidthDisplay = 40;
 
     virtual void SetBank(int bnk) {
         m_footer.set(LImageFooter::POS_CURRENT_BANK,bnk);
@@ -197,7 +198,8 @@ public:
     static uchar m_copy[];
 
     virtual int getGridWidth() {
-        return getCharWidthDisplay();
+//        return getCharWidthDisplay();
+        return m_gridWidthDisplay;
     }
     virtual int getGridHeight() {
         return getCharHeightDisplay();

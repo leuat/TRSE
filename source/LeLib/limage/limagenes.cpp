@@ -19,6 +19,7 @@ LImageNES::LImageNES(LColorList::Type t) : CharsetImage(t)
     //m_data = new PixelChar[m_charWidth*m_charHeight];
     m_charWidthDisplay=16;
     m_charHeightDisplay=16;
+    m_gridWidthDisplay = 16;
 
 //    m_double=false;
     Clear();

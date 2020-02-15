@@ -90,6 +90,8 @@ public:
 
     virtual int getCharWidthDisplay() override;
     virtual int getCharHeightDisplay() override;
+    virtual int getGridWidth() override;
+
 
 /*    void FlipHorizontal() override;
     void FlipVertical() override;

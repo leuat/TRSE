@@ -664,6 +664,7 @@ void ImageLevelEditor::CopyFrom(LImage *mc)
         m_footer = c->m_footer;
         m_charset = c->m_charset;
         m_charWidthDisplay = c->m_charWidthDisplay;
+        m_gridWidthDisplay = c->m_gridWidthDisplay;
         m_writeType = c->m_writeType;
         for (int i=0;i<4;i++)
             m_extraCols[i] = c->m_extraCols[i];

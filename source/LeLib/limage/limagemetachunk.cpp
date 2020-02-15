@@ -27,6 +27,9 @@ LImageMetaChunk::LImageMetaChunk(LColorList::Type t) : CharsetImage(t)
     if (isNes())
         m_charWidthDisplay = 16;
     else m_charWidthDisplay = 40;
+
+    m_gridWidthDisplay = m_charWidthDisplay;
+
     m_supports.asmExport = false;
     m_supports.binaryLoad = true;
     m_supports.binarySave = true;

@@ -302,6 +302,8 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             m_work.m_currentImage->m_image->BuildData(ui->tblData, lst);
 
         }
+        if (!((QApplication::keyboardModifiers() & Qt::ControlModifier)))
+            m_work.m_currentImage->m_image->KeyPress(e);
 
 
 //        FillCMBColors();
@@ -434,7 +436,8 @@ void FormImageEditor::UpdateGrid()
 /*    if (!m_updateThread.m_drawGrid)
         return;
 */
-    m_grid.Initialize(m_updateThread.m_gridScale *m_work.m_currentImage->m_image->m_width,m_updateThread.m_gridScale*m_work.m_currentImage->m_image->m_height);
+    m_grid.Initialize(m_updateThread.m_gridScale *m_work.m_currentImage->m_image->m_width,
+                      m_updateThread.m_gridScale*m_work.m_currentImage->m_image->m_height);
 //    qDebug() << m_work.m_currentImage->m_image->m_scaleX;
     m_updateThread.CreateGrid();
 //    m_grid.ApplyToLabel(ui->lblGrid);
@@ -772,7 +775,9 @@ bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
         const QKeyEvent *ke = static_cast<QKeyEvent *>(e);
 //        qDebug() << "KEY EVENT "<<rand()%100;
 
+
         if (!(QApplication::keyboardModifiers() & Qt::ShiftModifier)) {
+
             if(ke->key()== Qt::Key_Space) {
                 onSwapDisplayMode();
                 return true;
@@ -1092,8 +1097,10 @@ void FormImageEditor::updateCharSet()
     CharsetImage* charmap = m_work.m_currentImage->m_image->getCharset();
 
 
+    bool isLevelEditor = dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image)!=nullptr;
 
-    ImageLevelEditor* le = dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image);
+
+//    ImageLevelEditor* le = dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image);
 /*    if (le!=nullptr && charmap==nullptr) {
         Messages::messages.DisplayMessage(Messages::messages.CHARSET_WARNING);
         return;
@@ -1147,7 +1154,7 @@ void FormImageEditor::updateCharSet()
         itm->setIcon(q);
         itm->setData(Qt::UserRole, kk);
         cnt++;
-        if (cnt>=256) break;
+        if (cnt>=256 && isLevelEditor) break;
         i++;
         kk++;
         if (i>=width) {
@@ -1285,8 +1292,6 @@ void FormImageEditor::PrepareImageTypeGUI()
 
 void FormImageEditor::SetSingleCharsetEdit()
 {
-
-
     UpdateGrid();
     SetFooterData(LImageFooter::POS_DISPLAY_CHAR,1);
     m_updateThread.m_zoom = 1.0;
@@ -1648,22 +1653,28 @@ QWidget *FormImageEditor::getCurrentPainter()
 void FormImageEditor::onSwapDisplayMode()
 {
     m_work.m_currentImage->m_image->m_footer.toggle(LImageFooter::POS_DISPLAY_CHAR);
+  //  qDebug() << "woot " << GetFooterData(LImageFooter::POS_DISPLAY_CHAR);
     getCurrentPainter()->setFocus();
     ui->lstCharMap->setCurrentItem(nullptr);
     if (GetFooterData(LImageFooter::POS_DISPLAY_CHAR)==1) {
-/*        int c = m_work.m_currentImage->m_image->m_currentChar;
-        int w = m_work.m_currentImage->m_image->m_charWidthDisplay;
-
-
-        ui->lstCharMap->setCurrentCell(c/w, c%w);*/
-        UpdateCurrentCell();
+       UpdateCurrentCell();
     }
 
     m_updateThread.m_zoom = 1.0;
 
+    UpdateCurrentMode();
+    UpdateGrid();
     emit onImageMouseEvent();
     Data::data.forceRedraw = true;
     Data::data.Redraw();
+
+//    qDebug() << "woot2 " << GetFooterData(LImageFooter::POS_DISPLAY_CHAR);
+
+
+
+
+
+
 
 }
 
@@ -1722,13 +1733,23 @@ void FormImageEditor::on_btnLoadCharmap_clicked()
 
 }
 
+void FormImageEditor::on_lstCharMap_itemClicked(QTableWidgetItem *item)
+{
+    if (item==nullptr)
+        return;
+    m_prefMode = m_keepMode;
+    SelectCharacter(item->data(Qt::UserRole).toInt());
+    SetSingleCharsetEdit();
+
+}
+
 void FormImageEditor::on_lstCharMap_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous)
 {
     if (current==nullptr)
         return;
     m_prefMode = m_keepMode;
     SelectCharacter(current->data(Qt::UserRole).toInt());
-    SetSingleCharsetEdit();
+//    SetSingleCharsetEdit();
     Data::data.Redraw();
     Data::data.forceRedraw = true;
 //    qDebug() << m_work.m_currentImage->m_image->m_currentChar;
@@ -2281,3 +2302,4 @@ void FormImageEditor::on_cmbCharWidth_currentIndexChanged(const QString &arg1)
     updateCharSet();
 
 }
+

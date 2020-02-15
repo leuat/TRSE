@@ -61,6 +61,7 @@ LImageVIC20::LImageVIC20(LColorList::Type t)  : CharsetImage (t)
 void LImageVIC20::setMultiColor(bool doSet)
 {
     m_charWidthDisplay = m_charWidth;
+    m_gridWidthDisplay  = m_charWidth;
     m_charHeightDisplay = m_charHeight;
     if (doSet) {
         m_width = m_charWidth*4;

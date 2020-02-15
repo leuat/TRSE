@@ -5,6 +5,7 @@ LImageLevelNES::LImageLevelNES(LColorList::Type t) : ImageLevelEditor(t)
     m_type = LImage::Type::LevelEditorNES;
     m_supports.displayBank = true;
     m_charWidthDisplay = 32;
+    m_gridWidthDisplay = 32;
     m_supports.asmExport = true;
     m_supports.binaryLoad = true;
     m_supports.binarySave = true;
