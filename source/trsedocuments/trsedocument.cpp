@@ -35,7 +35,7 @@ bool TRSEDocument::SaveChanges()
         return true;
     QMessageBox msgBox;
     msgBox.setText("The document has been modified.");
-    msgBox.setInformativeText("Do you want to save your changes?");
+    msgBox.setInformativeText("Do you want to save your changes in '"+m_currentFileShort+"'?");
     msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Save);
     msgBox.setWindowTitle("Save document");

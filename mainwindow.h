@@ -252,7 +252,7 @@ public slots:
     void CloseAll();
     QString getProjectPath();
 
-
+    void closeEvent(QCloseEvent *event) override;
 
 signals:
    void ValueChanged();

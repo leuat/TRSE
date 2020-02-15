@@ -610,6 +610,13 @@ QString MainWindow::getProjectPath()
 
 }
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    CloseAll();
+    // accept close event
+    event->accept();
+}
+
 void MainWindow::FindFileDialog()
 {
 
