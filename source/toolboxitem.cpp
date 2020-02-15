@@ -361,9 +361,12 @@ void Circle::Perform(int x, int y, unsigned char color, LImage *img, bool isPrev
 
         int r = sqrt(dx*dx + dy*dy);
 
-  //  }
+  //  }p
+    int innerR = -1;
+    if (m_type==1)
+        innerR = r-4;
     if (r>0)
-    img->drawCircle(m_start.x(), m_start.y(), r, color);
+        img->drawCircle(m_start.x(), m_start.y(), r, innerR,color);
 
 
 }
@@ -374,7 +377,10 @@ void Box::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview
         m_start = QPoint(x,y);
         return;
     }
-    img->RBox(m_start.x(), m_start.y(), x,y, color);
+    int width = 0;
+    if (m_type ==1)
+        width = 1;
+    img->RBox(m_start.x(), m_start.y(), x,y, color, width);
 
 
 }

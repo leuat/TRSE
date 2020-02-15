@@ -337,11 +337,11 @@ public:
     virtual void ImportC(QFile& file)  {}
 
     virtual void setMultiColor(bool doSet) {}
-    void RBox(int x0, int y0, int x1, int y1, unsigned char col);
+    void RBox(int x0, int y0, int x1, int y1, unsigned char col, int size);
 
     virtual bool isMultiColor() { return false; }
     void drawLine(float x0, float y0, float x1, float y1, unsigned int col, int size);
-    void drawCircle(float x0, float y0, float r, unsigned int col);
+    void drawCircle(float x0, float y0, float r, float r0, unsigned int col);
 
 
     void Box(int x, int y, unsigned char col, int size);
