@@ -384,3 +384,83 @@ void Box::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview
 
 
 }
+
+void WetBrush::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
+{
+    float m= m_size;
+    float ll = 0.66;
+    MultiColorImage* mci = dynamic_cast<MultiColorImage*>(img);
+    if (mci!=nullptr) {
+        if (mci->isMultiColor())
+            ll = 2.4;
+    }
+
+    if (curCol != color) {
+        prevCol = curCol;
+        curCol = color;
+    }
+
+    if (button==0) {
+        len = maxLen;
+    }
+
+    float r = len / (float)maxLen;
+//    qDebug() << "TOOLBOX " <<len << button;
+    if (len>0 && !isPreview)
+        len-=8;
+
+
+/*    float matrix[16] = {
+    0, 4, 1, 5,
+    8, 12, 9, 13,
+    2, 6, 3, 7,
+    10, 6, 11, 15};
+*/
+    float matrix[64] = {
+     0, 32, 8, 40, 2, 34, 10, 42, /* 8x8 Bayer ordered dithering */
+    48, 16, 56, 24, 50, 18, 58, 26, /* pattern. Each input pixel */
+    12, 44, 4, 36, 14, 46, 6, 38, /* is scaled to the 0..63 range */
+    60, 28, 52, 20, 62, 30, 54, 22, /* before looking in this table */
+     3, 35, 11, 43, 1, 33, 9, 41, /* to determine the action. */
+    51, 19, 59, 27, 49, 17, 57, 25,
+    15, 47, 7, 39, 13, 45, 5, 37,
+    63, 31, 55, 23, 61, 29, 53, 21 };
+
+
+    QVector3D c1 = Util::fromColor(img->m_colorList.get(color).color);
+    QVector3D c2 = Util::fromColor(img->m_colorList.get(prevCol).color);
+
+
+//    r = r/2 + 0.25;
+
+    QVector3D c3 = r*c1 + (1-r)*c2;
+
+    for (int i=0;i<m;i++)
+        for (int j=0;j<m;j++) {
+
+            float mval = matrix[(i)&7 + (j&7)*8]/4.0;
+            int d = m/2;
+            float xx = i-d;
+            float yy = (j-d);
+            float l = sqrt(xx*xx*ll + yy*yy);
+
+            bool ok = l<m/2.5;
+
+
+            if (m_type==1)
+                ok = abs(l-m/3)<0.75;
+
+            if (ok)
+            {
+                QColor cc = Util::toColor(c3);
+
+                cc.setRed(min((float)cc.red() + mval,255.0f));
+                cc.setGreen(min((float)cc.green()+ mval,255.0f));
+                cc.setBlue(min((float)cc.blue() + mval,255.0f));
+                int winner = 0;
+                img->m_colorList.getClosestColor(cc, winner);
+
+                img->setPixel(x+xx,y+yy,winner);
+            }
+        }
+}

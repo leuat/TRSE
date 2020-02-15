@@ -415,5 +415,8 @@
         <file>resources/code/x86/init_keyboard_irq.asm</file>
         <file>resources/text/help/r/vbmexportchunk.rtf</file>
         <file>resources/text/help/r/exportframe.rtf</file>
+        <file>resources/images/brush_drawcircle.png</file>
+        <file>resources/images/brush_rect.png</file>
+        <file>resources/images/brush_wet.png</file>
     </qresource>
 </RCC>
