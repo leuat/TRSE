@@ -71,13 +71,11 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
     m_updateThread.SetCurrentImage(&m_work, &m_toolBox);
 
 
-//    ui->lblImage->initializeGL();
-//    setFocusPolicy(Qt::StrongFocus);
-
-//    ui->lblImage->setFocusPolicy(Qt::StrongFocus);
-  //  setFocusPolicy(Qt::StrongFocus);
     installEventFilter(this);
     ui->tblData->setItemDelegate(new ByteDelegate());
+  //  ui->splitter->setStretchFactor(1, 0);
+
+  ui->splitter->setSizes(QList<int>() << 10000<<3);
 }
 
 void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *iniProject) {
@@ -114,6 +112,7 @@ void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *ini
 
     }
 
+    QObject::connect(ui->splitter, SIGNAL(splitterMoved(int,int)), this, SLOT(UpdateAspect()));
 
 }
 
@@ -122,7 +121,8 @@ void FormImageEditor::onImageMouseEvent()
 {
 //    emit EmitMouseEvent();
     m_updateThread.RunContents();
-
+    ui->splitter->setCollapsible(0,true);
+ //   ui->ImageLayout->set
 
     UpdateImage();
     if (dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image)!=nullptr)
@@ -369,7 +369,7 @@ void FormImageEditor::UpdateImage()
     if (m_painterType==OpenGL) {
         QImage txt = m_updateThread.m_pixMapImage.toImage();
 
-        ui->lblImage->setVisible(true);
+//        ui->lblImage->setVisible(true);
         ui->lblImage->setTexture(txt,*m_updateThread.m_grid->m_qImage);
 
         m_documentIsChanged = ui->lblImage->m_imageChanged;
@@ -380,7 +380,7 @@ void FormImageEditor::UpdateImage()
     } else
     {
 
-        ui->lblImageQt->setVisible(true);
+//        ui->lblImageQt->setVisible(true);
         //ui->lblImage->setTexture(txt,*m_updateThread.m_grid->m_qImage);
 //        ui->lblImageQt->setPixmap(QPixmap::fromImage(txt));
         m_documentIsChanged = ui->lblImageQt->m_imageChanged;
@@ -830,7 +830,10 @@ bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
 
 void FormImageEditor::resizeEvent(QResizeEvent *event)
 {
+
     QWidget* w = getCurrentPainter();
+//    w->setSizePolicy(QSizePolicy ::MinimumExpanding,QSizePolicy ::Expanding);
+
     w->setVisible(true);
     m_oldWidth = w->width();
     UpdateAspect();
@@ -1599,10 +1602,77 @@ void FormImageEditor::UpdateSpriteImages()
 
 }
 
-void FormImageEditor::UpdateAspect()
+void FormImageEditor::AspectDone() {
+    QWidget* w = getCurrentPainter();
+    w->setVisible(true);
+    ui->lblName->setVisible(true);
+
+}
+
+void FormImageEditor::Aspect1()
 {
     QWidget* w = getCurrentPainter();
+
+    int size;
+    if (w->width()<=w->height()*m_scaley)
+        size = w->width();
+//
+    else
+        size = w->height()-10;//min((double)m_oldWidth,height()/1.25);
+//    qDebug() << size << this->height();
+    int sy = size/m_scaley;
+    //  w->setMinimumWidth(size);
+      w->setMaximumHeight(sy);
+      w->setMaximumWidth(size);
+      w->setMinimumHeight(sy);
+      w->setMinimumWidth(size);
+//
+    ui->vImageSpacer->changeSize(0,this->height()-sy-20,QSizePolicy::Expanding,QSizePolicy::Expanding);
+    QTimer::singleShot(10, this, SLOT(AspectDone()));
+
+//    w->setVisible(true);
+  //  ui->lblName->setVisible(true);
+
+}
+
+
+void FormImageEditor::UpdateAspect()
+{
+
+    QWidget* w = getCurrentPainter();
     int val = ui->cmbAspect->currentIndex();
+
+//    ui->lblImage->setVisible(false);
+  //  return;
+
+
+    w->setMinimumHeight(0);
+    w->setMaximumHeight(100000);
+    w->setMinimumWidth(0);
+    w->setMaximumWidth(100000);
+    ui->vImageSpacer->changeSize(0,0);
+
+    if (val==0) {
+        w->setVisible(true);
+        return;
+    }
+
+
+     w->setVisible(false);
+     int wait = 10;
+    ui->lblName->setVisible(false);
+    if (val==1) {
+        m_scaley = 1.0;
+        QTimer::singleShot(wait, this, SLOT(Aspect1()));
+    }
+    if (val==2) {
+        QTimer::singleShot(wait, this, SLOT(Aspect1()));
+        m_scaley = 1.6;
+
+    }
+
+    return;
+
     if (val==0) {
         w->setMinimumHeight(0);
         w->setMaximumHeight(100000);
@@ -1612,13 +1682,9 @@ void FormImageEditor::UpdateAspect()
 //        m_oldWidth = width();
     }
     if (val==1) {
-//        qDebug() << m_oldWidth;
-        int size = min((double)m_oldWidth,height()/1.25);
-        w->setMinimumHeight(size);
-        w->setMaximumHeight(size);
-        w->setMinimumWidth(size);
-        w->setMaximumWidth(size);
-        ui->vImageSpacer->changeSize(0,200,QSizePolicy::Expanding,QSizePolicy::Expanding);
+
+//        w->setMinimumWidth(size/2);
+  //      w->setMaximumWidth(size);
     }
     if (val==2) {
         w->setMinimumWidth(0);
@@ -1742,6 +1808,7 @@ void FormImageEditor::on_lstCharMap_itemClicked(QTableWidgetItem *item)
     SetSingleCharsetEdit();
 
 }
+
 
 void FormImageEditor::on_lstCharMap_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous)
 {

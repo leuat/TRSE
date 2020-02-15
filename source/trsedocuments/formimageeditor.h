@@ -89,6 +89,7 @@ public:
     enum PainterType {OpenGL, QtPaint };
     PainterType m_painterType = OpenGL;
     bool m_isInitialized = false;
+    float m_scaley = 1.0;
 
     int m_oldWidth = 600;
 
@@ -161,7 +162,6 @@ public:
 
     void UpdateSpriteImages();
 
-    void UpdateAspect();
 
     void Update();
 
@@ -173,6 +173,7 @@ private:
     QWidget* getCurrentPainter();
 
 private slots:
+    void UpdateAspect();
     void UpdateMulticolorImageSettings();
     void InitAspect();
     void onSwapDisplayMode();
@@ -293,6 +294,8 @@ private slots:
     void on_btnSelectDefaultClearItm_clicked();
     void on_cmbCharWidth_currentIndexChanged(const QString &arg1);
     void on_lstCharMap_itemClicked(QTableWidgetItem *item);
+    void Aspect1();
+    void AspectDone();
 };
 
 
