@@ -1,0 +1,95 @@
+program NES_Project;
+
+/*
+
+  You need to have installed the NES emulator "mednafen", and set the NES emulator
+  location in the TRSE settings dialog. 
+
+  charset data and initial address are set in project settings
+
+  you can edit the charset / sprite data / palette by opening the tiles/game_tiles.flf image file. 
+
+
+*/
+
+@export "tiles/game_tiles.flf" "tiles/game_tiles.bin" 256
+
+var  
+   	i,j,k: byte; 
+	music: incnsf("music/zelda.nsf");
+	palette: incbin("tiles/game_tiles.pal");
+	
+
+
+
+// NMI will automatically be called on every vblank. 
+//
+
+interrupt NMI();
+begin
+	startirq(0);
+	// Plays the song
+	PlaySong();
+	closeirq();
+end;
+
+
+// Empty
+interrupt IRQ();
+begin
+
+end;
+
+
+/*
+	Sets up the background screen by filling 32x30 rows with
+    Afterwards, creating 64 random attribute (color) values and dumping them to the attribute 
+
+*/
+
+// use $0400 as temp storage area
+
+@define storage $0400
+
+procedure InitScreen();
+begin
+//	zp:=@storage;
+	// fill 30 lines with same value i+50
+	ppupoint($20,00);
+	for i:=0 to 30 do begin
+		for j:=0 to 32 do
+		begin
+			ppuwrite(2+j&1 +(i&1)*16);
+		end;
+	end;
+	// Fill nametable with : Palette 0 (00), 1(01), 2(10) and 3 (11)
+	fill(^@storage,%00011110,64);
+	// Dump 64 bytes from storage to PPU nametable 0 color ram ($2000 + $3C0);
+	PPUAttributeDump(^@storage,$23,$C0);
+	
+end;
+
+
+// Starting point after resetting the NES
+begin
+	// Load palette
+	LoadPalette(palette);
+	// Set up background & color values
+	InitScreen();
+	
+	LoadSong(0);
+	// Turn on background
+	ToggleBackground(1);
+	// Display background in border 0
+	ToggleBorderBackground(1);
+
+	// Press F1 on PPUCTRL for detailed info	
+	togglebackgroundtableaddress(1);
+
+	// set nametable 0 = $2000 (where we dumped the background data)
+	SetNametable(0);
+	// Turn on NMI
+	ToggleNMI(1);
+	// Halt! (this is where non-drawing gamelogic should happen)
+	Loop();
+end.

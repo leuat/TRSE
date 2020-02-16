@@ -43,7 +43,7 @@ public:
 
     bool getXY(QPoint& xy,QPoint& p1, QPoint& p2);
 
-//    PixelChar &getPixelChar(int x, int y) override;
+   PixelChar &getPixelChar(int x, int y) override;
 
 
 
