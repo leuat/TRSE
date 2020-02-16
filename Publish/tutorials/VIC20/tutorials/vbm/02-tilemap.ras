@@ -1,6 +1,16 @@
 program TileMap;
 var  
 
+// Take a look at the VBM commands in the help (press F1)
+// and also in the platform section of the help file
+//
+// Note that TRSE for VIC 20 is using zero pages from $8F downwards
+// and VBM uses zero pages from $00 upwards.
+// The Zero page memory in between can be used by your programs.
+// See VBM Memory in the Platforms help section for details. 
+
+// Show two tilemaps (key 1 and 2) of different sizes
+
 // declare all your include files here
 @export "resources/charsets/tiles.flf" "resources/charsets/tiles.bin" 10
 tiles: incbin( "resources/charsets/tiles.bin", $4000 ); // individual tile characters

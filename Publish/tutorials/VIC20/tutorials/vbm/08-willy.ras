@@ -1,6 +1,16 @@
 program VicWilly;
 var  
 
+// Take a look at the VBM commands in the help (press F1)
+// and also in the platform section of the help file
+//
+// Note that TRSE for VIC 20 is using zero pages from $8F downwards
+// and VBM uses zero pages from $00 upwards.
+// The Zero page memory in between can be used by your programs.
+// See VBM Memory in the Platforms help section for details. 
+
+// Example showing 8x16 sprite and tilemap
+
 // these constants are used to calculate positions of sprite data
 	// pre-shift sprite address offests for 8x16 sprites
 	const sprHeight16:byte = 16;

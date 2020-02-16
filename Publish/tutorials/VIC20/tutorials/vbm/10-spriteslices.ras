@@ -1,0 +1,122 @@
+program SpriteSlices;
+var  
+
+// Take a look at the VBM commands in the help (press F1)
+// and also in the platform section of the help file
+//
+// Note that TRSE for VIC 20 is using zero pages from $8F downwards
+// and VBM uses zero pages from $00 upwards.
+// The Zero page memory in between can be used by your programs.
+// See VBM Memory in the Platforms help section for details. 
+
+// Using slices, draw a larger sprite
+
+// these constants are used to calculate positions of sprite data
+	// pre-shift sprite address offests for 8x16 sprites
+	const sprHeight8:byte = 32;
+	// side A
+	const O0a:byte = 0;
+	const O1a:byte = O0a+(sprHeight8*2);
+	const O2a:byte = O1a+(sprHeight8*2);
+	const O3a:byte = O2a+(sprHeight8*2);
+
+	// side B
+	const O0b:byte = sprHeight8;
+	const O1b:byte = O0b+(sprHeight8*2);
+	const O2b:byte = O1b+(sprHeight8*2);
+	const O3b:byte = O2b+(sprHeight8*2);
+
+
+
+// declare all your include files here
+@vbmexport "resources/charsets/sprSlice.flf" "resources/charsets/sprSlice.bin" 0 8 4 0
+
+	const adrSprite : address = $4000; 
+
+	spr: incbin("resources/charsets/sprSlice.bin", adrSprite);
+
+	// can use some bytes in ZERO PAGE memory ($35 to $63)
+	xp : byte at $35;
+	yp : byte at $36;
+	i, j : byte at $37;
+
+
+@startblock $2000 "CODE"
+// declare all your variables and procedures here
+	
+
+	// pre-shifted addresses for Player Right - side A
+	adrSprite_A: array[] of integer = (
+		adrSprite+O0a, adrSprite+O1a, adrSprite+O2a, adrSprite+O3a
+	);
+	// pre-shifted addresses for Player Right - side B
+	adrSprite_B: array[] of integer = (
+		adrSprite+O0b, adrSprite+O1b, adrSprite+O2b, adrSprite+O3b
+	);
+
+
+
+begin
+
+	// set the default display mode showing all 20 columns
+	vbmSetDisplayMode( 0 );
+	vbmClear( 0 );
+	vbmClearColor( WHITE );
+	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
+
+
+	xp := 64; yp := 1060;
+	i:=16; j:=16;		
+
+
+	while ( true ) offpage do
+	begin
+	
+		vbmsetposition2( xp, yp );
+		vbmDrawSpriteSliceE( adrSprite_A, i, j );
+		vbmNextColumn();
+		vbmDrawSpriteSliceE( adrSprite_B, i, j );
+
+	
+		waitForRaster( 122 );
+
+
+		vbmsetposition2( xp, yp );
+		vbmsetposition2( xp, yp );
+		vbmDrawSpriteSliceE( adrSprite_A, i, j );
+		vbmNextColumn();
+		vbmDrawSpriteSliceE( adrSprite_B, i, j );
+		
+		// update Willy
+		readjoy1();
+	
+		if (joy1 & joy_right) then
+		begin
+		
+			if xp< 136 then xp := xp + 2;
+		
+		end;
+		
+		if (joy1 & joy_left) then
+		begin
+		
+			if xp> 0 then xp := xp - 2;
+			
+		end;
+		
+		// i and j are setting the row to start and end drawing
+		if (i > 0) then
+		begin
+			i := i - 1;
+			j := j + 1;
+		end
+		else
+		begin
+			i:=15; j:=17;
+		end;
+
+	end;
+	
+	loop();
+
+end.

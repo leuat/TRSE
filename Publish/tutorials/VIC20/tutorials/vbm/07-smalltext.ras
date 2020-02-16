@@ -1,6 +1,16 @@
 program SmallText;
 var
 
+// Take a look at the VBM commands in the help (press F1)
+// and also in the platform section of the help file
+//
+// Note that TRSE for VIC 20 is using zero pages from $8F downwards
+// and VBM uses zero pages from $00 upwards.
+// The Zero page memory in between can be used by your programs.
+// See VBM Memory in the Platforms help section for details. 
+
+// Display small text (4x5) which allows 40 columns
+
 @export "resources/charsets/font4x8.flf" "resources/charsets/font4x8.bin" 0 64 // start end height
 font: incbin("resources/charsets/font4x8.bin", $4000); // first 64 PETSCII Screen Codes
 lfchar: incbin("resources/images/lf-char.bin", $4200); // Llama face chars
