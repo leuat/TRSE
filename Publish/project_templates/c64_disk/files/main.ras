@@ -1,0 +1,51 @@
+program disk_loader_project;
+var  
+   	i: byte; 
+	@use KrillsLoader $0200 $3000 $5000 
+	
+// Automatically export images to .bin format
+
+@export "images/neo_rider_by_the_diad.flf" "images/neo.bin" 0
+
+@export "images/octopus.flf" "images/octopus.bin" 0
+
+
+	/* Place initial loader data at $3000 and installer at $4000. 
+	 Loader will be copied to $0200 when "initkrill" is called
+
+	 Files that will be added to the disk are defined in "d64.paw"
+	 The main paw file can be changed in the project settings. 
+	
+
+	disk setup under project settings/target setup
+	*/
+	
+begin
+	// Make sure that krill is initialized (you can overwrite this data later)
+	InitKrill();
+
+	setmemoryconfig(1,0,0);
+	setmulticolormode();
+	setbitmapmode();
+	// Bitmap points to $6000 etc
+	vic_data_loc := $18;
+	screen_fg_col:=black;
+	i:=0;
+	setbank(vic_bank1);
+	// Alternate between showing image 0 and 1	
+	while (true) offpage do begin
+		// Display data while loading! cool stuff
+		if (i=0) then KrillLoad(octopus_color);
+		if (i=1) then KrillLoad(moose_color);
+		
+		copyimagecolordata(^$2000,1);
+
+		if (i=0) then KrillLoad(octopus_data);
+		if (i=1) then KrillLoad(moose_data);
+		while (keypressed(key_space)=false) do 
+			waitforraster(0);
+
+		i:=mod(i+1,2);
+	end;
+end.
+
