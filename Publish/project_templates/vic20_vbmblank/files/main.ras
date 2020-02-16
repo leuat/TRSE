@@ -16,7 +16,7 @@ program MainProgram;
 */
 var  
 
-@define DEBUG		1		// set to 0 to remove timing code, 1 to include it
+//@define DEBUG		1				// uncomment to show debugging timings
 
 
 // -------------------------------------------------------------------------------
