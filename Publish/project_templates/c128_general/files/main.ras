@@ -1,0 +1,38 @@
+program C128_80_col_mode;
+var  
+   i: byte; 
+	text1: cstring=("OOOH 80 COLUMNS IS NICE ISNT IT");
+	text2: cstring=("Damn hard to code for that VDC though");
+
+/*
+	If the program doesn't start automatically, type "run"
+
+*/
+
+
+begin
+	Go80Columns();
+	// Move to x=20, y=10 at memory address $0800 on the VDC (color ram)
+	MoveTo80(20,10,$08);
+
+	// Fill with 7*5 chunks of random colors
+	for i:=0 to 7 do 
+		fill80(i+1, 5);
+	
+	// Move to x=20, y=10 at memory address $0000 on the VDC (text matrix)
+	MoveTo80(20,10,0);
+	print80(text1,31);
+
+
+	// Repeat for second sentence
+	MoveTo80(20,15,$08);
+
+	for i:=0 to 8 do 
+		fill80(i+20, 5);
+	
+	MoveTo80(20,15,0);
+	print80(text2,37);
+
+
+	Loop();
+end.
