@@ -1,0 +1,151 @@
+program MyProgram;
+var
+
+// Take a look at the VBM commands in the help (press F1)
+// and also in the platform section of the help file
+//
+// Note that TRSE for VIC 20 is using zero pages from $8F downwards
+// and VBM uses zero pages from $00 upwards.
+// The Zero page memory in between can be used by your programs.
+// See VBM Memory in the Platforms help section for details. 
+
+// Example showing how to create a mask to draw a sprite (so the background
+// bitmap does not show through) and how to save and restore the background
+// bitmap as the sprite moves over it.
+
+tiles: incbin("resources/charsets/tiles.bin", $4000);
+map: incbin("resources/charsets/tilemap.bin", $4050);
+
+const addressToStoreSprites : address = $a000;
+const sizeOfSpriteData : byte = $80;
+
+const spr1a : address = addressToStoreSprites; // sprite 1 A column
+const spr1b : address = addressToStoreSprites + sizeOfSpriteData; // len $80	sprite 1 B column
+
+const spr1maska : address = addressToStoreSprites + (sizeOfSpriteData * 2); // sprite 1 mask A column
+const spr1maskb : address = addressToStoreSprites + (sizeOfSpriteData * 3); // sprite 1 mask B column
+
+const bgnd1 : address = $a200; // A buffer in memory to store the background bitmap data behind a sprite (2 bytes x 16) 
+
+
+@startblock $2000 "CODE"
+
+	x : byte;
+	
+	// Here is our sprite data
+	spr8 : array[] of byte = (
+		%00111100,
+		%01000010,
+		%10100101,
+		%10000001,
+		%10100101,
+		%10111101,
+		%01000010,
+		%00111100,
+		
+		%00011000,
+		%00011000,
+		%01111110,
+		%00011000,
+		%00011000,
+		%00111100,
+		%01000010,
+		%10000001,
+	);
+	// Here is the mask to use for the sprite
+	spr8mask : array[] of byte = (
+		%01111110,
+		%11111111,
+		%11111111,
+		%11111111,
+		%11111111,
+		%11111111,
+		%01111110,
+		%00111100,
+		
+		%00111100,
+		%11111111,
+		%11111111,
+		%11111111,
+		%00111100,
+		%01111110,
+		%11100111,
+		%11000011,
+	);
+	
+	spr1a_a : array[8] of integer; // to store the low addresses of pre-shifted sprites for spr8
+	spr1b_a : array[8] of integer; // to store the high addresses of pre-shifted sprites for spr8
+
+	spr1maska_a : array[8] of integer; // to store the low addresses of pre-shifted sprites for spr8
+	spr1maskb_a : array[8] of integer; // to store the high addresses of pre-shifted sprites for spr8
+
+
+begin
+
+	vbmSetDisplayMode(0);
+	vbmClear(0);
+	vbmClearColor( BLACK );
+
+
+	// So our sprite and mask can move smoothly, pre-shift the data
+	// at increments of 1 pixel
+	
+	// sprite 8x16 - pre-shift in 8 positions, using 64 bytes (8 x 16 = $80)
+	vbmSpriteShiftR( spr8, spr1a, 1, 16, spr1a_a ); // spr8 into addr A000, 1 pixel increments, 8 lines
+	vbmSpriteShiftL( spr8, spr1b, 1, 16, spr1b_a ); // spr8 into addr A080, 1 pixel increments, 8 lines
+
+	// same for mask
+	vbmSpriteShiftR( spr8mask, spr1maska, 1, 16, spr1maska_a ); // spr8mask left side
+	vbmSpriteShiftL( spr8mask, spr1maskb, 1, 16, spr1maskb_a ); // spr8mask right side
+	
+
+	// Draw a tile map for the sprite to move over
+	vbmDrawTileMap( map, tiles, 0, 0, 20, 184 );
+
+    x := 0;
+
+	while (true) offpage do
+	begin
+
+		// The screen bg color changes below help indicate how much
+		// time each set of commands take to run - good for debugging!
+	SCREEN_BG_COLOR := SCREEN_BG_WHITE + CYAN;
+
+		// first, take a copy of the bitmap where we will be
+		// drawing the sprite, so we can restore it later
+		vbmSetPosition1(x,x);
+		vbmCopyToBuffer( bgnd1 , 2, 16);
+
+	SCREEN_BG_COLOR := SCREEN_BG_WHITE + GREEN;
+
+		// next, use clearsprite to 'cut out' the mask from the background
+		vbmSetPosition1(x,x);
+		vbmClearSprite( spr1maska_a, spr1maskb_a );
+		
+		// then draw the sprite in its position, inside the cut-out area
+		vbmSetPosition1(x,x);
+		vbmDrawSprite( spr1a_a, spr1b_a );
+		
+	SCREEN_BG_COLOR := SCREEN_BG_WHITE + YELLOW;
+
+		// wait for the raster to reach line 32 (16 = 32/2)
+		waitforraster(16);
+		
+
+	SCREEN_BG_COLOR := SCREEN_BG_WHITE + PURPLE;
+
+		// restore the bitmap we data we saved previously
+		// to erase the sprite
+		vbmSetPosition1(x,x);
+		vbmCopyFromBuffer( bgnd1 , 2, 16);
+
+		
+	SCREEN_BG_COLOR := SCREEN_BG_WHITE + YELLOW;
+
+		// we can now move the sprite
+		x:=x+1;
+		if x>151 then x := 0;
+			
+	end;
+
+end.
