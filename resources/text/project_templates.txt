@@ -1,5 +1,6 @@
 
 C64; Empty C64 project; c64_general; <h2>Empty C64 project</h2><p>Create an empty C64 project.
 C64; Simple C64 project; c64_general2; <h2>Main C64 project</h2><p>Create a small C64 project with a SID file, a raster loop and a custom charset.
+C64; C64 cartridge project; c64_crt; <h2>C64 16kb cartridge project</h2><p>A simple setup that compiles to a 16kb crt program. <p>Exomizer must be turned on in order for this project to compile!
 VIC20; Simple VIC20 project; vic20_general; <h2>Empty VIC20 project</h2><p>Create a small VIC20 project.
 NES; Clean NES project; nes_general; <h2>Almost empty NES project</h2><p>Sets up a NES project with a main source file, tile ROM image file and music.
