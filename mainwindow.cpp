@@ -1466,3 +1466,8 @@ void MainWindow::on_btnProjectDir_clicked()
 {
     on_actionOpen_project_location_triggered();
 }
+
+void MainWindow::on_btnNewProject_clicked()
+{
+    on_actionNew_project_triggered();
+}

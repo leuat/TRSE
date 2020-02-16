@@ -17,13 +17,18 @@
    <item>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
-      <string>Project template</string>
+      <string>Select a project template</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_3" rowstretch="1,10,4,0">
+     <layout class="QGridLayout" name="gridLayout_3" rowstretch="1,10,4">
       <item row="0" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="5,15">
         <item>
          <widget class="QLabel" name="label_3">
+          <property name="font">
+           <font>
+            <pointsize>16</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>Select system:</string>
           </property>
@@ -31,6 +36,11 @@
         </item>
         <item>
          <widget class="QComboBox" name="comboBox">
+          <property name="font">
+           <font>
+            <pointsize>16</pointsize>
+           </font>
+          </property>
           <item>
            <property name="text">
             <string>C64</string>
@@ -69,6 +79,11 @@
           <item>
            <property name="text">
             <string>OK64</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Amiga</string>
            </property>
           </item>
          </widget>

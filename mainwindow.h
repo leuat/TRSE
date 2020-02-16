@@ -349,6 +349,8 @@ private slots:
 
     void on_btnProjectDir_clicked();
 
+    void on_btnNewProject_clicked();
+
 private:
 
     QString FindPathInProjectFolders(const QModelIndex &index);

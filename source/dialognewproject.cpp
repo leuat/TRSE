@@ -17,6 +17,19 @@ DialogNewProject::DialogNewProject(CIniFile* ini, QWidget *parent) :
     else
         ui->leProjectDir->setText(Util::path);
 
+
+    for (int i=0;i<ui->comboBox->count();i++) {
+        QString txt = ui->comboBox->itemText(i);
+        QString fn =":resources/images/" +txt+".png";
+        QPixmap img(fn);
+        ui->comboBox->setItemIcon(i,img);
+
+    }
+    int s = 64;
+    ui->comboBox->setIconSize(QSize(s,s/1.5));
+
+
+
 }
 
 DialogNewProject::~DialogNewProject()
