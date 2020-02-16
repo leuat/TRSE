@@ -1,5 +1,15 @@
 program MoonBuggy;
-var  
+var 
+
+// Take a look at the VBM commands in the help (press F1)
+// and also in the platform section of the help file
+//
+// Note that TRSE for VIC 20 is using zero pages from $8F downwards
+// and VBM uses zero pages from $00 upwards.
+// The Zero page memory in between can be used by your programs.
+// See VBM Memory in the Platforms help section for details. 
+
+// Scrolling landscape with pixel testing to keep the buggy on the ground
 
 // declare all your include files here
 buggy: incbin( "resources/charsets/moonspr.bin", $4000 ); // moon buggy

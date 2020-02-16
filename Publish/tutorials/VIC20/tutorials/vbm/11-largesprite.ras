@@ -1,0 +1,137 @@
+program LargeSprites;
+var
+
+// Take a look at the VBM commands in the help (press F1)
+// and also in the platform section of the help file
+//
+// Note that TRSE for VIC 20 is using zero pages from $8F downwards
+// and VBM uses zero pages from $00 upwards.
+// The Zero page memory in between can be used by your programs.
+// See VBM Memory in the Platforms help section for details. 
+
+// Advanced example using sprite slices, and also generating the pre-shifts
+// at runtime in the $a000 address space
+
+// source image to use for sprite
+const spriteLoadAddress : address = $4000;
+const sizeOfEachSprite : byte = $28;
+const spra0 : address = spriteLoadAddress;  
+const spra1 : address = spriteLoadAddress + sizeOfEachSprite;
+const spra2 : address = spriteLoadAddress + (sizeOfEachSprite * 2);
+spr: incbin("resources/charsets/spr24x40.bin", spriteLoadAddress);
+
+// destination addresses where to store pre-shifted sprite data
+const sizeOfPreShiftData : byte = $a0;
+const dstAddr0 : address = $a000;
+const dstAddr1 : address = $a000 + sizeOfPreShiftData;
+const dstAddr2 : address = $a000 + (sizeOfPreShiftData * 2);
+const dstAddr3 : address = $a000 + (sizeOfPreShiftData * 3);
+
+
+@startblock $2000 "CODE"
+
+	x,y, s, h :byte;
+	
+	// Our sprite is 24 x 40 --- 3 characters wide.  
+	// We need 32 bits (4 bytes) for pre-shifted data
+	// to allow the sprite to 'shift' into a fourth column.
+	spr0 : array[4] of integer; 
+	spr1 : array[4] of integer; 
+	spr2 : array[4] of integer; 
+	spr3 : array[4] of integer; 
+
+
+
+begin
+
+	vbmSetDisplayMode(0);
+
+	vbmClear(0);
+	vbmClearColor(GREEN);
+	
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK + BLACK;
+
+
+	// sprite is 24 x 40.  Need 40 bytes per shift ($28) x 4 shifts = $A0
+	vbmSpriteShiftR( spra0,		dstAddr0, 2, sizeOfEachSprite, spr0 ); 
+	vbmSpriteShiftL( spra0, 	dstAddr1, 2, sizeOfEachSprite, spr1 ); 
+
+	vbmSpriteShiftR( spra1,		dstAddr2, 2, sizeOfEachSprite, spr2 ); 
+	vbmSpriteStitch( dstAddr2,	dstAddr1, sizeOfEachSprite*4 );  		// 40 high * 4 = 160
+	vbmSpriteShiftL( spra1,		dstAddr2, 2, sizeOfEachSprite, spr2 ); 
+
+	vbmSpriteShiftR( spra2,		dstAddr3, 2, sizeOfEachSprite, spr3 ); 
+	vbmSpriteStitch( dstAddr3,	dstAddr2, sizeOfEachSprite*4 );
+	vbmSpriteShiftL( spra2, 	dstAddr3, 2, sizeOfEachSprite, spr3 ); 
+
+	/*
+		What is the above doing?
+		
+		Our large sprite is 3 characters wide and it needs to be 'pre-shifted'
+		into positions ready to draw as a sprite so it can move smoothly across
+		the screen.  In this case it is going to move 2 pixels at a time.
+		
+		We will need 4 character columns to be able to do this.
+		
+		Our image data is also laid out in columns of 40 pixels high (bytes)
+		
+		Sprite shift left and right 'scrolls' or moves the image data from a
+		column to the right and to the left.  This creates two sides of that
+		column.
+		
+		If our sprite was only going to be 8 pixels wide, this is all that we
+		would need to do.  However, as it si 23 pixels wide, another 2 columns,
+		we have to do this three times.
+		
+		There is one additional step required.  When shifting the image data
+		for each column, it also needs to be stitched in with the previous 
+		column.  So column 0's data needs to be stitched to column 1's data
+		and column 1's data with column 2's.
+		
+		The address of each pre-shifted column is stored in the arrays
+		spr0, spr1, spr2 and spr3 by these commands.  The addresses are needed
+		by the sprite drawing commands.
+
+	*/		
+
+	x:= 5;
+	y:= 9;
+	
+	s := 0;					// start drawing sprite data at row 0
+	h:= sizeOfEachSprite;	// end drawing sprite data at row 40
+
+	while (true) offpage do
+	begin
+
+		vbmSetPosition2(x,y);
+
+		vbmDrawSpriteSlice( spr0, s, h );
+		vbmNextColumn();
+		vbmDrawSpriteSlice( spr1, s, h );
+		vbmNextColumn();
+		vbmDrawSpriteSlice( spr2, s, h );
+		vbmNextColumn();
+		vbmDrawSpriteSlice( spr3, s, h );
+
+
+		waitforraster(100);
+		
+
+		vbmSetPosition2(x,y);
+
+		vbmClearSpriteSlice( spr0, s, h );
+		vbmNextColumn();
+		vbmClearSpriteSlice( spr1, s, h );
+		vbmNextColumn();
+		vbmClearSpriteSlice( spr2, s, h );
+		vbmNextColumn();
+		vbmClearSpriteSlice( spr3, s, h );
+
+
+		x := x + 2;
+		if x > 120 then x := 0;
+
+	end;
+
+
+end.

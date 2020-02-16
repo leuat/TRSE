@@ -1,5 +1,5 @@
-program TileMap;
-var
+program BcdNumbers;
+var  
 
 // Take a look at the VBM commands in the help (press F1)
 // and also in the platform section of the help file
@@ -9,18 +9,28 @@ var
 // The Zero page memory in between can be used by your programs.
 // See VBM Memory in the Platforms help section for details. 
 
-// Tile and Tilemap example
+// display BCD numbers
 
 // declare all your include files here
-chars: incbin( "resources/tilemap/vbm-char.bin", $4000 ); // individual tile characters
-map: incbin( "resources/tilemap/vbm-map.bin", $4490 ); // full screen map of tiles
-circle: incbin( "resources/tilemap/circle.bin", $4670 ); // circle char
 
+@export "resources/charsets/font4x8.flf" "resources/charsets/font4x8.bin" 0 64 // start end height
+font: incbin("resources/charsets/font4x8.bin", $4000); // first 64 PETSCII Screen Codes
+
+const adrNumbers : address = $4180;
+
+
+// The main code and variables starts here at $2000
 @startblock $2000 "CODE"
 // declare all your variables and procedures here
 
-	i, j : byte;
+	numb : array[] of byte = ($00, $00, $00, $00, $00);
+	add  : array[] of byte = ($01, $00, $00, $00, $00);
+	
+	strScore : cstring = ("SCORE");
 
+
+
+/* **** MAIN PROGRAM **** */
 begin
 
 	// set the default display mode showing all 20 columns
@@ -32,29 +42,21 @@ begin
 	// set the colour memory to GREEN
 	vbmClearColor( GREEN );
 	
-	// set screen colour
-	SCREEN_BG_COLOR := SCREEN_BG_BLACK + BLACK;
+	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
 
-	vbmDrawTileMap( map, chars, 0,0, 20,184 );
-
-	fill(^$9414, yellow, 20);
-	fill(^$94b4, white, 20);
-	
-	i := 72;
+	vbmDrawSmallTextE( strScore, font, 1, 89, 8 );
 
 	while (true) do
 	begin
 	
-		vbmDrawTileE( circle );
-		waitforraster( 125 );
-		vbmDrawTileE( circle );
+		bcdAdd( numb, add, 5 );
+		vbmDrawSmallBcd( numb, adrNumbers, 1, 96, 5 );
 		
-		i := i - 3;
-
-		vbmSetColumn( 10 );
-		j := sine[ i ] >> 3;
-		screenmemory := screenmemory + j + 40;
+		waitforraster(0);
 
 	end;
+
 	
+	loop();
+
 end.
