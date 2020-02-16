@@ -162,6 +162,11 @@ public:
     void SaveBin(QFile& f) override;
     void LoadBin(QFile& f) override;
 
+
+    virtual int charWidthDisplay() {
+        return m_charWidth;
+    }
+
     void ImportKoa(QFile& f) override;
     void ExportKoa(QFile& f) override;
 

@@ -571,3 +571,10 @@ int CharsetImage::getGridWidth()
     return m_gridWidthDisplay;
 }
 
+int CharsetImage::charWidthDisplay() {
+    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1)
+        return m_charWidthDisplay;
+
+    return m_charWidth;
+}
+

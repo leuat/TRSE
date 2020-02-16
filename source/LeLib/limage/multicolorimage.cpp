@@ -952,8 +952,8 @@ PixelChar &MultiColorImage::getPixelChar(int x, int y)
 {
     int dx = x/(8/m_scale);
     int dy = y/8;
-    int i = Util::clamp(dx + m_charWidthDisplay*dy,0,m_charWidth*m_charHeight);
-    return m_data[i];
+    int i = Util::clamp(dx + charWidthDisplay()*dy,0,m_charWidth*m_charHeight);
+     return m_data[i];
 
 }
 
