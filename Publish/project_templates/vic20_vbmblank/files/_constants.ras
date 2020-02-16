@@ -1,0 +1,37 @@
+	// Remove if using multiplcation or division
+	@ignoremethod "init16x8mul"
+	@ignoremethod "init16x8div"
+	@ignoremethod "init8x8div"
+	@ignoremethod "initeightbitmul"
+	// deprecated commands - ensure not included
+	@ignoremethod "initjoystick"
+	@ignoremethod "initmoveto"
+	
+
+
+// -------------------------------------------------------------------------------
+
+	// These constants can be used for 8x8 sprites.
+	// Same method can be used for sprites of other sizes
+	
+	// pre-shift sprite address offsets for 8x8 sprites
+	const sprHeight8:byte = 8;
+	
+	// an 8x8 sprite needs 2 characters to move smoothly between them
+	
+	// side a (left)						side b (right)	
+	const ma0a:byte = $0;					const ma0b:byte = sprHeight8;
+	const ma1a:byte = ma0a+(sprHeight8*2);	const ma1b:byte = ma0b+(sprHeight8*2);
+	const ma2a:byte = ma1a+(sprHeight8*2);	const ma2b:byte = ma1b+(sprHeight8*2);
+	const ma3a:byte = ma2a+(sprHeight8*2);	const ma3b:byte = ma2b+(sprHeight8*2);	
+	const ma4a:byte = ma3a+(sprHeight8*2);	const ma4b:byte = ma3b+(sprHeight8*2);	
+	const ma5a:byte = ma4a+(sprHeight8*2);	const ma5b:byte = ma4b+(sprHeight8*2);	
+	const ma6a:byte = ma5a+(sprHeight8*2);	const ma6b:byte = ma5b+(sprHeight8*2);	
+	const ma7a:byte = ma6a+(sprHeight8*2);	const ma7b:byte = ma6b+(sprHeight8*2);	
+	
+
+	
+
+
+
+

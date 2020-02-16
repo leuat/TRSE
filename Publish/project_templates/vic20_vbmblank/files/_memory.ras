@@ -1,0 +1,11 @@
+// -------------------------------------------------------------------------------
+// Variables:	(for assignable/changing data, use these addresses)
+// Not suitable for Cartridge projects - use _memoryzp instead
+
+
+	// Declare variables
+	// ------------------------------
+
+
+//	myvar : byte = 0;	// example variable in main RAM
+
