@@ -1,0 +1,77 @@
+program OK64SampleProject;
+var  
+ 	x1,i,k,y2,j,m,g,time,t: byte=0;
+    music : incsid("music/fliptape36.sid",2);
+	
+
+@export "images/ok_computer.flf" "images/ok_computer.bin" 256
+	image1 : incbin("images/ok_computer.bin",$20000);    
+
+	@define count 200
+
+	xpos : array[@count] of byte;
+	sz : array[@count] of byte;
+
+
+procedure Setup();
+begin
+	for i:=0 to @count do 
+		xpos[i]:=okvc_random;
+		
+	for i:=0 to @count do begin 
+		sz[i]:=okvc_random;
+	end;
+		
+end;
+
+procedure DrawImage();
+begin
+	j:=sine[time*2]/8;
+	// Copy data
+	Blit(0,0, sine[time]/8,j, 255,255-j);
+
+end;
+
+procedure DrawCircles();
+begin
+	t:=time*2;
+	m:=sine[t]/32;
+	g:=g+1;
+	j:=toColor(m,g,7-m);
+
+	for k:=0 to @count do
+	begin
+		x1 := xpos[k];
+		y2:=sine[time+x1]/4;
+		y2:=y2+sine[time+k/4]/2+32;
+		xpos[k]:=xpos[k]-1;
+		sz[k]:=sz[k]-2;
+		i:=sine[sz[k]]/8;
+
+		DrawCircleFilled(x1,y2,i,k);
+	end;
+
+end;
+
+
+begin
+	initsid(sidfile_1_init);
+	Setup();
+
+	j:=120;
+	m:=0;
+	
+	while(true) offpage do
+	begin	
+		clearscreen(0);
+		DrawImage();
+		DrawCircles();		
+		time:=time+2;
+
+		call(sidfile_1_play);
+		
+		WaitForVSync();
+
+	end;
+	
+end.
