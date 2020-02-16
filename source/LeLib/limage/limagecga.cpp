@@ -11,6 +11,11 @@ LImageCGA::LImageCGA(LColorList::Type t)  : LImageQImage(t)
     m_supports.flfSave = true;
     m_supports.flfLoad = true;
 
+    m_supports.displayMC1 = false;
+    m_supports.displayMC2 = false;
+    m_supports.displayForeground = false;
+    m_supports.displayBackground = false;
+
 }
 
 void LImageCGA::ExportBin(QFile &file)
