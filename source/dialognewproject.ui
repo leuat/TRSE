@@ -19,13 +19,7 @@
      <property name="title">
       <string>Project template</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_3" rowstretch="1,10,4">
-      <item row="1" column="0">
-       <widget class="QListWidget" name="lstData"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QTextBrowser" name="txtInfo"/>
-      </item>
+     <layout class="QGridLayout" name="gridLayout_3" rowstretch="1,10,4,0">
       <item row="0" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="5,15">
         <item>
@@ -78,6 +72,16 @@
            </property>
           </item>
          </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0" rowspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="5,8">
+        <item>
+         <widget class="QTextBrowser" name="txtInfo"/>
+        </item>
+        <item>
+         <widget class="QListWidget" name="lstData"/>
         </item>
        </layout>
       </item>
