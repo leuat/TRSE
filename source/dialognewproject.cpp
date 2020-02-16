@@ -51,7 +51,18 @@ void DialogNewProject::UpdateProjectInfo()
     m_dir = ui->leProjectDir->text();
     if (!(m_dir.endsWith("/")))
         m_dir=m_dir+"/";
+    QPalette palette = ui->lblInfo->palette();
+    palette.setColor(ui->lblInfo->foregroundRole(), Qt::yellow);
+    ui->btnOk->setEnabled(true);
+    if (QDir().exists(m_dir+ m_project)) {
+        ui->lblInfo->setText("Error: Project directory already exists. Please select a different name or directory.");
+        palette.setColor(ui->lblInfo->foregroundRole(), Qt::red);
+        ui->btnOk->setEnabled(false);
+        ui->lblInfo->setPalette(palette);
+        return;
+    }
 
+    ui->lblInfo->setPalette(palette);
     QString p = m_dir+ m_project+"/"+m_project+".trse";
     ui->lblInfo->setText("Project will be created under : "+p);
 }
@@ -66,7 +77,7 @@ void DialogNewProject::on_pushButton_2_clicked()
     close();
 }
 
-void DialogNewProject::on_pushButton_clicked()
+void DialogNewProject::on_btnOk_clicked()
 {
     ok = true;
     m_ini->setString("default_project_dir",ui->leProjectDir->text());
