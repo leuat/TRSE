@@ -104,6 +104,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagex16.cpp \
     source/PmmEdit/fjonghighlighter.cpp \
     source/dialogexport3d.cpp \
+    source/dialognewproject.cpp \
     source/dialogselectcharset.cpp \
     source/toolbox.cpp \
     source/toolboxitem.cpp \
@@ -261,6 +262,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagex16.h \
     source/PmmEdit/fjonghighlighter.h \
     source/dialogexport3d.h \
+    source/dialognewproject.h \
     source/dialogselectcharset.h \
     source/toolbox.h \
     source/toolboxitem.h \
@@ -397,6 +399,7 @@ FORMS    += mainwindow.ui \
     dialognewimage.ui \
     dialogimport.ui \
     source/dialogexport3d.ui \
+    source/dialognewproject.ui \
     source/dialogselectcharset.ui \
     source/trsedocuments/formraseditor.ui \
     source/trsedocuments/formimageeditor.ui \

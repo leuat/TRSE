@@ -58,6 +58,8 @@
 #include "source/dialogprojectbuilder.h"
 #include "source/tutorials.h"
 #include <QDesktopServices>
+#include "source/dialognewproject.h"
+
 namespace Ui {
 class MainWindow;
 

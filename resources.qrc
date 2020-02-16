@@ -424,5 +424,6 @@
         <file>resources/text/help/m/vbmclearsprite2.rtf</file>
         <file>resources/text/help/m/vbmdrawsprite2E.rtf</file>
         <file>resources/text/help/m/vbmdrawsprite2.rtf</file>
+        <file>resources/text/project_templates.txt</file>
     </qresource>
 </RCC>

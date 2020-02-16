@@ -127,7 +127,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lblBuild->setHidden(true);
     this->installEventFilter(this);
 
-    m_tutorials.Read();
+    m_tutorials.Read(":resources/text/tutorials.txt");
     m_tutorials.PopulateTreeList(ui->treeTutorials);
     setWindowTitle("Turbo Rascal Syntax error, \";\" expected but \"BEGIN\" Version " + Data::data.version);
 }
@@ -912,7 +912,25 @@ void MainWindow::on_actionTRSE_Settings_triggered()
 
 void MainWindow::on_actionNew_project_triggered()
 {
-    QFileDialog dialog;
+
+    DialogNewProject *np = new DialogNewProject(&m_iniFile);
+    np->exec();
+    if (!np->ok)
+        return;
+
+
+    QString src = Util::GetSystemPrefix() + "project_templates/"+np->m_template;
+    QString dst = np->m_dir + "/" + np->m_project + "/";
+    // Create new project:
+    QDir().mkdir(dst);
+//    qDebug() << "MainWindow " <<src;
+  //  qDebug() << "MainWindow " <<dst;
+    QString projectFile = dst + np->m_project+".trse";
+    QFile::copy(src+"/project.trse",projectFile);
+    UpdateRecentProjects();
+    LoadProject(projectFile);
+
+/*    QFileDialog dialog;
     QString filename = dialog.getSaveFileName(this, "New project",getProjectPath(),"*.trse");
     if (filename=="")
         return;
@@ -936,7 +954,7 @@ void MainWindow::on_actionNew_project_triggered()
 
     UpdateRecentProjects();
     LoadProject(filename);
-
+*/
 }
 
 void MainWindow::on_actionClose_all_triggered()
@@ -1374,16 +1392,9 @@ void MainWindow::on_treeTutorials_itemDoubleClicked(QTreeWidgetItem *item, int c
 {
     if (item->data(0,Qt::UserRole).toString()=="")
         return;
-    QString dir = "tutorials/"+item->data(0,Qt::UserRole).toString().split(";")[0];
+    QString dir = Util::GetSystemPrefix() + "tutorials/"+item->data(0,Qt::UserRole).toString().split(";")[0];
 
-#ifdef __linux__
-    dir = Util::path +"tutorials/"+item->data(0,Qt::UserRole).toString().split(";")[0];
-#endif
-#ifdef __APPLE__
-    dir = Util::path +"tutorials/"+item->data(0,Qt::UserRole).toString().split(";")[0];
-#endif
     QString fileName = Util::findFileInDirectory("",dir,"trse");
-    qDebug() << dir;
     LoadProject(fileName);
 
 }

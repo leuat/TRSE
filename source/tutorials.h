@@ -7,7 +7,8 @@
 #include <QTreeView>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
-
+#include <QListWidget>
+#include "source/LeLib/util/util.h"
 
 
 class Tutorial {
@@ -32,8 +33,10 @@ public:
     Tutorials();
     QVector<Tutorial> m_tutorials;
     QMap<QString, QTreeWidgetItem*> m_roots;
-    void Read();
+    void Read(QString );
     void PopulateTreeList(QTreeWidget* tree);
+
+    void PopulateTemplateList(QListWidget* w, QString system);
 
     void addTreeChild(QTreeWidgetItem *parent,
                       QString name, QString description);

@@ -292,6 +292,19 @@ QColor Util::toColor(QVector3D c) {
 
     return QColor(c.x(),c.y(),c.z());
 }
+
+QString Util::GetSystemPrefix()
+{
+    QString dir = "";
+
+#ifdef __linux__
+    dir = Util::path;
+#endif
+#ifdef __APPLE__
+    dir = Util::path
+#endif
+    return dir;
+}
 QString Util::ReplaceWords(QString line, QString word) {
 
     return "";

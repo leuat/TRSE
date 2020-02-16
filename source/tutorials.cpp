@@ -2,15 +2,16 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
+
 Tutorials::Tutorials()
 {
 
 
 }
 
-void Tutorials::Read()
+void Tutorials::Read(QString file)
 {
-    QFile inputFile(":resources/text/tutorials.txt");
+    QFile inputFile(file);
     if (inputFile.open(QIODevice::ReadOnly))
     {
        QTextStream in(&inputFile);
@@ -47,6 +48,51 @@ void Tutorials::PopulateTreeList(QTreeWidget *tree)
 
     tree->expandAll();
     tree->setCurrentItem(first);
+}
+
+void Tutorials::PopulateTemplateList(QListWidget *w, QString system)
+{
+    w->clear();
+    if (m_tutorials.count()==0)
+        return;
+    int row = 0;
+    int col = 0;
+    int maxCol = 3;
+    QListWidgetItem* cur = nullptr;
+//    qDebug() << "Tutorials " << m_tutorials.count();
+ //   w->setRowCount(m_tutorials.count()/3+1);
+ //   w->setColumnCount(maxCol);
+    int idx = 0;
+    for (Tutorial& t: m_tutorials) {
+        if (t.m_system.toLower()!=system.toLower()) {
+            idx++;
+            continue;
+        }
+
+        QListWidgetItem* it = new QListWidgetItem(t.m_name);
+        if (cur == nullptr) cur = it;
+        QString iconFile = Util::GetSystemPrefix() + "project_templates/"+t.m_file + "/project.png";
+//        qDebug() << "TEMPLATES " <<iconFile << QFile::exists(iconFile);
+        QPixmap icon = QPixmap(iconFile);
+        it->setIcon(icon);
+
+        it->setData(Qt::UserRole,idx);
+
+
+        w->addItem(it);
+//        w->setItem(row,col,it);
+        col++;
+        if (col==maxCol) {
+            col = 0;
+            row++;
+        }
+        idx++;
+
+    }
+    int ww = 160;
+    int h = ww/1.5;
+    w->setIconSize(QSize(ww,h));
+    w->setCurrentItem(cur);
 }
 
 void Tutorials::addTreeChild(QTreeWidgetItem *parent, QString name, QString description)

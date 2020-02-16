@@ -75,7 +75,8 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
     ui->tblData->setItemDelegate(new ByteDelegate());
   //  ui->splitter->setStretchFactor(1, 0);
 
-  ui->splitter->setSizes(QList<int>() << 10000<<3);
+  ui->splitter->setSizes(QList<int>() << 1000<<500);
+//  ui->splitter->setCollapsible(0, false);
 }
 
 void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *iniProject) {
@@ -902,6 +903,7 @@ void FormImageEditor::showDetailCharButtons()
     }
     ui->cmbCharX->setVisible(doShow);
     ui->cmbCharY->setVisible(doShow);
+    ui->lblTileSize->setVisible(doShow);
 
 /*    if (doShow)
         ui->btnCharsetFull->setText("Full");

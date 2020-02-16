@@ -1,0 +1,3 @@
+
+C64; Simple C64 project; c64_general; <h2>Main C64 project</h2><p>Create a small C64 project.
+VIC20; Simple VIC20 project; vic20_general; <h2>Empty VIC20 project</h2><p>Create a small VIC20 project.

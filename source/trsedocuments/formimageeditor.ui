@@ -102,7 +102,7 @@
       </layout>
      </widget>
      <widget class="QWidget" name="layoutWidget">
-      <layout class="QHBoxLayout" name="ToolLayoutCombined" stretch="1,100">
+      <layout class="QHBoxLayout" name="ToolLayoutCombined" stretch="1,20">
        <property name="sizeConstraint">
         <enum>QLayout::SetDefaultConstraint</enum>
        </property>
@@ -391,7 +391,7 @@
          <widget class="QWidget" name="tabCharset">
           <property name="minimumSize">
            <size>
-            <width>330</width>
+            <width>0</width>
             <height>0</height>
            </size>
           </property>
@@ -832,7 +832,7 @@
                 </widget>
                </item>
                <item row="2" column="0">
-                <widget class="QLabel" name="label_5">
+                <widget class="QLabel" name="lblTileSize">
                  <property name="text">
                   <string>Tile size</string>
                  </property>

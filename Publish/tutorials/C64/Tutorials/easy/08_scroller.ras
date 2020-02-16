@@ -53,8 +53,8 @@ interrupt Bottom();
 interrupt Top();
 begin
 	StartIRQ(kernal);
-	screen_bg_col:=red;
-	screen_fg_col:=red;
+	//screen_bg_col:=red;
+	//screen_fg_col:=red;
 	scrollx(0); // make sure that everythingin the "TOP" layer doesn't scroll
 	RasterIRQ(Bottom(),@yposRaster,kernal); // bottom os referenced here, so it needs to be forward declared
 	// Update text and etc from the "Top" layer
@@ -70,8 +70,8 @@ begin
 	// Wait(3) makes sure that we set the background color when the raster is outside the screen,
 	// removing any artifacts
 	wait(3);
-	screen_bg_col:=black;
-	screen_fg_col:=black;
+	//screen_bg_col:=black;
+	//screen_fg_col:=black;
 	// Scroll here!
 	Scrollx(scrollVal);
 	
