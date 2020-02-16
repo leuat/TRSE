@@ -2,6 +2,7 @@
 C64; Empty C64 project; c64_general; <h2>Empty C64 project</h2><p>Create an empty C64 project.
 C64; Simple C64 project; c64_general2; <h2>Main C64 project</h2><p>Create a small C64 project with a SID file, a raster loop and a custom charset.
 C64; C64 cartridge project; c64_crt; <h2>C64 16kb cartridge project</h2><p>A simple setup that compiles to a 16kb crt program. <p>Exomizer must be turned on in order for this project to compile!
+C64; C64 disk project; c64_disk; <h2>C64 disk project</h2><p>A sample project that loads and displays two images from disk. The disk contents are defined in the d64.paw file.
 VIC20; VBM blank project; vic20_vbmblank; <h2>VBM blank project</h2><p>Ready to use Vic Bitmap Mode project with zero page pointers, project files and two text fonts.</p>
 VIC20; Unexpanded Vic; vic20_unexp; <h2>Unexpanded Vic 20 project</h2><p>Vic 20 project with a basic set up ready to use.</p>
 NES; NES sample project; nes_general; <h2>Small NES sample project</h2><p>Sets up a NES project with a main source file, tile ROM image file and music.
