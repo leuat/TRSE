@@ -117,6 +117,10 @@ public:
 
     static void CopyFile(QString i, QString o);
 
+    static bool CopyRecursively(QString sourceFolder, QString destFolder);
+
+
+
     static QVector3D abss(QVector3D a);
     static QVector3D maxx(QVector3D a, QVector3D b);
 

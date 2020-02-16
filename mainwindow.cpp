@@ -927,6 +927,7 @@ void MainWindow::on_actionNew_project_triggered()
   //  qDebug() << "MainWindow " <<dst;
     QString projectFile = dst + np->m_project+".trse";
     QFile::copy(src+"/project.trse",projectFile);
+    Util::CopyRecursively(src + "/files/", dst);
     UpdateRecentProjects();
     LoadProject(projectFile);
 

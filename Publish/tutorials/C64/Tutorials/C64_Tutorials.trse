@@ -39,6 +39,4 @@ data_header_resources/images/petscii_animation.flf = 0
 charset_resources/images/petscii_animation.flf = :resources/character.rom
 data_header_resources/charsets/charset.flf = 0
 exomize_toggle = 0
-open_files = ,easy/08_scroller.ras, easy/05_matrix.ras, Hello.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
-current_file = easy/08_scroller.ras
+open_files =, Hello.ras
