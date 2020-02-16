@@ -1,4 +1,5 @@
 
-C64; Simple C64 project; c64_general; <h2>Main C64 project</h2><p>Create a small C64 project.
+C64; Empty C64 project; c64_general; <h2>Empty C64 project</h2><p>Create an empty C64 project.
+C64; Simple C64 project; c64_general2; <h2>Main C64 project</h2><p>Create a small C64 project with a SID file, a raster loop and a custom charset.
 VIC20; Simple VIC20 project; vic20_general; <h2>Empty VIC20 project</h2><p>Create a small VIC20 project.
 NES; Clean NES project; nes_general; <h2>Almost empty NES project</h2><p>Sets up a NES project with a main source file, tile ROM image file and music.
