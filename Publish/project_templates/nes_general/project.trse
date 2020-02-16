@@ -41,3 +41,4 @@ override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
 exomize_toggle = 0
+current_file = main.ras

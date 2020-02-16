@@ -91,12 +91,12 @@
        </layout>
       </item>
       <item row="1" column="0" rowspan="2">
-       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="5,8">
-        <item>
-         <widget class="QTextBrowser" name="txtInfo"/>
-        </item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="5,5">
         <item>
          <widget class="QListWidget" name="lstData"/>
+        </item>
+        <item>
+         <widget class="QTextBrowser" name="txtInfo"/>
         </item>
        </layout>
       </item>
