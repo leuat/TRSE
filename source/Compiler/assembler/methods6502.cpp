@@ -10878,7 +10878,6 @@ void Methods6502::Peek(Assembler* as)
     //m_node->RequireAddress(m_node->m_params[0],"Peek", m_node->m_op.m_lineNumber);
 
     // If pointer
-
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         as->Term("ldy ");
         m_node->m_params[1]->Accept(m_dispatcher);
@@ -10892,15 +10891,17 @@ void Methods6502::Peek(Assembler* as)
     // Optimize if numeric
     NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
     if (num!=nullptr) {
-        as->ClearTerm();
+        QString add = m_node->m_params[1]->getValue(as);
+        QString org = m_node->m_params[0]->getValue(as);
+        as->Asm("lda "+org + " + "+add);
+/*        as->ClearTerm();
         as->Term("lda ");
         m_node->m_params[0]->Accept(m_dispatcher);
         as->Term(" + " + num->HexValue());
-        as->Term();
+        as->Term();*/
         return;
 
     }
-
     LoadVar(as, 1);
     as->Asm("tax");
     LoadVar(as,0,"x");

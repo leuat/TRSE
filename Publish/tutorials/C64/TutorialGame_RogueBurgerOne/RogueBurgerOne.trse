@@ -42,4 +42,6 @@ data_header_charsets/charset_level.flf = 0
 data_header_images/intrologo2.flf = 6.91242e-310
 data_header_sprites/fastfood.flf = 6.94947e-310
 exomize_toggle = 0
-open_files =, RogueBurgerOne.ras
+open_files = ,charsets/charset_level.flf, levels/levels.flf, images/titlescreen2.flf, images/intrologo2.flf, RogueBurgerOne.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/TutorialGame_RogueBurgerOne/
+current_file = levels/levels.flf

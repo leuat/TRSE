@@ -58,4 +58,6 @@ data_header_screens/test.flf = 6.92781e-310
 charset_screens/test.flf = :resources/character.rom
 charset_screens/croom5.flf = :resources/character.rom
 charset_screens/croom3.flf = :resources/character.rom
-open_files =, graveintentions.ras
+open_files = ,graveintentions.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/CrossPlat/GraveIntentions/
+exomize_toggle = 0
