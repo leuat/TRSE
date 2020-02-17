@@ -10,9 +10,9 @@
 //	myvar : byte = 0;	// example variable in main RAM
 
 
+
 // -------------------------------------------------------------------------------
 // CString
 
-	strTitle: cstring = ("HELLO WORLD");
-	strDesc: cstring = ("UNLEASH YOUR VIC 20 CREATIVITY!");
-
+	strTitle: cstring = ("SPACESHIP INERTIA");
+	strDesc: cstring = ("USE THE JOYSTICK LUKE!");
