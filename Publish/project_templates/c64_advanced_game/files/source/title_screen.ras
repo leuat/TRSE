@@ -1,0 +1,58 @@
+interrupt RasterScreenTitleTop();
+interrupt RasterScreenTitleBottom();
+
+interrupt RasterScreenTitleTop();
+begin
+	startirq(useKernal);
+	scrollx(scroll);
+	setbank(vic_bank0);
+	setregularcolormode();
+	settextmode();
+	setcharsetlocation(charsetLoc);
+	hideborderx(1);
+	RasterIRQ(RasterScreenTitleBottom(),58,useKernal);
+	closeIrq();
+end;
+
+
+
+interrupt RasterScreenTitleBottom();
+begin
+	startirq(useKernal);
+	wait(5);
+	scrollx(0);
+	setbitmapmode();
+	setmulticolormode();
+	setbank(vic_bank1);
+	screen_bg_col:=black;
+	if (scroll=0) then
+	begin
+		scroll:=7;
+		tp:=tp+1;
+		memcpy(tp,0,^$0400,40);
+		if (tp[39]=0) then tp:=introText;		
+	end;
+	dec(scroll);
+	RasterIRQ(RasterScreenTitleTop(),0,useKernal);
+	
+	call(SIDFILE_1_PLAY);
+	Joystick(2);
+	if (joystickbutton=1) then
+	begin
+		ClearSound();
+		InitializeGame();
+		InitializeGameScreen();
+		RasterIRQ(RasterTopGame(),$00,@useKernal);
+
+
+	end;
+	closeIrq();
+end;
+
+procedure InitializeTitleScreen();
+begin
+	copyimagecolordata(image_color,1);
+	tp:=introText;
+	fill(^$D800,blue,40);
+	
+end;

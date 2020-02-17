@@ -1,0 +1,141 @@
+// Sets up the player sprite
+procedure InitMainSprite();
+begin
+	// Set sprite position at bank 0 to $C8=$3200/64
+	setspriteloc(@playerSprite,@spriteLoc/64,0);
+	player_x:=80;
+	player_y:=120;
+	// Set sprite x,y pos
+	spritepos(player_x,player_y,@playerSprite);
+
+	// Turn on only player sprite
+	sprite_bitmask:=%00000001;
+
+ 	// All sprites are multicolor
+	sprite_multicolor:=$FF;
+	sprite_multicolor_reg1:=black;
+	sprite_multicolor_reg2:=purple;
+
+	sprite_color[@playerSprite]:=red;
+end;
+
+procedure PlayerBackgroundCollide();
+var
+	tmp:integer;
+	
+begin
+	tmp:=(player_x - 12);
+	i:=tmp/8;
+	j:=(player_y-38)/8;
+	moveto(i-1,j-1, hi(screen_char_loc));
+	blockx:=0;
+	blocky:=0;
+	
+	k:=screenmemory[ map_player_direction +screen_width+1]; // down
+	
+	if (background_mask[k]=1) then begin
+		if (joystickdown=1 or joystickup=1) then blocky:=1;
+		if (joystickleft=1 or joystickright=1) then blockx:=1;
+	end;
+end;
+
+
+
+procedure TraverseLevels();
+var 
+   redraw:byte=0;
+begin
+	
+	if (player_x<@minx) then begin
+		if (curLevel_x<>0) then begin
+			dec(curLevel_x);
+			player_x:=@maxx-1;
+			redraw:=1;
+		end
+		else
+			player_x:=@minx+1;
+	end;
+	if (player_x>@maxx) then begin
+		if (curLevel_x+1<>m_rl_width) then begin
+			inc(curLevel_x);
+			player_x:=@minx+1;
+			redraw:=1;
+		end
+		else 
+			player_x:=@maxx-1;
+
+	end;
+
+	if (player_y<@miny) then begin
+		if (curLevel_y<>0) then begin
+			dec(curLevel_y);
+			player_y:=@maxy-1;
+			redraw:=1;
+		end
+		else
+			player_y:=@miny+1;
+	end;
+	if (player_y>@maxy) then begin
+		if (curLevel_y+1<>m_rl_height) then begin
+			inc(curLevel_y);
+			player_y:=@miny;
+			redraw:=1;
+		end
+		else
+			player_y:=@maxy-1;
+	end;
+
+
+	if redraw=1 then begin
+		@levelpointer:=@levelPosition;
+		RenderColorLevel(curLevel_x,curLevel_y,hi(screen_char_loc));
+		LoadEntities();
+		InitEntities();
+		redraw:=0;
+	end;
+
+
+end;
+
+/*
+	 Moves the player
+*/
+procedure MovePlayerSprite();
+begin
+	joystick(2);
+
+	map_player_direction:=0;
+	movement_dir := 0;
+	if (joystickleft=1) then begin map_player_direction:=map_player_direction-1;movement_dir:=2;end;
+	if (joystickright=1) then begin map_player_direction:=map_player_direction+1;movement_dir:=1;end;
+	if (joystickdown=1) then begin map_player_direction:=map_player_direction+screen_width;end;
+	if (joystickup=1) then begin map_player_direction:=map_player_direction-screen_width;end;
+
+	PlayerBackgroundCollide();
+
+	if (blockx=0) then
+		player_x:=player_x+joystickright-joystickleft;
+		
+	if (blocky=0) then
+		player_y:=player_y+joystickdown-joystickup;
+
+	
+	if (movement_dir<>0 or (joystickup=1 or joystickdown=1)) then
+	begin
+		if (playerMovementCounter=0) then
+		begin
+			playerMovementCounter := playerMovementCounterMax;
+			playerMovement := mod(playerMovement+1,8);
+		end			
+		else
+			dec(playerMovementCounter);
+		
+	end;
+		
+	spritepos(player_x, player_y,@playerSprite);
+	i:=playerMoveSprite[playerMovement];
+	if (movement_dir=2) then i:=i+5;
+	setspriteloc(@playerSprite,@spriteLoc/64 + i,0);
+	
+end;
+

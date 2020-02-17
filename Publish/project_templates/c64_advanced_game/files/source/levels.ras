@@ -1,0 +1,91 @@
+procedure ReadHeader();
+
+begin
+	@levelpointer := @levelpointer +13;
+
+	// Read level header info
+
+	m_rl_sizex := @levelpointer[0];
+	m_rl_sizey := @levelpointer[1];
+
+	m_rl_width := @levelpointer[2];
+	m_rl_height := @levelpointer[3];
+
+	m_rl_startx := 0;
+	m_rl_starty := 2;
+
+
+	m_rl_chunks := @levelpointer[6];
+	m_rl_chunksize := @levelpointer[7];
+
+	m_rl_dataSize := @levelpointer[8];
+
+end;
+
+
+
+procedure RenderColorLevel(m_li, m_lj, m_screen: byte);
+begin
+	// Fluff files have 13 byte headers
+	
+	// Go past header
+	@levelpointer := @levelpointer +13+32;
+
+	// Calculate position in level layout
+
+	m_rl_pos := m_rl_sizex*m_lj + m_li;
+	// Calculate data size of map 
+	m_rl_val := m_rl_width*m_rl_height;
+
+	// Locate level
+	@levelpointer := @levelpointer +m_rl_val*2*m_rl_pos;
+	@levelpointer := @levelpointer +m_rl_dataSize*m_rl_pos;
+
+	// Set screen position 
+
+	moveto(m_rl_startx, m_rl_starty, m_screen);
+	
+	// Fill screen with chars
+	
+	for m_rl_j:=0 to m_rl_height do begin
+		for m_rl_i:=0 to m_rl_width do begin
+			m_rl_val := peek(@levelpointer,m_rl_i);
+			m_rl_idx:=m_rl_i*2;
+
+			screenmemory[m_rl_idx]:=m_rl_val;
+			screenmemory[m_rl_idx+1]:=m_rl_val+1;
+			screenmemory[m_rl_idx+40]:=m_rl_val+40;
+			screenmemory[m_rl_idx+41]:=m_rl_val+41;
+		 end;
+		 screenmemory:=screenmemory+screen_width*2;
+		 @levelpointer:=@levelpointer+m_rl_width;
+	end;
+	// Then colors
+	moveto(m_rl_startx, m_rl_starty, $D8);
+
+	for m_rl_j:=0 to m_rl_height do begin
+		for m_rl_i:=0 to m_rl_width do begin
+			m_rl_val := peek(@levelpointer,m_rl_i)&7 + 8;
+			m_rl_idx:=m_rl_i*2;
+	
+			screenmemory[m_rl_idx]:=m_rl_val;
+			screenmemory[m_rl_idx+1]:=m_rl_val;
+			screenmemory[m_rl_idx+40]:=m_rl_val;
+			screenmemory[m_rl_idx+41]:=m_rl_val;
+
+	 	end;
+	 	screenmemory:=screenmemory+screen_width*2;
+		 @levelpointer:=@levelpointer+m_rl_width;
+
+	
+	end;
+	// Set multicolor colors
+
+	poke(MULTICOLOR_CHAR_COL, 0, @levelpointer[0]);
+	poke(MULTICOLOR_CHAR_COL, 2, @levelpointer[1]); 
+	poke(MULTICOLOR_CHAR_COL, 1, @levelpointer[2]);
+
+	@levelpointer:=@levelpointer+3;
+	// levelpointer now points to the data
+
+end;

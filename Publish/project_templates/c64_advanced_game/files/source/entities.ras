@@ -1,0 +1,83 @@
+
+procedure LoadEntities();
+begin
+	// Make sure all ID's are set to zer0
+	fill(entity_id,0, @numEntities);
+	for i:=0 to @numEntities do begin
+		if @levelpointer[0]=0 then return();
+		entity_id[i] := @levelpointer[0];
+		entity_pos_x[i] := @levelpointer[1]*4 + 10;
+		entity_pos_y[i] := @levelpointer[2]*8 + 60;
+		entity_color[i] := @levelpointer[3];
+		@levelpointer:=@levelpointer + m_rl_chunksize;
+	end;
+end;
+
+
+procedure InitEntities();
+var
+	ex: integer;
+begin
+	sprite_bitmask:=%00000001; // Only enable player sprite
+	for i:=0 to @numEntities do begin
+		k:=i+1;
+		if entity_id[i]=0 then return();
+		j:=entity_id[i];
+		j:=j + @spriteLoc/64 + 7; // Position after cat sprites
+		setspriteloc(k,j,0);
+		togglebit(sprite_bitmask,k,1);
+		sprite_color[k]:=entity_color[i];
+		ex:=entity_pos_x[i]*2;
+		spritepos(ex,entity_pos_y[i], k);		
+	end;
+end;
+
+/*
+ 	Calculates the nearest entity. 
+   	Entity index stored in nearestEntity
+*/
+
+procedure EntityCollider();
+var 
+	maxDistance:byte;
+	nearestEntity:byte;
+	px:byte;
+begin
+	maxDistance := 255;
+	px:=player_x/2;
+	nearestEntity := 255; 
+	
+	for i:=0 to @numEntities  do begin
+		if (entity_id[i]=0) then return();
+
+		k := abs(entity_pos_x[i] - px);
+		l := abs(entity_pos_y[i] - player_y);
+			
+		k:=k/2 + l/2;
+			
+		if k<maxDistance then begin
+			maxDistance:=k;
+			nearestEntity:=i;
+		end;
+	end;
+	
+end;
+
+
+procedure CrashWithEntities();
+begin
+	EntityCollider();
+	if (maxDistance<@crashDistance) then begin
+		entity_id[nearestEntity]:=0;
+		togglebit(sprite_bitmask, nearestEntity+1,0);
+		PlaySound(sid_channel2,
+			14,  // Volume
+			20,  // Hi byte frequency
+			2*16+0,  // Attack voice 1
+			3*16 + 12,   // Sustain = 16*15 + release=6
+			1 +SID_SAW,  // Waveform
+			SID_SAW);  // waveform*/
+		score:=score+10;
+	end;
+
+end;

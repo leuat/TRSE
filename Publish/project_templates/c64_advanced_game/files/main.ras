@@ -1,0 +1,130 @@
+program SampleC64GameProject;
+var
+
+// Automatically export charset
+@export "charsets/charset.flf" "charsets/charset.bin" 256
+
+@export "charsets/game_tiles.flf" "charsets/game_tiles.bin" 256
+
+@export "sprites/sprites.flf" "sprites/sprites.bin" 256
+
+@export "images/titlescreen.flf" "images/titlescreen.bin" 0
+
+
+	i, time,j: byte = 0;
+	const useKernal : byte = 0;
+	
+// music by Mibri
+	music : incsid("music/discoman.sid",2);
+
+@define levelpointer lp
+	lp : pointer;
+
+	// Intro data
+	introText : cstring = ("                                 TOOT ORIAL SAMPLE TRSE GAME      PRESS JOY 2 TO START       MUSIC BY MIBRI                                   "); 
+	tp : pointer;
+	scroll : byte = 0;
+
+@define spriteLoc $3200
+
+	// Location of charset
+	const charsetLoc: address = $2000;
+	const tileLoc: address = $2800;
+// levels are loaded to/from $5000
+	const levelPosition : address = $8000;
+
+	// Tile data
+   	tile: incbin("charsets/game_tiles.bin", tileLoc);
+   	// Sprite data
+	mySprites:incbin("sprites/sprites.bin", @spriteLoc);
+	// Raw level data ( should be compressed! ) 
+	levels: incbin("levels/levels.flf", levelPosition);
+	// Charset data ( font etc ) 
+	charset : incbin("charsets/charset.bin", charsetLoc);
+
+	image_data : incbin("images/titlescreen_data.bin",$6000);
+	image_color : incbin("images/titlescreen_color.bin",$5000);
+
+	curLevel_x, curLevel_y : byte=0;
+	// Defines if x/y directions are being blocked
+
+	k,l,blockx, blocky,map_player_direction : byte = 0;
+	player_x: integer;
+	player_y: byte = 0;
+	// Tiles that have a "1" are collideable
+	background_mask: array[240] of byte=(
+		1,1,1,1,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
+		1,1,1,1,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0
+	);
+
+	// Level meta data
+	
+   	m_rl_width, m_rl_height : byte;
+   	m_rl_sizex, m_rl_sizey : byte;
+   	m_rl_startx, m_rl_starty : byte;
+   	m_rl_dataSize, m_rl_pos : byte;
+   	m_rl_i, m_rl_j, m_rl_val, m_rl_idx: byte;
+   	m_rl_chunksize, m_rl_chunks : byte;
+
+
+	// Game score
+	score : byte = 0;
+
+
+	spriteLocations : array[2] of byte=(0, $C9);
+	// Player animations sprites
+	playerMoveSprite : array[8] of byte = (0,1,2 ,1,0,1,2,1);
+	// Current movement
+	playerMovement, playerMovementCounter : byte = 0;
+	// Movement counter (lower value = faster animations)
+	const playerMovementCounterMax : byte = 6;
+	// Left or right player direction
+	movement_dir : byte=0; 
+	@define numEntities 6
+	@define crashDistance 8
+
+	entity_id : array[@numEntities] of byte;
+	entity_pos_x : array[@numEntities] of byte;
+	entity_pos_y : array[@numEntities] of byte;
+	entity_color : array[@numEntities] of byte;
+
+
+// Max / min movement position for player sprite x,y	
+	@define miny 66
+	@define maxy 210
+	@define minx 24
+	@define maxx 320 
+
+	@define playerSprite 0
+
+
+	const rasterLevelsPosY:byte = 64;
+	const rasterBottomPosY:byte = 228;
+	const backgroundCol : byte = blue;
+
+@include "source/levels.ras"
+
+@include "source/entities.ras"
+
+@include "source/player.ras"
+
+@include "source/game.ras"
+
+@include "source/title_screen.ras"
+
+// Main block
+begin
+	preventirq();
+	disableciainterrupts();
+	SetMemoryConfig(1,useKernal,0);
+	InitSid(SIDFILE_1_INIT);
+	
+	InitializeTitleScreen();
+	// Set up raster IRQ
+	StartRasterChain(RasterScreenTitleTop(),$00,@useKernal);
+	Loop(); 
+end.

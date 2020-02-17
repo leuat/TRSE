@@ -1,0 +1,92 @@
+procedure PrintScore();
+begin
+	moveto(14,23,hi(screen_char_loc));
+	printdecimal(score,3);
+
+end;
+interrupt RasterTopGame();
+interrupt RasterBottomGame();
+interrupt RasterLevelsGame();
+
+interrupt RasterTopGame();
+begin
+	startirq(useKernal);
+	wait(5);
+	screen_fg_col:=backgroundCol;
+	setcharsetlocation(charsetLoc);
+//	call(SIDFILE_1_PLAY);
+	PrintScore();
+	// Randomly increase the score
+	inc(time);
+	RasterIRQ(RasterLevelsGame(), rasterLevelsPosY,useKernal);	
+	closeirq();
+end;
+// Main raster function: Contains all high-level procedure calls to sprite & entity handling
+interrupt RasterLevelsGame();
+begin
+	StartIRQ(useKernal);
+	wait(5);
+	screen_fg_col:=black;
+	setcharsetlocation(tileLoc);
+	MovePlayerSprite();	
+	TraverseLevels();
+	RasterIRQ(RasterBottomGame(), rasterBottomPosY,useKernal);	
+	CloseIRQ();
+end;
+
+interrupt RasterBottomGame();
+begin
+	startirq(useKernal);
+	wait(5);
+	screen_fg_col:=backgroundCol;
+	setcharsetlocation(charsetLoc);
+
+	CrashWithEntities();
+	RasterIRQ(RasterTopGame(), 0,useKernal);	
+	closeirq();
+end;
+
+
+// This method initializes charset data, and is similar to the one in part 6
+procedure InitializeGame();
+begin
+	clearscreen(light_blue, screen_col_loc);
+	clearscreen(key_space, screen_char_loc);
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	// Pointer to character color definitions
+
+	multicolor_char_col[1]:=grey;
+	multicolor_char_col[2]:=brown;
+	setbank(vic_bank0);
+	settextmode();
+	setmulticolormode();
+
+	setcharsetlocation(tileLoc);
+
+	@levelpointer:=levelPosition;
+	ReadHeader();
+
+	InitMainSprite();
+
+	@levelpointer:=levelPosition;
+	redraw:=true;
+	
+	LoadEntities();
+	InitEntities();
+	// override y start position
+	m_rl_starty:=2;
+end;
+
+
+procedure InitializeGameScreen();
+begin
+	clearscreen(yellow,screen_col_loc);
+	moveto(2,0,hi(screen_char_loc));
+	PrintString("TOOT ORIOLE GAME",0,40);
+//	fill(^$D800,yellow,40);
+
+	moveto(2,23,hi(screen_char_loc));
+	PrintString("FAKE SCORE",0,10);
+end;
+
