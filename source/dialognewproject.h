@@ -36,6 +36,8 @@ private slots:
 
     void on_btnOk_clicked();
 
+    void on_leProjectName_editingFinished();
+
 private:
     Ui::DialogNewProject *ui;
     void UpdateProjectInfo();

@@ -27,7 +27,9 @@ DialogNewProject::DialogNewProject(CIniFile* ini, QWidget *parent) :
     }
     int s = 64;
     ui->comboBox->setIconSize(QSize(s,s/1.5));
-
+    ui->btnOk->setFocus();
+    ui->btnOk->setAutoDefault(true);
+    ui->pushButton_2->setAutoDefault(false);
 
 
 }
@@ -95,4 +97,11 @@ void DialogNewProject::on_btnOk_clicked()
     ok = true;
     m_ini->setString("default_project_dir",ui->leProjectDir->text());
     close();
+}
+
+void DialogNewProject::on_leProjectName_editingFinished()
+{
+/*    if (ui->btnOk->isEnabled())
+        ui->btnOk->setFocus();
+*/
 }
