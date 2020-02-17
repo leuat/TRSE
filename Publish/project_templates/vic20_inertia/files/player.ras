@@ -1,0 +1,78 @@
+// Player control
+
+procedure Player_Init();
+begin
+	
+	// the lo byte is for smooth enertia, only high byte used for pixel position
+	px := $5000; // 80
+	py := $6000; // 96
+	dx := PLAYERDELTAMID;
+	dy := PLAYERDELTAMID;
+
+end;
+
+// draw the player sprite with EOR operation
+procedure Player_RenderEor();
+begin
+
+	//vbmSetPosition1( peek( px, 1 ), peek( py, 1 ) );
+	vbmSetPosition1( Hi( px ), Hi( py ) );
+	vbmDrawSprite8E( sprPlayerA, sprPlayerB );
+
+end;
+
+// update player position
+procedure Player_Update();
+begin
+
+	// Player pushed direction on joystick - adjust delta
+	if (joy1 & JOY_RIGHT) then dx := dx + PLAYERACCEL;
+	if (joy1 & JOY_LEFT)  then dx := dx - PLAYERACCEL;
+	if (joy1 & JOY_DOWN)  then dy := dy + PLAYERACCEL;
+	if (joy1 & JOY_UP)    then dy := dy - PLAYERACCEL;
+	
+	// ensure delta does not exceed range
+	if (dx > PLAYERDELTAMAX) then dx := PLAYERDELTAMAX;
+	if (dx < PLAYERDELTAMIN) then dx := PLAYERDELTAMIN;
+	if (dy > PLAYERDELTAMAX) then dy := PLAYERDELTAMAX;
+	if (dy < PLAYERDELTAMIN) then dy := PLAYERDELTAMIN;
+	
+	// update player position using delta
+	if (dx > PLAYERDELTAMID) then px := px + (dx - PLAYERDELTAMID);
+	if (dx < PLAYERDELTAMID) then px := px - (PLAYERDELTAMIN - (dx - PLAYERDELTAMIN));
+	if (dy > PLAYERDELTAMID) then py := py + (dy - PLAYERDELTAMID);
+	if (dy < PLAYERDELTAMID) then py := py - (PLAYERDELTAMIN - (dy - PLAYERDELTAMIN));
+	
+	// ensure player stays within bounds of bitmap
+	if ( hi( px ) < 1 ) then 
+	begin 
+		px := px + PLAYERDELTAHALF; 
+		dx := dx - PLAYERDELTAMIN;
+		dx := PLAYERDELTAMAX - dx; 
+	end;
+	if ( hi( px ) > 151 ) then 
+	begin 
+		px := px - PLAYERDELTAHALF; 
+		dx := dx - PLAYERDELTAMID-1;
+		dx := PLAYERDELTAMID - dx; 
+	end;
+	if ( hi( py ) < 1 ) then 
+	begin 
+		py := py + PLAYERDELTAHALF; 
+		dy := dy - PLAYERDELTAMIN;
+		dy := PLAYERDELTAMAX - dy; 
+	end;
+	if ( hi( py ) > 183 ) then 
+	begin 
+		py := py - PLAYERDELTAHALF; 
+		dy := dy - PLAYERDELTAMID-1;
+		dy := PLAYERDELTAMID - dy; 
+	end;
+	
+	// slow down by bringing delta to the mid point
+	if (dx > PLAYERDELTAMID) then dx := dx - PLAYERDECEL;
+	if (dy > PLAYERDELTAMID) then dy := dy - PLAYERDECEL;
+	if (dx < PLAYERDELTAMID) then dx := dx + PLAYERDECEL;
+	if (dy < PLAYERDELTAMID) then dy := dy + PLAYERDECEL;
+
+end;

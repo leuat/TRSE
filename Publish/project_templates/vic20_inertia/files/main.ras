@@ -1,0 +1,97 @@
+program InertiaShip;
+/*
+
+	Vic 20 8K Vic Bitmap Mode Space ship with inertia template
+	- can utilize up to 35K RAM under project settings
+
+	-------------------
+	
+	Dev Note:	Zero Page addresses have been defined in project settings
+				for the Vic 20 build.
+				
+				_memoryzp 	- all zero page variables and resources
+				_constants	- game constants & parameters
+				_memory		- all main RAM variables
+				_lookup		- read only look up tables
+				player		- Draw and move the player space ship
+*/
+var  
+
+@define DEBUG		1				// uncomment to show debugging timings
+
+
+// -------------------------------------------------------------------------------
+
+@include "_constants.ras"			// GAME PARAMETERS and CONSTANTS
+@include "_memoryzp.ras"			// variables in Zero Page and binary data
+
+
+// -------------------------------------------------------------------------------
+
+@startblock $2000 "GAME"
+
+// -------------------------------------------------------------------------------
+// look up data
+@include "_memory.ras"				// variables in main RAM
+@include "_lookup.ras"				// read only lookup tables
+
+
+// -------------------------------------------------------------------------------
+// source files						// add your include files here
+
+@include "vbl.ras"					// vertical blank interrupt
+@include "player.ras"				// player routines
+
+
+
+
+// -------------------------------------------------------------------------------
+// **** MAIN PROGRAM ****
+
+begin
+
+	Vbl_Init(); // call before set display mode
+	
+	vbmSetDisplayMode( 0 );
+	vbmclear( 0 );
+	vbmClearColor( GREEN );	
+
+	AUX_COLOR_AND_VOLUME := %00000010;
+	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
+
+	vbmDrawText( strTitle, font8, 1, 40, 8 );
+	vbmDrawSmallTextO( strDesc, font4, 8, 50, 6 );
+
+	Player_Init();
+
+	// main game loop
+	while (true) offpage do 
+	begin
+		
+		// read joystick state
+		ReadJoy1();
+
+		// reposition player
+		Player_Update();
+
+		// draw player
+		Player_RenderEor();
+		
+		@ifdef DEBUG	// for testing speed
+		SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
+		@endif
+		
+		// wait for vertical blank
+		while (ticks = oldticks) do begin end;
+		oldticks := ticks;
+
+		@ifdef DEBUG	// for testing speed
+		SCREEN_BG_COLOR := CYAN + SCREEN_BG_BLACK;
+		@endif
+
+		// erase player
+		Player_RenderEor();
+				
+	end;
+
+end.

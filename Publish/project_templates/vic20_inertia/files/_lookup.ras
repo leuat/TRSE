@@ -10,6 +10,19 @@
 	);
 
 
+// Sprite offsets for Pre-Shifted sprites
+// Player
+
+// A side
+sprPlayerA: array[] of integer = (
+	aPlayer+ma0a, aPlayer+ma1a, aPlayer+ma2a, aPlayer+ma3a, 
+	aPlayer+ma4a, aPlayer+ma5a, aPlayer+ma6a, aPlayer+ma7a
+);
+// B side
+sprPlayerB: array[] of integer = (
+	aPlayer+ma0b, aPlayer+ma1b, aPlayer+ma2b, aPlayer+ma3b, 
+	aPlayer+ma4b, aPlayer+ma5b, aPlayer+ma6b, aPlayer+ma7b
+);
 
 
 
