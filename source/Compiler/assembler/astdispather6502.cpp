@@ -104,7 +104,7 @@ void ASTDispather6502::HandleGenericBinop16bit(Node *node) {
     }
     else {
         as->Asm("bcs "+lblword);
-        as->Asm("dec  " +lbl+"+1");
+        as->Asm("inc  " +lbl+"+1");
     }
 
     as->Label(lblword);
@@ -113,7 +113,8 @@ void ASTDispather6502::HandleGenericBinop16bit(Node *node) {
     as->Asm("tya");
 
     //    as->BinOP(m_op.m_type);
-    as->BinOP(TokenType::PLUS);
+//    if (node->m_op.m_type==TokenType::PLUS)
+    as->BinOP(node->m_op.m_type);
 
     as->Term(lbl+"+1",true);
     //    as->Asm("lda #0");
