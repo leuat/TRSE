@@ -1345,8 +1345,8 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
     if (vara==nullptr)
         ErrorHandler::e.Error("Integer comparison: only pure integer variable is supported");
 
-    QString lbl1 = as->NewLabel("binaryclauseintegerlbl1");
-    QString lbl2 = as->NewLabel("binaryclauseintegerlbl2"); // failed
+    QString lbl1 = as->NewLabel("binaryclauseinteger_success");
+    QString lbl2 = as->NewLabel("binaryclauseinteger_fail"); // failed
     QString lbl3 = as->NewLabel("binaryclauseintegerfinished"); // failed
 
     QString lo = "";
@@ -1364,9 +1364,43 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
     //m_left->Build(as);
     //as->Term();
 
+/*    if (node->m_op.m_type==TokenType::EQUALS)
+        as->Asm("bne " + lblFailed);
+    if (node->m_op.m_type==TokenType::NOTEQUALS)
+        as->Asm("beq " + lblFailed);
+    if (node->m_op.m_type==TokenType::GREATEREQUAL) {
+        as->Asm("bcc " + lblFailed);
+    }
+    if (node->m_op.m_type==TokenType::GREATER) {
+        as->Asm("bcc " + lblFailed);
+        as->Asm("beq " + lblFailed);
+    }
+    if (node->m_op.m_type==TokenType::LESSEQUAL ) {
+        as->Asm("beq " + lblSuccess);
+        as->Asm("bcs " + lblFailed);
+    }
+
+    if (node->m_op.m_type==TokenType::LESS)
+        as->Asm("bcs " + lblFailed);
+
+  */
+
+
     if (numb!=nullptr || varb!=nullptr) {
-        if (node->m_op.m_type==TokenType::GREATER || node->m_op.m_type==TokenType::GREATEREQUAL) {
-            as->Comment("Compare INTEGER with pure num / var optimization");
+        if (node->m_op.m_type==TokenType::GREATER) {
+            as->Comment("Compare INTEGER with pure num / var optimization. GREATER. ");
+            as->Asm("lda " + vara->getValue(as) + "+1   ; compare high bytes");
+            as->Asm("cmp " + hi + " ;keep");
+            as->Asm("bcc " + lbl2);
+        //    as->Asm("beq " + lbl2);
+            as->Asm("bne " + lbl1);
+            as->Asm("lda " + vara->getValue(as));
+            as->Asm("cmp " + lo +" ;keep");
+            as->Asm("bcc " + lbl2);
+            as->Asm("beq " + lbl2);
+        }
+        if (node->m_op.m_type==TokenType::GREATEREQUAL) {
+            as->Comment("Compare INTEGER with pure num / var optimization. GREATEREQUAL. ");
             as->Asm("lda " + vara->getValue(as) + "+1   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
             as->Asm("bcc " + lbl2);
@@ -1383,7 +1417,12 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
             as->Asm("bne " + lbl2);
             as->Asm("lda " + vara->getValue(as));
             as->Asm("cmp " + lo+" ;keep");
+            if (node->m_op.m_type==TokenType::LESSEQUAL)
+                as->Asm("beq "+lbl1);
             as->Asm("bcs " + lbl2);
+
+
+
         }
         if (node->m_op.m_type==TokenType::EQUALS) {
             as->Comment("Compare INTEGER with pure num / var optimization");
@@ -1429,8 +1468,8 @@ void ASTDispather6502::BinaryClauseInteger(Node *node)
         as->Asm("lda #0 ; failed state");
         as->Label(lblFinished);
     */
-    as->PopLabel("binaryclauseintegerlbl1");
-    as->PopLabel("binaryclauseintegerlbl2");
+    as->PopLabel("binaryclauseinteger_success");
+    as->PopLabel("binaryclauseinteger_fail");
     as->PopLabel("binaryclauseintegerfinished");
     // as->PopLabel("binary_clause_temp_var");
     //  as->PopLabel("binary_clause_temp_lab");

@@ -42,4 +42,4 @@ data_header_images/image2.flf = 6.93427e-310
 exomize_toggle = 0
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/X86/CGA/
 open_files = ,test.asm, tut4.ras, tut3.ras, tut2.ras, tut1.ras, test.ras, tut5.ras
-current_file = test.ras
+current_file = test.asm
