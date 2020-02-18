@@ -87,9 +87,7 @@ public:
     }
 
 protected slots:
-    void onTextChanged(){
-        m_textChanged = true;
-    }
+    void onTextChanged();
 
 
 protected:

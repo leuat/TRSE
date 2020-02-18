@@ -904,6 +904,7 @@ void FormRasEditor::HandleUpdateBuildText()
 void FormRasEditor::HandleBuildComplete()
 {
     m_builderThread.msleep(70); // crashes if we don't sleep.. for some reason
+    bool keepTextChanged = ui->txtEditor->m_textChanged;
     if (m_builderThread.m_builder->compiler->m_assembler!=nullptr) {
         ui->txtEditor->m_cycles =  m_builderThread.m_builder->compiler->m_assembler->m_cyclesOut;
         ui->txtEditor->m_blockCycles =  m_builderThread.m_builder->compiler->m_assembler->m_blockCyclesOut;
@@ -926,7 +927,7 @@ void FormRasEditor::HandleBuildComplete()
     highlighter->AppendSymboltable(m_builderThread.m_builder->compiler->m_parser.m_procedures.keys());
     highlighter->rehighlight();
 //    ui->txtEditor->viewport()->update();
-
+    ui->txtEditor->m_textChanged = keepTextChanged;
     if (m_run) {
         m_builderThread.m_builder->AddMessage("<br>Running program...");
         HandleUpdateBuildText();

@@ -233,6 +233,10 @@ void CodeEditor::InitCompleter(SymbolTable* symTab, Parser* parser)
 
 }
 
+void CodeEditor::onTextChanged() {
+    m_textChanged = true;
+}
+
 
 
 
