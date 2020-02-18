@@ -144,6 +144,8 @@ void ImageLevelEditor::Initialize()
 
     m_charWidthDisplay = m_meta.m_width;
     m_charHeightDisplay = m_meta.m_height;
+    m_charWidth = m_meta.m_width;
+    m_charHeight = m_meta.m_height;
 
 }
 
@@ -269,7 +271,10 @@ void ImageLevelEditor::LoadBin(QFile &file)
     LoadBinCharsetFilename(file);
 
     SetLevel(QPoint(0,0));
-
+    m_charWidth = m_meta.m_width;
+    m_charHeight = m_meta.m_height;
+    m_charWidthDisplay = m_meta.m_width;
+    m_charHeightDisplay = m_meta.m_height;
 
 }
 
@@ -826,7 +831,10 @@ void ImageLevelEditor::ExportFrame(QFile &file, int frame, int frameCount, int t
 
     if (height == 0) height = m_charHeight;
     if (width == 0) width = m_charWidth;
-
+/*    qDebug() << height << width << m_charHeight<<m_charWidth;
+    m_charHeight = height;
+    m_charWidth = width;*/
+    int w = m_charWidth;
     QByteArray data;  // output data
     QVector<PixelChar*> pcList;
     for (int l = frame; l < frame+frameCount; l++) {
@@ -841,7 +849,7 @@ void ImageLevelEditor::ExportFrame(QFile &file, int frame, int frameCount, int t
 
                 for(int y = row; y < row+height; y++)
                     for (int x = col; x < col+width; x++) {
-                        int pos = x+(y*m_charWidthDisplay);
+                        int pos = x+(y*w);
                         if (pos>=0 && pos< m_charWidth*m_charHeight)
                             data.append(lv->m_CharData[pos]);
                     }
@@ -851,7 +859,7 @@ void ImageLevelEditor::ExportFrame(QFile &file, int frame, int frameCount, int t
 
                 for (int x = col; x < col+width; x++)
                     for(int y = row; y < row+height; y++) {
-                        int pos = x+(y*m_charWidthDisplay);
+                        int pos = x+(y*w);
                         if (pos>=0 && pos< m_charWidth*m_charHeight)
                             data.append(lv->m_CharData[pos]);
                     }
@@ -867,7 +875,7 @@ void ImageLevelEditor::ExportFrame(QFile &file, int frame, int frameCount, int t
 
                 for(int y = row; y < row+height; y++)
                     for (int x = col; x < col+width; x++) {
-                        int pos = x+(y*m_charWidthDisplay);
+                        int pos = x+(y*w);
                         if (pos>=0 && pos< m_charWidth*m_charHeight)
                             data.append(lv->m_ColorData[pos]);
                     }
@@ -877,7 +885,7 @@ void ImageLevelEditor::ExportFrame(QFile &file, int frame, int frameCount, int t
 
                 for(int y = row; y < row+height; y=y+2)
                     for (int x = col; x < col+width; x++) {
-                        int pos = x+(y*m_charWidthDisplay);
+                        int pos = x+(y*w);
                         if (pos>=0 && pos< m_charWidth*m_charHeight)
                             data.append(lv->m_ColorData[pos]);
                     }

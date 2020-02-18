@@ -42,6 +42,7 @@ void Tutorials::PopulateTreeList(QTreeWidget *tree)
              first =treeItem;
          treeItem->setText(0,t.m_name);
          treeItem->setData(0,Qt::UserRole,t.m_file + ";"+t.m_text);
+         treeItem->setForeground(0,QColor(190,220,240,255));
 
          m_roots[t.m_system]->addChild(treeItem);
      }
@@ -119,10 +120,15 @@ void Tutorials::addTreeRoots(QTreeWidget* tree)
             // QTreeWidgetItem::setText(int column, const QString & text)
             treeItem->setText(0, t.m_system);
             treeItem->setText(1, "");
-            treeItem->setData(0,Qt::UserRole,"");
+            QPixmap img(":resources/images/" +t.m_system.toUpper()+".png");
 
+            treeItem->setIcon(0,img);
+            treeItem->setData(0,Qt::UserRole,"");
             m_roots[t.m_system] = treeItem;
         }
     }
+    tree->setIconSize(QSize(64,48));
+
+
 }
 
