@@ -12,7 +12,7 @@ DialogNewProject::DialogNewProject(CIniFile* ini, QWidget *parent) :
     m_templates.PopulateTemplateList(ui->lstData,"C64");
 
     ui->leProjectName->setText("myProject");
-    if (ini->contains("default_project_dir"))
+    if (ini->contains("default_project_dir") && ini->getString("default_project_dir").trimmed()!="")
         ui->leProjectDir->setText(ini->getString("default_project_dir"));
     else
         ui->leProjectDir->setText(Util::path);
@@ -104,4 +104,15 @@ void DialogNewProject::on_leProjectName_editingFinished()
 /*    if (ui->btnOk->isEnabled())
         ui->btnOk->setFocus();
 */
+}
+
+void DialogNewProject::on_btnSelectDir_clicked()
+{
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                                 "",
+                                                 QFileDialog::ShowDirsOnly
+                                                 | QFileDialog::DontResolveSymlinks);
+
+    if (dir!="")
+        ui->leProjectDir->setText(dir);
 }

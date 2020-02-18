@@ -5,7 +5,7 @@
 #include <QStringList>
 #include "source/tutorials.h"
 #include "source/LeLib/util/cinifile.h"
-
+#include <QFileDialog>
 namespace Ui {
 class DialogNewProject;
 }
@@ -37,6 +37,8 @@ private slots:
     void on_btnOk_clicked();
 
     void on_leProjectName_editingFinished();
+
+    void on_btnSelectDir_clicked();
 
 private:
     Ui::DialogNewProject *ui;
