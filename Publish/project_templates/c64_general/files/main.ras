@@ -1,0 +1,7 @@
+program C64Project;
+var
+	i : byte=0;
+
+begin
+	Loop(); 
+end.
