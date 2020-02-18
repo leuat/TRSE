@@ -35,6 +35,3 @@ override_target_settings_prg = 0
 build_list = ,
 pascal_settings_use_local_variables = 1
 exomize_toggle = 0
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/UnitTests/
-open_files = ,arithmetic/muldiv.ras, arithmetic/integer.ras, conditional/01_if-then-else.ras, arithmetic/advanced.ras
-current_file = arithmetic/advanced.ras
