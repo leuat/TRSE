@@ -1,0 +1,20 @@
+<h3>DecRange( [address] , [start] , [end] );</h3>
+<ul>
+    <li>[address] - the address to decrement</li>
+    <li>[start] - if increase would hit this value, roll over to [end]</li>
+    <li>[end] - value stored when rollover happens</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Decreases the value at the address with 1. If decreasing the value would cause value to hit [start], stores [end] to value instead.
+</p>
+
+<p>Notice that if variable value is outside the [start] and [end] range when calling this, function might misbehave.</p>
+
+<h3>Examples</h3>
+
+<code>
+decRange(my_variable, 255, 42);  // decrease my_variable by 1, keeping it between 0 and 42
+decRange(my_array[i], 10, 13);  // decrease my_array[i] by 1, keeping it between 11 and 13
+</code>
