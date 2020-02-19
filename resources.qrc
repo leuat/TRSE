@@ -425,5 +425,7 @@
         <file>resources/text/help/m/vbmdrawsprite2E.rtf</file>
         <file>resources/text/help/m/vbmdrawsprite2.rtf</file>
         <file>resources/text/project_templates.txt</file>
+        <file>resources/text/help/m/incrange.rtf</file>
+        <file>resources/text/help/m/decrange.rtf</file>
     </qresource>
 </RCC>
