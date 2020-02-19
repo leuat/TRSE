@@ -1,2 +1,10 @@
-<p>Decimal . PAL = .  NTSC = </p>
-<p></p>
+<p>Address of character screen</p>
+<p>Set a pointer (eg: screenmemory) to this address to write PETSCII screen codes to the screen</p>
+<p>Example</p>
+<code>
+DefineScreen();
+screenmemory := SCREEN_CHAR_LOC;
+
+// write an A to the top left of the screen
+screenmemory[0] := 1;
+</code>
