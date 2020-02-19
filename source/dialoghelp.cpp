@@ -186,6 +186,7 @@ void DialogHelp::LoadItem(QString findword)
                     if (s=="n") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> numeric ]";
                     if (s=="a") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> address ]";
                     if (s=="s") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> string address ]";
+                    if (s=="p") val+="[ <span style=\"vertical-align:super\">" + QString::number( paramNo ) + ":</span> procedure ]";
 
                     val+=", ";
                     paramNo++;
