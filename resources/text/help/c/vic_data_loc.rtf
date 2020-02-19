@@ -1,2 +1,20 @@
-<p>Decimal . PAL = .  NTSC = </p>
-<p></p>
+<p>Screen map and Character map addresses</p>
+
+<p><strong>Bits 7-4</strong> default = 240.  These serve as bits 13-10 of the screen map address,
+combined with bit 7 of $9002 to form the 14-bit VIC chip screen map address.</p>
+<code>
+                 76 54
+14 bit address = 01 1110 0000 0000 = $1E00 (7680)
+                      7
+</code>
+
+<p>Note, there is an odd behaviour, that bit 7 must be 1, but it is seen as a 0 when used.</p>
+
+<p><strong>Bits 0-3</strong> default = 0.  Serve as bits 13-10 of the character map 14-bit address.</p>
+<code>
+                 32 10
+14 bit address = 00 0000 0000 0000 = $0000 (32768)
+
+</code>
+
+<p>Bit 3 is essentially ROM/RAM switch.  When 1 RAM is being used, 0 ROM is used.</p>
