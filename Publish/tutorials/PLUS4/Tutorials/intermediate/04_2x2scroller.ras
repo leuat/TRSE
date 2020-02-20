@@ -10,7 +10,7 @@ var
 	// ms_shift is 0 or 1, corresponding to the current column in the 2x2 character set
 	ms_sshift : byte=0;
 
-	charset: IncBin("resources/charsets/charset_16x16.bin","$2000");
+	charset: IncBin("resources/charsets/charset_16x16.bin",$2000);
 	// Text to be rendered on-screen
 	text : string=("THIS IS A TWO X TWO CHARACTER SCROLLER           ");
 

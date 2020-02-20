@@ -45,4 +45,5 @@ data_header_resources/charsets/chrwilly.flf = 2.02803e-312
 data_header_resources/tilemap/lvlwilly.flf = 2.02803e-312
 charset_resources/tilemap/lvlwilly.flf = C:/OneDrive/Documents/GitHub/build-TRSE-Desktop_Qt_5_13_0_MSVC2017_64bit-Release/tutorials/VIC20/tutorials/resources/charsets/chrWilly.flf
 data_header_resources/charsets/sprslice.flf = 1.82351e-312
-open_files =, easy/01_hello_world.ras
+open_files = ,easy/01_hello_world.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/tutorials/

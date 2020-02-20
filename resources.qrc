@@ -425,5 +425,16 @@
         <file>resources/text/help/m/vbmdrawsprite2E.rtf</file>
         <file>resources/text/help/m/vbmdrawsprite2.rtf</file>
         <file>resources/text/project_templates.txt</file>
+        <file>resources/text/help/m/togglevram32inc.rtf</file>
+        <file>resources/text/help/m/togglebackground.rtf</file>
+        <file>resources/text/help/m/togglesprites.rtf</file>
+        <file>resources/text/help/m/togglenmi.rtf</file>
+        <file>resources/text/help/m/readinput.rtf</file>
+        <file>resources/text/help/m/scroll.rtf</file>
+        <file>resources/text/help/m/setnametable.rtf</file>
+        <file>resources/text/help/m/setspritelocation.rtf</file>
+        <file>resources/text/help/m/togglebackgroundtableaddress.rtf</file>
+        <file>resources/text/help/m/togglespritetableaddress.rtf</file>
+        <file>resources/text/help/m/loadpalette.rtf</file>
     </qresource>
 </RCC>

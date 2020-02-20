@@ -1,0 +1,9 @@
+<p>The NES 8kb graphics ROM image consists of two parts: two 4096 byte images each consisting of 256 8x8
+chars. Let's say the first image is "bank 0" and the second is "bank 1".
+<p>
+ToggleSpriteTableAddress(N) will tell the PPU that sprites are located in bank N, where N is either 0 or 1.
+<p>
+Similarly, ToggleBackgroundTableAddress(N) where N is 0 or 1 will tell the PPU that the tile image
+is located in either bank 0 or 1.
+
+

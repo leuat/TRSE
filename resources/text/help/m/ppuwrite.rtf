@@ -1,6 +1,6 @@
-<h3>val := PPURead()</h3>
-PPURead reads a single byte to the memory address and returns it to a byte value.
-
+<h3>PPUWrite(value)</h3>
+PPUWrite writes a single byte to the current VRAM memory address and increments the address with either 1 or 32 (if togglevram32inc(1) is set).
+Example:
 <code>
     // Point to first colour attribute in first nametable $23C0
     PPUPoint($23,$C0);

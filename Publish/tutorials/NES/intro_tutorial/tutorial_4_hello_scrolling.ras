@@ -18,7 +18,6 @@ var
    	kp,shift,i,k,j,colorSize,scrollx,scrolly,curShift, curColumn: byte; 
    	// Use the original zelda music score
 	music: incnsf("music/zelda.nsf");
-	// Standard palette. Use YYchr (https://www.romhacking.net/utilities/119/) to create and edit.
 
 	const centerX : byte = 158;
 	// Location of the player sprite

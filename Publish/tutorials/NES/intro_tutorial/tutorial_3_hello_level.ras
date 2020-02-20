@@ -16,8 +16,7 @@ var
    	i,k,j,colorSize: byte; 
    	// Use the original zelda music score
 	music: incnsf("music/zelda.nsf");
-	// Standard palette. Use YYchr (https://www.romhacking.net/utilities/119/) to create and edit.
-
+	
 	// Location of the player sprite
 	sprite_x, sprite_y : byte;
 

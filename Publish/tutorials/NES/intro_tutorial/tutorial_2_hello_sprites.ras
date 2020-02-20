@@ -95,8 +95,8 @@ end;
 */
 procedure SetSpritePosition();
 begin
-	k:=0;
-	j:=0;
+	k:=16;
+	j:=16;
 
 	for i:=0 to 4 do begin
 		poke(^@spriteLoc,k+0,spriteData[j+0]+sprite_y);

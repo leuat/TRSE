@@ -1,0 +1,13 @@
+<p>Reads input and stores toggled buttons in an internal "buttons" variable.
+<p>Example:
+<code>
+ReadInput();
+
+sprite_x:=sprite_x+getbit(buttons,1)-getbit(buttons,0); // x axis
+sprite_y:=sprite_y-getbit(buttons,2)+getbit(buttons,3); // y axis
+if (getbit(buttons,4)=0) then
+    Jump();
+
+</code>
+
+
