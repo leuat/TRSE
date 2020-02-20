@@ -438,5 +438,6 @@
         <file>resources/text/help/m/loadpalette.rtf</file>
         <file>resources/text/help/m/incrange.rtf</file>
         <file>resources/text/help/m/decrange.rtf</file>
+        <file>resources/text/help/c/ppumask.rtf</file>
     </qresource>
 </RCC>

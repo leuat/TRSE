@@ -10,12 +10,14 @@ program Tutorial_4_hello_level;
 	
 	Meta tiles uses main 8kb tileset located in tiles/game_tiles.flf
 	
+	Flickering occurs because the level render method hasn't been fully optimized
+	
 */
 
 
 
 var  
-   	kp,shift,i,k,j,colorSize,scrollx,scrolly,curShift, curColumn: byte; 
+   	kp,shift,i,k,j,colorSize,scrollx,scrolly,curShift, curColumn,ishift, ishiftCol, performRenderColumn: byte; 
    	// Use the original zelda music score
 	music: incnsf("music/zelda.nsf");
 
@@ -24,6 +26,8 @@ var
 	sprite_x, sprite_y : byte;
 
 	@define spriteLoc $204
+	@define dataLoc $400
+	@define colLoc $430
 
 // Make sure game tiles are being automatically exported
 @export "tiles/game_tiles.flf" "tiles/game_tiles.bin" 256
@@ -118,19 +122,7 @@ begin
 
 end;
 
-procedure RenderMetaBlock1X(r_shift:byte;zz2 : pointer);
-begin
-	
-	zp2:=zz2;
-	ppusingle(hi(zp2),lo(zp2), dp[r_shift]);
-	zp2:=zp2+32;
-	ppusingle(hi(zp2),lo(zp2), dp[r_shift+2]);
-
-end;
-
-
-
-
+// Renders initial level
 procedure RenderLevel();
 begin
 	// Turn off NMI, or else everything will crash while rendering...
@@ -182,14 +174,10 @@ begin
 
 end;
 
+// Renders a single column when moving around. 
+// NB : Only renders to a temporary data which will be copied to the PPU on VLANK to prevent .. flickering..
 procedure RenderLevelColumn();
 begin
-	// Turn off NMI, or else everything will crash while rendering...
-//	ToggleNMI(0);
-	ToggleSprites(0);
-	ToggleBackground(0);
-	isRendering:=true;
-	togglevram32inc(false);
 	
 	
 	// Go past header
@@ -207,43 +195,32 @@ begin
 	@levelpointer := @levelpointer +colorSize*m_rl_pos;
 	@levelpointer := @levelpointer +m_rl_dataSize*m_rl_pos;
 
+
 	i:=curColumn&$FE;
 	shift:=1-((scrollx&15)/8);
 	
-	i:=i+shift;
-	zp:=$2400+i;
-	zp3:=$2000+i;
-
-
+	ishift := i+ shift;	
 	m_rl_i:=curColumn/2;
+	zp:=@dataLoc;
+	
+	// Write data to temp loc
 	for m_rl_j:=0 to m_rl_height do begin
 			dp:=meta + lp[m_rl_i]*4;
-	
-			RenderMetaBlock1X(shift,zp);
-			dp:=meta + lp[m_rl_i]*4;
-			RenderMetaBlock1X(shift,zp3);
-			
-		 zp3:=zp3+64;
-		 zp:=zp+64;		
+			zp[m_rl_j*2]:=dp[shift];
+			zp[m_rl_j*2+1]:=dp[shift+2];
 		 @levelpointer:=@levelpointer+m_rl_width;
-		 
 	end;
-	i:=((curColumn/2))/2;
-	zp3:=$23C0+i;
-	zp:=$27C0+i;
-//	i:=lp[i
+
+	ishiftCol:=((curColumn/2))/2;
 	k:=curColumn/4;
+	zp := @colLoc;
+	// Write color data to a temp loc
 	for m_rl_j:=0 to m_rl_height/2 do 
 	begin
-		ppusingle(hi(zp),lo(zp),lp[k]);
-		ppusingle(hi(zp3),lo(zp3),lp[k]);
+		zp[m_rl_j]:=lp[k];
 		k:=k+8;
-		zp:=zp+8;
-		zp3:=zp3+8;
 	end;
-	ToggleNMI(1);
-	isRendering:=false;
-
+	performRenderColumn:=true;
 end;
 
 
@@ -272,7 +249,7 @@ begin
 		sprite_x:=159;
 		scrollx:=scrollx+2;
 		curShift:=curShift+2;
-		if (curShift=8) then
+		if (curShift>=8) then
 		begin
 			curShift:=0;
 			m_li:=m_li+1;
@@ -322,24 +299,70 @@ end;
 
 
 // NMI will automatically be called on every vblank. 
+// Copy data while vblank is true
+procedure CopyDataToPPU();
+begin
+	ppupoint($24,ishift);
+	zp:=@dataLoc;
+	j:=0;
+	PPUCTRL:=%10000100;
+	for i:=0 to m_rl_height do
+	begin
+		ppuwrite(zp[j]);
+		inc(j);
+		ppuwrite(zp[j]);
+		inc(j);
+	end;
+
+	ppupoint($20,ishift);
+	zp:=@dataLoc;
+	j:=0;
+	for i:=0 to m_rl_height do
+	begin
+		ppuwrite(zp[j]);
+		inc(j);
+		ppuwrite(zp[j]);
+		inc(j);
+	end;
+	// Copy color data : 
+	// Color data located at $23C0 and $27C0
+	j:=$c0 + ishiftCol;
+	zp2 := @colLoc;
+	for i:=0 to m_rl_height/2 do 
+	begin
+		ppusingle($23,j,zp2[i]) ;
+		ppusingle($27,j,zp2[i]);
+		j:=j+8;
+	end;
+
+	performRenderColumn:=false;
+end;
+
 
 interrupt NMI();
 begin
 	// Startirq pushes a,x,y onto the stack
 	Startirq(0);
+	// Performs rendering at VBLANK so not to disturb the PPU
+	if (performRenderColumn) then
+		CopyDataToPPU();
+	PPUMASK:=%00011100;
+		
 	scroll(scrollx,scrolly);
 	if (isRendering=true) then
 	begin
 		closeirq();
 		asm("rti");
 	end;
-
+//	ToggleBorderBackground(0);
 	// First, make sure that the PPU knows that sprites are located at @spriteLoc
 	SetSpriteLocation(hi(^@spriteLoc));
 	// Make sure nametable 0 is set
 	SetNametable(0);
 	// Play the tune!
 	PlaySong();
+	// Moves player, renders new column	
+	MovePlayer();
 
 	ToggleSpriteSize(0);
 	ToggleSpriteTableAddress(0);
@@ -347,7 +370,6 @@ begin
 
 	// Set colours
 	PPUMASK:=%00011000;
-	MovePlayer();
 	
 	CloseIRQ();
 end;
