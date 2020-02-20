@@ -1,0 +1,20 @@
+<h3>IncRange( [address] , [start] , [end] );</h3>
+<ul>
+    <li>[address] - the address to increment</li>
+    <li>[start] - starting value</li>
+    <li>[end] - if increase would hit this value, roll over to [start]</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Increases the byte value at the address with 1. If increasing the value would cause value to hit [end], stores [start] to value instead.
+</p>
+
+<p>Notice that if variable value is outside the [start] and [end] range when calling this, function might misbehave.</p>
+
+<h3>Examples</h3>
+
+<code>
+incRange(my_variable, 0, 100);  // increase my_variable by 1, keeping it between 0 and 99
+incRange(my_array[i], 10, 13);  // increase my_array[i] by 1, keeping it between 10 and 12
+</code>

@@ -1,2 +1,10 @@
-<p>Decimal . PAL = .  NTSC = </p>
-<p></p>
+<p>Address of color screen</p>
+<p>Set a pointer (eg: screenmemory) to this address to write color codes for displaying the screen.</p>
+<p>Example</p>
+<code>
+DefineScreen();
+screenmemory := SCREEN_COL_LOC;
+
+// set the top left of the screens color code to yellow
+screenmemory[0] := YELLOW;
+</code>

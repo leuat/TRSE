@@ -686,4 +686,6 @@ DISTFILES += \
     resources/text/help/r/while.rtf \
     resources/text/help/m/drawtextbox.rtf \
     resources/text/help/m/drawcolortextbox.rtf \
-    resources/text/tutorials.txt
+    resources/text/tutorials.txt \
+    resources/text/help/m/inccrange.rtf
+    resources/text/help/m/decrange.rtf

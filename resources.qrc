@@ -436,5 +436,7 @@
         <file>resources/text/help/m/togglebackgroundtableaddress.rtf</file>
         <file>resources/text/help/m/togglespritetableaddress.rtf</file>
         <file>resources/text/help/m/loadpalette.rtf</file>
+        <file>resources/text/help/m/incrange.rtf</file>
+        <file>resources/text/help/m/decrange.rtf</file>
     </qresource>
 </RCC>
