@@ -204,10 +204,10 @@ begin
 			k:=k+getbit(zp[y+1],6-x)*4;
 			k:=k+getbit(zp[y+1],7-x)*8;
 	*/		
-			k:=1-getbit(zp[y],7-x);
-//			k:=k+getbit(zp[y],6-x)*2;
-	//		k:=k+getbit(zp[y+1],6-x)*4;
-		//	k:=k+getbit(zp[y+1],7-x)*8;
+			k:=getbit(zp[y],7-x);
+			k:=k+getbit(zp[y],6-x)*2;
+			k:=k+getbit(zp[y+1],6-x)*4;
+			k:=k+getbit(zp[y+1],7-x)*8;
 
 
 			k:=k&15;
