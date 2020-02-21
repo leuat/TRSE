@@ -578,3 +578,31 @@ int CharsetImage::charWidthDisplay() {
     return m_charWidth;
 }
 
+int CharsetImage::getDx()
+{
+    int dx = 1;
+    int s = 1;
+    if (m_colorList.m_isMulticolor)
+        s = 2;
+    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1) {
+        dx = m_width/(8*m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X)/s);
+        if (m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_REPEAT)==1)
+            dx*=3;
+    }
+    return dx;
+
+}
+
+int CharsetImage::getDy()
+{
+    int dx = 1;
+    int s = 1;
+    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1) {
+        dx = m_height/(8*m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y)/s);
+        if (m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_REPEAT)==1)
+            dx*=3;
+    }
+    return dx;
+
+}
+

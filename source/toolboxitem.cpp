@@ -177,6 +177,9 @@ void Filler::Fill(int i, int j, unsigned char col, unsigned char testCol, LImage
     QByteArray mark;
     mark.resize(maxx);
     mark.fill(0);
+    int dx = img->getDx();
+    int dy = img->getDy();
+
     while (queue.count()!=0 && queue.count()<2*maxx) {
         QPoint q = queue.last();
         queue.removeLast();
@@ -193,14 +196,14 @@ void Filler::Fill(int i, int j, unsigned char col, unsigned char testCol, LImage
             done.append(q);
             mark[pos]=1;
 
-            if (q.x()<img->m_width-1)
-                queue.append(QPoint(q.x()+1,q.y()));
-            if (q.x()>0)
-                 queue.append(QPoint(q.x()-1,q.y()));
-            if (q.y()<img->m_height-1)
-                 queue.append(QPoint(q.x(),q.y()+1));
-            if (q.y()>0)
-                 queue.append(QPoint(q.x(),q.y()-1));
+            if (q.x()<img->m_width-dx)
+                queue.append(QPoint(q.x()+dx,q.y()));
+            if (q.x()>=dx)
+                 queue.append(QPoint(q.x()-dx,q.y()));
+            if (q.y()<img->m_height-dy)
+                 queue.append(QPoint(q.x(),q.y()+dy));
+            if (q.y()>=dy)
+                 queue.append(QPoint(q.x(),q.y()-dy));
             }
         }
 

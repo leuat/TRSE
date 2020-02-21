@@ -367,6 +367,9 @@ public:
 
     void EnsureSystemColours();
 
+    virtual int getDx();
+    virtual int getDy();
+
 };
 
 

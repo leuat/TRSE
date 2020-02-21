@@ -489,6 +489,17 @@ void ImageLevelEditor::setMultiColor(bool doSet)
         m_charset->setMultiColor(doSet);
 }
 
+int ImageLevelEditor::getDx()
+{
+    return m_width/m_meta.m_width;
+}
+
+int ImageLevelEditor::getDy()
+{
+    return m_height/m_meta.m_height;
+}
+
+
 void ImageLevelEditor::setPixel(int x, int y, unsigned int color)
 {
     int pos;

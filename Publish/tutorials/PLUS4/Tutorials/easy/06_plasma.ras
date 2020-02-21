@@ -6,13 +6,12 @@ var
 	x,y : byte;
 	colorP: pointer;	
 
+	const baseCharacter : byte = $68;
 // charset will be placed at $2000 in bank 1	
-@define charsetLocation $2000
- // look in the character set
-@define baseCharacter $68
+	const charsetLocation : address = $2000;
 
 	// Use custom charset
-	charset : IncBin("resources/charsets/charset.bin", @charsetLocation);
+	charset : IncBin("resources/charsets/charset.bin", charsetLocation);
 	// nice colors
     fade : array [] of byte = ($41,$3e,$51,$51,$44,$5e,$61,$71,$71,$71,$71,$61,$5e,$44,12,$51,$3e,$41,$71,$71); // PLUS4 colors
 
@@ -65,7 +64,7 @@ c2x:=ax;
 			// we have created a lookup table instead!
 			c:=lookupDiv16[ (sinx[x] +val) ];
 			// Set the screen memory
-			screenmemory[x]:=c + @baseCharacter;
+			screenmemory[x]:=c + baseCharacter;
 			// Set color memory
 			colorP[x] := fade[ c ];
 		end;
@@ -87,7 +86,7 @@ begin
 	screen_bg_col:=black;
 	screen_fg_col:=black;
 	// Set charmap location at $2000
-	SetCharsetLocation(@charsetLocation);
+	SetCharsetLocation(charsetLocation);
 	InitDivision16();
 	ax:=1;
 	ay:=5;

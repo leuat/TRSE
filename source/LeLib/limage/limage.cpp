@@ -507,3 +507,7 @@ void LImage::EnsureSystemColours()
 
 }
 
+int LImage::getDx() { return 1;}
+
+int LImage::getDy() { return 1;}
+

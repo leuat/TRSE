@@ -263,6 +263,9 @@ public:
     }
 
 
+    virtual int getDx() override;
+    virtual int getDy() override;
+
 };
 
 #endif // IMAGELEVELEDITOR_H

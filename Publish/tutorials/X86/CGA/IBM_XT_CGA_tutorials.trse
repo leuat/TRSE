@@ -41,5 +41,5 @@ data_header_images/sprites.flf = 0
 data_header_images/image2.flf = 6.93427e-310
 exomize_toggle = 0
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/X86/CGA/
-open_files = ,images/sprites.flf, tut4.ras, tut3.ras, tut1.ras, tut2.ras, test.ras, tut5.ras
-current_file = images/sprites.flf
+open_files = ,images/sprites.flf, tut4.ras, tut3.ras
+current_file = tut1.ras

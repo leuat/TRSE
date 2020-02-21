@@ -95,6 +95,8 @@ public:
 
     virtual int charWidthDisplay() override;
 
+    virtual int getDx() override;
+    virtual int getDy() override;
 
 /*    void FlipHorizontal() override;
     void FlipVertical() override;
