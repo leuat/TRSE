@@ -17,7 +17,10 @@ void Tutorials::Read(QString file)
        QTextStream in(&inputFile);
        while (!in.atEnd())
        {
-          QStringList data = in.readLine().split(";");
+           QString d = in.readLine();
+           if (d.trimmed().simplified().startsWith("#"))
+               continue;
+          QStringList data = d.split(";");
           if (data.count()==4)
               m_tutorials.append(Tutorial(data[0].trimmed(),data[1].trimmed(),data[2].trimmed(),data[3]));
        }

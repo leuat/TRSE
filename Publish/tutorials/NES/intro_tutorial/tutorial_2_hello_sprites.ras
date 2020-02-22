@@ -125,12 +125,12 @@ procedure InitScreen();
 begin
 	
 	// Fill screen with some random values at $2000
-	ppupoint($20,$00);
-	for j:=0 to 30 do
-		for i:=0 to 32 do ppuwrite(i&5+2 + ((j&5)*16));
+	ppupointi($2000+32*20);
+	for j:=0 to 10 do
+		for i:=0 to 32 do ppuwrite(i&5+2 + ((j&1)*16));
 		
 	// Fill colour attributes at $23C0
-	ppupoint($23,$C0);
+	ppupointI($23C0);
 	for i:=0 to 63 do 
 		ppuwrite(i|01010100);
 	

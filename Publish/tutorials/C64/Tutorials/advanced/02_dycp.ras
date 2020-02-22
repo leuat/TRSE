@@ -20,9 +20,10 @@ var
 */
 
 
-
 	@define charmap $3000
 	@define charLoc $2000
+	chardata : incbin("resources/charsets/charset.bin", @charmap);
+
 	const useKernal : byte = 1;
 	const rasterLine : byte = 210;
 	const yrow : byte = 21;
@@ -267,8 +268,6 @@ end;
 
 procedure InitAll();
 begin
-	
-	copycharsetfromrom(^@charmap);
 	// change sine table, divide by 12
 	for a:=0 to 256 do sine[a]:=sine[a]/12;
 	// Create a lookup table for character data

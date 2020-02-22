@@ -88,7 +88,7 @@ begin
 end;
 
 
-
+/*
 procedure RenderMetaBlock(zz : pointer);
 begin
 	
@@ -103,7 +103,18 @@ begin
 	end;
 
 end;
+*/
 
+procedure RenderMetaBlock(zz : pointer);
+begin
+	ppupointi(zz);
+	ppuwrite(dp[0]);	
+	ppuwrite(dp[1]);
+	zz:=zz+32;
+	ppupointi(zz);
+	ppuwrite(dp[2]);	
+	ppuwrite(dp[3]);
+end;
 
 
 
@@ -309,8 +320,8 @@ begin
 	LoadSong(0);
 	InitVariables();
 	// Render initial level
+	ToggleNMI(1);
 	RenderLevel();
 	// Turn on NMI and RUN!
-	ToggleNMI(1);
 	Loop();
 end.

@@ -69,9 +69,9 @@ JoyRead
                 SEI
                 STX PORTBVIA2d
                 LDY PORTBVIA2
-                BMI @jump
+                BMI jjump
                 ORA #$02
-@jump           LDX #$FF
+jjump           LDX #$FF
                 STX PORTBVIA2d
                 CLI
                 LSR

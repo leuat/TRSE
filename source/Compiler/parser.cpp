@@ -752,6 +752,7 @@ void Parser::HandlePreprocessorInParsing()
 void Parser::StripWhiteSpaceBeforeParenthesis()
 {
     m_lexer->m_text = m_lexer->m_text.replace(QRegularExpression("\\s*(\\()"),"\\1");
+    m_lexer->m_text = m_lexer->m_text.replace("sta(", "sta (");
 }
 
 void Parser::RemoveComments()

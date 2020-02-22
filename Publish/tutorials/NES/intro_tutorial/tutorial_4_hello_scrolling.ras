@@ -9,9 +9,8 @@ program Tutorial_4_hello_level;
 	Level uses 2x2 meta tiles that are defined in tiles/game_meta_tiles.flf
 	
 	Meta tiles uses main 8kb tileset located in tiles/game_tiles.flf
-	
-	Flickering occurs because the level render method hasn't been fully optimized
-	
+
+	Color bugs when scrolling not fixed yet	
 */
 
 
@@ -106,19 +105,15 @@ begin
 end;
 
 
-
 procedure RenderMetaBlock(zz : pointer);
 begin
-	
-	zp2:=zz;
-	for i:=0 to 2 do
-	begin	
-		ppusingle(hi(zp2),lo(zp2), dp[0]);
-		zp2:=zp2+1;
-		ppusingle(hi(zp2),lo(zp2), dp[1]);
-		zp2:=zp2+31;
-		dp:=dp+2;
-	end;
+	ppupointi(zz);
+	ppuwrite(dp[0]);	
+	ppuwrite(dp[1]);
+	zz:=zz+32;
+	ppupointi(zz);
+	ppuwrite(dp[2]);	
+	ppuwrite(dp[3]);
 
 end;
 
@@ -443,9 +438,9 @@ begin
 	// Load music
 	LoadSong(0);
 	InitVariables();
-	// Render initial level
-	RenderLevel();
 	// Turn on NMI and RUN!
 	ToggleNMI(1);
+	// Render initial level
+	RenderLevel();
 	Loop();
 end.

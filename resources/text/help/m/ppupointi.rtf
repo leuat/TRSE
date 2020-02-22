@@ -1,0 +1,12 @@
+<h3>PPUPointI([ value ])</h3>
+PPUpoints sets up the PPU registers to point to address [ val ] :
+
+<code>
+    // Point to first colour attribute in first nametable $23C0
+    PPUPointI($23C0);
+    // Write walue zero
+    PPUWrite(0);
+    // PPU now points to $23C1.
+    PPUPointI(zp); // Point to the contents of the zp
+
+</code>

@@ -439,5 +439,6 @@
         <file>resources/text/help/m/incrange.rtf</file>
         <file>resources/text/help/m/decrange.rtf</file>
         <file>resources/text/help/c/ppumask.rtf</file>
+        <file>resources/text/help/m/ppupointi.rtf</file>
     </qresource>
 </RCC>

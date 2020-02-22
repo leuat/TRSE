@@ -701,6 +701,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("PPUPoint"))
         PPUSingle(as,1);
 
+    if (Command("PPUPointI"))
+        PPUSingle(as,3);
+
 
     if (Command("PPUWrite"))
         PPUSingle(as,2);
@@ -10893,7 +10896,7 @@ void Methods6502::Peek(Assembler* as)
     if (num!=nullptr) {
         QString add = m_node->m_params[1]->getValue(as);
         QString org = m_node->m_params[0]->getValue(as);
-        as->Asm("lda "+org + " + "+add);
+        as->Asm("lda "+org + " + "+add.remove("#"));
 /*        as->ClearTerm();
         as->Term("lda ");
         m_node->m_params[0]->Accept(m_dispatcher);
@@ -11072,13 +11075,13 @@ void Methods6502::MemCpyUnroll(Assembler* as)
             as->Asm("lda ("+ addr +"),y");
         else
 //            as->Asm("lda " +addr +" +  #" + m_node->m_params[1]->getValue(as) + ",y");
-          as->Asm("lda " +addr +" +  #" + m_node->m_params[1]->getValue(as) + " + #" +Util::numToHex(i));
+          as->Asm("lda " +addr +" +  " + m_node->m_params[1]->getValue(as) + " + " +Util::numToHex(i));
 
         as->ClearTerm();
 
 
         if (m_node->m_params[2]->isPureNumeric()) {
-            as->Asm("sta " +m_node->m_params[2]->getValue(as) +" +  #" +Util::numToHex(i));
+            as->Asm("sta " +m_node->m_params[2]->getValue(as) +" +  " +Util::numToHex(i));
 
         }
         else {
@@ -12760,6 +12763,20 @@ void Methods6502::PPUSingle(Assembler *as, int type )
     if (type==2) {
         LoadVar(as,0);
         as->Asm("sta $2007");
+    }
+
+    if (type==3) {
+        if (m_node->m_params[0]->isPureNumeric()) {
+            as->Comment("Is pure numeric ppupoint");
+            as->Asm("ldy #"+QString::number(m_node->m_params[0]->getValueAsInt(as)>>8));
+            as->Asm("lda #"+QString::number(m_node->m_params[0]->getValueAsInt(as)&0xFF));
+            as->Asm("sty $2006");
+            as->Asm("sta $2006");
+            return;
+        }
+        LoadVar(as,0);
+        as->Asm("sty $2006");
+        as->Asm("sta $2006");
     }
 
 }
