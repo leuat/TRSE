@@ -681,6 +681,18 @@ void LColorList::FillComboBox(QComboBox *cmb)
     }
 }
 
+void LColorList::FillComboBoxRestricted(QComboBox *cmb, int a, int b)
+{
+    cmb->clear();
+    for (int i=a;i<b;i++) {
+        QPixmap pixmap(16,16);
+        pixmap.fill(m_list[i].color);
+        QIcon icon(pixmap);
+        cmb->addItem(icon,Util::numToHex(i));
+    }
+
+}
+
 int LColorList::getIndex(QColor c)
 {
     for (int i=0;i<m_list.count();i++) {

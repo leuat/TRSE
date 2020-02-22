@@ -170,6 +170,7 @@ public:
     void ExportAmigaPalette(QString filename);
 
     void FillComboBox(QComboBox* cmb);
+    void FillComboBoxRestricted(QComboBox* cmb, int a, int b);
 
     LColor m_background;
 

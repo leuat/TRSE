@@ -871,7 +871,8 @@ void MainWindow::on_actionImage_triggered()
     ui->tabMain->setTabsClosable(true);
     m_documents.append(editor);
     m_currentDoc = editor;
-
+    editor->Initialize();
+    editor->SetMCColors();
     ConnectDocument();
 
 }

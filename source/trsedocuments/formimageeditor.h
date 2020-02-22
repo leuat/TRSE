@@ -103,7 +103,7 @@ public:
     void InitQtPainter();
 
     void PrepareImageTypeGUI();
-
+    void Initialize();
     void SetSingleCharsetEdit();
 
     void SetFooterData(int pos, uchar val);

@@ -115,6 +115,7 @@ void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *ini
 
     QObject::connect(ui->splitter, SIGNAL(splitterMoved(int,int)), this, SLOT(UpdateAspect()));
 
+
 }
 
 
@@ -447,21 +448,8 @@ void FormImageEditor::UpdateGrid()
 
 }
 
-void FormImageEditor::Load(QString filename)
+void FormImageEditor::Initialize()
 {
-/*    QString f = "Image Files (*." + LImageIO::m_fileExtension + ")";
-    QString filename = QFileDialog::getOpenFileName(this,
-        tr("Open Image"), m_iniFile->getString("project_path"), f);
-    if (filename=="")
-        return;
-*/
-
-    LImage* img = LImageIO::Load(filename);
-    if (img==nullptr)
-        return;
-    if (!m_isInitialized)
-       m_work.New(img, filename);
-    else m_work.m_currentImage->m_image = img;
     //m_prefMode = CharsetImage::Mode::FULL_IMAGE;
     PrepareImageTypeGUI();
 /*    if (QFile::exists(m_projectIniFile->getString("charset_"+m_currentFileShort))) {
@@ -486,7 +474,6 @@ void FormImageEditor::Load(QString filename)
     updateCharSet();
     FillCMBColors();
 
-    m_currentFilename = filename;
 
     m_work.m_currentImage->m_image->BuildData(ui->tblData, m_projectIniFile->getStringList("data_header"));
 
@@ -558,7 +545,30 @@ void FormImageEditor::Load(QString filename)
 
     QTimer::singleShot(50, this, SLOT(InitAspect()));
 
+}
 
+
+
+void FormImageEditor::Load(QString filename)
+{
+/*    QString f = "Image Files (*." + LImageIO::m_fileExtension + ")";
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Open Image"), m_iniFile->getString("project_path"), f);
+    if (filename=="")
+        return;
+*/
+
+    LImage* img = LImageIO::Load(filename);
+    if (img==nullptr)
+        return;
+
+    if (!m_isInitialized)
+       m_work.New(img, filename);
+    else m_work.m_currentImage->m_image = img;
+    m_currentFilename = filename;
+
+
+    Initialize();
 }
 
 
@@ -668,8 +678,11 @@ void FormImageEditor::UpdatePalette()
         l->CreateUI(ui->layoutColorsEdit_3,1, this->size());
     l->FillComboBox(ui->cmbBackgroundMain_3);
     l->FillComboBox(ui->cmbBorderMain_3);
-        l->FillComboBox(ui->cmbMC1);
-    l->FillComboBox(ui->cmbMC2);
+    l->FillComboBox(ui->cmbMC1);
+    if (m_work.m_currentImage->m_image->m_colorList.m_type==LColorList::VIC20)
+    l->FillComboBoxRestricted(ui->cmbMC2,0,8);
+    else
+        l->FillComboBox(ui->cmbMC2);
 
     m_currentColorList = l;
     //}
