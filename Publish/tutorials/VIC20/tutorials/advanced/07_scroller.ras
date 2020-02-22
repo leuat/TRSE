@@ -8,8 +8,8 @@ var
 	@define charCopyPos 64
 
 	tp,h1,h2,zp : pointer;
-
-	charset:incbin("resources/charsets/charset_8x8.bin", @charPos);
+@export "resources/charsets/charset.flf" "resources/charsets/charset.bin" 256
+	charset:incbin("resources/charsets/charset.bin", @charPos);
 
 	chars: array[16] of byte = (0,1,2, 0,   3,4,5,0);
 

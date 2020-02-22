@@ -24,7 +24,7 @@ var
 	@userdata "$8400" "$8800" "Bank 3 video"
 	
 // Main demo music (by Uctumi)
-	music: incsid("music/courierb0.sid","2");
+	music: incsid("music/courierb0.sid",2);
 
 
 // Put all these variables at $F000

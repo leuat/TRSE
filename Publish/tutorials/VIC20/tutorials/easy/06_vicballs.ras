@@ -11,10 +11,10 @@
 program VicBalls;
 var 
 	// defines a constant to specify how many balls we want 
-	@define NUM_BALLS 10
+	const NUM_BALLS:byte = 10;
 	
 	// create arrays for the ball data
-   	xp, yp, dx, dy: array[@NUM_BALLS] of byte; // x and y position, delta X and Y moveement
+   	xp, yp, dx, dy: array[NUM_BALLS] of byte; // x and y position, delta X and Y moveement
 
 	scr : array[ screen_height ] of integer; // an array to store the address of each row of screen memory
 	
@@ -30,7 +30,7 @@ end;
 procedure InitialiseBalls();
 begin
 	// loop through all items in the array to set their position
-	for i := 0 to @NUM_BALLS do
+	for i := 0 to NUM_BALLS do
 	begin
 		xp[ i ] := random() / 12;	// set x position for each ball
 		yp[ i ] := random() / 11;	// set y position for each ball
@@ -49,7 +49,7 @@ end;
 
 procedure MoveBalls();
 begin
-	for i := 0 to @NUM_BALLS do
+	for i := 0 to NUM_BALLS do
 	begin
 		// find screen address where we will draw the ball
 		screenmemory := addresstable(scr, 0, yp[ i ]);
