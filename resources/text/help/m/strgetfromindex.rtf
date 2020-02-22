@@ -1,0 +1,21 @@
+<h3>StrGetFromIndex( [ input string list ], [ index] );</h3>
+<ul>
+    <li>[ input string list ] - Input string list separated with #0</li>
+    <li>[ index ] - Index of the list</li>
+</ul>
+Returns an integer address for a zero page pointer.
+
+
+<h3>Description</h3>
+<p>
+Returns the zero page pointer address to the string at the reqested index.
+</p>
+
+<h3>Example</h3>
+<code>
+    // Splits "myString" separated by space ($20) to "list"
+    strsplit(myString,list,key_space);
+
+    zp:=strgetfromindex(list,1); // zp (pointer) now points to the second item in the list (0 is the first)
+
+</code>

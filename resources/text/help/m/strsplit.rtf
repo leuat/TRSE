@@ -1,0 +1,21 @@
+<h3>StrSplit( [ input string ], [ output string list ], [ split token ] );</h3>
+<ul>
+    <li>[ input string ] - Input string</li>
+    <li>[ output string list ] - Output string list separated by #0</li>
+    <li>[ split token ] - Token to split string with (i.e "key_space", ";" etc)</li>
+</ul>
+
+
+<h3>Description</h3>
+<p>
+Splits a string into null-terminated substrings with a separator token.
+</p>
+
+<h3>Example</h3>
+<code>
+    // Splits "myString" separated by space ($20) to "list"
+    strsplit(myString,list,key_space);
+
+    zp:=strgetfromindex(list,1); // zp (pointer) now points to the second item in the list
+
+</code>
