@@ -20,7 +20,7 @@ var
 begin
 	// Set screen background/border color
 	
-    clearscreen(key_space, screen_char_loc);
+    clearscreen($20, screen_char_loc);
 	// Sets up the address tables for the screen & color memory    
 	createaddresstable(saddr,screen_char_loc,screen_width,screen_height);
 

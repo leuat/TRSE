@@ -88,7 +88,7 @@ begin
 	ay:=5;
 
 	// Clear screen and color memory
-	ClearScreen(key_space, screen_char_loc);
+	ClearScreen($20, screen_char_loc);
 	// Main loop
 	while (true) do begin
 		Plasma();

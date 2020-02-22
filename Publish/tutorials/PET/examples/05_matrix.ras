@@ -73,7 +73,7 @@ end;
 */
 begin
 	// Clear screens	
-	clearscreen(key_space,screen_char_loc);
+	clearscreen($20,screen_char_loc);
 	// Initialize tables	
 	InitTables();
 	

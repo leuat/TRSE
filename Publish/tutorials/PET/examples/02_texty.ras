@@ -5,7 +5,7 @@ var
 begin
 	moveto(0,0,hi(screen_char_loc));
 	// infinite loop
-	ClearScreen(key_space, screen_char_loc);
+	ClearScreen($20, screen_char_loc);
 	while (true) do
 	begin
 		for i:=0 to 200 do wait(20);
