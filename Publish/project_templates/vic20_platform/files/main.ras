@@ -1,7 +1,7 @@
 program MainProgram;
 /*
 
-	Vic 20 8K Vic Bitmap Mode template
+	Vic 20 16K Vic Bitmap Mode template
 	- can utilize up to 35K RAM under project settings
 	
 	Platform game template

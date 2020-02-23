@@ -6,6 +6,7 @@ C64; C64 cartridge project; c64_crt; <h2>C64 16kb cartridge project</h2><p>A sim
 C64; C64 disk project; c64_disk; <h2>C64 disk project</h2><p>A sample project that loads and displays two images from disk. The disk contents are defined in the d64.paw file.
 VIC20; VBM blank project; vic20_vbmblank; <h2>VBM blank project</h2><p>Ready to use Vic Bitmap Mode project with zero page pointers, project files and two text fonts.</p>
 VIC20; VBM inertia project; vic20_inertia; <h2>VBM spaceship inertia project</h2><p>Ready to use Vic Bitmap Mode project with a sapceship sprite controlled by the player, moving with inertia smoothly around the screen.</p>
+VIC20; VBM platformer project; vic20_platform; <h2>VBM platformer project</h2><p>Ready to use Vic Bitmap Mode project with a platform game engine with ladders, jumps, solids and platforms to run around.</p>
 VIC20; Unexpanded Vic; vic20_unexp; <h2>Unexpanded Vic 20 project</h2><p>Vic 20 project with a basic set up ready to use.</p>
 NES; NES sample project; nes_general; <h2>Small NES sample project</h2><p>Sets up a NES project with a main source file, tile ROM image file and music.
 PET; Commodore PET project; pet_general; <h2>Small Commodore PET project</h2><p>A small sample project for the commodore PET that displays some random text on the screen.
