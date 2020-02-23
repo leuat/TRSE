@@ -1,0 +1,131 @@
+
+procedure Level_Init();
+begin
+
+	// set up address table
+	//createaddresstable(levelAddr, aLevel, 20, 24);
+
+end;
+
+
+// draw level map
+procedure Level_Draw();
+begin
+
+	vbmDrawTileMap( aLevel, aTiles, 0,0, 20, 186 );
+	vbmDrawSmallTextO( strTitle, font4, 12, 2, 6 );
+
+end;
+
+// Test block at feet
+// k = result  
+procedure Level_PlayerFeetTest();
+begin
+	
+	i := px + 3;
+	i := i >> 3;
+	
+	j := py + 7;
+	j := j >> 3;
+	
+	p1 := addresstable(levelAddr, i, j);
+	k := p1[0];								// check tile on level
+	k := tileBlockTypes[ k ]; 				// convert tile into a type
+
+end;
+
+// Test block below feet (one test)
+// k = result  
+procedure Level_PlayerBelowFeetTest();
+begin
+	
+	i := px + 3;
+	i := i >> 3;
+	
+	j := py + 8;
+	j := j >> 3;
+	
+	p1 := addresstable(levelAddr, i, j);
+	k := p1[0];								// check tile on level
+	k := tileBlockTypes[ k ]; 				// convert tile into a type
+
+end;
+
+// Tests the block beneath each foot (two tests)
+// k = result  
+procedure Level_PlayerFallTest();
+begin
+	
+	i := px + 1;
+	i := i >> 3;
+	
+	j := py + 8;
+	j := j >> 3;
+	
+	p1 := addresstable(levelAddr, i, j);
+	k := p1[0];								// check tile on level
+	k := tileBlockTypes[ k ]; 				// convert tile into a type
+
+	if (k = tileBlank) then
+	begin
+		i := px + 4;
+		i := i >> 3;
+		p1 := addresstable(levelAddr, i, j);
+		k := p1[0];								// check tile on level
+		k := tileBlockTypes[ k ]; 				// convert tile into a type
+		
+	end;	
+
+end;
+
+// test block to right of player
+// k = result  
+procedure Level_PlayerRightTest();
+begin
+	
+	i := px + 6;
+	i := i >> 3;
+	
+	j := py + 3;
+	j := j >> 3;
+	
+	p1 := addresstable(levelAddr, i, j);
+	k := p1[0];								// check tile on level
+	k := tileBlockTypes[ k ]; 				// convert tile into a type
+	
+end;
+
+// test block to left of player
+// k = result  
+procedure Level_PlayerLeftTest();
+begin
+	
+	i := px - 1;
+	i := i >> 3;
+	
+	j := py + 3;
+	j := j >> 3;
+	
+	p1 := addresstable(levelAddr, i, j);
+	k := p1[0];								// check tile on level
+	k := tileBlockTypes[ k ]; 				// convert tile into a type
+	
+end;
+
+// test block above player
+// k = result  
+procedure Level_PlayerJumpTest();
+begin
+	
+	i := px + 3;
+	i := i >> 3;
+	
+	j := py - 1;
+	j := j >> 3;
+	
+	p1 := addresstable(levelAddr, i, j);
+	k := p1[0];								// check tile on level
+	k := tileBlockTypes[ k ]; 				// convert tile into a type
+	
+end;
+

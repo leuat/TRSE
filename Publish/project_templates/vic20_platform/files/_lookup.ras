@@ -1,0 +1,102 @@
+
+// -------------------------------------------------------------------------------
+// Colour memory look up addresses
+
+	const acol: address = $9400;
+	colmem: array[] of integer = (
+		acol, acol + (20*1), acol + (20*2), acol + (20*3), acol + (20*4),
+		acol + (20*5), acol + (20*6), acol + (20*7), acol + (20*8), acol + (20*9),
+		acol + (20*10), acol + (20*11)
+	);
+
+
+// -------------------------------------------------------------------------------
+// Level look up addresses - each entry points to the start of a row
+// to help the routines find the right location on the map quickly
+	levelAddr : array[] of integer = (
+		aLevel, aLevel+20, aLevel+40, aLevel+60, aLevel+80, aLevel+100,
+		aLevel+120, aLevel+140, aLevel+160, aLevel+180, aLevel+200,
+		aLevel+220, aLevel+240, aLevel+260, aLevel+280, aLevel+300, 
+		aLevel+320, aLevel+340, aLevel+360, aLevel+380, aLevel+400, 
+		aLevel+420, aLevel+440, aLevel+460   
+	);
+
+
+// -------------------------------------------------------------------------------
+// Sprite pre-shift data addresses
+
+// pre-shifted addresses for Player Right - side A / side B
+sprPlayerRight_A: array[] of integer = (
+	aSprPlayerRight+ma0a, aSprPlayerRight+ma1a, aSprPlayerRight+ma2a, aSprPlayerRight+ma3a
+);
+sprPlayerRight_B: array[] of integer = (
+	aSprPlayerRight+ma0b, aSprPlayerRight+ma1b, aSprPlayerRight+ma2b, aSprPlayerRight+ma3b
+);
+
+// pre-shifted addresses for Player Left - side A / side B
+sprPlayerLeft_A: array[] of integer = (
+	aSprPlayerLeft+ma0a, aSprPlayerLeft+ma1a, aSprPlayerLeft+ma2a, aSprPlayerLeft+ma3a
+);
+sprPlayerLeft_B: array[] of integer = (
+	aSprPlayerLeft+ma0b, aSprPlayerLeft+ma1b, aSprPlayerLeft+ma2b, aSprPlayerLeft+ma3b
+);
+
+// pre-shifted addresses for Player Jump Right - side A / side B
+sprPlayerJumpRight_A: array[] of integer = (
+	aSprPlayerJumpRight+ma0a, aSprPlayerJumpRight+ma1a, aSprPlayerJumpRight+ma2a, aSprPlayerJumpRight+ma3a
+);
+sprPlayerJumpRight_B: array[] of integer = (
+	aSprPlayerJumpRight+ma0b, aSprPlayerJumpRight+ma1b, aSprPlayerJumpRight+ma2b, aSprPlayerJumpRight+ma3b
+);
+
+// pre-shifted addresses for Player Jump Left - side A / side B
+sprPlayerJumpLeft_A: array[] of integer = (
+	aSprPlayerJumpLeft+ma0a, aSprPlayerJumpLeft+ma1a, aSprPlayerJumpLeft+ma2a, aSprPlayerJumpLeft+ma3a
+);
+sprPlayerJumpLeft_B: array[] of integer = (
+	aSprPlayerJumpLeft+ma0b, aSprPlayerJumpLeft+ma1b, aSprPlayerJumpLeft+ma2b, aSprPlayerJumpLeft+ma3b
+);
+
+// pre-shifted addresses for Player Jump Right - side A / side B
+sprPlayerStandRight_A: array[] of integer = (
+	aSprPlayerStandRight+ma0a, aSprPlayerStandRight+ma1a, aSprPlayerStandRight+ma2a, aSprPlayerStandRight+ma3a
+);
+sprPlayerStandRight_B: array[] of integer = (
+	aSprPlayerStandRight+ma0b, aSprPlayerStandRight+ma1b, aSprPlayerStandRight+ma2b, aSprPlayerStandRight+ma3b
+);
+
+// pre-shifted addresses for Player Jump Left - side A / side B
+sprPlayerStandLeft_A: array[] of integer = (
+	aSprPlayerStandLeft+ma0a, aSprPlayerStandLeft+ma1a, aSprPlayerStandLeft+ma2a, aSprPlayerStandLeft+ma3a
+);
+sprPlayerStandLeft_B: array[] of integer = (
+	aSprPlayerStandLeft+ma0b, aSprPlayerStandLeft+ma1b, aSprPlayerStandLeft+ma2b, aSprPlayerStandLeft+ma3b
+);
+
+// pre-shifted addresses for Player Jump Left - side A / side B
+sprPlayerClimb_A: array[] of integer = (
+	aSprPlayerClimb+ma0a, aSprPlayerClimb+ma1a, aSprPlayerClimb+ma2a, aSprPlayerClimb+ma3a
+);
+sprPlayerClimb_B: array[] of integer = (
+	aSprPlayerClimb+ma0b, aSprPlayerClimb+ma1b, aSprPlayerClimb+ma2b, aSprPlayerClimb+ma3b
+);
+
+
+
+
+// -------------------------------------------------------------------------------
+// Level block descriptors - define array of what type of block each tile is
+
+tileBlockTypes: array[] of byte = (
+	tileBlank,										// tile 0
+	tileSolid,										// tile 1
+	tilePlatform, tilePlatform,						// tile 2 and 3
+	tileLadder, tileLadder, tileLadder, tileLadder	// tiles 4, 5, 6 and 7
+);
+
+
+
+// -------------------------------------------------------------------------------
+// Music
+
+// toot - toot!

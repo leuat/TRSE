@@ -1,0 +1,318 @@
+// set up the player
+procedure Player_Init();
+begin
+
+	// set player start position
+	px := 80;		// x position 
+	py := 30;		// y position
+	dy := 0;		// jump / fall delta
+	dx := 0;
+	playerState := playerStateNone;
+	jumpCount := playerJumpCount;
+	fallCount := 0;
+	panim := panim_walkRight;		// animation to use
+
+
+end;
+
+// draw/erase (EOR) the player sprite
+procedure Player_Draw();
+begin
+
+	vbmSetPosition2( px, py );
+	
+	// using panim, decide which sprite graphic/animation to use
+	case panim of
+		panim_walkRight: vbmDrawSprite8E( sprPlayerRight_A, sprPlayerRight_B );
+		panim_walkLeft: vbmDrawSprite8E( sprPlayerLeft_A, sprPlayerLeft_B );
+		panim_jumpRight: vbmDrawSprite8E( sprPlayerJumpRight_A, sprPlayerJumpRight_B );
+		panim_jumpLeft: vbmDrawSprite8E( sprPlayerJumpLeft_A, sprPlayerJumpLeft_B );
+		panim_standRight: vbmDrawSprite8E( sprPlayerStandRight_A, sprPlayerStandRight_B );
+		panim_standLeft: vbmDrawSprite8E( sprPlayerStandLeft_A, sprPlayerStandLeft_B );
+		panim_onLadder: vbmDrawSprite8E( sprPlayerClimb_A, sprPlayerClimb_B );
+	end;
+	
+end;
+
+// move player right if not solid block in way
+procedure Player_MoveRight();
+begin
+
+	if (px >= 153) then return(); // don't let move out of screen
+	
+	Level_PlayerRightTest();
+	if (k <> tileSolid) then incrange(px, 0, 159);
+	panim := panim_walkRight;
+
+end;
+
+// move player left if not solid block in way
+procedure Player_MoveLeft();
+begin
+
+	if (px <= 1) then return(); // don't let move out of screen
+
+	Level_PlayerLeftTest();
+	if (k <> tileSolid) then decrange(px, 0, 159);
+	panim := panim_walkLeft;
+			
+end;
+
+
+// MAIN PLAYER ROUTINE - Called by main loop every frame
+// update the player
+procedure Player_Update();
+begin
+
+	readJoy1();
+	
+	// test if should be falling?
+	if (playerState = playerStateNone) then
+	begin
+	
+		Level_PlayerFallTest();
+		if ( k = tileBlank ) then playerState := playerStateFall;
+	
+	end;
+
+	// check if walking
+	if (playerState = playerStateNone) then
+	begin	
+
+		dx := 0;
+
+		if (panim = panim_walkRight) then panim := panim_standRight;
+		if (panim = panim_walkLeft) then panim := panim_standLeft;
+
+		if (joy1 & JOY_RIGHT) then Player_MoveRight();
+		if (joy1 & JOY_LEFT) then Player_MoveLeft();
+		
+		// get on to ladder?
+		if (joy1 & JOY_UP) then
+		begin
+		
+			Level_PlayerFeetTest();
+			if ( k = tileLadder ) then playerState := playerStateLadder;
+
+		end;
+		// get on to ladder?
+		if (joy1 & JOY_DOWN) then
+		begin
+		
+			Level_PlayerBelowFeetTest();
+			if ( k = tileLadder ) then playerState := playerStateLadder;
+
+		end;
+		
+		// start jump?
+		if (joy1pressed & JOY_FIRE) then
+		begin
+		
+			playerState := playerStateJump;
+			
+			jumpCount := playerJumpCount;	// reset counter
+			fallCount := 0;					// reset counter
+			
+			dy := playerJump;	// state delta for jump (how fast go up)
+			
+			if (panim = panim_standRight) then panim := panim_jumpRight;
+			if (panim = panim_standLeft) then panim := panim_jumpLeft;
+
+						// are we jumping in a direction?
+			if (joy1 & JOY_LEFT) then dx := -1;
+			if (joy1 & JOY_RIGHT) then dx := 1;
+
+		end;
+
+	end;
+
+	// control player on ladder
+	if (playerState = playerStateLadder) then
+	begin
+
+		// gradually move the player to centre of ladder
+		i := 3 + px - ((px + 3) & $f8);
+		j := 4 + px - i;
+		if (px > j ) then px := px - 1;
+		if (px < j ) then px := px + 1;
+	
+		// Should we climb up the ladder?
+		if (joy1 & JOY_UP) then
+		begin
+		
+			panim := panim_onLadder;
+			
+			// check above head to determine if can move up
+			Level_PlayerJumpTest();
+			if (k <> tileSolid) then py := py - 1;
+			// check if free still on ladder?
+			Level_PlayerFeetTest();
+			if ( k <> tileLadder ) then 
+			begin
+			
+				playerState := playerStateNone;
+				panim := panim_standRight;
+				
+			end;
+
+		end;
+		// Should we climb down the ladder?
+		if (joy1 & JOY_DOWN) then
+		begin
+		
+			panim := panim_onLadder;
+			
+			py := py + 1;
+			// check if feet still on ladder?
+			Level_PlayerFallTest();
+			if ( k <> tileLadder ) then 
+			begin
+			
+				playerState := playerStateNone;
+				panim := panim_standLeft;
+				
+			end;
+
+		end;
+
+		// jump off ladder to right?
+		if (joy1pressed & JOY_RIGHT) then
+		begin
+		
+			playerState := playerStateJump;
+			
+			jumpCount := playerJumpCount;	// reset counter
+			fallCount := 0;					// reset counter
+			
+			dy := playerJump>>1;	// state delta for jump (how fast go up)
+			dx := 1;
+
+		end;
+		
+		// jump off ladder to left?
+		if (joy1pressed & JOY_LEFT) then
+		begin
+		
+			playerState := playerStateJump;
+			
+			jumpCount := playerJumpCount;	// reset counter
+			fallCount := 0;					// reset counter
+			
+			dy := playerJump>>1;	// state delta for jump (how fast go up)
+			dx := -1;
+
+		end;
+
+	end;
+	
+	// Handle the falling
+	if (playerState = playerStateFall) then
+	begin
+	
+		// only fall every other frame
+		if (ticks & 1 = 0) then
+		begin
+		
+			// increase fall delta (until max)
+			dy := dy + 1;
+			if (dy > playerMaxFall) then dy := playerMaxFall;
+			
+			// update player position
+			py := py + (dy>>1); // add fall delta to y position
+			
+			// force direction when falling following a jump
+			if (dx = 1) then Player_MoveRight();
+			if (dx = -1) then Player_MoveLeft();
+			if (panim = panim_walkRight) then panim := panim_jumpRight;
+			if (panim = panim_walkLeft) then panim := panim_jumpLeft;
+
+			// only move in direction while falling for as long as jump took
+			if (fallCount > 0) then
+			begin
+			
+				fallCount := fallCount - 1;
+				if (fallCount = 0) then dx := 0;
+
+			end;
+
+			// have we jumped onto a ladder?
+			Level_PlayerFeetTest();
+			if ( k = tileLadder ) then 
+			begin
+			
+				playerState := playerStateLadder;
+				dx := 0;
+				
+			end;
+
+			// test if fallen into a block, if so move back up
+			// still have the feet test result
+			if (k <> tileBlank) then
+			begin
+		
+				i := py - (py & $f8);
+				py := py - i;
+				// check if on a ldder after correction
+				Level_PlayerFeetTest();
+				if (k <> tileLadder) then
+				begin
+				
+					playerState := playerStateNone;
+					if (panim = panim_jumpRight) then panim := panim_standRight;
+					if (panim = panim_jumpLeft) then panim := panim_standLeft;
+					
+				end;
+			
+			end;
+
+		end;
+
+	end;
+
+	// handle the jump
+	if (playerState = playerStateJump) then
+	begin
+	
+		jumpCount := jumpCount - 1;	// control speed of change in jump
+		fallCount := fallCount + 1;	// count how many moves jump takes to use on fall
+
+		// ready to change jump rate
+		if (jumpCount = 0) then
+		begin
+			
+			jumpCount := playerJumpCount;
+			dy := dy - 1;
+
+		end;
+			
+		// update player position
+		Level_PlayerJumpTest();
+		if (k <> tileSolid) then py := py - (dy>>1);	// move player up
+
+		// force direction when jumping
+		if (dx = 1) then Player_MoveRight();
+		if (dx = -1) then Player_MoveLeft();
+		if (panim = panim_walkRight) then panim := panim_jumpRight;
+		if (panim = panim_walkLeft) then panim := panim_jumpLeft;
+	
+		// has the jump finished?
+		if (dy = 0) then 
+		begin
+		
+			// have we jumped onto a ladder?
+			Level_PlayerFeetTest();
+			if ( k <> tileLadder ) then playerState := playerStateFall;
+			if ( k = tileLadder ) then 
+			begin
+			
+				playerState := playerStateLadder;
+				panim := panim_onLadder;
+				
+			end;
+			
+		end;
+
+	end;
+
+
+end;
