@@ -1,0 +1,49 @@
+// Vertical Blank Interrupt
+interrupt vbl_Interrupt();
+begin
+	StartIRQ(0);
+
+	@ifdef DEBUG
+	SCREEN_BG_COLOR := YELLOW + SCREEN_BG_BLACK;
+	@endif
+	
+	ticks := (ticks + 1) & 63;
+
+	// use interrupts for playing music / sound fx etc
+	// Music_Play();
+
+	@ifdef DEBUG
+	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
+	@endif
+	
+	closeIRQ();
+end;
+
+
+// Set up VBL interrupt to occur at start of vertical blanking phase
+// compatible for PAL and NTSC
+procedure Vbl_Init();
+begin
+
+	DisableVIC20IRQ();
+	
+	// check if PAL or NTSC
+	if (HSCROLL_REGISTER = 12) then
+	begin
+	
+		// Time the interrupt directly with the raster (PAL);
+		// 312 scanlines * 71 cycles -2 = $5686
+		//VIAIRQ(vbl(), $86, $56);
+		VIARasterIRQ(vbl_Interrupt(), 121, 0);
+	
+	end
+	else
+	begin
+	
+		// Time the interrupt directly with the raster (NTSC);
+		//VIAIRQ(vbl(), $43, $42);
+		VIARasterIRQ(vbl_Interrupt(), 107, 1);
+
+	end;
+
+end;

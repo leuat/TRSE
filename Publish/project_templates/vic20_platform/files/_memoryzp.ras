@@ -1,0 +1,100 @@
+// -------------------------------------------------------------------------------
+// Variables:	(for assignable/changing data, use these addresses)
+
+
+	// Address of bitmap (screen and characters)
+	@userdata 		$1000 $1FFF "Bitmap"
+
+
+	// Declare variables
+	// ------------------------------
+	// Zero Page: 			$35 - $5d
+
+	// game tick counter + 1 per FPS
+	ticks : 		byte at $35;		// incremented 1 per frame
+	oldticks : 		byte at $3d;
+
+	i, j, k, l :	byte at $3e;		// working temporary variables
+	ii, jj :		byte at $42;		// loop temporary variables
+
+	px, py :		byte at $44;		// player position
+	dy : 			byte at $46;		// jump / fall
+	dx : 			byte at $47;		// delta x for jumping/falling
+	playerState:	byte at $48;		// defines the state the player is in
+	jumpCount:		byte at $49;		// jump counter
+	fallCount:		byte at $4a;		// count down for falling in direction
+	panim:			byte at $4b;		// player animation to display
+	
+	// ------------------------------
+	// Cassette buffer:		$033C-$03FB (828-1019)
+	//levelAddr : array[ 24 ] of integer at $033c;
+
+
+	// ------------------------------	
+	// Working Zero Page pointers
+	p1: 			pointer;			// general pointer
+	lp:				pointer;			// level testing pointer
+
+
+
+
+// -------------------------------------------------------------------------------
+// Data
+
+
+// export data
+const fontSize: address = 8 * 64;	// 64 characters using 8 bytes each
+@vbmexport "chr/font8x8.flf" "chr/font8x8.bin" 0 64  1 0	// S E  H M 
+@vbmexport "chr/font4x8.flf" "chr/font4x8.bin" 0 64  1 0	// S E  H M 
+
+// Export the tileset character data to a bin file
+const tileSize: address = 8 * 8;  // eight tiles for use on the level
+@vbmexportchunk "chr/tiles.flf" "chr/tiles.bin" 0  8 1  0	// S  W H  M
+
+// Export one level data to a bin file
+const levelSize: address = 20 * 24; // size of a level
+@exportframe "lvl/level.flf" "lvl/level.bin" 0 1  0  0 0 20 24  0 // S C  T  X Y W H  O  
+
+// Export the animation frames for the player to a series of bin files
+const sprPlayerSize: address = 2 * 8 * 4; // 2 characters and 4 preshifted positions
+@vbmexport "spr/sprites.flf" "spr/sprPlayerRight.bin" 0 8   1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprPlayerLeft.bin" 40 48  1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprPlayerJumpRight.bin" 80 88  1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprPlayerJumpLeft.bin" 120 128  1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprPlayerStandRight.bin" 160 168  1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprPlayerStandLeft.bin" 200 208  1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprPlayerClimb.bin" 240 248  1 0 // S E  H M
+
+
+
+// memory - load addresses - calculated to follow sequentially in memory
+	const aBaseData:	address = $5700;		// address where binary data will start
+
+	const aFont8:		address = aBaseData;
+	const aFont4:		address = aFont8 + fontSize;
+	const aTiles:		address = aFont4 + fontSize;
+	const aLevel:		address = aTiles + tileSize;
+	const aSprPlayerRight:	address = aLevel + LevelSize;
+	const aSprPlayerLeft:	address = aSprPlayerRight + sprPlayerSize;
+	const aSprPlayerJumpRight:	address = aSprPlayerLeft + sprPlayerSize;
+	const aSprPlayerJumpLeft:	address = aSprPlayerJumpRight + sprPlayerSize;
+	const aSprPlayerStandRight:	address = aSprPlayerJumpLeft + sprPlayerSize;
+	const aSprPlayerStandLeft:	address = aSprPlayerStandRight + sprPlayerSize;
+	const aSprPlayerClimb:		address =  aSprPlayerStandLeft + sprPlayerSize;
+
+
+
+
+// incbin - include the bin data exported earlier
+font8: 				incbin( "chr/font8x8.bin", aFont8 );
+font4: 				incbin( "chr/font4x8.bin", aFont4 );
+tiles: 				incbin( "chr/tiles.bin", aTiles );
+level: 				incbin( "lvl/level.bin", aLevel );
+sprPlayerRight: 	incbin( "spr/sprPlayerRight.bin", aSprPlayerRight );
+sprPlayerLeft: 		incbin( "spr/sprPlayerLeft.bin", aSprPlayerLeft );
+sprPlayerJumpRight:	incbin( "spr/sprPlayerJumpRight.bin", aSprPlayerJumpRight );
+sprPlayerJumpLeft:	incbin( "spr/sprPlayerJumpLeft.bin", aSprPlayerJumpLeft );
+sprPlayerStandRight:incbin( "spr/sprPlayerStandRight.bin", aSprPlayerStandRight );
+sprPlayerStandLeft:	incbin( "spr/sprPlayerStandLeft.bin", aSprPlayerStandLeft );
+sprPlayerClimb: 	incbin( "spr/sprPlayerClimb.bin", aSprPlayerClimb );
+

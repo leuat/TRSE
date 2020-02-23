@@ -1,0 +1,95 @@
+program MainProgram;
+/*
+
+	Vic 20 8K Vic Bitmap Mode template
+	- can utilize up to 35K RAM under project settings
+	
+	Platform game template
+	Ready made sprites and tiles with code to get the player character
+	running and jumping around a single example level.
+
+
+	-------------------
+	
+	Dev Note:	Zero Page addresses have been defined in project settings
+				for the Vic 20 build.
+				
+				_memoryzp 	- all zero page variables and resources
+				_constants	- game constants & parameters
+				_memory		- all main RAM variables
+				_lookup		- read only look up tables
+*/
+var  
+
+//@define DEBUG		1				// uncomment to show debugging timings
+
+
+// -------------------------------------------------------------------------------
+
+@include "_constants.ras"			// GAME PARAMETERS and CONSTANTS
+@include "_memoryzp.ras"			// variables in Zero Page and binary data
+
+
+// -------------------------------------------------------------------------------
+
+@startblock $2000 "GAME"
+
+// -------------------------------------------------------------------------------
+// look up data
+@include "_memory.ras"				// variables in main RAM
+@include "_lookup.ras"				// read only lookup tables
+
+
+// -------------------------------------------------------------------------------
+// source files						// add your include files here
+
+@include "vbl.ras"					// vertical blank interrupt
+@include "level.ras"				// game level routines
+@include "player.ras"				// player routines
+
+
+
+// -------------------------------------------------------------------------------
+// **** MAIN PROGRAM ****
+
+begin
+
+	Vbl_Init(); // call before set display mode
+	
+	vbmSetDisplayMode( 0 );
+	vbmclear( 0 );
+	vbmClearColor( YELLOW );	
+
+	AUX_COLOR_AND_VOLUME := %00000010;
+	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
+
+	Level_Init();
+	Player_Init();
+
+	Level_Draw();
+
+	// main game loop
+	while (true) offpage do 
+	begin
+		
+		Player_Draw();
+
+		@ifdef DEBUG	// for testing speed
+		SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
+		@endif
+		
+		// wait for vertical blank
+		while (ticks = oldticks) do begin end;
+		oldticks := ticks;
+
+		@ifdef DEBUG	// for testing speed
+		SCREEN_BG_COLOR := CYAN + SCREEN_BG_BLACK;
+		@endif
+
+
+		Player_Draw();
+		Player_Update();
+
+	end;
+
+end.
