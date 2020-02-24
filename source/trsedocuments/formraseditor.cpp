@@ -136,6 +136,21 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         return;
     }
     QProcess process;
+
+#ifdef __APPLE__
+        if (emu.toLower().endsWith(".app") || emu.toLower().endsWith(".app/")) {
+            if (emu.endsWith("/"))
+                emu.remove(emu.count()-1,1);
+                QString ls = emu.split("/").last().remove(".app");
+                emu = emu + "/Contents/MacOS/"+ls;
+
+
+
+        }
+
+#endif
+
+
     if (m_projectIniFile->getString("system")=="VIC20" || m_projectIniFile->getString("system")=="C64" || m_projectIniFile->getString("system")=="C128")
         if (m_iniFile->getdouble("auto_inject")==1.0) {
            params << "-autostartprgmode" << "1";
@@ -428,7 +443,7 @@ void FormRasEditor::SetupHighlighter()
     if (highlighter != nullptr)
         delete highlighter;
     CIniFile colors;
-    colors.Load(Util::path + "themes/" + m_iniFile->getString("theme"));
+    colors.Load(Util::GetSystemPrefix() + "themes/" + m_iniFile->getString("theme"));
     ui->txtEditor->InitColors(colors);
 
     QPalette p = ui->txtEditor->palette();

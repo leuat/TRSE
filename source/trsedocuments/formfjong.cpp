@@ -117,7 +117,8 @@ void FormFjong::SetupHighlighter()
     if (highlighter != nullptr)
         delete highlighter;
     CIniFile colors;
-    colors.Load(Util::path + "themes/" + m_iniFile->getString("theme_fjong"));
+
+    colors.Load(Util::GetSystemPrefix() + "themes/" + m_iniFile->getString("theme_fjong"));
     ui->txtEditor->InitColors(colors);
 
     QPalette p = ui->txtEditor->palette();
