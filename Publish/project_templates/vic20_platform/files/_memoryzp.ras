@@ -12,18 +12,18 @@
 
 	// game tick counter + 1 per FPS
 	ticks : 		byte at $35;		// incremented 1 per frame
-	oldticks : 		byte at $3d;
+	oldticks : 		byte at $36;
 
-	i, j, k, l :	byte at $3e;		// working temporary variables
-	ii, jj :		byte at $42;		// loop temporary variables
+	i, j, k, l :	byte at $37;		// working temporary variables
+	ii, jj :		byte at $3b;		// loop temporary variables
 
-	px, py :		byte at $44;		// player position
-	dy : 			byte at $46;		// jump / fall
-	dx : 			byte at $47;		// delta x for jumping/falling
-	playerState:	byte at $48;		// defines the state the player is in
-	jumpCount:		byte at $49;		// jump counter
-	fallCount:		byte at $4a;		// count down for falling in direction
-	panim:			byte at $4b;		// player animation to display
+	px, py :		byte at $3d;		// player position
+	dy : 			byte at $3f;		// jump / fall
+	dx : 			byte at $40;		// delta x for jumping/falling
+	playerState:	byte at $41;		// defines the state the player is in
+	jumpCount:		byte at $42;		// jump counter
+	fallCount:		byte at $43;		// count down for falling in direction
+	panim:			byte at $44;		// player animation to display
 	
 	// ------------------------------
 	// Cassette buffer:		$033C-$03FB (828-1019)
