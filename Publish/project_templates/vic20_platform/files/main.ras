@@ -8,6 +8,37 @@ program MainProgram;
 	Ready made sprites and tiles with code to get the player character
 	running and jumping around a single example level.
 
+	Where to start:
+	-------------------
+	
+	The sprites for the player are in the spr folder
+	The tiles for the level in the chr folder
+	The example level in the lvl folder
+	
+	This file contains the main game loop.  It draws the level, initialises
+	the player variables and then the game loop runs forever.  The game
+	loop draws the sprite, waits for the rasterbeam to reach the bottom border
+	and then erases the sprite and updates the player position if required,
+	before repeating the loop.
+	
+	Remove the comment on the @define DEBUG	1 line below to see a border colour
+	change indicating how much processor time is used to run the loop.
+	
+	Take a look at the level.ras and player.ras files for the functionality
+	connected with each.
+	
+	Take a look at _memoryzp.ras for the variables, the export commands (to
+	export the sprites, tiles and levels) and the incbin commands (to import
+	the exported binary data).
+	
+	Take a look at _constants.ras and _lookup.ras for definitions and data
+	used by the game.
+	
+
+	Use CTRL + B to build, then CTRL + U to see the memory map / usage.
+	
+	Use CTRL + R to build and run in the emulator.
+
 
 	-------------------
 	
@@ -18,6 +49,10 @@ program MainProgram;
 				_constants	- game constants & parameters
 				_memory		- all main RAM variables
 				_lookup		- read only look up tables
+				
+				level.ras	- Level drawing and block testing routines
+				player.ras	- Routines to draw and control the player sprite
+
 */
 var  
 
@@ -28,6 +63,8 @@ var
 
 @include "_constants.ras"			// GAME PARAMETERS and CONSTANTS
 @include "_memoryzp.ras"			// variables in Zero Page and binary data
+									// put variables here for speed and if
+									// releasing on cartridge
 
 
 // -------------------------------------------------------------------------------
@@ -36,7 +73,8 @@ var
 
 // -------------------------------------------------------------------------------
 // look up data
-@include "_memory.ras"				// variables in main RAM
+@include "_memory.ras"				// variables in main RAM - OK to use if
+									// plan to release game on tape or disk
 @include "_lookup.ras"				// read only lookup tables
 
 
@@ -54,41 +92,46 @@ var
 
 begin
 
+	// initialise our interrupt timer to be called each frame
 	Vbl_Init(); // call before set display mode
 	
+	// set up VBM
 	vbmSetDisplayMode( 0 );
 	vbmclear( 0 );
 	vbmClearColor( YELLOW );	
 
+	// set up the global colours we want to use
 	AUX_COLOR_AND_VOLUME := %00000010;
 	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
 
-	Level_Init();
-	Player_Init();
 
-	Level_Draw();
+	Player_Init();		// set up some things for the player 
+
+	Level_Draw();		// Draw the level with a title
 
 	// main game loop
 	while (true) offpage do 
 	begin
 		
-		Player_Draw();
+		Player_Draw();		// draw the player sprite
 
-		@ifdef DEBUG	// for testing speed
+
+		@ifdef DEBUG		// for testing speed
 		SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
 		@endif
 		
-		// wait for vertical blank
+		// wait for vertical blank - ticks is updated in the Vbl interrupt
 		while (ticks = oldticks) do begin end;
 		oldticks := ticks;
 
-		@ifdef DEBUG	// for testing speed
+		@ifdef DEBUG		// for testing speed
 		SCREEN_BG_COLOR := CYAN + SCREEN_BG_BLACK;
 		@endif
 
 
-		Player_Draw();
-		Player_Update();
+		Player_Draw();		// erase the player sprite (EOR operation)
+		
+		Player_Update();	// update the player (joystick) and move around the level
 
 	end;
 

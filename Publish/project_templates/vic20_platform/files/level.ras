@@ -1,11 +1,11 @@
+/*
 
-procedure Level_Init();
-begin
+	Level routines
+	
+	Used to draw the level and test where tile blocks are for the player.
+	(test blocks hardcoded to player for speed) 
 
-	// set up address table
-	//createaddresstable(levelAddr, aLevel, 20, 24);
-
-end;
+*/
 
 
 // draw level map
