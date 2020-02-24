@@ -35,7 +35,4 @@ override_target_settings_sys = 1
 override_target_settings_prg = 0
 build_list = ,
 data_header_images/image1.flf = 0
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/X16/Tutorials/
 exomize_toggle = 0
-open_files = ,example8_tunnel.ras
-current_file = example8_tunnel.ras

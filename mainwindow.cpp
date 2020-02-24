@@ -1096,6 +1096,14 @@ void MainWindow::on_actionClose_current_project_triggered()
 
 void MainWindow::on_actionHelp_F1_triggered()
 {
+    if (m_currentPath=="") {
+        QMessageBox msgBox;
+        msgBox.setText("You need to load a project before using the help window, as topics are populated based on the current computer system.");
+        msgBox.setWindowTitle("TRSE help window");
+        msgBox.exec();
+        return;
+    }
+
     DialogHelp* dh = new DialogHelp(nullptr, "", m_defaultPalette);
     dh->show();
 //    dh->exec();
