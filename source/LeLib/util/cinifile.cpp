@@ -139,7 +139,11 @@ QString CIniFile::getString(QString name) {
         if (items[i].name==name.toLower().trimmed()) {
             if (items[i].strval!="")
                 return items[i].strval;
-            else return QString::number(items[i].dval);
+            else {
+                if (items[i].dval>0.0001)
+                    return QString::number(items[i].dval);
+            }
+            return "";
         }
     }
     return "";

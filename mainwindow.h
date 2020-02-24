@@ -248,10 +248,10 @@ public slots:
     void UpdateRecentProjects();
     void SaveAs();
 
-    void RemoveTab(int, bool save=true);
+    bool RemoveTab(int, bool save=true);
     void LoadProject(QString filename);
 
-    void CloseAll();
+    bool CloseAll();
     QString getProjectPath();
 
     void closeEvent(QCloseEvent *event) override;

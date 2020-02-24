@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(m_updateThread, SIGNAL(updateImageSignal()), this, SLOT(updateImage()));
 
 
-    Data::data.version += "   Build  " + QDate::currentDate().toString();
+//    Data::data.version += "   Build  " + QDate::currentDate().toString();
 
 
     this->setMouseTracking(true);
@@ -548,23 +548,23 @@ void MainWindow::SaveAs()
 
 }
 
-void MainWindow::RemoveTab(int idx, bool save)
+bool MainWindow::RemoveTab(int idx, bool save)
 {
     if (idx==0)
-        return;
+        return true;
 
 
     idx--;
     TRSEDocument* doc = m_documents[idx];
     if (!doc->SaveChanges())
-        return;
+        return false;
 //    m_updateThread->Park();
 //    QThread::msleep(30);
 
     doc->PrepareClose();
 
     if (doc==nullptr)
-        return;
+        return false;
     if (save) {
         m_currentProject.m_ini.removeFromList("open_files", doc->m_currentFileShort);
         m_currentProject.Save();
@@ -594,13 +594,16 @@ void MainWindow::RemoveTab(int idx, bool save)
 
     m_updateThread->Continue();
     */
+    return true;
 }
 
-void MainWindow::CloseAll()
+bool MainWindow::CloseAll()
 {
     while (ui->tabMain->count()!=1) {
-        RemoveTab(1, false);
+        if (!RemoveTab(1, false))
+            return false;
     }
+    return true;
 
 }
 
@@ -612,9 +615,10 @@ QString MainWindow::getProjectPath()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    CloseAll();
-    // accept close event
-    event->accept();
+    if (CloseAll())
+        event->accept();
+    else
+        event->ignore();
 }
 
 void MainWindow::FindFileDialog()
@@ -762,7 +766,6 @@ void MainWindow::on_actionRas_source_file_triggered()
         s<< "   i: byte; \n";
         s<< "begin\n\n";
         s<< "end.\n";
-        qDebug() << "Done writing;";
     }
 
     file.close();
