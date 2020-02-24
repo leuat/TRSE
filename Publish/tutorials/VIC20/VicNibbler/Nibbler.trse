@@ -37,6 +37,4 @@ output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
 exomize_toggle = 0
 exomizer_toggle = 0
-open_files = ,setup.ras, gamescrn.ras, gameplay.ras, nibbler.asm, nibbler.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/VicNibbler/
-current_file = gamescrn.ras
+open_files =, nibbler.ras
