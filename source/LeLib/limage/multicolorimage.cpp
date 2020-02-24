@@ -552,7 +552,6 @@ void MultiColorImage::ExportBin(QFile& ofile)
 
     if (m_bitMask== 0b1 || m_type==LImage::Type::HiresBitmap) { // Regular color
         charC = 1;
-        qDebug() << "REGULAR COLOR";
     }
     if (charC==3)
     for (int j=sy;j<ey;j++)
@@ -575,7 +574,6 @@ void MultiColorImage::ExportBin(QFile& ofile)
         if (charC==1) {
 //            c = (uchar)m_data[i+j*m_charWidth].c[charC];
             c = ((uchar)m_data[j*m_charWidth + i].colorMapToNumber(0,1));
-            qDebug() << c;
         }
         if (c==255)
             c=0;
