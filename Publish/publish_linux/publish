@@ -7,7 +7,8 @@ mkdir trse/bin
 mkdir trse/tutorials/
 cp -r ../../Release/trse trse/bin
 cp -r ../../Release/lib trse/bin
-cp -r ../../Release/plugins trse/bin
+#cp -r ../../Release/plugins trse/bin
+cp -r plugins trse/bin
 cp -r ../source/* trse/
 cp -r ../tutorials/RasLib trse/tutorials/
 

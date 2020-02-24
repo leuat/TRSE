@@ -228,6 +228,13 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
              </property>
             </widget>
            </item>
+           <item row="3" column="2">
+            <widget class="QPushButton" name="btnPetEmulator">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </widget>

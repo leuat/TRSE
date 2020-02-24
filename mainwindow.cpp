@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(m_updateThread, SIGNAL(updateImageSignal()), this, SLOT(updateImage()));
 
 
-    Data::data.version += "   Build  " + QDate::currentDate().toString();
+//    Data::data.version += "   Build  " + QDate::currentDate().toString();
 
 
     this->setMouseTracking(true);
@@ -762,7 +762,6 @@ void MainWindow::on_actionRas_source_file_triggered()
         s<< "   i: byte; \n";
         s<< "begin\n\n";
         s<< "end.\n";
-        qDebug() << "Done writing;";
     }
 
     file.close();

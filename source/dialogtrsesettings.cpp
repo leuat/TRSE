@@ -320,3 +320,12 @@ void DialogTRSESettings::on_btnNasm_clicked()
         ui->leNasm->setText(filename);
 
 }
+
+void DialogTRSESettings::on_btnPetEmulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("PET emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->lePETEmulator->setText(filename);
+
+}

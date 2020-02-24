@@ -99,6 +99,8 @@ private slots:
 
     void on_btnNasm_clicked();
 
+    void on_btnPetEmulator_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };
