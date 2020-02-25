@@ -36,4 +36,6 @@ override_target_settings_prg = 0
 build_list = ,
 data_header_images/ok1.flf = 6.93207e-310
 exomize_toggle = 0
-open_files =, example1.ras
+open_files = ,images/ok1.flf, example1.ras
+project_path = /home/leuat/code/TRSE/Release/../tutorials/OK64/Tutorials/
+current_file = images/ok1.flf

@@ -1,6 +1,6 @@
 #ifndef LIMAGEOK64_H
 #define LIMAGEOK64_H
-
+#include "source/LeLib/util/util.h"
 #include "source/LeLib/limage/limage.h"
 
 class LImageOK64 : public LImage
