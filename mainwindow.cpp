@@ -252,7 +252,7 @@ void MainWindow::VerifyDefaults()
     //    qDebug() << m_ini.getString("ok64_emulator");
    if (!m_iniFile.contains("ok64_emulator") || m_iniFile.getString("ok64_emulator")=="")
     #ifdef __linux__
-            m_iniFile.setString("ok64_emulator","bin/OK64");
+            m_iniFile.setString("ok64_emulator","ok64");
     #endif
     #ifdef _WIN32
         m_iniFile.setString("ok64_emulator","ok64.exe");
