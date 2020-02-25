@@ -6,6 +6,8 @@ mkdir trse/
 mkdir trse/bin
 mkdir trse/tutorials/
 cp -r ../../Release/trse trse/bin
+cp /home/leuat/code/OK64/Release/OK64 trse/bin/
+
 cp -r ../../Release/lib trse/bin
 #cp -r ../../Release/plugins trse/bin
 cp -r plugins trse/bin
@@ -18,5 +20,5 @@ cp -r lib trse/bin/
 cp trse.sh trse
 tar -cvf trse_linux64.tar trse
 gzip trse_linux64.tar
-#scp trse_linux64.tar.gz leuat@www.irio.co.uk:www.irio.co.uk/trse/latest_snapshots/trse_linux64.tar.gz
+scp trse_linux64.tar.gz leuat@www.irio.co.uk:www.irio.co.uk/trse/latest_snapshots/trse_linux64.tar.gz
 
