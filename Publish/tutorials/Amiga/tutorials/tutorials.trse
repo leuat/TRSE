@@ -35,3 +35,6 @@ override_target_settings_prg = 0
 output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
 exomize_toggle = 0
+project_path = /home/leuat/code/TRSE/Release/../tutorials/Amiga/tutorials/
+open_files = ,tutorial2.ras, tutorial1.ras
+current_file = tutorial2.ras
