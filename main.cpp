@@ -23,6 +23,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QStyleFactory>
+#include <QSettings>
 
 void ConvertPerlin(QString input, QString out, float div) {
     QImage img;
@@ -140,6 +141,11 @@ int main(int argc, char *argv[])
         w.m_commandParams+=QString(argv[i]);
     w.showMaximized();
     w.AfterStart(oldCurDir);
+
+    qDebug() << "Restore settings";
+    QSettings settings("LemonSpawn", "TRSE");
+    w.restoreGeometry(settings.value("MainWindow/geometry").toByteArray());
+    w.restoreState(settings.value("MainWindow/windowState").toByteArray());
 
     return a.exec();
 }

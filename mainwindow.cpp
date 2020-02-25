@@ -36,6 +36,7 @@
 #include "source/dialogabout.h"
 #include "source/LeLib/limage/limageio.h"
 #include <QMessageBox>
+#include <QSettings>
 #include "source/Compiler/assembler/mos6502.h"
 #include "source/dialogeffects.h"
 #include "source/Compiler/errorhandler.h"
@@ -615,8 +616,13 @@ QString MainWindow::getProjectPath()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if (CloseAll())
+    if (CloseAll()) {
+        qDebug() << "Store settings";
+        QSettings settings("LemonSpawn", "TRSE");
+        settings.setValue("MainWindow/geometry", saveGeometry());
+        settings.setValue("MainWindow/windowState", saveState());
         event->accept();
+    }
     else
         event->ignore();
 }
