@@ -278,6 +278,10 @@ begin
 				if (panim = panim_jumpLeft) then panim := panim_standLeft;
 					
 			end;
+			// odd case of landing at foot of ladder
+			Level_PlayerBelowFeetTest();
+			if (k <> tileBlank) then playerState := playerStateNone;
+
 			
 		end;
 
