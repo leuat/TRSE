@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
     MainWindow w;
     for (int i=0;i<argc;i++)
         w.m_commandParams+=QString(argv[i]);
-    w.showMaximized();
+    w.show();
     w.AfterStart(oldCurDir);
 
     qDebug() << "Restore settings";
