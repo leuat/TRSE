@@ -69,9 +69,10 @@ void AsmM68000::DeclareArray(QString name, QString type, int count, QStringList 
                 if (i!=data.count()-1)
                     s=s + "\t" +t + " ";
             }
-            else s=s+", ";
+            else if (i!=data.count()-1) s=s+", ";
 
         }
+        s = s.replace("$0","$");
         QStringList lst = s.split("\n");
             for (int i=0;i<lst.count();i++)
                 Write(lst[i]);

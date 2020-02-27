@@ -1,4 +1,4 @@
-/*
+   /*
  * Turbo Rascal Syntax error, “;” expected but “BEGIN” (TRSE, Turbo Rascal SE)
  * 8 bit software development IDE for the Commodore 64
  * Copyright (C) 2018  Nicolaas Ervik Groeneboom (nicolaas.groeneboom@gmail.com)
@@ -1548,7 +1548,8 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
     m_pass = 0;
   //  RemoveComments();
     InitObsolete();
-    StripWhiteSpaceBeforeParenthesis(); // TODO: make better fix for this
+    if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::M68000)
+        StripWhiteSpaceBeforeParenthesis(); // TODO: make better fix for this
     InitSystemPreprocessors();
     bool done = false;
     //while (!done)

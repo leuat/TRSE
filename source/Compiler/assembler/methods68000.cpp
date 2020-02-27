@@ -128,6 +128,13 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("setcopperlist32"))
         SetCopperList32(as);
 
+    if (Command("pusha")) {
+        as->Asm("movem.l d0-d7/a0-a6,-(sp)");
+    }
+    if (Command("popa")) {
+        as->Asm("movem.l (sp)+,d0-d7/a0-a6");
+    }
+
     if (Command("WaitVerticalBlank")) {
         QString lbl = as->NewLabel("waitVB");
         QString d0 = as->m_regAcc.Get();
@@ -150,6 +157,8 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     }
     if (Command("memcpy"))
         Memcpy(as);
+    if (Command("memcpyunroll"))
+        MemcpyUnroll(as);
     if (Command("setpalette"))
         Setpalette(as);
     if (Command("ablit"))
@@ -284,43 +293,21 @@ void Methods68000::SetCopperList32(Assembler *as)
   //  Asm(as,"lea",val1,a0);
   //  Asm(as,"move.l",a0,d0);
 
-
+    as->Comment("setcopperlist32");
     m_dispatcher->LoadAddress(m_node->m_params[0]);
     Asm(as,"move.l",as->m_varStack.pop(),d0);
 
-
-//    if (m_node->m_params[0]->isPointer(as)) {
-//        m_dispatcher->LoadVariable(m_node->m_params[0]);
-  //      m_dispatcher->LoadAddress(m_node->m_params[0]);
-    //    Asm(as,"move.l",as->m_varStack.pop(),d0);
-    //}
-/*    else {
-        Asm(as,"lea",val1,a0);
-        Asm(as,"move.l",a0,d0);
-    }
-*/
-//    Asm(as,"lea",val1,a0);
-  //  Asm(as,"move.l",a0,d0);
-
     Asm(as,"lea",addr,a0);
-    Asm(as,"move.w",d0,"4("+a0+")");
+    Asm(as,"move.w",d0,"6("+a0+")");
     as->Asm("swap "+d0);
-    Asm(as,"move.w",d0,"("+a0+")");
+    Asm(as,"move.w",d0,"2("+a0+")");
 
     as->m_regMem.Pop(a0);
     as->m_regAcc.Pop(d0);
 
 
-
- /*   lea    Screens_1,a0
-    move.l  a0,d0
-    lea        b0h,a0
-    move.w    d0,4(a0)
-    swap    d0
-    move.w    d0,(a0)
-;    adda.w    #8,a0
-   */
 }
+
 
 void Methods68000::Memcpy(Assembler *as)
 {
@@ -334,12 +321,15 @@ void Methods68000::Memcpy(Assembler *as)
     m_dispatcher->LoadAddress(m_node->m_params[0],a0);
  //   m_dispatcher->LoadAddress()
     m_node->m_params[1]->Accept(m_dispatcher);
-    Asm(as,"add.w",as->m_varStack.pop(), a0);
+    Asm(as,"add"+m_dispatcher->getEndType(as,m_node->m_params[1]),as->m_varStack.pop(), a0);
 
 
     m_dispatcher->LoadAddress(m_node->m_params[2],a1);
-    m_node->m_params[3]->Accept(m_dispatcher);
-    Asm(as,"add.w",as->m_varStack.pop(), a1);
+    bool ok = true;
+    if (m_node->m_params[3]->isPureNumeric() && m_node->m_params[3]->getValueAsInt(as)==0)
+        ok = false;
+    if (ok)
+        Asm(as,"add"+m_dispatcher->getEndType(as,m_node->m_params[3]),as->m_varStack.pop(), a1);
 
     as->Label(lbl);
     as->Asm("move.w ("+a0+")+,("+a1+")+");
@@ -349,6 +339,38 @@ void Methods68000::Memcpy(Assembler *as)
     as->m_regMem.Pop(a1);
     as->m_regAcc.Pop(d0);
     as->PopLabel("memcpy");
+}
+
+void Methods68000::MemcpyUnroll(Assembler *as)
+{
+    QString a0 = as->m_regMem.Get();
+    QString a1 = as->m_regMem.Get();
+    QString d0 = as->m_regAcc.Get();
+    QString lbl = as->NewLabel("memcpy");
+
+    if (!m_node->m_params[4]->isPureNumeric())
+        ErrorHandler::e.Error("MemCpyUnroll requires parameter 4 to be a constant", m_node->m_op.m_lineNumber);
+
+    int cnt = m_node->m_params[4]->getValueAsInt(as);
+
+    m_dispatcher->LoadAddress(m_node->m_params[0],a0);
+ //   m_dispatcher->LoadAddress()
+    m_node->m_params[1]->Accept(m_dispatcher);
+    Asm(as,"add"+m_dispatcher->getEndType(as,m_node->m_params[1]),as->m_varStack.pop(), a0);
+
+
+    m_dispatcher->LoadAddress(m_node->m_params[2],a1);
+    bool ok = true;
+    if (m_node->m_params[3]->isPureNumeric() && m_node->m_params[3]->getValueAsInt(as)==0)
+        ok = false;
+    if (ok)
+        Asm(as,"add"+m_dispatcher->getEndType(as,m_node->m_params[3]),as->m_varStack.pop(), a1);
+    for (int i=0;i<cnt;i++)
+        as->Asm("move.w ("+a0+")+,("+a1+")+");
+
+    as->m_regMem.Pop(a0);
+    as->m_regMem.Pop(a1);
+    as->m_regAcc.Pop(d0);
 }
 
 void Methods68000::Setpalette(Assembler *as)

@@ -33,6 +33,7 @@ public:
     void Poke(Assembler* as, QString bb);
     void SetCopperList32(Assembler* as);
     void Memcpy(Assembler *as);
+    void MemcpyUnroll(Assembler *as);
     void Setpalette(Assembler *as);
     void ABlit(Assembler* as, bool isFiller);
     void AddCopperCommand(Assembler* as);

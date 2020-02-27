@@ -108,16 +108,29 @@ copper_mod_odd:
 
 
 
-CopSprites:
     
+copper_spritestruct0:
     dc.w $120,0, $122,0
+copper_spritestruct1:
     dc.w $124,0, $126,0
+copper_spritestruct2:
     dc.w $128,0, $12A,0
+copper_spritestruct3:
     dc.w $12C,0, $12E,0
+copper_spritestruct4:
     dc.w $130,0, $132,0
+copper_spritestruct5:
     dc.w $134,0, $136,0
+copper_spritestruct6:
     dc.w $138,0, $13A,0
+copper_spritestruct7:
     dc.w $13C,0, $13E,0
+
+copper_spritedata0:
+    dc.w $144,0, $146,0
+copper_spritedata1:
+    dc.w $14C,0, $14E,0
+
 
 copper_palette:
     dc.w    $0180, $000
@@ -158,28 +171,21 @@ copper_palette:
 
 
 
-    dc.w    $e0
 copper_bitplane0:
-    dc.w    0,$e2
-b0l:
-    dc.w    0,$e4
+    dc.w    $e0,0
+    dc.w    $e2,0
 copper_bitplane1:
-    dc.w    0,$e6
-b1l:
-    dc.w    0,$e8
+    dc.w    $e4,0
+    dc.w    $e6,0
 copper_bitplane2:
-    dc.w    0,$ea
-b2l:
-    dc.w    0,$ec
+    dc.w    $e8,0
+    dc.w    $ea,0
 copper_bitplane3:
-    dc.w    0,$ee
-b3l:
-    dc.w    0,$f0
+    dc.w    $ec,0
+    dc.w    $ee,0
 copper_bitplane4:
-    dc.w    0,$f2
-b4l:
-    dc.w    0
-
+    dc.w    $f0,0
+    dc.w    $f2,0
 
 
 copbplcon1:

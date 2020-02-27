@@ -156,11 +156,14 @@ m; WaitVerticalBlank; Amiga;
 m; SetCopperList32; Amiga; a, a
 m; ApplyCopperList; Amiga;
 m; memcpy; Amiga; a, l,a,l, l
+m; memcpyunroll; Amiga; a, l,a,l, l
 m; setpalette; Amiga; a, a, l
 m; ablit; Amiga; a,a,i, i,i,i,i,l,i,i,i
 m; fblit; Amiga; a,a,i, i,i,i,i,l,i,i,i
 m; getKey; C64, C128, VIC20;
 m; EnableInterrupt; Amiga;i
+m; pusha; amiga ;
+m; popa; amiga ;
 
 m; InitCustomCopperList; Amiga;
 m; EndCustomCopperList; Amiga;

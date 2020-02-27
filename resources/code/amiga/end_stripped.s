@@ -1,7 +1,3 @@
-; exit gracefully - reverse everything done in init
-	rts
-
-
 ;** PROCEDURES
 ; d6 = src shift
 ; d1 = dst x
@@ -26,7 +22,7 @@ blitter:
     bne.s   .litwait
 
     move.w  d0,BLTCON0(a6)  ; Set registers; BLTCON0
-    move.l  a0,BLTAPTH(a6) ; src 
+    move.l  a0,BLTAPTH(a6) ; src
     move.l  a1,BLTBPTH(a6) ; BLT Dest PTR
     move.l  a1,BLTCPTH(a6) ; BLT Dest PTR
     move.l  a1,BLTDPTH(a6) ; BLT Dest PTR
@@ -39,22 +35,24 @@ blitter:
 
 
 ; storage for 32-bit addresses and data
-	CNOP 0,4
+        CNOP 0,4
 oldview:	dc.l 0
 oldcopper:	dc.l 0
 gfxbase:	dc.l 0
 frame:          dc.l 0
 
 ; storage for 16-bit data
-	CNOP 0,4
+        CNOP 0,4
 olddmareq:	dc.w 0
 oldintreq:	dc.w 0
 oldintena:	dc.w 0
 oldadkcon:	dc.w 0
 
 copper_index    dc.w 0
-	CNOP 0,4
+        CNOP 0,4
 gfxname: dc.b 'graphics.library',0
+
+
 
 
 Chip:
@@ -67,10 +65,10 @@ diwstrt:
 diwstop:
     dc.w    $2cc1
 
-    
+
     dc.w    $0092
 ddfstrt:
-; 
+;
     dc.w    $0038,$0094
 ddfstop:
     dc.w    $00d0
@@ -85,16 +83,29 @@ copper_mod_odd:
 
 
 
-CopSprites:
-    
+
+copper_spritestruct0:
     dc.w $120,0, $122,0
+copper_spritestruct1:
     dc.w $124,0, $126,0
+copper_spritestruct2:
     dc.w $128,0, $12A,0
+copper_spritestruct3:
     dc.w $12C,0, $12E,0
+copper_spritestruct4:
     dc.w $130,0, $132,0
+copper_spritestruct5:
     dc.w $134,0, $136,0
+copper_spritestruct6:
     dc.w $138,0, $13A,0
+copper_spritestruct7:
     dc.w $13C,0, $13E,0
+
+copper_spritedata0:
+    dc.w $144,0, $146,0
+copper_spritedata1:
+    dc.w $14C,0, $14E,0
+
 
 copper_palette:
     dc.w    $0180, $000
@@ -135,28 +146,21 @@ copper_palette:
 
 
 
-    dc.w    $e0
 copper_bitplane0:
-    dc.w    0,$e2
-b0l:
-    dc.w    0,$e4
+    dc.w    $e0,0
+    dc.w    $e2,0
 copper_bitplane1:
-    dc.w    0,$e6
-b1l:
-    dc.w    0,$e8
+    dc.w    $e4,0
+    dc.w    $e6,0
 copper_bitplane2:
-    dc.w    0,$ea
-b2l:
-    dc.w    0,$ec
+    dc.w    $e8,0
+    dc.w    $ea,0
 copper_bitplane3:
-    dc.w    0,$ee
-b3l:
-    dc.w    0,$f0
+    dc.w    $ec,0
+    dc.w    $ee,0
 copper_bitplane4:
-    dc.w    0,$f2
-b4l:
-    dc.w    0
-
+    dc.w    $f0,0
+    dc.w    $f2,0
 
 
 copbplcon1:
@@ -166,7 +170,7 @@ copbplcon0
 ; Set bitplane  B
    dc.w    $0100
 copper_resolution
-   dc.w     $4200 
+   dc.w     $4200
 copper_custom:
     dc.l    $fffffffe
 

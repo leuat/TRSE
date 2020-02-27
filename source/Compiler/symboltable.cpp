@@ -214,12 +214,19 @@ void SymbolTable::InitBuiltins()
         Define(new Symbol("screenmemory", "pointer"));
     }
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA) {
+
+        for (int i=0;i<8;i++) {
+            QString k = QString::number(i);
+            Define(new Symbol("copper_spritestruct"+k, "integer"));
+            Define(new Symbol("copper_spritedata"+k, "integer"));
+        }
+
         Define(new Symbol("copper_bitplane0", "integer"));
         Define(new Symbol("copper_bitplane1", "integer"));
         Define(new Symbol("copper_bitplane2", "integer"));
         Define(new Symbol("copper_bitplane3", "integer"));
         Define(new Symbol("copper_bitplane4", "integer"));
-        Define(new Symbol("copper_bitplane0", "integer"));
+      //  Define(new Symbol("copper_bitplane0", "integer"));
         Define(new Symbol("copper_mod_even", "integer"));
         Define(new Symbol("copper_mod_odd", "integer"));
         Define(new Symbol("copper_palette", "integer"));
