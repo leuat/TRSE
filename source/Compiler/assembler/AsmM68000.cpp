@@ -9,12 +9,18 @@ AsmM68000::AsmM68000()
 
 void AsmM68000::Program(QString name, QString vicParam)
 {
-    IncludeFile(":resources/code/amiga/init.s");
+    if (!Syntax::s.m_currentSystem->m_systemParams.contains("ignoresystemheaders"))
+        IncludeFile(":resources/code/amiga/init.s");
+    else
+        IncludeFile(":resources/code/amiga/init_stripped.s");
 }
 
 void AsmM68000::EndProgram()
 {
-    IncludeFile(":resources/code/amiga/end.s");
+    if (!Syntax::s.m_currentSystem->m_systemParams.contains("ignoresystemheaders"))
+        IncludeFile(":resources/code/amiga/end.s");
+    else
+        IncludeFile(":resources/code/amiga/end_stripped.s");
 
 }
 

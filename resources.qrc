@@ -443,5 +443,7 @@
         <file>resources/text/help/m/strsplit.rtf</file>
         <file>resources/text/help/m/strgetfromindex.rtf</file>
         <file>resources/text/help/m/strcmp.rtf</file>
+        <file>resources/code/amiga/end_stripped.s</file>
+        <file>resources/code/amiga/init_stripped.s</file>
     </qresource>
 </RCC>

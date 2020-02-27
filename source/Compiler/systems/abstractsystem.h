@@ -4,6 +4,7 @@
 #include <QString>
 #include <QFile>
 #include "source/LeLib/util/cinifile.h"
+#include <QMap>
 
 #include <QElapsedTimer>
 
@@ -33,6 +34,7 @@ public:
         if (m_labelColors.count()==0)
             InitLabelColors();
     }
+    QMap<QString, QString> m_systemParams;
     QElapsedTimer timer;
     QString m_orgOutput;
     CIniFile* m_projectIni, *m_settingsIni;

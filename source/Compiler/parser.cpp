@@ -49,6 +49,7 @@ void Parser::InitObsolete()
 //    m_obsoleteWarnings.append(QStringList() << "copycharsetfromrom"<<"Funtion 'CopyCharsetFromROM()' is scheduled to be deprecated from 0.09. ");
 }
 
+
 void Parser::Eat(TokenType::Type t)
 {
  //   qDebug() << m_currentToken.m_value << m_currentToken.m_intVal;
@@ -618,6 +619,10 @@ void Parser::HandlePreprocessorInParsing()
         Eat(TokenType::INTEGER_CONST);
         return;
     }
+    if (m_currentToken.m_value=="ignoresystemheaders") {
+        Eat();
+    }
+
     if (m_currentToken.m_value=="exportframe") {
         Eat();
         Eat(TokenType::STRING);
@@ -1321,6 +1326,11 @@ void Parser::Preprocess()
 //                qDebug() << "Defined: " << key << val;
 
             }
+            else if (m_currentToken.m_value.toLower() =="ignoresystemheaders") {
+                Eat(TokenType::PREPROCESSOR);
+                Syntax::s.m_currentSystem->m_systemParams["ignoresystemheaders"]="1";
+            }
+
             else if (m_currentToken.m_value.toLower() =="userdata") {
                 Eat(TokenType::PREPROCESSOR);
                 QString from = m_currentToken.getNumAsHexString();
