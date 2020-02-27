@@ -57,9 +57,6 @@ copper_index    dc.w 0
 gfxname: dc.b 'graphics.library',0
 
 
-
-  section datachip,data_c
-
 Chip:
 
     even

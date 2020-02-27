@@ -12,7 +12,8 @@ void CompilerM68K::Connect()
 {
     //        m_assembler->blocks.append(m_assembler->m_chipMem);
     m_assembler->m_chipMem.m_source.insert(0," 	CNOP 0,4");
-    m_assembler->m_chipMem.m_source.insert(0,"	Section ChipRAM,Data_c");
+    if (!Syntax::s.m_currentSystem->m_systemParams.contains("ignoresystemheaders"))
+        m_assembler->m_chipMem.m_source.insert(0,"	Section ChipRAM,Data_c");
     m_assembler->m_source <<m_assembler->m_chipMem.m_source;
 
 }
