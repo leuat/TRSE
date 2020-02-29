@@ -401,6 +401,14 @@ void LImage::Rotate(QPoint center, float angle, float scale, LImage* img)
         }
 }
 
+void LImage::ExportRGB8Palette(QString filename) {
+
+    QByteArray b = m_colorList.toArray();
+    b.remove(0,1);
+    Util::SaveByteArray(b,filename);
+
+}
+
 
 
 
@@ -462,6 +470,7 @@ void LImage::CopyFrom(LImage *img) {
     if (m_width!=img->m_width || m_height!=img->m_height) {
         m_width = img->m_width;
         m_height = img->m_height;
+
     }
 
 #pragma omp parallel for

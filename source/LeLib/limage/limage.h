@@ -318,6 +318,8 @@ public:
     virtual void ExportBin(QFile &file) {}
     virtual void ImportBin(QFile &file) {}
 
+    virtual void ExportRGB8Palette(QString filename);
+
     virtual void ExportCompressed(QString f1, QString f2) {}
 
     virtual void ExportMovie(QFile &file) {}
@@ -369,6 +371,7 @@ public:
 
     virtual int getDx();
     virtual int getDy();
+
 
 };
 

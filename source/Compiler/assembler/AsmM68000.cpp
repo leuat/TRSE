@@ -122,6 +122,12 @@ void AsmM68000::BinOP(TokenType::Type t)
     if (t == TokenType::DIV)
         v = "divs";
 
+    if (t == TokenType::SHR)
+        v = "lsr";
+
+    if (t == TokenType::SHL)
+        v = "lsl";
+
     m_varStack.push(v);
 }
 

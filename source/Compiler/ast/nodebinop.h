@@ -66,6 +66,9 @@ public:
     }
     bool containsPointer(Assembler* as);
 
+    void SwapVariableFirst();
+
+
     bool ContainsVariable(Assembler* as, QString var);
 
 

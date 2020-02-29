@@ -324,10 +324,16 @@ void Methods68000::Memcpy(Assembler *as)
     Asm(as,"add"+m_dispatcher->getEndType(as,m_node->m_params[1]),as->m_varStack.pop(), a0);
 
 
-    m_dispatcher->LoadAddress(m_node->m_params[2],a1);
     bool ok = true;
-    if (m_node->m_params[3]->isPureNumeric() && m_node->m_params[3]->getValueAsInt(as)==0)
-        ok = false;
+    if (m_node->m_params[3]->isPureNumeric()) {
+        if (m_node->m_params[3]->getValueAsInt(as)==0) {
+            ok = false;
+        }
+    }
+//    qDebug() << "HERE" << m_dispatcher->getEndType(as,m_node->m_params[3]);
+  //  qDebug()  << a1;
+    m_dispatcher->LoadAddress(m_node->m_params[2],a1);
+     m_node->m_params[3]->Accept(m_dispatcher);
     if (ok)
         Asm(as,"add"+m_dispatcher->getEndType(as,m_node->m_params[3]),as->m_varStack.pop(), a1);
 

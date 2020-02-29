@@ -85,6 +85,10 @@ public:
     bool m_clearFlag = false;
     QString getEndType(Assembler *as, Node *v1,Node *v2) override;
 
+    bool HandleSimpleAeqAopConst(NodeAssign* node);
+    bool HandleSimpleAeqBopConst(NodeAssign* node);
+
+
 };
 
 #endif // ASTDISPATCHER68000_H

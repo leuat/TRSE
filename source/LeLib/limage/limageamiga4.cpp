@@ -4,16 +4,18 @@
 
 LImageAmiga::LImageAmiga(LColorList::Type t, int type)  : LImageQImage(t)
 {
-    if (type==0) {
-        m_height = 200;
-        Initialize(320,200);
+/*    if (type==0) {
+        m_height = 256;
+        Initialize(320,256);
         m_type = LImage::Type::AMIGA320x200;
     }
     if (type==1) {
         m_height = 256;
         Initialize(320,256);
         m_type = LImage::Type::AMIGA320x256;
-    }
+    }*/
+    m_type = LImage::Type::AMIGA320x256;
+    Initialize(320,256);
     m_scale = 1;
     m_supports.asmExport = false;
     m_supports.binaryLoad = false;
@@ -25,6 +27,8 @@ LImageAmiga::LImageAmiga(LColorList::Type t, int type)  : LImageQImage(t)
 
 void LImageAmiga::ExportBin(QFile &file)
 {
+    m_height  = 256;
+
     int nobp = m_colorList.getNoBitplanes();
 //    qDebug() << nobp;
     QVector<QByteArray> data;
@@ -75,7 +79,7 @@ void LImageAmiga::ExportBin(QFile &file)
         int val = c.get12BitValue();
         val = val | (0x01800000+i*0x00020000);
         QString out = "move.l #"+Util::numToHex(val) + ",(a6)+";
-        qDebug().noquote() << out	;
+//        qDebug().noquote() << out	;
 
         i=i+1;
     }
@@ -84,6 +88,7 @@ void LImageAmiga::ExportBin(QFile &file)
 
 void LImageAmiga::SaveBin(QFile &file)
 {
+    m_height  = 256;
     LImageQImage::SaveBin(file);
     file.write(m_colorList.toArray());
 }

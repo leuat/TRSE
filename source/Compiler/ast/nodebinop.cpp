@@ -96,6 +96,18 @@ bool NodeBinOP::containsPointer(Assembler *as)
     return m_left->containsPointer(as) || m_right->containsPointer(as);
 }
 
+void NodeBinOP::SwapVariableFirst()
+{
+    if (m_op.m_type==TokenType::PLUS || m_op.m_type==TokenType::MUL) {
+        NodeVar* isRight = dynamic_cast<NodeVar*>(m_right);
+        if (isRight) {
+            Node* tmp = m_right;
+            m_right = m_left;
+            m_left = tmp;
+        }
+    }
+}
+
 bool NodeBinOP::ContainsVariable(Assembler *as, QString var)
 {
     if (m_right->isPureVariable() && m_right->getValue(as)==var) {

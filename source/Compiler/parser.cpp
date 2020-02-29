@@ -581,6 +581,12 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
         return;
     }
+    if (m_currentToken.m_value=="exportrgb8palette") {
+        Eat();
+        Eat();
+        Eat();
+        return;
+    }
     if (m_currentToken.m_value=="importchar") {
         Eat();
         Eat();
@@ -1350,6 +1356,10 @@ void Parser::Preprocess()
             else if (m_currentToken.m_value.toLower() =="export") {
                 Eat(TokenType::PREPROCESSOR);
                 HandleExport();
+            }
+            else if (m_currentToken.m_value.toLower() =="exportrgb8palette") {
+                Eat(TokenType::PREPROCESSOR);
+                HandleExportPalette();
             }
             else if (m_currentToken.m_value.toLower() =="vbmexport") {
                 Eat(TokenType::PREPROCESSOR);
@@ -2281,6 +2291,27 @@ void Parser::HandleImportChar()
 
 
 }
+
+void Parser::HandleExportPalette()
+{
+    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile =m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+    if (!QFile::exists(inFile)) {
+        ErrorHandler::e.Error("File not found : "+inFile,ln);
+    }
+    LImage* img = LImageIO::Load(inFile);
+    if (QFile::exists(outFile))
+        QFile::remove(outFile);
+
+
+    img->ExportRGB8Palette(outFile);
+
+}
+
 
 void Parser::HandleExport()
 {

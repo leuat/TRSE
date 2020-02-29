@@ -156,6 +156,7 @@ public:
     QStringList m_parserAppendix;
 
 
+    void HandleExportPalette();
     void HandleExport();
     void HandleVBMExport();
     void HandleVBMExportChunk();

@@ -88,6 +88,7 @@ void Compression::AddToDataVGA(QByteArray &data, LImageQImage& img, int xp, int 
 
 void Compression::AddBitplaneToData(QByteArray &data, MultiColorImage &img, int xp, int yp, int w, int h, int bpl)
 {
+    int d= 0;
     for (int y=0;y<h;y+=1)
         for (int bp=0; bp<bpl;bp++) {
             int curBit = pow(2,bp);
@@ -105,11 +106,12 @@ void Compression::AddBitplaneToData(QByteArray &data, MultiColorImage &img, int 
                 //0101
             }
             data.append(c);
+            d++;
 //            PixelChar& pc = img.m_data[40*(yy/8)+xx];
   //          data.append(PixelChar::reverse(pc.p[yy&7]));
         }
      }
-
+    qDebug() << "AddBitplaneToData size " <<d << w << h;
 
 }
 

@@ -24,12 +24,15 @@ void ASTDispather68000::dispatch(NodeBinOP *node) {
     QString d0 = as->m_regAcc.Get();
     as->Comment("BOP NEW register: " + d0);
 //    if (m_clearFlag) {
+
         TransformVariable(as,"moveq",d0,"#0");
     //    m_clearFlag=false;
   //  }
     node->m_left->Accept(this);
     TransformVariable(as,"move"+getEndType(as,node->m_left, node->m_right),d0 + "     ; BOP move",as->m_varStack.pop());
 
+//    qDebug() << "NodeBinOp : " << op;
+  //  as->Comment("NodeBinop  : " +op);
     if (op.toLower().contains("mul") || op.toLower().contains("div"))
         op = op+".w"; else op=op + getEndType(as,node->m_left, node->m_right);//+m_lastSize;//+".l";
 
@@ -620,7 +623,7 @@ void ASTDispather68000::StoreVariable(NodeVar *n)
       //      exit(1);
             bool done = false;
             if (as->m_regAcc.m_latest.count()==2) {
-                TransformVariable(as,"moveq.l",as->m_regAcc.m_latest,"#0");
+                TransformVariable(as,"moveq.l",as->m_regAcc.m_latest,"#0 ; Clear #1");
                 done = true;
             }
             as->m_regAcc.m_latest="";
@@ -629,7 +632,7 @@ void ASTDispather68000::StoreVariable(NodeVar *n)
             QString a0 = as->m_regMem.Get();
 
             if (!done && d0.toLower().startsWith("d") )
-                TransformVariable(as,"moveq.l",d0,"#0");
+                TransformVariable(as,"moveq.l",d0,"#0 ; Clear #2");
 
             //qDebug() << "Loading array: expression";
             LoadVariable(n->m_expr);
@@ -879,6 +882,102 @@ QString ASTDispather68000::getEndType(Assembler *as, Node *v) {
     return "";
 }
 
+bool ASTDispather68000::HandleSimpleAeqAopConst(NodeAssign *node)
+{
+    QString var = node->m_left->getValue(as);
+    NodeBinOP* bop = dynamic_cast<NodeBinOP*>(node->m_right);
+    if (bop==nullptr)
+        return false;
+
+    bop->SwapVariableFirst();
+    //if (bop->m_left->)
+
+    NodeVar* v2 = dynamic_cast<NodeVar*>(bop->m_left);
+    // v2 MUst be variable
+    if (v2==nullptr)
+        return false;
+    // Make sure that A:=A op ...
+    if (v2->getValue(as)!=var)
+        return false;
+    // rvar must be pure numeric
+    if (!bop->m_right->isPureNumeric())
+        return false;
+
+    QString num = bop->m_right->getValue(as);
+
+    // Good to go!
+    as->BinOP(bop->m_op.m_type);
+    QString op = as->m_varStack.pop();
+
+    // Can be done directly
+    if (bop->m_op.m_type==TokenType::PLUS || bop->m_op.m_type==TokenType::MINUS || bop->m_op.m_type==TokenType::OR || bop->m_op.m_type==TokenType::AND)
+        as->Asm(op +getEndType(as,v2) + " "+num +","+var + " ; Optimization: simple A := A op Const ADD SUB OR AND");
+    else {
+        QString d0 = as->m_regAcc.Get();
+        as->Asm("move"+getEndType(as,v2) + " "+var+","+d0);
+        as->Asm(op +getEndType(as,v2) + " "+num +","+d0 + " ; Optimization: simple A := A op Const MUL DIV SHR etc");
+        as->Asm("move"+getEndType(as,v2) + " "+d0+","+var);
+        as->m_regAcc.Pop(d0);
+    }
+
+    return true;
+}
+
+bool ASTDispather68000::HandleSimpleAeqBopConst(NodeAssign *node)
+{
+    QString var = node->m_left->getValue(as);
+//    return false;
+    // First: Check if right is simple,
+    if (node->m_right->isPure() && !node->m_right->isArrayIndex() && !node->m_left->isArrayIndex()) {
+        QString rval = node->m_right->getValue(as);
+
+        as->Asm("move"+getEndType(as,node->m_left) + " "+rval+","+var + " ; Simple a:=b optimization");
+        return true;
+    }
+    // Stop here for now
+    return false;
+
+
+    NodeBinOP* bop = dynamic_cast<NodeBinOP*>(node->m_right);
+    if (bop==nullptr)
+        return false;
+
+    bop->SwapVariableFirst();
+    //if (bop->m_left->)
+
+    NodeVar* v2 = dynamic_cast<NodeVar*>(bop->m_left);
+    // v2 MUst be variable
+    if (v2==nullptr)
+        return false;
+    // Make sure that A:=A op ...
+    if (v2->getValue(as)!=var)
+        return false;
+    // rvar must be pure numeric
+    if (!bop->m_right->isPureNumeric())
+        return false;
+
+    QString num = bop->m_right->getValue(as);
+
+    // Good to go!
+    as->BinOP(bop->m_op.m_type);
+    QString op = as->m_varStack.pop();
+
+    // Can be done directly
+    if (bop->m_op.m_type==TokenType::PLUS || bop->m_op.m_type==TokenType::MINUS || bop->m_op.m_type==TokenType::OR || bop->m_op.m_type==TokenType::AND)
+        as->Asm(op +getEndType(as,v2) + " "+num +","+var + " ; Optimization: simple A := A op Const ADD SUB OR AND");
+    else {
+        QString d0 = as->m_regAcc.Get();
+        as->Asm("move"+getEndType(as,v2) + " "+var+","+d0);
+        as->Asm(op +getEndType(as,v2) + " "+num +","+d0 + " ; Optimization: simple A := A op Const MUL DIV SHR etc");
+        as->Asm("move"+getEndType(as,v2) + " "+d0+","+var);
+        as->m_regAcc.Pop(d0);
+    }
+
+    return true;
+
+}
+
+
 QString ASTDispather68000::AssignVariable(NodeAssign *node) {
 
     NodeVar* v = (NodeVar*)dynamic_cast<const NodeVar*>(node->m_left);
@@ -894,6 +993,7 @@ QString ASTDispather68000::AssignVariable(NodeAssign *node) {
 
 
 
+
     if (node->m_left->getType(as)==TokenType::INTEGER) {
         node->m_right->m_forceType = TokenType::INTEGER; // FORCE integer on right-hand side
     }
@@ -904,6 +1004,19 @@ QString ASTDispather68000::AssignVariable(NodeAssign *node) {
         node->m_right->m_forceType = TokenType::LONG; // FORCE integer on right-hand side
         node->m_right->ForceAddress();
     }
+
+
+    // Handle A = A op #num;
+    if (HandleSimpleAeqAopConst(node))
+        return "";
+
+    // Handle A = B (op #num);
+    if (HandleSimpleAeqBopConst(node))
+        return "";
+
+
+
+
     if (node->m_right->isArrayIndex()) {
         as->Comment("Assign: is Array index");
         LoadVariable((NodeVar*)node->m_right);
@@ -1069,4 +1182,5 @@ QString ASTDispather68000::ASTDispather68000::getEndType(Assembler *as, Node *v1
         return ".w";
     return ".b";
 }
+
 
