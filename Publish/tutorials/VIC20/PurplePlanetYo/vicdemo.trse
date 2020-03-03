@@ -44,5 +44,5 @@ output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
 exomize_toggle = 0
 open_files = ,data.paw, demo.ras
-project_path = /home/leuat/code/TRSE/Release/../tutorials/VIC20/PurplePlanetYo/
-current_file = data.paw
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/PurplePlanetYo/
+current_file = demo.ras

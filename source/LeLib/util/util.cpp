@@ -119,7 +119,7 @@ QString Util::BinopString(QString a) {
     QStringList lst = b.replace("+","|").replace("-","|").split("|");
 
     QString q=a;
-    QString str = "0123456789$#%abcdef ";
+    QString str = "0123456789$#%abcdef <>";
     for (int i=0;i<str.length();i++)
         q=q.replace(str[i],"");
 
@@ -133,6 +133,7 @@ QString Util::BinopString(QString a) {
 
     for (int i=0;i<q.length();i++) {
         int v;
+//        ok = false;
         ok = Util::NumberFromStringHex(lst[i+1],v);
         if (!ok)
             return pa+a+pb;
@@ -141,6 +142,7 @@ QString Util::BinopString(QString a) {
         if (q[i]=="-")
             val-=v;
     }
+//    qDebug() << "BinopString  DONE ";
 
     return pa + Util::numToHex(val) + pb;
 

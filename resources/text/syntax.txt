@@ -375,7 +375,7 @@ m; EnableRasterIRQ; C64, PLUS4, C128;
 m; StartIRQ; C64, PLUS4, C128, VIC20, PET,  NES,OK64; b
 m; StartIRQWedge; C64, PLUS4, C128; b
 m; StartRasterChain; C64, PLUS4, C128; p,b,n
-m; CloseIRQ; C64, PLUS4, C128, VIC20, PET,  NES, OK64;
+m; CloseIRQ; C64, PLUS4, C128, VIC20, PET,  NES, OK64, Amiga;
 m; CloseIRQWedge; C64, PLUS4, C128;
 m; EnableIRQ; C64, PLUS4, C128;
 m; PreventIRQ; C64, PLUS4, C128;

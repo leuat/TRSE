@@ -623,7 +623,7 @@ void ASTDispather68000::StoreVariable(NodeVar *n)
       //      exit(1);
             bool done = false;
             if (as->m_regAcc.m_latest.count()==2) {
-                TransformVariable(as,"moveq.l",as->m_regAcc.m_latest,"#0 ; Clear #1");
+                TransformVariable(as,"moveq.l",as->m_regAcc.m_latest,"#0");
                 done = true;
             }
             as->m_regAcc.m_latest="";
@@ -845,6 +845,7 @@ QString ASTDispather68000::getEndType(Assembler *as, Node *v) {
 //    getType(as)==TokenType::LONG
     if (v->m_forceType==TokenType::LONG)
         return ".l";
+
     NodeVar* nv = dynamic_cast<NodeVar*>(v);
     TokenType::Type t = v->getType(as);
     if (nv!=nullptr && nv->m_expr!=nullptr) {
@@ -862,6 +863,18 @@ QString ASTDispather68000::getEndType(Assembler *as, Node *v) {
 
         }
     }
+    if (v->isPureNumeric()) {
+        int ival =v->getValueAsInt(as);
+        if (ival>=256*256)
+            return ".l";
+        if (ival>=256)
+            return ".w";
+        return ".w";
+
+
+    }
+
+
     NodeNumber* n = dynamic_cast<NodeNumber*>(v);
     if (n!=nullptr) {
 
@@ -1004,6 +1017,11 @@ QString ASTDispather68000::AssignVariable(NodeAssign *node) {
         node->m_right->m_forceType = TokenType::LONG; // FORCE integer on right-hand side
         node->m_right->ForceAddress();
     }
+    if (node->m_left->getType(as)==TokenType::POINTER && node->m_left->isArrayIndex()) {
+        //if (node->m_left->getArrayType(as))
+        node->m_right->m_forceType = node->m_left->getArrayType(as); // FORCE integer on right-hand side
+    }
+
 
 
     // Handle A = A op #num;
@@ -1018,12 +1036,14 @@ QString ASTDispather68000::AssignVariable(NodeAssign *node) {
 
 
     if (node->m_right->isArrayIndex()) {
-        as->Comment("Assign: is Array index");
+        as->Comment("Assign: is Array index, forcetype " +TokenType::getType(node->m_right->m_forceType));
         LoadVariable((NodeVar*)node->m_right);
 
     }
-    else
+    else {
+        as->Comment("Assign: Regular, forcetype " +TokenType::getType(node->m_right->m_forceType));
         node->m_right->Accept(this);
+    }
 
 
     StoreVariable(v);

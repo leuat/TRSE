@@ -134,6 +134,10 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("popa")) {
         as->Asm("movem.l (sp)+,d0-d7/a0-a6");
     }
+    if (Command("closeirq")) {
+        as->Asm("movem.l (sp)+,d0-d7/a0-a6");
+        as->Asm("moveq    #0,d0");
+    }
 
     if (Command("WaitVerticalBlank")) {
         QString lbl = as->NewLabel("waitVB");
@@ -231,6 +235,7 @@ void Methods68000::Fill(Assembler *as)
     as->Comment("Fill method");
     m_node->m_params[2]->Accept(m_dispatcher);
     Asm(as,"move.l",as->m_varStack.pop(),"d0");
+    m_node->m_params[1]->setForceType(TokenType::LONG);
     m_node->m_params[1]->Accept(m_dispatcher);
     Asm(as,"move.l",as->m_varStack.pop(),"d2");
 //    m_node->m_params[0]->Accept(m_dispatcher);
@@ -316,7 +321,7 @@ void Methods68000::Memcpy(Assembler *as)
     QString d0 = as->m_regAcc.Get();
     QString lbl = as->NewLabel("memcpy");
 
-    LoadVariable(as, "move.l",m_node->m_params[4], d0);
+    LoadVariable(as, "move",m_node->m_params[4], d0);
 //    LoadVariable(as, "lea", m_node->m_params[0], a0);
     m_dispatcher->LoadAddress(m_node->m_params[0],a0);
  //   m_dispatcher->LoadAddress()
