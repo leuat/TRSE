@@ -1378,7 +1378,7 @@ void TRSEProject::VerifyDefaults() {
 
 
     if (m_ini.getString("system")=="VIC20") {
-        if (m_ini.contains("vic_memory_config"))
+        if (!m_ini.contains("vic_memory_config"))
             m_ini.setString("vic_memory_config","none");
 
         if (!m_ini.contains("via_zeropages")) {
