@@ -174,8 +174,8 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     else process.startDetached(emu, params);
 
 #else
-    qDebug() << emu << params;
-    qDebug() << "FormRasEditor params" << emu << params;
+//    qDebug() << emu << params;
+//    qDebug() << "FormRasEditor params" << emu << params;
     process.startDetached(emu, params);
 #endif
 //    process.pi

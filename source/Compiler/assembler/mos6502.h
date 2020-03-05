@@ -49,6 +49,7 @@ public:
 
 
     static QString m_defaultZeroPointers;
+    static QString m_defaultViaZeroPointers;
     static QString m_defaultTempZeroPointers;
 
     QStringList m_varZeroPointers;

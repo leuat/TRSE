@@ -23,6 +23,7 @@
 #include "source/Compiler/syntax.h"
 
 QString AsmMOS6502::m_defaultZeroPointers = "$02, $04, $08, $16, $0B,$0D, $10, $12, $22,$24, $68";
+QString AsmMOS6502::m_defaultViaZeroPointers = "$5B, $5C, $5D, $5E";
 QString AsmMOS6502::m_defaultTempZeroPointers = "$54, $56, $58, $5A";
 
 

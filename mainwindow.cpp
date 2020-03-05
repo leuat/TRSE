@@ -1377,9 +1377,14 @@ void TRSEProject::VerifyDefaults() {
     }
 
 
-    if (m_ini.getString("system")=="VIC_20") {
+    if (m_ini.getString("system")=="VIC20") {
         if (m_ini.contains("vic_memory_config"))
             m_ini.setString("vic_memory_config","none");
+
+        if (!m_ini.contains("via_zeropages")) {
+            m_ini.setStringList("via_zeropages", AsmMOS6502::m_defaultViaZeroPointers.split(","));
+        }
+
     }
     if (!m_ini.contains("border_color"))
         m_ini.setFloat("border_color",0);

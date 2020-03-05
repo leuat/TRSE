@@ -99,6 +99,7 @@ void DialogProjectSettings::FillFromIni()
 
     if (m_ini->getString("system")=="VIC20") {
         ui->tabConfigs->setCurrentWidget(ui->tabVic20);
+        ui->leViaZP->setText(  fromStringList(m_ini->getStringList("via_zeropages")));
     }
 
     ui->cmbVic20Config->setCurrentText(m_ini->getString("vic_memory_config"));
@@ -216,6 +217,8 @@ void DialogProjectSettings::FillToIni()
     if (m_ini->getString("system")=="VIC20") {
 
         m_ini->setString("vic_memory_config",ui->cmbVic20Config->currentText());
+        m_ini->setStringList("via_zeropages", toStringList(ui->leViaZP->text()));
+
     }
 
     if (m_ini->getString("system")=="NES") {

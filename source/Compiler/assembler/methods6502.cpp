@@ -15069,19 +15069,19 @@ void Methods6502::VIAIRQ(Assembler *as)
 
     as->Asm("lda #<"+name);
 //    as->Asm("sta pointers_vic_raster+1");
-    as->Asm("sta $D2");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP3"]);
     as->Asm("lda #>"+name);
 //    as->Asm("sta pointers_vic_raster+6");
-    as->Asm("sta $D3");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP4"]);
 
     m_node->m_params[1]->Accept(m_dispatcher);
     as->Term();
 //    as->Asm("sta timers_vic_raster+1");
-    as->Asm("sta $D0");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP1"]);
     m_node->m_params[2]->Accept(m_dispatcher);
     as->Term();
 //    as->Asm("sta timers_vic_raster+3");
-    as->Asm("sta $D1");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP2"]);
 
     as->Asm("ldx #0"); // Start timer from raster line 0
     as->Asm("jsr init_via_irq");
@@ -15094,11 +15094,11 @@ void Methods6502::VIARasterIRQ(Assembler *as)
     m_node->RequireNumber(m_node->m_params[2], "RasterIRQ", m_node->m_op.m_lineNumber);
 
     as->Asm("lda #<"+name);
-    as->Asm("sta $D2");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP3"]);
   //  as->Asm("sta pointers_vic_raster+1");
     as->Asm("lda #>"+name);
 //    as->Asm("sta pointers_vic_raster+6");
-    as->Asm("sta $D3");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP4"]);
 
     LoadVar(as,1);
     as->Asm("tax");
@@ -15111,22 +15111,22 @@ void Methods6502::VIARasterIRQ(Assembler *as)
     as->Asm("bne " + lbl1);
     as->Asm("lda #$86");
 //    as->Asm("sta timers_vic_raster+1");
-    as->Asm("sta $D0");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP1"]);
 
     as->Asm("lda #$56");
  //   as->Asm("sta timers_vic_raster+3");
-    as->Asm("sta $D1");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP2"]);
     as->Asm("jsr A0_vic_raster");
     as->Asm("jmp " + lbl2);
 
     as->Label(lbl1);
     as->Asm("lda #$43");
 //    as->Asm("sta timers_vic_raster+1");
-    as->Asm("sta $D0");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP1"]);
 
     as->Asm("lda #$42");
 //    as->Asm("sta timers_vic_raster+3");
-    as->Asm("sta $D1");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP2"]);
 
     as->Asm("jsr A0_vic_raster");
 

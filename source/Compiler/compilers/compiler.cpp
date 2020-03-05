@@ -70,7 +70,12 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
         delete m_assembler;
 
 
-    InitAssemblerAndDispatcher(system);
+    try {
+        InitAssemblerAndDispatcher(system);
+    } catch (FatalErrorException e) {
+        HandleError(e,"Error during pre-build");
+        return false;
+    }
 
     if (m_assembler==nullptr)
         return false;

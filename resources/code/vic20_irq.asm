@@ -35,8 +35,8 @@ A1_vic_raster:
 timers_vic_raster:
 ;  lda #$56
 ;  ldx #$86
-  lda $D0
-  ldx $D1
+  lda @VIA_ZP1
+  ldx @VIA_ZP2
   sta $9116     ; load the timer low byte latches
   sta $9126
 
@@ -57,10 +57,10 @@ timers_vic_raster:
 
 pointers_vic_raster:
 ;  lda #00     ; set the raster IRQ routine pointer
-   lda $D2
+   lda @VIA_ZP3
   sta $314
 ;  lda #00
-  lda $D3
+  lda @VIA_ZP4
   sta $315
   lda #$c0
   sta $912e     ; enable Timer A underflow interrupts
