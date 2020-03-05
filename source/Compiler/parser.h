@@ -158,6 +158,7 @@ public:
 
     void HandleExportPalette();
     void HandleExport();
+    void HandleExportPrg2Bin();
     void HandleVBMExport();
     void HandleVBMExportChunk();
     void HandleExportFrame();

@@ -587,6 +587,14 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         return;
     }
+    if (m_currentToken.m_value=="exportprg2bin") {
+        Eat();
+        Eat();
+        Eat();
+        Eat();
+        Eat();
+        return;
+    }
     if (m_currentToken.m_value=="importchar") {
         Eat();
         Eat();
@@ -1360,6 +1368,10 @@ void Parser::Preprocess()
             else if (m_currentToken.m_value.toLower() =="exportrgb8palette") {
                 Eat(TokenType::PREPROCESSOR);
                 HandleExportPalette();
+            }
+            else if (m_currentToken.m_value.toLower() =="exportprg2bin") {
+                Eat(TokenType::PREPROCESSOR);
+                HandleExportPrg2Bin();
             }
             else if (m_currentToken.m_value.toLower() =="vbmexport") {
                 Eat(TokenType::PREPROCESSOR);
@@ -2366,6 +2378,34 @@ void Parser::HandleExport()
 
     file.close();
 
+}
+
+void Parser::HandleExportPrg2Bin()
+{
+    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile =m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    int from = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int to = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    QByteArray in  = Util::loadBinaryFile(inFile);
+    QByteArray out;
+    if (outFile.toLower().contains(".prg")) {
+        out.append((char)((from)&0xFF)); // lo byte
+        out.append((char)((from>>8)&0xFF)); // hi byte
+    }
+    int start = in[0] | ((int)(in[1])<<8);
+    for (int i=from;i<to;i++) {
+        int j = i-start;
+        if (in.count()<j)
+            ErrorHandler::e.Error("ExportPrg2Bin error: .prg file does not contain specified binary range.", m_currentToken.m_lineNumber);
+        out.append(in[j]);
+    }
+    Util::SaveByteArray(out,outFile);
 }
 
 void Parser::HandleVBMExport()
