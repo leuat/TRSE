@@ -143,6 +143,7 @@ m; InitMatmulVec; Amiga;
 m; InitMatmulVecNormalZ; Amiga;
 m; InitProjectToScreen; Amiga;
 m; InitP61PlayerInternal; Amiga;
+m; InitProjectAllVertices; Amiga;
 
 
 # ** CALL METHODS
@@ -182,7 +183,7 @@ m; MatMulVecNormal; Amiga; a,a,a,i
 m; ProjectToScreen; Amiga; a,i,l,l
 m; WaitForBlitter; Amiga;
 m; VBIRQ;Amiga; p
-
+m; ProjectAllVertices; Amiga; a,a,l,l,l,l
 
 #Memory routines
 m; Poke; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a,b,b

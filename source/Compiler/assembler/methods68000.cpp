@@ -29,6 +29,13 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("endcustomcopperlist"))
         as->Asm("move.l #$fffffffe,(a5)+");
 
+    if (Command("InitProjectAllVertices")) {
+        as->IncludeFile(":resources/code/amiga/init_projectall.s");
+    }
+    if (Command("ProjectAllVertices")) {
+        ProjectAllVertices(as);
+    }
+
     if (Command("InitP61PlayerInternal")) {
         as->Asm("jsr init_p1_cont");
         as->IncludeFile(":resources/code/amiga/init_p61_player.s");
@@ -219,7 +226,7 @@ void Methods68000::DrawLine(Assembler *as)
     m_node->m_params[3]->Accept(m_dispatcher);
     Asm(as,"move.l",as->m_varStack.pop(),"d3");
     m_node->m_params[5]->Accept(m_dispatcher);
-    Asm(as,"move.l",as->m_varStack.pop(),"d5");
+    Asm(as,"move.w",as->m_varStack.pop(),"d5");
     //m_node->m_params[4]->Accept(m_dispatcher);
     //Asm(as,"lea",as->m_varStack.pop(),"a0");
     m_dispatcher->LoadAddress(m_node->m_params[4]);
@@ -623,7 +630,31 @@ void Methods68000::EnableInterrupt(Assembler *as)
     as->m_regAcc.Pop(d0);
 
 //    as->Asm("move.b "+as->m_varStack.pop() + ",d4");
-//    as->Asm("move.b "+m_node->m_params[0]"",d0");
+    //    as->Asm("move.b "+m_node->m_params[0]"",d0");
+}
+
+void Methods68000::ProjectAllVertices(Assembler *as)
+{
+    m_dispatcher->LoadVariable(m_node->m_params[3]);
+    as->Asm("move.l " + as->m_varStack.pop() +",pa_cxx");
+    m_dispatcher->LoadVariable(m_node->m_params[4]);
+    as->Asm("move.l " + as->m_varStack.pop() +",pa_cyy");
+    m_dispatcher->LoadVariable(m_node->m_params[5]);
+    as->Asm("move.l " + as->m_varStack.pop() +",pa_czz");
+
+    m_dispatcher->LoadVariable(m_node->m_params[2]);
+    as->Asm("move.l " + as->m_varStack.pop() +",d3");
+
+
+    m_dispatcher->LoadAddress(m_node->m_params[0], "a0");
+    m_dispatcher->LoadAddress(m_node->m_params[1], "a2");
+    as->Asm("jsr call_pall");
+
+/*            move.l pa_vert,a2
+            move.l pa_obj,a0
+
+            move.l len,d3
+  */
 }
 
 
