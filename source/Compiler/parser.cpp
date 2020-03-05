@@ -2402,7 +2402,9 @@ void Parser::HandleExportPrg2Bin()
     for (int i=from;i<to;i++) {
         int j = i-start;
         if (in.count()<j)
-            ErrorHandler::e.Error("ExportPrg2Bin error: .prg file does not contain specified binary range.", m_currentToken.m_lineNumber);
+            out.append((char)0);
+        else
+  //          ErrorHandler::e.Error("ExportPrg2Bin error: .prg file does not contain specified binary range.", m_currentToken.m_lineNumber);
         out.append(in[j]);
     }
     Util::SaveByteArray(out,outFile);
