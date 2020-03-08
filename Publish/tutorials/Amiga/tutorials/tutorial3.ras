@@ -24,7 +24,7 @@ var
 
 	// 40 = 320/8 = bytes per bitplane
    	@define width 40 
-   	@define height 200
+   	@define height 256
    	@define bitplanes 4
    	
 	@define bitmapFont_noCharactersInColumns 10

@@ -30,6 +30,8 @@ public:
     ASTDispather68000();
     QString m_lastSize;
 
+    QStringList m_regs = QStringList()<<"d0" <<"d1"<<"d2" <<"d3"<<"d4" <<"d5"<<"d6";
+
     void dispatch(NodeBinOP *node) override;
 //    void dispatchOld(NodeBinOP *node) override;
     void dispatch(NodeNumber *node) override;
