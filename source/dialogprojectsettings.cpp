@@ -323,10 +323,10 @@ void DialogProjectSettings::on_btnDefaultZP_clicked()
           ui->leInternalZp3->setText("$84");
           ui->leInternalZp4->setText("$86");
           ui->leZeropageScreenMemory->setText("$FE");
-          ui->leDecrunchZp1->setText("$7A");
-          ui->leDecrunchZp2->setText("$7B");
-          ui->leDecrunchZp3->setText("$7D");
-          ui->leDecrunchZp4->setText("$7E");
+          ui->leDecrunchZp1->setText("$7B");
+          ui->leDecrunchZp2->setText("$7C");
+          ui->leDecrunchZp3->setText("$7E");
+          ui->leDecrunchZp4->setText("$7F");
           ui->leZeropages->setText("$64, $66, $68, $6A, $6C, $6E, $70, $72, $74, $76, $78");
       }
 
