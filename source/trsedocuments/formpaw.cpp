@@ -274,45 +274,93 @@ void FormPaw::on_tabData_cellChanged(int row, int column)
 
 void PawThread::CreateIncludefile()
 {
-    QString incFile = m_projectData->getString("project_path")+"/" +m_pawData->getString("ras_include_file");
-    output +="Include file written to :" + incFile + "\n";
-    emit EmitTextUpdate();
- //   ui->leOutput->setText(output);
+    bool twoFiles = m_pawData->getString("ras_include_file").contains(';');
 
+    if (!twoFiles) {
 
+        QString incFile = m_projectData->getString("project_path")+"/" +m_pawData->getString("ras_include_file");
+        output +="Include file written to :" + incFile + "\n";
+        emit EmitTextUpdate();
 
-    if (QFile::exists(incFile))
-        QFile::remove(incFile);
+        if (QFile::exists(incFile))
+            QFile::remove(incFile);
 
-    QFile file(incFile);
-    file.open(QIODevice::ReadWrite);
-    QTextStream stream(&file);
+        QFile file(incFile);
+        file.open(QIODevice::ReadWrite);
+        QTextStream stream(&file);
 
-/*    for d in data:
-        s = "\t" + d[0] + " : IncBin(\""+d[3]+"\", " + hex(d[4]).replace("0x","$")+");"
-        print s
-        text_file.write(s+"\n")
-  */
-    int address = Util::NumberFromStringHex(m_pawData->getString("packed_address"));
-    QVector<int> addresses;
-    for (PawFile& pf : *m_files) {
-        QString s = pf.name + " : IncBin(\""+pf.incCFile+"\", " + Util::numToHex(address) + ");\n";
-        address+=pf.packedSize;
-        addresses.append(address);
-        stream<<s;
+        int address = Util::NumberFromStringHex(m_pawData->getString("packed_address"));
+        QVector<int> addresses;
+        for (PawFile& pf : *m_files) {
+            QString s = pf.name + " : IncBin(\""+pf.incCFile+"\", " + Util::numToHex(address) + ");\n";
+            address+=pf.packedSize;
+            addresses.append(address);
+            stream<<s;
+        }
+        QString adr = m_pawData->getString("address_field") + " : array [" + QString::number(m_files->count()*2) +"] of byte = (\n";
+        for (int i: addresses){
+            adr+="\t"+QString::number(i&255) + ", ";
+            adr+=QString::number((i>>8)&255);
+            if (i!=addresses[addresses.count()-1])
+                adr+=",";
+            adr+="\n";
+        }
+
+        adr = adr+");";
+        stream << adr;
+        file.close();
+
     }
-    QString adr = m_pawData->getString("address_field") + " : array [" + QString::number(m_files->count()*2) +"] of byte = (\n";
-    for (int i: addresses){
-        adr+="\t"+QString::number(i&255) + ", ";
-        adr+=QString::number((i>>8)&255);
-        if (i!=addresses[addresses.count()-1])
-            adr+=",";
-        adr+="\n";
-    }
+    else
+    {
 
-    adr = adr+");";
-    stream << adr;
-    file.close();
+        QStringList fNames = m_pawData->getString("ras_include_file").split(';');
+
+        QString incFile1 = m_projectData->getString("project_path")+"/" +fNames[0];
+        QString incFile2 = m_projectData->getString("project_path")+"/" +fNames[1];
+
+        output +="Include BIN file written to :" + incFile1 + "\n";
+        output +="Include ARRAY file written to :" + incFile2 + "\n";
+        emit EmitTextUpdate();
+
+        if (QFile::exists(incFile1))
+            QFile::remove(incFile1);
+        if (QFile::exists(incFile2))
+            QFile::remove(incFile2);
+
+        QFile file1(incFile1);
+        file1.open(QIODevice::ReadWrite);
+        QTextStream stream1(&file1);
+
+        QFile file2(incFile2);
+        file2.open(QIODevice::ReadWrite);
+        QTextStream stream2(&file2);
+
+        int address = Util::NumberFromStringHex(m_pawData->getString("packed_address"));
+        QVector<int> addresses;
+        for (PawFile& pf : *m_files) {
+            QString s = pf.name + " : IncBin(\""+pf.incCFile+"\", " + Util::numToHex(address) + ");\n";
+            address+=pf.packedSize;
+            addresses.append(address);
+            stream1<<s;
+        }
+
+        QString adr = m_pawData->getString("address_field") + " : array [" + QString::number(m_files->count()*2) +"] of byte = (\n";
+        for (int i: addresses){
+            adr+="\t"+QString::number(i&255) + ", ";
+            adr+=QString::number((i>>8)&255);
+            if (i!=addresses[addresses.count()-1])
+                adr+=",";
+            adr+="\n";
+        }
+
+        adr = adr+");";
+        stream2 << adr;
+
+        file1.close();
+        file2.close();
+
+    }
 
 }
 
