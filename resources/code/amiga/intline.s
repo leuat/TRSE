@@ -93,7 +93,7 @@ waitblt:
         move.w	d0,BLTCON0(a6)
         moveq	#0,d0
         move.b	oct(pc,d5.w),d0
-        bset	#1,d0
+        bclr	#1,d0
         move.w	d0,BLTCON1(a6)
         move.l	d4,BLTCPTH(a6)
         move.l	d4,BLTDPTH(a6)

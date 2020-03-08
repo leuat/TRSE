@@ -257,6 +257,8 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
             QColor color = QColor(img.pixel(xx,yy));
             int yp = yy + xx%(int)strength.y();
             int xp = xx + yy%(int)strength.z();
+            xp=xp&3;
+            yp=yp&3;
             color.setRed(min((float)pow(color.red(),gamma) + bayer4x4(xp % 4,yp % 4),255.0f));
             color.setGreen(min((float)pow(color.green(),gamma) + bayer4x4(xp % 4,yp % 4),255.0f));
             color.setBlue(min((float)pow(color.blue(),gamma) + bayer4x4(xp % 4,yp % 4),255.0f));

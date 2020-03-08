@@ -632,7 +632,7 @@ void ASTDispather68000::StoreVariable(NodeVar *n)
             QString a0 = as->m_regMem.Get();
 
             if (!done && d0.toLower().startsWith("d") )
-                TransformVariable(as,"moveq.l",d0,"#0 ; Clear #2");
+                TransformVariable(as,"moveq.l",d0,"#0");
 
             //qDebug() << "Loading array: expression";
             LoadVariable(n->m_expr);
