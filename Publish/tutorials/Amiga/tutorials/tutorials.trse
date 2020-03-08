@@ -37,4 +37,5 @@ pascal_settings_use_local_variables = 0
 exomize_toggle = 0
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/Amiga/tutorials/
 open_files = ,tutorial5_twister.asm, tutorial5_twister.fjo, tutorial5_twister.ras, tutorial4_3D.ras, tutorial3.ras, tutorial2.ras, tutorial1.ras
-current_file = tutorial5_twister.fjo
+current_file = tutorial5_twister.asm
+exomizer_toggle = 0
