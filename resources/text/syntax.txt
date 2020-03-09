@@ -86,6 +86,8 @@ m; vbmScrollRight; VIC20 ;
 m; vbmScrollFixTop; VIC20 ;
 m; vbmScrollFixBottom; VIC20 ;
 
+m; vbmInitScreenShiftLeft; VIC20; b
+m; vbmInitScreenShiftRight; VIC20; b
 m; vbmScreenShiftLeft; VIC20 ; b, b
 m; vbmScreenShiftRight; VIC20 ; b, b
 

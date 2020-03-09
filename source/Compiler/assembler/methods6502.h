@@ -242,8 +242,8 @@ public:
     void vbmScrollFixTop(Assembler *as);
     void vbmScrollFixBottom(Assembler *as);
 
-    void initVbmScreenShiftLeft(Assembler *as);
-    void initVbmScreenShiftRight(Assembler *as);
+    void vbmInitScreenShiftLeft(Assembler *as);
+    void vbmInitScreenShiftRight(Assembler *as);
     void vbmScreenShiftLeft(Assembler *as);
     void vbmScreenShiftRight(Assembler *as);
 

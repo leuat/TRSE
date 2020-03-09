@@ -1,11 +1,11 @@
 <h3>vbmSetDisplayMode( [byte] );</h3>
 <ul>
-    <li>[byte] - (0)=20 or (1)=19 display mode</li>
+    <li>[byte] - 0 - 15:  Mode 0 is the default and creates a full screen bitmap</li>
 </ul>
 
 
 <h3>Description</h3>
-<p>Set up the Vic Bitmap Mode (VBM) with either 20 or 19 displayed columns. 8K or more
+<p>Set up the Vic Bitmap Mode (VBM) with a specified width and height. 8K or more
     of RAM is required to use this mode. <strong>More information about the Vic Bitmap Mode (VBM)
         can be found in the Platform help section.
     </strong>
@@ -14,21 +14,37 @@
 <p>The display mode needs to be set up before any other VBM command is executed.</p>
 
 <ul>
-<li>0 - Display mode 0 creates a full screen bitmap of 20 columns (160 pixels) and 192 pixel rows.</li>
-<li>1 - Display mode 1 creates the same size bitmap, but only displays 19 columns on screen.
-The 20th column is hidden and can be used for scrolling games.  See vbmScreenShiftLeft and vbmScreenShiftRight.</li>
+    <li>0 - 20 x 24 characters - 160 x 192 pixels.  Free RAM: $10f0 - $10ff</li>
+    <li>1 - As above but the last column is not shown. To be used for scrolling bitmaps.</li>
+    <li>2 - 20 x 22 characters - 160 x 176 pixels.  Free RAM: $10dc - $10ff, $1ec0 - $1fff</li>
+    <li>3 - As above but the last column is not shown. To be used for scrolling bitmaps.</li>
+    <li>4 - 20 x 20 characters - 160 x 160 pixels.  Free RAM: $10c8 - $10ff, $1d80 - $1fff</li>
+    <li>5 - As above but the last column is not shown. To be used for scrolling bitmaps.</li>
+    <li>6 - 20 x 18 characters - 160 x 144 pixels.  Free RAM: $1084 - $10ff, $1c40 - $1fff</li>
+    <li>7 - As above but the last column is not shown. To be used for scrolling bitmaps.</li>
+    <li>8 - 18 x 24 characters - 144 x 192 pixels.  Free RAM: $10d8 - $10ff, $1e80 - $1fff</li>
+    <li>9 - As above but the last column is not shown. To be used for scrolling bitmaps.</li>
+    <li>10 - 18 x 22 characters - 144 x 176 pixels.  Free RAM: $10c6 - $10ff, $1d60 - $1fff</li>
+    <li>11 - As above but the last column is not shown. To be used for scrolling bitmaps.</li>
+    <li>12 - 18 x 20 characters - 144 x 160 pixels.  Free RAM: $10b4 - $10ff, $1c40 - $1fff</li>
+    <li>13 - As above but the last column is not shown. To be used for scrolling bitmaps.</li>
+    <li>14 - 18 x 18 characters - 144 x 144 pixels.  Free RAM: $10a2 - $10ff, $1820 - $1fff</li>
+    <li>15 - As above but the last column is not shown. To be used for scrolling bitmaps.</li>
 </ul>
 
+
 <h3>How it works</h3>
-<p>VBM creates a full screen bitmap using 240 (20 x 12) double heigh characters.  This presents a 160 x 192
-pixel display on screen.</p>
+<p>The default VBM mode 0 creates a full screen bitmap using 240 (20 x 12) double heigh characters.  This presents a 160 x 192
+pixel display on screen.  Other modes create a variety of screen sizes with free RAM to use between the screen and bitmap and also
+at the end of the bitmap.</p>
+
 <p>The way characters are laid out is a little differently to what you may be used to
     on the standard Vic 20 character screen. This is to make manipulating the bitmap
     simpler and easier to understand.
 </p>
 <p>The first double height character is 16 (a space and ! character) and this is placed
     at the top left of the screen.  Beneath that character 17 is placed (a " and # character),
-    then 18 (a $ and %) and so on unit character 27 (a 6 and a 7 character) which is in the 12th row.
+    then 18 (a $ and %) and so on unit character 27 (a 6 and a 7 character) which is in the 12th row on mode 0.
 </p>
 <p>Character 28 (an 8 and a 9) is printed in the next column back at the top. This pattern is
     repeated, filling each column in turn until all 20 columns have been populated.
@@ -43,19 +59,25 @@ pixel display on screen.</p>
 <h3>Screen and Character memory</h3>
 <p>The Vic 20 is set up to have both the screen memory and character memory start at
     address $1000 (4096).  It is also set to use double height characters which allows
-    the screen memory to be completely filled with 240 characters.
+    the screen memory to be completely filled with 240 characters in mode 0 & 1.  Other 
+    modes require fewer characters.
 </p>
 
 <h3>$1000 to $10F0</h3>
 <p>The screen memory occupies $1000 through to $10F0.  $1100 through to $1FFF is
-    therefore free for the bitmap.</p>
+    therefore free for the bitmap.  Other screen modes require fewer characters so more
+    memory will be available to use for your own program.
+</p>
 
 <h3>$1100 to $1FFF</h3>
 <p>The character memory occupies $1000 through to $1FFF, however, as this overlaps
     with the screen memory, the first 240 bytes cannot be used.  This is why the
     first character printed to the screen memory is number 16 (space and !) and not number 0.
     The usable character memory therefore starts at $1100 (character 16) and this
-    extends to $1FFF.  Writing to this area of memory will modify the bitmap.</p>
+    extends to $1FFF.  Writing to this area of memory will modify the bitmap.
+    Other modes require fewer characters and as such a smaller bitmap so some bytes will
+    be available to use at the end of the bitmap in some modes.
+</p>
     
 <h3>Working with the bitmap</h3>
 <p>You are free to write your own routines to modify the btimap memory ($1100 through

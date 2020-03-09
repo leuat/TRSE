@@ -264,10 +264,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("vbmScrollFixBottom"))
         vbmScrollFixBottom(as);
 
-    if (Command("initVbmScreenShiftLeft"))
-        initVbmScreenShiftLeft(as);
-    if (Command("initVbmScreenShiftRight"))
-        initVbmScreenShiftRight(as);
+    if (Command("vbmInitScreenShiftLeft"))
+        vbmInitScreenShiftLeft(as);
+    if (Command("vbmInitScreenShiftRight"))
+        vbmInitScreenShiftRight(as);
     if (Command("vbmScreenShiftLeft"))
         vbmScreenShiftLeft(as);
     if (Command("vbmScreenShiftRight"))
@@ -3881,7 +3881,7 @@ void Methods6502::vbmScrollFixBottom(Assembler* as)
 
 }
 
-void Methods6502::initVbmScreenShiftLeft(Assembler* as)
+void Methods6502::vbmInitScreenShiftLeft(Assembler* as)
 {
     if (m_node->m_isInitialized["vbmScreenShiftLeft"])
         return;
@@ -3891,12 +3891,86 @@ void Methods6502::initVbmScreenShiftLeft(Assembler* as)
     if (as->m_internalZP.count()==0)
         return;
 
+    QStringList sl;
+
+    int mode = 0;
+
+    if ( m_node->m_params[0]->isPureNumeric() ) {
+
+        // pure numeric
+        mode = m_node->m_params[0]->getValueAsInt(as);
+
+        if (mode <0 || mode > 15)
+            ErrorHandler::e.Error("vbmInitScreenShiftLeft - Please pass in a constant: 0 - 15", m_node->m_op.m_lineNumber);
+
+    } else {
+
+        // complex not supported
+        ErrorHandler::e.Error("vbmInitScreenShiftLeft - Please pass in a constant: 0 - 15", m_node->m_op.m_lineNumber);
+
+    }
+
     as->Comment("VBM - Shift the screen to the left");
     as->Comment("x reg = start line, vbmY = end line");
-    as->IncludeFile(":resources/code/vbm/vbmScreenShiftLeft.asm");
+    //as->IncludeFile(":resources/code/vbm/vbmScreenShiftLeft.asm");
+    /*
+    vbmScreenShiftLeft
+        ;ldx vbmX	; line to start at
+    vbmLSP_loop
+        lda $1100,x ; to get bit from left
+        asl
+        rol $1100+$E40,x
+        rol $1100+$D80,x
+        rol $1100+$CC0,x
+        rol $1100+$C00,x
+        rol $1100+$B40,x
+        rol $1100+$A80,x
+        rol $1100+$9C0,x
+        rol $1100+$900,x
+        rol $1100+$840,x
+        rol $1100+$780,x
+        rol $1100+$6C0,x
+        rol $1100+$600,x
+        rol $1100+$540,x
+        rol $1100+$480,x
+        rol $1100+$3C0,x
+        rol $1100+$300,x
+        rol $1100+$240,x
+        rol $1100+$180,x
+        rol $1100+$C0,x
+        rol $1100,x
 
+        inx
+        cpx vbmY	; line to end at
+        bne vbmLSP_loop
+*/
+    int inc = 0, cnt = 0;
+    if (mode == 0 || mode == 1) { inc = 192; cnt = 20; }
+    if (mode == 2 || mode == 3) { inc = 176; cnt = 20; }
+    if (mode == 4 || mode == 5) { inc = 160; cnt = 20; }
+    if (mode == 6 || mode == 7) { inc = 144; cnt = 20; }
+    if (mode == 8 || mode == 9) { inc = 192; cnt = 18; }
+    if (mode == 10 || mode == 11) { inc = 176; cnt = 18; }
+    if (mode == 12 || mode == 13) { inc = 160; cnt = 18; }
+    if (mode == 14 || mode == 15) { inc = 144; cnt = 18; }
+
+    sl << "vbmScreenShiftLeft";
+    sl << " lda $1100,x";
+    sl << " asl ; to get bit from left";
+
+    for (int i = cnt-1; i >= 0; i--) {
+        sl << " rol $1100+"+ QString::number( i * inc ) +",x";
+    }
+
+    sl << " inx ; next row";
+    sl << " cpx vbmY ; line to end at";
+    sl << " bne vbmScreenShiftLeft";
+    sl << " rts";
+
+    as->m_startInsertAssembler << sl;
+    //qDebug( "Here" );
 }
-void Methods6502::initVbmScreenShiftRight(Assembler* as)
+void Methods6502::vbmInitScreenShiftRight(Assembler* as)
 {
     if (m_node->m_isInitialized["vbmScreenShiftRight"])
         return;
@@ -3908,14 +3982,16 @@ void Methods6502::initVbmScreenShiftRight(Assembler* as)
 
     as->Comment("VBM - Shift the screen to the left");
     as->Comment("x reg = start line, vbmY = end line");
-    as->IncludeFile(":resources/code/vbm/vbmScreenShiftRight.asm");
+    //as->IncludeFile(":resources/code/vbm/vbmScreenShiftRight.asm");
 
 }
 void Methods6502::vbmScreenShiftLeft(Assembler* as)
 {
 
     VerifyInitialized("vbm","InitVbm");
-    VerifyInitialized("vbmScreenShiftLeft","InitVbmScreenShiftLeft");
+    if (!m_node->m_isInitialized["vbmScreenShiftLeft"])
+        ErrorHandler::e.Error("Must call vbmInitScreenShiftLeft first", m_node->m_op.m_lineNumber);
+
 
     as->Comment("Screen Shift Left");
 
@@ -3948,7 +4024,8 @@ void Methods6502::vbmScreenShiftRight(Assembler* as)
 {
 
     VerifyInitialized("vbm","InitVbm");
-    VerifyInitialized("vbmScreenShiftRight","InitVbmScreenShiftRight");
+    if (!m_node->m_isInitialized["vbmScreenShiftRight"])
+        ErrorHandler::e.Error("Must call vbmInitScreenShiftRight first", m_node->m_op.m_lineNumber);
 
     as->Comment("Screen Shift Left");
 
