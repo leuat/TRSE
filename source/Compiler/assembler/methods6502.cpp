@@ -3891,7 +3891,7 @@ void Methods6502::vbmInitScreenShiftLeft(Assembler* as)
     if (as->m_internalZP.count()==0)
         return;
 
-    QStringList sl;
+//    QStringList sl;
 
     int mode = 0;
 
@@ -3954,20 +3954,20 @@ void Methods6502::vbmInitScreenShiftLeft(Assembler* as)
     if (mode == 12 || mode == 13) { inc = 160; cnt = 18; }
     if (mode == 14 || mode == 15) { inc = 144; cnt = 18; }
 
-    sl << "vbmScreenShiftLeft";
-    sl << " lda $1100,x";
-    sl << " asl ; to get bit from left";
+    as->Label( "vbmScreenShiftLeft" );
+    as->Asm( "lda $1100,x" );
+    as->Asm( "asl ; to get bit from left" );
 
     for (int i = cnt-1; i >= 0; i--) {
-        sl << " rol $1100+"+ QString::number( i * inc ) +",x";
+        as->Asm( "rol $1100+"+ QString::number( i * inc ) +",x" );
     }
 
-    sl << " inx ; next row";
-    sl << " cpx vbmY ; line to end at";
-    sl << " bne vbmScreenShiftLeft";
-    sl << " rts";
+    as->Asm( "inx ; next row" );
+    as->Asm( "cpx vbmY ; line to end at" );
+    as->Asm( "bne vbmScreenShiftLeft" );
+//    sl << " rts";
 
-    as->m_startInsertAssembler << sl;
+//    as->m_startInsertAssembler << sl;
     //qDebug( "Here" );
 }
 void Methods6502::vbmInitScreenShiftRight(Assembler* as)
@@ -3983,6 +3983,49 @@ void Methods6502::vbmInitScreenShiftRight(Assembler* as)
     as->Comment("VBM - Shift the screen to the left");
     as->Comment("x reg = start line, vbmY = end line");
     //as->IncludeFile(":resources/code/vbm/vbmScreenShiftRight.asm");
+    int mode = 0;
+
+    if ( m_node->m_params[0]->isPureNumeric() ) {
+
+        // pure numeric
+        mode = m_node->m_params[0]->getValueAsInt(as);
+
+        if (mode <0 || mode > 15)
+            ErrorHandler::e.Error("vbmInitScreenShiftLeft - Please pass in a constant: 0 - 15", m_node->m_op.m_lineNumber);
+
+    } else {
+
+        // complex not supported
+        ErrorHandler::e.Error("vbmInitScreenShiftLeft - Please pass in a constant: 0 - 15", m_node->m_op.m_lineNumber);
+
+    }
+
+    as->Comment("VBM - Shift the screen to the left");
+    as->Comment("x reg = start line, vbmY = end line");
+    //as->IncludeFile(":resources/code/vbm/vbmScreenShiftLeft.asm");
+
+    int inc = 0, cnt = 0;
+    if (mode == 0 || mode == 1) { inc = 192; cnt = 20; }
+    if (mode == 2 || mode == 3) { inc = 176; cnt = 20; }
+    if (mode == 4 || mode == 5) { inc = 160; cnt = 20; }
+    if (mode == 6 || mode == 7) { inc = 144; cnt = 20; }
+    if (mode == 8 || mode == 9) { inc = 192; cnt = 18; }
+    if (mode == 10 || mode == 11) { inc = 176; cnt = 18; }
+    if (mode == 12 || mode == 13) { inc = 160; cnt = 18; }
+    if (mode == 14 || mode == 15) { inc = 144; cnt = 18; }
+
+    as->Label( "vbmScreenShiftRight" );
+    as->Asm( "lda $1100+"+ QString::number( (cnt-1) * inc )+",x" ); //lda $1100+$E40,x
+    as->Asm( "lsr ; to get bit from right" );
+
+    for (int i = 0; i < cnt; i++) {
+        as->Asm( "ror $1100+"+ QString::number( i * inc ) +",x" );
+    }
+
+
+    as->Asm( "inx ; next row" );
+    as->Asm( "cpx vbmY ; line to end at" );
+    as->Asm( "bne vbmScreenShiftRight" );
 
 }
 void Methods6502::vbmScreenShiftLeft(Assembler* as)

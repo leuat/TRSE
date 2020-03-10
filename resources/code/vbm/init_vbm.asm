@@ -142,6 +142,15 @@ vbmSDM_RowsDone
     jsr vbmLayoutCharacters
     jsr vbmCreateColumnAddresses
 
+    ; if using hidden column, set the logical width
+    lda vbmNumColumns
+    cmp #20
+    beq vbmSDM_Completed
+    cmp #18
+    beq vbmSDM_Completed
+
+    inc vbmNumColumns ; 1 hidden column
+vbmSDM_Completed
     rts
 
 
