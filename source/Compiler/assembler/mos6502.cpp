@@ -127,9 +127,10 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
     Nl();
 
 
+    QString org = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress+1);
+    StartMemoryBlock(org);
 
-
-    Asm("ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_startAddress+1));
+//    Asm("ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_startAddress+1));
 
 
 
@@ -152,7 +153,7 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
     m_source+=m_startInsertAssembler;
 
     Label(programName);
-
+    EndMemoryBlock();
 }
 
 void AsmMOS6502::EndProgram()
@@ -638,6 +639,10 @@ void AsmMOS6502::Optimise(CIniFile& ini)
 
         OptimisePassLdx("a");
 
+    if (ini.getdouble("post_optimizer_passlda")==1)
+
+        OptimisePassLdx("y");
+
     if (ini.getdouble("post_optimizer_passjmp")==1)
         OptimiseJumps();
 
@@ -740,7 +745,7 @@ void AsmMOS6502::OptimisePassLdx(QString x)
                     k=j;
                     QString op2 = getToken(l1,1);
                     QString op = getToken(l1,0);
-//                    qDebug() << op2 <<value;
+                    //qDebug() << op2 << op << l0 << l1<<value;
                     if (l0==l1 && !op2.startsWith("(") && !op2.contains(",") && !op2.startsWith("$")) {
 //                      if (l0==l1 && !op2.startsWith("(") && !op2.contains(",")) {
 //                        if (x=="a")

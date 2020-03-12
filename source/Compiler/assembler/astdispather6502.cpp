@@ -645,7 +645,7 @@ void ASTDispather6502::dispatch(NodeNumber *node)
 {
     node->DispatchConstructor(as);
 
-    QString val = "";
+    QString val = node->getValue(as);
 
     /*        if (as->m_symTab->m_constants.contains(m_op.m_value)) {
             m_val = as->m_symTab->m_constants[m_op.m_value]->m_value->m_fVal;
@@ -653,17 +653,17 @@ void ASTDispather6502::dispatch(NodeNumber *node)
 */
 
 //    qDebug() << TokenType::types[node->getType(as)];
-    if (node->m_op.m_type==TokenType::BYTE)
-        val = "#"+QString::number((int)node->m_val);
+/*    if (node->m_op.m_type==TokenType::BYTE)
+        val = QString::number((int)node->m_val);
     if (node->m_op.m_type==TokenType::INTEGER)
         val = "#"+QString::number((int)node->m_val);
     if (node->m_op.m_type==TokenType::INTEGER_CONST)
-        val = "#"+QString::number((int)node->m_val);
+        val = node->getValue(as);;
     if (node->m_op.m_type==TokenType::ADDRESS) {
 
         val = "$" + QString::number((int)node->m_val,16);
     }
-
+*/
     if (node->m_forceType==TokenType::INTEGER && node->m_val<=255) {
         as->Asm("ldy #0   ; Force integer assignment, set y = 0 for values lower than 255");
     }
@@ -683,7 +683,7 @@ void ASTDispather6502::dispatch(NodeNumber *node)
         //exit(1);
     }
 
-    // qDebug() << m_op.getType() << " for " << val;;
+//     qDebug() << " Node Number for " << val;;
 
     if (as->m_term=="")
 

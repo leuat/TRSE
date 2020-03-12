@@ -9,7 +9,10 @@ var
    	t_tab : incbin("data/twister_table.bin");
    	t_data : incbin("data/twister_data.bin");
    	
+// 2 bitplanes
+	
    	screen_data : array[2*40*256] of byte chipmem;
+// Sine table
 	sine256_data: incbin("data/sine.bin");
 
 	table2: pointer of integer;
