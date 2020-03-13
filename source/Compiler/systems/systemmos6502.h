@@ -28,6 +28,7 @@ public:
     void CreateDisk(QString currentDir, QString filename, QString iniData, bool addPrg);
     bool BuildDiskFiles(QString currentDir, QStringList& d64Params, QString iniData);
 
+    void DefaultValues() override;
 
 
 };

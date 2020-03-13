@@ -71,6 +71,17 @@ Lexer::Lexer()
 
 }
 
+Lexer::Lexer(QString text, QStringList lines, QString path) {
+    m_orgText = text;
+    m_pos = 0;
+    m_path = path;
+    if (m_text.count()>0)
+        m_currentChar = m_text[m_pos];
+    m_lines = lines;
+    m_ignorePreprocessor = true;
+    Pmm::Data::d.Init();
+}
+
 
 /*void Lexer::IncludeFiles()
 {
@@ -284,7 +295,8 @@ void Lexer::Initialize()
 {
     Pmm::Data::d.lineNumber = 0;
     m_finished = false;
-    m_currentChar = m_text[0];
+    if (m_text.count()>0)
+        m_currentChar = m_text[0];
     m_pos = 0;
     m_localPos = 0;
 }

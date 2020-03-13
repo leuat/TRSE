@@ -313,3 +313,8 @@ bool SystemMOS6502::BuildDiskFiles(QString currentDir, QStringList &d64Params, Q
 
 }
 
+void SystemMOS6502::DefaultValues()
+{
+
+}
+

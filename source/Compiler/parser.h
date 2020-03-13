@@ -83,10 +83,11 @@ public:
     bool m_ignoreAll = false;
     QStringList  m_initJumps;
     SymbolTable* m_symTab = nullptr;
-
+    CIniFile* m_projectIni;
     Parser();
-    Parser(Lexer* l) {
+    Parser(Lexer* l, CIniFile* projectFile) {
         m_lexer = l;
+        m_projectIni = projectFile;
     }
     ~Parser() {
         Delete();
@@ -163,6 +164,7 @@ public:
     void HandleVBMExportChunk();
     void HandleExportFrame();
     void HandleSpriteCompiler();
+    void HandleProjectSettingsPreprocessors();
     void Eat();
     void HandleImportChar();
 
