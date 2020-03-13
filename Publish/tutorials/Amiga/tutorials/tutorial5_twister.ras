@@ -1,0 +1,126 @@
+program Tutorial5_Twister;
+
+@requirefile "data/twister_data.bin" "Please execute the Fjong raytracer file 'tutorials5_twister.fjo' before compiling this program"
+
+var	
+
+   	j,k,l,i,time,tt,t2: integer = 0; 
+ 	n : long;
+   	t_tab : incbin("data/twister_table.bin");
+   	t_data : incbin("data/twister_data.bin");
+   	
+   	screen_data : array[2*40*256] of byte chipmem;
+	sine256_data: incbin("data/sine.bin");
+
+	table2: pointer of integer;
+		
+	sine256 : pointer of byte;
+	sine32 : array[256] of byte;
+   	
+	text: string = ("LEMONSPAWNANDTRSELEMONSPAWNANDTRSE");
+	
+
+/*
+	Two bitplanes, interleaved
+*/
+procedure SetupScreen();
+begin
+	poke16(copper_resolution, 0 , $2200); // $4000  = bitplanes, $200 = colours, 320x200
+	
+	SetCopperList32(screen_data, copper_bitplane0);
+	SetCopperList32(screen_data+^40, copper_bitplane1);
+
+	poke16(copper_mod_even,0,40);
+	poke16(copper_mod_odd,0,40);
+end;
+
+
+
+
+
+procedure RenderTwister(xp : pointer of long; tx:integer);
+var 
+  dst,d2 : pointer of long;
+begin
+	table2 := t_tab;
+	tt:=0-tx; // Text goes up
+	t2:=tx; // Twist goes down
+
+	dst := screen_data+xp;
+	
+	for i:=0 to 128 do
+	begin
+		j:=sine32[(i+t2)&255]; // Twist turning
+		k:=((tx+j)&15); // Current rotation frame
+		l:=(i-tt); // Current shift & text position in y
+		
+		j:=l>>5; // j:=l/32 - find current character
+	 	j:=(text[j&15]-1)&31; // Look up current character, store in j
+	 	// Look up : each charater is 32 height * 16 frames * 2 = 32*32 = shl 10 == shl 5 shl 5 
+	 	n:=j*32*32;
+	 	
+		l:=l&31;
+		// Look up actual table: Frame (k) + line (l) + letter (n)
+		k:=table2[k<<6+ l<<1 +n];
+
+		// Copy 2x2 rows of data
+		memcpyunroll(t_data,k,dst,0,2,4);
+		j:=k;
+		k:=k+8;
+		dst:=dst+40;
+		memcpyunroll(t_data,k,dst,0,2,4);
+		dst:=dst+40;
+		
+		k:=j;
+
+		memcpyunroll(t_data,k,dst,0,2,4);
+		k:=k+8;
+		dst:=dst+40;
+		memcpyunroll(t_data,k,dst,0,2,4);
+		dst:=dst+40;
+		
+
+	end;
+end;
+
+
+
+
+
+interrupt Raster();
+begin
+	RenderTwister(10,time/2);
+	time:=time+1;
+	ApplyCopperList();
+	
+end;
+
+
+procedure Init();
+begin
+	sine256 := sine256_data;
+	fill(screen_data,10*2*256,0);
+	// Set four colours	
+	poke16(copper_palette,2+4*1,$0555);	
+	poke16(copper_palette,2+4*2,$0800);	
+	poke16(copper_palette,2+4*3,$0F00);	
+	poke16(copper_palette,2+4*4,$0F32);	
+	// Set up sine table	
+	for i:=0 to 256 do
+	begin 
+		sine32[i]:=(sine256[i]/20);
+	end;
+
+
+end;
+
+
+begin	
+	SetupScreen();
+	Init();
+	vbirq(Raster());
+	EnableInterrupt(VB_IRQ);
+	asm("
+		bra *
+	");
+end.

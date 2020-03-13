@@ -622,17 +622,36 @@ void ASTDispather68000::StoreVariable(NodeVar *n)
     //        qDebug() << n->m_op.getType();
       //      exit(1);
             bool done = false;
-            if (as->m_regAcc.m_latest.count()==2) {
-                TransformVariable(as,"moveq.l",as->m_regAcc.m_latest,"#0");
+/*            if (as->m_regAcc.m_latest.count()==2) {
+                TransformVariable(as,"moveq.l",as->m_regAcc.m_latest + " ; StoreVariable regAcc latest","#0");
                 done = true;
-            }
+            }*/
+            as->Term();
             as->m_regAcc.m_latest="";
+            //as->Comment("PREV POP "+as->m_varStack.pop());
+  //          QString prevPop = as->m_varStack.pop();
             QString d0 = as->m_varStack.pop();
+    //        QString data = as->m_regAcc.Get(); // Get d1
+//            QString d0 = as->m_regAcc.Get();
+            QString d2 = as->m_regAcc.Get();
+            QString oldd2 = "";
+            bool newD2 = false;
+            if (d2==d0) { // If they are equal, get another one {
+                oldd2 =d2;
+                d2 = as->m_regAcc.Get();
+                newD2 = true;
+            }
+
+            //d0 = d2;
+            as->Comment("Storevar START getting new unused var "+d0);
 //            QString d0 = as->m_regAcc.Get();
             QString a0 = as->m_regMem.Get();
-
-            if (!done && d0.toLower().startsWith("d") )
-                TransformVariable(as,"moveq.l",d0,"#0");
+ //           QStringList ls = QStringList() << "d0";
+/*            if (!ls.contains(prevPop) )
+                TransformVariable(as,"move"+getEndType(as,n),data + "; clear #1",prevPop);
+*/
+//            if (!done && prevPop.toLower().startsWith("d"))
+//                TransformVariable(as,"moveq.l",d0 + "; clear #1","#0");
 
             //qDebug() << "Loading array: expression";
             LoadVariable(n->m_expr);
@@ -645,29 +664,17 @@ void ASTDispather68000::StoreVariable(NodeVar *n)
                 TransformVariable(as,"lea",a0,n->getValue(as));
 
             TransformVariable(as,"move"+getEndType(as,n),"("+a0+","+d1+")",d0);
-            //qDebug() << "Cleaning up loadvar: " <<d1;
-    //        as->m_varStack.push(d0);
+
             as->m_regMem.Pop(a0);
-/*            for (QString s: as->m_regAcc.m_free)
-                as->Comment(" END of storevar free : " +s);
-            for (QString s: as->m_regAcc.m_occupied)
-                as->Comment(" END of storevar occ : " +s);
-            as->Comment(" END of storevar latest : " +as->m_regAcc.m_latest);
-            */
-  //          as->m_regAcc.Pop(d0);
-    //        as->m_regAcc.Pop(d0);
-    //        LoadPointer(n);
-            //qDebug() << "Done: ";
+            if (m_regs.contains(d2)) {
+                as->m_regAcc.Pop(d2);
+            }
 
             return;
         }
         QString d0 = as->m_varStack.pop();
 
         TransformVariable(as,"move"+getEndType(as,n),n->getValue(as),d0);
-//        if (d0.startsWith("d"))
-  //          as->m_regAcc.Pop(d0);
-    //    as->m_varStack.push(d0);
-
 }
 
 

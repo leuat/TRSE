@@ -328,6 +328,17 @@ void Methods68000::Memcpy(Assembler *as)
     QString d0 = as->m_regAcc.Get();
     QString lbl = as->NewLabel("memcpy");
 
+
+    if (!m_node->m_params[5]->isPureNumeric())
+        ErrorHandler::e.Error("MemCpyUnroll requires parameter 5 to be a constant", m_node->m_op.m_lineNumber);
+
+    int type = m_node->m_params[5]->getValueAsInt(as);
+    QString ending = ".b";
+    if (type==2) ending=".w";
+    if (type==4) ending=".l";
+
+
+
     LoadVariable(as, "move",m_node->m_params[4], d0);
 //    LoadVariable(as, "lea", m_node->m_params[0], a0);
     m_dispatcher->LoadAddress(m_node->m_params[0],a0);
@@ -350,7 +361,7 @@ void Methods68000::Memcpy(Assembler *as)
         Asm(as,"add"+m_dispatcher->getEndType(as,m_node->m_params[3]),as->m_varStack.pop(), a1);
 
     as->Label(lbl);
-    as->Asm("move.w ("+a0+")+,("+a1+")+");
+    as->Asm("move"+ending+" ("+a0+")+,("+a1+")+");
     as->Asm("dbf "+d0+","+lbl);
 
     as->m_regMem.Pop(a0);
@@ -369,7 +380,15 @@ void Methods68000::MemcpyUnroll(Assembler *as)
     if (!m_node->m_params[4]->isPureNumeric())
         ErrorHandler::e.Error("MemCpyUnroll requires parameter 4 to be a constant", m_node->m_op.m_lineNumber);
 
+    if (!m_node->m_params[5]->isPureNumeric())
+        ErrorHandler::e.Error("MemCpyUnroll requires parameter 5 to be a constant", m_node->m_op.m_lineNumber);
+
     int cnt = m_node->m_params[4]->getValueAsInt(as);
+
+    int type = m_node->m_params[5]->getValueAsInt(as);
+    QString ending = ".b";
+    if (type==2) ending=".w";
+    if (type==4) ending=".l";
 
     m_dispatcher->LoadAddress(m_node->m_params[0],a0);
  //   m_dispatcher->LoadAddress()
@@ -384,7 +403,7 @@ void Methods68000::MemcpyUnroll(Assembler *as)
     if (ok)
         Asm(as,"add"+m_dispatcher->getEndType(as,m_node->m_params[3]),as->m_varStack.pop(), a1);
     for (int i=0;i<cnt;i++)
-        as->Asm("move.w ("+a0+")+,("+a1+")+");
+        as->Asm("move"+ending+" ("+a0+")+,("+a1+")+");
 
     as->m_regMem.Pop(a0);
     as->m_regMem.Pop(a1);

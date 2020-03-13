@@ -158,8 +158,8 @@ m; Poke32; Amiga ; a,i,l
 m; WaitVerticalBlank; Amiga;
 m; SetCopperList32; Amiga; a, a
 m; ApplyCopperList; Amiga;
-m; memcpy; Amiga; a, l,a,l, l
-m; memcpyunroll; Amiga; a, l,a,l, l
+m; memcpy; Amiga; a, l,a,l, l,i
+m; memcpyunroll; Amiga; a, l,a,l, l,i
 m; setpalette; Amiga; a, a, l
 m; ablit; Amiga; a,a,i, i,i,i,i,l,i,i,i
 m; fblit; Amiga; a,a,i, i,i,i,i,l,i,i,i
