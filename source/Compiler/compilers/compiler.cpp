@@ -26,6 +26,7 @@ Compiler::Compiler(CIniFile* ini, CIniFile* pIni)
 {
     m_ini = ini;
     m_projectIni = pIni;
+    m_parser.m_projectIni = pIni;
 }
 
 
@@ -54,7 +55,6 @@ void Compiler::Parse(QString text, QStringList lst)
 //        qDebug() << "ERROR parse " << e.message;
         HandleError(e, "Error during parsing");
     }
-
     if (m_parser.m_symTab!=nullptr)
         m_parser.m_symTab->SetCurrentProcedure("");
 }
@@ -69,6 +69,8 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
     if (m_assembler)
         delete m_assembler;
 
+    system->DefaultValues();
+    Syntax::s.m_currentSystem->DefaultValues();
 
     try {
         InitAssemblerAndDispatcher(system);

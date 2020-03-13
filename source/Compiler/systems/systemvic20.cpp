@@ -5,7 +5,12 @@ SystemVIC20::SystemVIC20(CIniFile *settings, CIniFile *proj) : SystemMOS6502(set
     m_system = VIC20;
 
     m_systemColor = QColor(80,110,200);
-    QString param = proj->getString("vic_memory_config");
+    param = proj->getString("vic_memory_config");
+    DefaultValues();
+}
+
+void SystemVIC20::DefaultValues()
+{
     if (param=="none") {
         m_startAddress = 0x1000;
         m_programStartAddress = 0x1010;
@@ -22,7 +27,7 @@ SystemVIC20::SystemVIC20(CIniFile *settings, CIniFile *proj) : SystemMOS6502(set
         m_programStartAddress = 0x1210;
         m_memoryType = 1;
    }
-
+    m_labels.clear();
 
 
     if (param=="3k") {
@@ -97,4 +102,7 @@ SystemVIC20::SystemVIC20(CIniFile *settings, CIniFile *proj) : SystemMOS6502(set
 
     }
     //...
+    m_ignoreSys = false;
+    m_stripPrg = false;
+
 }

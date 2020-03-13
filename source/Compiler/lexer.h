@@ -69,15 +69,7 @@ public:
 
 
     Lexer();
-    Lexer(QString text, QStringList lines, QString path) {
-        m_orgText = text;
-        m_pos = 0;
-        m_path = path;
-        m_currentChar = m_text[m_pos];
-        m_lines = lines;
-        m_ignorePreprocessor = true;
-        Pmm::Data::d.Init();
-    }
+    Lexer(QString text, QStringList lines, QString path);
 
     void Error(QString text);
     void Advance();

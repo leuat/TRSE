@@ -4,8 +4,7 @@
 SystemC64::SystemC64(CIniFile *settings, CIniFile *proj) : SystemMOS6502(settings, proj) {
     m_processor = MOS6502;
     m_system = C64;
-    m_startAddress = 0x0800;
-    m_programStartAddress = 0x0810;
+    DefaultValues();
 
     m_labels.append(SystemLabel(SystemLabel::ZEROPAGE,"Zero pages",0,0x00FF));
     m_labels.append(SystemLabel(SystemLabel::STACK,"Stack",0x0100,0x01FF));
@@ -25,4 +24,12 @@ SystemC64::SystemC64(CIniFile *settings, CIniFile *proj) : SystemMOS6502(setting
 
     m_systemColor = QColor(80,110,80);
 
+}
+
+void SystemC64::DefaultValues()
+{
+    m_startAddress = 0x0800;
+    m_programStartAddress = 0x0810;
+    m_ignoreSys = false;
+    m_stripPrg = false;
 }

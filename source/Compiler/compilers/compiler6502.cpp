@@ -12,7 +12,7 @@ void Compiler6502::InitAssemblerAndDispatcher(AbstractSystem *system)
 
 void Compiler6502::Connect()
 {
-    m_assembler->EndMemoryBlock();
+//    m_assembler->EndMemoryBlock();
     m_assembler->Connect();
     if (m_ini->getdouble("post_optimize")==1.0)
         m_assembler->Optimise(*m_projectIni);
@@ -93,16 +93,17 @@ void Compiler6502::Init6502Assembler()
     m_assembler->m_replaceValues["@DECRUNCH_ZP3"] = m_projectIni->getString("zeropage_decrunch3");
     m_assembler->m_replaceValues["@DECRUNCH_ZP4"] = m_projectIni->getString("zeropage_decrunch4");
 
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20) {
     QStringList lst = m_projectIni->getStringList("via_zeropages");
     if (lst.count()<4)
         ErrorHandler::e.Error("VIC-20 compilation error: You need to specify 4 1-byte VIA zero page values in the project settings.",0);
-
-
-
     m_assembler->m_replaceValues["@VIA_ZP1"] = lst[0];
     m_assembler->m_replaceValues["@VIA_ZP2"] = lst[1];
     m_assembler->m_replaceValues["@VIA_ZP3"] = lst[2];
     m_assembler->m_replaceValues["@VIA_ZP4"] = lst[3];
+    }
+
+
 
     m_assembler->m_internalZP =
             RegisterStack(QStringList()
@@ -120,10 +121,12 @@ void Compiler6502::Init6502Assembler()
 
 
     if (m_projectIni->getdouble("override_target_settings")==1) {
-        Syntax::s.m_currentSystem->m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
-        Syntax::s.m_currentSystem->m_programStartAddress = Syntax::s.m_currentSystem->m_startAddress+0x10;//Util::NumberFromStringHex(m_ini->getString("override_target_settings_org"));
+        Syntax::s.m_currentSystem->m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_basic"));
         Syntax::s.m_ignoreSys = m_projectIni->getdouble("override_target_settings_sys")==1;
+        Syntax::s.m_currentSystem->m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
         Syntax::s.m_stripPrg = m_projectIni->getdouble("override_target_settings_prg")==1;
+        if (Syntax::s.m_ignoreSys)
+            Syntax::s.m_currentSystem->m_startAddress = Syntax::s.m_currentSystem->m_programStartAddress;
     } else {
         Syntax::s.m_ignoreSys = false;
         Syntax::s.m_stripPrg = false;

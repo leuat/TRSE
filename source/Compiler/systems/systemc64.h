@@ -7,6 +7,7 @@ class SystemC64 : public SystemMOS6502
 {
 public:
     SystemC64(CIniFile* settings, CIniFile* proj);
+    void DefaultValues() override;
 };
 
 

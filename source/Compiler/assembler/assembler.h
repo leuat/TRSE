@@ -106,7 +106,7 @@ public:
         m_pos=pos;
         m_id=s_id++;
     }
-
+    bool m_isMainBlock = false;
     QStringList m_source;
     QString m_pos;
 

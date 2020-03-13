@@ -645,7 +645,7 @@ void ASTDispather6502::dispatch(NodeNumber *node)
 {
     node->DispatchConstructor(as);
 
-    QString val = "";
+    QString val = node->getValue(as);
 
     /*        if (as->m_symTab->m_constants.contains(m_op.m_value)) {
             m_val = as->m_symTab->m_constants[m_op.m_value]->m_value->m_fVal;
@@ -653,17 +653,17 @@ void ASTDispather6502::dispatch(NodeNumber *node)
 */
 
 //    qDebug() << TokenType::types[node->getType(as)];
-    if (node->m_op.m_type==TokenType::BYTE)
-        val = "#"+QString::number((int)node->m_val);
+/*    if (node->m_op.m_type==TokenType::BYTE)
+        val = QString::number((int)node->m_val);
     if (node->m_op.m_type==TokenType::INTEGER)
         val = "#"+QString::number((int)node->m_val);
     if (node->m_op.m_type==TokenType::INTEGER_CONST)
-        val = "#"+QString::number((int)node->m_val);
+        val = node->getValue(as);;
     if (node->m_op.m_type==TokenType::ADDRESS) {
 
         val = "$" + QString::number((int)node->m_val,16);
     }
-
+*/
     if (node->m_forceType==TokenType::INTEGER && node->m_val<=255) {
         as->Asm("ldy #0   ; Force integer assignment, set y = 0 for values lower than 255");
     }
@@ -683,7 +683,7 @@ void ASTDispather6502::dispatch(NodeNumber *node)
         //exit(1);
     }
 
-    // qDebug() << m_op.getType() << " for " << val;;
+//     qDebug() << " Node Number for " << val;;
 
     if (as->m_term=="")
 
@@ -840,7 +840,11 @@ void ASTDispather6502::dispatch(NodeProgram *node)
 //    as->EndMemoryBlock();
     NodeBuiltinMethod::m_isInitialized.clear();
     as->Program(node->m_name, node->m_param);
-    as->m_source << node->m_initJumps;
+    for (QString s: node->m_initJumps)
+        as->Asm(s);
+  //  as->m_source << node->m_initJumps;
+//    qDebug() << "INIT JUMPS " <<node->m_initJumps;
+//    as->Asm(node->m_initJumps)
     node->m_NodeBlock->m_isMainBlock = true;
     node->m_NodeBlock->Accept(this);
 
@@ -976,8 +980,8 @@ void ASTDispather6502::dispatch(NodeBlock *node)
 
     if (node->m_isMainBlock) {
         int ret = node->MaintainBlocks(as);
-        if (ret==2)
-            as->m_currentBlock = nullptr;
+//        if (ret==2)
+  //          as->m_currentBlock = nullptr;
 
         as->m_currentBlockName="MainProgram";
 //        as->EndMemoryBlock();
@@ -1090,15 +1094,15 @@ void ASTDispather6502::dispatch(NodeVarDecl *node)
     }
     else
     if (t->m_op.m_type==TokenType::INCBIN) {
-        if (node->m_curMemoryBlock!=nullptr && ((NodeVarType*)node->m_typeNode)->m_position!="")
-             ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block with an abslute address. :",node->m_op.m_lineNumber);
+    //    if (node->m_curMemoryBlock!=nullptr && ((NodeVarType*)node->m_typeNode)->m_position!="")
+      //       ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block with an abslute address. :",node->m_op.m_lineNumber);
 
         IncBin(node);
     }
     else
     if (t->m_op.m_type==TokenType::INCSID || t->m_op.m_type==TokenType::INCNSF) {
-        if (node->m_curMemoryBlock!=nullptr)
-            ErrorHandler::e.Error("IncSid can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
+//        if (node->m_curMemoryBlock!=nullptr)
+  //          ErrorHandler::e.Error("IncSid can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
         IncSid(node);
     }
     else

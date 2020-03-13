@@ -47,7 +47,7 @@ class AsmMOS6502 : public Assembler
 public:
     AsmMOS6502();
 
-
+    bool m_hasOpenBlock = false;
     static QString m_defaultZeroPointers;
     static QString m_defaultViaZeroPointers;
     static QString m_defaultTempZeroPointers;

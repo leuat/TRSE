@@ -24,7 +24,6 @@
 
 Parser::Parser()
 {
-
 }
 
 void Parser::Delete()
@@ -256,7 +255,6 @@ void Parser::InitBuiltinFunctions()
     Node::m_staticBlockInfo.m_blockID = -1;
     Node::m_staticBlockInfo.m_blockPos = "";
     Node::m_staticBlockInfo.m_blockName = "";
-//    EndMemoryBlock();
  }
 
 void Parser::InitBuiltinFunction(QStringList methodName, QString builtinFunctionName, QString initJump )
@@ -686,6 +684,12 @@ void Parser::HandlePreprocessorInParsing()
     }
 
     if (m_currentToken.m_value=="ignoremethod") {
+        Eat();
+        Eat();
+        return;
+    }
+    if (m_currentToken.m_value=="projectsettings") {
+        Eat();
         Eat();
         Eat();
         return;
@@ -1358,6 +1362,12 @@ void Parser::Preprocess()
                                                 MemoryBlock::USER, name));
 
             }
+            else if (m_currentToken.m_value.toLower() =="projectsettings") {
+                Eat(TokenType::PREPROCESSOR);
+                HandleProjectSettingsPreprocessors();
+
+            }
+
             else if (m_currentToken.m_value.toLower() =="ignoremethod") {
                 Eat(TokenType::PREPROCESSOR);
                 m_ignoreMethods.append(m_currentToken.m_value);
@@ -2550,6 +2560,34 @@ void Parser::HandleSpriteCompiler()
 
 
     delete img;
+}
+
+void Parser::HandleProjectSettingsPreprocessors()
+{
+    QString cmd = m_currentToken.m_value.toLower();
+    Eat(TokenType::STRING); // Filename
+    QString val = m_currentToken.m_value;
+    if (val=="")
+       val = QString::number(m_currentToken.m_intVal);
+    if (cmd == "startaddress") {
+        m_projectIni->setFloat("override_target_settings", 1);
+        m_projectIni->setString("override_target_settings_org", val);
+    }
+    if (cmd == "basicsysaddress") {
+        m_projectIni->setFloat("override_target_settings", 1);
+        m_projectIni->setString("override_target_settings_basic", val);
+    }
+    if (cmd == "ignorebasicsysstart") {
+        m_projectIni->setFloat("override_target_settings", 1);
+        m_projectIni->setFloat("override_target_settings_sys", val.toInt());
+    }
+
+    if (cmd == "stripprg") {
+        m_projectIni->setFloat("override_target_settings", 1);
+        m_projectIni->setFloat("override_target_settings_prg", val.toInt());
+    }
+
+    Eat(); // H
 }
 
 Node* Parser::Expr()

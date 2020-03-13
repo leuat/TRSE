@@ -9,9 +9,16 @@ public:
     SystemNES(CIniFile* settings, CIniFile* proj) : SystemMOS6502(settings, proj) {
         m_processor = MOS6502;
         m_system = NES;
+        DefaultValues();
+    }
+    void DefaultValues() override {
         m_startAddress = 0xCA00;
         m_programStartAddress = 0xCA00;
+        m_ignoreSys = false;
+        m_stripPrg = false;
+
     }
+
 };
 
 #endif // SYSTEMNES_H

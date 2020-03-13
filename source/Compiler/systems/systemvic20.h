@@ -6,7 +6,10 @@
 class SystemVIC20 : public SystemMOS6502
 {
 public:
+    QString param;
     SystemVIC20(CIniFile* settings, CIniFile* proj);
+    void DefaultValues();
+
 };
 
 #endif // SYSTEMVIC20_H
