@@ -120,6 +120,7 @@ void DialogProjectSettings::FillFromIni()
     ui->chkOverrideTargetSettings->setChecked(m_ini->getdouble("override_target_settings")==1);
 
     ui->leProgramStartAddress->setText(m_ini->getString("override_target_settings_org"));
+    ui->leBasicStartAddress->setText(m_ini->getString("override_target_settings_basic"));
     ui->chkIgnoreBasic->setChecked(m_ini->getdouble("override_target_settings_sys")==1);
     ui->chkStripPrg->setChecked(m_ini->getdouble("override_target_settings_prg")==1);
 
@@ -238,6 +239,7 @@ void DialogProjectSettings::FillToIni()
 
     m_ini->setFloat("override_target_settings", ui->chkOverrideTargetSettings->isChecked());
     m_ini->setString("override_target_settings_org", ui->leProgramStartAddress->text());
+    m_ini->setString("override_target_settings_basic", ui->leBasicStartAddress->text());
     m_ini->setFloat("override_target_settings_sys", ui->chkIgnoreBasic->isChecked());
     m_ini->setFloat("override_target_settings_prg", ui->chkStripPrg->isChecked());
 
@@ -347,4 +349,10 @@ void DialogProjectSettings::on_cmbSystem_currentIndexChanged(int index)
         ui->tabConfigs->setCurrentIndex(4);
     if (index==6)
         ui->tabConfigs->setCurrentIndex(5);
+}
+
+void DialogProjectSettings::on_chkIgnoreBasic_clicked(bool checked)
+{
+    ui->leBasicStartAddress->setEnabled(!checked);
+    ui->leBasicStartAddress->setVisible(!checked);
 }

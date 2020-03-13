@@ -75,7 +75,8 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
 
         QString startAddress = Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
         if (Syntax::s.m_ignoreSys)
-            startAddress = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress+1);
+//            startAddress = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress+1);
+          startAddress = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress);
 
         QStringList exoParams = QStringList() << "sfx" << startAddress << target << fn<< "-o" << fn ;
 

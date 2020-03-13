@@ -255,7 +255,6 @@ void Parser::InitBuiltinFunctions()
     Node::m_staticBlockInfo.m_blockID = -1;
     Node::m_staticBlockInfo.m_blockPos = "";
     Node::m_staticBlockInfo.m_blockName = "";
-//    EndMemoryBlock();
  }
 
 void Parser::InitBuiltinFunction(QStringList methodName, QString builtinFunctionName, QString initJump )

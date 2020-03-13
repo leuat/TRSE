@@ -58,9 +58,14 @@ int Node::MaintainBlocks(Assembler* as)
   //      qDebug() << as->m_currentBlock->m_pos;
 
     if (m_blockInfo.m_blockID == -1) {
-        if (as->m_currentBlock!=nullptr) {
-    //        qDebug() << "Ending blocks " << as->m_currentBlock->m_pos ;
+        if (as->m_currentBlock!=nullptr && (!as->m_currentBlock->m_isMainBlock)) {
+//            qDebug() << "Ending blocks " << as->m_currentBlock->m_pos ;
+            // If things fuck up, turn on this again
             as->EndMemoryBlock(); // Make sure it is memoryblock!
+//            m_curMemoryBlock =
+//            m_curMemoryBlock = as->blocks.last();
+  //           if (as->m_currentBlock!=nullptr)
+    //           qDebug() << " AFTER ENDING, CURRENT BLOCK IS " << as->m_currentBlock->m_pos;
             return 2;
         }
         return 0;
@@ -72,7 +77,7 @@ int Node::MaintainBlocks(Assembler* as)
     }
     if (as->m_currentBlock!=nullptr) {
         if (m_blockInfo.m_blockPos!=as->m_currentBlock->m_pos) {
-        //    qDebug() << "Switchingblocks at " << m_blockInfo.m_blockPos << as->m_currentBlock->m_pos ;
+      //      qDebug() << "Switchingblocks at " << m_blockInfo.m_blockPos << as->m_currentBlock->m_pos ;
             as->StartMemoryBlock(m_blockInfo.m_blockPos);
             return 3;
         }

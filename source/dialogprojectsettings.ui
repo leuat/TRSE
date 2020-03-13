@@ -43,7 +43,7 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>0</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -913,17 +913,24 @@ p, li { white-space: pre-wrap; }
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_7">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_23">
-            <property name="text">
-             <string>Program start address</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
+          <item row="2" column="1">
            <widget class="QCheckBox" name="chkIgnoreBasic">
             <property name="text">
              <string>Ignore BASIC SYS start</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QCheckBox" name="chkDebugSymbols">
+            <property name="text">
+             <string>Output debug symbols</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QCheckBox" name="chkStripPrg">
+            <property name="text">
+             <string>Strip PRG 2-byte header</string>
             </property>
            </widget>
           </item>
@@ -934,17 +941,24 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="chkStripPrg">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_23">
             <property name="text">
-             <string>Strip PRG 2-byte header</string>
+             <string>Program start address</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QCheckBox" name="chkDebugSymbols">
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_31">
             <property name="text">
-             <string>Output debug symbols</string>
+             <string>BASIC SYS start address</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="leBasicStartAddress">
+            <property name="text">
+             <string>$1010</string>
             </property>
            </widget>
           </item>

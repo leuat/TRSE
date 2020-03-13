@@ -80,6 +80,8 @@ private slots:
 
     void on_cmbSystem_currentIndexChanged(int index);
 
+    void on_chkIgnoreBasic_clicked(bool checked);
+
 private:
     void FillFromIni();
     void FillToIni();

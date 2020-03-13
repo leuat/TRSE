@@ -840,7 +840,11 @@ void ASTDispather6502::dispatch(NodeProgram *node)
 //    as->EndMemoryBlock();
     NodeBuiltinMethod::m_isInitialized.clear();
     as->Program(node->m_name, node->m_param);
-    as->m_source << node->m_initJumps;
+    for (QString s: node->m_initJumps)
+        as->Asm(s);
+  //  as->m_source << node->m_initJumps;
+//    qDebug() << "INIT JUMPS " <<node->m_initJumps;
+//    as->Asm(node->m_initJumps)
     node->m_NodeBlock->m_isMainBlock = true;
     node->m_NodeBlock->Accept(this);
 
@@ -976,8 +980,8 @@ void ASTDispather6502::dispatch(NodeBlock *node)
 
     if (node->m_isMainBlock) {
         int ret = node->MaintainBlocks(as);
-        if (ret==2)
-            as->m_currentBlock = nullptr;
+//        if (ret==2)
+  //          as->m_currentBlock = nullptr;
 
         as->m_currentBlockName="MainProgram";
 //        as->EndMemoryBlock();
@@ -1090,15 +1094,15 @@ void ASTDispather6502::dispatch(NodeVarDecl *node)
     }
     else
     if (t->m_op.m_type==TokenType::INCBIN) {
-        if (node->m_curMemoryBlock!=nullptr && ((NodeVarType*)node->m_typeNode)->m_position!="")
-             ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block with an abslute address. :",node->m_op.m_lineNumber);
+    //    if (node->m_curMemoryBlock!=nullptr && ((NodeVarType*)node->m_typeNode)->m_position!="")
+      //       ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block with an abslute address. :",node->m_op.m_lineNumber);
 
         IncBin(node);
     }
     else
     if (t->m_op.m_type==TokenType::INCSID || t->m_op.m_type==TokenType::INCNSF) {
-        if (node->m_curMemoryBlock!=nullptr)
-            ErrorHandler::e.Error("IncSid can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
+//        if (node->m_curMemoryBlock!=nullptr)
+  //          ErrorHandler::e.Error("IncSid can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
         IncSid(node);
     }
     else

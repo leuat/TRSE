@@ -113,22 +113,29 @@ void Assembler::StartMemoryBlock(QString pos) {
     m_appendix.append(m_currentBlock);
     m_currentBlock->Append(GetOrg(Util::NumberFromStringHex(pos)),1);
     m_blockStack.append(m_currentBlock);
+    Comment("Starting new memory block at "+pos);
+//    qDebug() << "Starting new memory block at "+pos;
     //        m_currentBlockCount = m_appendix.count()-1;
 }
 
 void Assembler::EndMemoryBlock() {
     //        qDebug() << "Trying to end memory block.. ";
+    Comment("Ending memory block");
     if (m_currentBlock!=nullptr) {
         Label("EndBlock"+QString::number(m_currentBlock->m_id));
 
     }
     m_currentBlock=nullptr;
+
     if (m_blockStack.count()>0)
         m_blockStack.removeLast();
+
     if (m_blockStack.count()!=0) {
         m_currentBlock = m_blockStack.last();
         // qDebug() << "STILL STACK : " << m_blockStack.count();
     }
+  //  if (m_currentBlock!=nullptr)
+    //    qDebug() << "AT END: " << m_blockStack.count() << m_currentBlock->m_pos;;
 //    else m_currentBlock = nullptr;
 
 }
@@ -232,6 +239,11 @@ void Assembler::Asm(QString s, QString comment)
     QString c = "\t;" + comment;
     if (comment=="") c="";
     Write(s+c ,1);
+ /*   if (m_currentBlock!=nullptr)
+        qDebug() << m_currentBlock->m_pos + " : "+ s;
+    else
+        qDebug() << "NULL : "+ s;
+*/
 }
 
 void Assembler::Label(QString s)
