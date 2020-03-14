@@ -2432,8 +2432,10 @@ void Parser::HandleExportPrg2Bin()
         out.append((char)((from)&0xFF)); // lo byte
         out.append((char)((from>>8)&0xFF)); // hi byte
     }
-    int start = in[0] | ((int)(in[1])<<8);
+    int start = (in[0] | ((int)(in[1])<<8))&0xFFFF;
+//    qDebug() << "PRG2BIN START "<<Util::numToHex(start);
     in = in.remove(0,2);
+  //  qDebug() << "PRG2BIN "<<Util::numToHex(from) << Util::numToHex(to);
     for (int i=from;i<to;i++) {
         int j = i-start;
         if (in.count()<j)
@@ -2608,6 +2610,10 @@ void Parser::HandleProjectSettingsPreprocessors()
     if (cmd == "stripprg") {
         m_projectIni->setFloat("override_target_settings", 1);
         m_projectIni->setFloat("override_target_settings_prg", val.toInt());
+    }
+    if (cmd == "ignorejmp") {
+        m_projectIni->setFloat("override_target_settings", 1);
+        m_projectIni->setFloat("ignore_initial_jump", val.toInt());
     }
 
     Eat(); // H
