@@ -59,6 +59,7 @@ public:
     CIniFile* m_pawData,* m_projectData,* m_iniFile;
     QVector<PawFile>* m_files;
     QString isExomizer3, output;
+    bool m_ignoreIncludefile = false;
 
     PawThread(CIniFile* pawData, CIniFile* projectData, CIniFile* iniFile,  QVector<PawFile> *files) {
         m_pawData = pawData;
@@ -70,7 +71,7 @@ public:
     void CreateIncludefile();
 
 
-protected:
+public:
     void run();
 
 signals:
@@ -81,20 +82,22 @@ class FormPaw : public TRSEDocument
 {
     Q_OBJECT
 
-    CIniFile m_pawData;
     QVector<PawFile> m_files;
     PawThread* pt = nullptr;
 public:
+    CIniFile m_pawData;
     explicit FormPaw(QWidget *parent = nullptr);
     ~FormPaw();
 
 
     void FillFromIni();
     void FillToIni();
+    void FillFiles();
 
     void Save(QString filename) override;
     void Load(QString filename) override;
     void Build() override;
+    void BuildSingle();
     void CreateIncludefile();
 
     void Destroy() override {}

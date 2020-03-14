@@ -694,6 +694,11 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         return;
     }
+    if (m_currentToken.m_value=="buildpaw") {
+        Eat();
+        Eat();
+        return;
+    }
     if (m_currentToken.m_value=="startassembler") {
         Eat();
         Eat();
@@ -1366,6 +1371,10 @@ void Parser::Preprocess()
                 Eat(TokenType::PREPROCESSOR);
                 HandleProjectSettingsPreprocessors();
 
+            }
+            else if (m_currentToken.m_value.toLower() =="buildpaw") {
+                Eat(TokenType::PREPROCESSOR);
+                HandleBuildPaw();
             }
 
             else if (m_currentToken.m_value.toLower() =="ignoremethod") {
@@ -2389,6 +2398,21 @@ void Parser::HandleExport()
 
     file.close();
 
+}
+
+void Parser::HandleBuildPaw()
+{
+    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value; //    QString inFile = m_currentToken.m_value;form
+    Eat(TokenType::STRING);
+    FormPaw fp;
+    fp.InitDocument(nullptr,m_settingsIni,m_projectIni);
+    if (!QFile::exists(inFile))
+        ErrorHandler::e.Error("Could not locate paw file for building: "+inFile, ln);
+//    fp.Load(inFile);
+    fp.m_pawData.Load(inFile);
+
+    fp.BuildSingle();
 }
 
 void Parser::HandleExportPrg2Bin()

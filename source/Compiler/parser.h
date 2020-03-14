@@ -50,7 +50,7 @@
 #include "source/Compiler/ast/nodecase.h"
 #include "source/LeLib/limage/limageio.h"
 #include "source/LeLib/limage/c64fullscreenchar.h"
-
+#include "source/trsedocuments/formpaw.h"
 
 class ParserBlock {
 public:
@@ -83,7 +83,7 @@ public:
     bool m_ignoreAll = false;
     QStringList  m_initJumps;
     SymbolTable* m_symTab = nullptr;
-    CIniFile* m_projectIni;
+    CIniFile* m_projectIni, *m_settingsIni;
     Parser();
     Parser(Lexer* l, CIniFile* projectFile) {
         m_lexer = l;
@@ -159,6 +159,7 @@ public:
 
     void HandleExportPalette();
     void HandleExport();
+    void HandleBuildPaw();
     void HandleExportPrg2Bin();
     void HandleVBMExport();
     void HandleVBMExportChunk();
