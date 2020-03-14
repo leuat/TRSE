@@ -304,19 +304,29 @@ void Assembler::Term()
 void Assembler::Connect()
 {
     // Connect with temp vars
-    QStringList newSource;
-    for (int i=0;i<m_varDeclEndsLineNumber;i++) {
-        newSource<<m_source[i];
-    }
-    newSource << " ; Temp vars section";
-    newSource<< m_tempVars;
-    newSource << " ; Temp vars section ends";
-    for (int i=m_varDeclEndsLineNumber;i<m_source.count(); i++) {
-        newSource<<m_source[i];
-    }
-    m_source = newSource;
 
-    //m_source<<m_appendix;
+
+    if (m_mainBlock==nullptr) {
+
+        QStringList newSource;
+        for (int i=0;i<m_varDeclEndsLineNumber;i++) {
+            newSource<<m_source[i];
+        }
+        newSource << " ; Temp vars section";
+        newSource << m_tempVars;
+        newSource << " ; Temp vars section ends";
+        for (int i=m_varDeclEndsLineNumber;i<m_source.count(); i++) {
+            newSource<<m_source[i];
+        }
+        m_source = newSource;
+    }
+    else {
+        for (QString t : m_tempVars) {
+            m_mainBlock->Append(t,0);
+        }
+
+    }
+
     //    m_appendix.append(m_ extraBlocks);
     SortAppendix();
 

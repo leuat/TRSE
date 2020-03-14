@@ -180,6 +180,7 @@ public:
     QMap<QString, QString> m_defines;
 
     Appendix* m_currentBlock = nullptr;
+    Appendix* m_mainBlock = nullptr;
     QVector<Appendix*> m_blockStack;
 
     int m_zbyte = 0x80;

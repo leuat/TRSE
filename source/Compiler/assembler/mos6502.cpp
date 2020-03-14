@@ -157,8 +157,10 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
         StartMemoryBlock(Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
     }
     m_currentBlock->m_isMainBlock = true;
+    m_mainBlock = m_currentBlock;
     m_source+=m_startInsertAssembler;
 //    Asm("test");
+
     Label(programName);
 //    if (!m_hasOpenBlock)
   //      EndMemoryBlock();

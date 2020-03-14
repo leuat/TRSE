@@ -78,6 +78,11 @@ void FormPaw::FillToIni()
 
 }
 
+void FormPaw::FillFiles()
+{
+
+}
+
 void FormPaw::FillFromIni()
 {
     ui->leOutfile->setText(m_pawData.getString("ras_include_file"));
@@ -121,7 +126,6 @@ void FormPaw::Build() {
             return;
         delete pt;
     }
-
     pt = new PawThread(&m_pawData, m_projectIniFile, m_iniFile, &m_files);
     connect(pt, SIGNAL(EmitTextUpdate()), this, SLOT(onTextUpdate()));
 
@@ -155,6 +159,39 @@ void FormPaw::Build() {
     //pt->output +="Compression done!";
     //ui->leOutput->setText(pt->output);
     // Create include file
+
+}
+
+void FormPaw::BuildSingle()
+{
+    pt = new PawThread(&m_pawData, m_projectIniFile, m_iniFile, &m_files);
+
+    pt->output="";
+
+ //   QString isExomizer3 = "-P0";
+    pt->isExomizer3 = "";
+    if (m_pawData.getdouble("use_exomizer3")==1)
+            pt->isExomizer3="-P0";
+
+    QString ex = m_iniFile->getString("exomizer");
+
+    if (!QFile::exists(ex)) {
+//        ui->leOutput->setText("Exomizer not correctly set up");
+        return;
+    }
+    for (PawFile& pf: m_files) {
+        if (!QFile::exists(pf.inFile)) {
+  //          ui->leOutput->setText("Could not find file: " + pf.inFile);
+            return;
+        }
+    }
+    QString outFolder = m_projectIniFile->getString("project_path")+"/"+m_pawData.getString("output_dir");
+
+    if (!QDir().exists(outFolder))
+            QDir().mkdir(outFolder);
+
+    pt->m_ignoreIncludefile = true;
+    pt->run();
 
 }
 
@@ -369,6 +406,8 @@ void PawThread::run()
     QString ex = m_iniFile->getString("exomizer");
     QString tt = m_iniFile->getString("tinycrunch");
 
+
+
     for (PawFile& pf: *m_files) {
             QProcess processCompress;
             QString adr = pf.address;
@@ -420,7 +459,8 @@ void PawThread::run()
             pf.packedSize = QFile(pf.cFile).size();
 
     }
-    CreateIncludefile();
+    if (!m_ignoreIncludefile)
+        CreateIncludefile();
     output+="All done!\n";
     emit EmitTextUpdate();
 }

@@ -27,6 +27,8 @@ Compiler::Compiler(CIniFile* ini, CIniFile* pIni)
     m_ini = ini;
     m_projectIni = pIni;
     m_parser.m_projectIni = pIni;
+    m_parser.m_settingsIni = ini;
+
 }
 
 
