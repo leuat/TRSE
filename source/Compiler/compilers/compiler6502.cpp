@@ -93,6 +93,10 @@ void Compiler6502::Init6502Assembler()
     m_assembler->m_replaceValues["@DECRUNCH_ZP3"] = m_projectIni->getString("zeropage_decrunch3");
     m_assembler->m_replaceValues["@DECRUNCH_ZP4"] = m_projectIni->getString("zeropage_decrunch4");
 
+    m_assembler->m_ignoreInitialJump = m_projectIni->getdouble("ignore_initial_jump")==1.0;
+
+
+
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20) {
     QStringList lst = m_projectIni->getStringList("via_zeropages");
     if (lst.count()<4)

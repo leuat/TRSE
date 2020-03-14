@@ -939,10 +939,9 @@ void ASTDispather6502::dispatch(NodeBlock *node)
 
 
     if (node->m_decl.count()!=0) {
-        if (node->m_isMainBlock)
+        if (node->m_isMainBlock && !as->m_ignoreInitialJump)
             as->Asm("jmp " + label);
         hasLabel = true;
-        //           as->PushBlock(m_decl[0]->m_op.m_lineNumber-1);
     }
 
 /*    if (node->m_isMainBlock) {
@@ -955,10 +954,6 @@ void ASTDispather6502::dispatch(NodeBlock *node)
     for (Node* n: node->m_decl) {
         // Print label at end of vardecl
         if (dynamic_cast<NodeVarDecl*>(n)==nullptr) {
-/*            if (!blockLabel)
-                as->Label(label);
-            blockLabel = true;
-*/
             if (!blockProcedure) // Print label at end of vardecl
             {
                 if (n->m_op.m_lineNumber!=0) {
@@ -970,8 +965,6 @@ void ASTDispather6502::dispatch(NodeBlock *node)
             }
 
         }
-        //if (dynamic_cast<NodeProcedureDecl*>(n)==nullptr)
-        //qDebug() << "VarDeclBuild:" ;
         n->Accept(this);
 
     }
