@@ -200,6 +200,8 @@ public:
     int m_varDeclEndsLineNumber = 0;
     int m_totalOptimizedLines = 0;
 
+    bool m_ignoreInitialJump = false;
+
     void SortAppendix();
 
     QMap<int, int> m_cycles, m_blockCycles;

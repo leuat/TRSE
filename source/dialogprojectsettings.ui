@@ -909,7 +909,7 @@ p, li { white-space: pre-wrap; }
            <x>30</x>
            <y>60</y>
            <width>621</width>
-           <height>171</height>
+           <height>201</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_7">
@@ -927,10 +927,17 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QCheckBox" name="chkStripPrg">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_23">
             <property name="text">
-             <string>Strip PRG 2-byte header</string>
+             <string>Program start address</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="leBasicStartAddress">
+            <property name="text">
+             <string>$1010</string>
             </property>
            </widget>
           </item>
@@ -941,10 +948,10 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_23">
+          <item row="3" column="1">
+           <widget class="QCheckBox" name="chkStripPrg">
             <property name="text">
-             <string>Program start address</string>
+             <string>Strip PRG 2-byte header</string>
             </property>
            </widget>
           </item>
@@ -955,10 +962,10 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="leBasicStartAddress">
+          <item row="5" column="1">
+           <widget class="QCheckBox" name="chkIgnoreJump">
             <property name="text">
-             <string>$1010</string>
+             <string>Ignore initial jump</string>
             </property>
            </widget>
           </item>
@@ -981,7 +988,7 @@ p, li { white-space: pre-wrap; }
          <property name="geometry">
           <rect>
            <x>30</x>
-           <y>250</y>
+           <y>290</y>
            <width>621</width>
            <height>201</height>
           </rect>

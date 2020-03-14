@@ -125,7 +125,7 @@ void DialogProjectSettings::FillFromIni()
     ui->chkStripPrg->setChecked(m_ini->getdouble("override_target_settings_prg")==1);
 
     ui->chkDebugSymbols->setChecked(m_ini->getdouble("output_debug_symbols")==1);
-
+    ui->chkIgnoreJump->setChecked(m_ini->getdouble("ignore_initial_jump")==1);
 
 
 
@@ -246,6 +246,7 @@ void DialogProjectSettings::FillToIni()
     m_ini->setStringList("build_list", ui->teBuildList->toPlainText().remove("=").split("\n"));
 
     m_ini->setFloat("output_debug_symbols",ui->chkDebugSymbols->isChecked());
+    m_ini->setFloat("ignore_initial_jump",ui->chkIgnoreJump->isChecked());
 
 
 
