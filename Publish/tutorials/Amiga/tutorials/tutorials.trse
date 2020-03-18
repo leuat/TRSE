@@ -35,7 +35,4 @@ override_target_settings_prg = 0
 output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
 exomize_toggle = 0
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/Amiga/tutorials/
-open_files = ,tutorial7_grid.asm, tutorial7_grid.ras, tutorial6_sprites.ras, images/image1.flf, tutorial6_sprites.fjo, tutorial5_twister.ras, tutorial4_3D.ras, tutorial3.ras, tutorial2.ras, tutorial1.ras
-current_file = tutorial7_grid.ras
 exomizer_toggle = 0
