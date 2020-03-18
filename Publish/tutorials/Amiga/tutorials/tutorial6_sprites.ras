@@ -1,0 +1,95 @@
+program Tutorial6_Sprites;
+
+@requirefile "data/sprites_data.bin" "Please execute the Fjong raytracer file 'tutorials6_sprites.fjo' before compiling this program"
+
+var	
+
+   	j,time: integer = 0; 
+   	x,y : byte;
+   	sprites : incbin("data/sprites_data.bin");
+   	
+// 2 bitplanes
+   	screen_data : array[2*40*256] of byte chipmem;
+   	
+	sine256_data: incbin("data/sine.bin");
+
+	table2: pointer of integer;
+		
+	sine256 : pointer of byte;
+
+	sprite_struct1 : array[70] of integer chipmem;
+	
+
+/*
+	Two bitplanes, interleaved
+*/
+procedure SetupScreen();
+begin
+	poke16(copper_resolution, 0 , $2200); // $4000  = bitplanes, $200 = colours, 320x200
+	
+	SetCopperList32(screen_data, copper_bitplane0);
+	SetCopperList32(screen_data+^40, copper_bitplane1);
+
+	poke16(copper_mod_even,0,40);
+	poke16(copper_mod_odd,0,40);
+end;
+
+
+
+// Updates the X/Y position of a sprite
+procedure UpdateSpritePos(spo : pointer of byte; u_cx, u_cy, u_height:byte);
+begin
+	spo[1]:=u_cx; // X
+	spo[0]:=u_cy; // Y 
+	spo[2]:=u_cy+u_height; // Y+height
+	spo[3]:=0;
+end;
+
+
+
+interrupt Raster();
+begin
+	time:=time+1;
+	ApplyCopperList();
+	
+	// Calculate some funky sines
+	x:=sine256[time&255]/2;
+	y:=sine256[(time+64)&255]/2;
+	x:=x+64;
+	y:=y+64;
+	UpdateSpritePos(sprite_struct1, x,y, 32);
+
+	// Find frame in data	
+	j:=(time&63)<<7; // 64 frames in total, 128 bytes per frame (<<7)
+	// Copy over 32*4=128 bytes of data
+	memcpy(sprites,j,sprite_struct1,4,32,4);
+	
+end;
+
+
+procedure Init();
+begin
+	sine256 := sine256_data;
+	// Clear screen
+	fill(screen_data,10*2*256,0);
+	
+	// Set four colours	
+	
+	poke16(copper_palette,2+1*16,$00);	
+	poke16(copper_palette,2+4*17,$0800);	
+	poke16(copper_palette,2+4*18,$0F16);	
+	poke16(copper_palette,2+4*19,$0FA2);	
+	
+	// Setup copper sprite pointer
+	setcopperlist32(sprite_struct1, copper_spritestruct0);
+
+end;
+
+
+begin	
+	SetupScreen();
+	Init();
+	vbirq(Raster());
+	EnableInterrupt(VB_IRQ);
+	Loop();
+end.
