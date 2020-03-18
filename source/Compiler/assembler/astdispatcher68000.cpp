@@ -234,16 +234,16 @@ void ASTDispather68000::dispatch(NodeVarDecl *node)
     }
     else
     if (t->m_op.m_type==TokenType::INCBIN) {
-        if (node->m_curMemoryBlock!=nullptr)
-            ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
+//        if (node->m_curMemoryBlock!=nullptr)
+  //          ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
 
         IncBin(as,node);
 
     }
     else
     if (t->m_op.m_type==TokenType::POINTER) {
-        if (node->m_curMemoryBlock!=nullptr)
-            ErrorHandler::e.Error("Pointers can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
+    //    if (node->m_curMemoryBlock!=nullptr)
+      //      ErrorHandler::e.Error("Pointers can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
         DeclarePointer(node);
         as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
 

@@ -1,0 +1,327 @@
+program Tutorial7_Grid;
+var  
+
+	sine256_data: incbin("data/sine.bin");
+
+   	loo,t,j,sx,sy,l,m,jj,k,i,isDone,time,tt,curFrame: integer = 0; 
+   	ll:long;
+   	const maxFrames:integer = 1;
+   	
+   	ii,ij,l2,k2:long;
+	curBuf : integer = 0;
+	sin256:pointer of byte;
+	p1 : pointer of long;
+   	pi,p2,p3,p4 : pointer of integer;
+
+	screen,offscreen,spp,tp: pointer of long;
+
+
+	// Rotation matrices  3 x 3 = 9 longs
+	rotmat,rotX,rotY,rotZ,rotmatA : array[9] of long;
+
+	  	
+	// 40 = 320/8 = bytes per bitplane
+   	@define width 40 
+   	@define height 256
+   	@define bitplanes 1
+   	
+	@define bitmapFont_noCharactersInColumns 10
+	@define bitmapFont_characterHeight 24
+	
+
+	const size : byte = 9;
+	vcount: long = size*size;
+	const max : integer = size*size+1;
+	vertices_T : array[3*max] of long;
+	vertices : array[3*max] of long;
+	const lcount : integer = (size-1)*(size-1)*2;
+	LineList : array[lcount*2] of integer;
+	PVert : array[2*max*maxFrames] of long;
+	zpos : long = 500;
+	LineMode: integer = $a4a;
+
+
+
+
+	
+   	
+  	lineBuf : array[@width*@height] of byte chipmem;
+	  	
+  	buffer : array[@width*@height] of byte chipmem;
+   	screenb1 : array[@width*@height*@bitplanes] of byte chipmem;
+   	screenb2 : array[@width*@height*@bitplanes] of byte chipmem;
+
+
+ 
+/*
+	Performs the rendering of the scene using lines. Will probably be 
+	converted to a TRSE method later on. 
+
+*/
+
+
+
+
+procedure RenderObjectLines(ro_list:pointer of integer,ro_count : long);
+var
+	ro_ri : integer = 0;
+	ro_x1,ro_x2, ro_y1, ro_y2 : long = 0;
+	ro_z1,ro_tmp:byte;
+	ro_idx,ro_nidx : integer = 0;
+	
+begin
+
+	ro_idx:=0;
+	tt:=0;
+	asm(" 
+		move.l #-$1,$dff044 ;; last word first word mask
+		move.l #-$8000,$dff072
+		move.w #40,$dff060
+		");
+	for ro_ri:=0 to ro_count do begin
+			i:=ro_list[ro_idx];
+			j:=ro_list[ro_idx+2];
+			
+			ro_x1:=PVert[i];
+			ro_y1:=PVert[i+4];
+			
+			ro_x2:=PVert[j];
+			ro_y2:=PVert[j+4];
+
+			DrawLine(ro_x1,ro_y1,ro_x2,ro_y2, screen, 40);
+	
+		ro_idx:=ro_idx+4; // two shorts per line
+	end;
+
+end;
+
+
+
+
+/*
+	Method that sets cosine and sine of a given theta in 0-255
+
+*/
+procedure SetCosin(scs:integer);
+var
+   cost,sint,tmp : long =0;
+	scs_t:  integer = 0;
+	ms : long;
+	v:integer;
+begin
+	scs:=scs&255;
+	v := sin256[scs];
+	sint:=v-128;	
+	
+	scs_t:=scs+64;	
+	scs_t:=scs_t&255;
+	v := sin256[scs_t];
+	cost:=v-128;	
+
+
+end;
+
+/*
+	Sets up the rotation matrix
+	Rx(t1) * Ry(t2) * Rz(t3) of the three Euler angles t1,t2 and t3
+*/
+
+procedure SetupRotMat(rto3D_t1,rto3D_t2,rto3D_t3 : integer);
+begin
+	SetCosin(rto3D_t1);
+	SetRotationX(rotX,cost,sint);
+	SetCosin(rto3D_t2);
+	SetRotationY(rotY,cost,sint);
+	SetCosin(rto3D_t3);
+	SetRotationZ(rotZ,cost,sint);
+
+	// Built-in matmul rulez	
+	MatMul3x3(rotX,rotY,rotmatA);
+	MatMul3x3(rotmatA,rotZ,rotmat);
+	
+//	setidentity(rotmat);
+end;
+
+
+
+
+/*
+	Flips rendering buffer and updates copper list & pointers
+*/
+procedure FlipBuffers();
+begin
+	if (curBuf=0) then begin
+		screen:=screenb1;
+		offscreen:=screenb2;
+
+	end else begin
+		screen:=screenb2;
+		offscreen:=screenb1;
+	end;
+	
+	SetCopperList32(offscreen,copper_bitplane0);
+
+	curBuf:=(curBuf+1)&1;
+
+end;
+
+
+/*
+	Sets up basic screen copper list
+*/
+procedure SetupScreen();
+begin
+	poke16(copper_resolution, 0 , $1200); // $4000  = bitplanes, $200 = colours, 320x200
+	
+	SetCopperList32(screenb1, copper_bitplane0);
+	
+	SetCopperList32(screenb1, copper_bitplane0);
+		// Modulo for each line = 120 (meaning that after 40 bytes are written to screen, 
+	// the copper skips 120 bytes to the next interleaved line of data for the current bitplane
+	poke16(copper_mod_even,0,0);
+	poke16(copper_mod_odd,0,0);
+end;
+
+
+
+/*
+	Initializing method. Most TRSE "Init"-methods will be performed automatically in later versions.
+
+*/
+procedure PerformInit();
+begin
+	SetupScreen();
+	InitLine();
+	InitMatmul3x3();
+	InitMatmulVec();
+	InitMatmulVecNormalZ();
+	InitProjectAllVertices();	
+//	ablit(logo_image,screen,0, 0,0,  160,(100*$40) + 20,0,120);
+
+	WaitVerticalBlank();	
+	i:=0;
+	screen:=screenb1;
+	offscreen:=screenb2;
+	
+	SetIdentity(rotX);	
+	SetIdentity(rotY);	
+	SetIdentity(rotZ);	
+
+
+
+end;
+
+procedure UpdateGrid();
+begin
+	p1:=vertices;
+	k2:=4;
+	for i:=0 to size do
+	begin
+		for j:=0 to size do
+		begin
+			t:=(i+j)<<4;
+			t:=t+time<<3;
+			t:=t&255;
+			k:=sin256[t];
+			l2:=k/2;
+			p1[k2]:=l2;
+			k2:=k2+12;
+
+		end;
+
+	end;
+
+
+end;
+
+
+
+procedure InitGrid();
+begin
+	k2:=0;
+	
+	p1:=vertices;
+	
+	for i:=0 to size do
+	begin
+		sx:=0;
+		sy:=0;
+		sx:=i-size/2;
+		for j:=0 to size do
+		begin
+			sy:=j-size/2;
+			p1[k2]:=sx*32;
+			k2:=k2+4;
+			
+			p1[k2]:=100;
+			k2:=k2+4;
+			
+			p1[k2]:=sy*32;
+			k2:=k2+4;
+
+		end;
+
+	end;
+	k2:=0;
+	m:=size-1;
+
+	pi:=LineList;
+
+	for i:=0 to m do
+	begin
+		
+		for j:=0 to m do
+		begin
+			l:=i*size + j;
+			l:=l<<3;			
+			pi[k2]:=l;
+			k2:=k2+2;
+			l:=i*size + j+1;
+			l:=l<<3;			
+			pi[k2]:=l;
+			k2:=k2+2;
+	
+		
+
+			l:=i*size + j;
+			pi[k2]:=l<<3;
+			k2:=k2+2;
+			l:=(i+1)*size + j;
+			l:=l<<3;			
+
+			pi[k2]:=l;
+			k2:=k2+2;
+		
+
+		end;
+	end;
+	
+end;
+
+
+
+
+
+begin
+	PerformInit();
+	InitGrid();	
+	sin256:=sine256_data;
+	FlipBuffers();
+	ApplyCopperList();
+	time:=0;
+	
+	while (isDone=0) do begin
+		UpdateGrid();	
+		SetupRotMat((time/3)&255,time&255,(time/2)&255);
+		SetupRotMat(0,(92+time)&255,(111-time)&255);
+		MatmulVec(rotmat, vertices, vertices_T, vcount);
+		ProjectAllVertices(vertices_T,PVert, vcount, 160,110,zpos);
+		RenderObjectLines(LineList,lcount);		
+		waitverticalblank();		
+		FlipBuffers();
+		time:=time+1;
+		fill(screen,0,10*256);
+	end;
+
+end.
+

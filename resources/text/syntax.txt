@@ -350,7 +350,7 @@ m; Jammer; C64, PLUS4, C128  ; n,n
 m; FLD ; C64, PLUS4, C128 ; b,n
 m; TransformColors; C64, PLUS4, C128; a,a
 m; Call; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64; a
-m; Loop; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64;
+m; Loop; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64, AMIGA;
 m; Return;  X16,C64, PLUS4, C128, VIC20, PET,  NES, AMIGA, OK64, X86;
 m; ReturnValue;  X16,C64, PLUS4, C128, VIC20, PET,  NES, AMIGA, OK64; b
 m; Set2MhzMode; C128;
