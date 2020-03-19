@@ -373,7 +373,7 @@ int Parser::getParsedNumberOrConstant() {
     return s->m_value->m_fVal;
 }
 
-int Parser::GetParsedInt() {
+int Parser::GetParsedInt(TokenType::Type forceType) {
 
 
     bool done = false;
@@ -451,6 +451,12 @@ int Parser::GetParsedInt() {
     QJSEngine myEngine;
     QJSValue ret = myEngine.evaluate(str);
 //    qDebug() << str << ret.toInt();
+    int r = ret.toInt();
+    if (forceType==TokenType::BYTE)
+        return r&0xFF;
+    if (forceType==TokenType::INTEGER || forceType==TokenType::INTEGER_CONST || TokenType::ADDRESS)
+        return r&0xFFFF;
+
     return ret.toInt();
 }
 
@@ -1932,12 +1938,13 @@ QVector<Node*> Parser::ConstDeclaration()
         type="byte";
     if (m_currentToken.m_type == TokenType::INTEGER)
         type="integer";
+    TokenType::Type dType = m_currentToken.m_type;
     if (type=="") {
         ErrorHandler::e.Error("Unknown or illegal type when defining constant of type: '"+m_currentToken.m_value+"' ("+m_currentToken.getType()+")<br>Allowed types are : <b>address, byte, integer.</b> ",m_currentToken.m_lineNumber);
     }
     Eat();
     Eat(TokenType::EQUALS);
-    int value = GetParsedInt();
+    int value = GetParsedInt(dType);
 
     m_symTab->m_constants[name.toUpper()] = new Symbol(name.toUpper(),type.toUpper(),value);
     return QVector<Node*>();
@@ -2042,7 +2049,7 @@ Node *Parser::TypeSpec()
         QString position ="";
         if (m_currentToken.m_type==TokenType::COMMA) {
             Eat();
-            position = Util::numToHex(GetParsedInt());
+            position = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
         }
         Eat(TokenType::RPAREN);
 
@@ -2066,12 +2073,13 @@ Node *Parser::TypeSpec()
         Eat(TokenType::LBRACKET);
         float count = 0;
         if (m_currentToken.m_type != TokenType::RBRACKET)
-            count = GetParsedInt();
+            count = GetParsedInt(TokenType::NADA);
 
         Eat(TokenType::RBRACKET);
         Eat(TokenType::OF);
         Token arrayType = m_currentToken;
         Eat(m_currentToken.m_type);
+        TokenType::Type dataType = m_currentToken.m_type;
         QStringList data;
         // Contains constant init?
         if (m_currentToken.m_type==TokenType::EQUALS) {
@@ -2088,7 +2096,7 @@ Node *Parser::TypeSpec()
 //                    qDebug() << "ADDRESS " << m_currentToken.m_value <<m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
                  }
                 if (!found)
-                    data << "$0"+QString::number(GetParsedInt(),16);//QString::number(m_currentToken.m_intVal);
+                    data << "$0"+QString::number(GetParsedInt(dataType),16);//QString::number(m_currentToken.m_intVal);
                 //data << "$0"+QString::number(GetParsedInt(),16);//QString::number(m_currentToken.m_intVal);
                 if (m_currentToken.m_type!=TokenType::RPAREN) {
 
@@ -2115,7 +2123,7 @@ Node *Parser::TypeSpec()
         if (m_currentToken.m_type==TokenType::AT || m_currentToken.m_type==TokenType::ABSOLUT) {
             Eat();
             //position = m_currentToken.getNumAsHexString();
-            position = Util::numToHex(GetParsedInt());
+            position = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
            // Eat(m_currentToken.m_type);
         }
         QStringList flags;
@@ -2188,7 +2196,7 @@ Node *Parser::TypeSpec()
         Eat();
 //        data << "$0"+QString::number(getIntVal(m_currentToken),16);//QString::number(m_currentToken.m_intVal);
 
-        initVal = Util::numToHex(GetParsedInt());
+        initVal = Util::numToHex(GetParsedInt(t.m_type));
 
 
 

@@ -1,5 +1,5 @@
-zeropages = ,$02,  $04,  $08,  $16,  $0B,  $0D,  $10,  $12,  $22,  $24,  $68
-temp_zeropages = ,$54,  $56,  $58,  $5A
+zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
+temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $47
 zeropage_decrunch2 = $48
@@ -40,4 +40,6 @@ var_zeropages = ,
 dosbox_x86_system = default
 cpu_x86_system = 8086
 override_target_settings_basic = 6.95314e-310
-open_files =, example1.ras
+open_files = ,example5.ras, example1.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/OK64/Tutorials/
+current_file = example5.ras

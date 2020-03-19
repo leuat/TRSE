@@ -56,10 +56,11 @@ end;
 procedure Advanced04();
 begin
 	p2:=$4000;
-	p2[1]:=$20;
 	v1:=1;
+	p2[v1]:=$20;
 	p1:=$0400;
-	p1:=p1 + p2[1];
+	asm(";prob");
+	p1:=p1 + p2[v1];
 	text := "04:"; if p1=$0420 then PASS() else FAIL();
 end;
 

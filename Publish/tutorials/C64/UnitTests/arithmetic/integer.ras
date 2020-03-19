@@ -19,7 +19,8 @@ var
 	v1, v2,v3,rb : byte;
 	i1, i2,ri : integer;
 	p1, p2,rp : pointer;
-
+	a1,a2 : array[10] of integer;
+	
 @include "common.ras"
 
 
@@ -137,6 +138,30 @@ end;
 
 
 
+// Arrays
+procedure T13();
+begin
+	a1[1]:=1000;
+	a2[2]:=10000;
+	v1:=1;
+	v2:=0;
+	a2[v2]:=a1[v1]+a2[v1+1];
+	i1:=a2[v2];
+	text := "13:"; if i1=11000 then PASS() else FAIL();
+end;
+
+// Arrays 2
+procedure T14();
+begin
+	a1[1]:=10000;
+	a2[1]:=1000;
+	v1:=1;
+	v2:=0;
+	a2[v2]:=a1[2*v1-1]*2-a2[v1]*3;
+	i1:=a2[v2];
+	text := "13:"; if i1=17000 then PASS() else FAIL();
+end;
+
 
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
@@ -158,6 +183,8 @@ begin
 	
 	T11();
 	T12();
+	T13();
+	T14();
 	
 	loop();
 end.

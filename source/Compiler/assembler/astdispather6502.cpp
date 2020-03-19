@@ -185,20 +185,39 @@ void ASTDispather6502::HandleVarBinopB16bit(Node *node) {
     //as->Variable(v->getValue(as), false);
   //  as->Comment(";HEREHERE");
 //    exit(1);
-    if (v->getType(as)==TokenType::POINTER || (v->m_op.m_type!=TokenType::ADDRESS && !v->m_fake16bit) )
-        as->Asm("lda " + v->getValue(as) + "+1");
-    else
-        as->Asm("lda #>" + v->getValue(as) + "");
+    if (!v->isArrayIndex()) {
+        if (v->getType(as)==TokenType::POINTER || (v->m_op.m_type!=TokenType::ADDRESS && !v->m_fake16bit) )
+            as->Asm("lda " + v->getValue(as) + "+1");
+        else
+            as->Asm("lda #>" + v->getValue(as) + "");
 
-    as->BinOP(node->m_op.m_type);
-    as->Term(lbl+"+1", true);
-    as->Asm("tay");
-//    qDebug() << v->getValue(as) << v->m_op.getType();
-  //  exit(1);
-    if (v->getType(as)==TokenType::POINTER || (v->m_op.m_type!=TokenType::ADDRESS && !v->m_fake16bit) )
-        as->Asm("lda "+ v->getValue(as));
-    else
-        as->Asm("lda #<"+ v->getValue(as));
+        as->BinOP(node->m_op.m_type);
+        as->Term(lbl+"+1", true);
+        as->Asm("tay");
+        //    qDebug() << v->getValue(as) << v->m_op.getType();
+        //  exit(1);
+        if (v->getType(as)==TokenType::POINTER || (v->m_op.m_type!=TokenType::ADDRESS && !v->m_fake16bit) )
+            as->Asm("lda "+ v->getValue(as));
+        else
+            as->Asm("lda #<"+ v->getValue(as));
+    }
+    else{
+        as->Comment("Contains expression");
+        v->m_expr->Accept(this);
+        as->Term();
+        as->Asm("asl");
+        as->Asm("tax");
+//        as->Asm("tax");
+        as->Asm("lda " + v->getValue(as) + "+1,x");
+
+        as->BinOP(node->m_op.m_type);
+        as->Term(lbl+"+1", true);
+        as->Asm("tay");
+
+        as->Asm("lda "+ v->getValue(as)+",x");
+
+//        v->Accept(this);
+    }
     //as->Asm("clc");
 
     //            as->ClearTerm();
@@ -2113,12 +2132,16 @@ bool ASTDispather6502::LoadXYVarOrNum(NodeVar *node, Node *other, bool isx) {
     QString operand = "ldx ";
     if (!isx) operand="ldy ";
     if (var!=nullptr && var->m_expr == nullptr) {
-            as->Asm(operand + var->getValue(as));
             if (s->m_arrayType==TokenType::INTEGER) // integer array index is *2 (two bytes per array slot)
             {
-                as->Asm("txa   ; watch for bug, Integer array has index range of 0 to 127");
+                //as->Asm("txa   ; watch for bug, Integer array has index range of 0 to 127");
+                as->Asm("lda "+ var->getValue(as));
                 as->Asm("asl");
                 as->Asm("tax");
+            }
+            else {
+                as->Asm(operand + var->getValue(as));
+
             }
         return true;
     }
@@ -2309,6 +2332,9 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
             if (usePush)
                 as->Asm("pha");
             as->ClearTerm();
+            if (node->m_expr->isPureVariable() && node->m_expr->isWord(as)) {
+                ErrorHandler::e.Error("You cannot use integers variables as array indices!", node->m_op.m_lineNumber);
+            }
             node->m_expr->Accept(this);
             //                node->m_expr->Build(as);
             as->Term();
@@ -2538,7 +2564,7 @@ bool ASTDispather6502::isSimpleAeqAOpB16Bit(NodeVar *var, NodeAssign *node)
         QString lbl = as->NewLabel("WordAdd");
         as->Comment("WORD optimization: a=a+b");
         //var->Accept(this);
-        as->Asm("lda " + var->getValue(as) + "+0");
+        as->Asm("lda " + var->getValue(as));
         as->Term();
         //        as->Asm("clc");
         as->BinOP(rterm->m_op.m_type);
@@ -2809,7 +2835,7 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
 
 
 
-    TokenType::Type t = s->getTokenType();
+//    TokenType::Type t = s->getTokenType();
     //qDebug() << TokenType::getType(m_left->getType(as)) << " " << v->m_expr;
 
     if (node->m_left->getType(as)==TokenType::POINTER && v->m_expr==nullptr) {
@@ -2876,7 +2902,7 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
 
     node->m_right->Accept(this);
     as->Term();
-//    as->Comment("Calling STOREVARIABLE");
+    as->Comment("Calling storevariable");
     StoreVariable(v);
 
      return v->getValue(as);

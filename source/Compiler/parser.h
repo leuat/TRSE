@@ -109,7 +109,7 @@ public:
     void PreprocessConstants();
 
     int GetParsedIntOld();
-    int GetParsedInt();
+    int GetParsedInt(TokenType::Type forceType);
 
     int getIntVal(Token t);
 
