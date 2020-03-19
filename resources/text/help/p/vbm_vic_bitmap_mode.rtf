@@ -17,7 +17,7 @@
     to a spaceship, pacman or a sheep.  Most Vic 20 programmers would have done this when making a game.
 </p>
 <p>
-    The Vic Bitmap Mode works as follows:  
+    The default Vic Bitmap Mode works as follows:  
 </p>
 <ol>
     <li>The screen and the character addresses are both set to $1000</li>
@@ -30,6 +30,8 @@
         character 16 (which is a space and an !), then 17 underneath, 18, 19 and so of and repeated for each column. A total of 240 characters are written to screen memory in this pattern</li>
     <li>Addresses from $1100 to $1FFF point to a character definintions, starting at character 16.</li>
 </ol>
+
+<p><em>Note: there are now a number of other screen modes for different screen sizes.  See vbmSetDisplayMode.</em></p>
 
 <p>
     So with the above set up, writing to any address between $1100 through to $1FFF will draw onto the 

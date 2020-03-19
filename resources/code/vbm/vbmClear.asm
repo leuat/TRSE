@@ -1,7 +1,7 @@
 vbmClear
 	; Address of bitmap $1100
-	lda #0
-	ldx #17
+        lda #$00 ; 0
+        ldx #$11 ; 17
 	sta screenmemory
 	stx screenmemory+1
 
@@ -16,20 +16,20 @@ vbmClearForY
 	ldy vbmY
 	sta (screenmemory),y
 	inc vbmY
-	lda #192    ; reached end of row?
+        lda vbmScrHeight ; #192    ; reached end of row?
 	cmp vbmY ;keep
 	bne vbmClearForY
 
 	lda screenmemory
 
 	clc
-	adc #192
+        adc vbmScrHeight ; #192
 	bcc vbmClearXOverflow
 	inc screenmemory+1
 vbmClearXOverflow
 	sta screenmemory
 	inc vbmX
-	lda #20 ; reched end of column?
+        lda vbmNumColumns ; #20 ; reched end of column?
 	cmp vbmX ;keep
 	bne vbmClearForX
     ; bitmap has been cleared
