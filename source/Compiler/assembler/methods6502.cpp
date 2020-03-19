@@ -14683,11 +14683,12 @@ void Methods6502::Call(Assembler *as)
 {
     //NodeNumber* num= (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
     if (m_node->m_params[0]->isPointer(as)) {
-        QString zp0 = as->m_internalZP[0];
-        QString zp1 = as->m_internalZP[1];
-        QString lbl = as->NewLabel("callme");
+        //QString zp0 = as->m_internalZP[0];
+        //QString zp1 = as->m_internalZP[1];
+        QString lblF = as->NewLabel("foo");
+        QString lblB = as->NewLabel("bar");
 
-        as->Asm("jsr *+3");
+/*        as->Asm("jsr *+3");
         as->Asm("pla");
         as->Asm("sta "+zp0+"; lo");
         as->Asm("pla");
@@ -14705,9 +14706,15 @@ void Methods6502::Call(Assembler *as)
         as->Asm("pha      ");
         as->Asm("lda "+zp0+" ; load lo");
         as->Asm("pha");
-
+*/
+        as->Asm("jsr "+lblF);
+        as->Asm("jmp "+lblB);
+        as->Label(lblF);
         as->Asm("jmp ("+m_node->m_params[0]->getValue(as)+")");
-        as->PopLabel("callme");
+        as->Label(lblB);
+
+        as->PopLabel("foo");
+        as->PopLabel("bar");
         return;
     }
 
