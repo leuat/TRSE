@@ -120,6 +120,16 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("initVbm"))
         initVbm(as);
 
+    if (Command("ProcedureToPointer")) {
+        NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_node->m_params[0]);
+        if (addr==nullptr)
+            ErrorHandler::e.Error("ProcedureToPointer parameter must be a procedure.", m_node->m_op.m_lineNumber);
+
+        QString name = addr->m_procedure->m_procName;
+        as->Asm("lda #<"+name);
+        as->Asm("ldy #>"+name);
+
+    }
     // Set up bitmap mode, adjust screen size, screen/char address and draw characters used for bitmap
     // 20 x 24 characters (12 double height characters) -- 160 x 194 pixels
     if (Command("vbmSetDisplayMode"))
@@ -14672,6 +14682,36 @@ void Methods6502::IncScreenX(Assembler *as)
 void Methods6502::Call(Assembler *as)
 {
     //NodeNumber* num= (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    if (m_node->m_params[0]->isPointer(as)) {
+        QString zp0 = as->m_internalZP[0];
+        QString zp1 = as->m_internalZP[1];
+        QString lbl = as->NewLabel("callme");
+
+        as->Asm("jsr *+3");
+        as->Asm("pla");
+        as->Asm("sta "+zp0+"; lo");
+        as->Asm("pla");
+        as->Asm("sta "+zp1+" ; hi");
+
+
+        as->Asm("lda "+zp0+" ; lo");
+        as->Asm("clc");
+        as->Asm("adc #26 ; lo");
+        as->Asm("sta "+zp0+"");
+        as->Asm("bcc "+lbl);
+        as->Asm("inc "+zp1+" ; inc hi");
+        as->Label(lbl);
+        as->Asm("lda "+zp1+" ; load hi");
+        as->Asm("pha      ");
+        as->Asm("lda "+zp0+" ; load lo");
+        as->Asm("pha");
+
+        as->Asm("jmp ("+m_node->m_params[0]->getValue(as)+")");
+        as->PopLabel("callme");
+        return;
+    }
+
+
     as->Term("jsr ");
     m_node->m_params[0]->Accept(m_dispatcher);
     as->Term();

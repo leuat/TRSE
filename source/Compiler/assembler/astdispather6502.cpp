@@ -756,7 +756,14 @@ void ASTDispather6502::dispatch(NodeProcedure *node)
         NodeVarDecl* vd = (NodeVarDecl*)node->m_procedure->m_paramDecl[i];
         NodeAssign* na = new NodeAssign(vd->m_varNode, node->m_parameters[i]->m_op, node->m_parameters[i]);
         na->Accept(this);
-//        na->Build(as);
+ /*       LoadVariable(node->m_parameters[i]);
+        as->Asm("pha");
+        if (node->m_parameters[i]->isWord(as)) {
+            as->Asm("tya");
+            as->Asm("pha");
+        }
+//        m_parameters.push(ProcedureParameter(node->m_parameters[i].)
+//        na->Build(as);*/
     }
 
     as->Asm("jsr " + node->m_procedure->m_procName);
@@ -828,10 +835,13 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
 
         //as->Label(m_procName);
     }
+
     if (node->m_block!=nullptr) {
         NodeBlock* b = dynamic_cast<NodeBlock*>(node->m_block);
-        if (b!=nullptr)
+        if (b!=nullptr) {
             b->forceLabel=node->m_procName;
+            b->m_isProcedure = true;
+        }
         node->m_block->Accept(this);
 //        node->m_block->Build(as);
     }
@@ -1010,6 +1020,49 @@ void ASTDispather6502::dispatch(NodeBlock *node)
         as->IncludeFile(":resources/code/nes_init.asm");
 
 
+    /*
+     * POP stuff
+     *
+    */
+  /*  if (node->m_isProcedure) {
+        if (node->m_decl.count()>0) {
+            as->Asm("pla");
+            as->Asm("sta $30");
+    //        as->Asm("pla");
+      //      as->Asm("sta $31");
+        }
+
+        for (int i=0;i<node->m_decl.count();i++) {
+            // Print label at end of vardecl
+            Node* n = node->m_decl[node->m_decl.count()-1-i];
+            NodeVarDecl* nt = dynamic_cast<NodeVarDecl*>(n);
+            if (nt!=nullptr) {
+                NodeVar* v = (NodeVar*)nt->m_varNode;
+                NodeVarType* t = (NodeVarType*)nt->m_typeNode;
+                if (!blockProcedure) // Print label at end of vardecl
+                {
+                    if (t->m_op.m_type == TokenType::INTEGER || t->m_op.m_type == TokenType::INTEGER_CONST || t->m_op.m_type == TokenType::ADDRESS || t->m_op.m_type == TokenType::POINTER)
+                    {
+                        as->Asm("pla");
+                        as->Asm("sta "+v->getValue(as));
+                        as->Asm("pla");
+                        as->Asm("sta "+v->getValue(as)+"+1");
+
+                    }
+                    else {
+                        as->Asm("pla");
+                        as->Asm("sta "+v->getValue(as));
+                    }
+
+                }
+
+            }
+            n->Accept(this);
+
+        }
+
+    }
+    */
     if (node->m_compoundStatement!=nullptr)
         node->m_compoundStatement->Accept(this);
 
@@ -1024,7 +1077,17 @@ void ASTDispather6502::dispatch(NodeBlock *node)
 
 
     node->PopZeroPointers(as);
+/*
+    if (node->m_isProcedure) {
+        if (node->m_decl.count()>0) {
+//            as->Asm("lda $31");
+//            as->Asm("pha");
+            as->Asm("lda $30");
+            as->Asm("pha");
 
+        }
+    }
+*/
 //    qDebug() << QString::number(ln);
     as->PopCounter(ln);
 }

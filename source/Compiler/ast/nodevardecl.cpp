@@ -53,7 +53,7 @@ void NodeVarDecl::ExecuteSym(SymbolTable *symTab) {
     //        if (typeSymbol==nullptr)
     //          ErrorHandler::e.Error("Could not find type symbol :" + typeName,m_op.m_lineNumber);
 
-    ErrorHandler::e.DebugLow("Typename define : " + typeName + "  variable " + varName);
+//    ErrorHandler::e.DebugLow("Typename define : " + typeName + "  variable " + varName);
 //    qDebug() << "NodeVarDecl::ExecuteSym " << varName;
 
 

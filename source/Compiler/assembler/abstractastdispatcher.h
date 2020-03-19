@@ -2,7 +2,7 @@
 #define ABSTRACTASTDISPATCHER_H
 
 #include "source/Compiler/assembler/assembler.h"
-
+#include <QStack>
 class Node;
 class NodeBinOP;
 class NodeNumber;
@@ -26,6 +26,19 @@ class NodeCase;
 class NodeRepeatUntil;
 class NodeComment;
 
+
+class ProcedureParameter {
+    QString m_name;
+    TokenType::Type m_type;
+    ProcedureParameter() {
+
+    }
+    ProcedureParameter(QString n, TokenType::Type t) {
+        m_type=t;
+        m_name = n;
+    }
+};
+
 class AbstractASTDispatcher
 {
 public:
@@ -33,6 +46,7 @@ public:
     Assembler* as = nullptr;
 
     AbstractASTDispatcher();
+    QStack<ProcedureParameter> m_parameters;
         // Declare overloads for each kind of a file to dispatch
     virtual void dispatch(NodeBinOP *node) = 0;
     virtual void dispatch(NodeNumber *node) = 0;

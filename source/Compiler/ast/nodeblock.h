@@ -41,6 +41,7 @@ public:
     SymbolTable* m_symTab = nullptr;
     bool m_useOwnSymTab;
     bool m_isMainBlock = false;
+    bool m_isProcedure = false;
     QString m_forceInterupt = "";
 
 
