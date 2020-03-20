@@ -1,0 +1,63 @@
+program Procedure_pointers;
+var  
+ 	time: byte = 0; 
+ 	// Pointer to procedure is stored in p1
+	p1 : pointer;
+
+/*
+
+ This tutorial is meant as an example on how to use procedure pointer calls in TRSE.
+ Procedure pointers are very useful for avoiding things like : 
+ 
+ if (mode=0) then DoSomething0();
+ if (mode=1) then DoSomething1();
+ if (mode=2) then DoSomething2();
+ if (mode=3) then DoSomething3();
+ if (mode=4) then DoSomething4();
+
+ which can now be replaced with a 
+ 
+ call(p1); 
+ 
+ However : remember that procedure pointer calls cannot take any parameters.  
+
+
+*/
+
+// Some random procedure 
+procedure Proc1();
+begin
+	screen_bg_col:=purple;
+	clearscreen(key_space,screen_char_loc);
+	moveto(10,10,hi(screen_char_loc));
+	printstring("THIS IS PROC 1",0,40);
+end;
+
+// Another random procedure 
+procedure Proc2();
+begin
+	screen_bg_col:=green;
+	clearscreen(key_space,screen_char_loc);
+	moveto(5,12,hi(screen_char_loc));
+	printstring("THIS IS PROC 2",0,40);
+end;
+
+
+begin
+	// Initialize the pointer
+	p1:=procedureToPointer(Proc1());
+
+	while(true) do
+	begin
+		// Call the current procedure 
+		call(p1);
+		// alternate between Proc1() and Proc2();
+		if (time=128) then 	p1:=procedureToPointer(Proc1());
+		if (time=0) then 	p1:=procedureToPointer(Proc2());
+
+		time:=time+4;
+
+		waitforverticalblank(); 	
+	end;
+
+end.

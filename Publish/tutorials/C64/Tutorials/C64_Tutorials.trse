@@ -40,6 +40,6 @@ charset_resources/images/petscii_animation.flf = :resources/character.rom
 data_header_resources/charsets/charset.flf = 0
 exomize_toggle = 0
 exomizer_toggle = 0
-open_files = -1
+open_files = ,intermediate/11_procedure_pointers.ras, Hello.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
 current_file = Hello.ras
