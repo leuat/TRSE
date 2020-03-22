@@ -274,10 +274,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("vbmScrollFixBottom"))
         vbmScrollFixBottom(as);
 
-    if (Command("initVbmScreenShiftLeft"))
-        initVbmScreenShiftLeft(as);
-    if (Command("initVbmScreenShiftRight"))
-        initVbmScreenShiftRight(as);
+    if (Command("vbmInitScreenShiftLeft"))
+        vbmInitScreenShiftLeft(as);
+    if (Command("vbmInitScreenShiftRight"))
+        vbmInitScreenShiftRight(as);
     if (Command("vbmScreenShiftLeft"))
         vbmScreenShiftLeft(as);
     if (Command("vbmScreenShiftRight"))
@@ -1496,22 +1496,142 @@ void Methods6502::vbmSetDisplayMode(Assembler* as)
         // pure numeric
         mode = m_node->m_params[0]->getValueAsInt(as);
 
-        if (mode !=0 && mode != 1)
-            ErrorHandler::e.Error("vbmSetDisplayMode - Please pass in a constant: 0 = normal 20 columns, 1 = scrolling 19 columns", m_node->m_op.m_lineNumber);
+        if (mode <0 || mode > 15)
+            ErrorHandler::e.Error("vbmSetDisplayMode - Please pass in a constant: 0 - 15", m_node->m_op.m_lineNumber);
 
     } else {
 
         // complex not supported
-        ErrorHandler::e.Error("vbmSetDisplayMode - Please pass in a constant: 0 = normal 20 columns, 1 = scrolling 19 columns", m_node->m_op.m_lineNumber);
+        ErrorHandler::e.Error("vbmSetDisplayMode - Please pass in a constant: 0 - 15", m_node->m_op.m_lineNumber);
 
     }
 
-    if (mode == 0) {
-        as->Asm("lda #20");
+    if (mode == 0) {    // 20 x 24 (12 dbl) - 192 pixel high
+        as->Asm("lda #20 ; screen width in chars");
         as->Asm("sta vbmNumColumns");
-    } else {
-        as->Asm("lda #19");
+        as->Asm("lda #192 ; screen height in pixels");
+        as->Asm("sta vbmScrHeight");
+        as->Asm("lda #12 ; screen height in chars");
+        as->Asm("sta vbmJ");
+    } else if (mode == 1) {    // 19 x 24 (12 dbl) - 192 pixel high
+        as->Asm("lda #19 ; screen width in chars");
         as->Asm("sta vbmNumColumns");
+        as->Asm("lda #192 ; screen height in pixels");
+        as->Asm("sta vbmScrHeight");
+        as->Asm("lda #12 ; screen height in chars");
+        as->Asm("sta vbmJ");
+
+    } else if (mode == 2) {    // 20 x 22 (11 dbl) - 176 pixel high
+        as->Asm("lda #20 ; screen width in chars");
+        as->Asm("sta vbmNumColumns");
+        as->Asm("lda #176 ; screen height in pixels");
+        as->Asm("sta vbmScrHeight");
+        as->Asm("lda #11 ; screen height in chars");
+        as->Asm("sta vbmJ");
+    } else if (mode == 3) {    // 19 x 22 (11 dbl) - 176 pixel high
+        as->Asm("lda #19 ; screen width in chars");
+        as->Asm("sta vbmNumColumns");
+        as->Asm("lda #176 ; screen height in pixels");
+        as->Asm("sta vbmScrHeight");
+        as->Asm("lda #11 ; screen height in chars");
+        as->Asm("sta vbmJ");
+
+    } else if (mode == 4) {    // 20 x 20 (10 dbl) - 160 pixel high
+        as->Asm("lda #20 ; screen width in chars");
+        as->Asm("sta vbmNumColumns");
+        as->Asm("lda #160 ; screen height in pixels");
+        as->Asm("sta vbmScrHeight");
+        as->Asm("lda #10 ; screen height in chars");
+        as->Asm("sta vbmJ");
+    } else if (mode == 5) {    // 19 x 20 (10 dbl) - 160 pixel high
+        as->Asm("lda #19 ; screen width in chars");
+        as->Asm("sta vbmNumColumns");
+        as->Asm("lda #160 ; screen height in pixels");
+        as->Asm("sta vbmScrHeight");
+        as->Asm("lda #10 ; screen height in chars");
+        as->Asm("sta vbmJ");
+
+    } else if (mode == 6) {    // 20 x 18 (9 dbl) - 144 pixel high
+        as->Asm("lda #20 ; screen width in chars");
+        as->Asm("sta vbmNumColumns");
+        as->Asm("lda #144 ; screen height in pixels");
+        as->Asm("sta vbmScrHeight");
+        as->Asm("lda #9 ; screen height in chars");
+        as->Asm("sta vbmJ");
+    } else if (mode == 7) {    // 19 x 18 (9 dbl) - 144 pixel high
+        as->Asm("lda #19 ; screen width in chars");
+        as->Asm("sta vbmNumColumns");
+        as->Asm("lda #144 ; screen height in pixels");
+        as->Asm("sta vbmScrHeight");
+        as->Asm("lda #9 ; screen height in chars");
+        as->Asm("sta vbmJ");
+
+
+
+    } else if (mode == 8) {    // 18 x 24 (12 dbl) - 192 pixel high
+        as->Asm("lda #18 ; screen width in chars");
+        as->Asm("sta vbmNumColumns");
+        as->Asm("lda #192 ; screen height in pixels");
+        as->Asm("sta vbmScrHeight");
+        as->Asm("lda #12 ; screen height in chars");
+        as->Asm("sta vbmJ");
+    } else if (mode == 9) {    // 17 x 24 (12 dbl) - 192 pixel high
+        as->Asm("lda #17 ; screen width in chars");
+        as->Asm("sta vbmNumColumns");
+        as->Asm("lda #192 ; screen height in pixels");
+        as->Asm("sta vbmScrHeight");
+        as->Asm("lda #12 ; screen height in chars");
+        as->Asm("sta vbmJ");
+
+    } else if (mode == 10) {    // 18 x 22 (11 dbl) - 160 pixel high
+        as->Asm("lda #18 ; screen width in chars");
+        as->Asm("sta vbmNumColumns");
+        as->Asm("lda #176 ; screen height in pixels");
+        as->Asm("sta vbmScrHeight");
+        as->Asm("lda #11 ; screen height in chars");
+        as->Asm("sta vbmJ");
+    } else if (mode == 11) {    // 17 x 22 (11 dbl) - 160 pixel high
+        as->Asm("lda #17 ; screen width in chars");
+        as->Asm("sta vbmNumColumns");
+        as->Asm("lda #176 ; screen height in pixels");
+        as->Asm("sta vbmScrHeight");
+        as->Asm("lda #11 ; screen height in chars");
+        as->Asm("sta vbmJ");
+
+    } else if (mode == 12) {    // 18 x 20 (10 dbl) - 160 pixel high
+        as->Asm("lda #18 ; screen width in chars");
+        as->Asm("sta vbmNumColumns");
+        as->Asm("lda #160 ; screen height in pixels");
+        as->Asm("sta vbmScrHeight");
+        as->Asm("lda #10 ; screen height in chars");
+        as->Asm("sta vbmJ");
+    } else if (mode == 13) {    // 17 x 20 (10 dbl) - 160 pixel high
+        as->Asm("lda #17 ; screen width in chars");
+        as->Asm("sta vbmNumColumns");
+        as->Asm("lda #160 ; screen height in pixels");
+        as->Asm("sta vbmScrHeight");
+        as->Asm("lda #10 ; screen height in chars");
+        as->Asm("sta vbmJ");
+
+    } else if (mode == 14) {    // 18 x 18 (9 dbl) - 144 pixel high
+        as->Asm("lda #18 ; screen width in chars");
+        as->Asm("sta vbmNumColumns");
+        as->Asm("lda #144 ; screen height in pixels");
+        as->Asm("sta vbmScrHeight");
+        as->Asm("lda #9 ; screen height in chars");
+        as->Asm("sta vbmJ");
+    } else if (mode == 15) {    // 17 x 18 (9 dbl) - 144 pixel high
+        as->Asm("lda #17 ; screen width in chars");
+        as->Asm("sta vbmNumColumns");
+        as->Asm("lda #144 ; screen height in pixels");
+        as->Asm("sta vbmScrHeight");
+        as->Asm("lda #9 ; screen height in chars");
+        as->Asm("sta vbmJ");
+
+    }
+    else
+    {   // something went wrong
+        ErrorHandler::e.Error("vbmSetDisplayMode - Please pass in a constant: 0 - 5", m_node->m_op.m_lineNumber);
     }
 
     as->Asm("jsr vbmSetDisplayMode");
@@ -1760,7 +1880,7 @@ void Methods6502::initVbmNextColumn(Assembler *as)
     as->Comment("WARNING: This is not safe to use with Screen Scrolling as the character map position is unknown");
     as->Asm("lda screenmemory");
     as->Asm("clc");
-    as->Asm("adc #192 ; next column");
+    as->Asm("adc vbmScrHeight ; #192 ; next column");
     as->Asm("bcc vbmCSS_overflow");
     as->Asm("inc screenmemory+1");
     as->Label("vbmCSS_overflow");
@@ -3771,7 +3891,7 @@ void Methods6502::vbmScrollFixBottom(Assembler* as)
 
 }
 
-void Methods6502::initVbmScreenShiftLeft(Assembler* as)
+void Methods6502::vbmInitScreenShiftLeft(Assembler* as)
 {
     if (m_node->m_isInitialized["vbmScreenShiftLeft"])
         return;
@@ -3781,12 +3901,86 @@ void Methods6502::initVbmScreenShiftLeft(Assembler* as)
     if (as->m_internalZP.count()==0)
         return;
 
+//    QStringList sl;
+
+    int mode = 0;
+
+    if ( m_node->m_params[0]->isPureNumeric() ) {
+
+        // pure numeric
+        mode = m_node->m_params[0]->getValueAsInt(as);
+
+        if (mode <0 || mode > 15)
+            ErrorHandler::e.Error("vbmInitScreenShiftLeft - Please pass in a constant: 0 - 15", m_node->m_op.m_lineNumber);
+
+    } else {
+
+        // complex not supported
+        ErrorHandler::e.Error("vbmInitScreenShiftLeft - Please pass in a constant: 0 - 15", m_node->m_op.m_lineNumber);
+
+    }
+
     as->Comment("VBM - Shift the screen to the left");
     as->Comment("x reg = start line, vbmY = end line");
-    as->IncludeFile(":resources/code/vbm/vbmScreenShiftLeft.asm");
+    //as->IncludeFile(":resources/code/vbm/vbmScreenShiftLeft.asm");
+    /*
+    vbmScreenShiftLeft
+        ;ldx vbmX	; line to start at
+    vbmLSP_loop
+        lda $1100,x ; to get bit from left
+        asl
+        rol $1100+$E40,x
+        rol $1100+$D80,x
+        rol $1100+$CC0,x
+        rol $1100+$C00,x
+        rol $1100+$B40,x
+        rol $1100+$A80,x
+        rol $1100+$9C0,x
+        rol $1100+$900,x
+        rol $1100+$840,x
+        rol $1100+$780,x
+        rol $1100+$6C0,x
+        rol $1100+$600,x
+        rol $1100+$540,x
+        rol $1100+$480,x
+        rol $1100+$3C0,x
+        rol $1100+$300,x
+        rol $1100+$240,x
+        rol $1100+$180,x
+        rol $1100+$C0,x
+        rol $1100,x
 
+        inx
+        cpx vbmY	; line to end at
+        bne vbmLSP_loop
+*/
+    int inc = 0, cnt = 0;
+    if (mode == 0 || mode == 1) { inc = 192; cnt = 20; }
+    if (mode == 2 || mode == 3) { inc = 176; cnt = 20; }
+    if (mode == 4 || mode == 5) { inc = 160; cnt = 20; }
+    if (mode == 6 || mode == 7) { inc = 144; cnt = 20; }
+    if (mode == 8 || mode == 9) { inc = 192; cnt = 18; }
+    if (mode == 10 || mode == 11) { inc = 176; cnt = 18; }
+    if (mode == 12 || mode == 13) { inc = 160; cnt = 18; }
+    if (mode == 14 || mode == 15) { inc = 144; cnt = 18; }
+
+    as->Label( "vbmScreenShiftLeft" );
+    as->Asm( "lda $1100,x" );
+    as->Asm( "asl ; to get bit from left" );
+
+    for (int i = cnt-1; i >= 0; i--) {
+        as->Asm( "rol $1100+"+ QString::number( i * inc ) +",x" );
+    }
+
+    as->Asm( "inx ; next row" );
+    as->Asm( "cpx vbmY ; line to end at" );
+    as->Asm( "bne vbmScreenShiftLeft" );
+//    sl << " rts";
+
+//    as->m_startInsertAssembler << sl;
+    //qDebug( "Here" );
 }
-void Methods6502::initVbmScreenShiftRight(Assembler* as)
+void Methods6502::vbmInitScreenShiftRight(Assembler* as)
 {
     if (m_node->m_isInitialized["vbmScreenShiftRight"])
         return;
@@ -3798,14 +3992,59 @@ void Methods6502::initVbmScreenShiftRight(Assembler* as)
 
     as->Comment("VBM - Shift the screen to the left");
     as->Comment("x reg = start line, vbmY = end line");
-    as->IncludeFile(":resources/code/vbm/vbmScreenShiftRight.asm");
+    //as->IncludeFile(":resources/code/vbm/vbmScreenShiftRight.asm");
+    int mode = 0;
+
+    if ( m_node->m_params[0]->isPureNumeric() ) {
+
+        // pure numeric
+        mode = m_node->m_params[0]->getValueAsInt(as);
+
+        if (mode <0 || mode > 15)
+            ErrorHandler::e.Error("vbmInitScreenShiftLeft - Please pass in a constant: 0 - 15", m_node->m_op.m_lineNumber);
+
+    } else {
+
+        // complex not supported
+        ErrorHandler::e.Error("vbmInitScreenShiftLeft - Please pass in a constant: 0 - 15", m_node->m_op.m_lineNumber);
+
+    }
+
+    as->Comment("VBM - Shift the screen to the left");
+    as->Comment("x reg = start line, vbmY = end line");
+    //as->IncludeFile(":resources/code/vbm/vbmScreenShiftLeft.asm");
+
+    int inc = 0, cnt = 0;
+    if (mode == 0 || mode == 1) { inc = 192; cnt = 20; }
+    if (mode == 2 || mode == 3) { inc = 176; cnt = 20; }
+    if (mode == 4 || mode == 5) { inc = 160; cnt = 20; }
+    if (mode == 6 || mode == 7) { inc = 144; cnt = 20; }
+    if (mode == 8 || mode == 9) { inc = 192; cnt = 18; }
+    if (mode == 10 || mode == 11) { inc = 176; cnt = 18; }
+    if (mode == 12 || mode == 13) { inc = 160; cnt = 18; }
+    if (mode == 14 || mode == 15) { inc = 144; cnt = 18; }
+
+    as->Label( "vbmScreenShiftRight" );
+    as->Asm( "lda $1100+"+ QString::number( (cnt-1) * inc )+",x" ); //lda $1100+$E40,x
+    as->Asm( "lsr ; to get bit from right" );
+
+    for (int i = 0; i < cnt; i++) {
+        as->Asm( "ror $1100+"+ QString::number( i * inc ) +",x" );
+    }
+
+
+    as->Asm( "inx ; next row" );
+    as->Asm( "cpx vbmY ; line to end at" );
+    as->Asm( "bne vbmScreenShiftRight" );
 
 }
 void Methods6502::vbmScreenShiftLeft(Assembler* as)
 {
 
     VerifyInitialized("vbm","InitVbm");
-    VerifyInitialized("vbmScreenShiftLeft","InitVbmScreenShiftLeft");
+    if (!m_node->m_isInitialized["vbmScreenShiftLeft"])
+        ErrorHandler::e.Error("Must call vbmInitScreenShiftLeft first", m_node->m_op.m_lineNumber);
+
 
     as->Comment("Screen Shift Left");
 
@@ -3838,7 +4077,8 @@ void Methods6502::vbmScreenShiftRight(Assembler* as)
 {
 
     VerifyInitialized("vbm","InitVbm");
-    VerifyInitialized("vbmScreenShiftRight","InitVbmScreenShiftRight");
+    if (!m_node->m_isInitialized["vbmScreenShiftRight"])
+        ErrorHandler::e.Error("Must call vbmInitScreenShiftRight first", m_node->m_op.m_lineNumber);
 
     as->Comment("Screen Shift Left");
 
@@ -4826,7 +5066,7 @@ void Methods6502::initVbmDrawSprite8(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmDS8_overflow");
         as->Asm("inc screenmemory+1");
     as->Label("vbmDS8_overflow");
@@ -5015,7 +5255,7 @@ void Methods6502::initVbmDrawSprite8E(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmDS8E_overflow");
         as->Asm("inc screenmemory+1");
     as->Label("vbmDS8E_overflow");
@@ -5210,7 +5450,7 @@ void Methods6502::initVbmClearSprite8(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmCS8_overflow");
         as->Asm("inc screenmemory+1");
     as->Label("vbmCS8_overflow");
@@ -5439,7 +5679,7 @@ void Methods6502::initVbmDrawSprite(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmDS_overflow");
         as->Asm("inc screenmemory+1");
     as->Label("vbmDS_overflow");
@@ -5692,7 +5932,7 @@ void Methods6502::initVbmDrawSpriteE(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmDSE_overflow");
         as->Asm("inc screenmemory+1");
     as->Label("vbmDSE_overflow");
@@ -5959,7 +6199,7 @@ void Methods6502::initVbmClearSprite(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmCS_overflow");
         as->Asm("inc screenmemory+1");
     as->Label("vbmCS_overflow");
@@ -6232,7 +6472,7 @@ void Methods6502::initVbmDrawSprite16(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmDS16_overflow");
         as->Asm("inc screenmemory+1");
     as->Label("vbmDS16_overflow");
@@ -6310,7 +6550,7 @@ void Methods6502::initVbmDrawSprite16(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmDS16_overflow2");
         as->Asm("inc screenmemory+1");
     as->Label("vbmDS16_overflow2");
@@ -6596,7 +6836,7 @@ void Methods6502::initVbmDrawSprite16E(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmDS16E_overflow");
         as->Asm("inc screenmemory+1");
     as->Label("vbmDS16E_overflow");
@@ -6674,7 +6914,7 @@ void Methods6502::initVbmDrawSprite16E(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmDS16E_overflow2");
         as->Asm("inc screenmemory+1");
     as->Label("vbmDS16E_overflow2");
@@ -6976,7 +7216,7 @@ void Methods6502::initVbmClearSprite16(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmCS16_overflow");
         as->Asm("inc screenmemory+1");
     as->Label("vbmCS16_overflow");
@@ -7070,7 +7310,7 @@ void Methods6502::initVbmClearSprite16(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmCS16_overflow2");
         as->Asm("inc screenmemory+1");
     as->Label("vbmCS16_overflow2");
@@ -7339,7 +7579,7 @@ void Methods6502::initVbmDrawSprite2(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmDS2_overflow");
         as->Asm("inc screenmemory+1");
     as->Label("vbmDS2_overflow");
@@ -7384,7 +7624,7 @@ void Methods6502::initVbmDrawSprite2(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmDS2_overflow2");
         as->Asm("inc screenmemory+1");
     as->Label("vbmDS2_overflow2");
@@ -7603,7 +7843,7 @@ void Methods6502::initVbmDrawSprite2E(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmDS2E_overflow");
         as->Asm("inc screenmemory+1");
     as->Label("vbmDS2E_overflow");
@@ -7648,7 +7888,7 @@ void Methods6502::initVbmDrawSprite2E(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmDS2E_overflow2");
         as->Asm("inc screenmemory+1");
     as->Label("vbmDS2E_overflow2");
@@ -7875,7 +8115,7 @@ void Methods6502::initVbmClearSprite2(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmCS2_overflow");
         as->Asm("inc screenmemory+1");
     as->Label("vbmCS2_overflow");
@@ -7928,7 +8168,7 @@ void Methods6502::initVbmClearSprite2(Assembler *as)
         as->Comment("move screenmemory to next column");
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; next column");
+        as->Asm("adc vbmScrHeight ; #192 ; next column");
         as->Asm("bcc vbmCS2_overflow2");
         as->Asm("inc screenmemory+1");
     as->Label("vbmCS2_overflow2");
@@ -8482,7 +8722,7 @@ void Methods6502::initVbmDrawText(Assembler* as)
     as->Label("vbmDTX_NTM_NoOverflow");
         as->Comment("next x pos on screen");
         as->Asm("inc vbmX");
-        as->Asm("lda #20   ; 0-19 columns, 20 means exceeded right of screen");
+        as->Asm("lda vbmNumColumns   ; 0-19 columns, 20 means exceeded right of screen");
         as->Asm("cmp vbmX  ; has x pos exceeded?");
         as->Asm("bne vbmDTX_Xloop  ; no, draw next char");
 
@@ -8692,7 +8932,7 @@ void Methods6502::initVbmDrawTextO(Assembler* as)
     as->Label("vbmDTXO_NTM_NoOverflow");
         as->Comment("next x pos on screen");
         as->Asm("inc vbmX");
-        as->Asm("lda #20   ; 0-19 columns, 20 means exceeded right of screen");
+        as->Asm("lda vbmNumColumns   ; 0-19 columns, 20 means exceeded right of screen");
         as->Asm("cmp vbmX  ; has x pos exceeded?");
         as->Asm("beq vbmDTXO_NextLine  ;");
         as->Asm("jmp vbmDTXO_Xloop  ; no, draw next char");
@@ -8904,7 +9144,7 @@ void Methods6502::initVbmDrawTextE(Assembler* as)
     as->Label("vbmDTXE_NTM_NoOverflow");
         as->Comment("next x pos on screen");
         as->Asm("inc vbmX");
-        as->Asm("lda #20   ; 0-19 columns, 20 means exceeded right of screen");
+        as->Asm("lda vbmNumColumns   ; 0-19 columns, 20 means exceeded right of screen");
         as->Asm("cmp vbmX  ; has x pos exceeded?");
         as->Asm("beq vbmDTXE_NextLine");
         as->Asm("jmp vbmDTXE_Xloop  ; no, draw next char");
@@ -9124,7 +9364,7 @@ void Methods6502::initVbmClearText(Assembler* as)
     as->Label("vbmCTX_NTM_NoOverflow");
         as->Comment("next x pos on screen");
         as->Asm("inc vbmX");
-        as->Asm("lda #20   ; 0-19 columns, 20 means exceeded right of screen");
+        as->Asm("lda vbmNumColumns   ; 0-19 columns, 20 means exceeded right of screen");
         as->Asm("cmp vbmX  ; has x pos exceeded?");
         as->Asm("beq vbmCTX_NextLine");
         as->Asm("jmp vbmCTX_Xloop  ; no, draw next char");
@@ -9354,7 +9594,8 @@ void Methods6502::initVbmDrawSmallTextO(Assembler* as)
     as->Label("vbmDSTXO_NTM_NoOverflow");
         as->Comment("next x pos on screen");
         as->Asm("inc vbmX");
-        as->Asm("lda #40   ; 0-39 columns, 40 means exceeded right of screen");
+        as->Asm("lda vbmNumColumns   ; 0-39 columns, 40 means exceeded right of screen");
+        as->Asm("asl ; x2");
         as->Asm("cmp vbmX  ; has x pos exceeded?");
         as->Asm("beq vbmDSTXO_NextLine  ;");
         as->Asm("jmp vbmDSTXO_Xloop  ; no, draw next char");
@@ -9584,7 +9825,8 @@ void Methods6502::initVbmDrawSmallTextE(Assembler* as)
     as->Label("vbmDSTXE_NTM_NoOverflow");
         as->Comment("next x pos on screen");
         as->Asm("inc vbmX");
-        as->Asm("lda #40   ; 0-39 columns, 40 means exceeded right of screen");
+        as->Asm("lda vbmNumColumns   ; 0-39 columns, 40 means exceeded right of screen");
+        as->Asm("asl ; x2");
         as->Asm("cmp vbmX  ; has x pos exceeded?");
         as->Asm("beq vbmDSTXE_NextLine  ;");
         as->Asm("jmp vbmDSTXE_Xloop  ; no, draw next char");
@@ -9822,7 +10064,8 @@ void Methods6502::initVbmClearSmallText(Assembler* as)
     as->Label("vbmCSTX_NTM_NoOverflow");
         as->Comment("next x pos on screen");
         as->Asm("inc vbmX");
-        as->Asm("lda #40   ; 0-39 columns, 40 means exceeded right of screen");
+        as->Asm("lda vbmNumColumns   ; 0-39 columns, 40 means exceeded right of screen");
+        as->Asm("asl ; x2");
         as->Asm("cmp vbmX  ; has x pos exceeded?");
         as->Asm("beq vbmCSTX_NextLine  ;");
         as->Asm("jmp vbmCSTX_Xloop  ; no, draw next char");
@@ -10619,7 +10862,7 @@ void Methods6502::initVbmCopyToBuffer(Assembler* as)
 
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; note - not compatible with screen scroll");
+        as->Asm("adc vbmScrHeight ; #192 ; note - not compatible with screen scroll");
         as->Asm("sta screenmemory");
         as->Asm("bcc vbmCTB_NoOverflow");
         as->Asm("inc screenmemory+1");
@@ -10731,7 +10974,7 @@ void Methods6502::initVbmCopyFromBuffer(Assembler* as)
 
         as->Asm("lda screenmemory");
         as->Asm("clc");
-        as->Asm("adc #192 ; note - not compatible with screen scroll");
+        as->Asm("adc vbmScrHeight ; #192 ; note - not compatible with screen scroll");
         as->Asm("sta screenmemory");
         as->Asm("bcc vbmCFB_NoOverflow");
         as->Asm("inc screenmemory+1");
