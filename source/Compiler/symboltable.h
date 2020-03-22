@@ -44,7 +44,7 @@ public:
     Symbol(QString name, QString type, float var);
     Symbol(QString name, QString type, QString var);
     int getLength();
-
+    // Nested symbols = records
 };
 
 
@@ -68,6 +68,7 @@ private:
     QString m_currentProcedure = "";
 public:
     QMap<QString, Symbol*> m_symbols;
+    QString m_name="";
 
     QString getCurrentProcedure()  {
         return m_currentProcedure;
@@ -82,12 +83,13 @@ public:
 
     }
 
+    QMap<QString, SymbolTable*> m_records;
+
     void ExitProcedureScope(bool removeSymbols);
 
 //    QMap<QString,SymbolTable*> m_locals;
 
     static QMap<QString, Symbol*> m_constants;
-    QString m_name;
     SymbolTable();
     static SymbolTable s;
     bool m_useLocals = false;

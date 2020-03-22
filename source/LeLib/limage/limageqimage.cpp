@@ -194,7 +194,8 @@ void LImageQImage::Release()
 
 QImage* LImageQImage::Resize(int x, int y, LColorList& lst, float gamma, float shift, float hsvShift, float sat, QPointF scale, bool useDither)
 {
-
+    if (m_qImage==nullptr)
+        return nullptr;
     QImage* other = new QImage(x,y,QImage::Format_ARGB32);
     float aspect = m_qImage->width()/(float)m_qImage->height();
     float m = max(m_qImage->width(), m_qImage->height());

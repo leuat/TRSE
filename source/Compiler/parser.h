@@ -120,6 +120,8 @@ public:
     Node* Parse(bool removeUnusedDecls, QString param, QString globalDefines, bool useLocals);
     Node* Variable();
     Node* Empty();
+    void Record(QString name);
+//    Node* Record();
     Node* Case();
     Node* AssignStatement();
     Node* Statement();

@@ -57,6 +57,7 @@ void Compiler::Parse(QString text, QStringList lst)
 //        qDebug() << "ERROR parse " << e.message;
         HandleError(e, "Error during parsing");
     }
+
     if (m_parser.m_symTab!=nullptr)
         m_parser.m_symTab->SetCurrentProcedure("");
 }
@@ -85,8 +86,11 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
         return false;
 
     m_assembler->m_projectDir = project_dir;
+    // Copy symbol table stuff, like records
     m_assembler->m_symTab->m_useLocals = m_parser.m_symTab->m_useLocals;
-
+    m_assembler->m_symTab->m_records = m_parser.m_symTab->m_records;
+    for (SymbolTable* st : m_parser.m_symTab->m_records)
+        m_assembler->m_symTab->Define(new Symbol(st->m_name, "RECORD"));
 
     if (m_tree!=nullptr)
         try {

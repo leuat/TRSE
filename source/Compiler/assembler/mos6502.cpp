@@ -263,6 +263,23 @@ void AsmMOS6502::DeclareVariable(QString name, QString type, QString initval, QS
         }
     }
 
+    if (m_symTab->m_records.contains(type)) {
+//        ErrorHandler::e.Error("Record types not implemented yet: " + type);
+        SymbolTable* st = m_symTab->m_records[type];
+        for (Symbol* s : st->m_symbols) {
+            //qDebug() << "WTF " <<s->m_name <<s->m_type;
+            // Build the name
+            QString n = name + "_" + st->m_name+"_"+s->m_name;
+            if (s->m_type.toLower()=="byte")
+                n = n+ "\t"+byte + "\t0";
+            if (s->m_type.toLower()=="integer")
+                ErrorHandler::e.Error("Record types does not support integer yet for record : " + type);
+            Write(n);
+
+        }
+        return;
+    }
+
     if (t=="")
         ErrorHandler::e.Error("Cannot declare variable of type: " + type);
 

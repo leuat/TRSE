@@ -1137,11 +1137,13 @@ void ASTDispather6502::dispatch(NodeVarDecl *node)
     QString keep = v->value;
     v->value = as->m_symTab->getCurrentProcedure()+v->getValue(as);
 //    qDebug() << v->value;
+//    qDebug() << "NVA A";
     node->ExecuteSym(as->m_symTab);
 //    qDebug() << as->m_symTab->m_symbols.keys();
    //   v->value = keep;
     //        v->m_op.m_type =t->m_op.m_type;
     //v->m_type = t;
+  //  qDebug() << "NVA B";
 
     if (t->m_op.m_type==TokenType::ARRAY) {
         as->DeclareArray(v->value, t->m_arrayVarType.m_value, t->m_op.m_intVal, t->m_data, t->m_position);

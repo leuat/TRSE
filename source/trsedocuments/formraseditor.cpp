@@ -869,9 +869,11 @@ void FormRasEditor::HandleBuildError()
     m_outputText = ErrorHandler::e.m_teOut;
     int ln = Pmm::Data::d.lineNumber;
     HandleErrorDialogs(ErrorHandler::e.m_teOut);
+//    qDebug() << "FormRasEditor "<<ln;
     if (m_builderThread.m_builder!=nullptr)
         emit OpenOtherFile(m_builderThread.m_builder->compiler->recentError.file, ln);
-    GotoLine(ln);
+    if (ln>1)
+        GotoLine(ln);
     m_builderThread.m_builder->m_system->m_buildSuccess = false;
     SetLights();
 

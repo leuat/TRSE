@@ -925,6 +925,33 @@ Node *Parser::Empty()
     return new NoOp();
 }
 
+void Parser::Record(QString name)
+{
+    Eat(TokenType::RECORD);
+//    SymbolTable
+    SymbolTable* record = new SymbolTable();
+    record->m_symbols.clear();
+    m_symTab->m_records[name] = record;
+    //m_symTab->Define(new Symbol(name,"record"));
+    record->setName(name);
+
+    while (m_currentToken.m_type!=TokenType::END) {
+        QVector<Node*> vars = VariableDeclarations("");
+        for (Node* n : vars) {
+            NodeVarDecl* nv = dynamic_cast<NodeVarDecl*>(n);
+            NodeVarType* typ = dynamic_cast<NodeVarType*>(nv->m_typeNode);
+            NodeVar* var = dynamic_cast<NodeVar*>(nv->m_varNode);
+            record->Define(new Symbol(var->value, typ->value));
+//            qDebug() << "R TYPE " <<typ->value;
+  //          qDebug() << "R VAL " <<var->value;
+        }
+        Eat(TokenType::SEMI);
+
+    }
+    Eat(TokenType::END);
+//    Eat(TokenType::SEMI);
+}
+
 
 Node *Parser::AssignStatement()
 {
@@ -1702,6 +1729,7 @@ Node *Parser::Block(bool useOwnSymTab, QString blockName)
     if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type==TokenType::WEDGE)
         return nullptr;
     QVector<Node*> decl =  Declarations(useOwnSymTab, blockName);
+
     int pos = m_currentToken.m_lineNumber;
     Node* vars =  CompoundStatement();
     NodeBlock* bl =  new NodeBlock(m_currentToken,decl, vars, useOwnSymTab);
@@ -1973,7 +2001,14 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
     m_symTab->Define(syms.last() ,false);
     Eat(TokenType::ID);
 
-
+    if (m_currentToken.m_type==TokenType::EQUALS) {
+        Eat(TokenType::EQUALS);
+        if (m_currentToken.m_type==TokenType::RECORD) {
+            Record(varName);
+            return QVector<Node *>();
+        }
+        ErrorHandler::e.Error("Unknown declaration : " +m_currentToken.m_type);
+    }
 
     // Make sure that ALL are defined!
     while (m_currentToken.m_type == TokenType::COMMA) {
@@ -2004,7 +2039,6 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
     }
 
 
-
 /*    for (Node* v: vars) {
         Syntax::s.globals[((Var*)v)->value] = 0;
     }*/
@@ -2033,6 +2067,7 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
             decl->InitSid(m_currentDir, sidloc, "nsf");
         }
     }
+
 //    return vars;
     return var_decleratons;
 }
@@ -2204,7 +2239,6 @@ Node *Parser::TypeSpec()
 
 
     }
-
     return new NodeVarType(t,initVal);
 
 }

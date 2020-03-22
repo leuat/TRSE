@@ -175,6 +175,7 @@ void SymbolTable::InitBuiltins()
     Define(new BuiltInTypeSymbol("INCBIN",""));
     Define(new BuiltInTypeSymbol("INCSID",""));
     Define(new BuiltInTypeSymbol("INCNSF",""));
+    Define(new BuiltInTypeSymbol("RECORD",""));
 
     Define(new Symbol("return",""));
 
@@ -302,8 +303,12 @@ Symbol *SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
         return s;
     }
 
+
+
     QString localName = m_currentProcedure+name;
 //    qDebug() << "localName: " << localName;
+
+
     if (!m_symbols.contains(name) && !m_symbols.contains(localName)) {
 
         QString similarSymbol = findSimilarSymbol(name,65,2,QStringList());
@@ -372,6 +377,8 @@ TokenType::Type Symbol::getTokenType() {
         return TokenType::LONG;
     if (m_type.toLower()=="incsid")
         return TokenType::INCSID;
+    if (m_type.toLower()=="record")
+        return TokenType::RECORD;
     return TokenType::NADA;
 }
 

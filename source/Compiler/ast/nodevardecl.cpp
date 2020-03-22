@@ -48,7 +48,8 @@ void NodeVarDecl::ExecuteSym(SymbolTable *symTab) {
           ErrorHandler::e.Error("Variable '" + varName +"' is already defined!",m_op.m_lineNumber);
 
 
-
+//    qDebug() << "NodeVarDecl ExecuteSym A "<<typeName;
+  //  qDebug()  << symTab->m_symbols.keys();
     Symbol* typeSymbol = symTab->Lookup(typeName, m_op.m_lineNumber);
     //        if (typeSymbol==nullptr)
     //          ErrorHandler::e.Error("Could not find type symbol :" + typeName,m_op.m_lineNumber);
@@ -56,6 +57,7 @@ void NodeVarDecl::ExecuteSym(SymbolTable *symTab) {
 //    ErrorHandler::e.DebugLow("Typename define : " + typeName + "  variable " + varName);
 //    qDebug() << "NodeVarDecl::ExecuteSym " << varName;
 
+    //qDebug() << "NodeVarDecl ExecuteSym B";
 
 
     varName = varName.remove(symTab->getCurrentProcedure());

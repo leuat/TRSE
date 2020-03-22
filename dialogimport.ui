@@ -355,7 +355,7 @@
      <string/>
     </property>
     <property name="checked">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QSlider" name="hsDither">
@@ -451,7 +451,7 @@
        <x>10</x>
        <y>10</y>
        <width>381</width>
-       <height>171</height>
+       <height>200</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout">
