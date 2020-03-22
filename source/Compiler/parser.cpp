@@ -452,9 +452,11 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
     QJSValue ret = myEngine.evaluate(str);
 //    qDebug() << str << ret.toInt();
     int r = ret.toInt();
+    if (forceType==TokenType::ADDRESS && Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64)
+        return r;
     if (forceType==TokenType::BYTE)
         return r&0xFF;
-    if (forceType==TokenType::INTEGER || forceType==TokenType::INTEGER_CONST || TokenType::ADDRESS)
+    if (forceType==TokenType::INTEGER || forceType==TokenType::INTEGER_CONST || forceType==TokenType::ADDRESS)
         return r&0xFFFF;
 
     return ret.toInt();
