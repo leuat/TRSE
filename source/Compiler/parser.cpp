@@ -849,9 +849,10 @@ Node *Parser::Variable()
     Node* n = nullptr;
 
 
-
+    bool isConstant = false;
     if (SymbolTable::m_constants.contains(m_currentToken.m_value.toUpper())) {
         Symbol* s = SymbolTable::m_constants[m_currentToken.m_value.toUpper()];
+        isConstant=true;
 
 //        qDebug() << "looking for " << m_currentToken.m_value << " , found symbol: " << s->m_name << " with value " << s->m_value->m_fVal << " of type " << s->m_type;
 
@@ -887,6 +888,7 @@ Node *Parser::Variable()
             t.m_value = "$"+QString::number( (int)s->m_value->m_fVal,16);
             NodeVar* nv = new NodeVar(t,expr);
             nv->m_subNode = subVar;
+            //nv->m_expr = expr;
             n=nv;
         }
         else {
@@ -945,6 +947,23 @@ Node *Parser::Variable()
     if (n==nullptr) {
         ErrorHandler::e.Error("Could not assign variable!");
     }
+/*    NodeVar* nv = (NodeVar*)n;
+    if (nv->m_subNode!=nullptr && ((NodeVar*)nv->m_subNode)->m_expr!=nullptr)
+        nv->m_expr = ((NodeVar*)nv->m_subNode)->m_expr;
+*/
+    // Verify that we're not trying to screw with the variable
+    NodeVar* nv = dynamic_cast<NodeVar*>(n);
+    if (nv!=nullptr) {
+        Symbol* s = m_symTab->Lookup(nv->value,m_currentToken.m_lineNumber);
+        // If variable doesn't exist
+        if (s==nullptr)
+            ErrorHandler::e.Error("Could not find variable : " +nv->value);
+//        qDebug() << nv->value<<s->m_type;
+        if (!(s->m_type.toUpper()=="ARRAY" || s->m_type.toUpper()=="POINTER" || s->m_type.toUpper()=="ADDRESS" || isConstant) && nv->m_expr!=nullptr)
+            ErrorHandler::e.Error("Variable '<b>" +nv->value + "</b>' is neither a pointer nor an array.",nv->m_op.m_lineNumber);
+
+    }
+
     return n;
 }
 
@@ -969,9 +988,10 @@ void Parser::Record(QString name)
             NodeVarDecl* nv = dynamic_cast<NodeVarDecl*>(n);
             NodeVarType* typ = dynamic_cast<NodeVarType*>(nv->m_typeNode);
             NodeVar* var = dynamic_cast<NodeVar*>(nv->m_varNode);
-            record->Define(new Symbol(var->value, typ->value));
-//            qDebug() << "R TYPE " <<typ->value;
-  //          qDebug() << "R VAL " <<var->value;
+            Symbol* s = new Symbol(var->value, typ->value);
+            s->m_arrayType = typ->m_arrayVarType.m_type;
+            s->m_arrayTypeText = typ->m_arrayVarTypeText;
+            record->Define(s);
         }
         Eat(TokenType::SEMI);
 
@@ -1250,9 +1270,10 @@ Node *Parser::Program(QString param)
 {
 //    Node* n = CompoundStatement();
     Eat(TokenType::PROGRAM);
-    NodeVar* varNode = (NodeVar*)Variable();
-    QString progName = varNode->value;
-
+//    NodeVar* varNode = (NodeVar*)Variable();
+    QString progName = m_currentToken.m_value;// varNode->value;
+    Eat();
+    m_symTab->Define(new Symbol(progName,"STRING"));
     Eat(TokenType::SEMI);
     NodeBlock* block = (NodeBlock*)Block(true);
     NodeProgram* program = new NodeProgram(progName,  param, block);
@@ -2202,8 +2223,11 @@ Node *Parser::TypeSpec()
 //        qDebug() << "Type: " << t.m_value;
   //      t.m_type = arrayType.m_type;
 //        qDebug()<< "PARSE "<< arrayType.getType() <<arrayType.m_value;
-        if (m_symTab->m_records.contains(arrayType.m_value))
+        if (m_symTab->m_records.contains(arrayType.m_value)) {
             arrayType.m_type = TokenType::RECORD;
+            if (m_symTab->m_records[arrayType.m_value]->ContainsArrays())
+                ErrorHandler::e.Error("You cannot declare an array of records that contain sub-arrays due to 6502 limitations. <br>Please remove the sub-array from the record type in question : '"+arrayType.m_value+"'.",arrayType.m_lineNumber);
+        }
 
         NodeVarType *nt =  new NodeVarType(t,position, arrayType,data);
         nt->m_flags = flags;

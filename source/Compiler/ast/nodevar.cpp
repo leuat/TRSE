@@ -161,6 +161,12 @@ bool NodeVar::isRecord(Assembler *as)
 }
 
 
+bool NodeVar::isRecordData(Assembler *as)
+{
+    return m_subNode!=nullptr;
+}
+
+
 
 QString NodeVar::getTypeText(Assembler *as)
 {
@@ -176,10 +182,11 @@ QString NodeVar::getValue(Assembler* as) {
     QString v= value;
 //    return v;
 //    qDebug() << v;
-    Symbol *s = as->m_symTab->Lookup(v,m_op.m_lineNumber,true);
     if (m_subNode!=nullptr) {
+        Symbol *s = as->m_symTab->Lookup(v,m_op.m_lineNumber,true);
+
         QString type = s->m_type;
-        if (m_expr!=nullptr) { // Has array indices
+        if ((m_expr!=nullptr) && !m_ignoreRecordExpr) { // Has array indices
             type = s->m_arrayTypeText;
 //            qDebug() << v << type;
   //          qDebug() << as->m_symTab->m_symbols.keys();

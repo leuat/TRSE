@@ -99,7 +99,7 @@ public:
     static int m_currentSid;
 
     static void DefineSid(unsigned int initAddress, unsigned int playAddress);
-
+    bool ContainsArrays();
 
     static bool isInitialized;
     static void Initialize();

@@ -38,7 +38,7 @@ public:
     //NodeVarType* m_type;
     bool m_fake16bit = false;
     Node* m_subNode = nullptr;
-
+    bool m_ignoreRecordExpr = false;
     NodeVar(Token t);
 
     NodeVar(Token t, Node* expr);
@@ -58,6 +58,7 @@ public:
     bool isByte(Assembler* as) override;
     bool containsPointer(Assembler* as) override;
     bool isRecord(Assembler* as) override;
+    bool isRecordData(Assembler* as) override;
 
     void forceWord() override {
         m_fake16bit = true;

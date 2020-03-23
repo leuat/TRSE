@@ -59,6 +59,16 @@ void SymbolTable::DefineSid(unsigned int initAddress, unsigned int playAddress) 
 
 }
 
+bool SymbolTable::ContainsArrays()
+{
+    for (QString ss: m_symbols.keys()) {
+        Symbol* s  = m_symbols[ss];
+        if (s->m_type=="ARRAY")
+            return true;
+    }
+    return false;
+}
+
 void SymbolTable::Initialize()
 {
   //  if (isInitialized)
@@ -397,7 +407,7 @@ Symbol::Symbol(QString name, QString type, float var) {
 
 Symbol::Symbol(QString name, QString type, QString var) {
     m_name = name;
-    m_type = type;
+    m_type = type;;
     m_value = new PVar(var);
 }
 

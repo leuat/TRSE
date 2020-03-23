@@ -66,8 +66,15 @@ void NodeVarDecl::ExecuteSym(SymbolTable *symTab) {
 //        qDebug() << "EXECUTESYM " << typeSymbol->m_name << varName;
         SymbolTable* ns = symTab->m_records[typeSymbol->m_name];
             for (Symbol* s : ns->m_symbols) {
-                symTab->Define(new Symbol(varName + "_" + typeSymbol->m_name + "_"+s->m_name, s->m_type));
-//                qDebug() << "Defining : "<<varName + "_" + typeSymbol->m_name + "_"+s->m_name;
+                Symbol* ns = new Symbol(varName + "_" + typeSymbol->m_name + "_"+s->m_name, s->m_type);
+//                if
+  //              qDebug() << "TS "<<s->m_type;
+                if (s->m_type=="ARRAY") {
+                    ns->m_arrayType = s->m_arrayType;
+                    ns->m_arrayTypeText = s->m_arrayTypeText;
+//                    qDebug() << "Defining : "<<varName + "_" + typeSymbol->m_name + "_"+ns->m_name << ns->m_type << TokenType::getType(ns->m_arrayType);
+                }
+                symTab->Define(ns);
             }
     }
 

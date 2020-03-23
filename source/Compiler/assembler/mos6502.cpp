@@ -116,7 +116,9 @@ bool AsmMOS6502::DeclareRecord(QString name, QString type, int count, QStringLis
             if (s->m_type.toLower()=="byte")
                 w = w+ "\t"+byte + "\t0";
             if (s->m_type.toLower()=="integer")
-                ErrorHandler::e.Error("Record types does not support integer yet for record : " + type);
+                ErrorHandler::e.Error("Record types does not support integer (yet) for record : " + type);
+            if (s->m_type.toLower()=="string")
+                ErrorHandler::e.Error("Record types does not support strings (yet) for record : " + type);
             Write(w);
             int scale = 1;
 

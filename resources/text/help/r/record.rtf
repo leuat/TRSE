@@ -1,0 +1,33 @@
+<h3>Description</h3>
+<p>A <b>record></b> is a collection of variables that is grouped together, analogous to types in C++.
+<h2>Definition></h2>
+<code>
+var
+   myType = record
+      x,y : byte;
+   end;
+   t : myType;
+
+</code>
+<p>Warning: records in TRSE does not yet support integers.</p>
+<p>Individual fields are accessed through "." as such:
+<code>
+   i := t.x;
+   moveto(t.x, t.y, hi(screen_char_loc));
+</code>
+<p>Records can be also stored as arrays, but you can *not* have arrays of records that contain arrays.
+<code>
+    tarr : array[10] of myType;
+</code>
+and fields are accessed in a similar way:
+<code>
+    moveto( tarr[i].x, tarr[i].y, hi(screen_char_loc));
+</code>
+<p>Records can also be copied through direct assignment:
+<code>
+   t := tarr[5];
+   tarr[i+1] := t;
+</code>
+<h2>Notes</h2>
+<p>As of now, integers and strings are not supported in records. Also, due to the fact how
+records are stored on the 6502, you cannot have pointers to them.

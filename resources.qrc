@@ -446,5 +446,6 @@
         <file>resources/code/amiga/end_stripped.s</file>
         <file>resources/code/amiga/init_stripped.s</file>
         <file>resources/code/amiga/init_projectall.s</file>
+        <file>resources/text/help/r/record.rtf</file>
     </qresource>
 </RCC>

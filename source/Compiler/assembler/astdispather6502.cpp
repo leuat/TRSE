@@ -2340,8 +2340,17 @@ void ASTDispather6502::LoadVariable(NodeNumber *node)
 
 void ASTDispather6502::StoreVariable(NodeVar *node) {
     //        as->Comment("VarNode StoreVariable");
-    as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber);
     //          ErrorHandler::e.Error("Could not find variable '" +value +"' for storing.", m_op.m_lineNumber);
+    as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber);
+    if (node->m_subNode!=nullptr){
+        NodeVar* nv = dynamic_cast<NodeVar*>(node->m_subNode);
+        if (nv->m_expr!=nullptr) {
+            node->m_expr = nv->m_expr;
+            nv->m_expr = nullptr;
+            node->m_ignoreRecordExpr = true;
+            nv->m_ignoreRecordExpr = true;
+        }
+    }
 
     if (node->m_expr != nullptr) {
 //        NodeNumber* number = dynamic_cast<NodeNumber*>(node->m_expr);
@@ -2351,8 +2360,7 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
             if (node->getArrayType(as)==TokenType::INTEGER) {
                 // Store integer array
                 int i = node->m_expr->getValueAsInt(as)*2;
-                as->Asm("sta " + node->getValue(as) + "+"+ QString::number(i));
-                as->Asm("sty "  + node->getValue(as) +"+"+ QString::number(i+1));
+                as->Asm("sta " + node->getValue(as) + "+"+ QString::number(i)); as->Asm("sty "  + node->getValue(as) +"+"+ QString::number(i+1));
 
             }
             else {
@@ -2443,7 +2451,7 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
             return;
         }
         else {
-            ErrorHandler::e.Error("Unable to assign variable : "+node->getValue(as)+ " of type "+as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber)->m_type,node->m_op.m_lineNumber);
+            ErrorHandler::e.Error("Unable to assign variable : "+node->getValue(as)+ " of type "+node->getTypeText(as),node->m_op.m_lineNumber);
         }
 
     }
@@ -2921,16 +2929,31 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
   */
 
     // Trying to assign a PURE record
-    if (v->isRecord(as) && v->m_subNode==nullptr) {
+    if (v->isRecord(as) && !v->isRecordData(as)) {
         if (!node->m_right->isRecord(as))
-            ErrorHandler::e.Error("Right-hand side of assignment must also be record.", v->m_op.m_lineNumber);
+            ErrorHandler::e.Error("Right-hand side of assignment must also be record of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
         if (v->getTypeText(as)!=node->m_right->getTypeText(as))
+            ErrorHandler::e.Error("Right-hand side of assignment must also be of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
+        if (node->m_right->isRecordData(as))
             ErrorHandler::e.Error("Right-hand side of assignment must also be of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
 
         // Copy record:
         HandleNodeAssignCopyRecord(node);
 
         return "";
+    }
+
+    // POINTER = RECORD errors
+    if (node->m_left->getType(as)==TokenType::POINTER && node->m_right->isRecord(as)) {
+        if (!node->m_left->isArrayIndex())
+            ErrorHandler::e.Error("Cannot assign a pointer to a record.", node->m_op.m_lineNumber);
+        if (!node->m_right->isRecordData(as))
+            ErrorHandler::e.Error("Cannot assign a pointer data to a record.", node->m_op.m_lineNumber);
+ //       if (node->)
+    }
+    // Variable = POINTER
+    if (node->m_right->isRecord(as) && (!node->m_right->isRecordData(as))) {
+        ErrorHandler::e.Error("Cannot assign a record of type '"+node->m_right->getTypeText(as)+"' to a single variable. ",node->m_op.m_lineNumber);
     }
 
 

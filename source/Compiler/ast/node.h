@@ -106,6 +106,9 @@ public:
     virtual bool isRecord(Assembler* as)  {
         return false;
     }
+    virtual bool isRecordData(Assembler* as)  {
+        return false;
+    }
 
     virtual bool isPureNumeric() {
         return false;
