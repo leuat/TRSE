@@ -2914,6 +2914,26 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
 //    TokenType::Type t = s->getTokenType();
     //qDebug() << TokenType::getType(m_left->getType(as)) << " " << v->m_expr;
 
+/*    else
+        if (node->isRecord(as)) {
+            qDebug() << "IS RECORD TEST " <<node->getTypeText(as);
+        }
+  */
+
+    // Trying to assign a PURE record
+    if (v->isRecord(as) && v->m_subNode==nullptr) {
+        if (!node->m_right->isRecord(as))
+            ErrorHandler::e.Error("Right-hand side of assignment must also be record.", v->m_op.m_lineNumber);
+        if (v->getTypeText(as)!=node->m_right->getTypeText(as))
+            ErrorHandler::e.Error("Right-hand side of assignment must also be of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
+
+        // Copy record:
+        HandleNodeAssignCopyRecord(node);
+
+        return "";
+    }
+
+
     if (node->m_left->getType(as)==TokenType::POINTER && v->m_expr==nullptr) {
 
         if (dynamic_cast<const NodeString*>(node->m_right)) {
@@ -2970,6 +2990,9 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
 
     // Optimization : a[2*b]:=2; -> no need for pha/pla
 
+
+
+
     if (!v->isWord(as) && node->m_right->isPure() && v->m_expr!=nullptr) {
         StoreVariableSimplified(v, node->m_right);
         return v->getValue(as);
@@ -2981,7 +3004,31 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
     as->Comment("Calling storevariable");
     StoreVariable(v);
 
-     return v->getValue(as);
+    return v->getValue(as);
+}
+
+void ASTDispather6502::HandleNodeAssignCopyRecord(NodeAssign *node)
+{
+    // Both are records of same type. Set up copy.
+    SymbolTable* stab = as->m_symTab->m_records[node->m_right->getTypeText(as)];
+    as->Comment("Handle assign copy records");
+    for (Symbol* s: stab->m_symbols) {
+        NodeVar* l = new NodeVar(Token(TokenType::ID,node->m_left->getValue(as)));
+        l->m_op.m_lineNumber = node->m_op.m_lineNumber;
+        l->m_expr = ((NodeVar*)node->m_left)->m_expr;
+        NodeVar* lp = new NodeVar(Token(TokenType::ID,s->m_name));
+        l->m_subNode = lp;
+
+        NodeVar* r = new NodeVar(Token(TokenType::ID,node->m_right->getValue(as)));
+        NodeVar* rp = new NodeVar(Token(TokenType::ID,s->m_name));
+        r->m_subNode = rp;
+        r->m_op.m_lineNumber = node->m_op.m_lineNumber;
+        r->m_expr = ((NodeVar*)node->m_right)->m_expr;
+
+ //       qDebug() << node->m_left->getValue(as);
+        NodeAssign* ns = new NodeAssign(l,node->m_op, r);
+        ns->Accept(this);
+    }
 }
 
 void ASTDispather6502::StoreVariableSimplified(NodeVar *node, Node* expr)

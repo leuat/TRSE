@@ -99,7 +99,7 @@ public:
     virtual QString getAddress() {return "";}
 
     virtual void forceWord() {}
-
+    virtual QString getTypeText(Assembler* as) {return "";}
     virtual bool isPure() {
         return isPureNumeric() || isPureVariable();
     }

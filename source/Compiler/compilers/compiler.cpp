@@ -169,8 +169,8 @@ void Compiler::HandleError(FatalErrorException fe, QString e)
 
     fe.file=file;
 
-    msg +="<br><font color=\"#FF0000\">Fatal error " + line+"</font>";
-    if (linenr<m_parser.m_lexer->m_lines.count() && linenr>=0)
+    msg +="<br><font color=\"#FF0000\">Fatal error " + line+"</font>&nbsp;";
+//    if (linenr<m_parser.m_lexer->m_lines.count() && linenr>=0)
 //        msg+="<br><i>Source code line</i>: " + m_parser.m_lexer->m_lines[linenr];
     msg+="<br>";
 //    msg+="<br><i>Message</i>: ";

@@ -172,6 +172,7 @@ public:
 
     QString AssignVariable(NodeAssign* node);
 
+    void HandleNodeAssignCopyRecord(NodeAssign* node);
 
 
 

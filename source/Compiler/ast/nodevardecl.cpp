@@ -67,6 +67,7 @@ void NodeVarDecl::ExecuteSym(SymbolTable *symTab) {
         SymbolTable* ns = symTab->m_records[typeSymbol->m_name];
             for (Symbol* s : ns->m_symbols) {
                 symTab->Define(new Symbol(varName + "_" + typeSymbol->m_name + "_"+s->m_name, s->m_type));
+//                qDebug() << "Defining : "<<varName + "_" + typeSymbol->m_name + "_"+s->m_name;
             }
     }
 

@@ -94,6 +94,7 @@ TokenType::Type NodeVar::getType(Assembler *as) {
 }
 
 
+
 TokenType::Type NodeVar::getArrayType(Assembler *as)
 {
     TokenType::Type t = m_op.m_type;
@@ -151,8 +152,24 @@ bool NodeVar::containsPointer(Assembler *as)
 
 bool NodeVar::isRecord(Assembler *as)
 {
-    return m_subNode!=nullptr;
-    //as->m_symTab->Lookup()
+    Symbol* s = as->m_symTab->Lookup(value,m_op.m_lineNumber,true);
+    QString t = s->m_type;
+    if (t=="address") {
+        t = s->m_arrayTypeText;
+    }
+    return as->m_symTab->m_records.contains(t);
+}
+
+
+
+QString NodeVar::getTypeText(Assembler *as)
+{
+    Symbol* s = as->m_symTab->Lookup(value,m_op.m_lineNumber,true);
+    QString t = s->m_type;
+    if (t=="address")
+        t = s->m_arrayTypeText;
+    return t;
+
 }
 
 QString NodeVar::getValue(Assembler* as) {
@@ -172,7 +189,7 @@ QString NodeVar::getValue(Assembler* as) {
 //        qDebug() << "NodeVar getValue"
 
         if (!as->m_symTab->m_records.contains(type))
-                ErrorHandler::e.Error("Could not find record type : "+type + " of " + v,m_op.m_lineNumber);
+                ErrorHandler::e.Error("Could not find of record type : "+type + " of " + v,m_op.m_lineNumber);
         //SymbolTable* t = as->m_symTab->m_records[type];
         v =v + "_"+type+"_"+((NodeVar*)m_subNode)->value;//m_subNode->getValue(as);
     }
