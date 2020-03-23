@@ -21,15 +21,13 @@ var
    	i,j,x,dx, time: byte = 0; 
 	// a star can have 8 values in a single char
 	charsetVals: array[8] of byte =(1,2,4,8,16,32,64,128);	
-		// Star position in memory (0-40)
-	posx: array[noStars] of byte;
-	// Star position in char pos (0-64) / 8 with range 0-7
-	posdx: array[noStars] of byte;
-	// speed of star, subtracted to posdx, range 0-64 divided by 8
-	posddx: array[noStars] of byte;
+	
+	star = record
+		x,dx,ddx,color : byte;
+	end;
 
-	// Star color
-	color: array[noStars] of byte;
+	stars : array[noStars] of star;
+
 	// random table
 	rands: array[256] of byte;
 	zp,cp:pointer;
@@ -58,10 +56,10 @@ procedure InitializeStarfield();
 begin
 	j:=42;
 	for i:=0 to noStars do begin
-		posx[i]:=rands[i]/2;  // 0-40
-		posdx[i]:=rands[j]&63; // 0-64 (will be divided by 8)
-		color[i]:=starColors[j&7];  // 0-7
-		posddx[i]:=rands[i]&7+1;  // 1-8
+		stars[i].x:=rands[i]/2;  // 0-40
+		stars[i].dx:=rands[j]&63; // 0-64 (will be divided by 8)
+		stars[i].color:=starColors[j&7];  // 0-7
+		stars[i].ddx:=rands[i]&7+1;  // 1-8
 		j:=j+11; // just some random shift
 	end;
 end;
@@ -85,15 +83,15 @@ begin
 	cp:=screen_col_loc;
 	for i:=0 to noStars do begin
 		if i<>12 then begin // ignore stars at line 12
-			x:=posx[i];
-			dx:=posdx[i]/8;
+			x:=stars[i].x;
+			dx:=stars[i].dx/8;
 			screenmemory[x]:=charPos+7-dx;
 			if x<>39 then
 				screenmemory[x+1]:=key_space
 			else
 				screenmemory[0]:=key_space;
 
-			cp[x]:=color[i];
+			cp[x]:=stars[i].color;
 
 		end;
 		screenmemory:=screenmemory+screen_width;
@@ -106,17 +104,17 @@ end;
 procedure UpdateStarfield();
 begin
 	for i:=0 to noStars do begin
-		dx:=posdx[i]-posddx[i];
+		dx:=stars[i].dx-stars[i].ddx;
 		if dx>127 then begin
-			posx[i]:=posx[i]-1;
-			if posx[i]>127 then begin	
-				posx[i]:=39;
-				posddx[i]:=rands[time]&7+1;
+			stars[i].x:=stars[i].x-1;
+			if stars[i].x>127 then begin	
+				stars[i].x:=39;
+				stars[i].ddx:=rands[time]&7+1;
 			end;
-			posdx[i]:=63;
+			stars[i].dx:=63;
 		end
 		else 	
-		posdx[i]:=dx;
+		stars[i].dx:=dx;
 	end;
 
 end;

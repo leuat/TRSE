@@ -120,8 +120,13 @@ bool AsmMOS6502::DeclareRecord(QString name, QString type, int count, QStringLis
             Write(w);
             int scale = 1;
 
+            QString bytes = "";
+            for (int i=0;i<count-1;i++)
+                bytes+="0,";
+            bytes.remove(bytes.count()-1,1);
             if (count!=1)
-                Asm("org "+n+"+" +QString::number(count*scale));
+                Asm("   dc.b "+bytes);
+//                Asm("org "+n+"+" +QString::number(count*scale));
 
         }
         return true;

@@ -1,6 +1,6 @@
 program fading_text;
 var  
-   	time1, waitTime,x,y,i,j,val : byte = 0; 
+   	time1, waitTime,x,y,i,j,k,val : byte = 0; 
 
 // @max defines how many texts can be written on the screen at the same time
 	const max : byte = 6;
@@ -11,7 +11,12 @@ var
 
 
 	// Current texts, supports @max 
-	text_x, text_y, text_time, text_len:array[@max] of byte = (0,0,0,0,0,0);
+//	text_x, text_y, text_time, text_len:array[max] of byte = (0,0,0,0,0,0);
+	textType = record
+		x,y,time,l : byte;
+	end;
+
+	text : array[max] of textType;
 
 	// Pointer to text and color ram
 	textPtr, colorPtr:pointer;
@@ -45,7 +50,7 @@ procedure FindAvailableSlot(); // returns j
 begin
 	j:=0;
 	for i:=0 to @max do begin
-		if text_time[i]=0 then begin 
+		if text[i].time=0 then begin 
 			j:=i; 
 			return(); 
 		end;
@@ -62,11 +67,11 @@ begin
 	// keep x/y position
 	x:=textPtr[0];
 	y:=textPtr[1];
-	text_x[j]:=x;
-	text_y[j]:=y;
+	text[j].x:=x;
+	text[j].y:=y;
 
 	// Set time to size of color list
-	text_time[j]:=40; // set time
+	text[j].time:=40; // set time
 	// Advance to text
 	textPtr:=textPtr+2;
 	// Move screenmemory pointer to $d800 color ram
@@ -84,7 +89,7 @@ begin
 		inc(i);
 		textPtr:=textPtr+1;
 	end;
-	text_len[j]:=i; // Set length
+	text[j].l:=i; // Set length
 	waitTime:=textPtr[1];
 	// Pointing to the next
 	textPtr:=textPtr+2;
@@ -101,14 +106,10 @@ end;
 procedure UpdateTextColors();
 begin
 	for i:=0 to max do begin
-		if (text_time[i]<>0) then begin // is active: update color 
-			text_time[i]:=text_time[i]-1; // damn dec doesn't work
-			val:=colors[text_time[i]];
-			moveto(text_x[i],text_y[i],hi(screen_col_loc));
-			j:=text_len[i];
-			fill(screenmemory,val,j);
-//			for j:=0 to text_len[i] do screenmemory[j]:=val;
-
+		if (text[i].time<>0) then begin // is active: update color 
+			text[i].time:=text[i].time-1; // damn dec doesn't work
+			moveto(text[i].x, text[i].y, hi(screen_col_loc));
+			fill(screenmemory,colors[text[i].time],k);
 		end;
 	end; 
 
@@ -149,7 +150,7 @@ begin
 	textPtr:=demotext;
 	ClearScreen(key_space,screen_char_loc);
 	ClearScreen(black,screen_col_loc);
-
+	
 	StartRasterChain(RasterMain(),0,useKernal);
 	Loop();
 end.
