@@ -35,6 +35,8 @@ public:
     QString m_name;
     QString m_type;
     TokenType::Type m_arrayType;
+    // For records
+    QString m_arrayTypeText;
     int m_org = 0;
     int m_size = 0;
     bool isUsed = false;

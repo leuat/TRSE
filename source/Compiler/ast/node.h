@@ -103,6 +103,9 @@ public:
     virtual bool isPure() {
         return isPureNumeric() || isPureVariable();
     }
+    virtual bool isRecord(Assembler* as)  {
+        return false;
+    }
 
     virtual bool isPureNumeric() {
         return false;

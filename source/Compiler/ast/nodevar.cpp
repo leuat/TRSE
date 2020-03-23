@@ -149,16 +149,32 @@ bool NodeVar::containsPointer(Assembler *as)
     return (getType(as)==TokenType::POINTER && m_expr!=nullptr);
 }
 
+bool NodeVar::isRecord(Assembler *as)
+{
+    return m_subNode!=nullptr;
+    //as->m_symTab->Lookup()
+}
+
 QString NodeVar::getValue(Assembler* as) {
     QString v= value;
 //    return v;
+//    qDebug() << v;
+    Symbol *s = as->m_symTab->Lookup(v,m_op.m_lineNumber,true);
     if (m_subNode!=nullptr) {
-        QString type = as->m_symTab->Lookup(v,0,false)->m_type;
+        QString type = s->m_type;
+        if (m_expr!=nullptr) { // Has array indices
+            type = s->m_arrayTypeText;
+//            qDebug() << v << type;
+  //          qDebug() << as->m_symTab->m_symbols.keys();
+//            exit(1);
+    }
+
+//        qDebug() << "NodeVar getValue"
 
         if (!as->m_symTab->m_records.contains(type))
                 ErrorHandler::e.Error("Could not find record type : "+type);
         //SymbolTable* t = as->m_symTab->m_records[type];
-        v =v + "_"+type+"_"+m_subNode->getValue(as);
+        v =v + "_"+type+"_"+((NodeVar*)m_subNode)->value;//m_subNode->getValue(as);
     }
     if (as->m_symTab->getCurrentProcedure()!="") {
         //value = value.replace(as->m_symTab->getCurrentProcedure(),"");

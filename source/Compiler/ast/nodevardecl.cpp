@@ -42,26 +42,25 @@ void NodeVarDecl::Delete() {
 
 void NodeVarDecl::ExecuteSym(SymbolTable *symTab) {
 
-    QString typeName = ((NodeVar*)m_typeNode)->value;
+    NodeVarType* typeNode = dynamic_cast<NodeVarType*>(m_typeNode);
+    QString typeName = typeNode->value;
     QString varName = ((NodeVar*)m_varNode)->value;
     if (symTab->exists(varName))
           ErrorHandler::e.Error("Variable '" + varName +"' is already defined!",m_op.m_lineNumber);
 
 
-//    qDebug() << "NodeVarDecl ExecuteSym A "<<typeName;
-  //  qDebug()  << symTab->m_symbols.keys();
+    if (typeName=="ARRAY"){
+
+        //if (symTab->m_records.contains(typeNode->m_arrayVarType.m_value))
+        if (typeNode->m_arrayVarType.m_type==TokenType::RECORD)
+            typeName = typeNode->m_arrayVarType.m_value;
+    }
+
     Symbol* typeSymbol = symTab->Lookup(typeName, m_op.m_lineNumber);
-    //        if (typeSymbol==nullptr)
-    //          ErrorHandler::e.Error("Could not find type symbol :" + typeName,m_op.m_lineNumber);
-
-//    ErrorHandler::e.DebugLow("Typename define : " + typeName + "  variable " + varName);
-//    qDebug() << "NodeVarDecl::ExecuteSym " << varName;
-
-    //qDebug() << "NodeVarDecl ExecuteSym B";
 
 
     varName = varName.remove(symTab->getCurrentProcedure());
-
+//    qDebug() << "Nodevardecl:ExecuteSym " << varName << " " << varSymbol->m_type;
     if (symTab->m_records.contains(typeSymbol->m_name)) {
         // Create record symbol table
 //        qDebug() << "EXECUTESYM " << typeSymbol->m_name << varName;
@@ -78,7 +77,6 @@ void NodeVarDecl::ExecuteSym(SymbolTable *symTab) {
 
     symTab->Define(varSymbol,isFlaggedAsUsed);
 
-    // qDebug() << "Nodevardecl:ExecuteSym " << varName << " " << varSymbol->m_type;
 
 }
 

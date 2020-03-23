@@ -2077,7 +2077,7 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
 
         NodeVarDecl* decl = new NodeVarDecl(n, typeNode);
         var_decleratons.append(decl);
-//        qDebug() <<  typeNode->m_op.getType() << typeNode->m_op.m_value;;
+//        qDebug() <<  typeNode->m_op.getType() << typeNode->m_op.m_value << ((NodeVar*)n)->value;;
         if (typeNode->m_op.m_type == TokenType::INCSID) {
 //            decl->m_isUsed = true;
 
@@ -2201,10 +2201,14 @@ Node *Parser::TypeSpec()
         t.m_intVal = count;
 //        qDebug() << "Type: " << t.m_value;
   //      t.m_type = arrayType.m_type;
+//        qDebug()<< "PARSE "<< arrayType.getType() <<arrayType.m_value;
+        if (m_symTab->m_records.contains(arrayType.m_value))
+            arrayType.m_type = TokenType::RECORD;
 
         NodeVarType *nt =  new NodeVarType(t,position, arrayType,data);
         nt->m_flags = flags;
         return nt;
+
 
     }
 

@@ -56,6 +56,7 @@ public:
     bool isLong(Assembler* as) override;
     bool isByte(Assembler* as) override;
     bool containsPointer(Assembler* as) override;
+    bool isRecord(Assembler* as) override;
 
     void forceWord() override {
         m_fake16bit = true;

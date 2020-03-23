@@ -34,6 +34,7 @@ class NodeVarType : public Node {
 public:
     QString value;
     Token m_arrayVarType;
+    QString m_arrayVarTypeText = "";
     QStringList m_data;
     QStringList m_flags;
     QString m_filename, m_position="";

@@ -76,6 +76,7 @@ public:
 
     void InitCStrings();
 
+    bool DeclareRecord(QString name, QString type, int count, QStringList data, QString pos);
 
     void Program(QString name, QString vicParams) override;
     void EndProgram() override;

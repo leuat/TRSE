@@ -103,6 +103,32 @@ void AsmMOS6502::InitCStrings()
 
 }
 
+bool AsmMOS6502::DeclareRecord(QString name, QString type, int count, QStringList data, QString pos)
+{
+    if (m_symTab->m_records.contains(type)) {
+//        ErrorHandler::e.Error("Record types not implemented yet: " + type);
+        SymbolTable* st = m_symTab->m_records[type];
+        for (Symbol* s : st->m_symbols) {
+            //qDebug() << "WTF " <<s->m_name <<s->m_type;
+            // Build the name
+            QString n = name + "_" + st->m_name+"_"+s->m_name;
+            QString w = n;
+            if (s->m_type.toLower()=="byte")
+                w = w+ "\t"+byte + "\t0";
+            if (s->m_type.toLower()=="integer")
+                ErrorHandler::e.Error("Record types does not support integer yet for record : " + type);
+            Write(w);
+            int scale = 1;
+
+            if (count!=1)
+                Asm("org "+n+"+" +QString::number(count*scale));
+
+        }
+        return true;
+    }
+    return false;
+}
+
 void AsmMOS6502::Program(QString programName, QString vicConfig)
 {
 
@@ -178,6 +204,12 @@ void AsmMOS6502::EndProgram()
 void AsmMOS6502::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
 {
     QString t = byte;
+
+    if (DeclareRecord(name,type,count,data,pos))
+        return;
+
+
+
     if (type.toLower()=="integer")
         t = word;
     if (type.toLower()=="byte")
@@ -245,6 +277,9 @@ void AsmMOS6502::DeclareVariable(QString name, QString type, QString initval, QS
 {
     QString t = "";
 
+    if (DeclareRecord(name,type,1,QStringList(),position))
+         return;
+
     if (type.toLower()=="const") {
         Write(name + " = " + initval);
         return;
@@ -263,7 +298,7 @@ void AsmMOS6502::DeclareVariable(QString name, QString type, QString initval, QS
         }
     }
 
-    if (m_symTab->m_records.contains(type)) {
+/*    if (m_symTab->m_records.contains(type)) {
 //        ErrorHandler::e.Error("Record types not implemented yet: " + type);
         SymbolTable* st = m_symTab->m_records[type];
         for (Symbol* s : st->m_symbols) {
@@ -279,7 +314,7 @@ void AsmMOS6502::DeclareVariable(QString name, QString type, QString initval, QS
         }
         return;
     }
-
+*/
     if (t=="")
         ErrorHandler::e.Error("Cannot declare variable of type: " + type);
 

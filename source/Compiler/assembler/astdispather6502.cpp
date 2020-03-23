@@ -1107,7 +1107,6 @@ void ASTDispather6502::dispatch(NodeBlock *node)
 void ASTDispather6502::dispatch(NodeVarDecl *node)
 {
     node->DispatchConstructor(as);
-
     int ret = node->MaintainBlocks(as);
 
     if (ret==3) node->m_curMemoryBlock = nullptr;
@@ -1131,14 +1130,18 @@ void ASTDispather6502::dispatch(NodeVarDecl *node)
 
     }*/
 
+//    qDebug() << "NODEVARDECL";
 
     NodeVar* v = (NodeVar*)node->m_varNode;
     NodeVarType* t = (NodeVarType*)node->m_typeNode;
     QString keep = v->value;
-    v->value = as->m_symTab->getCurrentProcedure()+v->getValue(as);
+
+    v->value = as->m_symTab->getCurrentProcedure()+v->value;
+
+    node->ExecuteSym(as->m_symTab);
+
 //    qDebug() << v->value;
 //    qDebug() << "NVA A";
-    node->ExecuteSym(as->m_symTab);
 //    qDebug() << as->m_symTab->m_symbols.keys();
    //   v->value = keep;
     //        v->m_op.m_type =t->m_op.m_type;
@@ -1151,6 +1154,10 @@ void ASTDispather6502::dispatch(NodeVarDecl *node)
         node->m_dataSize=t->m_op.m_intVal;
         Symbol* s = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
         s->isUsed=false;
+        //if (!v->isRecord(as))
+        // Symbol needs reorganizing, move type to typearray while main type now is address. stupid name, should be array
+        s->m_arrayTypeText = s->m_type;
+        //qDebug() << "DECLARE ARRAY "<<s->m_type;
         s->m_type="address";
         s->m_arrayType = t->m_arrayVarType.m_type;
     }else
@@ -2423,15 +2430,20 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
             as->Asm("sta " + node->getValue(as));
             return;
         }
+        else
         if (as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber)->getTokenType() == TokenType::ADDRESS) {
 
             as->Asm("sta " + node->getValue(as));
             return;
         }
+        else
         if (as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber)->getTokenType() == TokenType::INTEGER) {
             as->Asm("sta " + node->getValue(as));
             as->Asm("sty " + node->getValue(as) + "+1");
             return;
+        }
+        else {
+            ErrorHandler::e.Error("Unable to assign variable : "+node->getValue(as)+ " of type "+as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber)->m_type,node->m_op.m_lineNumber);
         }
 
     }
