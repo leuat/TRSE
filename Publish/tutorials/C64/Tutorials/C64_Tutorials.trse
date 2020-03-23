@@ -42,4 +42,4 @@ exomize_toggle = 0
 exomizer_toggle = 0
 open_files = ,easy/18_records.ras, easy/03_boxes.ras, intermediate/02_fading_text.ras, intermediate/01_starfield.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
-current_file = easy/03_boxes.ras
+current_file = easy/18_records.ras
