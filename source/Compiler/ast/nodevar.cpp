@@ -172,7 +172,7 @@ QString NodeVar::getValue(Assembler* as) {
 //        qDebug() << "NodeVar getValue"
 
         if (!as->m_symTab->m_records.contains(type))
-                ErrorHandler::e.Error("Could not find record type : "+type);
+                ErrorHandler::e.Error("Could not find record type : "+type + " of " + v,m_op.m_lineNumber);
         //SymbolTable* t = as->m_symTab->m_records[type];
         v =v + "_"+type+"_"+((NodeVar*)m_subNode)->value;//m_subNode->getValue(as);
     }
