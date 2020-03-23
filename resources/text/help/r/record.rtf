@@ -9,7 +9,6 @@ var
    t : myType;
 
 </code>
-<p>Warning: records in TRSE does not yet support integers.</p>
 <p>Individual fields are accessed through "." as such:
 <code>
    i := t.x;
@@ -17,7 +16,7 @@ var
 </code>
 <p>Records can be also stored as arrays, but you can *not* have arrays of records that contain arrays.
 <code>
-    tarr : array[10] of myType;
+    tarr : array[10] of myType; // note that myType is now barred from containing arrays
 </code>
 and fields are accessed in a similar way:
 <code>
@@ -31,3 +30,4 @@ and fields are accessed in a similar way:
 <h2>Notes</h2>
 <p>As of now, integers and strings are not supported in records. Also, due to the fact how
 records are stored on the 6502, you cannot have pointers to them.
+<p>You can have a byte array in records, but then you're unable to have an array of that record type (due to 6502 limitations).</p>
