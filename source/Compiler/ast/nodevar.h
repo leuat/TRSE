@@ -37,7 +37,7 @@ public:
     Node* m_expr = nullptr;
     //NodeVarType* m_type;
     bool m_fake16bit = false;
-
+    Node* m_subNode = nullptr;
 
     NodeVar(Token t);
 

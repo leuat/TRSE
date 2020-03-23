@@ -848,6 +848,8 @@ Node *Parser::Variable()
 {
     Node* n = nullptr;
 
+
+
     if (SymbolTable::m_constants.contains(m_currentToken.m_value.toUpper())) {
         Symbol* s = SymbolTable::m_constants[m_currentToken.m_value.toUpper()];
 
@@ -875,14 +877,24 @@ Node *Parser::Variable()
             Eat(TokenType::RBRACKET);
          }
 
+        Node* subVar = nullptr;
+        if (m_currentToken.m_type==TokenType::DOT) {
+            Eat();
+            subVar = Variable();
+        }
+
         if (t.m_type==TokenType::ADDRESS && expr!=nullptr) {
             t.m_value = "$"+QString::number( (int)s->m_value->m_fVal,16);
-            n = new NodeVar(t,expr);
+            NodeVar* nv = new NodeVar(t,expr);
+            nv->m_subNode = subVar;
+            n=nv;
         }
         else {
             n = new NodeNumber(t, s->m_value->m_fVal);
+
             //qDebug()  << s->m_value->m_fVal;
         }
+
 
     }
     else {
@@ -894,6 +906,7 @@ Node *Parser::Variable()
         }
 
         Eat(m_currentToken.m_type);
+
         if (m_currentToken.m_type!=TokenType::LBRACKET) {
             if (t.m_value.endsWith("^")) {
                 t.m_value.replace("^","");
@@ -901,14 +914,29 @@ Node *Parser::Variable()
 //                exit(1);
                 t.m_type = TokenType::ADDRESS;
             }
+            Node* subVar = nullptr;
+            if (m_currentToken.m_type==TokenType::DOT) {
+                Eat();
+                subVar = Variable();
+            }
+
             n = new NodeVar(t);
+            dynamic_cast<NodeVar*>(n)->m_subNode = subVar;
         }
         else
             {
                 Eat(TokenType::LBRACKET);
                 Node* expr = Expr();
                 Eat(TokenType::RBRACKET);
+                Node* subVar = nullptr;
+                if (m_currentToken.m_type==TokenType::DOT) {
+                    Eat();
+                    subVar = Variable();
+                }
+
+
                 n = new NodeVar(t, expr);
+                dynamic_cast<NodeVar*>(n)->m_subNode = subVar;
 
 
         }

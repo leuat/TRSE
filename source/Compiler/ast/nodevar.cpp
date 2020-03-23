@@ -152,6 +152,14 @@ bool NodeVar::containsPointer(Assembler *as)
 QString NodeVar::getValue(Assembler* as) {
     QString v= value;
 //    return v;
+    if (m_subNode!=nullptr) {
+        QString type = as->m_symTab->Lookup(v,0,false)->m_type;
+
+        if (!as->m_symTab->m_records.contains(type))
+                ErrorHandler::e.Error("Could not find record type : "+type);
+        //SymbolTable* t = as->m_symTab->m_records[type];
+        v =v + "_"+type+"_"+m_subNode->getValue(as);
+    }
     if (as->m_symTab->getCurrentProcedure()!="") {
         //value = value.replace(as->m_symTab->getCurrentProcedure(),"");
         QString tstv = as->m_symTab->getCurrentProcedure()+value;

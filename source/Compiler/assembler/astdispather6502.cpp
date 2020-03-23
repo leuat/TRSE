@@ -2336,7 +2336,6 @@ void ASTDispather6502::StoreVariable(NodeVar *node) {
     as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber);
     //          ErrorHandler::e.Error("Could not find variable '" +value +"' for storing.", m_op.m_lineNumber);
 
-    // Is array
     if (node->m_expr != nullptr) {
 //        NodeNumber* number = dynamic_cast<NodeNumber*>(node->m_expr);
         bool isNumber = node->m_expr->isPureNumeric();

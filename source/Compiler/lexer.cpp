@@ -465,7 +465,7 @@ Token Lexer::GetNextToken()
         }
         if (m_currentChar==".") {
             Advance();
-            Advance();
+//            Advance();
             //m_text = m_text.replace("\n", "");
             return Token(TokenType::DOT, ".");
         }
