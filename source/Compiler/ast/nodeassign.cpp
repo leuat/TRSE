@@ -35,6 +35,11 @@ NodeAssign::NodeAssign(Node *left, Token t, Node *r):Node() {
 
 }
 
+void NodeAssign::Delete()
+{
+    Node::Delete();
+}
+
 void NodeAssign::ExecuteSym(SymbolTable *symTab) {
     QString varName = ((NodeVar*)m_left)->value;
     Symbol* varSymbol = symTab->Lookup(varName, m_op.m_lineNumber);

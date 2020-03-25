@@ -26,6 +26,22 @@ bool SymbolTable::isInitialized = false;
 int SymbolTable::m_currentSid = 0;
 QMap<QString, Symbol*> SymbolTable::m_constants;
 
+SymbolTable::~SymbolTable() {
+/*    for (QString s: m_symbols.keys())
+        delete m_symbols[s];
+    m_symbols.clear();
+
+    for (QString s: m_constants.keys())
+        delete m_constants[s];
+    m_constants.clear();
+
+    for (QString s: m_records.keys())
+        delete m_records[s];
+    m_records.clear();
+*/
+    Delete();
+}
+
 void SymbolTable::ExitProcedureScope(bool removeSymbols) {
     // "TRUE" doesn't work
     if (removeSymbols)
@@ -148,7 +164,7 @@ void SymbolTable::Delete() {
         }
         delete s;
     }
-
+    m_symbols.clear();
     // Delete static constants as well
     if (isInitialized) {
         for (QString val : m_constants.keys()) {
@@ -164,6 +180,11 @@ void SymbolTable::Delete() {
         isInitialized = false;
 
     }
+    m_constants.clear();
+    for (QString s: m_records.keys())
+        delete m_records[s];
+    m_records.clear();
+
 }
 
 void SymbolTable::setName(QString s) {

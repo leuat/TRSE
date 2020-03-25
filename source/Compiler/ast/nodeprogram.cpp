@@ -28,6 +28,13 @@ void NodeProgram::Delete() {
         delete m_NodeBlock;
         m_NodeBlock = nullptr;
     }
+    qDebug() << "NodeProgram:: delete" <<s_uniqueSymbols.keys().count();
+    for (Node* n :s_uniqueSymbols.keys()) {
+        n->Delete();
+        delete n
+                ;
+    }
+    s_uniqueSymbols.clear();
 }
 
 

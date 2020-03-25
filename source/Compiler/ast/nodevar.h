@@ -44,6 +44,8 @@ public:
     NodeVar(Token t, Node* expr);
 
 
+    void Delete() override;
+
     TokenType::Type getOrgType(Assembler *as);
 
     TokenType::Type getType(Assembler* as) override;

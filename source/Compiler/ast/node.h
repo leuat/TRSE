@@ -42,6 +42,7 @@ public:
 
 class Node {
 public:
+    static QMap<Node*, Node*> s_uniqueSymbols;
     Token m_op;
     int m_lineNumber;
     uint level = 0;

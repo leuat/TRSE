@@ -756,6 +756,8 @@ void ASTDispather6502::dispatch(NodeProcedure *node)
         NodeVarDecl* vd = (NodeVarDecl*)node->m_procedure->m_paramDecl[i];
         NodeAssign* na = new NodeAssign(vd->m_varNode, node->m_parameters[i]->m_op, node->m_parameters[i]);
         na->Accept(this);
+        delete na;
+        //na->s_uniqueSymbols[na] = na;// mark for deletion
  /*       LoadVariable(node->m_parameters[i]);
         as->Asm("pha");
         if (node->m_parameters[i]->isWord(as)) {
@@ -803,10 +805,12 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
     }
 
 
-
     //MaintainBlocks(as);
-    if (node->m_block==nullptr)  // Is builtin procedure
+    if (node->m_block==nullptr) {  // Is builtin procedure
         node->m_block = new NodeBuiltinMethod(node->m_procName, QVector<Node*>(), nullptr);
+//        Node::s_uniqueSymbols[node->m_block] = node->m_block; // Mark for deletion
+
+    }
 
     bool isInitFunction=false;
     bool isBuiltinFunction=false;
@@ -843,6 +847,11 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
             b->m_isProcedure = true;
         }
         node->m_block->Accept(this);
+//        node->Delete();
+//        node->s_uniqueSymbols[node->m_block] = node->m_block;
+
+
+//        delete node;
 //        node->m_block->Build(as);
     }
     if (!isInitFunction) {
@@ -865,7 +874,6 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
 void ASTDispather6502::dispatch(NodeProgram *node)
 {
     node->DispatchConstructor(as);
-
 //    as->EndMemoryBlock();
     NodeBuiltinMethod::m_isInitialized.clear();
     as->Program(node->m_name, node->m_param);
@@ -2888,7 +2896,7 @@ void ASTDispather6502::dispatch(NodeComment *node)
 
 
 
-QString ASTDispather6502::AssignVariable(NodeAssign *node) {
+void ASTDispather6502::AssignVariable(NodeAssign *node) {
 
 
     NodeVar* v = (NodeVar*)dynamic_cast<const NodeVar*>(node->m_left);
@@ -2908,6 +2916,8 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
         as->Comment("Assigning memory location");
         v = new NodeVar(num->m_op); // Create a variable copy
         v->value = num->HexValue();
+        Node::s_uniqueSymbols[v] = v; // Mark for deletion
+
         //return num->HexValue();
     }
 
@@ -2940,7 +2950,7 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
         // Copy record:
         HandleNodeAssignCopyRecord(node);
 
-        return "";
+        return;
     }
 
     // POINTER = RECORD errors
@@ -2961,18 +2971,18 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
 
         if (dynamic_cast<const NodeString*>(node->m_right)) {
             AssignString(node,node->m_left->isPointer(as));
-            return v->getValue(as);
+            return;
 
         }
 
         AssignPointer(node);
-        return v->getValue(as);
+        return;
     }
 
     if (dynamic_cast<const NodeString*>(node->m_right))
     {
         AssignString(node,node->m_left->isPointer(as));
-        return v->getValue(as);
+        return;
     }
     if (node->m_right==nullptr)
         ErrorHandler::e.Error("Node assign: right hand must be expression", node->m_op.m_lineNumber);
@@ -2985,7 +2995,7 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
     }
     // For constant i:=i+1;
     if (IsSimpleIncDec(v,  node))
-        return v->getValue(as);
+        return;
 
     // Special case:
 /*
@@ -3018,7 +3028,7 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
 
     if (!v->isWord(as) && node->m_right->isPure() && v->m_expr!=nullptr) {
         StoreVariableSimplified(v, node->m_right);
-        return v->getValue(as);
+        return;
     }
 
 
@@ -3027,7 +3037,7 @@ QString ASTDispather6502::AssignVariable(NodeAssign *node) {
     as->Comment("Calling storevariable");
     StoreVariable(v);
 
-    return v->getValue(as);
+    return;
 }
 
 void ASTDispather6502::HandleNodeAssignCopyRecord(NodeAssign *node)
@@ -3048,9 +3058,10 @@ void ASTDispather6502::HandleNodeAssignCopyRecord(NodeAssign *node)
         r->m_op.m_lineNumber = node->m_op.m_lineNumber;
         r->m_expr = ((NodeVar*)node->m_right)->m_expr;
 
- //       qDebug() << node->m_left->getValue(as);
         NodeAssign* ns = new NodeAssign(l,node->m_op, r);
         ns->Accept(this);
+        Node::s_uniqueSymbols[ns] = ns; // Mark for deletion
+
     }
 }
 

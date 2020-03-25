@@ -39,3 +39,8 @@ bool NodeUnaryOp::isMinusOne() {
     return false;
 
 }
+
+void NodeUnaryOp::Delete()
+{
+    Node::Delete();
+}

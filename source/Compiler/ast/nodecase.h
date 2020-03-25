@@ -17,6 +17,8 @@ public:
         m_statements.append(b);
     }
 
+    void Delete() override;
+
     void ExecuteSym(SymbolTable* symTab) override {
         m_variable->ExecuteSym(symTab);
         for (Node* n: m_statements)

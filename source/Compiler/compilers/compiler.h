@@ -45,7 +45,11 @@ public:
     CIniFile* m_ini, *m_projectIni;
     FatalErrorException recentError;
     Compiler(CIniFile* ini, CIniFile* pIni);
-    Compiler() {}
+    Compiler() {
+    }
+
+
+
 
     virtual void InitAssemblerAndDispatcher(AbstractSystem* system) = 0;
     virtual void Connect() = 0;
@@ -55,6 +59,7 @@ public:
     void CleanupBlockLinenumbers();
     void SaveBuild(QString filename);
     void HandleError(FatalErrorException fe, QString se);
+    void Destroy();
 //    void FindLineNumberAndFile(int inLe, QString& file, int& outle);
     void WarningUnusedVariables();
     virtual void CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &ocycles, QMap<int, int> &retcycles) {}

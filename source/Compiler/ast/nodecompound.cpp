@@ -23,6 +23,7 @@
 
 
 void NodeCompound::Delete() {
+    Node::Delete();
     for (Node* n: children) {
         n->Delete();
         delete n;

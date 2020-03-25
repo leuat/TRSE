@@ -9,6 +9,7 @@ class AsmM68000 : public Assembler
 {
 public:
     AsmM68000();
+    ~AsmM68000() {}
 
     QString byte = "dc.b";
     QString word = "dc.w";

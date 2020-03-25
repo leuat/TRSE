@@ -41,6 +41,7 @@ public:
     bool isMinusOne() override;
 
 
+    void Delete() override;
     void parseConstants(SymbolTable* symTab) override {
         if (m_left!=nullptr)
             m_left->parseConstants(symTab);

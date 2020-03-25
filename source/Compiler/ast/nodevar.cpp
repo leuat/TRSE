@@ -36,6 +36,22 @@ NodeVar::NodeVar(Token t, Node *expr) : Node() {
 
 }
 
+void NodeVar::Delete()
+{
+    if (m_expr!=nullptr) {
+        m_expr->Delete();
+        delete m_expr;
+        m_expr = nullptr;
+    }
+    if (m_subNode!=nullptr) {
+        m_subNode->Delete();
+        delete m_subNode;
+        m_subNode = nullptr;
+    }
+
+
+}
+
 
 TokenType::Type NodeVar::getOrgType(Assembler *as) {
 

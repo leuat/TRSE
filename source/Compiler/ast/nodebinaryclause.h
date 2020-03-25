@@ -38,6 +38,8 @@ public:
 
     bool cannotBeSimplified(Assembler* as);
 
+    void Delete() override;
+
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);

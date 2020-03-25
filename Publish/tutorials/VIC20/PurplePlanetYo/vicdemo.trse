@@ -44,6 +44,6 @@ output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
 exomize_toggle = 0
 via_zeropages = ,$5B, $5C, $5D, $5E
-open_files = -1
+open_files = ,include/rasterbars.ras, demo.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/PurplePlanetYo/
 current_file = demo.ras

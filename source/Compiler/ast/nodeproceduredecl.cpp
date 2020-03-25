@@ -54,19 +54,23 @@ void NodeProcedureDecl::AppendBlock(Node *block)
 }
 
 void NodeProcedureDecl::Delete() {
-    ErrorHandler::e.DebugLow("Memory: Deleting in NodeProcedureDecl", level);
-
+  //  ErrorHandler::e.DebugLow("Memory: Deleting in NodeProcedureDecl", level);
+//    qDebug() << "Procdure decl DELETE!";
+    Node::Delete();
     for (Node* n: m_paramDecl) {
         n->Delete();
         delete n;
     }
     m_paramDecl.clear();
-    if (m_block) {
+
+    if (m_block!=nullptr) {
+//        qDebug() << "Deleting procedure decl for "<< m_procName;
         m_block->Delete();
         delete m_block;
+//        s_uniqueSymbols[m_block] = m_block;
         m_block = nullptr;
     }
-    ErrorHandler::e.DebugLow("Memory DONE: Deleting in NodeProcedureDecl", level);
+//    ErrorHandler::e.DebugLow("Memory DONE: Deleting in NodeProcedureDecl", level);
 }
 
 void NodeProcedureDecl::SetParametersValue(QVector<PVar> &lst) {

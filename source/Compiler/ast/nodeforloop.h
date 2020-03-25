@@ -35,8 +35,8 @@
 class NodeForLoop : public Node {
 public:
 
-    Node* m_a, *m_b;
-    Node* m_block;
+    Node* m_a=nullptr, *m_b = nullptr;
+    Node* m_block=nullptr;
     int m_forcePage;
     bool m_unroll = false;
     Node* m_step = nullptr;

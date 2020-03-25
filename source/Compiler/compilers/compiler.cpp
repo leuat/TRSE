@@ -69,8 +69,12 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
         //qDebug() << "Compiler::Build : tree not parsed!";
         return false;
     }
-    if (m_assembler)
+    if (m_assembler!=nullptr) {
+        m_assembler->Delete();
         delete m_assembler;
+
+        m_assembler = nullptr;
+    }
 
     system->DefaultValues();
     Syntax::s.m_currentSystem->DefaultValues();
@@ -89,6 +93,7 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
     // Copy symbol table stuff, like records
     m_assembler->m_symTab->m_useLocals = m_parser.m_symTab->m_useLocals;
     m_assembler->m_symTab->m_records = m_parser.m_symTab->m_records;
+
     for (SymbolTable* st : m_parser.m_symTab->m_records)
         m_assembler->m_symTab->Define(new Symbol(st->m_name, "RECORD"));
 
@@ -96,6 +101,7 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
         try {
         dynamic_cast<NodeProgram*>(m_tree)->m_initJumps = m_parser.m_initJumps;
         m_dispatcher->as = m_assembler;
+
         m_tree->Accept(m_dispatcher);
 
     } catch (FatalErrorException e) {
@@ -103,17 +109,18 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
         return false;
     }
 
+
     for (MemoryBlock* mb:m_parser.m_userBlocks)
         m_assembler->blocks.append(mb);
-
 
     Connect();
 
     CleanupBlockLinenumbers();
 
     WarningUnusedVariables();
-
-
+    // Make sure records aren't deleted in copy
+    m_assembler->m_symTab->m_records.clear();
+//    m_assembler->m_symTab->Delete();
     return true;
 
 }
@@ -179,6 +186,27 @@ void Compiler::HandleError(FatalErrorException fe, QString e)
     recentError = fe;
     ErrorHandler::e.CatchError(fe, e + msg);
 
+}
+
+void Compiler::Destroy()
+{
+    if (m_tree!=nullptr) {
+        m_tree->Delete();
+    }
+
+    delete m_tree;
+    m_tree = nullptr;
+
+    if (m_assembler) {
+        m_assembler->Delete();
+        delete m_assembler;
+    }
+    m_assembler = nullptr;
+
+    if (m_dispatcher!=nullptr) {
+        delete m_dispatcher;
+        m_dispatcher = nullptr;
+    }
 }
 
 

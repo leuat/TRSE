@@ -39,17 +39,20 @@
 
 class NodeAssign : public Node {
 public:
-    Node* m_arrayIndex = nullptr;
+//    Node* m_arrayIndex = nullptr;
 
 
     NodeAssign(Node* left, Token t, Node* r);
+
+    void Delete() override;
+
 
     void ExecuteSym(SymbolTable* symTab) override;
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);
     }
-    void parseConstants(SymbolTable* symTab) override {
+/*    void parseConstants(SymbolTable* symTab) override {
         if (m_arrayIndex!=nullptr)
             m_arrayIndex->parseConstants(symTab);
         if (m_left!=nullptr)
@@ -57,7 +60,7 @@ public:
         if (m_right!=nullptr)
             m_right->parseConstants(symTab);
     }
-
+*/
 };
 
 #endif // NODEASSIGN_H

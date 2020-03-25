@@ -238,6 +238,8 @@ public:
     }
     virtual bool CheckZPAvailability() {return false;}
 
+    void Delete();
+
     QString getLabel(QString s);
     QString m_hash = "#";
     QString NewLabel(QString s);
@@ -247,6 +249,7 @@ public:
     }
 
     Assembler();
+    virtual ~Assembler();
     void Save(QString filename);
     void Nl();
     virtual void Write(QString str, int level=0);

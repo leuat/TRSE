@@ -70,7 +70,11 @@ private:
     QString m_currentProcedure = "";
 public:
     QMap<QString, Symbol*> m_symbols;
+    QMap<QString, SymbolTable*> m_records;
+    static QMap<QString, Symbol*> m_constants;
     QString m_name="";
+
+    ~SymbolTable();
 
     QString getCurrentProcedure()  {
         return m_currentProcedure;
@@ -85,13 +89,11 @@ public:
 
     }
 
-    QMap<QString, SymbolTable*> m_records;
 
     void ExitProcedureScope(bool removeSymbols);
 
 //    QMap<QString,SymbolTable*> m_locals;
 
-    static QMap<QString, Symbol*> m_constants;
     SymbolTable();
     static SymbolTable s;
     bool m_useLocals = false;

@@ -170,7 +170,7 @@ public:
 
     bool IsSimpleAndOr(NodeBinaryClause* node, QString labelSuccess, QString labelFail);
 
-    QString AssignVariable(NodeAssign* node);
+    void AssignVariable(NodeAssign* node);
 
     void HandleNodeAssignCopyRecord(NodeAssign* node);
 

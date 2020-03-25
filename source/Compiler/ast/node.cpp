@@ -29,6 +29,8 @@ MemoryBlock* Node::m_curMemoryBlock = nullptr;
 QMap<QString, bool> Node::flags;
 SymbolTable* Node::parserSymTab;
 
+QMap<Node*, Node*> Node::s_uniqueSymbols;
+
 void Node::DispatchConstructor(Assembler *as) {
     //        m_blockInfo = m_staticBlockInfo;s
     m_currentLineNumber = m_op.m_lineNumber;

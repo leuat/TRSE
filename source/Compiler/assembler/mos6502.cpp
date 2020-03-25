@@ -34,6 +34,9 @@ AsmMOS6502::AsmMOS6502() :Assembler()
     InitCStrings();
 }
 
+AsmMOS6502::~AsmMOS6502() {
+}
+
 void AsmMOS6502::InitCStrings()
 {
     m_cstr.clear();
@@ -113,10 +116,15 @@ bool AsmMOS6502::DeclareRecord(QString name, QString type, int count, QStringLis
             // Build the name
             QString n = name + "_" + st->m_name+"_"+s->m_name;
             QString w = n;
-            if (s->m_type.toLower()=="byte")
-                w = w+ "\t"+byte + "\t0";
+            QString t = byte;
             if (s->m_type.toLower()=="integer")
-                ErrorHandler::e.Error("Record types does not support integer (yet) for record : " + type);
+                t= word;
+
+            w = w+ "\t"+t + "\t0";
+
+
+            //if (s->m_type.toLower()=="integer")
+            //    ErrorHandler::e.Error("Record types does not support integer (yet) for record : " + type);
             if (s->m_type.toLower()=="string")
                 ErrorHandler::e.Error("Record types does not support strings (yet) for record : " + type);
             Write(w);
@@ -127,7 +135,7 @@ bool AsmMOS6502::DeclareRecord(QString name, QString type, int count, QStringLis
                 bytes+="0,";
             bytes.remove(bytes.count()-1,1);
             if (count!=1)
-                Asm("   dc.b "+bytes);
+                Asm("    "+t+" "+bytes);
 //                Asm("org "+n+"+" +QString::number(count*scale));
 
         }

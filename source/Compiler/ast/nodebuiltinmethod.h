@@ -47,12 +47,7 @@ public:
         m_op.m_lineNumber--;
     }
 
-    void Delete() override {
-        for (Node* n: m_params) {
-            n->Delete();
-            delete n;
-        }
-    }
+    void Delete() override;
 
     void parseConstants(SymbolTable* symTab) override {
         for (Node* n:m_params)

@@ -37,7 +37,7 @@
 class NodeVarDecl : public Node {
 public:
     Node* m_varNode = nullptr;
-    Node* m_typeNode;
+    Node* m_typeNode = nullptr;
     int m_fileSize=0;
     int m_dataSize=0;
     bool m_chipMem = false;

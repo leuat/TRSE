@@ -13,6 +13,18 @@ SourceBuilder::SourceBuilder(CIniFile *ini, CIniFile *project, QString curDir, Q
     m_currentSourceFile = curSourceFile;
 }
 
+SourceBuilder::~SourceBuilder() {
+    if (compiler!=nullptr) {
+        compiler->Destroy();
+        delete compiler;
+    }
+    if (m_system!=nullptr && !m_useSyntaxSystem) {
+        delete m_system;
+        m_system = nullptr;
+    }
+
+}
+
 bool SourceBuilder::Build(QString source)
 {
     if (m_currentSourceFile.toLower().endsWith(".asm")) {
@@ -25,9 +37,10 @@ bool SourceBuilder::Build(QString source)
                                            &m_iniFile, &m_projectIniFile);
 */
        compiler = FactoryCompiler::CreateCompiler(&m_iniFile, &m_projectIniFile);
+       m_useSyntaxSystem = true;
        return true;
     }
-
+    m_useSyntaxSystem = false;
     m_buildSuccess = false;
     m_assembleSuccess = false;
     m_output = "";
@@ -55,19 +68,31 @@ bool SourceBuilder::Build(QString source)
     m_filename = m_currentSourceFile.split(".ras")[0];
 //    m_filename = m_curDir+"/"+ m_currentSourceFile.split(".")[0];
 
-    if (m_system != nullptr)
+    if (m_system != nullptr) {
         delete m_system;
+    }
+
 
 
     m_system = FactorySystem::Create(AbstractSystem::SystemFromString(
                                          m_projectIniFile.getString("system")),
                                         &m_iniFile, &m_projectIniFile);
 
+
+
+
+
     m_system->timer.start();
     m_system->m_buildSuccess = true;
 
+//    m_system->m_buildSuccess = false;
+//    return false;
+
+
     m_buildSuccess = compiler->Build(m_system, path);
-//    qDebug() << lst;
+
+
+
     if (m_buildSuccess)
         BuildSuccesString();
 

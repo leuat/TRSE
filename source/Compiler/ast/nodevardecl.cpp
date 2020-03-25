@@ -28,13 +28,14 @@ NodeVarDecl::NodeVarDecl(Node *varNode, Node *typeNode):Node() {
 }
 
 void NodeVarDecl::Delete() {
-    if (m_varNode) {
+    if (m_varNode!=nullptr) {
         m_varNode->Delete();
         delete m_varNode;
     }
-    if (m_typeNode) {
-        m_typeNode->Delete();
-        delete m_typeNode;
+    if (m_typeNode!=nullptr) {
+        s_uniqueSymbols[m_typeNode] = m_typeNode;
+  //      m_typeNode->Delete();
+//        delete m_typeNode;
     }
 
 }

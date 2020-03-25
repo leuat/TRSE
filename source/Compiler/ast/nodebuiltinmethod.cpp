@@ -78,3 +78,13 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
     }
 }
 
+void NodeBuiltinMethod::Delete() {
+    Node::Delete();
+    for (Node* n: m_params) {
+        n->Delete();
+        delete n;
+    }
+    m_params.clear();
+
+}
+

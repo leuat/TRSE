@@ -29,18 +29,18 @@ NodeProcedure::NodeProcedure(NodeProcedureDecl *proc, QVector<Node *> params, To
 }
 
 void NodeProcedure::Delete() {
-    ErrorHandler::e.DebugLow("Memory: Deleting in NodeProcedure", level);
-    if (m_procedure) {
-        //m_procedure->Delete();
-        //delete m_procedure;
-        //m_procedure = nullptr;
-    }
     for (Node* n : m_parameters) {
         n->Delete();
         delete n;
     }
+
+    if (m_procedure!=nullptr) {
+//        m_procedure->Delete();
+ //       delete m_procedure;
+//        s_uniqueSymbols[m_procedure] = m_procedure;
+        m_procedure = nullptr;
+    }
     m_parameters.clear();
-    ErrorHandler::e.DebugLow("Memory DONE: Deleting in NodeProcedure", level);
 }
 
 void NodeProcedure::ExecuteSym(SymbolTable *symTab) {

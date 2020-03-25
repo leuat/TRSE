@@ -34,6 +34,10 @@ Assembler::Assembler()
     m_symTab = new SymbolTable();
 }
 
+Assembler::~Assembler()
+{
+}
+
 void Assembler::Save(QString filename) {
     if (QFile::exists(filename))
         QFile::remove(filename);
@@ -218,6 +222,20 @@ int Assembler::CountCycles(QString s)
 
 }
 
+void Assembler::Delete()
+{
+  delete m_symTab;
+    m_symTab = nullptr;
+
+    m_source = QStringList();
+
+//    qDebug() << "Assembler::delete no blocks " <<blocks.count();
+  /*  for (MemoryBlock* mb: blocks)
+        if (mb!=nullptr)
+            delete mb;*/
+    blocks.clear();
+}
+
 QString Assembler::getLabel(QString s) {
     QString pre ="";
     if (m_currentBlockName!="")
@@ -342,7 +360,14 @@ void Assembler::Connect()
 
     m_source = QStringList() << " processor 6502" <<pre << m_source;
     m_source.removeAll("");
+    // Delete appendix
+//    qDebug() << "Deleting appendices : "<<m_appendix.count() << m_blockStack.count();
+    for (Appendix* a: m_appendix)
+        delete a;
     m_appendix.clear();
+/*    for (Appendix* a: m_blockStack)
+        delete a;
+    m_blockStack.clear();*/
 }
 
 

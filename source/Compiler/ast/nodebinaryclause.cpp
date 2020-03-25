@@ -42,3 +42,8 @@ bool NodeBinaryClause::cannotBeSimplified(Assembler *as) {
             );
 }
 
+void NodeBinaryClause::Delete()
+{
+    Node::Delete();
+}
+

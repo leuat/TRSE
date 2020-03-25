@@ -245,8 +245,10 @@ void FormRasEditor::Build()
 //    if (m_builderThread.m_builder!=nullptr)
   //      delete m_builderThread.m_builder;
 
-  //  if (m_builderThread.m_builder==nullptr)
-        m_builderThread.m_builder = new SourceBuilder(m_iniFile, m_projectIniFile, m_currentDir, m_currentSourceFile);
+    if (m_builderThread.m_builder!=nullptr)
+        delete m_builderThread.m_builder;
+
+    m_builderThread.m_builder = new SourceBuilder(m_iniFile, m_projectIniFile, m_currentDir, m_currentSourceFile);
 
 
 
@@ -450,6 +452,8 @@ void FormRasEditor::SetupHighlighter()
     p.setColor(QPalette::Base, colors.getColor("backgroundcolor"));
     p.setColor(QPalette::Text, colors.getColor("textcolor"));
     ui->txtEditor->setPalette(p);
+    //if (highlighter!=nullptr)
+    //    delete highlighter;
     highlighter = new Highlighter(colors, 0, ui->txtEditor->document());
     QStringList ls = m_iniFile->getStringList("custom_keyword_colour");
     QColor col= Qt::white;

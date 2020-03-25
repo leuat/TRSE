@@ -33,20 +33,21 @@ NodeConditional::NodeConditional(Token op, int forcePage, Node *clause, Node *bl
 }
 
 void NodeConditional::Delete() {
-    /*if (m_a) {
-            m_a->Delete();
-            delete m_a;
-            m_a = nullptr;
-        }
-        if (m_b) {
-            m_b->Delete();
-            delete m_b;
-            m_b = nullptr;
-        }*/
-    if (m_block) {
+    Node::Delete();
+    if (m_block!=nullptr) {
         m_block->Delete();
         delete m_block;
         m_block = nullptr;
+    }
+    if (m_elseBlock!=nullptr) {
+        m_elseBlock->Delete();
+        delete m_elseBlock;
+        m_elseBlock = nullptr;
+    }
+    if (m_binaryClause) {
+        m_binaryClause->Delete();
+        delete m_binaryClause;
+        m_binaryClause = nullptr;
     }
 
 

@@ -31,17 +31,22 @@ void NodeBlock::SetParameter(QString name, PVar var) {
 
 void NodeBlock::Delete() {
     Node::Delete();
-
+//    qDebug()<< "NODEBLOCK DETELET";
     if (m_useOwnSymTab && m_symTab!=nullptr) {
         m_symTab->Delete();
+        delete m_symTab;
     }
     if (m_compoundStatement!=nullptr) {
         m_compoundStatement->Delete();
         m_compoundStatement = nullptr;
     }
     for (Node* n : m_decl) {
-        n->Delete();
-        delete n;
+//        qDebug() << "Deleting : "<< (dynamic_cast<NodeVarDecl*>(n)!=nullptr) <<m_decl.count();
+       // n->Delete();
+  //      qDebug() << "DONE";
+       // delete n;
+        s_uniqueSymbols[n] = n;
+
     }
     m_decl.clear();
 
