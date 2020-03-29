@@ -201,6 +201,17 @@ void LColorList::EnableColors(QVector<int> &cols)
 
 void LColorList::GeneratePaletteFromQImage(QImage &img)
 {
+    if (img.format()==QImage::Format_Indexed8) {
+//        qDebug() << "INDEXED colors : "<<img.colorTable().count();
+        for (int i=0;i<img.colorTable().count();i++) {
+            if (i<m_list.count())
+              m_list[i].color = QColor(img.colorTable()[i]);
+        }
+
+        return;
+    }
+
+
     QVector<QVector3D> m_colorList;
     for (int i=0;i<10000;i++) {
             int x  = rand()%img.width();

@@ -61,6 +61,8 @@ begin
 
 end;
 
+
+
 // Random walk: up, down,left,right, stop at walls
 // Uses a lookup random table to decide which direction to go
 procedure UpdateMonsters();
@@ -118,6 +120,7 @@ begin
 		UpdateMonsters();
 		RenderMonsters(0);// 'at' sign
 		// Wait a bit each frame
+		
 		for i:=0 to 4 do
 			waitforverticalblank();
 		shift:=shift+1; // Some prime number
