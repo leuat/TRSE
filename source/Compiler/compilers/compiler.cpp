@@ -31,6 +31,10 @@ Compiler::Compiler(CIniFile* ini, CIniFile* pIni)
 
 }
 
+Compiler::Compiler() {
+//    qDebug() << "~COMPILER DESTROYED "<<this;
+}
+
 
 void Compiler::Parse(QString text, QStringList lst)
 {
@@ -72,7 +76,6 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
     if (m_assembler!=nullptr) {
         m_assembler->Delete();
         delete m_assembler;
-
         m_assembler = nullptr;
     }
 
@@ -190,14 +193,16 @@ void Compiler::HandleError(FatalErrorException fe, QString e)
 
 void Compiler::Destroy()
 {
+
     if (m_tree!=nullptr) {
         m_tree->Delete();
+        delete m_tree;
+
     }
 
-    delete m_tree;
     m_tree = nullptr;
 
-    if (m_assembler) {
+    if (m_assembler!=nullptr) {
         m_assembler->Delete();
         delete m_assembler;
     }

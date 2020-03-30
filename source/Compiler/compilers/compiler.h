@@ -45,8 +45,7 @@ public:
     CIniFile* m_ini, *m_projectIni;
     FatalErrorException recentError;
     Compiler(CIniFile* ini, CIniFile* pIni);
-    Compiler() {
-    }
+    Compiler();
 
 
 

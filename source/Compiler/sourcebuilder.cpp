@@ -14,10 +14,11 @@ SourceBuilder::SourceBuilder(CIniFile *ini, CIniFile *project, QString curDir, Q
 }
 
 SourceBuilder::~SourceBuilder() {
-    if (compiler!=nullptr) {
+/*    if (compiler!=nullptr) {
         compiler->Destroy();
         delete compiler;
-    }
+        compiler = nullptr;
+    }*/
     if (m_system!=nullptr && !m_useSyntaxSystem) {
         delete m_system;
         m_system = nullptr;

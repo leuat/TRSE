@@ -240,7 +240,6 @@ void FormRasEditor::Build()
 
     }
 
-    emit requestBuild();
 
 //    if (m_builderThread.m_builder!=nullptr)
   //      delete m_builderThread.m_builder;
@@ -250,6 +249,7 @@ void FormRasEditor::Build()
 
     m_builderThread.m_builder = new SourceBuilder(m_iniFile, m_projectIniFile, m_currentDir, m_currentSourceFile);
 
+    emit requestBuild();
 
 
     m_builderThread.m_filename = filename;
