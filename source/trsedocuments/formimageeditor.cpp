@@ -79,7 +79,7 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
 //  ui->splitter->setCollapsible(0, false);
 }
 
-void FormImageEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile *iniProject) {
+void FormImageEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> iniProject) {
     m_iniFile = ini;
     m_projectIniFile = iniProject;
     m_updateThread.m_grid = &m_grid;

@@ -11,7 +11,7 @@ ui(new Ui::DialogProjectBuilder)
 
 }
 
-void DialogProjectBuilder::Initialize(CIniFile *ini, CIniFile *iniP, QString curDir, QStringList list)
+void DialogProjectBuilder::Initialize(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> iniP, QString curDir, QStringList list)
 {
     m_pb = new ProjectBuilder(ini,iniP,curDir);
     m_pb->LoadBuildList(list);

@@ -10,7 +10,7 @@
 class SystemMOS6502 : public AbstractSystem
 {
 public:
-    SystemMOS6502(CIniFile* settings, CIniFile* proj) : AbstractSystem(settings, proj) {
+    SystemMOS6502(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : AbstractSystem(settings, proj) {
 
     }
 

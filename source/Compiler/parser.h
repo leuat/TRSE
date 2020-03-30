@@ -78,15 +78,15 @@ public:
     QString m_initAssembler = "";
     QVector<QSharedPointer<Node>> m_proceduresOnly;
     QVector<QString> m_ignoreMethods;
-    Lexer* m_lexer;
+    QSharedPointer<Lexer> m_lexer;
     Token m_currentToken;
     int m_pass = 0, m_acc=0;
     bool m_ignoreAll = false;
     QStringList  m_initJumps;
     QSharedPointer<SymbolTable>  m_symTab = nullptr;
-    CIniFile* m_projectIni, *m_settingsIni;
+    QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
     Parser();
-    Parser(Lexer* l, CIniFile* projectFile) {
+    Parser(QSharedPointer<Lexer> l, QSharedPointer<CIniFile> projectFile) {
         m_lexer = l;
         m_projectIni = projectFile;
     }

@@ -15,7 +15,7 @@ class DialogProjectBuilder : public QDialog
 
 public:
     explicit DialogProjectBuilder(QWidget *parent = nullptr);
-    void Initialize(CIniFile* ini, CIniFile* iniP, QString curDir, QStringList lst);
+    void Initialize(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> iniP, QString curDir, QStringList lst);
     ~DialogProjectBuilder();
     ProjectBuilder* m_pb = nullptr;
 

@@ -5,7 +5,7 @@ FactoryCompiler::FactoryCompiler()
 
 }
 
-Compiler *FactoryCompiler::CreateCompiler(CIniFile *ini, CIniFile *pIni)
+Compiler *FactoryCompiler::CreateCompiler(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pIni)
 {
     if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502)
         return new Compiler6502(ini,pIni);

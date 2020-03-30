@@ -32,7 +32,7 @@ FormPaw::FormPaw(QWidget *parent) :
     ui->tabData->setColumnWidth(1, 500);
     ui->tabData->setColumnWidth(2, 160);
     ui->tabData->setColumnWidth(3, 40);
-
+    m_pawData = QSharedPointer<CIniFile>(new CIniFile);
 }
 
 FormPaw::~FormPaw()
@@ -42,11 +42,11 @@ FormPaw::~FormPaw()
 
 void FormPaw::FillToIni()
 {
-    m_pawData.setString("ras_include_file",ui->leOutfile->text());
-    m_pawData.setString("packed_address",Util::numToHex(Util::VerifyHexAddress(ui->lePackedAddress->text())));
-    m_pawData.setString("output_dir",ui->leOutDir->text());
-    m_pawData.setFloat("use_exomizer3", ui->chkExomizer3->isChecked()?1:0);
-    m_pawData.setString("address_field", ui->leAddressField->text());
+    m_pawData->setString("ras_include_file",ui->leOutfile->text());
+    m_pawData->setString("packed_address",Util::numToHex(Util::VerifyHexAddress(ui->lePackedAddress->text())));
+    m_pawData->setString("output_dir",ui->leOutDir->text());
+    m_pawData->setFloat("use_exomizer3", ui->chkExomizer3->isChecked()?1:0);
+    m_pawData->setString("address_field", ui->leAddressField->text());
 
     QStringList data, data_tinycrunch;
     m_files.clear();
@@ -62,17 +62,17 @@ void FormPaw::FillToIni()
            data<< Util::numToHex(Util::VerifyHexAddress(ui->tabData->item(r,2)->text()));
 
         PawFile pf(m_projectIniFile->getString("project_path")+"/"+ui->tabData->item(r,1)->text(),
-                   m_projectIniFile->getString("project_path")+"/"+  m_pawData.getString("output_dir")+"/" + ui->tabData->item(r,0)->text() + "_c.bin",
+                   m_projectIniFile->getString("project_path")+"/"+  m_pawData->getString("output_dir")+"/" + ui->tabData->item(r,0)->text() + "_c.bin",
 
                    Util::numToHex(Util::VerifyHexAddress(ui->tabData->item(r,2)->text())),
                    ui->tabData->item(r,0)->text()
                    );
-        pf.incCFile = m_pawData.getString("output_dir")+"/" + ui->tabData->item(r,0)->text() + "_c.bin";
+        pf.incCFile = m_pawData->getString("output_dir")+"/" + ui->tabData->item(r,0)->text() + "_c.bin";
         pf.tinyCrunch = useTiny=="1";
         m_files.append(pf);
     }
-    m_pawData.setStringList("data",data);
-    m_pawData.setStringList("data_tinycrunch", data_tinycrunch);
+    m_pawData->setStringList("data",data);
+    m_pawData->setStringList("data_tinycrunch", data_tinycrunch);
 
 
 
@@ -85,13 +85,13 @@ void FormPaw::FillFiles()
 
 void FormPaw::FillFromIni()
 {
-    ui->leOutfile->setText(m_pawData.getString("ras_include_file"));
-    ui->lePackedAddress->setText(m_pawData.getString("packed_address"));
-    ui->leOutDir->setText(m_pawData.getString("output_dir"));
-    ui->leAddressField->setText(m_pawData.getString("address_field"));
-    ui->chkExomizer3->setChecked(m_pawData.getdouble("use_exomizer3")==1);
-    QStringList data = m_pawData.getStringList("data");
-    QStringList dataTinycrunch = m_pawData.getStringList("data_tinycrunch");
+    ui->leOutfile->setText(m_pawData->getString("ras_include_file"));
+    ui->lePackedAddress->setText(m_pawData->getString("packed_address"));
+    ui->leOutDir->setText(m_pawData->getString("output_dir"));
+    ui->leAddressField->setText(m_pawData->getString("address_field"));
+    ui->chkExomizer3->setChecked(m_pawData->getdouble("use_exomizer3")==1);
+    QStringList data = m_pawData->getStringList("data");
+    QStringList dataTinycrunch = m_pawData->getStringList("data_tinycrunch");
 
 
     for (int r=0;r<data.count()/3;r++) {
@@ -108,13 +108,13 @@ void FormPaw::FillFromIni()
 void FormPaw::Save(QString filename)
 {
     FillToIni();
-    m_pawData.Save(filename);
+    m_pawData->Save(filename);
 
 }
 
 void FormPaw::Load(QString filename)
 {
-    m_pawData.Load(filename);
+    m_pawData->Load(filename);
     FillFromIni();
 }
 
@@ -126,14 +126,14 @@ void FormPaw::Build() {
             return;
         delete pt;
     }
-    pt = new PawThread(&m_pawData, m_projectIniFile, m_iniFile, &m_files);
+    pt = new PawThread(m_pawData, m_projectIniFile, m_iniFile, &m_files);
     connect(pt, SIGNAL(EmitTextUpdate()), this, SLOT(onTextUpdate()));
 
     pt->output="";
 
  //   QString isExomizer3 = "-P0";
     pt->isExomizer3 = "";
-    if (m_pawData.getdouble("use_exomizer3")==1)
+    if (m_pawData->getdouble("use_exomizer3")==1)
             pt->isExomizer3="-P0";
 
     QString ex = m_iniFile->getString("exomizer");
@@ -148,7 +148,7 @@ void FormPaw::Build() {
             return;
         }
     }
-    QString outFolder = m_projectIniFile->getString("project_path")+"/"+m_pawData.getString("output_dir");
+    QString outFolder = m_projectIniFile->getString("project_path")+"/"+m_pawData->getString("output_dir");
 
     if (!QDir().exists(outFolder))
             QDir().mkdir(outFolder);
@@ -164,13 +164,13 @@ void FormPaw::Build() {
 
 void FormPaw::BuildSingle()
 {
-    pt = new PawThread(&m_pawData, m_projectIniFile, m_iniFile, &m_files);
+    pt = new PawThread(m_pawData, m_projectIniFile, m_iniFile, &m_files);
 
     pt->output="";
 
  //   QString isExomizer3 = "-P0";
     pt->isExomizer3 = "";
-    if (m_pawData.getdouble("use_exomizer3")==1)
+    if (m_pawData->getdouble("use_exomizer3")==1)
             pt->isExomizer3="-P0";
 
     QString ex = m_iniFile->getString("exomizer");
@@ -185,7 +185,7 @@ void FormPaw::BuildSingle()
             return;
         }
     }
-    QString outFolder = m_projectIniFile->getString("project_path")+"/"+m_pawData.getString("output_dir");
+    QString outFolder = m_projectIniFile->getString("project_path")+"/"+m_pawData->getString("output_dir");
 
     if (!QDir().exists(outFolder))
             QDir().mkdir(outFolder);
@@ -204,7 +204,7 @@ void FormPaw::BuildSingle()
     QString ex = m_iniFile->getString("exomizer");
  //   QString isExomizer3 = "-P0";
     QString isExomizer3 = "";
-    if (m_pawData.getdouble("use_exomizer3")==1)
+    if (m_pawData->getdouble("use_exomizer3")==1)
             isExomizer3="-P0";
 
     if (!QFile::exists(ex)) {
@@ -217,7 +217,7 @@ void FormPaw::BuildSingle()
             return;
         }
     }
-    QString outFolder = m_projectIniFile->getString("project_path")+"/"+m_pawData.getString("output_dir");
+    QString outFolder = m_projectIniFile->getString("project_path")+"/"+m_pawData->getString("output_dir");
 
     if (!QDir().exists(outFolder))
             QDir().mkdir(outFolder);

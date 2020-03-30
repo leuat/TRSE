@@ -5,10 +5,12 @@ SourceBuilder::SourceBuilder()
 
 }
 
-SourceBuilder::SourceBuilder(CIniFile *ini, CIniFile *project, QString curDir, QString curSourceFile)
+SourceBuilder::SourceBuilder(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> project, QString curDir, QString curSourceFile)
 {
-    m_iniFile = *ini; // Make copies for those changs
-    m_projectIniFile = *project;
+    m_iniFile = QSharedPointer<CIniFile>(new CIniFile);
+    m_projectIniFile = QSharedPointer<CIniFile>(new CIniFile);
+    *m_iniFile = *ini; // Make copies for those changs
+    *m_projectIniFile = *project;
     m_curDir = curDir;
     m_currentSourceFile = curSourceFile;
 }
@@ -20,8 +22,8 @@ SourceBuilder::~SourceBuilder() {
 bool SourceBuilder::Build(QString source)
 {
     m_system = QSharedPointer<AbstractSystem>(FactorySystem::Create(AbstractSystem::SystemFromString(
-                                         m_projectIniFile.getString("system")),
-                                        &m_iniFile, &m_projectIniFile));
+                                         m_projectIniFile->getString("system")),
+                                        m_iniFile, m_projectIniFile));
 
     if (m_currentSourceFile.toLower().endsWith(".asm")) {
         m_buildSuccess=true;
@@ -31,7 +33,7 @@ bool SourceBuilder::Build(QString source)
                                             m_projectIniFile.getString("system")),
                                            &m_iniFile, &m_projectIniFile);
 */
-       compiler = QSharedPointer<Compiler>(FactoryCompiler::CreateCompiler(&m_iniFile, &m_projectIniFile));
+       compiler = QSharedPointer<Compiler>(FactoryCompiler::CreateCompiler(m_iniFile, m_projectIniFile));
        m_useSyntaxSystem = true;
        return true;
     }
@@ -52,7 +54,7 @@ bool SourceBuilder::Build(QString source)
     QStringList lst = source.split("\n");
 
 
-    compiler = QSharedPointer<Compiler>(FactoryCompiler::CreateCompiler(&m_iniFile, &m_projectIniFile));
+    compiler = QSharedPointer<Compiler>(FactoryCompiler::CreateCompiler(m_iniFile, m_projectIniFile));
 //    qDebug() << "CREATED COMPILER " <<compiler;
 
 
@@ -135,7 +137,7 @@ QString SourceBuilder::getOutput() {
 
 QStringList SourceBuilder::getFileList()
 {
-    QString pawFile = m_projectIniFile.getString("d64_paw_file");
+    QString pawFile = m_projectIniFile->getString("d64_paw_file");
     if (pawFile=="none") return QStringList();
     CIniFile paw;
     paw.Load(m_curDir + "/"+pawFile);
@@ -146,7 +148,7 @@ QStringList SourceBuilder::getFileList()
         ret<< data[3*i];
     }
 
-    QString pawFile2 = m_projectIniFile.getString("d64_paw_file_disk2");
+    QString pawFile2 = m_projectIniFile->getString("d64_paw_file_disk2");
     if (pawFile2=="none") return ret;
     CIniFile paw2;
     paw2.Load(m_curDir + "/"+pawFile2);
@@ -167,7 +169,7 @@ void SourceBuilder::BuildSuccesString()
     text+="Assembler file saved to : <b>" + m_filename+".asm</b><br>";
     text+="Compiled <b>" + QString::number(compiler->m_parser.m_lexer->m_lines.count()) +"</b> lines of Turbo Rascal to <b>";
     text+=QString::number(compiler->m_assembler->getLineCount()) + "</b> lines of assembler instructions (and variables/labels)<br>";
-    if (m_iniFile.getdouble("post_optimize")==1) {
+    if (m_iniFile->getdouble("post_optimize")==1) {
         text+="Post-optimized away <b>" + QString::number(compiler->m_assembler->m_totalOptimizedLines) +"</b> lines of assembler instructions ";
         text=text+"(<font color=\"#70FF40\"> " + QString::number((int)(100.0*(float)compiler->m_assembler->m_totalOptimizedLines/(float)compiler->m_assembler->getLineCount()))+  " % </font> of total ) <br>";
 

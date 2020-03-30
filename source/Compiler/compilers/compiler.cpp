@@ -22,7 +22,7 @@
 #include "compiler.h"
 #include <QDebug>
 
-Compiler::Compiler(CIniFile* ini, CIniFile* pIni)
+Compiler::Compiler(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pIni)
 {
     m_ini = ini;
     m_projectIni = pIni;
@@ -33,16 +33,16 @@ Compiler::Compiler(CIniFile* ini, CIniFile* pIni)
 
 Compiler::~Compiler() {
   //  qDebug() << "~COMPILER DESTROYED "<<this;
-    Destroy();
+//    Destroy();
 }
 
 
 void Compiler::Parse(QString text, QStringList lst)
 {
 
-    m_lexer = Lexer(text, lst, m_projectIni->getString("project_path"));
+    m_lexer = QSharedPointer<Lexer>(new Lexer(text, lst, m_projectIni->getString("project_path")));
     Syntax::s.m_currentSystem->m_systemParams.clear();
-    m_parser.m_lexer = &m_lexer;
+    m_parser.m_lexer = m_lexer;
     ErrorHandler::e.m_displayWarnings = m_ini->getdouble("display_warnings")==1;
 
 
@@ -187,31 +187,6 @@ void Compiler::HandleError(FatalErrorException fe, QString e)
     ErrorHandler::e.CatchError(fe, e + msg);
 
 }
-
-void Compiler::Destroy()
-{
-
-/*    if (m_tree!=nullptr) {
-        m_tree->Delete();
-        delete m_tree;
-
-    }
-
-    m_tree = nullptr;
-*/
-/*    if (m_assembler!=nullptr) {
-        m_assembler->Delete();
-        delete m_assembler;
-    }
-    m_assembler = nullptr;
-
-    if (m_dispatcher!=nullptr) {
-        delete m_dispatcher;
-        m_dispatcher = nullptr;
-    }
-    */
-}
-
 
 
 void Compiler::WarningUnusedVariables()

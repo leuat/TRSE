@@ -6,7 +6,7 @@
 class CompilerM68K : public Compiler
 {
 public:
-    CompilerM68K(CIniFile* ini, CIniFile* pIni) : Compiler(ini, pIni) {};
+    CompilerM68K(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pIni) : Compiler(ini, pIni) {};
     void InitAssemblerAndDispatcher(QSharedPointer<AbstractSystem> system) override;
 
     void Connect() override;

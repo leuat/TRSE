@@ -34,7 +34,7 @@ public:
     void UpdateFromIni() override;
 
 
-    void InitDocument(WorkerThread *t, CIniFile *ini, CIniFile* pro) override;
+    void InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pro) override;
 
     void Init(LuaScript& s);
 

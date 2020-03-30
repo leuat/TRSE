@@ -28,7 +28,7 @@ Messages::Messages()
     InitMessages();
 }
 
-void Messages::LoadFromCIni(CIniFile* file)
+void Messages::LoadFromCIni(QSharedPointer<CIniFile> file)
 {
     m_iniFile = file;
     QStringList ls = file->getStringList("ignore_messages");

@@ -77,7 +77,7 @@ void FormFjong::Init(LuaScript &s)
     lua_pop(s.L, 1);
     //        return result;
 }
-void FormFjong::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile* pro)
+void FormFjong::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pro)
 {
     TRSEDocument::InitDocument(t,ini, pro);
     QString fnt = m_iniFile->getString("editor_font");

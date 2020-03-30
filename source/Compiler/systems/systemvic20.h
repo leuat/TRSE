@@ -7,7 +7,7 @@ class SystemVIC20 : public SystemMOS6502
 {
 public:
     QString param;
-    SystemVIC20(CIniFile* settings, CIniFile* proj);
+    SystemVIC20(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
     void DefaultValues();
 
 };

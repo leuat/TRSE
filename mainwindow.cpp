@@ -97,19 +97,21 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(qApp, SIGNAL(aboutToQuit()), m_updateThread, SLOT(OnQuit()));
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(OnQuit()));
 
+    m_iniFile = QSharedPointer<CIniFile>(new CIniFile);
+
     if (QFile::exists(m_iniFileName))
-       m_iniFile.Load(m_iniFileName);
+       m_iniFile->Load(m_iniFileName);
 
     VerifyDefaults();
-    if (m_iniFile.getdouble("windowpalette")==0)
+    if (m_iniFile->getdouble("windowpalette")==0)
         SetDarkPalette();
 
-    QVector3D sp = m_iniFile.getVec("splitpos");
+    QVector3D sp = m_iniFile->getVec("splitpos");
     if (sp.length()!=0)
         ui->splitter->setSizes(QList<int>() << sp.x() << sp.y());
 
 
-    Messages::messages.LoadFromCIni(&m_iniFile);
+    Messages::messages.LoadFromCIni(m_iniFile);
     UpdateRecentProjects();
 
     SetupFileList();
@@ -207,66 +209,66 @@ void MainWindow::keyReleaseEvent(QKeyEvent *e)
 
 void MainWindow::VerifyDefaults()
 {
-    if (!m_iniFile.contains("windowpalette"))
-        m_iniFile.setFloat("windowpalette", 0);
+    if (!m_iniFile->contains("windowpalette"))
+        m_iniFile->setFloat("windowpalette", 0);
 
-    if (!m_iniFile.contains("font_size"))
-        m_iniFile.setFloat("font_size", 12);
-    if (!m_iniFile.contains("hide_exomizer_footprint"))
-        m_iniFile.setFloat("hide_exomizer_footprint", 1);
+    if (!m_iniFile->contains("font_size"))
+        m_iniFile->setFloat("font_size", 12);
+    if (!m_iniFile->contains("hide_exomizer_footprint"))
+        m_iniFile->setFloat("hide_exomizer_footprint", 1);
 
-    if (!m_iniFile.contains("tab_width"))
-        m_iniFile.setFloat("tab_width", 4);
+    if (!m_iniFile->contains("tab_width"))
+        m_iniFile->setFloat("tab_width", 4);
 
-    if (!m_iniFile.contains("editor_font"))
-        m_iniFile.setString("editor_font","Courier");
+    if (!m_iniFile->contains("editor_font"))
+        m_iniFile->setString("editor_font","Courier");
 
-    if (!m_iniFile.contains("auto_inject"))
-        m_iniFile.setFloat("auto_inject", 1);
+    if (!m_iniFile->contains("auto_inject"))
+        m_iniFile->setFloat("auto_inject", 1);
 
-    if (!m_iniFile.contains("editor_cursor_width"))
-        m_iniFile.setFloat("editor_cursor_width",1);
+    if (!m_iniFile->contains("editor_cursor_width"))
+        m_iniFile->setFloat("editor_cursor_width",1);
 
-    if (!m_iniFile.contains("theme"))
-        m_iniFile.setString("theme", "dark_standard.ini");
-    if (!m_iniFile.contains("theme_fjong"))
-        m_iniFile.setString("theme_fjong", "dark_standard.ini");
+    if (!m_iniFile->contains("theme"))
+        m_iniFile->setString("theme", "dark_standard.ini");
+    if (!m_iniFile->contains("theme_fjong"))
+        m_iniFile->setString("theme_fjong", "dark_standard.ini");
 
-    if (!m_iniFile.contains("post_optimize"))
-        m_iniFile.setFloat("post_optimize", 1);
+    if (!m_iniFile->contains("post_optimize"))
+        m_iniFile->setFloat("post_optimize", 1);
 
-    if (!m_iniFile.contains("display_warnings"))
-        m_iniFile.setFloat("display_warnings", 1);
+    if (!m_iniFile->contains("display_warnings"))
+        m_iniFile->setFloat("display_warnings", 1);
 
-    if (!m_iniFile.contains("memory_analyzer_font_size"))
-        m_iniFile.setFloat("memory_analyzer_font_size", 17);
+    if (!m_iniFile->contains("memory_analyzer_font_size"))
+        m_iniFile->setFloat("memory_analyzer_font_size", 17);
 
-    if (!m_iniFile.contains("memory_analyzer_window_width"))
-        m_iniFile.setFloat("memory_analyzer_window_width", 600);
-    if (!m_iniFile.contains("memory_analyzer_window_height"))
-        m_iniFile.setFloat("memory_analyzer_window_height", 600);
-    if (!m_iniFile.contains("image_painter"))
-        m_iniFile.setFloat("image_painter", 0);
+    if (!m_iniFile->contains("memory_analyzer_window_width"))
+        m_iniFile->setFloat("memory_analyzer_window_width", 600);
+    if (!m_iniFile->contains("memory_analyzer_window_height"))
+        m_iniFile->setFloat("memory_analyzer_window_height", 600);
+    if (!m_iniFile->contains("image_painter"))
+        m_iniFile->setFloat("image_painter", 0);
 
 
 
-    //    qDebug() << m_ini.getString("ok64_emulator");
-   if (!m_iniFile.contains("ok64_emulator") || m_iniFile.getString("ok64_emulator")=="")
+    //    qDebug() << m_ini->getString("ok64_emulator");
+   if (!m_iniFile->contains("ok64_emulator") || m_iniFile->getString("ok64_emulator")=="")
     #ifdef __linux__
-        m_iniFile.setString("ok64_emulator","bin/OK64");
+        m_iniFile->setString("ok64_emulator","bin/OK64");
     #endif
     #ifdef _WIN32
-        m_iniFile.setString("ok64_emulator","ok64.exe");
+        m_iniFile->setString("ok64_emulator","ok64.exe");
     #endif
 
 
-    if (!m_iniFile.contains("optimizer_remove_unused_symbols"))
-     m_iniFile.setFloat("optimizer_remove_unused_symbols",0);
+    if (!m_iniFile->contains("optimizer_remove_unused_symbols"))
+     m_iniFile->setFloat("optimizer_remove_unused_symbols",0);
 
-    if (!m_iniFile.contains("assembler"))
-        m_iniFile.setString("assembler","OrgAsm");
+    if (!m_iniFile->contains("assembler"))
+        m_iniFile->setString("assembler","OrgAsm");
 
-    m_iniFile.filename = m_iniFileName;
+    m_iniFile->filename = m_iniFileName;
 
 }
 
@@ -309,7 +311,7 @@ void MainWindow::LoadDocument(QString fileName)
     if (fileName.contains(".paw")  ) {
         editor = new FormPaw(this);
     }
-    editor->InitDocument(nullptr, &m_iniFile, &m_currentProject.m_ini);
+    editor->InitDocument(nullptr, m_iniFile, m_currentProject.m_ini);
     editor->m_currentDir = m_currentPath+"/";
     editor->m_currentSourceFile = getProjectPath() + "/" + fileName;
     editor->m_currentFileShort = fileName;
@@ -317,7 +319,7 @@ void MainWindow::LoadDocument(QString fileName)
     editor->Load(editor->m_currentSourceFile);
 
 
-    m_currentProject.m_ini.addStringList("open_files", editor->m_currentFileShort, true);
+    m_currentProject.m_ini->addStringList("open_files", editor->m_currentFileShort, true);
     m_currentProject.Save();
 
 
@@ -326,7 +328,7 @@ void MainWindow::LoadDocument(QString fileName)
     editor->showMaximized();
     ui->tabMain->setCurrentWidget(editor);
 
-    m_currentProject.m_ini.setString("current_file", fileName);
+    m_currentProject.m_ini->setString("current_file", fileName);
     //m_buildSuccess = false;
     ui->tabMain->setTabsClosable(true);
     m_documents.append(editor);
@@ -448,16 +450,16 @@ void MainWindow::OpenProjectSettings()
     if (m_currentProject.m_filename=="")
         return;
 
-    QString oldSystem = m_currentProject.m_ini.getString("system");
+    QString oldSystem = m_currentProject.m_ini->getString("system");
 
     DialogProjectSettings* dSettings = new DialogProjectSettings(m_currentPath, this);
-    dSettings->SetInit(&m_currentProject.m_ini);
+    dSettings->SetInit(m_currentProject.m_ini);
     dSettings->exec();
     delete dSettings;
 
     // Set compiler syntax based on system
-//    Syntax::s.Init(AbstractSystem::SystemFromString(m_currentProject.m_ini.getString("system")),&m_iniFile, &m_currentProject.m_ini);
-    if (oldSystem != m_currentProject.m_ini.getString("system"))
+//    Syntax::s.Init(AbstractSystem::SystemFromString(m_currentProject.m_ini->getString("system")),&m_iniFile, &m_currentProject.m_ini);
+    if (oldSystem != m_currentProject.m_ini->getString("system"))
         LoadProject(m_currentProject.m_filename);
 
 }
@@ -467,12 +469,12 @@ void MainWindow::OpenProjectSettings()
 
 void MainWindow::OnQuit()
 {
-//    qDebug() << m_currentProject.m_ini.getStringList("open_files");
+//    qDebug() << m_currentProject.m_ini->getStringList("open_files");
     m_currentProject.Save();
-//    qDebug() << m_currentProject.m_ini.getString("current_file");
+//    qDebug() << m_currentProject.m_ini->getString("current_file");
 
-    m_iniFile.setVec("splitpos", QVector3D(ui->splitter->sizes()[0],ui->splitter->sizes()[1],0));
-    m_iniFile.Save();
+    m_iniFile->setVec("splitpos", QVector3D(ui->splitter->sizes()[0],ui->splitter->sizes()[1],0));
+    m_iniFile->Save();
 }
 
 void MainWindow::ForceOpenFile(QString s, int ln)
@@ -502,7 +504,7 @@ void MainWindow::closeWindowSlot()
 void MainWindow::UpdateRecentProjects()
 {
     ui->lstRecentProjects->clear();
-    QStringList l = m_iniFile.getStringList("recent_projects");
+    QStringList l = m_iniFile->getStringList("recent_projects");
     l.removeDuplicates();
     l.removeAll("");
 //    qDebug() << l;
@@ -567,7 +569,7 @@ bool MainWindow::RemoveTab(int idx, bool save)
     if (doc==nullptr)
         return false;
     if (save) {
-        m_currentProject.m_ini.removeFromList("open_files", doc->m_currentFileShort);
+        m_currentProject.m_ini->removeFromList("open_files", doc->m_currentFileShort);
         m_currentProject.Save();
     }
 
@@ -657,7 +659,7 @@ void MainWindow::onImageMouseMove()
 
 /*QString MainWindow::getProjectPath()
 {
-    return m_currentProject.m_ini.getString("project_path");
+    return m_currentProject.m_ini->getString("project_path");
 }
 */
 
@@ -676,15 +678,15 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
     }
     if (file.toLower().endsWith(".prg")) {
 
-/*        QString emu = m_iniFile.getString("emulator");
-        if (m_currentProject.m_ini.getString("system")=="VIC20")
-            emu = m_iniFile.getString("vic20_emulator");
-        if (m_currentProject.m_ini.getString("system")=="C128")
-            emu = m_iniFile.getString("c128_emulator");
-        if (m_currentProject.m_ini.getString("system")=="NES")
-            emu = m_iniFile.getString("nes_emulator");
+/*        QString emu = m_iniFile->getString("emulator");
+        if (m_currentProject.m_ini->getString("system")=="VIC20")
+            emu = m_iniFile->getString("vic20_emulator");
+        if (m_currentProject.m_ini->getString("system")=="C128")
+            emu = m_iniFile->getString("c128_emulator");
+        if (m_currentProject.m_ini->getString("system")=="NES")
+            emu = m_iniFile->getString("nes_emulator");
 */
-//        FormRasEditor::ExecutePrg(getProjectPath()+"/" + file, m_currentProject.m_ini.getString("system"));
+//        FormRasEditor::ExecutePrg(getProjectPath()+"/" + file, m_currentProject.m_ini->getString("system"));
     }
 
     Data::data.Redraw();
@@ -714,7 +716,7 @@ void MainWindow::on_tabMain_currentChanged(int index)
 
     if (dynamic_cast<TRSEDocument*>(ui->tabMain->widget(index))!=nullptr) {
         m_currentDoc = dynamic_cast<TRSEDocument*>(ui->tabMain->widget(index));
-        m_currentProject.m_ini.setString("current_file",m_currentDoc->m_currentFileShort);
+        m_currentProject.m_ini->setString("current_file",m_currentDoc->m_currentFileShort);
         if (m_currentDoc!=nullptr && index!=0)
             m_currentDoc->Reload();
 
@@ -830,9 +832,9 @@ void MainWindow::BuildAll()
 
     DialogProjectBuilder* pb = new DialogProjectBuilder();
 
-    pb->Initialize(&m_iniFile, &m_currentProject.m_ini,
+    pb->Initialize(m_iniFile, m_currentProject.m_ini,
                    m_currentPath,
-                   m_currentProject.m_ini.getStringList("build_list"));
+                   m_currentProject.m_ini->getStringList("build_list"));
 
     pb->exec();
 
@@ -865,7 +867,7 @@ void MainWindow::on_actionImage_triggered()
 
 
     editor->UpdatePalette();
-    editor->InitDocument(nullptr, &m_iniFile, &m_currentProject.m_ini);
+    editor->InitDocument(nullptr, m_iniFile, m_currentProject.m_ini);
     editor->m_currentSourceFile = "";
     editor->m_currentFileShort = "";
     ui->tabMain->addTab(editor, "New Image");
@@ -875,7 +877,7 @@ void MainWindow::on_actionImage_triggered()
     editor->showMaximized();
     ui->tabMain->setCurrentWidget(editor);
 
-    //m_iniFile.setString("current_file", fileName);
+    //m_iniFile->setString("current_file", fileName);
     //m_buildSuccess = false;
     ui->tabMain->setTabsClosable(true);
     m_documents.append(editor);
@@ -896,7 +898,7 @@ void MainWindow::on_actionTRSE_Settings_triggered()
     DialogTRSESettings* dSettings = new DialogTRSESettings(this);
 
 
-    dSettings->SetInit(&m_iniFile);
+    dSettings->SetInit(m_iniFile);
 
 
     dSettings->exec();
@@ -911,9 +913,9 @@ void MainWindow::on_actionTRSE_Settings_triggered()
 
     delete dSettings;
 
-    if (m_iniFile.getdouble("windowpalette")==0)
+    if (m_iniFile->getdouble("windowpalette")==0)
         SetDarkPalette();
-    if (m_iniFile.getdouble("windowpalette")==1)
+    if (m_iniFile->getdouble("windowpalette")==1)
         QApplication::setPalette(m_defaultPalette);
 
 
@@ -923,7 +925,7 @@ void MainWindow::on_actionTRSE_Settings_triggered()
 void MainWindow::on_actionNew_project_triggered()
 {
 
-    DialogNewProject *np = new DialogNewProject(&m_iniFile);
+    DialogNewProject *np = new DialogNewProject(m_iniFile);
     np->exec();
     if (!np->ok)
         return;
@@ -954,14 +956,14 @@ void MainWindow::on_actionNew_project_triggered()
 
     m_currentProject = TRSEProject();
     m_currentPath = path;
-    //m_currentProject.m_ini.setString("project_path", path);
+    //m_currentProject.m_ini->setString("project_path", path);
     m_currentProject.m_filename = filename;
     m_currentProject.Save();
     RefreshFileList();
 
-   // m_iniFile.setString("project_path", getProjectPath());
-    m_iniFile.addStringList("recent_projects", filename, true);
-    m_iniFile.Save();
+   // m_iniFile->setString("project_path", getProjectPath());
+    m_iniFile->addStringList("recent_projects", filename, true);
+    m_iniFile->Save();
 
     UpdateRecentProjects();
     LoadProject(filename);
@@ -992,24 +994,24 @@ void MainWindow::LoadProject(QString filename)
     m_currentPath = QFileInfo(QFile(filename)).absolutePath();
     Data::data.currentPath = m_currentPath;
     VerifyProjectDefaults();
-//    m_iniFile.setString("project_path", getProjectPath());
-    m_iniFile.addStringList("recent_projects", filename, true);
+//    m_iniFile->setString("project_path", getProjectPath());
+    m_iniFile->addStringList("recent_projects", filename, true);
 
     RefreshFileList();
 /*
-    qDebug() << m_currentProject.m_ini.contains("build_list");
-    qDebug() << m_currentProject.m_ini.getStringList("build_list");
+    qDebug() << m_currentProject.m_ini->contains("build_list");
+    qDebug() << m_currentProject.m_ini->getStringList("build_list");
 
-    for (int i=0;i<m_currentProject.m_ini.items.size();i++)
-        qDebug() << m_currentProject.m_ini.items[i].name << m_currentProject.m_ini.items[i].lst;
+    for (int i=0;i<m_currentProject.m_ini->items.size();i++)
+        qDebug() << m_currentProject.m_ini->items[i].name << m_currentProject.m_ini->items[i].lst;
 
 */
-    m_iniFile.Save();
+    m_iniFile->Save();
 
     // Set compiler syntax based on system
-    QString system = m_currentProject.m_ini.getString("system");
+    QString system = m_currentProject.m_ini->getString("system");
     Syntax::s.m_systemString = system;
-    Syntax::s.Init(AbstractSystem::SystemFromString(system),&m_iniFile, &m_currentProject.m_ini);
+    Syntax::s.Init(AbstractSystem::SystemFromString(system),m_iniFile, m_currentProject.m_ini);
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA)
         Messages::messages.DisplayMessage(Messages::messages.AMIGA_WARNING);
 
@@ -1032,9 +1034,9 @@ void MainWindow::LoadProject(QString filename)
     UpdateRecentProjects();
 
 
-    QStringList files = m_currentProject.m_ini.getStringList("open_files");
+    QStringList files = m_currentProject.m_ini->getStringList("open_files");
 
-    QString focusFile = m_currentProject.m_ini.getString("current_file");
+    QString focusFile = m_currentProject.m_ini->getString("current_file");
     for (int i=0;i<files.count();i++) {
         QString f = files[files.count()-1-i];
         if (QFile::exists(getProjectPath() + "/"+ f))
@@ -1276,7 +1278,7 @@ void MainWindow::on_actionFjong_Raymarcher_document_triggered()
 
 void MainWindow::on_actionWavefront_obj_to_amiga_converter_triggered()
 {
-    DialogExport3D* de = new DialogExport3D(&m_iniFile);
+    DialogExport3D* de = new DialogExport3D(m_iniFile);
 
     de->exec();
     delete de;
@@ -1290,125 +1292,125 @@ void MainWindow::on_btnBuildAll_clicked()
 }
 
 void TRSEProject::VerifyDefaults() {
-    if (!m_ini.contains("zeropages"))
-        m_ini.setStringList("zeropages", AsmMOS6502::m_defaultZeroPointers.split(","));
+    if (!m_ini->contains("zeropages"))
+        m_ini->setStringList("zeropages", AsmMOS6502::m_defaultZeroPointers.split(","));
 
 
-    if (!m_ini.contains("temp_zeropages"))
-        m_ini.setStringList("temp_zeropages", AsmMOS6502::m_defaultTempZeroPointers.split(","));
+    if (!m_ini->contains("temp_zeropages"))
+        m_ini->setStringList("temp_zeropages", AsmMOS6502::m_defaultTempZeroPointers.split(","));
 
-    if (!m_ini.contains("zeropage_screenmemory"))
-        m_ini.setString("zeropage_screenmemory","$fe");
+    if (!m_ini->contains("zeropage_screenmemory"))
+        m_ini->setString("zeropage_screenmemory","$fe");
 
-    if (!m_ini.contains("zeropage_decrunch1"))
-        m_ini.setString("zeropage_decrunch1","$47");
+    if (!m_ini->contains("zeropage_decrunch1"))
+        m_ini->setString("zeropage_decrunch1","$47");
 
-    if (!m_ini.contains("zeropage_decrunch2"))
-        m_ini.setString("zeropage_decrunch2","$48");
-
-
-    if (!m_ini.contains("zeropage_decrunch3"))
-        m_ini.setString("zeropage_decrunch3","$4A");
-
-    if (!m_ini.contains("zeropage_decrunch4"))
-        m_ini.setString("zeropage_decrunch4","$4B");
+    if (!m_ini->contains("zeropage_decrunch2"))
+        m_ini->setString("zeropage_decrunch2","$48");
 
 
-    if (!m_ini.contains("pascal_settings_use_local_variables"))
-        m_ini.setFloat("pascal_settings_use_local_variables", 0);
+    if (!m_ini->contains("zeropage_decrunch3"))
+        m_ini->setString("zeropage_decrunch3","$4A");
 
-    if (!m_ini.contains("system"))
-        m_ini.setString("system", "C64");
-
-    if (!m_ini.contains("main_ras_file"))
-        m_ini.setString("main_ras_file", "none");
+    if (!m_ini->contains("zeropage_decrunch4"))
+        m_ini->setString("zeropage_decrunch4","$4B");
 
 
+    if (!m_ini->contains("pascal_settings_use_local_variables"))
+        m_ini->setFloat("pascal_settings_use_local_variables", 0);
 
-    if (!m_ini.contains("zeropage_internal1"))
-        m_ini.setString("zeropage_internal1","$4C");
+    if (!m_ini->contains("system"))
+        m_ini->setString("system", "C64");
 
-    if (!m_ini.contains("zeropage_internal2"))
-        m_ini.setString("zeropage_internal2","$4E");
-
-    if (!m_ini.contains("zeropage_internal3"))
-        m_ini.setString("zeropage_internal3","$50");
-
-    if (!m_ini.contains("zeropage_internal4"))
-        m_ini.setString("zeropage_internal4","$52");
+    if (!m_ini->contains("main_ras_file"))
+        m_ini->setString("main_ras_file", "none");
 
 
-    m_ini.setFloat("post_optimizer_passlda", 1);
-    m_ini.setFloat("post_optimizer_passjmp", 1);
-    m_ini.setFloat("post_optimizer_passldatax", 1);
-    m_ini.setFloat("post_optimizer_passstalda", 1);
-    m_ini.setFloat("post_optimizer_passldx", 1);
-    m_ini.setFloat("post_optimizer_passcmp", 1);
-    m_ini.setFloat("post_optimizer_passphapla", 1);
 
-    if (!m_ini.contains("machine_state"))
-        m_ini.setString("machine_state", "$35");
+    if (!m_ini->contains("zeropage_internal1"))
+        m_ini->setString("zeropage_internal1","$4C");
 
-    if (m_ini.getString("system")=="C128") {
+    if (!m_ini->contains("zeropage_internal2"))
+        m_ini->setString("zeropage_internal2","$4E");
 
-        if (!m_ini.contains("columns")) {
-            m_ini.setString("columns","40");
+    if (!m_ini->contains("zeropage_internal3"))
+        m_ini->setString("zeropage_internal3","$50");
+
+    if (!m_ini->contains("zeropage_internal4"))
+        m_ini->setString("zeropage_internal4","$52");
+
+
+    m_ini->setFloat("post_optimizer_passlda", 1);
+    m_ini->setFloat("post_optimizer_passjmp", 1);
+    m_ini->setFloat("post_optimizer_passldatax", 1);
+    m_ini->setFloat("post_optimizer_passstalda", 1);
+    m_ini->setFloat("post_optimizer_passldx", 1);
+    m_ini->setFloat("post_optimizer_passcmp", 1);
+    m_ini->setFloat("post_optimizer_passphapla", 1);
+
+    if (!m_ini->contains("machine_state"))
+        m_ini->setString("machine_state", "$35");
+
+    if (m_ini->getString("system")=="C128") {
+
+        if (!m_ini->contains("columns")) {
+            m_ini->setString("columns","40");
         }
 
     }
 
-    if (!m_ini.contains("exomize_toggle")) {
-        m_ini.setFloat("exomize_toggle",0);
+    if (!m_ini->contains("exomize_toggle")) {
+        m_ini->setFloat("exomize_toggle",0);
     }
 
 
-    if (m_ini.getString("system")=="X86") {
-        if (!m_ini.contains("dosbox_x86_system"))
-            m_ini.setString("dosbox_x86_system","default");
+    if (m_ini->getString("system")=="X86") {
+        if (!m_ini->contains("dosbox_x86_system"))
+            m_ini->setString("dosbox_x86_system","default");
 
-        if (!m_ini.contains("cpu_x86_system"))
-            m_ini.setString("cpu_x86_system","8086");
+        if (!m_ini->contains("cpu_x86_system"))
+            m_ini->setString("cpu_x86_system","8086");
 
     }
 
-    if (m_ini.getString("system")=="NES") {
-        if (!m_ini.contains("nes_code_start"))
-            m_ini.setString("nes_code_start","$C000");
+    if (m_ini->getString("system")=="NES") {
+        if (!m_ini->contains("nes_code_start"))
+            m_ini->setString("nes_code_start","$C000");
     }
 
 
-    if (m_ini.getString("system")=="VIC20") {
-        if (!m_ini.contains("vic_memory_config"))
-            m_ini.setString("vic_memory_config","none");
+    if (m_ini->getString("system")=="VIC20") {
+        if (!m_ini->contains("vic_memory_config"))
+            m_ini->setString("vic_memory_config","none");
 
-        if (!m_ini.contains("via_zeropages")) {
-            m_ini.setStringList("via_zeropages", AsmMOS6502::m_defaultViaZeroPointers.split(","));
+        if (!m_ini->contains("via_zeropages")) {
+            m_ini->setStringList("via_zeropages", AsmMOS6502::m_defaultViaZeroPointers.split(","));
         }
 
     }
-    if (!m_ini.contains("border_color"))
-        m_ini.setFloat("border_color",0);
-    if (!m_ini.contains("background_color"))
-        m_ini.setFloat("background_color",0);
+    if (!m_ini->contains("border_color"))
+        m_ini->setFloat("border_color",0);
+    if (!m_ini->contains("background_color"))
+        m_ini->setFloat("background_color",0);
 
 
-    if (!m_ini.contains("override_target_settings"))
-        m_ini.setFloat("override_target_settings",0);
+    if (!m_ini->contains("override_target_settings"))
+        m_ini->setFloat("override_target_settings",0);
 
-    if (!m_ini.contains("override_target_settings_org")) {
-           if (m_ini.getString("system")=="PLUS4")
-               m_ini.setString("override_target_settings_org","$1010");
+    if (!m_ini->contains("override_target_settings_org")) {
+           if (m_ini->getString("system")=="PLUS4")
+               m_ini->setString("override_target_settings_org","$1010");
            else
-               m_ini.setString("override_target_settings_org","$810");
+               m_ini->setString("override_target_settings_org","$810");
        }
-    if (!m_ini.contains("override_target_settings_ignore_sys"))
-        m_ini.setFloat("override_target_settings_ignore_sys",0);
+    if (!m_ini->contains("override_target_settings_ignore_sys"))
+        m_ini->setFloat("override_target_settings_ignore_sys",0);
 
-    if (!m_ini.contains("override_target_settings_ignore_prg"))
-        m_ini.setFloat("override_target_settings_ignore_prg",0);
+    if (!m_ini->contains("override_target_settings_ignore_prg"))
+        m_ini->setFloat("override_target_settings_ignore_prg",0);
 
-    if (!m_ini.contains("output_debug_symbols"))
-        m_ini.setFloat("output_debug_symbols",1);
+    if (!m_ini->contains("output_debug_symbols"))
+        m_ini->setFloat("output_debug_symbols",1);
 
 }
 

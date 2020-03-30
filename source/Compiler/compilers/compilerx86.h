@@ -6,7 +6,7 @@
 class CompilerX86 : public Compiler
 {
 public:
-    CompilerX86(CIniFile* ini, CIniFile* pIni) : Compiler(ini, pIni) {};
+    CompilerX86(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pIni) : Compiler(ini, pIni) {};
 
     void InitAssemblerAndDispatcher(QSharedPointer<AbstractSystem> system) override;
 

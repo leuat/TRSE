@@ -9,7 +9,7 @@ class FactoryCompiler
 {
 public:
     FactoryCompiler();
-    static Compiler* CreateCompiler(CIniFile* ini, CIniFile* pIni);
+    static Compiler* CreateCompiler(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pIni);
 };
 
 #endif // FACTORYCOMPILER_H

@@ -40,14 +40,14 @@ class DialogMemoryAnalyze : public QDialog
 
     int m_fontSize,xsize,ysize,shift;
     QVector<QSharedPointer<MemoryBlock>> m_blocks;
-    CIniFile* m_iniFile = nullptr;
+    QSharedPointer<CIniFile> m_iniFile = nullptr;
     AbstractSystem *m_system = nullptr;
     QString curT = "";
     QPoint cur;
     QPoint mpos;
 
 public:
-    explicit DialogMemoryAnalyze(CIniFile* ini, AbstractSystem* system, QWidget *parent = 0);
+    explicit DialogMemoryAnalyze(QSharedPointer<CIniFile> ini, AbstractSystem* system, QWidget *parent = 0);
     void Initialize(QVector<QSharedPointer<MemoryBlock>>& blocks, int fontSize);
     QMap<QString, QColor> m_colors;
     void InitColors();

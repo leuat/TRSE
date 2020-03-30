@@ -28,7 +28,7 @@ public:
 class AbstractSystem
 {
 public:
-    AbstractSystem(CIniFile* settings, CIniFile* proj) {
+    AbstractSystem(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) {
         m_projectIni = proj;
         m_settingsIni = settings;
         if (m_labelColors.count()==0)
@@ -41,7 +41,7 @@ public:
     QMap<QString, QString> m_systemParams;
     QElapsedTimer timer;
     QString m_orgOutput;
-    CIniFile* m_projectIni, *m_settingsIni;
+    QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
     int m_startAddress = 0x800;
     int m_programStartAddress = m_startAddress+10;
 //    bool m_hasSysHeader = true;

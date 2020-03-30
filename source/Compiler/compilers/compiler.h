@@ -41,10 +41,10 @@ public:
     QSharedPointer<Assembler> m_assembler = nullptr;
     QSharedPointer<AbstractASTDispatcher> m_dispatcher = nullptr;
     Parser m_parser;
-    Lexer m_lexer;
-    CIniFile* m_ini, *m_projectIni;
+    QSharedPointer<Lexer> m_lexer;
+    QSharedPointer<CIniFile> m_ini, m_projectIni;
     FatalErrorException recentError;
-    Compiler(CIniFile* ini, CIniFile* pIni);
+    Compiler(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pIni);
     Compiler() {};
     ~Compiler();
 
@@ -58,7 +58,7 @@ public:
     void CleanupBlockLinenumbers();
     void SaveBuild(QString filename);
     void HandleError(FatalErrorException fe, QString se);
-    void Destroy();
+//    void Destroy();
 //    void FindLineNumberAndFile(int inLe, QString& file, int& outle);
     void WarningUnusedVariables();
     virtual void CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &ocycles, QMap<int, int> &retcycles) {}

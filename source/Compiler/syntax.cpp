@@ -30,7 +30,7 @@ Syntax::Syntax()
 {
 }
 
-void Syntax::Init(AbstractSystem::System s, CIniFile* m_ini, CIniFile* m_proj)
+void Syntax::Init(AbstractSystem::System s, QSharedPointer<CIniFile> m_ini, QSharedPointer<CIniFile> m_proj)
 {
     m_currentSystem = QSharedPointer<AbstractSystem>(FactorySystem::Create(s,m_ini, m_proj));
 /*    if (s==AbstractSystem::BBCM) {

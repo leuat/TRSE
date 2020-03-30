@@ -188,7 +188,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 //    process.waitForFinished();
 }
 
-void FormRasEditor::InitDocument(WorkerThread *t, CIniFile *ini, CIniFile* pro)
+void FormRasEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pro)
 {
     TRSEDocument::InitDocument(t,ini, pro);
     FillFromIni();

@@ -1,6 +1,6 @@
 #include "systemvic20.h"
 
-SystemVIC20::SystemVIC20(CIniFile *settings, CIniFile *proj) : SystemMOS6502(settings, proj) {
+SystemVIC20::SystemVIC20(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : SystemMOS6502(settings, proj) {
     m_processor = MOS6502;
     m_system = VIC20;
 

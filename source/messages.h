@@ -74,8 +74,8 @@ public:
     int PROJECT_BUILDER_HELP = 14;
 
     QMap<int, Message> m_messages;
-    CIniFile* m_iniFile;
-    void LoadFromCIni(CIniFile* file);
+    QSharedPointer<CIniFile> m_iniFile;
+    void LoadFromCIni(QSharedPointer<CIniFile> file);
     void InitMessages();
 
     void DisplayMessage(int i, bool isHelp=false);

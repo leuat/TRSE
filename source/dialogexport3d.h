@@ -17,7 +17,7 @@ class DialogExport3D : public QDialog
 
 
 public:
-    explicit DialogExport3D(CIniFile* ini, QWidget *parent = nullptr);
+    explicit DialogExport3D(QSharedPointer<CIniFile> ini, QWidget *parent = nullptr);
     ~DialogExport3D();
 
 private slots:
@@ -36,7 +36,7 @@ private slots:
 
 private:
     Ui::DialogExport3D *ui;
-    CIniFile* m_ini = nullptr;
+    QSharedPointer<CIniFile> m_ini = nullptr;
 };
 
 #endif // DIALOGEXPORT3D_H

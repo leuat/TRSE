@@ -67,32 +67,31 @@ class MainWindow;
 
 class TRSEProject {
 public:
-    CIniFile m_ini;
+    QSharedPointer<CIniFile> m_ini;
     QString m_filename="";
 //    QStringList m_acceptedFileTypes = {"asm", "flf", "ras", "prg", "paw", "inc", "fjo"};
     void Load(QString projectfile) {
-        m_ini = CIniFile();
-        m_ini.Load(projectfile);
+        m_ini = QSharedPointer<CIniFile>(new CIniFile());
+        m_ini->Load(projectfile);
         m_filename = projectfile;
         QStringList l = m_filename.split("/");
         l.removeLast();
         QString path = "";
         for (QString s: l) path+=s+"/";
-        m_ini.setString("project_path", path);
+        m_ini->setString("project_path", path);
     }
 
     void VerifyDefaults();
 
 
     void Close() {
-        m_ini = CIniFile();
         m_filename = "";
 
     }
 
 
     void Save() {
-        m_ini.Save(m_filename);
+        m_ini->Save(m_filename);
     }
 };
 
@@ -145,7 +144,7 @@ public:
     ~MainWindow();
 
 
-    CIniFile m_iniFile;
+    QSharedPointer<CIniFile> m_iniFile;
  //   CodeEditor m_codeEditor;
     CustomFileSystemModel *fileSystemModel = nullptr;
     QStringList m_commandParams;
@@ -203,17 +202,17 @@ public slots:
 
     void acceptBuildMain() {
         acceptBuild();
-        if (!VerifyFile(m_currentProject.m_ini.getString("main_ras_file"),"Error trying to build main project file. Please see project settings and specify correct path to main .ras file"))
+        if (!VerifyFile(m_currentProject.m_ini->getString("main_ras_file"),"Error trying to build main project file. Please see project settings and specify correct path to main .ras file"))
             return;
-        LoadDocument(m_currentProject.m_ini.getString("main_ras_file"));
+        LoadDocument(m_currentProject.m_ini->getString("main_ras_file"));
         m_currentDoc->Build();
 
     }
 
     void acceptRunMain() {
-        if (!VerifyFile(m_currentProject.m_ini.getString("main_ras_file"),"Error trying to build main project file. Please see project settings and specify correct path to main .ras file"))
+        if (!VerifyFile(m_currentProject.m_ini->getString("main_ras_file"),"Error trying to build main project file. Please see project settings and specify correct path to main .ras file"))
             return;
-        LoadDocument(m_currentProject.m_ini.getString("main_ras_file"));
+        LoadDocument(m_currentProject.m_ini->getString("main_ras_file"));
         m_currentDoc->Run();
     }
 

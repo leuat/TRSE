@@ -1,7 +1,7 @@
 #include "systemc64.h"
 
 
-SystemC64::SystemC64(CIniFile *settings, CIniFile *proj) : SystemMOS6502(settings, proj) {
+SystemC64::SystemC64(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : SystemMOS6502(settings, proj) {
     m_processor = MOS6502;
     m_system = C64;
     DefaultValues();

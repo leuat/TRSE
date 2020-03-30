@@ -36,9 +36,9 @@ class DialogProjectSettings : public QDialog
 {
     Q_OBJECT
 public:
-    CIniFile* m_ini;
+    QSharedPointer<CIniFile> m_ini;
     QString m_currentDir;
-    void SetInit(CIniFile* ini) {
+    void SetInit(QSharedPointer<CIniFile> ini) {
         m_ini = ini;
         FillFromIni();
     }

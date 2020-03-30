@@ -101,7 +101,7 @@ public:
 
     void LoadRasFile(QString fileName);
     void ExecutePrg(QString fileName,  QString system);
-    void InitDocument(WorkerThread *t, CIniFile *ini, CIniFile* iniProject) override;
+    void InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> iniProject) override;
     void setupEditor();
     void Compress();
     void Build() override;

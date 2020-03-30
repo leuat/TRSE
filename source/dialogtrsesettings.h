@@ -37,8 +37,8 @@ class DialogTRSESettings : public QDialog
 public:
     explicit DialogTRSESettings(QWidget *parent = 0);
 
-    CIniFile* m_ini;
-    void SetInit(CIniFile* ini) {
+    QSharedPointer<CIniFile> m_ini;
+    void SetInit(QSharedPointer<CIniFile> ini) {
         m_ini = ini;
         FillFromIni();
     }

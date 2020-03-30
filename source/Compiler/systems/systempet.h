@@ -6,7 +6,7 @@
 class SystemPET : public SystemMOS6502
 {
 public:
-    SystemPET(CIniFile* settings, CIniFile* proj) : SystemMOS6502(settings, proj) {
+    SystemPET(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : SystemMOS6502(settings, proj) {
         m_processor = MOS6502;
         m_system = PET;
         DefaultValues();

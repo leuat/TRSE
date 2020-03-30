@@ -5,10 +5,12 @@ ProjectBuilder::ProjectBuilder()
 
 }
 
-ProjectBuilder::ProjectBuilder(CIniFile *ini, CIniFile *project, QString curDir)
+ProjectBuilder::ProjectBuilder(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> project, QString curDir)
 {
-    m_iniFile = *ini; // Make copies for those changs
-    m_projectIniFile = *project;
+    m_iniFile = QSharedPointer<CIniFile>(new CIniFile);
+    m_projectIniFile = QSharedPointer<CIniFile>(new CIniFile);
+    *m_iniFile = *ini; // Make copies for those changs
+    *m_projectIniFile = *project;
     m_curDir = curDir;
 
 }
@@ -23,7 +25,7 @@ void ProjectBuilder::Message(QString s, bool term)
 
 void ProjectBuilder::Build(QString file)
 {
-    SourceBuilder* sb = new SourceBuilder(&m_iniFile, &m_projectIniFile,m_curDir,m_curDir+"/"+file);
+    SourceBuilder* sb = new SourceBuilder(m_iniFile, m_projectIniFile,m_curDir,m_curDir+"/"+file);
     QString f = m_curDir + "/" + file;
     if (!QFile::exists(f))
         throw QString("Could not find source file: " + f);
@@ -59,7 +61,7 @@ void ProjectBuilder::run()
                 if (cmdList.count()!=3)
                     throw QString("Build command 'define' requires two parameters: name and value");
 
-                m_projectIniFile.addStringList("global_defines","@define "+cmdList[1] + " " + cmdList[2],false);
+                m_projectIniFile->addStringList("global_defines","@define "+cmdList[1] + " " + cmdList[2],false);
                 Message("Adding define: <b>" + cmdList[1] + " " + cmdList[2]+"</b>");
 
             }
@@ -75,10 +77,10 @@ void ProjectBuilder::run()
                     throw QString("Error: setvalue requires 2 parameters: a name and a float");
                 QString id = cmdList[1];
                 float value = cmdList[2].toFloat();
-                if (m_iniFile.contains(id))
-                    m_iniFile.setFloat(id, value);
-                if (m_projectIniFile.contains(id))
-                    m_projectIniFile.setFloat(id, value);
+                if (m_iniFile->contains(id))
+                    m_iniFile->setFloat(id, value);
+                if (m_projectIniFile->contains(id))
+                    m_projectIniFile->setFloat(id, value);
                 Message("Setting compiler value:  <b>"+id + "</b> to " + QString::number(value));
             }
 

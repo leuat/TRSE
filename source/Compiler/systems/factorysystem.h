@@ -18,7 +18,7 @@ class FactorySystem
 public:
     FactorySystem();
 
-    static AbstractSystem* Create(AbstractSystem::System type,CIniFile* settings, CIniFile* proj) {
+    static AbstractSystem* Create(AbstractSystem::System type,QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) {
         AbstractSystem* s = nullptr;
         if (type==AbstractSystem::C64)
             return new SystemC64(settings, proj);

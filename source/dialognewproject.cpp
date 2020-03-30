@@ -1,7 +1,7 @@
 #include "dialognewproject.h"
 #include "ui_dialognewproject.h"
 
-DialogNewProject::DialogNewProject(CIniFile* ini, QWidget *parent) :
+DialogNewProject::DialogNewProject(QSharedPointer<CIniFile> ini, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogNewProject)
 {

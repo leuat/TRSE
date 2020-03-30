@@ -86,7 +86,7 @@ public:
     bool m_ignoreSys = false;
     bool m_stripPrg = false;
     Syntax();
-    void Init(AbstractSystem::System s, CIniFile* m_ini, CIniFile* m_proj);
+    void Init(AbstractSystem::System s, QSharedPointer<CIniFile> m_ini, QSharedPointer<CIniFile> m_proj);
     void SetupReservedWords(QVector<Token>& list, QString id, bool ignoreSystem);
     void SetupBuiltinFunctions(QMap<QString, BuiltInFunction>& lst, AbstractSystem::System s, QString id, bool ignoreSystem);
     void SetupKeys();

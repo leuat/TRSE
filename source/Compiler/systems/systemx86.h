@@ -9,7 +9,7 @@
 class SystemX86 : public AbstractSystem
 {
 public:
-    SystemX86(CIniFile* settings, CIniFile* proj) : AbstractSystem(settings, proj) {
+    SystemX86(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : AbstractSystem(settings, proj) {
         m_processor = PX86;
         m_system = X86;
         m_startAddress = 0x100;

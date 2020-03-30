@@ -12,10 +12,10 @@ class ProjectBuilder : public QThread
 
 public:
     ProjectBuilder();
-    ProjectBuilder(CIniFile* ini, CIniFile* project, QString curDir);
+    ProjectBuilder(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> project, QString curDir);
 
 
-    CIniFile m_projectIniFile, m_iniFile;
+    QSharedPointer<CIniFile> m_projectIniFile, m_iniFile;
     QString m_curDir;
     QStringList m_list;
 

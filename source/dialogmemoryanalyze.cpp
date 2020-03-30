@@ -23,7 +23,7 @@
 #include "ui_dialogmemoryanalyze.h"
 #include "source/LeLib/util/util.h"
 
-DialogMemoryAnalyze::DialogMemoryAnalyze(CIniFile* ini, AbstractSystem* system,QWidget *parent) :
+DialogMemoryAnalyze::DialogMemoryAnalyze(QSharedPointer<CIniFile> ini, AbstractSystem* system,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogMemoryAnalyze)
 {

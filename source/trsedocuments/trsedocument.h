@@ -47,8 +47,8 @@ public:
     QString m_outputText;
 
 //    WorkerThread* m_updateThread;
-    CIniFile* m_iniFile;
-    CIniFile* m_projectIniFile;
+    QSharedPointer<CIniFile> m_iniFile;
+    QSharedPointer<CIniFile> m_projectIniFile;
 
     virtual void Save(QString filename) {}
     virtual void Load(QString filename) {}
@@ -73,7 +73,7 @@ public:
     virtual void UpdateFromIni() {}
     virtual void Init() {}
     virtual void UpdateColors() { }
-    virtual void InitDocument(WorkerThread* t, CIniFile* ini, CIniFile* iniProject) {
+    virtual void InitDocument(WorkerThread* t, QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> iniProject) {
       //  m_updateThread = t;
         m_iniFile = ini;
         m_projectIniFile = iniProject;

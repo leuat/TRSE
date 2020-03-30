@@ -2511,7 +2511,7 @@ void Parser::HandleBuildPaw()
     if (!QFile::exists(inFile))
         ErrorHandler::e.Error("Could not locate paw file for building: "+inFile, ln);
 //    fp.Load(inFile);
-    fp.m_pawData.Load(inFile);
+    fp.m_pawData->Load(inFile);
 
     fp.BuildSingle();
 }

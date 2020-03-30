@@ -56,12 +56,12 @@ class PawThread : public QThread
 {
     Q_OBJECT
 public:
-    CIniFile* m_pawData,* m_projectData,* m_iniFile;
+    QSharedPointer<CIniFile> m_pawData, m_projectData, m_iniFile;
     QVector<PawFile>* m_files;
     QString isExomizer3, output;
     bool m_ignoreIncludefile = false;
 
-    PawThread(CIniFile* pawData, CIniFile* projectData, CIniFile* iniFile,  QVector<PawFile> *files) {
+    PawThread(QSharedPointer<CIniFile> pawData, QSharedPointer<CIniFile> projectData, QSharedPointer<CIniFile> iniFile,  QVector<PawFile> *files) {
         m_pawData = pawData;
         m_projectData = projectData;
         m_iniFile = iniFile;
@@ -85,7 +85,7 @@ class FormPaw : public TRSEDocument
     QVector<PawFile> m_files;
     PawThread* pt = nullptr;
 public:
-    CIniFile m_pawData;
+    QSharedPointer<CIniFile> m_pawData;
     explicit FormPaw(QWidget *parent = nullptr);
     ~FormPaw();
 

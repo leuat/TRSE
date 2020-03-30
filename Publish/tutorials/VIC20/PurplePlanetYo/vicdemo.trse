@@ -46,4 +46,4 @@ exomize_toggle = 0
 via_zeropages = ,$5B, $5C, $5D, $5E
 open_files = ,include/rasterbars.ras, demo.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/PurplePlanetYo/
-current_file = demo.ras
+current_file = include/rasterbars.ras

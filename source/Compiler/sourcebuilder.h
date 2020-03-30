@@ -13,10 +13,10 @@ class SourceBuilder
 {
 public:
     SourceBuilder();
-    SourceBuilder(CIniFile* ini, CIniFile* project, QString curDir, QString curSourceFile);
+    SourceBuilder(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> project, QString curDir, QString curSourceFile);
     ~SourceBuilder();
 
-    CIniFile m_iniFile, m_projectIniFile;
+    QSharedPointer<CIniFile> m_iniFile, m_projectIniFile;
 
     bool m_buildSuccess = false;
     bool m_assembleSuccess = false;

@@ -16,12 +16,12 @@ class DialogNewProject : public QDialog
     Tutorials m_templates;
 public:
 
-    explicit DialogNewProject(CIniFile* ini, QWidget *parent = nullptr);
+    explicit DialogNewProject(QSharedPointer<CIniFile> ini, QWidget *parent = nullptr);
     ~DialogNewProject();
     bool ok=false;
 
     QString m_project, m_dir, m_template;
-    CIniFile* m_ini;
+    QSharedPointer<CIniFile> m_ini;
 
 private slots:
     void on_comboBox_currentIndexChanged(const QString &arg1);

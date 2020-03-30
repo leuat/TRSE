@@ -8,7 +8,7 @@
 class SystemM68000 : public AbstractSystem
 {
 public:
-    SystemM68000(CIniFile* settings, CIniFile* proj) : AbstractSystem(settings, proj) {
+    SystemM68000(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : AbstractSystem(settings, proj) {
 
     }
 

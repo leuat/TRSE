@@ -6,7 +6,7 @@
 class SystemNES : public SystemMOS6502
 {
 public:
-    SystemNES(CIniFile* settings, CIniFile* proj) : SystemMOS6502(settings, proj) {
+    SystemNES(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : SystemMOS6502(settings, proj) {
         m_processor = MOS6502;
         m_system = NES;
         DefaultValues();

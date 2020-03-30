@@ -1,7 +1,7 @@
 #include "dialogexport3d.h"
 #include "ui_dialogexport3d.h"
 #include <QFileDialog>
-DialogExport3D::DialogExport3D(CIniFile* ini, QWidget *parent) :
+DialogExport3D::DialogExport3D(QSharedPointer<CIniFile> ini, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogExport3D)
 {

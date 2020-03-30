@@ -154,7 +154,7 @@ public:
 
     void UpdateCurrentMode();
 
-    void InitDocument(WorkerThread* t, CIniFile* ini, CIniFile* iniProject) override;
+    void InitDocument(WorkerThread* t, QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> iniProject) override;
 
 
     void GenericExportImage(QString type, QString ext);
