@@ -22,7 +22,7 @@
 #include "nodeforloop.h"
 #include "nodenumber.h"
 
-NodeForLoop::NodeForLoop(Node *a, Node *b, Node *block, Node *step, bool unroll, int forcePage, int loopCounter, bool inclusive) :Node(){
+NodeForLoop::NodeForLoop(QSharedPointer<Node> a, QSharedPointer<Node> b, QSharedPointer<Node> block, QSharedPointer<Node> step, bool unroll, int forcePage, int loopCounter, bool inclusive) :Node(){
     m_a = a;
     m_b = b;
     m_block = block;
@@ -35,29 +35,4 @@ NodeForLoop::NodeForLoop(Node *a, Node *b, Node *block, Node *step, bool unroll,
 }
 
 
-void NodeForLoop::Delete() {
-    Node::Delete();
-    if (m_a!=nullptr) {
-        m_a->Delete();
-        delete m_a;
-        m_a = nullptr;
-    }
-    if (m_b!=nullptr) {
-        m_b->Delete();
-        delete m_b;
-        m_b = nullptr;
-    }
-    if (m_block!=nullptr) {
-        m_block->Delete();
-        delete m_block;
-        m_block = nullptr;
-    }
-    if (m_step!=nullptr) {
-        m_step->Delete();
-        delete m_block;
-        m_block = nullptr;
-    }
-
-
-}
 

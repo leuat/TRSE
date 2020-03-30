@@ -35,13 +35,12 @@
 
 class NodeUnaryOp : public Node {
 public:
-    NodeUnaryOp(Token t, Node* right);
+    NodeUnaryOp(Token t, QSharedPointer<Node> right);
 
 
     bool isMinusOne() override;
 
 
-    void Delete() override;
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_left!=nullptr)
             m_left->parseConstants(symTab);
@@ -54,7 +53,7 @@ public:
         m_right->ExecuteSym(symTab);
     }
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(qSharedPointerDynamicCast<NodeUnaryOp>(sharedFromThis()));
     }
 
 };

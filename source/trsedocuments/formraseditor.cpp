@@ -18,7 +18,6 @@
  *   along with this program (LICENSE.txt).
  *   If not, see <https://www.gnu.org/licenses/>.
 */
-
 #include "formraseditor.h"
 #include "ui_formraseditor.h"
 #include <QProcess>
@@ -530,8 +529,8 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         QTextCursor tc = ui->txtEditor->textCursor();
         tc.select(QTextCursor::WordUnderCursor);
         QString word = tc.selectedText();
-        for (Node*n : m_builderThread.m_builder->compiler->m_parser.m_proceduresOnly) {
-            NodeProcedureDecl* np = dynamic_cast<NodeProcedureDecl*>(n);
+        for (QSharedPointer<Node>n : m_builderThread.m_builder->compiler->m_parser.m_proceduresOnly) {
+            QSharedPointer<NodeProcedureDecl> np = qSharedPointerDynamicCast<NodeProcedureDecl>(n);
             if (np->m_procName.toLower()==word.toLower()) {
                 int ln=np->m_op.m_lineNumber;
                 QTextCursor cursor(ui->txtEditor->document()->findBlockByLineNumber(ln));

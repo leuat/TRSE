@@ -29,7 +29,7 @@ QSharedPointer<MemoryBlock> Node::m_curMemoryBlock = nullptr;
 QMap<QString, bool> Node::flags;
 QSharedPointer<SymbolTable>  Node::parserSymTab;
 
-QMap<Node*, Node*> Node::s_uniqueSymbols;
+//QMap<QSharedPointer<Node>, QSharedPointer<Node>> Node::s_uniqueSymbols;
 
 void Node::DispatchConstructor(Assembler *as) {
     //        m_blockInfo = m_staticBlockInfo;s
@@ -89,27 +89,14 @@ int Node::MaintainBlocks(Assembler* as)
 
 }
 
-void Node::Delete() {
-    if (m_left!=nullptr) {
-        m_left->Delete();
-        delete m_left;
-        m_left = nullptr;
-    }
-    if (m_right!=nullptr) {
-        m_right->Delete();
-        delete m_right;
-        m_left = nullptr;
-
-    }
-}
 
 
-void Node::RequireAddress(Node *n, QString name, int ln) {
+void Node::RequireAddress(QSharedPointer<Node> n, QString name, int ln) {
     if (!n->isAddress())
         ErrorHandler::e.Error(name + " requires parameter to be memory address. Did you forget a '^' symbol such as ^$D800?", ln);
 }
 
-bool Node::verifyBlockBranchSize(Assembler *as, Node *testBlock)
+bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlock)
 {
     AsmMOS6502 tmpAsm;
     tmpAsm.m_symTab = as->m_symTab;

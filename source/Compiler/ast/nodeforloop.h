@@ -35,15 +35,15 @@
 class NodeForLoop : public Node {
 public:
 
-    Node* m_a=nullptr, *m_b = nullptr;
-    Node* m_block=nullptr;
+    QSharedPointer<Node> m_a=nullptr, m_b = nullptr;
+    QSharedPointer<Node> m_block=nullptr;
     int m_forcePage;
     bool m_unroll = false;
-    Node* m_step = nullptr;
+    QSharedPointer<Node> m_step = nullptr;
     int m_loopCounter=0;
     bool m_inclusive = false;
 
-    NodeForLoop(Node* a, Node* b, Node* block, Node* step, bool unroll, int forcePage, int loopCounter, bool inclusive);
+    NodeForLoop(QSharedPointer<Node> a, QSharedPointer<Node> b, QSharedPointer<Node> block, QSharedPointer<Node> step, bool unroll, int forcePage, int loopCounter, bool inclusive);
 
 
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
@@ -59,14 +59,13 @@ public:
 
 
 
-    void Delete() override;
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override {
         m_block->ExecuteSym(symTab);
     }
 
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(qSharedPointerDynamicCast<NodeForLoop>(sharedFromThis()));
     }
 
 };

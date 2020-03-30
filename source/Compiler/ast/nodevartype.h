@@ -54,7 +54,7 @@ public:
 
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(qSharedPointerDynamicCast<NodeVarType>(sharedFromThis()));
     }
 
 };

@@ -31,30 +31,30 @@ public:
     ASTDispather6502();
 
 
-    void dispatch(NodeBinOP *node) override;
-    void dispatch(NodeNumber *node) override;
-    void dispatch(NodeAsm *node) override;
-    void dispatch(NodeString *node) override;
-    void dispatch(NodeUnaryOp *node) override;
-    void dispatch(NodeCompound *node) override;
-    void dispatch(NodeVarDecl *node) override;
-    void dispatch(NodeBlock *node) override;
-    void dispatch(NodeProgram *node) override;
-    void dispatch(NodeVarType *node) override;
-    void dispatch(NodeBinaryClause *node) override;
-    void dispatch(NodeProcedure *node) override;
-    void dispatch(NodeProcedureDecl *node) override;
-    void dispatch(NodeConditional *node) override;
-    void dispatch(NodeForLoop *node) override;
-    void dispatch(NodeVar *node) override;
-    void dispatch(Node *node) override;
-    void dispatch(NodeAssign *node) override;
-    void dispatch(NodeCase *node) override;
-    void dispatch(NodeRepeatUntil *node) override;
-    void dispatch(NodeComment *node) override;
+    void dispatch(QSharedPointer<NodeBinOP>node) override;
+    void dispatch(QSharedPointer<NodeNumber>node) override;
+    void dispatch(QSharedPointer<NodeAsm> node) override;
+    void dispatch(QSharedPointer<NodeString> node) override;
+    void dispatch(QSharedPointer<NodeUnaryOp> node) override;
+    void dispatch(QSharedPointer<NodeCompound> node) override;
+    void dispatch(QSharedPointer<NodeVarDecl> node) override;
+    void dispatch(QSharedPointer<NodeBlock> node) override;
+    void dispatch(QSharedPointer<NodeProgram> node) override;
+    void dispatch(QSharedPointer<NodeVarType> node) override;
+    void dispatch(QSharedPointer<NodeBinaryClause> node) override;
+    void dispatch(QSharedPointer<NodeProcedure> node) override;
+    void dispatch(QSharedPointer<NodeProcedureDecl> node) override;
+    void dispatch(QSharedPointer<NodeConditional> node) override;
+    void dispatch(QSharedPointer<NodeForLoop> node) override;
+    void dispatch(QSharedPointer<NodeVar> node) override;
+    void dispatch(QSharedPointer<Node> node) override;
+    void dispatch(QSharedPointer<NodeAssign> node) override;
+    void dispatch(QSharedPointer<NodeCase> node) override;
+    void dispatch(QSharedPointer<NodeRepeatUntil> node) override;
+    void dispatch(QSharedPointer<NodeComment> node) override;
 
 
-    void dispatch(NodeBuiltinMethod *node);
+    void dispatch(QSharedPointer<NodeBuiltinMethod> node);
 
 
 
@@ -64,22 +64,22 @@ public:
      *
     */
 
-    void EightBitDiv(Node* node);
-    void EightBitMul(Node* node);
-    void Mul16x8(Node* node);
-    void Div16x8(Node* node);
-    void RightIsPureNumericMulDiv16bit(Node* node);
+    void EightBitDiv(QSharedPointer<Node> node);
+    void EightBitMul(QSharedPointer<Node> node);
+    void Mul16x8(QSharedPointer<Node> node);
+    void Div16x8(QSharedPointer<Node> node);
+    void RightIsPureNumericMulDiv16bit(QSharedPointer<Node> node);
 
-    void HandleShiftLeftRight(NodeBinOP* node);
-    void HandleShiftLeftRightInteger(NodeBinOP* node, bool isSimpleAeqAopB);
+    void HandleShiftLeftRight(QSharedPointer<NodeBinOP> node);
+    void HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP> node, bool isSimpleAeqAopB);
 
-    void HandleGenericBinop16bit(Node* node);
-    void HandleVarBinopB16bit(Node* node);
-    bool HandleSingleAddSub(Node* node);
-    void HandleMulDiv(Node* node);
-    void HandleRestBinOp(Node* node);
+    void HandleGenericBinop16bit(QSharedPointer<Node> node);
+    void HandleVarBinopB16bit(QSharedPointer<Node> node);
+    bool HandleSingleAddSub(QSharedPointer<Node> node);
+    void HandleMulDiv(QSharedPointer<Node> node);
+    void HandleRestBinOp(QSharedPointer<Node> node);
 
-    void RightIsPureNumericMulDiv8bit(Node* node);
+    void RightIsPureNumericMulDiv8bit(QSharedPointer<Node> node);
 
     /*
      *
@@ -88,12 +88,12 @@ public:
      *
     */
 
-    void IncSid(NodeVarDecl* node);
+    void IncSid(QSharedPointer<NodeVarDecl> node);
 
-    void IncBin(NodeVarDecl* node);
+    void IncBin(QSharedPointer<NodeVarDecl> node);
 
-    void PrintCompare(Node* node, QString lblSuccess, QString lblFailed);
-    void DeclarePointer(NodeVarDecl* node);
+    void PrintCompare(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);
+    void DeclarePointer(QSharedPointer<NodeVarDecl> node);
 
 
 
@@ -102,15 +102,15 @@ public:
      * NodeBinaryClause functions
      *
     */
-    void BinaryClause(Node* node);
+    void BinaryClause(QSharedPointer<Node> node);
 
-    void BuildToCmp(Node* node);
+    void BuildToCmp(QSharedPointer<Node> node);
 
-    void BuildSimple(Node* node, QString lblSuccess, QString lblFailed);
+    void BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);
 
-    void BinaryClauseInteger(Node* node);
+    void BinaryClauseInteger(QSharedPointer<Node> node);
 
-    void LogicalClause(Node* node);
+    void LogicalClause(QSharedPointer<Node> node);
 
 
     /*
@@ -121,13 +121,13 @@ public:
      */
 
 
-    void Compare(NodeForLoop* node, NodeVar* var, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive);
+    void Compare(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive);
 
-    void IncreaseCounter(NodeForLoop* node, NodeVar* var);
+    void IncreaseCounter(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var);
 
-    void LargeLoop(NodeForLoop* node, NodeVar* var, bool inclusive);
+    void LargeLoop(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool inclusive);
 
-    void SmallLoop(NodeForLoop* node, NodeVar* var, bool inclusive);
+    void SmallLoop(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool inclusive);
 
     /*
      *
@@ -136,20 +136,20 @@ public:
      *
      *
    */
-    void LoadPointer(NodeVar* node);
+    void LoadPointer(QSharedPointer<NodeVar> node);
 
-    bool LoadXYVarOrNum(NodeVar* node, Node *other, bool isx);
+    bool LoadXYVarOrNum(QSharedPointer<NodeVar> node, QSharedPointer<Node> other, bool isx);
 
-    void LoadByteArray(NodeVar* node);
+    void LoadByteArray(QSharedPointer<NodeVar> node);
 
 
-    void LoadVariable(NodeVar* node) override;
-    void LoadAddress(Node* node) override;
-    void LoadVariable(Node* node) override;
-    void LoadVariable(NodeNumber* node) override;
+    void LoadVariable(QSharedPointer<NodeVar> node) override;
+    void LoadAddress(QSharedPointer<Node> node) override;
+    void LoadVariable(QSharedPointer<Node> node) override;
+    void LoadVariable(QSharedPointer<NodeNumber> node) override;
 
-    void StoreVariable(NodeVar* node) override;
-    void StoreVariableSimplified(NodeVar* node, Node* expr);
+    void StoreVariable(QSharedPointer<NodeVar> node) override;
+    void StoreVariableSimplified(QSharedPointer<NodeVar> node, QSharedPointer<Node> expr);
 
     /*
      *
@@ -159,20 +159,20 @@ public:
      *
     */
 
-    void AssignString(NodeAssign* node, bool isPointer);
+    void AssignString(QSharedPointer<NodeAssign>node, bool isPointer);
 
-    void AssignPointer(NodeAssign* node);
+    void AssignPointer(QSharedPointer<NodeAssign>node);
 
-    bool isSimpleAeqAOpB(NodeVar *var, NodeAssign* node);
-    bool isSimpleAeqAOpB16Bit(NodeVar *var, NodeAssign* node);
+    bool isSimpleAeqAOpB(QSharedPointer<NodeVar> var, QSharedPointer<NodeAssign>node);
+    bool isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QSharedPointer<NodeAssign>node);
 
-    bool IsSimpleIncDec(NodeVar *var, NodeAssign* node);
+    bool IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPointer<NodeAssign>node);
 
-    bool IsSimpleAndOr(NodeBinaryClause* node, QString labelSuccess, QString labelFail);
+    bool IsSimpleAndOr(QSharedPointer<NodeBinaryClause> node, QString labelSuccess, QString labelFail);
 
-    void AssignVariable(NodeAssign* node);
+    void AssignVariable(QSharedPointer<NodeAssign>node);
 
-    void HandleNodeAssignCopyRecord(NodeAssign* node);
+    void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign>node);
 
 
 

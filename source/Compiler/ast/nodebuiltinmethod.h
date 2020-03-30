@@ -33,13 +33,13 @@
 class NodeBuiltinMethod : public Node {
 public:
     QString m_procName;
-    QVector<Node*> m_params;
+    QVector<QSharedPointer<Node>> m_params;
     static QMap<QString, bool> m_isInitialized;
     BuiltInFunction* m_function = nullptr;
 
     void VerifyParams(Assembler* as);
 
-    NodeBuiltinMethod(QString m, QVector<Node*> params, BuiltInFunction* bf):Node() {
+    NodeBuiltinMethod(QString m, QVector<QSharedPointer<Node>> params, BuiltInFunction* bf):Node() {
         m_procName = m;
         m_params = params;
         m_op.m_type = TokenType::BYTE;
@@ -47,10 +47,9 @@ public:
         m_op.m_lineNumber--;
     }
 
-    void Delete() override;
 
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
-        for (Node* n:m_params)
+        for (QSharedPointer<Node> n:m_params)
             n->parseConstants(symTab);
     }
 
@@ -60,7 +59,7 @@ public:
     }
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(qSharedPointerDynamicCast<NodeBuiltinMethod>(sharedFromThis()));
     }
 
 };

@@ -29,32 +29,10 @@ void NodeBlock::SetParameter(QString name, PVar var) {
     s->m_value = QSharedPointer<PVar>(new PVar(var));
 }
 
-void NodeBlock::Delete() {
-    Node::Delete();
-//    qDebug()<< "NODEBLOCK DETELET";
-    if (m_useOwnSymTab && m_symTab!=nullptr) {
-        m_symTab->Delete();
-//        delete m_symTab;
-    }
-    if (m_compoundStatement!=nullptr) {
-        m_compoundStatement->Delete();
-        m_compoundStatement = nullptr;
-    }
-    for (Node* n : m_decl) {
-//        qDebug() << "Deleting : "<< (dynamic_cast<NodeVarDecl*>(n)!=nullptr) <<m_decl.count();
-       // n->Delete();
-  //      qDebug() << "DONE";
-       // delete n;
-        s_uniqueSymbols[n] = n;
-
-    }
-    m_decl.clear();
-
-}
 
 void NodeBlock::PopZeroPointers(Assembler *as) {
-    for (Node* n: m_decl) {
-        NodeVarDecl* nv = dynamic_cast<NodeVarDecl*>(n);
+    for (QSharedPointer<Node> n: m_decl) {
+        QSharedPointer<NodeVarDecl> nv = qSharedPointerDynamicCast<NodeVarDecl>(n);
         if (nv!=nullptr) {
             for (int i=0;i<nv->m_pushedPointers;i++)
                 as->PopZeroPointer();
@@ -74,7 +52,7 @@ void NodeBlock::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
     }
     else m_symTab = symTab;
 
-    for (Node* n: m_decl)
+    for (QSharedPointer<Node> n: m_decl)
     {
         n->ExecuteSym(m_symTab);
     }

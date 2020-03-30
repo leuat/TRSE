@@ -71,8 +71,8 @@ QString NodeNumber::HexValue() {
 
 }
 
-bool NodeNumber::DataEquals(Node *other) {
-    NodeNumber* var = dynamic_cast<NodeNumber*>(other);
+bool NodeNumber::DataEquals(QSharedPointer<Node> other) {
+    QSharedPointer<NodeNumber> var = qSharedPointerDynamicCast<NodeNumber>(other);
     if (var==nullptr)
         return false;
     return var->m_val == m_val;

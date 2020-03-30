@@ -37,7 +37,7 @@
 class NodeBinOP : public Node {
 public:
 
-    NodeBinOP(Node* left, Token op, Node* right);
+    NodeBinOP(QSharedPointer<Node> left, Token op, QSharedPointer<Node> right);
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
     QString BothConstants(Assembler* as);
@@ -133,7 +133,7 @@ public:
 
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(qSharedPointerDynamicCast<NodeBinOP>(sharedFromThis()));
     };
 
 };

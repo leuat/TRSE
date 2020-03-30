@@ -35,25 +35,24 @@
 
 class NodeProcedure : public Node {
 public:
-    NodeProcedureDecl* m_procedure;
-    QVector<Node*> m_parameters;
+    QSharedPointer<NodeProcedureDecl> m_procedure;
+    QVector<QSharedPointer<Node>> m_parameters;
 
-    NodeProcedure(NodeProcedureDecl* proc, QVector<Node*> params, Token t );
+    NodeProcedure(QSharedPointer<NodeProcedureDecl> proc, QVector<QSharedPointer<Node>> params, Token t );
 
-    void Delete() override;
 
 
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_procedure!=nullptr)
             m_procedure->parseConstants(symTab);
-        for (Node* n : m_parameters)
+        for (QSharedPointer<Node> n : m_parameters)
             n->parseConstants(symTab);
     }
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(qSharedPointerDynamicCast<NodeProcedure>(sharedFromThis()));
     }
 
 };

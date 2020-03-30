@@ -22,7 +22,7 @@
 #include "nodebinop.h"
 
 
-NodeBinOP::NodeBinOP(Node *left, Token op, Node *right):Node() {
+NodeBinOP::NodeBinOP(QSharedPointer<Node> left, Token op, QSharedPointer<Node> right):Node() {
     m_right = right;
     m_left = left;
     m_op = op;
@@ -99,9 +99,9 @@ bool NodeBinOP::containsPointer(Assembler *as)
 void NodeBinOP::SwapVariableFirst()
 {
     if (m_op.m_type==TokenType::PLUS || m_op.m_type==TokenType::MUL) {
-        NodeVar* isRight = dynamic_cast<NodeVar*>(m_right);
+        QSharedPointer<NodeVar> isRight = qSharedPointerDynamicCast<NodeVar>(m_right);
         if (isRight) {
-            Node* tmp = m_right;
+            QSharedPointer<Node> tmp = m_right;
             m_right = m_left;
             m_left = tmp;
         }
@@ -113,7 +113,7 @@ bool NodeBinOP::ContainsVariable(Assembler *as, QString var)
     if (m_right->isPureVariable() && m_right->getValue(as)==var) {
         // Only switch if PLUS
         if (m_op.m_type == TokenType::PLUS) {
-            Node* n = m_left;
+            QSharedPointer<Node> n = m_left;
             m_left = m_right;
             m_right = n;
             return true;
@@ -178,11 +178,11 @@ QString NodeBinOP::HexValue() {
 int NodeBinOP::BothPureNumbersBinOp(Assembler *as) {
 
 
-    //NodeNumber *a = (NodeNumber*)dynamic_cast<const NodeNumber*>(m_left);
-    //NodeNumber *b = (NodeNumber*)dynamic_cast<const NodeNumber*>(m_right);
+    //QSharedPointer<NodeNumber>a = (QSharedPointer<NodeNumber>)dynamic_cast<const QSharedPointer<NodeNumber>>(m_left);
+    //QSharedPointer<NodeNumber>b = (QSharedPointer<NodeNumber>)dynamic_cast<const QSharedPointer<NodeNumber>>(m_right);
     //BothConstants(as);
-    if (dynamic_cast<NodeUnaryOp*>(m_left)!=nullptr) {
-        NodeNumber *b = (NodeNumber*)dynamic_cast<const NodeNumber*>(m_right);
+    if (qSharedPointerDynamicCast<NodeUnaryOp>(m_left)!=nullptr) {
+        QSharedPointer<NodeNumber>b = qSharedPointerDynamicCast<NodeNumber>(m_right);
         if (m_left->m_op.m_type==TokenType::MINUS) {
             return b->m_val*-1;
         }
@@ -196,14 +196,15 @@ int NodeBinOP::BothPureNumbersBinOp(Assembler *as) {
 
     int na=0;
     int nb=0;
-    if (dynamic_cast<NodeBinOP*>(m_left)!=nullptr)
-        na = dynamic_cast<NodeBinOP*>(m_left)->BothPureNumbersBinOp(as);
+    if (qSharedPointerDynamicCast<NodeBinOP>(m_left)!=nullptr)
+        na = qSharedPointerDynamicCast<NodeBinOP>(m_left)->BothPureNumbersBinOp(as);
     else
-        na = dynamic_cast<NodeNumber*>(m_left)->m_val;
-    if (dynamic_cast<NodeBinOP*>(m_right)!=nullptr)
-        nb = dynamic_cast<NodeBinOP*>(m_right)->BothPureNumbersBinOp(as);
+        na = qSharedPointerDynamicCast<NodeNumber>(m_left)->m_val;
+
+    if (qSharedPointerDynamicCast<NodeBinOP>(m_right)!=nullptr)
+        nb = qSharedPointerDynamicCast<NodeBinOP>(m_right)->BothPureNumbersBinOp(as);
     else
-        nb = dynamic_cast<NodeNumber*>(m_right)->m_val;
+        nb = qSharedPointerDynamicCast<NodeNumber>(m_right)->m_val;
 
 
     if (m_op.m_type==TokenType::PLUS)

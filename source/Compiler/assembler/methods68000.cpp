@@ -17,7 +17,7 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     }
 
     if (Command("vbirq")) {
-        NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_node->m_params[0]);
+        QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
         QString name = addr->m_procedure->m_procName;
 
         as->Asm("move.l #"+name+",$6c.w");
@@ -186,7 +186,7 @@ bool Methods68000::Command(QString name)
 
 }
 
-void Methods68000::LoadVariable(Assembler* as, QString cmd, Node* n, QString d0)
+void Methods68000::LoadVariable(Assembler* as, QString cmd, QSharedPointer<Node> n, QString d0)
 {
     if (n->getValue(as)!="") {
         Asm(as,cmd,n->getValue(as),d0);
@@ -198,7 +198,7 @@ void Methods68000::LoadVariable(Assembler* as, QString cmd, Node* n, QString d0)
 
 }
 
-/*void Methods68000::LoadAddress(Assembler *as, Node *n, QString d0)
+/*void Methods68000::LoadAddress(Assembler *as, QSharedPointer<Node> n, QString d0)
 {
     Asm(as,"lea",n->getLiteral(as),d0);
 }
@@ -267,7 +267,7 @@ void Methods68000::Poke(Assembler *as, QString bb)
     m_node->m_params[2]->Accept(m_dispatcher);
     QString val = as->m_varStack.pop();
 //    m_node->m_params[2]->Accept(m_dispatcher);
-    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
     if (num!=nullptr) {
         if (num->m_val==0) {
             as->Asm("move"+bb+" "+ val +","+"("+a0+")");

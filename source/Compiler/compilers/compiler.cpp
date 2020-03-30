@@ -61,7 +61,7 @@ void Compiler::Parse(QString text, QStringList lst)
     } catch (FatalErrorException e) {
 //        qDebug() << "ERROR parse " << e.message;
         //m_tree->Delete();
-        m_tree = nullptr;
+//        m_tree = nullptr;
         HandleError(e, "Error during parsing");
     }
 
@@ -99,7 +99,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
 
     if (m_tree!=nullptr)
         try {
-        dynamic_cast<NodeProgram*>(m_tree)->m_initJumps = m_parser.m_initJumps;
+        qSharedPointerDynamicCast<NodeProgram>(m_tree)->m_initJumps = m_parser.m_initJumps;
         m_dispatcher->as = m_assembler.get();
 
         m_tree->Accept(m_dispatcher.get());
@@ -191,14 +191,14 @@ void Compiler::HandleError(FatalErrorException fe, QString e)
 void Compiler::Destroy()
 {
 
-    if (m_tree!=nullptr) {
+/*    if (m_tree!=nullptr) {
         m_tree->Delete();
         delete m_tree;
 
     }
 
     m_tree = nullptr;
-
+*/
 /*    if (m_assembler!=nullptr) {
         m_assembler->Delete();
         delete m_assembler;

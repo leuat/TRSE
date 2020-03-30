@@ -37,7 +37,7 @@
 class Compiler
 {
 public:
-    Node* m_tree = nullptr;
+    QSharedPointer<Node> m_tree = nullptr;
     QSharedPointer<Assembler> m_assembler = nullptr;
     QSharedPointer<AbstractASTDispatcher> m_dispatcher = nullptr;
     Parser m_parser;

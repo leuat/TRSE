@@ -29,7 +29,7 @@ Parser::Parser()
 void Parser::Delete()
 {
     for (QString val : m_procedures.keys()) {
-        Node* s = m_procedures[val];
+        QSharedPointer<Node> s = m_procedures[val];
            // if (s!=nullptr) {
             //s->Delete();
 //            delete s;
@@ -266,7 +266,7 @@ void Parser::InitBuiltinFunction(QStringList methodName, QString builtinFunction
     for (QString s: methodName)
      if (txt.contains(s)) {
 //         Node::m_staticBlockInfo.m_blockID=-1;
-        m_procedures[builtinFunctionName] = new NodeProcedureDecl(Token(TokenType::PROCEDURE, builtinFunctionName), builtinFunctionName);
+        m_procedures[builtinFunctionName] = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(Token(TokenType::PROCEDURE, builtinFunctionName), builtinFunctionName));
         if (initJump!="")
             m_initJumps << "\tjsr "+ initJump;
         return;
@@ -549,9 +549,9 @@ void Parser::RemoveUnusedProcedures()
 {
     QString removeProcedures = "Removing unused procedures: ";
     bool outputUnusedWarning = false;
-    QVector<Node*> procs;
-    for (Node* n: m_proceduresOnly) {
-        NodeProcedureDecl* np = (NodeProcedureDecl*)n;
+    QVector<QSharedPointer<Node>> procs;
+    for (QSharedPointer<Node> n: m_proceduresOnly) {
+        QSharedPointer<NodeProcedureDecl> np = qSharedPointerDynamicCast<NodeProcedureDecl>(n);
         if ((np->m_isUsed==true) || m_doNotRemoveMethods.contains(np->m_procName))
             procs.append(n);
         else {
@@ -845,9 +845,9 @@ bool Parser::PreprocessIncludeFiles()
 
 
 
-Node *Parser::Variable()
+QSharedPointer<Node> Parser::Variable()
 {
-    Node* n = nullptr;
+    QSharedPointer<Node> n = nullptr;
 
 
     bool isConstant = false;
@@ -872,14 +872,14 @@ Node *Parser::Variable()
 
         Token t = m_currentToken;
         Eat(m_currentToken.m_type);
-        Node *expr = nullptr;
+        QSharedPointer<Node> expr = nullptr;
         if (m_currentToken.m_type==TokenType::LBRACKET) {
             Eat(TokenType::LBRACKET);
             expr = Expr();
             Eat(TokenType::RBRACKET);
          }
 
-        Node* subVar = nullptr;
+        QSharedPointer<Node> subVar = nullptr;
         if (m_currentToken.m_type==TokenType::DOT) {
             Eat();
             subVar = Variable();
@@ -887,13 +887,13 @@ Node *Parser::Variable()
 
         if (t.m_type==TokenType::ADDRESS && expr!=nullptr) {
             t.m_value = "$"+QString::number( (int)s->m_value->m_fVal,16);
-            NodeVar* nv = new NodeVar(t,expr);
+            QSharedPointer<NodeVar> nv = QSharedPointer<NodeVar>(new NodeVar(t,expr));
             nv->m_subNode = subVar;
             //nv->m_expr = expr;
             n=nv;
         }
         else {
-            n = new NodeNumber(t, s->m_value->m_fVal);
+            n = QSharedPointer<NodeNumber>(new NodeNumber(t, s->m_value->m_fVal));
 
             //qDebug()  << s->m_value->m_fVal;
         }
@@ -917,29 +917,29 @@ Node *Parser::Variable()
 //                exit(1);
                 t.m_type = TokenType::ADDRESS;
             }
-            Node* subVar = nullptr;
+            QSharedPointer<Node> subVar = nullptr;
             if (m_currentToken.m_type==TokenType::DOT) {
                 Eat();
                 subVar = Variable();
             }
 
-            n = new NodeVar(t);
-            dynamic_cast<NodeVar*>(n)->m_subNode = subVar;
+            n = QSharedPointer<NodeVar>(new NodeVar(t));
+            qSharedPointerDynamicCast<NodeVar>(n)->m_subNode = subVar;
         }
         else
             {
                 Eat(TokenType::LBRACKET);
-                Node* expr = Expr();
+                QSharedPointer<Node> expr = Expr();
                 Eat(TokenType::RBRACKET);
-                Node* subVar = nullptr;
+                QSharedPointer<Node> subVar = nullptr;
                 if (m_currentToken.m_type==TokenType::DOT) {
                     Eat();
                     subVar = Variable();
                 }
 
 
-                n = new NodeVar(t, expr);
-                dynamic_cast<NodeVar*>(n)->m_subNode = subVar;
+                n = QSharedPointer<NodeVar>(new NodeVar(t, expr));
+                qSharedPointerDynamicCast<NodeVar>(n)->m_subNode = subVar;
 
 
         }
@@ -948,12 +948,12 @@ Node *Parser::Variable()
     if (n==nullptr) {
         ErrorHandler::e.Error("Could not assign variable!");
     }
-/*    NodeVar* nv = (NodeVar*)n;
-    if (nv->m_subNode!=nullptr && ((NodeVar*)nv->m_subNode)->m_expr!=nullptr)
-        nv->m_expr = ((NodeVar*)nv->m_subNode)->m_expr;
+/*    QSharedPointer<NodeVar> nv = qSharedPointerDynamicCast<NodeVar>n;
+    if (nv->m_subNode!=nullptr && (qSharedPointerDynamicCast<NodeVar>nv->m_subNode)->m_expr!=nullptr)
+        nv->m_expr = (qSharedPointerDynamicCast<NodeVar>nv->m_subNode)->m_expr;
 */
     // Verify that we're not trying to screw with the variable
-    NodeVar* nv = dynamic_cast<NodeVar*>(n);
+    QSharedPointer<NodeVar> nv = qSharedPointerDynamicCast<NodeVar>(n);
     if (nv!=nullptr) {
         QSharedPointer<Symbol> s = m_symTab->Lookup(nv->value,m_currentToken.m_lineNumber);
         // If variable doesn't exist
@@ -968,9 +968,9 @@ Node *Parser::Variable()
     return n;
 }
 
-Node *Parser::Empty()
+QSharedPointer<Node> Parser::Empty()
 {
-    return new NoOp();
+    return QSharedPointer<Node>(new NoOp());
 }
 
 void Parser::Record(QString name)
@@ -984,11 +984,11 @@ void Parser::Record(QString name)
     record->setName(name);
 
     while (m_currentToken.m_type!=TokenType::END) {
-        QVector<Node*> vars = VariableDeclarations("");
-        for (Node* n : vars) {
-            NodeVarDecl* nv = dynamic_cast<NodeVarDecl*>(n);
-            NodeVarType* typ = dynamic_cast<NodeVarType*>(nv->m_typeNode);
-            NodeVar* var = dynamic_cast<NodeVar*>(nv->m_varNode);
+        QVector<QSharedPointer<Node>> vars = VariableDeclarations("");
+        for (QSharedPointer<Node> n : vars) {
+            QSharedPointer<NodeVarDecl> nv = qSharedPointerDynamicCast<NodeVarDecl>(n);
+            QSharedPointer<NodeVarType> typ = qSharedPointerDynamicCast<NodeVarType>(nv->m_typeNode);
+            QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(nv->m_varNode);
             QSharedPointer<Symbol> s = QSharedPointer<Symbol>(new Symbol(var->value, typ->value));
             s->m_arrayType = typ->m_arrayVarType.m_type;
             s->m_arrayTypeText = typ->m_arrayVarTypeText;
@@ -1002,11 +1002,11 @@ void Parser::Record(QString name)
 }
 
 
-Node *Parser::AssignStatement()
+QSharedPointer<Node> Parser::AssignStatement()
 {
-    Node* arrayIndex = nullptr;
+    QSharedPointer<Node> arrayIndex = nullptr;
     Token t = m_currentToken;
-    Node* left = Variable();
+    QSharedPointer<Node> left = Variable();
     Token token = m_currentToken;
 
 
@@ -1034,17 +1034,17 @@ Node *Parser::AssignStatement()
         ErrorHandler::e.Error("Error assigning variable <b>'" + t.m_value+  "'</b>, did you forget a colon or mistype? Syntax should be: <b>'a := b;'</b>." , token.m_lineNumber);
     }
     Eat(TokenType::ASSIGN);
-    Node* right = Expr();
-    NodeAssign* na = dynamic_cast<NodeAssign*>(new NodeAssign(left, t, right));
+    QSharedPointer<Node> right = Expr();
+    QSharedPointer<NodeAssign>na = QSharedPointer<NodeAssign>(new NodeAssign(left, t, right));
     na->m_right->ApplyFlags();// make sure integer:=byte*byte works
     return na;
 
 
 }
 
-Node *Parser::Statement()
+QSharedPointer<Node> Parser::Statement()
 {
-    Node *node = nullptr;
+    QSharedPointer<Node> node = nullptr;
     if (m_currentToken.m_type == TokenType::BEGIN) {
         node = CompoundStatement();
     }
@@ -1103,16 +1103,16 @@ Node *Parser::Statement()
 
 }
 
-Node *Parser::Case()
+QSharedPointer<Node> Parser::Case()
 {
-    NodeCase* n = new NodeCase(m_currentToken);
+    QSharedPointer<NodeCase> n = QSharedPointer<NodeCase>(new NodeCase(m_currentToken));
     Eat(); // Eat "case"
-    n->m_variable = dynamic_cast<NodeVar*>(Variable());
+    n->m_variable = qSharedPointerDynamicCast<NodeVar>(Variable());
     Eat(TokenType::OF);
     while (m_currentToken.m_type != TokenType::END && m_currentToken.m_type != TokenType::ELSE) {
-        Node* expr = Expr();
+        QSharedPointer<Node> expr = Expr();
         Eat(TokenType::COLON);
-        Node* block = Block(false);
+        QSharedPointer<Node> block = Block(false);
         n->Append(expr, block);
         Eat(); // Eat the semicolon
 
@@ -1127,32 +1127,32 @@ Node *Parser::Case()
 
 }
 
-Node *Parser::BinaryClause()
+QSharedPointer<Node> Parser::BinaryClause()
 {
     if (m_currentToken.m_type == TokenType::LPAREN) {
         // Logical clause AND OR
         Eat(TokenType::LPAREN);
-        Node* a = BinaryClause();
+        QSharedPointer<Node> a = BinaryClause();
         if (m_currentToken.m_type==TokenType::RPAREN) {
             Eat();
             return a;
         }
         Token logical = m_currentToken;
         Eat();
-        Node* b = BinaryClause();
+        QSharedPointer<Node> b = BinaryClause();
         Eat(TokenType::RPAREN);
-        return new NodeBinaryClause(logical, a, b);
+        return QSharedPointer<NodeBinaryClause>(new NodeBinaryClause(logical, a, b));
     }
 
-    Node* a = Expr();
+    QSharedPointer<Node> a = Expr();
     Token comparetoken;
-    Node* b;
+    QSharedPointer<Node> b;
     // Nothing : the null test. Check if NOT EQUALS ZERO
     if (m_currentToken.m_type==TokenType::RPAREN || m_currentToken.m_type==TokenType::THEN) {
         Token t;
         t.m_type = TokenType::BYTE;
         t.m_intVal = 0;
-        b = new NodeNumber(t,0);
+        b = QSharedPointer<NodeNumber>(new NodeNumber(t,0));
         comparetoken.m_type = TokenType::NOTEQUALS;
     }
     else
@@ -1172,11 +1172,11 @@ Node *Parser::BinaryClause()
         b = Expr();
 
     }
-    return new NodeBinaryClause(comparetoken, a, b);
+    return QSharedPointer<NodeBinaryClause>(new NodeBinaryClause(comparetoken, a, b));
 }
 
 
-void Parser::AppendComment(Node *n)
+void Parser::AppendComment(QSharedPointer<Node> n)
 {
     if (m_lexer->m_currentComment=="")
         return;
@@ -1188,10 +1188,10 @@ void Parser::AppendComment(Node *n)
 
 
 
-Node *Parser::Conditional(bool isWhileLoop)
+QSharedPointer<Node> Parser::Conditional(bool isWhileLoop)
 {
 
-    QVector<Node*> left, right;
+    QVector<QSharedPointer<Node>> left, right;
     QVector<Token> compareTokens, conditionals;
 
     // Start
@@ -1199,7 +1199,7 @@ Node *Parser::Conditional(bool isWhileLoop)
     bool done=false;
     int linenum = m_currentToken.m_lineNumber;
 
-    Node* clause = BinaryClause();
+    QSharedPointer<Node> clause = BinaryClause();
 
     int forcePage = findPage();
 
@@ -1209,27 +1209,27 @@ Node *Parser::Conditional(bool isWhileLoop)
         ErrorHandler::e.Error("Expected THEN or DO after conditional", linenum);
     }
 
-    Node* block = Block(false);
+    QSharedPointer<Node> block = Block(false);
 
-    Node* nodeElse = nullptr;
+    QSharedPointer<Node> nodeElse = nullptr;
     if (m_currentToken.m_type==TokenType::ELSE) {
         Eat(TokenType::ELSE);
         nodeElse = Block(false);
     }
 
-    return new NodeConditional(t, forcePage, clause, block, isWhileLoop, nodeElse);
+    return QSharedPointer<NodeConditional>(new NodeConditional(t, forcePage, clause, block, isWhileLoop, nodeElse));
 }
 
 
-QVector<Node*> Parser::StatementList()
+QVector<QSharedPointer<Node>> Parser::StatementList()
 {
 
-    Node* node = Statement();
-    QVector<Node*> results;
+    QSharedPointer<Node> node = Statement();
+    QVector<QSharedPointer<Node>> results;
     results.append(node);
     while (m_currentToken.m_type == TokenType::SEMI) {
         Eat(TokenType::SEMI);
-        Node* n = Statement();
+        QSharedPointer<Node> n = Statement();
 
         results.append(n);
 
@@ -1243,11 +1243,11 @@ QVector<Node*> Parser::StatementList()
 
 }
 
-Node *Parser::CompoundStatement()
+QSharedPointer<Node> Parser::CompoundStatement()
 {
     if (m_currentToken.m_type!=TokenType::BEGIN) {
         // Single statement
-        Node* n =  Statement();
+        QSharedPointer<Node> n =  Statement();
   //      Eat(TokenType::SEMI);
     //    qDebug() << m_currentToken.getType();
       //  qDebug() << m_currentToken.m_value;
@@ -1256,10 +1256,10 @@ Node *Parser::CompoundStatement()
     }
     Token t = m_currentToken;
     Eat(TokenType::BEGIN);
-    QVector<Node*> nodes = StatementList();
+    QVector<QSharedPointer<Node>> nodes = StatementList();
     Eat(TokenType::END);
-    NodeCompound* root = new NodeCompound(t);
-    for (Node* n: nodes)
+    QSharedPointer<NodeCompound> root = QSharedPointer<NodeCompound>(new NodeCompound(t));
+    for (QSharedPointer<Node> n: nodes)
         root->children.append(n);
 
 //    qDebug() << "from begin block : " +m_currentToken.getType();
@@ -1267,24 +1267,24 @@ Node *Parser::CompoundStatement()
 
 }
 
-Node *Parser::Program(QString param)
+QSharedPointer<Node> Parser::Program(QString param)
 {
-//    Node* n = CompoundStatement();
+//    QSharedPointer<Node> n = CompoundStatement();
     Eat(TokenType::PROGRAM);
-//    NodeVar* varNode = (NodeVar*)Variable();
+//    QSharedPointer<NodeVar> varNode = qSharedPointerDynamicCast<NodeVar>Variable();
     QString progName = m_currentToken.m_value;// varNode->value;
     Eat();
     m_symTab->Define(QSharedPointer<Symbol>(new Symbol(progName,"STRING")));
     Eat(TokenType::SEMI);
-    NodeBlock* block = (NodeBlock*)Block(true);
-    NodeProgram* program = new NodeProgram(progName,  param, block);
+    QSharedPointer<NodeBlock> block = qSharedPointerDynamicCast<NodeBlock>(Block(true));
+    QSharedPointer<NodeProgram> program = QSharedPointer<NodeProgram>(new NodeProgram(progName,  param, block));
     Eat(TokenType::DOT);
 
     return program;
 }
 
 
-Node* Parser::Factor()
+QSharedPointer<Node> Parser::Factor()
 {
     if (m_currentToken.m_type == TokenType::LENGTH) {
         Eat();
@@ -1299,7 +1299,7 @@ Node* Parser::Factor()
         t.m_type  = TokenType::INTEGER_CONST;
         Eat();
         Eat(TokenType::RPAREN);
-        return new NodeNumber(t,s->getLength());
+        return QSharedPointer<NodeNumber>(new NodeNumber(t,s->getLength()));
 
     }
 
@@ -1314,12 +1314,12 @@ Node* Parser::Factor()
             || t.m_type ==TokenType::ADDRESS) {
         Eat(t.m_type);
         //qDebug() << "parser: " <<t.m_value << t.m_intVal;
-        return new NodeNumber(t, t.m_intVal);
+        return QSharedPointer<NodeNumber>(new NodeNumber(t, t.m_intVal));
     }
 
     if (t.m_type == TokenType::PLUS || t.m_type==TokenType::MINUS ){
         Eat(t.m_type);
-        return new NodeUnaryOp(t, Factor());
+        return QSharedPointer<NodeUnaryOp>(new NodeUnaryOp(t, Factor()));
     }
 
 
@@ -1327,14 +1327,14 @@ Node* Parser::Factor()
 
     if (t.m_type == TokenType::LPAREN) {
         Eat(TokenType::LPAREN);
-        Node* node = Expr();
+        QSharedPointer<Node> node = Expr();
         Eat(TokenType::RPAREN);
         return node;
 
     }
     if (t.m_type == TokenType::ID) {
 //        qDebug() << "FINDING PROCEDURE IN TERM: " << t.m_value;
-        Node* node = FindProcedure();
+        QSharedPointer<Node> node = FindProcedure();
         if (node!=nullptr)
             return node;
         node = BuiltinFunction();
@@ -1345,31 +1345,31 @@ Node* Parser::Factor()
     return Variable();
 }
 
-Node *Parser::RepeatUntil()
+QSharedPointer<Node> Parser::RepeatUntil()
 {
     Token t = m_currentToken;
     Eat(TokenType::REPEAT);
-    QVector<Node*> nodes = StatementList();
-    NodeCompound* root = new NodeCompound(t);
+    QVector<QSharedPointer<Node>> nodes = StatementList();
+    QSharedPointer<NodeCompound> root = QSharedPointer<NodeCompound>(new NodeCompound(t));
     Eat(TokenType::UNTIL);
-    Node* cond = BinaryClause();
-    QVector<Node*> decl;
+    QSharedPointer<Node> cond = BinaryClause();
+    QVector<QSharedPointer<Node>> decl;
 
-    for (Node* n: nodes)
+    for (QSharedPointer<Node> n: nodes)
         root->children.append(n);
 
-    NodeBlock* block = new NodeBlock(t,decl,root);
+    QSharedPointer<NodeBlock> block = QSharedPointer<NodeBlock>(new NodeBlock(t,decl,root));
 
 //    qDebug() << "from begin block : " +m_currentToken.getType();
-//    NodeRepeatUntil(Token op, int forcePage, Node* cond, Node* block);
+//    NodeRepeatUntil(Token op, int forcePage, QSharedPointer<Node> cond, QSharedPointer<Node> block);
 
-    return new NodeRepeatUntil(t,false,dynamic_cast<NodeBinaryClause*>(cond),block);
+    return QSharedPointer<Node>(new NodeRepeatUntil(t,false,qSharedPointerDynamicCast<NodeBinaryClause>(cond),block));
 
 }
 
-Node* Parser::Term()
+QSharedPointer<Node> Parser::Term()
 {
-    Node* node = Factor();
+    QSharedPointer<Node> node = Factor();
     while (m_currentToken.m_type == TokenType::Type::MUL || m_currentToken.m_type == TokenType::Type::DIV
     || m_currentToken.m_type == TokenType::Type::BITAND || m_currentToken.m_type == TokenType::Type::BITOR
      || m_currentToken.m_type == TokenType::Type::SHR || m_currentToken.m_type == TokenType::Type::SHL
@@ -1379,7 +1379,7 @@ Node* Parser::Term()
         Token t = m_currentToken;
         Eat(m_currentToken.m_type);
 
-        node = new NodeBinOP(node, t, Factor());
+        node = QSharedPointer<NodeBinOP>(new NodeBinOP(node, t, Factor()));
 
     }
     return node;
@@ -1667,7 +1667,7 @@ void Parser::PreprocessReplace()
 //    qDebug() << m_preprocessorDefines.keys();
 }
 
-Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines, bool useLocals)
+QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines, bool useLocals)
 {
     // Call preprocessor for include files etc
     m_lexer->m_orgText = m_lexer->m_orgText + "\n" + globalDefines+"\n";
@@ -1708,7 +1708,7 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
     //qDebug() <<m_lexer->m_text[0];
     SymbolTable::Initialize();
     Node::m_staticBlockInfo.m_blockID=-1;
-    NodeProgram* root = (NodeProgram*)Program(param);
+    QSharedPointer<NodeProgram> root = qSharedPointerDynamicCast<NodeProgram>(Program(param));
     // First add builtin functions
     if (removeUnusedDecls)
         RemoveUnusedProcedures();
@@ -1716,14 +1716,14 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
     InitBuiltinFunctions();
 
     for (QString s: m_procedures.keys())
-        if (((NodeProcedureDecl*)m_procedures[s])->m_block==nullptr)
+        if (qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[s])->m_block==nullptr)
             root->m_NodeBlock->m_decl.append(m_procedures[s]);
 
 
     // Then add regular ones ORDERED BY DEFINITION
     //for (QString s: m_procedures.keys())
-     //   if (((NodeProcedureDecl*)m_procedures[s])->m_block!=nullptr)
-        for ( Node* n: m_proceduresOnly )
+     //   if (((QSharedPointer<NodeProcedureDecl>)m_procedures[s])->m_block!=nullptr)
+        for ( QSharedPointer<Node> n: m_proceduresOnly )
             root->m_NodeBlock->m_decl.append(n);
 
 
@@ -1734,7 +1734,7 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
     return root;
 }
 
-Node *Parser::FindProcedure()
+QSharedPointer<Node> Parser::FindProcedure()
 {
     Token procToken = m_currentToken;
     if (m_procedures.contains(m_currentToken.m_value)) {
@@ -1742,7 +1742,7 @@ Node *Parser::FindProcedure()
         Token t = m_currentToken;
         Eat(TokenType::ID);
         Eat(TokenType::LPAREN);
-        QVector<Node*> paramList;
+        QVector<QSharedPointer<Node>> paramList;
         while (m_currentToken.m_type!=TokenType::RPAREN && !m_lexer->m_finished) {
             paramList.append(Expr());
 
@@ -1754,14 +1754,14 @@ Node *Parser::FindProcedure()
         if (!m_procedures.contains(procName))
             ErrorHandler::e.Error("Could not find procedure :" + procName, m_currentToken.m_lineNumber);
 
-        NodeProcedureDecl* p = (NodeProcedureDecl*)m_procedures[procName];
+        QSharedPointer<NodeProcedureDecl> p = qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]);
         Eat(TokenType::RPAREN);
 
         //p->SetParameters(paramList);
         p->m_isUsed = true;
 //        if (p->m_procName==BGMUpdateSpriteLoc)
 
-        return new NodeProcedure(p, paramList, t);
+        return QSharedPointer<NodeProcedure>(new NodeProcedure(p, paramList, t));
     }
 
     //qDebug() << m_currentToken.getType() << " with value " << m_currentToken.m_value;
@@ -1769,7 +1769,7 @@ Node *Parser::FindProcedure()
 }
 
 
-Node *Parser::Block(bool useOwnSymTab, QString blockName)
+QSharedPointer<Node> Parser::Block(bool useOwnSymTab, QString blockName)
 {
 
 /*    if (m_currentToken.m_type!=TokenType::VAR  && m_currentToken.m_type!=TokenType::BEGIN)
@@ -1778,24 +1778,24 @@ Node *Parser::Block(bool useOwnSymTab, QString blockName)
 
     if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type==TokenType::WEDGE)
         return nullptr;
-    QVector<Node*> decl =  Declarations(useOwnSymTab, blockName);
+    QVector<QSharedPointer<Node>> decl =  Declarations(useOwnSymTab, blockName);
 
     int pos = m_currentToken.m_lineNumber;
-    Node* vars =  CompoundStatement();
-    NodeBlock* bl =  new NodeBlock(m_currentToken,decl, vars, useOwnSymTab);
+    QSharedPointer<Node> vars =  CompoundStatement();
+    QSharedPointer<NodeBlock> bl =  QSharedPointer<NodeBlock>(new NodeBlock(m_currentToken,decl, vars, useOwnSymTab));
     bl->m_op.m_lineNumber = pos;
     return bl;
 }
 
-QVector<Node *> Parser::Parameters(QString blockName)
+QVector<QSharedPointer<Node> > Parser::Parameters(QString blockName)
 {
-    QVector<Node*> decl;
+    QVector<QSharedPointer<Node>> decl;
     if (m_currentToken.m_type==TokenType::LPAREN) {
         Eat(TokenType::LPAREN);
         while (m_currentToken.m_type==TokenType::ID) {
-            QVector<Node*> ns = VariableDeclarations(blockName);
+            QVector<QSharedPointer<Node>> ns = VariableDeclarations(blockName);
 
-            for (Node* n: ns)
+            for (QSharedPointer<Node> n: ns)
                 decl.append(n);
             Eat(m_currentToken.m_type);
         }
@@ -1804,18 +1804,18 @@ QVector<Node *> Parser::Parameters(QString blockName)
     return decl;
 }
 
-Node *Parser::ForLoop(bool inclusive)
+QSharedPointer<Node> Parser::ForLoop(bool inclusive)
 {
     int ln = m_currentToken.m_lineNumber;
     if (inclusive)
         Eat(TokenType::FORI);
     else
         Eat(TokenType::FOR);
-    Node* a = AssignStatement();
+    QSharedPointer<Node> a = AssignStatement();
     Eat(TokenType::TO);
-    Node* b = Expr();
+    QSharedPointer<Node> b = Expr();
     bool unroll = false;
-    Node* step = nullptr;
+    QSharedPointer<Node> step = nullptr;
 
     int forcePage = 0;
     int loopType = 0; // use var
@@ -1849,19 +1849,19 @@ Node *Parser::ForLoop(bool inclusive)
     Eat(m_currentToken.m_type);
 //    qDebug() << "Current: " << m_currentToken.getType();
 //    Eat(TokenType::DO);
-    Node* block = Block(false);
+    QSharedPointer<Node> block = Block(false);
 
 //    qDebug() << m_currentToken.getType();
   //  exit(1);
-    return new NodeForLoop(a,b,block, step, unroll, forcePage, loopType, inclusive);
+    return QSharedPointer<NodeForLoop>(new NodeForLoop(a,b,block, step, unroll, forcePage, loopType, inclusive));
 
 }
 
-Node *Parser::String()
+QSharedPointer<Node> Parser::String()
 {
 
     if (m_currentToken.m_type==TokenType::STRING || m_currentToken.m_type==TokenType::CSTRING) {
-        NodeString* node = new NodeString(m_currentToken,QStringList()<<m_currentToken.m_value,m_currentToken.m_type==TokenType::CSTRING);
+        QSharedPointer<NodeString> node = QSharedPointer<NodeString>(new NodeString(m_currentToken,QStringList()<<m_currentToken.m_value,m_currentToken.m_type==TokenType::CSTRING));
         Eat();
         return node;
     }
@@ -1890,14 +1890,14 @@ Node *Parser::String()
     Eat(); // RParen
 //    qDebug() <<m_currentToken.getType();
 
-    NodeString* node = new NodeString(token, lst, token.m_type==TokenType::CSTRING);
+    QSharedPointer<NodeString> node = QSharedPointer<NodeString>(new NodeString(token, lst, token.m_type==TokenType::CSTRING));
     return node;
 }
 
 
-QVector<Node*> Parser::Declarations(bool isMain, QString blockName)
+QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockName)
 {
-    QVector<Node*> decl;
+    QVector<QSharedPointer<Node>> decl;
     if (m_currentToken.m_type==TokenType::VAR) {
         Eat(TokenType::VAR);
         while (m_currentToken.m_type==TokenType::ID || m_currentToken.m_type == TokenType::CONSTANT) {
@@ -1907,9 +1907,9 @@ QVector<Node*> Parser::Declarations(bool isMain, QString blockName)
             }
             else {
 
-                QVector<Node*> ns = VariableDeclarations(blockName);
+                QVector<QSharedPointer<Node>> ns = VariableDeclarations(blockName);
 
-                for (Node* n: ns)
+                for (QSharedPointer<Node> n: ns)
                     decl.append(n);
             }
             Eat(TokenType::SEMI);
@@ -1930,8 +1930,8 @@ QVector<Node*> Parser::Declarations(bool isMain, QString blockName)
     }
 
     if (m_currentToken.m_type==TokenType::ID) {
-            QVector<Node*> ns = VariableDeclarations();
-            for (Node* n: ns)
+            QVector<QSharedPointer<Node>> ns = VariableDeclarations();
+            for (QSharedPointer<Node> n: ns)
                 decl.append(n);
             Eat(TokenType::SEMI);
             continue;
@@ -1950,7 +1950,7 @@ QVector<Node*> Parser::Declarations(bool isMain, QString blockName)
         //qDebug() << tok.m_value  << " : " << procName;
         Eat(TokenType::ID);
         //exit(1);
-        QVector<Node*> paramDecl;
+        QVector<QSharedPointer<Node>> paramDecl;
         if (m_currentToken.m_type==TokenType::LPAREN)
             paramDecl = Parameters(procName);
         //qDebug()<< "current : " << m_currentToken.getType();
@@ -1959,8 +1959,8 @@ QVector<Node*> Parser::Declarations(bool isMain, QString blockName)
             Eat(TokenType::RPAREN);
 
         Eat(TokenType::SEMI);
-        Node* block = nullptr;
-        NodeProcedureDecl* procDecl = new NodeProcedureDecl(tok, procName, paramDecl, block, type);
+        QSharedPointer<Node> block = nullptr;
+        QSharedPointer<NodeProcedureDecl> procDecl = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(tok, procName, paramDecl, block, type));
         AppendComment(procDecl);
 
         if (m_procedures[procName]!=nullptr)
@@ -1986,8 +1986,8 @@ QVector<Node*> Parser::Declarations(bool isMain, QString blockName)
         if (block!=nullptr) {
             bool ok = true;
              // Check if procedure already declared
-            for (Node* n: m_proceduresOnly) {
-                NodeProcedureDecl* proc =(NodeProcedureDecl*)n;
+            for (QSharedPointer<Node> n: m_proceduresOnly) {
+                QSharedPointer<NodeProcedureDecl> proc =qSharedPointerDynamicCast<NodeProcedureDecl>(n);
                 if (proc->m_procName==procName) ok = false;
 
             }
@@ -2006,7 +2006,7 @@ QVector<Node*> Parser::Declarations(bool isMain, QString blockName)
     return decl;
 }
 
-QVector<Node*> Parser::ConstDeclaration()
+QVector<QSharedPointer<Node>> Parser::ConstDeclaration()
 {
     Eat(TokenType::CONSTANT);
     QString name = m_currentToken.m_value;
@@ -2028,12 +2028,12 @@ QVector<Node*> Parser::ConstDeclaration()
     int value = GetParsedInt(dType);
 
     m_symTab->m_constants[name.toUpper()] = QSharedPointer<Symbol>(new Symbol(name.toUpper(),type.toUpper(),value));
-    return QVector<Node*>();
+    return QVector<QSharedPointer<Node>>();
 }
 
 
 
-QVector<Node *> Parser::VariableDeclarations(QString blockName)
+QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
 {
     if (blockName!="")
         m_symTab->SetCurrentProcedure(blockName+"_");
@@ -2043,8 +2043,8 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
 
 
 
-    QVector<Node*> vars;
-    vars.append(new NodeVar(m_currentToken));
+    QVector<QSharedPointer<Node>> vars;
+    vars.append(QSharedPointer<NodeVar>(new NodeVar(m_currentToken)));
     QString varName = m_currentToken.m_value;
     QVector<QSharedPointer<Symbol>> syms;
     syms.append(QSharedPointer<Symbol>(new Symbol(m_currentToken.m_value,"")));
@@ -2055,7 +2055,7 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
         Eat(TokenType::EQUALS);
         if (m_currentToken.m_type==TokenType::RECORD) {
             Record(varName);
-            return QVector<Node *>();
+            return QVector<QSharedPointer<Node> >();
         }
         ErrorHandler::e.Error("Unknown declaration : " +m_currentToken.m_type);
     }
@@ -2063,7 +2063,7 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
     // Make sure that ALL are defined!
     while (m_currentToken.m_type == TokenType::COMMA) {
         Eat(TokenType::COMMA);
-        vars.append(new NodeVar(m_currentToken));
+        vars.append(QSharedPointer<NodeVar>(new NodeVar(m_currentToken)));
         AppendComment(vars[vars.count()-1]);
 
         syms.append(QSharedPointer<Symbol>(new Symbol(m_currentToken.m_value,"")));
@@ -2073,7 +2073,7 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
     }
     Eat(TokenType::COLON);
 
-    NodeVarType* typeNode = dynamic_cast<NodeVarType*>(TypeSpec());
+    QSharedPointer<NodeVarType> typeNode = qSharedPointerDynamicCast<NodeVarType>(TypeSpec());
     // Set all types
     for (QSharedPointer<Symbol> s: syms) {
        s->m_type = typeNode->m_op.m_value;
@@ -2089,17 +2089,17 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
     }
 
 
-/*    for (Node* v: vars) {
+/*    for (QSharedPointer<Node> v: vars) {
         Syntax::s.globals[((Var*)v)->value] = 0;
     }*/
 
-    QVector<Node*> var_decleratons;
+    QVector<QSharedPointer<Node>> var_decleratons;
 
-    for (Node* n : vars) {
+    for (QSharedPointer<Node> n : vars) {
 
-        NodeVarDecl* decl = new NodeVarDecl(n, typeNode);
+        QSharedPointer<NodeVarDecl> decl = QSharedPointer<NodeVarDecl>(new NodeVarDecl(n, typeNode));
         var_decleratons.append(decl);
-//        qDebug() <<  typeNode->m_op.getType() << typeNode->m_op.m_value << ((NodeVar*)n)->value;;
+//        qDebug() <<  typeNode->m_op.getType() << typeNode->m_op.m_value << (qSharedPointerDynamicCast<NodeVar>n)->value;;
         if (typeNode->m_op.m_type == TokenType::INCSID) {
 //            decl->m_isUsed = true;
 
@@ -2124,7 +2124,7 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
 
 
 
-Node *Parser::TypeSpec()
+QSharedPointer<Node> Parser::TypeSpec()
 {
     Token t = m_currentToken;
 
@@ -2148,7 +2148,7 @@ Node *Parser::TypeSpec()
             flags<<"chipmem";
         }
 
-        NodeVarType *nt =  new NodeVarType(t,binFile, position);
+        QSharedPointer<NodeVarType> nt =  QSharedPointer<NodeVarType>(new NodeVarType(t,binFile, position));
         nt->m_flags = flags;
         return nt;
 
@@ -2230,7 +2230,7 @@ Node *Parser::TypeSpec()
                 ErrorHandler::e.Error("You cannot declare an array of records that contain sub-arrays due to 6502 limitations. <br>Please remove the sub-array from the record type in question : '"+arrayType.m_value+"'.",arrayType.m_lineNumber);
         }
 
-        NodeVarType *nt =  new NodeVarType(t,position, arrayType,data);
+        QSharedPointer<NodeVarType> nt =  QSharedPointer<NodeVarType>(new NodeVarType(t,position, arrayType,data));
         nt->m_flags = flags;
         return nt;
 
@@ -2242,23 +2242,23 @@ Node *Parser::TypeSpec()
         QStringList initData;
         if (m_currentToken.m_type == TokenType::EQUALS) {
             Eat();
-            NodeString* str = (NodeString*)String();
+            QSharedPointer<NodeString> str = qSharedPointerDynamicCast<NodeString>(String());
             initData = str->m_val;
         }
-        return new NodeVarType(t,initData);
+        return QSharedPointer<NodeVarType>(new NodeVarType(t,initData));
     }
 
     if (m_currentToken.m_type == TokenType::POINTER) {
         Eat();
         QString type;
-        NodeVarType* nvt = new NodeVarType(t,"");
+        QSharedPointer<NodeVarType> nvt = QSharedPointer<NodeVarType>(new NodeVarType(t,""));
         nvt->m_arrayVarType.m_type = TokenType::BYTE;
 
         if (m_currentToken.m_type == TokenType::OF) {
             Eat();
             TokenType::Type typ = m_currentToken.m_type;
 
-//            NodeString* str = (NodeString*)String();
+//            QSharedPointer<NodeString> str = (QSharedPointer<NodeString>)String();
   //          initData = str->m_val;
             Eat();
             nvt->m_arrayVarType.m_type = typ;
@@ -2279,7 +2279,7 @@ Node *Parser::TypeSpec()
         position = m_currentToken.getNumAsHexString();
 
         Eat(m_currentToken.m_type);
-        NodeVarType* nt = new NodeVarType(t,position);
+        QSharedPointer<NodeVarType> nt = QSharedPointer<NodeVarType>(new NodeVarType(t,position));
         nt->m_position = position;
         nt->m_flag = 1;
         return nt;
@@ -2296,18 +2296,18 @@ Node *Parser::TypeSpec()
 
 
     }
-    return new NodeVarType(t,initVal);
+    return QSharedPointer<NodeVarType>(new NodeVarType(t,initVal));
 
 }
 
-Node *Parser::BuiltinFunction()
+QSharedPointer<Node> Parser::BuiltinFunction()
 {
     if (Syntax::s.builtInFunctions.contains(m_currentToken.m_value.toLower())) {
         QString procName = m_currentToken.m_value.toLower();
         int noParams = Syntax::s.builtInFunctions[procName].m_params.count();
         Eat(TokenType::ID);
         Eat(TokenType::LPAREN);
-        QVector<Node*> paramList;
+        QVector<QSharedPointer<Node>> paramList;
         QString prev;
 
         while (m_currentToken.m_type!=TokenType::RPAREN) {
@@ -2355,7 +2355,7 @@ Node *Parser::BuiltinFunction()
                  }
             }
 
-        return new NodeBuiltinMethod(procName,paramList,&Syntax::s.builtInFunctions[procName]);
+        return QSharedPointer<NodeBuiltinMethod>(new NodeBuiltinMethod(procName,paramList,&Syntax::s.builtInFunctions[procName]));
         //p->SetParameters(paramList);
 
 
@@ -2364,25 +2364,25 @@ Node *Parser::BuiltinFunction()
 
 }
 
-Node *Parser::Constant()
+QSharedPointer<Node> Parser::Constant()
 {
     QString id = m_currentToken.m_value;
     if (SymbolTable::m_constants.contains(id)) {
         Eat(m_currentToken.m_type);
         QSharedPointer<Symbol> s = SymbolTable::m_constants[id];
-        Node* n =  new NodeNumber(Token(s->getTokenType(), s->m_value->m_fVal), s->m_value->m_fVal);
+        QSharedPointer<Node> n =  QSharedPointer<NodeNumber>(new NodeNumber(Token(s->getTokenType(), s->m_value->m_fVal), s->m_value->m_fVal));
         return n;
     }
     return nullptr;
 }
 
-Node *Parser::InlineAssembler()
+QSharedPointer<Node> Parser::InlineAssembler()
 {
     Eat(TokenType::ASM);
     Eat(TokenType::LPAREN);
     if (m_currentToken.m_type!=TokenType::STRING)
         ErrorHandler::e.Error("Inline assembler must be enclosed as a string");
-    Node* n = new NodeAsm(m_currentToken);
+    QSharedPointer<Node> n = QSharedPointer<NodeAsm>(new NodeAsm(m_currentToken));
     Eat(TokenType::STRING);
     Eat(TokenType::RPAREN);
     return n;
@@ -2721,9 +2721,9 @@ void Parser::HandleProjectSettingsPreprocessors()
     Eat(); // H
 }
 
-Node* Parser::Expr()
+QSharedPointer<Node> Parser::Expr()
 {
-    Node* node = Term();
+    QSharedPointer<Node> node = Term();
 
 
 
@@ -2734,7 +2734,7 @@ Node* Parser::Expr()
 
         Eat(m_currentToken.m_type);
 
-        node = new NodeBinOP(node, t, Term());
+        node = QSharedPointer<NodeBinOP>(new NodeBinOP(node, t, Term()));
 
     }
     return node;

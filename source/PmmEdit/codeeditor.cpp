@@ -120,7 +120,7 @@ QAbstractItemModel *CodeEditor::modelFromTRSE(QSharedPointer<SymbolTable> symtab
     }
     if (parser!=nullptr) {
         for (QString s: parser->m_procedures.keys()) {
-            NodeProcedureDecl* n = (NodeProcedureDecl*)parser->m_procedures[s];
+            QSharedPointer<NodeProcedureDecl> n = qSharedPointerDynamicCast<NodeProcedureDecl>(parser->m_procedures[s]);
             int cnt = n->m_paramDecl.count();
             QString params = "(";
             for (int i=0;i<cnt-1;i++)

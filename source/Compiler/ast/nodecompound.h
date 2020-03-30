@@ -32,18 +32,17 @@
 
 class NodeCompound : public Node {
 public:
-    QVector<Node*> children;
+    QVector<QSharedPointer<Node>> children;
     NodeCompound(Token t):Node() {
         m_op = t;
     }
-    void Delete() override;
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(qSharedPointerDynamicCast<NodeCompound>(sharedFromThis()));
     }
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
-        for (Node* n: children)
+        for (QSharedPointer<Node> n: children)
             n->parseConstants(symTab);
     }
 

@@ -240,7 +240,7 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("installKeyboardIRQ")) {
 
         as->Asm("cli");
-//        NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_node->m_params[0]);
+//        QSharedPointer<NodeProcedure> addr = (QSharedPointer<NodeProcedure>)dynamic_cast<QSharedPointer<NodeProcedure>>(m_node->m_params[0]);
   //      QString name = addr->m_procedure->m_procName;
 
         as->Comment("Install new ISR");

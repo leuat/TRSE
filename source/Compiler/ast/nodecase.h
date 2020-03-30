@@ -7,34 +7,33 @@ class NodeCase : public Node
 {
 public:
     NodeCase(Token t);
-    NodeVar* m_variable = nullptr;
-    QVector<Node*> m_conditionals;
-    QVector<Node*> m_statements;
-    Node* m_elseBlock = nullptr;
+    QSharedPointer<NodeVar> m_variable = nullptr;
+    QVector<QSharedPointer<Node>> m_conditionals;
+    QVector<QSharedPointer<Node>> m_statements;
+    QSharedPointer<Node> m_elseBlock = nullptr;
 
-    void Append(Node* c, Node* b) {
+    void Append(QSharedPointer<Node> c, QSharedPointer<Node> b) {
         m_conditionals.append(c);
         m_statements.append(b);
     }
 
-    void Delete() override;
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override {
         m_variable->ExecuteSym(symTab);
-        for (Node* n: m_statements)
+        for (QSharedPointer<Node> n: m_statements)
             n->ExecuteSym(symTab);
         if (m_elseBlock!=nullptr)
            m_elseBlock->ExecuteSym(symTab);
     }
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(qSharedPointerDynamicCast<NodeCase>(sharedFromThis()));
     }
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_variable!=nullptr)
             m_variable->parseConstants(symTab);
-        for (Node* n:m_conditionals)
+        for (QSharedPointer<Node> n:m_conditionals)
             n->parseConstants(symTab);
-        for (Node* n: m_statements)
+        for (QSharedPointer<Node> n: m_statements)
             n->parseConstants(symTab);
     }
 

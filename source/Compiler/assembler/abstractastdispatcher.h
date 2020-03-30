@@ -48,38 +48,38 @@ public:
     AbstractASTDispatcher();
     QStack<ProcedureParameter> m_parameters;
         // Declare overloads for each kind of a file to dispatch
-    virtual void dispatch(NodeBinOP *node) = 0;
-    virtual void dispatch(NodeNumber *node) = 0;
-    virtual void dispatch(Node *node) = 0;
-    virtual void dispatch(NodeString *node) = 0;
-    virtual void dispatch(NodeUnaryOp *node) = 0;
-    virtual void dispatch(NodeCompound *node) = 0;
-    virtual void dispatch(NodeVar *node) = 0;
-    virtual void dispatch(NodeAssign *node) = 0;
-    virtual void dispatch(NodeVarDecl *node) = 0;
-    virtual void dispatch(NodeBlock *node) = 0;
-    virtual void dispatch(NodeProgram *node) = 0;
-    virtual void dispatch(NodeVarType *node) = 0;
-    virtual void dispatch(NodeProcedure *node) = 0;
-    virtual void dispatch(NodeProcedureDecl *node) = 0;
-    virtual void dispatch(NodeConditional *node) = 0;
-    virtual void dispatch(NodeForLoop *node) = 0;
-    virtual void dispatch(NodeBuiltinMethod *node) = 0;
-    virtual void dispatch(NodeAsm *node) = 0;
-    virtual void dispatch(NodeBinaryClause *node) = 0;
-    virtual void dispatch(NodeCase *node) = 0;
-    virtual void dispatch(NodeRepeatUntil *node) = 0;
-    virtual void dispatch(NodeComment *node) = 0;
+    virtual void dispatch(QSharedPointer<NodeBinOP> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeNumber> node) = 0;
+    virtual void dispatch(QSharedPointer<Node> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeString> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeUnaryOp> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeCompound> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeVar> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeAssign> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeVarDecl> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeBlock> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeProgram> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeVarType> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeProcedure> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeProcedureDecl> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeConditional> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeForLoop> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeBuiltinMethod> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeAsm> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeBinaryClause> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeCase> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeRepeatUntil> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeComment> node) = 0;
 
-    virtual QString getEndType(Assembler* as, Node* v) {return "";}
-    virtual QString getEndType(Assembler *as, Node *v1,Node *v2) {return "";}
+    virtual QString getEndType(Assembler* as, QSharedPointer<Node> v) {return "";}
+    virtual QString getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2) {return "";}
 
-    virtual void StoreVariable(NodeVar* n) = 0;
-    virtual void LoadVariable(NodeVar* n) = 0;
-    virtual void LoadVariable(Node* n) = 0;
-    virtual void LoadVariable(NodeNumber* n) = 0;
-    virtual void LoadAddress(Node* node) {}
-    virtual void LoadAddress(Node* node,QString reg) {}
+    virtual void StoreVariable(QSharedPointer<NodeVar> n) = 0;
+    virtual void LoadVariable(QSharedPointer<NodeVar> n) = 0;
+    virtual void LoadVariable(QSharedPointer<Node> n) = 0;
+    virtual void LoadVariable(QSharedPointer<NodeNumber> n) = 0;
+    virtual void LoadAddress(QSharedPointer<Node> node) {}
+    virtual void LoadAddress(QSharedPointer<Node> node,QString reg) {}
 
 };
 

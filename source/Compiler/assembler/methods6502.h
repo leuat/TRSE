@@ -21,7 +21,7 @@ class Methods6502
 public:
     Methods6502();
     AbstractASTDispatcher* m_dispatcher;
-    NodeBuiltinMethod* m_node = nullptr;
+    QSharedPointer<NodeBuiltinMethod> m_node = nullptr;
 
     void Assemble(Assembler* as, AbstractASTDispatcher* dispenser);
 
@@ -80,7 +80,7 @@ public:
 
     void LoHi(Assembler* as, bool isLo);
 
-    void LoadAndStoreInZp(Node* n, Assembler* as, QString zp);
+    void LoadAndStoreInZp(QSharedPointer<Node> n, Assembler* as, QString zp);
 
     void BcdAdd(Assembler* as);
     void BcdSub(Assembler* as);

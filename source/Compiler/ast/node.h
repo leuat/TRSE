@@ -40,9 +40,9 @@ public:
     }
 };
 
-class Node {
+class Node : public QEnableSharedFromThis<Node> {
 public:
-    static QMap<Node*, Node*> s_uniqueSymbols;
+//    static QMap<QSharedPointer<Node>, QSharedPointer<Node>> s_uniqueSymbols;
     Token m_op;
     int m_lineNumber;
     uint level = 0;
@@ -55,7 +55,8 @@ public:
     static QMap<QString, bool> flags;
     static QSharedPointer<SymbolTable>  parserSymTab;
 
-    Node* m_left = nullptr, *m_right = nullptr;
+    QSharedPointer<Node> m_left = nullptr;
+    QSharedPointer<Node> m_right = nullptr;
     bool m_isWord = false;
     static MemoryBlockInfo m_staticBlockInfo;
     static QSharedPointer<MemoryBlock> m_curMemoryBlock;
@@ -85,10 +86,9 @@ public:
     int m_cycleCounter;
     static int m_currentLineNumber;
     virtual void ExecuteSym(QSharedPointer<SymbolTable> symTab) = 0;
-    virtual bool DataEquals(Node* other) { return false;}
+    virtual bool DataEquals(QSharedPointer<Node> other) { return false;}
     virtual QString HexValue() {return "0";}
     virtual int numValue() { return 0;}
-    virtual void Delete();
     virtual void ForceAddress() {
         m_forceAddress = true;
         if (m_left!=nullptr)
@@ -140,9 +140,9 @@ public:
     }
 
 
-    void RequireAddress(Node* n,QString name, int ln);
+    void RequireAddress(QSharedPointer<Node> n,QString name, int ln);
 
-    void RequireNumber(Node* n,QString name, int ln) {
+    void RequireNumber(QSharedPointer<Node> n,QString name, int ln) {
         if (!n->isPureNumeric())
             ErrorHandler::e.Error(name + " requires parameter to be pure numeric", ln);
     }
@@ -155,7 +155,7 @@ public:
     virtual bool isMinusOne() { return false; }
     virtual bool isOne() { return false; }
 
-    bool verifyBlockBranchSize(Assembler *as, Node* testBlock);
+    bool verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlock);
 
 
     virtual void parseConstants(QSharedPointer<SymbolTable>  symTab) {
@@ -171,7 +171,7 @@ class NoOp : public Node {
 
     }
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(sharedFromThis());
     }
 
 };
@@ -186,7 +186,7 @@ class NodeComment : public Node {
 
     }
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(sharedFromThis());
     }
 
 

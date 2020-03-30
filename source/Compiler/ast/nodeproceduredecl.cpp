@@ -30,14 +30,14 @@ NodeProcedureDecl::NodeProcedureDecl(Token t, QString m):Node() {
     m_type=0;
 }
 
-NodeProcedureDecl::NodeProcedureDecl(Token t, QString m, QVector<Node *> paramDecl, Node *block, int type) : Node() {
+NodeProcedureDecl::NodeProcedureDecl(Token t, QString m, QVector<QSharedPointer<Node> > paramDecl, QSharedPointer<Node> block, int type) : Node() {
     m_op = t;
 
     m_procName = m;
     m_block = block;
     m_paramDecl = paramDecl;
     if (block!=nullptr) {
-        NodeBlock* b = (NodeBlock*)block;
+        QSharedPointer<NodeBlock> b = qSharedPointerDynamicCast<NodeBlock>(block);
         for (int i=0;i<m_paramDecl.count();i++)
             b->m_decl.append(m_paramDecl[i]);
     }
@@ -45,33 +45,14 @@ NodeProcedureDecl::NodeProcedureDecl(Token t, QString m, QVector<Node *> paramDe
 
 }
 
-void NodeProcedureDecl::AppendBlock(Node *block)
+void NodeProcedureDecl::AppendBlock(QSharedPointer<Node> block)
 {
-    NodeBlock* b = (NodeBlock*)block;
+    QSharedPointer<NodeBlock> b = qSharedPointerDynamicCast<NodeBlock>(block);
     for (int i=0;i<m_paramDecl.count();i++)
         b->m_decl.append(m_paramDecl[i]);
     m_block = block;
 }
 
-void NodeProcedureDecl::Delete() {
-  //  ErrorHandler::e.DebugLow("Memory: Deleting in NodeProcedureDecl", level);
-//    qDebug() << "Procdure decl DELETE!";
-    Node::Delete();
-    for (Node* n: m_paramDecl) {
-        n->Delete();
-        delete n;
-    }
-    m_paramDecl.clear();
-
-    if (m_block!=nullptr) {
-//        qDebug() << "Deleting procedure decl for "<< m_procName;
-        m_block->Delete();
-        delete m_block;
-//        s_uniqueSymbols[m_block] = m_block;
-        m_block = nullptr;
-    }
-//    ErrorHandler::e.DebugLow("Memory DONE: Deleting in NodeProcedureDecl", level);
-}
 
 void NodeProcedureDecl::SetParametersValue(QVector<PVar> &lst) {
     if (lst.count()!=m_paramDecl.count())
@@ -80,14 +61,14 @@ void NodeProcedureDecl::SetParametersValue(QVector<PVar> &lst) {
                               " parameters but is called with "+QString::number(lst.count()));
 
     for (int i=0;i<m_paramDecl.count();i++) {
-        NodeVarDecl* vd = (NodeVarDecl*)m_paramDecl[i];
-        NodeVar* v= ((NodeVar*)vd->m_varNode);
+        QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(m_paramDecl[i]);
+        QSharedPointer<NodeVar> v= qSharedPointerDynamicCast<NodeVar>(vd->m_varNode);
         QString name = v->value;
         PVar val = lst[i];
-        ((NodeBlock*)m_block)->SetParameter(name, val);
+        qSharedPointerDynamicCast<NodeBlock>(m_block)->SetParameter(name, val);
 
     }
-    //        ((NodeBlock*)m_block)->SetParameters(lst, names);
+    //        ((QSharedPointer<NodeBlock>)m_block)->SetParameters(lst, names);
 }
 
 

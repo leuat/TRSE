@@ -49,4 +49,6 @@ var_zeropages = ,
 dosbox_x86_system = default
 cpu_x86_system = 8086
 via_zeropages = ,$5b, $5c, $5d, $5e
-open_files =, easy/01_hello_world.ras
+open_files = ,easy/06_vicballs.ras, easy/01_hello_world.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/tutorials/
+current_file = easy/01_hello_world.ras

@@ -35,18 +35,18 @@
 class NodeConditional : public Node {
 public:
 
-//    QVector<Node*> m_a, m_b;
+//    QVector<QSharedPointer<Node>> m_a, m_b;
 
-    Node* m_block = nullptr;
-    Node* m_elseBlock = nullptr;
-    Node* m_binaryClause = nullptr;
+    QSharedPointer<Node> m_block = nullptr;
+    QSharedPointer<Node> m_elseBlock = nullptr;
+    QSharedPointer<Node> m_binaryClause = nullptr;
 /*    QVector<Token> m_compares;
     QVector<Token> m_conditionals;*/
     bool m_isWhileLoop;
 
 
     int m_forcePage = 0;
-/*    NodeConditional(QVector<Token> op, QVector<Node*> a, QVector<Node*> b, Node* block, bool isWhile, QVector<Token> conditionals, Node* elseBlock=nullptr) {
+/*    NodeConditional(QVector<Token> op, QVector<QSharedPointer<Node>> a, QVector<QSharedPointer<Node>> b, QSharedPointer<Node> block, bool isWhile, QVector<Token> conditionals, QSharedPointer<Node> elseBlock=nullptr) {
         m_a = a;
         m_b = b;
         m_block = block;
@@ -55,7 +55,7 @@ public:
         m_elseBlock = elseBlock;
         m_conditionals = conditionals;
     }*/
-    NodeConditional(Token op, int forcePage, Node* clause, Node* block, bool isWhile, Node* elseBlock=nullptr);
+    NodeConditional(Token op, int forcePage, QSharedPointer<Node> clause, QSharedPointer<Node> block, bool isWhile, QSharedPointer<Node> elseBlock=nullptr);
 
 
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
@@ -75,7 +75,6 @@ public:
 
 
 
-    void Delete() override;
 
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override {
@@ -83,7 +82,7 @@ public:
     }
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(qSharedPointerDynamicCast<NodeConditional>(sharedFromThis()));
     }
 
 };

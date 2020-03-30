@@ -52,12 +52,12 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
                 ErrorHandler::e.Error(error + cp + " to be pure numeric", m_op.m_lineNumber);
         }
         if (m_function->m_params[p]==BuiltInFunction::PROCEDURE) {
-            if (dynamic_cast<NodeProcedure*>(m_params[p])==nullptr)
+            if (qSharedPointerDynamicCast<NodeProcedure>(m_params[p])==nullptr)
                 ErrorHandler::e.Error(error + cp + " to be a procedure", m_op.m_lineNumber);
         }
 
-        if (dynamic_cast<NodeVar*>(m_params[p])!=nullptr) {
-                NodeVar* v = dynamic_cast<NodeVar*>(m_params[p]);
+        if (qSharedPointerDynamicCast<NodeVar>(m_params[p])!=nullptr) {
+                QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(m_params[p]);
                 v->ExecuteSym(as->m_symTab);
 
                 if (m_function->m_params[p]==BuiltInFunction::BYTE) {
@@ -72,19 +72,10 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
                 }
 
 
-//            if (dynamic_cast<NodeProcedure*>(m_params[p])==nullptr)
+//            if (dynamic_cast<QSharedPointer<NodeProcedure>>(m_params[p])==nullptr)
   //              ErrorHandler::e.Error(error + cp + " to be a procedure", m_op.m_lineNumber);
         }
     }
 }
 
-void NodeBuiltinMethod::Delete() {
-    Node::Delete();
-    for (Node* n: m_params) {
-        n->Delete();
-        delete n;
-    }
-    m_params.clear();
-
-}
 

@@ -34,17 +34,16 @@ private:
 public:
     QString value;
 
-    Node* m_expr = nullptr;
-    //NodeVarType* m_type;
+    QSharedPointer<Node> m_expr = nullptr;
+    //QSharedPointer<NodeVarType> m_type;
     bool m_fake16bit = false;
-    Node* m_subNode = nullptr;
+    QSharedPointer<Node> m_subNode = nullptr;
     bool m_ignoreRecordExpr = false;
     NodeVar(Token t);
 
-    NodeVar(Token t, Node* expr);
+    NodeVar(Token t, QSharedPointer<Node> expr);
 
 
-    void Delete() override;
 
     TokenType::Type getOrgType(Assembler *as);
 
@@ -54,7 +53,7 @@ public:
 
     bool isPointer(Assembler* as) override;
 
-    bool DataEquals(Node *other) override;
+    bool DataEquals(QSharedPointer<Node> other) override;
     bool isWord(Assembler* as) override;
     bool isLong(Assembler* as) override;
     bool isByte(Assembler* as) override;
@@ -108,7 +107,7 @@ public:
 */
     void ExecuteSym(QSharedPointer<SymbolTable> symTab) override;
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(qSharedPointerDynamicCast<NodeVar>(sharedFromThis()));
     }
 
 };

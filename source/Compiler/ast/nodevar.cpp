@@ -27,7 +27,7 @@ NodeVar::NodeVar(Token t):Node() {
     value = t.m_value;
 }
 
-NodeVar::NodeVar(Token t, Node *expr) : Node() {
+NodeVar::NodeVar(Token t, QSharedPointer<Node> expr) : Node() {
     m_op = t;
     value = t.m_value;
     m_expr = expr;
@@ -36,21 +36,6 @@ NodeVar::NodeVar(Token t, Node *expr) : Node() {
 
 }
 
-void NodeVar::Delete()
-{
-    if (m_expr!=nullptr) {
-        m_expr->Delete();
-        delete m_expr;
-        m_expr = nullptr;
-    }
-    if (m_subNode!=nullptr) {
-        m_subNode->Delete();
-        delete m_subNode;
-        m_subNode = nullptr;
-    }
-
-
-}
 
 
 TokenType::Type NodeVar::getOrgType(Assembler *as) {
@@ -131,8 +116,8 @@ bool NodeVar::isPointer(Assembler *as)
 
 }
 
-bool NodeVar::DataEquals(Node *other) {
-    NodeVar* var = dynamic_cast<NodeVar*>(other);
+bool NodeVar::DataEquals(QSharedPointer<Node> other) {
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(other);
     if (var==nullptr)
         return false;
     return var->value==value;
@@ -214,7 +199,7 @@ QString NodeVar::getValue(Assembler* as) {
         if (!as->m_symTab->m_records.contains(type))
                 ErrorHandler::e.Error("Could not find of record type : "+type + " of " + v,m_op.m_lineNumber);
         //QSharedPointer<SymbolTable>  t = as->m_symTab->m_records[type];
-        v =v + "_"+type+"_"+((NodeVar*)m_subNode)->value;//m_subNode->getValue(as);
+        v =v + "_"+type+"_"+qSharedPointerDynamicCast<NodeVar>(m_subNode)->value;//m_subNode->getValue(as);
     }
     if (as->m_symTab->getCurrentProcedure()!="") {
         //value = value.replace(as->m_symTab->getCurrentProcedure(),"");

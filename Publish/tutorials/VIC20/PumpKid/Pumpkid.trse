@@ -40,4 +40,4 @@ exomize_toggle = 0
 via_zeropages = ,$5B, $5C, $5D, $5E
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/PumpKid/
 open_files = ,screen.ras, pumpkid.ras
-current_file = pumpkid.ras
+current_file = screen.ras

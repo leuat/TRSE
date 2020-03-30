@@ -29,10 +29,10 @@
 class NodeVarArray : public Node
 {
 public:
-    NodeVar* m_var;
-    Node* m_expr;
+    QSharedPointer<NodeVar> m_var;
+    QSharedPointer<Node> m_expr;
 
-    NodeVarArray(Token token, Node* expr);
+    NodeVarArray(Token token, QSharedPointer<Node> expr);
 
     void StoreAcc(Assembler* as);
 

@@ -37,8 +37,8 @@ class NodeProgram : public Node {
 public:
     QString m_name, m_param;
     QStringList m_initJumps;
-    NodeBlock* m_NodeBlock;
-    NodeProgram(QString n, QString p, NodeBlock* b):Node() {
+    QSharedPointer<NodeBlock> m_NodeBlock;
+    NodeProgram(QString n, QString p, QSharedPointer<NodeBlock> b):Node() {
         m_NodeBlock = b;
         m_name = n;
         m_param = p;
@@ -52,14 +52,11 @@ public:
 
 
 
-    void Delete() override;
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
 
-    void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
-    }
+    void Accept(AbstractASTDispatcher* dispatcher) override;
 
 };
 

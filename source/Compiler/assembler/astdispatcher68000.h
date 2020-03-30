@@ -32,63 +32,63 @@ public:
 
     QStringList m_regs = QStringList()<<"d0" <<"d1"<<"d2" <<"d3"<<"d4" <<"d5"<<"d6";
 
-    void dispatch(NodeBinOP *node) override;
-//    void dispatchOld(NodeBinOP *node) override;
-    void dispatch(NodeNumber *node) override;
-    void dispatch(NodeAsm *node) override;
-    void dispatch(NodeString *node) override;
-    void dispatch(NodeUnaryOp *node) override;
-    void dispatch(NodeCompound *node) override;
-    void dispatch(NodeVarDecl *node) override;
-    void dispatch(NodeBlock *node) override;
-    void dispatch(NodeProgram *node) override;
-    void dispatch(NodeVarType *node) override;
-    void dispatch(NodeBinaryClause *node) override;
-    void dispatch(NodeProcedure *node) override;
-    void dispatch(NodeProcedureDecl *node) override;
-    void dispatch(NodeConditional *node) override;
-    void dispatch(NodeForLoop *node) override;
-    void dispatch(NodeVar *node) override;
-    void dispatch(Node *node) override;
-    void dispatch(NodeAssign *node) override;
-    void dispatch(NodeCase* node) override;
-    void dispatch(NodeRepeatUntil *node) override;
-    void dispatch(NodeBuiltinMethod *node) override;
-    void dispatch(NodeComment *node) override;
+    void dispatch(QSharedPointer<NodeBinOP>node) override;
+//    void dispatchOld(QSharedPointer<NodeBinOP>node) override;
+    void dispatch(QSharedPointer<NodeNumber>node) override;
+    void dispatch(QSharedPointer<NodeAsm>node) override;
+    void dispatch(QSharedPointer<NodeString> node) override;
+    void dispatch(QSharedPointer<NodeUnaryOp> node) override;
+    void dispatch(QSharedPointer<NodeCompound> node) override;
+    void dispatch(QSharedPointer<NodeVarDecl> node) override;
+    void dispatch(QSharedPointer<NodeBlock> node) override;
+    void dispatch(QSharedPointer<NodeProgram> node) override;
+    void dispatch(QSharedPointer<NodeVarType> node) override;
+    void dispatch(QSharedPointer<NodeBinaryClause> node) override;
+    void dispatch(QSharedPointer<NodeProcedure> node) override;
+    void dispatch(QSharedPointer<NodeProcedureDecl> node) override;
+    void dispatch(QSharedPointer<NodeConditional> node) override;
+    void dispatch(QSharedPointer<NodeForLoop> node) override;
+    void dispatch(QSharedPointer<NodeVar> node) override;
+    void dispatch(QSharedPointer<Node> node) override;
+    void dispatch(QSharedPointer<NodeAssign> node) override;
+    void dispatch(QSharedPointer<NodeCase> node) override;
+    void dispatch(QSharedPointer<NodeRepeatUntil> node) override;
+    void dispatch(QSharedPointer<NodeBuiltinMethod> node) override;
+    void dispatch(QSharedPointer<NodeComment> node) override;
 
 
 
 
-    void StoreVariable(NodeVar* n) override;
-    void LoadVariable(NodeVar* n) override ;
-    void LoadAddress(Node* n) override;
-    void LoadAddress(Node *n, QString reg) override;
+    void StoreVariable(QSharedPointer<NodeVar> n) override;
+    void LoadVariable(QSharedPointer<NodeVar> n) override ;
+    void LoadAddress(QSharedPointer<Node> n) override;
+    void LoadAddress(QSharedPointer<Node> n, QString reg) override;
 
-    void LoadPointer(Node* n);
-    void LoadVariable(Node* n) override;
-    void LoadVariable(NodeNumber* n) override;
+    void LoadPointer(QSharedPointer<Node> n);
+    void LoadVariable(QSharedPointer<Node> n) override;
+    void LoadVariable(QSharedPointer<NodeNumber> n) override;
 
 
-    void TransformVariable(Assembler* as, QString op, QString n, QString val, Node* t);
-    void TransformVariable(Assembler* as, QString op, NodeVar* n, QString val);
-    void TransformVariable(Assembler* as, QString op, QString n, NodeVar* val);
+    void TransformVariable(Assembler* as, QString op, QString n, QString val, QSharedPointer<Node> t);
+    void TransformVariable(Assembler* as, QString op, QSharedPointer<NodeVar> n, QString val);
+    void TransformVariable(Assembler* as, QString op, QString n, QSharedPointer<NodeVar> val);
     void TransformVariable(Assembler* as, QString op, QString n, QString val);
 
-    QString getEndType(Assembler* as, Node* v) override;
+    QString getEndType(Assembler* as, QSharedPointer<Node> v) override;
 
-    QString AssignVariable(NodeAssign *node);
-    void IncBin(Assembler* as, NodeVarDecl *node);
+    QString AssignVariable(QSharedPointer<NodeAssign> node);
+    void IncBin(Assembler* as, QSharedPointer<NodeVarDecl> node);
 
-    void BuildSimple(Node *node, QString lblFailed);
+    void BuildSimple(QSharedPointer<Node> node, QString lblFailed);
 
-    void BuildToCmp(Node *node);
+    void BuildToCmp(QSharedPointer<Node> node);
 
-    void DeclarePointer(NodeVarDecl *node);
+    void DeclarePointer(QSharedPointer<NodeVarDecl> node);
     bool m_clearFlag = false;
-    QString getEndType(Assembler *as, Node *v1,Node *v2) override;
+    QString getEndType(Assembler *as, QSharedPointer<Node> v1,QSharedPointer<Node> v2) override;
 
-    bool HandleSimpleAeqAopConst(NodeAssign* node);
-    bool HandleSimpleAeqBopConst(NodeAssign* node);
+    bool HandleSimpleAeqAopConst(QSharedPointer<NodeAssign>node);
+    bool HandleSimpleAeqBopConst(QSharedPointer<NodeAssign>node);
 
 
 };

@@ -6,7 +6,7 @@ ASTDispatcherX86::ASTDispatcherX86()
 
 }
 
-void ASTDispatcherX86::dispatch(NodeBinOP *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeBinOP>node)
 {
     if (node->m_left->isWord(as))
         node->m_right->setForceType(TokenType::INTEGER);
@@ -23,7 +23,7 @@ void ASTDispatcherX86::dispatch(NodeBinOP *node)
         return;
     }
 /*    if (!node->m_left->isPure() && node->m_right->isPure()) {
-        Node* t = node->m_right;
+        QSharedPointer<Node> t = node->m_right;
         node->m_right = node->m_left;
         node->m_left = t;
         qDebug() << "SWITCH";
@@ -64,7 +64,7 @@ void ASTDispatcherX86::dispatch(NodeBinOP *node)
 
 }
 
-void ASTDispatcherX86::dispatch(NodeNumber *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeNumber>node)
 {
     QString ax = getAx(node);
     if (as->m_term!="") {
@@ -75,7 +75,7 @@ void ASTDispatcherX86::dispatch(NodeNumber *node)
     as->Asm("mov "+ax+", " + node->getValue(as));
 }
 
-void ASTDispatcherX86::dispatch(NodeVar *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeVar> node)
 {
     QString ending = "]";
     if (node->m_expr!=nullptr) {
@@ -116,7 +116,7 @@ void ASTDispatcherX86::dispatch(NodeVar *node)
 
 }
 
-void ASTDispatcherX86::dispatch(NodeAsm *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeAsm>node)
 {
     node->DispatchConstructor(as);
 
@@ -130,22 +130,22 @@ void ASTDispatcherX86::dispatch(NodeAsm *node)
 
 }
 
-void ASTDispatcherX86::dispatch(NodeString *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeString> node)
 {
 
 }
 
-void ASTDispatcherX86::dispatch(NodeUnaryOp *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeUnaryOp> node)
 {
 
 }
 
-void ASTDispatcherX86::dispatch(NodeCompound *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeCompound> node)
 {
     node->DispatchConstructor(as);
 
     as->BeginBlock();
-    for (Node* n: node->children)
+    for (QSharedPointer<Node> n: node->children)
         n->Accept(this);
 
 
@@ -153,7 +153,7 @@ void ASTDispatcherX86::dispatch(NodeCompound *node)
 
 }
 
-void ASTDispatcherX86::dispatch(NodeVarDecl *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeVarDecl> node)
 {
     node->DispatchConstructor(as);
 
@@ -186,8 +186,8 @@ void ASTDispatcherX86::dispatch(NodeVarDecl *node)
 
 
 
-    NodeVar* v = (NodeVar*)node->m_varNode;
-    NodeVarType* t = (NodeVarType*)node->m_typeNode;
+    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
+    QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
 
     if (t->m_op.m_type==TokenType::ARRAY) {
         as->DeclareArray(v->getValue(as), t->m_arrayVarType.m_value, t->m_op.m_intVal, t->m_data, t->m_position);
@@ -232,7 +232,7 @@ void ASTDispatcherX86::dispatch(NodeVarDecl *node)
 
 }
 
-void ASTDispatcherX86::dispatch(NodeBlock *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeBlock> node)
 {
     node->DispatchConstructor(as);
 
@@ -251,8 +251,8 @@ void ASTDispatcherX86::dispatch(NodeBlock *node)
         hasLabel = true;
         //           as->PushBlock(m_decl[0]->m_op.m_lineNumber-1);
     }
-    for (Node* n: node->m_decl) {
-        if (dynamic_cast<NodeVarDecl*>(n)==nullptr) {
+    for (QSharedPointer<Node> n: node->m_decl) {
+        if (qSharedPointerDynamicCast<QSharedPointer<NodeVarDecl>>(n)==nullptr) {
             if (!blockProcedure) // Print label at end of vardecl
             {
                 if (n->m_op.m_lineNumber!=0) {
@@ -286,7 +286,7 @@ void ASTDispatcherX86::dispatch(NodeBlock *node)
 
 }
 
-void ASTDispatcherX86::dispatch(NodeProgram *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeProgram> node)
 {
     node->DispatchConstructor(as);
 
@@ -302,17 +302,17 @@ void ASTDispatcherX86::dispatch(NodeProgram *node)
 
 }
 
-void ASTDispatcherX86::dispatch(NodeVarType *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeVarType> node)
 {
 
 }
 
-void ASTDispatcherX86::dispatch(NodeBinaryClause *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeBinaryClause> node)
 {
 
 }
 
-void ASTDispatcherX86::dispatch(NodeProcedure *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeProcedure> node)
 {
     node->DispatchConstructor(as);
 
@@ -324,8 +324,8 @@ void ASTDispatcherX86::dispatch(NodeProcedure *node)
 
     for (int i=0; i<node->m_parameters.count();i++) {
         // Assign all variables
-        NodeVarDecl* vd = (NodeVarDecl*)node->m_procedure->m_paramDecl[i];
-        NodeAssign* na = new NodeAssign(vd->m_varNode, node->m_parameters[i]->m_op, node->m_parameters[i]);
+        QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(node->m_procedure->m_paramDecl[i]);
+        QSharedPointer<NodeAssign> na = QSharedPointer<NodeAssign>(new NodeAssign(vd->m_varNode, node->m_parameters[i]->m_op, node->m_parameters[i]));
         na->Accept(this);
 //        na->Build(as);
     }
@@ -334,7 +334,7 @@ void ASTDispatcherX86::dispatch(NodeProcedure *node)
 
 }
 
-void ASTDispatcherX86::dispatch(NodeProcedureDecl *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeProcedureDecl> node)
 {
     node->DispatchConstructor(as);
 
@@ -361,7 +361,7 @@ void ASTDispatcherX86::dispatch(NodeProcedureDecl *node)
 
     if (!isInitFunction) {
     if (node->m_block!=nullptr) {
-        NodeBlock* b = dynamic_cast<NodeBlock*>(node->m_block);
+        QSharedPointer<NodeBlock> b = qSharedPointerDynamicCast<NodeBlock>(node->m_block);
         if (b!=nullptr)
             b->forceLabel=node->m_procName;
         node->m_block->Accept(this);
@@ -374,7 +374,7 @@ void ASTDispatcherX86::dispatch(NodeProcedureDecl *node)
 
 }
 
-void ASTDispatcherX86::dispatch(NodeConditional *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeConditional> node)
 {
     QString labelStartOverAgain = as->NewLabel("while");
     QString lblstartTrueBlock = as->NewLabel("ConditionalTrueBlock");
@@ -389,7 +389,7 @@ void ASTDispatcherX86::dispatch(NodeConditional *node)
         as->Label(labelStartOverAgain);
 
     // Test all binary clauses:
-    NodeBinaryClause* bn = dynamic_cast<NodeBinaryClause*>(node->m_binaryClause);
+    QSharedPointer<NodeBinaryClause> bn = qSharedPointerDynamicCast<NodeBinaryClause>(node->m_binaryClause);
 
 
         QString failedLabel = labelElseDone;
@@ -427,19 +427,19 @@ void ASTDispatcherX86::dispatch(NodeConditional *node)
 
 }
 
-void ASTDispatcherX86::dispatch(NodeForLoop *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeForLoop> node)
 {
     node->DispatchConstructor(as);
 
 
     //QString m_currentVar = ((NodeAssign*)m_a)->m_
-    NodeAssign *nVar = dynamic_cast<NodeAssign*>(node->m_a);
+    QSharedPointer<NodeAssign> nVar = qSharedPointerDynamicCast<NodeAssign>(node->m_a);
 
 
     if (nVar==nullptr)
         ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
 
-    QString var = dynamic_cast<NodeVar*>(nVar->m_left)->getValue(as);//  m_a->Build(as);
+    QString var = qSharedPointerDynamicCast<NodeVar>(nVar->m_left)->getValue(as);//  m_a->Build(as);
 //    qDebug() << "Starting for";
     node->m_a->Accept(this);
   //  qDebug() << "accepted";
@@ -448,10 +448,11 @@ void ASTDispatcherX86::dispatch(NodeForLoop *node)
   //  TransformVariable()
     //QString to = m_b->Build(as);
     QString to = "";
-    if (dynamic_cast<const NodeNumber*>(node->m_b) != nullptr)
-        to = QString::number(((NodeNumber*)node->m_b)->m_val);
-    if (dynamic_cast<const NodeVar*>(node->m_b) != nullptr)
-        to = ((NodeVar*)node->m_b)->getValue(as);
+    if (node->m_b->isPure())
+//    if (qSharedPointerDynamicCast<NodeNumber>(node->m_b) != nullptr)
+        to = node->m_b->getValue(as);
+  //  if (qSharedPointerDynamicCast<NodeVar>(node->m_b) != nullptr)
+    //    to = (qSharedPointerDynamicCast<NodeVar>node->m_b)->getValue(as);
 
 //    as->m_stack["for"].push(var);
     QString lblFor =as->NewLabel("forloop");
@@ -479,12 +480,12 @@ void ASTDispatcherX86::dispatch(NodeForLoop *node)
 }
 
 
-void ASTDispatcherX86::dispatch(Node *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<Node> node)
 {
 
 }
 
-void ASTDispatcherX86::dispatch(NodeAssign *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeAssign> node)
 {
 /*    if (node==nullptr)
         return;*/
@@ -496,17 +497,17 @@ void ASTDispatcherX86::dispatch(NodeAssign *node)
 
 }
 
-void ASTDispatcherX86::dispatch(NodeCase *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeCase> node)
 {
 
 }
 
-void ASTDispatcherX86::dispatch(NodeRepeatUntil *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeRepeatUntil> node)
 {
 
 }
 
-void ASTDispatcherX86::dispatch(NodeBuiltinMethod *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeBuiltinMethod> node)
 {
     node->DispatchConstructor(as);
 
@@ -521,53 +522,53 @@ void ASTDispatcherX86::dispatch(NodeBuiltinMethod *node)
 
 }
 
-void ASTDispatcherX86::dispatch(NodeComment *node)
+void ASTDispatcherX86::dispatch(QSharedPointer<NodeComment> node)
 {
 
 }
 
-void ASTDispatcherX86::StoreVariable(NodeVar *n)
+void ASTDispatcherX86::StoreVariable(QSharedPointer<NodeVar> n)
 {
 
 }
 
-void ASTDispatcherX86::LoadVariable(NodeVar *n)
-{
-    n->Accept(this);
-}
-
-void ASTDispatcherX86::LoadAddress(Node *n)
-{
-
-}
-
-void ASTDispatcherX86::LoadAddress(Node *n, QString reg)
-{
-
-}
-
-void ASTDispatcherX86::LoadPointer(Node *n)
-{
-
-}
-
-void ASTDispatcherX86::LoadVariable(Node *n)
+void ASTDispatcherX86::LoadVariable(QSharedPointer<NodeVar> n)
 {
     n->Accept(this);
-
 }
 
-void ASTDispatcherX86::LoadVariable(NodeNumber *n)
+void ASTDispatcherX86::LoadAddress(QSharedPointer<Node> n)
 {
 
 }
 
-QString ASTDispatcherX86::getEndType(Assembler *as, Node *v)
+void ASTDispatcherX86::LoadAddress(QSharedPointer<Node> n, QString reg)
+{
+
+}
+
+void ASTDispatcherX86::LoadPointer(QSharedPointer<Node> n)
+{
+
+}
+
+void ASTDispatcherX86::LoadVariable(QSharedPointer<Node> n)
+{
+    n->Accept(this);
+
+}
+
+void ASTDispatcherX86::LoadVariable(QSharedPointer<NodeNumber>n)
+{
+
+}
+
+QString ASTDispatcherX86::getEndType(Assembler *as, QSharedPointer<Node> v)
 {
 return "";
 }
 
-QString ASTDispatcherX86::AssignVariable(NodeAssign *node)
+QString ASTDispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
 {
 
     if (node->m_left->isWord(as)) {
@@ -577,7 +578,7 @@ QString ASTDispatcherX86::AssignVariable(NodeAssign *node)
 
 
 
-    NodeVar* var = dynamic_cast<NodeVar*>(node->m_left);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 
 
 
@@ -623,7 +624,7 @@ QString ASTDispatcherX86::AssignVariable(NodeAssign *node)
         return "";
     }
     // Check for a:=a+2;
-    NodeBinOP* bop =  dynamic_cast<NodeBinOP*>(node->m_right);
+    QSharedPointer<NodeBinOP> bop =  qSharedPointerDynamicCast<NodeBinOP>(node->m_right);
    // as->Comment("Testing for : a:=a+ expr " + QString::number(bop!=nullptr));
    // if (bop!=nullptr)
      //  as->Comment(TokenType::getType(bop->getType(as)));
@@ -654,23 +655,23 @@ QString ASTDispatcherX86::AssignVariable(NodeAssign *node)
 
     node->m_right->Accept(this);
 
-    as->Asm("mov ["+dynamic_cast<NodeVar*>(node->m_left)->getValue(as) + "], "+getAx(node->m_left));
+    as->Asm("mov ["+qSharedPointerDynamicCast<NodeVar>(node->m_left)->getValue(as) + "], "+getAx(node->m_left));
     return "";
 }
 
-void ASTDispatcherX86::DeclarePointer(NodeVarDecl *node)
+void ASTDispatcherX86::DeclarePointer(QSharedPointer<NodeVarDecl> node)
 {
 
 }
 
-QString ASTDispatcherX86::getEndType(Assembler *as, Node *v1, Node *v2)
+QString ASTDispatcherX86::getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2)
 {
     return "";
 }
 
-void ASTDispatcherX86::IncBin(Assembler *as, NodeVarDecl *node) {
-    NodeVar* v = (NodeVar*)node->m_varNode;
-    NodeVarType* t = (NodeVarType*)node->m_typeNode;
+void ASTDispatcherX86::IncBin(Assembler *as, QSharedPointer<NodeVarDecl> node) {
+    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
+    QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
     QString filename = as->m_projectDir + "/" + t->m_filename;
     if (!QFile::exists(filename))
         ErrorHandler::e.Error("Could not locate binary file for inclusion :" +filename);
@@ -712,7 +713,7 @@ void ASTDispatcherX86::IncBin(Assembler *as, NodeVarDecl *node) {
     }
 }
 
-void ASTDispatcherX86::BuildSimple(Node *node, QString lblFailed)
+void ASTDispatcherX86::BuildSimple(QSharedPointer<Node> node, QString lblFailed)
 {
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());
@@ -733,7 +734,7 @@ void ASTDispatcherX86::BuildSimple(Node *node, QString lblFailed)
 
 }
 
-void ASTDispatcherX86::BuildToCmp(Node *node)
+void ASTDispatcherX86::BuildToCmp(QSharedPointer<Node> node)
 {
     if (node->m_left->getValue(as)!="") {
         if (node->m_right->isPureNumeric())
@@ -750,8 +751,8 @@ void ASTDispatcherX86::BuildToCmp(Node *node)
             as->Comment("Compare two vars optimization");
             if (node->m_right->isPureVariable()) {
                 QString wtf = as->m_regAcc.Get();
-                LoadVariable((NodeVar*)node->m_right);
-                //TransformVariable(as,"move",wtf,(NodeVar*)node->m_left);
+                LoadVariable(node->m_right);
+                //TransformVariable(as,"move",wtf,qSharedPointerDynamicCast<NodeVar>node->m_left);
                 //TransformVariable(as,"cmp",wtf,as->m_varStack.pop());
                 as->Asm("cmp  "+node->m_left->getValue(as) +"," + getAx(node->m_right));
 
@@ -762,7 +763,7 @@ void ASTDispatcherX86::BuildToCmp(Node *node)
 
             as->Asm("cmp  "+node->m_left->getValue(as) +"," + getAx(node->m_right));
 
-//            TransformVariable(as,"cmp",(NodeVar*)node->m_left,as->m_varStack.pop());
+//            TransformVariable(as,"cmp",qSharedPointerDynamicCast<NodeVar>node->m_left,as->m_varStack.pop());
             return;
         }
     }
@@ -772,7 +773,7 @@ void ASTDispatcherX86::BuildToCmp(Node *node)
 
     as->Asm("cmp  "+node->m_left->getValue(as) +"," + getAx(node->m_right));
 
-//    TransformVariable(as,"cmp",(NodeVar*)node->m_left, as->m_varStack.pop());
+//    TransformVariable(as,"cmp",qSharedPointerDynamicCast<NodeVar>node->m_left, as->m_varStack.pop());
 
     // Perform a full compare : create a temp variable
     //        QString tmpVar = as->m_regAcc.Get();//as->StoreInTempVar("binary_clause_temp");

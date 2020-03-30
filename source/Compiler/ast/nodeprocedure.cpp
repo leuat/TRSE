@@ -22,26 +22,12 @@
 #include "nodeprocedure.h"
 
 
-NodeProcedure::NodeProcedure(NodeProcedureDecl *proc, QVector<Node *> params, Token t):Node() {
+NodeProcedure::NodeProcedure(QSharedPointer<NodeProcedureDecl> proc, QVector<QSharedPointer<Node> > params, Token t):Node() {
     m_parameters = params;
     m_procedure = proc;
     m_op = t;
 }
 
-void NodeProcedure::Delete() {
-    for (Node* n : m_parameters) {
-        n->Delete();
-        delete n;
-    }
-
-    if (m_procedure!=nullptr) {
-//        m_procedure->Delete();
- //       delete m_procedure;
-//        s_uniqueSymbols[m_procedure] = m_procedure;
-        m_procedure = nullptr;
-    }
-    m_parameters.clear();
-}
 
 void NodeProcedure::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     m_procedure ->ExecuteSym(symTab);

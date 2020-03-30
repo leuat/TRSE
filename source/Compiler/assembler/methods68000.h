@@ -12,21 +12,21 @@ class Methods68000
 public:
     Methods68000();
     AbstractASTDispatcher* m_dispatcher;
-    NodeBuiltinMethod* m_node = nullptr;
+    QSharedPointer<NodeBuiltinMethod> m_node = nullptr;
 
     void Assemble(Assembler* as, AbstractASTDispatcher* dispenser);
 
 
     bool Command(QString name);
-    void Asm(Assembler* as, QString cmd, QString a, QString b, Node* n) {
+    void Asm(Assembler* as, QString cmd, QString a, QString b, QSharedPointer<Node> n) {
         as->Asm(cmd + m_dispatcher->getEndType(as,n) + " " + a +","+b);
     }
     void Asm(Assembler* as, QString cmd, QString a, QString b) {
         as->Asm(cmd + " " + a +","+b);
     }
 
-    void LoadVariable(Assembler* as, QString cmd, Node* n, QString d0);
-//    void LoadAddress(Assembler* as, Node* n, QString d0);
+    void LoadVariable(Assembler* as, QString cmd, QSharedPointer<Node> n, QString d0);
+//    void LoadAddress(Assembler* as, QSharedPointer<Node> n, QString d0);
 
     void DrawLine(Assembler*as);
     void Fill(Assembler*as);

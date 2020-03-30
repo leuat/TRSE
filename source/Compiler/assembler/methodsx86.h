@@ -13,7 +13,7 @@ class MethodsX86
 public:
     MethodsX86();
     AbstractASTDispatcher* m_dispatcher;
-    NodeBuiltinMethod* m_node = nullptr;
+    QSharedPointer<NodeBuiltinMethod> m_node = nullptr;
 
 
     void Assemble(Assembler* as, AbstractASTDispatcher* dispenser);

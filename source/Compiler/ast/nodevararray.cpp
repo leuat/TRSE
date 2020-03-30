@@ -21,8 +21,8 @@
 
 #include "nodevararray.h"
 
-NodeVarArray::NodeVarArray(Token token, Node *expr):Node() {
-    m_var = new NodeVar(token);
+NodeVarArray::NodeVarArray(Token token, QSharedPointer<Node> expr):Node() {
+    m_var = QSharedPointer<NodeVar>(new NodeVar(token));
     m_expr = expr;
 }
 

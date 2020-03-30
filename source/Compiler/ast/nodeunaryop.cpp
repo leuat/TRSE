@@ -22,14 +22,14 @@
 #include "nodeunaryop.h"
 
 
-NodeUnaryOp::NodeUnaryOp(Token t, Node *right):Node() {
+NodeUnaryOp::NodeUnaryOp(Token t, QSharedPointer<Node> right):Node() {
     m_op = t;
     m_right = right;
     m_left = nullptr;
 }
 
 bool NodeUnaryOp::isMinusOne() {
-    NodeNumber* num = dynamic_cast<NodeNumber*>(m_right);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_right);
     if (num==nullptr)
         return false;
 
@@ -40,7 +40,3 @@ bool NodeUnaryOp::isMinusOne() {
 
 }
 
-void NodeUnaryOp::Delete()
-{
-    Node::Delete();
-}

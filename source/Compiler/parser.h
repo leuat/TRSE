@@ -70,13 +70,13 @@ public:
 
     QString m_currentDir;
     QVector<QStringList> m_obsoleteWarnings;
-    QMap<QString, Node*> m_procedures;
+    QMap<QString, QSharedPointer<Node>> m_procedures;
     QMap<QString, QString> m_preprocessorDefines;
     QStringList m_diskFiles;
     QStringList m_warningsGiven;
     QStringList m_doNotRemoveMethods;
     QString m_initAssembler = "";
-    QVector<Node*> m_proceduresOnly;
+    QVector<QSharedPointer<Node>> m_proceduresOnly;
     QVector<QString> m_ignoreMethods;
     Lexer* m_lexer;
     Token m_currentToken;
@@ -118,44 +118,44 @@ public:
 
 
     void RemoveUnusedProcedures();
-    Node* Parse(bool removeUnusedDecls, QString param, QString globalDefines, bool useLocals);
-    Node* Variable();
-    Node* Empty();
+    QSharedPointer<Node> Parse(bool removeUnusedDecls, QString param, QString globalDefines, bool useLocals);
+    QSharedPointer<Node> Variable();
+    QSharedPointer<Node> Empty();
     void Record(QString name);
-//    Node* Record();
-    Node* Case();
-    Node* AssignStatement();
-    Node* Statement();
-    QVector<Node*> StatementList();
-    Node* CompoundStatement();
-    Node* Program(QString param);
-    Node* Factor();
-    Node* RepeatUntil();
-    Node* Expr();
-    Node* Term();
-    Node* FindProcedure();
-    Node* BinaryClause();
+//    QSharedPointer<Node> Record();
+    QSharedPointer<Node> Case();
+    QSharedPointer<Node> AssignStatement();
+    QSharedPointer<Node> Statement();
+    QVector<QSharedPointer<Node>> StatementList();
+    QSharedPointer<Node> CompoundStatement();
+    QSharedPointer<Node> Program(QString param);
+    QSharedPointer<Node> Factor();
+    QSharedPointer<Node> RepeatUntil();
+    QSharedPointer<Node> Expr();
+    QSharedPointer<Node> Term();
+    QSharedPointer<Node> FindProcedure();
+    QSharedPointer<Node> BinaryClause();
 
-    void AppendComment(Node* n);
+    void AppendComment(QSharedPointer<Node> n);
 
-//    void AppendComment(Node* n);
+//    void AppendComment(QSharedPointer<Node> n);
 
-    QVector<Node*> ConstDeclaration();
-    //Node* LogicalClause();
-    Node* Block(bool useOwnSymTab, QString blockName="");
-    QVector<Node*> Parameters(QString blockName);
-    Node* ForLoop(bool inclusive);
-//    Node* WhileLoop();
-    Node* String();
+    QVector<QSharedPointer<Node>> ConstDeclaration();
+    //QSharedPointer<Node> LogicalClause();
+    QSharedPointer<Node> Block(bool useOwnSymTab, QString blockName="");
+    QVector<QSharedPointer<Node>> Parameters(QString blockName);
+    QSharedPointer<Node> ForLoop(bool inclusive);
+//    QSharedPointer<Node> WhileLoop();
+    QSharedPointer<Node> String();
 
-    Node* Conditional(bool isWhileLoop=false);
-//    QVector<Node*> Procedure();
-    QVector<Node*> Declarations(bool isMain, QString blockName);
-    QVector<Node*> VariableDeclarations(QString blockName);
-    Node* TypeSpec();
-    Node* BuiltinFunction();
-    Node* Constant();
-    Node* InlineAssembler();
+    QSharedPointer<Node> Conditional(bool isWhileLoop=false);
+//    QVector<QSharedPointer<Node>> Procedure();
+    QVector<QSharedPointer<Node>> Declarations(bool isMain, QString blockName);
+    QVector<QSharedPointer<Node>> VariableDeclarations(QString blockName);
+    QSharedPointer<Node> TypeSpec();
+    QSharedPointer<Node> BuiltinFunction();
+    QSharedPointer<Node> Constant();
+    QSharedPointer<Node> InlineAssembler();
 
     QStringList m_parserAppendix;
 

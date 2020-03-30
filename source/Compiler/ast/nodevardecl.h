@@ -36,8 +36,8 @@
 
 class NodeVarDecl : public Node {
 public:
-    Node* m_varNode = nullptr;
-    Node* m_typeNode = nullptr;
+    QSharedPointer<Node> m_varNode = nullptr;
+    QSharedPointer<Node> m_typeNode = nullptr;
     int m_fileSize=0;
     int m_dataSize=0;
     bool m_chipMem = false;
@@ -46,7 +46,7 @@ public:
 
     int m_pushedPointers = 0;
 
-    NodeVarDecl(Node* varNode, Node* typeNode);
+    NodeVarDecl(QSharedPointer<Node> varNode, QSharedPointer<Node> typeNode);
 
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_varNode!=nullptr)
@@ -57,7 +57,6 @@ public:
 
 
 
-    void Delete() override;
 
     int getDataSize() {
         return m_dataSize;
@@ -65,7 +64,7 @@ public:
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(qSharedPointerDynamicCast<NodeVarDecl>(sharedFromThis()));
     }
 
     void InitSid(QString projectDir, int VICAddress, QString type);

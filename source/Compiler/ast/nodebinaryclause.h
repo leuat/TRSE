@@ -29,7 +29,7 @@
 class NodeBinaryClause : public Node
 {
 public:
-    NodeBinaryClause(Token op, Node* left, Node* right):Node() {
+    NodeBinaryClause(Token op, QSharedPointer<Node> left, QSharedPointer<Node> right):Node() {
         m_right = right;
         m_left = left;
         m_op = op;
@@ -38,11 +38,10 @@ public:
 
     bool cannotBeSimplified(Assembler* as);
 
-    void Delete() override;
 
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(qSharedPointerDynamicCast<NodeBinaryClause>(sharedFromThis()));
     }
 
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {

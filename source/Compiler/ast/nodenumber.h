@@ -66,7 +66,7 @@ public:
 
     QString HexValue() override;
 
-    bool DataEquals(Node *other) override;
+    bool DataEquals(QSharedPointer<Node> other) override;
 
 
 
@@ -76,7 +76,7 @@ public:
 
     bool isOne() override;
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(qSharedPointerDynamicCast<NodeNumber>(sharedFromThis()));
     }
 
 

@@ -29,16 +29,15 @@ class NodeWhileLoop : public Node
 {
 public:
     NodeWhileLoop();
-    Node* m_block = nullptr;
-    NodeWhileLoop(Node* block) {
+    QSharedPointer<Node> m_block = nullptr;
+    NodeWhileLoop(QSharedPointer<Node> block) {
         m_block = block;
     }
-    void Delete() override;
 
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(qSharedPointerDynamicCast<NodeWhileLoop>(sharedFromThis()));
     }
 
 

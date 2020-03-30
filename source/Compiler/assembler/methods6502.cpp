@@ -121,7 +121,7 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         initVbm(as);
 
     if (Command("ProcedureToPointer")) {
-        NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_node->m_params[0]);
+        QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
         if (addr==nullptr)
             ErrorHandler::e.Error("ProcedureToPointer parameter must be a procedure.", m_node->m_op.m_lineNumber);
 
@@ -572,7 +572,7 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     if (Command("inputIRQ")) {
 
-        NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_node->m_params[0]);
+        QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
         if (addr==nullptr)
             ErrorHandler::e.Error("First parameter must be interrupt procedure!", m_node->m_op.m_lineNumber);
 
@@ -1934,8 +1934,8 @@ void Methods6502::vbmDrawTile(Assembler *as) {
 
     VerifyInitialized("vbm","InitVbm");
 
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
-    //NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+    //QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
@@ -2004,8 +2004,8 @@ void Methods6502::vbmDrawTileO(Assembler *as) {
 
     VerifyInitialized("vbm","InitVbm");
 
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
-    //NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+    //QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
@@ -2090,8 +2090,8 @@ void Methods6502::vbmDrawTileE(Assembler *as) {
 
     VerifyInitialized("vbm","InitVbm");
 
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
-    //NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+    //QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
@@ -2176,8 +2176,8 @@ void Methods6502::vbmClearTile(Assembler *as) {
 
     VerifyInitialized("vbm","InitVbm");
 
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
-    //NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+    //QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
@@ -2419,7 +2419,7 @@ void Methods6502::vbmDrawTileMap(Assembler* as)
     }
 
     // address 1 - tilemap
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -2430,7 +2430,7 @@ void Methods6502::vbmDrawTileMap(Assembler* as)
         addr1 = var->getValue(as);
 
     // address 2 - tiles
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -2644,7 +2644,7 @@ void Methods6502::vbmDrawTileMapO(Assembler* as)
     }
 
     // address 1 - tilemap
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -2655,7 +2655,7 @@ void Methods6502::vbmDrawTileMapO(Assembler* as)
         addr1 = var->getValue(as);
 
     // address 2 - tiles
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -2869,7 +2869,7 @@ void Methods6502::vbmDrawTileMapE(Assembler* as)
     }
 
     // address 1 - tilemap
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -2880,7 +2880,7 @@ void Methods6502::vbmDrawTileMapE(Assembler* as)
         addr1 = var->getValue(as);
 
     // address 2 - tiles
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -3106,7 +3106,7 @@ void Methods6502::vbmClearTileMap(Assembler* as)
     }
 
     // address 1 - tilemap
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -3117,7 +3117,7 @@ void Methods6502::vbmClearTileMap(Assembler* as)
         addr1 = var->getValue(as);
 
     // address 2 - tiles
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -3251,7 +3251,7 @@ void Methods6502::vbmTestTilePixel(Assembler* as)
     }
 
     // address 1 - tile
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -3312,7 +3312,7 @@ void Methods6502::vbmTestTilePixel2(Assembler* as)
     }
 
     // address 1 - tile
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -4147,7 +4147,7 @@ void Methods6502::vbmSpriteStitch(Assembler* as)
     }
 
     // address 1
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -4158,7 +4158,7 @@ void Methods6502::vbmSpriteStitch(Assembler* as)
         addr1 = var->getValue(as);
 
     // address 2
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -4418,7 +4418,7 @@ void Methods6502::vbmSpriteShiftL(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -4430,7 +4430,7 @@ void Methods6502::vbmSpriteShiftL(Assembler* as)
 
     // address 2
     as->Comment("Read address 2");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -4442,7 +4442,7 @@ void Methods6502::vbmSpriteShiftL(Assembler* as)
 
     // address 3
     as->Comment("Read address 3");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[4]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[4]);
     if (var==nullptr && !m_node->m_params[4]->isPureNumeric()) {
         ErrorHandler::e.Error("fifth parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -4527,7 +4527,7 @@ void Methods6502::vbmSpriteShiftR(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -4539,7 +4539,7 @@ void Methods6502::vbmSpriteShiftR(Assembler* as)
 
     // address 2
     as->Comment("Read address 2");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -4551,7 +4551,7 @@ void Methods6502::vbmSpriteShiftR(Assembler* as)
 
     // address 3
     as->Comment("Read address 3");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[4]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[4]);
     if (var==nullptr && !m_node->m_params[4]->isPureNumeric()) {
         ErrorHandler::e.Error("fifth parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -4801,7 +4801,7 @@ void Methods6502::vbmSpriteShiftSL(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -4813,7 +4813,7 @@ void Methods6502::vbmSpriteShiftSL(Assembler* as)
 
     // address 2
     as->Comment("Read address 2");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -4825,7 +4825,7 @@ void Methods6502::vbmSpriteShiftSL(Assembler* as)
 
     // address 3
     as->Comment("Read address 3");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[4]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[4]);
     if (var==nullptr && !m_node->m_params[4]->isPureNumeric()) {
         ErrorHandler::e.Error("fifth parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -4910,7 +4910,7 @@ void Methods6502::vbmSpriteShiftSR(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -4922,7 +4922,7 @@ void Methods6502::vbmSpriteShiftSR(Assembler* as)
 
     // address 2
     as->Comment("Read address 2");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -4934,7 +4934,7 @@ void Methods6502::vbmSpriteShiftSR(Assembler* as)
 
     // address 3
     as->Comment("Read address 3");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[4]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[4]);
     if (var==nullptr && !m_node->m_params[4]->isPureNumeric()) {
         ErrorHandler::e.Error("fifth parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -5130,7 +5130,7 @@ void Methods6502::vbmDrawSprite8(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -5142,7 +5142,7 @@ void Methods6502::vbmDrawSprite8(Assembler* as)
 
     // address 2
     as->Comment("Read address 2");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -5318,7 +5318,7 @@ void Methods6502::vbmDrawSprite8E(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -5330,7 +5330,7 @@ void Methods6502::vbmDrawSprite8E(Assembler* as)
 
     // address 2
     as->Comment("Read address 2");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -5521,7 +5521,7 @@ void Methods6502::vbmClearSprite8(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -5533,7 +5533,7 @@ void Methods6502::vbmClearSprite8(Assembler* as)
 
     // address 2
     as->Comment("Read address 2");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -5775,7 +5775,7 @@ void Methods6502::vbmDrawSprite(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -5787,7 +5787,7 @@ void Methods6502::vbmDrawSprite(Assembler* as)
 
     // address 2
     as->Comment("Read address 2");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -6027,7 +6027,7 @@ void Methods6502::vbmDrawSpriteE(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -6039,7 +6039,7 @@ void Methods6502::vbmDrawSpriteE(Assembler* as)
 
     // address 2
     as->Comment("Read address 2");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -6311,7 +6311,7 @@ void Methods6502::vbmClearSprite(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -6323,7 +6323,7 @@ void Methods6502::vbmClearSprite(Assembler* as)
 
     // address 2
     as->Comment("Read address 2");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -6646,7 +6646,7 @@ void Methods6502::vbmDrawSprite16(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -6658,7 +6658,7 @@ void Methods6502::vbmDrawSprite16(Assembler* as)
 
     // address 2
     as->Comment("Read address 2");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -6670,7 +6670,7 @@ void Methods6502::vbmDrawSprite16(Assembler* as)
 
     // address 3
     as->Comment("Read address 3");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[2]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[2]);
     if (var==nullptr && !m_node->m_params[2]->isPureNumeric()) {
         ErrorHandler::e.Error("third parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -7010,7 +7010,7 @@ void Methods6502::vbmDrawSprite16E(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -7022,7 +7022,7 @@ void Methods6502::vbmDrawSprite16E(Assembler* as)
 
     // address 2
     as->Comment("Read address 2");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -7034,7 +7034,7 @@ void Methods6502::vbmDrawSprite16E(Assembler* as)
 
     // address 3
     as->Comment("Read address 3");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[2]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[2]);
     if (var==nullptr && !m_node->m_params[2]->isPureNumeric()) {
         ErrorHandler::e.Error("third parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -7422,7 +7422,7 @@ void Methods6502::vbmClearSprite16(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -7434,7 +7434,7 @@ void Methods6502::vbmClearSprite16(Assembler* as)
 
     // address 2
     as->Comment("Read address 2");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -7446,7 +7446,7 @@ void Methods6502::vbmClearSprite16(Assembler* as)
 
     // address 3
     as->Comment("Read address 3");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[2]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[2]);
     if (var==nullptr && !m_node->m_params[2]->isPureNumeric()) {
         ErrorHandler::e.Error("third parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -7687,7 +7687,7 @@ void Methods6502::vbmDrawSprite2(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -7699,7 +7699,7 @@ void Methods6502::vbmDrawSprite2(Assembler* as)
 
     // address 2
     as->Comment("Read address 2");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -7711,7 +7711,7 @@ void Methods6502::vbmDrawSprite2(Assembler* as)
 
     // address 3
     as->Comment("Read address 3");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[2]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[2]);
     if (var==nullptr && !m_node->m_params[2]->isPureNumeric()) {
         ErrorHandler::e.Error("third parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -7951,7 +7951,7 @@ void Methods6502::vbmDrawSprite2E(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -7963,7 +7963,7 @@ void Methods6502::vbmDrawSprite2E(Assembler* as)
 
     // address 2
     as->Comment("Read address 2");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -7975,7 +7975,7 @@ void Methods6502::vbmDrawSprite2E(Assembler* as)
 
     // address 3
     as->Comment("Read address 3");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[2]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[2]);
     if (var==nullptr && !m_node->m_params[2]->isPureNumeric()) {
         ErrorHandler::e.Error("third parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -8239,7 +8239,7 @@ void Methods6502::vbmClearSprite2(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -8251,7 +8251,7 @@ void Methods6502::vbmClearSprite2(Assembler* as)
 
     // address 2
     as->Comment("Read address 2");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -8263,7 +8263,7 @@ void Methods6502::vbmClearSprite2(Assembler* as)
 
     // address 3
     as->Comment("Read address 3");
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[2]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[2]);
     if (var==nullptr && !m_node->m_params[2]->isPureNumeric()) {
         ErrorHandler::e.Error("third parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -8381,7 +8381,7 @@ void Methods6502::vbmDrawSpriteSlice(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -8479,7 +8479,7 @@ void Methods6502::vbmDrawSpriteSliceE(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -8578,7 +8578,7 @@ void Methods6502::vbmClearSpriteSlice(Assembler* as)
 
     // address 1
     as->Comment("Read address 1");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -8750,7 +8750,7 @@ void Methods6502::vbmDrawText(Assembler* as)
     }
 
     // address 1 - text
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -8761,7 +8761,7 @@ void Methods6502::vbmDrawText(Assembler* as)
         addr1 = var->getValue(as);
 
     // address 2 - chars (font)
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -8962,7 +8962,7 @@ void Methods6502::vbmDrawTextO(Assembler* as)
     }
 
     // address 1 - text
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -8973,7 +8973,7 @@ void Methods6502::vbmDrawTextO(Assembler* as)
         addr1 = var->getValue(as);
 
     // address 2 - chars (font)
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -9174,7 +9174,7 @@ void Methods6502::vbmDrawTextE(Assembler* as)
     }
 
     // address 1 - text
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -9185,7 +9185,7 @@ void Methods6502::vbmDrawTextE(Assembler* as)
         addr1 = var->getValue(as);
 
     // address 2 - chars (font)
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -9394,7 +9394,7 @@ void Methods6502::vbmClearText(Assembler* as)
     }
 
     // address 1 - text
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -9405,7 +9405,7 @@ void Methods6502::vbmClearText(Assembler* as)
         addr1 = var->getValue(as);
 
     // address 2 - chars (font)
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -9625,7 +9625,7 @@ void Methods6502::vbmDrawSmallTextO(Assembler* as)
     }
 
     // address 1 - text
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -9636,7 +9636,7 @@ void Methods6502::vbmDrawSmallTextO(Assembler* as)
         addr1 = var->getValue(as);
 
     // address 2 - chars (font)
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -9856,7 +9856,7 @@ void Methods6502::vbmDrawSmallTextE(Assembler* as)
     }
 
     // address 1 - text
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -9867,7 +9867,7 @@ void Methods6502::vbmDrawSmallTextE(Assembler* as)
         addr1 = var->getValue(as);
 
     // address 2 - chars (font)
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -10095,7 +10095,7 @@ void Methods6502::vbmClearSmallText(Assembler* as)
     }
 
     // address 1 - text
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -10106,7 +10106,7 @@ void Methods6502::vbmClearSmallText(Assembler* as)
         addr1 = var->getValue(as);
 
     // address 2 - chars (font)
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -10274,7 +10274,7 @@ void Methods6502::vbmDrawBCD(Assembler *as)
     as->Comment("VBM DrawBCD BCD array, Font, X, Y, number of BCD bytes");
 
     // address 1 - BCD array
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -10285,7 +10285,7 @@ void Methods6502::vbmDrawBCD(Assembler *as)
         addr1 = var->getValue(as);
 
     // address 2 - chars (font)
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -10331,7 +10331,7 @@ void Methods6502::vbmDrawBCD(Assembler *as)
     as->Asm("sta vbmY ; y position in pixels");
 
     // Number of digits in BCD number
-    NodeNumber* numBytes = dynamic_cast<NodeNumber*>(m_node->m_params[4]);
+    QSharedPointer<NodeNumber> numBytes = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[4]);
     if (numBytes==nullptr)
         ErrorHandler::e.Error("BCD: last parameter, number of digits, required to be pure constant number");
 
@@ -10532,7 +10532,7 @@ void Methods6502::vbmDrawSmallBCD(Assembler *as)
     as->Comment("VBM DrawSBCD BCD array, Font, X, Y, number of BCD bytes");
 
     // address 1 - BCD array
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -10543,7 +10543,7 @@ void Methods6502::vbmDrawSmallBCD(Assembler *as)
         addr1 = var->getValue(as);
 
     // address 2 - chars (font)
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -10589,7 +10589,7 @@ void Methods6502::vbmDrawSmallBCD(Assembler *as)
     as->Asm("sta vbmY ; y position in pixels");
 
     // Number of digits in BCD number
-    NodeNumber* numBytes = dynamic_cast<NodeNumber*>(m_node->m_params[4]);
+    QSharedPointer<NodeNumber> numBytes = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[4]);
     if (numBytes==nullptr)
         ErrorHandler::e.Error("BCD: last parameter, number of digits, required to be pure constant number");
 
@@ -10744,7 +10744,7 @@ void Methods6502::vbmDrawSmallBCDO(Assembler *as)
     as->Comment("VBM DrawSBCDO BCD array, Font, X, Y, number of BCD bytes");
 
     // address 1 - BCD array
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -10755,7 +10755,7 @@ void Methods6502::vbmDrawSmallBCDO(Assembler *as)
         addr1 = var->getValue(as);
 
     // address 2 - chars (font)
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -10801,7 +10801,7 @@ void Methods6502::vbmDrawSmallBCDO(Assembler *as)
     as->Asm("sta vbmY ; y position in pixels");
 
     // Number of digits in BCD number
-    NodeNumber* numBytes = dynamic_cast<NodeNumber*>(m_node->m_params[4]);
+    QSharedPointer<NodeNumber> numBytes = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[4]);
     if (numBytes==nullptr)
         ErrorHandler::e.Error("BCD: last parameter, number of digits, required to be pure constant number");
 
@@ -10898,7 +10898,7 @@ void Methods6502::vbmCopyToBuffer(Assembler *as)
     as->Comment("VBM CopyToBuffer address, width-in-chars, height-in-pixels");
 
     // address 1 - Buffer address
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -11010,7 +11010,7 @@ void Methods6502::vbmCopyFromBuffer(Assembler *as)
     as->Comment("VBM CopyFromBuffer address, width-in-chars, height-in-pixels");
 
     // address 1 - Buffer address
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be pointer or address", m_node->m_op.m_lineNumber);
     }
@@ -11076,7 +11076,7 @@ void Methods6502::vbmCopyFromBuffer(Assembler *as)
 void Methods6502::AddMemoryBlock(Assembler *as, int param)
 {
 
-    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[param]);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[param]);
     if (!m_node->m_params[param]->isPureNumeric())
         return;
     int val = m_node->m_params[param]->getValueAsInt(as);
@@ -11091,7 +11091,7 @@ void Methods6502::Poke(Assembler* as)
     as->Comment("Poke");
     //m_node->RequireAddress(m_node->m_params[0],"Poke", m_node->m_op.m_lineNumber);
     AddMemoryBlock(as,0);
-    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
     if (num!=nullptr!=0 && num->m_val==0) {
         as->Comment("Optimization: shift is zero");
         LoadVar(as,2);
@@ -11099,7 +11099,7 @@ void Methods6502::Poke(Assembler* as)
         return;
     }
     // Optimization #2 : if parameter is num AND parameter 2 is num, just add
-    NodeNumber* num2 = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> num2 = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (num2!=nullptr!=0 && num!=nullptr) {
         as->Comment("Optimization: both storage and shift are constant");
         LoadVar(as,2);
@@ -11145,7 +11145,7 @@ void Methods6502::Peek(Assembler* as)
     }
 
     // Optimize if numeric
-    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
     if (num!=nullptr) {
         QString add = m_node->m_params[1]->getValue(as);
         QString org = m_node->m_params[0]->getValue(as);
@@ -11189,8 +11189,8 @@ void Methods6502::Modulo(Assembler *as)
 void Methods6502::MemCpy(Assembler* as, bool isFast)
 {
     //as->ClearTerm();
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
-    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
@@ -11202,7 +11202,7 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
     if (var!=nullptr)
         addr = var->getValue(as);
 
-//    NodeNumber* num2 = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+//    QSharedPointer<NodeNumber> num2 = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
 
     if (!m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pure numeric", m_node->m_op.m_lineNumber);
@@ -11287,8 +11287,8 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
 void Methods6502::MemCpyUnroll(Assembler* as)
 {
     //as->ClearTerm();
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
-    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric())
     {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
@@ -11299,7 +11299,7 @@ void Methods6502::MemCpyUnroll(Assembler* as)
     if (var!=nullptr)
         addr = var->getValue(as);
 
-//    int num2 = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+//    int num2 = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
     if (!m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be pure numeric", m_node->m_op.m_lineNumber);
     }
@@ -11862,8 +11862,8 @@ void Methods6502::PrintString(Assembler *as)
 {
     QString lbl= as->NewLabel("printstring_call");
     QString lbl2= as->NewLabel("printstring_text");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
-    NodeString* str = (NodeString*)dynamic_cast<NodeString*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+    QSharedPointer<NodeString> str = qSharedPointerDynamicCast<NodeString>(m_node->m_params[0]);
 
     if (str==nullptr && var==nullptr)
         ErrorHandler::e.Error("PrintString must take variable or string constant");
@@ -12029,7 +12029,7 @@ void Methods6502::CopyBytesShift(Assembler *as, bool isLeft)
     QString lblSkip = as->NewLabel("copybytesshift_skip");
     QString lblSkipInside = as->NewLabel("copybytesshift_skip2");
 
-    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[4]);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[4]);
 
     QString cmd = "asl";
     if (num->m_val==1) cmd ="lsr";
@@ -12170,8 +12170,8 @@ void Methods6502::Fill80(Assembler *as)
 
 void Methods6502::KrillLoad(Assembler *as, bool isCompressed)
 {
-    NodeVar* varName = dynamic_cast<NodeVar*>(m_node->m_params[0]);
-//    NodeVar* varJump = dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    QSharedPointer<NodeVar> varName = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+//    QSharedPointer<NodeVar> varJump = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (varName==nullptr) {
         ErrorHandler::e.Error("When loading a file, first parameter must point to a zero-terminated string", m_node->m_op.m_lineNumber);
     }
@@ -12295,7 +12295,7 @@ void Methods6502::PokeScreen(Assembler *as, int shift)
 
 void Methods6502::PokeScreenColor(Assembler *as, int hiAddress)
 {
-    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[3]);
+    QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[3]);
     if (num==nullptr)
         ErrorHandler::e.Error("PokeScreenColor: last parameter required to be pure constant number");
 
@@ -12373,7 +12373,7 @@ void Methods6502::SetSpritePos(Assembler *as)
     as->Comment("Setting sprite position");
 
 
-    NodeNumber* spriteNum = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+    QSharedPointer<NodeNumber> spriteNum = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[2]);
     if (spriteNum!=nullptr) {
         as->Comment("isi-pisi: value is constant");
         uchar v = 1 << (uchar)spriteNum->m_val;
@@ -12730,7 +12730,7 @@ void Methods6502::SetVideoMode(Assembler *as)
 
 QString Methods6502::checkAndInitStringParameter(Assembler *as, int n)
 {
-    NodeString* str = (NodeString*)dynamic_cast<NodeString*>(m_node->m_params[n]);
+    QSharedPointer<NodeString> str = qSharedPointerDynamicCast<NodeString>(m_node->m_params[n]);
 
     if (str!=nullptr) {
         QString name= as->NewLabel("new_string_define");
@@ -12790,7 +12790,7 @@ void Methods6502::RightBitShift(Assembler *as, bool isRight)
 
 void Methods6502::Joystick(Assembler *as)
 {
-    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (num==nullptr || num->m_val<1 || num->m_val>2)
         ErrorHandler::e.Error("Joystick requires numeric parameter : 1 or 2 (for port 1 or 2)", m_node->m_op.m_lineNumber);
     //QString port = "$dc00";
@@ -12841,7 +12841,7 @@ void Methods6502::BitOp(Assembler *as, int type)
 void Methods6502::PlaySound(Assembler *as)
 {
 //    LoadVar(as, 0);
-    NodeNumber *num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber>num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (num==nullptr) {
         ErrorHandler::e.Error("First value must be constant - addresses chip");
     }
@@ -12902,7 +12902,7 @@ void Methods6502::LoHi(Assembler *as, bool isLo)
 
 }
 
-void Methods6502::LoadAndStoreInZp(Node* n, Assembler *as, QString zp)
+void Methods6502::LoadAndStoreInZp(QSharedPointer<Node> n, Assembler *as, QString zp)
 {
     as->ClearTerm();
    // qDebug() << n->getType(as);
@@ -13085,7 +13085,7 @@ void Methods6502::PPUDrawColumn(Assembler *as)
 void Methods6502::SetFrequency(Assembler *as)
 {
 //    LoadVar(as, 0);
-    NodeNumber *num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber>num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (num==nullptr) {
         ErrorHandler::e.Error("First value must be constant - addresses chip");
     }
@@ -13375,11 +13375,11 @@ void Methods6502::Clearsound(Assembler *as)
 
 void Methods6502::SetCharsetLocation(Assembler *as)
 {
-/*    NodeVar* v = dynamic_cast<NodeVar*>(m_node->m_params[0]);
+/*    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (v==nullptr)
         ErrorHandler::e.Error("SetCharsetLocation parameter must be an incbin address!");
   */
-    NodeNumber* v = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> v = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (v==nullptr)
         ErrorHandler::e.Error("SetCharsetLocation parameter must be an address!", m_node->m_op.m_lineNumber);
 
@@ -13448,7 +13448,7 @@ void Methods6502::SetCharsetLocation(Assembler *as)
 
 void Methods6502::SetScreenLocation(Assembler *as)
 {
-    NodeNumber* v = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> v = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (v==nullptr)
         ErrorHandler::e.Error("SetScreenLocation parameter must be an address!", m_node->m_op.m_lineNumber);
 
@@ -13622,8 +13622,8 @@ void Methods6502::CreateAddressTable(Assembler *as) {
     QString tableSize = Util::numToHex( ((m_node->m_params[3]->getValueAsInt(as)) - 1) * 2 ); //  ; ( 10 * 2 ) - 2     or     10-1 = 9*2 = 18
 
 
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
-    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
@@ -13681,8 +13681,8 @@ void Methods6502::AddressTable(Assembler *as) {
 
     QString lblDTNoOverflow = as->NewLabel("dtnooverflow");
 
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
-    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
@@ -13854,8 +13854,8 @@ void Methods6502::DrawTextBox(Assembler* as) {
     QString lblPetsciiCopy = as->NewLabel("PetsciiCopy");
     AddMemoryBlock(as,0);
 
-    NodeVar* addr = dynamic_cast<NodeVar*>(m_node->m_params[0]);
-    NodeVar* petscii = dynamic_cast<NodeVar*>(m_node->m_params[1]);
+    QSharedPointer<NodeVar> addr = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> petscii = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     if (addr==nullptr) {
         ErrorHandler::e.Error("First parameter must be variable containing address table", m_node->m_op.m_lineNumber);
     }
@@ -13925,9 +13925,9 @@ void Methods6502::DrawColorTextBox(Assembler* as) {
     QString lblColorCopy = as->NewLabel("ColorCopy");
     AddMemoryBlock(as,0);
 
-    NodeVar* addr = dynamic_cast<NodeVar*>(m_node->m_params[0]);
-    NodeVar* coloraddr = dynamic_cast<NodeVar*>(m_node->m_params[1]);
-    NodeVar* petscii = dynamic_cast<NodeVar*>(m_node->m_params[2]);
+    QSharedPointer<NodeVar> addr = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> coloraddr = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
+    QSharedPointer<NodeVar> petscii = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[2]);
 
     if (addr==nullptr) {
         ErrorHandler::e.Error("First parameter must be variable containing screen address table", m_node->m_op.m_lineNumber);
@@ -14339,8 +14339,8 @@ void Methods6502::IncDec(Assembler *as, QString cmd)
 {
     QString lbl = as->NewLabel("incdec");
 //    m_node->RequireAddress(m_node->m_params[0], "Inc/Dec", m_node->m_op.m_lineNumber);
-    NodeNumber* n = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
-    NodeVar* v = dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> n = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
 
     if (n==nullptr && v==nullptr)
         ErrorHandler::e.Error("Inc / Dec requires an address / variable", m_node->m_op.m_lineNumber);
@@ -14449,15 +14449,15 @@ void Methods6502::SetMemoryConfig(Assembler *as)
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C128) {
         //as->Asm("lda #0");
         uchar v = 0;
-        if (dynamic_cast<NodeNumber*>(m_node->m_params[0])->m_val!=0)
+        if (qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0])->m_val!=0)
             v |= 0b00000001; // (0=IO, 1=RAM/ROM)
-        if (dynamic_cast<NodeNumber*>(m_node->m_params[1])->m_val!=0)
+        if (qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1])->m_val!=0)
             v |= 0b00000010; // Bank 1 RAM = 1, ROM =0))
-        if (dynamic_cast<NodeNumber*>(m_node->m_params[2])->m_val!=0)
+        if (qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[2])->m_val!=0)
             v |= 0b00001100; // B000 RAM = 1, ROM =0))
-        if (dynamic_cast<NodeNumber*>(m_node->m_params[3])->m_val!=0)
+        if (qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[3])->m_val!=0)
             v |= 0b00110000; // C000 RAM = 1, ROM =0))
-        if (dynamic_cast<NodeNumber*>(m_node->m_params[4])->m_val!=0)
+        if (qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[4])->m_val!=0)
             v |= 0b01000000; // C000 RAM = 1, ROM =0))
 
         as->Asm("lda #"+Util::numToHex(v));
@@ -14504,7 +14504,7 @@ void Methods6502::StartIRQ(Assembler *as)
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64) {
         m_node->RequireNumber(m_node->m_params[0], "StartIRQ", m_node->m_op.m_lineNumber);
-        NodeNumber* n = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+        QSharedPointer<NodeNumber> n = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
         if (n->m_val==1) {
             as->Asm("asl $d019");
         }
@@ -14519,7 +14519,7 @@ void Methods6502::StartIRQ(Assembler *as)
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::PLUS4) {
         m_node->RequireNumber(m_node->m_params[0], "StartIRQ", m_node->m_op.m_lineNumber);
-        NodeNumber* n = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+        QSharedPointer<NodeNumber> n = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
         if (n->m_val==1) {
             as->Asm("asl $ff09");
         }
@@ -14554,7 +14554,7 @@ void Methods6502::StartIRQWedge(Assembler *as)
     QString lbl1 = as->NewLabel("startirqwedge_lbl1");
     QString lbl2 = as->NewLabel("startirqwedge_lbl2");
 
-    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
 
     as->Asm("txs");
     as->Asm("ldx #"+Util::numToHex(num->m_val));
@@ -14641,7 +14641,7 @@ void Methods6502::DisableNMI(Assembler *as)
 
         as->Comment("Hook NMI");
 
-        NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_node->m_params[0]);
+        QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
         if (addr==nullptr)
             ErrorHandler::e.Error("First parameter must be interrupt procedure!", m_node->m_op.m_lineNumber);
 
@@ -14677,7 +14677,7 @@ void Methods6502::KeyPressed(Assembler *as)
 {
     as->Comment("Keypressed");
 
-    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (num==nullptr)
         ErrorHandler::e.Error("KeyPressed requires key to be numeric! KEY_A etc");
 
@@ -14747,7 +14747,7 @@ QString Methods6502::BitShiftX(Assembler *as)
 
 void Methods6502::LoadAddress(Assembler *as, int paramNo)
 {
-    Node* node = m_node->m_params[paramNo];
+    QSharedPointer<Node> node = m_node->m_params[paramNo];
 
     if (node->isPureNumeric()) {
         as->Asm("lda " + Util::numToHex(node->getValueAsInt(as)&0xff));
@@ -14825,7 +14825,7 @@ void Methods6502::IncZp(Assembler *as)
     as->m_labelStack["incscreenx"].push();
     QString lbl = as->getLabel("incscreenx");
 
-    NodeVar* var = dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr) {
         ErrorHandler::e.Error("IncZp: Left-hand parameter must be zeropage pointer");
     }
@@ -14867,7 +14867,7 @@ void Methods6502::DecZp(Assembler *as)
     as->m_labelStack["deczp"].push();
     QString lbl = as->getLabel("deczp");
 
-    NodeVar* var = dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr) {
         ErrorHandler::e.Error("DecZp: Left-hand parameter must be zeropage pointer");
     }
@@ -14924,7 +14924,7 @@ void Methods6502::IncScreenX(Assembler *as)
 
 void Methods6502::Call(Assembler *as)
 {
-    //NodeNumber* num= (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    //QSharedPointer<NodeNumber> num= (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (m_node->m_params[0]->isPointer(as)) {
         //QString zp0 = as->m_internalZP[0];
         //QString zp1 = as->m_internalZP[1];
@@ -14973,7 +14973,7 @@ void Methods6502::Call(Assembler *as)
         return;
     }*/
 //    ErrorHandler::e.Error("Call currently only supports constant values", m_node->m_op.m_lineNumber);
-/*    NodeVar* num= (NodeVar*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+/*    QSharedPointer<NodeVar> num= qSharedPointer<NodeNumber>>(m_node->m_params[0]);
     if (num!=nullptr) {
         as->Asm("jsr $" + QString::number(num->m_val,16));
         return;
@@ -14983,7 +14983,7 @@ void Methods6502::Call(Assembler *as)
 
 void Methods6502::ToggleRegisterBit(Assembler *as, QString addr, int bit, bool regular)
 {
-    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (num==nullptr) {
            ErrorHandler::e.Error("Call currently only supports constant 0/1 (on/off)", m_node->m_op.m_lineNumber);
 
@@ -15006,7 +15006,7 @@ void Methods6502::ToggleRegisterBit(Assembler *as, QString addr, int bit, bool r
 
 void Methods6502::InitSid(Assembler *as)
 {
-    NodeNumber* num= (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> num= (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
 //    qDebug() << "initsid:" << num->HexValue();
     if (num!=nullptr) {
         as->Comment("initsid");
@@ -15295,7 +15295,7 @@ void Methods6502::DisableInterrupts(Assembler *as)
 
 /*void Methods6502::RasterIRQ(Assembler *as)
 {
-    NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_node->m_params[0]);
+    QSharedPointer<NodeProcedure> addr = (QSharedPointer<NodeProcedure>)dynamic_cast<QSharedPointer<NodeProcedure>>(m_node->m_params[0]);
     if (addr==nullptr)
         ErrorHandler::e.Error("First parameter must be interrupt procedure!", m_node->m_op.m_lineNumber);
     QString name = addr->m_procedure->m_procName;
@@ -15312,7 +15312,7 @@ void Methods6502::DisableInterrupts(Assembler *as)
 */
 void Methods6502::RasterIRQ(Assembler *as)
 {
-    NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_node->m_params[0]);
+    QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
 //    if (addr==nullptr)
   //      ErrorHandler::e.Error("First parameter must be interrupt procedure!", m_node->m_op.m_lineNumber);
 
@@ -15320,7 +15320,7 @@ void Methods6502::RasterIRQ(Assembler *as)
     QString name = addr->m_procedure->m_procName;
 
     m_node->RequireNumber(m_node->m_params[2], "RasterIRQ", m_node->m_op.m_lineNumber);
-    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[2]);
 
     as->Comment("RasterIRQ : Hook a procedure");
 
@@ -15351,10 +15351,10 @@ void Methods6502::RasterIRQ(Assembler *as)
 
 void Methods6502::VIAIRQ(Assembler *as)
 {
-    NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_node->m_params[0]);
+    QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
     QString name = addr->m_procedure->m_procName;
     m_node->RequireNumber(m_node->m_params[2], "RasterIRQ", m_node->m_op.m_lineNumber);
-//    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+//    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[2]);
 
 
     as->Asm("lda #<"+name);
@@ -15379,7 +15379,7 @@ void Methods6502::VIAIRQ(Assembler *as)
 
 void Methods6502::VIARasterIRQ(Assembler *as)
 {
-    NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_node->m_params[0]);
+    QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
     QString name = addr->m_procedure->m_procName;
     m_node->RequireNumber(m_node->m_params[2], "RasterIRQ", m_node->m_op.m_lineNumber);
 
@@ -15433,10 +15433,10 @@ void Methods6502::InitVIAIRQ(Assembler *as)
 
 void Methods6502::RasterIRQWedge(Assembler *as)
 {
-    NodeProcedure* addr = (NodeProcedure*)dynamic_cast<NodeProcedure*>(m_node->m_params[0]);
+    QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
     QString name = addr->m_procedure->m_procName;
 
-    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[2]);
 
     as->Comment("RasterIRQ Wedge: Hook a wedge");
 
@@ -15565,10 +15565,10 @@ void Methods6502::WaitNoRasterLines(Assembler *as)
 {
    /* QString var = "";
     QString lbl = as->NewLabel("waitnoraster");
-    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (num!=nullptr)
             var = "#" + num->HexValue();
-    NodeVar* nvar = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> nvar = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (nvar!=nullptr)
             var = nvar->getValue(as);
     if (var=="")
@@ -15623,10 +15623,10 @@ void Methods6502::WaitForRaster(Assembler *as)
 void Methods6502::SetSpriteLoc(Assembler *as)
 {
 
-  /*  NodeNumber* num2 = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+  /*  QSharedPointer<NodeNumber> num2 = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (num2==nullptr)
         ErrorHandler::e.Error("SetSpriteLoc parameter 0 must be constant");
-    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
     if (num==nullptr)
         ErrorHandler::e.Error("SetSpriteLoc parameter 1 must be constant");
 */
@@ -15643,7 +15643,7 @@ void Methods6502::SetSpriteLoc(Assembler *as)
     }
 
 
-    NodeNumber* num3 = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+    QSharedPointer<NodeNumber> num3 = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[2]);
     if (num3==nullptr)
         ErrorHandler::e.Error("SetSpriteLoc parameter 2 (bank) must be constant 0-3");
 
@@ -15701,9 +15701,9 @@ void Methods6502::ClearBitmap(Assembler *as)
 
 void Methods6502::Swap(Assembler *as)
 {
-    NodeVar* vars[2];
+    QSharedPointer<NodeVar> vars[2];
     for (int i=0;i<2;i++) {
-        NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[i]);
+        QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[i]);
         if (var==nullptr)
             ErrorHandler::e.Error("Swap error: both parameters must be variables");
         vars[i]=var;
@@ -15728,10 +15728,10 @@ void Methods6502::MemCpyLarge(Assembler *as)
 {
 
     /*as->Comment("Memory copy large > 255 bytes");
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr)
         ErrorHandler::e.Error("MemCpyLarge parameter 0 must be Variable location");
-    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[3]);
+    QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[3]);
     if (num==nullptr)
         ErrorHandler::e.Error("MemCpyLarge parameter 4 must be constant");
     QString defs = as->NewLabel("memcpy_defs");
@@ -15782,7 +15782,7 @@ void Methods6502::SetBank(Assembler *as)
 
 void Methods6502::Decrunch(Assembler *as)
 {
-    NodeNumber *num = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber>num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (num!=nullptr) {
     as->Comment("; Decrunch number direct");
     as->Asm("lda #" + QString::number(((int)num->m_val)&0xFF));
@@ -15794,7 +15794,7 @@ void Methods6502::Decrunch(Assembler *as)
     }
 
 
-    NodeVar *var = dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr)
             ErrorHandler::e.Error("Decrunch : parameter 0 must be an incbin block or address!");
 
@@ -15840,12 +15840,12 @@ void Methods6502::DecrunchFromIndex(Assembler *as)
 
 void Methods6502::CopyImageColorData(Assembler *as)
 {
-    NodeVar* var = dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     QString varName;
 
     if (var==nullptr)
     {
-        NodeNumber* num =dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+        QSharedPointer<NodeNumber> num =qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
         if (num==nullptr)
             ErrorHandler::e.Error("CopyImageColorData : parameter 0 must be a variable or address");
 
@@ -15853,7 +15853,7 @@ void Methods6502::CopyImageColorData(Assembler *as)
     }
     else varName = var->getValue(as);
 
-    NodeNumber * bank = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    QSharedPointer<NodeNumber> bank = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
     if (bank==nullptr)
         ErrorHandler::e.Error("CopyImageColorData : parameter 1 must be a constant number!");
 
@@ -15928,15 +15928,15 @@ void Methods6502::CopyHalfScreen(Assembler *as)
 */
     AddMemoryBlock(as,1);
 
-    NodeNumber * lines = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+    QSharedPointer<NodeNumber> lines = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[2]);
     if (lines==nullptr)
         ErrorHandler::e.Error("CopyHalfScreen : parameter 3 must be a constant number!");
 
-    NodeNumber *inverted = dynamic_cast<NodeNumber*>(m_node->m_params[3]);
+    QSharedPointer<NodeNumber>inverted = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[3]);
     if (inverted==nullptr)
         ErrorHandler::e.Error("CopyHalfScreen : parameter 4 must be a constant number!");
 
-    NodeNumber *invertedx = dynamic_cast<NodeNumber*>(m_node->m_params[4]);
+    QSharedPointer<NodeNumber>invertedx = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[4]);
     if (invertedx==nullptr)
         ErrorHandler::e.Error("CopyHalfScreen : parameter 5 must be a constant number!");
 
@@ -16126,7 +16126,7 @@ void Methods6502::BlockMemCpy(Assembler *as)
   //  m_node->RequireAddress(m_node->m_params[1],"BlockMemCpy", m_node->m_op.m_lineNumber);
 
 
-/*    NodeNumber* from = dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+/*    QSharedPointer<NodeNumber> from = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (from==nullptr)
         ErrorHandler::e.Error("BlockMemCpy parameter 1 *must* be a pure number");
 */
@@ -16146,11 +16146,11 @@ void Methods6502::BlockMemCpy(Assembler *as)
     as->PopLabel("Blockmemcpy_lbl2");
 
     if (m_node->m_params[0]->getType(as)!=TokenType::POINTER) {
-        NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+        QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[2]);
         if (num==nullptr)
             ErrorHandler::e.Error("BlockMemCpy parameter 3 *must* be a pure number");
 
-        NodeNumber* to = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+        QSharedPointer<NodeNumber> to = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
         if (to==nullptr)
             ErrorHandler::e.Error("BlockMemCpy parameter 2 *must* be a pure number");
 
@@ -16218,11 +16218,11 @@ void Methods6502::BlockMemCpy(Assembler *as)
 
 void Methods6502::TransformColors(Assembler *as)
 {
-    NodeVar* var = dynamic_cast<NodeVar*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     if (var==nullptr)
         ErrorHandler::e.Error("Parameter 0 must be variable (array)");
 
-    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
     if (num==nullptr)
         ErrorHandler::e.Error("Parameter 1 must be address");
 
@@ -16269,12 +16269,12 @@ void Methods6502::TransformColors(Assembler *as)
 
 void Methods6502::ToggleBit(Assembler *as)
 {
-    NodeNumber* toggle = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+    QSharedPointer<NodeNumber> toggle = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[2]);
     if (toggle==nullptr)
         ErrorHandler::e.Error("TogglesBit (for now) needs param 3 to be a number");
 
 
-    NodeNumber* spriteNum = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    QSharedPointer<NodeNumber> spriteNum = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
 
     if (spriteNum!=nullptr) {
 
@@ -16315,7 +16315,7 @@ void Methods6502::ToggleBit(Assembler *as)
 
 void Methods6502::GetBit(Assembler *as)
 {
-    NodeNumber* sprite = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    QSharedPointer<NodeNumber> sprite = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
 
 
     if (sprite!=nullptr) {
@@ -16399,7 +16399,7 @@ void Methods6502::SaveVar(Assembler *as, int paramNo, QString reg, QString extra
         ErrorHandler::e.Error("Parameter "+QString::number(paramNo) + " must be a variable or address", m_node->m_op.m_lineNumber);
 
     QString vName = m_node->m_params[paramNo]->getValue(as);
-    NodeVar* v = dynamic_cast<NodeVar*>(m_node->m_params[paramNo]);
+    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[paramNo]);
     as->Term();
 
     if (v==nullptr || v->m_expr==nullptr) {
@@ -16452,8 +16452,8 @@ void Methods6502::SaveVar(Assembler *as, int paramNo, QString reg, QString extra
 void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
 {
 
-    Node* node = m_node->m_params[paramNo];
-    NodeVar* nodevar = dynamic_cast<NodeVar*>(node);
+    QSharedPointer<Node> node = m_node->m_params[paramNo];
+    QSharedPointer<NodeVar> nodevar = qSharedPointerDynamicCast<NodeVar>(node);
 
     if (node->isPureNumeric() && node->getValueAsInt(as)>=256 && !node->isAddress()) {
         as->Asm("lda " + Util::numToHex(node->getValueAsInt(as)&0xff));
@@ -16461,8 +16461,8 @@ void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
         return;
     }
 
-    if (dynamic_cast<NodeVar*>(node)!=nullptr ||
-        dynamic_cast<NodeNumber*>(node)!=nullptr) {
+    if (qSharedPointerDynamicCast<NodeVar>(node)!=nullptr ||
+        qSharedPointerDynamicCast<NodeNumber>(node)!=nullptr) {
 
 
 /*        if (node->isWord(as)) {
@@ -16568,7 +16568,7 @@ void Methods6502::Jammer(Assembler *as)
 void Methods6502::FLD(Assembler *as)
 {
 
-    NodeNumber* num = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
     if (num==nullptr)
         ErrorHandler::e.Error("FLD: last parameter required to be pure constant number (0 or 1)");
 
@@ -16630,8 +16630,8 @@ void Methods6502::BcdAdd(Assembler *as)
     as->Comment("BcdAdd address, address, number");
 
     // BCD array address to add to
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
-    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
@@ -16643,8 +16643,8 @@ void Methods6502::BcdAdd(Assembler *as)
         srcaddr = var->getValue(as);
 
     // BCD array address containing value to add
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
-    num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
+    num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
@@ -16655,7 +16655,7 @@ void Methods6502::BcdAdd(Assembler *as)
     if (var!=nullptr)
         addaddr = var->getValue(as);
 
-    NodeNumber* num3 = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+    QSharedPointer<NodeNumber> num3 = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[2]);
     if (num3==nullptr)
         ErrorHandler::e.Error("BCD: last parameter, number of digits, required to be pure constant number");
 
@@ -16691,8 +16691,8 @@ void Methods6502::BcdSub(Assembler *as)
     as->Comment("BcdSub address, address, number");
 
     // BCD array address to subtract from
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
-    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
@@ -16704,8 +16704,8 @@ void Methods6502::BcdSub(Assembler *as)
         srcaddr = var->getValue(as);
 
     // BCD array address containing value to subtract
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
-    num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
+    num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
@@ -16716,7 +16716,7 @@ void Methods6502::BcdSub(Assembler *as)
     if (var!=nullptr)
         addaddr = var->getValue(as);
 
-    NodeNumber* num3 = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+    QSharedPointer<NodeNumber> num3 = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[2]);
     if (num3==nullptr)
         ErrorHandler::e.Error("BCD: last parameter, number of digits, required to be pure constant number");
 
@@ -16752,8 +16752,8 @@ void Methods6502::BcdCompare(Assembler *as)
     as->Comment("BcdCompare address, address, number");
 
     // BCD array address to compare
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
-    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
@@ -16765,8 +16765,8 @@ void Methods6502::BcdCompare(Assembler *as)
         srcaddr = var->getValue(as);
 
     // BCD array address containing value to compare with
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
-    num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
+    num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
@@ -16777,7 +16777,7 @@ void Methods6502::BcdCompare(Assembler *as)
     if (var!=nullptr)
         dstaddr = var->getValue(as);
 
-    NodeNumber* num3 = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+    QSharedPointer<NodeNumber> num3 = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[2]);
     if (num3==nullptr)
         ErrorHandler::e.Error("BCD: last parameter, number of digits, required to be pure constant number");
 
@@ -16824,8 +16824,8 @@ void Methods6502::BcdIsEqual(Assembler *as)
     as->Comment("BcdIsEqual address, address, number");
 
     // BCD array address to compare
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
-    NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
@@ -16837,8 +16837,8 @@ void Methods6502::BcdIsEqual(Assembler *as)
         srcaddr = var->getValue(as);
 
     // BCD array address containing value to compare with
-    var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[1]);
-    num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
+    num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
     if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
         ErrorHandler::e.Error("Second parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
@@ -16849,7 +16849,7 @@ void Methods6502::BcdIsEqual(Assembler *as)
     if (var!=nullptr)
         dstaddr = var->getValue(as);
 
-    NodeNumber* num3 = dynamic_cast<NodeNumber*>(m_node->m_params[2]);
+    QSharedPointer<NodeNumber> num3 = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[2]);
     if (num3==nullptr)
         ErrorHandler::e.Error("BCD: last parameter, number of digits, required to be pure constant number");
 
@@ -16889,8 +16889,8 @@ void Methods6502::BcdPrint(Assembler *as)
     as->Comment("BcdPrint address, number");
 
     // BCD array address to add to
-    NodeVar* var = (NodeVar*)dynamic_cast<NodeVar*>(m_node->m_params[0]);
-    //NodeNumber* num = (NodeNumber*)dynamic_cast<NodeNumber*>(m_node->m_params[0]);
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+    //QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
@@ -16901,7 +16901,7 @@ void Methods6502::BcdPrint(Assembler *as)
     if (var!=nullptr)
         srcaddr = var->getValue(as);
 
-    NodeNumber* num3 = dynamic_cast<NodeNumber*>(m_node->m_params[1]);
+    QSharedPointer<NodeNumber> num3 = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
     if (num3==nullptr)
         ErrorHandler::e.Error("BCD: last parameter, number of digits, required to be pure constant number");
 

@@ -22,23 +22,14 @@
 #include "nodeprogram.h"
 
 
-void NodeProgram::Delete() {
-    if (m_NodeBlock) {
-        m_NodeBlock->Delete();
-        delete m_NodeBlock;
-        m_NodeBlock = nullptr;
-    }
-//    qDebug() << "NodeProgram:: delete" <<s_uniqueSymbols.keys().count();
-  /*  for (Node* n :s_uniqueSymbols.keys()) {
-        n->Delete();
-        delete n
-                ;
-    }*/
-    s_uniqueSymbols.clear();
-}
-
 
 void NodeProgram::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     m_NodeBlock->ExecuteSym(symTab);
+}
+
+void NodeProgram::Accept(AbstractASTDispatcher *dispatcher) {
+    dispatcher->dispatch(qSharedPointerDynamicCast<NodeProgram>(sharedFromThis()));
+
+
 }
 

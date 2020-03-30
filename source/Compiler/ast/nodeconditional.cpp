@@ -23,7 +23,7 @@
 #include "source/Compiler/assembler/mos6502.h"
 
 
-NodeConditional::NodeConditional(Token op, int forcePage, Node *clause, Node *block, bool isWhile, Node *elseBlock) :Node(){
+NodeConditional::NodeConditional(Token op, int forcePage, QSharedPointer<Node> clause, QSharedPointer<Node> block, bool isWhile, QSharedPointer<Node> elseBlock) :Node(){
     m_block = block;
     m_isWhileLoop = isWhile;
     m_elseBlock = elseBlock;
@@ -32,24 +32,6 @@ NodeConditional::NodeConditional(Token op, int forcePage, Node *clause, Node *bl
     m_forcePage = forcePage;
 }
 
-void NodeConditional::Delete() {
-    Node::Delete();
-    if (m_block!=nullptr) {
-        m_block->Delete();
-        delete m_block;
-        m_block = nullptr;
-    }
-    if (m_elseBlock!=nullptr) {
-        m_elseBlock->Delete();
-        delete m_elseBlock;
-        m_elseBlock = nullptr;
-    }
-    if (m_binaryClause) {
-        m_binaryClause->Delete();
-        delete m_binaryClause;
-        m_binaryClause = nullptr;
-    }
 
 
-}
 

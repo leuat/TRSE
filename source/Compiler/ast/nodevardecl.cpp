@@ -22,30 +22,16 @@
 #include "nodevardecl.h"
 
 
-NodeVarDecl::NodeVarDecl(Node *varNode, Node *typeNode):Node() {
+NodeVarDecl::NodeVarDecl(QSharedPointer<Node> varNode, QSharedPointer<Node> typeNode):Node() {
     m_varNode = varNode;
     m_typeNode = typeNode;
 }
 
-void NodeVarDecl::Delete() {
-    if (m_varNode!=nullptr) {
-        m_varNode->Delete();
-        delete m_varNode;
-    }
-    if (m_typeNode!=nullptr) {
-        s_uniqueSymbols[m_typeNode] = m_typeNode;
-  //      m_typeNode->Delete();
-//        delete m_typeNode;
-    }
-
-}
-
-
 void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
 
-    NodeVarType* typeNode = dynamic_cast<NodeVarType*>(m_typeNode);
+    QSharedPointer<NodeVarType> typeNode = qSharedPointerDynamicCast<NodeVarType>(m_typeNode);
     QString typeName = typeNode->value;
-    QString varName = ((NodeVar*)m_varNode)->value;
+    QString varName = qSharedPointerDynamicCast<NodeVar>(m_varNode)->value;
     if (symTab->exists(varName))
           ErrorHandler::e.Error("Variable '" + varName +"' is already defined!",m_op.m_lineNumber);
 
@@ -90,8 +76,8 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
 }
 
 void NodeVarDecl::InitSid(QString projectDir, int VICAddress, QString type) {
-    NodeVar* v = (NodeVar*)m_varNode;
-    NodeVarType* t = (NodeVarType*)m_typeNode;
+    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(m_varNode);
+    QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(m_typeNode);
 
 
     int headerShift = 0;

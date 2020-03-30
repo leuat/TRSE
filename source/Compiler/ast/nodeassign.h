@@ -39,18 +39,17 @@
 
 class NodeAssign : public Node {
 public:
-//    Node* m_arrayIndex = nullptr;
+//    QSharedPointer<Node> m_arrayIndex = nullptr;
 
 
-    NodeAssign(Node* left, Token t, Node* r);
+    NodeAssign(QSharedPointer<Node> left, Token t, QSharedPointer<Node> r);
 
-    void Delete() override;
 
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(qSharedPointerDynamicCast<NodeAssign>(sharedFromThis()));
     }
 /*    void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_arrayIndex!=nullptr)

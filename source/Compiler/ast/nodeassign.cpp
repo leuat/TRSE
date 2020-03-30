@@ -22,11 +22,11 @@
 #include "nodeassign.h"
 
 
-NodeAssign::NodeAssign(Node *left, Token t, Node *r):Node() {
+NodeAssign::NodeAssign(QSharedPointer<Node> left, Token t, QSharedPointer<Node> r):Node() {
     m_right = r;
     m_op = t;
     m_left = left;
-   // qDebug() << "NodeAssign " <<TokenType::getType(m_left->getType(nullptr)) << ((NodeVar*)m_left)->getValue(as);
+   // qDebug() << "NodeAssign " <<TokenType::getType(m_left->getType(nullptr)) << (qSharedPointerDynamicCast<NodeVar>m_left)->getValue(as);
     if (m_left->getType(nullptr)==TokenType::INTEGER) {// || m_left->getType(nullptr)==TokenType::POINTER) {
  //       qDebug() << "::NodeAssign INTEGER";
 //        m_right->setForceType(TokenType::INTEGER);
@@ -35,13 +35,9 @@ NodeAssign::NodeAssign(Node *left, Token t, Node *r):Node() {
 
 }
 
-void NodeAssign::Delete()
-{
-    Node::Delete();
-}
 
 void NodeAssign::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
-    QString varName = ((NodeVar*)m_left)->value;
+    QString varName = qSharedPointerDynamicCast<NodeVar>(m_left)->value;
     QSharedPointer<Symbol> varSymbol = symTab->Lookup(varName, m_op.m_lineNumber);
     m_right->ExecuteSym(symTab);
 

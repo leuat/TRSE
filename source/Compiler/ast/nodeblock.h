@@ -35,9 +35,9 @@
 
 class NodeBlock : public Node {
 public:
-    QVector<Node*> m_decl;
+    QVector<QSharedPointer<Node>> m_decl;
     QString forceLabel = "";
-    Node* m_compoundStatement = nullptr;
+    QSharedPointer<Node> m_compoundStatement = nullptr;
     QSharedPointer<SymbolTable>  m_symTab = nullptr;
     bool m_useOwnSymTab;
     bool m_isMainBlock = false;
@@ -45,7 +45,7 @@ public:
     QString m_forceInterupt = "";
 
 
-    NodeBlock(Token t, QVector<Node*> decl, Node* comp, bool useOwnSymTab = true):Node() {
+    NodeBlock(Token t, QVector<QSharedPointer<Node>> decl, QSharedPointer<Node> comp, bool useOwnSymTab = true):Node() {
         m_compoundStatement = comp;
         m_decl = decl;
         m_op = t;
@@ -53,11 +53,10 @@ public:
     }
 
     void SetParameter(QString name, PVar var);
-    void Delete() override;
 
     void PopZeroPointers(Assembler* as);
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
-        for (Node* n: m_decl)
+        for (QSharedPointer<Node> n: m_decl)
             if (n!=nullptr)
             n->parseConstants(symTab);
         if (m_compoundStatement!=nullptr)
@@ -68,7 +67,7 @@ public:
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
-        dispatcher->dispatch(this);
+        dispatcher->dispatch(qSharedPointerDynamicCast<NodeBlock>(sharedFromThis()));
     }
 
 };
