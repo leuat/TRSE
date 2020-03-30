@@ -14,16 +14,7 @@ SourceBuilder::SourceBuilder(CIniFile *ini, CIniFile *project, QString curDir, Q
 }
 
 SourceBuilder::~SourceBuilder() {
-/*    if (compiler!=nullptr) {
-        compiler->Destroy();
-        delete compiler;
-        compiler = nullptr;
-    }*/
-    if (m_system!=nullptr && !m_useSyntaxSystem) {
-        delete m_system;
-        m_system = nullptr;
-    }
-
+//    qDebug() << "~SourceBuilder destroying : "<<compiler;
 }
 
 bool SourceBuilder::Build(QString source)
@@ -32,12 +23,12 @@ bool SourceBuilder::Build(QString source)
         m_buildSuccess=true;
        m_assembleSuccess=false;
        m_filename = m_currentSourceFile.split(".")[0];
-       m_system = Syntax::s.m_currentSystem;
+       m_system.create(Syntax::s.m_currentSystem);
 /*       m_system = FactorySystem::Create(AbstractSystem::SystemFromString(
                                             m_projectIniFile.getString("system")),
                                            &m_iniFile, &m_projectIniFile);
 */
-       compiler = FactoryCompiler::CreateCompiler(&m_iniFile, &m_projectIniFile);
+       compiler = QSharedPointer<Compiler>(FactoryCompiler::CreateCompiler(&m_iniFile, &m_projectIniFile));
        m_useSyntaxSystem = true;
        return true;
     }
@@ -58,7 +49,10 @@ bool SourceBuilder::Build(QString source)
     QStringList lst = source.split("\n");
 
 
-    compiler = FactoryCompiler::CreateCompiler(&m_iniFile, &m_projectIniFile);
+    compiler = QSharedPointer<Compiler>(FactoryCompiler::CreateCompiler(&m_iniFile, &m_projectIniFile));
+    qDebug() << "CREATED COMPILER " <<compiler;
+
+
     compiler->m_parser.m_diskFiles = getFileList();
     compiler->m_parser.m_currentDir = m_curDir;
 
@@ -69,15 +63,15 @@ bool SourceBuilder::Build(QString source)
     m_filename = m_currentSourceFile.split(".ras")[0];
 //    m_filename = m_curDir+"/"+ m_currentSourceFile.split(".")[0];
 
-    if (m_system != nullptr) {
+/*    if (m_system != nullptr) {
         delete m_system;
     }
+*/
 
 
-
-    m_system = FactorySystem::Create(AbstractSystem::SystemFromString(
+    m_system = QSharedPointer<AbstractSystem>(FactorySystem::Create(AbstractSystem::SystemFromString(
                                          m_projectIniFile.getString("system")),
-                                        &m_iniFile, &m_projectIniFile);
+                                        &m_iniFile, &m_projectIniFile));
 
 
 
@@ -90,7 +84,7 @@ bool SourceBuilder::Build(QString source)
 //    return false;
 
 
-    m_buildSuccess = compiler->Build(m_system, path);
+    m_buildSuccess = compiler->Build(m_system.get(), path);
 
 
 
@@ -101,6 +95,21 @@ bool SourceBuilder::Build(QString source)
 //     qDebug() << "Saving to "+m_filename + ".asm";
 
      return m_buildSuccess;
+}
+
+void SourceBuilder::Destroy()
+{
+/*    if (compiler!=nullptr) {
+        qDebug() << "~SourceBuilder TRYING TO DESTROY COMPILER " <<compiler;
+        compiler->Destroy();
+        delete compiler;
+        compiler = nullptr;
+    }*/
+/*    if (m_system!=nullptr && !m_useSyntaxSystem) {
+        delete m_system;
+    }
+    m_system = nullptr;
+*/
 }
 
 

@@ -27,7 +27,13 @@
 #include "source/LeLib/util/util.h"
 
 
+
+
+
 bool FormRasEditor::m_broadcast = true;
+//SourceBuilder* BuilderThread::m_builder = nullptr;
+
+
 FormRasEditor::FormRasEditor(QWidget *parent) :
     TRSEDocument(parent),
     ui(new Ui::FormRasEditor)
@@ -244,10 +250,12 @@ void FormRasEditor::Build()
 //    if (m_builderThread.m_builder!=nullptr)
   //      delete m_builderThread.m_builder;
 
-    if (m_builderThread.m_builder!=nullptr)
+/*    if (m_builderThread.m_builder!=nullptr) {
+//        m_builderThread.m_builder->Destroy();
         delete m_builderThread.m_builder;
-
-    m_builderThread.m_builder = new SourceBuilder(m_iniFile, m_projectIniFile, m_currentDir, m_currentSourceFile);
+    }
+*/
+    m_builderThread.m_builder = QSharedPointer<SourceBuilder>(new SourceBuilder(m_iniFile, m_projectIniFile, m_currentDir, m_currentSourceFile));
 
     emit requestBuild();
 
@@ -783,7 +791,7 @@ void FormRasEditor::MemoryAnalyze()
 
     m_mca.ClassifyZP(m_builderThread.m_builder->compiler->m_assembler->blocks);
 
-    DialogMemoryAnalyze* dma = new DialogMemoryAnalyze(m_iniFile,m_builderThread.m_builder->m_system);
+    DialogMemoryAnalyze* dma = new DialogMemoryAnalyze(m_iniFile,m_builderThread.m_builder->m_system.get());
     dma->Initialize(m_builderThread.m_builder->compiler->m_assembler->blocks, m_iniFile->getInt("memory_analyzer_font_size"));
     dma->resize(m_iniFile->getdouble("memory_analyzer_window_width"),m_iniFile->getdouble("memory_analyzer_window_height"));
 

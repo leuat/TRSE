@@ -2,6 +2,9 @@
 
 QMap<SystemLabel::Type, QColor> AbstractSystem::m_labelColors;
 
+AbstractSystem::AbstractSystem(AbstractSystem *a) {
+}
+
 void AbstractSystem::InitLabelColors() {
     m_labelColors[SystemLabel::IO] = QColor(255,128,50);
     m_labelColors[SystemLabel::SID] = QColor(255,255,128);

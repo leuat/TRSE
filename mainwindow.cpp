@@ -413,7 +413,7 @@ void MainWindow::RefreshFileList()
 
 }
 
-void MainWindow::AcceptUpdateSourceFiles(SourceBuilder *sourceBuilder)
+void MainWindow::AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBuilder)
 {
     FormRasEditor::m_broadcast=false;
 
@@ -432,7 +432,7 @@ void MainWindow::AcceptUpdateSourceFiles(SourceBuilder *sourceBuilder)
             if (files.contains(name)) {
                 sourceBuilder->compiler->CleanupCycleLinenumbers(name, sourceBuilder->compiler->m_assembler->m_cycles, sourceBuilder->compiler->m_assembler->m_cyclesOut);
                 sourceBuilder->compiler->CleanupCycleLinenumbers(name,sourceBuilder->compiler->m_assembler->m_blockCycles,sourceBuilder->compiler->m_assembler->m_blockCyclesOut);
-                r->m_builderThread.m_builder = sourceBuilder;
+                r->m_builderThread.m_builder = QSharedPointer<SourceBuilder>(sourceBuilder);
                 r->HandleBuildComplete();
 
             }

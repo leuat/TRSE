@@ -31,22 +31,22 @@
 #include "source/Compiler/assembler/astdispatcher68000.h"
 #include "source/Compiler/assembler/astdispatcherx86.h"
 #include "source/LeLib/util/cinifile.h"
-
+#include <QSharedPointer>
 #include "source/Compiler/systems/abstractsystem.h"
 
 class Compiler
 {
 public:
     Node* m_tree = nullptr;
-    Assembler* m_assembler = nullptr;
-    AbstractASTDispatcher* m_dispatcher = nullptr;
+    QSharedPointer<Assembler> m_assembler = nullptr;
+    QSharedPointer<AbstractASTDispatcher> m_dispatcher = nullptr;
     Parser m_parser;
     Lexer m_lexer;
     CIniFile* m_ini, *m_projectIni;
     FatalErrorException recentError;
     Compiler(CIniFile* ini, CIniFile* pIni);
-    Compiler();
-
+    Compiler() {};
+    ~Compiler();
 
 
 

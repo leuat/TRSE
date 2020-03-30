@@ -31,8 +31,9 @@ Compiler::Compiler(CIniFile* ini, CIniFile* pIni)
 
 }
 
-Compiler::Compiler() {
-//    qDebug() << "~COMPILER DESTROYED "<<this;
+Compiler::~Compiler() {
+  //  qDebug() << "~COMPILER DESTROYED "<<this;
+    Destroy();
 }
 
 
@@ -59,6 +60,8 @@ void Compiler::Parse(QString text, QStringList lst)
         //exit(1);
     } catch (FatalErrorException e) {
 //        qDebug() << "ERROR parse " << e.message;
+        //m_tree->Delete();
+        m_tree = nullptr;
         HandleError(e, "Error during parsing");
     }
 
@@ -73,12 +76,12 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
         //qDebug() << "Compiler::Build : tree not parsed!";
         return false;
     }
-    if (m_assembler!=nullptr) {
+/*    if (m_assembler!=nullptr) {
         m_assembler->Delete();
         delete m_assembler;
         m_assembler = nullptr;
     }
-
+*/
     system->DefaultValues();
     Syntax::s.m_currentSystem->DefaultValues();
 
@@ -103,9 +106,9 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
     if (m_tree!=nullptr)
         try {
         dynamic_cast<NodeProgram*>(m_tree)->m_initJumps = m_parser.m_initJumps;
-        m_dispatcher->as = m_assembler;
+        m_dispatcher->as = m_assembler.get();
 
-        m_tree->Accept(m_dispatcher);
+        m_tree->Accept(m_dispatcher.get());
 
     } catch (FatalErrorException e) {
         HandleError(e,"Error during build");
@@ -202,7 +205,7 @@ void Compiler::Destroy()
 
     m_tree = nullptr;
 
-    if (m_assembler!=nullptr) {
+/*    if (m_assembler!=nullptr) {
         m_assembler->Delete();
         delete m_assembler;
     }
@@ -212,6 +215,7 @@ void Compiler::Destroy()
         delete m_dispatcher;
         m_dispatcher = nullptr;
     }
+    */
 }
 
 

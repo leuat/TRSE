@@ -44,6 +44,7 @@
 
 #include <QThread>
 #include <QElapsedTimer>
+#include <QSharedPointer>
 
 namespace Ui {
     class FormRasEditor;
@@ -62,7 +63,7 @@ public:
 class BuilderThread : public QThread {
     Q_OBJECT
 public:
-    SourceBuilder* m_builder = nullptr;
+    QSharedPointer<SourceBuilder> m_builder;
     QString m_source, m_filename;
     bool m_isRunning = false;
     void run() override;
@@ -158,7 +159,7 @@ private:
 
 signals:
     void OpenOtherFile(QString filename, int ln);
-    void NotifyOtherSourceFiles(SourceBuilder* builder);
+    void NotifyOtherSourceFiles(QSharedPointer<SourceBuilder> builder);
 private slots:
     void on_leSearch_textChanged();
 

@@ -3,8 +3,8 @@
 
 void CompilerM68K::InitAssemblerAndDispatcher(AbstractSystem *system)
 {
-    m_assembler = new AsmM68000();//
-    m_dispatcher = new ASTDispather68000();
+    m_assembler = QSharedPointer<AsmM68000>(new AsmM68000());//
+    m_dispatcher = QSharedPointer<ASTDispather68000>(new ASTDispather68000());
 
 }
 

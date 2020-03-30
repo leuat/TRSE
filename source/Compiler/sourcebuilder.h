@@ -6,6 +6,7 @@
 #include "source/Compiler/systems/abstractsystem.h"
 #include "source/Compiler/systems/factorysystem.h"
 #include <QThread>
+#include <QSharedPointer>
 
 
 class SourceBuilder
@@ -22,10 +23,14 @@ public:
     bool m_useSyntaxSystem = false;
 
 
-    AbstractSystem* m_system = nullptr;
-    Compiler* compiler = nullptr;
-    bool Build(QString source);
+    QSharedPointer<AbstractSystem> m_system;
+    QSharedPointer<Compiler> compiler;
+    //QSharedPointer<Compiler> compiler;
 
+//    AbstractSystem* m_system = nullptr;
+    //Compiler* compiler = nullptr;
+    bool Build(QString source);
+    void Destroy();
 
     bool Assemble();
 

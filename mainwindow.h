@@ -198,7 +198,7 @@ public:
 
     void RefreshFileList();
 public slots:
-    void AcceptUpdateSourceFiles(SourceBuilder* sourceBuilder);
+    void AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBuilder);
 
 
     void acceptBuildMain() {

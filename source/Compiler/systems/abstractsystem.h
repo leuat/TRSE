@@ -34,6 +34,10 @@ public:
         if (m_labelColors.count()==0)
             InitLabelColors();
     }
+    AbstractSystem() {
+
+    }
+    AbstractSystem(AbstractSystem* a);
     QMap<QString, QString> m_systemParams;
     QElapsedTimer timer;
     QString m_orgOutput;
