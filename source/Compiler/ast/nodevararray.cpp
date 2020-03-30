@@ -27,7 +27,7 @@ NodeVarArray::NodeVarArray(Token token, Node *expr):Node() {
 }
 
 
-void NodeVarArray::ExecuteSym(SymbolTable *symTab) {
+void NodeVarArray::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     if (m_var!=nullptr)
         m_var->ExecuteSym(symTab);
     if (m_expr!=nullptr)

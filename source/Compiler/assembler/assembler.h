@@ -193,7 +193,7 @@ public:
     QString m_term;
     QMap<QString, Stack> m_stack;
     QMap<QString, LabelStack> m_labelStack;
-    SymbolTable* m_symTab;
+    QSharedPointer<SymbolTable> m_symTab;
     QString m_projectDir;
     QVector<QSharedPointer<MemoryBlock>> blocks;
 

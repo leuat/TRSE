@@ -66,7 +66,7 @@ public:
     }
     QCompleter *completer() const;
     QAbstractItemModel *modelFromFile(const QString& fileName);
-    QAbstractItemModel *modelFromTRSE(SymbolTable* symtab, Parser* parser);
+    QAbstractItemModel *modelFromTRSE(QSharedPointer<SymbolTable>  symtab, Parser* parser);
 
 
     void SetIndent();
@@ -78,7 +78,7 @@ public:
 
     void FixBackTab(QKeyEvent* e);
 
-    void InitCompleter(SymbolTable* m_symTab, Parser* parser);
+    void InitCompleter(QSharedPointer<SymbolTable>  m_symTab, Parser* parser);
 
     QMap<int,int> m_cycles, m_blockCycles;
 

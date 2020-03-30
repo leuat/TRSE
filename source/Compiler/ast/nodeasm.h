@@ -38,7 +38,7 @@ public:
         m_op = t;
     }
 
-    void ExecuteSym(SymbolTable* symTab) override {
+    void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override {
 
     }
 

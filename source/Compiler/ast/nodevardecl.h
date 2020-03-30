@@ -48,7 +48,7 @@ public:
 
     NodeVarDecl(Node* varNode, Node* typeNode);
 
-    void parseConstants(SymbolTable* symTab) override {
+    void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_varNode!=nullptr)
             m_varNode->parseConstants(symTab);
         if (m_typeNode!=nullptr)
@@ -63,7 +63,7 @@ public:
         return m_dataSize;
     }
 
-    void ExecuteSym(SymbolTable* symTab) override;
+    void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);
     }

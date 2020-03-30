@@ -40,7 +40,7 @@ void NodeAssign::Delete()
     Node::Delete();
 }
 
-void NodeAssign::ExecuteSym(SymbolTable *symTab) {
+void NodeAssign::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     QString varName = ((NodeVar*)m_left)->value;
     Symbol* varSymbol = symTab->Lookup(varName, m_op.m_lineNumber);
     m_right->ExecuteSym(symTab);

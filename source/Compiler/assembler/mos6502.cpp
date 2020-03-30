@@ -110,8 +110,8 @@ bool AsmMOS6502::DeclareRecord(QString name, QString type, int count, QStringLis
 {
     if (m_symTab->m_records.contains(type)) {
 //        ErrorHandler::e.Error("Record types not implemented yet: " + type);
-        SymbolTable* st = m_symTab->m_records[type];
-        for (Symbol* s : st->m_symbols) {
+        QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
+        for (QSharedPointer<Symbol> s : st->m_symbols) {
             //qDebug() << "WTF " <<s->m_name <<s->m_type;
             // Build the name
             QString n = name + "_" + st->m_name+"_"+s->m_name;
@@ -315,7 +315,7 @@ void AsmMOS6502::DeclareVariable(QString name, QString type, QString initval, QS
 
 /*    if (m_symTab->m_records.contains(type)) {
 //        ErrorHandler::e.Error("Record types not implemented yet: " + type);
-        SymbolTable* st = m_symTab->m_records[type];
+        QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
         for (Symbol* s : st->m_symbols) {
             //qDebug() << "WTF " <<s->m_name <<s->m_type;
             // Build the name

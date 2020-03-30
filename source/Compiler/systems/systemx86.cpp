@@ -1,6 +1,6 @@
 #include "systemx86.h"
 
-void SystemX86::Assemble(QString &text, QString filename, QString currentDir, SymbolTable* symTab)
+void SystemX86::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable>  symTab)
 {
     QString output;
     int time = timer.elapsed();

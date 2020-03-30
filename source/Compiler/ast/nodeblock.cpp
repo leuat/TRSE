@@ -26,7 +26,7 @@ void NodeBlock::SetParameter(QString name, PVar var) {
     //        if (s==nullptr)
     //          ErrorHandler::e.Error("Could not find variable :" + name,m_op.m_lineNumber);
 
-    s->m_value = new PVar(var);
+    s->m_value = QSharedPointer<PVar>(new PVar(var));
 }
 
 void NodeBlock::Delete() {
@@ -34,7 +34,7 @@ void NodeBlock::Delete() {
 //    qDebug()<< "NODEBLOCK DETELET";
     if (m_useOwnSymTab && m_symTab!=nullptr) {
         m_symTab->Delete();
-        delete m_symTab;
+//        delete m_symTab;
     }
     if (m_compoundStatement!=nullptr) {
         m_compoundStatement->Delete();
@@ -65,12 +65,12 @@ void NodeBlock::PopZeroPointers(Assembler *as) {
 
 
 
-void NodeBlock::ExecuteSym(SymbolTable *symTab) {
+void NodeBlock::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
     m_useOwnSymTab = false;
 
     if (m_useOwnSymTab) {
         if (m_symTab == nullptr)
-            m_symTab = new SymbolTable();
+            m_symTab = QSharedPointer<SymbolTable>(new SymbolTable());
     }
     else m_symTab = symTab;
 

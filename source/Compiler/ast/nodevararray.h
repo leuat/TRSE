@@ -37,7 +37,7 @@ public:
     void StoreAcc(Assembler* as);
 
 
-    void parseConstants(SymbolTable* symTab) override {
+    void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_var!=nullptr)
             m_var->parseConstants(symTab);
         if (m_expr!=nullptr)
@@ -45,7 +45,7 @@ public:
     }
 
 
-    void ExecuteSym(SymbolTable* symTab);
+    void ExecuteSym(QSharedPointer<SymbolTable>  symTab);
 
 
 };

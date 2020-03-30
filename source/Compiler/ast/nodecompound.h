@@ -37,12 +37,12 @@ public:
         m_op = t;
     }
     void Delete() override;
-    void ExecuteSym(SymbolTable* symTab) override;
+    void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);
     }
-    void parseConstants(SymbolTable* symTab) override {
+    void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         for (Node* n: children)
             n->parseConstants(symTab);
     }

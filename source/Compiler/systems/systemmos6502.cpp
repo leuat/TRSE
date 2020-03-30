@@ -5,7 +5,7 @@
 
 
 
-void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir, SymbolTable* symTab)
+void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir, QSharedPointer<SymbolTable>  symTab)
 {
 
 

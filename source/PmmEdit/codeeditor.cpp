@@ -98,7 +98,7 @@ QAbstractItemModel *CodeEditor::modelFromFile(const QString &fileName)
     return new QStringListModel(words, completer());
 }
 
-QAbstractItemModel *CodeEditor::modelFromTRSE(SymbolTable *symtab, Parser* parser)
+QAbstractItemModel *CodeEditor::modelFromTRSE(QSharedPointer<SymbolTable> symtab, Parser* parser)
 {
     QStringList words;
     for (QString s: Syntax::s.builtInFunctions.keys()) {
@@ -115,7 +115,7 @@ QAbstractItemModel *CodeEditor::modelFromTRSE(SymbolTable *symtab, Parser* parse
             words.append(s );
         }
 
-        for (Symbol* s: symtab->m_symbols)
+        for (QSharedPointer<Symbol> s: symtab->m_symbols)
             words.append(s->m_name );
     }
     if (parser!=nullptr) {
@@ -216,7 +216,7 @@ void CodeEditor::FixBackTab(QKeyEvent *e)
     setTextCursor(cur);
 
 }
-void CodeEditor::InitCompleter(SymbolTable* symTab, Parser* parser)
+void CodeEditor::InitCompleter(QSharedPointer<SymbolTable>  symTab, Parser* parser)
 {
 
     QCompleter* completer;

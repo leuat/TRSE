@@ -26,7 +26,7 @@
 
 
 
-void NodeBinaryClause::ExecuteSym(SymbolTable *sym) {
+void NodeBinaryClause::ExecuteSym(QSharedPointer<SymbolTable> sym) {
     if (m_left!=nullptr)
         m_left->ExecuteSym(sym);
     if (m_right!=nullptr)

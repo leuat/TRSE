@@ -27,7 +27,7 @@ MemoryBlockInfo  Node::m_staticBlockInfo;
 QSharedPointer<MemoryBlock> Node::m_curMemoryBlock = nullptr;
 
 QMap<QString, bool> Node::flags;
-SymbolTable* Node::parserSymTab;
+QSharedPointer<SymbolTable>  Node::parserSymTab;
 
 QMap<Node*, Node*> Node::s_uniqueSymbols;
 
@@ -116,8 +116,6 @@ bool Node::verifyBlockBranchSize(Assembler *as, Node *testBlock)
     ASTDispather6502 dispatcher;
     dispatcher.as = &tmpAsm;
     testBlock->Accept(&dispatcher);
-//    testBlock->Build(&tmpAsm);
-//    qDebug() << "block count:" << tmpAsm.m_source.count();
     int blockCount = tmpAsm.m_source.count();
     return blockCount<80;
 

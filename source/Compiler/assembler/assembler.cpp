@@ -31,7 +31,7 @@ RegisterStack Assembler::m_internalZP;
 Assembler::Assembler()
 {
   //  LabelStack::sNumbersUsed.clear();
-    m_symTab = new SymbolTable();
+    m_symTab = QSharedPointer<SymbolTable>(new SymbolTable());
 }
 
 Assembler::~Assembler()
@@ -224,8 +224,8 @@ int Assembler::CountCycles(QString s)
 
 void Assembler::Delete()
 {
-  delete m_symTab;
-    m_symTab = nullptr;
+  //delete m_symTab;
+    //m_symTab = nullptr;
 
     m_source = QStringList();
 

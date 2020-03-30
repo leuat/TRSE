@@ -12972,7 +12972,7 @@ void Methods6502::ReadInput(Assembler *as)
     as->m_zbyte++;
     as->IncludeFile(":resources/code/nes_readinput.asm");
 
-    as->m_symTab->Define(new Symbol("buttons","byte"));
+    as->m_symTab->Define(QSharedPointer<Symbol>(new Symbol("buttons","byte")));
 }
 
 void Methods6502::PPUDump(Assembler *as, int hi, int lo, int x, int y)

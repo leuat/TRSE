@@ -16,7 +16,7 @@ public:
         m_programStartAddress = m_startAddress;
     }
 
-    virtual void Assemble(QString& text, QString file, QString currentDir, SymbolTable* symTab);
+    virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);
     virtual void PostProcess(QString& text, QString file, QString currentDir);
 };
 

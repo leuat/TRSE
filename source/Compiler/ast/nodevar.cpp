@@ -213,7 +213,7 @@ QString NodeVar::getValue(Assembler* as) {
 
         if (!as->m_symTab->m_records.contains(type))
                 ErrorHandler::e.Error("Could not find of record type : "+type + " of " + v,m_op.m_lineNumber);
-        //SymbolTable* t = as->m_symTab->m_records[type];
+        //QSharedPointer<SymbolTable>  t = as->m_symTab->m_records[type];
         v =v + "_"+type+"_"+((NodeVar*)m_subNode)->value;//m_subNode->getValue(as);
     }
     if (as->m_symTab->getCurrentProcedure()!="") {
@@ -235,7 +235,7 @@ bool NodeVar::isAddress() {
 }
 
 
-void NodeVar::ExecuteSym(SymbolTable *symTab) {
+void NodeVar::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
     QString varName = m_op.m_value;
     Symbol* varSymbol = symTab->Lookup(varName, m_op.m_lineNumber);
 

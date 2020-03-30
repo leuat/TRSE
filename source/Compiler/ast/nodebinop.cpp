@@ -30,7 +30,7 @@ NodeBinOP::NodeBinOP(Node *left, Token op, Node *right):Node() {
 }
 
 
-void NodeBinOP::ExecuteSym(SymbolTable *symTab) {
+void NodeBinOP::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     m_left->ExecuteSym(symTab);
     m_right->ExecuteSym(symTab);
 }
@@ -125,7 +125,7 @@ bool NodeBinOP::ContainsVariable(Assembler *as, QString var)
     }
 }
 
-void NodeBinOP::parseConstants(SymbolTable *symTab) {
+void NodeBinOP::parseConstants(QSharedPointer<SymbolTable>  symTab) {
 
  //   qDebug() << "NodeBinOp :: parse HERE1" << m_left->isPureNumeric() <<m_right->isPureNumeric();
 //    int a = m_left->getValueAsInt(nullptr);

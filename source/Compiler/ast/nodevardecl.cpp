@@ -41,7 +41,7 @@ void NodeVarDecl::Delete() {
 }
 
 
-void NodeVarDecl::ExecuteSym(SymbolTable *symTab) {
+void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
 
     NodeVarType* typeNode = dynamic_cast<NodeVarType*>(m_typeNode);
     QString typeName = typeNode->value;
@@ -65,9 +65,9 @@ void NodeVarDecl::ExecuteSym(SymbolTable *symTab) {
     if (symTab->m_records.contains(typeSymbol->m_name)) {
         // Create record symbol table
 //        qDebug() << "EXECUTESYM " << typeSymbol->m_name << varName;
-        SymbolTable* ns = symTab->m_records[typeSymbol->m_name];
-            for (Symbol* s : ns->m_symbols) {
-                Symbol* ns = new Symbol(varName + "_" + typeSymbol->m_name + "_"+s->m_name, s->m_type);
+        QSharedPointer<SymbolTable>  ns = symTab->m_records[typeSymbol->m_name];
+            for (QSharedPointer<Symbol> s : ns->m_symbols) {
+                QSharedPointer<Symbol> ns = QSharedPointer<Symbol>(new Symbol(varName + "_" + typeSymbol->m_name + "_"+s->m_name, s->m_type));
 //                if
   //              qDebug() << "TS "<<s->m_type;
                 if (s->m_type=="ARRAY") {
@@ -79,7 +79,7 @@ void NodeVarDecl::ExecuteSym(SymbolTable *symTab) {
             }
     }
 
-    Symbol* varSymbol = new VarSymbol(varName, typeSymbol->m_name);
+    QSharedPointer<Symbol> varSymbol = QSharedPointer<Symbol>(new VarSymbol(varName, typeSymbol->m_name));
     bool isFlaggedAsUsed = false;
     if (typeName == "INCSID")
         isFlaggedAsUsed = true;

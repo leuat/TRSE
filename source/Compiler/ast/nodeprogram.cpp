@@ -38,7 +38,7 @@ void NodeProgram::Delete() {
 }
 
 
-void NodeProgram::ExecuteSym(SymbolTable *symTab) {
+void NodeProgram::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     m_NodeBlock->ExecuteSym(symTab);
 }
 

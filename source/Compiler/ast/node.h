@@ -53,7 +53,7 @@ public:
     bool m_ignoreSuccess = false; // Used for binary expressions
     // Used to set various states, such as if binary operations are used etc
     static QMap<QString, bool> flags;
-    static SymbolTable* parserSymTab;
+    static QSharedPointer<SymbolTable>  parserSymTab;
 
     Node* m_left = nullptr, *m_right = nullptr;
     bool m_isWord = false;
@@ -84,7 +84,7 @@ public:
 
     int m_cycleCounter;
     static int m_currentLineNumber;
-    virtual void ExecuteSym(SymbolTable* symTab) = 0;
+    virtual void ExecuteSym(QSharedPointer<SymbolTable> symTab) = 0;
     virtual bool DataEquals(Node* other) { return false;}
     virtual QString HexValue() {return "0";}
     virtual int numValue() { return 0;}
@@ -158,7 +158,7 @@ public:
     bool verifyBlockBranchSize(Assembler *as, Node* testBlock);
 
 
-    virtual void parseConstants(SymbolTable* symTab) {
+    virtual void parseConstants(QSharedPointer<SymbolTable>  symTab) {
 
     }
 
@@ -167,7 +167,7 @@ public:
 
 class NoOp : public Node {
     public:
-    void ExecuteSym(SymbolTable* symTab) override {
+    void ExecuteSym(QSharedPointer<SymbolTable> symTab) override {
 
     }
     void Accept(AbstractASTDispatcher* dispatcher) override {
@@ -182,7 +182,7 @@ class NodeComment : public Node {
     NodeComment(QString com) {
         m_comment = com;
     }
-    void ExecuteSym(SymbolTable* symTab) override {
+    void ExecuteSym(QSharedPointer<SymbolTable> symTab) override {
 
     }
     void Accept(AbstractASTDispatcher* dispatcher) override {

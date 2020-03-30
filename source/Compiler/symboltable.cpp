@@ -24,7 +24,7 @@
 
 bool SymbolTable::isInitialized = false;
 int SymbolTable::m_currentSid = 0;
-QMap<QString, Symbol*> SymbolTable::m_constants;
+QMap<QString,QSharedPointer<Symbol>> SymbolTable::m_constants;
 
 SymbolTable::~SymbolTable() {
 /*    for (QString s: m_symbols.keys())
@@ -69,8 +69,8 @@ void SymbolTable::DefineSid(unsigned int initAddress, unsigned int playAddress) 
 
     QString init = "SIDFILE_"+s+"_INIT";
     QString play = "SIDFILE_"+s+"_PLAY";
-    m_constants[init] = new Symbol("$"+QString::number(initAddress,16),"ADDRESS", initAddress);
-    m_constants[play] = new Symbol("$"+QString::number(playAddress,16),"ADDRESS", playAddress);
+    m_constants[init] = QSharedPointer<Symbol>(new Symbol("$"+QString::number(initAddress,16),"ADDRESS", initAddress));
+    m_constants[play] = QSharedPointer<Symbol>(new Symbol("$"+QString::number(playAddress,16),"ADDRESS", playAddress));
 
 
 }
@@ -78,7 +78,7 @@ void SymbolTable::DefineSid(unsigned int initAddress, unsigned int playAddress) 
 bool SymbolTable::ContainsArrays()
 {
     for (QString ss: m_symbols.keys()) {
-        Symbol* s  = m_symbols[ss];
+        QSharedPointer<Symbol> s  = m_symbols[ss];
         if (s->m_type=="ARRAY")
             return true;
     }
@@ -120,42 +120,42 @@ void SymbolTable::Initialize()
         if (system.contains(currentSystem)) {
             int ival = Util::NumberFromStringHex(value);
             if (type=="b")
-                m_constants[constant] = new Symbol(value,"BYTE", ival);
+                m_constants[constant] = QSharedPointer<Symbol>(new Symbol(value,"BYTE", ival));
             if (type=="a")
-                m_constants[constant] = new Symbol("^"+value,"ADDRESS", ival);
+                m_constants[constant] = QSharedPointer<Symbol>(new Symbol("^"+value,"ADDRESS", ival));
             if (type=="i")
-                m_constants[constant] = new Symbol(value,"INTEGER", ival);
+                m_constants[constant] = QSharedPointer<Symbol>(new Symbol(value,"INTEGER", ival));
 
 //            if (constant=="KEY_2")
-  //              qDebug() << constant << Util::numToHex(value.toInt());
+  //              qDebug() << constant << Util::numToHex(value.toInt()));
 
-//            reservedWords.append(Token(TokenType::getType(word), word.toUpper()));
+//            reservedWords.append(Token(TokenType::getType(word), word.toUpper())));
         }
 
      }
     if (!m_constants.contains("SIDFILE_1_INIT")) {
-       m_constants["SIDFILE_1_INIT"] = new Symbol("","ADDRESS", 0);
-      m_constants["SIDFILE_2_INIT"] = new Symbol("","ADDRESS", 0);
-      m_constants["SIDFILE_1_PLAY"] = new Symbol("","ADDRESS", 0);
-      m_constants["SIDFILE_2_PLAY"] = new Symbol("","ADDRESS", 0);
+       m_constants["SIDFILE_1_INIT"] = QSharedPointer<Symbol>(new Symbol("","ADDRESS", 0));
+      m_constants["SIDFILE_2_INIT"] = QSharedPointer<Symbol>(new Symbol("","ADDRESS", 0));
+      m_constants["SIDFILE_1_PLAY"] = QSharedPointer<Symbol>(new Symbol("","ADDRESS", 0));
+      m_constants["SIDFILE_2_PLAY"] = QSharedPointer<Symbol>(new Symbol("","ADDRESS", 0));
     }
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 )
     for (unsigned char key: Syntax::s.m_c64keys.keys()) {
         C64Key k = Syntax::s.m_c64keys[key];
-        m_constants[k.m_key] = new Symbol(QString::number(k.m_value), "BYTE",  k.m_value);
+        m_constants[k.m_key] = QSharedPointer<Symbol>(new Symbol(QString::number(k.m_value), "BYTE",  k.m_value));
     }
 //    qDebug()  << Util::numToHex(m_constants["KEY_2"]->m_value->m_fVal);
 
 }
 
-void SymbolTable::Define(Symbol *s, bool isUsed) {
+void SymbolTable::Define(QSharedPointer<Symbol> s, bool isUsed) {
     m_symbols[m_currentProcedure+ s->m_name] = s;
     m_symbols[m_currentProcedure+ s->m_name]->isUsed = isUsed;
 }
 
 void SymbolTable::Delete() {
-    for (QString val : m_symbols.keys()) {
+/*    for (QString val : m_symbols.keys()) {
         Symbol* s = m_symbols[val];
         if (s!=nullptr) {
             if (s->m_value)
@@ -163,10 +163,10 @@ void SymbolTable::Delete() {
 
         }
         delete s;
-    }
+    }*/
     m_symbols.clear();
     // Delete static constants as well
-    if (isInitialized) {
+/*    if (isInitialized) {
         for (QString val : m_constants.keys()) {
             Symbol* s = m_symbols[val];
 
@@ -181,8 +181,9 @@ void SymbolTable::Delete() {
 
     }
     m_constants.clear();
-    for (QString s: m_records.keys())
-        delete m_records[s];
+    */
+//    for (QString s: m_records.keys())
+//        delete m_records[s];
     m_records.clear();
 
 }
@@ -194,45 +195,45 @@ void SymbolTable::setName(QString s) {
 void SymbolTable::InitBuiltins()
 {
 
-    Define(new BuiltInTypeSymbol("INTEGER",""));
-    Define(new BuiltInTypeSymbol("WORD",""));
-    Define(new BuiltInTypeSymbol("LONG",""));
-    Define(new BuiltInTypeSymbol("REAL",""));
-    Define(new BuiltInTypeSymbol("BYTE",""));
-    Define(new BuiltInTypeSymbol("STRING",""));
-    Define(new BuiltInTypeSymbol("CSTRING",""));
-    Define(new BuiltInTypeSymbol("POINTER",""));
-    Define(new BuiltInTypeSymbol("ARRAY",""));
-    Define(new BuiltInTypeSymbol("INCBIN",""));
-    Define(new BuiltInTypeSymbol("INCSID",""));
-    Define(new BuiltInTypeSymbol("INCNSF",""));
-    Define(new BuiltInTypeSymbol("RECORD",""));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("INTEGER","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("WORD","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("LONG","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("REAL","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("BYTE","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("STRING","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("CSTRING","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("POINTER","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("ARRAY","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("INCBIN","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("INCSID","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("INCNSF","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("RECORD","")));
 
-    Define(new Symbol("return",""));
+    Define(QSharedPointer<Symbol>(new Symbol("return","")));
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X86) {
-        Define(new Symbol("currentKey", "integer"));
+        Define(QSharedPointer<Symbol>(new Symbol("currentKey", "integer")));
     }
 
     if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES && Syntax::s.m_currentSystem->m_system!=AbstractSystem::X86)
-        Define(new Symbol("sine", "address"));
-    Define(new Symbol("log2_table", "address"));
-    Define(new Symbol("joystickup", "byte"));
-    Define(new Symbol("joystickdown", "byte"));
-    Define(new Symbol("joystickleft", "byte"));
-    Define(new Symbol("joystickright", "byte"));
-    Define(new Symbol("joystickbutton", "byte"));
+        Define(QSharedPointer<Symbol>(new Symbol("sine", "address")));
+    Define(QSharedPointer<Symbol>(new Symbol("log2_table", "address")));
+    Define(QSharedPointer<Symbol>(new Symbol("joystickup", "byte")));
+    Define(QSharedPointer<Symbol>(new Symbol("joystickdown", "byte")));
+    Define(QSharedPointer<Symbol>(new Symbol("joystickleft", "byte")));
+    Define(QSharedPointer<Symbol>(new Symbol("joystickright", "byte")));
+    Define(QSharedPointer<Symbol>(new Symbol("joystickbutton", "byte")));
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 ||
             Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20) {
 
-        Define(new Symbol("joy1", "byte"));
-        Define(new Symbol("joy1pressed", "byte"));
+        Define(QSharedPointer<Symbol>(new Symbol("joy1", "byte")));
+        Define(QSharedPointer<Symbol>(new Symbol("joy1pressed", "byte")));
     }
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64) {
 
-        Define(new Symbol("joy2", "byte"));
-        Define(new Symbol("joy2pressed", "byte"));
+        Define(QSharedPointer<Symbol>(new Symbol("joy2", "byte")));
+        Define(QSharedPointer<Symbol>(new Symbol("joy2pressed", "byte")));
     }
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 ||
@@ -243,35 +244,35 @@ void SymbolTable::InitBuiltins()
             Syntax::s.m_currentSystem->m_system==AbstractSystem::NES
             ) {
 
-        Define(new Symbol("screenmemory", "pointer"));
+        Define(QSharedPointer<Symbol>(new Symbol("screenmemory", "pointer")));
     }
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA) {
 
         for (int i=0;i<8;i++) {
             QString k = QString::number(i);
-            Define(new Symbol("copper_spritestruct"+k, "integer"));
-            Define(new Symbol("copper_spritedata"+k, "integer"));
+            Define(QSharedPointer<Symbol>(new Symbol("copper_spritestruct"+k, "integer")));
+            Define(QSharedPointer<Symbol>(new Symbol("copper_spritedata"+k, "integer")));
         }
 
-        Define(new Symbol("copper_bitplane0", "integer"));
-        Define(new Symbol("copper_bitplane1", "integer"));
-        Define(new Symbol("copper_bitplane2", "integer"));
-        Define(new Symbol("copper_bitplane3", "integer"));
-        Define(new Symbol("copper_bitplane4", "integer"));
-      //  Define(new Symbol("copper_bitplane0", "integer"));
-        Define(new Symbol("copper_mod_even", "integer"));
-        Define(new Symbol("copper_mod_odd", "integer"));
-        Define(new Symbol("copper_palette", "integer"));
-        Define(new Symbol("diwstrt", "integer"));
-        Define(new Symbol("diwstop", "integer"));
+        Define(QSharedPointer<Symbol>(new Symbol("copper_bitplane0", "integer")));
+        Define(QSharedPointer<Symbol>(new Symbol("copper_bitplane1", "integer")));
+        Define(QSharedPointer<Symbol>(new Symbol("copper_bitplane2", "integer")));
+        Define(QSharedPointer<Symbol>(new Symbol("copper_bitplane3", "integer")));
+        Define(QSharedPointer<Symbol>(new Symbol("copper_bitplane4", "integer")));
+      //  Define(new Symbol("copper_bitplane0", "integer")));
+        Define(QSharedPointer<Symbol>(new Symbol("copper_mod_even", "integer")));
+        Define(QSharedPointer<Symbol>(new Symbol("copper_mod_odd", "integer")));
+        Define(QSharedPointer<Symbol>(new Symbol("copper_palette", "integer")));
+        Define(QSharedPointer<Symbol>(new Symbol("diwstrt", "integer")));
+        Define(QSharedPointer<Symbol>(new Symbol("diwstop", "integer")));
 
-        Define(new Symbol("ddfstrt", "integer"));
-        Define(new Symbol("ddfstop", "integer"));
-        Define(new Symbol("copper_resolution", "integer"));
-        Define(new Symbol("copper_custom", "integer"));
-/*        Define(new Symbol("copper_wait_for_raster", "integer"));
-        Define(new Symbol("copper_palette_start", "integer"));
-        Define(new Symbol("copper_scroll", "integer"));
+        Define(QSharedPointer<Symbol>(new Symbol("ddfstrt", "integer")));
+        Define(QSharedPointer<Symbol>(new Symbol("ddfstop", "integer")));
+        Define(QSharedPointer<Symbol>(new Symbol("copper_resolution", "integer")));
+        Define(QSharedPointer<Symbol>(new Symbol("copper_custom", "integer")));
+/*        Define(new Symbol("copper_wait_for_raster", "integer")));
+        Define(new Symbol("copper_palette_start", "integer")));
+        Define(new Symbol("copper_scroll", "integer")));
 */
 
     }
@@ -318,7 +319,7 @@ QStringList SymbolTable::getUnusedVariables()
 Symbol *SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
 //            name = name.toUpper();
     if (m_constants.contains(name.toUpper())) {
-        return m_constants[name.toUpper()];
+        return m_constants[name.toUpper()].get();
     }
     // Create address on the fly
 
@@ -328,10 +329,10 @@ Symbol *SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
     // if ((isAddress || name.startsWith("$")) && !m_symbols.contains(name) ) {
     if ((name.startsWith("$")) && !m_symbols.contains(name) ) {
         //            qDebug() << "Creating new symbol:" << name;
-        Symbol* s = new Symbol(name, "address");
+        QSharedPointer<Symbol> s = QSharedPointer<Symbol>(new Symbol(name, "address"));
         s->isUsed = true;
         m_symbols[name] = s;
-        return s;
+        return s.get();
     }
 
 
@@ -360,11 +361,11 @@ Symbol *SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
     if (m_symbols.contains(localName)) {
     //    qDebug() << "Found local name " << localName;
         m_symbols[localName]->isUsed = true;
-        return m_symbols[localName];
+        return m_symbols[localName].get();
 
     }
     m_symbols[name]->isUsed = true;
-    return m_symbols[name];
+    return m_symbols[name].get();
 }
 
 Symbol *SymbolTable::LookupVariables(QString name, int lineNumber) {
@@ -373,12 +374,12 @@ Symbol *SymbolTable::LookupVariables(QString name, int lineNumber) {
         return nullptr;
     }
     m_symbols[name]->isUsed=true;
-    return m_symbols[name];
+    return m_symbols[name].get();
 }
 
 Symbol *SymbolTable::LookupConstants(QString name) {
     if (m_constants.contains(name)) {
-        return m_constants[name];
+        return m_constants[name].get();
     }
     return nullptr;
 }
@@ -416,20 +417,20 @@ TokenType::Type Symbol::getTokenType() {
 Symbol::Symbol(QString name, QString type) {
     m_name = name;
     m_type = type;
-    m_value = new PVar();
+    m_value = QSharedPointer<PVar>(new PVar());
 }
 
 Symbol::Symbol(QString name, QString type, float var) {
     m_name = name;
     m_type = type;
-    m_value = new PVar(var);
+    m_value = QSharedPointer<PVar>(new PVar(var));
 
 }
 
 Symbol::Symbol(QString name, QString type, QString var) {
     m_name = name;
     m_type = type;;
-    m_value = new PVar(var);
+    m_value = QSharedPointer<PVar>(new PVar(var));
 }
 
 int Symbol::getLength() {

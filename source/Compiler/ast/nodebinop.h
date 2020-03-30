@@ -38,7 +38,7 @@ class NodeBinOP : public Node {
 public:
 
     NodeBinOP(Node* left, Token op, Node* right);
-    void ExecuteSym(SymbolTable* symTab) override;
+    void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
     QString BothConstants(Assembler* as);
 
@@ -72,7 +72,7 @@ public:
     bool ContainsVariable(Assembler* as, QString var);
 
 
-    void parseConstants(SymbolTable* symTab) override;
+    void parseConstants(QSharedPointer<SymbolTable>  symTab) override;
 
 
     QString getValue(Assembler* as)  override {

@@ -43,14 +43,14 @@ public:
     void Delete() override;
 
 
-    void parseConstants(SymbolTable* symTab) override {
+    void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_procedure!=nullptr)
             m_procedure->parseConstants(symTab);
         for (Node* n : m_parameters)
             n->parseConstants(symTab);
     }
 
-    void ExecuteSym(SymbolTable* symTab) override;
+    void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);

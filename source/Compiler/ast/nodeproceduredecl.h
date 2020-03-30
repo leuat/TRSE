@@ -40,7 +40,7 @@ public:
 
 
     NodeProcedureDecl(Token t, QString m);
-    void parseConstants(SymbolTable* symTab) override {
+    void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_block!=nullptr)
             m_block->parseConstants(symTab);
         for (Node* n:m_paramDecl)
@@ -58,7 +58,7 @@ public:
     void SetParametersValue(QVector<PVar>& lst);
 
 
-    void ExecuteSym(SymbolTable* symTab) override;
+    void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);

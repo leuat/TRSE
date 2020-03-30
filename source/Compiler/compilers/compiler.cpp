@@ -94,8 +94,8 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
     m_assembler->m_symTab->m_useLocals = m_parser.m_symTab->m_useLocals;
     m_assembler->m_symTab->m_records = m_parser.m_symTab->m_records;
 
-    for (SymbolTable* st : m_parser.m_symTab->m_records)
-        m_assembler->m_symTab->Define(new Symbol(st->m_name, "RECORD"));
+    for (QSharedPointer<SymbolTable>  st : m_parser.m_symTab->m_records)
+        m_assembler->m_symTab->Define(QSharedPointer<Symbol>(new Symbol(st->m_name, "RECORD")));
 
     if (m_tree!=nullptr)
         try {

@@ -38,7 +38,7 @@ public:
     QVector<Node*> m_decl;
     QString forceLabel = "";
     Node* m_compoundStatement = nullptr;
-    SymbolTable* m_symTab = nullptr;
+    QSharedPointer<SymbolTable>  m_symTab = nullptr;
     bool m_useOwnSymTab;
     bool m_isMainBlock = false;
     bool m_isProcedure = false;
@@ -56,7 +56,7 @@ public:
     void Delete() override;
 
     void PopZeroPointers(Assembler* as);
-    void parseConstants(SymbolTable* symTab) override {
+    void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         for (Node* n: m_decl)
             if (n!=nullptr)
             n->parseConstants(symTab);
@@ -65,7 +65,7 @@ public:
     }
 
 
-    void ExecuteSym(SymbolTable* symTab) override;
+    void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);

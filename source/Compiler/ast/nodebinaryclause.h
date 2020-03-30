@@ -34,7 +34,7 @@ public:
         m_left = left;
         m_op = op;
     }
-    void ExecuteSym(SymbolTable* sym) override;
+    void ExecuteSym(QSharedPointer<SymbolTable> sym) override;
 
     bool cannotBeSimplified(Assembler* as);
 
@@ -45,7 +45,7 @@ public:
         dispatcher->dispatch(this);
     }
 
-    void parseConstants(SymbolTable* symTab) override {
+    void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_left!=nullptr)
             m_left->parseConstants(symTab);
         if (m_right!=nullptr)

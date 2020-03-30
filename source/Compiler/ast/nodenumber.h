@@ -36,7 +36,7 @@ public:
     float m_val;
     NodeNumber(Token op, int val);
     QString m_strVal = "";
-    void ExecuteSym(SymbolTable* symTab) override {
+    void ExecuteSym(QSharedPointer<SymbolTable> symTab) override {
     }
 
     bool isAddress() override;

@@ -42,7 +42,7 @@ public:
 
 
     void Delete() override;
-    void parseConstants(SymbolTable* symTab) override {
+    void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_left!=nullptr)
             m_left->parseConstants(symTab);
         if (m_right!=nullptr)
@@ -50,7 +50,7 @@ public:
     }
 
 
-    void ExecuteSym(SymbolTable* symTab) override {
+    void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override {
         m_right->ExecuteSym(symTab);
     }
     void Accept(AbstractASTDispatcher* dispatcher) override {

@@ -83,7 +83,7 @@ public:
     int m_pass = 0, m_acc=0;
     bool m_ignoreAll = false;
     QStringList  m_initJumps;
-    SymbolTable* m_symTab = nullptr;
+    QSharedPointer<SymbolTable>  m_symTab = nullptr;
     CIniFile* m_projectIni, *m_settingsIni;
     Parser();
     Parser(Lexer* l, CIniFile* projectFile) {

@@ -31,7 +31,7 @@ void NodeCompound::Delete() {
     children.clear();
 }
 
-void NodeCompound::ExecuteSym(SymbolTable *symTab) {
+void NodeCompound::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     Pmm::Data::d.Set(m_op.m_lineNumber, m_op.m_currentLineText);
     for (Node* n:children) {
         ErrorHandler::e.DebugLow("Calling Compound Node",level);

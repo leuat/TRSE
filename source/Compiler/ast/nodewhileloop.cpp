@@ -36,6 +36,6 @@ void NodeWhileLoop::Delete() {
 
 }
 
-void NodeWhileLoop::ExecuteSym(SymbolTable *symTab) {
+void NodeWhileLoop::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     m_block->ExecuteSym(symTab);
 }

@@ -43,6 +43,6 @@ void NodeProcedure::Delete() {
     m_parameters.clear();
 }
 
-void NodeProcedure::ExecuteSym(SymbolTable *symTab) {
+void NodeProcedure::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     m_procedure ->ExecuteSym(symTab);
 }

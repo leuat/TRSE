@@ -91,6 +91,6 @@ void NodeProcedureDecl::SetParametersValue(QVector<PVar> &lst) {
 }
 
 
-void NodeProcedureDecl::ExecuteSym(SymbolTable *symTab) {
+void NodeProcedureDecl::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     m_block->ExecuteSym(symTab);
 }

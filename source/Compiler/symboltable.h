@@ -40,7 +40,7 @@ public:
     int m_org = 0;
     int m_size = 0;
     bool isUsed = false;
-    PVar* m_value = nullptr;
+    QSharedPointer<PVar> m_value = nullptr;
     TokenType::Type getTokenType();
     Symbol(QString name, QString type="");
     Symbol(QString name, QString type, float var);
@@ -69,9 +69,9 @@ class SymbolTable
 private:
     QString m_currentProcedure = "";
 public:
-    QMap<QString, Symbol*> m_symbols;
-    QMap<QString, SymbolTable*> m_records;
-    static QMap<QString, Symbol*> m_constants;
+    QMap<QString, QSharedPointer<Symbol>> m_symbols;
+    QMap<QString, QSharedPointer<SymbolTable> > m_records;
+    static QMap<QString, QSharedPointer<Symbol>> m_constants;
     QString m_name="";
 
     ~SymbolTable();
@@ -92,7 +92,7 @@ public:
 
     void ExitProcedureScope(bool removeSymbols);
 
-//    QMap<QString,SymbolTable*> m_locals;
+//    QMap<QString,QSharedPointer<SymbolTable> > m_locals;
 
     SymbolTable();
     static SymbolTable s;
@@ -106,7 +106,7 @@ public:
     static bool isInitialized;
     static void Initialize();
 
-    void Define(Symbol* s, bool isUsed=true);
+    void Define(QSharedPointer<Symbol> s, bool isUsed=true);
     void Delete();
 
     void setName(QString s);

@@ -44,7 +44,7 @@ public:
         m_param = p;
     }
 
-    void parseConstants(SymbolTable* symTab) override {
+    void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_NodeBlock!=nullptr)
             m_NodeBlock->parseConstants(symTab);
     }
@@ -54,7 +54,7 @@ public:
 
     void Delete() override;
 
-    void ExecuteSym(SymbolTable* symTab) override;
+    void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
 
     void Accept(AbstractASTDispatcher* dispatcher) override {

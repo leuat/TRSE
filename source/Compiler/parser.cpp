@@ -36,8 +36,8 @@ void Parser::Delete()
 //        }
     }
     m_procedures.clear();
-    delete m_symTab;
-    m_symTab = nullptr;
+    //delete m_symTab;
+    //m_symTab = nullptr;
 }
 
 void Parser::InitObsolete()
@@ -852,7 +852,7 @@ Node *Parser::Variable()
 
     bool isConstant = false;
     if (SymbolTable::m_constants.contains(m_currentToken.m_value.toUpper())) {
-        Symbol* s = SymbolTable::m_constants[m_currentToken.m_value.toUpper()];
+        QSharedPointer<Symbol> s = SymbolTable::m_constants[m_currentToken.m_value.toUpper()];
         isConstant=true;
 
 //        qDebug() << "looking for " << m_currentToken.m_value << " , found symbol: " << s->m_name << " with value " << s->m_value->m_fVal << " of type " << s->m_type;
@@ -977,7 +977,7 @@ void Parser::Record(QString name)
 {
     Eat(TokenType::RECORD);
 //    SymbolTable
-    SymbolTable* record = new SymbolTable();
+    QSharedPointer<SymbolTable>  record = QSharedPointer<SymbolTable> (new SymbolTable());
     record->m_symbols.clear();
     m_symTab->m_records[name] = record;
     //m_symTab->Define(new Symbol(name,"record"));
@@ -989,7 +989,7 @@ void Parser::Record(QString name)
             NodeVarDecl* nv = dynamic_cast<NodeVarDecl*>(n);
             NodeVarType* typ = dynamic_cast<NodeVarType*>(nv->m_typeNode);
             NodeVar* var = dynamic_cast<NodeVar*>(nv->m_varNode);
-            Symbol* s = new Symbol(var->value, typ->value);
+            QSharedPointer<Symbol> s = QSharedPointer<Symbol>(new Symbol(var->value, typ->value));
             s->m_arrayType = typ->m_arrayVarType.m_type;
             s->m_arrayTypeText = typ->m_arrayVarTypeText;
             record->Define(s);
@@ -1274,7 +1274,7 @@ Node *Parser::Program(QString param)
 //    NodeVar* varNode = (NodeVar*)Variable();
     QString progName = m_currentToken.m_value;// varNode->value;
     Eat();
-    m_symTab->Define(new Symbol(progName,"STRING"));
+    m_symTab->Define(QSharedPointer<Symbol>(new Symbol(progName,"STRING")));
     Eat(TokenType::SEMI);
     NodeBlock* block = (NodeBlock*)Block(true);
     NodeProgram* program = new NodeProgram(progName,  param, block);
@@ -1688,7 +1688,7 @@ Node* Parser::Parse(bool removeUnusedDecls, QString param, QString globalDefines
     m_lexer->m_currentComment = "";
     m_parserBlocks.clear();
     SymbolTable::m_constants.clear();
-    m_symTab = new SymbolTable();
+    m_symTab = QSharedPointer<SymbolTable>(new SymbolTable());
     m_symTab->m_useLocals = useLocals;
 
 
@@ -2027,7 +2027,7 @@ QVector<Node*> Parser::ConstDeclaration()
     Eat(TokenType::EQUALS);
     int value = GetParsedInt(dType);
 
-    m_symTab->m_constants[name.toUpper()] = new Symbol(name.toUpper(),type.toUpper(),value);
+    m_symTab->m_constants[name.toUpper()] = QSharedPointer<Symbol>(new Symbol(name.toUpper(),type.toUpper(),value));
     return QVector<Node*>();
 }
 
@@ -2046,8 +2046,8 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
     QVector<Node*> vars;
     vars.append(new NodeVar(m_currentToken));
     QString varName = m_currentToken.m_value;
-    QVector<Symbol*> syms;
-    syms.append(new Symbol(m_currentToken.m_value,""));
+    QVector<QSharedPointer<Symbol>> syms;
+    syms.append(QSharedPointer<Symbol>(new Symbol(m_currentToken.m_value,"")));
     m_symTab->Define(syms.last() ,false);
     Eat(TokenType::ID);
 
@@ -2066,7 +2066,7 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
         vars.append(new NodeVar(m_currentToken));
         AppendComment(vars[vars.count()-1]);
 
-        syms.append(new Symbol(m_currentToken.m_value,""));
+        syms.append(QSharedPointer<Symbol>(new Symbol(m_currentToken.m_value,"")));
         m_symTab->Define(syms.last() ,false);
 
         Eat(TokenType::ID);
@@ -2075,7 +2075,7 @@ QVector<Node *> Parser::VariableDeclarations(QString blockName)
 
     NodeVarType* typeNode = dynamic_cast<NodeVarType*>(TypeSpec());
     // Set all types
-    for (Symbol* s: syms) {
+    for (QSharedPointer<Symbol> s: syms) {
        s->m_type = typeNode->m_op.m_value;
        if (typeNode->m_data.count()!=0)
            s->m_size = typeNode->m_data.count();
@@ -2369,7 +2369,7 @@ Node *Parser::Constant()
     QString id = m_currentToken.m_value;
     if (SymbolTable::m_constants.contains(id)) {
         Eat(m_currentToken.m_type);
-        Symbol* s = SymbolTable::m_constants[id];
+        QSharedPointer<Symbol> s = SymbolTable::m_constants[id];
         Node* n =  new NodeNumber(Token(s->getTokenType(), s->m_value->m_fVal), s->m_value->m_fVal);
         return n;
     }

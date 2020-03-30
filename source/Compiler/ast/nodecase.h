@@ -19,7 +19,7 @@ public:
 
     void Delete() override;
 
-    void ExecuteSym(SymbolTable* symTab) override {
+    void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override {
         m_variable->ExecuteSym(symTab);
         for (Node* n: m_statements)
             n->ExecuteSym(symTab);
@@ -29,7 +29,7 @@ public:
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(this);
     }
-    void parseConstants(SymbolTable* symTab) override {
+    void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_variable!=nullptr)
             m_variable->parseConstants(symTab);
         for (Node* n:m_conditionals)

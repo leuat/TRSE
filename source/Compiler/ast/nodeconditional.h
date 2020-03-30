@@ -58,7 +58,7 @@ public:
     NodeConditional(Token op, int forcePage, Node* clause, Node* block, bool isWhile, Node* elseBlock=nullptr);
 
 
-    void parseConstants(SymbolTable* symTab) override {
+    void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_block!=nullptr)
             m_block->parseConstants(symTab);
         if (m_elseBlock!=nullptr)
@@ -78,7 +78,7 @@ public:
     void Delete() override;
 
 
-    void ExecuteSym(SymbolTable* symTab) override {
+    void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override {
        m_block->ExecuteSym(symTab);
     }
 

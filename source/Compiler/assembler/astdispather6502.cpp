@@ -3043,9 +3043,9 @@ void ASTDispather6502::AssignVariable(NodeAssign *node) {
 void ASTDispather6502::HandleNodeAssignCopyRecord(NodeAssign *node)
 {
     // Both are records of same type. Set up copy.
-    SymbolTable* stab = as->m_symTab->m_records[node->m_right->getTypeText(as)];
+    QSharedPointer<SymbolTable>  stab = as->m_symTab->m_records[node->m_right->getTypeText(as)];
     as->Comment("Handle assign copy records");
-    for (Symbol* s: stab->m_symbols) {
+    for (QSharedPointer<Symbol> s: stab->m_symbols) {
         NodeVar* l = new NodeVar(Token(TokenType::ID,node->m_left->getValue(as)));
         l->m_op.m_lineNumber = node->m_op.m_lineNumber;
         l->m_expr = ((NodeVar*)node->m_left)->m_expr;
