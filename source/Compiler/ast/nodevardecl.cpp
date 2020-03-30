@@ -57,7 +57,7 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
             typeName = typeNode->m_arrayVarType.m_value;
     }
 
-    Symbol* typeSymbol = symTab->Lookup(typeName, m_op.m_lineNumber);
+    QSharedPointer<Symbol> typeSymbol = symTab->Lookup(typeName, m_op.m_lineNumber);
 
 
     varName = varName.remove(symTab->getCurrentProcedure());

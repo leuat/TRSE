@@ -857,7 +857,7 @@ QString ASTDispather68000::getEndType(Assembler *as, Node *v) {
     TokenType::Type t = v->getType(as);
     if (nv!=nullptr && nv->m_expr!=nullptr) {
       //  qDebug() << nv->getValue(as);
-        Symbol* s = as->m_symTab->Lookup(nv->getValue(as), v->m_op.m_lineNumber, v->isAddress());
+        QSharedPointer<Symbol> s = as->m_symTab->Lookup(nv->getValue(as), v->m_op.m_lineNumber, v->isAddress());
         if (s!=nullptr) {
             t = s->m_arrayType;
 //            as->Comment("GetEndType : is array of type : " +TokenType::getType(t));
@@ -1088,7 +1088,7 @@ void ASTDispather68000::IncBin(Assembler* as, NodeVarDecl *node) {
         //            qDebug() << "bin: "<<v->getValue(as) << " at " << t->m_position;
 //        Appendix app(t->m_position);
 
-        Symbol* typeSymbol = as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber);
+        QSharedPointer<Symbol> typeSymbol = as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber);
         typeSymbol->m_org = Util::C64StringToInt(t->m_position);
         typeSymbol->m_size = size;
         //            qDebug() << "POS: " << typeSymbol->m_org;

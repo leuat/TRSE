@@ -32,7 +32,7 @@ Syntax::Syntax()
 
 void Syntax::Init(AbstractSystem::System s, CIniFile* m_ini, CIniFile* m_proj)
 {
-    m_currentSystem = FactorySystem::Create(s,m_ini, m_proj);
+    m_currentSystem = QSharedPointer<AbstractSystem>(FactorySystem::Create(s,m_ini, m_proj));
 /*    if (s==AbstractSystem::BBCM) {
         m_startAddress = 0x02000;
         m_programStartAddress = 0x2010;

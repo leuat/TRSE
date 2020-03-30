@@ -496,7 +496,7 @@ void ASTDispather6502::HandleRestBinOp(Node* node) {
     if ( dynamic_cast<const NodeVar*>(node->m_left) != nullptr) {
         NodeVar* v= (NodeVar*)node->m_left;
         varName = v->getValue(as);
-        Symbol* s = as->m_symTab->Lookup(varName, node->m_op.m_lineNumber);
+        QSharedPointer<Symbol> s = as->m_symTab->Lookup(varName, node->m_op.m_lineNumber);
     }
     isWord16 = node->isWord(as);
     if (node->m_isWord)
@@ -1160,7 +1160,7 @@ void ASTDispather6502::dispatch(NodeVarDecl *node)
         as->DeclareArray(v->value, t->m_arrayVarType.m_value, t->m_op.m_intVal, t->m_data, t->m_position);
         //qDebug() << "IS: " << TokenType::types[as->m_symTab->Lookup(v->getValue(as))->getTokenType()];
         node->m_dataSize=t->m_op.m_intVal;
-        Symbol* s = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
+        QSharedPointer<Symbol> s = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
         s->isUsed=false;
         //if (!v->isRecord(as))
         // Symbol needs reorganizing, move type to typearray while main type now is address. stupid name, should be array
@@ -1282,7 +1282,7 @@ void ASTDispather6502::IncBin(NodeVarDecl *node) {
         //            qDebug() << "bin: "<<v->getValue(as) << " at " << t->m_position;
         QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix(t->m_position));
 
-        Symbol* typeSymbol = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
+        QSharedPointer<Symbol> typeSymbol = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
         typeSymbol->m_org = Util::C64StringToInt(t->m_position);
         typeSymbol->m_size = size;
         //            qDebug() << "POS: " << typeSymbol->m_org;
@@ -2170,7 +2170,7 @@ void ASTDispather6502::dispatch(NodeVar *node)
 
     QString  val = node->getValue(as);
     Pmm::Data::d.lineNumber = node->m_op.m_lineNumber;
-    Symbol* s = as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber);
+    QSharedPointer<Symbol> s = as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber);
     //        if (s==nullptr) {
     //          ErrorHandler::e.Error("Could not find variable '" + value +"'.\nDid you mispell?", m_op.m_lineNumber);
     //    }
@@ -2203,7 +2203,7 @@ void ASTDispather6502::dispatch(NodeVar *node)
 
 
 bool ASTDispather6502::LoadXYVarOrNum(NodeVar *node, Node *other, bool isx) {
-    Symbol* s = as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber);
+    QSharedPointer<Symbol> s = as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber);
     NodeVar* var = dynamic_cast<NodeVar*>(other);
     //NodeNumber* num = dynamic_cast<NodeNumber*>(other);
     if (other==nullptr)
@@ -2241,7 +2241,7 @@ bool ASTDispather6502::LoadXYVarOrNum(NodeVar *node, Node *other, bool isx) {
 void ASTDispather6502::LoadByteArray(NodeVar *node) {
     // Optimizer: if expression is number, just return direct
 
-    Symbol* s = as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber);
+    QSharedPointer<Symbol> s = as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber);
     if (s->m_arrayType==TokenType::INTEGER)
         as->Comment("Load Integer array");
     else if (s->m_arrayType==TokenType::BYTE)
@@ -2923,7 +2923,7 @@ void ASTDispather6502::AssignVariable(NodeAssign *node) {
 
 
     as->Comment("Assigning single variable : " + v->getValue(as));
-    Symbol* s = as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber, v->isAddress());
+    QSharedPointer<Symbol> s = as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber, v->isAddress());
     //        if (s==nullptr)
     //          ErrorHandler::e.Error("Could not find variable :" + v->getValue(as),m_op.m_lineNumber);
 

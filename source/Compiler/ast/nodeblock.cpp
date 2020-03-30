@@ -22,7 +22,7 @@
 #include "nodeblock.h"
 
 void NodeBlock::SetParameter(QString name, PVar var) {
-    Symbol* s = m_symTab->Lookup(name, m_op.m_lineNumber);
+    QSharedPointer<Symbol> s = m_symTab->Lookup(name, m_op.m_lineNumber);
     //        if (s==nullptr)
     //          ErrorHandler::e.Error("Could not find variable :" + name,m_op.m_lineNumber);
 

@@ -59,7 +59,7 @@ TokenType::Type NodeVar::getOrgType(Assembler *as) {
         // Use parser symbtab
         TokenType::Type t = m_op.m_type;
         if (parserSymTab != nullptr) {
-            Symbol* s = parserSymTab->Lookup(value, m_op.m_lineNumber);
+            QSharedPointer<Symbol> s = parserSymTab->Lookup(value, m_op.m_lineNumber);
 //            qDebug() << "NodeVar::getType "<< s->m_name << TokenType::getType(s->getTokenType()) << " with forcetype " << TokenType::getType(m_forceType);
             if (s!=nullptr)
                 t= s->getTokenType();
@@ -83,7 +83,7 @@ TokenType::Type NodeVar::getType(Assembler *as) {
         // Use parser symbtab
         TokenType::Type t = m_op.m_type;
         if (parserSymTab != nullptr) {
-            Symbol* s = parserSymTab->Lookup(value, m_op.m_lineNumber);
+            QSharedPointer<Symbol> s = parserSymTab->Lookup(value, m_op.m_lineNumber);
 //            qDebug() << "NodeVar::getType "<< s->m_name << TokenType::getType(s->getTokenType()) << " with forcetype " << TokenType::getType(m_forceType);
             if (s!=nullptr)
                 t= s->getTokenType();
@@ -148,7 +148,7 @@ bool NodeVar::isWord(Assembler *as) {
    // qDebug() << "NodeVar is Word : " << (getType(as)==TokenType::ARRAY) << getArrayType(as);
     return getType(as)==TokenType::INTEGER || (getType(as)==TokenType::POINTER && m_expr==nullptr) || m_fake16bit;
 /*    return m_op.m_type==TokenType::INTEGER;
-    Symbol* s = as->m_symTab->Lookup(value, m_op.m_lineNumber);
+    QSharedPointer<Symbol> s = as->m_symTab->Lookup(value, m_op.m_lineNumber);
 
     return s->m_type.toLower()=="integer";*/
 }
@@ -168,7 +168,7 @@ bool NodeVar::containsPointer(Assembler *as)
 
 bool NodeVar::isRecord(Assembler *as)
 {
-    Symbol* s = as->m_symTab->Lookup(value,m_op.m_lineNumber,true);
+    QSharedPointer<Symbol> s = as->m_symTab->Lookup(value,m_op.m_lineNumber,true);
     QString t = s->m_type;
     if (t=="address") {
         t = s->m_arrayTypeText;
@@ -186,7 +186,7 @@ bool NodeVar::isRecordData(Assembler *as)
 
 QString NodeVar::getTypeText(Assembler *as)
 {
-    Symbol* s = as->m_symTab->Lookup(value,m_op.m_lineNumber,true);
+    QSharedPointer<Symbol> s = as->m_symTab->Lookup(value,m_op.m_lineNumber,true);
     QString t = s->m_type;
     if (t=="address")
         t = s->m_arrayTypeText;
@@ -199,7 +199,7 @@ QString NodeVar::getValue(Assembler* as) {
 //    return v;
 //    qDebug() << v;
     if (m_subNode!=nullptr) {
-        Symbol *s = as->m_symTab->Lookup(v,m_op.m_lineNumber,true);
+        QSharedPointer<Symbol> s = as->m_symTab->Lookup(v,m_op.m_lineNumber,true);
 
         QString type = s->m_type;
         if ((m_expr!=nullptr) && !m_ignoreRecordExpr) { // Has array indices
@@ -237,6 +237,6 @@ bool NodeVar::isAddress() {
 
 void NodeVar::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
     QString varName = m_op.m_value;
-    Symbol* varSymbol = symTab->Lookup(varName, m_op.m_lineNumber);
+    QSharedPointer<Symbol> varSymbol = symTab->Lookup(varName, m_op.m_lineNumber);
 
 }

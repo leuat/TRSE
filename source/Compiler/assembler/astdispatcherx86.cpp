@@ -692,7 +692,7 @@ void ASTDispatcherX86::IncBin(Assembler *as, NodeVarDecl *node) {
         //            qDebug() << "bin: "<<v->getValue(as) << " at " << t->m_position;
         //        Appendix app(t->m_position);
 
-        Symbol* typeSymbol = as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber);
+        QSharedPointer<Symbol> typeSymbol = as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber);
         typeSymbol->m_org = Util::C64StringToInt(t->m_position);
         typeSymbol->m_size = size;
         //            qDebug() << "POS: " << typeSymbol->m_org;

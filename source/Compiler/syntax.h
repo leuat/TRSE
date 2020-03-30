@@ -82,7 +82,7 @@ public:
 
     QMap<QString, bool> m_reservedWordsRegularFont;
 
-    AbstractSystem* m_currentSystem;
+    QSharedPointer<AbstractSystem> m_currentSystem;
     bool m_ignoreSys = false;
     bool m_stripPrg = false;
     Syntax();

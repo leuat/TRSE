@@ -368,7 +368,7 @@ int Parser::getParsedNumberOrConstant() {
     if (m_currentToken.m_value=="") {
         return m_currentToken.m_intVal;
     }
-    Symbol* s = m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
+    QSharedPointer<Symbol> s = m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
     if (s==nullptr)
         ErrorHandler::e.Error("Value required to be a number or a constant.",m_currentToken.m_lineNumber);
 
@@ -433,7 +433,7 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
             Eat();
         }
         else {
-            Symbol* s = m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
+            QSharedPointer<Symbol> s = m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
               if (s==nullptr)
                   done=true;
               else {
@@ -520,7 +520,7 @@ int Parser::getIntVal(Token t)
 {
     int val = t.m_intVal;
     if (t.m_value!="") {
-        Symbol* s = m_symTab->Lookup(t.m_value,t.m_lineNumber);
+        QSharedPointer<Symbol> s = m_symTab->Lookup(t.m_value,t.m_lineNumber);
         if (s!=nullptr)
             return s->m_value->m_fVal;
     }
@@ -955,7 +955,7 @@ Node *Parser::Variable()
     // Verify that we're not trying to screw with the variable
     NodeVar* nv = dynamic_cast<NodeVar*>(n);
     if (nv!=nullptr) {
-        Symbol* s = m_symTab->Lookup(nv->value,m_currentToken.m_lineNumber);
+        QSharedPointer<Symbol> s = m_symTab->Lookup(nv->value,m_currentToken.m_lineNumber);
         // If variable doesn't exist
         if (s==nullptr)
             ErrorHandler::e.Error("Could not find variable : " +nv->value);
@@ -1290,7 +1290,7 @@ Node* Parser::Factor()
         Eat();
         Eat(TokenType::LPAREN);
         QString varName = m_currentToken.m_value;
-        Symbol* s = m_symTab->Lookup(varName,m_currentToken.m_lineNumber);
+        QSharedPointer<Symbol> s = m_symTab->Lookup(varName,m_currentToken.m_lineNumber);
         if (s==nullptr) {
             ErrorHandler::e.Error("Internal function 'Length' reqruires a variable");
         }

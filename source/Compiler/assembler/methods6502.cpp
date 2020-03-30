@@ -15803,7 +15803,7 @@ void Methods6502::Decrunch(Assembler *as)
 
 
 
-    Symbol* varS = as->m_symTab->Lookup(var->getValue(as), m_node->m_op.m_lineNumber);
+    QSharedPointer<Symbol> varS = as->m_symTab->Lookup(var->getValue(as), m_node->m_op.m_lineNumber);
     int pos = varS->m_org + varS->m_size;
 
 //    qDebug() <<" DECRUNCH:" << varS->m_org << varS->m_size;

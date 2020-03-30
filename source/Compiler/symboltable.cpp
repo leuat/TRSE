@@ -156,7 +156,7 @@ void SymbolTable::Define(QSharedPointer<Symbol> s, bool isUsed) {
 
 void SymbolTable::Delete() {
 /*    for (QString val : m_symbols.keys()) {
-        Symbol* s = m_symbols[val];
+        QSharedPointer<Symbol> s = m_symbols[val];
         if (s!=nullptr) {
             if (s->m_value)
                 delete s->m_value;
@@ -168,7 +168,7 @@ void SymbolTable::Delete() {
     // Delete static constants as well
 /*    if (isInitialized) {
         for (QString val : m_constants.keys()) {
-            Symbol* s = m_symbols[val];
+            QSharedPointer<Symbol> s = m_symbols[val];
 
             if (s!=nullptr) {
                 if (s->m_value)
@@ -316,10 +316,10 @@ QStringList SymbolTable::getUnusedVariables()
     return lst;
 }
 
-Symbol *SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
+QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
 //            name = name.toUpper();
     if (m_constants.contains(name.toUpper())) {
-        return m_constants[name.toUpper()].get();
+        return m_constants[name.toUpper()];
     }
     // Create address on the fly
 
@@ -332,7 +332,7 @@ Symbol *SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
         QSharedPointer<Symbol> s = QSharedPointer<Symbol>(new Symbol(name, "address"));
         s->isUsed = true;
         m_symbols[name] = s;
-        return s.get();
+        return s;
     }
 
 
@@ -361,25 +361,25 @@ Symbol *SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
     if (m_symbols.contains(localName)) {
     //    qDebug() << "Found local name " << localName;
         m_symbols[localName]->isUsed = true;
-        return m_symbols[localName].get();
+        return m_symbols[localName];
 
     }
     m_symbols[name]->isUsed = true;
-    return m_symbols[name].get();
+    return m_symbols[name];
 }
 
-Symbol *SymbolTable::LookupVariables(QString name, int lineNumber) {
+QSharedPointer<Symbol> SymbolTable::LookupVariables(QString name, int lineNumber) {
     if (!m_symbols.contains(name)) {
         ErrorHandler::e.Error("Symbol/variable '" + name + "' does not exist in the current scope", lineNumber);
         return nullptr;
     }
     m_symbols[name]->isUsed=true;
-    return m_symbols[name].get();
+    return m_symbols[name];
 }
 
-Symbol *SymbolTable::LookupConstants(QString name) {
+QSharedPointer<Symbol> SymbolTable::LookupConstants(QString name) {
     if (m_constants.contains(name)) {
-        return m_constants[name].get();
+        return m_constants[name];
     }
     return nullptr;
 }

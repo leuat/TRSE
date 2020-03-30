@@ -117,10 +117,10 @@ public:
     QString findSimilarSymbol(QString sim, float percentage, int n,QStringList procedures);
     QStringList getUnusedVariables();
 
-    Symbol* Lookup(QString name, int lineNumber, bool isAddress=false);
-    Symbol* LookupVariables(QString name, int lineNumber);
+    QSharedPointer<Symbol> Lookup(QString name, int lineNumber, bool isAddress=false);
+    QSharedPointer<Symbol> LookupVariables(QString name, int lineNumber);
 
-    Symbol* LookupConstants(QString name);
+    QSharedPointer<Symbol> LookupConstants(QString name);
 
 };
 
