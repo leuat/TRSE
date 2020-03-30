@@ -1448,8 +1448,8 @@ void Parser::Preprocess()
                 Eat();
                 QString name = m_currentToken.m_value;
                 bool ok;
-                m_userBlocks.append(new MemoryBlock(Util::NumberFromStringHex(from), Util::NumberFromStringHex(to),
-                                                MemoryBlock::USER, name));
+                m_userBlocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(Util::NumberFromStringHex(from), Util::NumberFromStringHex(to),
+                                                MemoryBlock::USER, name)));
 
             }
             else if (m_currentToken.m_value.toLower() =="projectsettings") {

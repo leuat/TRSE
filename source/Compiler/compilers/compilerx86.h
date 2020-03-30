@@ -8,7 +8,7 @@ class CompilerX86 : public Compiler
 public:
     CompilerX86(CIniFile* ini, CIniFile* pIni) : Compiler(ini, pIni) {};
 
-    void InitAssemblerAndDispatcher(AbstractSystem* system) override;
+    void InitAssemblerAndDispatcher(QSharedPointer<AbstractSystem> system) override;
 
     void Connect() override;
 

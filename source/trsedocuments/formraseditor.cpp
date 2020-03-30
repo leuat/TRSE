@@ -314,9 +314,9 @@ void FormRasEditor::ConnectBlockSymbols()
 {
     for (int sym : m_blockEndSymbols) {
         int winner = 0xFFFF;
-        MemoryBlock* winnerBlock=nullptr;
+        QSharedPointer<MemoryBlock> winnerBlock=nullptr;
 
-        for (MemoryBlock* mb: m_builderThread.m_builder->compiler->m_assembler->blocks) {
+        for (QSharedPointer<MemoryBlock> mb: m_builderThread.m_builder->compiler->m_assembler->blocks) {
 //            if (mb->m_type==MemoryBlock::CODE &&  sym>mb->m_start)
                 if (sym>mb->m_start)
                 if (sym-mb->m_start<winner) {
@@ -786,7 +786,7 @@ void FormRasEditor::MemoryAnalyze()
 //    qDebug() << "B";
     ConnectBlockSymbols();
 //    qDebug() << "asm " << m_builderThread.m_builder->compiler->m_assembler;
-    m_builderThread.m_builder->compiler->m_assembler->blocks.append(new MemoryBlock(Syntax::s.m_currentSystem->m_startAddress, codeEnd, MemoryBlock::CODE, "code"));
+    m_builderThread.m_builder->compiler->m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(Syntax::s.m_currentSystem->m_startAddress, codeEnd, MemoryBlock::CODE, "code")));
  //   qDebug() << "B2";
 
     m_mca.ClassifyZP(m_builderThread.m_builder->compiler->m_assembler->blocks);

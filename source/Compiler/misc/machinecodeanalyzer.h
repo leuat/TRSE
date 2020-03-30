@@ -48,7 +48,7 @@ public:
     MachineCodeAnalyzer();
     void Load(QString file);
     QVector<MCZP> m_mczp;
-    void ClassifyZP(QVector<MemoryBlock*> blocks);
+    void ClassifyZP(QVector<QSharedPointer<MemoryBlock>> blocks);
 
     void AnalyzeZP();
 

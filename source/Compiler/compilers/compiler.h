@@ -50,11 +50,11 @@ public:
 
 
 
-    virtual void InitAssemblerAndDispatcher(AbstractSystem* system) = 0;
+    virtual void InitAssemblerAndDispatcher(QSharedPointer<AbstractSystem> system) = 0;
     virtual void Connect() = 0;
 
     void Parse(QString text, QStringList lst);
-    bool Build( AbstractSystem* system, QString projDir);
+    bool Build( QSharedPointer<AbstractSystem> system, QString projDir);
     void CleanupBlockLinenumbers();
     void SaveBuild(QString filename);
     void HandleError(FatalErrorException fe, QString se);

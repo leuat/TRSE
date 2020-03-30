@@ -93,7 +93,7 @@ public:
     ~Parser() {
         Delete();
     }
-    QVector<MemoryBlock*> m_userBlocks;
+    QVector<QSharedPointer<MemoryBlock>> m_userBlocks;
 
     void Delete();
     void InitObsolete();

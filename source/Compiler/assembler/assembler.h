@@ -47,6 +47,7 @@ class MemoryBlock {
         m_type=type;
         m_name=name;
     }
+    ~MemoryBlock();
 
 
 
@@ -153,9 +154,12 @@ class Assembler
 {
 public:
     QStringList m_source;
-    QVector<Appendix*> m_appendix;
+    QVector<QSharedPointer<Appendix>> m_appendix;
+    QSharedPointer<Appendix> m_currentBlock = nullptr;
+    QSharedPointer<Appendix> m_mainBlock = nullptr;
+    QVector<QSharedPointer<Appendix>> m_blockStack;
     QVector<Appendix> m_extraBlocks;
-    Appendix m_chipMem;
+    QSharedPointer<Appendix> m_chipMem;
 
     QString m_currentBlockName="";
 
@@ -179,9 +183,6 @@ public:
 
     QMap<QString, QString> m_defines;
 
-    Appendix* m_currentBlock = nullptr;
-    Appendix* m_mainBlock = nullptr;
-    QVector<Appendix*> m_blockStack;
 
     int m_zbyte = 0x80;
 
@@ -194,7 +195,7 @@ public:
     QMap<QString, LabelStack> m_labelStack;
     SymbolTable* m_symTab;
     QString m_projectDir;
-    QVector<MemoryBlock*> blocks;
+    QVector<QSharedPointer<MemoryBlock>> blocks;
 
     QStringList m_tempVars;
     int m_varDeclEndsLineNumber = 0;

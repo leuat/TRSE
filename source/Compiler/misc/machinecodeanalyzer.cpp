@@ -34,10 +34,10 @@ void MachineCodeAnalyzer::Load(QString file)
 
 }
 
-void MachineCodeAnalyzer::ClassifyZP(QVector<MemoryBlock*> blocks)
+void MachineCodeAnalyzer::ClassifyZP(QVector<QSharedPointer<MemoryBlock>> blocks)
 {
     for (MCZP& m : m_mczp) {
-        for (MemoryBlock* b: blocks) {
+        for (QSharedPointer<MemoryBlock> b: blocks) {
             if (b->m_type==MemoryBlock::CODE ||b->m_type==MemoryBlock::MUSIC || b->m_type==MemoryBlock::ARRAY)
             if (m.m_addr>=b->m_start && m.m_addr<b->m_end) {
                 if (!b->m_zeropages.contains(m.m_zp))
@@ -46,7 +46,7 @@ void MachineCodeAnalyzer::ClassifyZP(QVector<MemoryBlock*> blocks)
         }
 
     }
-    for (MemoryBlock* b: blocks)
+    for (QSharedPointer<MemoryBlock> b: blocks)
         std::sort(b->m_zeropages.begin(), b->m_zeropages.end(),std::less<int>());
 }
 

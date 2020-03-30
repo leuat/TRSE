@@ -68,7 +68,7 @@ void DialogMemoryAnalyze::RenderSystemLabels(QPainter& p, int xstart, int fs )
 }
 
 
-void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize)
+void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &blocks, int fontSize)
 {
     m_blocks = blocks;
     m_fontSize = fontSize;
@@ -104,7 +104,7 @@ void DialogMemoryAnalyze::Initialize(QVector<MemoryBlock*> &blocks, int fontSize
 
     RenderSystemLabels(p,xstart,fontSize);
 
-    for (MemoryBlock* mb:blocks) {
+    for (QSharedPointer<MemoryBlock> mb:blocks) {
         float y0 = (mb->m_start/(float)m_system->m_memorySize)*ysize;
         float y1 = (mb->m_end/(float)m_system->m_memorySize)*ysize;
         QColor c = m_colors[mb->Type()];
@@ -244,18 +244,18 @@ void DialogMemoryAnalyze::resizeEvent(QResizeEvent *e)
     m_iniFile->setFloat("memory_analyzer_window_height", this->size().height());
 }
 
-void DialogMemoryAnalyze::VerifyZPMusic(QVector<MemoryBlock*> &blocks)
+void DialogMemoryAnalyze::VerifyZPMusic(QVector<QSharedPointer<MemoryBlock>> &blocks)
 {
-    QVector<MemoryBlock*> music;
-    for (MemoryBlock* mb : blocks) {
+    QVector<QSharedPointer<MemoryBlock>> music;
+    for (QSharedPointer<MemoryBlock> mb : blocks) {
         if (mb->m_type == MemoryBlock::MUSIC)
             music.append(mb);
     }
     QString infoText="";
-    for (MemoryBlock* mb: music) {
+    for (QSharedPointer<MemoryBlock> mb: music) {
         bool overlaps=false;
         QString overlapString="";
-        for (MemoryBlock* o : blocks)
+        for (QSharedPointer<MemoryBlock> o : blocks)
             if (o!=mb) {
                 for (int j: o->m_zeropages) {
 

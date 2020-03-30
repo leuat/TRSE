@@ -24,7 +24,7 @@
 
 int Node::m_currentLineNumber;
 MemoryBlockInfo  Node::m_staticBlockInfo;
-MemoryBlock* Node::m_curMemoryBlock = nullptr;
+QSharedPointer<MemoryBlock> Node::m_curMemoryBlock = nullptr;
 
 QMap<QString, bool> Node::flags;
 SymbolTable* Node::parserSymTab;

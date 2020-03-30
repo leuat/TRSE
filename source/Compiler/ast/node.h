@@ -58,7 +58,7 @@ public:
     Node* m_left = nullptr, *m_right = nullptr;
     bool m_isWord = false;
     static MemoryBlockInfo m_staticBlockInfo;
-    static MemoryBlock* m_curMemoryBlock;
+    static QSharedPointer<MemoryBlock> m_curMemoryBlock;
 
 
     virtual bool containsPointer(Assembler* as) {return false;}

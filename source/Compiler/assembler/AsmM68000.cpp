@@ -4,7 +4,7 @@ AsmM68000::AsmM68000()
 {
     m_regAcc = RegisterStack(QStringList()<<"d0"<<"d1"<<"d2"<<"d3"<<"d4"<<"d5"<<"d6" );
     m_regMem = RegisterStack(QStringList()<<"a0"<<"a1"<<"a2"<<"a3"<<"a4"<<"a5"<<"a6" );
-
+    m_chipMem = QSharedPointer<Appendix>(new Appendix);
 }
 
 void AsmM68000::Program(QString name, QString vicParam)

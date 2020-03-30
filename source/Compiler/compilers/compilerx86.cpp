@@ -1,7 +1,7 @@
 #include "compilerx86.h"
 
 
-void CompilerX86::InitAssemblerAndDispatcher(AbstractSystem *system)
+void CompilerX86::InitAssemblerAndDispatcher(QSharedPointer<AbstractSystem> system)
 {
     m_assembler = QSharedPointer<AsmX86>(new AsmX86());//
     m_dispatcher = QSharedPointer<ASTDispatcherX86>(new ASTDispatcherX86());

@@ -796,7 +796,7 @@ void ASTDispather6502::dispatch(NodeProcedureDecl *node)
 //            qDebug() << "Creating new block procedure for " << m_procName;
             QString p = as->m_currentBlock->m_pos;
             int pos = p.remove("$").toInt(&ok, 16);
-            node->m_curMemoryBlock = new MemoryBlock(pos,pos,MemoryBlock::ARRAY, node->m_blockInfo.m_blockName);
+            node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::ARRAY, node->m_blockInfo.m_blockName));
             as->blocks.append(node->m_curMemoryBlock);
         }
     }
@@ -1127,7 +1127,7 @@ void ASTDispather6502::dispatch(NodeVarDecl *node)
             bool ok;
             QString p = as->m_currentBlock->m_pos;
             int pos = p.remove("$").toInt(&ok, 16);
-            node->m_curMemoryBlock = new MemoryBlock(pos,pos,MemoryBlock::ARRAY, node->m_blockInfo.m_blockName);
+            node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::ARRAY, node->m_blockInfo.m_blockName));
             as->blocks.append(node->m_curMemoryBlock);
         }
     }
@@ -1229,7 +1229,7 @@ void ASTDispather6502::IncSid(NodeVarDecl *node) {
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES) {
 
         if (node->sid.m_loadAddress!=0x8000 && Syntax::s.m_currentSystem->m_programStartAddress!=0x8000) {
-          Appendix* app = new Appendix("$8000");
+          QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix("$8000"));
           app->Append("org $8000",1);
           app->Append("NSFfiller dc.b 0",0);
           as->m_appendix.append(app);
@@ -1237,7 +1237,7 @@ void ASTDispather6502::IncSid(NodeVarDecl *node) {
     }
 
     QString pos = QString::number(node->sid.m_loadAddress,16);
-    Appendix* app = new Appendix("$"+pos);
+    QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix("$"+pos));
 //    qDebug() << "INCSID DISPATCHER"<< pos;
     app->Append("org $" +pos,1);
     //        as->Appendix(v->getValue(as),0);
@@ -1254,7 +1254,7 @@ void ASTDispather6502::IncSid(NodeVarDecl *node) {
     node->m_fileSize = size;
 
 //    qDebug() << "LOAD ADDRESS **** " << Util::numToHex(node->sid.m_loadAddress);
-    as->blocks.append(new MemoryBlock(node->sid.m_loadAddress,node->sid.m_loadAddress+size, MemoryBlock::MUSIC, node->sid.m_fileName));
+    as->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(node->sid.m_loadAddress,node->sid.m_loadAddress+size, MemoryBlock::MUSIC, node->sid.m_fileName)));
 
 
 }
@@ -1280,7 +1280,7 @@ void ASTDispather6502::IncBin(NodeVarDecl *node) {
     }
     else {
         //            qDebug() << "bin: "<<v->getValue(as) << " at " << t->m_position;
-        Appendix* app = new Appendix(t->m_position);
+        QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix(t->m_position));
 
         Symbol* typeSymbol = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
         typeSymbol->m_org = Util::C64StringToInt(t->m_position);
@@ -1297,7 +1297,7 @@ void ASTDispather6502::IncBin(NodeVarDecl *node) {
         }
         else start = t->m_position.toInt();
 
-        as->blocks.append(new MemoryBlock(start,start+size, MemoryBlock::DATA,t->m_filename));
+        as->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start,start+size, MemoryBlock::DATA,t->m_filename)));
 
     }
 }

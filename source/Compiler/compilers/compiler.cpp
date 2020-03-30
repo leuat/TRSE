@@ -70,18 +70,12 @@ void Compiler::Parse(QString text, QStringList lst)
 }
 
 
-bool Compiler::Build(AbstractSystem* system, QString project_dir)
+bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
 {
     if (m_tree==nullptr) {
-        //qDebug() << "Compiler::Build : tree not parsed!";
         return false;
     }
-/*    if (m_assembler!=nullptr) {
-        m_assembler->Delete();
-        delete m_assembler;
-        m_assembler = nullptr;
-    }
-*/
+
     system->DefaultValues();
     Syntax::s.m_currentSystem->DefaultValues();
 
@@ -116,7 +110,7 @@ bool Compiler::Build(AbstractSystem* system, QString project_dir)
     }
 
 
-    for (MemoryBlock* mb:m_parser.m_userBlocks)
+    for (QSharedPointer<MemoryBlock> mb:m_parser.m_userBlocks)
         m_assembler->blocks.append(mb);
 
     Connect();

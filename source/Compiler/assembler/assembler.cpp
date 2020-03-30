@@ -80,7 +80,7 @@ void Assembler::Write(QString str, int level)
      m_cycles[Node::m_currentLineNumber] += cnt;
 }
 
-bool caseInsensitiveLessThan(const Appendix *s1, const Appendix *s2)
+bool caseInsensitiveLessThan(const QSharedPointer<Appendix> s1, const QSharedPointer<Appendix> s2)
 {
     QString sa = s1->m_pos.toLower().replace("$","0x");
     QString sb = s2->m_pos.toLower().replace("$","0x");
@@ -113,7 +113,7 @@ void Assembler::StartMemoryBlock(QString pos) {
     //EndMemoryBlock();
     //        qDebug() << "Starting emory pos: "<< pos;
     Appendix app(pos);
-    m_currentBlock = new Appendix(pos);
+    m_currentBlock = QSharedPointer<Appendix>(new Appendix(pos));
     m_appendix.append(m_currentBlock);
     m_currentBlock->Append(GetOrg(Util::NumberFromStringHex(pos)),1);
     m_blockStack.append(m_currentBlock);
@@ -362,9 +362,9 @@ void Assembler::Connect()
     m_source.removeAll("");
     // Delete appendix
 //    qDebug() << "Deleting appendices : "<<m_appendix.count() << m_blockStack.count();
-    for (Appendix* a: m_appendix)
-        delete a;
-    m_appendix.clear();
+/*    for (QSharedPointer<Appendix> a: m_appendix)
+        delete a;*/
+ //   m_appendix.clear();
 /*    for (Appendix* a: m_blockStack)
         delete a;
     m_blockStack.clear();*/
@@ -398,7 +398,7 @@ QString RegisterStack::Get() {
         return reg;
     }
     qDebug() << "NO FREE REGISTERS :  RegisterStack::Get()";
-    exit(1);
+//    exit(1);
 
 }
 
@@ -445,4 +445,7 @@ void LabelStack::push() {
     sNumbersUsed[m_current] = true;
 
     m_vars.push_back(m_current);
+}
+
+MemoryBlock::~MemoryBlock() {
 }

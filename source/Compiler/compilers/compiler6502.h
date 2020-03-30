@@ -8,7 +8,7 @@ class Compiler6502 : public Compiler
 public:
     Compiler6502(CIniFile* ini, CIniFile* pIni) : Compiler(ini, pIni) {};
 
-    void InitAssemblerAndDispatcher(AbstractSystem* system) override;
+    void InitAssemblerAndDispatcher(QSharedPointer<AbstractSystem> system) override;
 
     void Connect() override;
 

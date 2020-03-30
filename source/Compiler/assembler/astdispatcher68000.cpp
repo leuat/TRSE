@@ -207,7 +207,7 @@ void ASTDispather68000::dispatch(NodeVarDecl *node)
     NodeVar* v = (NodeVar*)node->m_varNode;
     NodeVarType* t = (NodeVarType*)node->m_typeNode;
     if (t->m_flags.contains("chipmem")) {
-        as->m_currentBlock = &as->m_chipMem;
+        as->m_currentBlock = as->m_chipMem;
     }
 
     if (t->m_op.m_type==TokenType::ARRAY) {

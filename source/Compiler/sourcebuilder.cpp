@@ -19,11 +19,14 @@ SourceBuilder::~SourceBuilder() {
 
 bool SourceBuilder::Build(QString source)
 {
+    m_system = QSharedPointer<AbstractSystem>(FactorySystem::Create(AbstractSystem::SystemFromString(
+                                         m_projectIniFile.getString("system")),
+                                        &m_iniFile, &m_projectIniFile));
+
     if (m_currentSourceFile.toLower().endsWith(".asm")) {
         m_buildSuccess=true;
        m_assembleSuccess=false;
        m_filename = m_currentSourceFile.split(".")[0];
-       m_system.create(Syntax::s.m_currentSystem);
 /*       m_system = FactorySystem::Create(AbstractSystem::SystemFromString(
                                             m_projectIniFile.getString("system")),
                                            &m_iniFile, &m_projectIniFile);
@@ -50,7 +53,7 @@ bool SourceBuilder::Build(QString source)
 
 
     compiler = QSharedPointer<Compiler>(FactoryCompiler::CreateCompiler(&m_iniFile, &m_projectIniFile));
-    qDebug() << "CREATED COMPILER " <<compiler;
+//    qDebug() << "CREATED COMPILER " <<compiler;
 
 
     compiler->m_parser.m_diskFiles = getFileList();
@@ -68,23 +71,23 @@ bool SourceBuilder::Build(QString source)
     }
 */
 
-
+/*
     m_system = QSharedPointer<AbstractSystem>(FactorySystem::Create(AbstractSystem::SystemFromString(
                                          m_projectIniFile.getString("system")),
                                         &m_iniFile, &m_projectIniFile));
 
 
-
+*/
 
 
     m_system->timer.start();
     m_system->m_buildSuccess = true;
 
-//    m_system->m_buildSuccess = false;
-//    return false;
+/*    m_system->m_buildSuccess = false;
+    return false;
+*/
 
-
-    m_buildSuccess = compiler->Build(m_system.get(), path);
+    m_buildSuccess = compiler->Build(m_system, path);
 
 
 

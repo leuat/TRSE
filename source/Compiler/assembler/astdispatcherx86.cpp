@@ -172,7 +172,7 @@ void ASTDispatcherX86::dispatch(NodeVarDecl *node)
             bool ok;
             QString p = as->m_currentBlock->m_pos;
             int pos = p.remove("$").toInt(&ok, 16);
-            node->m_curMemoryBlock = new MemoryBlock(pos,pos,MemoryBlock::ARRAY, node->m_blockInfo.m_blockName);
+            node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::ARRAY, node->m_blockInfo.m_blockName));
             as->blocks.append(node->m_curMemoryBlock);
         }
     }

@@ -1,7 +1,7 @@
 #include "compiler6502.h"
 
 
-void Compiler6502::InitAssemblerAndDispatcher(AbstractSystem *system)
+void Compiler6502::InitAssemblerAndDispatcher(QSharedPointer<AbstractSystem> system)
 {
     m_assembler = QSharedPointer<AsmMOS6502>(new AsmMOS6502());
     m_assembler->m_zbyte = 0x10;

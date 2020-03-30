@@ -39,7 +39,7 @@ class DialogMemoryAnalyze : public QDialog
     Q_OBJECT
 
     int m_fontSize,xsize,ysize,shift;
-    QVector<MemoryBlock*> m_blocks;
+    QVector<QSharedPointer<MemoryBlock>> m_blocks;
     CIniFile* m_iniFile = nullptr;
     AbstractSystem *m_system = nullptr;
     QString curT = "";
@@ -48,12 +48,12 @@ class DialogMemoryAnalyze : public QDialog
 
 public:
     explicit DialogMemoryAnalyze(CIniFile* ini, AbstractSystem* system, QWidget *parent = 0);
-    void Initialize(QVector<MemoryBlock*>& blocks, int fontSize);
+    void Initialize(QVector<QSharedPointer<MemoryBlock>>& blocks, int fontSize);
     QMap<QString, QColor> m_colors;
     void InitColors();
     void RenderSystemLabels(QPainter& p,int,int);
     void resizeEvent(QResizeEvent *) override;
-    void VerifyZPMusic(QVector<MemoryBlock*> &blocks);
+    void VerifyZPMusic(QVector<QSharedPointer<MemoryBlock>> &blocks);
     ~DialogMemoryAnalyze();
 
     void mouseMoveEvent(QMouseEvent *event) override;
