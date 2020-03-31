@@ -236,6 +236,11 @@ void SymbolTable::InitBuiltins()
         Define(QSharedPointer<Symbol>(new Symbol("joy2pressed", "byte")));
     }
 
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES) {
+
+        Define(QSharedPointer<Symbol>(new Symbol("buttons", "address")));
+    }
+
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 ||
             Syntax::s.m_currentSystem->m_system==AbstractSystem::PLUS4 ||
             Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 ||
