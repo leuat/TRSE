@@ -112,7 +112,8 @@ class CustomFileSystemModel : public QFileSystemModel {
             QImage img;
             QString f = index.data().toString();
             if (f.contains(".ras"))
-                img.load(":resources/images/trselogo.png");
+//                img.load(":resources/images/trselogo.png");
+               img.load(":resources/images/ras.png");
             if (f.contains(".asm"))
                 img.load(":resources/images/asm_icon.png");
             if (f.contains(".prg"))

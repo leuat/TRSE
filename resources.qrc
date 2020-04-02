@@ -448,5 +448,6 @@
         <file>resources/code/amiga/init_projectall.s</file>
         <file>resources/text/help/r/record.rtf</file>
         <file>resources/images/tru.png</file>
+        <file>resources/images/ras.png</file>
     </qresource>
 </RCC>
