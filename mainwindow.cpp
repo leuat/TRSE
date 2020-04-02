@@ -304,7 +304,7 @@ void MainWindow::LoadDocument(QString fileName)
         fe->m_projectPath = getProjectPath();
 
     }
-    if (fileName.contains(".ras") || fileName.contains(".asm") || fileName.contains(".inc")  ) {
+    if (fileName.contains(".ras") || fileName.contains(".asm") || fileName.contains(".inc") || fileName.contains(".tru") ) {
         editor = new FormRasEditor(this);
     }
     if (fileName.contains(".fjo")) {
@@ -405,7 +405,7 @@ void MainWindow::RefreshFileList()
     fileSystemModel->setRootPath(rootPath);
     fileSystemModel->setFilter(QDir::NoDotAndDotDot |
                             QDir::AllDirs |QDir::AllEntries);
-    fileSystemModel->setNameFilters(QStringList() << "*.ras" << "*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo");
+    fileSystemModel->setNameFilters(QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo");
     fileSystemModel->setNameFilterDisables(false);
 
     ui->treeFiles->setModel(fileSystemModel);
@@ -633,7 +633,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::FindFileDialog()
 {
 
-    QStringList lst = QStringList() <<"*.asm" << "*.ras" << "*.fjo" << "*.flf" << "*.paw";
+    QStringList lst = QStringList() <<"*.asm" << "*.ras" << "*.tru"<< "*.fjo" << "*.flf" << "*.paw";
     QDirIterator it(getProjectPath(), lst, QDir::Files, QDirIterator::Subdirectories);
     QVector<QString> files;
     while (it.hasNext()) {
@@ -672,7 +672,7 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
 
     // Finally load file!
     QString file = index.data().toString();
-    if (file.toLower().endsWith(".ras") || file.toLower().endsWith(".asm")
+    if (file.toLower().endsWith(".tru") || file.toLower().endsWith(".ras") || file.toLower().endsWith(".asm")
             || file.toLower().endsWith(".inc") || file.toLower().endsWith(".flf")
             || file.toLower().endsWith(".paw") || file.toLower().endsWith(".fjo")) {
         LoadDocument(path + file);

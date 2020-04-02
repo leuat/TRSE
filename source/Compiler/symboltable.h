@@ -74,10 +74,12 @@ public:
     static QMap<QString, QSharedPointer<Symbol>> m_constants;
     QString m_name="";
 
+    static QString m_gPrefix;
+
     ~SymbolTable();
 
     QString getCurrentProcedure()  {
-        return m_currentProcedure;
+        return m_gPrefix+m_currentProcedure;
     }
     void SetCurrentProcedure(QString pr) {
         if (m_useLocals) {
@@ -105,6 +107,7 @@ public:
 
     static bool isInitialized;
     static void Initialize();
+    void Merge(SymbolTable* other, bool mergeConstants = false);
 
     void Define(QSharedPointer<Symbol> s, bool isUsed=true);
     void Delete();

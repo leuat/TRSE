@@ -265,8 +265,13 @@ void Parser::InitBuiltinFunction(QStringList methodName, QString builtinFunction
     QString txt = m_lexer->m_text.toLower();
     for (QString s: methodName)
      if (txt.contains(s)) {
+         //if (m_procedures.contains(builtinFunctionName))
+             //m_ignoreBuiltinFunctionTPU.append(builtinFunctionName);
+         //qDebug() << "ALRADY COMTAINS " << builtinFunctionName;
 //         Node::m_staticBlockInfo.m_blockID=-1;
-        m_procedures[builtinFunctionName] = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(Token(TokenType::PROCEDURE, builtinFunctionName), builtinFunctionName));
+         if (!m_ignoreBuiltinFunctionTPU.contains(builtinFunctionName))
+            m_procedures[builtinFunctionName] = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(Token(TokenType::PROCEDURE, builtinFunctionName), builtinFunctionName));
+         else m_procedures.remove(builtinFunctionName);//qDebug() << "IGNORING CREATING NEW " <<builtinFunctionName;
         if (initJump!="")
             m_initJumps << "\tjsr "+ initJump;
         return;
@@ -361,6 +366,64 @@ void Parser::PreprocessConstants()
     }
 
     m_lexer->m_text = txt;
+}
+
+void Parser::ApplyTPUBefore()
+{
+    for (QSharedPointer<Parser> p: m_tpus) {
+//        QSharedPointer<NodeProgram> np = qSharedPointerDynamicCast<NodeProgram>(p->m_tree);
+        for (QString k : p->m_procedures.keys())
+            m_procedures[k] = p->m_procedures[k];
+//        for (QString k : p->m_procedures.keys())
+  //          m_procedures[k] = p->m_procedures[k];
+
+    }
+}
+
+void Parser::ApplyTPUAfter(QVector<QSharedPointer<Node>>& decl)
+{
+    for (QSharedPointer<Parser> p: m_tpus) {
+        QSharedPointer<NodeProgram> np = qSharedPointerDynamicCast<NodeProgram>(p->m_tree);
+        QVector<QSharedPointer<Node>> decls;
+        for (QSharedPointer<Node> on : np->m_NodeBlock->m_decl) {
+            QSharedPointer<NodeProcedureDecl> procDecl =
+                    qSharedPointerDynamicCast<NodeProcedureDecl>(on);
+            if (procDecl!=nullptr) {
+                // We have a procedure!
+               // qDebug() << procDecl->m_procName;
+  /*              if (m_procedures.contains(procDecl->m_procName)) {
+                    //decls.append(procDecl);
+                    //qDebug() << "Appending : " << procDecl;
+                    if (m_procedures[procDecl->m_procName].isI)
+                }
+                else
+                    decls.append(procDecl);*/
+                bool doAppend = true;
+/*                if (m_procedures.contains())
+                if (Syntax::s.builtInFunctions.contains(procDecl->m_procName)) {
+                    Syntax::s.builtInFunctions[procDecl->m_procName].m_initFunction;
+
+                }*/
+                if (doAppend)
+                    decls.append(on);
+                if (Syntax::s.builtInFunctions.contains(procDecl->m_procName)) {
+//                    m_procedures.remove(procDecl->m_procName);
+//                    qDebug() << "Removing : " <<procDecl->m_procName;
+                    m_ignoreBuiltinFunctionTPU.append(procDecl->m_procName);
+                }
+//                    Syntax::s.builtInFunctions[procDecl->m_procName].m_initFunction;
+
+//                }*/
+
+
+            }
+            else decls.append(on);
+
+
+        }
+
+        decl.append(decls);
+    }
 }
 
 int Parser::getParsedNumberOrConstant() {
@@ -713,14 +776,14 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         return;
     }
-/*    if (m_currentToken.m_value=="use") {
+    if (m_currentToken.m_value=="use") {
         Eat();
         Eat();
-        Eat();
-        Eat();
+//        Eat();
+//        Eat();
         return;
     }
-*/
+
 
     if (m_currentToken.m_value=="include") {
         Eat();
@@ -1270,17 +1333,41 @@ QSharedPointer<Node> Parser::CompoundStatement()
 QSharedPointer<Node> Parser::Program(QString param)
 {
 //    QSharedPointer<Node> n = CompoundStatement();
-    Eat(TokenType::PROGRAM);
+    if (!m_isTRU)
+        Eat(TokenType::PROGRAM);
+    else
+        Eat(TokenType::UNIT);
+
 //    QSharedPointer<NodeVar> varNode = qSharedPointerDynamicCast<NodeVar>Variable();
     QString progName = m_currentToken.m_value;// varNode->value;
+    // Prefix all TRUs with the name
+/*    if (m_isTRU)
+        SymbolTable::m_gPrefix = progName+"_";
+    else
+        SymbolTable::m_gPrefix = "";
+*/
     Eat();
     m_symTab->Define(QSharedPointer<Symbol>(new Symbol(progName,"STRING")));
     Eat(TokenType::SEMI);
-    QSharedPointer<NodeBlock> block = qSharedPointerDynamicCast<NodeBlock>(Block(true));
-    QSharedPointer<NodeProgram> program = QSharedPointer<NodeProgram>(new NodeProgram(progName,  param, block));
-    Eat(TokenType::DOT);
+    QSharedPointer<NodeBlock> block;
+    if (!m_isTRU)
+     block = qSharedPointerDynamicCast<NodeBlock>(Block(true));
+    else
+        block = qSharedPointerDynamicCast<NodeBlock>(BlockNoCompound(true));
 
+    QSharedPointer<NodeProgram> program = QSharedPointer<NodeProgram>(new NodeProgram(progName,  param, block));
+
+    if (!m_isTRU) {
+        ApplyTPUAfter(block->m_decl);
+        Eat(TokenType::DOT);
+    }
+    else {
+        Eat(TokenType::END);
+        Eat(TokenType::DOT);
+
+    }
     return program;
+
 }
 
 
@@ -1622,12 +1709,16 @@ void Parser::Preprocess()
 
                     //Eat();
                 }
-                if (!ok) {
-                    ErrorHandler::e.Error("Uknown @use parameter : "+type, m_currentToken.m_lineNumber);
+                else {
+                    HandleUseTPU(type);
                 }
+  /*              if (!ok) {
+                    ErrorHandler::e.Error("Uknown @use parameter : "+type, m_currentToken.m_lineNumber);
+                }*/
             }
-            else Eat();
-
+            else {
+                Eat();
+            }
 
           /*  else if (m_currentToken.m_value.toLower() =="error") {
                 Eat(TokenType::PREPROCESSOR);
@@ -1672,6 +1763,9 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     // Call preprocessor for include files etc
     m_lexer->m_orgText = m_lexer->m_orgText + "\n" + globalDefines+"\n";
     m_lexer->m_text = m_lexer->m_orgText;
+    m_removeUnusedDecls = removeUnusedDecls;
+    m_symTab = QSharedPointer<SymbolTable>(new SymbolTable());
+
     m_pass = 0;
   //  RemoveComments();
     InitObsolete();
@@ -1683,12 +1777,13 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
         done = PreprocessIncludeFiles();
 
     Preprocess();
+
+    ApplyTPUBefore();
 //    PreprocessConstants();
     m_pass = 1;
     m_lexer->m_currentComment = "";
     m_parserBlocks.clear();
     SymbolTable::m_constants.clear();
-    m_symTab = QSharedPointer<SymbolTable>(new SymbolTable());
     m_symTab->m_useLocals = useLocals;
 
 
@@ -1781,11 +1876,27 @@ QSharedPointer<Node> Parser::Block(bool useOwnSymTab, QString blockName)
     QVector<QSharedPointer<Node>> decl =  Declarations(useOwnSymTab, blockName);
 
     int pos = m_currentToken.m_lineNumber;
-    QSharedPointer<Node> vars =  CompoundStatement();
-    QSharedPointer<NodeBlock> bl =  QSharedPointer<NodeBlock>(new NodeBlock(m_currentToken,decl, vars, useOwnSymTab));
+    QSharedPointer<Node> statements =  CompoundStatement();
+    QSharedPointer<NodeBlock> bl =  QSharedPointer<NodeBlock>(new NodeBlock(m_currentToken,decl, statements, useOwnSymTab));
     bl->m_op.m_lineNumber = pos;
     return bl;
 }
+
+QSharedPointer<Node> Parser::BlockNoCompound(bool useOwnSymTab, QString blockName)
+{
+
+    if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type==TokenType::WEDGE)
+        return nullptr;
+
+
+    QVector<QSharedPointer<Node>> decl =  Declarations(useOwnSymTab, blockName, false);
+    int pos = m_currentToken.m_lineNumber;
+    QSharedPointer<NodeBlock> bl =  QSharedPointer<NodeBlock>(new NodeBlock(m_currentToken,decl, nullptr, useOwnSymTab));
+    bl->m_op.m_lineNumber = pos;
+    return bl;
+
+}
+
 
 QVector<QSharedPointer<Node> > Parser::Parameters(QString blockName)
 {
@@ -1895,7 +2006,7 @@ QSharedPointer<Node> Parser::String()
 }
 
 
-QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockName)
+QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockName, bool hasBlock )
 {
     QVector<QSharedPointer<Node>> decl;
     if (m_currentToken.m_type==TokenType::VAR) {
@@ -2000,7 +2111,7 @@ QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockNam
     }
 //    }
    // qDebug() << "Finally:" << m_currentToken.getType();
-    if (m_currentToken.m_type!=TokenType::BEGIN && isMain)
+    if (m_currentToken.m_type!=TokenType::BEGIN && isMain && hasBlock)
         ErrorHandler::e.Error("After declarations, BEGIN is expected", m_currentToken.m_lineNumber);
 
     return decl;
@@ -2719,6 +2830,34 @@ void Parser::HandleProjectSettingsPreprocessors()
     }
 
     Eat(); // H
+}
+
+void Parser::HandleUseTPU(QString fileName)
+{
+    QString fname = m_currentDir + QDir::separator() + fileName+".tru";
+
+    if (!QFile::exists(fname)) {
+        ErrorHandler::e.Error("Could not find TRU file for inclusion : "+fname,m_currentToken.m_lineNumber);
+    }
+
+
+    QSharedPointer<Parser> p = QSharedPointer<Parser>(new Parser);
+    QSharedPointer<Lexer> l = QSharedPointer<Lexer>(new Lexer);
+    p->m_lexer = l;
+    l->m_text = Util::loadTextFile(fname);
+    l->m_orgText = l->m_text;
+    p->m_isTRU = true;
+    p->m_tree = p->Parse( m_removeUnusedDecls
+                             ,m_projectIni->getString("vic_memory_config"),
+                             Util::fromStringList(m_projectIni->getStringList("global_defines")),
+                             m_projectIni->getdouble("pascal_settings_use_local_variables")==1.0);
+
+    m_symTab->Merge(p->m_symTab.get());
+
+    m_tpus.append(p);
+//    qDebug() << m_currentToken.m_value;
+//    Eat();
+//    qDebug() << m_currentToken.m_value;
 }
 
 QSharedPointer<Node> Parser::Expr()

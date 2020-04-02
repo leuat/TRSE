@@ -48,7 +48,7 @@ public:
     Compiler() {};
     ~Compiler();
 
-
+    bool m_isTRU = false;
 
     virtual void InitAssemblerAndDispatcher(QSharedPointer<AbstractSystem> system) = 0;
     virtual void Connect() = 0;
@@ -62,7 +62,6 @@ public:
 //    void FindLineNumberAndFile(int inLe, QString& file, int& outle);
     void WarningUnusedVariables();
     virtual void CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &ocycles, QMap<int, int> &retcycles) {}
-
 
 };
 

@@ -87,6 +87,7 @@ public:
     Highlighter* highlighter = nullptr;
     QFont m_font;
     bool m_run = false;
+    bool m_isTRU = false;
     QVector<int> m_blockEndSymbols;
 
     BuilderThread m_builderThread;

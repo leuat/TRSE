@@ -53,6 +53,8 @@
 #include "source/LeLib/limage/c64fullscreenchar.h"
 #include "source/trsedocuments/formpaw.h"
 
+//#include "source/Compiler/sourcebuilder.h"
+
 class ParserBlock {
 public:
     int m_blockID;
@@ -80,11 +82,19 @@ public:
     QVector<QString> m_ignoreMethods;
     QSharedPointer<Lexer> m_lexer;
     Token m_currentToken;
+    bool m_isTRU = false;
     int m_pass = 0, m_acc=0;
     bool m_ignoreAll = false;
+    bool m_removeUnusedDecls = false;
     QStringList  m_initJumps;
     QSharedPointer<SymbolTable>  m_symTab = nullptr;
     QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
+    QSharedPointer<Node> m_tree;
+
+    QVector<QString> m_ignoreBuiltinFunctionTPU;
+    QVector<QSharedPointer<Parser>> m_tpus;
+
+
     Parser();
     Parser(QSharedPointer<Lexer> l, QSharedPointer<CIniFile> projectFile) {
         m_lexer = l;
@@ -108,6 +118,8 @@ public:
     void PreprocessReplace();
     void PreprocessIfDefs(bool ifdef);
     void PreprocessConstants();
+    void ApplyTPUBefore();
+    void ApplyTPUAfter(QVector<QSharedPointer<Node>>& decl);
 
     int GetParsedIntOld();
     int GetParsedInt(TokenType::Type forceType);
@@ -143,6 +155,7 @@ public:
     QVector<QSharedPointer<Node>> ConstDeclaration();
     //QSharedPointer<Node> LogicalClause();
     QSharedPointer<Node> Block(bool useOwnSymTab, QString blockName="");
+    QSharedPointer<Node> BlockNoCompound(bool useOwnSymTab, QString blockName="");
     QVector<QSharedPointer<Node>> Parameters(QString blockName);
     QSharedPointer<Node> ForLoop(bool inclusive);
 //    QSharedPointer<Node> WhileLoop();
@@ -150,7 +163,7 @@ public:
 
     QSharedPointer<Node> Conditional(bool isWhileLoop=false);
 //    QVector<QSharedPointer<Node>> Procedure();
-    QVector<QSharedPointer<Node>> Declarations(bool isMain, QString blockName);
+    QVector<QSharedPointer<Node>> Declarations(bool isMain, QString blockName, bool hasBlock = true);
     QVector<QSharedPointer<Node>> VariableDeclarations(QString blockName);
     QSharedPointer<Node> TypeSpec();
     QSharedPointer<Node> BuiltinFunction();
@@ -169,6 +182,7 @@ public:
     void HandleExportFrame();
     void HandleSpriteCompiler();
     void HandleProjectSettingsPreprocessors();
+    void HandleUseTPU(QString fileName);
     void Eat();
     void HandleImportChar();
 

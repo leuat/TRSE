@@ -424,8 +424,11 @@ void FormRasEditor::Run()
         filename = m_currentSourceFile.split(".ras")[0] + ".com";
 
 //    exit(1);
-
-    ExecutePrg(filename, m_projectIniFile->getString("system"));
+    if (m_currentSourceFile.toLower().endsWith(".tru")) {
+        ui->txtOutput->setText("<font color=\"red\">Cannot execute Turbo Rascal Unit (.tru) files. </font>");
+    }
+    else
+        ExecutePrg(filename, m_projectIniFile->getString("system"));
 
 }
 
@@ -775,7 +778,7 @@ void FormRasEditor::MemoryAnalyze()
     int codeEnd=FindEndSymbol(output);
     */
     Orgasm orgAsm;
-    //orgAsm.LoadCodes();
+    //orgAsm.Codes();
     orgAsm.Assemble(filename+".asm", filename+".prg");
     if (!orgAsm.m_success)
         return;
@@ -834,7 +837,7 @@ void FormRasEditor::Load(QString filename)
         SetText(file.readAll());
     }
     file.close();
-
+    m_isTRU = filename.toLower().endsWith(".tru");
 }
 
 
@@ -948,7 +951,7 @@ void FormRasEditor::HandleBuildComplete()
     HandleErrorDialogs(ErrorHandler::e.m_teOut);
 
     SetLights();
-    if (m_broadcast && m_currentFileShort.toLower().endsWith(".ras")) {
+    if (m_broadcast && (m_currentFileShort.toLower().endsWith(".ras")  ||m_currentFileShort.toLower().endsWith(".tru"))) {
         emit NotifyOtherSourceFiles(m_builderThread.m_builder);
     }
 

@@ -49,4 +49,12 @@ public:
     void Redraw();
 };
 
+class ParseData {
+public:
+    QString m_filename = "";
+    bool m_isTRU = false;
+
+};
+
+
 #endif // DATA_H

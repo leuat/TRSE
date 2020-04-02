@@ -13,6 +13,7 @@ SourceBuilder::SourceBuilder(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFi
     *m_projectIniFile = *project;
     m_curDir = curDir;
     m_currentSourceFile = curSourceFile;
+    m_isTRU = m_currentSourceFile.toLower().endsWith(".tru");
 }
 
 SourceBuilder::~SourceBuilder() {
@@ -25,6 +26,9 @@ bool SourceBuilder::Build(QString source)
                                          m_projectIniFile->getString("system")),
                                         m_iniFile, m_projectIniFile));
 
+    compiler = QSharedPointer<Compiler>(FactoryCompiler::CreateCompiler(m_iniFile, m_projectIniFile));
+
+
     if (m_currentSourceFile.toLower().endsWith(".asm")) {
         m_buildSuccess=true;
        m_assembleSuccess=false;
@@ -33,17 +37,21 @@ bool SourceBuilder::Build(QString source)
                                             m_projectIniFile.getString("system")),
                                            &m_iniFile, &m_projectIniFile);
 */
-       compiler = QSharedPointer<Compiler>(FactoryCompiler::CreateCompiler(m_iniFile, m_projectIniFile));
        m_useSyntaxSystem = true;
        return true;
     }
+
     m_useSyntaxSystem = false;
     m_buildSuccess = false;
     m_assembleSuccess = false;
     m_output = "";
-    if (!m_currentSourceFile.toLower().endsWith(".ras")) {
+    if (!(m_currentSourceFile.toLower().endsWith(".ras") || m_currentSourceFile.toLower().endsWith(".tru"))) {
        m_output = "Turbo Rascal SE can only compile .ras files";
-        return false;
+       return false;
+       //ErrorHandler::e.CatchError(fe, e + msg);
+
+  //      return false;
+//        ErrorHandler::e.Error("BALLE");
     }
     m_source = source;
 //    QString text = ui->txtEditor->toPlainText();
@@ -54,7 +62,6 @@ bool SourceBuilder::Build(QString source)
     QStringList lst = source.split("\n");
 
 
-    compiler = QSharedPointer<Compiler>(FactoryCompiler::CreateCompiler(m_iniFile, m_projectIniFile));
 //    qDebug() << "CREATED COMPILER " <<compiler;
 
 
@@ -62,6 +69,8 @@ bool SourceBuilder::Build(QString source)
     compiler->m_parser.m_currentDir = m_curDir;
 
 //    qDebug() << lst;
+    compiler->m_isTRU = m_isTRU;
+
     compiler->Parse(source,lst);
 
     QString path = m_curDir+"/";//m_projectIniFile.getString("project_path") + "/";

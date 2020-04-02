@@ -24,6 +24,7 @@
 
 bool SymbolTable::isInitialized = false;
 int SymbolTable::m_currentSid = 0;
+QString SymbolTable::m_gPrefix = "";
 QMap<QString,QSharedPointer<Symbol>> SymbolTable::m_constants;
 
 SymbolTable::~SymbolTable() {
@@ -46,7 +47,7 @@ void SymbolTable::ExitProcedureScope(bool removeSymbols) {
     // "TRUE" doesn't work
     if (removeSymbols)
     for (QString s: m_symbols.keys()) {
-        if (s.startsWith(m_currentProcedure)) {
+        if (s.startsWith(m_gPrefix+ m_currentProcedure)) {
             m_symbols.remove(s);
         }
     }
@@ -149,9 +150,29 @@ void SymbolTable::Initialize()
 
 }
 
+void SymbolTable::Merge(SymbolTable *other, bool mergeConstants)
+{
+    for (QString k : other->m_records.keys()) {
+        if (m_records.contains(k))
+            ErrorHandler::e.Error("Record already defined : '"+k+"'");
+        m_records[k] = other->m_records[k];
+    }
+    for (QString k : other->m_symbols.keys()) {
+        if (!m_symbols.contains(k)) {
+            m_symbols[k] = other->m_symbols[k];
+        }
+    }
+    if (mergeConstants)
+    for (QString k : other->m_constants.keys()) {
+        if (!m_constants.contains(k))
+            m_constants[k] = other->m_constants[k];
+    }
+
+}
+
 void SymbolTable::Define(QSharedPointer<Symbol> s, bool isUsed) {
-    m_symbols[m_currentProcedure+ s->m_name] = s;
-    m_symbols[m_currentProcedure+ s->m_name]->isUsed = isUsed;
+    m_symbols[m_gPrefix+ m_currentProcedure+ s->m_name] = s;
+    m_symbols[m_gPrefix+m_currentProcedure+ s->m_name]->isUsed = isUsed;
 }
 
 void SymbolTable::Delete() {
@@ -343,7 +364,7 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
 
 
 
-    QString localName = m_currentProcedure+name;
+    QString localName = m_gPrefix+m_currentProcedure+name;
 //    qDebug() << "localName: " << localName;
 
 
