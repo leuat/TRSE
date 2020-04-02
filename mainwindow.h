@@ -128,6 +128,7 @@ class CustomFileSystemModel : public QFileSystemModel {
 
             QIcon ic(QPixmap::fromImage(img));
 
+
             return QVariant(ic);
         }
     else

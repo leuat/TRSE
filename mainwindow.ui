@@ -72,8 +72,14 @@
            <widget class="QTreeView" name="treeFiles">
             <property name="font">
              <font>
-              <pointsize>9</pointsize>
+              <pointsize>10</pointsize>
              </font>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
             </property>
             <property name="uniformRowHeights">
              <bool>true</bool>
