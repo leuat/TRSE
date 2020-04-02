@@ -1,4 +1,6 @@
 program tutorial_12_sqrt_and_atan;
+@use "luminosities" // Uses standard luminosity
+
 var  
 
 /*
@@ -31,8 +33,6 @@ var
 	radial : integer;
 	// Add a color pointer
 	cp:pointer;
-	// Luminosity color values, just for prettiness
-	lumi:  array[32] of byte = ($06,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06);
 
 	
 
@@ -63,7 +63,7 @@ begin
 			// Fill screen memory with the character value
 			screenmemory[x]:=i+@charVal;
 			// Fill color data with color value based on tangent
-			cp[x]:=lumi[tangent&31];
+			cp[x]:=lumi_fromBlue[tangent&31]; // Defined in lumunosities
 		end;
 		screenmemory:=screenmemory+screen_width;
 		cp:=cp+screen_width;
