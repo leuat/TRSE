@@ -1,6 +1,6 @@
 program Tutorial11_Lines;
 
-@use "bitmapgraphics"
+@use "gfx/bitmapgraphics"
 
 var
 	i, j,k,val: byte=5;

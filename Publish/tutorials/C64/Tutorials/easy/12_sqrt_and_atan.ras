@@ -1,5 +1,5 @@
 program tutorial_12_sqrt_and_atan;
-@use "luminosities" // Uses standard luminosity
+@use "tables/luminosities" // Uses standard luminosity
 
 var  
 
