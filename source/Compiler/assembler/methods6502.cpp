@@ -152,6 +152,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("vbmNextColumn"))
         vbmNextColumn(as);
 
+    if (Command("max"))
+        MinMax(as,false);
+    if (Command("min"))
+        MinMax(as,true);
     // Set the screenmemory pointer to an exact address and load vbmX with the 0-7 x offset
     if (Command("initvbmSetPosition"))
         initvbmSetPosition(as);
@@ -17164,3 +17168,27 @@ void Methods6502::ReadJoy2(Assembler *as)
 
     as->Asm("jsr callReadJoy2");
 }
+
+void Methods6502::MinMax(Assembler *as, bool isMin)
+{
+    QString lbl = as->NewLabel("minmax");
+    QString lblCont = as->NewLabel("minmaxc");
+    LoadVar(as,0);
+    if (!m_node->m_params[1]->isPure())
+        ErrorHandler::e.Error("Min/max : parameter 1 must be variable or constant", m_node->m_op.m_lineNumber);
+    as->Asm("cmp " +m_node->m_params[1]->getValue(as));
+    if (isMin)
+        as->Asm("bcs "+lbl);
+    else
+        as->Asm("bcc "+lbl);
+    as->Asm("lda "+m_node->m_params[1]->getValue(as));
+    as->Asm("jmp "+lblCont);
+    as->Label(lbl);
+    LoadVar(as,0);
+
+    as->Label(lblCont);
+
+    as->PopLabel("minmax");
+    as->PopLabel("minmaxc");
+}
+

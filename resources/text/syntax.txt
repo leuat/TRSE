@@ -340,6 +340,8 @@ m; Abs;  X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64;ib
 m; Rand; C64, PLUS4, C128 ; b,b,b
 m; Random; X16,C64, PLUS4, C128, VIC20, PET;
 m; mod; X16,C64, PLUS4, C128, VIC20, NES, OK64, PET; b,b
+m; max; X16,C64, PLUS4, C128, VIC20, NES, OK64, PET; b,b
+m; min; X16,C64, PLUS4, C128, VIC20, NES, OK64, PET; b,b
 
 
 # Collision routines

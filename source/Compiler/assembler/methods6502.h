@@ -88,6 +88,7 @@ public:
     void BcdIsEqual(Assembler* as);
     void BcdPrint(Assembler* as);
 
+    void MinMax(Assembler*as, bool isMin);
 
 
     /*

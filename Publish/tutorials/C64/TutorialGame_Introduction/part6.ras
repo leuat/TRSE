@@ -14,7 +14,9 @@ our character set
 @define useKernal 0
 @define @levelpointer levelp
 
-// Automatically export charset and sprites
+// Automatically export sprites on each build, so you don't have to manually export
+@export "sprites/Sprites.flf" "sprites/sprites.bin" 256
+// Automatically export charsets 
 @export "charsets/charset1.flf" "charsets/charset1.bin" 256
 
    	charset1: incbin("charsets/charset1.bin", @charsetPosition);

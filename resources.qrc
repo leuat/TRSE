@@ -449,5 +449,7 @@
         <file>resources/text/help/r/record.rtf</file>
         <file>resources/images/tru.png</file>
         <file>resources/images/ras.png</file>
+        <file>resources/text/help/m/min.rtf</file>
+        <file>resources/text/help/m/max.rtf</file>
     </qresource>
 </RCC>

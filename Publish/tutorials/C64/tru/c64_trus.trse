@@ -28,3 +28,6 @@ override_target_settings_org = $810
 override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/tru/
+open_files = ,tables/luminosities.tru, gfx/bitmapgraphics.tru, math/math.tru
+current_file = math/math.tru
