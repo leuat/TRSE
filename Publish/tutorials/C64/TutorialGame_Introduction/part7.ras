@@ -13,6 +13,11 @@ var
 // Turn off kernal
 @define useKernal 0
 
+// Automatically export sprites on each build, so you don't have to manually export
+@export "sprites/Sprites.flf" "sprites/sprites.bin" 256
+// Automatically export charsets 
+@export "charsets/charset1.flf" "charsets/charset1.bin" 256
+
 @define @levelpointer levelp
 
    	charset1: incbin("charsets/charset1.bin", @charsetPosition);

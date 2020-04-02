@@ -14,7 +14,8 @@ our character set
 @define useKernal 0
 @define @levelpointer levelp
 
-
+// Automatically export charset and sprites
+@export "charsets/charset1.flf" "charsets/charset1.bin" 256
 
    	charset1: incbin("charsets/charset1.bin", @charsetPosition);
 	levels: incbin("levels/level1.flf", @levelPosition);

@@ -2,6 +2,11 @@ program part4_charsets;
 var  
 	// Charset at $2000
 @define charLoc $2000
+// Automatically export sprites on each build, so you don't have to manually export
+@export "sprites/Sprites.flf" "sprites/sprites.bin" 256
+// Automatically export charsets 
+@export "charsets/charset1.flf" "charsets/charset1.bin" 256
+
    	charset1: incbin("charsets/charset1.bin", @charLoc);
 	// Pointer that will point to character data location at $2000+$800=$2800
 	colors : pointer;

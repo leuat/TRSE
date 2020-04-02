@@ -2,6 +2,13 @@ program part3;
 var  
 	// Include raw sprite data at $3200 on vic bank 0
 @define spriteLoc $3200
+
+
+// Automatically export sprites on each build, so you don't have to manually export
+@export "sprites/Sprites.flf" "sprites/sprites.bin" 256
+// Automatically export charsets 
+@export "charsets/charset1.flf" "charsets/charset1.bin" 256
+
 	mySprites:incbin("sprites/sprites.bin", @spriteLoc);
 
 
