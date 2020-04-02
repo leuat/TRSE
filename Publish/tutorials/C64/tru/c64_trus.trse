@@ -29,5 +29,5 @@ override_target_settings_org = $810
 override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
-open_files = ,tables/luminosities.tru, math/math.tru, luminosities.tru, math.tru, bitmapgraphics.tru
-current_file = math/math.tru
+open_files = ,gfx/bitmapgraphics.tru, tables/luminosities.tru, math/math.tru, luminosities.tru, math.tru, bitmapgraphics.tru
+current_file = gfx/bitmapgraphics.tru

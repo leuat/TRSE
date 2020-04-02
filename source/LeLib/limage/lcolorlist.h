@@ -34,7 +34,8 @@
 #include <QPixmap>
 #include "source/LeLib/data.h"
 #include <math.h>
-#include <QStringLiteral>
+//#include <QStringLiteral>
+
 class Metric {
 public:
     virtual float getDistance(QColor& a, QColor& b) = 0;
