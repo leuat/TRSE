@@ -74,7 +74,10 @@ bool SourceBuilder::Build(QString source)
     compiler->Parse(source,lst);
 
     QString path = m_curDir+"/";//m_projectIniFile.getString("project_path") + "/";
-    m_filename = m_currentSourceFile.split(".ras")[0];
+    if (m_currentSourceFile.toLower().endsWith(".ras"))
+        m_filename = m_currentSourceFile.split(".ras")[0];
+    if (m_currentSourceFile.toLower().endsWith(".tru"))
+        m_filename = m_currentSourceFile.split(".tru")[0];
 //    m_filename = m_curDir+"/"+ m_currentSourceFile.split(".")[0];
 
 /*    if (m_system != nullptr) {

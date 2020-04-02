@@ -416,12 +416,14 @@ void FormRasEditor::Run()
     if (!m_projectIniFile->contains("output_type"))
         m_projectIniFile->setString("output_type","prg");
 
-
-    QString filename = m_currentSourceFile.split(".ras")[0] + "."+ m_projectIniFile->getString("output_type");
+    QString ft = ".ras";
+    if (m_currentSourceFile.toLower().endsWith(".tru"))
+        ft =".tru";
+    QString filename = m_currentSourceFile.split(ft)[0] + "."+ m_projectIniFile->getString("output_type");
     if (m_projectIniFile->getString("system")=="NES")
-        filename = m_currentSourceFile.split(".ras")[0] + ".nes";
+        filename = m_currentSourceFile.split(ft)[0] + ".nes";
     if (m_projectIniFile->getString("system")=="X86")
-        filename = m_currentSourceFile.split(".ras")[0] + ".com";
+        filename = m_currentSourceFile.split(ft)[0] + ".com";
 
 //    exit(1);
     if (m_currentSourceFile.toLower().endsWith(".tru")) {
