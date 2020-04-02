@@ -87,7 +87,8 @@ void CIniFile::Save(QString fname)
     if (QFile::exists(fname)) {
         QFile::remove(fname);
     }
-
+    if (fname=="")
+        return;
     QFile file(fname);
     file.open(QIODevice::WriteOnly| QIODevice::Text);
     QTextStream f(&file);

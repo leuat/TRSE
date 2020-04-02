@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(m_updateThread, SIGNAL(updateImageSignal()), this, SLOT(updateImage()));
 
 
-    Data::data.version += "   Build  " + QDate::currentDate().toString();
+//    Data::data.version += "   Build  " + QDate::currentDate().toString();
 
 
     this->setMouseTracking(true);
@@ -133,6 +133,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_tutorials.Read(":resources/text/tutorials.txt");
     m_tutorials.PopulateTreeList(ui->treeTutorials);
     setWindowTitle("Turbo Rascal Syntax error, \";\" expected but \"BEGIN\" Version " + Data::data.version);
+    ui->textBrowser->setText( ui->textBrowser->toHtml().replace("@version",Data::data.version));
+
 }
 
 
@@ -619,7 +621,6 @@ QString MainWindow::getProjectPath()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     if (CloseAll()) {
-        qDebug() << "Store settings";
         QSettings settings("LemonSpawn", "TRSE");
         settings.setValue("MainWindow/geometry", saveGeometry());
         settings.setValue("MainWindow/windowState", saveState());

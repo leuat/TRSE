@@ -268,8 +268,9 @@ void SymbolTable::InitBuiltins()
         Define(QSharedPointer<Symbol>(new Symbol("copper_mod_even", "integer")));
         Define(QSharedPointer<Symbol>(new Symbol("copper_mod_odd", "integer")));
         Define(QSharedPointer<Symbol>(new Symbol("copper_palette", "integer")));
-        Define(QSharedPointer<Symbol>(new Symbol("diwstrt", "integer")));
-        Define(QSharedPointer<Symbol>(new Symbol("diwstop", "integer")));
+//        Define(QSharedPointer<Symbol>(new Symbol("copper_diwstrt", "integer")));
+  //      Define(QSharedPointer<Symbol>(new Symbol("copper_diwstop", "integer")));
+
 
         Define(QSharedPointer<Symbol>(new Symbol("ddfstrt", "integer")));
         Define(QSharedPointer<Symbol>(new Symbol("ddfstop", "integer")));

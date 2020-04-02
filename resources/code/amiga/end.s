@@ -85,9 +85,9 @@ Chip:
     even
 cop:
     dc.w    $008e
-diwstrt:
+copper_diwstrt:
     dc.w    $2c81,$0090
-diwstop:
+copper_diwstop:
     dc.w    $2cc1
 
     

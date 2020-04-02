@@ -182,6 +182,9 @@ public:
     QVector<QString> m_zpStack; // temp zp stack
 
     QMap<QString, QString> m_defines;
+    // Labels for hi/lo integers
+    QString ilo = "_i_lo";
+    QString ihi = "_i_hi";
 
 
     int m_zbyte = 0x80;

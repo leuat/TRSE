@@ -23,6 +23,7 @@
 #include "ui_dialogabout.h"
 #include "source/LeLib/data.h"
 #include <QFile>
+#include <QDate>
 
 DialogAbout::DialogAbout(QWidget *parent) :
     QDialog(parent),
@@ -30,6 +31,7 @@ DialogAbout::DialogAbout(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->txtAbout->setText( ui->txtAbout->toHtml().replace("@version",Data::data.version));
+    ui->txtAbout->setText( ui->txtAbout->toHtml().replace("@date", QDate::currentDate().toString()));
 
 /*    QFile f(":resources/text/about.txt");
   //  if (QFile::exists(":resources/text/about.txt"))

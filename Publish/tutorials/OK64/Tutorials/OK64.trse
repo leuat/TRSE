@@ -40,6 +40,4 @@ var_zeropages = ,
 dosbox_x86_system = default
 cpu_x86_system = 8086
 override_target_settings_basic = 6.95314e-310
-open_files = ,example5.ras, example1.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/OK64/Tutorials/
-current_file = example1.ras
+open_files =, example1.ras

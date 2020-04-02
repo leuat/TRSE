@@ -142,7 +142,6 @@ int main(int argc, char *argv[])
     w.show();
     w.AfterStart(oldCurDir);
 
-    qDebug() << "Restore settings";
     QSettings settings("LemonSpawn", "TRSE");
     w.restoreGeometry(settings.value("MainWindow/geometry").toByteArray());
     w.restoreState(settings.value("MainWindow/windowState").toByteArray());
