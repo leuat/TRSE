@@ -1,21 +1,10 @@
 program Tutorial11_Lines;
+
+@use "bitmapgraphics"
+
 var
-	@define addr zeropage1
 	i, j,k,val: byte=5;
 	zeropage1: pointer;
-	@define bitmapstart "$2000"
-	
-	// Currently, putpixel2 and putpixel3 are supported
-	@define putpixel "putpixel2();"
-	
-	@include "../../RasLib/bitmapgraphics.ras"
-
-
-/*
-
-	Not yet updated.
-*/
-
 
 /*
   switch between bank 0 and 1
@@ -81,7 +70,7 @@ end;
 
 begin
 	bmg_currbank :=0; // Current bitmap bank (added to high bit of putpixel)
-	SetupPixelTables();
+	InitBitmapGraphics(1, $2000);
 	inczp(zeropage1,10);
 	vic_data_loc:=$18;
 	
@@ -95,7 +84,6 @@ begin
 	
 	clearscreen(YELLOW,screen_col_loc);
 	clearscreen(BLUE,screen_char_loc2);
-
 
 	while (true) do UpdateRaster();
 	Loop();

@@ -105,6 +105,9 @@ public:
 
     static uchar flipBit(uchar val, int bit);
 
+    static QString findFileInDirectories(QString fileName, QStringList dirs);
+
+
 
     static bool QStringIsSimilar(QString a, QString b, qreal percentage, int n, Qt::CaseSensitivity caseSense);
 

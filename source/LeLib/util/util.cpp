@@ -216,6 +216,16 @@ uchar Util::flipBit(uchar val, int bit)
     return val;
 }
 
+QString Util::findFileInDirectories(QString fileName, QStringList dirs)
+{
+    for (QString d : dirs) {
+        QString s = d + QDir::separator() + fileName;
+        if (QFile::exists(s))
+            return s;
+    }
+    return "";
+}
+
 
 
 QVector3D Util::fromSpherical(float r, float t, float p) {

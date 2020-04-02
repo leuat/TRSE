@@ -67,7 +67,7 @@ class Parser {
 public:
 
     QVector<ParserBlock> m_parserBlocks;
-
+    static QStringList s_usedTRUs;
 //    int m_currentParserBlock=-1;
 
     QString m_currentDir;
@@ -90,6 +90,7 @@ public:
     QSharedPointer<SymbolTable>  m_symTab = nullptr;
     QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
     QSharedPointer<Node> m_tree;
+
 
     QVector<QString> m_ignoreBuiltinFunctionTPU;
     QVector<QSharedPointer<Parser>> m_tpus;

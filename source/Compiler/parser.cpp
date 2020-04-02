@@ -22,6 +22,9 @@
 #include "parser.h"
 #include "source/Compiler/data_pmm.h"
 
+QStringList Parser::s_usedTRUs;
+
+
 Parser::Parser()
 {
 }
@@ -260,8 +263,9 @@ void Parser::InitBuiltinFunctions()
 
 void Parser::InitBuiltinFunction(QStringList methodName, QString builtinFunctionName, QString initJump )
 {
-    if (m_ignoreMethods.contains(builtinFunctionName.toLower()))
+    if (m_ignoreMethods.contains(builtinFunctionName.toLower())) {
             return;
+    }
     QString txt = m_lexer->m_text.toLower();
     for (QString s: methodName)
      if (txt.contains(s)) {
@@ -269,9 +273,15 @@ void Parser::InitBuiltinFunction(QStringList methodName, QString builtinFunction
              //m_ignoreBuiltinFunctionTPU.append(builtinFunctionName);
          //qDebug() << "ALRADY COMTAINS " << builtinFunctionName;
 //         Node::m_staticBlockInfo.m_blockID=-1;
-         if (!m_ignoreBuiltinFunctionTPU.contains(builtinFunctionName))
+//         qDebug() <<m_ignoreBuiltinFunctionTPU;
+         /*if (!m_ignoreBuiltinFunctionTPU.contains(builtinFunctionName))
             m_procedures[builtinFunctionName] = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(Token(TokenType::PROCEDURE, builtinFunctionName), builtinFunctionName));
-         else m_procedures.remove(builtinFunctionName);//qDebug() << "IGNORING CREATING NEW " <<builtinFunctionName;
+         else {
+             m_procedures.remove(builtinFunctionName);
+            qDebug() << "IGNORING CREATING NEW " <<builtinFunctionName;
+         }*/
+         m_procedures[builtinFunctionName] = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(Token(TokenType::PROCEDURE, builtinFunctionName), builtinFunctionName));
+         m_ignoreBuiltinFunctionTPU.append(builtinFunctionName);
         if (initJump!="")
             m_initJumps << "\tjsr "+ initJump;
         return;
@@ -372,8 +382,9 @@ void Parser::ApplyTPUBefore()
 {
     for (QSharedPointer<Parser> p: m_tpus) {
 //        QSharedPointer<NodeProgram> np = qSharedPointerDynamicCast<NodeProgram>(p->m_tree);
-        for (QString k : p->m_procedures.keys())
+        for (QString k : p->m_procedures.keys()) {
             m_procedures[k] = p->m_procedures[k];
+        }
 //        for (QString k : p->m_procedures.keys())
   //          m_procedures[k] = p->m_procedures[k];
 
@@ -385,36 +396,14 @@ void Parser::ApplyTPUAfter(QVector<QSharedPointer<Node>>& decl)
     for (QSharedPointer<Parser> p: m_tpus) {
         QSharedPointer<NodeProgram> np = qSharedPointerDynamicCast<NodeProgram>(p->m_tree);
         QVector<QSharedPointer<Node>> decls;
+
         for (QSharedPointer<Node> on : np->m_NodeBlock->m_decl) {
             QSharedPointer<NodeProcedureDecl> procDecl =
                     qSharedPointerDynamicCast<NodeProcedureDecl>(on);
             if (procDecl!=nullptr) {
-                // We have a procedure!
-               // qDebug() << procDecl->m_procName;
-  /*              if (m_procedures.contains(procDecl->m_procName)) {
-                    //decls.append(procDecl);
-                    //qDebug() << "Appending : " << procDecl;
-                    if (m_procedures[procDecl->m_procName].isI)
-                }
-                else
-                    decls.append(procDecl);*/
-                bool doAppend = true;
-/*                if (m_procedures.contains())
-                if (Syntax::s.builtInFunctions.contains(procDecl->m_procName)) {
-                    Syntax::s.builtInFunctions[procDecl->m_procName].m_initFunction;
 
-                }*/
-                if (doAppend)
+                if (!m_ignoreBuiltinFunctionTPU.contains(procDecl->m_procName))
                     decls.append(on);
-                if (Syntax::s.builtInFunctions.contains(procDecl->m_procName)) {
-//                    m_procedures.remove(procDecl->m_procName);
-//                    qDebug() << "Removing : " <<procDecl->m_procName;
-                    m_ignoreBuiltinFunctionTPU.append(procDecl->m_procName);
-                }
-//                    Syntax::s.builtInFunctions[procDecl->m_procName].m_initFunction;
-
-//                }*/
-
 
             }
             else decls.append(on);
@@ -1356,9 +1345,9 @@ QSharedPointer<Node> Parser::Program(QString param)
         block = qSharedPointerDynamicCast<NodeBlock>(BlockNoCompound(true));
 
     QSharedPointer<NodeProgram> program = QSharedPointer<NodeProgram>(new NodeProgram(progName,  param, block));
+    ApplyTPUAfter(block->m_decl);
 
     if (!m_isTRU) {
-        ApplyTPUAfter(block->m_decl);
         Eat(TokenType::DOT);
     }
     else {
@@ -1777,7 +1766,6 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
         done = PreprocessIncludeFiles();
 
     Preprocess();
-
     ApplyTPUBefore();
 //    PreprocessConstants();
     m_pass = 1;
@@ -2834,12 +2822,24 @@ void Parser::HandleProjectSettingsPreprocessors()
 
 void Parser::HandleUseTPU(QString fileName)
 {
-    QString fname = m_currentDir + QDir::separator() + fileName+".tru";
+    //QString fname = m_currentDir + QDir::separator() + fileName+".tru";
 
-    if (!QFile::exists(fname)) {
-        ErrorHandler::e.Error("Could not find TRU file for inclusion : "+fname,m_currentToken.m_lineNumber);
+//    if (m_isTRU)
+  //      ErrorHandler::e.Error("TRSE Unit files cannot include other unit files")
+
+    if (s_usedTRUs.contains(fileName))
+        return;
+
+
+    QStringList dirs;
+    dirs << Util::GetSystemPrefix()+ "tutorials/"+Syntax::s.m_systemString+ QDir::separator()+ "tru"+QDir::separator();
+    dirs << m_currentDir + QDir::separator();
+    QString fname = Util::findFileInDirectories(fileName + ".tru", dirs);
+
+    if (fname == "" || !QFile::exists(fname)) {
+        ErrorHandler::e.Error("Could not find TRU file for inclusion : "+fileName,m_currentToken.m_lineNumber);
     }
-
+    s_usedTRUs.append(fileName);
 
     QSharedPointer<Parser> p = QSharedPointer<Parser>(new Parser);
     QSharedPointer<Lexer> l = QSharedPointer<Lexer>(new Lexer);
@@ -2847,13 +2847,15 @@ void Parser::HandleUseTPU(QString fileName)
     l->m_text = Util::loadTextFile(fname);
     l->m_orgText = l->m_text;
     p->m_isTRU = true;
-    p->m_tree = p->Parse( m_removeUnusedDecls
+    p->m_projectIni = m_projectIni;
+    p->m_settingsIni = m_settingsIni;
+    p->m_tree = p->Parse( false
                              ,m_projectIni->getString("vic_memory_config"),
                              Util::fromStringList(m_projectIni->getStringList("global_defines")),
                              m_projectIni->getdouble("pascal_settings_use_local_variables")==1.0);
 
     m_symTab->Merge(p->m_symTab.get());
-
+    m_ignoreBuiltinFunctionTPU.append(p->m_ignoreBuiltinFunctionTPU);
     m_tpus.append(p);
 //    qDebug() << m_currentToken.m_value;
 //    Eat();

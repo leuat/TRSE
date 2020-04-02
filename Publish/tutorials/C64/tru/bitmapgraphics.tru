@@ -1,0 +1,235 @@
+unit BitmapGraphics;
+@use "math"
+
+
+var
+	xtablelow: array[160] of byte;
+	xtablehigh: array[160] of byte;
+	ytablelow: array[200] of byte;
+	ytablehigh: array[200] of byte;
+	bmg_mask, bmg_maskClear : array[160] of byte;
+	//	xi, yi: byte;
+
+	bmg_dx,bmg_dy,bmg_ai,bmg_bi,bmg_xi,bmg_yi : byte;
+	bmg_d, bmg_currbank:byte;
+	bmg_low, bmg_high, bmg_k, bmg_i, bmg_val : byte;
+	bmg_index, bmg_bitmapstart : integer;
+	addr,p_putpixel : pointer;
+	
+
+
+procedure putpixel3();
+begin
+	asm("
+	ldy bmg_y1
+	ldx bmg_x1
+	
+	lda ytablelow,y
+	sta addr
+	
+	lda ytablehigh,y
+	clc
+	adc bmg_currbank
+	sta addr+1
+	
+	ldy xtablelow,x
+	
+	lda (addr),y
+	ora bmg_mask,x
+	sta (addr),y
+	
+	");
+	
+	
+end;
+
+
+procedure putpixel2();
+begin
+	asm("
+	ldy bmg_y1
+	ldx bmg_x1
+	
+	lda ytablelow,y
+	clc
+	adc xtablelow,x
+	sta addr
+	
+	lda ytablehigh,y
+	adc bmg_currbank
+	adc xtablehigh,x
+	sta addr+1
+	
+	ldy #$00
+	lda (addr),y
+	
+	ora bmg_mask,x
+	sta (addr),y
+	");
+	
+end;
+
+
+/*procedure putpixel(_pixx,_pixy:byte);
+begin
+	asm("
+	ldy _pixy
+	ldx _pixx
+	
+	lda ytablelow,y
+	clc
+	adc xtablelow,x
+	sta addr
+	
+	lda ytablehigh,y
+	adc xtablehigh,x
+	sta addr+1
+	
+	lda addr
+	clc
+	adc <@bitmapstart
+	sta addr
+	
+	lda addr+1
+	adc >@bitmapstart
+	sta addr+1
+	
+	ldy $00
+	lda (addr),y
+	ora (zeropage5),y
+	sta (addr),y
+	");
+end;
+*/
+procedure SetupPixelTables();
+var
+	bmg_zp: pointer;
+begin
+	bmg_low:=0;
+	bmg_high:=0;
+	bmg_k:=0;
+	bmg_index:=0;
+	bmg_zp := bmg_index;
+	
+	for bmg_i:=0 to 160 do begin
+		xtablelow[bmg_i] := bmg_zp[0];
+		xtablehigh[bmg_i] := bmg_zp[1];
+		bmg_k:=bmg_k+2;
+		if bmg_k=8 then begin
+			bmg_index:=bmg_index+8;
+			bmg_k:=0;
+			
+		end;
+	end;
+	
+	bmg_index := bmg_bitmapstart;
+	bmg_k:=0;
+	for bmg_i:=0 to 200 do begin
+		
+		ytablelow[bmg_i] := bmg_zp[0];
+		ytablehigh[bmg_i] := bmg_zp[1];
+		bmg_k:=bmg_k+1;
+		bmg_index:=bmg_index+1;
+		if bmg_k=8 then begin
+			bmg_index:=bmg_index+312;
+			bmg_k:=0;
+		end;
+		
+	end;
+	
+	for bmg_i:=0 to 200 do begin
+		bmg_k:=3-bmg_i&3;
+		bmg_val:=0;
+		togglebit(bmg_val, bmg_k*2, 1);
+		togglebit(bmg_val, bmg_k*2+1, 1);
+		bmg_mask[bmg_i] := bmg_val;
+//		maskClear[bmg_i] := $FF-bmg_val;
+		
+	end;
+	
+end;
+
+
+procedure InitBitmapGraphics(bmg_pi:byte; bmg_bsta:integer);
+begin
+	p_putpixel := proceduretopointer(putpixel2());
+	if (bmg_pi=2) then 
+		p_putpixel := proceduretopointer(putpixel3());
+
+	bmg_bitmapstart:=bmg_bsta;
+	SetupPixelTables();
+
+end;
+
+procedure Line ( bmg_x1, bmg_y1, bmg_x2, bmg_y2 : byte);
+begin
+	bmg_dx:=0;
+	bmg_dy:=0;
+	bmg_d:=0;
+	
+	if bmg_x1 < bmg_x2 then begin
+		bmg_xi := 1;
+		bmg_dx := bmg_x2 - bmg_x1;
+	end
+	else
+		begin
+		bmg_xi := 255;
+		bmg_dx := bmg_x1 - bmg_x2;
+	end;
+	
+	if bmg_y1 < bmg_y2 then begin
+		bmg_yi := 1;
+		bmg_dy := bmg_y2 - bmg_y1;
+	end
+	
+	else
+		begin
+		bmg_yi := 255;
+		bmg_dy := bmg_y1 - bmg_y2;
+	end;
+	call(p_putpixel);
+	if bmg_dx >= bmg_dy then begin
+		
+		bmg_ai := (bmg_dy - bmg_dx);
+		bmg_bi := bmg_dy;
+		bmg_d := bmg_bi - bmg_dx/2;
+		while bmg_x1 <> bmg_x2 do begin
+			if bmg_d <128 do begin
+				asm(";check");
+
+				bmg_y1 := bmg_y1 + bmg_yi;
+				bmg_d := bmg_d + bmg_ai;
+			end
+			else
+				bmg_d := bmg_d + bmg_bi;
+			
+			bmg_x1 :=  bmg_x1 + bmg_xi;
+			call(p_putpixel);
+		end;
+	end
+	else
+		begin // dy > dx
+		bmg_ai := (bmg_dx - bmg_dy);
+		bmg_bi := bmg_dx;
+		bmg_d := bmg_bi - bmg_dy/2;
+		
+		while bmg_y1 <> bmg_y2 do begin
+			if bmg_d<128 do begin
+				bmg_x1 := bmg_x1+ bmg_xi;
+				bmg_d := bmg_d + bmg_ai;
+				
+			end
+			else
+				bmg_d := bmg_d+  bmg_bi;
+			
+			
+			bmg_y1 := bmg_y1 + bmg_yi;
+			call(p_putpixel);
+		end;
+		
+	end;
+end;
+
+
+
+end.
