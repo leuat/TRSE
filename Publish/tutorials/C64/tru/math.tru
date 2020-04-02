@@ -2,6 +2,8 @@ unit math;
 var
 	math_test: byte;
 
+
+balle
 procedure sqrTest(math_v : byte);
 begin
 	returnvalue(math_v*math_v);

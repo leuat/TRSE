@@ -2849,11 +2849,17 @@ void Parser::HandleUseTPU(QString fileName)
     p->m_isTRU = true;
     p->m_projectIni = m_projectIni;
     p->m_settingsIni = m_settingsIni;
+    try {
     p->m_tree = p->Parse( false
                              ,m_projectIni->getString("vic_memory_config"),
                              Util::fromStringList(m_projectIni->getStringList("global_defines")),
                              m_projectIni->getdouble("pascal_settings_use_local_variables")==1.0);
-
+    }catch (FatalErrorException e)
+    {
+        e.message = "<font color=\"#FFB030\">Error during compiling the Turbo Rascal Unit file : '</font><font color=\"yellow\">" +fileName + "</font>'<br>Please make sure that this TRU files is working correctly, and compiles stand-alone! <br><br>Original error message: <font color=\"grey\">"+e.message+"</font>";
+        e.linenr = m_currentToken.m_lineNumber;
+       throw e;
+    }
     m_symTab->Merge(p->m_symTab.get());
     m_ignoreBuiltinFunctionTPU.append(p->m_ignoreBuiltinFunctionTPU);
     m_tpus.append(p);
