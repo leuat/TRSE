@@ -123,6 +123,8 @@ class CustomFileSystemModel : public QFileSystemModel {
                 img.load(":resources/images/paw_icon.png");
             if (f.contains(".fjo"))
                 img.load(":resources/images/torus.jpg");
+            if (f.contains(".tru"))
+                img.load(":resources/images/tru.png");
 
             QIcon ic(QPixmap::fromImage(img));
 
