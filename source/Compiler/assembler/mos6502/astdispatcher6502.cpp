@@ -1145,11 +1145,17 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeVarDecl> node)
 
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
+
+    if (v->m_isGlobal)
+        return;
+
+
     QString keep = v->value;
 
     v->value = as->m_symTab->getCurrentProcedure()+v->value;
 
     node->ExecuteSym(as->m_symTab);
+
 
 //    qDebug() << v->value;
 //    qDebug() << "NVA A";

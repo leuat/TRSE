@@ -43,7 +43,7 @@ public:
 
     NodeVar(Token t, QSharedPointer<Node> expr);
 
-
+    bool m_isGlobal = false;
 
     TokenType::Type getOrgType(Assembler *as);
 

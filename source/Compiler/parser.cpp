@@ -2160,6 +2160,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
     }
 
     // Make sure that ALL are defined!
+
     while (m_currentToken.m_type == TokenType::COMMA) {
         Eat(TokenType::COMMA);
         vars.append(QSharedPointer<NodeVar>(new NodeVar(m_currentToken)));
@@ -2171,6 +2172,11 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
         Eat(TokenType::ID);
     }
     Eat(TokenType::COLON);
+    bool isGlobal = false;
+    if (m_currentToken.m_type==TokenType::GLOBAL) {
+        isGlobal = true;
+        Eat();
+    }
 
     QSharedPointer<NodeVarType> typeNode = qSharedPointerDynamicCast<NodeVarType>(TypeSpec());
     // Set all types
@@ -2193,10 +2199,20 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
     }*/
 
     QVector<QSharedPointer<Node>> var_decleratons;
+    if (isGlobal) { // Typecheck that they exist
+        for (QSharedPointer<Node> n : vars) {
+            QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
+            m_symTab->Lookup(v->value,v->m_op.m_lineNumber);
 
+        }
+    }
+
+    //else
+ //   if (!isGlobal)
     for (QSharedPointer<Node> n : vars) {
-
         QSharedPointer<NodeVarDecl> decl = QSharedPointer<NodeVarDecl>(new NodeVarDecl(n, typeNode));
+        QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
+        v->m_isGlobal = isGlobal;
         var_decleratons.append(decl);
 //        qDebug() <<  typeNode->m_op.getType() << typeNode->m_op.m_value << (qSharedPointerDynamicCast<NodeVar>n)->value;;
         if (typeNode->m_op.m_type == TokenType::INCSID) {
