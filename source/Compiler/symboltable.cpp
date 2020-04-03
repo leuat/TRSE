@@ -366,8 +366,6 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
 
 
     QString localName = m_gPrefix+m_currentProcedure+name;
-//    qDebug() << "localName: " << localName;
-
 
     if (!m_symbols.contains(name) && !m_symbols.contains(localName)) {
 
@@ -380,12 +378,6 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
         return nullptr;
     }
 
-    //qDebug() << name << " " << m_symbols[name]->m_type;
-    //        qDebug() << "FOUND "<< name;
-//    qDebug() << "SymbolTable Symbols used : " << name <<m_symbols[name]->isUsed;
-    // Prioritize local name
-  //  qDebug() <<m_symbols.keys();
-//    exit(1);
     if (m_symbols.contains(localName)) {
     //    qDebug() << "Found local name " << localName;
         m_symbols[localName]->isUsed = true;

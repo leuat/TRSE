@@ -2147,7 +2147,6 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
     QString varName = m_currentToken.m_value;
     QVector<QSharedPointer<Symbol>> syms;
     syms.append(QSharedPointer<Symbol>(new Symbol(m_currentToken.m_value,"")));
-    m_symTab->Define(syms.last() ,false);
     Eat(TokenType::ID);
 
     if (m_currentToken.m_type==TokenType::EQUALS) {
@@ -2167,7 +2166,6 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
         AppendComment(vars[vars.count()-1]);
 
         syms.append(QSharedPointer<Symbol>(new Symbol(m_currentToken.m_value,"")));
-        m_symTab->Define(syms.last() ,false);
 
         Eat(TokenType::ID);
     }
@@ -2177,9 +2175,15 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
         isGlobal = true;
         Eat();
     }
+    // NOW do the syms define
+    if (!isGlobal)
+    for (QSharedPointer<Symbol> s: syms)
+        m_symTab->Define(s ,false);
+
 
     QSharedPointer<NodeVarType> typeNode = qSharedPointerDynamicCast<NodeVarType>(TypeSpec());
     // Set all types
+
     for (QSharedPointer<Symbol> s: syms) {
        s->m_type = typeNode->m_op.m_value;
        if (typeNode->m_data.count()!=0)
@@ -2202,14 +2206,16 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
     if (isGlobal) { // Typecheck that they exist
         for (QSharedPointer<Node> n : vars) {
             QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
-            m_symTab->Lookup(v->value,v->m_op.m_lineNumber);
+            try {
+               m_symTab->Lookup(v->value,v->m_op.m_lineNumber);
+            } catch (FatalErrorException fe) {
+                fe.message = fe.message + "When using the <font color=\"yellow\">global</font> keyword, the variable must in question must be declared in the global variable scope. ";
+                throw fe;
+            }
 
         }
     }
-
-    //else
- //   if (!isGlobal)
-    for (QSharedPointer<Node> n : vars) {
+   for (QSharedPointer<Node> n : vars) {
         QSharedPointer<NodeVarDecl> decl = QSharedPointer<NodeVarDecl>(new NodeVarDecl(n, typeNode));
         QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
         v->m_isGlobal = isGlobal;

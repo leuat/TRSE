@@ -32,6 +32,10 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
     QSharedPointer<NodeVarType> typeNode = qSharedPointerDynamicCast<NodeVarType>(m_typeNode);
     QString typeName = typeNode->value;
     QString varName = qSharedPointerDynamicCast<NodeVar>(m_varNode)->value;
+
+//    if (qSharedPointerDynamicCast<NodeVar>(m_varNode)->m_isGlobal)
+  //      return;
+
     if (symTab->exists(varName))
           ErrorHandler::e.Error("Variable '" + varName +"' is already defined!",m_op.m_lineNumber);
 
@@ -69,6 +73,7 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
     bool isFlaggedAsUsed = false;
     if (typeName == "INCSID")
         isFlaggedAsUsed = true;
+
 
     symTab->Define(varSymbol,isFlaggedAsUsed);
 

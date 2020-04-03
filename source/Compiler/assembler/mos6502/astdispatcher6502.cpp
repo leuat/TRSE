@@ -1146,6 +1146,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeVarDecl> node)
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
 
+    // Don't declare va
     if (v->m_isGlobal)
         return;
 
