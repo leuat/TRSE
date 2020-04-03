@@ -8,314 +8,445 @@ Methods6502Vic20::Methods6502Vic20()
 void Methods6502Vic20::Assemble(Assembler *as, AbstractASTDispatcher *dispenser)
 {
     Methods6502::Assemble(as,dispenser);
+
+
+    if (Command("init_viairq"))
+        InitVIAIRQ(as);
+    else
+    if (Command("VIAIRQ"))
+        VIAIRQ(as);
+    else
+    if (Command("VIARasterIRQ"))
+        VIARasterIRQ(as);
+    else
+
     if (Command("init_vic20_sidplay"))
         as->IncludeFile(":resources/code/vic20_playsid_init.asm");
-
+    else
     if (Command("PlayVIC20Sid"))
         PlayVIC20Sid(as);
 
+    else
 
     if (Command("initVbm"))
         initVbm(as);
+    else
     if (Command("vbmSetDisplayMode"))
         vbmSetDisplayMode(as);
     // Restore regular mode
+    else
     if (Command("vbmResetDisplayMode"))
         vbmResetDisplayMode(as);
 
     // Enable or disable debug mode - switches off characterset
+    else
     if (Command("vbmDebug"))
         vbmDebug(as);
 
     // Set the screenmemory pointer to start of a bitmap column.  There are 20 columns
+    else
     if (Command("vbmSetColumn"))
         vbmSetColumn(as);
 
     // Set the screenmemory pointer to next bitmap column.  ie: add 192
+    else
     if (Command("initVbmNextColumn"))
         initVbmNextColumn(as);
+    else
     if (Command("vbmNextColumn"))
         vbmNextColumn(as);
 
+    else
     if (Command("max"))
         MinMax(as,false);
+    else
     if (Command("min"))
         MinMax(as,true);
     // Set the screenmemory pointer to an exact address and load vbmX with the 0-7 x offset
+    else
     if (Command("initvbmSetPosition"))
         initvbmSetPosition(as);
+    else
     if (Command("vbmSetPosition1"))
         vbmSetPosition1(as);
+    else
     if (Command("vbmSetPosition2"))
         vbmSetPosition2(as);
+    else
     if (Command("vbmSetPosition4"))
         vbmSetPosition4(as);
 
     // clear the bitmap area that starts at $1100
+    else
     if (Command("initVbmClear"))
         initVbmClear(as);
+    else
     if (Command("vbmClear"))
         vbmClear(as);
 
     // clear the colour memory
+    else
     if (Command("vbmClearColor"))
         vbmClearColor(as);
 
     // Draw a tile at screenmemory position
+    else
     if (Command("vbmDrawTile"))
         vbmDrawTile(as);
     // Draw a tile with OR operation at screenmemory position
+    else
     if (Command("vbmDrawTileO"))
         vbmDrawTileO(as);
     // Draw a tile with EOR operation at screenmemory position
+    else
     if (Command("vbmDrawTileE"))
         vbmDrawTileE(as);
     // Clear a tile at screenmemory position
+    else
     if (Command("vbmClearTile"))
         vbmClearTile(as);
     // Clear an 8x8 block at screenmemory position
+    else
     if (Command("vbmClearBlock"))
         vbmClearBlock(as);
 
     // TileMap Replace
+    else
     if (Command("initVbmDrawTileMap"))
         initVbmDrawTileMap(as);
     // Draw TileMap
+    else
     if (Command("vbmDrawTileMap"))
         vbmDrawTileMap(as);
     // TileMap OR
+    else
     if (Command("initVbmDrawTileMapO"))
         initVbmDrawTileMapO(as);
     // Draw TileMap
+    else
     if (Command("vbmDrawTileMapO"))
         vbmDrawTileMapO(as);
     // TileMap EOR
+    else
     if (Command("initVbmDrawTileMapE"))
         initVbmDrawTileMapE(as);
     // Draw TileMap
+    else
     if (Command("vbmDrawTileMapE"))
         vbmDrawTileMapE(as);
     // TileMap AND
+    else
     if (Command("initVbmClearTileMap"))
         initVbmClearTileMap(as);
     // Draw TileMap
+    else
     if (Command("vbmClearTileMap"))
         vbmClearTileMap(as);
 
 
     // Test pixel commands
+    else
     if (Command("vbmTestPixel"))
         vbmTestPixel(as);
+    else
     if (Command("vbmTestPixel2"))
         vbmTestPixel2(as);
 
+    else
     if (Command("initVbmTestTilePixel"))
         initVbmTestTilePixel(as);
+    else
     if (Command("initVbmTestTilePixel2"))
         initVbmTestTilePixel2(as);
+    else
     if (Command("vbmTestTilePixel"))
         vbmTestTilePixel(as);
+    else
     if (Command("vbmTestTilePixel2"))
         vbmTestTilePixel2(as);
 
     // Dot commands
+    else
     if (Command("initVbmDot"))
         initVbmDot(as);
     // Draw dot
+    else
     if (Command("vbmDrawDot"))
         vbmDrawDot(as);
     // Clear dot
+    else
     if (Command("vbmClearDot"))
         vbmClearDot(as);
     // Draw dot with Eor
+    else
     if (Command("vbmDrawDotE"))
         vbmDrawDotE(as);
 
     // Blot commands
+    else
     if (Command("initVbmBlot"))
         initVbmBlot(as);
     // Draw Blot
+    else
     if (Command("vbmDrawBlot"))
         vbmDrawBlot(as);
     // Clear Blot
+    else
     if (Command("vbmClearBlot"))
         vbmClearBlot(as);
     // Draw Blot with Eor
+    else
     if (Command("vbmDrawBlotE"))
         vbmDrawBlotE(as);
 
     // Horizontal Scrolling
+    else
     if (Command("initVbmScrollLeft"))
         initVbmScrollLeft(as);
+    else
     if (Command("initVbmScrollRight"))
         initVbmScrollRight(as);
+    else
     if (Command("initVbmScrollFixTop"))
         initVbmScrollFixTop(as);
+    else
     if (Command("initVbmScrollFixBottom"))
         initVbmScrollFixBottom(as);
 
+    else
     if (Command("vbmScrollLeft"))
         vbmScrollLeft(as);
+    else
     if (Command("vbmScrollRight"))
         vbmScrollRight(as);
+    else
     if (Command("vbmScrollFixTop"))
         vbmScrollFixTop(as);
+    else
     if (Command("vbmScrollFixBottom"))
         vbmScrollFixBottom(as);
 
+    else
     if (Command("vbmInitScreenShiftLeft"))
         vbmInitScreenShiftLeft(as);
+    else
     if (Command("vbmInitScreenShiftRight"))
         vbmInitScreenShiftRight(as);
+    else
     if (Command("vbmScreenShiftLeft"))
         vbmScreenShiftLeft(as);
+    else
     if (Command("vbmScreenShiftRight"))
         vbmScreenShiftRight(as);
 
     // Sprites
+    else
     if (Command("initVbmSpriteStitch"))
         initVbmSpriteStitch(as);
+    else
     if (Command("vbmSpriteStitch"))
         vbmSpriteStitch(as);
+    else
     if (Command("initVbmSpriteShiftR"))
         initVbmSpriteShiftR(as);
+    else
     if (Command("vbmSpriteShiftR"))
         vbmSpriteShiftR(as);
+    else
     if (Command("initVbmSpriteShiftL"))
         initVbmSpriteShiftL(as);
+    else
     if (Command("vbmSpriteShiftL"))
         vbmSpriteShiftL(as);
+    else
     if (Command("initVbmSpriteShiftSR"))
         initVbmSpriteShiftSR(as);
+    else
     if (Command("vbmSpriteShiftSR"))
         vbmSpriteShiftSR(as);
+    else
     if (Command("initVbmSpriteShiftSL"))
         initVbmSpriteShiftSL(as);
+    else
     if (Command("vbmSpriteShiftSL"))
         vbmSpriteShiftSL(as);
 
+    else
     if (Command("initVbmDrawSprite"))
         initVbmDrawSprite(as);
+    else
     if (Command("vbmDrawSprite"))
         vbmDrawSprite(as);
+    else
     if (Command("initVbmDrawSpriteE"))
         initVbmDrawSpriteE(as);
+    else
     if (Command("vbmDrawSpriteE"))
         vbmDrawSpriteE(as);
+    else
     if (Command("initVbmClearSprite"))
         initVbmClearSprite(as);
+    else
     if (Command("vbmClearSprite"))
         vbmClearSprite(as);
 
+    else
     if (Command("initVbmDrawSprite2"))
         initVbmDrawSprite2(as);
+    else
     if (Command("vbmDrawSprite2"))
         vbmDrawSprite2(as);
+    else
     if (Command("initVbmDrawSprite2E"))
         initVbmDrawSprite2E(as);
+    else
     if (Command("vbmDrawSprite2E"))
         vbmDrawSprite2E(as);
+    else
     if (Command("initVbmClearSprite2"))
         initVbmClearSprite2(as);
+    else
     if (Command("vbmClearSprite2"))
         vbmClearSprite2(as);
+    else
 
     if (Command("initVbmDrawSprite8"))
         initVbmDrawSprite8(as);
+    else
     if (Command("vbmDrawSprite8"))
         vbmDrawSprite8(as);
+    else
     if (Command("initVbmDrawSprite8E"))
         initVbmDrawSprite8E(as);
+    else
     if (Command("vbmDrawSprite8E"))
         vbmDrawSprite8E(as);
+    else
     if (Command("initVbmClearSprite8"))
         initVbmClearSprite8(as);
+    else
     if (Command("vbmClearSprite8"))
         vbmClearSprite8(as);
 
+    else
     if (Command("initVbmDrawSprite16"))
         initVbmDrawSprite16(as);
+    else
     if (Command("vbmDrawSprite16"))
         vbmDrawSprite16(as);
+    else
     if (Command("initVbmDrawSprite16E"))
         initVbmDrawSprite16E(as);
+    else
     if (Command("vbmDrawSprite16E"))
         vbmDrawSprite16E(as);
+    else
     if (Command("initVbmClearSprite16"))
         initVbmClearSprite16(as);
+    else
     if (Command("vbmClearSprite16"))
         vbmClearSprite16(as);
 
+    else
     if (Command("initVbmDrawSpriteSlice"))
         initVbmDrawSpriteSlice(as);
+    else
     if (Command("vbmDrawSpriteSlice"))
         vbmDrawSpriteSlice(as);
+    else
     if (Command("initVbmDrawSpriteSliceE"))
         initVbmDrawSpriteSliceE(as);
+    else
     if (Command("vbmDrawSpriteSliceE"))
         vbmDrawSpriteSliceE(as);
+    else
     if (Command("initVbmClearSpriteSlice"))
         initVbmClearSpriteSlice(as);
+    else
     if (Command("vbmClearSpriteSlice"))
         vbmClearSpriteSlice(as);
 
     // 8x8 text commands
+    else
     if (Command("initVbmDrawText"))
         initVbmDrawText(as);
+    else
     if (Command("vbmDrawText"))
         vbmDrawText(as);
+    else
     if (Command("initVbmDrawTextO"))
         initVbmDrawTextO(as);
+    else
     if (Command("vbmDrawTextO"))
         vbmDrawTextO(as);
+    else
     if (Command("initVbmDrawTextE"))
         initVbmDrawTextE(as);
+    else
     if (Command("vbmDrawTextE"))
         vbmDrawTextE(as);
+    else
     if (Command("initVbmClearText"))
         initVbmClearText(as);
+    else
     if (Command("vbmClearText"))
         vbmClearText(as);
 
     // 4x8 text commands
+    else
     if (Command("initVbmDrawSmallTextO"))
         initVbmDrawSmallTextO(as);
+    else
     if (Command("vbmDrawSmallTextO"))
         vbmDrawSmallTextO(as);
+    else
     if (Command("initVbmDrawSmallTextE"))
         initVbmDrawSmallTextE(as);
+    else
     if (Command("vbmDrawSmallTextE"))
         vbmDrawSmallTextE(as);
+    else
     if (Command("initVbmClearSmallText"))
         initVbmClearSmallText(as);
+    else
     if (Command("vbmClearSmallText"))
         vbmClearSmallText(as);
 
     // 8x8 Draw BCD numbers
+    else
     if (Command("initVbmDrawBCD"))
         initVbmDrawBCD(as);
+    else
     if (Command("vbmDrawBCD"))
         vbmDrawBCD(as);
 
     // 4x8 Draw BCD numbers
+    else
     if (Command("initVbmDrawSmallBCD"))
         initVbmDrawSmallBCD(as);
+    else
     if (Command("vbmDrawSmallBCD"))
         vbmDrawSmallBCD(as);
+    else
     if (Command("initVbmDrawSmallBCDO"))
         initVbmDrawSmallBCDO(as);
+    else
     if (Command("vbmDrawSmallBCDO"))
         vbmDrawSmallBCDO(as);
 
 
     // bitmap buffers
+    else
     if (Command("initVbmCopyToBuffer"))
         initVbmCopyToBuffer(as);
+    else
     if (Command("vbmCopyToBuffer"))
         vbmCopyToBuffer(as);
 
+    else
     if (Command("initVbmCopyFromBuffer"))
         initVbmCopyFromBuffer(as);
+    else
     if (Command("vbmCopyFromBuffer"))
         vbmCopyFromBuffer(as);
 
@@ -9925,6 +10056,85 @@ void Methods6502Vic20::vbmCopyFromBuffer(Assembler *as)
 
     as->Asm("jsr vbmCopyFromBuffer");
 
+}
+
+void Methods6502Vic20::VIAIRQ(Assembler *as)
+{
+    QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
+    QString name = addr->m_procedure->m_procName;
+    m_node->RequireNumber(m_node->m_params[2], "RasterIRQ", m_node->m_op.m_lineNumber);
+    //    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[2]);
+
+
+    as->Asm("lda #<"+name);
+    //    as->Asm("sta pointers_vic_raster+1");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP3"]);
+    as->Asm("lda #>"+name);
+    //    as->Asm("sta pointers_vic_raster+6");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP4"]);
+
+    m_node->m_params[1]->Accept(m_dispatcher);
+    as->Term();
+    //    as->Asm("sta timers_vic_raster+1");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP1"]);
+    m_node->m_params[2]->Accept(m_dispatcher);
+    as->Term();
+    //    as->Asm("sta timers_vic_raster+3");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP2"]);
+
+    as->Asm("ldx #0"); // Start timer from raster line 0
+    as->Asm("jsr init_via_irq");
+}
+
+void Methods6502Vic20::VIARasterIRQ(Assembler *as)
+{
+    QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
+    QString name = addr->m_procedure->m_procName;
+    m_node->RequireNumber(m_node->m_params[2], "RasterIRQ", m_node->m_op.m_lineNumber);
+
+    as->Asm("lda #<"+name);
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP3"]);
+    //  as->Asm("sta pointers_vic_raster+1");
+    as->Asm("lda #>"+name);
+    //    as->Asm("sta pointers_vic_raster+6");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP4"]);
+
+    LoadVar(as,1);
+    as->Asm("tax");
+
+    QString lbl1 = as->NewLabel("viarasterirq_ntsc_timing");
+    QString lbl2 = as->NewLabel("viarasterirq_end");
+
+    LoadVar(as,2);
+    as->Asm("cmp #0");
+    as->Asm("bne " + lbl1);
+    as->Asm("lda #$86");
+    //    as->Asm("sta timers_vic_raster+1");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP1"]);
+
+    as->Asm("lda #$56");
+    //   as->Asm("sta timers_vic_raster+3");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP2"]);
+    as->Asm("jsr A0_vic_raster");
+    as->Asm("jmp " + lbl2);
+
+    as->Label(lbl1);
+    as->Asm("lda #$43");
+    //    as->Asm("sta timers_vic_raster+1");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP1"]);
+
+    as->Asm("lda #$42");
+    //    as->Asm("sta timers_vic_raster+3");
+    as->Asm("sta "+as->m_replaceValues["@VIA_ZP2"]);
+
+    as->Asm("jsr A0_vic_raster");
+
+    as->Label(lbl2);
+}
+
+void Methods6502Vic20::InitVIAIRQ(Assembler *as)
+{
+    as->IncludeFile(":resources/code/vic20_irq.asm");
 }
 
 

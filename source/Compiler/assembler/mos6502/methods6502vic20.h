@@ -149,6 +149,15 @@ public:
     void vbmCopyFromBuffer(Assembler *as);
 
 
+
+    void VIAIRQ(Assembler *as);
+
+    void VIARasterIRQ(Assembler *as);
+
+
+    void InitVIAIRQ(Assembler *as);
+
+
 };
 
 #endif // METHODS6502VIC20_H

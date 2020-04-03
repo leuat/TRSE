@@ -38,8 +38,6 @@ public:
     void Rand(Assembler* as);
     void Random(Assembler* as);
 
-    void CallOKVC(Assembler* as, int noParams, uchar val);
-    void WaitForVerticalBlank(Assembler* as);
     void MoveTo(Assembler* as);
     void MoveTo80(Assembler* as);
     void SetFrequency(Assembler *as);
@@ -122,9 +120,6 @@ public:
     void DisableInterrupts(Assembler* as);
 //    void EnableInterrupts(Assembler* as);
     void RasterIRQ(Assembler* as);
-    void VIAIRQ(Assembler* as);
-    void VIARasterIRQ(Assembler* as);
-    void InitVIAIRQ(Assembler* as);
     void RasterIRQWedge(Assembler* as);
     void ClearScreen(Assembler* as);
     void WaitForRaster(Assembler* as);
@@ -181,8 +176,6 @@ public:
     void VDCWrite(Assembler* as);
     void VDCInit(Assembler* as);
 
-    void Jammer(Assembler *as);
-    void FLD(Assembler* as);
 
 
 

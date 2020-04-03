@@ -4,6 +4,8 @@
 #include <QSharedPointer>
 #include "mos6502/methods6502.h"
 #include "mos6502/methods6502vic20.h"
+#include "mos6502/methods6502c64.h"
+#include "mos6502/methods6502ok64.h"
 #include "methods68000.h"
 #include "methodsx86.h"
 

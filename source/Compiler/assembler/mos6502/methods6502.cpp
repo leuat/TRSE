@@ -25,48 +25,6 @@ void Methods6502::PointToVera(Assembler* as, int address, bool initLow)
 
 }
 
-void Methods6502::toColor(Assembler *as)
-{
-/*
-    QString zp = as->m_internalZP[0];
-    LoadVar(as,0);
-    as->Asm("and #3");
-    as->Asm("sta "+zp);
-    LoadVar(as,1);
-    as->Asm("and #3");
-    as->Asm("asl");
-    as->Asm("asl");
-    as->Asm("ora "+zp);
-    as->Asm("sta "+zp);
-    LoadVar(as,2);
-    as->Asm("and #3");
-    as->Asm("asl");
-    as->Asm("asl");
-    as->Asm("asl");
-    as->Asm("asl");
-    as->Asm("ora "+zp);
-    */
-    QString zp = as->m_internalZP[0];
-    LoadVar(as,0);
-    as->Asm("and #7");
-    as->Asm("sta "+zp);
-    LoadVar(as,1);
-    as->Asm("and #3");
-    as->Asm("asl");
-    as->Asm("asl");
-    as->Asm("asl");
-    as->Asm("ora "+zp);
-    as->Asm("sta "+zp);
-    LoadVar(as,2);
-    as->Asm("and #7");
-    as->Asm("asl");
-    as->Asm("asl");
-    as->Asm("asl");
-    as->Asm("asl");
-    as->Asm("asl");
-    as->Asm("ora "+zp);
-
-}
 
 
 
@@ -91,27 +49,23 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     }
 
-    if (Command("waitforverticalblank"))
-        WaitForVerticalBlank(as);
 
 
     if (Command("strtolower"))
         StrToLower(as,true);
+    else
     if (Command("strtoupper"))
         StrToLower(as,false);
+    else
     if (Command("strcmp"))
         StrCmp(as);
+    else
     if (Command("strsplit"))
         StrSplit(as);
+    else
     if (Command("strgetfromindex"))
         StrGetFromIndex(as);
-
-    /*
-     * Vic20 Bitmap Mode
-     *
-     */
-
-    // initialise
+    else
 
     if (Command("ProcedureToPointer")) {
         QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
@@ -123,17 +77,6 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         as->Asm("ldy #>"+name);
 
     }
-    // Set up bitmap mode, adjust screen size, screen/char address and draw characters used for bitmap
-    // 20 x 24 characters (12 double height characters) -- 160 x 194 pixels
-
-
-
-
-    /*
-     *
-     *
-     */
-
 
 
     /*
@@ -144,91 +87,7 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
      *
      *
      * */
-    if (Command("ResetFileList"))
-        CallOKVC(as,0,9);
-    if (Command("ReadNextFile"))
-        CallOKVC(as,0,10);
 
-    if (Command("fmul"))
-        CallOKVC(as,2,15);
-
-    if (Command("DrawPixel")) {
-        CallOKVC(as,3,1);
-    }
-    if (Command("SetDefaultPalette")) {
-        CallOKVC(as,0,14);
-    }
-    if (Command("DrawRect")) {
-        CallOKVC(as,5,8);
-    }
-    if (Command("drawCircleFilled")) {
-        CallOKVC(as,4,4);
-    }
-    if (Command("drawPoly")) {
-        CallOKVC(as,7,12);
-    }
-
-    if (Command("DrawLine")) {
-        as->Comment("Draw Line");
-        LoadVar(as,0);
-        as->Asm("sta $FF00");
-        LoadVar(as,1);
-        as->Asm("sta $FF01");
-        LoadVar(as,2);
-        as->Asm("sta $FF04");
-        LoadVar(as,3);
-        as->Asm("sta $FF05");
-        LoadVar(as,4);
-        as->Asm("sta $FF02");
-        as->Asm("lda #2");
-        as->Asm("sta $FF10"); // Initialize pixel drawing
-    }
-    if (Command("ClearScreen")) {
-        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::OK64) {
-            as->Comment("ClearScreen");
-            LoadVar(as,0);
-            as->Asm("sta $FF02");
-            as->Asm("lda #3");
-            as->Asm("sta $FF10"); // Initialize pixel drawing
-        }
-    }
-    if (Command("WaitForVSync")) {
-        as->Asm("lda #1");
-        as->Asm("sta $FFEF");
-    }
-    if (Command("toColor"))
-        toColor(as);
-    if (Command("setPalette")) {
-        CallOKVC(as,4,5);
-    }
-    if (Command("loadfile")) {
-        CallOKVC(as,0,11);
-    }
-    if (Command("memcpyokvc")) {
-        CallOKVC(as,8,13);
-    }
-    if (Command("blit")) {
-        CallOKVC(as,6,6);
-    }
-    if (Command("printchar")) {
-        CallOKVC(as,4,7);
-    }
-
-    /*
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     * */
-
-    if (Command("VIAIRQ"))
-        VIAIRQ(as);
-
-    if (Command("VIARasterIRQ"))
-        VIARasterIRQ(as);
 
     if (Command("CreateInteger"))
         CreateInteger(as,"y");
@@ -472,8 +331,6 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         }
     }
 
-    if (Command("init_viairq"))
-        InitVIAIRQ(as);
 
     if (Command("Go80Columns")) {
         as->Comment("Go 80 columns");
@@ -529,8 +386,6 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("Call")) {
         Call(as);
     }
-    if (Command("fld"))
-        FLD(as);
 
     if (Command("Abs")) {
         Abs(as);
@@ -718,8 +573,6 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("copydatatovera"))
         CopyDataToVera(as);
 
-    if (Command("jammer"))
-        Jammer(as);
 
     if (Command("initsid")) {
         InitSid(as);
@@ -1452,33 +1305,6 @@ void Methods6502::Random(Assembler* as)
     //SaveVar(as,2);
 }
 
-void Methods6502::CallOKVC(Assembler *as, int noParams, uchar val)
-{
-    for (uchar i=0;i<noParams;i++) {
-        LoadVar(as,i);
-        as->Asm("sta "+Util::numToHex(0xFF00+i));
-    }
-    as->Asm("lda #"+QString::number(val));
-    as->Asm("sta $FF10"); // Start
-
-}
-
-void Methods6502::WaitForVerticalBlank(Assembler* as)
-{
-    QString l1 = as->NewLabel("verticalblank1");
-    QString l2 = as->NewLabel("verticalblank2");
-
-    as->Label(l1);
-    as->Asm("bit $D011");
-    as->Asm("bpl "+l1);
-    as->Label(l2);
-    as->Asm("bit $D011");
-    as->Asm("bmi "+l2);
-
-
-    as->PopLabel("verticalblank1");
-    as->PopLabel("verticalblank2");
-}
 
 void Methods6502::InitRandom256(Assembler *as)
 {
@@ -5421,86 +5247,6 @@ void Methods6502::RasterIRQ(Assembler *as)
     }
 }
 
-void Methods6502::VIAIRQ(Assembler *as)
-{
-    QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
-    QString name = addr->m_procedure->m_procName;
-    m_node->RequireNumber(m_node->m_params[2], "RasterIRQ", m_node->m_op.m_lineNumber);
-//    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[2]);
-
-
-    as->Asm("lda #<"+name);
-//    as->Asm("sta pointers_vic_raster+1");
-    as->Asm("sta "+as->m_replaceValues["@VIA_ZP3"]);
-    as->Asm("lda #>"+name);
-//    as->Asm("sta pointers_vic_raster+6");
-    as->Asm("sta "+as->m_replaceValues["@VIA_ZP4"]);
-
-    m_node->m_params[1]->Accept(m_dispatcher);
-    as->Term();
-//    as->Asm("sta timers_vic_raster+1");
-    as->Asm("sta "+as->m_replaceValues["@VIA_ZP1"]);
-    m_node->m_params[2]->Accept(m_dispatcher);
-    as->Term();
-//    as->Asm("sta timers_vic_raster+3");
-    as->Asm("sta "+as->m_replaceValues["@VIA_ZP2"]);
-
-    as->Asm("ldx #0"); // Start timer from raster line 0
-    as->Asm("jsr init_via_irq");
-}
-
-void Methods6502::VIARasterIRQ(Assembler *as)
-{
-    QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
-    QString name = addr->m_procedure->m_procName;
-    m_node->RequireNumber(m_node->m_params[2], "RasterIRQ", m_node->m_op.m_lineNumber);
-
-    as->Asm("lda #<"+name);
-    as->Asm("sta "+as->m_replaceValues["@VIA_ZP3"]);
-  //  as->Asm("sta pointers_vic_raster+1");
-    as->Asm("lda #>"+name);
-//    as->Asm("sta pointers_vic_raster+6");
-    as->Asm("sta "+as->m_replaceValues["@VIA_ZP4"]);
-
-    LoadVar(as,1);
-    as->Asm("tax");
-
-    QString lbl1 = as->NewLabel("viarasterirq_ntsc_timing");
-    QString lbl2 = as->NewLabel("viarasterirq_end");
-
-    LoadVar(as,2);
-    as->Asm("cmp #0");
-    as->Asm("bne " + lbl1);
-    as->Asm("lda #$86");
-//    as->Asm("sta timers_vic_raster+1");
-    as->Asm("sta "+as->m_replaceValues["@VIA_ZP1"]);
-
-    as->Asm("lda #$56");
- //   as->Asm("sta timers_vic_raster+3");
-    as->Asm("sta "+as->m_replaceValues["@VIA_ZP2"]);
-    as->Asm("jsr A0_vic_raster");
-    as->Asm("jmp " + lbl2);
-
-    as->Label(lbl1);
-    as->Asm("lda #$43");
-//    as->Asm("sta timers_vic_raster+1");
-    as->Asm("sta "+as->m_replaceValues["@VIA_ZP1"]);
-
-    as->Asm("lda #$42");
-//    as->Asm("sta timers_vic_raster+3");
-    as->Asm("sta "+as->m_replaceValues["@VIA_ZP2"]);
-
-    as->Asm("jsr A0_vic_raster");
-
-    as->Label(lbl2);
-}
-
-
-void Methods6502::InitVIAIRQ(Assembler *as)
-{
-    as->IncludeFile(":resources/code/vic20_irq.asm");
-}
-
 
 
 void Methods6502::RasterIRQWedge(Assembler *as)
@@ -6615,63 +6361,6 @@ void Methods6502::VDCInit(Assembler *as)
 
 }
 
-void Methods6502::Jammer(Assembler *as)
-{
-    as->Comment("Jammer");
-    QString lbl = as->NewLabel("jammer");
-    m_node->m_params[0]->Accept(m_dispatcher);
-    as->Term();
-    //;sta     $7000
-    as->Asm("cmp $d012");
-
-    as->Asm("bcs "+lbl);
-    as->Asm("lda #$02");
-    as->Asm("sta     $0400");
-    m_node->m_params[1]->Accept(m_dispatcher);
-    as->Term();
-    as->Asm("sta     $d020");
-    as->Asm("sta     $d021");
-
-    as->Asm("jmp     *");
-    as->Label(lbl);
-    as->PopLabel("jammer");
-}
-
-void Methods6502::FLD(Assembler *as)
-{
-
-    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
-    if (num==nullptr)
-        ErrorHandler::e.Error("FLD: last parameter required to be pure constant number (0 or 1)");
-
-    int val = num->m_val;
-
-    QString lbl = as->NewLabel("fld");
-    as->Comment("FLD effect");
-    m_node->m_params[0]->Accept(m_dispatcher);
-    as->Term();
-    as->Asm("tax");
-
-    as->Label(lbl);
-    as->Asm("lda $d012 ; Wait for beginning of next line");
-    as->Asm("cmp $d012");
-    as->Asm("beq *-3");
-
-    as->Asm("clc ; Do one line of FLD");
-    as->Asm("lda $d011");
-    as->Asm("adc #1");
-    as->Asm("and #7");
-    if (val==0)
-    as->Asm("ora #$18");
-        else
-    as->Asm("ora #$38");
-    as->Asm("sta $d011");
-
-    as->Asm("dex ; Decrease counter");
-    as->Asm("bne " + lbl);
-
-    as->PopLabel("fld");
-}
 
 // initialise the Bcd Print Digit code
 void Methods6502::InitBcd(Assembler *as)

@@ -84,6 +84,8 @@ SOURCES += main.cpp\
     source/Compiler/assembler/asmx86.cpp \
     source/Compiler/assembler/astdispatcherx86.cpp \
     source/Compiler/assembler/factorymethods.cpp \
+    source/Compiler/assembler/mos6502/methods6502c64.cpp \
+    source/Compiler/assembler/mos6502/methods6502ok64.cpp \
     source/Compiler/assembler/mos6502/methods6502vic20.cpp \
     source/Compiler/assembler/methodsx86.cpp \
     source/Compiler/ast/nodecase.cpp \
@@ -245,6 +247,8 @@ HEADERS  += mainwindow.h \
     source/Compiler/assembler/asmx86.h \
     source/Compiler/assembler/astdispatcherx86.h \
     source/Compiler/assembler/factorymethods.h \
+    source/Compiler/assembler/mos6502/methods6502c64.h \
+    source/Compiler/assembler/mos6502/methods6502ok64.h \
     source/Compiler/assembler/mos6502/methods6502vic20.h \
     source/Compiler/assembler/methodsx86.h \
     source/Compiler/ast/nodecase.h \
