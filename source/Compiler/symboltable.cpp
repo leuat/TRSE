@@ -229,6 +229,7 @@ void SymbolTable::InitBuiltins()
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("INCSID","")));
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("INCNSF","")));
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("RECORD","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("GLOBAL","")));
 
     Define(QSharedPointer<Symbol>(new Symbol("return","")));
 
@@ -438,6 +439,8 @@ TokenType::Type Symbol::getTokenType() {
         return TokenType::INCSID;
     if (m_type.toLower()=="record")
         return TokenType::RECORD;
+    if (m_type.toLower()=="global")
+        return TokenType::GLOBAL;
     return TokenType::NADA;
 }
 

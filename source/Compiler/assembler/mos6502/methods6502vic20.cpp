@@ -56,12 +56,6 @@ void Methods6502Vic20::Assemble(Assembler *as, AbstractASTDispatcher *dispenser)
     if (Command("vbmNextColumn"))
         vbmNextColumn(as);
 
-    else
-    if (Command("max"))
-        MinMax(as,false);
-    else
-    if (Command("min"))
-        MinMax(as,true);
     // Set the screenmemory pointer to an exact address and load vbmX with the 0-7 x offset
     else
     if (Command("initvbmSetPosition"))

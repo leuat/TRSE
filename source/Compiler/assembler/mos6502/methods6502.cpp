@@ -77,6 +77,12 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
         as->Asm("ldy #>"+name);
 
     }
+    else
+    if (Command("max"))
+        MinMax(as,false);
+    else
+    if (Command("min"))
+        MinMax(as,true);
 
 
     /*
