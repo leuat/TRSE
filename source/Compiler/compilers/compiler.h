@@ -40,13 +40,14 @@ public:
     QSharedPointer<Node> m_tree = nullptr;
     QSharedPointer<Assembler> m_assembler = nullptr;
     QSharedPointer<AbstractASTDispatcher> m_dispatcher = nullptr;
+
     Parser m_parser;
     QSharedPointer<Lexer> m_lexer;
     QSharedPointer<CIniFile> m_ini, m_projectIni;
     FatalErrorException recentError;
     Compiler(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pIni);
-    Compiler() {};
-    ~Compiler();
+    Compiler() {}
+    virtual ~Compiler();
 
     bool m_isTRU = false;
 

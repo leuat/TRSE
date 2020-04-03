@@ -13,7 +13,7 @@ cd trse/trse.app
  find trse -name '*.prg' -delete
  find trse -name '*.asm' -delete
  find trse -name '*.sym' -delete
-tar -cvf trse_osx.tar trse/trse.app
+tar -cvf trse_osx.tar trse/trse.app trse/OK64.app
 gzip trse_osx.tar
 scp trse_osx.tar.gz leuat@www.irio.co.uk:www.irio.co.uk/trse/latest_snapshots/
 

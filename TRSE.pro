@@ -360,7 +360,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagesprites2.h \
     source/LeLib/limage/limagecontainer.h \
     source/Compiler/assembler/abstractastdispatcher.h \
-    source/Compiler/assembler/astdispatcher6502.h \
+    source/Compiler/assembler/mos6502/astdispatcher6502.h \
     source/Compiler/assembler/mos6502/methods6502.h \
     source/dialogeffects.h \
     source/effects/abstractdemoeffect.h \

@@ -57,6 +57,8 @@ void Compiler::Parse(QString text, QStringList lst)
                                  Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES
                                  ,m_projectIni->getString("vic_memory_config"),Util::fromStringList(m_projectIni->getStringList("global_defines")),
                                  m_projectIni->getdouble("pascal_settings_use_local_variables")==1.0);
+
+
 //        m_tree->parseConstants(m_parser.m_symTab);
         //qDebug() << m_parser.m_preprocessorDefines["ORGASM"];
         //exit(1);

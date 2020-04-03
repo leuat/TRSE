@@ -46,7 +46,7 @@ class AsmMOS6502 : public Assembler
 {
 public:
     AsmMOS6502();
-    ~AsmMOS6502();
+    ~AsmMOS6502() override;
 
     bool m_hasOpenBlock = false;
     static QString m_defaultZeroPointers;
