@@ -82,7 +82,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
     Syntax::s.m_currentSystem->DefaultValues();
 
     try {
-        InitAssemblerAndDispatcher(system);
+        InitAssemblerAnddispatcher(system);
     } catch (FatalErrorException e) {
         HandleError(e,"Error during pre-build");
         return false;

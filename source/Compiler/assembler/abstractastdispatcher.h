@@ -1,5 +1,5 @@
-#ifndef ABSTRACTASTDISPATCHER_H
-#define ABSTRACTASTDISPATCHER_H
+#ifndef AbstractASTDispatcher_H
+#define AbstractASTDispatcher_H
 
 #include "source/Compiler/assembler/assembler.h"
 #include <QStack>
@@ -83,4 +83,4 @@ public:
 
 };
 
-#endif // ABSTRACTASTDISPATCHER_H
+#endif // AbstractASTDispatcher_H

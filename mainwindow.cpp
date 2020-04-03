@@ -37,7 +37,7 @@
 #include "source/LeLib/limage/limageio.h"
 #include <QMessageBox>
 #include <QSettings>
-#include "source/Compiler/assembler/mos6502.h"
+#include "source/Compiler/assembler/mos6502/mos6502.h"
 #include "source/dialogeffects.h"
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/parser.h"

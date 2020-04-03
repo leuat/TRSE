@@ -1,13 +1,13 @@
 #include "astdispatcher68000.h"
 
 
-ASTDispather68000::ASTDispather68000()
+ASTDispatcher68000::ASTDispatcher68000()
 {
 
 }
 
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeBinOP>node) {
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeBinOP>node) {
     node->DispatchConstructor(as);
 
 
@@ -48,7 +48,7 @@ void ASTDispather68000::dispatch(QSharedPointer<NodeBinOP>node) {
 }
 
 
-/*void ASTDispather68000::dispatchOld(QSharedPointer<NodeBinOP>node)
+/*void ASTDispatcher68000::dispatchOld(QSharedPointer<NodeBinOP>node)
 {
     node->DispatchConstructor(as);
 
@@ -141,13 +141,13 @@ void ASTDispather68000::dispatch(QSharedPointer<NodeBinOP>node) {
 }
 */
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeNumber>node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeNumber>node)
 {
     as->m_varStack.push(node->getValue(as));
 
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeAsm>node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeAsm>node)
 {
     node->DispatchConstructor(as);
 
@@ -161,12 +161,12 @@ void ASTDispather68000::dispatch(QSharedPointer<NodeAsm>node)
 
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeString> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeString> node)
 {
 
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeUnaryOp> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeUnaryOp> node)
 {
   //  node->DispatchConstructor(as);
 //    node->Accept(this);
@@ -182,7 +182,7 @@ void ASTDispather68000::dispatch(QSharedPointer<NodeUnaryOp> node)
     as->Comment("Unary op for : " + node->m_right->getValue(as));
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeCompound> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeCompound> node)
 {
     node->DispatchConstructor(as);
 
@@ -195,7 +195,7 @@ void ASTDispather68000::dispatch(QSharedPointer<NodeCompound> node)
 
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeVarDecl> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeVarDecl> node)
 {
     node->DispatchConstructor(as);
 
@@ -261,7 +261,7 @@ void ASTDispather68000::dispatch(QSharedPointer<NodeVarDecl> node)
 
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeBlock> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeBlock> node)
 {
 
     node->DispatchConstructor(as);
@@ -335,7 +335,7 @@ void ASTDispather68000::dispatch(QSharedPointer<NodeBlock> node)
 
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeProgram> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeProgram> node)
 {
     node->DispatchConstructor(as);
 
@@ -351,17 +351,17 @@ void ASTDispather68000::dispatch(QSharedPointer<NodeProgram> node)
 
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeVarType> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeVarType> node)
 {
 
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeBinaryClause> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeBinaryClause> node)
 {
 
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeProcedure> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeProcedure> node)
 {
     node->DispatchConstructor(as);
 
@@ -383,7 +383,7 @@ void ASTDispather68000::dispatch(QSharedPointer<NodeProcedure> node)
 
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeProcedureDecl> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeProcedureDecl> node)
 {
     node->DispatchConstructor(as);
 
@@ -456,7 +456,7 @@ void ASTDispather68000::dispatch(QSharedPointer<NodeProcedureDecl> node)
 
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeConditional> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeConditional> node)
 {
     QString labelStartOverAgain = as->NewLabel("while");
     QString lblstartTrueBlock = as->NewLabel("ConditionalTrueBlock");
@@ -510,7 +510,7 @@ void ASTDispather68000::dispatch(QSharedPointer<NodeConditional> node)
 
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeForLoop> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeForLoop> node)
 {
     node->DispatchConstructor(as);
 
@@ -554,7 +554,7 @@ void ASTDispather68000::dispatch(QSharedPointer<NodeForLoop> node)
 
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeVar> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeVar> node)
 {
 //    LoadVariable(node);
     if (node->m_expr!=nullptr) {
@@ -565,12 +565,12 @@ void ASTDispather68000::dispatch(QSharedPointer<NodeVar> node)
     as->m_varStack.push(node->getValue(as));
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<Node> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<Node> node)
 {
 
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeAssign> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeAssign> node)
 {
     node->DispatchConstructor(as);
 
@@ -582,17 +582,17 @@ void ASTDispather68000::dispatch(QSharedPointer<NodeAssign> node)
 
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeCase> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeCase> node)
 {
     ErrorHandler::e.Error("CASE not implemented for m68K yet...", node->m_op.m_lineNumber);
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeRepeatUntil> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeRepeatUntil> node)
 {
 
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeBuiltinMethod> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeBuiltinMethod> node)
 {
     node->DispatchConstructor(as);
 
@@ -608,14 +608,14 @@ void ASTDispather68000::dispatch(QSharedPointer<NodeBuiltinMethod> node)
 
 }
 
-void ASTDispather68000::dispatch(QSharedPointer<NodeComment> node)
+void ASTDispatcher68000::dispatch(QSharedPointer<NodeComment> node)
 {
 
 }
 
 
 
-void ASTDispather68000::StoreVariable(QSharedPointer<NodeVar> n)
+void ASTDispatcher68000::StoreVariable(QSharedPointer<NodeVar> n)
 {
         as->Comment("StoreVar : " +QString::number(n->m_expr==nullptr));
         if (n->m_expr!=nullptr) {
@@ -678,7 +678,7 @@ void ASTDispather68000::StoreVariable(QSharedPointer<NodeVar> n)
 }
 
 
-void ASTDispather68000::LoadVariable(QSharedPointer<NodeVar> n)
+void ASTDispatcher68000::LoadVariable(QSharedPointer<NodeVar> n)
 {
 //    TokenType::Type t = as->m_symTab->Lookup(n->getValue(as), n->m_op.m_lineNumber)->getTokenType();
 
@@ -738,7 +738,7 @@ void ASTDispather68000::LoadVariable(QSharedPointer<NodeVar> n)
     as->m_varStack.push(d0);
 }
 
-void ASTDispather68000::LoadAddress(QSharedPointer<Node> n)
+void ASTDispatcher68000::LoadAddress(QSharedPointer<Node> n)
 {
 /*    QSharedPointer<NodeVar> v = dynamic_cast<QSharedPointer<NodeVar>>(n);
     if (v==nullptr) {
@@ -757,7 +757,7 @@ void ASTDispather68000::LoadAddress(QSharedPointer<Node> n)
 
 }
 
-void ASTDispather68000::LoadAddress(QSharedPointer<Node> n, QString a0)
+void ASTDispatcher68000::LoadAddress(QSharedPointer<Node> n, QString a0)
 {
     /*    QSharedPointer<NodeVar> v = dynamic_cast<QSharedPointer<NodeVar>>(n);
         if (v==nullptr) {
@@ -773,7 +773,7 @@ void ASTDispather68000::LoadAddress(QSharedPointer<Node> n, QString a0)
 
 }
 
-void ASTDispather68000::LoadPointer(QSharedPointer<Node> n)
+void ASTDispatcher68000::LoadPointer(QSharedPointer<Node> n)
 {
     QString d0 = as->m_regAcc.Get();
     //    n->Accept(m_)
@@ -783,9 +783,9 @@ void ASTDispather68000::LoadPointer(QSharedPointer<Node> n)
 
 }
 
-void ASTDispather68000::LoadVariable(QSharedPointer<Node> n)
+void ASTDispatcher68000::LoadVariable(QSharedPointer<Node> n)
 {
-    //    qDebug() << "Don't call Dispatcher::LoadVariable with NODE. ";
+    //    qDebug() << "Don't call dispatcher::LoadVariable with NODE. ";
     //  exit(1);
     QSharedPointer<NodeVar> nv = qSharedPointerDynamicCast<NodeVar>(n);
     QSharedPointer<NodeNumber> nn = qSharedPointerDynamicCast<NodeNumber>(n);
@@ -804,7 +804,7 @@ void ASTDispather68000::LoadVariable(QSharedPointer<Node> n)
 }
 
 
-void ASTDispather68000::LoadVariable(QSharedPointer<NodeNumber>n)
+void ASTDispatcher68000::LoadVariable(QSharedPointer<NodeNumber>n)
 {
     QString d0 = as->m_regAcc.Get();
     TransformVariable(as,"move",d0, n->getValue(as));
@@ -813,7 +813,7 @@ void ASTDispather68000::LoadVariable(QSharedPointer<NodeNumber>n)
 
 }
 
-void ASTDispather68000::TransformVariable(Assembler *as, QString op, QString n, QString val, QSharedPointer<Node> t)
+void ASTDispatcher68000::TransformVariable(Assembler *as, QString op, QString n, QString val, QSharedPointer<Node> t)
 {
 //    as->Asm(op+getEndType(as,t) +" "+val + "," + n);
     m_lastSize = getEndType(as,t);
@@ -821,7 +821,7 @@ void ASTDispather68000::TransformVariable(Assembler *as, QString op, QString n, 
 
 }
 
-void ASTDispather68000::TransformVariable(Assembler* as, QString op, QSharedPointer<NodeVar> n, QString val)
+void ASTDispatcher68000::TransformVariable(Assembler* as, QString op, QSharedPointer<NodeVar> n, QString val)
 {
     as->Asm(op+getEndType(as,n) +" "+val + "," + n->getValue(as));
     m_lastSize = getEndType(as,n);
@@ -829,7 +829,7 @@ void ASTDispather68000::TransformVariable(Assembler* as, QString op, QSharedPoin
 //    qDebug() << " ** OP : " << op+getEndType(as,n) +" "+val + "," + n->getValue(as);
 }
 
-void ASTDispather68000::TransformVariable(Assembler *as, QString op, QString n, QSharedPointer<NodeVar> val)
+void ASTDispatcher68000::TransformVariable(Assembler *as, QString op, QString n, QSharedPointer<NodeVar> val)
 {
     as->Asm(op+getEndType(as,val) +" "+val->getValue(as) + "," + n);
     m_lastSize = getEndType(as,val);
@@ -837,7 +837,7 @@ void ASTDispather68000::TransformVariable(Assembler *as, QString op, QString n, 
 //
 }
 
-void ASTDispather68000::TransformVariable(Assembler* as, QString op, QString n, QString val)
+void ASTDispatcher68000::TransformVariable(Assembler* as, QString op, QString n, QString val)
 {
     QString flag="";
 /*    if (val.count()==2 && val.startsWith("d") && n.count()==2 && n.startsWith("d"))
@@ -848,7 +848,7 @@ void ASTDispather68000::TransformVariable(Assembler* as, QString op, QString n, 
     //qDebug() << " ** OP : " << op +" "+val + "," + n;
 }
 
-QString ASTDispather68000::getEndType(Assembler *as, QSharedPointer<Node> v) {
+QString ASTDispatcher68000::getEndType(Assembler *as, QSharedPointer<Node> v) {
 //    getType(as)==TokenType::LONG
     if (v->m_forceType==TokenType::LONG)
         return ".l";
@@ -902,7 +902,7 @@ QString ASTDispather68000::getEndType(Assembler *as, QSharedPointer<Node> v) {
     return "";
 }
 
-bool ASTDispather68000::HandleSimpleAeqAopConst(QSharedPointer<NodeAssign> node)
+bool ASTDispatcher68000::HandleSimpleAeqAopConst(QSharedPointer<NodeAssign> node)
 {
     QString var = node->m_left->getValue(as);
     QSharedPointer<NodeBinOP> bop = qSharedPointerDynamicCast<NodeBinOP>(node->m_right);
@@ -943,7 +943,7 @@ bool ASTDispather68000::HandleSimpleAeqAopConst(QSharedPointer<NodeAssign> node)
     return true;
 }
 
-bool ASTDispather68000::HandleSimpleAeqBopConst(QSharedPointer<NodeAssign> node)
+bool ASTDispatcher68000::HandleSimpleAeqBopConst(QSharedPointer<NodeAssign> node)
 {
     QString var = node->m_left->getValue(as);
 //    return false;
@@ -998,7 +998,7 @@ bool ASTDispather68000::HandleSimpleAeqBopConst(QSharedPointer<NodeAssign> node)
 }
 
 
-QString ASTDispather68000::AssignVariable(QSharedPointer<NodeAssign> node) {
+QString ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
 
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_left);
     //        qDebug() << "AssignVariable: " <<v->getValue(as) << " : " << TokenType::getType( v->getType(as));
@@ -1063,7 +1063,7 @@ QString ASTDispather68000::AssignVariable(QSharedPointer<NodeAssign> node) {
     return "";
 }
 
-void ASTDispather68000::IncBin(Assembler* as, QSharedPointer<NodeVarDecl> node) {
+void ASTDispatcher68000::IncBin(Assembler* as, QSharedPointer<NodeVarDecl> node) {
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
     QString filename = as->m_projectDir + "/" + t->m_filename;
@@ -1109,7 +1109,7 @@ void ASTDispather68000::IncBin(Assembler* as, QSharedPointer<NodeVarDecl> node) 
     }
 }
 
-void ASTDispather68000::BuildSimple(QSharedPointer<Node> node, QString lblFailed)
+void ASTDispatcher68000::BuildSimple(QSharedPointer<Node> node, QString lblFailed)
 {
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());
@@ -1134,7 +1134,7 @@ void ASTDispather68000::BuildSimple(QSharedPointer<Node> node, QString lblFailed
 
 }
 
-void ASTDispather68000::BuildToCmp(QSharedPointer<Node> node)
+void ASTDispatcher68000::BuildToCmp(QSharedPointer<Node> node)
 {
 //    QString b="";
 
@@ -1188,7 +1188,7 @@ void ASTDispather68000::BuildToCmp(QSharedPointer<Node> node)
 
 }
 
-void ASTDispather68000::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
+void ASTDispatcher68000::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
 
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
     QString initVal = t->initVal;
@@ -1199,7 +1199,7 @@ void ASTDispather68000::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
 
 }
 
-QString ASTDispather68000::ASTDispather68000::getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2)
+QString ASTDispatcher68000::ASTDispatcher68000::getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2)
 {
     QString t1 = getEndType(as,v1);
     QString t2 = getEndType(as,v2);

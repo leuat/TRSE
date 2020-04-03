@@ -1,5 +1,5 @@
-#ifndef ASTDISPATCHERX86_H
-#define ASTDISPATCHERX86_H
+#ifndef ASTdispatcherX86_H
+#define ASTdispatcherX86_H
 
 
 
@@ -26,10 +26,10 @@
 #include "source/Compiler/ast/nodecase.h"
 #include "source/Compiler/assembler/methodsx86.h"
 
-class ASTDispatcherX86 : public AbstractASTDispatcher
+class ASTdispatcherX86 : public AbstractASTDispatcher
 {
 public:
-    ASTDispatcherX86();
+    ASTdispatcherX86();
 
     void dispatch(QSharedPointer<NodeBinOP>node) override;
 //    void dispatchOld(QSharedPointer<NodeBinOP>node) override;
@@ -134,4 +134,4 @@ public:
 
 
 };
-#endif // ASTDISPATCHERX86_H
+#endif // ASTdispatcherX86_H

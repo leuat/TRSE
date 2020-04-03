@@ -1,5 +1,5 @@
-#ifndef ASTDISPATCHER68000_H
-#define ASTDISPATCHER68000_H
+#ifndef ASTdispatcher68000_H
+#define ASTdispatcher68000_H
 
 #include "abstractastdispatcher.h"
 #include "source/Compiler/ast/nodebinop.h"
@@ -24,10 +24,10 @@
 #include "source/Compiler/ast/nodecase.h"
 #include "methods68000.h"
 
-class ASTDispather68000 : public AbstractASTDispatcher
+class ASTDispatcher68000 : public AbstractASTDispatcher
 {
 public:
-    ASTDispather68000();
+    ASTDispatcher68000();
     QString m_lastSize;
 
     QStringList m_regs = QStringList()<<"d0" <<"d1"<<"d2" <<"d3"<<"d4" <<"d5"<<"d6";
@@ -93,4 +93,4 @@ public:
 
 };
 
-#endif // ASTDISPATCHER68000_H
+#endif // ASTdispatcher68000_H

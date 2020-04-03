@@ -20,7 +20,7 @@
 */
 
 #include "node.h"
-#include "source/Compiler/assembler/astdispather6502.h"
+#include "source/Compiler/assembler/mos6502/astdispatcher6502.h"
 
 int Node::m_currentLineNumber;
 MemoryBlockInfo  Node::m_staticBlockInfo;
@@ -100,7 +100,7 @@ bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlock)
 {
     AsmMOS6502 tmpAsm;
     tmpAsm.m_symTab = as->m_symTab;
-    ASTDispather6502 dispatcher;
+    ASTDispatcher6502 dispatcher;
     dispatcher.as = &tmpAsm;
     testBlock->Accept(&dispatcher);
     int blockCount = tmpAsm.m_source.count();

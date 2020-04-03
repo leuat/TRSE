@@ -1,11 +1,11 @@
 #include "compiler6502.h"
 
 
-void Compiler6502::InitAssemblerAndDispatcher(QSharedPointer<AbstractSystem> system)
+void Compiler6502::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system)
 {
     m_assembler = QSharedPointer<AsmMOS6502>(new AsmMOS6502());
     m_assembler->m_zbyte = 0x10;
-    m_dispatcher = QSharedPointer<ASTDispather6502>(new ASTDispather6502());
+    m_dispatcher = QSharedPointer<ASTDispatcher6502>(new ASTDispatcher6502());
     Init6502Assembler();
     LabelStack::m_labelCount = 0;
 }

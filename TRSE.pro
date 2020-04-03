@@ -80,8 +80,10 @@ win32:RC_ICONS += trse.ico
 SOURCES += main.cpp\
         mainwindow.cpp \
     imageworker.cpp \
+    source/Compiler/assembler/abstractmethods.cpp \
     source/Compiler/assembler/asmx86.cpp \
     source/Compiler/assembler/astdispatcherx86.cpp \
+    source/Compiler/assembler/mos6502/methods6502vic20.cpp \
     source/Compiler/assembler/methodsx86.cpp \
     source/Compiler/ast/nodecase.cpp \
     source/Compiler/ast/noderepeatuntil.cpp \
@@ -137,7 +139,7 @@ SOURCES += main.cpp\
     source/Compiler/token.cpp \
     source/Compiler/assembler/asmpascal.cpp \
     source/Compiler/assembler/assembler.cpp \
-    source/Compiler/assembler/mos6502.cpp \
+    source/Compiler/assembler/mos6502/mos6502.cpp \
     source/Compiler/ast/ast.cpp \
     source/Compiler/ast/node.cpp \
     source/Compiler/ast/nodeasm.cpp \
@@ -196,8 +198,8 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagesprites2.cpp \
     source/LeLib/limage/limagecontainer.cpp \
     source/Compiler/assembler/abstractastdispatcher.cpp \
-    source/Compiler/assembler/astdispather6502.cpp \
-    source/Compiler/assembler/methods6502.cpp \
+    source/Compiler/assembler/mos6502/astdispatcher6502.cpp \
+    source/Compiler/assembler/mos6502/methods6502.cpp \
     source/dialogeffects.cpp \
     source/effects/abstractdemoeffect.cpp \
     source/effects/demoeffecttwister.cpp \
@@ -238,8 +240,10 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     imageworker.h \
+    source/Compiler/assembler/abstractmethods.h \
     source/Compiler/assembler/asmx86.h \
     source/Compiler/assembler/astdispatcherx86.h \
+    source/Compiler/assembler/mos6502/methods6502vic20.h \
     source/Compiler/assembler/methodsx86.h \
     source/Compiler/ast/nodecase.h \
     source/Compiler/ast/noderepeatuntil.h \
@@ -295,7 +299,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/token.h \
     source/Compiler/assembler/asmpascal.h \
     source/Compiler/assembler/assembler.h \
-    source/Compiler/assembler/mos6502.h \
+    source/Compiler/assembler/mos6502/mos6502.h \
     source/Compiler/ast/ast.h \
     source/Compiler/ast/node.h \
     source/Compiler/ast/nodeasm.h \
@@ -356,8 +360,8 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagesprites2.h \
     source/LeLib/limage/limagecontainer.h \
     source/Compiler/assembler/abstractastdispatcher.h \
-    source/Compiler/assembler/astdispather6502.h \
-    source/Compiler/assembler/methods6502.h \
+    source/Compiler/assembler/astdispatcher6502.h \
+    source/Compiler/assembler/mos6502/methods6502.h \
     source/dialogeffects.h \
     source/effects/abstractdemoeffect.h \
     source/effects/demoeffecttwister.h \

@@ -8,7 +8,7 @@ C64; Disk loader; C64/Disk_loader_project/; <h2>C64 disk project sample</h2><tr>
 C64; $4k Dreams; C64/4kDreams/; <h2>$4k (16kb) cracktro example</h2><br><img src=":resources/images/tutorials/4kdreams.png" width="300"><p>Full source included.
 C64; 16kb cartridge project; C64/16kb_cartridge_project/; <h2>16kb cartridge project</h2><p>This tutorial shows how to set up / create a 16 kb cartridge project for the commodore 64.<p>Note that for a .crt file to compile, you <b>need to have exomizer compression turned on!</b>
 C64; C64 TRUs; C64/tru; <h2>Turbo Rascal Unit interal library</h2><p><p>Not complete, still under construction.
-C64; Unit tests; C64/UnitTests/; <h2>TRSE internal unit tests</h2><p>This project contains various unit test files for testing and verifying that the internal MOS6502 arithmetic / methods / dispather stuff is working. Which not everything is. Yet. <p>Not complete, still under construction.
+C64; Unit tests; C64/UnitTests/; <h2>TRSE internal unit tests</h2><p>This project contains various unit test files for testing and verifying that the internal MOS6502 arithmetic / methods / Dispatcher stuff is working. Which not everything is. Yet. <p>Not complete, still under construction.
 
 
 VIC20; Main Vic-20 tutorials; VIC20/tutorials/ ;  <h2>Main Vic-20 tutorials</h2><p>Recommended starting point for anybody interested in coding for the VIC-20. Easy and advanced tutorials. <p>Please note that most of the C64 tutorials / demo effects can also easily be converted to work for the VIC-20.

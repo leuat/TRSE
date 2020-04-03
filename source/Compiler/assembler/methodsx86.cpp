@@ -15,7 +15,7 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->EndWriteln();
     }
 */
-     ASTDispatcherX86* disp = dynamic_cast<ASTDispatcherX86*>(m_dispatcher);
+     ASTdispatcherX86* disp = dynamic_cast<ASTdispatcherX86*>(m_dispatcher);
 
     if (Command("waitforverticalblank"))
         WaitForVerticalBlank(as);

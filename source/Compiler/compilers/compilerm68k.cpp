@@ -1,10 +1,10 @@
 #include "compilerm68k.h"
 
 
-void CompilerM68K::InitAssemblerAndDispatcher(QSharedPointer<AbstractSystem> system)
+void CompilerM68K::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system)
 {
     m_assembler = QSharedPointer<AsmM68000>(new AsmM68000());//
-    m_dispatcher = QSharedPointer<ASTDispather68000>(new ASTDispather68000());
+    m_dispatcher = QSharedPointer<ASTDispatcher68000>(new ASTDispatcher68000());
 
 }
 
