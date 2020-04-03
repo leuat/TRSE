@@ -162,10 +162,14 @@ void SymbolTable::Merge(SymbolTable *other, bool mergeConstants)
             m_symbols[k] = other->m_symbols[k];
         }
     }
+//    qDebug() << other->m_constants.keys();
+
     if (mergeConstants)
     for (QString k : other->m_constants.keys()) {
         if (!m_constants.contains(k))
             m_constants[k] = other->m_constants[k];
+
+
     }
 
 }

@@ -1,0 +1,30 @@
+<h3>Description</h3>
+<p>The global keyword is used to specify that the variables are a global type, and is declared elsewhere.</p>
+Assume you have procedure defined as follows:
+<code>
+procedure MyProcedure1(a,b : byte);
+begin
+    a:=... do something
+
+end;
+</code>
+Now, both "a" and "b" will be declared as new variables within the body of "MyProcedure", occupying two bytes.
+This is usually all well, but if you'd like to preserve some memory, you can define these variables as global
+variables, and enable the possibility for several methods to re-use the same variables :
+<code>
+var
+   a, b : byte;
+
+
+procedure MyProcedure1(a,b : <b>global</b> byte); // re-use the global "a" and "b"
+begin
+    a:=... do something
+end;
+
+procedure MyProcedure2(a,b : <b>global</b> byte); // Re-use the same global "a" and "b"
+begin
+    b:=... do something
+end;
+</code>
+While using global variables will allow you to save some memory, please be careful with procedures that
+call other procedures that re-uses the same methods, as this would produce incorrect results.

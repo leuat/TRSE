@@ -1763,7 +1763,8 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     InitSystemPreprocessors();
     bool done = false;
     //while (!done)
-        done = PreprocessIncludeFiles();
+    done = PreprocessIncludeFiles();
+    SymbolTable::m_constants.clear();
 
     Preprocess();
     ApplyTPUBefore();
@@ -1771,7 +1772,6 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     m_pass = 1;
     m_lexer->m_currentComment = "";
     m_parserBlocks.clear();
-    SymbolTable::m_constants.clear();
     m_symTab->m_useLocals = useLocals;
 
 
@@ -2872,7 +2872,7 @@ void Parser::HandleUseTPU(QString fileName)
     p->m_projectIni = m_projectIni;
     p->m_settingsIni = m_settingsIni;
     try {
-    p->m_tree = p->Parse( false
+        p->m_tree = p->Parse( false
                              ,m_projectIni->getString("vic_memory_config"),
                              Util::fromStringList(m_projectIni->getStringList("global_defines")),
                              m_projectIni->getdouble("pascal_settings_use_local_variables")==1.0);
@@ -2882,7 +2882,7 @@ void Parser::HandleUseTPU(QString fileName)
         e.linenr = m_currentToken.m_lineNumber;
        throw e;
     }
-    m_symTab->Merge(p->m_symTab.get());
+    m_symTab->Merge(p->m_symTab.get(),true);
     m_ignoreBuiltinFunctionTPU.append(p->m_ignoreBuiltinFunctionTPU);
     m_tpus.append(p);
 //    qDebug() << m_currentToken.m_value;

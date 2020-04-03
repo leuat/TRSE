@@ -3,7 +3,7 @@ var
    	time1, waitTime,x,y,i,j,k,val : byte = 0; 
 
 // @max defines how many texts can be written on the screen at the same time
-	const max : byte = 6;
+	const maxx : byte = 6;
 	const useKernal : byte = 1;
 
 	// Colors to fade between, one per frame
@@ -16,7 +16,7 @@ var
 		x,y,time,l : byte;
 	end;
 
-	text : array[max] of textType;
+	text : array[maxx] of textType;
 
 	// Pointer to text and color ram
 	textPtr, colorPtr:pointer;
@@ -49,7 +49,7 @@ var
 procedure FindAvailableSlot(); // returns j
 begin
 	j:=0;
-	for i:=0 to @max do begin
+	for i:=0 to @maxx do begin
 		if text[i].time=0 then begin 
 			j:=i; 
 			return(); 
@@ -105,7 +105,7 @@ end;
 */
 procedure UpdateTextColors();
 begin
-	for i:=0 to max do begin
+	for i:=0 to maxx do begin
 		if (text[i].time<>0) then begin // is active: update color 
 			text[i].time:=text[i].time-1; // damn dec doesn't work
 			moveto(text[i].x, text[i].y, hi(screen_col_loc));

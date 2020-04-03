@@ -6,6 +6,13 @@ var
 	i, j,k,val: byte=5;
 	zeropage1: pointer;
 
+	const bank1 : integer = $2000;
+	const bank2 : integer = $6000;
+
+	const bank1_screen : address = bank1+$400;
+	const bank2_screen : address = bank2+$400;
+
+
 /*
   switch between bank 0 and 1
 */
@@ -14,14 +21,14 @@ begin
 	if bmg_currbank=0 then begin
 		bmg_currbank := $40;
 		SetBank(VIC_BANK0);
-		clearbitmap(^$6400, 22); // Clear a certain window only
+		clearbitmap(bank2_screen, 22); // Clear a certain window only
 	end
 	
 	else
 	begin
 		bmg_currbank:=0;
 		SetBank(VIC_BANK1);
-		clearbitmap(^$2400, 22);
+		clearbitmap(bank1_screen, 22);
 	end;
 	
 end;
@@ -70,7 +77,8 @@ end;
 
 begin
 	bmg_currbank :=0; // Current bitmap bank (added to high bit of putpixel)
-	InitBitmapGraphics(1, $2000);
+	InitBitmapGraphics(1, bank1);
+	zeropage1:=zeropage1+10; // Move to the center of the screen
 	inczp(zeropage1,10);
 	vic_data_loc:=$18;
 	

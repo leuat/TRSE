@@ -21,6 +21,7 @@ var
 
 procedure putpixel3();
 begin
+	bmg_index:=math_pi;
 	asm("
 	ldy bmg_y1
 	ldx bmg_x1

@@ -1,7 +1,7 @@
 unit math;
 var
 	math_test: byte;
-
+	const math_pi : integer=31415;
 
 procedure sqrTest(math_v : byte);
 begin

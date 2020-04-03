@@ -451,5 +451,6 @@
         <file>resources/images/ras.png</file>
         <file>resources/text/help/m/min.rtf</file>
         <file>resources/text/help/m/max.rtf</file>
+        <file>resources/text/help/r/global.rtf</file>
     </qresource>
 </RCC>

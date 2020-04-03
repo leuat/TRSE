@@ -663,6 +663,7 @@ DISTFILES += \
     resources/text/help/r/endif.rtf \
     resources/text/help/r/error.rtf \
     resources/text/help/r/for.rtf \
+    resources/text/help/r/global.rtf \
     resources/text/help/r/if.rtf \
     resources/text/help/r/ifdef.rtf \
     resources/text/help/r/ifndef.rtf \
