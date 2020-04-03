@@ -600,11 +600,10 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeBuiltinMethod> node)
 
   //  as->PushCounter();
 
-    Methods68000 methods;
-    methods.m_node = node;
-    methods.Assemble(as,this);
+    QSharedPointer<AbstractMethods> methods = FactoryMethods::CreateMethods(Syntax::s.m_currentSystem->m_system);
+    methods->m_node = node;
+    methods->Assemble(as,this);
 
-//    as->PopCounter(node->m_op.m_lineNumber-1);
 
 }
 

@@ -22,7 +22,8 @@
 #include "source/Compiler/ast/nodeasm.h"
 #include "source/Compiler/ast/nodebinaryclause.h"
 #include "source/Compiler/ast/nodecase.h"
-#include "methods68000.h"
+#include "source/Compiler/assembler/factorymethods.h"
+#include "source/Compiler/syntax.h"
 
 class ASTDispatcher68000 : public AbstractASTDispatcher
 {

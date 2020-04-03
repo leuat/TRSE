@@ -2,22 +2,21 @@
 #define METHODS68000_H
 
 #include "abstractastdispatcher.h"
+#include "abstractmethods.h"
 //#include "astdispatcher68000.h"
 #include "source/Compiler/ast/nodebuiltinmethod.h"
 #include "source/Compiler/ast/nodenumber.h"
 #include "source/Compiler/ast/nodeprocedure.h"
 
-class Methods68000
+class Methods68000 : public AbstractMethods
 {
 public:
     Methods68000();
-    AbstractASTDispatcher* m_dispatcher;
-    QSharedPointer<NodeBuiltinMethod> m_node = nullptr;
 
-    void Assemble(Assembler* as, AbstractASTDispatcher* dispenser);
+    void Assemble(Assembler* as, AbstractASTDispatcher* dispenser) override;
 
 
-    bool Command(QString name);
+    bool Command(QString name) override;
     void Asm(Assembler* as, QString cmd, QString a, QString b, QSharedPointer<Node> n) {
         as->Asm(cmd + m_dispatcher->getEndType(as,n) + " " + a +","+b);
     }

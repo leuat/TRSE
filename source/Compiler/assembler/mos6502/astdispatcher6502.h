@@ -24,6 +24,7 @@
 #include "source/Compiler/ast/nodecase.h"
 #include "source/Compiler/ast/noderepeatuntil.h"
 #include "methods6502.h"
+#include "source/Compiler/assembler/factorymethods.h"
 
 class ASTDispatcher6502 : public AbstractASTDispatcher
 {

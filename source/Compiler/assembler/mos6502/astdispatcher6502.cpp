@@ -725,9 +725,9 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeBuiltinMethod> node)
 //    as->PushCounter();
 //    qDebug() <<"dispatcher::builtin" << as->m_tempZeroPointers;
 
-    Methods6502 methods;
-    methods.m_node = node;
-    methods.Assemble(as,this);
+    QSharedPointer<AbstractMethods> methods = FactoryMethods::CreateMethods(Syntax::s.m_currentSystem->m_system);
+    methods->m_node = node;
+    methods->Assemble(as,this);
  //   as->PopCounter(node->m_op.m_lineNumber);
 }
 

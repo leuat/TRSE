@@ -514,9 +514,9 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBuiltinMethod> node)
     node->VerifyParams(as);
 
 
-    MethodsX86 methods;
-    methods.m_node = node;
-    methods.Assemble(as,this);
+    QSharedPointer<AbstractMethods> methods = FactoryMethods::CreateMethods(Syntax::s.m_currentSystem->m_system);
+    methods->m_node = node;
+    methods->Assemble(as,this);
 
 
 

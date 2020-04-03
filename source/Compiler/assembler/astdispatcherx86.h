@@ -25,6 +25,7 @@
 #include "source/Compiler/ast/nodebinaryclause.h"
 #include "source/Compiler/ast/nodecase.h"
 #include "source/Compiler/assembler/methodsx86.h"
+#include "source/Compiler/assembler/factorymethods.h"
 
 class ASTdispatcherX86 : public AbstractASTDispatcher
 {

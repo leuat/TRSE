@@ -1,5 +1,5 @@
-zeropages = ,$64,  $66,  $68,  $6A,  $6C,  $6E,  $70,  $72,  $74,  $76,  $78
-temp_zeropages = ,$88,  $8A,  $8C,  $8E
+zeropages = ,$64, $66, $68, $6A, $6C, $6E, $70, $72, $74, $76, $78
+temp_zeropages = ,$88, $8A, $8C, $8E
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $7a
 zeropage_decrunch2 = $7b
@@ -48,3 +48,7 @@ data_header_resources/charsets/sprslice.flf = 1.82351e-312
 var_zeropages = ,
 dosbox_x86_system = default
 cpu_x86_system = 8086
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/vbm/
+via_zeropages = ,$5B, $5C, $5D, $5E
+open_files = ,11-largesprite.ras
+current_file = 11-largesprite.ras

@@ -7,21 +7,20 @@
 #include "source/Compiler/ast/nodebuiltinmethod.h"
 #include "source/Compiler/ast/nodenumber.h"
 #include "source/Compiler/ast/nodeprocedure.h"
+#include "source/Compiler/assembler/abstractmethods.h"
 
-class MethodsX86
+class MethodsX86 : public AbstractMethods
 {
 public:
     MethodsX86();
-    AbstractASTDispatcher* m_dispatcher;
-    QSharedPointer<NodeBuiltinMethod> m_node = nullptr;
 
 
-    void Assemble(Assembler* as, AbstractASTDispatcher* dispenser);
+    void Assemble(Assembler* as, AbstractASTDispatcher* dispenser) override;
 
 
 
 
-    bool Command(QString name);
+    bool Command(QString name) override;
 
     void LoadVar(Assembler *as, int paramNo);
     void LoadAddress(Assembler *as, int paramNo, bool isSource);

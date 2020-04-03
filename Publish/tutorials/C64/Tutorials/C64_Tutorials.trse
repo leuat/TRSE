@@ -42,4 +42,4 @@ exomize_toggle = 0
 exomizer_toggle = 0
 open_files = ,advanced/04_lines.ras, intermediate/03_fire.ras, intermediate/02_fading_text.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
-current_file = intermediate/03_fire.ras
+current_file = advanced/04_lines.ras
