@@ -77,6 +77,11 @@ OrgasmLine Orgasm::LexLine(int i) {
         line = line.split("//")[0];
 
     l.m_orgLine = line;
+    if (line=="") {
+        l.m_ignore = true;
+        return l;
+
+    }
 
 //    if (line.toLower().contains("else"))
   //      qDebug() << line;
@@ -209,8 +214,8 @@ bool Orgasm::Assemble(QString filename, QString outFile)
 
     try {
 
-
     for (int i=0;i<m_lines.count();i++) {
+        if (m_lines[i]=="") continue;
         OrgasmLine ol = LexLine(i);
         ol.m_lineNumber = i;
         if (!ol.m_ignore)
@@ -220,6 +225,7 @@ bool Orgasm::Assemble(QString filename, QString outFile)
 
     PassFindConstants();
     PassReplaceConstants();
+
 //       for (QString s: m_constants.keys())
   //         qDebug() << s << " " << m_constants[s];
    //     exit(1);

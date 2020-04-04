@@ -1765,7 +1765,6 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     //while (!done)
     done = PreprocessIncludeFiles();
     SymbolTable::m_constants.clear();
-
     Preprocess();
     ApplyTPUBefore();
 //    PreprocessConstants();
@@ -1796,7 +1795,9 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     if (removeUnusedDecls)
         RemoveUnusedProcedures();
 
+
     InitBuiltinFunctions();
+
 
     for (QString s: m_procedures.keys())
         if (qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[s])->m_block==nullptr)
@@ -1812,6 +1813,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
 
     if (m_currentToken.m_type!=TokenType::TEOF)
         ErrorHandler::e.Error("End of file error");
+
 
 
     return root;

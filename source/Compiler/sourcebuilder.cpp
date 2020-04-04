@@ -70,7 +70,6 @@ bool SourceBuilder::Build(QString source)
 
 //    qDebug() << lst;
     compiler->m_isTRU = m_isTRU;
-
     compiler->Parse(source,lst);
 
     QString path = m_curDir+"/";//m_projectIniFile.getString("project_path") + "/";
