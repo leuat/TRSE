@@ -1,5 +1,4 @@
 program Tutorial11_Lines;
-// 651 lines
 @use "gfx/bitmapgraphics"
 
 var

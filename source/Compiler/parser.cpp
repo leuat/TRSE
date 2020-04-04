@@ -2952,6 +2952,8 @@ void Parser::HandleUseTPU(QString fileName)
     p->m_isTRU = true;
     p->m_projectIni = m_projectIni;
     p->m_settingsIni = m_settingsIni;
+
+
     try {
         p->m_tree = p->Parse( false
                              ,m_projectIni->getString("vic_memory_config"),
