@@ -11,7 +11,7 @@ var
 
 	const bank1_screen : address = bank1+$400;
 	const bank2_screen : address = bank2+$400;
-
+	balle: integer;
 
 /*
   switch between bank 0 and 1

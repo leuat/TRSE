@@ -76,6 +76,7 @@ begin
 		PrintData();
 	end;
 end;
+
 procedure ShiftCharsetData();
 begin
 	// We copy 16 characters * 8 bytes each 128 byte from the original point in memory @charsetLoc  + 8*@charVal

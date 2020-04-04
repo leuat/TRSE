@@ -1,0 +1,71 @@
+unit animation;
+var  
+	trm_zp: pointer;   
+	trm_maxFrames, trm_compressionType, trm_hasTimeStamps, trm_endChar, trm_skipChar, trm_curFrame: byte=0;	
+
+	trm_orgPos : integer;
+// Images are imported using TRSE's petscii importer. Check out the .flf file!
+	
+procedure ReadAnimationHeader(trm_rah_pos:integer);
+begin
+	trm_orgPos:=trm_rah_pos;
+	trm_zp:=int2ptr(trm_rah_pos);
+	trm_maxFrames := trm_zp[2];
+	trm_compressionType := trm_zp[3];
+	trm_hasTimeStamps:=trm_zp[4];
+	trm_endChar:=trm_zp[5];
+	trm_skipChar:=trm_zp[6];
+	trm_zp := trm_zp + 7; 
+	trm_curFrame:=0;
+
+end;
+
+procedure RenderNextPackedFrameCompressionType2(trm_data_width, trm_xpos, trm_ypos:byte);
+var
+   m,i,pass,dw,sw: byte;
+   s : pointer;
+begin
+	
+	m:=0;
+	trm_zp := trm_zp + 1;
+	i:=trm_zp[0];
+
+	dw:=trm_data_width;
+	sw:=screen_width-dw;
+	
+	for pass:=0 to 2 do begin
+		case pass of
+			1:	s:=screen_col_loc+trm_xpos;
+			0:	s:=screen_char_loc+trm_xpos;
+		end;
+	s:=s+screen_width*trm_ypos;
+	while (trm_zp[0]<>trm_endChar) do begin
+		if (trm_zp[0] = trm_skipChar) then begin
+			s := s + trm_zp[1]; 
+			trm_zp:=trm_zp+2; 
+		end
+		else 
+		begin
+			s[0]:=trm_zp[0];
+			s := s + 1;
+			trm_zp:=trm_zp+1; 
+		end;
+//		g0:=zp[0];
+
+	end;
+	trm_zp:=trm_zp+1; //inczp(zp,1);
+//	g0:=0;
+	end;
+
+	if (trm_hasTimeStamps) then trm_zp:=trm_zp+1;
+
+	inc(trm_curFrame);
+	if (trm_curFrame=trm_maxFrames) then 
+	begin
+		trm_curFrame:=0;
+		trm_zp:=int2ptr(trm_orgPos+7);
+
+	end;
+end;
+
+end.

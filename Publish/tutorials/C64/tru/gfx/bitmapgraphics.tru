@@ -4,10 +4,10 @@ unit BitmapGraphics;
 
 
 var
-	xtablelow: array[160] of byte;
-	xtablehigh: array[160] of byte;
-	ytablelow: array[200] of byte;
-	ytablehigh: array[200] of byte;
+	bmg_xtablelow: array[160] of byte;
+	bmg_xtablehigh: array[160] of byte;
+	bmg_ytablelow: array[200] of byte;
+	bmg_ytablehigh: array[200] of byte;
 	bmg_mask, bmg_maskClear : array[160] of byte;
 	//	xi, yi: byte;
 
@@ -26,15 +26,15 @@ begin
 	ldy bmg_y1
 	ldx bmg_x1
 	
-	lda ytablelow,y
+	lda bmg_ytablelow,y
 	sta addr
 	
-	lda ytablehigh,y
+	lda bmg_ytablehigh,y
 	clc
 	adc bmg_currbank
 	sta addr+1
 	
-	ldy xtablelow,x
+	ldy bmg_xtablelow,x
 	
 	lda (addr),y
 	ora bmg_mask,x
@@ -52,14 +52,14 @@ begin
 	ldy bmg_y1
 	ldx bmg_x1
 	
-	lda ytablelow,y
+	lda bmg_ytablelow,y
 	clc
-	adc xtablelow,x
+	adc bmg_xtablelow,x
 	sta addr
 	
-	lda ytablehigh,y
+	lda bmg_ytablehigh,y
 	adc bmg_currbank
-	adc xtablehigh,x
+	adc bmg_xtablehigh,x
 	sta addr+1
 	
 	ldy #$00
@@ -114,8 +114,8 @@ begin
 	bmg_zp := bmg_index;
 	
 	for bmg_i:=0 to 160 do begin
-		xtablelow[bmg_i] := bmg_zp[0];
-		xtablehigh[bmg_i] := bmg_zp[1];
+		bmg_xtablelow[bmg_i] := bmg_zp[0];
+		bmg_xtablehigh[bmg_i] := bmg_zp[1];
 		bmg_k:=bmg_k+2;
 		if bmg_k=8 then begin
 			bmg_index:=bmg_index+8;
@@ -128,8 +128,8 @@ begin
 	bmg_k:=0;
 	for bmg_i:=0 to 200 do begin
 		
-		ytablelow[bmg_i] := bmg_zp[0];
-		ytablehigh[bmg_i] := bmg_zp[1];
+		bmg_ytablelow[bmg_i] := bmg_zp[0];
+		bmg_ytablehigh[bmg_i] := bmg_zp[1];
 		bmg_k:=bmg_k+1;
 		bmg_index:=bmg_index+1;
 		if bmg_k=8 then begin

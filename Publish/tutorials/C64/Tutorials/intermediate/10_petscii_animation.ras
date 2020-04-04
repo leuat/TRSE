@@ -1,8 +1,7 @@
 program PetsciiAnimations;
-var  
-	zp: pointer;   
-	maxFrames, compressionType, hasTimeStamps, endChar, skipChar, curFrame: byte=0;	
+@use "animation/animation"
 
+var  
 	const animPos : address = $4000;
 
 // Images are imported using TRSE's petscii importer. Check out the .flf file!
@@ -10,79 +9,16 @@ var
 
 	anim: incbin("resources/images/petscii_animation.trm",animPos);
 	
-procedure ReadAnimationHeader();
-begin
-	zp:=animPos;
-	maxFrames := zp[2];
-	compressionType := zp[3];
-	hasTimeStamps:=zp[4];
-	endChar:=zp[5];
-	skipChar:=zp[6];
-	zp := zp + 7; 
-	curFrame:=0;
-
-end;
-
-procedure RenderNextPackedFrameCompressionType2(data_width, xpos, ypos:byte);
-var
-   m,i,pass,dw,sw: byte;
-   s : pointer;
-begin
-	
-	m:=0;
-	zp := zp + 1;
-	i:=zp[0];
-
-	dw:=data_width;
-	sw:=screen_width-dw;
-	
-	for pass:=0 to 2 do begin
-		case pass of
-			1:	s:=screen_col_loc+xpos;
-			0:	s:=screen_char_loc+xpos;
-		end;
-	s:=s+screen_width*ypos;
-	while (zp[0]<>endChar) do begin
-		if (zp[0] = skipChar) then begin
-			s := s + zp[1]; 
-			zp:=zp+2; 
-		end
-		else 
-		begin
-			s[0]:=zp[0];
-			s := s + 1;
-			zp:=zp+1; 
-		end;
-//		g0:=zp[0];
-
-	end;
-	zp:=zp+1; //inczp(zp,1);
-//	g0:=0;
-	end;
-
-	if (hasTimeStamps) then zp:=zp+1;
-
-	inc(curFrame);
-	if (curFrame=maxFrames) then 
-	begin
-		curFrame:=0;
-		zp:=@animPos+7;
-
-	end;
-end;
 
 procedure Render();
-var
-  li,lj:byte;
 begin
 	while (true) do
 	begin
 		screenoff();
 		RenderNextPackedFrameCompressionType2(40,0,0);
 		screenon();
-		for li:=0 to 10 do
-			for lj:=0 to 10 do 
-				waitforverticalblank();
+		for i:=0 to 100 do
+			waitforverticalblank();
 	end;
 end;
 
@@ -90,6 +26,6 @@ end;
 begin
 	screen_bg_col:=black;
 	screen_fg_col:=black;
-	ReadAnimationHeader();
+	ReadAnimationHeader(anim);
 	Render();	
 end.
