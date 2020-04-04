@@ -5,7 +5,7 @@ var
 /*
 	The famous MCMC random walk!	
 
-*/
+*/	
 
 	// Monster type : record	
 	monster_type = record

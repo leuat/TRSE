@@ -606,6 +606,22 @@ int Parser::findPage()
     return forcePage ;
 }
 
+void Parser::VerifyTypeSpec(Token t)
+{
+    try {
+        bool ok = false;
+        if (m_symTab->m_records.contains(t.m_value))
+            ok=true;
+        //return;
+        if (!ok)
+            m_symTab->Lookup(t.m_value,t.m_lineNumber);
+
+    } catch (FatalErrorException fe) {
+        fe.message = "Unknown type specification : " +t.m_value;
+        throw fe;
+    }
+}
+
 void Parser::RemoveUnusedProcedures()
 {
     QString removeProcedures = "Removing unused procedures: ";
@@ -2217,7 +2233,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
             Record(varName);
             return QVector<QSharedPointer<Node> >();
         }
-        ErrorHandler::e.Error("Unknown declaration : " +m_currentToken.m_type);
+        ErrorHandler::e.Error("Unknown declaration : " +m_currentToken.m_value);
     }
 
     // Make sure that ALL are defined!
@@ -2349,6 +2365,7 @@ QSharedPointer<Node> Parser::TypeSpec()
         Eat(TokenType::RBRACKET);
         Eat(TokenType::OF);
         Token arrayType = m_currentToken;
+        VerifyTypeSpec(arrayType);
         Eat(m_currentToken.m_type);
         TokenType::Type dataType = m_currentToken.m_type;
         QStringList data;
@@ -2479,6 +2496,8 @@ QSharedPointer<Node> Parser::TypeSpec()
 
 
     }
+    VerifyTypeSpec(t);
+
     return QSharedPointer<NodeVarType>(new NodeVarType(t,initVal));
 
 }

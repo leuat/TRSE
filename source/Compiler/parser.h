@@ -129,7 +129,7 @@ public:
     int getIntVal(Token t);
 
     int findPage();
-
+    void VerifyTypeSpec(Token t);
 
     void RemoveUnusedProcedures();
     void RemoveUnusedSymbols(QSharedPointer<NodeProgram> root);
