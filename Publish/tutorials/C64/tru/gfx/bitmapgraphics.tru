@@ -15,8 +15,14 @@ var
 	bmg_d, bmg_currbank:byte;
 	bmg_low, bmg_high, bmg_k, bmg_i, bmg_val : byte;
 	bmg_index, bmg_bitmapstart : integer;
+	
+@donotremove addr
 	addr,p_putpixel : pointer;
 	
+	bmg_zp: pointer;
+	
+	bmg_x1, bmg_y1, bmg_x2, bmg_y2 : byte;
+
 
 
 procedure putpixel3();
@@ -104,8 +110,6 @@ begin
 end;
 */
 procedure SetupPixelTables();
-var
-	bmg_zp: pointer;
 begin
 	bmg_low:=0;
 	bmg_high:=0;
@@ -163,7 +167,7 @@ begin
 
 end;
 
-procedure Line ( bmg_x1, bmg_y1, bmg_x2, bmg_y2 : byte);
+procedure Line ( bmg_x1, bmg_y1, bmg_x2, bmg_y2 : global byte);
 begin
 	bmg_dx:=0;
 	bmg_dy:=0;

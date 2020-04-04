@@ -1398,6 +1398,9 @@ void TRSEProject::VerifyDefaults() {
     if (!m_ini->contains("override_target_settings"))
         m_ini->setFloat("override_target_settings",0);
 
+    if (!m_ini->contains("remove_unused_symbols"))
+        m_ini->setFloat("remove_unused_symbols",1);
+
     if (!m_ini->contains("override_target_settings_org")) {
            if (m_ini->getString("system")=="PLUS4")
                m_ini->setString("override_target_settings_org","$1010");

@@ -70,7 +70,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="4,1">
          <item>
           <widget class="QTextEdit" name="txtOutput">
            <property name="readOnly">
@@ -80,24 +80,31 @@
          </item>
          <item>
           <layout class="QGridLayout" name="gridLayout_4">
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="chkExomize">
+           <item row="3" column="0">
+            <widget class="QCheckBox" name="chkWarnings">
              <property name="text">
-              <string>Exomize</string>
+              <string>Show warnings</string>
              </property>
             </widget>
            </item>
            <item row="1" column="0">
+            <widget class="QCheckBox" name="chkRemoveUnusedSymbols">
+             <property name="text">
+              <string>Remove unused symbols</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
             <widget class="QCheckBox" name="chkPostOpt">
              <property name="text">
               <string>Post-optimize</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QCheckBox" name="chkWarnings">
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="chkExomize">
              <property name="text">
-              <string>Show warnings</string>
+              <string>Exomize</string>
              </property>
             </widget>
            </item>

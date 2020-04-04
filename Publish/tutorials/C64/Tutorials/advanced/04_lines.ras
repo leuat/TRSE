@@ -1,9 +1,9 @@
 program Tutorial11_Lines;
-
+// 651 lines
 @use "gfx/bitmapgraphics"
 
 var
-	i, j,k,val: byte=5;
+	i, j,k,val,test: byte=5;
 	zeropage1: pointer;
 
 	const bank1 : integer = $2000;
@@ -11,11 +11,21 @@ var
 
 	const bank1_screen : address = bank1+$400;
 	const bank2_screen : address = bank2+$400;
-	balle: integer;
+
+
+//@donotremove "Balle"
+
+procedure Balle();
+begin
+
+
+end;
 
 /*
   switch between bank 0 and 1
 */
+
+
 procedure SwitchDrawBank();
 begin
 	if bmg_currbank=0 then begin
@@ -79,7 +89,6 @@ begin
 	bmg_currbank :=0; // Current bitmap bank (added to high bit of putpixel)
 	InitBitmapGraphics(1, bank1);
 	zeropage1:=zeropage1+10; // Move to the center of the screen
-	inczp(zeropage1,10);
 	vic_data_loc:=$18;
 	
 	setmulticolormode();

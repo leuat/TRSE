@@ -391,7 +391,7 @@ void Parser::ApplyTPUBefore()
     }
 }
 
-void Parser::ApplyTPUAfter(QVector<QSharedPointer<Node>>& decl)
+void Parser::ApplyTPUAfter(QVector<QSharedPointer<Node>>& declBlock, QVector<QSharedPointer<Node>>& procs)
 {
     for (QSharedPointer<Parser> p: m_tpus) {
         QSharedPointer<NodeProgram> np = qSharedPointerDynamicCast<NodeProgram>(p->m_tree);
@@ -402,8 +402,11 @@ void Parser::ApplyTPUAfter(QVector<QSharedPointer<Node>>& decl)
                     qSharedPointerDynamicCast<NodeProcedureDecl>(on);
             if (procDecl!=nullptr) {
 
-                if (!m_ignoreBuiltinFunctionTPU.contains(procDecl->m_procName))
-                    decls.append(on);
+                if (!m_ignoreBuiltinFunctionTPU.contains(procDecl->m_procName)) {
+                    procs.append(procDecl);
+//                    qDebug() << "Appending : " << procDecl->m_procName << procDecl->m_isUsed;
+                    m_mergedProcedures.append(procDecl);
+                }
 
             }
             else decls.append(on);
@@ -411,7 +414,7 @@ void Parser::ApplyTPUAfter(QVector<QSharedPointer<Node>>& decl)
 
         }
 
-        decl.append(decls);
+        declBlock.append(decls);
     }
 }
 
@@ -602,23 +605,69 @@ void Parser::RemoveUnusedProcedures()
     QString removeProcedures = "Removing unused procedures: ";
     bool outputUnusedWarning = false;
     QVector<QSharedPointer<Node>> procs;
+
+/*    m_proceduresOnly.append(m_mergedProcedures);
+    for (QSharedPointer<Node> n:m_proceduresOnly) {
+        qDebug() << qSharedPointerDynamicCast<NodeProcedureDecl>(n)->m_procName;
+    }*/
     for (QSharedPointer<Node> n: m_proceduresOnly) {
         QSharedPointer<NodeProcedureDecl> np = qSharedPointerDynamicCast<NodeProcedureDecl>(n);
+
         if ((np->m_isUsed==true) || m_doNotRemoveMethods.contains(np->m_procName))
             procs.append(n);
         else {
             outputUnusedWarning = true;
             removeProcedures+=np->m_procName + ",";
-            //                qDebug() << "Removing procedure: " << np->m_procName;
-            //            m_proceduresOnly.removeOne(m_procedures[s]);
         }
     }
+
     m_proceduresOnly = procs;
+
     if (outputUnusedWarning) {
         removeProcedures.remove(removeProcedures.count()-1,1);
         ErrorHandler::e.Warning(removeProcedures);
     }
 
+
+}
+
+void Parser::RemoveUnusedSymbols(QSharedPointer<NodeProgram> root)
+{
+    QVector<QSharedPointer<Node>> newDecl;
+    QStringList removedSymbols;
+    for (QSharedPointer<Node> n: root->m_NodeBlock->m_decl) {
+        bool add = true;
+
+        QSharedPointer<NodeVarDecl> nv = qSharedPointerDynamicCast<NodeVarDecl>(n);
+        if (nv!=nullptr) {
+            QString val = qSharedPointerDynamicCast<NodeVar>(nv->m_varNode)->value;
+
+            if (m_symTab->m_symbols.contains(val) && !m_doNotRemoveMethods.contains(val)) {
+
+                QSharedPointer<Symbol> s = m_symTab->m_symbols[val];//m_symTab->Lookup(,0);
+                qDebug() << s->m_type;
+                if (!s->isUsed && !(s->m_type=="INCBIN" || s->m_type=="INCSID")) {
+                    removedSymbols.append(val);
+//                    qDebug() << s->m_name << s->isUsed;
+                    add = false;
+                }
+
+            }
+            else add=true;
+        }
+        if (add)
+            newDecl.append(n);
+    }
+    root->m_NodeBlock->m_decl = newDecl;
+    if (removedSymbols.count()!=0) {
+        QString s = "Removed the following unused symbols: ";
+        for (int i=0;i<removedSymbols.count();i++) {
+            s = s + removedSymbols[i];
+            if (i!=removedSymbols.count()-1)
+                s=s+", ";
+        }
+        ErrorHandler::e.Warning(s);
+    }
 
 }
 
@@ -1345,7 +1394,8 @@ QSharedPointer<Node> Parser::Program(QString param)
         block = qSharedPointerDynamicCast<NodeBlock>(BlockNoCompound(true));
 
     QSharedPointer<NodeProgram> program = QSharedPointer<NodeProgram>(new NodeProgram(progName,  param, block));
-    ApplyTPUAfter(block->m_decl);
+//    ApplyTPUAfter(block->m_decl);
+    ApplyTPUAfter(block->m_decl,m_proceduresOnly);
 
     if (!m_isTRU) {
         Eat(TokenType::DOT);
@@ -1792,8 +1842,10 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     Node::m_staticBlockInfo.m_blockID=-1;
     QSharedPointer<NodeProgram> root = qSharedPointerDynamicCast<NodeProgram>(Program(param));
     // First add builtin functions
-    if (removeUnusedDecls)
+    if (removeUnusedDecls && !m_isTRU) {
         RemoveUnusedProcedures();
+        RemoveUnusedSymbols(root);
+    }
 
 
     InitBuiltinFunctions();
@@ -2885,6 +2937,7 @@ void Parser::HandleUseTPU(QString fileName)
        throw e;
     }
     m_symTab->Merge(p->m_symTab.get(),true);
+    m_doNotRemoveMethods.append(p->m_doNotRemoveMethods);
     m_ignoreBuiltinFunctionTPU.append(p->m_ignoreBuiltinFunctionTPU);
     m_tpus.append(p);
 //    qDebug() << m_currentToken.m_value;

@@ -53,7 +53,7 @@ void Compiler::Parse(QString text, QStringList lst)
     Parser::s_usedTRUs.clear(); // None TRU's are marked
     //qDebug() << "******" << m_ini->getString("assembler").toUpper();
     try {
-        m_tree = m_parser.Parse( m_ini->getdouble("optimizer_remove_unused_symbols")==1.0 &&
+        m_tree = m_parser.Parse( m_projectIni->getdouble("remove_unused_symbols")==1.0 &&
                                  Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES
                                  ,m_projectIni->getString("vic_memory_config"),Util::fromStringList(m_projectIni->getStringList("global_defines")),
                                  m_projectIni->getdouble("pascal_settings_use_local_variables")==1.0);

@@ -100,7 +100,7 @@ void DialogTRSESettings::FillFromIni()
 
     ui->leFontSizeMemoryAnalyzer->setText(QString::number((int)m_ini->getdouble("memory_analyzer_font_size")));
     ui->chkExomizerFootprint->setChecked(m_ini->getdouble("hide_exomizer_footprint")==1.0);
-    ui->chkRemoveUnusedProcedures->setChecked( m_ini->getdouble("optimizer_remove_unused_symbols")==1.0);
+    //ui->chkRemoveUnusedProcedures->setChecked( m_ini->getdouble("optimizer_remove_unused_symbols")==1.0);
 
     ui->leUserDefined->setText(m_ini->getString("user_defined_command"));
 
@@ -149,7 +149,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("user_defined_command",ui->leUserDefined->text());
 
 
-    m_ini->setFloat("optimizer_remove_unused_symbols", ui->chkRemoveUnusedProcedures->isChecked()?1:0);
+//    m_ini->setFloat("optimizer_remove_unused_symbols", ui->chkRemoveUnusedProcedures->isChecked()?1:0);
 
     if (ui->cmbPalette->currentText()=="Dark")
         m_ini->setFloat("windowpalette",0);

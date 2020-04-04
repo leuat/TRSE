@@ -30,9 +30,12 @@ var
 
 
 
+
 	);
 //	textcols : array[7] of byte = (7,4,4,3,3,11, 11);
 
+
+@donotremove zp2
 
 @define roadBlock $3D
 
