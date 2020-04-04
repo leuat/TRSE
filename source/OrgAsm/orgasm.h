@@ -6,7 +6,8 @@
 #include "source/LeLib/util/util.h"
 #include "source/Compiler/syntax.h"
 #include "source/Compiler/Opcodes/opcodes6502.h"
-
+#include "source/Compiler/symboltable.h"
+#include <QSharedPointer>
 
 class OrgasmData {
 public:
@@ -159,6 +160,13 @@ public:
     QMap<QString, QRegExp*> m_regs;
     QString m_output;
 
+
+    void SetupConstants(QSharedPointer<SymbolTable> symTab) {
+        for(QString k: symTab->m_constants.keys()) {
+            m_constants[k] = Util::numToHex(symTab->m_constants[k]->m_value->m_fVal);
+        }
+
+    }
 
 
     int m_pCounter = 0;

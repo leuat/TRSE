@@ -762,8 +762,9 @@ void FormRasEditor::MemoryAnalyze()
 
         return;
     }
-    if (!m_builderThread.m_builder->Build(ui->txtEditor->toPlainText()))
+    if (!m_builderThread.m_builder->Build(ui->txtEditor->toPlainText())) {
         return;
+    }
 
     m_projectIniFile->setFloat("exomizer_toggle",i);
     m_builderThread.m_builder->compiler->SaveBuild(filename + ".asm");
@@ -776,11 +777,14 @@ void FormRasEditor::MemoryAnalyze()
     int codeEnd=FindEndSymbol(output);
     */
     Orgasm orgAsm;
+    orgAsm.SetupConstants(m_builderThread.m_builder->compiler->m_parser.m_symTab);
     //orgAsm.Codes();
     orgAsm.Assemble(filename+".asm", filename+".prg");
-    if (!orgAsm.m_success)
+    if (!orgAsm.m_success) {
         return;
+    }
     int codeEnd=FindEndSymbol(orgAsm);
+
 
     FindBlockEndSymbols(orgAsm);
 //    qDebug() << "B";

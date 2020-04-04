@@ -25,9 +25,7 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
     }
     else if (m_settingsIni->getString("assembler").toLower()=="orgasm") {
         Orgasm orgAsm;
-        for(QString k: symTab->m_constants.keys()) {
-            orgAsm.m_constants[k] = Util::numToHex(symTab->m_constants[k]->m_value->m_fVal);
-        }
+        orgAsm.SetupConstants(symTab);
 
         orgAsm.Assemble(filename+".asm", filename+".prg");
         output = orgAsm.m_output;
