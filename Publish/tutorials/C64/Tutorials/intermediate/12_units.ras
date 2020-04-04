@@ -1,0 +1,58 @@
+program Tutorial12_Units;
+// Global TRSE units, contains tables of colors
+@use "tables/luminosities"
+// Custom units can be included from the current project dir
+@use "intermediate/customunit"
+
+var
+	x,y,time,i : byte = 0;
+	shift : byte = 128; // initially object #2 is shiftet 180 degrees from object 1
+	
+
+procedure Render(char : byte);
+begin
+	// lumi_fromBlue is a 32-byte colour array defined in the luminosities unit
+	i:=lumi_fromBlue[ time&31 ];
+
+	x:=sine[time]/8;
+	y:=sine[time+64]/24+1;
+	
+	// Drawbox and DrawTri are  defined in the custom unit
+	
+	DrawBox(x,y, 4,4, char, i, hi(screen_char_loc));
+	
+	// Next object 180 degrees ahead
+	x:=sine[time+shift]/8;
+	y:=sine[time+64+shift]/24+1;
+	DrawTri(x,y, 4, char, black, hi(screen_char_loc));
+end;
+
+
+begin
+	// Set up the screen
+	screen_bg_col:=red;
+	screen_fg_col:=orange;
+	clearscreen(key_space,screen_char_loc);
+	clearscreen(black,screen_col_loc);
+	
+	while (true) do
+	begin
+		// Print the number defined in the unit to screen
+		moveto(35,0,hi(screen_char_loc));
+		printdecimal(cu_number,4);
+		// One row down : print the unit constant 
+		screenmemory:=screenmemory+screen_width;		 
+		printdecimal(cu_SomeUnitConstant,2);
+		
+		Render($80+key_space); // Filled black char = $80 + $20
+		
+		for i:=0 to 2 do
+			waitforraster(150);
+		clearscreen(key_space,screen_char_loc);
+		inc(time);
+		inc(shift);
+			
+	end;
+
+	Loop();
+end.
