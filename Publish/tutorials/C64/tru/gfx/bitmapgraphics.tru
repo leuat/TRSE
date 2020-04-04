@@ -8,6 +8,8 @@ var
 	bmg_xtablehigh: array[160] of byte;
 	bmg_ytablelow: array[200] of byte;
 	bmg_ytablehigh: array[200] of byte;
+@donotremove bmg_maskClear
+
 	bmg_mask, bmg_maskClear : array[160] of byte;
 	//	xi, yi: byte;
 
@@ -25,9 +27,9 @@ var
 
 
 
+
 procedure putpixel3();
 begin
-	bmg_index:=math_pi;
 	asm("
 	ldy bmg_y1
 	ldx bmg_x1
@@ -159,13 +161,18 @@ end;
 procedure InitBitmapGraphics(bmg_pi:byte; bmg_bsta:integer);
 begin
 	p_putpixel := proceduretopointer(putpixel2());
+	inc(screen_fg_col);
 	if (bmg_pi=2) then 
 		p_putpixel := proceduretopointer(putpixel3());
+
+	inc(screen_bg_col);
 
 	bmg_bitmapstart:=bmg_bsta;
 	SetupPixelTables();
 
 end;
+
+
 
 procedure Line ( bmg_x1, bmg_y1, bmg_x2, bmg_y2 : global byte);
 begin

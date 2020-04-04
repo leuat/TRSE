@@ -109,7 +109,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
         m_tree->Accept(m_dispatcher.get());
 
     } catch (FatalErrorException e) {
-        HandleError(e,"Error during build");
+        HandleError(e,"Error during build (dispatcher) :");
         return false;
     }
 

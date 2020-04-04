@@ -20,34 +20,35 @@ begin
 
 end;
 
+
 procedure RenderNextPackedFrameCompressionType2(trm_data_width, trm_xpos, trm_ypos:byte);
 var
-   m,i,pass,dw,sw: byte;
-   s : pointer;
+   trm_m,trm_i,trm_pass,trm_dw,trm_sw: byte;
+   trm_s : pointer;
 begin
 	
-	m:=0;
+	trm_m:=0;
 	trm_zp := trm_zp + 1;
-	i:=trm_zp[0];
+	trm_i:=trm_zp[0];
 
-	dw:=trm_data_width;
-	sw:=screen_width-dw;
+	trm_dw:=trm_data_width;
+	trm_sw:=screen_width-trm_dw;
 	
-	for pass:=0 to 2 do begin
-		case pass of
-			1:	s:=screen_col_loc+trm_xpos;
-			0:	s:=screen_char_loc+trm_xpos;
+	for trm_pass:=0 to 2 do begin
+		case trm_pass of
+			1:	trm_s:=screen_col_loc+trm_xpos;
+			0:	trm_s:=screen_char_loc+trm_xpos;
 		end;
-	s:=s+screen_width*trm_ypos;
+	trm_s:=trm_s+screen_width*trm_ypos;
 	while (trm_zp[0]<>trm_endChar) do begin
 		if (trm_zp[0] = trm_skipChar) then begin
-			s := s + trm_zp[1]; 
+			trm_s := trm_s + trm_zp[1]; 
 			trm_zp:=trm_zp+2; 
 		end
 		else 
 		begin
-			s[0]:=trm_zp[0];
-			s := s + 1;
+			trm_s[0]:=trm_zp[0];
+			trm_s := trm_s + 1;
 			trm_zp:=trm_zp+1; 
 		end;
 //		g0:=zp[0];

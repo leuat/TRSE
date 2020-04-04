@@ -2,6 +2,7 @@ program PetsciiAnimations;
 @use "animation/animation"
 
 var  
+	i:byte;
 	const animPos : address = $4000;
 
 // Images are imported using TRSE's petscii importer. Check out the .flf file!

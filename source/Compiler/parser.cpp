@@ -394,6 +394,9 @@ void Parser::ApplyTPUBefore()
 void Parser::ApplyTPUAfter(QVector<QSharedPointer<Node>>& declBlock, QVector<QSharedPointer<Node>>& procs)
 {
     for (QSharedPointer<Parser> p: m_tpus) {
+        QVector<QSharedPointer<Node>> orgProcs = procs;
+        procs.clear();
+
         QSharedPointer<NodeProgram> np = qSharedPointerDynamicCast<NodeProgram>(p->m_tree);
         QVector<QSharedPointer<Node>> decls;
 
@@ -413,6 +416,9 @@ void Parser::ApplyTPUAfter(QVector<QSharedPointer<Node>>& declBlock, QVector<QSh
 
 
         }
+
+        // Important: add newest procedures *last*
+        procs.append(orgProcs);
 
         declBlock.append(decls);
     }
@@ -1058,8 +1064,10 @@ QSharedPointer<Node> Parser::Variable()
     if (nv!=nullptr) {
         QSharedPointer<Symbol> s = m_symTab->Lookup(nv->value,m_currentToken.m_lineNumber);
         // If variable doesn't exist
-        if (s==nullptr)
+//        qDebug
+        if (s==nullptr) {
             ErrorHandler::e.Error("Could not find variable : " +nv->value);
+        }
 //        qDebug() << nv->value<<s->m_type;
         if (!(s->m_type.toUpper()=="ARRAY" || s->m_type.toUpper()=="POINTER" || s->m_type.toUpper()=="STRING"  ||s->m_type.toUpper()=="CSTRING" ||s->m_type.toUpper()=="INCBIN" || s->m_type.toUpper()=="ADDRESS" || isConstant) && nv->m_expr!=nullptr)
             ErrorHandler::e.Error("Variable '<b>" +nv->value + "</b>' is neither a pointer nor an array.",nv->m_op.m_lineNumber);
@@ -1394,7 +1402,6 @@ QSharedPointer<Node> Parser::Program(QString param)
         block = qSharedPointerDynamicCast<NodeBlock>(BlockNoCompound(true));
 
     QSharedPointer<NodeProgram> program = QSharedPointer<NodeProgram>(new NodeProgram(progName,  param, block));
-//    ApplyTPUAfter(block->m_decl);
     ApplyTPUAfter(block->m_decl,m_proceduresOnly);
 
     if (!m_isTRU) {
@@ -1867,6 +1874,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
         ErrorHandler::e.Error("End of file error");
 
 
+//    qDebug() << m_symTab->m_symbols.keys();
 
     return root;
 }

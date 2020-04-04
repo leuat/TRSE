@@ -3,7 +3,7 @@ program Tutorial11_Lines;
 @use "gfx/bitmapgraphics"
 
 var
-	i, j,k,val,test: byte=5;
+	i: byte=5;
 	zeropage1: pointer;
 
 	const bank1 : integer = $2000;
@@ -13,13 +13,6 @@ var
 	const bank2_screen : address = bank2+$400;
 
 
-//@donotremove "Balle"
-
-procedure Balle();
-begin
-
-
-end;
 
 /*
   switch between bank 0 and 1
@@ -55,7 +48,6 @@ var
 	
 begin
 	SwitchDrawBank();
-	
 	Line(xp[0],yp[0],xp[1],yp[1]);
 	Line(xp[1],yp[1],xp[2],yp[2]);
 	Line(xp[2],yp[2],xp[0],yp[0]);
@@ -85,7 +77,8 @@ begin
 
 end;
 
-begin
+begin	
+	screen_bg_col:=black;
 	bmg_currbank :=0; // Current bitmap bank (added to high bit of putpixel)
 	InitBitmapGraphics(1, bank1);
 	zeropage1:=zeropage1+10; // Move to the center of the screen
