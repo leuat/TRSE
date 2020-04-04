@@ -1,0 +1,154 @@
+program MainProgram;
+/*
+
+	Vic 20 8K Cartridge template
+	- For testing 35K RAM expansion is set under project settings
+
+	- **** READ ME ****
+	-
+	- To run in VICE <=3.1, run this project and when VICE shows the yellow
+	- screen, press ALT + R to do a soft reset.  The cartridge witll autostart
+	- ** note some builds/VICE will not need the above and will autoreset 
+	- ** the jmp PRGstart in the main code will let you test the cart
+	- ** you can remove this to save 3 bytes if desired / needed
+	-
+	- To export the BIN needed to write to a cartridge, uncomment the
+	- @define EXPORTBIN 1 below and an a000.prg is produced.
+	- This is an 8K binary with 2 byte smart address at the beginning
+
+	-------------------
+	
+	Dev Note:	Zero Page addresses have been defined in project settings
+				for the Vic 20 build.
+
+*/
+var  
+
+	strHello : cstring = ("A VOICE BOOOOMS OUT");
+	strCart : cstring = ("WELCOME TO CARTLAND");
+
+//@define DEBUG		1				// uncomment to show debugging timings
+@define BUILDCRT		1			// uncomment to build for cartridge
+//@define EXPORTBIN		1			// uncomment to export cartridge images
+
+@ifdef EXPORTBIN
+
+	// as separate 8k blocks
+//	@exportprg2bin "main.prg" "2000.prg" $2000 $4000	
+//	@exportprg2bin "main.prg" "4000.prg" $4000 $6000	
+//	@exportprg2bin "main.prg" "6000.prg" $6000 $8000	
+	@exportprg2bin "main.prg" "a000.prg" $a000 $c000
+
+@endif
+
+@ifdef BUILDCRT
+	
+	// These project settings are needed to run as a cartridge build
+	@projectsettings "ignorebasicsysstart" 1
+	@projectsettings "startaddress" $A0A0
+
+@endif	
+
+
+@ifndef BUILDCRT
+
+	// These project settings are needed to run when not a cartridge build
+	@projectsettings "ignorebasicsysstart" 0
+	@projectsettings "basicsysaddress" $1200
+	@projectsettings "startaddress" $2000
+
+@endif
+
+// -------------------------------------------------------------------------------
+// The magic bytes needed at address $A000
+
+@startblock $A000 "CARTAUTOSTART"
+@ifdef BUILDCRT
+procedure cartAutostart();
+begin
+	asm("
+	dc.b <CRTStart,>CRTStart				; Cart reset start address
+	dc.b <restoreKeyStart,>restoreKeyStart 	; Restore keypress jump address
+	dc.b $41,$30,$c3,$c2,$cd				; Signature for cart autostart (a0CBM)
+	"); 
+end;
+@endif
+@endblock
+
+// -------------------------------------------------------------------------------
+
+// -------------------------------------------------------------------------------
+// **** MAIN PROGRAM ****
+
+begin
+
+@ifdef BUILDCRT
+
+	// Initialize system when run as cartridge
+	asm("
+		jmp PRGstart		; resolves problem with joystick to start prg builds here
+
+CRTStart:					; crt builds start here
+
+		; Disable interrupts
+		sei
+     	cld                 ; clear decimal mode
+     	
+     	ldx #$FB			; value for start stack
+     	txs					; set stack pointer
+     	
+		; Run kernal setup routines.
+		jsr $FD8D			; initialise and test RAM
+PRGstart:		
+		jsr $FD52			; restore default I/O vectors
+		jsr $FDF9			; initialize I/O registers 
+restoreKeyStart:
+		; Disable interrupts again (for Restore-key)
+		sei
+		jsr $E518			; initialise hardware
+		
+     	cli					; enable interrupts
+     
+     	jsr $E45B			; initialise BASIC vector tables
+     	jsr $E3A4			; initialise BASIC RAM locations     
+     	jsr $C644			; perform NEW (bypass check)
+
+		; Prevent lower/uppercase swap
+		lda #$80
+		sta $0291		
+
+	");
+	
+@endif
+	
+	DefineScreen();
+
+	ClearScreen( 32, SCREEN_CHAR_LOC); 		// ^$1000 - expanded screen location
+	ClearScreen( GREEN, SCREEN_COL_LOC); 	// ^$9400 - expanded colour location
+
+	AUX_COLOR_AND_VOLUME := %00000010;
+	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
+
+	screenmemory := SCREEN_CHAR_LOC;
+	PrintString( strHello, 0, 20 );
+	screenmemory := screenmemory + 22;
+	PrintString( strCart, 0, 20 );
+
+	// main game loop
+	while (true) offpage do 
+	begin
+		
+		@ifdef DEBUG	// for testing speed
+		SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
+		@endif
+		
+		// wait for vertical blank
+		WaitForRaster(120);
+
+		@ifdef DEBUG	// for testing speed
+		SCREEN_BG_COLOR := CYAN + SCREEN_BG_BLACK;
+		@endif
+				
+	end;
+
+end.
