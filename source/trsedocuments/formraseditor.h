@@ -170,6 +170,7 @@ private slots:
 
     void on_btnReplace_clicked();
     void on_chkExomize_stateChanged(int arg1);
+    void on_chkRemoveUnusedSymbols_stateChanged(int arg1);
     void on_chkPostOpt_stateChanged(int arg1);
 
 

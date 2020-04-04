@@ -79,6 +79,7 @@ public:
     QStringList m_doNotRemoveMethods;
     QString m_initAssembler = "";
     QVector<QSharedPointer<Node>> m_proceduresOnly;
+    QVector<QSharedPointer<Node>> m_mergedProcedures;
     QVector<QString> m_ignoreMethods;
     QSharedPointer<Lexer> m_lexer;
     Token m_currentToken;
@@ -120,7 +121,7 @@ public:
     void PreprocessIfDefs(bool ifdef);
     void PreprocessConstants();
     void ApplyTPUBefore();
-    void ApplyTPUAfter(QVector<QSharedPointer<Node>>& decl);
+    void ApplyTPUAfter(QVector<QSharedPointer<Node>>& declBlock, QVector<QSharedPointer<Node>>& procs);
 
     int GetParsedIntOld();
     int GetParsedInt(TokenType::Type forceType);
@@ -131,6 +132,7 @@ public:
 
 
     void RemoveUnusedProcedures();
+    void RemoveUnusedSymbols(QSharedPointer<NodeProgram> root);
     QSharedPointer<Node> Parse(bool removeUnusedDecls, QString param, QString globalDefines, bool useLocals);
     QSharedPointer<Node> Variable();
     QSharedPointer<Node> Empty();

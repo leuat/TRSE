@@ -1154,6 +1154,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeVarDecl> node)
     QString keep = v->value;
 
     v->value = as->m_symTab->getCurrentProcedure()+v->value;
+//    QSharedPointer<Symbol> s = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
 
     node->ExecuteSym(as->m_symTab);
 

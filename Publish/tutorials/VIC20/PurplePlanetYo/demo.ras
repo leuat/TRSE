@@ -13,6 +13,11 @@ var
 //@ignoremethod "initprintdecimal"
 
 
+@donotremove Texts
+@donotremove eights
+@donotremove pattern0
+
+
 @define SceneTwister 0
 @define SceneImage 1
 @define SceneCharback 2
