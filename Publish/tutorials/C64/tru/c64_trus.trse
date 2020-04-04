@@ -30,5 +30,5 @@ override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/tru/
 open_files = ,animation/animation.tru, gfx/bitmapgraphics.tru, math/math.tru
-current_file = gfx/bitmapgraphics.tru
+current_file = animation/animation.tru
 output_type = prg

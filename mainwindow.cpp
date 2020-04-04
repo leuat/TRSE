@@ -1413,6 +1413,9 @@ void TRSEProject::VerifyDefaults() {
     if (!m_ini->contains("output_debug_symbols"))
         m_ini->setFloat("output_debug_symbols",1);
 
+    if (!m_ini->contains("ignore_initial_jump"))
+        m_ini->setFloat("ignore_initial_jump",0);
+
 }
 
 void MainWindow::on_treeTutorials_itemDoubleClicked(QTreeWidgetItem *item, int column)
