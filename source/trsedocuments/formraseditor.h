@@ -86,6 +86,7 @@ public:
     static bool m_broadcast;
     Highlighter* highlighter = nullptr;
     QFont m_font;
+    QSharedPointer<DialogHelp> m_help = nullptr;
     bool m_run = false;
     bool m_isTRU = false;
     QVector<int> m_blockEndSymbols;
@@ -155,6 +156,7 @@ private:
 
     static QString path;
     Ui::FormRasEditor *ui;
+    void Help(QString word);
 
 
 
@@ -173,12 +175,14 @@ private slots:
     void on_chkRemoveUnusedSymbols_stateChanged(int arg1);
     void on_chkPostOpt_stateChanged(int arg1);
 
-
     void HandleUpdateBuildText();
     void HandleBuildError();
     void HandleErrorDialogs(QString& output);
 //    void HandleRun();
     void on_chkWarnings_stateChanged(int arg1);
+    void on_btnHelpExomize_clicked();
+    void on_btnHelpRemoveUnusedSymbols_clicked();
+    void on_btnHelpPostOptimize_clicked();
 };
 
 #endif // FORMRASEDITOR_H

@@ -1,0 +1,40 @@
+<h2>Automatic removal of unused symbols and procedures</h2>
+Since the introduction of <b>Units</b> in TRSE 0.10, it has been possible
+to include a large amount of methods from a nested set of internal / user-defined libraries. However, in
+order to reduce the potential bloating of the source code (i.e. inclusion of methods and variables from libraries
+that aren't used),
+it is vital that the compiler is able to identify unused symbols and remove them.
+<p>From TRSE 0.10, the compiler is able to remove all unused symbols and procedures, and will produce a warning
+whenever unused symbols are excluded from a build.
+<p><b>It is strongly recommended to keep this feature on.</b>
+<h3>Problem & solution with raw inline assembler</h3>
+Inline assembler source code is excluded from any syntax checking, so if you define
+a global variable/procedure but never access it outside of an inline assembler, the compiler
+assumes that the symbol is unused and will remove it, causing a build error on assembly. In order
+to prevent the compiler to remove a symbol, use the <code>@donotremove</code> command.
+<h3>Example</h3>
+<code>
+program Something;
+var
+  i : byte;
+
+procedure MyProc();
+begin
+    // Do nothing
+end;
+
+begin
+    asm("
+        lda #1
+        sta i
+        jsr MyProc
+    ");
+end.
+</code>
+<p>
+Here, both the "sta i" and "jsr MyProc" commands will fail, since the compiler will have removed the unused symbols.
+In order to prevent the compiler from doing so, add the follow commands:
+<code>
+@donotremove i
+@donotremove MyProc
+</code>

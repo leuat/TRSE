@@ -452,5 +452,8 @@
         <file>resources/text/help/m/min.rtf</file>
         <file>resources/text/help/m/max.rtf</file>
         <file>resources/text/help/r/global.rtf</file>
+        <file>resources/text/help/p/postoptimize.rtf</file>
+        <file>resources/text/help/p/removeunusedsymbols.rtf</file>
+        <file>resources/text/help/p/exomizer.rtf</file>
     </qresource>
 </RCC>

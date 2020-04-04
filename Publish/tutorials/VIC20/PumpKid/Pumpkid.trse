@@ -38,7 +38,5 @@ build_list = ,
 charset_ = :resources/character.rom
 exomize_toggle = 0
 via_zeropages = ,$5B, $5C, $5D, $5E
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/PumpKid/
 remove_unused_symbols = 1
 ignore_initial_jump = 0
-open_files = ,pumpkid.ras

@@ -521,13 +521,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         tc.select(QTextCursor::WordUnderCursor);
         QString word = tc.selectedText();
 
-
-        DialogHelp* dh = new DialogHelp(nullptr, word, m_defaultPalette);
-//        dh->setPalette(m_defaultPalette);
-     //   QApplication::setPalette(m_defaultPalette);
-
-        dh->show();
-
+        Help(word);
     }
 
     if (e->key()==Qt::Key_F2) {
@@ -977,6 +971,13 @@ void FormRasEditor::HandleBuildComplete()
     m_run = false;
 }
 
+void FormRasEditor::Help(QString word) {
+    m_help = QSharedPointer<DialogHelp>(new DialogHelp(nullptr, word, m_defaultPalette));
+    m_help->show();
+//    delete dh;
+
+}
+
 
 void BuilderThread::run()
 {
@@ -1009,5 +1010,22 @@ void BuilderThread::run()
 void FormRasEditor::on_chkWarnings_stateChanged(int arg1)
 {
     FillToIni();
+
+}
+
+void FormRasEditor::on_btnHelpExomize_clicked()
+{
+    Help("Exomizer");
+}
+
+void FormRasEditor::on_btnHelpRemoveUnusedSymbols_clicked()
+{
+    Help("RemoveUnusedSymbols");
+
+}
+
+void FormRasEditor::on_btnHelpPostOptimize_clicked()
+{
+    Help("postoptimize");
 
 }

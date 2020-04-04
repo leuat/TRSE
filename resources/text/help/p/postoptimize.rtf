@@ -1,0 +1,54 @@
+<h2>The TRSE Post optimizer</h2>
+<p>
+Without an optimizer, the TRSE compiler would have been awfully bloated. In order to accomodate for every possible binary operation or assignment, even a single operation such as array[i]:=0; would produce a horrendous amount of garbage assembly code. But it would still work, albeit slowly.
+<p>
+The TRSE compiler consists of several stages. In the building stage, the compiler tries to perform build optimizations on items such as the code mentioned above (by testing whether we are currently operating on a single number/variable), or a whole expression etc.
+<p>
+When the compiler part is done (More technically, the abstract syntax tree is compiled and parsed), the generated assembly source file is squeezed through the TRSE post optimizer, as several unoptimized instructions might have accumulated.  The TRSE post optimizer will in several passes go through the assembly source and try to weed out some of these annoyances.
+<p>
+However, since this is all written by someone like me, the post optimizer might sometimes be over-eager and perform actions that will break the code. In this settings tab, you will have the option of removing those passes that might be the culprit.
+<p>
+The various post-optimizer settings can be tweaked in the <b>project settings dialog</b>.
+<h3>Examples of post-processing optimizations</h3>
+
+<h4>Pass StaLda</h4>
+Sometimes, the compiler produces too many
+<code>
+lda #0
+sta i
+sta i
+</code>
+this pass removes the excess "sta".
+
+<h4>Pass Ldx / Lda</h4>
+<code>
+lda #0
+sta $D020
+lda #0
+sta $D021
+</code>
+Tries to remove the excess "lda #0" on line 3 (also on ldy & ldx)
+
+<h4>Pass LdaTax</h4>
+Due to the nature of the compiler, array indices are used with the x register. However, since we wish to support expressions such as
+<code>
+ array[i+j*8]
+</code>
+we need to *build* the expression within the bracket. The result is stored in a, and then a tax is perfored.
+<p>
+However, on several occasions, array[i] is suffucient, and we end up with
+<p>
+<code>
+lda i
+tax
+...
+</code>
+This pass merges these two instructions into a single "ldx i"
+
+<h4>Pass jmp</h4>
+With all these conditionals yanking about, the compiler is destined to produce filth like
+<code>
+jmp label
+label:
+</code>
+this pass just removes those jumps.

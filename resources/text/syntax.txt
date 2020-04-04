@@ -1173,6 +1173,9 @@ p; vbm_memory; VIC20
 p; bitwise_operations; X16,C64, PLUS4, C128, VIC20, PET, NES, BBCM, AMIGA, OK64
 p; forward_references; X16,C64, PLUS4, C128, VIC20, PET, NES, BBCM, AMIGA, OK64
 p; vic_interrupts; VIC20
+p; exomizer; C64,VIC20,PLUS4,C128, PET
+p; removeunusedsymbols; X16,C64, PLUS4, C128, VIC20, PET, NES, BBCM, AMIGA, OK64
+p; postoptimize; X16,C64, PLUS4, C128, VIC20, PET, NES, BBCM, AMIGA, OK64
 
 
 #
