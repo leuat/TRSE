@@ -163,7 +163,7 @@ OrgasmLine Orgasm::LexLine(int i) {
         l.m_label = cl[0].trimmed();
         l.m_expr = cl[1].trimmed();
         if (l.m_label.toLower()=="x" ||  l.m_label.toLower()=="y") {
-            throw QString("Orgasm does not support constants (or absolute addresses) that uses the name 'x' or 'y'! Please use a different name.");
+            throw OrgasmError("Orgasm does not support constants (or absolute addresses) that uses the name 'x' or 'y'! Please use a different name.",l);
         }
         //qDebug() << l.m_expr;
         return l;
@@ -252,9 +252,10 @@ bool Orgasm::Assemble(QString filename, QString outFile)
 
 
     }
-    catch (QString e) {
+    catch (OrgasmError e) {
         //qDebug() << "Error compiling: " << e;
-        m_output = "Error during OrgAsm assembly: "+e;
+        m_output = "Error during OrgAsm assembly : " +e.msg;
+        m_output +="<br><br>Line "+QString::number(e.oline.m_lineNumber+1)+ " in " +"<font color=\"orange\">"+filename+" :</font> "" : " +e.oline.m_orgLine;
     }
     return m_success;
 }
@@ -285,7 +286,7 @@ void Orgasm::PassFindConstants()
         if (ol.m_type == OrgasmLine::CONSTANT) {
 //            qDebug() << ol.m_label;
             if (m_constants.contains(ol.m_label)) {
-                throw QString("OrgAsm error: constant '"+ol.m_label+"' already defined.");
+                throw OrgasmError("OrgAsm error: constant '"+ol.m_label+"' already defined.",ol);
 //                continue;
             }
 
@@ -336,7 +337,7 @@ void Orgasm::Compile(OrgasmData::PassType pt)
         if (ol.m_label!="" && pt == OrgasmData::PASS_LABELS) {
 //            qDebug() << "Writing to label: " << ol.m_label << Util::numToHex(m_pCounter);
             if (m_constants.contains(ol.m_label)) {
-                throw QString("OrgAsm error: label '"+ol.m_label+"' already defined as a constant.");
+                throw OrgasmError("OrgAsm error: label '"+ol.m_label+"' already defined as a constant.",ol);
 
             }
             if (!m_symbols.contains(ol.m_label))
@@ -345,7 +346,7 @@ void Orgasm::Compile(OrgasmData::PassType pt)
                 m_symbolsList.append(ol.m_label);
             }
             else {
-                throw QString("OrgAsm error: symbol '"+ol.m_label+"' already defined");
+                throw OrgasmError("OrgAsm error: symbol '"+ol.m_label+"' already defined",ol);
             }
         }
         ol.m_pos = m_pCounter;
@@ -510,7 +511,7 @@ void Orgasm::ProcessOrgData(OrgasmLine &ol)
         if (val<m_pCounter) {
             QString e = "Origin reversed index. Trying to move program counter backwards to '"+Util::numToHex(val)+"' from current counter " + Util::numToHex(m_pCounter)+". ";
             e+="<br><br><font color=\"#FF7020\">Oh no! You have included/defined overlapping data!</font><br><font color=\"#60FFFF\">Please make sure that your included data does not overlap, and make use of the memory analyzer tool!</font>";
-            throw QString(e);
+            throw OrgasmError(e,ol);
         }
 
         while (m_pCounter<val) {
@@ -624,7 +625,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
             }
 
             if (val==-1 && pd==OrgasmData::PASS_SYMBOLS) {
-                throw QString("Unknown operation: " +orgExpr);
+                throw OrgasmError("Unknown operation: " +orgExpr,ol);
             }
 
         }
@@ -650,11 +651,11 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     if (m_opCodes.m_opCycles.contains(m_opCode))
         cyc = m_opCodes.m_opCycles[m_opCode];
     else {
-        throw QString("Unknown opcode: " + m_opCode);
+        throw OrgasmError("Unknown opcode: " + m_opCode,ol);
     }
 
     if (cyc.m_opcodes.count()==0)
-        throw QString("Opcode illegal or not implemented yet: '" + m_opCode + "' on line '" + orgexpr+"'");
+        throw OrgasmError("Opcode illegal or not implemented yet: '" + m_opCode + "' on line '" + orgexpr+"'",ol);
 
 
     if (expr!="")
@@ -674,7 +675,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     int code = cyc.m_opcodes[(int)type];
     if (code==0 && pd==OrgasmData::PASS_SYMBOLS) {
         qDebug() << "ERROR on line : " << m_opCode + " " +expr;
-        throw QString("Opcode type not implemented or illegal: " + m_opCode + "  type " +type + "        on line " + ol.m_expr );
+        throw OrgasmError("Opcode type not implemented or illegal: " + m_opCode + "  type " +type + "        on line " + ol.m_expr,ol );
     }
 
 
@@ -692,7 +693,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     if (m_opCode=="bpl" || m_opCode=="bne" || m_opCode=="beq" || m_opCode=="bcc" || m_opCode=="bcs" || m_opCode=="bvc" || m_opCode=="bmi" || m_opCode=="bvc" || m_opCode=="bvs") {
         int diff = (val)-m_pCounter-2;
         if (abs(diff)>=128 && pd==OrgasmData::PASS_SYMBOLS) {
-            throw QString("Branch out of range : " +QString::number(diff) + " :" + m_opCode + " " +expr + " on line " + QString::number(ol.m_lineNumber));
+            throw OrgasmError("Branch out of range : " +QString::number(diff) + " :" + m_opCode + " " +expr + " on line " + QString::number(ol.m_lineNumber),ol);
         }
         data.append((uchar)diff);
     }

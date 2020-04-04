@@ -7,6 +7,7 @@
 #include "source/Compiler/syntax.h"
 #include "source/Compiler/Opcodes/opcodes6502.h"
 
+
 class OrgasmData {
 public:
     enum PassType { PASS_LABELS, PASS_SYMBOLS, PASS_COMPILE };
@@ -128,6 +129,16 @@ public:
 
 };
 
+
+class OrgasmError {
+public:
+    QString msg;
+    OrgasmLine oline;
+    OrgasmError(QString s, OrgasmLine ln) {
+        msg = s;
+        oline = ln;
+    }
+};
 
 
 

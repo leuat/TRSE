@@ -645,7 +645,7 @@ void Parser::RemoveUnusedSymbols(QSharedPointer<NodeProgram> root)
             if (m_symTab->m_symbols.contains(val) && !m_doNotRemoveMethods.contains(val)) {
 
                 QSharedPointer<Symbol> s = m_symTab->m_symbols[val];//m_symTab->Lookup(,0);
-                qDebug() << s->m_type;
+//                qDebug() << s->m_type;
                 if (!s->isUsed && !(s->m_type=="INCBIN" || s->m_type=="INCSID")) {
                     removedSymbols.append(val);
 //                    qDebug() << s->m_name << s->isUsed;
