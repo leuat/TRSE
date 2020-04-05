@@ -73,8 +73,8 @@ public:
     QMap<QString, QSharedPointer<SymbolTable> > m_records;
     static QMap<QString, QSharedPointer<Symbol>> m_constants;
     QString m_name="";
-
-    static QString m_gPrefix;
+    QStringList m_globalList;
+    QString m_gPrefix;
 
     ~SymbolTable();
 

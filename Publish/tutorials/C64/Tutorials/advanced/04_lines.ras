@@ -18,15 +18,15 @@ var
 
 procedure SwitchDrawBank();
 begin
-	if bmg_currbank=0 then begin
-		bmg_currbank := $40;
+	if BitmapGraphics::currbank=0 then begin
+		BitmapGraphics::currbank := $40;
 		SetBank(VIC_BANK0);
 		clearbitmap(bank2_screen, 22); // Clear a certain window only
 	end
 	
 	else
 	begin
-		bmg_currbank:=0;
+		BitmapGraphics::currbank:=0;
 		SetBank(VIC_BANK1);
 		clearbitmap(bank1_screen, 22);
 	end;
@@ -45,18 +45,18 @@ var
 	
 begin
 	SwitchDrawBank();
-	Line(xp[0],yp[0],xp[1],yp[1]);
-	Line(xp[1],yp[1],xp[2],yp[2]);
-	Line(xp[2],yp[2],xp[0],yp[0]);
+	BitmapGraphics::Line(xp[0],yp[0],xp[1],yp[1]);
+	BitmapGraphics::Line(xp[1],yp[1],xp[2],yp[2]);
+	BitmapGraphics::Line(xp[2],yp[2],xp[0],yp[0]);
 
 	i:=8;
-	Line(xp[0]+i,yp[0]+i,xp[1]+i,yp[1]+i);
-	Line(xp[1]+i,yp[1]+i,xp[2]+i,yp[2]+i);
-	Line(xp[2]+i,yp[2]+i,xp[0]+i,yp[0]+i);
+	BitmapGraphics::Line(xp[0]+i,yp[0]+i,xp[1]+i,yp[1]+i);
+	BitmapGraphics::Line(xp[1]+i,yp[1]+i,xp[2]+i,yp[2]+i);
+	BitmapGraphics::Line(xp[2]+i,yp[2]+i,xp[0]+i,yp[0]+i);
 
-	Line(xp[0]+i,yp[0]+i,xp[0],yp[0]);
-	Line(xp[1]+i,yp[1]+i,xp[1],yp[1]);
-	Line(xp[2]+i,yp[2]+i,xp[2],yp[2]);
+	BitmapGraphics::Line(xp[0]+i,yp[0]+i,xp[0],yp[0]);
+	BitmapGraphics::Line(xp[1]+i,yp[1]+i,xp[1],yp[1]);
+	BitmapGraphics::Line(xp[2]+i,yp[2]+i,xp[2],yp[2]);
 	
 
 	for i:=0 to 3 do begin
@@ -76,8 +76,8 @@ end;
 
 begin	
 	screen_bg_col:=black;
-	bmg_currbank :=0; // Current bitmap bank (added to high bit of putpixel)
-	InitBitmapGraphics(1, bank1);
+	BitmapGraphics::currbank :=0; // Current bitmap bank (added to high bit of putpixel)
+	BitmapGraphics::InitBitmapGraphics(1, bank1);
 	zeropage1:=zeropage1+10; // Move to the center of the screen
 	vic_data_loc:=$18;
 	

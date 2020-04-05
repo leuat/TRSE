@@ -1,4 +1,5 @@
 program MegaScroller;
+@use "tables/luminosities"
 //
 var
 	// Various
@@ -35,7 +36,6 @@ var
 	// Define some text pointers
 	@define textpointer textp
 	
-	lumi:  array[] of byte = ($06,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06);
 
 	
 	/*
@@ -211,7 +211,7 @@ begin
 			radial:=(dx*dx+dy*dy);
 			radial:=radial/3;
 			val:=sqrt(radial);
-			zeropage1[i]:=lumi[val&31];
+			zeropage1[i]:=Luminosities::fromBlue[val&31];
 		end;
 		zeropage1:=zeropage1+screen_width;
 	end;

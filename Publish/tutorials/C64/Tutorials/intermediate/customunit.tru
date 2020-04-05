@@ -3,57 +3,58 @@ unit CustomUnit;
 
 var
 	// Variables here will be accessible by any .ras file that uses it
-	cu_number : integer = 10000;
-	cu_x, cu_y, cu_a, cu_b,cu_value, cu_color, cu_screen  : byte; // some global variables with shared use in various procedure declarations
-	cu_zp : pointer; // Internal pointer
-	cu_i, cu_j, cu_k, cu_c : byte; // varaibles used internally 
+	number : integer = 10000;
+	x, y, a, b,value, color, screen  : byte; // some global variables with shared use in various procedure declarations
+	zp : pointer; // Internal pointer
+	i, j, k, c : byte; // varaibles used internally 
 	// Some random constant definition
-	const cu_SomeUnitConstant : byte = 50;
+	// Constants keep their original name 
+	const SomeUnitConstant : byte = 50;
 	
 /* 	
 
-We define cu_x, cu_y, cu_a, and cu_b as being global variables. This way, these variables 
+We define x, y, a, and b as being global variables. This way, these variables 
 can be reused as later procedure parameters. Just make sure that the procedures don't call
 each other nested.
 
 */
 
-procedure DrawBox(cu_x, cu_y, cu_a, cu_b, cu_value, cu_color, cu_screen : global byte);
+procedure DrawBox(x, y, a, b, value, color, screen : global byte);
 begin
-	// cu_zp points to color ram
-	cu_zp:=$D800 + cu_x + cu_y*screen_width;
+	// zp points to color ram
+	zp:=$D800 + x + y*screen_width;
 	// point to screen
-	moveto(cu_x,cu_y, cu_screen);
-	for cu_i:=0 to cu_a do
+	moveto(x,y, screen);
+	for i:=0 to a do
 	begin
-		for cu_j:=0 to cu_b do
+		for j:=0 to b do
 		begin
-			screenmemory[cu_j]:=cu_value;
-			cu_zp[cu_j]:=cu_color;
+			screenmemory[j]:=value;
+			zp[j]:=color;
 		end;
-		cu_zp:=cu_zp + screen_width;
+		zp:=zp + screen_width;
 		screenmemory:=screenmemory + screen_width;
 	end;
 end;
 
-procedure DrawTri(cu_x, cu_y, cu_a, cu_value, cu_color, cu_screen : global byte);
+procedure DrawTri(x, y, a, value, color, screen : global byte);
 begin
-	// cu_zp points to color ram
-	cu_zp:=$D800 + cu_x + cu_y*screen_width;
+	// zp points to color ram
+	zp:=$D800 + x + y*screen_width;
 	// point to screen
-	moveto(cu_x,cu_y, cu_screen);
-	cu_c := cu_a;
-	cu_k:=1;
-	for cu_i:=0 to cu_a do
+	moveto(x,y, screen);
+	c := a;
+	k:=1;
+	for i:=0 to a do
 	begin
-		for cu_j:=cu_c-cu_k to cu_c+cu_k-1 do
+		for j:=c-k to c+k-1 do
 		begin
-			screenmemory[cu_j]:=cu_value;
-			cu_zp[cu_j]:=cu_color;
+			screenmemory[j]:=value;
+			zp[j]:=color;
 		end;
-		cu_zp:=cu_zp + screen_width;
+		zp:=zp + screen_width;
 		screenmemory:=screenmemory + screen_width;
-		if (cu_k<cu_c) then inc(cu_k);
+		if (k<c) then inc(k);
 	end;
 end;
 

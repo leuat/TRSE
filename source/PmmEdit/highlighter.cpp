@@ -269,6 +269,10 @@ void Highlighter::AppendSymboltable(QList<QString> procs)
         QString name = k;
         QString s = "\\b" + name.toLower() + "\\b";
         keywordPatterns<<s;
+        name = name.replace("_","::");
+        s = "\\b" + name.toLower() + "\\b";
+        keywordPatterns<<s;
+
     }
     HighlightingRule rule;
 

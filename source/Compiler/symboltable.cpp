@@ -24,7 +24,7 @@
 
 bool SymbolTable::isInitialized = false;
 int SymbolTable::m_currentSid = 0;
-QString SymbolTable::m_gPrefix = "";
+//QString SymbolTable::m_gPrefix = "";
 QMap<QString,QSharedPointer<Symbol>> SymbolTable::m_constants;
 
 SymbolTable::~SymbolTable() {
@@ -47,7 +47,7 @@ void SymbolTable::ExitProcedureScope(bool removeSymbols) {
     // "TRUE" doesn't work
     if (removeSymbols)
     for (QString s: m_symbols.keys()) {
-        if (s.startsWith(m_gPrefix+ m_currentProcedure)) {
+        if (s.startsWith(m_currentProcedure)) {
             m_symbols.remove(s);
         }
     }
@@ -175,8 +175,8 @@ void SymbolTable::Merge(SymbolTable *other, bool mergeConstants)
 }
 
 void SymbolTable::Define(QSharedPointer<Symbol> s, bool isUsed) {
-    m_symbols[m_gPrefix+ m_currentProcedure+ s->m_name] = s;
-    m_symbols[m_gPrefix+m_currentProcedure+ s->m_name]->isUsed = isUsed;
+    m_symbols[m_currentProcedure+ s->m_name] = s;
+    m_symbols[m_currentProcedure+ s->m_name]->isUsed = isUsed;
 }
 
 void SymbolTable::Delete() {
@@ -219,6 +219,8 @@ void SymbolTable::setName(QString s) {
 
 void SymbolTable::InitBuiltins()
 {
+
+    m_globalList << "screenmemory";
 
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("INTEGER","")));
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("WORD","")));
@@ -369,7 +371,7 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
 
 
 
-    QString localName = m_gPrefix+m_currentProcedure+name;
+    QString localName = m_currentProcedure+name;
 
     if (!m_symbols.contains(name) && !m_symbols.contains(localName)) {
 

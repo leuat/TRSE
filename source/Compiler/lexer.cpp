@@ -244,6 +244,12 @@ Token Lexer::_Id()
     while (!m_finished && Syntax::s.isAlnum(m_currentChar)) {
         result +=m_currentChar;
         Advance();
+        // Replace "::" with "_"
+        if (m_currentChar==":" && peek()==":") {
+            Advance();
+            m_currentChar = "_";
+        }
+
     }
     return Syntax::s.GetID(result);
 
@@ -362,7 +368,7 @@ Token Lexer::GetNextToken()
 
         if (m_currentChar==",") {
             Advance();
-            return Token(TokenType::COMMA, ":");
+            return Token(TokenType::COMMA, ",");
         }
 
         if (Syntax::s.isDigit(m_currentChar)) {
@@ -375,8 +381,6 @@ Token Lexer::GetNextToken()
 
             return _Id();
         }
-
-
         if (m_currentChar==":" && peek()=="=") {
             Advance();
             Advance();

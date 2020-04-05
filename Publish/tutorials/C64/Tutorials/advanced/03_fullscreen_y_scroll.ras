@@ -1,10 +1,10 @@
 program fullscreen_scroller_with_colors;
+@use "tables/luminosities"
 var  
 	time, val, color, colorShift,i,j,k : byte = 0;  
 	g_currentBank: byte = 0;
 	temp_colorCopy : array[40] of byte;
 
-	lumi:  array[] of byte = ($06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06,$06);
 	g_vscroll : byte;
 
 /*
@@ -128,7 +128,7 @@ begin
 	j:=time/8+colorShift;
 	for i:=0 to screen_width do 
 	begin
-		color:=lumi[(j+i)&31];
+		color:=Luminosities::fromBlue[(j+i)&31];
 	
 		screen_col_loc[i]:=color;
 	end;

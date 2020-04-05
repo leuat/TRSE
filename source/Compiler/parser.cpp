@@ -786,7 +786,7 @@ void Parser::HandlePreprocessorInParsing()
 
     if (m_currentToken.m_value=="donotremove") {
         Eat();
-        m_doNotRemoveMethods.append(m_currentToken.m_value);
+        m_doNotRemoveMethods.append(m_symTab->m_gPrefix+m_currentToken.m_value);
         Eat();
         return;
     }
@@ -1024,13 +1024,18 @@ QSharedPointer<Node> Parser::Variable()
 
     }
     else {
+
         Token t = m_currentToken;
         if (m_currentToken.m_type==TokenType::STRING || m_currentToken.m_type==TokenType::CSTRING) {
            n = String();
            return n;
 
         }
+        // Make sure that prefixes are added
+        if (!m_symTab->m_globalList.contains(t.m_value.toLower()))
+            t.m_value = m_symTab->m_gPrefix+t.m_value;
 
+//        qDebug() << t.m_value;
         Eat(m_currentToken.m_type);
 
         if (m_currentToken.m_type!=TokenType::LBRACKET) {
@@ -1076,6 +1081,7 @@ QSharedPointer<Node> Parser::Variable()
         nv->m_expr = (qSharedPointerDynamicCast<NodeVar>nv->m_subNode)->m_expr;
 */
     // Verify that we're not trying to screw with the variable
+
     QSharedPointer<NodeVar> nv = qSharedPointerDynamicCast<NodeVar>(n);
     if (nv!=nullptr) {
         QSharedPointer<Symbol> s = m_symTab->Lookup(nv->value,m_currentToken.m_lineNumber);
@@ -1403,15 +1409,18 @@ QSharedPointer<Node> Parser::Program(QString param)
 //    QSharedPointer<NodeVar> varNode = qSharedPointerDynamicCast<NodeVar>Variable();
     QString progName = m_currentToken.m_value;// varNode->value;
     // Prefix all TRUs with the name
-/*    if (m_isTRU)
-        SymbolTable::m_gPrefix = progName+"_";
-    else
-        SymbolTable::m_gPrefix = "";
-*/
+
     Eat();
     m_symTab->Define(QSharedPointer<Symbol>(new Symbol(progName,"STRING")));
     Eat(TokenType::SEMI);
     QSharedPointer<NodeBlock> block;
+
+    if (m_isTRU)
+        m_symTab->m_gPrefix = progName+"_";
+    else
+        m_symTab->m_gPrefix = "";
+
+
     if (!m_isTRU)
      block = qSharedPointerDynamicCast<NodeBlock>(Block(true));
     else
@@ -1898,8 +1907,8 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
 QSharedPointer<Node> Parser::FindProcedure()
 {
     Token procToken = m_currentToken;
-    if (m_procedures.contains(m_currentToken.m_value)) {
-        QString procName = m_currentToken.m_value;
+    if (m_procedures.contains(m_symTab->m_gPrefix+m_currentToken.m_value)) {
+        QString procName = m_symTab->m_gPrefix+m_currentToken.m_value;
         Token t = m_currentToken;
         Eat(TokenType::ID);
         Eat(TokenType::LPAREN);
@@ -1912,6 +1921,7 @@ QSharedPointer<Node> Parser::FindProcedure()
             //if (m_currentToken.m_type==TokenType::SEMI)
             //    ErrorHandler::e.Error("Syntax errror", m_currentToken.m_lineNumber);
         }
+//        qDebug() << "Searching for :" << procName << " in " << m_procedures.keys();
         if (!m_procedures.contains(procName))
             ErrorHandler::e.Error("Could not find procedure :" + procName, m_currentToken.m_lineNumber);
 
@@ -2123,7 +2133,7 @@ QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockNam
      //   bool isInterrupt= (m_currentToken.m_type==TokenType::PROCEDURE)?false:true;
         Token tok = m_currentToken;
         Eat(m_currentToken.m_type);
-        QString procName = m_currentToken.m_value;
+        QString procName =m_symTab->m_gPrefix+ m_currentToken.m_value;
         //qDebug() << tok.m_value  << " : " << procName;
         Eat(TokenType::ID);
         //exit(1);
@@ -2221,6 +2231,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
 
 
     QVector<QSharedPointer<Node>> vars;
+    m_currentToken.m_value = m_symTab->m_gPrefix+m_currentToken.m_value;
     vars.append(QSharedPointer<NodeVar>(new NodeVar(m_currentToken)));
     QString varName = m_currentToken.m_value;
     QVector<QSharedPointer<Symbol>> syms;
@@ -2240,9 +2251,9 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
 
     while (m_currentToken.m_type == TokenType::COMMA) {
         Eat(TokenType::COMMA);
+        m_currentToken.m_value = m_symTab->m_gPrefix+m_currentToken.m_value;
         vars.append(QSharedPointer<NodeVar>(new NodeVar(m_currentToken)));
         AppendComment(vars[vars.count()-1]);
-
         syms.append(QSharedPointer<Symbol>(new Symbol(m_currentToken.m_value,"")));
 
         Eat(TokenType::ID);

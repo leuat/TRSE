@@ -63,7 +63,7 @@ begin
 			// Fill screen memory with the character value
 			screenmemory[x]:=i+@charVal;
 			// Fill color data with color value based on tangent
-			cp[x]:=lumi_fromBlue[tangent&31]; // Defined in lumunosities
+			cp[x]:=Luminosities::fromBlue[tangent&31]; // Defined in lumunosities
 		end;
 		screenmemory:=screenmemory+screen_width;
 		cp:=cp+screen_width;

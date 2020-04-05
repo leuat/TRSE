@@ -1,4 +1,4 @@
-unit animation;
+unit Animations;
 var  
 	trm_zp: pointer;   
 	trm_maxFrames, trm_compressionType, trm_hasTimeStamps, trm_endChar, trm_skipChar, trm_curFrame: byte=0;	
