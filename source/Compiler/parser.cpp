@@ -2958,12 +2958,15 @@ void Parser::HandleUseTPU(QString fileName)
     QSharedPointer<Parser> p = QSharedPointer<Parser>(new Parser);
     QSharedPointer<Lexer> l = QSharedPointer<Lexer>(new Lexer);
     p->m_lexer = l;
-    l->m_text = Util::loadTextFile(fname);
     l->m_orgText = l->m_text;
     p->m_isTRU = true;
     p->m_projectIni = m_projectIni;
     p->m_settingsIni = m_settingsIni;
 
+
+    l->m_text = Util::loadTextFile(fname);
+    l->m_text = l->m_text.replace("\r\n","\n");
+    l->m_orgText = l->m_text;
 
     try {
         p->m_tree = p->Parse( false

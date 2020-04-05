@@ -31,3 +31,6 @@ output_debug_symbols = 1
 output_type = prg
 ignore_initial_jump = 0
 remove_unused_symbols = 1
+project_path = tutorials/C64/tru/
+open_files = -1
+current_file = tables/luminosities.tru
