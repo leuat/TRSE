@@ -189,7 +189,7 @@ QStringList SourceBuilder::getFileList()
 void SourceBuilder::BuildSuccesString()
 {
     QString text ="Build <b><font color=\"#90FF90\">Successful</font>!</b> ( "+  (Util::MilisecondToString(m_system->timer.elapsed())) +")<br>";
-    text+="Assembler file saved to : <b>" + m_filename+".asm</b><br>";
+//    text+="Assembler file saved to : <b>" + m_filename+".asm</b><br>";
     text+="Compiled <b>" + QString::number(compiler->m_parser.m_lexer->m_lines.count()) +"</b> lines of Turbo Rascal to <b>";
     text+=QString::number(compiler->m_assembler->getLineCount()) + "</b> lines of assembler instructions (and variables/labels)<br>";
     if (m_iniFile->getdouble("post_optimize")==1) {
