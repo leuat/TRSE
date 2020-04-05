@@ -15,8 +15,6 @@ var
 chars: incbin( "resources/tilemap/sshipchar.bin", $4000 ); // individual tile characters
 map: incbin( "resources/tilemap/sshipmap.bin", $4148 ); // full screen map of tiles
 
-@startblock $2000 "CODE"
-// declare all your variables and procedures here
 
 @define NUM_STARS 20
 

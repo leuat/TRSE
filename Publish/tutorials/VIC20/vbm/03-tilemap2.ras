@@ -16,8 +16,6 @@ chars: incbin( "resources/tilemap/vbm-char.bin", $4000 ); // individual tile cha
 map: incbin( "resources/tilemap/vbm-map.bin", $4490 ); // full screen map of tiles
 circle: incbin( "resources/tilemap/circle.bin", $4670 ); // circle char
 
-@startblock $2000 "CODE"
-// declare all your variables and procedures here
 
 	i, j : byte;
 

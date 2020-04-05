@@ -16,16 +16,27 @@ buggy: incbin( "resources/charsets/moonspr.bin", $4000 ); // moon buggy
 chars: incbin( "resources/charsets/moonchar.bin", $4008 ); // individual tile characters
 map: incbin( "resources/charsets/moonmap.bin", $42d8 ); // full screen map of tiles
 
-@startblock $2000 "CODE"
-// declare all your variables and procedures here
+
 
 	i, j : byte;
 	y : byte;
 
+
+procedure setUpScreenShiftLeft();
+begin
+
+	vbmInitScreenShiftLeft(0);
+
+end;
+
+
 begin
 	// set the default display mode showing all 20 columns
 	vbmSetDisplayMode( 0 );
-		
+	
+	// set screen scrolling routine to match the screen mode
+	setUpScreenShiftLeft();
+	
 	// set the colour memory to RED
 	vbmClearColor( RED );
 	

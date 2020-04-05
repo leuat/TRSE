@@ -17,7 +17,6 @@ chars: incbin( "resources/tilemap/monschar.bin", $4800 ); // individual tile cha
 map: incbin( "resources/tilemap/monsmap.bin", $4db0 ); // full screen map of tiles
 
 
-@startblock $2000 "CODE"
 // declare all your variables and procedures here
 	message: CSTRING = ("HELLO WORLD!  . . . THIS IS AN AWESOME TEXT SCROLLER ",
 						"... CONTAIN YOUR EXCITEMENT MADAME!  ",
@@ -34,10 +33,20 @@ map: incbin( "resources/tilemap/monsmap.bin", $4db0 ); // full screen map of til
 	i, j : byte = 0;
 	p1 : pointer;
 
+@donotremove "setUpScreenShiftLeft"
+// scrolling must be initialised to match the DisplayMode
+procedure setUpScreenShiftLeft();
 begin
 
+	vbmInitScreenShiftLeft(1);
+
+end;
+
+begin
+addbreakpoint();
 	// set the smaller display mode showing 19 columns, the 20th is hidden
 	vbmSetDisplayMode( 1 );
+
 	
 	// Clear the bitmap with a value of 0
 	vbmClear( 0 );

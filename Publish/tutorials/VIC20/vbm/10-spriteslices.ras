@@ -41,7 +41,7 @@ var
 	i, j : byte at $37;
 
 
-@startblock $2000 "CODE"
+
 // declare all your variables and procedures here
 	
 

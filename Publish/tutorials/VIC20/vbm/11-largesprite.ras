@@ -28,7 +28,6 @@ const dstAddr2 : address = $a000 + (sizeOfPreShiftData * 2);
 const dstAddr3 : address = $a000 + (sizeOfPreShiftData * 3);
 
 
-@startblock $2000 "CODE"
 
 	x,y, s, h :byte;
 	
