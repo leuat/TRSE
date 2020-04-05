@@ -196,7 +196,7 @@ public:
 
 
     void InitBuiltinFunctions();
-
+    void VerifyInlineSymbols6502(QString s);
 
     void InitBuiltinFunction(QStringList methodName, QString builtinFunctionName, QString initjump="");
 

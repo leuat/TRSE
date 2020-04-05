@@ -261,7 +261,21 @@ void Parser::InitBuiltinFunctions()
     Node::m_staticBlockInfo.m_blockID = -1;
     Node::m_staticBlockInfo.m_blockPos = "";
     Node::m_staticBlockInfo.m_blockName = "";
- }
+}
+
+void Parser::VerifyInlineSymbols6502(QString s)
+{
+    QStringList lst = s.split("\n");
+    for (QString l : lst) {
+        QStringList l2 = l.trimmed().simplified().split(" ");
+        if (l2.count()>1) {
+            QString s2 = l2[1];
+            s2 = s2.remove("(").remove(")").remove(",x").remove(",y");
+            if (m_symTab->m_symbols.contains(s2))
+                m_symTab->Lookup(s2,m_currentToken.m_lineNumber);
+        }
+    }
+}
 
 void Parser::InitBuiltinFunction(QStringList methodName, QString builtinFunctionName, QString initJump )
 {
@@ -2600,6 +2614,11 @@ QSharedPointer<Node> Parser::InlineAssembler()
     Eat(TokenType::LPAREN);
     if (m_currentToken.m_type!=TokenType::STRING)
         ErrorHandler::e.Error("Inline assembler must be enclosed as a string");
+
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502) {
+        VerifyInlineSymbols6502(m_currentToken.m_value);
+    }
+
     QSharedPointer<Node> n = QSharedPointer<NodeAsm>(new NodeAsm(m_currentToken));
     Eat(TokenType::STRING);
     Eat(TokenType::RPAREN);

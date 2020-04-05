@@ -10,7 +10,7 @@ var
 	ytablehigh: array[200] of byte;
 	
 
-	mask, maskClear : array[160] of byte;
+	mask: array[200] of byte;
 	//	xi, yi: byte;
 
 	dx,dy,ai,bi,xi,yi : byte;
@@ -18,8 +18,6 @@ var
 	low, high, k, i, val : byte;
 	index, bitmapstart : integer;
 	
-@donotremove addr
-@donotremove maskClear
 
 	addr,p_putpixel : pointer;
 	
