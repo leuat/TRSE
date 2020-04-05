@@ -28,8 +28,6 @@ const spr1maskb : address = addressToStoreSprites + (sizeOfSpriteData * 3); // s
 const bgnd1 : address = $a200; // A buffer in memory to store the background bitmap data behind a sprite (2 bytes x 16) 
 
 
-@startblock $2000 "CODE"
-
 	x : byte;
 	
 	// Here is our sprite data

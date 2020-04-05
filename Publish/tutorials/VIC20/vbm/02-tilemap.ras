@@ -19,9 +19,6 @@ map10: incbin( "resources/charsets/tilemap10x10.bin", $4230 ); // small tilemap
 font: incbin( "resources/charsets/font8x8.bin", $4294 ); // character set for first 64 PETSCII Screen Codes
 
 
-@startblock $2000 "CODE"
-// declare all your variables and procedures here
-
 	i : byte;
 
 	message: CSTRING = "PRESS  1 OR 2";

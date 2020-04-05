@@ -19,8 +19,7 @@ font: incbin("resources/charsets/font4x8.bin", $4000); // first 64 PETSCII Scree
 const adrNumbers : address = $4180;
 
 
-// The main code and variables starts here at $2000
-@startblock $2000 "CODE"
+
 // declare all your variables and procedures here
 
 	numb : array[] of byte = ($00, $00, $00, $00, $00);

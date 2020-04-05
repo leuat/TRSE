@@ -16,8 +16,6 @@ font: incbin("resources/charsets/font4x8.bin", $4000); // first 64 PETSCII Scree
 lfchar: incbin("resources/images/lf-char.bin", $4200); // Llama face chars
 lfmap : incbin("resources/images/lf-map.bin", $46d0);  // Llama face tilemap
 
-@startblock $2000 "CODE"
-// declare all your variables and procedures here
 	message: CSTRING = (
 		"-IN THE YEAR 2020, THE LLAMANIAN SYSTEM*",
 		"---DEVELOPED A METHOD OF TRAINING ITS*",
@@ -40,6 +38,8 @@ lfmap : incbin("resources/images/lf-map.bin", $46d0);  // Llama face tilemap
 	charNull: byte = 0;
 	
 	x, y: byte;
+
+@donotremove "charNull"
 
 begin
 

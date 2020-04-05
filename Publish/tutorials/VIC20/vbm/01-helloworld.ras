@@ -17,8 +17,6 @@ font: incbin( "resources/charsets/font8x8.bin", $4000 ); // character set for fi
 
 
 
-// The main code and variables starts here at $2000
-@startblock $2000 "CODE"
 // declare all your variables and procedures here
 
 	message: CSTRING = "HELLO WORLD";

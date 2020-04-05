@@ -51,9 +51,6 @@ var
 	i, j : byte at $38;
 
 
-@startblock $2000 "CODE"
-// declare all your variables and procedures here
-	
 
 	// pre-shifted addresses for Player Right - side A
 	adrWillyR_A: array[] of integer = (
