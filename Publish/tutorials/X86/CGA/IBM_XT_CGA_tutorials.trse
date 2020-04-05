@@ -40,3 +40,5 @@ cpu_x86_system = 8086
 data_header_images/sprites.flf = 0
 data_header_images/image2.flf = 6.93427e-310
 exomize_toggle = 0
+remove_unused_symbols = 1
+ignore_initial_jump = 0

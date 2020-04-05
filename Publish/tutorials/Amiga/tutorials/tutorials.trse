@@ -36,3 +36,5 @@ output_debug_symbols = 1
 pascal_settings_use_local_variables = 0
 exomize_toggle = 0
 exomizer_toggle = 0
+remove_unused_symbols = 1
+ignore_initial_jump = 0

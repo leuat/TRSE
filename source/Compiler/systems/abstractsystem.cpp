@@ -19,3 +19,8 @@ void AbstractSystem::InitLabelColors() {
 
 
 }
+
+void AbstractSystem::AcceptDispatcherTick(QString val)
+{
+    emit EmitTick(val);
+}

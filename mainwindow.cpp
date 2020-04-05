@@ -369,6 +369,7 @@ void MainWindow::ConnectDocument()
     connect(m_currentDoc, SIGNAL(emitNewImage()), this, SLOT(on_actionImage_triggered()));
 
 
+
 //    connect(m_currentDoc, SIGNAL(NotifyOtherSourceFiles()), this, SLOT(AcceptUpdateSourceFiles()));
     if (dynamic_cast<FormRasEditor*>(m_currentDoc)!=nullptr)
        QObject::connect((FormRasEditor*)m_currentDoc, &FormRasEditor::NotifyOtherSourceFiles, this, &MainWindow::AcceptUpdateSourceFiles);
@@ -445,6 +446,7 @@ void MainWindow::AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBui
     }
     FormRasEditor::m_broadcast=true;
 }
+
 
 
 void MainWindow::OpenProjectSettings()

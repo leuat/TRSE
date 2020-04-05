@@ -222,7 +222,7 @@ bool Orgasm::Assemble(QString filename, QString outFile)
             m_olines.append(ol);
     }
 
-
+    emit EmitTick(" [constants] ");
     PassFindConstants();
     PassReplaceConstants();
 
@@ -237,8 +237,10 @@ bool Orgasm::Assemble(QString filename, QString outFile)
     QTime myTimer;
     myTimer.start();
 //    qDebug() << "LABELS  " << QString::number((myTimer.elapsed()/100.0));
+    emit EmitTick(" [labels] ");
     Compile(OrgasmData::PASS_LABELS);
 
+    emit EmitTick(" [symbols] ");
     Compile(OrgasmData::PASS_SYMBOLS);
 
     m_success = true;

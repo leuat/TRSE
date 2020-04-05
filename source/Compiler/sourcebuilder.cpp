@@ -64,7 +64,7 @@ bool SourceBuilder::Build(QString source)
 
 //    qDebug() << "CREATED COMPILER " <<compiler;
 
-
+    connect(&compiler->m_parser, SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
     compiler->m_parser.m_diskFiles = getFileList();
     compiler->m_parser.m_currentDir = m_curDir;
 
@@ -99,14 +99,20 @@ bool SourceBuilder::Build(QString source)
 /*    m_system->m_buildSuccess = false;
     return false;
 */
+    connect(compiler.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
 
     m_buildSuccess = compiler->Build(m_system, path);
+//    m_buildString+="<br>Post";
+//    emit EmitBuildString();
+
+    disconnect(&compiler->m_parser, SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
+    disconnect(compiler.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
 
 
 
-    if (m_buildSuccess)
+/*    if (m_buildSuccess)
         BuildSuccesString();
-
+*/
      compiler->SaveBuild(m_filename + ".asm");
 //     qDebug() << "Saving to "+m_filename + ".asm";
 
@@ -133,12 +139,18 @@ bool SourceBuilder::Assemble()
 {
 //    qDebug() << m_filename << m_curDir;
 //    qDebug() << m_system;
+    connect(m_system.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
     m_system->Assemble(m_output,m_filename, m_curDir,compiler->m_parser.m_symTab);
     if (m_system->m_buildSuccess)
         m_system->PostProcess(m_output, m_filename, m_curDir);
 
   //  qDebug() << "AA2";
     m_assembleSuccess=m_system->m_buildSuccess;
+    if (m_buildSuccess && m_assembleSuccess)
+        BuildSuccesString();
+
+    disconnect(m_system.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
+
     return true;
 }
 
@@ -189,4 +201,10 @@ void SourceBuilder::BuildSuccesString()
         text+="<font color=\"#FFA090\">Warning:</font>Post-optimizer disabled. Enable for faster results (unless post-optimizer breaks something).<br>";
 
     m_output+=text;
+}
+
+void SourceBuilder::AcceptParserTick(QString val)
+{
+    m_buildString +=val;
+    emit EmitBuildString();
 }

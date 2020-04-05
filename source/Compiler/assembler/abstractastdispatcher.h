@@ -39,12 +39,13 @@ class ProcedureParameter {
     }
 };
 
-class AbstractASTDispatcher
+class AbstractASTDispatcher : public QObject
 {
+    Q_OBJECT
 public:
 
     Assembler* as = nullptr;
-
+    int m_ticks = 0;
     AbstractASTDispatcher();
     QStack<ProcedureParameter> m_parameters;
         // Declare overloads for each kind of a file to dispatch
@@ -57,7 +58,7 @@ public:
     virtual void dispatch(QSharedPointer<NodeVar> node) = 0;
     virtual void dispatch(QSharedPointer<NodeAssign> node) = 0;
     virtual void dispatch(QSharedPointer<NodeVarDecl> node) = 0;
-    virtual void dispatch(QSharedPointer<NodeBlock> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeBlock> node);
     virtual void dispatch(QSharedPointer<NodeProgram> node) = 0;
     virtual void dispatch(QSharedPointer<NodeVarType> node) = 0;
     virtual void dispatch(QSharedPointer<NodeProcedure> node) = 0;
@@ -80,6 +81,9 @@ public:
     virtual void LoadVariable(QSharedPointer<NodeNumber> n) = 0;
     virtual void LoadAddress(QSharedPointer<Node> node) {}
     virtual void LoadAddress(QSharedPointer<Node> node,QString reg) {}
+public:
+signals:
+    void EmitTick(QString val);
 
 };
 

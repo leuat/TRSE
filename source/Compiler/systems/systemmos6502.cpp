@@ -14,6 +14,7 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
     int codeEnd = 0;
     //qDebug() << m_settingsIni->getString("assembler");
     if (m_settingsIni->getString("assembler").toLower()=="dasm") {
+        emit EmitTick("<br>Assembling with DASM ...");
         QProcess process;
         process.start(m_settingsIni->getString("dasm"), QStringList()<<(filename +".asm") << ("-o"+filename+".prg"));//) << "-v3");
         process.waitForFinished();
@@ -24,11 +25,15 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
         // codeEnd=FindEndSymbol(output);
     }
     else if (m_settingsIni->getString("assembler").toLower()=="orgasm") {
+        emit EmitTick("<br></font><font color=\"yellow\">Assembling with OrgAsm ");
         Orgasm orgAsm;
+        connect(&orgAsm, SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
         orgAsm.SetupConstants(symTab);
 
         orgAsm.Assemble(filename+".asm", filename+".prg");
+
         output = orgAsm.m_output;
+        disconnect(&orgAsm, SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
 
         if (m_projectIni->getdouble("output_debug_symbols")==1.0)
             orgAsm.SaveSymbolsList(filename+".sym");
@@ -94,6 +99,8 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
         //            QStringList exoParams = QStringList() << "sfx" << "$0810"  << fn<< "-o" << fn ;
         // qDebug() << exoParams;
  //       qDebug() << "Starting exomizer";
+        emit EmitTick("Exomizing ...");
+
         processCompress.start(m_settingsIni->getString("exomizer"), exoParams  );
         processCompress.waitForFinished();
    //     qDebug() << processCompress.readAllStandardError() << processCompress.readAllStandardOutput();

@@ -47,3 +47,5 @@ exomize_toggle = 0
 data_header_tiles/main_tiles.flf = 6.90915e-310
 data_header_tiles/game_sprite_meta.flf = 0
 charset_levels/game_levels.flf = /home/leuat/code/TRSE/tutorials/NES/intro_tutorial/tiles/game_meta_tiles.flf
+remove_unused_symbols = 1
+ignore_initial_jump = 0

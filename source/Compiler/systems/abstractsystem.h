@@ -25,8 +25,9 @@ public:
     }
 };
 
-class AbstractSystem
+class AbstractSystem : public QObject
 {
+    Q_OBJECT
 public:
     AbstractSystem(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) {
         m_projectIni = proj;
@@ -116,6 +117,12 @@ public:
     virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) {}
     virtual void PostProcess(QString& text, QString file, QString currentDir) {}
     virtual void DefaultValues() {}
+public:
+signals:
+    void EmitTick(QString val);
+public slots:
+    void AcceptDispatcherTick(QString val);
+
 };
 
 

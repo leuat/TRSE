@@ -5,7 +5,10 @@ var
 	src,dst : pointer;   
 	ds_xx, ds_yy, ds_ddx : integer;
 	sine : incbin("data/sine.bin");
-	
+		@donotremove ds_ddx
+	@donotremove ds_xx
+	@donotremove ds_yy
+
 @export "images/image2.flf" "images/image2.bin" 0
 	data : incbin("images/image2.bin");
 

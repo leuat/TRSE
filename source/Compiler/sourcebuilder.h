@@ -9,8 +9,9 @@
 #include <QSharedPointer>
 
 
-class SourceBuilder
+class SourceBuilder : public QObject
 {
+    Q_OBJECT
 public:
     SourceBuilder();
     SourceBuilder(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> project, QString curDir, QString curSourceFile);
@@ -34,6 +35,8 @@ public:
 
     bool Assemble();
 
+    QString m_buildString = "";
+
     QString getOutput();
     void AddMessage(QString msg) {
         m_output+=msg;
@@ -51,7 +54,11 @@ private:
     QStringList getFileList();
 
     void BuildSuccesString();
-
+public:
+signals:
+    void EmitBuildString();
+public slots:
+    void AcceptParserTick(QString val);
 
 };
 

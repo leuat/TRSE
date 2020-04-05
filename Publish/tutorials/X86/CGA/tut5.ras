@@ -5,6 +5,10 @@ var
 	ds_ddx,delta,xx,yy : integer;
 	src, dst,zp : pointer;
 	px, py,x,y,z : integer = 30;
+	@donotremove ds_xx
+	@donotremove ds_yy
+	@donotremove ds_ddx
+	@donotremove ds_ddy
 	ds_xx, ds_yy : integer;
 		sine : incbin("data/sine.bin");
 

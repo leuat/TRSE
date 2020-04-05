@@ -55,6 +55,8 @@ void Parser::InitObsolete()
 
 void Parser::Eat(TokenType::Type t)
 {
+    if (m_tick++%500==99)
+        emit EmitTick(".");
  //   qDebug() << m_currentToken.m_value << m_currentToken.m_intVal;
     if (m_currentToken.m_type == t) {
         m_currentToken = m_lexer->GetNextToken();
@@ -1836,7 +1838,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     m_lexer->m_text = m_lexer->m_orgText;
     m_removeUnusedDecls = removeUnusedDecls;
     m_symTab = QSharedPointer<SymbolTable>(new SymbolTable());
-
+    emit EmitTick("<font color=\"grey\">Parsing pass #1 ");
     m_pass = 0;
   //  RemoveComments();
     InitObsolete();
@@ -1870,9 +1872,12 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
 */
 //    qDebug() << m_ignoreMethods;
     //qDebug() <<m_lexer->m_text[0];
+    emit EmitTick("<br>Parsing pass #2 ");
     SymbolTable::Initialize();
     Node::m_staticBlockInfo.m_blockID=-1;
     QSharedPointer<NodeProgram> root = qSharedPointerDynamicCast<NodeProgram>(Program(param));
+
+
     // First add builtin functions
     if (removeUnusedDecls && !m_isTRU) {
         RemoveUnusedProcedures();

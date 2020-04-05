@@ -34,8 +34,9 @@
 #include <QSharedPointer>
 #include "source/Compiler/systems/abstractsystem.h"
 
-class Compiler
+class Compiler : public QObject
 {
+    Q_OBJECT
 public:
     QSharedPointer<Node> m_tree = nullptr;
     QSharedPointer<Assembler> m_assembler = nullptr;
@@ -63,7 +64,11 @@ public:
 //    void FindLineNumberAndFile(int inLe, QString& file, int& outle);
     void WarningUnusedVariables();
     virtual void CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &ocycles, QMap<int, int> &retcycles) {}
-
+public:
+signals:
+    void EmitTick(QString val);
+public slots:
+    void AcceptDispatcherTick(QString val);
 };
 
 #endif // Compiler_H

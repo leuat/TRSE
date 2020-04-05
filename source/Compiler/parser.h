@@ -63,8 +63,10 @@ public:
 
 
 
-class Parser {
+class Parser : public QObject {
+    Q_OBJECT
 public:
+    int m_tick = 0;
 
     QVector<ParserBlock> m_parserBlocks;
     static QStringList s_usedTRUs;
@@ -127,7 +129,6 @@ public:
     int GetParsedInt(TokenType::Type forceType);
 
     int getIntVal(Token t);
-
     int findPage();
     void VerifyTypeSpec(Token t);
 
@@ -198,6 +199,9 @@ public:
 
 
     void InitBuiltinFunction(QStringList methodName, QString builtinFunctionName, QString initjump="");
+
+signals:
+    void EmitTick(QString val);
 
 };
 

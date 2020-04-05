@@ -962,6 +962,9 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeBlock> node)
 {
     node->DispatchConstructor(as);
 
+    AbstractASTDispatcher::dispatch(node);
+
+
     // In case memory block is acive
     //as->EndMemoryBlock();
     int ln = node->m_op.m_lineNumber-1;

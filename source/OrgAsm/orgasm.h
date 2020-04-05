@@ -143,7 +143,8 @@ public:
 
 
 
-class Orgasm {
+class Orgasm  : public QObject{
+    Q_OBJECT
 public:
     QString m_source;
     QStringList m_lines;
@@ -193,4 +194,6 @@ public:
     void ProcessIncBin(OrgasmLine& ol);
     void ProcessInstructionData(OrgasmLine& ol, OrgasmData::PassType pd);
     void SaveSymbolsList(QString dupFile);
+signals:
+    void EmitTick(QString val);
 };

@@ -2,6 +2,9 @@ program Example5;
 var  
  	x1,i,k,y1,x2,y2,x3,y3,x4,y4,j,time,t,cx,cy: byte=0;
 
+// BUG
+@donotremove k
+
 procedure SetupPalette();
 var 
    k,i,j: byte;

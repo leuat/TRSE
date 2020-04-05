@@ -23,7 +23,6 @@ map: incbin( "resources/charsets/moonmap.bin", $42d8 ); // full screen map of ti
 	y : byte;
 
 begin
-
 	// set the default display mode showing all 20 columns
 	vbmSetDisplayMode( 0 );
 		

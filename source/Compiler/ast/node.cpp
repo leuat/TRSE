@@ -51,7 +51,6 @@ void Node::DispatchConstructor(Assembler *as) {
 //        qDebug() << c;
 
     }
-
 }
 
 int Node::MaintainBlocks(Assembler* as)

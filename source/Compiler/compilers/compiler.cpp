@@ -101,6 +101,9 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
     for (QSharedPointer<SymbolTable>  st : m_parser.m_symTab->m_records)
         m_assembler->m_symTab->Define(QSharedPointer<Symbol>(new Symbol(st->m_name, "RECORD")));
 
+    connect(m_dispatcher.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
+
+    emit EmitTick("<br>Building ");
     if (m_tree!=nullptr)
         try {
         qSharedPointerDynamicCast<NodeProgram>(m_tree)->m_initJumps = m_parser.m_initJumps;
@@ -116,6 +119,10 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
 
     for (QSharedPointer<MemoryBlock> mb:m_parser.m_userBlocks)
         m_assembler->blocks.append(mb);
+
+
+    disconnect(m_dispatcher.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
+    emit EmitTick("<br>Connecting and optimising");
 
     Connect();
 
@@ -204,4 +211,9 @@ void Compiler::WarningUnusedVariables()
         ErrorHandler::e.Warning("Unused variables : " +lstStr);
     }
 
+}
+
+void Compiler::AcceptDispatcherTick(QString val)
+{
+    emit EmitTick(val);
 }

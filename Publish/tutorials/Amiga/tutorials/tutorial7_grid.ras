@@ -6,7 +6,7 @@ var
    	loo,t,j,sx,sy,l,m,jj,k,i,isDone,time,tt,curFrame: integer = 0; 
    	ll:long;
    	const maxFrames:integer = 1;
-   	
+   	@donotremove LineMode
    	ii,ij,l2,k2:long;
 	curBuf : integer = 0;
 	sin256:pointer of byte;

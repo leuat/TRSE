@@ -49,4 +49,6 @@ var_zeropages = ,
 dosbox_x86_system = default
 cpu_x86_system = 8086
 via_zeropages = ,$5b, $5c, $5d, $5e
+remove_unused_symbols = 1
+ignore_initial_jump = 0
 open_files =, easy/01_hello_world.ras

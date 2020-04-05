@@ -44,6 +44,7 @@ FormRasEditor::FormRasEditor(QWidget *parent) :
     connect(&m_builderThread, SIGNAL(emitSuccess()), this, SLOT(HandleBuildComplete()));
     connect(&m_builderThread, SIGNAL(emitError()), this, SLOT(HandleBuildError()));
 
+
     m_timer.start();
     m_lastBuild = m_timer.elapsed();
 }
@@ -254,7 +255,12 @@ void FormRasEditor::Build()
         delete m_builderThread.m_builder;
     }
 */
+    if (m_builderThread.m_builder!=nullptr)
+        disconnect(m_builderThread.m_builder.get(), SIGNAL(EmitBuildString()), this, SLOT(AcceptBuildString()));
+
     m_builderThread.m_builder = QSharedPointer<SourceBuilder>(new SourceBuilder(m_iniFile, m_projectIniFile, m_currentDir, m_currentSourceFile));
+    connect(m_builderThread.m_builder.get(), SIGNAL(EmitBuildString()), this, SLOT(AcceptBuildString()));
+
 
     emit requestBuild();
 
@@ -264,6 +270,7 @@ void FormRasEditor::Build()
     while (m_builderThread.isRunning()) {
 
     }
+ //   m_curCol = m_startCol;
     m_builderThread.start();
 //    m_builderThread.run();
 
@@ -578,6 +585,15 @@ void FormRasEditor::on_leSearch_textChanged()
 {
     QString i;
     SearchInSource();
+}
+
+void FormRasEditor::AcceptBuildString()
+{
+    ui->txtOutput->setHtml(m_builderThread.m_builder->m_buildString);
+//    float t = 0.02;
+  //  m_curCol = m_endCol;//(m_curCol)*(1-t) + m_endCol*t;
+    ui->lblLight->setStyleSheet("QLabel { background-color : \""+ Util::toColor(m_curCol).name() + "\"; color : blue; }");
+
 }
 
 void FormRasEditor::SearchInSource()
@@ -996,7 +1012,8 @@ void BuilderThread::run()
 //        qDebug() << m_builder->m_filename;
 
         m_builder->AddMessage("Assembling & compressing... ");
-        emit emitText();
+
+        //emit emitText();
 
         m_builder->Assemble();
 
