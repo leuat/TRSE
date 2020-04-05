@@ -1,0 +1,56 @@
+procedure InitEffect(cnt:byte);
+begin
+	counter:=cnt;
+	isDone:=false;
+	time:=0;
+	transition:=false;
+end;
+
+procedure AdvanceEffect();
+begin
+	inc(time);
+	if (time&15=0) then dec(counter);
+	if (counter=0) then isDone:=true;
+	if (counter=7) then transition:=true;
+end;
+
+
+
+
+
+procedure InitSine2(d:byte);
+begin
+	for i:=0 to 0 do sine2[i]:=sine[i]/d;
+
+end;
+
+
+procedure SetupPalette2();
+var 
+   k: byte;
+begin
+	k:=0-(time&127)+128;
+//	k:=0;
+	for i:=0 to 64 do begin
+		j:=(k*4)&127;
+		setpalette(i+128,j/2,j/3,j);
+		setpalette(i+64+128,j/2,j/1,j);
+		inc(k);
+	end;
+end;
+
+procedure SetupPalette();
+
+begin
+	for i:=0 to 64 do begin
+		j:=i*4;
+		setpalette(i,j/2,j/3,j);
+		setpalette(127-i,j/2,j/3,j);
+	end;
+	for i:=0 to 64 do begin
+		j:=i*4;
+		setpalette(i+128,j,j/3,j/2);
+		setpalette(255-i,j,j/3,j/2);
+	end;
+
+end;

@@ -273,6 +273,8 @@ void Parser::VerifyInlineSymbols6502(QString s)
             s2 = s2.remove("(").remove(")").remove(",x").remove(",y");
             if (m_symTab->m_symbols.contains(s2))
                 m_symTab->Lookup(s2,m_currentToken.m_lineNumber);
+            if (m_procedures.contains(s2))
+                m_procedures[s2]->m_isUsed = true;
         }
     }
 }

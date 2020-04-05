@@ -23,6 +23,7 @@ PLUS4; Main Commodore PLUS/4 tutorials; PLUS4/Tutorials/;<h2>Main Commodore Plus
 NES; Main NES tutorials; NES/intro_tutorial/;<h2>Main NES tutorials</h2><p>The NES tutorials + editor + graphics support has in this version of TRSE received a complete overhaul!
 X86; IBM 8086 AT (CGA) tutorials; X86/CGA/; <h2>Main IBM AT (CGA) tutorials</h2><p>Preliminary X86 DOS tutorials for the IBM XT with CGA running at 4.77 mhz. Extremely early development, compiler is totally incomplete and inefficient. <p>Proof of concept.
 OK64; Main OK64 examples ; OK64/Tutorials/; <h2>Main OK64 tutorials</h2>Prelimiary tutorials, prone to change. OK64 is Leuat's very own fake 6502 computer!
+OK64; OK Computer (demo) ; OK64/OkComputer/; <h2>OK Computer</h2>The first demo made for the OK64! Presented at Revision 2020.
 OK64; OK Operating System (KOS) ; OK64/KOS/; <h2>KOS: OK64 OS Operating system source</h2>Simple source code for the extremely basic KOS - (O)K Operating System.
 PET; Main Commodore PET tutorials; PET/examples/;<h2>Main Commodore PET tutorials</h2>The official PET tutorials!
 CrossPlatform; Grave Intentions; CrossPlat/GraveIntentions; <h2>Grave Intentions</h2>A C64/VIC-20/PET/PLUS4 cross-platform text-based adventure engine/ game. Still under construction.

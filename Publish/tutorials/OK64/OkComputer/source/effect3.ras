@@ -1,0 +1,152 @@
+procedure RenderTwister(xp, ll,yy:byte);
+var
+	hh,k,x :byte;
+begin
+	memcpyokvc($5,ll*8,0, 0,$80,0,8,0);
+	
+	OKVC_BLIT_TYPE := OKVC_BLIT_ALPHA;
+	OKVC_BLIT_ALPHAVAL := 0;
+	t:=2*time;
+	k:=0;
+	for i:=0 to 32 do
+	begin
+//		j:=(sine[frame])/4;//+sine[fmul(time,173)]);
+//		ll:=;
+		//ll:=frame&31;
+//		ll:=(ll/8)&31;
+		zp:=AddressTable( addressT, 0,div8[time-frame]&31 );
+		j:=i+yy;
+		if (j>sstart and j<send) then
+			memcpyokvc($3,zp[k],zp[k+1],  $1,j, xp + sine2[time+frame],  0,32);
+
+		k:=k+2;
+		inc(frame);
+		
+	end;
+	OKVC_BLIT_TYPE :=0;
+
+end;
+
+procedure InitBalls();
+begin
+	for i:=0 to @noBalls do
+	begin
+		balls_x[i]:=OKVC_RANDOM;
+		k:=OKVC_RANDOM;
+		balls_y[i]:=k;
+		k:=OKVC_RANDOM;
+		balls_c[i]:=(k&3+3)<<5;
+		k:=OKVC_RANDOM;
+		balls_dy[i]:=k/128+1;
+		k:=OKVC_RANDOM;
+		balls_r[i]:=k/16;
+
+	end;
+
+end;
+
+
+procedure RenderBalls();
+begin
+	for i:=0 to dx2 do
+	begin
+		k:=balls_r[i]/4+1;
+		dx:=div8[(sine[time + i+balls_y[i]+k])] + balls_x[i];
+		DrawCircleFilled(dx, balls_y[i], balls_r[i], balls_c[i]);
+		DrawCircleFilled(dx-k/2, balls_y[i]-k/2, k/2,balls_c[i] | %010011101);
+		balls_y[i]:=balls_y[i]-balls_dy[i];
+	end;
+
+	
+
+end;
+
+procedure RenderScrollers();
+var
+  l,i :byte;
+begin
+		l:=30-(time&31);
+		if (time&31=0) then
+		begin
+			shift:=shift-32;
+			inc(curPos);
+		end;
+				
+		frame:=0-time*3-shift;
+		if textScroller[curPos]=0 then curPos:=0;
+		ttp:=curPos;
+		dx:=sine[0-tt]/3+48;
+		for i:=0 to 8 do
+		begin
+			
+			s:=textScroller[ttp]-65;
+			if (textScroller[ttp]=$20) then s:=26;
+			inc(ttp);	
+			if textScroller[ttp]=0 then
+			begin
+				ttp:=0;
+			end;
+			
+			RenderTwister(dx, s,l);
+			l:=l+32;
+		end;
+	
+
+end;
+
+
+procedure Effect3();
+var 
+   t,i,kcol,kctime : byte=0;
+begin
+	ccol:=0;
+	shift:=0;
+	curPos :=0;
+	InitBalls();
+	kcol:=0;
+	kctime:=20;
+	send := 255;
+	sstart :=send;
+	dx2:=1;
+	for i:=0 to 0 do sine2[i]:=sine[i]/8;	 
+	okvc_border_color:=0;
+	SetDefaultPalette();
+	CreateAddressTable( addressT, @tpos, 64, 32 );
+	
+
+
+
+	while (isDone=false) do
+	begin
+		inc(kctime);
+
+		if (transition=0) then
+		begin
+			if sstart<>0 then dec(sstart);
+			if dx2<@noBalls then inc(dx2);
+		end
+		else
+		begin
+			if send>sstart then send:=send-3;
+			if dx2<>1 then dec(dx2);
+		end;
+		
+		if (kctime=60) then 
+		begin
+			kctime:=0;
+			kcol:=64;
+		end;
+		if (kcol<>0) then kcol:=kcol-2;
+		
+		setpalette(0,kcol,kcol/3,kcol);
+		clearscreen(ccol);
+		if (time&1=0) then inc(tt);	
+		RenderBalls();
+		RenderScrollers();			
+		AdvanceEffect();
+		waitforvsync();
+		call(SIDFILE_1_PLAY);
+
+	end;
+
+end;

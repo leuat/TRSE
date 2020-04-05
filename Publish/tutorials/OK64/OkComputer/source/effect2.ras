@@ -1,0 +1,169 @@
+procedure PrintInfoText(tp:pointer;len:Byte);
+var
+  tx, ty, i,tc,v,draw : byte;
+begin
+	tc:=7;
+	i:=0;
+	while (tp[i]<>0 and i<len) do
+	begin
+		v:=tp[i];
+		draw:=true;
+		if (v=@cpause) then
+		begin
+			draw:=false;
+			i:=i+2;
+		end;
+		if (v=@ccol) then
+		begin
+			draw:=false;
+			tc:=tp[i+1];
+			i:=i+2;
+		end;
+		if (v=@cpos) then
+		begin
+			tx:=tp[i+1];
+			ty:=tp[i+2];
+			i:=i+3;
+			draw:=false;
+		end;
+		
+		if (draw) then
+		begin
+			if (v<>key_space) then begin
+				
+				DrawCircleFilled(tx+4,ty+4,9,0);
+				PrintChar(v, tc,  tx,ty);
+				end;
+				
+			tx:=tx+okvc_font_width;
+			i:=i+1;
+		end;
+		
+	end;	
+
+
+
+end;
+
+
+
+procedure RenderBox(x,y,k,t,n:byte);
+begin
+	cx:=x;
+	cy:=y;
+	x1:=cx+sine2[t];
+	y1:=cy+sine2[t+64];
+	t:=t+64;
+	x2:=cx+sine2[t];
+	y2:=cy+sine2[t+64];
+	t:=t+64;
+	x3:=cx+sine2[t];
+	y3:=cy+sine2[t+64];
+	t:=t+64;
+	x4:=cx+sine2[t];
+	y4:=cy+sine2[t+64];
+	DrawPoly(x1,y1,x2,y2,x3,y3,k);
+	DrawPoly(x1,y1,x4,y4,x3,y3,k);
+
+end;
+
+
+
+procedure Effect1TransitionPalette();
+begin
+	if (transition=0) then
+	begin
+		if cr1<32 then inc(cr1);
+		if cb1<32 then inc(cb1);
+		if cb2<64 then inc(cb2);
+		if cg2<16 then inc(cg2);
+	end;		
+	if (transition=1) then
+	begin
+		if cr1<>0 then dec(cr1);
+		if cb1<>0 then dec(cb1);
+		if cb2<>0 then dec(cb2);
+		if cg2<>0 then dec(cg2);
+	end;		
+
+
+	SetPalette(c1, cr1, cg1, cb1);
+	SetPalette(c2, cr2, cg2, cb2);
+
+end;
+
+procedure Effect2();
+var
+	textTime : byte = 0;
+begin
+	clearscreen(c2);
+	InitSine2(8);
+	c1:=%00100001;
+	c2:=%10000000;
+	okvc_border_width:=32;
+	okvc_border_height:=32;
+	okvc_border_color:=c1;
+	
+	
+
+	okvc_font_bank:=$F;
+	okvc_font_width:=8;
+	okvc_font_height:=8;
+
+
+
+	SetDefaultPalette();
+	scroll:=1;
+	while (isDone=false) do
+	begin
+		//SetupPalette2();
+		clearscreen(c2);
+		Effect1TransitionPalette();
+
+		k:=time*2;
+		
+		if (time&31=0) then
+		begin
+			dx:=dx+4;
+			dx2:=dx2+1;
+		end;
+		k2:=0;		
+		for i:=0 to 7 do
+		begin		
+			for j:=0 to 8 do
+			begin
+				t:=sine[time*2+(i-dx2)*8]/4 + j*32-32;
+	//			RenderBox(i*32+time&15,j*32+16,i+j+sine[k]/16+time,k-dx,8);
+				if (k2<scroll) then
+				if (t>0 and t<255-32) then
+					RenderBox(i*32+time&31,t,i+j+sine[k]/16+time+dx,k-dx,8);
+					
+				inc(k);
+				inc(k2);		
+			end;
+//			k:=k+4;
+		end;
+
+		if (transition=0) then
+		begin
+			if (time&3=0 and textTime<128) then 
+				inc(textTime);
+			if (time&1=1) then 
+			if scroll<64 then inc(scroll);
+
+		end
+		else
+		begin
+			if (textTime>0) then textTime:=textTime-2;
+			if (scroll>0) then scroll:=scroll-1;
+		end;
+			
+		PrintInfoText(text3,textTime);
+			
+		waitforvsync();
+		call(sidfile_1_play);
+		AdvanceEffect();
+
+	end;
+
+end;

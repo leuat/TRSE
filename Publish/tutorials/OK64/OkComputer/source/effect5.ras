@@ -1,0 +1,231 @@
+procedure PrintCustomTextEffect5(tp:pointer;xx,y,sx,sy, bank,col : byte);
+var 
+ x,i,yy: byte;
+ 
+begin
+	okvc_font_bank:=bank;
+	okvc_font_width:=sx;
+	okvc_font_height:=sy;
+	j:=curPos;
+	x:=xx;
+	
+//	while (tp[0]<>0) do
+	for i:=0 to 8 do
+	begin
+		v:=tp[0]-65;
+		if (v<>32) then
+		if (x>0 and x<250) then
+		begin
+			yy:=255-y+sine[(j-time*2+128)]/16;	
+			PrintChar(v, 0,  x+2,yy+2);
+			PrintChar(v, col,  x,yy);
+		end;
+		j:=j+48;
+		x:=x+25;
+		tp:=tp+1;
+	end;
+		
+
+
+end;
+
+
+procedure CalcIT();
+begin
+	it:=it-64;
+	fmul(it,m);
+	it := okvc_outval;
+	it:=it+128;
+
+/*
+	it:=it<<4;
+	it:=it-2048;
+	isNeg:=false;
+	if (it>20000) then 
+	begin
+		isNeg:=true;
+		it:=abs(it);
+	end; 
+	it:=it/m;
+	
+	if (isNeg) then
+		it:=0-it;
+		
+	it:=it+128;
+*/
+
+end;
+
+
+procedure E5SetupTunnel();
+var
+   cp : byte = 0;
+begin
+	k:=0;
+	l:=255/@tunnelX;
+	//inc(scroll);
+	if scroll=8 then
+	begin
+		scroll:=0;
+		counter:=counter+1;
+	end;
+	cp:=0-counter*8 +time*3;
+	c2:=0-counter*8 +time*2;
+	g:=scroll/4;
+	
+	for dy:=0 to @tunnelZ do
+	begin
+		dx2:=div8[sine[time*2+dy*4]];
+		j:=(time+sine[dy*2+dx2+g]);
+//		m:=74-dy*8-scroll;
+		m:=14+dy*8+scroll;
+		
+		for dx:=0 to @tunnelX do
+		begin
+			it:=sine[j]/2;
+			CalcIT();
+			
+			tunneld[k]:=it;
+			it:=sine[j+64]/2;
+			CalcIT();
+			tunneld[k+1]:=it;
+			
+/*			tunneld[k]:=tunneld[k]+sine[dy*8-time*2]/8 - 16;
+			tunneld[k+1]:=tunneld[k+1]+sine[dy*16-time*3]/8 - 16;*/
+			tunneld[k]:=tunneld[k]+sine2[cp] - 32;
+			tunneld[k+1]:=tunneld[k+1]+sine2[c2] - 16;
+
+
+			j:=j+l;
+
+			k:=k+2;			
+			
+		end;
+		cp:=cp+8;
+		c2:=c2+8;
+	end;
+end;
+
+procedure E5RenderTunnel();
+var
+  p1,p2,p3,p4 : byte;
+begin
+	k:=0;
+	m:=64-scroll-8-time;
+	m:=0;
+	dx2:=63;
+	x2:=0;
+	c2:=time*3;
+	for dy:=0 to @tunnelZ-1 do
+	begin
+		p1:=dy*@tunnelX*2;
+		l:=p1;
+		m:=m+4;
+//		c1:=sine[p1*4+c2]/32+2;
+		for dx:=0 to @tunnelX do
+		begin
+			p2:=mod(p1+2, @tunnelX*2)+l;
+			p3:=p1 + @tunnelX*2;
+			p4:=p2 + @tunnelX*2;
+			
+	/*		drawcirclefilled(tunneld[p1],tunneld[p1+1],c1,0);
+			drawcirclefilled(tunneld[p2],tunneld[p2+1],c1,0);
+			drawcirclefilled(tunneld[p3],tunneld[p3+1],c1,0);
+			drawcirclefilled(tunneld[p4],tunneld[p4+1],c1,0);
+*/
+			drawpoly(tunneld[p1],tunneld[p1+1], tunneld[p2],tunneld[p2+1], tunneld[p3],tunneld[p3+1],m+x2);
+			drawpoly(tunneld[p4],tunneld[p4+1], tunneld[p2],tunneld[p2+1], tunneld[p3],tunneld[p3+1],m+x2);
+			drawline(tunneld[p1],tunneld[p1+1],tunneld[p2],tunneld[p2+1],0);
+			drawline(tunneld[p1],tunneld[p1+1],tunneld[p3],tunneld[p3+1],0);
+
+			x2:=x2+64;
+			p1:=p1+2;
+		//	inc(m);
+		end;
+		
+	end;
+	cg1:=m;
+end;
+
+
+procedure InitEffect5();
+begin
+	for i:=0 to 0 do div8[i]:=i/8;	
+	for i:=0 to 0 do sine2[i]:=sine[i]/4;	
+
+end;
+
+
+procedure sideCircle(xx,yy,c,k: byte);
+begin
+	drawcirclefilled(xx,yy,c,k);
+	drawcirclefilled(xx,yy,c-5,0);
+	drawcirclefilled(xx,yy,c-10,k);
+	drawcirclefilled(xx,yy,c-15,0);
+	drawcirclefilled(xx,yy,c-20,40+64);
+
+end;
+
+
+procedure RenderE5Balls();
+begin
+	k:=150;
+	t:=time*2;
+	l:=32;
+	c1:=sine[t]/8+48;
+	t:=t+l;
+	sideCircle(32,32,c1,k);
+	c1:=sine[t]/8+48;
+	t:=t+l;
+	sideCircle(32,255-32,c1,k);
+	c1:=sine[t]/8+48;
+	t:=t+l;
+	sideCircle(255-32,32,c1,k);
+	c1:=sine[t]/8+48;
+	t:=t+l;
+	sideCircle(255-32,255-32,c1,k);
+
+end;
+
+procedure Effect5();
+begin
+	
+	clearscreen(0);
+	okvc_border_color:=0;
+	okvc_border_width:=32;
+	okvc_border_height:=128;
+	InitEffect5();
+	SetupPaletteEffect4();
+	zp:=textCredits;
+	y4:=127+40;
+	start:=0;
+	while (isDone=false) do
+	begin
+		if (transition=0) then
+			if (okvc_border_height>36) then dec(okvc_border_height);
+		if (transition=1) then
+			if (okvc_border_height<128) then inc(okvc_border_height);
+		if (time&1=0) then
+			E5SetupTunnel()
+		else 
+		begin
+			cg1:=0;
+			clearscreen(cg1);
+			E5RenderTunnel();
+			RenderE5Balls();
+			PrintCustomTextEffect5(zp,26, start ,32,32, $d,y4);
+		end;
+	
+	
+		start:=start+2;
+		if (start=0) then
+		begin
+			zp:=zp+8;
+			y4:=y4+64;
+		end;
+		AdvanceEffect();
+		waitforvsync();
+		call(sidfile_1_play);
+	
+	end;	
+end;

@@ -1,0 +1,66 @@
+procedure EffectEndIntro();
+var 
+	x,y:byte;
+
+begin
+	clearscreen(0);
+	okvc_border_color:=%00100001;
+	okvc_border_width:=24;
+	okvc_border_height:=24;
+	okvc_src_page:=$70;
+	t:=0;
+	time:=0;
+	t:=0;
+	while (t<200) do
+	begin
+		y:=0;
+		inc(time);
+//		if (time&1=0) then 
+//			if (t<128+32) then 
+			inc(t);
+				
+		x1:=0;
+		y1:=0;
+	 	for i:=0 to 16 do
+	 	begin
+			x:=0;
+			x1:=0;
+	 		for j:=0 to 16 do
+	 		begin
+				x:=x+16;
+				t2:=t-x1-y1;
+				if (t2<=16) then
+					blit(x,y,x,y,t2,t2);	 		
+				x1:=x1+4;
+			end;
+			y:=y+16;	 		
+			y1:=y1+4;
+		end;
+		waitforvsync();
+	end;	
+
+
+end;
+
+procedure EffectEnd();
+
+begin
+	setdefaultpalette();
+	EffectEndIntro();	
+	time:=0;
+	t:=0;
+	okvc_font_bank:=$F;
+	okvc_font_width:=8;
+	okvc_font_height:=8;
+
+	while (true) do
+	begin
+		if (time&3=0) then 
+			inc(t);
+		inc(time);
+		
+		PrintInfoText(textEnd,t);
+		if (textEnd[0]=0) then Loop(); // HALT
+		waitforvsync();
+	end;
+end;

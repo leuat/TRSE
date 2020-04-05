@@ -1,0 +1,150 @@
+procedure PrintCustomTextEffect1(tp:pointer;xx,y,sx,sy, bank : byte);
+var 
+ x,i,yy: byte;
+ 
+begin
+	okvc_font_bank:=bank;
+	okvc_font_width:=sx;
+	okvc_font_height:=sy;
+	j:=curPos;
+	x:=xx;
+//	while (tp[0]<>0) do
+	for i:=0 to 8 do
+	begin
+		k:=j&7+16*5;
+		v:=tp[0]-65;
+		if (v<>32) then
+		if (x>0 and x<250) then
+		begin
+			yy:=y+sine[(j*8-time*2+64)]/4;	
+			PrintChar(v, 0,  x+2,yy+2);
+			PrintChar(v, k,  x,yy);
+		end;
+		j:=j+1;
+		x:=x+32;
+		tp:=tp+1;
+	end;
+		
+
+
+end;
+
+procedure SetupEffect1();
+begin
+	for i:=0 to @count do 
+	begin
+		xpos[i]:=okvc_random;
+		ypos[i]:=okvc_random;
+		ydy[i]:=okvc_random;
+		ydy[i]:=ydy[i]/80+1;
+	end;
+	for i:=0 to @count do begin 
+		sz[i]:=okvc_random;
+	end;
+	okvc_src_page:=$20;
+	okvc_blit_type:=0; // Alpha
+	okvc_blit_alphaval:=$0;
+		
+	SetDefaultPalette();
+
+	
+end;
+procedure Effect1Blit();
+var 
+	i,j,l:byte;
+
+begin
+	k:=0;
+	for i:=0 to 8 do
+	begin
+		l:=sine[i*4+k+time]/16+k;
+		Blit(k, 16,  sine[t3*2]/16+l,yp, 48,255-yp);
+		k:=k+32;
+	end;
+
+end;
+
+
+procedure Effect1();
+begin
+	SetupEffect1();
+//	SetupPalette();
+	yp:=255;
+	m:=0;
+	zp:=text2;	
+	scroll:=15;
+	start:=128;
+	OKVC_BORDER_WIDTH:=96;
+	OKVC_BORDER_HEIGHT:=96;
+	
+	while (isDone=false) offpage do
+	begin	
+		clearscreen(0);
+		
+		if (start<>0) then dec(start);
+
+		if (start=0) then
+		if (yp<>0) then dec(yp);
+		Effect1Blit();
+		t:=time*4;
+		t3:=time*2;
+		m:=sine[t];
+		m:=m/32;
+		g:=g+1;
+		j:=toColor(m,g,7-m);
+
+		if (yp=0) then if (cnt<@count) then inc(cnt);
+		
+		if (transition=0) then 
+		begin
+		if (OKVC_BORDER_WIDTH>24) then
+		if (time&3=0) then 
+		begin
+			dec(OKVC_BORDER_WIDTH);
+			dec(OKVC_BORDER_HEIGHT);
+		end;
+		end
+		else 
+		begin
+		if (OKVC_BORDER_WIDTH<128) then
+			inc(OKVC_BORDER_WIDTH);		
+			inc(OKVC_BORDER_HEIGHT);		
+		end;	
+//		l:=toColor(m,g,m);
+		if (cnt<>0) then
+		for k:=0 to cnt do
+		begin
+			x1 := xpos[k];
+			y2 := 0; 
+			y2:=y2+sine[t3+x1]/4;
+			y2:=y2+sine[t3+k/4]/2+32;
+			xpos[k]:=xpos[k]-1;
+			ypos[k]:=ypos[k]+ydy[k];
+			sz[k]:=sz[k]-2;
+//			inc(j);
+			i:=sine[sz[k]]/16;
+
+			DrawCircleFilled(xpos[k],ypos[k],i+2,0);
+			DrawCircleFilled(xpos[k],ypos[k],i,k/8);
+	//		DrawLine(x1,y1,x2,y2,j);
+		end;
+//		PrintCustomText(text1,32,8,8,$F);
+//		PrintCustomText(zp,scroll,0,16,16,$E);
+		PrintCustomTextEffect1(zp,scroll,sine[64+t2]/4+32,32,32,$D);
+		call(sidfile_1_play);
+		if (time&1=0) then inc(t2);
+		dec(scroll);
+		if(scroll=255) then 
+		begin
+			scroll:=31;
+			zp:=zp+1;
+			inc(curPos);
+			if(zp[0]=0) then zp:=text2;
+		end;
+		AdvanceEffect();
+		WaitForVSync();
+
+	end;
+
+
+end;

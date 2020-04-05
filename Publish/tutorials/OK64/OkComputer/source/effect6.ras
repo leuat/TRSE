@@ -1,0 +1,185 @@
+procedure RenderE6Letter(v,xx,yy,r,cur : byte);
+var 
+ x,y,r1,r2,r3,i,j,ok : byte;
+ 
+begin
+	v:=v-64;
+	zp:=@tempData;
+//	if (v>32) then
+	zp:=zp + v*8;
+	x:=xx-80;
+	tt:=0-time*2;
+	siz:=time;
+	dx:=12;
+	for i:=0 to 8 do
+	begin
+		l1:=v*16;
+		y:=yy;
+		cp:=zp;
+		dy:=sine[tt + x]/4;
+		ok:=true;
+		if (cur=0) then
+		begin
+			if (x>128) then
+				ok:=false;
+		end;
+		if (cur=3) then
+		begin
+			if (x<128) then
+				ok:=false;
+		end;
+
+		if (ok) then	
+		for j:=0 to 8 do
+		begin
+					
+
+			if (cp[i]<>0) then
+			begin
+			
+
+				r1:=10 + sine[siz]/32;
+				r2:=r1-2;
+				r3:=r1-4;
+
+/*				drawcirclefilled(x,y+dy,r1,45);
+				drawcirclefilled(x,y+dy,r2,0);
+//				drawcirclefilled(x,y+dy,r3,%00110001);
+				drawcirclefilled(x,y+dy,r3,l1);*/
+				drawrect(x-2,y+dy-2,12,12,0);
+				drawrect(x-2,y+dy,8,8,l1);
+			end;
+			siz:=siz+7;
+			cp:=cp+256;
+			inc(l1);
+			y:=y+dx;
+		end
+		else siz:=siz+7*8;
+		x:=x+12;
+	end;
+
+end;
+
+
+procedure RenderTextE6();
+var 
+  i:byte;
+begin
+
+	g:=cy;
+	for i:=0 to 4 do
+	begin	
+		if (tp[i]<>key_space) then
+			RenderE6Letter(tp[i], g, 60,10,i);
+		g:=g+80;
+		
+	end;
+	cy:=cy-2;
+	
+	if (cy=0) then
+	begin
+		cy:=80;
+		tp:=tp+1;
+	end;
+	
+end;
+
+
+procedure DrawSpeedLines();
+var 
+	xx,len:byte;
+begin
+	for i:=0 to @noLines do
+	begin
+		len:=balls_c[i];
+		xx:=(balls_x[i]-8)*8;
+		
+		
+		drawLine(xx,balls_y[i],xx+len,balls_y[i], %01100010);
+//		j:=okvc_random;
+//		j:=j/32+2;
+		balls_x[i]:=balls_x[i]-1;
+		if (balls_x[i]>253) then
+					balls_y[i]:=okvc_random;
+
+	end;
+end;
+
+
+procedure InitSpeedLines();
+begin
+	for i:=0 to @noLines do
+	begin
+		j:=okvc_random;
+		balls_x[i]:=8+j/4;
+		balls_y[i]:=okvc_random;
+		j:=okvc_random;
+		j:=j/8 + 16;
+		balls_c[i]:=j;
+
+	end;
+end;
+
+procedure GenerateBackground();
+var 
+	r:byte;
+begin
+	clearscreen(%01000001);
+	for j:=0 to 16 do
+	for i:=0 to 255 do
+	begin
+		cx:=okvc_random;
+		cy:=okvc_random;
+
+		
+		
+		dx:=cx;
+		if (255-dx<cx) then dx:=255-cx;
+		dy:=cy;
+		if (255-dy<cy) then dy:=255-cy;
+
+		r:=(255-dx-dy)/16 - 8;
+		
+		if (r<10) then
+			drawcirclefilled(cx,cy,r,0);
+
+	end;
+	memcpyokvc($1,0,0,    $2,0,0, 255,255);
+
+end;
+
+
+procedure Effect6();
+begin
+
+	GenerateBackground();
+	InitSpeedLines();
+	memcpyokvc($10,15,0,    0,@tempDataHI,0,  $20,0);
+	cy:=70;
+	SetDefaultPalette();
+	okvc_border_width:=128;
+	okvc_border_height:=16;
+	tp:=textE6;
+	while (isDone=false) do
+	begin
+//		clearscreen(%01000001);
+		memcpyokvc($2,0,0,    $1,0,0,  255,255);
+		DrawSpeedLines();
+		RenderTextE6();
+		AdvanceEffect();
+		if (transition=0) then
+		begin
+			if (okvc_border_width>16) then
+				okvc_border_width:=peek(okvc_border_width,0)-1;
+			
+		end;
+		if (transition=1) then
+		begin
+			if (okvc_border_height<128) then
+				okvc_border_height:=peek(okvc_border_height,0)+1;
+		end;
+		waitforvsync();
+		call(SIDFILE_1_PLAY);
+	end;
+
+end;

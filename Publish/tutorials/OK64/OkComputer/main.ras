@@ -1,0 +1,270 @@
+program OKComptuter_the_demo;
+var  
+ 	k2, dx,dx2,dy,n,x1,i,k,l,y1,x2,y2,x3,y3,x4,y4,j,m,g,time,t,yp,cnt,scroll,curPos, cx,cy,start,v,t2,t3: byte=0;
+ 	c1,c2,counter, isDone,transition,ccol,frame,sstart,send,isNeg : byte = 0;
+ 	cr1,cg1,cb1, cr2,cg2,cb2,shift,ttp,s,tt,siz:byte = 0;
+	l0,l1,l2,l3: byte = 0;
+ 	tp:pointer;
+ 	it : byte;
+
+   //music : incsid("music/courier.sid","2");
+   music : incsid("music/warheadE0.sid",2);
+//   music : incsid("music/wip.sid","2");
+   // music : incsid("music/freud.sid","2");
+//    music : incsid("music/fliptape36.sid","2");
+	
+//@export "images/font2.flf" "images/font2.bin"  256
+//	font1 : incbin("images/font2.bin",$E0100);    
+@export "images/font4.flf" "images/font3.bin"  256
+//	font1 : incbin("images/font3.bin",$DFB00);    
+	font1 : incbin("images/font3.bin",$E0000);    
+@export "images/ok1.flf" "images/ok1.bin"  256
+	image1 : incbin("images/ok1.bin",$20000);    
+@export "images/logo.flf" "images/logo.bin"  256
+	imageBefore : incbin("images/logo.bin",$40000);    
+@export "images/logo2.flf" "images/logo2.bin"  256
+	imageLogo : incbin("images/logo2.bin",$60000);    
+@export "images/logo3.flf" "images/logo3.bin"  256
+	imageLogo2 : incbin("images/logo3.bin",$70000);    
+	
+	ttable : incbin("data/table.bin",$50000);
+	tdata : incbin("data/data.bin",$30000);
+
+@define tempData $8000
+@define tempDataHI $80
+		
+
+	textCredits: string=( "  CODE  ",
+						  "  LEUAT ",
+						  "  MUSIC ",
+						  "RESPONSE",
+						  "   GFX  ",
+						  "  LEUAT ",
+						  "        ",
+						  "        ",
+						  "        ",
+						  );
+
+
+
+@define noBalls 40
+@define noBalls2 8
+@define noPoints 6
+@define noLines 40
+
+
+	const tunnelX : byte = 6;
+	const tunnelZ : byte = 14;
+
+
+	tunneld : array[@tunnelX*@tunnelZ*2] of byte;
+
+	balls_x : array[@noBalls] of byte;
+	balls_y : array[@noBalls] of byte;
+	balls_c : array[@noBalls] of byte;
+	balls_r : array[@noBalls] of byte;
+	balls_dy : array[@noBalls] of byte;
+	addressT  : array[64] of byte;
+
+	div8  : array[256] of byte;
+	sine2  : array[256] of byte;
+@define tpos $8000
+
+	@define count 128
+
+	text1 : string = ("OK64",0);
+//	text2 : string = ("                The OK Computer     mos6502 at 1mhz    SID    64k + 1MB vram ",0);
+	text2 : string = ("        THE OK COMPUTER      ",0);
+	textScroller : string = ("         OK COMPUTER SUPER MODERN       ");
+	textE3 : string = ("                                        The OK64!         ",
+	"underpowered CPU with an OP video chip            ",
+	"fast built-in methods for primitive geometries           ",
+	"like the pico8 had a baby with a mos6502                                                          ");
+	
+	textE6 : string = ("      scroll me baby                        ");
+
+@define cpos 254
+@define ccol 253
+@define cpause 252
+
+	text3 : string = (
+					  @ccol, %11110100, @cpos,68,60, "64k program ram", 
+					  @ccol, %11100110, @cpos,68,80, " 1mb video ram",
+					  @ccol, %01100111, @cpos,68,100," MOS 6502 1mhz",
+					  @ccol, %00011111, @cpos,68,120,"SID music chip",
+					  @ccol, %00011011, @cpos,68,140,"OKVC video chip",
+					  @ccol, %11001000, @cpos,68,160,"  256x256 VGA");
+					
+
+	textEnd : string = (
+					  @ccol, %11110100, @cpos,60,60, "the OK64 computer", 
+					  @ccol, %11100110, @cpos,75,80, "download from",
+					  @ccol, %01100111, @cpos,58,100,"www.turborascal.com",
+					  @ccol, %00011111, @cpos,68,140,"OK64 is included",
+					  @ccol, %00011011, @cpos,63,160,"with the trse IDE.",
+					  @ccol, %11001000, @cpos,68,160,"",0);
+					
+
+
+	xpos : array[@count] of byte;
+	ypos : array[@count] of byte;
+	ydy : array[@count] of byte;
+	sz : array[@count] of byte;
+	zp,cp:pointer;
+
+
+@include "source/common.ras"
+@include "source/effect1.ras"
+@include "source/effect2.ras"
+@include "source/effect3.ras"
+@include "source/effect4.ras"
+@include "source/effect5.ras"
+@include "source/effect6.ras"
+@include "source/effect_end.ras"
+
+
+procedure InitTables();
+begin
+	for i:=0 to 0 do div8[i]:=i/8;	
+end;
+
+
+procedure Effect0();
+var 
+	x,y,h,j2,px,py : byte;
+	text : string = "PRESENTS";
+begin
+
+	SetDefaultPalette();
+	j2:=255;
+	k:=0;
+	l:=1;
+	h:=128;
+	py:=200;
+	px:=100;
+	c1:=1;
+	okvc_font_bank:=$F;
+	okvc_font_width:=8;
+	okvc_font_height:=8;
+	okvc_border_width:=128;
+	okvc_border_height:=128;
+	c2:=false;
+	while (isDone=false) do
+	begin
+		okvc_blit_type:=0; // Alpha
+		okvc_src_page:=$40;
+//		if (transition=0) then
+			blit(0,0,0,0, 255,255);
+		okvc_blit_type:=okvc_blit_alpha; // Alpha
+		okvc_blit_alphaval:=$10;
+		okvc_src_page:=$60;
+		x:=0;
+		t:=0-time*2+32;
+		t2:=0-time;
+		j:=4;
+		if (time>64) then c2:=true;
+		if (c2) then
+		begin
+			if (c1<255) then inc(c1);
+
+			for i:=0 to c1 do
+			begin
+				y:=sine[t]/4+sine[t2]/4;// + sine[time+i*9]/2;
+				blit(x,120,x,y, j,h);
+				x:=x+j;
+				t:=t+3;
+				t2:=t2+1;
+			end;
+		end;		
+		if (transition=1) then
+		begin
+			i:=okvc_border_width;
+			if (i<128) then i:=i+1;
+			okvc_border_width:=i;
+			okvc_border_height:=i;
+		end;
+		if (transition=0) then
+		begin
+			i:=okvc_border_width;
+			if (i>20) then i:=i-1;
+			okvc_border_width:=i;
+			okvc_border_height:=i;
+		end;
+		setpalette(1,l0,l0,l0);
+		setpalette(2,l1,l1,l1);
+		setpalette(3,l2,l2,l2);
+		setpalette(4,l3,l3,l3);
+		
+		px:=100;
+		t:=px;
+		
+		t2:=py;		
+		okvc_blit_type:=0; // Alpha
+		okvc_blit_alphaval:=$0;
+		j:=0-time*2;
+		j2:=0-time*1+23;
+		for i:=0 to 8 do
+		begin
+			t:=sine[j]/4+80;
+			t2:=sine[j2]/4+140;
+			PrintChar(text[i], 0,  t,t2);
+			PrintChar(text[i], %11000111,  t-1,t2-1);
+			j:=j+11;
+			j2:=j2+9;
+			t:=t+8;
+		end;
+		px:=px-1;
+
+
+		WaitForVSync();
+
+		if (l0<250) then l0:=l0+4;
+		if (l1<192) then l1:=l1+3;
+		if (l2<128) then l2:=l2+2;
+		if (l3<64) then  l3:=l3+1;
+
+		AdvanceEffect();
+/*	if (transition=1) offpage then
+		begin
+			DrawLine(0,j2,255,j2,0);
+			DrawLine(0,j2-1,255,j2-1,0);
+			DrawLine(0,j2-2,255,j2-2,0);
+			DrawLine(0,j2-3,255,j2-3,0);
+			j2:=j2-4;
+		end;
+		*/
+	end;
+	l0:=0;
+	c1:=0;
+end;
+
+
+begin
+	initsid(sidfile_1_init);
+	
+	okvc_border_color:=0; 
+	InitTables();
+	
+	InitEffect(32);
+	Effect0();
+	InitEffect(50);
+	Effect1();
+	InitEffect(48);
+	Effect2();
+	
+	InitEffect(64);
+	Effect3();
+	InitEffect(54);
+	Effect4();
+	InitEffect(48);
+	Effect6(); // scroller
+	
+	InitEffect(64);
+	Effect5();
+
+	InitEffect(64);
+	EffectEnd();
+		
+	Loop();	
+	
+end.
