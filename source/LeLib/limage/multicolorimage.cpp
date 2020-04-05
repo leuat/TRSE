@@ -1397,7 +1397,8 @@ void MultiColorImage::UpdateColorList()
 
         }
         for (int i=0;i<4;i++)
-            m_colorList.m_list[m_extraCols[i]].displayList=true;
+            if (m_extraCols[i]<m_colorList.m_list.count())
+                m_colorList.m_list[m_extraCols[i]].displayList=true;
 
     }
     m_colorList.CreateUI(m_colorList.m_layout,1);

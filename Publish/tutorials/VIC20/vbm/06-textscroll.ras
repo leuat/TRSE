@@ -12,6 +12,9 @@ var
 // Displays a scrolling text message and a tile bitmap
 
 // declare all your include files here
+
+@export "resources/charsets/charset_8x8.flf" "resources/charsets/font8x8.bin" 256
+
 font: incbin( "resources/charsets/font8x8.bin", $4000 ); // character set for first 64 PETSCII Screen Codes
 chars: incbin( "resources/tilemap/monschar.bin", $4800 ); // individual tile characters
 map: incbin( "resources/tilemap/monsmap.bin", $4db0 ); // full screen map of tiles

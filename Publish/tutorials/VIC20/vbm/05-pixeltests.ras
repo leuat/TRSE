@@ -11,7 +11,7 @@ var
 
 // Scrolling landscape with pixel testing to keep the buggy on the ground
 
-// declare all your include files here
+
 buggy: incbin( "resources/charsets/moonspr.bin", $4000 ); // moon buggy
 chars: incbin( "resources/charsets/moonchar.bin", $4008 ); // individual tile characters
 map: incbin( "resources/charsets/moonmap.bin", $42d8 ); // full screen map of tiles

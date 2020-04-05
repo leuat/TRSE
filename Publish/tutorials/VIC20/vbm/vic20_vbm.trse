@@ -1,5 +1,5 @@
-zeropages = ,$68,  $6A,  $6C,  $6E,  $70,  $72,  $74,  $76,  $78
-temp_zeropages = ,$88,  $8A,  $8C,  $8E
+zeropages = ,$68, $6A, $6C, $6E, $70, $72, $74, $76, $78
+temp_zeropages = ,$88, $8A, $8C, $8E
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $7b
 zeropage_decrunch2 = $7c
@@ -45,20 +45,14 @@ data_header_resources/charsets/chrwilly.flf = 2.02803e-312
 data_header_resources/tilemap/lvlwilly.flf = 2.02803e-312
 charset_resources/tilemap/lvlwilly.flf = C:/OneDrive/Documents/GitHub/build-TRSE-Desktop_Qt_5_13_0_MSVC2017_64bit-Release/tutorials/VIC20/tutorials/resources/charsets/chrWilly.flf
 data_header_resources/charsets/sprslice.flf = 1.82351e-312
-var_zeropages = ,$5e,  $5f,  $60,  $61,  $62,  $63
+var_zeropages = ,$5e, $5f, $60, $61, $62, $63
 dosbox_x86_system = default
 cpu_x86_system = 8086
-<<<<<<< HEAD
 via_zeropages = ,$5B, $5C, $5D, $5E
 remove_unused_symbols = 1
 ignore_initial_jump = 0
-=======
-via_zeropages = ,$64,  $65,  $66,  $67
-project_path = tutorials/VIC20/vbm/
+via_zeropages = ,$64, $65, $66, $67
 remove_unused_symbols = 1
 ignore_initial_jump = 0
-open_files = ,07-smalltext.ras, 06-textscroll.ras
-current_file = 06-textscroll.asm
->>>>>>> a2ebe54f1e923b548e4cb143e6223296f69a24ad
 exomizer_toggle = 0
 override_target_settings_basic = $1200

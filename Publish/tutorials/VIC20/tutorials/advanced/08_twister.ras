@@ -7,7 +7,7 @@ const twisterAddr:address = $2000;
 	twister: incbin("resources/data/twister.bin", twisterAddr);
 //	charset: incbin("charsets/charset_8x8.bin", $2000);
 	zp,zp2,p1:pointer;
-@donotremove eights
+	
 
 @startblock $2A00 "vars"
 	x,y,i,j,time,ttime,k,tt,m,t1,t2 : byte = 0;
@@ -16,10 +16,6 @@ const twisterAddr:address = $2000;
 	eights : array[9] of byte = (0,0,8,16,24,32,40,48,56,64);
 @endblock
 
-procedure WOOT();
-begin
-
-end;
 
 @startblock $3000 "code"
 
