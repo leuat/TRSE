@@ -46,7 +46,7 @@ begin
 end;
 
 begin
-addbreakpoint();
+
 	// set the smaller display mode showing 19 columns, the 20th is hidden
 	vbmSetDisplayMode( 1 );
 
