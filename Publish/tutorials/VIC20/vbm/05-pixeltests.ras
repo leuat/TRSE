@@ -11,6 +11,9 @@ var
 
 // Scrolling landscape with pixel testing to keep the buggy on the ground
 
+@export "resources/charsets/moonspr.flf" "resources/charsets/moonspr.bin" 1
+@export "resources/charsets/moonchar.flf" "resources/charsets/moonchar.bin" 89
+
 
 buggy: incbin( "resources/charsets/moonspr.bin", $4000 ); // moon buggy
 chars: incbin( "resources/charsets/moonchar.bin", $4008 ); // individual tile characters
