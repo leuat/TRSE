@@ -1050,12 +1050,21 @@ void DialogEffects::UpdateGlobals()
         m_rt.m_globals.m_translate = m_script->getVec("globals.translate");
 
     if (m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_VGA)  {
-        QString f = m_script->get<QString>("output.palette_file");
+        if (m_script->lua_exists("output.palette_file"))
+        {
+            QString f = m_script->get<QString>("output.palette_file");
+            //      qDebug() << "Here "<<f;
+            if (m_effect!=nullptr)
+                if (m_effect->m_mc!=nullptr)
+                    m_effect->m_mc->m_colorList.LoadFromFile(m_currentDir+"/"+f);
+        }
+        if (m_script->lua_exists("output.palette")) {
+//            qDebug() << "PALETTE";
+            if (m_effect!=nullptr)
+                if (m_effect->m_mc!=nullptr)
+                    m_effect->m_mc->m_colorList.fromArrayList(m_script->getIntVector("output.palette"));
 
-  //      qDebug() << "Here "<<f;
-        if (m_effect!=nullptr)
-            if (m_effect->m_mc!=nullptr)
-               m_effect->m_mc->m_colorList.LoadFromFile(m_currentDir+"/"+f);
+        }
 
         m_rt.m_globals.m_dither = m_script->get<float>("output.dither");
         m_rt.m_globals.m_ditherStrength = m_script->getVec("output.ditherStrength");

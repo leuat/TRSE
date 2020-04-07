@@ -1,4 +1,5 @@
 program PetsciiAnimations;
+// The unit is accessible in the C64 Turbl Rascal Units project from the front page 
 @use "animation/animation"
 
 var  

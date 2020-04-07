@@ -77,6 +77,7 @@ public:
         return QString::number(color.red()/16)+"," + QString::number(color.green()/16) +","+ QString::number(color.blue()/16);
     }
 
+
     void fromRGB8(QString s) {
         QStringList d = s.simplified().trimmed().split(",");
         if (d.count()==3) {
@@ -123,6 +124,7 @@ public:
     void SetIsMulticolor(bool mult);
 
     void SetMulticolor(int index, int col);
+    void fromArrayList(QVector<int> colors);
 
     void SetPPUColors(char c1, int idx);
     QSize m_windowSize;

@@ -1,4 +1,6 @@
 program Tutorial11_Lines;
+// The unit is accessible in the C64 Turbl Rascal Units project from the front page 
+
 @use "gfx/bitmapgraphics"
 
 var
@@ -10,6 +12,12 @@ var
 	const bank1_screen : address = bank1+$400;
 	const bank2_screen : address = bank2+$400;
 
+	xp: array[3] of byte = (40, 70, 50);
+	yp: array[3] of byte = (100, 40, 156);
+	xp2: array[3] of byte = (40, 70, 50);
+	yp2: array[3] of byte = (100, 40, 156);
+	dxp: array[3] of byte = (1, 1, 255);
+	dyp: array[3] of byte = (255, 1, 1);
 
 /*
   switch between bank 0 and 1
@@ -35,13 +43,6 @@ end;
 
 
 procedure UpdateRaster();
-var
-	xp: array[3] of byte = (40, 70, 50);
-	yp: array[3] of byte = (100, 40, 156);
-	xp2: array[3] of byte = (40, 70, 50);
-	yp2: array[3] of byte = (100, 40, 156);
-	dxp: array[3] of byte = (1, 1, 255);
-	dyp: array[3] of byte = (255, 1, 1);
 	
 begin
 	SwitchDrawBank();
@@ -93,6 +94,5 @@ begin
 	clearscreen(BLUE,screen_char_loc2);
 
 	while (true) do UpdateRaster();
-	Loop();
 	
 end.

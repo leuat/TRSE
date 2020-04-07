@@ -57,7 +57,7 @@ begin
 
 	end;
 	// Move cursor to (1,y) on $0400 on bank 1
-	moveto(1,yStart, hi(screen_char_loc));
+	moveto(0,yStart, hi(screen_char_loc));
 	// moveto could also be replaced with : screenmemory:=$0400 + @y_start*40;
 	
 	colorP:=screen_col_loc + yStart*screen_width;

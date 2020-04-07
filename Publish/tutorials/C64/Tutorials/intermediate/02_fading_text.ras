@@ -117,7 +117,7 @@ end;
 
 
 /*
-	Main update loop. Replace with a raster.
+	Main update loop, called from the raster
 */
 procedure Update();
 begin

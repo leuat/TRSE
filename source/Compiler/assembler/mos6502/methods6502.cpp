@@ -78,10 +78,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     }
     else
-    if (Command("max"))
+    if (Command("min"))
         MinMax(as,false);
     else
-    if (Command("min"))
+    if (Command("max"))
         MinMax(as,true);
 
 

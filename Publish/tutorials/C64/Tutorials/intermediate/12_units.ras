@@ -1,5 +1,6 @@
 program Tutorial12_Units;
 // Global TRSE units, contains tables of colors
+// The unit is accessible in the C64 Turbl Rascal Units project from the front page 
 @use "tables/luminosities"
 // Custom units can be included from the current project dir
 @use "intermediate/customunit" // has name "CustomUnit"

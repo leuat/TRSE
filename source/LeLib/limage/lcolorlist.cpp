@@ -874,3 +874,12 @@ void LColorList::handleButtonImport(int data)
     //Data::data.redrawInput = true;
     emit colorValueChanged();
  }
+
+void LColorList::fromArrayList(QVector<int> colors) {
+    m_list.resize(colors.size()/3);
+    int c = 0;
+    for (LColor &l: m_list) {
+        l.color = QColor(colors[c],colors[c+1],colors[c+2]);
+        c+=3;
+    }
+}
