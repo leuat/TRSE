@@ -220,7 +220,7 @@ void SymbolTable::setName(QString s) {
 void SymbolTable::InitBuiltins()
 {
 
-    m_globalList << "screenmemory";
+    m_globalList << "screenmemory" << "sine";
 
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("INTEGER","")));
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("WORD","")));

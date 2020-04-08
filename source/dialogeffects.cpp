@@ -840,6 +840,8 @@ static int OptimizeScreenAndCharset(lua_State* L) {
     m_compression.OptimizeScreenAndCharset(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
 //    m_charData.clear();
     m_charData = cOut;
+    m_infoText="Total no. chars : "+QString::number(m_charData.count()/8) +"\n"+ m_infoText;
+
     m_screenData = sOut;
     return 0;
 }
