@@ -319,14 +319,25 @@ void MainWindow::UpdateSymbolTree(QString search)
     Parser* p = &e->m_builderThread.m_builder->compiler->m_parser;
     for (QString key : p->m_symTab->m_symbols.keys()) {
         QSharedPointer<Symbol> s = p->m_symTab->m_symbols[key];
-        cleanSymbol(Symbols, s->m_name, s->m_lineNumber, s->m_fileName,p,Qt::yellow,search);
+        QString t = s->m_type;
+        if (t.toLower()=="array") t = s->m_arrayTypeText+"[ "+QString::number(s->m_size)+ " ]";
+        cleanSymbol(Symbols, s->m_name + " : " + t.toLower(), s->m_lineNumber, s->m_fileName,p,Qt::yellow,search);
     }
     m_symbolItems.clear();
 
     for (QString key : p->m_procedures.keys()) {
         QSharedPointer<Node> s = p->m_procedures[key];
         QSharedPointer<NodeProcedureDecl> proc = qSharedPointerDynamicCast<NodeProcedureDecl>(s);
-       cleanSymbol(Procedures,proc->m_procName, proc->m_op.m_lineNumber, proc->m_fileName,p,Qt::cyan,search);
+        QString params = "(";
+        for (QSharedPointer<Node> n: proc->m_paramDecl) {
+            QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(n);
+//            params+=qSharedPointerDynamicCast<NodeVar>(vd->m_varNode)->value+" : ";
+            params+=qSharedPointerDynamicCast<NodeVarType>(vd->m_typeNode)->value.toLower() + ",";
+        }
+        if (proc->m_paramDecl.count()!=0)
+            params.remove(params.length()-1,1);
+        params+=")";
+       cleanSymbol(Procedures,proc->m_procName+params, proc->m_op.m_lineNumber, proc->m_fileName,p,Qt::cyan,search);
     }
     Procedures->setExpanded(true);
     if (search!="")
