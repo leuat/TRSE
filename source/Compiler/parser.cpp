@@ -2169,6 +2169,8 @@ QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockNam
         Eat(TokenType::SEMI);
         QSharedPointer<Node> block = nullptr;
         QSharedPointer<NodeProcedureDecl> procDecl = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(tok, procName, paramDecl, block, type));
+        procDecl->m_fileName = m_currentFileShort;
+
         AppendComment(procDecl);
 
         if (m_procedures[procName]!=nullptr)
@@ -2993,7 +2995,7 @@ void Parser::HandleUseTPU(QString fileName)
     l->m_text = Util::loadTextFile(fname);
     l->m_text = l->m_text.replace("\r\n","\n");
     l->m_orgText = l->m_text;
-
+    p->m_currentFileShort = fname;
     try {
         p->m_tree = p->Parse( false
                              ,m_projectIni->getString("vic_memory_config"),

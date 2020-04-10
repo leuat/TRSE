@@ -37,9 +37,9 @@ Compiler::~Compiler() {
 }
 
 
-void Compiler::Parse(QString text, QStringList lst)
+void Compiler::Parse(QString text, QStringList lst, QString fname)
 {
-
+    m_parser.m_currentFileShort = fname;
     m_lexer = QSharedPointer<Lexer>(new Lexer(text, lst, m_projectIni->getString("project_path")));
     Syntax::s.m_currentSystem->m_systemParams.clear();
     m_parser.m_lexer = m_lexer;

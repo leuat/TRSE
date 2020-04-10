@@ -72,7 +72,7 @@ public:
     static QStringList s_usedTRUs;
 //    int m_currentParserBlock=-1;
 
-    QString m_currentDir;
+    QString m_currentDir, m_currentFileShort;
     QVector<QStringList> m_obsoleteWarnings;
     QMap<QString, QSharedPointer<Node>> m_procedures;
     QMap<QString, QString> m_preprocessorDefines;

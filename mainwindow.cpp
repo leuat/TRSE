@@ -349,7 +349,7 @@ void MainWindow::UpdateSymbolTree()
 
         sym->setData(0,Qt::UserRole,n);
         m_symPointers[proc->m_procName] =
-                QSharedPointer<SymbolPointer>(new SymbolPointer(proc->m_procName, proc->m_op.m_lineNumber+1, m_currentDoc->m_currentFileShort));
+                QSharedPointer<SymbolPointer>(new SymbolPointer(proc->m_procName, proc->m_op.m_lineNumber+1, proc->m_fileName));
         Procedures->addChild(sym);
     }
 //    Symbols->setExpanded(true);
@@ -1611,5 +1611,5 @@ void MainWindow::on_treeSymbols_itemDoubleClicked(QTreeWidgetItem *item, int col
     QString key = item->data(0,Qt::UserRole).toString();
     QSharedPointer<SymbolPointer> sp = m_symPointers[key];
     ForceOpenFile(sp->m_file,sp->m_ln);
-//    qDebug() << sp->m_file << " and " <<sp->m_ln;
+    qDebug() << sp->m_file << " and " <<sp->m_ln;
 }

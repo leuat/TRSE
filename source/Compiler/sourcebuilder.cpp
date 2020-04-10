@@ -70,7 +70,7 @@ bool SourceBuilder::Build(QString source)
 
 //    qDebug() << lst;
     compiler->m_isTRU = m_isTRU;
-    compiler->Parse(source,lst);
+    compiler->Parse(source,lst, m_currentSourceFile);
 
     QString path = m_curDir+"/";//m_projectIniFile.getString("project_path") + "/";
     if (m_currentSourceFile.toLower().endsWith(".ras"))

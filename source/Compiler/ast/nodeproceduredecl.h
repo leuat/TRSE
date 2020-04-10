@@ -33,7 +33,7 @@
 
 class NodeProcedureDecl : public Node {
 public:
-    QString m_procName;
+    QString m_procName, m_fileName;
     QVector<QSharedPointer<Node>> m_paramDecl;
     int m_type;
     QSharedPointer<Node> m_block = nullptr;
