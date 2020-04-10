@@ -317,14 +317,14 @@ void MainWindow::UpdateSymbolTree()
     Parser* p = &e->m_builderThread.m_builder->compiler->m_parser;
     for (QString key : p->m_symTab->m_symbols.keys()) {
         QSharedPointer<Symbol> s = p->m_symTab->m_symbols[key];
-        Symbols->addChild(cleanSymbol(s->m_name, s->m_lineNumber+1, s->m_fileName,p));
+        Symbols->addChild(cleanSymbol(s->m_name, s->m_lineNumber, s->m_fileName,p));
     }
 
     for (QString key : p->m_procedures.keys()) {
         QSharedPointer<Node> s = p->m_procedures[key];
         QSharedPointer<NodeProcedureDecl> proc = qSharedPointerDynamicCast<NodeProcedureDecl>(s);
 
-        Procedures->addChild(cleanSymbol(proc->m_procName, proc->m_op.m_lineNumber+1, proc->m_fileName,p));
+        Procedures->addChild(cleanSymbol(proc->m_procName, proc->m_op.m_lineNumber, proc->m_fileName,p));
     }
 //    Symbols->setExpanded(true);
     Procedures->setExpanded(true);
@@ -354,8 +354,15 @@ QTreeWidgetItem *MainWindow::cleanSymbol(QString n, int ln, QString fn, Parser* 
 
     sym->setData(0,Qt::UserRole,n);
 
+    int l = ln;
+    QString f;
+    p->m_lexer->FindLineNumberAndFile(l, f, ln);
+
+    if (f!="")
+        fn =f;
+ //   qDebug() << ln << fn;
     m_symPointers[n] =
-            QSharedPointer<SymbolPointer>(new SymbolPointer(n, ln, fn));
+            QSharedPointer<SymbolPointer>(new SymbolPointer(n, ln+1, fn));
 
     return sym;
 
