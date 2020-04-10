@@ -90,7 +90,7 @@ public:
     QStringList m_globalList;
     QString m_gPrefix;
     QString m_currentFilename="";
-
+    bool m_addToGlobals = false;
     ~SymbolTable();
 
     QString getCurrentProcedure()  {

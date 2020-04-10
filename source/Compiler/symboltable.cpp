@@ -178,6 +178,8 @@ void SymbolTable::Define(QSharedPointer<Symbol> s, bool isUsed) {
     m_symbols[m_currentProcedure+ s->m_name] = s;
     m_symbols[m_currentProcedure+ s->m_name]->isUsed = isUsed;
     s->m_fileName = m_currentFilename;
+    if (m_addToGlobals)
+        m_globalList.append(m_currentProcedure+ s->m_name);
 }
 
 void SymbolTable::Delete() {
@@ -221,8 +223,13 @@ void SymbolTable::setName(QString s) {
 void SymbolTable::InitBuiltins()
 {
 
-    m_globalList << "screenmemory" << "sine";
-
+/*    m_globalList << "screenmemory" << "sine" << "return";
+     << "log2_table"
+                 << "joystickup" << "joystickdown" << "joystickleft" << "joystickright" <<"joystickbutton"
+                 << "joy1" << "joy1pressed" <<
+*/
+    m_addToGlobals = true;
+    // Define global methods here
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("INTEGER","")));
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("WORD","")));
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("LONG","")));
@@ -242,6 +249,7 @@ void SymbolTable::InitBuiltins()
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X86) {
         Define(QSharedPointer<Symbol>(new Symbol("currentKey", "integer")));
+        m_globalList << "currentKey";
     }
 
     if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES && Syntax::s.m_currentSystem->m_system!=AbstractSystem::X86)
@@ -311,7 +319,7 @@ void SymbolTable::InitBuiltins()
 */
 
     }
-
+    m_addToGlobals = false;
 }
 
 bool SymbolTable::exists(QString name) {

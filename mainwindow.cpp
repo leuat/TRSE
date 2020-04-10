@@ -343,10 +343,12 @@ QTreeWidgetItem *MainWindow::cleanSymbol(QString n, int ln, QString fn, Parser* 
 
     if (n.isUpper())
         sym->setForeground(0,QBrush(Qt::darkGray));
-    else if (n.contains("::"))
+    else if (name.contains("::"))
         sym->setForeground(0,QBrush(QColor(50,100,255)));
     else if (n.toLower().startsWith("init"))
         sym->setForeground(0,QBrush(Qt::darkGray));
+    else if (p->m_symTab->m_globalList.contains(n))
+        sym->setForeground(0,QBrush(Qt::gray));
     else
         sym->setForeground(0,QBrush(Qt::cyan));
 
