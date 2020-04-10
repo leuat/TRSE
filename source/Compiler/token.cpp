@@ -21,7 +21,6 @@
 
 #include "token.h"
 
-#define no_types 94
 QString TokenType::types[no_types] = {
             "NONE", "INTEGER", "PLUS", "MINUS", "MUL", "DIV", "LPAREN",
             "RPAREN", "TEOF", "ID", "ASSIGN", "BEGIN",

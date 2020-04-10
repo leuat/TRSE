@@ -29,6 +29,8 @@
 
 class TokenType {
 public:
+#define no_types 94
+
     enum Type {
         NONE, INTEGER, PLUS, MINUS, MUL, DIV, LPAREN,
         RPAREN, TEOF, ID, ASSIGN, BEGIN,
@@ -47,6 +49,8 @@ public:
 
     static QString types[];
     static QString getType(Type t) {
+        if (t>=no_types)
+            return types[NADA];
         return types[t];
     }
 

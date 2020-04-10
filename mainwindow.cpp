@@ -320,7 +320,10 @@ void MainWindow::UpdateSymbolTree(QString search)
     for (QString key : p->m_symTab->m_symbols.keys()) {
         QSharedPointer<Symbol> s = p->m_symTab->m_symbols[key];
         QString t = s->m_type;
-        if (t.toLower()=="array") t = s->m_arrayTypeText+"[ "+QString::number(s->m_size)+ " ]";
+        if (t.toLower()=="array") t = s->m_arrayTypeText.toLower()+"[ "+QString::number(s->m_size)+ " ]";
+        //if (t.toLower()=="record") t = s->m_arrayTypeText +"[ "+QString::number(s->m_size)+ " ]";
+//        qDebug() << t << s->m_arrayTypeText;
+        //if (p-) t = TokenType::getType(s->m_arrayType).toLower()+"[ "+QString::number(s->m_size)+ " ]";
         cleanSymbol(Symbols, s->m_name + " : " + t.toLower(), s->m_lineNumber, s->m_fileName,p,Qt::yellow,search);
     }
     m_symbolItems.clear();
