@@ -350,6 +350,7 @@ private slots:
     void on_treeSymbols_itemDoubleClicked(QTreeWidgetItem *item, int column);
 
 private:
+    QTreeWidgetItem* cleanSymbol(QString name, int ln, QString fn,Parser* p);
 
     QString FindPathInProjectFolders(const QModelIndex &index);
 

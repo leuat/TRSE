@@ -317,46 +317,47 @@ void MainWindow::UpdateSymbolTree()
     Parser* p = &e->m_builderThread.m_builder->compiler->m_parser;
     for (QString key : p->m_symTab->m_symbols.keys()) {
         QSharedPointer<Symbol> s = p->m_symTab->m_symbols[key];
-        QString n= s->m_name;
-        QTreeWidgetItem* sym = new QTreeWidgetItem(QStringList() <<n);
-
-        if (n.isUpper())
-            sym->setForeground(0,QBrush(Qt::yellow));
-        else if (n.contains("_"))
-            sym->setForeground(0,QBrush(QColor(50,100,255)));
-        else
-            sym->setForeground(0,QBrush(Qt::cyan));
-
-        sym->setData(0,Qt::UserRole,n);
-        m_symPointers[n] = QSharedPointer<SymbolPointer>(new SymbolPointer(n, 0, m_currentDoc->m_currentFileShort));
-        Symbols->addChild(sym);
+        Symbols->addChild(cleanSymbol(s->m_name, s->m_lineNumber+1, s->m_fileName,p));
     }
 
     for (QString key : p->m_procedures.keys()) {
         QSharedPointer<Node> s = p->m_procedures[key];
         QSharedPointer<NodeProcedureDecl> proc = qSharedPointerDynamicCast<NodeProcedureDecl>(s);
-        QTreeWidgetItem* sym = new QTreeWidgetItem(QStringList() <<proc->m_procName);
-        QString n = proc->m_procName;
-        if (n.isUpper())
-            sym->setForeground(0,QBrush(Qt::yellow));
-        else if (n.contains("_"))
-            sym->setForeground(0,QBrush(QColor(50,100,255)));
-        else if (n.toLower().startsWith("init"))
-            sym->setForeground(0,QBrush(QColor(50,255,100)));
-        else
-            sym->setForeground(0,QBrush(Qt::cyan));
 
-
-        sym->setData(0,Qt::UserRole,n);
-        m_symPointers[proc->m_procName] =
-                QSharedPointer<SymbolPointer>(new SymbolPointer(proc->m_procName, proc->m_op.m_lineNumber+1, proc->m_fileName));
-        Procedures->addChild(sym);
+        Procedures->addChild(cleanSymbol(proc->m_procName, proc->m_op.m_lineNumber+1, proc->m_fileName,p));
     }
 //    Symbols->setExpanded(true);
     Procedures->setExpanded(true);
 
 }
 
+QTreeWidgetItem *MainWindow::cleanSymbol(QString n, int ln, QString fn, Parser* p)
+{
+    QString name = n;
+
+    for (QString s: p->s_usedTRUNames) {
+        name = name.replace(s+"_",s+"::");
+    }
+
+    QTreeWidgetItem* sym = new QTreeWidgetItem(QStringList() <<name);
+
+    if (n.isUpper())
+        sym->setForeground(0,QBrush(Qt::darkGray));
+    else if (n.contains("::"))
+        sym->setForeground(0,QBrush(QColor(50,100,255)));
+    else if (n.toLower().startsWith("init"))
+        sym->setForeground(0,QBrush(Qt::darkGray));
+    else
+        sym->setForeground(0,QBrush(Qt::cyan));
+
+    sym->setData(0,Qt::UserRole,n);
+
+    m_symPointers[n] =
+            QSharedPointer<SymbolPointer>(new SymbolPointer(n, ln, fn));
+
+    return sym;
+
+}
 
 
 
@@ -581,7 +582,7 @@ void MainWindow::OnQuit()
 void MainWindow::ForceOpenFile(QString s, int ln)
 {
     s.remove(getProjectPath());
-    if (s.startsWith("/"))
+    while (s.startsWith("/"))
         s = s.remove(0,1);
 
     if (s=="")
@@ -1609,7 +1610,10 @@ void MainWindow::on_btnNewProject_clicked()
 void MainWindow::on_treeSymbols_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
     QString key = item->data(0,Qt::UserRole).toString();
+    if (!m_symPointers.contains(key))
+        return;
     QSharedPointer<SymbolPointer> sp = m_symPointers[key];
     ForceOpenFile(sp->m_file,sp->m_ln);
-    qDebug() << sp->m_file << " and " <<sp->m_ln;
+//    qDebug() << sp->m_file << " and " <<sp->m_ln;
 }
+

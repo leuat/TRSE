@@ -51,6 +51,7 @@ void Compiler::Parse(QString text, QStringList lst, QString fname)
     m_parser.m_preprocessorDefines[m_ini->getString("assembler").toUpper()]=1;
     m_parser.m_isTRU = m_isTRU;
     Parser::s_usedTRUs.clear(); // None TRU's are marked
+    Parser::s_usedTRUNames.clear(); // None TRU's are marked
     //qDebug() << "******" << m_ini->getString("assembler").toUpper();
     try {
         m_tree = m_parser.Parse( m_projectIni->getdouble("remove_unused_symbols")==1.0 &&

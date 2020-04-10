@@ -69,7 +69,7 @@ public:
     int m_tick = 0;
 
     QVector<ParserBlock> m_parserBlocks;
-    static QStringList s_usedTRUs;
+    static QStringList s_usedTRUs, s_usedTRUNames;
 //    int m_currentParserBlock=-1;
 
     QString m_currentDir, m_currentFileShort;

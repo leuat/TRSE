@@ -177,6 +177,7 @@ void SymbolTable::Merge(SymbolTable *other, bool mergeConstants)
 void SymbolTable::Define(QSharedPointer<Symbol> s, bool isUsed) {
     m_symbols[m_currentProcedure+ s->m_name] = s;
     m_symbols[m_currentProcedure+ s->m_name]->isUsed = isUsed;
+    s->m_fileName = m_currentFilename;
 }
 
 void SymbolTable::Delete() {

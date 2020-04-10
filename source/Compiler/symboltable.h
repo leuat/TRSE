@@ -51,6 +51,8 @@ public:
     QString m_arrayTypeText;
     int m_org = 0;
     int m_size = 0;
+    int m_lineNumber;
+    QString m_fileName;
     bool isUsed = false;
     QSharedPointer<PVar> m_value = nullptr;
     TokenType::Type getTokenType();
@@ -87,6 +89,7 @@ public:
     QString m_name="";
     QStringList m_globalList;
     QString m_gPrefix;
+    QString m_currentFilename="";
 
     ~SymbolTable();
 

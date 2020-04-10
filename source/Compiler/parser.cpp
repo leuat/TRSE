@@ -23,6 +23,7 @@
 #include "source/Compiler/data_pmm.h"
 
 QStringList Parser::s_usedTRUs;
+QStringList Parser::s_usedTRUNames;
 
 
 Parser::Parser()
@@ -1433,8 +1434,10 @@ QSharedPointer<Node> Parser::Program(QString param)
     Eat(TokenType::SEMI);
     QSharedPointer<NodeBlock> block;
 
-    if (m_isTRU)
+    if (m_isTRU) {
         m_symTab->m_gPrefix = progName+"_";
+        s_usedTRUNames.append(progName);
+    }
     else
         m_symTab->m_gPrefix = "";
 
@@ -1854,6 +1857,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     m_lexer->m_text = m_lexer->m_orgText;
     m_removeUnusedDecls = removeUnusedDecls;
     m_symTab = QSharedPointer<SymbolTable>(new SymbolTable());
+    m_symTab->m_currentFilename = m_currentFileShort;
     emit EmitTick("<font color=\"grey\">Parsing pass #1 ");
     m_pass = 0;
   //  RemoveComments();
@@ -2289,8 +2293,10 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
     }
     // NOW do the syms define
     if (!isGlobal)
-    for (QSharedPointer<Symbol> s: syms)
+    for (QSharedPointer<Symbol> s: syms) {
         m_symTab->Define(s ,false);
+        s->m_lineNumber = m_currentToken.m_lineNumber;
+    }
 
 
     QSharedPointer<NodeVarType> typeNode = qSharedPointerDynamicCast<NodeVarType>(TypeSpec());
