@@ -146,7 +146,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
+    QMap<QString, QSharedPointer<SymbolPointer>> m_symPointers;
 
     QSharedPointer<CIniFile> m_iniFile;
  //   CodeEditor m_codeEditor;
@@ -178,10 +178,14 @@ public:
     void keyPressEvent(QKeyEvent* e);
     void keyReleaseEvent(QKeyEvent *e);
 
+    void RestoreSettings();
+
     void ConnectDocument();
 
     void VerifyDefaults();
     void VerifyProjectDefaults();
+
+
 
     void SetDarkPalette();
 
@@ -203,26 +207,16 @@ public:
 public slots:
     void AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBuilder);
 
+    void UpdateSymbolTree();
 
-    void acceptBuildMain() {
-        acceptBuild();
-        if (!VerifyFile(m_currentProject.m_ini->getString("main_ras_file"),"Error trying to build main project file. Please see project settings and specify correct path to main .ras file"))
-            return;
-        LoadDocument(m_currentProject.m_ini->getString("main_ras_file"));
-        m_currentDoc->Build();
+    void acceptBuildMain();
 
-    }
-
-    void acceptRunMain() {
-        if (!VerifyFile(m_currentProject.m_ini->getString("main_ras_file"),"Error trying to build main project file. Please see project settings and specify correct path to main .ras file"))
-            return;
-        LoadDocument(m_currentProject.m_ini->getString("main_ras_file"));
-        m_currentDoc->Run();
-    }
+    void acceptRunMain();
 
     void acceptBuild() {
         ui->lblBuild->setHidden(false);
         QTimer::singleShot(500, ui->lblBuild, &QLabel::hide);
+        UpdateSymbolTree();
 
     }
     void OpenProjectSettings();
@@ -352,6 +346,8 @@ private slots:
     void on_btnProjectDir_clicked();
 
     void on_btnNewProject_clicked();
+
+    void on_treeSymbols_itemDoubleClicked(QTreeWidgetItem *item, int column);
 
 private:
 

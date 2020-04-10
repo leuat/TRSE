@@ -100,6 +100,7 @@ signals:
     void requestBuildMain();
     void requestRunMain();
     void requestSaveAs();
+    void emitSuccess();
 
 };
 

@@ -468,3 +468,11 @@ int Symbol::getLength() {
  //   qDebug() << m_type << m_size <<l;
     return m_size;
 }
+
+SymbolPointer::SymbolPointer() {}
+
+SymbolPointer::SymbolPointer(QString name, int ln, QString file) {
+    m_ln = ln;
+    m_file = file;
+    m_name = name;
+}

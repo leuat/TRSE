@@ -141,10 +141,7 @@ int main(int argc, char *argv[])
         w.m_commandParams+=QString(argv[i]);
     w.show();
     w.AfterStart(oldCurDir);
-
-    QSettings settings("LemonSpawn", "TRSE");
-    w.restoreGeometry(settings.value("MainWindow/geometry").toByteArray());
-    w.restoreState(settings.value("MainWindow/windowState").toByteArray());
+    w.RestoreSettings();
 
     return a.exec();
 }

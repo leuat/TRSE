@@ -208,6 +208,17 @@ void MainWindow::keyReleaseEvent(QKeyEvent *e)
 
 }
 
+void MainWindow::RestoreSettings()
+{
+    QSettings settings("LemonSpawn", "TRSE");
+    restoreGeometry(settings.value("MainWindow/geometry").toByteArray());
+    restoreState(settings.value("MainWindow/windowState").toByteArray());
+
+    ui->psplitter->restoreState(settings.value("MainWindow/psplitter").toByteArray());
+    ui->splitter->restoreState(settings.value("MainWindow/splitter").toByteArray());
+
+}
+
 
 void MainWindow::VerifyDefaults()
 {
@@ -280,6 +291,71 @@ void MainWindow::VerifyProjectDefaults()
 
 
 }
+
+void MainWindow::UpdateSymbolTree()
+{
+    ui->treeSymbols->setHeaderHidden(true);
+
+    FormRasEditor* e = dynamic_cast<FormRasEditor*>(m_currentDoc);
+    if (e==nullptr)
+        return;
+    m_symPointers.clear();
+
+    QTreeWidgetItem* Symbols = new QTreeWidgetItem(QStringList() <<"Symbols");
+    QTreeWidgetItem* Procedures = new QTreeWidgetItem(QStringList() <<"Procedures");
+
+    ui->treeSymbols->clear();
+    ui->treeSymbols->addTopLevelItem(Symbols);
+    ui->treeSymbols->addTopLevelItem(Procedures);
+
+
+    if (e->m_builderThread.m_builder==nullptr)
+        return;
+    if (e->m_builderThread.m_builder->compiler==nullptr)
+        return;
+    Parser* p = &e->m_builderThread.m_builder->compiler->m_parser;
+    for (QString key : p->m_symTab->m_symbols.keys()) {
+        QSharedPointer<Symbol> s = p->m_symTab->m_symbols[key];
+        QString n= s->m_name;
+        QTreeWidgetItem* sym = new QTreeWidgetItem(QStringList() <<n);
+
+        if (n.isUpper())
+            sym->setForeground(0,QBrush(Qt::yellow));
+        else if (n.contains("_"))
+            sym->setForeground(0,QBrush(QColor(50,100,255)));
+        else
+            sym->setForeground(0,QBrush(Qt::cyan));
+
+        sym->setData(0,Qt::UserRole,n);
+        m_symPointers[n] = QSharedPointer<SymbolPointer>(new SymbolPointer(n, 0, m_currentDoc->m_currentFileShort));
+        Symbols->addChild(sym);
+    }
+
+    for (QString key : p->m_procedures.keys()) {
+        QSharedPointer<Node> s = p->m_procedures[key];
+        QSharedPointer<NodeProcedureDecl> proc = qSharedPointerDynamicCast<NodeProcedureDecl>(s);
+        QTreeWidgetItem* sym = new QTreeWidgetItem(QStringList() <<proc->m_procName);
+        QString n = proc->m_procName;
+        if (n.isUpper())
+            sym->setForeground(0,QBrush(Qt::yellow));
+        else if (n.contains("_"))
+            sym->setForeground(0,QBrush(QColor(50,100,255)));
+        else if (n.toLower().startsWith("init"))
+            sym->setForeground(0,QBrush(QColor(50,255,100)));
+        else
+            sym->setForeground(0,QBrush(Qt::cyan));
+
+
+        sym->setData(0,Qt::UserRole,n);
+        m_symPointers[proc->m_procName] =
+                QSharedPointer<SymbolPointer>(new SymbolPointer(proc->m_procName, proc->m_op.m_lineNumber+1, m_currentDoc->m_currentFileShort));
+        Procedures->addChild(sym);
+    }
+//    Symbols->setExpanded(true);
+    Procedures->setExpanded(true);
+
+}
+
 
 
 
@@ -368,6 +444,7 @@ void MainWindow::ConnectDocument()
     connect(m_currentDoc, SIGNAL(emitNewRas()), this, SLOT(on_actionRas_source_file_triggered()));
     connect(m_currentDoc, SIGNAL(emitNewImage()), this, SLOT(on_actionImage_triggered()));
 
+    connect(m_currentDoc, SIGNAL(emitSuccess()), this, SLOT(UpdateSymbolTree()));
 
 
 //    connect(m_currentDoc, SIGNAL(NotifyOtherSourceFiles()), this, SLOT(AcceptUpdateSourceFiles()));
@@ -416,6 +493,8 @@ void MainWindow::RefreshFileList()
     ui->treeFiles->hideColumn(2);
     ui->treeFiles->hideColumn(3);
 
+
+
 }
 
 void MainWindow::AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBuilder)
@@ -445,6 +524,22 @@ void MainWindow::AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBui
 
     }
     FormRasEditor::m_broadcast=true;
+}
+
+void MainWindow::acceptBuildMain() {
+    acceptBuild();
+    if (!VerifyFile(m_currentProject.m_ini->getString("main_ras_file"),"Error trying to build main project file. Please see project settings and specify correct path to main .ras file"))
+        return;
+    LoadDocument(m_currentProject.m_ini->getString("main_ras_file"));
+    m_currentDoc->Build();
+}
+
+void MainWindow::acceptRunMain() {
+    if (!VerifyFile(m_currentProject.m_ini->getString("main_ras_file"),"Error trying to build main project file. Please see project settings and specify correct path to main .ras file"))
+        return;
+    LoadDocument(m_currentProject.m_ini->getString("main_ras_file"));
+    m_currentDoc->Run();
+    UpdateSymbolTree();
 }
 
 
@@ -477,8 +572,9 @@ void MainWindow::OnQuit()
     m_currentProject.Save();
 //    qDebug() << m_currentProject.m_ini->getString("current_file");
 
-    m_iniFile->setVec("splitpos", QVector3D(ui->splitter->sizes()[0],ui->splitter->sizes()[1],0));
+//    m_iniFile->setVec("splitpos", QVector3D(ui->splitter->sizes()[0],ui->splitter->sizes()[1],0));
     m_iniFile->Save();
+
 }
 
 void MainWindow::ForceOpenFile(QString s, int ln)
@@ -626,6 +722,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
         QSettings settings("LemonSpawn", "TRSE");
         settings.setValue("MainWindow/geometry", saveGeometry());
         settings.setValue("MainWindow/windowState", saveState());
+        settings.setValue("MainWindow/psplitter", ui->psplitter->saveState());
+        settings.setValue("MainWindow/splitter", ui->splitter->saveState());
+
         event->accept();
     }
     else
@@ -1504,4 +1603,12 @@ void MainWindow::on_btnProjectDir_clicked()
 void MainWindow::on_btnNewProject_clicked()
 {
     on_actionNew_project_triggered();
+}
+
+void MainWindow::on_treeSymbols_itemDoubleClicked(QTreeWidgetItem *item, int column)
+{
+    QString key = item->data(0,Qt::UserRole).toString();
+    QSharedPointer<SymbolPointer> sp = m_symPointers[key];
+    ForceOpenFile(sp->m_file,sp->m_ln);
+    qDebug() << sp->m_file << " and " <<sp->m_ln;
 }

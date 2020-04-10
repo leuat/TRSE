@@ -30,6 +30,18 @@
 #include "token.h"
 #include "syntax.h"
 #include "source/LeLib/util/util.h"
+
+class SymbolPointer : public QObject {
+    Q_OBJECT
+public:
+    QString m_name, m_file;
+    int m_ln;
+    SymbolPointer();
+    SymbolPointer(QString name, int ln, QString file);
+
+};
+
+
 class Symbol {
 public:
     QString m_name;

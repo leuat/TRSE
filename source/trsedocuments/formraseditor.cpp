@@ -982,6 +982,9 @@ void FormRasEditor::HandleBuildComplete()
     highlighter->rehighlight();
 //    ui->txtEditor->viewport()->update();
     ui->txtEditor->m_textChanged = keepTextChanged;
+
+    emit emitSuccess();
+
     if (m_run) {
         m_builderThread.m_builder->AddMessage("<br>Running program...");
         HandleUpdateBuildText();
