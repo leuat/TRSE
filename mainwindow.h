@@ -59,10 +59,29 @@
 #include "source/tutorials.h"
 #include <QDesktopServices>
 #include "source/dialognewproject.h"
+#include <QSortFilterProxyModel>
 
 namespace Ui {
 class MainWindow;
 }
+
+
+class MySortFilterProxyModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
+
+public:
+    MySortFilterProxyModel(QObject *parent = 0): QSortFilterProxyModel(parent)
+    {
+    }
+    QString searchText;
+
+
+protected:
+    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
+
+
+} ;
 
 
 class TRSEProject {
@@ -176,8 +195,8 @@ public:
     void mousePressEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
     void wheelEvent(QWheelEvent *event);
-    void keyPressEvent(QKeyEvent* e);
-    void keyReleaseEvent(QKeyEvent *e);
+    void keyPressEvent(QKeyEvent* e) override;
+    void keyReleaseEvent(QKeyEvent *e) override;
 
     void RestoreSettings();
 
@@ -208,9 +227,11 @@ public:
 public slots:
     void AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBuilder);
 
-    void UpdateSymbolTree();
+    void UpdateSymbolTree(QString search="");
 
     void acceptBuildMain();
+
+    void acceptSearchSymbols();
 
     void acceptRunMain();
 
@@ -350,8 +371,11 @@ private slots:
 
     void on_treeSymbols_itemDoubleClicked(QTreeWidgetItem *item, int column);
 
+
+    void on_leFilterSymbols_textChanged(const QString &arg1);
+
 private:
-    void cleanSymbol(QTreeWidgetItem* parent, QString name, int ln, QString fn,Parser* p);
+    void cleanSymbol(QTreeWidgetItem* parent, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);
 
     QString FindPathInProjectFolders(const QModelIndex &index);
 

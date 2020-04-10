@@ -201,6 +201,8 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 
     Data::data.forceRedraw = true;
     Data::data.Redraw();
+
+
     if (m_currentDoc!=nullptr)
         m_currentDoc->keyPressEvent(e);
 }
@@ -294,7 +296,7 @@ void MainWindow::VerifyProjectDefaults()
 
 }
 
-void MainWindow::UpdateSymbolTree()
+void MainWindow::UpdateSymbolTree(QString search)
 {
 
     FormRasEditor* e = dynamic_cast<FormRasEditor*>(m_currentDoc);
@@ -317,24 +319,33 @@ void MainWindow::UpdateSymbolTree()
     Parser* p = &e->m_builderThread.m_builder->compiler->m_parser;
     for (QString key : p->m_symTab->m_symbols.keys()) {
         QSharedPointer<Symbol> s = p->m_symTab->m_symbols[key];
-        cleanSymbol(Symbols, s->m_name, s->m_lineNumber, s->m_fileName,p);
+        cleanSymbol(Symbols, s->m_name, s->m_lineNumber, s->m_fileName,p,Qt::yellow,search);
     }
     m_symbolItems.clear();
 
     for (QString key : p->m_procedures.keys()) {
         QSharedPointer<Node> s = p->m_procedures[key];
         QSharedPointer<NodeProcedureDecl> proc = qSharedPointerDynamicCast<NodeProcedureDecl>(s);
-
-        cleanSymbol(Procedures,proc->m_procName, proc->m_op.m_lineNumber, proc->m_fileName,p);
+       cleanSymbol(Procedures,proc->m_procName, proc->m_op.m_lineNumber, proc->m_fileName,p,Qt::cyan,search);
     }
-//    Symbols->setExpanded(true);
     Procedures->setExpanded(true);
+    if (search!="")
+        Symbols->setExpanded(true);
 
 }
 
-void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString n, int ln, QString fn, Parser* p)
+void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString n, int ln, QString fn, Parser* p, QColor bcol, QString search)
 {
     QString name = n;
+
+    bool exp = false;
+    if (search!="") {
+        // filter
+        if (!n.toLower().contains(search.toLower()))
+            return;
+        exp = true;
+    }
+
 
     for (QString s: p->s_usedTRUNames) {
         name = name.replace(s+"_",s+"::");
@@ -343,7 +354,7 @@ void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString n, int ln, QString
     QTreeWidgetItem* sym = new QTreeWidgetItem(QStringList() <<name);
 
     QString type = "";
-    QColor col = Qt::cyan;
+    QColor col = bcol;
 
     if (n.isUpper()) {
         col = Qt::darkGray;
@@ -391,6 +402,10 @@ void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString n, int ln, QString
     }
     QTreeWidgetItem* grp = m_symbolItems[type];
     grp->addChild(sym);
+    if (exp) {
+        parent->setExpanded(true);
+        grp->setExpanded(true);
+    }
 
 
 //    for (QTreeWidgetItem* it : parent->)
@@ -489,6 +504,7 @@ void MainWindow::ConnectDocument()
     connect(m_currentDoc, SIGNAL(emitNewImage()), this, SLOT(on_actionImage_triggered()));
 
     connect(m_currentDoc, SIGNAL(emitSuccess()), this, SLOT(UpdateSymbolTree()));
+    connect(m_currentDoc, SIGNAL(emitSearchSymbols()), this, SLOT(acceptSearchSymbols()));
 
 
 //    connect(m_currentDoc, SIGNAL(NotifyOtherSourceFiles()), this, SLOT(AcceptUpdateSourceFiles()));
@@ -576,6 +592,12 @@ void MainWindow::acceptBuildMain() {
         return;
     LoadDocument(m_currentProject.m_ini->getString("main_ras_file"));
     m_currentDoc->Build();
+}
+
+void MainWindow::acceptSearchSymbols()
+{
+    ui->leFilterSymbols->clear();
+    ui->leFilterSymbols->setFocus();
 }
 
 void MainWindow::acceptRunMain() {
@@ -1659,3 +1681,24 @@ void MainWindow::on_treeSymbols_itemDoubleClicked(QTreeWidgetItem *item, int col
 //    qDebug() << sp->m_file << " and " <<sp->m_ln;
 }
 
+
+bool MySortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
+{
+    // check the current item
+    bool result = QSortFilterProxyModel::filterAcceptsRow(source_row,source_parent);
+    QModelIndex currntIndex = sourceModel()->index(source_row, 0, source_parent);
+    if (sourceModel()->hasChildren(currntIndex)) {
+        // if it has sub items
+        for (int i = 0; i < sourceModel()->rowCount(currntIndex) && !result; ++i) {
+            // keep the parent if a children is shown
+            result = result || filterAcceptsRow(i, currntIndex);
+        }
+    }
+    return result;
+}
+
+
+void MainWindow::on_leFilterSymbols_textChanged(const QString &arg1)
+{
+    UpdateSymbolTree(arg1);
+}

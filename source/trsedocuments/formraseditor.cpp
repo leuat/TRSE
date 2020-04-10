@@ -522,6 +522,10 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         m_searchFromPos = ui->txtEditor->textCursor().position();
         ui->leSearch->setFocus();
     }
+    if (e->key()==Qt::Key_G && (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+        emit emitSearchSymbols();
+    }
+
 
     if (e->key()==Qt::Key_F1) {
         QTextCursor tc = ui->txtEditor->textCursor();
