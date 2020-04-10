@@ -135,6 +135,8 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle("Turbo Rascal Syntax error, \";\" expected but \"BEGIN\" Version " + Data::data.version);
     ui->textBrowser->setText( ui->textBrowser->toHtml().replace("@version",Data::data.version));
 
+    ui->treeSymbols->setHeaderHidden(true);
+
 }
 
 
@@ -294,7 +296,6 @@ void MainWindow::VerifyProjectDefaults()
 
 void MainWindow::UpdateSymbolTree()
 {
-    ui->treeSymbols->setHeaderHidden(true);
 
     FormRasEditor* e = dynamic_cast<FormRasEditor*>(m_currentDoc);
     if (e==nullptr)
@@ -1610,5 +1611,5 @@ void MainWindow::on_treeSymbols_itemDoubleClicked(QTreeWidgetItem *item, int col
     QString key = item->data(0,Qt::UserRole).toString();
     QSharedPointer<SymbolPointer> sp = m_symPointers[key];
     ForceOpenFile(sp->m_file,sp->m_ln);
-    qDebug() << sp->m_file << " and " <<sp->m_ln;
+//    qDebug() << sp->m_file << " and " <<sp->m_ln;
 }
