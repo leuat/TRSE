@@ -49,7 +49,7 @@ public:
 
     static QString types[];
     static QString getType(Type t) {
-        if (t>=no_types)
+        if (t>=no_types || t<=0)
             return types[NADA];
         return types[t];
     }
@@ -61,7 +61,7 @@ public:
     QString m_value;
     Type m_type;
 
-    TokenType() {}
+    TokenType() {m_type = NADA;}
     TokenType (Type t, QString v) {
         m_type = t;
         m_value = v;
@@ -72,7 +72,7 @@ public:
 class Token
 {
 public:
-    TokenType::Type m_type;
+    TokenType::Type m_type = TokenType::NADA;
     QString m_value;
     int m_intVal=0;
     int m_lineNumber=0;

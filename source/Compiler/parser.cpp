@@ -2316,15 +2316,21 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
            if (s->m_type=="long")
                s->m_size =4;
        }
+      // qDebug() << "A";
        s->m_size = typeNode->m_op.m_intVal;
+       if (s->m_size==0)
+           s->m_size = typeNode->m_data.count();
+//       qDebug() << "B";
        s->m_arrayType = typeNode->m_arrayVarType.m_type;
-//       qDebug() << typeNode->m_arrayVarType.m_type;
+  //     qDebug() << typeNode->m_arrayVarType.m_type;
        s->m_arrayTypeText = TokenType::getType(typeNode->m_arrayVarType.m_type);
+    //   qDebug() << "C";
        if (typeNode->m_arrayVarType.m_type==TokenType::RECORD) {
   //         qDebug() << typeNode->m_op.m_value << TokenType::getType(typeNode->m_op.m_type)  << TokenType::getType(typeNode->m_arrayVarType.m_type);
 //           ;
            s->m_arrayTypeText = typeNode->m_arrayVarType.m_value;
        }
+//       qDebug() << "D";
     }
 
 
