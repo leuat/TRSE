@@ -23,9 +23,10 @@ var
 	const no : byte = 32;
 	// Monster array allocation will fail if it is an array. 
 	monsters : array[no] of monster_type;
-	m: monster_type;
 	// The following is allowed even if monster_type contains an array
 	singleMonster : monster_type;
+
+
 
 /*
 	Initialize all the monsters
