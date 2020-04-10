@@ -308,7 +308,7 @@ void MainWindow::UpdateSymbolTree()
     ui->treeSymbols->clear();
     ui->treeSymbols->addTopLevelItem(Symbols);
     ui->treeSymbols->addTopLevelItem(Procedures);
-
+    m_symbolItems.clear();
 
     if (e->m_builderThread.m_builder==nullptr)
         return;
@@ -317,21 +317,22 @@ void MainWindow::UpdateSymbolTree()
     Parser* p = &e->m_builderThread.m_builder->compiler->m_parser;
     for (QString key : p->m_symTab->m_symbols.keys()) {
         QSharedPointer<Symbol> s = p->m_symTab->m_symbols[key];
-        Symbols->addChild(cleanSymbol(s->m_name, s->m_lineNumber, s->m_fileName,p));
+        cleanSymbol(Symbols, s->m_name, s->m_lineNumber, s->m_fileName,p);
     }
+    m_symbolItems.clear();
 
     for (QString key : p->m_procedures.keys()) {
         QSharedPointer<Node> s = p->m_procedures[key];
         QSharedPointer<NodeProcedureDecl> proc = qSharedPointerDynamicCast<NodeProcedureDecl>(s);
 
-        Procedures->addChild(cleanSymbol(proc->m_procName, proc->m_op.m_lineNumber, proc->m_fileName,p));
+        cleanSymbol(Procedures,proc->m_procName, proc->m_op.m_lineNumber, proc->m_fileName,p);
     }
 //    Symbols->setExpanded(true);
     Procedures->setExpanded(true);
 
 }
 
-QTreeWidgetItem *MainWindow::cleanSymbol(QString n, int ln, QString fn, Parser* p)
+void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString n, int ln, QString fn, Parser* p)
 {
     QString name = n;
 
@@ -341,16 +342,30 @@ QTreeWidgetItem *MainWindow::cleanSymbol(QString n, int ln, QString fn, Parser* 
 
     QTreeWidgetItem* sym = new QTreeWidgetItem(QStringList() <<name);
 
-    if (n.isUpper())
-        sym->setForeground(0,QBrush(Qt::darkGray));
-    else if (name.contains("::"))
-        sym->setForeground(0,QBrush(QColor(50,100,255)));
-    else if (n.toLower().startsWith("init"))
-        sym->setForeground(0,QBrush(Qt::darkGray));
-    else if (p->m_symTab->m_globalList.contains(n))
+    QString type = "";
+    QColor col = Qt::cyan;
+
+    if (n.isUpper()) {
+        col = Qt::darkGray;
+        type = "Built-in";
+    }
+    else if (name.contains("::")) {
+        col = QColor(50,100,255);
+        type = name.split("::").first();
+    }
+    else if (n.toLower().startsWith("init")) {
+        col = Qt::darkGray;
+        type = "Init";
+    }
+    else if (p->m_symTab->m_globalList.contains(n)) {
         sym->setForeground(0,QBrush(Qt::gray));
-    else
-        sym->setForeground(0,QBrush(Qt::cyan));
+        col = Qt::gray;
+        type = "Built-in";
+    }
+//    else
+  //      sym->setForeground(0,QBrush(Qt::cyan));
+
+    sym->setForeground(0,QBrush(col));
 
     sym->setData(0,Qt::UserRole,n);
 
@@ -364,7 +379,25 @@ QTreeWidgetItem *MainWindow::cleanSymbol(QString n, int ln, QString fn, Parser* 
     m_symPointers[n] =
             QSharedPointer<SymbolPointer>(new SymbolPointer(n, ln+1, fn));
 
-    return sym;
+    if (type=="") {
+        parent->addChild(sym);
+        return;
+    }
+    if (!m_symbolItems.contains(type)) {
+        QTreeWidgetItem* grp = new QTreeWidgetItem(QStringList() << type);
+        grp->setForeground(0,QBrush(col));
+        m_symbolItems[type] = grp;
+        parent->insertChild(0,grp);
+    }
+    QTreeWidgetItem* grp = m_symbolItems[type];
+    grp->addChild(sym);
+
+
+//    for (QTreeWidgetItem* it : parent->)
+//    parent->ch
+
+
+//    return sym;
 
 }
 

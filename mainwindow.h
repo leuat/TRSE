@@ -149,6 +149,7 @@ public:
     QMap<QString, QSharedPointer<SymbolPointer>> m_symPointers;
 
     QSharedPointer<CIniFile> m_iniFile;
+    QMap<QString, QTreeWidgetItem*> m_symbolItems;
  //   CodeEditor m_codeEditor;
     CustomFileSystemModel *fileSystemModel = nullptr;
     QStringList m_commandParams;
@@ -350,7 +351,7 @@ private slots:
     void on_treeSymbols_itemDoubleClicked(QTreeWidgetItem *item, int column);
 
 private:
-    QTreeWidgetItem* cleanSymbol(QString name, int ln, QString fn,Parser* p);
+    void cleanSymbol(QTreeWidgetItem* parent, QString name, int ln, QString fn,Parser* p);
 
     QString FindPathInProjectFolders(const QModelIndex &index);
 

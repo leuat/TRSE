@@ -24,7 +24,7 @@
 #include "source/Compiler/errorhandler.h"
 #include <QElapsedTimer>
 #include "source/LeLib/util/util.h"
-
+#include <QScrollBar>
 
 
 
@@ -538,10 +538,10 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         for (QSharedPointer<Node>n : m_builderThread.m_builder->compiler->m_parser.m_proceduresOnly) {
             QSharedPointer<NodeProcedureDecl> np = qSharedPointerDynamicCast<NodeProcedureDecl>(n);
             if (np->m_procName.toLower()==word.toLower()) {
-                int ln=np->m_op.m_lineNumber;
-                QTextCursor cursor(ui->txtEditor->document()->findBlockByLineNumber(ln));
-                ui->txtEditor->setTextCursor(cursor);
-
+                GotoLine(np->m_op.m_lineNumber);
+                //QTextCursor cursor(ui->txtEditor->document()->findBlockByLineNumber(ln));
+                //ui->txtEditor->setTextCursor(cursor);
+//                GotoLine(ln);
             }
         }
 
@@ -575,8 +575,17 @@ void FormRasEditor::TestForCodeOverwrite(int codeEnd, QString& output)
 
 void FormRasEditor::GotoLine(int ln)
 {
+//    QTextCursor cursor(ui->txtEditor->document()->findBlockByLineNumber(ln-1));
+//    int scrollPos =  ui->txtEditor->verticalScrollBar()->value();
+//    ui->txtEditor->setTextCursor(cursor);
+//    ui->txtEditor->verticalScrollBar()->setValue(ui->txtEditor->verticalScrollBar()->value()+16);
+    ui->txtEditor->moveCursor(QTextCursor::End);
     QTextCursor cursor(ui->txtEditor->document()->findBlockByLineNumber(ln-1));
     ui->txtEditor->setTextCursor(cursor);
+
+    // reset the cursor position (and scroll back again)
+  //  setTextCursor(prevCursor);
+    // scroll again to the remembered position
 }
 
 
