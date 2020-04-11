@@ -409,6 +409,10 @@ void FormRasEditor::Setup()
     setupEditor();
 }
 
+void FormRasEditor::Focus() {
+    ui->txtEditor->setFocus();
+}
+
 
 void FormRasEditor::Run()
 {

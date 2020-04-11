@@ -36,7 +36,6 @@ begin
 		// Calculate an y sine				
 		y:=sine[time]/8;
 		// Multiply with scanlines
-		asm(";here");
 		y:=y*80;
 
 

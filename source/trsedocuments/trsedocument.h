@@ -83,6 +83,7 @@ public:
 
     }
 
+    virtual void Focus() {}
     virtual void keyPressEvent(QKeyEvent *e);
 
 

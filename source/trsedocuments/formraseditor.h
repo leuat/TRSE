@@ -113,6 +113,7 @@ public:
     bool BuildDiskFiles(QStringList& d64Params, QString data);
     void Setup();
 
+    void Focus() override;
 
 
     void Run() override;

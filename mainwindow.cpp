@@ -203,8 +203,13 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
     Data::data.Redraw();
 
 
-    if (m_currentDoc!=nullptr)
+    if (m_currentDoc!=nullptr) {
         m_currentDoc->keyPressEvent(e);
+    }
+    if (e->key()==Qt::Key_F2) {
+        m_currentDoc->Focus();
+    }
+
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *e)
@@ -311,6 +316,7 @@ void MainWindow::UpdateSymbolTree(QString search)
 
     m_symPointers.clear();
     m_orgSymPointers.clear();
+    m_treeItems.clear();
 
     QTreeWidgetItem* Symbols = new QTreeWidgetItem(QStringList() <<"Symbols");
     QTreeWidgetItem* Procedures = new QTreeWidgetItem(QStringList() <<"Procedures");
@@ -328,6 +334,8 @@ void MainWindow::UpdateSymbolTree(QString search)
     ui->treeSymbols->clear();
     ui->treeSymbols->addTopLevelItem(Symbols);
     ui->treeSymbols->addTopLevelItem(Procedures);
+
+
     m_symbolItems.clear();
 
 
@@ -408,6 +416,7 @@ void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString on, QString n, int
     sym->setForeground(0,QBrush(col));
     sym->setData(0,Qt::UserRole,n);
     sym->setFont(0,QFont(m_iniFile->getString("editor_font_symbols"),m_iniFile->getInt("font_size_symbols")));
+    m_treeItems[on] = sym;
 
     int l = ln;
     QString f;
@@ -1706,7 +1715,14 @@ void MainWindow::on_treeSymbols_itemDoubleClicked(QTreeWidgetItem *item, int col
         return;
     QSharedPointer<SymbolPointer> sp = m_symPointers[key];
     ForceOpenFile(sp->m_file,sp->m_ln);
+    m_currentDoc->Focus();
+
 //    qDebug() << sp->m_file << " and " <<sp->m_ln;
+}
+
+void MainWindow::on_treeSymbols_itemClicked(QTreeWidgetItem *item, int column)
+{
+    on_treeSymbols_itemDoubleClicked(item,column);
 }
 
 
@@ -1717,7 +1733,9 @@ void MainWindow::GotoSymbol(QString s)
         return;
     QSharedPointer<SymbolPointer> sp = m_orgSymPointers[s];
     ForceOpenFile(sp->m_file,sp->m_ln);
-
+    m_currentDoc->Focus();
+//    qDebug() <<  s  << m_treeItems.keys();
+    ui->treeSymbols->setCurrentItem(m_treeItems[s]);
 }
 
 
@@ -1731,3 +1749,4 @@ void MainWindow::on_actionLook_up_symbol_F2_triggered()
 {
     m_currentDoc->LookupSymbolUnderCursor();
 }
+

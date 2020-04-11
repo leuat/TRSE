@@ -148,6 +148,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     QMap<QString, QSharedPointer<SymbolPointer>> m_symPointers, m_orgSymPointers;
+    QMap<QString, QTreeWidgetItem*> m_treeItems;
 
     QSharedPointer<CIniFile> m_iniFile;
     QMap<QString, QTreeWidgetItem*> m_symbolItems;
@@ -357,6 +358,8 @@ private slots:
     void on_leFilterSymbols_textChanged(const QString &arg1);
 
     void on_actionLook_up_symbol_F2_triggered();
+
+    void on_treeSymbols_itemClicked(QTreeWidgetItem *item, int column);
 
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);
