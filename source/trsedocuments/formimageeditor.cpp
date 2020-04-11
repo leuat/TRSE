@@ -1143,7 +1143,6 @@ void FormImageEditor::updateCharSet()
 //   ui->lstCharMap->setViewMode(QListView::IconMode);
    ui->lstCharMap->setColumnCount(width);
 //   ui->lstCharMap->setRowCount(1+maps.count()/width);
-   ui->lstCharMap->setRowCount(height);
     int cnt=0;
     int j=0;
     int i=0;
@@ -1190,6 +1189,7 @@ void FormImageEditor::updateCharSet()
 //    ui->lstCharMap->
 //    int size = (ui->lstCharMap->rect().width()-ui->lstCharMap->spacing())/8;
   //  ui->lstCharMap->setIconSize(QSize(size,size));
+    ui->lstCharMap->setRowCount(j);
 
     ui->lstCharMap->horizontalHeader()->setMinimumSectionSize(1);
     ui->lstCharMap->verticalHeader()->setMinimumSectionSize(1);
