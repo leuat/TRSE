@@ -42,5 +42,5 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 exomizer_toggle = 0
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/PumpKid/
-open_files = ,pumpkid.ras, game.ras
-current_file = pumpkid.ras
+open_files = ,gametimer.ras, candy.ras, titles.ras, sound.ras, pumpkid.ras, game.ras
+current_file = gametimer.ras

@@ -302,21 +302,30 @@ void MainWindow::UpdateSymbolTree(QString search)
     FormRasEditor* e = dynamic_cast<FormRasEditor*>(m_currentDoc);
     if (e==nullptr)
         return;
+
+
     m_symPointers.clear();
 
     QTreeWidgetItem* Symbols = new QTreeWidgetItem(QStringList() <<"Symbols");
     QTreeWidgetItem* Procedures = new QTreeWidgetItem(QStringList() <<"Procedures");
-
-    ui->treeSymbols->clear();
-    ui->treeSymbols->addTopLevelItem(Symbols);
-    ui->treeSymbols->addTopLevelItem(Procedures);
-    m_symbolItems.clear();
 
     if (e->m_builderThread.m_builder==nullptr)
         return;
     if (e->m_builderThread.m_builder->compiler==nullptr)
         return;
     Parser* p = &e->m_builderThread.m_builder->compiler->m_parser;
+
+
+    if (p->m_symTab->m_symbols.keys().count()==0)
+        return;
+
+    ui->treeSymbols->clear();
+    ui->treeSymbols->addTopLevelItem(Symbols);
+    ui->treeSymbols->addTopLevelItem(Procedures);
+    m_symbolItems.clear();
+
+
+
     for (QString key : p->m_symTab->m_symbols.keys()) {
         QSharedPointer<Symbol> s = p->m_symTab->m_symbols[key];
         QString t = s->m_type;
@@ -619,7 +628,7 @@ void MainWindow::acceptRunMain() {
         return;
     LoadDocument(m_currentProject.m_ini->getString("main_ras_file"));
     m_currentDoc->Run();
-    UpdateSymbolTree();
+//    UpdateSymbolTree();
 }
 
 

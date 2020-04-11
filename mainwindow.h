@@ -238,7 +238,7 @@ public slots:
     void acceptBuild() {
         ui->lblBuild->setHidden(false);
         QTimer::singleShot(500, ui->lblBuild, &QLabel::hide);
-        UpdateSymbolTree();
+        //UpdateSymbolTree();
 
     }
     void OpenProjectSettings();
