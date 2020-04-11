@@ -308,7 +308,8 @@ void MainWindow::VerifyProjectDefaults()
 
 void MainWindow::UpdateSymbolTree(QString search)
 {
-
+    if (!m_currentDoc->m_currentFileShort.toLower().endsWith(".ras"))
+        return;
     FormRasEditor* e = dynamic_cast<FormRasEditor*>(m_currentDoc);
     if (e==nullptr)
         return;

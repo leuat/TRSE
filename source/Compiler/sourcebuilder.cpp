@@ -186,9 +186,12 @@ void SourceBuilder::BuildSuccesString()
 {
     QString text ="Build <b><font color=\"#90FF90\">Successful</font>!</b> ( "+  (Util::MilisecondToString(m_system->timer.elapsed())) +")<br>";
 //    text+="Assembler file saved to : <b>" + m_filename+".asm</b><br>";
-    text+="Compiled <b>" + QString::number(compiler->m_parser.m_lexer->m_lines.count()) +"</b> lines of Turbo Rascal to <b>";
+    if (compiler!=nullptr && compiler->m_parser.m_lexer!=nullptr)
+        text+="Compiled <b>" + QString::number(compiler->m_parser.m_lexer->m_lines.count()) +"</b> lines of Turbo Rascal to <b>";
+    if (compiler!=nullptr && compiler->m_assembler!=nullptr)
     text+=QString::number(compiler->m_assembler->getLineCount()) + "</b> lines of assembler instructions (and variables/labels)<br>";
-    if (m_iniFile->getdouble("post_optimize")==1) {
+    if (m_iniFile->getdouble("post_optimize")==1 && compiler!=nullptr && compiler->m_assembler!=nullptr) {
+
         text+="Post-optimized away <b>" + QString::number(compiler->m_assembler->m_totalOptimizedLines) +"</b> lines of assembler instructions ";
         text=text+"(<font color=\"#70FF40\"> " + QString::number((int)(100.0*(float)compiler->m_assembler->m_totalOptimizedLines/(float)compiler->m_assembler->getLineCount()))+  " % </font> of total ) <br>";
 
