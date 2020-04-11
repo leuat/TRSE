@@ -108,6 +108,8 @@ void AsmMOS6502::InitCStrings()
 
 bool AsmMOS6502::DeclareRecord(QString name, QString type, int count, QStringList data, QString pos)
 {
+    if (pos!="")
+        StartMemoryBlock(pos);
     if (m_symTab->m_records.contains(type)) {
 //        ErrorHandler::e.Error("Record types not implemented yet: " + type);
         QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
@@ -139,8 +141,13 @@ bool AsmMOS6502::DeclareRecord(QString name, QString type, int count, QStringLis
 //                Asm("org "+n+"+" +QString::number(count*scale));
 
         }
+        if (pos!="")
+            EndMemoryBlock();
+
         return true;
     }
+    if (pos!="")
+        EndMemoryBlock();
     return false;
 }
 

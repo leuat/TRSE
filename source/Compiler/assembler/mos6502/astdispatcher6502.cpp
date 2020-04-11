@@ -1220,9 +1220,8 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeVarDecl> node)
         node->m_dataSize=1;
         if (t->getValue(as).toLower()=="integer") node->m_dataSize = 2;
         QString typeVal = t->getValue(as);
-        if (t->m_flag==1)
+        if (t->m_flag==1 && (!as->m_symTab->m_records.contains(typeVal)))
             typeVal="const";
-
         as->DeclareVariable(v->value, typeVal, t->initVal,t->m_position);
         // Increase by data counter IF
         if (t->m_flag==1)

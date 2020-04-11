@@ -2301,7 +2301,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
         s->m_lineNumber = m_currentToken.m_lineNumber;
     }
 
-
+//    qDebug() << "CURVAL " <<m_currentToken.m_value;
     QSharedPointer<NodeVarType> typeNode = qSharedPointerDynamicCast<NodeVarType>(TypeSpec());
     // Set all types
 
@@ -2385,6 +2385,8 @@ QSharedPointer<Node> Parser::TypeSpec()
 {
     Token t = m_currentToken;
 
+
+
     if (m_currentToken.m_type == TokenType::INCBIN || m_currentToken.m_type == TokenType::INCSID || m_currentToken.m_type == TokenType::INCNSF) {
         Eat();
 //        qDebug() << Node::m_staticBlockInfo.m_blockPos;
@@ -2463,13 +2465,14 @@ QSharedPointer<Node> Parser::TypeSpec()
 
             }
 
-        }
+        } // end of array
 
         QString position = "";
         if (m_currentToken.m_type==TokenType::AT || m_currentToken.m_type==TokenType::ABSOLUT) {
             Eat();
             //position = m_currentToken.getNumAsHexString();
             position = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
+
            // Eat(m_currentToken.m_type);
         }
         QStringList flags;
@@ -2535,11 +2538,14 @@ QSharedPointer<Node> Parser::TypeSpec()
     if (m_currentToken.m_type==TokenType::AT || m_currentToken.m_type==TokenType::ABSOLUT) {
         Eat();
         position = m_currentToken.getNumAsHexString();
-
         Eat(m_currentToken.m_type);
-        QSharedPointer<NodeVarType> nt = QSharedPointer<NodeVarType>(new NodeVarType(t,position));
+        QSharedPointer<NodeVarType> nt = QSharedPointer<NodeVarType>(new NodeVarType(t, position ));
+//        qDebug() << "IN TYPESPEC : " << t.m_value << TokenType::getType(t.m_type);
         nt->m_position = position;
+        // Only declare as CONST if NOT a record
         nt->m_flag = 1;
+//        VerifyTypeSpec(t);
+
         return nt;
     }
 
