@@ -44,7 +44,7 @@ FormRasEditor::FormRasEditor(QWidget *parent) :
     connect(&m_builderThread, SIGNAL(emitSuccess()), this, SLOT(HandleBuildComplete()));
     connect(&m_builderThread, SIGNAL(emitError()), this, SLOT(HandleBuildError()));
 
-
+    m_type = RAS;
     m_timer.start();
     m_lastBuild = m_timer.elapsed();
 }

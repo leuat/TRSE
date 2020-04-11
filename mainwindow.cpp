@@ -231,6 +231,8 @@ void MainWindow::VerifyDefaults()
 
     if (!m_iniFile->contains("font_size"))
         m_iniFile->setFloat("font_size", 12);
+    if (!m_iniFile->contains("font_size_symbols"))
+        m_iniFile->setFloat("font_size_symbols", 10);
     if (!m_iniFile->contains("hide_exomizer_footprint"))
         m_iniFile->setFloat("hide_exomizer_footprint", 1);
 
@@ -239,6 +241,9 @@ void MainWindow::VerifyDefaults()
 
     if (!m_iniFile->contains("editor_font"))
         m_iniFile->setString("editor_font","Courier");
+
+    if (!m_iniFile->contains("editor_font_symbols"))
+        m_iniFile->setString("editor_font_symbols","Courier");
 
     if (!m_iniFile->contains("auto_inject"))
         m_iniFile->setFloat("auto_inject", 1);
@@ -400,8 +405,8 @@ void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString n, int ln, QString
   //      sym->setForeground(0,QBrush(Qt::cyan));
 
     sym->setForeground(0,QBrush(col));
-
     sym->setData(0,Qt::UserRole,n);
+    sym->setFont(0,QFont(m_iniFile->getString("editor_font_symbols"),m_iniFile->getInt("font_size_symbols")));
 
     int l = ln;
     QString f;
@@ -495,7 +500,6 @@ void MainWindow::LoadDocument(QString fileName)
     m_currentDoc = editor;
     ConnectDocument();
 
-    connect(m_currentDoc, SIGNAL(OpenOtherFile(QString, int )), this, SLOT(ForceOpenFile(QString , int)));
 }
 
 bool MainWindow::VerifyFile(QString file, QString message)
@@ -527,15 +531,17 @@ void MainWindow::ConnectDocument()
     connect(m_currentDoc, SIGNAL(emitNewImage()), this, SLOT(on_actionImage_triggered()));
 
     connect(m_currentDoc, SIGNAL(emitSuccess()), this, SLOT(UpdateSymbolTree()));
-    connect(m_currentDoc, SIGNAL(emitSearchSymbols()), this, SLOT(acceptSearchSymbols()));
+
 
 
 //    connect(m_currentDoc, SIGNAL(NotifyOtherSourceFiles()), this, SLOT(AcceptUpdateSourceFiles()));
-    if (dynamic_cast<FormRasEditor*>(m_currentDoc)!=nullptr)
-       QObject::connect((FormRasEditor*)m_currentDoc, &FormRasEditor::NotifyOtherSourceFiles, this, &MainWindow::AcceptUpdateSourceFiles);
+    if (m_currentDoc->m_type == TRSEDocument::RAS) {
+        connect((FormRasEditor*)m_currentDoc, &FormRasEditor::NotifyOtherSourceFiles, this, &MainWindow::AcceptUpdateSourceFiles);
+        connect(m_currentDoc, SIGNAL(emitSearchSymbols()), this, SLOT(acceptSearchSymbols()));
+        connect(m_currentDoc, SIGNAL(OpenOtherFile(QString, int )), this, SLOT(ForceOpenFile(QString , int)));
+    }
+
 }
-
-
 
 void MainWindow::SetupFileList()
 {
@@ -1705,20 +1711,6 @@ void MainWindow::on_treeSymbols_itemDoubleClicked(QTreeWidgetItem *item, int col
 }
 
 
-bool MySortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
-{
-    // check the current item
-    bool result = QSortFilterProxyModel::filterAcceptsRow(source_row,source_parent);
-    QModelIndex currntIndex = sourceModel()->index(source_row, 0, source_parent);
-    if (sourceModel()->hasChildren(currntIndex)) {
-        // if it has sub items
-        for (int i = 0; i < sourceModel()->rowCount(currntIndex) && !result; ++i) {
-            // keep the parent if a children is shown
-            result = result || filterAcceptsRow(i, currntIndex);
-        }
-    }
-    return result;
-}
 
 
 void MainWindow::on_leFilterSymbols_textChanged(const QString &arg1)

@@ -25,6 +25,7 @@
 #include <QDialog>
 #include "source/LeLib/util/cinifile.h"
 #include <QFontDatabase>
+#include <QComboBox>
 namespace Ui {
 class DialogTRSESettings;
 }
@@ -64,6 +65,9 @@ public:
 
     ~DialogTRSESettings();
 
+    void FillFont(QComboBox* cbmFont, QString keep);
+
+
 private slots:
     void on_pushButton_clicked();
 
@@ -100,6 +104,8 @@ private slots:
     void on_btnNasm_clicked();
 
     void on_btnPetEmulator_clicked();
+
+    void on_cmbFontSymbols_currentIndexChanged(const QString &arg1);
 
 private:
     Ui::DialogTRSESettings *ui;

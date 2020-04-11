@@ -35,7 +35,9 @@ class TRSEDocument : public QWidget
     Q_OBJECT
 public:
     TRSEDocument(QWidget* parent);
+    enum Type {FJONG, RAS, PAW };
 
+    Type m_type;
 
     bool m_documentIsChanged = false;
     QString m_currentSourceFile;

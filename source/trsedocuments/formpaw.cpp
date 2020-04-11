@@ -32,6 +32,7 @@ FormPaw::FormPaw(QWidget *parent) :
     ui->tabData->setColumnWidth(1, 500);
     ui->tabData->setColumnWidth(2, 160);
     ui->tabData->setColumnWidth(3, 40);
+    m_type = PAW;
     m_pawData = QSharedPointer<CIniFile>(new CIniFile);
 }
 

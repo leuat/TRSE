@@ -37,15 +37,9 @@ DialogTRSESettings::DialogTRSESettings(QWidget *parent) :
 
 void DialogTRSESettings::FillFromIni()
 {
+    FillFont(ui->cbmFont, m_ini->getString("editor_font"));
+    FillFont(ui->cmbFontSymbols, m_ini->getString("editor_font_symbols"));
 
-    QFontDatabase d;
-    QString keep = m_ini->getString("editor_font");
-    ui->cbmFont->clear();
-    QStringList fam = d.families();
-    if (!fam.contains("Courier"))
-        fam<<"Courier";
-    ui->cbmFont->addItems(fam);
-    ui->cbmFont->setCurrentText(keep);
 
 
     ui->leDosbox->setText(m_ini->getString("dosbox"));
@@ -96,6 +90,7 @@ void DialogTRSESettings::FillFromIni()
 
 
     ui->leFontSize->setText(QString::number((int)m_ini->getdouble("font_size")));
+    ui->leFontSizeSymbols->setText(QString::number((int)m_ini->getdouble("font_size_symbols")));
     ui->leTabWidth->setText(QString::number((int)m_ini->getdouble("tab_width")));
 
     ui->leFontSizeMemoryAnalyzer->setText(QString::number((int)m_ini->getdouble("memory_analyzer_font_size")));
@@ -138,6 +133,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("theme_fjong", ui->cmbThemeFjong->currentText() + ".ini");
 
     m_ini->setFloat("font_size", ui->leFontSize->text().toInt());
+    m_ini->setFloat("font_size_symbols", ui->leFontSizeSymbols->text().toInt());
     m_ini->setFloat("tab_width", ui->leTabWidth->text().toInt());
     m_ini->setFloat("memory_analyzer_font_size", ui->leFontSizeMemoryAnalyzer->text().toInt());
 
@@ -172,6 +168,18 @@ DialogTRSESettings::~DialogTRSESettings()
     delete ui;
 }
 
+void DialogTRSESettings::FillFont(QComboBox *cbmFont, QString keep) {
+    //        QString keep = m_ini->getString("editor_font");
+    cbmFont->clear();
+    QFontDatabase d;
+    QStringList fam = d.families();
+    if (!fam.contains("Courier"))
+        fam<<"Courier";
+    cbmFont->addItems(fam);
+    cbmFont->setCurrentText(keep);
+
+}
+
 void DialogTRSESettings::on_pushButton_clicked()
 {
     FillToIni();
@@ -182,9 +190,9 @@ void DialogTRSESettings::on_pushButton_clicked()
 void DialogTRSESettings::on_btnEmulator_clicked()
 {
     QString filename = QFileDialog::getOpenFileName(this,
-        tr("C64 Emulator location"), m_ini->getString("project_path"), "*");
+                                                    tr("C64 Emulator location"), m_ini->getString("project_path"), "*");
     if (filename!="")
-       ui->leEmulator->setText(filename);
+        ui->leEmulator->setText(filename);
 
 }
 
@@ -327,5 +335,11 @@ void DialogTRSESettings::on_btnPetEmulator_clicked()
         tr("PET emulator"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->lePETEmulator->setText(filename);
+
+}
+
+void DialogTRSESettings::on_cmbFontSymbols_currentIndexChanged(const QString &arg1)
+{
+    m_ini->setString("editor_font_symbols", arg1);
 
 }

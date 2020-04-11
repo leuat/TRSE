@@ -59,29 +59,11 @@
 #include "source/tutorials.h"
 #include <QDesktopServices>
 #include "source/dialognewproject.h"
-#include <QSortFilterProxyModel>
 
 namespace Ui {
 class MainWindow;
 }
 
-
-class MySortFilterProxyModel : public QSortFilterProxyModel
-{
-    Q_OBJECT
-
-public:
-    MySortFilterProxyModel(QObject *parent = 0): QSortFilterProxyModel(parent)
-    {
-    }
-    QString searchText;
-
-
-protected:
-    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
-
-
-} ;
 
 
 class TRSEProject {

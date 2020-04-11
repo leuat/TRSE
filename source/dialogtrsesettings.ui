@@ -19,7 +19,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -522,24 +522,17 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_4">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_27">
-             <property name="text">
-              <string>Code editor font</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_4">
-             <property name="text">
-              <string>Tab width</string>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="1">
             <widget class="QLineEdit" name="leFontSize">
              <property name="inputMask">
               <string>99</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_27">
+             <property name="text">
+              <string>Code editor font</string>
              </property>
             </widget>
            </item>
@@ -550,10 +543,17 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_5">
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_9">
              <property name="text">
-              <string>Code editor font size</string>
+              <string>Memory Analyzer Font Size</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLineEdit" name="leCursorWidth">
+             <property name="inputMask">
+              <string>99</string>
              </property>
             </widget>
            </item>
@@ -564,13 +564,24 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="cbmFont"/>
-           </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="label_9">
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_4">
              <property name="text">
-              <string>Memory Analyzer Font Size</string>
+              <string>Tab width</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="label_36">
+             <property name="text">
+              <string>Symbol list font</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>Code editor font size</string>
              </property>
             </widget>
            </item>
@@ -581,8 +592,21 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
              </property>
             </widget>
            </item>
-           <item row="6" column="1">
-            <widget class="QLineEdit" name="leCursorWidth">
+           <item row="0" column="1">
+            <widget class="QComboBox" name="cbmFont"/>
+           </item>
+           <item row="7" column="1">
+            <widget class="QComboBox" name="cmbFontSymbols"/>
+           </item>
+           <item row="8" column="0">
+            <widget class="QLabel" name="label_37">
+             <property name="text">
+              <string>Symbol list font size</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="1">
+            <widget class="QLineEdit" name="leFontSizeSymbols">
              <property name="inputMask">
               <string>99</string>
              </property>
