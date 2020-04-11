@@ -883,6 +883,8 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
   */
     if (Command("fill"))
         Fill(as);
+    if (Command("fillfast"))
+        FillFast(as);
 
     if (Command("initrandom"))
         InitRandom(as);
@@ -2429,6 +2431,44 @@ void Methods6502::Fill(Assembler *as)
     m_node->m_params[2]->Accept(m_dispatcher);
     as->Term();
     as->Asm("bne "+lbl);
+    as->PopLabel("fill");
+
+}
+
+void Methods6502::FillFast(Assembler *as)
+{
+    QString lbl = as->NewLabel("fill");
+    m_node->RequireAddress(m_node->m_params[0],"Fill",m_node->m_op.m_lineNumber);
+    if (!m_node->m_params[1]->isPure())
+        ErrorHandler::e.Error("FillFast parameter 2 must be pure numeric/variable!",m_node->m_op.m_lineNumber);
+
+    AddMemoryBlock(as,0);
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+
+        LoadVar(as,2);
+        as->Asm("tay");
+        LoadVar(as,1);
+        as->Label(lbl);
+        as->Term("sta (");
+        m_node->m_params[0]->Accept(m_dispatcher);
+        as->Term("),y", true);
+        as->Asm("dey");
+        as->Asm("bpl "+lbl);
+        as->PopLabel("fill");
+
+        return;
+    }
+
+
+    LoadVar(as,2);
+    as->Asm("tax");
+    LoadVar(as,1);
+    as->Label(lbl);
+    as->Term("sta ");
+    m_node->m_params[0]->Accept(m_dispatcher);
+    as->Term(",x", true);
+    as->Asm("dex");
+    as->Asm("bpl "+lbl);
     as->PopLabel("fill");
 
 }

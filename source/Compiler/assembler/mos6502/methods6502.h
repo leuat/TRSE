@@ -50,6 +50,7 @@ public:
     void PokeScreenColor(Assembler* as, int hiAddress);
     void SetSpritePos(Assembler* as);
     void Fill(Assembler* as);
+    void FillFast(Assembler* as);
     void PrintNumber(Assembler* as);
     void PrintString(Assembler* as);
     void ScrollX(Assembler* as);

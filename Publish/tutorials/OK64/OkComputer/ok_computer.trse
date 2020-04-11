@@ -1,4 +1,3 @@
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/OK64/OkComputer/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fe
@@ -28,8 +27,6 @@ override_target_settings_org = $400
 override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
-open_files = ,main.ras, source/effect3.ras, source/effect1.ras, source/effect_end.ras, images/logo.flf, images/ok1.flf, source/effect5.ras, fjong/twistertext.fjo
-current_file = source/effect_end.ras
 output_type = prg
 global_defines = ,
 d64_paw_file = none

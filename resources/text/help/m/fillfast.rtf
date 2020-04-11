@@ -1,0 +1,22 @@
+<h3>FillFast( [address], [byte 1], [byte 2] );</h3>
+<ul>
+    <li>[address] - address to fill from</li>
+    <li>[byte 1] - fill memory with this value</li>
+    <li>[byte 2] - number of bytes to fill. <b>Must be lower than 127!</b></li>
+</ul>
+
+
+<h3>Description</h3>
+<p>Fills an area of memory with a value for the specified number of bytes. Faster than
+regular "fill", but can *only* fill lengths up to 127!</p>
+
+
+<h3>Example</h3>
+
+<code>
+fillfast( ^$D800, 0, 40 ); // Fill 40 chars of zeroes (0, black) at the start of color ram $D800 (first row)
+
+// zp is a pointer, point to a specific character in a charset and fill 8 bytes with value 255
+zp := charset + ^@myCharVal;
+fillfast( zp, 255, 8 );
+</code>

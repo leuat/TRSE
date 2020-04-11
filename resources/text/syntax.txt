@@ -202,6 +202,7 @@ m; IncRange; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; b,b,b
 m; DecRange; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; b,b,b
 m; Dec; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a
 m; Fill; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a, b, b
+m; FillFast; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a, b, b
 m; SetMemoryConfig ; C64,  VIC20, PET,  NES ; b,b,b
 m; CopyHalfScreen; X16,C64, PLUS4, C128, VIC20, PET,  NES ; a,a,b,b,n
 m; CopyFullScreen; X16,C64, PLUS4, C128, VIC20, PET,  NES ; a,a

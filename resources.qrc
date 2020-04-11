@@ -455,5 +455,6 @@
         <file>resources/text/help/p/postoptimize.rtf</file>
         <file>resources/text/help/p/removeunusedsymbols.rtf</file>
         <file>resources/text/help/p/exomizer.rtf</file>
+        <file>resources/text/help/m/fillfast.rtf</file>
     </qresource>
 </RCC>
