@@ -218,9 +218,8 @@ public slots:
     void acceptRunMain();
 
     void acceptBuild() {
-        ui->lblBuild->setHidden(false);
-        QTimer::singleShot(500, ui->lblBuild, &QLabel::hide);
-        //UpdateSymbolTree();
+        //ui->lblBuild->setHidden(false);
+        //QTimer::singleShot(500, ui->lblBuild, &QLabel::hide);
 
     }
     void OpenProjectSettings();
@@ -356,6 +355,8 @@ private slots:
 
 
     void on_leFilterSymbols_textChanged(const QString &arg1);
+
+    void on_actionLook_up_symbol_F2_triggered();
 
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);

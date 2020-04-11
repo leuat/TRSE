@@ -120,7 +120,7 @@ void FormPaw::Load(QString filename)
 }
 
 
-void FormPaw::Build() {
+void FormPaw::Build(bool isShadow) {
     FillToIni();
     if (pt!=nullptr) {
         if (pt->isRunning())

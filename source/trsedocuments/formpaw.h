@@ -96,7 +96,7 @@ public:
 
     void Save(QString filename) override;
     void Load(QString filename) override;
-    void Build() override;
+    void Build(bool isShadow=false) override;
     void BuildSingle();
     void CreateIncludefile();
 

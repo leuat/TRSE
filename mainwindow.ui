@@ -466,6 +466,7 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="actionSearch"/>
     <addaction name="actionSearch_in_symbols_c_g"/>
+    <addaction name="actionLook_up_symbol_F2"/>
     <addaction name="actionReplace"/>
     <addaction name="actionAuto_ident"/>
     <addaction name="actionProject_Settings"/>
@@ -688,6 +689,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionSearch_in_symbols_c_g">
    <property name="text">
     <string>Search in symbols (c-&amp;g)</string>
+   </property>
+  </action>
+  <action name="actionLook_up_symbol_F2">
+   <property name="text">
+    <string>Look up sy&amp;mbol under cursor (F2)</string>
    </property>
   </action>
  </widget>

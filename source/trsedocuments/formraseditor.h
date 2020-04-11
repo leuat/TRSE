@@ -45,7 +45,7 @@
 #include <QThread>
 #include <QElapsedTimer>
 #include <QSharedPointer>
-
+#include <QTimer>
 namespace Ui {
     class FormRasEditor;
 }
@@ -109,7 +109,7 @@ public:
     void InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> iniProject) override;
     void setupEditor();
     void Compress();
-    void Build() override;
+    void Build(bool isShadow=false) override;
     bool BuildDiskFiles(QStringList& d64Params, QString data);
     void Setup();
 
@@ -150,6 +150,7 @@ public:
     void FindBlockEndSymbols(Orgasm& orgAsm);
     void ConnectBlockSymbols();
     void BuildNes(QString prg);
+    void LookupSymbolUnderCursor() override;
 public slots:
     void HandleBuildComplete();
 
@@ -168,13 +169,14 @@ signals:
     void OpenOtherFile(QString filename, int ln);
     void NotifyOtherSourceFiles(QSharedPointer<SourceBuilder> builder);
 private slots:
+    void ShadowBuild();
+
     void on_leSearch_textChanged();
 
     void AcceptBuildString();
     void on_leSearch_returnPressed();
 
     void on_leSearch_textChanged(const QString &arg1);
-
     void on_btnReplace_clicked();
     void on_chkExomize_stateChanged(int arg1);
     void on_chkRemoveUnusedSymbols_stateChanged(int arg1);

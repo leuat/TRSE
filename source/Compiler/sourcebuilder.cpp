@@ -63,13 +63,19 @@ bool SourceBuilder::Build(QString source)
 
 
 //    qDebug() << "CREATED COMPILER " <<compiler;
-
-    connect(&compiler->m_parser, SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
+    if (!m_isShadow)
+        connect(&compiler->m_parser, SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
     compiler->m_parser.m_diskFiles = getFileList();
     compiler->m_parser.m_currentDir = m_curDir;
 
 //    qDebug() << lst;
     compiler->m_isTRU = m_isTRU;
+    /*
+     *   P A R S I NG
+     *
+     * */
+//    if (m_isShadow)
+  //      qDebug() << "SHADOW BUILD..";
     compiler->Parse(source,lst, m_currentSourceFile);
 
     QString path = m_curDir+"/";//m_projectIniFile.getString("project_path") + "/";
@@ -77,20 +83,6 @@ bool SourceBuilder::Build(QString source)
         m_filename = m_currentSourceFile.split(".ras")[0];
     if (m_currentSourceFile.toLower().endsWith(".tru"))
         m_filename = m_currentSourceFile.split(".tru")[0];
-//    m_filename = m_curDir+"/"+ m_currentSourceFile.split(".")[0];
-
-/*    if (m_system != nullptr) {
-        delete m_system;
-    }
-*/
-
-/*
-    m_system = QSharedPointer<AbstractSystem>(FactorySystem::Create(AbstractSystem::SystemFromString(
-                                         m_projectIniFile.getString("system")),
-                                        &m_iniFile, &m_projectIniFile));
-
-
-*/
 
 
     m_system->timer.start();
@@ -99,21 +91,25 @@ bool SourceBuilder::Build(QString source)
 /*    m_system->m_buildSuccess = false;
     return false;
 */
-    connect(compiler.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
+    if (!m_isShadow)
+        connect(compiler.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
 
     m_buildSuccess = compiler->Build(m_system, path);
 //    m_buildString+="<br>Post";
 //    emit EmitBuildString();
 
-    disconnect(&compiler->m_parser, SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
-    disconnect(compiler.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
+    if (!m_isShadow)
+        disconnect(&compiler->m_parser, SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
+    if (!m_isShadow)
+        disconnect(compiler.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
 
 
 
 /*    if (m_buildSuccess)
         BuildSuccesString();
 */
-     compiler->SaveBuild(m_filename + ".asm");
+    if (!m_isShadow)
+         compiler->SaveBuild(m_filename + ".asm");
 //     qDebug() << "Saving to "+m_filename + ".asm";
 
      return m_buildSuccess;

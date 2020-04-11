@@ -47,6 +47,11 @@ FormRasEditor::FormRasEditor(QWidget *parent) :
     m_type = RAS;
     m_timer.start();
     m_lastBuild = m_timer.elapsed();
+    // Enable shadow builds?
+/*    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(ShadowBuild()));
+    timer->start(5000); //time specified in ms
+*/
 }
 
 FormRasEditor::~FormRasEditor()
@@ -225,7 +230,7 @@ void FormRasEditor::Compress()
 
 }
 
-void FormRasEditor::Build()
+void FormRasEditor::Build(bool isShadow)
 {
     // Enforce pause between builds
     if (abs(m_timer.elapsed()-m_lastBuild)<250) // 250 ms beteen each try
@@ -236,8 +241,10 @@ void FormRasEditor::Build()
     }
     m_builderThread.quit();
 
-    SaveCurrent();
+    if (!isShadow)
+        SaveCurrent();
 
+    if (!isShadow)
     if (m_projectIniFile->getString("main_ras_file")!="none") {
         if (m_projectIniFile->getString("main_ras_file")!=m_currentFileShort) {
             emit requestBuildMain();
@@ -245,7 +252,6 @@ void FormRasEditor::Build()
         }
 
     }
-
 
 //    if (m_builderThread.m_builder!=nullptr)
   //      delete m_builderThread.m_builder;
@@ -259,6 +265,7 @@ void FormRasEditor::Build()
         disconnect(m_builderThread.m_builder.get(), SIGNAL(EmitBuildString()), this, SLOT(AcceptBuildString()));
 
     m_builderThread.m_builder = QSharedPointer<SourceBuilder>(new SourceBuilder(m_iniFile, m_projectIniFile, m_currentDir, m_currentSourceFile));
+    m_builderThread.m_builder->m_isShadow = isShadow;
     connect(m_builderThread.m_builder.get(), SIGNAL(EmitBuildString()), this, SLOT(AcceptBuildString()));
 
 
@@ -385,6 +392,14 @@ void FormRasEditor::BuildNes(QString prg)
     out.write(data);
     out.close();
 
+}
+
+void FormRasEditor::LookupSymbolUnderCursor()
+{
+    QTextCursor tc = ui->txtEditor->textCursor();
+    tc.select(QTextCursor::WordUnderCursor);
+    QString word = tc.selectedText();
+    emit emitGotoSymbol(word);
 }
 
 
@@ -536,21 +551,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
     }
 
     if (e->key()==Qt::Key_F2) {
-        QTextCursor tc = ui->txtEditor->textCursor();
-        tc.select(QTextCursor::WordUnderCursor);
-        QString word = tc.selectedText();
-        emit emitGotoSymbol(word);
-/*        for (QSharedPointer<Node>n : m_builderThread.m_builder->compiler->m_parser.m_proceduresOnly) {
-            QSharedPointer<NodeProcedureDecl> np = qSharedPointerDynamicCast<NodeProcedureDecl>(n);
-            if (np->m_procName.toLower()==word.toLower()) {
-                GotoLine(np->m_op.m_lineNumber);
-                //QTextCursor cursor(ui->txtEditor->document()->findBlockByLineNumber(ln));
-                //ui->txtEditor->setTextCursor(cursor);
-//                GotoLine(ln);
-            }
-        }
-*/
-
+        LookupSymbolUnderCursor();
     }
 
 
@@ -870,6 +871,7 @@ void FormRasEditor::Load(QString filename)
     }
     file.close();
     m_isTRU = filename.toLower().endsWith(".tru");
+    ShadowBuild();
 }
 
 
@@ -919,14 +921,18 @@ void FormRasEditor::HandleBuildError()
     SetOutputText(ErrorHandler::e.m_teOut);
     m_outputText = ErrorHandler::e.m_teOut;
     int ln = Pmm::Data::d.lineNumber;
+
+    m_builderThread.m_builder->m_system->m_buildSuccess = false;
+    SetLights();
+    if (m_builderThread.m_builder->m_isShadow)
+        return;
+
     HandleErrorDialogs(ErrorHandler::e.m_teOut);
 //    qDebug() << "FormRasEditor "<<ln;
     if (m_builderThread.m_builder!=nullptr)
         emit OpenOtherFile(m_builderThread.m_builder->compiler->recentError.file, ln);
     if (ln>1)
         GotoLine(ln);
-    m_builderThread.m_builder->m_system->m_buildSuccess = false;
-    SetLights();
 
 
 }
@@ -1015,12 +1021,25 @@ void FormRasEditor::Help(QString word) {
 
 }
 
+void FormRasEditor::ShadowBuild()
+{
+    if (m_builderThread.m_isRunning)
+        return;
+    if (!m_hasFocus)
+        return;
+
+    Build(true);
+
+
+}
+
 
 void BuilderThread::run()
 {
     m_isRunning=true;
     if (m_builder->Build( m_source ))
     {
+        if (!m_builder->m_isShadow) {
         if (!m_builder->m_currentSourceFile.toLower().endsWith(".asm"))
             m_builder->compiler->SaveBuild(m_filename + ".asm");
 //        else {
@@ -1035,6 +1054,7 @@ void BuilderThread::run()
         m_builder->Assemble();
 
         emit emitText();
+        }
         emit emitSuccess();
 
     }
@@ -1043,6 +1063,7 @@ void BuilderThread::run()
         emit emitError();
     }
     m_isRunning=false;
+
 }
 
 void FormRasEditor::on_chkWarnings_stateChanged(int arg1)

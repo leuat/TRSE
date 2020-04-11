@@ -38,7 +38,7 @@ public:
     enum Type {FJONG, RAS, PAW };
 
     Type m_type;
-
+    bool m_hasFocus = true;
     bool m_documentIsChanged = false;
     QString m_currentSourceFile;
     QString m_currentFileShort;
@@ -66,11 +66,12 @@ public:
         emit updatePaletteSignal();
     }
     virtual void GotoLine(int ln) {}
-    virtual void Build() {}
+    virtual void Build(bool isShadow = false) {}
     virtual void Run() {}
     virtual void PrepareClose() {}
 
     virtual void MemoryAnalyze() {}
+    virtual void LookupSymbolUnderCursor() {}
 
     virtual void UpdateFromIni() {}
     virtual void Init() {}

@@ -23,6 +23,7 @@ public:
     bool m_assembleSuccess = false;
     bool m_useSyntaxSystem = false;
     bool m_isTRU = false;
+    bool m_isShadow = false;
 
     QSharedPointer<AbstractSystem> m_system;
     QSharedPointer<Compiler> compiler;

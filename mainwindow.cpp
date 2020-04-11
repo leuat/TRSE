@@ -905,21 +905,16 @@ void MainWindow::on_tabMain_currentChanged(int index)
     FormRasEditor* rasedit = dynamic_cast<FormRasEditor*>(ui->tabMain->widget(index));
 
 
-    if (rasedit!=nullptr) {
-        //m_updateThread->SetCurrentImage(nullptr, nullptr, nullptr);
-    }
-    if (imageedit!=nullptr) {
-        //m_updateThread->SetCurrentImage(&imageedit->m_work, &imageedit->m_toolBox, imageedit->getLabelImage());
-        //connect( imageedit, SIGNAL(EmitMouseEvent()),this, SLOT(onImageMouseMove()));
-    }
-
-
+    for (TRSEDocument* doc : m_documents)
+        doc->m_hasFocus = false;
 
     if (dynamic_cast<TRSEDocument*>(ui->tabMain->widget(index))!=nullptr) {
         m_currentDoc = dynamic_cast<TRSEDocument*>(ui->tabMain->widget(index));
         m_currentProject.m_ini->setString("current_file",m_currentDoc->m_currentFileShort);
-        if (m_currentDoc!=nullptr && index!=0)
+        if (m_currentDoc!=nullptr && index!=0) {
             m_currentDoc->Reload();
+            m_currentDoc->m_hasFocus = true;
+        }
 
 //        qDebug() << "dyn:" << dynamic_cast<TRSEDocument*>(ui->tabMain->widget(index));
     }
@@ -1730,4 +1725,9 @@ void MainWindow::GotoSymbol(QString s)
 void MainWindow::on_leFilterSymbols_textChanged(const QString &arg1)
 {
     UpdateSymbolTree(arg1);
+}
+
+void MainWindow::on_actionLook_up_symbol_F2_triggered()
+{
+    m_currentDoc->LookupSymbolUnderCursor();
 }

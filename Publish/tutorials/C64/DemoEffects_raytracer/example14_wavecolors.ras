@@ -241,6 +241,7 @@ begin
 	// Setup 
 	Init(data1,Black2White);
 	// Colors
+	
 	screen_bg_col:=black;
 	screen_fg_col:=black;
 	setcharsetlocation($2000);

@@ -41,7 +41,7 @@ public:
     void keyPressEvent(QKeyEvent *e);
 
 
-    void Build() override { Run(); }
+    void Build(bool isShadow=false) override { Run(); }
     void Run() override;
 
     void SetupHighlighter();
