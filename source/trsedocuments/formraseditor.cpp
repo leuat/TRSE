@@ -539,7 +539,8 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         QTextCursor tc = ui->txtEditor->textCursor();
         tc.select(QTextCursor::WordUnderCursor);
         QString word = tc.selectedText();
-        for (QSharedPointer<Node>n : m_builderThread.m_builder->compiler->m_parser.m_proceduresOnly) {
+        emit emitGotoSymbol(word);
+/*        for (QSharedPointer<Node>n : m_builderThread.m_builder->compiler->m_parser.m_proceduresOnly) {
             QSharedPointer<NodeProcedureDecl> np = qSharedPointerDynamicCast<NodeProcedureDecl>(n);
             if (np->m_procName.toLower()==word.toLower()) {
                 GotoLine(np->m_op.m_lineNumber);
@@ -548,7 +549,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
 //                GotoLine(ln);
             }
         }
-
+*/
 
     }
 

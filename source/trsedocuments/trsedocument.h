@@ -103,6 +103,7 @@ signals:
     void requestRunMain();
     void requestSaveAs();
     void emitSuccess();
+    void emitGotoSymbol(QString sym);
 
 };
 

@@ -310,6 +310,7 @@ void MainWindow::UpdateSymbolTree(QString search)
 
 
     m_symPointers.clear();
+    m_orgSymPointers.clear();
 
     QTreeWidgetItem* Symbols = new QTreeWidgetItem(QStringList() <<"Symbols");
     QTreeWidgetItem* Procedures = new QTreeWidgetItem(QStringList() <<"Procedures");
@@ -338,7 +339,7 @@ void MainWindow::UpdateSymbolTree(QString search)
         //if (t.toLower()=="record") t = s->m_arrayTypeText +"[ "+QString::number(s->m_size)+ " ]";
 //        qDebug() << t << s->m_arrayTypeText;
         //if (p-) t = TokenType::getType(s->m_arrayType).toLower()+"[ "+QString::number(s->m_size)+ " ]";
-        cleanSymbol(Symbols, s->m_name + " : " + t.toLower(), s->m_lineNumber, s->m_fileName,p,Qt::yellow,search);
+        cleanSymbol(Symbols, s->m_name, s->m_name + " : " + t.toLower(), s->m_lineNumber, s->m_fileName,p,Qt::yellow,search);
     }
     m_symbolItems.clear();
 
@@ -354,7 +355,7 @@ void MainWindow::UpdateSymbolTree(QString search)
         if (proc->m_paramDecl.count()!=0)
             params.remove(params.length()-1,1);
         params+=")";
-       cleanSymbol(Procedures,proc->m_procName+params, proc->m_op.m_lineNumber, proc->m_fileName,p,Qt::cyan,search);
+       cleanSymbol(Procedures,proc->m_procName,proc->m_procName+params, proc->m_op.m_lineNumber, proc->m_fileName,p,Qt::cyan,search);
     }
     Procedures->setExpanded(true);
     if (search!="")
@@ -362,7 +363,7 @@ void MainWindow::UpdateSymbolTree(QString search)
 
 }
 
-void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString n, int ln, QString fn, Parser* p, QColor bcol, QString search)
+void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString on, QString n, int ln, QString fn, Parser* p, QColor bcol, QString search)
 {
     QString name = n;
 
@@ -418,6 +419,7 @@ void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString n, int ln, QString
     m_symPointers[n] =
             QSharedPointer<SymbolPointer>(new SymbolPointer(n, ln+1, fn));
 
+    m_orgSymPointers[on] = m_symPointers[n];
     if (type=="") {
         parent->addChild(sym);
         return;
@@ -539,6 +541,7 @@ void MainWindow::ConnectDocument()
         connect((FormRasEditor*)m_currentDoc, &FormRasEditor::NotifyOtherSourceFiles, this, &MainWindow::AcceptUpdateSourceFiles);
         connect(m_currentDoc, SIGNAL(emitSearchSymbols()), this, SLOT(acceptSearchSymbols()));
         connect(m_currentDoc, SIGNAL(OpenOtherFile(QString, int )), this, SLOT(ForceOpenFile(QString , int)));
+        connect(m_currentDoc, SIGNAL(emitGotoSymbol(QString)), this, SLOT(GotoSymbol(QString)));
     }
 
 }
@@ -848,6 +851,7 @@ void MainWindow::FindFileDialog()
 
     m_currentDoc->setFocus();
 }
+
 
 void MainWindow::onImageMouseMove()
 {
@@ -1710,6 +1714,16 @@ void MainWindow::on_treeSymbols_itemDoubleClicked(QTreeWidgetItem *item, int col
 //    qDebug() << sp->m_file << " and " <<sp->m_ln;
 }
 
+
+void MainWindow::GotoSymbol(QString s)
+{
+//    qDebug() << s << m_symPointers.contains(s) << m_symPointers.keys();
+    if (!m_orgSymPointers.contains(s))
+        return;
+    QSharedPointer<SymbolPointer> sp = m_orgSymPointers[s];
+    ForceOpenFile(sp->m_file,sp->m_ln);
+
+}
 
 
 

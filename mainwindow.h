@@ -147,7 +147,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    QMap<QString, QSharedPointer<SymbolPointer>> m_symPointers;
+    QMap<QString, QSharedPointer<SymbolPointer>> m_symPointers, m_orgSymPointers;
 
     QSharedPointer<CIniFile> m_iniFile;
     QMap<QString, QTreeWidgetItem*> m_symbolItems;
@@ -265,6 +265,7 @@ signals:
 private slots:
 
     void FindFileDialog();
+    void GotoSymbol(QString s);
     void onImageMouseMove();
 
     void on_treeFiles_doubleClicked(const QModelIndex &index);
@@ -357,7 +358,7 @@ private slots:
     void on_leFilterSymbols_textChanged(const QString &arg1);
 
 private:
-    void cleanSymbol(QTreeWidgetItem* parent, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);
+    void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);
 
     QString FindPathInProjectFolders(const QModelIndex &index);
 
