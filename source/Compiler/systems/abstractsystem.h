@@ -53,10 +53,13 @@ public:
     static QMap<SystemLabel::Type, QColor> m_labelColors;
     QColor m_systemColor = QColor(64,64,128);
 
+
+    void StartProcess(QString file, QStringList params, QString& output);
+
     static void InitLabelColors();
 
-    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86};
-    enum Processor {MOS6502, M68000,PX86};
+    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY};
+    enum Processor {MOS6502, M68000,PX86, Z80};
 
     bool m_buildSuccess;
     static bool isSupported(System currentSystem, QString list) {
@@ -94,6 +97,8 @@ public:
             return X16;
         if (s.toLower()=="x86")
             return X86;
+        if (s.toLower()=="gameboy")
+            return GAMEBOY;
     }
 
     static QString StringFromSystem(System s) {
@@ -108,6 +113,7 @@ public:
         if (s == OK64) return "OK64";
         if (s == X16) return "X16";
         if (s == X86) return "X86";
+        if (s == GAMEBOY) return "GAMEBOY";
     }
 
 
@@ -117,6 +123,7 @@ public:
     virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) {}
     virtual void PostProcess(QString& text, QString file, QString currentDir) {}
     virtual void DefaultValues() {}
+//    virtual void Execute(QString filename, QString currentDir);
 public:
 signals:
     void EmitTick(QString val);

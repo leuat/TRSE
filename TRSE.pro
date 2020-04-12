@@ -82,7 +82,9 @@ SOURCES += main.cpp\
     imageworker.cpp \
     source/Compiler/assembler/abstractmethods.cpp \
     source/Compiler/assembler/asmx86.cpp \
+    source/Compiler/assembler/asmz80.cpp \
     source/Compiler/assembler/astdispatcherx86.cpp \
+    source/Compiler/assembler/dispatcherz80.cpp \
     source/Compiler/assembler/factorymethods.cpp \
     source/Compiler/assembler/mos6502/methods6502c64.cpp \
     source/Compiler/assembler/mos6502/methods6502ok64.cpp \
@@ -93,10 +95,13 @@ SOURCES += main.cpp\
     source/Compiler/compilers/compiler6502.cpp \
     source/Compiler/compilers/compilerm68k.cpp \
     source/Compiler/compilers/compilerx86.cpp \
+    source/Compiler/compilers/compilerz80.cpp \
     source/Compiler/compilers/factorycompiler.cpp \
+    source/Compiler/systems/systemgameboy.cpp \
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemplus4.cpp \
     source/Compiler/systems/systemx86.cpp \
+    source/Compiler/systems/systemz80.cpp \
     source/ImageEditor/abstractimageeditor.cpp \
     source/ImageEditor/glwidget.cpp \
     source/ImageEditor/qlabellimage.cpp \
@@ -245,7 +250,9 @@ HEADERS  += mainwindow.h \
     imageworker.h \
     source/Compiler/assembler/abstractmethods.h \
     source/Compiler/assembler/asmx86.h \
+    source/Compiler/assembler/asmz80.h \
     source/Compiler/assembler/astdispatcherx86.h \
+    source/Compiler/assembler/dispatcherz80.h \
     source/Compiler/assembler/factorymethods.h \
     source/Compiler/assembler/mos6502/methods6502c64.h \
     source/Compiler/assembler/mos6502/methods6502ok64.h \
@@ -256,10 +263,13 @@ HEADERS  += mainwindow.h \
     source/Compiler/compilers/compiler6502.h \
     source/Compiler/compilers/compilerm68k.h \
     source/Compiler/compilers/compilerx86.h \
+    source/Compiler/compilers/compilerz80.h \
     source/Compiler/compilers/factorycompiler.h \
+    source/Compiler/systems/systemgameboy.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemplus4.h \
     source/Compiler/systems/systemx86.h \
+    source/Compiler/systems/systemz80.h \
     source/ImageEditor/abstractimageeditor.h \
     source/ImageEditor/glwidget.h \
     source/ImageEditor/qlabellimage.h \

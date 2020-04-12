@@ -1,8 +1,21 @@
 #include "abstractsystem.h"
+#include <QProcess>
 
 QMap<SystemLabel::Type, QColor> AbstractSystem::m_labelColors;
 
 AbstractSystem::AbstractSystem(AbstractSystem *a) {
+}
+
+void AbstractSystem::StartProcess(QString file, QStringList params, QString& output) {
+   // qDebug() << params;
+    QProcess process;
+    process.start(file, params);
+    process.waitForFinished();
+//    qDebug() << process.readAllStandardOutput();;
+//    qDebug() << process.readAllStandardError();
+//        output+= process.readAllStandardOutput();
+    output+= process.readAllStandardError();
+
 }
 
 void AbstractSystem::InitLabelColors() {

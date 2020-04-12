@@ -27,9 +27,11 @@
 #include "source/Compiler/assembler/AsmM68000.h"
 #include "source/Compiler/assembler/asmpascal.h"
 #include "source/Compiler/assembler/asmx86.h"
+#include "source/Compiler/assembler/asmz80.h"
 #include "source/Compiler/assembler/mos6502/astdispatcher6502.h"
 #include "source/Compiler/assembler/astdispatcher68000.h"
 #include "source/Compiler/assembler/astdispatcherx86.h"
+#include "source/Compiler/assembler/dispatcherz80.h"
 #include "source/LeLib/util/cinifile.h"
 #include <QSharedPointer>
 #include "source/Compiler/systems/abstractsystem.h"

@@ -58,6 +58,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leX16EmuParams->setText(m_ini->getString("x16_emulator_params"));
     ui->leC1541->setText(m_ini->getString("c1541"));
     ui->leExomizer->setText(m_ini->getString("exomizer"));
+    ui->leRGBAsmDir->setText(m_ini->getString("gameboy_rgbasm_dir"));
     ui->leTinyCrunch->setText(m_ini->getString("tinycrunch"));
     ui->leCursorWidth->setText(QString::number((int)m_ini->getdouble("editor_cursor_width")));
     ui->chkAutoInject->setChecked(m_ini->getdouble("auto_inject")==1.0);
@@ -126,6 +127,8 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
     m_ini->setString("x16_emulator_params", ui->leX16EmuParams->text());
     m_ini->setString("c1541", ui->leC1541->text());
+
+    m_ini->setString("gameboy_rgbasm_dir", ui->leRGBAsmDir->text());
 
 
     m_ini->setString("nes_emulator", ui->leNesEmulator->text());

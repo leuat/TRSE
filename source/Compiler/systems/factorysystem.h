@@ -11,6 +11,7 @@
 #include "systemplus4.h"
 #include "systemok64.h"
 #include "systemx86.h"
+#include "systemgameboy.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem
@@ -40,6 +41,8 @@ public:
             return new SystemX16(settings, proj);
         if (type==AbstractSystem::X86)
             return new SystemX86(settings, proj);
+        if (type==AbstractSystem::GAMEBOY)
+            return new SystemGameboy(settings, proj);
 
         return s;
     }
