@@ -92,11 +92,13 @@ public:
     float m_multicolor = 1;
     float m_dither = 0;
     float m_aspect = 1;
+    float m_smooth = 0;
     QVector3D m_translate= QVector3D(0,0,0);
     QVector3D m_ditherStrength = QVector3D(0,0,0);
     float m_c64ImageType = 0;
     float m_shadowScale = 0.5;
     int m_width, m_height;
+    int m_orgWidth, m_orgHeight;
     QVector<int> m_c64Colors;
     QVector3D getPerlinNormal(QVector3D p, QVector3D n, QVector3D t, QVector3D bn, float s, float s2) {
         QVector3D p0 = n.normalized()+p;

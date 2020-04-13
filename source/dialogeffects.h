@@ -9,6 +9,7 @@
 #include "source/LeLib/luascript.h"
 #include "source/LeLib/limage/compression.h"
 #include <QPixmap>
+#include <QPainter>
 #include "source/Compiler/syntax.h"
 #include "source/LeLib/limage/limageio.h"
 namespace Ui {
@@ -30,7 +31,6 @@ private:
 
     static int Message(lua_State *L);
     QString m_file;
-
     void Create();
     Ui::DialogEffects *ui;
     int m_avg=0;

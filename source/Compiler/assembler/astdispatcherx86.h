@@ -34,7 +34,7 @@ public:
 
     void dispatch(QSharedPointer<NodeBinOP>node) override;
 //    void dispatchOld(QSharedPointer<NodeBinOP>node) override;
-    void dispatch(QSharedPointer<NodeNumber>node) override;
+    virtual void dispatch(QSharedPointer<NodeNumber>node) override;
     void dispatch(QSharedPointer<NodeAsm>node) override;
     void dispatch(QSharedPointer<NodeString> node) override;
     void dispatch(QSharedPointer<NodeUnaryOp> node) override;
@@ -71,7 +71,13 @@ public:
     int m_lvl = 0;
     QStringList m_regs = QStringList({"a","b","c","d"});
 
-    QString getAx(QSharedPointer<Node> n) {
+    QString m_jmp = "jmp ";
+    QString m_mov = "mov ";
+    QString m_cmp = "cmp ";
+    QString m_jne = "jne ";
+
+
+    virtual QString getAx(QSharedPointer<Node> n) {
         QString a = m_regs[m_lvl];
         if (n->m_forceType==TokenType::INTEGER)
             return a+"x";
@@ -87,14 +93,14 @@ public:
         return a+"l";
 
     }
-    QString getX86Value(Assembler* as, QSharedPointer<Node> n) {
+    virtual QString getX86Value(Assembler* as, QSharedPointer<Node> n) {
         if (n->isPureVariable())
             return "["+n->getValue(as)+"]";
         return n->getValue(as);
 
     }
 
-    QString getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
+    virtual QString getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
         if (bop->m_op.m_type == TokenType::PLUS)
             return "add";
         if (bop->m_op.m_type == TokenType::MINUS)
@@ -118,7 +124,7 @@ public:
     }
     QString getEndType(Assembler* as, QSharedPointer<Node> v) override;
 
-    QString AssignVariable(QSharedPointer<NodeAssign> node);
+    virtual QString AssignVariable(QSharedPointer<NodeAssign> node);
 
 
 

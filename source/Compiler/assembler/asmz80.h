@@ -37,6 +37,8 @@ public:
     QString String(QStringList lst) override;
 
 
+
+
 };
 
 #endif // ASMX86_H

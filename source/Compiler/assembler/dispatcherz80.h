@@ -25,53 +25,39 @@
 #include "source/Compiler/ast/nodebinaryclause.h"
 #include "source/Compiler/ast/nodecase.h"
 #include "source/Compiler/assembler/methodsx86.h"
+#include "source/Compiler/assembler/astdispatcherx86.h"
 #include "source/Compiler/assembler/factorymethods.h"
 
-class ASTdispatcherZ80 : public AbstractASTDispatcher
+class ASTdispatcherZ80 : public ASTdispatcherX86
 {
 public:
     ASTdispatcherZ80();
 
     void dispatch(QSharedPointer<NodeBinOP>node) override;
 //    void dispatchOld(QSharedPointer<NodeBinOP>node) override;
-    void dispatch(QSharedPointer<NodeNumber>node) override;
-    void dispatch(QSharedPointer<NodeAsm>node) override;
-    void dispatch(QSharedPointer<NodeString> node) override;
-    void dispatch(QSharedPointer<NodeUnaryOp> node) override;
-    void dispatch(QSharedPointer<NodeCompound> node) override;
-    void dispatch(QSharedPointer<NodeVarDecl> node) override;
-    void dispatch(QSharedPointer<NodeBlock> node) override;
-    void dispatch(QSharedPointer<NodeProgram> node) override;
-    void dispatch(QSharedPointer<NodeVarType> node) override;
     void dispatch(QSharedPointer<NodeBinaryClause> node) override;
-    void dispatch(QSharedPointer<NodeProcedure> node) override;
-    void dispatch(QSharedPointer<NodeProcedureDecl> node) override;
     void dispatch(QSharedPointer<NodeConditional> node) override;
-    void dispatch(QSharedPointer<NodeForLoop> node) override;
+  //  void dispatch(QSharedPointer<NodeForLoop> node) override;
+    void dispatch(QSharedPointer<NodeVarDecl> node) override;
+/*    void dispatch(QSharedPointer<NodeCase> node) override;
+    void dispatch(QSharedPointer<NodeRepeatUntil> node) override;*/
+
     void dispatch(QSharedPointer<NodeVar> node) override;
-    void dispatch(QSharedPointer<Node> node) override;
-    void dispatch(QSharedPointer<NodeAssign> node) override;
-    void dispatch(QSharedPointer<NodeCase> node) override;
-    void dispatch(QSharedPointer<NodeRepeatUntil> node) override;
-    void dispatch(QSharedPointer<NodeBuiltinMethod> node) override;
-    void dispatch(QSharedPointer<NodeComment> node) override;
+    void dispatch(QSharedPointer<NodeNumber>node) override;
+
+    void dispatch(QSharedPointer<NodeForLoop> node);
+
+
+    QString AssignVariable(QSharedPointer<NodeAssign> node) override;
 
 
 
-    void StoreVariable(QSharedPointer<NodeVar> n) override;
-    void LoadVariable(QSharedPointer<NodeVar> n) override ;
-    void LoadAddress(QSharedPointer<Node> n) override;
-    void LoadAddress(QSharedPointer<Node> n, QString reg) override;
+    QString getAx(QSharedPointer<Node> n) override;
+    QString getA(QSharedPointer<Node> n);
 
-    void LoadPointer(QSharedPointer<Node> n);
-    void LoadVariable(QSharedPointer<Node> n) override;
-    void LoadVariable(QSharedPointer<NodeNumber> n) override;
-    void IncBin(Assembler *as, QSharedPointer<NodeVarDecl> node);
+    QString getX86Value(Assembler *as, QSharedPointer<Node> n) override;
 
-
-
-    int m_lvl = 0;
-
+    QString getBinaryOperation(QSharedPointer<NodeBinOP> bop) override;
 
 
 };

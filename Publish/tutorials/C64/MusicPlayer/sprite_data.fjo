@@ -1,0 +1,175 @@
+globals = {
+	camera = { x = 0.5, y=0.20, z=6.0 },
+	fov = 20, 
+	target = { x = 0.5, y=0.20, z=0 },
+	up = { x=0, y=1, z=0 },
+	light0 = {   	direction = {x=1, y=0, z=2 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+	light1 = {   	direction = {x=1, y=0, z=2 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+	ambient = { x = 0.6, y = 0.6, z = 0.6 },
+     raymarch_steps = 80,
+	raymarch_shadow_steps = 40,
+
+	sky = 0,
+	shadow_scale = 1,
+	isPaused = 0
+	
+}
+
+
+
+output = {
+--	resolution = { width = 160, height=160},
+--	resolution = { width = 320, height=160},
+	resolution = { width = 24, height=21},
+	output_type = 1,
+	c64_imageType = 0,
+	c64_multicolor=0,
+	aspect = 1,
+	ditherStrength= {x=34, y=1, z=1 },
+	dither = 2,
+--	c64_colors = { 0,4,3,6 }
+	index_colors = { 0,1 }
+}
+
+
+Material0 = {
+   color = { x=0.0, y=0.0, z=0.0 },
+	reflection = 0.0,
+	shininess = 100,
+	shininess_intensity = 0
+}
+
+
+Material2 = {
+	color = { x=1.0, y=0.0, z=1.0 },
+	reflection = 0.0,
+	shininess = 100,
+	shininess_intensity = 1 
+
+}
+
+
+GroundMaterial = {
+	color = { x=0.2, y=0.4, z=0.1 },
+	reflection = 0.0,
+	shininess = 400,
+	shininess_intensity = 0 
+
+}
+
+
+-- Init is called on start  
+
+text = "MIBRI"
+ 
+function Init()
+
+
+--  AddObject("cylinder","cyl1", "", "Material0", 0,0,0,    0.2,0.2, 3 )
+--  AddObject("box","cyl1", "", "Material0", 0,0,0,    2.4,12,0.5 )
+
+	font = "rom"
+	--font = "charsets/gamecharset.flf"
+
+	z = 1
+	w = 0.25
+	if char~=25 then
+
+	c = string.sub(text,char+1,char+2)
+	cc = string.byte(c)-64
+	
+	cc = 
+	AddObject("char","char1", "", "Material2",  font, cc,   
+0,0,-z,            -- position
+0.55,0.6,0.0,      -- width xyz 
+w,0.31,0.27  -- stretch xyz
+);          
+
+
+	jj = 0
+	SetRotation("char1",0,45,jj);
+
+	--SetRotation("char2",0,45+90,jj);
+
+	end
+
+	UpdateGraphics()
+
+end
+
+
+distance = 10
+frame = 0
+noFrames = 16
+char = 0
+
+
+function UpdateGraphics()
+
+  	t = ((frame+24)/noFrames)*3.14159*2+3.1515/2;--*2 
+	r = 12
+	r = 14
+	globals.camera.x = sin(t)*r
+	globals.camera.z = cos(t)*r
+	t=t+3.14159/4
+	if (frame<16) then
+		t=0.3
+	else
+		t=-0.3
+	end
+--	t=t
+	globals.light0.direction.x = sin(t)
+	globals.light0.direction.z = cos(t)
+
+
+
+--[[	SetRotation("char1",0,(t*180+90),0);
+	SetRotation("char2",0,(t*180+90),0);
+	SetRotation("cyl1",0,(t*180+45)*2,0);
+	t=t*3.14159*2;
+	r=1
+	SetPosition("char1",cos(t)*r,0,sin(t)*r);
+	t=t+3.14159
+	SetPosition("char2",cos(t)*r,0,sin(t)*r);
+--	SetPosition("char1",0,0,0);
+]]--
+
+end
+
+
+function Update()
+	
+
+	if frame == noFrames then 
+		char=char+1
+		frame = 0
+		if char == 4 then 
+			globals.isPaused = 1
+		--CompressAndSaveHorizontalData(16,3, "data/screen.bin","data/table.bin");
+			SaveRawData("data/scroller.bin");
+--			CompressAndSaveHorizontalData(3,1, "data/screen_sprite.bin","data/table_sprite.bin");
+
+
+
+			Message("Files written")
+			
+		end
+		ClearAllObjects()
+		Init()
+	end
+
+	UpdateGraphics()
+	frame=frame+1
+
+--	if (frame ~= noFrames) then 
+		AddC64LineToData(0,0,3,21)
+		AddC64LineToData(0,0,1,1)
+--	end
+	
+
+
+end

@@ -23,6 +23,8 @@ QSharedPointer<AbstractMethods> FactoryMethods::CreateMethods(AbstractSystem::Sy
     if (s==AbstractSystem::AMIGA)
         return QSharedPointer<Methods68000>(new Methods68000);
 
+    if (s==AbstractSystem::GAMEBOY)
+        return QSharedPointer<MethodsZ80>(new MethodsZ80);
 
     // Default one
     return QSharedPointer<Methods6502>(new Methods6502);

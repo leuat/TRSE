@@ -1,8 +1,19 @@
-	SECTION	"Start",ROM0[$100]		; start vector, followed by header data applied by rgbfix.exe
+
+SECTION "VBL",ROM0[$0040]		; vblank interrupt handler
+        jp	vblank
+
+    SECTION	"Start",ROM0[$100]		; start vector, followed by header data applied by rgbfix.exe
 	nop
 	jp	start
 
-        SECTION "Example",ROM0[$150]		; code starts here
+        SECTION "Code",ROM0[$150]		; code starts here
+
+
+vblank:
+        call	$FF80				; copy OAM mirror table using DMA
+        reti
+
+
 
 start:
 	di					; disable interrupts

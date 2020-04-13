@@ -19,5 +19,14 @@ void CompilerZ80::Connect()
     m_assembler->EndMemoryBlock();
     m_assembler->Connect();
 
+
+    m_assembler->m_wram->m_source.insert(0,"		SECTION	\"WRAM\",WRAM0[$C000]"		);
+
+    m_assembler->m_source <<m_assembler->m_wram->m_source;
+
+    m_assembler->m_hram->m_source.insert(0,"		SECTION	\"HRAM\",HRAM[$FF8A]"		);
+    m_assembler->m_source <<m_assembler->m_hram->m_source;
+
+
 }
 

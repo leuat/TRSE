@@ -86,6 +86,7 @@ SOURCES += main.cpp\
     source/Compiler/assembler/astdispatcherx86.cpp \
     source/Compiler/assembler/dispatcherz80.cpp \
     source/Compiler/assembler/factorymethods.cpp \
+    source/Compiler/assembler/methodsz80.cpp \
     source/Compiler/assembler/mos6502/methods6502c64.cpp \
     source/Compiler/assembler/mos6502/methods6502ok64.cpp \
     source/Compiler/assembler/mos6502/methods6502vic20.cpp \
@@ -254,6 +255,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/assembler/astdispatcherx86.h \
     source/Compiler/assembler/dispatcherz80.h \
     source/Compiler/assembler/factorymethods.h \
+    source/Compiler/assembler/methodsz80.h \
     source/Compiler/assembler/mos6502/methods6502c64.h \
     source/Compiler/assembler/mos6502/methods6502ok64.h \
     source/Compiler/assembler/mos6502/methods6502vic20.h \

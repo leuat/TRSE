@@ -134,6 +134,21 @@ m; vbmDrawSprite2E; VIC20 ; a, a, a
 m; vbmClearSprite2; VIC20 ; a, a, a
 
 
+
+
+# ************** Z80 ROUTINES
+
+m; fill ; GAMEBOY; a,b,i
+m; MemCpy; GAMEBOY ; a,a,i
+m; EnableVBlank; GAMEBOY;
+m; Halt; GAMEBOY;
+c; VRAM ; GAMEBOY; a; $8000
+c; SCREEN0 ; GAMEBOY; a; $9800
+c; BACKGROUND_PALETTE; GAMEBOY; a; $FF47
+
+
+
+
 # ************** AMIGA ROUTINES
 
 # *** INIT METHODS
@@ -188,8 +203,8 @@ m; VBIRQ;Amiga; p
 m; ProjectAllVertices; Amiga; a,a,l,l,l,l
 
 #Memory routines
-m; Poke; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a,b,b
-m; Peek; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a,b
+m; Poke; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64, GAMEBOY ; a,b,b
+m; Peek; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64,GAMEBOY  ; a,b
 m; ToggleBit; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a,b,b
 m; GetBit; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; a,b
 m; EnableAllRam; C64, PLUS4  ;
@@ -396,9 +411,9 @@ m; ReturnInterrupt; C64, PLUS4, C128, OK64;
 
 
 
-m; WaitForRaster; C64, PLUS4, C128, VIC20, OK64; b
+m; WaitForRaster; C64, PLUS4, C128, VIC20, OK64, GAMEBOY; b
 m; WaitNoRaster; C64, PLUS4, C128, VIC20, OK64; b
-m; WaitForVerticalBlank; C64, C128, X86 ;
+m; WaitForVerticalBlank; C64, C128, X86, GAMEBOY;
 
 
 m; DisableVIC20IRQ; VIC20;
@@ -406,7 +421,6 @@ m; DisableVIC20IRQ; VIC20;
 #m; CloseVIAIRQ; VIC20;
 m; VIAIRQ; VIC20; p,b,b
 m; VIARasterIRQ; VIC20; p,b,b
-
 
 
 ##############################################################################
@@ -1148,7 +1162,8 @@ r; PROJECTSETTINGS; X16,C64, PLUS4, C128, VIC20, BBCM, NES, AMIGA, OK64, PET, X8
 r; BUILDPAW; X16,C64, PLUS4, C128, VIC20, BBCM, NES, AMIGA, OK64, PET, X86
 # Reserved names
 #r; SINE; X16,C64, PLUS4, C128, VIC20, BBCM, AMIGA, OK64, PET, X86, GAMEBOY
-
+r; WRAM; GAMEBOY
+r; HRAM; GAMEBOY
 
 
 

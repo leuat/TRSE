@@ -5,6 +5,7 @@
 #include "source/LeLib/util/cinifile.h"
 #include "source/Raytracer/raytracer.h"
 #include "source/LeLib/limage/limageqimage.h"
+#include "source/LeLib/luascript.h"
 #include <QMatrix3x3>
 
 class DemoEffectRaytracer : public AbstractDemoEffect
@@ -39,6 +40,7 @@ public:
     int m_frameHeight = 25;
 
 
+    LuaScript* m_script;
 
 //    int m_frameWidth = 40;
   //  int m_frameHeight = 25;

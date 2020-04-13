@@ -94,7 +94,10 @@ void DialogEffects::Create()
         if (m_script!=nullptr) {
 
             dynamic_cast<DemoEffectRaytracer*>(m_effect)->m_rt = &m_rt;
+            dynamic_cast<DemoEffectRaytracer*>(m_effect)->m_script = m_script;
         }
+
+
 //    }
     m_effect->Initialize();
     connect(m_effect,SIGNAL(SignalImageUpdate()),this,SLOT(UpdateImage()));
@@ -846,6 +849,18 @@ static int OptimizeScreenAndCharset(lua_State* L) {
     return 0;
 }
 
+
+static int DrawLine(lua_State* L) {
+
+    QPainter painter;
+    painter.begin(&m_effect->m_img);
+    painter.setPen(QPen(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)), lua_tonumber(L,8), Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
+    painter.drawLine(lua_tonumber(L,1),lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+    painter.end();
+//    m_effect->m_img.fill((Qt::red));
+    return 0;
+}
+
 static int AddRawCharsetData(lua_State* L) {
     int w = lua_tonumber(L,1);
     int h = lua_tonumber(L,1);;
@@ -922,6 +937,9 @@ static int AddToPng(lua_State* L) {
     return 0;
 }
 
+
+
+
 void DialogEffects::LoadScript(QString file)
 {
     m_script = new LuaScript(file);
@@ -988,6 +1006,8 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "Message", Message);
     lua_register(m_script->L, "ClearAllObjects", ClearObjects);
 
+    lua_register(m_script->L, "DrawLine", DrawLine);
+
     // Particle effects
 
     lua_register(m_script->L, "AddParticle", AddParticle);
@@ -1045,6 +1065,17 @@ void DialogEffects::UpdateGlobals()
     m_rt.m_globals.m_width = m_script->get<float>("output.resolution.width");
     m_rt.m_globals.m_height = m_script->get<float>("output.resolution.height");
 
+    if (m_script->lua_exists("output.orgresolution.width")) {
+        m_rt.m_globals.m_orgWidth = m_script->get<float>("output.orgresolution.width");
+        m_rt.m_globals.m_orgHeight = m_script->get<float>("output.orgresolution.height");
+
+    }
+    else {
+        m_rt.m_globals.m_orgWidth = m_rt.m_globals.m_width;
+        m_rt.m_globals.m_orgHeight = m_rt.m_globals.m_height;
+    }
+
+
     m_rt.m_globals.m_outputType = m_script->get<float>("output.output_type");
     m_rt.m_globals.m_aspect = m_script->get<float>("output.aspect");
 
@@ -1072,6 +1103,9 @@ void DialogEffects::UpdateGlobals()
         m_rt.m_globals.m_ditherStrength = m_script->getVec("output.ditherStrength");
         m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.index_colors");
 
+    }
+    if (m_script->lua_exists("output.smooth")) {
+        m_rt.m_globals.m_smooth = m_script->get<float>("output.smooth");
     }
 
 
@@ -1130,6 +1164,7 @@ void DialogEffects::UpdateImage()
         ui->txtOutput->setText(m_error);
         return;
     }
+
 
 
     ui->lblImage->setPixmap( m_effect->m_pixmap );

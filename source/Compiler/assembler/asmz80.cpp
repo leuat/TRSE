@@ -3,6 +3,9 @@
 AsmZ80::AsmZ80()
 {
     m_hash = "";
+    m_hram = QSharedPointer<Appendix>(new Appendix);
+    m_wram = QSharedPointer<Appendix>(new Appendix);
+
 }
 
 void AsmZ80::Connect() {
@@ -34,6 +37,9 @@ void AsmZ80::Connect() {
 
     m_source.removeAll("");
     m_appendix.clear();
+
+
+
 
 
 }
@@ -143,6 +149,11 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
         ErrorHandler::e.Error("Cannot declare variable of type: " + type);
 
 
+    if (m_currentBlock==m_hram || m_currentBlock==m_wram) {
+        t = "ds";
+        initval = "1";
+    }
+
     if (position=="")
         Write(name+":" +"\t" + t + "\t"+initval,0);
     else
@@ -229,3 +240,4 @@ QString AsmZ80::String(QStringList lst)
     m_term +=res;
     return res;
 }
+

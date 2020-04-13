@@ -160,6 +160,8 @@ public:
     QVector<QSharedPointer<Appendix>> m_blockStack;
     QVector<Appendix> m_extraBlocks;
     QSharedPointer<Appendix> m_chipMem;
+    QSharedPointer<Appendix> m_hram;
+    QSharedPointer<Appendix> m_wram;
 
     QString m_currentBlockName="";
 

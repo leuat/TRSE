@@ -3,417 +3,373 @@
 
 ASTdispatcherZ80::ASTdispatcherZ80()
 {
-
+    // Override with Z80 values!
+    m_jmp = "jp ";
+    m_mov = "ld ";
+    m_cmp = "cp ";
+    m_jne = "jr nz,";
 }
 
 void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
 {
+    if (node->m_left->isWord(as))
+        node->m_right->setForceType(TokenType::INTEGER);
+    if (node->m_right->isWord(as))
+        node->m_left->setForceType(TokenType::INTEGER);
 
 
-}
-
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeNumber>node)
-{
-}
-
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
-{
-
-}
-
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeAsm>node)
-{
-    node->DispatchConstructor(as);
-
-    QStringList txt = node->m_asm.split("\n");
-    as->Comment("");
-    as->Comment("****** Inline assembler section");
-    for (QString t: txt) {
-        as->Write(t,0);
+    if (node->isPureNumeric()) {
+        as->Asm("ld "+getAx(node)+", " + node->getValue(as) + "; binop is pure numeric");
+        return;
     }
-    as->Asm("");
+    if (node->isPureVariable()) {
+        as->Asm("ld "+getAx(node)+", [" + node->getValue(as)+"] ; binop is pure variable");
+        return;
+    }
+/*    if (!node->m_left->isPure() && node->m_right->isPure()) {
+        QSharedPointer<Node> t = node->m_right;
+        node->m_right = node->m_left;
+        node->m_left = t;
+        qDebug() << "SWITCH";
+    }
+*/
+    if (node->m_op.m_type == TokenType::MUL || node->m_op.m_type == TokenType::DIV) {
+        node->m_left->Accept(this);
+        QString bx = getAx(node->m_left);
 
-}
-
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeString> node)
-{
-
-}
-
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeUnaryOp> node)
-{
-
-}
-
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeCompound> node)
-{
-    node->DispatchConstructor(as);
-
-    as->BeginBlock();
-    for (QSharedPointer<Node> n: node->children)
-        n->Accept(this);
-
-
-    as->EndBlock();
-
-}
-
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVarDecl> node)
-{
-    node->DispatchConstructor(as);
-
-
-    node->ExecuteSym(as->m_symTab);
-
-    int ret = node->MaintainBlocks(as);
-
-    if (ret==3) node->m_curMemoryBlock = nullptr;
-//    qDebug() << "NodeVarDecl new memory block "  << ret;
-    if (node->m_curMemoryBlock!=nullptr)
-  //      qDebug() << node->m_curMemoryBlock->m_start;
-    if (as->m_currentBlock!=nullptr) {
-    //    qDebug() <<as->m_currentBlock->m_pos;
-        if (node->m_curMemoryBlock==nullptr) {
-            bool ok;
-            QString p = as->m_currentBlock->m_pos;
-            int pos = p.remove("$").toInt(&ok, 16);
-            node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::ARRAY, node->m_blockInfo.m_blockName));
-            as->blocks.append(node->m_curMemoryBlock);
+        PushX();
+        if (node->m_op.m_type == TokenType::DIV) {
+//            node->m_right->setForceType(TokenType::BYTE);
+//            as->Asm("cwd");
         }
+        node->m_right->Accept(this);
+
+        QString ax = getAx(node->m_right);
+        PopX();
+        as->BinOP(node->m_op.m_type);
+
+        as->Asm(as->m_term + " " +  ax);
+        as->m_term = "";
+        return;
     }
-    else
-        node->m_curMemoryBlock=nullptr;
- /*   if (ret==2) {
-        m_curMemoryBlock = nullptr;
+    node->m_left->Accept(this);
+    QString bx = getAx(node->m_left);
 
-    }*/
+    PushX();
+    node->m_right->Accept(this);
 
+    QString ax = getAx(node->m_right);
+    PopX();
+    as->BinOP(node->m_op.m_type);
 
-
-
-    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
-    QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
-
-    if (t->m_op.m_type==TokenType::ARRAY) {
-        as->DeclareArray(v->getValue(as), t->m_arrayVarType.m_value, t->m_op.m_intVal, t->m_data, t->m_position);
-        node->m_dataSize=t->m_op.m_intVal;
-        as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_type="address";
-        as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
-    }else
-    if (t->m_op.m_type==TokenType::STRING) {
-        as->DeclareString(v->getValue(as), t->m_data);
-    }
-    else
-    if (t->m_op.m_type==TokenType::INCBIN) {
-        if (node->m_curMemoryBlock!=nullptr)
-            ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
-
-        IncBin(as,node);
-
-    }
-    else
-    if (t->m_op.m_type==TokenType::POINTER) {
-        if (node->m_curMemoryBlock!=nullptr)
-            ErrorHandler::e.Error("Pointers can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
-//        DeclarePointer(node);
-        as->Asm(v->getValue(as)+ ": dw  0,0" );
-//        as->DeclareVariable(v->getValue(as), "long", "0", t->m_position);
-
-        as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
-
-    }else {
-        node->m_dataSize=1;
-        if (t->getValue(as).toLower()=="integer") node->m_dataSize = 2;
-        if (t->getValue(as).toLower()=="long") node->m_dataSize = 4;
-        as->DeclareVariable(v->getValue(as), t->value, t->initVal, t->m_position);
-    }
+    as->Asm(as->m_term + " " +  bx +"," +ax);
+    as->m_term = "";
 
 
-    if (node->m_curMemoryBlock!=nullptr) {
-        node->m_curMemoryBlock->m_end+=node->m_dataSize;
-    }
-
-    as->m_currentBlock = nullptr;
 
 }
 
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBlock> node)
-{
-    node->DispatchConstructor(as);
 
-    as->PushBlock(node->m_currentLineNumber);
-
-
-    bool blockLabel = false;
-    bool blockProcedure = false;
-    bool hasLabel = false;
-
-    QString label = as->NewLabel("block");
-
-
-    if (node->m_decl.count()!=0) {
-        as->Asm("jp " + label);
-        hasLabel = true;
-        //           as->PushBlock(m_decl[0]->m_op.m_lineNumber-1);
-    }
-    for (QSharedPointer<Node> n: node->m_decl) {
-        if (qSharedPointerDynamicCast<QSharedPointer<NodeVarDecl>>(n)==nullptr) {
-            if (!blockProcedure) // Print label at end of vardecl
-            {
-                if (n->m_op.m_lineNumber!=0) {
-                    //                      as->PopBlock(n->m_op.m_lineNumber);
-                    blockProcedure = true;
-                    //   qDebug() << "pop" << n->m_op.m_lineNumber << " " << TokenType::getType(n->getType(as));
-                }
-
-            }
-
-        }
-        n->Accept(this);
-
-    }
-    as->VarDeclEnds();
-
-    if (!blockLabel && hasLabel) {
-        as->Label(label);
-
-    }
-
-    if (node->forceLabel!="")
-        as->Label(node->forceLabel);
-
-
-    if (node->m_compoundStatement!=nullptr)
-        node->m_compoundStatement->Accept(this);
-
-
-    as->PopBlock(node->m_currentLineNumber);
-
-}
-
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeProgram> node)
-{
-    node->DispatchConstructor(as);
-
-//    as->EndMemoryBlock();
-    NodeBuiltinMethod::m_isInitialized.clear();
-    as->Program(node->m_name, node->m_param);
-  //  as->m_source << node->m_initJumps;
-    node->m_NodeBlock->m_isMainBlock = true;
-    node->m_NodeBlock->Accept(this);
-
-//    qDebug() << as->m_currentBlock;
-    as->EndProgram();
-
-}
-
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVarType> node)
-{
-
-}
 
 void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinaryClause> node)
 {
 
 }
 
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeProcedure> node)
-{
-    node->DispatchConstructor(as);
 
-
-    if (node->m_parameters.count()!=node->m_procedure->m_paramDecl.count())
-        ErrorHandler::e.Error("Procedure '" + node->m_procedure->m_procName+"' requires "
-                              + QString::number(node->m_procedure->m_paramDecl.count()) +" parameters, not "
-                              + QString::number(node->m_parameters.count()) + ".", node->m_op.m_lineNumber);
-
-    for (int i=0; i<node->m_parameters.count();i++) {
-        // Assign all variables
-        QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(node->m_procedure->m_paramDecl[i]);
-        QSharedPointer<NodeAssign> na = QSharedPointer<NodeAssign>(new NodeAssign(vd->m_varNode, node->m_parameters[i]->m_op, node->m_parameters[i]));
-        na->Accept(this);
-//        na->Build(as);
-    }
-
-    as->Asm("call " + node->m_procedure->m_procName);
-
-}
-
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeProcedureDecl> node)
-{
-    node->DispatchConstructor(as);
-
-
-
-    bool isInitFunction=false;
-    bool isBuiltinFunction=false;
-    if (Syntax::s.builtInFunctions.contains(node->m_procName)) {
-        isBuiltinFunction = true;
-        isInitFunction = Syntax::s.builtInFunctions[node->m_procName].m_initFunction;
-    }
-
-    as->Asm("");
-    as->Asm("");
-    as->Comment("***********  Defining procedure : " + node->m_procName);
-    QString type = (isBuiltinFunction) ? "Built-in function" : "User-defined procedure";
-    as->Comment("   Procedure type : " + type);
-    if (isBuiltinFunction) {
-        type = (isInitFunction) ? "yes" : "no";
-        as->Comment("   Requires initialization : " + type);
-    }
-    as->Asm("");
-    QString endLabel = "";
-
-    if (!isInitFunction) {
-    if (node->m_block!=nullptr) {
-        QSharedPointer<NodeBlock> b = qSharedPointerDynamicCast<NodeBlock>(node->m_block);
-        if (b!=nullptr)
-            b->forceLabel=node->m_procName;
-        node->m_block->Accept(this);
-//        node->m_block->Build(as);
-    }
-    }
-    as->Asm("ret");
-
-
-
-}
 
 void ASTdispatcherZ80::dispatch(QSharedPointer<NodeConditional> node)
 {
 
 }
-
+/*
 void ASTdispatcherZ80::dispatch(QSharedPointer<NodeForLoop> node)
 {
 
 }
-
-
-void ASTdispatcherZ80::dispatch(QSharedPointer<Node> node)
+*/
+void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVarDecl> node)
 {
+    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
+    QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
+
+    if (t->m_flags.contains("hram")) {
+        as->m_currentBlock = as->m_hram;
+//        qDebug() << "declaring in HRAM";
+    }
+    if (t->m_flags.contains("wram"))
+        as->m_currentBlock = as->m_wram;
+
+
+//    qDebug() << "BEFORE " <<as->m_currentBlock;
+    ASTdispatcherX86::dispatch(node);
+  //  qDebug() << as->m_currentBlock;
+    as->m_currentBlock = nullptr;
+}
+
+void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
+{
+    QString ending = "]";
+    if (node->m_expr!=nullptr) {
+/*        as->Asm("mov ah,0");
+        node->m_expr->Accept(this);
+        as->Asm("mov di,ax");
+        if (node->getArrayType(as)==TokenType::INTEGER)
+            as->Asm("shl di,1 ; Accomodate for word");
+        ending = "+di]";*/
+
+    }
+
+    if (as->m_term!="") {
+        as->m_term +=node->getValue(as);
+        return;
+    }
+
+
+    QString ax = getAx(node);
+
+    if (ax[0]!='a') {
+        as->Asm("ld a,[" + node->getValue(as)+ending);
+        as->Asm("ld "+ax[1]+",a");
+
+    }
+    else
+        as->Asm("ld "+ax[0]+", [" + node->getValue(as)+ending);
+    //    if (node->isArrayIndex())
+    //        qDebug() << TokenType::getType(node->getArrayType(as));
+    if (node->m_forceType==TokenType::INTEGER) {
+        bool accomodate = false;
+        if (node->isArrayIndex()) {
+            if (node->getArrayType(as)!=TokenType::INTEGER) {
+                accomodate = true;
+            }
+        }
+        else
+            if (node->getOrgType(as)!=TokenType::INTEGER)
+                accomodate = true;
+
+        if (accomodate) {
+            if (!(node->getOrgType(as)!=TokenType::INTEGER))
+                as->Asm("ld a,[" + node->getValue(as)+"+1"+ending);
+            else
+                as->Asm("ld a,0");
+            as->Asm("ld "+ax[0]+",a");
+        }
+    }
+    //    qDebug() << "ORG " <<TokenType::getType(node->getOrgType(as)) << "   : " << node->getValue(as);
+    //  qDebug() << "FT " <<TokenType::getType(node->m_forceType);
 
 }
 
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeAssign> node)
+void ASTdispatcherZ80::dispatch(QSharedPointer<NodeNumber> node)
 {
-/*    if (node==nullptr)
-        return;*/
-//    node->DispatchConstructor(as);
-    node->m_currentLineNumber = node->m_op.m_lineNumber;
+    QString ax = getAx(node);
+    if (as->m_term!="") {
+        as->m_term +=node->getValue(as);
+        return;
+    }
 
-
- //   AssignVariable(node);
-
+    as->Asm("ld "+ax+", " + node->getValue(as));
 }
 
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeCase> node)
-{
-
-}
-
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeRepeatUntil> node)
-{
-
-}
-
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBuiltinMethod> node)
+void ASTdispatcherZ80::dispatch(QSharedPointer<NodeForLoop> node)
 {
     node->DispatchConstructor(as);
 
-    node->VerifyParams(as);
+
+    //QString m_currentVar = ((NodeAssign*)m_a)->m_
+    QSharedPointer<NodeAssign> nVar = qSharedPointerDynamicCast<NodeAssign>(node->m_a);
 
 
-    QSharedPointer<AbstractMethods> methods = FactoryMethods::CreateMethods(Syntax::s.m_currentSystem->m_system);
-    methods->m_node = node;
-    methods->Assemble(as,this);
+    if (nVar==nullptr)
+        ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
+
+    QString var = qSharedPointerDynamicCast<NodeVar>(nVar->m_left)->getValue(as);//  m_a->Build(as);
+    //    qDebug() << "Starting for";
+    node->m_a->Accept(this);
+    //  qDebug() << "accepted";
+
+    //    LoadVariable(node->m_a);
+    //  TransformVariable()
+    //QString to = m_b->Build(as);
+    QString to = "";
+    if (node->m_b->isPure())
+        //    if (qSharedPointerDynamicCast<NodeNumber>(node->m_b) != nullptr)
+        to = node->m_b->getValue(as);
+    //  if (qSharedPointerDynamicCast<NodeVar>(node->m_b) != nullptr)
+    //    to = (qSharedPointerDynamicCast<NodeVar>node->m_b)->getValue(as);
+
+    //    as->m_stack["for"].push(var);
+    QString lblFor =as->NewLabel("forloop");
+    as->Label(lblFor);
+    //    qDebug() << "end for";
 
 
+    if (nVar->m_left->isWord(as))
+        node->m_b->setForceType(TokenType::INTEGER);
+
+    node->m_block->Accept(this);
+    QString ax = getA(nVar->m_left);
+    as->Asm(m_mov+ax+",["+var+"]");
+    as->Asm("add "+ax+",1");
+    as->Asm(m_mov+"["+var+"],"+ax);
+    PushX();
+    as->ClearTerm();
+    LoadVariable(node->m_b);
+    as->Term();
+    as->Asm(m_cmp+ax+","+getA(node->m_b));
+    PopX();
+
+    as->Asm(m_jne+lblFor);
+
+    as->PopLabel("forloop");
 
 }
 
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeComment> node)
+
+
+QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
 {
 
-}
-
-void ASTdispatcherZ80::StoreVariable(QSharedPointer<NodeVar> n)
-{
-
-}
-
-void ASTdispatcherZ80::LoadVariable(QSharedPointer<NodeVar> n)
-{
-    n->Accept(this);
-}
-
-void ASTdispatcherZ80::LoadAddress(QSharedPointer<Node> n)
-{
-
-}
-
-void ASTdispatcherZ80::LoadAddress(QSharedPointer<Node> n, QString reg)
-{
-
-}
-
-void ASTdispatcherZ80::LoadPointer(QSharedPointer<Node> n)
-{
-
-}
-
-void ASTdispatcherZ80::LoadVariable(QSharedPointer<Node> n)
-{
-    n->Accept(this);
-
-}
-
-void ASTdispatcherZ80::LoadVariable(QSharedPointer<NodeNumber>n)
-{
-
-}
-
-void ASTdispatcherZ80::IncBin(Assembler *as, QSharedPointer<NodeVarDecl> node) {
-    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
-    QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
-    QString filename = as->m_projectDir + "/" + t->m_filename;
-    if (!QFile::exists(filename))
-        ErrorHandler::e.Error("Could not locate binary file for inclusion :" +filename);
-
-    int size=0;
-    QFile f(filename);
-    if (f.open(QIODevice::ReadOnly)){
-        size = f.size();  //when file does open.
-        f.close();
+    if (node->m_left->isWord(as)) {
+        node->m_right->setForceType(TokenType::INTEGER);
     }
 
 
-    if (t->m_position=="") {
 
-        as->Label(v->getValue(as));
-        as->Asm("incbin \"" + filename + "\"");
+
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
+    as->ClearTerm();
+
+    if (qSharedPointerDynamicCast<NodeNumber>(node->m_left)!=nullptr) {
+        node->m_right->Accept(this);
+        as->Term();
+        as->Asm("ld ["+node->m_left->getValue(as)+"],a");
+        return "";
+
     }
-    else {
-        //            qDebug() << "bin: "<<v->getValue(as) << " at " << t->m_position;
-        //        Appendix app(t->m_position);
 
-        QSharedPointer<Symbol> typeSymbol = as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber);
-        typeSymbol->m_org = Util::C64StringToInt(t->m_position);
-        typeSymbol->m_size = size;
-        //            qDebug() << "POS: " << typeSymbol->m_org;
-        //app.Append("org " +t->m_position,1);
 
-        as->Label(v->getValue(as));
-        as->Asm("incbin \"" + filename + "\"");
-        /*        bool ok;
-                int start=0;
-                if (t->m_position.startsWith("$")) {
-                    start = t->m_position.remove("$").toInt(&ok, 16);
-                }
-                else start = t->m_position.toInt();
+    if (var->isPointer(as)) {
+        /*       if (node->m_right->isPureVariable()) {
+            as->Asm("lea si, ["+node->m_right->getValue(as)+"]");
+            as->Asm("mov ["+var->getValue(as)+"], ds");
+            as->Asm("mov ["+var->getValue(as)+"+2], si");
+            return "";
+        }
+        else{
+            node->m_right->Accept(this);
+
+            as->Asm("mov ["+var->getValue(as)+"], ax");
+            as->Asm("mov ["+var->getValue(as)+"+2], bx");
+        }
         */
-        //      as->blocks.append(new MemoryBlock(start,start+size, MemoryBlock::DATA,t->m_filename));
+        ErrorHandler::e.Error("Pointers not implemented",node->m_op.m_lineNumber);
+        return "";
+    }
+
+    if (var->isArrayIndex()) {
+        // Is an array
+        node->m_right->Accept(this);
+        as->Asm("push a");
+        var->m_expr->Accept(this);
+        as->Asm("ld d,a");
+        if (var->isWord(as))
+            as->Asm("shl d,1");
+        as->Asm("pop a");
+        as->Asm("ld ["+var->getValue(as) + "+di], "+getAx(node->m_left));
+        return "";
+    }
+
+    //    if (var->getValue())
+    // Simple a:=b;
+    QString type ="byte";
+    if (var->isWord(as))
+        type = "word";
+
+    if (node->m_right->isPureNumeric()) {
+        as->Asm("ld "+getAx(node) + ", "+node->m_right->getValue(as));
+        as->Asm("ld ["+var->getValue(as)+ "], "+getAx(node));
+        return "";
+    }
+    // Check for a:=a+2;
+    QSharedPointer<NodeBinOP> bop =  qSharedPointerDynamicCast<NodeBinOP>(node->m_right);
+    // as->Comment("Testing for : a:=a+ expr " + QString::number(bop!=nullptr));
+    // if (bop!=nullptr)
+    //  as->Comment(TokenType::getType(bop->getType(as)));
+    if (bop!=nullptr && (bop->m_op.m_type==TokenType::PLUS || bop->m_op.m_type==TokenType::MINUS)) {
+        //      as->Comment("PREBOP searching for "+var->getValue(as));
+        if (bop->ContainsVariable(as,var->getValue(as))) {
+            // We are sure that a:=a ....
+            // first, check if a:=a + number
+            //            as->Comment("In BOP");
+            if (bop->m_right->isPureNumeric()) {
+                as->Comment("'a:=a + const'  optimization ");
+                //as->Asm(getBinaryOperation(bop) + " ["+var->getValue(as)+"], "+type + " "+bop->m_right->getValue(as));
+                as->Asm("ld a,["+var->getValue(as)+"]");
+                as->Asm(getBinaryOperation(bop) + " " +bop->m_right->getValue(as));
+                as->Asm("ld ["+var->getValue(as)+"], a");
+                return "";
+            }
+            as->Comment("'a:=a + expression'  optimization ");
+            bop->m_right->Accept(this);
+            as->Asm(getBinaryOperation(bop) + " ["+var->getValue(as)+"], "+getAx(var));
+            return "";
+        }
+        // Check for a:=a+
 
     }
+    /*    if (node->m_right->isPureVariable()) {
+            as->Asm("mov ["+var->getValue(as)+ "],   " +getX86Value(as,node->m_right));
+            return "";
+        }
+    */
+
+    node->m_right->Accept(this);
+
+    as->Asm("ld ["+qSharedPointerDynamicCast<NodeVar>(node->m_left)->getValue(as) + "], "+getAx(node->m_left));
+    return "";
+}
+
+QString ASTdispatcherZ80::getAx(QSharedPointer<Node> n) {
+    QString a = m_regs[m_lvl];
+    if (n->m_forceType==TokenType::INTEGER)
+        return "bc";
+    if (n->getType(as)==TokenType::INTEGER)
+        return "bc";
+    if (n->getType(as)==TokenType::ADDRESS)
+        return "hl";
+    if (n->getType(as)==TokenType::INTEGER_CONST)
+        if (n->isWord(as))
+            return "bc";
+    //        if (n->isPureNumeric())
+    //          if (n->getValue()
+    return a;
+
+}
+
+QString ASTdispatcherZ80::getA(QSharedPointer<Node> n) {
+    QString a = m_regs[m_lvl];
+    return a;
+
+}
+
+QString ASTdispatcherZ80::getX86Value(Assembler *as, QSharedPointer<Node> n) {
+    if (n->isPureVariable())
+        return "["+n->getValue(as)+"]";
+    return n->getValue(as);
+
+}
+
+QString ASTdispatcherZ80::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
+    if (bop->m_op.m_type == TokenType::PLUS)
+        return "add";
+    if (bop->m_op.m_type == TokenType::MINUS)
+        return "sub";
+    if (bop->m_op.m_type == TokenType::DIV)
+        return "div";
+    if (bop->m_op.m_type == TokenType::MUL)
+        return "mul";
+    return " UNKNOWN BINARY OPERATION";
 }
 

@@ -26,6 +26,26 @@ QStringList Parser::s_usedTRUs;
 QStringList Parser::s_usedTRUNames;
 
 
+QStringList Parser::getFlags() {
+    QStringList flags;
+    if (m_currentToken.m_type==TokenType::CHIPMEM) {
+        Eat(TokenType::CHIPMEM);
+        flags<<"chipmem";
+    }
+
+    if (m_currentToken.m_type==TokenType::WRAM) {
+        Eat(TokenType::WRAM);
+        flags<<"wram";
+    }
+
+    if (m_currentToken.m_type==TokenType::HRAM) {
+        Eat(TokenType::HRAM);
+        flags<<"hram";
+    }
+    return flags;
+
+}
+
 Parser::Parser()
 {
 }
@@ -34,10 +54,10 @@ void Parser::Delete()
 {
     for (QString val : m_procedures.keys()) {
         QSharedPointer<Node> s = m_procedures[val];
-           // if (s!=nullptr) {
-            //s->Delete();
-//            delete s;
-//        }
+        // if (s!=nullptr) {
+        //s->Delete();
+        //            delete s;
+        //        }
     }
     m_procedures.clear();
     //delete m_symTab;
@@ -2303,6 +2323,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
 
 //    qDebug() << "CURVAL " <<m_currentToken.m_value;
     QSharedPointer<NodeVarType> typeNode = qSharedPointerDynamicCast<NodeVarType>(TypeSpec());
+    typeNode->m_flags = getFlags();
     // Set all types
 
     for (QSharedPointer<Symbol> s: syms) {
@@ -2401,11 +2422,7 @@ QSharedPointer<Node> Parser::TypeSpec()
         Eat(TokenType::RPAREN);
 
 
-        QStringList flags;
-        if (m_currentToken.m_type==TokenType::CHIPMEM) {
-            Eat(TokenType::CHIPMEM);
-            flags<<"chipmem";
-        }
+        QStringList flags = getFlags();
 
         QSharedPointer<NodeVarType> nt =  QSharedPointer<NodeVarType>(new NodeVarType(t,binFile, position));
         nt->m_flags = flags;
@@ -2475,11 +2492,7 @@ QSharedPointer<Node> Parser::TypeSpec()
 
            // Eat(m_currentToken.m_type);
         }
-        QStringList flags;
-        if (m_currentToken.m_type==TokenType::CHIPMEM) {
-            Eat(TokenType::CHIPMEM);
-            flags<<"chipmem";
-        }
+        QStringList flags = getFlags();
 
         t.m_intVal = count;
 //        qDebug() << "Type: " << t.m_value;

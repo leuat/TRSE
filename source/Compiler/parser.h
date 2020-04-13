@@ -98,6 +98,8 @@ public:
     QVector<QString> m_ignoreBuiltinFunctionTPU;
     QVector<QSharedPointer<Parser>> m_tpus;
 
+    QStringList getFlags();
+
 
     Parser();
     Parser(QSharedPointer<Lexer> l, QSharedPointer<CIniFile> projectFile) {

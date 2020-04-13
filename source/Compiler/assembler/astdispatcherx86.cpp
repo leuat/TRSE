@@ -160,7 +160,11 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVarDecl> node)
 
     node->ExecuteSym(as->m_symTab);
 
+
+    if (qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode)->m_flags.count()==0) {
     int ret = node->MaintainBlocks(as);
+
+
 
     if (ret==3) node->m_curMemoryBlock = nullptr;
 //    qDebug() << "NodeVarDecl new memory block "  << ret;
@@ -182,8 +186,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVarDecl> node)
         m_curMemoryBlock = nullptr;
 
     }*/
-
-
+    }
 
 
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
@@ -247,7 +250,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBlock> node)
 
 
     if (node->m_decl.count()!=0) {
-        as->Asm("jmp " + label);
+        as->Asm(m_jmp+ label);
         hasLabel = true;
         //           as->PushBlock(m_decl[0]->m_op.m_lineNumber-1);
     }
@@ -404,11 +407,11 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeConditional> node)
     node->m_block->Accept(this);
 
     if (node->m_elseBlock!=nullptr)
-        as->Asm("jmp " + labelElseDone);
+        as->Asm(m_jmp + labelElseDone);
 
     // If while loop, return to beginning of conditionals
     if (node->m_isWhileLoop)
-        as->Asm("jmp " + labelStartOverAgain);
+        as->Asm(m_jmp + labelStartOverAgain);
 
     // An else block?
     if (node->m_elseBlock!=nullptr) {
@@ -467,13 +470,13 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeForLoop> node)
     PushX();
     QString ax = getAx(nVar->m_left);
     PopX();
-    as->Asm("mov "+ax+",["+var+"]");
+    as->Asm(m_mov+ax+",["+var+"]");
     as->Asm("add "+ax+",1");
-    as->Asm("mov ["+var+"],"+ax);
+    as->Asm(m_mov+"["+var+"],"+ax);
     LoadVariable(node->m_b);
-    as->Asm("cmp "+getAx(node->m_b)+","+ax);
+    as->Asm(m_cmp+getAx(node->m_b)+","+ax);
 
-    as->Asm("jne "+lblFor);
+    as->Asm(m_jne+lblFor);
 
     as->PopLabel("forloop");
 

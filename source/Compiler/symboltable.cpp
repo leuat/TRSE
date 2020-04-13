@@ -252,7 +252,9 @@ void SymbolTable::InitBuiltins()
         m_globalList << "currentKey";
     }
 
-    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES && Syntax::s.m_currentSystem->m_system!=AbstractSystem::X86)
+    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES &&
+            Syntax::s.m_currentSystem->m_system!=AbstractSystem::X86  &&
+            Syntax::s.m_currentSystem->m_system!=AbstractSystem::GAMEBOY)
         Define(QSharedPointer<Symbol>(new Symbol("sine", "address")));
     Define(QSharedPointer<Symbol>(new Symbol("log2_table", "address")));
     Define(QSharedPointer<Symbol>(new Symbol("joystickup", "byte")));
