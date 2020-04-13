@@ -52,13 +52,16 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->Asm("ei");
 
     }
-    else if (Command("halt")) {
+    else if (Command("loop")) {
         QString lbl = as->NewLabel("end");
         as->Label(lbl);
         as->Asm("halt");
         as->Asm(";nop");
         as->Asm("jr "+lbl);
         as->PopLabel("end");
+    }
+    else if (Command("halt")) {
+        as->Asm("halt");
     }
 }
 

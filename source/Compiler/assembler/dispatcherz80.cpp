@@ -52,6 +52,21 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
         as->m_term = "";
         return;
     }
+
+    if (node->m_op.m_type == TokenType::SHR || node->m_op.m_type == TokenType::SHL) {
+        node->m_left->Accept(this);
+        if (!node->m_right->isPureNumeric())
+            ErrorHandler::e.Error("bit shifting on the Z80 must have constant numeric values!", node->m_op.m_lineNumber);
+        int num = node->m_right->getValueAsInt(as);
+        if (node->m_op.m_type == TokenType::SHR)
+            as->Asm("and "+Util::numToHex(0xFF^(int)(pow(2,num)-1)));
+        for (int i=0;i<num;i++) {
+            if (node->m_op.m_type == TokenType::SHR)
+                as->Asm("rrca");
+        }
+        return;
+    }
+
     node->m_left->Accept(this);
     QString bx = getAx(node->m_left);
 
@@ -111,6 +126,22 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
 {
     QString ending = "]";
     if (node->m_expr!=nullptr) {
+/*        ld a, [i]
+        ld e,a
+        ld d, 0
+        ld hl,sine
+        add hl,de
+        ld a,[hl]
+  */    node->m_expr->Accept(this);
+        as->Asm("ld e,a");
+        as->Asm("ld d,0");
+        as->Asm("ld hl,"+node->getValue(as));
+        as->Asm("add hl,de");
+        as->Asm("ld a,[hl]");
+        return;
+
+
+
 /*        as->Asm("mov ah,0");
         node->m_expr->Accept(this);
         as->Asm("mov di,ax");

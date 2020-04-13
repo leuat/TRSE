@@ -142,6 +142,8 @@ m; fill ; GAMEBOY; a,b,i
 m; MemCpy; GAMEBOY ; a,a,i
 m; EnableVBlank; GAMEBOY;
 m; Halt; GAMEBOY;
+m; Loop; GAMEBOY;
+
 c; VRAM ; GAMEBOY; a; $8000
 c; SCREEN0 ; GAMEBOY; a; $9800
 c; BACKGROUND_PALETTE; GAMEBOY; a; $FF47

@@ -693,7 +693,9 @@ void MainWindow::ForceOpenFile(QString s, int ln)
 
     if (s=="")
         return;
-    QString txt = m_currentDoc->m_outputText;
+    QString txt = "";
+    if (m_currentDoc!=nullptr)
+         txt = m_currentDoc->m_outputText;
 
     LoadDocument(s);
     m_currentDoc->GotoLine(ln);
