@@ -40,7 +40,7 @@ begin
 	begin
 		// Print the number defined in the unit to screen
 		moveto(35,0,hi(screen_char_loc));
-		printdecimal(CustomUnit_number,4);
+		printdecimal(CustomUnit::number,4);
 		// One row down : print the unit constant 
 		screenmemory:=screenmemory+screen_width;		 
 		printdecimal(SomeUnitConstant,2);
@@ -49,6 +49,7 @@ begin
 		
 		for i:=0 to 2 do
 			waitforraster(150);
+			
 		clearscreen(key_space,screen_char_loc);
 		inc(time);
 		inc(shift);

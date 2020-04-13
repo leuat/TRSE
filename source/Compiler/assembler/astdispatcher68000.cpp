@@ -206,8 +206,10 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeVarDecl> node)
 
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
+  //  qDebug() << t->m_flags;
     if (t->m_flags.contains("chipmem")) {
         as->m_currentBlock = as->m_chipMem;
+//        qDebug() << "CURRENTBLOCK IS CHIPMEM";
     }
 
     if (t->m_op.m_type==TokenType::ARRAY) {

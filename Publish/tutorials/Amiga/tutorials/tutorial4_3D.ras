@@ -10,7 +10,7 @@ var
 */
 
 
-
+@donotremove LineMode
 
 @define IS_LOVE 1
 //@define IS_TEAPOT 1

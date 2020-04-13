@@ -28,6 +28,7 @@ QStringList Parser::s_usedTRUNames;
 
 QStringList Parser::getFlags() {
     QStringList flags;
+
     if (m_currentToken.m_type==TokenType::CHIPMEM) {
         Eat(TokenType::CHIPMEM);
         flags<<"chipmem";
@@ -2323,7 +2324,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
 
 //    qDebug() << "CURVAL " <<m_currentToken.m_value;
     QSharedPointer<NodeVarType> typeNode = qSharedPointerDynamicCast<NodeVarType>(TypeSpec());
-    typeNode->m_flags = getFlags();
+    typeNode->m_flags.append(getFlags());
     // Set all types
 
     for (QSharedPointer<Symbol> s: syms) {

@@ -6,18 +6,18 @@ var
 
    	j,time: integer = 0; 
    	x,y : byte;
+	sine256_data: incbin("data/sine.bin");
    	sprites : incbin("data/sprites_data.bin");
    	
 // 2 bitplanes
-   	screen_data : array[2*40*256] of byte chipmem;
    	
-	sine256_data: incbin("data/sine.bin");
 
 	table2: pointer of integer;
 		
 	sine256 : pointer of byte;
 
 	sprite_struct1 : array[70] of integer chipmem;
+   	screen_data : array[2*40*256] of byte chipmem;
 	
 
 /*
@@ -63,7 +63,6 @@ begin
 	j:=(time&63)<<7; // 64 frames in total, 128 bytes per frame (<<7)
 	// Copy over 32*4=128 bytes of data
 	memcpy(sprites,j,sprite_struct1,4,32,4);
-	
 end;
 
 
@@ -71,7 +70,7 @@ procedure Init();
 begin
 	sine256 := sine256_data;
 	// Clear screen
-	fill(screen_data,10*2*256,0);
+	fill(screen_data, 0 ,10*2*256);
 	
 	// Set four colours	
 	
