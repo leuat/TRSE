@@ -401,8 +401,16 @@ QPoint CharsetImage::getXY(int x, int y)
 
         cx/=s;
 
-        int sx = (m_currentChar%m_charWidth)*8/s;
+//        if (rand()%100>=99)
+  //          qDebug() << m_charWidth << charWidthDisplay();
+
+
+/*        int sx = (m_currentChar%m_charWidth)*8/s;
         int sy = (m_currentChar/m_charWidth)*8;
+*/
+        int sx = (m_currentChar%charWidthDisplay())*8/s;
+        int sy = (m_currentChar/charWidthDisplay())*8;
+
 
         if (!m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_REPEAT)) {
             x = (x / (float)m_width)*cx+sx;

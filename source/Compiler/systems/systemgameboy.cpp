@@ -14,6 +14,8 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
     QString fix = dir+"rgbfix";
 #ifdef _WIN32
     assembler+=".exe";
+    link+=".exe";
+    fix+=".exe";
 #endif
 
 

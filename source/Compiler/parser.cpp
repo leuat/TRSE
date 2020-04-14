@@ -3069,6 +3069,7 @@ void Parser::HandleUseTPU(QString fileName)
     }
 
     m_symTab->Merge(p->m_symTab.get(),true);
+
     m_doNotRemoveMethods.append(p->m_doNotRemoveMethods);
     m_ignoreBuiltinFunctionTPU.append(p->m_ignoreBuiltinFunctionTPU);
     m_userBlocks.append(p->m_userBlocks);
