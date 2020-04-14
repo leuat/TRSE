@@ -19,6 +19,22 @@ each other nested.
 
 */
 
+@userdata $A000 $B000 "CUSTOM UNIT"
+
+@donotremove "Kake"
+
+@ignoremethod init8x8div
+@ignoremethod init8x8div
+@ignoremethod init16x8div
+@ignoremethod initeightbitmul
+@ignoremethod init16x8mul
+
+procedure Kake();
+begin
+
+end;
+
+
 procedure DrawBox(x, y, a, b, value, color, screen : global byte);
 begin
 	// zp points to color ram

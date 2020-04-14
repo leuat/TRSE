@@ -456,7 +456,7 @@ QString ASTdispatcherZ80::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
     return " UNKNOWN BINARY OPERATION";
 }
 
-void ASTdispatcherZ80::BuildSimple(QSharedPointer<Node> node, QString lblFailed)
+void ASTdispatcherZ80::BuildSimple(QSharedPointer<Node> node, QString lblFailed, bool offPage)
 {
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());
@@ -464,14 +464,20 @@ void ASTdispatcherZ80::BuildSimple(QSharedPointer<Node> node, QString lblFailed)
 
     BuildToCmp(node);
 
+
+    QSharedPointer<NodeConditional> n = qSharedPointerDynamicCast<NodeConditional>(node);
+    QString p = "r";
+    if (offPage)
+        p="p";
+
     if (node->m_op.m_type==TokenType::EQUALS)
-        as->Asm("jr nz," + lblFailed);
+        as->Asm("j"+p+" nz," + lblFailed);
     if (node->m_op.m_type==TokenType::NOTEQUALS)
-        as->Asm("jr z, " + lblFailed);
+        as->Asm("j"+p+" z, " + lblFailed);
     if (node->m_op.m_type==TokenType::LESS)
-        as->Asm("jr nc," + lblFailed);
+        as->Asm("j"+p+" nc," + lblFailed);
     if (node->m_op.m_type==TokenType::GREATER)
-        as->Asm("jr c, " + lblFailed);
+        as->Asm("j"+p+" c, " + lblFailed);
 
 
 

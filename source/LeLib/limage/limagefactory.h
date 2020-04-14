@@ -39,8 +39,10 @@
 #include "source/LeLib/limage/limageok64.h"
 #include "source/LeLib/limage/limagex16.h"
 #include "source/LeLib/limage/limagenes.h"
+#include "source/LeLib/limage/limagegamboy.h"
 #include "source/LeLib/limage/limagemetachunk.h"
 #include "source/LeLib/limage/limagelevelnes.h"
+#include "source/LeLib/limage/limagegamboy.h"
 #include "source/LeLib/limage/limagemetablocksprites.h"
 
 class LImageFactory {

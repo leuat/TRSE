@@ -10,6 +10,8 @@ var
 	shift : byte = 128; // initially object #2 is shiftet 180 degrees from object 1
 	
 
+
+
 procedure Render(char : byte);
 begin
 	// lumi_fromBlue is a 32-byte colour array defined in the luminosities unit

@@ -3067,9 +3067,12 @@ void Parser::HandleUseTPU(QString fileName)
         e.linenr = m_currentToken.m_lineNumber;
        throw e;
     }
+
     m_symTab->Merge(p->m_symTab.get(),true);
     m_doNotRemoveMethods.append(p->m_doNotRemoveMethods);
     m_ignoreBuiltinFunctionTPU.append(p->m_ignoreBuiltinFunctionTPU);
+    m_userBlocks.append(p->m_userBlocks);
+
     m_tpus.append(p);
 //    qDebug() << m_currentToken.m_value;
 //    Eat();

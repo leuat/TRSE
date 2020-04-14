@@ -459,5 +459,8 @@
         <file>resources/images/GAMEBOY.png</file>
         <file>resources/code/gameboy/init.s</file>
         <file>resources/code/gameboy/defs.s</file>
+        <file>resources/bin/gbt-player/gbt_player_bank1.o</file>
+        <file>resources/bin/gbt-player/gbt_player.o</file>
+        <file>resources/code/gameboy/gbt_player.inc</file>
     </qresource>
 </RCC>

@@ -107,6 +107,7 @@ SOURCES += main.cpp\
     source/ImageEditor/glwidget.cpp \
     source/ImageEditor/qlabellimage.cpp \
     source/LeLib/limage/limagefooter.cpp \
+    source/LeLib/limage/limagegamboy.cpp \
     source/LeLib/limage/limagelevelnes.cpp \
     source/LeLib/limage/limagemetablocksprites.cpp \
     source/LeLib/limage/limagemetachunk.cpp \
@@ -276,6 +277,7 @@ HEADERS  += mainwindow.h \
     source/ImageEditor/glwidget.h \
     source/ImageEditor/qlabellimage.h \
     source/LeLib/limage/limagefooter.h \
+    source/LeLib/limage/limagegamboy.h \
     source/LeLib/limage/limagelevelnes.h \
     source/LeLib/limage/limagemetablocksprites.h \
     source/LeLib/limage/limagemetachunk.h \

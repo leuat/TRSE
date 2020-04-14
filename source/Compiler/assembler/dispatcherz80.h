@@ -61,7 +61,7 @@ public:
 
 
 
-    void BuildSimple(QSharedPointer<Node> node, QString lblFailed);
+    void BuildSimple(QSharedPointer<Node> node, QString lblFailed, bool offPage=false);
 
     void BuildToCmp(QSharedPointer<Node> node) override;
 

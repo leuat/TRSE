@@ -399,7 +399,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeConditional> node)
         if (node->m_elseBlock!=nullptr)
             failedLabel = labelElse;
 
-    BuildSimple(bn,  failedLabel);
+    BuildSimple(bn,  failedLabel,node->m_forcePage==1);
 
     // Start main block
     as->Label(lblstartTrueBlock); // This means skip inside
@@ -716,7 +716,7 @@ void ASTdispatcherX86::IncBin(Assembler *as, QSharedPointer<NodeVarDecl> node) {
     }
 }
 
-void ASTdispatcherX86::BuildSimple(QSharedPointer<Node> node, QString lblFailed)
+void ASTdispatcherX86::BuildSimple(QSharedPointer<Node> node, QString lblFailed, bool offPage)
 {
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());

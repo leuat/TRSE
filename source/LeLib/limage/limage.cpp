@@ -80,6 +80,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 18;
     if (t==SpritesNES)
         return 19;
+    if (t==GAMEBOY)
+        return 20;
 
 
     return 255;
@@ -127,6 +129,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "NES level editor";
     if (t==SpritesNES)
         return "NES sprites";
+    if (t==GAMEBOY)
+        return "GAMEBOY";
 
     return "Unknown image type";
 
@@ -175,6 +179,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return LevelEditorNES;
     if (c==19)
         return SpritesNES;
+    if (c==20)
+        return GAMEBOY;
 
     return NotSupported;
 

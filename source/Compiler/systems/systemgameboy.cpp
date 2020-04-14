@@ -21,7 +21,8 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
         text  += "<br><font color=\"#FF6040\">Please set up a link to the RGBASM assembler directory in the TRSE settings panel.</font>";
         return;
     }
-
+    Util::CopyFile(":resources/bin/gbt-player/gbt_player.o",currentDir+"/gbt_player.o");
+    Util::CopyFile(":resources/bin/gbt-player/gbt_player_bank1.o",currentDir+"/gbt_player_bank1.o");
     //qDebug() << m_settingsIni->getString("assembler");
         QProcess process;
         QStringList params;
@@ -38,7 +39,9 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
         }
 //        qDebug() << "-d"<< "-o" << filename + ".gb" << filename+".o";
         QFile::remove(filename+".gb");
-        StartProcess(link, QStringList() <<"-d"<< "-o" << filename + ".gb" << filename+".o", output);
+
+//        gbt_player.o gbt_player_bank1.o
+        StartProcess(link, QStringList() <<"-d"<< "-o" << filename + ".gb" << filename+".o" <<currentDir+"/gbt_player.o" <<currentDir+"/gbt_player_bank1.o", output);
         if (!QFile::exists(filename+".gb")) {
             text  += "<br><font color=\"#FFFF00\">Error during assembly : please check source assembly for errors.</font>";
             text+=output;

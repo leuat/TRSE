@@ -69,9 +69,10 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageMetaChunk(colorType);
     if (t == LImage::Type::LevelEditorNES)
         return new LImageLevelNES(colorType);
-    if (t == LImage::Type::SpritesNES) {
+    if (t == LImage::Type::SpritesNES)
         return new LImageMetaBlockSprites(colorType);
-    }
+    if (t == LImage::Type::GAMEBOY)
+        return new LImageGamboy(colorType);
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;
     return nullptr;

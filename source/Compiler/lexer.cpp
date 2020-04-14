@@ -273,6 +273,11 @@ Token Lexer::String()
     while (!m_finished && m_currentChar!="\"") {
         result +=m_currentChar;
         Advance();
+        if (m_currentChar=="\\" && peek()=="\"") {
+            Advance();
+            Advance();
+            result[result.count()-1]='\"';
+        }
     }
     Advance();
 //    ErrorHandler::e.DebugLow("Calling Lexer::String with string: " + result);
