@@ -65,6 +65,7 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
                     ns->m_arrayTypeText = s->m_arrayTypeText;
 //                    qDebug() << "Defining : "<<varName + "_" + typeSymbol->m_name + "_"+ns->m_name << ns->m_type << TokenType::getType(ns->m_arrayType);
                 }
+                ns->m_flags = typeNode->m_flags;
                 symTab->Define(ns);
             }
     }
@@ -74,6 +75,7 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
     if (typeName == "INCSID")
         isFlaggedAsUsed = true;
 
+    varSymbol->m_flags = typeNode->m_flags;
 
     symTab->Define(varSymbol,isFlaggedAsUsed);
 

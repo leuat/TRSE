@@ -29,19 +29,34 @@ QStringList Parser::s_usedTRUNames;
 QStringList Parser::getFlags() {
     QStringList flags;
 
-    if (m_currentToken.m_type==TokenType::CHIPMEM) {
-        Eat(TokenType::CHIPMEM);
-        flags<<"chipmem";
-    }
 
-    if (m_currentToken.m_type==TokenType::WRAM) {
-        Eat(TokenType::WRAM);
-        flags<<"wram";
-    }
+    bool done = false;
 
-    if (m_currentToken.m_type==TokenType::HRAM) {
-        Eat(TokenType::HRAM);
-        flags<<"hram";
+    while (!done)  {
+        done = true;
+        if (m_currentToken.m_type==TokenType::CHIPMEM) {
+            Eat(TokenType::CHIPMEM);
+            flags<<"chipmem";
+            done = false;
+        }
+
+        if (m_currentToken.m_type==TokenType::WRAM) {
+            Eat(TokenType::WRAM);
+            flags<<"wram";
+            done = false;
+        }
+
+        if (m_currentToken.m_type==TokenType::HRAM) {
+            Eat(TokenType::HRAM);
+            done = false;
+            flags<<"hram";
+        }
+
+        if (m_currentToken.m_type==TokenType::ALIGNED) {
+            Eat(TokenType::ALIGNED);
+            done = false;
+            flags<<"aligned";
+        }
     }
     return flags;
 
@@ -2329,6 +2344,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
 
     for (QSharedPointer<Symbol> s: syms) {
        s->m_type = typeNode->m_op.m_value;
+       s->m_flags = typeNode->m_flags;
        if (typeNode->m_data.count()!=0)
            s->m_size = typeNode->m_data.count();
        else {

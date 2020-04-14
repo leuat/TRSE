@@ -135,9 +135,9 @@ public:
 
     void IncBin(Assembler* as, QSharedPointer<NodeVarDecl> node);
 
-    void BuildSimple(QSharedPointer<Node> node, QString lblFailed);
+    virtual void BuildSimple(QSharedPointer<Node> node, QString lblFailed);
 
-    void BuildToCmp(QSharedPointer<Node> node);
+    virtual void BuildToCmp(QSharedPointer<Node> node);
 
 
 };

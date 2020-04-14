@@ -36,7 +36,7 @@ public:
     void dispatch(QSharedPointer<NodeBinOP>node) override;
 //    void dispatchOld(QSharedPointer<NodeBinOP>node) override;
     void dispatch(QSharedPointer<NodeBinaryClause> node) override;
-    void dispatch(QSharedPointer<NodeConditional> node) override;
+    //void dispatch(QSharedPointer<NodeConditional> node) override;
   //  void dispatch(QSharedPointer<NodeForLoop> node) override;
     void dispatch(QSharedPointer<NodeVarDecl> node) override;
 /*    void dispatch(QSharedPointer<NodeCase> node) override;
@@ -58,6 +58,12 @@ public:
     QString getX86Value(Assembler *as, QSharedPointer<Node> n) override;
 
     QString getBinaryOperation(QSharedPointer<NodeBinOP> bop) override;
+
+
+
+    void BuildSimple(QSharedPointer<Node> node, QString lblFailed);
+
+    void BuildToCmp(QSharedPointer<Node> node) override;
 
 
 };

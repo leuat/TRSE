@@ -92,11 +92,12 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinaryClause> node)
 }
 
 
-
+/*
 void ASTdispatcherZ80::dispatch(QSharedPointer<NodeConditional> node)
 {
 
 }
+*/
 /*
 void ASTdispatcherZ80::dispatch(QSharedPointer<NodeForLoop> node)
 {
@@ -301,7 +302,58 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
 
     if (var->isArrayIndex()) {
         // Is an array
-        node->m_right->Accept(this);
+
+        // Optimization : array[ constant ] := expr
+        if (var->m_expr->isPureNumeric()) {
+            node->m_right->Accept(this);
+            as->Asm("ld [+"+var->getValue(as)+"+"+var->m_expr->getValue(as)+"],a");
+            return "";
+        }
+        /*
+         ld a,5
+         ld e,a
+         ld d,0
+         ld hl,var
+         add dl,de
+
+
+
+          */
+        // GENERIC expression
+
+        bool rightIsPure = node->m_right->isPure();
+        bool isAligned = as->m_symTab->Lookup(var->getValue(as),var->m_op.m_lineNumber)->m_flags.contains("aligned");
+        qDebug() << "IS ALIGNED "<< isAligned;
+
+        if (!rightIsPure) {
+            node->m_right->Accept(this);
+            as->Asm("push af");
+        }
+        var->m_expr->Accept(this);
+        if (isAligned) {
+            as->Asm("ld hl," + var->getValue(as));
+            as->Asm("add a,l");
+            as->Asm("ld l,a");
+        }
+        else {
+            as->Asm("ld e,a");
+            as->Asm("ld d,0");
+            as->Asm("ld hl," + var->getValue(as));
+            as->Asm("add hl,de");
+        }
+        if (!rightIsPure)
+            as->Asm("pop af");
+        else
+            node->m_right->Accept(this);
+
+        as->Asm("ld [hl],a");
+
+
+
+//        ErrorHandler::e.Error("Array indicies not implemented yet");
+
+
+  /*      node->m_right->Accept(this);
         as->Asm("push a");
         var->m_expr->Accept(this);
         as->Asm("ld d,a");
@@ -309,7 +361,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
             as->Asm("shl d,1");
         as->Asm("pop a");
         as->Asm("ld ["+var->getValue(as) + "+di], "+getAx(node->m_left));
-        return "";
+        return "";*/
     }
 
     //    if (var->getValue())
@@ -402,5 +454,76 @@ QString ASTdispatcherZ80::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
     if (bop->m_op.m_type == TokenType::MUL)
         return "mul";
     return " UNKNOWN BINARY OPERATION";
+}
+
+void ASTdispatcherZ80::BuildSimple(QSharedPointer<Node> node, QString lblFailed)
+{
+
+    as->Comment("Binary clause Simplified: " + node->m_op.getType());
+    //    as->Asm("pha"); // Push that baby
+
+    BuildToCmp(node);
+
+    if (node->m_op.m_type==TokenType::EQUALS)
+        as->Asm("jr nz," + lblFailed);
+    if (node->m_op.m_type==TokenType::NOTEQUALS)
+        as->Asm("jr z, " + lblFailed);
+    if (node->m_op.m_type==TokenType::LESS)
+        as->Asm("jr nc," + lblFailed);
+    if (node->m_op.m_type==TokenType::GREATER)
+        as->Asm("jr c, " + lblFailed);
+
+
+
+}
+
+void ASTdispatcherZ80::BuildToCmp(QSharedPointer<Node> node)
+{
+    if (node->m_left->getValue(as)!="") {
+        if (node->m_right->isPureNumeric())
+        {
+            as->Comment("Compare with pure num / var optimization");
+            //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
+            //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
+            LoadVariable(node->m_left);
+            as->Asm("cp a," + node->m_right->getValue(as));
+
+            return;
+        } else
+        {
+            as->Comment("Compare two vars optimization");
+            if (node->m_right->isPureVariable()) {
+                QString wtf = as->m_regAcc.Get();
+                LoadVariable(node->m_right);
+                //TransformVariable(as,"move",wtf,qSharedPointerDynamicCast<NodeVar>node->m_left);
+                //TransformVariable(as,"cmp",wtf,as->m_varStack.pop());
+                as->Asm("cp  a," + getAx(node->m_right));
+
+                return;
+            }
+            else
+                node->m_right->Accept(this);
+
+            as->Asm("cp a," + getAx(node->m_right));
+
+            //            TransformVariable(as,"cmp",qSharedPointerDynamicCast<NodeVar>node->m_left,as->m_varStack.pop());
+            return;
+        }
+    }
+
+    node->m_right->Accept(this);
+
+
+    as->Asm("cp a, " + getAx(node->m_right));
+
+    //    TransformVariable(as,"cmp",qSharedPointerDynamicCast<NodeVar>node->m_left, as->m_varStack.pop());
+
+    // Perform a full compare : create a temp variable
+    //        QString tmpVar = as->m_regAcc.Get();//as->StoreInTempVar("binary_clause_temp");
+    //        node->m_right->Accept(this);
+    //      as->Asm("cmp " + tmpVar);
+    //      as->PopTempVar();
+
+
 }
 

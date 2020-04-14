@@ -89,6 +89,14 @@ void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList dat
 
         Write(name+":" +"\t array " + t + "\t "+QString::number(count),0);
   */
+
+        //Write(name+":" +"\t times "+QString::number(count) +" "+t+" 0",0);
+        if (m_currentBlock==m_hram || m_currentBlock==m_wram) {
+            Write(name+":" +"\t ds "+QString::number(count),0);
+
+        }
+        else
+
         Write(name+":" +"\t times "+QString::number(count) +" "+t+" 0",0);
 
     }

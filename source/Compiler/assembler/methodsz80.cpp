@@ -63,7 +63,13 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     else if (Command("halt")) {
         as->Asm("halt");
     }
+    else if (Command("setsprite"))
+      SetSprite(as,0);
+    else if (Command("initsprite"))
+      SetSprite(as,1);
+
 }
+
 
 bool MethodsZ80::Command(QString name)
 {
@@ -197,4 +203,49 @@ void MethodsZ80::Poke(Assembler *as)
     LoadVar(as,2);
     as->Asm("ld [hl],a");
 
+}
+
+
+void MethodsZ80::SetSprite(Assembler *as, int type)
+{
+//    LoadAddress(as,0);
+    if (!m_node->m_params[2]->isPure())
+        ErrorHandler::e.Error("Parameter 1 (x) must be pure constant or variable");
+    if (!m_node->m_params[1]->isPure())
+        ErrorHandler::e.Error("Parameter 2 (y) must be pure constant or variable");
+
+    if (!m_node->m_params[3]->isPureNumeric())
+        ErrorHandler::e.Error("Parameter 3 (width) must be constant value!");
+    if (!m_node->m_params[4]->isPureNumeric())
+        ErrorHandler::e.Error("Parameter 4 (height) must be constant value");
+
+
+    int x = m_node->m_params[3]->getValueAsInt(as);
+    int y = m_node->m_params[4]->getValueAsInt(as);
+
+
+    QString addr = m_node->m_params[0]->getValue(as);
+    as->Comment("SetSprite");
+    for (int j=0;j<y;j++) {
+        for (int i=0;i<x;i++) {
+            int cnt = 4* (x*j+i);
+            if (type==0) { // Set sprite
+                LoadVar(as,2);
+                if (j!=0)
+                    as->Asm("add "+QString::number(j*8));
+                as->Asm("ld ["+addr + "+"+QString::number(cnt)+" +0 ],a");
+                LoadVar(as,1);
+                if (i!=0)
+                    as->Asm("add "+QString::number(i*8));
+                as->Asm("ld ["+addr + "+"+QString::number(cnt)+" +1 ],a");
+            }
+            if (type==1) { // Init
+                LoadVar(as,1);
+                int num =i+j*16;
+                if (num!=0)
+                    as->Asm("add "+QString::number(num));
+                as->Asm("ld ["+addr + "+"+QString::number(cnt)+" +2 ],a");
+            }
+        }
+    }
 }
