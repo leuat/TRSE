@@ -46,7 +46,10 @@ public:
     bool isWord(Assembler* as) override;
 
     QString getValue(Assembler* as) override {
-        if (isAddress()) return HexValue(); else return as->m_hash + HexValue();
+        QString hash = "";
+        if (as!=nullptr)
+            hash = as->m_hash;
+        if (isAddress()) return HexValue(); else return hash + HexValue();
     }
     void forceWord() override {
         m_op.m_type = TokenType::INTEGER_CONST;

@@ -147,6 +147,71 @@ void NodeBinOP::parseConstants(QSharedPointer<SymbolTable>  symTab) {
 */
 }
 
+QString NodeBinOP::getValue(Assembler *as) {
+    QString hash = "";
+    if (!isAddress() && as!=nullptr)
+        hash=as->m_hash;
+    if (m_isCollapsed)
+        return hash + "$" + QString::number(m_value, 16);
+
+    if (isAddress()) return HexValue();
+    return hash + HexValue();
+}
+
+TokenType::Type NodeBinOP::getType(Assembler *as) {
+    TokenType::Type a =m_right->getType(as);
+    TokenType::Type b =m_left->getType(as);
+    if (a==TokenType::LONG || b==TokenType::LONG)
+        return TokenType::LONG;
+    if (a==TokenType::INTEGER || b==TokenType::INTEGER)
+        return TokenType::INTEGER;
+    return TokenType::BYTE;
+
+}
+
+bool NodeBinOP::isPure() {
+    if (isPureNumeric())
+        return true;
+    return false;
+}
+
+TokenType::Type NodeBinOP::VerifyAndGetNumericType() {
+    TokenType::Type a =m_right->VerifyAndGetNumericType();
+    TokenType::Type b =m_left->VerifyAndGetNumericType();
+    if (a!=b) {
+/*        if (a==TokenType::ADDRESS || b==TokenType::ADDRESS)
+            return TokenType::ADDRESS;*/
+        if (a!=TokenType::ADDRESS)
+            return a;
+        if (b!=TokenType::ADDRESS)
+            return b;
+        ErrorHandler::e.Error("Binary operations must occur between same token types ("+TokenType::getType(a)+" vs "+TokenType::getType(b)+")", m_op.m_lineNumber);
+
+    }
+    return a;
+}
+
+QString NodeBinOP::getStringOperation() {
+    if (m_op.m_type == TokenType::PLUS)
+        return "+";
+    if (m_op.m_type == TokenType::MINUS)
+        return "-";
+    if (m_op.m_type == TokenType::MUL)
+        return "*";
+    if (m_op.m_type == TokenType::DIV)
+        return "/";
+    if (m_op.m_type == TokenType::AND)
+        return "&";
+    if (m_op.m_type == TokenType::OR)
+        return "|";
+
+    return "";
+}
+
+QString NodeBinOP::getLiteral(Assembler *as) {
+    return m_left->getLiteral(as) + getStringOperation() + m_right->getLiteral(as);
+}
+
 
 
 int NodeBinOP::numValue() {
@@ -163,6 +228,16 @@ int NodeBinOP::numValue() {
         res=a*b;
     if (m_op.m_type==TokenType::DIV)
         res=a/b;
+    if (m_op.m_type==TokenType::BITAND)
+        res=a&b;
+    if (m_op.m_type==TokenType::BITOR)
+        res=a|b;
+    if (m_op.m_type==TokenType::XOR)
+        res=a^b;
+    if (m_op.m_type==TokenType::SHR)
+        res=a>>b;
+    if (m_op.m_type==TokenType::SHL)
+        res=a<<b;
 
     return res;
 }

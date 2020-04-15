@@ -131,7 +131,7 @@ begin
 	sprite_stretch_Y:=$FF;
 	setbank(vic_bank1);
 	for i:=0 to 8 do 
-		setspriteloc(i, (@spriteLoc-bank_size)/64+i,1);
+		setspriteloc(i, (spriteLoc-bank_size)/64+i,1);
 
 	sprite_multicolor:=0;
 	fill(zero,0,64);

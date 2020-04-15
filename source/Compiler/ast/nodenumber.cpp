@@ -48,6 +48,8 @@ bool NodeNumber::isWord(Assembler *as) {
     return (m_val>=256 && m_op.m_type == TokenType::INTEGER_CONST);
 }
 
+
+
 bool NodeNumber::is8bitValue(Assembler* as)
 {
   //  if (m_forceType==TokenType::INTEGER)

@@ -44,4 +44,6 @@ data_header_sprites/fastfood.flf = 6.94947e-310
 exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
-open_files =, RogueBurgerOne.ras
+open_files = -1
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/TutorialGame_RogueBurgerOne/
+current_file = RogueBurgerOne.ras

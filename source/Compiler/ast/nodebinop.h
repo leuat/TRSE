@@ -75,54 +75,18 @@ public:
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override;
 
 
-    QString getValue(Assembler* as)  override {
-        QString hash = "";
-        if (!isAddress())
-            hash=as->m_hash;
-        if (m_isCollapsed)
-            return hash + "$" + QString::number(m_value, 16);
+    QString getValue(Assembler* as)  override;
 
-        if (isAddress()) return HexValue();
-        return as->m_hash + HexValue();
-    }
+    TokenType::Type getType(Assembler *as) override;
 
-    TokenType::Type getType(Assembler *as) override {
-        TokenType::Type a =m_right->getType(as);
-        TokenType::Type b =m_left->getType(as);
-        if (a==TokenType::LONG || b==TokenType::LONG)
-            return TokenType::LONG;
-        if (a==TokenType::INTEGER || b==TokenType::INTEGER)
-            return TokenType::INTEGER;
-        return TokenType::BYTE;
+    bool isPure() override;
 
-    }
+    TokenType::Type VerifyAndGetNumericType() override;
 
-    bool isPure() override {
-        if (isPureNumeric())
-            return true;
-        return false;
-    }
 
-    QString getStringOperation() {
-        if (m_op.m_type == TokenType::PLUS)
-            return "+";
-        if (m_op.m_type == TokenType::MINUS)
-            return "-";
-        if (m_op.m_type == TokenType::MUL)
-            return "*";
-        if (m_op.m_type == TokenType::DIV)
-            return "/";
-        if (m_op.m_type == TokenType::AND)
-            return "&";
-        if (m_op.m_type == TokenType::OR)
-            return "|";
+    QString getStringOperation();
 
-        return "";
-    }
-
-    QString getLiteral(Assembler* as) override {
-        return m_left->getLiteral(as) + getStringOperation() + m_right->getLiteral(as);
-    }
+    QString getLiteral(Assembler* as) override;
 
 
     int numValue() override;

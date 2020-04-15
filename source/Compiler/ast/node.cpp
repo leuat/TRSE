@@ -106,3 +106,7 @@ bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlock)
     return blockCount<80;
 
 }
+
+TokenType::Type Node::VerifyAndGetNumericType() {
+   return m_op.m_type;
+}

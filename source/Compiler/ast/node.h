@@ -156,6 +156,7 @@ public:
     virtual bool isOne() { return false; }
 
     bool verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlock);
+    virtual TokenType::Type VerifyAndGetNumericType();
 
 
     virtual void parseConstants(QSharedPointer<SymbolTable>  symTab) {

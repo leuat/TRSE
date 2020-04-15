@@ -3096,6 +3096,21 @@ QSharedPointer<Node> Parser::Expr()
         node = QSharedPointer<NodeBinOP>(new NodeBinOP(node, t, Term()));
 
     }
+
+    if (node->isPureNumeric() && qSharedPointerDynamicCast<NodeNumber>(node)==nullptr) {
+        // Calculate and COLLAPSE. Easier on the dispatcher.
+        int val = node->getValueAsInt(nullptr);
+        Token t;
+        t.m_type = node->VerifyAndGetNumericType();
+        t.m_lineNumber = node->m_lineNumber;
+        qDebug() << "Collapsing node to " << Util::numToHex(val) << t.getType() << t.m_lineNumber << node->m_op.getType();
+
+        return QSharedPointer<NodeNumber>(new NodeNumber(t,val));
+
+//        qDebug() << node->m_op.getType();
+//        t.m_type = TokenType::CON
+    }
+
     return node;
 }
 

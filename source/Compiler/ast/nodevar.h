@@ -45,6 +45,7 @@ public:
 
     bool m_isGlobal = false;
 
+
     TokenType::Type getOrgType(Assembler *as);
 
     TokenType::Type getType(Assembler* as) override;
@@ -90,6 +91,8 @@ public:
     }
 
     bool isArrayIndex() override { return m_expr!=nullptr; }
+
+
 
     QString getValue(Assembler* as) override;
     QString getLiteral(Assembler* as) override {
