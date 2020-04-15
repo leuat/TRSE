@@ -455,6 +455,8 @@ DISTFILES += \
     resources/code/amiga/init_p61_player.s \
     resources/code/amiga/p61-play.i \
     resources/code/c64_keyboard_input.asm \
+    resources/code/gameboy/gbt_player.asm \
+    resources/code/gameboy/gbt_player_bank1.asm \
     resources/code/vbm/vic20_vbm.asm \
     resources/code/x86/init_cga_scanlines.asm \
     resources/code/x86/init_playnote.asm \

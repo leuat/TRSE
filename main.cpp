@@ -62,6 +62,18 @@ void SineTable(QString fn) {
 
 }
 
+
+void RandTable(QString fn) {
+    QFile f(fn);
+    f.open(QFile::WriteOnly);
+    QByteArray b;
+    for (int i=0;i<256;i++)
+        b.append(rand()%0xFF);
+    f.write(b);
+    f.close();
+
+}
+
 void TanTable(QString fn) {
     QFile f(fn);
     f.open(QFile::WriteOnly);
@@ -132,6 +144,7 @@ int main(int argc, char *argv[])
 //    qDebug() << Util::BinopString("#$C");
 //    ConvertPerlin("perlin512.jpg","perlin64.bin",8);
 //    ColumnTab();
+//    RandTable("rnd256.bin");
     QApplication a(argc, argv);
     QString oldCurDir = QDir::currentPath();
     fixCurrentDir(QString(argv[0]));

@@ -23,8 +23,8 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
         text  += "<br><font color=\"#FF6040\">Please set up a link to the RGBASM assembler directory in the TRSE settings panel.</font>";
         return;
     }
-    Util::CopyFile(":resources/bin/gbt-player/gbt_player.o",currentDir+"/gbt_player.o");
-    Util::CopyFile(":resources/bin/gbt-player/gbt_player_bank1.o",currentDir+"/gbt_player_bank1.o");
+//    Util::CopyFile(":resources/bin/gbt-player/gbt_player.o",currentDir+"/gbt_player.o");
+//    Util::CopyFile(":resources/bin/gbt-player/gbt_player_bank1.o",currentDir+"/gbt_player_bank1.o");
     //qDebug() << m_settingsIni->getString("assembler");
         QProcess process;
         QStringList params;
@@ -33,6 +33,16 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
     //    params << "-Fhunkexe";
         QFile::remove(filename+".o");
         StartProcess(assembler, QStringList() <<"-o" << filename + ".o"<<filename+".asm", output);
+
+        // Assemble the player:
+        Util::CopyFile(":resources/code/gameboy/gbt_player.asm",currentDir+"/gbt_player.asm");
+        Util::CopyFile(":resources/code/gameboy/gbt_player.inc",currentDir+"/gbt_player.inc");
+        Util::CopyFile(":resources/code/gameboy/gbt_player_bank1.asm",currentDir+"/gbt_player_bank1.asm");
+        Util::CopyFile(":resources/code/gameboy/hardware.inc",currentDir+"/hardware.inc");
+        StartProcess(assembler, QStringList() <<"-o" << currentDir+"/gbt_player.o"<<currentDir+"/gbt_player.asm" <<"-i" <<currentDir+"/", output);
+        StartProcess(assembler, QStringList() <<"-o" << currentDir+"/gbt_player_bank1.o"<<currentDir+"/gbt_player_bank1.asm"<<"-i" <<currentDir, output);
+
+
         if (!QFile::exists(filename+".o")) {
             text  += "<br><font color=\"#FFFF00\">Error during assembly : please check source assembly for errors.</font>";
             text+=output;
@@ -52,7 +62,11 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
         }
 
         StartProcess(fix, QStringList() <<"-p" <<"0" <<"-r" <<"0" <<"-t" <<"TRSE GB" << "-v" << filename + ".gb", output);
-
+        /* Cleanup */
+        QStringList dels = QStringList() << "gbt_player.asm" <<"gbt_player.o" <<"gbt_player_bank1.asm" <<"gbt_player_bank1.o" <<"hardware.inc" << "gbt_player.inc";
+        for (QString s : dels)
+            if (QFile::exists(currentDir+s))
+                QFile::remove(currentDir+s);
 
 /*        process.start(link, params);
         process.waitForFinished();

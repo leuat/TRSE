@@ -3103,7 +3103,7 @@ QSharedPointer<Node> Parser::Expr()
         Token t;
         t.m_type = node->VerifyAndGetNumericType();
         t.m_lineNumber = node->m_lineNumber;
-        qDebug() << "Collapsing node to " << Util::numToHex(val) << t.getType() << t.m_lineNumber << node->m_op.getType();
+//        qDebug() << "Collapsing node to " << Util::numToHex(val) << t.getType() << t.m_lineNumber << node->m_op.getType();
 
         return QSharedPointer<NodeNumber>(new NodeNumber(t,val));
 
