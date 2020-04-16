@@ -187,6 +187,7 @@ public:
     void HandleVBMExportChunk();
     void HandleExportFrame();
     void HandleSpriteCompiler();
+    void HandleSpritePacker();
     void HandleProjectSettingsPreprocessors();
     void HandleUseTPU(QString fileName);
     void Eat();

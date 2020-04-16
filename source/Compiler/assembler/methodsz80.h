@@ -29,6 +29,8 @@ public:
     void MemCpy(Assembler* as);
     void Poke(Assembler* as);
     void SetSprite(Assembler* as, int type);
+    void InitSpriteFromData(Assembler *as, int type);
+
 };
 
 #endif // METHODSX86_H

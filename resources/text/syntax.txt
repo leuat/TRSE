@@ -145,6 +145,7 @@ m; Halt; GAMEBOY;
 m; Loop; GAMEBOY;
 m; SetSprite ; GAMEBOY; a,b,b,b,b
 m; InitSprite ; GAMEBOY; a,b,b,b,b
+m; InitSpriteFromData ; GAMEBOY; a,a,b,b
 
 c; VRAM ; GAMEBOY; a; $8000
 c; SCREEN0 ; GAMEBOY; a; $9800

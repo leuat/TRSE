@@ -67,6 +67,8 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
       SetSprite(as,0);
     else if (Command("initsprite"))
       SetSprite(as,1);
+    else if (Command("initspritefromdata"))
+      InitSpriteFromData(as,0);
 
 }
 
@@ -247,5 +249,30 @@ void MethodsZ80::SetSprite(Assembler *as, int type)
                 as->Asm("ld ["+addr + "+"+QString::number(cnt)+" +2 ],a");
             }
         }
+    }
+}
+
+void MethodsZ80::InitSpriteFromData(Assembler *as, int type)
+{
+//    LoadAddress(as,0);
+    if (!m_node->m_params[2]->isPure())
+        ErrorHandler::e.Error("Parameter 2 (start) must be pure constant or variable");
+    if (!m_node->m_params[3]->isPure())
+        ErrorHandler::e.Error("Parameter 3 (end) must be pure constant or variable");
+
+    int start = m_node->m_params[2]->getValueAsInt(as);
+    int end = m_node->m_params[3]->getValueAsInt(as);
+
+
+    QString addr = m_node->m_params[0]->getValue(as);
+    as->Comment("InitSpriteFromData");
+    LoadAddress(as,1);
+    as->Asm("ld d,0");
+    as->Asm("ld e,"+Util::numToHex(start));
+    as->Asm("add hl,de");
+    for (int i=start;i<end;i++) {
+        int cnt = 4* (i-start);
+        as->Asm("ld a,[hl+]");
+        as->Asm("ld ["+addr + "+"+QString::number(cnt)+" +2 ],a");
     }
 }

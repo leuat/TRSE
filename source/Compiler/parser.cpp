@@ -789,6 +789,18 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         return;
     }
+    if (m_currentToken.m_value=="spritepacker") {
+        Eat();
+        Eat(TokenType::STRING);
+        Eat(TokenType::STRING);
+        Eat(TokenType::STRING);
+        Eat(TokenType::STRING);
+        Eat();
+        Eat();
+        Eat();
+        Eat();
+        return;
+    }
     if (m_currentToken.m_value=="importchar") {
         Eat();
         Eat();
@@ -1692,6 +1704,10 @@ void Parser::Preprocess()
             else if (m_currentToken.m_value.toLower() =="buildpaw") {
                 Eat(TokenType::PREPROCESSOR);
                 HandleBuildPaw();
+            }
+            else if (m_currentToken.m_value.toLower() =="spritepacker") {
+                Eat(TokenType::PREPROCESSOR);
+                HandleSpritePacker();
             }
 
             else if (m_currentToken.m_value.toLower() =="ignoremethod") {
@@ -3002,6 +3018,71 @@ void Parser::HandleSpriteCompiler()
 
 
     delete img;
+}
+
+void Parser::HandleSpritePacker()
+{
+    QString inFile = m_currentDir+ m_currentToken.m_value;
+    Eat(TokenType::STRING); // Filename
+
+    QString outChrFileName = m_currentDir+m_currentToken.m_value;
+    Eat(TokenType::STRING); // Filename
+
+    QString outSpriteFileName = m_currentDir+m_currentToken.m_value;
+    Eat(TokenType::STRING); // Filename
+
+    QString type = m_currentToken.m_value.toLower();
+    Eat(TokenType::STRING); // Filename
+
+    int x = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST); // X
+    int y = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST); // Y
+    int w = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST); // W
+    int h = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST); // H
+
+    LImage* imgChrOut = nullptr;
+    LImage* imgSrc = nullptr;
+
+    if (QFile::exists(outChrFileName)) {
+        imgChrOut = LImageIO::Load(outChrFileName);
+    }
+    else {
+        if (type=="gameboy")
+            imgChrOut = LImageFactory::Create(LImage::GAMEBOY, LColorList::NES);
+    }
+    if (imgChrOut == nullptr)
+        ErrorHandler::e.Error("Unknown image type : "+type+". For now, only 'gameboy' is supported.", m_currentToken.m_lineNumber);
+
+    if (inFile.toLower().endsWith(".bin") || inFile.toLower().endsWith(".chr")) {
+        imgSrc = LImageFactory::Create(imgChrOut);
+        QFile f(inFile);
+        f.open(QFile::ReadOnly);
+        imgSrc->ImportBin(f);
+        f.close();
+    }
+    if (inFile.toLower().endsWith(".flf"))
+      imgSrc = LImageIO::Load(inFile);
+
+    if (imgSrc == nullptr) {
+        ErrorHandler::e.Error("Importing char error : unknown filetype for input binary '"+inFile +"'");
+    }
+
+    QByteArray spriteData;
+    if (QFile::exists(outSpriteFileName))
+        spriteData = Util::loadBinaryFile(outSpriteFileName);
+
+    int curPos = spriteData.count();
+
+    imgChrOut->SpritePacker(imgSrc, spriteData, x,y,w,h);
+
+    Util::SaveByteArray(spriteData, outSpriteFileName);
+    LImageIO::Save(outChrFileName,imgChrOut);
+    ErrorHandler::e.Warning("Added new sprite data from '"+inFile+"' : sprite from "+QString::number(curPos) + "  to " + QString::number(spriteData.count()),m_currentToken.m_lineNumber);
+//    qDebug() << "SPRDATA " <<spriteData;
+
 }
 
 void Parser::HandleProjectSettingsPreprocessors()
