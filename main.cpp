@@ -62,6 +62,18 @@ void SineTable(QString fn) {
 
 }
 
+void SineTablei(QString fn) {
+    QFile f(fn);
+    f.open(QFile::WriteOnly);
+    QByteArray b;
+    for (int i=0;i<256;i++) {
+        b.append(sin((i/256.0)*3.14159265*2)*127+128);
+    }
+    f.write(b);
+    f.close();
+
+}
+
 
 void RandTable(QString fn) {
     QFile f(fn);

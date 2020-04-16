@@ -761,6 +761,11 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         return;
     }
+    if (m_currentToken.m_value=="deletefile") {
+        Eat();
+        Eat();
+        return;
+    }
     if (m_currentToken.m_value=="export") {
         Eat();
         Eat();
@@ -1637,6 +1642,15 @@ void Parser::Preprocess()
 
                 Eat(TokenType::STRING);
             }*/
+            if (m_currentToken.m_value.toLower() =="deletefile") {
+                Eat(TokenType::PREPROCESSOR);
+                QString file = m_currentToken.m_value;
+                Eat();
+                if (QFile::exists(m_currentDir+file))
+                    QFile::remove(m_currentDir+file);
+
+            }
+            else
             if (m_currentToken.m_value.toLower() =="define") {
                 Eat(TokenType::PREPROCESSOR);
                 QString key = m_currentToken.m_value;

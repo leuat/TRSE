@@ -240,10 +240,10 @@ void MethodsZ80::SetSprite(Assembler *as, int type)
                 as->Asm("ld ["+addr + "+"+QString::number(cnt)+" +1 ],a");
             }
             if (type==1) { // Init
-                LoadVar(as,1);
-                int num =i+j*16;
-                if (num!=0)
-                    as->Asm("add "+QString::number(num));
+                int dx = m_node->m_params[1]->getValueAsInt(as);
+                int dy = m_node->m_params[2]->getValueAsInt(as);
+                int num = (dx+i)+ (dy+j)*16;
+                 as->Asm("ld a,"+QString::number(num));
                 as->Asm("ld ["+addr + "+"+QString::number(cnt)+" +2 ],a");
             }
         }

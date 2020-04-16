@@ -2402,37 +2402,74 @@ void Methods6502::Fill(Assembler *as)
     m_node->RequireAddress(m_node->m_params[0],"Fill",m_node->m_op.m_lineNumber);
     AddMemoryBlock(as,0);
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+        if (m_node->m_params[2]->isPure()) {
+            LoadVar(as,1);
+            as->Asm("ldy #0");
+            as->Label(lbl);
+            as->Term("sta (");
+            m_node->m_params[0]->Accept(m_dispatcher);
+            as->Term("),y", true);
+            as->Asm("iny");
+            as->Term("cpy ");
+            m_node->m_params[2]->Accept(m_dispatcher);
+            as->Term();
+            as->Asm("bne "+lbl);
+            as->PopLabel("fill");
 
-        LoadVar(as,1);
-        as->Asm("ldy #0");
-        as->Label(lbl);
-        as->Term("sta (");
-        m_node->m_params[0]->Accept(m_dispatcher);
-        as->Term("),y", true);
-        as->Asm("iny");
-        as->Term("cpy ");
-        m_node->m_params[2]->Accept(m_dispatcher);
-        as->Term();
-        as->Asm("bne "+lbl);
-        as->PopLabel("fill");
+        }
+        else {
+            LoadVar(as,2);
+            QString tmp = as->StoreInTempVar("filltmp");
+            LoadVar(as,1);
+            as->Asm("ldy #0");
+            as->Label(lbl);
+            as->Term("sta (");
+            m_node->m_params[0]->Accept(m_dispatcher);
+            as->Term("),y", true);
+            as->Asm("iny");
+            as->Term("cpy "+tmp);
+            as->Term();
+            as->Asm("bne "+lbl);
+            as->PopLabel("fill");
+            as->PopTempVar();
 
+        }
         return;
     }
 
 
-    LoadVar(as,1);
-    as->Asm("ldx #0");
-    as->Label(lbl);
-    as->Term("sta ");
-    m_node->m_params[0]->Accept(m_dispatcher);
-    as->Term(",x", true);
-    as->Asm("inx");
-    as->Term("cpx ");
-    m_node->m_params[2]->Accept(m_dispatcher);
-    as->Term();
-    as->Asm("bne "+lbl);
-    as->PopLabel("fill");
 
+    if (m_node->m_params[2]->isPure()) {
+        LoadVar(as,1);
+        as->Asm("ldx #0");
+        as->Label(lbl);
+        as->Term("sta ");
+        m_node->m_params[0]->Accept(m_dispatcher);
+        as->Term(",x", true);
+        as->Asm("inx");
+        as->Term("cpx ");
+        m_node->m_params[2]->Accept(m_dispatcher);
+        as->Term();
+        as->Asm("bne "+lbl);
+        as->PopLabel("fill");
+    }
+    else {
+        LoadVar(as,2);
+        QString tmp = as->StoreInTempVar("filltmp");
+        LoadVar(as,1);
+        as->Asm("ldx #0");
+        as->Label(lbl);
+        as->Term("sta ");
+        m_node->m_params[0]->Accept(m_dispatcher);
+        as->Term(",x", true);
+        as->Asm("inx");
+        as->Term("cpx "+tmp);
+        as->Term();
+        as->Asm("bne "+lbl);
+        as->PopLabel("fill");
+        as->PopTempVar();
+
+    }
 }
 
 void Methods6502::FillFast(Assembler *as)

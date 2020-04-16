@@ -13,7 +13,7 @@ var
 	// Current texts, supports @max 
 //	text_x, text_y, text_time, text_len:array[max] of byte = (0,0,0,0,0,0);
 	textType = record
-		x,y,time,l : byte;
+		x,y,time,len : byte;
 	end;
 
 	text : array[maxx] of textType;
@@ -89,7 +89,7 @@ begin
 		inc(i);
 		textPtr:=textPtr+1;
 	end;
-	text[j].l:=i; // Set length
+	text[j].len:=i; // Set length
 	waitTime:=textPtr[1];
 	// Pointing to the next
 	textPtr:=textPtr+2;
@@ -109,7 +109,7 @@ begin
 		if (text[i].time<>0) then begin // is active: update color 
 			text[i].time:=text[i].time-1; // damn dec doesn't work
 			moveto(text[i].x, text[i].y, hi(screen_col_loc));
-			fill(screenmemory,colors[text[i].time],k);
+			fill(screenmemory,colors[text[i].time],text[i].len);
 		end;
 	end; 
 
