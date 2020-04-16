@@ -214,6 +214,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVarDecl> node)
         if (node->m_curMemoryBlock!=nullptr)
             ErrorHandler::e.Error("Pointers can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
 //        DeclarePointer(node);
+ //       as->DecaareP
         as->Asm(v->getValue(as)+ ": dw  0,0" );
 //        as->DeclareVariable(v->getValue(as), "long", "0", t->m_position);
 

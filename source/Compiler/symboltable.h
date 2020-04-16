@@ -53,6 +53,7 @@ public:
     int m_org = 0;
     int m_size = 0;
     int m_lineNumber;
+    int m_bank = 0;
     QString m_fileName;
     bool isUsed = false;
     QSharedPointer<PVar> m_value = nullptr;

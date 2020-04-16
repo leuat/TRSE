@@ -8,7 +8,6 @@
 class LImageNES : public CharsetImage
 {
 public:
-    uchar m_cols[4];
     LImageNES(LColorList::Type t);
     void ImportBin(QFile &file) override;
     void ExportBin(QFile &file) override;

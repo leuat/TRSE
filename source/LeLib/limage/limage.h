@@ -223,7 +223,7 @@ public:
     }
 
 
-    virtual void SpritePacker(LImage* in, QByteArray& sprData, int x, int y, int w, int h) {
+    virtual void SpritePacker(LImage* in, QByteArray& sprData, int x, int y, int w, int h, int comp) {
         qDebug() << "LImage::SpritePacker not implemented for this image type : " <<m_type;
     }
 

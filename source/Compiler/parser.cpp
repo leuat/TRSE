@@ -57,6 +57,14 @@ QStringList Parser::getFlags() {
             done = false;
             flags<<"aligned";
         }
+        if (m_currentToken.m_type==TokenType::BANK) {
+            Eat(TokenType::BANK);
+            done = false;
+            Eat(TokenType::LPAREN);
+            flags<<"bank"<<Util::numToHex(GetParsedInt(TokenType::INTEGER_CONST));
+            Eat(TokenType::RPAREN);
+
+        }
     }
     return flags;
 
@@ -795,6 +803,7 @@ void Parser::HandlePreprocessorInParsing()
         Eat(TokenType::STRING);
         Eat(TokenType::STRING);
         Eat(TokenType::STRING);
+        Eat();
         Eat();
         Eat();
         Eat();
@@ -2375,6 +2384,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
     for (QSharedPointer<Symbol> s: syms) {
        s->m_type = typeNode->m_op.m_value;
        s->m_flags = typeNode->m_flags;
+       s->m_bank = typeNode->m_bank;
        if (typeNode->m_data.count()!=0)
            s->m_size = typeNode->m_data.count();
        else {
@@ -2473,6 +2483,7 @@ QSharedPointer<Node> Parser::TypeSpec()
 
         QSharedPointer<NodeVarType> nt =  QSharedPointer<NodeVarType>(new NodeVarType(t,binFile, position));
         nt->m_flags = flags;
+
         return nt;
 
 
@@ -2809,6 +2820,10 @@ void Parser::HandleExport()
         img->m_exportParams["Start"] = param1;
         img->m_exportParams["End"] = param2;
     }
+    if (dynamic_cast<LImageNES*>(img)!=nullptr) {
+        img->m_exportParams["Start"] = param1;
+        img->m_exportParams["End"] = param2;
+    }
     if (QFile::exists(outFile))
         QFile::remove(outFile);
 
@@ -3042,6 +3057,8 @@ void Parser::HandleSpritePacker()
     Eat(TokenType::INTEGER_CONST); // W
     int h = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST); // H
+    int comp = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST); // H
 
     LImage* imgChrOut = nullptr;
     LImage* imgSrc = nullptr;
@@ -3076,7 +3093,7 @@ void Parser::HandleSpritePacker()
 
     int curPos = spriteData.count();
 
-    imgChrOut->SpritePacker(imgSrc, spriteData, x,y,w,h);
+    imgChrOut->SpritePacker(imgSrc, spriteData, x,y,w,h,comp);
 
     Util::SaveByteArray(spriteData, outSpriteFileName);
     LImageIO::Save(outChrFileName,imgChrOut);

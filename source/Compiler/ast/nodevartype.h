@@ -37,6 +37,7 @@ public:
     QString m_arrayVarTypeText = "";
     QStringList m_data;
     QStringList m_flags;
+    int m_bank=0;
     QString m_filename, m_position="";
     QString initVal ="0";
     int m_flag = 0;

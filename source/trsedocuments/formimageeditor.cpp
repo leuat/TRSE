@@ -1017,7 +1017,9 @@ void FormImageEditor::on_btnImport_clicked()
     di->Initialize(m_work.m_currentImage->m_image->m_type, m_work.m_currentImage->m_image->m_colorList.m_type, m_work.m_currentImage->m_image);
     di->exec();
     if (di->m_ok) {
+
         m_work.m_currentImage->m_image->CopyFrom(di->m_image);
+
         m_work.m_currentImage->m_image->m_colorList.m_list = di->m_image->m_colorList.m_list;
         UpdatePalette();
         FillCMBColors();

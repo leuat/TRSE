@@ -133,7 +133,7 @@ void LImageNES::ForceColor()
 
 void LImageNES::setForeground(unsigned int col)
 {
-//    m_cols[1] = col;
+//    m_colorList.m_nesCols[1] = col;
     SetColor(col, 1);
  //   qDebug() << "HERE";
 }
@@ -151,10 +151,10 @@ bool LImageNES::KeyPress(QKeyEvent *e)
 {
     CharsetImage::KeyPress(e);
 
-    if (e->key()==Qt::Key_0 ) { Data::data.currentColor = m_cols[3];}
-    if (e->key()==Qt::Key_1 ) { Data::data.currentColor = m_cols[0];}
-    if (e->key()==Qt::Key_2 ) { Data::data.currentColor = m_cols[1];}
-    if (e->key()==Qt::Key_3 ) { Data::data.currentColor = m_cols[2];}
+    if (e->key()==Qt::Key_0 ) { Data::data.currentColor = m_colorList.m_nesCols[3];}
+    if (e->key()==Qt::Key_1 ) { Data::data.currentColor = m_colorList.m_nesCols[0];}
+    if (e->key()==Qt::Key_2 ) { Data::data.currentColor = m_colorList.m_nesCols[1];}
+    if (e->key()==Qt::Key_3 ) { Data::data.currentColor = m_colorList.m_nesCols[2];}
     return true;
 }
 
@@ -162,14 +162,14 @@ void LImageNES::LoadBin(QFile &file)
 {
     file.read( ( char * )( &m_data ),  m_charWidth*m_charHeight*12 );
     m_colorList.m_nesPPU = file.read(0x20);
-    m_cols[0] = m_colorList.m_nesPPU[0];
-    m_cols[1] = m_colorList.m_nesPPU[1];
-    m_cols[2] = m_colorList.m_nesPPU[2];
-    m_cols[3] = m_colorList.m_nesPPU[3];
+    m_colorList.m_nesCols[0] = m_colorList.m_nesPPU[0];
+    m_colorList.m_nesCols[1] = m_colorList.m_nesPPU[1];
+    m_colorList.m_nesCols[2] = m_colorList.m_nesPPU[2];
+    m_colorList.m_nesCols[3] = m_colorList.m_nesPPU[3];
 
     for (PixelChar& pc: m_data)
         for (int i=0;i<4;i++)
-            pc.c[i] = m_cols[i];
+            pc.c[i] = m_colorList.m_nesCols[i];
 }
 
 QPixmap LImageNES::ToQPixMap(int chr)
@@ -211,10 +211,10 @@ QPixmap LImageNES::ToQPixMap(int chr)
 
 void LImageNES::SetPalette(int pal)
 {
-     m_cols[2-1] = m_colorList.m_nesPPU[pal*4 +1 +0];
-     m_cols[2-0] = m_colorList.m_nesPPU[pal*4 +1 +1];
-     m_cols[2-2] = m_colorList.m_nesPPU[pal*4 +1 +2];
-     m_cols[3] = m_colorList.m_nesPPU[0];
+     m_colorList.m_nesCols[2-1] = m_colorList.m_nesPPU[pal*4 +1 +0];
+     m_colorList.m_nesCols[2-0] = m_colorList.m_nesPPU[pal*4 +1 +1];
+     m_colorList.m_nesCols[2-2] = m_colorList.m_nesPPU[pal*4 +1 +2];
+     m_colorList.m_nesCols[3] = m_colorList.m_nesPPU[0];
 }
 
 bool LImageNES::getXY(QPoint& xy,QPoint& p1, QPoint& p2)
@@ -295,20 +295,21 @@ QString LImageNES::getMetaInfo() {
 unsigned int LImageNES::getPixel(int x, int y)
 {
     if (x>=m_width || x<0 || y>=m_height || y<0)
-        return m_cols[0];
+        return m_colorList.m_nesCols[0];
 
     QPoint xy = QPoint(x,y);
 
     QPoint p1, p2;
-    if (!getXY(xy, p1, p2))
-        return m_cols[0];
+    if (!getXY(xy, p1, p2)) {
+        return m_colorList.m_nesCols[0];
+    }
 
     PixelChar& m_pc1 = getPixelChar(p1.x(), p1.y());
     PixelChar& m_pc2 = getPixelChar(p2.x(), p2.y());
 
     unsigned char pp = 3-((((m_pc1.p[xy.y()])>>xy.x()) & 0b1) | (((m_pc2.p[xy.y()])>>xy.x()) & 0b1)*2);
 
-    return m_cols[pp];
+    return m_colorList.m_nesCols[pp];
 
 
 //    return pc.get(m_scale*ix, iy, m_bitMask);
@@ -330,15 +331,18 @@ void LImageNES::setPixel(int x, int y, unsigned int col)
     PixelChar& m_pc2 = getPixelChar(p2.x(), p2.y());
 
     int j=0;
-    for (int i=0;i<4;i++)
-        if (m_cols[i]==col)
+    for (int i=0;i<4;i++) {
+//        if (rand()%1000>988)
+  //          qDebug() << "LImageNes::SETPIXEL " <<Util::numToHex(m_colorList.m_nesCols[i]) << Util::numToHex(i);
+        if (m_colorList.m_nesCols[i]==col)
             j=3-i;
+    }
 
      m_pc1.p[xy.y()] &= ~(1<<xy.x());
      m_pc2.p[xy.y()] &= ~(1<<xy.x());
      m_pc1.p[xy.y()] |= (j&1)<<xy.x();
      m_pc2.p[xy.y()] |= ((j&3)>>1)<<xy.x();
-    //return m_cols[pp];
+    //return m_colorList.m_nesCols[pp];
 
 
 }
@@ -352,14 +356,16 @@ void LImageNES::SetColor(uchar col, uchar idx)
         if (li==3)
             li=0;
 
-    m_cols[li] = col;
+
+    m_colorList.m_nesCols[li] = col;
     if (idx!=0)
         m_colorList.SetPPUColors(col, idx-1);
 
 
     else m_colorList.m_nesPPU[0]=col;
 
-//    qDebug() << "SETTING COLOR : " << idx <<  "   WITH COLOR " <<QString::number(col);
+//    if (rand()%100>98)
+  //      qDebug() << "SETTING COLOR : " << idx <<  "   WITH COLOR " <<Util::numToHex(col);
 
    // qDebug() << "Setting idx " << idx << " to  "<< QString::number(col);
 
@@ -367,15 +373,20 @@ void LImageNES::SetColor(uchar col, uchar idx)
 
 void LImageNES::CopyFrom(LImage *img)
 {
+    CharsetImage::CopyFrom(img);
+
     LImageNES* n = dynamic_cast<LImageNES*>(img);
-    for (int i=0;i<4;i++)
-        m_cols[i] = n->m_cols[i];
+    for (int i=0;i<4;i++) {
+        m_colorList.m_nesCols[i] = n->m_colorList.m_nesCols[i];
+        m_background = n->m_background;
+        m_extraCols[i] = m_colorList.m_nesCols[i];
+    }
 
     m_footer.m_data = img->m_footer.m_data;
-
+    m_colorList.m_curPal = img->m_colorList.m_curPal;
+    m_colorList.m_nesPPU = img->m_colorList.m_nesPPU;
 //    qDebug() << m_footer.isFullscreen() << img->m_footer.isFullscreen();
 
-    CharsetImage::CopyFrom(img);
 }
 
 void LImageNES::CopySingleChar(LImage *src, int srcChar, int dstChar)

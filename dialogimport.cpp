@@ -47,15 +47,16 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
     m_imageType = imageType;
 
     m_image = LImageFactory::Create(m_imageType, colorType);
+//    m_image->CopyFrom(img);
     m_image->m_colorList.m_list = img->m_colorList.m_list;
+//    m_image->m_metaParams
 /*    m_image->m_footer = img->m_footer;
     m_image->setMultiColor(img->isMultiColor());
     for (int i=0;i<)
     m_image->m_extraCols = img->m_extraCols;
 */
     m_image->CopyFrom(img);
-    m_image->Clear();
-
+//    m_image->Clear();
 
     LImageVIC20* vic = dynamic_cast<LImageVIC20*>(img);
     if (vic!=nullptr) {
@@ -85,13 +86,16 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 //        m_image = img;
     }
 
-
+    if (m_image->m_colorList.m_type!=LColorList::NES) {
 
     m_image->m_colorList.CreateUI(ui->layoutColors,0);
     m_image->m_colorList.FillComboBox(ui->cmbForeground);
     m_image->m_colorList.FillComboBox(ui->cmbBackground);
     m_image->m_colorList.FillComboBox(ui->cmbMC1);
     m_image->m_colorList.FillComboBox(ui->cmbMC2);
+
+//    qDebug() << "EXTRACOL 3 " <<QString::number(m_image->m_extraCols[3]);
+ //   qDebug() << "EXTRACOL 0 " <<QString::number(m_image->m_extraCols[0]);
 
     ui->cmbForeground->setCurrentIndex(m_image->m_extraCols[3]);
     ui->cmbBackground->setCurrentIndex(m_image->m_extraCols[0]);
@@ -104,8 +108,8 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 
     //QObject::connect(this, LColorList::colorValueChanged, UpdateOutput);
     connect(&m_image->m_colorList, SIGNAL(colorValueChanged()), this, SLOT(UpdateOutput()));
+}
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(slotOk()));
-
 }
 
 
@@ -127,8 +131,8 @@ void DialogImport::Convert()
     strength.setX( (ui->hsDither->value()/100.0)*100.0);
 //    m_output.m_qImage->save("temp.png");
 
-    for (int i=0;i<4;i++)
-        qDebug() << "COLS : S " <<QString::number(m_image->m_extraCols[i]);
+//    for (int i=0;i<4;i++)
+  //      qDebug() << "COLS : S " <<QString::number(m_image->m_extraCols[i]);
     if (!useDither)
        m_image->fromQImage(m_output.m_qImage, m_image->m_colorList);
     else
@@ -143,7 +147,7 @@ void DialogImport::Convert()
 
 
     CharsetImage* chr = dynamic_cast<CharsetImage*>(m_image);
-    if (chr!=nullptr) {
+    if (chr!=nullptr && chr->m_colorList.m_type!=LColorList::NES) {
         //chr->m_currentMode=CharsetImage::Mode::FULL_IMAGE;
         chr->m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
         chr->SetColor(0,0);
@@ -153,6 +157,10 @@ void DialogImport::Convert()
     }
    // for (int i=0;i<200;i++)
    //     qDebug() << QColor(m_image->getPixel(rand()%320, rand()%200));
+    //qDebug() << "DIALOGIMPORT:";
+    //for (int i=0;i<4;i++)
+    //    qDebug() << i << Util::numToHex(m_image->m_colorList.m_nesCols[i]);
+
     m_image->ToQImage(m_image->m_colorList,*m_output.m_qImage,1, QPoint(0.0,0.0));
 
 }
@@ -191,6 +199,10 @@ void DialogImport::on_cmbBackground_activated(int index)
 
 void DialogImport::SetColors()
 {
+
+    if (m_image->m_colorList.m_type!=LColorList::NES) {
+
+
     int a = ui->cmbMC1->currentIndex();
     int b = ui->cmbMC2->currentIndex();
     int back = ui->cmbBackground->currentIndex();
@@ -199,6 +211,7 @@ void DialogImport::SetColors()
     m_image->SetColor(back, 0);
     m_image->SetColor(a, 1);
     m_image->SetColor(b, 2);
+    }
 
 }
 

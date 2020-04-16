@@ -11,8 +11,8 @@ public:
 
     void ExportBin(QFile &file);
 
-    void SpritePacker(LImage* in, QByteArray& sprData, int x, int y, int w, int h) override;
-    int SearchForIdenticalPixelChar(PixelChar o1, PixelChar o2);
+    void SpritePacker(LImage* in, QByteArray& sprData, int x, int y, int w, int h, int c) override;
+    int SearchForIdenticalPixelChar(PixelChar o1, PixelChar o2, int compare);
 
 
     void ImportBin(QFile &file) override;

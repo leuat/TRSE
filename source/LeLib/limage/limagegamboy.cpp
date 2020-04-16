@@ -10,7 +10,14 @@ void LImageGamboy::ExportBin(QFile &file)
     QByteArray data;
     int j=0;
 //    qDebug() << m_charWidth;
-    for (int i=0;i<(m_charWidth/2)*m_charHeight;i++) {
+
+    int start = m_exportParams["Start"];
+    int end = m_exportParams["End"];
+    int size = end-start;
+
+
+    for (int i=0;i<min((m_charWidth/2)*m_charHeight,size);i++) {
+//        for (int i=0;i<(m_charWidth/2)*m_charHeight;i++) {
 
         for (int k=0;k<8;k++) {
             data.append( PixelChar::reverse(m_data[i*2].p[k]));
@@ -23,7 +30,7 @@ void LImageGamboy::ExportBin(QFile &file)
 
 }
 
-void LImageGamboy::SpritePacker(LImage *in, QByteArray &sprData, int x, int y, int w, int h) {
+void LImageGamboy::SpritePacker(LImage *in, QByteArray &sprData, int x, int y, int w, int h, int compression) {
 
     int cur = 1;
     while (!(m_data[cur*2].isEmpty() && m_data[cur*2+1].isEmpty())) { //Find first non-empty sprite
@@ -37,7 +44,7 @@ void LImageGamboy::SpritePacker(LImage *in, QByteArray &sprData, int x, int y, i
             int ii =(x+i+(j+y)*16);
             PixelChar& orgA = lga->m_data[ii*2];
             PixelChar& orgB = lga->m_data[ii*2+1];
-            int idx = SearchForIdenticalPixelChar(orgA, orgB);
+            int idx = SearchForIdenticalPixelChar(orgA, orgB,compression);
 //            qDebug() << "Testing if equal : "<<i<<j;
             if (idx==-1) {
                 idx = ii;
@@ -59,10 +66,13 @@ void LImageGamboy::SpritePacker(LImage *in, QByteArray &sprData, int x, int y, i
 
 }
 
-int LImageGamboy::SearchForIdenticalPixelChar(PixelChar o1, PixelChar o2) {
+int LImageGamboy::SearchForIdenticalPixelChar(PixelChar o1, PixelChar o2, int compare) {
     for (int i=0;i<m_charWidth*m_charHeight;i++) {
         int j=i*2;
-        if (m_data[j].isEqualBytes(o1) && m_data[j+1].isEqualBytes(o2))
+        int c1 = m_data[j].CompareLength(o1);
+        int c2 = m_data[j+1].CompareLength(o2);
+//        if (m_data[j].isEqualBytes(o1) && m_data[j+1].isEqualBytes(o2))
+        if (c1+c2<=compare)
             return i;
     }
 

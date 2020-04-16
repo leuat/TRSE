@@ -116,6 +116,15 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVarDecl> node)
     if (t->m_flags.contains("wram"))
         as->m_currentBlock = as->m_wram;
 
+    if (t->m_flags.contains("bank")) {
+        QString bnk = t->m_flags[t->m_flags.indexOf("bank")+1];//Banks always placed +1
+        if (!as->m_banks.contains(bnk)) {
+            as->m_banks[bnk] = QSharedPointer<Appendix>(new Appendix());
+            as->m_banks[bnk]->m_pos = "$4000";
+        }
+        as->m_currentBlock = as->m_banks[bnk];
+    }
+
 
 //    qDebug() << "BEFORE " <<as->m_currentBlock;
     ASTdispatcherX86::dispatch(node);

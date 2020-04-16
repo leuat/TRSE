@@ -336,6 +336,8 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
 
             int winner = 0;
             QColor newPixel = colors.getClosestColor(color, winner);
+        //    if (rand()%100>98)
+         //       qDebug() << "WINNER : " <<Util::numToHex(winner) << newPixel;
             //int c = m_colorList.getIndex(newPixel);
             setPixel(x,y,winner);
 

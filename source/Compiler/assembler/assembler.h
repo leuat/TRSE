@@ -162,6 +162,7 @@ public:
     QSharedPointer<Appendix> m_chipMem;
     QSharedPointer<Appendix> m_hram;
     QSharedPointer<Appendix> m_wram;
+    QMap<QString,QSharedPointer<Appendix>> m_banks;
 
     QString m_currentBlockName="";
 

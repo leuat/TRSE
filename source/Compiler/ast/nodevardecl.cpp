@@ -66,6 +66,7 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
 //                    qDebug() << "Defining : "<<varName + "_" + typeSymbol->m_name + "_"+ns->m_name << ns->m_type << TokenType::getType(ns->m_arrayType);
                 }
                 ns->m_flags = typeNode->m_flags;
+                ns->m_bank = typeNode->m_bank;
                 symTab->Define(ns);
             }
     }
@@ -76,6 +77,7 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
         isFlaggedAsUsed = true;
 
     varSymbol->m_flags = typeNode->m_flags;
+    varSymbol->m_bank = typeNode->m_bank;
 
     symTab->Define(varSymbol,isFlaggedAsUsed);
 

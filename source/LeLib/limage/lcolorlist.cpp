@@ -648,8 +648,35 @@ void LColorList::LoadFromFile(QString fileName)
 QColor LColorList::getClosestColor(QColor col, int& winner)
 {
     float d = 1E20;
-    int i = 0;
 //    qDebug() << "WHOO";
+    winner = 0;
+    if (m_type==NES) {
+        winner = m_nesCols[0];
+        for (int i=0;i<4;i++) {
+            //qDebug() << "Metric:";
+            int j=m_nesCols[i];
+
+//            qDebug() << "COLS "<<Util::numToHex(j)<<i;
+
+
+/*            m_cols[2-1] = m_colorList.m_nesPPU[pal*4 +1 +0];
+            m_cols[2-0] = m_colorList.m_nesPPU[pal*4 +1 +1];
+            m_cols[2-2] = m_colorList.m_nesPPU[pal*4 +1 +2];
+            m_cols[3] = m_colorList.m_nesPPU[0];
+*/
+            float v = m_metric->getDistance(m_list[j].color, col);
+            //qDebug() << "end:";
+            if (v<d) {
+//                qDebug() << winner;
+                d = v;
+                winner = j;
+            }
+        }
+     //   qDebug() << "WINNER "<<Util::numToHex(winner);
+
+   }
+
+    else
     for (int i=0;i<m_list.count();i++) {
         //qDebug() << "Metric:";
         if (!m_list[i].inUse)
