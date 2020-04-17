@@ -145,7 +145,7 @@ m; Halt; GAMEBOY;
 m; Loop; GAMEBOY;
 m; SetSprite ; GAMEBOY; a,b,b,b,b
 m; InitSprite ; GAMEBOY; a,b,b,b,b
-m; InitSpriteFromData ; GAMEBOY; a,a,b,b
+m; InitSpriteFromData ; GAMEBOY; a,a,b,b,b,b
 
 c; VRAM ; GAMEBOY; a; $8000
 c; SCREEN0 ; GAMEBOY; a; $9800
@@ -153,8 +153,10 @@ c; BACKGROUND_PALETTE; GAMEBOY; a; $FF47
 c; OBJECT0_PALETTE; GAMEBOY; a;$FF48
 c; OBJECT1_PALETTE; GAMEBOY; a;$FF49
 c; CURRENT_BANK ; GAMEBOY; a; $2000
-
-
+c; SPRITE_FLIP_X; GAMEBOY; b; %00100000
+c; SPRITE_FLIP_Y; GAMEBOY; b; %01000000
+c; SCROLLY ; GAMEBOY; a ; $FF42
+c; SCROLLX ; GAMEBOY; a ; $FF43
 # ************** AMIGA ROUTINES
 
 # *** INIT METHODS

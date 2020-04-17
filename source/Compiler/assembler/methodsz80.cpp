@@ -95,8 +95,21 @@ void MethodsZ80::LoadVar(Assembler *as, int paramNo)
 
 void MethodsZ80::LoadAddress(Assembler *as, int paramNo, QString reg)
 {
+
+
+
     if (m_node->m_params[paramNo]->isPure()) {
-        as->Asm("ld "+reg+", "+m_node->m_params[paramNo]->getValue(as));
+        QString v= m_node->m_params[paramNo]->getValue(as);
+        if (m_node->m_params[paramNo]->isPointer(as)) {
+            as->Asm("ld a,["+v+"]");
+            as->Asm("ld "+reg[0]+",a");
+            as->Asm("ld a,["+v+"+1]");
+            as->Asm("ld "+reg[1]+",a");
+            return;
+        }
+
+
+        as->Asm("ld "+reg+", "+v);
         return;
     }
 
@@ -256,23 +269,54 @@ void MethodsZ80::InitSpriteFromData(Assembler *as, int type)
 {
 //    LoadAddress(as,0);
     if (!m_node->m_params[2]->isPure())
-        ErrorHandler::e.Error("Parameter 2 (start) must be pure constant or variable");
-    if (!m_node->m_params[3]->isPure())
-        ErrorHandler::e.Error("Parameter 3 (end) must be pure constant or variable");
+        ErrorHandler::e.Error("Parameter 2 (start) must be constant/variable");
+    if (!m_node->m_params[3]->isPureNumeric())
+        ErrorHandler::e.Error("Parameter 3 (length) must be pure constant");
 
-    int start = m_node->m_params[2]->getValueAsInt(as);
-    int end = m_node->m_params[3]->getValueAsInt(as);
+    //    LoadAddress(as,0);
+    if (!m_node->m_params[4]->isPureNumeric())
+        ErrorHandler::e.Error("Parameter 4 (width) must be pure constant");
+    if (!m_node->m_params[5]->isPureNumeric())
+        ErrorHandler::e.Error("Parameter 5 (flip x) must be pure constant");
+
+//    int start = m_node->m_params[2]->getValueAsInt(as);
+    int length = m_node->m_params[3]->getValueAsInt(as);
+
+    int width = m_node->m_params[4]->getValueAsInt(as);
+
+    int attr = m_node->m_params[5]->getValueAsInt(as);
+
+
 
 
     QString addr = m_node->m_params[0]->getValue(as);
     as->Comment("InitSpriteFromData");
     LoadAddress(as,1);
     as->Asm("ld d,0");
-    as->Asm("ld e,"+Util::numToHex(start));
+    m_node->m_params[2]->Accept(m_dispatcher);
+//    as->Asm("ld a,["+m_node->m_params[2]->getValue(as)+"]");
+    as->Asm("ld e,a");
     as->Asm("add hl,de");
-    for (int i=start;i<end;i++) {
-        int cnt = 4* (i-start);
+    int x = 0;
+    int y =0;
+    bool flipx = (attr & 0b00100000)==0b00100000;
+    bool flipy = (attr & 0b01000000)==0b01000000;
+    for (int i=0;i<length;i++) {
+//        int cnt = 4* (i-start);
+        int dx = x;
+        int dy = y;
+        if (flipx) dx = width-1-dx;
+        if (flipy) dy = (length)/width-1-dy;
+        int cnt = 4* (dx+dy*width);
+
         as->Asm("ld a,[hl+]");
         as->Asm("ld ["+addr + "+"+QString::number(cnt)+" +2 ],a");
+        as->Asm("ld a,"+Util::numToHex(attr));
+        as->Asm("ld ["+addr + "+"+QString::number(cnt)+" +3 ],a");
+        x++;
+        if (x==width) {
+            x=0;
+            y++;
+        }
     }
 }

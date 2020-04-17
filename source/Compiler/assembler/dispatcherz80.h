@@ -65,6 +65,10 @@ public:
 
     void BuildToCmp(QSharedPointer<Node> node) override;
 
+    void HandleAssignPointers(QSharedPointer<NodeAssign> node);
+
+    QString getPlusMinus(Token t);
+
 
 };
 #endif // ASTdispatcherX86_H

@@ -63,6 +63,8 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
         for (int i=0;i<num;i++) {
             if (node->m_op.m_type == TokenType::SHR)
                 as->Asm("rrca");
+            if (node->m_op.m_type == TokenType::SHL)
+                as->Asm("rlca");
         }
         return;
     }
@@ -292,20 +294,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
 
 
     if (var->isPointer(as)) {
-        /*       if (node->m_right->isPureVariable()) {
-            as->Asm("lea si, ["+node->m_right->getValue(as)+"]");
-            as->Asm("mov ["+var->getValue(as)+"], ds");
-            as->Asm("mov ["+var->getValue(as)+"+2], si");
-            return "";
-        }
-        else{
-            node->m_right->Accept(this);
-
-            as->Asm("mov ["+var->getValue(as)+"], ax");
-            as->Asm("mov ["+var->getValue(as)+"+2], bx");
-        }
-        */
-        ErrorHandler::e.Error("Pointers not implemented",node->m_op.m_lineNumber);
+        HandleAssignPointers(node);
         return "";
     }
 
@@ -318,16 +307,6 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
             as->Asm("ld [+"+var->getValue(as)+"+"+var->m_expr->getValue(as)+"],a");
             return "";
         }
-        /*
-         ld a,5
-         ld e,a
-         ld d,0
-         ld hl,var
-         add dl,de
-
-
-
-          */
         // GENERIC expression
 
         bool rightIsPure = node->m_right->isPure();
@@ -405,7 +384,11 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
             }
             as->Comment("'a:=a + expression'  optimization ");
             bop->m_right->Accept(this);
-            as->Asm(getBinaryOperation(bop) + " ["+var->getValue(as)+"], "+getAx(var));
+            as->Asm("ld b,a");
+            as->Asm("ld a,["+var->getValue(as)+"]");
+            as->Asm(getBinaryOperation(bop) + " a,b");
+            as->Asm("ld ["+var->getValue(as)+"], a");
+
             return "";
         }
         // Check for a:=a+
@@ -540,5 +523,139 @@ void ASTdispatcherZ80::BuildToCmp(QSharedPointer<Node> node)
     //      as->PopTempVar();
 
 
+}
+
+void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
+{
+    //        qDebug() << "IS POINTER "<<node->m_right->isPure();
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
+
+    if (!var->isArrayIndex()) {
+
+        // P := Address / variable
+        if (node->m_right->isPure()) {
+            as->Asm("ld hl, "+node->m_right->getValue(as)+"");
+            as->Asm("ld a,h");
+            as->Asm("ld ["+var->getValue(as)+"], a");
+            as->Asm("ld a,l");
+            as->Asm("ld ["+var->getValue(as)+"+1], a");
+            return;
+        }
+        // First test for the simplest case: p := p  + const
+        QSharedPointer<NodeBinOP> bop = qSharedPointerDynamicCast<NodeBinOP>(node->m_right);
+        // P:= (expr);
+        if (bop!=nullptr) {
+            // Pointer := Pointer BOP expr
+            if (bop->m_left->getValue(as)==var->getValue(as)) {
+/*                as->Asm("ld e,a");
+                as->Asm("xor a,a");
+                as->Asm("ld d,a");*/
+                if (!bop->m_right->isWord(as) && bop->m_right->isPure()) {
+                    // Simple p1 := p1 + VAL
+                    as->ClearTerm();
+                    QString lbl = as->NewLabel("pcont");
+                    as->Asm("ld a,["+var->getValue(as)+"+1]");
+                    as->Asm(getPlusMinus(bop->m_op)+"a,"+bop->m_right->getValue(as));
+                    as->Asm("ld ["+var->getValue(as)+"+1],a");
+                    as->Asm("jr nc,"+lbl);
+                    as->Asm("ld a,["+var->getValue(as)+"]");
+                    if (bop->m_op.m_type==TokenType::PLUS)
+                       as->Asm("inc a");
+                    else
+                        as->Asm("dec a");
+                    as->Asm("ld ["+var->getValue(as)+"],a");
+as->Label(lbl);
+                    as->PopLabel("pcont");
+                    return;
+                }
+                bop->m_right->Accept(this);
+                ErrorHandler::e.Error("Pointers in GBZ80 TRSE do not support this expression (yet) ",bop->m_op.m_lineNumber);
+
+/*                ld a,[p1+1]
+                add a,32
+                ld [p1+1],a
+                jr nc,ccnt
+                ld a,[p1]
+                add a,1
+                ld [p1],a
+    ccnt:
+  */
+
+/*                as->Asm("ld hl,"+var->getValue(as));
+                if (bop->m_op.m_type == TokenType::PLUS) {
+                    as->Asm("add hl,bc");
+                }
+                else
+                    if (bop->m_op.m_type == TokenType::MINUS) {
+                        as->Asm("sub hl,bc");
+                    }
+                    else ErrorHandler::e.Error("Pointers can only be added / subtracted together",bop->m_op.m_lineNumber);
+
+                as->Asm("ld a,h");
+                as->Asm("ld ["+var->getValue(as)+"], a");
+                as->Asm("ld a,l");
+                as->Asm("ld ["+var->getValue(as)+"+1], a");
+                */
+                return;
+            }
+            else ErrorHandler::e.Error("Pointers in GBZ80 TRSE do not support this expression",bop->m_op.m_lineNumber);
+        }
+        // Generic : Doesn't really work
+        node->m_right->setForceType(TokenType::POINTER);
+        node->m_right->Accept(this);
+
+        as->Asm("ld a,h");
+        as->Asm("ld ["+var->getValue(as)+"], a");
+        as->Asm("ld a,l");
+        as->Asm("ld ["+var->getValue(as)+"+1], a");
+
+
+        // Generic case ))
+    }
+    else
+    {
+        // HAS array index, so P[ index ] := ..
+        // Much simpler. set value.
+        if (!node->m_right->isPure()) {
+            node->m_right->Accept(this);
+            as->Asm("push af");
+        }
+        as->Asm("ld a,[p1]");
+        as->Asm("ld h,a");
+        as->Asm("ld a,[p1+1]");
+        as->Asm("ld l,a");
+        if (var->m_expr->isPureNumeric() && var->m_expr->getValueAsInt(as)==0) {
+
+        }
+        else
+        {
+            as->Asm("xor a");
+            as->Asm("ld d,a");
+            var->m_expr->Accept(this);
+            as->Asm("ld e,a");
+            as->Asm("add hl,de");
+        }
+        if (!node->m_right->isPure()) {
+            as->Asm("push af");
+        }
+        else node->m_right->Accept(this);
+
+        as->Asm("ld [hl],a"); // Store in pointer
+
+        return;
+    }
+    ErrorHandler::e.Error("Pointers must be assigned to variables or addresses",node->m_op.m_lineNumber);
+
+}
+
+QString ASTdispatcherZ80::getPlusMinus(Token t) {
+    if (t.m_type == TokenType::PLUS) {
+        return "add ";
+    }
+    if (t.m_type == TokenType::MINUS) {
+        return "sub ";
+    }
+    ErrorHandler::e.Error("Only plus / minus are supported for this type of operation.",t.m_lineNumber);
+    return "";
 }
 
