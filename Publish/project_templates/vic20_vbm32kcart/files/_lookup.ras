@@ -1,0 +1,26 @@
+@donotremove _lookup
+procedure _lookup();
+var
+
+// -------------------------------------------------------------------------------
+// Colour memory look up addresses 
+
+	const acol: address = $9400;
+	colmem: array[] of integer = (
+		acol, acol + (20*1), acol + (20*2), acol + (20*3), acol + (20*4),
+		acol + (20*5), acol + (20*6), acol + (20*7), acol + (20*8), acol + (20*9),
+		acol + (20*10), acol + (20*11)
+	);
+
+
+
+
+
+
+// -------------------------------------------------------------------------------
+// Music
+
+
+
+
+begin end;
