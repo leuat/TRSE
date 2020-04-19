@@ -782,13 +782,42 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeProcedure> node)
 
 }
 
+void ASTDispatcher6502::InlineProcedure(QSharedPointer<NodeProcedure> p)
+{
+    as->Comment("Inline procedure : "+p->m_procedure->m_procName);
+    m_inlineParameters.clear();
+    int cur = 0;
+    for (auto v : p->m_procedure->m_paramDecl) {
+        QSharedPointer<NodeVarDecl> nv = qSharedPointerDynamicCast<NodeVarDecl>(v);
+        QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(nv->m_varNode);
+
+        m_inlineParameters[var->value] = p->m_parameters[cur++];
+     }
+    qSharedPointerDynamicCast<NodeBlock>(p->m_procedure->m_block)->m_ignoreDeclarations = true;
+    p->m_procedure->m_block->Accept(this);
+    m_inlineParameters.clear();
+
+}
+
+
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeProcedureDecl> node)
 {
 
     node->DispatchConstructor(as);
     // Don't declare inline procedures
-    if (node->m_isInline)
+
+    if (node->m_isInline) {
+        // Only declare variables in SYMTAB
+        for (QSharedPointer<Node> n: qSharedPointerDynamicCast<NodeBlock>(node->m_block)->m_decl) {
+            // Print label at end of vardecl
+            auto vd = qSharedPointerDynamicCast<NodeVarDecl>(n);
+            if (vd!=nullptr)
+                vd->ExecuteSym(as->m_symTab);
+
+        }
         return;
+    }
+
     as->m_symTab->SetCurrentProcedure(node->m_procName+"_");
     int ln = node->m_currentLineNumber;
 //    as->PushCounter();
@@ -991,37 +1020,40 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeBlock> node)
     QString label = as->NewLabel("block");
 
 
-    if (node->m_decl.count()!=0) {
-        if (node->m_isMainBlock && !as->m_ignoreInitialJump)
-            as->Asm("jmp " + label);
-        hasLabel = true;
-    }
+    if (!node->m_ignoreDeclarations) {
 
-/*    if (node->m_isMainBlock) {
+        if (node->m_decl.count()!=0) {
+            if (node->m_isMainBlock && !as->m_ignoreInitialJump)
+                as->Asm("jmp " + label);
+            hasLabel = true;
+        }
+
+        /*    if (node->m_isMainBlock) {
         int ret = node->MaintainBlocks(as);
         if (ret==2)
             as->m_currentBlock = nullptr;
     }
 */
 
-    for (QSharedPointer<Node> n: node->m_decl) {
-        // Print label at end of vardecl
-        if (qSharedPointerDynamicCast<NodeVarDecl>(n)==nullptr) {
-            if (!blockProcedure) // Print label at end of vardecl
-            {
-                if (n->m_op.m_lineNumber!=0) {
-                    //                      as->PopBlock(n->m_op.m_lineNumber);
-                    blockProcedure = true;
-                    //   qDebug() << "pop" << n->m_op.m_lineNumber << " " << TokenType::getType(n->getType(as));
+        for (QSharedPointer<Node> n: node->m_decl) {
+            // Print label at end of vardecl
+            if (qSharedPointerDynamicCast<NodeVarDecl>(n)==nullptr) {
+                if (!blockProcedure) // Print label at end of vardecl
+                {
+                    if (n->m_op.m_lineNumber!=0) {
+                        //                      as->PopBlock(n->m_op.m_lineNumber);
+                        blockProcedure = true;
+                        //   qDebug() << "pop" << n->m_op.m_lineNumber << " " << TokenType::getType(n->getType(as));
+                    }
+
                 }
 
             }
+            n->Accept(this);
 
         }
-        n->Accept(this);
-
+        as->VarDeclEnds();
     }
-    as->VarDeclEnds();
     as->PushCounter();
 
     if (node->m_isMainBlock) {
@@ -1344,12 +1376,6 @@ void ASTDispatcher6502::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
 
 }
 
-void ASTDispatcher6502::InlineProcedure(QSharedPointer<NodeProcedure> p)
-{
-    as->Comment("Inline procedure : "+p->m_procedure->m_procName);
-
-     p->m_procedure->m_block->Accept(this);
-}
 void ASTDispatcher6502::PrintCompare(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed)
 {
     if (node->m_op.m_type==TokenType::EQUALS)
@@ -2195,6 +2221,13 @@ void ASTDispatcher6502::LoadPointer(QSharedPointer<NodeVar> node) {
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeVar> node)
 {
+    // Override inline parameters
+//    qDebug() << "INLINE cnt :" <<m_inlineParameters.count();
+    if (m_inlineParameters.contains(node->value)) {
+  //      qDebug()<< "INLINE node override : "<< node->value;
+        m_inlineParameters[node->value]->Accept(this);
+        return;
+    }
 
     node->DispatchConstructor(as);
 

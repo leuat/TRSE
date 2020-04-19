@@ -37,6 +37,7 @@ class NodeBlock : public Node {
 public:
     QVector<QSharedPointer<Node>> m_decl;
     QString forceLabel = "";
+    bool m_ignoreDeclarations = false;
     QSharedPointer<Node> m_compoundStatement = nullptr;
     QSharedPointer<SymbolTable>  m_symTab = nullptr;
     bool m_useOwnSymTab;
