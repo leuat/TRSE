@@ -46,6 +46,6 @@ cpu_x86_system = 8086
 override_target_settings_basic = 6.95335e-310
 ignore_initial_jump = 0
 remove_unused_symbols = 1
-open_files = ,easy/05_matrix.ras, intermediate/02_fading_text.ras, intermediate/customunit.tru, Hello.ras
+open_files = ,easy/18_records.ras, easy/05_matrix.ras, intermediate/02_fading_text.ras, intermediate/customunit.tru, Hello.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
 current_file = intermediate/customunit.tru

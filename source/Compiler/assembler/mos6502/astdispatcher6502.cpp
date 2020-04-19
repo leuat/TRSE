@@ -89,8 +89,8 @@ void ASTDispatcher6502::HandleGenericBinop16bit(QSharedPointer<Node> node) {
 //    as->Asm("sty " +lbl+"+1"); // J is stored
     as->Term();
 
-    //as->Variable(v->getValue(as), false);
-    //as->Asm("lda " + v->getValue(as) + "+1");
+    //as->Variable(getValue(v), false);
+    //as->Asm("lda " + getValue(v) + "+1");
     node->m_left->m_isWord = true;
     node->m_left->Accept(this);
     as->Term();
@@ -182,24 +182,24 @@ void ASTDispatcher6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
 //        qDebug() << as->m_term;
     as->Term();
   //  as->Asm("clc");
-    //as->Variable(v->getValue(as), false);
+    //as->Variable(getValue(v), false);
   //  as->Comment(";HEREHERE");
 //    exit(1);
     if (!v->isArrayIndex()) {
         if (v->getType(as)==TokenType::POINTER || (v->m_op.m_type!=TokenType::ADDRESS && !v->m_fake16bit) )
-            as->Asm("lda " + v->getValue(as) + "+1");
+            as->Asm("lda " + getValue(v) + "+1");
         else
-            as->Asm("lda #>" + v->getValue(as) + "");
+            as->Asm("lda #>" + getValue(v) + "");
 
         as->BinOP(node->m_op.m_type);
         as->Term(lbl+"+1", true);
         as->Asm("tay");
-        //    qDebug() << v->getValue(as) << v->m_op.getType();
+        //    qDebug() << getValue(v) << v->m_op.getType();
         //  exit(1);
         if (v->getType(as)==TokenType::POINTER || (v->m_op.m_type!=TokenType::ADDRESS && !v->m_fake16bit) )
-            as->Asm("lda "+ v->getValue(as));
+            as->Asm("lda "+ getValue(v));
         else
-            as->Asm("lda #<"+ v->getValue(as));
+            as->Asm("lda #<"+ getValue(v));
     }
     else{
         as->Comment("Contains expression");
@@ -208,13 +208,13 @@ void ASTDispatcher6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
         as->Asm("asl");
         as->Asm("tax");
 //        as->Asm("tax");
-        as->Asm("lda " + v->getValue(as) + "+1,x");
+        as->Asm("lda " + getValue(v) + "+1,x");
 
         as->BinOP(node->m_op.m_type);
         as->Term(lbl+"+1", true);
         as->Asm("tay");
 
-        as->Asm("lda "+ v->getValue(as)+",x");
+        as->Asm("lda "+ getValue(v)+",x");
 
 //        v->Accept(this);
     }
@@ -261,7 +261,7 @@ bool ASTDispatcher6502::HandleSingleAddSub(QSharedPointer<Node> node) {
             //exit(1);
             //as->
             as->ClearTerm();
-            as->Term("lda " + var->getValue(as) + " + " + num->StringValue());
+            as->Term("lda " + getValue(var) + " + " + num->StringValue());
             return true;
         }
         node->m_left->Accept(this);
@@ -399,7 +399,7 @@ void ASTDispatcher6502::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>nod
         varName = as->StoreInTempVar("tempVarShift","word");
     }
     else
-        varName = node->m_left->getValue(as);
+        varName = getValue(node);
 
 //    QString cmd = node->m_op.m_type==TokenType::SHR?"lsr":"asl";
     QString command = "";
@@ -495,7 +495,7 @@ void ASTDispatcher6502::HandleRestBinOp(QSharedPointer<Node> node) {
 
     if ( qSharedPointerDynamicCast<NodeVar>(node->m_left) != nullptr) {
         QSharedPointer<NodeVar> v= qSharedPointerDynamicCast<NodeVar>(node->m_left);
-        varName = v->getValue(as);
+        varName = getValue(v);
         QSharedPointer<Symbol> s = as->m_symTab->Lookup(varName, node->m_op.m_lineNumber);
     }
     isWord16 = node->isWord(as);
@@ -588,7 +588,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeBinOP>node)
     node->DispatchConstructor(as);
 
 /*    if (node->m_isCollapsed) {
-        as->Asm("lda "+node->getValue(as));
+        as->Asm("lda "+getValue(node));
         return;
     }
 */
@@ -664,7 +664,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeNumber>node)
 {
     node->DispatchConstructor(as);
 
-    QString val = node->getValue(as);
+    QString val = getValue(node);
 
     /*        if (as->m_symTab->m_constants.contains(m_op.m_value)) {
             m_val = as->m_symTab->m_constants[m_op.m_value]->m_value->m_fVal;
@@ -677,7 +677,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeNumber>node)
     if (node->m_op.m_type==TokenType::INTEGER)
         val = "#"+QString::number((int)node->m_val);
     if (node->m_op.m_type==TokenType::INTEGER_CONST)
-        val = node->getValue(as);;
+        val = getValue(node);;
     if (node->m_op.m_type==TokenType::ADDRESS) {
 
         val = "$" + QString::number((int)node->m_val,16);
@@ -729,6 +729,13 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeBuiltinMethod> node)
     methods->m_node = node;
     methods->Assemble(as,this);
  //   as->PopCounter(node->m_op.m_lineNumber);
+}
+
+QString ASTDispatcher6502::getValue(QSharedPointer<Node> n) {
+    if (m_inlineParameters.contains(n->getValue(as)))
+        return m_inlineParameters[n->getValue(as)]->getValue(as);
+
+    return n->getValue(as);
 }
 
 
@@ -784,17 +791,19 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeProcedure> node)
 
 void ASTDispatcher6502::InlineProcedure(QSharedPointer<NodeProcedure> p)
 {
-    as->Comment("Inline procedure : "+p->m_procedure->m_procName);
+//    as->Comment("Inline procedure : "+p->m_procedure->m_procName);
     m_inlineParameters.clear();
     int cur = 0;
     for (auto v : p->m_procedure->m_paramDecl) {
         QSharedPointer<NodeVarDecl> nv = qSharedPointerDynamicCast<NodeVarDecl>(v);
         QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(nv->m_varNode);
-
+    //    qDebug() << "Preparing inline : " <<var->value << cur;
         m_inlineParameters[var->value] = p->m_parameters[cur++];
      }
     qSharedPointerDynamicCast<NodeBlock>(p->m_procedure->m_block)->m_ignoreDeclarations = true;
+//    qDebug() << "Before Inline Proc" <<m_inlineParameters.keys();
     p->m_procedure->m_block->Accept(this);
+  //  qDebug() << "Done Inline Proc";
     m_inlineParameters.clear();
 
 }
@@ -1100,14 +1109,14 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeBlock> node)
                     if (t->m_op.m_type == TokenType::INTEGER || t->m_op.m_type == TokenType::INTEGER_CONST || t->m_op.m_type == TokenType::ADDRESS || t->m_op.m_type == TokenType::POINTER)
                     {
                         as->Asm("pla");
-                        as->Asm("sta "+v->getValue(as));
+                        as->Asm("sta "+getValue(v));
                         as->Asm("pla");
-                        as->Asm("sta "+v->getValue(as)+"+1");
+                        as->Asm("sta "+getValue(v)+"+1");
 
                     }
                     else {
                         as->Asm("pla");
-                        as->Asm("sta "+v->getValue(as));
+                        as->Asm("sta "+getValue(v));
                     }
 
                 }
@@ -1214,7 +1223,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeVarDecl> node)
 
     if (t->m_op.m_type==TokenType::ARRAY) {
         as->DeclareArray(v->value, t->m_arrayVarType.m_value, t->m_op.m_intVal, t->m_data, t->m_position);
-        //qDebug() << "IS: " << TokenType::types[as->m_symTab->Lookup(v->getValue(as))->getTokenType()];
+        //qDebug() << "IS: " << TokenType::types[as->m_symTab->Lookup(getValue(v))->getTokenType()];
         node->m_dataSize=t->m_op.m_intVal;
         QSharedPointer<Symbol> s = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
         s->isUsed=false;
@@ -1295,7 +1304,7 @@ void ASTDispatcher6502::IncSid(QSharedPointer<NodeVarDecl> node) {
     QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix("$"+pos));
 //    qDebug() << "INCSID dispatcher"<< pos;
     app->Append("org $" +pos,1);
-    //        as->Appendix(v->getValue(as),0);
+    //        as->Appendix(getValue(v),0);
     app->Append("incbin \"" + as->m_projectDir + node->sid.m_outFile + "\"",1);
 
     as->m_appendix.append(app);
@@ -1334,7 +1343,7 @@ void ASTDispatcher6502::IncBin(QSharedPointer<NodeVarDecl> node) {
         as->Asm("incbin \"" + filename + "\"");
     }
     else {
-        //            qDebug() << "bin: "<<v->getValue(as) << " at " << t->m_position;
+        //            qDebug() << "bin: "<<getValue(v) << " at " << t->m_position;
         QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix(t->m_position));
 
         QSharedPointer<Symbol> typeSymbol = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
@@ -1440,12 +1449,12 @@ void ASTDispatcher6502::BuildToCmp(QSharedPointer<Node> node)
 
     QSharedPointer<NodeVar> varb = qSharedPointerDynamicCast<NodeVar>(node->m_right);
     if (varb!=nullptr && varb->m_expr==nullptr)
-        b = varb->getValue(as);
+        b = getValue(varb);
 
     if (node->m_right->isPureNumeric())
 //    QSharedPointer<NodeNumber> numb = dynamic_cast<QSharedPointer<NodeNumber>>(node->m_right);
   //  if (numb!=nullptr)
-        b = node->m_right->getValue(as);
+        b = getValue(node->m_right);
 
     node->m_left->Accept(this);
     as->Term();
@@ -1510,8 +1519,8 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node)
         hi = "#" + QString::number(((int)numb->m_val>>8) & 255);
     }
     if (varb!=nullptr) {
-        lo = varb->getValue(as);
-        hi = varb->getValue(as)+ "+1";
+        lo = getValue(varb);
+        hi = getValue(varb)+ "+1";
     }
 
     //m_left->Build(as);
@@ -1542,33 +1551,33 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node)
     if (numb!=nullptr || varb!=nullptr) {
         if (node->m_op.m_type==TokenType::GREATER) {
             as->Comment("Compare INTEGER with pure num / var optimization. GREATER. ");
-            as->Asm("lda " + vara->getValue(as) + "+1   ; compare high bytes");
+            as->Asm("lda " + getValue(vara) + "+1   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
             as->Asm("bcc " + lbl2);
         //    as->Asm("beq " + lbl2);
             as->Asm("bne " + lbl1);
-            as->Asm("lda " + vara->getValue(as));
+            as->Asm("lda " + getValue(vara));
             as->Asm("cmp " + lo +" ;keep");
             as->Asm("bcc " + lbl2);
             as->Asm("beq " + lbl2);
         }
         if (node->m_op.m_type==TokenType::GREATEREQUAL) {
             as->Comment("Compare INTEGER with pure num / var optimization. GREATEREQUAL. ");
-            as->Asm("lda " + vara->getValue(as) + "+1   ; compare high bytes");
+            as->Asm("lda " + getValue(vara) + "+1   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
             as->Asm("bcc " + lbl2);
             as->Asm("bne " + lbl1);
-            as->Asm("lda " + vara->getValue(as));
+            as->Asm("lda " + getValue(vara));
             as->Asm("cmp " + lo +" ;keep");
             as->Asm("bcc " + lbl2);
         }
         if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL) {
             as->Comment("Compare INTEGER with pure num / var optimization");
-            as->Asm("lda " + vara->getValue(as) + "+1   ; compare high bytes");
+            as->Asm("lda " + getValue(vara) + "+1   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
             as->Asm("bcc " + lbl1);
             as->Asm("bne " + lbl2);
-            as->Asm("lda " + vara->getValue(as));
+            as->Asm("lda " + getValue(vara));
             as->Asm("cmp " + lo+" ;keep");
             if (node->m_op.m_type==TokenType::LESSEQUAL)
                 as->Asm("beq "+lbl1);
@@ -1579,10 +1588,10 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node)
         }
         if (node->m_op.m_type==TokenType::EQUALS) {
             as->Comment("Compare INTEGER with pure num / var optimization");
-            as->Asm("lda " + vara->getValue(as) + "+1   ; compare high bytes");
+            as->Asm("lda " + getValue(vara) + "+1   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
             as->Asm("bne " + lbl2);
-            as->Asm("lda " + vara->getValue(as));
+            as->Asm("lda " + getValue(vara));
             as->Asm("cmp " + lo+" ;keep");
             as->Asm("bne " + lbl2);
             as->Asm("jmp " + lbl1);
@@ -2157,7 +2166,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeForLoop> node)
 
 
     // Get the variable name
-    QString var = qSharedPointerDynamicCast<NodeVar>(nVar->m_left)->getValue(as);
+    QString var = getValue(nVar->m_left);
     // accept statement (assign variable)
     node->m_a->Accept(this);
 
@@ -2204,7 +2213,7 @@ void ASTDispatcher6502::LoadPointer(QSharedPointer<NodeVar> node) {
     }
     if (m=="")
         m="lda ";
-    as->Asm(m+  "(" + node->getValue(as)+"),y");
+    as->Asm(m+  "(" + getValue(node)+"),y");
 
 }
 
@@ -2222,7 +2231,7 @@ void ASTDispatcher6502::LoadPointer(QSharedPointer<NodeVar> node) {
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeVar> node)
 {
     // Override inline parameters
-//    qDebug() << "INLINE cnt :" <<m_inlineParameters.count();
+//    qDebug() << "INLINE cnt :" <<m_inlineParameters.count() << m_inlineParameters.keys();
     if (m_inlineParameters.contains(node->value)) {
   //      qDebug()<< "INLINE node override : "<< node->value;
         m_inlineParameters[node->value]->Accept(this);
@@ -2231,9 +2240,9 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeVar> node)
 
     node->DispatchConstructor(as);
 
-    QString  val = node->getValue(as);
+    QString  val = getValue(node);
     Pmm::Data::d.lineNumber = node->m_op.m_lineNumber;
-    QSharedPointer<Symbol> s = as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber);
+    QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber);
     //        if (s==nullptr) {
     //          ErrorHandler::e.Error("Could not find variable '" + value +"'.\nDid you mispell?", m_op.m_lineNumber);
     //    }
@@ -2266,7 +2275,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeVar> node)
 
 
 bool ASTDispatcher6502::LoadXYVarOrNum(QSharedPointer<NodeVar> node, QSharedPointer<Node> other, bool isx) {
-    QSharedPointer<Symbol> s = as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber);
+    QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber);
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(other);
     //QSharedPointer<NodeNumber> num = dynamic_cast<QSharedPointer<NodeNumber>>(other);
     if (other==nullptr)
@@ -2278,12 +2287,12 @@ bool ASTDispatcher6502::LoadXYVarOrNum(QSharedPointer<NodeVar> node, QSharedPoin
             if (s->m_arrayType==TokenType::INTEGER) // integer array index is *2 (two bytes per array slot)
             {
                 //as->Asm("txa   ; watch for bug, Integer array has index range of 0 to 127");
-                as->Asm("lda "+ var->getValue(as));
+                as->Asm("lda "+ getValue(var));
                 as->Asm("asl");
                 as->Asm("tax");
             }
             else {
-                as->Asm(operand + var->getValue(as));
+                as->Asm(operand + getValue(var));
 
             }
         return true;
@@ -2294,7 +2303,7 @@ bool ASTDispatcher6502::LoadXYVarOrNum(QSharedPointer<NodeVar> node, QSharedPoin
             as->Asm(operand + "#" + QString::number(other->getValueAsInt(as) * 2) + " ; watch for bug, Integer array has max index of 128");
         }
         else
-            as->Asm(operand  + other->getValue(as));
+            as->Asm(operand  + getValue(other));
         return true;
     }
     return false;
@@ -2304,7 +2313,7 @@ bool ASTDispatcher6502::LoadXYVarOrNum(QSharedPointer<NodeVar> node, QSharedPoin
 void ASTDispatcher6502::LoadByteArray(QSharedPointer<NodeVar> node) {
     // Optimizer: if expression is number, just return direct
 
-    QSharedPointer<Symbol> s = as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber);
+    QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber);
     if (s->m_arrayType==TokenType::INTEGER)
         as->Comment("Load Integer array");
     else if (s->m_arrayType==TokenType::BYTE)
@@ -2330,12 +2339,12 @@ void ASTDispatcher6502::LoadByteArray(QSharedPointer<NodeVar> node) {
     }
     if (m=="")
         m="lda ";
-    as->Asm(m+  node->getValue(as)+",x");
+    as->Asm(m+  getValue(node)+",x");
 
     if (s->m_arrayType==TokenType::INTEGER) { // integer array need to load the high byte also
-//        as->Asm("ldy "+  node->getValue(as)+",x");
+//        as->Asm("ldy "+  getValue(node)+",x");
   //      as->Asm("inx");
-        as->Asm("ldy "+  node->getValue(as)+"+1,x");
+        as->Asm("ldy "+  getValue(node)+"+1,x");
     }
 }
 
@@ -2364,7 +2373,7 @@ void ASTDispatcher6502::LoadVariable(QSharedPointer<NodeVar> node) {
     /*        if (as->m_symTab->Lookup(value)==nullptr)
                 ErrorHandler::e.Error("Could not find variable '" +value +"' for storing.",m_op.m_lineNumber);
     */
-    TokenType::Type t = as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber)->getTokenType();
+    TokenType::Type t = as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType();
     if (t==TokenType::ADDRESS || t==TokenType::STRING || t==TokenType::CSTRING || t==TokenType::INCBIN) {
         LoadByteArray(node);
         return;
@@ -2380,18 +2389,18 @@ void ASTDispatcher6502::LoadVariable(QSharedPointer<NodeVar> node) {
         else {
             if (node->m_fake16bit)
                 as->Asm("ldy #0");
-            as->Asm("lda " +node->getValue(as));
+            as->Asm("lda " +getValue(node));
         }
         return;
     }
     if (t == TokenType::INTEGER) {
         node->m_isWord = true;
         as->Comment("Integer assignment in nodevar");
-        as->Asm("lda " +node->getValue(as));
-        as->Asm("ldy " +node->getValue(as)+"+1");
+        as->Asm("lda " +getValue(node));
+        as->Asm("ldy " +getValue(node)+"+1");
         return;
     }
-    ErrorHandler::e.Error(TokenType::getType(t) + " assignment not supported yet for exp: " + node->getValue(as));
+    ErrorHandler::e.Error(TokenType::getType(t) + " assignment not supported yet for exp: " + getValue(node));
     return;
 }
 
@@ -2412,7 +2421,7 @@ void ASTDispatcher6502::LoadVariable(QSharedPointer<NodeNumber>node)
 void ASTDispatcher6502::StoreVariable(QSharedPointer<NodeVar> node) {
     //        as->Comment("VarNode StoreVariable");
     //          ErrorHandler::e.Error("Could not find variable '" +value +"' for storing.", m_op.m_lineNumber);
-    as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber);
+    as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber);
     if (node->m_subNode!=nullptr){
         QSharedPointer<NodeVar> nv = qSharedPointerDynamicCast<NodeVar>(node->m_subNode);
         if (nv->m_expr!=nullptr) {
@@ -2431,11 +2440,11 @@ void ASTDispatcher6502::StoreVariable(QSharedPointer<NodeVar> node) {
             if (node->getArrayType(as)==TokenType::INTEGER) {
                 // Store integer array
                 int i = node->m_expr->getValueAsInt(as)*2;
-                as->Asm("sta " + node->getValue(as) + "+"+ QString::number(i)); as->Asm("sty "  + node->getValue(as) +"+"+ QString::number(i+1));
+                as->Asm("sta " + getValue(node) + "+"+ QString::number(i)); as->Asm("sty "  + getValue(node) +"+"+ QString::number(i+1));
 
             }
             else {
-                as->Asm("sta " + node->getValue(as) + "+"+ node->m_expr->getValue(as));
+                as->Asm("sta " + getValue(node) + "+"+ getValue(node->m_expr));
             }
             //                as->Asm("tya");
             return;
@@ -2461,11 +2470,11 @@ void ASTDispatcher6502::StoreVariable(QSharedPointer<NodeVar> node) {
                 node->m_expr->Accept(this);
                 as->Term();
 //                as->Asm("COMMENT BUT WHY DOES IT DISAPPEAR");
-                as->Asm("sta " +pa + node->getValue(as)+ pb + "," + secondReg);
+                as->Asm("sta " +pa + getValue(node)+ pb + "," + secondReg);
                 if (node->getArrayType(as)==TokenType::INTEGER) {
                     as->Asm("in"+secondReg);
                     as->Asm("tya");
-                    as->Asm("sta "  + node->getValue(as) + "," + secondReg);
+                    as->Asm("sta "  + getValue(node) + "," + secondReg);
                 }
                 return;
             }
@@ -2493,36 +2502,36 @@ void ASTDispatcher6502::StoreVariable(QSharedPointer<NodeVar> node) {
             as->Asm("ta" + secondReg);
             if (usePush)
                 as->Asm("pla");
-            as->Asm("sta " +pa + node->getValue(as)+pb+","+ secondReg);
+            as->Asm("sta " +pa + getValue(node)+pb+","+ secondReg);
             if (node->getArrayType(as)==TokenType::INTEGER) {
                 as->Asm("in"+secondReg);
              as->Asm("tya");
-             as->Asm("sta " +pa + node->getValue(as)+pb+","+ secondReg);
+             as->Asm("sta " +pa + getValue(node)+pb+","+ secondReg);
             }
         }
         return;
     }
     else {
         // Not array
-        if (as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber)->getTokenType() == TokenType::BYTE) {
+        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::BYTE) {
 
-            as->Asm("sta " + node->getValue(as));
+            as->Asm("sta " + getValue(node));
             return;
         }
         else
-        if (as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber)->getTokenType() == TokenType::ADDRESS) {
+        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::ADDRESS) {
 
-            as->Asm("sta " + node->getValue(as));
+            as->Asm("sta " + getValue(node));
             return;
         }
         else
-        if (as->m_symTab->Lookup(node->getValue(as), node->m_op.m_lineNumber)->getTokenType() == TokenType::INTEGER) {
-            as->Asm("sta " + node->getValue(as));
-            as->Asm("sty " + node->getValue(as) + "+1");
+        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::INTEGER) {
+            as->Asm("sta " + getValue(node));
+            as->Asm("sty " + getValue(node) + "+1");
             return;
         }
         else {
-            ErrorHandler::e.Error("Unable to assign variable : "+node->getValue(as)+ " of type "+node->getTypeText(as),node->m_op.m_lineNumber);
+            ErrorHandler::e.Error("Unable to assign variable : "+getValue(node)+ " of type "+node->getTypeText(as),node->m_op.m_lineNumber);
         }
 
     }
@@ -2551,16 +2560,16 @@ void ASTDispatcher6502::AssignString(QSharedPointer<NodeAssign> node, bool isPoi
     if (isPointer) {
   //      qDebug() << "HERE";
         as->Asm("lda #<"+str);
-        as->Asm("sta "+left->getValue(as));
+        as->Asm("sta "+getValue(left));
         as->Asm("lda #>"+str);
-        as->Asm("sta "+left->getValue(as)+"+1");
+        as->Asm("sta "+getValue(left)+"+1");
     }
     else {
 
         as->Asm("ldx #0");
         as->Label(lblCpy);
         as->Asm("lda " + str+",x");
-        as->Asm("sta "+left->getValue(as) +",x");
+        as->Asm("sta "+getValue(left) +",x");
         as->Asm("inx");
         as->Asm("cmp #0 ;keep");  // ask post optimiser to not remove this
         as->Asm("bne " + lblCpy);
@@ -2596,8 +2605,8 @@ void ASTDispatcher6502::AssignPointer(QSharedPointer<NodeAssign> node) {
         node->m_right->Accept(this);
         as->Term();
      //  as->Comment(";end");
-        as->Asm("sta " + aVar->getValue(as));
-        as->Asm("sty "+ aVar->getValue(as)+"+1");
+        as->Asm("sta " + getValue(aVar));
+        as->Asm("sty "+ getValue(aVar)+"+1");
         return;
     }
 
@@ -2608,19 +2617,19 @@ void ASTDispatcher6502::AssignPointer(QSharedPointer<NodeAssign> node) {
 
         if (bVar->getType(as)!=TokenType::POINTER) {
 //            if (bVar->m_op.m_type==TokenType::ADDRESS) {
-                as->Asm("lda #<" + bVar->getValue(as));
-                as->Asm("ldx #>" + bVar->getValue(as));
-                as->Asm("sta " + aVar->getValue(as));
-                as->Asm("stx "+ aVar->getValue(as)+"+1");
+                as->Asm("lda #<" + getValue(bVar));
+                as->Asm("ldx #>" + getValue(bVar));
+                as->Asm("sta " + getValue(aVar));
+                as->Asm("stx "+ getValue(aVar)+"+1");
                 return;
   //          }
         }
         else
         {
-            as->Asm("lda " + bVar->getValue(as));
-            as->Asm("ldx " + bVar->getValue(as) + "+1");
-            as->Asm("sta " + aVar->getValue(as));
-            as->Asm("stx "+ aVar->getValue(as)+"+1");
+            as->Asm("lda " + getValue(bVar));
+            as->Asm("ldx " + getValue(bVar) + "+1");
+            as->Asm("sta " + getValue(aVar));
+            as->Asm("stx "+ getValue(aVar)+"+1");
             return;
         }
 
@@ -2628,8 +2637,8 @@ void ASTDispatcher6502::AssignPointer(QSharedPointer<NodeAssign> node) {
     if (node->m_right->isPureNumeric()) {
         as->Asm("lda #" + QString::number(((int)node->m_right->numValue()) & 255));
         as->Asm("ldx #" + QString::number(((int)node->m_right->numValue()>>8) & 255) );
-        as->Asm("sta " + aVar->getValue(as));
-        as->Asm("stx "+ aVar->getValue(as)+"+1");
+        as->Asm("sta " + getValue(aVar));
+        as->Asm("stx "+ getValue(aVar)+"+1");
         return;
 
     }
@@ -2719,7 +2728,7 @@ bool ASTDispatcher6502::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QShare
         QString lbl = as->NewLabel("WordAdd");
         as->Comment("WORD optimization: a=a+b");
         //var->Accept(this);
-        as->Asm("lda " + var->getValue(as));
+        as->Asm("lda " + getValue(var));
         as->Term();
         //        as->Asm("clc");
         as->BinOP(rterm->m_op.m_type);
@@ -2728,16 +2737,16 @@ bool ASTDispatcher6502::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QShare
         as->Term();
         if (rterm->m_op.m_type==TokenType::PLUS) {
             as->Asm("bcc "+lbl);
-            as->Asm("inc " + var->getValue(as) + "+1");
+            as->Asm("inc " + getValue(var) + "+1");
         }
         else {
             as->Asm("bcs "+lbl);
-            as->Asm("dec " + var->getValue(as) + "+1");
+            as->Asm("dec " + getValue(var) + "+1");
         }
 
         as->Label(lbl);
-        as->Asm("sta " + var->getValue(as) + "+0");
-        //        as->Asm("sty " + var->getValue(as) +"+1");
+        as->Asm("sta " + getValue(var) + "+0");
+        //        as->Asm("sty " + getValue(var) +"+1");
 
         as->PopLabel("WordAdd");
         return true;
@@ -2762,7 +2771,7 @@ bool ASTDispatcher6502::IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPoint
 //    qDebug() << "IsSimpleIncDec test";
 
 
-    if (rvar->getValue(as)!=var->getValue(as))
+    if (getValue(rvar)!=getValue(var))
         return false;
 
 
@@ -2807,7 +2816,7 @@ bool ASTDispatcher6502::IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPoint
 
 
     if (var->m_expr==nullptr && rvar->m_expr==nullptr) {
-        as->Asm(operand +var->getValue(as));
+        as->Asm(operand +getValue(var));
         return true;
     }
     else {
@@ -2824,7 +2833,7 @@ bool ASTDispatcher6502::IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPoint
         if (LoadXYVarOrNum(var, var->m_expr,true)) {
             as->Comment("Optimize byte array " + operand);
 
-            as->Asm(operand + var->getValue(as)+",x");
+            as->Asm(operand + getValue(var)+",x");
             return true;
         }
 
@@ -2870,7 +2879,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeCase> node)
         if (node->m_conditionals[i]->isPure()) {
             node->m_variable->Accept(this);
             as->Term();
-            as->Asm("cmp " + node->m_conditionals[i]->getValue(as) +" ;keep");
+            as->Asm("cmp " + getValue(node->m_conditionals[i]) +" ;keep");
 
         }
         else { // General term
@@ -2963,7 +2972,7 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
 
 
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_left);
-    //        qDebug() << "AssignVariable: " <<v->getValue(as) << " : " << TokenType::getType( v->getType(as));
+    //        qDebug() << "AssignVariable: " <<getValue(v) << " : " << TokenType::getType( v->getType(as));
 
     QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
 
@@ -2985,10 +2994,10 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
     }
 
 
-    as->Comment("Assigning single variable : " + v->getValue(as));
-    QSharedPointer<Symbol> s = as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber, v->isAddress());
+    as->Comment("Assigning single variable : " + getValue(v));
+    QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(v), node->m_op.m_lineNumber, v->isAddress());
     //        if (s==nullptr)
-    //          ErrorHandler::e.Error("Could not find variable :" + v->getValue(as),m_op.m_lineNumber);
+    //          ErrorHandler::e.Error("Could not find variable :" + getValue(v),m_op.m_lineNumber);
 
 
 
@@ -3051,7 +3060,7 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
         ErrorHandler::e.Error("Node assign: right hand must be expression", node->m_op.m_lineNumber);
 
     if (node->m_left->isWord(as)) {
-//        qDebug() << "AssignVariable HERE " << v->getValue(as);
+//        qDebug() << "AssignVariable HERE " << getValue(v);
         as->Asm("ldy #0");    // AH:20190722: Does not appear to serve a purpose - takes up space in prg. Breaks TRSE scroll in 4K C64 demo if take this out
 //        node->m_right->m_forceType = TokenType::INTEGER; // FORCE integer on right-hand side
         node->m_right->setForceType(TokenType::INTEGER);
@@ -3078,8 +3087,8 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
         }
 
         as->Asm("ta" + secondReg);
-        as->Asm("sta " +pa + v->getValue(as)+pb+","+ secondReg);
-        return v->getValue(as);
+        as->Asm("sta " +pa + getValue(v)+pb+","+ secondReg);
+        return getValue(v);
 
     }
 */
@@ -3109,13 +3118,13 @@ void ASTDispatcher6502::HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign> no
     QSharedPointer<SymbolTable>  stab = as->m_symTab->m_records[node->m_right->getTypeText(as)];
     as->Comment("Handle assign copy records");
     for (QSharedPointer<Symbol> s: stab->m_symbols) {
-        QSharedPointer<NodeVar> l = QSharedPointer<NodeVar>(new NodeVar(Token(TokenType::ID,node->m_left->getValue(as))));
+        QSharedPointer<NodeVar> l = QSharedPointer<NodeVar>(new NodeVar(Token(TokenType::ID,getValue(node->m_left))));
         l->m_op.m_lineNumber = node->m_op.m_lineNumber;
         l->m_expr = qSharedPointerDynamicCast<NodeVar>(node->m_left)->m_expr;
         QSharedPointer<NodeVar> lp = QSharedPointer<NodeVar>(new NodeVar(Token(TokenType::ID,s->m_name)));
         l->m_subNode = lp;
 
-        QSharedPointer<NodeVar> r = QSharedPointer<NodeVar>(new NodeVar(Token(TokenType::ID,node->m_right->getValue(as))));
+        QSharedPointer<NodeVar> r = QSharedPointer<NodeVar>(new NodeVar(Token(TokenType::ID,getValue(node->m_right))));
         QSharedPointer<NodeVar> rp = QSharedPointer<NodeVar>(new NodeVar(Token(TokenType::ID,s->m_name)));
         r->m_subNode = rp;
         r->m_op.m_lineNumber = node->m_op.m_lineNumber;
@@ -3151,6 +3160,6 @@ void ASTDispatcher6502::StoreVariableSimplified(QSharedPointer<NodeVar> node, QS
     as->ClearTerm();
     expr->Accept(this);
     as->Term();
-    as->Asm("sta " +pa + node->getValue(as)+pb+","+ secondReg);
+    as->Asm("sta " +pa + getValue(node)+pb+","+ secondReg);
 
 }

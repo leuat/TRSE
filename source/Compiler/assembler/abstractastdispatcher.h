@@ -75,6 +75,7 @@ public:
     virtual void dispatch(QSharedPointer<NodeRepeatUntil> node) = 0;
     virtual void dispatch(QSharedPointer<NodeComment> node) = 0;
 
+    virtual QString getValue(QSharedPointer<Node> n);
     virtual QString getEndType(Assembler* as, QSharedPointer<Node> v) {return "";}
     virtual QString getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2) {return "";}
 
