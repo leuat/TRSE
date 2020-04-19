@@ -2545,25 +2545,30 @@ QSharedPointer<Node> Parser::TypeSpec()
         // Contains constant init?
         if (m_currentToken.m_type==TokenType::EQUALS) {
             Eat();
-            Eat(TokenType::LPAREN);
-            while (m_currentToken.m_type!=TokenType::RPAREN) {
-                bool found = false;
-                // First check if symbol exists:
-                if (m_currentToken.m_value!="") {
-                    if (m_symTab->m_symbols.contains(m_currentToken.m_value) && (m_symTab->LookupConstants(m_currentToken.m_value.toUpper())==nullptr)) {
-                        data<<m_currentToken.m_value;
-                        found = true;
+            if (m_currentToken.m_type==TokenType::BUILDTABLE) {
+                data = BuildTable(count);
+            }
+            else {
+                Eat(TokenType::LPAREN);
+                while (m_currentToken.m_type!=TokenType::RPAREN) {
+                    bool found = false;
+                    // First check if symbol exists:
+                    if (m_currentToken.m_value!="") {
+                        if (m_symTab->m_symbols.contains(m_currentToken.m_value) && (m_symTab->LookupConstants(m_currentToken.m_value.toUpper())==nullptr)) {
+                            data<<m_currentToken.m_value;
+                            found = true;
+                        }
+                        //                    qDebug() << "ADDRESS " << m_currentToken.m_value <<m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
                     }
-//                    qDebug() << "ADDRESS " << m_currentToken.m_value <<m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
-                 }
-                if (!found)
-                    data << "$0"+QString::number(GetParsedInt(dataType),16);//QString::number(m_currentToken.m_intVal);
-                //data << "$0"+QString::number(GetParsedInt(),16);//QString::number(m_currentToken.m_intVal);
-                if (m_currentToken.m_type!=TokenType::RPAREN) {
+                    if (!found)
+                        data << "$0"+QString::number(GetParsedInt(dataType),16);//QString::number(m_currentToken.m_intVal);
+                    //data << "$0"+QString::number(GetParsedInt(),16);//QString::number(m_currentToken.m_intVal);
+                    if (m_currentToken.m_type!=TokenType::RPAREN) {
 
-                    Eat();
-                    if (m_currentToken.m_type==TokenType::COMMA)
                         Eat();
+                        if (m_currentToken.m_type==TokenType::COMMA)
+                            Eat();
+                    }
                 }
             }
             Eat(TokenType::RPAREN);
@@ -2803,6 +2808,40 @@ void Parser::HandleImportChar()
     LImageIO::Save(outFile,imgB);
 
 
+}
+
+QStringList Parser::BuildTable(int cnt)
+{
+    Eat(TokenType::BUILDTABLE);
+    if (cnt==0)
+        ErrorHandler::e.Error("BuildTable must have at least 1 element in array.",m_currentToken.m_lineNumber);
+
+
+    Eat(TokenType::LPAREN);
+    QString sentence = m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QStringList data;
+    QJSEngine myEngine;
+    for (int i=0;i<cnt;i++) {
+        QString str = sentence;
+//        str = str.replace("i",QString::number(i));
+//        QJSValue ret = myEngine.evaluate(str);
+
+        QJSValue fun = myEngine.evaluate("(function(i) { return "+str+"; })");
+        if (fun.isError())
+            ErrorHandler::e.Error("Error evaluation javascript expression : " + fun.toString() + " <br><br>", m_currentToken.m_lineNumber);
+
+        QJSValueList args;
+        args << i;
+        QJSValue ret = fun.call(args);
+
+        if (ret.isError())
+            ErrorHandler::e.Error("Error evaluation javascript expression : " + ret.toString() + " <br><br>", m_currentToken.m_lineNumber);
+
+        data << Util::numToHex(ret.toInt());
+    }
+
+    return data;
 }
 
 void Parser::HandleExportPalette()

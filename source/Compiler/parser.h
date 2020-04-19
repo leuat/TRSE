@@ -193,6 +193,7 @@ public:
     void HandleUseTPU(QString fileName);
     void Eat();
     void HandleImportChar();
+    QStringList BuildTable(int cnt);
 
     int getParsedNumberOrConstant();
 
