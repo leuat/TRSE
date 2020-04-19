@@ -58,7 +58,7 @@ void Assembler::Nl()
 
 void Assembler::Write(QString str, int level)
 {
-    qDebug() << "ASM : " <<str;
+//    qDebug() << "ASM : " <<str;
     if (m_currentBlock==nullptr) {
 
         QString s ="";

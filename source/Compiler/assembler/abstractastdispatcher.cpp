@@ -1,4 +1,5 @@
 #include "abstractastdispatcher.h"
+#include "source/Compiler/ast/node.h"
 
 AbstractASTDispatcher::AbstractASTDispatcher()
 {
@@ -11,6 +12,6 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBlock> node) {
 }
 
 QString AbstractASTDispatcher::getValue(QSharedPointer<Node> n) {
-
+    return n->getValue(as);
 }
 

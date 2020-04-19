@@ -269,20 +269,30 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeForLoop> node)
 
     node->m_block->Accept(this);
     QString ax = getA(nVar->m_left);
+/*    as->ClearTerm();
+    LoadVariable(node->m_b);
+    as->Term();
+  */
+    if (!node->m_b->isPureNumeric()) {
+        as->ClearTerm();
+        node->m_b->Accept(this);
+        as->Term();
+        as->Asm("ld c,a");
+    }
+
     as->Asm(m_mov+ax+",["+var+"]");
     as->Asm("add "+ax+",1");
     as->Asm(m_mov+"["+var+"],"+ax);
-    PushX();
-    as->ClearTerm();
-    LoadVariable(node->m_b);
-    as->Term();
-    as->Asm(m_cmp+ax+","+getA(node->m_b));
-    PopX();
+    if (!node->m_b->isPureNumeric())
+        as->Asm(m_cmp+ax+",c");
+    else
+        as->Asm(m_cmp+ax+"," + node->m_b->getValue(as));
 
     if (!node->m_forcePage)
         as->Asm(m_jne+lblFor);
     else
         as->Asm("jp nz,"+lblFor);
+
     as->PopLabel("forloop");
 
 }
@@ -564,7 +574,17 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
 
         // P := Address / variable
         if (node->m_right->isPure()) {
-            as->Asm("ld hl, "+node->m_right->getValue(as)+"");
+            // p1 := p2;
+/*            if (node->m_right->isPointer(as)) {
+                as->Asm("ld a,["+node->m_right->getValue(as)+"]");
+                as->Asm("ld ["+var->getValue(as)+"], a");
+                as->Asm("ld a,["+node->m_right->getValue(as)+"+1]");
+                as->Asm("ld ["+var->getValue(as)+"+1], a");
+
+                return;
+            }
+            as->Asm("ld hl, "+node->m_right->getValue(as)+"");*/
+            LoadAddress(node->m_right);
             as->Asm("ld a,h");
             as->Asm("ld ["+var->getValue(as)+"], a");
             as->Asm("ld a,l");
@@ -580,12 +600,24 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
 /*                as->Asm("ld e,a");
                 as->Asm("xor a,a");
                 as->Asm("ld d,a");*/
-                if (!bop->m_right->isWord(as) && bop->m_right->isPure()) {
+//                qDebug() << "AAA "<<bop->m_right->getOrgType() << bop->m_right->isPure();
+                //if (!bop->m_right->isWord(as) && bop->m_right->isPure()) {
+                if (bop->m_right->isPure()) {
                     // Simple p1 := p1 + VAL
                     as->ClearTerm();
                     QString lbl = as->NewLabel("pcont");
-                    as->Asm("ld a,["+var->getValue(as)+"+1]");
-                    as->Asm(getPlusMinus(bop->m_op)+"a,"+bop->m_right->getValue(as));
+                    if (bop->m_right->isPureNumeric()) {
+                        as->Asm("ld a,["+var->getValue(as)+"+1]");
+
+                        as->Asm(getPlusMinus(bop->m_op)+"a,"+bop->m_right->getValue(as));
+                    }
+                    else {
+                        as->Asm("ld a,["+bop->m_right->getValue(as)+"]");
+                        as->Asm("ld b,a");
+                        as->Asm("ld a,["+var->getValue(as)+"+1]");
+                        as->Asm(getPlusMinus(bop->m_op)+"a,b");
+
+                    }
                     as->Asm("ld ["+var->getValue(as)+"+1],a");
                     as->Asm("jr nc,"+lbl);
                     as->Asm("ld a,["+var->getValue(as)+"]");
@@ -599,7 +631,7 @@ as->Label(lbl);
                     return;
                 }
                 bop->m_right->Accept(this);
-                ErrorHandler::e.Error("Pointers in GBZ80 TRSE do not support this expression (yet) ",bop->m_op.m_lineNumber);
+                ErrorHandler::e.Error("Pointers in GBZ80 TRSE do not support this expression pointer:=pointer + var (yet) ",bop->m_op.m_lineNumber);
 
 /*                ld a,[p1+1]
                 add a,32

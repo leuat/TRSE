@@ -2410,7 +2410,9 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
     QSharedPointer<NodeVarType> typeNode = qSharedPointerDynamicCast<NodeVarType>(TypeSpec());
     typeNode->m_flags.append(getFlags());
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY) {
-        if (typeNode->m_op.m_type==TokenType::POINTER) {
+        //if (typeNode->m_op.m_type==TokenType::POINTER)
+        if (typeNode->m_data.count()<=1 && typeNode->m_op.m_type!=TokenType::INCBIN)
+        {
 //            qDebug() << "HERE" << vars;
             typeNode->m_flags.append("wram"); // Always declare pointers in WRAM on GB
         }
