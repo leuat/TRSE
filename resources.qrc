@@ -465,5 +465,6 @@
         <file>resources/code/gameboy/gbt_player_bank1.asm</file>
         <file>resources/code/gameboy/gbt_player.asm</file>
         <file>resources/code/gameboy/hardware.inc</file>
+        <file>resources/text/help/p/buildtable.rtf</file>
     </qresource>
 </RCC>

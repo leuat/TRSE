@@ -1,10 +1,12 @@
 <h3>Description</h3>
 <p>Define a procedure.  Procedures contain parameters which are memory locations.  Note that any variables
-declared are not local variables.
+declared are not local variables.  With the inline modifier, a procedure can be changed to a special type that
+creates the code inline where it is called from rathter than calling a subroutine.  When parameters are 
+used inline they become substitutions.
 </p>
 
 
-<h3>Example</h3>
+<h3>Procedure Example</h3>
 
 <code>
     procedure MyProc( ind: byte );
@@ -23,6 +25,29 @@ declared are not local variables.
 
         myVar := 1; // change myVar
         MyProc( 10 );  // call procedure
+
+    end.
+        
+</code>
+
+
+
+<h3>Inline Procedure Example</h3>
+
+<code>
+    procedure MyCommand( ind: byte ) inline;
+    begin
+
+        screenMemory := screenMemory + ind;
+            
+    end;
+
+
+    // main code
+    begin
+
+        myVar := 1; // change myVar
+        MyCommand( 10 );  // inserts screenMemory := screenMemory + 10; at this location in the code
 
     end.
         
