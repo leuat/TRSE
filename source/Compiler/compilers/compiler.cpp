@@ -86,6 +86,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
 
     try {
         InitAssemblerAnddispatcher(system);
+        m_assembler->m_curDir = project_dir;
     } catch (FatalErrorException e) {
         HandleError(e,"Error during pre-build");
         return false;

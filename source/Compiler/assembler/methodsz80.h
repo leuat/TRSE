@@ -30,7 +30,7 @@ public:
     void Poke(Assembler* as);
     void SetSprite(Assembler* as, int type);
     void InitSpriteFromData(Assembler *as, int type);
-
+    void LoadSong(Assembler* as);
 };
 
 #endif // METHODSX86_H

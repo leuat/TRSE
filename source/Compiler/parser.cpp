@@ -483,7 +483,11 @@ void Parser::ApplyTPUAfter(QVector<QSharedPointer<Node>>& declBlock, QVector<QSh
         // Important: add newest procedures *last*
         procs.append(orgProcs);
 
+        auto copy = declBlock;
+        declBlock.clear();
+        // Make sure that TRUs are declared FIRST
         declBlock.append(decls);
+        declBlock.append(copy);
     }
 }
 
@@ -793,6 +797,11 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         Eat();
         Eat();
+        Eat();
+        Eat();
+        return;
+    }
+    if (m_currentToken.m_value=="execute") {
         Eat();
         Eat();
         return;
@@ -1757,6 +1766,11 @@ void Parser::Preprocess()
                 HandleImportChar();
             }
 
+            else if (m_currentToken.m_value.toLower() =="execute") {
+                Eat(TokenType::PREPROCESSOR);
+                HandleExecute();
+            }
+
             else if (m_currentToken.m_value.toLower() =="startassembler") {
                 Eat(TokenType::PREPROCESSOR);
                 m_initAssembler = m_currentToken.m_value;
@@ -2334,15 +2348,18 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
 
 
 
-
+    // All the vars that will be declared
     QVector<QSharedPointer<Node>> vars;
+    // Make sure that prefix is added
     m_currentToken.m_value = m_symTab->m_gPrefix+m_currentToken.m_value;
     vars.append(QSharedPointer<NodeVar>(new NodeVar(m_currentToken)));
     QString varName = m_currentToken.m_value;
+ //u   qDebug() << "CURRENT VARNAME "<< varName;
     QVector<QSharedPointer<Symbol>> syms;
     syms.append(QSharedPointer<Symbol>(new Symbol(m_currentToken.m_value,"")));
     Eat(TokenType::ID);
 
+    // Declare a record?
     if (m_currentToken.m_type==TokenType::EQUALS) {
         Eat(TokenType::EQUALS);
         if (m_currentToken.m_type==TokenType::RECORD) {
@@ -2356,6 +2373,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
 
     while (m_currentToken.m_type == TokenType::COMMA) {
         Eat(TokenType::COMMA);
+        // Prefix
         m_currentToken.m_value = m_symTab->m_gPrefix+m_currentToken.m_value;
         vars.append(QSharedPointer<NodeVar>(new NodeVar(m_currentToken)));
         AppendComment(vars[vars.count()-1]);
@@ -3132,6 +3150,16 @@ void Parser::HandleProjectSettingsPreprocessors()
     }
 
     Eat(); // H
+}
+
+void Parser::HandleExecute()
+{
+    QStringList ls = m_currentToken.m_value.split(" ");
+    Eat();
+    QString f = ls.first();
+    ls.removeAll(f);
+    QString out;
+    Syntax::s.m_currentSystem->StartProcess(f,ls,out);
 }
 
 void Parser::HandleUseTPU(QString fileName)

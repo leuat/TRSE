@@ -147,6 +147,24 @@ void fixCurrentDir(QString execFile) {
 }
 
 
+void CircleAndAtan(QString f1, QString f2, int w, int h) {
+    QByteArray b1,b2;
+    for (int j=0;j<h;j++)
+        for (int i=0;i<w;i++) {
+            float y = (j-h/2)/(float)h;
+            float x = (i-w/2)/(float)w;
+            float s = sqrt(x*x+y*y);
+            b1.append((char)(s*15.0));
+            float s2 = atan2(x,y);
+            b2.append((char)(s2*15.0));
+
+        }
+
+    Util::SaveByteArray(b1,f1);
+    Util::SaveByteArray(b2,f2);
+}
+
+
 
 //https://www.c64-wiki.com/wiki/Commodore_Plus/4
 
@@ -157,6 +175,7 @@ int main(int argc, char *argv[])
 //    ConvertPerlin("perlin512.jpg","perlin64.bin",8);
 //    ColumnTab();
 //    RandTable("rnd256.bin");
+    CircleAndAtan("/home/leuat/Dropbox/TRSE/gameboytest/data/circle.bin","/home/leuat/Dropbox/TRSE/gameboytest/data/atan.bin",16,16);
     QApplication a(argc, argv);
     QString oldCurDir = QDir::currentPath();
     fixCurrentDir(QString(argv[0]));

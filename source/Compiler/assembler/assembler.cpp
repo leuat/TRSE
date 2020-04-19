@@ -256,6 +256,7 @@ void Assembler::Asm(QString s, QString comment)
 {
     QString c = "\t;" + comment;
     if (comment=="") c="";
+    if (s=="" && comment=="") return;
     Write(s+c ,1);
  /*   if (m_currentBlock!=nullptr)
         qDebug() << m_currentBlock->m_pos + " : "+ s;
@@ -397,9 +398,9 @@ QString RegisterStack::Get() {
         m_latest.append(reg);
         return reg;
     }
-    qDebug() << "NO FREE REGISTERS :  RegisterStack::Get()";
-//    exit(1);
-
+//    qDebug() << "NO FREE REGISTERS :  RegisterStack::Get()";
+  //  exit(1);
+    ErrorHandler::e.Error("NO FREE Registers (shouldn't happen)",0);
 }
 
 void RegisterStack::Pop(QString reg) {

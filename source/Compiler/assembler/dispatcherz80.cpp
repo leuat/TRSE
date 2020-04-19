@@ -263,8 +263,10 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeForLoop> node)
     as->Asm(m_cmp+ax+","+getA(node->m_b));
     PopX();
 
-    as->Asm(m_jne+lblFor);
-
+    if (!node->m_forcePage)
+        as->Asm(m_jne+lblFor);
+    else
+        as->Asm("jp nz,"+lblFor);
     as->PopLabel("forloop");
 
 }
@@ -453,7 +455,6 @@ void ASTdispatcherZ80::BuildSimple(QSharedPointer<Node> node, QString lblFailed,
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());
     //    as->Asm("pha"); // Push that baby
-
     BuildToCmp(node);
 
 
@@ -491,11 +492,13 @@ void ASTdispatcherZ80::BuildToCmp(QSharedPointer<Node> node)
         {
             as->Comment("Compare two vars optimization");
             if (node->m_right->isPureVariable()) {
-                QString wtf = as->m_regAcc.Get();
+                //QString wtf = as->m_regAcc.Get();
                 LoadVariable(node->m_right);
+                as->Asm("ld b,a");
+                LoadVariable(node->m_left);
                 //TransformVariable(as,"move",wtf,qSharedPointerDynamicCast<NodeVar>node->m_left);
                 //TransformVariable(as,"cmp",wtf,as->m_varStack.pop());
-                as->Asm("cp  a," + getAx(node->m_right));
+                as->Asm("cp  a,b");
 
                 return;
             }

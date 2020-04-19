@@ -46,6 +46,9 @@ public:
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeString>(sharedFromThis()));
     }
 
+    QString getValue(Assembler* as) override {
+        return Util::toString(m_val);
+    }
 
 };
 

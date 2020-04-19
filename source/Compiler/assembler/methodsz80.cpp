@@ -69,6 +69,11 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
       SetSprite(as,1);
     else if (Command("initspritefromdata"))
       InitSpriteFromData(as,0);
+    else if (Command("updatemusic"))
+        as->Asm("call gbt_update ");
+    else if (Command("loadmusic"))
+        LoadSong(as);
+
 
 }
 
@@ -319,4 +324,23 @@ void MethodsZ80::InitSpriteFromData(Assembler *as, int type)
             y++;
         }
     }
+}
+
+void MethodsZ80::LoadSong(Assembler *as)
+{
+    QString song = m_node->m_params[0]->getValue(as);
+    as->Asm("ld de," +song +"_data");
+    as->Asm("ld bc,BANK(" +song +"_data)");
+    LoadVar(as,1);
+    as->Asm("call    gbt_play ; Play song");
+
+    auto app = QSharedPointer<Appendix>(new Appendix);
+
+    QString fn = as->m_projectDir+QDir::separator() + song+".asm";
+    if (!QFile::exists(fn))
+        ErrorHandler::e.Error("Required mod2gbt song assember file: '"+fn+"' not found", m_node->m_op.m_lineNumber);
+
+    app->m_source<<	"INCLUDE \""+fn+"\"";
+    app->m_pos = "$10000";
+    as->m_appendix.append(app);
 }

@@ -176,6 +176,7 @@ public:
     Stack m_varStack;
 
     QString m_lblFailed, m_lblSuccess;
+    QString m_curDir;
     int m_currentBreakpoint = 0;
 
 //    static QStringList m_internalZP;

@@ -189,6 +189,7 @@ public:
     void HandleSpriteCompiler();
     void HandleSpritePacker();
     void HandleProjectSettingsPreprocessors();
+    void HandleExecute();
     void HandleUseTPU(QString fileName);
     void Eat();
     void HandleImportChar();
@@ -196,6 +197,7 @@ public:
     int getParsedNumberOrConstant();
 
     int findSymbolLineNumber(QString symbol);
+
 
 
     void InitBuiltinFunctions();

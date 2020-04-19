@@ -45,6 +45,12 @@ start:
 	ld	b,$18				; a = 0, bc should be $1800; c = 0 here, so..
 	call	finit_fill
 
+        ld	a,LCDCF_ON | LCDCF_BG9800 | LCDCF_OBJ8 | LCDCF_OBJON | LCDCF_WINOFF | LCDCF_BGON
+                                        ; lcd setup: tiles at $8000, map at $9800, 8x8 sprites (disabled), no window, etc.
+        ld	[rLCDC],a			; enable lcd
+
+
+
 	jp init_cont
 ;-------------------------------------------------------------------------------
 finit_fill:
