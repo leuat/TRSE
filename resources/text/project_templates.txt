@@ -7,10 +7,11 @@ C64; C64 disk project; c64_disk; <h2>C64 disk project</h2><p>A sample project th
 VIC20; VBM blank project; vic20_vbmblank; <h2>VBM blank project</h2><p>Ready to use Vic Bitmap Mode project with zero page pointers, project files and two text fonts.</p>
 VIC20; VBM inertia project; vic20_inertia; <h2>VBM spaceship inertia project</h2><p>Ready to use Vic Bitmap Mode project with a sapceship sprite controlled by the player, moving with inertia smoothly around the screen.</p>
 VIC20; VBM platformer project; vic20_platform; <h2>VBM platformer project</h2><p>Ready to use Vic Bitmap Mode project with a platform game engine with ladders, jumps, solids and platforms to run around.</p>
+VIC20; VBM 32K cartridge; vic20_vbm32kcart; <h2>Vic 20 VBM 32k cartridge project</h2><p>Vic 20 project set up with VBM ready to use as an 32K cartidge at addressses $2000, $4000, $6000 and $A000.</p>
 VIC20; Unexpanded Vic; vic20_unexp; <h2>Unexpanded Vic 20 project</h2><p>Vic 20 project with a basic set up ready to use.</p>
 VIC20; 8K cartridge; vic20_8kcart; <h2>Vic 20 8k cartridge project</h2><p>Vic 20 project with a basic set up ready to use as an 8K cartidge at adress $A000.</p>
-VIC20; 16K cartridge; vic20_16kcart; <h2>Vic 20 16k cartridge project</h2><p>Vic 20 project with a basic set up ready to use as an 8K cartidge at addresses $2000 and $A000.</p>
-VIC20; 32K cartridge; vic20_32kcart; <h2>Vic 20 32k cartridge project</h2><p>Vic 20 project with a basic set up ready to use as an 8K cartidge at addressses $2000, $4000, $6000 and $A000.</p>
+VIC20; 16K cartridge; vic20_16kcart; <h2>Vic 20 16k cartridge project</h2><p>Vic 20 project with a basic set up ready to use as an 16K cartidge at addresses $2000 and $A000.</p>
+VIC20; 32K cartridge; vic20_32kcart; <h2>Vic 20 32k cartridge project</h2><p>Vic 20 project with a basic set up ready to use as an 32K cartidge at addressses $2000, $4000, $6000 and $A000.</p>
 NES; NES sample project; nes_general; <h2>Small NES sample project</h2><p>Sets up a NES project with a main source file, tile ROM image file and music.
 PET; Commodore PET project; pet_general; <h2>Small Commodore PET project</h2><p>A small sample project for the commodore PET that displays some random text on the screen.
 PLUS4; Empty Commodore PLUS4 project; plus4_general; <h2>Small Commodore PLUS4 project</h2><p>A small sample project for the commodore PLUS that displays text.
