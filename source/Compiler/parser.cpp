@@ -46,6 +46,11 @@ QStringList Parser::getFlags() {
             done = false;
         }
 
+        if (m_currentToken.m_type==TokenType::SPRRAM) {
+            Eat(TokenType::SPRRAM);
+            flags<<"sprram";
+            done = false;
+        }
         if (m_currentToken.m_type==TokenType::HRAM) {
             Eat(TokenType::HRAM);
             done = false;
@@ -485,7 +490,7 @@ void Parser::ApplyTPUAfter(QVector<QSharedPointer<Node>>& declBlock, QVector<QSh
 
         auto copy = declBlock;
         declBlock.clear();
-        // Make sure that TRUs are declared FIRST
+        // Make sure that TRU variables are declared FIRST. Ordering is important for the GB
         declBlock.append(decls);
         declBlock.append(copy);
     }
@@ -2250,6 +2255,7 @@ QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockNam
      //   bool isInterrupt= (m_currentToken.m_type==TokenType::PROCEDURE)?false:true;
         Token tok = m_currentToken;
         Eat(m_currentToken.m_type);
+        bool isInline = false;
         QString procName =m_symTab->m_gPrefix+ m_currentToken.m_value;
         //qDebug() << tok.m_value  << " : " << procName;
         Eat(TokenType::ID);
@@ -2262,11 +2268,17 @@ QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockNam
         if (m_currentToken.m_type==TokenType::RPAREN)
             Eat(TokenType::RPAREN);
 
+        if (m_currentToken.m_type == TokenType::INLINE) {
+            isInline = true;
+            Eat(TokenType::INLINE);
+        }
+
+
         Eat(TokenType::SEMI);
         QSharedPointer<Node> block = nullptr;
         QSharedPointer<NodeProcedureDecl> procDecl = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(tok, procName, paramDecl, block, type));
         procDecl->m_fileName = m_currentFileShort;
-
+        procDecl->m_isInline = isInline;
         AppendComment(procDecl);
 
         if (m_procedures[procName]!=nullptr)
@@ -2354,7 +2366,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
     m_currentToken.m_value = m_symTab->m_gPrefix+m_currentToken.m_value;
     vars.append(QSharedPointer<NodeVar>(new NodeVar(m_currentToken)));
     QString varName = m_currentToken.m_value;
- //u   qDebug() << "CURRENT VARNAME "<< varName;
+//    qDebug() << "CURRENT VARNAME "<< varName;
     QVector<QSharedPointer<Symbol>> syms;
     syms.append(QSharedPointer<Symbol>(new Symbol(m_currentToken.m_value,"")));
     Eat(TokenType::ID);
@@ -2397,6 +2409,12 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
 //    qDebug() << "CURVAL " <<m_currentToken.m_value;
     QSharedPointer<NodeVarType> typeNode = qSharedPointerDynamicCast<NodeVarType>(TypeSpec());
     typeNode->m_flags.append(getFlags());
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY) {
+        if (typeNode->m_op.m_type==TokenType::POINTER) {
+//            qDebug() << "HERE" << vars;
+            typeNode->m_flags.append("wram"); // Always declare pointers in WRAM on GB
+        }
+    }
     // Set all types
 
     for (QSharedPointer<Symbol> s: syms) {

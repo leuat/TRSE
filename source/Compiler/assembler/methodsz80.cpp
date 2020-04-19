@@ -73,6 +73,8 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->Asm("call gbt_update ");
     else if (Command("loadmusic"))
         LoadSong(as);
+    else if (Command("return"))
+        as->Asm("ret");
 
 
 }

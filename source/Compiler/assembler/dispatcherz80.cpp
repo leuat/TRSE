@@ -118,6 +118,9 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVarDecl> node)
     if (t->m_flags.contains("wram"))
         as->m_currentBlock = as->m_wram;
 
+    if (t->m_flags.contains("sprram"))
+        as->m_currentBlock = as->m_sprram;
+
     if (t->m_flags.contains("bank")) {
         QString bnk = t->m_flags[t->m_flags.indexOf("bank")+1];//Banks always placed +1
         if (!as->m_banks.contains(bnk)) {
@@ -144,10 +147,23 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
         ld hl,sine
         add hl,de
         ld a,[hl]
-  */    node->m_expr->Accept(this);
+
+
+  */
+        if (node->m_expr->isPureNumeric() && node->m_expr->getValueAsInt(as)==0) {
+            as->Asm("; Optimization : zp[0]");
+//            LoadVariable(as,)
+//            as->Asm("ld hl,"+node->getValue(as));
+            LoadAddress(node);
+            as->Asm("ld a,[hl]");
+            return;
+        }
+
+        node->m_expr->Accept(this);
         as->Asm("ld e,a");
         as->Asm("ld d,0");
-        as->Asm("ld hl,"+node->getValue(as));
+  //      as->Asm("ld hl,"+node->getValue(as));
+        LoadAddress(node);
         as->Asm("add hl,de");
         as->Asm("ld a,[hl]");
         return;
@@ -450,6 +466,17 @@ QString ASTdispatcherZ80::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
     return " UNKNOWN BINARY OPERATION";
 }
 
+void ASTdispatcherZ80::LoadAddress(QSharedPointer<Node> n)
+{
+    if (n->isPointer(as)) {
+        as->Asm("ld a,[" +n->getValue(as)+"]");
+        as->Asm("ld h,a");
+        as->Asm("ld a,[" +n->getValue(as)+"+1]");
+        as->Asm("ld l,a");
+    }
+    else as->Asm("ld hl," +n->getValue(as));
+}
+
 void ASTdispatcherZ80::BuildSimple(QSharedPointer<Node> node, QString lblFailed, bool offPage)
 {
 
@@ -623,10 +650,11 @@ as->Label(lbl);
             node->m_right->Accept(this);
             as->Asm("push af");
         }
-        as->Asm("ld a,[p1]");
+        LoadAddress(var);
+/*        as->Asm("ld a,[p1]");
         as->Asm("ld h,a");
         as->Asm("ld a,[p1+1]");
-        as->Asm("ld l,a");
+        as->Asm("ld l,a");*/
         if (var->m_expr->isPureNumeric() && var->m_expr->getValueAsInt(as)==0) {
 
         }

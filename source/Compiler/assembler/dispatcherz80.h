@@ -59,6 +59,7 @@ public:
 
     QString getBinaryOperation(QSharedPointer<NodeBinOP> bop) override;
 
+    void LoadAddress(QSharedPointer<Node> n) override;
 
 
     void BuildSimple(QSharedPointer<Node> node, QString lblFailed, bool offPage=false);

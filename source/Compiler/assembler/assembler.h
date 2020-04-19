@@ -100,6 +100,7 @@ class Appendix {
 public:
     static int s_id;
     int m_id;
+    int m_dataSize = 0;
     Appendix() {
         m_id=s_id++;
     }
@@ -161,7 +162,7 @@ public:
     QVector<Appendix> m_extraBlocks;
     QSharedPointer<Appendix> m_chipMem;
     QSharedPointer<Appendix> m_hram;
-    QSharedPointer<Appendix> m_wram;
+    QSharedPointer<Appendix> m_wram, m_sprram;
     QMap<QString,QSharedPointer<Appendix>> m_banks;
 
     QString m_currentBlockName="";

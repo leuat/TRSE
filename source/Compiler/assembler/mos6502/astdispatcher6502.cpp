@@ -754,6 +754,12 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeProcedure> node)
                               + QString::number(node->m_procedure->m_paramDecl.count()) +" parameters, not "
                               + QString::number(node->m_parameters.count()) + ".", node->m_op.m_lineNumber);
 
+    if (node->m_procedure->m_isInline) {
+        InlineProcedure(node);
+        return;
+    }
+
+
     for (int i=0; i<node->m_parameters.count();i++) {
         // Assign all variables
         QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(node->m_procedure->m_paramDecl[i]);
@@ -778,7 +784,11 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeProcedure> node)
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeProcedureDecl> node)
 {
+
     node->DispatchConstructor(as);
+    // Don't declare inline procedures
+    if (node->m_isInline)
+        return;
     as->m_symTab->SetCurrentProcedure(node->m_procName+"_");
     int ln = node->m_currentLineNumber;
 //    as->PushCounter();
@@ -1332,6 +1342,13 @@ void ASTDispatcher6502::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     as->Label(v->value + "\t= " + initVal);
 
+}
+
+void ASTDispatcher6502::InlineProcedure(QSharedPointer<NodeProcedure> p)
+{
+    as->Comment("Inline procedure : "+p->m_procedure->m_procName);
+
+     p->m_procedure->m_block->Accept(this);
 }
 void ASTDispatcher6502::PrintCompare(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed)
 {

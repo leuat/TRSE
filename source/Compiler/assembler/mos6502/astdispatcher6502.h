@@ -97,6 +97,7 @@ public:
     void DeclarePointer(QSharedPointer<NodeVarDecl> node);
 
 
+    void InlineProcedure(QSharedPointer<NodeProcedure> p);
 
     /*
      *

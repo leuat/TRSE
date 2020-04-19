@@ -36,6 +36,7 @@ public:
     QString m_procName, m_fileName;
     QVector<QSharedPointer<Node>> m_paramDecl;
     int m_type;
+    bool m_isInline = false;
     QSharedPointer<Node> m_block = nullptr;
 
 
