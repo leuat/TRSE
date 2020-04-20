@@ -183,7 +183,6 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
             as->Asm("ld a,[hl]");
             return;
         }
-
         node->m_expr->Accept(this);
         as->Asm("ld e,a");
         as->Asm("ld d,0");

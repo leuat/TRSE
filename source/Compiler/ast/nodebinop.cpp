@@ -26,6 +26,24 @@ NodeBinOP::NodeBinOP(QSharedPointer<Node> left, Token op, QSharedPointer<Node> r
     m_right = right;
     m_left = left;
     m_op = op;
+
+/*    if (m_right->isPureNumeric()) {
+        int val = m_right->getValueAsInt(nullptr);
+        if (power2.contains(val)) {
+            int idx = power2.indexOf(val);
+            if (m_op.m_type == TokenType::MUL) {
+                m_op.m_type = TokenType::SHL;
+                m_right = QSharedPointer<NodeNumber>(new NodeNumber(right->m_op,idx));
+//                qDebug() << "Replacing a MUL " << val << " with SHL "<<idx;
+            }else
+            if (m_op.m_type == TokenType::DIV) {
+                m_op.m_type = TokenType::SHR;
+                m_right = QSharedPointer<NodeNumber>(new NodeNumber(right->m_op,idx));
+  //              qDebug() << "Replacing a DIV " << val << " with SHR "<<idx;
+            }
+        }
+    }
+*/
     ApplyFlags();
 }
 

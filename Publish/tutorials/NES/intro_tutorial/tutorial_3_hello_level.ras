@@ -146,8 +146,7 @@ begin
 	zp:=$2000;
 	for m_rl_j:=0 to m_rl_height do begin
 		for m_rl_i:=0 to m_rl_width do begin
-			dp:=meta + lp[m_rl_i]*4;
-	
+			dp:=meta + lp[m_rl_i]*4;	
 			RenderMetaBlock(zp);
 			zp:=zp+2;
 			

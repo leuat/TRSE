@@ -36,7 +36,7 @@
 
 class NodeBinOP : public Node {
 public:
-
+    QVector<int> power2 = {1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192, 8192*2,8192*4,8192*8};
     NodeBinOP(QSharedPointer<Node> left, Token op, QSharedPointer<Node> right);
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
