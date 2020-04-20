@@ -69,6 +69,30 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
         return;
     }
 
+    // Special case if B-node is simple:
+    if (node->m_right->isPure() && node->m_left->isPure()) {
+        if (node->m_right->isPureVariable())  {
+            node->m_right->Accept(this);
+            as->Asm("ld b,a");
+        }
+        else {
+            as->Asm("ld b,"+node->m_right->getValue(as));
+        }
+        node->m_left->Accept(this);
+        as->Asm(getBinaryOperation(node)+" a,b");
+        return;
+    }
+
+    node->m_left->Accept(this);
+    as->Asm("push af");
+    node->m_right->Accept(this);
+    as->Asm("ld b,a");
+    as->Asm("pop af");
+    as->Asm(getBinaryOperation(node)+" a,b");
+
+//    as->Asm("ld b,a");
+
+/*    as->Comment(";balle binop");
     node->m_left->Accept(this);
     QString bx = getAx(node->m_left);
 
@@ -81,6 +105,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
 
     as->Asm(as->m_term + " " +  bx +"," +ax);
     as->m_term = "";
+*/
 
 
 
@@ -427,8 +452,9 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
             return "";
         }
     */
-
+    as->Comment("; generic assign ");
     node->m_right->Accept(this);
+    as->Comment("; before");
 
     as->Asm("ld ["+qSharedPointerDynamicCast<NodeVar>(node->m_left)->getValue(as) + "], "+getAx(node->m_left));
     return "";
@@ -469,11 +495,18 @@ QString ASTdispatcherZ80::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
         return "add";
     if (bop->m_op.m_type == TokenType::MINUS)
         return "sub";
-    if (bop->m_op.m_type == TokenType::DIV)
+    if (bop->m_op.m_type == TokenType::BITAND)
+        return "and";
+    if (bop->m_op.m_type == TokenType::BITOR)
+        return "or";
+    if (bop->m_op.m_type == TokenType::XOR)
+        return "xor";
+/*    if (bop->m_op.m_type == TokenType::DIV)
         return "div";
     if (bop->m_op.m_type == TokenType::MUL)
-        return "mul";
-    return " UNKNOWN BINARY OPERATION";
+        return "mul";*/
+    ErrorHandler::e.Error("Unknown binary operation : " + bop->m_op.getType(),bop->m_op.m_lineNumber);
+//    return " UNKNOWN BINARY OPERATION";
 }
 
 void ASTdispatcherZ80::LoadAddress(QSharedPointer<Node> n)
@@ -539,20 +572,21 @@ void ASTdispatcherZ80::BuildToCmp(QSharedPointer<Node> node)
 
                 return;
             }
-            else
-                node->m_right->Accept(this);
+/*
+            node->m_right->Accept(this);
 
             as->Asm("cp a," + getAx(node->m_right));
 
             //            TransformVariable(as,"cmp",qSharedPointerDynamicCast<NodeVar>node->m_left,as->m_varStack.pop());
-            return;
+            return;*/
         }
     }
-
     node->m_right->Accept(this);
+    as->Asm("ld c, a");
+    node->m_left->Accept(this);
+    as->Term();
 
-
-    as->Asm("cp a, " + getAx(node->m_right));
+    as->Asm("cp a, c");
 
     //    TransformVariable(as,"cmp",qSharedPointerDynamicCast<NodeVar>node->m_left, as->m_varStack.pop());
 
@@ -603,13 +637,38 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
 //                qDebug() << "AAA "<<bop->m_right->getOrgType() << bop->m_right->isPure();
                 //if (!bop->m_right->isWord(as) && bop->m_right->isPure()) {
                 if (bop->m_right->isPure()) {
+
                     // Simple p1 := p1 + VAL
                     as->ClearTerm();
                     QString lbl = as->NewLabel("pcont");
                     if (bop->m_right->isPureNumeric()) {
-                        as->Asm("ld a,["+var->getValue(as)+"+1]");
+                        int lo = bop->m_right->getValueAsInt(as)&0xFF;
+                        if (lo!=0) {
+                            as->Asm("ld a,["+var->getValue(as)+"+1]");
 
-                        as->Asm(getPlusMinus(bop->m_op)+"a,"+bop->m_right->getValue(as));
+                            as->Asm(getPlusMinus(bop->m_op)+"a,"+Util::numToHex(lo));
+                            as->Asm("ld ["+var->getValue(as)+"+1],a");
+                            as->Asm("jr nc,"+lbl);
+                            as->Asm("ld a,["+var->getValue(as)+"]");
+                            if (bop->m_op.m_type==TokenType::PLUS)
+                                as->Asm("inc a");
+                            else
+                                as->Asm("dec a");
+                            as->PopLabel("pcont");
+
+                        }
+                        else {
+                            as->Asm("ld a,["+var->getValue(as)+"]");
+
+                        }
+
+                        int hi = (bop->m_right->getValueAsInt(as)>>8)&0xFF;
+                        if (hi!=0)
+                           as->Asm(getPlusMinus(bop->m_op)+"a,"+Util::numToHex(hi));
+
+                        as->Asm("ld ["+var->getValue(as)+"],a");
+                        as->Label(lbl);
+                        return;
                     }
                     else {
                         as->Asm("ld a,["+bop->m_right->getValue(as)+"]");
@@ -699,7 +758,7 @@ as->Label(lbl);
             as->Asm("add hl,de");
         }
         if (!node->m_right->isPure()) {
-            as->Asm("push af");
+            as->Asm("pop af");
         }
         else node->m_right->Accept(this);
 

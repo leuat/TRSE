@@ -115,6 +115,43 @@ void Compression::AddBitplaneToData(QByteArray &data, MultiColorImage &img, int 
 
 }
 
+
+void Compression::AddGameboyData(QByteArray &data, MultiColorImage &img, int xp, int yp, int w, int h)
+{
+    int d= 0;
+//            curBit=curBit;
+
+    for (int ymain=0;ymain<h/8;ymain++)
+    for (int x=0;x<w;x++) {
+        for (int y=0;y<8;y+=1) {
+
+            for (int bp=0; bp<2;bp++) {
+
+                int curBit = pow(2,bp);
+
+                int xx = xp+x;
+                int yy = yp+y+ymain*8;
+                char c = 0;
+                for (int i=0;i<8;i++) {
+                    int col = img.getPixel(xx*8+i,yy);
+                    if ((col & curBit)==curBit )
+                        c = c | (0x1<<(7-i));
+                    //0101
+                }
+                data.append(c);
+
+                d++;
+                //            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+                //          data.append(PixelChar::reverse(pc.p[yy&7]));
+            }
+        }
+    }
+    //    qDebug() << "AddBitplaneToData size " <<d << w << h;
+
+}
+
+
+
 int Compression::CompareSprites(QByteArray &d1, QByteArray& d2, int sprite1, int sprite2)
 {
     int l=0;

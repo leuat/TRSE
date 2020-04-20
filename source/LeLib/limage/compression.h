@@ -38,6 +38,8 @@ public:
 
     void AddCharsetScreen(QByteArray& data, QImage& img, CharsetImage* charset,int w, int h);
 
+    void AddGameboyData(QByteArray &data, MultiColorImage &img, int xp, int yp, int w, int h);
+
  //   void m_compression.AddCharsetScreen(ba, m_effect->m_img, charset, lua_tonumber(L,1),lua_tonumber(L,2));
 
 
