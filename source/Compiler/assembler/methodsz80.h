@@ -22,7 +22,7 @@ public:
 
     bool Command(QString name) override;
 
-    void LoadVar(Assembler *as, int paramNo);
+    void LoadVar(Assembler *as, int paramNo, QString s="");
     void LoadAddress(Assembler *as, int paramNo, QString reg = "hl");
 
     void Fill(Assembler* as);

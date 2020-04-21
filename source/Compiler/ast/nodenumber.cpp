@@ -45,6 +45,8 @@ bool NodeNumber::isPureNumeric() {
 
 bool NodeNumber::isWord(Assembler *as) {
 //    return (m_val>=256 && m_op.m_type == TokenType::INTEGER_CONST);
+    if (m_forceType == TokenType::INTEGER)
+        return true;
     return (m_val>=256 && m_op.m_type == TokenType::INTEGER_CONST);
 }
 

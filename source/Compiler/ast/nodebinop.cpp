@@ -27,7 +27,8 @@ NodeBinOP::NodeBinOP(QSharedPointer<Node> left, Token op, QSharedPointer<Node> r
     m_left = left;
     m_op = op;
 
-/*    if (m_right->isPureNumeric()) {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY)
+    if (m_right->isPureNumeric()) {
         int val = m_right->getValueAsInt(nullptr);
         if (power2.contains(val)) {
             int idx = power2.indexOf(val);
@@ -43,7 +44,7 @@ NodeBinOP::NodeBinOP(QSharedPointer<Node> left, Token op, QSharedPointer<Node> r
             }
         }
     }
-*/
+
     ApplyFlags();
 }
 

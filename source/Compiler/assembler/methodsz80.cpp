@@ -85,7 +85,7 @@ bool MethodsZ80::Command(QString name)
     return m_node->m_procName.toLower() == name.toLower();
 }
 
-void MethodsZ80::LoadVar(Assembler *as, int paramNo)
+void MethodsZ80::LoadVar(Assembler *as, int paramNo, QString s)
 {
     //    qDebug() << "LOADVAR FORCE WORD  TYPE "<<paramNo <<m_node->m_params[paramNo]->m_builtInFunctionParameterType  <<m_node->m_params[paramNo]->isWord(as);
         if (m_node->m_params[paramNo]->m_builtInFunctionParameterType==BuiltInFunction::INTEGER
@@ -95,6 +95,7 @@ void MethodsZ80::LoadVar(Assembler *as, int paramNo)
         }
 
 //   qDebug() << "ISN " << qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[paramNo]);
+   m_dispatcher->m_useNext = s;
    m_node->m_params[paramNo]->Accept(m_dispatcher);
 
 
@@ -102,10 +103,11 @@ void MethodsZ80::LoadVar(Assembler *as, int paramNo)
 
 void MethodsZ80::LoadAddress(Assembler *as, int paramNo, QString reg)
 {
+    m_dispatcher->m_useNext = reg;
+    m_dispatcher->LoadAddress(m_node->m_params[paramNo]);
 
 
-
-    if (m_node->m_params[paramNo]->isPure()) {
+/*    if (m_node->m_params[paramNo]->isPure()) {
         QString v= m_node->m_params[paramNo]->getValue(as);
         if (m_node->m_params[paramNo]->isPointer(as)) {
             as->Asm("ld a,["+v+"]");
@@ -119,16 +121,19 @@ void MethodsZ80::LoadAddress(Assembler *as, int paramNo, QString reg)
         as->Asm("ld "+reg+", "+v);
         return;
     }
-
+*/
 }
 
 void MethodsZ80::Fill(Assembler *as)
 {
+    as->Comment("Loading param 2 ");
+    LoadVar(as,2,"bc");
+    as->Comment("Loading param 0 ");
     LoadAddress(as, 0);
-    as->ClearTerm();
-    LoadVar(as,2);
-    as->ClearTerm();
+
+    as->Comment("Loading param 1 ");
     LoadVar(as,1);
+
     QString lblFill = "."+as->NewLabel("fill");
     QString lblSkip = "."+as->NewLabel("skip");
 
@@ -181,7 +186,7 @@ void MethodsZ80::MemCpy(Assembler *as)
     as->Term();
     LoadAddress(as,0,"hl");
     as->Term();
-    LoadVar(as,2);
+    LoadVar(as,2,"bc");
     as->Asm("inc b");
     as->Asm("inc c");
     as->Asm("jr "+lblSkip);

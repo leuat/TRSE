@@ -10,6 +10,24 @@ ASTdispatcherZ80::ASTdispatcherZ80()
     m_jne = "jr nz,";
 }
 
+
+void ASTdispatcherZ80::Handle16bitShift(QSharedPointer<NodeBinOP> node)
+{   node->m_left->setForceType(TokenType::NADA);
+    node->m_left->Accept(this);
+    as->Asm("ld l,a");
+    as->Asm("ld h,0");
+    if (!node->m_right->isPureNumeric())
+        ErrorHandler::e.Error("Only constant 16-bit shifts are supported", node->m_op.m_lineNumber);
+
+    int val = node->m_right->getValueAsInt(as);
+    if (node->m_op.m_type == TokenType::SHL) {
+        for (int i=0;i<val;i++)
+            as->Asm("add hl,hl");
+    }
+}
+
+
+
 void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
 {
     if (node->m_left->isWord(as))
@@ -54,6 +72,12 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
     }
 
     if (node->m_op.m_type == TokenType::SHR || node->m_op.m_type == TokenType::SHL) {
+        if (node->getType(as)==TokenType::INTEGER) {
+            Handle16bitShift(node);
+            return;
+        }
+
+
         node->m_left->Accept(this);
         if (!node->m_right->isPureNumeric())
             ErrorHandler::e.Error("bit shifting on the Z80 must have constant numeric values!", node->m_op.m_lineNumber);
@@ -164,7 +188,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVarDecl> node)
 
 void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
 {
-    QString ending = "]";
+    QString hl =getHL();
     if (node->m_expr!=nullptr) {
 /*        ld a, [i]
         ld e,a
@@ -202,8 +226,31 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
         ending = "+di]";*/
 
     }
+    if (!node->isWord(as)) {
+        if (node->isPureVariable())
+            as->Asm("ld a,["+node->getValue(as)+"]");
+        else
+            as->Asm("ld a,"+node->getValue(as));
+        return;
+    }
+    // Word
+    if (node->isPureNumeric())
+        as->Asm("ld "+hl+", "+node->getValue(as));
+    else
+    {
+        as->Asm("ld a,["+node->getValue(as)+"]");
+        as->Asm("ld "+hl[1]+",a");
+        if (node->getOrgType(as)==TokenType::POINTER || node->getOrgType(as)==TokenType::INTEGER) {
+            as->Asm("ld a,["+node->getValue(as)+"+1]");
+            as->Asm("ld "+hl[0]+",a");
+        }
+        else {
+            as->Asm("xor a,a");
+            as->Asm("ld "+hl[0]+",a");
+        }
 
-    if (as->m_term!="") {
+    }
+    /*if (as->m_term!="") {
         as->m_term +=node->getValue(as);
         return;
     }
@@ -241,18 +288,19 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
     }
     //    qDebug() << "ORG " <<TokenType::getType(node->getOrgType(as)) << "   : " << node->getValue(as);
     //  qDebug() << "FT " <<TokenType::getType(node->m_forceType);
-
+*/
 }
 
 void ASTdispatcherZ80::dispatch(QSharedPointer<NodeNumber> node)
 {
-    QString ax = getAx(node);
-    if (as->m_term!="") {
-        as->m_term +=node->getValue(as);
-        return;
-    }
+    QString hl = getHL();
 
-    as->Asm("ld "+ax+", " + node->getValue(as));
+    if (!node->isWord(as))
+        as->Asm("ld a,"+node->getValue(as));
+    else
+        as->Asm("ld "+hl+","+node->getValue(as));
+
+
 }
 
 void ASTdispatcherZ80::dispatch(QSharedPointer<NodeForLoop> node)
@@ -510,13 +558,25 @@ QString ASTdispatcherZ80::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
 
 void ASTdispatcherZ80::LoadAddress(QSharedPointer<Node> n)
 {
+    QString hl =getHL();
+
     if (n->isPointer(as)) {
         as->Asm("ld a,[" +n->getValue(as)+"]");
-        as->Asm("ld h,a");
+        as->Asm("ld "+hl[0]+",a");
         as->Asm("ld a,[" +n->getValue(as)+"+1]");
-        as->Asm("ld l,a");
+        as->Asm("ld "+hl[1]+",a");
     }
-    else as->Asm("ld hl," +n->getValue(as));
+    else as->Asm("ld "+hl+"," +n->getValue(as));
+}
+
+void ASTdispatcherZ80::StoreAddress(QSharedPointer<Node> n)
+{
+    QString hl =getHL();
+    as->Asm("ld a,"+hl[0]+"");
+    as->Asm("ld ["+n->getValue(as)+"], a");
+    as->Asm("ld a,"+hl[1]+"");
+    as->Asm("ld ["+n->getValue(as)+"+1], a");
+
 }
 
 void ASTdispatcherZ80::BuildSimple(QSharedPointer<Node> node, QString lblFailed, bool offPage)
@@ -607,21 +667,8 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
 
         // P := Address / variable
         if (node->m_right->isPure()) {
-            // p1 := p2;
-/*            if (node->m_right->isPointer(as)) {
-                as->Asm("ld a,["+node->m_right->getValue(as)+"]");
-                as->Asm("ld ["+var->getValue(as)+"], a");
-                as->Asm("ld a,["+node->m_right->getValue(as)+"+1]");
-                as->Asm("ld ["+var->getValue(as)+"+1], a");
-
-                return;
-            }
-            as->Asm("ld hl, "+node->m_right->getValue(as)+"");*/
             LoadAddress(node->m_right);
-            as->Asm("ld a,h");
-            as->Asm("ld ["+var->getValue(as)+"], a");
-            as->Asm("ld a,l");
-            as->Asm("ld ["+var->getValue(as)+"+1], a");
+            StoreAddress(var);
             return;
         }
         // First test for the simplest case: p := p  + const
@@ -630,12 +677,8 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
         if (bop!=nullptr) {
             // Pointer := Pointer BOP expr
             if (bop->m_left->getValue(as)==var->getValue(as)) {
-/*                as->Asm("ld e,a");
-                as->Asm("xor a,a");
-                as->Asm("ld d,a");*/
-//                qDebug() << "AAA "<<bop->m_right->getOrgType() << bop->m_right->isPure();
-                //if (!bop->m_right->isWord(as) && bop->m_right->isPure()) {
-                if (bop->m_right->isPure()) {
+
+                /*if (bop->m_right->isPure()) {
 
                     // Simple p1 := p1 + VAL
                     as->ClearTerm();
@@ -684,50 +727,37 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
                     else
                         as->Asm("dec a");
                     as->Asm("ld ["+var->getValue(as)+"],a");
-as->Label(lbl);
+                    as->Label(lbl);
                     as->PopLabel("pcont");
                     return;
                 }
-                bop->m_right->Accept(this);
-                ErrorHandler::e.Error("Pointers in GBZ80 TRSE do not support this expression pointer:=pointer + var (yet) ",bop->m_op.m_lineNumber);
-
-/*                ld a,[p1+1]
-                add a,32
-                ld [p1+1],a
-                jr nc,ccnt
-                ld a,[p1]
-                add a,1
-                ld [p1],a
-    ccnt:
-  */
-
-/*                as->Asm("ld hl,"+var->getValue(as));
-                if (bop->m_op.m_type == TokenType::PLUS) {
-                    as->Asm("add hl,bc");
-                }
-                else
-                    if (bop->m_op.m_type == TokenType::MINUS) {
-                        as->Asm("sub hl,bc");
-                    }
-                    else ErrorHandler::e.Error("Pointers can only be added / subtracted together",bop->m_op.m_lineNumber);
-
-                as->Asm("ld a,h");
-                as->Asm("ld ["+var->getValue(as)+"], a");
-                as->Asm("ld a,l");
-                as->Asm("ld ["+var->getValue(as)+"+1], a");
                 */
-                return;
+                as->Comment(";generic pointer P:=P+(expr) add expression");
+
+                bop->setForceType(TokenType::INTEGER);
+                if (bop->m_right->isPure()) {
+                    m_useNext="de";
+                    bop->m_right->Accept(this);
+                }
+                else {
+                    bop->m_right->Accept(this);
+
+                    as->Asm("ld d,h");
+                    as->Asm("ld e,l");
+                }
+                LoadAddress(var); // Load address into hl
+                as->Asm(getPlusMinus(bop->m_op)+" hl,de");
+                // Store address
+                StoreAddress(var);
+
+               return;
             }
             else ErrorHandler::e.Error("Pointers in GBZ80 TRSE do not support this expression",bop->m_op.m_lineNumber);
         }
         // Generic : Doesn't really work
         node->m_right->setForceType(TokenType::POINTER);
         node->m_right->Accept(this);
-
-        as->Asm("ld a,h");
-        as->Asm("ld ["+var->getValue(as)+"], a");
-        as->Asm("ld a,l");
-        as->Asm("ld ["+var->getValue(as)+"+1], a");
+        StoreAddress(var);
 
 
         // Generic case ))

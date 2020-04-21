@@ -48,7 +48,7 @@ public:
     int m_ticks = 0;
     AbstractASTDispatcher();
     QStack<ProcedureParameter> m_parameters;
-
+    QString m_useNext="";
     QMap< QString,QSharedPointer<Node>> m_inlineParameters;
 
         // Declare overloads for each kind of a file to dispatch

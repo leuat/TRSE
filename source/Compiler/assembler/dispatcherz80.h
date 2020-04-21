@@ -60,7 +60,14 @@ public:
     QString getBinaryOperation(QSharedPointer<NodeBinOP> bop) override;
 
     void LoadAddress(QSharedPointer<Node> n) override;
-
+    void StoreAddress(QSharedPointer<Node> n);
+    QString getHL() {
+        QString hl ="hl";
+        if (m_useNext!="")
+            hl = m_useNext;
+        m_useNext="";
+       return hl;
+    }
 
     void BuildSimple(QSharedPointer<Node> node, QString lblFailed, bool offPage=false);
 
@@ -69,6 +76,7 @@ public:
     void HandleAssignPointers(QSharedPointer<NodeAssign> node);
 
     QString getPlusMinus(Token t);
+    void Handle16bitShift(QSharedPointer<NodeBinOP>node);
 
 
 };
