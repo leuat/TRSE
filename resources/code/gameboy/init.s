@@ -1,6 +1,6 @@
 
 SECTION "VBL",ROM0[$0040]		; vblank interrupt handler
-        jp	vblank
+        jp	internal_vblank
 
     SECTION	"Start",ROM0[$100]		; start vector, followed by header data applied by rgbfix.exe
 	nop
@@ -9,10 +9,13 @@ SECTION "VBL",ROM0[$0040]		; vblank interrupt handler
         SECTION "Code",ROM0[$150]		; code starts here
 
 
-vblank:
+internal_vblank:
         call	$FF80				; copy OAM mirror table using DMA
         reti
 
+
+default_DMAData:	db $03e, $0c0, $0e0, $046, $03e, $028, $03d, $020
+        db $0fd, $0cd, $00, $00, $0c9
 
 
 start:

@@ -31,6 +31,7 @@ public:
     void SetSprite(Assembler* as, int type);
     void InitSpriteFromData(Assembler *as, int type);
     void LoadSong(Assembler* as);
+    void InitDMA(Assembler* as);
 };
 
 #endif // METHODSX86_H

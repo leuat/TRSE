@@ -75,6 +75,22 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         LoadSong(as);
     else if (Command("return"))
         as->Asm("ret");
+    else if(Command("initdmaandvblank"))
+        InitDMA(as);
+    else if (Command("push")) {
+        as->Asm("push af");
+        as->Asm("push bc");
+        as->Asm("push hl");
+        as->Asm("push de");
+
+    }
+    else if (Command("pop")) {
+        as->Asm("pop de");
+        as->Asm("pop hl");
+        as->Asm("pop bc");
+        as->Asm("pop af");
+
+    }
 
 
 }
@@ -281,15 +297,15 @@ void MethodsZ80::InitSpriteFromData(Assembler *as, int type)
 {
 //    LoadAddress(as,0);
     if (!m_node->m_params[2]->isPure())
-        ErrorHandler::e.Error("Parameter 2 (start) must be constant/variable");
+        ErrorHandler::e.Error("Parameter 2 (start) must be constant/variable", m_node->m_op.m_lineNumber);
     if (!m_node->m_params[3]->isPureNumeric())
-        ErrorHandler::e.Error("Parameter 3 (length) must be pure constant");
+        ErrorHandler::e.Error("Parameter 3 (length) must be pure constant", m_node->m_op.m_lineNumber);
 
     //    LoadAddress(as,0);
     if (!m_node->m_params[4]->isPureNumeric())
-        ErrorHandler::e.Error("Parameter 4 (width) must be pure constant");
+        ErrorHandler::e.Error("Parameter 4 (width) must be pure constant", m_node->m_op.m_lineNumber);
     if (!m_node->m_params[5]->isPureNumeric())
-        ErrorHandler::e.Error("Parameter 5 (flip x) must be pure constant");
+        ErrorHandler::e.Error("Parameter 5 (flip x) must be pure constant", m_node->m_op.m_lineNumber);
 
 //    int start = m_node->m_params[2]->getValueAsInt(as);
     int length = m_node->m_params[3]->getValueAsInt(as);
@@ -350,4 +366,57 @@ void MethodsZ80::LoadSong(Assembler *as)
     app->m_source<<	"INCLUDE \""+fn+"\"";
     app->m_pos = "$10000";
     as->m_appendix.append(app);
+}
+
+void MethodsZ80::InitDMA(Assembler *as)
+{
+    QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
+    if (addr==nullptr)
+        ErrorHandler::e.Error("ProcedureToPointer parameter must be a procedure.", m_node->m_op.m_lineNumber);
+
+    QString lblCopy = "."+as->NewLabel("copy");
+
+    as->Asm("ld de, $FF80");
+    as->Asm("ld hl, default_DMAData");
+    as->Asm("ld c,13");
+    as->Label(lblCopy);
+    as->Asm("ld	a,[hl+]");
+    as->Asm("ld	[de],a");
+    as->Asm("inc de");
+    as->Asm("dec c");
+    as->Asm("jr	nz,"+lblCopy);
+    as->PopLabel("copy");
+
+    as->Asm("ld hl,"+addr->m_procedure->m_procName);
+    as->Asm("ld a,l");
+    as->Asm("ld [$FF80+$A],a");
+    as->Asm("ld a,h");
+    as->Asm("ld [$FF80+$B],a");
+
+
+
+/*
+    QString lblCopy = "."+as->NewLabel("copy");
+    QString lblSkip = "."+as->NewLabel("skip");
+    as->ClearTerm();
+    LoadAddress(as,1,"de");
+    as->Term();
+    LoadAddress(as,0,"hl");
+    as->Term();
+    LoadVar(as,2,"bc");
+    as->Asm("inc b");
+    as->Asm("inc c");
+    as->Asm("jr "+lblSkip);
+    as->Label(lblCopy);
+
+    as->Asm("ld	a,[hl+]");
+    as->Asm("ld	[de],a");
+    as->Asm("inc de");
+    as->Label(lblSkip);
+    as->Asm("dec c");
+    as->Asm("jr	nz,"+lblCopy);
+    as->Asm("dec b");
+    as->Asm("jr	nz,"+lblCopy);
+*/
+
 }

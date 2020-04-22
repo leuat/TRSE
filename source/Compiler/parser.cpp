@@ -1515,6 +1515,8 @@ QSharedPointer<Node> Parser::Program(QString param)
 
     if (m_isTRU) {
         m_symTab->m_gPrefix = progName+"_";
+        if (s_usedTRUNames.contains(progName))
+            ErrorHandler::e.Error("TRU '"+progName+"' is already defined! ",m_currentToken.m_lineNumber);
         s_usedTRUNames.append(progName);
     }
     else
@@ -3266,6 +3268,7 @@ void Parser::HandleUseTPU(QString fileName)
         e.linenr = m_currentToken.m_lineNumber;
        throw e;
     }
+
 
     m_symTab->Merge(p->m_symTab.get(),true);
 

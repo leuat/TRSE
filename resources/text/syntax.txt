@@ -148,6 +148,10 @@ m; InitSprite ; GAMEBOY; a,b,b,b,b
 m; InitSpriteFromData ; GAMEBOY; a,a,b,b,b,b
 m; UpdateMusic; GAMEBOY;
 m; LoadMusic; GAMEBOY; s,b
+m; InitDMAandVBlank; GAMEBOY; p
+m; Push; GAMEBOY;
+m; POP; GAMEBOY;
+
 c; VRAM ; GAMEBOY; a; $8000
 c; SCREEN0 ; GAMEBOY; a; $9800
 c; BACKGROUND_PALETTE; GAMEBOY; a; $FF47
