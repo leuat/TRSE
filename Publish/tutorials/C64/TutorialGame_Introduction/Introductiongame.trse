@@ -35,4 +35,5 @@ data_header_charsets/charset1.flf = 0
 exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
+exomizer_toggle = 0
 open_files =, part3.ras

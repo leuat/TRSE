@@ -9,7 +9,7 @@ var
 
    	charset1: incbin("charsets/charset1.bin", @charLoc);
 	// Pointer that will point to character data location at $2000+$800=$2800
-	colors : pointer;
+	colors :  incbin("charsets/charset1_color.bin", @charLoc+$800);
 	i:byte;
 
 // Prints a 2x2 block at position x,y with the upper left value of c, (and c+1, c+40 and c+41)
@@ -23,10 +23,10 @@ begin
 	screenmemory[41]:=c+41;
 
 	moveto(x,y,hi(screen_col_loc));
-	screenmemory[0]:=colors[c];
-	screenmemory[1]:=colors[c+1];
-	screenmemory[40]:=colors[c+40];;
-	screenmemory[41]:=colors[c+41];;
+	screenmemory[0]:=colors[c]+8;
+	screenmemory[1]:=colors[c+1]+8;
+	screenmemory[40]:=colors[c+40]+8;;
+	screenmemory[41]:=colors[c+41]+8;;
 
 end;
 
@@ -39,7 +39,6 @@ begin
 	screen_fg_col:=black;
 	screen_bg_col:=black;
 	// Set color pointer
-	colors:=$2800;
 	// Set multicolor characters (grey brown) 
 	// multicolor_char_col[0] is the same as SCREEN_FG_COL
 	multicolor_char_col[1]:=grey;

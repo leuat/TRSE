@@ -43,6 +43,7 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
         StartProcess(assembler, QStringList() <<"-o" << currentDir+"/gbt_player_bank1.o"<<currentDir+"/gbt_player_bank1.asm"<<"-i" <<currentDir, output);
 
 
+
         if (!QFile::exists(filename+".o")) {
             text  += "<br><font color=\"#FFFF00\">Error during assembly : please check source assembly for errors.</font>";
             text+=output;
@@ -61,7 +62,8 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
             return;
         }
 
-        StartProcess(fix, QStringList() <<"-p" <<"0" <<"-r" <<"0" <<"-t" <<"TRSE GB" << "-v" << filename + ".gb", output);
+//        StartProcess(fix, QStringList() <<"-p" <<"0" <<"-r" <<"0" <<"-t" <<"TRSE GB" << "-v" << filename + ".gb", output);
+        StartProcess(fix, QStringList() << "-m"<< "3"<<  "-p" <<"0" <<"-t" <<"TRSE GB" << "-v" << filename + ".gb", output);
         /* Cleanup */
         QStringList dels = QStringList() << "gbt_player.asm" <<"gbt_player.o" <<"gbt_player_bank1.asm" <<"gbt_player_bank1.o" <<"hardware.inc" << "gbt_player.inc";
         for (QString s : dels)

@@ -41,6 +41,3 @@ via_zeropages = ,$5B, $5C, $5D, $5E
 remove_unused_symbols = 1
 ignore_initial_jump = 0
 exomizer_toggle = 0
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/PumpKid/
-open_files = 6.92278e-310
-current_file = pumpkid.ras

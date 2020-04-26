@@ -25,7 +25,9 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     }
     else
     if (Command("memcpy"))
-        MemCpy(as);
+        MemCpy(as,false);
+    if (Command("memcpycont"))
+        MemCpy(as,true);
     else
         if (Command("waitforverticalblank")) {
             QString lbl = as->NewLabel("vblank");
@@ -41,13 +43,48 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         QString lbl = as->NewLabel("vblank");
         as->Label(lbl);
         as->Asm("ld	a,[rLY]");
-        as->Asm("cp	" +m_node->m_params[0]->getValue(as));
+        if (m_node->m_params[0]->isPureVariable()) {
+
+            as->Asm("ld c,a");
+            as->Asm("ld a,["+m_node->m_params[0]->getValue(as)+"]");
+            as->Asm("cp	c");
+        }
+        else
+            as->Asm("cp	" +m_node->m_params[0]->getValue(as));
+        as->Asm("jr	nz,"+lbl);
+        as->PopLabel("vblank");
+
+    }
+    else
+    if (Command("memcpyonhblank"))
+        MemCpyOnHBLank(as,"internal_copy_hblank8",8);
+    else
+        if (Command("memcpyonhblankexp"))
+            MemCpyOnHBLank(as,"internal_copy_hblank_exp",12);
+        else
+    if (Command("waitnoraster")) {
+        QString lbl = as->NewLabel("vblank");
+        as->Asm("ld	a,[rLY]");
+        as->Asm("add " +m_node->m_params[0]->getValue(as));
+        as->Asm("ld	b,a");
+        as->Label(lbl);
+        as->Asm("ld	a,[rLY]");
+        as->Asm("cp	b");
+
         as->Asm("jr	nz,"+lbl);
         as->PopLabel("vblank");
 
     }
     else if (Command("enablevblank")) {
-        as->Asm("ld	a,IEF_VBLANK");
+        as->Asm("ld	a,[rIE]");
+        as->Asm("or	a,IEF_VBLANK");
+        as->Asm("ld	[rIE],a");
+        as->Asm("ei");
+
+    }
+    else if (Command("enabletimer")) {
+        as->Asm("ld	a,[rIE]");
+        as->Asm("or	a,IEF_TIMER");
         as->Asm("ld	[rIE],a");
         as->Asm("ei");
 
@@ -75,22 +112,36 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         LoadSong(as);
     else if (Command("return"))
         as->Asm("ret");
-    else if(Command("initdmaandvblank"))
+    else if(Command("initvblank"))
         InitDMA(as);
+    else if(Command("inittimer"))
+        InitTimer(as);
     else if (Command("push")) {
         as->Asm("push af");
         as->Asm("push bc");
-        as->Asm("push hl");
         as->Asm("push de");
+        as->Asm("push hl");
 
     }
     else if (Command("pop")) {
-        as->Asm("pop de");
         as->Asm("pop hl");
+        as->Asm("pop de");
         as->Asm("pop bc");
         as->Asm("pop af");
 
     }
+    else if (Command("wait")) {
+        as->Comment("Wait");
+        QString lbl = as->NewLabel("wait");
+        LoadVar(as,0);
+        as->Label(lbl);
+        as->Asm("sub 1");
+        as->Asm("jr nz,"+lbl);
+        as->PopLabel("wait");
+
+    }
+    else if (Command("waitforhblank"))
+        WaitForHBLank(as);
 
 
 }
@@ -190,7 +241,7 @@ void MethodsZ80::Fill(Assembler *as)
   */
 }
 
-void MethodsZ80::MemCpy(Assembler *as)
+void MethodsZ80::MemCpy(Assembler *as, bool isCont)
 {
 /*    ; hl - source address
     ; de - destination
@@ -198,11 +249,17 @@ void MethodsZ80::MemCpy(Assembler *as)
     QString lblCopy = "."+as->NewLabel("copy");
     QString lblSkip = "."+as->NewLabel("skip");
     as->ClearTerm();
-    LoadAddress(as,1,"de");
-    as->Term();
-    LoadAddress(as,0,"hl");
-    as->Term();
-    LoadVar(as,2,"bc");
+    int ii=0;
+    if (!isCont) {
+        LoadAddress(as,1,"de");
+        as->Term();
+        LoadAddress(as,0,"hl");
+        as->Term();
+        ii=2;
+    }
+
+
+    LoadVar(as,ii,"bc");
     as->Asm("inc b");
     as->Asm("inc c");
     as->Asm("jr "+lblSkip);
@@ -267,8 +324,35 @@ void MethodsZ80::SetSprite(Assembler *as, int type)
     int y = m_node->m_params[4]->getValueAsInt(as);
 
 
+
+
     QString addr = m_node->m_params[0]->getValue(as);
+
     as->Comment("SetSprite");
+    if (m_node->m_params[0]->isPointer(as)) {
+        // Completely different shit
+        as->Comment("SetSprite is a pointer");
+
+        type +=2;
+        as->Asm("ld a,["+addr+"]");
+        as->Asm("ld h,a");
+        as->Asm("ld a,["+addr+"+1]");
+        as->Asm("ld l,a");
+        as->Asm("ld de,2");
+        if (type==3)
+        {
+            as->Asm("add hl,de");
+//            as->Asm("ld de,"+Util::num())
+            as->Asm("ld de,4");
+            if (m_node->m_params[1]->isPureVariable()) {
+                as->Asm("ld a, ["+m_node->m_params[1]->getValue(as)+"]");
+                as->Asm("ld b,a");
+            }
+
+        }
+//        return;
+    }
+    int mcur = 0;
     for (int j=0;j<y;j++) {
         for (int i=0;i<x;i++) {
             int cnt = 4* (x*j+i);
@@ -282,14 +366,50 @@ void MethodsZ80::SetSprite(Assembler *as, int type)
                     as->Asm("add "+QString::number(i*8));
                 as->Asm("ld ["+addr + "+"+QString::number(cnt)+" +1 ],a");
             }
+
+            if (type==2) { // Set sprite from POINTEr
+                LoadVar(as,2);
+                if (j!=0)
+                    as->Asm("add "+QString::number(j*8));
+                as->Asm("ld [hl+],a");
+                LoadVar(as,1);
+                if (i!=0)
+                    as->Asm("add "+QString::number(i*8));
+                as->Asm("ld [hl+],a");
+                as->Asm("add hl,de");
+            }
+
+
+
             if (type==1) { // Init
-                int dx = m_node->m_params[1]->getValueAsInt(as);
-                int dy = m_node->m_params[2]->getValueAsInt(as);
-                int num = (dx+i)+ (dy+j)*16;
-                 as->Asm("ld a,"+QString::number(num));
+                if (m_node->m_params[1]->isPureNumeric()) {
+                    int dx = m_node->m_params[1]->getValueAsInt(as);
+                    int dy = m_node->m_params[2]->getValueAsInt(as);
+                    int num = (dx+i)+ (dy+j)*16;
+                    as->Asm("ld a,"+QString::number(num));
+                }
                 as->Asm("ld ["+addr + "+"+QString::number(cnt)+" +2 ],a");
             }
+            if (type==3) { // Init from POINTER
+                if (m_node->m_params[1]->isPureNumeric()) {
+                    int dx = m_node->m_params[1]->getValueAsInt(as);
+                    int dy = m_node->m_params[2]->getValueAsInt(as);
+                    int num = (dx+i)+ (dy+j)*16;
+                    as->Asm("ld a,"+QString::number(num));
+                }
+                else {
+                    as->Asm("ld a,"+QString::number(mcur));
+                    as->Asm("add a,b");
+
+                }
+                as->Asm("ld [hl] ,a");
+                as->Asm("add hl,de");
+            }
+
+            mcur++;
         }
+
+
     }
 }
 
@@ -392,31 +512,65 @@ void MethodsZ80::InitDMA(Assembler *as)
     as->Asm("ld [$FF80+$A],a");
     as->Asm("ld a,h");
     as->Asm("ld [$FF80+$B],a");
+}
 
+void MethodsZ80::InitTimer(Assembler *as)
+{
+    QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
+    if (addr==nullptr)
+        ErrorHandler::e.Error("ProcedureToPointer parameter must be a procedure.", m_node->m_op.m_lineNumber);
 
-
-/*
     QString lblCopy = "."+as->NewLabel("copy");
-    QString lblSkip = "."+as->NewLabel("skip");
-    as->ClearTerm();
-    LoadAddress(as,1,"de");
-    as->Term();
-    LoadAddress(as,0,"hl");
-    as->Term();
-    LoadVar(as,2,"bc");
-    as->Asm("inc b");
-    as->Asm("inc c");
-    as->Asm("jr "+lblSkip);
-    as->Label(lblCopy);
 
+    as->Asm("ld de, $FF90");
+    as->Asm("ld hl, default_DMATimer");
+    as->Asm("ld c,4");
+    as->Label(lblCopy);
     as->Asm("ld	a,[hl+]");
     as->Asm("ld	[de],a");
     as->Asm("inc de");
-    as->Label(lblSkip);
     as->Asm("dec c");
     as->Asm("jr	nz,"+lblCopy);
-    as->Asm("dec b");
-    as->Asm("jr	nz,"+lblCopy);
-*/
+    as->PopLabel("copy");
 
+    as->Asm("ld hl,"+addr->m_procedure->m_procName);
+    as->Asm("ld a,l");
+    as->Asm("ld [$FF90+$1],a");
+    as->Asm("ld a,h");
+    as->Asm("ld [$FF90+$2],a");
+}
+
+void MethodsZ80::MemCpyOnHBLank(Assembler *as, QString jlbl, int div)
+{
+    LoadAddress(as,0,"de");
+    LoadAddress(as,1,"hl");
+    if (!m_node->m_params[2]->isPureNumeric())
+        ErrorHandler::e.Error("Parameter 3 must be pure constant and a divisible by 8", m_node->m_op.m_lineNumber);
+    as->Comment("HBLANK 8-byte copy per scanline");
+    int cnt = m_node->m_params[2]->getValueAsInt(as);
+    QString lbl = as->NewLabel("memcpyhblank");
+    as->Asm("ld a, "+Util::numToHex(ceil(cnt/(float)div)));
+    as->Label(lbl);
+    as->Asm("push af");
+    as->Asm("call "+jlbl);
+    as->Asm("pop af");
+    as->Asm("dec a");
+    as->Asm("cp a, 0");
+    as->Asm("jr nz, "+lbl);
+
+    as->PopLabel("memcpyhblank");
+//    for j:=0 to ($80/8) do
+
+}
+
+void MethodsZ80::WaitForHBLank(Assembler *as)
+{
+    as->Comment("Wait for HBLank");
+    QString lbl = as->NewLabel("hblank");
+    as->Label(lbl);
+    as->Asm("ld a,[$FF41]");
+    as->Asm("and 3");
+    as->Asm("cp 0");
+    as->Asm("jr nz, "+lbl);
+    as->PopLabel("hblank");
 }

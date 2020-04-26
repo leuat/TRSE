@@ -140,7 +140,11 @@ m; vbmClearSprite2; VIC20 ; a, a, a
 
 m; fill ; GAMEBOY; a,b,i
 m; MemCpy; GAMEBOY ; a,a,i
+m; MemCpyCont; GAMEBOY ; i
+m; MemCpyOnHBLank; Gameboy; a,a,i
+m; MemCpyOnHBLankExp; Gameboy; a,a,i
 m; EnableVBlank; GAMEBOY;
+m; EnableTimer; GAMEBOY;
 m; Halt; GAMEBOY;
 m; Loop; GAMEBOY;
 m; SetSprite ; GAMEBOY; a,b,b,b,b
@@ -148,12 +152,15 @@ m; InitSprite ; GAMEBOY; a,b,b,b,b
 m; InitSpriteFromData ; GAMEBOY; a,a,b,b,b,b
 m; UpdateMusic; GAMEBOY;
 m; LoadMusic; GAMEBOY; s,b
-m; InitDMAandVBlank; GAMEBOY; p
+m; InitVBlank; GAMEBOY; p
+m; InitTimer; GAMEBOY; p
 m; Push; GAMEBOY;
 m; POP; GAMEBOY;
+m; waitforhblank; GAMEBOY;
 
 c; VRAM ; GAMEBOY; a; $8000
 c; SCREEN0 ; GAMEBOY; a; $9800
+c; SCREEN1 ; GAMEBOY; a; $9C00
 c; BACKGROUND_PALETTE; GAMEBOY; a; $FF47
 c; OBJECT0_PALETTE; GAMEBOY; a;$FF48
 c; OBJECT1_PALETTE; GAMEBOY; a;$FF49
@@ -163,6 +170,10 @@ c; SPRITE_FLIP_Y; GAMEBOY; b; %01000000
 c; SCROLLY ; GAMEBOY; a ; $FF42
 c; SCROLLX ; GAMEBOY; a ; $FF43
 c; DMA; GAMEBOY; a; $FF80
+c; LCDCSTAT; GAMEBOY; a; $FF41
+c; WINDOWY; GAMEBOY; a; $FF4A
+c; WINDOWX; GAMEBOY; a; $FF4B
+
 # ************** AMIGA ROUTINES
 
 # *** INIT METHODS
@@ -380,7 +391,7 @@ m; IsOverlappingWH; C64, PLUS4, C128, VIC20, PET, NES, OK64; b,b,b,b,b,b
 
 # Other routines
 
-m; Wait; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64 ; b
+m; Wait; X16,C64, PLUS4, C128, VIC20, PET,  NES, OK64, GAMEBOY ; b
 m; Jammer; C64, PLUS4, C128  ; n,n
 m; FLD ; C64, PLUS4, C128 ; b,n
 m; TransformColors; C64, PLUS4, C128; a,a
@@ -426,7 +437,7 @@ m; ReturnInterrupt; C64, PLUS4, C128, OK64;
 
 
 m; WaitForRaster; C64, PLUS4, C128, VIC20, OK64, GAMEBOY; b
-m; WaitNoRaster; C64, PLUS4, C128, VIC20, OK64; b
+m; WaitNoRaster; C64, PLUS4, C128, VIC20, OK64, GAMEBOY; b
 m; WaitForVerticalBlank; C64, C128, X86, GAMEBOY;
 
 

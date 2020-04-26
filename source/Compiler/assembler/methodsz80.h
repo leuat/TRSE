@@ -26,12 +26,15 @@ public:
     void LoadAddress(Assembler *as, int paramNo, QString reg = "hl");
 
     void Fill(Assembler* as);
-    void MemCpy(Assembler* as);
+    void MemCpy(Assembler* as, bool isCont);
     void Poke(Assembler* as);
     void SetSprite(Assembler* as, int type);
     void InitSpriteFromData(Assembler *as, int type);
     void LoadSong(Assembler* as);
     void InitDMA(Assembler* as);
+    void InitTimer(Assembler* as);
+    void MemCpyOnHBLank(Assembler* as,QString lbl, int div);
+    void WaitForHBLank(Assembler* as);
 };
 
 #endif // METHODSX86_H

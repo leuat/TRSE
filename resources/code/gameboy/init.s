@@ -2,6 +2,9 @@
 SECTION "VBL",ROM0[$0040]		; vblank interrupt handler
         jp	internal_vblank
 
+SECTION "TIMER",ROM0[$0050]		; timer interrupt handler
+        jp	internal_timer
+
     SECTION	"Start",ROM0[$100]		; start vector, followed by header data applied by rgbfix.exe
 	nop
 	jp	start
@@ -10,13 +13,159 @@ SECTION "VBL",ROM0[$0040]		; vblank interrupt handler
 
 
 internal_vblank:
+        push af
+        push bc
+        push de
+        push hl
         call	$FF80				; copy OAM mirror table using DMA
+        pop hl
+        pop de
+        pop bc
+        pop af
+        reti
+
+internal_timer:
+        push af
+        push bc
+        push de
+        push hl
+        call	$FF90				; copy OAM mirror table using DMA
+        pop hl
+        pop de
+        pop bc
+        pop af
         reti
 
 
-default_DMAData:	db $03e, $0c0, $0e0, $046, $03e, $028, $03d, $020
-        db $0fd, $0cd, $00, $00, $0c9
+; Copies 8 bytes on HBLank
+internal_copy_hblank8
+    ld a, [de]
+    inc de
+    ld b, a
 
+    ld a, [de]
+    inc de
+    ld c, a
+
+waitfor_hblank_internal:
+    ld a,[$FF41]
+    and 3
+    cp 0
+    jr nz, waitfor_hblank_internal
+    ; 1
+    ld a,b
+    ld [hl+],a
+    ; 2
+    ld a,c
+    ld [hl+],a
+    ; 3
+    ld a,[de]
+    ld [hl+],a
+    inc de
+    ; 4
+    ld a,[de]
+    ld [hl+],a
+    inc de
+    ; 5
+    ld a,[de]
+    ld [hl+],a
+    inc de
+    ; 6
+
+    ld a,[de]
+    ld [hl+],a
+    inc de
+    ; 7
+
+    ld a,[de]
+    ld [hl+],a
+    inc de
+    ; 8
+
+    ld a,[de]
+    ld [hl+],a
+    inc de
+    ret
+
+
+
+; Copies 8 bytes on HBLank
+internal_copy_hblank_exp
+    ld a, [de]
+    inc de
+    ld b, a
+
+    ld a, [de]
+    inc de
+    ld c, a
+
+waitfor_hblank_internal_exp:
+    ld a,[$FF41]
+    and 3
+    cp 0
+    jr nz, waitfor_hblank_internal_exp
+    ; 1
+    ld a,b
+    ld [hl+],a
+    ; 2
+    ld a,c
+    ld [hl+],a
+    ; 3
+    ld a,[de]
+    ld [hl+],a
+    inc e
+    ; 4
+    ld a,[de]
+    ld [hl+],a
+    inc e
+    ; 5
+    ld a,[de]
+    ld [hl+],a
+    inc e
+    ; 6
+
+    ld a,[de]
+    ld [hl+],a
+    inc e
+    ; 7
+
+    ld a,[de]
+    ld [hl+],a
+    inc e
+    ; 8
+
+    ld a,[de]
+    ld [hl+],a
+    inc e
+    ; 9
+    ld a,[de]
+    ld [hl+],a
+    inc e
+    ; 10
+    ld a,[de]
+    ld [hl+],a
+    inc e
+    ; 11
+    ld a,[de]
+    ld [hl+],a
+    inc e
+    ; 12
+    ld a,[de]
+    ld [hl+],a
+    inc de
+
+
+    ret
+
+
+
+
+
+default_DMAData:
+        db $03e, $0c0, $0e0, $046, $03e, $028, $03d, $020, $0fd,   $0cd,   $00, $00, $0c9
+
+default_DMATimer:
+        db $0cd,   $00, $00, $0c9
 
 start:
 	di					; disable interrupts

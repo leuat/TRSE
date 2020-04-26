@@ -1,0 +1,164 @@
+Unit Levels;
+var
+   width, height : byte;
+   sizex, sizey : byte;
+   startx, starty : byte;
+   dataSize, pos : byte;
+   i, j, val, idx: byte;
+   chunksize, chunks : byte;
+/*
+   Renders a .flf level at map pos x,y
+*/
+
+	@define levelpointer lp
+	@define colorpointer cp
+	cp,lp,cdp : pointer; 
+
+
+
+procedure ReadHeader();
+
+begin
+	@levelpointer := @levelpointer +13;
+
+	// Read level header info
+
+	sizex := @levelpointer[0];
+	sizey := @levelpointer[1];
+
+	width := @levelpointer[2];
+	height := @levelpointer[3];
+
+	startx := @levelpointer[4];
+	starty := @levelpointer[5];
+
+
+	chunks := @levelpointer[6];
+	chunksize := @levelpointer[7];
+
+	dataSize := @levelpointer[8];
+
+
+
+
+end;
+
+procedure RenderColorLevel(m_li, m_lj, m_screen: byte);
+begin
+	// Fluff files have 13 byte headers
+	
+	// Go past header
+	@levelpointer := @levelpointer +32;
+
+	// Calculate position in level layout
+
+	pos := sizex*m_lj + m_li;
+	// Calculate data size of map 
+	val := width*height;
+
+	// Locate level
+	@levelpointer := @levelpointer +val*2*pos;
+	@levelpointer := @levelpointer +dataSize*pos;
+
+	// Set screen position 
+
+	moveto(startx, starty, m_screen);
+	
+	// Fill screen with chars
+	
+	for j:=0 to height do begin
+		for i:=0 to width do begin
+			val := peek(@levelpointer,i);
+			idx:=i*2;
+
+			screenmemory[idx]:=val;
+			screenmemory[idx+1]:=val+1;
+			screenmemory[idx+40]:=val+40;
+			screenmemory[idx+41]:=val+41;
+		 end;
+		 screenmemory:=screenmemory+screen_width*2;
+		 @levelpointer:=@levelpointer+width;
+	end;
+	// Then colors
+	moveto(startx, starty, $D8);
+
+	@colorpointer:=@levelpointer;
+	for j:=0 to height do begin
+		for i:=0 to width do begin
+			val := peek(@levelpointer,i)&7 + 8;
+			idx:=i*2;
+	
+			screenmemory[idx]:=val;
+			screenmemory[idx+1]:=val;
+			screenmemory[idx+40]:=val;
+			screenmemory[idx+41]:=val;
+
+	 	end;
+	 	screenmemory:=screenmemory+screen_width*2;
+		 @levelpointer:=@levelpointer+width;
+
+	
+	end;
+	// Set multicolor colors
+	poke(MULTICOLOR_CHAR_COL, 0, @levelpointer[0]);
+	poke(MULTICOLOR_CHAR_COL, 2, @levelpointer[1]); 
+	poke(MULTICOLOR_CHAR_COL, 1, @levelpointer[2]);
+
+	@levelpointer:=@levelpointer+3;
+	// levelpointer now points to the data
+
+end;
+
+procedure RenderCharsetColorLevel(m_li2, m_lj2, m_screen2: byte);
+var
+
+begin
+	// Fluff files have 13 byte headers
+	@levelpointer:=@levelpointer+32+13;
+//	inczp(@levelpointer, 32+13);
+
+	pos := sizex*m_lj2 + m_li2;
+	// Calculate data size of levels	
+	val := width*height;
+
+	// Locate level 
+	@levelpointer := @levelpointer +val*pos;
+	@levelpointer := @levelpointer +dataSize*pos;
+
+	moveto(startx, starty, $D8);
+	cp:=screenmemory;
+	moveto(startx, starty, m_screen2);
+	
+	// Fill screen with chars
+
+	for j:=0 to height do begin
+		idx:=0;
+	
+		for i:=0 to width do begin
+			val := @levelpointer[i];
+			screenmemory[idx+40]:=val+40;
+			screenmemory[idx]:=val;
+			screenmemory[idx+41]:=val+41;
+			screenmemory[idx+1]:=val+1;
+
+			cp[idx] := cdp[val] +8;
+			cp[idx+1] := cdp[val+1]+8;
+			cp[idx+41] := cdp[val+41]+8;
+			cp[idx+40] := cdp[val+40]+8;
+
+			idx:=idx+2;
+		 end;
+		 screenmemory:=screenmemory+screen_width*2;
+		 cp:=cp+screen_width*2;
+		 @levelpointer:=@levelpointer+width;
+	end;
+
+	poke(MULTICOLOR_CHAR_COL, 0, @levelpointer[0]);
+	poke(MULTICOLOR_CHAR_COL, 2, @levelpointer[1]); 
+	poke(MULTICOLOR_CHAR_COL, 1, @levelpointer[2]);
+	@levelpointer:=@levelpointer+3;
+
+end;
+
+
+end.

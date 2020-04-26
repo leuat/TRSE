@@ -30,7 +30,7 @@ output = {
 	aspect = 1,
 	ditherStrength= {x=0, y=1, z=1 },
 	dither = 2,
-	index_colors = { 1 }
+	index_colors = { 1,4,8,12 }
 --	c64_colors = { 0,1}
 }
 

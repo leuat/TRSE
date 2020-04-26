@@ -1,5 +1,7 @@
 program part6_RenderLevel;
-var  
+@use Levels
+
+var
 
 /*
 In this tutorial, we use actual level data to render a screen with 
@@ -21,15 +23,14 @@ our character set
 
    	charset1: incbin("charsets/charset1.bin", @charsetPosition);
 	levels: incbin("levels/level1.flf", @levelPosition);
+	colors : incbin("charsets/charset1_color.bin", @charsetPosition+$800);
 	// Define some pointers
-	colors, levelp, colormemory : pointer;
 	i,j:byte = 0;
 	// Current level screen x,y
 	curLevel_x, curLevel_y : byte=0;
 
 // Include RasLib level renderer
 @define colorpointer colormemory
-@include "../../RasLib/levels.ras"
 
 // Initializes charsets etc
 procedure Initialize();
@@ -39,8 +40,6 @@ begin
 	screen_fg_col:=black;
 	screen_bg_col:=black;
 
-	colors:=@charsetPosition+$800;
-
 	multicolor_char_col[1]:=grey;
 	multicolor_char_col[2]:=brown;
 
@@ -48,10 +47,10 @@ begin
 
 	setcharsetlocation(@charsetPosition);
 	// Make sure that the level pointer points to level data location
-	levelp:=@levelPosition;
 	// Read header data
-	ReadHeader();
-	m_rl_starty:=2;
+	Levels::lp := @levelPosition;
+	Levels::ReadHeader();
+	Levels::starty:=2;
 end;
 
 
@@ -72,9 +71,9 @@ begin
 	end;
 
 	if (i=10) then begin
-		levelp:=@levelPosition;
+		Levels::lp:=@levelPosition;
 		screenoff();
-		RenderCharsetColorLevel(curLevel_x,curLevel_y,$04);
+		Levels::RenderCharsetColorLevel(curLevel_x,curLevel_y,$04);
 		screenon();
 	end;
 	if (i) then dec(i); // i acts as a counter
@@ -86,9 +85,10 @@ end;
 begin
 	Initialize();
 	// Remember to set level location!
-	levelp:=@levelPosition;
+	Levels::lp:=@levelPosition;
+	Levels::cdp := colors;
 	// Render the level to $0400
-	RenderCharsetColorLevel(curLevel_x,curLevel_y,hi(screen_char_loc));
+	Levels::RenderCharsetColorLevel(curLevel_x,curLevel_y,hi(screen_char_loc));
 
 	DisableCIAInterrupts();
 	SetMemoryConfig(1,@useKernal,0);

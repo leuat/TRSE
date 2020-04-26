@@ -1328,7 +1328,7 @@ void ASTDispatcher6502::IncBin(QSharedPointer<NodeVarDecl> node) {
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
     QString filename = as->m_projectDir + "/" + t->m_filename.replace("\\","/");
     if (!QFile::exists(filename))
-        ErrorHandler::e.Error("Could not locate binary file for inclusion :" +filename);
+        ErrorHandler::e.Error("Could not locate binary file for inclusion :" +filename, node->m_op.m_lineNumber);
 
     int size=0;
     QFile f(filename);

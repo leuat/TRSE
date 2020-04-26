@@ -1,4 +1,5 @@
 program part7_RenderLevel;
+@use Levels
 var  
 /*
 	In this tutorial, we combine part 3 (sprites) with level rendering
@@ -21,11 +22,11 @@ var
 @define @levelpointer levelp
 
    	charset1: incbin("charsets/charset1.bin", @charsetPosition);
+   	colors: incbin("charsets/charset1_color.bin", @charsetPosition+$800);
 	// Sprite locations as in part 3 (at $3200)
 	mySprites:incbin("sprites/sprites.bin", @spriteLoc);
 	levels: incbin("levels/level1.flf", @levelPosition);
 
-	colors, levelp, colormemory : pointer;
 	i,j:byte = 0;
 	curLevel_x, curLevel_y : byte=0;
 
@@ -42,10 +43,7 @@ var
 	// Let's always use sprite "0" as our player sprite
 	@define playerSprite 0
 
-@define colorpointer colormemory
 
-// RasLib contains all level rendering routines
-@include "../../RasLib/levels.ras"
 
 // Sets up sprite
 procedure InitMainSprite();
@@ -76,7 +74,7 @@ begin
 	screen_bg_col:=black;
 	screen_fg_col:=black;
 	// Pointer to character color definitions
-	colors:=@charsetPosition+$800;
+	Levels::cdp:=colors;
 
 	multicolor_char_col[1]:=grey;
 	multicolor_char_col[2]:=brown;
@@ -85,9 +83,9 @@ begin
 
 	setcharsetlocation(@charsetPosition);
 
-	levelp:=@levelPosition;
-	ReadHeader();
-	m_rl_starty:=2;
+	Levels::lp:=@levelPosition;
+	Levels::ReadHeader();
+	Levels::starty:=2;
 end;
 
 /*	
@@ -113,7 +111,7 @@ begin
 			player_x:=@minx+1;
 	end;
 	if (player_x>@maxx) then begin
-		if (curLevel_x+1<>m_rl_width) then begin
+		if (curLevel_x+1<>Levels::width) then begin
 			inc(curLevel_x);
 			player_x:=@minx+1;
 			redraw:=1;
@@ -133,7 +131,7 @@ begin
 			player_y:=@miny+1;
 	end;
 	if (player_y>@maxy) then begin
-		if (curLevel_y+1<>m_rl_height) then begin
+		if (curLevel_y+1<>Levels::height) then begin
 			inc(curLevel_y);
 			player_y:=@miny;
 			redraw:=1;
@@ -143,8 +141,8 @@ begin
 	end;
 
 	if redraw=1 then begin
-		levelp:=@levelPosition;
-		RenderCharsetColorLevel(curLevel_x,curLevel_y,hi(screen_char_loc));
+		Levels::lp:=@levelPosition;
+		Levels::RenderCharsetColorLevel(curLevel_x,curLevel_y,hi(screen_char_loc));
 		redraw:=0;
 	end;
 
