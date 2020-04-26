@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
 //    ConvertPerlin("perlin512.jpg","perlin64.bin",8);
 //    ColumnTab();
 //    RandTable("rnd256.bin");
-    CircleAndAtan("/home/leuat/Dropbox/TRSE/gameboytest/data/circle.bin","/home/leuat/Dropbox/TRSE/gameboytest/data/atan.bin",16,16);
+//    CircleAndAtan("/home/leuat/Dropbox/TRSE/gameboytest/data/circle.bin","/home/leuat/Dropbox/TRSE/gameboytest/data/atan.bin",16,16);
     QApplication a(argc, argv);
     QString oldCurDir = QDir::currentPath();
     fixCurrentDir(QString(argv[0]));
