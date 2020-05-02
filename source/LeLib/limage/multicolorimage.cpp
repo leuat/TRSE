@@ -1295,7 +1295,8 @@ int PixelChar::CompareLength3(PixelChar &other)
         for (int j=0;j<8;j++) {
             char a = (p[i]>>(j))&0b1;
             char b = (other.p[i]>>(j))&0b1;
-            s+=pow(a-b,2);
+//            s+=pow(a-b,2);
+            s+=a!=b;//abs(a-b);
         }
     }
 

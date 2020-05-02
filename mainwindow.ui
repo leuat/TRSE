@@ -29,222 +29,216 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="gridLayout_7">
     <item row="0" column="0">
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <property name="handleWidth">
-       <number>8</number>
-      </property>
       <widget class="QWidget" name="layoutWidget">
-       <layout class="QVBoxLayout" name="verticalLayout" stretch="1,10">
+       <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QPushButton" name="btnNewProject">
-            <property name="text">
-             <string>New Project</string>
-            </property>
-           </widget>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QPushButton" name="btnNewProject">
+              <property name="text">
+               <string>New Project</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnProjectSettings">
+              <property name="text">
+               <string>Project Settings</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
-          <item>
-           <widget class="QPushButton" name="btnProjectSettings">
-            <property name="text">
-             <string>Project Settings</string>
-            </property>
-           </widget>
+          <item row="1" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>Filter:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="leFilterSymbols"/>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>
         <item>
-         <widget class="QSplitter" name="psplitter">
-          <property name="lineWidth">
-           <number>2</number>
-          </property>
+         <widget class="QSplitter" name="qsplitter">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
-          <property name="handleWidth">
-           <number>8</number>
-          </property>
-          <widget class="QTreeView" name="treeFiles">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
+          <widget class="QSplitter" name="psplitter">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
            </property>
-           <property name="iconSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="uniformRowHeights">
-            <bool>true</bool>
-           </property>
+           <widget class="QTreeView" name="treeFiles">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="uniformRowHeights">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QTreeWidget" name="treeSymbols">
+            <column>
+             <property name="text">
+              <string notr="true">1</string>
+             </property>
+            </column>
+           </widget>
           </widget>
-          <widget class="QWidget" name="verticalLayoutWidget">
-           <layout class="QVBoxLayout" name="verticalLayout_4">
+          <widget class="QWidget" name="layoutWidget">
+           <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
-              <item>
-               <widget class="QLabel" name="label_5">
+             <layout class="QGridLayout" name="gridLayout_5">
+              <item row="1" column="0">
+               <widget class="QLabel" name="lblCommodoreImage">
                 <property name="text">
-                 <string>Filter:</string>
+                 <string/>
+                </property>
+                <property name="pixmap">
+                 <pixmap resource="resources.qrc">:/resources/images/C64.png</pixmap>
+                </property>
+                <property name="scaledContents">
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>
-              <item>
-               <widget class="QLineEdit" name="leFilterSymbols"/>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QTreeWidget" name="treeSymbols">
-              <column>
-               <property name="text">
-                <string notr="true">1</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_5">
-              <item>
-               <layout class="QGridLayout" name="gridLayout_5">
-                <item row="1" column="0">
-                 <widget class="QLabel" name="lblCommodoreImage">
+              <item row="2" column="0">
+               <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <item>
+                 <widget class="QLabel" name="lblSave">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>64</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>64</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="baseSize">
+                   <size>
+                    <width>63</width>
+                    <height>48</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string/>
                   </property>
                   <property name="pixmap">
-                   <pixmap resource="resources.qrc">:/resources/images/C64.png</pixmap>
+                   <pixmap resource="resources.qrc">:/resources/images/tape.png</pixmap>
                   </property>
                   <property name="scaledContents">
-                   <bool>false</bool>
+                   <bool>true</bool>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="lblBuild">
+                  <property name="maximumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="pixmap">
+                   <pixmap resource="resources.qrc">:/resources/images/hammer.png</pixmap>
+                  </property>
+                  <property name="scaledContents">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_3">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>49</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="0" column="0">
+               <layout class="QGridLayout" name="gridLayout_8">
+                <item row="2" column="1">
+                 <widget class="QPushButton" name="btnProjectDir">
+                  <property name="text">
+                   <string>Project directory</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QPushButton" name="btnBuild_3">
+                  <property name="text">
+                   <string>Build (c-b)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QPushButton" name="btnMemoryAnalyze">
+                  <property name="text">
+                   <string>Memory Map (c-u)</string>
                   </property>
                  </widget>
                 </item>
                 <item row="2" column="0">
-                 <layout class="QHBoxLayout" name="horizontalLayout_3">
-                  <item>
-                   <widget class="QLabel" name="lblSave">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>64</width>
-                      <height>48</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>64</width>
-                      <height>48</height>
-                     </size>
-                    </property>
-                    <property name="baseSize">
-                     <size>
-                      <width>63</width>
-                      <height>48</height>
-                     </size>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                    <property name="pixmap">
-                     <pixmap resource="resources.qrc">:/resources/images/tape.png</pixmap>
-                    </property>
-                    <property name="scaledContents">
-                     <bool>true</bool>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="lblBuild">
-                    <property name="maximumSize">
-                     <size>
-                      <width>48</width>
-                      <height>48</height>
-                     </size>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                    <property name="pixmap">
-                     <pixmap resource="resources.qrc">:/resources/images/hammer.png</pixmap>
-                    </property>
-                    <property name="scaledContents">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_3">
-                    <property name="minimumSize">
-                     <size>
-                      <width>0</width>
-                      <height>49</height>
-                     </size>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
+                 <widget class="QPushButton" name="btnBuildAll">
+                  <property name="text">
+                   <string>Build All</string>
+                  </property>
+                 </widget>
                 </item>
                 <item row="0" column="0">
-                 <layout class="QGridLayout" name="gridLayout_8">
-                  <item row="2" column="1">
-                   <widget class="QPushButton" name="btnProjectDir">
-                    <property name="text">
-                     <string>Project directory</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QPushButton" name="btnBuild_3">
-                    <property name="text">
-                     <string>Build (c-b)</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="QPushButton" name="btnMemoryAnalyze">
-                    <property name="text">
-                     <string>Memory Map (c-u)</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="0">
-                   <widget class="QPushButton" name="btnBuildAll">
-                    <property name="text">
-                     <string>Build All</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <widget class="QPushButton" name="btnSave_3">
-                    <property name="text">
-                     <string>Save (c-s)</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QPushButton" name="btnBuild_4">
-                    <property name="text">
-                     <string>Run (c-r)</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
+                 <widget class="QPushButton" name="btnSave_3">
+                  <property name="text">
+                   <string>Save (c-s)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QPushButton" name="btnBuild_4">
+                  <property name="text">
+                   <string>Run (c-r)</string>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>

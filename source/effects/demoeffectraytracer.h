@@ -6,6 +6,7 @@
 #include "source/Raytracer/raytracer.h"
 #include "source/LeLib/limage/limageqimage.h"
 #include "source/LeLib/luascript.h"
+#include "source/LeLib/limage/limagegamboy.h"
 #include <QMatrix3x3>
 
 class DemoEffectRaytracer : public AbstractDemoEffect

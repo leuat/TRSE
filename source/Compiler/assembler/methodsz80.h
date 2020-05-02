@@ -35,6 +35,7 @@ public:
     void InitTimer(Assembler* as);
     void MemCpyOnHBLank(Assembler* as,QString lbl, int div);
     void WaitForHBLank(Assembler* as);
+    void HiLo(Assembler* as, bool isHi);
 };
 
 #endif // METHODSX86_H

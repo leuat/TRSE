@@ -851,6 +851,9 @@ static int OptimizeScreenAndCharset(lua_State* L) {
 
     QByteArray cOut;
     QVector<int> sOut;
+    if (dynamic_cast<LImageGamboy*>(m_effect->m_mc)!=nullptr)
+        m_compression.OptimizeScreenAndCharsetGB(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+    else
     m_compression.OptimizeScreenAndCharset(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
 //    m_charData.clear();
     m_charData = cOut;
@@ -872,12 +875,25 @@ static int DrawLine(lua_State* L) {
     return 0;
 }
 
+static int DrawRect(lua_State* L) {
+
+    QPainter painter;
+    painter.begin(&m_effect->m_img);
+    painter.setPen(QPen(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)), lua_tonumber(L,8), Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
+    painter.setBrush(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)));
+    painter.drawRect(lua_tonumber(L,1),lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+    painter.end();
+//    m_effect->m_img.fill((Qt::red));
+    return 0;
+}
+
+
 static int DrawCircle(lua_State* L) {
 
     QPainter painter;
     painter.begin(&m_effect->m_img);
-    painter.setPen(QPen(QColor(lua_tonumber(L,54),lua_tonumber(L,6),lua_tonumber(L,7)), lua_tonumber(L,8), Qt::SolidLine,Qt::SquareCap, Qt::BevelJoin));
-    painter.setBrush(QColor(lua_tonumber(L,54),lua_tonumber(L,6),lua_tonumber(L,7)));
+    painter.setPen(QPen(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)), lua_tonumber(L,8), Qt::SolidLine,Qt::SquareCap, Qt::BevelJoin));
+    painter.setBrush(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)));
     painter.drawEllipse(lua_tonumber(L,1)-lua_tonumber(L,3)/(float)2,
                        lua_tonumber(L,2)-lua_tonumber(L,4)/(float)2,
                        lua_tonumber(L,3),lua_tonumber(L,4));
@@ -1033,6 +1049,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "ClearAllObjects", ClearObjects);
 
     lua_register(m_script->L, "DrawLine", DrawLine);
+    lua_register(m_script->L, "DrawRect", DrawRect);
     lua_register(m_script->L, "DrawCircle", DrawCircle);
 
     // Particle effects

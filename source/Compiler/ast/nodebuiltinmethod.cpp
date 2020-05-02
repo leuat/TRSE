@@ -43,7 +43,7 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
         QString cp = QString::number(p+1);
         if (m_function->m_params[p]==BuiltInFunction::ADDRESS) {
             if (!m_params[p]->isAddress()) {
-     //           qDebug() << "TYPE: " << m_params[p]->m_op.getType();
+//                qDebug() << "TYPE: " << m_params[p]->m_op.getType() <<m_params[p]->getValue(as);
                 ErrorHandler::e.Error(error + cp + " to be an address. Did you forget a ^?", m_op.m_lineNumber);
             }
         }

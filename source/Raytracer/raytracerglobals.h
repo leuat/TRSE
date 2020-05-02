@@ -83,6 +83,7 @@ public:
     static const int output_type_pico8 = 2;
     static const int output_type_VGA = 3;
     static const int output_type_BINARY = 4;
+    static const int output_type_GAMEBOY = 5;
 
     double m_steps = 120;
     double m_shadowSteps = 60;

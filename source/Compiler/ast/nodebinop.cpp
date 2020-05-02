@@ -93,7 +93,7 @@ void NodeBinOP::ApplyFlags()
 }
 
 bool NodeBinOP::isAddress() {
-    return m_left->isAddress() && m_right->isAddress();
+    return m_left->isAddress() || m_right->isAddress();
 }
 
 
@@ -200,9 +200,9 @@ TokenType::Type NodeBinOP::VerifyAndGetNumericType() {
     if (a!=b) {
 /*        if (a==TokenType::ADDRESS || b==TokenType::ADDRESS)
             return TokenType::ADDRESS;*/
-        if (a!=TokenType::ADDRESS)
+        if (a==TokenType::ADDRESS)
             return a;
-        if (b!=TokenType::ADDRESS)
+        if (b==TokenType::ADDRESS)
             return b;
         ErrorHandler::e.Error("Binary operations must occur between same token types ("+TokenType::getType(a)+" vs "+TokenType::getType(b)+")", m_op.m_lineNumber);
 

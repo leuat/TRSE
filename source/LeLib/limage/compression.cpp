@@ -225,6 +225,79 @@ void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &cha
 
 }
 
+
+void Compression::OptimizeScreenAndCharsetGB(QVector<int> &screen, QByteArray &charset, QVector<int> &sOut, QByteArray &cOut, int sw, int sh, int charSize, int compression)
+{
+    cOut.clear();
+    sOut.clear();
+    if (sw==0 || sh==0)
+        return;
+    int screens = screen.size()/sw/sh;
+/*    for (int i=0;i<screens;i++) {
+        for (int x=0;x<sw*sh;x++)
+            screen[i*sw*sh +x] = screen[i*sw*sh +x]+ charSize*i;
+    }*/
+    qDebug() << sw << sh << charSize << screens << charset.count()/8;
+    int sum = 0;
+    cOut.resize(64);
+    for (int i=0;i<8;i++) {
+        cOut[i+8*0] = 0;
+        cOut[i+8*1] = 0;
+
+        cOut[i+8*2] = 0xFF;
+        cOut[i+8*3] = 0xFF;
+
+        cOut[i+8*4] = 0xFF;
+        cOut[i+8*5] = 0x00;
+
+        cOut[i+8*6] = 0x00;
+        cOut[i+8*7] = 0xFF;
+
+    }
+
+//    for (int i=0;i<charset.count();i++)
+  //      qDebug() << QString::number(charset[i]);
+
+    // All screens are set up. Start compressing!
+    for (int i=0;i<screens;i++) {
+       // qDebug() << "Current screen : " << i ;
+
+        for (int x=0;x<sw*sh;x++) {
+            int s = screen[i*sw*sh + x] + charSize*i;
+
+
+//            qDebug() << "   Current s: " << QString::number(s) ;
+            int found = -1;
+            int curMin = 8000;
+            for (int j=0;j<cOut.count()/16;j++) {
+                //int Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length)
+                int res = Compare(cOut, charset,j*16,s*16,16);
+                if (res<compression && res<curMin) {
+                    found = j;
+                    curMin = res;
+    //                qDebug() << "Found similar: " << found;
+//                    break;
+                }
+            }
+            if (found ==-1) {
+                found = cOut.size()/16;
+                for (int j=0;j<16;j++)
+                    cOut.push_back( charset[s*16+j]  );
+      //          qDebug() << "Added new : " << found;
+            }
+//            qDebug() << "  ADDING : " << QString::number(found) << " vs "  << QString::number(s);
+
+            sOut.append((uchar)found);
+        }
+
+    }
+    qDebug() << "Final # chars: " << cOut.size()/16;
+    qDebug() << "Final # screens: " << sOut.size()/sw/sh;
+    qDebug() << "Final # res: " << sum;
+
+}
+
+
 void Compression::SaveCompressedSpriteData(QByteArray &data, QString dataFile, QString tableFile, int address, int compressionLevel)
 {
     int noSprites = data.count()/64;

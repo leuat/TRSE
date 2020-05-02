@@ -91,13 +91,7 @@ waitfor_hblank_internal:
 
 ; Copies 8 bytes on HBLank
 internal_copy_hblank_exp
-    ld a, [de]
-    inc de
-    ld b, a
 
-    ld a, [de]
-    inc de
-    ld c, a
 
 waitfor_hblank_internal_exp:
     ld a,[$FF41]
@@ -105,54 +99,9 @@ waitfor_hblank_internal_exp:
     cp 0
     jr nz, waitfor_hblank_internal_exp
     ; 1
-    ld a,b
-    ld [hl+],a
-    ; 2
-    ld a,c
-    ld [hl+],a
-    ; 3
     ld a,[de]
     ld [hl+],a
     inc e
-    ; 4
-    ld a,[de]
-    ld [hl+],a
-    inc e
-    ; 5
-    ld a,[de]
-    ld [hl+],a
-    inc e
-    ; 6
-
-    ld a,[de]
-    ld [hl+],a
-    inc e
-    ; 7
-
-    ld a,[de]
-    ld [hl+],a
-    inc e
-    ; 8
-
-    ld a,[de]
-    ld [hl+],a
-    inc e
-    ; 9
-    ld a,[de]
-    ld [hl+],a
-    inc e
-    ; 10
-    ld a,[de]
-    ld [hl+],a
-    inc e
-    ; 11
-    ld a,[de]
-    ld [hl+],a
-    inc e
-    ; 12
-    ld a,[de]
-    ld [hl+],a
-    inc de
 
 
     ret

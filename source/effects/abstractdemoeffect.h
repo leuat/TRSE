@@ -61,8 +61,9 @@ public:
 
     void ConvertToC64(int dither, bool isMulticolor, QVector3D ditherStrength)
     {
-        if (m_outputType!=1)
+        if (!(m_outputType==1  || m_outputType==5))
             return;
+//        qDebug() <<"HERE";
         m_mc->setMultiColor(isMulticolor);
         if (m_cols.count()>=4) {
             m_mc->SetColor(m_cols[0],0);

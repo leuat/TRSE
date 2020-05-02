@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(m_updateThread, SIGNAL(updateImageSignal()), this, SLOT(updateImage()));
 
 
-   Data::data.version;// += "   Build  " + QDate::currentDate().toString();
+   Data::data.version += "   Build  " + QDate::currentDate().toString();
 
 
     this->setMouseTracking(true);
@@ -224,6 +224,7 @@ void MainWindow::RestoreSettings()
     restoreState(settings.value("MainWindow/windowState").toByteArray());
 
     ui->psplitter->restoreState(settings.value("MainWindow/psplitter").toByteArray());
+    ui->qsplitter->restoreState(settings.value("MainWindow/qsplitter").toByteArray());
     ui->splitter->restoreState(settings.value("MainWindow/splitter").toByteArray());
 
 }
@@ -834,6 +835,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
         settings.setValue("MainWindow/windowState", saveState());
         settings.setValue("MainWindow/psplitter", ui->psplitter->saveState());
         settings.setValue("MainWindow/splitter", ui->splitter->saveState());
+        settings.setValue("MainWindow/qsplitter", ui->qsplitter->saveState());
 
         event->accept();
     }

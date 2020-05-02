@@ -290,6 +290,88 @@ QString LImageNES::getMetaInfo() {
     return txt;
 }
 
+void LImageNES::CompressAndSave(QByteArray &chardata, QVector<int> &screen, int x0, int x1, int y0, int y1, int &noChars, int compression, int maxChars) {
+
+    QVector<PixelChar> charsA;
+    QVector<PixelChar> charsB;
+    //    QByteArray data;
+    QVector<int> data;
+    int sx = x1-x0;
+    int sy = y1-y0;
+    data.resize(sx*sy);
+    data.fill(0x0);
+    noChars = 0;
+    int w = m_charWidth/2;
+//    qDebug() << "W " <<m_width <<m_height;
+
+    for (int j=0;j<sy;j++) {
+
+        for (int i=0;i<sx;i++)
+        {
+            PixelChar& pc1 = m_data[(i+x0 + (j+y0)*w)*2+0];
+            PixelChar& pc2 = m_data[(i+x0 + (j+y0)*w)*2+1];
+            int pi = 0;
+            bool found = false;
+            int cur = 1E5;
+            for (int cc=0;cc<charsA.count();cc++) {
+                //                if (found)
+                //                  break;
+                int metric = pc1.CompareLength3(charsA[cc]) + pc2.CompareLength3(charsB[cc]);
+                //                int metric = pc.Compare(p);
+                if (metric <=compression && metric<cur ) {
+                    data[i + j*sx] = pi;
+                    cur=metric;
+                    found = true;
+                    //                    break;
+
+                }
+                pi++;
+                //                if (pi>255) exit(1);
+            }
+            if (!found) {
+                charsA.append(pc1);
+                charsB.append(pc2);
+                data[i + j*sx] = charsA.count()-1;
+                noChars++;
+
+            }
+            //        data[i]=i;
+        }
+    }
+
+    //QFile f(outFile);
+    //f.open(QFile::WriteOnly);
+    QByteArray out;
+    for (int i=0;i<maxChars;i++) {
+        if (i<charsA.count()) {
+            for (int j=0;j<8;j++) {
+                out.append(PixelChar::reverse(charsA[i].p[j]));
+                out.append(PixelChar::reverse(charsB[i].p[j]));
+            }
+        }
+        else
+            for (int j=0;j<16;j++)
+                out.append((char)0);
+
+    }
+    //    qDebug() << data.count();
+    //out.append(data);
+    chardata.append(out);
+    screen.append(data);
+    /*    f.write(out);
+       f.write(data);
+
+       f.close();
+   */
+
+    qDebug() << "CHARDATA : " << chardata.count()/16;
+//    delete ni;
+
+    // return out;
+
+
+}
+
 
 
 unsigned int LImageNES::getPixel(int x, int y)
@@ -312,7 +394,7 @@ unsigned int LImageNES::getPixel(int x, int y)
     return m_colorList.m_nesCols[pp];
 
 
-//    return pc.get(m_scale*ix, iy, m_bitMask);
+    //    return pc.get(m_scale*ix, iy, m_bitMask);
 
 }
 
@@ -332,16 +414,16 @@ void LImageNES::setPixel(int x, int y, unsigned int col)
 
     int j=0;
     for (int i=0;i<4;i++) {
-//        if (rand()%1000>988)
-  //          qDebug() << "LImageNes::SETPIXEL " <<Util::numToHex(m_colorList.m_nesCols[i]) << Util::numToHex(i);
+        //        if (rand()%1000>988)
+        //          qDebug() << "LImageNes::SETPIXEL " <<Util::numToHex(m_colorList.m_nesCols[i]) << Util::numToHex(i);
         if (m_colorList.m_nesCols[i]==col)
             j=3-i;
     }
 
-     m_pc1.p[xy.y()] &= ~(1<<xy.x());
-     m_pc2.p[xy.y()] &= ~(1<<xy.x());
-     m_pc1.p[xy.y()] |= (j&1)<<xy.x();
-     m_pc2.p[xy.y()] |= ((j&3)>>1)<<xy.x();
+    m_pc1.p[xy.y()] &= ~(1<<xy.x());
+    m_pc2.p[xy.y()] &= ~(1<<xy.x());
+    m_pc1.p[xy.y()] |= (j&1)<<xy.x();
+    m_pc2.p[xy.y()] |= ((j&3)>>1)<<xy.x();
     //return m_colorList.m_nesCols[pp];
 
 
@@ -364,10 +446,10 @@ void LImageNES::SetColor(uchar col, uchar idx)
 
     else m_colorList.m_nesPPU[0]=col;
 
-//    if (rand()%100>98)
-  //      qDebug() << "SETTING COLOR : " << idx <<  "   WITH COLOR " <<Util::numToHex(col);
+    //    if (rand()%100>98)
+    //      qDebug() << "SETTING COLOR : " << idx <<  "   WITH COLOR " <<Util::numToHex(col);
 
-   // qDebug() << "Setting idx " << idx << " to  "<< QString::number(col);
+    // qDebug() << "Setting idx " << idx << " to  "<< QString::number(col);
 
 }
 
@@ -385,7 +467,7 @@ void LImageNES::CopyFrom(LImage *img)
     m_footer.m_data = img->m_footer.m_data;
     m_colorList.m_curPal = img->m_colorList.m_curPal;
     m_colorList.m_nesPPU = img->m_colorList.m_nesPPU;
-//    qDebug() << m_footer.isFullscreen() << img->m_footer.isFullscreen();
+    //    qDebug() << m_footer.isFullscreen() << img->m_footer.isFullscreen();
 
 }
 

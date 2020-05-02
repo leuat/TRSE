@@ -37,6 +37,14 @@ void DemoEffectRaytracer::Initialize()
        m_mc = new LImageQImage(LColorList::PICO8);
        m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
    }
+   if (m_rt->m_globals.m_outputType == RayTracerGlobals::output_type_GAMEBOY) {
+       m_mc = new LImageGamboy(LColorList::NES);
+       m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
+       m_mc->SetColor(0xD,0);
+       m_mc->SetColor(0xC,1);
+       m_mc->SetColor(0x1C,2);
+       m_mc->SetColor(0x2C,3);
+   }
    m_mc->setMultiColor(true);
 
 
@@ -129,6 +137,9 @@ void DemoEffectRaytracer::Render(QImage &img)
         ConvertToP8(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
     if (m_outputType==RayTracerGlobals::output_type_BINARY)
         ConvertToBIN(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
+
+    if (m_outputType==RayTracerGlobals::output_type_GAMEBOY)
+        ConvertToC64(m_rt->m_globals.m_dither,m_rt->m_globals.m_multicolor==1,m_rt->m_globals.m_ditherStrength);
 
 //    if (m_outputType==RayTracerGlobals::output_type_STANDARD)
   //      ConvertToStandard(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);

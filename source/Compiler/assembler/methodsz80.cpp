@@ -140,6 +140,14 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->PopLabel("wait");
 
     }
+    else
+    if (Command("hi")) {
+        HiLo(as, true);
+    }
+    else
+    if (Command("lo")) {
+        HiLo(as, false);
+    }
     else if (Command("waitforhblank"))
         WaitForHBLank(as);
 
@@ -544,12 +552,22 @@ void MethodsZ80::MemCpyOnHBLank(Assembler *as, QString jlbl, int div)
 {
     LoadAddress(as,0,"de");
     LoadAddress(as,1,"hl");
-    if (!m_node->m_params[2]->isPureNumeric())
-        ErrorHandler::e.Error("Parameter 3 must be pure constant and a divisible by 8", m_node->m_op.m_lineNumber);
+    //if (!m_node->m_params[2]->isPureNumeric())
+    //    ErrorHandler::e.Error("Parameter 3 must be pure constant and a divisible by 8", m_node->m_op.m_lineNumber);
     as->Comment("HBLANK 8-byte copy per scanline");
     int cnt = m_node->m_params[2]->getValueAsInt(as);
     QString lbl = as->NewLabel("memcpyhblank");
-    as->Asm("ld a, "+Util::numToHex(ceil(cnt/(float)div)));
+    if (m_node->m_params[2]->isPureNumeric())
+        as->Asm("ld a, "+Util::numToHex(ceil(cnt/(float)div)));
+    else {
+        as->Comment("hblank non-const");
+        m_node->m_params[2]->Accept(m_dispatcher);
+//        LoadVar(as,2);
+        as->Asm("rrca");
+        as->Asm("rrca");
+        as->Asm("rrca");
+
+    }
     as->Label(lbl);
     as->Asm("push af");
     as->Asm("call "+jlbl);
@@ -563,6 +581,9 @@ void MethodsZ80::MemCpyOnHBLank(Assembler *as, QString jlbl, int div)
 
 }
 
+
+
+
 void MethodsZ80::WaitForHBLank(Assembler *as)
 {
     as->Comment("Wait for HBLank");
@@ -573,4 +594,20 @@ void MethodsZ80::WaitForHBLank(Assembler *as)
     as->Asm("cp 0");
     as->Asm("jr nz, "+lbl);
     as->PopLabel("hblank");
+}
+
+void MethodsZ80::HiLo(Assembler *as, bool isHi)
+{
+    if (m_node->m_params[0]->isPureVariable())
+    {
+        if (m_node->m_params[0]->isWord(as)) {
+            if (isHi)
+                as->Asm("ld a,["+m_node->m_params[0]->getValue(as)+"]");
+            else
+                as->Asm("ld a,["+m_node->m_params[0]->getValue(as)+"+1]");
+            return;
+        }
+    }
+    ErrorHandler::e.Error("Hi / lo uknown parameter type", m_node->m_op.m_lineNumber);
+
 }
