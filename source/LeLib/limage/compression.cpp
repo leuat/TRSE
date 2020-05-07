@@ -237,7 +237,7 @@ void Compression::OptimizeScreenAndCharsetGB(QVector<int> &screen, QByteArray &c
         for (int x=0;x<sw*sh;x++)
             screen[i*sw*sh +x] = screen[i*sw*sh +x]+ charSize*i;
     }*/
-    qDebug() << sw << sh << charSize << screens << charset.count()/8;
+    qDebug() << sw << sh << charSize << screens << charset.count()/16;
     int sum = 0;
     cOut.resize(64);
     for (int i=0;i<8;i++) {
@@ -268,7 +268,7 @@ void Compression::OptimizeScreenAndCharsetGB(QVector<int> &screen, QByteArray &c
 
 //            qDebug() << "   Current s: " << QString::number(s) ;
             int found = -1;
-            int curMin = 8000;
+            int curMin = 80000;
             for (int j=0;j<cOut.count()/16;j++) {
                 //int Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length)
                 int res = Compare(cOut, charset,j*16,s*16,16);
@@ -347,7 +347,11 @@ int Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int lengt
         for (int j=0;j<8;j++) {
             uchar k1 =(a[p1+i]>>(j)) & 0b1;
             uchar k2 =(b[p2+i]>>(j)) & 0b1 ;
-            if (k1!=k2) l++;
+            if (k1!=k2) {
+                l++;
+//                if ((i&1)==0)
+//                    qDebug() << "SHOULD NOT HAPPEN";
+            }
         }
 
 

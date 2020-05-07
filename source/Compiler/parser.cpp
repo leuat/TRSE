@@ -26,6 +26,15 @@ QStringList Parser::s_usedTRUs;
 QStringList Parser::s_usedTRUNames;
 
 
+QString Parser::WashVariableName(QString v)
+{
+  //  QString p =m_symTab->m_gPrefix;
+//    p = p.replace("_","::");
+    v = v.replace(m_symTab->m_gPrefix,"");
+    return v;
+
+}
+
 QStringList Parser::getFlags() {
     QStringList flags;
 
@@ -2283,8 +2292,31 @@ QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockNam
         procDecl->m_isInline = isInline;
         AppendComment(procDecl);
 
-        if (m_procedures[procName]!=nullptr)
+        if (m_procedures[procName]!=nullptr) {
             procDecl->m_isUsed = m_procedures[procName]->m_isUsed;
+            // Make sure that the correct number of parameters + types etc are identical for the forward declared procedure
+            QSharedPointer<NodeProcedureDecl> existing = qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]);
+            if (existing->m_paramDecl.count()!=procDecl->m_paramDecl.count())
+                ErrorHandler::e.Error("Forward declared procedure '"+ WashVariableName(procName) +"' has incorrect number of parameters. ", tok.m_lineNumber);
+
+            for (int i=0;i<existing->m_paramDecl.count();i++) {
+                QSharedPointer<NodeVarDecl> a = qSharedPointerDynamicCast<NodeVarDecl>(existing->m_paramDecl[i]);
+                QSharedPointer<NodeVarDecl> b = qSharedPointerDynamicCast<NodeVarDecl>(procDecl->m_paramDecl[i]);
+                if ( qSharedPointerDynamicCast<NodeVar>(a->m_varNode)->value!=
+                     qSharedPointerDynamicCast<NodeVar>(b->m_varNode)->value)
+                    ErrorHandler::e.Error("Forward declared procedure '"+ WashVariableName(procName) +"' has incorrect or missing declared parameter '"+WashVariableName(qSharedPointerDynamicCast<NodeVar>(a->m_varNode)->value)+"'", tok.m_lineNumber);
+
+                if ( qSharedPointerDynamicCast<NodeVarType>(a->m_typeNode)->value!=
+                     qSharedPointerDynamicCast<NodeVarType>(b->m_typeNode)->value)
+                    ErrorHandler::e.Error("Forward declared procedure '"+ WashVariableName(procName) +
+                                          "' has incorrect declared parameter type for parameter '"+WashVariableName(qSharedPointerDynamicCast<NodeVar>(a->m_varNode)->value)+"', should be "
+                                          +WashVariableName(qSharedPointerDynamicCast<NodeVarType>(a->m_typeNode)->value), tok.m_lineNumber);
+
+
+            }
+//            qDebug() << procName << procDecl->m_paramDecl.count() << existing->m_paramDecl.count();
+
+        }
         m_procedures[procName] = procDecl;
 
         // For recursive procedures, it is vital that we forward declare the current procedure
@@ -2308,7 +2340,11 @@ QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockNam
              // Check if procedure already declared
             for (QSharedPointer<Node> n: m_proceduresOnly) {
                 QSharedPointer<NodeProcedureDecl> proc =qSharedPointerDynamicCast<NodeProcedureDecl>(n);
-                if (proc->m_procName==procName) ok = false;
+                if (proc->m_procName==procName) {
+                    ok = false;
+                    // Verify that the parameters are identical:
+                }
+
 
             }
             if (!ok)

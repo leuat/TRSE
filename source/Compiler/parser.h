@@ -93,6 +93,7 @@ public:
     QSharedPointer<SymbolTable>  m_symTab = nullptr;
     QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
     QSharedPointer<Node> m_tree;
+    QString WashVariableName(QString v);
 
 
     QVector<QString> m_ignoreBuiltinFunctionTPU;

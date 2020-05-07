@@ -18,25 +18,8 @@ can be reused as later procedure parameters. Just make sure that the procedures 
 each other nested.
 
 */
-/*
 
-REMOVE BEFORE PUBLISH 
 
-@userdata $A000 $B000 "CUSTOM UNIT"
-
-@donotremove "Cake"
-
-@ignoremethod init8x8div
-@ignoremethod init8x8div
-@ignoremethod init16x8div
-@ignoremethod initeightbitmul
-@ignoremethod init16x8mul
-
-procedure Cake();
-begin
-
-end;
-*/
 
 procedure DrawBox(x, y, a, b, value, color, screen : global byte);
 begin
@@ -56,7 +39,7 @@ begin
 	end;
 end;
 
-procedure DrawTri(x, y, a, value, color, screen : global byte);
+procedure DrawTri(x, y, a, value, color, c : global byte);
 begin
 	// zp points to color ram
 	zp:=$D800 + x + y*screen_width;

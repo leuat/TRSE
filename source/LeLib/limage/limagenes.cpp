@@ -302,7 +302,7 @@ void LImageNES::CompressAndSave(QByteArray &chardata, QVector<int> &screen, int 
     data.fill(0x0);
     noChars = 0;
     int w = m_charWidth/2;
-//    qDebug() << "W " <<m_width <<m_height;
+    qDebug() << "W " <<m_width <<m_height << w << m_charWidth << sx;;
 
     for (int j=0;j<sy;j++) {
 
@@ -345,8 +345,11 @@ void LImageNES::CompressAndSave(QByteArray &chardata, QVector<int> &screen, int 
     for (int i=0;i<maxChars;i++) {
         if (i<charsA.count()) {
             for (int j=0;j<8;j++) {
+ //               out.append(PixelChar::reverse(charsA[i].p[j]));
+//                out.append(PixelChar::reverse(charsB[i].p[j]));
                 out.append(PixelChar::reverse(charsA[i].p[j]));
                 out.append(PixelChar::reverse(charsB[i].p[j]));
+//                qDebug() << "CHR : " << Util::numToHex(charsA[i].p[j]) << Util::numToHex(charsB[i].p[j]);
             }
         }
         else

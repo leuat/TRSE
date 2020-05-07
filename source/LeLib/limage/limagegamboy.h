@@ -16,6 +16,7 @@ public:
 
 
     void ImportBin(QFile &file) override;
+    void Initialize(int width, int height) override;
 
 };
 

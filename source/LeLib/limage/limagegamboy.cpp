@@ -93,3 +93,11 @@ void LImageGamboy::ImportBin(QFile &file)
     }
     ForceColor();
 }
+
+void LImageGamboy::Initialize(int width, int height) {
+    m_width = width;
+    m_height = height;
+    m_charWidth = width/8;
+//    qDebug() << "LIMAGEGAMEBOY::INIT";
+ //   qDebug() << m_width;
+}

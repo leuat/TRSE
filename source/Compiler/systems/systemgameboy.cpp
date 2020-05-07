@@ -18,7 +18,7 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
     fix+=".exe";
 #endif
 
-
+    output+="<br>";
     if (!QFile::exists(assembler) || !QFile::exists(link) || !QFile::exists(fix)) {
         text  += "<br><font color=\"#FF6040\">Please set up a link to the RGBASM assembler directory in the TRSE settings panel.</font>";
         return;
@@ -69,6 +69,8 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
         for (QString s : dels)
             if (QFile::exists(currentDir+s))
                 QFile::remove(currentDir+s);
+
+        output+="<br>";
 
 /*        process.start(link, params);
         process.waitForFinished();

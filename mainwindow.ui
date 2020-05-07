@@ -57,20 +57,6 @@
             </item>
            </layout>
           </item>
-          <item row="1" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <item>
-             <widget class="QLabel" name="label_5">
-              <property name="text">
-               <string>Filter:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="leFilterSymbols"/>
-            </item>
-           </layout>
-          </item>
          </layout>
         </item>
         <item>
@@ -104,6 +90,20 @@
               <string notr="true">1</string>
              </property>
             </column>
+           </widget>
+           <widget class="QWidget" name="">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QLabel" name="label_5">
+               <property name="text">
+                <string>Filter:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="leFilterSymbols"/>
+             </item>
+            </layout>
            </widget>
           </widget>
           <widget class="QWidget" name="layoutWidget">

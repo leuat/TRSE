@@ -39,7 +39,7 @@ void DemoEffectRaytracer::Initialize()
    }
    if (m_rt->m_globals.m_outputType == RayTracerGlobals::output_type_GAMEBOY) {
        m_mc = new LImageGamboy(LColorList::NES);
-       m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
+       m_mc->Initialize(m_rt->m_globals.m_width, m_rt->m_globals.m_height);
        m_mc->SetColor(0xD,0);
        m_mc->SetColor(0xC,1);
        m_mc->SetColor(0x1C,2);

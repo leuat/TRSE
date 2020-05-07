@@ -851,13 +851,16 @@ static int OptimizeScreenAndCharset(lua_State* L) {
 
     QByteArray cOut;
     QVector<int> sOut;
-    if (dynamic_cast<LImageGamboy*>(m_effect->m_mc)!=nullptr)
+    int scale = 1;
+    if (dynamic_cast<LImageGamboy*>(m_effect->m_mc)!=nullptr) {
+        scale=2;
         m_compression.OptimizeScreenAndCharsetGB(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+    }
     else
     m_compression.OptimizeScreenAndCharset(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
 //    m_charData.clear();
     m_charData = cOut;
-    m_infoText="Total no. chars : "+QString::number(m_charData.count()/8) +"\n"+ m_infoText;
+    m_infoText="Total no. chars : "+QString::number(m_charData.count()/(8*scale)) +"\n"+ m_infoText;
 
     m_screenData = sOut;
     return 0;
@@ -1135,23 +1138,24 @@ void DialogEffects::UpdateGlobals()
                 if (m_effect->m_mc!=nullptr)
                     m_effect->m_mc->m_colorList.LoadFromFile(m_currentDir+"/"+f);
         }
-        if (m_script->lua_exists("output.palette")) {
-//            qDebug() << "PALETTE";
-            if (m_effect!=nullptr)
-                if (m_effect->m_mc!=nullptr)
-                    m_effect->m_mc->m_colorList.fromArrayList(m_script->getIntVector("output.palette"));
-
-        }
-
-        m_rt.m_globals.m_dither = m_script->get<float>("output.dither");
-        m_rt.m_globals.m_ditherStrength = m_script->getVec("output.ditherStrength");
-        m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.index_colors");
 
     }
     if (m_script->lua_exists("output.smooth")) {
         m_rt.m_globals.m_smooth = m_script->get<float>("output.smooth");
     }
 
+    if (m_script->lua_exists("output.palette")) {
+//            qDebug() << "PALETTE";
+        if (m_effect!=nullptr)
+            if (m_effect->m_mc!=nullptr)
+                m_effect->m_mc->m_colorList.fromArrayList(m_script->getIntVector("output.palette"));
+
+    }
+
+    m_rt.m_globals.m_dither = m_script->get<float>("output.dither");
+    m_rt.m_globals.m_ditherStrength = m_script->getVec("output.ditherStrength");
+    if (m_script->lua_exists("output.index_colors"))
+        m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.index_colors");
 
   //  if (m_script->lua_exists(material+".checkerboard")) {
 

@@ -529,6 +529,11 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
     node->m_right->Accept(this);
     as->Comment("; before");
 
+    if (node->m_left->isArrayIndex()) {
+        as->Asm("ld [hl], a");
+        return "";
+    }
+
     as->Asm("ld ["+qSharedPointerDynamicCast<NodeVar>(node->m_left)->getValue(as) + "], "+getAx(node->m_left));
     return "";
 }

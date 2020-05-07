@@ -48,6 +48,8 @@ NodeProcedureDecl::NodeProcedureDecl(Token t, QString m, QVector<QSharedPointer<
 void NodeProcedureDecl::AppendBlock(QSharedPointer<Node> block)
 {
     QSharedPointer<NodeBlock> b = qSharedPointerDynamicCast<NodeBlock>(block);
+    if (b==nullptr)
+        return;
     for (int i=0;i<m_paramDecl.count();i++)
         b->m_decl.append(m_paramDecl[i]);
     m_block = block;

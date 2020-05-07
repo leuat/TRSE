@@ -65,6 +65,7 @@ public:
             return;
 //        qDebug() <<"HERE";
         m_mc->setMultiColor(isMulticolor);
+//        qDebug() << "Dither " << dither;
         if (m_cols.count()>=4) {
             m_mc->SetColor(m_cols[0],0);
             m_mc->SetColor(m_cols[1],1);

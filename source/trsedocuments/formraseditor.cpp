@@ -52,6 +52,7 @@ FormRasEditor::FormRasEditor(QWidget *parent) :
     connect(timer, SIGNAL(timeout()), this, SLOT(ShadowBuild()));
     timer->start(5000); //time specified in ms
 */
+//    ui->txtOutput->set
 }
 
 FormRasEditor::~FormRasEditor()
@@ -458,7 +459,7 @@ void FormRasEditor::Run()
 
 //    exit(1);
     if (m_currentSourceFile.toLower().endsWith(".tru")) {
-        ui->txtOutput->setText("<font color=\"red\">Cannot execute Turbo Rascal Unit (.tru) files. </font>");
+        ui->txtOutput->setHtml("<font color=\"red\">Cannot execute Turbo Rascal Unit (.tru) files. </font>");
     }
     else
         ExecutePrg(filename, m_projectIniFile->getString("system"));
@@ -980,7 +981,7 @@ void FormRasEditor::HandleErrorDialogs(QString& output)
 }
 void FormRasEditor::HandleUpdateBuildText()
 {
-    ui->txtOutput->setText(m_builderThread.m_builder->getOutput());
+    ui->txtOutput->setHtml(m_builderThread.m_builder->getOutput());
 
 }
 
