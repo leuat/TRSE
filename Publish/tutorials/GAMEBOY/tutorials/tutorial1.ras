@@ -1,0 +1,90 @@
+program Tutorial1_Hello_World;
+
+@use screens
+
+var  
+	const charBank : byte = 2;
+	// A temporary address to store the screen
+	const tempAddress : address = $D000;
+
+// Automatically export the character image
+@export "images/charset.flf" "images/charset.bin" 256
+
+	// Place data in one of the 16kb banks at $4000-$7FFF. 
+	// You have a *lot* of free ROM space for graphics and other data!
+	
+    font : incbin("images/charset.bin") bank(charBank);
+
+	text1 : string = "HELLO GAMEBOY!";
+	
+	text2 : string = "DIS FAILS ON REAL HW";
+
+	zp : pointer;
+
+/*
+	While the Gameboy in principle is a very easy system to program for, it has a very annoying/painful
+	feature that we've tried to make much easier to manage with the help of TRSE. 
+	The Gameboy has, much like the C64,
+	a 256-character character (VRAM_CHARSET) set and a 32x32 screen (SCREEN0). 
+	The screen displays only 20x18 of the grid, where you
+	can scroll around by setting the scrollx and scrolly registers. So far, so good!
+
+
+	 However, here's the caveat of the system : while writing data *directly* to the 
+	 screen / vram in general is possible, it will always result in scrambled data. Some emulators 
+	 (like Mednafen and VisualBoy) will allow this and produce (in)correct output. 
+	 However, on real hardware - or a proper emulator (such as Gambatte), the data copying will fail!   
+	 
+	 On the gameboy, there are two ways to update data in VRAM : either by first turning OFF the screen,
+	 or by copying (a small chunk of) data on VBLANK or HBLANK. Turning the LCD OFF has several 
+	 disadvantages - first, you'll need to wait for a vertical blank, then the screen will always 
+	 flash, and finally - the IRQ on VBLank will fail to be called, resulting in music etc stopping up. 
+	 The solution that TRSE uses is simply copying data on HBLANK only.
+	 
+	 The TRSE "memcpyonhblank(,,);" will copy the data you specify in 8-byte chunks for each HBLANK line,
+	 guaranteeing that data is being copied to VRAM properly. We will see more of this in later tutorials, 
+	 but for now just remember: the only way to copy data to VRAM is by using the "memcpyonhblank" method,
+	 and will copy data in 8-byte chunks on each raster line. Say you need to copy 128 bytes of data to vram, then
+	 memcpyonhblank will copy 8 bytes each for a total of 16 raster lines.  
+	  
+
+	*/	
+
+
+
+begin
+	// Set default palette : each of the 4 colors are defined by 2 bits : 11 = black, 00 = white.
+	background_palette:=%10010011;
+	// Set screen at $9800
+	Screens::Set9800();
+	// Copy from charbank to VRAM
+	current_bank:=charBank;
+	// Copy $400 bytes from the ROM font to VRAM charset. MUST be done on HBLANK, or else 
+	// writing to screen ram wil lfail
+	Screens::MemCopyBankOnHBlank(font, vram_charset, 4); // Copy 4x$100 bytes of data
+	
+	/*
+	If you call memcpy directly, data will be copied outside of vblank - and produce
+	corrupted charset data on real hardware / accurate emulators. However, mednafen will allow this. 
+	*/
+	
+	// memcpy(font, vram_charset, $400); // WILL FAIL ON REAL HARDWARE!
+
+
+	// Fill with some empty character ($80)
+	// Clear both the screen and temporary address. 
+	Screens::ClearScreen(tempAddress, $80);	
+	Screens::ClearScreen(screen0, $80);	
+
+	// Print text to buffer
+	Screens::PrintText(tempAddress,3,5, 0, text1);
+	
+	// Copy buffer to screen - again, only on HBLANK!
+	Screens::MemCopyBankOnHBlank(tempAddress, screen0, 4); // Copy 4x$100 bytes of data to the screen
+	
+	// The next line will fail (on gambatte or real hardware), since we are writing directly to VRAM during non-blank intervals
+	Screens::PrintText(screen0,0,8, 26, text2);
+	
+
+	Loop();			
+end.

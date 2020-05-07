@@ -2708,6 +2708,8 @@ QSharedPointer<Node> Parser::TypeSpec()
 //        data << "$0"+QString::number(getIntVal(m_currentToken),16);//QString::number(m_currentToken.m_intVal);
 
         initVal = Util::numToHex(GetParsedInt(t.m_type));
+        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES || Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY)
+            ErrorHandler::e.Error("You cannot initialize variables stored in work ram (WRAM) on the Gameboy/NES, as these needs to be initialized manually. " ,m_currentToken.m_lineNumber-1);
 
 
 

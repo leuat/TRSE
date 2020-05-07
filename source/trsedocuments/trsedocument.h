@@ -43,6 +43,7 @@ public:
     QString m_currentSourceFile;
     QString m_currentFileShort;
     QString m_currentDir;
+    QString m_programEndingType = "prg";
 
     QString m_fileExtension;
     static QPalette m_defaultPalette;

@@ -1,0 +1,246 @@
+unit Screens;
+var
+	p1,zp:pointer wram aligned;
+	w,h,adde,b,x,y,j,i,done,c:byte wram;
+	screenOn : byte;
+
+	const storage: address= $C900;
+
+procedure Set9800();
+begin
+	asm("
+        ld	a,LCDCF_ON | LCDCF_BG9800 | LCDCF_OBJ8 | LCDCF_OBJON | LCDCF_WINOFF | LCDCF_BGON
+        ld	[rLCDC],a			; enable lcd
+	
+	");
+	screenOn:=1;
+	
+end;
+
+
+
+
+procedure EnableWindow();
+begin
+	asm("
+		ld a,[rLCDC]
+        or	a, LCDCF_WINON | LCDCF_WIN9C00
+        ld	[rLCDC],a
+	
+	");
+//	screenOn:=1;
+	
+end;
+
+
+procedure Set9C00();
+begin
+	asm("
+        ld	a,LCDCF_ON | LCDCF_BG9C00 | LCDCF_OBJ8 | LCDCF_OBJON | LCDCF_WINOFF | LCDCF_BGON
+        ld	[rLCDC],a			; enable lcd
+	");
+end;
+procedure Set8000();
+begin
+	asm("
+        ld	a,LCDCF_ON | LCDCF_BG8000 | LCDCF_OBJ8 | LCDCF_OBJON | LCDCF_WINOFF | LCDCF_BGON
+        ld	[rLCDC],a			; enable lcd
+	
+	");
+end;
+procedure StopLCD() inline;
+begin
+	asm("
+    ld a, [rLCDC]
+    res 7, a            ; Reset bit 7 of LCDC
+    ld [rLCDC], a
+	");
+	screenOn:=0;
+end;
+
+
+procedure HLine(hlx, hly, hllen, hlc : byte) inline;
+begin
+	p1:=screen0;
+	p1:=p1 + hly*32;
+	p1:=p1+ hlx;
+	for j:=0 to hlc do
+	begin
+		p1[0]:=hlc;
+		p1:=p1+$20;
+	end;
+end;
+
+
+procedure VLine(vlx, vly, vllen, vlc : byte) inline;
+begin
+	p1:=screen0;
+	p1:=p1 + vly*32;
+	p1:=p1+ vlx;
+	fill(p1,vlc,vllen);
+end;
+
+
+procedure MemCopyBankOnHBlank(cp1, cp2 : pointer; cwi : byte);
+begin
+	waitforverticalblank();
+	for i:=0 to cwi offpage do
+	begin
+		memcpyonHBlank(cp1,cp2,256);
+		asm(";here");
+		cp1:=cp1+256;
+		cp2:=cp2+256;
+	end;
+end;
+
+
+
+procedure RenderScreen(p:pointer;adde,b,x,y,w,h : global byte);
+begin
+//	p1:=screen0;
+	p1:=screen0;
+	p:=p+adde;
+	p1:=p1+x;
+	if (y<>0) then
+		p1:=p1+y*32;
+
+	for j:=0 to h do
+	begin
+		memcpy(p,p1,w);
+		
+		p1:=p1+32;			
+		p:=p+w;
+	end;
+end;
+
+procedure RenderOffScreen(ro_dst,ro_p:pointer;ro_adde,ro_b,ro_x,ro_y,ro_w,ro_h : byte);
+begin
+	p1:=ro_dst;
+	ro_p:=ro_p+ro_adde;
+	p1:=p1+ro_x;
+	if (ro_y<>0) then
+		p1:=p1+ro_y*32;
+
+	for j:=0 to ro_h do
+	begin
+		memcpy(ro_p,p1,ro_w);
+		
+		p1:=p1+32;			
+		ro_p:=ro_p+ro_w;
+	end;
+end;
+
+
+
+procedure RenderScreenVB8(pr2:pointer;adde2,b2,x2,y2,w2,h2 : byte);
+begin
+	p1:=screen0;
+	pr2:=pr2+adde2;
+	p1:=p1+x2;
+	if (y2<>0) then
+		p1:=p1+y2*32;
+
+	for j:=0 to h2 do
+	begin
+		memcpyonhblank(pr2,p1,w2);
+		
+		p1:=p1+32;			
+		pr2:=pr2+w2;
+	end;
+end;
+
+procedure PrintText(p1 :global  pointer;x,y,c : global byte ; text : pointer);
+begin
+	done:=false;
+	j:=0;
+	p1:=p1+x;
+	p1:=p1+y*32;
+	while (done = false) do
+	begin
+		i:=text[j];
+		// Space $20 ignore
+		if (i<>$20) then
+		begin
+			i:=i-65+c;
+			p1[j]:=i;
+		end;
+		j:=j+1;
+		if (text[j]=0) then done:=true;		
+	
+	end;	
+end; 
+
+
+procedure ClearScreen(clspos : pointer; cls:byte);
+begin
+	zp:=storage;
+	fill(zp,cls,64);
+	for i:=0 to 16 do
+	begin
+		zp:=storage;
+		memcpyonhblank(zp,clspos,64);
+		clspos:=clspos+64;
+	end;
+end;
+
+procedure FillVRAM(pvr:pointer;fcls, vlen:byte);
+begin
+	zp:=storage;
+	fill(zp, fcls, vlen);
+	zp:=storage;
+	memcpyonhblank(zp,pvr,vlen);
+end;
+
+
+procedure ClearWindow(clw:byte);
+begin
+	p1:=$9C00;
+	zp:=storage;
+	fill(zp,cls,64);
+	for i:=0 to 16 do
+	begin
+		memcpyonhblank(zp,p1,64);
+		p1:=p1+64;
+	end;
+
+end;
+
+procedure CopyFullCharset(cpfc:pointer);
+begin
+	p1:=cpfc;
+	MemCopyBankOnHBlank(p1,$9000, 8);
+	p1:=cpfc;
+	p1:=p1+(256*8);
+	MemCopyBankOnHBlank(p1,^$8800, 8);
+end;
+
+
+procedure ClearSprites(cs_n:byte);
+begin
+	p1:=$C000;
+//	fill(^$C000,0,256);
+	for i:=0 to cs_n do
+	begin
+		// Set x / y to 0
+		p1[0]:=0;
+		p1[1]:=0;
+		p1:=p1+4;
+	end;
+
+end;
+
+procedure InitDefaultScreen();
+begin
+	background_palette:=%10010011;
+	object0_palette:=%10010011;
+	scrollx:=0;
+	scrolly:=0;
+
+	ClearSprites(64);
+	ClearScreen(screen0,0);
+
+	// Set screen at $9800
+	Set9800();
+end;
+
+end.

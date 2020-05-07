@@ -22,6 +22,8 @@ VIC20; PumpKid;  VIC20/PumpKid/; <h2>PumpKid</h2><p>Created by <b>AndyH [ Hewco 
 PLUS4; Main Commodore PLUS/4 tutorials; PLUS4/Tutorials/;<h2>Main Commodore Plus/4 tutorials</h2>Support for the Plus/4 was added in version 0.08, with a bunch of fresh and new tutorials!<br><img src=":resources/images/tutorials/plus4_tut.png" width="300"><p><i>Small disclaimer: </i>Most built-in methods are not yet updated to work for the PLUS/4. This will be added later, within a larger project setting.
 
 NES; Main NES tutorials; NES/intro_tutorial/;<h2>Main NES tutorials</h2><p>The NES tutorials + editor + graphics support has in this version of TRSE received a complete overhaul!
+GAMEBOY; Main Gameboy tutorials; GAMEBOY/tutorials/ ;  <h2>Main Gameboy tutorials</h2><p>Recommended starting point for anybody interested in coding for the Nintendo Gameboy!
+
 X86; IBM 8086 AT (CGA) tutorials; X86/CGA/; <h2>Main IBM AT (CGA) tutorials</h2><p>Preliminary X86 DOS tutorials for the IBM XT with CGA running at 4.77 mhz. Extremely early development, compiler is totally incomplete and inefficient. <p>Proof of concept.
 OK64; Main OK64 examples ; OK64/Tutorials/; <h2>Main OK64 tutorials</h2>Prelimiary tutorials, prone to change. OK64 is Leuat's very own fake 6502 computer!
 OK64; OK Computer (demo) ; OK64/OkComputer/; <h2>OK Computer</h2>The first demo made for the OK64! Presented at Revision 2020.

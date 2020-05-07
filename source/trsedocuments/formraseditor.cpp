@@ -43,6 +43,9 @@ FormRasEditor::FormRasEditor(QWidget *parent) :
     connect(&m_builderThread, SIGNAL(emitText()), this, SLOT(HandleUpdateBuildText()));
     connect(&m_builderThread, SIGNAL(emitSuccess()), this, SLOT(HandleBuildComplete()));
     connect(&m_builderThread, SIGNAL(emitError()), this, SLOT(HandleBuildError()));
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY)
+        m_programEndingType = "gb";
+
 
     m_type = RAS;
     m_timer.start();

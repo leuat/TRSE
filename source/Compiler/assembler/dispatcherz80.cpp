@@ -194,6 +194,8 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVarDecl> node)
         }
         as->m_currentBlock = as->m_banks[bnk];
     }
+    if (v->m_isGlobal)
+        return;
 
 
 //    qDebug() << "BEFORE " <<as->m_currentBlock;
@@ -769,6 +771,15 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
                 bop->setForceType(TokenType::INTEGER);
                 if (bop->m_right->isPure()) {
                     as->Comment("RHS is pure");
+                    if (bop->m_right->isPureNumeric() && (bop->m_right->getValueAsInt(as)&0xFF)==0) {
+                        as->Comment("RHS is pure constant of $100");
+                        as->Asm("ld b,"+Util::numToHex(bop->m_right->getValueAsInt(as)>>8));
+                        as->Asm("ld a,[ "+var->value+" ]");
+                        as->Asm("add a,b");
+                        as->Asm("ld [ "+var->value+" ],a");
+                        return;
+
+                    }
                     m_useNext="de";
                     bop->m_right->Accept(this);
                 }

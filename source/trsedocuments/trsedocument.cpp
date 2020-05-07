@@ -84,7 +84,7 @@ void TRSEDocument::UserDefined()
 
     QString src = m_currentSourceFile;
 
-    s=s.replace("@prg", src.replace(".ras", ".prg"));
+    s=s.replace("@prg", src.replace(".ras", "."+m_programEndingType));
     QStringList params = s.split(" ");
     QString cmd = params[0];
     params.removeFirst();
