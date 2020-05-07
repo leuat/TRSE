@@ -1,3 +1,4 @@
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/GAMEBOY/tutorials/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fe
@@ -30,6 +31,8 @@ override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 ignore_initial_jump = 0
+open_files = ,tutorial1.ras, tutorial2_sprites.ras, screens.tru, images/sprites.flf
+current_file = tutorial1.ras
 var_zeropages = ,
 global_defines = ,
 dosbox_x86_system = default

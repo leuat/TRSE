@@ -1064,6 +1064,7 @@ void BuilderThread::run()
 
         //emit emitText();
 
+
         m_builder->Assemble();
 
         emit emitText();

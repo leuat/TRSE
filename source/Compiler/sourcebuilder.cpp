@@ -135,6 +135,11 @@ bool SourceBuilder::Assemble()
 {
 //    qDebug() << m_filename << m_curDir;
 //    qDebug() << m_system;
+    if (compiler->m_parser.m_isTRU) {
+        BuildSuccesString();
+
+        return true;
+    }
     connect(m_system.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
     m_system->Assemble(m_output,m_filename, m_curDir,compiler->m_parser.m_symTab);
     if (m_system->m_buildSuccess)

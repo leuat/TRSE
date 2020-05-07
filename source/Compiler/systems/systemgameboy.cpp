@@ -6,6 +6,8 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
     QString output;
     int time = timer.elapsed();
     int codeEnd = 0;
+
+
     QString dir = m_settingsIni->getString("gameboy_rgbasm_dir");
     if (!dir.endsWith(QDir::separator()))
         dir+=QDir::separator();
