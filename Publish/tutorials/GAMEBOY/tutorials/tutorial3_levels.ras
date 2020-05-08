@@ -1,0 +1,91 @@
+program Tutorial3_Levels;
+@use levels
+@use screens
+
+/*
+ The TRSE sprite packer will pack sprites from .flf files to a packed format, identifying
+ tiles that are equal etc. The indices will be added to an index file. These should
+ all be deleted & initialized on build, or else they'll just continue to grow indefinitely!
+*/
+
+
+// Export the level data
+@export "images/level.flf" "images/level.bin" 256
+
+// Export the metatile data
+@export "images/metatiles.flf" "images/metatiles.bin" 256
+
+// Export the tile data
+@export "images/tiles.flf" "images/tiles.bin" 128
+
+
+var  
+	// Bank to place sprites
+	const levelBank : byte = 2;
+	// A temporary address to store the screen
+	
+	level_data : incbin("images/level.bin") bank(levelBank);
+	tiles : incbin("images/tiles.bin") bank(levelBank);
+	metatiles : incbin("images/metatiles.bin") bank(levelBank);
+
+
+	time,x,y,pos,i  : byte;
+
+	// Generate a sine table
+    sine : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*0x7f+0x7F");
+
+
+procedure VBlank();
+begin
+	time:=time+1;
+//	scrollx:=sine[time];
+	//scrolly:=sine[time+64];
+end;
+
+
+procedure RenderLevel(lx,ly : byte);
+begin
+
+	current_bank := levelBank;
+	Levels::lp := level_data;
+	Levels::RenderLevel2x2MetaTiles(lx,ly);
+	Screens::MemCopyBankOnHBlank($D000,screen0,4); // Copy $400 bytes
+end;
+
+
+procedure InitLevelData();
+begin
+	current_bank := levelBank;
+	// Set up tile data
+	Screens::CopyFullCharset(tiles);
+
+	// Set TRU data
+	Levels::lp := level_data;
+	Levels::mt := metatiles;
+	
+	Levels::ReadHeader();
+
+	background_palette:=%11010010;
+	object0_palette:=%11010010;
+
+end;
+
+
+
+begin
+	Screens::InitDefaultScreen();
+	current_bank:=levelBank;
+
+	InitLevelData();
+	RenderLevel(0,1);
+
+	time:=0;
+	x:=0;
+	y:=60;
+	pos:=0;
+	
+	// must have Vertical blank in order to be able to display sprites
+	InitVBlank(VBlank());
+	EnableVBLank();
+	Loop();	
+end.
