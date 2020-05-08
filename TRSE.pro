@@ -108,6 +108,7 @@ SOURCES += main.cpp\
     source/ImageEditor/qlabellimage.cpp \
     source/LeLib/limage/limagefooter.cpp \
     source/LeLib/limage/limagegamboy.cpp \
+    source/LeLib/limage/limagelevelgameboy.cpp \
     source/LeLib/limage/limagelevelnes.cpp \
     source/LeLib/limage/limagemetablocksprites.cpp \
     source/LeLib/limage/limagemetachunk.cpp \
@@ -278,6 +279,7 @@ HEADERS  += mainwindow.h \
     source/ImageEditor/qlabellimage.h \
     source/LeLib/limage/limagefooter.h \
     source/LeLib/limage/limagegamboy.h \
+    source/LeLib/limage/limagelevelgameboy.h \
     source/LeLib/limage/limagelevelnes.h \
     source/LeLib/limage/limagemetablocksprites.h \
     source/LeLib/limage/limagemetachunk.h \

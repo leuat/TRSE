@@ -52,14 +52,58 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
     }
 */
     if (node->m_op.m_type == TokenType::MUL || node->m_op.m_type == TokenType::DIV) {
-        node->m_left->Accept(this);
-        QString bx = getAx(node->m_left);
 
-        PushX();
         if (node->m_op.m_type == TokenType::DIV) {
 //            node->m_right->setForceType(TokenType::BYTE);
+            ErrorHandler::e.Error("Generic division is not implemented yet!",  node->m_op.m_lineNumber);
 //            as->Asm("cwd");
         }
+        if (node->m_op.m_type == TokenType::MUL) {
+                QString skip1 = as->NewLabel("skip1");
+                as->Comment("Generic mul");
+                if (!node->isWord(as)) {
+                    node->m_right->Accept(this);
+                    as->Asm("ld e,a");
+                    as->Asm("ld d,0");
+                    node->m_left->Accept(this);
+                    as->Asm("ld h,a");
+                    as->Asm("ld l,0");
+                    as->Asm("call mul_8x8");
+                    as->Asm("ld a,l");
+
+                    return;
+                }
+                // Is 16 bit
+
+//                ErrorHandler::e.Error("NOT IMPLEMENTED YET", node->m_op.m_lineNumber);
+
+                if (node->m_left->isPure()) {
+                    m_useNext ="de";
+                    node->m_left->Accept(this);
+                }
+                else {
+                    node->m_left->Accept(this);
+                    as->Asm("ld d,h");
+                    as->Asm("ld e,l");
+                }
+                node->m_right->setForceType(TokenType::BYTE);
+                node->m_right->Accept(this);
+//                as->Asm("ld a,l");
+                as->Asm("ld hl,0");
+                as->Asm("ld c,0");
+                as->Asm("call mul_16x8");
+//                as->Asm("ld a,l");
+
+
+
+//            }
+
+//            ErrorHandler::e.Error("Generic 16-bit multiplication is not implemented yet!",  node->m_op.m_lineNumber);
+              return;
+        }
+        node->m_left->Accept(this);
+        QString bx = getAx(node->m_left);
+        PushX();
         node->m_right->Accept(this);
 
         QString ax = getAx(node->m_right);
@@ -198,7 +242,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVarDecl> node)
         return;
 
 
-//    qDebug() << "BEFORE " <<as->m_currentBlock;
+//    qDebug() << "" <<as->m_currentBlock;
     ASTdispatcherX86::dispatch(node);
   //  qDebug() << as->m_currentBlock;
     as->m_currentBlock = nullptr;
@@ -263,10 +307,18 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
     else
     {
 
-        if (node->getOrgType(as)==TokenType::POINTER || node->getOrgType(as)==TokenType::INTEGER) {
+        if (node->getOrgType(as)==TokenType::POINTER) {
             //as->Asm("ld a,["+node->getValue(as)+"+1]");
             //as->Asm("ld "+hl[0]+",a");
             LoadAddress(node);
+        }
+        else if (node->getOrgType(as)==TokenType::INTEGER) {
+            //LoadVariable(node);
+            //node->Accept(this);
+            as->Comment("Integer");
+            LoadInteger(node);
+
+
         }
         else {
             QString hl =getHL();
@@ -486,7 +538,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
     if (var->isWord(as))
         type = "word";
 
-    if (node->m_right->isPureNumeric()) {
+    if (node->m_right->isPureNumeric() && !var->isWord(as)) {
         as->Asm("ld "+getAx(node) + ", "+node->m_right->getValue(as));
         as->Asm("ld ["+var->getValue(as)+ "], "+getAx(node));
         return "";
@@ -527,16 +579,27 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
             return "";
         }
     */
-    as->Comment("; generic assign ");
+    as->Comment("generic assign ");
+    QString name = var->getValue(as);
+    if (var->isWord(as)) {
+        node->m_right->setForceType(TokenType::INTEGER);
+        node->m_right->Accept(this);
+        as->Comment("Integer assignment ");
+        as->Asm("ld a,h");
+        as->Asm("ld ["+name+"],a");
+        as->Asm("ld a,l");
+        as->Asm("ld ["+name+"+1],a");
+        return "";
+    }
     node->m_right->Accept(this);
-    as->Comment("; before");
+
 
     if (node->m_left->isArrayIndex()) {
         as->Asm("ld [hl], a");
         return "";
     }
 
-    as->Asm("ld ["+qSharedPointerDynamicCast<NodeVar>(node->m_left)->getValue(as) + "], "+getAx(node->m_left));
+    as->Asm("ld ["+name + "], "+getAx(node->m_left));
     return "";
 }
 
@@ -601,6 +664,17 @@ void ASTdispatcherZ80::LoadAddress(QSharedPointer<Node> n)
     }
     else as->Asm("ld "+hl+"," +n->getValue(as));
 }
+
+void ASTdispatcherZ80::LoadInteger(QSharedPointer<Node> n)
+{
+    QString hl =getHL();
+
+    as->Asm("ld a,[" +n->getValue(as)+"]");
+    as->Asm("ld "+hl[0]+",a");
+    as->Asm("ld a,[" +n->getValue(as)+"+1]");
+    as->Asm("ld "+hl[1]+",a");
+}
+
 
 void ASTdispatcherZ80::StoreAddress(QSharedPointer<Node> n)
 {

@@ -54,6 +54,8 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("Fake C64 png Palette 2", "c64",LImage::Type::QImageBitmap, LColorList::Type::C64_ORG));
     m_types.append(ImageType("Sprite Editor (deprecated type)","c64", LImage::Type::Sprites,LColorList::Type::C64));
     m_types.append(ImageType("Gameboy CHR/tiles", "gameboy",LImage::Type::GAMEBOY, LColorList::Type::NES));
+    m_types.append(ImageType("Meta Tile Editor", "gameboy",LImage::Type::LMetaChunk, LColorList::Type::NES));
+    m_types.append(ImageType("Gameboy Level Editor", "gameboy",LImage::Type::LevelEditorGameboy,LColorList::Type::NES));
 //    m_types.append(ImageType("C64 Multicolor Charmap Fixed Colors", LImage::Type::CharMapMultiColorFixed,LColorList::Type::C64));
 
     /*    m_types.append(ImageType("CGA Palette 1 Lo", LImage::Type::QImageBitmap,LColorList::Type::CGA1_LOW));

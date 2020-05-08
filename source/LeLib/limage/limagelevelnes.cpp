@@ -172,7 +172,8 @@ void LImageLevelNES::SetBank(int bank)
 void LImageLevelNES::LoadCharset(QString file, int skipBttes)
 {
     ImageLevelEditor::LoadCharset(file,skipBttes);
-    m_colorList.m_nesPPU = m_charset->m_colorList.m_nesPPU;
+    if (m_charset!=nullptr)
+        m_colorList.m_nesPPU = m_charset->m_colorList.m_nesPPU;
 }
 
 void LImageLevelNES::ExportBin(QFile &file)

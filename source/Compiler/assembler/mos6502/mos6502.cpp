@@ -32,6 +32,7 @@ AsmMOS6502::AsmMOS6502() :Assembler()
 //    m_stack["for"] = new Stack();
     m_opCycles.InitMosOpCycles();
     InitCStrings();
+    m_countCycles = true;
 }
 
 AsmMOS6502::~AsmMOS6502() {

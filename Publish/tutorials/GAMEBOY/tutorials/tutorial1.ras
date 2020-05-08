@@ -21,6 +21,8 @@ var
 
 	zp : pointer;
 
+
+
 /*
 	While the Gameboy in principle is a very easy system to program for, it has a very annoying/painful
 	feature that we've tried to make much easier to manage with the help of TRSE. 
@@ -77,14 +79,15 @@ begin
 	Screens::ClearScreen(screen0, $80);	
 
 	// Print text to buffer
-	Screens::PrintText(tempAddress,3,5, 0, text1);
+	Screens::PrintText(tempAddress,3,3, 0, text1);
 	
 	// Copy buffer to screen - again, only on HBLANK!
 	Screens::MemCopyBankOnHBlank(tempAddress, screen0, 4); // Copy 4x$100 bytes of data to the screen
 	
 	// The next line will fail (on gambatte or real hardware), since we are writing directly to VRAM during non-blank intervals
 	Screens::PrintText(screen0,0,8, 26, text2);
-	
+
+
 
 	Loop();			
 end.

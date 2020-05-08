@@ -161,8 +161,15 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
 
     if (m_currentBlock==m_hram || m_currentBlock==m_wram || m_currentBlock==m_sprram) {
         t = "ds";
-        initval = "1";
-        m_currentBlock->m_dataSize+=1;
+        if (type.toLower()=="byte") {
+            initval = "1";
+            m_currentBlock->m_dataSize+=1;
+        }
+        if (type.toLower()=="integer") {
+            initval = "2";
+            m_currentBlock->m_dataSize+=2;
+        }
+
 
     }
 

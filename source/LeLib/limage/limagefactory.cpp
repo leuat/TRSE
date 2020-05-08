@@ -73,6 +73,8 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageMetaBlockSprites(colorType);
     if (t == LImage::Type::GAMEBOY)
         return new LImageGamboy(colorType);
+    if (t == LImage::Type::LevelEditorGameboy)
+        return new LImageLevelGameboy(colorType);
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;
     return nullptr;

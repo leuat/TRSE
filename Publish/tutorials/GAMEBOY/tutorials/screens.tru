@@ -155,7 +155,7 @@ begin
 	j:=0;
 	p1:=p1+x;
 	p1:=p1+y*32;
-	while (done = false) do
+	while (done = false) offpage do
 	begin
 		i:=text[j];
 		// Space $20 ignore

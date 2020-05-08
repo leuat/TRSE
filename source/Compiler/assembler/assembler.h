@@ -166,6 +166,8 @@ public:
     QMap<QString,QSharedPointer<Appendix>> m_banks;
     QMap<QString, QString> m_lastRegister; // Last registers set
 
+    bool m_countCycles = false;
+
     QString m_currentBlockName="";
 
     QVector<MemoryBlock> m_userWrittenBlocks;

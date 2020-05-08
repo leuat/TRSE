@@ -78,8 +78,10 @@ end;
 begin
 	Screens::InitDefaultScreen();
 	current_bank:=spriteBank;
-	
+
+	// Tile palette - set background to dark grey 	
 	background_palette:=%11010010;
+	// Sprite palette
 	object0_palette:=%11010010;
 	Screens::MemCopyBankOnHBlank(sprites_data, vram, 8); // Copy 8x$100 bytes of data
 	

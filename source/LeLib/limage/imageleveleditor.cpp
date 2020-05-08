@@ -48,7 +48,7 @@ void ImageLevelEditor::SetLevel(QPoint f)
 
     m_colorList.m_ignoreSetIsMulti = true;
 
-    if (m_type!=LImage::LevelEditorNES) {
+    if (!(m_type==LImage::LevelEditorNES || m_type==LImage::LevelEditorGameboy )) {
         m_charset->SetColor(m_currentLevel->m_ExtraData[0], 0);
         m_charset->SetColor(m_currentLevel->m_ExtraData[1], 1);
         m_charset->SetColor(m_currentLevel->m_ExtraData[2], 2);

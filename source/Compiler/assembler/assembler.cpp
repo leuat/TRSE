@@ -72,13 +72,14 @@ void Assembler::Write(QString str, int level)
 //        qDebug() << "CURRENTBLOCK: " << str;
     }
 
+    if (m_countCycles) {
+        int cnt = CountCycles(str);
 
-    int cnt = CountCycles(str);
+        for (int i=0;i<m_cycleCounter.count();i++)
+            m_cycleCounter[i] += cnt;
 
-    for (int i=0;i<m_cycleCounter.count();i++)
-        m_cycleCounter[i] += cnt;
-
-     m_cycles[Node::m_currentLineNumber] += cnt;
+        m_cycles[Node::m_currentLineNumber] += cnt;
+    }
 }
 
 bool caseInsensitiveLessThan(const QSharedPointer<Appendix> s1, const QSharedPointer<Appendix> s2)

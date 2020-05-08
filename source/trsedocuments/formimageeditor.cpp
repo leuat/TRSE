@@ -462,7 +462,8 @@ void FormImageEditor::Initialize()
 
 
     if (GetFooterData(LImageFooter::POS_CHARSET_WIDTH)!=0) {
-        m_work.m_currentImage->m_image->getCharset()->m_charWidthDisplay = GetFooterData(LImageFooter::POS_CHARSET_WIDTH);
+        if (m_work.m_currentImage->m_image->getCharset()!=nullptr)
+            m_work.m_currentImage->m_image->getCharset()->m_charWidthDisplay = GetFooterData(LImageFooter::POS_CHARSET_WIDTH);
 //        SetFooterData(LImageFooter::POS_CHARSET_WIDTH, ui->cmbCharWidth->currentText().toInt());
         ui->cmbCharWidth->setCurrentText(QString::number(GetFooterData(LImageFooter::POS_CHARSET_WIDTH)));
     }
@@ -557,7 +558,8 @@ void FormImageEditor::Load(QString filename)
     if (filename=="")
         return;
 */
-
+    if (!QFile::exists(filename))
+        return;
     LImage* img = LImageIO::Load(filename);
     if (img==nullptr)
         return;
