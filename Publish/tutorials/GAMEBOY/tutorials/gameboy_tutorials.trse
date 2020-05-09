@@ -49,3 +49,4 @@ charset_images/meattiles.flf = /home/leuat/code/TRSE/tutorials/GAMEBOY/tutorials
 data_header_images/level.flf = 0
 charset_images/level.flf = /home/leuat/code/TRSE/tutorials/GAMEBOY/tutorials/images/metatiles.flf
 data_header_images/metatiles.flf = 6.94741e-310
+open_files =, tutorial1.ras

@@ -30,3 +30,4 @@ echo "open_files =, graveintentions.ras" >> CrossPlat/GraveIntentions/GraveInten
 
 echo "open_files =, 01_hello_world.ras" >> PET/examples/examples.trse
 echo "open_files =, main.ras" >> OK64/OkComputer/ok_computer.trse
+echo "open_files =, tutorial1.ras" >> GAMEBOY/tutorials/gameboy_tutorials.trse

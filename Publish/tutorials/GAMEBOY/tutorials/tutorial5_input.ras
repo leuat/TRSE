@@ -2,11 +2,7 @@ program Tutorial5_Input;
 
 @use screens
 
-/*
- The TRSE sprite packer will pack sprites from .flf files to a packed format, identifying
- tiles that are equal etc. The indices will be added to an index file. These should
- all be deleted & initialized on build, or else they'll just continue to grow indefinitely!
-*/
+// Same as tutorial 2, but with inputs!
 
 // Delete the packed data
 @deletefile "images/sprites_packed.flf"

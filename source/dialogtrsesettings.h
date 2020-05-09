@@ -107,6 +107,10 @@ private slots:
 
     void on_cmbFontSymbols_currentIndexChanged(const QString &arg1);
 
+    void on_btnRgbAsmDir_clicked();
+
+    void on_btnGameboyEmulator_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

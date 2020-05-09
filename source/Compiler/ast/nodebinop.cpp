@@ -142,6 +142,7 @@ bool NodeBinOP::ContainsVariable(Assembler *as, QString var)
     if (m_left->isPureVariable() && m_left->getValue(as)==var) {
         return true;
     }
+    return false;
 }
 
 void NodeBinOP::parseConstants(QSharedPointer<SymbolTable>  symTab) {

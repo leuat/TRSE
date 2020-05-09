@@ -52,6 +52,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leVic20Emulator->setText(m_ini->getString("vic20_emulator"));
     ui->lePETEmulator->setText(m_ini->getString("pet_emulator"));
     ui->leNesEmulator->setText(m_ini->getString("nes_emulator"));
+    ui->leGameboyEmulator->setText(m_ini->getString("gameboy_emulator"));
     ui->leOK64Emulator->setText(m_ini->getString("ok64_emulator"));
     ui->lePlus4Emulator->setText(m_ini->getString("plus4_emulator"));
     ui->leX16Emu->setText(m_ini->getString("x16_emulator"));
@@ -132,6 +133,7 @@ void DialogTRSESettings::FillToIni()
 
 
     m_ini->setString("nes_emulator", ui->leNesEmulator->text());
+    m_ini->setString("gameboy_emulator", ui->leGameboyEmulator->text());
     m_ini->setString("theme", ui->cmbTheme->currentText() + ".ini");
     m_ini->setString("theme_fjong", ui->cmbThemeFjong->currentText() + ".ini");
 
@@ -344,5 +346,23 @@ void DialogTRSESettings::on_btnPetEmulator_clicked()
 void DialogTRSESettings::on_cmbFontSymbols_currentIndexChanged(const QString &arg1)
 {
     m_ini->setString("editor_font_symbols", arg1);
+
+}
+
+void DialogTRSESettings::on_btnRgbAsmDir_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("RGBASM location"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leRGBAsmDir->setText(filename);
+
+}
+
+void DialogTRSESettings::on_btnGameboyEmulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Gameboy emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leGameboyEmulator->setText(filename);
 
 }
