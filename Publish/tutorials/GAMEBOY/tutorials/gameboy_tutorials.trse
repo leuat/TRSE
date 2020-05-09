@@ -49,6 +49,3 @@ charset_images/meattiles.flf = /home/leuat/code/TRSE/tutorials/GAMEBOY/tutorials
 data_header_images/level.flf = 0
 charset_images/level.flf = /home/leuat/code/TRSE/tutorials/GAMEBOY/tutorials/images/metatiles.flf
 data_header_images/metatiles.flf = 6.94741e-310
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/GAMEBOY/tutorials/
-open_files = ,tutorial5_input.ras, tutorial2_sprites.ras, tutorial3_levels.ras, levels.tru, tutorial4_music.ras, tune_by_mibri.asm
-current_file = tutorial2_sprites.ras
