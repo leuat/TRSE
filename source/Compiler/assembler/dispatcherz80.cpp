@@ -238,8 +238,10 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVarDecl> node)
         }
         as->m_currentBlock = as->m_banks[bnk];
     }
-    if (v->m_isGlobal)
+    if (v->m_isGlobal) {
+        as->m_currentBlock = nullptr;
         return;
+    }
 
 
 //    qDebug() << "" <<as->m_currentBlock;

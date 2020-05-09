@@ -1,0 +1,40 @@
+program Music;
+var
+	sidfile2: incsid("resources/sid/Riding_It_Out.sid",2);
+	sidfile1: incsid("resources/sid/courier.sid",2);
+	const useKernal:byte=0;
+	time, t2, currentSong : byte = 0;
+/*
+	Sid music is played by calling
+	the sidfile_1_play address for each raster interupt trigger
+
+*/
+interrupt Raster1();
+begin
+	StartIRQ(useKernal);
+	// Turn on background color only when SID file is playing
+	screen_bg_col:=currentSong+1;
+	inc(time);
+	if (time&7=0) then inc(t2);
+	// Switch song at some 
+	if (t2=32) then 
+	begin
+		currentSong:=1;
+		initsid(sidfile_2_init);			
+	end;
+
+	if (currentSong=0) then call(sidfile_1_play);
+	if (currentSong=1) then call(sidfile_2_play);
+
+	// Turn off (black) backgrund color. We can now observe how much raster time has been used!
+	screen_bg_col:=black;
+	CloseIRQ();
+end;
+
+begin
+	setmemoryconfig(1,0,@useKernal);
+	InitSid(sidfile_1_init);
+	StartRasterChain(Raster1(),$50,useKernal);
+	Loop();
+
+end.

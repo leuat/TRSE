@@ -497,7 +497,10 @@ void Parser::ApplyTPUAfter(QVector<QSharedPointer<Node>>& declBlock, QVector<QSh
         // Important: add newest procedures *last*
         procs.append(orgProcs);
 
-        auto copy = declBlock;
+        QVector<QSharedPointer<Node>> copy;
+        for (auto p: declBlock)
+            copy.append(p);
+
         declBlock.clear();
         // Make sure that TRU variables are declared FIRST. Ordering is important for the GB
         declBlock.append(decls);
@@ -2082,6 +2085,7 @@ QSharedPointer<Node> Parser::Block(bool useOwnSymTab, QString blockName)
 
     if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type==TokenType::WEDGE)
         return nullptr;
+
     QVector<QSharedPointer<Node>> decl =  Declarations(useOwnSymTab, blockName);
 
     int pos = m_currentToken.m_lineNumber;
@@ -2218,8 +2222,16 @@ QSharedPointer<Node> Parser::String()
 QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockName, bool hasBlock )
 {
     QVector<QSharedPointer<Node>> decl;
+
+//    qDebug() << "PARSER " <<isMain <<m_currentToken.getType();
+  /*  if (isMain)
+        if (m_currentToken.m_type!=TokenType::VAR)
+            ErrorHandler::e.Error("Main program must start with 'var' keyword",m_currentToken.m_lineNumber);
+
+*/
     if (m_currentToken.m_type==TokenType::VAR) {
         Eat(TokenType::VAR);
+  //      qDebug() << "PARSER INSIDE " <<isMain  <<m_currentToken.getType();
         while (m_currentToken.m_type==TokenType::ID || m_currentToken.m_type == TokenType::CONSTANT) {
 
             if (m_currentToken.m_type == TokenType::CONSTANT) {
@@ -2320,7 +2332,7 @@ QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockNam
         m_procedures[procName] = procDecl;
 
         // For recursive procedures, it is vital that we forward declare the current procedure
-        block = Block(true, procName);
+        block = Block(false, procName);
 //        if (block==nullptr)
   //          qDebug() << "Procedure decl: " << procName;
         //decl.append(procDecl);

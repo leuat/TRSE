@@ -5,6 +5,7 @@ find . -name "*.gb" -type f -delete
 find . -name "*.o" -type f -delete
 find . -name "*.dup" -type f -delete
 find . -name "*.nes" -type f -delete
+find . -name "*.com" -type f -delete
 find . -name "*.trse" -type f  -exec sed -i /project_path/d {} +
 find . -name "*.trse" -type f  -exec sed -i /open_files/d {} +
 find . -name "*.trse" -type f  -exec sed -i /current_file/d {} +

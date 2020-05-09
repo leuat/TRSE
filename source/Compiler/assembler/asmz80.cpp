@@ -7,6 +7,9 @@ AsmZ80::AsmZ80()
     m_wram = QSharedPointer<Appendix>(new Appendix);
     m_sprram = QSharedPointer<Appendix>(new Appendix);
 
+    m_wram->Append("i_input_current:	DS	1",0);
+    m_wram->Append("i_input_previous:	DS	1",0);
+
 }
 
 void AsmZ80::Connect() {

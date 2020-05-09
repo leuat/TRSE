@@ -36,6 +36,7 @@ public:
     void MemCpyOnHBLank(Assembler* as,QString lbl, int div);
     void WaitForHBLank(Assembler* as);
     void HiLo(Assembler* as, bool isHi);
+    void Joypad(Assembler* as);
 };
 
 #endif // METHODSX86_H

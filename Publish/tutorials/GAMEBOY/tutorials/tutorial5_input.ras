@@ -1,0 +1,104 @@
+program Tutorial5_Input;
+
+@use screens
+
+/*
+ The TRSE sprite packer will pack sprites from .flf files to a packed format, identifying
+ tiles that are equal etc. The indices will be added to an index file. These should
+ all be deleted & initialized on build, or else they'll just continue to grow indefinitely!
+*/
+
+// Delete the packed data
+@deletefile "images/sprites_packed.flf"
+// Delete the packed index lookup file
+@deletefile "images/sprites_index.bin"
+
+// Pack sprite 1 : girl at 0,0 - 2,3 in "sprites.flf"
+@spritepacker "images/sprites.flf" "images/sprites_packed.flf" "images/sprites_index.bin" "gameboy" 0 0 2 3 0
+// Pack sprite 2 : girl at 2,0 - 4,3 in "sprites.flf"
+@spritepacker "images/sprites.flf" "images/sprites_packed.flf" "images/sprites_index.bin" "gameboy" 2 0 2 3 0
+// Pack sprite 3 : girl at 4,0 - 6,3 in "sprites.flf"
+@spritepacker "images/sprites.flf" "images/sprites_packed.flf" "images/sprites_index.bin" "gameboy" 4 0 2 3 0
+
+// Export the packed file to a binary file
+@export "images/sprites_packed.flf" "images/sprites_packed.bin" 64
+
+
+var  
+	// Bank to place sprites
+	const spriteBank : byte = 2;
+	// A temporary address to store the screen
+	
+	sprites_index : incbin("images/sprites_index.bin") bank(spriteBank);
+	sprites_data : incbin("images/sprites_packed.bin") bank(spriteBank);
+
+	// 1 sprite takes up 4 bytes, the grl sprite is 3x2x4 bytes starting at $C000 (Sprite ram)
+	sprGirl : array[3*2*4] of byte sprram aligned;
+
+	time,x,y,pos,pad1,pad2  : byte;
+
+	// Generate a sine table
+    rnd : array[256] of byte = BuildTable("Math.random()*0xFF");
+
+
+procedure UpdateSprite();
+begin
+
+	// Initialize sprite: address of internal table at $C000 (sprGirl), indices, position in sprite data, width, flipping
+
+//		initspritefromdata(sprGirl,sprites_index,pos,6 ,2, sprite_flip_x)
+	initspritefromdata(sprGirl,sprites_index,pos,6 ,2, 0);
+
+	// Set sprite position			
+	setsprite(sprGirl,x,y, 2,30);
+	if (pad1=0) then return();
+	// Advance to next sprite		
+	if (time&7=0) then
+	begin
+		pos:=pos+6; // Point to next sprite
+		if (pos=18) then pos:=0; // Reset sprite
+	end;		
+	if (pad1&PAD_RIGHT=PAD_RIGHT) then x:=x+1;
+	if (pad1&PAD_LEFT=PAD_LEFT) then x:=x-1;
+	if (pad1&PAD_DOWN=PAD_DOWN) then y:=y-1;
+	if (pad1&PAD_UP=PAD_UP) then y:=y+1;
+	// Move to a random X if button A is pressed
+	if (pad1&PAD_BUTTON_A=PAD_BUTTON_A) then 
+		x:=(rnd[time])&127;
+	
+	if (pad1&PAD_BUTTON_B=PAD_BUTTON_B) then 
+		y:=(rnd[time])&127;
+	// Finally, there is PAD_BUTTON_SELECT and PAD_BUTTON_START
+end;
+
+
+
+procedure VBlank();
+begin
+	time:=time+1;
+	Joypad(pad1,pad2);
+	UpdateSprite();
+end;
+
+
+
+begin
+	Screens::InitDefaultScreen();
+	current_bank:=spriteBank;
+
+	// Tile palette - set background to dark grey 	
+	background_palette:=%11010010;
+	// Sprite palette
+	object0_palette:=%11010010;
+	Screens::MemCopyBankOnHBlank(sprites_data, vram, 8); // Copy 8x$100 bytes of data
+	
+	time:=0;
+	x:=60;
+	y:=60;
+	pos:=0;
+	
+	// must have Vertical blank in order to be able to display sprites
+	InitVBlank(VBlank());
+	EnableVBLank();
+	Loop();	
+end.

@@ -20,6 +20,9 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("fill"))
         Fill(as);
     else
+    if (Command("joypad"))
+        Joypad(as);
+        else
     if (Command("poke")) {
         Poke(as);
     }
@@ -487,8 +490,15 @@ void MethodsZ80::LoadSong(Assembler *as)
 
     auto app = QSharedPointer<Appendix>(new Appendix);
 
-    QString fn = as->m_projectDir+QDir::separator() + song+".asm";
-    if (!QFile::exists(fn))
+
+    QString fn1 = as->m_projectDir+QDir::separator() + song+".inc";
+    QString fn2 = as->m_projectDir+QDir::separator() + song+".asm";
+    QString fn="";
+    if (QFile::exists(fn1))
+        fn=fn1;
+    if (QFile::exists(fn2))
+        fn=fn2;
+    if (fn=="")
         ErrorHandler::e.Error("Required mod2gbt song assember file: '"+fn+"' not found", m_node->m_op.m_lineNumber);
 
     app->m_source<<	"INCLUDE \""+fn+"\"";
@@ -609,5 +619,18 @@ void MethodsZ80::HiLo(Assembler *as, bool isHi)
         }
     }
     ErrorHandler::e.Error("Hi / lo uknown parameter type", m_node->m_op.m_lineNumber);
+
+}
+
+void MethodsZ80::Joypad(Assembler *as)
+{
+    if (!m_node->m_params[0]->isPure() || !m_node->m_params[1]->isPure())
+        ErrorHandler::e.Error("Parameter 1 and 2 must be addresses", m_node->m_op.m_lineNumber);
+
+    as->Asm("call read_keys");
+    as->Asm("ld a,b");
+    as->Asm("ld ["+m_node->m_params[0]->getValue(as)+"],a");
+    as->Asm("ld a,c");
+    as->Asm("ld ["+m_node->m_params[1]->getValue(as)+"],a");
 
 }

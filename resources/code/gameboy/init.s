@@ -211,7 +211,47 @@ mul_16x8_s7:
 mul_16x8_s8:
     ret
 
+;-------------------------------------------------------------------------------
+read_keys:
+;-------------------------------------------------------------------------------
+; this function returns two different values in b and c registers:
+; b - returns raw state (pressing key triggers given action continuously as long as it's pressed - it does not prevent bouncing)
+; c - returns debounced state (pressing key triggers given action only once - key must be released and pressed again)
 
+        ld      a,$20				; read P15 - returns a, b, select, start
+        ldh     [rP1],a
+        ldh     a,[rP1]				; mandatory
+        ldh     a,[rP1]
+        cpl					; rP1 returns not pressed keys as 1 and pressed as 0, invert it to make result more readable
+        and     $0f				; lower nibble has a, b, select, start state
+        swap	a
+        ld	b,a
+
+        ld      a,$10				; read P14 - returns up, down, left, right
+        ldh     [rP1],a
+        ldh     a,[rP1]				; mandatory
+        ldh     a,[rP1]
+        ldh     a,[rP1]
+        ldh     a,[rP1]
+        ldh     a,[rP1]
+        ldh     a,[rP1]
+        cpl					; rP1 returns not pressed keys as 1 and pressed as 0, invert it to make result more readable
+        and     $0f				; lower nibble has up, down, left, right state
+        or	b				; combine P15 and P14 states in one byte
+        ld      b,a				; store it
+
+        ld	a,[i_input_previous]			; this is when important part begins, load previous P15 & P14 state
+        xor	b				; result will be 0 if it's the same as current read
+        and	b				; keep buttons that were pressed during this read only
+        ld	[i_input_current],a			; store final result in variable and register
+        ld	c,a
+        ld	a,b				; current P15 & P14 state will be previous in next read
+        ld	[i_input_previous],a
+
+        ld	a,$30				; reset rP1
+        ldh     [rP1],a
+
+        ret
 
 
 default_DMAData:

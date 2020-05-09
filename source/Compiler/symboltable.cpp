@@ -135,10 +135,12 @@ void SymbolTable::Initialize()
 
      }
     if (!m_constants.contains("SIDFILE_1_INIT")) {
-       m_constants["SIDFILE_1_INIT"] = QSharedPointer<Symbol>(new Symbol("","ADDRESS", 0));
-      m_constants["SIDFILE_2_INIT"] = QSharedPointer<Symbol>(new Symbol("","ADDRESS", 0));
-      m_constants["SIDFILE_1_PLAY"] = QSharedPointer<Symbol>(new Symbol("","ADDRESS", 0));
-      m_constants["SIDFILE_2_PLAY"] = QSharedPointer<Symbol>(new Symbol("","ADDRESS", 0));
+        for (int i=1;i<10;i++) {
+
+            m_constants["SIDFILE_"+QString::number(i)+"_INIT"] = QSharedPointer<Symbol>(new Symbol("","ADDRESS", 0));
+           m_constants["SIDFILE_"+QString::number(i)+"_INIT"] = QSharedPointer<Symbol>(new Symbol("","ADDRESS", 0));
+
+        }
     }
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 )

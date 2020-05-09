@@ -2,21 +2,14 @@ program Tutorial3_Levels;
 @use levels
 @use screens
 
-/*
- The TRSE sprite packer will pack sprites from .flf files to a packed format, identifying
- tiles that are equal etc. The indices will be added to an index file. These should
- all be deleted & initialized on build, or else they'll just continue to grow indefinitely!
-*/
-
-
 // Export the level data
 @export "images/level.flf" "images/level.bin" 256
 
-// Export the metatile data
+// Export the metatile data (2x2 chunks of tiles)
 @export "images/metatiles.flf" "images/metatiles.bin" 256
 
 // Export the tile data
-@export "images/tiles.flf" "images/tiles.bin" 128
+@export "images/tiles.flf" "images/tiles.bin" 256
 
 
 var  
@@ -29,28 +22,39 @@ var
 	metatiles : incbin("images/metatiles.bin") bank(levelBank);
 
 
-	time,x,y,pos,i  : byte;
+	time,x,y,curLevel  : byte;
 
 	// Generate a sine table
     sine : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*0x7f+0x7F");
 
 
+procedure RenderLevel(x,y : global byte);
+begin
+	current_bank := levelBank;
+	Levels::lp := level_data;
+	Levels::RenderLevel2x2MetaTiles(x,y);
+	// Remember to turn off LCD before copying to VRAM!
+	Screens::StopLCD();
+	memcpy(^$D000,screen0,$400);
+	Screens::Set9800();
+end;
+
+
+
 procedure VBlank();
 begin
 	time:=time+1;
-//	scrollx:=sine[time];
-	//scrolly:=sine[time+64];
+	scrollx:=sine[time]/2;
+	scrolly:=sine[time+64]/2;
+	
+	if (time=0) then 
+	begin
+		curLevel:=(curLevel+1)&1;
+		RenderLevel(0,curLevel);
+	end;
 end;
 
 
-procedure RenderLevel(lx,ly : byte);
-begin
-
-	current_bank := levelBank;
-	Levels::lp := level_data;
-	Levels::RenderLevel2x2MetaTiles(lx,ly);
-	Screens::MemCopyBankOnHBlank($D000,screen0,4); // Copy $400 bytes
-end;
 
 
 procedure InitLevelData();
@@ -59,12 +63,12 @@ begin
 	// Set up tile data
 	Screens::CopyFullCharset(tiles);
 
-	// Set TRU data
+	// Set TRU data to point to level & metatiles
 	Levels::lp := level_data;
 	Levels::mt := metatiles;
 	
 	Levels::ReadHeader();
-
+	// Set a nice palette
 	background_palette:=%11010010;
 	object0_palette:=%11010010;
 
@@ -77,12 +81,10 @@ begin
 	current_bank:=levelBank;
 
 	InitLevelData();
-	RenderLevel(0,1);
+	RenderLevel(0,0);
 
 	time:=0;
-	x:=0;
-	y:=60;
-	pos:=0;
+	curLevel:=0;
 	
 	// must have Vertical blank in order to be able to display sprites
 	InitVBlank(VBlank());
