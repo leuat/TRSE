@@ -572,11 +572,12 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
     if (e->key() == Qt::Key_U &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
         MemoryAnalyze();
     }
-    if (e->key() == Qt::Key_R &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+    if (e->key() == Qt::Key_F5 || (e->key() == Qt::Key_R &&  (QApplication::keyboardModifiers() & Qt::ControlModifier))) {
         m_run=true;
         Build();
 //        Run();
     }
+
 
 
 
