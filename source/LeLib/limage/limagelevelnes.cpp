@@ -150,7 +150,7 @@ void LImageLevelNES::LoadBin(QFile &file)
         if (m_meta.m_useColors)
             l->m_ColorData = file.read(m_meta.m_colSizex*m_meta.m_colSizey);
 
-        qDebug() << "ImageLevelEditor loadbin " << m_meta.m_extraDataSize;
+//        qDebug() << "ImageLevelEditor loadbin " << m_meta.m_extraDataSize;
         if (m_meta.m_extraDataSize!=0)
             l->m_ExtraData = file.read(m_meta.m_extraDataSize);
 

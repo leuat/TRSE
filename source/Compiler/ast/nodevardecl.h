@@ -67,7 +67,7 @@ public:
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeVarDecl>(sharedFromThis()));
     }
 
-    void InitSid(QString projectDir, int VICAddress, QString type);
+    void InitSid(QSharedPointer<SymbolTable> symtab, QString projectDir, int VICAddress, QString type);
 
 };
 

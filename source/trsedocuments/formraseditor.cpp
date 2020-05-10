@@ -251,6 +251,7 @@ void FormRasEditor::Build(bool isShadow)
     if (!isShadow)
         SaveCurrent();
 
+    if (!(QApplication::keyboardModifiers() & Qt::ShiftModifier))
     if (!isShadow)
     if (m_projectIniFile->getString("main_ras_file")!="none") {
         if (m_projectIniFile->getString("main_ras_file")!=m_currentFileShort) {
@@ -1005,7 +1006,7 @@ void FormRasEditor::HandleBuildComplete()
         BuildNes(m_currentSourceFile.split(".")[0]);
     }
     HandleErrorDialogs(ErrorHandler::e.m_teOut);
-
+    highlighter->m_symTab = m_builderThread.m_builder->compiler->m_parser.m_symTab;
     SetLights();
     if (m_broadcast && (m_currentFileShort.toLower().endsWith(".ras")  ||m_currentFileShort.toLower().endsWith(".tru"))) {
         emit NotifyOtherSourceFiles(m_builderThread.m_builder);

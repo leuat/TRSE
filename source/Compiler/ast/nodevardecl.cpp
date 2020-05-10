@@ -84,7 +84,7 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
 
 }
 
-void NodeVarDecl::InitSid(QString projectDir, int VICAddress, QString type) {
+void NodeVarDecl::InitSid(QSharedPointer<SymbolTable> symtab, QString projectDir, int VICAddress, QString type) {
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(m_typeNode);
 
@@ -113,6 +113,7 @@ void NodeVarDecl::InitSid(QString projectDir, int VICAddress, QString type) {
   //      qDebug() << "BUG load sid at ZERO?";
         sid.m_loadAddress = sid.m_initAddress;
     }
-    SymbolTable::DefineSid(sid.m_initAddress, sid.m_playAddress);
+
+    symtab->DefineSid(sid.m_initAddress, sid.m_playAddress);
 
 }

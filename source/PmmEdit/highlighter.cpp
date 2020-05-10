@@ -131,14 +131,15 @@ Highlighter::Highlighter(CIniFile ini, int type, QTextDocument *parent)
 
 
         /* CONSTANTS */
-
-        SymbolTable::Initialize();
+        if (m_symTab==nullptr)
+            m_symTab = QSharedPointer<SymbolTable>(new SymbolTable);
+//        SymbolTable::Initialize();
 
         constantsFormat.setForeground(m_colors.getColor("constantscolor"));
         constantsFormat.setFontWeight(QFont::Normal);
         keywordPatterns.clear();
 
-        for (QString k: SymbolTable::m_constants.keys()) {
+        for (QString k: m_symTab->m_constants.keys()) {
             //qDebug() << QString::number(i) << TokenType::types[i].toLower();
             QString s = "\\b" + k.toLower() + "\\b";
             keywordPatterns<<s;

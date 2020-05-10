@@ -25,7 +25,7 @@
 bool SymbolTable::isInitialized = false;
 int SymbolTable::m_currentSid = 0;
 //QString SymbolTable::m_gPrefix = "";
-QMap<QString,QSharedPointer<Symbol>> SymbolTable::m_constants;
+//QMap<QString,QSharedPointer<Symbol>> SymbolTable::m_constants;
 
 SymbolTable::~SymbolTable() {
 /*    for (QString s: m_symbols.keys())
@@ -168,8 +168,10 @@ void SymbolTable::Merge(SymbolTable *other, bool mergeConstants)
 
     if (mergeConstants)
     for (QString k : other->m_constants.keys()) {
-        if (!m_constants.contains(k))
+
+        if (!m_constants.contains(k)) {
             m_constants[k] = other->m_constants[k];
+        }
 
 
     }

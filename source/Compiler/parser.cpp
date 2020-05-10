@@ -1084,8 +1084,8 @@ QSharedPointer<Node> Parser::Variable()
 
 
     bool isConstant = false;
-    if (SymbolTable::m_constants.contains(m_currentToken.m_value.toUpper())) {
-        QSharedPointer<Symbol> s = SymbolTable::m_constants[m_currentToken.m_value.toUpper()];
+    if (m_symTab->m_constants.contains(m_currentToken.m_value.toUpper())) {
+        QSharedPointer<Symbol> s = m_symTab->m_constants[m_currentToken.m_value.toUpper()];
         isConstant=true;
 
 //        qDebug() << "looking for " << m_currentToken.m_value << " , found symbol: " << s->m_name << " with value " << s->m_value->m_fVal << " of type " << s->m_type;
@@ -1979,7 +1979,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     bool done = false;
     //while (!done)
     done = PreprocessIncludeFiles();
-    SymbolTable::m_constants.clear();
+    m_symTab->m_constants.clear();
     Preprocess();
     ApplyTPUBefore();
 //    PreprocessConstants();
@@ -2004,7 +2004,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
 //    qDebug() << m_ignoreMethods;
     //qDebug() <<m_lexer->m_text[0];
     emit EmitTick("<br>Parsing pass #2 ");
-    SymbolTable::Initialize();
+    m_symTab->Initialize();
     Node::m_staticBlockInfo.m_blockID=-1;
     QSharedPointer<NodeProgram> root = qSharedPointerDynamicCast<NodeProgram>(Program(param));
 
@@ -2532,12 +2532,12 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
                 //qDebug() << sidloc;
             }
 //            exit(1);
-            decl->InitSid(m_currentDir, sidloc, "sid");
+            decl->InitSid(m_symTab,m_currentDir, sidloc, "sid");
         }
         if (typeNode->m_op.m_type == TokenType::INCNSF) {
             int sidloc = 0;
  //           exit(1);
-            decl->InitSid(m_currentDir, sidloc, "nsf");
+            decl->InitSid(m_symTab, m_currentDir, sidloc, "nsf");
         }
     }
 
@@ -2799,9 +2799,9 @@ QSharedPointer<Node> Parser::BuiltinFunction()
 QSharedPointer<Node> Parser::Constant()
 {
     QString id = m_currentToken.m_value;
-    if (SymbolTable::m_constants.contains(id)) {
+    if (m_symTab->m_constants.contains(id)) {
         Eat(m_currentToken.m_type);
-        QSharedPointer<Symbol> s = SymbolTable::m_constants[id];
+        QSharedPointer<Symbol> s = m_symTab->m_constants[id];
         QSharedPointer<Node> n =  QSharedPointer<NodeNumber>(new NodeNumber(Token(s->getTokenType(), s->m_value->m_fVal), s->m_value->m_fVal));
         return n;
     }

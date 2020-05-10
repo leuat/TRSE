@@ -43,6 +43,8 @@ public:
     void HighlightText(QString &text);
     void AppendSymboltable(QList<QString> procs);
     void ApplyCustomKeywordList();
+    QSharedPointer<SymbolTable> m_symTab = nullptr;
+
 
     QStringList m_customList;
     QColor m_customColour;

@@ -87,7 +87,7 @@ private:
 public:
     QMap<QString, QSharedPointer<Symbol>> m_symbols;
     QMap<QString, QSharedPointer<SymbolTable> > m_records;
-    static QMap<QString, QSharedPointer<Symbol>> m_constants;
+    QMap<QString, QSharedPointer<Symbol>> m_constants;
     QString m_name="";
     QStringList m_globalList;
     QString m_gPrefix;
@@ -119,11 +119,11 @@ public:
 
     static int m_currentSid;
 
-    static void DefineSid(unsigned int initAddress, unsigned int playAddress);
+    void DefineSid(unsigned int initAddress, unsigned int playAddress);
     bool ContainsArrays();
 
     static bool isInitialized;
-    static void Initialize();
+    void Initialize();
     void Merge(SymbolTable* other, bool mergeConstants = false);
 
     void Define(QSharedPointer<Symbol> s, bool isUsed=true);
