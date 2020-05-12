@@ -9,6 +9,8 @@ AsmZ80::AsmZ80()
 
     m_wram->Append("i_input_current:	DS	1",0);
     m_wram->Append("i_input_previous:	DS	1",0);
+    m_wram->Append("cmpvar:	DS	1",0);
+
 
 }
 

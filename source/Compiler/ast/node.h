@@ -75,7 +75,7 @@ public:
         m_blockInfo = m_staticBlockInfo;
     }
 
-
+    virtual bool isCompoundClause() { return false; }
     void DispatchConstructor(Assembler* as);
 
     int MaintainBlocks(Assembler* as);

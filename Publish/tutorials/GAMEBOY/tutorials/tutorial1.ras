@@ -3,8 +3,6 @@ program Tutorial1_Hello_World;
 @use screens
 var  
 	const charBank : byte = 2;
-	// A temporary address to store the screen
-//	const tempAddress : address = $D000;
 
 // Automatically export the character image
 @export "images/charset.flf" "images/charset.bin" 256

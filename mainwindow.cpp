@@ -1277,6 +1277,15 @@ void MainWindow::on_btnBuild_3_clicked()
 
 }
 
+
+void MainWindow::on_actionBuild_current_File_only_Shift_C_b_triggered()
+{
+    if (m_currentDoc!=nullptr)
+        m_currentDoc->Build();
+
+}
+
+
 void MainWindow::on_btnBuild_4_clicked()
 {
     if (m_currentDoc!=nullptr) {
@@ -1754,4 +1763,5 @@ void MainWindow::on_actionLook_up_symbol_F2_triggered()
 {
     m_currentDoc->LookupSymbolUnderCursor();
 }
+
 

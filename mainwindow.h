@@ -361,6 +361,8 @@ private slots:
 
     void on_treeSymbols_itemClicked(QTreeWidgetItem *item, int column);
 
+    void on_actionBuild_current_File_only_Shift_C_b_triggered();
+
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);
 

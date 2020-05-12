@@ -80,5 +80,11 @@ public:
     void Handle16bitShift(QSharedPointer<NodeBinOP>node);
 
 
+    void AssignString(QSharedPointer<NodeAssign> node, bool isPointer);
+
+
+    void dispatch(QSharedPointer<NodeConditional> node) override;
+    void HandleCompoundBinaryClause(QSharedPointer<Node> node, QString lblFailed,QString lblSuccess, bool forcePage);
+
 };
 #endif // ASTdispatcherX86_H

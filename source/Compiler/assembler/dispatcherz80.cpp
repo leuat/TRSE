@@ -26,6 +26,130 @@ void ASTdispatcherZ80::Handle16bitShift(QSharedPointer<NodeBinOP> node)
     }
 }
 
+void ASTdispatcherZ80::AssignString(QSharedPointer<NodeAssign> node, bool isPointer) {
+
+    QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
+    QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
+    //    QString lbl = as->NewLabel("stringassign");
+    QString str = as->NewLabel("stringassignstr");
+    QString lblCpy=as->NewLabel("stringassigncpy");
+
+    //    as->Asm("jmp " + lbl);
+    QString strAssign = str + "\tdb \"" + right->m_op.m_value + "\",0";
+    as->m_tempVars<<strAssign;
+    //as->Label(str + "\t.dc \"" + right->m_op.m_value + "\",0");
+    //  as->Label(lbl);
+
+    //    qDebug() << "IS POINTER " << isPointer;
+    if (isPointer) {
+        //      qDebug() << "HERE";
+        as->Asm("ld hl,"+str);
+        as->Asm("ld a,h");
+        as->Asm("ld ["+getValue(left)+"],a");
+        as->Asm("ld a,l");
+        as->Asm("ld ["+getValue(left)+"],a");
+    }
+    else {
+
+//        as->Asm("ld c,0");
+        as->Asm("ld hl,"+str);
+        as->Asm("ld de,"+getValue(left));
+        as->Label(lblCpy);
+        as->Asm("ld a,[hl+]");
+        as->Asm("ld [de],a");
+        as->Asm("inc de");
+  //      as->Asm("dec c");
+        as->Asm("cp a,0");
+        as->Asm("jr nz, "+lblCpy);
+    }
+    //  as->PopLabel("stringassign");
+    as->PopLabel("stringassignstr");
+    as->PopLabel("stringassigncpy");
+
+}
+
+void ASTdispatcherZ80::dispatch(QSharedPointer<NodeConditional> node)
+{
+    QString labelStartOverAgain = as->NewLabel("while");
+    QString lblstartTrueBlock = as->NewLabel("ConditionalTrueBlock");
+
+    QString labelElse = as->NewLabel("elseblock");
+    QString labelElseDone = as->NewLabel("elsedoneblock");
+    // QString labelFailed = as->NewLabel("conditionalfailed");
+
+    //    qDebug() << "HMM";
+
+    if (node->m_isWhileLoop)
+        as->Label(labelStartOverAgain);
+
+    // Test all binary clauses:
+    QSharedPointer<NodeBinaryClause> bn = qSharedPointerDynamicCast<NodeBinaryClause>(node->m_binaryClause);
+
+
+    QString failedLabel = labelElseDone;
+    if (node->m_elseBlock!=nullptr)
+        failedLabel = labelElse;
+
+    // Handle AND & OR
+    if (bn->isCompoundClause()) {
+        HandleCompoundBinaryClause(bn, failedLabel, lblstartTrueBlock,node->m_forcePage==1);
+    }
+    else
+        BuildSimple(bn,  failedLabel,node->m_forcePage==1);
+
+    // Start main block
+    as->Label(lblstartTrueBlock); // This means skip inside
+
+    node->m_block->Accept(this);
+
+    if (node->m_elseBlock!=nullptr)
+        as->Asm(m_jmp + labelElseDone);
+
+    // If while loop, return to beginning of conditionals
+    if (node->m_isWhileLoop)
+        as->Asm(m_jmp + labelStartOverAgain);
+
+    // An else block?
+    if (node->m_elseBlock!=nullptr) {
+        as->Label(labelElse);
+        node->m_elseBlock->Accept(this);
+        //        m_elseBlock->Build(as);
+
+    }
+    as->Label(labelElseDone); // Jump here if not
+
+    as->PopLabel("while");
+    as->PopLabel("ConditionalTrueBlock");
+    as->PopLabel("elseblock");
+    as->PopLabel("elsedoneblock");
+    //    as->PopLabel("conditionalfailed");
+
+}
+
+void ASTdispatcherZ80::HandleCompoundBinaryClause(QSharedPointer<Node> node, QString lblFailed, QString lblSuccess, bool offpage)
+{
+    if (!node->m_left->isCompoundClause() && !node->m_left->isCompoundClause()) {
+        // We are now guaranteed that we have either a single AND or single OR
+        // Both MUST be true
+        if (node->m_op.m_type == TokenType::AND) {
+            BuildSimple(node->m_left,  lblFailed, offpage);
+            BuildSimple(node->m_right,  lblFailed,offpage);
+        }
+        if (node->m_op.m_type == TokenType::OR) {
+            QString lblLocalFailed = as->NewLabel("localfailed");
+            BuildSimple(node->m_left,  lblLocalFailed,offpage);
+            // Success! please continue!
+            as->Asm("jr "+lblSuccess);
+            as->Label(lblLocalFailed +" ; second chance");
+            BuildSimple(node->m_right,  lblFailed,offpage);
+            as->PopLabel("localfailed");
+        }
+
+        return;
+    }
+    ErrorHandler::e.Error("Compiler limitation: generic and / or not implemented yet.", node->m_op.m_lineNumber);
+}
+
 
 
 void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
@@ -44,7 +168,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
         as->Asm("ld "+getAx(node)+", [" + node->getValue(as)+"] ; binop is pure variable");
         return;
     }
-/*    if (!node->m_left->isPure() && node->m_right->isPure()) {
+    /*    if (!node->m_left->isPure() && node->m_right->isPure()) {
         QSharedPointer<Node> t = node->m_right;
         node->m_right = node->m_left;
         node->m_left = t;
@@ -54,28 +178,28 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
     if (node->m_op.m_type == TokenType::MUL || node->m_op.m_type == TokenType::DIV) {
 
         if (node->m_op.m_type == TokenType::DIV) {
-//            node->m_right->setForceType(TokenType::BYTE);
+            //            node->m_right->setForceType(TokenType::BYTE);
             ErrorHandler::e.Error("Generic division is not implemented yet!",  node->m_op.m_lineNumber);
-//            as->Asm("cwd");
+            //            as->Asm("cwd");
         }
         if (node->m_op.m_type == TokenType::MUL) {
-                QString skip1 = as->NewLabel("skip1");
-                as->Comment("Generic mul");
-                if (!node->isWord(as)) {
-                    node->m_right->Accept(this);
-                    as->Asm("ld e,a");
-                    as->Asm("ld d,0");
-                    node->m_left->Accept(this);
-                    as->Asm("ld h,a");
-                    as->Asm("ld l,0");
-                    as->Asm("call mul_8x8");
-                    as->Asm("ld a,l");
+            QString skip1 = as->NewLabel("skip1");
+            as->Comment("Generic mul");
+            if (!node->isWord(as)) {
+                node->m_right->Accept(this);
+                as->Asm("ld e,a");
+                as->Asm("ld d,0");
+                node->m_left->Accept(this);
+                as->Asm("ld h,a");
+                as->Asm("ld l,0");
+                as->Asm("call mul_8x8");
+                as->Asm("ld a,l");
 
-                    return;
-                }
-                // Is 16 bit
+                return;
+            }
+            // Is 16 bit
 
-//                ErrorHandler::e.Error("NOT IMPLEMENTED YET", node->m_op.m_lineNumber);
+            //                ErrorHandler::e.Error("NOT IMPLEMENTED YET", node->m_op.m_lineNumber);
 
                 if (node->m_left->isPure()) {
                     m_useNext ="de";
@@ -461,6 +585,11 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
     }
 
 
+    if (qSharedPointerDynamicCast<NodeString>(node->m_right))
+    {
+        AssignString(node,node->m_left->isPointer(as));
+        return "";
+    }
 
 
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
@@ -693,6 +822,13 @@ void ASTdispatcherZ80::BuildSimple(QSharedPointer<Node> node, QString lblFailed,
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());
     //    as->Asm("pha"); // Push that baby
+
+    if (node->m_op.m_type==TokenType::LESSEQUAL) {
+        auto n = node->m_right;
+        node->m_right = node->m_left;
+        node->m_left = n;
+    }
+
     BuildToCmp(node);
 
 
@@ -705,10 +841,23 @@ void ASTdispatcherZ80::BuildSimple(QSharedPointer<Node> node, QString lblFailed,
         as->Asm("j"+p+" nz," + lblFailed);
     if (node->m_op.m_type==TokenType::NOTEQUALS)
         as->Asm("j"+p+" z, " + lblFailed);
-    if (node->m_op.m_type==TokenType::LESS)
+    if (node->m_op.m_type==TokenType::LESS) {
         as->Asm("j"+p+" nc," + lblFailed);
-    if (node->m_op.m_type==TokenType::GREATER)
+//        as->Asm("j"+p+" z, " + lblFailed);
+    }
+    if (node->m_op.m_type==TokenType::GREATER) {
         as->Asm("j"+p+" c, " + lblFailed);
+        as->Asm("j"+p+" z, " + lblFailed);
+    }
+    if (node->m_op.m_type==TokenType::GREATEREQUAL) {
+        as->Asm("j"+p+" c, " + lblFailed);
+
+    }
+    if (node->m_op.m_type==TokenType::LESSEQUAL) {
+//        as->Asm("j"+p+" z, " + lblFailed);
+        // Flipped!
+        as->Asm("j"+p+" c," + lblFailed);
+    }
 
 
 
@@ -716,6 +865,7 @@ void ASTdispatcherZ80::BuildSimple(QSharedPointer<Node> node, QString lblFailed,
 
 void ASTdispatcherZ80::BuildToCmp(QSharedPointer<Node> node)
 {
+
     if (node->m_left->getValue(as)!="") {
         if (node->m_right->isPureNumeric())
         {

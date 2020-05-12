@@ -20,6 +20,7 @@ program Tutorial2_Sprites;
 // Pack sprite 3 : girl at 4,0 - 6,3 in "sprites.flf"
 @spritepacker "images/sprites.flf" "images/sprites_packed.flf" "images/sprites_index.bin" "gameboy" 4 0 2 3 0
 
+
 // Export the packed file to a binary file
 @export "images/sprites_packed.flf" "images/sprites_packed.bin" 64
 
@@ -50,7 +51,7 @@ begin
 		initspritefromdata(sprGirl,sprites_index,pos,6 ,2, sprite_flip_x)
 	else
 		initspritefromdata(sprGirl,sprites_index,pos,6 ,2, 0);
-	asm(";crash");
+	// Set some sprite X value		
 	x:=sine[time]/2+16;
 	// Set sprite position			
 	setsprite(sprGirl,x,y, 2,30);
@@ -58,7 +59,7 @@ begin
 	// Advance to next sprite		
 	if (time&15=0) then
 	begin
-		pos:=pos+6; // Point to next sprite
+		pos:=pos+6; // Point to next sprite. Each sprite is 6 bytes long in the index.
 		if (pos=18) then pos:=0; // Reset sprite
 	end;		
 
@@ -66,6 +67,7 @@ begin
 end;
 
 
+// VBlank is called 1 time per ... vertical blank! 
 
 procedure VBlank();
 begin

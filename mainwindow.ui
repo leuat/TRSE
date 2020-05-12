@@ -295,6 +295,8 @@ p, li { white-space: pre-wrap; }
 &lt;li style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Sprite packer system for GB&lt;/li&gt;&lt;/ul&gt;
 &lt;li style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Compiler&lt;/li&gt;&lt;/ul&gt;
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 2;&quot;&gt;&lt;li style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Fixed a bug where forward declarations of procedure with parameters crashed&lt;/li&gt;
+&lt;li style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;TRU constants fixed&lt;/li&gt;
+&lt;li style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can now build TRU/independent files with CTRL+SHIFT+B&lt;/li&gt;
 &lt;li style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Gameboy Z80ish compiler almost done&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:0px; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
@@ -482,6 +484,7 @@ p, li { white-space: pre-wrap; }
      <string>&amp;Project</string>
     </property>
     <addaction name="actionBuild_C_b"/>
+    <addaction name="actionBuild_current_File_only_Shift_C_b"/>
     <addaction name="actionBuild_All"/>
     <addaction name="action_Run"/>
     <addaction name="action_Memory_map_C_u"/>
@@ -677,6 +680,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionLook_up_symbol_F2">
    <property name="text">
     <string>Look up sy&amp;mbol under cursor (F2)</string>
+   </property>
+  </action>
+  <action name="actionBuild_current_File_only_Shift_C_b">
+   <property name="text">
+    <string>Build current &amp;File only (Shift-C-b)</string>
    </property>
   </action>
  </widget>

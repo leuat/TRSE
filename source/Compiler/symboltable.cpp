@@ -278,6 +278,10 @@ void SymbolTable::InitBuiltins()
         Define(QSharedPointer<Symbol>(new Symbol("joy2", "byte")));
         Define(QSharedPointer<Symbol>(new Symbol("joy2pressed", "byte")));
     }
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY) {
+        Define(QSharedPointer<Symbol>(new Symbol("cmpvar", "address")));
+
+    }
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES) {
 

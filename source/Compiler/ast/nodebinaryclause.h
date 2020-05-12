@@ -51,6 +51,10 @@ public:
             m_right->parseConstants(symTab);
     }
 
+    bool isCompoundClause() override {
+        return (m_op.m_type==TokenType::AND || m_op.m_type == TokenType::OR);
+
+    }
 
 };
 
