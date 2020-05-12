@@ -6,6 +6,7 @@ Methods6502::Methods6502()
 }
 
 
+
 bool Methods6502::Command(QString name)
 {
     return m_node->m_procName.toLower() == name.toLower();
