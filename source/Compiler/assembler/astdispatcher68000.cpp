@@ -998,6 +998,11 @@ bool ASTDispatcher68000::HandleSimpleAeqBopConst(QSharedPointer<NodeAssign> node
 
 }
 
+void ASTDispatcher68000::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
+{
+
+}
+
 
 QString ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
 

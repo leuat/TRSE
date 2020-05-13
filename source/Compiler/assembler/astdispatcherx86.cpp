@@ -211,8 +211,8 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVarDecl> node)
     }
     else
     if (t->m_op.m_type==TokenType::POINTER) {
-        if (node->m_curMemoryBlock!=nullptr)
-            ErrorHandler::e.Error("Pointers can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
+//        if (node->m_curMemoryBlock!=nullptr)
+  //          ErrorHandler::e.Error("Pointers can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
 //        DeclarePointer(node);
  //       as->DecaareP
         if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY)
@@ -434,57 +434,6 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeConditional> node)
 
 }
 */
-void ASTdispatcherX86::dispatch(QSharedPointer<NodeForLoop> node)
-{
-    node->DispatchConstructor(as);
-
-
-    //QString m_currentVar = ((NodeAssign*)m_a)->m_
-    QSharedPointer<NodeAssign> nVar = qSharedPointerDynamicCast<NodeAssign>(node->m_a);
-
-
-    if (nVar==nullptr)
-        ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
-
-    QString var = qSharedPointerDynamicCast<NodeVar>(nVar->m_left)->getValue(as);//  m_a->Build(as);
-//    qDebug() << "Starting for";
-    node->m_a->Accept(this);
-  //  qDebug() << "accepted";
-
-//    LoadVariable(node->m_a);
-  //  TransformVariable()
-    //QString to = m_b->Build(as);
-    QString to = "";
-    if (node->m_b->isPure())
-//    if (qSharedPointerDynamicCast<NodeNumber>(node->m_b) != nullptr)
-        to = node->m_b->getValue(as);
-  //  if (qSharedPointerDynamicCast<NodeVar>(node->m_b) != nullptr)
-    //    to = (qSharedPointerDynamicCast<NodeVar>node->m_b)->getValue(as);
-
-//    as->m_stack["for"].push(var);
-    QString lblFor =as->NewLabel("forloop");
-    as->Label(lblFor);
-//    qDebug() << "end for";
-
-
-    if (nVar->m_left->isWord(as))
-        node->m_b->setForceType(TokenType::INTEGER);
-
-    node->m_block->Accept(this);
-    PushX();
-    QString ax = getAx(nVar->m_left);
-    PopX();
-    as->Asm(m_mov+ax+",["+var+"]");
-    as->Asm("add "+ax+",1");
-    as->Asm(m_mov+"["+var+"],"+ax);
-    LoadVariable(node->m_b);
-    as->Asm(m_cmp+getAx(node->m_b)+","+ax);
-
-    as->Asm(m_jne+lblFor);
-
-    as->PopLabel("forloop");
-
-}
 
 
 void ASTdispatcherX86::dispatch(QSharedPointer<Node> node)
@@ -789,5 +738,29 @@ void ASTdispatcherX86::BuildToCmp(QSharedPointer<Node> node)
     //      as->Asm("cmp " + tmpVar);
     //      as->PopTempVar();
 
+
+}
+
+void ASTdispatcherX86::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
+{
+    QString var = nodeA->m_left->getValue(as);
+    if (step!=nullptr) {
+        step->Accept(this);
+        as->Asm("mov cx,ax");
+    }
+    PushX();
+
+    QString ax = getAx(nodeA->m_left);
+    PopX();
+    as->Asm(m_mov+ax+",["+var+"]");
+    if (step==nullptr)
+        as->Asm("add "+ax+",1");
+    else
+        as->Asm("add "+ax+",cx");
+
+    as->Asm(m_mov+"["+var+"],"+ax);
+    LoadVariable(nodeB);
+    as->Asm(m_cmp+getAx(nodeB)+","+ax);
+    as->Asm(m_jne+lblJump);
 
 }

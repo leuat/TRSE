@@ -46,7 +46,7 @@ public:
     void dispatch(QSharedPointer<NodeProcedure> node) override;
     void dispatch(QSharedPointer<NodeProcedureDecl> node) override;
    // void dispatch(QSharedPointer<NodeConditional> node) override;
-    void dispatch(QSharedPointer<NodeForLoop> node) override;
+   // void dispatch(QSharedPointer<NodeForLoop> node) override;
     void dispatch(QSharedPointer<NodeVar> node) override;
     void dispatch(QSharedPointer<Node> node) override;
     void dispatch(QSharedPointer<NodeAssign> node) override;
@@ -131,13 +131,17 @@ public:
      */
 
 
-    void Compare(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive);
+//    void Compare(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive);
 
-    void IncreaseCounter(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var);
+    void IncreaseCounter(QSharedPointer<Node> step, QSharedPointer<NodeVar> var);
 
     void LargeLoop(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool inclusive);
 
     void SmallLoop(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool inclusive);
+
+    void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive) override;
+
+    void Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive);
 
     /*
      *
@@ -183,6 +187,7 @@ public:
     void AssignVariable(QSharedPointer<NodeAssign>node);
 
     void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign>node);
+
 
 
 

@@ -130,9 +130,8 @@ begin
 	if (colldiry=1) then begin if (blockup=0) then py:=py+1; end;
 
 
-	i:=colldirx | colldiry;	
 	
-	if (i<>0) then
+	if (colldirx <>0  or colldiry<>0) then
 	if (time&7=0) then
 	begin
 		pos:=pos+6; // Point to next sprite
@@ -144,7 +143,7 @@ end;
 
 procedure UpdateLevels();
 begin
-	if (px>248) then
+	if (px>=248) then
 	begin
 		px:=16;
 		sx:=0;
@@ -158,7 +157,7 @@ begin
 		curx:=curx-1;
 		RenderLevel(curx,cury);
 	end;
-	if (py>248) then
+	if (py>=248) then
 	begin
 		py:=16;
 		sy:=0;

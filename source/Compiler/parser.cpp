@@ -2524,22 +2524,22 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
         var_decleratons.append(decl);
 //        qDebug() <<  typeNode->m_op.getType() << typeNode->m_op.m_value << (qSharedPointerDynamicCast<NodeVar>n)->value;;
         if (typeNode->m_op.m_type == TokenType::INCSID) {
-//            decl->m_isUsed = true;
+            //            decl->m_isUsed = true;
 
             int sidloc = 0;
             if (m_preprocessorDefines.contains("SIDEmulatorLocation")) {
                 sidloc = Util::NumberFromStringHex(m_preprocessorDefines["SIDEmulatorLocation"]);
                 //qDebug() << sidloc;
             }
-//            exit(1);
+            //            exit(1);
             decl->InitSid(m_symTab,m_currentDir, sidloc, "sid");
         }
         if (typeNode->m_op.m_type == TokenType::INCNSF) {
             int sidloc = 0;
- //           exit(1);
+            //           exit(1);
             decl->InitSid(m_symTab, m_currentDir, sidloc, "nsf");
         }
-    }
+   }
 
 //    return vars;
     return var_decleratons;

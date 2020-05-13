@@ -1,6 +1,7 @@
 #include "abstractastdispatcher.h"
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/ast/nodeconditional.h"
+#include "source/Compiler/ast/nodeforloop.h"
 
 AbstractASTDispatcher::AbstractASTDispatcher()
 {
@@ -10,6 +11,41 @@ AbstractASTDispatcher::AbstractASTDispatcher()
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBlock> node) {
     if (m_ticks++%4==0)
         emit EmitTick(".");
+}
+
+void AbstractASTDispatcher::dispatch(QSharedPointer<NodeForLoop> node)
+{
+    node->DispatchConstructor(as);
+
+
+    //QString m_currentVar = ((NodeAssign*)m_a)->m_
+    QSharedPointer<NodeAssign> nVar = qSharedPointerDynamicCast<NodeAssign>(node->m_a);
+
+
+    if (nVar==nullptr)
+        ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
+
+    QString var = qSharedPointerDynamicCast<NodeVar>(nVar->m_left)->getValue(as);//  m_a->Build(as);
+    //    qDebug() << "Starting for";
+    node->m_a->Accept(this);
+
+    QString lblFor =as->NewLabel("forloop");
+    as->Label(lblFor);
+
+    if (nVar->m_left->isWord(as))
+        node->m_b->setForceType(TokenType::INTEGER);
+
+    node->m_block->Accept(this);
+
+
+    bool offpage = isOffPage(node, node->m_block, nullptr);
+
+    CompareAndJumpIfNotEqual(node->m_a, node->m_b,  node->m_step, lblFor, offpage,node->m_inclusive);
+
+
+    as->PopLabel("forloop");
+
+
 }
 
 QString AbstractASTDispatcher::getValue(QSharedPointer<Node> n) {
@@ -39,12 +75,8 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeConditional> node)
         failedLabel = labelElse;
 
 
-    bool offpage = node->m_forcePage==1;
-    // Build actualy binary clauseu
+    bool offpage = isOffPage(node, node->m_block, node->m_elseBlock);
 
-
-    if (!node->verifyBlockBranchSize(as, node->m_block, node->m_elseBlock, this))
-        offpage = true;
 
 
 //    HandleCompoundBinaryClause(bn, failedLabel, lblstartTrueBlock,page);
@@ -72,7 +104,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeConditional> node)
             BuildSimple(bn,  failedLabel,node->m_forcePage==1);
     */
     // Start main block
-    as->Label(lblstartTrueBlock); // This means skip inside
+    as->Label(lblstartTrueBlock+": ;Main true block ;keep "); // This means skip inside
     node->m_block->Accept(this);
 
     if (node->m_elseBlock!=nullptr)
@@ -108,9 +140,6 @@ void AbstractASTDispatcher::HandleCompoundBinaryClause(QSharedPointer<Node> node
         return;
     }
 
-    //    if (!node->m_left->isCompoundClause() && !node->m_right->isCompoundClause()) {
-    // We are now guaranteed that we have either a single AND or single OR
-    // Both MUST be true
 
     if (node->m_op.m_type == TokenType::AND) {
         HandleCompoundBinaryClause(node->m_left,  lblFailed, lblSuccess, offpage);
@@ -122,14 +151,23 @@ void AbstractASTDispatcher::HandleCompoundBinaryClause(QSharedPointer<Node> node
         HandleCompoundBinaryClause(node->m_left,  lblLocalFailed,lblSuccess,offpage);
         // Success! please continue!
         as->Asm(getJmp(offpage)+" "+lblSuccess);
-        as->Label(lblLocalFailed +" ; second chance");
-        as->Comment("; logical OR");
+        as->Label(lblLocalFailed+": ;keep");
+        as->Comment("; logical OR, second chance");
         HandleCompoundBinaryClause(node->m_right,  lblFailed,lblSuccess,offpage);
         as->PopLabel("localfailed");
     }
 
-    //  return;
-    //}
-    //  ErrorHandler::e.Error("Compiler limitation: generic and / or not implemented yet.", node->m_op.m_lineNumber);
+}
+
+bool AbstractASTDispatcher::isOffPage(QSharedPointer<Node> node, QSharedPointer<Node> b1, QSharedPointer<Node> b2) {
+    bool onPage = node->verifyBlockBranchSize(as, b1,b2,this);
+
+    if (node->m_forcePage == 1)
+        onPage = false;
+
+    if (node->m_forcePage == 2)
+        onPage = true;
+
+    return !onPage;
 }
 

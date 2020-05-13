@@ -243,10 +243,10 @@ begin
 
 		if k>=31 then begin
 			k:=k-31;
-			inczp(zp, 31*8);
+			zp:=zp+(31*8);
 		end;
 		if (k<>0) then 
-			inczp(zp, k*8);
+			zp:=zp +k*8;
 
 		k:=i*2;
 		asm("

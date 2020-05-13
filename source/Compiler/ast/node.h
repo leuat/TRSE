@@ -51,6 +51,8 @@ public:
     bool m_isUsed = false;
     bool m_forceAddress = false;
     bool m_ignoreSuccess = false; // Used for binary expressions
+    int m_forcePage = 0;
+
     // Used to set various states, such as if binary operations are used etc
     static QMap<QString, bool> flags;
     static QSharedPointer<SymbolTable>  parserSymTab;

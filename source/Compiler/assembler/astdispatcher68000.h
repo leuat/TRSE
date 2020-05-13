@@ -96,6 +96,8 @@ public:
     bool HandleSimpleAeqBopConst(QSharedPointer<NodeAssign>node);
 
 
+    void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive) override;
+
 };
 
 #endif // ASTdispatcher68000_H

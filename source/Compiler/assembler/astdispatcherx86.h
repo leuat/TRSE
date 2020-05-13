@@ -47,7 +47,7 @@ public:
     void dispatch(QSharedPointer<NodeProcedure> node) override;
     void dispatch(QSharedPointer<NodeProcedureDecl> node) override;
  //   void dispatch(QSharedPointer<NodeConditional> node) override;
-    void dispatch(QSharedPointer<NodeForLoop> node) override;
+    //void dispatch(QSharedPointer<NodeForLoop> node) override;
     void dispatch(QSharedPointer<NodeVar> node) override;
     void dispatch(QSharedPointer<Node> node) override;
     void dispatch(QSharedPointer<NodeAssign> node) override;
@@ -141,6 +141,8 @@ public:
     virtual void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page);
 
     virtual void BuildToCmp(QSharedPointer<Node> node);
+
+    void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive);
 
 
 };

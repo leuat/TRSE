@@ -117,7 +117,7 @@ bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,
     as->m_currentBlock = keep;
 
 
-    return count<127;
+    return count<120;
 
 }
 

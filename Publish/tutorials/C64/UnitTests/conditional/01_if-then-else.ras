@@ -304,7 +304,7 @@ end;
 procedure AdvancedI1();
 begin
 	i1 := 5000; i2 := 4000; i3:=3000;
-	text := "   AI 1:"; if (i1 >= i2 and i3=3000) then begin PASS(); end else begin FAIL(); end;
+	text := "   AI 1:"; if (i1 >= i2 and i3=3000)  then begin PASS(); end else begin FAIL(); end;
 end;
 
 
@@ -398,7 +398,7 @@ begin
 	AdvancedI2();
 	AdvancedI3();
 
-	BranchSize1();
+//	BranchSize1();
 
 
 	loop();

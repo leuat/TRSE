@@ -42,6 +42,15 @@ var
 
 @define specialRoomFire 0
 
+@donotremove room1
+@donotremove room2
+@donotremove room3
+@donotremove room4
+@donotremove room5
+
+
+
+
 
 
     i,j,k,time,key,prevKey: byte = 0;  

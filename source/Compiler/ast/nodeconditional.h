@@ -45,7 +45,6 @@ public:
     bool m_isWhileLoop;
 
 
-    int m_forcePage = 0;
 /*    NodeConditional(QVector<Token> op, QVector<QSharedPointer<Node>> a, QVector<QSharedPointer<Node>> b, QSharedPointer<Node> block, bool isWhile, QVector<Token> conditionals, QSharedPointer<Node> elseBlock=nullptr) {
         m_a = a;
         m_b = b;

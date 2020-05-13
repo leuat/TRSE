@@ -221,13 +221,13 @@ void AsmZ80::BinOP(TokenType::Type t)
     if (t == TokenType::XOR) {
         m_term = "xor ";
     }
-    if (t == TokenType::MUL) {
+/*    if (t == TokenType::MUL) {
         m_term = "mul ";
     }
     if (t == TokenType::DIV) {
         m_term = "div ";
     }
-
+*/
 
 }
 

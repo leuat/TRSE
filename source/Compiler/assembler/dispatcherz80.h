@@ -45,7 +45,7 @@ public:
     void dispatch(QSharedPointer<NodeVar> node) override;
     void dispatch(QSharedPointer<NodeNumber>node) override;
 
-    void dispatch(QSharedPointer<NodeForLoop> node);
+//    void dispatch(QSharedPointer<NodeForLoop> node);
 
 
     QString AssignVariable(QSharedPointer<NodeAssign> node) override;
@@ -90,6 +90,10 @@ public:
 
 //    void dispatch(QSharedPointer<NodeConditional> node) override;
     void HandleCompoundBinaryClause(QSharedPointer<Node> node, QString lblFailed,QString lblSuccess, bool forcePage);
+
+    void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive) override;
+
+
 
 };
 #endif // ASTdispatcherX86_H

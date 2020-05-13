@@ -13,7 +13,7 @@ begin
 	StartIRQ(useKernal);
 	// Turn on background color only when SID file is playing
 	screen_bg_col:=green;
-	call(sidfile_1_play);
+	call(sidfile_1_play);	
 	// Turn off (black) backgrund color. We can now observe how much raster time has been used!
 	screen_bg_col:=black;
 	CloseIRQ();

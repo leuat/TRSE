@@ -86,11 +86,11 @@ void SidFile::LoadNSF(QString filename, QString path)
     m_initAddress+=10;
     m_playAddress+=10;
 */
-    qDebug() << "MUSIC data: " << Util::numToHex(u);
+/*    qDebug() << "MUSIC data: " << Util::numToHex(u);
     qDebug() << "Load address:" << Util::numToHex(m_loadAddress);
     qDebug() << "Init address:" << Util::numToHex(m_initAddress);
     qDebug() << "Play address:" << Util::numToHex(m_playAddress);
-
+*/
 
   /*  qDebug() << Util::numToHex(m_loadAddress);
     qDebug() << Util::numToHex(m_initAddress);
@@ -130,7 +130,7 @@ void SidFile::Convert(int headerShift, int newAddress, QString fileEnding, int h
     //if (org.toLower().trimmed().endsWith(".vsid"))
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::OK64)
     {
-        qDebug() << "VSID CONVERSION: ";
+//        qDebug() << "VSID CONVERSION: ";
         for (int i=0;i<m_blob.count()-1;i++) {
             uchar lo = m_blob[i];
             uchar hi = m_blob[i+1];

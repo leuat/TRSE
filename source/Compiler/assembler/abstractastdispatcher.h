@@ -67,7 +67,7 @@ public:
     virtual void dispatch(QSharedPointer<NodeProcedure> node) = 0;
     virtual void dispatch(QSharedPointer<NodeProcedureDecl> node) = 0;
 //    virtual void dispatch(QSharedPointer<NodeConditional> node) = 0;
-    virtual void dispatch(QSharedPointer<NodeForLoop> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeForLoop> node);
     virtual void dispatch(QSharedPointer<NodeBuiltinMethod> node) = 0;
     virtual void dispatch(QSharedPointer<NodeAsm> node) = 0;
     virtual void dispatch(QSharedPointer<NodeBinaryClause> node) = 0;
@@ -94,7 +94,9 @@ public:
 
     virtual void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)  = 0;
 
+    bool isOffPage(QSharedPointer<Node> node, QSharedPointer<Node> b1, QSharedPointer<Node> b2);
 
+    virtual void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive) = 0;
 
 
 public:

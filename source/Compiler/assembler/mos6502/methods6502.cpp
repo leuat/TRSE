@@ -113,8 +113,10 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("ReadInput"))
         ReadInput(as);
 
-    if (Command("PlaySong"))
-        as->Asm("jsr " + (Util::numToHex(as->m_symTab->m_constants["SIDFILE_1_PLAY"]->m_value->m_fVal)));
+    if (Command("PlaySong")) {
+        if (as->m_symTab->m_constants.contains("SIDFILE_1_PLAY"))
+            as->Asm("jsr " + (Util::numToHex(as->m_symTab->m_constants["SIDFILE_1_PLAY"]->m_value->m_fVal)));
+    }
 
     if (Command("ToggleNMI"))
         ToggleRegisterBit(as,"$2000",7);

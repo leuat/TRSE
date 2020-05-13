@@ -28,7 +28,8 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
         emit EmitTick("<br></font><font color=\"yellow\">Assembling with OrgAsm ");
         Orgasm orgAsm;
         connect(&orgAsm, SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
-        orgAsm.SetupConstants(symTab);
+        if (symTab!=nullptr)
+            orgAsm.SetupConstants(symTab);
 
         orgAsm.Assemble(filename+".asm", filename+".prg");
 

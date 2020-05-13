@@ -68,6 +68,48 @@ void ASTdispatcherZ80::AssignString(QSharedPointer<NodeAssign> node, bool isPoin
 
 }
 
+void ASTdispatcherZ80::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
+{
+
+
+
+    QString var = nodeA->m_left->getValue(as);
+
+    if (!nodeB->isPureNumeric()) {
+        as->ClearTerm();
+        nodeB->Accept(this);
+        as->Term();
+        as->Asm("ld c,a");
+    }
+
+
+    if (step!=nullptr) {
+        step->Accept(this);
+        as->Asm("ld d,a");
+    }
+//    PushX();
+    QString ax = getAx(nodeA->m_left);
+  //  PopX();
+    as->Asm(m_mov+ax+",["+var+"]");
+    if (step==nullptr)
+        as->Asm("add "+ax+",1");
+    else
+        as->Asm("add "+ax+",d");
+
+    as->Asm(m_mov+"["+var+"],"+ax);
+
+    if (!nodeB->isPureNumeric())
+        as->Asm(m_cmp+ax+",c");
+    else
+        as->Asm(m_cmp+ax+"," + nodeB->getValue(as));
+
+
+    if (!isOffPage)
+        as->Asm("jr nz,"+lblJump);
+    else
+        as->Asm("jp nz,"+lblJump);
+}
+
 
 
 
@@ -428,7 +470,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeNumber> node)
 
 }
 
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeForLoop> node)
+/*void ASTdispatcherZ80::dispatch(QSharedPointer<NodeForLoop> node)
 {
     node->DispatchConstructor(as);
 
@@ -466,10 +508,6 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeForLoop> node)
 
     node->m_block->Accept(this);
     QString ax = getA(nVar->m_left);
-/*    as->ClearTerm();
-    LoadVariable(node->m_b);
-    as->Term();
-  */
     if (!node->m_b->isPureNumeric()) {
         as->ClearTerm();
         node->m_b->Accept(this);
@@ -498,7 +536,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeForLoop> node)
 
 }
 
-
+*/
 
 QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
 {

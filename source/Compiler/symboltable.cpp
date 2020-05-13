@@ -72,7 +72,7 @@ void SymbolTable::DefineSid(unsigned int initAddress, unsigned int playAddress) 
     QString play = "SIDFILE_"+s+"_PLAY";
     m_constants[init] = QSharedPointer<Symbol>(new Symbol("$"+QString::number(initAddress,16),"ADDRESS", initAddress));
     m_constants[play] = QSharedPointer<Symbol>(new Symbol("$"+QString::number(playAddress,16),"ADDRESS", playAddress));
-
+//    qDebug() << "DEFINE SID "<<playAddress;
 
 }
 
@@ -134,13 +134,17 @@ void SymbolTable::Initialize()
         }
 
      }
+//    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES)
     if (!m_constants.contains("SIDFILE_1_INIT")) {
         for (int i=1;i<10;i++) {
+           if (!m_constants.contains("SIDFILE_"+QString::number(i)+"_INIT")) {
+               m_constants["SIDFILE_"+QString::number(i)+"_INIT"] = QSharedPointer<Symbol>(new Symbol("","ADDRESS", 0));
+               m_constants["SIDFILE_"+QString::number(i)+"_PLAY"] = QSharedPointer<Symbol>(new Symbol("","ADDRESS", 0));
+//               qDebug() << "Redefining : "<<i;
 
-            m_constants["SIDFILE_"+QString::number(i)+"_INIT"] = QSharedPointer<Symbol>(new Symbol("","ADDRESS", 0));
-           m_constants["SIDFILE_"+QString::number(i)+"_INIT"] = QSharedPointer<Symbol>(new Symbol("","ADDRESS", 0));
-
+           }
         }
+
     }
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 )

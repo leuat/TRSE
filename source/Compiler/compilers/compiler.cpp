@@ -99,6 +99,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
     // Copy symbol table stuff, like records
     m_assembler->m_symTab->m_useLocals = m_parser.m_symTab->m_useLocals;
     m_assembler->m_symTab->m_records = m_parser.m_symTab->m_records;
+    m_assembler->m_symTab->m_constants = m_parser.m_symTab->m_constants;
 
     for (QSharedPointer<SymbolTable>  st : m_parser.m_symTab->m_records)
         m_assembler->m_symTab->Define(QSharedPointer<Symbol>(new Symbol(st->m_name, "RECORD")));
