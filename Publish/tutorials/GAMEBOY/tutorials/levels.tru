@@ -60,10 +60,10 @@ begin
 	sp:=temp;
 	
 	// Fill temp data with chars
-	for j:=0 to height offpage do begin
+	for j:=0 to height  do begin
 		idx:=0;
 	
-		for i:=0 to width offpage do begin
+		for i:=0 to width   do begin
 		
 			val := lp[i];
 			val:=val*4;

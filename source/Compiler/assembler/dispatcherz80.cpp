@@ -485,8 +485,12 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeForLoop> node)
     else
         as->Asm(m_cmp+ax+"," + node->m_b->getValue(as));
 
-    if (!node->m_forcePage)
-        as->Asm(m_jne+lblFor);
+    bool offpage = node->m_forcePage;
+    if (!node->verifyBlockBranchSize(as, node->m_block, nullptr, this))
+        offpage = true;
+
+    if (!offpage)
+        as->Asm("jr nz,"+lblFor);
     else
         as->Asm("jp nz,"+lblFor);
 

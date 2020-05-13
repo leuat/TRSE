@@ -43,4 +43,4 @@ ignore_initial_jump = 0
 exomizer_toggle = 0
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/PumpKid/
 open_files = ,zombie.ras, collisions.ras, pumpkid.asm, screens.paw, screens_packed.ras, pumpkid.ras
-current_file = collisions.ras
+current_file = zombie.ras

@@ -84,7 +84,7 @@ end;
 procedure MemCopyBankOnHBlank(cp1, cp2 : pointer; cwi : byte);
 begin
 	waitforverticalblank();
-	for i:=0 to cwi offpage do
+	for i:=0 to cwi  do
 	begin
 		memcpyonHBlank(cp1,cp2,256);
 		asm(";here");
@@ -155,7 +155,7 @@ begin
 	j:=0;
 	p1:=p1+x;
 	p1:=p1+y*32;
-	while (done = false) offpage do
+	while (done = false) do
 	begin
 		i:=text[j];
 		// Space $20 ignore

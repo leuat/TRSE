@@ -232,7 +232,87 @@ void AsmZ80::BinOP(TokenType::Type t)
 }
 
 int AsmZ80::CodeSizeEstimator(QStringList &lines) {
-    return 0;
+    int size = 0;
+    //   qDebug() << "EST START";
+    for (auto&s : lines) {
+        if (!s.startsWith("\t")) // IS label
+            continue;
+        QString t = s.trimmed().simplified().split(";").first();
+        int add = 0;
+        if (t=="")
+            continue;
+        QStringList sp1 = t.split(" ");
+        if (sp1.count()==1) {
+            add=1;
+        }
+
+        if (sp1.count()>=2) {
+            QStringList plst = sp1[1].toLower().trimmed().split(","); // a, hl, [hl], [var] etc
+            // ld [var], a
+            QString p = plst[0].trimmed();
+            // 1 param
+            if (plst.count()==1) {
+                if (p=="a" || p=="b" || p=="c" || p=="d" || p=="e") {
+                    add = 1; // add b
+                }
+                else
+                {
+                    // Test if number
+                    int i;
+                    bool ok;
+                    i = p.remove("$").toInt(&ok,16);
+                    if (ok)
+                        add=2; // sub 10
+                    else add=3;   // call someting
+
+                }
+            }
+            //            else
+            if (p.startsWith("[")) {
+                if (p!="[hl]" && p!="[de]" && p!="[bc]")
+                    add=3;
+                else add=1;
+            }
+            else
+            if (plst.count()>=2) {
+                QString p2 = plst[1].toLower().trimmed(); // a, hl, [hl], [var] etc
+//                qDebug() << "H";
+
+
+                if (p=="a" || p=="b" || p=="c" || p=="d" || p=="e") {
+                    if (p2=="a" || p2=="b" || p2=="c" || p2=="d" || p2=="e")
+                        add=1; // ld a,b
+                    else
+                        if (p2.startsWith("[")) {
+
+                            if (p2=="[hl]" || p2=="[de]" || p2=="[bc]" )
+                                add=1; // ld a, [hl]
+                            else
+                                add=3; // ld a, [var]
+
+                        }
+                        else
+                            add=2; // ld a,10
+                }
+                else add=3; // ld hl, var
+            }
+
+            // ld a,b
+
+/*            QStringList ps = p.split(",");
+            p = ps[0]; // pick first one, ignore ",x" etc
+            if (p.startsWith("")) { add=2; }
+            else add=3;*/
+        }
+        size+=add;
+//        qDebug() << t << add;
+
+    }
+  //  qDebug() << "********************* SIZE "<<size;
+    return size;
+
+
+
 }
 
 void AsmZ80::Label(QString s)

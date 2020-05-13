@@ -113,11 +113,9 @@ bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,
         testBlockB->Accept(dispatcher);
     as->m_tempVars = keepTemps;
 
-//    int count = app->m_source.count();
     int count = as->CodeSizeEstimator(app->m_source);
     as->m_currentBlock = keep;
 
-//    qDebug() << "VERIFY BLOCK SIZE : "<<count;
 
     return count<127;
 
