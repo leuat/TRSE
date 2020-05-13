@@ -102,6 +102,9 @@ public:
 
     void Destroy() override {}
 
+
+
+
 private slots:
     void on_pushButton_clicked();
 
@@ -117,6 +120,7 @@ private slots:
     void on_leOutfile_cursorPositionChanged(int arg1, int arg2);
 
     void on_tabData_cellChanged(int row, int column);
+
 
 private:
     Ui::FormPaw *ui;

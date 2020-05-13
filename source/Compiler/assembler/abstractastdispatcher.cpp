@@ -72,7 +72,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeConditional> node)
             BuildSimple(bn,  failedLabel,node->m_forcePage==1);
     */
     // Start main block
-    as->Label(lblstartTrueBlock + "; keep    MAIN TRUE CONDITIONAL BLOCK"); // This means skip inside
+    as->Label(lblstartTrueBlock); // This means skip inside
     node->m_block->Accept(this);
 
     if (node->m_elseBlock!=nullptr)

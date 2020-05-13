@@ -72,6 +72,10 @@ void TRSEDocument::keyPressEvent(QKeyEvent *e) {
     if (e->key() == Qt::Key_I &&  (QApplication::keyboardModifiers() & Qt::ControlModifier))
         emit emitNewImage();
 
+
+    if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier))
+        emit requestCloseWindow();
+
 }
 
 void TRSEDocument::UserDefined()

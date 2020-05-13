@@ -117,6 +117,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         QString type = m_projectIniFile->getString("dosbox_x86_system");
         if (type.toLower()!="default")
             params << "-machine" << type;
+        params << "-noautoexec";
 #ifdef _WIN32
 //        params << "-noconsole";
 #endif
@@ -800,18 +801,26 @@ void FormRasEditor::MemoryAnalyze()
     }
     int i= m_projectIniFile->getdouble("exomizer_toggle");
     m_projectIniFile->setFloat("exomizer_toggle",0);
+
     if (m_builderThread.m_builder==nullptr) {
         ErrorHandler::e.m_warnings.clear();
         ErrorHandler::e.m_teOut = "";
         ErrorHandler::e.Warning("Source file must be built before memory analyzer can run.");
         SetOutputText(ErrorHandler::e.m_teOut);
-
         return;
     }
-    if (!m_builderThread.m_builder->Build(ui->txtEditor->toPlainText())) {
+    if (!m_builderThread.m_builder->m_buildSuccess) {
+        ErrorHandler::e.m_warnings.clear();
+        ErrorHandler::e.m_teOut = "";
+        ErrorHandler::e.Warning("Source file must be built before memory analyzer can run.");
+        SetOutputText(ErrorHandler::e.m_teOut);
         return;
     }
 
+/*    if (!m_builderThread.m_builder->Build(ui->txtEditor->toPlainText())) {
+        return;
+    }
+*/
     m_projectIniFile->setFloat("exomizer_toggle",i);
     m_builderThread.m_builder->compiler->SaveBuild(filename + ".asm");
 

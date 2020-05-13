@@ -25,10 +25,10 @@ var
 	lookupDiv16 : array[256] of byte;
 
 
-	const yStart:byte = 5;
+	const yStart:byte = 2;
 	const yEnd:byte = 23;
 	const xStart:byte = 1;
-	const xEnd:byte = 36;
+	const xEnd:byte = 39;
 
 
 
