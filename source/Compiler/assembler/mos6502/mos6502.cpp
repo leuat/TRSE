@@ -983,11 +983,11 @@ void AsmMOS6502::OptimiseJumps()
             QString l1 = getNextLine(i,j);
             QString lbl0 = getToken(l0, 1);
             //qDebug() << lbl0 << " vs " << l1 ;
-            if (l1.toLower().contains(lbl0.toLower()))
+            if (l1.toLower().contains(lbl0.toLower()) && !l1.toLower().contains("keep"))
             {
-                //qDebug() << "Removing:";
-                //qDebug() << " " + l0;
-                //qDebug() << " " + l1;
+//                qDebug() << "Removing:";
+ //               qDebug() << " " + l0;
+  //              qDebug() << " " + l1;
                 m_removeLines.append(i);
                 m_removeLines.append(j);
                 i++;

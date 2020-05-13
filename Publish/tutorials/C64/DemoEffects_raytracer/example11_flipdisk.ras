@@ -59,7 +59,7 @@ begin
 	x:=xPos;
 	// Setup sprites, 4 in total
 	for i:=0 to 4 do begin
-		setspriteloc(i,($5000-bank_size)/64+i,1); // ($5000-1000)/64 = $40
+		setspriteloc(i,(($1000)/64)+i,1); // ($5000-1000)/64 = $40
 		spritepos(x*2,0,i);
 		sprite_color[i]:=light_blue;	
 		x:=x+24;

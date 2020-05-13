@@ -28,7 +28,7 @@ var
 	
 ----------------------------------------------------------------------------------------------*/
 
-	v1, v2 : byte;
+	v1, v2, v3 : byte;
 
 @include "common.ras"
 
@@ -227,6 +227,13 @@ begin
 	text := "26"; if (v1=5 or v2>=4) then begin PASS(); end else begin FFAIL(); end;
 end;
 
+// AND
+procedure Triple1();
+begin
+	v1 := 5; v2 := 3; v3:=30;
+ 	text := "27"; if (v1=5 and (v2>=4 or v3=30)) then begin PASS(); end else begin FFAIL(); end;
+end;
+
 
 
 //--------------------------------------------------------------------------------------------
@@ -271,7 +278,11 @@ begin
 	// Not Equal to conditional tests
 	NEQ1_NotEqualTo_True();
 	NEQ2_NotEqualTo_False();
+	
+	// Advanced stuff
 	DoubleAnd();
 	DoubleOr();
+	Triple1();	
+
 	loop();
 end.

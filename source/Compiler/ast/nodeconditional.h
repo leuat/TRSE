@@ -38,10 +38,10 @@ public:
 //    QVector<QSharedPointer<Node>> m_a, m_b;
 
     QSharedPointer<Node> m_block = nullptr;
-    QSharedPointer<Node> m_elseBlock = nullptr;
     QSharedPointer<Node> m_binaryClause = nullptr;
 /*    QVector<Token> m_compares;
     QVector<Token> m_conditionals;*/
+    QSharedPointer<Node> m_elseBlock = nullptr;
     bool m_isWhileLoop;
 
 

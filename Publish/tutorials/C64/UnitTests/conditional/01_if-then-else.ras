@@ -23,7 +23,8 @@ var
 	
 ----------------------------------------------------------------------------------------------*/
 
-	v1, v2 : byte;
+	v1, v2, v3, v4  : byte;
+	i1,i2,i3,i4 : integer;
 
 @include "common.ras"
 
@@ -207,6 +208,127 @@ begin
 end;
 
 
+procedure Advanced1();
+begin
+	v1 := 5; v2 := 5;
+	v3:=5; v4:=4;
+	
+	text := "  ADV 1:";if (v1 >= v2 and v3<>5) then begin FAIL(); end else begin PASS(); end;
+end;
+
+
+procedure Advanced2();
+begin
+	v1 := 5; v2 := 5;
+	v3:=5; v4:=4;
+	text := "  ADV 2:"; if (v1 = v2 and (v3<>5 or v4=4)) then begin PASS(); end else begin FAIL(); end;
+end;
+
+
+
+
+
+// when v1 is greater than v2
+procedure IGT1_GreaterThan_True();
+begin
+	i1 := 1000; i2 := 500;
+	text := "   GI 1:"; if i1 > i2 then begin PASS(); end else begin FAIL(); end;
+end;
+
+// when v1 is not greater than v2
+procedure IGT2_GreaterThan_False();
+begin
+	i1 := 100; i2 := 500;
+	text := "   GI 2:"; if i1 > i2 then begin FAIL(); end else begin PASS(); end;
+end;
+
+// when v1 is equal to v2
+procedure IGT3_GreaterThan_False();
+begin
+	i1 := 500; i2 := 500;
+	text := "   GI 3:"; if i1 > i2 then begin FAIL(); end else begin PASS(); end;
+end;
+
+// when v1 is zero and v2 is 255
+procedure IGT4_GreaterThan_False();
+begin
+	i1 := 0; i2 := 2550;
+	text := "   GI 4:"; if i1 > i2 then begin FAIL(); end else begin PASS(); end;
+end;
+
+// when v1 is 255 and v2 is 0
+procedure IGT5_GreaterThan_True();
+begin
+	i1 := 2550; i2 := 0;
+	text := "   GI 5:"; if i1 > i2 then begin PASS(); end else begin FAIL(); end;
+end;
+
+
+// when v1 is greater than v2
+procedure IGTE1_GreaterEqual_True();
+begin
+	i1 := 510; i2 := 500;
+	text := "  GIE 1:"; if i1 >= i2 then begin PASS(); end else begin FAIL(); end;
+end;
+
+// when v1 is not greater than v2
+procedure IGTE2_GreaterThan_False();
+begin
+	i1 := 490; i2 := 500;
+	text := "  GIE 2:"; if i1 >= i2 then begin FAIL(); end else begin PASS(); end;
+end;
+
+// when v1 is equal to v2
+procedure IGTE3_GreaterThan_True();
+begin
+	i1 := 500; i2 := 500;
+	text := "  GIE 3:"; if i1 >= i2 then begin PASS(); end else begin FAIL(); end;
+end;
+
+// when v1 is zero and v2 is 255
+procedure IGTE4_GreaterThan_False();
+begin
+	i1 := 0; i2 := 2550;
+	text := "  GIE 4:"; if i1 >= i2 then begin FAIL(); end else begin PASS(); end;
+end;
+
+// when v1 is 255 and v2 is 0
+procedure IGTE5_GreaterThan_True();
+begin
+	i1 := 2550; i2 := 513;
+	text := "  GIE 5:"; if i1 >= i2 then begin PASS(); end else begin FAIL(); end;
+end;
+
+
+// when v1 is 255 and v2 is 0
+procedure AdvancedI1();
+begin
+	i1 := 5000; i2 := 4000; i3:=3000;
+	text := "   AI 1:"; if (i1 >= i2 and i3=3000) then begin PASS(); end else begin FAIL(); end;
+end;
+
+
+// when v1 is 255 and v2 is 0
+procedure AdvancedI2();
+begin
+	i1 := 5000; i2 := 5000; i3:=3000;
+	text := "   AI 2:"; if (i1 > i2 or i3=5000) then begin FAIL(); end else begin PASS(); end;
+end;
+
+// when v1 is 255 and v2 is 0
+procedure AdvancedI3();
+begin
+	i1 := 5000; i2 := 5000; i3:=3000;
+	text := "   AI 3:"; if (i1 = i2 or (i3=3000 and i1>=5000)) then begin PASS(); end else begin FAIL(); end;
+end;
+
+
+// when v1 is 255 and v2 is 0
+procedure BranchSize1();
+begin
+	text := "   B1:"; if (7 > 5)  then begin PASS(); nop(120);end else begin FAIL(); end;
+end;
+
 
 
 //--------------------------------------------------------------------------------------------
@@ -251,6 +373,33 @@ begin
 	// Not Equal to conditional tests
 	NEQ1_NotEqualTo_True();
 	NEQ2_NotEqualTo_False();
+
+	Advanced1();
+	Advanced2();
+
+
+
+
+	// Greater than conditional tests 
+	IGT1_GreaterThan_True();
+	IGT2_GreaterThan_False();
+	IGT3_GreaterThan_False();
+	IGT4_GreaterThan_False();
+	IGT5_GreaterThan_True();
+	
+	// Greater than or equal to conditional tests
+	IGTE1_GreaterEqual_True();
+	IGTE2_GreaterThan_False();
+	IGTE3_GreaterThan_True();
+	IGTE4_GreaterThan_False();
+	IGTE5_GreaterThan_True();
+
+	AdvancedI1();
+	AdvancedI2();
+	AdvancedI3();
+
+	BranchSize1();
+
 
 	loop();
 end.

@@ -42,4 +42,9 @@ bool NodeBinaryClause::cannotBeSimplified(Assembler *as) {
             );
 }
 
+bool NodeBinaryClause::isWord(Assembler *as)
+{
+    return m_left->isWord(as) | m_right->isWord(as);
+}
+
 

@@ -457,7 +457,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeProcedureDecl> node)
 
 
 }
-
+/*
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeConditional> node)
 {
     QString labelStartOverAgain = as->NewLabel("while");
@@ -511,7 +511,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeConditional> node)
 
 
 }
-
+*/
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeForLoop> node)
 {
     node->DispatchConstructor(as);
@@ -1110,7 +1110,7 @@ void ASTDispatcher68000::IncBin(Assembler* as, QSharedPointer<NodeVarDecl> node)
     }
 }
 
-void ASTDispatcher68000::BuildSimple(QSharedPointer<Node> node, QString lblFailed)
+void ASTDispatcher68000::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
 {
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());

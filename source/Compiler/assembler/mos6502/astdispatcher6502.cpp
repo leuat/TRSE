@@ -945,6 +945,11 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeVarType> node)
     node->DispatchConstructor(as);
 
 }
+
+void ASTDispatcher6502::dispatch(QSharedPointer<NodeBinaryClause> node)
+{
+
+}
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeAsm>node)
 {
     node->DispatchConstructor(as);
@@ -1407,7 +1412,7 @@ void ASTDispatcher6502::PrintCompare(QSharedPointer<Node> node, QString lblSucce
         as->Asm("bcs " + lblFailed);
 
 }
-
+/*
 void ASTDispatcher6502::BinaryClause(QSharedPointer<Node> node)
 {
 
@@ -1442,7 +1447,7 @@ void ASTDispatcher6502::BinaryClause(QSharedPointer<Node> node)
     //  as->PopLabel("binary_clause_temp_lab");
 
 }
-
+*/
 void ASTDispatcher6502::BuildToCmp(QSharedPointer<Node> node)
 {
     QString b="";
@@ -1477,8 +1482,13 @@ void ASTDispatcher6502::BuildToCmp(QSharedPointer<Node> node)
 
 }
 
-void ASTDispatcher6502::BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed)
+void ASTDispatcher6502::BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed, bool page)
 {
+
+    if (node->isWord(as)) {
+        BinaryClauseInteger(node,lblSuccess, lblFailed, page);
+        return;
+    }
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());
     //    as->Asm("pha"); // Push that baby
@@ -1491,7 +1501,7 @@ void ASTDispatcher6502::BuildSimple(QSharedPointer<Node> node, QString lblSucces
 
 }
 
-void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node)
+void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node,QString lblSuccess, QString lblFailed, bool page)
 {
 
     as->Comment("Binary clause INTEGER: " + node->m_op.getType());
@@ -1507,9 +1517,12 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node)
     if (vara==nullptr)
         ErrorHandler::e.Error("Integer comparison: only pure integer variable is supported");
 
-    QString lbl1 = as->NewLabel("binaryclauseinteger_success");
-    QString lbl2 = as->NewLabel("binaryclauseinteger_fail"); // failed
-    QString lbl3 = as->NewLabel("binaryclauseintegerfinished"); // failed
+    QString lbl2 = lblFailed;
+    QString lbl1 = lblSuccess;
+
+//    QString lbl1 = as->NewLabel("binaryclauseinteger_success");
+//    QString lbl2 = as->NewLabel("binaryclauseinteger_fail"); // failed
+//    QString lbl3 = as->NewLabel("binaryclauseintegerfinished"); // failed
 
     QString lo = "";
     QString hi = "";
@@ -1596,7 +1609,11 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node)
             as->Asm("bne " + lbl2);
             as->Asm("jmp " + lbl1);
         }
-        as->Label(lbl1); // ok
+        if (node->m_op.m_type==TokenType::NOTEQUALS){
+            ErrorHandler::e.Error("Comparison of integer NOTEQUALS<> not implemented!", node->m_op.m_lineNumber);
+
+        }
+/*        as->Label(lbl1); // ok
         as->Asm("lda #1");
         as->Asm("jmp " + lbl3);
         as->Label(lbl2); // failed
@@ -1604,11 +1621,11 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node)
 
         as->Label(lbl3); // DONE
 
-
+*/
         // Now all is ok
     }
     else {
-        ErrorHandler::e.Error("Comparison of integer only works with number or variable");
+        ErrorHandler::e.Error("Comparison of integer only works with number or variable",node->m_op.m_lineNumber);
     }
 
 
@@ -1630,9 +1647,9 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node)
         as->Asm("lda #0 ; failed state");
         as->Label(lblFinished);
     */
-    as->PopLabel("binaryclauseinteger_success");
-    as->PopLabel("binaryclauseinteger_fail");
-    as->PopLabel("binaryclauseintegerfinished");
+ //   as->PopLabel("binaryclauseinteger_success");
+ //   as->PopLabel("binaryclauseinteger_fail");
+ //   as->PopLabel("binaryclauseintegerfinished");
     // as->PopLabel("binary_clause_temp_var");
     //  as->PopLabel("binary_clause_temp_lab");
 }
@@ -1704,6 +1721,7 @@ bool ASTDispatcher6502::IsSimpleAndOr(QSharedPointer<NodeBinaryClause> node, QSt
  *
  */
 
+/*
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeBinaryClause> node)
 {
     node->DispatchConstructor(as);
@@ -1747,32 +1765,6 @@ void ASTDispatcher6502::LogicalClause(QSharedPointer<Node> node)
     // Test for optimization : if left and right are pure
 
 
-/*
-    if (node->m_op.m_type==TokenType::OR) {
-        node->m_left->Accept(this);
-        QString tmpVar = as->StoreInTempVar("logical_class_temp");
-        node->m_right->Accept(this);
-        if (node->m_op.m_type==TokenType::AND)
-            as->Asm("and " + tmpVar);
-        if (node->m_op.m_type==TokenType::OR)
-            as->Asm("ora " + tmpVar);
-
-        as->PopTempVar();
-        return;
-    }
-    if (node->m_op.m_type==TokenType::AND) {
-        node->m_left->m_ignoreSuccess=true;
-        node->m_right->m_ignoreSuccess=true;
-        as->m_lblFailed = as->NewLabel("logicalclausefail");
-        node->m_left->Accept(this);
-        node->m_right->Accept(this);
-        as->Label(as->m_lblFailed);
-        as->PopLabel("logicalclausefail");
-        return;
-    }
-*/
-
-
     node->m_left->Accept(this);
     QString tmpVar = as->StoreInTempVar("logical_class_temp");
     node->m_right->Accept(this);
@@ -1790,7 +1782,7 @@ void ASTDispatcher6502::LogicalClause(QSharedPointer<Node> node)
     // Done comparing!
 }
 
-
+*/
 void ASTDispatcher6502::Compare(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive) {
 
 //    if (!var->isWord(as))
@@ -2043,6 +2035,9 @@ void ASTDispatcher6502::LargeLoop(QSharedPointer<NodeForLoop> node, QSharedPoint
  *
 */
 
+
+
+/*
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeConditional> node)
 {
     node->DispatchConstructor(as);
@@ -2105,7 +2100,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeConditional> node)
         QString failedLabel = labelElseDone;
         if (node->m_elseBlock!=nullptr)
             failedLabel = labelElse;
-        BuildSimple(bn,  lblstartTrueBlock,failedLabel);
+        BuildSimple(bn,  lblstartTrueBlock,failedLabel,node->m_forcePage==1 );
     }
     // Start main block
     as->Label(lblstartTrueBlock); // This means skip inside
@@ -2139,6 +2134,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeConditional> node)
 
 }
 
+*/
 /*
  *
  *
@@ -2175,7 +2171,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeForLoop> node)
 
     as->Label(as->NewLabel("for"));
 
-    bool isSmall = node->verifyBlockBranchSize(as, node->m_block);
+    bool isSmall = node->verifyBlockBranchSize(as, node->m_block,this);
 
     if (node->m_forcePage == 1)
         isSmall = false;
@@ -2915,7 +2911,8 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeRepeatUntil> node)
 
     bool isSimplified = false;
     bool isOKBranchSize = true;
-    if (node->verifyBlockBranchSize(as, node->m_block)) {
+
+    if (node->verifyBlockBranchSize(as, node->m_block,this)) {
         isSimplified = !node->m_clause->cannotBeSimplified(as);
     }
     else isOKBranchSize = false;
@@ -2945,7 +2942,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeRepeatUntil> node)
     }
     else {
         // Simplified version <80 instructions & just one clause
-        BuildSimple(node->m_clause,  lblDone,lbl);
+        BuildSimple(node->m_clause,  lblDone,lbl, node->m_forcePage==1);
     }
     // Start main block
 

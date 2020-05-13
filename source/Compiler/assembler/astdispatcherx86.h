@@ -46,7 +46,7 @@ public:
     void dispatch(QSharedPointer<NodeBinaryClause> node) override;
     void dispatch(QSharedPointer<NodeProcedure> node) override;
     void dispatch(QSharedPointer<NodeProcedureDecl> node) override;
-    void dispatch(QSharedPointer<NodeConditional> node) override;
+ //   void dispatch(QSharedPointer<NodeConditional> node) override;
     void dispatch(QSharedPointer<NodeForLoop> node) override;
     void dispatch(QSharedPointer<NodeVar> node) override;
     void dispatch(QSharedPointer<Node> node) override;
@@ -76,6 +76,9 @@ public:
     QString m_cmp = "cmp ";
     QString m_jne = "jne ";
 
+    QString getJmp(bool isOffPage) override {
+        return "jmp";
+    }
 
     virtual QString getAx(QSharedPointer<Node> n) {
         QString a = m_regs[m_lvl];
@@ -135,7 +138,7 @@ public:
 
     void IncBin(Assembler* as, QSharedPointer<NodeVarDecl> node);
 
-    virtual void BuildSimple(QSharedPointer<Node> node, QString lblFailed, bool offPage=false);
+    virtual void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page);
 
     virtual void BuildToCmp(QSharedPointer<Node> node);
 

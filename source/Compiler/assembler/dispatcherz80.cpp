@@ -68,87 +68,6 @@ void ASTdispatcherZ80::AssignString(QSharedPointer<NodeAssign> node, bool isPoin
 
 }
 
-void ASTdispatcherZ80::dispatch(QSharedPointer<NodeConditional> node)
-{
-    QString labelStartOverAgain = as->NewLabel("while");
-    QString lblstartTrueBlock = as->NewLabel("ConditionalTrueBlock");
-
-    QString labelElse = as->NewLabel("elseblock");
-    QString labelElseDone = as->NewLabel("elsedoneblock");
-    // QString labelFailed = as->NewLabel("conditionalfailed");
-
-    //    qDebug() << "HMM";
-
-    if (node->m_isWhileLoop)
-        as->Label(labelStartOverAgain);
-
-    // Test all binary clauses:
-    QSharedPointer<NodeBinaryClause> bn = qSharedPointerDynamicCast<NodeBinaryClause>(node->m_binaryClause);
-
-
-    QString failedLabel = labelElseDone;
-    if (node->m_elseBlock!=nullptr)
-        failedLabel = labelElse;
-
-    // Handle AND & OR
-    if (bn->isCompoundClause()) {
-        HandleCompoundBinaryClause(bn, failedLabel, lblstartTrueBlock,node->m_forcePage==1);
-    }
-    else
-        BuildSimple(bn,  failedLabel,node->m_forcePage==1);
-
-    // Start main block
-    as->Label(lblstartTrueBlock); // This means skip inside
-
-    node->m_block->Accept(this);
-
-    if (node->m_elseBlock!=nullptr)
-        as->Asm(m_jmp + labelElseDone);
-
-    // If while loop, return to beginning of conditionals
-    if (node->m_isWhileLoop)
-        as->Asm(m_jmp + labelStartOverAgain);
-
-    // An else block?
-    if (node->m_elseBlock!=nullptr) {
-        as->Label(labelElse);
-        node->m_elseBlock->Accept(this);
-        //        m_elseBlock->Build(as);
-
-    }
-    as->Label(labelElseDone); // Jump here if not
-
-    as->PopLabel("while");
-    as->PopLabel("ConditionalTrueBlock");
-    as->PopLabel("elseblock");
-    as->PopLabel("elsedoneblock");
-    //    as->PopLabel("conditionalfailed");
-
-}
-
-void ASTdispatcherZ80::HandleCompoundBinaryClause(QSharedPointer<Node> node, QString lblFailed, QString lblSuccess, bool offpage)
-{
-    if (!node->m_left->isCompoundClause() && !node->m_left->isCompoundClause()) {
-        // We are now guaranteed that we have either a single AND or single OR
-        // Both MUST be true
-        if (node->m_op.m_type == TokenType::AND) {
-            BuildSimple(node->m_left,  lblFailed, offpage);
-            BuildSimple(node->m_right,  lblFailed,offpage);
-        }
-        if (node->m_op.m_type == TokenType::OR) {
-            QString lblLocalFailed = as->NewLabel("localfailed");
-            BuildSimple(node->m_left,  lblLocalFailed,offpage);
-            // Success! please continue!
-            as->Asm("jr "+lblSuccess);
-            as->Label(lblLocalFailed +" ; second chance");
-            BuildSimple(node->m_right,  lblFailed,offpage);
-            as->PopLabel("localfailed");
-        }
-
-        return;
-    }
-    ErrorHandler::e.Error("Compiler limitation: generic and / or not implemented yet.", node->m_op.m_lineNumber);
-}
 
 
 
@@ -817,10 +736,10 @@ void ASTdispatcherZ80::StoreAddress(QSharedPointer<Node> n)
 
 }
 
-void ASTdispatcherZ80::BuildSimple(QSharedPointer<Node> node, QString lblFailed, bool offPage)
+void ASTdispatcherZ80::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool offPage)
 {
 
-    as->Comment("Binary clause Simplified: " + node->m_op.getType());
+    as->Comment("Binary clause core: " + node->m_op.getType());
     //    as->Asm("pha"); // Push that baby
 
     if (node->m_op.m_type==TokenType::LESSEQUAL) {

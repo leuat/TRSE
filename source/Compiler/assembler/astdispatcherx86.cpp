@@ -380,7 +380,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeProcedureDecl> node)
 
 
 }
-
+/*
 void ASTdispatcherX86::dispatch(QSharedPointer<NodeConditional> node)
 {
     QString labelStartOverAgain = as->NewLabel("while");
@@ -403,7 +403,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeConditional> node)
         if (node->m_elseBlock!=nullptr)
             failedLabel = labelElse;
 
-    BuildSimple(bn,  failedLabel,node->m_forcePage==1);
+    BuildSimple(bn,  lblstartTrueBlock,  failedLabel,node->m_forcePage==1);
 
     // Start main block
     as->Label(lblstartTrueBlock); // This means skip inside
@@ -433,7 +433,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeConditional> node)
 //    as->PopLabel("conditionalfailed");
 
 }
-
+*/
 void ASTdispatcherX86::dispatch(QSharedPointer<NodeForLoop> node)
 {
     node->DispatchConstructor(as);
@@ -720,7 +720,8 @@ void ASTdispatcherX86::IncBin(Assembler *as, QSharedPointer<NodeVarDecl> node) {
     }
 }
 
-void ASTdispatcherX86::BuildSimple(QSharedPointer<Node> node, QString lblFailed, bool offPage)
+
+void ASTdispatcherX86::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
 {
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());

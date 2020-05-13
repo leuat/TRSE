@@ -45,7 +45,7 @@ public:
     void dispatch(QSharedPointer<NodeBinaryClause> node) override;
     void dispatch(QSharedPointer<NodeProcedure> node) override;
     void dispatch(QSharedPointer<NodeProcedureDecl> node) override;
-    void dispatch(QSharedPointer<NodeConditional> node) override;
+   // void dispatch(QSharedPointer<NodeConditional> node) override;
     void dispatch(QSharedPointer<NodeForLoop> node) override;
     void dispatch(QSharedPointer<NodeVar> node) override;
     void dispatch(QSharedPointer<Node> node) override;
@@ -60,6 +60,9 @@ public:
     QString getValue(QSharedPointer<Node> n) override;
 
 
+    QString getJmp(bool isOffPage) override {
+        return "jmp";
+    }
 
 
 
@@ -108,15 +111,16 @@ public:
      * NodeBinaryClause functions
      *
     */
-    void BinaryClause(QSharedPointer<Node> node);
+//    void BinaryClause(QSharedPointer<Node> node);
 
     void BuildToCmp(QSharedPointer<Node> node);
 
-    void BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);
+//    void BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);
+    void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
-    void BinaryClauseInteger(QSharedPointer<Node> node);
+    void BinaryClauseInteger(QSharedPointer<Node> node,QString lblSuccess, QString lblFailed, bool page);
 
-    void LogicalClause(QSharedPointer<Node> node);
+  //  void LogicalClause(QSharedPointer<Node> node);
 
 
     /*

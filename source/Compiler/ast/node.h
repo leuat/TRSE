@@ -155,7 +155,7 @@ public:
     virtual bool isMinusOne() { return false; }
     virtual bool isOne() { return false; }
 
-    bool verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlock);
+    bool verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlock, AbstractASTDispatcher* disp);
     virtual TokenType::Type VerifyAndGetNumericType();
 
 

@@ -37,3 +37,7 @@ pascal_settings_use_local_variables = 1
 exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/UnitTests/
+open_files = ,conditional/01_if-then-else.asm, conditional/01_if-then-else.ras
+current_file = conditional/01_if-then-else.ras
+exomizer_toggle = 0

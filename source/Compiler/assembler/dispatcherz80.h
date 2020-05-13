@@ -70,7 +70,7 @@ public:
        return hl;
     }
 
-    void BuildSimple(QSharedPointer<Node> node, QString lblFailed, bool offPage=false);
+    void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
     void BuildToCmp(QSharedPointer<Node> node) override;
 
@@ -81,9 +81,14 @@ public:
 
 
     void AssignString(QSharedPointer<NodeAssign> node, bool isPointer);
+    QString getJmp(bool isOffPage) override {
+        if (!isOffPage)
+            return "jr";
+        return "jp";
+    }
 
 
-    void dispatch(QSharedPointer<NodeConditional> node) override;
+//    void dispatch(QSharedPointer<NodeConditional> node) override;
     void HandleCompoundBinaryClause(QSharedPointer<Node> node, QString lblFailed,QString lblSuccess, bool forcePage);
 
 };

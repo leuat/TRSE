@@ -66,7 +66,7 @@ public:
     virtual void dispatch(QSharedPointer<NodeVarType> node) = 0;
     virtual void dispatch(QSharedPointer<NodeProcedure> node) = 0;
     virtual void dispatch(QSharedPointer<NodeProcedureDecl> node) = 0;
-    virtual void dispatch(QSharedPointer<NodeConditional> node) = 0;
+//    virtual void dispatch(QSharedPointer<NodeConditional> node) = 0;
     virtual void dispatch(QSharedPointer<NodeForLoop> node) = 0;
     virtual void dispatch(QSharedPointer<NodeBuiltinMethod> node) = 0;
     virtual void dispatch(QSharedPointer<NodeAsm> node) = 0;
@@ -85,6 +85,18 @@ public:
     virtual void LoadVariable(QSharedPointer<NodeNumber> n) = 0;
     virtual void LoadAddress(QSharedPointer<Node> node) {}
     virtual void LoadAddress(QSharedPointer<Node> node,QString reg) {}
+
+    virtual QString getJmp(bool isOffPage) = 0;
+
+    void virtual dispatch(QSharedPointer<NodeConditional> node);
+
+    void HandleCompoundBinaryClause(QSharedPointer<Node> node, QString lblFailed, QString lblSuccess, bool offpage);
+
+    virtual void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)  = 0;
+
+
+
+
 public:
 signals:
     void EmitTick(QString val);

@@ -1,68 +1,68 @@
 titleScrn : IncBin("compressed//titleScrn_c.bin", $4800);
-gameChars : IncBin("compressed//gameChars_c.bin", $4879);
-titleChars : IncBin("compressed//titleChars_c.bin", $49e6);
-scr00 : IncBin("compressed//scr00_c.bin", $4b42);
-gameoverChars : IncBin("compressed//gameoverChars_c.bin", $4bac);
-gamewonChars : IncBin("compressed//gamewonChars_c.bin", $4d36);
-scrgameover : IncBin("compressed//scrgameover_c.bin", $4ecf);
-scrgamewon : IncBin("compressed//scrgamewon_c.bin", $4f5b);
-titlestory : IncBin("compressed//titlestory_c.bin", $4fef);
-titlecast : IncBin("compressed//titlecast_c.bin", $50a3);
-scrhowto : IncBin("compressed//scrhowto_c.bin", $5137);
-titlestory2 : IncBin("compressed//titlestory2_c.bin", $51df);
-failchars : IncBin("compressed//failchars_c.bin", $5283);
-failscr : IncBin("compressed//failscr_c.bin", $5421);
-scrheader : IncBin("compressed//scrheader_c.bin", $54ae);
-scr01 : IncBin("compressed//scr01_c.bin", $54de);
-scr02 : IncBin("compressed//scr02_c.bin", $553c);
-scr03 : IncBin("compressed//scr03_c.bin", $55a0);
-scr04 : IncBin("compressed//scr04_c.bin", $5615);
-scr05 : IncBin("compressed//scr05_c.bin", $5680);
-scr06 : IncBin("compressed//scr06_c.bin", $56e5);
-scr07 : IncBin("compressed//scr07_c.bin", $574b);
-scr08 : IncBin("compressed//scr08_c.bin", $57ad);
-scr09 : IncBin("compressed//scr09_c.bin", $5832);
-scr10 : IncBin("compressed//scr10_c.bin", $5899);
-scr11 : IncBin("compressed//scr11_c.bin", $5906);
-scr12 : IncBin("compressed//scr12_c.bin", $5977);
-scr13 : IncBin("compressed//scr13_c.bin", $59e8);
-gamenextchars : IncBin("compressed//gamenextchars_c.bin", $5a4f);
-gamenextscr : IncBin("compressed//gamenextscr_c.bin", $5baa);
-lastscorescr : IncBin("compressed//lastscorescr_c.bin", $5c0f);
-creditschar : IncBin("compressed//creditschar_c.bin", $5c50);
-creditscr : IncBin("compressed//creditscr_c.bin", $5d26);
+gameChars : IncBin("compressed//gameChars_c.bin", $4877);
+titleChars : IncBin("compressed//titleChars_c.bin", $49e4);
+scr00 : IncBin("compressed//scr00_c.bin", $4b40);
+gameoverChars : IncBin("compressed//gameoverChars_c.bin", $4ba7);
+gamewonChars : IncBin("compressed//gamewonChars_c.bin", $4d31);
+scrgameover : IncBin("compressed//scrgameover_c.bin", $4ec8);
+scrgamewon : IncBin("compressed//scrgamewon_c.bin", $4f54);
+titlestory : IncBin("compressed//titlestory_c.bin", $4fe5);
+titlecast : IncBin("compressed//titlecast_c.bin", $5097);
+scrhowto : IncBin("compressed//scrhowto_c.bin", $512b);
+titlestory2 : IncBin("compressed//titlestory2_c.bin", $51d1);
+failchars : IncBin("compressed//failchars_c.bin", $5275);
+failscr : IncBin("compressed//failscr_c.bin", $5411);
+scrheader : IncBin("compressed//scrheader_c.bin", $549d);
+scr01 : IncBin("compressed//scr01_c.bin", $54cd);
+scr02 : IncBin("compressed//scr02_c.bin", $552a);
+scr03 : IncBin("compressed//scr03_c.bin", $558e);
+scr04 : IncBin("compressed//scr04_c.bin", $5603);
+scr05 : IncBin("compressed//scr05_c.bin", $566e);
+scr06 : IncBin("compressed//scr06_c.bin", $56d3);
+scr07 : IncBin("compressed//scr07_c.bin", $5739);
+scr08 : IncBin("compressed//scr08_c.bin", $579c);
+scr09 : IncBin("compressed//scr09_c.bin", $5820);
+scr10 : IncBin("compressed//scr10_c.bin", $5886);
+scr11 : IncBin("compressed//scr11_c.bin", $58f0);
+scr12 : IncBin("compressed//scr12_c.bin", $5960);
+scr13 : IncBin("compressed//scr13_c.bin", $59d2);
+gamenextchars : IncBin("compressed//gamenextchars_c.bin", $5a39);
+gamenextscr : IncBin("compressed//gamenextscr_c.bin", $5b93);
+lastscorescr : IncBin("compressed//lastscorescr_c.bin", $5bf6);
+creditschar : IncBin("compressed//creditschar_c.bin", $5c36);
+creditscr : IncBin("compressed//creditscr_c.bin", $5d0c);
 packedScreens : array [66] of byte = (
-	121, 72,
-	230, 73,
-	66, 75,
-	172, 75,
-	54, 77,
-	207, 78,
-	91, 79,
-	239, 79,
-	163, 80,
-	55, 81,
-	223, 81,
-	131, 82,
-	33, 84,
-	174, 84,
-	222, 84,
-	60, 85,
-	160, 85,
-	21, 86,
-	128, 86,
-	229, 86,
-	75, 87,
-	173, 87,
-	50, 88,
-	153, 88,
-	6, 89,
-	119, 89,
-	232, 89,
-	79, 90,
-	170, 91,
-	15, 92,
-	80, 92,
-	38, 93,
-	124, 93
+	119, 72,
+	228, 73,
+	64, 75,
+	167, 75,
+	49, 77,
+	200, 78,
+	84, 79,
+	229, 79,
+	151, 80,
+	43, 81,
+	209, 81,
+	117, 82,
+	17, 84,
+	157, 84,
+	205, 84,
+	42, 85,
+	142, 85,
+	3, 86,
+	110, 86,
+	211, 86,
+	57, 87,
+	156, 87,
+	32, 88,
+	134, 88,
+	240, 88,
+	96, 89,
+	210, 89,
+	57, 90,
+	147, 91,
+	246, 91,
+	54, 92,
+	12, 93,
+	98, 93
 );

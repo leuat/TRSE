@@ -47,7 +47,7 @@ public:
     void dispatch(QSharedPointer<NodeBinaryClause> node) override;
     void dispatch(QSharedPointer<NodeProcedure> node) override;
     void dispatch(QSharedPointer<NodeProcedureDecl> node) override;
-    void dispatch(QSharedPointer<NodeConditional> node) override;
+   // void dispatch(QSharedPointer<NodeConditional> node) override;
     void dispatch(QSharedPointer<NodeForLoop> node) override;
     void dispatch(QSharedPointer<NodeVar> node) override;
     void dispatch(QSharedPointer<Node> node) override;
@@ -69,6 +69,9 @@ public:
     void LoadVariable(QSharedPointer<Node> n) override;
     void LoadVariable(QSharedPointer<NodeNumber> n) override;
 
+    QString getJmp(bool isOffPage) override {
+        return "jmp";
+    }
 
     void TransformVariable(Assembler* as, QString op, QString n, QString val, QSharedPointer<Node> t);
     void TransformVariable(Assembler* as, QString op, QSharedPointer<NodeVar> n, QString val);
@@ -80,7 +83,8 @@ public:
     QString AssignVariable(QSharedPointer<NodeAssign> node);
     void IncBin(Assembler* as, QSharedPointer<NodeVarDecl> node);
 
-    void BuildSimple(QSharedPointer<Node> node, QString lblFailed);
+//    void BuildSimple(QSharedPointer<Node> node, QString lblFailed);
+    void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
     void BuildToCmp(QSharedPointer<Node> node);
 
