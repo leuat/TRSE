@@ -43,7 +43,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeConditional> node)
     // Build actualy binary clauseu
 
 
-    if (!node->verifyBlockBranchSize(as, node->m_block, this))
+    if (!node->verifyBlockBranchSize(as, node->m_block, node->m_elseBlock, this))
         offpage = true;
 
 
@@ -79,7 +79,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeConditional> node)
         as->Asm(getJmp(offpage)+" " + labelElseDone);
 
     // If while loop, return to beginning of conditionals
-    qDebug() << "IS OFFPAGE: " << getJmp(offpage) << offpage;
+//    qDebug() << "IS OFFPAGE: " << getJmp(offpage) << offpage;
     if (node->m_isWhileLoop)
         as->Asm(getJmp(offpage)+" " + labelStartOverAgain);
 

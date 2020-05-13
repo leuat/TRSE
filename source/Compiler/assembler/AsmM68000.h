@@ -24,10 +24,11 @@ public:
 
     void DeclareArray(QString name, QString type, int count, QStringList data, QString pos) override;
     void DeclareVariable(QString name, QString type, QString initval, QString position) override;
+    int CodeSizeEstimator(QStringList& lines) override {return 0;}
 
     void BinOP(TokenType::Type t) override;
 
-    void DeclareString(QString name, QStringList initval);
+    void DeclareString(QString name, QStringList initval) override;
 
     QString String(QStringList lst) override;
 

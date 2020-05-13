@@ -231,6 +231,10 @@ void AsmZ80::BinOP(TokenType::Type t)
 
 }
 
+int AsmZ80::CodeSizeEstimator(QStringList &lines) {
+    return 0;
+}
+
 void AsmZ80::Label(QString s)
 {
     Write(s+":",0);

@@ -29,6 +29,7 @@ public:
 
     void BinOP(TokenType::Type t) override;
 
+    int CodeSizeEstimator(QStringList& lines) override;
 
     void Label(QString s) override;
 

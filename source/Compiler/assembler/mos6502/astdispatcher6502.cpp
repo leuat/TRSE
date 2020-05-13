@@ -2171,7 +2171,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeForLoop> node)
 
     as->Label(as->NewLabel("for"));
 
-    bool isSmall = node->verifyBlockBranchSize(as, node->m_block,this);
+    bool isSmall = node->verifyBlockBranchSize(as, node->m_block,nullptr,this);
 
     if (node->m_forcePage == 1)
         isSmall = false;
@@ -2912,7 +2912,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeRepeatUntil> node)
     bool isSimplified = false;
     bool isOKBranchSize = true;
 
-    if (node->verifyBlockBranchSize(as, node->m_block,this)) {
+    if (node->verifyBlockBranchSize(as, node->m_block,nullptr,this)) {
         isSimplified = !node->m_clause->cannotBeSimplified(as);
     }
     else isOKBranchSize = false;

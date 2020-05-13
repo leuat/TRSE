@@ -96,7 +96,7 @@ void Node::RequireAddress(QSharedPointer<Node> n, QString name, int ln) {
     }
 }
 
-bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlock, AbstractASTDispatcher* dispatcher)
+bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,QSharedPointer<Node> testBlockB, AbstractASTDispatcher* dispatcher)
 {
     //QSharedPointer<Assembler> as =
 //    AsmMOS6502 tmpAsm;
@@ -106,13 +106,20 @@ bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlock, 
     auto app = QSharedPointer<Appendix>(new Appendix);
     auto keep = as->m_currentBlock;
     as->m_currentBlock = app;
-    testBlock->Accept(dispatcher);
-    int blockCount = app->m_source.count();
+    QStringList keepTemps = as->m_tempVars;
+    if (testBlockA!=nullptr)
+        testBlockA->Accept(dispatcher);
+    if (testBlockB!=nullptr)
+        testBlockB->Accept(dispatcher);
+    as->m_tempVars = keepTemps;
+
+//    int count = app->m_source.count();
+    int count = as->CodeSizeEstimator(app->m_source);
     as->m_currentBlock = keep;
 
-    qDebug() << "VERIFY BLOCK SIZE : "<<blockCount;
+//    qDebug() << "VERIFY BLOCK SIZE : "<<count;
 
-    return blockCount<60;
+    return count<127;
 
 }
 

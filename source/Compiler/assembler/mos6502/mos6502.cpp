@@ -606,6 +606,42 @@ void AsmMOS6502::DeclareInternalVariable(QString name)
 //    m_tempVars << (name + " dc.b 0");
 }
 
+int AsmMOS6502::CodeSizeEstimator(QStringList &lines) {
+    int size = 0;
+ //   qDebug() << "EST START";
+    for (auto&s : lines) {
+        if (!s.startsWith("\t")) // IS label
+            continue;
+        QString t = s.trimmed().simplified().split(";").first();
+        int add = 0;
+        if (t=="")
+            continue;
+        QStringList sp1 = t.split(" ");
+        if (sp1.count()==1) {
+            add=1;
+        }
+        if (sp1.count()>=2) {
+            QString p = sp1[1];
+            QStringList ps = p.split(",");
+            p = ps[0]; // pick first one, ignore ",x" etc
+            if (p.startsWith("#")) { add=2; }
+            else add=3;
+//            else size+=3;
+/*            p = p.remove("$");
+            bool conversionOk = false;
+            int value = p.toInt(&conversionOk, 16);
+            if (conversionOk)*/
+
+        }
+//        qDebug() << t << add;
+        size+=add;
+
+    }
+//    if (size>100)
+//        qDebug() << "********************** EST SIZE "<< size;
+    return size;
+}
+
 QString AsmMOS6502::StoreInTempVar(QString name, QString type)
 {
     if (m_zpStack.count()<m_tempZeroPointers.count()) {

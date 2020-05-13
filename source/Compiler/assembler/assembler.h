@@ -195,6 +195,7 @@ public:
     QString ihi = "_i_hi";
 
 
+
     int m_zbyte = 0x80;
 
     void StartMemoryBlock(QString pos);
@@ -230,6 +231,8 @@ public:
     void PopBlock(int ln);
 
     virtual void DeclareInternalVariable(QString name) {}
+
+    virtual int CodeSizeEstimator(QStringList& lines) = 0;
 
 
     virtual void InitZeroPointers(QStringList list1, QStringList list2, QStringList list3) {

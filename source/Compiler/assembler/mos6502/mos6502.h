@@ -110,6 +110,7 @@ public:
     QString GetOrg(int pos);
     void DeclareInternalVariable(QString name) override;
 
+    int CodeSizeEstimator(QStringList& lines) override;
 
     QString StoreInTempVar(QString name, QString type="byte") override;
 
