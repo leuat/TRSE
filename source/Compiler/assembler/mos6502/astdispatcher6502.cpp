@@ -751,64 +751,9 @@ void ASTDispatcher6502::dispatch(QSharedPointer<Node> node)
 
 
 
-void ASTDispatcher6502::dispatch(QSharedPointer<NodeProcedure> node)
-{
-    node->DispatchConstructor(as);
-//    as->PushCounter();
-//    int ln = node->m_op.m_lineNumber;
-    if (node->m_parameters.count()!=node->m_procedure->m_paramDecl.count())
-        ErrorHandler::e.Error("Procedure '" + node->m_procedure->m_procName+"' requires "
-                              + QString::number(node->m_procedure->m_paramDecl.count()) +" parameters, not "
-                              + QString::number(node->m_parameters.count()) + ".", node->m_op.m_lineNumber);
-
-    if (node->m_procedure->m_isInline) {
-        InlineProcedure(node);
-        return;
-    }
 
 
-    for (int i=0; i<node->m_parameters.count();i++) {
-        // Assign all variables
-        QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(node->m_procedure->m_paramDecl[i]);
-        QSharedPointer<NodeAssign>na = QSharedPointer<NodeAssign>(new NodeAssign(vd->m_varNode, node->m_parameters[i]->m_op, node->m_parameters[i]));
-        na->Accept(this);
-        //na->s_uniqueSymbols[na] = na;// mark for deletion
- /*       LoadVariable(node->m_parameters[i]);
-        as->Asm("pha");
-        if (node->m_parameters[i]->isWord(as)) {
-            as->Asm("tya");
-            as->Asm("pha");
-        }
-//        m_parameters.push(ProcedureParameter(node->m_parameters[i].)
-//        na->Build(as);*/
-    }
-
-    as->Asm("jsr " + node->m_procedure->m_procName);
-  //  qDebug() << ln;
-//    as->PopCounter(ln);
-
-}
-
-void ASTDispatcher6502::InlineProcedure(QSharedPointer<NodeProcedure> p)
-{
-//    as->Comment("Inline procedure : "+p->m_procedure->m_procName);
-    m_inlineParameters.clear();
-    int cur = 0;
-    for (auto v : p->m_procedure->m_paramDecl) {
-        QSharedPointer<NodeVarDecl> nv = qSharedPointerDynamicCast<NodeVarDecl>(v);
-        QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(nv->m_varNode);
-    //    qDebug() << "Preparing inline : " <<var->value << cur;
-        m_inlineParameters[var->value] = p->m_parameters[cur++];
-     }
-    qSharedPointerDynamicCast<NodeBlock>(p->m_procedure->m_block)->m_ignoreDeclarations = true;
-//    qDebug() << "Before Inline Proc" <<m_inlineParameters.keys();
-    p->m_procedure->m_block->Accept(this);
-  //  qDebug() << "Done Inline Proc";
-    m_inlineParameters.clear();
-
-}
-
-
+/*
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeProcedureDecl> node)
 {
 
@@ -919,26 +864,8 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeProcedureDecl> node)
   //  as->PopCounter(ln);
 }
 
+*/
 
-
-void ASTDispatcher6502::dispatch(QSharedPointer<NodeProgram> node)
-{
-    node->DispatchConstructor(as);
-//    as->EndMemoryBlock();
-
-    NodeBuiltinMethod::m_isInitialized.clear();
-    as->Program(node->m_name, node->m_param);
-    for (QString s: node->m_initJumps)
-        as->Asm(s);
-  //  as->m_source << node->m_initJumps;
-//    qDebug() << "INIT JUMPS " <<node->m_initJumps;
-//    as->Asm(node->m_initJumps)
-    node->m_NodeBlock->m_isMainBlock = true;
-    node->m_NodeBlock->Accept(this);
-
-//    qDebug() << as->m_currentBlock;
-    as->EndProgram();
-}
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeVarType> node)
 {
@@ -949,18 +876,6 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeVarType> node)
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeBinaryClause> node)
 {
 
-}
-void ASTDispatcher6502::dispatch(QSharedPointer<NodeAsm>node)
-{
-    node->DispatchConstructor(as);
-
-    QStringList txt = node->m_asm.split("\n");
-    as->Comment("");
-    as->Comment("****** Inline assembler section");
-    for (QString t: txt) {
-        as->Write(t,0);
-    }
-    as->Asm("");
 }
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeString> node)
@@ -997,16 +912,16 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeUnaryOp> node)
 
 }
 
-void ASTDispatcher6502::dispatch(QSharedPointer<NodeCompound> node)
+
+void ASTDispatcher6502::dispatch(QSharedPointer<NodeVarDecl> node)
 {
-    node->DispatchConstructor(as);
+    AbstractASTDispatcher::dispatch(node);
+    QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
+    if (t->m_op.m_type==TokenType::INCSID || t->m_op.m_type==TokenType::INCNSF) {
+        IncSid(node);
+    }
 
-    as->BeginBlock();
-    for (QSharedPointer<Node> n: node->children)
-        n->Accept(this);
 
-
-    as->EndBlock();
 }
 
 
@@ -1113,121 +1028,6 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeBlock> node)
  * */
 
 
-void ASTDispatcher6502::dispatch(QSharedPointer<NodeVarDecl> node)
-{
-    node->DispatchConstructor(as);
-    int ret = node->MaintainBlocks(as);
-
-    if (ret==3) node->m_curMemoryBlock = nullptr;
-//    qDebug() << "NodeVarDecl new memory block "  << ret;
-    if (node->m_curMemoryBlock!=nullptr)
-  //      qDebug() << node->m_curMemoryBlock->m_start;
-    if (as->m_currentBlock!=nullptr) {
-    //    qDebug() <<as->m_currentBlock->m_pos;
-        if (node->m_curMemoryBlock==nullptr) {
-            bool ok;
-            QString p = as->m_currentBlock->m_pos;
-            int pos = p.remove("$").toInt(&ok, 16);
-            node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::ARRAY, node->m_blockInfo.m_blockName));
-            as->blocks.append(node->m_curMemoryBlock);
-        }
-    }
-    else
-        node->m_curMemoryBlock=nullptr;
- /*   if (ret==2) {
-        m_curMemoryBlock = nullptr;
-
-    }*/
-
-//    qDebug() << "NODEVARDECL";
-
-    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
-    QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
-
-    // Don't declare va
-    if (v->m_isGlobal)
-        return;
-
-
-    QString keep = v->value;
-
-    v->value = as->m_symTab->getCurrentProcedure()+v->value;
-//    QSharedPointer<Symbol> s = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
-
-    node->ExecuteSym(as->m_symTab);
-
-
-//    qDebug() << v->value;
-//    qDebug() << "NVA A";
-//    qDebug() << as->m_symTab->m_symbols.keys();
-   //   v->value = keep;
-    //        v->m_op.m_type =t->m_op.m_type;
-    //v->m_type = t;
-  //  qDebug() << "NVA B";
-
-    if (t->m_op.m_type==TokenType::ARRAY) {
-        as->DeclareArray(v->value, t->m_arrayVarType.m_value, t->m_op.m_intVal, t->m_data, t->m_position);
-        //qDebug() << "IS: " << TokenType::types[as->m_symTab->Lookup(getValue(v))->getTokenType()];
-        node->m_dataSize=t->m_op.m_intVal;
-        QSharedPointer<Symbol> s = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
-        s->isUsed=false;
-        //if (!v->isRecord(as))
-        // Symbol needs reorganizing, move type to typearray while main type now is address. stupid name, should be array
-        s->m_arrayTypeText = s->m_type;
-        //qDebug() << "DECLARE ARRAY "<<s->m_type;
-        s->m_type="address";
-        s->m_arrayType = t->m_arrayVarType.m_type;
-    }else
-    if (t->m_op.m_type==TokenType::STRING) {
-        as->DeclareString(v->value, t->m_data);
-        node->m_dataSize = 0;
-        for (QString s: t->m_data)
-            node->m_dataSize+=s.count();
-        node->m_dataSize++; // 0 end
-    }
-    else
-    if (t->m_op.m_type==TokenType::CSTRING) {
-        as->DeclareCString(v->value, t->m_data);
-        node->m_dataSize = 0;
-        for (QString s: t->m_data)
-            node->m_dataSize+=s.count();
-        node->m_dataSize++; // 0 end
-    }
-    else
-    if (t->m_op.m_type==TokenType::INCBIN) {
-    //    if (node->m_curMemoryBlock!=nullptr && ((QSharedPointer<NodeVarType>)node->m_typeNode)->m_position!="")
-      //       ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block with an abslute address. :",node->m_op.m_lineNumber);
-
-        IncBin(node);
-    }
-    else
-    if (t->m_op.m_type==TokenType::INCSID || t->m_op.m_type==TokenType::INCNSF) {
-//        if (node->m_curMemoryBlock!=nullptr)
-  //          ErrorHandler::e.Error("IncSid can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
-        IncSid(node);
-    }
-    else
-    if (t->m_op.m_type==TokenType::POINTER) {
-        //if (node->m_curMemoryBlock!=nullptr)
-        //    ErrorHandler::e.Error("Pointers can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
-        DeclarePointer(node);
-    }else {
-        node->m_dataSize=1;
-        if (t->getValue(as).toLower()=="integer") node->m_dataSize = 2;
-        QString typeVal = t->getValue(as);
-        if (t->m_flag==1 && (!as->m_symTab->m_records.contains(typeVal)))
-            typeVal="const";
-        as->DeclareVariable(v->value, typeVal, t->initVal,t->m_position);
-        // Increase by data counter IF
-        if (t->m_flag==1)
-            t->initVal = Util::numToHex(Util::NumberFromStringHex(t->initVal)+node->m_dataSize);
-    }
-
-    if (node->m_curMemoryBlock!=nullptr) {
-        node->m_curMemoryBlock->m_end+=node->m_dataSize;
-    }
-
-}
 
 
 void ASTDispatcher6502::IncSid(QSharedPointer<NodeVarDecl> node) {
@@ -1263,52 +1063,8 @@ void ASTDispatcher6502::IncSid(QSharedPointer<NodeVarDecl> node) {
 
 //    qDebug() << "LOAD ADDRESS **** " << Util::numToHex(node->sid.m_loadAddress);
     as->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(node->sid.m_loadAddress,node->sid.m_loadAddress+size, MemoryBlock::MUSIC, node->sid.m_fileName)));
-
-
 }
 
-void ASTDispatcher6502::IncBin(QSharedPointer<NodeVarDecl> node) {
-    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
-    QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
-    QString filename = as->m_projectDir + "/" + t->m_filename.replace("\\","/");
-    if (!QFile::exists(filename))
-        ErrorHandler::e.Error("Could not locate binary file for inclusion :" +filename, node->m_op.m_lineNumber);
-
-    int size=0;
-    QFile f(filename);
-    if (f.open(QIODevice::ReadOnly)){
-        size = f.size();  //when file does open.
-        f.close();
-    }
-
-
-    if (t->m_position=="") {
-        as->Label(v->value);
-        as->Asm("incbin \"" + filename + "\"");
-    }
-    else {
-        //            qDebug() << "bin: "<<getValue(v) << " at " << t->m_position;
-        QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix(t->m_position));
-
-        QSharedPointer<Symbol> typeSymbol = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
-        typeSymbol->m_org = Util::C64StringToInt(t->m_position);
-        typeSymbol->m_size = size;
-        //            qDebug() << "POS: " << typeSymbol->m_org;
-        app->Append("org " +t->m_position,1);
-        app->Append(v->value,0);
-        app->Append("incbin \"" + filename + "\"",1);
-        as->m_appendix.append(app);
-        bool ok;
-        int start=0;
-        if (t->m_position.startsWith("$")) {
-            start = t->m_position.remove("$").toInt(&ok, 16);
-        }
-        else start = t->m_position.toInt();
-
-        as->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start,start+size, MemoryBlock::DATA,t->m_filename)));
-
-    }
-}
 
 
 void ASTDispatcher6502::DeclarePointer(QSharedPointer<NodeVarDecl> node) {

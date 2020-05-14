@@ -134,8 +134,11 @@ void AsmM68000::BinOP(TokenType::Type t)
 void AsmM68000::DeclareString(QString name, QStringList initval)
 {
 
+    Asm(" 	CNOP 0,4");
     Write(name +"\t" + String(initval));
     m_term="";
+    Asm(" 	CNOP 0,4");
+
 }
 
 QString AsmM68000::String(QStringList lst)

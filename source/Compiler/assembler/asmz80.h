@@ -25,7 +25,7 @@ public:
 
     void DeclareArray(QString name, QString type, int count, QStringList data, QString pos) override;
     void DeclareVariable(QString name, QString type, QString initval, QString position) override;
-    void DeclareString(QString name, QStringList initVal);
+    void DeclareString(QString name, QStringList initVal) override;
 
     void BinOP(TokenType::Type t) override;
 
@@ -37,6 +37,10 @@ public:
 
     QString String(QStringList lst) override;
 
+
+    void StartMemoryBlock(QString pos) override {}
+
+    void EndMemoryBlock() override {}
 
 
 

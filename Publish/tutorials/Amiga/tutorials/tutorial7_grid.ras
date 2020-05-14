@@ -29,7 +29,7 @@ var
 	@define bitmapFont_characterHeight 24
 	
 
-	const size : byte = 9;
+	const size : byte = 8;
 	vcount: long = size*size;
 	const max : integer = size*size+1;
 	vertices_T : array[3*max] of long;

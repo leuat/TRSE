@@ -4,7 +4,7 @@ program Tutorial5_Twister;
 
 var	
 
-   	j,k,l,i,time,tt,t2: integer = 0; 
+   	k,l,i,time,tt,t2,j: integer = 0; 
  	n : long;
    	t_tab : incbin("data/twister_table.bin");
    	t_data : incbin("data/twister_data.bin");
@@ -14,14 +14,14 @@ var
    	screen_data : array[2*40*256] of byte chipmem;
 // Sine table
 	sine256_data: incbin("data/sine.bin");
+@donotremove text   	
+	text: string = ("LEMONSPAWNANDTRSELEMONSPAWNANDTRSELEMONSPAWNANDTRSELEMONSPAWNANDTRSE");
 
 	table2: pointer of integer;
 		
 	sine256 : pointer of byte;
 	sine32 : array[256] of byte;
-   	
-	text: string = ("LEMONSPAWNANDTRSELEMONSPAWNANDTRSE");
-	
+	tp : pointer of byte;
 
 /*
 	Two bitplanes, interleaved
@@ -48,23 +48,23 @@ begin
 	table2 := t_tab;
 	tt:=0-tx; // Text goes up
 	t2:=tx; // Twist goes down
-
+	tp:=text;
 	dst := screen_data+xp;
-	
+	j:=0;
 	for i:=0 to 128 do
 	begin
 		j:=sine32[(i+t2)&255]; // Twist turning
 		k:=((tx+j)&15); // Current rotation frame
 		l:=(i-tt); // Current shift & text position in y
-		
 		j:=l>>5; // j:=l/32 - find current character
-	 	j:=(text[j&15]-1)&31; // Look up current character, store in j
+	 	j:=(tp[j&15])&31; // Look up current character, store in j
 	 	// Look up : each charater is 32 height * 16 frames * 2 = 32*32 = shl 10 == shl 5 shl 5 
 	 	n:=j*(32*32);
 	 	
 		l:=l&31;
 		// Look up actual table: Frame (k) + line (l) + letter (n)
 		k:=table2[k<<6+ l<<1 +n];
+
 
 		// Copy 2x2 rows of data
 		memcpyunroll(t_data,k,dst,0,2,4);
@@ -84,6 +84,7 @@ begin
 		
 
 	end;
+	
 end;
 
 

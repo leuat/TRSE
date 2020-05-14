@@ -147,19 +147,6 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeNumber>node)
 
 }
 
-void ASTDispatcher68000::dispatch(QSharedPointer<NodeAsm>node)
-{
-    node->DispatchConstructor(as);
-
-    QStringList txt = node->m_asm.split("\n");
-    as->Comment("");
-    as->Comment("****** Inline assembler section");
-    for (QString t: txt) {
-        as->Write(t,0);
-    }
-    as->Asm("");
-
-}
 
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeString> node)
 {
@@ -182,22 +169,31 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeUnaryOp> node)
     as->Comment("Unary op for : " + node->m_right->getValue(as));
 }
 
-void ASTDispatcher68000::dispatch(QSharedPointer<NodeCompound> node)
-{
-    node->DispatchConstructor(as);
-
-    as->BeginBlock();
-    for (QSharedPointer<Node> n: node->children)
-        n->Accept(this);
-
-
-    as->EndBlock();
-
-}
 
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeVarDecl> node)
 {
+
+    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
+    QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
+
+
     node->DispatchConstructor(as);
+
+    if (t->m_flags.contains("chipmem"))
+        as->m_currentBlock = as->m_chipMem;
+
+
+    AbstractASTDispatcher::dispatch(node);
+
+    as->m_currentBlock = nullptr;
+
+
+
+/*
+    node->DispatchConstructor(as);
+
+
+
 
 
     node->ExecuteSym(as->m_symTab);
@@ -221,10 +217,6 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeVarDecl> node)
     if (t->m_op.m_type==TokenType::STRING) {
         as->DeclareString(v->getValue(as), t->m_data);
 
-/*        node->m_dataSize = 0;
-        for (QString s: t->m_data)
-            node->m_dataSize+=s.count();
-        node->m_dataSize++; // 0 end*/
     }
     else
     if (t->m_op.m_type==TokenType::CSTRING) {
@@ -239,7 +231,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeVarDecl> node)
 //        if (node->m_curMemoryBlock!=nullptr)
   //          ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
 
-        IncBin(as,node);
+        IncBin(node);
 
     }
     else
@@ -259,7 +251,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeVarDecl> node)
 
 
     as->m_currentBlock = nullptr;
-
+    */
 
 }
 
@@ -337,7 +329,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeBlock> node)
 
 }
 
-void ASTDispatcher68000::dispatch(QSharedPointer<NodeProgram> node)
+/*void ASTDispatcher68000::dispatch(QSharedPointer<NodeProgram> node)
 {
     node->DispatchConstructor(as);
 
@@ -352,7 +344,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeProgram> node)
     as->EndProgram();
 
 }
-
+*/
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeVarType> node)
 {
 
@@ -363,7 +355,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeBinaryClause> node)
 
 }
 
-void ASTDispatcher68000::dispatch(QSharedPointer<NodeProcedure> node)
+/*void ASTDispatcher68000::dispatch(QSharedPointer<NodeProcedure> node)
 {
     node->DispatchConstructor(as);
 
@@ -384,7 +376,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeProcedure> node)
     as->Asm("jsr " + node->m_procedure->m_procName);
 
 }
-
+*/
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeProcedureDecl> node)
 {
     node->DispatchConstructor(as);
@@ -1069,7 +1061,7 @@ QString ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
     return "";
 }
 
-void ASTDispatcher68000::IncBin(Assembler* as, QSharedPointer<NodeVarDecl> node) {
+void ASTDispatcher68000::IncBin(QSharedPointer<NodeVarDecl> node) {
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
     QString filename = as->m_projectDir + "/" + t->m_filename;

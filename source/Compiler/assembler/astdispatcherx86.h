@@ -35,17 +35,15 @@ public:
     void dispatch(QSharedPointer<NodeBinOP>node) override;
 //    void dispatchOld(QSharedPointer<NodeBinOP>node) override;
     virtual void dispatch(QSharedPointer<NodeNumber>node) override;
-    void dispatch(QSharedPointer<NodeAsm>node) override;
     void dispatch(QSharedPointer<NodeString> node) override;
     void dispatch(QSharedPointer<NodeUnaryOp> node) override;
-    void dispatch(QSharedPointer<NodeCompound> node) override;
-    void dispatch(QSharedPointer<NodeVarDecl> node) override;
+   // void dispatch(QSharedPointer<NodeVarDecl> node) override;
  //   void dispatch(QSharedPointer<NodeBlock> node) override;
-    void dispatch(QSharedPointer<NodeProgram> node) override;
+ //   void dispatch(QSharedPointer<NodeProgram> node) override;
     void dispatch(QSharedPointer<NodeVarType> node) override;
     void dispatch(QSharedPointer<NodeBinaryClause> node) override;
-    void dispatch(QSharedPointer<NodeProcedure> node) override;
-    void dispatch(QSharedPointer<NodeProcedureDecl> node) override;
+    //void dispatch(QSharedPointer<NodeProcedure> node) override;
+   // void dispatch(QSharedPointer<NodeProcedureDecl> node) override;
  //   void dispatch(QSharedPointer<NodeConditional> node) override;
     //void dispatch(QSharedPointer<NodeForLoop> node) override;
     void dispatch(QSharedPointer<NodeVar> node) override;
@@ -79,6 +77,7 @@ public:
     QString getJmp(bool isOffPage) override {
         return "jmp";
     }
+    QString getCallSubroutine() override { return "call"; }
 
     virtual QString getAx(QSharedPointer<Node> n) {
         QString a = m_regs[m_lvl];
@@ -131,18 +130,22 @@ public:
 
 
 
-    void DeclarePointer(QSharedPointer<NodeVarDecl> node);
+    void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
     QString getEndType(Assembler *as, QSharedPointer<Node> v1,QSharedPointer<Node> v2) override;
 
 
 
-    void IncBin(Assembler* as, QSharedPointer<NodeVarDecl> node);
+//    void IncBin(Assembler* as, QSharedPointer<NodeVarDecl> node);
 
-    virtual void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page);
+    virtual void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
     virtual void BuildToCmp(QSharedPointer<Node> node);
 
-    void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive);
+    void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive) override;
+
+
+    QString getReturn() override { return "ret";}
+    QString getReturnInterrupt() override { return "reti";}
 
 
 };

@@ -34,17 +34,14 @@ public:
 
     void dispatch(QSharedPointer<NodeBinOP>node) override;
     void dispatch(QSharedPointer<NodeNumber>node) override;
-    void dispatch(QSharedPointer<NodeAsm> node) override;
     void dispatch(QSharedPointer<NodeString> node) override;
     void dispatch(QSharedPointer<NodeUnaryOp> node) override;
-    void dispatch(QSharedPointer<NodeCompound> node) override;
     void dispatch(QSharedPointer<NodeVarDecl> node) override;
  //   void dispatch(QSharedPointer<NodeBlock> node) override;
-    void dispatch(QSharedPointer<NodeProgram> node) override;
     void dispatch(QSharedPointer<NodeVarType> node) override;
     void dispatch(QSharedPointer<NodeBinaryClause> node) override;
-    void dispatch(QSharedPointer<NodeProcedure> node) override;
-    void dispatch(QSharedPointer<NodeProcedureDecl> node) override;
+  //  void dispatch(QSharedPointer<NodeProcedure> node) override;
+//    void dispatch(QSharedPointer<NodeProcedureDecl> node) override;
    // void dispatch(QSharedPointer<NodeConditional> node) override;
    // void dispatch(QSharedPointer<NodeForLoop> node) override;
     void dispatch(QSharedPointer<NodeVar> node) override;
@@ -63,6 +60,8 @@ public:
     QString getJmp(bool isOffPage) override {
         return "jmp";
     }
+
+    bool UseBlocks() override { return true;}
 
 
 
@@ -98,7 +97,7 @@ public:
 
     void IncSid(QSharedPointer<NodeVarDecl> node);
 
-    void IncBin(QSharedPointer<NodeVarDecl> node);
+//    void IncBin(QSharedPointer<NodeVarDecl> node);
 
     void PrintCompare(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);
     void DeclarePointer(QSharedPointer<NodeVarDecl> node);
@@ -189,6 +188,10 @@ public:
     void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign>node);
 
 
+
+
+    QString getReturn() override { return "rts";}
+    QString getReturnInterrupt() override { return "rti";}
 
 
 };

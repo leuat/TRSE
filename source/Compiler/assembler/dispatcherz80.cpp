@@ -330,7 +330,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVarDecl> node)
 
 
 //    qDebug() << "" <<as->m_currentBlock;
-    ASTdispatcherX86::dispatch(node);
+    AbstractASTDispatcher::dispatch(node);
   //  qDebug() << as->m_currentBlock;
     as->m_currentBlock = nullptr;
 }
@@ -338,15 +338,6 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVarDecl> node)
 void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
 {
     if (node->m_expr!=nullptr) {
-/*        ld a, [i]
-        ld e,a
-        ld d, 0
-        ld hl,sine
-        add hl,de
-        ld a,[hl]
-
-
-  */
         if (node->m_expr->isPureNumeric() && node->m_expr->getValueAsInt(as)==0) {
             as->Asm("; Optimization : zp[0]");
 //            LoadVariable(as,)
@@ -417,45 +408,6 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
         }
 
     }
-    /*if (as->m_term!="") {
-        as->m_term +=node->getValue(as);
-        return;
-    }
-
-
-    QString ax = getAx(node);
-
-    if (ax[0]!='a') {
-        as->Asm("ld a,[" + node->getValue(as)+ending);
-        as->Asm("ld "+ax[1]+",a");
-
-    }
-    else
-        as->Asm("ld "+ax[0]+", [" + node->getValue(as)+ending);
-    //    if (node->isArrayIndex())
-    //        qDebug() << TokenType::getType(node->getArrayType(as));
-    if (node->m_forceType==TokenType::INTEGER) {
-        bool accomodate = false;
-        if (node->isArrayIndex()) {
-            if (node->getArrayType(as)!=TokenType::INTEGER) {
-                accomodate = true;
-            }
-        }
-        else
-            if (node->getOrgType(as)!=TokenType::INTEGER)
-                accomodate = true;
-
-        if (accomodate) {
-            if (!(node->getOrgType(as)!=TokenType::INTEGER))
-                as->Asm("ld a,[" + node->getValue(as)+"+1"+ending);
-            else
-                as->Asm("ld a,0");
-            as->Asm("ld "+ax[0]+",a");
-        }
-    }
-    //    qDebug() << "ORG " <<TokenType::getType(node->getOrgType(as)) << "   : " << node->getValue(as);
-    //  qDebug() << "FT " <<TokenType::getType(node->m_forceType);
-*/
 }
 
 void ASTdispatcherZ80::dispatch(QSharedPointer<NodeNumber> node)
@@ -583,7 +535,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
 
         bool rightIsPure = node->m_right->isPure();
         bool isAligned = as->m_symTab->Lookup(var->getValue(as),var->m_op.m_lineNumber)->m_flags.contains("aligned");
-        qDebug() << "IS ALIGNED "<< isAligned;
+//        qDebug() << "IS ALIGNED "<< isAligned;
 
         if (!rightIsPure) {
             node->m_right->Accept(this);

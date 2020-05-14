@@ -57,19 +57,16 @@ public:
     virtual void dispatch(QSharedPointer<Node> node) = 0;
     virtual void dispatch(QSharedPointer<NodeString> node) = 0;
     virtual void dispatch(QSharedPointer<NodeUnaryOp> node) = 0;
-    virtual void dispatch(QSharedPointer<NodeCompound> node) = 0;
     virtual void dispatch(QSharedPointer<NodeVar> node) = 0;
     virtual void dispatch(QSharedPointer<NodeAssign> node) = 0;
-    virtual void dispatch(QSharedPointer<NodeVarDecl> node) = 0;
+  //  virtual void dispatch(QSharedPointer<NodeVarDecl> node) = 0;
     virtual void dispatch(QSharedPointer<NodeBlock> node);
-    virtual void dispatch(QSharedPointer<NodeProgram> node) = 0;
     virtual void dispatch(QSharedPointer<NodeVarType> node) = 0;
-    virtual void dispatch(QSharedPointer<NodeProcedure> node) = 0;
-    virtual void dispatch(QSharedPointer<NodeProcedureDecl> node) = 0;
+ //   virtual void dispatch(QSharedPointer<NodeProcedure> node) = 0;
+//    virtual void dispatch(QSharedPointer<NodeProcedureDecl> node) = 0;
 //    virtual void dispatch(QSharedPointer<NodeConditional> node) = 0;
     virtual void dispatch(QSharedPointer<NodeForLoop> node);
     virtual void dispatch(QSharedPointer<NodeBuiltinMethod> node) = 0;
-    virtual void dispatch(QSharedPointer<NodeAsm> node) = 0;
     virtual void dispatch(QSharedPointer<NodeBinaryClause> node) = 0;
     virtual void dispatch(QSharedPointer<NodeCase> node) = 0;
     virtual void dispatch(QSharedPointer<NodeRepeatUntil> node) = 0;
@@ -87,6 +84,12 @@ public:
     virtual void LoadAddress(QSharedPointer<Node> node,QString reg) {}
 
     virtual QString getJmp(bool isOffPage) = 0;
+    virtual QString getReturn() = 0;
+    virtual QString getReturnInterrupt() = 0;
+    virtual QString getIncbin() { return "incbin"; }
+    virtual QString getCallSubroutine() { return "jsr"; }
+
+    virtual bool UseBlocks() { return false;}
 
     void virtual dispatch(QSharedPointer<NodeConditional> node);
 
@@ -98,6 +101,27 @@ public:
 
     virtual void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive) = 0;
 
+
+    virtual void dispatch(QSharedPointer<NodeProcedureDecl> node);
+
+
+    virtual void dispatch(QSharedPointer<NodeProcedure> node);
+    void InlineProcedure(QSharedPointer<NodeProcedure> p);
+
+
+    virtual void dispatch(QSharedPointer<NodeProgram> node);
+
+    virtual void dispatch(QSharedPointer<NodeVarDecl> node);
+
+    virtual void IncBin(QSharedPointer<NodeVarDecl> node);
+
+
+    virtual void DeclarePointer(QSharedPointer<NodeVarDecl> node) = 0;
+
+    virtual void dispatch(QSharedPointer<NodeAsm>node);
+
+
+    virtual void dispatch(QSharedPointer<NodeCompound> node);
 
 public:
 signals:

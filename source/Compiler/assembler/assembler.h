@@ -198,9 +198,9 @@ public:
 
     int m_zbyte = 0x80;
 
-    void StartMemoryBlock(QString pos);
+    virtual void StartMemoryBlock(QString pos);
 
-    void EndMemoryBlock();
+    virtual void EndMemoryBlock();
 
     QString m_term;
     QMap<QString, Stack> m_stack;

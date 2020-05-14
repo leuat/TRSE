@@ -34,6 +34,11 @@ public:
 
     QString GetOrg(int pos ) override;
 
+    void StartMemoryBlock(QString pos) override {}
+
+    void EndMemoryBlock() override {}
+
+
 };
 
 #endif // M68000_H
