@@ -717,19 +717,6 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeNumber>node)
  *  */
 
 
-void ASTDispatcher6502::dispatch(QSharedPointer<NodeBuiltinMethod> node)
-{
-    node->DispatchConstructor(as);
-    node->VerifyParams(as);
-
-//    as->PushCounter();
-//    qDebug() <<"dispatcher::builtin" << as->m_tempZeroPointers;
-
-    QSharedPointer<AbstractMethods> methods = FactoryMethods::CreateMethods(Syntax::s.m_currentSystem->m_system);
-    methods->m_node = node;
-    methods->Assemble(as,this);
- //   as->PopCounter(node->m_op.m_lineNumber);
-}
 
 QString ASTDispatcher6502::getValue(QSharedPointer<Node> n) {
     if (m_inlineParameters.contains(n->getValue(as)))
@@ -2568,6 +2555,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeCase> node)
     for (int i=0;i<node->m_conditionals.count();i++) {
         QString labelNext = as->NewLabel("casenext");
         as->PopLabel("casenext");
+
         if (node->m_conditionals[i]->isPure()) {
             node->m_variable->Accept(this);
             as->Term();
@@ -2583,8 +2571,12 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeCase> node)
             as->Asm("cmp " + compare +" ;keep");
         }
         as->Asm("bne "+labelNext);
+
         node->m_statements[i]->Accept(this); // RUN the current block
+
         as->Asm("jmp "+labelEnd);
+
+
         as->Label(labelNext);
     }
     if (hasElse)

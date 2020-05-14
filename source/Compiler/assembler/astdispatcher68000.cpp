@@ -586,28 +586,15 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeAssign> node)
 
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeCase> node)
 {
-    ErrorHandler::e.Error("CASE not implemented for m68K yet...", node->m_op.m_lineNumber);
+    ErrorHandler::e.Error("case not implemented for m68K yet", node->m_op.m_lineNumber);
 }
 
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeRepeatUntil> node)
 {
+    ErrorHandler::e.Error("Repeat-until not implemented yet", node->m_op.m_lineNumber);
 
 }
 
-void ASTDispatcher68000::dispatch(QSharedPointer<NodeBuiltinMethod> node)
-{
-    node->DispatchConstructor(as);
-
-    node->VerifyParams(as);
-
-  //  as->PushCounter();
-
-    QSharedPointer<AbstractMethods> methods = FactoryMethods::CreateMethods(Syntax::s.m_currentSystem->m_system);
-    methods->m_node = node;
-    methods->Assemble(as,this);
-
-
-}
 
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeComment> node)
 {

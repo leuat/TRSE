@@ -434,14 +434,15 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeAssign> node)
 
 void ASTdispatcherX86::dispatch(QSharedPointer<NodeCase> node)
 {
-
+    ErrorHandler::e.Error("Case not implemented yet", node->m_op.m_lineNumber);
 }
 
 void ASTdispatcherX86::dispatch(QSharedPointer<NodeRepeatUntil> node)
 {
+    ErrorHandler::e.Error("Repeat-until not implemented yet", node->m_op.m_lineNumber);
 
 }
-
+/*
 void ASTdispatcherX86::dispatch(QSharedPointer<NodeBuiltinMethod> node)
 {
     node->DispatchConstructor(as);
@@ -456,7 +457,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBuiltinMethod> node)
 
 
 }
-
+*/
 void ASTdispatcherX86::dispatch(QSharedPointer<NodeComment> node)
 {
 

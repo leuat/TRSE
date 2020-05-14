@@ -52,7 +52,6 @@ public:
     void dispatch(QSharedPointer<NodeComment> node) override;
 
 
-    void dispatch(QSharedPointer<NodeBuiltinMethod> node);
 
     QString getValue(QSharedPointer<Node> n) override;
 

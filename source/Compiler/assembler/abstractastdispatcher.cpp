@@ -10,12 +10,19 @@
 #include "source/Compiler/ast/nodevardecl.h"
 #include "source/Compiler/ast/nodeasm.h"
 #include "source/Compiler/ast/nodecompound.h"
+#include "source/Compiler/ast/nodebuiltinmethod.h"
+#include "source/Compiler/assembler/abstractmethods.h"
+#include "source/Compiler/assembler/factorymethods.h"
 
 AbstractASTDispatcher::AbstractASTDispatcher()
 {
 
 }
-
+/*
+ *
+ *  BLOCKS (VAR ... BEGIN ...  END)
+ *
+ * */
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBlock> node) {
     if (m_ticks++%8==0)
         emit EmitTick(".");
@@ -105,36 +112,41 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBlock> node) {
     node->PopZeroPointers(as);
     as->PopCounter(ln);
 }
+/*
+ *
+ *  FOR LOOPS
+ *
+ * */
 
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeForLoop> node)
 {
     node->DispatchConstructor(as);
 
-
-    //QString m_currentVar = ((NodeAssign*)m_a)->m_
     QSharedPointer<NodeAssign> nVar = qSharedPointerDynamicCast<NodeAssign>(node->m_a);
-
-
+    // Must be a variable
     if (nVar==nullptr)
         ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
 
+    // Get name
     QString var = qSharedPointerDynamicCast<NodeVar>(nVar->m_left)->getValue(as);//  m_a->Build(as);
-    //    qDebug() << "Starting for";
+    // Perform assigment
     node->m_a->Accept(this);
 
+    // Define main for label
     QString lblFor =as->NewLabel("forloop");
     as->Label(lblFor);
 
+    // Maintain b has same type as a
     if (nVar->m_left->isWord(as))
         node->m_b->setForceType(TokenType::INTEGER);
 
+    // Perform block
     node->m_block->Accept(this);
 
 
     bool offpage = isOffPage(node, node->m_block, nullptr);
-
+    // Perform counter increase and jimps (individual for each target cpu)
     CompareAndJumpIfNotEqual(node->m_a, node->m_b,  node->m_step, lblFor, offpage,node->m_inclusive);
-
 
     as->PopLabel("forloop");
 
@@ -145,6 +157,15 @@ QString AbstractASTDispatcher::getValue(QSharedPointer<Node> n) {
     return n->getValue(as);
 }
 
+
+/*
+ *
+ *  IF (A AND (B OR C))  ,  WHILE
+ *
+ * */
+
+
+
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeConditional> node)
 {
     QString labelStartOverAgain = as->NewLabel("while");
@@ -152,18 +173,16 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeConditional> node)
 
     QString labelElse = as->NewLabel("elseblock");
     QString labelElseDone = as->NewLabel("elsedoneblock");
-    // QString labelFailed = as->NewLabel("conditionalfailed");
 
-    //    qDebug() << "HMM";
-
+    // While loops are identical to "ifs" with a loop
     if (node->m_isWhileLoop)
         as->Label(labelStartOverAgain);
 
     // Test all binary clauses:
     QSharedPointer<NodeBinaryClause> bn = qSharedPointerDynamicCast<NodeBinaryClause>(node->m_binaryClause);
 
-
     QString failedLabel = labelElseDone;
+    // If else block exist, point fail tot hat one
     if (node->m_elseBlock!=nullptr)
         failedLabel = labelElse;
 
@@ -172,14 +191,17 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeConditional> node)
 
 
 
-//    HandleCompoundBinaryClause(bn, failedLabel, lblstartTrueBlock,page);
     QString localFailed = failedLabel;
-    // Z80 has jumps in instruction
+
     if (offpage && Syntax::s.m_currentSystem->m_processor!=AbstractSystem::Z80) {
         localFailed = as->NewLabel("localfailed");
     }
+    // Main recursive method that tests everything. Evaluates all logical
+    // clauses and jumps to the corresponding fail/success label
     HandleCompoundBinaryClause(bn, localFailed, lblstartTrueBlock,offpage);
-    // OFFPAGE branching:
+
+    // OFFPAGE branching for z80:
+
     if (offpage && Syntax::s.m_currentSystem->m_processor!=AbstractSystem::Z80) {
         as->Asm(getJmp(offpage) + " "+lblstartTrueBlock);
         as->Label(localFailed);
@@ -187,16 +209,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeConditional> node)
         as->Asm(getJmp(offpage) + " " + failedLabel);
     }
 
-
-    /*
-        // Handle AND & OR
-        if (bn->isCompoundClause()) {
-            HandleCompoundBinaryClause(bn, failedLabel, lblstartTrueBlock,node->m_forcePage==1);
-        }
-        else
-            BuildSimple(bn,  failedLabel,node->m_forcePage==1);
-    */
-    // Start main block
+   // Start main block
     as->Label(lblstartTrueBlock+": ;Main true block ;keep "); // This means skip inside
     node->m_block->Accept(this);
 
@@ -204,11 +217,10 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeConditional> node)
         as->Asm(getJmp(offpage)+" " + labelElseDone);
 
     // If while loop, return to beginning of conditionals
-//    qDebug() << "IS OFFPAGE: " << getJmp(offpage) << offpage;
     if (node->m_isWhileLoop)
         as->Asm(getJmp(offpage)+" " + labelStartOverAgain);
 
-    // An else block?
+    // Else block
     if (node->m_elseBlock!=nullptr) {
         as->Label(labelElse);
         node->m_elseBlock->Accept(this);
@@ -225,6 +237,15 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeConditional> node)
 
 }
 
+/*
+ *
+ *  RECURSIVE METHOD FOR CHECKING BINARY CLAUSES ( A OR (B AND (C OR (D ....
+ *  LEAF EVALUATED WITH BUILDSIMPLE
+ *
+ * */
+
+
+
 void AbstractASTDispatcher::HandleCompoundBinaryClause(QSharedPointer<Node> node, QString lblFailed, QString lblSuccess, bool offpage)
 {
     //    QSharedPointer<NodeBinaryClause> bc = qSharedPointerDynamicCast<NodeBinaryClause>(node);
@@ -232,7 +253,6 @@ void AbstractASTDispatcher::HandleCompoundBinaryClause(QSharedPointer<Node> node
         BuildSimple(node,  lblSuccess, lblFailed, offpage);
         return;
     }
-
 
     if (node->m_op.m_type == TokenType::AND) {
         HandleCompoundBinaryClause(node->m_left,  lblFailed, lblSuccess, offpage);
@@ -252,6 +272,13 @@ void AbstractASTDispatcher::HandleCompoundBinaryClause(QSharedPointer<Node> node
 
 }
 
+/*
+ *
+ *  Determines if a node block is >~127 bytes or not (for relative branching) (offpage/onpage)
+ *
+ * */
+
+
 bool AbstractASTDispatcher::isOffPage(QSharedPointer<Node> node, QSharedPointer<Node> b1, QSharedPointer<Node> b2) {
     bool onPage = node->verifyBlockBranchSize(as, b1,b2,this);
 
@@ -263,6 +290,13 @@ bool AbstractASTDispatcher::isOffPage(QSharedPointer<Node> node, QSharedPointer<
 
     return !onPage;
 }
+
+/*
+ *
+ *  PROCEDURE DECLARATION
+ *
+ * */
+
 
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
 {
@@ -284,33 +318,25 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
 
     as->m_symTab->SetCurrentProcedure(node->m_procName+"_");
     int ln = node->m_currentLineNumber;
-    //    as->PushCounter();
-    //    if (node->m_curMemoryBlock!=nullptr)
-    //      qDebug() << node->m_procName << "IS IN BLOCK " << node->m_curMemoryBlock->m_name << " STARTING AT " << Util::numToHex(node->m_curMemoryBlock->m_start);
 
-    // In case memory block is acive
-
-
-    //    qDebug() << node->m_procName << node->m_curMemoryBlock << as->m_currentBlock;
-
-
-    int ret = node->MaintainBlocks(as);
-    if (ret==3) node->m_curMemoryBlock=nullptr;
-    if (as->m_currentBlock!=nullptr) {
-        if (node->m_curMemoryBlock==nullptr) {
-            bool ok;
-            //            qDebug() << "Creating new block procedure for " << m_procName;
-            QString p = as->m_currentBlock->m_pos;
-            int pos = p.remove("$").toInt(&ok, 16);
-            node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::ARRAY, node->m_blockInfo.m_blockName));
-            as->blocks.append(node->m_curMemoryBlock);
+    if (UseBlocks()) {
+        int ret = node->MaintainBlocks(as);
+        if (ret==3) node->m_curMemoryBlock=nullptr;
+        if (as->m_currentBlock!=nullptr) {
+            if (node->m_curMemoryBlock==nullptr) {
+                bool ok;
+                //            qDebug() << "Creating new block procedure for " << m_procName;
+                QString p = as->m_currentBlock->m_pos;
+                int pos = p.remove("$").toInt(&ok, 16);
+                node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::ARRAY, node->m_blockInfo.m_blockName));
+                as->blocks.append(node->m_curMemoryBlock);
+            }
         }
-    }
-    else {
-        //node->m_curMemoryBlock=nullptr;
-    }
+        else {
+            //node->m_curMemoryBlock=nullptr;
+        }
 
-
+    }
     //MaintainBlocks(as);
     if (node->m_block==nullptr) {  // Is builtin procedure
         node->m_block = QSharedPointer<NodeBuiltinMethod>(new NodeBuiltinMethod(node->m_procName, QVector<QSharedPointer<Node>>(), nullptr));
@@ -339,13 +365,6 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
     as->Asm("");
     as->m_currentBlockName = node->m_procName;
 
-    if (!isInitFunction) {
-        //as->Asm("jmp afterProc_" + m_procName);
-
-
-        //as->Label(m_procName);
-    }
-
     if (node->m_block!=nullptr) {
         QSharedPointer<NodeBlock> b = qSharedPointerDynamicCast<NodeBlock>(node->m_block);
         if (b!=nullptr) {
@@ -353,13 +372,8 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
             b->m_isProcedure = true;
         }
         node->m_block->Accept(this);
-        //        node->Delete();
-        //        node->s_uniqueSymbols[node->m_block] = node->m_block;
-
-
-        //        delete node;
-        //        node->m_block->Build(as);
     }
+
     if (!isInitFunction) {
         if (node->m_type==0) {
             as->Asm(getReturn());
@@ -374,6 +388,15 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
     as->m_symTab->ExitProcedureScope(false);
     //  as->PopCounter(ln);
 }
+
+
+/*
+ *
+ *  PROCEDURE CALLING
+ *
+ * */
+
+
 
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedure> node)
 {
@@ -400,25 +423,33 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedure> node)
     as->Asm(getCallSubroutine() + " " + node->m_procedure->m_procName);
 
 }
+/*
+ *
+ *  INLINE PROCEDURE CALLING (AND DECLARATION)
+ *
+ * */
+
 
 void AbstractASTDispatcher::InlineProcedure(QSharedPointer<NodeProcedure> p)
 {
-    //    as->Comment("Inline procedure : "+p->m_procedure->m_procName);
     m_inlineParameters.clear();
     int cur = 0;
     for (auto v : p->m_procedure->m_paramDecl) {
         QSharedPointer<NodeVarDecl> nv = qSharedPointerDynamicCast<NodeVarDecl>(v);
         QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(nv->m_varNode);
-        //    qDebug() << "Preparing inline : " <<var->value << cur;
         m_inlineParameters[var->value] = p->m_parameters[cur++];
     }
     qSharedPointerDynamicCast<NodeBlock>(p->m_procedure->m_block)->m_ignoreDeclarations = true;
-    //    qDebug() << "Before Inline Proc" <<m_inlineParameters.keys();
     p->m_procedure->m_block->Accept(this);
-    //  qDebug() << "Done Inline Proc";
     m_inlineParameters.clear();
 
 }
+/*
+ *
+ *  MAIN PROGRAM NODE
+ *
+ * */
+
 
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProgram> node)
 {
@@ -435,6 +466,15 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProgram> node)
     as->EndProgram();
 }
 
+
+/*
+ *
+ *  VARIABLE DECLARATION
+ *
+ * */
+
+
+
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeVarDecl> node)
 {
     node->DispatchConstructor(as);
@@ -444,11 +484,8 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeVarDecl> node)
         int ret = node->MaintainBlocks(as);
 
         if (ret==3) node->m_curMemoryBlock = nullptr;
-        //    qDebug() << "NodeVarDecl new memory block "  << ret;
         if (node->m_curMemoryBlock!=nullptr)
-            //      qDebug() << node->m_curMemoryBlock->m_start;
             if (as->m_currentBlock!=nullptr) {
-                //    qDebug() <<as->m_currentBlock->m_pos;
                 if (node->m_curMemoryBlock==nullptr) {
                     bool ok;
                     QString p = as->m_currentBlock->m_pos;
@@ -459,13 +496,8 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeVarDecl> node)
             }
             else
                 node->m_curMemoryBlock=nullptr;
-        /*   if (ret==2) {
-            m_curMemoryBlock = nullptr;
-
-        }*/
-
-        //    qDebug() << "NODEVARDECL";
     }
+
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
 
@@ -477,29 +509,15 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeVarDecl> node)
     QString keep = v->value;
 
     v->value = as->m_symTab->getCurrentProcedure()+v->value;
-    //    QSharedPointer<Symbol> s = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
 
     node->ExecuteSym(as->m_symTab);
 
-
-    //    qDebug() << v->value;
-    //    qDebug() << "NVA A";
-    //    qDebug() << as->m_symTab->m_symbols.keys();
-    //   v->value = keep;
-    //        v->m_op.m_type =t->m_op.m_type;
-    //v->m_type = t;
-    //  qDebug() << "NVA B";
-
     if (t->m_op.m_type==TokenType::ARRAY) {
         as->DeclareArray(v->value, t->m_arrayVarType.m_value, t->m_op.m_intVal, t->m_data, t->m_position);
-        //qDebug() << "IS: " << TokenType::types[as->m_symTab->Lookup(getValue(v))->getTokenType()];
         node->m_dataSize=t->m_op.m_intVal;
         QSharedPointer<Symbol> s = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
         s->isUsed=false;
-        //if (!v->isRecord(as))
-        // Symbol needs reorganizing, move type to typearray while main type now is address. stupid name, should be array
         s->m_arrayTypeText = s->m_type;
-        //qDebug() << "DECLARE ARRAY "<<s->m_type;
         s->m_type="address";
         s->m_arrayType = t->m_arrayVarType.m_type;
     }else
@@ -520,15 +538,11 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeVarDecl> node)
             }
             else
                 if (t->m_op.m_type==TokenType::INCBIN) {
-                    //    if (node->m_curMemoryBlock!=nullptr && ((QSharedPointer<NodeVarType>)node->m_typeNode)->m_position!="")
-                    //       ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block with an abslute address. :",node->m_op.m_lineNumber);
 
                     IncBin(node);
                 }
                 else
                     if (t->m_op.m_type==TokenType::POINTER) {
-                        //if (node->m_curMemoryBlock!=nullptr)
-                        //    ErrorHandler::e.Error("Pointers can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
                         DeclarePointer(node);
                         as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
 
@@ -547,7 +561,6 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeVarDecl> node)
 
                         as->DeclareVariable(v->value, typeVal, t->initVal,t->m_position);
 
-                        // Increase by data counter IF
                         if (t->m_flag==1)
                             t->initVal = Util::numToHex(Util::NumberFromStringHex(t->initVal)+node->m_dataSize);
                     }
@@ -558,6 +571,14 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeVarDecl> node)
     }
 
 }
+
+/*
+ *
+ *  INCLUDE BINARY FILE
+ *
+ * */
+
+
 
 void AbstractASTDispatcher::IncBin(QSharedPointer<NodeVarDecl> node) {
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
@@ -602,6 +623,13 @@ void AbstractASTDispatcher::IncBin(QSharedPointer<NodeVarDecl> node) {
     }
 }
 
+/*
+ *
+ *  INLINE ASSEMBLER
+ *
+ * */
+
+
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeAsm> node)
 {
     node->DispatchConstructor(as);
@@ -614,6 +642,13 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeAsm> node)
     as->Asm("");
 }
 
+/*
+ *
+ *  COMPOUND STATEMENTS (several lines of sentences)
+ *
+ * */
+
+
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeCompound> node)
 {
     node->DispatchConstructor(as);
@@ -624,6 +659,12 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeCompound> node)
 
     as->EndBlock();
 }
+/*
+ *
+ *  RECROD COPYING myMonster:=someMonster;
+ *
+ * */
+
 
 void AbstractASTDispatcher::HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign> node)
 {
@@ -648,5 +689,23 @@ void AbstractASTDispatcher::HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign
         //    Node::s_uniqueSymbols[ns] = ns; // Mark for deletion
 
     }
+}
+
+/*
+ *
+ *  BUILT-IN METHODS
+ *
+ * */
+
+
+
+void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBuiltinMethod> node)
+{
+    node->DispatchConstructor(as);
+    node->VerifyParams(as);
+
+    QSharedPointer<AbstractMethods> methods = FactoryMethods::CreateMethods(Syntax::s.m_currentSystem->m_system);
+    methods->m_node = node;
+    methods->Assemble(as,this);
 }
 

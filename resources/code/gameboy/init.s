@@ -213,10 +213,6 @@ mul_16x8_s8:
 
 ;-------------------------------------------------------------------------------
 read_keys:
-;-------------------------------------------------------------------------------
-; this function returns two different values in b and c registers:
-; b - returns raw state (pressing key triggers given action continuously as long as it's pressed - it does not prevent bouncing)
-; c - returns debounced state (pressing key triggers given action only once - key must be released and pressed again)
 
         ld      a,$20				; read P15 - returns a, b, select, start
         ldh     [rP1],a

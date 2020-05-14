@@ -17,6 +17,7 @@
 #include "source/Compiler/ast/nodeprocedure.h"
 #include "source/Compiler/ast/nodeconditional.h"
 #include "source/Compiler/ast/nodeforloop.h"
+#include "source/Compiler/ast/noderepeatuntil.h"
 #include "source/Compiler/ast/nodebuiltinmethod.h"
 #include "source/Compiler/ast/nodewhileloop.h"
 #include "source/Compiler/ast/nodeasm.h"
@@ -52,7 +53,7 @@ public:
     void dispatch(QSharedPointer<NodeAssign> node) override;
     void dispatch(QSharedPointer<NodeCase> node) override;
     void dispatch(QSharedPointer<NodeRepeatUntil> node) override;
-    void dispatch(QSharedPointer<NodeBuiltinMethod> node) override;
+    //void dispatch(QSharedPointer<NodeBuiltinMethod> node) override;
     void dispatch(QSharedPointer<NodeComment> node) override;
 
 

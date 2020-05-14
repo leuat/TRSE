@@ -59,14 +59,9 @@ public:
     virtual void dispatch(QSharedPointer<NodeUnaryOp> node) = 0;
     virtual void dispatch(QSharedPointer<NodeVar> node) = 0;
     virtual void dispatch(QSharedPointer<NodeAssign> node) = 0;
-  //  virtual void dispatch(QSharedPointer<NodeVarDecl> node) = 0;
     virtual void dispatch(QSharedPointer<NodeBlock> node);
     virtual void dispatch(QSharedPointer<NodeVarType> node) = 0;
- //   virtual void dispatch(QSharedPointer<NodeProcedure> node) = 0;
-//    virtual void dispatch(QSharedPointer<NodeProcedureDecl> node) = 0;
-//    virtual void dispatch(QSharedPointer<NodeConditional> node) = 0;
     virtual void dispatch(QSharedPointer<NodeForLoop> node);
-    virtual void dispatch(QSharedPointer<NodeBuiltinMethod> node) = 0;
     virtual void dispatch(QSharedPointer<NodeBinaryClause> node) = 0;
     virtual void dispatch(QSharedPointer<NodeCase> node) = 0;
     virtual void dispatch(QSharedPointer<NodeRepeatUntil> node) = 0;
@@ -125,6 +120,7 @@ public:
 
     void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign> node);
 
+    void dispatch(QSharedPointer<NodeBuiltinMethod> node);
 
 
 public:
