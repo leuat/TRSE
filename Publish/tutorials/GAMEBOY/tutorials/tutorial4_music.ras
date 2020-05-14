@@ -16,10 +16,17 @@ var
 
 	zp : pointer;
 
-
-
 /*
-	*/	
+
+	Here's how you create tunes for the gameboy using TRSE:
+	 - Download a MOD file tracker such as OpenMPT (https://openmpt.org/)
+	 - Download the GBT player from : https://github.com/AntonioND/gbt-player/releases
+	 - Open the example MOD file (https://github.com/AntonioND/gbt-player/blob/master/rgbds_example/template.mod) 
+	 - Create a tune using the same samples and 3 channels
+	 - Use mod2gbt to convert your tune to a gbt player assembly file (.asm or .inc)
+	 - Load in TRSE by using "loadmusic", play on VBlank with "UpdateMusic"
+
+*/	
 
 
 procedure VBlank();
