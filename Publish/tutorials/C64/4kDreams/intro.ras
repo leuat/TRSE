@@ -126,14 +126,14 @@ procedure PrintWave();
 
 procedure SetupScroll();
 begin
-	k2:=-time;
+	k2:=0-time;
 	for k:=0 to 4 do begin
 		ms_shift:=sine[time+k2];// -sine[time*2+k2*2+3]/4;
 		if (dscroll<>0) then begin
 			shifts[k]:=(7-ms_shift)&7;
 		end;
-		ms_shift:=ms_shift/8;
-		shifts2[k]:=ms_shift;	
+//		ms_shift:=ms_shift/8;
+		shifts2[k]:=(ms_shift>>3);	
 //		if (dscroll<>0) then
 		if (k=1) then shifts[k]:=7-dscroll;
 		k2:=k2+44;
@@ -150,13 +150,21 @@ begin
 	
 	a:=0;
 	b:=40;
+	i:=sine[time];
+	shifts2[0]:=i/8;
+	shifts[0]:=7-i&7;
 	ms_shift:=shifts2[0];
 	PrintWave();
-	ms_shift:=shifts2[2];
 	moveto(0,@ypos+4,$04);
 
 	p1:=screenmemory;
 	inczp(p1,40);
+	
+	i:=sine[time+64];
+	shifts2[2]:=i/8;
+	shifts[2]:=7-i&7;
+	ms_shift:=shifts2[2];
+	
 	PrintWave();
 
 
@@ -566,7 +574,7 @@ begin
 
 //	shifts[current]:=7-time&7;
 	scrollx(shifts[current]);
-
+//	scrollx(0);
 	y:=y+16;
 	if (idx=2) then y:=y+16;
 	inc(current);
@@ -814,6 +822,7 @@ procedure PrintWave();
 begin
 
 	asm("
+		
 		ldy a
 pwl:		tya
 		adc ms_shift

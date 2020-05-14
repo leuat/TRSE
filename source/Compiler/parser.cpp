@@ -597,7 +597,7 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
 
     QJSEngine myEngine;
     QJSValue ret = myEngine.evaluate(str);
-//    qDebug() << str << ret.toInt();
+   qDebug() << str << ret.toInt();
     int r = ret.toInt();
     if (forceType==TokenType::ADDRESS && Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64)
         return r;
@@ -1979,7 +1979,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     bool done = false;
     //while (!done)
     done = PreprocessIncludeFiles();
-    m_symTab->m_constants.clear();
+//    m_symTab->m_constants.clear();
     Preprocess();
     ApplyTPUBefore();
 //    PreprocessConstants();
@@ -3355,7 +3355,7 @@ QSharedPointer<Node> Parser::Expr()
         Token t;
         t.m_type = node->VerifyAndGetNumericType();
         t.m_lineNumber = node->m_lineNumber;
-//        qDebug() << "Collapsing node to " << Util::numToHex(val) << t.getType() << t.m_lineNumber << node->m_op.getType();
+        qDebug() << "Collapsing node to " << Util::numToHex(val) << t.getType() << t.m_lineNumber << node->m_op.getType();
 
         return QSharedPointer<NodeNumber>(new NodeNumber(t,val));
 

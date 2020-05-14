@@ -5561,6 +5561,8 @@ void Methods6502::SetSpriteLoc(Assembler *as)
         as->Asm("tax");
         LoadVar(as,1);
     } else {
+/*        if (m_node->m_params[0]->isPureNumeric())
+            m_node->m_params[0]->setForceType(TokenType::BYTE);*/
         LoadVar(as,0);
         QString zp = as->m_internalZP[2];
         as->Asm("sta "+zp);
