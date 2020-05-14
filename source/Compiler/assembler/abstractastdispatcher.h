@@ -123,6 +123,10 @@ public:
 
     virtual void dispatch(QSharedPointer<NodeCompound> node);
 
+    void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign> node);
+
+
+
 public:
 signals:
     void EmitTick(QString val);

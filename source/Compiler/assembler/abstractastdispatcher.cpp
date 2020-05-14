@@ -625,3 +625,28 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeCompound> node)
     as->EndBlock();
 }
 
+void AbstractASTDispatcher::HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign> node)
+{
+    // Both are records of same type. Set up copy.
+    QSharedPointer<SymbolTable>  stab = as->m_symTab->m_records[node->m_right->getTypeText(as)];
+    as->Comment("Handle assign copy records");
+    for (QSharedPointer<Symbol> s: stab->m_symbols) {
+        QSharedPointer<NodeVar> l = QSharedPointer<NodeVar>(new NodeVar(Token(TokenType::ID,getValue(node->m_left))));
+        l->m_op.m_lineNumber = node->m_op.m_lineNumber;
+        l->m_expr = qSharedPointerDynamicCast<NodeVar>(node->m_left)->m_expr;
+        QSharedPointer<NodeVar> lp = QSharedPointer<NodeVar>(new NodeVar(Token(TokenType::ID,s->m_name)));
+        l->m_subNode = lp;
+
+        QSharedPointer<NodeVar> r = QSharedPointer<NodeVar>(new NodeVar(Token(TokenType::ID,getValue(node->m_right))));
+        QSharedPointer<NodeVar> rp = QSharedPointer<NodeVar>(new NodeVar(Token(TokenType::ID,s->m_name)));
+        r->m_subNode = rp;
+        r->m_op.m_lineNumber = node->m_op.m_lineNumber;
+        r->m_expr = qSharedPointerDynamicCast<NodeVar>(node->m_right)->m_expr;
+
+        QSharedPointer<NodeAssign> ns = QSharedPointer<NodeAssign>(new NodeAssign(l,node->m_op, r));
+        ns->Accept(this);
+        //    Node::s_uniqueSymbols[ns] = ns; // Mark for deletion
+
+    }
+}
+

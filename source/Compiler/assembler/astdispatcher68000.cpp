@@ -551,6 +551,14 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeForLoop> node)
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeVar> node)
 {
 //    LoadVariable(node);
+
+    if (m_inlineParameters.contains(node->value)) {
+  //      qDebug()<< "INLINE node override : "<< node->value;
+        m_inlineParameters[node->value]->Accept(this);
+        return;
+    }
+
+
     if (node->m_expr!=nullptr) {
 //        qDebug() << "HERE";
         LoadVariable(node);

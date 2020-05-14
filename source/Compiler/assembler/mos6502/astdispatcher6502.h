@@ -185,7 +185,7 @@ public:
 
     void AssignVariable(QSharedPointer<NodeAssign>node);
 
-    void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign>node);
+//    void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign>node);
 
 
 

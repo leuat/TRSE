@@ -337,6 +337,13 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVarDecl> node)
 
 void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
 {
+
+    if (m_inlineParameters.contains(node->value)) {
+  //      qDebug()<< "INLINE node override : "<< node->value;
+        m_inlineParameters[node->value]->Accept(this);
+        return;
+    }
+
     if (node->m_expr!=nullptr) {
         if (node->m_expr->isPureNumeric() && node->m_expr->getValueAsInt(as)==0) {
             as->Asm("; Optimization : zp[0]");

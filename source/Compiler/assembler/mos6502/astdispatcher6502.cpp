@@ -2753,9 +2753,7 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
         ErrorHandler::e.Error("Node assign: right hand must be expression", node->m_op.m_lineNumber);
 
     if (node->m_left->isWord(as)) {
-//        qDebug() << "AssignVariable HERE " << getValue(v);
         as->Asm("ldy #0");    // AH:20190722: Does not appear to serve a purpose - takes up space in prg. Breaks TRSE scroll in 4K C64 demo if take this out
-//        node->m_right->m_forceType = TokenType::INTEGER; // FORCE integer on right-hand side
         node->m_right->setForceType(TokenType::INTEGER);
     }
     // For constant i:=i+1;
@@ -2805,30 +2803,6 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
     return;
 }
 
-void ASTDispatcher6502::HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign> node)
-{
-    // Both are records of same type. Set up copy.
-    QSharedPointer<SymbolTable>  stab = as->m_symTab->m_records[node->m_right->getTypeText(as)];
-    as->Comment("Handle assign copy records");
-    for (QSharedPointer<Symbol> s: stab->m_symbols) {
-        QSharedPointer<NodeVar> l = QSharedPointer<NodeVar>(new NodeVar(Token(TokenType::ID,getValue(node->m_left))));
-        l->m_op.m_lineNumber = node->m_op.m_lineNumber;
-        l->m_expr = qSharedPointerDynamicCast<NodeVar>(node->m_left)->m_expr;
-        QSharedPointer<NodeVar> lp = QSharedPointer<NodeVar>(new NodeVar(Token(TokenType::ID,s->m_name)));
-        l->m_subNode = lp;
-
-        QSharedPointer<NodeVar> r = QSharedPointer<NodeVar>(new NodeVar(Token(TokenType::ID,getValue(node->m_right))));
-        QSharedPointer<NodeVar> rp = QSharedPointer<NodeVar>(new NodeVar(Token(TokenType::ID,s->m_name)));
-        r->m_subNode = rp;
-        r->m_op.m_lineNumber = node->m_op.m_lineNumber;
-        r->m_expr = qSharedPointerDynamicCast<NodeVar>(node->m_right)->m_expr;
-
-        QSharedPointer<NodeAssign> ns = QSharedPointer<NodeAssign>(new NodeAssign(l,node->m_op, r));
-        ns->Accept(this);
-    //    Node::s_uniqueSymbols[ns] = ns; // Mark for deletion
-
-    }
-}
 
 void ASTDispatcher6502::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
 {
