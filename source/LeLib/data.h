@@ -30,7 +30,7 @@ class Data
 public:
     Data();
     int flfVersion = 2;
-    QString version = "0.10.2";
+    QString version = "0.10.3";
 
     bool redrawOutput=false;
     bool redrawInput=false;
