@@ -1,0 +1,39 @@
+program Tutorial4_music;
+
+@use screens
+var  
+	const charBank : byte = 2;
+
+// Automatically export the character image
+@export "images/charset.flf" "images/charset.bin" 256
+
+	// Place data in one of the 16kb banks at $4000-$7FFF. 
+	// You have a *lot* of free ROM space for graphics and other data!
+	
+    font : incbin("images/charset.bin") bank(charBank);
+
+	text1 : string = "HELLO GAMEBOY!";
+
+	zp : pointer;
+
+
+
+/*
+	*/	
+
+
+procedure VBlank();
+begin
+	UpdateMusic();
+end;
+
+
+begin
+	Screens::InitDefaultScreen();	
+
+	LoadMusic("tune_by_mibri",5);	
+
+	InitVBlank(VBlank());
+	EnableVBLank();
+	Loop();			
+end.

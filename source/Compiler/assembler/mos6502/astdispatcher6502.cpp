@@ -1010,7 +1010,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeCompound> node)
 }
 
 
-
+/*
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeBlock> node)
 {
     node->DispatchConstructor(as);
@@ -1042,12 +1042,6 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeBlock> node)
             hasLabel = true;
         }
 
-        /*    if (node->m_isMainBlock) {
-        int ret = node->MaintainBlocks(as);
-        if (ret==2)
-            as->m_currentBlock = nullptr;
-    }
-*/
 
         for (QSharedPointer<Node> n: node->m_decl) {
             // Print label at end of vardecl
@@ -1090,49 +1084,6 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeBlock> node)
         as->IncludeFile(":resources/code/nes_init.asm");
 
 
-    /*
-     * POP stuff
-     *
-    */
-  /*  if (node->m_isProcedure) {
-        if (node->m_decl.count()>0) {
-            as->Asm("pla");
-            as->Asm("sta $30");
-    //        as->Asm("pla");
-      //      as->Asm("sta $31");
-        }
-
-        for (int i=0;i<node->m_decl.count();i++) {
-            // Print label at end of vardecl
-            QSharedPointer<Node> n = node->m_decl[node->m_decl.count()-1-i];
-            QSharedPointer<NodeVarDecl> nt = dynamic_cast<QSharedPointer<NodeVarDecl>>(n);
-            if (nt!=nullptr) {
-                QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>nt->m_varNode;
-                QSharedPointer<NodeVarType> t = (QSharedPointer<NodeVarType>)nt->m_typeNode;
-                if (!blockProcedure) // Print label at end of vardecl
-                {
-                    if (t->m_op.m_type == TokenType::INTEGER || t->m_op.m_type == TokenType::INTEGER_CONST || t->m_op.m_type == TokenType::ADDRESS || t->m_op.m_type == TokenType::POINTER)
-                    {
-                        as->Asm("pla");
-                        as->Asm("sta "+getValue(v));
-                        as->Asm("pla");
-                        as->Asm("sta "+getValue(v)+"+1");
-
-                    }
-                    else {
-                        as->Asm("pla");
-                        as->Asm("sta "+getValue(v));
-                    }
-
-                }
-
-            }
-            n->Accept(this);
-
-        }
-
-    }
-    */
     if (node->m_compoundStatement!=nullptr)
         node->m_compoundStatement->Accept(this);
 
@@ -1147,22 +1098,10 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeBlock> node)
 
 
     node->PopZeroPointers(as);
-/*
-    if (node->m_isProcedure) {
-        if (node->m_decl.count()>0) {
-//            as->Asm("lda $31");
-//            as->Asm("pha");
-            as->Asm("lda $30");
-            as->Asm("pha");
-
-        }
-    }
-*/
-//    qDebug() << QString::number(ln);
     as->PopCounter(ln);
 }
 
-
+*/
 
 /*
  *

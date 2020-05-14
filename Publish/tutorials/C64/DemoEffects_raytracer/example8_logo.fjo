@@ -34,6 +34,8 @@ output = {
 	resolution = { width = 128, height=128},
 --	resolution = { width = 64, height=64},
 	aspect = 1.2,
+	dither = 0,
+	ditherStrength = { x=30, y=1, z=1 },
 	output_type = 0, -- no c64 output, RGB
 }
 

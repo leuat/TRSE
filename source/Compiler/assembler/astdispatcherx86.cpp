@@ -238,7 +238,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVarDecl> node)
     as->m_currentBlock = nullptr;
 
 }
-
+/*
 void ASTdispatcherX86::dispatch(QSharedPointer<NodeBlock> node)
 {
     node->DispatchConstructor(as);
@@ -292,7 +292,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBlock> node)
     as->PopBlock(node->m_currentLineNumber);
 
 }
-
+*/
 void ASTdispatcherX86::dispatch(QSharedPointer<NodeProgram> node)
 {
     node->DispatchConstructor(as);

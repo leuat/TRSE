@@ -1152,8 +1152,10 @@ void DialogEffects::UpdateGlobals()
 
     }
 
-    m_rt.m_globals.m_dither = m_script->get<float>("output.dither");
-    m_rt.m_globals.m_ditherStrength = m_script->getVec("output.ditherStrength");
+    if (m_script->lua_exists("output.dither"))
+        m_rt.m_globals.m_dither = m_script->get<float>("output.dither");
+    if (m_script->lua_exists("output.ditherStrength"))
+        m_rt.m_globals.m_ditherStrength = m_script->getVec("output.ditherStrength");
     if (m_script->lua_exists("output.index_colors"))
         m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.index_colors");
 

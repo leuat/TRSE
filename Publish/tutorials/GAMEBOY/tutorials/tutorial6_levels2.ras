@@ -226,7 +226,7 @@ begin
 	sx:=0;
 	sy:=0;
 	px:=50;
-	py:=60;
+	py:=100;
 	time:=0;
 	curLevel:=0;
 end;

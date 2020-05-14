@@ -40,7 +40,7 @@ public:
     void dispatch(QSharedPointer<NodeUnaryOp> node) override;
     void dispatch(QSharedPointer<NodeCompound> node) override;
     void dispatch(QSharedPointer<NodeVarDecl> node) override;
-    void dispatch(QSharedPointer<NodeBlock> node) override;
+ //   void dispatch(QSharedPointer<NodeBlock> node) override;
     void dispatch(QSharedPointer<NodeProgram> node) override;
     void dispatch(QSharedPointer<NodeVarType> node) override;
     void dispatch(QSharedPointer<NodeBinaryClause> node) override;

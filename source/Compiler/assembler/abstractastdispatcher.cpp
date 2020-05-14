@@ -2,6 +2,7 @@
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/ast/nodeconditional.h"
 #include "source/Compiler/ast/nodeforloop.h"
+#include "source/Compiler/ast/nodeblock.h"
 
 AbstractASTDispatcher::AbstractASTDispatcher()
 {
@@ -9,8 +10,93 @@ AbstractASTDispatcher::AbstractASTDispatcher()
 }
 
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBlock> node) {
-    if (m_ticks++%4==0)
+    if (m_ticks++%8==0)
         emit EmitTick(".");
+
+
+    node->DispatchConstructor(as);
+
+ //   AbstractASTDispatcher::dispatch(node);
+
+
+    // In case memory block is acive
+    //as->EndMemoryBlock();
+    int ln = node->m_op.m_lineNumber-1;
+    if (ln==0) ln++;
+    as->PushBlock(node->m_currentLineNumber);
+
+
+
+
+    bool blockLabel = false;
+    bool blockProcedure = false;
+    bool hasLabel = false;
+
+    QString label = as->NewLabel("block");
+
+
+    if (!node->m_ignoreDeclarations) {
+
+        if (node->m_decl.count()!=0) {
+            if (node->m_isMainBlock && !as->m_ignoreInitialJump)
+                as->Asm(getJmp(true)+" " + label);
+            hasLabel = true;
+        }
+
+
+        for (QSharedPointer<Node> n: node->m_decl) {
+            // Print label at end of vardecl
+            if (qSharedPointerDynamicCast<NodeVarDecl>(n)==nullptr) {
+                if (!blockProcedure) // Print label at end of vardecl
+                {
+                    if (n->m_op.m_lineNumber!=0) {
+                        //                      as->PopBlock(n->m_op.m_lineNumber);
+                        blockProcedure = true;
+                        //   qDebug() << "pop" << n->m_op.m_lineNumber << " " << TokenType::getType(n->getType(as));
+                    }
+
+                }
+
+            }
+            n->Accept(this);
+
+        }
+        as->VarDeclEnds();
+    }
+    as->PushCounter();
+
+    if (node->m_isMainBlock) {
+        int ret = node->MaintainBlocks(as);
+
+        as->m_currentBlockName="MainProgram";
+    }
+
+
+    if (!blockLabel && hasLabel)
+        as->Label(label);
+
+    if (node->forceLabel!="")
+        as->Label(node->forceLabel);
+
+    if (node->m_isMainBlock && Syntax::s.m_currentSystem->m_system == AbstractSystem::NES)
+        as->IncludeFile(":resources/code/nes_init.asm");
+
+
+    if (node->m_compoundStatement!=nullptr)
+        node->m_compoundStatement->Accept(this);
+
+    as->PopBlock(node->m_currentLineNumber);
+    if (node->m_isMainBlock && Syntax::s.m_currentSystem->m_system == AbstractSystem::NES) {
+        as->StartMemoryBlock("$FFFA");
+        as->IncludeFile(":resources/code/nes_end.asm");
+        as->EndMemoryBlock();
+    }
+    if (node->m_isMainBlock)
+        as->Label("EndSymbol");
+
+
+    node->PopZeroPointers(as);
+    as->PopCounter(ln);
 }
 
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeForLoop> node)
