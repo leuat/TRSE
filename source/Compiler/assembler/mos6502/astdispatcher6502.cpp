@@ -132,25 +132,6 @@ void ASTDispatcher6502::HandleGenericBinop16bit(QSharedPointer<Node> node) {
 
 void ASTDispatcher6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
 
-/*    if ((node->m_left->isPureNumeric() || node->m_left->isPureVariable()) &&
-       (node->m_right->isPureNumeric() || node->m_right->isPureVariable())) {
-        as->Comment("16 bit operation rvar & lvar are pure number or variables");
-
-        node->m_right->Accept(this);
-        as->Term();
-        as->Asm("clc");
-        as->Asm("add ");
-        lda #40
-        clc
-        adc zp
-        bcc incscreenx52298
-        inc zp +1
-    incscreenx52298
-        sta zp
-
-
-    }
-  */
 
     as->m_labelStack["wordAdd"].push();
     QString lblword = as->getLabel("wordAdd");
@@ -587,14 +568,6 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeBinOP>node)
 
     node->DispatchConstructor(as);
 
-/*    if (node->m_isCollapsed) {
-        as->Asm("lda "+getValue(node));
-        return;
-    }
-*/
-    // First check if both are consants:
-
-
 
     // First, flip such that anything numeric / pure var is to the right
     if (node->m_op.m_type == TokenType::MUL || node->m_op.m_type == TokenType::PLUS)
@@ -666,23 +639,6 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeNumber>node)
 
     QString val = getValue(node);
 
-    /*        if (as->m_symTab->m_constants.contains(m_op.m_value)) {
-            m_val = as->m_symTab->m_constants[m_op.m_value]->m_value->m_fVal;
-        }
-*/
-
-//    qDebug() << TokenType::types[node->getType(as)];
-/*    if (node->m_op.m_type==TokenType::BYTE)
-        val = QString::number((int)node->m_val);
-    if (node->m_op.m_type==TokenType::INTEGER)
-        val = "#"+QString::number((int)node->m_val);
-    if (node->m_op.m_type==TokenType::INTEGER_CONST)
-        val = getValue(node);;
-    if (node->m_op.m_type==TokenType::ADDRESS) {
-
-        val = "$" + QString::number((int)node->m_val,16);
-    }
-*/
     if (node->m_forceType==TokenType::INTEGER && node->m_val<=255) {
         as->Asm("ldy #0   ; Force integer assignment, set y = 0 for values lower than 255");
     }
@@ -694,15 +650,11 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeNumber>node)
         int loBit = ((int)node->m_val)&0xff;
         as->ClearTerm();
         as->Asm("ldy #" + Util::numToHex(hiBit) );
-        //            as->Asm("tax");
         as->Asm("lda #" + Util::numToHex(loBit) );
         return;
 
-        //qDebug() << m_op.m_value <<":" << m_val << " : " << hiBit << "  , " << loBit;
-        //exit(1);
     }
 
-//     qDebug() << " Node Number for " << val;;
 
     if (as->m_term=="")
 
@@ -870,33 +822,6 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeString> node)
     node->DispatchConstructor(as);
 
     as->String(node->m_val);
-}
-
-void ASTDispatcher6502::dispatch(QSharedPointer<NodeUnaryOp> node)
-{
-    node->DispatchConstructor(as);
-
-    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
-
-    if (num!=nullptr) {
-        int s = num->m_val;
-        bool isWord = node->m_forceType==TokenType::INTEGER;
-        if (node->m_op.m_type==TokenType::MINUS) {
-            if (!isWord)
-                num->m_val=256-num->m_val;
-            else
-                    num->m_val=65536-num->m_val;
-
-        }
-
-        num->Accept(this);
-        num->m_val = s;
-/*        QString ss= num->Build(as);
-        num->m_val = s;
-*/
-    }
-
-
 }
 
 
@@ -2681,19 +2606,6 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
 
     as->Comment("Assigning single variable : " + getValue(v));
     QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(v), node->m_op.m_lineNumber, v->isAddress());
-    //        if (s==nullptr)
-    //          ErrorHandler::e.Error("Could not find variable :" + getValue(v),m_op.m_lineNumber);
-
-
-
-//    TokenType::Type t = s->getTokenType();
-    //qDebug() << TokenType::getType(m_left->getType(as)) << " " << v->m_expr;
-
-/*    else
-        if (node->isRecord(as)) {
-            qDebug() << "IS RECORD TEST " <<node->getTypeText(as);
-        }
-  */
 
     // Trying to assign a PURE record
     if (v->isRecord(as) && !v->isRecordData(as)) {
@@ -2751,33 +2663,6 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
     // For constant i:=i+1;
     if (IsSimpleIncDec(v,  node))
         return;
-
-    // Special case:
-/*
-    // typically "a[i+1]:=b;" or "a[i+3]:=b+c*2;" but no Y set. Then
-    // execute [expr] first and THEN do a lda # and save! No more pha pla
-    if (!node->m_right->containsPointer(as)) {
-        as->ClearTerm();
-        v->Accept(this);
-        as->Term();
-        QString secondReg="x";
-        QString pa = "";
-        QString pb= "";
-        if (v->getType(as)==TokenType::POINTER) {
-            secondReg="y";
-            pa="(";
-            pb=")";
-        }
-
-        as->Asm("ta" + secondReg);
-        as->Asm("sta " +pa + getValue(v)+pb+","+ secondReg);
-        return getValue(v);
-
-    }
-*/
-
-    // Optimization : a[2*b]:=2; -> no need for pha/pla
-
 
 
 

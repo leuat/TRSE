@@ -5,6 +5,7 @@
 #include "compilerm68k.h"
 #include "compilerx86.h"
 #include "compilerz80.h"
+#include "compilergbz80.h"
 
 class FactoryCompiler
 {

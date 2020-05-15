@@ -62,13 +62,7 @@ public:
     void LoadAddress(QSharedPointer<Node> n) override;
     void LoadInteger(QSharedPointer<Node> n);
     void StoreAddress(QSharedPointer<Node> n);
-    QString getHL() {
-        QString hl ="hl";
-        if (m_useNext!="")
-            hl = m_useNext;
-        m_useNext="";
-       return hl;
-    }
+    QString getHL();
 
     void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
@@ -81,11 +75,7 @@ public:
 
 
     void AssignString(QSharedPointer<NodeAssign> node, bool isPointer);
-    QString getJmp(bool isOffPage) override {
-        if (!isOffPage)
-            return "jr";
-        return "jp";
-    }
+    QString getJmp(bool isOffPage) override;
 
 
 //    void dispatch(QSharedPointer<NodeConditional> node) override;

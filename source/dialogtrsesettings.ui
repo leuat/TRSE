@@ -19,7 +19,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -63,78 +63,26 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
             <height>451</height>
            </rect>
           </property>
-          <layout class="QGridLayout" name="gridLayout_7" rowstretch="0,0,0,0,0,0,0,0,0,0,0">
-           <item row="8" column="2">
-            <widget class="QPushButton" name="btnOKEmulator">
+          <layout class="QGridLayout" name="gridLayout_7" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0">
+           <item row="8" column="0">
+            <widget class="QLabel" name="label_34">
              <property name="text">
-              <string>...</string>
+              <string>DOSBOX</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
-            <widget class="QLineEdit" name="lePETEmulator"/>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="leEmulator"/>
-           </item>
-           <item row="4" column="2">
-            <widget class="QPushButton" name="btnPlus4Select">
-             <property name="text">
-              <string>...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="9" column="2">
+           <item row="10" column="2">
             <widget class="QPushButton" name="btnX16Emulator">
              <property name="text">
               <string>...</string>
              </property>
             </widget>
            </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_26">
-             <property name="text">
-              <string>PLUS4 emulator location:</string>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="1">
             <widget class="QLineEdit" name="leEmulatorC128"/>
            </item>
-           <item row="7" column="2">
-            <widget class="QPushButton" name="btnDosbox">
-             <property name="text">
-              <string>...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>C64 Emulator location</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_7">
-             <property name="text">
-              <string>VIC 20 emulator location:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="2">
-            <widget class="QPushButton" name="btnNesEmulatr">
-             <property name="text">
-              <string>...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0">
-            <widget class="QLabel" name="label_34">
-             <property name="text">
-              <string>DOSBOX</string>
-             </property>
-            </widget>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="lePlus4Emulator"/>
            </item>
            <item row="2" column="2">
             <widget class="QPushButton" name="btnVic20Emulator">
@@ -143,8 +91,66 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
              </property>
             </widget>
            </item>
-           <item row="1" column="2">
-            <widget class="QPushButton" name="btnEmulatorC128">
+           <item row="10" column="0">
+            <widget class="QLabel" name="label_79">
+             <property name="text">
+              <string>X16 emulator location</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLineEdit" name="leNesEmulator"/>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_81">
+             <property name="text">
+              <string>Gameboy emulator location</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QPushButton" name="btnPetEmulator">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_23">
+             <property name="text">
+              <string>PET emulator location:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="leEmulator"/>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLineEdit" name="leGameboyEmulator"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>VIC 20 emulator location:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="btnEmulator">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="11" column="1">
+            <widget class="QLineEdit" name="leX16EmuParams">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="2">
+            <widget class="QPushButton" name="btnPlus4Select">
              <property name="text">
               <string>...</string>
              </property>
@@ -157,8 +163,52 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
              </property>
             </widget>
            </item>
-           <item row="0" column="2">
-            <widget class="QPushButton" name="btnEmulator">
+           <item row="1" column="2">
+            <widget class="QPushButton" name="btnEmulatorC128">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="leVic20Emulator"/>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>C64 Emulator location</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="1">
+            <widget class="QLineEdit" name="leDosbox"/>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="lePETEmulator"/>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_26">
+             <property name="text">
+              <string>PLUS4 emulator location:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0">
+            <widget class="QLabel" name="label_18">
+             <property name="text">
+              <string>OK64 emulator location</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="2">
+            <widget class="QPushButton" name="btnNesEmulatr">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="2">
+            <widget class="QPushButton" name="btnDosbox">
              <property name="text">
               <string>...</string>
              </property>
@@ -171,82 +221,49 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
              </property>
             </widget>
            </item>
-           <item row="10" column="1">
-            <widget class="QLineEdit" name="leX16EmuParams">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="2">
-            <widget class="QPushButton" name="btnPetEmulator">
+           <item row="9" column="2">
+            <widget class="QPushButton" name="btnOKEmulator">
              <property name="text">
               <string>...</string>
              </property>
             </widget>
            </item>
-           <item row="9" column="0">
-            <widget class="QLabel" name="label_79">
+           <item row="6" column="2">
+            <widget class="QPushButton" name="btnGameboyEmulator">
              <property name="text">
-              <string>X16 emulator location</string>
+              <string>...</string>
              </property>
             </widget>
            </item>
-           <item row="8" column="0">
-            <widget class="QLabel" name="label_18">
-             <property name="text">
-              <string>OK64 emulator location</string>
-             </property>
-            </widget>
-           </item>
-           <item row="9" column="1">
-            <widget class="QLineEdit" name="leX16Emu">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="8" column="1">
-            <widget class="QLineEdit" name="leOK64Emulator"/>
-           </item>
-           <item row="7" column="1">
-            <widget class="QLineEdit" name="leDosbox"/>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_23">
-             <property name="text">
-              <string>PET emulator location:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="leVic20Emulator"/>
-           </item>
-           <item row="10" column="0">
+           <item row="11" column="0">
             <widget class="QLabel" name="label_80">
              <property name="text">
               <string>X16 additional params</string>
              </property>
             </widget>
            </item>
-           <item row="5" column="1">
-            <widget class="QLineEdit" name="leNesEmulator"/>
+           <item row="9" column="1">
+            <widget class="QLineEdit" name="leOK64Emulator"/>
            </item>
-           <item row="4" column="1">
-            <widget class="QLineEdit" name="lePlus4Emulator"/>
-           </item>
-           <item row="6" column="0">
-            <widget class="QLabel" name="label_81">
+           <item row="10" column="1">
+            <widget class="QLineEdit" name="leX16Emu">
              <property name="text">
-              <string>Gameboy emulator location</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="6" column="1">
-            <widget class="QLineEdit" name="leGameboyEmulator"/>
+           <item row="7" column="0">
+            <widget class="QLabel" name="label_82">
+             <property name="text">
+              <string>ZX Spectrum emulator location</string>
+             </property>
+            </widget>
            </item>
-           <item row="6" column="2">
-            <widget class="QPushButton" name="btnGameboyEmulator">
+           <item row="7" column="1">
+            <widget class="QLineEdit" name="leZXSpectrumEmulator"/>
+           </item>
+           <item row="7" column="2">
+            <widget class="QPushButton" name="btnZXSpectrumEmulator">
              <property name="text">
               <string>...</string>
              </property>
@@ -359,13 +376,6 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
                 </layout>
                </widget>
               </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_17">
-                <property name="text">
-                 <string>OrgAsm is TRSE's built-in assembler. Use Dasm if something goes wrong</string>
-                </property>
-               </widget>
-              </item>
               <item row="0" column="0">
                <layout class="QVBoxLayout" name="verticalLayout_7">
                 <item>
@@ -373,7 +383,7 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
                   <item>
                    <widget class="QLabel" name="label_15">
                     <property name="text">
-                     <string>MOS6502 Assembler:</string>
+                     <string>6502 Assembler:</string>
                     </property>
                    </widget>
                   </item>
@@ -395,10 +405,10 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
                 </item>
                </layout>
               </item>
-              <item row="5" column="0">
+              <item row="6" column="0">
                <widget class="QGroupBox" name="groupBox_2">
                 <property name="title">
-                 <string>External Assembler &amp; tools</string>
+                 <string>External 6502 Assembler &amp; tools</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_14">
                  <item row="0" column="0">
@@ -506,6 +516,13 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
                 </layout>
                </widget>
               </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_17">
+                <property name="text">
+                 <string>OrgAsm is TRSE's built-in assembler. Use Dasm if something goes wrong</string>
+                </property>
+               </widget>
+              </item>
               <item row="4" column="0">
                <widget class="QGroupBox" name="groupBox_9">
                 <property name="title">
@@ -528,6 +545,36 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
                  </item>
                  <item row="0" column="2">
                   <widget class="QPushButton" name="btnRgbAsmDir">
+                   <property name="text">
+                    <string>...</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QGroupBox" name="groupBox_10">
+                <property name="title">
+                 <string>Z80 Pasmo assembler</string>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_17">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_39">
+                   <property name="text">
+                    <string>Pasmo location</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLineEdit" name="lePasmo">
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="2">
+                  <widget class="QPushButton" name="btnPasmo">
                    <property name="text">
                     <string>...</string>
                    </property>

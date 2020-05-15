@@ -111,6 +111,10 @@ private slots:
 
     void on_btnGameboyEmulator_clicked();
 
+    void on_btnZXSpectrumEmulator_clicked();
+
+    void on_btnPasmo_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

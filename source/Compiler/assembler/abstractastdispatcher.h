@@ -56,7 +56,6 @@ public:
     virtual void dispatch(QSharedPointer<NodeNumber> node) = 0;
     virtual void dispatch(QSharedPointer<Node> node) = 0;
     virtual void dispatch(QSharedPointer<NodeString> node) = 0;
-    virtual void dispatch(QSharedPointer<NodeUnaryOp> node) = 0;
     virtual void dispatch(QSharedPointer<NodeVar> node) = 0;
     virtual void dispatch(QSharedPointer<NodeAssign> node) = 0;
     virtual void dispatch(QSharedPointer<NodeBlock> node);
@@ -121,6 +120,9 @@ public:
     void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign> node);
 
     void dispatch(QSharedPointer<NodeBuiltinMethod> node);
+
+    virtual void dispatch(QSharedPointer<NodeUnaryOp> node);
+
 
 
 public:

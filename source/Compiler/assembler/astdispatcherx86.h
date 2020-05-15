@@ -37,7 +37,6 @@ public:
 //    void dispatchOld(QSharedPointer<NodeBinOP>node) override;
     virtual void dispatch(QSharedPointer<NodeNumber>node) override;
     void dispatch(QSharedPointer<NodeString> node) override;
-    void dispatch(QSharedPointer<NodeUnaryOp> node) override;
    // void dispatch(QSharedPointer<NodeVarDecl> node) override;
  //   void dispatch(QSharedPointer<NodeBlock> node) override;
  //   void dispatch(QSharedPointer<NodeProgram> node) override;

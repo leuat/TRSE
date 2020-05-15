@@ -70,8 +70,11 @@ public:
     }
 };
 
+// Singleton
 class Syntax
 {
+private:
+    Syntax();
 public:
     QVector<Token> reservedWords, reservedWordsFjong;
     //QVector<BuiltInFunction> builtinFunctions;
@@ -85,40 +88,12 @@ public:
     QSharedPointer<AbstractSystem> m_currentSystem;
     bool m_ignoreSys = false;
     bool m_stripPrg = false;
-    Syntax();
     void Init(AbstractSystem::System s, QSharedPointer<CIniFile> m_ini, QSharedPointer<CIniFile> m_proj);
     void SetupReservedWords(QVector<Token>& list, QString id, bool ignoreSystem);
     void SetupBuiltinFunctions(QMap<QString, BuiltInFunction>& lst, AbstractSystem::System s, QString id, bool ignoreSystem);
     void SetupKeys();
     void LoadSyntaxData();
 
-/*    static System SystemFromString(QString s) {
-        if (s.toLower()=="c64")
-            return C64;
-        if (s.toLower()=="c128")
-            return C128;
-        if (s.toLower()=="pet")
-            return PET;
-        if (s.toLower()=="vic20")
-            return VIC20;
-        if (s.toLower()=="nes")
-            return NES;
-        if (s.toLower()=="bbcm")
-            return BBCM;
-        if (s.toLower()=="amiga")
-            return AMIGA;
-    }
-
-    static QString StringFromSystem(System s) {
-        if (s == C64) return "C64";
-        if (s == PET) return "PET";
-        if (s == VIC20) return "VIC20";
-        if (s == NES) return "NES";
-        if (s == C128) return "C128";
-        if (s == BBCM) return "BBCM";
-        if (s == AMIGA) return "AMIGA";
-    }
-*/
     QString puredigit = "0123456789^";
     QString digit = "^0123456789$%";
     QString digitAll = "^0123456789$%ABCDEFabcdef";

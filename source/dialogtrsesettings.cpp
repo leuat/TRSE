@@ -58,6 +58,8 @@ void DialogTRSESettings::FillFromIni()
     ui->leX16Emu->setText(m_ini->getString("x16_emulator"));
     ui->leX16EmuParams->setText(m_ini->getString("x16_emulator_params"));
     ui->leC1541->setText(m_ini->getString("c1541"));
+    ui->lePasmo->setText(m_ini->getString("pasmo"));
+    ui->leZXSpectrumEmulator->setText(m_ini->getString("spectrum_emulator"));
     ui->leExomizer->setText(m_ini->getString("exomizer"));
     ui->leRGBAsmDir->setText(m_ini->getString("gameboy_rgbasm_dir"));
     ui->leTinyCrunch->setText(m_ini->getString("tinycrunch"));
@@ -128,6 +130,10 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
     m_ini->setString("x16_emulator_params", ui->leX16EmuParams->text());
     m_ini->setString("c1541", ui->leC1541->text());
+
+    m_ini->setString("spectrum_emulator", ui->leZXSpectrumEmulator->text());
+    m_ini->setString("pasmo", ui->lePasmo->text());
+
 
     m_ini->setString("gameboy_rgbasm_dir", ui->leRGBAsmDir->text());
 
@@ -364,5 +370,23 @@ void DialogTRSESettings::on_btnGameboyEmulator_clicked()
         tr("Gameboy emulator"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->leGameboyEmulator->setText(filename);
+
+}
+
+void DialogTRSESettings::on_btnZXSpectrumEmulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("ZX Spectrum emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leZXSpectrumEmulator->setText(filename);
+
+}
+
+void DialogTRSESettings::on_btnPasmo_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Pasmo assembler location"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->lePasmo->setText(filename);
 
 }

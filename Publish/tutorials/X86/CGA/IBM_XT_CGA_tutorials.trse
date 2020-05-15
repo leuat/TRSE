@@ -44,4 +44,4 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/X86/CGA/
 open_files = ,tut3.ras, tut4.asm, tut4.ras, tut2.ras, tut5.ras
-current_file = tut3.ras
+current_file = tut4.asm

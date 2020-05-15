@@ -95,7 +95,8 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     else if (Command("loop")) {
         QString lbl = as->NewLabel("end");
         as->Label(lbl);
-        as->Asm("halt");
+        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY)
+            as->Asm("halt");
         as->Asm(";nop");
         as->Asm("jr "+lbl);
         as->PopLabel("end");
@@ -219,7 +220,12 @@ void MethodsZ80::Fill(Assembler *as)
     as->Asm("inc c");
     as->Asm("jr "+lblSkip);
     as->Label(lblFill);
-    as->Asm("ld [hl+],a");
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80)
+        as->Asm("ld [hl+],a");
+    else {
+        as->Asm("ld [hl],a");
+        as->Asm("inc hl");
+    }
     as->Label(lblSkip);
     as->Asm("dec c");
     as->Asm("jr nz,"+lblFill);
@@ -583,7 +589,7 @@ void MethodsZ80::MemCpyOnHBLank(Assembler *as, QString jlbl, int div)
     as->Asm("call "+jlbl);
     as->Asm("pop af");
     as->Asm("dec a");
-    as->Asm("cp a, 0");
+    as->Asm("cp 0");
     as->Asm("jr nz, "+lbl);
 
     as->PopLabel("memcpyhblank");

@@ -1225,6 +1225,7 @@ void MainWindow::LoadProject(QString filename)
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA)
         Messages::messages.DisplayMessage(Messages::messages.AMIGA_WARNING);
 
+
     QImage img(":resources/images/" +system+".png");
     QPainter p;
     p.begin(&img);

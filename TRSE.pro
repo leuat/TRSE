@@ -94,6 +94,7 @@ SOURCES += main.cpp\
     source/Compiler/ast/nodecase.cpp \
     source/Compiler/ast/noderepeatuntil.cpp \
     source/Compiler/compilers/compiler6502.cpp \
+    source/Compiler/compilers/compilergbz80.cpp \
     source/Compiler/compilers/compilerm68k.cpp \
     source/Compiler/compilers/compilerx86.cpp \
     source/Compiler/compilers/compilerz80.cpp \
@@ -101,6 +102,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemgameboy.cpp \
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemplus4.cpp \
+    source/Compiler/systems/systemspectrum.cpp \
     source/Compiler/systems/systemx86.cpp \
     source/Compiler/systems/systemz80.cpp \
     source/ImageEditor/abstractimageeditor.cpp \
@@ -265,6 +267,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/ast/nodecase.h \
     source/Compiler/ast/noderepeatuntil.h \
     source/Compiler/compilers/compiler6502.h \
+    source/Compiler/compilers/compilergbz80.h \
     source/Compiler/compilers/compilerm68k.h \
     source/Compiler/compilers/compilerx86.h \
     source/Compiler/compilers/compilerz80.h \
@@ -272,6 +275,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemgameboy.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemplus4.h \
+    source/Compiler/systems/systemspectrum.h \
     source/Compiler/systems/systemx86.h \
     source/Compiler/systems/systemz80.h \
     source/ImageEditor/abstractimageeditor.h \

@@ -11,6 +11,7 @@
 #include "source/Compiler/ast/nodeasm.h"
 #include "source/Compiler/ast/nodecompound.h"
 #include "source/Compiler/ast/nodebuiltinmethod.h"
+#include "source/Compiler/ast/nodeunaryop.h"
 #include "source/Compiler/assembler/abstractmethods.h"
 #include "source/Compiler/assembler/factorymethods.h"
 
@@ -707,5 +708,29 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBuiltinMethod> node)
     QSharedPointer<AbstractMethods> methods = FactoryMethods::CreateMethods(Syntax::s.m_currentSystem->m_system);
     methods->m_node = node;
     methods->Assemble(as,this);
+}
+
+void AbstractASTDispatcher::dispatch(QSharedPointer<NodeUnaryOp> node)
+{
+    node->DispatchConstructor(as);
+
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
+
+    if (num!=nullptr) {
+        int s = num->m_val;
+        bool isWord = node->m_forceType==TokenType::INTEGER;
+        if (node->m_op.m_type==TokenType::MINUS) {
+            if (!isWord)
+                num->m_val=256-num->m_val;
+            else
+                num->m_val=65536-num->m_val;
+
+        }
+
+        num->Accept(this);
+        num->m_val = s;
+    }
+
+
 }
 

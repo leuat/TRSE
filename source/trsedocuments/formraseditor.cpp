@@ -104,6 +104,9 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     if (m_projectIniFile->getString("system")=="BBCM") {
         emu = m_iniFile->getString("bbcm_emulator");
     }
+    if (m_projectIniFile->getString("system")=="SPECTRUM") {
+        emu = m_iniFile->getString("spectrum_emulator");
+    }
     if (m_projectIniFile->getString("system")=="PLUS4") {
         emu = m_iniFile->getString("plus4_emulator");
     }
@@ -459,6 +462,8 @@ void FormRasEditor::Run()
         filename = m_currentSourceFile.split(ft)[0] + ".nes";
     if (m_projectIniFile->getString("system")=="GAMEBOY")
         filename = m_currentSourceFile.split(ft)[0] + ".gb";
+    if (m_projectIniFile->getString("system")=="SPECTRUM")
+        filename = m_currentSourceFile.split(ft)[0] + ".tap";
     if (m_projectIniFile->getString("system")=="X86")
         filename = m_currentSourceFile.split(ft)[0] + ".com";
 

@@ -128,10 +128,6 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeString> node)
 
 }
 
-void ASTdispatcherX86::dispatch(QSharedPointer<NodeUnaryOp> node)
-{
-
-}
 
 
 /*void ASTdispatcherX86::dispatch(QSharedPointer<NodeVarDecl> node)
@@ -603,7 +599,7 @@ void ASTdispatcherX86::DeclarePointer(QSharedPointer<NodeVarDecl> node)
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY)
         as->Write(v->getValue(as)+ ": ds  2" ,0);
     else
-        as->Asm(v->getValue(as)+ ": dw  0,0" );
+        as->Write(v->getValue(as)+ ": dw  0,0",0);
 
     as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
 

@@ -26,6 +26,9 @@ QSharedPointer<AbstractMethods> FactoryMethods::CreateMethods(AbstractSystem::Sy
     if (s==AbstractSystem::GAMEBOY)
         return QSharedPointer<MethodsZ80>(new MethodsZ80);
 
+    if (s==AbstractSystem::SPECTRUM)
+        return QSharedPointer<MethodsZ80>(new MethodsZ80);
+
     // Default one
     return QSharedPointer<Methods6502>(new Methods6502);
 }

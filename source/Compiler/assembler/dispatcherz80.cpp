@@ -59,13 +59,19 @@ void ASTdispatcherZ80::AssignString(QSharedPointer<NodeAssign> node, bool isPoin
         as->Asm("ld [de],a");
         as->Asm("inc de");
   //      as->Asm("dec c");
-        as->Asm("cp a,0");
+        as->Asm("cp 0");
         as->Asm("jr nz, "+lblCpy);
     }
     //  as->PopLabel("stringassign");
     as->PopLabel("stringassignstr");
     as->PopLabel("stringassigncpy");
 
+}
+
+QString ASTdispatcherZ80::getJmp(bool isOffPage) {
+    if (!isOffPage)
+        return "jr";
+    return "jp";
 }
 
 void ASTdispatcherZ80::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
@@ -99,9 +105,9 @@ void ASTdispatcherZ80::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSha
     as->Asm(m_mov+"["+var+"],"+ax);
 
     if (!nodeB->isPureNumeric())
-        as->Asm(m_cmp+ax+",c");
+        as->Asm(m_cmp+"c");
     else
-        as->Asm(m_cmp+ax+"," + nodeB->getValue(as));
+        as->Asm(m_cmp+nodeB->getValue(as));
 
 
     if (!isOffPage)
@@ -609,7 +615,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
                 as->Comment("'a:=a + const'  optimization ");
                 //as->Asm(getBinaryOperation(bop) + " ["+var->getValue(as)+"], "+type + " "+bop->m_right->getValue(as));
                 as->Asm("ld a,["+var->getValue(as)+"]");
-                as->Asm(getBinaryOperation(bop) + " " +bop->m_right->getValue(as));
+                as->Asm(getBinaryOperation(bop) + " a," +bop->m_right->getValue(as));
                 as->Asm("ld ["+var->getValue(as)+"], a");
                 return "";
             }
@@ -737,6 +743,14 @@ void ASTdispatcherZ80::StoreAddress(QSharedPointer<Node> n)
 
 }
 
+QString ASTdispatcherZ80::getHL() {
+    QString hl ="hl";
+    if (m_useNext!="")
+        hl = m_useNext;
+    m_useNext="";
+    return hl;
+}
+
 void ASTdispatcherZ80::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool offPage)
 {
 
@@ -793,7 +807,7 @@ void ASTdispatcherZ80::BuildToCmp(QSharedPointer<Node> node)
             //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
             //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
             LoadVariable(node->m_left);
-            as->Asm("cp a," + node->m_right->getValue(as));
+            as->Asm("cp " + node->m_right->getValue(as));
 
             return;
         } else
@@ -806,14 +820,14 @@ void ASTdispatcherZ80::BuildToCmp(QSharedPointer<Node> node)
                 LoadVariable(node->m_left);
                 //TransformVariable(as,"move",wtf,qSharedPointerDynamicCast<NodeVar>node->m_left);
                 //TransformVariable(as,"cmp",wtf,as->m_varStack.pop());
-                as->Asm("cp  a,b");
+                as->Asm("cp b");
 
                 return;
             }
 /*
             node->m_right->Accept(this);
 
-            as->Asm("cp a," + getAx(node->m_right));
+            as->Asm("cp " + getAx(node->m_right));
 
             //            TransformVariable(as,"cmp",qSharedPointerDynamicCast<NodeVar>node->m_left,as->m_varStack.pop());
             return;*/
@@ -825,7 +839,7 @@ void ASTdispatcherZ80::BuildToCmp(QSharedPointer<Node> node)
     node->m_left->Accept(this);
     as->Term();
 
-    as->Asm("cp a, c");
+    as->Asm("cp c");
 
     //    TransformVariable(as,"cmp",qSharedPointerDynamicCast<NodeVar>node->m_left, as->m_varStack.pop());
 
