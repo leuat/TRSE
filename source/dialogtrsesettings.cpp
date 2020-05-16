@@ -357,8 +357,8 @@ void DialogTRSESettings::on_cmbFontSymbols_currentIndexChanged(const QString &ar
 
 void DialogTRSESettings::on_btnRgbAsmDir_clicked()
 {
-    QString filename = QFileDialog::getOpenFileName(this,
-        tr("RGBASM location"), m_ini->getString("project_path"), "*");
+    QString filename = QFileDialog::getExistingDirectory(this,
+        tr("RGBASM location"), m_ini->getString("project_path"));
     if (filename!="")
         ui->leRGBAsmDir->setText(filename);
 
