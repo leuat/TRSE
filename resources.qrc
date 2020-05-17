@@ -467,5 +467,8 @@
         <file>resources/code/gameboy/hardware.inc</file>
         <file>resources/text/help/p/buildtable.rtf</file>
         <file>resources/images/SPECTRUM.png</file>
+        <file>resources/images/TIKI100.png</file>
+        <file>resources/bin/tiki/disk.dsk</file>
+        <file>resources/bin/tiki/tiki.rom</file>
     </qresource>
 </RCC>

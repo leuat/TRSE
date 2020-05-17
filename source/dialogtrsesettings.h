@@ -115,6 +115,8 @@ private slots:
 
     void on_btnPasmo_clicked();
 
+    void on_btnTiki100_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

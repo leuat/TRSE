@@ -114,6 +114,9 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     if (m_projectIniFile->getString("system")=="OK64") {
         emu = m_iniFile->getString("ok64_emulator");
     }
+    if (m_projectIniFile->getString("system")=="TIKI100") {
+        emu = m_iniFile->getString("tiki100_emulator");
+    }
 
     if (m_projectIniFile->getString("system")=="X86") {
         emu = m_iniFile->getString("dosbox");
@@ -178,8 +181,11 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
            params << "-autostartprgmode" << "1";
         }
 
+    if (m_projectIniFile->getString("system")=="TIKI100")
+           params << "-diska"<< fileName<< "-40x"<< "2"<< "-80x"<< "2";
 
-    params << QDir::toNativeSeparators(fileName);
+    if (!(m_projectIniFile->getString("system")=="TIKI100"))
+        params << QDir::toNativeSeparators(fileName);
 
 
     process.waitForFinished();
@@ -466,6 +472,8 @@ void FormRasEditor::Run()
         filename = m_currentSourceFile.split(ft)[0] + ".tap";
     if (m_projectIniFile->getString("system")=="X86")
         filename = m_currentSourceFile.split(ft)[0] + ".com";
+    if (m_projectIniFile->getString("system")=="TIKI100")
+        filename = m_currentDir+ "disk.dsk";
 
 //    exit(1);
     if (m_currentSourceFile.toLower().endsWith(".tru")) {

@@ -103,6 +103,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemplus4.cpp \
     source/Compiler/systems/systemspectrum.cpp \
+    source/Compiler/systems/systemtiki100.cpp \
     source/Compiler/systems/systemx86.cpp \
     source/Compiler/systems/systemz80.cpp \
     source/ImageEditor/abstractimageeditor.cpp \
@@ -117,6 +118,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagenes.cpp \
     source/LeLib/limage/limageok64.cpp \
     source/LeLib/limage/limagex16.cpp \
+    source/LeLib/util/tikidisk.cpp \
     source/PmmEdit/fjonghighlighter.cpp \
     source/dialogexport3d.cpp \
     source/dialognewproject.cpp \
@@ -276,6 +278,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemplus4.h \
     source/Compiler/systems/systemspectrum.h \
+    source/Compiler/systems/systemtiki100.h \
     source/Compiler/systems/systemx86.h \
     source/Compiler/systems/systemz80.h \
     source/ImageEditor/abstractimageeditor.h \
@@ -290,6 +293,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagenes.h \
     source/LeLib/limage/limageok64.h \
     source/LeLib/limage/limagex16.h \
+    source/LeLib/util/tikidisk.h \
     source/PmmEdit/fjonghighlighter.h \
     source/dialogexport3d.h \
     source/dialognewproject.h \

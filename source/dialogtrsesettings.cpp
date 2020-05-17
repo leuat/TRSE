@@ -60,6 +60,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leC1541->setText(m_ini->getString("c1541"));
     ui->lePasmo->setText(m_ini->getString("pasmo"));
     ui->leZXSpectrumEmulator->setText(m_ini->getString("spectrum_emulator"));
+    ui->leTiki100->setText(m_ini->getString("tiki100_emulator"));
     ui->leExomizer->setText(m_ini->getString("exomizer"));
     ui->leRGBAsmDir->setText(m_ini->getString("gameboy_rgbasm_dir"));
     ui->leTinyCrunch->setText(m_ini->getString("tinycrunch"));
@@ -132,6 +133,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("c1541", ui->leC1541->text());
 
     m_ini->setString("spectrum_emulator", ui->leZXSpectrumEmulator->text());
+    m_ini->setString("tiki100_emulator", ui->leTiki100->text());
     m_ini->setString("pasmo", ui->lePasmo->text());
 
 
@@ -388,5 +390,14 @@ void DialogTRSESettings::on_btnPasmo_clicked()
         tr("Pasmo assembler location"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->lePasmo->setText(filename);
+
+}
+
+void DialogTRSESettings::on_btnTiki100_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Tiki100 emulator location"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leTiki100->setText(filename);
 
 }

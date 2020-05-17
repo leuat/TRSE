@@ -58,7 +58,7 @@ public:
 
     static void InitLabelColors();
 
-    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM};
+    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100};
     enum Processor {MOS6502, M68000,PX86, GBZ80, Z80};
 
     bool m_buildSuccess;
@@ -101,6 +101,8 @@ public:
             return GAMEBOY;
         if (s.toLower()=="spectrum")
             return SPECTRUM;
+        if (s.toLower()=="tiki100")
+            return TIKI100;
     }
 
     static QString StringFromSystem(System s) {
@@ -117,6 +119,7 @@ public:
         if (s == X86) return "X86";
         if (s == GAMEBOY) return "GAMEBOY";
         if (s == SPECTRUM) return "SPECTRUM";
+        if (s == TIKI100) return "TIKI100";
     }
 
 

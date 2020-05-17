@@ -10,6 +10,11 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 
     m_assembler->Asm(" org "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
 
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::TIKI100) {
+        m_assembler->Asm(" jp $8000");
+        m_assembler->Asm(" org $8000");
+
+    }
 
 }
 
