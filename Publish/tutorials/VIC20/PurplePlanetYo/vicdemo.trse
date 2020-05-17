@@ -55,5 +55,5 @@ build_list = ,
 ignore_initial_jump = 0
 remove_unused_symbols = 1
 open_files = ,demo.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/PurplePlanetYo/
+project_path = /home/leuat/code/TRSE TEST/Debug/../tutorials/VIC20/PurplePlanetYo/
 current_file = demo.ras

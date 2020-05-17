@@ -141,7 +141,13 @@ OrgasmLine Orgasm::LexLine(int i) {
 
 
     QStringList lst = line.simplified().split(" ");
+//    qDebug() << line.trimmed();
+    if (line.trimmed().toLower().startsWith("incbin")) {
+        lst.clear();
+        lst.append("incbin");
+        lst.append(line.simplified().remove(0,6).trimmed());
 
+    }
 
     if (lst[0].toLower()=="org") {
         l.m_type = OrgasmLine::ORG;
@@ -526,7 +532,10 @@ void Orgasm::ProcessOrgData(OrgasmLine &ol)
 void Orgasm::ProcessIncBin(OrgasmLine &ol)
 {
     //qDebug() << ol.m_expr;
-    QFile f(ol.m_expr.replace("\"",""));
+    QString fn = ol.m_expr.replace("\"","");
+    if (!QFile::exists(fn))
+        throw OrgasmError("Could not include binary file: "+fn,ol);
+    QFile f(fn);
     f.open(QFile::ReadOnly);
     QByteArray data = f.readAll();
     f.close();
