@@ -256,6 +256,8 @@ public slots:
 
     void closeEvent(QCloseEvent *event) override;
 
+    void CreateNewSourceFile(QString type);
+
 signals:
    void ValueChanged();
 
@@ -276,7 +278,8 @@ private slots:
 
     void on_btnSave_3_clicked();
 
-    void on_actionRas_source_file_triggered();
+
+
 
     void on_actionDelete_file_triggered();
 
@@ -362,6 +365,10 @@ private slots:
     void on_treeSymbols_itemClicked(QTreeWidgetItem *item, int column);
 
     void on_actionBuild_current_File_only_Shift_C_b_triggered();
+
+    void on_action_TRU_Unit_source_file_triggered();
+
+    void on_actionRas_source_file_triggered();
 
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);

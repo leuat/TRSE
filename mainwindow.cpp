@@ -843,6 +843,63 @@ void MainWindow::closeEvent(QCloseEvent *event)
         event->ignore();
 }
 
+void MainWindow::CreateNewSourceFile(QString type)
+{
+    if (m_currentProject.m_filename=="") {
+        Messages::messages.DisplayMessage(Messages::messages.NO_PROJECT);
+        return;
+    }
+    QString Type = type;
+    Type[0] = type[0].toUpper();
+    QFileDialog dialog;
+    dialog.setFileMode(QFileDialog::AnyFile);
+    QString f = Type+" Files (*."+type+")";
+    QString filename = dialog.getSaveFileName(nullptr, "Create New File",getProjectPath(),f);
+
+    if (filename=="")
+        return;
+    if (!filename.toLower().endsWith("."+type+"")) {
+        filename = filename + "."+type+"";
+    }
+    QString orgFile;
+    //filename = filename.split("/").last();
+    filename = filename.toLower().remove(getProjectPath().toLower());
+
+    qDebug() << filename;
+  //  qDebug() << getProjectPath().toLower();
+    QString fn = getProjectPath() + filename;
+    if (QFile::exists(fn))
+        QFile::remove(fn);
+
+    QFile file(fn);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        if (type=="ras") {
+            QTextStream s(&file);
+            s<< "program MyProgram;\n";
+            s<< "var  \n";
+            s<< "   i: byte; \n\n";
+            s<< "begin\n\n";
+            s<< "end.\n";
+        }
+        if (type=="tru") {
+            QTextStream s(&file);
+            s<< "Unit MyUnit;\n";
+            s<< "var  \n";
+            s<< "   i: byte; \n\n";
+            s<< "procedure myProcedure();\n";
+            s<< "begin\n";
+            s<< "end;\n\n";
+            s<< "end.\n";
+        }
+    }
+
+    file.close();
+//    LoadRasFile(filename);
+    LoadDocument(filename);
+    RefreshFileList();
+
+}
+
 void MainWindow::FindFileDialog()
 {
 
@@ -949,47 +1006,7 @@ void MainWindow::on_btnSave_3_clicked()
 // New source file
 void MainWindow::on_actionRas_source_file_triggered()
 {
-    if (m_currentProject.m_filename=="") {
-        Messages::messages.DisplayMessage(Messages::messages.NO_PROJECT);
-        return;
-    }
-
-
-
-    QFileDialog dialog;
-    dialog.setFileMode(QFileDialog::AnyFile);
-    QString f = "Ras Files (*.ras)";
-    QString filename = dialog.getSaveFileName(nullptr, "Create New File",getProjectPath(),f);
-
-    if (filename=="")
-        return;
-    if (!filename.toLower().endsWith(".ras")) {
-        filename = filename + ".ras";
-    }
-    QString orgFile;
-    //filename = filename.split("/").last();
-    filename = filename.toLower().remove(getProjectPath().toLower());
-
-    qDebug() << filename;
-  //  qDebug() << getProjectPath().toLower();
-    QString fn = getProjectPath() + filename;
-    if (QFile::exists(fn))
-        QFile::remove(fn);
-
-    QFile file(fn);
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream s(&file);
-        s<< "program MyProgram;\n";
-        s<< "var  \n";
-        s<< "   i: byte; \n";
-        s<< "begin\n\n";
-        s<< "end.\n";
-    }
-
-    file.close();
-//    LoadRasFile(filename);
-    LoadDocument(filename);
-    RefreshFileList();
+    CreateNewSourceFile("ras");
 }
 
 void MainWindow::on_actionDelete_file_triggered()
@@ -1766,3 +1783,8 @@ void MainWindow::on_actionLook_up_symbol_F2_triggered()
 }
 
 
+
+void MainWindow::on_action_TRU_Unit_source_file_triggered()
+{
+    CreateNewSourceFile("tru");
+}

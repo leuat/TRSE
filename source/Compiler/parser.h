@@ -72,6 +72,7 @@ public:
     static QStringList s_usedTRUs, s_usedTRUNames;
 //    int m_currentParserBlock=-1;
 
+    bool m_hasBeenApplied = false;
     QString m_currentDir, m_currentFileShort;
     QVector<QStringList> m_obsoleteWarnings;
     QMap<QString, QSharedPointer<Node>> m_procedures;
@@ -97,7 +98,7 @@ public:
 
 
     QVector<QString> m_ignoreBuiltinFunctionTPU;
-    QVector<QSharedPointer<Parser>> m_tpus;
+    static QVector<QSharedPointer<Parser>> m_tpus;
 
     QStringList getFlags();
 

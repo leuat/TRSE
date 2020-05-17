@@ -76,6 +76,7 @@ bool SourceBuilder::Build(QString source)
      * */
 //    if (m_isShadow)
   //      qDebug() << "SHADOW BUILD..";
+
     compiler->Parse(source,lst, m_currentSourceFile);
 
     QString path = m_curDir+"/";//m_projectIniFile.getString("project_path") + "/";

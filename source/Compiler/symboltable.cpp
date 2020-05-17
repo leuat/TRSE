@@ -169,7 +169,8 @@ void SymbolTable::Merge(SymbolTable *other, bool mergeConstants)
         }
     }
 //    qDebug() << other->m_constants.keys();
-
+    m_globalList.append(other->m_globalList);
+    m_globalList.removeDuplicates();
     if (mergeConstants)
     for (QString k : other->m_constants.keys()) {
 

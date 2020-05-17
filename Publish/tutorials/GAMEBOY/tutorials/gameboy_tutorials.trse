@@ -50,6 +50,6 @@ data_header_images/level.flf = 0
 charset_images/level.flf = /home/leuat/code/TRSE/tutorials/GAMEBOY/tutorials/images/metatiles.flf
 data_header_images/metatiles.flf = 0
 data_header_images/charset.flf = 6.91604e-310
-open_files = ,tutorial6_levels2.ras, screens.tru, tutorial3_levels.ras, tutorial2_sprites.ras
+open_files = ,tutorial5_input.ras, tutorial6_levels2.ras, screens.tru, tutorial3_levels.ras, tutorial2_sprites.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/GAMEBOY/tutorials/
 current_file = tutorial6_levels2.ras

@@ -434,6 +434,7 @@ p, li { white-space: pre-wrap; }
       <string>&amp;New file</string>
      </property>
      <addaction name="actionRas_source_file"/>
+     <addaction name="action_TRU_Unit_source_file"/>
      <addaction name="actionImage"/>
      <addaction name="actionPaw_packed_resource_file"/>
      <addaction name="separator"/>
@@ -688,6 +689,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionBuild_current_File_only_Shift_C_b">
    <property name="text">
     <string>Build current &amp;File only (Shift-C-b)</string>
+   </property>
+  </action>
+  <action name="action_TRU_Unit_source_file">
+   <property name="text">
+    <string>&amp;TRU Unit source file</string>
    </property>
   </action>
  </widget>
