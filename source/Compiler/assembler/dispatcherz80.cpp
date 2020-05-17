@@ -116,6 +116,55 @@ void ASTdispatcherZ80::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSha
         as->Asm("jp nz,"+lblJump);
 }
 
+void ASTdispatcherZ80::HandleAeqAopB16bit(QSharedPointer<NodeBinOP> bop, QSharedPointer<NodeVar> var)
+{
+    as->Comment("16 bit BINOP");
+    if (bop->m_right->isPure()) {
+        as->Comment("RHS is pure ");
+        if (bop->m_right->isPureNumeric() && (bop->m_right->getValueAsInt(as)&0xFF)==0) {
+            as->Comment("RHS is pure constant of $100");
+            as->Asm("ld b,"+Util::numToHex(bop->m_right->getValueAsInt(as)>>8));
+            as->Asm("ld a,[ "+var->value+" ]");
+            as->Asm("add a,b");
+            as->Asm("ld [ "+var->value+" ],a");
+            return;
+
+        }
+        m_useNext="de";
+        bop->m_right->Accept(this);
+    }
+    else {
+        bop->m_right->Accept(this);
+
+        as->Asm("ld d,h");
+        as->Asm("ld e,l");
+    }
+    LoadVariable(var); // Load address into hl
+    if (bop->m_op.m_type==TokenType::PLUS) {
+        as->Asm(getPlusMinus(bop->m_op)+" hl,de");
+        StoreAddress(var);
+        return;
+    }
+
+    as->Asm("ld a,l");
+    as->Asm("or a");
+    as->Asm("sub e");
+
+    as->Asm("ld l,a");
+    as->Asm("ld a,h");
+
+    as->Asm("sbc a,d");
+//    as->Asm("ld h,a");
+
+
+    as->Asm("ld ["+var->value+"],a");
+    as->Asm("ld a,l");
+    as->Asm("ld ["+var->value+"+1],a");
+//    StoreVariable(var);
+
+
+}
+
 
 
 
@@ -611,6 +660,14 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
             // We are sure that a:=a ....
             // first, check if a:=a + number
             //            as->Comment("In BOP");
+
+            // Handle 16 bit op
+            if (bop->isWord(as)) {
+                HandleAeqAopB16bit(bop,var);
+                return "";
+            }
+
+
             if (bop->m_right->isPureNumeric()) {
                 as->Comment("'a:=a + const'  optimization ");
                 //as->Asm(getBinaryOperation(bop) + " ["+var->getValue(as)+"], "+type + " "+bop->m_right->getValue(as));
@@ -926,11 +983,11 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
                     return;
                 }
   */
-                as->Comment(";generic pointer P:=P+(expr) add expression");
+                as->Comment(";generic pointer/integer P:=P+(expr) add expression");
 
                 bop->setForceType(TokenType::INTEGER);
                 if (bop->m_right->isPure()) {
-                    as->Comment("RHS is pure");
+                    as->Comment("RHS is pure ");
                     if (bop->m_right->isPureNumeric() && (bop->m_right->getValueAsInt(as)&0xFF)==0) {
                         as->Comment("RHS is pure constant of $100");
                         as->Asm("ld b,"+Util::numToHex(bop->m_right->getValueAsInt(as)>>8));

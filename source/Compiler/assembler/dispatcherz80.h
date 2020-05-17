@@ -86,6 +86,7 @@ public:
     QString getReturn() override { return "ret";}
     QString getReturnInterrupt() override { return "reti";}
 
+    void HandleAeqAopB16bit(QSharedPointer<NodeBinOP> bop, QSharedPointer<NodeVar> var);
 
 };
 #endif // ASTdispatcherX86_H
