@@ -155,7 +155,8 @@ public:
  //   CodeEditor m_codeEditor;
     CustomFileSystemModel *fileSystemModel = nullptr;
     QStringList m_commandParams;
-    QString m_iniFileName = "fluff64.ini";
+    QString m_iniFileNameOld = "fluff64.ini";
+    QString m_iniFileName = "trse.ini";
     QString m_iniFileHomeDir = ".TRSE";
     QString m_fontFamily;
     QPalette m_defaultPalette;
@@ -170,6 +171,8 @@ public:
 
 
     TRSEDocument* m_currentDoc = nullptr;
+
+    void LoadIniFile();
 
     void AfterStart(QString oldCurDir);
 

@@ -52,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent) :
    // m_work.m_colorList.CreateUI(ui->layoutColors,0);
 
     TRSEDocument::m_defaultPalette = m_defaultPalette;
-
+    qRegisterMetaTypeStreamOperators<CItem>("CItem");
 
     //QObject::connect(m_updateThread, SIGNAL(valueChanged()), this, SLOT (Update()));
 //    m_updateThread = new WorkerThread();
@@ -76,42 +76,13 @@ MainWindow::MainWindow(QWidget *parent) :
 #endif
     m_currentPath = "";
     ui->lblCommodoreImage->setAlignment(Qt::AlignCenter);
-
-   int id= QFontDatabase::addApplicationFont(":resources/fonts/c64.ttf");
-   m_fontFamily = QFontDatabase::applicationFontFamilies(id).at(0);
-#ifndef Q_OS_WIN
-   QString pa = QDir::homePath() +QDir::separator() + m_iniFileHomeDir;
-   QString oldFile = Util::path + m_iniFileName;
-    if (!QDir().exists(pa))
-        QDir().mkdir(pa);
-    m_iniFileName = pa +QDir::separator()+ m_iniFileName;
-
-    // Move old file
-    if (QFile::exists(oldFile)) {
-        QFile::copy(oldFile, m_iniFileName);
-        QFile::remove(oldFile);
-    }
-
-#endif
+    LoadIniFile();
     connect( ui->tabMain, SIGNAL(tabCloseRequested(int)),this, SLOT(RemoveTab(int)));
 //    connect(qApp, SIGNAL(aboutToQuit()), m_updateThread, SLOT(OnQuit()));
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(OnQuit()));
 
-    m_iniFile = QSharedPointer<CIniFile>(new CIniFile);
-
-    if (QFile::exists(m_iniFileName))
-       m_iniFile->Load(m_iniFileName);
-
-    VerifyDefaults();
-    if (m_iniFile->getdouble("windowpalette")==0)
-        SetDarkPalette();
-
-    QVector3D sp = m_iniFile->getVec("splitpos");
-    if (sp.length()!=0)
-        ui->splitter->setSizes(QList<int>() << sp.x() << sp.y());
-
-
-    Messages::messages.LoadFromCIni(m_iniFile);
+   int id= QFontDatabase::addApplicationFont(":resources/fonts/c64.ttf");
+   m_fontFamily = QFontDatabase::applicationFontFamilies(id).at(0);
     UpdateRecentProjects();
 
     SetupFileList();
@@ -1787,4 +1758,56 @@ void MainWindow::on_actionLook_up_symbol_F2_triggered()
 void MainWindow::on_action_TRU_Unit_source_file_triggered()
 {
     CreateNewSourceFile("tru");
+}
+
+void MainWindow::LoadIniFile()
+{
+#ifndef Q_OS_WIN
+   QString pa = QDir::homePath() +QDir::separator() + m_iniFileHomeDir;
+/*   QString oldFile = Util::path + m_iniFileName;
+    if (!QDir().exists(pa))
+        QDir().mkdir(pa);*/
+    m_iniFileNameOld = pa +QDir::separator()+ m_iniFileNameOld;
+/*
+    // Move old file
+    if (QFile::exists(oldFile)) {
+        QFile::copy(oldFile, m_iniFileName);
+        QFile::remove(oldFile);
+    }*/
+
+#endif
+
+    m_iniFile = QSharedPointer<CIniFile>(new CIniFile);
+
+    m_iniFile->isMainSettings = true;
+    auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    if (!QDir().exists(path)) {
+        QDir().mkdir(path);
+    }
+    m_iniFileName = path +QDir::separator()+ m_iniFileName;
+
+    if (QFile::exists(m_iniFileName)) {
+       m_iniFile->Load(m_iniFileName);
+//       qDebug() << "Loading NEW file type "<<m_iniFileName;
+
+    }
+    else {
+        if (QFile::exists(m_iniFileNameOld)) {
+            m_iniFile->Load(m_iniFileNameOld);
+  //          qDebug() << "Loading OLD file type";
+        }
+    }
+
+
+    VerifyDefaults();
+    if (m_iniFile->getdouble("windowpalette")==0)
+        SetDarkPalette();
+
+    QVector3D sp = m_iniFile->getVec("splitpos");
+    if (sp.length()!=0)
+        ui->splitter->setSizes(QList<int>() << sp.x() << sp.y());
+
+
+    Messages::messages.LoadFromCIni(m_iniFile);
+
 }

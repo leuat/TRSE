@@ -177,6 +177,8 @@ int main(int argc, char *argv[])
 //    RandTable("rnd256.bin");
 //    CircleAndAtan("/home/leuat/Dropbox/TRSE/gameboytest/data/circle.bin","/home/leuat/Dropbox/TRSE/gameboytest/data/atan.bin",16,16);
     QApplication a(argc, argv);
+    a.setOrganizationDomain("lemonspawn.com");
+    a.setApplicationName("TRSE");
     QString oldCurDir = QDir::currentPath();
     fixCurrentDir(QString(argv[0]));
     a.setStyle(QStyleFactory::create("Fusion"));

@@ -24,6 +24,11 @@
 
 void CIniFile::Load(QString fname) {
 
+/*    if (isMainSettings) {
+        LoadQt();
+        return;
+    }
+*/
     filename = fname;
     if (!QFile::exists(fname)) {
         qDebug() << "Could not find file " << fname;
@@ -84,6 +89,13 @@ void CIniFile::Load(QString fname) {
 
 void CIniFile::Save(QString fname)
 {
+/*    if (isMainSettings) {
+        return;
+        SaveQt();
+    }
+    */
+
+
     if (QFile::exists(fname)) {
         QFile::remove(fname);
     }
@@ -123,6 +135,19 @@ void CIniFile::Save(QString fname)
 
     }
     file.close();
+
+}
+
+void CIniFile::LoadQt()
+{
+
+}
+
+void CIniFile::SaveQt()
+{
+    QSettings settings(company, product);
+//    QVariant var = settings.value()
+    settings.setValue("Settings", QVariant::fromValue(items));
 
 }
 
@@ -316,4 +341,30 @@ double CIniFile::getdouble(QString name) {
     }
     qDebug() << "CIniFile: Could not find parameter " + name;
     return 0;
+}
+
+
+
+
+
+QDataStream& operator<<(QDataStream& out, const CItem& v) {
+    out << v.name << v.strval << QString::number(v.dval) << QString::number(v.lst.count()) << v.lst;
+    return out;
+}
+
+QDataStream& operator>>(QDataStream& in, CItem& v) {
+    in >> v.name;
+    in >> v.strval;
+    QString v1;
+    in >> v1;
+    v.dval = v1.toDouble();
+    int cnt;
+    in >> v1;
+    cnt = v1.toInt();
+    for (int i=0;i<cnt;i++) {
+        QString s;
+        in >> s;
+        v.lst.append(s);
+    }
+    return in;
 }

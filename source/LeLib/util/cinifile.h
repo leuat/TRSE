@@ -29,24 +29,35 @@
 #include <QVector>
 #include <QVector3D>
 #include <QColor>
-
-class CItem {
+#include <QSettings>
+class CItem : public QVariant {
 public:
     QString name="", strval="";
     QStringList lst;
     double dval;
     QVector3D vec;
+
+
+
 };
+
+
+Q_DECLARE_METATYPE(CItem);
 
 class CIniFile  {
 public:
     QString filename;
-
+ //   QSettings settings;//("LemonSpawn", "TRSE");
+    QString company = "LemonSpawn";
+    QString product = "TRSE";
     QVector<CItem> items;
-
+    bool isMainSettings = false;
     CIniFile() {}
     void Load(QString fname);
     void Save(QString fname);
+
+    void LoadQt();
+    void SaveQt();
 
     void Save() {
         Save(filename);
