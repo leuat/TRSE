@@ -188,8 +188,10 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
            params << "-autostartprgmode" << "1";
         }
 
-    if (m_projectIniFile->getString("system")=="TIKI100")
-           params << "-diska"<< fileName<< "-40x"<< "2"<< "-80x"<< "2";
+    if (m_projectIniFile->getString("system")=="TIKI100") {
+           params << "-diska"<< QDir::toNativeSeparators(fileName)<< "-40x"<< "2"<< "-80x"<< "2";
+           qDebug() << params;
+    }
 
     if (!(m_projectIniFile->getString("system")=="TIKI100"))
         params << QDir::toNativeSeparators(fileName);

@@ -35,6 +35,7 @@ void SystemTiki100::Assemble(QString &text, QString filename, QString currentDir
     output+="<br>";
     QString disk = currentDir +  "disk1.dsk";
     Util::CopyFile(":resources/bin/tiki/disk.dsk", disk);
+
     Util::CopyFile(":resources/bin/tiki/tiki.rom", "tiki.rom");
     InitTikiDisk((char*)disk.toStdString().c_str());
     addTikiFile((char*)(QString(filename+".com").toStdString().c_str()),0);
