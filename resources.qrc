@@ -470,5 +470,8 @@
         <file>resources/images/TIKI100.png</file>
         <file>resources/bin/tiki/disk.dsk</file>
         <file>resources/bin/tiki/tiki.rom</file>
+        <file>resources/images/ATARI2600.png</file>
+        <file>resources/code/atari2600/end.asm</file>
+        <file>resources/code/atari2600/init.asm</file>
     </qresource>
 </RCC>

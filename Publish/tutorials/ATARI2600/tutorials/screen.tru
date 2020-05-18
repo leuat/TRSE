@@ -1,0 +1,51 @@
+Unit Screen;
+var  
+   i: byte; 
+
+procedure WaitForVerticalSync();
+begin
+	asm("
+	    lda #2      ; LoaD Accumulator with 2 so D1=1
+        sta WSYNC   ; Wait for SYNC (halts CPU until end of scanline)
+        sta VSYNC   ; Accumulator D1=1, turns on Vertical Sync signal
+        sta WSYNC   ; Wait for Sync - halts CPU until end of 1st scanline of VSYNC
+        sta WSYNC   ; wait until end of 2nd scanline of VSYNC
+        lda #0      ; LoaD Accumulator with 0 so D1=0
+        sta WSYNC   ; wait until end of 3rd scanline of VSYNC
+        sta VSYNC   ; Accumulator D1=0, turns off Vertical Sync signal
+	");
+
+end;
+
+procedure WaitForVerticalBlank();
+begin
+	asm("
+;        ldx #37         ; LoaD X with 37
+;vbLoop:        
+        sta WSYNC       ; Wait for SYNC (halts CPU until end of scanline)
+ ;       dex             ; DEcrement X by 1
+ ;       bne vbLoop      ; Branch if Not Equal to 0
+	");
+end;
+
+procedure TurnOnDisplay();
+begin
+	asm("
+	sta WSYNC       ; Wait for SYNC (halts CPU until end of scanline)
+    lda #0          ; LoaD Accumulator with 0 so D1=0
+    sta VBLANK      ; Accumulator D1=1, turns off Vertical Blank signal (image output on)
+	");
+end;
+
+procedure TurnOffDisplay();
+begin
+	asm("
+	 	sta WSYNC   ; Wait for SYNC (halts CPU until end of scanline)
+        lda #2      ; LoaD Accumulator with 2 so D1=1
+        sta VBLANK  ; STore Accumulator to VBLANK, D1=1 turns image output off
+
+	");
+end;
+
+
+end.

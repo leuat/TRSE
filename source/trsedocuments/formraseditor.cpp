@@ -69,6 +69,8 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     QString emu = m_iniFile->getString("emulator");
     QStringList params;
 
+
+
     QString debugFile =fileName.split(".").first()+".sym";
     if (QFile::exists(debugFile) && (
                 m_projectIniFile->getString("system")=="VIC20" ||
@@ -78,6 +80,8 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
                 m_projectIniFile->getString("system")=="OK64"
                 ))
         params<<"-moncommands"<<debugFile;
+
+
 
 
     if (m_projectIniFile->getString("system")=="VIC20") {
@@ -116,6 +120,9 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     }
     if (m_projectIniFile->getString("system")=="TIKI100") {
         emu = m_iniFile->getString("tiki100_emulator");
+    }
+    if (m_projectIniFile->getString("system")=="ATARI2600") {
+        emu = m_iniFile->getString("atari2600_emulator");
     }
 
     if (m_projectIniFile->getString("system")=="X86") {

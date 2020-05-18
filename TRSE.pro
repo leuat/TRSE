@@ -99,6 +99,7 @@ SOURCES += main.cpp\
     source/Compiler/compilers/compilerx86.cpp \
     source/Compiler/compilers/compilerz80.cpp \
     source/Compiler/compilers/factorycompiler.cpp \
+    source/Compiler/systems/systematari2600.cpp \
     source/Compiler/systems/systemgameboy.cpp \
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemplus4.cpp \
@@ -274,6 +275,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/compilers/compilerx86.h \
     source/Compiler/compilers/compilerz80.h \
     source/Compiler/compilers/factorycompiler.h \
+    source/Compiler/systems/systematari2600.h \
     source/Compiler/systems/systemgameboy.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemplus4.h \

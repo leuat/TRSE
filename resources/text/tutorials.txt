@@ -29,6 +29,7 @@ X86; IBM 8086 AT (CGA) tutorials; X86/CGA/; <h2>Main IBM AT (CGA) tutorials</h2>
 
 SPECTRUM; ZX Spectrum tutorials; SPECTRUM/tutorials/;  <h2>Main ZX Spectrum tutorials</h2>Proof-of-concept that the Z80 works, but not much else. A couple of test tutorials. Will be expanded upon at a later point.
 TIKI100; Tiki 100 tutorials; TIKI100/tutorials/;  <h2>Main TIKI 100 tutorials</h2>The TIKI 100 was a little-known (and failed) 1980s computer from Norway. A perfect match for TRSE!<br><br>  Proof-of-concept that the Z80 works, but not much else. A couple of test tutorials. Will be expanded upon at a later point.
+ATARI2600; Atari 2600 tutorials; ATARI2600/tutorials/;  <h2>Main Atari 2600 tutorials</h2>Proof-of-concept, but not much else. A couple of test tutorials. Will be expanded upon at a later point.
 
 
 OK64; Main OK64 examples ; OK64/Tutorials/; <h2>Main OK64 tutorials</h2>Prelimiary tutorials, prone to change. OK64 is Leuat's very own fake 6502 computer!

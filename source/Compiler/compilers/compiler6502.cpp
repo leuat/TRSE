@@ -14,6 +14,11 @@ void Compiler6502::Connect()
 {
 //    m_assembler->EndMemoryBlock();
     m_assembler->Connect();
+
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI2600)
+        m_assembler->IncludeFile(":resources/code/atari2600/end.asm");
+
+
     if (m_ini->getdouble("post_optimize")==1.0)
         m_assembler->Optimise(*m_projectIni);
 
@@ -86,6 +91,12 @@ void Compiler6502::Init6502Assembler()
     //    qDebug() << m_parser.m_initAssembler;
     m_assembler->m_defines = m_parser.m_preprocessorDefines;
 
+
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI2600)
+        m_assembler->IncludeFile(":resources/code/atari2600/init.asm");
+
+
+
     m_assembler->InitZeroPointers(m_projectIni->getStringList("zeropages"),m_projectIni->getStringList("temp_zeropages"),m_projectIni->getStringList("var_zeropages"));
     m_assembler->m_zeropageScreenMemory = m_projectIni->getString("zeropage_screenmemory");
     m_assembler->m_replaceValues["@DECRUNCH_ZP1"] = m_projectIni->getString("zeropage_decrunch1");
@@ -138,6 +149,11 @@ void Compiler6502::Init6502Assembler()
     } else {
         Syntax::s.m_ignoreSys = false;
         Syntax::s.m_stripPrg = false;
+
+    }
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::ATARI2600) {
+        Syntax::s.m_ignoreSys = true;
+        Syntax::s.m_stripPrg = true;
 
     }
 

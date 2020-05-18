@@ -1,0 +1,48 @@
+program Atari_Tutorial1;
+@use "screen"
+/*
+ Test : Proof-of-concept that the Atari 2600 can be included in TRSE
+ Please contact me if you are interested in developing the library for this computer
+*/
+
+var
+	i, time:byte at $80;
+	
+
+procedure ColorStuff();
+begin
+	Screen::TurnOnDisplay();
+	// Have game logic here, before the scan starts
+	
+	for i:=0 to 24 do 
+	begin
+		Screen::WaitForVerticalBlank();
+		
+	end;
+
+	for i:=0 to 192 do
+	begin
+		Screen::WaitForVerticalBlank();
+		poke(background_color,0,i*2+time);
+	end;
+	time:=time+1;
+end;
+
+procedure OverScan();
+begin
+	Screen::TurnOffDisplay();
+	// Have game logic here
+end;
+
+
+
+begin
+	while (true) do
+	begin
+		Screen::WaitForVerticalSync();
+		ColorStuff();
+		OverScan(); // Game Logic
+	end;
+
+
+end.

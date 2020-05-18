@@ -144,6 +144,10 @@ private slots:
 
     void on_btnHelpOK64_clicked();
 
+    void on_btnHelpAtari_clicked();
+
+    void on_btnAtari2600_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

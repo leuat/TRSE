@@ -52,6 +52,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leVic20Emulator->setText(m_ini->getString("vic20_emulator"));
     ui->lePETEmulator->setText(m_ini->getString("pet_emulator"));
     ui->leNesEmulator->setText(m_ini->getString("nes_emulator"));
+    ui->leAtari2600Emulator->setText(m_ini->getString("atari2600_emulator"));
     ui->leGameboyEmulator->setText(m_ini->getString("gameboy_emulator"));
     ui->leOK64Emulator->setText(m_ini->getString("ok64_emulator"));
     ui->lePlus4Emulator->setText(m_ini->getString("plus4_emulator"));
@@ -126,6 +127,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("vic20_emulator", ui->leVic20Emulator->text());
     m_ini->setString("pet_emulator", ui->lePETEmulator->text());
     m_ini->setString("c128_emulator", ui->leEmulatorC128->text());
+    m_ini->setString("atari2600_emulator", ui->leAtari2600Emulator->text());
     m_ini->setString("ok64_emulator", ui->leOK64Emulator->text());
     m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
@@ -475,4 +477,19 @@ void DialogTRSESettings::on_btnHelpDosbox_clicked()
 void DialogTRSESettings::on_btnHelpOK64_clicked()
 {
     Help("OK64 Emulator", "Since the OK64 is written by the developers of TRSE, it is included with the TRSE by default. ");
+}
+
+void DialogTRSESettings::on_btnHelpAtari_clicked()
+{
+    Help("Atari 2600 Emulator", "Your favorite Atari 2600 emulator! <br>We recommend using Stella <a href=\"https://stella-emu.github.io/\">https://stella-emu.github.io/</a>. Debian package 'stella' on linux (apt-get install stella).");
+
+}
+
+void DialogTRSESettings::on_btnAtari2600_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Atari 2600 emulator location"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leAtari2600Emulator->setText(filename);
+
 }
