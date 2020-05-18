@@ -6,7 +6,7 @@ program Atari_Tutorial1;
 */
 
 var
-	i, time:byte at $80;
+	i,j, time:byte at $80;
 	
 
 procedure ColorStuff();
@@ -23,7 +23,8 @@ begin
 	for i:=0 to 192 do
 	begin
 		Screen::WaitForVerticalBlank();
-		poke(background_color,0,i*2+time);
+		j:=(time)+(i*2);
+		poke(background_color,0,j);
 	end;
 	time:=time+1;
 end;

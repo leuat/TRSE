@@ -11,7 +11,7 @@ var
  
 */
 
-
+// Fill some random stuff to VRAM. 
 procedure ClearScreen(v:byte);
 begin
 	p1:=vram;
@@ -27,14 +27,12 @@ begin
 end;
 
 begin
+	// Some pattern
 	t:=%11000000;
-	for j:=0 to 255 do
+	while (true) do
 	begin
 		ClearScreen(t);		
 		t:=t<<1;
 	end;
-	asm("
-		add a,b
-	");
 	Loop(); 
 end.

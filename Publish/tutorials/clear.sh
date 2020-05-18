@@ -31,3 +31,9 @@ echo "open_files =, graveintentions.ras" >> CrossPlat/GraveIntentions/GraveInten
 echo "open_files =, 01_hello_world.ras" >> PET/examples/examples.trse
 echo "open_files =, main.ras" >> OK64/OkComputer/ok_computer.trse
 echo "open_files =, tutorial1.ras" >> GAMEBOY/tutorials/gameboy_tutorials.trse
+
+echo "open_files =, player.ras" >> C64/MusicPlayer/dualsidplayer.trse
+
+echo "open_files =, tutorial1.ras" >> ATARI2600/tutorials/atari2600.trse
+echo "open_files =, tutorial1.ras" >> TIKI100/tutorials/tiki100.trse
+echo "open_files =, tutorial1.ras" >> SPECTRUM/tutorials/spectrum.trse
