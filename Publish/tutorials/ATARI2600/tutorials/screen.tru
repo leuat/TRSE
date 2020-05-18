@@ -17,14 +17,10 @@ begin
 
 end;
 
-procedure WaitForVerticalBlank();
+procedure WaitForVerticalBlank() inline;
 begin
 	asm("
-;        ldx #37         ; LoaD X with 37
-;vbLoop:        
         sta WSYNC       ; Wait for SYNC (halts CPU until end of scanline)
- ;       dex             ; DEcrement X by 1
- ;       bne vbLoop      ; Branch if Not Equal to 0
 	");
 end;
 

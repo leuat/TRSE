@@ -1,0 +1,92 @@
+program Atari_Tutorial1;
+@use "screen"
+/*
+ Test : Proof-of-concept that the Atari 2600 can be included in TRSE
+ Please contact me if you are interested in developing the library for this computer
+*/
+
+var
+	i,j, time,k,l:byte at $80;
+	const height : byte = 8;
+	
+	pattern: array[3] of byte = (
+	%00111111, %11111111, %00111111,
+	%00110000, %00000000, %00000011,
+	%00110000, %00000000, %00000011,
+	%01110000, %00000000, %00000011,
+	%10110000, %00000000, %00000011,
+	%00110000, %10000000, %00000011,
+	%00110000, %01000000, %00000011,
+	%00110000, %00100000, %00000011,
+	%00110000, %00010000, %00000011,
+	%00110000, %00001000, %00000011,
+	%00110000, %00000100, %00000011,
+	%00110000, %00000010, %00000011,
+	%11111111, %11111111, %11111111);
+	
+	p1: pointer;								  
+	
+procedure ColorStuff();
+begin
+	Screen::TurnOnDisplay();
+	// Have game logic here, before the scan starts
+	for i:=0 to 24 do 
+	begin
+		Screen::WaitForVerticalBlank();
+		
+	end;
+	playfield_color:=$45;
+	k:=0;
+	p1:=pattern;
+	l:=0;
+	for i:=0 to 192 do
+	begin
+		j:=(time)+i;
+		j:=j&15+32;
+		k:=k+1;
+		
+		Screen::WaitForVerticalBlank();
+		playfield_color:=j;
+		if (k=15) then
+		begin
+			k:=0;
+			l:=l+3;
+			
+		asm("
+			ldx l
+			lda pattern,x
+			sta $d
+			inx
+			lda pattern,x
+			sta $e
+			inx
+			lda pattern,x
+			sta $f
+		");
+		end;
+//		poke(background_color,0,j);
+		
+	end;
+	time:=time+1;
+end;
+
+procedure OverScan();
+begin
+	Screen::TurnOffDisplay();
+	// Have game logic here
+end;
+
+
+
+begin
+	playfield_color:=$45;
+	playfield_control:=%00000001;
+	while (true) do
+	begin
+		Screen::WaitForVerticalSync();
+		ColorStuff();
+		OverScan(); // Game Logic
+	end;
+
+
+end.

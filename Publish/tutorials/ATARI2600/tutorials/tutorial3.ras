@@ -1,0 +1,96 @@
+program Atari_Tutorial1;
+@use "screen"
+/*
+ Test : Proof-of-concept that the Atari 2600 can be included in TRSE
+ Please contact me if you are interested in developing the library for this computer
+*/
+
+var
+	i,j, time,k,l:byte at $80;
+	const height : byte = 8;
+	
+@include "yo-grl.ras"
+
+procedure ColorStuff();
+begin
+	Screen::TurnOnDisplay();
+	// Have game logic here, before the scan starts
+	for i:=0 to 22 do 
+	begin
+		Screen::WaitForVerticalBlank();
+		
+	end;
+	playfield_color:=$45;
+	k:=0;
+	l:=0;
+	j:=time;
+	// 192 steps. every cycle counts.
+	asm("
+	ldx #192	
+topp: 
+
+;	ldx i
+	sta WSYNC
+	lda yo-grl_STRIP_0,x	; PF0 left
+
+	sta PF0
+
+	lda yo-grl_STRIP_1,x	; PF1 left
+
+	sta PF1
+
+	lda yo-grl_STRIP_2,x	; PF2 left
+
+	sta PF2
+
+
+; delay as appropriate
+
+	inc j
+	lda j
+	ora 15
+	sta COLUPF
+
+	lda yo-grl_STRIP_3,x	; PF0 right
+
+	sta PF0
+
+	lda yo-grl_STRIP_4,x	; PF1 right
+
+	sta PF1
+
+	lda yo-grl_STRIP_5,x	; PF2 right
+
+	sta PF2
+
+
+	dex
+
+	cpx #0
+
+	bne topp
+
+		");
+	time:=time+1;
+end;
+
+procedure OverScan();
+begin
+	Screen::TurnOffDisplay();
+	// Have game logic here
+end;
+
+
+
+begin
+	playfield_color:=$45;
+	playfield_control:=%00000000;
+	while (true) do
+	begin
+		Screen::WaitForVerticalSync();
+		ColorStuff();
+		OverScan(); // Game Logic
+	end;
+
+
+end.
