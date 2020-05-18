@@ -1,0 +1,52 @@
+program Tiki100_Tutorial1;
+/*
+ Test : Proof-of-concept that the Tiki 100 can be included in TRSE
+ Please contact me if you are interested in developing the library for this computer
+*/
+
+var
+	k : byte=0;
+	j,la,time : byte=0;
+	p1:pointer;
+	y:byte;
+
+procedure InitScreen();
+begin
+	asm("
+	 di
+	ld a,%00110000
+ 	out [$0c],a
+
+
+ 	; vram at 0
+ 	ld a,%00001100
+ 	out [$1c],a
+	");
+end;
+
+
+procedure RenderRandomStuff();
+begin
+	p1:=$000;
+	j:=time;
+	for k:=0 to 128 do  
+	begin
+		fill(p1,j,255);
+		p1:=p1+$100;
+		j:=j+10;
+	end;
+end;
+
+
+begin
+	InitScreen();
+	while (true) do
+	begin
+		RenderRandomStuff();
+		time:=time+1;
+	end;
+	
+
+	
+
+end.

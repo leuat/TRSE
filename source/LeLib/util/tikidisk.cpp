@@ -241,7 +241,7 @@ extern "C" {
 
     buildBAM();
 
-    printf ("Legger til %02d:%s...\n", user, efn);
+//    printf ("Legger til %02d:%s...\n", user, efn);
 
     while (!done) {
       int bytesRead = fread (sectorData, 1, sectorSize, fp);

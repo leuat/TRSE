@@ -30,6 +30,7 @@ DialogAbout::DialogAbout(QWidget *parent) :
     ui(new Ui::DialogAbout)
 {
     ui->setupUi(this);
+    ui->txtAbout->setOpenExternalLinks(true);
     ui->txtAbout->setText( ui->txtAbout->toHtml().replace("@version",Data::data.version));
     ui->txtAbout->setText( ui->txtAbout->toHtml().replace("@date", QDate::currentDate().toString()));
 
@@ -46,6 +47,12 @@ DialogAbout::DialogAbout(QWidget *parent) :
 DialogAbout::~DialogAbout()
 {
     delete ui;
+}
+
+void DialogAbout::SetText(QString title, QString text)
+{
+    setWindowTitle(title);
+    ui->txtAbout->setText(text);
 }
 
 void DialogAbout::on_pushButton_clicked()

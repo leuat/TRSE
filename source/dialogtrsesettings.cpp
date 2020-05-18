@@ -174,6 +174,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setFloat("custom_keyword_italic",ui->chkItalic->isChecked());
 
 
+
 }
 
 DialogTRSESettings::~DialogTRSESettings()
@@ -191,7 +192,19 @@ void DialogTRSESettings::FillFont(QComboBox *cbmFont, QString keep) {
     cbmFont->addItems(fam);
     cbmFont->setCurrentText(keep);
 
+
 }
+
+void DialogTRSESettings::Help(QString tit, QString text)
+{
+    DialogAbout* da = new DialogAbout();
+    da->SetText(tit,text);
+    da->exec();
+
+    delete da;
+
+}
+
 
 void DialogTRSESettings::on_pushButton_clicked()
 {
@@ -400,4 +413,66 @@ void DialogTRSESettings::on_btnTiki100_clicked()
     if (filename!="")
         ui->leTiki100->setText(filename);
 
+}
+
+void DialogTRSESettings::on_btnHelpC64_clicked()
+{
+    Help("C64 Emulator", "Your favorite C64 emulator. <br>We'd recommend using VICE : <a href=\"https://vice-emu.sourceforge.io/\">https://vice-emu.sourceforge.io/</a>");
+}
+
+void DialogTRSESettings::on_btnHelpC128_clicked()
+{
+    Help("C128 Emulator", "Your favorite C128 emulator. <br>We'd recommend using VICE : <a href=\"https://vice-emu.sourceforge.io/\">https://vice-emu.sourceforge.io/</a>");
+
+}
+
+void DialogTRSESettings::on_btnHelpVIC20_clicked()
+{
+    Help("VIC20 Emulator", "Your favorite VIC20 emulator. <br>We'd recommend using VICE : <a href=\"https://vice-emu.sourceforge.io/\">https://vice-emu.sourceforge.io/</a>");
+
+}
+
+void DialogTRSESettings::on_btnHelpPET_clicked()
+{
+    Help("Commodore PET Emulator", "Your favorite PET emulator. <br>We'd recommend using VICE : <a href=\"https://vice-emu.sourceforge.io/\">https://vice-emu.sourceforge.io/</a>");
+
+}
+
+void DialogTRSESettings::on_btnHelpPlus4_clicked()
+{
+    Help("PLUS4 Emulator", "Your favorite PLUS4 emulator. <br>We'd recommend using VICE : <a href=\"https://vice-emu.sourceforge.io/\">https://vice-emu.sourceforge.io/</a>");
+}
+
+void DialogTRSESettings::on_btnHelpNES_clicked()
+{
+    Help("NES Emulator", "Your favorite NES emulator. <br>We recommend using Mednafen : <a href=\"https://mednafen.github.io/\">https://mednafen.github.io/</a>");
+
+}
+
+void DialogTRSESettings::on_btnHelpGB_clicked()
+{
+    Help("Gameboy Emulator", "Your favorite Gameboy emulator. <br>We recommend using Mednafen (pretty): <a href=\"https://mednafen.github.io/\">https://mednafen.github.io/</a>. <br><br>If you plan to run on real hardware, a much more accurate emulator would be Gambatte : <a hef=\"https://sourceforge.net/projects/gambatte/\">https://sourceforge.net/projects/gambatte/</a>.");
+
+}
+
+void DialogTRSESettings::on_btnHelpZX_clicked()
+{
+    Help("ZX Spectrum Emulator", "Your favorite speccy emulator. <br>We recommend using Fuse for linux <a href=\"http://fuse-emulator.sourceforge.net/\">http://fuse-emulator.sourceforge.net/</a> or speccy for windows <a href=\"https://fms.komkon.org/Speccy/\">https://fms.komkon.org/Speccy/</a>.");
+}
+
+void DialogTRSESettings::on_btnHelpTiki_clicked()
+{
+    Help("TIKI 100 Emulator", "Your favorite Tiki 100 emulator! <br>We recommend using TIKI-Emul for windows <a href=\"http://www.djupdal.org/tiki/emulator/TIKI-100_emul_v1.1_win32.zip\">http://www.djupdal.org/tiki/emulator/TIKI-100_emul_v1.1_win32.zip</a> or compile the source for linux <a href=\"http://www.djupdal.org/tiki/emulator/TIKI-100_emul_v1.1-src.tgz\">http://www.djupdal.org/tiki/emulator/TIKI-100_emul_v1.1-src.tgz</a>. <br><br>Not that you really have any other choices in terms of selecting an emulator...");
+
+}
+
+void DialogTRSESettings::on_btnHelpDosbox_clicked()
+{
+    Help("DOSBOX Emulator", "Grab Dosbox from <a href=\"https://www.dosbox.com/\">https://www.dosbox.com/</a>");
+
+}
+
+void DialogTRSESettings::on_btnHelpOK64_clicked()
+{
+    Help("OK64 Emulator", "Since the OK64 is written by the developers of TRSE, it is included with the TRSE by default. ");
 }

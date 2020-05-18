@@ -35,7 +35,7 @@ class DialogAbout : public QDialog
 public:
     explicit DialogAbout(QWidget *parent = 0);
     ~DialogAbout();
-
+    void SetText(QString tit, QString text);
 private slots:
     void on_pushButton_clicked();
 

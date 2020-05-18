@@ -1,0 +1,40 @@
+program ZXTest;
+var
+	k : byte=0;
+	t,j,la : byte=0;
+	p1:pointer;
+	
+/*
+
+ Test : Proof-of-concept that the ZX Spectrum can be included in TRSE
+ Please contact me if you are interested in developing the library for this computer
+ 
+*/
+
+
+procedure ClearScreen(v:byte);
+begin
+	p1:=vram;
+	la:=v;
+	for k:=0 to 24 do
+	begin
+		fill(p1,la,$100);
+		p1:=p1+$100;
+		la:=la<<1;
+	end;
+	
+
+end;
+
+begin
+	t:=%11000000;
+	for j:=0 to 255 do
+	begin
+		ClearScreen(t);		
+		t:=t<<1;
+	end;
+	asm("
+		add a,b
+	");
+	Loop(); 
+end.

@@ -24,6 +24,7 @@
 
 #include <QDialog>
 #include "source/LeLib/util/cinifile.h"
+#include "dialogabout.h"
 #include <QFontDatabase>
 #include <QComboBox>
 namespace Ui {
@@ -66,7 +67,8 @@ public:
     ~DialogTRSESettings();
 
     void FillFont(QComboBox* cbmFont, QString keep);
-
+    void BuildEmulatorHelp();
+    void Help(QString tit, QString text);
 
 private slots:
     void on_pushButton_clicked();
@@ -116,6 +118,31 @@ private slots:
     void on_btnPasmo_clicked();
 
     void on_btnTiki100_clicked();
+
+
+    void on_btnHelpC64_clicked();
+
+
+
+    void on_btnHelpC128_clicked();
+
+    void on_btnHelpVIC20_clicked();
+
+    void on_btnHelpPET_clicked();
+
+    void on_btnHelpPlus4_clicked();
+
+    void on_btnHelpNES_clicked();
+
+    void on_btnHelpGB_clicked();
+
+    void on_btnHelpZX_clicked();
+
+    void on_btnHelpTiki_clicked();
+
+    void on_btnHelpDosbox_clicked();
+
+    void on_btnHelpOK64_clicked();
 
 private:
     Ui::DialogTRSESettings *ui;
