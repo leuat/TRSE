@@ -743,6 +743,18 @@ c; PLAYFIELD2; ATARI2600; a; $0F
 c; PLAYFIELD_CONTROL; ATARI2600; a; $A
 
 
+c; PLAYER0_COLOR; ATARI2600; a; $06
+c; PLAYER1_COLOR; ATARI2600; a; $07
+
+c; PLAYER0_GFX; ATARI2600; a; $1B
+c; PLAYER1_GFX; ATARI2600; a; $1C
+
+
+
+
+c; RESP0; ATARI2600; a; $10
+c; RESP1; ATARI2600; a; $11
+
 # VIC 20-specific constants
 
 c; PAL_OR_NTSC;VIC20; a; $ede4
@@ -1321,6 +1333,8 @@ f ; translate;
 f ; introduction_to_the_fjong_raytracer;
 
 
+illegalvariablenames; SPECTRUM, TIKI100, GAMEBOY; a,b,c,d,e,af,bc,de,hl,h,l,sp
+illegalvariablenames; AMIGA; sp, d0,d1,d2,d3,d4,d5,d6,d7,a0,a1,a2,a3,a4,a5,a6,a7
 
 
 

@@ -360,12 +360,14 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVarDecl> node)
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
 
+    QSharedPointer<Appendix> old = as->m_currentBlock;
+
     if (t->m_flags.contains("hram")) {
         as->m_currentBlock = as->m_hram;
-//        qDebug() << "declaring in HRAM";
     }
-    if (t->m_flags.contains("wram"))
+    if (t->m_flags.contains("wram")) {
         as->m_currentBlock = as->m_wram;
+    }
 
     if (t->m_flags.contains("sprram"))
         as->m_currentBlock = as->m_sprram;
@@ -375,6 +377,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVarDecl> node)
         if (!as->m_banks.contains(bnk)) {
             as->m_banks[bnk] = QSharedPointer<Appendix>(new Appendix());
             as->m_banks[bnk]->m_pos = "$4000";
+            as->m_banks[bnk]->m_isMainBlock = true;
         }
         as->m_currentBlock = as->m_banks[bnk];
     }
@@ -387,7 +390,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVarDecl> node)
 //    qDebug() << "" <<as->m_currentBlock;
     AbstractASTDispatcher::dispatch(node);
   //  qDebug() << as->m_currentBlock;
-    as->m_currentBlock = nullptr;
+    as->m_currentBlock = old;
 }
 
 void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)

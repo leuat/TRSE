@@ -77,6 +77,7 @@ private:
     Syntax();
 public:
     QVector<Token> reservedWords, reservedWordsFjong;
+    QStringList m_illegaVariableNames;
     //QVector<BuiltInFunction> builtinFunctions;
     QMap<QString, BuiltInFunction> builtInFunctions, builtinFunctionsFjong;
   //  enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA};
@@ -90,6 +91,7 @@ public:
     bool m_stripPrg = false;
     void Init(AbstractSystem::System s, QSharedPointer<CIniFile> m_ini, QSharedPointer<CIniFile> m_proj);
     void SetupReservedWords(QVector<Token>& list, QString id, bool ignoreSystem);
+    void SetupIllegalVariables();
     void SetupBuiltinFunctions(QMap<QString, BuiltInFunction>& lst, AbstractSystem::System s, QString id, bool ignoreSystem);
     void SetupKeys();
     void LoadSyntaxData();

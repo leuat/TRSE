@@ -38,9 +38,9 @@ public:
     QString String(QStringList lst) override;
 
 
-    void StartMemoryBlock(QString pos) override {}
+    void StartMemoryBlock(QString pos) override;
 
-    void EndMemoryBlock() override {}
+    void EndMemoryBlock()  override;
 
 
 

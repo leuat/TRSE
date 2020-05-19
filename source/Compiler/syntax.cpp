@@ -45,6 +45,7 @@ void Syntax::Init(AbstractSystem::System s, QSharedPointer<CIniFile> m_ini, QSha
     SetupBuiltinFunctions(builtInFunctions, s,"m",false);
     SetupBuiltinFunctions(builtinFunctionsFjong, s,"f",true);
     SetupKeys();
+    SetupIllegalVariables();
 
 }
 
@@ -71,6 +72,29 @@ void Syntax::SetupReservedWords(QVector<Token>& list, QString id, bool ignoreSys
                     m_reservedWordsRegularFont[word.toUpper()] = true;
              }
             list.append(Token(TokenType::getType(word), word.toUpper()));
+        }
+
+     }
+
+}
+
+void Syntax::SetupIllegalVariables()
+{
+    m_illegaVariableNames.clear();
+    QString currentSystem = AbstractSystem::StringFromSystem(m_currentSystem->m_system).toLower();
+    for (QString s: m_syntaxData.split('\n')) {
+        s= s.simplified();
+        if (s.count()==0) continue;
+        if (s.startsWith("#")) continue;
+        s=s.replace(" ", "");
+
+        QStringList data = s.split(";");
+        if (data[0].toLower()!="illegalvariablenames")
+            continue;
+        QString system = data[1].toLower();
+
+        if (system.contains(currentSystem)) {
+            m_illegaVariableNames<<(data[2].split(","));
         }
 
      }

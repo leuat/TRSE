@@ -10,7 +10,9 @@ AsmZ80::AsmZ80()
     m_wram->Append("i_input_current:	DS	1",0);
     m_wram->Append("i_input_previous:	DS	1",0);
     m_wram->Append("cmpvar:	DS	1",0);
-
+    m_hram->m_isMainBlock = true;
+    m_wram->m_isMainBlock = true;
+    m_sprram->m_isMainBlock = true;
 
 }
 
@@ -347,5 +349,41 @@ QString AsmZ80::String(QStringList lst)
     res=res + "\t"+mark+"\t0";
     m_term +=res;
     return res;
+}
+
+void AsmZ80::StartMemoryBlock(QString pos) {
+
+//    qDebug() << "START MEMORY BLOCK";
+    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::GAMEBOY)
+        return;
+
+
+
+    //EndMemoryBlock();
+    pos = Util::numToHex(Util::NumberFromStringHex(pos));
+//            qDebug() << "Starting emory pos: "<< pos << m_banks.keys();
+    if (!m_banks.contains(pos)) {
+  //      qDebug() << "Creating NEW for code : " << pos;
+        m_banks[pos] = QSharedPointer<Appendix>(new Appendix());
+        m_banks[pos]->m_pos = "$4000";
+        m_banks[pos]->m_isMainBlock = true;
+    }
+
+    m_currentBlock = m_banks[pos];
+//    m_currentBlock->m_isMainBlock = true;
+
+    //    qDebug() << "Starting new memory block at "+pos;
+    //        m_currentBlockCount = m_appendix.count()-1;
+}
+
+void AsmZ80::EndMemoryBlock() {
+    //        qDebug() << "Trying to end memory block.. ";
+    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::GAMEBOY)
+        return;
+
+
+    m_currentBlock=nullptr;
+
+
 }
 

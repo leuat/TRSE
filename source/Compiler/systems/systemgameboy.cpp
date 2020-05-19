@@ -56,7 +56,7 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
         QFile::remove(filename+".gb");
 
 //        gbt_player.o gbt_player_bank1.o
-        StartProcess(link, QStringList() <<"-d"<< "-o" << filename + ".gb" << filename+".o" <<currentDir+"/gbt_player.o" <<currentDir+"/gbt_player_bank1.o", output);
+        StartProcess(link, QStringList() <<"-d"<< "-o" << filename + ".gb" << filename+".o" <<currentDir+"/gbt_player.o" <<currentDir+"/gbt_player_bank1.o" << "-n" << filename+".sym", output);
         if (!QFile::exists(filename+".gb")) {
             text  += "<br><font color=\"#FFFF00\">Error during assembly : please check source assembly for errors.</font>";
             text+=output;

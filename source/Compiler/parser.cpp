@@ -2484,9 +2484,13 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
         isGlobal = true;
         Eat();
     }
+
     // NOW do the syms define
     if (!isGlobal)
     for (QSharedPointer<Symbol> s: syms) {
+        if (Syntax::s.m_illegaVariableNames.contains(s->m_name))
+            ErrorHandler::e.Error("Illegal variable name '" + s->m_name +"' on the "+AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+" (name already used in the assembler etc) ",m_currentToken.m_lineNumber);
+
         m_symTab->Define(s ,false);
         s->m_lineNumber = m_currentToken.m_lineNumber;
     }

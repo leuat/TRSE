@@ -6,24 +6,77 @@ program Atari_Tutorial4;
 */
 
 var
-	i,j, time,k,l:byte at $80;
+	xp,yp, i,j, time,k,l:byte at $80;
 	const height : byte = 8;
 	
+	div15 : array[160] of byte = BuildTable("i/15 +1");
+    sinetab : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*0x7f+0x7F)/2.0");
+    
+    @donotremove fineAdjustBegin
+    @donotremove fineAdjustTable2
+    
+	fineAdjustBegin :array[] of byte = (
+ %01110000, 
+ %01100000, 
+ %01010000, 
+ %01000000, 
+ %00110000, 
+ %00100000, 
+ %00010000, 
+ %00000000, 
+ %11110000, 
+ %11100000, 
+ %11010000, 
+ %11000000, 
+ %10110000, 
+ %10100000, 
+ %10010000, 
+) at $FF00;	
+
 @include "yo-grl.ras"
 
 procedure ColorStuff();
 begin
+
 	Screen::TurnOnDisplay();
 	// Have game logic here, before the scan starts
-	for i:=0 to 22 do 
+	for i:=0 to 24 do 
 	begin
 		Screen::WaitForVerticalBlank();
 		
 	end;
+	
 	playfield_color:=$45;
-	k:=0;
+	k:=time;
 	l:=0;
 	j:=time;
+//	xp:=sinetab[time];
+	xp:=xp+1;
+//	if (xp>=160) then xp:=0;
+	player0_gfx:=$01;
+	// Trigger the sprite
+	asm("
+		fineAdjustTable = fineAdjustBegin-241;//+%11110001
+
+		ldx 0
+		lda xp
+		sta WSYNC
+        sec
+
+.Div15   sbc #15      ; 2
+
+         bcs .Div15   ; 3(2)
+
+		tay
+
+        lda fineAdjustTable,y    ; 13 -> Consume 5 cycles by guaranteeing we cross a page boundary
+
+        sta HMP0,x
+
+        sta RESP0,x            
+
+	");
+	Screen::WaitForVerticalBlank();
 	// 192 steps. every cycle counts.
 	asm("
 	ldx #192	
@@ -46,10 +99,18 @@ topp:
 
 ; delay as appropriate
 
-	inc j
-	lda j
-	ora 15
-	sta COLUPF
+;	inc j
+;	lda j
+;	ora 15
+;	sta COLUPF
+
+;	cpx k
+;	bne cont
+;	sta $10
+
+cont:
+	txa 
+	sta $1b
 
 	lda yo-grl_STRIP_3,x	; PF0 right
 
@@ -62,7 +123,7 @@ topp:
 	lda yo-grl_STRIP_5,x	; PF2 right
 
 	sta PF2
-
+		
 
 	dex
 
@@ -85,6 +146,10 @@ end;
 begin
 	playfield_color:=$45;
 	playfield_control:=%00000000;
+	player1_color:=$70;	
+	player0_color:=$9A;	
+	xp:=0;
+	yp:=0;
 	while (true) do
 	begin
 		Screen::WaitForVerticalSync();
