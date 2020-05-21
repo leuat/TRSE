@@ -146,14 +146,14 @@ void FormFjong::keyPressEvent(QKeyEvent *e)
         ui->txtEditor->setFocus();
     }
 //    qDebug() << ui->txtEditor->m_textChanged    ;
-    if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+/*    if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
         m_documentIsChanged  = ui->txtEditor->m_textChanged;
         emit requestCloseWindow();
     //    Data::data.requestCloseWindow = true;
 
 //    if (ui->txtEditor->m_textChanged)
     }
-
+*/
     if (e->key()==Qt::Key_J && (QApplication::keyboardModifiers() & Qt::ControlModifier)) AutoFormat();
     if (e->key()==Qt::Key_F && QApplication::keyboardModifiers() & Qt::ControlModifier) {
         ui->leSearch->setText("");

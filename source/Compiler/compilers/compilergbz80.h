@@ -12,6 +12,8 @@ public:
 
     void Connect() override;
 
+    void SetupMemoryAnalyzer(QString filename) override;
+
 };
 
 #endif // COMPILERX86_H

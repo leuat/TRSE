@@ -318,60 +318,6 @@ void FormRasEditor::SetOutputText(QString txt)
 
 }
 
-int FormRasEditor::FindEndSymbol(Orgasm& orgasm)
-{
-//    QStringList output = QString(out).split("\n");
-    for (QString s : orgasm.m_symbols.keys()) {
-        if (s.toLower().contains("endsymbol")) {
-            return orgasm.m_symbols[s];
-            //s= s.remove("EndSymbol").trimmed();
-//            bool ok;
-  //          qDebug() << "FOUND END " << s;
-//            exit(1);
-//            return s.toInt(&ok, 16);
-        }
-    }
-    return 0;
-}
-
-void FormRasEditor::FindBlockEndSymbols(Orgasm& orgasm)
-{
-    m_blockEndSymbols.clear();
-    for (QString s : orgasm.m_symbols.keys()) {
-        if (s.toLower().contains("endblock")) {
-           QString spl = s;
-            spl = spl.toLower().simplified().split("block")[1];
-//            bool ok;
-            int i= orgasm.m_symbols[s];//.toInt(&ok, 16);
-            //qDebug() << "FOUND endblock : " << s << Util::numToHex(i);
-            m_blockEndSymbols.append(i);
-        }
-    }
-
-}
-
-void FormRasEditor::ConnectBlockSymbols()
-{
-    for (int sym : m_blockEndSymbols) {
-        int winner = 0xFFFF;
-        QSharedPointer<MemoryBlock> winnerBlock=nullptr;
-
-        for (QSharedPointer<MemoryBlock> mb: m_builderThread.m_builder->compiler->m_assembler->blocks) {
-//            if (mb->m_type==MemoryBlock::CODE &&  sym>mb->m_start)
-                if (sym>mb->m_start)
-                if (sym-mb->m_start<winner) {
-                    winner = sym-mb->m_start;
-                    winnerBlock  =mb;
-                }
-        }
-        if (winnerBlock!=nullptr) {
-            winnerBlock->m_end = sym;
-       //     qDebug() << Util::numToHex(sym) << " " << winnerBlock->Type();
-        }
-    }
-
-
-}
 
 void FormRasEditor::BuildNes(QString prg)
 {
@@ -561,11 +507,11 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         ui->txtEditor->setOverwriteMode(!ui->txtEditor->overwriteMode());
     }
 
-    if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier))
+/*    if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier))
         emit requestCloseWindow();
         m_documentIsChanged  = ui->txtEditor->m_textChanged;
     //    Data::data.requestCloseWindow = true;
-
+*/
 //    if (ui->txtEditor->m_textChanged)
 
     if (e->key()==Qt::Key_J && (QApplication::keyboardModifiers() & Qt::ControlModifier)) AutoFormat();
@@ -853,7 +799,7 @@ void FormRasEditor::MemoryAnalyze()
     QString output = process.readAllStandardOutput();
     int codeEnd=FindEndSymbol(output);
     */
-    Orgasm orgAsm;
+/*    Orgasm orgAsm;
     orgAsm.SetupConstants(m_builderThread.m_builder->compiler->m_parser.m_symTab);
     //orgAsm.Codes();
     orgAsm.Assemble(filename+".asm", filename+".prg");
@@ -861,14 +807,18 @@ void FormRasEditor::MemoryAnalyze()
         return;
     }
     int codeEnd=FindEndSymbol(orgAsm);
-
-
-    FindBlockEndSymbols(orgAsm);
+    QVector<int> ends = FindBlockEndSymbols(orgAsm);
 //    qDebug() << "B";
-    ConnectBlockSymbols();
+    ConnectBlockSymbols(ends);
+    */
+
+
 //    qDebug() << "asm " << m_builderThread.m_builder->compiler->m_assembler;
-    m_builderThread.m_builder->compiler->m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(Syntax::s.m_currentSystem->m_startAddress, codeEnd, MemoryBlock::CODE, "code")));
  //   qDebug() << "B2";
+    filename = m_currentSourceFile;
+    filename = filename.remove(".ras");
+//    qDebug() << "Filename; "<< m_currentSourceFile;
+    m_builderThread.m_builder->compiler->SetupMemoryAnalyzer(filename);
 
     m_mca.ClassifyZP(m_builderThread.m_builder->compiler->m_assembler->blocks);
 

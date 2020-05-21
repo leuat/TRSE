@@ -89,7 +89,6 @@ public:
     QSharedPointer<DialogHelp> m_help = nullptr;
     bool m_run = false;
     bool m_isTRU = false;
-    QVector<int> m_blockEndSymbols;
 
     BuilderThread m_builderThread;
     QElapsedTimer m_timer;
@@ -147,9 +146,6 @@ public:
 
     void SetOutputText(QString txt);
 
-    int FindEndSymbol(Orgasm& orgAsm);
-    void FindBlockEndSymbols(Orgasm& orgAsm);
-    void ConnectBlockSymbols();
     void BuildNes(QString prg);
     void LookupSymbolUnderCursor() override;
 public slots:

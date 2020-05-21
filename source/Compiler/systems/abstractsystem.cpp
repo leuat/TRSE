@@ -23,6 +23,7 @@ void AbstractSystem::InitLabelColors() {
     m_labelColors[SystemLabel::SID] = QColor(255,255,128);
     m_labelColors[SystemLabel::VIC] = QColor(64,128,255);
     m_labelColors[SystemLabel::FREE] = QColor(128,192,128);
+    m_labelColors[SystemLabel::ROM] = QColor(64,192,200);
     m_labelColors[SystemLabel::BASIC] = QColor(64,64,255);
     m_labelColors[SystemLabel::STACK] = QColor(255,128,64);
     m_labelColors[SystemLabel::COLOUR] = QColor(255,64,255);

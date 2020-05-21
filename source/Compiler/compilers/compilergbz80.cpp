@@ -49,3 +49,38 @@ void CompilerGBZ80::Connect()
 
 }
 
+void CompilerGBZ80::SetupMemoryAnalyzer(QString filename)
+{
+    QString s = Util::loadTextFile(filename+".sym");
+    if (!QFile::exists(filename+".sym"))
+        return;
+
+
+    QStringList lst = s.split("\n");
+    lst.removeFirst();
+    int codeStart = 0x150;
+    int varStart = 0xC000;
+    bool done = false;
+    int i=0;
+    int maxB1  = codeStart;
+    int maxV1  = varStart;
+    while (!done) {
+        if (lst[i].count()==0) {
+            done=++i>=lst.count();
+            continue;
+        }
+        QString d = lst[i].split(" ")[0];
+        QString b = d.split(":")[1];
+        int val = Util::NumberFromStringHex("$"+b);
+        if (val>codeStart & val <0x4000)
+            maxB1=val;
+        if (val>varStart & val <0xDFFFF)
+            maxV1=val;
+        done=++i>=lst.count();
+
+    }
+    m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(codeStart, maxB1, MemoryBlock::CODE, "code")));
+    m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(varStart, maxV1, MemoryBlock::DATA, "varialbes")));
+
+}
+

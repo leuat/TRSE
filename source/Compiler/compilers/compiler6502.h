@@ -2,6 +2,7 @@
 #define COMPILER6502_H
 
 #include "compiler.h"
+#include "source/OrgAsm/orgasm.h"
 
 class Compiler6502 : public Compiler
 {
@@ -15,6 +16,15 @@ public:
     void CleanupCycleLinenumbers(QString currentFile, QMap<int,int>& ocycles, QMap<int,int>& retcycles ) override;
 
     void Init6502Assembler();
+
+    void SetupMemoryAnalyzer(QString filename) override;
+
+
+    int FindEndSymbol(Orgasm& orgasm);
+
+    QVector<int> FindBlockEndSymbols(Orgasm& orgasm);
+
+    void ConnectBlockSymbols(QVector<int>& blockEndSymbols);
 
 };
 

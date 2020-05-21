@@ -1,6 +1,5 @@
 #include "compiler6502.h"
 
-
 void Compiler6502::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system)
 {
     m_assembler = QSharedPointer<AsmMOS6502>(new AsmMOS6502());
@@ -161,6 +160,82 @@ void Compiler6502::Init6502Assembler()
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES) {
         Syntax::s.m_currentSystem->m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
         Syntax::s.m_currentSystem->m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
+    }
+
+
+}
+
+void Compiler6502::SetupMemoryAnalyzer(QString filename)
+{
+    Orgasm orgAsm;
+    orgAsm.SetupConstants(m_parser.m_symTab);
+    //orgAsm.Codes();
+    orgAsm.Assemble(filename+".asm", filename+".prg");
+    if (!orgAsm.m_success) {
+        return;
+    }
+    int codeEnd=FindEndSymbol(orgAsm);
+    QVector<int> ends = FindBlockEndSymbols(orgAsm);
+//    qDebug() << "B";
+    ConnectBlockSymbols(ends);
+
+    m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(Syntax::s.m_currentSystem->m_startAddress, codeEnd, MemoryBlock::CODE, "code")));
+
+
+}
+
+int Compiler6502::FindEndSymbol(Orgasm &orgasm)
+{
+    //    QStringList output = QString(out).split("\n");
+    for (QString s : orgasm.m_symbols.keys()) {
+        if (s.toLower().contains("endsymbol")) {
+            return orgasm.m_symbols[s];
+            //s= s.remove("EndSymbol").trimmed();
+            //            bool ok;
+            //          qDebug() << "FOUND END " << s;
+            //            exit(1);
+            //            return s.toInt(&ok, 16);
+        }
+    }
+    return 0;
+}
+
+QVector<int> Compiler6502::FindBlockEndSymbols(Orgasm &orgasm)
+{
+    QVector<int> m_blockEndSymbols;
+
+    m_blockEndSymbols.clear();
+    for (QString s : orgasm.m_symbols.keys()) {
+        if (s.toLower().contains("endblock")) {
+            QString spl = s;
+            spl = spl.toLower().simplified().split("block")[1];
+            //            bool ok;
+            int i= orgasm.m_symbols[s];//.toInt(&ok, 16);
+            //qDebug() << "FOUND endblock : " << s << Util::numToHex(i);
+            m_blockEndSymbols.append(i);
+        }
+    }
+    return m_blockEndSymbols;
+}
+
+void Compiler6502::ConnectBlockSymbols(QVector<int> &blockEndSymbols)
+{
+    for (int sym : blockEndSymbols) {
+        int winner = 0xFFFF;
+        QSharedPointer<MemoryBlock> winnerBlock=nullptr;
+
+        for (QSharedPointer<MemoryBlock> mb: m_assembler->blocks) {
+            //            if (mb->m_type==MemoryBlock::CODE &&  sym>mb->m_start)
+            if (sym>mb->m_start)
+                if (sym-mb->m_start<winner) {
+                    winner = sym-mb->m_start;
+                    winnerBlock  =mb;
+                }
+        }
+        if (winnerBlock!=nullptr) {
+            winnerBlock->m_end = sym;
+            //     qDebug() << Util::numToHex(sym) << " " << winnerBlock->Type();
+        }
     }
 
 

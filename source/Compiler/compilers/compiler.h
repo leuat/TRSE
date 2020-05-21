@@ -57,6 +57,9 @@ public:
     virtual void InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system) = 0;
     virtual void Connect() = 0;
 
+
+    virtual void SetupMemoryAnalyzer(QString filename) {};
+
     void Parse(QString text, QStringList lst, QString fname);
     bool Build( QSharedPointer<AbstractSystem> system, QString projDir);
     void CleanupBlockLinenumbers();

@@ -366,14 +366,17 @@ void MultiColorImage::CopyFrom(LImage* img)
     if (mc!=nullptr)
     {
         MultiColorImage* mc = (MultiColorImage*)img;
+//        m_footer.m_data = mc->m_footer.m_data;
          m_background = mc->m_background;
          m_border = mc->m_border;
          m_charWidth = mc->m_charWidth;
          m_charHeight = mc->m_charHeight;
          m_scale = mc->m_scale;
+         m_bitMask = mc->m_bitMask;
          m_width = mc->m_width;
          m_height = mc->m_height;
          m_scaleX = mc->m_scaleX;
+
          m_charWidthDisplay = mc->m_charWidthDisplay;
         // qDebug() << "COPY FROM";
 #pragma omp parallel for

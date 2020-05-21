@@ -9,11 +9,7 @@
 class SystemGameboy : public SystemZ80
 {
 public:
-    SystemGameboy(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : SystemZ80(settings, proj) {
-        m_processor = GBZ80;
-        m_system = GAMEBOY;
-
-    }
+    SystemGameboy(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
 
 
 
