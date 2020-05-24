@@ -54,6 +54,63 @@ void Tutorials::PopulateTreeList(QTreeWidget *tree)
     tree->setCurrentItem(first);
 }
 
+void Tutorials::PopulateSystemList(QListWidget *w)
+{
+    QStringList systems;
+    for (Tutorial& t: m_tutorials) {
+        if (!systems.contains(t.m_system)) {
+            systems.append(t.m_system);
+
+            QListWidgetItem *item = new QListWidgetItem();
+            item->setText(t.m_system);
+//            item->setData(Qt::UserRole,t.m_file + ";"+t.m_text);
+            item->setData(Qt::UserRole,t.m_system);
+            item->setForeground(QColor(190,220,240,255));
+            QPixmap img(":resources/images/" +t.m_system.toUpper()+".png");
+            item->setIcon(img);
+
+            w->addItem(item);
+            QFont f = item->font();
+            f.setPointSize(16);
+            item->setFont(f);
+        }
+
+/*         QTreeWidgetItem *treeItem = new QTreeWidgetItem();
+         if (first==nullptr)
+             first =treeItem;
+         treeItem->setText(0,t.m_name);
+         treeItem->setData(0,Qt::UserRole,t.m_file + ";"+t.m_text);
+         treeItem->setForeground(0,QColor(190,220,240,255));
+*/
+//         m_roots[t.m_system]->addChild(treeItem);
+     }
+    w->setCurrentRow(0);
+    w->setIconSize(QSize(64,48));
+
+}
+
+void Tutorials::PopulateProjectList(QString system, QListWidget *w)
+{
+    w->clear();
+    for (Tutorial& t: m_tutorials) {
+        if ((system != t.m_system))
+            continue;
+
+
+        QListWidgetItem *item = new QListWidgetItem();
+            item->setText(t.m_name);
+            item->setData(Qt::UserRole,t.m_file + ";"+t.m_text);
+            item->setForeground(QColor(190,220,240,255));
+            w->addItem(item);
+            QFont f = item->font();
+            f.setPointSize(15);
+            item->setFont(f);
+        }
+    w->setCurrentRow(0);
+
+
+}
+
 void Tutorials::PopulateTemplateList(QListWidget *w, QString system)
 {
     w->clear();

@@ -64,23 +64,44 @@ void CompilerGBZ80::SetupMemoryAnalyzer(QString filename)
     int i=0;
     int maxB1  = codeStart;
     int maxV1  = varStart;
+    QMap<int,QSharedPointer<MemoryBlock>> banks;
     while (!done) {
         if (lst[i].count()==0) {
             done=++i>=lst.count();
             continue;
         }
         QString d = lst[i].split(" ")[0];
+        bool ok = true;
+        int a = d.split(":")[0].toInt(&ok,16);
         QString b = d.split(":")[1];
         int val = Util::NumberFromStringHex("$"+b);
         if (val>codeStart & val <0x4000)
             maxB1=val;
-        if (val>varStart & val <0xDFFFF)
+
+        if (val>varStart & val <0xFFFF)
             maxV1=val;
+
+        if (val>=0x4000 && val<=0x7FFF) {
+            // We're in BANK territory!
+            if (!banks.contains(a)) {
+                banks[a] = QSharedPointer<MemoryBlock>(
+                            new MemoryBlock(0x4000, 0x4000, MemoryBlock::DATA, "B"+QString::number(a,16)));
+                banks[a]->m_bank = a;
+
+            }
+            QSharedPointer<MemoryBlock> bank = banks[a];
+            bank->m_end = val;
+        }
+
+
+
         done=++i>=lst.count();
 
     }
     m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(codeStart, maxB1, MemoryBlock::CODE, "code")));
     m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(varStart, maxV1, MemoryBlock::DATA, "varialbes")));
-
+    for (int k: banks.keys())
+        m_assembler->blocks.append(banks[k]);
+    m_assembler->m_noBanks = banks.count();
 }
 

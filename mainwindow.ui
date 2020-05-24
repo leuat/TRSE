@@ -373,41 +373,42 @@ p, li { white-space: pre-wrap; }
            <item row="1" column="1">
             <layout class="QVBoxLayout" name="verticalLayout_6">
              <item>
-              <widget class="QLabel" name="label">
-               <property name="font">
-                <font>
-                 <pointsize>14</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Tutorials and sample projects</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <layout class="QGridLayout" name="gridLayout_6">
-               <item row="0" column="1">
-                <widget class="QTextBrowser" name="txtTutorials"/>
+              <layout class="QGridLayout" name="gridLayout_6" columnstretch="1,2,0" columnminimumwidth="2,6,6">
+               <item row="1" column="0">
+                <widget class="QListWidget" name="lstSystems"/>
+               </item>
+               <item row="1" column="1">
+                <layout class="QVBoxLayout" name="verticalLayout_4">
+                 <item>
+                  <widget class="QListWidget" name="lstSampleProjects"/>
+                 </item>
+                 <item>
+                  <widget class="QTextBrowser" name="txtTutorials"/>
+                 </item>
+                </layout>
                </item>
                <item row="0" column="0">
-                <widget class="QTreeWidget" name="treeTutorials">
+                <widget class="QLabel" name="label">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
-                   <kerning>true</kerning>
+                   <pointsize>14</pointsize>
                   </font>
                  </property>
-                 <property name="autoExpandDelay">
-                  <number>1</number>
+                 <property name="text">
+                  <string>Supported systems</string>
                  </property>
-                 <attribute name="headerVisible">
-                  <bool>false</bool>
-                 </attribute>
-                 <column>
-                  <property name="text">
-                   <string notr="true">1</string>
-                  </property>
-                 </column>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLabel" name="label_6">
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Sample projects</string>
+                 </property>
                 </widget>
                </item>
               </layout>

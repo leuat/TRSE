@@ -48,6 +48,7 @@ public:
     float m_hsv = 0.5;
     float m_saturation = 0.5;
     float m_blur = 0;
+    int matrixSize = 2;
     QPointF m_scale = QPointF(1,1);
 
     bool isPetscii = false;
@@ -107,6 +108,8 @@ private slots:
 
     void on_hsScaleX_sliderMoved(int position);
     void on_hsScaleY_sliderMoved(int position);
+
+    void on_cmbDither_currentIndexChanged(int index);
 
 private:
     Ui::DialogImport *ui;

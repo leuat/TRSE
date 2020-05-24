@@ -88,9 +88,42 @@ waitfor_hblank_internal:
     ret
 
 
+internal_copy_hblank4
+    ld a, [de]
+    inc de
+    ld b, a
+
+    ld a, [de]
+    inc de
+    ld c, a
+
+waitfor_hblank_internal4:
+    ld a,[$FF41]
+    and 3
+    cp 0
+    jr nz, waitfor_hblank_internal4
+    ; 1
+    ld a,b
+    ld [hl+],a
+    ; 2
+    ld a,c
+    ld [hl+],a
+    ; 3
+    ld a,[de]
+    ld [hl+],a
+    inc de
+    ; 4
+    ld a,[de]
+    ld [hl+],a
+    inc de
+    ret
+
 
 ; Copies 8 bytes on HBLank
 internal_copy_hblank_exp
+
+
+
 
 
 waitfor_hblank_internal_exp:

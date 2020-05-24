@@ -32,6 +32,7 @@ DialogImport::DialogImport(QWidget *parent) :
     QFontDatabase d;
     ui->cmbFonts->addItems(d.families());
     ui->cmbFonts->setCurrentText("Courier 10 Pitch");
+    ui->cmbDither->setCurrentIndex(1);
 
 }
 
@@ -119,6 +120,10 @@ void DialogImport::Convert()
 //    qDebug()<< "Type" << m_imageType;
     m_output.Release();
     bool useDither = ui->chkDither->isChecked();
+    if (m_work.m_qImage==nullptr)
+        return;
+    if (m_image == nullptr)
+        return;
     m_output.m_qImage = m_work.Resize(m_image->m_width, m_image->m_height, m_image->m_colorList, m_contrast, m_shift, m_hsv, m_saturation, m_scale, useDither);
 //    qDebug() << m_image->m_width << m_output.m_qImage->width();
     //exit(1);
@@ -133,12 +138,14 @@ void DialogImport::Convert()
 
 //    for (int i=0;i<4;i++)
   //      qDebug() << "COLS : S " <<QString::number(m_image->m_extraCols[i]);
+    matrixSize = ui->cmbDither->currentText().toInt();
+//    qDebug() << matrixSize;
     if (!useDither)
        m_image->fromQImage(m_output.m_qImage, m_image->m_colorList);
     else
 //        m_image->FloydSteinbergDither(*m_output.m_qImage,m_image->m_colorList, true);
 
-        m_image->OrdererdDither(*m_output.m_qImage,m_image->m_colorList, strength,1);
+        m_image->OrdererdDither(*m_output.m_qImage,m_image->m_colorList, strength,matrixSize,1);
 
 
 
@@ -177,7 +184,8 @@ void DialogImport::UpdateOutput()
     Convert();
     QPixmap p;
 //    QPixmap p = m_pixMapImage.scaled(QSize(grid.width(),grid.height()),  Qt::IgnoreAspectRatio, Qt::FastTransformation);
-
+    if (m_output.m_qImage==nullptr)
+        return;
     p.convertFromImage(*m_output.m_qImage);
     p = p.scaled(320,200);
     ui->lblTwo->setPixmap(p);
@@ -338,6 +346,12 @@ void DialogImport::on_hsScaleX_sliderMoved(int position)
 }
 
 void DialogImport::on_hsScaleY_sliderMoved(int position)
+{
+    UpdateOutput();
+
+}
+
+void DialogImport::on_cmbDither_currentIndexChanged(int index)
 {
     UpdateOutput();
 

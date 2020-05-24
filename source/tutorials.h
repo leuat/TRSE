@@ -35,6 +35,8 @@ public:
     QMap<QString, QTreeWidgetItem*> m_roots;
     void Read(QString );
     void PopulateTreeList(QTreeWidget* tree);
+    void PopulateSystemList(QListWidget* w);
+    void PopulateProjectList(QString system, QListWidget* w);
 
     void PopulateTemplateList(QListWidget* w, QString system);
 

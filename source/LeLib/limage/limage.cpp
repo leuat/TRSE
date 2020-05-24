@@ -251,7 +251,7 @@ void LImage::FloydSteinbergDither(QImage &img, LColorList &colors, bool dither)
 
 }
 
-void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, float gamma=1.0)
+void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, int size, float gamma=1.0)
 {
     int height  =min(img.height(), m_height);
     int width  =min(img.width(), m_width);
@@ -271,9 +271,9 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
             int xp = xx + yy%(int)strength.z();
             xp=xp&3;
             yp=yp&3;
-            color.setRed(min((float)pow(color.red(),gamma) + bayer4x4(xp % 4,yp % 4),255.0f));
-            color.setGreen(min((float)pow(color.green(),gamma) + bayer4x4(xp % 4,yp % 4),255.0f));
-            color.setBlue(min((float)pow(color.blue(),gamma) + bayer4x4(xp % 4,yp % 4),255.0f));
+            color.setRed(min((float)pow(color.red(),gamma) + bayer4x4(xp % size,yp % size),255.0f));
+            color.setGreen(min((float)pow(color.green(),gamma) + bayer4x4(xp % size,yp % size),255.0f));
+            color.setBlue(min((float)pow(color.blue(),gamma) + bayer4x4(xp % size,yp % size),255.0f));
 
             int winner = 0;
             QColor newPixel = colors.getClosestColor(color, winner);

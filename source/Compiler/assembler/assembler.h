@@ -34,7 +34,7 @@
 
 class MemoryBlock {
   public:
-    int m_start, m_end, m_lineNumber;
+    int m_start, m_end, m_lineNumber, m_bank=-1;
     enum Type {CODE, DATA, MUSIC, USER, ARRAY};
     Type m_type;
     QVector<int> m_zeropages;
@@ -167,6 +167,7 @@ public:
     QMap<QString, QString> m_lastRegister; // Last registers set
 
     bool m_countCycles = false;
+    int m_noBanks = 0;
 
     QString m_currentBlockName="";
 

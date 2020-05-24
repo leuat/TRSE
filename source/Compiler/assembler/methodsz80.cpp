@@ -61,6 +61,8 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     else
     if (Command("memcpyonhblank"))
         MemCpyOnHBLank(as,"internal_copy_hblank8",8);
+    if (Command("memcpyonhblank4"))
+        MemCpyOnHBLank(as,"internal_copy_hblank4",4);
     else
         if (Command("memcpyonhblankexp"))
             MemCpyOnHBLank(as,"internal_copy_hblank_exp",12);

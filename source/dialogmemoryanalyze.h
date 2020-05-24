@@ -49,6 +49,7 @@ class DialogMemoryAnalyze : public QDialog
 public:
     explicit DialogMemoryAnalyze(QSharedPointer<CIniFile> ini, AbstractSystem* system, QWidget *parent = 0);
     void Initialize(QVector<QSharedPointer<MemoryBlock>>& blocks, int fontSize);
+    int m_noBanks = 0;
     QMap<QString, QColor> m_colors;
     void InitColors();
     void RenderSystemLabels(QPainter& p,int,int);

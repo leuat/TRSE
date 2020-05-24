@@ -102,7 +102,9 @@ MainWindow::MainWindow(QWidget *parent) :
     this->installEventFilter(this);
 
     m_tutorials.Read(":resources/text/tutorials.txt");
-    m_tutorials.PopulateTreeList(ui->treeTutorials);
+//    m_tutorials.PopulateTreeList(ui->treeTutorials);
+    m_tutorials.PopulateSystemList(ui->lstSystems);
+    ui->lstSystems->setCurrentRow(0);
     setWindowTitle("Turbo Rascal Syntax error, \";\" expected but \"BEGIN\" Version " + Data::data.version);
     ui->textBrowser->setText( ui->textBrowser->toHtml().replace("@version",Data::data.version));
 
@@ -1809,5 +1811,36 @@ void MainWindow::LoadIniFile()
 
 
     Messages::messages.LoadFromCIni(m_iniFile);
+
+}
+
+
+void MainWindow::on_lstSystems_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
+{
+    QString key = current->data(Qt::UserRole).toString();
+    m_tutorials.PopulateProjectList(key,ui->lstSampleProjects);
+
+}
+
+void MainWindow::on_lstSampleProjects_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
+{
+    if (current==nullptr)
+        return;
+    if (current->data(Qt::UserRole).toString()=="")
+        return;
+    QString text = current->data(Qt::UserRole).toString().split(";")[1];
+    ui->txtTutorials->setText(text+"<p><font color=\"#A0FFA0\">Double click to load the project!</font>");
+
+}
+
+void MainWindow::on_lstSampleProjects_itemDoubleClicked(QListWidgetItem *item)
+{
+    if (item==nullptr) return;
+    if (item->data(Qt::UserRole).toString()=="")
+        return;
+    QString dir = Util::GetSystemPrefix() + "tutorials/"+item->data(Qt::UserRole).toString().split(";")[0];
+
+    QString fileName = Util::findFileInDirectory("",dir,"trse");
+    LoadProject(fileName);
 
 }

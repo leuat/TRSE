@@ -81,6 +81,9 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
 
     InitColors();
 
+
+
+
     float xsize = ui->lblImage->width()-8;
     float ysize= ui->lblImage->height()-8;
 /*    float xsize=this->width()*2;
@@ -116,7 +119,20 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
         c.setBlue(min(c.blue()*scale,255.0f));
         p.setPen(c);
         p.setBrush(c);
-        p.drawRoundedRect(QRect(xstart,y0,xsize-xborder-xstart-ww,y1-y0),round,round);
+
+
+        int x1 = xstart;
+        int x2 = xsize;
+
+        if (mb->m_bank>=0) {
+            int dx = xsize/m_noBanks;
+            x1 = xstart + dx/2.0 * mb->m_bank;
+            x2 = dx*1.5+x1;
+         //   qDebug() << mb->m_bank <<mb->m_end;
+        }
+
+
+        p.drawRoundedRect(QRect(x1,y0,x2-xborder-x1-ww,y1-y0),round,round);
 
         int box2s = ww;
         float s2 = 0.75f;
@@ -124,7 +140,7 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
         c.setGreen(min(c.green()*scale*s2,255.0f));
         c.setBlue(min(c.blue()*scale*s2,255.0f));
 
-        QRect r = QRect(xstart,y0+shift,xsize-xborder,y1-y0);
+        QRect r = QRect(x1,y0+shift,x2-xborder,y1-y0);
         if (r.contains(mpos)) {
             curT = mb->m_name;
             cur.setX(mb->m_start);
@@ -135,19 +151,20 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
 
         p.setPen(c);
         p.setBrush(c);
-        p.drawRoundedRect(QRect(xsize-xborder-box2s,y0,xsize-xborder,y1-y0),round,round);
+        if (mb->m_bank<0)
+            p.drawRoundedRect(QRect(x2-xborder-box2s,y0,x2-xborder,y1-y0),round,round);
 
-        int box1 = xsize-xstart-xborder-box2s;
-        int box2 = xsize-xborder-box2s;
+        int box1 = x2-x1-xborder-box2s;
+        int box2 = x2-xborder-box2s;
         int height= y1-y0;
         p.setPen(QPen(QColor(32,32,48)));
         p.setFont(QFont("Courier", min(fontSize,height), QFont::Bold));
-        p.drawText(QRect(xstart, y0,box1, height), Qt::AlignCenter, mb->m_name);
+        p.drawText(QRect(x1, y0,box1, height), Qt::AlignCenter, mb->m_name);
 
         QString f = "$"+QString::number(mb->m_start,16).rightJustified(4, '0');
         QString t = "$"+QString::number(mb->m_end,16).rightJustified(4, '0');
 
-        p.drawText(QRect(xstart, y0,box1, height), Qt::AlignLeft|Qt::AlignTop, f + " - " + t);
+        p.drawText(QRect(x1, y0,box1, height), Qt::AlignLeft|Qt::AlignTop, f + " - " + t);
 
         // Zeropages
         QString zp = "";
@@ -161,7 +178,7 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
         zp=zp.trimmed();
         p.setFont(QFont("Courier", min(fontSize,height), QFont::Bold));
 
-        p.drawText(QRect(xsize-xborder-box2s+12, y0,box2, y1-y0), Qt::AlignLeft|Qt::AlignTop, zp);
+        p.drawText(QRect(x2-xborder-box2s+12, y0,box2, y1-y0), Qt::AlignLeft|Qt::AlignTop, zp);
 
 
 

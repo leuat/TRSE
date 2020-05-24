@@ -31,6 +31,11 @@
 #include "source/LeLib/limage/limageio.h"
 #include "source/LeLib/limage/compression.h"
 
+static bool compareHist(const QPoint &s1, const QPoint &s2)
+       {
+           return s1.x() > s2.x(); // This is just an example
+       }
+
 MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
 {
     m_width = 160;
@@ -312,12 +317,19 @@ void MultiColorImage::FloydSteinbergDither(QImage &img, LColorList& colors, bool
 
 }
 
-void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, float gamma = 1.0)
+void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, int size, float gamma = 1.0)
 {
     int height  =min(img.height(), m_height);
     int width  =min(img.width(), m_width);
     QMatrix4x4 bayer4x4 = QMatrix4x4(0,8,2,10,  12,4,14,6, 3,11,1,9, 15,7,13,5);
     bayer4x4 = bayer4x4*1/16.0*strength.x();
+
+/*    QMatrix4x4 bayer4x4 = QMatrix4x4(0,2,0,0,  3,1,0,0, 0,0,0,0, 0,0,0,0);
+    bayer4x4 = bayer4x4*1/4.0*strength.x();
+*/
+
+    QVector<QPoint> hist;
+    hist.resize(16);
 
     for (int y=0;y<height;y++) {
         for (int x=0;x<width;x++) {
@@ -330,15 +342,41 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
             QColor color = QColor(img.pixel(xx,yy));
             int yp = y + x%(int)strength.y();
             int xp = x + y%(int)strength.z();
-            color.setRed(min((float)pow(color.red(),gamma) + bayer4x4(xp % 4,yp % 4),255.0f));
-            color.setGreen(min((float)pow(color.green(),gamma) + bayer4x4(xp % 4,yp % 4),255.0f));
-            color.setBlue(min((float)pow(color.blue(),gamma) + bayer4x4(xp % 4,yp % 4),255.0f));
+            color.setRed(min((float)pow(color.red(),gamma) + bayer4x4(xp % size,yp % 2),255.0f));
+            color.setGreen(min((float)pow(color.green(),gamma) + bayer4x4(xp % size,yp % size),255.0f));
+            color.setBlue(min((float)pow(color.blue(),gamma) + bayer4x4(xp % size,yp % size),255.0f));
 
-            int winner = 0;
-            QColor newPixel = colors.getClosestColor(color, winner);
         //    if (rand()%100>98)
          //       qDebug() << "WINNER : " <<Util::numToHex(winner) << newPixel;
             //int c = m_colorList.getIndex(newPixel);
+
+            // Then finally: get max closest colours
+
+/*            int sz = 4;
+            for (int i=0;i<16;i++) hist[i]=QPoint(0,i);
+            for (int y2=0;y2<sz;y2++) {
+                for (int x2=0;x2<sz;x2++) {
+                    int c;
+                    int xx = (x2-sz/2+x-img.width()/2)*m_importScaleX + img.width()/2;
+                    int yy = (y2-sz/2+y-img.height()/2)*m_importScaleY + img.height()/2;
+                    QColor color = QColor(img.pixel(xx,yy));
+                    colors.getClosestColor(color, c);
+                     hist[c].setX(hist[c].x()+1);
+                }
+
+            }
+            qSort(hist.begin(), hist.end(), compareHist);
+//            PixelChar& pc = getPixelChar(x,y);
+
+
+            int winner = 0;
+            QColor newPixel = colors.getClosestColor(color, winner);
+            if (hist[0].y()==winner || hist[1].y()==winner || hist[2].y()==winner || hist[3].y()==winner)
+                setPixel(x,y,winner);
+*/
+            int winner = 0;
+            QColor newPixel = colors.getClosestColor(color, winner);
+//            PixelChar& pc = getPixelChar(x,y);
             setPixel(x,y,winner);
 
         }
