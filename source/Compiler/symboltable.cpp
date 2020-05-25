@@ -114,12 +114,20 @@ void SymbolTable::Initialize()
         else
             value = values[0];
 
+//        qDebug() << "Found VALUE " << value;
 
     //    if (constant=="KEY_2")
       //      qDebug() << system << currentSystem << system.contains(currentSystem);
 
         if (system.contains(currentSystem)) {
             int ival = Util::NumberFromStringHex(value);
+            if (ival==0 && value.count()>4) {
+                QString tst = value;
+                tst = tst.remove("$");
+                bool ok;
+                ival = tst.toLong(&ok,16);
+            }
+//            qDebug() << "TRYING : " << value << ival;
             if (type=="b")
                 m_constants[constant] = QSharedPointer<Symbol>(new Symbol(value,"BYTE", ival));
             if (type=="a")

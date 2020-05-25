@@ -1598,7 +1598,7 @@ QSharedPointer<Node> Parser::Factor()
     if (t.m_type == TokenType::INTEGER_CONST || t.m_type ==TokenType::REAL_CONST
             || t.m_type ==TokenType::ADDRESS) {
         Eat(t.m_type);
-        //qDebug() << "parser: " <<t.m_value << t.m_intVal;
+//        qDebug() << "parser: " <<t.m_value << t.m_intVal;
         return QSharedPointer<NodeNumber>(new NodeNumber(t, t.m_intVal));
     }
 

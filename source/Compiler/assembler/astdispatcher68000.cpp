@@ -755,6 +755,10 @@ void ASTDispatcher68000::LoadAddress(QSharedPointer<Node> n, QString a0)
         }*/
     n->ForceAddress();
 //    as->Comment("LoadAddress: move start with literal: " +n->getLiteral(as));
+    if (n->isPureNumeric() && n->isAddress()) {
+        TransformVariable(as,"move.l",a0,"#"+n->getValue(as));
+        return;
+    }
     TransformVariable(as,"move.l",a0,n->getLiteral(as));
 
     //    QString v = n->getLiteral(as);

@@ -44,6 +44,7 @@
 #include "source/LeLib/limage/limagelevelnes.h"
 #include "source/LeLib/limage/limagelevelgameboy.h"
 #include "source/LeLib/limage/limagegamboy.h"
+#include "source/LeLib/limage/limageatari520st.h"
 #include "source/LeLib/limage/limagemetablocksprites.h"
 
 class LImageFactory {

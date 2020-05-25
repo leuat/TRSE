@@ -75,7 +75,7 @@ class Token
 public:
     TokenType::Type m_type = TokenType::NADA;
     QString m_value;
-    int m_intVal=0;
+    long m_intVal=0;
     int m_lineNumber=0;
     QString m_currentLineText="";
     QString getType();
@@ -84,7 +84,7 @@ public:
     QString getNumAsHexString();
 
     Token(TokenType::Type t, QString val);
-    Token(TokenType::Type t, int val);
+    Token(TokenType::Type t, long val);
 
 };
 

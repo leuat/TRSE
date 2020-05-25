@@ -67,7 +67,7 @@ Token::Token(TokenType::Type t, QString val) {
     m_currentLineText = Pmm::Data::d.currentLineText;
 }
 
-Token::Token(TokenType::Type t, int val) {
+Token::Token(TokenType::Type t, long val) {
     m_intVal = val;
     m_type = t;
     m_lineNumber = Pmm::Data::d.lineNumber;

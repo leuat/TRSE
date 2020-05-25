@@ -185,6 +185,17 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("fblit"))
         ABlit(as, true);
 
+    if (Command("getscreen")) {
+        if (!m_node->m_params[0]->isPureVariable())
+            ErrorHandler::e.Error("Parameter must be a pointer in which to store the screen address", m_node->m_lineNumber);
+        as->Comment("Getscreen");
+        as->Asm("move.w  #2,-(a7)                ; get physbase");
+        as->Asm("trap    #14                      ; call XBIOS");
+        as->Asm("addq.l  #2,a7                   ; clean up stack");
+        as->Asm("move.l  d0,"+m_node->m_params[0]->getValue(as));
+
+    }
+
 }
 
 bool Methods68000::Command(QString name)

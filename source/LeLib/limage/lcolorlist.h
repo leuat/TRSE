@@ -70,6 +70,10 @@ public:
         return color.blue()/16  | (color.green()/16)<<4  | (color.red()/16)<<8;
 
     }
+    unsigned short get9BitValue() {
+        return color.blue()/32  | (color.green()/32)<<4  | (color.red()/32)<<8;
+
+    }
     QString toRGB8() {
         return QString::number(color.red())+"," + QString::number(color.green()) +","+ QString::number(color.blue());
     }
@@ -173,6 +177,8 @@ public:
     QColor getClosestColor(QColor col, int& winner);
 
     void ExportAmigaPalette(QString filename);
+    void ExportAtariSTPalette(QString filename);
+
 
     void FillComboBox(QComboBox* cmb);
     void FillComboBoxRestricted(QComboBox* cmb, int a, int b);

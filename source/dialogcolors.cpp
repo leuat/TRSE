@@ -1,5 +1,7 @@
 #include "dialogcolors.h"
 #include "ui_dialogcolors.h"
+#include "source/Compiler/syntax.h"
+
 
 DialogColors::DialogColors(QWidget *parent) :
     QDialog(parent),
@@ -84,7 +86,7 @@ void DialogColors::on_btnLoad_clicked()
 void DialogColors::on_btnSave_2_clicked()
 {
     QString ext = "bin";
-    QString ttr  = "Export 4-bit amiga palette";
+    QString ttr  = "Export amiga/atari ST palette";
     QString f = "Binary( *."+ext+" )";
 
     QString fileName = QFileDialog::getSaveFileName(this,
@@ -96,7 +98,10 @@ void DialogColors::on_btnSave_2_clicked()
 //    MultiColorImage* mi = (MultiColorImage*)dynamic_cast<MultiColorImage*>(m_work.m_currentImage->m_image);
 
    // fileName = fileName.remove(".bin");
-    m_lst->ExportAmigaPalette(fileName);
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMIGA)
+        m_lst->ExportAmigaPalette(fileName);
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI520ST)
+        m_lst->ExportAtariSTPalette(fileName);
 
 }
 

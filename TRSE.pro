@@ -111,6 +111,7 @@ SOURCES += main.cpp\
     source/ImageEditor/abstractimageeditor.cpp \
     source/ImageEditor/glwidget.cpp \
     source/ImageEditor/qlabellimage.cpp \
+    source/LeLib/limage/limageatari520st.cpp \
     source/LeLib/limage/limagefooter.cpp \
     source/LeLib/limage/limagegamboy.cpp \
     source/LeLib/limage/limagelevelgameboy.cpp \
@@ -288,6 +289,7 @@ HEADERS  += mainwindow.h \
     source/ImageEditor/abstractimageeditor.h \
     source/ImageEditor/glwidget.h \
     source/ImageEditor/qlabellimage.h \
+    source/LeLib/limage/limageatari520st.h \
     source/LeLib/limage/limagefooter.h \
     source/LeLib/limage/limagegamboy.h \
     source/LeLib/limage/limagelevelgameboy.h \

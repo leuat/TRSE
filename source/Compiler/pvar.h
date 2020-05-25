@@ -30,7 +30,7 @@
 class PVar {
 public:
     TokenType::Type m_type;
-    float m_fVal;
+    long m_fVal;
     bool m_isError = false;
     QString m_strVal;
     PVar() {
@@ -43,7 +43,7 @@ public:
         m_isError = o.m_isError;
     }
 
-    PVar(float f) {
+    PVar(long f) {
         m_fVal = f;
         m_type = TokenType::REAL;
     }

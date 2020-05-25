@@ -200,13 +200,13 @@ Token Lexer::Number()
             res+=m_currentChar;
             Advance();
         }
-
+//        qDebug() << "LEXER " << res<<res.toFloat();
 
         return Token(TokenType::REAL_CONST, res.toFloat());
     }
     org = res;
     bool ok;
-    float val = 0;
+    long val = 0;
     // Memory address
     bool isConstant = true;
     int base = 10;
@@ -224,9 +224,9 @@ Token Lexer::Number()
         res.remove("^");
         isConstant = false;
     }
-    val = res.toInt(&ok, base);
+    val = res.toLong(&ok, base);
 
-
+//    qDebug() << val;
     if (isConstant)
         return Token(TokenType::INTEGER_CONST, val);
     else {

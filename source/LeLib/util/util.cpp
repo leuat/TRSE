@@ -640,6 +640,7 @@ QString Util::fromStringList(QStringList lst)
     return ret;
 }
 
+
 int Util::NumberFromStringHex(QString s) {
     int val = 0;
     bool ok = NumberFromStringHex(s,val);

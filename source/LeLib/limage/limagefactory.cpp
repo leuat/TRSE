@@ -75,6 +75,8 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageGamboy(colorType);
     if (t == LImage::Type::LevelEditorGameboy)
         return new LImageLevelGameboy(colorType);
+    if (t == LImage::Type::ATARI320x200)
+        return new LImageAtari520ST(colorType,0);
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;
     return nullptr;

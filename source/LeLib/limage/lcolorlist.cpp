@@ -708,6 +708,18 @@ void LColorList::ExportAmigaPalette(QString filename)
     Util::SaveByteArray(data, filename);
 }
 
+void LColorList::ExportAtariSTPalette(QString filename)
+{
+    QByteArray data;
+    for (LColor l: m_list) {
+        unsigned short d = l.get9BitValue();
+        //        qDebug() << QString::number(d,16);
+        data.append((char)((d>>8)&0xFF));
+        data.append((char)(d&0xFF));
+    }
+    Util::SaveByteArray(data, filename);
+}
+
 void LColorList::FillComboBox(QComboBox *cmb)
 {
     cmb->clear();
