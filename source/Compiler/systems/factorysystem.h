@@ -15,6 +15,7 @@
 #include "systemspectrum.h"
 #include "systemtiki100.h"
 #include "systematari2600.h"
+#include "systematari520st.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem
@@ -52,6 +53,9 @@ public:
             return new SystemTiki100(settings, proj);
         if (type==AbstractSystem::ATARI2600)
             return new SystemAtari2600(settings, proj);
+        if (type==AbstractSystem::ATARI520ST)
+            return new SystemAtari520ST(settings, proj);
+
 
         return s;
     }

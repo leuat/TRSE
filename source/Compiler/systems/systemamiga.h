@@ -10,6 +10,10 @@ public:
         m_processor = M68000;
         m_system = AMIGA;
     }
+    void Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable>  symTab) override;
+
+    void PostProcess(QString &text, QString file, QString currentDir) override;
+
 };
 
 #endif // SYSTEMAMIGA_H

@@ -11,7 +11,7 @@ QSharedPointer<AbstractMethods> FactoryMethods::CreateMethods(AbstractSystem::Sy
         return QSharedPointer<Methods6502Vic20>(new Methods6502Vic20);
 
     if (s==AbstractSystem::C64)
-        return QSharedPointer<Methods6502>(new Methods6502);
+        return QSharedPointer<Methods6502C64>(new Methods6502C64);
 
     if (s==AbstractSystem::PLUS4)
         return QSharedPointer<Methods6502>(new Methods6502);

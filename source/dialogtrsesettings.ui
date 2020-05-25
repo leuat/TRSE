@@ -19,7 +19,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -675,25 +675,11 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
               <item row="2" column="0">
                <widget class="QGroupBox" name="groupBox_4">
                 <property name="title">
-                 <string>Assembler Motorola 68000 (Amiga/Atari etc)</string>
+                 <string>Assembler Motorola 68000 (Amiga/Atari ST etc)</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_13">
                  <item row="0" column="0">
                   <layout class="QGridLayout" name="gridLayout_9">
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_24">
-                     <property name="text">
-                      <string>Vasmm assembler location:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="label_25">
-                     <property name="text">
-                      <string>Target executable deployment directory</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="0" column="1">
                     <widget class="QLineEdit" name="leVasmm"/>
                    </item>
@@ -701,6 +687,20 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
                     <widget class="QPushButton" name="btnVasmm">
                      <property name="text">
                       <string>...</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_25">
+                     <property name="text">
+                      <string>Target executable deployment directory for the Amiga</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_24">
+                     <property name="text">
+                      <string>Vasmm assembler location:</string>
                      </property>
                     </widget>
                    </item>
@@ -713,6 +713,23 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
                    </item>
                    <item row="1" column="1">
                     <widget class="QLineEdit" name="le68kTargetDir"/>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QLabel" name="label_40">
+                     <property name="text">
+                      <string>Target executable deployment directory for Atari ST 512</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QLineEdit" name="le68kTargetDirAtariST"/>
+                   </item>
+                   <item row="2" column="2">
+                    <widget class="QPushButton" name="btn68kTargetDirAtariST">
+                     <property name="text">
+                      <string>...</string>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </item>

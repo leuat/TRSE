@@ -12,8 +12,8 @@ public:
 
     }
 
-    virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);
-    virtual void PostProcess(QString& text, QString file, QString currentDir);
+/*    virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);
+    virtual void PostProcess(QString& text, QString file, QString currentDir);*/
 };
 
 #endif // SYSTEMM6800_H

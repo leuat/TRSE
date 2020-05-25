@@ -4,7 +4,7 @@ program tutorial_12_sqrt_and_atan;
 var  
 
 /*
-	In this tutorial, we slowly pre-render a screen that is slowly flled with a spiral. 
+	In this tutorial, we slowly pre-render a screen that is filled with a spiral. 
 	In order to calculate the value of the spiral, we need to use both radial and tangentinal values,
 	which we obtain by using sqrt() and atan2. The screen is rendered using 16 characters (64-80, 
 	view the character set used in "charsets/charset.flf).
@@ -22,7 +22,7 @@ var
 // Let the character set be loacated at $2000 on bank 0
 @define charsetLoc $2000
 // Base of the 16 char value is "64". Check out "charsets/charsets.flf" in order to view the characters at position 64
-@define charVal 64
+	const charVal : byte= 64;
 // Use kernal
  	const useKernal: byte = 1;
 
@@ -78,8 +78,8 @@ procedure ShiftCharsetData();
 begin
 	// We copy 16 characters * 8 bytes each 128 byte from the original point in memory @charsetLoc  + 8*@charVal
 	// 8 bytes to the rigth, cycling the characters
-	memcpy(^@charsetLoc+^@charVal*^8, 0, ^@charsetLoc+^@charVal*^8+^128,8);
-	memcpy(^@charsetLoc+^@charVal*^8+^8, 0, ^@charsetLoc+^@charVal*^8,128);
+	memcpy(^@charsetLoc+charVal*^8, 0, ^@charsetLoc+charVal*^8+^128,8);
+	memcpy(^@charsetLoc+charVal*^8+^8, 0, ^@charsetLoc+charVal*^8,128);
 
 end;
 // Main raster, called once per raster cycle. Only shifts charset data with 8 bytes

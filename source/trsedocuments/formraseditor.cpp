@@ -396,7 +396,12 @@ void FormRasEditor::Run()
 
     if (m_builderThread.m_builder->m_system->m_system == AbstractSystem::AMIGA) {
 //        Messages::messages.DisplayMessage(Messages::messages.NO_AMIGA_EMULATOR);
-        qDebug() << "No amiga emulator installed";
+//        qDebug() << "No amiga emulator installed";
+        return;
+    }
+    if (m_builderThread.m_builder->m_system->m_system == AbstractSystem::ATARI520ST) {
+//        Messages::messages.DisplayMessage(Messages::messages.NO_AMIGA_EMULATOR);
+//        qDebug() << "No amiga emulator installed";
         return;
     }
 

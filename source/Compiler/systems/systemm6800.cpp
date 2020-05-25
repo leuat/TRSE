@@ -1,6 +1,6 @@
 #include "systemm6800.h"
 #include "source/messages.h"
-
+/*
 void SystemM68000::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable>  symTab)
 {
     QString output;
@@ -66,30 +66,12 @@ void SystemM68000::PostProcess(QString &text, QString file, QString currentDir)
   //                  Messages::messages.DisplayMessage(Messages::messages.DASM_COMPILER_ERROR);
 
     }
-/*    if (!output.toLower().contains("complete.")) {
-        m_buildSuccess = false;
-        if (output=="") {
-            Messages::messages.DisplayMessage(Messages::messages.NO_DASM);
-
-            output = output + "\nCould not find Dasm.exe. Did you set the correct environment variables?";
-        }
-
-    }
-*/
 
     if (m_buildSuccess) {
 
             int orgFileSize = QFile(file).size();
 
             output+="<br>Assembled file size: <b>" + QString::number(orgFileSize) + "</b> bytes";
-/*            if (m_settingsIni->getdouble("perform_crunch")==1) {
-                output=output+" (<font color=\"#70FF40\"> " + QString::number((int)(100.0*(float)size/(float)orgFileSize))+  " % </font> of original size ) <br>";
-                output=output+"Original file size: " + QString::number(orgFileSize) + " bytes";
-            }
-            output = output + "\nAssemble time: <font color=\"#70FF40\">"+ (Util::MilisecondToString(assembleTime)) + "</font>";
-            output = output + "Crunch time: <font color=\"#70FF40\">"+ (Util::MilisecondToString(crunchTime)) + "</font>";
-
-  */
 
 
         QString newFile = m_settingsIni->getString("vasmm_target_dir") + "/"+file.split("/").last();
@@ -103,3 +85,4 @@ void SystemM68000::PostProcess(QString &text, QString file, QString currentDir)
     text = output;
 
 }
+*/

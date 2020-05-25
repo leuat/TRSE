@@ -1,7 +1,7 @@
-#include "systemamiga.h"
+#include "systematari520st.h"
 
 
-void SystemAmiga::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
+void SystemAtari520ST::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
 {
     QString output;
     int time = timer.elapsed();
@@ -18,10 +18,17 @@ void SystemAmiga::Assemble(QString &text, QString filename, QString currentDir, 
     QProcess process;
     QStringList params;
     // -kick1hunks  -o example$1 -nosym source$1.asm
-    params << "-kick1hunks";
-    params << "-Fhunkexe";
-    params << "-o" << filename;
+    params << "-o" << filename+".tos";
     params << filename+".asm";
+    params << "-DVASM_ATARI";
+    params << "-nocase";
+    params << "-maxerrors=20";
+    params << "-devpac";
+    params << "-m68000";
+    params << "-no-opt";
+    params << "-Ftos";
+
+
     // qDebug() << params;
     process.start(m_settingsIni->getString("vasmm"), params);
     process.waitForFinished();
@@ -38,11 +45,10 @@ void SystemAmiga::Assemble(QString &text, QString filename, QString currentDir, 
     text+=output;
 }
 
-void SystemAmiga::PostProcess(QString &text, QString file, QString currentDir)
+void SystemAtari520ST::PostProcess(QString &text, QString file, QString currentDir)
 {
     QString output=text;
-
-
+    file+=".tos";
 
     if (output.toLower().contains("error")) {
         text="<font color=\"#FF6040\">Fatal error during assembly!</font><br>";
@@ -92,13 +98,14 @@ void SystemAmiga::PostProcess(QString &text, QString file, QString currentDir)
       */
 
 
-        QString newFile = m_settingsIni->getString("vasmm_target_dir") + "/"+file.split("/").last();
+        QString newFile = m_settingsIni->getString("vasmm_target_dir_atarist") + "/"+file.split("/").last();
         if (QFile::exists(newFile))
             QFile::remove(newFile);
 
         //        qDebug() << file;
 
         QFile::copy(file, newFile);
+        output+="<br>File deployed to <b>"+newFile+"</b>";
     }
     text = output;
 

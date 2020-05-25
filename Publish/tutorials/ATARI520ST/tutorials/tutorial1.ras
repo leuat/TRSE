@@ -1,0 +1,55 @@
+program Test;
+var 
+	i, j : integer;
+	@donotremove s
+	s : pointer of integer;
+begin
+	asm("
+	move.w  #$777,$ffff8240       ; red background color
+	");
+	asm("
+	move.w  #2,-(a7)                ; get physbase
+    trap    #14                      ; call XBIOS
+    addq.l  #2,a7                   ; clean up stack
+    move.l  d0,s                   ; a0 points to screen
+    move.l  d0,a3                   ; a0 points to screen
+    
+
+    move.l  #8000,d3
+loope
+    move.l  d3,(a3)+
+    dbf     d3,loope
+
+	");
+	for j:=0 to 100 do
+	begin
+		for i:=0 to 80 step 2 do
+		begin
+			asm(";here");
+//			s[i]:=i;
+			asm("
+	moveq.l #0,d1
+	move.w i,d1          ; Loadvar regular end
+	move.l s,a0
+	move.w i,(a0)
+			
+
+			");
+			s:=s+2;
+		end;
+//		s:=s+80;		
+	end; 
+	
+	
+	// Wait for keypress
+	asm("
+	  move.w  #7,-(a7)              ; wait for a keypress
+      trap    #1                     ; call gemdos
+      addq.l  #2,a7                 ; clear up stack
+	");
+
+end.
+
+
+
+

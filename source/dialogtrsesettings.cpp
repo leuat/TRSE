@@ -46,6 +46,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leVasmm->setText(m_ini->getString("vasmm"));
     ui->leNasm->setText(m_ini->getString("nasm"));
     ui->le68kTargetDir->setText(m_ini->getString("vasmm_target_dir"));
+    ui->le68kTargetDirAtariST->setText(m_ini->getString("vasmm_target_dir_atarist"));
     ui->leDasm->setText(m_ini->getString("dasm"));
     ui->leEmulator->setText(m_ini->getString("emulator"));
     ui->leEmulatorC128->setText(m_ini->getString("c128_emulator"));
@@ -117,6 +118,7 @@ void DialogTRSESettings::FillToIni()
 
     m_ini->setFloat("editor_cursor_width",ui->leCursorWidth->text().toInt());
     m_ini->setString("vasmm_target_dir", ui->le68kTargetDir->text());
+    m_ini->setString("vasmm_target_dir_atarist", ui->le68kTargetDirAtariST->text());
     m_ini->setString("vasmm", ui->leVasmm->text());
     m_ini->setString("nasm", ui->leNasm->text());
     m_ini->setString("dosbox", ui->leDosbox->text());
@@ -491,5 +493,14 @@ void DialogTRSESettings::on_btnAtari2600_clicked()
         tr("Atari 2600 emulator location"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->leAtari2600Emulator->setText(filename);
+
+}
+
+void DialogTRSESettings::on_btn68kTargetDirAtariST_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Atari ST target directory"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->le68kTargetDirAtariST->setText(filename);
 
 }

@@ -136,7 +136,6 @@
         <file>resources/images/PET.png</file>
         <file>resources/code/amiga/end.s</file>
         <file>resources/code/amiga/init.s</file>
-        <file>resources/images/Amiga.png</file>
         <file>resources/code/amiga/poly.s</file>
         <file>resources/code/amiga/intline.s</file>
         <file>resources/code/amiga/matmul.s</file>
@@ -473,5 +472,8 @@
         <file>resources/images/ATARI2600.png</file>
         <file>resources/code/atari2600/end.asm</file>
         <file>resources/code/atari2600/init.asm</file>
+        <file>resources/images/ATARI520ST.png</file>
+        <file>resources/code/atari520st/end.s</file>
+        <file>resources/code/atari520st/init.s</file>
     </qresource>
 </RCC>

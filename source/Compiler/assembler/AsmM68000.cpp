@@ -9,13 +9,14 @@ AsmM68000::AsmM68000()
 
 void AsmM68000::Program(QString name, QString vicParam)
 {
-    if (!Syntax::s.m_currentSystem->m_systemParams.contains("ignoresystemheaders"))
+  /*  if (!Syntax::s.m_currentSystem->m_systemParams.contains("ignoresystemheaders"))
         IncludeFile(":resources/code/amiga/init.s");
     else
         IncludeFile(":resources/code/amiga/init_stripped.s");
+        */
 }
 
-void AsmM68000::EndProgram()
+/*void AsmM68000::EndProgram()
 {
     if (!Syntax::s.m_currentSystem->m_systemParams.contains("ignoresystemheaders"))
         IncludeFile(":resources/code/amiga/end.s");
@@ -23,7 +24,7 @@ void AsmM68000::EndProgram()
         IncludeFile(":resources/code/amiga/end_stripped.s");
 
 }
-
+*/
 void AsmM68000::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
 {
     QString t = byte;

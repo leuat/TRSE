@@ -148,6 +148,8 @@ private slots:
 
     void on_btnAtari2600_clicked();
 
+    void on_btn68kTargetDirAtariST_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

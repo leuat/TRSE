@@ -100,6 +100,7 @@ SOURCES += main.cpp\
     source/Compiler/compilers/compilerz80.cpp \
     source/Compiler/compilers/factorycompiler.cpp \
     source/Compiler/systems/systematari2600.cpp \
+    source/Compiler/systems/systematari520st.cpp \
     source/Compiler/systems/systemgameboy.cpp \
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemplus4.cpp \
@@ -276,6 +277,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/compilers/compilerz80.h \
     source/Compiler/compilers/factorycompiler.h \
     source/Compiler/systems/systematari2600.h \
+    source/Compiler/systems/systematari520st.h \
     source/Compiler/systems/systemgameboy.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemplus4.h \
@@ -466,12 +468,16 @@ RESOURCES += \
 DISTFILES += \
     resources/code/amiga/init_p61_player.s \
     resources/code/amiga/p61-play.i \
+    resources/code/atari520st/end.s \
+    resources/code/atari520st/init.s \
     resources/code/c64_keyboard_input.asm \
     resources/code/gameboy/gbt_player.asm \
     resources/code/gameboy/gbt_player_bank1.asm \
     resources/code/vbm/vic20_vbm.asm \
     resources/code/x86/init_cga_scanlines.asm \
     resources/code/x86/init_playnote.asm \
+    resources/images/AMIGA.png \
+    resources/images/ATARI520ST.png \
     resources/images/OK64.jpg \
     resources/images/OK64.png \
     resources/images/PLUS4.png \

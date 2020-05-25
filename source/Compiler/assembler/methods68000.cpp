@@ -147,6 +147,7 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     }
 
     if (Command("WaitVerticalBlank")) {
+        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA) {
         QString lbl = as->NewLabel("waitVB");
         QString d0 = as->m_regAcc.Get();
         as->Label(lbl);
@@ -157,6 +158,13 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
 
         as->m_regAcc.Pop(d0);
         as->PopLabel("waitVB");
+        }
+        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::ATARI520ST) {
+            as->Asm("; Wait for vertical blank");
+            as->Asm("move.w  #37, -(a7)   ");
+            as->Asm("trap    #14         ");
+            as->Asm("addq.l  #2, a7       ");
+        }
 
     }
     if (Command("ApplyCopperList")) {

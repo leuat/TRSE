@@ -395,7 +395,7 @@ p, li { white-space: pre-wrap; }
                   </font>
                  </property>
                  <property name="text">
-                  <string>Supported systems</string>
+                  <string>Select a system</string>
                  </property>
                 </widget>
                </item>
