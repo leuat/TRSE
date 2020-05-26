@@ -31,16 +31,16 @@ class PVar {
 public:
     TokenType::Type m_type;
     long m_fVal;
-    bool m_isError = false;
+  //  bool m_isError = false;
     QString m_strVal;
     PVar() {
-        m_isError = true;
+//        m_isError = true;
     }
     PVar(const PVar& o) {
         m_type = o.m_type;
         m_fVal = o.m_fVal;
         m_strVal = o.m_strVal;
-        m_isError = o.m_isError;
+    //    m_isError = o.m_isError;
     }
 
     PVar(long f) {
@@ -51,7 +51,7 @@ public:
         m_strVal = f;
         m_type = TokenType::STRING;
     }
-
+/*
     bool operator==(const PVar& b) {
         if (m_type==TokenType::REAL && b.m_type==TokenType::REAL)
             return m_fVal == b.m_fVal;
@@ -128,7 +128,7 @@ public:
             return QString::number(m_fVal);
         return "Variable not initialized";
     }
-
+*/
 };
 
 

@@ -1,0 +1,58 @@
+program Tutorial1;
+var 
+	done : integer = 0;
+	screen : pointer of integer;
+	// Music is a sample .ym song from Arkos Tracker II 
+	// Download from https://www.julien-nevo.com/arkostracker/ . Export as ".ym" file, load in TRSE!
+	ym_file : incbin("music/test1.ym");
+	
+	@export "images/image1.flf" "images/image1.bin" 256
+	
+	image : incbin("images/image1.bin");
+	image_pal : incbin("images/image1.pal");
+	
+/*
+  Image is located in images/image1.flf, and is exported automatically on each build
+  
+  a) Download & set TRSE Settings path to the VASMm68K assembler (https://www.irio.co.uk/trse/assembler/vasmm68k_mot_win32.exe on windows)
+  b) Download and set up the Hatari emulator ( https://hatari.tuxfamily.org/ )
+  c) Download your favorite TOS image from http://www.avtandil.narod.ru/tose.html
+  d) Set up a "fake" hard drive directory for your emulated Atari
+  e) Set up the "Target executable directory for Atari ST" in the TRSE settings to point to this hard drive location
+  f) Compile this program - the compiled program will be automatically copied into the (h)atari hdd
+  e) Open up hatari -> your HDD -> double click on "tut1.tos"  
+
+
+*/
+
+
+// Vertical blank is called once per frame. Perfect for music!
+interrupt VBLank();
+begin
+	UpdateMusic();
+end;
+
+begin
+	// Set to lores mode
+	SetLoRes();
+	// Copy palette data
+	memcpy(image_pal,0,palette_start,0,16,2);
+	// Get screen pointer
+	GetScreen(screen);
+	// Copy image data
+	memcpy(image,0,screen,0,8000,4);
+	// Initialize music	
+	InitMusic(ym_file);
+	// Initialize VBLank IRQ
+	setirq(VBLank(), irq_verticalblank);
+
+	//Loop until keypressed
+	while (done = false) do
+	begin
+		done:=keypressed(sc_key_space_pressed);
+	end;	
+end.
+
+
+
+

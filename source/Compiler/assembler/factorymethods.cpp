@@ -30,10 +30,10 @@ QSharedPointer<AbstractMethods> FactoryMethods::CreateMethods(AbstractSystem::Sy
         return QSharedPointer<MethodsX86>(new MethodsX86);
 
     if (s==AbstractSystem::AMIGA)
-        return QSharedPointer<Methods68000>(new Methods68000);
+        return QSharedPointer<Methods68000Amiga>(new Methods68000Amiga);
 
     if (s==AbstractSystem::ATARI520ST)
-        return QSharedPointer<Methods68000>(new Methods68000);
+        return QSharedPointer<Methods68000Atari>(new Methods68000Atari);
 
     if (s==AbstractSystem::GAMEBOY)
         return QSharedPointer<MethodsZ80>(new MethodsZ80);

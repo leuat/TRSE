@@ -8,26 +8,6 @@ Methods68000::Methods68000()
 void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
 {
     m_dispatcher = dispatcher;
-    if (Command("waitforblitter")) {
-        QString lbl = as->NewLabel("waitforblitter");
-        as->Label(lbl);
-        as->Asm("btst	#14,DMACONR");
-        as->Asm("bne.s	"+lbl);
-        as->PopLabel("waitforblitter");
-    }
-
-    if (Command("vbirq")) {
-        QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
-        QString name = addr->m_procedure->m_procName;
-
-        as->Asm("move.l #"+name+",$6c.w");
-    }
-
-    if (Command("initcustomcopperlist"))
-        as->Asm("lea copper_custom,a5");
-
-    if (Command("endcustomcopperlist"))
-        as->Asm("move.l #$fffffffe,(a5)+");
 
     if (Command("InitProjectAllVertices")) {
         as->IncludeFile(":resources/code/amiga/init_projectall.s");
@@ -36,42 +16,9 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         ProjectAllVertices(as);
     }
 
-    if (Command("InitP61PlayerInternal")) {
-        as->Asm("jsr init_p1_cont");
-        as->IncludeFile(":resources/code/amiga/init_p61_player.s");
-        as->IncludeFile(":resources/code/amiga/p61-play.i");
-        as->Label("init_p1_cont");
-    }
-    if (Command("InitP61Module")) {
-        as->Asm("movem.l	d0-a6,-(sp)");
-        m_dispatcher->LoadAddress(m_node->m_params[0],"a0");
-        //as->Asm("lea Module1,a0
-        as->Asm("sub.l a1,a1");
-        as->Asm("sub.l a2,a2");
-        as->Asm("moveq #0,d0");
-        as->Asm("lea $DFF000,a6");
-
-        as->Asm("jsr P61_Init");
-        as->Asm("movem.l (sp)+,d0-a6");
-
-    }
-    if (Command("PlayP61Module")) {
-        as->Asm("movem.l d0-a6,-(sp)");
-        as->Asm("lea $DFF000,a6");
-
-        as->Asm("jsr P61_Music");
-        as->Asm("movem.l (sp)+,d0-a6");
-
-    }
-
     if (Command("matmul3x3"))
         MatMul(as);
 
-    if (Command("addcoppercommand"))
-        AddCopperCommand(as);
-
-    if (Command("skipcoppercommands"))
-        SkipCopperCommands(as);
 
     if (Command("initmatmul3x3"))
         as->IncludeFile(":resources/code/amiga/matmul.s");
@@ -108,14 +55,6 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("poke32"))
         Poke(as,".l");
 
-    if (Command("EnableInterrupt"))
-        EnableInterrupt(as);
-
-    if (Command("InitPoly"))
-        as->IncludeFile(":resources/code/amiga/poly.s");
-
-    if (Command("InitLine"))
-        as->IncludeFile(":resources/code/amiga/intline.s");
 
 //    if (Command("InitProjectToScreen"))
   //      as->IncludeFile(":resources/code/amiga/simpleproject.s");
@@ -123,17 +62,8 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("ProjectToScreen"))
         ProjectToScreen(as);
 
-    if (Command("DrawLine"))
-        DrawLine(as);
-
-    if (Command("Fill"))
-        Fill(as);
-
     if (Command("return"))
         as->Asm("rts");
-
-    if (Command("setcopperlist32"))
-        SetCopperList32(as);
 
     if (Command("pusha")) {
         as->Asm("movem.l d0-d7/a0-a6,-(sp)");
@@ -161,40 +91,19 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         }
         if (Syntax::s.m_currentSystem->m_system==AbstractSystem::ATARI520ST) {
             as->Asm("; Wait for vertical blank");
-            as->Asm("move.w  #37, -(a7)   ");
+            as->Asm("move.w  #37,-(a7)   ");
             as->Asm("trap    #14         ");
-            as->Asm("addq.l  #2, a7       ");
+            as->Asm("addq.l  #2,a7       ");
         }
 
-    }
-    if (Command("ApplyCopperList")) {
-
-        QString a0 = as->m_regMem.Get();
-        as->Asm("move.l #cop,"+a0);
-        as->Asm("move.l "+a0+",COP1LCH");
-        as->m_regMem.Pop(a0);
     }
     if (Command("memcpy"))
         Memcpy(as);
     if (Command("memcpyunroll"))
         MemcpyUnroll(as);
-    if (Command("setpalette"))
-        Setpalette(as);
-    if (Command("ablit"))
-        ABlit(as, false);
-    if (Command("fblit"))
-        ABlit(as, true);
 
-    if (Command("getscreen")) {
-        if (!m_node->m_params[0]->isPureVariable())
-            ErrorHandler::e.Error("Parameter must be a pointer in which to store the screen address", m_node->m_lineNumber);
-        as->Comment("Getscreen");
-        as->Asm("move.w  #2,-(a7)                ; get physbase");
-        as->Asm("trap    #14                      ; call XBIOS");
-        as->Asm("addq.l  #2,a7                   ; clean up stack");
-        as->Asm("move.l  d0,"+m_node->m_params[0]->getValue(as));
 
-    }
+
 
 }
 

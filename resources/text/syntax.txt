@@ -200,9 +200,20 @@ c; VRAM ; SPECTRUM, TIKI100; a; $4000
 # *********** ATARI ST ROUTINES
 
 m; GetScreen; ATARI520ST; a
+m; WaitForKeypress; ATARI520ST;
+m; keypressed; ATARI520ST; b
+m; setlores; ATARI520ST;
+m; sethires; ATARI520ST;
+m; setmedres; ATARI520ST;
+m; InitMusic; ATARI520ST; a
+m; UpdateMusic; ATARI520ST;
+m; SetIRQ;ATARI520ST; p, a
+m; SetTimerIRQ; ATARI520ST; p, b
 
 c; palette_start; ATARI520ST; a; $ffff8240
-
+c; sc_key_space_pressed; ATARI520ST; b; #$39
+c; irq_verticalblank; ATARI520ST; a; $70
+c; irq_horizontalblank; ATARI520ST; a; $68
 
 # ************** Amiga ROUTINES
 
@@ -254,7 +265,8 @@ m; MatMulVecNormalZ; Amiga, ATARI520ST; a,a,a,i
 m; MatMulVecNormal; Amiga, ATARI520ST; a,a,a,i
 m; ProjectToScreen; Amiga, ATARI520ST; a,i,l,l
 m; WaitForBlitter; Amiga;
-m; VBIRQ;Amiga, ATARI520ST; p
+m; VBIRQ;Amiga; p
+
 m; ProjectAllVertices; Amiga, ATARI520ST; a,a,l,l,l,l
 
 #Memory routines

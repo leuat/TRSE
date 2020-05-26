@@ -7,6 +7,8 @@
 #include "mos6502/methods6502c64.h"
 #include "mos6502/methods6502ok64.h"
 #include "methods68000.h"
+#include "methods6800amiga.h"
+#include "methods68000atari.h"
 #include "methodsz80.h"
 #include "methodsx86.h"
 

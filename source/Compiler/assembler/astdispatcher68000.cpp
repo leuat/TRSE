@@ -308,13 +308,22 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeBlock> node)
     // (Amiga) interrupt.
     if (node->m_forceInterupt!="") {
 //        as->Asm(" 	CNOP 0,4");
-        as->Asm("movem.l d0-d7/a0-a6,-(sp)");
-        as->Asm("btst #5,$dff01f ;Check if it's the VB!");
-        as->Asm("; Save all Dx and Ax regs");
-        as->Asm("; Interrupt requested at level 3.");
-        as->Asm("beq.w "+node->m_forceInterupt);
-        as->Asm("move.w #$0020,$dff09c ; Acknowledge VB interrupt");
-        as->Asm("move.w #$0020,$dff09c ; Twice for compatibility");
+        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMIGA) {
+
+            as->Asm("movem.l d0-d7/a0-a6,-(sp)");
+            as->Asm("btst #5,$dff01f ;Check if it's the VB!");
+            as->Asm("; Save all Dx and Ax regs");
+            as->Asm("; Interrupt requested at level 3.");
+            as->Asm("beq.w "+node->m_forceInterupt);
+            as->Asm("move.w #$0020,$dff09c ; Acknowledge VB interrupt");
+            as->Asm("move.w #$0020,$dff09c ; Twice for compatibility");
+        }
+        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI520ST) {
+    //        as->Asm("move.w  sr,-(a7)                ; backup status register");
+     //       as->Asm("or.w    #$0700,sr               ; disable interrupts");
+            as->Asm("movem.l d0-d7/a0-a6,-(a7)");
+
+        }
 
     }
 
@@ -439,7 +448,14 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeProcedureDecl> node)
             //as->Asm("rti");
             if (endLabel!="")
                 as->Label(endLabel);
-            as->Asm("movem.l (sp)+,d0-d7/a0-a6 ");
+            if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMIGA)
+                as->Asm("movem.l (sp)+,d0-d7/a0-a6 ");
+            if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI520ST) {
+                as->Asm("movem.l (a7)+,d0-d7/a0-a6");
+  //              as->Asm("move.w  (a7)+,sr                ; restore status register");
+                as->Asm("bclr   #0,$fffffa0f ; Acknowledge end of irq");
+
+            }
 //            as->Asm("movem d0-a6,-(sp)");
             as->Asm("rte");
         }
@@ -1004,7 +1020,7 @@ QString ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
     if (v==nullptr && num == nullptr)
         ErrorHandler::e.Error("Left value not variable or memory address! ");
 
-    as->Comment("Assigning single variable : " + v->getValue(as));
+    //as->Comment("Assigning single variable : " + v->getValue(as));
     if (node->m_right==nullptr)
         ErrorHandler::e.Error("Node assign: right hand must be expression", node->m_op.m_lineNumber);
 

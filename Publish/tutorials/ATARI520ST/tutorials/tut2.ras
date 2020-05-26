@@ -1,0 +1,58 @@
+program Test;
+var 
+	col,time,line : integer = 0;
+	done : integer = 0;
+	screen : pointer of integer;
+ 	
+	ym_file : incbin("music/test1.ym");
+	sin : array[512] of integer = buildtable("Math.sin(i/256.0*2*3.14159)*0xFF");
+	
+	@export "images/image1.flf" "images/image1.bin" 256
+	
+	image : incbin("images/image1.bin");
+	image_pal : incbin("images/image1.pal");
+	
+
+
+
+interrupt VBLank();
+begin
+	UpdateMusic();
+	col:=sin[(time*2)&511];
+	time:=time+2;
+	line:=0;
+end;
+
+// Some raster boys
+interrupt Timer();
+begin
+	if (line<98) then
+		palette_start:=col
+	else 
+		palette_start:=0;
+	
+	col:=col+4;
+	line:=line+1;
+end;
+
+begin
+	
+	SetLoRes();
+	
+	GetScreen(screen);
+	
+	memcpy(image_pal,0,palette_start,0,15,2);
+	memcpy(image,0,screen,0,8000,4);
+	InitMusic(ym_file);
+	setirq(VBLank(), irq_verticalblank);
+	settimerirq(Timer(),2);
+	
+	while (done = false) do
+	begin
+		done:=keypressed(sc_key_space_pressed);
+	end;	
+end.
+
+
+
+
