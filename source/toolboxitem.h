@@ -29,7 +29,7 @@
 
 class ToolBoxItemOption {
 public:
-    QString name;
+    QString name, sval;
     float tmin;
     float tmax;
     float val;
@@ -42,7 +42,29 @@ public:
     ToolBoxItemOption() {
 
     }
+
+    virtual void Build(QGridLayout* gl, int row);
+
 };
+
+class ToolBoxItemOptionFileList : public ToolBoxItemOption {
+public:
+    QString m_path;
+    QString m_fileType;
+    QImage* m_img;
+    ToolBoxItemOptionFileList(QString path,QString fileType, QImage* img) {
+        m_path = path;
+        m_fileType = fileType;
+        m_img = img;
+    }
+    ToolBoxItemOptionFileList() {
+
+    }
+    void Build(QGridLayout* gl, int row) override;
+
+};
+
+
 
 
 class ToolboxItem
@@ -228,6 +250,31 @@ public:
 
 };
 
+class Smooth : public ToolboxItem {
+public:
+    void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
+
+    Smooth();
+    Smooth(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile, tooltip) {
+        m_options["strength"] = new ToolBoxItemOption("strength",0,50,20);
+//        m_options["size"] = new ToolBoxItemOption("Size",0,60,4);
+
+    }
+
+};
+
+class ShapePNGColor : public ToolboxItem {
+public:
+    void Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button) override;
+    QImage m_shape;
+    ShapePNGColor();
+    ShapePNGColor(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile, tooltip) {
+        m_options["file"] = new ToolBoxItemOptionFileList(":resources/images/shapes","png", &m_shape);
+//        m_options["size"] = new ToolBoxItemOption("Size",0,60,4);
+
+    }
+
+};
 
 
 #endif // TOOLBOXITEM_H

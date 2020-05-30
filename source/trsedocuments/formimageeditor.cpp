@@ -314,10 +314,10 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
 
         updateCharSet();
 
-        if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier))
+/*        if (e->key()==Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier))
 //            Data::data.requestCloseWindow = true;
             emit requestCloseWindow();
-
+*/
         if (e->key()==Qt::Key_Z && QApplication::keyboardModifiers() & Qt::ControlModifier) {
             m_work.m_currentImage->Undo();
 
@@ -533,7 +533,7 @@ void FormImageEditor::Initialize()
     //m_work.m_currentImage->m_image->m_currentBank = bank;
 
     //showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
-    SetSingleCharsetEdit();
+//    SetSingleCharsetEdit();
 
 
     updateCharSet();

@@ -133,7 +133,7 @@ void DialogImport::Convert()
 //    m_image->setPixel(10,10,1);
     SetColors();
     QVector3D strength = QVector3D(1,1,1);
-    strength.setX( (ui->hsDither->value()/100.0)*100.0);
+    strength.setX( (ui->hsDither->value()/100.0)*300.0);
 //    m_output.m_qImage->save("temp.png");
 
 //    for (int i=0;i<4;i++)

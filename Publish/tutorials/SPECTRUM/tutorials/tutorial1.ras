@@ -1,7 +1,7 @@
 program ZXTest;
 var
 	k : byte=0;
-	t,j,la,sp : byte=0;
+	t,j,la : byte=0;
 	p1:pointer;
 	
 /*
@@ -29,7 +29,7 @@ end;
 begin
 	// Some pattern
 	t:=%11000000;
-	sp:=1;
+//	sp:=1;
 	while (true) do
 	begin
 		ClearScreen(t);		

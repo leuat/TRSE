@@ -471,3 +471,115 @@ void WetBrush::Perform(int x, int y, unsigned char color, LImage *img, bool isPr
             }
         }
 }
+
+
+void Smooth::Perform(int x, int y, unsigned char color, LImage* img, bool isPreview, int button)
+{
+    float m= m_size;
+    float ll = 0.66;
+    MultiColorImage* mci = dynamic_cast<MultiColorImage*>(img);
+    if (mci!=nullptr) {
+        if (mci->isMultiColor())
+            ll = 2.4;
+    }
+    float str = m_options["strength"]->val/50.0;
+    LImageQImage small(img->m_colorList.m_type);
+    small.Initialize(m,m);
+    small.Clear();
+
+    for (int i=0;i<m;i++)
+        for (int j=0;j<m;j++) {
+            LColor& c = img->m_colorList.get(img->getPixel(i+x-m/2,j+y-m/2));
+            QColor col = c.color;
+        //    col = Qt::red;
+            small.setPixel(i,j,col.rgb());
+       }
+    small.m_qImage = small.Blur(1);
+    str = Util::clamp(str,0,1);
+    for (int i=0;i<m;i++)
+        for (int j=0;j<m;j++) {
+            int d = m/2;
+            float xx = i-d;
+            float yy = (j-d);
+            float l = sqrt(xx*xx*ll + yy*yy);
+
+            bool ok = l<m/2.8;
+//            if (m_type==1)
+  //              ok = abs(l-m/3)<lw;
+            if (ok)
+            {
+                QColor c1 = small.getPixel(i,j);
+                QColor c2 = img->m_colorList.get(img->getPixel(x+xx,y+yy)).color;
+                QColor mix = Util::toColor(Util::fromColor(c1)*str + Util::fromColor(c2)*(1-str));
+                int c;
+                img->m_colorList.getClosestColor(mix,c);
+ //               qDebug() << "Setting color : "<<c;
+                img->setPixel(x+xx,y+yy, c);
+            }
+        }
+}
+
+void ToolBoxItemOption::Build(QGridLayout* gl, int row) {
+    QLabel* l = new QLabel(name);
+    QSlider* sl = new QSlider(Qt::Horizontal);
+    QLabel* v = new QLabel(QString::number(val));
+    sl->setMaximum(tmax);
+    sl->setMinimum(tmin);
+    sl->setValue(val);
+    QObject::connect( sl, &QSlider::sliderMoved,  [=](){
+        val = sl->value();
+        v->setText(QString::number(val));
+    } );
+    gl->addWidget(l,row,0);
+    gl->addWidget(sl,row+1,0);
+
+    QPushButton* help = new QPushButton("?");
+    help->setMaximumWidth(16);
+    gl->addWidget(help,row,1);
+
+    gl->addWidget(v,row+1,1);
+
+}
+
+void ToolBoxItemOptionFileList::Build(QGridLayout *gl, int row)
+{
+    QDir directory(m_path);
+    QStringList images = directory.entryList(QStringList() << "*."+m_fileType,QDir::Files);
+    QStringList names;
+    for (QString s : images) {
+        s = s.split(QDir::separator()).last();
+        names<< s.split(".").first();
+
+    //do whatever you need to do
+    }
+    QComboBox* cmb = new QComboBox();
+    cmb->addItems(names);
+    QObject::connect( cmb, &QComboBox::currentTextChanged,  [=](){
+        QString fn =cmb->currentText();
+        m_img->load(":resources/images/shapes/"+fn + ".png");
+    } );
+    for (int i=0;i<names.count();i++) {
+        QIcon icon(":resources/images/shapes/"+names[i]+".png");
+        cmb->setItemIcon(i,icon);
+    }
+
+
+    gl->addWidget(cmb,row,0);
+}
+
+void ShapePNGColor::Perform(int x, int y, unsigned char color, LImage* img, bool isPreview, int button)
+{
+    float m= m_size;
+//    float str = m_options["strength"]->val/50.0;
+    QImage scaled = m_shape.scaled(m_size, m_size,Qt::KeepAspectRatio, Qt::TransformationMode::SmoothTransformation);
+
+    for (int i=0;i<scaled.width();i++)
+        for (int j=0;j<scaled.height();j++) {
+            QColor c = scaled.pixelColor(i,j);
+            if (c.red()<200) {
+                int col;
+                //img->m_colorList.getClosestColor(c,col);
+                img->setPixel(x+i-scaled.width()/2, j+y-scaled.height()/2,color);
+            }
+       }
+}

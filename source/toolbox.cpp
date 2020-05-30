@@ -33,6 +33,8 @@ void Toolbox::Initialize(QGridLayout* ly, int windowWidth)
     m_items.clear();
     m_ly = ly;
     m_items.append(new ShapeBox("",":/resources/images/brush_circle.png","Brush"));
+    m_items.append(new Smooth("Sm","","Smooth"));
+    m_items.append(new ShapePNGColor("Sh","","Shape"));
     m_items.append(new Spray("",":/resources/images/brush_spray.png","Spray"));
     m_items.append(new Dither("",":/resources/images/brush_dither.png","Dither"));
     m_items.append(new WetBrush("",":/resources/images/brush_wet.png","Wet"));
@@ -75,25 +77,8 @@ void Toolbox::BuildToolOptions()
     m_optionsLayout->setColumnStretch(0,10);
     m_optionsLayout->setColumnStretch(1,1);
     for (QString name: m_current->m_options.keys()) {
-        ToolBoxItemOption* t = m_current->m_options[name];
-        QLabel* l = new QLabel(t->name);
-        QSlider* sl = new QSlider(Qt::Horizontal);
-        QLabel* val = new QLabel(QString::number(t->val));
-        sl->setMaximum(t->tmax);
-        sl->setMinimum(t->tmin);
-        sl->setValue(t->val);
-        QObject::connect( sl, &QSlider::sliderMoved,  [=](){
-            t->val = sl->value();
-            val->setText(QString::number(t->val));
-        } );
-        m_optionsLayout->addWidget(l,row,0);
-        m_optionsLayout->addWidget(sl,row+1,0);
+        m_current->m_options[name]->Build(m_optionsLayout,row);
 
-         QPushButton* help = new QPushButton("?");
-         help->setMaximumWidth(16);
-         m_optionsLayout->addWidget(help,row,1);
-
-         m_optionsLayout->addWidget(val,row+1,1);
 
         row+=2;
     }

@@ -475,5 +475,7 @@
         <file>resources/images/ATARI520ST.png</file>
         <file>resources/code/atari520st/end.s</file>
         <file>resources/code/atari520st/init.s</file>
+        <file>resources/images/shapes/star_thin_filled.png</file>
+        <file>resources/images/shapes/star_line.png</file>
     </qresource>
 </RCC>
