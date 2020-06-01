@@ -477,5 +477,8 @@
         <file>resources/code/atari520st/init.s</file>
         <file>resources/images/shapes/star_thin_filled.png</file>
         <file>resources/images/shapes/star_line.png</file>
+        <file>resources/images/shapes/heart_line.png</file>
+        <file>resources/images/brush_shape.png</file>
+        <file>resources/images/brush_blur.png</file>
     </qresource>
 </RCC>

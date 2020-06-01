@@ -257,8 +257,8 @@ public:
     Smooth();
     Smooth(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile, tooltip) {
         m_options["strength"] = new ToolBoxItemOption("strength",0,50,20);
-//        m_options["size"] = new ToolBoxItemOption("Size",0,60,4);
-
+//         m_options["size"] = new ToolBoxItemOption("Size",0,60,4);
+        m_size = 16;
     }
 
 };
@@ -270,6 +270,7 @@ public:
     ShapePNGColor();
     ShapePNGColor(QString name, QString imagefile, QString tooltip) : ToolboxItem(name, imagefile, tooltip) {
         m_options["file"] = new ToolBoxItemOptionFileList(":resources/images/shapes","png", &m_shape);
+        m_size = 16;
 //        m_options["size"] = new ToolBoxItemOption("Size",0,60,4);
 
     }

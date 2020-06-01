@@ -336,8 +336,8 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
 
 //            color.R = color.R + bayer8x8[x % 8, y % 8] * GAP / 65;
 
-            int xx = (x-img.width()/2)*m_importScaleX + img.width()/2;
-            int yy = (y-img.height()/2)*m_importScaleY + img.height()/2;
+            int xx = (x-img.width()/2.0)*m_importScaleX + img.width()/2.0;
+            int yy = (y-img.height()/2.0)*m_importScaleY + img.height()/2.0;
 
             QColor color = QColor(img.pixel(xx,yy));
             int yp = y + x%(int)strength.y();

@@ -33,8 +33,8 @@ void Toolbox::Initialize(QGridLayout* ly, int windowWidth)
     m_items.clear();
     m_ly = ly;
     m_items.append(new ShapeBox("",":/resources/images/brush_circle.png","Brush"));
-    m_items.append(new Smooth("Sm","","Smooth"));
-    m_items.append(new ShapePNGColor("Sh","","Shape"));
+    m_items.append(new Smooth("",":/resources/images/brush_blur.png","Blur"));
+    m_items.append(new ShapePNGColor("",":/resources/images/brush_shape.png","Shape"));
     m_items.append(new Spray("",":/resources/images/brush_spray.png","Spray"));
     m_items.append(new Dither("",":/resources/images/brush_dither.png","Dither"));
     m_items.append(new WetBrush("",":/resources/images/brush_wet.png","Wet"));

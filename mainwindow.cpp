@@ -110,6 +110,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->treeSymbols->setHeaderHidden(true);
 
+    this->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    connect(this, SIGNAL(customContextMenuRequested(const QPoint &)),
+            this, SLOT(ShowContextMenu(const QPoint &)));
+
 }
 
 
@@ -427,6 +432,9 @@ void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString on, QString n, int
 
 
 //    return sym;
+
+
+
 
 }
 
@@ -871,6 +879,20 @@ void MainWindow::CreateNewSourceFile(QString type)
     LoadDocument(filename);
     RefreshFileList();
 
+}
+
+void MainWindow::ShowContextMenu(const QPoint &pos)
+{
+    if (!ui->lstRecentProjects->rect().contains( ui->lstRecentProjects->mapFromGlobal(QCursor::pos())))
+        return;
+
+    QMenu contextMenu(tr("Context menu"), this);
+
+    QAction action1("Remove from list", this);
+    connect(&action1, SIGNAL(triggered()), this, SLOT(removeFromRecentList()));
+    contextMenu.addAction(&action1);
+
+    contextMenu.exec(mapToGlobal(pos));
 }
 
 void MainWindow::FindFileDialog()
@@ -1843,4 +1865,13 @@ void MainWindow::on_lstSampleProjects_itemDoubleClicked(QListWidgetItem *item)
     QString fileName = Util::findFileInDirectory("",dir,"trse");
     LoadProject(fileName);
 
+}
+
+void MainWindow::removeFromRecentList()
+{
+    int idx = ui->lstRecentProjects->currentIndex().row();
+    QStringList l = m_iniFile->getStringList("recent_projects");
+    l.removeAt(idx+1);
+    m_iniFile->setStringList("recent_projects",l);
+    UpdateRecentProjects();
 }

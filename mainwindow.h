@@ -269,6 +269,8 @@ signals:
 
 private slots:
 
+   void ShowContextMenu(const QPoint &pos);
+
     void FindFileDialog();
     void GotoSymbol(QString s);
     void onImageMouseMove();
@@ -378,6 +380,8 @@ private slots:
     void on_lstSampleProjects_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
 
     void on_lstSampleProjects_itemDoubleClicked(QListWidgetItem *item);
+
+    void removeFromRecentList();
 
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);
