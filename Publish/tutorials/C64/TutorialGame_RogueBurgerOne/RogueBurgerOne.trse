@@ -45,5 +45,4 @@ exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
 exomizer_toggle = 0
-open_files = ,RogueBurgerOne.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/TutorialGame_RogueBurgerOne/
+open_files =, RogueBurgerOne.ras

@@ -37,3 +37,4 @@ echo "open_files =, player.ras" >> C64/MusicPlayer/dualsidplayer.trse
 echo "open_files =, tutorial1.ras" >> ATARI2600/tutorials/atari2600.trse
 echo "open_files =, tutorial1.ras" >> TIKI100/tutorials/tiki100.trse
 echo "open_files =, tutorial1.ras" >> SPECTRUM/tutorials/spectrum.trse
+echo "open_files =, tut1.ras" >> ATARI520ST/tutorials/atari520st_tutorials.trse

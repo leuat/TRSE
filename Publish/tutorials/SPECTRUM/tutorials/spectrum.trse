@@ -41,6 +41,4 @@ override_target_settings_basic = 6.95286e-310
 override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
-open_files = ,tutorial1.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/SPECTRUM/tutorials/
-current_file = tutorial1.ras
+open_files =, tutorial1.ras

@@ -41,6 +41,4 @@ override_target_settings_basic = 6.95286e-310
 override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
-open_files = ,tutorial4.asm, tutorial4.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/ATARI2600/tutorials/
-current_file = tutorial4.asm
+open_files =, tutorial1.ras

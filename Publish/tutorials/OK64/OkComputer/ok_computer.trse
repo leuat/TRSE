@@ -46,5 +46,4 @@ data_header_images/logo3.flf = 0
 data_header_images/ok1.flf = 6.95335e-310
 remove_unused_symbols = 1
 ignore_initial_jump = 0
-open_files = ,main.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/OK64/OkComputer/
+open_files =, main.ras
