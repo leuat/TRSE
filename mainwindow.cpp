@@ -1872,7 +1872,7 @@ void MainWindow::removeFromRecentList()
     int idx = ui->lstRecentProjects->currentRow();
     QStringList l = m_iniFile->getStringList("recent_projects");
 //    qDebug() << idx << l[idx] << ui->lstRecentProjects->currentItem()->text();
- //   l.removeAt(idx);
+    l.removeAt(idx);
     m_iniFile->setStringList("recent_projects",l);
     UpdateRecentProjects();
 }
