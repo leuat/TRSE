@@ -504,6 +504,7 @@ void FormRasEditor::wheelEvent(QWheelEvent *event)
 void FormRasEditor::keyPressEvent(QKeyEvent *e)
 {
     TRSEDocument::keyPressEvent(e);
+    m_documentIsChanged  = ui->txtEditor->m_textChanged;
     if (e->key() == Qt::Key_Escape && ui->leSearch->hasFocus()) {
         ui->txtEditor->setFocus();
     }

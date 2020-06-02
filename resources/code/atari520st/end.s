@@ -128,9 +128,141 @@ putpixel_slow:
                 ; end putpixel
 
 
+*HOLINE. A horizontal line is drawn from left to right.
+* passes: x1=d2.w, y1=d3.w, N=d1.w, colour=d4.w, screen y table:a4.l
+* First find the address of the word at which the line starts.
+holine_holine:
+        lea	hln_tbl,a3	pointer to mask table
+        lsl.w	#2,d3		there are y long words before the
+        movea.l 0(a4,d3.w),a4	current row address in the table
+        move	d2,d5		save x1
+        andi	#$fff0,d5	go in steps of 8 bytes
+        lsr.w	#1,d5		to point to plane #1 word
+        adda.w	d5,a4		at this address
+        andi	#$000f,d2	which pixel from the left?
+        move	d2,d0		save it
+* does the entire line lie within one word?
+        subi	#16,d0
+        neg	d0		are there more pixels to the word end
+        cmp	d1,d0		than we have to draw?
+        bmi	holine_long_line	no, so it's a long line
+* The line is entirely within one word. Get the mask and draw it.
+        move	d1,d0
+        bsr	holine_draw_it
+        rts			and that's all.
+* Complete the 1st word in a long line
+holine_long_line:
+        sub	d0,d1		number left
+        bsr	holine_draw_it
+* Now fill all the solid words.
+        clr	d0
+        not	d0
+        move	d1,d2		save number of pixels left to do
+        lsr	#4,d2		how many are whole words?
+        beq	holine_last_word	none are
+* a long stretch of filled words - no need to read the table
+        subq	#1,d2		this many full words but one
+        move	d0,d3		which are all 1's
+        not	d3		or all 0's, depending on the colour
+        moveq	#4-1,d5		4 colour planes
+        move	d4,d6
+        subq	#2,a4
+holine_inc_plane:
+        addq	#2,a4		offset for next plane
+        movea.l a4,a5		save the address
+        move	d2,d7		initialise the word count
+        lsr.w	#1,d6		next colour bit
+        bcc	holine_clr_word
+holine_set_word:
+        or.w	d0,(a5)
+        adda	#8,a5		next word in this plane
+        dbra	d7,holine_set_word
+        bra	holine_new_plane
+holine_clr_word:
+        and	d3,(a5)
+        adda	#8,a5		next word in this plane
+        dbra	d7,holine_clr_word
+holine_new_plane:
+        dbra	d5,holine_inc_plane	for all the colour planes
+        subq	#6,a5		pointer to next plane 1
+        movea.l a5,a4		update pointer
+* it only remains to do the last word. It will start at pixel 0
+holine_last_word:
+        andi	#$f,d1		low nibble
+        cmpi.w	#0,d1		any todo ?
+        beq	holine_holine_end	no - finished.
+* In finding the mask,the row offset is zero this time.
+        clr	d2		1st pixel at extreme left
+        move	d1,d0
+        bsr	holine_draw_it
+holine_holine_end:
+        rts			completely finished
+
+* Draw in a section of a word which starts at pixel a and ends at pixel b
+holine_draw_it
+        lsl	#5,d2		the mask row offset=a*32
+        move	d0,d5		plus
+        subq	#1,d5		column
+        lsl	#1,d5		offset of (15-b)*2 gives
+        add	d5,d2		the total offset
+        move.w	0(a3,d2.w),d0	to fetch the mask
+        move	d0,d3		and
+        not	d3		its 1's compliment
+        moveq	#3,d5		4-1 colour planes
+        move	d4,d6		save colour
+holine_next_plane:
+        lsr	#1,d6		is this colour bit set?
+        bcc	holine_not_set		no
+        or.w	d0,(a4)+	yes, also set the bits
+        dbf	d5,holine_next_plane
+        rts
+holine_not_set and.w	d3,(a4)+	clear the bits
+        dbf	d5,holine_next_plane
+holine_fil_end rts			finished
+
+
+holine_hline_lu:
+;Set up a look-up table for low resolution horizontal line drawing.
+;Each mask in the table is the word to set between pixel a and b.
+        lea	hln_tbl,a0	pointer to the table base
+        move.w	#16-1,d1	16 rows, d1 is the counter
+holine_hloop2	clr.w	d0		new row
+        move.w	#16-1,d2	16 columns, d2 is the counter
+        bset	d1,d0		set the 1st column bit
+holine_hloop3	move.w	d0,(a0)+	next column
+        move.w	d0,d3
+        lsr.w	#1,d3 shift
+        or.w	d3,d0 add	back
+        dbra	d2,holine_hloop3	complete this row
+        dbra	d1,holine_hloop2	for all rows
+        rts
+
+gfx_find_phys:
+;A call to the operating System to find the physical screen address
+        move.w	#2,-(sp)	xbios _physbase
+        trap	#14		xbios call
+        addq	#2,sp		tidy stack
+;the base address is returned in d0 and saved
+        move.l	d0,gfx_phys_screen
+        rts
+
+
+gfx_wrt_phys_tbl:
+;Write a look-up table of the addresses pf the start of physical each
+;screen row in low resolution. The product 4*y is an offset to row y.
+        move.l	gfx_phys_screen,d0	where screen location is kept
+        move	#200-1,d1	200 rows
+        lea	gfx_phys_tbl_y,a0	where the table is
+luloop	move.l	d0,(a0)+	the next row in the table
+        add	#160,d0		there are 160 bytes/row
+        dbra	d1,luloop	for all rows
+        rts
 
 
 
+
+
+hln_tbl		 ds.w	256	;the masks for filling words
 old_resolution:  dc.w    0
 old_stack:       dc.l    0
 old_screen:      dc.l    0
@@ -142,3 +274,6 @@ backup          ds.b    14
 internal_frames: dc.l 0
 internal_music : dc.l 0;
 internal_play_time: dc.l 0;
+
+gfx_phys_screen	ds.l	1	;the address of the physical screen
+gfx_phys_tbl_y	ds.l	200	;pointers to the row y's

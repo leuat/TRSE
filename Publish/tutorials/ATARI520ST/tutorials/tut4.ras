@@ -1,0 +1,60 @@
+program Tutorial4;
+var 
+	done : integer = 0;
+ 	i,time,x1,t,col : integer = 0;
+	ym_file : incbin("music/test1.ym");
+	sin : array[256] of integer = buildtable("Math.sin(i/256.0*2*3.14159)*128 +128");
+
+procedure RenderLines();
+begin
+	t:=time;
+	for i:=50 to 150 do
+	begin
+		x1:=sin[t&255]>>1 + 64;	
+		if (t&3=0) then		
+			col:=(col+1)&15;
+		t:=t+1;
+		hline(x1,i,50,col);
+	end;
+end;
+
+
+interrupt VBLank();
+begin
+	UpdateMusic();
+	RenderLines();
+	time:=time+1;
+	done:=keypressed(sc_key_space_pressed);
+end;
+
+begin
+	SetLoRes();
+	InitGraphics(); // sets up HLINE (and soon polygons etc)
+
+	if (x1&2=i*3) then
+	begin
+	
+	end;
+
+	if (x1&2=i*3) then
+	begin
+	
+	end;
+
+	for i:=0 to 16 do
+	begin
+		// Set some palette
+		poke16(palette_start,i*2,i);
+	end;	
+	InitMusic(ym_file);
+	setirq(VBLank(), irq_verticalblank);
+
+	while (done = false) do
+	begin
+		waitverticalblank();
+	end;	
+end.
+
+
+
+

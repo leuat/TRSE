@@ -6,7 +6,7 @@ var
 	// Download from https://www.julien-nevo.com/arkostracker/ . Export as ".ym" file, load in TRSE!
 	ym_file : incbin("music/test1.ym");
 	
-	@export "images/image2.flf" "images/image1.bin" 256
+	@export "images/image1.flf" "images/image1.bin" 256
 	
 	image : incbin("images/image1.bin");
 	image_pal : incbin("images/image1.pal");

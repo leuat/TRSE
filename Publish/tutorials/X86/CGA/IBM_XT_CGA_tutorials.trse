@@ -43,3 +43,4 @@ exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/X86/CGA/
+open_files = ,tut5.ras

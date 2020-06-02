@@ -4,7 +4,7 @@ var
 	screen : pointer of integer;
  	i,time : integer = 0;
 	ym_file : incbin("music/test1.ym");
-	sin : array[512] of integer = buildtable("Math.sin(i/256.0*2*3.14159)*48 +48");
+	sin : array[256] of integer = buildtable("Math.sin(i/256.0*2*3.14159)*48 +48");
 
 	// Palette gets exported automatically	
 	@export "images/logo.flf" "images/logo.bin" 256
@@ -16,7 +16,7 @@ var
 procedure UpdateLogo();
 begin
 	GetScreen(screen);
-	i:=sin[(time*2)&511];
+	i:=sin[(time)&255];
 	i:=i*160;
 	//s:=s+i;
 	memcpy(image,55*160,screen,i,40*90,4);

@@ -72,6 +72,32 @@ void Methods68000Atari::Assemble(Assembler *as, AbstractASTDispatcher *dispatche
 
         as->Asm("move.l #"+name+","+m_node->m_params[1]->getValue(as));
     }
+    else
+//    m; HLine; ATARI520ST; a, i,i,i
+
+    if (Command("InitGraphics")) {
+        as->Asm("bsr gfx_find_phys");
+        as->Asm("bsr gfx_wrt_phys_tbl");
+        as->Asm("bsr holine_hline_lu");
+    }
+    else
+    if (Command("HLine")) {
+        /**HOLINE. A horizontal line is drawn from left to right.
+        * passes: x1=d2.w, y1=d3.w, N=d1.w, colour=d4.w, screen y table:a4.l
+        * First find the address of the word at which the line starts.
+        holine_holine
+*/
+        m_node->m_params[0]->Accept(m_dispatcher);
+        Asm(as,"move.w",as->m_varStack.pop(),"d2");
+        m_node->m_params[1]->Accept(m_dispatcher);
+        Asm(as,"move.w",as->m_varStack.pop(),"d3");
+        m_node->m_params[2]->Accept(m_dispatcher);
+        Asm(as,"move.w",as->m_varStack.pop(),"d1");
+        m_node->m_params[3]->Accept(m_dispatcher);
+        Asm(as,"move.w",as->m_varStack.pop(),"d4");
+        as->Asm("lea gfx_phys_tbl_y,a4");
+        as->Asm("bsr holine_holine");
+    }
 
 
 }

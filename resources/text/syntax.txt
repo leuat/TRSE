@@ -199,6 +199,9 @@ c; VRAM ; SPECTRUM, TIKI100; a; $4000
 
 # *********** ATARI ST ROUTINES
 
+m; InitGraphics; ATARI520ST;
+m; HLine; ATARI520ST; i,i,i,i
+
 m; GetScreen; ATARI520ST; a
 m; WaitForKeypress; ATARI520ST;
 m; keypressed; ATARI520ST; b

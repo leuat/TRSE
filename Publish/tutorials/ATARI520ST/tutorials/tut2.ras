@@ -5,7 +5,7 @@ var
 	screen : pointer of integer;
  	
 	ym_file : incbin("music/test1.ym");
-	sin : array[512] of integer = buildtable("Math.sin(i/256.0*2*3.14159)*0xFF");
+	sin : array[256] of integer = buildtable("Math.sin(i/256.0*2*3.14159)*0xFF");
 	
 	@export "images/image1.flf" "images/image1.bin" 256
 	
@@ -18,8 +18,8 @@ var
 interrupt VBLank();
 begin
 	UpdateMusic();
-	col:=sin[(time*2)&511];
-	time:=time+2;
+	col:=sin[(time)&255];
+	time:=time+1;
 	line:=0;
 end;
 

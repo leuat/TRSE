@@ -1176,7 +1176,7 @@ void ASTDispatcher68000::BuildToCmp(QSharedPointer<Node> node)
 */
 //    as->Term();
 
-    if (node->m_left->getValue(as)!="") {
+    if (node->m_left->isPure()) {
         if (node->m_right->isPureNumeric())
         {
             as->Comment("Compare with pure num / var optimization");
@@ -1203,9 +1203,16 @@ void ASTDispatcher68000::BuildToCmp(QSharedPointer<Node> node)
         }
     }
 
+    node->m_left->Accept(this);
+    QString d0 = as->m_varStack.pop();
+    QString tmp = as->m_regAcc.Get();
     node->m_right->Accept(this);
+    QString d1 = as->m_varStack.pop();
+    as->m_regAcc.Pop(tmp);
+//    qDebug() << "VARSTACK" <<d0 << d1;
 
-    TransformVariable(as,"cmp",qSharedPointerDynamicCast<NodeVar>(node->m_left), as->m_varStack.pop());
+    as->Asm("cmp "+d1+"," +d0);
+    //TransformVariable(as,"cmp",node->m_left, as->m_varStack.pop());
 
         // Perform a full compare : create a temp variable
 //        QString tmpVar = as->m_regAcc.Get();//as->StoreInTempVar("binary_clause_temp");
