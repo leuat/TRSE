@@ -27,8 +27,8 @@ var
    	@define height 256
    	@define bitplanes 4
    	
-	@define bitmapFont_noCharactersInColumns 10
-	@define bitmapFont_characterHeight 24
+	const bitmapFont_noCharactersInColumns:integer = 10;
+	const bitmapFont_characterHeight:integer =24;
 
 	// Text to be displayed
 	text: string =("HELLO");
@@ -57,14 +57,14 @@ begin
 	// ascii character A - 65 = 0
 	j:=a_char-65;
 	sourcey:=0;
+	j:=0;	
 		// There are 10 characters for each row, increase sourcey by 24 pixels
-	while (j>@bitmapFont_noCharactersInColumns) do begin
-		j:=j-@bitmapFont_noCharactersInColumns; 
-		sourcey:=sourcey+@bitmapFont_characterHeight; // height of bitmap font
+	while (j>=bitmapFont_noCharactersInColumns) do begin
+		j:=j-bitmapFont_noCharactersInColumns; 
+		sourcey:=sourcey+bitmapFont_characterHeight; // height of bitmap font
 	end;
 	sourcex:=j*4; // bitmap font is 4 bytes wide
 	src:=sourcex + sourcey*40; // Source position in bitmap font
-
 end;
 
 
@@ -75,9 +75,10 @@ begin
 		y:=sin64[(i*6+time)&63]+80;
 		x:=8+i*4;
 		// Convert ascii to bitmap font
+		
 		AsciiToPositionInBitmap(text[i]); // outputs "src"
 		//Blit the character to screen + 80 (to bitplane #3, yielding color 4=purple) 
-		
+				
 		ablit(font, screen+^80, src, x, y,  160,  (26*$40)+(2), 40-4,160-4, 160-4,$09E0);
 
 		

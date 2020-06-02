@@ -80,17 +80,17 @@ begin
 		");
 	for ro_ri:=0 to ro_count do begin
 			i:=ro_list[ro_idx];
-			j:=ro_list[ro_idx+2];
+			j:=ro_list[ro_idx+1];
 			
 			ro_x1:=PVert[i];
-			ro_y1:=PVert[i+4];
+			ro_y1:=PVert[i+1];
 			
 			ro_x2:=PVert[j];
-			ro_y2:=PVert[j+4];
+			ro_y2:=PVert[j+1];
 
 			DrawLine(ro_x1,ro_y1,ro_x2,ro_y2, screen, 40);
 	
-		ro_idx:=ro_idx+4; // two shorts per line
+		ro_idx:=ro_idx+2; // two shorts per line
 	end;
 
 end;
@@ -214,7 +214,7 @@ end;
 procedure UpdateGrid();
 begin
 	p1:=vertices;
-	k2:=4;
+	k2:=1;
 	for i:=0 to size do
 	begin
 		for j:=0 to size do
@@ -224,8 +224,9 @@ begin
 			t:=t&255;
 			k:=sin256[t];
 			l2:=k/2;
+			
 			p1[k2]:=l2;
-			k2:=k2+12;
+			k2:=k2+3;
 
 		end;
 
@@ -251,13 +252,13 @@ begin
 		begin
 			sy:=j-size/2;
 			p1[k2]:=sx*32;
-			k2:=k2+4;
+			k2:=k2+1;
 			
 			p1[k2]:=100;
-			k2:=k2+4;
+			k2:=k2+1;
 			
 			p1[k2]:=sy*32;
-			k2:=k2+4;
+			k2:=k2+1;
 
 		end;
 
@@ -273,24 +274,24 @@ begin
 		for j:=0 to m do
 		begin
 			l:=i*size + j;
-			l:=l<<3;			
+			l:=l<<1;			
 			pi[k2]:=l;
-			k2:=k2+2;
+			k2:=k2+1;
 			l:=i*size + j+1;
-			l:=l<<3;			
+			l:=l<<1;			
 			pi[k2]:=l;
-			k2:=k2+2;
+			k2:=k2+1;
 	
 		
 
 			l:=i*size + j;
-			pi[k2]:=l<<3;
-			k2:=k2+2;
+			pi[k2]:=l<<1;
+			k2:=k2+1;
 			l:=(i+1)*size + j;
-			l:=l<<3;			
+			l:=l<<1;			
 
 			pi[k2]:=l;
-			k2:=k2+2;
+			k2:=k2+1;
 		
 
 		end;

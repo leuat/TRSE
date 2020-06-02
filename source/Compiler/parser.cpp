@@ -2929,7 +2929,10 @@ QStringList Parser::BuildTable(int cnt)
         if (ret.isError())
             ErrorHandler::e.Error("Error evaluation javascript expression : " + ret.toString() + " <br><br>", m_currentToken.m_lineNumber);
 
-        data << Util::numToHex(ret.toInt()&0xFF);
+//        data << Util::numToHex(ret.toInt()&0xFF);
+ //       if ()
+//        data << Util::numToHex(ret.toInt()&0xFF);
+        data << Util::numToHex(ret.toInt()&0xFFFF);
     }
 
     return data;

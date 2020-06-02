@@ -78,8 +78,6 @@ void Methods68000Amiga::Assemble(Assembler *as, AbstractASTDispatcher *dispatche
     if (Command("DrawLine"))
         DrawLine(as);
 
-    if (Command("Fill"))
-        Fill(as);
 
 
 

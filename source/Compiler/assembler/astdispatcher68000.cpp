@@ -294,7 +294,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeBlock> node)
 
     }
     as->VarDeclEnds();
-//    if (node->m_decl.count()!=0)
+    if (node->m_decl.count()!=0)
         as->Asm(" 	CNOP 0,4");
 
     if (!blockLabel && hasLabel) {
@@ -660,6 +660,14 @@ void ASTDispatcher68000::StoreVariable(QSharedPointer<NodeVar> n)
             //qDebug() << "Loading array: expression";
             LoadVariable(n->m_expr);
             QString d1 = as->m_varStack.pop();
+            if (n->getArrayType(as)==TokenType::INTEGER) {
+                as->Asm("lsl #1,"+d1);
+            }
+            if (n->getArrayType(as)==TokenType::LONG) {
+                as->Asm("lsl #2,"+d1);
+            }
+
+
             //qDebug() << "Popping varstack: " <<d1;
 //            as->Comment("Type: " + TokenType::getType(n->getType(as)));
             if (n->getType(as)==TokenType::POINTER)
@@ -707,6 +715,13 @@ void ASTDispatcher68000::LoadVariable(QSharedPointer<NodeVar> n)
         m_clearFlag=true;
         LoadVariable(n->m_expr);
         QString d1 = as->m_varStack.pop();
+        if (n->getArrayType(as)==TokenType::INTEGER) {
+            as->Asm("lsl #1,"+d1);
+        }
+        if (n->getArrayType(as)==TokenType::LONG) {
+            as->Asm("lsl #2,"+d1);
+        }
+        //qDebug() << "TYPE: "<< TokenType::getType(n->getArrayType(as));
         //qDebug() << "Popping varstack: " <<d1;
       //  as->Comment("Type : " + TokenType::getType(n->getType(as)));
 //        as->Comment("Raw type: " + TokenType::getType(as->m_symTab->Lookup(n->value, n->m_op.m_lineNumber)->getTokenType()));

@@ -116,7 +116,7 @@ begin
 
 			// Project vertices to screen				
 			ProjectToScreen(ro_obj,ro_list[ro_idx], ro_x1, ro_y1);
-			ProjectToScreen(ro_obj,ro_list[ro_idx+2], ro_x2, ro_y2);
+			ProjectToScreen(ro_obj,ro_list[ro_idx+1], ro_x2, ro_y2);
 //			WaitForBlitter();
 			if (tt=0) then
 			DrawLine(ro_x1,ro_y1,ro_x2,ro_y2, ss, 80)
@@ -125,7 +125,7 @@ begin
 			
 		asm("ro_skipp");
 
-		ro_idx:=ro_idx+4; // two shorts per line
+		ro_idx:=ro_idx+2; // two shorts per line
 		ro_nidx:=ro_nidx+3; // 3 bytes per normal
 	end;
 

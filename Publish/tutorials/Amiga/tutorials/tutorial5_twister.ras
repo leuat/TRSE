@@ -43,7 +43,7 @@ end;
 
 procedure RenderTwister(xp : pointer of long; tx:integer);
 var 
-  dst,d2 : pointer of long;
+  dst : pointer of long;
 begin
 	table2 := t_tab;
 	tt:=0-tx; // Text goes up
@@ -59,11 +59,11 @@ begin
 		j:=l>>5; // j:=l/32 - find current character
 	 	j:=(tp[j&15])&31; // Look up current character, store in j
 	 	// Look up : each charater is 32 height * 16 frames * 2 = 32*32 = shl 10 == shl 5 shl 5 
-	 	n:=j*(32*32);
+	 	n:=j*(32*16);
 	 	
 		l:=l&31;
 		// Look up actual table: Frame (k) + line (l) + letter (n)
-		k:=table2[k<<6+ l<<1 +n];
+		k:=table2[k<<5+ l +n];
 
 
 		// Copy 2x2 rows of data

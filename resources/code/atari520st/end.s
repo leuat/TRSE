@@ -95,7 +95,7 @@ int_song_data
 putpixel_slow:
                 ; a0 screen address
                 ; d0 X coordinate
-                ; d1Y coordinate
+                ; d1 Y coordinate
                 ; d2 colour
 
                 mulu.w  #160,d1                 ; 160 bytes to a scan line

@@ -19,6 +19,9 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("matmul3x3"))
         MatMul(as);
 
+    if (Command("Fill"))
+        Fill(as);
+
 
     if (Command("initmatmul3x3"))
         as->IncludeFile(":resources/code/amiga/matmul.s");
