@@ -1869,9 +1869,10 @@ void MainWindow::on_lstSampleProjects_itemDoubleClicked(QListWidgetItem *item)
 
 void MainWindow::removeFromRecentList()
 {
-    int idx = ui->lstRecentProjects->currentIndex().row();
+    int idx = ui->lstRecentProjects->currentRow();
     QStringList l = m_iniFile->getStringList("recent_projects");
-    l.removeAt(idx+1);
+//    qDebug() << idx << l[idx] << ui->lstRecentProjects->currentItem()->text();
+ //   l.removeAt(idx);
     m_iniFile->setStringList("recent_projects",l);
     UpdateRecentProjects();
 }
