@@ -374,6 +374,9 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
         }
         node->m_block->Accept(this);
     }
+    // Return value
+    if (node->m_returnValue!=nullptr)
+        node->m_returnValue->Accept(this);
 
     if (!isInitFunction) {
         if (node->m_type==0) {

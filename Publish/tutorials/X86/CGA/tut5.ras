@@ -65,7 +65,6 @@ begin
 	begin
 		DrawLineCGA(screen_cga, x, landscape[z], x+xx,landscape[z+1] , rl_color);
 	//	DrawLineCGA(screen_cga, x, z, x+xx, z , rl_color);
-		asm(";here");
 		x:=x+xx;
 		z:=z+1;
 	end;

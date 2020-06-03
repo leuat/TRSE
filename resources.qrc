@@ -481,5 +481,6 @@
         <file>resources/images/brush_shape.png</file>
         <file>resources/images/brush_blur.png</file>
         <file>resources/images/tutorials/floskel.png</file>
+        <file>resources/text/help/r/function.rtf</file>
     </qresource>
 </RCC>

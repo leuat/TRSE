@@ -1301,8 +1301,11 @@ QSharedPointer<Node> Parser::Statement()
         node = CompoundStatement();
     }
     else if (m_currentToken.m_type == TokenType::ID) {
+        bool isAssign;
+        node = FindProcedure(isAssign);
+        if (isAssign)
+            return Empty();
 
-        node = FindProcedure();
         if (node==nullptr)
             node = BuiltinFunction();
 //        if (node==nullptr)
@@ -1478,12 +1481,13 @@ QVector<QSharedPointer<Node>> Parser::StatementList()
 
     QSharedPointer<Node> node = Statement();
     QVector<QSharedPointer<Node>> results;
+    if (node!=nullptr)
     results.append(node);
     while (m_currentToken.m_type == TokenType::SEMI) {
         Eat(TokenType::SEMI);
         QSharedPointer<Node> n = Statement();
-
-        results.append(n);
+        if (n!=nullptr)
+           results.append(n);
 
     }
     if (m_currentToken.m_type==TokenType::ID)
@@ -1619,7 +1623,8 @@ QSharedPointer<Node> Parser::Factor()
     }
     if (t.m_type == TokenType::ID) {
 //        qDebug() << "FINDING PROCEDURE IN TERM: " << t.m_value;
-        QSharedPointer<Node> node = FindProcedure();
+        bool isAssign;
+        QSharedPointer<Node> node = FindProcedure(isAssign);
         if (node!=nullptr)
             return node;
         node = BuiltinFunction();
@@ -2064,8 +2069,10 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
 }
 
 
-QSharedPointer<Node> Parser::FindProcedure()
+QSharedPointer<Node> Parser::FindProcedure(bool& isAssign)
 {
+    isAssign = false;
+
     Token procToken = m_currentToken;
     bool dual = false;
     // TRUs can also search for other TRU names without prefix
@@ -2080,6 +2087,20 @@ QSharedPointer<Node> Parser::FindProcedure()
         if (dual) procName = m_currentToken.m_value;;
         Token t = m_currentToken;
         Eat(TokenType::ID);
+        // Return value from "Function"
+        if (m_currentToken.m_type==TokenType::ASSIGN) {
+            // ASSIGN procedure for return value
+//            qDebug() << procName << m_inCurrentProcedure;
+            if (procName != m_inCurrentProcedure)
+                ErrorHandler::e.Error("Function return name needs to be identical the name of the function itself.",m_currentToken.m_lineNumber);
+            Eat();
+            auto node = qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]);
+            if (!node->m_isFunction)
+                ErrorHandler::e.Error("Only functions can have intrinsic return values.",m_currentToken.m_lineNumber);
+            node->m_returnValue = Expr();
+            isAssign=true;
+            return nullptr;
+        }
         Eat(TokenType::LPAREN);
         QVector<QSharedPointer<Node>> paramList;
         while (m_currentToken.m_type!=TokenType::RPAREN && !m_lexer->m_finished) {
@@ -2116,7 +2137,7 @@ QSharedPointer<Node> Parser::Block(bool useOwnSymTab, QString blockName)
         return nullptr;
 */
 
-    if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type==TokenType::WEDGE)
+    if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type==TokenType::WEDGE || m_currentToken.m_type==TokenType::FUNCTION)
         return nullptr;
 
     QVector<QSharedPointer<Node>> decl =  Declarations(useOwnSymTab, blockName);
@@ -2131,7 +2152,7 @@ QSharedPointer<Node> Parser::Block(bool useOwnSymTab, QString blockName)
 QSharedPointer<Node> Parser::BlockNoCompound(bool useOwnSymTab, QString blockName)
 {
 
-    if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type==TokenType::WEDGE)
+    if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type==TokenType::WEDGE || m_currentToken.m_type==TokenType::FUNCTION)
         return nullptr;
 
 
@@ -2304,15 +2325,18 @@ QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockNam
 
 
 */
-    while (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type == TokenType::WEDGE) {
+    while (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type == TokenType::WEDGE  || m_currentToken.m_type==TokenType::FUNCTION) {
         int type=0;
         if (m_currentToken.m_type == TokenType::INTERRUPT) type=1;
         if (m_currentToken.m_type == TokenType::WEDGE) type=2;
+        bool isFunction = m_currentToken.m_type == TokenType::FUNCTION;
      //   bool isInterrupt= (m_currentToken.m_type==TokenType::PROCEDURE)?false:true;
         Token tok = m_currentToken;
         Eat(m_currentToken.m_type);
         bool isInline = false;
         QString procName =m_symTab->m_gPrefix+ m_currentToken.m_value;
+
+        m_inCurrentProcedure = procName;
         //qDebug() << tok.m_value  << " : " << procName;
         Eat(TokenType::ID);
         //exit(1);
@@ -2335,6 +2359,7 @@ QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockNam
         QSharedPointer<NodeProcedureDecl> procDecl = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(tok, procName, paramDecl, block, type));
         procDecl->m_fileName = m_currentFileShort;
         procDecl->m_isInline = isInline;
+        procDecl->m_isFunction = isFunction;
         AppendComment(procDecl);
 
         if (m_procedures[procName]!=nullptr) {
@@ -2405,6 +2430,9 @@ QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockNam
    // qDebug() << "Finally:" << m_currentToken.getType();
     if (m_currentToken.m_type!=TokenType::BEGIN && isMain && hasBlock)
         ErrorHandler::e.Error("After declarations, BEGIN is expected", m_currentToken.m_lineNumber);
+
+
+//    m_inCurrentProcedure = "";
 
     return decl;
 }

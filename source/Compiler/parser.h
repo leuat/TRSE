@@ -86,6 +86,7 @@ public:
     QVector<QString> m_ignoreMethods;
     QSharedPointer<Lexer> m_lexer;
     Token m_currentToken;
+    QString m_inCurrentProcedure="";
     bool m_isTRU = false;
     int m_pass = 0, m_acc=0;
     bool m_ignoreAll = false;
@@ -153,7 +154,7 @@ public:
     QSharedPointer<Node> RepeatUntil();
     QSharedPointer<Node> Expr();
     QSharedPointer<Node> Term();
-    QSharedPointer<Node> FindProcedure();
+    QSharedPointer<Node> FindProcedure(bool& isAssign);
     QSharedPointer<Node> BinaryClause();
 
     void AppendComment(QSharedPointer<Node> n);
