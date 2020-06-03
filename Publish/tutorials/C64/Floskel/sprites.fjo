@@ -1,0 +1,137 @@
+
+--[[
+	Global values
+	
+]]--
+globals = {
+ 	camera = { x = 23, y=6, z=-0 },
+     fov = 30,
+	target = { x = 0, y=0, z=-0 },
+	light0 = {   	direction = {x=3, y=0.5, z=0 }, 
+				color = {x=0.7, y=0.8, z=1.0},
+			},
+	ambient = { x = 0.1, y = 0.1, z = 0.1 },
+     raymarch_steps = 90,
+ 	up = { x = 0, y=1, z=0 },
+	raymarch_shadow_steps = 40,
+	
+	sky = 0.0,
+	shadow_scale = 1.0,
+	isPaused = 0
+	
+}
+
+--[[ sprites are 12x21   ]]-- 
+output = {
+	resolution = { width = 12, height=21},
+	aspect = 1.0,
+	output_type = 1, --c64
+	c64_multicolor = 1, -- turn on multicolor
+	c64_imageType = 0, -- charset-based colors
+	dither = 2,
+	ditherStrength = { x = 10, y= 1, z= 1},
+	index_colors = { 0,4,6,3 }
+}
+
+Material0 = {
+   color = { x=1, y=1, z=1 },
+	reflection = 0.5,
+	shininess = 90,
+	shininess_intensity = 1 
+}
+
+t = 0
+charname = "char"
+ 
+-- alphabet
+text = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+curChar = 1
+maxFrames = 24
+curFrame = 0
+isDone = 0
+
+--[[
+
+Initialise the scene (for each letter)
+]]--
+function Init(cc)
+	ClearAllObjects();
+	x = 0.3
+	sy = 0.5
+	xi = 0
+	--[[ Use C64 ROM font   ]]-- 
+
+	font ="rom"
+	c = string.sub(text,cc,cc+1)
+	char = string.byte(c)-64
+	z = 0--cos((xi)*3.14)*3
+	AddObject("char", charname, "", "Material0",  font, char,   
+			z,0,x,            -- position
+			0.6,1*sy,0.5,      -- width xyz 
+			0.40,0.60*sy,0.35  -- stretch xyz
+		);          
+
+end
+
+
+function UpdateScene()
+	s = 0.7
+	t = ((curFrame)/maxFrames)*3.14159*s-3.14/4;
+--	t = 
+	r = 10
+	globals.camera.x = r
+	globals.camera.z = 0
+
+	-- SetRotation roterer euler-vinkler X Y Z. 
+--	SetRotation(charname,0,t*45,(char*10)%40);
+	SetRotation(charname,t*60,60 + (char*2),190);
+	-- Prøv gjerne denne her istedenfor, eller rotér med Z!
+--	SetRotation(charname,t*45,0,0);
+
+	-- putt litt offset på target/camera y og sånn så 3d-objektene havner i "midten" av skjermen
+	
+	globals.camera.y = 0
+	globals.target.x = 0
+	globals.target.y = 0.2
+	globals.target.z = -0.5
+end
+
+
+
+
+function Update()
+--	Init()
+	if (curFrame>=1 and curFrame<=maxFrames) then
+		AddC64LineToData(0,0,3,21)
+		AddC64LineToData(0,0,1,1) -- add a random single byte to fill up to 64 bytes
+	end;
+	
+	if (isDone==1) then return end
+	if (curFrame==0) then Init(curChar) end
+	
+	UpdateScene()
+	if (curFrame==maxFrames) then
+		if (curChar<string.len(text)) then 
+			curChar = curChar+1
+		
+		else
+			isDone = 1
+			SaveRawData("data/sprites.bin");		
+			Message("SAVED")
+
+		end
+	
+		curFrame = -1
+	end;
+	
+	
+	curFrame=curFrame+1
+	
+
+
+
+
+	
+
+
+end

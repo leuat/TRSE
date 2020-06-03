@@ -1,0 +1,131 @@
+globals = {
+
+-- Renders the dot over the "i" in "Proxima"
+
+
+	-- camera will be overwritten, so no worries there
+	
+ 	camera = { x = 12, y=0, z=0 },
+     fov = 50,
+     
+     -- target: look at center
+     
+	target = { x = 0, y=0.0, z=-0.5 },
+	
+	-- light will be changed for each frame
+	light0 = {   	direction = {x=1, y=0.0, z=-0.5 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+	-- add some ambient background colors
+	ambient = { x = 0.3, y = 0.3, z = 0.3 },
+     raymarch_steps = 30,
+     
+     -- define the "up" vector
+     
+ 	up = { x = 0, y=1, z=0 },
+	raymarch_shadow_steps = 4,
+	sky = 0,
+	shadow_scale = 0,
+	isPaused = 0
+	
+}
+
+output = {
+	-- resolution equals to 2x2  8x8 hires chars,si 16x16 pixles 
+	
+	resolution = { width = 16, height=16},
+-- to view the scene properly, render with higher resolution
+--	resolution = { width = 128, height=128},
+	
+	-- Allow for dithering (2)	
+	dither = 2,
+	-- set dither strength 30
+	ditherStrength= {x=45, y=2, z=2},
+	
+	-- Enable c64 output
+	output_type = 1, -- c64 image type
+     aspect = 1,
+     -- Set character set
+	c64_imageType = 0, -- 0 = character set (4 colors, compressable), 1 = multicolor image 
+	c64_multicolor = 0,
+	-- Define the 4 colors (black, purple, white, blue)
+	index_colors = { 0,4,1,6 }
+}
+
+-- Two materials in this scene: a regular one and a black one
+Material0 = {
+   color = { x=1, y=1.0, z=1 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0.7 
+}
+
+MaterialBlack = {
+   color = { x=0, y=0.0, z=0 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 1 
+}
+
+
+frame = 0
+-- 128 frames * 64 bytes per sprite = $2000 bytes of raw data
+noFrames = 64
+hasSaved = 0
+
+-- A torus with a box within. Original. 
+function Init()
+	-- Create a box with a smaller box surround it
+	AddObject("torus","object1","","Material0",0,0,0,4,1.0,0);
+	s=2
+	AddObject("box","object2","","Material0",0,0,0,s,s,s);
+--	AddObject("box","object2","","MaterialBlack",0,0,0,3.5,0.6,3.5);
+
+--	AddObject("torus","object1","","Material0",0,0,0,4,1.5,3);
+	
+	UpdateScene()
+	Message("Rendering.. please wait")
+end
+
+
+
+function UpdateScene()
+	
+  	t = ((frame)/noFrames)
+	-- Convert from (0,1) -> angles (0,360)
+	j=t*360
+	-- Rotate both objects
+	SetRotation("object1",j/2,0,j+45) --box
+	SetRotation("object2",j/2,0,j+45) --box
+--	SetRotation("object2",0,j+90,j) --box
+
+end
+
+
+function Update()
+	-- For each frame, add a new 64 byte sprite to the internal buffer	
+	if (hasSaved == 0) then 
+		-- Add raw data starting at (0,0) to bytes (3,21) = 3*21=63 bytes of data (size of a sprite)
+		
+		AddC64LineToData(0,0, 1,8)
+		AddC64LineToData(1,0, 1,8)
+		AddC64LineToData(0,8, 1,8)
+		AddC64LineToData(1,8, 1,8)
+--		AddC64LineToData(0,0,1,1) -- add a random single byte to fill up to 64 bytes
+	end
+	-- increase frame count
+	frame=frame+1
+	-- if final frame has been reached
+	if (frame==noFrames) then 
+		hasSaved = 1
+		
+		-- save the noFrames*48 bytes of data as raw data
+		SaveRawData("data/small.bin");
+		
+		Message("example 5 sprite data save to disk. You can now close this window.")
+		
+	end	
+	-- Update scene again
+	UpdateScene()
+
+end

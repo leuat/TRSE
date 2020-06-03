@@ -1,0 +1,546 @@
+program Floskel;
+var  
+
+/*
+
+	This intro was quickly assembled during the end of May 2020 in order to participate for
+	the CSDB "Unreadable scroller intro 2020" compo.
+	
+	It basically consists of a y-stretch scroller with pregenerated sprites. The sprites
+	(and the "dot" in the "proxima" logo) are both rendered with the Fjong raytracer. 
+	
+
+
+*/
+
+	// Music by Response/Darklite. $E000.
+ 	music: incsid("music/oops.sid",2);
+ 	// Y position of the scroller
+	const yp:byte =$90;
+	// Speed of the scroller
+	const speed:byte = 4;
+	// Width between each sprite
+   	const curMax : byte  = 48;
+   
+	// Number of frames for each sprite
+	const frameCount : byte = 32;
+
+	// User-defined positions
+	@userdata $3800 $4400 "Tabs"
+	@userdata $2000 $2800 "Charset"
+	@userdata $2800 $2A00 "Sprites"
+	
+
+	@define sprPos $2800
+	bgcol:byte=red;
+	// Sprites positions are stored in an array	
+	spriteTab : array[$11*curMax] of byte at $3800;
+	const smallChar : byte = 250;
+
+	// The image is saved as a compressed charset + screen data	
+	charset : incbin("images/logo_hires_charset.bin", $2000);
+	screen : incbin("images/logo_hires_screen.bin", $1C00);
+
+	// Variables
+   	curLum, curCols,t2,startColors, y,smallCharFrame, k,i,j,l,frame,ft,time, YPos, shift: byte = 0; 
+   	cur : byte = 0;
+   	k2:integer;
+	// Used for multiplying with 32
+	charTable : array[32] of integer;
+	// Multiply by 64	
+	table64 : array[24] of integer;
+   	// The "dot" in "Proxima"
+	small : incbin("data/small.bin",$3000);
+	// Sprite location
+   @define sprLoc $4400
+   	spraits: incbin("data/sprites.bin", @sprLoc);
+   @donotremove StretchTab
+   	// Tab used for sprite stretching
+	StretchTab : array[256] of byte at $4300;
+	// Sine 1 for stretching	
+   	sinTab : array[256] of byte = BuildTable("(Math.pow(Math.sin(i/256.0*3.14159),6)*0x80+0x7F)/1.8/21");
+	// Sine used for selecting current sprite frame   	
+	sin24 : array[256] of byte = BuildTable("(Math.sin(i/256.0*3.14159*2.0+3.1415/2)*0x80+0x7F)/10.66");
+	// Raster background colors	
+  	cols : array[256] of byte at $4200;
+	// Raster background colors	 org
+ 	colsOrg : array[256] of byte at $4100;
+ 	// Colour lists
+	lumi:  array[64] of byte;
+	lumiOrg:  array[34] of byte = ($06,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06);
+ 	lumi2:  array[34] of byte = ($06,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06,06,06,06,06,06,06);
+ 	// Texts
+	text : string= ("                ITS NICE TO BE IMPORTANT BUT IT IS MORE IMPORTANT TO BE NICE   ITS NOT THE NUMBER OF BREATHS WE TAKE BUT THE NUMBER OF MOMENTS THAT TAKE OUR BREATHS AWAY   THESE INSPIRATIONAL QUOTES SURE ARE ANNOYING   DID YOU USE THE VICE MONITOR TO READ THIS TEXT    NAUGHTY BOY   HERE IS ANOTHER INSPIRATIONAL QUOTE FOR YOU TO PONDER   SINE LIKE NO ONE IS LISTENING LOVE LIKE YOURE NEVER BEEN HURT DANCE LIKE NOBODY IS WATCHING DRINK LIKE YOUVE NEVER CONSUMED ETHANOL BEFORE ",0,"       ");
+ 	pow2 : array[8] of byte = ();
+
+	// Pointers used
+	p1,src,dst,txt,spr,psmall:pointer;
+
+// Calculates the stretching table for each frame
+procedure CalcStretch();
+begin
+	//YPos:=0;
+	@ifdef debug
+	screen_bg_col:=blue;
+	@endif
+
+	fill(StretchTab, $FF,0);
+	
+//		AddVal:=time*2;
+		k:=time*6;
+		YPos:=0;
+		for i:=0 to 24 do
+		begin
+//			j:=sine2[k];
+			YPos:=(YPos + sinTab[k]);
+			k:=(k+6);
+//			k:=mod(k+4,80);
+			StretchTab[YPos]:=0;//StretchTab[YPos] & test[i];
+
+
+		end;
+
+		
+	@ifdef debug
+	screen_bg_col:=black;
+	@endif
+
+end;
+
+// Initialise sprite positions
+procedure InitSprites();
+begin
+	for i:=0 to 8 do
+	begin
+		setspriteloc(i,(@sprPos/64)+i,0);
+	end;	
+end;
+
+
+// for curMax steps, pre-generate and fill the sprite table (reflecting data in $D000-$D011, so $11 bytes for each frame)
+// Since we're copying sprite data every 2nd frame, the difficult part is making sure that 
+// this table is synchronized from the start
+procedure CreateSpritesTable();
+begin
+	cur:=0;
+	p1:=spriteTab;
+	k2:=40;
+	k2:=k2 - curMax;
+	for i:=0 to 8 do
+	begin
+		spritepos(k2,yp,i);
+		k2:=k2+curMax;
+	end;
+	y:=yp+4;
+	for j:=0 to curMax+1 do
+	begin
+		// First 3 sprites are only calculated every 2nd frame (j&1=0)	
+		if (j&1=0) then
+		begin		
+			k2:=40-cur;
+
+			for i:=0 to 3 do
+			begin
+				spritepos(k2,y,i);
+				k2:=k2+curMax;
+			end;
+		end
+		else
+		begin
+		
+			for i:=3 to 7 do
+			begin
+				spritepos(k2,y,i);
+				k2:=k2+curMax;
+			end;
+
+		end;	
+		memcpy(^$D000,0,p1,$11);
+		p1:=p1+$11;	
+		cur:=cur+speed;
+	
+	end;
+end;
+
+// Called every frame, copies pre-generated sprite position table and updates scroll etc 
+procedure UpdateSprites1();
+begin
+	//spr:=spriteTab;
+//	spr:=spr + ($11*48);
+	memcpyunroll(spr,0,^$D000,$11);
+	spr:=spr+$11;
+	cur:=cur+speed;
+	if (cur>=curMax) then
+	begin
+		cur:=0;
+		if (startColors>=2) then
+			txt:=txt+1;
+		if txt[0]=0 then txt:=text;
+		shift:=shift+32;
+		spr:=spriteTab;
+	end;
+
+end;
+
+// Performs the actual copying of sprites from the current sprite frame to the sprite buffer
+procedure CopySprites(ca,cb:byte);
+begin
+@ifdef debug
+	screen_bg_col:=white;
+@endif
+	if (ca=0) then
+	begin
+		dst:=@sprPos;
+		frame:=time*2 + shift;
+	end;
+		
+	l:=peek(^01,0);
+	// Sprites *might* be in >$D000
+	enableallram();
+	// Only copy 3-4 sprites per frame
+	for i:=ca to cb do
+	begin
+		j:=txt[i];
+		if (j=0) then j:=$20;
+		// If not space
+		if (j<>key_space) then
+		begin
+			k:=j-65;
+			//Lookup character (64 sprite bytes *32 frames)
+			src:=AddressTable(charTable,0,k);
+			// Use a nice sine frame
+			ft:=sin24[frame];
+			// Lookupt the character frame (64 sprite bytes per frame)
+			src := src + AddressTable(table64,0,ft);
+			// Use unroll loop
+			memcpyunroll(src,0,dst,63);
+		end
+		else
+		begin
+			// If space, then fill with nada
+			fillfast(dst,0,63);		
+		end;
+		frame:=frame+frameCount;
+			
+		dst:=dst+64;
+	end;
+	poke(^01,0,l);
+@ifdef debug
+	screen_bg_col:=black;
+@endif
+
+end;
+
+// Perform the stretch. Needs to be pixel perfect. 
+// Also sets the background color. 
+procedure Stretch();
+begin
+
+	asm("
+	
+	lda #$00 ; Set idle-pattern
+	sta $3fff
+
+	lda j ; Wait for sprite y-position
+	cmp $d012
+	bne *-3
+
+	ldx #5 ; Wait a few cycles to make the d017-stretch work
+	dex
+	bne *-1
+
+
+
+	ldx #0
+loop2
+	
+	lda StretchTab,x ; $ff will stretch, 0 will step one line of graphics in the sprite
+	sta $d017
+
+	
+	sec
+	lda $d011
+	sbc #7
+	ora #$18
+	sta $d011 ; Step d011 each line to avoid badlines
+
+	
+;	bit $ea ; Make the whole loop 44 cycles = one raster line when using 8 sprites
+
+
+	lda cols,x
+	sta $d021
+	;sta $d020 ; couldn't make this one work 
+	nop ; wait two nops
+	nop
+	
+
+	lda #0 ; Set back for the next line
+	sta $d017
+	
+
+	inx
+	cpx #100
+	bne loop2 ; Loop 100 times
+
+	");
+end;
+
+// Cycles colors
+procedure CycleTextColors();
+begin
+	i:=time;
+	sprite_multicolor_reg1:=lumi2[i&31];	
+	i:=(i+8);
+	if (startColors>=6) then	
+	fill(sprite_color,lumi2[i&31] ,8);
+	i:=i+8;
+	if (startColors>=7) then	
+	sprite_multicolor_reg2:=lumi2[i&31];
+
+end;
+
+
+ // Updates the dot in the "i", copying 4 characters worth of data 
+procedure UpdateSmallChar();
+begin
+	p1:=$2000 + (smallChar*8);
+	memcpyunroll(psmall,0,p1,32);
+	inc(smallCharFrame);
+	psmall:=psmall+frameCount;
+	if (smallCharFrame=64) then
+	begin
+		smallCharFrame:=0;
+		psmall:=small;
+	end;
+end;
+
+// Main raster routine
+interrupt Raster();
+begin
+	startirq(0);
+	scrolly(0);
+	screen_bg_col:=bgcol;
+	j:=yp;
+	// Perform stretch
+	Stretch();
+	// Wait a bit in order to prevent artifacts
+	waitnoraster(1);
+	wait(9);nop(1);
+	screen_bg_col:=bgcol;
+	screen_fg_col:=bgcol;
+	CalcStretch();
+	if (startColors>=1) then
+	UpdateSmallChar();
+
+	inc(time);
+	// Copy sprites on every second frame, but also copy 100 bytes of color data from the lumi to the color table.
+	// This  updates the background raster bars
+	if (time&1=0) then 
+	begin
+		CopySprites(0,3);
+			asm("
+		ldx #100
+topp1:
+		txa
+		adc time
+		and #$1F
+		tay
+		
+		lda lumi,y
+		
+		sta cols,x
+		
+		dex
+		dex
+		bpl topp1
+
+	");
+
+	end
+	else
+	begin
+		// on every 2nd frame, copy the rest of the sprite data
+		CopySprites(3,7);
+//		UpdateSprites2();
+	end;
+	// Update sprite position
+	UpdateSprites1();
+	// Play music
+	call(SIDFILE_1_PLAY);
+	
+	
+
+	if (t2<128) then
+		if (time&31=0) then inc(t2);
+
+	// Timing information
+	// StartColors is a silly name. The variable turned out to control the flow of events. 
+	if (t2=8) then startColors:=1; // The "dot" starts rotating
+	if (t2=30) then startColors:=2; // Text starts flowing
+	if (t2=45) then startColors:=3; // Background raster starts changing
+	if (t2=60) then startColors:=4; // Background raster #2 starts changing
+	if (t2=80) then startColors:=5; // Color #1 starts cycling 
+	if (t2=85) then startColors:=6; // Color #2 starts cycling 
+	if (t2=90) then startColors:=7; // Color #3 starts cycling
+
+		
+	// here, the actual control flow is implemented		
+	if (startColors>=3) then
+	begin
+		cols[curCols]:=colsOrg[curCols];
+		if (curCols<128) then
+			curCols:=curCols+1;
+
+		if (startColors>=4) then
+		begin
+			if (curLum<32) then 
+			if (time&3=0) then
+			begin
+				lumi[curLum]:=lumiOrg[curLum];
+				inc(curLum);
+			end;
+			if (startColors>=5) then
+				CycleTextColors();
+			end;
+	end;
+	//if (startColors>=2) then
+		//bgcol:=lumi[time&31];
+	closeirq();
+end;
+
+// Prints the "dot" in the "Proxima" logo to the screen
+procedure PrintToScreen();
+begin
+	p1:=$0400 + (13 + 4*40);
+	p1[0]:=smallChar;
+	p1[1]:=smallChar+1;
+	p1[40]:=smallChar+2;
+	p1[41]:=smallChar+3;
+
+end;
+
+// Initialize start screen
+procedure InitScreen();
+begin
+	moveto(10,9,04);
+	printstring("'FLOSKEL' BY PROXIMA",0,40);
+	moveto(10,11,04);
+	printstring(" CODE / GFX BY LEUAT",0,40);
+	moveto(10,13,04);
+	printstring("  MUSIC BY RESPONSE",0,40);
+	moveto(2,16,04);
+	printstring("SOUNDTRACK DEDICATED TO BHF/HOAXERS",0,40);
+	moveto(11,18,04);
+	printstring("WE MISS YOU BROTHER",0,40);
+	
+
+	k:=31;
+	l:=27;
+	p1:=$0400;
+	cur:=0;
+	for j:=0 to 3 do
+	for i:=0 to 160 do
+	begin
+		waitforraster($F0);
+		call(SIDFILE_1_PLAY);
+		if (j=1) then begin
+			if (k<>0) then
+				screen_bg_col:=lumiOrg[k]
+				else screen_bg_col:=0;
+				
+			inc(shift);
+			
+			if (k<>0) then begin dec(k);end;
+			if (shift>32) then			
+			begin
+			if (l<>0) then dec(l);
+			if (l<>0) then
+				screen_fg_col:=lumiOrg[l]
+			else screen_fg_col:=0;
+				
+			end;
+		end;
+		if (j=2 and cur<200) then
+		begin
+			fill(p1,$20,5);
+			p1:=p1+5;
+		end;
+		
+
+	end;
+	cur:=0;
+	shift:=0;
+
+	screenoff();
+end;
+
+
+// Main routine. Should be straight-forward. 
+begin
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	InitSid(SIDFILE_1_INIT);	
+	InitScreen();
+	clearscreen(key_space,screen_char_loc);
+	screen_bg_col:=0;
+	screen_fg_col:=0;
+	sprite_stretch_x:=$ff;
+	sprite_stretch_y:=$ff;
+	sprite_multicolor:=$ff;
+	sprite_bitmask:=%01111111;
+	
+	sprite_multicolor_reg1:=cyan;	
+	fill(sprite_color,purple,8);
+	sprite_multicolor_reg2:=blue;
+
+	sprite_multicolor_reg1:=light_red;	
+	fill(sprite_color,orange ,8);
+	sprite_multicolor_reg2:=red;
+
+	sprite_multicolor_reg1:=light_red;	
+	fill(sprite_color,orange ,8);
+	sprite_multicolor_reg2:=brown;
+
+
+
+	// Set up original colours etc
+	for i:=0 to 128 step 2 do colsOrg[i+1]:=lumiOrg[(i/3)&31];
+	for i:=0 to 128 step 2 do cols[i+1]:=lumi[(i/3)&31];
+	// Sine tab modded with $FE	
+	for i:=0 to 0 do sinTab[i]:=sinTab[i]&%11111110;
+	k:=30;
+	txt:=text;
+	k2:=@sprLoc;
+	for i:=0 to 32 do
+	begin
+		charTable[i]:=k2;
+		k2:=k2+(24*64);
+	end;
+	CreateAddressTable(table64, 0, 64,24);
+	setbank(VIC_bank0);
+//	CalcStretch();	
+	copyfullscreen(screen,^$0400);
+	setcharsetlocation($2000);
+	fill(^$2000+255*8,0,8);
+	fill(lumi,red,64);	
+	clearscreen(black,^$D800);
+	InitSprites();
+	PrintToScreen();
+	psmall := small;
+	for i:=0 to 8 do
+	UpdateSmallChar();
+	CreateSpritesTable();	
+//	UpdateSprites1();
+	spr:=spriteTab;
+	CopySprites(0,7);
+	
+
+	screenon();	
+	waitforraster(240);
+	StartRasterChain(Raster(),yp-2,0);
+	hidebordery(1);		
+	hideborderx(1);		
+
+	Loop();
+end.

@@ -480,5 +480,6 @@
         <file>resources/images/shapes/heart_line.png</file>
         <file>resources/images/brush_shape.png</file>
         <file>resources/images/brush_blur.png</file>
+        <file>resources/images/tutorials/floskel.png</file>
     </qresource>
 </RCC>
