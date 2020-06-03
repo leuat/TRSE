@@ -5208,7 +5208,6 @@ void Methods6502::IncludeModPlayer(Assembler *as)
 
 void Methods6502::InitMul16x8(Assembler *as)
 {
-
 //     Multiplies "num1" by "num2" and stores result in .A (low byte, also in .X) and .Y (high byte)
 //    as->Asm("jmp mul16x8_def_end");
   //  as->Label("mul16x8_procedure_defs");

@@ -7,6 +7,7 @@ FactoryMethods::FactoryMethods()
 
 QSharedPointer<AbstractMethods> FactoryMethods::CreateMethods(AbstractSystem::System s)
 {
+
     if (s==AbstractSystem::VIC20)
         return QSharedPointer<Methods6502Vic20>(new Methods6502Vic20);
 
@@ -38,8 +39,14 @@ QSharedPointer<AbstractMethods> FactoryMethods::CreateMethods(AbstractSystem::Sy
     if (s==AbstractSystem::GAMEBOY)
         return QSharedPointer<MethodsZ80>(new MethodsZ80);
 
-    if (s==AbstractSystem::SPECTRUM || AbstractSystem::TIKI100)
+    if (s==AbstractSystem::SPECTRUM || s==AbstractSystem::TIKI100)
         return QSharedPointer<MethodsZ80>(new MethodsZ80);
+
+
+
+    if (s==AbstractSystem::X16)
+        return QSharedPointer<Methods6502>(new Methods6502);
+
 
     // Default one
     return QSharedPointer<Methods6502>(new Methods6502);

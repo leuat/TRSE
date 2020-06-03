@@ -707,6 +707,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBuiltinMethod> node)
 
     QSharedPointer<AbstractMethods> methods = FactoryMethods::CreateMethods(Syntax::s.m_currentSystem->m_system);
     methods->m_node = node;
+//    qDebug() << "BALLE"<<methods << Syntax::s.m_currentSystem->m_system << qSharedPointerDynamicCast<Methods6502>(methods);
     methods->Assemble(as,this);
 }
 
