@@ -179,7 +179,10 @@ void Compiler6502::SetupMemoryAnalyzer(QString filename)
 //    qDebug() << "B";
     ConnectBlockSymbols(ends);
 
-    m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(Syntax::s.m_currentSystem->m_startAddress, codeEnd, MemoryBlock::CODE, "code")));
+    int start = Syntax::s.m_currentSystem->m_startAddress;
+    if (Syntax::s.m_currentSystem->m_startAddress!=Syntax::s.m_currentSystem->m_programStartAddress)
+        start = Syntax::s.m_currentSystem->m_programStartAddress;
+    m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start, codeEnd, MemoryBlock::CODE, "code")));
 
 
 }

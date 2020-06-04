@@ -34,3 +34,4 @@ output_type = prg
 open_files = ,floskel.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Floskel/
 current_file = floskel.ras
+exomizer_toggle = 0

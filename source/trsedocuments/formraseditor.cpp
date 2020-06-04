@@ -798,29 +798,6 @@ void FormRasEditor::MemoryAnalyze()
     m_projectIniFile->setFloat("exomizer_toggle",i);
     m_builderThread.m_builder->compiler->SaveBuild(filename + ".asm");
 
-    /*QProcess process;
-    process.start(m_iniFile->getString("dasm"), QStringList()<<(filename +".asm") << ("-o"+filename+".prg") << "-v3");
-    process.waitForFinished();
-    //process;
-    QString output = process.readAllStandardOutput();
-    int codeEnd=FindEndSymbol(output);
-    */
-/*    Orgasm orgAsm;
-    orgAsm.SetupConstants(m_builderThread.m_builder->compiler->m_parser.m_symTab);
-    //orgAsm.Codes();
-    orgAsm.Assemble(filename+".asm", filename+".prg");
-    if (!orgAsm.m_success) {
-        return;
-    }
-    int codeEnd=FindEndSymbol(orgAsm);
-    QVector<int> ends = FindBlockEndSymbols(orgAsm);
-//    qDebug() << "B";
-    ConnectBlockSymbols(ends);
-    */
-
-
-//    qDebug() << "asm " << m_builderThread.m_builder->compiler->m_assembler;
- //   qDebug() << "B2";
     filename = m_currentSourceFile;
     filename = filename.remove(".ras");
 //    qDebug() << "Filename; "<< m_currentSourceFile;
