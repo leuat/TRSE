@@ -453,7 +453,7 @@ void MainWindow::LoadDocument(QString fileName)
             return;
         }
     }
-
+    m_isClosingWindows = true;
     TRSEDocument* editor = nullptr;
     if (fileName.contains(".flf")) {
         editor = new FormImageEditor(this);
@@ -493,6 +493,7 @@ void MainWindow::LoadDocument(QString fileName)
     m_documents.append(editor);
     m_currentDoc = editor;
     ConnectDocument();
+    m_isClosingWindows = false;
 
 }
 
@@ -659,6 +660,7 @@ void MainWindow::OpenProjectSettings()
 void MainWindow::OnQuit()
 {
 //    qDebug() << m_currentProject.m_ini->getStringList("open_files");
+
     m_currentProject.Save();
 //    qDebug() << m_currentProject.m_ini->getString("current_file");
 
@@ -794,10 +796,14 @@ bool MainWindow::RemoveTab(int idx, bool save)
 
 bool MainWindow::CloseAll()
 {
+    m_isClosingWindows = true;
+
     while (ui->tabMain->count()!=1) {
         if (!RemoveTab(1, false))
             return false;
     }
+    m_isClosingWindows = false;
+
     return true;
 
 }
@@ -976,7 +982,10 @@ void MainWindow::on_tabMain_currentChanged(int index)
 
     if (dynamic_cast<TRSEDocument*>(ui->tabMain->widget(index))!=nullptr) {
         m_currentDoc = dynamic_cast<TRSEDocument*>(ui->tabMain->widget(index));
-        m_currentProject.m_ini->setString("current_file",m_currentDoc->m_currentFileShort);
+        if (!m_isClosingWindows) {
+            m_currentProject.m_ini->setString("current_file",m_currentDoc->m_currentFileShort);
+//            qDebug() << "SETTING CURRENT : " << m_currentDoc->m_currentFileShort;
+        }
         if (m_currentDoc!=nullptr && index!=0) {
             m_currentDoc->Reload();
             m_currentDoc->m_hasFocus = true;

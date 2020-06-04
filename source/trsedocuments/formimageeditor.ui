@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1133</width>
+    <width>1041</width>
     <height>627</height>
    </rect>
   </property>
@@ -376,7 +376,7 @@
           </size>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <property name="iconSize">
           <size>
@@ -867,7 +867,7 @@
             <rect>
              <x>10</x>
              <y>10</y>
-             <width>281</width>
+             <width>284</width>
              <height>261</height>
             </rect>
            </property>
@@ -879,47 +879,6 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
-             <widget class="QPushButton" name="btnImportKoala">
-              <property name="text">
-               <string>Import koala</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QPushButton" name="btnExportImage">
-              <property name="toolTip">
-               <string>Export this image as a png/jpg</string>
-              </property>
-              <property name="text">
-               <string>Export image</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QPushButton" name="btnImportBin">
-              <property name="toolTip">
-               <string>Import binary data (from CBM PRG studio etc). Plain C64 binary format.</string>
-              </property>
-              <property name="text">
-               <string>Import bin</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="1">
-             <widget class="QPushButton" name="btnExportC">
-              <property name="text">
-               <string>Export .c</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QPushButton" name="btnExportCompressed">
-              <property name="text">
-               <string>Export compressed</string>
-              </property>
-             </widget>
-            </item>
             <item row="2" column="1">
              <widget class="QPushButton" name="btnExportBin">
               <property name="toolTip">
@@ -927,23 +886,6 @@
               </property>
               <property name="text">
                <string>Export bin</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QPushButton" name="btnExportMovie">
-              <property name="text">
-               <string>Export movie</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="1">
-             <widget class="QPushButton" name="btnNew">
-              <property name="toolTip">
-               <string>Clear this image</string>
-              </property>
-              <property name="text">
-               <string>Clear</string>
               </property>
              </widget>
             </item>
@@ -967,10 +909,68 @@
               </property>
              </widget>
             </item>
+            <item row="7" column="1">
+             <widget class="QPushButton" name="btnExportC">
+              <property name="text">
+               <string>Export .c</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QPushButton" name="btnExportMovie">
+              <property name="text">
+               <string>Export movie</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QPushButton" name="btnExportImage">
+              <property name="toolTip">
+               <string>Export this image as a png/jpg</string>
+              </property>
+              <property name="text">
+               <string>Export image</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QPushButton" name="btnExportCompressed">
+              <property name="text">
+               <string>Export compressed</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="1">
+             <widget class="QPushButton" name="btnNew">
+              <property name="toolTip">
+               <string>Clear this image</string>
+              </property>
+              <property name="text">
+               <string>Clear</string>
+              </property>
+             </widget>
+            </item>
             <item row="7" column="0">
              <widget class="QPushButton" name="btnImportC">
               <property name="text">
                <string>Import .c</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QPushButton" name="btnImportKoala">
+              <property name="text">
+               <string>Import koala</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QPushButton" name="btnImportBin">
+              <property name="toolTip">
+               <string>Import binary data (from CBM PRG studio etc). Plain C64 binary format.</string>
+              </property>
+              <property name="text">
+               <string>Import bin</string>
               </property>
              </widget>
             </item>

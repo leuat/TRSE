@@ -149,6 +149,7 @@ public:
     ~MainWindow();
     QMap<QString, QSharedPointer<SymbolPointer>> m_symPointers, m_orgSymPointers;
     QMap<QString, QTreeWidgetItem*> m_treeItems;
+    bool m_isClosingWindows = false;
 
     QSharedPointer<CIniFile> m_iniFile;
     QMap<QString, QTreeWidgetItem*> m_symbolItems;
