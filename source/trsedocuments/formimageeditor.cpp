@@ -35,7 +35,7 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
 {
     ui->setupUi(this);
 //    m_toolBox.Initialize(ui->lyToolbox_3,width());
-    m_toolBox.Initialize(ui->ToolboxLayout,height()*1.4);
+    m_toolBox.Initialize(ui->ToolboxLayout,height()*1.8);
 
     UpdatePalette();
     m_grid.Initialize(320,200);
