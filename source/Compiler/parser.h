@@ -81,6 +81,11 @@ public:
     QStringList m_warningsGiven;
     QStringList m_doNotRemoveMethods;
     QString m_initAssembler = "";
+    // Preprocessor stuff
+    QVector<QString> m_lastKey;
+    QVector<bool> m_lastIfdef;
+
+
     QVector<QSharedPointer<Node>> m_proceduresOnly;
     QVector<QSharedPointer<Node>> m_mergedProcedures;
     QVector<QString> m_ignoreMethods;

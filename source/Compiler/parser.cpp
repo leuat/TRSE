@@ -385,9 +385,26 @@ void Parser::PreprocessIfDefs(bool ifdef)
 {
 
     //Eat();
-     Eat();
-    QString key = m_currentToken.m_value;
+     QString key="";
+
+     //if (m_currentToken.m_valu)
+     if (m_currentToken.m_value=="else") {
+//         qDebug() << "WE ARE ELSE";
+         Eat();
+         if (m_lastKey.count()!=0)
+             key = m_lastKey.last();
+     }
+      else
+     {
+         // ifdef, ifndef
+         Eat();
+         key = m_currentToken.m_value;
+     }
+  //   qDebug() << "CURRENTKEY: " <<key;
+
 //    Eat();
+     m_lastKey.append(key);
+     m_lastIfdef.append(ifdef);
 
     if (ifdef && m_preprocessorDefines.contains(key)) {
         Eat();
@@ -398,12 +415,21 @@ void Parser::PreprocessIfDefs(bool ifdef)
         Eat();
         return;
     }
-
     // Remove everything!
+    //qDebug() << "IGNORE" << key;
     m_ignoreAll = true;
+    int ignorePop=0; // Counter to keep track of proper ifdef / else /end
     while (!m_lexer->m_finished) {
+      //  qDebug() << m_currentToken.m_value;
         if (m_currentToken.m_type==TokenType::PREPROCESSOR) {
+
+         //   qDebug() << "HERE 1 "<<m_currentToken.m_value;
             m_pass=1;
+            // Ignore preprocessors ifdef etc within preprocessors
+            if (m_currentToken.m_value.startsWith("if")) {
+                ignorePop++;
+        //        qDebug() << "INCREASING POP "<<ignorePop;
+            }
             Eat();
         }
         else {
@@ -411,12 +437,22 @@ void Parser::PreprocessIfDefs(bool ifdef)
             Eat(); // OM NOM NOM
             m_pass = 1;
         }
+
         if (m_currentToken.m_type==TokenType::PREPROCESSOR) {
-            if (m_currentToken.m_value=="endif") {
+            if (m_currentToken.m_value=="else" && ignorePop==0) {
                 Eat();
                 m_ignoreAll = false;
-
                 return; // Finish
+            }
+            if (m_currentToken.m_value=="endif") {
+                if (ignorePop==0) {
+                Eat();
+                m_ignoreAll = false;
+                m_lastKey.removeLast();
+                m_lastIfdef.removeLast();
+                return; // Finish
+                }
+                else --ignorePop;
             }
         }
     }
@@ -968,10 +1004,10 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         return;
     }
-    if (m_currentToken.m_value=="endif") {
-        Eat();
-        return;
-    }
+
+//    qDebug() <<"VAL " <<m_currentToken.m_value;
+
+    if (!m_ignoreAll) {
     if (m_currentToken.m_value=="ifdef") {
         PreprocessIfDefs(true);
         return;
@@ -981,6 +1017,20 @@ void Parser::HandlePreprocessorInParsing()
         PreprocessIfDefs(false);
         return;
     }
+    if (m_currentToken.m_value=="else") {
+//        qDebug() << "Start with ELSE : " << m_lastIfdef.last() << m_lastKey.last();
+        PreprocessIfDefs(!m_lastIfdef.last());
+        return;
+    }
+    }
+    if (m_currentToken.m_value=="endif") {
+        m_lastKey.removeLast();
+        m_lastIfdef.removeLast();
+        Eat();
+        return;
+    }
+
+
     if (m_currentToken.m_value=="error") {
             Eat();
 
