@@ -25,6 +25,9 @@
      <property name="handleWidth">
       <number>10</number>
      </property>
+     <property name="childrenCollapsible">
+      <bool>false</bool>
+     </property>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="ImageLayout" stretch="1,200,200,0">
        <item>
@@ -376,7 +379,7 @@
           </size>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>5</number>
          </property>
          <property name="iconSize">
           <size>

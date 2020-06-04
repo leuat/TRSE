@@ -77,7 +77,9 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
   //  ui->splitter->setStretchFactor(1, 0);
 
   ui->splitter->setSizes(QList<int>() << 1000<<500);
+//  ui->splitter->s
 //  ui->splitter->setCollapsible(0, false);
+ // ui->splitter->setCollapsible(1, false);
 }
 
 void FormImageEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> iniProject) {
