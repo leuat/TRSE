@@ -107,7 +107,7 @@
         <enum>QLayout::SetDefaultConstraint</enum>
        </property>
        <item>
-        <layout class="QHBoxLayout" name="ToolboxLayout" stretch="1,1">
+        <layout class="QHBoxLayout" name="Tools" stretch="1,1,1">
          <property name="sizeConstraint">
           <enum>QLayout::SetMaximumSize</enum>
          </property>
@@ -115,7 +115,7 @@
           <layout class="QGridLayout" name="layoutColorsEdit_3"/>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0">
+          <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0">
            <item>
             <widget class="QLabel" name="label_13">
              <property name="font">
@@ -345,14 +345,10 @@
              </property>
             </spacer>
            </item>
-           <item>
-            <layout class="QGridLayout" name="lyToolbox_3">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-            </layout>
-           </item>
           </layout>
+         </item>
+         <item>
+          <layout class="QGridLayout" name="ToolboxLayout"/>
          </item>
         </layout>
        </item>

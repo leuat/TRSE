@@ -34,7 +34,8 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
     ui(new Ui::Formimageeditor)
 {
     ui->setupUi(this);
-    m_toolBox.Initialize(ui->lyToolbox_3,width());
+//    m_toolBox.Initialize(ui->lyToolbox_3,width());
+    m_toolBox.Initialize(ui->ToolboxLayout,height()*1.4);
 
     UpdatePalette();
     m_grid.Initialize(320,200);
@@ -1648,7 +1649,7 @@ void FormImageEditor::Aspect1()
       w->setMinimumHeight(sy);
       w->setMinimumWidth(size);
 //
-    ui->vImageSpacer->changeSize(0,this->height()-sy-20,QSizePolicy::Expanding,QSizePolicy::Expanding);
+//    ui->vImageSpacer->changeSize(0,this->height()-sy-20,QSizePolicy::Expanding,QSizePolicy::Expanding);
     QTimer::singleShot(10, this, SLOT(AspectDone()));
 
 //    w->setVisible(true);

@@ -51,8 +51,10 @@ void Toolbox::Initialize(QGridLayout* ly, int windowWidth)
 
     m_buttonsLayout = new QGridLayout();
     m_optionsLayout = new QGridLayout();
-    m_ly->addLayout(m_optionsLayout,0,0);
+    m_ly->addWidget(new QLabel("Toolbox"),0,0);
     m_ly->addLayout(m_buttonsLayout,1,0);
+    m_ly->addLayout(m_optionsLayout,2,0);
+    m_ly->addItem(new QSpacerItem(0,1000,QSizePolicy::Expanding,QSizePolicy::Expanding),3,0);
 
 
     BuildGUI(m_buttonsLayout, windowWidth);
@@ -78,8 +80,6 @@ void Toolbox::BuildToolOptions()
     m_optionsLayout->setColumnStretch(1,1);
     for (QString name: m_current->m_options.keys()) {
         m_current->m_options[name]->Build(m_optionsLayout,row);
-
-
         row+=2;
     }
     QFrame* hFrame2 = new QFrame;
