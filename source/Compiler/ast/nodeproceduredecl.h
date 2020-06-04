@@ -36,6 +36,7 @@ public:
     QString m_procName, m_fileName;
     QVector<QSharedPointer<Node>> m_paramDecl;
     QSharedPointer<Node> m_returnValue;
+    QSharedPointer<Node> m_returnType;
     bool m_isFunction = false;
     int m_type;
     bool m_isInline = false;

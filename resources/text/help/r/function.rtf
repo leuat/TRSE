@@ -2,21 +2,28 @@
 <p>Functions are procedures that can have an intrinsic return value. Functions can be called from
 assign statements such as a:=b(c); The return value is specified by assigning the function value to the return value.
 </p>
-
+<b>Note:</b>TRSE currently only supports two return types: 'byte' and 'integer'.
 
 <h3>Example</h3>
 
 <code>
-    function Calc( i: byte );
+    function Calc( i: byte ) : byte;
     begin
         // Set the return value of the function
         Calc := i*i + 2;
+    end;
+
+    function DoSomething( val: integer ) : integer;
+    begin
+        // Set the return value of the function
+        DoSomething := val * 100;
     end;
 
 
     // main code
     begin
         myVar := Calc( 2 + j );; // Call the function
+        ...
     end.
         
 </code>

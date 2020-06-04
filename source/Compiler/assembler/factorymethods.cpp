@@ -39,7 +39,7 @@ QSharedPointer<AbstractMethods> FactoryMethods::CreateMethods(AbstractSystem::Sy
     if (s==AbstractSystem::GAMEBOY)
         return QSharedPointer<MethodsZ80>(new MethodsZ80);
 
-    if (s==AbstractSystem::SPECTRUM || s==AbstractSystem::TIKI100)
+    if (s == AbstractSystem::SPECTRUM || s==AbstractSystem::TIKI100)
         return QSharedPointer<MethodsZ80>(new MethodsZ80);
 
 

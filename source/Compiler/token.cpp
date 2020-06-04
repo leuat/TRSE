@@ -39,6 +39,7 @@ QString TokenType::types[no_types] = {
 
 };
 
+
 QString Token::getType() {
     return TokenType::types[m_type];
 }

@@ -2081,14 +2081,15 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign)
 
 //    qDebug() << "Searching for procedure : " <<m_currentToken.m_value;// << m_procedures.keys();
   //  qDebug() << "Searching for procedure : " <<m_currentToken.m_value;
+    // Already defined? calling / assigning an existing procedure?
     if (m_procedures.contains(m_symTab->m_gPrefix+m_currentToken.m_value) || dual) {
     //    qDebug() << "FOUND";
-        QString procName = m_symTab->m_gPrefix+m_currentToken.m_value;
+        QString procName = m_symTab->m_gPrefix+m_currentToken.m_value; // fix prefix
         if (dual) procName = m_currentToken.m_value;;
         Token t = m_currentToken;
         Eat(TokenType::ID);
         // Return value from "Function"
-        if (m_currentToken.m_type==TokenType::ASSIGN) {
+        if (m_currentToken.m_type==TokenType::ASSIGN) { // IS function ASSIGN myProc:= ... - so return value
             // ASSIGN procedure for return value
 //            qDebug() << procName << m_inCurrentProcedure;
             if (procName != m_inCurrentProcedure)
@@ -2101,7 +2102,7 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign)
             isAssign=true;
             return nullptr;
         }
-        Eat(TokenType::LPAREN);
+        Eat(TokenType::LPAREN); // Must be a procedure call
         QVector<QSharedPointer<Node>> paramList;
         while (m_currentToken.m_type!=TokenType::RPAREN && !m_lexer->m_finished) {
             paramList.append(Expr());
@@ -2352,6 +2353,17 @@ QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockNam
             isInline = true;
             Eat(TokenType::INLINE);
         }
+        QSharedPointer<Node> funcType;
+        if (isFunction) {
+            Eat(TokenType::COLON);
+            funcType = TypeSpec();
+            auto t = qSharedPointerDynamicCast<NodeVarType>(funcType);
+            if (!(t->value.toLower()=="integer" || t->value.toLower()=="byte")) {
+                ErrorHandler::e.Error("TRSE currently only supports return values of type 'byte' and 'integer'",t->m_op.m_lineNumber);
+            }
+
+
+        }
 
 
         Eat(TokenType::SEMI);
@@ -2390,6 +2402,10 @@ QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockNam
         m_procedures[procName] = procDecl;
 //        qDebug() << "Adding to GLOBAL list: " <<procName;
         m_symTab->m_globalList.append(procName);
+        if (isFunction)
+            qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName])->m_returnType = funcType;
+
+
 
         // For recursive procedures, it is vital that we forward declare the current procedure
         block = Block(false, procName);
