@@ -50,7 +50,7 @@ public:
     QStack<ProcedureParameter> m_parameters;
     QString m_useNext="";
     QMap< QString,QSharedPointer<Node>> m_inlineParameters;
-
+    bool m_flag1 = false;
         // Declare overloads for each kind of a file to dispatch
     virtual void dispatch(QSharedPointer<NodeBinOP> node) = 0;
     virtual void dispatch(QSharedPointer<NodeNumber> node) = 0;

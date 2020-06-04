@@ -247,9 +247,11 @@ bool ASTDispatcher6502::HandleSingleAddSub(QSharedPointer<Node> node) {
         }
         node->m_left->Accept(this);
         as->Term();
+        m_flag1=true;
         as->BinOP(node->m_op.m_type);
         node->m_right->Accept(this);
         as->Term();
+        m_flag1=false;
         as->Term(" ; end add / sub var with constant", true);
         return true;
     }
@@ -1933,13 +1935,19 @@ void ASTDispatcher6502::LoadByteArray(QSharedPointer<NodeVar> node) {
     if (!LoadXYVarOrNum(node, node->m_expr,true))
     {
         // calculation version, eg: index+2  or 3+2
-        //       as->Asm("pha");
+
+        as->ClearTerm();
+        if (m_flag1)
+            as->Asm("pha");
+
+        //as->Asm("pha");
         node->m_expr->Accept(this);
         as->Term();
         if (s->m_arrayType==TokenType::INTEGER) // integer array index is *2 (two bytes per array slot)
             as->Asm("asl");
         as->Asm("tax");
-        //          as->Asm("pla");
+        if (m_flag1)
+            as->Asm("pla");
     }
     if (m=="")
         m="lda ";
@@ -2655,6 +2663,12 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
     }
     if (node->m_right==nullptr)
         ErrorHandler::e.Error("Node assign: right hand must be expression", node->m_op.m_lineNumber);
+
+//    qDebug() << "HER" << v->getValue(as) << v->getTypeText(as);
+    if (v->getTypeText(as).toLower()=="array" && v->m_expr==nullptr) {
+        ErrorHandler::e.Error("Cannot assign an address to an array. Did you forget to use an [] index?", node->m_op.m_lineNumber);
+
+    }
 
     if (node->m_left->isWord(as)) {
         as->Asm("ldy #0");    // AH:20190722: Does not appear to serve a purpose - takes up space in prg. Breaks TRSE scroll in 4K C64 demo if take this out
