@@ -3405,6 +3405,7 @@ void Parser::HandleUseTPU(QString fileName)
     l->m_text = l->m_text.replace("\r\n","\n");
     l->m_orgText = l->m_text;
     p->m_currentFileShort = fname;
+    p->m_ignoreMethods = m_ignoreMethods;
 
     try {
 
