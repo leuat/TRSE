@@ -386,7 +386,8 @@ void Parser::PreprocessIfDefs(bool ifdef)
 
     //Eat();
      QString key="";
-
+     bool isIf = false;
+     QString keyValue ="";
      //if (m_currentToken.m_valu)
      if (m_currentToken.m_value=="else") {
 //         qDebug() << "WE ARE ELSE";
@@ -396,9 +397,17 @@ void Parser::PreprocessIfDefs(bool ifdef)
      }
       else
      {
-         // ifdef, ifndef
+         // ifdef, ifndef, if
+         if (m_currentToken.m_value=="if") isIf = true;
          Eat();
          key = m_currentToken.m_value;
+         if (isIf) {
+             Eat();
+             Eat(TokenType::EQUALS);
+             keyValue = m_currentToken.m_value;
+             if (keyValue=="") keyValue = QString::number(m_currentToken.m_intVal);
+//             Eat();
+         }
      }
   //   qDebug() << "CURRENTKEY: " <<key;
 
@@ -406,7 +415,16 @@ void Parser::PreprocessIfDefs(bool ifdef)
      m_lastKey.append(key);
      m_lastIfdef.append(ifdef);
 
-    if (ifdef && m_preprocessorDefines.contains(key)) {
+     bool valOK = true;
+
+     // test for if value
+     if (isIf && m_preprocessorDefines.contains(key)) {
+         QString val = m_preprocessorDefines[key];
+  //       qDebug() << "VALS "<<val <<keyValue;
+         valOK = (val == keyValue);
+     }
+
+    if (ifdef && m_preprocessorDefines.contains(key) && valOK) {
         Eat();
         return; // K
     }
@@ -1008,15 +1026,15 @@ void Parser::HandlePreprocessorInParsing()
 //    qDebug() <<"VAL " <<m_currentToken.m_value;
 
     if (!m_ignoreAll) {
-    if (m_currentToken.m_value=="ifdef") {
+    if (m_currentToken.m_value=="ifdef" || m_currentToken.m_value=="if") {
         PreprocessIfDefs(true);
         return;
     }
-
     if (m_currentToken.m_value=="ifndef") {
         PreprocessIfDefs(false);
         return;
     }
+
     if (m_currentToken.m_value=="else") {
 //        qDebug() << "Start with ELSE : " << m_lastIfdef.last() << m_lastKey.last();
         PreprocessIfDefs(!m_lastIfdef.last());
