@@ -499,8 +499,8 @@ void MethodsZ80::LoadSong(Assembler *as)
     auto app = QSharedPointer<Appendix>(new Appendix);
 
 
-    QString fn1 = as->m_projectDir+QDir::separator() + song+".inc";
-    QString fn2 = as->m_projectDir+QDir::separator() + song+".asm";
+    QString fn1 = as->m_projectDir + song+".inc";
+    QString fn2 = as->m_projectDir+ song+".asm";
     QString fn="";
     if (QFile::exists(fn1))
         fn=fn1;
