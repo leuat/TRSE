@@ -163,8 +163,13 @@ bool CIniFile::contains(QString name) {
 QString CIniFile::getString(QString name) {
     for (int i=0;i<items.size();i++) {
         if (items[i].name==name.toLower().trimmed()) {
-            if (items[i].strval!="")
+            if (items[i].strval!="") {
+                bool ok;
+                double d =items[i].strval.toDouble(&ok);
+                if (ok && d<0.001) items[i].strval="";
                 return items[i].strval;
+            }
+
             else {
                 if (items[i].dval>0.0001)
                     return QString::number(items[i].dval);
