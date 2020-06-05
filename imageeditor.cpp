@@ -76,5 +76,5 @@ void ImageEdit::AddUndo()
 void ImageEdit::setName()
 {
     QStringList fs = m_fileName.split("/");
-    m_name = (fs[fs.count()-1]).split(".")[0];
+    m_name = Util::getFileWithoutEnding((fs[fs.count()-1]));
 }

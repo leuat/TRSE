@@ -162,7 +162,7 @@ void CharsetImage::ExportBin(QFile &f)
     for (int i=0;i<m_charWidth*m_charHeight;i++)
         colorData.append(m_data[i].c[3]);
 
-    QString filenameBase = f.fileName().split(".")[0];
+    QString filenameBase = Util::getFileWithoutEnding(f.fileName());
     QString fColor = filenameBase + "_color.bin";
     QFile f2(fColor);
     f2.open(QFile::WriteOnly);

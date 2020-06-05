@@ -71,7 +71,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 
 
 
-    QString debugFile =fileName.split(".").first()+".sym";
+    QString debugFile =Util::getFileWithoutEnding(fileName)+".sym";
     if (QFile::exists(debugFile) && (
                 m_projectIniFile->getString("system")=="VIC20" ||
                 m_projectIniFile->getString("system")=="C64"||
@@ -968,7 +968,7 @@ void FormRasEditor::HandleBuildComplete()
         ui->txtEditor->InitCompleter(m_builderThread.m_builder->compiler->m_assembler->m_symTab, &m_builderThread.m_builder->compiler->m_parser);
 
     if (m_projectIniFile->getString("system")=="NES") {
-        BuildNes(m_currentSourceFile.split(".")[0]);
+        BuildNes(Util::getFileWithoutEnding(m_currentSourceFile));
     }
     HandleErrorDialogs(ErrorHandler::e.m_teOut);
     highlighter->m_symTab = m_builderThread.m_builder->compiler->m_parser.m_symTab;

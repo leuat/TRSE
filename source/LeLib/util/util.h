@@ -214,6 +214,8 @@ public:
 
     static QString getFileName(QString dir, QString baseName, QString type);
 
+    static QString getFileWithoutEnding(QString f);
+
     static QString loadTextFile(QString filename);
 
     static QString MilisecondToString(int ms);

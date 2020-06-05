@@ -85,7 +85,7 @@ void DialogTRSESettings::FillFromIni()
   //  qDebug() << "themes : " << themes;
     QStringList washed;
     for (QString s: themes) {
-        QString name = s.split(".")[0];
+        QString name = Util::getFileWithoutEnding(s);
     //    qDebug() << name;
         washed << name;
     }

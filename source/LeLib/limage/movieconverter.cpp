@@ -25,6 +25,8 @@
 #include <QDebug>
 #include <math.h>
 #include "source/LeLib/limage/lcolorlist.h"
+#include "source/LeLib/util/util.h"
+
 MovieConverter::MovieConverter()
 {
 
@@ -108,7 +110,7 @@ void MovieConverter::ConvertPacked(QString dir, QString baseName, QString fileEx
     int lowest = 1E20;
     for (QString img: images) {
         QString first = img.remove(baseName);
-        first = first.split(".")[0];
+        first = Util::getFileWithoutEnding(first);
         val = first.toInt();
         qDebug() << val << " " << img;
         if (val<lowest)

@@ -722,6 +722,19 @@ QString Util::getFileName(QString dir, QString baseName, QString type)
 
 }
 
+QString Util::getFileWithoutEnding(QString f)
+{
+    QStringList lst = f.split(".");
+    QString s = "";
+    for (int i=0;i<lst.count()-1;i++) {
+        s+=lst[i];
+        if (i!=lst.count()-2)
+            s+=".";
+
+    }
+    return s;
+}
+
 QString Util::loadTextFile(QString filename) {
     QFile file(filename);
     file.open(QIODevice::ReadOnly);

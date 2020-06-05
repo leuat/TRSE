@@ -557,7 +557,7 @@ void MultiColorImage::ExportBin(QFile& ofile)
 
     QString f = ofile.fileName();
 
-    QString filenameBase = f.split(".")[0];
+    QString filenameBase = Util::getFileWithoutEnding(f);
 
     QString fData = filenameBase + "_data.bin";
     QString fColor = filenameBase + "_color.bin";

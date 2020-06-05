@@ -32,7 +32,8 @@ bool SourceBuilder::Build(QString source)
     if (m_currentSourceFile.toLower().endsWith(".asm")) {
         m_buildSuccess=true;
        m_assembleSuccess=false;
-       m_filename = m_currentSourceFile.split(".")[0];
+
+       m_filename = Util::getFileWithoutEnding(m_currentSourceFile);
 /*       m_system = FactorySystem::Create(AbstractSystem::SystemFromString(
                                             m_projectIniFile.getString("system")),
                                            &m_iniFile, &m_projectIniFile);

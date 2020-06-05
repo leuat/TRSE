@@ -98,7 +98,7 @@ void LImageNES::ExportBin(QFile &file)
 
     QString f = file.fileName();
 
-    QString of = f.split(".")[0] + ".pal";
+    QString of = Util::getFileWithoutEnding(f) + ".pal";
     if (QFile::exists(of))
         QFile::remove(of);
     QFile wf(of);
@@ -118,7 +118,7 @@ void LImageNES::ExportBin(QFile &file)
     QByteArray d2;
     d2.append(data);
     d2.append(ba);
-    Util::SaveByteArray(d2,f.split(".")[0] + ".chr");
+    Util::SaveByteArray(d2,Util::getFileWithoutEnding(f) + ".chr");
 
 }
 
