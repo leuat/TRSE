@@ -34,4 +34,7 @@ exomize_toggle = 0
 exomizer_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
+<<<<<<< HEAD
+=======
+>>>>>>> fa9a420be7294cfe4023849fece014467b2fa8d6
 open_files =, player.ras

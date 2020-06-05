@@ -13,7 +13,7 @@ var
 	music: incnsf("music/zelda.nsf");
 	// Standard palette. Use YYchr (https://www.romhacking.net/utilities/119/) to create and edit.
 
-
+	
 	// Location of the sprite
 	sprite_x, sprite_y : byte;
 

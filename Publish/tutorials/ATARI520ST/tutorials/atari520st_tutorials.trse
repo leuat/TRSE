@@ -46,4 +46,7 @@ data_header_images/image1.flf = 0
 data_header_images/logo.flf = 0
 data_header_images/image2.flf = 0
 data_header_images/image3.flf = 0
+<<<<<<< HEAD
+=======
+>>>>>>> fa9a420be7294cfe4023849fece014467b2fa8d6
 open_files =, tut1.ras

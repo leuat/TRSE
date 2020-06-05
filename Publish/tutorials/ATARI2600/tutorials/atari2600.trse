@@ -41,4 +41,7 @@ override_target_settings_basic = 6.95286e-310
 override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
+<<<<<<< HEAD
+=======
+>>>>>>> fa9a420be7294cfe4023849fece014467b2fa8d6
 open_files =, tutorial1.ras
