@@ -57,3 +57,4 @@ remove_unused_symbols = 1
 open_files = -1
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/PurplePlanetYo/
 current_file = demo.asm
+open_files =, demo.ras

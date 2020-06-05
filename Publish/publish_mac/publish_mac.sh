@@ -1,13 +1,13 @@
 rm -rf trse
 mkdir trse
-cp -r ../../release/trse.app trse/
+cp -r ../../Release/trse.app trse/
 cp -r  ../source/* trse/trse.app/
 cp -r  ../source/* trse/trse.app/	
 cp -r ../tutorials trse/trse.app/
 cp -r ../project_templates trse/trse.app/
-cp -r ~/Documents/Github/OK64/Release/OK64.app  trse/
+cp -r ~/code/OK64/Release/OK64.app  trse/
 cd trse/trse.app
- ~/Qt/5.13.1/clang_64/bin/macdeployqt .
+ ~/Qt/5.15.0/clang_64/bin/macdeployqr .
  rm *.ini
  cd ../../
  find trse -name '*.prg' -delete

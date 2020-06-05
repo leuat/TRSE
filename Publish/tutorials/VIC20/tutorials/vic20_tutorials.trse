@@ -54,3 +54,4 @@ ignore_initial_jump = 0
 override_target_settings_basic = 6.95297e-310
 exomizer_toggle = 0
 open_files =, easy/01_hello_world.ras
+open_files =, easy/01_hello_world.ras

@@ -42,3 +42,4 @@ override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
 open_files =, tutorial1.ras
+open_files =, tutorial1.ras

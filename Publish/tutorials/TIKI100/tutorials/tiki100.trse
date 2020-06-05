@@ -44,3 +44,4 @@ build_list = ,
 open_files = ,tutorial1.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/TIKI100/tutorials/
 current_file = tutorial1.ras
+open_files =, tutorial1.ras

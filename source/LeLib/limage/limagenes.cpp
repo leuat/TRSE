@@ -97,8 +97,7 @@ void LImageNES::ExportBin(QFile &file)
 
 
     QString f = file.fileName();
-
-    QString of = f.split(".")[0] + ".pal";
+    QString of = f.split(".bin")[0] + ".pal";
     if (QFile::exists(of))
         QFile::remove(of);
     QFile wf(of);
