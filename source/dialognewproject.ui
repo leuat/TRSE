@@ -58,6 +58,11 @@
           </item>
           <item>
            <property name="text">
+            <string>GAMEBOY</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
             <string>C128</string>
            </property>
           </item>

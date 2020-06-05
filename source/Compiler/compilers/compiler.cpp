@@ -53,21 +53,16 @@ void Compiler::Parse(QString text, QStringList lst, QString fname)
     Parser::s_usedTRUs.clear(); // None TRU's are marked
     Parser::s_usedTRUNames.clear(); // None TRU's are marked
     Parser::m_tpus.clear();
-    //qDebug() << "******" << m_ini->getString("assembler").toUpper();
+    // MAIN parser
     try {
         m_tree = m_parser.Parse( m_projectIni->getdouble("remove_unused_symbols")==1.0 &&
                                  Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES
-                                 ,m_projectIni->getString("vic_memory_config"),Util::fromStringList(m_projectIni->getStringList("global_defines")),
+                                 ,m_projectIni->getString("vic_memory_config"),
+                                 Util::fromStringList(m_projectIni->getStringList("global_defines")),
                                  m_projectIni->getdouble("pascal_settings_use_local_variables")==1.0);
 
 
-//        m_tree->parseConstants(m_parser.m_symTab);
-        //qDebug() << m_parser.m_preprocessorDefines["ORGASM"];
-        //exit(1);
     } catch (FatalErrorException e) {
-//        qDebug() << "ERROR parse " << e.message;
-        //m_tree->Delete();
-//        m_tree = nullptr;
         HandleError(e, "Error during parsing");
     }
 
@@ -86,8 +81,10 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
     Syntax::s.m_currentSystem->DefaultValues();
 
     try {
+        // Set up assembler and dispatcher for the current system
         InitAssemblerAnddispatcher(system);
         m_assembler->m_curDir = project_dir;
+
     } catch (FatalErrorException e) {
         HandleError(e,"Error during pre-build");
         return false;
@@ -112,7 +109,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
         try {
         qSharedPointerDynamicCast<NodeProgram>(m_tree)->m_initJumps = m_parser.m_initJumps;
         m_dispatcher->as = m_assembler.get();
-
+        // Visit that AST node tree baby!
         m_tree->Accept(m_dispatcher.get());
 
     } catch (FatalErrorException e) {

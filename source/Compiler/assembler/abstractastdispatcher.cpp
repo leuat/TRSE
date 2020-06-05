@@ -191,7 +191,6 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeConditional> node)
     bool offpage = isOffPage(node, node->m_block, node->m_elseBlock);
 
 
-
     QString localFailed = failedLabel;
 
     if (offpage && Syntax::s.m_currentSystem->m_processor!=AbstractSystem::Z80) {

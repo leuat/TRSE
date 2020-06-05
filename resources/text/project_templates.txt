@@ -13,8 +13,9 @@ VIC20; 8K cartridge; vic20_8kcart; <h2>Vic 20 8k cartridge project</h2><p>Vic 20
 VIC20; 16K cartridge; vic20_16kcart; <h2>Vic 20 16k cartridge project</h2><p>Vic 20 project with a basic set up ready to use as an 16K cartidge at addresses $2000 and $A000.</p>
 VIC20; 32K cartridge; vic20_32kcart; <h2>Vic 20 32k cartridge project</h2><p>Vic 20 project with a basic set up ready to use as an 32K cartidge at addressses $2000, $4000, $6000 and $A000.</p>
 NES; NES sample project; nes_general; <h2>Small NES sample project</h2><p>Sets up a NES project with a main source file, tile ROM image file and music.
+GAMEBOY; Gameboy game project; gameboy_game; <h2>Small Gameboy sample project</h2><p>Sets up a Gameboy game project that renders a movable sprite in a collidable level. Charset, tiles, metatiles, level and sprites are included.
 PET; Commodore PET project; pet_general; <h2>Small Commodore PET project</h2><p>A small sample project for the commodore PET that displays some random text on the screen.
 PLUS4; Empty Commodore PLUS4 project; plus4_general; <h2>Small Commodore PLUS4 project</h2><p>A small sample project for the commodore PLUS that displays text.
 C128; C128 80 column project; c128_general; <h2>Small Commodore C128 80-column project</h2><p>A small sample project for the C128 that serves as a starting point.
 OK64; OK64 sample project; ok64_general; <h2>OK64 sample project with SID music, an image and some circles.</h2><p>The OK64 is a MOS6502-based "fake" computer designed by the TRSE team. The OK64 supports VGA-like graphics with 1mb ram, a 1 mhz MOS6502 with 64kb program ram and a SID chip.<p>The OK64 emulator is included with TRSE, and works out-of-the-box.
-X86; X86 8086 CGA sample project; x86_cga_general; <h2>X86 8086 CGA sample project with sprites and an image.</h2><p>NB: The X86 compiler is still very much in beta, and is considered pre-alpha / WIP until TRSE 0.10!
+X86; X86 8086 CGA sample project; x86_cga_general; <h2>X86 8086 CGA sample project with sprites and an image.</h2><p>NB: The X86 compiler is still very much in beta, and is considered pre-alpha / WIP until TRSE 0.12!

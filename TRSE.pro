@@ -33,6 +33,7 @@ INCLUDEPATH +=$$PWD/libs/lua/include
 #if USE_LUA
 #LIBS
 DEPENDPATH += $$PWD/../Libs
+win32:RC_ICONS += trse.ico
 ICON = trse.icns
 
 macx {
@@ -73,7 +74,6 @@ linux*{
 
 }
 
-win32:RC_ICONS += trse.ico
 
 
 
