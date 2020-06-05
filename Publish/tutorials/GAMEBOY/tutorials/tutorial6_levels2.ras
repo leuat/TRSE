@@ -12,6 +12,22 @@ program Tutorial3_Levels;
 @export "images/tiles.flf" "images/tiles.bin" 256
 
 
+// Delete the packed data
+@deletefile "images/sprites_packed.flf"
+// Delete the packed index lookup file
+@deletefile "images/sprites_index.bin"
+
+// Pack sprite 1 : girl at 0,0 - 2,3 in "sprites.flf"
+@spritepacker "images/sprites.flf" "images/sprites_packed.flf" "images/sprites_index.bin" "gameboy" 0 0 2 3 0
+// Pack sprite 2 : girl at 2,0 - 4,3 in "sprites.flf"
+@spritepacker "images/sprites.flf" "images/sprites_packed.flf" "images/sprites_index.bin" "gameboy" 2 0 2 3 0
+// Pack sprite 3 : girl at 4,0 - 6,3 in "sprites.flf"
+@spritepacker "images/sprites.flf" "images/sprites_packed.flf" "images/sprites_index.bin" "gameboy" 4 0 2 3 0
+
+// Export the packed file to a binary file
+@export "images/sprites_packed.flf" "images/sprites_packed.bin" 64
+
+
 var  
 	// Bank to place sprites
 	const levelBank : byte = 2;

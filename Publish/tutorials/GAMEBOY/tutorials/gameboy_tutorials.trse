@@ -50,7 +50,4 @@ data_header_images/level.flf = 0
 charset_images/level.flf = /home/leuat/code/TRSE/tutorials/GAMEBOY/tutorials/images/metatiles.flf
 data_header_images/metatiles.flf = 0
 data_header_images/charset.flf = 6.91604e-310
-<<<<<<< HEAD
-=======
->>>>>>> fa9a420be7294cfe4023849fece014467b2fa8d6
 open_files =, tutorial1.ras
