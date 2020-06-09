@@ -34,7 +34,7 @@ INCLUDEPATH +=$$PWD/libs/lua/include
 #LIBS
 DEPENDPATH += $$PWD/../Libs
 win32:RC_ICONS += trse.ico
-ICON = trse.icns
+ICON = trse.
 
 macx {
     QMAKE_CXXFLAGS += -openmp

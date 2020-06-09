@@ -325,7 +325,6 @@ void ASTDispatcher6502::RightIsPureNumericMulDiv16bit(QSharedPointer<Node> node)
     as->Asm("");
     LoadVariable(node->m_left);
     as->Term();
-
     varName = as->StoreInTempVar("int_shift", "word");
 //    as->ClearTerm();
   //  as->Asm("sty "+varName);
@@ -387,16 +386,17 @@ void ASTDispatcher6502::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>nod
 //    QString cmd = node->m_op.m_type==TokenType::SHR?"lsr":"asl";
     QString command = "";
     if (node->m_op.m_type==TokenType::SHR) {
-        command = "\tlsr " + varName +"+1"+ "\n";
-        command += "\tror " + varName+"+0" + "\n";
+        command = "\tlsr " + varName +"+1 ;keep"+ "\n";
+        command += "\tror " + varName+"+0 ;keep" + "\n";
     }
     else {
-        command = "\tasl " + varName +"+0"+ "\n";
-        command += "\trol " + varName+"+1" + "\n";
+        command = "\tasl " + varName +"+0 ;keep"+ "\n";
+        command += "\trol " + varName+"+1 ;keep" + "\n";
     }
     if (node->m_right->isPureNumeric()) {
 
         int val = node->m_right->getValueAsInt(as);
+        as->Comment("COUNT : "+QString::number(val));
         for (int i=0;i<val;i++)
             as->Asm(command);
 

@@ -1302,7 +1302,8 @@ void Parser::Record(QString name)
     m_symTab->m_records[name] = record;
     //m_symTab->Define(new Symbol(name,"record"));
     record->setName(name);
-
+    QString oldPrefix = m_symTab->m_gPrefix;
+    m_symTab->m_gPrefix="";
     while (m_currentToken.m_type!=TokenType::END) {
         QVector<QSharedPointer<Node>> vars = VariableDeclarations("");
         for (QSharedPointer<Node> n : vars) {
@@ -1317,6 +1318,8 @@ void Parser::Record(QString name)
         Eat(TokenType::SEMI);
 
     }
+    m_symTab->m_gPrefix = oldPrefix;
+
     Eat(TokenType::END);
 //    Eat(TokenType::SEMI);
 }
@@ -3038,12 +3041,14 @@ QStringList Parser::BuildTable(int cnt)
         args << i;
         QJSValue ret = fun.call(args);
 
+
         if (ret.isError())
             ErrorHandler::e.Error("Error evaluation javascript expression : " + ret.toString() + " <br><br>", m_currentToken.m_lineNumber);
 
 //        data << Util::numToHex(ret.toInt()&0xFF);
  //       if ()
 //        data << Util::numToHex(ret.toInt()&0xFF);
+//        qDebug() <<  ret.toInt();
         data << Util::numToHex(ret.toInt()&0xFFFF);
     }
 

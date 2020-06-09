@@ -76,7 +76,7 @@ void Methods68000Atari::Assemble(Assembler *as, AbstractASTDispatcher *dispatche
 //    m; HLine; ATARI520ST; a, i,i,i
 
     if (Command("InitGraphics")) {
-        as->Asm("bsr gfx_find_phys");
+//        as->Asm("bsr gfx_find_phys");
         as->Asm("bsr gfx_wrt_phys_tbl");
         as->Asm("bsr holine_hline_lu");
     }

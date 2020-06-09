@@ -32,6 +32,7 @@ void AsmM68000::DeclareArray(QString name, QString type, int count, QStringList 
 
 
     if (data.count()==0 && pos=="") {
+        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA) {
         if (type.toLower()=="integer")
             t = "blk.w";
         if (type.toLower()=="byte")
@@ -42,6 +43,20 @@ void AsmM68000::DeclareArray(QString name, QString type, int count, QStringList 
 
         if (type.toLower()=="long")
             t = "blk.l";
+        }
+        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::ATARI520ST) {
+        if (type.toLower()=="integer")
+            t = "dcb.w";
+        if (type.toLower()=="byte")
+            t = "dcb.b";
+
+        if (type.toLower()=="string")
+            t = "dcb.b";
+
+        if (type.toLower()=="long")
+            t = "dcb.l";
+        }
+
 
         Write(name +"\t" + t + "\t " + QString::number(count));
 

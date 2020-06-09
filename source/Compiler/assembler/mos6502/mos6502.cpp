@@ -828,8 +828,11 @@ void AsmMOS6502::OptimisePassStaLda()
         QString l0 = getLine(i);
         if (l0.contains("sta")) {
             QString l1 = getNextLine(i,j);
-            if (l0==l1) {
+            if (l0==l1 && !
+                    l1.contains("keep")) {
                 //qDebug() << "Removing " <<l0;
+                //qDebug() << "Removing: " << l1 << " on line " << j;
+
                 m_removeLines.append(j);
                 continue;
             }
@@ -907,7 +910,6 @@ void AsmMOS6502::OptimisePassLdx(QString x)
   //                      qDebug () << "Removing because equal: " << l0 << ", " << l1;
                         m_removeLines.append(j);
                         curCnt++;
-                        //qDebug() << "Removing: " << l1 << " on line " << j;
                         continue;
                     }
                     //qDebug() << "curop:" << op;
@@ -931,7 +933,6 @@ void AsmMOS6502::OptimisePassLdx(QString x)
 
 
                     ll++;
-
                      if (x=="a") {
                         if (op==("lda") || op==("txa") || op==("tya") || op=="jmp" || op=="rts" || op=="jsr" ||
                                 op==("ina") || op==("dea")|| op.length()!=3  || op==("adc") || op==("sbc") || op==("cmp")

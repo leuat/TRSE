@@ -1,5 +1,6 @@
 #include "raytracer.h"
 
+
 #ifndef TARGET_OS_MAC
 #include <omp.h>
 #endif

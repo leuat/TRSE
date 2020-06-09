@@ -22,7 +22,15 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeBinOP>node) {
     as->BinOP(node->m_op.m_type);
     QString op = as->m_varStack.pop();
     QString d0 = as->m_regAcc.Get();
-    as->Comment("BOP NEW register: " + d0);
+    bool adv = false;
+    if (node->m_op.m_type == TokenType::SHR || node->m_op.m_type == TokenType::SHL) {
+        if (!node->m_right->isPureNumeric())
+            adv = true;
+    }
+    if (adv)
+        as->Comment("Advanced binop: Evaluate expr first");
+
+//    as->Comment("BOP NEW register: " + d0);
 //    if (m_clearFlag) {
 
         TransformVariable(as,"moveq",d0,"#0");
@@ -34,12 +42,27 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeBinOP>node) {
 //    qDebug() << "NodeBinOp : " << op;
   //  as->Comment("NodeBinop  : " +op);
     if (op.toLower().contains("mul") || op.toLower().contains("div"))
-        op = op+".w"; else op=op + getEndType(as,node->m_left, node->m_right);//+m_lastSize;//+".l";
+        op = op+".w";
+    else op=op + getEndType(as,node->m_left, node->m_right);//+m_lastSize;//+".l";
 
 //    as->Comment("d0 used:" +d0);
-    node->m_right->Accept(this);
+    if (adv) {
+        QString d1 = as->m_regAcc.Get();
 
-    TransformVariable(as,op,d0,as->m_varStack.pop());
+        node->m_right->Accept(this);
+        TransformVariable(as,"move"+getEndType(as,node->m_right, node->m_right),d1 + "     ; Advanced move",as->m_varStack.pop());
+
+        TransformVariable(as,op,d0,d1);
+
+        as->m_regAcc.Pop(d1);
+
+    }
+    else {
+        node->m_right->Accept(this);
+        TransformVariable(as,op,d0,as->m_varStack.pop());
+    }
+
+
     as->m_varStack.push(d0);
 
 
@@ -181,6 +204,10 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeVarDecl> node)
 
     if (t->m_flags.contains("chipmem"))
         as->m_currentBlock = as->m_chipMem;
+
+    if (t->m_flags.contains("aligned")) {
+        as->Asm(" 	CNOP 0,256");
+    }
 
 
     AbstractASTDispatcher::dispatch(node);
@@ -1104,6 +1131,9 @@ void ASTDispatcher68000::IncBin(QSharedPointer<NodeVarDecl> node) {
         size = f.size();  //when file does open.
         f.close();
     }
+
+
+
 
 
     if (t->m_position=="") {
