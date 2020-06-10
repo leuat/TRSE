@@ -752,12 +752,20 @@ int Parser::findPage()
     return forcePage ;
 }
 
-void Parser::VerifyTypeSpec(Token t)
+void Parser::VerifyTypeSpec(Token& t)
 {
     try {
         bool ok = false;
         if (m_symTab->m_records.contains(t.m_value))
             ok=true;
+
+        if (m_symTab->m_records.contains(m_symTab->m_gPrefix+t.m_value)) {
+            t.m_value = m_symTab->m_gPrefix+t.m_value;
+            ok=true;
+        }
+
+
+
         //return;
         if (!ok)
             m_symTab->Lookup(t.m_value,t.m_lineNumber);
@@ -2803,7 +2811,7 @@ QSharedPointer<Node> Parser::TypeSpec()
 //        qDebug() << "Type: " << t.m_value;
   //      t.m_type = arrayType.m_type;
 //        qDebug()<< "PARSE "<< arrayType.getType() <<arrayType.m_value;
-        if (m_symTab->m_records.contains(arrayType.m_value)) {
+        if (m_symTab->m_records.contains( arrayType.m_value)) {
             arrayType.m_type = TokenType::RECORD;
             if (m_symTab->m_records[arrayType.m_value]->ContainsArrays())
                 ErrorHandler::e.Error("You cannot declare an array of records that contain sub-arrays due to 6502 limitations. <br>Please remove the sub-array from the record type in question : '"+arrayType.m_value+"'.",arrayType.m_lineNumber);
