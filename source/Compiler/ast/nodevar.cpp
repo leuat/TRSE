@@ -101,9 +101,19 @@ TokenType::Type NodeVar::getArrayType(Assembler *as)
     TokenType::Type t = m_op.m_type;
     if (as==nullptr)
         return t;
-    if (as->m_symTab->Lookup(value, m_op.m_lineNumber)!=nullptr)
-        t= as->m_symTab->Lookup(value, m_op.m_lineNumber)->m_arrayType;
+    if (as->m_symTab->Lookup(getValue(as), m_op.m_lineNumber)!=nullptr)
+        t= as->m_symTab->Lookup(getValue(as), m_op.m_lineNumber)->m_arrayType;
 
+
+/*    if (m_subNode!=nullptr) {
+        qDebug() << getValue(as) << TokenType::getType(as->m_symTab->Lookup(getValue(as), m_op.m_lineNumber)->m_arrayType);
+
+//         Ok this is an array of a record. Need to find the actual type
+//        if (m_subNode!=nullptr) {
+  //          QSharedPointer<Symbol> s = as->m_symTab->Lookup(v,m_op.m_lineNumber,true);
+
+    }
+*/
 /*    if (m_forceType!=TokenType::NADA && t!=TokenType::POINTER)
         return m_forceType;
 */

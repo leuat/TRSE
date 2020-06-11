@@ -263,6 +263,8 @@ public:
     void PopLabel(QString s) {
         m_labelStack[s].pop();
     }
+    QString byte = "dc.b";
+    QString word = "dc.w";
 
     Assembler();
     virtual ~Assembler();
@@ -313,6 +315,10 @@ public:
     virtual void Optimise(CIniFile& ini) {}
 
     virtual void IncludeFile(QString pfile);
+
+
+    virtual bool DeclareRecord(QString name, QString type, int count, QStringList data, QString pos);
+
 
     void ClearTerm() {
         m_term = "";

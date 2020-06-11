@@ -306,6 +306,81 @@ void Assembler::IncludeFile(QString pfile)
 
 }
 
+bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList data, QString pos)
+{
+    if (m_symTab->m_records.contains(type)) {
+        if (pos!="") {
+            int p = Util::NumberFromStringHex(pos);
+
+            QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
+
+            for (QSharedPointer<Symbol> s : st->m_symbols) {
+                //qDebug() << "WTF " <<s->m_name <<s->m_type;
+                // Build the name
+                QString n = name + "_" + st->m_name+"_"+s->m_name;
+                QString w = n;
+                //            QString t = byte;
+                //
+                //                  t= word;
+
+                w = w+ "\t = \t" + Util::numToHex(p);
+
+
+                //if (s->m_type.toLower()=="integer")
+                //    ErrorHandler::e.Error("Record types does not support integer (yet) for record : " + type);
+                if (s->m_type.toLower()=="string")
+                    ErrorHandler::e.Error("Record types does not support strings (yet) for record : " + type);
+                Write(w);
+                int scale = 1;
+                if (s->m_type.toLower()=="integer")
+                    scale=2;
+                p+=count*scale;
+
+            }
+
+
+            return true;
+        }
+        //          StartMemoryBlock(pos);
+
+        //        ErrorHandler::e.Error("Record types not implemented yet: " + type);
+        QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
+        for (QSharedPointer<Symbol> s : st->m_symbols) {
+            //qDebug() << "WTF " <<s->m_name <<s->m_type;
+            // Build the name
+            QString n = name + "_" + st->m_name+"_"+s->m_name;
+            QString w = n;
+            QString t = byte;
+            if (s->m_type.toLower()=="integer")
+                t= word;
+
+            w = w+ "\t"+t + "\t0";
+
+
+            //if (s->m_type.toLower()=="integer")
+            //    ErrorHandler::e.Error("Record types does not support integer (yet) for record : " + type);
+            if (s->m_type.toLower()=="string")
+                ErrorHandler::e.Error("Record types does not support strings (yet) for record : " + type);
+            Write(w);
+            int scale = 1;
+
+            QString bytes = "";
+            for (int i=0;i<count-1;i++)
+                bytes+="0,";
+            bytes.remove(bytes.count()-1,1);
+            if (count!=1)
+                Asm("    "+t+" "+bytes);
+            //                Asm("org "+n+"+" +QString::number(count*scale));
+
+        }
+        //    if (pos!="")
+        //      EndMemoryBlock();
+
+        return true;
+    }
+    return false;
+}
+
 void Assembler::Term(QString s, bool write)
 {
     m_term+=s;
@@ -354,7 +429,7 @@ void Assembler::Connect()
     //  qDebug() << m_appendix[0].m_source;
     QStringList pre;
     for (int i=0;i<m_appendix.count();i++) {
-//                qDebug() << (m_appendix[i].m_pos);
+        //                qDebug() << (m_appendix[i].m_pos);
         if (Util::NumberFromStringHex(m_appendix[i]->m_pos)<Syntax::s.m_currentSystem->m_programStartAddress)
             pre <<m_appendix[i]->m_source;
         else m_source << m_appendix[i]->m_source;
@@ -364,11 +439,11 @@ void Assembler::Connect()
     m_source = QStringList() << " processor 6502" <<pre << m_source;
     m_source.removeAll("");
     // Delete appendix
-//    qDebug() << "Deleting appendices : "<<m_appendix.count() << m_blockStack.count();
-/*    for (QSharedPointer<Appendix> a: m_appendix)
+    //    qDebug() << "Deleting appendices : "<<m_appendix.count() << m_blockStack.count();
+    /*    for (QSharedPointer<Appendix> a: m_appendix)
         delete a;*/
- //   m_appendix.clear();
-/*    for (Appendix* a: m_blockStack)
+    //   m_appendix.clear();
+    /*    for (Appendix* a: m_blockStack)
         delete a;
     m_blockStack.clear();*/
 }
@@ -400,8 +475,8 @@ QString RegisterStack::Get() {
         m_latest.append(reg);
         return reg;
     }
-//    qDebug() << "NO FREE REGISTERS :  RegisterStack::Get()";
-  //  exit(1);
+    //    qDebug() << "NO FREE REGISTERS :  RegisterStack::Get()";
+    //  exit(1);
     ErrorHandler::e.Error("NO FREE Registers (shouldn't happen)",0);
 }
 

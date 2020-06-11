@@ -693,7 +693,11 @@ void ASTDispatcher68000::StoreVariable(QSharedPointer<NodeVar> n)
             if (n->getArrayType(as)==TokenType::LONG) {
                 as->Asm("lsl #2,"+d1);
             }
-
+         /*   if (n->getArrayType(as)==TokenType::RECORD) {
+                as->Comment("ARRAY TYPE : "+TokenType::getType(n->getArrayType(as)));
+                as->Asm("lsl #1,"+d1);
+            }
+*/
 
             //qDebug() << "Popping varstack: " <<d1;
 //            as->Comment("Type: " + TokenType::getType(n->getType(as)));

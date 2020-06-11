@@ -67,8 +67,6 @@ public:
             return true;
         return false;
     }
-    QString byte = "dc.b";
-    QString word = "dc.w";
     QString m_currentVar="";
 //    QString m_currentLoopVar="";
     //int m_lblIdx = 0;
@@ -77,7 +75,7 @@ public:
 
     void InitCStrings();
 
-    bool DeclareRecord(QString name, QString type, int count, QStringList data, QString pos);
+//    bool DeclareRecord(QString name, QString type, int count, QStringList data, QString pos);
 
     void Program(QString name, QString vicParams) override;
     void EndProgram() override;

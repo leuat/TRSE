@@ -229,7 +229,7 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "initmodplayer(" , "include_modplayer");
         InitBuiltinFunction(QStringList()<< "decrunch("<<"decrunchfromindex(", "init_decrunch");
 
-        if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES)
+        if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES && Syntax::s.m_currentSystem->m_system!=AbstractSystem::ATARI520ST)
             InitBuiltinFunction(QStringList()<< "sine[", "initsinetable", "initsine_calculate");
 
         InitBuiltinFunction(QStringList()<< "log2_table[" << "atan2(", "initlog2");
@@ -2655,8 +2655,9 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
     //   qDebug() << "C";
        if (typeNode->m_arrayVarType.m_type==TokenType::RECORD) {
   //         qDebug() << typeNode->m_op.m_value << TokenType::getType(typeNode->m_op.m_type)  << TokenType::getType(typeNode->m_arrayVarType.m_type);
-//           ;
+//
            s->m_arrayTypeText = typeNode->m_arrayVarType.m_value;
+
        }
 //       qDebug() << "D";
     }

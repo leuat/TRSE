@@ -58,13 +58,19 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
         QSharedPointer<SymbolTable>  ns = symTab->m_records[typeSymbol->m_name];
             for (QSharedPointer<Symbol> s : ns->m_symbols) {
                 QSharedPointer<Symbol> ns = QSharedPointer<Symbol>(new Symbol(varName + "_" + typeSymbol->m_name + "_"+s->m_name, s->m_type));
-//                if
-  //              qDebug() << "TS "<<s->m_type;
-                if (s->m_type=="ARRAY") {
+//
+                // Make sure that the array is the correct type (int / long)
+                ns->m_arrayType = s->getTokenType();
+                ns->m_arrayTypeText = s->m_type;
+
+//                qDebug() << "TS "<<s->m_type << ns->m_name << ns->m_arrayTypeText << TokenType::getType(ns->getTokenType());
+/*                if (s->m_type.toUpper()=="ARRAY") {
                     ns->m_arrayType = s->m_arrayType;
                     ns->m_arrayTypeText = s->m_arrayTypeText;
+                    qDebug() << ns->m_value << " VS " << s->m_arrayTypeText;;
+
 //                    qDebug() << "Defining : "<<varName + "_" + typeSymbol->m_name + "_"+ns->m_name << ns->m_type << TokenType::getType(ns->m_arrayType);
-                }
+                }*/
                 ns->m_flags = typeNode->m_flags;
                 ns->m_bank = typeNode->m_bank;
                 symTab->Define(ns);
