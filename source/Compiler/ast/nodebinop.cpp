@@ -181,6 +181,8 @@ QString NodeBinOP::getValue(Assembler *as) {
 TokenType::Type NodeBinOP::getType(Assembler *as) {
     TokenType::Type a =m_right->getType(as);
     TokenType::Type b =m_left->getType(as);
+
+
     if (a==TokenType::LONG || b==TokenType::LONG)
         return TokenType::LONG;
     if (a==TokenType::INTEGER || b==TokenType::INTEGER)

@@ -72,6 +72,7 @@ TokenType::Type NodeVar::getType(Assembler *as) {
 //            qDebug() << "NodeVar::getType "<< s->m_name << TokenType::getType(s->getTokenType()) << " with forcetype " << TokenType::getType(m_forceType);
             if (s!=nullptr)
                 t= s->getTokenType();
+
         }
         //qDebug() << "Forcetype = " << TokenType::getType(m_forceType);
         if ((m_forceType!=TokenType::NADA))// && (t!=TokenType::POINTER && m_expr==nullptr))
@@ -81,8 +82,15 @@ TokenType::Type NodeVar::getType(Assembler *as) {
     }
 
     TokenType::Type t = m_op.m_type;
-    if (as->m_symTab->Lookup(value, m_op.m_lineNumber)!=nullptr)
-        t= as->m_symTab->Lookup(value, m_op.m_lineNumber)->getTokenType();
+    QSharedPointer<Symbol> s = as->m_symTab->Lookup(value, m_op.m_lineNumber);
+//    qDebug() << "VAL "<<getValue(as) ;
+    if (s!=nullptr)
+        t= as->m_symTab->Lookup(getValue(as), m_op.m_lineNumber)->getTokenType();
+
+
+//    qDebug() <<  + " " + TokenType::getType(t);
+
+
 
     if (m_forceType!=TokenType::NADA && t!=TokenType::POINTER)
         return m_forceType;
@@ -223,7 +231,9 @@ QString NodeVar::getValue(Assembler* as) {
 
     }
 //    qDebug() << "NodeVar:: getValue : " << value << "  "  << TokenType::getType(getType(as));
-    if (m_forceAddress && !(getType(as)==TokenType::POINTER)) return "#" + v;
+//    if (m_forceAddress && !(getType(as)==TokenType::POINTER)) return "#" + v;
+//    if (m_forceAddress && !(getType(as)==TokenType::POINTER)) return "#" + v;
+    if (m_forceAddress && !(isPointer(as))) return "#" + v;
     return v;
 }
 

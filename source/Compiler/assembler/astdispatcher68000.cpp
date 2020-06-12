@@ -648,7 +648,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeComment> node)
 
 void ASTDispatcher68000::StoreVariable(QSharedPointer<NodeVar> n)
 {
-        as->Comment("StoreVar : " +QString::number(n->m_expr==nullptr));
+        as->Comment("Store variable : " + n->getValue(as));
         if (n->m_expr!=nullptr) {
     //        qDebug() << n->m_op.getType();
       //      exit(1);
@@ -667,14 +667,16 @@ void ASTDispatcher68000::StoreVariable(QSharedPointer<NodeVar> n)
             QString d2 = as->m_regAcc.Get();
             QString oldd2 = "";
             bool newD2 = false;
-            if (d2==d0) { // If they are equal, get another one {
+            if (d2 == d0) { // If they are equal, get another one {
                 oldd2 =d2;
                 d2 = as->m_regAcc.Get();
                 newD2 = true;
             }
+    //        as->Comment("Storevar Free "+Util::toString(as->m_regAcc.m_free));
+  //          as->Comment("Occ "+Util::toString(as->m_regAcc.m_occupied));
 
             //d0 = d2;
-            as->Comment("Storevar START getting new unused var "+d0);
+//            as->Comment("Storevar START getting new unused var "+d0);
 //            QString d0 = as->m_regAcc.Get();
             QString a0 = as->m_regMem.Get();
  //           QStringList ls = QStringList() << "d0";
@@ -712,6 +714,8 @@ void ASTDispatcher68000::StoreVariable(QSharedPointer<NodeVar> n)
             if (m_regs.contains(d2)) {
                 as->m_regAcc.Pop(d2);
             }
+            if (oldd2!="")
+                as->m_regAcc.Pop(oldd2);
 
             return;
         }
@@ -730,7 +734,7 @@ void ASTDispatcher68000::LoadVariable(QSharedPointer<NodeVar> n)
   //      exit(1);
         bool done = false;
         if (as->m_regAcc.m_latest.count()==2) {
-            as->Comment("Trying to clear: " + as->m_regAcc.m_latest + " YO");
+            //as->Comment("Trying to clear: " + as->m_regAcc.m_latest + " YO");
 //            TransformVariable(as,"move.l",as->m_regAcc.m_latest,"#0");
             done = true;
         }
@@ -738,7 +742,7 @@ void ASTDispatcher68000::LoadVariable(QSharedPointer<NodeVar> n)
         QString d0 = as->m_regAcc.Get();
         QString a0 = as->m_regMem.Get();
         if (!done ) {
-            as->Comment("Clearing : " + d0 + " YO");
+//            as->Comment("Clearing : " + d0 + " YO");
             m_clearFlag=true;
            // TransformVariable(as,"move.l",d0,"#0");
         }
@@ -747,9 +751,11 @@ void ASTDispatcher68000::LoadVariable(QSharedPointer<NodeVar> n)
         LoadVariable(n->m_expr);
         QString d1 = as->m_varStack.pop();
         if (n->getArrayType(as)==TokenType::INTEGER) {
+            as->Comment("Array is integer, so multiply with 2");
             as->Asm("lsl #1,"+d1);
         }
         if (n->getArrayType(as)==TokenType::LONG) {
+            as->Comment("Array is long, so multiply with 4");
             as->Asm("lsl #2,"+d1);
         }
         //qDebug() << "TYPE: "<< TokenType::getType(n->getArrayType(as));
@@ -769,6 +775,11 @@ void ASTDispatcher68000::LoadVariable(QSharedPointer<NodeVar> n)
 
         as->m_regMem.Pop(a0);
         as->m_regAcc.Pop(d0);
+
+//        as->Comment("LoadVar array Popping "+a0 +" " +d0 + "   pushing " + d0);
+  //      as->Comment("Free "+Util::toString(as->m_regAcc.m_free));
+  //      as->Comment("Occ "+Util::toString(as->m_regAcc.m_occupied));
+
 //        as->m_regAcc.Pop(d0);
 //        LoadPointer(n);
         //qDebug() << "Done: ";
@@ -778,7 +789,7 @@ void ASTDispatcher68000::LoadVariable(QSharedPointer<NodeVar> n)
 
     QString d0 = as->m_regAcc.Get();
     if (m_clearFlag) {
-        as->Comment("LoadVariable:: Clearing");
+//        as->Comment("LoadVariable:: Clearing");
         TransformVariable(as,"move.l",d0,"#0");
 
         m_clearFlag=0;
@@ -798,7 +809,7 @@ void ASTDispatcher68000::LoadAddress(QSharedPointer<Node> n)
     }*/
     n->ForceAddress();
     QString a0 = as->m_regMem.Get();
-    as->Comment("LoadAddress: move start with literal: " +n->getLiteral(as));
+  //  as->Comment("LoadAddress: move start with literal: " +n->getLiteral(as));
     TransformVariable(as,"move.l",a0,n->getLiteral(as));
     as->m_varStack.push(a0);
     as->m_regMem.Pop(a0);
@@ -852,7 +863,7 @@ void ASTDispatcher68000::LoadVariable(QSharedPointer<Node> n)
             LoadVariable(qSharedPointerDynamicCast<NodeNumber>(n));
     }
     else {
-        as->Comment("LoadVariable: unknown, just accepting");
+    //    as->Comment("LoadVariable: unknown, just accepting");
         n->Accept(this);
     }
 }
@@ -906,6 +917,14 @@ QString ASTDispatcher68000::getEndType(Assembler *as, QSharedPointer<Node> v) {
 //    getType(as)==TokenType::LONG
     if (v->m_forceType==TokenType::LONG)
         return ".l";
+/*
+    TokenType::Type tt = v->getType(as);
+    if (tt==TokenType::INTEGER)
+        return ".w";
+    if (tt==TokenType::LONG)
+        return ".l";
+    return ".b";
+*/
 
     QSharedPointer<NodeVar> nv = qSharedPointerDynamicCast<NodeVar>(v);
     TokenType::Type t = v->getType(as);
@@ -934,6 +953,8 @@ QString ASTDispatcher68000::getEndType(Assembler *as, QSharedPointer<Node> v) {
 
 
     }
+
+
 
 
     QSharedPointer<NodeNumber> n =qSharedPointerDynamicCast<NodeNumber>(v);
@@ -1102,12 +1123,12 @@ QString ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
 
 
     if (node->m_right->isArrayIndex()) {
-        as->Comment("Assign: is Array index, forcetype " +TokenType::getType(node->m_right->m_forceType));
+  //      as->Comment("Assign: is Array index, forcetype " +TokenType::getType(node->m_right->m_forceType));
         LoadVariable(qSharedPointerDynamicCast<NodeVar>(node->m_right));
 
     }
     else {
-        as->Comment("Assign: Regular, forcetype " +TokenType::getType(node->m_right->m_forceType));
+//        as->Comment("Assign: Regular, forcetype " +TokenType::getType(node->m_right->m_forceType));
         node->m_right->Accept(this);
     }
 
@@ -1174,7 +1195,7 @@ void ASTDispatcher68000::IncBin(QSharedPointer<NodeVarDecl> node) {
 void ASTDispatcher68000::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
 {
 
-    as->Comment("Binary clause Simplified: " + node->m_op.getType());
+//    as->Comment("Binary clause Simplified: " + node->m_op.getType());
     //    as->Asm("pha"); // Push that baby
 
     BuildToCmp(node);
@@ -1213,13 +1234,13 @@ void ASTDispatcher68000::BuildToCmp(QSharedPointer<Node> node)
     if (node->m_left->isPure()) {
         if (node->m_right->isPureNumeric())
         {
-            as->Comment("Compare with pure num / var optimization");
+  //          as->Comment("Compare with pure num / var optimization");
 //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
             TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
             return;
         } else
         {
-            as->Comment("Compare two vars optimization");
+    //        as->Comment("Compare two vars optimization");
             if (node->m_right->isPureVariable()) {
                 QString wtf = as->m_regAcc.Get();
                 LoadVariable(qSharedPointerDynamicCast<NodeVar>(node->m_right));

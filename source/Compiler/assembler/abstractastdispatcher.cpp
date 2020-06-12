@@ -302,7 +302,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
 {
 
     node->DispatchConstructor(as);
-    // Don't declare inline procedures
+    // Don't x<<<< inline procedures
 
     if (node->m_isInline) {
         // Only declare variables in SYMTAB

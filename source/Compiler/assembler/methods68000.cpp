@@ -78,7 +78,24 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->Asm("movem.l (sp)+,d0-d7/a0-a6");
         as->Asm("moveq    #0,d0");
     }
+    if (Command("abs")) {
+        QString lbl = as->NewLabel("abs");
+        m_node->m_params[0]->Accept(m_dispatcher);
+        QString var = as->m_varStack.pop();
+        QString reg = as->m_regAcc.Get();
+        QString e = m_dispatcher->getEndType(as,m_node->m_params[0]);
+        if (var!=reg)
+            as->Asm("move"+e + " "+var+","+ reg);
+        as->Asm("cmp"+e+" #0,"+reg);
+        as->Asm("bpl "+lbl);
+        as->Asm("neg"+e +" " +reg);
+        as->Label(lbl);
 
+        as->PopLabel("abs");
+        as->m_varStack.push(reg);
+        as->m_regAcc.Pop(reg);
+    }
+    else
     if (Command("WaitVerticalBlank")) {
         if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA) {
         QString lbl = as->NewLabel("waitVB");
