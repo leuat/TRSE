@@ -103,6 +103,8 @@ public:
     QString WashVariableName(QString v);
 
 
+    QSharedPointer<Symbol> getSymbol(QSharedPointer<Node> var);
+
     QVector<QString> m_ignoreBuiltinFunctionTPU;
     static QVector<QSharedPointer<Parser>> m_tpus;
 

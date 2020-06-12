@@ -231,7 +231,6 @@ m; InitProjectToScreen; Amiga, ATARI520ST;
 m; InitP61PlayerInternal; Amiga, ATARI520ST;
 m; InitProjectAllVertices; Amiga, ATARI520ST;
 
-
 # ** CALL METHODS
 
 m; InitP61Module; Amiga;a
@@ -251,6 +250,9 @@ m; getKey; C64, C128, VIC20;
 m; EnableInterrupt; Amiga, ATARI520ST;i
 m; pusha; Amiga, ATARI520ST ;
 m; popa; Amiga, ATARI520ST ;
+m; toPointer;Amiga, ATARI520ST;l
+
+
 
 m; InitCustomCopperList; Amiga;
 m; EndCustomCopperList; Amiga;

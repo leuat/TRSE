@@ -27,6 +27,7 @@
 #include <QDebug>
 #include "source/Compiler/data_pmm.h"
 #include <stdio.h>
+//#include "source/Compiler/ast/node.h"
 #include <iostream>
 //#include <QTextEdit>
 #include <exception>
@@ -105,6 +106,7 @@ public:
         //if (exitOnError)
         //    exit(1);
     }
+
 
     void Warning(QString str, int lineNumber=0);
 

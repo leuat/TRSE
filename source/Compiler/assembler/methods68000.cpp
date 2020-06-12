@@ -51,6 +51,14 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         SetRotation(as,"id");
 
 
+    if (Command("topointer")) {
+        //m_node->setForceType(TokenType::ADDRESS);
+        if (m_node->m_params[0]->isPureVariable())
+            m_node->m_params[0]->ForceAddress();
+        m_node->m_params[0]->Accept(m_dispatcher);
+      }
+
+
     if (Command("poke8"))
         Poke(as,".b");
     if (Command("poke16"))
@@ -292,7 +300,9 @@ void Methods68000::Memcpy(Assembler *as)
     m_dispatcher->LoadAddress(m_node->m_params[0],a0);
  //   m_dispatcher->LoadAddress()
     m_node->m_params[1]->Accept(m_dispatcher);
-    Asm(as,"add"+m_dispatcher->getEndType(as,m_node->m_params[1]),as->m_varStack.pop(), a0);
+
+    if (!(m_node->m_params[1]->isPureNumeric() && m_node->m_params[1]->getValueAsInt(as)==0))
+       Asm(as,"add"+m_dispatcher->getEndType(as,m_node->m_params[1]),as->m_varStack.pop(), a0);
 
 
     bool ok = true;

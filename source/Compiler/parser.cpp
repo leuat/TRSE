@@ -36,6 +36,17 @@ QString Parser::WashVariableName(QString v)
 
 }
 
+QSharedPointer<Symbol> Parser::getSymbol(QSharedPointer<Node> var)
+{
+    auto v = qSharedPointerDynamicCast<NodeVar>(var);
+    if (v==nullptr)
+        return nullptr;
+    QString val = v->value;
+    val = val.replace("#","");
+   return m_symTab->Lookup(val,v->m_op.m_lineNumber);
+
+}
+
 QStringList Parser::getFlags() {
     QStringList flags;
 
@@ -1367,6 +1378,17 @@ QSharedPointer<Node> Parser::AssignStatement()
     Eat(TokenType::ASSIGN);
     QSharedPointer<Node> right = Expr();
     QSharedPointer<NodeAssign>na = QSharedPointer<NodeAssign>(new NodeAssign(left, t, right));
+
+    // Verify that assign statement is OK
+    auto s = getSymbol(left);
+//    qDebug() << "TYPE  "<<s->m_type;
+    if (s!=nullptr)
+        if (s->m_type.toLower()=="array" && !left->isArrayIndex())
+            ErrorHandler::e.Error("Cannot assign array to a value", left->m_op.m_lineNumber);
+/*    if (!left->isArrayIndex()) {
+        if (left->isPointer())
+    }
+  */
     na->m_right->ApplyFlags();// make sure integer:=byte*byte works
     return na;
 

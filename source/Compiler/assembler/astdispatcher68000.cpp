@@ -648,80 +648,71 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeComment> node)
 
 void ASTDispatcher68000::StoreVariable(QSharedPointer<NodeVar> n)
 {
-        as->Comment("Store variable : " + n->getValue(as));
-        if (n->m_expr!=nullptr) {
-    //        qDebug() << n->m_op.getType();
-      //      exit(1);
-            bool done = false;
-/*            if (as->m_regAcc.m_latest.count()==2) {
-                TransformVariable(as,"moveq.l",as->m_regAcc.m_latest + " ; StoreVariable regAcc latest","#0");
-                done = true;
-            }*/
-            as->Term();
-            as->m_regAcc.m_latest="";
-            //as->Comment("PREV POP "+as->m_varStack.pop());
-  //          QString prevPop = as->m_varStack.pop();
-            QString d0 = as->m_varStack.pop();
-    //        QString data = as->m_regAcc.Get(); // Get d1
-//            QString d0 = as->m_regAcc.Get();
-            QString d2 = as->m_regAcc.Get();
-            QString oldd2 = "";
-            bool newD2 = false;
-            if (d2 == d0) { // If they are equal, get another one {
-                oldd2 =d2;
-                d2 = as->m_regAcc.Get();
-                newD2 = true;
-            }
-    //        as->Comment("Storevar Free "+Util::toString(as->m_regAcc.m_free));
-  //          as->Comment("Occ "+Util::toString(as->m_regAcc.m_occupied));
+    as->Comment("Store variable : " + n->getValue(as));
+    if (n->m_expr!=nullptr) {
+        QString d0 = as->m_varStack.pop();
 
-            //d0 = d2;
-//            as->Comment("Storevar START getting new unused var "+d0);
-//            QString d0 = as->m_regAcc.Get();
+
+        if (n->m_expr->isPureNumeric()) {
+            as->Comment("StoreVariable pure numeric optimization");
+            int val = n->m_expr->getValueAsInt(as);
+            if (n->getArrayType(as)==TokenType::INTEGER)
+                val*=2;
+            if (n->getArrayType(as)==TokenType::LONG)
+                val*=4;
             QString a0 = as->m_regMem.Get();
- //           QStringList ls = QStringList() << "d0";
-/*            if (!ls.contains(prevPop) )
-                TransformVariable(as,"move"+getEndType(as,n),data + "; clear #1",prevPop);
-*/
-//            if (!done && prevPop.toLower().startsWith("d"))
-//                TransformVariable(as,"moveq.l",d0 + "; clear #1","#0");
 
-            //qDebug() << "Loading array: expression";
-            LoadVariable(n->m_expr);
-            QString d1 = as->m_varStack.pop();
-            if (n->getArrayType(as)==TokenType::INTEGER) {
-                as->Asm("lsl #1,"+d1);
-            }
-            if (n->getArrayType(as)==TokenType::LONG) {
-                as->Asm("lsl #2,"+d1);
-            }
-         /*   if (n->getArrayType(as)==TokenType::RECORD) {
-                as->Comment("ARRAY TYPE : "+TokenType::getType(n->getArrayType(as)));
-                as->Asm("lsl #1,"+d1);
-            }
-*/
-
-            //qDebug() << "Popping varstack: " <<d1;
-//            as->Comment("Type: " + TokenType::getType(n->getType(as)));
             if (n->getType(as)==TokenType::POINTER)
                 TransformVariable(as,"move.l",a0,n->getValue(as));
             else
                 TransformVariable(as,"lea",a0,n->getValue(as));
 
-            TransformVariable(as,"move"+getEndType(as,n),"("+a0+","+d1+")",d0);
+            TransformVariable(as,"move"+getEndType(as,n),Util::numToHex(val)+"("+a0+")",d0);
 
             as->m_regMem.Pop(a0);
-            if (m_regs.contains(d2)) {
-                as->m_regAcc.Pop(d2);
-            }
-            if (oldd2!="")
-                as->m_regAcc.Pop(oldd2);
-
             return;
         }
-        QString d0 = as->m_varStack.pop();
 
-        TransformVariable(as,"move"+getEndType(as,n),n->getValue(as),d0);
+        bool done = false;
+        as->Term();
+        as->m_regAcc.m_latest="";
+//        QString d0 = as->m_varStack.pop();
+        QString d2 = as->m_regAcc.Get();
+        QString oldd2 = "";
+        bool newD2 = false;
+        if (d2 == d0) { // If they are equal, get another one {
+            oldd2 =d2;
+            d2 = as->m_regAcc.Get();
+            newD2 = true;
+        }
+        QString a0 = as->m_regMem.Get();
+        LoadVariable(n->m_expr);
+        QString d1 = as->m_varStack.pop();
+        if (n->getArrayType(as)==TokenType::INTEGER) {
+            as->Asm("lsl #1,"+d1);
+        }
+        if (n->getArrayType(as)==TokenType::LONG) {
+            as->Asm("lsl #2,"+d1);
+        }
+        if (n->getType(as)==TokenType::POINTER)
+            TransformVariable(as,"move.l",a0,n->getValue(as));
+        else
+            TransformVariable(as,"lea",a0,n->getValue(as));
+
+        TransformVariable(as,"move"+getEndType(as,n),"("+a0+","+d1+")",d0);
+
+        as->m_regMem.Pop(a0);
+        if (m_regs.contains(d2)) {
+            as->m_regAcc.Pop(d2);
+        }
+        if (oldd2!="")
+            as->m_regAcc.Pop(oldd2);
+
+        return;
+    }
+    QString d0 = as->m_varStack.pop();
+
+    TransformVariable(as,"move"+getEndType(as,n),n->getValue(as),d0);
 }
 
 
@@ -998,7 +989,13 @@ bool ASTDispatcher68000::HandleSimpleAeqAopConst(QSharedPointer<NodeAssign> node
     if (!bop->m_right->isPureNumeric())
         return false;
 
+    if (v2->isArrayIndex())
+        return false;
+
+
     QString num = bop->m_right->getValue(as);
+
+
 
     // Good to go!
     as->BinOP(bop->m_op.m_type);
@@ -1166,6 +1163,7 @@ void ASTDispatcher68000::IncBin(QSharedPointer<NodeVarDecl> node) {
 
         as->Label(v->getValue(as));
         as->Asm("incbin \"" + filename + "\"");
+        as->Asm(" 	CNOP 0,4");
     }
     else {
         //            qDebug() << "bin: "<<v->getValue(as) << " at " << t->m_position;
@@ -1180,6 +1178,7 @@ void ASTDispatcher68000::IncBin(QSharedPointer<NodeVarDecl> node) {
 
         as->Label(v->getValue(as));
         as->Asm("incbin \"" + filename + "\"");
+        as->Asm(" 	CNOP 0,4");
 /*        bool ok;
         int start=0;
         if (t->m_position.startsWith("$")) {
@@ -1204,10 +1203,20 @@ void ASTDispatcher68000::BuildSimple(QSharedPointer<Node> node,  QString lblSucc
         as->Asm("bne " + lblFailed);
     if (node->m_op.m_type==TokenType::NOTEQUALS)
         as->Asm("beq " + lblFailed);
+
     if (node->m_op.m_type==TokenType::LESS)
-        as->Asm("bgt " + lblFailed);
+        as->Asm("bge " + lblFailed);
     if (node->m_op.m_type==TokenType::GREATER)
+        as->Asm("ble " + lblFailed);
+
+
+    if (node->m_op.m_type==TokenType::LESSEQUAL)
+        as->Asm("bgt " + lblFailed);
+    if (node->m_op.m_type==TokenType::GREATEREQUAL)
         as->Asm("blt " + lblFailed);
+
+
+
 
 /*    if (node->m_op.m_type==TokenType::LESS)
         as->Asm("bcc " + lblFailed);
