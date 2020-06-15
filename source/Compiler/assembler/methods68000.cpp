@@ -295,7 +295,7 @@ void Methods68000::Memcpy(Assembler *as)
 
 
 
-    LoadVariable(as, "move",m_node->m_params[4], d0);
+    LoadVariable(as, "move.w",m_node->m_params[4], d0);
 //    LoadVariable(as, "lea", m_node->m_params[0], a0);
     m_dispatcher->LoadAddress(m_node->m_params[0],a0);
  //   m_dispatcher->LoadAddress()

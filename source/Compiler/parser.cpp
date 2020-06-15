@@ -2567,6 +2567,8 @@ QVector<QSharedPointer<Node>> Parser::ConstDeclaration()
         type="byte";
     if (m_currentToken.m_type == TokenType::INTEGER)
         type="integer";
+    if (m_currentToken.m_type == TokenType::LONG)
+        type="long";
     TokenType::Type dType = m_currentToken.m_type;
     if (type=="") {
         ErrorHandler::e.Error("Unknown or illegal type when defining constant of type: '"+m_currentToken.m_value+"' ("+m_currentToken.getType()+")<br>Allowed types are : <b>address, byte, integer.</b> ",m_currentToken.m_lineNumber);
