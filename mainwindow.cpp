@@ -289,6 +289,10 @@ void MainWindow::UpdateSymbolTree(QString search)
 {
     if (!m_currentDoc->m_currentFileShort.toLower().endsWith(".ras"))
         return;
+
+    m_currentDoc->setOutputText(FormRasEditor::m_globalOutput);
+
+
     FormRasEditor* e = dynamic_cast<FormRasEditor*>(m_currentDoc);
     if (e==nullptr)
         return;
@@ -612,11 +616,19 @@ void MainWindow::AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBui
 }
 
 void MainWindow::acceptBuildMain() {
+    m_keepFile = m_currentDoc->m_currentFileShort;
     acceptBuild();
     if (!VerifyFile(m_currentProject.m_ini->getString("main_ras_file"),"Error trying to build main project file. Please see project settings and specify correct path to main .ras file"))
         return;
     LoadDocument(m_currentProject.m_ini->getString("main_ras_file"));
     m_currentDoc->Build();
+
+    if (m_keepFile!="")
+        LoadDocument(m_keepFile);
+
+    m_keepFile="";
+
+
 }
 
 void MainWindow::acceptSearchSymbols()
@@ -890,6 +902,9 @@ void MainWindow::CreateNewSourceFile(QString type)
 void MainWindow::ShowContextMenu(const QPoint &pos)
 {
     if (!ui->lstRecentProjects->rect().contains( ui->lstRecentProjects->mapFromGlobal(QCursor::pos())))
+        return;
+
+    if (ui->tabMain->currentIndex()!=0)
         return;
 
     QMenu contextMenu(tr("Context menu"), this);

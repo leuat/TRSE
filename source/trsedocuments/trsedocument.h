@@ -92,6 +92,8 @@ public:
 
     virtual void Reload() {}
 
+    virtual void setOutputText(QString text) {}
+
 
     virtual void Destroy() = 0;
 

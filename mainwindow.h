@@ -159,6 +159,7 @@ public:
     QString m_iniFileNameOld = "fluff64.ini";
     QString m_iniFileName = "trse.ini";
     QString m_iniFileHomeDir = ".TRSE";
+    QString m_keepFile = "";
     QString m_fontFamily;
     QPalette m_defaultPalette;
     QString m_currentPath;

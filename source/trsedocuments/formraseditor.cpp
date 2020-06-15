@@ -30,6 +30,7 @@
 
 
 bool FormRasEditor::m_broadcast = true;
+QString FormRasEditor::m_globalOutput = "";
 //SourceBuilder* BuilderThread::m_builder = nullptr;
 
 
@@ -61,6 +62,10 @@ FormRasEditor::FormRasEditor(QWidget *parent) :
 FormRasEditor::~FormRasEditor()
 {
     delete ui;
+}
+
+void FormRasEditor::setOutputText(QString text) {
+    ui->txtOutput->setHtml(text);
 }
 
 void FormRasEditor::ExecutePrg(QString fileName, QString system)
@@ -574,10 +579,10 @@ void FormRasEditor::GotoLine(int ln)
 //    QTextCursor cursor(ui->txtEditor->document()->findBlockByLineNumber(ln-1));
 //    int scrollPos =  ui->txtEditor->verticalScrollBar()->value();
 //    ui->txtEditor->setTextCursor(cursor);
-//    ui->txtEditor->verticalScrollBar()->setValue(ui->txtEditor->verticalScrollBar()->value()+16);
     ui->txtEditor->moveCursor(QTextCursor::End);
     QTextCursor cursor(ui->txtEditor->document()->findBlockByLineNumber(ln-1));
     ui->txtEditor->setTextCursor(cursor);
+    ui->txtEditor->verticalScrollBar()->setValue(ui->txtEditor->verticalScrollBar()->value()-16);
 
     // reset the cursor position (and scroll back again)
   //  setTextCursor(prevCursor);
@@ -982,6 +987,7 @@ void FormRasEditor::HandleBuildComplete()
 //    ui->txtEditor->viewport()->update();
     ui->txtEditor->m_textChanged = keepTextChanged;
 
+    m_globalOutput =m_builderThread.m_builder->getOutput();
     emit emitSuccess();
 
     if (m_run) {

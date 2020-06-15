@@ -36,3 +36,7 @@ override_target_settings_prg = 0
 build_list = ,
 data_header_images/image1.flf = 0
 exomize_toggle = 0
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/X16/Tutorials/
+remove_unused_symbols = 1
+ignore_initial_jump = 0
+open_files = ,example1_simple.ras

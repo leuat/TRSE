@@ -97,11 +97,16 @@ public:
     QVector3D m_startCol = QVector3D(64,32,0);
     QVector3D m_endCol = QVector3D(255,200,100);
 
+    static QString m_globalOutput;
+
     MachineCodeAnalyzer m_mca;
     QString filename;
     bool isInitialized=false;
     int m_searchFromPos = 0;
     int m_currentFromPos = 0;
+
+
+    void setOutputText(QString text) override;
 
     void LoadRasFile(QString fileName);
     void ExecutePrg(QString fileName,  QString system);
