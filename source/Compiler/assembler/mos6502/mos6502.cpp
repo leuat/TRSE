@@ -704,6 +704,13 @@ void AsmMOS6502::EndForLoop(QString endVal)
 void AsmMOS6502::Optimise(CIniFile& ini)
 {
     m_totalOptimizedLines = 0;
+
+    if (ini.getdouble("post_optimizer_passldatax")==1)
+        OptimisePassLdaTax("x");
+    if (ini.getdouble("post_optimizer_passldatax")==1)
+        OptimisePassLdaTax("y");
+
+
     if (ini.getdouble("post_optimizer_passstalda")==1)
         OptimisePassStaLda();
     if (ini.getdouble("post_optimizer_passldx")==1)
@@ -711,10 +718,6 @@ void AsmMOS6502::Optimise(CIniFile& ini)
     if (ini.getdouble("post_optimizer_passldx")==1)
         OptimisePassLdx("y");
 
-    if (ini.getdouble("post_optimizer_passldatax")==1)
-        OptimisePassLdaTax("x");
-    if (ini.getdouble("post_optimizer_passldatax")==1)
-        OptimisePassLdaTax("y");
 
     if (ini.getdouble("post_optimizer_passlda")==1)
 
