@@ -575,8 +575,10 @@ void MainWindow::RefreshFileList()
     fileSystemModel->setRootPath(rootPath);
     fileSystemModel->setFilter(QDir::NoDotAndDotDot |
                             QDir::AllDirs |QDir::AllEntries);
+
     fileSystemModel->setNameFilters(QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo");
     fileSystemModel->setNameFilterDisables(false);
+
 
     ui->treeFiles->setModel(fileSystemModel);
     ui->treeFiles->setRootIndex(fileSystemModel->index(rootPath));
@@ -1246,6 +1248,9 @@ void MainWindow::LoadProject(QString filename)
     CloseAll();
     m_currentProject.Load(filename);
     m_currentPath = QFileInfo(QFile(filename)).absolutePath();
+
+
+
     Data::data.currentPath = m_currentPath;
     VerifyProjectDefaults();
 //    m_iniFile->setString("project_path", getProjectPath());
@@ -1269,6 +1274,14 @@ void MainWindow::LoadProject(QString filename)
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA)
         Messages::messages.DisplayMessage(Messages::messages.AMIGA_WARNING);
 
+
+    QString link = m_currentPath+QDir::separator() + "trse_units";
+    QString truPath = Util::path+ QDir::separator() + "tutorials"+QDir::separator() + system+QDir::separator() + "tru"+QDir::separator();
+//    qDebug() <<link << truPath;
+
+  //  qDebug() << "LINK : " <<
+
+    QFile::link(truPath, link);
 
     QImage img(":resources/images/" +system+".png");
     QPainter p;

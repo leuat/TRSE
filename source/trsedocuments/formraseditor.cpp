@@ -275,6 +275,7 @@ void FormRasEditor::Build(bool isShadow)
     if (!isShadow)
         SaveCurrent();
 
+
     if (!(QApplication::keyboardModifiers() & Qt::ShiftModifier))
     if (!isShadow)
     if (m_projectIniFile->getString("main_ras_file")!="none") {
