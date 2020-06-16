@@ -1280,8 +1280,17 @@ void MainWindow::LoadProject(QString filename)
 //    qDebug() <<link << truPath;
 
   //  qDebug() << "LINK : " <<
-    if (QDir().exists(truPath))
-       QFile::link(truPath, link);
+    if (QDir().exists(truPath)) {
+
+        #ifdef Q_OS_UNIX
+            QFile::link(truPath, link);
+        #endif
+
+        #ifdef Q_OS_WIN
+            QFile::link(truPath, link.append(".lnk"));
+        #endif
+
+    }
 
     QImage img(":resources/images/" +system+".png");
     QPainter p;
