@@ -588,7 +588,7 @@ void FormRasEditor::GotoLine(int ln)
     ui->txtEditor->moveCursor(QTextCursor::End);
     QTextCursor cursor(ui->txtEditor->document()->findBlockByLineNumber(ln-1));
     ui->txtEditor->setTextCursor(cursor);
-    ui->txtEditor->verticalScrollBar()->setValue(ui->txtEditor->verticalScrollBar()->value()-16);
+    ui->txtEditor->verticalScrollBar()->setValue(ui->txtEditor->verticalScrollBar()->value()-4);
 
     // reset the cursor position (and scroll back again)
   //  setTextCursor(prevCursor);

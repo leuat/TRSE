@@ -1336,6 +1336,8 @@ void Parser::Record(QString name)
             s->m_arrayType = typ->m_arrayVarType.m_type;
             s->m_arrayTypeText = typ->m_arrayVarTypeText;
             record->Define(s);
+            record->m_orderedByDefinition.append(var->value);
+//            qDebug() << "APPEND " <<var->value;
         }
         Eat(TokenType::SEMI);
 

@@ -313,8 +313,8 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
             int p = Util::NumberFromStringHex(pos);
 
             QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
-
-            for (QSharedPointer<Symbol> s : st->m_symbols) {
+            for (QString v : st->m_orderedByDefinition) {
+                QSharedPointer<Symbol> s = st->m_symbols[v];
                 //qDebug() << "WTF " <<s->m_name <<s->m_type;
                 // Build the name
                 QString n = name + "_" + st->m_name+"_"+s->m_name;

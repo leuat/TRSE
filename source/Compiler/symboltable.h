@@ -88,6 +88,9 @@ public:
     QMap<QString, QSharedPointer<Symbol>> m_symbols;
     QMap<QString, QSharedPointer<SymbolTable> > m_records;
     QMap<QString, QSharedPointer<Symbol>> m_constants;
+
+    QStringList m_orderedByDefinition;
+
     QString m_name="";
     QStringList m_globalList;
     QString m_gPrefix;
