@@ -451,8 +451,14 @@ void FormRasEditor::Run()
 
 void FormRasEditor::SetLights()
 {
+    if (m_builderThread.m_builder==nullptr) {
+        ui->lblLight->setStyleSheet("QLabel { background-color : green; color : blue; }");
+        return;
+    }
+
     if (m_builderThread.m_builder->m_system==nullptr)
         return;
+
     if (!m_builderThread.m_builder->m_system->m_buildSuccess)
         ui->lblLight->setStyleSheet("QLabel { background-color : red; color : blue; }");
     else

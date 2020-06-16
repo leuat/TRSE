@@ -147,7 +147,7 @@ public:
     void RemoveUnusedProcedures();
     void RemoveUnusedSymbols(QSharedPointer<NodeProgram> root);
     QSharedPointer<Node> Parse(bool removeUnusedDecls, QString param, QString globalDefines, bool useLocals);
-    QSharedPointer<Node> Variable();
+    QSharedPointer<Node> Variable(bool isSubVar=false);
     QSharedPointer<Node> Empty();
     void Record(QString name);
 //    QSharedPointer<Node> Record();

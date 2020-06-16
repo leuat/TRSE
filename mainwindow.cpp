@@ -291,7 +291,9 @@ void MainWindow::UpdateSymbolTree(QString search)
         return;
 
     m_currentDoc->setOutputText(FormRasEditor::m_globalOutput);
-
+    FormRasEditor* fe = ((FormRasEditor*)m_currentDoc);
+    if (fe)
+        fe->SetLights();
 
     FormRasEditor* e = dynamic_cast<FormRasEditor*>(m_currentDoc);
     if (e==nullptr)

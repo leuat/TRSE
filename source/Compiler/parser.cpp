@@ -1173,7 +1173,7 @@ bool Parser::PreprocessIncludeFiles()
 
 
 
-QSharedPointer<Node> Parser::Variable()
+QSharedPointer<Node> Parser::Variable(bool isSubVar)
 {
     QSharedPointer<Node> n = nullptr;
 
@@ -1210,7 +1210,7 @@ QSharedPointer<Node> Parser::Variable()
         QSharedPointer<Node> subVar = nullptr;
         if (m_currentToken.m_type==TokenType::DOT) {
             Eat();
-            subVar = Variable();
+            subVar = Variable(true);
         }
 
         if (t.m_type==TokenType::ADDRESS && expr!=nullptr) {
@@ -1240,10 +1240,13 @@ QSharedPointer<Node> Parser::Variable()
 //        qDebug() << "PREFIX " << m_symTab->m_globalList.contains(t.m_value) << t.m_value <<  m_symTab->m_gPrefix+t.m_value ;
   //     qDebug() << m_symTab->m_globalList;
 
-        if (!m_symTab->m_globalList.contains(t.m_value))
+        if (!m_symTab->m_globalList.contains(t.m_value) && !isSubVar)
             t.m_value = m_symTab->m_gPrefix+t.m_value;
 
-//        qDebug() << t.m_value;
+//        qDebug() << "PARSER" <<t.m_value << m_symTab->m_globalList.contains(t.m_value) << m_symTab->m_gPrefix;
+  //      qDebug() <<
+
+
         Eat(m_currentToken.m_type);
 
         if (m_currentToken.m_type!=TokenType::LBRACKET) {
@@ -1256,7 +1259,7 @@ QSharedPointer<Node> Parser::Variable()
             QSharedPointer<Node> subVar = nullptr;
             if (m_currentToken.m_type==TokenType::DOT) {
                 Eat();
-                subVar = Variable();
+                subVar = Variable(true);
             }
 
             n = QSharedPointer<NodeVar>(new NodeVar(t));
@@ -1270,7 +1273,7 @@ QSharedPointer<Node> Parser::Variable()
                 QSharedPointer<Node> subVar = nullptr;
                 if (m_currentToken.m_type==TokenType::DOT) {
                     Eat();
-                    subVar = Variable();
+                    subVar = Variable(true);
                 }
 
 
