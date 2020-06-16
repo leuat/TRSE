@@ -2666,7 +2666,7 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
 
 //    qDebug() << "HER" << v->getValue(as) << v->getTypeText(as);
     if (v->getTypeText(as).toLower()=="array" && v->m_expr==nullptr) {
-        ErrorHandler::e.Error("Cannot assign an address to an array. Did you forget to use an [] index?", node->m_op.m_lineNumber);
+//        ErrorHandler::e.Error("Cannot assign an address to an array. Did you forget to use an [] index?", node->m_op.m_lineNumber);
 
     }
 

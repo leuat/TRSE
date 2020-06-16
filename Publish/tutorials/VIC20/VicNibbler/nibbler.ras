@@ -62,6 +62,7 @@ var
 	@define MOVESTARTVAL 11 	// slowest wave 1 starting speed
 	@define MOVEMINVAL  5		// fastest will move
 
+	
 	scrm : array[24] of integer; // screen memory start addresses
 	clrm : array[24] of integer; // colour memory start addresses
 

@@ -1387,9 +1387,10 @@ QSharedPointer<Node> Parser::AssignStatement()
     // Verify that assign statement is OK
     auto s = getSymbol(left);
 //    qDebug() << "TYPE  "<<s->m_type;
-    if (s!=nullptr)
+/*    if (s!=nullptr)
         if (s->m_type.toLower()=="array" && !left->isArrayIndex())
             ErrorHandler::e.Error("Cannot assign array to a value", left->m_op.m_lineNumber);
+  */
 /*    if (!left->isArrayIndex()) {
         if (left->isPointer())
     }

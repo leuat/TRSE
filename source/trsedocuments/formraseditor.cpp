@@ -924,6 +924,8 @@ void FormRasEditor::HandleBuildError()
     if (ln>1)
         GotoLine(ln);
 
+    m_globalOutput = m_outputText;
+    emit emitFailure();
 
 }
 

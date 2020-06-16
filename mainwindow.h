@@ -285,6 +285,7 @@ private slots:
 
     void on_btnSave_3_clicked();
 
+    void UpdateFailure();
 
 
 

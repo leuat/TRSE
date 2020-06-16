@@ -170,6 +170,7 @@ signals:
     void emitSearchSymbols();
     void OpenOtherFile(QString filename, int ln);
     void NotifyOtherSourceFiles(QSharedPointer<SourceBuilder> builder);
+    void emitFailure();
 private slots:
     void ShadowBuild();
 

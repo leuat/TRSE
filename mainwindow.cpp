@@ -532,6 +532,7 @@ void MainWindow::ConnectDocument()
     connect(m_currentDoc, SIGNAL(emitNewImage()), this, SLOT(on_actionImage_triggered()));
 
     connect(m_currentDoc, SIGNAL(emitSuccess()), this, SLOT(UpdateSymbolTree()));
+    connect(m_currentDoc, SIGNAL(emitFailure()), this, SLOT(UpdateFailure()));
 
 
 
@@ -1022,6 +1023,11 @@ void MainWindow::on_btnSave_3_clicked()
     if (m_currentDoc==nullptr)
         return;
     m_currentDoc->SaveCurrent();
+}
+
+void MainWindow::UpdateFailure()
+{
+    m_currentDoc->setOutputText(FormRasEditor::m_globalOutput);
 }
 
 // New source file
