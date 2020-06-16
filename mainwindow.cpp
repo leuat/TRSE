@@ -476,10 +476,10 @@ void MainWindow::LoadDocument(QString fileName)
     if (fileName.contains(".paw")  ) {
         editor = new FormPaw(this);
     }
-    editor->InitDocument(nullptr, m_iniFile, m_currentProject.m_ini);
     editor->m_currentDir = m_currentPath+"/";
     editor->m_currentSourceFile = getProjectPath() + "/" + fileName;
     editor->m_currentFileShort = fileName;
+    editor->InitDocument(nullptr, m_iniFile, m_currentProject.m_ini);
     ui->tabMain->addTab(editor, fileName);
     editor->Load(editor->m_currentSourceFile);
 

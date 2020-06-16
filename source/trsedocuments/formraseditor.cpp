@@ -254,6 +254,11 @@ void FormRasEditor::setupEditor()
   //  ui->splitter->setStretchFactor(1, 0);
 //    ui->txtEditor->setTabStopWidth(m_iniFile->getInt("tab_width") * metrics.width(' '));
 
+//    qDebug() << "FILE " <<m_currentSourceFile;
+    if (m_currentFileShort.contains("trse_units")) {
+        ui->txtOutput->setHtml("<font color=\"#FF8020\"><b>WARNING: </b></font>You are currently editing an <font color=\"#FF8020\">internal and global TRSE unit</font> that is probably being used by other projects. </font>");
+    }
+
 }
 
 void FormRasEditor::Compress()
