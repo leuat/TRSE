@@ -64,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->setMouseTracking(true);
     m_currentDoc = nullptr;
+    setupIcons();
 
 #if defined(Q_OS_MAC)
     Util::path = QCoreApplication::applicationDirPath() + "/../../";
@@ -84,7 +85,6 @@ MainWindow::MainWindow(QWidget *parent) :
    int id= QFontDatabase::addApplicationFont(":resources/fonts/c64.ttf");
    m_fontFamily = QFontDatabase::applicationFontFamilies(id).at(0);
     UpdateRecentProjects();
-
     SetupFileList();
 
     /*QImage img;
@@ -580,16 +580,83 @@ void MainWindow::RefreshFileList()
     fileSystemModel->setNameFilterDisables(false);
 
 
-    ui->treeFiles->setModel(fileSystemModel);
-    ui->treeFiles->setRootIndex(fileSystemModel->index(rootPath));
+
+    QStandardItemModel* im = new QStandardItemModel();
+    QList<QStandardItem *> LocalItem;
+    QStandardItem* root = new QStandardItem("Project");
+    LocalItem.insert(0,root);
+    LocalItem.at(0)->setEditable(false);
+    im->insertRow(0,LocalItem);
+    QStringList exts = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo";
+    QDirIterator it(getProjectPath(),QStringList(), QDir::NoDotAndDotDot | QDir::Dirs);
+    while (it.hasNext()) {
+        AddTreeFileItem(root,it.next(),exts);
+       }
+
+    QDirIterator it2(getProjectPath(),QStringList(), QDir::NoDotAndDotDot | QDir::Files);
+    while (it2.hasNext()) {
+        AddTreeFileItem(root,it2.next(),exts);
+       }
+
+//        QFile f(it.next());
+  //      f.open(QIODevice::ReadOnly);
+        //qDebug() << f.fileName() << f.readAll().trimmed().toDouble() / 1000 << "MHz";
+
+
+
+//    im->appendRow(fileSystemModel->tr())
+
+//    ui->treeFiles->setModel(fileSystemModel);
+   // ui->treeFiles->setRootIndex(fileSystemModel->index(rootPath));
+    ui->treeFiles->setModel(im);
 
     ui->treeFiles->hideColumn(1);
     ui->treeFiles->hideColumn(2);
     ui->treeFiles->hideColumn(3);
-
-
+//    ui->treeFiles->expandAll();
+    ui->treeFiles->expand(root->index());
 
 }
+
+
+void MainWindow::AddTreeFileItem(QStandardItem *parent, QString file, QStringList exts)
+{
+//    QString file= it.next();
+   QFileInfo fi = QFileInfo(file);
+   QVector<QStandardItem* > lstFiles;
+   if (fi.isFile()) {
+       QString f = file;
+       if (exts.contains("*."+fi.suffix())) {
+
+          //parent->appendRow(new QStandardItem(f.split(QDir::separator()).last()));
+           QString name = f.split(QDir::separator()).last();
+           QStandardItem* si = new QStandardItem(name);
+           si->setIcon(m_icons[name.split(".").last()]);
+           si->setEditable(false);
+           lstFiles.append(si);
+           si->setData(f.remove(m_currentPath), Qt::UserRole);
+
+       }
+   }
+   else
+   if (fi.isDir()) {
+//       qDebug() << "DIR " << file;
+       QDirIterator iterator(fi.absoluteFilePath(), exts, QDir::NoDotAndDotDot | QDir::AllEntries, QDirIterator::Subdirectories);
+       if (iterator.hasNext()) {
+         QStandardItem* it = new QStandardItem(fi.fileName());
+         it->setEditable(false);
+         //it->setData(finfo.absoluteFilePath(), QtCore.Qt.UserRole)
+         parent->appendRow(it);
+         QDir d(fi.absoluteFilePath());
+         for (auto subfiles : d.entryInfoList(QDir::AllEntries|QDir::NoDotAndDotDot))
+             AddTreeFileItem(it, subfiles.absoluteFilePath(),exts);
+
+        }
+
+    }
+   for (QStandardItem* si : lstFiles)
+       parent->appendRow(si);
+    }
 
 void MainWindow::AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBuilder)
 {
@@ -647,7 +714,30 @@ void MainWindow::acceptRunMain() {
         return;
     LoadDocument(m_currentProject.m_ini->getString("main_ras_file"));
     m_currentDoc->Run();
-//    UpdateSymbolTree();
+    //    UpdateSymbolTree();
+}
+
+void MainWindow::setupIcons()
+{
+    QImage img;
+    img.load(":resources/images/ras.png");
+    m_icons["ras"] = QIcon(QPixmap::fromImage(img));
+    img.load(":resources/images/asm_icon.png");
+    m_icons["asm"] = QIcon(QPixmap::fromImage(img));
+
+    img.load(":resources/images/image_icon.png");
+    m_icons["flf"] = QIcon(QPixmap::fromImage(img));
+
+    img.load(":resources/images/paw_icon.png");
+    m_icons["paw"] = QIcon(QPixmap::fromImage(img));
+
+    img.load(":resources/images/torus.jpg");
+    m_icons["fjo"] = QIcon(QPixmap::fromImage(img));
+
+    img.load(":resources/images/tru.png");
+    m_icons["tru"] = QIcon(QPixmap::fromImage(img));
+
+
 }
 
 
@@ -963,7 +1053,10 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
     QString path = FindPathInProjectFolders(index);
 
     // Finally load file!
-    QString file = index.data().toString();
+    QString file = index.data(Qt::UserRole).toString();
+
+    qDebug() << "TreeFiles " <<file;
+
     if (file.toLower().endsWith(".tru") || file.toLower().endsWith(".ras") || file.toLower().endsWith(".asm")
             || file.toLower().endsWith(".inc") || file.toLower().endsWith(".flf")
             || file.toLower().endsWith(".paw") || file.toLower().endsWith(".fjo")) {

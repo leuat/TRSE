@@ -59,6 +59,7 @@
 #include "source/tutorials.h"
 #include <QDesktopServices>
 #include "source/dialognewproject.h"
+#include <QStandardItemModel>
 
 namespace Ui {
 class MainWindow;
@@ -167,7 +168,7 @@ public:
     Tutorials m_tutorials;
 
 
-
+    QMap<QString, QIcon> m_icons;
 
     TRSEProject m_currentProject;
 
@@ -222,6 +223,7 @@ public slots:
     void acceptSearchSymbols();
 
     void acceptRunMain();
+    void setupIcons();
 
     void acceptBuild() {
         //ui->lblBuild->setHidden(false);
@@ -262,6 +264,9 @@ public slots:
     void closeEvent(QCloseEvent *event) override;
 
     void CreateNewSourceFile(QString type);
+
+    void AddTreeFileItem(QStandardItem* parent, QString path, QStringList ext);
+
 
 signals:
    void ValueChanged();
