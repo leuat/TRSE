@@ -49,4 +49,4 @@ remove_unused_symbols = 1
 data_header_resources/images/octopus.flf = 6.93276e-310
 open_files = ,language/02_variables.ras, intermediate/07_screenclearer.ras, Hello.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
-current_file = intermediate/07_screenclearer.ras
+current_file = language/02_variables.ras

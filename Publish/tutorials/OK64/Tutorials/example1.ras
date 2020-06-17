@@ -1,15 +1,31 @@
 program Example1;
 var  
  	time,j: byte=0;
-	image1 : incbin("images/image1.bin",$20000);    
+	image1 : incbin("images/image1.bin",$30000);    
+
+// Automaticall export image and palette
+@export "images/test1.flf" "images/image1.bin" 256
+
+	palette : incbin("images/image1.pal");
+	zp:pointer;
+	i:byte;
 
 begin
+	// Set the palette
+	zp:=palette;
+	for i:=0 to 256 do
+	begin
+		setpalette(i,zp[0],zp[1],zp[2]);
+		zp:=zp+3;
+	end;
+	
+	okvc_src_page:=$30;
 
 	while(true) offpage do
 	begin	
 		clearscreen(0);
 		j:=sine[time]/8;
-		Blit(0,j, 0,40, 255,180);
+		Blit(0,j, 0,40,   255,180);
 		time:=time+2;
 		
 		WaitForVSync();
