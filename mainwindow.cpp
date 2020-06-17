@@ -448,10 +448,15 @@ void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString on, QString n, int
 
 
 
-void MainWindow::LoadDocument(QString fileName)
+void MainWindow::LoadDocument(QString fileName, bool isExternal)
 {
-    if (!QFile::exists( getProjectPath() + "/" +fileName))
-        return;
+
+    if (!isExternal) {
+        if (!QFile::exists( getProjectPath() + "/" +fileName))
+            return;
+        if (fileName.startsWith(QDir::separator()))
+            fileName = fileName.remove(0,1);
+    }
 
     for (TRSEDocument* d: m_documents) {
         if (d->m_currentFileShort==fileName) {
@@ -477,7 +482,14 @@ void MainWindow::LoadDocument(QString fileName)
         editor = new FormPaw(this);
     }
     editor->m_currentDir = m_currentPath+"/";
+    if (!isExternal)
     editor->m_currentSourceFile = getProjectPath() + "/" + fileName;
+    else
+        editor->m_currentSourceFile = fileName;
+
+    if (isExternal) {
+        fileName = "[external]"+fileName.split(QDir::separator()).last();
+    }
     editor->m_currentFileShort = fileName;
     editor->InitDocument(nullptr, m_iniFile, m_currentProject.m_ini);
     ui->tabMain->addTab(editor, fileName);
@@ -557,57 +569,53 @@ void MainWindow::SetupFileList()
 
 void MainWindow::RefreshFileList()
 {
+    if (m_currentPath=="") {
+        ui->treeFiles->setModel(nullptr);
+            return;
+
+    }
 //    qDebug() << m_currentPath << rand()%100;
   //  if (m_currentPath=="")
     //    return;
+    /*
     if (fileSystemModel!=nullptr)
         delete fileSystemModel;
     fileSystemModel = new CustomFileSystemModel(this);
 
 
     QString rootPath= getProjectPath();
-    if (m_currentPath=="") {
-        ui->treeFiles->setModel(nullptr);
-            return;
-
-    }
     fileSystemModel->setReadOnly(true);
     fileSystemModel->setRootPath(rootPath);
     fileSystemModel->setFilter(QDir::NoDotAndDotDot |
                             QDir::AllDirs |QDir::AllEntries);
 
-    fileSystemModel->setNameFilters(QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo");
+    fileSystemModel->setNameFilters(QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt" <<"*.inc" << "*.flf" <<"*.paw" << "*.fjo");
     fileSystemModel->setNameFilterDisables(false);
 
-
+*/
 
     QStandardItemModel* im = new QStandardItemModel();
-    QList<QStandardItem *> LocalItem;
-    QStandardItem* root = new QStandardItem("Project");
-    LocalItem.insert(0,root);
-    LocalItem.at(0)->setEditable(false);
-    im->insertRow(0,LocalItem);
-    QStringList exts = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo";
-    QDirIterator it(getProjectPath(),QStringList(), QDir::NoDotAndDotDot | QDir::Dirs);
-    while (it.hasNext()) {
-        AddTreeFileItem(root,it.next(),exts);
-       }
 
-    QDirIterator it2(getProjectPath(),QStringList(), QDir::NoDotAndDotDot | QDir::Files);
-    while (it2.hasNext()) {
-        AddTreeFileItem(root,it2.next(),exts);
-       }
+
+
 
 //        QFile f(it.next());
   //      f.open(QIODevice::ReadOnly);
         //qDebug() << f.fileName() << f.readAll().trimmed().toDouble() / 1000 << "MHz";
+    QVector<QStandardItem*> localItem;
+    QString system = m_currentProject.m_ini->getString("system");
 
+    QString truPath = Util::path+ QDir::separator() + "tutorials"+QDir::separator() + system+ QDir::separator() + "tru"+QDir::separator();
 
+//    QStandardItem* root = AddTreeRoot(getProjectPath(),"Project '"+m_currentProject.m_filename.split(".").first() +"'");
+    QStandardItem* root = AddTreeRoot(getProjectPath(),"Project");
+    im->insertRow(0,root);
+    if (QDir().exists(truPath)) {
+        QStandardItem* trus = AddTreeRoot(truPath,"Library");
+        im->insertRow(1,trus);
+        ui->treeFiles->expand(trus->index());
+    }
 
-//    im->appendRow(fileSystemModel->tr())
-
-//    ui->treeFiles->setModel(fileSystemModel);
-   // ui->treeFiles->setRootIndex(fileSystemModel->index(rootPath));
     ui->treeFiles->setModel(im);
 
     ui->treeFiles->hideColumn(1);
@@ -656,7 +664,25 @@ void MainWindow::AddTreeFileItem(QStandardItem *parent, QString file, QStringLis
     }
    for (QStandardItem* si : lstFiles)
        parent->appendRow(si);
-    }
+}
+
+QStandardItem* MainWindow::AddTreeRoot(QString path, QString name)
+{
+    QStandardItem* root = new QStandardItem(name);
+    root->setEditable(false);
+    QStringList exts = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo";
+    QDirIterator it(path,QStringList(), QDir::NoDotAndDotDot | QDir::Dirs);
+    while (it.hasNext()) {
+        AddTreeFileItem(root,it.next(),exts);
+       }
+
+    QDirIterator it2(path,QStringList(), QDir::NoDotAndDotDot | QDir::Files);
+    while (it2.hasNext()) {
+        AddTreeFileItem(root,it2.next(),exts);
+       }
+    return root;
+
+}
 
 void MainWindow::AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBuilder)
 {
@@ -1054,8 +1080,11 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
 
     // Finally load file!
     QString file = index.data(Qt::UserRole).toString();
-
-    qDebug() << "TreeFiles " <<file;
+    qDebug() << "CLICKED "<<file;
+    if (file.contains("/C64/tru/")) {
+        LoadDocument(file,true);
+        return;
+    }
 
     if (file.toLower().endsWith(".tru") || file.toLower().endsWith(".ras") || file.toLower().endsWith(".asm")
             || file.toLower().endsWith(".inc") || file.toLower().endsWith(".flf")
@@ -1368,7 +1397,7 @@ void MainWindow::LoadProject(QString filename)
         Messages::messages.DisplayMessage(Messages::messages.AMIGA_WARNING);
 
 
-    QString link = m_currentPath+QDir::separator() + "trse_units";
+/*    QString link = m_currentPath+QDir::separator() + "trse_units";
     QString truPath = Util::path+ QDir::separator() + "tutorials"+QDir::separator() + system+QDir::separator() + "tru"+QDir::separator();
 //    qDebug() <<link << truPath;
 
@@ -1384,7 +1413,7 @@ void MainWindow::LoadProject(QString filename)
         #endif
 
     }
-
+*/
     QImage img(":resources/images/" +system+".png");
     QPainter p;
     p.begin(&img);

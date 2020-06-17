@@ -202,7 +202,7 @@ public:
 
 //    WorkerThread* m_updateThread;
 
-    void LoadDocument(QString fileName);
+    void LoadDocument(QString fileName, bool isExternal = false);
 
     bool m_quit = false;
 
@@ -266,6 +266,7 @@ public slots:
     void CreateNewSourceFile(QString type);
 
     void AddTreeFileItem(QStandardItem* parent, QString path, QStringList ext);
+    QStandardItem* AddTreeRoot(QString path, QString name);
 
 
 signals:

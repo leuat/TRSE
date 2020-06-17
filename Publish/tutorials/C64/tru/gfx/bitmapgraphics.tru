@@ -2,13 +2,11 @@ unit BitmapGraphics;
 
 @use "math/math"
 
-
 var
 	xtablelow: array[160] of byte;
 	xtablehigh: array[160] of byte;
 	ytablelow: array[200] of byte;
 	ytablehigh: array[200] of byte;
-	
 
 	mask: array[200] of byte;
 	//	xi, yi: byte;
