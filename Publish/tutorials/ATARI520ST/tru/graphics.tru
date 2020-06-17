@@ -1,0 +1,623 @@
+Unit Graphics;
+var  
+   curBufIndex, i,k,j,l,m,n,c1,c2: integer = 0; 
+   addr,curBuf,offBuf,buf1,buf2 : pointer of integer;
+   col,x,y : integer;
+	htabInOrg : array[16] of integer = buildtable("(((65536-Math.pow(2.0,16-i))))");
+	htabOutOrg : array[16] of integer  = buildtable("(Math.pow(2,16-i)-1)");
+
+	hTabMainCol : array[64*2] of integer;
+	htabIn, htabOut : array[64*16] of integer;
+	empty : array[512] of byte;
+	screen1Buf : array[32000] of byte aligned;
+	screen2Buf : array[32000] of byte aligned; 
+
+	rnd : array[256] of integer = buildtable("Math.random()*0xFFFF");
+	
+
+	@donotremove bsrc
+	@donotremove bdst
+	@donotremove bdx
+	@donotremove bdy
+	@donotremove bw
+	@donotremove bh
+	@donotremove badd
+	
+	@donotremove BlitSetup
+	
+	bsrc,bdst: pointer of integer; 
+	bdx, bdy,bw,bh : integer;
+	badd : long;
+	hx, hy, hl,hc:integer;
+
+	@donotremove Graphics_htabIn
+	@donotremove htabOut
+	@donotremove htabInOrg
+	@donotremove htabOutOrg
+	@donotremove hTabMainCol
+	@donotremove j
+	@donotremove Graphics_empty
+	@donotremove Graphics_screenBuf	
+	@donotremove empty
+	@donotremove screenBuf	
+	@donotremove shiftTab
+
+	// Tab for shl >8
+	shiftTab : array[32] of integer = (
+	0,0, 
+	1,0, 
+	2,0, 
+	3,0, 
+	4,0, 
+	5,0, 
+	6,0, 
+	7,0, 
+	8,0, 
+	8,1, 
+	8,2,
+	8,3,
+	8,4,
+	8,5,
+	8,6,
+	8,7,
+	8,8);
+
+
+
+
+
+
+
+procedure SetScreenBuffer(buff : pointer of long);
+begin
+asm("
+  	move.l  Graphics_buff,d0             ; put screen1 address in d0
+    clr.b   d0                       ; put on 256 byte boundary
+
+    clr.b   $ffff820d                ; clear STe extra bit
+    lsr.l   #8,d0
+    move.b  d0,$ffff8203            ; put in mid screen address byte
+    lsr.w   #8,d0
+    move.b  d0,$ffff8201            ; put in high screen address byte
+
+;                section bss
+ ;               ds.b    256                      ; 256 byte clear buffer
+;screen          ds.b    32000                    ; the screen
+");
+end;
+
+
+
+
+procedure FlipBuffers();
+begin
+
+	curBufIndex:=(curBufIndex+1)&1;
+	if (curBufIndex=0) then
+	begin
+		SetScreenBuffer(screen1Buf);
+		curBuf:=buf2;
+		offBuf:=buf1;
+	end
+	else
+	begin
+		SetScreenBuffer(screen2Buf);
+		curBuf:=buf1;
+		offBuf:=buf2;
+	end;
+	
+end;
+
+procedure Init();
+begin
+	SetScreenBuffer(screen1Buf);
+	GetScreen(buf1);
+	SetScreenBuffer(screen2Buf);
+	GetScreen(buf2);
+	
+	curBuf:=buf1;
+	offBuf:=buf2;
+end;
+
+
+
+procedure Putpixel(addr, x,y,col:global integer);
+begin
+	asm("
+		move.l Graphics_addr,a0
+		move.w Graphics_col,d2
+		move.w Graphics_x,d0
+		move.w Graphics_y,d1
+		jsr putpixel_slow
+	");
+end;
+
+procedure PutpixelDirect();
+begin
+	asm("
+		jsr putpixel_slow
+	");
+end;
+
+
+
+procedure InitHTabs();
+begin
+	k:=0;
+	// Colors
+	for i:=0 to 16 do
+	begin
+		// Pixels
+		for j:=0 to 4 do
+		begin
+			l:=i>>j;
+			if (l&1=true) then
+			begin
+				hTabMainCol[k]:=$FFFF;
+			end
+			else
+			begin			
+				hTabMainCol[k]:=0;
+			end;
+			k:=k+1;
+		end;
+
+	end;
+	k:=0;
+	for m:=0 to 16 do
+	begin
+	
+	// Colors
+	for i:=0 to 16 do
+	begin
+		for j:=0 to 4 do
+		begin
+			l:=i>>j;
+			l:=l&1;
+			if (l=1) then
+			begin
+				n:=htabInOrg[m];
+				htabIn[k]:=n;
+				n:=htabOutOrg[m];
+				htabOut[k]:=n;		
+			end
+			else
+			begin			
+				htabIn[k]:=0;		
+				htabOut[k]:=0;		
+			end;
+			k:=k+1;
+		end;
+
+	end;
+	
+	end;
+
+end;
+
+procedure LHLine(hx, hy, hl,hc:global integer);
+begin
+
+	if (hl<16) then
+	begin
+		HLine(hx,hy,hl,hc);
+	end
+	else
+	asm("
+
+		 ;; D5 contains width
+		move.w Graphics_hl,d5
+		
+		lsr #4,d5	 ; width of the line, divide by 16 to get number of $FF cells	
+		
+		sub.w #2,d5
+		
+;		moveq.l #0,d2
+;		moveq.l #0,d1
+;		moveq.l #0,d3
+
+		; hTabMainCol is the center filler, 64 integers		
+		lea Graphics_hTabMainCol,a1
+		; Both in and out tabs consist of 16 * 64 = 1024 integers
+		lea Graphics_htabOut,a2
+		lea Graphics_htabIn,a3
+		
+		; Main dudes * 16 color possibilities each, mul 
+		
+		move.w Graphics_hc,d1
+		and.w #15,d1
+		lsl.w #3,d1  ; mul with 4 (patterns) * 2 (integer size)
+		
+		add.l d1,a1	 ; $FFFF and 0000, main dudes, color shift. Keep!
+		
+
+		; Now to find the end and start values
+		
+		move.w Graphics_hx,d2 ; x-pos start and stop
+		
+		and.w #15,d2 ; and 15
+		move.w d2,d3 ; copy for END line
+		move.w Graphics_hl,d4 ; find end value
+		and.w #15,d4
+		
+		add.w d4,d3 ; Add hline to find end pos 
+		cmp #16,d3 ; Overflow?
+		bcs ccc
+		add.w #1,d5 ; add a center counter loop!
+ccc:
+
+		and.w #15,d3 
+		
+		lsl.w #7,d2       ; 64 bytes per frame + integer = 128  = shl 7
+		lsl.w #7,d3       ; 64 bytes per frame + integer = 128  = shl 7
+		
+		add d1,d2  ; Add color shift start
+		add d1,d3  ; add color shift end
+		
+		add.l d2,a2	 ; htabIn
+		add.l d3,a3	 ; htabOut
+
+
+
+
+
+	   ; find X position
+	   	
+		move.w Graphics_hx,d2
+		; Originally : shr 4 to get x-pos, then shl 2+1 to get bitplane pos (4) in word(2)=8 
+		; instead of shr 4  and shl 3, we simply shl 1 and  do an and
+		lsr.w #1,d2 
+		and #%1111111111111000,d2 
+		
+		; Set screen pointer
+		move.l Graphics_curBuf,a0
+
+		; Mul with 160, faster to do a shl 7+ shl 5	
+		move.w Graphics_hy,d1
+		move.w d1,d3
+;		mulu.w #160,d1
+		; FAST mul 160 = 128 + 32 = shl 7 + shl 5
+		lsl.w #7,d1		
+		lsl.w #5,d3	
+		add.w d3,d1
+		
+		add.l d1,a0
+		add.l d2,a0
+		
+		; Copy first byte from (a2)
+		move.l 0(a2),d0
+		or.l d0,(a0)+
+		move.l 4(a2),d0
+		or.l d0,(a0)+
+		
+		; main block
+		; Skip main block if no main
+		cmp #0,d5
+		blt hlf_cont2		
+		
+
+hlf2:
+		move.l 0(a1),(a0)+
+		move.l 4(a1),(a0)+
+		dbf d5,hlf2
+
+hlf_cont2:
+
+		move.l 0(a3),d0
+		or.l d0,(a0)+
+		move.l 4(a3),d0
+		or.l d0,(a0)+
+		
+	");
+
+end;
+
+
+procedure LHLineSingle(hx, hy, hl,hc:global integer);
+begin
+
+	if (hl<16) then
+	begin
+		HLine(hx,hy,hl,hc);
+	end
+	else
+	asm("
+
+		 ;; D5 contains width
+		move.w Graphics_hl,d5
+		
+		lsr #4,d5	 ; width of the line, divide by 16 to get number of $FF cells	
+		
+		sub.w #2,d5
+		
+;		moveq.l #0,d2
+;		moveq.l #0,d1
+;		moveq.l #0,d3
+
+		; hTabMainCol is the center filler, 64 integers		
+		lea Graphics_hTabMainCol,a1
+		; Both in and out tabs consist of 16 * 64 = 1024 integers
+		lea Graphics_htabOut,a2
+		lea Graphics_htabIn,a3
+		
+		; Main dudes * 16 color possibilities each, mul 
+		
+		move.w Graphics_hc,d1
+		move.w #15,d1
+		and.w #15,d1
+		lsl.w #3,d1  ; mul with 4 (patterns) * 2 (integer size)
+		
+		add.l d1,a1	 ; $FFFF and 0000, main dudes, color shift. Keep!
+		
+
+		; Now to find the end and start values
+		
+		move.w Graphics_hx,d2 ; x-pos start and stop
+		
+		and.w #15,d2 ; and 15
+		move.w d2,d3 ; copy for END line
+		move.w Graphics_hl,d4 ; find end value
+		and.w #15,d4
+		
+		add.w d4,d3 ; Add hline to find end pos 
+		cmp #16,d3 ; Overflow?
+		bcs ccc2
+		add.w #1,d5 ; add a center counter loop!
+ccc2:
+
+		and.w #15,d3 
+		
+		lsl.w #7,d2       ; 64 bytes per frame + integer = 128  = shl 7
+		lsl.w #7,d3       ; 64 bytes per frame + integer = 128  = shl 7
+		
+		add d1,d2  ; Add color shift start
+		add d1,d3  ; add color shift end
+		
+		add.l d2,a2	 ; htabIn
+		add.l d3,a3	 ; htabOut
+
+
+
+
+
+	   ; find X position
+	   	
+		move.w Graphics_hx,d2
+		; Originally : shr 4 to get x-pos, then shl 2+1 to get bitplane pos (4) in word(2)=8 
+		; instead of shr 4  and shl 3, we simply shl 1 and  do an and
+		lsr.w #1,d2 
+		and #%1111111111111000,d2 
+		
+		; Set screen pointer
+		move.l Graphics_curBuf,a0
+
+		; Mul with 160, faster to do a shl 7+ shl 5	
+		move.w Graphics_hy,d1
+		move.w d1,d3
+;		mulu.w #160,d1
+		; FAST mul 160 = 128 + 32 = shl 7 + shl 5
+		lsl.w #7,d1		
+		lsl.w #5,d3	
+		add.w d3,d1
+		
+		add.l d1,a0
+		add.l d2,a0
+		
+		add.w Graphics_hc,a0		
+
+		; Copy first byte from (a2)
+		move.w 0(a2),d0
+		or.w d0,(a0)+
+		add.l #6,a0
+		
+;		move.l 4(a2),d0
+;		or.l d0,(a0)+
+		
+		; main block
+		; Skip main block if no main
+		cmp #0,d5
+		blt hlf_cont3		
+		
+
+hlf3:
+;		move.l 0(a1),(a0)+
+;		move.l 4(a1),(a0)+
+		move.w (a1),(a0)
+		add.l #8,a0
+		
+		dbf d5,hlf3
+
+hlf_cont3:
+
+		move.w 0(a3),d0
+		or.w d0,(a0)+
+		
+	");
+
+end;
+
+
+procedure ClearScreenFast(cls_buf:pointer of long);
+begin
+asm("
+    move.l  Graphics_cls_buf,a6
+    add.l #4*40*200,a6
+    movem.l Graphics_empty,d0-d7/a0-a5
+    rept 571
+    movem.l d0-d7/a0-a5,-(a6)
+    endr 
+    movem.l d0-d7,-(a6)
+  ");
+end;
+
+
+procedure BlitSetup();
+begin
+/*	i:=bdx&15;
+	j:=0;
+	if (i>8) then 
+	begin
+		j:=(i-8);
+		i:=8;
+	end;
+*/
+//	x1:=bdx>>4;
+	asm("
+		
+
+		clr.l d0
+;		clr.l d1
+;		clr.l d6
+;		clr.l d7
+;		clr.l d3
+		
+
+;		move.w Graphics_bdx,d6
+;		move.w Graphics_bdx,d7
+		
+		;; Set up shift tab		
+		move.w Graphics_bdx,d0 ; bdx
+		and.w #15,d0
+		lsl.w #2,d0 ; *2 integer *2 table
+		lea Graphics_shiftTab,a1
+;		add.l d0,a1
+		move.w 0(a1,d0),d7
+		move.w 2(a1,d0),d6
+
+
+	;	move.w Graphics_i,d6
+	;	move.w Graphics_j,d7
+		
+		move.l Graphics_bsrc,a1
+		move.l Graphics_bdst,a2
+		
+		move.w Graphics_bdy,d0
+		
+		move.w d0,d1
+		lsl.w #5,d1
+		lsl.w #7,d0
+		add.l d1,a2
+		add.l d0,a2
+		
+		move.w Graphics_bdx,d0
+		lsr.w #1,d0
+		and #%1111111111111000,d0 
+				
+		add.w d0,a2
+
+		; 160-w*4
+
+; Taken care of with badd		
+;		move.w #160,d5
+;		move.w Graphics_bw,d0
+;		asl.w #3,d0 ; *8
+;		add.w #8,d0 + 8
+;		sub.w d0,d5
+	
+
+		sub.l #8,a1 ; go 8 back
+");
+
+end;
+
+
+procedure Blit(bsrc,bdst: global pointer of integer; bdx, bdy,bw,bh : global integer;badd:global long);
+begin
+	asm("
+		jsr Graphics_BlitSetup	
+
+		move.w Graphics_bh,d3 ; height
+blit_y:
+		move.w Graphics_bw,d4 ; width
+		
+blit_x:
+		move.w #3,d2
+inner:
+		move.w 0(a1),d0
+		swap d0
+		move.w 8(a1),d0
+;		swap d0
+		
+		lsr.l d6,d0
+		lsr.l d7,d0
+			
+		or.w d0,(a2)+
+		add.l #2,a1	
+
+
+
+
+		dbf d2,inner
+			
+
+
+		dbf d4,blit_x
+		
+		add.l Graphics_badd,a2
+		add.l Graphics_badd,a1
+		
+		dbf d3,blit_y
+						
+		
+
+	");	
+
+end;
+
+procedure BlitSingle(bsrc,bdst: global pointer of integer; bdx, bdy,bw,bh : global integer; badd:global long);
+begin
+	asm("
+		
+		jsr Graphics_BlitSetup
+		move.w Graphics_bh,d3 ; height
+blit2_y:
+		move.w Graphics_bw,d4 ; width
+		
+blit2_x:
+
+		move.w 0(a1),d0
+		swap d0
+		move.w 8(a1),d0
+	;	swap d0
+		lsr.l d6,d0
+		lsr.l d7,d0
+			
+		or.w d0,(a2)+
+		add.l #8,a1	
+		add.l #6,a2	
+
+
+
+		dbf d4,blit2_x
+		
+		add.l Graphics_badd,a2
+		add.l Graphics_badd,a1
+		
+		dbf d3,blit2_y
+						
+		
+
+	");	
+
+end;
+
+
+procedure RandomizeArray(ra_p:pointer of integer; ra_len:integer);
+begin
+	for j:=0 to ra_len do
+	begin
+		k:=rnd[j]&511;// random index
+		while (k>=ra_len) then k:=k-ra_len;
+//		if (k=ra_len) then k:=0;
+		// Swap
+		c1:=ra_p[j];
+		c2:=ra_p[k];
+		ra_p[j]:=c2;
+		ra_p[k]:=c1;
+	end;
+
+
+end;
+
+
+end.
