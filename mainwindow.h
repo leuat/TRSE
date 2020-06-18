@@ -172,6 +172,7 @@ public:
 
 
     QMap<QString, QIcon> m_icons;
+    QMap<QString, QColor> m_fileColors;
 
     TRSEProject m_currentProject;
 

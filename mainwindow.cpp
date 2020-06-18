@@ -617,7 +617,7 @@ void MainWindow::RefreshFileList()
         im->insertRow(1,trus);
     }
 
-
+   im->setHorizontalHeaderLabels(QStringList() << "");
     ui->treeFiles->hideColumn(1);
     ui->treeFiles->hideColumn(2);
     ui->treeFiles->hideColumn(3);
@@ -644,7 +644,11 @@ void MainWindow::AddTreeFileItem(QStandardItem *parent, QString file, QStringLis
           //parent->appendRow(new QStandardItem(f.split(QDir::separator()).last()));
            QString name = f.split(QDir::separator()).last();
            QStandardItem* si = new QStandardItem(name);
-           si->setIcon(m_icons[name.split(".").last()]);
+           QString id = name.split(".").last();
+           QBrush b;
+           b.setColor(m_fileColors[id]);
+           si->setIcon(m_icons[id]);
+           si->setForeground(b);
            si->setEditable(false);
            lstFiles.append(si);
            si->setData(f.remove(m_currentPath), Qt::UserRole);
@@ -658,6 +662,9 @@ void MainWindow::AddTreeFileItem(QStandardItem *parent, QString file, QStringLis
        if (iterator.hasNext()) {
          QStandardItem* it = new QStandardItem(fi.fileName());
          it->setEditable(false);
+         QBrush b;
+         b.setColor(m_fileColors["dir"]);
+         it->setForeground(b);
          //it->setData(finfo.absoluteFilePath(), QtCore.Qt.UserRole)
          parent->appendRow(it);
          QDir d(fi.absoluteFilePath());
@@ -752,22 +759,37 @@ void MainWindow::setupIcons()
 {
     QImage img;
     img.load(":resources/images/ras.png");
+    int c1= 255;
+    int c2= 224;
+    int c3 =192;
+    int c4 = 96;
+
+
+
     m_icons["ras"] = QIcon(QPixmap::fromImage(img));
+    m_fileColors["ras"] = QColor(c1,c1,c3);
+
     img.load(":resources/images/asm_icon.png");
     m_icons["asm"] = QIcon(QPixmap::fromImage(img));
+    m_fileColors["asm"] = QColor(c4,c1,c4);
 
     img.load(":resources/images/image_icon.png");
     m_icons["flf"] = QIcon(QPixmap::fromImage(img));
+    m_fileColors["flf"] = QColor(c1,c4,c4);
 
     img.load(":resources/images/paw_icon.png");
     m_icons["paw"] = QIcon(QPixmap::fromImage(img));
+    m_fileColors["paw"] = QColor(c2,c4,c3);
 
     img.load(":resources/images/torus.jpg");
     m_icons["fjo"] = QIcon(QPixmap::fromImage(img));
+    m_fileColors["fjo"] = QColor(c4,c3,c1);
 
     img.load(":resources/images/tru.png");
     m_icons["tru"] = QIcon(QPixmap::fromImage(img));
+    m_fileColors["tru"] = QColor(c1,c3,c1);
 
+    m_fileColors["dir"] = QColor(c2,c2,c2);
 
 }
 
