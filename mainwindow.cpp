@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->setMouseTracking(true);
     m_currentDoc = nullptr;
-    setupIcons();
+//    setupIcons();
 
 #if defined(Q_OS_MAC)
     Util::path = QCoreApplication::applicationDirPath() + "/../../";
@@ -114,6 +114,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(this, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(ShowContextMenu(const QPoint &)));
+
 
 }
 
@@ -573,7 +574,10 @@ void MainWindow::RefreshFileList()
         ui->treeFiles->setModel(nullptr);
             return;
 
+
     }
+
+    setupIcons();
 //    qDebug() << m_currentPath << rand()%100;
   //  if (m_currentPath=="")
     //    return;
@@ -605,7 +609,7 @@ void MainWindow::RefreshFileList()
     QVector<QStandardItem*> localItem;
     QString system = m_currentProject.m_ini->getString("system");
 
-    QString truPath = Util::path + QDir::separator() + "tutorials"+QDir::separator() + system+ QDir::separator() + "tru"+QDir::separator();
+    QString truPath = getTRUPath();
 
     QStandardItem* root = AddTreeRoot(getProjectPath(),"Project ("+m_currentProject.m_projectName+")");
 
@@ -764,6 +768,10 @@ void MainWindow::setupIcons()
     int c3 =192;
     int c4 = 96;
 
+    if (m_iniFile!=nullptr)
+    if (m_iniFile->getdouble("disable_file_colors")==1.0) {
+        c1 = c2 = c3 =c4 = 255;
+    }
 
 
     m_icons["ras"] = QIcon(QPixmap::fromImage(img));
@@ -973,6 +981,14 @@ bool MainWindow::CloseAll()
 QString MainWindow::getProjectPath()
 {
     return m_currentPath + "/";//QDir::toNativeSeparators("/");
+
+}
+
+QString MainWindow::getTRUPath()
+{
+    QString system = m_currentProject.m_ini->getString("system");
+
+    return Util::path + QDir::separator() + "tutorials"+QDir::separator() + system+ QDir::separator() + "tru"+QDir::separator();
 
 }
 
@@ -1326,6 +1342,8 @@ void MainWindow::on_actionTRSE_Settings_triggered()
         QApplication::setPalette(m_defaultPalette);
 
 
+    RefreshFileList();
+
 
 }
 
@@ -1476,6 +1494,13 @@ void MainWindow::LoadProject(QString filename)
         if (!(QDir(getProjectPath() + "/"+ focusFile).exists()))
             LoadDocument(focusFile);
 
+
+    m_watcher = QSharedPointer<QFileSystemWatcher>(new QFileSystemWatcher());
+    m_watcher->addPath(getProjectPath());
+    m_watcher->addPath(getTRUPath());
+
+
+    QObject::connect(m_watcher.get(), SIGNAL(directoryChanged(QString)), this, SLOT(RefreshFileList()));
 
 }
 

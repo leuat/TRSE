@@ -818,7 +818,7 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
          <property name="geometry">
           <rect>
            <x>40</x>
-           <y>150</y>
+           <y>190</y>
            <width>701</width>
            <height>381</height>
           </rect>
@@ -935,19 +935,19 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
            <x>50</x>
            <y>20</y>
            <width>481</width>
-           <height>111</height>
+           <height>141</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="1">
-           <widget class="QComboBox" name="cmbTheme"/>
-          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_3">
             <property name="text">
              <string>Rascal editor color theme</string>
             </property>
            </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="cmbTheme"/>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_21">
@@ -956,15 +956,15 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="cmbThemeFjong"/>
-          </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_8">
             <property name="text">
              <string>Window palette</string>
             </property>
            </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="cmbThemeFjong"/>
           </item>
           <item row="2" column="1">
            <widget class="QComboBox" name="cmbPalette">
@@ -978,6 +978,20 @@ So /usr/bin/x64 (linux) or  /Contents/MacOS/x64 (os x) or an exe file (win).</st
               <string>Light</string>
              </property>
             </item>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_41">
+            <property name="text">
+             <string>Disable project explorer colors</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QCheckBox" name="chkDisableFileColors">
+            <property name="text">
+             <string/>
+            </property>
            </widget>
           </item>
          </layout>

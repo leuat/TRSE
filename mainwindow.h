@@ -60,6 +60,7 @@
 #include <QDesktopServices>
 #include "source/dialognewproject.h"
 #include <QStandardItemModel>
+#include <QFileSystemWatcher>
 
 namespace Ui {
 class MainWindow;
@@ -169,7 +170,7 @@ public:
     QString m_currentPath;
     QVector<TRSEDocument*> m_documents;
     Tutorials m_tutorials;
-
+    QSharedPointer<QFileSystemWatcher> m_watcher;
 
     QMap<QString, QIcon> m_icons;
     QMap<QString, QColor> m_fileColors;
@@ -216,8 +217,8 @@ public:
     void SetupFileList();
 
 
-    void RefreshFileList();
 public slots:
+    void RefreshFileList();
     void AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBuilder);
 
     void UpdateSymbolTree(QString search="");
@@ -264,6 +265,7 @@ public slots:
 
     bool CloseAll();
     QString getProjectPath();
+    QString getTRUPath();
 
     void closeEvent(QCloseEvent *event) override;
 

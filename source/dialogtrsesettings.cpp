@@ -68,6 +68,9 @@ void DialogTRSESettings::FillFromIni()
     ui->leTinyCrunch->setText(m_ini->getString("tinycrunch"));
     ui->leCursorWidth->setText(QString::number((int)m_ini->getdouble("editor_cursor_width")));
     ui->chkAutoInject->setChecked(m_ini->getdouble("auto_inject")==1.0);
+
+    ui->chkDisableFileColors->setChecked(m_ini->getdouble("disable_file_colors")==1.0);
+
 //    if (ui->cmbPalette->currentText()=="Dark")
     if (m_ini->getdouble("windowpalette")==0)
         ui->cmbPalette->setCurrentText("Dark");
@@ -141,6 +144,9 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("pasmo", ui->lePasmo->text());
 
 
+
+
+
     m_ini->setString("gameboy_rgbasm_dir", ui->leRGBAsmDir->text());
 
 
@@ -160,6 +166,10 @@ void DialogTRSESettings::FillToIni()
 
     m_ini->setFloat("auto_inject", ui->chkAutoInject->isChecked()?1:0);
     m_ini->setString("user_defined_command",ui->leUserDefined->text());
+
+    m_ini->setFloat("disable_file_colors", ui->chkDisableFileColors->isChecked()?1:0);
+
+
 
 
 //    m_ini->setFloat("optimizer_remove_unused_symbols", ui->chkRemoveUnusedProcedures->isChecked()?1:0);
