@@ -767,7 +767,8 @@ void MainWindow::setupIcons()
 
 
     m_icons["ras"] = QIcon(QPixmap::fromImage(img));
-    m_fileColors["ras"] = QColor(c1,c1,c3);
+//    m_fileColors["ras"] = QColor(c1,c1,c3);
+    m_fileColors["ras"] = QColor(c4,c3,c1);
 
     img.load(":resources/images/asm_icon.png");
     m_icons["asm"] = QIcon(QPixmap::fromImage(img));
@@ -783,7 +784,8 @@ void MainWindow::setupIcons()
 
     img.load(":resources/images/torus.jpg");
     m_icons["fjo"] = QIcon(QPixmap::fromImage(img));
-    m_fileColors["fjo"] = QColor(c4,c3,c1);
+//    m_fileColors["fjo"] = QColor(c4,c3,c1);
+    m_fileColors["fjo"] = QColor(c1,c1,c3);
 
     img.load(":resources/images/tru.png");
     m_icons["tru"] = QIcon(QPixmap::fromImage(img));
