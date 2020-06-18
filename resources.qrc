@@ -482,5 +482,11 @@
         <file>resources/images/brush_blur.png</file>
         <file>resources/images/tutorials/floskel.png</file>
         <file>resources/text/help/r/function.rtf</file>
+        <file>resources/text/help/p/ras_files.rtf</file>
+        <file>resources/text/help/p/flf_files.rtf</file>
+        <file>resources/text/help/p/asm_files.rtf</file>
+        <file>resources/text/help/p/paw_files.rtf</file>
+        <file>resources/text/help/p/fjo_files.rtf</file>
+        <file>resources/text/help/p/tru_files.rtf</file>
     </qresource>
 </RCC>

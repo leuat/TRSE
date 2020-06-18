@@ -290,6 +290,7 @@ signals:
 private slots:
 
    void ShowContextMenu(const QPoint &pos);
+   void ShowFileContext(const QPoint &pos);
 
     void FindFileDialog();
     void GotoSymbol(QString s);
@@ -297,7 +298,7 @@ private slots:
 
     void on_treeFiles_doubleClicked(const QModelIndex &index);
 
-
+    void on_helpFileType();
 
     void on_tabMain_currentChanged(int index);
 

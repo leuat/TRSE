@@ -116,6 +116,10 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(ShowContextMenu(const QPoint &)));
 
 
+    connect(this, SIGNAL(customContextMenuRequested(const QPoint &)),
+            this, SLOT(ShowFileContext(const QPoint &)));
+
+
 }
 
 
@@ -1128,6 +1132,27 @@ void MainWindow::ShowContextMenu(const QPoint &pos)
     contextMenu.exec(mapToGlobal(pos));
 }
 
+void MainWindow::ShowFileContext(const QPoint &pos)
+{
+    if (!ui->treeFiles->rect().contains( ui->treeFiles->mapFromGlobal(QCursor::pos())))
+        return;
+
+//    if (ui->tabMain->currentIndex()!=0)
+//        return;
+
+    QMenu contextMenu(tr("Menu"), this);
+
+    QAction action1("Delete file", this);
+    QAction action3("Help - what is this type of file?", this);
+    connect(&action1, SIGNAL(triggered()), this, SLOT(on_actionDelete_file_triggered()));
+    connect(&action3, SIGNAL(triggered()), this, SLOT(on_helpFileType()));
+    contextMenu.addAction(&action1);
+    contextMenu.addAction(&action3);
+
+    contextMenu.exec(mapToGlobal(pos));
+
+}
+
 void MainWindow::FindFileDialog()
 {
 
@@ -1200,6 +1225,16 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
 
     Data::data.Redraw();
     Data::data.forceRedraw = true;
+}
+
+void MainWindow::on_helpFileType()
+{
+    //ui->treeFiles->currentIndex();
+    QString name = ui->treeFiles->model()->data(ui->treeFiles->currentIndex(), Qt::UserRole).toString();
+
+    DialogHelp* dh = new DialogHelp(nullptr, name.split(".").last()+"_files", m_defaultPalette);
+    dh->show();
+
 }
 
 

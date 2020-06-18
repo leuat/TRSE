@@ -49,4 +49,4 @@ remove_unused_symbols = 1
 data_header_resources/images/octopus.flf = 6.93276e-310
 open_files = ,05_paw_resources_auto_generated.ras, Hello.ras, language/01_introduction.ras, intermediate/03_fire.ras, /home/leuat/code/TRSE/tutorials/C64/tru/gfx/bitmapgraphics.tru, /Hello.ras, /language/01_introduction.ras, /intermediate/03_fire.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
-current_file = 05_paw_resources_auto_generated.ras
+current_file = Hello.ras
