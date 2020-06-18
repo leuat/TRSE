@@ -168,6 +168,12 @@ public:
     QString m_fontFamily;
     QPalette m_defaultPalette;
     QString m_currentPath;
+    QStringList m_expandedList;
+
+    void findExpanded(QAbstractItemModel* model, QStringList& lst, QModelIndex parent = QModelIndex());
+    void setExpanded(QAbstractItemModel* model, QStringList& lst, QModelIndex parent = QModelIndex());
+
+    QSharedPointer<QStandardItemModel> m_im = nullptr;
     QVector<TRSEDocument*> m_documents;
     Tutorials m_tutorials;
     QSharedPointer<QFileSystemWatcher> m_watcher;

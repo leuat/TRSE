@@ -127,15 +127,41 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::findExpanded(QAbstractItemModel *model,  QStringList& lst,QModelIndex parent) {
+    for(int r = 0; r < model->rowCount(parent); ++r) {
+        QModelIndex index = model->index(r, 0, parent);
+        QVariant name = model->data(index);
+        if (ui->treeFiles->isExpanded(index))
+            lst<<name.toString();
+        if( model->hasChildren(index) ) {
+            findExpanded(model, lst, index);
+        }
+    }
+}
+
+void MainWindow::setExpanded(QAbstractItemModel *model, QStringList &lst, QModelIndex parent)
+{
+    for(int r = 0; r < model->rowCount(parent); ++r) {
+        QModelIndex index = model->index(r, 0, parent);
+        QVariant name = model->data(index);
+        if (lst.contains(name.toString()))
+            ui->treeFiles->setExpanded(index,true);
+        if( model->hasChildren(index) ) {
+            setExpanded(model, lst, index);
+        }
+    }
+
+}
+
 void MainWindow::AfterStart(QString oldCurDir)
 {
     if (m_commandParams.count()>1) {
         QString p1 = m_commandParams[1];
         if (p1.toLower().endsWith(".trse")) {
 #ifdef _WIN32
-        LoadProject(p1);
+            LoadProject(p1);
 #else
-        LoadProject(oldCurDir+QDir::separator()+ p1);
+            LoadProject(oldCurDir+QDir::separator()+ p1);
 #endif
         }
     }
@@ -578,6 +604,21 @@ void MainWindow::RefreshFileList()
     }
 
     setupIcons();
+    m_expandedList.clear();
+    if (m_im!=nullptr)
+        findExpanded(m_im.get(),m_expandedList);
+    //qDebug() << List;
+        // prepare list
+        // PS: getPersistentIndexList() function is a simple `return this->persistentIndexList()` from TreeModel model class
+/*    if (m_im!=nullptr)
+        for (QModelIndex index : m_im->)
+        {
+            if (ui->treeFiles->isExpanded(index))
+            {
+                List << index.data(Qt::DisplayRole).toString();
+            }
+        }
+*/
 //    qDebug() << m_currentPath << rand()%100;
   //  if (m_currentPath=="")
     //    return;
@@ -598,7 +639,7 @@ void MainWindow::RefreshFileList()
 
 */
 
-    QStandardItemModel* im = new QStandardItemModel();
+    m_im = QSharedPointer<QStandardItemModel>(new QStandardItemModel());
 
 
 
@@ -614,22 +655,25 @@ void MainWindow::RefreshFileList()
     QStandardItem* root = AddTreeRoot(getProjectPath(),"Project ("+m_currentProject.m_projectName+")");
 
 //    QStandardItem* root = AddTreeRoot(getProjectPath(),"Project");
-    im->insertRow(0,root);
+    m_im->insertRow(0,root);
     QStandardItem* trus = nullptr;
     if (QDir().exists(truPath)) {
        trus = AddTreeRoot(truPath,"Library (TRSE)");
-        im->insertRow(1,trus);
+        m_im->insertRow(1,trus);
     }
 
-   im->setHorizontalHeaderLabels(QStringList() << "");
+   m_im->setHorizontalHeaderLabels(QStringList() << "");
     ui->treeFiles->hideColumn(1);
     ui->treeFiles->hideColumn(2);
     ui->treeFiles->hideColumn(3);
-    ui->treeFiles->setModel(im);
+    ui->treeFiles->setModel(m_im.get());
     ui->treeFiles->expand(root->index());
-
+//    ui->treeFiles->expandAll();
     if (trus!=nullptr)
         ui->treeFiles->expand(trus->index());
+
+    // Restore expanded settings
+    setExpanded(m_im.get(),m_expandedList);
 
 //    ui->treeFiles->expandAll();
 
@@ -688,6 +732,8 @@ QStandardItem* MainWindow::AddTreeRoot(QString path, QString name)
     root->setEditable(false);
     QStringList exts = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo";
     QDirIterator it(path,QStringList(), QDir::NoDotAndDotDot | QDir::Dirs);
+//    if (m_expandedList.contains(path))
+
     while (it.hasNext()) {
         AddTreeFileItem(root,it.next(),exts);
        }
@@ -1124,9 +1170,12 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
     QString path = FindPathInProjectFolders(index);
 
     // Finally load file!
+    QString tru = QDir::separator()+m_currentProject.m_ini->getString("system")+QDir::separator()+"tru";
     QString file = index.data(Qt::UserRole).toString();
+//    qDebug() << "CLICKED "<<file;
+//    qDebug() << "CLICKED2 "<<tru;
 
-    if (file.contains(getTRUPath())) {
+    if (file.contains(tru)) {
         LoadDocument(file,true);
         return;
     }
