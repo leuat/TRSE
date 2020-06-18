@@ -605,24 +605,29 @@ void MainWindow::RefreshFileList()
     QVector<QStandardItem*> localItem;
     QString system = m_currentProject.m_ini->getString("system");
 
-    QString truPath = Util::path+ QDir::separator() + "tutorials"+QDir::separator() + system+ QDir::separator() + "tru"+QDir::separator();
+    QString truPath = Util::path + QDir::separator() + "tutorials"+QDir::separator() + system+ QDir::separator() + "tru"+QDir::separator();
 
-//    QStandardItem* root = AddTreeRoot(getProjectPath(),"Project '"+m_currentProject.m_filename.split(".").first() +"'");
-    QStandardItem* root = AddTreeRoot(getProjectPath(),"Project");
+    QStandardItem* root = AddTreeRoot(getProjectPath(),"Project ("+m_currentProject.m_projectName+")");
+
+//    QStandardItem* root = AddTreeRoot(getProjectPath(),"Project");
     im->insertRow(0,root);
+    QStandardItem* trus = nullptr;
     if (QDir().exists(truPath)) {
-        QStandardItem* trus = AddTreeRoot(truPath,"Library");
+       trus = AddTreeRoot(truPath,"Library (TRSE)");
         im->insertRow(1,trus);
-        ui->treeFiles->expand(trus->index());
     }
 
-    ui->treeFiles->setModel(im);
 
     ui->treeFiles->hideColumn(1);
     ui->treeFiles->hideColumn(2);
     ui->treeFiles->hideColumn(3);
-//    ui->treeFiles->expandAll();
+    ui->treeFiles->setModel(im);
     ui->treeFiles->expand(root->index());
+
+    if (trus!=nullptr)
+        ui->treeFiles->expand(trus->index());
+
+//    ui->treeFiles->expandAll();
 
 }
 

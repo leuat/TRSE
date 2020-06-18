@@ -71,11 +71,14 @@ class TRSEProject {
 public:
     QSharedPointer<CIniFile> m_ini;
     QString m_filename="";
+    QString m_projectName = "";
 //    QStringList m_acceptedFileTypes = {"asm", "flf", "ras", "prg", "paw", "inc", "fjo"};
     void Load(QString projectfile) {
         m_ini = QSharedPointer<CIniFile>(new CIniFile());
         m_ini->Load(projectfile);
         m_filename = projectfile;
+        m_projectName = projectfile.split(QDir::separator()).last().split(".").first();
+
         QStringList l = m_filename.split("/");
         l.removeLast();
         QString path = "";

@@ -203,7 +203,6 @@ begin
 		d := bi - dx/2;
 		while x1 <> x2 do begin
 			if d <128 do begin
-				asm(";check");
 
 				y1 := y1 + yi;
 				d := d + ai;
