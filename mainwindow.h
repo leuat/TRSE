@@ -398,6 +398,8 @@ private slots:
 
     void removeFromRecentList();
 
+    void on_btnClearProject_clicked();
+
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);
 

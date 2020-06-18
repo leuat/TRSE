@@ -2106,3 +2106,14 @@ void MainWindow::removeFromRecentList()
     m_iniFile->setStringList("recent_projects",l);
     UpdateRecentProjects();
 }
+
+void MainWindow::on_btnClearProject_clicked()
+{
+    QDir dir(m_currentPath);
+    dir.setNameFilters(QStringList() << "*.asm" << "*.sym" << "*.prg" << "*.gb" << "*.o" <<"*.tos");
+    dir.setFilter(QDir::Files);
+    foreach(QString dirFile, dir.entryList())
+    {
+        dir.remove(dirFile);
+    }
+}

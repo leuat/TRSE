@@ -198,31 +198,13 @@
               </item>
               <item row="0" column="0">
                <layout class="QGridLayout" name="gridLayout_8">
-                <item row="2" column="1">
-                 <widget class="QPushButton" name="btnProjectDir">
-                  <property name="text">
-                   <string>Project directory</string>
+                <item row="1" column="0">
+                 <widget class="QPushButton" name="btnBuild_4">
+                  <property name="toolTip">
+                   <string>Runs the current program. </string>
                   </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QPushButton" name="btnBuild_3">
                   <property name="text">
-                   <string>Build (c-b)</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QPushButton" name="btnMemoryAnalyze">
-                  <property name="text">
-                   <string>Memory Map (c-u)</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QPushButton" name="btnBuildAll">
-                  <property name="text">
-                   <string>Build All</string>
+                   <string>Run (c-r)</string>
                   </property>
                  </widget>
                 </item>
@@ -233,10 +215,50 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
-                 <widget class="QPushButton" name="btnBuild_4">
+                <item row="0" column="1">
+                 <widget class="QPushButton" name="btnBuild_3">
                   <property name="text">
-                   <string>Run (c-r)</string>
+                   <string>Build (c-b)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QPushButton" name="btnBuildAll">
+                  <property name="toolTip">
+                   <string>Builds all files according to the build instruction script. Check the &quot;project settings&quot; for details.</string>
+                  </property>
+                  <property name="text">
+                   <string>Build All</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QPushButton" name="btnMemoryAnalyze">
+                  <property name="toolTip">
+                   <string>Opens up a memory map analyzer window</string>
+                  </property>
+                  <property name="text">
+                   <string>Memory Map (c-u)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QPushButton" name="btnProjectDir">
+                  <property name="toolTip">
+                   <string>Opens up an explorer window to the current project folder</string>
+                  </property>
+                  <property name="text">
+                   <string>Project directory</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QPushButton" name="btnClearProject">
+                  <property name="toolTip">
+                   <string>Deletes all .asm .sym .prg files in the current project</string>
+                  </property>
+                  <property name="text">
+                   <string>Clear project</string>
                   </property>
                  </widget>
                 </item>
