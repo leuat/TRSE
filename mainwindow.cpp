@@ -1125,8 +1125,8 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
 
     // Finally load file!
     QString file = index.data(Qt::UserRole).toString();
-    qDebug() << "CLICKED "<<file;
-    if (file.contains("/C64/tru/")) {
+
+    if (file.contains(getTRUPath())) {
         LoadDocument(file,true);
         return;
     }
