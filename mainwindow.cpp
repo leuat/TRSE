@@ -694,7 +694,7 @@ void MainWindow::AddTreeFileItem(QStandardItem *parent, QString file, QStringLis
        if (exts.contains("*."+fi.suffix())) {
 
           //parent->appendRow(new QStandardItem(f.split(QDir::separator()).last()));
-           QString name = f.split(QDir::separator()).last();
+           QString name = QDir::toNativeSeparators(f).split(QDir::separator()).last();
            QStandardItem* si = new QStandardItem(name);
            QString id = name.split(".").last();
            QBrush b;
@@ -827,6 +827,10 @@ void MainWindow::setupIcons()
     m_icons["ras"] = QIcon(QPixmap::fromImage(img));
 //    m_fileColors["ras"] = QColor(c1,c1,c3);
     m_fileColors["ras"] = QColor(c4,c3,c1);
+
+    m_icons["inc"] = QIcon(QPixmap::fromImage(img));
+//    m_fileColors["ras"] = QColor(c1,c1,c3);
+    m_fileColors["inc"] = QColor(c4,c4,c1);
 
     img.load(":resources/images/asm_icon.png");
     m_icons["asm"] = QIcon(QPixmap::fromImage(img));

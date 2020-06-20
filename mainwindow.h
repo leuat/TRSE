@@ -78,7 +78,7 @@ public:
         m_ini = QSharedPointer<CIniFile>(new CIniFile());
         m_ini->Load(projectfile);
         m_filename = projectfile;
-        m_projectName = projectfile.split(QDir::separator()).last().split(".").first();
+        m_projectName = QDir::toNativeSeparators(projectfile).split(QDir::separator()).last().split(".").first();
 
         QStringList l = m_filename.split("/");
         l.removeLast();
