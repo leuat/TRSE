@@ -605,6 +605,7 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
     while (!done) {
 //        qDebug() << "ival:"  << QString::number(m_currentToken.m_intVal);
 //        qDebug() << m_currentToken.getType();
+
         if (m_currentToken.m_type==TokenType::LPAREN) {
             str = str+ "(";
             p++;
@@ -2831,8 +2832,12 @@ QSharedPointer<Node> Parser::TypeSpec()
         QString position = "";
         if (m_currentToken.m_type==TokenType::AT || m_currentToken.m_type==TokenType::ABSOLUT) {
             Eat();
+
             //position = m_currentToken.getNumAsHexString();
             position = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
+
+            qDebug() << "PARSER "<<position;
+
 
            // Eat(m_currentToken.m_type);
         }
@@ -2894,8 +2899,11 @@ QSharedPointer<Node> Parser::TypeSpec()
     QString position = "";
     if (m_currentToken.m_type==TokenType::AT || m_currentToken.m_type==TokenType::ABSOLUT) {
         Eat();
-        position = m_currentToken.getNumAsHexString();
-        Eat(m_currentToken.m_type);
+
+        position = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
+//        qDebug() << "LOOKUP constnt : "<<position;
+
+//        Eat(m_currentToken.m_type);
         QSharedPointer<NodeVarType> nt = QSharedPointer<NodeVarType>(new NodeVarType(t, position ));
 //        qDebug() << "IN TYPESPEC : " << t.m_value << TokenType::getType(t.m_type);
         nt->m_position = position;
