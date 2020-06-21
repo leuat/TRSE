@@ -666,19 +666,21 @@ void MainWindow::RefreshFileList()
         m_im->insertRow(1,trus);
     }
 
-   m_im->setHorizontalHeaderLabels(QStringList() << "");
-    ui->treeFiles->hideColumn(1);
-    ui->treeFiles->hideColumn(2);
-    ui->treeFiles->hideColumn(3);
+   m_im->setHorizontalHeaderLabels(QStringList() << "1" <<"2");
+  //  ui->treeFiles->hideColumn(2);
+    //ui->treeFiles->hideColumn(3);
     ui->treeFiles->setModel(m_im.get());
     ui->treeFiles->expand(root->index());
 //    ui->treeFiles->expandAll();
     if (trus!=nullptr)
         ui->treeFiles->expand(trus->index());
 
+    ui->treeFiles->hideColumn(1);
+//    m_im->sort()
+
     // Restore expanded settings
     setExpanded(m_im.get(),m_expandedList);
-
+    m_im->sort(1);
 //    ui->treeFiles->expandAll();
 
 }
@@ -688,7 +690,7 @@ void MainWindow::AddTreeFileItem(QStandardItem *parent, QString file, QStringLis
 {
 //    QString file= it.next();
    QFileInfo fi = QFileInfo(file);
-   QVector<QStandardItem* > lstFiles;
+   QVector<QList<QStandardItem*> > lstFiles;
    if (fi.isFile()) {
        QString f = file;
        if (exts.contains("*."+fi.suffix())) {
@@ -702,8 +704,16 @@ void MainWindow::AddTreeFileItem(QStandardItem *parent, QString file, QStringLis
            si->setIcon(m_icons[id]);
            si->setForeground(b);
            si->setEditable(false);
-           lstFiles.append(si);
+           QList<QStandardItem*> lst;
+           lst<<si;
            si->setData(f.remove(m_currentPath), Qt::UserRole);
+
+           QStandardItem* srt = new QStandardItem(name);
+           lst<<srt;
+//           lst<<si;
+
+           lstFiles.append(lst);
+
 
        }
    }
@@ -718,16 +728,20 @@ void MainWindow::AddTreeFileItem(QStandardItem *parent, QString file, QStringLis
          b.setColor(m_fileColors["dir"]);
          it->setForeground(b);
          //it->setData(finfo.absoluteFilePath(), QtCore.Qt.UserRole)
-         parent->appendRow(it);
+         QStandardItem* srt = new QStandardItem("AAAAA" + fi.fileName());
+
+         parent->appendRow(QList<QStandardItem*>() <<it << srt);
          QDir d(fi.absoluteFilePath());
          for (auto subfiles : d.entryInfoList(QDir::AllEntries|QDir::NoDotAndDotDot))
              AddTreeFileItem(it, subfiles.absoluteFilePath(),exts);
 
+         //it->sortChildren(0);
         }
 
     }
-   for (QStandardItem* si : lstFiles)
+   for (QList<QStandardItem*> si : lstFiles) {
        parent->appendRow(si);
+   }
 }
 
 QStandardItem* MainWindow::AddTreeRoot(QString path, QString name)
@@ -830,7 +844,7 @@ void MainWindow::setupIcons()
 
     m_icons["inc"] = QIcon(QPixmap::fromImage(img));
 //    m_fileColors["ras"] = QColor(c1,c1,c3);
-    m_fileColors["inc"] = QColor(c4,c4,c1);
+    m_fileColors["inc"] = QColor(c2,c4,c1);
 
     img.load(":resources/images/asm_icon.png");
     m_icons["asm"] = QIcon(QPixmap::fromImage(img));
@@ -847,7 +861,7 @@ void MainWindow::setupIcons()
     img.load(":resources/images/torus.jpg");
     m_icons["fjo"] = QIcon(QPixmap::fromImage(img));
 //    m_fileColors["fjo"] = QColor(c4,c3,c1);
-    m_fileColors["fjo"] = QColor(c1,c1,c3);
+    m_fileColors["fjo"] = QColor(c4,c4,c1);
 
     img.load(":resources/images/tru.png");
     m_icons["tru"] = QIcon(QPixmap::fromImage(img));

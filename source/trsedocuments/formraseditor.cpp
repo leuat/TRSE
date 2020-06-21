@@ -400,6 +400,15 @@ void FormRasEditor::Focus() {
 
 void FormRasEditor::Run()
 {
+
+    if (m_projectIniFile->getString("main_ras_file")!="none") {
+        if (m_projectIniFile->getString("main_ras_file")!=m_currentFileShort) {
+            emit requestRunMain();
+            return;
+        }
+
+    }
+
     if (m_builderThread.m_builder->m_system==nullptr)
         return;
 
@@ -417,13 +426,6 @@ void FormRasEditor::Run()
     }
 
 
-    if (m_projectIniFile->getString("main_ras_file")!="none") {
-        if (m_projectIniFile->getString("main_ras_file")!=m_currentFileShort) {
-            emit requestRunMain();
-            return;
-        }
-
-    }
 
     if (!m_builderThread.m_builder->m_system->m_buildSuccess)
         return;

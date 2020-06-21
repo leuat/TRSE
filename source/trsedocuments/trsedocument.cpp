@@ -88,14 +88,17 @@ void TRSEDocument::UserDefined()
 
     QString src = m_currentSourceFile;
 
+    if (m_projectIniFile->getString("main_ras_file")!="none")
+        if (m_projectIniFile->getString("main_ras_file")!=m_currentFileShort)
+            src = m_currentDir+ m_projectIniFile->getString("main_ras_file");
+
+
+
     s=s.replace("@prg", src.replace(".ras", "."+m_programEndingType));
     QStringList params = s.split(" ");
     QString cmd = params[0];
     params.removeFirst();
-    qDebug() << cmd << params;
     p.startDetached(cmd,params);
     p.waitForFinished();
-    qDebug()  << p.readAllStandardError();
-    qDebug()  << p.readAllStandardOutput();
 
 }
