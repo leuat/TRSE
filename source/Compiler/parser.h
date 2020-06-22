@@ -203,7 +203,7 @@ public:
     void HandleUseTPU(QString fileName);
     void Eat();
     void HandleImportChar();
-    QStringList BuildTable(int cnt);
+    QStringList BuildTable(int cnt, TokenType::Type type);
 
     int getParsedNumberOrConstant();
 

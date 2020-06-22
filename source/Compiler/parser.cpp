@@ -2783,14 +2783,14 @@ QSharedPointer<Node> Parser::TypeSpec()
         Eat(TokenType::OF);
         Token arrayType = m_currentToken;
         VerifyTypeSpec(arrayType);
-        Eat(m_currentToken.m_type);
         TokenType::Type dataType = m_currentToken.m_type;
+        Eat(m_currentToken.m_type);
         QStringList data;
         // Contains constant init?
         if (m_currentToken.m_type==TokenType::EQUALS) {
             Eat();
             if (m_currentToken.m_type==TokenType::BUILDTABLE) {
-                data = BuildTable(count);
+                data = BuildTable(count, dataType);
             }
             else {
                 Eat(TokenType::LPAREN);
@@ -3063,7 +3063,7 @@ void Parser::HandleImportChar()
 
 }
 
-QStringList Parser::BuildTable(int cnt)
+QStringList Parser::BuildTable(int cnt,TokenType::Type type)
 {
     Eat(TokenType::BUILDTABLE);
     if (cnt==0)
@@ -3075,6 +3075,12 @@ QStringList Parser::BuildTable(int cnt)
     Eat(TokenType::STRING);
     QStringList data;
     QJSEngine myEngine;
+    int AND = 0xFFFF;
+//    qDebug() << "PARSER " <<TokenType::getType(type);
+    if (type==TokenType::BYTE)
+        AND = 0xFF;
+    if (type==TokenType::LONG)
+        AND = 0xFFFFFFFF;
     for (int i=0;i<cnt;i++) {
         QString str = sentence;
 //        str = str.replace("i",QString::number(i));
@@ -3096,7 +3102,7 @@ QStringList Parser::BuildTable(int cnt)
  //       if ()
 //        data << Util::numToHex(ret.toInt()&0xFF);
 //        qDebug() <<  ret.toInt();
-        data << Util::numToHex(ret.toInt()&0xFFFF);
+        data << Util::numToHex(ret.toInt()&AND);
     }
 
     return data;
