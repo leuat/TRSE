@@ -346,8 +346,8 @@ begin
 	scroll(scrollx,scrolly);
 	if (isRendering=true) then
 	begin
-		closeirq();
-		asm("rti");
+//		closeirq();
+	//	asm("rti");
 	end;
 //	ToggleBorderBackground(0);
 	// First, make sure that the PPU knows that sprites are located at @spriteLoc

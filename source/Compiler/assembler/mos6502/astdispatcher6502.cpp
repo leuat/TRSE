@@ -2334,6 +2334,9 @@ bool ASTDispatcher6502::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QShare
      if (bvar->isArrayIndex())
          return false;
 
+     if (var->isArrayIndex())
+         return false;
+
 //    QSharedPointer<NodeVar> rrvar = dynamic_cast<QSharedPointer<NodeVar>>(rterm->m_right);
 //    QSharedPointer<NodeNumber> rrnum = dynamic_cast<QSharedPointer<NodeNumber>>(rterm->m_right);
 
@@ -2393,6 +2396,9 @@ bool ASTDispatcher6502::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QShare
     }*/
     if (var->isWord(as) && rterm->m_right->isPure()) {
         QString lbl = as->NewLabel("WordAdd");
+        if (bvar->getValue(as)!=var->getValue(as))
+//        qDebug() << "OPTIMIZATION " <<bvar->getValue(as) << var->getValue(as);
+//
         as->Comment("INTEGER optimization: a=b+c ");
         //var->Accept(this);
         as->Asm("lda " + getValue(bvar));
@@ -2413,7 +2419,7 @@ bool ASTDispatcher6502::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QShare
             as->Asm("dec " + getValue(var) + "+1");
         }
 */
-        as->Label(lbl);
+//        as->Label(lbl);
         as->Asm("sta " + getValue(var) + "+0");
         as->Asm("lda "+getValue(bvar)+"+1");
         as->ClearTerm();
@@ -2450,10 +2456,13 @@ bool ASTDispatcher6502::IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPoint
 //    qDebug() << "IsSimpleIncDec test";
 
     // DANGEROUS
-/*
-    if (getValue(rvar)!=getValue(var))
+
+/*    if (getValue(rvar)!=getValue(var)) {
+  //      qDebug() << "NOT SAME " <<rvar->getValue(as) << var->getValue(as);
         return false;
+    }
 */
+
 
 //    QSharedPointer<NodeNumber> num = dynamic_cast<QSharedPointer<NodeNumber>>(rterm->m_right);
     bool isPureNumber = rterm->m_right->isPureNumeric();
@@ -2483,6 +2492,12 @@ bool ASTDispatcher6502::IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPoint
 
     if (num!=1)
         return false;
+
+    if (getValue(rvar)!=getValue(var)) {
+  //      qDebug() << "NOT SAME " <<rvar->getValue(as) << var->getValue(as);
+        return false;
+    }
+
 
     // OK: it is i:=i+1;
     QString operand ="";

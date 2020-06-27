@@ -76,6 +76,7 @@ public:
 
 
     QString getValue(Assembler* as)  override;
+    QString getValue8bit(Assembler* as, bool isHi) override;
 
     TokenType::Type getType(Assembler *as) override;
 

@@ -27,6 +27,7 @@ var
 	k,l,blockx, blocky,map_player_direction : byte = 0;
 	player_x: integer;
 	player_y: byte;
+	tmp:integer;
 
 	background_mask: array[240] of byte=(
 	1,1,1,1,1,1,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
@@ -106,6 +107,24 @@ begin
 	Levels::lp:=@levelPosition;
 	Levels::ReadHeader();
 	Levels::starty:=2;
+end;
+
+procedure PlayerBackgroundCollide();
+	
+begin
+	asm(";woot");
+	tmp:=player_x-12;
+	i:=tmp/8;
+	j:=(player_y-38)/8;
+	moveto(i-1,j-1, hi(screen_char_loc));
+	blockx:=0;
+	blocky:=0;
+//	screenmemory:=$0400;
+	k:=screenmemory[ map_player_direction +screen_width+1]; // down
+	if (background_mask[k]=1) then begin
+		if (joystickdown=1 or joystickup=1) then blocky:=1;
+		if (joystickleft=1 or joystickright=1) then blockx:=1;
+	end;
 end;
 
 procedure LoadEntities();
@@ -190,35 +209,6 @@ begin
 end;
 
 
-/*	
-	Traverselevels checkes whether the player has moved close to a border.
-    If true, then the neighbouring screen is loaded and the player sprite is placed
-	on the opposite part of the screen. 
-
-*/
-
-
-
-procedure PlayerBackgroundCollide();
-var
-	tmp:integer;
-	
-begin
-	tmp:=(player_x - 12);
-	i:=tmp/8;
-	j:=(player_y-38)/8;
-	moveto(i-1,j-1, hi(screen_char_loc));
-	blockx:=0;
-	blocky:=0;
-	
-	k:=screenmemory[ map_player_direction +screen_width+1]; // down
-	
-	if (background_mask[k]=1) then begin
-		if (joystickdown=1 or joystickup=1) then blocky:=1;
-		if (joystickleft=1 or joystickright=1) then blockx:=1;
-	end;
-end;
-
 
 
 procedure TraverseLevels();
@@ -277,6 +267,18 @@ begin
 
 end;
 
+
+/*	
+	Traverselevels checkes whether the player has moved close to a border.
+    If true, then the neighbouring screen is loaded and the player sprite is placed
+	on the opposite part of the screen. 
+
+*/
+
+
+
+
+
 /*
 	 Moves the player
 */
@@ -307,7 +309,7 @@ begin
 	StartIRQ(@useKernal);
 	MovePlayerSprite();	
 	TraverseLevels();
-	CrashWithEntities();
+//	CrashWithEntities();
 	CloseIRQ();
 end;
 
@@ -317,7 +319,6 @@ end;
 begin
 	Initialize();
 	InitMainSprite();
-
 
 	Levels::lp:=@levelPosition;
 	Levels::cdp := colors;

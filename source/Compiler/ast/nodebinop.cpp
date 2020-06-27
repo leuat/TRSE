@@ -178,6 +178,22 @@ QString NodeBinOP::getValue(Assembler *as) {
     return hash + HexValue();
 }
 
+QString NodeBinOP::getValue8bit(Assembler *as, bool isHi)
+{   QString hash = "";
+    if (as!=nullptr)
+        hash = as->m_hash;
+
+    if (isAddress()) hash="";
+
+    int res = numValue();
+    if (isHi)
+        return hash + Util::numToHex((int)res>>8);
+    else
+        return hash + Util::numToHex(((int)res)&0xFF);
+
+
+}
+
 TokenType::Type NodeBinOP::getType(Assembler *as) {
     TokenType::Type a =m_right->getType(as);
     TokenType::Type b =m_left->getType(as);

@@ -98,7 +98,7 @@ begin
 	// Go past header
 
 	inczp(rl_levels, 9);
-
+	
 	// Calculate position in level layout
 
 	m_rl_pos := m_rl_sizex*m_lj + m_li;

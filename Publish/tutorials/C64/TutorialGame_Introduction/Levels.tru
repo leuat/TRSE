@@ -114,7 +114,7 @@ var
 
 begin
 	// Fluff files have 13 byte headers
-	@levelpointer:=@levelpointer+32+13;
+	@levelpointer:=@levelpointer+(32+13);
 //	inczp(@levelpointer, 32+13);
 
 	pos := sizex*m_lj2 + m_li2;

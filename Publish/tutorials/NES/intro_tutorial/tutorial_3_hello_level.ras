@@ -228,12 +228,12 @@ interrupt NMI();
 begin
 	// Startirq pushes a,x,y onto the stack
 	Startirq(0);
-	if (isRendering=true) then
+/*	if (isRendering=true) then
 	begin
 		closeirq();
 		asm("rti");
 	end;
-
+*/
 	// First, make sure that the PPU knows that sprites are located at @spriteLoc
 	SetSpriteLocation(hi(^@spriteLoc));
 	// Make sure nametable 0 is set
