@@ -98,6 +98,75 @@ void ASTDispatcher6502::HandleGenericBinop16bit(QSharedPointer<Node> node) {
     as->BinOP(node->m_op.m_type);
     as->Term(lbl, true); // high bit added to a
 
+  /*  if (node->m_op.m_type==TokenType::PLUS) {
+        as->Asm("bcc "+lblword);
+        as->Asm("inc " +lbl+"+1");
+    }
+    else {
+        as->Asm("bcs "+lblword);
+        as->Asm("inc  " +lbl+"+1");
+    }
+*/
+    as->Label(lblword);
+    as->Asm("sta "+lbl);
+    as->Comment("High-bit binop");
+    as->Asm("tya");
+
+    //    as->BinOP(m_op.m_type);
+//    if (node->m_op.m_type==TokenType::PLUS)
+    as->BinOP(node->m_op.m_type,false);
+
+    as->Term(lbl+"+1",true);
+    //    as->Asm("lda #0");
+
+    as->Asm("tay");
+    as->Asm("lda "+lbl);
+
+
+    as->PopLabel("wordAdd");
+
+    //as->PopLabel("rightvarInteger");
+    as->PopLabel("jmprightvarInteger");
+    as->PopTempVar();
+}
+/*
+void ASTDispatcher6502::HandleGenericBinop16bit(QSharedPointer<Node> node) {
+
+
+    as->m_labelStack["wordAdd"].push();
+    QString lblword = as->getLabel("wordAdd");
+
+    //QString lbl = as->NewLabel("rightvarInteger");
+    QString lblJmp = as->NewLabel("jmprightvarInteger");
+
+
+    as->Comment("Generic 16 bit op");
+
+
+    as->ClearTerm();
+    as->Asm("ldy #0");
+//    qDebug() <<node->m_left->m_op.m_value;
+  //  exit(1);
+//    node->m_right->forceWord();
+    node->m_right->Accept(this);
+
+    // 255 + k - j doesn't work
+    as->Term();
+    QString lbl = as->StoreInTempVar("rightvarInteger", "word");
+
+    //    as->Asm("sta " +lbl);
+//    as->Asm("sty " +lbl+"+1"); // J is stored
+    as->Term();
+
+    //as->Variable(getValue(v), false);
+    //as->Asm("lda " + getValue(v) + "+1");
+    node->m_left->m_isWord = true;
+    node->m_left->Accept(this);
+    as->Term();
+    as->Comment("Low bit binop:");
+    as->BinOP(node->m_op.m_type);
+    as->Term(lbl, true); // high bit added to a
+
     if (node->m_op.m_type==TokenType::PLUS) {
         as->Asm("bcc "+lblword);
         as->Asm("inc " +lbl+"+1");
@@ -129,7 +198,7 @@ void ASTDispatcher6502::HandleGenericBinop16bit(QSharedPointer<Node> node) {
     as->PopLabel("jmprightvarInteger");
     as->PopTempVar();
 }
-
+*/
 void ASTDispatcher6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
 
 
