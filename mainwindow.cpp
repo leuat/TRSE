@@ -409,8 +409,9 @@ void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString on, QString n, int
 
     QString type = "";
     QColor col = bcol;
+    QString ns = n;
 
-    if (n.isUpper()) {
+    if (ns.remove(":").trimmed().isUpper()) {
         col = Qt::darkGray;
         type = "Built-in";
     }

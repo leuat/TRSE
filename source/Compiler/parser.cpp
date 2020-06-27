@@ -2836,7 +2836,7 @@ QSharedPointer<Node> Parser::TypeSpec()
             //position = m_currentToken.getNumAsHexString();
             position = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
 
-            qDebug() << "PARSER "<<position;
+//            qDebug() << "PARSER "<<position;
 
 
            // Eat(m_currentToken.m_type);
