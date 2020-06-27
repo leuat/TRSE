@@ -703,7 +703,6 @@ void AsmMOS6502::EndForLoop(QString endVal)
 // 8790 vs 8717
 void AsmMOS6502::Optimise(CIniFile& ini)
 {
-    m_totalOptimizedLines = 0;
 
     if (ini.getdouble("post_optimizer_passldatax")==1)
         OptimisePassLdaTax("x");
