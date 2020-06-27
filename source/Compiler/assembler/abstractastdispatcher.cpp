@@ -309,6 +309,8 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
         for (QSharedPointer<Node> n: qSharedPointerDynamicCast<NodeBlock>(node->m_block)->m_decl) {
             // Print label at end of vardecl
             auto vd = qSharedPointerDynamicCast<NodeVarDecl>(n);
+
+            if (!(qSharedPointerDynamicCast<NodeVar>(vd->m_varNode)->m_isGlobal))
             if (vd!=nullptr)
                 vd->ExecuteSym(as->m_symTab);
 
