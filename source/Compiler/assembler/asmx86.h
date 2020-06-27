@@ -26,7 +26,7 @@ public:
     void DeclareArray(QString name, QString type, int count, QStringList data, QString pos) override;
     void DeclareVariable(QString name, QString type, QString initval, QString position) override;
 
-    void BinOP(TokenType::Type t) override;
+    void BinOP(TokenType::Type t, bool clearFlag=true) override;
     int CodeSizeEstimator(QStringList& lines) override {return 0;}
 
 

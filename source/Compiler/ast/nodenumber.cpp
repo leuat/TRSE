@@ -50,12 +50,33 @@ bool NodeNumber::isWord(Assembler *as) {
     return (m_val>=256 && m_op.m_type == TokenType::INTEGER_CONST);
 }
 
+QString NodeNumber::getValue(Assembler* as) {
+        QString hash = "";
+        if (as!=nullptr)
+            hash = as->m_hash;
+        if (isAddress()) return HexValue(); else return hash + HexValue();
+    }
+
+QString NodeNumber::getValue8bit(Assembler *as, bool isHi) {
+    QString hash = "";
+    if (as!=nullptr)
+        hash = as->m_hash;
+
+    if (isAddress()) hash="";
+    if (isHi)
+        return hash + Util::numToHex((int)m_val>>8);
+    else
+        return hash + Util::numToHex(((int)m_val)&0xFF);
+}
+
+
+
 
 
 bool NodeNumber::is8bitValue(Assembler* as)
 {
-  //  if (m_forceType==TokenType::INTEGER)
-//        return false;
+    //  if (m_forceType==TokenType::INTEGER)
+    //        return false;
     return m_val<256 && m_op.m_type == TokenType::INTEGER_CONST;
 }
 

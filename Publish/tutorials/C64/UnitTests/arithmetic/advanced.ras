@@ -57,11 +57,13 @@ procedure Advanced04();
 begin
 	p2:=$4000;
 	v1:=1;
-	p2[v1]:=$20;
+	p2[v1]:=2;
 	p1:=$0400;
+
 	asm(";prob");
 	p1:=p1 + p2[v1];
-	text := "04:"; if p1=$0420 then PASS() else FAIL();
+	text := "04:"; if p1=$0402 then PASS() else FAIL();
+	DebugValue(p1);
 end;
 
 procedure Advanced05();
@@ -110,6 +112,7 @@ begin
 	v1:=3;
 	p2[1]:=$20;
 	p1:=$0400 + toPointer(hi(p2)+$10*v1,lo(p2)*3+p2[1]*2)*2;
+	
 	text := "09:"; if p1=$E486 then PASS() else FAIL();
 end;
 

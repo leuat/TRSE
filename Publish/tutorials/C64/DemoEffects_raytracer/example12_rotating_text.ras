@@ -60,7 +60,7 @@ var
 */
 procedure SetSprite(ss_i, ss_char, ss_frame:byte);
 begin
-	zp:=spriteLoc + 64*ss_i;
+	zp:=spriteLoc + ss_i*64;
 	if (ss_char=$20) then begin
 		memcpyfast(zero,0,zp,63);
 		return();
@@ -95,9 +95,7 @@ begin
 	lStart:=lStart+2;
 	xadd:=16+sine[time*2]/12;
 	tt:=tt*3;
-	i:=sine[time]/2;
-	itmp:=i;
-	// Set x/y pos
+	itmp:=sine[time]/2;
 	for i:=0 to 8 do begin
 		m:=l-tt*2;
 		k:=sine[m]/4;
@@ -106,7 +104,6 @@ begin
 		spritepos(itmp,y,i);
 		k:=sine[m+64-9]/16;			
 		vals[i]:=k;
-
 		itmp:=itmp+xadd;
 		l:=l+aadd;		
 	

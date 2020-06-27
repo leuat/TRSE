@@ -145,9 +145,16 @@ begin
 	a2[2]:=10000;
 	v1:=1;
 	v2:=0;
-	a2[v2]:=a1[v1]+a2[v1+1];
+	asm(";prob");
+	//a2[v2]:=a1[v1]+a2[v1+1];
+	asm(" ldy #0");
+	asm(" ldy #0");
+	asm(" ldy #0");
+	asm(" ldy #0");
+	a2[v2]:=a1[v1] + a2[v1+1];
 	i1:=a2[v2];
 	text := "13:"; if i1=11000 then PASS() else FAIL();
+	DebugValue(i1);
 end;
 
 // Arrays 2
@@ -159,7 +166,7 @@ begin
 	v2:=0;
 	a2[v2]:=a1[2*v1-1]*2-a2[v1]*3;
 	i1:=a2[v2];
-	text := "13:"; if i1=17000 then PASS() else FAIL();
+	text := "14:"; if i1=17000 then PASS() else FAIL();
 end;
 
 

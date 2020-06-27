@@ -203,7 +203,7 @@ void AsmZ80::DeclareString(QString name, QStringList initVal) {
     Write(name +"\t" + String(initVal),0);
 }
 
-void AsmZ80::BinOP(TokenType::Type t)
+void AsmZ80::BinOP(TokenType::Type t, bool clearFlag)
 {
     if (t == TokenType::PLUS) {
         m_term = "add ";

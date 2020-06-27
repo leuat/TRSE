@@ -289,7 +289,7 @@ public:
     virtual void ApplyTerm() {}
     virtual void Number(QString n) {}
     virtual QString  String(QStringList s) { return "";}
-    virtual void BinOP(TokenType::Type t){}
+    virtual void BinOP(TokenType::Type t, bool clearFlag=true){}
 //    virtual void Poke(bool start) = 0;
 //    virtual void Peek(bool start) {}
     virtual void Term(QString s, bool write=false);

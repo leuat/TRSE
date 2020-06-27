@@ -161,7 +161,7 @@ void AsmX86::DeclareVariable(QString name, QString type, QString initval, QStrin
     }
 }
 
-void AsmX86::BinOP(TokenType::Type t)
+void AsmX86::BinOP(TokenType::Type t, bool clearFlag)
 {
     if (t == TokenType::PLUS) {
         m_term = "add ";

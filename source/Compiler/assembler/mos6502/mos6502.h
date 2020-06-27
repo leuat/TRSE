@@ -96,7 +96,7 @@ public:
     QString String(QStringList s) override;
  //   void AssignVariable(QString v) override;
  //   void EndAssignVariable(QString variable) override;
-    void BinOP(TokenType::Type t) override;
+    void BinOP(TokenType::Type t, bool clearFlag=true) override;
  //   void Poke(bool start) override;
  //   void Peek(bool start) override;
 

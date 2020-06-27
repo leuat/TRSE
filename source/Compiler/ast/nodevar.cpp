@@ -188,6 +188,15 @@ bool NodeVar::isRecordData(Assembler *as)
     return m_subNode!=nullptr;
 }
 
+QString NodeVar::getValue8bit(Assembler *as, bool isHi) {
+    if (isHi) {
+        if (getOrgType(as)==TokenType::BYTE)
+            return "#0";
+       return getValue(as)+"+1";
+    }
+    else return getValue(as);
+}
+
 
 
 QString NodeVar::getTypeText(Assembler *as)

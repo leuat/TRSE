@@ -120,7 +120,7 @@ void AsmM68000::DeclareVariable(QString name, QString type, QString initval, QSt
 
 }
 
-void AsmM68000::BinOP(TokenType::Type t)
+void AsmM68000::BinOP(TokenType::Type t, bool clearFlag)
 {
     QString v="";
     if (t == TokenType::PLUS)

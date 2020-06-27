@@ -450,14 +450,16 @@ void AsmMOS6502::EndAssignVariable(QString variable)
     Asm("sta " + variable);
 }
 */
-void AsmMOS6502::BinOP(TokenType::Type t)
+void AsmMOS6502::BinOP(TokenType::Type t,  bool clearFlag)
 {
     if (t == TokenType::PLUS) {
+        if (clearFlag)
         Asm("clc");
         m_term = "adc ";
     }
 
     if (t == TokenType::MINUS) {
+        if (clearFlag)
         Asm("sec");
         m_term = "sbc ";
     }

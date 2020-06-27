@@ -144,7 +144,11 @@ void ASTDispatcher6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
     //as->Asm("jmp " + lblJmp);
     //as->Write(lbl +"\t.word\t0");
     //as->Label(lblJmp);
+
     as->Comment("HandleVarBinopB16bit");
+
+
+
     as->ClearTerm();
     as->Asm("ldy #0 ; ::HandleVarBinopB16bit 0");
 
@@ -186,16 +190,25 @@ void ASTDispatcher6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
         as->Comment("Contains expression");
         v->m_expr->Accept(this);
         as->Term();
-        as->Asm("asl");
-        as->Asm("tax");
-//        as->Asm("tax");
-        as->Asm("lda " + getValue(v) + "+1,x");
+        if (v->getType(as)==TokenType::POINTER) {
+            as->Asm("tay");
+            as->Asm("lda (" + getValue(v) + "),y");
+            as->Asm("ldy "+lbl+"+1");
+//            as->Asm("ldy #0");
+        }
+        else {
+            as->Asm("asl");
 
-        as->BinOP(node->m_op.m_type);
-        as->Term(lbl+"+1", true);
-        as->Asm("tay");
+            as->Asm("tax");
+            //        as->Asm("tax");
+            as->Asm("lda " + getValue(v) + "+1,x");
 
-        as->Asm("lda "+ getValue(v)+",x");
+            as->BinOP(node->m_op.m_type);
+            as->Term(lbl+"+1", true);
+            as->Asm("tay");
+
+            as->Asm("lda "+ getValue(v)+",x");
+        }
 
 //        v->Accept(this);
     }
@@ -2265,6 +2278,11 @@ bool ASTDispatcher6502::isSimpleAeqAOpB(QSharedPointer<NodeVar> var, QSharedPoin
 
     // right first is var
     QSharedPointer<NodeVar> rvar = qSharedPointerDynamicCast<NodeVar>(rterm->m_left);
+    QSharedPointer<NodeVar> bvar = qSharedPointerDynamicCast<NodeVar>(rterm->m_left);
+
+    if (bvar == nullptr)
+        return false;
+
 
     QSharedPointer<NodeVar> rrvar = qSharedPointerDynamicCast<NodeVar>(rterm->m_right);
     if (!rterm->m_right->isPureNumeric())
@@ -2292,7 +2310,7 @@ bool ASTDispatcher6502::isSimpleAeqAOpB(QSharedPointer<NodeVar> var, QSharedPoin
 //    return false;
 
     as->Comment("Optimizer: a = a +/- b");
-    LoadVariable(var);
+    LoadVariable(bvar);
     as->BinOP(rterm->m_op.m_type);
     rterm->m_right->Accept(this);
     as->Term();
@@ -2308,6 +2326,13 @@ bool ASTDispatcher6502::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QShare
 
     // right first is var
      QSharedPointer<NodeVar> rvar = qSharedPointerDynamicCast<NodeVar>(rterm->m_right);
+
+     QSharedPointer<NodeVar> bvar = qSharedPointerDynamicCast<NodeVar>(rterm->m_left);
+     if (bvar==nullptr)
+         return false;
+
+     if (bvar->isArrayIndex())
+         return false;
 
 //    QSharedPointer<NodeVar> rrvar = dynamic_cast<QSharedPointer<NodeVar>>(rterm->m_right);
 //    QSharedPointer<NodeNumber> rrnum = dynamic_cast<QSharedPointer<NodeNumber>>(rterm->m_right);
@@ -2332,7 +2357,9 @@ bool ASTDispatcher6502::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QShare
     qDebug() << "type " << TokenType::getType(rterm->m_right->getType(as));
 */
 
-    if (var->isWord(as) &&  rterm->m_right->is8bitValue(as) && !(node->m_forceType==TokenType::INTEGER)) {
+
+
+/*    if (var->isWord(as) &&  rterm->m_right->is8bitValue(as) && !(node->m_forceType==TokenType::INTEGER)) {
   //      qDebug() << "WHOO";
         //          qDebug() << "Cont";
 
@@ -2363,9 +2390,49 @@ bool ASTDispatcher6502::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QShare
         as->PopLabel("WordAdd");
         return true;
 
+    }*/
+    if (var->isWord(as) && rterm->m_right->isPure()) {
+        QString lbl = as->NewLabel("WordAdd");
+        as->Comment("INTEGER optimization: a=b+c ");
+        //var->Accept(this);
+        as->Asm("lda " + getValue(bvar));
+        as->Term();
+        //        as->Asm("clc");
+        as->BinOP(rterm->m_op.m_type);
+
+        as->Term(rterm->m_right->getValue8bit(as,false),true);
+
+        //rterm->m_right->Accept(this);
+        as->Term();
+/*        if (rterm->m_op.m_type==TokenType::PLUS) {
+            as->Asm("bcc "+lbl);
+            as->Asm("inc " + getValue(var) + "+1");
+        }
+        else {
+            as->Asm("bcs "+lbl);
+            as->Asm("dec " + getValue(var) + "+1");
+        }
+*/
+        as->Label(lbl);
+        as->Asm("sta " + getValue(var) + "+0");
+        as->Asm("lda "+getValue(bvar)+"+1");
+        as->ClearTerm();
+        as->BinOP(rterm->m_op.m_type,false);
+        as->Term(rterm->m_right->getValue8bit(as,true),true);
+        as->Asm("sta " + getValue(var) + "+1");
+        //        as->Asm("sty " + getValue(var) +"+1");
+
+        as->PopLabel("WordAdd");
+        return true;
+
     }
+
+
     return false;
 }
+
+
+
 
 bool ASTDispatcher6502::IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPointer<NodeAssign> node) {
     // Right is binop
@@ -2382,10 +2449,11 @@ bool ASTDispatcher6502::IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPoint
 
 //    qDebug() << "IsSimpleIncDec test";
 
-
+    // DANGEROUS
+/*
     if (getValue(rvar)!=getValue(var))
         return false;
-
+*/
 
 //    QSharedPointer<NodeNumber> num = dynamic_cast<QSharedPointer<NodeNumber>>(rterm->m_right);
     bool isPureNumber = rterm->m_right->isPureNumeric();
@@ -2669,6 +2737,8 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
 //        ErrorHandler::e.Error("Cannot assign an address to an array. Did you forget to use an [] index?", node->m_op.m_lineNumber);
 
     }
+
+//    if (node->m_left->isWord(as))
 
     if (node->m_left->isWord(as)) {
         as->Asm("ldy #0");    // AH:20190722: Does not appear to serve a purpose - takes up space in prg. Breaks TRSE scroll in 4K C64 demo if take this out

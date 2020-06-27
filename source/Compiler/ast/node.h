@@ -137,6 +137,7 @@ public:
     virtual void AssignPointer(Assembler* as, QString memoryLocation) {}
 
     virtual QString getValue(Assembler* as) {return "";}
+    virtual QString getValue8bit(Assembler* as, bool isHi) {return "";}
     virtual int getValueAsInt(Assembler* as) {
         return Util::NumberFromStringHex(getValue(as));
     }

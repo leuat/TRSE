@@ -92,6 +92,8 @@ public:
 
     bool isArrayIndex() override { return m_expr!=nullptr; }
 
+    QString getValue8bit(Assembler* as, bool isHi) override;
+
 
 
     QString getValue(Assembler* as) override;
