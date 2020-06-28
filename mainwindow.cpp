@@ -489,9 +489,13 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
         if (fileName.startsWith(QDir::separator()))
             fileName = fileName.remove(0,1);
     }
+    QString testFilename = fileName;
+    if (isExternal) {
+        testFilename = "[external]"+fileName.split(QDir::separator()).last();
+    }
 
     for (TRSEDocument* d: m_documents) {
-        if (d->m_currentFileShort==fileName) {
+        if (d->m_currentFileShort==testFilename) {
             ui->tabMain->setCurrentWidget(d);
             return;
         }
@@ -662,6 +666,7 @@ void MainWindow::RefreshFileList()
 //    QStandardItem* root = AddTreeRoot(getProjectPath(),"Project");
     m_im->insertRow(0,root);
     QStandardItem* trus = nullptr;
+    //qDebug() << "TRU PATH " << truPath<<QDir().exists(truPath);
     if (QDir().exists(truPath)) {
        trus = AddTreeRoot(truPath,"Library (TRSE)");
         m_im->insertRow(1,trus);
@@ -1056,8 +1061,10 @@ QString MainWindow::getProjectPath()
 QString MainWindow::getTRUPath()
 {
     QString system = m_currentProject.m_ini->getString("system");
-
-    return Util::path + QDir::separator() + "tutorials"+QDir::separator() + system+ QDir::separator() + "tru"+QDir::separator();
+    QString s =  Util::path + QDir::separator() + "tutorials"+QDir::separator() + system+ QDir::separator() + "tru"+QDir::separator();
+    s = s.replace("\\\\","\\");
+    if (s.startsWith("\\")) s = s.remove(0,1);
+    return s;
 
 }
 
@@ -1215,7 +1222,9 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
 
     // Finally load file!
     QString tru = QDir::separator()+m_currentProject.m_ini->getString("system")+QDir::separator()+"tru";
-    QString file = index.data(Qt::UserRole).toString();
+    QString file = QDir::toNativeSeparators(index.data(Qt::UserRole).toString());
+    file = file.replace("\\\\","\\");
+    file = file.replace("//","/");
 //    qDebug() << "CLICKED "<<file;
 //    qDebug() << "CLICKED2 "<<tru;
 
