@@ -46,6 +46,4 @@ data_header_images/image1.flf = 0
 data_header_images/logo.flf = 0
 data_header_images/image2.flf = 0
 data_header_images/image3.flf = 0
-open_files = ,tut2.ras, tut4.ras, tut3.ras, tut1.ras, tut5.ras, works.ras, [external]graphics.tru
-project_path = tutorials/ATARI520ST/tutorials/
-current_file = tut4.ras
+open_files =, tut1.ras

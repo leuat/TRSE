@@ -436,7 +436,7 @@ ccc2:
 
 		; Copy first byte from (a2)
 		
-		move.w (a0),d1		
+		move.w (a2),d1		
 		or.w d1,(a0)+
 
 		add.l #6,a0
