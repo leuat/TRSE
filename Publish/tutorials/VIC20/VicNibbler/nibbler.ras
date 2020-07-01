@@ -106,7 +106,7 @@ var
 	// 0 - 0000 Black   1 - 0001 White  2 - 0010 Red   3 - 0011 Cyan 
 	// 4 - 0100 Purple  5 - 0101 Green  6 - 0110 Blue  7 - 0111 Yellow
 	colourarray : array[] of byte = (
-		7, 3, 4, 5, 2 
+		7, 3, 4, 5, 2 ,
 		7, 5, 4, 3, 2
 	);
 

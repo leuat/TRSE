@@ -318,6 +318,12 @@ void MainWindow::VerifyProjectDefaults()
 
 void MainWindow::UpdateSymbolTree(QString search)
 {
+    ui->treeSymbols->clear();
+
+    if (m_currentDoc==nullptr) {
+        return;
+    }
+
     if (!m_currentDoc->m_currentFileShort.toLower().endsWith(".ras"))
         return;
 
@@ -334,7 +340,6 @@ void MainWindow::UpdateSymbolTree(QString search)
     m_symPointers.clear();
     m_orgSymPointers.clear();
     m_treeItems.clear();
-    ui->treeSymbols->clear();
 
 
     if (e->m_builderThread.m_builder==nullptr)
