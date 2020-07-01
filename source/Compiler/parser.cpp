@@ -600,10 +600,9 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
     QString str = "";
     int p = 0;
 
-
+    bool prevNumber = false;
 
     while (!done) {
-//        qDebug() << "ival:"  << QString::number(m_currentToken.m_intVal);
 //        qDebug() << m_currentToken.getType();
 
         if (m_currentToken.m_type==TokenType::LPAREN) {
@@ -629,27 +628,49 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
         if (m_currentToken.m_type==TokenType::PLUS) {
             str = str+ "+";
             Eat();
+            prevNumber = false;
             continue;
         }
         if (m_currentToken.m_type==TokenType::MINUS) {
             str = str+ "-";
             Eat();
+            prevNumber = false;
             continue;
         }
         if (m_currentToken.m_type==TokenType::MUL) {
             str = str+ "*";
             Eat();
+            prevNumber = false;
             continue;
         }
         if (m_currentToken.m_type==TokenType::DIV) {
             str = str+ "/";
             Eat();
+            prevNumber = false;
             continue;
+        }
+//        qDebug() << "Token type: " <<m_currentToken.getType();
+        if (m_currentToken.m_type==TokenType::COMMA || m_currentToken.m_type==TokenType::SEMI || m_currentToken.m_type==TokenType::RBRACKET) {
+            if (p!=0)
+                ErrorHandler::e.Error("Mismatced paranthesis when parsing number",m_currentToken.m_lineNumber);
+            else
+            {
+                done=true;
+                continue;
+            }
+        }
+        if (prevNumber==true) {
+//            if (m_currentToken.m_value!="")
+  //              str+=QString::number(m_currentToken.m_intVal);
+
+            ErrorHandler::e.Error("Error parsing number : "+str,m_currentToken.m_lineNumber);
         }
 
         if (m_currentToken.m_value=="") {
+//            qDebug() << "ival:"  << QString::number(m_currentToken.m_intVal);
             str+=QString::number(m_currentToken.m_intVal);
             Eat();
+            prevNumber = true;
         }
         else {
             QSharedPointer<Symbol> s = m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
@@ -657,6 +678,8 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
                   done=true;
               else {
                str+=QString::number(s->m_value->m_fVal);
+               prevNumber = true;
+
                Eat();
               }
 
