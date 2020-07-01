@@ -334,21 +334,22 @@ void MainWindow::UpdateSymbolTree(QString search)
     m_symPointers.clear();
     m_orgSymPointers.clear();
     m_treeItems.clear();
+    ui->treeSymbols->clear();
 
-    QTreeWidgetItem* Symbols = new QTreeWidgetItem(QStringList() <<"Symbols");
-    QTreeWidgetItem* Procedures = new QTreeWidgetItem(QStringList() <<"Procedures");
 
     if (e->m_builderThread.m_builder==nullptr)
         return;
     if (e->m_builderThread.m_builder->compiler==nullptr)
         return;
     Parser* p = &e->m_builderThread.m_builder->compiler->m_parser;
+    QTreeWidgetItem* Symbols = new QTreeWidgetItem(QStringList() <<"Symbols");
+    QTreeWidgetItem* Procedures = new QTreeWidgetItem(QStringList() <<"Procedures");
 
 
     if (p->m_symTab->m_symbols.keys().count()==0)
         return;
 
-    ui->treeSymbols->clear();
+//    ui->treeSymbols->clear();
     ui->treeSymbols->addTopLevelItem(Symbols);
     ui->treeSymbols->addTopLevelItem(Procedures);
 
@@ -1613,7 +1614,7 @@ void MainWindow::LoadProject(QString filename)
 
 
     QObject::connect(m_watcher.get(), SIGNAL(directoryChanged(QString)), this, SLOT(RefreshFileList()));
-
+    UpdateSymbolTree();
 }
 
 

@@ -47,4 +47,4 @@ ignore_initial_jump = 0
 exomizer_toggle = 0
 open_files = ,charsets/charset_level.flf, RogueBurgerOne.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/TutorialGame_RogueBurgerOne/
-current_file = charsets/charset_level.flf
+current_file = RogueBurgerOne.ras
