@@ -1120,7 +1120,7 @@ void FormImageEditor::updateCharSet()
     if (m_work.m_currentImage==nullptr)
         return;
 
-    return;
+//    return;
 
     UpdateCurrentMode();
     CharsetImage* charmap = m_work.m_currentImage->m_image->getCharset();
