@@ -823,7 +823,7 @@ void AsmMOS6502::OptimisePassLdx(QString x)
             QString value = getToken(l0,1);
             if (l0.contains("ld"+x)) {
                 bool done = false;
-                //qDebug() << l0;
+//                qDebug() << l0;
                 int k=i;
                 int cnt = 0;
                 int curCnt = 0;
@@ -833,7 +833,7 @@ void AsmMOS6502::OptimisePassLdx(QString x)
                     k=j;
                     QString op2 = getToken(l1,1);
                     QString op = getToken(l1,0);
-                    //qDebug() << op2 << op << l0 << l1<<value;
+  //                  qDebug() << op2 << op << l0 << l1<<value;
                     if (l0==l1 && !op2.startsWith("(") && !op2.contains(",") && !op2.startsWith("$")) {
 //                      if (l0==l1 && !op2.startsWith("(") && !op2.contains(",")) {
 //                        if (x=="a")
@@ -848,7 +848,7 @@ void AsmMOS6502::OptimisePassLdx(QString x)
                     if (op==("ld"+x) || op==("ta"+x) || op=="jmp" || op=="rts" || op=="jsr" ||
                             op==("in" +x) || op==("de"+x)|| op.length()!=3 )
 //                        op==("in" +x) || op==("de"+x)|| op==("sta")|| op.length()!=3 ) {
-                        //qDebug() << "Done because: " << l1;
+//                        qDebug() << "Done because: " << l1;
                         done=true;
                     // Stuff like
                     // ldx i
@@ -896,6 +896,7 @@ void AsmMOS6502::OptimisePassLdx(QString x)
         }
         if (m_removeLines.count()==0)
             allDone = true;
+
         RemoveLines();
     }
 }
@@ -1077,10 +1078,16 @@ void AsmMOS6502::OptimisePhaLdxPla()
             QString l1 = getNextLine(i,j);
             if (l1.toLower().trimmed().startsWith("ldx") || l1.toLower().trimmed().startsWith("ldy")) {
                 l1= getNextLine(j,k);
-                if (l1.toLower().trimmed()=="pla") {
+                if (l1=="pla") {
                     m_removeLines.append(i);
                     m_removeLines.append(k);
                 }
+            }
+            else
+            if (l1=="pla") {
+               m_removeLines.append(i);
+               m_removeLines.append(j);
+//               qDebug() << l0 << l1;
             }
         }
     }
@@ -1108,6 +1115,11 @@ void AsmMOS6502::OptimiseLdLd()
 QString AsmMOS6502::getLine(int i)
 {
     QString s = m_source[i].trimmed().toLower().simplified().remove("\n");
+//    return s;
+
+    if (m_source[i].contains(";keep"))
+            return s;
+    s = s.split(";").first().trimmed();
     return s;
 }
 
