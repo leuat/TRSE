@@ -38,6 +38,8 @@ public:
     enum Type {FJONG, RAS, PAW };
 
     Type m_type;
+    bool m_run = false;
+
     bool m_hasFocus = true;
     bool m_documentIsChanged = false;
     QString m_currentSourceFile;
@@ -104,7 +106,7 @@ signals:
     void requestCloseWindow();
     void updatePaletteSignal();
     void requestBuild();
-    void requestBuildMain();
+    void requestBuildMain(bool isRun);
     void requestRunMain();
     void requestSaveAs();
     void emitSuccess();

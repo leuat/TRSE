@@ -87,7 +87,6 @@ public:
     Highlighter* highlighter = nullptr;
     QFont m_font;
     QSharedPointer<DialogHelp> m_help = nullptr;
-    bool m_run = false;
     bool m_isTRU = false;
 
     BuilderThread m_builderThread;

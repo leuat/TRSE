@@ -229,7 +229,7 @@ public slots:
 
     void UpdateSymbolTree(QString search="");
 
-    void acceptBuildMain();
+    void acceptBuildMain(bool run);
 
     void acceptSearchSymbols();
 

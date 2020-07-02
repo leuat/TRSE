@@ -579,7 +579,7 @@ void MainWindow::ConnectDocument()
     connect(m_currentDoc, SIGNAL(requestCloseWindow()), this, SLOT(closeWindowSlot()));
     connect(m_currentDoc, SIGNAL(emitFindFile()), this, SLOT(FindFileDialog()));
     connect(m_currentDoc, SIGNAL(requestBuild()), this, SLOT(acceptBuild()));
-    connect(m_currentDoc, SIGNAL(requestBuildMain()), this, SLOT(acceptBuildMain()));
+    connect(m_currentDoc, SIGNAL(requestBuildMain(bool)), this, SLOT(acceptBuildMain(bool)));
     connect(m_currentDoc, SIGNAL(requestRunMain()), this, SLOT(acceptRunMain()));
 
     connect(m_currentDoc, SIGNAL(emitNewRas()), this, SLOT(on_actionRas_source_file_triggered()));
@@ -805,12 +805,14 @@ void MainWindow::AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBui
     FormRasEditor::m_broadcast=true;
 }
 
-void MainWindow::acceptBuildMain() {
+void MainWindow::acceptBuildMain(bool run) {
     m_keepFile = m_currentDoc->m_currentFileShort;
     acceptBuild();
     if (!VerifyFile(m_currentProject.m_ini->getString("main_ras_file"),"Error trying to build main project file. Please see project settings and specify correct path to main .ras file"))
         return;
     LoadDocument(m_currentProject.m_ini->getString("main_ras_file"));
+
+    m_currentDoc->m_run = run;
     m_currentDoc->Build();
 
     if (m_keepFile!="")

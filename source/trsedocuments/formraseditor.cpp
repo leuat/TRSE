@@ -285,7 +285,7 @@ void FormRasEditor::Build(bool isShadow)
     if (!isShadow)
     if (m_projectIniFile->getString("main_ras_file")!="none") {
         if (m_projectIniFile->getString("main_ras_file")!=m_currentFileShort) {
-            emit requestBuildMain();
+            emit requestBuildMain(m_run);
             return;
         }
 
@@ -400,9 +400,9 @@ void FormRasEditor::Focus() {
 
 void FormRasEditor::Run()
 {
-
     if (m_projectIniFile->getString("main_ras_file")!="none") {
         if (m_projectIniFile->getString("main_ras_file")!=m_currentFileShort) {
+
             emit requestRunMain();
             return;
         }
@@ -1005,6 +1005,7 @@ void FormRasEditor::HandleBuildComplete()
 
     m_globalOutput =m_builderThread.m_builder->getOutput();
     emit emitSuccess();
+//    qDebug() << "EXECUTING RUN" <<m_run <<m_currentFileShort;
 
     if (m_run) {
         m_builderThread.m_builder->AddMessage("<br>Running program...");
