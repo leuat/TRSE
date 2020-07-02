@@ -619,6 +619,7 @@ void MainWindow::RefreshFileList()
     }
 
     setupIcons();
+
     m_expandedList.clear();
     if (m_im!=nullptr)
         findExpanded(m_im.get(),m_expandedList);
@@ -668,7 +669,7 @@ void MainWindow::RefreshFileList()
     QString truPath = getTRUPath();
 
     QStandardItem* root = AddTreeRoot(getProjectPath(),"Project ("+m_currentProject.m_projectName+")");
-
+    ui->treeFiles->setHeaderHidden(true);
 //    QStandardItem* root = AddTreeRoot(getProjectPath(),"Project");
     m_im->insertRow(0,root);
     QStandardItem* trus = nullptr;
