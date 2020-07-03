@@ -239,6 +239,7 @@ void DialogTRSESettings::SetupExtras()
             if (de->m_ok)
                 m_ini->setString(name,de->getValue().trimmed());
 
+            SetupExtras();
         });
     }
 }
