@@ -32,4 +32,5 @@ output_debug_symbols = 1
 ignore_initial_jump = 0
 output_type = prg
 exomizer_toggle = 0
-open_files =, floskel.ras
+open_files = ,floskel.ras
+project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/Floskel/
