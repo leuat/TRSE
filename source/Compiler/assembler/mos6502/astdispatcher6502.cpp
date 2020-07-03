@@ -2491,7 +2491,7 @@ bool ASTDispatcher6502::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QShare
 //        as->Label(lbl);
         as->Asm("sta " + getValue(var) + "+0");
         // Optimization
-        qDebug() << rterm->m_right->getValue8bit(as,true);
+//        qDebug() << rterm->m_right->getValue8bit(as,true);
         if ((rterm->m_right->getValue8bit(as,true)=="#$00" || rterm->m_right->getValue8bit(as,true)=="#0") && bvar->getValue(as) == var->getValue(as)) {
             as->Comment("Optimization : A := A op 8 bit - var and bvar are the same - perform inc");
             if (rterm->m_op.m_type==TokenType::PLUS) {
