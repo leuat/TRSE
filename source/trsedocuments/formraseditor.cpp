@@ -74,6 +74,12 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     QString emu = m_iniFile->getString("emulator");
     QStringList params;
 
+    QString name = "emulator_additional_parameters_"+ AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system);
+    if (m_iniFile->contains(name)) {
+        QStringList pl = m_iniFile->getString(name).trimmed().split(" ");
+        pl.removeAll("");
+        params<<pl;
+    }
 
 
     QString debugFile =Util::getFileWithoutEnding(fileName)+".sym";
@@ -218,6 +224,10 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 #else
 //    qDebug() << emu << params;
 //    qDebug() << "FormRasEditor params" << emu << params;
+
+    // Finally, add custom paramters
+
+
     process.startDetached(emu, params);
 #endif
 //    process.pi
@@ -447,6 +457,7 @@ void FormRasEditor::Run()
         filename = m_currentSourceFile.split(ft)[0] + ".com";
     if (m_projectIniFile->getString("system")=="TIKI100")
         filename = m_currentDir+ "disk.dsk";
+
 
 //    exit(1);
     if (m_currentSourceFile.toLower().endsWith(".tru")) {

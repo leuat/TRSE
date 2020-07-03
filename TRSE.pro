@@ -128,6 +128,7 @@ SOURCES += main.cpp\
     source/dialogexport3d.cpp \
     source/dialognewproject.cpp \
     source/dialogselectcharset.cpp \
+    source/dialogsimplelineedit.cpp \
     source/toolbox.cpp \
     source/toolboxitem.cpp \
     source/tutorials.cpp \
@@ -308,6 +309,7 @@ HEADERS  += mainwindow.h \
     source/dialogexport3d.h \
     source/dialognewproject.h \
     source/dialogselectcharset.h \
+    source/dialogsimplelineedit.h \
     source/toolbox.h \
     source/toolboxitem.h \
     source/tutorials.h \
@@ -445,6 +447,7 @@ FORMS    += mainwindow.ui \
     source/dialogexport3d.ui \
     source/dialognewproject.ui \
     source/dialogselectcharset.ui \
+    source/dialogsimplelineedit.ui \
     source/trsedocuments/formraseditor.ui \
     source/trsedocuments/formimageeditor.ui \
     source/dialogtrsesettings.ui \

@@ -27,6 +27,8 @@
 #include "dialogabout.h"
 #include <QFontDatabase>
 #include <QComboBox>
+#include "dialogsimplelineedit.h"
+
 namespace Ui {
 class DialogTRSESettings;
 }
@@ -69,6 +71,8 @@ public:
     void FillFont(QComboBox* cbmFont, QString keep);
     void BuildEmulatorHelp();
     void Help(QString tit, QString text);
+
+    void SetupExtras();
 
 private slots:
     void on_pushButton_clicked();

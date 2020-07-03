@@ -33,6 +33,9 @@ DialogTRSESettings::DialogTRSESettings(QWidget *parent) :
     ui(new Ui::DialogTRSESettings)
 {
     ui->setupUi(this);
+
+    SetupExtras();
+
 }
 
 void DialogTRSESettings::FillFromIni()
@@ -58,7 +61,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leOK64Emulator->setText(m_ini->getString("ok64_emulator"));
     ui->lePlus4Emulator->setText(m_ini->getString("plus4_emulator"));
     ui->leX16Emu->setText(m_ini->getString("x16_emulator"));
-    ui->leX16EmuParams->setText(m_ini->getString("x16_emulator_params"));
+    //ui->leX16EmuParams->setText(m_ini->getString("x16_emulator_params"));
     ui->leC1541->setText(m_ini->getString("c1541"));
     ui->lePasmo->setText(m_ini->getString("pasmo"));
     ui->leZXSpectrumEmulator->setText(m_ini->getString("spectrum_emulator"));
@@ -136,7 +139,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("ok64_emulator", ui->leOK64Emulator->text());
     m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
-    m_ini->setString("x16_emulator_params", ui->leX16EmuParams->text());
+    //m_ini->setString("x16_emulator_params", ui->leX16EmuParams->text());
     m_ini->setString("c1541", ui->leC1541->text());
 
     m_ini->setString("spectrum_emulator", ui->leZXSpectrumEmulator->text());
@@ -217,6 +220,27 @@ void DialogTRSESettings::Help(QString tit, QString text)
 
     delete da;
 
+}
+
+void DialogTRSESettings::SetupExtras()
+{
+    QStringList data;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16";
+    for (int i=0;i<ui->grdEmulators->rowCount();i++) {
+        QPushButton* btn = new QPushButton("params");
+        ui->grdEmulators->addWidget(btn,i,4);
+        QString name = "emulator_additional_parameters_"+data[i];
+        connect(btn, &QPushButton::clicked,  [=](){
+            DialogSimpleLineEdit* de = new DialogSimpleLineEdit(data[i]+" emulator additional params",
+                                                                "Additional parameters for the emulator.",
+                                                                m_ini->getString(name)
+                                                                );
+            de->exec();
+            if (de->m_ok)
+                m_ini->setString(name,de->getValue().trimmed());
+
+        });
+    }
 }
 
 
