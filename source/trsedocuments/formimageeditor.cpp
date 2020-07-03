@@ -973,13 +973,13 @@ void FormImageEditor::on_btnFlipHorisontal_clicked()
 */
 void FormImageEditor::on_chkGrid_clicked(bool checked)
 {
-//    if (checked)
-//    ui->lblGrid->setVisible(checked);
     m_updateThread.m_drawGrid=checked;
     SetFooterData(LImageFooter::POS_DISPLAY_GRID,m_updateThread.m_drawGrid);
 
     Data::data.Redraw();
+    Data::data.forceRedraw = true;
     emit onImageMouseEvent();
+    resizeEvent(nullptr);
 
 }
 
