@@ -2693,15 +2693,15 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
            s->m_size = typeNode->m_data.count();
        else {
            s->m_size = 1;
-           if (s->m_type=="integer")
+           if (s->m_type.toLower()=="integer")
                s->m_size =2;
-           if (s->m_type=="long")
+           if (s->m_type.toLower()=="long")
                s->m_size =4;
        }
       // qDebug() << "A";
-       s->m_size = typeNode->m_op.m_intVal;
+/*       s->m_size = typeNode->m_op.m_intVal;
        if (s->m_size==0)
-           s->m_size = typeNode->m_data.count();
+           s->m_size = typeNode->m_data.count();*/
 //       qDebug() << "B";
        s->m_arrayType = typeNode->m_arrayVarType.m_type;
   //     qDebug() << typeNode->m_arrayVarType.m_type;
@@ -2734,6 +2734,9 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
 
         }
     }
+    int add=0, cur=0;
+
+
    for (QSharedPointer<Node> n : vars) {
         QSharedPointer<NodeVarDecl> decl = QSharedPointer<NodeVarDecl>(new NodeVarDecl(n, typeNode));
         QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
@@ -2742,8 +2745,14 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
 
         // Update extra list for assembler
        if (typeNode->m_position!="") { // HAS a fixed position
-            m_symTab->m_extraAtSymbols[v->value] = typeNode->m_position;
+           //qDebug() << "FX" <<v->value;
+            m_symTab->m_extraAtSymbols[v->value] = Util::numToHex(Util::NumberFromStringHex(typeNode->m_position)+add);
+            add+=syms[cur]->m_size;
+//            qDebug() <<syms[cur]->m_value->m_strVal<<syms[cur]->m_size;
+            cur++;
+
        }
+
 
 
 //        qDebug() <<  typeNode->m_op.getType() << typeNode->m_op.m_value << (qSharedPointerDynamicCast<NodeVar>n)->value;;
