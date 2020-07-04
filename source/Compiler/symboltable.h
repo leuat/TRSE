@@ -88,6 +88,7 @@ public:
     QMap<QString, QSharedPointer<Symbol>> m_symbols;
     QMap<QString, QSharedPointer<SymbolTable> > m_records;
     QMap<QString, QSharedPointer<Symbol>> m_constants;
+    QMap<QString, QString> m_extraAtSymbols;
 
     QStringList m_orderedByDefinition;
 

@@ -30,8 +30,8 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
         connect(&orgAsm, SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
         if (symTab!=nullptr)
             orgAsm.SetupConstants(symTab);
-
-        orgAsm.Assemble(filename+".asm", filename+".prg");
+         orgAsm.m_extraSymbols = symTab->m_extraAtSymbols;
+           orgAsm.Assemble(filename+".asm", filename+".prg");
 
         output = orgAsm.m_output;
         disconnect(&orgAsm, SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));

@@ -151,6 +151,7 @@ public:
     QString m_currentChar;
     QVector<OrgasmLine> m_ol;
     QVector<QString> m_symbolsList, m_constList;
+    QMap<QString, QString> m_extraSymbols; // Variables declared AT
     QMap<QString, int> m_symbols;
     QMap<QString, QString> m_constants;
     Opcodes6502 m_opCodes;

@@ -750,6 +750,10 @@ void Orgasm::SaveSymbolsList(QString filename)
                     isSet[m_symbols[s]]=true;
                 }
         }
+        for (QString s: m_extraSymbols.keys()) {
+            stream << "al  " << m_extraSymbols[s] << " ."<< s << endl;
+        }
+
 /*        for (QString s: m_constList) {
             if (!s.startsWith("trse_breakpoint"))
                     if (m_constants[s].startsWith("$"))

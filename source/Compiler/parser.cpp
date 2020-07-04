@@ -2739,6 +2739,13 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
         QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
         v->m_isGlobal = isGlobal;
         var_decleratons.append(decl);
+
+        // Update extra list for assembler
+       if (typeNode->m_position!="") { // HAS a fixed position
+            m_symTab->m_extraAtSymbols[v->value] = typeNode->m_position;
+       }
+
+
 //        qDebug() <<  typeNode->m_op.getType() << typeNode->m_op.m_value << (qSharedPointerDynamicCast<NodeVar>n)->value;;
         if (typeNode->m_op.m_type == TokenType::INCSID) {
             //            decl->m_isUsed = true;
@@ -2858,7 +2865,6 @@ QSharedPointer<Node> Parser::TypeSpec()
 
             //position = m_currentToken.getNumAsHexString();
             position = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
-
 //            qDebug() << "PARSER "<<position;
 
 
