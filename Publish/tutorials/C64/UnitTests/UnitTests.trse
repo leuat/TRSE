@@ -38,6 +38,3 @@ exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
 exomizer_toggle = 0
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/UnitTests/
-open_files = ,arithmetic/muldiv.ras, arithmetic/advanced.ras
-current_file = arithmetic/muldiv.ras
