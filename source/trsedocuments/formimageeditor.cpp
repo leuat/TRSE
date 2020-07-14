@@ -474,6 +474,7 @@ void FormImageEditor::Initialize()
 
     Data::data.redrawFileList = true;
     Data::data.Redraw();
+
     UpdatePalette();
     updateCharSet();
     FillCMBColors();
@@ -572,6 +573,8 @@ void FormImageEditor::Load(QString filename)
     else m_work.m_currentImage->m_image = img;
     m_currentFilename = filename;
 
+
+//    qDebug() << "EXTRACOLS " << img->m_extraCols[0] <<img->m_extraCols[1] << img->m_extraCols[2];
 
     Initialize();
 }
@@ -979,7 +982,7 @@ void FormImageEditor::on_chkGrid_clicked(bool checked)
     Data::data.Redraw();
     Data::data.forceRedraw = true;
     emit onImageMouseEvent();
-    resizeEvent(nullptr);
+//    resizeEvent(nullptr);
 
 }
 

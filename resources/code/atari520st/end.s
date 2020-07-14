@@ -250,13 +250,13 @@ gfx_find_phys:
 gfx_wrt_phys_tbl:
 ;Write a look-up table of the addresses pf the start of physical each
 ;screen row in low resolution. The product 4*y is an offset to row y.
-        move.l	gfx_phys_screen,d0	where screen location is kept
-        move	#200-1,d1	200 rows
-        lea	gfx_phys_tbl_y,a0	where the table is
-luloop	move.l	d0,(a0)+	the next row in the table
-        add	#160,d0		there are 160 bytes/row
-        dbra	d1,luloop	for all rows
-        rts
+;        move.l	gfx_phys_screen,d0	where screen location is kept
+ ;       move	#200-1,d1	200 rows
+;        lea	gfx_phys_tbl_y,a0	where the table is
+;luloop	move.l	d0,(a0)+	the next row in the table
+;        add	#160,d0		there are 160 bytes/row
+;        dbra	d1,luloop	for all rows
+       rts
 
 
 
@@ -276,4 +276,4 @@ internal_music : dc.l 0;
 internal_play_time: dc.l 0;
 
 gfx_phys_screen	ds.l	1	;the address of the physical screen
-gfx_phys_tbl_y	ds.l	200	;pointers to the row y's
+;gfx_phys_tbl_y	ds.l	200	;pointers to the row y's

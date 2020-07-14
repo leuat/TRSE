@@ -15,7 +15,7 @@ public:
 
 
     static QString ReplaceWord(QString& line, QString& word, QString replacement);
-    static QString BinopExpr(QString& expr, int& val, QString rep);
+    static QString BinopExpr(QString& expr, long& val, QString rep);
 
 };
 
@@ -44,7 +44,7 @@ class OrgasmInstruction {
                 return none;
             if (s.startsWith("#"))
                 return imm;
-            int i = 0;
+            long i = 0;
             bool ok;
             if (s.contains(",")) {
                 ok = Util::NumberFromStringHex(s.split(",")[0],i);

@@ -126,13 +126,13 @@ QString Util::BinopString(QString a) {
 //    qDebug() << q;
 //    qDebug() << lst;
 //    exit(1);
-    int val = 0;
+    long val = 0;
     bool ok=Util::NumberFromStringHex(lst[0],val);
     if (!ok)
         return pa+a+pb;
 
     for (int i=0;i<q.length();i++) {
-        int v;
+        long v;
 //        ok = false;
         ok = Util::NumberFromStringHex(lst[i+1],v);
         if (!ok)
@@ -171,11 +171,11 @@ QString Util::BinopString(QString a) {
 
 }
 
-bool Util::NumberFromStringHex(QString s, int &num) {
+bool Util::NumberFromStringHex(QString s, long &num) {
     bool ok = true;
     s=s.trimmed();
 
-    int val = 0;
+    long val = 0;
 
     int type = 0;
     s = s.remove("#");
@@ -188,13 +188,13 @@ bool Util::NumberFromStringHex(QString s, int &num) {
         s = s.replace(">","");
     }
     if (s.startsWith("$"))
-        val = s.remove("$").toInt(&ok, 16);
+        val = s.remove("$").toLong(&ok, 16);
     else
         if (s.toLower().startsWith("0x"))
-            val = s.remove("0x").toInt(&ok, 16);
+            val = s.remove("0x").toLong(&ok, 16);
         else
             if (s.toLower().startsWith("%"))
-                val= s.remove("%").toInt(&ok, 2);
+                val= s.remove("%").toLong(&ok, 2);
             else
                 val = s.toInt(&ok,  10);
 
@@ -355,7 +355,7 @@ int Util::VerifyHexAddress(QString s)
 
 }
 
-QString Util::numToHex(int v)
+QString Util::numToHex(long v)
 {
     QString o = QString::number(v,16);
     if (o.count()==1) o="0"+o;
@@ -641,8 +641,8 @@ QString Util::fromStringList(QStringList lst)
 }
 
 
-int Util::NumberFromStringHex(QString s) {
-    int val = 0;
+long Util::NumberFromStringHex(QString s) {
+    long val = 0;
     bool ok = NumberFromStringHex(s,val);
     return val;
 }

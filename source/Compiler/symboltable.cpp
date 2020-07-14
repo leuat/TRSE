@@ -120,7 +120,7 @@ void SymbolTable::Initialize()
       //      qDebug() << system << currentSystem << system.contains(currentSystem);
 
         if (system.contains(currentSystem)) {
-            int ival = Util::NumberFromStringHex(value);
+            long ival = Util::NumberFromStringHex(value);
             if (ival==0 && value.count()>4) {
                 QString tst = value;
                 tst = tst.remove("$");
@@ -134,6 +134,7 @@ void SymbolTable::Initialize()
                 m_constants[constant] = QSharedPointer<Symbol>(new Symbol("^"+value,"ADDRESS", ival));
             if (type=="i")
                 m_constants[constant] = QSharedPointer<Symbol>(new Symbol(value,"INTEGER", ival));
+//            qDebug() << "SYMTAB "<<ival <<m_constants[constant]->m_value->m_fVal;
 
 //            if (constant=="KEY_2")
   //              qDebug() << constant << Util::numToHex(value.toInt()));
@@ -480,7 +481,7 @@ Symbol::Symbol(QString name, QString type) {
     m_value = QSharedPointer<PVar>(new PVar());
 }
 
-Symbol::Symbol(QString name, QString type, float var) {
+Symbol::Symbol(QString name, QString type, long var) {
     m_name = name;
     m_type = type;
     m_value = QSharedPointer<PVar>(new PVar(var));

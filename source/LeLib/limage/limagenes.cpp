@@ -170,6 +170,18 @@ void LImageNES::LoadBin(QFile &file)
     for (PixelChar& pc: m_data)
         for (int i=0;i<4;i++)
             pc.c[i] = m_colorList.m_nesCols[i];
+
+/*
+    m_extraCols[0] = m_colorList.m_nesCols[3];;//m_colorList.m_nesCols[3];
+    m_extraCols[1] = m_colorList.m_nesCols[0];
+    m_extraCols[2] = m_colorList.m_nesCols[1];
+    m_extraCols[3] = m_colorList.m_nesCols[2];
+    m_background = m_extraCols[0];
+ //   m_background = m_colorList.m_nesCols[1];
+
+    qDebug() << "COLS IN ORDER "<< m_colorList.m_nesCols[0] << m_colorList.m_nesCols[1] <<m_colorList.m_nesCols[2] <<m_colorList.m_nesCols[3];
+*/
+//    m_background = m_colorList.m_nesCols[3];;
 }
 
 QPixmap LImageNES::ToQPixMap(int chr)

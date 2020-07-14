@@ -32,6 +32,10 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("initmatmulvecnormalz"))
         as->IncludeFile(":resources/code/amiga/matmulvec_norm_z.s");
 
+    if (Command("swap"))
+        Swap(as);
+
+
     if (Command("matmulvec"))
         MatMulVec(as);
 
@@ -632,6 +636,19 @@ void Methods68000::ProjectAllVertices(Assembler *as)
 
             move.l len,d3
   */
+}
+
+void Methods68000::Swap(Assembler *as)
+{
+    QString p1 = m_node->m_params[0]->getValue(as);
+    QString p2 = m_node->m_params[1]->getValue(as);
+    int type = m_node->m_params[2]->getValueAsInt(as);
+    QString t = ".b ";
+    if (type==2) t=".w ";
+    if (type==4) t=".l ";
+    as->Asm("move"+t+p1+",d0");
+    as->Asm("move"+t+p2+","+p1);
+    as->Asm("move"+t+"d0"+","+p2);
 }
 
 

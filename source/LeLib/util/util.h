@@ -88,7 +88,7 @@ public:
     static bool verify_file_bool(string filename);
     static string trim(string s);
     static int VerifyHexAddress(QString s);
-    static QString numToHex(int v);
+    static QString numToHex(long v);
     static QString path;
 
 
@@ -147,7 +147,7 @@ public:
 
     static QString fromStringList(QStringList lst);
 
-    static int NumberFromStringHex(QString s);
+    static long NumberFromStringHex(QString s);
 
     static QString ReplaceWords(QString line, QString word);
 
@@ -155,7 +155,7 @@ public:
 
     static QString BinopString(QString a);
 
-    static bool NumberFromStringHex(QString s, int& num);
+    static bool NumberFromStringHex(QString s, long& num);
 
     static QVector3D fromSpherical(float r, float t, float p);
 

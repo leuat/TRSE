@@ -38,4 +38,6 @@ data_header_images/logo.flf = 6.92642e-310
 exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
-open_files =, kos.ras
+open_files = ,kos.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/OK64/KOS/
+current_file = kos.ras

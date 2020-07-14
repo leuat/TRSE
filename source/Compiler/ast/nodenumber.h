@@ -33,8 +33,8 @@
 
 class NodeNumber : public Node {
 public:
-    float m_val;
-    NodeNumber(Token op, int val);
+    double m_val;
+    NodeNumber(Token op, long val);
     QString m_strVal = "";
     void ExecuteSym(QSharedPointer<SymbolTable> symTab) override {
     }

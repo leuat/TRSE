@@ -65,4 +65,3 @@ pointers_vic_raster:
   lda #$c0
   sta $912e     ; enable Timer A underflow interrupts
 
-  rts

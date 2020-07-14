@@ -15,7 +15,6 @@ public:
 
     void Assemble(Assembler* as, AbstractASTDispatcher* dispenser) override;
 
-
     bool Command(QString name) override;
     void Asm(Assembler* as, QString cmd, QString a, QString b, QSharedPointer<Node> n) {
         as->Asm(cmd + m_dispatcher->getEndType(as,n) + " " + a +","+b);
@@ -44,6 +43,7 @@ public:
     void ProjectToScreen(Assembler* as);
     void EnableInterrupt(Assembler* as);
     void ProjectAllVertices(Assembler* as);
+    void Swap(Assembler* as);
 
 
 

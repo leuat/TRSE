@@ -305,7 +305,7 @@ void Orgasm::PassFindConstants()
                 ol.m_expr.replace(key, m_constants[key]);
             }
 
-            int var = 0;
+            long var = 0;
             //qDebug() << ol.m_expr;
             OrgasmData::BinopExpr(ol.m_expr,var,"");
 
@@ -620,7 +620,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 //        qDebug() << "ORGASM " <<expr << org << ol.m_expr;
 
         if (expr!="") {
-            int val = 0;
+            long val = 0;
             QString repl = "$1000";
             if (expr.contains("<") || expr.contains(">"))
                 repl= "#$10";
@@ -795,7 +795,7 @@ QString OrgasmData::ReplaceWord(QString& line, QString& word, QString replacemen
     return line;
 }
 
-QString OrgasmData::BinopExpr(QString& expr, int& val, QString rep)
+QString OrgasmData::BinopExpr(QString& expr, long& val, QString rep)
 {
     bool hasHash = false;
 /*    if (expr.contains("#")) {

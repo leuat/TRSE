@@ -95,7 +95,7 @@ void Methods68000Atari::Assemble(Assembler *as, AbstractASTDispatcher *dispatche
         Asm(as,"move.w",as->m_varStack.pop(),"d1");
         m_node->m_params[3]->Accept(m_dispatcher);
         Asm(as,"move.w",as->m_varStack.pop(),"d4");
-        as->Asm("lea gfx_phys_tbl_y,a4");
+        //as->Asm("lea gfx_phys_tbl_y,a4");
         as->Asm("bsr holine_holine");
     }
 

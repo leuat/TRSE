@@ -696,6 +696,7 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
     QJSValue ret = myEngine.evaluate(str);
 //   qDebug() << str << ret.toInt();
     int r = ret.toInt();
+//    qDebug() << "PARSER "<<r;
     if (forceType==TokenType::ADDRESS && Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64)
         return r;
     if (forceType==TokenType::BYTE)
@@ -1210,7 +1211,8 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
 //        qDebug() << "looking for " << m_currentToken.m_value << " , found symbol: " << s->m_name << " with value " << s->m_value->m_fVal << " of type " << s->m_type;
 
 //        qDebug() << m_currentToken.m_value;
-
+//        qDebug() << s->m_value->m_fVal << 0xffff8240;
+//        qDebug() << "PHERE "<< Util::numToHex(s->m_value->m_fVal);
 
 
 
@@ -1238,7 +1240,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         }
 
         if (t.m_type==TokenType::ADDRESS && expr!=nullptr) {
-            t.m_value = "$"+QString::number( (int)s->m_value->m_fVal,16);
+            t.m_value = "$"+QString::number( (long)s->m_value->m_fVal,16);
             QSharedPointer<NodeVar> nv = QSharedPointer<NodeVar>(new NodeVar(t,expr));
             nv->m_subNode = subVar;
             //nv->m_expr = expr;
@@ -1733,7 +1735,7 @@ QSharedPointer<Node> Parser::Factor()
     if (t.m_type == TokenType::INTEGER_CONST || t.m_type ==TokenType::REAL_CONST
             || t.m_type ==TokenType::ADDRESS) {
         Eat(t.m_type);
-//        qDebug() << "parser: " <<t.m_value << t.m_intVal;
+  //      qDebug() << "parser: " <<t.m_value << t.m_intVal;
         return QSharedPointer<NodeNumber>(new NodeNumber(t, t.m_intVal));
     }
 

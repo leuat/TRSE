@@ -35,8 +35,11 @@ void CompilerM68K::Connect()
             m_assembler->IncludeFile(":resources/code/amiga/end_stripped.s");
     }
 
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::ATARI520ST)
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::ATARI520ST) {
             m_assembler->IncludeFile(":resources/code/atari520st/end.s");
+            m_assembler->IncludeFile(":resources/code/atari520st/poly.s");
+
+    }
 
 
     m_assembler->m_chipMem->m_source.insert(0," 	CNOP 0,4");

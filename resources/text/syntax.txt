@@ -251,6 +251,7 @@ m; EnableInterrupt; Amiga, ATARI520ST;i
 m; pusha; Amiga, ATARI520ST ;
 m; popa; Amiga, ATARI520ST ;
 m; toPointer;Amiga, ATARI520ST;l
+m; swap; Amiga, ATARI520ST; a,a,b
 
 
 

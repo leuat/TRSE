@@ -12,7 +12,7 @@ begin
 	begin
 		j:=screen_bg_color;
 		screen_bg_color:=(j+1)&15;	// set the background colour
-		nop(89);		// this number of NOP instructions delays the processor to create a nice steady bar of colour
+		nop(90);		// this number of NOP instructions delays the processor to create a nice steady bar of colour
 	end;
 	// revert to black
 	screen_bg_color:=black;

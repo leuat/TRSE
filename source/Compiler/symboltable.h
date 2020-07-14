@@ -59,7 +59,7 @@ public:
     QSharedPointer<PVar> m_value = nullptr;
     TokenType::Type getTokenType();
     Symbol(QString name, QString type="");
-    Symbol(QString name, QString type, float var);
+    Symbol(QString name, QString type, long var);
     Symbol(QString name, QString type, QString var);
     int getLength();
     // Nested symbols = records

@@ -62,4 +62,5 @@ exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
 exomizer_toggle = 0
-open_files =, graveintentions.ras
+open_files = ,graveintentions.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/CrossPlat/GraveIntentions/

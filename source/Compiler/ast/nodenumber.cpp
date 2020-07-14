@@ -22,7 +22,7 @@
 #include "nodenumber.h"
 
 
-NodeNumber::NodeNumber(Token op, int val) :Node() {
+NodeNumber::NodeNumber(Token op, long val) :Node() {
     m_op = op;
     m_val = val;
 
@@ -90,11 +90,14 @@ bool NodeNumber::is8bitValue(Assembler* as)
 */
 QString NodeNumber::HexValue() {
 
+//    qDebug() << "NODENUMBER " <<m_val;
     if (m_val>=0)
 
-    return "$" + QString::number((int)m_val,16);
+
+
+    return "$" + QString::number((long)m_val,16);
     else
-        return "-$" + QString::number((int)abs(m_val),16);
+        return "-$" + QString::number((long)abs(m_val),16);
 
 }
 

@@ -488,5 +488,6 @@
         <file>resources/text/help/p/paw_files.rtf</file>
         <file>resources/text/help/p/fjo_files.rtf</file>
         <file>resources/text/help/p/tru_files.rtf</file>
+        <file>resources/code/atari520st/poly.s</file>
     </qresource>
 </RCC>
