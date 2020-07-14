@@ -599,7 +599,7 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
     bool done = false;
     QString str = "";
     int p = 0;
-
+//    if (m_pass==0) return 0;
     bool prevNumber = false;
 
     while (!done) {
@@ -673,10 +673,14 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
             prevNumber = true;
         }
         else {
+//            qDebug() << "Looking for constant " << m_currentToken.m_value.toUpper();
+  //          qDebug() << m_symTab->m_constants.keys();
             QSharedPointer<Symbol> s = m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
+    //        qDebug() << " FOUND = " << (s==nullptr);
               if (s==nullptr)
                   done=true;
               else {
+      //            qDebug() << "FOUND adding " <<s->m_value->m_fVal;
                str+=QString::number(s->m_value->m_fVal);
                prevNumber = true;
 
@@ -2608,7 +2612,7 @@ QVector<QSharedPointer<Node>> Parser::ConstDeclaration()
     Eat();
     Eat(TokenType::EQUALS);
     int value = GetParsedInt(dType);
-
+//    qDebug() << "DECLARING CONSTANT " <<name.toUpper();
     m_symTab->m_constants[name.toUpper()] = QSharedPointer<Symbol>(new Symbol(name.toUpper(),type.toUpper(),value));
     return QVector<QSharedPointer<Node>>();
 }
@@ -3121,12 +3125,17 @@ QStringList Parser::BuildTable(int cnt,TokenType::Type type)
         AND = 0xFF;
     if (type==TokenType::LONG)
         AND = 0xFFFFFFFF;
+
+    QString consts = "";
+    for (QString key:m_symTab->m_constants.keys())
+        consts +=key+"="+QString::number(m_symTab->m_constants[key]->m_value->m_fVal)+";";
+
+
     for (int i=0;i<cnt;i++) {
         QString str = sentence;
 //        str = str.replace("i",QString::number(i));
 //        QJSValue ret = myEngine.evaluate(str);
-
-        QJSValue fun = myEngine.evaluate("(function(i) { return "+str+"; })");
+        QJSValue fun = myEngine.evaluate("(function(i) { "+consts+";return "+str+"; })");
         if (fun.isError())
             ErrorHandler::e.Error("Error evaluation javascript expression : " + fun.toString() + " <br><br>", m_currentToken.m_lineNumber);
 
