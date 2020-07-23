@@ -1240,7 +1240,8 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         QSharedPointer<Node> subVar = nullptr;
         if (m_currentToken.m_type==TokenType::DOT) {
             Eat();
-            subVar = Variable(true);
+            subVar = SubVariable(t.m_value);
+
         }
 
         if (t.m_type==TokenType::ADDRESS && expr!=nullptr) {
@@ -1289,7 +1290,8 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
             QSharedPointer<Node> subVar = nullptr;
             if (m_currentToken.m_type==TokenType::DOT) {
                 Eat();
-                subVar = Variable(true);
+                subVar = SubVariable(t.m_value);
+
             }
 
             n = QSharedPointer<NodeVar>(new NodeVar(t));
@@ -1303,7 +1305,9 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
                 QSharedPointer<Node> subVar = nullptr;
                 if (m_currentToken.m_type==TokenType::DOT) {
                     Eat();
-                    subVar = Variable(true);
+//                    qDebug() << "H1";
+                    subVar = SubVariable(t.m_value);
+  //                  qDebug() << "H2";
                 }
 
 
@@ -1324,6 +1328,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
     // Verify that we're not trying to screw with the variable
 
     QSharedPointer<NodeVar> nv = qSharedPointerDynamicCast<NodeVar>(n);
+//    if (!m_ignoreLookup)
     if (nv!=nullptr) {
         QSharedPointer<Symbol> s = m_symTab->Lookup(nv->value,m_currentToken.m_lineNumber);
         // If variable doesn't exist
@@ -1337,6 +1342,22 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
 
     }
 
+    return n;
+}
+
+QSharedPointer<Node> Parser::SubVariable(QString parent)
+{
+    QString fix = m_symTab->m_gPrefix;
+ //   qDebug() << "SUBVAR ORG " <<fix << parent << m_symTab->m_symbols.keys();
+    QSharedPointer<Symbol> s = m_symTab->Lookup(parent,m_currentToken.m_lineNumber);
+   // qDebug() << "SUBVAR TYPE " <<s->m_arrayTypeText;
+    QString recordType = s->m_type;
+    if (recordType.toLower()=="array")
+        recordType = s->m_arrayTypeText;
+    m_symTab->m_gPrefix = recordType+"_";
+    QSharedPointer<Node> n = Variable(false);
+    m_symTab->m_gPrefix = fix;
+  //  qDebug() << "DONE";
     return n;
 }
 
@@ -1355,7 +1376,13 @@ void Parser::Record(QString name)
     //m_symTab->Define(new Symbol(name,"record"));
     record->setName(name);
     QString oldPrefix = m_symTab->m_gPrefix;
-    m_symTab->m_gPrefix="";
+    m_symTab->m_gPrefix=name+"_";
+//    qDebug() << "RECORD PREFIX " <<m_symTab->m_gPrefix;
+    //m_symTab->m_gPrefix="";
+    m_isRecord = true;
+    //QSharedPointer<SymbolTable> oldTab;
+  //  oldTab = m_symTab;
+   // m_symTab = record;
     while (m_currentToken.m_type!=TokenType::END) {
         QVector<QSharedPointer<Node>> vars = VariableDeclarations("");
         for (QSharedPointer<Node> n : vars) {
@@ -1372,6 +1399,8 @@ void Parser::Record(QString name)
         Eat(TokenType::SEMI);
 
     }
+    m_isRecord = false;
+//    m_symTab = oldTab;
     m_symTab->m_gPrefix = oldPrefix;
 
     Eat(TokenType::END);
@@ -2673,7 +2702,8 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
     for (QSharedPointer<Symbol> s: syms) {
         if (Syntax::s.m_illegaVariableNames.contains(s->m_name))
             ErrorHandler::e.Error("Illegal variable name '" + s->m_name +"' on the "+AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+" (name already used in the assembler etc) ",m_currentToken.m_lineNumber);
-
+        //if (m_isRecord)
+        //qDebug() << "Defining RECORD: " << s->m_name;
         m_symTab->Define(s ,false);
         s->m_lineNumber = m_currentToken.m_lineNumber;
     }
@@ -2747,8 +2777,12 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
         QSharedPointer<NodeVarDecl> decl = QSharedPointer<NodeVarDecl>(new NodeVarDecl(n, typeNode));
         QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
         v->m_isGlobal = isGlobal;
-        var_decleratons.append(decl);
+  //      if (!m_isRecord)
+           var_decleratons.append(decl);
+//        else
 
+//        if (m_isRecord)
+  //          qDebug() << v->value;
         // Update extra list for assembler
        if (typeNode->m_position!="") { // HAS a fixed position
            //qDebug() << "FX" <<v->value;

@@ -95,6 +95,7 @@ public:
     bool m_isTRU = false;
     int m_pass = 0, m_acc=0;
     bool m_ignoreAll = false;
+    bool m_isRecord = false;
     bool m_removeUnusedDecls = false;
     QStringList  m_initJumps;
     QSharedPointer<SymbolTable>  m_symTab = nullptr;
@@ -148,6 +149,7 @@ public:
     void RemoveUnusedSymbols(QSharedPointer<NodeProgram> root);
     QSharedPointer<Node> Parse(bool removeUnusedDecls, QString param, QString globalDefines, bool useLocals);
     QSharedPointer<Node> Variable(bool isSubVar=false);
+    QSharedPointer<Node> SubVariable(QString parent);
     QSharedPointer<Node> Empty();
     void Record(QString name);
 //    QSharedPointer<Node> Record();

@@ -385,6 +385,8 @@ QStringList SymbolTable::getUnusedVariables()
 
 QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
 //            name = name.toUpper();
+
+
     if (m_constants.contains(name.toUpper())) {
         return m_constants[name.toUpper()];
     }
@@ -406,9 +408,12 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
 
     QString localName = m_currentProcedure+name;
 
+//    if (name.contains("posX"))
+    //qDebug() << "SYMTAB ERROR Looking up : "<<name <<localName <<m_symbols.keys();
     if (!m_symbols.contains(name) && !m_symbols.contains(localName)) {
-
-        QString similarSymbol = findSimilarSymbol(name,65,2,QStringList());
+        QString similarSymbol = findSimilarSymbol(name,85,2,QStringList());
+        name = name.remove(m_gPrefix);
+        similarSymbol = similarSymbol.remove(m_gPrefix);
         QString em = "";
         if (similarSymbol!="") {
             em+="Did you mean '<font color=\"#A080FF\">"+similarSymbol+"</font>'?<br>";
@@ -423,6 +428,9 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
         return m_symbols[localName];
 
     }
+    if (m_symbols[name]==nullptr)
+        ErrorHandler::e.Error("Could not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>", lineNumber);
+
     m_symbols[name]->isUsed = true;
     return m_symbols[name];
 }
