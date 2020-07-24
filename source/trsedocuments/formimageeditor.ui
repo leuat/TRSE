@@ -850,6 +850,16 @@
                  </property>
                 </widget>
                </item>
+               <item row="4" column="3">
+                <widget class="QPushButton" name="btnInv">
+                 <property name="toolTip">
+                  <string>Invert</string>
+                 </property>
+                 <property name="text">
+                  <string>Inv</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </item>
              <item row="1" column="0">

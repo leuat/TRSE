@@ -2410,3 +2410,9 @@ void FormImageEditor::on_cmbCharWidth_currentIndexChanged(const QString &arg1)
 
 }
 
+
+void FormImageEditor::on_btnInv_clicked()
+{
+    m_work.m_currentImage->m_image->Invert();
+    Update();
+}

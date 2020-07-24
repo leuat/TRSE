@@ -1664,3 +1664,14 @@ void MultiColorImage::SetColor(uchar col, uchar idx)
 //    qDebug()<< m_extraCols[idx];
 
 }
+
+void PixelChar::Invert() {
+    for (int i=0;i<8;i++) {
+        p[i] = ~p[i];
+    }
+}
+
+void MultiColorImage::Invert() {
+    for (int i=0;i<m_charWidth*m_charHeight;i++)
+        m_data[i].Invert();
+}

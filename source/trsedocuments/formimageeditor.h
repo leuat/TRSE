@@ -296,6 +296,7 @@ private slots:
     void on_lstCharMap_itemClicked(QTableWidgetItem *item);
     void Aspect1();
     void AspectDone();
+    void on_btnInv_clicked();
 };
 
 

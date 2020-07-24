@@ -328,6 +328,7 @@ public:
 
     virtual void ExportMovie(QFile &file) {}
 
+    virtual void Invert() {}
 
     virtual void ExportKoa(QFile &file) {}
     virtual void ImportKoa(QFile &file) {}

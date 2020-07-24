@@ -61,7 +61,6 @@ public:
     void LoadCharset(QString file, int skipBytes) override;
 
 
-
     CharsetImage* getCharset() override { return this; }
     unsigned int getPixel(int x, int y) override;
 
@@ -77,6 +76,8 @@ public:
     QPoint getXY(int x, int y);
 
     virtual unsigned int getCharPixel(int pos, int pal, int x, int y);
+
+    void Invert() override;
 
 
     void RenderEffect(QMap<QString, float> params) override;

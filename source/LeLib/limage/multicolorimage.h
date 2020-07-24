@@ -57,7 +57,7 @@ public:
     void ForceBackgroundColor(int col, int swapcol);
 
     int Compare(PixelChar& other);
-
+    void Invert();
 
     int CompareLength(PixelChar& other);
 
@@ -138,6 +138,8 @@ public:
     void SwapChars(int p1, int p2);
 
     void UpdateColorList();
+
+    void Invert() override;
 
 
     void CalculateCharIndices();

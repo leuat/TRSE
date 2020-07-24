@@ -436,6 +436,20 @@ void CharsetImage::RenderEffect(QMap<QString, float> params)
 
 
 }
+void CharsetImage::Invert()
+{
+    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1) {
+        int cx = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X);
+        int cy = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y);
+        for (int y=0;y<cy;y++)
+            for (int x=0;x<cx;x++) {
+                int pos = m_currentChar + y*m_charWidthDisplay + x;
+                m_data[pos].Invert();
+            }
+        return;
+    }
+    MultiColorImage::Invert();
+}
 
 void CharsetImage::CopyFrom(LImage *img)
 {
