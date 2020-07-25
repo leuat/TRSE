@@ -41,6 +41,7 @@ public:
     bool m_run = false;
 
     bool m_hasFocus = true;
+
     bool m_documentIsChanged = false;
     QString m_currentSourceFile;
     QString m_currentFileShort;
@@ -55,6 +56,8 @@ public:
     QSharedPointer<CIniFile> m_iniFile;
     QSharedPointer<CIniFile> m_projectIniFile;
 
+
+    virtual bool isBuilding() {return false;}
     virtual void Save(QString filename) {}
     virtual void Load(QString filename) {}
     virtual void AutoFormat() {}

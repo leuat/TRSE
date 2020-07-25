@@ -407,6 +407,12 @@ void FormRasEditor::Focus() {
     ui->txtEditor->setFocus();
 }
 
+bool FormRasEditor::isBuilding()
+{
+
+    return m_builderThread.m_isRunning;
+}
+
 
 void FormRasEditor::Run()
 {
@@ -418,7 +424,8 @@ void FormRasEditor::Run()
         }
 
     }
-
+//    if (!m_run)
+  //      return;
     if (m_builderThread.m_builder->m_system==nullptr)
         return;
 
@@ -465,6 +472,8 @@ void FormRasEditor::Run()
     }
     else
         ExecutePrg(filename, m_projectIniFile->getString("system"));
+
+    m_run = false;
 
 }
 

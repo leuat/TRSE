@@ -635,7 +635,7 @@ void CharsetImage::ExportFrame(QFile &file, int frame, int frameCount, int type,
     QByteArray data;
 
     // ANDY : data stored in m_data
-    // m_data[ x + y*m_charWidthDisplay] is the current cell
+    // m_data[ x + y*m_charWidthDisplay] is the current cell at x,y
     int x = 1;
     int y = 1;
     // Colour data located in "c"

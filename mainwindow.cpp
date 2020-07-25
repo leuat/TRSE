@@ -807,7 +807,11 @@ void MainWindow::AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBui
 }
 
 void MainWindow::acceptBuildMain(bool run) {
+    if (m_currentDoc->isBuilding()) {
+        return;
+    }
     m_keepFile = m_currentDoc->m_currentFileShort;
+
     acceptBuild();
     if (!VerifyFile(m_currentProject.m_ini->getString("main_ras_file"),"Error trying to build main project file. Please see project settings and specify correct path to main .ras file"))
         return;

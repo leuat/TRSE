@@ -14,7 +14,6 @@ begin
 		hissDuration := 0;
 		return();
 	end;
-	
 	SOUNDFX_REGISTER := @SOUND_HISS;
 	hissDuration := hissDuration - 1;
 

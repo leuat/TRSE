@@ -118,6 +118,7 @@ public:
 
     void Focus() override;
 
+    bool isBuilding() override;
 
     void Run() override;
     void SetLights();
