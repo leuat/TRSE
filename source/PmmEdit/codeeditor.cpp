@@ -29,18 +29,25 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
     lineNumberArea = new LineNumberArea(this);
     cycleNumberArea = new CycleNumberArea(this);
+    addressArea = new AddressArea(this);
+
+    connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
 
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
     connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumberArea(QRect,int)));
-    connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
 
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateCycleNumberAreaWidth(int)));
     connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateCycleNumberArea(QRect,int)));
+
+    connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateAddressAreaWidth(int)));
+    connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateAddressArea(QRect,int)));
 
     connect(this, SIGNAL(textChanged()), this, SLOT(onTextChanged()));
 
     updateLineNumberAreaWidth(0);
     updateCycleNumberAreaWidth(0);
+    updateAddressAreaWidth(0);
+
     highlightCurrentLine();
     InitCompleter(nullptr, nullptr);
 
@@ -180,6 +187,14 @@ int CodeEditor::cycleNumberAreaWidth()
     return 80;
 }
 
+int CodeEditor::AddressAreaWidth()
+{
+    if (m_addresses.keys().count()==0)
+        return 0;
+    return 80;
+
+}
+
 void CodeEditor::FixBackTab(QKeyEvent *e)
 {
 
@@ -208,7 +223,7 @@ void CodeEditor::FixBackTab(QKeyEvent *e)
         }
         else {
 
-// Its not a tab, so reset the selection to what it was
+            // Its not a tab, so reset the selection to what it was
             cur.setPosition(anchor);
             cur.setPosition(pos,QTextCursor::KeepAnchor);
         }
@@ -233,23 +248,36 @@ void CodeEditor::InitCompleter(QSharedPointer<SymbolTable>  symTab, Parser* pars
 
 }
 
+
 void CodeEditor::onTextChanged() {
     m_textChanged = true;
 }
 
 
 
+void CodeEditor::update()
+{
+    setViewportMargins(AddressAreaWidth()+lineNumberAreaWidth(),0,cycleNumberAreaWidth(),0);
+
+}
 
 void CodeEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
 {
-    setViewportMargins(lineNumberAreaWidth(),0,cycleNumberAreaWidth(),0);
+    update();
+}
+
+void CodeEditor::updateAddressAreaWidth(int newBlockCount)
+{
+    update();
+
 }
 
 
 void CodeEditor::updateCycleNumberAreaWidth(int /* newBlockCount */)
 {
-    setViewportMargins(lineNumberAreaWidth(),0,cycleNumberAreaWidth(),0);
+    update();
 }
+
 
 void CodeEditor::keyPressEvent(QKeyEvent *e)
 {
@@ -407,6 +435,8 @@ QString CodeEditor::textUnderCursor() const
 }
 
 
+
+
 void CodeEditor::updateLineNumberArea(const QRect &rect, int dy)
 {
     if (dy)
@@ -416,6 +446,19 @@ void CodeEditor::updateLineNumberArea(const QRect &rect, int dy)
 
     if (rect.contains(viewport()->rect()))
         updateLineNumberAreaWidth(0);
+}
+void CodeEditor::updateAddressArea(const QRect &rect, int dy)
+{
+    if (dy)
+        addressArea->scroll(0, dy);
+    else
+//        cycleNumberArea->update(rect.x()-cycleNumberArea->width()-1, rect.y(), cycleNumberArea->width(), rect.height());
+      addressArea->update(0, rect.y(), addressArea->width(), rect.height());
+
+//    updateAddressAreaWidth(0);
+//    if (rect.contains(viewport()->rect()))
+  //      updateCycleNumberAreaWidth(0);
+
 }
 
 
@@ -440,8 +483,9 @@ void CodeEditor::resizeEvent(QResizeEvent *e)
     QPlainTextEdit::resizeEvent(e);
 
     QRect cr = contentsRect();
-    lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
+    lineNumberArea->setGeometry(QRect(cr.left()+AddressAreaWidth(), cr.top(), lineNumberAreaWidth(), cr.height()));
     cycleNumberArea->setGeometry(QRect(cr.right()-cycleNumberAreaWidth(), cr.top(), cycleNumberAreaWidth(), cr.height()));
+    addressArea->setGeometry(QRect(cr.left(), cr.top(), AddressAreaWidth(), cr.height()));
 }
 
 
@@ -494,6 +538,7 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event) {
 }
 
 
+
 void CodeEditor::cycleNumberAreaPaintEvent(QPaintEvent *event)
 {
     QPainter painter(cycleNumberArea);
@@ -543,3 +588,42 @@ void CodeEditor::cycleNumberAreaPaintEvent(QPaintEvent *event)
         ++blockNumber;
     }
 }
+
+void CodeEditor::addressAreaPaintEvent(QPaintEvent *event) {
+    QPainter painter(addressArea);
+
+    painter.fillRect(event->rect(), cyclesBackgroundColor);
+
+    QTextBlock block = firstVisibleBlock();
+    int blockNumber = block.blockNumber();
+    int top = (int) blockBoundingGeometry(block).translated(contentOffset()).top();
+    painter.setPen(cyclesColor);
+    painter.drawText(0, top, addressArea->width(), fontMetrics().height(),
+                 Qt::AlignLeft, "");
+
+//    top+=20;
+    top+=fontMetrics().height();
+    int bottom = top + (int) blockBoundingRect(block).height();
+    while (block.isValid() && top <= event->rect().bottom()) {
+        if (block.isVisible() && bottom >= event->rect().top()) {
+            int ln = blockNumber+2;
+           // qDebug() << m_cycles.count();
+            if (m_addresses.contains(ln))
+            {
+
+                QString number = Util::numToHex(m_addresses[ln]).toUpper();
+                for (int i=0;i<5-number.count();i++)
+                    number.insert(1,"0");
+                painter.setPen(cyclesColor);
+                painter.drawText(10, top, addressArea->width(), fontMetrics().height(),
+                             Qt::AlignLeft, number);
+            }
+        }
+
+        block = block.next();
+        top = bottom;
+        bottom = top + (int) blockBoundingRect(block).height();
+        ++blockNumber;
+    }
+}
+

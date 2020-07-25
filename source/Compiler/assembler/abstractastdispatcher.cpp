@@ -30,7 +30,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBlock> node) {
 
 
     node->DispatchConstructor(as);
-
+    LineNumber(node->m_op.m_lineNumber);
  //   AbstractASTDispatcher::dispatch(node);
 
 
@@ -320,6 +320,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
 
     as->m_symTab->SetCurrentProcedure(node->m_procName+"_");
     int ln = node->m_currentLineNumber;
+//    LineNumber(ln+1);
 
     if (UseBlocks()) {
         int ret = node->MaintainBlocks(as);
@@ -488,6 +489,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeVarDecl> node)
     node->DispatchConstructor(as);
 
 
+    LineNumber(node->m_op.m_lineNumber);
     if (UseBlocks()) {
         int ret = node->MaintainBlocks(as);
 
@@ -662,8 +664,10 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeCompound> node)
     node->DispatchConstructor(as);
 
     as->BeginBlock();
-    for (QSharedPointer<Node> n: node->children)
+    for (QSharedPointer<Node> n: node->children) {
+        LineNumber(n->m_op.m_lineNumber+1);
         n->Accept(this);
+    }
 
     as->EndBlock();
 }
@@ -739,6 +743,11 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeUnaryOp> node)
         num->m_val = s;
     }
 
+
+}
+
+void AbstractASTDispatcher::LineNumber(int ln) {
+    as->Comment("LineNumber: "+QString::number(ln));
 
 }
 

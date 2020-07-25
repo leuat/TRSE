@@ -75,16 +75,23 @@ public:
 
     void cycleNumberAreaPaintEvent(QPaintEvent *event);
     int cycleNumberAreaWidth();
+    int AddressAreaWidth();
+
+    void addressAreaPaintEvent(QPaintEvent *event);
+
+
 
     void FixBackTab(QKeyEvent* e);
 
     void InitCompleter(QSharedPointer<SymbolTable>  m_symTab, Parser* parser);
 
     QMap<int,int> m_cycles, m_blockCycles;
+    QMap<int,int> m_addresses;
 
     void RepaintCycles() {
         cycleNumberArea->repaint();
     }
+    void update();
 
 protected slots:
     void onTextChanged();
@@ -99,12 +106,18 @@ protected slots:
     void updateLineNumberArea(const QRect &, int);
     void updateLineNumberAreaWidth(int newBlockCount);
 
+
     void updateCycleNumberArea(const QRect &, int);
     void updateCycleNumberAreaWidth(int newBlockCount);
+
+
+    void updateAddressArea(const QRect &, int);
+    void updateAddressAreaWidth(int newBlockCount);
 
 protected:
     QWidget *lineNumberArea;
     QWidget *cycleNumberArea;
+    QWidget *addressArea;
 
 
  // Completer stuff
@@ -164,6 +177,26 @@ public:
 protected:
     void paintEvent(QPaintEvent *event) override {
         codeEditor->cycleNumberAreaPaintEvent(event);
+    }
+
+protected:
+    CodeEditor *codeEditor;
+};
+
+class AddressArea : public QWidget
+{
+public:
+    AddressArea(CodeEditor *editor) : QWidget(editor) {
+        codeEditor = editor;
+    }
+
+    QSize sizeHint() const override {
+        return QSize(codeEditor->AddressAreaWidth(), 0);
+    }
+
+protected:
+    void paintEvent(QPaintEvent *event) override {
+        codeEditor->addressAreaPaintEvent(event);
     }
 
 protected:

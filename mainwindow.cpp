@@ -796,6 +796,7 @@ void MainWindow::AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBui
             if (files.contains(name)) {
                 sourceBuilder->compiler->CleanupCycleLinenumbers(name, sourceBuilder->compiler->m_assembler->m_cycles, sourceBuilder->compiler->m_assembler->m_cyclesOut);
                 sourceBuilder->compiler->CleanupCycleLinenumbers(name,sourceBuilder->compiler->m_assembler->m_blockCycles,sourceBuilder->compiler->m_assembler->m_blockCyclesOut);
+                sourceBuilder->compiler->CleanupCycleLinenumbers(name,sourceBuilder->m_system->m_addressesOut,sourceBuilder->m_system->m_addressesOut);
                 r->m_builderThread.m_builder = QSharedPointer<SourceBuilder>(sourceBuilder);
                 r->HandleBuildComplete();
 

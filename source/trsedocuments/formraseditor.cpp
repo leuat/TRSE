@@ -1001,6 +1001,7 @@ void FormRasEditor::HandleBuildComplete()
     bool keepTextChanged = ui->txtEditor->m_textChanged;
     if (m_builderThread.m_builder->compiler->m_assembler!=nullptr) {
         ui->txtEditor->m_cycles =  m_builderThread.m_builder->compiler->m_assembler->m_cyclesOut;
+        ui->txtEditor->m_addresses =  m_builderThread.m_builder->m_system->m_addressesOut;
         ui->txtEditor->m_blockCycles =  m_builderThread.m_builder->compiler->m_assembler->m_blockCyclesOut;
     }
     ui->txtEditor->RepaintCycles();

@@ -101,7 +101,7 @@ public:
     enum OLType {INSTRUCTION, ORG, INCBIN, CONSTANT, BYTE, WORD, LABELONLY, PADBYTE};
 
     OLType m_type;
-    int m_pos, m_lineNumber=0;
+    int m_pos, m_lineNumber, m_rasLineNumber=0;
     QString m_expr="";
     QString m_label="";
     QString m_orgLine="";
@@ -146,6 +146,7 @@ public:
 class Orgasm  : public QObject{
     Q_OBJECT
 public:
+    int m_curRasLine = 0;
     QString m_source;
     QStringList m_lines;
     QString m_currentChar;
@@ -160,6 +161,7 @@ public:
     int m_constantPassLines;
     QByteArray m_data;
     QMap<QString, QRegExp*> m_regs;
+    QMap<int,int> m_lineAddress;
     QString m_output;
 
 

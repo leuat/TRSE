@@ -123,6 +123,7 @@ public:
 
     virtual void dispatch(QSharedPointer<NodeUnaryOp> node);
 
+    void LineNumber(int ln);
 
 
 public:

@@ -40,6 +40,7 @@ public:
     }
     AbstractSystem(AbstractSystem* a);
     QMap<QString, QString> m_systemParams;
+    QMap<int,int> m_addressesOut;
     QElapsedTimer timer;
     QString m_orgOutput;
     QSharedPointer<CIniFile> m_projectIni, m_settingsIni;

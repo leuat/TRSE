@@ -72,6 +72,12 @@ OrgasmLine Orgasm::LexLine(int i) {
 //    line = line.replace("EQU", "=");
     //line = line.replace("ds.b", ".byte");
     line = line.replace(".dc ", ".byte ");
+
+    if (line.simplified().contains("; LineNumber: ")) {
+        m_curRasLine = line.split(":").last().toInt();
+    }
+    l.m_rasLineNumber = m_curRasLine;
+
     line = line.split(";")[0];
     if (!line.toLower().contains("incbin"))
         line = line.split("//")[0];
@@ -130,7 +136,6 @@ OrgasmLine Orgasm::LexLine(int i) {
         line.remove(0, lbl.length()).replace(":", " ");
 
     }
-
 
     if (line.simplified().startsWith(";") || line.simplified()=="" || line.simplified().startsWith("//")) {
         if (l.m_label=="")
@@ -265,6 +270,11 @@ bool Orgasm::Assemble(QString filename, QString outFile)
         m_output = "Error during OrgAsm assembly : " +e.msg;
         m_output +="<br><br>Line "+QString::number(e.oline.m_lineNumber+1)+ " in " +"<font color=\"orange\">"+filename+" :</font> "" : " +e.oline.m_orgLine;
     }
+/*    qDebug() << "ORGASM : ";
+    for (int i:m_lineAddress.keys()) {
+        qDebug() << i << Util::numToHex(m_lineAddress[i]);
+    }
+*/
     return m_success;
 }
 
@@ -358,7 +368,15 @@ void Orgasm::Compile(OrgasmData::PassType pt)
             }
         }
         ol.m_pos = m_pCounter;
-
+        if (pt == OrgasmData::PASS_LABELS && ol.m_rasLineNumber!=0) {
+            bool ok = true;
+            if (m_lineAddress.contains(ol.m_rasLineNumber)) {
+                ok = false;
+                if (m_lineAddress[ol.m_rasLineNumber]==0) ok=true;
+            }
+            if (ok)
+                m_lineAddress[ol.m_rasLineNumber] = ol.m_pos;
+        }
 
 //        qDm_pCounter
 
