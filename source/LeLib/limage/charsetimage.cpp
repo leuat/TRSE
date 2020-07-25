@@ -630,3 +630,21 @@ int CharsetImage::getDy()
 
 }
 
+void CharsetImage::ExportFrame(QFile &file, int frame, int frameCount, int type, int col, int row, int width, int height, int rowOrder)
+{
+    QByteArray data;
+
+    // ANDY : data stored in m_data
+    // m_data[ x + y*m_charWidthDisplay] is the current cell
+    int x = 1;
+    int y = 1;
+    // Colour data located in "c"
+    m_data[ x + y*m_charWidthDisplay].c[0]; // background colour
+    // colour 0 = background, 1 = mc col 1, 2 = mc col 2, 3 = cell colour
+    //pixel values are stored in p, with 8 bytes in total:
+    //m_data[ x + y*m_charWidthDisplay].p[0]; // background colour
+
+    file.write(data);
+
+}
+

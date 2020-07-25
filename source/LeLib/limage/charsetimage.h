@@ -103,6 +103,10 @@ public:
     virtual int getDx() override;
     virtual int getDy() override;
 
+
+    void ExportFrame(QFile &file, int frame, int frameCount, int type, int col, int row, int width, int height, int rowOrder) override;
+
+
 /*    void FlipHorizontal() override;
     void FlipVertical() override;
 
