@@ -324,6 +324,7 @@ m; IncZP; C64, PLUS4, C128, VIC20, PET,  NES ; a, b
 m; CopyCharsetFromRom; C64, PLUS4, C128 ; a
 m; SetCharsetLocation; C64, PLUS4, C128, VIC20; n
 m; SetScreenLocation; C64, PLUS4, C128, VIC20; n
+m; SetCharsetAndScreenLocation; C64, C128; n,n
 
 # **********************
 #

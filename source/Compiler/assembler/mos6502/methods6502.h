@@ -100,6 +100,7 @@ public:
     void PPUDrawColumn(Assembler* as);
     void Clearsound(Assembler* as);
     void SetCharsetLocation(Assembler* as);
+    void SetCharsetAndScreenLocation(Assembler* as);
     void SetScreenLocation(Assembler* as);
     void IncScreenX(Assembler* as);
     void Print80(Assembler* as);
