@@ -2656,6 +2656,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
         m_symTab->SetCurrentProcedure("");
 
 
+    int orgLineNumber = m_currentToken.m_lineNumber+1;
 
     // All the vars that will be declared
     QVector<QSharedPointer<Node>> vars;
@@ -2776,6 +2777,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
    for (QSharedPointer<Node> n : vars) {
         QSharedPointer<NodeVarDecl> decl = QSharedPointer<NodeVarDecl>(new NodeVarDecl(n, typeNode));
         QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
+        decl->m_op.m_lineNumber = orgLineNumber;
         v->m_isGlobal = isGlobal;
   //      if (!m_isRecord)
            var_decleratons.append(decl);
@@ -3089,6 +3091,7 @@ QSharedPointer<Node> Parser::Constant()
 
 QSharedPointer<Node> Parser::InlineAssembler()
 {
+    Token t = m_currentToken;
     Eat(TokenType::ASM);
     Eat(TokenType::LPAREN);
     if (m_currentToken.m_type!=TokenType::STRING)
@@ -3097,8 +3100,8 @@ QSharedPointer<Node> Parser::InlineAssembler()
     if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502) {
         VerifyInlineSymbols6502(m_currentToken.m_value);
     }
-
-    QSharedPointer<Node> n = QSharedPointer<NodeAsm>(new NodeAsm(m_currentToken));
+    t.m_value = m_currentToken.m_value;
+    QSharedPointer<Node> n = QSharedPointer<NodeAsm>(new NodeAsm(t));
     Eat(TokenType::STRING);
     Eat(TokenType::RPAREN);
     return n;

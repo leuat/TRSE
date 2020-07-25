@@ -700,14 +700,21 @@ void CharsetImage::setPixelHybrid(int x, int y, unsigned int color)
 
     QPoint p = getXY(x,y);
     PixelChar&pc = getPixelChar(p.x(),p.y());
-    if (pc.c[3]>=8) {
+//    if (pc.c[3]>=8 || color==m_extraCols[1] || color==m_extraCols[2]) {
+        if (pc.c[3]>=8) {
         m_bitMask=0b11;
         m_scale = 2;
         m_scaleX = 2.5f;
-
+        m_noColors = 4;
         p.setX(p.x()/2);
 
     }
+    else {
+//        pc.c[1] = color;
+  //      pc.c[2] = color;
+        pc.c[3] = color;
+    }
+
     CharsetImage::setLimitedPixel(p.x(),p.y(),color);
 }
 
