@@ -220,6 +220,8 @@ public:
 
     QMap<int, int> m_cycles, m_blockCycles;
     QMap<int, int> m_cyclesOut, m_blockCyclesOut;
+    QMap<int,int> m_addressesOut, m_addresses;
+
     QMap<int, int> m_blockIndent;
 
     QVector<int> m_cycleCounter;

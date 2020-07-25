@@ -747,7 +747,8 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeUnaryOp> node)
 }
 
 void AbstractASTDispatcher::LineNumber(int ln) {
-    as->Comment("LineNumber: "+QString::number(ln));
+    if (m_outputLineNumbers)
+        as->Comment("LineNumber: "+QString::number(ln));
 
 }
 

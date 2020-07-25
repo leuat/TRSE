@@ -78,12 +78,15 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
     }
 
     system->DefaultValues();
+
     Syntax::s.m_currentSystem->DefaultValues();
 
     try {
         // Set up assembler and dispatcher for the current system
         InitAssemblerAnddispatcher(system);
         m_assembler->m_curDir = project_dir;
+        m_dispatcher->m_outputLineNumbers =  m_ini->getdouble("display_addresses")==1.0;
+
 
     } catch (FatalErrorException e) {
         HandleError(e,"Error during pre-build");
@@ -98,7 +101,6 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
     m_assembler->m_symTab->m_useLocals = m_parser.m_symTab->m_useLocals;
     m_assembler->m_symTab->m_records = m_parser.m_symTab->m_records;
     m_assembler->m_symTab->m_constants = m_parser.m_symTab->m_constants;
-
 
     for (QSharedPointer<SymbolTable>  st : m_parser.m_symTab->m_records)
         m_assembler->m_symTab->Define(QSharedPointer<Symbol>(new Symbol(st->m_name, "RECORD")));

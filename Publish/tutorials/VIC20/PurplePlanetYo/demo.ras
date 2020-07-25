@@ -9,7 +9,7 @@ var
 //@ignoremethod "init16x8div"
 
 @ignoremethod "init_random"
-//@ignoremethod "initprintstring"
+//@ignoremethod "initpriuntstring"
 //@ignoremethod "initprintdecimal"
 
 
@@ -274,10 +274,13 @@ begin
 end;
 
 @include "include/chars.ras"
+
 @include "include/modmusic.ras"
 
 @include "include/charback.ras"
+
 @include "include/rasterbars.ras"
+
 @include "include/scenenext.ras"
 @include "include/twister.ras"
 @include "include/image.ras"

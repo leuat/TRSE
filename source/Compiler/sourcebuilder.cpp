@@ -29,6 +29,8 @@ bool SourceBuilder::Build(QString source)
     compiler = QSharedPointer<Compiler>(FactoryCompiler::CreateCompiler(m_iniFile, m_projectIniFile));
 
 
+
+
     if (m_currentSourceFile.toLower().endsWith(".asm")) {
         m_buildSuccess=true;
        m_assembleSuccess=false;
@@ -95,7 +97,6 @@ bool SourceBuilder::Build(QString source)
 */
     if (!m_isShadow)
         connect(compiler.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
-
     m_buildSuccess = compiler->Build(m_system, path);
 //    m_buildString+="<br>Post";
 //    emit EmitBuildString();
@@ -144,6 +145,9 @@ bool SourceBuilder::Assemble()
     }
     connect(m_system.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
     m_system->Assemble(m_output,m_filename, m_curDir,compiler->m_parser.m_symTab);
+    compiler->m_assembler->m_addresses = m_system->m_addresses;
+    compiler->CleanupCycleLinenumbers("",compiler->m_assembler->m_addresses,compiler->m_assembler->m_addressesOut,false);
+
     if (m_system->m_buildSuccess)
         m_system->PostProcess(m_output, m_filename, m_curDir);
 

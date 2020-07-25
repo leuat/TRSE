@@ -28,32 +28,35 @@ void Compiler6502::Connect()
     CleanupCycleLinenumbers("", m_assembler->m_cycles, m_assembler->m_cyclesOut);
     CleanupCycleLinenumbers("",m_assembler->m_blockCycles,m_assembler->m_blockCyclesOut);
 
+//    qDebug() << m_assembler->m_addresses.keys();
+
     CleanupBlockLinenumbers();
 
 }
 
-void Compiler6502::CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &ocycles, QMap<int, int> &retcycles)
+void Compiler6502::CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &ocycles, QMap<int, int> &retcycles, bool isCycles)
 {
 
     QMap<int, int> cycles;
-    int acc = 0;
+//    int acc = 0;
     if (currentFile=="")
         for (int i: ocycles.keys()) {
 
             int count = ocycles[i];
             int nl = i;
-            acc = 0;
+  //          acc = 0;
             for (FilePart& fp : m_parser.m_lexer->m_includeFiles) {
                 // Modify bi filepart
                 if (nl>fp.m_startLine && nl<fp.m_endLine) {
-                    cycles[fp.m_startLine]+=count;
+                    if (isCycles)
+                        cycles[fp.m_startLine]+=count;
                     count=0;
                     //               acc+=fp.m_startLine;
                 }
 
                 if (nl>=fp.m_endLine) {
                     //                qDebug() << fp.m_startLine << fp.m_count;
-                    acc+=fp.m_count;
+    //                acc+=fp.m_count;
                     nl-=fp.m_count-1;
                 }
             }

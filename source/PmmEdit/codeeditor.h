@@ -90,6 +90,7 @@ public:
 
     void RepaintCycles() {
         cycleNumberArea->repaint();
+        addressArea->repaint();
     }
     void update();
 

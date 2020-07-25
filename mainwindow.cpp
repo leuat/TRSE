@@ -274,6 +274,9 @@ void MainWindow::VerifyDefaults()
     if (!m_iniFile->contains("post_optimize"))
         m_iniFile->setFloat("post_optimize", 1);
 
+    if (!m_iniFile->contains("display_addresses"))
+        m_iniFile->setFloat("display_addresses", 1);
+
     if (!m_iniFile->contains("display_warnings"))
         m_iniFile->setFloat("display_warnings", 1);
 
@@ -790,13 +793,14 @@ void MainWindow::AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBui
     for (TRSEDocument* t : m_documents) {
         if (t==m_currentDoc)
             continue;
+
         FormRasEditor* r = dynamic_cast<FormRasEditor*>(t);
         if (r!=nullptr) {
             QString name = r->m_currentFileShort;
             if (files.contains(name)) {
                 sourceBuilder->compiler->CleanupCycleLinenumbers(name, sourceBuilder->compiler->m_assembler->m_cycles, sourceBuilder->compiler->m_assembler->m_cyclesOut);
                 sourceBuilder->compiler->CleanupCycleLinenumbers(name,sourceBuilder->compiler->m_assembler->m_blockCycles,sourceBuilder->compiler->m_assembler->m_blockCyclesOut);
-                sourceBuilder->compiler->CleanupCycleLinenumbers(name,sourceBuilder->m_system->m_addressesOut,sourceBuilder->m_system->m_addressesOut);
+                sourceBuilder->compiler->CleanupCycleLinenumbers(name,sourceBuilder->compiler->m_assembler->m_addresses,sourceBuilder->compiler->m_assembler->m_addressesOut,false);
                 r->m_builderThread.m_builder = QSharedPointer<SourceBuilder>(sourceBuilder);
                 r->HandleBuildComplete();
 

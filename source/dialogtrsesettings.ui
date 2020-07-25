@@ -485,16 +485,31 @@
           <rect>
            <x>20</x>
            <y>120</y>
-           <width>291</width>
-           <height>131</height>
+           <width>431</width>
+           <height>181</height>
           </rect>
          </property>
          <property name="title">
-          <string>Optimizer</string>
+          <string>Compiler options</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
-           <layout class="QVBoxLayout" name="verticalLayout_6"/>
+          <item row="1" column="0">
+           <layout class="QGridLayout" name="gridLayout_19">
+            <item row="0" column="1">
+             <widget class="QCheckBox" name="chkDisplayAddresses">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>Compute compiled code address:</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>

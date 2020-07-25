@@ -73,6 +73,7 @@ void DialogTRSESettings::FillFromIni()
     ui->chkAutoInject->setChecked(m_ini->getdouble("auto_inject")==1.0);
 
     ui->chkDisableFileColors->setChecked(m_ini->getdouble("disable_file_colors")==1.0);
+    ui->chkDisplayAddresses->setChecked(m_ini->getdouble("display_addresses")==1.0);
 
 //    if (ui->cmbPalette->currentText()=="Dark")
     if (m_ini->getdouble("windowpalette")==0)
@@ -149,7 +150,7 @@ void DialogTRSESettings::FillToIni()
 
 
 
-
+    m_ini->setFloat("display_addresses", ui->chkDisplayAddresses->isChecked());
     m_ini->setString("gameboy_rgbasm_dir", ui->leRGBAsmDir->text());
 
 

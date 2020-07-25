@@ -68,7 +68,7 @@ public:
 //    void Destroy();
 //    void FindLineNumberAndFile(int inLe, QString& file, int& outle);
     void WarningUnusedVariables();
-    virtual void CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &ocycles, QMap<int, int> &retcycles) {}
+    virtual void CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &ocycles, QMap<int, int> &retcycles, bool isCycles=true) {}
 public:
 signals:
     void EmitTick(QString val);

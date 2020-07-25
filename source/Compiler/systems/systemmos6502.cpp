@@ -36,7 +36,8 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
 
         output = orgAsm.m_output;
         disconnect(&orgAsm, SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
-        m_addressesOut = orgAsm.m_lineAddress;
+
+        m_addresses = orgAsm.m_lineAddress;
         if (m_projectIni->getdouble("output_debug_symbols")==1.0)
             orgAsm.SaveSymbolsList(filename+".sym");
 
