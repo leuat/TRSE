@@ -7,6 +7,7 @@ LImageHybridCharset::LImageHybridCharset(LColorList::Type t) : CharsetImage(t)
     m_bitMask = 0b1;
     m_scale = 1;
     m_width = 320;
+
 }
 
 unsigned int LImageHybridCharset::getPixel(int x, int y)
@@ -30,11 +31,15 @@ unsigned int LImageHybridCharset::getPixel(int x, int y)
         pc = getPixelChar(p.x(),p.y());
 
         ande = 7;
+        int c = MultiColorImage::getPixel(p.x(),p.y());
+        if (c!=m_extraCols[1] && c!=m_extraCols[2]) c=c&ande;
+        return c;
+
     }
 
 
     if (MultiColorImage::getPixel(p.x(),p.y())!=0)
-        return pc.c[3] &ande;
+        return pc.c[3];
 
     return pc.c[0] &ande;
 
@@ -47,14 +52,19 @@ void LImageHybridCharset::setPixel(int x, int y, unsigned int color)
     m_scale = 1;
     m_bitMask=1;
     m_width = 320;
- /*   if (x>=m_width || x<0 || y>=m_height || y<0)
-        return;
 
-    PixelChar& pc = getPixelChar(x,y);
 
-    int col = pc.c[3];
-    if (col>=8) { m_scale = 2; m_bitMask=0b11;}*/
-    CharsetImage::setLimitedPixel(x,y,color);
+    QPoint p = getXY(x,y);
+    PixelChar&pc = getPixelChar(p.x(),p.y());
+    if (pc.c[3]>=8) {
+        m_bitMask=0b11;
+        m_scale = 2;
+        p.setX(p.x()/2);
+
+    }
+
+
+    CharsetImage::setLimitedPixel(p.x(),p.y(),color);
  //   pc.Reorganize(m_bitMask, m_scale,m_minCol, m_noColors);
 
   //      qDebug() << QString::number(color) << QString::number(pc.c[0]) << QString::number(pc.c[1]) << QString::number(pc.c[2]) << QString::number(pc.c[3]);
