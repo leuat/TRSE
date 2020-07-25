@@ -133,6 +133,8 @@ unsigned int MultiColorImage::getPixel(int x, int y)
     int ix = x % (8/m_scale);//- (dx*m_charWidth);
     int iy = y % 8;//- (dy*m_charHeight);
 
+
+
     return pc.get(m_scale*ix, iy, m_bitMask);
 
 }

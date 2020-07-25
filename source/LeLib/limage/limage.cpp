@@ -86,6 +86,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 21;
     if (t==ATARI320x200)
         return 22;
+    if (t==HybridCharset)
+        return 23;
 
 
     return 255;
@@ -139,6 +141,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "Gameboy level editor";
     if (t==ATARI320x200)
         return "Atari ST 320x200";
+    if (t==HybridCharset)
+        return "Hybrid multicolor/hires";
 
     return "Unknown image type";
 
@@ -193,6 +197,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return LevelEditorGameboy;
     if (c==22)
         return ATARI320x200;
+    if (c==23)
+        return HybridCharset;
 
     return NotSupported;
 

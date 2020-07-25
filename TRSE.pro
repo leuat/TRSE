@@ -116,6 +116,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limageatari520st.cpp \
     source/LeLib/limage/limagefooter.cpp \
     source/LeLib/limage/limagegamboy.cpp \
+    source/LeLib/limage/limagehybridcharset.cpp \
     source/LeLib/limage/limagelevelgameboy.cpp \
     source/LeLib/limage/limagelevelnes.cpp \
     source/LeLib/limage/limagemetablocksprites.cpp \
@@ -298,6 +299,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limageatari520st.h \
     source/LeLib/limage/limagefooter.h \
     source/LeLib/limage/limagegamboy.h \
+    source/LeLib/limage/limagehybridcharset.h \
     source/LeLib/limage/limagelevelgameboy.h \
     source/LeLib/limage/limagelevelnes.h \
     source/LeLib/limage/limagemetablocksprites.h \

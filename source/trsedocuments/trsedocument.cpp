@@ -51,7 +51,8 @@ bool TRSEDocument::SaveChanges()
 
 void TRSEDocument::keyPressEvent(QKeyEvent *e) {
 
-    if (e->key() == Qt::Key_S &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+//    qDebug() << (e->key() == 16777249) << e->key() << Qt::Key_S <<(QApplication::keyboardModifiers() & Qt::ControlModifier);
+    if (((e->key() == Qt::Key_S) &&  ((QApplication::keyboardModifiers() & Qt::ControlModifier)))) {
         SaveCurrent();
     }
     if (e->key() == Qt::Key_B &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {

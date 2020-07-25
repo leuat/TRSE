@@ -46,6 +46,7 @@
 #include "source/LeLib/limage/limagegamboy.h"
 #include "source/LeLib/limage/limageatari520st.h"
 #include "source/LeLib/limage/limagemetablocksprites.h"
+#include "source/LeLib/limage/limagehybridcharset.h"
 
 class LImageFactory {
 public:

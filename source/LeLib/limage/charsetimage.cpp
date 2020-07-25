@@ -226,8 +226,9 @@ unsigned int CharsetImage::getPixel(int x, int y)
 
     QPoint p = getXY(x,y);
 
-    if (m_colorList.m_isMulticolor)
+    if (m_colorList.m_isMulticolor) {
         return MultiColorImage::getPixel(p.x(),p.y());
+    }
 
     PixelChar&pc = getPixelChar(p.x(),p.y());
     if (MultiColorImage::getPixel(p.x(),p.y())!=0)
@@ -384,6 +385,7 @@ void CharsetImage::setPixel(int x, int y, unsigned int color)
     }
 
 }
+
 
 void CharsetImage::SetBank(int bnk) {
     m_footer.set(LImageFooter::POS_CURRENT_BANK,bnk);

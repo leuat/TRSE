@@ -109,7 +109,7 @@ public:
 //    unsigned char m_border=0, m_background=0;
 
     void setPixel(int x, int y, unsigned int color) override;
-    unsigned int getPixel(int x, int y) override;
+    virtual unsigned int getPixel(int x, int y) override;
 
     void Reorganize();
     virtual bool KeyPress(QKeyEvent *e) override;
