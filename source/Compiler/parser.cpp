@@ -867,7 +867,7 @@ void Parser::RemoveUnusedSymbols(QSharedPointer<NodeProgram> root)
                 if (!s->isUsed && !(s->m_type=="INCBIN" || s->m_type=="INCSID")) {
                     removedSymbols.append(val);
                     m_symTab->m_symbols.remove(val);
-//                    qDebug() << s->m_name << s->isUsed;
+//                    qDebug() << "REMOVING " << s->m_name << s->isUsed;
                     add = false;
                 }
 

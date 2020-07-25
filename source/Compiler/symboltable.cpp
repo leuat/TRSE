@@ -421,10 +421,12 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
         ErrorHandler::e.Error("Could not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>"+em, lineNumber);
         return nullptr;
     }
-
+//    qDebug() << "ISUSED " <<  name;
     if (m_symbols.contains(localName)) {
     //    qDebug() << "Found local name " << localName;
         m_symbols[localName]->isUsed = true;
+        if (m_symbols.contains(name))
+            m_symbols[name]->isUsed = true;
         return m_symbols[localName];
 
     }

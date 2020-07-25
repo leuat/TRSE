@@ -7,7 +7,7 @@ var
 
 */	
 
-	// Monster type : record	
+	// Monsterbtw: since the difference between hybrid/ multicolor/hires doesn't seem to be that big in terms of code, perhaps we should instead have a drop down list that lets you select multicolor type : record	
 	monster_type = record
 		prevx, prevy : byte; // previous position of monster
 		x,y : byte; // Current position of monster 

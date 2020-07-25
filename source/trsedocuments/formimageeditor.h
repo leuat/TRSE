@@ -297,6 +297,7 @@ private slots:
     void Aspect1();
     void AspectDone();
     void on_btnInv_clicked();
+    void on_chkHybrid_clicked(bool checked);
 };
 
 

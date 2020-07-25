@@ -30,6 +30,7 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
         connect(&orgAsm, SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
         if (symTab!=nullptr)
             orgAsm.SetupConstants(symTab);
+        if (symTab!=nullptr)
          orgAsm.m_extraSymbols = symTab->m_extraAtSymbols;
            orgAsm.Assemble(filename+".asm", filename+".prg");
 

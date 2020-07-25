@@ -826,6 +826,7 @@ int MultiColorImage::getCharAtPos(QPoint p, float zoom, QPointF center)
     return xp/(float)m_width*m_charWidth + y*m_charWidth;
 }
 
+
 void MultiColorImage::onFocus()
 {
     if (m_charsetFilename!="")
@@ -848,6 +849,19 @@ int MultiColorImage::LookUp(PixelChar pc)
     // Not found, add
     m_organized.append(pc);
     return m_organized.count()-1;
+
+}
+
+void MultiColorImage::setHybrid()
+{
+    m_width = 320;
+    m_height = 200;
+    //m_scaleX = 1.2f;
+    m_bitMask = 0b1;
+    m_noColors = 4;
+    m_scale = 1;
+    m_scaleX = 1.0;
+    m_minCol = 0;
 
 }
 

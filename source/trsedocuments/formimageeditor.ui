@@ -1503,6 +1503,13 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QCheckBox" name="chkHybrid">
+       <property name="text">
+        <string>Display hybrid</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>

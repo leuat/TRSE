@@ -43,7 +43,6 @@ unsigned int LImageHybridCharset::getPixel(int x, int y)
 
     return pc.c[0] &ande;
 
-  //  return MultiColorImage::getPixel(p.x(),p.y());
 
 }
 
@@ -62,17 +61,5 @@ void LImageHybridCharset::setPixel(int x, int y, unsigned int color)
         p.setX(p.x()/2);
 
     }
-
-
     CharsetImage::setLimitedPixel(p.x(),p.y(),color);
- //   pc.Reorganize(m_bitMask, m_scale,m_minCol, m_noColors);
-
-  //      qDebug() << QString::number(color) << QString::number(pc.c[0]) << QString::number(pc.c[1]) << QString::number(pc.c[2]) << QString::number(pc.c[3]);
-
-/*    int ix = x % (8/scale);//- (dx*m_charHeight);
-    int iy = y % 8;//- (dy*m_charWidth);
-
-    //if (ix==0 || ix == 2 || ix == 4 || ix == 6)
-    pc.set(m_scale*ix, iy, color, bitmask);
-*/
 }

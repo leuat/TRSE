@@ -106,6 +106,10 @@ public:
 
     void ExportFrame(QFile &file, int frame, int frameCount, int type, int col, int row, int width, int height, int rowOrder) override;
 
+    unsigned int getPixelHybrid(int x, int y);
+
+    void setPixelHybrid(int x, int y, unsigned int color);
+
 
 /*    void FlipHorizontal() override;
     void FlipVertical() override;

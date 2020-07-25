@@ -506,6 +506,16 @@ void FormImageEditor::Initialize()
     ui->chkGrid->setChecked(GetFooterData(LImageFooter::POS_DISPLAY_GRID));
     on_chkGrid_clicked(GetFooterData(LImageFooter::POS_DISPLAY_GRID));
 
+    if (m_work.m_currentImage->m_image->m_type==LImage::Type::MultiColorBitmap ||
+       m_work.m_currentImage->m_image->m_type==LImage::Type::HiresBitmap ||
+            m_work.m_currentImage->m_image->m_type==LImage::Type::CharMapMulticolor
+            ) {
+        ui->chkHybrid->setChecked(GetFooterData(LImageFooter::POS_DISPLAY_HYBRID));
+        on_chkHybrid_clicked(GetFooterData(LImageFooter::POS_DISPLAY_HYBRID));
+    }
+    else ui->chkHybrid->setVisible(false);
+
+
     ui->chkPaintSeparately->setChecked(GetFooterData(LImageFooter::POS_DOUBLE_PAINT));
     on_chkPaintSeparately_stateChanged(GetFooterData(LImageFooter::POS_DOUBLE_PAINT));
 
@@ -2415,4 +2425,12 @@ void FormImageEditor::on_btnInv_clicked()
 {
     m_work.m_currentImage->m_image->Invert();
     Update();
+}
+
+void FormImageEditor::on_chkHybrid_clicked(bool checked)
+{
+    SetFooterData(LImageFooter::POS_DISPLAY_HYBRID,checked);
+    ui->chkDisplayMulticolor->setChecked(!checked);
+    ui->chkDisplayMulticolor->setVisible(!checked);
+
 }

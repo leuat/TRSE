@@ -223,6 +223,8 @@ void CharsetImage::LoadCharset(QString file, int skipBytes)
 
 unsigned int CharsetImage::getPixel(int x, int y)
 {
+    if (m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1)
+        return getPixelHybrid(x,y);
 
     QPoint p = getXY(x,y);
 
@@ -358,6 +360,11 @@ QPixmap CharsetImage::ToQPixMap(int chr)
 
 void CharsetImage::setPixel(int x, int y, unsigned int color)
 {
+    if (m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1) {
+        setPixelHybrid(x,y,color);
+        return;
+    }
+
     QPoint p = getXY(x,y);
 
     if (!m_forcePaintColorAndChar) {
@@ -646,5 +653,61 @@ void CharsetImage::ExportFrame(QFile &file, int frame, int frameCount, int type,
 
     file.write(data);
 
+}
+
+unsigned int CharsetImage::getPixelHybrid(int x, int y)
+{
+    setMultiColor(false);
+    setHybrid();
+
+
+    QPoint p = getXY(x,y);
+
+    //    PixelChar&pc = getPixelChar(p.x(),p.y());
+    /*       if (pc.c[3]!=0)
+                if (rand()%100>98)
+                    qDebug() << pc.c[3];*/
+    int ande = 0x15;
+    PixelChar&pc = getPixelChar(p.x(),p.y());
+    if (pc.c[3]>=8) {
+        m_bitMask=0b11;
+        m_scale = 2;
+        m_scaleX = 2.5f;
+
+        p.setX(p.x()/2);
+        pc = getPixelChar(p.x(),p.y());
+
+        ande = 7;
+        int c = MultiColorImage::getPixel(p.x(),p.y());
+        if (c!=m_extraCols[1] && c!=m_extraCols[2]) c=c&ande;
+        return c;
+
+    }
+
+
+    if (MultiColorImage::getPixel(p.x(),p.y())!=0)
+        return pc.c[3];
+
+    return pc.c[0] &ande;
+
+
+}
+
+void CharsetImage::setPixelHybrid(int x, int y, unsigned int color)
+{
+    setMultiColor(false);
+    setHybrid();
+
+    QPoint p = getXY(x,y);
+    PixelChar&pc = getPixelChar(p.x(),p.y());
+    if (pc.c[3]>=8) {
+        m_bitMask=0b11;
+        m_scale = 2;
+        m_scaleX = 2.5f;
+
+        p.setX(p.x()/2);
+
+    }
+    CharsetImage::setLimitedPixel(p.x(),p.y(),color);
 }
 
