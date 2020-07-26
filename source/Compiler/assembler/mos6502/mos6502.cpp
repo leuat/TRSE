@@ -714,8 +714,10 @@ void AsmMOS6502::Optimise(CIniFile& ini)
 
     if (ini.getdouble("post_optimizer_passstalda")==1)
         OptimisePassStaLda();
+
     if (ini.getdouble("post_optimizer_passldx")==1)
         OptimisePassLdx("x");
+
     if (ini.getdouble("post_optimizer_passldx")==1)
         OptimisePassLdx("y");
 
@@ -743,6 +745,7 @@ void AsmMOS6502::Optimise(CIniFile& ini)
 
     OptimisePassStaLdx("x");
     OptimisePassStaLdx("y");
+
 //        OptimisePhaPla2();
   //      OptimiseCmp("cpy");
   //      OptimiseCmp("cpx");
@@ -756,12 +759,12 @@ void AsmMOS6502::OptimisePassStaLda()
     int j;
     for (int i=0;i<m_source.count()-1;i++) {
         QString l0 = getLine(i);
-        if (l0.contains("sta")) {
+        if (l0.contains("sta ")) {
             QString l1 = getNextLine(i,j);
             if (l0==l1 && !
                     l1.contains("keep")) {
-                //qDebug() << "Removing " <<l0;
-                //qDebug() << "Removing: " << l1 << " on line " << j;
+
+//                qDebug() << "Removing: " << l0 << l1 << " on line " << j;
 
                 m_removeLines.append(j);
                 continue;
@@ -769,7 +772,7 @@ void AsmMOS6502::OptimisePassStaLda()
             QString var = getToken(l0,1);
             if (getToken(l1,1)==var && getToken(l1,0)=="lda") {
 
-              //  qDebug() << "Removing: " << l1 << " on line " << j;
+//                qDebug() << "Removing: " << l0 << l1<< " on line " << j;
                 m_removeLines.append(j);
                 i++;
                 continue;
@@ -836,8 +839,8 @@ void AsmMOS6502::OptimisePassLdx(QString x)
   //                  qDebug() << op2 << op << l0 << l1<<value;
                     if (l0==l1 && !op2.startsWith("(") && !op2.contains(",") && !op2.startsWith("$")) {
 //                      if (l0==l1 && !op2.startsWith("(") && !op2.contains(",")) {
-//                        if (x=="a")
-  //                      qDebug () << "Removing because equal: " << l0 << ", " << l1;
+//                        if (x=="x")
+//                           qDebug () << "Removing because equal: " << l0 << ", " << l1 << "  on line " <<i;
                         m_removeLines.append(j);
                         curCnt++;
                         continue;
