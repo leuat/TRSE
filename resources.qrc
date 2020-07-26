@@ -491,6 +491,10 @@
         <file>resources/code/atari520st/poly.s</file>
         <file>resources/images/brush_invert.png</file>
         <file>resources/text/help/m/setcharsetandscreenlocation.rtf</file>
+        <file>resources/text/help/r/vicmemoryconfig.rtf</file>
+        <file>resources/text/help/r/donotremove.rtf</file>
+        <file>resources/text/help/r/projectsettings.rtf</file>
+        <file>resources/text/help/r/exportprg2bin.rtf</file>
         <file>resources/text/help/r/buildtable.rtf</file>
         <file>resources/images/bin.png</file>
         <file>resources/images/tutorials/yogrl.png</file>
