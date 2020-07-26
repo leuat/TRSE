@@ -490,5 +490,6 @@
         <file>resources/text/help/p/tru_files.rtf</file>
         <file>resources/code/atari520st/poly.s</file>
         <file>resources/images/brush_invert.png</file>
+        <file>resources/text/help/m/setcharsetandscreenlocation.rtf</file>
     </qresource>
 </RCC>

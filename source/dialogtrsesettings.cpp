@@ -72,6 +72,9 @@ void DialogTRSESettings::FillFromIni()
     ui->leCursorWidth->setText(QString::number((int)m_ini->getdouble("editor_cursor_width")));
     ui->chkAutoInject->setChecked(m_ini->getdouble("auto_inject")==1.0);
 
+
+    ui->chkExomizer->setChecked(m_ini->getdouble("exomizer_version_3")==1.0);
+
     ui->chkDisableFileColors->setChecked(m_ini->getdouble("disable_file_colors")==1.0);
     ui->chkDisplayAddresses->setChecked(m_ini->getdouble("display_addresses")==1.0);
 
@@ -154,6 +157,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("gameboy_rgbasm_dir", ui->leRGBAsmDir->text());
 
 
+
     m_ini->setString("nes_emulator", ui->leNesEmulator->text());
     m_ini->setString("gameboy_emulator", ui->leGameboyEmulator->text());
     m_ini->setString("theme", ui->cmbTheme->currentText() + ".ini");
@@ -172,6 +176,8 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("user_defined_command",ui->leUserDefined->text());
 
     m_ini->setFloat("disable_file_colors", ui->chkDisableFileColors->isChecked()?1:0);
+
+    m_ini->setFloat("exomizer_version_3", ui->chkExomizer->isChecked()?1:0);
 
 
 

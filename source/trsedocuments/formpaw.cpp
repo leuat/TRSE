@@ -32,6 +32,7 @@ FormPaw::FormPaw(QWidget *parent) :
     ui->tabData->setColumnWidth(1, 500);
     ui->tabData->setColumnWidth(2, 160);
     ui->tabData->setColumnWidth(3, 40);
+    ui->chkExomizer3->setVisible(false);
     m_type = PAW;
     m_pawData = QSharedPointer<CIniFile>(new CIniFile);
 }
@@ -134,7 +135,8 @@ void FormPaw::Build(bool isShadow) {
 
  //   QString isExomizer3 = "-P0";
     pt->isExomizer3 = "";
-    if (m_pawData->getdouble("use_exomizer3")==1)
+//    if (m_pawData->getdouble("use_exomizer3")==1)
+    if (m_iniFile->getdouble("exomizer_version_3")==1)
             pt->isExomizer3="-P0";
 
     QString ex = m_iniFile->getString("exomizer");
