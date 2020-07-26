@@ -512,6 +512,7 @@ void FormImageEditor::Initialize()
        m_work.m_currentImage->m_image->m_type==LImage::Type::HiresBitmap ||
             m_work.m_currentImage->m_image->m_type==LImage::Type::CharMapMulticolor
             ) {
+
         ui->chkHybrid->setChecked(GetFooterData(LImageFooter::POS_DISPLAY_HYBRID));
         on_chkHybrid_clicked(GetFooterData(LImageFooter::POS_DISPLAY_HYBRID));
     }
@@ -2438,7 +2439,8 @@ void FormImageEditor::on_btnInv_clicked()
 void FormImageEditor::on_chkHybrid_clicked(bool checked)
 {
     SetFooterData(LImageFooter::POS_DISPLAY_HYBRID,checked);
-    ui->chkDisplayMulticolor->setChecked(!checked);
+    if (checked)
+        ui->chkDisplayMulticolor->setChecked(false);
     ui->chkDisplayMulticolor->setVisible(!checked);
 
 }

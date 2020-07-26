@@ -58,7 +58,7 @@ var
 	timeStamps: array[] of byte = (		
 										@scene1, $6, 0,0, 
 										@scene2, $A, 4,0, 
-										@scene1, $10,2,0
+										@scene1, $10,2,0,
 										@scene2, $14, 5,1, 
 
 	);
