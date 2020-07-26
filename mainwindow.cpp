@@ -276,7 +276,7 @@ void MainWindow::VerifyDefaults()
         m_iniFile->setFloat("post_optimize", 1);
 
     if (!m_iniFile->contains("display_addresses"))
-        m_iniFile->setFloat("display_addresses", 1);
+        m_iniFile->setFloat("display_addresses", 0);
 
 /*
     if (!m_iniFile->contains("display_addresses"))
