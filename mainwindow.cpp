@@ -2269,3 +2269,13 @@ void MainWindow::HandleBuildSuccess()
     RefreshFileList();
     UpdateSymbolTree();
 }
+
+void MainWindow::on_actionTRSE_Showcases_triggered()
+{
+    QDesktopServices::openUrl(QUrl("https://lemonspawn.com/gallery_/", QUrl::TolerantMode));
+}
+
+void MainWindow::on_btnShowcases_clicked()
+{
+    on_actionTRSE_Showcases_triggered();
+}

@@ -105,7 +105,7 @@
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="">
+           <widget class="QWidget" name="layoutWidget">
             <layout class="QGridLayout" name="gridLayout_8">
              <item row="2" column="1">
               <widget class="QPushButton" name="btnProjectDir">
@@ -171,13 +171,20 @@
                </property>
               </widget>
              </item>
+             <item row="3" column="1">
+              <widget class="QPushButton" name="btnShowcases">
+               <property name="text">
+                <string>TRSE Showcases</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
           </widget>
           <widget class="QWidget" name="layoutWidget">
            <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0">
             <item>
-             <layout class="QGridLayout" name="gridLayout_5" rowstretch="5,0,0">
+             <layout class="QGridLayout" name="gridLayout_5" rowstretch="5,0">
               <item row="0" column="0">
                <widget class="QLabel" name="lblCommodoreImage">
                 <property name="text">
@@ -568,6 +575,7 @@ p, li { white-space: pre-wrap; }
      <string>&amp;Help</string>
     </property>
     <addaction name="actionHelp_F1"/>
+    <addaction name="actionTRSE_Showcases"/>
     <addaction name="actionDonate"/>
     <addaction name="actionAbout"/>
    </widget>
@@ -789,6 +797,11 @@ p, li { white-space: pre-wrap; }
   <action name="action_TRU_Unit_source_file">
    <property name="text">
     <string>&amp;TRU Unit source file</string>
+   </property>
+  </action>
+  <action name="actionTRSE_Showcases">
+   <property name="text">
+    <string>TRSE Showcases</string>
    </property>
   </action>
  </widget>

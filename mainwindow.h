@@ -410,6 +410,10 @@ private slots:
 
     void HandleBuildSuccess();
 
+    void on_actionTRSE_Showcases_triggered();
+
+    void on_btnShowcases_clicked();
+
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);
 
