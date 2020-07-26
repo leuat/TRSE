@@ -169,6 +169,7 @@
 
 @deletefile "images/image_portraits_lookup.bin"
 @deletefile "images/image_portraits_packed.bin"
+@deletefile "images/image_portraits_packed.flf"
 
 @spritepacker "images/portraits.flf" "images/image_portraits_packed.flf" "images/image_portraits_lookup.bin" "gameboy" 0 0 4 4 1
 @spritepacker "images/portraits.flf" "images/image_portraits_packed.flf" "images/image_portraits_lookup.bin" "gameboy" 4 0 4 4 1

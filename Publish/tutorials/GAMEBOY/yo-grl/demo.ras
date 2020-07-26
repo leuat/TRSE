@@ -2,7 +2,12 @@ program MyProgram;
 @use screens
 
 // Packer contains all the stuff that packs images etc
-@include "src/packer.ras"
+// Small bug with the packer: Might need to recompile a couple of times.
+
+//@include "src/packer.ras"
+
+
+
 
 // Bank locations of data. Not really packed. 
 var  
@@ -386,6 +391,8 @@ begin
 	LoadMusic("mibri1",5);
 	InitVBlank(OrgVBlank());
 	EnableVBLank();
+
+	
 
 
 	/*
