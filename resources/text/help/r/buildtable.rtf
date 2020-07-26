@@ -9,4 +9,13 @@ a : array[256] of byte =BuildTable( "Math.sin( i / 256.0 * Math.PI * 2) * 0x7F +
 b : array[64] of byte = BuildTable("i")  ;   // will build a table with values 0-63
 
 c: array[16] of byte = BuildTable("( 1 + i ) * 0x4000");
+
+// Build two tables for the low and high byte addresses for the screen if starts at $1000
+screenLow: array[23] of byte = buildtable( " ((i*22) + 0x1000) & 255 " );
+screenHigh: array[23] of byte = buildtable( " ((i*22) + 0x1000) / 256 " );
+
+// use TRSE constants in the build table operation
+const DATAADDRESS: address = $a000;
+charAddresses: array[ 4 ] of byte = buildtable( " ((i*24) + DATAADDRESS) & 255 " );
+
 </code>
