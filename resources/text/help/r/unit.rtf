@@ -1,0 +1,77 @@
+<h3>Description</h3>
+<p>A Unit is a self contained module of code and data that can be 'used' in multiple
+programs. The structure of a unit is similar to that of a program.  THe Unit is declared
+and a name specified.  A var section is used to declare any data and variables. Procedures
+then follow.  The Unit concludes with an 'end.' statement.</p>
+
+<p>
+A unit can be included in a programe with the 'use' statement.
+For example: <strong>@use "cart"</strong>
+</p>
+
+<h3>Example 1</h3>
+
+<code>
+Unit cart;
+var 
+	
+	// These project settings are needed to run as a cartridge build
+	@projectsettings "ignorebasicsysstart" 0
+	@projectsettings "basicsysaddress" $1200
+	@projectsettings "startaddress" $2000
+	
+procedure Init() inline;
+begin
+
+	// Initialize system when run as cartridge
+	asm("
+		jmp PRGstart		; resolves problem with joystick to start prg builds here
+
+CRTStart:					; crt builds start here
+
+		; Disable interrupts
+		sei
+     	cld                 ; clear decimal mode
+     	
+     	ldx #$FB			; value for start stack
+     	txs					; set stack pointer
+     	
+		; Run kernal setup routines.
+		jsr $FD8D			; initialise and test RAM
+PRGstart:		
+		jsr $FD52			; restore default I/O vectors
+		jsr $FDF9			; initialize I/O registers 
+restoreKeyStart:
+		; Disable interrupts again (for Restore-key)
+		sei
+		jsr $E518			; initialise hardware
+		
+     	cli					; enable interrupts
+     
+     	jsr $E45B			; initialise BASIC vector tables
+     	jsr $E3A4			; initialise BASIC RAM locations     
+     	jsr $C644			; perform NEW (bypass check)
+
+		; Prevent lower/uppercase swap
+		lda #$80
+		sta $0291		
+
+	");
+
+end;
+
+
+// The magic bytes needed at address $A000
+procedure Autostart() inline;
+begin
+	asm("
+	dc.b <CRTStart,>CRTStart				; Cart reset start address
+	dc.b <restoreKeyStart,>restoreKeyStart 	; Restore keypress jump address
+	dc.b $41,$30,$c3,$c2,$cd				; Signature for cart autostart (a0CBM)
+	"); 
+end;
+
+
+
+end.
+</code>

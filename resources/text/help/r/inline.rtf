@@ -1,0 +1,16 @@
+<h3>Description</h3>
+<p>
+Procedures are notmally called, in 6502 with a JSR.  Inline changes the behaviour
+of the procedure to become more like a macro.  Instead of it being called, the code
+contained within the procedure is written 'inline' and no return (rts in 6502) is needed.
+</p>
+
+
+<h3>Example</h3>
+
+<code>
+procedure MacroProcedure() inline;
+begin
+    // do something
+end;
+</code>
