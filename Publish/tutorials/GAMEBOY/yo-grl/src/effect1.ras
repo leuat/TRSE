@@ -1,0 +1,202 @@
+procedure InitEffect1(ie_data : pointer);
+begin
+	//GRL::Setup();
+	SetupMessages();
+	waitforverticalblank();
+//	Screens::StopLCD();
+	Screens::ClearScreen(screen0,0);
+	SetBank(bank_charset);
+	sx:=0;
+	sy:=0;
+//	SetBank(bank_charset);
+
+	memcpyonhblank(main_charset,vram+^$1000,16*$10);
+	fill(temp,0,16*$10);
+	
+	memcpyonhblank(temp,vram+^$1000+16*$10,16*$10);
+	memcpyonhblank(temp,vram+^$1000+16*$10,16*$10);
+	memcpyonhblank(temp,vram+^$1000,$10);
+	//Screens::Set9800();	
+	SetBank(1);
+	x1:=30;
+	y1:=90;	
+
+
+	x2:=105;
+	y2:=30;
+	p2:=vram+^$1000;
+
+
+end;
+
+@donotremove circle
+procedure RenderEffect1();
+begin
+	p1:=screen0;
+	p1:=$D000;
+	p1:=p1;
+	t:=time;// + sine[time<<2]>>4;
+//	if (time&1=0) then t:=t<<4;
+//	k:=sine[time]>>4;
+	asm("
+	ld a,[ie_data]
+	ld b,a
+	ld a,[ie_data+1]
+	ld c,a
+	
+	ld a,[p1]
+	ld h,a
+	ld a,[p1+1]
+	ld l,a 
+	");
+	
+//	j:=sine[time];
+//	xx:=$10;
+	for i:=0 to 16 offpage  do
+	begin
+/*		Push();
+		waitforraster(xx);
+		xx:=xx+$4;
+		wait(4);
+		Pop();
+*/
+/*		for j:=0 to 16 do
+		begin
+			
+			x:=x+1;
+			asm(";here");
+//			x1:=(circle[x]+t)+attan[x];
+//			x1:=attan[x]+t;
+//			k:=perlin[x1];
+//			k:=perlin[(circle[x]<<4)+(attan[x]+t)&15]>>2;
+//			p1[j]:=(perlin[x1]>>3);
+			p1[j]:=(circle[x]+t)&15;
+		end;*/
+		asm("
+			
+			ld e,16
+			ld a,[t]
+			ld d,a
+ut:			
+			ld a,[bc]
+			sub a,d
+			and $1F
+			ld [hl+],a
+			inc bc
+			
+			
+			dec e
+			
+			jr nz,ut
+			ld de,16
+			add hl,de
+		");
+//		p1:=p1+$20;	
+//		p2:=p2+16;
+	end;
+/*	p1:=image_logo_screen;
+	p1:=p1+(16*16);
+	if (time&1=0) then
+		Screens::RenderScreen(p1,bank_logo,0,7,7,4,4);
+*/
+end;
+
+/*
+procedure UpdateEffect1Sprites();
+begin
+
+	setsprite(^$C000,x1,y1, 4,4);
+	
+	setsprite(^$C000+^4*^16,x2, y2, 4,4);
+	if (demoCounter>2) then
+	if (time&1=1) then
+	begin
+	if (x1<>220) then
+		x1:=x1-1;
+	if (x2<>220) then
+		x2:=x2+1;
+	end;
+end;
+*/
+
+procedure CopyScreen();
+begin
+	d1:=$D000;
+	d2:=screen0+34;
+//	wait(1);
+	//xx:=$10;;
+	for k:=0 to 16 offpage do
+	begin
+		MemCpyOnHBLank(d1,d2,16);	
+
+/*		waitforraster(xx);
+		wait(4);
+		memcpy(d1, d2,$6);
+		wait(9);
+		memcpyCont($6);
+		wait(8);
+		memcpyCont($4);
+	*/	
+		d1:=d1+(32);
+		d2:=d2+(32);
+//		xx:=xx+$4;
+		
+	end;
+
+end;
+
+
+procedure Effect1VBlank();
+begin
+
+//	Screens::StopLCD();
+	
+	CopyScreen();
+//	Screens::Set9800();
+
+	OrgVBlank();
+
+//	curScreen:=(curScreen+1)&1;
+end;
+
+
+
+
+procedure UpdateEffect1Out();
+begin
+	for i:=0 to 3 do
+	begin
+		for j:=0 to 6 do
+			p2[0]:=0;
+		p2:=p2+1;
+	end;
+end;
+
+
+procedure Effect1();
+begin
+	asm(" di");
+	InitVBlank(Effect1VBlank());
+	EnableVBlank();
+	//Screens::ClearSprites(0);
+	background_palette:=%10010011;
+	object0_palette:=%10010011;
+
+	while (effectIsDone=false) offpage do
+	begin
+		WaitForRaster($60);
+	
+		RenderEffect1();
+		UpdateMessages();	
+//		WaitForRaster($04);
+	
+//		UpdateEffect1Sprites();
+//		if (demoCounter>demoMax-4) then 
+		if (transition=1) then 
+			UpdateEffect1Out();
+//		i:=demoMax-4;
+	end;
+	InitVBlank(OrgVBlank());
+
+end;
+

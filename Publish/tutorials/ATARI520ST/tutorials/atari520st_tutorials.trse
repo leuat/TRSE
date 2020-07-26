@@ -46,6 +46,4 @@ data_header_images/image1.flf = 0
 data_header_images/logo.flf = 0
 data_header_images/image2.flf = 0
 data_header_images/image3.flf = 0
-open_files = ,tut5.asm, tut5.ras, tut1.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/ATARI520ST/tutorials/
-current_file = tut5.ras
+open_files =, tut1.ras

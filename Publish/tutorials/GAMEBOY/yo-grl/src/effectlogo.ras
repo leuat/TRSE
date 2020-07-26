@@ -1,0 +1,275 @@
+
+procedure EffectLogoBubblesInit();
+begin
+	p1:=$C000;
+	j:=0;
+	x:=0;
+	current_bank:=1;	
+	for i:=0 to noBubbles offpage do
+	begin
+		k:=j&7 + $10;
+		initsprite(p1,k, 0, 1,1);
+		j:=j+1;
+		x:=rnd[j&127];
+		j:=j+1;
+		y:=rnd[j&127]>>1;
+		
+		setsprite(p1, x, y, 1, 1);
+		p1:=p1+4;
+	end;
+	
+end;
+
+procedure UpdateBubbleSprites(uba, ubb:byte);
+begin
+	if (uba=0) then
+		p2:=$C000;
+	current_bank:=1;	
+		
+	for i:=uba to ubb offpage do
+	begin
+		k:=(i+time);
+		x:=rnd[i&127]>>2;
+		x:=x+(sine[k])/8;
+		y:=p2[0];
+		x:=x+sine[y+time]>>3;
+		
+//		j2:=bubbleMod[i&3];
+//		if (k&j2=0) then
+			y:=y-1;//bubbleMod[i&3];
+		if (y<16) then
+			y:=y-112;
+		j:=p2[2];
+		if (k&3=0) then
+			p2[2]:=(j+1)&7 + $10;
+		setsprite(p2, x, y, 1, 1);
+		p2:=p2+4;
+	end;
+
+end;
+
+
+procedure InitEffectLogo();
+begin
+//	waitforraster(0);
+	background_palette:=$FF;	
+//	Screens::StopLCD();
+	SetBank(bank_charset);
+	p3:=vram;
+	p3:=p3+$100;
+	Screens::CopyBankHB(main_charset,vram, 4);
+	SetBank(bank_logo);
+	Screens::ClearScreen(0);
+//	fill(vram+^$1000,$F0,$1000);
+	Screens::RenderScreenVB8(image_logo_screen,0,bank_logo,0,2,16,16);
+	
+	Screens::CopyFullCharset(image_logo_data);	
+	
+	EffectLogoBubblesInit();
+	UpdateMusicTick();
+
+//	Screens::Set9800();
+	object0_palette:=$FF;
+
+	for i:=0 to 4 do
+	begin
+		tabs[i]:=64;
+	end;
+
+
+	p1:=image_logo_screen;
+	d1:=screen0;
+	d1:=d1+(32*16);
+	sx:=245;
+	sy:=0;	
+	xx:=0;
+	yy:=0;
+end;
+
+
+procedure UpdateEffectLogo;
+begin
+ 	//if (sy<120) then sy:=sy+1;
+//	 	i:=time&3;
+//	 	if (sy<127) then
+
+/*		if (y1<16) then 
+	 	if (i=0) offpage then 
+	 	begin
+	 		//Screens::StopLCD();
+	 		memcpy(p1,d1,16);
+	 		//Screens::Set9800();;
+	 		p1:=p1+$10;
+	 		d1:=d1+$20;
+	 		y1:=y1+1;
+		end; 
+	*/	
+		if (demoCounter<(16+12)) offpage then
+		if (demoCounter>(12+10)) offpage then
+		begin
+			i:=time&3;
+			if (i=0) offpage then
+			if (yy<16) then
+			begin
+				p1:=image_logo_screen;
+				p1:=p1+(16*16);
+//				i:=yy+16;
+			dt:=1;
+//	 		Screens::StopLCD();
+//			Screens::RenderScreen(p1,0,bank_logo, xx,yy+16,4,4);
+//	 		Screens::Set9800();;
+			end;
+			
+		end;
+		if (demoCounter=(18+12)) then
+		begin
+			xx:=0;
+			yy:=0;		
+		
+		end;
+
+		if (demoCounter>(19+12)) then
+		begin
+			
+			i:=time&1;
+			if (i=0) then
+			if (yy<16) then
+			begin
+//				p1:=image_logo_screen;
+	//			p1:=p1+(16*16);
+				p1:=screen0+32;//+(32*16);
+				x:=12-xx;
+				y:=12-yy;
+				p1:=p1+x;
+				p1:=p1+y*$20;
+						
+				dt:=2;		
+			end;
+//			else 
+		end;
+		
+/* 	if (sy<120) then 
+ 	begin
+ 		sy:=sine[time+128+64+16]/2;
+ 		sy:=sy-7;
+	 	if (sy>240) then sy:=0;
+ 	end;
+ */	
+
+
+end;
+
+procedure EffectLogoCol(ec_idx, ec_cnt : byte);
+begin
+		b1:=btime[ec_idx];
+//		waitforhblank();
+		background_palette:=fadeIn[b1];
+//		background_palette:=ec_idx;
+		if (b1<3) then
+		if (demoCounter>ec_cnt) then 
+			if (time&15=10) then
+				begin
+					b1:=b1+1;
+					p1:=btime;
+					p1[ec_idx]:=b1;
+				end;
+		if (demoCounter>ec_cnt) then
+		begin
+			k:=tabs[ec_idx];
+			if k<>0 then
+				k:=k-1;
+		//	asm(";huh");
+			tabs[ec_idx]:=k;
+		end;
+end;
+
+
+procedure LogoVBlank();
+begin
+	if (dt=1) then
+	begin
+		Screens::RenderScreen(p1,0,bank_logo, xx,yy+1,4,4);
+				xx:=xx+4;
+				if (xx=16) then
+				begin
+					xx:=0;
+					yy:=yy+4;
+				end;
+				dt:=0;
+	end;
+	// Clear
+	if (dt=2) offpage then
+ 	begin
+	
+			for i:=0 to 4 do
+				begin
+					fill(p1,0,4);
+					p1:=p1+32;
+				end;
+			xx:=xx+4;
+			if (xx=16) then
+				begin
+					xx:=0;
+					yy:=yy+4;
+				end;
+
+			dt:=0;
+	end;
+	if (demoCounter>14) then
+	begin
+		// Start clearing sprites 
+		p3[0]:=0;
+		p3:=p3+1;
+	end;	
+
+//	OrgVBlank();
+end;
+
+
+
+procedure EffectLogo;
+begin
+	y1:=0;
+//	background_palette:=%10010011;
+	b1:=$FF;
+	p1:=bcol;
+/*	for i:=0 to 4 do
+	begin
+		j2 := %10010011;
+		p1[i]:=b1;
+		FadeToColor(b1,j2);
+	end;*/
+	InitVBlank(LogoVBlank());
+//	background_palette:=%10010011;
+	while (effectIsDone=false) offpage do
+	begin
+		//object0_palette:=%10010011;
+		FadeFromToBlack(2);
+		k:=64-tabs[0];
+		waitforraster($0);
+		scrollx:=sine[k]-16;
+		EffectLogoCol(0,4);
+		UpdateEffectLogo();
+		UpdateBubbleSprites(0,noBubbles/3);
+
+		k:=64-tabs[1];
+		k:=(255-17)-sine[k];
+		waitforraster($40); 	
+		scrollx:=k;
+		EffectLogoCol(1,10);
+		UpdateBubbleSprites((2*noBubbles)/3,noBubbles);
+//		OrgVBlank();
+
+		waitforraster($60); 	
+		k:=64-tabs[2];
+		sx:=sine[k]-16;
+		scrollx:=sx;
+		EffectLogoCol(2,13);
+		UpdateBubbleSprites(noBubbles/3,(2*noBubbles)/3);
+		OrgVBlank();
+	end;
+	InitVBlank(OrgVBlank());
+
+end;
+
+

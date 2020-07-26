@@ -1,0 +1,104 @@
+
+
+procedure InitEffectLogo2();
+begin
+//	waitforraster(0);
+	background_palette:=$FF;	
+	SetBank(bank_logo);
+//	Screens::StopLCD();
+	k:=0;
+	Screens::CopyFullCharset(image_logo_grl);	
+	//Screens::ClearScreen(0);
+	fill(^$D000,0,1024);
+	p1:=$D022;
+	for j:=0 to 16 do 
+	begin
+		for i:=0 to 16 do 
+		begin
+			p1[i]:=k;
+			k:=k+1;
+		end;
+		p1:=p1+32;
+	end;
+	// Copy image
+	Screens::CopyBankHB($D000,screen0,4);
+	// Copy sprites
+	Screens::CopyBankHB(image_logo_packed,vram,8);
+
+
+//	MemcpyOnHBlank(^$D000,0,screen0,1024
+	sx:=0;	
+	sy:=0;	
+	//	initspritefromdata(sprGirl,sprites,pos,6,2,sprite_flip_x)
+	
+	initspritefromdata(logo_spr1,image_logo_screen,0,12,6,0);
+	initspritefromdata(logo_spr1+(12*4),image_logo_screen,12, 12,6,0);
+	initspritefromdata(logo_spr1+(24*4),image_logo_screen,24, 14,7,0);
+	x1:=180;
+	x2:=180;
+	x3:=180;
+	y1:=32;
+	y2:=y1+32;
+	y3:=y2+32;
+	object0_palette:=%11010011;
+end;
+
+
+procedure UpdateSpritesEffectLogo();
+begin
+	setsprite(logo_spr1,x1,y1,6,2);	
+	setsprite(logo_spr1+(12*4),x2,y2,6,2);	
+	setsprite(logo_spr1+(24*4),x3,y3,7,2);	
+
+	if (transition=1) then
+	begin
+		if (y1<>180) then y1:=y1-1;
+		if (x2<>180) then x2:=x2+2;
+		if (y3<>180) then y3:=y3+2;
+//		FadeFromToBlack(background_palette);
+	end
+	else
+	begin
+		// Intro stuff
+	if (demoCounter>10) then
+		if (x1<>110) then x1:=x1-2;
+	if (demoCounter>13) then
+		if (x2<>110) then x2:=x2-2;
+	if (demoCounter>16) then
+		if (x3<>102) then x3:=x3-2;
+	
+
+	end;
+
+end;
+
+
+
+procedure EffectLogo2;
+begin
+//	background_palette:=%10010011;
+	/*c1:=0;
+	for i:=0 to 4 do
+	begin
+		FadeToColor(background_palette,%10010011);
+		for j:=0 to 200 do
+			wait(100);
+		waitforverticalblank();
+	end;*/
+	t:=0;	
+	sx:=100;
+	while (effectIsDone=false) offpage do
+	begin
+		waitforraster($0);
+		if (sx<>30) then sx:=sx-1;
+//		sx:=sine[time*2]/8-16;
+		sy:=sine[time*4]/32-4;
+		FadeFromToBlack(1);
+//		background_palette:=%10010011 xor $FF;
+
+		UpdateSpritesEffectLogo();
+	end;
+
+end;
+
+

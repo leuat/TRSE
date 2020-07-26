@@ -1,0 +1,176 @@
+unit Opponent;
+var
+//   font : incbin("font_8x8.chr");
+	spr : array[3*2*8] of byte sprram aligned;
+	
+	set_idle : array[8] of byte = (0,0,1,1,0,0,1,1);
+	set_move : array[8] of byte = (0,1,2,3,2,3,2,1);
+	set_kick : array[8] of byte = (1,3,1,3,2,0,2,0);
+
+	const STATE_IDLE : byte = 0;
+	const STATE_MOVETO : byte = 1;
+	const STATE_KICK : byte = 2;
+
+	shift : byte; // Diad
+	
+	const SHIFT_DIAD : byte = 48;
+	const SHIFT_LEUAT : byte = 48+3*2*4;
+	
+	// State pointer
+	
+	stateP,mp : pointer wram;	
+	
+
+
+//@donotremove sprites
+
+   	sprites : incbin("images/sprites.bin");
+  
+	time,prev_x, prev_y, x,y,t,t2,frame,frameLookup, pos, orientationRight,i,j : byte wram;
+	// State variables
+	currentState, curTick, maxTick, target_x, target_y : byte wram;
+
+
+
+procedure ReadState();
+begin
+	// Read current state
+	time:=0;
+	currentState:=stateP[0];
+	if (currentState = STATE_IDLE) then
+	begin
+		curTick:=0;
+		maxTick:=stateP[1];
+		// Advance counter
+		stateP:=stateP+2;
+		return();
+	end;
+	if (currentState = STATE_KICK) then
+	begin
+		curTick:=0;
+		maxTick:=stateP[1];
+		// Advance counter
+		stateP:=stateP+2;
+		return();
+	end;
+	if (currentState = STATE_MOVETO) then
+	begin
+		curTick:=0;
+		target_x:=stateP[1];
+		target_y:=stateP[2];
+		// Advance counter
+		stateP:=stateP + 3;
+		return();
+	end;
+end;
+
+
+	
+procedure UpdateState();
+begin
+	if (currentState = STATE_IDLE) then
+	begin
+		if (t2=0) then
+			curTick:=curTick+1;
+		if (curTick>maxTick) then
+			ReadState();
+		return();
+	end;
+	
+	if (currentState = STATE_KICK) then
+	begin
+		if (t2=0) then
+			curTick:=curTick+1;
+		if (curTick>maxTick) then
+			ReadState();
+		return();
+	end;
+
+	if (currentState = STATE_MOVETO) offpage then
+	begin
+		i:=target_x-1;
+		j:=target_y-1;
+		if (x=i) then
+			if (y=j) then
+			begin
+				ReadState();
+			end;
+
+		i:=time&1;
+		if (i=0) then
+		begin
+			prev_x:=x;
+			prev_y:=y;			
+
+			if (x<target_x) then x:=x+1;
+			if (x>target_x) then x:=x-1;
+			if (y<target_y) then y:=y+1;
+			if (y>target_y) then y:=y-1;
+			
+	i:=x+1;
+	if (currentState = STATE_MOVETO) then
+	if (prev_x<i) then orientationRight:=0 else orientationRight:=1;
+
+		end;		
+		return();
+
+	end;
+
+
+end;
+
+
+Procedure Move();
+begin
+	t2:=time&7;
+
+	UpdateState();
+
+	frame:=time>>3;
+	frame:=frame &7;
+	
+	if (currentState=STATE_IDLE) then mp:=set_idle;
+	if (currentState=STATE_MOVETO) then mp:=set_move;
+	if (currentState=STATE_KICK) then mp:=set_kick;
+	
+	frame:=mp[frame];
+		
+		// *6
+	pos:=frame<<1;
+	pos:=pos+frame;
+	pos:=pos<<1;
+
+//	pos:=0;
+	pos:=pos+shift;
+		
+	if (orientationRight=0) then
+		initspritefromdata(spr,sprites,pos,6,2,sprite_flip_x)
+	else
+		initspritefromdata(spr,sprites,pos,6,2 ,0);
+
+//	initspritefromdata(spr,sprites,pos,6,2 ,0);
+
+//	x:=100;
+//	y:=100;
+	
+
+	setsprite(spr,x,y,2,3);
+	time:=time+1;
+end;
+
+
+
+
+
+procedure Setup();
+begin
+	maxTick:=0;
+	curTick:=0;
+	time:=0;
+	ReadState();
+	shift:=SHIFT_DIAD;
+end;
+
+
+
+end.

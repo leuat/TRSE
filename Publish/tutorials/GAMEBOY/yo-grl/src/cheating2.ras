@@ -1,0 +1,92 @@
+
+
+
+procedure InitCheating2();
+begin
+	SetBank(bank_movie);
+	sy:=128+8;
+		
+	Screens::ClearScreen(screen0,0);
+	Screens::CopyFullCharset(movie_charset);	
+	msgp:=msg_torus;
+	SetupMessages();
+end;
+
+procedure UpdateCheating2();
+begin
+	SetBank(bank_movieD);
+	zp:=screen0;
+	zp:=zp+(32*1);
+	p1:=movie_screen;
+//	frame:=0;
+	// 24*24 = 576 = 512 + 64
+	i:=frame*1;
+	j:=0;
+	//j:=frame*64;
+	asm("
+		ld a,[i]
+		ld b,a
+		ld a,[p1]
+		add a,b
+		ld [p1],a
+
+;		ld a,[j]
+;		ld b,a
+;		ld a,[p1+1]
+;		adc a,b
+;		ld [p1+1],a
+;		jr nc,vid
+;		ld a,[p1]
+;		inc a
+;		ld [p1],a	
+;vid:
+	");
+	
+	//p1:=cheating_screen;
+//	p1:=p1;
+//	if (time&7=0) then
+	//frame:=(frame+1)&15;
+	if (time&1=0) then
+	frame:=(frame+1)&7;//sine[time*2]>>3;
+//	if (frame>27) then frame:=27;
+	
+	for j:=0 to 16 do
+	begin
+		memcpyonhblank(p1,zp,16);
+		p1:=p1+16;		
+		zp:=zp+32;
+	end;	
+
+end;
+
+procedure EffectCheating2();
+begin
+//	object0_palette:=%10010011;
+	
+	x1 := %10011011;//peek(background_palette,0);
+	background_palette:=$FF;
+//	background_palette:=%01101100;
+	sy:=0;
+	while (effectIsDone=false) offpage do
+	begin
+		UpdateMessages();
+		UpdateCheating2()	;
+		sx:=255-12;
+		//if (sy<>0) then 
+		//sy:=sy+1;
+//		sx:=sine[time*2+77]>>1-64;
+		//sx:=0;
+	//	tt:=tt+8;
+//		sy:=sine[time+64]>>2-32;
+		if (transition<>0) then
+		begin
+			if (time&7=0) then
+			FadeToColor(background_palette,$FF);
+		end
+		
+		else 
+			if (time&7=0) then
+			FadeToColor(background_palette,x1);
+		waitforraster($40);
+	end;
+end;

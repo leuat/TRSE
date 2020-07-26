@@ -1,0 +1,489 @@
+program MyProgram;
+@use screens
+
+// Packer contains all the stuff that packs images etc
+@include "src/packer.ras"
+
+// Bank locations of data. Not really packed. 
+var  
+	const bank_grl : byte = 4;
+	const bank_charset2 : byte = 2;
+	const bank_sine : byte = 1;
+	const bank_small_text_data : byte = 4;
+	const bank_prx_logo : byte = 1;
+	const bank_charset : byte = 2;
+	const bank_presents : byte = 6;
+	const bank_logo : byte = 1;
+	const bank_effect2move : byte = 2;
+	const bank_portraits : byte = 2;
+	const bank_vs : byte = 2;
+	const bank_cubes : byte = 4;
+	const bank_cheating :byte = 2;
+	const bank_cheatingD :byte = 7;
+	const bank_movie :byte = 2;
+	const bank_movieD :byte = 8;
+	const bank_bgstuff :byte = 9;
+	const bank_bgstuff2 :byte = 3;
+//	const bank_code : byte = 11;
+	const bank_mega : byte = 5;
+	
+	limg1 : incbin("images/l1.bin") bank(bank_mega);
+	limg2 : incbin("images/l2.bin") bank(bank_mega);
+	limg3 : incbin("images/l3.bin") bank(bank_mega);
+	limg4 : incbin("images/l4.bin") bank(bank_mega);
+ 
+	const bank_zoomtab : byte = 3;
+	const noBubbles : byte = 21;
+
+	const temp : address = $CF00;
+	
+	const mupdate : byte = 2;// Music update duing LCD off
+
+
+
+	fadeIn : array[4] of byte =
+	(
+	%11111111,
+	%10101011,
+	%10010111,
+	%10010011;
+	);
+
+
+	@donotremove bits
+	bits : array[8] of byte=(
+	%10000000,
+	%01000000,
+	%00100000,
+	%00010000,
+	%00001000,
+	%00000100,
+	%00000010,
+	%00000001,
+	);
+
+
+ 	image_logo_grl : incbin("images/grl-logo.bin") bank(bank_logo);
+
+ 	image_logo_packed : incbin("images/image_logo_packed.bin") bank(bank_logo);
+ 	image_logo_screen : incbin("images/image_logo_screen.bin") bank(bank_logo);
+
+	const logo_spr1: address = $C000;
+
+
+
+ 	image_portraits_data : incbin("images/image_portraits_packed.bin") bank(bank_portraits);
+ 	image_portraits_screen : incbin("images/image_portraits_lookup.bin") bank(bank_portraits);
+
+	bubbleMod : array[4] of byte = (1,3,7,3);
+
+	
+
+
+/* Regular data 
+*
+*
+*
+*
+*/
+	
+
+	creditsMoveX : array[256] of byte = BuildTable("35+i/2.8 + Math.sin((i+64*1.5)/24.0)*60") bank(bank_small_text_data);
+	creditsMoveY : array[256] of byte = BuildTable("80-40*Math.cos((0.1*256+0.8*i)/256.0*Math.PI*2.0*2)") bank(bank_small_text_data);
+	creditsDiv :  array[40] of byte = BuildTable("i*(256.0/40.0)") bank(bank_small_text_data);
+
+
+	const C_N4 : byte = 255;
+	const C_N2 : byte = 254;
+	const C_PGRL: byte =  0;
+	const C_PDIAD : byte = 1;
+	const C_PMIBRI : byte = 2;
+	const C_PLEUAT : byte = 3;
+	const C_CODE : byte = 4;
+	const C_GRAPHICS : byte = 5;
+	const C_MUSIC : byte = 6;
+	const C_LEUAT : byte = 7;
+	const C_MIBRI : byte = 8;
+	const C_DIAD : byte = 9;
+	const C_YOUHAVE : byte = 10;
+	const C_BY : byte = 11;
+	const C_STAR : byte = 12;
+	const C_DEMO : byte = 13;
+	const C_PRX : byte = 14;
+
+	portraits_packer : array[] of byte = 
+	(
+		0,4,4,0, // yo-grl
+		16,4,4,0, // diad
+		32,4,4,0, // mibri
+		48,4,4,0, // leuat
+		64,4,2,0, // code
+		72,8,2,0, // graphics
+		88,5,2,0, // music
+		98,5,2,0, // leuat text
+		108,5,2,0, // mibri text
+		118,8,2,0, // diad text
+		134,7,2,0, // you have been
+		148,2,2,0, // by
+		152,4,4,0, // star
+		168,4,4,0, // demologo
+		184,8,4,0, // Proxima
+	) bank(bank_small_text_data);
+
+
+
+	
+
+	creditsImages : array[] of byte = (
+	
+		C_STAR,C_N4,C_N4,C_N4,C_STAR,
+		C_STAR,C_N2,C_YOUHAVE,C_N2,C_STAR,
+		C_STAR,C_N4,C_N4,C_N4,C_STAR,
+//		C_STAR,C_N4,C_N4,C_N4,C_STAR,
+		C_STAR,C_PGRL,C_DEMO,C_PGRL,C_STAR,
+		C_STAR,C_N4,C_BY,C_N2,C_N4,C_STAR,
+//		C_STAR,C_N4,C_N4,C_N4,C_STAR,
+		C_PGRL,C_PLEUAT,C_PMIBRI,C_PDIAD,C_PGRL,
+		C_STAR,C_N2,C_PRX,C_N2,C_STAR,
+		C_PGRL,C_PLEUAT,C_PMIBRI,C_PDIAD,C_PGRL,
+		C_STAR,C_N4,C_N4,C_N4,C_STAR,
+		C_STAR,C_N4,C_CODE,C_N4,C_STAR,
+		C_STAR,C_PLEUAT,C_N2,C_LEUAT,C_STAR,
+		C_STAR,C_N4,C_MUSIC,C_N2,C_STAR,
+		C_STAR,C_PMIBRI,C_N2,C_MIBRI,C_STAR,
+		C_STAR,C_N2,C_GRAPHICS,C_N2,C_STAR,
+		C_STAR,C_PDIAD,C_DIAD,C_STAR,
+		C_STAR,C_PLEUAT,C_N2,C_LEUAT,C_STAR,
+		C_STAR,C_N4,C_N4,C_N4,C_STAR,
+		C_STAR,C_N4,C_N4,C_N4,C_STAR,
+		C_STAR,C_N4,C_N4,C_N4,C_STAR,
+		C_N4,C_N4,C_N4,C_N4,C_N4,
+		C_N4,C_N4,C_N4,C_N4,C_N4,
+		C_N4,C_N4,C_N4,C_N4,C_N4,
+		C_N4,C_N4,C_N4,C_N4,C_N4,
+		C_N4,C_N4,C_N4,C_N4,C_N4,
+		C_N4,C_N4,C_N4,C_N4,C_N4,
+		C_N4,C_N4,C_N4,C_N4,C_N4,
+	)  bank(bank_small_text_data);
+	 
+
+
+credits1 : string = ("      When yo grl got to the end of the demo       she took note of all the good she had made           ",
+	"Never before had she feasted on such a banquet of prerendered and realtime supremacy      ",
+	"yo grl therefore decided to hand over the credits to some less fortunate souls    "
+				"       Voracious code by Leuat         Adroit Audio by Mibri        Glamorous Graphics by Leuat and The Diad                                                                                                    ") bank(bank_small_text_data);
+
+
+
+	cheating_charset : incbin("data/charset0.bin") bank(bank_cheating);
+	cheating_screen : incbin("data/screen0.bin") bank(bank_cheatingD);
+
+	movie_charset : incbin("data/c_charset0.bin") bank(bank_movie);
+	movie_screen : incbin("data/c_screen0.bin") bank(bank_movieD);
+ 	
+	main_charset : incbin("images/charset.bin") bank(bank_charset);    
+	text_charset : incbin("images/charset_text.bin") bank(bank_charset2);    
+	
+	rnd : array[128] of byte = BuildTable("Math.random()*0xFF") bank(1);
+	circle1 : array[256] of byte = BuildTable("((0.4*(Math.sqrt( Math.pow( (i%16)-8,2) + Math.pow((Math.floor((i)/16-7)),2))))*12)") bank(1);
+	circle2 : array[256] of byte = BuildTable("((0.4*(Math.sqrt( Math.pow( (i%16)-8,4)/99.0 + Math.pow((Math.floor((i)/16-7)),2))))*12)") bank(1);
+	circle3 : array[256] of byte = BuildTable("((0.4*(Math.sqrt( Math.pow( (i%16)-8,2) +100- Math.pow((Math.floor((i)/16-7)),2))))*12)") bank(1);
+	
+
+   sine_org : incbin("data/sine.bin") bank(bank_sine);
+   
+
+	tabs : array[$100] of byte wram;
+	sine : array[$100] of byte wram;
+	tabs2 : array[$100] of byte wram;
+
+
+	
+
+ 
+	img_prx : incbin("images/image_prx_packed.bin") bank(bank_prx_logo);
+	img_prx_tab : incbin("images/image_prx_lookup.bin") bank(bank_prx_logo);
+	
+	presents_data : incbin("data/rot_charset1.bin") bank(bank_presents);
+	cubes_data : incbin("data/cubes.bin") bank(bank_cubes);
+	cubes_data2 : incbin("data/cubes2.bin") bank(bank_cubes);
+	quads_data : incbin("data/quads.bin") bank(bank_cubes);
+	bgstuff_data : incbin("data/cubes3.bin") bank(bank_bgstuff);
+	bgstuff_data2 : incbin("data/cubes4.bin") bank(bank_bgstuff2);
+
+	
+ 	image_cubes_data : incbin("images/image_cubes_packed.bin") bank(bank_grl);
+ 	image_cubes_screen : incbin("images/image_cubes_screen.bin") bank(bank_grl);
+	
+
+//	small_text_data : incbin("data/small_text.bin") bank(bank_small_text_data);
+//	@export "images/charset_test.flf" "images/charset_test.bin" 128
+	small_text_data : incbin("images/charset_text.bin") bank(bank_small_text_data);
+	portraits : incbin("images/portraits.bin") bank(bank_small_text_data);
+
+
+//@donotremove testTable
+	//testTable : array[2048] of byte;
+
+	const presents_char : byte = $68;	
+	
+	presents_list : array[8] of byte = (
+	presents_char, // P
+	presents_char+4,  //R
+	presents_char+8, // E
+	presents_char+12, // S
+	presents_char+8, // E
+	presents_char+16, // N
+	presents_char+20, // T
+	presents_char+12, // S
+	);
+	curScreen,x,y : byte;
+//	balle : array[100] of byte wram;
+	dt : byte;
+//	@donotremove balle
+	px,py,nomsg,textStart,fade,tt,b1,c3,c2,cc,ll,scroll, frame, copyTick, curBank, wt, pos,state,xx,yy,time,time2,val,v2,k,i,t,t2,va,vb,sx,sy,x1,y1,x2,y2,x3,y3:byte;
+	kp1,d2,p1,zp,p2,p3,d1,acc,src,dst,msgp,kp2:pointer wram aligned;
+
+		
+	demoCounter: byte wram;
+	demoMax,effectIsDone,transition : byte wram;
+	c1,j,j2:byte wram;
+	bcol,btime : array[4] of byte wram;
+
+	
+	const blank : byte = 126;
+	const filled : byte = 127;
+	const boxx : byte = 112;
+	@donotremove scrollText1
+	@donotremove scrollText2
+	scrollText1 : string= ("      ATLANTIS BOOZE DESIGN CALAMITY CENSOR DARKLITE DESIRE FLT GENESIS HF                                                  ")  bank(bank_small_text_data);
+	scrollText2 : string= ("                               IMPULSE MAYDAL MS LABS NOSTALGIA OFFENCE OXYRON PVM SAMAR SINGULAR TRIAD UP ROUGH            ")  bank(bank_small_text_data);
+
+//	text_1 : string=("Yo-grl enjoys a good torus");
+
+
+
+/* GRL STATES */
+
+	grl_state_effect2 : array[] of byte = ( 
+//	  STATE_IDLE, 24,
+	  STATE_MOVETO, 20,100,
+//	  STATE_IDLE, 16,
+	  STATE_KICK, 16,
+	  STATE_MOVETO, 80,100,
+	  STATE_MOVETO, 30,110,
+	  STATE_MOVETO, 100,110,
+	  STATE_MOVETO, 50,110,
+	  STATE_KICK, 16,
+	  STATE_MOVETO, 20,110,
+	  STATE_IDLE, 32,
+	  ) bank(1);
+
+	opp_state_diad : array[] of byte = ( 
+	  STATE_IDLE, 24,
+	  STATE_MOVETO, 150,110,
+//	  STATE_IDLE, 16,
+	  STATE_KICK, 16,
+	  STATE_MOVETO, 120,120,
+	  STATE_KICK, 16,
+	  STATE_MOVETO, 150,110,
+	  STATE_MOVETO, 140,105,
+	  STATE_IDLE, 32,
+	  ) bank(1);
+
+	opp_state_leuat : array[] of byte = ( 
+	  STATE_IDLE, 1,
+	  STATE_MOVETO, 50,40,
+//	  STATE_IDLE, 16,
+	  STATE_KICK, 16,
+	  STATE_MOVETO, 20,40,
+	  STATE_KICK, 16,
+	  STATE_MOVETO, 50,40,
+	  STATE_MOVETO, 40,40,
+	  STATE_IDLE, 32,
+	  STATE_MOVETO, 120,60,
+	  ) bank(1);
+
+
+
+	grl_state_bgscroll : array[] of byte = ( 
+	  STATE_IDLE, 1,
+	  STATE_MOVETO, 120,120,
+//	  STATE_IDLE, 16,
+	  STATE_UDLE, 16,
+	  STATE_MOVETO, 118,80,
+	  STATE_MOVETO, 115,80,
+	  STATE_KICK, 16,
+	  STATE_IDLE, 32,
+	  ) bank(1);
+
+
+	// #no text, # person, # y , char y,    timer, x, TEXT, 0    timer X TEXT  repeat 
+	msg_torus : string=(
+		3, 0, 20,     
+		6,110,"sure",0,    
+		4,120,"looks", 0,    
+		62,130,"tasty",0);
+
+	msg_torus2 : string=(
+		2, 0, 20,     
+	//	24,120,"",0,    
+		16,130,"mmmmmm",0,    
+		62,130," ",0);
+
+	msg_l1 : string=(
+		3, 1, 20,     
+		4,110, "thats",0, 
+		2,120,"just",0,    
+		4,130,"cheating", 0);    
+
+	msg_cheq : string=(
+		4, 2, 20,     
+		6,100,"An",0,    
+		4,110,"old", 0,    
+		62,120,"classic",0
+		4,130,"indeed", 0);    
+
+	msg_wonder : string=(
+		3, 3, 20,     
+		4,100,"Wonder",0,    
+		4,110,"whats", 0,    
+		62,120,"next",0);
+		
+	msg_head : string=(
+		3, 3, 20,     
+		0,100,"My head",0,    
+		4,110,"is", 0,    
+		62,120,"spinning",0);
+
+
+
+@include "src/util.ras"
+
+
+@include "src/effect1.ras"
+@include "src/effectPrxLogo.ras"
+
+@include "src/effectlogo2.ras"
+
+@include "src/cubes.ras"
+@include "src/quads.ras"
+@include "src/cheating.ras"
+@include "src/cheating2.ras"
+@include "src/bgstuff.ras"
+
+@include "src/megaimage.ras"
+@include "src/texteffect.ras"
+@include "src/credits.ras"
+
+
+
+begin
+	current_bank:=bank_sine;
+	memcpy(sine_org,sine,256);
+	copyTick:=0;
+//	TestImage();
+	LoadMusic("mibri1",5);
+	InitVBlank(OrgVBlank());
+	EnableVBLank();
+
+
+	/*
+	
+
+  		DEMO STARTS HERE
+
+
+	*/
+
+
+	// PRX logo
+	InitEffect(15);
+	SetBank(bank_prx_logo);
+	InitEffectPrxLogo();
+	EffectPRXLogo();
+
+
+
+	// GRL logo
+	InitEffect(28); // 19
+	InitEffectLogo2();
+	EffectLogo2();
+
+
+
+
+	 // CHEATING 2, toruses vid
+	InitEffect(17);
+	InitCheating2();
+	EffectCheating2();
+
+	
+
+
+
+
+	 // CHEATING 2 Cubes and toruses
+	InitEffect(28);
+	msgp := msg_torus2;
+	InitBGStuff();
+	EffectBGStuff();
+
+	// VS Some effect
+	InitEffect(14);
+	msgp := msg_l1;
+	InitEffect1(circle1);;
+	Effect1();	
+	
+
+	// YO GRL rotating cubes
+	InitEffect(30);
+	InitCubes();
+	EffectCubes();
+	Screens::ClearSprites(40);
+
+
+ // CHEATING intermediate text again
+	InitEffect(18);
+	InitCheating();
+	EffectCheating();
+
+	// Mega image scroller
+	InitEffect(37);
+	InitMegaImage();
+	RenderMegaImage();
+
+
+	// VS Some intermediate effect
+	InitEffect(10);
+	msgp := msg_wonder;
+	InitEffect1(circle2);
+	Effect1();	
+
+
+	// Greets
+	InitEffect(60);
+//	InitEffect(25);
+	InitQuads();
+	EffectQuads();
+
+
+	// VS Some effect
+	InitEffect(8);
+	msgp := msg_head;
+	InitEffect1(circle3);
+	Effect1();	
+	
+	// Credits
+	InitEffect(92);
+	InitCredits();
+	EffectCredits();
+
+
+
+	while (true) do
+	begin
+		halt();
+	end;
+
+end.

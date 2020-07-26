@@ -1,0 +1,37 @@
+
+procedure InitTextEffect();
+begin
+	
+	
+	
+/*	GRL::x:=100;
+	GRL::y:=100;
+
+	SetBank(bank_sprites);
+	GRL::stateP:=grl_state_effect2;
+	GRL::Setup();
+	
+
+	*/
+	Screens::ClearScreen(0);
+
+	sx:=0;
+	sy:=0;
+	object0_palette:=%11010010;
+	background_palette:=%11010010;
+end;
+
+
+
+procedure TextEffect();
+begin
+	while (effectIsDone=false) do
+	begin
+//		GRL::Move();
+		waitforraster(0);
+	end;
+
+
+end;
+
+

@@ -1,0 +1,170 @@
+
+
+
+procedure InitBGStuff();
+begin
+/*	sy:=0;
+	fill(temp,00,$10);
+	memcpyonhblank(temp,vram+$1000+$10*$7f,$10);
+	Screens::ClearScreen($7F);*/
+	Screens::ClearVRAM();
+	SetupMessages();
+	background_palette:=$FF;
+	zp:=temp;
+	for j:=0 to 32 offpage do
+	begin
+		v2:=(j>>2)&3;		
+		for i:=0 to 32 offpage do
+		begin
+			ll:=i>>2;
+			ll:=ll+v2;
+			ll:=ll&3;
+			ll:=ll*16;
+			
+			k:=(j&3)*4;
+			k:=k+i&3;
+			zp[i]:=k+ll;
+		end;
+		zp:=zp+32;
+	end;
+	Screens::CopyBankHB(temp, screen0, 4);
+/*	SetBank(bank_charset);	
+	Screens::CopyBankHB(main_charset, vram, 2);
+	for i:=0 to 25 do
+	begin
+		
+	end;*/
+/*	
+	Opponent::stateP:=opp_state_leuat;
+	GRL::stateP:=grl_state_bgscroll;
+	
+	
+	GRL::x:=0;
+	GRL::y:=110;
+	
+	Opponent::x:=200;
+	Opponent::y:=20;
+	SetBank(bank_sprites);
+	GRL::Setup();
+	Opponent::Setup();
+	Opponent::shift := 48+24;
+*/
+	xx:=0;
+
+//	Screens::ClearScreen(0);
+//	Screens::CopyFullCharset(movie_bgstuff);	
+end;
+
+procedure UpdateBGCont();
+begin
+	if (y&1=1) then
+		SetBank(bank_bgstuff)
+	else
+		SetBank(bank_bgstuff2);
+	p1:=bgstuff_data;
+//	i:=frame*4;
+	asm("
+		ld a,[k]
+		ld b,a
+		ld a,[p1]
+		add a,b
+		ld [p1],a
+	");		
+
+//	memcpyonhblank(p1,zp,$10*64);
+//	Screens::CopyBankHB(p1,zp, 1);
+	memcpyonHBlank(p1,zp,248);
+	
+	asm("
+		ld a,[zp]
+		inc a
+		ld [zp],a
+	");
+
+/*	zp:=zp+$80;
+	zp:=zp+$80;*/
+	k:=(k+8)&63;
+
+
+end;
+
+
+procedure UpdateBGStuff();
+begin
+//	SetBank(bank_bgstuff);
+	zp:=vram+$1000;
+	if (time&1=0) then 
+		frame:=(frame+1)&63;
+
+
+//	v2:=(time>>5);
+
+	k:=frame;	
+/*	for j:=0 to 4 offpage do
+	begin
+	p1:=bgstuff_data;
+//	i:=frame*4;
+	asm("
+		ld a,[k]
+		ld b,a
+		ld a,[p1]
+		add a,b
+		ld [p1],a
+	");		
+
+//	memcpyonhblank(p1,zp,$10*64);
+	Screens::CopyBankHB(p1,zp, 1);
+
+	zp:=zp+$80;
+	zp:=zp+$80;
+	k:=(k+8)&31;
+	end;
+*/
+
+end;
+
+procedure EffectBGStuff();
+begin
+	frame:=0;
+	//background_palette:=%10010011;
+ 	//  background_palette:=%01101100;
+	//background_palette:=%11010010;
+//	background_palette:=$FF;
+	p2:=temp;
+	p3:=screen0;
+	y:=3;
+	fade:=0;
+	while (effectIsDone=false) offpage do
+	begin
+//		sy:=sine[time]/16+8;
+	//	scrolly:=sy;
+		
+		UpdateBGStuff();
+		UpdateBGCont();
+		y:=0;
+		sx:=time&127;
+		waitforraster($20);
+		scrollx:=sx;
+		UpdateBGCont();
+		y:=1;	
+
+		sx:=255-time&127;
+
+		waitforraster($40);
+		scrollx:=sx;
+		UpdateBGCont();
+		y:=2;	
+		sx:=time&127;
+		waitforraster($60);
+		scrollx:=sx;
+		UpdateBGCont();
+		y:=3;	
+		scrollx:=sx;
+		waitforraster($80);
+		sx:=255-time&127;
+		FadeFromToBlack(1);
+
+		UpdateMessages();	
+
+		end;
+end;

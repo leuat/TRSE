@@ -1,0 +1,192 @@
+globals = {
+ 	camera = { x = 0, y=0, z=4 },
+     fov = 50,
+	target = { x = 0, y=3.0, z=0 },
+	light0 = {   	direction = {x=-0.5, y=2.2, z=0.60 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+	ambient = { x = 0.0, y = 0.0, z = 0.0 },
+    raymarch_steps = 30,
+	raymarch_shadow_steps = 4,
+	up = {x=1.26, y=1, z=0 },
+	sky = 0,
+	shadow_scale = 1,
+	isPaused = 0
+	
+}
+
+output = {
+	resolution = { width = 512, height=256},
+--	resolution = { width = 320, height=200},
+	aspect = 1.0,
+	output_type = 5,
+	c64_imageType=0,
+	c64_multicolor=0,
+--	palette = { 0,0,0, 48,48,48, 140,140,140, 255,255,255 },
+--	palette = { 0,0,0,    255,255,255,  140,140,140,  70,70,70,    255,0,0 },
+	dither = 2,
+	ditherStrength = { x = 0, y= 1, z= 1},
+
+--	c64_colors = { 0,5,14,6 }
+--	index_colors = { 0,1,2,3 }
+	index_colors = { 0,1,2,3 }
+}
+
+
+MaterialBlue = {
+   color = { x=1, y=1, z=1 },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+MaterialWhite = {
+   color = { x=2, y=2, z=2 },
+	reflection = 0.9,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+MaterialGreen = {
+   color = { x=0, y=1, z=0 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+MaterialBlack = {
+   color = { x=0, y=0.0, z=0 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+
+-- Init is called on start  
+ 
+
+N = 6
+distance = 10
+frame = 0
+--noFrames = 24
+noFrames = 32
+char = 0
+curSave = 1
+
+hasSaved = 0
+
+text = "PRX"
+
+cur = 0
+
+charname = "char"
+
+function Init()
+
+
+	UpdateScene()
+
+end
+
+
+
+function UpdateScene()
+
+  	t = ((frame)/(noFrames-1)) 
+	tt = t*3.14159*2
+
+end
+
+function PostProcess();
+
+	N=100
+--	cx=10 + t*10
+--	cy=000+t*10
+	s = 20.0
+	
+	cx = 128 
+	cy = 128- tt*16-- - sin(tt/2)*80
+	s = 40.0 +cos(tt)*10--tt*4.0
+	
+	s2 = 300
+
+
+	cx2 = cx
+	cy2 = cy--tt*3.5
+
+
+	for j=0,N do
+	 	for i=0,N do
+
+	 		x1=(i-N/2.0)*s2+cx2
+	 		y1=(j-N/2.0)*s2+cy2
+
+	 		
+			
+	 		if ((j+i)&1==0) then
+--				DrawRect(x1,y1,s2,s2,255,255,255,2)
+			end
+			
+
+		end
+	end
+
+
+
+
+
+	sx = s * 1.0	
+	for j=0,N do
+	 	for i=0,N do
+	 		x=(i-N/2.0)*s+cx
+	 		y=(j-N/2.0)*s+cy
+
+			
+	 		if ((j+i)&1==0) then
+				DrawRect(x,y,sx,sx,127,127,127,2)
+			end
+			
+
+		end
+	end
+
+	ds = 2
+--	DrawRect(0,128-16*ds,output.resolution.width,16*4,  255,255,255,2);
+
+
+
+end
+
+
+
+function Update()
+	
+
+	if (frame>=2) then
+		CompressCharset(0,32,0,16,  1, 256)
+--		SaveScreenAndCharset("data/c_screen0.bin", "data/c_charset0.bin");
+	
+	end
+
+--	if (frame==noFrames/4 or frame==(noFrames/4)*2 or frame==(noFrames/4)*3 or frame==noFrames) then 
+	if (frame==noFrames+1) then 
+--		SaveRawData("data/ballsprite.bin");
+		OptimizeScreenAndCharset(32,16,  256, 3);
+		SaveScreenAndCharset("data/c_screen"..tostring(cur)..".bin", "data/c_charset"..tostring(cur)..".bin");
+		cur = cur+1
+		Message("SAVED")
+	end	
+	---if (frame<noFrames) then
+		UpdateScene()
+--	end
+
+
+	frame=frame+1
+	
+
+
+end

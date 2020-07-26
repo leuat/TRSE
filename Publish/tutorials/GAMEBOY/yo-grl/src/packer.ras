@@ -1,0 +1,213 @@
+/* MEGA IMAGE */
+
+@export "images/l1.flf" "images/l1.bin" 256
+@export "images/l2.flf" "images/l2.bin" 256
+@export "images/l3.flf" "images/l3.bin" 256
+@export "images/l4.flf" "images/l4.bin" 256
+
+
+@export "images/tuv.flf" "images/grl-logo.bin" 256
+
+
+// TEXT CHARSET
+@export "images/charset2.flf" "images/charset_text.bin" 64
+
+/*
+	LOGO DEMO NAME SPRITES
+*/
+
+@deletefile "images/image_logo_packed.flf"
+@deletefile "images/image_logo_screen.bin"
+
+@spritepacker "images/yo-test2-text.flf" "images/image_logo_packed.flf" "images/image_logo_screen.bin" "gameboy" 0 0 6 2  2
+@spritepacker "images/yo-test2-text.flf" "images/image_logo_packed.flf" "images/image_logo_screen.bin" "gameboy" 0 2 6 2  2
+@spritepacker "images/yo-test2-text.flf" "images/image_logo_packed.flf" "images/image_logo_screen.bin" "gameboy" 0 4 7 2  2
+
+@export "images/image_logo_packed.flf" "images/image_logo_packed.bin" 134
+
+
+/* GRL IMAGE */
+
+
+@deletefile "images/image_cubes_packed.flf"
+@deletefile "images/image_cubes_screen.bin"
+
+@spritepacker "images/image_cubes_4.flf" "images/image_cubes_packed.flf" "images/image_cubes_screen.bin" "gameboy" 3 0 11 16 2
+
+@export "images/image_cubes_packed.flf" "images/image_cubes_packed.bin" 134
+
+/* GRL  AND SPRITES */
+
+@deletefile "images/tilespacked.flf"
+@deletefile "images/sprites.bin"
+
+@spritepacker "images/grl2.chr" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 0 0 2 3 0
+@spritepacker "images/grl2.chr" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 2 0 2 3  0
+@spritepacker "images/grl2.chr" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 4 0 2 3  0
+@spritepacker "images/grl2.chr" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 6 0 2 3  0
+
+@spritepacker "images/grl2.chr" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 8 0 2 3  0
+@spritepacker "images/grl2.chr" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 10 0 2 3  0
+@spritepacker "images/grl2.chr" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 12 0 2 3  0
+@spritepacker "images/grl2.chr" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 14 0 2 3  0
+
+// Diad
+@spritepacker "images/grl2.chr" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 3 9 2 3  0
+@spritepacker "images/grl2.chr" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 5 9 2 3  0
+@spritepacker "images/grl2.chr" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 7 9 2 3  0
+@spritepacker "images/grl2.chr" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 9 9 2 3  0
+
+// Leuat
+@spritepacker "images/grl2.chr" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 4 12 2 3  0
+@spritepacker "images/grl2.chr" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 6 12 2 3  0
+@spritepacker "images/grl2.chr" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 8 12 2 3  0
+@spritepacker "images/grl2.chr" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 10 12 2 3  0
+
+
+
+/*@spritepacker "images/charset.flf" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 0 1 1 1  0
+@spritepacker "images/charset.flf" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 0 1 1 1  0
+@spritepacker "images/charset.flf" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 0 1 1 1  0
+@spritepacker "images/charset.flf" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 0 1 1 1  0
+@spritepacker "images/charset.flf" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 0 1 1 1  0
+*/
+
+
+
+
+
+//@spritepacker "images/tiles.flf" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 0 0 2 2  0
+//@spritepacker "images/org.chr" "images/tilespacked.flf" "images/sprites.bin" "gameboy" 8 8 6 7
+/* IMG 1*/
+/*
+@deletefile "images/image1_packed.flf"
+@deletefile "images/image1_lookup.bin"
+
+@spritepacker "images/img1.flf" "images/image1_packed.flf" "images/image1_lookup.bin" "gameboy" 0 0 16 16 12
+
+*/
+
+
+@deletefile "images/image_prx_packed.flf"
+@deletefile "images/image_prx_lookup.bin"
+
+@spritepacker "images/grl2.chr" "images/image_prx_packed.flf" "images/image_prx_lookup.bin" "gameboy" 0 3  16  6  3
+@spritepacker "images/grl2.chr" "images/image_prx_packed.flf" "images/image_prx_lookup.bin" "gameboy" 0 9   3  6  3
+
+
+
+
+@export "images/tilespacked.flf" "images/data.bin" 196
+//@export "images/image1_packed.flf" "images/image1_packed.bin" 151
+@export "images/image_prx_packed.flf" "images/image_prx_packed.bin" 151
+
+
+
+@export "images/charset.flf" "images/charset.bin" 128
+
+
+
+
+/*
+
+  Effect 1 data
+*/   
+/*
+@deletefile "images/image_opening_packed.flf"
+@deletefile "images/image_opening_lookup.bin"
+
+@spritepacker "images/image_opening.flf" "images/image_opening_packed.flf" "images/image_opening_lookup.bin" "gameboy" 0 0 16 16 3
+@spritepacker "images/image_opening2.flf" "images/image_opening_packed.flf" "images/image_opening_lookup.bin" "gameboy" 0 0 16 16 3
+
+
+*/
+
+
+
+/*
+// LOGO and PORTRAITS
+@deletefile "images/image_logo_lookup.bin"
+@deletefile "images/image_logo_packed.flf"
+
+@spritepacker "images/yo-text.flf" "images/image_logo_packed.flf" "images/image_logo_lookup.bin" "gameboy" 0 0 16 16 1
+@spritepacker "images/portraits.flf" "images/image_logo_packed.flf" "images/image_logo_lookup.bin" "gameboy" 0 0 4 4 1
+
+@export "images/image_opening_packed.flf" "images/image_opening_packed.bin" 256
+
+@export "images/image_logo_packed.flf" "images/image_logo_packed.bin" 256
+*/
+
+
+
+/*
+   VS text and logo
+
+*/
+/*
+@deletefile "images/vs_text_and_logo_packed.flf"
+@deletefile "images/vs_text_and_logo_lookup.bin"
+@define vs_text_comp 3
+// yo-grl
+@spritepacker "images/vs_text_and_logo.flf" "images/vs_text_and_logo_packed.flf" "images/vs_text_and_logo_lookup.bin" "gameboy" 0 0 5 3    3
+// YO-GRL
+@spritepacker "images/vs_text_and_logo.flf" "images/vs_text_and_logo_packed.flf" "images/vs_text_and_logo_lookup.bin" "gameboy" 0 3 8 3    3
+// DIAD
+@spritepacker "images/vs_text_and_logo.flf" "images/vs_text_and_logo_packed.flf" "images/vs_text_and_logo_lookup.bin" "gameboy" 0 6 8 3    3
+// MIBRI
+@spritepacker "images/vs_text_and_logo.flf" "images/vs_text_and_logo_packed.flf" "images/vs_text_and_logo_lookup.bin" "gameboy" 0 9 7 3    3
+// LEUAT
+@spritepacker "images/vs_text_and_logo.flf" "images/vs_text_and_logo_packed.flf" "images/vs_text_and_logo_lookup.bin" "gameboy" 5 0 6 3    3
+
+@export "images/vs_text_and_logo_packed.flf" "images/vs_text_and_logo_packed.bin" 256
+
+*/
+
+/*
+	Portraits
+
+*/
+
+@deletefile "images/image_portraits_lookup.bin"
+@deletefile "images/image_portraits_packed.bin"
+
+@spritepacker "images/portraits.flf" "images/image_portraits_packed.flf" "images/image_portraits_lookup.bin" "gameboy" 0 0 4 4 1
+@spritepacker "images/portraits.flf" "images/image_portraits_packed.flf" "images/image_portraits_lookup.bin" "gameboy" 4 0 4 4 1
+@spritepacker "images/portraits.flf" "images/image_portraits_packed.flf" "images/image_portraits_lookup.bin" "gameboy" 8 0 4 4 1
+@spritepacker "images/portraits.flf" "images/image_portraits_packed.flf" "images/image_portraits_lookup.bin" "gameboy" 12 0 4 4 1
+
+// Code
+@spritepacker "images/portraits.flf" "images/image_portraits_packed.flf" "images/image_portraits_lookup.bin" "gameboy" 0 4 4 2 1
+// graphics
+@spritepacker "images/portraits.flf" "images/image_portraits_packed.flf" "images/image_portraits_lookup.bin" "gameboy" 4 4 8 2 1
+// music
+@spritepacker "images/portraits.flf" "images/image_portraits_packed.flf" "images/image_portraits_lookup.bin" "gameboy" 0 6 5 2 1
+// Leuat
+@spritepacker "images/portraits.flf" "images/image_portraits_packed.flf" "images/image_portraits_lookup.bin" "gameboy" 5 6  5 2 1
+// Mibri
+@spritepacker "images/portraits.flf" "images/image_portraits_packed.flf" "images/image_portraits_lookup.bin" "gameboy" 10 6  5 2 1
+// The Diad
+@spritepacker "images/portraits.flf" "images/image_portraits_packed.flf" "images/image_portraits_lookup.bin" "gameboy" 0 8  8 2 1
+// you have been watching
+@spritepacker "images/portraits.flf" "images/image_portraits_packed.flf" "images/image_portraits_lookup.bin" "gameboy" 8 8  7 2 1
+// by
+@spritepacker "images/portraits.flf" "images/image_portraits_packed.flf" "images/image_portraits_lookup.bin" "gameboy" 0 10  2 2 1
+// star
+@spritepacker "images/portraits.flf" "images/image_portraits_packed.flf" "images/image_portraits_lookup.bin" "gameboy" 0 12  4 4 1
+// demologo
+@spritepacker "images/portraits.flf" "images/image_portraits_packed.flf" "images/image_portraits_lookup.bin" "gameboy" 4 12  4 4 1
+// PRX
+@spritepacker "images/portraits.flf" "images/image_portraits_packed.flf" "images/image_portraits_lookup.bin" "gameboy" 8 12  8 4 1
+
+
+
+@export "images/image_portraits_packed.flf" "images/image_portraits_packed.bin" 256
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,164 @@
+
+
+procedure UpdateCubeData();
+begin
+	SetBank(bank_cubes);
+	d1:=vram;
+	j2:=yy;
+//	waitforraster(0);
+	for i:=0 to 5 offpage do
+	begin
+//		j:=j2;
+//		k:=j2+time;
+		k:=(sine[j2+time]>>1)&15;
+//		k:=;
+//		k:=k&15;
+		j:=i+yy;
+		if (j&1=0) then
+		p1:=cubes_data
+		else
+		p1:=cubes_data2;
+
+//		p1:=cubes_data;
+		if (k<>0) then	
+		p1:=p1 + k*$80;
+		MemCpyOnHBlank(p1,d1,$80);
+		d1:=d1+$80;
+		j2:=j2+11;
+	end;
+end;
+
+procedure UpdateCubePos();
+begin
+	dt:=dt+1;
+	if (dt=32) then
+	begin
+		dt:=0;
+		frame:=frame+21;
+		yy:=yy+11;
+
+		if (pos<5) then
+			pos:=pos+1;
+	end;
+
+
+end;
+
+procedure UpdateCubeSprites();
+begin
+	p1:=$C000;
+	y:=32-dt;
+	k:=time*2+frame;
+	for i:=0 to 5 do
+	begin
+		x:=10 + sine[k]>>3;
+		j2:=5-pos;
+		if (i>=j2) then
+			setsprite(p1,  x, y, 4,2);
+			
+		y:=y+32;
+		p1:=p1+(4*2*4);
+		k:=k+21;
+	end;
+
+end;
+
+
+procedure InitCubes();
+begin
+	SetBank(bank_cubes);
+	background_palette:=$FF;
+//	Screens::ClearVRAM();
+	waitforverticalblank();
+		
+//	Screens::StopLCD();
+	SetBank(bank_grl);
+	current_bank:=bank_grl;
+//	poke(^$4000,4,bank_grl);
+	waitforraster(10);
+	Screens::ClearScreen(screen0,$FE);
+	
+//	Screens::ClearScreen($FE);
+	
+	SetBank(bank_grl);
+	Screens::CopyFullCharset(image_cubes_data);
+
+	Screens::FillVRAM(^$8800+^$7E*^$10,$FF, $10);
+	Screens::FillVRAM(^$8800+^$7E*^$10,$FF, $10);
+
+//	fill(^$8800+^$7E*^$10,$FF,$10);
+	//UpdateMusicTick();
+	fill(temp,$FE,1024);
+	Screens::RenderOffScreen(temp, image_cubes_screen,0,bank_cubes,6,16, 11,16);
+	memcpyonhblank(temp,screen0,1024);
+
+
+
+//	fill(vram+$800,$30,$1000);
+//	fill(screen0,30,$200);
+//	Screens::Set9800();
+	Screens::ClearSprites(40);
+	// Init sprites
+	p1:=$C000;
+	k:=0;
+	//y:=20;
+	pos:=1;	
+	for i:=0 to 5 do
+	begin
+		initsprite(p1, k, 0,  4,2);
+		k:=k+(4*2);
+//		setsprite(p1,  80, y, 4,2);
+//		y:=y+32;
+		p1:=p1+(4*2*4);
+	end;
+	sy:=240;
+	background_palette:=%10010011;
+	object0_palette:=%10010011;
+
+	scrolly:=sy;
+	background_palette:=%11010010;
+
+end;
+
+procedure UpdateCubesBG();
+begin
+	if (time&3=0) then return();
+	
+	if (transition=0) then
+	begin
+		if (sy>=120) then 
+			sy:=sy-1;
+
+	end;
+	if (transition=1) then
+	begin
+		if (sx<>142) then 
+		begin
+			sx:=sx-2;
+			if (time&1=0) then sx:=sx-2;
+		end;
+	end;
+
+end;
+
+
+procedure EffectCubes();
+begin
+	dt:=0;
+	frame:=0;
+	yy:=0;
+	while (effectIsDone=false) do
+	begin
+		waitforraster($0);
+		UpdateCubeData();
+		UpdateCubePos();
+		UpdateCubeSprites();
+		if (transition=1) then
+		begin
+			if (time&15=0) then FaceToBlack(object0_palette);
+			if (time&15=0) then FaceToBlack(background_palette);
+		end;
+		UpdateCubesBG();
+	end;
+//	GRL::ClearSprites(40);
+end;

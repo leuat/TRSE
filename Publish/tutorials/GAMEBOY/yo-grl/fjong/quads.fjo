@@ -1,0 +1,174 @@
+globals = {
+	camera = { x = 0.5, y=0.5, z=6 },
+	fov = 20, 
+	target = { x = 0.5, y=0.20, z=0 },
+	up = { x=0, y=1, z=0 },
+	light0 = {   	direction = {x=0, y=0, z=-10.5 }, 
+				color = {x=0.1, y=1, z=1}, 
+			},
+	light1 = {   	direction = {x=1, y=0, z=2 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+	ambient = { x = 0.3, y = 0.3, z = 0.3 },
+     raymarch_steps = 80,
+	raymarch_shadow_steps = 40,
+
+	sky = 0,
+	shadow_scale = 1,
+	isPaused = 0
+	
+}
+
+
+
+output = {
+--	resolution = { width = 160, height=160},
+--	resolution = { width = 320, height=160},
+	resolution = { width = 32, height=32},
+	output_type = 3,
+--	palette = { 0,0,0, 48,48,48, 140,140,140, 255,255,255 },
+	palette = { 0,0,0,    255,255,255,  140,140,140,  70,70,70,    255,0,0 },
+
+	c64_imageType = 0,
+	c64_multicolor=0,
+	aspect = 1,
+	dither = 2,
+	ditherStrength= {x=15, y=1, z=1 },
+	index_colors = { 0,1,2,3 }
+--	index_colors = { 0,1,2,3,4,5,6,9,10,11 }
+--	index_colors = { 0,2,3,1 }
+--	index_colors = { 0,2,3,1 }
+--	c64_colors = { 0,1}
+}
+
+
+Material0 = {
+   color = { x=0.2, y=0.2, z=0.2 },
+	reflection = 0.0,
+	shininess = 100,
+	shininess_intensity = 0.0
+}
+
+
+Material2 = {
+	color = { x=1, y=1, z=1 },
+	reflection = 0.2,
+	shininess = 60,
+	shininess_intensity = 0.3
+
+}
+
+
+GroundMaterial = {
+	color = { x=0.2, y=0.4, z=0.1 },
+	reflection = 0.0,
+	shininess = 40,
+	shininess_intensity = 0 
+
+}
+
+
+-- Init is called on start  
+
+
+distance = 10
+frame = 0
+noFrames = 16
+char = 0
+pos = 0
+
+
+ 
+function Init()
+
+
+	rs = 1.5
+	dx=-0.0
+	s = 2
+	h = 1.2
+	ss = 0.4
+	ds = 0.2
+	dl = 3
+	for j=0,4 do
+	for i=0,4 do
+		na="boxA" ..tostring(j*4+i);
+		nb="boxB" ..tostring(j*4+i);
+		nc="boxC" ..tostring(j*4+i);
+		dx = (j-1.0)*rs*3;
+		dy = (i-2.0)*rs*3;
+		AddObject("box",na,"","Material2", dx,dy,0,rs*ss,rs*ss,1);
+		AddObject("box",nb,"","Material2", dx,dy,0,ds,dl,1);
+		AddObject("box",nc,"","Material2", dx,dy,0,dl,ds,1);
+	end
+	end
+--		AddObject("box","box2","","Material2", dx,0,0,rs*s,rs*h,rs*s);
+
+	UpdateGraphics()
+
+end
+
+
+
+
+function UpdateGraphics()
+
+  	t = ((frame)/(noFrames))*3.14159/4
+	r = 14
+	globals.camera.x = 0
+	globals.camera.z = -25
+	globals.camera.y = 0
+	globals.target.y = 0
+--	t=t+3.14159/4
+	t=t
+    dt = 0.5
+    
+    for j=0,4 do
+	for i=0,4 do
+		g = t/3.14159265*360
+		if ((i+j)&1==0) then g = -g end
+		
+		n="boxA" ..tostring(j*4+i)
+		SetRotation(n,0,0,g);
+		n="boxB" ..tostring(j*4+i)
+		SetRotation(n,0,0,g);
+		n="boxC" ..tostring(j*4+i)
+		SetRotation(n,0,0,g);
+	end
+	end
+
+
+    dt = 1.5
+	globals.light0.direction.x = sin(t+dt)
+	globals.light0.direction.y = cos(t+dt)
+
+
+end
+
+
+function Update()
+	
+	if frame == noFrames+1 then 
+		frame = 0
+			--globals.isPaused = 1
+			SaveRawData("data/quads.bin");
+
+			Message("Files written")
+			
+--		ClearAllObjects()
+--		Init()
+	end
+
+
+--	if (frame ~= noFrames) then 
+--		AddC64LineToData(0,0,3,21)
+--	SetLight(1, 0 ,-0,-1,  1,0,1);
+	if (frame<noFrames+1 and frame>=1) then
+    	AddGameboyData(0,0, 4, 32);
+    end
+	UpdateGraphics()
+	frame=frame+1
+--	end
+	
+
+
+end

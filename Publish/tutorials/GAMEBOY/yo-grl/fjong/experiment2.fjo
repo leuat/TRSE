@@ -1,0 +1,167 @@
+globals = {
+ 	camera = { x = 0, y=4, z=4.0 },
+     fov = 50,
+	target = { x = 0, y=0, z=-1 },
+	light0 = {   	direction = {x=1.5, y=3.2, z=-1.7 }, 
+				color = {x=0.8, y=0.8, z=0.8}, 
+			},
+	ambient = { x = 0.0, y = 0.0, z = 0.0 },
+    raymarch_steps = 30,
+	raymarch_shadow_steps = 4,
+	up = {x=1.24, y=1, z=0 },
+	sky = 0,
+	shadow_scale = 1,
+	isPaused = 0
+	
+}
+
+output = {
+	resolution = { width = 256, height=256},
+--	resolution = { width = 320, height=200},
+	aspect = 0.3,
+	output_type = 5,
+	c64_imageType=0,
+	c64_multicolor=0,
+--	palette = { 0,0,0, 48,48,48, 140,140,140, 255,255,255 },
+--	palette = { 0,0,0,    255,255,255,  140,140,140,  70,70,70,    255,0,0 },
+	dither = 2,
+	ditherStrength = { x = 30, y= 1, z= 1},
+	smooth = 0.05,
+--	c64_colors = { 0,5,14,6 }
+--	index_colors = { 0,1,2,3 }
+--	index_colors = { 0xD,0x1C,0xC, 0x2C }
+	index_colors = { 0xD,0x1C,0xC, 0xD }
+}
+
+
+MaterialBlue = {
+   color = { x=1, y=1, z=1 },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+Material2 = {
+   color = { x=1, y=1, z=1 },
+	reflection = 0.2,
+	shininess = 0,
+	shininess_intensity = 0
+}
+
+MaterialGreen = {
+   color = { x=0, y=1, z=0 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+MaterialBlack = {
+   color = { x=0, y=0.0, z=0 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+
+-- Init is called on start  
+ 
+
+N = 6
+distance = 10
+frame = 0
+--noFrames = 24
+noFrames = 8
+char = 0
+curSave = 1
+
+hasSaved = 0
+
+text = "PRX"
+
+cur = 0
+
+charname = "char"
+
+function Init()
+
+	dx = 0
+	s = 2
+	
+--	AddObject("box","box1","","Material2", 0,0,dx,s,s,s);
+--	AddObject("torus","box1","","Material2", 0,0,dx,s,s*0.3,s);
+	--AddObject("perlin","box1","","Material2", "box1",0.0,1.5,0,0);
+
+	-- Render a bunch of toruses
+	for i=0, 20 do
+		-- name 
+		n = "torus"..tostring(i) 
+		-- x position
+		x = (i-10)/1.5
+		--  some nice torus values
+		AddObject("torus",n,"","MaterialBlue",x,0,0,     3.5, 0.25,0.1);
+	    s = 0.5
+		-- Rotate them 45 degrees
+		SetRotation(n,45,0,45);
+	end
+	UpdateScene()
+
+
+	UpdateScene()
+
+end
+
+
+
+function UpdateScene()
+--[[
+  	t = ((frame)/(noFrames-1)) 
+	tt = t*3.14159*2
+	
+	d = t*180;
+
+	globals.camera.x = 20
+
+	SetRotation("box1", d,45,-30);
+]]--
+
+	tar = 1.2-frame*0.085
+	globals.camera.x = tar
+	globals.target.x = tar
+
+
+end
+
+
+
+
+function Update()
+	
+
+	if (frame>=2) then
+		CompressCharset(0,16,0,16,  2, 256)
+--		SaveScreenAndCharset("data/c_screen0.bin", "data/c_charset0.bin");
+	
+	end
+
+--	if (frame==noFrames/4 or frame==(noFrames/4)*2 or frame==(noFrames/4)*3 or frame==noFrames) then 
+	if (frame==noFrames+1) then 
+--		SaveRawData("data/ballsprite.bin");
+		OptimizeScreenAndCharset(16,16,  256, 4);
+		SaveScreenAndCharset("data/c_screen"..tostring(cur)..".bin", "data/c_charset"..tostring(cur)..".bin");
+		cur = cur+1
+		Message("SAVED")
+	end	
+	---if (frame<noFrames) then
+		UpdateScene()
+--	end
+
+
+	frame=frame+1
+	
+
+
+end

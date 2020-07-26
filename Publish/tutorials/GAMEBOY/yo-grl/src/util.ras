@@ -1,0 +1,379 @@
+
+procedure FadeFromToBlack(ffb : byte);
+begin
+	if (ffb&1=1) then
+		background_palette:=fadeIn[fade];
+	if (ffb&2=2) then
+		object0_palette:=fadeIn[fade];
+		
+		if (time&15=0) then
+		begin
+		if (transition=0) then
+		begin
+			if (fade<>3) then
+				fade:=fade+1;
+		end 
+		else
+		begin
+			if fade<>0 then 
+				fade:=fade-1;
+		end;
+		end;
+end;
+
+
+
+procedure FaceToBlack(ftp : pointer);
+begin
+	i:=ftp[0];
+	// black is 11 
+	j:=i & 3;
+	if (j<>3) then j:=j+1;
+	i:=(i&%11111100) | j;
+
+	j:=(i>>2) & 3;
+	if (j<>3) then j:=j+1;
+	i:=(i&%11110011) | (j<<2);
+
+	j:=(i>>4) & 3;
+	if (j<>3) then j:=j+1;
+	i:=(i&%11001111) | (j<<4);
+
+	j:=(i>>6) & 3;
+	if (j<>3) then j:=j+1;
+	i:=(i&%00111111) | (j<<6);
+	ftp[0]:=i;
+end;
+
+procedure FadeToColor(ftc : pointer; ftc_col:byte);
+begin
+//	if (time&7<>0) then return();
+	c3:=ftc[0];
+	// black is 11 
+	k:=0;
+	for j:=0 to 4 offpage do
+	begin
+		ll:=j*2;
+		c1:=(c3 >> ll)&3;
+		c2:=(ftc_col>>ll)&3;
+		if (c1<>c2) then
+		begin
+			if (c1>c2) then c1:=c1-1
+			else 
+				c1:=c1+1;
+		end;
+
+		k:=k|(c1<<ll);
+		
+	end;
+//		k:=ftc[0];
+	ftc[0]:=k;
+end;
+
+
+
+
+
+/*procedure FaceToWhite(ftp : pointer);
+begin
+	i:=ftp[0];
+	// black is 11 
+	j:=i & 3;
+	if (j<>0) then j:=j-1;
+	i:=(i&%11111100) | j;
+
+	j:=(i>>2) & 3;
+	if (j<>0) then j:=j-1;
+	i:=(i&%11110011) | (j<<2);
+
+	j:=(i>>4) & 3;
+	if (j<>0) then j:=j-1;
+	i:=(i&%11001111) | (j<<4);
+
+	j:=(i>>6) & 3;
+	if (j<>0) then j:=j-1;
+	i:=(i&%00111111) | (j<<6);
+	ftp[0]:=i;
+end;
+*/
+
+procedure UpdateMusicTick();
+begin
+	if (copyTick=mupdate) then
+		begin
+			Push();
+			UpdateMusic();
+			copyTick:=0;
+			Pop();
+			current_bank:=curBank;
+		end
+		else
+	copyTick:=copyTick+1;
+	
+end;
+
+procedure Timer();
+begin
+	if (Screens::screenOn=1) then
+		UpdateMusic();
+	poke(^$FF04,0,0);	
+	current_bank:=curBank;
+
+end;
+
+
+procedure SetBank(sb_bank:byte);
+begin
+	curBank:=sb_bank;
+	current_bank:=sb_bank;
+	
+//	poke(^$4F00,0,sb_bank);
+//	poke(^$2000,0,sb_bank);
+end;
+
+
+
+
+procedure InitEffect(id_cnt:byte wram);
+begin
+	Screens::Set9800();
+	
+	demoCounter:=0;
+	demoMax:=id_cnt;
+	time:=0;
+	transition:=0;
+	effectIsDone:=false;	
+	
+	background_palette:=$FF;
+	object0_palette:=$FF;
+
+end;
+
+
+procedure Advance();
+var li : byte wram;
+begin
+
+    scrollx:=sx;
+    scrolly:=sy;
+
+//	UpdateMusic();
+	
+	time:=time+1;
+	li:=time&3;
+	if (li=0) then time2:=time2+1;
+	li:=time&31;
+	if (li=0) then demoCounter:=demoCounter+1;
+//	i:=(demoMax-4);
+	if (demoCounter>demoMax-2) then
+		transition:=1;
+	if (demoCounter>demoMax) then
+	begin
+		effectIsDone:=true;
+	end;
+//	halt();
+//	waitforverticalblank();	
+end;
+
+@donotremove VBlank
+procedure OrgVBlank();
+
+begin
+/*	asm("
+		ld a,[$FF47]
+		ld [vlk],a
+	");*/
+//	vlk:=peek(background_palette,0);	
+	UpdateMusic();
+//	background_palette:=vlk;
+	Advance();
+	current_bank:=curBank;
+end;
+
+procedure SetupInvertedFont();
+begin
+	SetBank(bank_small_text_data);	
+	Screens::CopyBankHB(small_text_data,^$D000,4);
+	// Invert colors
+	
+	p1:=$D000;
+	for k:=0 to 2 do
+	begin
+	for i:=0 to 256 do
+	begin
+		j:=p1[0];
+	//	c2:=p1[1] xor $FF;
+//		c2:=j xor $FF;
+		p1[0]:=j xor $FF;
+		p1[1]:=0;//j xor $FF;
+		p1:=p1+2;
+	end;
+	end;
+	
+	Screens::CopyBankHB(^$D000,vram,4);
+
+	Screens::CopyBankHB(portraits,vram+$400,4);
+
+
+end;
+procedure SetupFont();
+begin
+	SetBank(bank_small_text_data);	
+	Screens::CopyBankHB(small_text_data,^$D000,4);
+	// Invert colors
+	
+	Screens::CopyBankHB(^$D000,vram,4);
+
+	Screens::CopyBankHB(portraits,vram+$400,4);
+
+
+end;
+
+
+
+
+procedure getCharacterFromAscii();
+begin
+	if (k=$20) then // space
+		k:=127
+	else 
+	begin
+				//if (cc>64) then cc:=cc-(65-26);
+		if (k>64 and k<(64+26)) then
+			k:=k-65
+					
+		else k:=k-(65+6);;
+	end; 
+end;
+
+procedure UpdateMessages();
+begin
+	kp2:=$C041; // y sprite 64+1
+	kp1:=tabs;
+	kp1:=kp1+1; 
+	
+	c2:=demoCounter;// - textStart;
+	if (transition=0) then
+	begin
+	
+	for i:=0 to nomsg do
+	begin
+
+		ll:=kp1[0];
+		k:=kp2[0];
+// 		k:=k&$Fe;
+//		c1:=i;
+				
+		if (demoCounter>i+textStart and k<>100) then
+		begin 			
+			for j:=0 to ll do
+			begin
+				kp2[0]:=kp2[0] - 2;
+				kp2:=kp2 + 4;
+			end;
+
+		end
+		else kp2:=kp2+ ll*4;
+		
+		kp1:=kp1+2;
+	end;
+	
+	if (demoCounter>textStart and px<>16) then px:=px+1;			
+
+	end
+	else
+	begin
+	for i:=0 to nomsg do
+	begin
+		ll:=kp1[0];
+		k:=kp2[0];
+// 		k:=k&$Fe;
+//		c1:=i;
+		
+		if (k<>180) then
+		begin 			
+			for j:=0 to ll do
+			begin
+				kp2[0]:=kp2[0] + 2;
+				kp2:=kp2 + 4;
+			end;
+
+		end
+		else kp2:=kp2+ ll*4;
+		
+		kp1:=kp1+2;
+	end;
+	if (px<>180) then px:=px-2;			
+
+	end;
+	setsprite(^$C000,px,py, 4,4);
+	
+	
+end;
+
+
+procedure SetupMessages();
+begin
+	Screens::ClearSprites(40);
+	SetupInvertedFont();
+	
+	nomsg:=msgp[0];
+	p1:=tabs;
+	p2:=$C000; // Sprites
+	
+	k:=msgp[1];
+	py:=msgp[2];
+	textStart:=msgp[3];
+	px:=180;
+	if (k=0) then
+		initsprite(p2,0,4, 4,4);	
+	if (k=1) then
+		initsprite(p2,4,4, 4,4);	
+	if (k=2) then
+		initsprite(p2,8,4, 4,4);	
+	if (k=3) then
+		initsprite(p2,12,4, 4,4);	
+	
+	msgp:=msgp+3;
+	
+	setsprite(p2,px,py, 4,4);
+	p2:=p2+64;
+	for i:=0 to nomsg do
+	begin
+		// Y position
+//		p1[0]:=msgp[0];
+		x1:=180;
+		y1:=msgp[1]; // Y
+		p1[0]:=msgp[0]; // Time
+		p1:=p1 + 1; // Number of chars
+		ll:=0;
+		
+		msgp:=msgp + 2;
+		k:=1;
+		
+		k:=msgp[0];
+		while (k<>0) do
+		begin
+
+			getCharacterFromAscii();
+			initsprite(p2,k,0,1,1);	
+			setsprite(p2,x1,y1,1,1);
+			x1:=x1+8;
+//		setsprite(p1,x1,y1,1,1);
+			msgp:=msgp+1;
+			p2:=p2+4;
+			ll:=ll+1;
+			k:=msgp[0];
+
+		end;
+//		p1:=p1+1;
+		p1[0]:=ll;
+		p1:=p1 + 1; // Number of chars
+		msgp:=msgp+1;
+	end;
+//	object0_palette:=%10110000;
+//	object0_palette:=%11001111;
+	object0_palette:=%10010011;
+
+end;
+

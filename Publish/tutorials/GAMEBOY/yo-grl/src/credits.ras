@@ -1,0 +1,204 @@
+
+procedure RenderCreditstLine();
+begin
+
+	fill(^$d000,255,20);
+	fill(^$d020,255,20);
+	fill(^$d040,255,20);
+	fill(^$d060,255,20);
+	dst:=$D000;
+	src:=image_portraits_screen;
+	SetBank(bank_portraits);
+	j:=2;
+	x1:=0;
+	while (x1<20) do
+	begin
+		current_bank:=bank_small_text_data;
+		i:=d1[c3];
+		
+		if (i<250) then
+		begin
+			p3:=portraits_packer;
+			p3:=p3+i*4;
+			
+			k:=p3[0];
+			y:=p3[2];
+			j:=p3[1];
+			current_bank:=bank_portraits; 
+			Screens::RenderOffScreen(dst,src, k, bank_portraits, x1,2-y/2, j,y );
+			x1:=x1+j;
+			if (x1&1=1) then x1:=x1+1;
+		end;
+		if (i=255) then
+			x1:=x1+4; // 4 is the default size
+		if (i=254) then
+			x1:=x1+2; // 4 is the default size
+		
+		c3:=c3+1;
+	end;
+/*	for i:=0 to 4 do
+	begin
+		k:=d1[i];
+		if (k<>255) then
+			Screens::RenderOffScreen(dst,src, k, bank_portraits, j,0, 4,4 );
+		j:=j+4;
+	end;*/
+//	sx:=sx+1;
+//	Screens::RenderScreen(src, 0, bank_portraits, 8,y2, 4,4 );
+	//procedure RenderOffScreen(ro_dst,ro_p:pointer;ro_adde,ro_b,ro_x,ro_y,ro_w,ro_h : byte);
+	SetBank(bank_small_text_data);	
+
+	dst:=screen0;
+	dst:=dst+(y3*$20);
+	src:=$D000;
+	for j:=0 to 4 do
+	begin
+		memcpyonhblank4(src,dst,20);
+		src:=src+$20;
+		dst:=dst+$20;
+	end;
+//	d1:=d1+4;
+
+end;
+
+
+procedure InitCredits();
+begin
+
+	SetBank(bank_portraits);
+	Screens::CopyBankHB(image_portraits_data,vram_charset,4);
+	Screens::CopyFullCharset(image_portraits_data);
+
+	Screens::ClearScreen(screen0,255);
+	waitforverticalblank();
+	Screens::ClearScreen(screen0,255);
+	waitforverticalblank();
+
+//	SetupInvertedFont();	
+	SetupFont();	
+	
+	for i:=0 to 40 do 
+		tabs[i]:=creditsDiv[i]; // Cant modify ROM, can't we
+
+	background_palette:=%10010011;
+//	object0_palette:=%10010011;
+	object0_palette:=%10001111;
+//	object0_palette:=%10110000;
+	object0_palette:=%10001111;
+	p2:=credits1;
+	sx:=0;
+	sy:=0;
+	y2:=128+32;
+	y3:=y2/8;
+	scroll:=0;
+	
+	waitforverticalblank();
+	for k:=0 to 10 do
+	for i:=0 to 16 step 2 do
+	begin
+		waitforhblank();
+		poke(vram+$800+127*$10,i,$FF);
+		waitforhblank();
+		poke(vram+127*$10,i,$00);
+		j:=i+1;
+		waitforhblank();
+		poke(vram+127*$10,j,$00);
+	end;	
+	j:=2;
+/*	for i:=0 to 40 do
+	begin
+		poke(^$C000,j,127);
+		j:=j+4;
+	end;*/
+	d1:=creditsImages;
+	c3:=0;
+	
+end;
+
+procedure UpdateCreditsSprites();
+begin
+	p1:=logo_spr1;
+	t:=time*2;
+	for i:=0 to 40 do
+	begin
+		j:=tabs[i];
+		y:=sine[t]>>3;
+		x1:=creditsMoveX[j];
+		y1:=creditsMoveY[j]+y;
+		setsprite(p1,x1,y1,1,1);
+		j:=(j+1)&255;
+		// NEW character
+		if (j=0) then
+		begin
+			k:=p2[0];
+/*			if (k=$20) then // space
+				k:=255
+			else 
+			begin
+				//if (cc>64) then cc:=cc-(65-26);
+
+				if (k>64 and k<(64+26)) then
+					k:=k-65
+					
+				else k:=k-(65+6);;
+			end; */
+			getCharacterFromAscii(); // transforms K
+			p1[2]:=k; // Set new character
+			p2:=p2+1;
+		end;
+//		if (j>256) then j:=0; // FETCH NEW 	
+		tabs[i]:=j;
+		p1:=p1+4;
+		t:=(t+21)&255;
+	end;
+
+end;
+
+procedure InitCreditsSprites();
+begin
+	p1:=logo_spr1;
+	for i:=0 to 40 do
+	begin
+		initsprite(p1,127,0,1,1);	
+		p1:=p1+4;
+	end;
+
+end;
+
+
+procedure UpdateCreditsScroll();
+begin
+	if (time&3=0) then
+	begin
+		if (scroll=0) then
+		begin
+			RenderCreditstLine();
+		
+		end;
+		sy:=sy+1;
+		y2:=y2+1;
+		scroll:=(scroll+1)&31;
+		if (scroll&7=0) then y3:=(y3+1)&31;
+	end;
+end;
+
+
+procedure CreditsVBlank();
+begin
+	OrgVBlank();
+	UpdateCreditsScroll();
+	UpdateCreditsSprites();
+end;
+
+
+procedure EffectCredits();
+begin
+	InitCreditsSprites();
+	InitVBLank(CreditsVBlank());
+	while (effectIsDone=false)  do
+	begin
+		waitforverticalblank();
+	end;
+	InitVBLank(OrgVBlank());
+
+end;

@@ -1,0 +1,461 @@
+
+procedure PrintQuadsScreen();
+begin
+	p1:=temp;					
+	for y:=0 to 8 offpage do
+	begin
+		for x:=0 to 8 offpage do
+		begin
+			d1:=p1;
+			k:=0;
+			for j:=0 to 4 do
+			begin
+				for i:=0 to 4 do
+				begin
+					d1[i]:=k;
+					k:=k+1;
+				end;
+				d1:=d1+32;
+			end;
+			
+			p1:=p1+4;
+		end;	
+		p1:=p1+(3*32);
+	end;
+	
+
+
+end;
+
+
+procedure UpdateQuads();
+begin
+	if (time&1=0) then 
+	frame:=(frame+1)&15;
+/*	frame:=sine[time<<1]>>2;
+	frame:=frame&15;*/
+	p1:=quads_data;
+	p1:=p1+ frame*$100;
+//	p1:=p1+ frame*$80;
+//	memcpy(p1,vram+^$1000,$160);
+//	scrollx:=80;
+	SetBank(bank_cubes);
+	memcpyonhblank(p1,vram+^$1000,$160);
+//	scrollx:=0;
+end;
+
+procedure InitQuadWindow();
+begin
+	Screens::ClearScreen(screen0,blank);	
+	Screens::FillVRAM(vram + ^$1000 + filled*^$10,$FF,$10);
+	waitforraster(0);
+	Screens::ClearScreen(screen0,blank);	
+//	fill(^$D000,0,1024);
+end;
+
+procedure GenerateQuadData();
+begin
+	p2:=$D000;
+	fill(p2,blank,$800);
+	for xx:=0 to 0 offpage do
+	begin
+		for yy:=0 to 8 offpage do
+		begin
+			k:=xx;
+			if (yy<>0) then
+				k:=k>>(8-yy);
+				
+			if (k & 1 = 1) then 
+				p2[yy]:=boxx+(8+yy)&7;
+			
+		end;
+		p2:=p2+8;
+
+	end;
+
+end;
+
+procedure InitQuads();
+begin
+//	Screens::StopLCD();
+	SetBank(bank_cubes);
+//	ClearScreen(0);
+	Screens::ClearVRAM();
+	PrintQuadsScreen();
+//	memcpyonhblank(temp,^$9c00,1024);
+	Screens::CopyBankHB(temp,^$9c00,4);
+
+	InitQuadWindow();
+	GenerateQuadData();
+
+	//EffectLogoBubblesInit();
+//	Screens::Set9800();
+	Screens::EnableWindow();
+//	fill(^$D000,0,1024);	
+	scroll:=0;
+	pos:=0;
+	background_palette:=%10010011;
+	object0_palette:=%10010011;
+end;
+
+procedure UpdateText();
+begin
+	sx:=sx+4;
+
+/*	if (scroll<>7) then
+	begin
+		scroll:=scroll+1;
+		return();
+	end;*/
+	xx:=xx+1;
+	scroll:=0;
+	yy:=yy+4;
+	
+	if (yy=64) then
+	begin
+		yy:=0;
+		pos:=pos+1; // Advance text position!	
+
+	end;
+	d1:=screen0;
+//	d1:=d1+(6;
+	i:=(pos&3)*8+24;
+	i:=i&31;
+//	i:=pos&3;
+	d1:=d1+i;
+	SetBank(bank_small_text_data);
+	x2:=0;	
+	cc := scrollText1[pos];
+	if (cc<>32) then
+	begin
+//	cc:=71; // G is gone?
+	if (cc>64) then cc:=cc-(65-26);
+	p1:=small_text_data;
+//	cc:=68;	
+	p1:=p1 + cc*($10);
+//	p1:=p1 + (32*$10);
+//		p1:=p1 + cc*($80);
+/*		j:=((time+ll<<4))>>2;
+//		j:=sine[j]/16+1;
+		j:=j &15;
+		p1:=p1+(j*16);
+	*/	
+	end else x2:=1;// Space is set
+		d2:=d1;		
+//		waitforhblank();
+	if (time&1=1) then 
+		for j:=0 to 16 step 2 offpage do
+		begin
+			k:=p1[j];
+			if (x2=1) then k:=0; // IS space
+			
+			asm("
+;	ld a,h
+;	ld [p2], a
+;	ld a,l
+;	ld [p2+1], a
+	; ;generic pointer/integer P:=P+(expr) add expression
+	ld a,[k]
+	ld l,a
+	ld h,0
+	add hl,hl
+	add hl,hl
+	add hl,hl
+	ld d,h
+	ld e,l
+;	ld a,[p2]
+;	ld h,a
+;	ld a,[p2+1]
+;	ld l,a
+	ld hl,$d000
+
+	add  hl,de
+	ld a,h
+	ld [p2], a
+	ld a,l
+	ld [p2+1], a
+
+			
+			");
+/*			
+			p2:=$D000;
+			
+			p2:=p2 + (k*8);
+	*/		
+	//		waitforhblank();
+			memcpyonhblank4(p2,d2,8);
+			d2:=d2+32;
+		end;
+		d1:=d1+8;
+end;
+
+procedure UpdateText2();
+begin
+//	dsx:=dsx-4;
+/*	if (scroll<>7) then
+	begin
+		scroll:=scroll+1;
+		return();
+	end;*/
+	d1:=screen0;
+	d1:=d1+(32*9);
+	i:=(pos&3)*8-25;
+	i:=31-i&31;
+//	i:=pos&3;
+	d1:=d1+i;
+	x2:=0;	
+//	SetBank(bank_small_text_data);
+		
+	cc := scrollText2[118-pos];
+	if (cc<>32) then
+	begin
+//	cc:=71; // G is gone?
+	if (cc>64) then cc:=cc-(65-26);
+	p1:=small_text_data;
+//	cc:=68;	
+	p1:=p1 + cc*($10);
+//	p1:=p1 + (32*$10);
+//		p1:=p1 + cc*($80);
+/*		j:=((time+ll<<4))>>2;
+//		j:=sine[j]/16+1;
+		j:=j &15;
+		p1:=p1+(j*16);
+	*/	
+	end else x2:=1;// Space is set
+		d2:=d1;		
+	//	waitforhblank();
+	if (time&1=0) then 
+		for j:=0 to 16 step 2 offpage do
+		begin
+			k:=p1[j];
+			if (x2=1) then k:=0; // IS space
+			p2:=$D000;
+			
+			p2:=p2 + (k*8);
+//			waitforhblank();
+			memcpyonhblank4(p2,d2,8);
+			d2:=d2+32;
+		end;
+		d1:=d1+8;
+end;
+
+
+/*procedure UpdateTextCopyAll();
+begin
+	sx:=sx+1;
+
+	xx:=xx+1;
+	scroll:=0;
+	yy:=yy+1;
+	
+	if (yy=64) then
+	begin
+		yy:=0;
+		pos:=pos+1; // Advance text position!	
+		sx:=0;
+
+	end;
+	d1:=screen0;
+	d1:=d1+64;
+	SetBank(bank_small_text_data);
+	
+	for ll:=0 to 4 offpage do
+	begin
+		cc := scrollText1[pos+ll];
+		if (cc>64) then cc:=cc-65+26;
+		p1:=small_text_data;
+		
+		p1:=p1 + cc*($10);
+//		p1:=p1 + cc*($80);
+/*		j:=((time+ll<<4))>>2;
+//		j:=sine[j]/16+1;
+		j:=j &15;
+		p1:=p1+(j*16);
+	*/	
+	/*
+		d2:=d1;		
+		for j:=0 to 8 offpage do
+		begin
+			k:=p1[j*2];
+			if (cc=32) then k:=0;
+			p2:=$D000;
+			
+			p2:=p2 + (k*8);
+			memcpyonhblank(p2,d2,8);
+			d2:=d2+32;
+		end;
+		d1:=d1+8;
+	end;	
+end;
+*/
+
+
+procedure EmptyVBlank();
+begin
+
+end;
+
+procedure UpdateWindowYQuad();
+begin
+
+	asm("
+		ld a,[p3]
+		ld [i],a	
+	");
+	windowy:=i;
+//	if (i<160) then
+//	begin
+	if (i>160) then
+	begin 
+		dt:=0;
+	end;
+	
+	if (dt=1) then
+	begin
+		p3:=p3+acc;
+		acc:=acc+32;
+	end;
+	
+	if (dt=0) then
+	begin
+		p3:=p3-acc;
+		
+		acc:=acc-48;
+		asm(";kake");
+		if (hi(acc)=0) then		
+		if (lo(acc)<49) then		
+		begin
+			dt:=1;
+//			acc:=0;
+		end;
+	end;
+		
+end;
+
+procedure UpdateWindowYQuad2();
+begin
+	asm("
+		ld a,[p3]
+		ld [i],a	
+	");
+
+//	begin
+	if (i>200) then
+	begin 
+		dt:=0;
+		i:=0;
+	end;
+	windowy:=i;
+	
+	if (dt=1) then
+	begin
+		p3:=p3-acc;
+		
+		acc:=acc+32;
+	end;
+	
+	if (dt=0) then
+	begin
+		p3:=p3+acc;
+		
+		acc:=acc-48;
+		if (hi(acc)=0) then		
+		if (lo(acc)<49) then		
+		begin
+			dt:=1;
+//			acc:=0;
+		end;
+	end;
+		
+end;
+
+
+procedure UpdateQuadFont();
+begin
+	SetBank(bank_charset);
+	p1:=main_charset;
+	p1:=p1+$20;
+//	p1:=p1+$180;
+	x1:=time>>2;
+	for i:=0 to 8 do
+	begin
+		d1:=vram + ^$1000 + boxx*^$10;
+		j:=(i+x1)&7;
+		d1:=d1+j*$10;		
+
+		memcpyonhblank(p1,d1,$10);
+		p1:=p1+$10
+	end;
+
+
+end;
+
+
+procedure EffectQuads();
+begin
+	frame:=0;
+	j2:=time;
+	sx:=0;
+	sy:=0;
+	xx:=24;
+	yy:=0;
+	pos:=0;
+	acc:=0;
+	InitVBlank(EmptyVBlank());
+	dt:=1;
+	p3:=0;
+//	p3:=200*256;
+//	p3:=(170*256);
+	//transition:=1;
+//	demoCounter:=5;
+	acc:=0;
+	waitforverticalblank();
+
+
+	while (effectIsDone=false) offpage do
+	begin
+		waitforraster($89);
+		OrgVBlank();
+		
+
+		if (demoCounter>4) then
+		begin
+//			if (demoCounter<demoMax-12) then
+				UpdateWindowYQuad()
+	//		else
+		//		UpdateWindowYQuad2();
+
+		end;
+		if (demoCounter>demoMax-3) then
+			if (time&7=0) then
+			FaceToBlack(background_palette);
+			
+		waitforraster($0);
+		scrolly:=0;
+		scrollx:=sx;
+	//	scrolly:=sine[time<<2]>>5-8;
+		
+		if (demoCounter>14) then			
+		begin
+//	background_palette:=%0;
+		
+		UpdateText();
+		waitforraster(70);
+		i:=255-sx;
+		waitforhblank();
+		scrollx:=i;
+//		windowy:=148;
+	//	sy:=sine[time<<2+64]>>5-8;
+//		scrolly:=sine[time<<2+64]>>5-8;
+		
+
+		UpdateText2();
+		
+		UpdateQuadFont();
+		end
+		else 		UpdateQuads();
+
+
+	end;
+	InitVBlank(OrgVBlank());
+end;

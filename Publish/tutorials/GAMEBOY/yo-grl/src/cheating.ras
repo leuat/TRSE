@@ -1,0 +1,188 @@
+
+
+
+procedure InitCheating();
+begin
+	msgp:=msg_cheq;
+	SetupMessages();
+	SetBank(bank_cheating);
+	
+	Screens::ClearScreen(screen0,0);
+	zp:=temp+$800;//vram + $1000;
+	p1:=cheating_charset;
+//	Screens::ClearSprites(40);
+	for j:=0 to 2 offpage do
+	begin
+		for i:=0 to 128 do
+		begin
+			for k:=0 to 8 do
+			begin
+				zp[0]:=0;
+				zp[1]:=p1[0];
+				p1:=p1+1;
+				zp:=zp+2;
+			end;	
+		end;
+		zp:=temp;
+	end;
+	//memcpy(p1,zp,(128*$10));
+	Screens::CopyBankHB(temp,^$8800,16);
+	background_palette:=%10010011;
+	object0_palette:=%10010011;
+
+end;
+
+procedure UpdateCheating();
+begin
+	SetBank(bank_cheatingD);
+	zp:=screen0;
+	zp:=zp+(32*1);
+	p1:=cheating_screen;
+//	frame:=0;
+	// 24*24 = 576 = 512 + 64
+	i:=frame*2;
+	j:=0;
+	//j:=frame*64;
+	asm("
+		ld a,[i]
+		ld b,a
+		ld a,[p1]
+		add a,b
+		ld [p1],a
+
+;		ld a,[j]
+;		ld b,a
+;		ld a,[p1+1]
+;		adc a,b
+;		ld [p1+1],a
+;		jr nc,vid
+;		ld a,[p1]
+;		inc a
+;		ld [p1],a	
+;vid:
+	");
+	
+	//p1:=cheating_screen;
+//	p1:=p1;
+//	if (time&7=0) then
+	//frame:=(frame+1)&15;
+	if (time&1=0) then
+	frame:=(frame+1)&31;//sine[time*2]>>3;
+//	if (frame>27) then frame:=27;
+	waitforraster(0);
+	for j:=0 to 16 do
+	begin
+		memcpyonhblank(p1,zp,32);
+		p1:=p1+32;		
+		zp:=zp+32;
+	end;	
+	UpdateMessages();
+end;
+
+/*procedure GenerateCheckerCharset();
+begin
+	zp:=vram+$1000;
+	fill(zp,$00,$100);
+	for j:=0 to $10 offpage do
+	begin
+		ll:=0;
+		for i:=0 to 4 offpage do
+		begin
+			
+			if (j&1=1) then
+				zp[ll]:=zp[ll] | %11110000;
+			if (j&2=2) then
+				zp[ll]:=zp[ll] | %00001111;
+			if (j&4=4) then
+				zp[ll+8]:=zp[ll+8] | %00001111;
+			if (j&8=8) then
+				zp[ll+8]:=zp[ll+8] | %11110000;
+				
+			ll:=ll+2;
+		end;
+		zp:=zp+$10;		
+
+	end;	
+
+end;
+
+*/
+/*
+procedure EffectCheckerTest2();
+begin	
+	//fill(vram+$1000,0,$10);
+	//fill(vram+$1010,$FF,$10);
+	
+	t:=sine[tt]/16;
+	SetBank(bank_zoomtab);
+	p2:=zoomTab;
+	
+	p2:=p2+t*64;
+	j:=sine[tt]>>8;
+//	p2:=p2+j;
+
+	p3:=zoomTab;
+
+	t:=sine[tt]/16;
+	
+	p3:=p3+t*64;
+
+	zp:=screen0;
+	yy:=0;
+	for j:=0 to 16 offpage do
+	begin
+		xx:=0;
+		c2:=p2[yy];
+		c3:=p2[yy+1];
+		
+		for i:=0 to 16 offpage do
+		begin
+			val:=0;
+			
+			k:=c2+ p3[xx];
+			if (k&1=1) then val:=1;
+			
+			k:=c2+ p3[xx+1];
+			if (k&1=1) then val:=val|2;
+			
+			k:=c3+ p3[xx+1];
+			if (k&1=1) then val:=val|4;
+			
+			k:=c3+ p3[xx];
+			if (k&1=1) then val:=val|8;
+			
+			zp[i]:=val;
+			
+			xx:=xx+2;
+		end;
+		yy:=yy+2;
+		zp:=zp+32;
+	end;
+
+
+end;
+*/
+
+
+
+procedure EffectCheating();
+begin
+	while (effectIsDone=false) offpage do
+	begin
+//		PrecalcRotozoom();	
+		UpdateCheating();
+		FadeFromToBlack(1);
+
+//		EffectCheckerTest2();	
+
+//		EffectCopyChecker();
+
+		
+		sx:=sine[time+77]>>2;
+		sy:=0;
+//		sx:=0;
+	//	tt:=tt+8;
+//		sy:=sine[time+64]>>2-32;
+//		waitforraster($00);
+	end;
+end;

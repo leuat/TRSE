@@ -1,0 +1,226 @@
+
+
+procedure InitMegaImage();
+begin
+	SetBank(bank_mega);
+	
+	j:=10;
+	background_palette:=$FF;
+	for i:=0 to j do begin waitforverticalblank();end;
+	background_palette:=%10101010;
+	for i:=0 to j do begin waitforverticalblank();end;
+	background_palette:=%01010101;
+	for i:=0 to j do begin waitforverticalblank();end;
+	background_palette:=%00000000;
+	c3:=0;
+
+//	background_palette:=$FF;
+
+
+/*	p1:=$D000 + 2 + 32;
+	k:=0;
+	for j:=0 to 16 do
+	begin	
+		for i:=0 to 16 do
+		begin
+			p1[i]:=k;
+			k:=k+1;
+		end;
+		p1:=p1+32;
+	end;
+*/
+	// Init sprites
+	j:=0;
+	p1:=$C000;
+	fill(^$D000,$FF,$10);
+	waitforraster(0);
+	memcpyonhblank4(^$D000,vram,$10);
+	//fill(^$D000,$FF,$10);
+	j:=0;
+	for k:=0 to 8 do
+	for i:=0 to 8 do 
+	begin
+		waitforhblank();
+		poke(vram_charset,j,$FF);
+		j:=j+1;
+		waitforhblank();
+		poke(vram_charset,j,$00);
+		j:=j+1;
+	end;
+//	memcpyonhblank4(^$D000,vram_charset,$10);
+//	background_palette:=$FF;
+	Screens::ClearScreen(screen0,0);
+	Screens::ClearScreen(screen0,0);
+	object0_palette:=%00010010;
+	
+	for i:=0 to 16 offpage do
+	begin
+		k:=j&7 + $10;
+		initsprite(p1, 0, 0, 1, 1);
+		j:=j+1;
+		x:=128+16;
+		j:=j+1;
+		y:=i*8+24;
+		
+		setsprite(p1, x, y, 1, 1);
+		p1:=p1+4;
+	end;
+	for i:=0 to 16 offpage do
+	begin
+		k:=j&7 + $10;
+		initsprite(p1, 0, 0, 1, 1);
+		j:=j+1;
+		x:=16;
+		j:=j+1;
+		y:=i*8+24;
+		
+		setsprite(p1, x, y, 1, 1);
+		p1:=p1+4;
+	end;
+
+	sy:=0;
+
+	c1:=0; // column
+	c2:=0; // current char
+	sx:=128-16;
+	x1:=32;
+	scroll:=0;
+	src:=limg1;
+	zp:=vram_charset;
+	y1:=0;	
+	
+	background_palette:=%11010010;
+
+//	memcpyonhblank(^$D000,screen0,1024);
+//	Screens::CopyFullCharset(limg1);
+//	Screens::Set9800();
+end;
+
+procedure UpdateMegaImage();
+begin
+//	i:=c1+8;
+	if (c1&15=8) then zp:=vram+$800;
+	
+	if (c1=16) then 
+	begin 
+		zp:=vram_charset; 
+		src:=limg2;
+		y1:=0; 
+	end; 
+	if (c1=32) then 
+	begin 
+		zp:=vram_charset; 
+		src:=limg3;
+		y1:=0; 
+	end; 
+	if (c1=48) then 
+	begin 
+		zp:=vram_charset; 
+		src:=limg4;
+		y1:=0; 
+	end; 
+	if (c1=64) then
+	begin
+		zp:=vram_charset;
+		src:=limg1;
+		y1:=0; 
+	end;
+	
+	if (scroll=8) then
+	begin
+		// draw screen
+		p2:=screen0;
+		p2:=p2+x1;
+//		p2:=p2+32;
+		j:=x1-16;		
+		p3:=p2;
+		p3:=screen0;
+		p3:=p3+j;
+		k:=y1*16;
+		for i:=0 to 16 do
+		begin
+			waitforhblank();
+			p2[0]:=k;
+			waitforhblank();
+			p3[0]:=0;
+			waitforhblank();
+			p3[18]:=0;
+			p2:=p2+32;
+			p3:=p3+32;
+			k:=k+1;
+		end;
+		waitforhblank();
+		p3[0]:=0;
+		waitforhblank();
+		p3[18]:=0;
+		
+		p1:=src;
+		p3:=zp;
+		
+		for j:=0 to 16 do
+		begin
+//			if (j=8) then p3:=p3-$1000;
+			memcpyonhblank4(p1,p3,$10);
+			p1:=p1+$100;
+			p3:=p3+$10;
+		end;
+		
+		//memcpyonhblank(src,zp,$100);
+		//fill(zp,$F0, $100);
+		src:=src+$10;
+		zp:=zp+$100;
+		
+		scroll:=0;
+		
+		c1:=c1+1;
+		x1:=x1+1;
+		y1:=y1+1;
+		if (x1=64) then x1:=32;
+//		c2:=c2+16;
+	end;
+//	sx:=0;
+	if (time&1=0) then
+	begin
+		sx:=sx+1;
+		scroll:=scroll+1;
+	end;
+
+end;
+
+
+procedure MegaVBlank();
+begin
+	OrgVBlank();
+	UpdateMegaImage();	
+	
+end;
+
+procedure RenderMegaImage();
+begin
+
+	InitVBlank(MegaVBlank());
+	
+	while (effectIsDone=false)  do
+	begin
+		waitforverticalblank();
+		
+		if (transition=1) then
+		begin
+			if (time&7=0) then
+			begin
+				if (c3=false and (demoCounter>demoMax-1)) then
+				begin
+					Screens::ClearSprites(40);
+					c3:=true;
+				end;
+				FaceToBlack(object0_palette);
+				FaceToBlack(background_palette);
+			end;
+		end;
+		
+	end;
+
+	InitVBlank(OrgVBlank());
+
+end;
+

@@ -1,0 +1,154 @@
+
+procedure UpdatePresents(upa,upb:byte);
+
+
+
+procedure CopyPRXLogo();
+begin
+	SetBank(bank_prx_logo);
+//	Screens::ClearScreen($F0);
+//	background_palette:=%11001001;
+	Screens::CopyBankHB(img_prx,^$9000,8);
+	fill(temp,$F0,1024);
+	Screens::RenderOffScreen(temp,img_prx_tab, 0, bank_prx_logo, 4,20, 16,6);
+	Screens::RenderOffScreen(temp,img_prx_tab, 16*6, bank_prx_logo, 20,20, 3,6);
+
+end;
+
+
+procedure PrintPRXScreen();
+begin
+	p1:=temp+^32*^27+^6;
+	for i:=0 to 8 do
+	begin
+		k:=presents_list[i];
+		p1[0]:=k;
+		k:=k+1;	
+		p1[1]:=k;
+		k:=k+1;	
+		p1[32]:=k;
+		k:=k+1;	
+		p1[33]:=k;
+		p1:=p1+2;
+	end;
+
+end;
+
+
+
+procedure InitEffectPrxLogo();
+begin
+//	background_palette:=%10010011;
+//	background_palette:=%01101100;
+	fill(screen0,0,256*4);
+//	InitDMAAndVBlank(PRXVBlank());
+	Screens::StopLCD();
+
+	CopyPRXLogo();
+	PrintPRXScreen();
+	memcpyonhblank(temp,screen0,1024);
+	
+	sx:=30;
+	sy:=0;
+	t:=128+64;
+	Screens::Set9800();
+	
+
+end;
+
+
+procedure UpdatePresents(upa,upb:byte);
+begin
+	
+	SetBank(bank_presents);
+	if (upa=0) then
+	begin
+		d1:=vram+presents_char*$10 + ^$1000;
+//	d1:=vram;
+	//d1:=d1-$40;
+//	d1:=vram+presents_char*$10 + ^$1000;
+		p2:=presents_data;
+	end;
+//	waitforraster($8E);
+	xx:=$10;	
+	for j:=upa to upb  do
+	begin
+		if (xx>$90) then xx:=xx-$90;
+		p1:=p2;
+		t2:=j<<2;
+		t2:=t2+time;
+		t2:=t2<<1;
+		k:=sine[t2]>>3;
+		k:=k+16;
+		k:=k&31;
+	
+		if (k<>0) then
+			p1:=p1+k*$40;
+		
+//		asm("ld bc,sine32");		
+		for j2:=0 to 11  do
+		begin
+			waitforraster(xx);
+			xx:=xx+3;
+//			wait(9);
+			if (j2 = 0) then
+			begin
+				//wait(2);
+				asm(" nop");
+				asm(" nop");
+				memcpy(p1,d1,$6)
+			end
+			else
+			begin
+				wait(4);
+				memcpycont($6);
+			end;
+			asm(" push hl");
+			asm(" push de");
+	//		waitforraster(xx);
+//			waitforhblank();
+			wait(4);
+			scrollx:=(sine[xx+time]/8)+20;		
+			asm(" pop de");
+			asm(" pop hl");
+//			xx:=xx+1;			
+//			wait(7);
+		end;
+		d1:=d1+$40;	
+		p2:=p2+ ($40*32);
+//	sx:=scrollx;
+	end;
+	
+end;
+
+
+procedure EffectPRXLogo();
+begin
+	background_palette:=%10010011;
+	object0_palette:=%10010011;
+	
+	while (effectIsDone=false)  do
+	begin
+		if (time&1=0) then
+			UpdatePresents(0,3)
+		else
+			UpdatePresents(3,6);
+
+		i:=demoMax-4;
+		if (demoCounter<i) then 
+		begin
+			if (t<>70) then t:=t+1;
+		end
+		else 
+		begin
+			if (t<>192) then t:=t+1;
+		end;
+		current_bank:=bank_sine;
+		sy:=sine[t];
+		sy:=sy>>1;
+		
+	end;
+
+end;
+
+
