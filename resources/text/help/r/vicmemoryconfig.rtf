@@ -1,0 +1,25 @@
+<h3>Description</h3>
+<p>Set the memory configuration requirements for the Vic 20 emualator.  This value if specified
+overrides the TRSE project settings.</p>
+
+<p>@VicMemoryConfig "value"</p>
+
+<h4>Values:</h4>
+<ul>
+
+<li>none - default unexpanded memory (5k)</li>
+<li>3k - expansion in block 0 at address $0400 (5k + 3k)</li>
+<li>8k - expansion in block 1 at address $2000 (5k + 8k)</li>
+<li>16k - expansions in block 1 and 2 at address $2000 (5k + 16k)</li>
+<li>24k - expansions in block 1, 2 and 3 at address $2000 (5k + 24k)</li>
+<li>all - expansions in all blocks 0, 1, 2, 3 and 5 at address $2000 (5k + 35k)</li>
+
+</ul>
+
+
+<h3>Example</h3>
+
+<code>
+// set 24k RAM expansion
+@VicMemoryConfig "24k"
+</code>

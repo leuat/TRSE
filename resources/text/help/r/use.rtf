@@ -1,8 +1,66 @@
 <h3>Description</h3>
-<p></p>
+<p>Include a TRU unit into the project.  TRU files can be created </p>
 
 
 <h3>Example</h3>
 
 <code>
+// main program ...
+@use "unit/cart"
+
+// the cart.tru file in the unit folder ...
+Unit cart;
+var 
+
+procedure Init() inline;
+begin
+
+	// Initialize system when run as cartridge
+	asm("
+		jmp PRGstart		; resolves problem with joystick to start prg builds here (while developing in TRSE)
+
+CRTStart:					; crt builds start here
+
+		; Disable interrupts
+		sei
+     	cld                 ; clear decimal mode
+     	
+     	ldx #$FB			; value for start stack
+     	txs					; set stack pointer
+     	
+		; Run kernal setup routines.
+		jsr $FD8D			; initialise and test RAM
+PRGstart:		
+		jsr $FD52			; restore default I/O vectors
+		jsr $FDF9			; initialize I/O registers 
+restoreKeyStart:
+		; Disable interrupts again (for Restore-key)
+		sei
+		jsr $E518			; initialise hardware
+		
+     	cli					; enable interrupts
+     
+     	jsr $E45B			; initialise BASIC vector tables
+     	jsr $E3A4			; initialise BASIC RAM locations     
+     	jsr $C644			; perform NEW (bypass check)
+
+		; Prevent lower/uppercase swap
+		lda #$80
+		sta $0291		
+
+	");
+
+end;
+
+procedure Autostart() inline;
+begin
+	asm("
+	dc.b <CRTStart,>CRTStart				; Cart reset start address
+	dc.b <restoreKeyStart,>restoreKeyStart 	; Restore keypress jump address
+	dc.b $41,$30,$c3,$c2,$cd				; Signature for cart autostart (a0CBM)
+	"); 
+end;
+
+end.
+
 </code>

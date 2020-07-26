@@ -1,0 +1,19 @@
+<h3>Description</h3>
+<p>Preprocessor that exports a section of the PRG file as a new PRG file.
+The two byte address in low, high order at the beginning by default unless
+disabled in the project settings.</p>
+
+<h3>Examples</h3>
+<p>The following export four 8k regions for the Vic 20 blocks 1, 2, 3 and 5 for use as a cartridge image.</p>
+<code>
+	@exportprg2bin "main.prg" "2000.prg" $2000 $4000	
+	@exportprg2bin "main.prg" "4000.prg" $4000 $6000	
+	@exportprg2bin "main.prg" "6000.prg" $6000 $8000	
+	@exportprg2bin "main.prg" "a000.prg" $a000 $c000
+</code>
+
+<p>
+<strong>Note:</p> this executes at the beginning.  The PRG of your main program
+is compiled at the end.  You will need to build your project twice to be sure that
+this preprocessor command has acted on the latest version of the PRG file.
+</p>

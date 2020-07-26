@@ -1,0 +1,15 @@
+<h3>Description</h3>
+<p>Overrides a number of project settings.  Possible values include:</p>
+
+<ul>
+<li>ignorebasicsysstart - set to 1 to not add a BASIC SYS call at the BasicSysAddress</li>
+<li>basicsysaddress - The address to place the BASIC SYS call to start your program</li>
+<li>startaddress - The address where your code will start</li>
+</ul>
+
+<h3>Examples</h3>
+<code>
+	@projectsettings "ignorebasicsysstart" 1
+	@projectsettings "basicsysaddress" $1200
+	@projectsettings "startaddress" $2000
+</code>
