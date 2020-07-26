@@ -897,6 +897,9 @@ void MainWindow::setupIcons()
     m_fileColors["dir"] = QColor(c2,c2,c2);
 
 
+    img.load(":resources/images/bin.png");
+    m_icons["bin"] = QIcon(QPixmap::fromImage(img));
+    m_icons["prg"] = QIcon(QPixmap::fromImage(img));
     m_fileColors["bin"] = QColor(c4,c4,c4);
     m_fileColors["prg"] = QColor(c4,c4,c4);
 

@@ -1,0 +1,12 @@
+<p>BuildTable can be used with arrays to create a table of data that is calculated at build time.</p>
+
+<p>JavaScript is used with an indexer valiable called 'i'.  Thus, any JavaScript functions can be used.</p>
+
+<h3>Example</h3>
+<code>
+a : array[256] of byte =BuildTable( "Math.sin( i / 256.0 * Math.PI * 2) * 0x7F + 0x80" );   // your average sine table
+
+b : array[64] of byte = BuildTable("i")  ;   // will build a table with values 0-63
+
+c: array[16] of byte = BuildTable("( 1 + i ) * 0x4000");
+</code>
