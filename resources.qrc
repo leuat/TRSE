@@ -499,5 +499,7 @@
         <file>resources/images/bin.png</file>
         <file>resources/images/tutorials/yogrl.png</file>
         <file>resources/images/AMIGA.png</file>
+        <file>resources/images/trse_icon.png</file>
+        <file>resources/images/nopgrl.png</file>
     </qresource>
 </RCC>

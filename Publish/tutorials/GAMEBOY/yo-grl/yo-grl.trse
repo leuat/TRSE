@@ -82,6 +82,6 @@ data_header_images/yo-tuv7.flf = 6.89897e-310
 data_header_images/yo-tuv5-2.flf = 6.89897e-310
 data_header_images/yo-tuv-work.flf = 6.89897e-310
 data_header_images/test2.flf = 6.89897e-310
+open_files = ,demo.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/GAMEBOY/yo-grl/
-open_files = ,l2.flf
 current_file = demo.ras

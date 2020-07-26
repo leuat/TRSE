@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(m_updateThread, SIGNAL(updateImageSignal()), this, SLOT(updateImage()));
 
 
-   Data::data.version += "   Build  " + QDate::currentDate().toString();
+//   Data::data.version += "   Build  " + QDate::currentDate().toString();
 
 
     this->setMouseTracking(true);
@@ -107,6 +107,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lstSystems->setCurrentRow(0);
     setWindowTitle("Turbo Rascal Syntax error, \";\" expected but \"BEGIN\" Version " + Data::data.version);
     ui->textBrowser->setText( ui->textBrowser->toHtml().replace("@version",Data::data.version));
+    ui->textBrowser->setText( ui->textBrowser->toHtml().replace("@build",QDate::currentDate().toString()));
 
     ui->treeSymbols->setHeaderHidden(true);
 

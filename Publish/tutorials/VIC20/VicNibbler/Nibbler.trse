@@ -44,6 +44,4 @@ cpu_x86_system = 8086
 override_target_settings_basic = $0400
 remove_unused_symbols = 1
 ignore_initial_jump = 0
-open_files = -1
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/VicNibbler/
-current_file = nibbler.ras
+open_files =, nibbler.ras

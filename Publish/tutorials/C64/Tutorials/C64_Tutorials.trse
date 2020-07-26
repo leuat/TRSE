@@ -47,6 +47,4 @@ override_target_settings_basic = 0
 ignore_initial_jump = 0
 remove_unused_symbols = 1
 data_header_resources/images/octopus.flf = 6.93276e-310
-open_files = ,advanced/01_spritescroller.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
-current_file = advanced/01_spritescroller.ras
+open_files =, Hello.ras
