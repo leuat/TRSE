@@ -501,5 +501,9 @@
         <file>resources/images/AMIGA.png</file>
         <file>resources/images/trse_icon.png</file>
         <file>resources/images/nopgrl.png</file>
+        <file>resources/text/help/r/unit.rtf</file>
+        <file>resources/text/help/r/shr.rtf</file>
+        <file>resources/text/help/r/shl.rtf</file>
+        <file>resources/text/help/r/inline.rtf</file>
     </qresource>
 </RCC>
