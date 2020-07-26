@@ -89,6 +89,7 @@ private:
         std::size_t           m_posAscii;
         std::size_t           m_charWidth;
         std::size_t           m_charHeight;
+        std::size_t           m_hexPause;
 
 
         std::size_t           m_selectBegin;

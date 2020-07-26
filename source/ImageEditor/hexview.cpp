@@ -27,9 +27,10 @@ m_pdata(NULL)
     m_charWidth = fontMetrics().width(QLatin1Char('9'));
     m_charHeight = fontMetrics().height();
 
+    m_hexPause = 20;
     m_posAddr = 0;
     m_posHex = 10 * m_charWidth + GAP_ADR_HEX;
-    m_posAscii = m_posHex + HEXCHARS_IN_LINE * m_charWidth + GAP_HEX_ASCII;
+    m_posAscii = m_posHex + HEXCHARS_IN_LINE * m_charWidth + GAP_HEX_ASCII + m_hexPause;
 
     setMinimumWidth(m_posAscii + (BYTES_PER_LINE * m_charWidth));
     setFocusPolicy(Qt::StrongFocus);
@@ -146,7 +147,6 @@ void HexView::paintEvent(QPaintEvent *event)
             QString val = QString::number((data.at((lineIdx - firstLineIdx) * BYTES_PER_LINE + i) & 0xF0) >> 4, 16);
             painter.drawText(xPos, yPos, val);
 
-
             if((pos+1) >= m_selectBegin && (pos+1) < m_selectEnd)
             {
                 painter.setBackground(selected);
@@ -164,6 +164,9 @@ void HexView::paintEvent(QPaintEvent *event)
             painter.setBackground(def);
             painter.setBackgroundMode(Qt::OpaqueMode);
 
+            if (i==8) xPos+=m_hexPause;
+
+
         }
         painter.setPen(m_colors->getColor("symbolscolor"));
 
@@ -175,6 +178,27 @@ void HexView::paintEvent(QPaintEvent *event)
 
             painter.drawText(xPosAscii, yPos, QString(ch));
         }
+
+        int sx = m_posAscii + 200;
+        int dx = 2;
+        int dy = 2;
+        painter.setPen(m_colors->getColor("quotationcolor"));
+        painter.setBrush(m_colors->getColor("quotationcolor"));
+        for (int i=0;i<2;i++)
+        {
+
+            for (int b=0;b<8;b++) {
+                uchar v = data[(lineIdx - firstLineIdx) * BYTES_PER_LINE + b +i*8];
+
+                for (int x=0;x<8;x++) {
+                    int j = 7-x;
+                    if (((v>>j)&1)==1)
+                        painter.drawRect(QRect(sx+dx*x + i*16*dx, yPos+dy*b-16, dx,dy));
+
+                }
+            }
+       }
+
 
     }
 

@@ -84,4 +84,4 @@ data_header_images/yo-tuv-work.flf = 6.89897e-310
 data_header_images/test2.flf = 6.89897e-310
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/GAMEBOY/yo-grl/
 open_files = ,src/util.ras, src/packer.ras, demo.ras, l2.flf
-current_file = images/image_portraits_packed.flf
+current_file = demo.ras
