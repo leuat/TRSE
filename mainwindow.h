@@ -47,6 +47,7 @@
 #include "source/trsedocuments/formimageeditor.h"
 #include "source/trsedocuments/formfjong.h"
 #include "source/trsedocuments/formpaw.h"
+#include "source/trsedocuments/formhexedit.h"
 #include "source/dialogtrsesettings.h"
 #include "source/messages.h"
 #include "source/LeLib/limage/movieconverter.h"

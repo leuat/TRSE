@@ -113,6 +113,7 @@ SOURCES += main.cpp\
     source/ImageEditor/abstractimageeditor.cpp \
     source/ImageEditor/customqtablewidget.cpp \
     source/ImageEditor/glwidget.cpp \
+    source/ImageEditor/hexview.cpp \
     source/ImageEditor/qlabellimage.cpp \
     source/LeLib/limage/limageatari520st.cpp \
     source/LeLib/limage/limagefooter.cpp \
@@ -134,6 +135,7 @@ SOURCES += main.cpp\
     source/dialogsimplelineedit.cpp \
     source/toolbox.cpp \
     source/toolboxitem.cpp \
+    source/trsedocuments/formhexedit.cpp \
     source/tutorials.cpp \
     source/workerthread.cpp \
     imageeditor.cpp \
@@ -297,6 +299,7 @@ HEADERS  += mainwindow.h \
     source/ImageEditor/abstractimageeditor.h \
     source/ImageEditor/customqtablewidget.h \
     source/ImageEditor/glwidget.h \
+    source/ImageEditor/hexview.h \
     source/ImageEditor/qlabellimage.h \
     source/LeLib/limage/limageatari520st.h \
     source/LeLib/limage/limagefooter.h \
@@ -318,6 +321,7 @@ HEADERS  += mainwindow.h \
     source/dialogsimplelineedit.h \
     source/toolbox.h \
     source/toolboxitem.h \
+    source/trsedocuments/formhexedit.h \
     source/tutorials.h \
     source/workerthread.h \
     imageeditor.h \
@@ -454,6 +458,7 @@ FORMS    += mainwindow.ui \
     source/dialognewproject.ui \
     source/dialogselectcharset.ui \
     source/dialogsimplelineedit.ui \
+    source/trsedocuments/formhexedit.ui \
     source/trsedocuments/formraseditor.ui \
     source/trsedocuments/formimageeditor.ui \
     source/dialogtrsesettings.ui \
