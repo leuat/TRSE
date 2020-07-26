@@ -790,6 +790,12 @@ void FormRasEditor::FillFromIni()
     ui->chkRemoveUnusedSymbols->setChecked(m_projectIniFile->getdouble("remove_unused_symbols")==1);
     ui->chkWarnings->setChecked(m_iniFile->getdouble("display_warnings")==1);
 //    qDebug() << "FillFromIni" << m_iniFile->getdouble("perform_crunch");
+
+
+    ui->chkDisplayAddresses->setChecked(m_iniFile->getdouble("display_addresses")==1);
+    ui->chkDisplayCycles->setChecked(m_iniFile->getdouble("display_cycles")==1);
+
+//    qDebug() << "PARSER "<<m_iniFile->getdouble("display_cycles");
     isInitialized=true;
 }
 
@@ -797,11 +803,18 @@ void FormRasEditor::FillToIni()
 {
     if (!isInitialized)
         return;
+
     m_iniFile->setFloat("post_optimize",ui->chkPostOpt->isChecked()?1:0);
     m_projectIniFile->setFloat("exomizer_toggle",ui->chkExomize->isChecked()?1:0);
     m_projectIniFile->setFloat("remove_unused_symbols",ui->chkRemoveUnusedSymbols->isChecked()?1:0);
     m_iniFile->setFloat("display_warnings",ui->chkWarnings->isChecked()?1:0);
 
+    m_iniFile->setFloat("display_addresses",ui->chkDisplayAddresses->isChecked()?1:0);
+    m_iniFile->setFloat("display_cycles",ui->chkDisplayCycles->isChecked()?1:0);
+
+    ui->txtEditor->m_displayCycles = ui->chkDisplayCycles->isChecked();
+    ui->txtEditor->m_displayAddresses = ui->chkDisplayAddresses->isChecked();
+    ui->txtEditor->update();
     m_iniFile->Save();
 }
 
@@ -1116,4 +1129,14 @@ void FormRasEditor::on_btnHelpPostOptimize_clicked()
 {
     Help("postoptimize");
 
+}
+
+void FormRasEditor::on_chkDisplayAddresses_stateChanged(int arg1)
+{
+    FillToIni();
+}
+
+void FormRasEditor::on_chkDisplayCycles_stateChanged(int arg1)
+{
+    FillToIni();
 }

@@ -183,15 +183,18 @@ int CodeEditor::lineNumberAreaWidth()
 
 int CodeEditor::cycleNumberAreaWidth()
 {
-
+    if (!m_displayCycles)
+        return 0;
     return 80;
 }
 
 int CodeEditor::AddressAreaWidth()
 {
+    if (!m_displayAddresses)
+        return 0;
     if (m_addresses.keys().count()==0)
         return 0;
-    return 80;
+    return 65;
 
 }
 

@@ -193,6 +193,8 @@ private slots:
     void on_btnHelpExomize_clicked();
     void on_btnHelpRemoveUnusedSymbols_clicked();
     void on_btnHelpPostOptimize_clicked();
+    void on_chkDisplayAddresses_stateChanged(int arg1);
+    void on_chkDisplayCycles_stateChanged(int arg1);
 };
 
 #endif // FORMRASEDITOR_H

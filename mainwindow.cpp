@@ -277,6 +277,13 @@ void MainWindow::VerifyDefaults()
     if (!m_iniFile->contains("display_addresses"))
         m_iniFile->setFloat("display_addresses", 1);
 
+/*
+    if (!m_iniFile->contains("display_addresses"))
+        m_iniFile->setFloat("display_addresses", 1);
+*/
+    if (!m_iniFile->contains("display_cycles"))
+        m_iniFile->setFloat("display_cycles", 1);
+
     if (!m_iniFile->contains("display_warnings"))
         m_iniFile->setFloat("display_warnings", 1);
 
@@ -321,6 +328,8 @@ void MainWindow::VerifyProjectDefaults()
 
 void MainWindow::UpdateSymbolTree(QString search)
 {
+
+
     ui->treeSymbols->clear();
 
     if (m_currentDoc==nullptr) {
@@ -591,7 +600,7 @@ void MainWindow::ConnectDocument()
     connect(m_currentDoc, SIGNAL(emitNewRas()), this, SLOT(on_actionRas_source_file_triggered()));
     connect(m_currentDoc, SIGNAL(emitNewImage()), this, SLOT(on_actionImage_triggered()));
 
-    connect(m_currentDoc, SIGNAL(emitSuccess()), this, SLOT(UpdateSymbolTree()));
+    connect(m_currentDoc, SIGNAL(emitSuccess()), this, SLOT(HandleBuildSuccess()));
     connect(m_currentDoc, SIGNAL(emitFailure()), this, SLOT(UpdateFailure()));
 
 
@@ -2245,4 +2254,10 @@ void MainWindow::on_btnClearProject_clicked()
     {
         dir.remove(dirFile);
     }
+}
+
+void MainWindow::HandleBuildSuccess()
+{
+    RefreshFileList();
+    UpdateSymbolTree();
 }

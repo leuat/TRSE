@@ -70,6 +70,24 @@
         </layout>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QCheckBox" name="chkDisplayAddresses">
+           <property name="text">
+            <string>Display address column</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chkDisplayCycles">
+           <property name="text">
+            <string>Display cycles column</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="4,1">
          <item>
           <widget class="QTextEdit" name="txtOutput">

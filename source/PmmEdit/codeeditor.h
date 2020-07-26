@@ -55,6 +55,7 @@ public:
     CodeEditor(QWidget *parent = 0);
     QColor currentLineColor, lineNumberBackgroundColor, cyclesBackgroundColor, cyclesColor, blockCyclesColor, lineNumbersColor;
     void setCompleter(QCompleter *c);
+
     void InitColors(CIniFile cols) {
         currentLineColor = cols.getColor("currentline");
         lineNumberBackgroundColor = cols.getColor("linenumbersbackground");
@@ -68,7 +69,8 @@ public:
     QAbstractItemModel *modelFromFile(const QString& fileName);
     QAbstractItemModel *modelFromTRSE(QSharedPointer<SymbolTable>  symtab, Parser* parser);
 
-
+    bool m_displayCycles = true;
+    bool m_displayAddresses = true;
     void SetIndent();
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
