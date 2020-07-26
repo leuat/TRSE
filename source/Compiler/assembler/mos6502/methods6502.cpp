@@ -6429,8 +6429,8 @@ void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
     QSharedPointer<NodeVar> nodevar = qSharedPointerDynamicCast<NodeVar>(node);
 
     if (node->isPureNumeric() && node->getValueAsInt(as)>=256 && !node->isAddress()) {
-        as->Asm("lda " + Util::numToHex(node->getValueAsInt(as)&0xff));
-        as->Asm("ldy " + Util::numToHex((node->getValueAsInt(as)>>8)&0xff));
+        as->Asm("lda #" + Util::numToHex(node->getValueAsInt(as)&0xff));
+        as->Asm("ldy #" + Util::numToHex((node->getValueAsInt(as)>>8)&0xff));
         return;
     }
 
