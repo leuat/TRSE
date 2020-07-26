@@ -417,7 +417,7 @@
            <item row="0" column="0">
             <layout class="QGridLayout" name="gridLayout_8">
              <item row="2" column="0">
-              <widget class="QTableWidget" name="lstCharMap"/>
+              <widget class="CustomQTableWidget" name="lstCharMap"/>
              </item>
              <item row="0" column="0">
               <widget class="QPushButton" name="btnLoadCharmap">
@@ -1525,6 +1525,11 @@
    <class>QLabelLImage</class>
    <extends>QLabel</extends>
    <header>source/ImageEditor/qlabellimage.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CustomQTableWidget</class>
+   <extends>QTableWidget</extends>
+   <header>source/ImageEditor/customqtablewidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

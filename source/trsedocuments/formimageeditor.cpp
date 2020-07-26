@@ -66,6 +66,8 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
     ui->lblImageQt->setMouseTracking(true);
     ui->lblImageQt->m_updateThread = &m_updateThread;
 
+    ui->lstCharMap->InitDoc(this);
+
 //    void EmitMouseMove();
 
 
@@ -808,6 +810,12 @@ bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
     if(/*e->type() == QEvent::KeyPress || */e->type()==QEvent::ShortcutOverride) {
         const QKeyEvent *ke = static_cast<QKeyEvent *>(e);
 //        qDebug() << "KEY EVENT "<<rand()%100;
+
+
+        if (((ke->key() == Qt::Key_S) &&  ((QApplication::keyboardModifiers() & Qt::ControlModifier)))) {
+            SaveCurrent();
+        }
+
 
 
         if (!(QApplication::keyboardModifiers() & Qt::ShiftModifier)) {

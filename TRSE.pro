@@ -111,6 +111,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemx86.cpp \
     source/Compiler/systems/systemz80.cpp \
     source/ImageEditor/abstractimageeditor.cpp \
+    source/ImageEditor/customqtablewidget.cpp \
     source/ImageEditor/glwidget.cpp \
     source/ImageEditor/qlabellimage.cpp \
     source/LeLib/limage/limageatari520st.cpp \
@@ -294,6 +295,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemx86.h \
     source/Compiler/systems/systemz80.h \
     source/ImageEditor/abstractimageeditor.h \
+    source/ImageEditor/customqtablewidget.h \
     source/ImageEditor/glwidget.h \
     source/ImageEditor/qlabellimage.h \
     source/LeLib/limage/limageatari520st.h \

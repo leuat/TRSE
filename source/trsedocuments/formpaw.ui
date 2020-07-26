@@ -67,7 +67,7 @@
       <number>4</number>
      </property>
      <attribute name="horizontalHeaderVisible">
-      <bool>true</bool>
+      <bool>false</bool>
      </attribute>
      <attribute name="horizontalHeaderDefaultSectionSize">
       <number>140</number>
