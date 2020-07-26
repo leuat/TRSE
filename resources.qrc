@@ -498,5 +498,9 @@
         <file>resources/text/help/r/buildtable.rtf</file>
         <file>resources/images/bin.png</file>
         <file>resources/images/tutorials/yogrl.png</file>
+        <file>resources/text/help/r/unit.rtf</file>
+        <file>resources/text/help/r/shr.rtf</file>
+        <file>resources/text/help/r/shl.rtf</file>
+        <file>resources/text/help/r/inline.rtf</file>
     </qresource>
 </RCC>
