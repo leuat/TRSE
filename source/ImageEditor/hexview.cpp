@@ -27,7 +27,7 @@ m_pdata(NULL)
     m_charWidth = fontMetrics().width(QLatin1Char('9'));
     m_charHeight = fontMetrics().height();
 
-    m_hexPause = 20;
+    m_hexPause = 00;
     m_posAddr = 0;
     m_posHex = 10 * m_charWidth + GAP_ADR_HEX;
     m_posAscii = m_posHex + HEXCHARS_IN_LINE * m_charWidth + GAP_HEX_ASCII + m_hexPause;
