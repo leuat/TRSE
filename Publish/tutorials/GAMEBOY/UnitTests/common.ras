@@ -11,13 +11,14 @@
 
 font : incbin("charset/charset.bin");
 curx : byte;
+
 procedure Initialise();
 begin
 	sc := screen0;
 	// Set default palette : each of the 4 colors are defined by 2 bits : 11 = black, 00 = white.
 	background_palette:=%10010011;
 	Screens::Set9800();
-	Screens::MemCopyBankOnHBlank(font, vram_charset, 8); // Copy 4x$100 bytes of data
+	Screens::CopyBankHB(font, vram_charset, 8); // Copy 4x$100 bytes of data
 	Screens::ClearScreen(screen0, $80);
 	curx:=0;
 end;

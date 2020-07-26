@@ -93,7 +93,7 @@ begin
 		begin
 //			j:=sine2[k];
 			YPos:=(YPos + sinTab[k]);
-			k:=(k+6);
+			k:=k+6;
 //			k:=mod(k+4,80);
 			StretchTab[YPos]:=0;//StretchTab[YPos] & test[i];
 
@@ -273,6 +273,7 @@ loop2
 	;sta $d020 ; couldn't make this one work 
 	nop ; wait two nops
 	nop
+	
 	
 
 	lda #0 ; Set back for the next line

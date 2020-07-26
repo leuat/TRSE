@@ -1,20 +1,28 @@
 program Tutorial4;
 var 
+@use graphics
+
 	done : integer = 0;
- 	i,time,x1,t,col : integer = 0;
+	buf: array[32000] of byte aligned;
+ 	j,i,time,x1,t,col : integer = 0;
 	ym_file : incbin("music/test1.ym");
 	sin : array[256] of integer = buildtable("Math.sin(i/256.0*2*3.14159)*128 +128");
+	test : pointer of long;
+
+	const yStart : integer = 25;
+	const yEnd : integer = 175;
 
 procedure RenderLines();
 begin
 	t:=time;
-	for i:=50 to 150 do
+	for i:=yStart to yEnd do
 	begin
 		x1:=sin[t&255]>>1 + 64;	
-		if (t&3=0) then		
-			col:=(col+1)&15;
+		// hlinesingle sets a single bitplane, while hline fills a specific color (slower)
 		t:=t+1;
-		hline(x1,i,50,col);
+		Graphics::LHLine(x1,i,48,t);
+		x1:=sin[(t*2)&255]>>1 + 64;	
+		Graphics::LHLineSingle(320-x1,i,48,4);
 	end;
 end;
 
@@ -22,36 +30,35 @@ end;
 interrupt VBLank();
 begin
 	UpdateMusic();
-	RenderLines();
 	time:=time+1;
 	done:=keypressed(sc_key_space_pressed);
 end;
 
 begin
+	InitMusic(ym_file);
 	SetLoRes();
-	InitGraphics(); // sets up HLINE (and soon polygons etc)
+	Graphics::Init();
+	InitGraphics();
+	Graphics::InitHTabs();
 
-	if (x1&2=i*3) then
-	begin
-	
-	end;
-
-	if (x1&2=i*3) then
-	begin
-	
-	end;
-
+	j:=2;
 	for i:=0 to 16 do
 	begin
-		// Set some palette
-		poke16(palette_start,i*2,i);
+		// Set some random palette
+		poke16(palette_start,i*2, j);
+		j:=j+111;
 	end;	
-	InitMusic(ym_file);
+	
 	setirq(VBLank(), irq_verticalblank);
 
+	Graphics::FlipBuffers();
 	while (done = false) do
 	begin
-		waitverticalblank();
+		// Clear back buffer. Do this smarter. 
+		fill(Graphics::curBuf,0,40*200);
+		RenderLines();
+		// Flip buffers
+		Graphics::FlipBuffers();
 	end;	
 end.
 

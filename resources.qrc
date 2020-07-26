@@ -498,5 +498,6 @@
         <file>resources/text/help/r/buildtable.rtf</file>
         <file>resources/images/bin.png</file>
         <file>resources/images/tutorials/yogrl.png</file>
+        <file>resources/images/AMIGA.png</file>
     </qresource>
 </RCC>

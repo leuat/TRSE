@@ -1575,11 +1575,11 @@ void MainWindow::LoadProject(QString filename)
     m_iniFile->Save();
 
     // Set compiler syntax based on system
-    QString system = m_currentProject.m_ini->getString("system");
+    QString system = m_currentProject.m_ini->getString("system").toUpper();
     Syntax::s.m_systemString = system;
     Syntax::s.Init(AbstractSystem::SystemFromString(system),m_iniFile, m_currentProject.m_ini);
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA)
-        Messages::messages.DisplayMessage(Messages::messages.AMIGA_WARNING);
+  //  if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA)
+   //     Messages::messages.DisplayMessage(Messages::messages.AMIGA_WARNING);
 
 
 /*    QString link = m_currentPath+QDir::separator() + "trse_units";
@@ -1599,20 +1599,27 @@ void MainWindow::LoadProject(QString filename)
 
     }
 */
-    QImage img(":resources/images/" +system+".png");
+    QImage sysImg(":resources/images/" +system+".png");
+    ui->lblCommodoreImage->setPixmap(QPixmap::fromImage(sysImg));
+    QImage img(320,50,QImage::Format_ARGB32);
+    img.fill(QColor(0,0,0,0));
+//    qDebug() << "MAIN " <<":resources/images/" +system+".png" << QFile::exists(":resources/images/" +system+".png");
     QPainter p;
     p.begin(&img);
+    QFont fnt = QFont(m_fontFamily, 16);
+    QFontMetrics qm(fnt);
+    QPointF pos(img.width()/2-((system.count()/2.0)*qm.width("9")),25);
 
-    QPointF pos(5,img.height()-10);
 //    p.setFont(QFont("c64", 12, QFont::Bold));
-    p.setFont(QFont(m_fontFamily, 8));
-    p.setPen(QPen(QColor(0,0,0)));
+    p.setFont(fnt);
+    p.setPen(QPen(QColor(0,0,0,255)));
     p.drawText(pos, system);
-    p.setPen(QPen(QColor(255,200,70)));
+    p.setPen(QPen(QColor(255,200,70,255)));
     p.drawText(pos-QPointF(2,2), system);
+ //   p.drawRect(pos.x(),pos.y(),10,10);
     p.end();
 
-    ui->lblCommodoreImage->setPixmap(QPixmap::fromImage(img));
+    ui->lblSystemName->setPixmap(QPixmap::fromImage(img));
 
 
     UpdateRecentProjects();

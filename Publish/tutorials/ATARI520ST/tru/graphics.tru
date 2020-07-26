@@ -232,7 +232,7 @@ begin
 		
 		sub.w #2,d5
 		
-;		moveq.l #0,d2
+		moveq.l #0,d2
 ;		moveq.l #0,d1
 ;		moveq.l #0,d3
 
@@ -379,7 +379,7 @@ begin
 		
 		sub.w #2,d5
 		
-;		moveq.l #0,d2
+		moveq.l #0,d2
 ;		moveq.l #0,d1
 ;		moveq.l #0,d3
 
