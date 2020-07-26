@@ -420,7 +420,7 @@ p, li { white-space: pre-wrap; }
                 </size>
                </property>
                <property name="toolTip">
-                <string>nop-grl is a 4-color Game Boy image created in TRSE. The image appears in the Game boy demo &quot;yo-grl&quot;. Full source + resoruces are located under the Game boy tutorial section</string>
+                <string>&quot;nop-grl&quot; is a 4-color Game Boy image created with TRSE. The image appears in the Game boy demo &quot;yo-grl&quot;. Full source + resources are located under the Game boy tutorial section</string>
                </property>
                <property name="text">
                 <string/>

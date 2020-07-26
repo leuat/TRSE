@@ -16,7 +16,7 @@ program Tutorial_1_hello_nes;
 
 var  
    	i,j,k: byte; 
-	// Must include dummy at $8000 due to the fact we are using 2 16kb blocks. For a larger project,
+	// Must include dummy at| $8000 due to the fact we are using 2 16kb blocks. For a larger project,
 	// this is where the music will go
 	dummy: incbin("tiles/game_tiles.pal", $8000);
 	palette: incbin("tiles/game_tiles.pal");
@@ -54,7 +54,7 @@ end;
 procedure InitScreen();
 begin
 //	zp:=@storage;
-	// fill 30 lines with same value i+50
+	// fill 30 lines with some values
 	ppupoint($20,00);
 	for i:=0 to 30 do begin
 		for j:=0 to 32 do
