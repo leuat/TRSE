@@ -179,9 +179,15 @@ void HexView::paintEvent(QPaintEvent *event)
             painter.drawText(xPosAscii, yPos, QString(ch));
         }
 
-        int sx = m_posAscii + 200;
+        int sx = m_posAscii + 16 * m_charWidth + GAP_HEX_ASCII;;
         int dx = 2;
         int dy = 2;
+
+        painter.setPen(m_colors->getColor("cycles"));
+
+        painter.drawLine(sx-8, event->rect().top(), sx-8, height());
+
+
         painter.setPen(m_colors->getColor("quotationcolor"));
         painter.setBrush(m_colors->getColor("quotationcolor"));
         for (int i=0;i<2;i++)
