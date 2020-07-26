@@ -5,12 +5,15 @@ SystemVIC20::SystemVIC20(QSharedPointer<CIniFile> settings, QSharedPointer<CIniF
     m_system = VIC20;
 
     m_systemColor = QColor(80,110,200);
-    param = proj->getString("vic_memory_config");
     DefaultValues();
 }
 
 void SystemVIC20::DefaultValues()
 {
+    param = m_projectIni->getString("temp_vic_memory_config");
+    if (param=="")
+        param = m_projectIni->getString("vic_memory_config");
+//    qDebug() << "VIC20 " << param;
     if (param=="none") {
         m_startAddress = 0x1000;
         m_programStartAddress = 0x1010;

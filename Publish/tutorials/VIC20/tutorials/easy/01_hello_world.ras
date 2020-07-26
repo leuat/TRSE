@@ -2,6 +2,8 @@ program HelloWorld;
 var  
   	text : string = ("HELLO WORLD");
 
+
+
 /*
 	This Vic 20 project is set up for use with a 16K RAM expansion, although
 	most examples will run on the unexpanded Vic 20.

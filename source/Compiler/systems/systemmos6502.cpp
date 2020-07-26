@@ -65,7 +65,7 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
             target="-t128";
         if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20) {
             target="-t20";
-            if (m_projectIni->getString("vic_memory_config")!="none") {
+            if (m_projectIni->getString("temp_vic_memory_config")!="none") {
                 target="-t52";
 
             }

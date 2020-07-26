@@ -928,6 +928,10 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         return;
     }
+    if (m_currentToken.m_value.toLower()=="vicmemoryconfig") {
+        Eat();
+        Eat();
+    }
     if (m_currentToken.m_value=="execute") {
         Eat();
         Eat();
@@ -1947,6 +1951,11 @@ void Parser::Preprocess()
                 Eat(TokenType::PREPROCESSOR);
                 HandleExportPrg2Bin();
             }
+            else if (m_currentToken.m_value.toLower()=="vicmemoryconfig") {
+                Eat(TokenType::PREPROCESSOR);
+                m_vicMemoryConfig = m_currentToken.m_value;
+                Eat();
+            }
             else if (m_currentToken.m_value.toLower() =="vbmexport") {
                 Eat(TokenType::PREPROCESSOR);
                 HandleVBMExport();
@@ -2153,6 +2162,8 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     m_lexer->m_text = m_lexer->m_orgText;
     m_removeUnusedDecls = removeUnusedDecls;
 
+    m_vicMemoryConfig = m_projectIni->getString("vic_memory_config");
+
     if (!m_isTRU || m_symTab==nullptr)
         m_symTab = QSharedPointer<SymbolTable>(new SymbolTable());
 
@@ -2161,6 +2172,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     m_pass = 0;
   //  RemoveComments();
     InitObsolete();
+
     if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::M68000)
         StripWhiteSpaceBeforeParenthesis(); // TODO: make better fix for this
 
@@ -2230,7 +2242,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
 
 
 //    qDebug() << m_symTab->m_symbols.keys();
-
+    m_projectIni->setString("temp_vic_memory_config",m_vicMemoryConfig);
     return root;
 }
 
@@ -3622,7 +3634,7 @@ void Parser::HandleUseTPU(QString fileName)
     try {
 
         p->m_tree = p->Parse( false
-                             ,m_projectIni->getString("vic_memory_config"),
+                             ,m_vicMemoryConfig,
                              Util::fromStringList(m_projectIni->getStringList("global_defines")),
                              m_projectIni->getdouble("pascal_settings_use_local_variables")==1.0);
     }catch (FatalErrorException e)

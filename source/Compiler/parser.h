@@ -73,6 +73,7 @@ public:
 //    int m_currentParserBlock=-1;
 
     bool m_hasBeenApplied = false;
+    QString m_vicMemoryConfig;
     QString m_currentDir, m_currentFileShort;
     QVector<QStringList> m_obsoleteWarnings;
     QMap<QString, QSharedPointer<Node>> m_procedures;

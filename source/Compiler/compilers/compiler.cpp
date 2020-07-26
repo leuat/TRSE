@@ -57,7 +57,7 @@ void Compiler::Parse(QString text, QStringList lst, QString fname)
     try {
         m_tree = m_parser.Parse( m_projectIni->getdouble("remove_unused_symbols")==1.0 &&
                                  Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES
-                                 ,m_projectIni->getString("vic_memory_config"),
+                                 ,m_parser.m_vicMemoryConfig,
                                  Util::fromStringList(m_projectIni->getStringList("global_defines")),
                                  m_projectIni->getdouble("pascal_settings_use_local_variables")==1.0);
 
@@ -78,8 +78,9 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
     }
 
     system->DefaultValues();
+    Syntax::s.m_currentSystem = system;
 
-    Syntax::s.m_currentSystem->DefaultValues();
+//    Syntax::s.m_currentSystem->DefaultValues();
 
     try {
         // Set up assembler and dispatcher for the current system
@@ -129,6 +130,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
     emit EmitTick("<br>Connecting and optimising");
 
     Connect();
+//    qDebug() << "Start address "<< Util::numToHex(system->m_startAddress);
 
     CleanupBlockLinenumbers();
 

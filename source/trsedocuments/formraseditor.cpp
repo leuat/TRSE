@@ -98,7 +98,12 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     if (m_projectIniFile->getString("system")=="VIC20") {
         emu = m_iniFile->getString("vic20_emulator");
         params<< "-autostartprgmode" << "1";
-        params<< "-memory" << m_projectIniFile->getString("vic_memory_config");
+        if (m_builderThread.m_builder==nullptr || m_builderThread.m_builder->compiler==nullptr)
+            params<< "-memory" << m_projectIniFile->getString("vic_memory_config");
+  //          qDebug() <<params;
+        else
+            params<< "-memory" << m_builderThread.m_builder->compiler->m_parser.m_vicMemoryConfig;
+
     }
     if (m_projectIniFile->getString("system")=="PET") {
         emu = m_iniFile->getString("pet_emulator");
