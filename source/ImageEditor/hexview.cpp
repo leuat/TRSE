@@ -15,7 +15,6 @@
 const int HEXCHARS_IN_LINE = 47;
 const int GAP_ADR_HEX = 10;
 const int GAP_HEX_ASCII = 16;
-const int BYTES_PER_LINE = 16;
 
 
 HexView::HexView(QWidget *parent):
@@ -26,13 +25,7 @@ m_pdata(NULL)
 
     m_charWidth = fontMetrics().width(QLatin1Char('9'));
     m_charHeight = fontMetrics().height();
-
-    m_hexPause = 00;
-    m_posAddr = 0;
-    m_posHex = 10 * m_charWidth + GAP_ADR_HEX;
-    m_posAscii = m_posHex + HEXCHARS_IN_LINE * m_charWidth + GAP_HEX_ASCII + m_hexPause;
-
-    setMinimumWidth(m_posAscii + (BYTES_PER_LINE * m_charWidth));
+    Calculate();
     setFocusPolicy(Qt::StrongFocus);
 }
 
@@ -41,6 +34,17 @@ HexView::~HexView()
 {
     if(m_pdata)
         delete m_pdata;
+}
+
+void HexView::Calculate()
+{
+    m_hexPause = 00;
+    m_posAddr = 0;
+    m_posHex = 10 * m_charWidth + GAP_ADR_HEX;
+    m_posAscii = m_posHex + (1+BYTES_PER_LINE)*3 * m_charWidth + GAP_HEX_ASCII + m_hexPause;
+
+    setMinimumWidth(m_posAscii + (BYTES_PER_LINE * m_charWidth));
+
 }
 
 void HexView::setData(HexView::DataStorage *pData)
@@ -91,7 +95,7 @@ void HexView::paintEvent(QPaintEvent *event)
 {
     if(!m_pdata)
         return;
-
+    Calculate();
     QPainter painter(viewport());
 
     QSize areaSize = viewport()->size();
@@ -130,7 +134,7 @@ void HexView::paintEvent(QPaintEvent *event)
     for (int lineIdx = firstLineIdx, yPos = yPosStart;  lineIdx < lastLineIdx; lineIdx += 1, yPos += m_charHeight)
     {
         painter.setPen(m_colors->getColor("numberscolor"));
-        QString address = QString("%1").arg(lineIdx * 16, 10, 16, QChar('0'));
+        QString address = QString("%1").arg(lineIdx * BYTES_PER_LINE, 10, 16, QChar('0'));
         painter.drawText(m_posAddr, yPos, address);
 
         painter.setPen(m_colors->getColor("textcolor"));
@@ -179,7 +183,7 @@ void HexView::paintEvent(QPaintEvent *event)
             painter.drawText(xPosAscii, yPos, QString(ch));
         }
 
-        int sx = m_posAscii + 16 * m_charWidth + GAP_HEX_ASCII;;
+        int sx = m_posAscii + BYTES_PER_LINE * m_charWidth + GAP_HEX_ASCII;;
         int dx = 2;
         int dy = 2;
 
@@ -190,7 +194,7 @@ void HexView::paintEvent(QPaintEvent *event)
 
         painter.setPen(m_colors->getColor("quotationcolor"));
         painter.setBrush(m_colors->getColor("quotationcolor"));
-        for (int i=0;i<2;i++)
+        for (int i=0;i<BYTES_PER_LINE/8;i++)
         {
 
             for (int b=0;b<8;b++) {

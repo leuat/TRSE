@@ -69,6 +69,8 @@ class HexView: public QAbstractScrollArea
 
         CIniFile* m_colors = nullptr;
 
+        int BYTES_PER_LINE = 16;
+        void Calculate();
 
     public slots:
         void setData(DataStorage *pData);

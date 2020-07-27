@@ -25,6 +25,9 @@ public:
     void InitDocument(WorkerThread* t, QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> iniProject) override;
 
 
+private slots:
+    void on_comboBox_currentIndexChanged(const QString &arg1);
+
 private:
     Ui::FormHexEdit *ui;
 };

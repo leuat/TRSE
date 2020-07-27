@@ -35,3 +35,11 @@ void FormHexEdit::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, QS
     ui->scrollArea->m_colors = &m_colors;
 }
 
+
+void FormHexEdit::on_comboBox_currentIndexChanged(const QString &arg1)
+{
+    ui->scrollArea->BYTES_PER_LINE = arg1.toInt();
+    ui->scrollArea->update();
+    ui->scrollArea->viewport()->update();
+
+}
