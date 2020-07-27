@@ -33,4 +33,3 @@ ignore_initial_jump = 0
 output_type = prg
 exomizer_toggle = 0
 open_files =, floskel.ras
-open_files =, floskel.ras

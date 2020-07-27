@@ -32,4 +32,3 @@ output_debug_symbols = 1
 exomize_toggle = 0
 exomizer_toggle = 1
 open_files =, main.ras
-open_files =, main.ras

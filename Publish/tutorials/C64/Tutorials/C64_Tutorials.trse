@@ -48,4 +48,3 @@ ignore_initial_jump = 0
 remove_unused_symbols = 1
 data_header_resources/images/octopus.flf = 6.93276e-310
 open_files =, Hello.ras
-open_files =, Hello.ras
