@@ -7,6 +7,9 @@ procedure MoveNibblerHeadLeft();
 
 procedure MoveNibblerHead();
 begin
+			
+	stopped := false;
+
 	// move head
 	if head[0] = @HEADUP then 
 	begin
@@ -147,73 +150,66 @@ end;
 // Stop Time - hit a wall
 procedure DecStopTime();
 begin
-	if stopTime <>0 then dec(stopTime);	// time allowed to rest
+	if stopTime <> 0 then dec(stopTime);	// time allowed to rest
+	stopped := true;
+end;
+
+procedure ProcessJoyResultTime();
+begin
+
+	// player is not pressing a direction right now
+	// check if we have a joytstick direction ready from last time?
+	if (JoyResult2Time > 0) then
+	begin
+		
+		JoyResult2Time := JoyResult2Time - 1;
+		joy1 := JoyResult2; // retrieve last saved joy dir
+			
+	end
+	else
+	begin
+		
+		JoyResult2 := 0; // time up, stop remembering
+
+	end;
+	
+end;
+
+// read the joystick or keys, or load up the last remembered direction
+procedure GetJoyKeyInput();
+begin
+
+	ReadJoy1( );
+	if (^@KEYB = KEY_Q or ^@KEYB = KEY_I) then joy1 := JOY_UP;
+	if (^@KEYB = KEY_A or ^@KEYB = KEY_M) then joy1 := JOY_DOWN;
+	if (^@KEYB = KEY_O or ^@KEYB = KEY_J) then joy1 := JOY_LEFT;
+	if (^@KEYB = KEY_P or ^@KEYB = KEY_K) then joy1 := JOY_RIGHT;
+
+	// sticky joy - store current joytstick dir if a direction pressed
+	if (joy1 <> 0) then
+	begin
+	
+		// player is pressing a direction, so save it
+		JoyResult2 := joy1;
+		JoyResult2Time := @JOYRESULTTIME; // amount of time to remember
+	
+	end;
+
 end;
 
 // test for user input to control Nibbler
 procedure NibblerControl();
+var
+	joke: string = ("AWFUL-JOKES.COM-TIME FLIES LIKE AN ARROW.FUIT FLIES LIKE A BANANA");
 begin
 
-	ReadJoystick();
-	if (^@KEYB = 48) then JoyResult := JoyResult | @JOY_UP;
-	if (^@KEYB = 17) then JoyResult := JoyResult | @JOY_DOWN;
-	if (^@KEYB = 52) then JoyResult := JoyResult | @JOY_LEFT;
-	if (^@KEYB = 13) then JoyResult := JoyResult | @JOY_RIGHT;
+	// retrieve last direction on key/joy that is saved
+	ProcessJoyResultTime();
 
 	// clear flag JUSTMOVED
 	justMoved := 0;
 
-	if (JoyResult & @JOY_UP = @JOY_UP) then begin 
-		if head[0] <> @HEADUP then // if travelling up or down, this key is invalid
-		if head[0] <> @HEADDOWN then // arcade peanalises you for this!
-		begin
-			p1 := head - @SCREEN_WIDTH;
-			if p1[0] >= 2 then return(); // it is not clear
-			
-			if head[0] = @HEADRIGHT then head[0] := @BODYTL;
-			if head[0] = @HEADLEFT then head[0] := @BODYTR;
-			
-			hissDuration:=@SOUND_HISSDURATION;
-			snd1Freq := 0;
-			
-			head := p1;
-			EatFood();
-			head[0] := @HEADUP;
-			headc := headc - @SCREEN_WIDTH;
-			headc[0] := GREEN;
-			//MoveNibblerTail();
-			justMoved := 1;
-		end;
-		return();
-	end;
-	
-
-	if (JoyResult & @JOY_DOWN = @JOY_DOWN) then begin 
-		if head[0] <> @HEADDOWN then // if travelling up or down, this key is invalid
-		if head[0] <> @HEADUP then // arcade peanalises you for this!
-		begin
-			p1 := head + @SCREEN_WIDTH;
-			if p1[0] >= 2 then return(); // it is not clear
-			
-			if head[0] = @HEADRIGHT then head[0] := @BODYBL;
-			if head[0] = @HEADLEFT then head[0] := @BODYBR;
-			
-			hissDuration:=@SOUND_HISSDURATION;
-			snd1Freq := 0;
-			
-			head := p1;
-			EatFood();
-			head[0] := @HEADDOWN;
-			headc := headc + @SCREEN_WIDTH;
-			headc[0] := GREEN;
-			//MoveNibblerTail();
-			justMoved := 1;
-		end;
-		return();
-	end;
-	
-
-	if (JoyResult & @JOY_LEFT = @JOY_LEFT) then begin 
+	if (joy1 & @JOY_LEFT = @JOY_LEFT) then begin 
 		if head[0] <> @HEADLEFT then // if travelling left or right, this key is invalid
 		if head[0] <> @HEADRIGHT then // arcade peanalises you for this!
 		begin
@@ -233,12 +229,15 @@ begin
 			headc[0] := GREEN;
 			//MoveNibblerTail();
 			justMoved := 1;
+			// stop remembering last joy move
+			//JoyResult2 := 0;
+			JoyResult2Time := 0;
 		end;
-		return();
+		//return();
 	end;
 	
 
-	if (JoyResult & @JOY_RIGHT = @JOY_RIGHT) then begin 
+	if (joy1 & @JOY_RIGHT = @JOY_RIGHT) then begin 
 		if head[0] <> @HEADRIGHT then // if travelling left or right, this key is invalid
 		if head[0] <> @HEADLEFT then // arcade peanalises you for this!
 		begin
@@ -258,8 +257,66 @@ begin
 			headc[0] := GREEN;
 			//MoveNibblerTail();
 			justMoved := 1;
+			// stop remembering last joy move
+			//JoyResult2 := 0;
+			JoyResult2Time := 0;
 		end;
-		return();
+		//return();
+	end;
+
+	if (joy1 & @JOY_UP = @JOY_UP) then begin 
+		if head[0] <> @HEADUP then // if travelling up or down, this key is invalid
+		if head[0] <> @HEADDOWN then // arcade peanalises you for this!
+		begin
+			p1 := head - @SCREEN_WIDTH;
+			if p1[0] >= 2 then return(); // it is not clear
+			
+			if head[0] = @HEADRIGHT then head[0] := @BODYTL;
+			if head[0] = @HEADLEFT then head[0] := @BODYTR;
+			
+			hissDuration:=@SOUND_HISSDURATION;
+			snd1Freq := 0;
+			
+			head := p1;
+			EatFood();
+			head[0] := @HEADUP;
+			headc := headc - @SCREEN_WIDTH;
+			headc[0] := GREEN;
+			//MoveNibblerTail();
+			justMoved := 1;
+			// stop remembering last joy move
+			//JoyResult2 := 0;
+			JoyResult2Time := 0;
+		end;
+		//return();
+	end;
+	
+
+	if (joy1 & @JOY_DOWN = @JOY_DOWN) then begin 
+		if head[0] <> @HEADDOWN then // if travelling up or down, this key is invalid
+		if head[0] <> @HEADUP then // arcade peanalises you for this!
+		begin
+			p1 := head + @SCREEN_WIDTH;
+			if p1[0] >= 2 then return(); // it is not clear
+			
+			if head[0] = @HEADRIGHT then head[0] := @BODYBL;
+			if head[0] = @HEADLEFT then head[0] := @BODYBR;
+			
+			hissDuration:=@SOUND_HISSDURATION;
+			snd1Freq := 0;
+			
+			head := p1;
+			EatFood();
+			head[0] := @HEADDOWN;
+			headc := headc + @SCREEN_WIDTH;
+			headc[0] := GREEN;
+			//MoveNibblerTail();
+			justMoved := 1;
+			// stop remembering last joy move
+			//JoyResult2 := 0;
+			JoyResult2Time := 0;
+		end;
+		//return();
 	end;
 	
 end;

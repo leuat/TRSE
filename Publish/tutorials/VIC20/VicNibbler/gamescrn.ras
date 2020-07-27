@@ -2,14 +2,15 @@
 procedure TitleScreen();
 var
 	titleText : string = (214,201,195);
-	hewcoText : string = (200,197,215,195,207,28,213,203,63,50,48,49,57);
-	rockText  : string = (210,207,195,203,28,207,204,193,63,49,57,56,50);
+	hewcoText : string = (200,197,215,195,207, 28,213,203, 63, 50,48,49,57);
+	rockText  : string = (210,207,195,203, 28,207,204,193, 63, 49,57,56,50);
+	tfw8bText : string = (212,198,215,56,194, 28, 195,207,205, 63, 50,48,50,48);
 	titlegfx : array[] of byte = (
 		$0a,$06,$0b,$02,$10,$00,$00,$10,$00,$00,$10,$00,$00,$00,$00,$00,$00,
 		$08,$00,$09,$08,$09,$05,$0b,$09,$05,$0b,$09,$0a,$07,$0b,$0a,$06,$03,
 		$08,$00,$09,$08,$09,$00,$08,$09,$00,$08,$09,$09,$06,$0d,$08,$00,$00,
 		$08,$00,$09,$08,$09,$00,$08,$09,$00,$08,$09,$09,$00,$00,$08,$00,$00,
-		$0e,$00,$04,$0e,$0c,$06,$0d,$0c,$06,$0d,$04,$0c,$06,$03,$0e,$00,$01
+		$0e,$00,$04,$0e,$0c,$06,$0d,$0c,$06,$0d,$04,$0c,$06,$03,$0e,$00,$32
 	);
 begin
 
@@ -29,12 +30,14 @@ begin
 		screenmemory := screenmemory + @SCREEN_WIDTH;
 		p1 := p1 + @SCREEN_WIDTH;
 	end;
-	screenmemory := $1f7f; //addresstable(scrm,3,20);
+	screenmemory := $1f6c; //addresstable(scrm,3,20);
 	printstring(rockText,0,13);
-	screenmemory := $1fa5; //addresstable(scrm,3,22);
+	screenmemory := $1f92; //addresstable(scrm,3,22);
 	printstring(hewcoText,0,13);
+	screenmemory := $1fb7; 
+	printstring(tfw8bText,0,14);
 
-	screenmemory := $1efd; //addresstable(scrm,6,12);
+	screenmemory := $1eea; //addresstable(scrm,6,12);
 	printdecimal(score,5);
 	screenmemory[6] := 48;
 	
@@ -42,7 +45,7 @@ end;
 
 procedure InstructionScreen();
 var // actual text letters are in the reverse range (in ROM) so referring to those instead
-	textInst0: array[] of byte =(137,142,147,148,146,149,131,148,137,143,142,147, 78);
+	textInst0: array[] of byte =(137,142,147,148,146,149,131,148,137,143,142,147, 59);
 
 	textInst1: array[] of byte =(131,140,133,129,146,0,133,129,131,136,0,141,129,154,133, 18);
 	textInst2: array[] of byte =(130,133,134,143,146,133,0,148,137,141,133,147,0,149,144, 56);
@@ -54,10 +57,12 @@ var // actual text letters are in the reverse range (in ROM) so referring to tho
 	textInst6: array[] of byte =(147,148,143,144,0,129,148,0,131,143,146,142,133,146,147, 57);
 
 	textInst7: array[] of byte =(142,137,130,130,140,133,146,0,135,146,143,151,147, 20);
-	textInst8: array[] of byte =(151,136,133,142,0,137,148,0,133,129,148,147, 96);
+	textInst8: array[] of byte =(151,136,133,142,0,137,148,0,133,129,148,147, 77);
 
 	textInstd: array[] of byte =(150,137,131,0,150,133,146,147,137,143,142, 20);
-	textInste: array[] of byte =(130,153,0,129,142,132,153,0,136, 254);
+	textInste: array[] of byte =(130,153,0,129,142,132,153,0,136);
+	
+	textInstf: array[] of byte =(34, 148,136,152,0,148,153,142,133,141,143,149,148,136,0,147,143,134,148, 254);
 
 begin
 	if p1[i] = 254 then return(); // finished
@@ -74,9 +79,6 @@ begin
 end;
 
 procedure TitleSequence();
-var
-	scrnNo : byte;
-	scrnDelay : byte;
 begin
 	scrnNo := 0;
 	
@@ -95,13 +97,13 @@ begin
 
 		numberOfRastersToWait := 15;
 		scrnDelay := 0;
-		while scrnDelay <> 200 do
+		while scrnDelay <> 220 do
 		begin
 			if scrnNo = 2 then InstructionScreen();
 			if scrnNo = 1 then AnimateNibblerBody();
 			
-			ReadJoystick();
-			if (JoyResult & @JOY_FIRE = @JOY_FIRE) then return();
+			ReadJoy1();
+			if (joy1 & JOY_FIRE) then return();
 			if (^@KEYB <> 64) then return();
 			
 			WaitForNRasters(); // uses s var

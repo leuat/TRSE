@@ -1,8 +1,5 @@
 
 procedure PlaySFX();
-var
-	hissDuration : byte = 0;
-	
 begin
 	if hissDuration = 0 then
 	begin
@@ -14,16 +11,14 @@ begin
 		hissDuration := 0;
 		return();
 	end;
+	
 	SOUNDFX_REGISTER := @SOUND_HISS;
 	hissDuration := hissDuration - 1;
 
 end;
 
 //SOUND1_REGISTER
-procedure PlaySND1();
-var
-	snd1Freq : byte = 0;
-	
+procedure PlaySND1();	
 begin
 
 	//if snd1Freq = 0 then return();
@@ -34,10 +29,7 @@ begin
 end;
 
 //SOUND2_REGISTER
-procedure PlaySND2();
-var
-	snd2Freq : byte = 0;
-	
+procedure PlaySND2();	
 begin
 
 	//if snd2Freq = 0 then return();

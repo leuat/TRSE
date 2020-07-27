@@ -1,3 +1,28 @@
+@ifdef BUILDCRT
+// only used in cart - to copy characters into VIC RAM
+procedure CopyCharSet();
+begin
+
+	p1 := @CHAR_ADDR;
+	p2 := @CHAR_ADDR_CART;
+	
+	for t := 0 to 2 do
+	begin
+		for i := 0 to 256 do
+		begin
+	
+			p1[ i ] := p2[ i ];
+
+		end;
+	
+		p1 := p1 + 256;
+		p2 := p2 + 256;
+	
+	end;
+
+end;
+@endif
+
 procedure ClearTheScreen();
 begin
 	ClearScreen(0, ^@SCREEN_ADDR);
@@ -12,8 +37,8 @@ begin
 	DefineScreen();
 	ClearTheScreen();
 	//poke( SCREEN_CHAR_REGISTER, 0, 255 ); // set char map to $1c00, leave screen at $1e00
-	SetCharsetLocation( @CHAR_ADDR );
-
+	//SetCharsetLocation( @CHAR_ADDR );
+	VIC_DATA_LOC := $ff; // screen and char location
 	
 	SCREEN_TEXT_WIDTH := @SCREEN_WIDTH | 128;  // width
 	SCREEN_TEXT_HEIGHT := 48; // 24 (25 rows-1) x 2
@@ -25,6 +50,12 @@ begin
 	CreateAddressTable( scrm, $1e00, @SCREEN_WIDTH, @SCREEN_HEIGHT ); // bug- constants not accepted @SCREEN_ADDR and @COLOUR_ADDR
 	CreateAddressTable( clrm, $9600, @SCREEN_WIDTH, @SCREEN_HEIGHT );
 	
+	@ifdef BUILDCRT
+	
+	CopyCharSet();
+	
+	@endif
+
 end;
 
 // set position of head and tail pointers
@@ -36,54 +67,9 @@ begin
 	tailc := $9795; //AddressTable( clrm, 6, 21 );
 end;
 
-// my version for the vic20
-procedure SetupJoystick();
-var
-	//JoyLast: byte = 0;
-	JoyResult: byte = 0;
-	@define JOY_UP %00000010
-	@define JOY_DOWN         %00000100
-	@define JOY_LEFT         %00001000
-	@define JOY_RIGHT        %00000001
-	@define JOY_FIRE         %00010000
-begin
-	asm("
-
-PORTACASS       = $911F
-PORTBVIA2       = $9120      ; Port B 6522 2 value (joystick)
-PORTBVIA2d      = $9122      ; Port B 6522 2 direction (joystick)
-
-
-	");
-end;
-procedure ReadJoystick();
-begin
-
-	asm("
-
-JoyRead      
-                LDA PORTACASS
-                EOR #$FF
-                AND #$3C
-                LDX #$7F
-                SEI
-                STX PORTBVIA2d
-                LDY PORTBVIA2
-                BMI jjump
-                ORA #$02
-jjump           LDX #$FF
-                STX PORTBVIA2d
-                CLI
-                LSR
-                STA JoyResult
-	");
-end;
-
 // wait for numberOfRastersToWait raster loops
 // uses s variable
 procedure WaitForNRasters();
-var
-	numberOfRastersToWait: byte = 1;
 begin
 	fori s := 1 to numberOfRastersToWait do
 		waitforraster(@WAITVBL_LINE); 
