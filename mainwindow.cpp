@@ -121,6 +121,9 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(ShowFileContext(const QPoint &)));
 
 
+
+//    ui->qsplitter->setSizes(QList<int>() << 5<<15<<10000);
+
 }
 
 
@@ -236,6 +239,8 @@ void MainWindow::RestoreSettings()
     ui->psplitter->restoreState(settings.value("MainWindow/psplitter").toByteArray());
     ui->qsplitter->restoreState(settings.value("MainWindow/qsplitter").toByteArray());
     ui->splitter->restoreState(settings.value("MainWindow/splitter").toByteArray());
+
+
 
 }
 
