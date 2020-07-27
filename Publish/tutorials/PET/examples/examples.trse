@@ -38,3 +38,4 @@ exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
 open_files =, 01_hello_world.ras
+open_files =, 01_hello_world.ras

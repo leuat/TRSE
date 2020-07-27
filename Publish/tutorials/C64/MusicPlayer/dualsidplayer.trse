@@ -36,3 +36,4 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 data_header_images/main.flf = 6.9229e-310
 open_files =, player.ras
+open_files =, player.ras

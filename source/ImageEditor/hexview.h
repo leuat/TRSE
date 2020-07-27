@@ -25,7 +25,7 @@ class HexView: public QAbstractScrollArea
         class DataStorage
         {
             public:
-                virtual ~DataStorage() {};
+                virtual ~DataStorage() {}
                 virtual QByteArray getData(std::size_t position, std::size_t length) = 0;
                 virtual void setData(std::size_t position, unsigned char val) = 0;
                 virtual std::size_t size() = 0;

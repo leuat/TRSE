@@ -107,7 +107,7 @@ public:
     enum WriteType { Color, Character };
     LImage() {}
     LImage(LColorList::Type t);
-    ~LImage() {
+    virtual ~LImage() {
         Release();
     }
     LImageSupports m_supports;
