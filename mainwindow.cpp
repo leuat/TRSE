@@ -50,6 +50,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_defaultPalette = palette();
     ui->setupUi(this);
    // m_work.m_colorList.CreateUI(ui->layoutColors,0);
+    int id= QFontDatabase::addApplicationFont(":resources/fonts/c64.ttf");
+    m_fontFamily = QFontDatabase::applicationFontFamilies(id).at(0);
 
     TRSEDocument::m_defaultPalette = m_defaultPalette;
     qRegisterMetaTypeStreamOperators<CItem>("CItem");
@@ -82,8 +84,6 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(qApp, SIGNAL(aboutToQuit()), m_updateThread, SLOT(OnQuit()));
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(OnQuit()));
 
-   int id= QFontDatabase::addApplicationFont(":resources/fonts/c64.ttf");
-   m_fontFamily = QFontDatabase::applicationFontFamilies(id).at(0);
     UpdateRecentProjects();
     SetupFileList();
 
@@ -1602,27 +1602,13 @@ void MainWindow::LoadProject(QString filename)
 */
     QImage sysImg(":resources/images/" +system+".png");
     ui->lblCommodoreImage->setPixmap(QPixmap::fromImage(sysImg));
-    QImage img(320,50,QImage::Format_ARGB32);
-    img.fill(QColor(0,0,0,0));
-//    qDebug() << "MAIN " <<":resources/images/" +system+".png" << QFile::exists(":resources/images/" +system+".png");
-    QPainter p;
-    p.begin(&img);
-    QFont fnt = QFont(m_fontFamily, 16);
-    QFontMetrics qm(fnt);
-    QPointF pos(img.width()/2-((system.count()/2.0)*qm.width("9")),25);
+    QFont fnt = QFont(m_fontFamily, width()/140);
 
-//    p.setFont(QFont("c64", 12, QFont::Bold));
-    p.setFont(fnt);
-    p.setPen(QPen(QColor(0,0,0,255)));
-    p.drawText(pos, system);
-    p.setPen(QPen(QColor(255,200,70,255)));
-    p.drawText(pos-QPointF(2,2), system);
- //   p.drawRect(pos.x(),pos.y(),10,10);
-    p.end();
-
-    ui->lblSystemName->setPixmap(QPixmap::fromImage(img));
-
-
+    ui->lblSystemName->setFont(fnt);
+    ui->lblSystemName->setText(system);
+    ui->lblSystemName->setAlignment(Qt::AlignCenter);
+    ui->lblSystemName->setStyleSheet("QLabel { color : yellow; }");
+    ui->lblSystemName->setFont(QFont(fnt));
     UpdateRecentProjects();
 
 

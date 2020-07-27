@@ -54,4 +54,6 @@ ignore_initial_jump = 0
 override_target_settings_basic = 0
 exomizer_toggle = 0
 data_header_resources/charsets/charset.flf = 0
-open_files =, easy/01_hello_world.ras
+open_files = ,easy/01_hello_world.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/tutorials/
+current_file = easy/01_hello_world.ras
