@@ -41,7 +41,7 @@ void SystemAtari520ST::Assemble(QString &text, QString filename, QString current
     int assembleTime = timer.elapsed()- time;
     time = timer.elapsed();
 
-        qDebug() << "*********" << output;
+//        qDebug() << "*********" << output;
 
     text+=output;
 }

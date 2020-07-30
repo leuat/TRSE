@@ -1216,7 +1216,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         QSharedPointer<Symbol> s = m_symTab->m_constants[m_currentToken.m_value.toUpper()];
         isConstant=true;
 
-//        qDebug() << "looking for " << m_currentToken.m_value << " , found symbol: " << s->m_name << " with value " << s->m_value->m_fVal << " of type " << s->m_type;
+        qDebug() << "PARSER looking for " << m_currentToken.m_value << " , found symbol: " << s->m_name << " with value " << s->m_value->m_fVal << " of type " << s->m_type;
 
 //        qDebug() << m_currentToken.m_value;
 //        qDebug() << s->m_value->m_fVal << 0xffff8240;

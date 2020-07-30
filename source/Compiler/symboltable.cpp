@@ -114,18 +114,22 @@ void SymbolTable::Initialize()
         else
             value = values[0];
 
-//        qDebug() << "Found VALUE " << value;
 
     //    if (constant=="KEY_2")
       //      qDebug() << system << currentSystem << system.contains(currentSystem);
 
         if (system.contains(currentSystem)) {
+
             long ival = Util::NumberFromStringHex(value);
             if (ival==0 && value.count()>4) {
+//                qDebug() << "IVAL zero so : " << value;
                 QString tst = value;
                 tst = tst.remove("$");
                 bool ok;
-                ival = tst.toLong(&ok,16);
+                ival = tst.toLongLong(&ok,16);
+                if (!ok)
+                    ErrorHandler::e.Error("Error reading constant '"+constant+"' with value '"+value+"' in syntax.txt. This should not happen, contant leuat@www.irio.co.uk at once!");
+  //              qDebug() << "OK? " <<ok <<tst;
             }
 //            qDebug() << "TRYING : " << value << ival;
             if (type=="b")
@@ -134,7 +138,9 @@ void SymbolTable::Initialize()
                 m_constants[constant] = QSharedPointer<Symbol>(new Symbol("^"+value,"ADDRESS", ival));
             if (type=="i")
                 m_constants[constant] = QSharedPointer<Symbol>(new Symbol(value,"INTEGER", ival));
-//            qDebug() << "SYMTAB "<<ival <<m_constants[constant]->m_value->m_fVal;
+
+//            if (constant.toLower().contains("palette"))
+    //            qDebug() << "SYMTAB "<<constant<<value<<ival <<m_constants[constant]->m_value->m_fVal;
 
 //            if (constant=="KEY_2")
   //              qDebug() << constant << Util::numToHex(value.toInt()));
