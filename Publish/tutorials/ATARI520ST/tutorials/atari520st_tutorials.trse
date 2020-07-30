@@ -46,4 +46,5 @@ data_header_images/image1.flf = 0
 data_header_images/logo.flf = 0
 data_header_images/image2.flf = 0
 data_header_images/image3.flf = 0
-open_files =, tut1.ras
+open_files = ,tut1.ras
+project_path = tutorials/ATARI520ST/tutorials/
