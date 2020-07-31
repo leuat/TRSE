@@ -609,6 +609,17 @@ static int AddBitplaneToData(lua_State* L) {
     return 0;
 }
 
+static int AddAtariBitplaneToData(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddAtariBitplaneTodata"))
+        return 0;
+
+    if (m_effect!=nullptr)
+       m_compression.AddAtariBitplaneToData(m_charData, *((MultiColorImage*)(m_effect->m_mc)) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+
+    return 0;
+}
+
+
 
 static int AddGameboyData(lua_State* L) {
     if (!VerifyFjongParameters(L,"AddBitplaneTodata"))
@@ -682,11 +693,7 @@ static int SaveData(lua_State* L) {
     if (!VerifyFjongParameters(L,"SaveData"))
         return 0;
 
-    QFile f(m_currentDir+"/"+ lua_tostring(L,1));
-    f.open(QFile::WriteOnly);
-
-    f.write(m_charData);
-    f.close();
+    Util::SaveByteArray(m_charData,m_currentDir+"/"+ lua_tostring(L,1));
     m_charData.clear();
     return 0;
 }
@@ -1030,6 +1037,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddToPng", AddToPng);
 
     lua_register(m_script->L, "AddAmigaBitplaneToData", AddBitplaneToData);
+    lua_register(m_script->L, "AddAtariBitplaneToData", AddAtariBitplaneToData);
     lua_register(m_script->L, "AddGameboyData", AddGameboyData);
     lua_register(m_script->L, "Save2DInfo", Save2DInfo);
     lua_register(m_script->L, "SaveMulticolorImage", SaveMulticolorImage);

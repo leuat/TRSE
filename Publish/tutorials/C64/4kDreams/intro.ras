@@ -210,11 +210,6 @@ begin
 	for y:=0 to 8 step 2 do begin
 		for x:=l to m step 2 do begin
 			
-/*			k:=getbit(zp[y],7-x);
-			k:=k+getbit(zp[y],6-x)*2;
-			k:=k+getbit(zp[y+1],6-x)*4;
-			k:=k+getbit(zp[y+1],7-x)*8;
-	*/		
 			k:=getbit(zp[y],7-x);
 			k:=k+getbit(zp[y],6-x)*2;
 			k:=k+getbit(zp[y+1],6-x)*4;
@@ -259,14 +254,11 @@ begin
 		k:=i*2;
 		asm("
 			ldy k
-	
 			lda zp
 			sta (p1),y
 			lda zp+1
 			iny
 			sta (p1),y
-
-	
 
 		");
 //		inczp(p1,2);

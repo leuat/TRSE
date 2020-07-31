@@ -100,6 +100,15 @@ begin
 end;
 
 
+procedure SingleBuffer();
+begin
+		SetScreenBuffer(screen1Buf);
+		curBuf:=buf1;
+		offBuf:=buf1;
+		screen_tab:=screentab1;
+
+end;
+
 
 procedure FlipBuffers();
 begin

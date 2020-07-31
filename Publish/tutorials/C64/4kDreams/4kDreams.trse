@@ -45,4 +45,6 @@ exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
 exomizer_toggle = 0
-open_files =, intro.ras
+open_files = ,intro.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/4kDreams/
+current_file = intro.ras

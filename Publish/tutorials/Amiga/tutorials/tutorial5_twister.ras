@@ -57,14 +57,14 @@ begin
 		j:=sine32[(i+t2)&255]; // Twist turning
 		k:=((tx+j)&15); // Current rotation frame
 		l:=(i-tt); // Current shift & text position in y
-		j:=l>>5; // j:=l/32 - find current character
+		j:=l>>6; // j:=l/32 - find current character
 	 	j:=(tp[j&15])&31; // Look up current character, store in j
 	 	// Look up : each charater is 32 height * 16 frames * 2 = 32*32 = shl 10 == shl 5 shl 5 
-	 	n:=j*(32*16);
+	 	n:=j*(64*16);
 	 	
 		l:=l&31;
 		// Look up actual table: Frame (k) + line (l) + letter (n)
-		k:=table2[k<<5+ l +n];
+		k:=table2[k<<6+ l +n];
 
 
 		// Copy 2x2 rows of data

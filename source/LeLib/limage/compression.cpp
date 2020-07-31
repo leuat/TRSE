@@ -116,6 +116,43 @@ void Compression::AddBitplaneToData(QByteArray &data, MultiColorImage &img, int 
 }
 
 
+void Compression::AddAtariBitplaneToData(QByteArray &data, MultiColorImage &img, int xp, int yp, int w, int h)
+{
+    int d= 0;
+    int bpl = 4;
+    // 4*(16/8)*4
+    for (int y=0;y<h;y+=1)
+//            curBit=curBit;
+
+
+        for (int x=0;x<w;x++) {
+
+            for (int bp=0; bp<bpl;bp++) {
+                int curBit = pow(2,bp);
+
+
+            int xx = xp+x;
+            int yy = yp+y;
+
+            unsigned int c = 0;
+            for (int i=0;i<16;i++) {
+                int col = img.getPixel(xx*16+i,yy);
+                if ((col & curBit)==curBit )
+                    c = c | (0x1<<(15-i));
+                //0101
+            }
+            data.append(((c>>8)&255));
+            data.append((c&255));
+            d++;
+//            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+  //          data.append(PixelChar::reverse(pc.p[yy&7]));
+        }
+     }
+    qDebug() << "AddAtariBitplaneToData size " <<d << w << h;
+
+}
+
+
 void Compression::AddGameboyData(QByteArray &data, MultiColorImage &img, int xp, int yp, int w, int h)
 {
     int d= 0;
