@@ -1,0 +1,41 @@
+program Tutorial1;
+var  
+   done: byte; 
+   test : byte;
+	k1 : byte=0;
+	t,j,k,la,time : byte=0;
+	p1:pointer;
+	
+procedure SetMode(sm_mode: byte);
+begin
+	asm("
+    ld  a,[sm_mode]
+    call  $BC0E
+	");
+end;
+
+procedure FillScreen(fs_j:byte);
+begin
+	p1:=$C000;
+	k1:=fs_j;
+	for j:=0 to 200 do
+	begin
+		fill(p1,k1,80);
+		k1:=k1+2;
+		p1:=p1+80;
+//		k1:=k1+11;
+	//	p1:=p1+160;
+	end;
+
+end;	
+
+begin
+	time:=0;
+	SetMode(0);
+	while (done=0) do
+	begin
+		FillScreen(time);
+		time:=time+1;
+	end;	
+
+end.
