@@ -649,6 +649,19 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeComment> node)
 void ASTDispatcher68000::StoreVariable(QSharedPointer<NodeVar> n)
 {
     as->Comment("Store variable : " + n->getValue(as));
+
+    if (n->m_subNode!=nullptr){
+        QSharedPointer<NodeVar> nv = qSharedPointerDynamicCast<NodeVar>(n->m_subNode);
+        if (nv->m_expr!=nullptr) {
+            n->m_expr = nv->m_expr;
+            nv->m_expr = nullptr;
+            n->m_ignoreRecordExpr = true;
+            nv->m_ignoreRecordExpr = true;
+        }
+    }
+
+
+
     if (n->m_expr!=nullptr) {
         QString d0 = as->m_varStack.pop();
 
@@ -1105,6 +1118,38 @@ QString ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
         //if (node->m_left->getArrayType(as))
         node->m_right->m_forceType = node->m_left->getArrayType(as); // FORCE integer on right-hand side
     }
+
+
+    // Trying to assign a PURE record
+    if (v->isRecord(as) && !v->isRecordData(as)) {
+        if (!node->m_right->isRecord(as))
+            ErrorHandler::e.Error("Right-hand side of assignment must also be record of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
+        if (v->getTypeText(as)!=node->m_right->getTypeText(as))
+            ErrorHandler::e.Error("Right-hand side of assignment must also be of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
+        if (node->m_right->isRecordData(as))
+            ErrorHandler::e.Error("Right-hand side of assignment must also be of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
+
+        // Copy record:
+//        HandleNodeAssignCopyRecord(node);
+        ErrorHandler::e.Error("RECORD ASSIGNMENT NOT IMPLEMENTED YET", v->m_op.m_lineNumber);
+
+        return "";
+    }
+
+    // POINTER = RECORD errors
+    if (node->m_left->getType(as)==TokenType::POINTER && node->m_right->isRecord(as)) {
+        if (!node->m_left->isArrayIndex())
+            ErrorHandler::e.Error("Cannot assign a pointer to a record.", node->m_op.m_lineNumber);
+        if (!node->m_right->isRecordData(as))
+            ErrorHandler::e.Error("Cannot assign a pointer data to a record.", node->m_op.m_lineNumber);
+ //       if (node->)
+    }
+    // Variable = POINTER
+    if (node->m_right->isRecord(as) && (!node->m_right->isRecordData(as))) {
+        ErrorHandler::e.Error("Cannot assign a record of type '"+node->m_right->getTypeText(as)+"' to a single variable. ",node->m_op.m_lineNumber);
+    }
+
+
 
 
 
