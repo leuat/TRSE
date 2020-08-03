@@ -74,6 +74,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leCursorWidth->setText(QString::number((int)m_ini->getdouble("editor_cursor_width")));
     ui->chkAutoInject->setChecked(m_ini->getdouble("auto_inject")==1.0);
 
+    ui->leCPCDisk->setText(m_ini->getString("cpcdisk_location"));
 
     ui->chkExomizer->setChecked(m_ini->getdouble("exomizer_version_3")==1.0);
 
@@ -154,6 +155,8 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("tiki100_emulator", ui->leTiki100->text());
     m_ini->setString("pasmo", ui->lePasmo->text());
 
+
+    m_ini->setString("cpcdisk_location",ui->leCPCDisk->text());
 
 
 
@@ -573,6 +576,16 @@ void DialogTRSESettings::on_btnColecoEmulator_clicked()
         tr("ColecoVision emulator"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->leColecoEmulator->setText(filename);
+
+
+}
+
+void DialogTRSESettings::on_btnCPCDIsk_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Amstrad CPCDiskXP.exe"), m_ini->getString("project_path"), "CPCDiskXP.exe");
+    if (filename!="")
+        ui->leCPCDisk->setText(filename);
 
 
 }

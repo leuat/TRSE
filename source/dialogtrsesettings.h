@@ -160,6 +160,8 @@ private slots:
 
     void on_btnColecoEmulator_clicked();
 
+    void on_btnCPCDIsk_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

@@ -32,6 +32,11 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
         text  += "<br><font color=\"#FF6040\">Please set up a link to the PASMO assembler directory in the TRSE settings panel.</font>";
         return;
     }
+    if (!QFile::exists(m_settingsIni->getString("cpcdisk_location"))) {
+        text  += "<br><font color=\"#FF6040\">Please set up a link to the CPCDiskXP disk utility TRSE 'Utilities' settings panel.</font>";
+        return;
+
+    }
 
     if (QFile::exists(filename+".bin"))
         QFile::remove(filename+".bin");
@@ -54,14 +59,24 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
     // Temporary solution
     QString fn = filename;
     fn = fn.remove(currentDir).remove("/");
-    QStringList ps = QStringList()                  <<"/home/leuat/code/amstrad/CPCDiskXP.exe"
+    QProcess* pr = new QProcess();
+#ifdef _WIN32
+    QStringList ps = QStringList()                 << "-File"<< ( fn+".bin")
+                                                   <<"-AddAmsdosHeader"<< "6000"
+                                                   <<"-AddToNewDsk"<< fn+".dsk";
+
+    pr->setWorkingDirectory(currentDir);
+    pr->start(m_settingsIni->getString("cpcdisk_location"), ps);
+#else
+
+    QStringList ps = QStringList()                  <<m_settingsIni->getString("cpcdisk_location")
                                                    << "-File"<< ( fn+".bin")
                                                    <<"-AddAmsdosHeader"<< "6000"
                                                    <<"-AddToNewDsk"<< fn+".dsk";
 
-    QProcess* pr = new QProcess();
     pr->setWorkingDirectory(currentDir);
     pr->start("wine", ps);
+#endif
     pr->waitForFinished();
 
 //    qDebug() <<     fn+".dsk";
