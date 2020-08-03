@@ -104,6 +104,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemamstradcpc464.cpp \
     source/Compiler/systems/systematari2600.cpp \
     source/Compiler/systems/systematari520st.cpp \
+    source/Compiler/systems/systemcoleco.cpp \
     source/Compiler/systems/systemgameboy.cpp \
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemplus4.cpp \
@@ -291,6 +292,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemamstradcpc464.h \
     source/Compiler/systems/systematari2600.h \
     source/Compiler/systems/systematari520st.h \
+    source/Compiler/systems/systemcoleco.h \
     source/Compiler/systems/systemgameboy.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemplus4.h \

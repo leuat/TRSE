@@ -135,6 +135,11 @@
          </item>
          <item>
           <property name="text">
+           <string>COLECO</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
            <string>X16</string>
           </property>
          </item>

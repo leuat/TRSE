@@ -505,5 +505,7 @@
         <file>resources/text/help/r/shr.rtf</file>
         <file>resources/text/help/r/shl.rtf</file>
         <file>resources/text/help/r/inline.rtf</file>
+        <file>resources/code/coleco/header.asm</file>
+        <file>resources/code/coleco/footer.asm</file>
     </qresource>
 </RCC>

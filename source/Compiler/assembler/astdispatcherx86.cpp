@@ -596,7 +596,7 @@ void ASTdispatcherX86::DeclarePointer(QSharedPointer<NodeVarDecl> node)
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
 
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY)
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY || Syntax::s.m_currentSystem->m_system == AbstractSystem::COLECO)
         as->Write(v->getValue(as)+ ": ds  2" ,0);
     else
         as->Write(v->getValue(as)+ ": dw  0,0",0);

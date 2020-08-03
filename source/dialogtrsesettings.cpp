@@ -62,6 +62,7 @@ void DialogTRSESettings::FillFromIni()
     ui->lePlus4Emulator->setText(m_ini->getString("plus4_emulator"));
     ui->leX16Emu->setText(m_ini->getString("x16_emulator"));
     ui->leAmstradCPC464->setText(m_ini->getString("amstradcpc464_emulator"));
+    ui->leColecoEmulator->setText(m_ini->getString("coleco_emulator"));
     //ui->leX16EmuParams->setText(m_ini->getString("x16_emulator_params"));
     ui->leC1541->setText(m_ini->getString("c1541"));
     ui->lePasmo->setText(m_ini->getString("pasmo"));
@@ -145,6 +146,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
     m_ini->setString("amstradcpc464_emulator", ui->leAmstradCPC464->text());
+    m_ini->setString("coleco_emulator", ui->leColecoEmulator->text());
     //m_ini->setString("x16_emulator_params", ui->leX16EmuParams->text());
     m_ini->setString("c1541", ui->leC1541->text());
 
@@ -234,7 +236,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" << "AMSTRADCPC464";
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"COLECO"<<"AMSTRADCPC464"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16";
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         QPushButton* btn = new QPushButton("params");
         ui->grdEmulators->addWidget(btn,i,4);
@@ -562,5 +564,15 @@ void DialogTRSESettings::on_btnAmstradCMC464_clicked()
 void DialogTRSESettings::on_btnHelpAmstradCPC464_clicked()
 {
     Help("Amstrad CPC 464 Emulator 'Caprice'", "TRSE needs to use the 'Caprice' emulator in order to be able to inject programs.");
+
+}
+
+void DialogTRSESettings::on_btnColecoEmulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("ColecoVision emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leColecoEmulator->setText(filename);
+
 
 }

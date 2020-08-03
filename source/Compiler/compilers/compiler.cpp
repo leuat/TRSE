@@ -86,7 +86,8 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
         // Set up assembler and dispatcher for the current system
         InitAssemblerAnddispatcher(system);
         m_assembler->m_curDir = project_dir;
-        m_dispatcher->m_outputLineNumbers =  m_ini->getdouble("display_addresses")==1.0;
+        if (system->m_processor==AbstractSystem::MOS6502)
+            m_dispatcher->m_outputLineNumbers =  m_ini->getdouble("display_addresses")==1.0;
 
 
     } catch (FatalErrorException e) {

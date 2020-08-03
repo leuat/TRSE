@@ -150,6 +150,7 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
 
     if (initval=="")
         initval = "0";
+
     if (type.toLower()=="const") {
         Write(name + " equ " + initval,0);
         return;
@@ -165,7 +166,7 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
     if (t=="")
         ErrorHandler::e.Error("Cannot declare variable of type: " + type);
 
-
+//    qDebug() << "IS WRAM " <<(m_currentBlock==m_wram) << name;
     if (m_currentBlock==m_hram || m_currentBlock==m_wram || m_currentBlock==m_sprram) {
         t = "ds";
         if (type.toLower()=="byte") {

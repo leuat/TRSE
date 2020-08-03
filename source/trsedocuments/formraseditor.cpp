@@ -144,6 +144,10 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         emu = m_iniFile->getString("amstradcpc464_emulator");
 
     }
+    if (m_projectIniFile->getString("system")=="COLECO") {
+        emu = m_iniFile->getString("coleco_emulator");
+
+    }
 
     if (m_projectIniFile->getString("system")=="X86") {
         emu = m_iniFile->getString("dosbox");
@@ -487,6 +491,8 @@ void FormRasEditor::Run()
         filename = m_currentSourceFile.split(ft)[0] + ".com";
     if (m_projectIniFile->getString("system")=="AMSTRADCPC464")
         filename = m_currentSourceFile.split(ft)[0] + ".dsk";
+    if (m_projectIniFile->getString("system")=="COLECO")
+        filename = m_currentSourceFile.split(ft)[0] + ".bin";
     if (m_projectIniFile->getString("system")=="TIKI100")
         filename = m_currentDir+ "disk.dsk";
 

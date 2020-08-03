@@ -158,6 +158,8 @@ private slots:
 
     void on_btnHelpAmstradCPC464_clicked();
 
+    void on_btnColecoEmulator_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

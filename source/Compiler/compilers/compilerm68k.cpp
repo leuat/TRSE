@@ -5,6 +5,7 @@ void CompilerM68K::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sys
 {
     m_assembler = QSharedPointer<AsmM68000>(new AsmM68000());//
     m_dispatcher = QSharedPointer<ASTDispatcher68000>(new ASTDispatcher68000());
+    m_dispatcher->m_outputLineNumbers = false;
 
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA) {
