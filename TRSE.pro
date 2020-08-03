@@ -101,6 +101,7 @@ SOURCES += main.cpp\
     source/Compiler/compilers/compilerx86.cpp \
     source/Compiler/compilers/compilerz80.cpp \
     source/Compiler/compilers/factorycompiler.cpp \
+    source/Compiler/systems/systemamstradcpc464.cpp \
     source/Compiler/systems/systematari2600.cpp \
     source/Compiler/systems/systematari520st.cpp \
     source/Compiler/systems/systemgameboy.cpp \
@@ -287,6 +288,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/compilers/compilerx86.h \
     source/Compiler/compilers/compilerz80.h \
     source/Compiler/compilers/factorycompiler.h \
+    source/Compiler/systems/systemamstradcpc464.h \
     source/Compiler/systems/systematari2600.h \
     source/Compiler/systems/systematari520st.h \
     source/Compiler/systems/systemgameboy.h \

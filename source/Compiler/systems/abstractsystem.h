@@ -62,7 +62,7 @@ public:
 
     static void InitLabelColors();
 
-    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST};
+    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST, AMSTRADCPC464};
     enum Processor {MOS6502, M68000,PX86, GBZ80, Z80};
 
     bool m_buildSuccess;
@@ -111,6 +111,8 @@ public:
             return ATARI2600;
         if (s.toLower()=="atari520st")
             return ATARI520ST;
+        if (s.toLower()=="amstradcpc464")
+            return AMSTRADCPC464;
     }
 
     static QString StringFromSystem(System s) {
@@ -130,6 +132,7 @@ public:
         if (s == TIKI100) return "TIKI100";
         if (s == ATARI2600) return "ATARI2600";
         if (s == ATARI520ST) return "ATARI520ST";
+        if (s == AMSTRADCPC464) return "AMSTRADCPC464";
     }
 
 

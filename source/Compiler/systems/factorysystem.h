@@ -16,6 +16,7 @@
 #include "systemtiki100.h"
 #include "systematari2600.h"
 #include "systematari520st.h"
+#include "systemamstradcpc464.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem
@@ -55,6 +56,8 @@ public:
             return new SystemAtari2600(settings, proj);
         if (type==AbstractSystem::ATARI520ST)
             return new SystemAtari520ST(settings, proj);
+        if (type==AbstractSystem::AMSTRADCPC464)
+            return new SystemAmstradCPC464(settings, proj);
 
 
         return s;

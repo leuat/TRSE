@@ -140,6 +140,10 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     if (m_projectIniFile->getString("system")=="ATARI2600") {
         emu = m_iniFile->getString("atari2600_emulator");
     }
+    if (m_projectIniFile->getString("system")=="AMSTRADCPC464") {
+        emu = m_iniFile->getString("amstradcpc464_emulator");
+
+    }
 
     if (m_projectIniFile->getString("system")=="X86") {
         emu = m_iniFile->getString("dosbox");
@@ -206,11 +210,25 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 
     if (m_projectIniFile->getString("system")=="TIKI100") {
            params << "-diska"<< QDir::toNativeSeparators(fileName)<< "-40x"<< "2"<< "-80x"<< "2";
-           qDebug() << params;
     }
 
     if (!(m_projectIniFile->getString("system")=="TIKI100"))
-        params << QDir::toNativeSeparators(fileName);
+        params << QDir::toNativeSeparators(fileName.replace("//","/"));
+
+/*
+
+
+
+  */
+
+
+    if (m_projectIniFile->getString("system")=="AMSTRADCPC464") {
+        QString cs = m_currentFileShort;
+        cs = cs.toUpper().remove(".RAS");
+        params << "-a" << "run\""+cs+".BIN";
+
+    }
+//    qDebug()<<"TEST"+QDir::toNativeSeparators(fileName)+"TEST";
 
 
     process.waitForFinished();
@@ -232,8 +250,8 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 
     // Finally, add custom paramters
 
-
     process.startDetached(emu, params);
+    qDebug() << params;
 #endif
 //    process.pi
     QString output(process.readAllStandardOutput());
@@ -467,6 +485,8 @@ void FormRasEditor::Run()
         filename = m_currentSourceFile.split(ft)[0] + ".tap";
     if (m_projectIniFile->getString("system")=="X86")
         filename = m_currentSourceFile.split(ft)[0] + ".com";
+    if (m_projectIniFile->getString("system")=="AMSTRADCPC464")
+        filename = m_currentSourceFile.split(ft)[0] + ".dsk";
     if (m_projectIniFile->getString("system")=="TIKI100")
         filename = m_currentDir+ "disk.dsk";
 

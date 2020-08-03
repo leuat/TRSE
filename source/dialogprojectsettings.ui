@@ -138,6 +138,11 @@
            <string>X16</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>AMSTRADCPC464</string>
+          </property>
+         </item>
         </widget>
         <widget class="QLabel" name="label">
          <property name="geometry">
