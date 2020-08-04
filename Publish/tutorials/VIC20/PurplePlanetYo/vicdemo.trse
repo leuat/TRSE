@@ -54,6 +54,4 @@ override_target_settings_basic = 6.90038e-310
 build_list = ,
 ignore_initial_jump = 0
 remove_unused_symbols = 1
-open_files = ,demo.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/PurplePlanetYo/
-current_file = demo.ras
+open_files =, demo.ras
