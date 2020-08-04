@@ -1,4 +1,4 @@
-project_path = /home/leuat/code/TRSE/Publish/tutorials/AMSTRADCPC464/tutorials/
+project_path = C:/Users/leuat/Documents/GitHub/TRSE/Publish/tutorials/AMSTRADCPC464/tutorials/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fe
@@ -32,7 +32,7 @@ override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 ignore_initial_jump = 0
 open_files = ,tut1.ras, tutorial1.asm, tutorial1.ras
-current_file = tut1.ras
+current_file = tut1.asm
 var_zeropages = ,
 global_defines = ,
 dosbox_x86_system = default

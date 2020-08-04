@@ -226,13 +226,6 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
   */
 
 
-    if (m_projectIniFile->getString("system")=="AMSTRADCPC464") {
-        QString cs = m_currentFileShort;
-        cs = cs.toUpper().remove(".RAS");
-        params << "-a" << "run\""+cs+".BIN";
-
-    }
-//    qDebug()<<"TEST"+QDir::toNativeSeparators(fileName)+"TEST";
 
 
     process.waitForFinished();
@@ -254,11 +247,26 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 
     // Finally, add custom paramters
 
+    QString orgDir = QDir::currentPath();
+
+    if (m_projectIniFile->getString("system")=="AMSTRADCPC464") {
+        QString cs = m_currentFileShort;
+        cs = cs.toUpper().remove(".RAS");
+        params << "-a" << "run\""+cs+".BIN";
+        process.setWorkingDirectory(QFileInfo(emu).path());
+        QDir::setCurrent(QFileInfo(emu).path());
+
+    }
+//    qDebug()<<"TEST"+QDir::toNativeSeparators(fileName)+"TEST";
+
+
+
     process.startDetached(emu, params);
-    qDebug() << params;
+    //qDebug() << params;
 #endif
 //    process.pi
     QString output(process.readAllStandardOutput());
+    QDir::setCurrent(orgDir);
 //    process.waitForFinished();
 }
 
