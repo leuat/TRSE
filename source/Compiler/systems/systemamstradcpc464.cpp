@@ -32,18 +32,18 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
         text  += "<br><font color=\"#FF6040\">Please set up a link to the PASMO assembler directory in the TRSE settings panel.</font>";
         return;
     }
-    if (!QFile::exists(m_settingsIni->getString("cpcdisk_location"))) {
+/*    if (!QFile::exists(m_settingsIni->getString("cpcdisk_location"))) {
         text  += "<br><font color=\"#FF6040\">Please set up a link to the CPCDiskXP disk utility TRSE 'Utilities' settings panel.</font>";
         return;
 
     }
-
+*/
     if (QFile::exists(filename+".bin"))
         QFile::remove(filename+".bin");
 
-    if (QFile::exists(filename+".dsk"))
+  /*  if (QFile::exists(filename+".dsk"))
         QFile::remove(filename+".dsk");
-
+*/
     QProcess process;
     QStringList params;
     StartProcess(assembler, QStringList() << filename+".asm" <<filename+".bin", output);
@@ -55,7 +55,7 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
         return;
     }
     output+="<br>";
-
+/*
     // Temporary solution
     QString fn = filename;
     fn = fn.remove(currentDir).remove("/");
@@ -78,7 +78,7 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
     pr->start("wine", ps);
 #endif
     pr->waitForFinished();
-
+*/
 //    qDebug() <<     fn+".dsk";
   //  Util::CopyFile(fn+".dsk",fn+"2.dsk");
     //Util::CopyFile(fn+"2.dsk",fn+".dsk");

@@ -250,9 +250,11 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     QString orgDir = QDir::currentPath();
 
     if (m_projectIniFile->getString("system")=="AMSTRADCPC464") {
-        QString cs = m_currentFileShort;
+/*        QString cs = m_currentFileShort;
         cs = cs.toUpper().remove(".RAS");
-        params << "-a" << "run\""+cs+".BIN";
+        params << "-a" << "run\""+cs+".BIN";*/
+        params.insert(0,"-i");
+        params << "-o" << "0x6000";
         process.setWorkingDirectory(QFileInfo(emu).path());
         QDir::setCurrent(QFileInfo(emu).path());
 
@@ -498,7 +500,7 @@ void FormRasEditor::Run()
     if (m_projectIniFile->getString("system")=="X86")
         filename = m_currentSourceFile.split(ft)[0] + ".com";
     if (m_projectIniFile->getString("system")=="AMSTRADCPC464")
-        filename = m_currentSourceFile.split(ft)[0] + ".dsk";
+        filename = m_currentSourceFile.split(ft)[0] + ".bin";
     if (m_projectIniFile->getString("system")=="COLECO")
         filename = m_currentSourceFile.split(ft)[0] + ".bin";
     if (m_projectIniFile->getString("system")=="TIKI100")

@@ -9,7 +9,7 @@ begin
 	readjoy1();
 	readjoy1();
 	joy1pressed := 0;
-	
+
 	x := 1;
 	y := 1;
 	
@@ -22,7 +22,7 @@ begin
 	
 	while joy1pressed & JOY_FIRE = false do
 	begin
-	
+		asm(";balle");	
 		x := y;
 		y := y + 1;
 		if y > 7 then y := 1;

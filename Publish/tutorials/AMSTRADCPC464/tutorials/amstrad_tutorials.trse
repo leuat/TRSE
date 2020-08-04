@@ -42,3 +42,5 @@ override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
 exomizer_toggle = 0
+project_path = /home/leuat/code/TRSE/Publish/tutorials/AMSTRADCPC464/tutorials/
+open_files = ,tut1.ras
