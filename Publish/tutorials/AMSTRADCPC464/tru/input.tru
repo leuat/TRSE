@@ -1,0 +1,35 @@
+Unit input;
+var  
+   joy: byte; 
+/*
+	Joystick bits
+
+	0 = Up
+	1 = Down
+	2 = Left
+	3 = Right
+	4 = Fire 1
+	5 = Fire 2
+*/
+const JOYUP: byte = 1;
+const JOYDOWN: byte = 2;
+const JOYLEFT: byte = 4;
+const JOYRIGHT: byte = 8;
+const JOYFIRE1: byte = 16;
+const JOYFIRE2: byte = 32;
+
+
+// read the joystick
+procedure GetJoy();
+begin
+
+	asm("
+	
+	call $bb24
+	ld [input_joy],a
+
+	");
+
+end;
+
+end.

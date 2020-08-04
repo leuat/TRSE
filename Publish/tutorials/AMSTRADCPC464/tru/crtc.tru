@@ -1,0 +1,64 @@
+Unit crtc;
+var 
+	ga : byte; 
+
+
+// Set screen mode
+procedure SetMode(ga: global byte);
+begin
+	asm("
+    ld  a,[crtc_ga]
+    call  $BC0E
+	");
+end;
+
+
+// Set screen width to 256 pixels
+procedure SetWidth256();
+begin
+
+	asm("
+	
+	; ChibiAkumas' set screen width
+
+	; send the CRTC (CRT Chip) values
+	ld hl,crtc_vals
+	ld bc,&bc00
+
+set_crtc_vals:
+	out (c),c	;choose register
+	inc b
+	ld a,(hl)
+	out (c),a	; send the new value
+	dec b
+	inc hl
+	inc c
+	ld a,c
+	cp 14		; update 14 registers
+	jr nz,set_crtc_vals
+
+	ret
+
+
+crtc_vals:
+
+	defb $3f	; R0  - horizontal total
+	defb 32		; R1  - horizontal displayed (32 chars wide)
+	defb 42		; R2  - Horizontal sync position (centralises screen)
+	defb $86	; R3  - Horizontal and Vertical sync widths
+	defb 38		; R4  - Vertical total
+	defb 0		; R5  - Vertical adjust
+	defb 24		; R6  - Vertical displayed (24 chars tall)
+	defb 31		; R7  - Vertical sync position (centralises screen)
+	defb 0		; R8  - Interlace
+	defb 7		; R9  - Max Raster
+	defb 0		; R10 - Cusror (not used)
+	defb 0		; R11 - Cursor (not used)
+	defb $30	; R12 - screen start (at &c000)
+	defb $00	; R13 - screen start
+
+	");
+end;
+
+
+end.
