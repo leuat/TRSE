@@ -2910,6 +2910,21 @@ void ASTDispatcher6502::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSh
 void ASTDispatcher6502::StoreVariableSimplified(QSharedPointer<NodeVar> node, QSharedPointer<Node> expr)
 {
     //QSharedPointer<NodeNumber> num = dynamic_cast<QSharedPointer<NodeNumber>>(node->m_expr);
+
+    if(node->getType(as)!=TokenType::POINTER)
+    if (node->m_expr->isPureNumeric()) {
+        int pos = node->m_expr->getValueAsInt(as);
+        if (node->getArrayType(as)==TokenType::INTEGER)
+            pos*=2;
+
+        as->Comment("Store Variable is pure numeric and not pointer - store directly!");
+        as->ClearTerm();
+        expr->Accept(this);
+        as->Term();
+        as->Asm("sta " + getValue(node)+" + " +Util::numToHex(pos));
+        return;
+    }
+
     QString secondReg="x";
     QString pa = "";
     QString pb= "";

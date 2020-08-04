@@ -46,4 +46,6 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 data_header_bin/chars.flf = 6.95265e-310
 data_header_bin\chars.flf = 6.95265e-310
-open_files =, nibbler.ras
+open_files = ,nibbler.asm, gameplay.ras, nibbler.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/VicNibbler/
+current_file = gameplay.ras
