@@ -229,6 +229,8 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 
 
     process.waitForFinished();
+    QString orgDir = QDir::currentPath();
+
 #ifdef _WIN32
     QProcess::execute("taskkill /im \"x64.exe\" /f");
 #endif
@@ -247,7 +249,6 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 
     // Finally, add custom paramters
 
-    QString orgDir = QDir::currentPath();
 
     if (m_projectIniFile->getString("system")=="AMSTRADCPC464") {
 /*        QString cs = m_currentFileShort;
