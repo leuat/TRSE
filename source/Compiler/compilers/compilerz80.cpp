@@ -6,6 +6,12 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
     m_assembler = QSharedPointer<AsmZ80>(new AsmZ80());//
     m_dispatcher = QSharedPointer<ASTdispatcherZ80>(new ASTdispatcherZ80());
     m_dispatcher->m_outputLineNumbers = false;
+
+    if (m_projectIni->getdouble("override_target_settings")==1) {
+        Syntax::s.m_currentSystem->m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
+    }
+
+
 //    m_assembler->Asm("CPU "+m_projectIni->getString("cpu_Z80_system"));
 
     if (Syntax::s.m_currentSystem->m_system != AbstractSystem::COLECO)
@@ -23,6 +29,8 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 
 
     }
+
+
 
 }
 
