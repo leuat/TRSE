@@ -40,8 +40,12 @@ begin
 		input::GetJoy();
 // this produces the AND error: if (input::joy & JOYUP) then
 		// In caprice, press F7 to enable joykey and Z is fire 1
-		if (input::joy = JOYFIRE1) then
+//		if (input::joy = JOYFIRE1) then
+	//		FillScreen( time );
+			
+		if (input::joy & JOYUP) then
 			FillScreen( time );
+			
 		time:=time+1;
 		
 	end;	

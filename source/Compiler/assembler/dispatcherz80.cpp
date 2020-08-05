@@ -303,7 +303,10 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
             as->Asm("ld b,"+node->m_right->getValue(as));
         }
         node->m_left->Accept(this);
-        as->Asm(getBinaryOperation(node)+" a,b");
+        if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80)
+            as->Asm(getBinaryOperation(node)+" a,b");
+        else
+            as->Asm(getBinaryOperation(node)+" b");
         return;
     }
 
@@ -312,7 +315,10 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
     node->m_right->Accept(this);
     as->Asm("ld b,a");
     as->Asm("pop af");
-    as->Asm(getBinaryOperation(node)+" a,b");
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80)
+        as->Asm(getBinaryOperation(node)+" a,b");
+    else
+        as->Asm(getBinaryOperation(node)+" b");
 
 //    as->Asm("ld b,a");
 
