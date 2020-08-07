@@ -6,7 +6,8 @@ LImageMetaBlockSprites::LImageMetaBlockSprites(LColorList::Type t) : LImageMetaC
 
     if (m_charset!=nullptr) {
         m_colorList.m_type = m_charset->m_colorList.m_type;
-        m_colorList.m_list = m_charset->m_colorList.m_list;
+        m_colorList.CopyFrom(&m_charset->m_colorList);
+//        m_colorList.m_list = m_charset->m_colorList.m_list;
         //m_charset->m_currentBank=0;
     }
 

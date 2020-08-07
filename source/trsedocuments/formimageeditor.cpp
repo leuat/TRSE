@@ -1046,8 +1046,7 @@ void FormImageEditor::on_btnImport_clicked()
     if (di->m_ok) {
 
         m_work.m_currentImage->m_image->CopyFrom(di->m_image);
-
-        m_work.m_currentImage->m_image->m_colorList.m_list = di->m_image->m_colorList.m_list;
+        m_work.m_currentImage->m_image->m_colorList.CopyFrom(&di->m_image->m_colorList);
         UpdatePalette();
         FillCMBColors();
         m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1, this->size());

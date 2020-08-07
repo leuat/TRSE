@@ -101,7 +101,7 @@ public:
     enum Type { QImageBitmap, MultiColorBitmap, HiresBitmap,
                 NotSupported, Tiff, CharMapMulticolor, FullScreenChar, LevelEditor, CharmapRegular, CharMapMultiColorFixed,
               Sprites, VIC20_MultiColorbitmap, Sprites2, CGA, AMIGA320x200, AMIGA320x256, ATARI320x200,
-                OK64_256x256,X16_640x480, NES, LMetaChunk, LevelEditorNES, SpritesNES, GAMEBOY, LevelEditorGameboy, HybridCharset};
+                OK64_256x256,X16_640x480, NES, LMetaChunk, LevelEditorNES, SpritesNES, GAMEBOY, LevelEditorGameboy, HybridCharset, AmstradCPC};
 
 
     enum WriteType { Color, Character };
@@ -239,15 +239,7 @@ public:
 
 
     void PerformConstrainColours(QVector<int>& cols) {
-        int j=0;
-        for (int i=0;i<m_colorList.m_list.count();i++)
-            if (cols.contains(i)) {
-                m_colorList.m_list[i].displayList = true;
-    //            m_colorList.m_list[i].currentIndex = j++;
-            }
-            else
-                m_colorList.m_list[i].displayList = false;
-
+        m_colorList.ConstrainColours(cols);
     }
 
 

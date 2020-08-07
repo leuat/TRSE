@@ -162,7 +162,7 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
         for (float j=0;j<m_charHeight;j++) {
             PixelChar pc;
             QVector<int> winner;
-            winner.resize(lst.m_list.count());
+            winner.resize(lst.count());
             for (int y=0;y<8;y++)
                 for (int x=0;x<8;x++) {
                     float xx = (i)*sx+x;

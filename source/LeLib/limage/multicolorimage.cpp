@@ -1084,17 +1084,7 @@ void MultiColorImage::UpdateColorList()
 {
 
     if (m_colorList.m_type == LColorList::VIC20 ||  m_colorList.m_type == LColorList::C64) {
-
-        for (int i=0;i<m_colorList.m_list.count();i++) {
-            if (i<8)
-                m_colorList.m_list[i].displayList = true;
-            else
-                m_colorList.m_list[i].displayList = false;
-
-        }
-        for (int i=0;i<4;i++)
-            if (m_extraCols[i]<m_colorList.m_list.count())
-                m_colorList.m_list[m_extraCols[i]].displayList=true;
+        m_colorList.UpdateCommodoreRestrictions(m_extraCols);
 
     }
     m_colorList.CreateUI(m_colorList.m_layout,1);

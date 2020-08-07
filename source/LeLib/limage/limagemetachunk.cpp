@@ -17,7 +17,7 @@ LImageMetaChunk::LImageMetaChunk(LColorList::Type t) : CharsetImage(t)
     m_type = LImage::Type::LMetaChunk;
     if (m_img!=nullptr) {
         m_colorList.m_type = m_img->m_colorList.m_type;
-        m_colorList.m_list = m_img->m_colorList.m_list;
+        m_colorList.CopyFrom(&m_img->m_colorList);
 
     }
     AddNew(2,2);

@@ -116,6 +116,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 9;
   if (t==NES)
       return 10;
+  if (t==AMSTRADCPC)
+      return 11;
 
   return 255;
 }
@@ -144,6 +146,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return X16;
     if (c==10)
         return NES;
+    if (c==11)
+        return AMSTRADCPC;
 
     return UNSUPPORTED;
 
@@ -347,9 +351,10 @@ void LColorList::Initialize(Type t)
         InitOK64();
     if (m_type == Type::NES)
         InitNES();
-    if (m_type == Type::X16) {
+    if (m_type == Type::X16)
         InitOK64();
-    }
+    if (m_type == Type::AMSTRADCPC)
+        InitAmstradCPC();
 
 
     m_metric = new LinearMetric();
@@ -381,9 +386,17 @@ QPixmap LColorList::CreateColorIcon(int col, int s)
 
 void LColorList::CopyFrom(LColorList *other)
 {
+
     m_list.resize(other->m_list.count());
+    m_pens.resize(other->m_pens.count());
     for (int i=0;i<m_list.count();i++)
         m_list[i] = other->m_list[i];
+    for (int i=0;i<m_pens.count();i++)
+        m_pens[i] = other->m_pens[i];
+
+    m_curPal = other->m_curPal;
+    m_nesPPU = other->m_nesPPU;
+
 }
 
 void LColorList::InitC64_org()
@@ -405,7 +418,7 @@ void LColorList::InitC64_org()
     m_list.append(LColor(QColor(170,255,102),""));
     m_list.append(LColor(QColor(0,136,255),""));
     m_list.append(LColor(QColor(187,187,198),""));
-
+    DefaultPen();
 }
 
 void LColorList::InitC64()
@@ -429,11 +442,13 @@ void LColorList::InitC64()
     m_list.append(LColor(QColor(0x95, 0x95, 0x95),""));
 
 
+
     for (int i=0;i<8;i++)
         m_list[i].m_altColour = i+8;
 
 
     m_background = m_list[0];
+    DefaultPen();
 
 }
 
@@ -463,6 +478,7 @@ void LColorList::InitPICO8()
     m_list.append(LColor(QColor(0xff, 0xcc, 0xaa),""));
 
     m_background = m_list[0];
+    DefaultPen();
 
 }
 
@@ -492,6 +508,7 @@ void LColorList::InitVIC20()
     for (int i=0;i<8;i++)
         m_list[i].m_altColour = i+8;
 
+    DefaultPen();
 
 
 
@@ -522,6 +539,7 @@ void LColorList::InitCGA1_LOW()
     m_list.append(LColor(QColor(0,0xaa,0xaa),"Cyan"));
     m_list.append(LColor(QColor(0xaa,0x00,0xaa),"Magenta"));
     m_list.append(LColor(QColor(0xaa,0xaa,0xaa),"Light gray"));
+    DefaultPen();
 }
 void LColorList::InitCGA1_HIGH()
 {
@@ -530,6 +548,7 @@ void LColorList::InitCGA1_HIGH()
     m_list.append(LColor(QColor(0x55,0xff,0xff),"Cyan"));
     m_list.append(LColor(QColor(0xff,0x55,0xff),"Magenta"));
     m_list.append(LColor(QColor(0xff,0xff,0xff),"Light gray"));
+    DefaultPen();
 }
 
 void LColorList::InitOK64()
@@ -548,6 +567,7 @@ void LColorList::InitOK64()
 
         m_list.append(LColor(QColor(r,g,b),""+QString::number((i))));
     }
+    DefaultPen();
 
 }
 
@@ -577,16 +597,6 @@ void LColorList::InitNES()
             i--;
         }
 
-/*
-//        qDebug() << k+d;
-        k=k+4;
-        if (k>=64)
-        {
-            d++;
-            k=0;
-
-        }
-*/
     }
     m_nesPPU.resize(0x20);
     m_nesPPU.fill(0xF); // fill black
@@ -594,6 +604,12 @@ void LColorList::InitNES()
     m_nesPPU[2] = 0x27;
     m_nesPPU[3] = 0x6;
 
+    m_pens.clear();
+    for (int i=0;i<4;i++) {
+        m_pens.append(LPen(m_nesPPU[i]));
+    }
+
+//    DefaultPen();
 
 }
 
@@ -606,6 +622,9 @@ void LColorList::InitNES4()
     m_list.append(LColor(QColor(255,0,255),"Red"));
     m_list.append(LColor(QColor(255,0,255),"Brown"));
 
+
+    DefaultPen();
+
 }
 
 
@@ -616,6 +635,7 @@ void LColorList::InitCGA2_LOW()
     m_list.append(LColor(QColor(0,0xaa,0x00),"Green"));
     m_list.append(LColor(QColor(0xaa,0x00,0x00),"Red"));
     m_list.append(LColor(QColor(0xaa,0x55,0x00),"Brown"));
+    DefaultPen();
 }
 void LColorList::InitCGA2_HIGH()
 {
@@ -624,6 +644,38 @@ void LColorList::InitCGA2_HIGH()
     m_list.append(LColor(QColor(0x55,0xff,0x55),"Green"));
     m_list.append(LColor(QColor(0xff,0x55,0x55),"Red"));
     m_list.append(LColor(QColor(0xff,0xff,0x55),"Brown"));
+    DefaultPen();
+}
+
+void LColorList::InitAmstradCPC()
+{
+    m_list.clear();
+    m_list.append(LColor(QColor(0,0,0),"Black"));
+    m_list.append(LColor(QColor(0x0,0x0,0x80),"Blue"));
+    m_list.append(LColor(QColor(0x0,0x0,0xFF),"Bright Blue"));
+    m_list.append(LColor(QColor(0x80,0x0,0x0),"Red"));
+    m_list.append(LColor(QColor(0x80,0x0,0x80),"Magenta"));
+    m_list.append(LColor(QColor(0x80,0x0,0xFF),"Mauve"));
+    m_list.append(LColor(QColor(0xFF,0x0,0x0),"Bright Red"));
+    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
+    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
+    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
+    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
+    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
+    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
+    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
+    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
+    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
+    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
+    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
+    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
+    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
+    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
+    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
+    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
+    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
+    DefaultPen();
+
 }
 
 void LColorList::LoadFromFile(QString fileName)
@@ -645,25 +697,46 @@ void LColorList::LoadFromFile(QString fileName)
 
 }
 
+void LColorList::DefaultPen()
+{
+    m_pens.clear();
+    for (int i=0;i<m_list.count();i++)
+        m_pens.append(LPen(i));
+
+}
+
 QColor LColorList::getClosestColor(QColor col, int& winner)
 {
     float d = 1E20;
 //    qDebug() << "WHOO";
     winner = 0;
+
+    for (int i=0;i<m_pens.count();i++) {
+            //qDebug() << "Metric:";
+//            if (!m_list[i].inUse)
+  //              continue;
+            int pen = m_pens[i].Get();
+            float v = m_metric->getDistance(m_list[pen].color, col);
+            //qDebug() << "end:";
+            if (v<d) {
+                d = v;
+                winner = i;
+            }
+        }
+    /*    if (rand()%500==0) {
+            qDebug() << "Testing for: " << col.red() << ", " << col.green() << ", " << col.blue();
+            qDebug() << "Winner: " <<m_list[winner].color.red() << ", " <<m_list[winner].color.green() << ", " << m_list[winner].color.blue();
+        }*/
+    return m_list[winner].color;
+/*
+
+
     if (m_type==NES) {
         winner = m_nesCols[0];
         for (int i=0;i<4;i++) {
             //qDebug() << "Metric:";
             int j=m_nesCols[i];
 
-//            qDebug() << "COLS "<<Util::numToHex(j)<<i;
-
-
-/*            m_cols[2-1] = m_colorList.m_nesPPU[pal*4 +1 +0];
-            m_cols[2-0] = m_colorList.m_nesPPU[pal*4 +1 +1];
-            m_cols[2-2] = m_colorList.m_nesPPU[pal*4 +1 +2];
-            m_cols[3] = m_colorList.m_nesPPU[0];
-*/
             float v = m_metric->getDistance(m_list[j].color, col);
             //qDebug() << "end:";
             if (v<d) {
@@ -688,12 +761,24 @@ QColor LColorList::getClosestColor(QColor col, int& winner)
             winner = i;
         }
     }
-/*    if (rand()%500==0) {
-        qDebug() << "Testing for: " << col.red() << ", " << col.green() << ", " << col.blue();
-        qDebug() << "Winner: " <<m_list[winner].color.red() << ", " <<m_list[winner].color.green() << ", " << m_list[winner].color.blue();
-    }*/
-    return m_list[winner].color;
 
+    */
+    return getPenColour(winner);
+//    return m_list[winner].color;
+
+}
+
+int LColorList::getPen(int pcol) {
+    if (pcol<m_pens.count())
+        return m_pens[pcol].Get();
+    return -1;
+}
+
+QColor LColorList::getPenColour(int pcol) {
+    int idx = getPen(pcol);
+    if (idx<m_list.count() && idx>=0)
+        return m_list[idx].color;
+    return Qt::black;
 }
 
 void LColorList::ExportAmigaPalette(QString filename)
@@ -701,7 +786,7 @@ void LColorList::ExportAmigaPalette(QString filename)
     QByteArray data;
     for (LColor l: m_list) {
         unsigned short d = l.get12BitValue();
-//        qDebug() << QString::number(d,16);
+        //        qDebug() << QString::number(d,16);
         data.append((char)((d>>8)&0xFF));
         data.append((char)(d&0xFF));
     }
@@ -719,6 +804,36 @@ void LColorList::ExportAtariSTPalette(QString filename)
     }
     Util::SaveByteArray(data, filename);
 }
+
+void LColorList::ConstrainColours(QVector<int> &cols) {
+    for (int i=0;i<m_list.count();i++) {
+        ConstrainColour(i,cols.contains(i));
+//        qDebug() << "const" << !cols.contains(i);
+    }
+
+}
+
+void LColorList::ConstrainColour(int pen, bool constrain) {
+    // Temporary FIX UP
+    m_list[ pen].displayList = constrain;
+}
+
+
+void LColorList::UpdateCommodoreRestrictions(uchar* extraCols)
+{
+    for (int i=0;i<m_list.count();i++) {
+        if (i<8)
+            m_list[i].displayList = true;
+        else
+            m_list[i].displayList = false;
+
+    }
+    for (int i=0;i<4;i++)
+        if (extraCols[i]<m_list.count())
+            m_list[extraCols[i]].displayList=true;
+
+}
+
 
 void LColorList::FillComboBox(QComboBox *cmb)
 {

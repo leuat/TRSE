@@ -117,6 +117,8 @@ SOURCES += main.cpp\
     source/ImageEditor/glwidget.cpp \
     source/ImageEditor/hexview.cpp \
     source/ImageEditor/qlabellimage.cpp \
+    source/LeLib/limage/lcolor.cpp \
+    source/LeLib/limage/limageamstradcpc.cpp \
     source/LeLib/limage/limageatari520st.cpp \
     source/LeLib/limage/limagefooter.cpp \
     source/LeLib/limage/limagegamboy.cpp \
@@ -305,6 +307,8 @@ HEADERS  += mainwindow.h \
     source/ImageEditor/glwidget.h \
     source/ImageEditor/hexview.h \
     source/ImageEditor/qlabellimage.h \
+    source/LeLib/limage/lcolor.h \
+    source/LeLib/limage/limageamstradcpc.h \
     source/LeLib/limage/limageatari520st.h \
     source/LeLib/limage/limagefooter.h \
     source/LeLib/limage/limagegamboy.h \

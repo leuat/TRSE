@@ -121,9 +121,10 @@ void DialogColors::on_btnLoad_2_clicked()
 {
     QString pal = ui->cbmPalette->currentText();
     if (pal.toLower()=="greyscale") {
-        m_lst->SetGreyscale(Util::fromColor(m_lst->m_list[1].color),false);
+        m_lst->SetGreyscale(Util::fromColor(m_lst->getPenColour(1)),false);
     }
     if (pal.toLower()=="twocolors") {
-        m_lst->SetTwoColors(Util::fromColor(m_lst->m_list[1].color),Util::fromColor(m_lst->m_list[2].color));
+        m_lst->SetTwoColors(Util::fromColor(m_lst->getPenColour(1)),
+                            Util::fromColor(m_lst->getPenColour(2)));
     }
 }

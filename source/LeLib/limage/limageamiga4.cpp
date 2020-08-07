@@ -75,7 +75,7 @@ void LImageAmiga::ExportBin(QFile &file)
   //      file.write(data[i]);
     qDebug() << "Written AMIGA file";
     int i=0;
-    for (auto c : m_colorList.m_list) {
+/*    for (auto c : m_colorList.m_list) {
         int val = c.get12BitValue();
         val = val | (0x01800000+i*0x00020000);
         QString out = "move.l #"+Util::numToHex(val) + ",(a6)+";
@@ -83,7 +83,7 @@ void LImageAmiga::ExportBin(QFile &file)
 
         i=i+1;
     }
-
+*/
 }
 
 void LImageAmiga::SaveBin(QFile &file)

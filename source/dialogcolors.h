@@ -26,7 +26,8 @@ public:
     void Initialize(LColorList* lc, QString path) {
         m_org = lc;
         m_lst = new LColorList();
-        m_lst->m_list = m_org->m_list;
+        m_lst->CopyFrom(m_org);
+//        m_lst->m_list = m_org->m_list;
         toGUI();
         m_projectPath = path;
     }

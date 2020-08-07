@@ -36,71 +36,7 @@
 #include <math.h>
 //#include <QStringLiteral>
 
-class Metric {
-public:
-    virtual float getDistance(QColor& a, QColor& b) = 0;
-};
-
-class LinearMetric: public Metric {
-public:
-    float getDistance(QColor& a, QColor& b) override {
-        return sqrt(1+ pow(a.red() - b.red(), 2) +pow(a.green() - b.green(), 2) +pow(a.blue() - b.blue(), 2)  );
-    }
-};
-
-
-class LColor {
-public:
-    QColor color;
-    bool inUse = true;
-    bool displayList = true;
-    bool ignoreAltColour = false;;
-
-    int m_altColour = -1;
-
-  //  int currentIndex; // used for NES and other fixed-palette stuff
-    QString name;
-    LColor() {}
-    LColor(QColor col, QString n) {
-        color = col;
-        name = n;
-    }
-
-    unsigned short get12BitValue() {
-        return color.blue()/16  | (color.green()/16)<<4  | (color.red()/16)<<8;
-
-    }
-    unsigned short get9BitValue() {
-        return color.blue()/32  | (color.green()/32)<<4  | (color.red()/32)<<8;
-
-    }
-    QString toRGB8() {
-        return QString::number(color.red())+"," + QString::number(color.green()) +","+ QString::number(color.blue());
-    }
-    QString toRGB4() {
-        return QString::number(color.red()/16)+"," + QString::number(color.green()/16) +","+ QString::number(color.blue()/16);
-    }
-
-
-    void fromRGB8(QString s) {
-        QStringList d = s.simplified().trimmed().split(",");
-        if (d.count()==3) {
-            color.setRed( d[0].toInt() );
-            color.setGreen( d[1].toInt() );
-            color.setBlue( d[2].toInt() );
-        }
-    }
-
-    void fromRGB4(QString s) {
-        QStringList d = s.simplified().trimmed().split(",");
-        if (d.count()==3) {
-            color.setRed( d[0].toInt()*16 );
-            color.setGreen( d[1].toInt()*16 );
-            color.setBlue( d[2].toInt()*16 );
-        }
-    }
-
-};
+#include "lcolor.h"
 
 class LColorList : public QObject
 {
@@ -109,13 +45,15 @@ private:
 
     QVector<int> m_multicolors;
     int m_currentType = 0;
-public:
     QVector<LColor> m_list;
-    uchar m_nesCols[4];
+    QVector<LPen> m_pens;
 
-    bool m_isMulticolor = true;
+public:
+//    uchar m_nesCols[4];    // OBSOLETE REWRITE
+    bool m_isMulticolor = true; // OBSOLETE REWRITE
 
-    enum Type{ NES, C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8,OK64,X16 };
+
+    enum Type{ NES, C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8,OK64,X16, AMSTRADCPC };
 
     Type m_type = Type::C64;
     LColorList();
@@ -126,7 +64,9 @@ public:
     bool m_ignoreSetIsMulti = false;
     LColor& get(int i);
     QColor m_cblack = QColor(0,0,0,255);
+
     LColor m_black = LColor(m_cblack,"black");
+
     void SetIsMulticolor(bool mult);
 
     void SetMulticolor(int index, int col);
@@ -172,12 +112,34 @@ public:
     void InitNES4();
     void InitCGA2_LOW();
     void InitCGA2_HIGH();
+    void InitAmstradCPC();
     void UpdateColors();
     void LoadFromFile(QString fileName);
+
+    int count() {
+        return m_pens.count();
+    }
+    void DefaultPen();
+
     QColor getClosestColor(QColor col, int& winner);
+
+    int getPen(int pcol);
+    void setPen(int pcol, int colorIndex) {
+        if (pcol<m_pens.count())
+            m_pens[pcol].m_colorIndex = colorIndex;
+    }
+
+    QColor getPenColour(int pcol);
 
     void ExportAmigaPalette(QString filename);
     void ExportAtariSTPalette(QString filename);
+
+
+    void ConstrainColours(QVector<int>& cols);
+
+    void ConstrainColour(int pen, bool constrain);
+    // Scheduled to be deprecated
+    void UpdateCommodoreRestrictions(uchar* extraCols);
 
 
     void FillComboBox(QComboBox* cmb);
