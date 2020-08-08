@@ -22,7 +22,11 @@ LImageAmiga::LImageAmiga(LColorList::Type t, int type)  : LImageQImage(t)
     m_supports.binarySave = true;
     m_supports.flfSave = true;
     m_supports.flfLoad = true;
+    InitPens();
+}
 
+void LImageAmiga::InitPens() {
+    m_colorList.DefaultPen(LPen::SingleSelect);
 }
 
 void LImageAmiga::ExportBin(QFile &file)

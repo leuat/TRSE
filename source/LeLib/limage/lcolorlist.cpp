@@ -293,7 +293,7 @@ int LColorList::getNoBitplanes() {
 void LColorList::setNoBitplanes(int bpl)
 {
     m_list.resize(pow(2,bpl));
-    DefaultPen();
+    DefaultPen(LPen::SingleSelect);
 }
 
 QByteArray LColorList::toArray()
@@ -484,7 +484,7 @@ void LColorList::InitC64_org()
     m_list.append(LColor(QColor(170,255,102),""));
     m_list.append(LColor(QColor(0,136,255),""));
     m_list.append(LColor(QColor(187,187,198),""));
-    DefaultPen();
+    DefaultPen(LPen::FixedSingle);
 }
 
 void LColorList::InitC64()
@@ -545,7 +545,7 @@ void LColorList::InitPICO8()
     m_list.append(LColor(QColor(0xff, 0xcc, 0xaa),""));
 
     m_background = m_list[0];
-    DefaultPen();
+    DefaultPen(LPen::FixedSingle);
 
 }
 
@@ -575,7 +575,7 @@ void LColorList::InitVIC20()
     for (int i=0;i<8;i++)
         m_list[i].m_altColour = i+8;
 
-    DefaultPen();
+//    DefaultPen(LPen::FixedSingle);
 
 
 
@@ -606,7 +606,7 @@ void LColorList::InitCGA1_LOW()
     m_list.append(LColor(QColor(0,0xaa,0xaa),"Cyan"));
     m_list.append(LColor(QColor(0xaa,0x00,0xaa),"Magenta"));
     m_list.append(LColor(QColor(0xaa,0xaa,0xaa),"Light gray"));
-    DefaultPen();
+    DefaultPen(LPen::FixedSingle);
 }
 void LColorList::InitCGA1_HIGH()
 {
@@ -615,7 +615,7 @@ void LColorList::InitCGA1_HIGH()
     m_list.append(LColor(QColor(0x55,0xff,0xff),"Cyan"));
     m_list.append(LColor(QColor(0xff,0x55,0xff),"Magenta"));
     m_list.append(LColor(QColor(0xff,0xff,0xff),"Light gray"));
-    DefaultPen();
+    DefaultPen(LPen::FixedSingle);
 }
 
 void LColorList::InitOK64()
@@ -634,7 +634,7 @@ void LColorList::InitOK64()
 
         m_list.append(LColor(QColor(r,g,b),""+QString::number((i))));
     }
-    DefaultPen();
+    DefaultPen(LPen::FixedSingle);
 
 }
 
@@ -690,7 +690,7 @@ void LColorList::InitNES4()
     m_list.append(LColor(QColor(255,0,255),"Brown"));
 
 
-    DefaultPen();
+    DefaultPen(LPen::FixedSingle);
 
 }
 
@@ -702,7 +702,7 @@ void LColorList::InitCGA2_LOW()
     m_list.append(LColor(QColor(0,0xaa,0x00),"Green"));
     m_list.append(LColor(QColor(0xaa,0x00,0x00),"Red"));
     m_list.append(LColor(QColor(0xaa,0x55,0x00),"Brown"));
-    DefaultPen();
+    DefaultPen(LPen::FixedSingle);
 }
 void LColorList::InitCGA2_HIGH()
 {
@@ -711,7 +711,7 @@ void LColorList::InitCGA2_HIGH()
     m_list.append(LColor(QColor(0x55,0xff,0x55),"Green"));
     m_list.append(LColor(QColor(0xff,0x55,0x55),"Red"));
     m_list.append(LColor(QColor(0xff,0xff,0x55),"Brown"));
-    DefaultPen();
+    DefaultPen(LPen::FixedSingle);
 }
 
 void LColorList::InitAmstradCPC()
@@ -741,7 +741,7 @@ void LColorList::InitAmstradCPC()
     m_list.append(LColor(QColor(0x0,0x0,0x0),""));
     m_list.append(LColor(QColor(0x0,0x0,0x0),""));
     m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    DefaultPen();
+    DefaultPen(LPen::Dropdown);
 
 }
 
@@ -764,12 +764,12 @@ void LColorList::LoadFromFile(QString fileName)
 
 }
 
-void LColorList::DefaultPen()
+void LColorList::DefaultPen(LPen::Type type = LPen::FixedSingle)
 {
     m_pens.clear();
 //    m_pens.append(LPen(&m_pens, 0,m_,LPen::Fixed));
     for (int i=0;i<m_list.count();i++) {
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,i,"",LPen::FixedSingle)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,i,"",type)));
     }
 
 }

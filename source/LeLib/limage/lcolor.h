@@ -81,7 +81,7 @@ public:
 class LPen {
 public:
     int m_colorIndex;
-    enum Type {FixedSingle, Dropdown,DropDownExceptAlreadySelected, DisplayAll, DisplayAllExceptAlreadySelected};
+    enum Type {FixedSingle, SingleSelect, Dropdown,DropDownExceptAlreadySelected, DisplayAll, DisplayAllExceptAlreadySelected};
     Type m_type = FixedSingle;
     QString m_name;
     bool m_isHidden = false;

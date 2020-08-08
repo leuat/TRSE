@@ -48,4 +48,4 @@ data_header_images/image2.flf = 0
 data_header_images/image3.flf = 0
 open_files = ,images/image2.flf, images/image1.flf, tut1.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/ATARI520ST/tutorials/
-current_file = images/image2.flf
+current_file = images/image1.flf

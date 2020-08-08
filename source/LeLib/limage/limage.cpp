@@ -304,7 +304,7 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
 
 void LImage::InitPens() {
 
-    m_colorList.DefaultPen();
+    m_colorList.DefaultPen(LPen::FixedSingle);
 }
 
 void LImage::CopyChar()
