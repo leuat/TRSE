@@ -54,7 +54,7 @@ private:
 public:
 //    uchar m_nesCols[4];    // OBSOLETE REWRITE
     bool m_isMulticolor = true; // OBSOLETE REWRITE
-
+    bool m_isCharset = false;
 
     enum Type{ NES, C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8,OK64,X16, AMSTRADCPC };
 
