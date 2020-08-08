@@ -26,6 +26,7 @@ LImageAmiga::LImageAmiga(LColorList::Type t, int type)  : LImageQImage(t)
 }
 
 void LImageAmiga::InitPens() {
+    m_colorList.m_bpp = QVector3D(4,4,4);
     m_colorList.DefaultPen(LPen::SingleSelect);
 }
 

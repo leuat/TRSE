@@ -133,6 +133,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/pixelchar.cpp \
     source/LeLib/util/tikidisk.cpp \
     source/PmmEdit/fjonghighlighter.cpp \
+    source/dialogcolorselect.cpp \
     source/dialogexport3d.cpp \
     source/dialognewproject.cpp \
     source/dialogselectcharset.cpp \
@@ -323,6 +324,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/pixelchar.h \
     source/LeLib/util/tikidisk.h \
     source/PmmEdit/fjonghighlighter.h \
+    source/dialogcolorselect.h \
     source/dialogexport3d.h \
     source/dialognewproject.h \
     source/dialogselectcharset.h \
@@ -462,6 +464,7 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     dialognewimage.ui \
     dialogimport.ui \
+    source/dialogcolorselect.ui \
     source/dialogexport3d.ui \
     source/dialognewproject.ui \
     source/dialogselectcharset.ui \

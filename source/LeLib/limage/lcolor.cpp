@@ -79,17 +79,27 @@ QWidget *LPen::createButtonSelect(QColor col, int index, int width)
     QWidget* w = new QWidget();
     QGridLayout* ly = new QGridLayout();
 
-    ly->addWidget(createButton(col,index,width),0,0);
+
+
+    ly->addWidget(createButton(col,index,width/1.3),0,0);
 
     QPushButton* palSelect = new QPushButton("..");
     int w2= width/2;
     palSelect->setMaximumSize(w2,w2);
     ly->addWidget(createButton(col,index,width),0,0);
     ly->addWidget(palSelect,0,1);
+    ly->setMargin(1);
 
 
     QObject::connect( palSelect, &QPushButton::clicked,  [=](){
         // Implement!
+        DialogColorSelect* dc = new DialogColorSelect();
+        dc->exec();
+        dc->Init(col,m_bpp);
+        if (dc->m_ok) {
+           ((*m_colors)[index]).color = QColor(0,0,0);
+            Data::data.UpdatePens();
+        }
     } );
 
 

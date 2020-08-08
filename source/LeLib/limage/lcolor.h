@@ -12,6 +12,7 @@
 #include "source/LeLib/data.h"
 #include "source/LeLib/util/util.h"
 #include <QComboBox>
+#include "source/dialogcolorselect.h"
 
 class Metric {
 public:
@@ -85,26 +86,38 @@ public:
     enum Type {FixedSingle, SingleSelect, Dropdown,DropDownExceptAlreadySelected, DisplayAll, DisplayAllExceptAlreadySelected};
     Type m_type = FixedSingle;
     QString m_name;
+    QVector3D m_bpp = QVector3D(4,4,4);
     bool m_isHidden = false;
     QVector<int> m_restricted;
     QVector<QSharedPointer<LPen>> *m_pens;
+    QVector<LColor>* m_colors;
     LPen() {
 
     }
-    LPen(QVector<QSharedPointer<LPen>> *pens, int cidx) {
+    LPen(QVector<QSharedPointer<LPen>> *pens, QVector<LColor> *colors, int cidx) {
         m_colorIndex = cidx;
         m_pens = pens;
+        m_colors = colors;
     }
 
     void Hide(bool hide) {
         m_isHidden = hide;
     }
 
-    LPen(QVector<QSharedPointer<LPen>> *pens, int cidx, QString name, Type type) {
+    LPen(QVector<QSharedPointer<LPen>> *pens, QVector<LColor> *colors,int cidx, QString name, Type type) {
         m_colorIndex = cidx;
         m_name = name;
         m_type = type;
         m_pens = pens;
+        m_colors = colors;
+    }
+    LPen(QVector<QSharedPointer<LPen>> *pens, QVector<LColor> *colors,int cidx, QString name, Type type, QVector3D bpp) {
+        m_colorIndex = cidx;
+        m_name = name;
+        m_type = type;
+        m_pens = pens;
+        m_bpp = bpp;
+        m_colors = colors;
     }
     QWidget* CreateUI(QColor col, int width,int xx,int yy,QVector<LColor>& list);
 

@@ -25,6 +25,11 @@ LImageAtari520ST::LImageAtari520ST(LColorList::Type t, int type)  : LImageAmiga(
 
 }
 
+void LImageAtari520ST::InitPens() {
+    m_colorList.m_bpp = QVector3D(3,3,3);
+    m_colorList.DefaultPen(LPen::SingleSelect);
+}
+
 void LImageAtari520ST::ExportBin(QFile &file)
 {
     m_height  = 200;

@@ -381,16 +381,16 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
     m_pens.clear();
 
     if (m_type==C64) {
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[0],"Background",LPen::Dropdown)));
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[1],"Multicolor 1",LPen::Dropdown)));
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[2],"Multicolor 2",LPen::Dropdown)));
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[3],"Free colour",LPen::DisplayAllExceptAlreadySelected)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[0],"Background",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[1],"Multicolor 1",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[2],"Multicolor 2",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Free colour",LPen::DisplayAllExceptAlreadySelected)));
     }
     if (m_type==VIC20) {
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[0],"Background",LPen::Dropdown)));
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[1],"Border",LPen::Dropdown)));
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[2],"AUX",LPen::Dropdown)));
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[3],"Char colour",LPen::DisplayAllExceptAlreadySelected)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[0],"Background",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[1],"Border",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[2],"AUX",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Char colour",LPen::DisplayAllExceptAlreadySelected)));
     }
 
     if (!m_isMulticolor && !m_isHybridMode) {
@@ -419,10 +419,10 @@ void LColorList::InitNESPens()
             oldList.append(i);
     }
     m_pens.clear();
-    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[0],"Color 0",LPen::Dropdown)));
-    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[1],"Color 1",LPen::Dropdown)));
-    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[2],"Color 2",LPen::Dropdown)));
-    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[3],"Color 3",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[0],"Color 0",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[1],"Color 1",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[2],"Color 2",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Color 3",LPen::Dropdown)));
 
 }
 
@@ -767,9 +767,10 @@ void LColorList::LoadFromFile(QString fileName)
 void LColorList::DefaultPen(LPen::Type type = LPen::FixedSingle)
 {
     m_pens.clear();
+
 //    m_pens.append(LPen(&m_pens, 0,m_,LPen::Fixed));
     for (int i=0;i<m_list.count();i++) {
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,i,"",type)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,i,"",type, m_bpp)));
     }
 
 }
