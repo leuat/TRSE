@@ -390,7 +390,7 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[0],"Background",LPen::Dropdown)));
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[1],"Border",LPen::Dropdown)));
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[2],"AUX",LPen::Dropdown)));
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[3],"Free colour",LPen::DisplayAllExceptAlreadySelected)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[3],"Char colour",LPen::DisplayAllExceptAlreadySelected)));
     }
 
     if (!m_isMulticolor) {

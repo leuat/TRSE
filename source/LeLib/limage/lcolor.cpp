@@ -147,6 +147,8 @@ QWidget *LPen::createGrid(QColor col, int width, QVector<LColor> &list)
     QGridLayout* ly = new QGridLayout();
     int j=0;
     int x = 0;
+    bool filled = false;
+    ly->addWidget(new QLabel(m_name),0,0);
     for (int i=0;i<list.count();i++) {
         bool ok=true;
 
@@ -162,7 +164,9 @@ QWidget *LPen::createGrid(QColor col, int width, QVector<LColor> &list)
             ok = false;
 
         if (ok) {
-            ly->addWidget(createButton(list[i].color,i,width),j,x);
+            ly->addWidget(createButton(list[i].color,i,width),j+1,x);
+            if (x>=1) filled = true;
+
         }
         j++;
         if (j==8) {
@@ -170,6 +174,12 @@ QWidget *LPen::createGrid(QColor col, int width, QVector<LColor> &list)
         }
 
     }
+    if (!filled) {
+        QWidget* dummy = new QWidget();
+        dummy->setMaximumSize(width,width);
+        ly->addWidget(dummy,0,1);
+    }
+
     QWidget* w = new QWidget();
     w->setLayout(ly);
     return w;
