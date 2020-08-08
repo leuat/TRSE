@@ -105,7 +105,11 @@ QWidget *LPen::createGrid(QColor col, int width, QVector<LColor> &list)
                 if (m_pens->at(j)->m_isHidden==false)
                 if (m_pens->at(j)->m_colorIndex==i && m_pens->at(j)!=this)
                     ok = false;
+
         }
+//        qDebug() << "REST" <<m_restricted;
+        if (m_restricted.contains(i))
+            ok = false;
 
         if (ok) {
             ly->addWidget(createButton(list[i].color,i,width),j,x);
@@ -128,7 +132,8 @@ void LPen::FillComboBox(QComboBox *cmb, QVector<LColor> &list)
         QPixmap pixmap(16,16);
         pixmap.fill(list[i].color);
         QIcon icon(pixmap);
-        cmb->addItem(icon,Util::numToHex(i),i);
+        if (!m_restricted.contains(i))
+            cmb->addItem(icon,Util::numToHex(i),i);
 
 
     }
@@ -143,6 +148,9 @@ void LPen::FillComboBoxRestricted(QComboBox *cmb, QVector<LColor> &list)
             if (m_pens->at(j)->m_isHidden==false)
                 if (m_pens->at(j)->m_colorIndex==i && m_pens->at(j)!=this)
                 ok = false; // Already used, restricted
+
+        if (m_restricted.contains(i))
+            ok = false;
 
         if (ok) {
             QPixmap pixmap(16,16);

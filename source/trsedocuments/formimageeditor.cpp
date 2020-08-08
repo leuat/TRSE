@@ -95,7 +95,6 @@ void FormImageEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini
         bool is = m_work.m_currentImage->m_image->isMultiColor();
         ui->chkDisplayMulticolor->setChecked(is);
         ui->lblName->setText(LImage::TypeToString(m_work.m_currentImage->m_image->m_type));
-        m_work.m_currentImage->m_image->InitPens();
 
     }
 
@@ -122,6 +121,9 @@ void FormImageEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini
     QObject::connect(ui->splitter, SIGNAL(splitterMoved(int,int)), this, SLOT(UpdateAspect()));
 //    QObject::connect(&Data::data, SIGNAL(EmitPenChanged()), this,SLOT(onImageMouseEvent()));
     QObject::connect(&Data::data, SIGNAL(EmitPenChanged()), this,SLOT(onPenChanged()));
+    if (m_work.m_currentImage!=nullptr)
+
+        m_work.m_currentImage->m_image->InitPens();
 
 }
 

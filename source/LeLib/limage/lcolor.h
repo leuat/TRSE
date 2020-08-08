@@ -85,6 +85,7 @@ public:
     Type m_type = FixedSingle;
     QString m_name;
     bool m_isHidden = false;
+    QVector<int> m_restricted;
     QVector<QSharedPointer<LPen>> *m_pens;
     LPen() {
 
