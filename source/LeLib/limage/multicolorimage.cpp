@@ -845,7 +845,13 @@ void MultiColorImage::InitPens() {
     if (m_colorList.m_type==LColorList::NES) {
         if (m_charset==nullptr)
             m_colorList.InitNESPens();
-        else m_charset->m_colorList.InitNESPens();
+
+        else {
+            m_charset->m_colorList.InitNESPens();
+            m_colorList.CopyFrom(&m_charset->m_colorList);
+
+        }
+
     }
 
     if (m_colorList.m_type==LColorList::C64 || m_colorList.m_type==LColorList::VIC20) {
