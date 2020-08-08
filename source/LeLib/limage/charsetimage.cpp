@@ -688,7 +688,15 @@ void CharsetImage::ExportFrame(QFile &file, int frame, int frameCount, int type,
 
 unsigned int CharsetImage::getPixelHybrid(int x, int y)
 {
-    setMultiColor(false);
+//    setMultiColor(false);
+    m_width = 320;
+    m_height = 200;
+    //m_scaleX = 1.2f;
+    m_bitMask = 0b1;
+    m_noColors = 2;
+    m_scale = 1;
+    m_minCol = 0;
+
     setHybrid();
 
 
