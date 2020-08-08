@@ -293,6 +293,7 @@ int LColorList::getNoBitplanes() {
 void LColorList::setNoBitplanes(int bpl)
 {
     m_list.resize(pow(2,bpl));
+    DefaultPen();
 }
 
 QByteArray LColorList::toArray()
@@ -769,7 +770,6 @@ void LColorList::DefaultPen()
 //    m_pens.append(LPen(&m_pens, 0,m_,LPen::Fixed));
     for (int i=0;i<m_list.count();i++) {
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,i,"",LPen::FixedSingle)));
-//        qDebug() << m_pens[i].m_colorIndex;
     }
 
 }
@@ -976,12 +976,12 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize) {
     m_layout = ly;
     Util::clearLayout(ly, true);
     int m = m_pens.count();
-    int width=60/(max(m/16,1))*(windowSize.height()/(float)1400);
+    int width=60/(max(m/16,1))*(windowSize.height()/(float)1600);
 //    qDebug() << width;
     if (m>200) {
-        width = 24*(windowSize.height()/(float)1400);;
+        width = 24*(windowSize.height()/(float)1600);;
     }
-
+//    width = (windowSize.height()/(float)140);
     int xx=0, yy=0;
     int maxy=0;
     int cur = 0;

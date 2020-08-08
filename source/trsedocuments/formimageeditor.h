@@ -44,6 +44,7 @@
 #include "source/dialogcolors.h"
 #include "source/ImageEditor/glwidget.h"
 #include <QLineEdit>
+#include <QScreen>
 #include <QItemDelegate>
 namespace Ui {
 class Formimageeditor;
@@ -85,6 +86,7 @@ public:
     QString m_projectPath;
     QVector<int> m_keepSpriteChar;
     QString m_currentFilename = "";
+    QSize m_windowSize;
 
     enum PainterType {OpenGL, QtPaint };
     PainterType m_painterType = OpenGL;

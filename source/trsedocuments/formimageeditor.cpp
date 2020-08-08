@@ -45,6 +45,9 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
     updateCharSet();
 
 
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect  screenGeometry = screen->geometry();
+    m_windowSize = screenGeometry.size();
     //ui->lblGrid->setVisible(ui->chkGrid->isChecked());
 
 
@@ -177,7 +180,7 @@ void FormImageEditor::onImageMouseEvent()
 void FormImageEditor::onPenChanged()
 {
     m_work.m_currentImage->m_image->InitPens();
-    m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,this->size());
+    m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,m_windowSize);
     onImageMouseEvent();
 
 }
@@ -707,7 +710,7 @@ void FormImageEditor::UpdatePalette()
     //{
 
     if (m_work.m_currentImage->m_image->m_supports.displayColors)
-        l->CreateUI(ui->layoutColorsEdit_3,1, this->size());
+        l->CreateUI(ui->layoutColorsEdit_3,1, m_windowSize);
 
 /*    l->FillComboBox(ui->cmbBackgroundMain_3);
     l->FillComboBox(ui->cmbBorderMain_3);
@@ -1064,7 +1067,7 @@ void FormImageEditor::on_btnImport_clicked()
         m_work.m_currentImage->m_image->m_colorList.CopyFrom(&di->m_image->m_colorList);
         UpdatePalette();
         FillCMBColors();
-        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1, this->size());
+        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1, m_windowSize);
 
         Data::data.redrawOutput = true;
     }
@@ -1967,7 +1970,7 @@ void FormImageEditor::UpdateMulticolorImageSettings()
 {
     if (m_work.m_currentImage->m_image->m_supports.displayColors) {
         m_work.m_currentImage->m_image->m_colorList.SetIsMulticolor(ui->chkDisplayMulticolor->isChecked());
-        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,this->size());
+        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,m_windowSize);
     }
 
 }

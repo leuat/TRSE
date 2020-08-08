@@ -25,12 +25,16 @@ QWidget* LPen::CreateUI(QColor col, int width,int xx,int yy,QVector<LColor>& lis
 QPixmap LPen::CreateColorIcon(QColor col, int s) {
     QImage img(s,s,QImage::Format_RGB32);
 
+    QColor c2(col.red()/2, col.green()/2, col.blue()/2);
     for (int y=0;y<s;y++)
         for (int x=0;x<s;x++) {
             //            if (s-1-y>x)
 
             //              img.setPixelColor(x,y, m_list[col].color);
             //        else
+            if (y==0 || y==s-1 ||x==0 || x==s-1)
+                img.setPixelColor(x,y, c2);
+            else
             img.setPixelColor(x,y, col);
 
 
@@ -50,7 +54,15 @@ QWidget *LPen::createButton(QColor col, int index, int width) {
     b->setMinimumWidth(width);
     b->setMaximumHeight(width);
     b->setMinimumHeight(width);
+    QColor c2(0,0,0);
+    if (col.red()+col.green()+col.blue()<(127*3))
+        c2 = QColor(255,255,255);
+    p.setColor(b->foregroundRole(),c2);
     b->setPalette(p);
+    if (index == Data::data.currentColor)
+        b->setText("X");
+
+//    b->setStyleSheet("QLabel { color : " + c2.name() +"; }");
     QObject::connect( b, &QPushButton::clicked,  [=](){
         handleButtonEdit(index,b);
     } );
