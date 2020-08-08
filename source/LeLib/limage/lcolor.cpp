@@ -101,7 +101,8 @@ QWidget *LPen::createButtonSelect(QColor col, int index, int width)
 QWidget *LPen::createComboBox(QColor col, int width, QVector<LColor> &list)
 {
     QGridLayout* ly = new QGridLayout();
-
+    ly->setSpacing(0);
+    ly->setVerticalSpacing(0);
     QWidget* btn = createButton(col,m_colorIndex,width);
 
     QComboBox *b = new QComboBox();
@@ -126,18 +127,23 @@ QWidget *LPen::createComboBox(QColor col, int width, QVector<LColor> &list)
     ly->addWidget(btn,0,0);
 
     QGridLayout* ly_small = new QGridLayout();
+    ly_small->setVerticalSpacing(0);
 
     ly_small->addWidget(new QLabel(m_name),0,0);
     ly_small->addWidget(b,1,0);
+    ly_small->setSpacing(0);
 
     QWidget* w_small = new QWidget();
     w_small->setLayout(ly_small);
+//    w_small->setMaximumSize(1000,width);
 
     ly->addWidget(w_small,0,1);
 
     QWidget* dummy = new QWidget();
     dummy->setLayout(ly);
-
+    ly->setMargin(4);
+    ly_small->setMargin(0);
+//    dummy->setMaximumSize(1000,width*1);
     return dummy;
 
 }

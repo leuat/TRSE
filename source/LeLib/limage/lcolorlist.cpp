@@ -985,7 +985,9 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize) {
     int xx=0, yy=0;
     int maxy=0;
     int cur = 0;
+//    ly->setSpacing(0);
 //    qDebug() << "*************************";
+//    ly->setSpacing(0);
     for (int i=0;i<m_pens.count();i++) {
         //qDebug() << "COL " <<m_pens[i].m_colorIndex;
         if (m_pens[i]->m_isHidden)
@@ -1000,6 +1002,7 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize) {
             QGridLayout* gly = dynamic_cast<QGridLayout*>(ly);
             if (gly!=nullptr) {
                 gly->addWidget(widget,yy,xx);
+                gly->setVerticalSpacing(0);
             }
             else
                 ly->addWidget(widget);
@@ -1016,7 +1019,7 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize) {
         }
         //}
     }
-    ly->addItem(new QSpacerItem(0,1,QSizePolicy::Expanding,QSizePolicy::Expanding));
+    ly->addItem(new QSpacerItem(0,maxy,QSizePolicy::Expanding,QSizePolicy::Expanding));
 
 }
 
