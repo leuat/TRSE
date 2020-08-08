@@ -40,11 +40,8 @@ void LImageCharsetFixedColor::SetColor(uchar col, uchar idx)
 
 void LImageCharsetFixedColor::SaveBin(QFile &file)
 {
-    file.write( ( char * )( &m_background ),  1 );
-    file.write( ( char * )( &m_border ), 1 );
-    file.write( ( char * )( &m_extraCols[1] ), 1 );
-    file.write( ( char * )( &m_extraCols[2] ), 1 );
-    file.write( ( char * )( &m_extraCols[3] ), 1 );
+    SavePensBin(file);
+
     file.write( ( char * )( &m_data ),  25*40*12 );
     for (int i=0;i<25*40;i++)
         m_colors[i] = m_data[i].c[3];
@@ -54,11 +51,7 @@ void LImageCharsetFixedColor::SaveBin(QFile &file)
 
 void LImageCharsetFixedColor::LoadBin(QFile &file)
 {
-    file.read( ( char * )( &m_background ),1 );
-    file.read( ( char * )( &m_border ), 1);
-    file.read( ( char * )( &m_extraCols[1] ), 1 );
-    file.read( ( char * )( &m_extraCols[2] ), 1 );
-    file.read( ( char * )( &m_extraCols[3] ), 1 );
+    LoadPensBin(file);
     file.read( ( char * )( &m_data ),  25*40*12 );
     m_colors = file.read( 25*40 );
 

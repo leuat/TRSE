@@ -32,7 +32,7 @@ unsigned int LImageHybridCharset::getPixel(int x, int y)
 
         ande = 7;
         int c = MultiColorImage::getPixel(p.x(),p.y());
-        if (c!=m_extraCols[1] && c!=m_extraCols[2]) c=c&ande;
+        if (c!=m_colorList.getPen(1) && c!=m_colorList.getPen(2)) c=c&ande;
         return c;
 
     }

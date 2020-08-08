@@ -106,11 +106,14 @@ public:
 
     void onFocus() override;
 
-    virtual void InitPens() override {
+    virtual void InitPens() override;
+
+    virtual int getBackground() override {
+        return m_colorList.getPen(0);
     }
 
-
-//    unsigned char m_border=0, m_background=0;
+    virtual void setBackground(unsigned int col) override;
+    //    unsigned char m_border=0, m_background=0;
 
     void setPixel(int x, int y, unsigned int color) override;
     virtual unsigned int getPixel(int x, int y) override;
@@ -137,8 +140,6 @@ public:
 
     void Initialize(int width, int height) override {}
 
-    void setForeground(unsigned int col) override;
-    void setBackground(unsigned int col) override;
 
     void ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center) override;
 

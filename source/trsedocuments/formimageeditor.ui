@@ -121,7 +121,7 @@
           <layout class="QGridLayout" name="layoutColorsEdit_3"/>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0">
+          <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,0">
            <property name="spacing">
             <number>4</number>
            </property>
@@ -260,85 +260,6 @@
                <string>Bank 1</string>
               </property>
              </item>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="lblBackground">
-             <property name="font">
-              <font>
-               <pointsize>7</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Background</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="cmbBackgroundMain_3">
-             <property name="toolTip">
-              <string>General background color. </string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="lblForeground">
-             <property name="font">
-              <font>
-               <pointsize>7</pointsize>
-              </font>
-             </property>
-             <property name="toolTip">
-              <string>Foreground color. Only used for full-screen multicolor images.</string>
-             </property>
-             <property name="text">
-              <string>Foreground</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="cmbBorderMain_3">
-             <property name="toolTip">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="lblMC1">
-             <property name="font">
-              <font>
-               <pointsize>7</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Multicolor 1</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="cmbMC1">
-             <property name="toolTip">
-              <string>Set multicolor #1 (charsets, sprites)</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="lblMC2">
-             <property name="font">
-              <font>
-               <pointsize>7</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Multicolor 2</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="cmbMC2">
-             <property name="toolTip">
-              <string>Set multicolor #1 (charsets, sprites)</string>
-             </property>
             </widget>
            </item>
            <item>

@@ -23,10 +23,12 @@
 #define DATA_H
 
 #include <QString>
+#include <QObject>
 
-
-class Data
+class Data : public QObject
 {
+    Q_OBJECT
+
 public:
     Data();
     int flfVersion = 2;
@@ -47,6 +49,10 @@ public:
     bool currentIsColor = false;
     static Data data;
     void Redraw();
+    void UpdatePens();
+signals:
+    void EmitPenChanged();
+
 };
 
 class ParseData {

@@ -84,15 +84,21 @@ public:
     enum Type {FixedSingle, Dropdown,DropDownExceptAlreadySelected, DisplayAll, DisplayAllExceptAlreadySelected};
     Type m_type = FixedSingle;
     QString m_name;
-    QVector<LPen> *m_pens;
+    bool m_isHidden = false;
+    QVector<QSharedPointer<LPen>> *m_pens;
     LPen() {
 
     }
-    LPen(QVector<LPen> *pens, int cidx) {
+    LPen(QVector<QSharedPointer<LPen>> *pens, int cidx) {
         m_colorIndex = cidx;
         m_pens = pens;
     }
-    LPen(QVector<LPen> *pens, int cidx, QString name, Type type) {
+
+    void Hide(bool hide) {
+        m_isHidden = hide;
+    }
+
+    LPen(QVector<QSharedPointer<LPen>> *pens, int cidx, QString name, Type type) {
         m_colorIndex = cidx;
         m_name = name;
         m_type = type;
@@ -103,7 +109,7 @@ public:
     QPixmap CreateColorIcon(QColor col, int s);
 
     QWidget* createButton(QColor col, int index, int width);
-    QWidget* createComboBox(QColor col,QVector<LColor> &list);
+    QWidget* createComboBox(QColor col,int width, QVector<LColor> &list);
     QWidget* createGrid(QColor col,int width, QVector<LColor> &list);
 
     void FillComboBox(QComboBox *cmb, QVector<LColor>& list);

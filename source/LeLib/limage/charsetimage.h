@@ -55,6 +55,9 @@ public:
     void SaveBin(QFile& file) override;
     void LoadBin(QFile& file) override;
 
+    void SavePensBin(QFile& file);
+    void LoadPensBin(QFile& file);
+
     uchar getVariableColor(PixelChar* pc);
 
 

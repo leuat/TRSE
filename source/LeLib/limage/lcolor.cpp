@@ -6,7 +6,7 @@ QWidget* LPen::CreateUI(QColor col, int width,int xx,int yy,QVector<LColor>& lis
     if (m_type == FixedSingle)
         widget = createButton(col, m_colorIndex, width);
     if (m_type == Dropdown || m_type == DropDownExceptAlreadySelected)
-        widget = createComboBox(col, list);
+        widget = createComboBox(col, width, list);
 
     if (m_type == DisplayAllExceptAlreadySelected || m_type == DisplayAllExceptAlreadySelected)
         widget = createGrid(col, width,list);
@@ -57,19 +57,38 @@ QWidget *LPen::createButton(QColor col, int index, int width) {
     return b;
 }
 
-QWidget *LPen::createComboBox(QColor col, QVector<LColor> &list)
+QWidget *LPen::createComboBox(QColor col, int width, QVector<LColor> &list)
 {
+    QGridLayout* ly = new QGridLayout();
+
+    QWidget* btn = createButton(col,m_colorIndex,width);
+
     QComboBox *b = new QComboBox();
     if (m_type == Dropdown || m_type == DisplayAll)
         FillComboBox(b, list);
     else
         FillComboBoxRestricted(b,list);
 
+    b->setCurrentIndex(m_colorIndex);
+
     QObject::connect( b, &QComboBox::currentTextChanged,  [=](){
         Data::data.currentColor = b->currentData(Qt::UserRole).toInt();
         Data::data.currentIsColor=true;
+        m_colorIndex = Data::data.currentColor;
+//        qDebug() << "SETTING CMB COLOR INDEX " <<Get();
+
+
+        Data::data.UpdatePens();
+
     } );
-    return b;
+
+    ly->addWidget(btn,0,0);
+    ly->addWidget(b,0,1);
+
+    QWidget* dummy = new QWidget();
+    dummy->setLayout(ly);
+
+    return dummy;
 
 }
 
@@ -82,7 +101,7 @@ QWidget *LPen::createGrid(QColor col, int width, QVector<LColor> &list)
 
         if (m_type==DisplayAllExceptAlreadySelected) {
             for (int j=0;j<m_pens->count();j++)
-                if (m_pens->at(j).m_colorIndex==i && &m_pens->at(j)!=this)
+                if (m_pens->at(j)->m_colorIndex==i && m_pens->at(j)!=this)
                     ok = false;
         }
 
@@ -116,7 +135,7 @@ void LPen::FillComboBoxRestricted(QComboBox *cmb, QVector<LColor> &list)
     for (int i=0;i<list.count();i++) {
         bool ok = true;
         for (int j=0;j<m_pens->count();j++)
-            if (m_pens->at(j).m_colorIndex==i)
+            if (m_pens->at(j)->m_colorIndex==i && m_pens->at(j)!=this)
                 ok = false; // Already used, restricted
 
         if (ok) {
@@ -137,6 +156,7 @@ void LPen::handleButtonEdit(int val, QPushButton *btn)
             m_buttonsEdit[data]->setText("X");*/
     Data::data.currentColor = val;
     Data::data.currentIsColor=true;
+    Data::data.UpdatePens();
 //    qDebug() << "Setting color "<< val;
     //        SetMulticolor(3,val);
     QPoint p = (QCursor::pos() - btn->mapToGlobal(QPoint(0,0)));

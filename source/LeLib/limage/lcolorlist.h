@@ -29,6 +29,7 @@
 #include <QComboBox>
 #include <QPushButton>
 #include <QLayout>
+#include <QSharedPointer>
 //#endif
 #include <QIcon>
 #include <QPixmap>
@@ -48,7 +49,7 @@ private:
     QVector<int> m_multicolors;
     int m_currentType = 0;
     QVector<LColor> m_list;
-    QVector<LPen> m_pens;
+    QVector<QSharedPointer<LPen>> m_pens;
 
 public:
 //    uchar m_nesCols[4];    // OBSOLETE REWRITE
@@ -68,6 +69,8 @@ public:
     QColor m_cblack = QColor(0,0,0,255);
 
     LColor m_black = LColor(m_cblack,"black");
+
+    QVector<int> getPenList();
 
     void SetIsMulticolor(bool mult);
 
@@ -102,6 +105,7 @@ public:
     void Initialize(Type t);
 
     void SetC64Pens(bool m_isMulticolor, bool m_isCharset);
+    void InitNESPens();
 
 
     QPixmap CreateColorIcon(int col, int s);
@@ -133,7 +137,7 @@ public:
     int getPen(int pcol);
     void setPen(int pcol, int colorIndex) {
         if (pcol<m_pens.count())
-            m_pens[pcol].m_colorIndex = colorIndex;
+            m_pens[pcol]->m_colorIndex = colorIndex;
     }
 
     QColor getPenColour(int pcol);

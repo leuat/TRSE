@@ -346,14 +346,6 @@ uchar LMetaChunkItem::getPixelAttrib(float x, float y, uchar bitMask)
 }
 
 
-void LImageMetaChunk::setForeground(unsigned int col)
-{
-    if (m_charset==nullptr)
-        return;
-
-    m_charset->SetColor(col, 1);
-}
-
 unsigned int LImageMetaChunk::getCharPixel(int pos,  int pal,int x, int y)
 {
     if (m_charset==nullptr)

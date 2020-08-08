@@ -144,7 +144,6 @@ public:
    CharsetImage* getCharset() override { return (CharsetImage*)m_charset; }
 
 
-    void setForeground(unsigned int col) override;
     unsigned int getCharPixel(int pos,  int pal,int x, int y) override;
 
 

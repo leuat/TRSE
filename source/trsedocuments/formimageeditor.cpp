@@ -95,6 +95,7 @@ void FormImageEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini
         bool is = m_work.m_currentImage->m_image->isMultiColor();
         ui->chkDisplayMulticolor->setChecked(is);
         ui->lblName->setText(LImage::TypeToString(m_work.m_currentImage->m_image->m_type));
+        m_work.m_currentImage->m_image->InitPens();
 
     }
 
@@ -119,7 +120,8 @@ void FormImageEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini
     }
 
     QObject::connect(ui->splitter, SIGNAL(splitterMoved(int,int)), this, SLOT(UpdateAspect()));
-
+//    QObject::connect(&Data::data, SIGNAL(EmitPenChanged()), this,SLOT(onImageMouseEvent()));
+    QObject::connect(&Data::data, SIGNAL(EmitPenChanged()), this,SLOT(onPenChanged()));
 
 }
 
@@ -167,7 +169,15 @@ void FormImageEditor::onImageMouseEvent()
 
 
 
-//    qDebug() << m_work.m_currentImage->m_image->m_footer.isFullscreen();
+    //    qDebug() << m_work.m_currentImage->m_image->m_footer.isFullscreen();
+}
+
+void FormImageEditor::onPenChanged()
+{
+    m_work.m_currentImage->m_image->InitPens();
+    m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,this->size());
+    onImageMouseEvent();
+
 }
 
 void FormImageEditor::onImageMouseReleaseEvent()
@@ -697,13 +707,16 @@ void FormImageEditor::UpdatePalette()
 
     if (m_work.m_currentImage->m_image->m_supports.displayColors)
         l->CreateUI(ui->layoutColorsEdit_3,1, this->size());
-    l->FillComboBox(ui->cmbBackgroundMain_3);
+
+/*    l->FillComboBox(ui->cmbBackgroundMain_3);
     l->FillComboBox(ui->cmbBorderMain_3);
     l->FillComboBox(ui->cmbMC1);
     if (m_work.m_currentImage->m_image->m_colorList.m_type==LColorList::VIC20)
     l->FillComboBoxRestricted(ui->cmbMC2,0,8);
     else
         l->FillComboBox(ui->cmbMC2);
+
+        */
 
     m_currentColorList = l;
     //}
@@ -714,8 +727,8 @@ void FormImageEditor::UpdatePalette()
     if (m_work.m_currentImage->m_image==nullptr)
         return;
 
-    ui->cmbMC1->setCurrentIndex(m_work.m_currentImage->m_image->m_extraCols[1]);
-    ui->cmbMC2->setCurrentIndex(m_work.m_currentImage->m_image->m_extraCols[2]);
+//    ui->cmbMC1->setCurrentIndex(m_work.m_currentImage->m_image->m_extraCols[1]);
+//    ui->cmbMC2->setCurrentIndex(m_work.m_currentImage->m_image->m_extraCols[2]);
 
     ui->btnExportCompressed->setVisible(m_work.m_currentImage->m_image->m_supports.compressedExport);
     ui->btnExportBin->setVisible(m_work.m_currentImage->m_image->m_supports.binarySave);
@@ -732,9 +745,10 @@ void FormImageEditor::UpdatePalette()
 
     ui->btnSelectDefaultClearItm->setVisible(m_work.m_currentImage->m_image->m_supports.displayDefaultClearButton);
 
-    ui->cmbMC1->setVisible(m_work.m_currentImage->m_image->m_supports.displayMC1);
+/*    ui->cmbMC1->setVisible(m_work.m_currentImage->m_image->m_supports.displayMC1);
     ui->cmbMC2->setVisible(m_work.m_currentImage->m_image->m_supports.displayMC2);
     ui->cmbBorderMain_3->setVisible(m_work.m_currentImage->m_image->m_supports.displayForeground);
+    */
     ui->layoutColorsEdit_3->setEnabled(m_work.m_currentImage->m_image->m_supports.displayColors);
     ui->cmbBank->setVisible(m_work.m_currentImage->m_image->m_supports.displayBank);
     if (!m_work.m_currentImage->m_image->m_supports.displayBank) {
@@ -749,15 +763,15 @@ void FormImageEditor::UpdatePalette()
 
     ui->lblTimeStamp->setVisible(m_work.m_currentImage->m_image->m_supports.displayTimestamp);
     ui->leTimeStamp->setVisible(m_work.m_currentImage->m_image->m_supports.displayTimestamp);
-    if (!m_work.m_currentImage->m_image->m_supports.displayCmbColors) {
+/*    if (!m_work.m_currentImage->m_image->m_supports.displayCmbColors) {
         ui->cmbMC1->setVisible(false);
         ui->cmbMC2->setVisible(false);
         ui->cmbBorderMain_3->setVisible(false);
         ui->cmbBackgroundMain_3->setVisible(false);
     }
+    */
 
-
-    m_work.m_currentImage->m_image->ApplyColor();
+    //m_work.m_currentImage->m_image->ApplyColor();
 
 
 //    ui->btnLoad->setVisible(m_work.m_currentImage->m_image->m_supports.flfLoad);
@@ -768,10 +782,10 @@ void FormImageEditor::UpdatePalette()
 
 void FormImageEditor::FillCMBColors()
 {
-    ui->cmbBackgroundMain_3->setCurrentIndex(m_work.m_currentImage->m_image->m_background);
+/*    ui->cmbBackgroundMain_3->setCurrentIndex(m_work.m_currentImage->m_image->m_background);
     ui->cmbMC1->setCurrentIndex(m_work.m_currentImage->m_image->m_extraCols[1]);
     ui->cmbMC2->setCurrentIndex(m_work.m_currentImage->m_image->m_extraCols[2]);
-
+*/
 }
 
 void FormImageEditor::focusInEvent(QFocusEvent *)
@@ -1296,11 +1310,12 @@ void FormImageEditor::PrepareImageTypeGUI()
 //    SetButton(ui->btnFlipHorisontal,LImage::GUIType::btnFlipH);
 //    SetButton(ui->btnFlipVert,LImage::GUIType::btnFlipV);
 //    SetButton(ui->btnCharsetFull,LImage::GUIType::btnEditFullCharset);
-    SetLabel(ui->lblBackground, LImage::GUIType::col1);
+
+    /*SetLabel(ui->lblBackground, LImage::GUIType::col1);
     SetLabel(ui->lblForeground, LImage::GUIType::col2);
     SetLabel(ui->lblMC1, LImage::GUIType::col3);
     SetLabel(ui->lblMC2, LImage::GUIType::col4);
-
+*/
 
     if (m_work.m_currentImage->m_image->isNes())
         ui->btnImportRom->setVisible(false);
@@ -1417,7 +1432,7 @@ void FormImageEditor::PrepareClose()
 void FormImageEditor::SetMCColors()
 {
 
-
+/*
 
     int a = ui->cmbMC1->currentIndex();
     int b = ui->cmbMC2->currentIndex();
@@ -1450,7 +1465,7 @@ void FormImageEditor::SetMCColors()
 
     Data::data.Redraw();
     Data::data.forceRedraw = true;
-
+*/
 }
 
 void FormImageEditor::UpdateLevels()
@@ -2260,10 +2275,12 @@ void FormImageEditor::on_cmbNesPalette_currentIndexChanged(int index)
     m_work.m_currentImage->m_image->m_colorList.m_curPal = index;
     m_ignoreMC = false;
     int idx = m_work.m_currentImage->m_image->m_colorList.m_curPal*4+1;
+/*
     ui->cmbMC2->setCurrentIndex(m_work.m_currentImage->m_image->m_colorList.m_nesPPU[idx+1]);
     ui->cmbMC1->setCurrentIndex(m_work.m_currentImage->m_image->m_colorList.m_nesPPU[idx+0]);
     ui->cmbBorderMain_3->setCurrentIndex(m_work.m_currentImage->m_image->m_colorList.m_nesPPU[idx+2]);
     ui->cmbBackgroundMain_3->setCurrentIndex(m_work.m_currentImage->m_image->m_colorList.m_nesPPU[0]);
+    */
     m_ignoreMC = false;
 
     SetFooterData(LImageFooter::POS_CURRENT_PALETTE,index);

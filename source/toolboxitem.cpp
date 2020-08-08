@@ -93,19 +93,19 @@ void ShapeBoxFilter::Perform(int x, int y, unsigned char color, LImage* img, boo
                 bool regular=true;
     //            if (rand()%100>98)// for (int i=0;i<4;i++)
   //                  qDebug() << img->m_extraCols[2];
-                if (img->m_background!=img->m_extraCols[2]) {
+/*                if (img->getBackground()!=img->m_extraCols[2]) {
 //                    qDebug() << img->m_extraCols[2];
                     regular = false;
                 }
-
+*/
 
                 if (regular) {
-                    if (img->getPixel(x+xx,y+yy)!=img->m_background)
+                    if (img->getPixel(x+xx,y+yy)!=img->getBackground())
                         img->setPixel(x+xx,y+yy,color);
                 }
-                else
-                    if (img->getPixel(x+xx,y+yy)==img->m_extraCols[2])
-                        img->setPixel(x+xx,y+yy,color);
+  //              else
+    //                if (img->getPixel(x+xx,y+yy)==img->m_extraCols[2])
+      //                  img->setPixel(x+xx,y+yy,color);
             }
         }
 }

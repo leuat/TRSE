@@ -42,6 +42,14 @@ LColor &LColorList::get(int i) {
     return m_black;
 }
 
+QVector<int> LColorList::getPenList()
+{
+    QVector<int> lst;
+    for (int i=0;i<m_pens.count();i++)
+        lst.append(m_pens.at(i)->m_colorIndex);
+    return lst;
+}
+
 void LColorList::SetIsMulticolor(bool mult)
 {
     m_isMulticolor = mult;
@@ -363,32 +371,33 @@ void LColorList::Initialize(Type t)
 
 void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
 {
+    QVector<int> oldList = getPenList();
+    // Make sure old data is kept!
+    for (int i=0;i<4;i++) {
+        if (i>=oldList.count())
+            oldList.append(i);
+    }
     m_pens.clear();
-    if (m_isMulticolor) {
-        if (m_isCharset) {
-            m_pens.append(LPen(&m_pens,0,"Background",LPen::Dropdown));
-            m_pens.append(LPen(&m_pens,1,"Multicolor 1",LPen::Dropdown));
-            m_pens.append(LPen(&m_pens,2,"Multicolor 2",LPen::Dropdown));
-            m_pens.append(LPen(&m_pens,3,"Free colour",LPen::DisplayAllExceptAlreadySelected));
-        }
-        else {
-            m_pens.append(LPen(&m_pens,0,"Background",LPen::Dropdown));
-            m_pens.append(LPen(&m_pens,1,"Free colour",LPen::DisplayAllExceptAlreadySelected));
 
-        }
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[0],"Background",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[1],"Multicolor 1",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[2],"Multicolor 2",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[3],"Free colour",LPen::DisplayAllExceptAlreadySelected)));
+
+    if (!m_isMulticolor) {
+        m_pens[1]->Hide(true);
+        m_pens[2]->Hide(true);
     }
-    else {
-        if (m_isCharset) {
-            m_pens.append(LPen(&m_pens,0,"Background",LPen::Dropdown));
-            m_pens.append(LPen(&m_pens,1,"Free colour",LPen::DisplayAllExceptAlreadySelected));
-        }
-        else {
-            m_pens.append(LPen(&m_pens,0,"Background",LPen::Dropdown));
-            m_pens.append(LPen(&m_pens,1,"Free colour",LPen::DisplayAllExceptAlreadySelected));
+}
 
-        }
+void LColorList::InitNESPens()
+{
+    m_pens.clear();
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,0,"Background",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,1,"Color 1",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,2,"Color 2",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,3,"Color 3",LPen::Dropdown)));
 
-    }
 }
 
 QPixmap LColorList::CreateColorIcon(int col, int s)
@@ -637,10 +646,10 @@ void LColorList::InitNES()
     m_nesPPU[3] = 0x6;
 
     m_pens.clear();
-    for (int i=0;i<4;i++) {
-        m_pens.append(LPen(&m_pens, m_nesPPU[i]));
+/*    for (int i=0;i<4;i++) {
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens, m_nesPPU[i])));
     }
-
+*/
 //    DefaultPen();
 
 }
@@ -734,7 +743,7 @@ void LColorList::DefaultPen()
     m_pens.clear();
 //    m_pens.append(LPen(&m_pens, 0,m_,LPen::Fixed));
     for (int i=0;i<m_list.count();i++) {
-        m_pens.append(LPen(&m_pens,i,"",LPen::FixedSingle));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,i,"",LPen::FixedSingle)));
 //        qDebug() << m_pens[i].m_colorIndex;
     }
 
@@ -750,7 +759,7 @@ QColor LColorList::getClosestColor(QColor col, int& winner)
             //qDebug() << "Metric:";
 //            if (!m_list[i].inUse)
   //              continue;
-            int pen = m_pens[i].Get();
+            int pen = m_pens[i]->Get();
             float v = m_metric->getDistance(m_list[pen].color, col);
             //qDebug() << "end:";
             if (v<d) {
@@ -806,7 +815,7 @@ QColor LColorList::getClosestColor(QColor col, int& winner)
 int LColorList::getPen(int pcol) {
 //    qDebug() << "WTF "<< pcol << m_pens.count() <<m_pens[pcol].m_colorIndex;
     if (pcol<m_pens.count())
-        return m_pens[pcol].Get();
+        return m_pens[pcol]->Get();
     return -1;
 }
 
@@ -853,7 +862,7 @@ void LColorList::FooterToPen(LImageFooter *footer)
 {
     for (int i=0;i<m_pens.count();i++) {
         uchar val =footer->get(LImageFooter::POS_PEN_START + i);
-        if (m_pens[i].m_type!=LPen::FixedSingle)
+        if (m_pens[i]->m_type!=LPen::FixedSingle)
         if (val!=0) setPen(i,val);
     }
 
@@ -942,10 +951,10 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize) {
     m_layout = ly;
     Util::clearLayout(ly, true);
     int m = m_pens.count();
-    int width=40/(max(m/16,1))*(windowSize.width()/(float)1400);
+    int width=60/(max(m/16,1))*(windowSize.height()/(float)1400);
 //    qDebug() << width;
     if (m>200) {
-        width = 16*(windowSize.width()/(float)1400);;
+        width = 24*(windowSize.height()/(float)1400);;
     }
 
     int xx=0, yy=0;
@@ -954,14 +963,14 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize) {
 //    qDebug() << "*************************";
     for (int i=0;i<m_pens.count();i++) {
         //qDebug() << "COL " <<m_pens[i].m_colorIndex;
-
+        if (!m_pens[i]->m_isHidden)
         for (int j=0;j<2;j++)  { // Name & widget
             QWidget* widget = nullptr;
-            if (m_pens[i].m_name!="" && j==0) {
-                widget = new QLabel(m_pens[i].m_name);
+            if (m_pens[i]->m_name!="" && j==0) {
+                widget = new QLabel(m_pens[i]->m_name);
             }
             if (j==1)
-                widget = m_pens[i].CreateUI(getPenColour(i),width,xx,yy, m_list);
+                widget = m_pens[i]->CreateUI(getPenColour(i),width,xx,yy, m_list);
 
             if (widget!=nullptr) {
                 QGridLayout* gly = dynamic_cast<QGridLayout*>(ly);
@@ -983,7 +992,7 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize) {
             }
         }
     }
-    ly->addItem(new QSpacerItem(0,1000,QSizePolicy::Expanding,QSizePolicy::Expanding));
+    ly->addItem(new QSpacerItem(0,1,QSizePolicy::Expanding,QSizePolicy::Expanding));
 
 }
 

@@ -178,6 +178,7 @@ private slots:
     void InitAspect();
     void onSwapDisplayMode();
     void onImageMouseEvent();
+    void onPenChanged();
     void onImageMouseReleaseEvent();
 
 //    void on_btnExportAsm_clicked();

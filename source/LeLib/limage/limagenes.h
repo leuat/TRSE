@@ -18,7 +18,6 @@ public:
     void setPixel(int x, int y, unsigned int col) override;
     void SetColor(uchar col, uchar idx) override;
     void CopyFrom(LImage* img) override;
-    void setForeground(unsigned int col) override;
 
     void SaveBin(QFile& file) override;
     void ConstrainColours(QVector<int>& cols) override {
@@ -34,13 +33,13 @@ public:
 
     bool KeyPress(QKeyEvent *e) override;
     void LoadBin(QFile& file) override;
-    void ApplyColor() override {
 
-    }
     QPixmap ToQPixMap(int chr) override;
     void SetPalette(int pal) override;
 
     bool getXY(QPoint& xy,QPoint& p1, QPoint& p2);
+
+    virtual void InitPens() override;
 
    PixelChar &getPixelChar(int x, int y) override;
 
