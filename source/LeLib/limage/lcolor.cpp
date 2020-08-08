@@ -96,18 +96,23 @@ QWidget *LPen::createGrid(QColor col, int width, QVector<LColor> &list)
 {
     QGridLayout* ly = new QGridLayout();
     int j=0;
+    int x = 0;
     for (int i=0;i<list.count();i++) {
         bool ok=true;
 
         if (m_type==DisplayAllExceptAlreadySelected) {
             for (int j=0;j<m_pens->count();j++)
+                if (m_pens->at(j)->m_isHidden==false)
                 if (m_pens->at(j)->m_colorIndex==i && m_pens->at(j)!=this)
                     ok = false;
         }
 
         if (ok) {
-            ly->addWidget(createButton(list[i].color,i,width),j,0);
-            j++;
+            ly->addWidget(createButton(list[i].color,i,width),j,x);
+        }
+        j++;
+        if (j==8) {
+            j=0;x++;
         }
 
     }
@@ -135,7 +140,8 @@ void LPen::FillComboBoxRestricted(QComboBox *cmb, QVector<LColor> &list)
     for (int i=0;i<list.count();i++) {
         bool ok = true;
         for (int j=0;j<m_pens->count();j++)
-            if (m_pens->at(j)->m_colorIndex==i && m_pens->at(j)!=this)
+            if (m_pens->at(j)->m_isHidden==false)
+                if (m_pens->at(j)->m_colorIndex==i && m_pens->at(j)!=this)
                 ok = false; // Already used, restricted
 
         if (ok) {
