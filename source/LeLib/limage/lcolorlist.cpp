@@ -418,7 +418,7 @@ void LColorList::InitNESPens()
             oldList.append(i);
     }
     m_pens.clear();
-    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[0],"Background",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[0],"Color 0",LPen::Dropdown)));
     m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[1],"Color 1",LPen::Dropdown)));
     m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[2],"Color 2",LPen::Dropdown)));
     m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[3],"Color 3",LPen::Dropdown)));

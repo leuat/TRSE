@@ -99,11 +99,14 @@ void LImageLevelNES::setPixel(int x, int y, unsigned int color)
     if (!PixelToPos(x,y, posC,m_meta.m_colSizex, m_meta.m_colSizey))
         return; // out of bounds
 
-    //    qDebug() << (m_writeType==Color);
+//        qDebug() << (m_writeType==Color) << color;
 
-    if (m_writeType==Character)
+
+
+
+    if (m_writeType==Character  || m_forcePaintColorAndChar)
         m_currentLevel->m_CharData[pos] = m_currentChar;
-    if (m_writeType==Color)
+    if (m_writeType==Color  || m_forcePaintColorAndChar)
         m_currentLevel->m_ColorData[posC] = color;
 
     //BuildImage();
