@@ -106,6 +106,10 @@ public:
 
     void onFocus() override;
 
+    virtual void InitPens() override {
+    }
+
+
 //    unsigned char m_border=0, m_background=0;
 
     void setPixel(int x, int y, unsigned int color) override;

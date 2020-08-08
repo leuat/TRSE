@@ -35,8 +35,10 @@
 #include "source/LeLib/data.h"
 #include <math.h>
 //#include <QStringLiteral>
+#include <QLabel>
 
 #include "lcolor.h"
+#include "limagefooter.h"
 
 class LColorList : public QObject
 {
@@ -88,6 +90,8 @@ public:
     Metric* m_metric = nullptr;
     void EnableColors(QVector<int>& cols);
 
+    void CreateUIOld(QLayout* ly, int type, QSize windowSize);
+
     void GeneratePaletteFromQImage(QImage& img);
 
     int getNoBitplanes();
@@ -96,6 +100,9 @@ public:
     void fromArray(QByteArray& d);
 
     void Initialize(Type t);
+
+    void SetC64Pens(bool m_isMulticolor, bool m_isCharset);
+
 
     QPixmap CreateColorIcon(int col, int s);
 
@@ -134,6 +141,9 @@ public:
     void ExportAmigaPalette(QString filename);
     void ExportAtariSTPalette(QString filename);
 
+
+    void PenToFooter(LImageFooter* footer);
+    void FooterToPen(LImageFooter* footer);
 
     void ConstrainColours(QVector<int>& cols);
 

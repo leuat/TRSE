@@ -49,7 +49,6 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 
     m_image = LImageFactory::Create(m_imageType, colorType);
 //    m_image->CopyFrom(img);
-    m_image->m_colorList.CopyFrom(&img->m_colorList);
 //    m_image->m_metaParams
 /*    m_image->m_footer = img->m_footer;
     m_image->setMultiColor(img->isMultiColor());
@@ -58,6 +57,7 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 */
     m_image->CopyFrom(img);
 //    m_image->Clear();
+    m_image->m_colorList.CopyFrom(&img->m_colorList);
 
     LImageVIC20* vic = dynamic_cast<LImageVIC20*>(img);
     if (vic!=nullptr) {

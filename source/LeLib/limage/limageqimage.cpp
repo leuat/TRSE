@@ -71,7 +71,7 @@ void LImageQImage::SaveBin(QFile& file)
             data[(i+j*m_qImage->width())] = val;
         }
     file.write((char*)data, m_width*m_height);
-    delete data;
+    delete[] data;
 
 }
 

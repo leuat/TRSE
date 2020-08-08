@@ -833,6 +833,11 @@ void MultiColorImage::onFocus()
         LoadCharset(m_charsetFilename,0);
 }
 
+void MultiColorImage::InitPens() {
+    m_colorList.SetC64Pens(m_bitMask == 0b11,(m_type==LImage::LImage::Type::CharMapMulticolor));
+
+}
+
 /*void MultiColorImage::Clear()
 {
     for (int i=0;i<m_charWidth*m_charHeight;i++) {
@@ -875,6 +880,7 @@ void MultiColorImage::setMultiColor(bool doSet)
         m_noColors = 4;
         m_scale = 2;
         m_minCol = 0;
+        m_colorList.InitC64Multicolor();
     }
     else {
         m_width = 320;
@@ -890,6 +896,9 @@ void MultiColorImage::setMultiColor(bool doSet)
   //      m_data->c[0] = m_extraCols[0];
      if (m_charset!=nullptr)
         m_charset->setMultiColor(doSet);
+
+//     SetPens();
+    InitPens();
 }
 
 void MultiColorImage::CalculateCharIndices()

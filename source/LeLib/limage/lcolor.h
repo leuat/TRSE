@@ -4,7 +4,13 @@
 #include <QString>
 #include <QColor>
 #include <math.h>
-
+#include <QPushButton>
+#include <QPixmap>
+#include <QGridLayout>
+#include <QDebug>
+#include "source/LeLib/data.h"
+#include "source/LeLib/util/util.h"
+#include <QComboBox>
 
 class Metric {
 public:
@@ -75,20 +81,40 @@ public:
 class LPen {
 public:
     int m_colorIndex;
-    enum Type {Fixed, Normal, Dropdown};
-    Type m_type = Normal;
+    enum Type {FixedSingle, Dropdown,DropDownExceptAlreadySelected, DisplayAll, DisplayAllExceptAlreadySelected};
+    Type m_type = FixedSingle;
     QString m_name;
+    QVector<LPen> *m_pens;
     LPen() {
 
     }
-    LPen(int cidx) {
+    LPen(QVector<LPen> *pens, int cidx) {
         m_colorIndex = cidx;
+        m_pens = pens;
     }
-    LPen(int cidx, QString name, Type type) {
+    LPen(QVector<LPen> *pens, int cidx, QString name, Type type) {
         m_colorIndex = cidx;
         m_name = name;
         m_type = type;
+        m_pens = pens;
     }
+    QWidget* CreateUI(QColor col, int width,int xx,int yy,QVector<LColor>& list);
+
+    QPixmap CreateColorIcon(QColor col, int s);
+
+    QWidget* createButton(QColor col, int index, int width);
+    QWidget* createComboBox(QColor col,QVector<LColor> &list);
+    QWidget* createGrid(QColor col,int width, QVector<LColor> &list);
+
+    void FillComboBox(QComboBox *cmb, QVector<LColor>& list);
+
+    void FillComboBoxRestricted(QComboBox *cmb, QVector<LColor>& list);
+
+
+    void handleButtonEdit(int val, QPushButton* btn);
+
+
+
     int Get() {
         return m_colorIndex;
     }
