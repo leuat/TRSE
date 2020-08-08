@@ -378,6 +378,7 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
             oldList.append(i);
     }
     m_pens.clear();
+
     if (m_type==C64) {
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[0],"Background",LPen::Dropdown)));
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[1],"Multicolor 1",LPen::Dropdown)));

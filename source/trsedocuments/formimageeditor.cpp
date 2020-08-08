@@ -215,7 +215,6 @@ FormImageEditor::~FormImageEditor()
 void FormImageEditor::wheelEvent(QWheelEvent *event)
 {
     float f = event->delta()/100.0f;
-
     if (QApplication::keyboardModifiers() & Qt::ShiftModifier) {
         m_updateThread.m_zoom -=f*0.05;
         m_updateThread.m_zoom = std::min(m_updateThread.m_zoom, 1.0f);

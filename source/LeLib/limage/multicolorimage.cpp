@@ -818,6 +818,7 @@ void MultiColorImage::LoadCharset(QString file, int skipBytes)
     m_gridWidthDisplay = m_charset->m_gridWidthDisplay;
     m_charHeightDisplay = m_charset->m_charHeightDisplay;;//m_meta.m_height;
 
+    InitPens();
 
 }
 
@@ -840,7 +841,23 @@ void MultiColorImage::onFocus()
 }
 
 void MultiColorImage::InitPens() {
-    m_colorList.SetC64Pens(m_bitMask == 0b11,(m_type==LImage::LImage::Type::CharMapMulticolor));
+
+    if (m_colorList.m_type==LColorList::NES) {
+        if (m_charset==nullptr)
+            m_colorList.InitNESPens();
+        else m_charset->m_colorList.InitNESPens();
+    }
+
+    if (m_colorList.m_type==LColorList::C64 || m_colorList.m_type==LColorList::VIC20) {
+        if (m_charset==nullptr)
+            m_colorList.SetC64Pens(m_bitMask == 0b11,(m_type==LImage::LImage::Type::CharMapMulticolor));
+        else {
+            m_charset->m_colorList.SetC64Pens(m_bitMask == 0b11,(m_type==LImage::LImage::Type::CharMapMulticolor));
+            m_colorList.CopyFrom(&m_charset->m_colorList);
+        }
+
+//        qDebug() << "HERE" <<m_charset;
+    }
 /*    qDebug() << "SETTING BACKGROUND " << getBackground();
     for (int i=0;i<2;i++) {
         qDebug() << "CURRENT PENS " << m_colorList.getPen(i);
