@@ -378,11 +378,18 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
             oldList.append(i);
     }
     m_pens.clear();
-
-    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[0],"Background",LPen::Dropdown)));
-    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[1],"Multicolor 1",LPen::Dropdown)));
-    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[2],"Multicolor 2",LPen::Dropdown)));
-    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[3],"Free colour",LPen::DisplayAllExceptAlreadySelected)));
+    if (m_type==C64) {
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[0],"Background",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[1],"Multicolor 1",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[2],"Multicolor 2",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[3],"Free colour",LPen::DisplayAllExceptAlreadySelected)));
+    }
+    if (m_type==VIC20) {
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[0],"Background",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[1],"Border",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[2],"AUX",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[3],"Free colour",LPen::DisplayAllExceptAlreadySelected)));
+    }
 
     if (!m_isMulticolor) {
         m_pens[1]->Hide(true);
@@ -392,11 +399,17 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
 
 void LColorList::InitNESPens()
 {
+    QVector<int> oldList = getPenList();
+    // Make sure old data is kept!
+    for (int i=0;i<4;i++) {
+        if (i>=oldList.count())
+            oldList.append(i);
+    }
     m_pens.clear();
-    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,0,"Background",LPen::Dropdown)));
-    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,1,"Color 1",LPen::Dropdown)));
-    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,2,"Color 2",LPen::Dropdown)));
-    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,3,"Color 3",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[0],"Background",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[1],"Color 1",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[2],"Color 2",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[3],"Color 3",LPen::Dropdown)));
 
 }
 
