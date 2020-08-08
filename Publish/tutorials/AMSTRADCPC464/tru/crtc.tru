@@ -22,7 +22,7 @@ begin
 	; ChibiAkumas' set screen width
 
 	; send the CRTC (CRT Chip) values
-	ld hl,crtc_vals
+	ld hl,crtc_256widthList
 	ld bc,&bc00
 
 set_crtc_vals:
@@ -40,7 +40,7 @@ set_crtc_vals:
 	ret
 
 
-crtc_vals:
+crtc_256widthList:
 
 	defb $3f	; R0  - horizontal total
 	defb 32		; R1  - horizontal displayed (32 chars wide)
