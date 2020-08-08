@@ -988,34 +988,33 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize) {
 //    qDebug() << "*************************";
     for (int i=0;i<m_pens.count();i++) {
         //qDebug() << "COL " <<m_pens[i].m_colorIndex;
-        if (!m_pens[i]->m_isHidden)
-        for (int j=0;j<2;j++)  { // Name & widget
-            QWidget* widget = nullptr;
-            if (m_pens[i]->m_name!="" && j==0) {
-                widget = new QLabel(m_pens[i]->m_name);
+        if (m_pens[i]->m_isHidden)
+            continue;
+
+
+        QWidget* widget = nullptr;
+        widget = m_pens[i]->CreateUI(getPenColour(i),width,xx,yy, m_list);
+
+        if (widget!=nullptr) {
+
+            QGridLayout* gly = dynamic_cast<QGridLayout*>(ly);
+            if (gly!=nullptr) {
+                gly->addWidget(widget,yy,xx);
             }
-            if (j==1)
-                widget = m_pens[i]->CreateUI(getPenColour(i),width,xx,yy, m_list);
-
-            if (widget!=nullptr) {
-                QGridLayout* gly = dynamic_cast<QGridLayout*>(ly);
-                if (gly!=nullptr) {
-                    gly->addWidget(widget,yy,xx);
-                }
-                else
-                    ly->addWidget(widget);
+            else
+                ly->addWidget(widget);
 
 
-                yy++;
-                cur++;
-                maxy++;
-                if (yy==16) {
-                    yy=0;
-                    xx++;
-                    maxy=17;
-                }
+            yy++;
+            cur++;
+            maxy++;
+            if (yy==16) {
+                yy=0;
+                xx++;
+                maxy=17;
             }
         }
+        //}
     }
     ly->addItem(new QSpacerItem(0,1,QSizePolicy::Expanding,QSizePolicy::Expanding));
 

@@ -5,6 +5,10 @@ QWidget* LPen::CreateUI(QColor col, int width,int xx,int yy,QVector<LColor>& lis
     QWidget* widget = nullptr;
     if (m_type == FixedSingle)
         widget = createButton(col, m_colorIndex, width);
+
+    if (m_type == SingleSelect)
+        widget = createButtonSelect(col, m_colorIndex, width);
+
     if (m_type == Dropdown || m_type == DropDownExceptAlreadySelected)
         widget = createComboBox(col, width, list);
 
@@ -54,6 +58,7 @@ QWidget *LPen::createButton(QColor col, int index, int width) {
     b->setMinimumWidth(width);
     b->setMaximumHeight(width);
     b->setMinimumHeight(width);
+
     QColor c2(0,0,0);
     if (col.red()+col.green()+col.blue()<(127*3))
         c2 = QColor(255,255,255);
@@ -67,6 +72,30 @@ QWidget *LPen::createButton(QColor col, int index, int width) {
         handleButtonEdit(index,b);
     } );
     return b;
+}
+
+QWidget *LPen::createButtonSelect(QColor col, int index, int width)
+{
+    QWidget* w = new QWidget();
+    QGridLayout* ly = new QGridLayout();
+
+    ly->addWidget(createButton(col,index,width),0,0);
+
+    QPushButton* palSelect = new QPushButton("..");
+    int w2= width/2;
+    palSelect->setMaximumSize(w2,w2);
+    ly->addWidget(createButton(col,index,width),0,0);
+    ly->addWidget(palSelect,0,1);
+
+
+    QObject::connect( palSelect, &QPushButton::clicked,  [=](){
+        // Implement!
+    } );
+
+
+    w->setLayout(ly);
+
+    return w;
 }
 
 QWidget *LPen::createComboBox(QColor col, int width, QVector<LColor> &list)
@@ -95,7 +124,16 @@ QWidget *LPen::createComboBox(QColor col, int width, QVector<LColor> &list)
     } );
 
     ly->addWidget(btn,0,0);
-    ly->addWidget(b,0,1);
+
+    QGridLayout* ly_small = new QGridLayout();
+
+    ly_small->addWidget(new QLabel(m_name),0,0);
+    ly_small->addWidget(b,1,0);
+
+    QWidget* w_small = new QWidget();
+    w_small->setLayout(ly_small);
+
+    ly->addWidget(w_small,0,1);
 
     QWidget* dummy = new QWidget();
     dummy->setLayout(ly);

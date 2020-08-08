@@ -4,6 +4,7 @@
 #include <QString>
 #include <QColor>
 #include <math.h>
+#include <QLabel>
 #include <QPushButton>
 #include <QPixmap>
 #include <QGridLayout>
@@ -110,6 +111,7 @@ public:
     QPixmap CreateColorIcon(QColor col, int s);
 
     QWidget* createButton(QColor col, int index, int width);
+    QWidget* createButtonSelect(QColor col, int index, int width);
     QWidget* createComboBox(QColor col,int width, QVector<LColor> &list);
     QWidget* createGrid(QColor col,int width, QVector<LColor> &list);
 
