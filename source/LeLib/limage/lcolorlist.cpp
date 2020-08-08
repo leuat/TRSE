@@ -398,7 +398,7 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
         m_pens[2]->Hide(true);
     }
     else { // IS multicolor
-        if (m_type == VIC20)
+        if (m_type == VIC20 && !m_isHybridMode)
             m_pens[3]->m_restricted = QVector<int>() << 8<<9<<10<<11<<12<<13<<14<<15;
         if (m_type==C64)
             if (m_isCharset)
