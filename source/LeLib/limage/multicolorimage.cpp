@@ -144,9 +144,10 @@ void MultiColorImage::setBackground(unsigned int col)
     for (int i=0;i<m_charWidth*m_charHeight;i++) {
         m_data[i].c[0] = col;
     }
-    if (m_bitMask==0b11) {
+    if (m_bitMask==0b11 || m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1) {
+//        qDebug() << "HERE SETBACKGROUND " << m_colorList.getPen(1) << m_colorList.getPen(2) ;;;
         for (int i=0;i<m_charWidth*m_charHeight;i++) {
-            m_data[i].c[0] = col;
+            //m_data[i].c[0] = col;
             m_data[i].c[1] = m_colorList.getPen(1);
             m_data[i].c[2] = m_colorList.getPen(2);
         }

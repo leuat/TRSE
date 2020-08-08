@@ -378,6 +378,7 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
         if (i>=oldList.count())
             oldList.append(i);
     }
+ //   qDebug()<< "OLD LIST " <<oldList;
     m_pens.clear();
     LPen::Type type = LPen::DisplayAllExceptAlreadySelected;
 
@@ -977,6 +978,7 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize) {
         CreateUIOld(ly,type,windowSize);
         return;
     }
+    //qDebug() <<"LColorList::CreateUI";
     m_windowSize = windowSize;
     if (ly==nullptr)
         return;

@@ -179,6 +179,9 @@ void FormImageEditor::onImageMouseEvent()
 
 void FormImageEditor::onPenChanged()
 {
+//    if (m_work.m_currentImage->m_image->m_colorList.getPen(1)==2)
+  //      return;
+//    m_work.m_currentImage->m_image->setBackground(m_work.m_currentImage->m_image->getBackground())
     m_work.m_currentImage->m_image->InitPens();
     m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,m_windowSize);
     onImageMouseEvent();
@@ -1931,12 +1934,12 @@ void FormImageEditor::on_cmbMC2_activated(int index)
 
 void FormImageEditor::on_cmbBackgroundMain_3_activated(int index)
 {
-    m_work.m_currentImage->m_image->setBackground(index);
+/*    m_work.m_currentImage->m_image->setBackground(index);
     SetMCColors();
     updateCharSet();
     emit onImageMouseEvent();
     Data::data.redrawOutput = true;
-
+*/
 }
 
 void FormImageEditor::on_btnResizeData_clicked()

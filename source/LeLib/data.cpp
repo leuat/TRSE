@@ -35,7 +35,7 @@ void Data::Redraw()
 
 void Data::UpdatePens()
 {
-    redrawOutput = true;
+//    redrawOutput = true;
     emit EmitPenChanged();
 
 }

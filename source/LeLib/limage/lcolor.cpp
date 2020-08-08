@@ -122,13 +122,14 @@ QWidget *LPen::createComboBox(QColor col, int width, QVector<LColor> &list)
     else
         FillComboBoxRestricted(b,list);
 
+//    qDebug() << "Setting : "<<m_colorIndex;
     b->setCurrentIndex(m_colorIndex);
 
     QObject::connect( b, &QComboBox::currentTextChanged,  [=](){
         Data::data.currentColor = b->currentData(Qt::UserRole).toInt();
         Data::data.currentIsColor=true;
         m_colorIndex = Data::data.currentColor;
-//        qDebug() << "SETTING CMB COLOR INDEX " <<Get();
+  //      qDebug() << "SETTING CMB COLOR INDEX " <<Get();
 
 
         Data::data.UpdatePens();

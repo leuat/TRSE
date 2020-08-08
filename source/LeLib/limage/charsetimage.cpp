@@ -724,7 +724,7 @@ unsigned int CharsetImage::getPixelHybrid(int x, int y)
     }
 
 
-    if (MultiColorImage::getPixel(p.x(),p.y())!=0)
+    if (MultiColorImage::getPixel(p.x(),p.y())!=getBackground())
         return pc.c[3];
 
     return pc.c[0] &ande;
