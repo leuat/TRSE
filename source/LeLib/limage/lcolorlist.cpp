@@ -379,18 +379,24 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
             oldList.append(i);
     }
     m_pens.clear();
+    LPen::Type type = LPen::DisplayAllExceptAlreadySelected;
+
+    if ((m_isMulticolor && m_isCharset) || m_isHybridMode)
+        type = LPen::DisplayAll;
+
 
     if (m_type==C64) {
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[0],"Background",LPen::Dropdown)));
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[1],"Multicolor 1",LPen::Dropdown)));
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[2],"Multicolor 2",LPen::Dropdown)));
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Free colour",LPen::DisplayAllExceptAlreadySelected)));
+
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Free colour",type)));
     }
     if (m_type==VIC20) {
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[0],"Background",LPen::Dropdown)));
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[1],"Border",LPen::Dropdown)));
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[2],"AUX",LPen::Dropdown)));
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Char colour",LPen::DisplayAllExceptAlreadySelected)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Char colour",type)));
     }
 
     if (!m_isMulticolor && !m_isHybridMode) {
@@ -400,10 +406,12 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
     else { // IS multicolor
         if (m_type == VIC20 && !m_isHybridMode)
             m_pens[3]->m_restricted = QVector<int>() << 8<<9<<10<<11<<12<<13<<14<<15;
+
         if (m_type==C64)
             if (m_isCharset)
                 m_pens[3]->m_restricted = QVector<int>() << 8<<9<<10<<11<<12<<13<<14<<15;
 
+        m_pens[3]->m_and =0x7;
  //       if (m_type == C64)
 
     }

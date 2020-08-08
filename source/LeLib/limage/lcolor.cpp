@@ -12,7 +12,7 @@ QWidget* LPen::CreateUI(QColor col, int width,int xx,int yy,QVector<LColor>& lis
     if (m_type == Dropdown || m_type == DropDownExceptAlreadySelected)
         widget = createComboBox(col, width, list);
 
-    if (m_type == DisplayAllExceptAlreadySelected || m_type == DisplayAllExceptAlreadySelected)
+    if (m_type == DisplayAllExceptAlreadySelected || m_type == DisplayAll)
         widget = createGrid(col, width,list);
 
 
@@ -179,7 +179,7 @@ QWidget *LPen::createGrid(QColor col, int width, QVector<LColor> &list)
             ok = false;
 
         if (ok) {
-            ly->addWidget(createButton(list[i].color,i,width),j+1,x);
+            ly->addWidget(createButton(list[i&m_and].color,i,width),j+1,x);
             if (x>=1) filled = true;
 
         }
