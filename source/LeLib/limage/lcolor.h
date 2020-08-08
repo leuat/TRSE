@@ -86,6 +86,7 @@ public:
     enum Type {FixedSingle, SingleSelect, Dropdown,DropDownExceptAlreadySelected, DisplayAll, DisplayAllExceptAlreadySelected};
     Type m_type = FixedSingle;
     QString m_name;
+    int m_dataType = 0;
     int m_and = 0xFFFF;
     QVector3D m_bpp = QVector3D(4,4,4);
     bool m_isHidden = false;

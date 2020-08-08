@@ -69,6 +69,8 @@ QWidget *LPen::createButton(QColor col, int index, int width) {
 
 //    b->setStyleSheet("QLabel { color : " + c2.name() +"; }");
     QObject::connect( b, &QPushButton::clicked,  [=](){
+        Data::data.currentColorType = m_dataType;
+//        qDebug() << "Setting "<<Data::data.currentColorType;
         handleButtonEdit(index,b);
     } );
     return b;
@@ -113,7 +115,7 @@ QWidget *LPen::createComboBox(QColor col, int width, QVector<LColor> &list)
     QGridLayout* ly = new QGridLayout();
     ly->setVerticalSpacing(0);
     QWidget* btn = createButton(col,m_colorIndex,width);
-
+    m_dataType = 1;
     QComboBox *b = new QComboBox();
     if (m_type == Dropdown || m_type == DisplayAll)
         FillComboBox(b, list);
@@ -244,6 +246,8 @@ void LPen::handleButtonEdit(int val, QPushButton *btn)
     //    qDebug() << data;
             m_buttonsEdit[data]->setText("X");*/
     Data::data.currentColor = val;
+//    Data::data.currentColorType = 0;
+
     Data::data.currentIsColor=true;
     Data::data.UpdatePens();
 //    qDebug() << "Setting color "<< val;

@@ -46,6 +46,7 @@ public:
     QString currentPath;
     float percent = 0;
     unsigned char currentColor = 0;
+    unsigned char currentColorType = 0;
     bool currentIsColor = false;
     static Data data;
     void Redraw();

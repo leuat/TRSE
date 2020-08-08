@@ -741,6 +741,13 @@ void CharsetImage::setPixelHybrid(int x, int y, unsigned int color)
     PixelChar&pc = getPixelChar(p.x(),p.y());
 
     bool isMC = false;
+
+//    if (Data::data.currentColorType!=0)
+  //      qDebug() << "DATATYPTE "<<Data::data.currentColorType;
+
+
+    if (Data::data.currentColorType==1)
+
     if (m_colorList.getPen(1)==color || m_colorList.getPen(2)==color)
     {
 //        isMC = true;
@@ -751,7 +758,7 @@ void CharsetImage::setPixelHybrid(int x, int y, unsigned int color)
     if (m_colorList.getPen(0)!=color) {
 
 
-//    if (pc.c[3]>=8 || color==m_extraCols[1] || color==m_extraCols[2]) {
+        //    if (pc.c[3]>=8 || color==m_extraCols[1] || color==m_extraCols[2]) {
         if (pc.c[3]>=8) {
             m_bitMask=0b11;
             m_scale = 2;
@@ -759,12 +766,12 @@ void CharsetImage::setPixelHybrid(int x, int y, unsigned int color)
             m_noColors = 4;
             p.setX(p.x()/2);
 
-    }
-    else {
-//        pc.c[1] = color;
-  //      pc.c[2] = color;
-        pc.c[3] = color;
-    }
+        }
+        else {
+            //        pc.c[1] = color;
+            //      pc.c[2] = color;
+            pc.c[3] = color;
+        }
     }
 
     CharsetImage::setLimitedPixel(p.x(),p.y(),color);
