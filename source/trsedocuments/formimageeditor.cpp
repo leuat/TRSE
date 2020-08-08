@@ -1983,7 +1983,7 @@ void FormImageEditor::on_chkDisplayMulticolor_stateChanged(int arg1)
     updateCharSet();
     Data::data.Redraw();
     onImageMouseEvent();
-
+    onPenChanged();
 }
 
 void FormImageEditor::on_leHeaders_editingFinished()
@@ -2459,8 +2459,11 @@ void FormImageEditor::on_btnInv_clicked()
 void FormImageEditor::on_chkHybrid_clicked(bool checked)
 {
     SetFooterData(LImageFooter::POS_DISPLAY_HYBRID,checked);
-    if (checked)
+    if (checked) {
         ui->chkDisplayMulticolor->setChecked(false);
-    ui->chkDisplayMulticolor->setVisible(!checked);
+    }
+    m_work.m_currentImage->m_image->m_colorList.m_isHybridMode = checked;
 
+    ui->chkDisplayMulticolor->setVisible(!checked);
+    onPenChanged();
 }

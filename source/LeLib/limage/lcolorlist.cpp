@@ -393,7 +393,7 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,oldList[3],"Char colour",LPen::DisplayAllExceptAlreadySelected)));
     }
 
-    if (!m_isMulticolor) {
+    if (!m_isMulticolor && !m_isHybridMode) {
         m_pens[1]->Hide(true);
         m_pens[2]->Hide(true);
     }
