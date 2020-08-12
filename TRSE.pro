@@ -130,6 +130,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagenes.cpp \
     source/LeLib/limage/limageok64.cpp \
     source/LeLib/limage/limagex16.cpp \
+    source/LeLib/limage/lpen.cpp \
     source/LeLib/limage/pixelchar.cpp \
     source/LeLib/util/tikidisk.cpp \
     source/PmmEdit/fjonghighlighter.cpp \
@@ -321,6 +322,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagenes.h \
     source/LeLib/limage/limageok64.h \
     source/LeLib/limage/limagex16.h \
+    source/LeLib/limage/lpen.h \
     source/LeLib/limage/pixelchar.h \
     source/LeLib/util/tikidisk.h \
     source/PmmEdit/fjonghighlighter.h \

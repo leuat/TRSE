@@ -805,6 +805,27 @@ QPoint Util::mapToWindow(QWidget *from, QPoint pt) {
     return pt;
 }
 
+QPixmap Util::CreateColorIcon(QColor col, int s) {
+    QImage img(s,s,QImage::Format_RGB32);
+
+    QColor c2(col.red()/2, col.green()/2, col.blue()/2);
+    for (int y=0;y<s;y++)
+        for (int x=0;x<s;x++) {
+            //            if (s-1-y>x)
+
+            //              img.setPixelColor(x,y, m_list[col].color);
+            //        else
+            if (y==0 || y==s-1 ||x==0 || x==s-1)
+                img.setPixelColor(x,y, c2);
+            else
+                img.setPixelColor(x,y, col);
+
+
+        }
+    return QPixmap::fromImage(img);
+
+}
+
 
 
 float Util::smoothstep(float edge0, float edge1, float x)

@@ -39,6 +39,7 @@
 #include <QLabel>
 
 #include "lcolor.h"
+#include "lpen.h"
 #include "limagefooter.h"
 
 class LColorList : public QObject
@@ -56,6 +57,7 @@ public:
     bool m_isMulticolor = true; // OBSOLETE REWRITE
     bool m_isCharset = false;
     bool m_isHybridMode = false;
+    bool m_supportsFooterPen = false;
     QVector3D m_bpp = QVector3D(8,8,8);
     enum Type{ NES, C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8,OK64,X16, AMSTRADCPC };
 

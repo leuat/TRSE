@@ -53,7 +53,7 @@ bool LImageIO::Save(QString filename, LImage* img)
     file.write( ( char * )( &imageType ),1 );
     file.write( ( char * )( &colorType ),1 );
     img->SaveBin(file);
-  //  img->m_colorList.PenToFooter(&img->m_footer);
+    img->m_colorList.PenToFooter(&img->m_footer);
     img->m_footer.Save(file);
     file.close();
 }
@@ -88,7 +88,9 @@ LImage* LImageIO::Load(QString filename)
         return nullptr;
     img->LoadBin(file);
     img->m_footer.Load(file);
-//    img->m_colorList.FooterToPen(&img->m_footer);
+    qDebug() << "HERE1";
+    img->m_colorList.FooterToPen(&img->m_footer);
+    qDebug() << "HERE2";
 
     file.close();
     return img;

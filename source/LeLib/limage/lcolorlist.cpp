@@ -895,6 +895,7 @@ void LColorList::PenToFooter(LImageFooter *footer)
 
 void LColorList::FooterToPen(LImageFooter *footer)
 {
+    if (m_supportsFooterPen)
     for (int i=0;i<m_pens.count();i++) {
         uchar val =footer->get(LImageFooter::POS_PEN_START + i);
         if (m_pens[i]->m_type!=LPen::FixedSingle)
@@ -904,6 +905,7 @@ void LColorList::FooterToPen(LImageFooter *footer)
 }
 
 void LColorList::ConstrainColours(QVector<int> &cols) {
+    if (m_supportsFooterPen)
     for (int i=0;i<m_list.count();i++) {
         ConstrainColour(i,cols.contains(i));
 //        qDebug() << "const" << !cols.contains(i);

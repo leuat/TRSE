@@ -78,7 +78,6 @@ void LImageAmiga::ExportBin(QFile &file)
     file.write(cData);
 //    for (int i=0;i<nobp;i++)
   //      file.write(data[i]);
-    qDebug() << "Written AMIGA file";
     int i=0;
 /*    for (auto c : m_colorList.m_list) {
         int val = c.get12BitValue();
@@ -89,6 +88,10 @@ void LImageAmiga::ExportBin(QFile &file)
         i=i+1;
     }
 */
+    QString ff = file.fileName();
+    ff = ff.remove(".bin");
+    m_colorList.ExportAmigaPalette(ff+".pal");
+
 }
 
 void LImageAmiga::SaveBin(QFile &file)
