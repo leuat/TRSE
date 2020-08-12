@@ -5,7 +5,7 @@ var
 
    	i,j,k, isDone: integer = 0; 
    	image : incbin("images/image1.bin") chipmem;
-	palette : incbin("images/image1.pal");
+	image_palette : incbin("images/image1.pal");
 // Some random image   	
 
  /*

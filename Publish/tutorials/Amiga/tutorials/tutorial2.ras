@@ -1,6 +1,10 @@
 program Tutorial2_CopperList;
 var  
    	i,j,k,l,m, isDone, time: integer = 0; 
+  @export "images/image1.flf"	 "images/image1.bin" 256
+
+  	image_palette : incbin("images/image1.pal");
+
    	image : incbin("images/image1.bin") chipmem;
 
 	sin64 : array[64] of byte = ($10,$12,$13,$15,$16,$18,$19,$1a,$1b,$1c,$1d,$1e,$1f,$1f,$20,$20,$20,$20,$20,$1f,$1f,$1e,$1d,$1c,$1b,$1a,$19,$18,$16,$15,$13,$12, $10,$e,$d,$b,$a,$8,$7,$6,$5,$4,$3,$2,$1,$1,$0,$0,$0,$0,$0,$1,$1,$2,$3,$4,$5,$6,$7,$8,$a,$b,$d,$e);
@@ -10,6 +14,7 @@ var
 procedure SetupScreen();
 begin
 	poke16(copper_resolution, 0 , $4200); // $4000  = bitplanes, $200 = colours
+	setpalette(image_palette,copper_palette,16);	
 	
 	// Setup image copper list (4 bitplanes, 40*40 modulo 120
 	SetCopperList32(image, copper_bitplane0);
