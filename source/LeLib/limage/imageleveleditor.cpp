@@ -37,11 +37,8 @@ void ImageLevelEditor::SetLevel(QPoint f)
 //    qDebug() << "Current colors:";
 
     for (int i=0;i<3;i++)
-        m_extraCols[i] = m_currentLevel->m_ExtraData[i];
+        m_colorList.setPen(i,m_currentLevel->m_ExtraData[i]);
 
-
-
-    m_background = m_currentLevel->m_ExtraData[0];
 //        qDebug() << QString::number(m_currentLevel->m_ExtraData[i]);
     if (m_charset==nullptr)
         return;
@@ -177,11 +174,13 @@ void ImageLevelEditor::SetColor(uchar col, uchar idx)
     if (m_currentLevel->m_ExtraData.count()>=3) {
         m_currentLevel->m_ExtraData[idx] = col;
     }
+    /*
     m_extraCols[idx] = col;
     if (idx==0)
         m_background = col;
 
     m_colorList.SetMulticolor(idx,col);
+    */
 
 //    UpdateColorList();
 
@@ -612,11 +611,11 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
     if (m_meta.m_useColors) {
         if (m_meta.m_displayMultiColor) {
             if (col<8) // Non-multicolor
-                if (val!=m_background)
+                if (val!=getBackground())
                     val = col;
         }
         else
-            if (val!=m_background)
+            if (val!=getBackground())
                 val = col;
     }
 
@@ -625,13 +624,13 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 
         val = m_charset->getCharPixel(v, col, x,y);
             if (!m_charset->m_colorList.m_isMulticolor)
-                if (val!=m_background)
+                if (val!=getBackground())
                     val = col;
     }
 
 
     if (m_meta.m_useColors) {
-        if (val==m_charset->m_data[pos].c[3] && val!=m_background)
+        if (val==m_charset->m_data[pos].c[3] && val!=getBackground())
         //if (val !=0  && val!=m_background)
         {
             val = col&0b00000111;
@@ -682,13 +681,14 @@ void ImageLevelEditor::CopyFrom(LImage *mc)
         m_charWidthDisplay = c->m_charWidthDisplay;
         m_gridWidthDisplay = c->m_gridWidthDisplay;
         m_writeType = c->m_writeType;
-        for (int i=0;i<4;i++)
-            m_extraCols[i] = c->m_extraCols[i];
+//        for (int i=0;i<4;i++)
+  //          m_extraCols[i] = c->m_extraCols[i];
         //SetLevel(QPoint(0,0));
         m_currentLevelPos = c->m_currentLevelPos;
         SetLevel(m_currentLevelPos);
         renderPathGrid = c->renderPathGrid;
         m_scale = c->m_scale;
+        m_colorList.CopyFrom(&c->m_colorList);
     }
     else
     LImage::CopyFrom(mc);

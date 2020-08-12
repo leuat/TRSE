@@ -49,7 +49,6 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 
     m_image = LImageFactory::Create(m_imageType, colorType);
 //    m_image->CopyFrom(img);
-    m_image->m_colorList.CopyFrom(&img->m_colorList);
 //    m_image->m_metaParams
 /*    m_image->m_footer = img->m_footer;
     m_image->setMultiColor(img->isMultiColor());
@@ -58,6 +57,7 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 */
     m_image->CopyFrom(img);
 //    m_image->Clear();
+    m_image->m_colorList.CopyFrom(&img->m_colorList);
 
     LImageVIC20* vic = dynamic_cast<LImageVIC20*>(img);
     if (vic!=nullptr) {
@@ -98,10 +98,12 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 //    qDebug() << "EXTRACOL 3 " <<QString::number(m_image->m_extraCols[3]);
  //   qDebug() << "EXTRACOL 0 " <<QString::number(m_image->m_extraCols[0]);
 
-    ui->cmbForeground->setCurrentIndex(m_image->m_extraCols[3]);
-    ui->cmbBackground->setCurrentIndex(m_image->m_extraCols[0]);
-    ui->cmbMC1->setCurrentIndex(m_image->m_extraCols[1]);
-    ui->cmbMC2->setCurrentIndex(m_image->m_extraCols[2]);
+    if (dynamic_cast<MultiColorImage*>(m_image)!=nullptr) {
+        ui->cmbForeground->setCurrentIndex(m_image->m_colorList.getPen(3));
+        ui->cmbBackground->setCurrentIndex(m_image->m_colorList.getPen(0));
+        ui->cmbMC1->setCurrentIndex(m_image->m_colorList.getPen(1));
+        ui->cmbMC2->setCurrentIndex(m_image->m_colorList.getPen(2));
+    }
 
     if (isPetscii)
         ui->cmbMC1->setCurrentIndex(6);
@@ -195,7 +197,7 @@ void DialogImport::UpdateOutput()
 
 void DialogImport::on_cmbForeground_activated(int index)
 {
-    m_image->setForeground(index);
+//    m_image->setForeground(index);
     UpdateOutput();
 }
 

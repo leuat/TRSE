@@ -225,6 +225,10 @@ public:
 
 
     static QPoint mapToWindow(QWidget *from, QPoint pt);
+
+    static QPixmap CreateColorIcon(QColor col, int s);
+
+
 };
 
 

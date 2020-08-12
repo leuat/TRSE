@@ -30,6 +30,7 @@ public:
     const static uchar POS_CLEAR_VALUE = 16;
     const static uchar POS_CHARSET_WIDTH = 17;
     const static uchar POS_DISPLAY_HYBRID = 18;
+    const static uchar POS_PEN_START = 256-64;
 
     bool isFullscreen() {
         return get(POS_DISPLAY_CHAR)==0;

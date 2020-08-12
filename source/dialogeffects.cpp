@@ -681,7 +681,7 @@ static int Save2DInfo(lua_State* L) {
    // MultiColorImage mc(m_effect->m_mc->m_colorList.m_type);
   //  mc.m_data[0].C = m_charData;
    // m_effect->m_mc
-    int bg = m_effect->m_mc->m_extraCols[0];
+    int bg = m_effect->m_mc->getBackground();
     for (QPoint k: killList)
         m_effect->m_mc->setPixel(k.x(),k.y(),bg);
 

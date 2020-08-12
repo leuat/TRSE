@@ -10,6 +10,8 @@ public:
 
     LImageAtari520ST(LColorList::Type t, int type);
 
+    virtual void InitPens() override;
+
     void ExportBin(QFile &file) override;
 
     void SaveBin(QFile &file) override;

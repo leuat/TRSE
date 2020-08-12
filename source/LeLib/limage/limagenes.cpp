@@ -66,8 +66,7 @@ LImageNES::LImageNES(LColorList::Type t) : CharsetImage(t)
     m_GUIParams[col4] = "Color 3";
 
 
-    for (int i=0;i<4;i++)
-        m_extraCols[i] = 0;
+    InitPens();
 
     //ForceColor();
 }
@@ -131,12 +130,6 @@ void LImageNES::ForceColor()
 {
 }
 
-void LImageNES::setForeground(unsigned int col)
-{
-//    m_colorList.m_nesCols[1] = col;
-    SetColor(col, 1);
- //   qDebug() << "HERE";
-}
 
 
 void LImageNES::SaveBin(QFile &file)
@@ -289,6 +282,11 @@ bool LImageNES::getXY(QPoint& xy,QPoint& p1, QPoint& p2)
 
     xy = QPoint(x,y);
     return true;
+}
+
+void LImageNES::InitPens()
+{
+    m_colorList.InitNESPens();
 }
 
 PixelChar &LImageNES::getPixelChar(int x, int y)
@@ -480,12 +478,6 @@ void LImageNES::CopyFrom(LImage *img)
 
     LImageNES* n = dynamic_cast<LImageNES*>(img);
     m_colorList.CopyFrom(&img->m_colorList);
-    for (int i=0;i<4;i++) {
-//        m_colorList.setPen(i,n->m_colorList)
-  //      m_colorList.m_nesCols[i] = n->m_colorList.m_nesCols[i];
-        m_background = n->m_background;
-        m_extraCols[i] = m_colorList.getPen(i);
-    }
 
     m_footer.m_data = img->m_footer.m_data;
     //    qDebug() << m_footer.isFullscreen() << img->m_footer.isFullscreen();

@@ -5,10 +5,11 @@ LImageAmstradCPC::LImageAmstradCPC(LColorList::Type t)  : LImageQImage(t)
     SetMode(0);
     m_type = LImage::Type::AmstradCPC;
     m_supports.asmExport = false;
-    m_supports.binaryLoad = false;
+    m_supports.binaryLoad = false   ;
     m_supports.binarySave = false;
     m_supports.flfSave = true;
     m_supports.flfLoad = true;
+    m_colorList.m_supportsFooterPen = true;
 
 }
 

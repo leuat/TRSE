@@ -81,11 +81,13 @@ void LImageVIC20::setMultiColor(bool doSet)
 }
 void LImageVIC20::SaveBin(QFile& file)
 {
-    file.write( ( char * )( &m_background ),  1 );
+/*    file.write( ( char * )( &m_background ),  1 );
     file.write( ( char * )( &m_border ), 1 );
     file.write( ( char * )( &m_extraCols[1] ), 1 );
     file.write( ( char * )( &m_extraCols[2] ), 1 );
-    file.write( ( char * )( &m_extraCols[3] ), 1 );
+    file.write( ( char * )( &m_extraCols[3] ), 1 );*/
+    SavePensBin(file);
+
     file.write( (char* )(&m_charWidth),1);
     file.write( (char* )(&m_charHeight),1);
     file.write( ( char * )( &m_data ),  m_charWidth*m_charHeight*12 );
@@ -95,11 +97,13 @@ void LImageVIC20::SaveBin(QFile& file)
 
 void LImageVIC20::LoadBin(QFile& file)
 {
-    file.read( ( char * )( &m_background ),1 );
+/*    file.read( ( char * )( &m_background ),1 );
     file.read( ( char * )( &m_border ), 1);
     file.read( ( char * )( &m_extraCols[1] ), 1 );
     file.read( ( char * )( &m_extraCols[2] ), 1 );
-    file.read( ( char * )( &m_extraCols[3] ), 1 );
+    file.read( ( char * )( &m_extraCols[3] ), 1 );*/
+
+    LoadPensBin(file);
     file.read( ( char * )( &m_charWidth ), 1 );
     file.read( ( char * )( &m_charHeight ), 1 );
     file.read( ( char * )( &m_data ),  m_charWidth*m_charHeight*12 );
@@ -158,7 +162,7 @@ void LImageVIC20::ToRaw(QByteArray &arr)
         QByteArray cols;
         cols.resize(size);
 
-        m_extraCols[0]=m_background;
+        //m_extraCols[0]=m_background;
 
 
         for (int i=start;i<end;i++) {

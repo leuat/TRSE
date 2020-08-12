@@ -302,11 +302,16 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
 
 }
 
+void LImage::InitPens() {
+
+    m_colorList.DefaultPen(LPen::FixedSingle);
+}
+
 void LImage::CopyChar()
 {
 
- //   m_copySize = 1;
-/*    if (m_footer.isFullscreen()) {
+    //   m_copySize = 1;
+    /*    if (m_footer.isFullscreen()) {
         m_copySize = QPoint(m_width,m_height);
     }
     else {

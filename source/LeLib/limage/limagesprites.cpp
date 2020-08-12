@@ -83,10 +83,12 @@ void LImageSprites::FromRaw(QByteArray &arr)
         }
     }
     for (int i=0;i<25*40;i++) {
-        m_data[i].c[0] = m_background;
+        for (int j=0;j<4;j++)
+            m_data[i].c[j] = m_colorList.getPen(j);
+/*        m_data[i].c[0] = m_background;
         m_data[i].c[1] = m_extraCols[1];
         m_data[i].c[2] = m_extraCols[2];
-        m_data[i].c[3] = m_extraCols[3];
+        m_data[i].c[3] = m_extraCols[3];*/
     }
 
 }

@@ -4,7 +4,14 @@
 #include <QString>
 #include <QColor>
 #include <math.h>
-
+#include <QLabel>
+#include <QPushButton>
+#include <QPixmap>
+#include <QGridLayout>
+#include <QDebug>
+#include "source/LeLib/data.h"
+#include "source/LeLib/util/util.h"
+#include <QComboBox>
 
 class Metric {
 public:
@@ -72,27 +79,6 @@ public:
 
 };
 
-class LPen {
-public:
-    int m_colorIndex;
-    enum Type {Fixed, Normal, Dropdown};
-    Type m_type = Normal;
-    QString m_name;
-    LPen() {
-
-    }
-    LPen(int cidx) {
-        m_colorIndex = cidx;
-    }
-    LPen(int cidx, QString name, Type type) {
-        m_colorIndex = cidx;
-        m_name = name;
-        m_type = type;
-    }
-    int Get() {
-        return m_colorIndex;
-    }
-};
 
 
 #endif // LCOLOR_H

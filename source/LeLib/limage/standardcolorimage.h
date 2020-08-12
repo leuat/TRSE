@@ -28,7 +28,7 @@ class StandardColorImage : public MultiColorImage
 {
 public:
     StandardColorImage(LColorList::Type t);
-    void ExportAsm(QString filename) override;
+//    void ExportAsm(QString filename) override;
 
 };
 

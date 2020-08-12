@@ -35,7 +35,6 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_width = 320;
     m_minCol = 0;
 //    m_data = new PixelChar[m_charWidth*m_charHeight];
-    m_background = 0;
     Clear();
     m_type = LImage::Type::CharMapMulticolor;
     SetColor(1,1);
@@ -86,7 +85,9 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
 
     m_GUIParams[tabCharset] = "1";
     m_updateCharsetPosition = true;
+    m_colorList.m_isCharset = true;
     EnsureSystemColours();
+    InitPens();
 
 }
 
@@ -124,7 +125,7 @@ QString CharsetImage::getMetaInfo()
 void CharsetImage::SetColor(uchar col, uchar idx)
 {
     m_color.c[idx] = col;
-
+/*
     if (idx==0)
         m_background = col;
 
@@ -136,7 +137,7 @@ void CharsetImage::SetColor(uchar col, uchar idx)
     m_colorList.SetMulticolor(idx,col);
 
     UpdateColorList();
-
+*/
 }
 
 void CharsetImage::ImportBin(QFile &file)
@@ -174,11 +175,14 @@ void CharsetImage::ExportBin(QFile &f)
 
 void CharsetImage::SaveBin(QFile& file)
 {
-    file.write( ( char * )( &m_background ),  1 );
+/*    file.write( ( char * )( &m_background ),  1 );
     file.write( ( char * )( &m_border ), 1 );
     file.write( ( char * )( &m_extraCols[1] ), 1 );
     file.write( ( char * )( &m_extraCols[2] ), 1 );
-    file.write( ( char * )( &m_extraCols[3] ), 1 );
+    file.write( ( char * )( &m_extraCols[3] ), 1 );*/
+
+
+    SavePensBin(file);
     file.write( ( char * )( &m_data ),  m_charWidth*m_charHeight*12 );
 
 
@@ -186,15 +190,44 @@ void CharsetImage::SaveBin(QFile& file)
 
 void CharsetImage::LoadBin(QFile& file)
 {
-    file.read( ( char * )( &m_background ),1 );
+/*    file.read( ( char * )( &m_background ),1 );
     file.read( ( char * )( &m_border ), 1);
     file.read( ( char * )( &m_extraCols[1] ), 1 );
     file.read( ( char * )( &m_extraCols[2] ), 1 );
     file.read( ( char * )( &m_extraCols[3] ), 1 );
+    */
+
+    LoadPensBin(file);
+
     file.read( ( char * )( &m_data ),  m_charWidth*m_charHeight*12 );
 
 //    for (int i=0;i<m_charWidth*m_charHeight;i++)
   //      m_data[i].c[3]=5;
+
+}
+
+void CharsetImage::SavePensBin(QFile &file)
+{
+    for (int i=0;i<4;i++) {
+        char dummy = m_colorList.getPen(i);
+        file.write( ( char * )( &dummy ),  1 );
+        if (i==0)
+            file.write( ( char * )( &dummy ),  1 );  // Write an extra for "border"
+
+    }
+
+}
+
+void CharsetImage::LoadPensBin(QFile &file)
+{
+    for (int i=0;i<4;i++) {
+        char dummy;
+        file.read( ( char * )( &dummy ), 1);
+        m_colorList.setPen(i,dummy);
+        if (i==0)
+            file.read( ( char * )( &dummy ),  1 );  // Read an extra for "border"
+
+    }
 
 }
 
@@ -205,7 +238,7 @@ uchar CharsetImage::getVariableColor(PixelChar *pc)
         col = pc->c[i];
         bool ok=true;
         for (int j=0;j<3;j++)
-            if (col==m_extraCols[j])
+            if (col==m_colorList.getPen(j))
                 ok=false;
         if (ok)
             return col;
@@ -231,9 +264,10 @@ unsigned int CharsetImage::getPixel(int x, int y)
     if (m_colorList.m_isMulticolor) {
         return MultiColorImage::getPixel(p.x(),p.y());
     }
+//    return MultiColorImage::getPixel(p.x(),p.y());
 
     PixelChar&pc = getPixelChar(p.x(),p.y());
-    if (MultiColorImage::getPixel(p.x(),p.y())!=0)
+    if (MultiColorImage::getPixel(p.x(),p.y())!=getBackground())
         return pc.c[3];
 
     return pc.c[0];
@@ -330,7 +364,7 @@ void CharsetImage::ToRaw(QByteArray &arr)
         for (int i=0;i<3;i++)
             qDebug() << QString::number(m_extraCols[i]);
 */
-        m_extraCols[0]=m_background;
+        //m_extraCols[0]=m_background;
 
 
         for (int i=start;i<end;i++) {
@@ -471,8 +505,7 @@ void CharsetImage::CopyFrom(LImage *img)
     m_footer = img->m_footer;
     if (mc!=nullptr)
     {
-        m_background = mc->m_background;
-        m_border = mc->m_border;
+        m_colorList.CopyFrom(&img->m_colorList);
         //m_currentMode = mc->m_currentMode;
         m_currentChar = mc->m_currentChar;
 
@@ -488,8 +521,6 @@ void CharsetImage::CopyFrom(LImage *img)
         m_gridWidthDisplay = mc->m_gridWidthDisplay;
         m_charWidthDisplay = mc->m_charWidthDisplay;
 
-        for (int i=0;i<4;i++)
-            m_extraCols[i]  = mc->m_extraCols[i];
         // qDebug() << "COPY FROM";
 //#pragma omp parallel for
         for(int i=0;i<m_charWidth*m_charHeight;i++) {
@@ -657,7 +688,15 @@ void CharsetImage::ExportFrame(QFile &file, int frame, int frameCount, int type,
 
 unsigned int CharsetImage::getPixelHybrid(int x, int y)
 {
-    setMultiColor(false);
+//    setMultiColor(false);
+    m_width = 320;
+    m_height = 200;
+    //m_scaleX = 1.2f;
+    m_bitMask = 0b1;
+    m_noColors = 2;
+    m_scale = 1;
+    m_minCol = 0;
+
     setHybrid();
 
 
@@ -679,13 +718,13 @@ unsigned int CharsetImage::getPixelHybrid(int x, int y)
 
         ande = 7;
         int c = MultiColorImage::getPixel(p.x(),p.y());
-        if (c!=m_extraCols[1] && c!=m_extraCols[2]) c=c&ande;
+        if (c!=m_colorList.getPen(1) && c!=m_colorList.getPen(2)) c=c&ande;
         return c;
 
     }
 
 
-    if (MultiColorImage::getPixel(p.x(),p.y())!=0)
+    if (MultiColorImage::getPixel(p.x(),p.y())!=getBackground())
         return pc.c[3];
 
     return pc.c[0] &ande;
@@ -700,19 +739,39 @@ void CharsetImage::setPixelHybrid(int x, int y, unsigned int color)
 
     QPoint p = getXY(x,y);
     PixelChar&pc = getPixelChar(p.x(),p.y());
-//    if (pc.c[3]>=8 || color==m_extraCols[1] || color==m_extraCols[2]) {
-        if (pc.c[3]>=8) {
-        m_bitMask=0b11;
-        m_scale = 2;
-        m_scaleX = 2.5f;
-        m_noColors = 4;
-        p.setX(p.x()/2);
 
+    bool isMC = false;
+
+//    if (Data::data.currentColorType!=0)
+  //      qDebug() << "DATATYPTE "<<Data::data.currentColorType;
+
+
+    if (Data::data.currentColorType==1)
+
+    if (m_colorList.getPen(1)==color || m_colorList.getPen(2)==color)
+    {
+//        isMC = true;
+        if (pc.c[3]<8)
+            pc.c[3]+=8;
     }
-    else {
-//        pc.c[1] = color;
-  //      pc.c[2] = color;
-        pc.c[3] = color;
+
+    if (m_colorList.getPen(0)!=color) {
+
+
+        //    if (pc.c[3]>=8 || color==m_extraCols[1] || color==m_extraCols[2]) {
+        if (pc.c[3]>=8) {
+            m_bitMask=0b11;
+            m_scale = 2;
+            m_scaleX = 2.5f;
+            m_noColors = 4;
+            p.setX(p.x()/2);
+
+        }
+        else {
+            //        pc.c[1] = color;
+            //      pc.c[2] = color;
+            pc.c[3] = color;
+        }
     }
 
     CharsetImage::setLimitedPixel(p.x(),p.y(),color);

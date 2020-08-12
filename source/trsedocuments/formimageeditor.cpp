@@ -45,6 +45,9 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
     updateCharSet();
 
 
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect  screenGeometry = screen->geometry();
+    m_windowSize = screenGeometry.size();
     //ui->lblGrid->setVisible(ui->chkGrid->isChecked());
 
 
@@ -119,7 +122,11 @@ void FormImageEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini
     }
 
     QObject::connect(ui->splitter, SIGNAL(splitterMoved(int,int)), this, SLOT(UpdateAspect()));
+//    QObject::connect(&Data::data, SIGNAL(EmitPenChanged()), this,SLOT(onImageMouseEvent()));
+    QObject::connect(&Data::data, SIGNAL(EmitPenChanged()), this,SLOT(onPenChanged()));
+    if (m_work.m_currentImage!=nullptr)
 
+        m_work.m_currentImage->m_image->InitPens();
 
 }
 
@@ -167,7 +174,18 @@ void FormImageEditor::onImageMouseEvent()
 
 
 
-//    qDebug() << m_work.m_currentImage->m_image->m_footer.isFullscreen();
+    //    qDebug() << m_work.m_currentImage->m_image->m_footer.isFullscreen();
+}
+
+void FormImageEditor::onPenChanged()
+{
+//    if (m_work.m_currentImage->m_image->m_colorList.getPen(1)==2)
+  //      return;
+//    m_work.m_currentImage->m_image->setBackground(m_work.m_currentImage->m_image->getBackground())
+    m_work.m_currentImage->m_image->InitPens();
+    m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,m_windowSize);
+    onImageMouseEvent();
+
 }
 
 void FormImageEditor::onImageMouseReleaseEvent()
@@ -203,7 +221,6 @@ FormImageEditor::~FormImageEditor()
 void FormImageEditor::wheelEvent(QWheelEvent *event)
 {
     float f = event->delta()/100.0f;
-
     if (QApplication::keyboardModifiers() & Qt::ShiftModifier) {
         m_updateThread.m_zoom -=f*0.05;
         m_updateThread.m_zoom = std::min(m_updateThread.m_zoom, 1.0f);
@@ -696,14 +713,17 @@ void FormImageEditor::UpdatePalette()
     //{
 
     if (m_work.m_currentImage->m_image->m_supports.displayColors)
-        l->CreateUI(ui->layoutColorsEdit_3,1, this->size());
-    l->FillComboBox(ui->cmbBackgroundMain_3);
+        l->CreateUI(ui->layoutColorsEdit_3,1, m_windowSize);
+
+/*    l->FillComboBox(ui->cmbBackgroundMain_3);
     l->FillComboBox(ui->cmbBorderMain_3);
     l->FillComboBox(ui->cmbMC1);
     if (m_work.m_currentImage->m_image->m_colorList.m_type==LColorList::VIC20)
     l->FillComboBoxRestricted(ui->cmbMC2,0,8);
     else
         l->FillComboBox(ui->cmbMC2);
+
+        */
 
     m_currentColorList = l;
     //}
@@ -714,8 +734,8 @@ void FormImageEditor::UpdatePalette()
     if (m_work.m_currentImage->m_image==nullptr)
         return;
 
-    ui->cmbMC1->setCurrentIndex(m_work.m_currentImage->m_image->m_extraCols[1]);
-    ui->cmbMC2->setCurrentIndex(m_work.m_currentImage->m_image->m_extraCols[2]);
+//    ui->cmbMC1->setCurrentIndex(m_work.m_currentImage->m_image->m_extraCols[1]);
+//    ui->cmbMC2->setCurrentIndex(m_work.m_currentImage->m_image->m_extraCols[2]);
 
     ui->btnExportCompressed->setVisible(m_work.m_currentImage->m_image->m_supports.compressedExport);
     ui->btnExportBin->setVisible(m_work.m_currentImage->m_image->m_supports.binarySave);
@@ -732,9 +752,10 @@ void FormImageEditor::UpdatePalette()
 
     ui->btnSelectDefaultClearItm->setVisible(m_work.m_currentImage->m_image->m_supports.displayDefaultClearButton);
 
-    ui->cmbMC1->setVisible(m_work.m_currentImage->m_image->m_supports.displayMC1);
+/*    ui->cmbMC1->setVisible(m_work.m_currentImage->m_image->m_supports.displayMC1);
     ui->cmbMC2->setVisible(m_work.m_currentImage->m_image->m_supports.displayMC2);
     ui->cmbBorderMain_3->setVisible(m_work.m_currentImage->m_image->m_supports.displayForeground);
+    */
     ui->layoutColorsEdit_3->setEnabled(m_work.m_currentImage->m_image->m_supports.displayColors);
     ui->cmbBank->setVisible(m_work.m_currentImage->m_image->m_supports.displayBank);
     if (!m_work.m_currentImage->m_image->m_supports.displayBank) {
@@ -749,15 +770,15 @@ void FormImageEditor::UpdatePalette()
 
     ui->lblTimeStamp->setVisible(m_work.m_currentImage->m_image->m_supports.displayTimestamp);
     ui->leTimeStamp->setVisible(m_work.m_currentImage->m_image->m_supports.displayTimestamp);
-    if (!m_work.m_currentImage->m_image->m_supports.displayCmbColors) {
+/*    if (!m_work.m_currentImage->m_image->m_supports.displayCmbColors) {
         ui->cmbMC1->setVisible(false);
         ui->cmbMC2->setVisible(false);
         ui->cmbBorderMain_3->setVisible(false);
         ui->cmbBackgroundMain_3->setVisible(false);
     }
+    */
 
-
-    m_work.m_currentImage->m_image->ApplyColor();
+    //m_work.m_currentImage->m_image->ApplyColor();
 
 
 //    ui->btnLoad->setVisible(m_work.m_currentImage->m_image->m_supports.flfLoad);
@@ -768,10 +789,10 @@ void FormImageEditor::UpdatePalette()
 
 void FormImageEditor::FillCMBColors()
 {
-    ui->cmbBackgroundMain_3->setCurrentIndex(m_work.m_currentImage->m_image->m_background);
+/*    ui->cmbBackgroundMain_3->setCurrentIndex(m_work.m_currentImage->m_image->m_background);
     ui->cmbMC1->setCurrentIndex(m_work.m_currentImage->m_image->m_extraCols[1]);
     ui->cmbMC2->setCurrentIndex(m_work.m_currentImage->m_image->m_extraCols[2]);
-
+*/
 }
 
 void FormImageEditor::focusInEvent(QFocusEvent *)
@@ -1049,7 +1070,7 @@ void FormImageEditor::on_btnImport_clicked()
         m_work.m_currentImage->m_image->m_colorList.CopyFrom(&di->m_image->m_colorList);
         UpdatePalette();
         FillCMBColors();
-        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1, this->size());
+        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1, m_windowSize);
 
         Data::data.redrawOutput = true;
     }
@@ -1296,11 +1317,12 @@ void FormImageEditor::PrepareImageTypeGUI()
 //    SetButton(ui->btnFlipHorisontal,LImage::GUIType::btnFlipH);
 //    SetButton(ui->btnFlipVert,LImage::GUIType::btnFlipV);
 //    SetButton(ui->btnCharsetFull,LImage::GUIType::btnEditFullCharset);
-    SetLabel(ui->lblBackground, LImage::GUIType::col1);
+
+    /*SetLabel(ui->lblBackground, LImage::GUIType::col1);
     SetLabel(ui->lblForeground, LImage::GUIType::col2);
     SetLabel(ui->lblMC1, LImage::GUIType::col3);
     SetLabel(ui->lblMC2, LImage::GUIType::col4);
-
+*/
 
     if (m_work.m_currentImage->m_image->isNes())
         ui->btnImportRom->setVisible(false);
@@ -1417,7 +1439,7 @@ void FormImageEditor::PrepareClose()
 void FormImageEditor::SetMCColors()
 {
 
-
+/*
 
     int a = ui->cmbMC1->currentIndex();
     int b = ui->cmbMC2->currentIndex();
@@ -1450,7 +1472,7 @@ void FormImageEditor::SetMCColors()
 
     Data::data.Redraw();
     Data::data.forceRedraw = true;
-
+*/
 }
 
 void FormImageEditor::UpdateLevels()
@@ -1912,12 +1934,12 @@ void FormImageEditor::on_cmbMC2_activated(int index)
 
 void FormImageEditor::on_cmbBackgroundMain_3_activated(int index)
 {
-    m_work.m_currentImage->m_image->setBackground(index);
+/*    m_work.m_currentImage->m_image->setBackground(index);
     SetMCColors();
     updateCharSet();
     emit onImageMouseEvent();
     Data::data.redrawOutput = true;
-
+*/
 }
 
 void FormImageEditor::on_btnResizeData_clicked()
@@ -1951,7 +1973,7 @@ void FormImageEditor::UpdateMulticolorImageSettings()
 {
     if (m_work.m_currentImage->m_image->m_supports.displayColors) {
         m_work.m_currentImage->m_image->m_colorList.SetIsMulticolor(ui->chkDisplayMulticolor->isChecked());
-        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,this->size());
+        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,m_windowSize);
     }
 
 }
@@ -1964,7 +1986,7 @@ void FormImageEditor::on_chkDisplayMulticolor_stateChanged(int arg1)
     updateCharSet();
     Data::data.Redraw();
     onImageMouseEvent();
-
+    onPenChanged();
 }
 
 void FormImageEditor::on_leHeaders_editingFinished()
@@ -2260,10 +2282,12 @@ void FormImageEditor::on_cmbNesPalette_currentIndexChanged(int index)
     m_work.m_currentImage->m_image->m_colorList.m_curPal = index;
     m_ignoreMC = false;
     int idx = m_work.m_currentImage->m_image->m_colorList.m_curPal*4+1;
+/*
     ui->cmbMC2->setCurrentIndex(m_work.m_currentImage->m_image->m_colorList.m_nesPPU[idx+1]);
     ui->cmbMC1->setCurrentIndex(m_work.m_currentImage->m_image->m_colorList.m_nesPPU[idx+0]);
     ui->cmbBorderMain_3->setCurrentIndex(m_work.m_currentImage->m_image->m_colorList.m_nesPPU[idx+2]);
     ui->cmbBackgroundMain_3->setCurrentIndex(m_work.m_currentImage->m_image->m_colorList.m_nesPPU[0]);
+    */
     m_ignoreMC = false;
 
     SetFooterData(LImageFooter::POS_CURRENT_PALETTE,index);
@@ -2438,8 +2462,11 @@ void FormImageEditor::on_btnInv_clicked()
 void FormImageEditor::on_chkHybrid_clicked(bool checked)
 {
     SetFooterData(LImageFooter::POS_DISPLAY_HYBRID,checked);
-    if (checked)
+    if (checked) {
         ui->chkDisplayMulticolor->setChecked(false);
-    ui->chkDisplayMulticolor->setVisible(!checked);
+    }
+    m_work.m_currentImage->m_image->m_colorList.m_isHybridMode = checked;
 
+    ui->chkDisplayMulticolor->setVisible(!checked);
+    onPenChanged();
 }

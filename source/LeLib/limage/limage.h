@@ -159,7 +159,7 @@ public:
     }
 
     virtual int getBackground() {
-        return m_background;
+        return 0;
     }
 
     virtual void ExportFrame(QFile& file, int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8) {}
@@ -180,7 +180,9 @@ public:
     int m_width;
     int m_height;
     float m_scaleX = 1.0f;
-    unsigned int m_border=0, m_background=0;
+
+//    unsigned int m_border=0, m_background=0;
+
     Type m_type = Type::QImageBitmap;
     WriteType m_writeType = WriteType::Color;
     unsigned char m_bitMask = 0b11;
@@ -233,7 +235,7 @@ public:
     virtual CharsetImage* getCharset() { return nullptr; }
 
     bool renderPathGrid = false;
-    unsigned char m_extraCols[4];
+//    unsigned char m_extraCols[4];
 
     LColorList m_colorList;
 
@@ -252,6 +254,7 @@ public:
     virtual void FloydSteinbergDither(QImage& img, LColorList& colors, bool dither);
     virtual void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength, int size,float gamma);
 
+    virtual void InitPens();
 
     virtual int getContainerCount() {return 1;}
 
@@ -295,13 +298,13 @@ public:
     virtual void SaveBin(QFile &file) = 0;
     virtual void LoadBin(QFile &file) = 0;
 
-    virtual void ApplyColor() {
+  /*  virtual void ApplyColor() {
        SetColor(m_extraCols[0],0);
        SetColor(m_extraCols[1],1);
        SetColor(m_extraCols[2],2);
 
     }
-
+*/
     virtual void SetPalette(int pal) {}
 
     virtual void BuildData(QTableWidget* tbl, QStringList header) {}
@@ -329,8 +332,7 @@ public:
 
     virtual void ApplyToLabel(QLabel* l) = 0;
 
-    virtual void setForeground(unsigned int col) { m_border = col; }
-    virtual void setBackground(unsigned int col) {m_background = col; }
+    virtual void setBackground(unsigned int col) {  }
 
     virtual void ExportC(QFile& file)  {}
     virtual void ImportC(QFile& file)  {}
@@ -368,7 +370,6 @@ public:
 
     virtual int getDx();
     virtual int getDy();
-
 
 };
 

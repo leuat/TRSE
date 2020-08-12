@@ -23,10 +23,12 @@
 #define DATA_H
 
 #include <QString>
+#include <QObject>
 
-
-class Data
+class Data : public QObject
 {
+    Q_OBJECT
+
 public:
     Data();
     int flfVersion = 2;
@@ -44,9 +46,14 @@ public:
     QString currentPath;
     float percent = 0;
     unsigned char currentColor = 0;
+    unsigned char currentColorType = 0;
     bool currentIsColor = false;
     static Data data;
     void Redraw();
+    void UpdatePens();
+signals:
+    void EmitPenChanged();
+
 };
 
 class ParseData {

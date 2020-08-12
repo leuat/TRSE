@@ -1,15 +1,21 @@
 program Tutorial1;
 var  
+
+@export "images/image1.flf"	 "images/image1.bin" 256
+
    	i,j,k, isDone: integer = 0; 
    	image : incbin("images/image1.bin") chipmem;
+	palette : incbin("images/image1.pal");
+// Some random image   	
 
-/*
+ /*
 	Sets up the copper list to point to the 320x200 interlaced image. 
 */
 procedure SetupScreen();
 begin
 	poke16(copper_resolution, 0 , $4200); // $4000  = bitplanes, $200 = colours
-	
+	// Set palette at copper palette location, 16 colors
+	setpalette(image_palette,copper_palette,16);	
 	// Setup image copper list (4 bitplanes, 40*40 modulo 120
 	SetCopperList32(image, copper_bitplane0);
 	SetCopperList32(image+^40, copper_bitplane1);

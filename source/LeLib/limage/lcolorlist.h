@@ -29,14 +29,18 @@
 #include <QComboBox>
 #include <QPushButton>
 #include <QLayout>
+#include <QSharedPointer>
 //#endif
 #include <QIcon>
 #include <QPixmap>
 #include "source/LeLib/data.h"
 #include <math.h>
 //#include <QStringLiteral>
+#include <QLabel>
 
 #include "lcolor.h"
+#include "lpen.h"
+#include "limagefooter.h"
 
 class LColorList : public QObject
 {
@@ -46,13 +50,15 @@ private:
     QVector<int> m_multicolors;
     int m_currentType = 0;
     QVector<LColor> m_list;
-    QVector<LPen> m_pens;
+    QVector<QSharedPointer<LPen>> m_pens;
 
 public:
 //    uchar m_nesCols[4];    // OBSOLETE REWRITE
     bool m_isMulticolor = true; // OBSOLETE REWRITE
-
-
+    bool m_isCharset = false;
+    bool m_isHybridMode = false;
+    bool m_supportsFooterPen = false;
+    QVector3D m_bpp = QVector3D(8,8,8);
     enum Type{ NES, C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8,OK64,X16, AMSTRADCPC };
 
     Type m_type = Type::C64;
@@ -66,6 +72,8 @@ public:
     QColor m_cblack = QColor(0,0,0,255);
 
     LColor m_black = LColor(m_cblack,"black");
+
+    QVector<int> getPenList();
 
     void SetIsMulticolor(bool mult);
 
@@ -88,6 +96,8 @@ public:
     Metric* m_metric = nullptr;
     void EnableColors(QVector<int>& cols);
 
+    void CreateUIOld(QLayout* ly, int type, QSize windowSize);
+
     void GeneratePaletteFromQImage(QImage& img);
 
     int getNoBitplanes();
@@ -96,6 +106,10 @@ public:
     void fromArray(QByteArray& d);
 
     void Initialize(Type t);
+
+    void SetC64Pens(bool m_isMulticolor, bool m_isCharset);
+    void InitNESPens();
+
 
     QPixmap CreateColorIcon(int col, int s);
 
@@ -119,14 +133,14 @@ public:
     int count() {
         return m_pens.count();
     }
-    void DefaultPen();
+    void DefaultPen(LPen::Type type);
 
     QColor getClosestColor(QColor col, int& winner);
 
     int getPen(int pcol);
     void setPen(int pcol, int colorIndex) {
         if (pcol<m_pens.count())
-            m_pens[pcol].m_colorIndex = colorIndex;
+            m_pens[pcol]->m_colorIndex = colorIndex;
     }
 
     QColor getPenColour(int pcol);
@@ -134,6 +148,9 @@ public:
     void ExportAmigaPalette(QString filename);
     void ExportAtariSTPalette(QString filename);
 
+
+    void PenToFooter(LImageFooter* footer);
+    void FooterToPen(LImageFooter* footer);
 
     void ConstrainColours(QVector<int>& cols);
 

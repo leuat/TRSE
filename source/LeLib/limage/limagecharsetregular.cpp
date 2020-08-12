@@ -61,8 +61,8 @@ LImageCharsetRegular::LImageCharsetRegular(LColorList::Type t) : CharsetImage(t)
 
 void LImageCharsetRegular::setPixel(int x, int y, unsigned int color)
 {
-    if (!(color==m_extraCols[0] || color==m_extraCols[1])) {
-        color = m_extraCols[1];
+    if (!(color==m_colorList.getPen(1) || color==m_colorList.getPen(1))) {
+        color = m_colorList.getPen(1);
         //qDebug() << color;
     }
     CharsetImage::setPixel(x,y,color);

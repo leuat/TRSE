@@ -32,9 +32,9 @@ void LImageSprites2::AddNew(int w, int h)
     s->Init(w,h);
     m_items.append(s);
     m_current = m_items.count()-1;
-    SetColor(m_extraCols[0],0);
-    SetColor(m_extraCols[1],1);
-    SetColor(m_extraCols[2],2);
+    //SetColor(m_extraCols[0],0);
+    //SetColor(m_extraCols[1],1);
+    //SetColor(m_extraCols[2],2);
 
 }
 
@@ -46,8 +46,8 @@ void LImageSprites2::ImportBin(QFile &f)
         LSprite* s = new LSprite(a,i*64,m_bitMask);
         m_items.append(s);
         m_current = m_items.count()-1;
-        for (int j=0;j<4;j++)
-            SetColor(m_extraCols[j],j);
+        //for (int j=0;j<4;j++)
+          //  SetColor(m_extraCols[j],j);
     }
 }
 
@@ -74,14 +74,11 @@ void LImageSprites2::CopyFrom(LImage *img)
     LImageSprites2* mc = dynamic_cast<LImageSprites2*>(img);
     if (mc!=nullptr)
     {
-         m_background = mc->m_background;
-         m_border = mc->m_border;
+        m_colorList.CopyFrom(&img->m_colorList);
          //m_extraCols = mc.m_extraCols;
          m_width = mc->m_width;
          m_height = mc->m_height;
          m_bitMask = mc->m_bitMask;
-         for (int i=0;i<4;i++)
-             m_extraCols[i] = mc->m_extraCols[i];
 //         m_items = mc->m_items;
 
          DeleteAll();
@@ -124,7 +121,7 @@ void LImageSprites2::setPixel(int x, int y, unsigned int color)
 
 
     for (int i=0;i<3;i++) {
-        if (m_extraCols[i]==color)
+        if (m_colorList.getPen(i)==color)
             fillColor = false;
     }
 
@@ -270,12 +267,7 @@ uchar LSprite::getPixel(float x, float y, uchar bitMask)
 
 void LImageSprites2::SaveBin(QFile& file)
 {
-    file.write( ( char * )( &m_background ),  1 );
-    file.write( ( char * )( &m_border ), 1 );
-    file.write( ( char * )( &m_extraCols[1] ), 1 );
-    file.write( ( char * )( &m_extraCols[2] ), 1 );
-    file.write( ( char * )( &m_extraCols[3] ), 1 );
-
+    SavePensBin(file);
     uchar cnt = m_items.count();
 
     file.write( ( char * )( &cnt ), 1 );
@@ -307,11 +299,12 @@ void LImageSprites2::SaveBin(QFile& file)
 void LImageSprites2::LoadBin(QFile& file)
 {
     m_items.clear();
-    file.read( ( char * )( &m_background ),  1 );
+    LoadPensBin(file);
+/*    file.read( ( char * )( &m_background ),  1 );
     file.read( ( char * )( &m_border ), 1 );
     file.read( ( char * )( &m_extraCols[1] ), 1 );
     file.read( ( char * )( &m_extraCols[2] ), 1 );
-    file.read( ( char * )( &m_extraCols[3] ), 1 );
+    file.read( ( char * )( &m_extraCols[3] ), 1 );*/
     uchar cnt;
     file.read( ( char * )( &cnt ), 1 );
     for (int i=0;i<cnt;i++) {
@@ -338,9 +331,9 @@ void LImageSprites2::LoadBin(QFile& file)
     }
     m_current = 0;
 
-    m_extraCols[0] = m_background;
-    SetColor(m_extraCols[1],1);
-    SetColor(m_extraCols[2],2);
+    //m_extraCols[0] = m_background;
+    //SetColor(m_extraCols[1],1);
+    //SetColor(m_extraCols[2],2);
 
 
 }
@@ -349,8 +342,8 @@ void LImageSprites2::SetColor(uchar col, uchar idx)
 {
     m_color.c[idx] = col;
 
-    if (idx==0)
-        m_background = col;
+//    if (idx==0)
+  //      m_background = col;
 
 //    qDebug() << "SETCOLOR index " +QString::number(idx) << "  " << QString::number(col)  << "   " <<QString::number(m_current);
     //if (m_current>=0 && idx==3)
@@ -363,7 +356,7 @@ void LImageSprites2::SetColor(uchar col, uchar idx)
 
 
     }
-    m_extraCols[idx] = col;
+    //m_extraCols[idx] = col;
 }
 
 void LImageSprites2::SetColor(uchar col, uchar idx, LSprite &s)
@@ -371,13 +364,13 @@ void LImageSprites2::SetColor(uchar col, uchar idx, LSprite &s)
 
     m_color.c[idx] = col;
 
-    if (idx==0)
-        m_background = col;
+//    if (idx==0)
+  //      m_background = col;
 
     for (int i=0;i<s.m_data.count();i++)
         s.m_data[i].c[idx] = col;
 
-    m_extraCols[idx] = col;
+    //m_extraCols[idx] = col;
 }
 
 bool LImageSprites2::KeyPress(QKeyEvent *e)
@@ -395,9 +388,9 @@ bool LImageSprites2::KeyPress(QKeyEvent *e)
 //    m_current = Util::clamp(m_current,0,m_items.count()-1);
 
 
-    SetColor(m_extraCols[0],0);
-    SetColor(m_extraCols[1],1);
-    SetColor(m_extraCols[2],2);
+    //SetColor(m_extraCols[0],0);
+    //SetColor(m_extraCols[1],1);
+    //SetColor(m_extraCols[2],2);
 //   SetColor(m_extraCols[3],3);
     return true;
 }
@@ -445,8 +438,8 @@ void LImageSprites2::MegaTransform(int flip, int ix, int iy)
     LSprite n;
     n.Init(s->m_width, s->m_height);
     n.m_header = s->m_header;
-    for (int i=0;i<4;i++)
-        SetColor(m_extraCols[i],i,n);
+    //for (int i=0;i<4;i++)
+      //  SetColor(m_extraCols[i],i,n);
 
 
 

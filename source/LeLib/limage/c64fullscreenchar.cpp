@@ -109,7 +109,7 @@ void C64FullScreenChar::SetColor(uchar col, uchar idx)
 //        return;
     m_charset->SetColor(col, idx);
     if (idx==0) ((C64Screen*)m_items[m_current])->m_data[1] = col;
-    m_extraCols[idx] = col;
+ //   m_extraCols[idx] = col;
 }
 
 void C64FullScreenChar::Clear()
@@ -174,7 +174,7 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
                     uchar col = 0;
                     if (xx>0 && xx<img->width() && yy>0 && yy<img->height())
                         col = lst.getIndex(QColor(img->pixel(xx,yy)));
-                    if (col!=m_background) {
+                    if (col!=getBackground()) {
                         pc.p[y] |= 1<<x;
                         winner[col]++;
                     }
@@ -235,9 +235,10 @@ bool C64FullScreenChar::KeyPress(QKeyEvent *e)
     }
 
 
-    SetColor(m_extraCols[0],0);
+/*    SetColor(m_extraCols[0],0);
     SetColor(m_extraCols[1],1);
     SetColor(m_extraCols[2],2);
+    */
     return true;
 }
 
@@ -545,8 +546,10 @@ void C64FullScreenChar::PasteChar()
 
 void C64FullScreenChar::SaveBin(QFile& file)
 {
-    file.write( ( char * )( &m_background ),  1 );
-    file.write( ( char * )( &m_border ), 1 );
+    char dummy =  m_colorList.getPen(0);
+
+    file.write( ( char * )( &dummy),  1 );
+    file.write( ( char * )( &dummy ), 1 );
     file.write( ( char * )( &m_charWidth ),  1 );
     file.write( ( char * )( &m_charHeight), 1 );
     uchar v = m_items.count();
@@ -571,8 +574,10 @@ void C64FullScreenChar::SaveBin(QFile& file)
 
 void C64FullScreenChar::LoadBin(QFile& file)
 {
-    file.read( ( char * )( &m_background ),1 );
-    file.read( ( char * )( &m_border ), 1);
+    uchar dummy = 0;
+    file.read( ( char * )( &dummy ),1 );
+    m_colorList.setPen(0,dummy); // background
+    file.read( ( char * )( &dummy ), 1);
     file.read( ( char * )( &m_charWidth ),  1 );
     file.read( ( char * )( &m_charHeight), 1 );
     uchar cnt;

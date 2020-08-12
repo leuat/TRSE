@@ -22,7 +22,12 @@ LImageAmiga::LImageAmiga(LColorList::Type t, int type)  : LImageQImage(t)
     m_supports.binarySave = true;
     m_supports.flfSave = true;
     m_supports.flfLoad = true;
+    InitPens();
+}
 
+void LImageAmiga::InitPens() {
+    m_colorList.m_bpp = QVector3D(4,4,4);
+    m_colorList.DefaultPen(LPen::SingleSelect);
 }
 
 void LImageAmiga::ExportBin(QFile &file)
@@ -73,7 +78,6 @@ void LImageAmiga::ExportBin(QFile &file)
     file.write(cData);
 //    for (int i=0;i<nobp;i++)
   //      file.write(data[i]);
-    qDebug() << "Written AMIGA file";
     int i=0;
 /*    for (auto c : m_colorList.m_list) {
         int val = c.get12BitValue();
@@ -84,6 +88,10 @@ void LImageAmiga::ExportBin(QFile &file)
         i=i+1;
     }
 */
+    QString ff = file.fileName();
+    ff = ff.remove(".bin");
+    m_colorList.ExportAmigaPalette(ff+".pal");
+
 }
 
 void LImageAmiga::SaveBin(QFile &file)
