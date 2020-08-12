@@ -40,4 +40,4 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/Amiga/tutorials/
 open_files = ,tutorial3.ras, tutorial4_3D.ras, tutorial5_twister.ras, tutorial6_sprites.ras, tutorial7_grid.ras, tutorial2.ras, tutorial1.ras, images/image1.flf
-current_file = tutorial4_3D.ras
+current_file = tutorial2.ras
