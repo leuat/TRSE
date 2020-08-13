@@ -795,6 +795,8 @@ QColor LColorList::getClosestColor(QColor col, int& winner)
 //            if (!m_list[i].inUse)
   //              continue;
             int pen = m_pens[i]->Get();
+            if (pen>=m_list.count())
+                continue;
             float v = m_metric->getDistance(m_list[pen].color, col);
             //qDebug() << "end:";
             if (v<d) {
