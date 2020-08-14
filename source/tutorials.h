@@ -8,6 +8,7 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QListWidget>
+#include <QComboBox>
 #include "source/LeLib/util/util.h"
 
 
@@ -36,6 +37,7 @@ public:
     void Read(QString );
     void PopulateTreeList(QTreeWidget* tree);
     void PopulateSystemList(QListWidget* w);
+    void PopulateSystemCmb(QComboBox* w);
     void PopulateProjectList(QString system, QListWidget* w);
 
     void PopulateTemplateList(QListWidget* w, QString system);

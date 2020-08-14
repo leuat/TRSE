@@ -507,5 +507,7 @@
         <file>resources/text/help/r/inline.rtf</file>
         <file>resources/code/coleco/header.asm</file>
         <file>resources/code/coleco/footer.asm</file>
+        <file>resources/shaders/screen_slider.vert</file>
+        <file>resources/shaders/screen_slider.frag</file>
     </qresource>
 </RCC>

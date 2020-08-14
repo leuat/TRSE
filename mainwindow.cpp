@@ -64,6 +64,11 @@ MainWindow::MainWindow(QWidget *parent) :
 //   Data::data.version += "   Build  " + QDate::currentDate().toString();
 
 
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/pumpkid.png","Pumpkid",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/rb1.png","RB1",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/nibbler.png","Nibbler",""));
+    ui->glslider->setCurrentTexture();
+
     this->setMouseTracking(true);
     m_currentDoc = nullptr;
 //    setupIcons();
@@ -103,8 +108,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_tutorials.Read(":resources/text/tutorials.txt");
 //    m_tutorials.PopulateTreeList(ui->treeTutorials);
-    m_tutorials.PopulateSystemList(ui->lstSystems);
-    ui->lstSystems->setCurrentRow(0);
+//    m_tutorials.PopulateSystemList(ui->lstSystems);
+    m_tutorials.PopulateSystemCmb(ui->cmbSelectSystem);
+    ui->cmbSelectSystem->setCurrentIndex(0);
+    on_cmbSelectSystem_activated(0);
+    //ui->lstSystems->setCurrentRow(0);
     setWindowTitle("Turbo Rascal Syntax error, \";\" expected but \"BEGIN\" Version " + Data::data.version);
     ui->textBrowser->setText( ui->textBrowser->toHtml().replace("@version",Data::data.version));
     ui->textBrowser->setText( ui->textBrowser->toHtml().replace("@build",QDate::currentDate().toString()));
@@ -2270,4 +2278,11 @@ void MainWindow::on_actionTRSE_Showcases_triggered()
 void MainWindow::on_btnShowcases_clicked()
 {
     on_actionTRSE_Showcases_triggered();
+}
+
+void MainWindow::on_cmbSelectSystem_activated(int index)
+{
+    QString key = ui->cmbSelectSystem->currentData(Qt::UserRole).toString();
+    m_tutorials.PopulateProjectList(key,ui->lstSampleProjects);
+
 }
