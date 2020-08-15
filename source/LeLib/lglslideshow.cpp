@@ -48,9 +48,16 @@ void LGLSlideshow::initializeGL()
 //void LGLSlideshow::paintEvent(QPaintEvent *event)
 void LGLSlideshow::paintGL()
 {
+    if (m_time2-3.14159/2.0>=3.14159) {
+        m_time2 = 0;
+        m_curSlide++;
+        setCurrentTexture();
+    }
+
     // celar the framebuffer
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
     // bind the texture
     uint texture_unit = 1;
@@ -68,6 +75,7 @@ void LGLSlideshow::paintGL()
     m_program->setUniformValue( "time", m_time );
 
     m_time += 0.01;
+    m_time2 += 0.01;
 //    qDebug() << "TIME "<<m_time;
     /*m_program->setUniformValue("CD", CD.x(), CD.y());
     m_program->setUniformValue("barrelScale", barrelScale.x(), barrelScale.y());
@@ -90,6 +98,9 @@ void LGLSlideshow::paintGL()
     m_program->disableAttributeArray(0);
 
 
+
+
+
 //    qDebug() <<"TEST " <<rand()%100;
 
     // release the shader
@@ -98,8 +109,12 @@ void LGLSlideshow::paintGL()
 
 void LGLSlideshow::setCurrentTexture()
 {
-    m_texture1 = new QOpenGLTexture( m_slides[m_curSlide].m_image );
-    m_texture2 = new QOpenGLTexture( m_slides[m_curSlide+1].m_image );
+    if (m_texture1!=nullptr)
+        delete m_texture1;
+    if (m_texture2!=nullptr)
+        delete m_texture2;
+    m_texture1 = new QOpenGLTexture( m_slides[m_curSlide%m_slides.count()].m_image );
+    m_texture2 = new QOpenGLTexture( m_slides[(m_curSlide+1)%m_slides.count()].m_image );
 
 }
 

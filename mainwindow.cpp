@@ -66,7 +66,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/pumpkid.png","Pumpkid",""));
     ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/rb1.png","RB1",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/nibbler.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/nibbler.gif","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/yogrl.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/floskel.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/torus.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/floppy.jpeg","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/image_icon.png","Nibbler",""));
     ui->glslider->setCurrentTexture();
 
     this->setMouseTracking(true);
