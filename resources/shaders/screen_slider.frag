@@ -93,10 +93,14 @@ vec4 Pixel()
     vec2 rp = v_pos;
     rp.x*=sx;
 
+    rp.x = rp.x*(1.0 + rp.y*0.3*cos(time*0.5));
     rp = rp - vec2(0.5,0.5);
     vec2 or = rp;
     rp.x = or.x*cos(r)  -or.y*sin(r);
     rp.y = or.x*sin(r)  +or.y*cos(r);
+
+
+
     rp = rp + vec2(0.5,0.5);
 
     vec2 twirl = vec2(cos(-rp.y*0.3+rp.x*s1-time*0.3)*amp, sin(rp.y*s2+time*0.252)*amp);

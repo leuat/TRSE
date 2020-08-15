@@ -398,10 +398,7 @@
            <item row="1" column="1">
             <layout class="QVBoxLayout" name="verticalLayout_6">
              <item>
-              <layout class="QGridLayout" name="gridLayout_6" columnstretch="1">
-               <item row="1" column="0">
-                <widget class="QComboBox" name="cmbSelectSystem"/>
-               </item>
+              <layout class="QGridLayout" name="gridLayout_6" columnstretch="5,7">
                <item row="0" column="0">
                 <widget class="QLabel" name="label">
                  <property name="font">
@@ -414,27 +411,18 @@
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
+               <item row="1" column="0">
+                <widget class="QComboBox" name="cmbSelectSystem"/>
+               </item>
+               <item row="2" column="0">
                 <layout class="QVBoxLayout" name="verticalLayout_4">
                  <item>
                   <widget class="QListWidget" name="lstSampleProjects"/>
                  </item>
-                 <item>
-                  <widget class="QTextBrowser" name="txtTutorials"/>
-                 </item>
                 </layout>
                </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_6">
-                 <property name="font">
-                  <font>
-                   <pointsize>14</pointsize>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Sample projects</string>
-                 </property>
-                </widget>
+               <item row="2" column="1">
+                <widget class="QTextBrowser" name="txtTutorials"/>
                </item>
               </layout>
              </item>

@@ -26,7 +26,6 @@ LGLSlideshow::LGLSlideshow(QWidget *)
 
 void LGLSlideshow::initializeGL()
 {
-
 //    qDebug() << "LGLSlideShow HERE";
     //LGLSlideshow::initializeGL();
     initializeOpenGLFunctions();
