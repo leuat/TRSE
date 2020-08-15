@@ -10,7 +10,9 @@
 
 class GLSlide {
 public:
+    GLSlide() {
 
+    }
     GLSlide(QString img, QString text, QString project) {
         m_image.load(img);
         m_text = text;

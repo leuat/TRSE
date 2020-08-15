@@ -2226,6 +2226,8 @@ void MainWindow::on_lstSampleProjects_currentItemChanged(QListWidgetItem *curren
         return;
     if (current->data(Qt::UserRole).toString()=="")
         return;
+
+
     QString text = current->data(Qt::UserRole).toString().split(";")[1];
     ui->txtTutorials->setText(text+"<p><font color=\"#A0FFA0\">Double click to load the project!</font>");
 
