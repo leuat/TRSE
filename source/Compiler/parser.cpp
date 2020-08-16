@@ -3527,6 +3527,7 @@ void Parser::HandleSpritePacker()
     }
 
     QByteArray spriteData;
+
     if (QFile::exists(outSpriteFileName))
         spriteData = Util::loadBinaryFile(outSpriteFileName);
 
