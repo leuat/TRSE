@@ -42,7 +42,7 @@ public:
     QVector<GLSlide> m_slides;
     int m_curSlide = 0;
     float m_time=0,m_time2=0;
-
+    int m_curType = 0;
     LGLSlideshow();
     LGLSlideshow(QWidget* );
     void initializeGL() override;

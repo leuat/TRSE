@@ -48,9 +48,11 @@ void LGLSlideshow::initializeGL()
 //void LGLSlideshow::paintEvent(QPaintEvent *event)
 void LGLSlideshow::paintGL()
 {
-    if (m_time2-3.14159/2.0>=3.14159) {
+    if (m_time2>=1) {
         m_time2 = 0;
+ //       m_time = 0;
         m_curSlide++;
+        m_curType++;
         setCurrentTexture();
     }
 
@@ -70,12 +72,17 @@ void LGLSlideshow::paintGL()
     // activate the shader
     m_program->bind();
 
+
+    m_program->setUniformValue( "type1", m_curType );
+    m_program->setUniformValue( "type2", m_curType+1 );
+
     m_program->setUniformValue( "t1", texture_unit );
     m_program->setUniformValue( "t2", texture_unit+1 );
     m_program->setUniformValue( "time", m_time );
+    m_program->setUniformValue( "time2", m_time2 );
 
-    m_time += 0.01;
-    m_time2 += 0.01;
+    m_time += 0.002;
+    m_time2 += 0.002;
 //    qDebug() << "TIME "<<m_time;
     /*m_program->setUniformValue("CD", CD.x(), CD.y());
     m_program->setUniformValue("barrelScale", barrelScale.x(), barrelScale.y());
