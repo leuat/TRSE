@@ -3,6 +3,9 @@
 LImageGamboy::LImageGamboy(LColorList::Type t) : LImageNES(t)
 {
     m_type = LImage::GAMEBOY;
+    for (int i=0;i<m_charWidth*m_charHeight;i++)
+        for (int j=0;j<8;j++)
+            m_data[i].p[j]=0;
 }
 
 void LImageGamboy::ExportBin(QFile &file)
@@ -35,8 +38,9 @@ void LImageGamboy::SpritePacker(LImage *in, QByteArray &sprData, int x, int y, i
     int cur = 1;
     while (!(m_data[cur*2].isEmpty() && m_data[cur*2+1].isEmpty())) { //Find first non-empty sprite
         cur++;
+//        qDebug() <<cur<<m_data[cur*2].isEmpty() <<QString::number(m_data[cur*2].p[0]);
     }
-//    qDebug() << "FIRST START "<<cur;
+  //  qDebug() << "FIRST START "<<cur;
   //  qDebug()<< m_data[cur*2].isEmpty() <<m_data[cur*2+2].isEmpty();
     LImageGamboy* lga = (LImageGamboy*)in;
     for (int j=0;j<h;j++)

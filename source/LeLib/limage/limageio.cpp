@@ -88,10 +88,7 @@ LImage* LImageIO::Load(QString filename)
         return nullptr;
     img->LoadBin(file);
     img->m_footer.Load(file);
-    qDebug() << "HERE1";
     img->m_colorList.FooterToPen(&img->m_footer);
-    qDebug() << "HERE2";
-
     file.close();
     return img;
 }

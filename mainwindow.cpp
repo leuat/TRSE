@@ -64,6 +64,21 @@ MainWindow::MainWindow(QWidget *parent) :
 //   Data::data.version += "   Build  " + QDate::currentDate().toString();
 
 
+    ui->glslider->m_slides.append(GLSlide(":resources/images/C64.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/rb1.png","RB1",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/nibbler.gif","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/pumpkid.png","Pumpkid",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/yogrl.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/floskel.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/X86.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/torus.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tape.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/floppy.jpeg","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/image_icon.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/GAMEBOY.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/nopgrl.png","Nibbler",""));
+    ui->glslider->setCurrentTexture();
+
     this->setMouseTracking(true);
     m_currentDoc = nullptr;
 //    setupIcons();
@@ -103,8 +118,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_tutorials.Read(":resources/text/tutorials.txt");
 //    m_tutorials.PopulateTreeList(ui->treeTutorials);
-    m_tutorials.PopulateSystemList(ui->lstSystems);
-    ui->lstSystems->setCurrentRow(0);
+//    m_tutorials.PopulateSystemList(ui->lstSystems);
+    m_tutorials.PopulateSystemCmb(ui->cmbSelectSystem);
+    ui->cmbSelectSystem->setCurrentIndex(0);
+    on_cmbSelectSystem_activated(0);
+    //ui->lstSystems->setCurrentRow(0);
     setWindowTitle("Turbo Rascal Syntax error, \";\" expected but \"BEGIN\" Version " + Data::data.version);
     ui->textBrowser->setText( ui->textBrowser->toHtml().replace("@version",Data::data.version));
     ui->textBrowser->setText( ui->textBrowser->toHtml().replace("@build",QDate::currentDate().toString()));
@@ -2218,6 +2236,8 @@ void MainWindow::on_lstSampleProjects_currentItemChanged(QListWidgetItem *curren
         return;
     if (current->data(Qt::UserRole).toString()=="")
         return;
+
+
     QString text = current->data(Qt::UserRole).toString().split(";")[1];
     ui->txtTutorials->setText(text+"<p><font color=\"#A0FFA0\">Double click to load the project!</font>");
 
@@ -2270,4 +2290,11 @@ void MainWindow::on_actionTRSE_Showcases_triggered()
 void MainWindow::on_btnShowcases_clicked()
 {
     on_actionTRSE_Showcases_triggered();
+}
+
+void MainWindow::on_cmbSelectSystem_activated(int index)
+{
+    QString key = ui->cmbSelectSystem->currentData(Qt::UserRole).toString();
+    m_tutorials.PopulateProjectList(key,ui->lstSampleProjects);
+
 }

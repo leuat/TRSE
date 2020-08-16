@@ -62,6 +62,7 @@
 #include "source/dialognewproject.h"
 #include <QStandardItemModel>
 #include <QFileSystemWatcher>
+#include <source/LeLib/lglslideshow.h>
 
 namespace Ui {
 class MainWindow;
@@ -413,6 +414,8 @@ private slots:
     void on_actionTRSE_Showcases_triggered();
 
     void on_btnShowcases_clicked();
+
+    void on_cmbSelectSystem_activated(int index);
 
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);
