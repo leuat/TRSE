@@ -417,6 +417,8 @@ private slots:
 
     void on_cmbSelectSystem_activated(int index);
 
+    void on_btnChangelog_clicked();
+
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);
 

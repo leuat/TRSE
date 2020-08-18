@@ -117,6 +117,20 @@
                </property>
               </widget>
              </item>
+             <item row="0" column="1">
+              <widget class="QPushButton" name="btnBuild_3">
+               <property name="text">
+                <string>Build (c-b)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QPushButton" name="btnShowcases">
+               <property name="text">
+                <string>TRSE Showcases</string>
+               </property>
+              </widget>
+             </item>
              <item row="1" column="1">
               <widget class="QPushButton" name="btnMemoryAnalyze">
                <property name="toolTip">
@@ -127,20 +141,10 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="1">
-              <widget class="QPushButton" name="btnBuild_3">
+             <item row="0" column="0">
+              <widget class="QPushButton" name="btnSave_3">
                <property name="text">
-                <string>Build (c-b)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QPushButton" name="btnBuildAll">
-               <property name="toolTip">
-                <string>Builds all files according to the build instruction script. Check the &quot;project settings&quot; for details.</string>
-               </property>
-               <property name="text">
-                <string>Build All</string>
+                <string>Save (c-s)</string>
                </property>
               </widget>
              </item>
@@ -154,13 +158,6 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="0">
-              <widget class="QPushButton" name="btnSave_3">
-               <property name="text">
-                <string>Save (c-s)</string>
-               </property>
-              </widget>
-             </item>
              <item row="1" column="0">
               <widget class="QPushButton" name="btnBuild_4">
                <property name="toolTip">
@@ -171,10 +168,20 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
-              <widget class="QPushButton" name="btnShowcases">
+             <item row="2" column="0">
+              <widget class="QPushButton" name="btnBuildAll">
+               <property name="toolTip">
+                <string>Builds all files according to the build instruction script. Check the &quot;project settings&quot; for details.</string>
+               </property>
                <property name="text">
-                <string>TRSE Showcases</string>
+                <string>Build All</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QPushButton" name="btnChangelog">
+               <property name="text">
+                <string>View changelog</string>
                </property>
               </widget>
              </item>
@@ -431,7 +438,16 @@
           </layout>
          </item>
          <item row="3" column="0">
-          <widget class="QTextBrowser" name="textBrowser">
+          <widget class="QTextBrowser" name="txtChangelog">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="html">
             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;

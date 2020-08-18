@@ -124,8 +124,8 @@ MainWindow::MainWindow(QWidget *parent) :
     on_cmbSelectSystem_activated(0);
     //ui->lstSystems->setCurrentRow(0);
     setWindowTitle("Turbo Rascal Syntax error, \";\" expected but \"BEGIN\" Version " + Data::data.version);
-    ui->textBrowser->setText( ui->textBrowser->toHtml().replace("@version",Data::data.version));
-    ui->textBrowser->setText( ui->textBrowser->toHtml().replace("@build",QDate::currentDate().toString()));
+    ui->txtChangelog->setText( ui->txtChangelog->toHtml().replace("@version",Data::data.version));
+    ui->txtChangelog->setText( ui->txtChangelog->toHtml().replace("@build",QDate::currentDate().toString()));
 
     ui->treeSymbols->setHeaderHidden(true);
 
@@ -2297,4 +2297,12 @@ void MainWindow::on_cmbSelectSystem_activated(int index)
     QString key = ui->cmbSelectSystem->currentData(Qt::UserRole).toString();
     m_tutorials.PopulateProjectList(key,ui->lstSampleProjects);
 
+}
+
+void MainWindow::on_btnChangelog_clicked()
+{
+    DialogAbout* ab = new DialogAbout();
+    ab->SetText("Changelog", ui->txtChangelog->toHtml());
+    ab->exec();
+    delete ab;
 }
