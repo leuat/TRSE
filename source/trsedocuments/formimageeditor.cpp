@@ -2281,7 +2281,7 @@ void FormImageEditor::on_cmbNesPalette_currentIndexChanged(int index)
 //    qDebug() << index;
     m_work.m_currentImage->m_image->m_colorList.m_curPal = index;
     m_ignoreMC = false;
-    int idx = m_work.m_currentImage->m_image->m_colorList.m_curPal*4+1;
+    int idx = m_work.m_currentImage->m_image->m_colorList.m_curPal;//*4+1;
 /*
     ui->cmbMC2->setCurrentIndex(m_work.m_currentImage->m_image->m_colorList.m_nesPPU[idx+1]);
     ui->cmbMC1->setCurrentIndex(m_work.m_currentImage->m_image->m_colorList.m_nesPPU[idx+0]);
@@ -2290,13 +2290,16 @@ void FormImageEditor::on_cmbNesPalette_currentIndexChanged(int index)
     */
     m_ignoreMC = false;
 
+    m_work.m_currentImage->m_image->SetPalette(idx);
     SetFooterData(LImageFooter::POS_CURRENT_PALETTE,index);
+
 
 //    qDebug() << "on_cmbNesPalette "<< index;
 
 
-    SetMCColors();
-
+//    SetMCColors();
+    UpdatePalette();
+    updateCharSet();
     emit onImageMouseEvent();
 
 }

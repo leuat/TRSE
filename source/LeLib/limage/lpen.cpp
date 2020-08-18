@@ -31,6 +31,8 @@ QWidget *LPen::createButton(QColor col, int index, int width) {
     QPushButton *b = new QPushButton();
     QPalette p;
     b->setFlat(true);
+    if (!col.isValid())
+        col = QColor(0,0,0,255);
     QPixmap pm = Util::CreateColorIcon(col,width);
     b->setAutoFillBackground(true);
     p.setBrush(b->backgroundRole(), QBrush(pm));
@@ -39,9 +41,9 @@ QWidget *LPen::createButton(QColor col, int index, int width) {
     b->setMaximumHeight(width);
     b->setMinimumHeight(width);
 
-    QColor c2(0,0,0);
+    QColor c2(0,0,0,255);
     if (col.red()+col.green()+col.blue()<(127*3))
-        c2 = QColor(255,255,255);
+        c2 = QColor(255,255,255,255);
     p.setColor(b->foregroundRole(),c2);
     b->setPalette(p);
     if (index == Data::data.currentColor)

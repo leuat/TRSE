@@ -161,9 +161,10 @@ void LImageNES::LoadBin(QFile &file)
     m_colorList.m_nesCols[2] = m_colorList.m_nesPPU[2];
     m_colorList.m_nesCols[3] = m_colorList.m_nesPPU[3];
 */
-    for (int i=0;i<4;i++)
+/*    for (int i=0;i<4;i++)
         m_colorList.setPen(i,m_colorList.m_nesPPU[i]);
-
+*/
+//    SetPalette(0);
     for (PixelChar& pc: m_data)
         for (int i=0;i<4;i++)
             pc.c[i] = m_colorList.getPen(i);
@@ -222,10 +223,28 @@ QPixmap LImageNES::ToQPixMap(int chr)
 void LImageNES::SetPalette(int pal)
 {
 //    m_colorList.setPen(2-1, m_colorList.)
+//    if (pal==m_oldPal)
+  //      return;
+    int m_oldPal = m_footer.get(LImageFooter::POS_CURRENT_PALETTE);
+    if (m_oldPal!=pal) {
+        m_colorList.m_nesPPU[m_oldPal*4 +1 +0] = m_colorList.getPen(2-1);
+        m_colorList.m_nesPPU[m_oldPal*4 +1 +1] = m_colorList.getPen(2-0);
+        m_colorList.m_nesPPU[m_oldPal*4 +1 +2] = m_colorList.getPen(2-2);
+        m_colorList.m_nesPPU[m_oldPal*4 +1 +3] = m_colorList.getPen(3);
+        m_colorList.m_nesPPU[0] = m_colorList.getPen(3);
+    }
+//     m_colorList.m_nesPPU[m_oldPal*4 +1 +3] = m_colorList.getPen(3);
+  //   m_colorList.m_nesPPU[0] = m_colorList.getPen(3);
+
+     qDebug() << "OLDPAL "<<m_oldPal <<pal;
+
      m_colorList.setPen(2-1,m_colorList.m_nesPPU[pal*4 +1 +0]);
      m_colorList.setPen(2-0,m_colorList.m_nesPPU[pal*4 +1 +1]);
      m_colorList.setPen(2-2,m_colorList.m_nesPPU[pal*4 +1 +2]);
+//     m_colorList.setPen(3,m_colorList.m_nesPPU[pal*4 +1 +3]);
      m_colorList.setPen(3,m_colorList.m_nesPPU[0]);
+
+
 }
 
 bool LImageNES::getXY(QPoint& xy,QPoint& p1, QPoint& p2)
@@ -450,7 +469,7 @@ void LImageNES::setPixel(int x, int y, unsigned int col)
 
 void LImageNES::SetColor(uchar col, uchar idx)
 {
-    int li = idx;
+/*    int li = idx;
     if (li==0)
         li=3;
     else
@@ -464,7 +483,7 @@ void LImageNES::SetColor(uchar col, uchar idx)
 
 
     else m_colorList.m_nesPPU[0]=col;
-
+*/
     //    if (rand()%100>98)
     //      qDebug() << "SETTING COLOR : " << idx <<  "   WITH COLOR " <<Util::numToHex(col);
 

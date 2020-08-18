@@ -49,5 +49,5 @@ remove_unused_symbols = 1
 data_header_resources/images/octopus.flf = 6.93276e-310
 open_files = ,resources/charsets/charset.flf, Hello.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
-current_file = resources/charsets/charset.flf
+current_file = Hello.ras
 data_header_resources/images/jack.flf = 0
