@@ -236,7 +236,6 @@ void LImageNES::SetPalette(int pal)
 //     m_colorList.m_nesPPU[m_oldPal*4 +1 +3] = m_colorList.getPen(3);
   //   m_colorList.m_nesPPU[0] = m_colorList.getPen(3);
 
-     qDebug() << "OLDPAL "<<m_oldPal <<pal;
 
      m_colorList.setPen(2-1,m_colorList.m_nesPPU[pal*4 +1 +0]);
      m_colorList.setPen(2-0,m_colorList.m_nesPPU[pal*4 +1 +1]);
