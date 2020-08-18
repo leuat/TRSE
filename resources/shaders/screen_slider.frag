@@ -6,6 +6,7 @@ uniform float time2;
 uniform int type1;
 uniform int type2;
 
+float sx = 4.0;
 
 
 vec4 Test1()
@@ -36,7 +37,6 @@ vec4 Test1()
 
 vec4 Flip()
 {
-    float sx = 4.0;
     float pixelScale = 8.0;
     float ph = 1.0/pixelScale;
 
@@ -99,7 +99,6 @@ vec2 rotate2D(vec2 rp, float r) {
 
 vec2 Pixel()
 {
-    float sx = 4.0;
     float t = time*2.0*3.14159;//clamp(time,0.0,3.14159*2.0);
 
 
@@ -136,7 +135,6 @@ vec2 Pixel()
 
 vec2 Tunnel()
 {
-    float sx = 4.0;
     float t = time*3.14159265*2.0;//clamp(time,0.0,3.14159*2.0);
 
 
@@ -154,11 +152,51 @@ vec2 Tunnel()
 }
 
 
+vec2 Cylinder() {
+    float t = float(int((10.5+(v_pos.x)/2.0*(sx+0.0))));
+    float y = sin(v_pos.y*0.9+t*5.0+time*5.0 + 4.5*cos(v_pos.x));
+
+//    y = clamp(2.0/(y+1.4),-10.5,10.5);
+    vec2 p = vec2(v_pos.x*sx,y+(time)*10.0+t*7.33);
+
+
+    return p;
+}
+
+
+vec2 Grid() {
+
+//    y = clamp(2.0/(y+1.4),-10.5,10.5);
+
+    vec2 t;
+
+    t.x = v_pos.x*sx+cos(time*0.5)*2.0;
+    t.y = 1.0-v_pos.y+cos(time*0.7)*2.0;
+
+    t = rotate2D(t,0.0-time*2.0+0.4*length(t)*cos(time)+0.4*sin(time)*(t.y - t.x));
+
+    float x1 = 1.0+t.x*0.3*(0.7+0.5*sin(time*13.0));
+    float y1 = 1.0+t.y*0.3*(0.7+0.5*cos(time*10.0));
+
+    vec2 p = vec2(t.x*x1,t.y*y1);
+
+
+    return p;
+}
+
+
+
 vec2 getType(float t)
 {
-    t = mod(t,2.0); // only 2 types yet
-    if (t==0.0) return Pixel();
+    t = mod(t,3.0);
+
+
+//    return Grid();
+
+    if (t==0.0) return Grid();
     if (t==1.0) return Tunnel();
+//    if (t==2.0) return Cylinder();
+    if (t==2.0) return Pixel();
 }
 
 
