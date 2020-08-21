@@ -50,5 +50,5 @@ charset_levels/game_levels.flf = /home/leuat/code/TRSE/tutorials/NES/intro_tutor
 remove_unused_symbols = 1
 ignore_initial_jump = 0
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/NES/intro_tutorial/
-open_files = ,tutorial_1_hello_nes.ras, tiles/game_tiles.flf
-current_file = tiles/game_tiles.flf
+open_files = ,levels/game_levels.flf, tutorial_1_hello_nes.ras, tiles/game_tiles.flf
+current_file = levels/game_levels.flf

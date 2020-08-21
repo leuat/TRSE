@@ -3,6 +3,7 @@
 #include "source/LeLib/util/util.h"
 #include <QOpenGLFunctions>
 #include <QTimer>
+#include <time.h>
 
 LGLSlideshow::LGLSlideshow()
 {
@@ -20,6 +21,22 @@ LGLSlideshow::LGLSlideshow(QWidget *)
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(20);
+}
+
+void LGLSlideshow::Init()
+{
+    srand(time(nullptr));
+    if (m_randomize && m_slides.count()!=0) {
+        m_prevType = rand()%m_slides.count();
+        m_curType = m_prevType;
+        int i = m_curType;
+        while (i==m_curType)
+            m_curType = rand()%m_slides.count();
+
+//        qDebug() << m_prevType << m_curType;
+        m_curSlide = rand()%1000;
+    }
+
 
 }
 
@@ -42,7 +59,6 @@ void LGLSlideshow::initializeGL()
 
 
 
-
 }
 
 //void LGLSlideshow::paintEvent(QPaintEvent *event)
@@ -52,7 +68,16 @@ void LGLSlideshow::paintGL()
         m_time2 = 0;
  //       m_time = 0;
         m_curSlide++;
-        m_curType++;
+        m_prevType = m_curType;
+        if (m_randomize) {
+            int i = m_curType;
+            while (i==m_curType)
+                m_curType = rand()%m_slides.count();
+
+        }
+        else
+            m_curType++;
+
         setCurrentTexture();
     }
 
@@ -73,8 +98,8 @@ void LGLSlideshow::paintGL()
     m_program->bind();
 
 
-    m_program->setUniformValue( "type1", m_curType );
-    m_program->setUniformValue( "type2", m_curType+1 );
+    m_program->setUniformValue( "type1", m_curSlide );
+    m_program->setUniformValue( "type2", m_curSlide+1 );
 
     m_program->setUniformValue( "t1", texture_unit );
     m_program->setUniformValue( "t2", texture_unit+1 );
@@ -120,8 +145,9 @@ void LGLSlideshow::setCurrentTexture()
         delete m_texture1;
     if (m_texture2!=nullptr)
         delete m_texture2;
-    m_texture1 = new QOpenGLTexture( m_slides[m_curSlide%m_slides.count()].m_image );
-    m_texture2 = new QOpenGLTexture( m_slides[(m_curSlide+1)%m_slides.count()].m_image );
+
+    m_texture1 = new QOpenGLTexture( m_slides[m_prevType%m_slides.count()].m_image );
+    m_texture2 = new QOpenGLTexture( m_slides[m_curType%m_slides.count()].m_image );
 
 }
 

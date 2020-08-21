@@ -13,6 +13,7 @@ public:
     }
 
     void ExportBin(QFile &file) override;
+    void SetPalette(int pal) override;
 
 };
 

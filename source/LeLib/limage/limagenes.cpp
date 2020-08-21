@@ -225,6 +225,12 @@ void LImageNES::SetPalette(int pal)
 //    m_colorList.setPen(2-1, m_colorList.)
 //    if (pal==m_oldPal)
   //      return;
+
+    if (m_charset!=nullptr) {
+//        m_charset->SetPalette(pal);
+        return;
+    }
+
     int m_oldPal = m_footer.get(LImageFooter::POS_CURRENT_PALETTE);
     if (m_oldPal!=pal) {
         m_colorList.m_nesPPU[m_oldPal*4 +1 +0] = m_colorList.getPen(2-1);

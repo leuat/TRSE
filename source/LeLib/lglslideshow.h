@@ -42,9 +42,11 @@ public:
     QVector<GLSlide> m_slides;
     int m_curSlide = 0;
     float m_time=0,m_time2=0;
-    int m_curType = 0;
+    int m_curType, m_prevType = 0;
+    bool m_randomize = true;
     LGLSlideshow();
     LGLSlideshow(QWidget* );
+    void Init();
     void initializeGL() override;
     void paintGL() override ;
 //    void paintEvent(QPaintEvent *event) override ;

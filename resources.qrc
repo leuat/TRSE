@@ -509,5 +509,6 @@
         <file>resources/code/coleco/footer.asm</file>
         <file>resources/shaders/screen_slider.vert</file>
         <file>resources/shaders/screen_slider.frag</file>
+        <file>resources/images/AMSTRADCPC464.png</file>
     </qresource>
 </RCC>

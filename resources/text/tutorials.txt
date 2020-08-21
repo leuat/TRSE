@@ -43,3 +43,5 @@ PET; Main Commodore PET tutorials; PET/examples/;<h2>Main Commodore PET tutorial
 CrossPlatform; Grave Intentions; CrossPlat/GraveIntentions; <h2>Grave Intentions</h2>A C64/VIC-20/PET/PLUS4 cross-platform text-based adventure engine/ game. Still under construction.
 X16; Main X16 examples; X16/Tutorials/; <h2>Main Commander X16 tutorials</h2>Please note: These are extremely preliminary examples. X16 support was implemented on sept 13th 2019, so very little is yet possible.
 C128; Main Commodore 128 tutorials; C128/;<h2>Main C128 tutorials</h2><p>C128 tutorials will be overhauled in a future release of TRSE.
+
+AMSTRADCPC464; Main Amstrad CPC tutorials; AMSTRADCPC464/tutorials/;<h2>Main Amstrad CPC</h2><p>Proof-of-concept, but not much else. A couple of test tutorials. Will be expanded upon at a later point.
