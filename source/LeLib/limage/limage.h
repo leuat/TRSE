@@ -137,7 +137,7 @@ public:
         return m_colorList.m_type;
     }
 
-
+    virtual void CopyImageData(LImage* img);
     virtual int getCharWidthDisplay();
     virtual int getCharHeightDisplay();
 

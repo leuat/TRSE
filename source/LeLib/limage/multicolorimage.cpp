@@ -408,6 +408,16 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
 
 }
 
+void MultiColorImage::CopyImageData(LImage *img)
+{
+    MultiColorImage* mc = dynamic_cast<MultiColorImage*>(img);
+    //qDebug() << "HERE " <<mc;
+    if (mc!=nullptr)
+        memcpy((char*)m_data,(char*)mc->m_data,sizeof(PixelChar)*m_charWidth*m_charWidth);
+    else qDebug() << "MultiColorImage::CopyImageData - unknown image type!";
+
+}
+
 void MultiColorImage::fromQImage(QImage *img, LColorList &lst)
 {
 #pragma omp parallel for
@@ -425,30 +435,26 @@ void MultiColorImage::CopyFrom(LImage* img)
     MultiColorImage* mc = dynamic_cast<MultiColorImage*>(img);
     //if ((typeid(*img) == typeid(MultiColorImage)) || (typeid(*img) == typeid(StandardColorImage))
     //        || (typeid(*img) == typeid(CharsetImage)))
+    m_footer.m_data = img->m_footer.m_data;
+    m_colorList.CopyFrom(&img->m_colorList);
     if (mc!=nullptr)
     {
-        MultiColorImage* mc = (MultiColorImage*)img;
-//        m_footer.m_data = mc->m_footer.m_data;
-        m_colorList.CopyFrom(&img->m_colorList);
-         m_charWidth = mc->m_charWidth;
-         m_charHeight = mc->m_charHeight;
-         m_scale = mc->m_scale;
-         m_bitMask = mc->m_bitMask;
-         m_width = mc->m_width;
-         m_height = mc->m_height;
-         m_scaleX = mc->m_scaleX;
-         m_footer = img->m_footer;
-         m_noColors = img->m_noColors;
-         m_charWidthDisplay = mc->m_charWidthDisplay;
-        // qDebug() << "COPY FROM";
-#pragma omp parallel for
-         for(int i=0;i<m_charHeight*m_charWidth;i++) {
-             for (int j=0;j<8;j++)
-                 m_data[i].p[j] = mc->m_data[i].p[j];
-             for (int j=0;j<4;j++)
-                 m_data[i].c[j] = mc->m_data[i].c[j];
-         }
-         //for (int i=0;i<4;i++) m_extraCols[i] = img->m_extraCols[i];
+        //        m_footer.m_data = mc->m_footer.m_data;
+        m_currentChar = mc->m_currentChar;
+        m_charWidth = mc->m_charWidth;
+        m_charHeight = mc->m_charHeight;
+        m_scale = mc->m_scale;
+        m_bitMask = mc->m_bitMask;
+        m_width = mc->m_width;
+        m_height = mc->m_height;
+        m_scaleX = mc->m_scaleX;
+        m_noColors = img->m_noColors;
+        m_minCol = img->m_minCol;
+        m_charWidthDisplay = mc->m_charWidthDisplay;
+        m_charHeightDisplay = mc->m_charHeightDisplay;
+
+        CopyImageData(img);
+
     }
     else
     {

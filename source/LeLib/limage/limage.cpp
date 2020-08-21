@@ -213,6 +213,10 @@ MetaParameter *LImage::getMetaParameter(QString name)
     return nullptr;
 }
 
+void LImage::CopyImageData(LImage *img) {
+    qDebug() << "LImage::CopyImageData should not be called on pure virtual class!";
+}
+
 int LImage::getCharWidthDisplay()
 {
     return m_charWidthDisplay;

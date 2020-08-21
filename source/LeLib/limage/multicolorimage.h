@@ -139,7 +139,7 @@ public:
     void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength, int size, float gamma) override;
 
     void Initialize(int width, int height) override {}
-
+    virtual void CopyImageData(LImage* img) override;
 
     void ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center) override;
 

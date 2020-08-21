@@ -493,7 +493,7 @@ void CharsetImage::Invert()
     }
     MultiColorImage::Invert();
 }
-
+/*
 void CharsetImage::CopyFrom(LImage *img)
 {
    // return LImage::CopyFrom(img);
@@ -521,14 +521,8 @@ void CharsetImage::CopyFrom(LImage *img)
         m_gridWidthDisplay = mc->m_gridWidthDisplay;
         m_charWidthDisplay = mc->m_charWidthDisplay;
 
-        // qDebug() << "COPY FROM";
-//#pragma omp parallel for
-        for(int i=0;i<m_charWidth*m_charHeight;i++) {
-            for (int j=0;j<8;j++)
-                m_data[i].p[j] = mc->m_data[i].p[j];
-            for (int j=0;j<4;j++)
-                m_data[i].c[j] = mc->m_data[i].c[j];
-        }
+        CopyImageData(img);
+
     }
     else
     {
@@ -538,7 +532,7 @@ void CharsetImage::CopyFrom(LImage *img)
 
 
 }
-
+*/
 bool CharsetImage::KeyPress(QKeyEvent *e)
 {
     QPoint dir(0,0);
@@ -579,6 +573,7 @@ void CharsetImage::setLimitedPixel(int x, int y, unsigned int color)
 
     if (x>=m_width || x<0 || y>=m_height || y<0)
         return;
+
     PixelChar& pc = getPixelChar(x,y);
 
  //   pc.Reorganize(m_bitMask, m_scale,m_minCol, m_noColors);
@@ -714,8 +709,8 @@ unsigned int CharsetImage::getPixelHybrid(int x, int y)
         m_scale = 2;
         m_scaleX = 2.5f;
 
-        p.setX(p.x()/2);
-        pc = getPixelChar(p.x(),p.y());
+        p.setX((((p.x())&0xFFFE)/2));
+//        pc = getPixelChar(p.x(),p.y());
 
         ande = 7;
         int c = MultiColorImage::getPixel(p.x(),p.y());
@@ -749,26 +744,29 @@ void CharsetImage::setPixelHybrid(int x, int y, unsigned int color)
   //      qDebug() << "DATATYPTE "<<Data::data.currentColorType;
 
 
-    if (Data::data.currentColorType==1)
+    bool isAux = false;
 
+    if (Data::data.currentColorType==1)
     if (m_colorList.getPen(1)==color || m_colorList.getPen(2)==color)
     {
 //        isMC = true;
         if (pc.c[3]<8)
             pc.c[3]+=8;
+        isAux = true;
     }
 
     if (m_colorList.getPen(0)!=color) {
 
 
         //    if (pc.c[3]>=8 || color==m_extraCols[1] || color==m_extraCols[2]) {
-        if (pc.c[3]>=8) {
+        if (color>=8 || isAux) {
             m_bitMask=0b11;
             m_scale = 2;
             m_scaleX = 2.5f;
             m_noColors = 4;
-            p.setX(p.x()/2);
-
+            p.setX(((p.x()&0xFFFE)/2.0));
+//            if (rand()%100>98)
+         //   qDebug() << "HERE " << QString::number(pc.c[3]);
         }
         else {
             //        pc.c[1] = color;
@@ -777,6 +775,7 @@ void CharsetImage::setPixelHybrid(int x, int y, unsigned int color)
         }
     }
     else {
+         //
         //    if (pc.c[3]>=8 || color==m_extraCols[1] || color==m_extraCols[2]) {
         if (pc.c[3]>=8) {
             m_bitMask=0b11;
