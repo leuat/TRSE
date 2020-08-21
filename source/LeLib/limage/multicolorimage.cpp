@@ -141,6 +141,7 @@ unsigned int MultiColorImage::getPixel(int x, int y)
 void MultiColorImage::setBackground(unsigned int col)
 {
     m_colorList.setPen(0,col);
+    //qDebug() << "SetBackrouund VIC "<<col;
     for (int i=0;i<m_charWidth*m_charHeight;i++) {
         m_data[i].c[0] = col;
     }

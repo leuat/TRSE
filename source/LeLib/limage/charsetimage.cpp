@@ -706,8 +706,9 @@ unsigned int CharsetImage::getPixelHybrid(int x, int y)
     /*       if (pc.c[3]!=0)
                 if (rand()%100>98)
                     qDebug() << pc.c[3];*/
-    int ande = 0x15;
+    int ande = 0xF;
     PixelChar&pc = getPixelChar(p.x(),p.y());
+
     if (pc.c[3]>=8) {
         m_bitMask=0b11;
         m_scale = 2;
@@ -723,6 +724,8 @@ unsigned int CharsetImage::getPixelHybrid(int x, int y)
 
     }
 
+//            if (rand()%100>98)
+  //              qDebug() << pc.c[0] << pc.c[3] << ande;
 
     if (MultiColorImage::getPixel(p.x(),p.y())!=getBackground())
         return pc.c[3];
