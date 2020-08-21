@@ -90,7 +90,7 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     //m_data.resize(m_charWidth*m_charHeight);
 
 //    qDebug() << m_charWidth*m_charHeight;
-
+//    m_colorList.m_supportsFooterPen = true;
 
 
     EnsureSystemColours();
@@ -144,10 +144,13 @@ void MultiColorImage::setBackground(unsigned int col)
     for (int i=0;i<m_charWidth*m_charHeight;i++) {
         m_data[i].c[0] = col;
     }
+
     if (m_bitMask==0b11 || m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1) {
 //        qDebug() << "HERE SETBACKGROUND " << m_colorList.getPen(1) << m_colorList.getPen(2) ;;;
+        if (m_type != MultiColorBitmap)
         for (int i=0;i<m_charWidth*m_charHeight;i++) {
             //m_data[i].c[0] = col;
+
             m_data[i].c[1] = m_colorList.getPen(1);
             m_data[i].c[2] = m_colorList.getPen(2);
         }
@@ -214,6 +217,17 @@ void MultiColorImage::LoadBin(QFile& file)
     m_colorList.setPen(0,dummy); // background
     file.read( ( char * )( &dummy ), 1); // Unused
     file.read( ( char * )( &m_data ),  m_charHeight*m_charWidth*12 );
+/*    int c1 = 255;
+    int c2 = 255;
+    for (int i=0;i<m_charWidth*m_charHeight;i++) {
+        if (m_data[i].c[1]!=255) c1=m_data[i].c[1];
+        if (m_data[i].c[2]!=255) c2=m_data[i].c[2];
+    }
+
+    m_colorList.setPen(2,c1); // background
+    m_colorList.setPen(1,c2); // background
+    qDebug() << "LoadBin"<< c1 << c2;
+*/
 //    QByteArray data = file.read(m_charHeight*m_charWidth*12);
   //  memcpy(&m_data, &data, m_charHeight*m_charWidth*12);
 }
