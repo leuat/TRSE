@@ -144,7 +144,7 @@ public:
 
     void UpdateGrid();
 
-    void Load(QString filename) override;
+    bool Load(QString filename) override;
     void Save(QString filename) override;
 
     void FillImageEffect();

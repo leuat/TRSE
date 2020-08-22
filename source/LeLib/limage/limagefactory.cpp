@@ -79,6 +79,8 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageAtari520ST(colorType,0);
     if (t == LImage::Type::HybridCharset)
         return new LImageHybridCharset(colorType);
+    if (t == LImage::Type::AmstradCPC)
+        return new LImageAmstradCPC(colorType);
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;
     return nullptr;

@@ -86,6 +86,7 @@ LImage* LImageIO::Load(QString filename)
     LImage* img = LImageFactory::Create(LImage::CharToType(imageType), LColorList::CharToType(paletteType));
     if (img==nullptr)
         return nullptr;
+
     img->LoadBin(file);
     img->m_footer.Load(file);
     img->m_colorList.FooterToPen(&img->m_footer);

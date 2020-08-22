@@ -937,7 +937,7 @@ void FormRasEditor::Save(QString filename)
     ui->txtEditor->m_textChanged = false;
 }
 
-void FormRasEditor::Load(QString filename)
+bool FormRasEditor::Load(QString filename)
 {
     QFile file(filename);
     if (file.open(QFile::ReadOnly | QFile::Text)) {
@@ -946,6 +946,7 @@ void FormRasEditor::Load(QString filename)
     file.close();
     m_isTRU = filename.toLower().endsWith(".tru");
     ShadowBuild();
+    return true;
 }
 
 

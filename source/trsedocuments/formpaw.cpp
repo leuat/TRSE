@@ -114,10 +114,11 @@ void FormPaw::Save(QString filename)
 
 }
 
-void FormPaw::Load(QString filename)
+bool FormPaw::Load(QString filename)
 {
     m_pawData->Load(filename);
     FillFromIni();
+    return true;
 }
 
 

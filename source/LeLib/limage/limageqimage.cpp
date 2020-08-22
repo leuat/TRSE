@@ -155,6 +155,24 @@ void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, float zoom
 
 }
 
+void LImageQImage::CopyFrom(LImage *img) {
+
+    if (m_width!=img->m_width || m_height!=img->m_height) {
+        m_width = img->m_width;
+        m_height = img->m_height;
+
+    }
+    m_colorList.CopyFrom(&img->m_colorList);
+    m_footer = img->m_footer;
+
+
+    LImageQImage* mc = dynamic_cast<LImageQImage*>(img);
+    if (mc!=nullptr) {
+        *m_qImage = *mc->m_qImage;
+    }
+
+}
+
 void LImageQImage::ApplyToLabel(QLabel *l)
 {
     QPixmap p;

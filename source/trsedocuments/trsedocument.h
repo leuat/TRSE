@@ -59,7 +59,7 @@ public:
 
     virtual bool isBuilding() {return false;}
     virtual void Save(QString filename) {}
-    virtual void Load(QString filename) {}
+    virtual bool Load(QString filename) { return false;}
     virtual void AutoFormat() {}
     bool SaveChanges();
     void SaveCurrent() {

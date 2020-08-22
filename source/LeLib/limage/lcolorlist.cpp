@@ -475,9 +475,13 @@ void LColorList::CopyFrom(LColorList *other)
     for (int i=0;i<m_list.count();i++)
         m_list[i] = other->m_list[i];
 
+//    m_pens = other->m_pens;
     m_pens.resize(other->m_pens.count());
     for (int i=0;i<m_pens.count();i++)
         m_pens[i] = other->m_pens[i];
+
+
+//        m_pens[i] = QSharedPointer<LPen>(new LPen(&m_pens, &m_list, other->m_pens[i]));
 
     m_curPal = other->m_curPal;
     m_nesPPU = other->m_nesPPU;
@@ -743,26 +747,42 @@ void LColorList::InitAmstradCPC()
     m_list.append(LColor(QColor(0x80,0x0,0x80),"Magenta"));
     m_list.append(LColor(QColor(0x80,0x0,0xFF),"Mauve"));
     m_list.append(LColor(QColor(0xFF,0x0,0x0),"Bright Red"));
-    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    m_list.append(LColor(QColor(0x0,0x0,0x0),""));
-    DefaultPen(LPen::Dropdown);
+    m_list.append(LColor(QColor(0xFF,0x0,0x80),"Bright Magenta"));
+    m_list.append(LColor(QColor(0x0,0x80,0x0),"Green"));
+    m_list.append(LColor(QColor(0x0,0x80,0x80),"Cyan"));
+    m_list.append(LColor(QColor(0x0,0x80,0xFF),"Sky Blue"));
+    m_list.append(LColor(QColor(0x80,0x80,0x0),"Yellow"));
+    m_list.append(LColor(QColor(0x80,0x80,0x80),"White"));
+    m_list.append(LColor(QColor(0x80,0x80,0xFF),"Pastel blue"));
+    m_list.append(LColor(QColor(0xFF,0x80,0x0),"Orange"));
+    m_list.append(LColor(QColor(0xFF,0x80,0x80),"Pink"));
+    m_list.append(LColor(QColor(0xff,0x80,0xFF),"Pastel Magenta"));
+    m_list.append(LColor(QColor(0x0,0xFF,0x0),"Bright Green"));
+    m_list.append(LColor(QColor(0x0,0xFF,0x80),"Sea green"));
+    m_list.append(LColor(QColor(0x0,0xFF,0xFF),"Bright Cyan"));
+    m_list.append(LColor(QColor(0x80,0xFF,0x0),"Lime"));
+    m_list.append(LColor(QColor(0x80,0xFF,0x80),"Pastel Green"));
+    m_list.append(LColor(QColor(0x80,0xFF,0xFF),"Pastel Cyan"));
+    m_list.append(LColor(QColor(0xFF,0xFF,0x0),"Bright Yellow"));
+    m_list.append(LColor(QColor(0xFF,0xFF,0x80),"Pastel Yellow"));
+    m_list.append(LColor(QColor(0xFF,0xFF,0xFF),"Bright White"));
+    //qDebug() << "Constructor called";
+    InitPalettePens(16);
+}
+
+void LColorList::InitPalettePens(int cnt)
+{
+    if (m_pens.count()==cnt)
+        return;
+    m_pens.clear();
+//    qDebug() << "IniTPalettePens called";
+//    m_pens.append(LPen(&m_pens, 0,m_,LPen::Fixed));
+    for (int i=0;i<16;i++) {
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,i,"",LPen::Dropdown, m_bpp)));
+    }
 
 }
+
 
 void LColorList::LoadFromFile(QString fileName)
 {
@@ -860,10 +880,33 @@ QColor LColorList::getClosestColor(QColor col, int& winner)
 }
 
 int LColorList::getPen(int pcol) {
-//    qDebug() << "WTF "<< pcol << m_pens.count() <<m_pens[pcol].m_colorIndex;
-    if (pcol<m_pens.count())
+
+
+//    qDebug() << "WTF "<< pcol << m_pens.count();// <<m_pens[pcol]->m_colorIndex;
+//    if (pcol>8) qDebug() << pcol;
+    if (pcol<m_pens.count() && pcol>=0)
         return m_pens[pcol]->Get();
-    return -1;
+    return 0;
+}
+
+int LColorList::getPenIndex(int pcol)
+{
+//    qDebug() << "Pens pcol " << pcol;
+
+   // if (pcol!=0)
+   // qDebug() << "Pens count " << m_pens.count() << getPen(pcol);
+    for (int i=0;i<m_pens.count();i++) {
+//        if (pcol!=0)
+  //          qDebug() << "CUR "<<i<<getPen(i) <<pcol;
+        if (getPen(i)==pcol)
+            return i;
+    }
+    return 0;
+}
+
+void LColorList::setPen(int pcol, int colorIndex) {
+    if (pcol<m_pens.count() && pcol>=0)
+        m_pens[pcol]->m_colorIndex = colorIndex;
 }
 
 QColor LColorList::getPenColour(int pcol) {
@@ -911,7 +954,9 @@ void LColorList::FooterToPen(LImageFooter *footer)
     for (int i=0;i<m_pens.count();i++) {
         uchar val =footer->get(LImageFooter::POS_PEN_START + i);
         if (m_pens[i]->m_type!=LPen::FixedSingle)
-        if (val!=0) setPen(i,val);
+            if (val!=0) {
+                setPen(i,val);
+            }
     }
 
 }

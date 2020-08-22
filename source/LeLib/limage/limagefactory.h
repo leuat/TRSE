@@ -47,7 +47,7 @@
 #include "source/LeLib/limage/limageatari520st.h"
 #include "source/LeLib/limage/limagemetablocksprites.h"
 #include "source/LeLib/limage/limagehybridcharset.h"
-
+#include "source/LeLib/limage/limageamstradcpc.h"
 class LImageFactory {
 public:
     static LImage* Create(LImage* img) {

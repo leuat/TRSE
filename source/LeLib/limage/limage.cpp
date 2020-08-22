@@ -88,6 +88,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 22;
     if (t==HybridCharset)
         return 23;
+    if (t==AmstradCPC)
+        return 24;
 
 
     return 255;
@@ -143,6 +145,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "Atari ST 320x200";
     if (t==HybridCharset)
         return "Hybrid multicolor/hires";
+    if (t==AmstradCPC)
+        return "Amstrad CPC";
 
     return "Unknown image type";
 
@@ -199,6 +203,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return ATARI320x200;
     if (c==23)
         return HybridCharset;
+    if (c==24)
+        return AmstradCPC;
 
     return NotSupported;
 
@@ -511,6 +517,8 @@ void LImage::CopyFrom(LImage *img) {
         m_height = img->m_height;
 
     }
+    m_colorList.CopyFrom(&img->m_colorList);
+    m_footer = img->m_footer;
 
 #pragma omp parallel for
 
@@ -518,13 +526,6 @@ void LImage::CopyFrom(LImage *img) {
         for (int j=0;j<m_height;j++)
             setPixel(i,j,img->getPixel(i,j));
 
-/*    if (img->m_colorList.m_list.count()==m_colorList.m_list.count()) {
-        for (int i=0;i<m_colorList.m_list.count();i++)
-            m_colorList.m_list[i].color = img->m_colorList.m_list[i].color;
-
-        qDebug() << "LImage copyfrom  count : " <<img->m_colorList.m_list.count();
-    }
-    */
 }
 
 

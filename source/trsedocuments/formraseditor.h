@@ -139,7 +139,7 @@ public:
     void Reload() override;
 
     void Save(QString filename) override;
-    void Load(QString filename) override;
+    bool Load(QString filename) override;
     void wheelEvent(QWheelEvent *event) override;
     void keyPressEvent(QKeyEvent* e) override;
 

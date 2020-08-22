@@ -1,5 +1,31 @@
 #include "lpen.h"
 
+LPen::LPen(QVector<QSharedPointer<LPen> > *pens, QVector<LColor> *colors, int cidx, QString name, LPen::Type type) {
+    m_colorIndex = cidx;
+    m_name = name;
+    m_type = type;
+    m_pens = pens;
+    m_colors = colors;
+}
+
+LPen::LPen(QVector<QSharedPointer<LPen> > *pens, QVector<LColor> *colors, QSharedPointer<LPen> copy) {
+    m_colorIndex = copy->m_colorIndex;
+    m_name = copy->m_name;
+    m_type = copy->m_type;
+    m_bpp = copy->m_bpp;
+    m_pens = pens;
+    m_colors = colors;
+}
+
+LPen::LPen(QVector<QSharedPointer<LPen> > *pens, QVector<LColor> *colors, int cidx, QString name, LPen::Type type, QVector3D bpp) {
+    m_colorIndex = cidx;
+    m_name = name;
+    m_type = type;
+    m_pens = pens;
+    m_bpp = bpp;
+    m_colors = colors;
+}
+
 QWidget* LPen::CreateUI(QColor col, int width,int xx,int yy,QVector<LColor>& list) {
 
     QWidget* widget = nullptr;
@@ -111,7 +137,7 @@ QWidget *LPen::createComboBox(QColor col, int width, QVector<LColor> &list)
         Data::data.currentColor = b->currentData(Qt::UserRole).toInt();
         Data::data.currentIsColor=true;
         m_colorIndex = Data::data.currentColor;
-  //      qDebug() << "SETTING CMB COLOR INDEX " <<Get();
+//       qDebug() << "SETTING CMB COLOR INDEX " <<Get();
 
 
         Data::data.UpdatePens();
@@ -123,8 +149,10 @@ QWidget *LPen::createComboBox(QColor col, int width, QVector<LColor> &list)
     QGridLayout* ly_small = new QGridLayout();
     ly_small->setVerticalSpacing(0);
 
-    ly_small->addWidget(new QLabel(m_name),0,0);
-    ly_small->addItem(new QSpacerItem(0,6,QSizePolicy::Fixed,QSizePolicy::Fixed),1,0);
+    if (m_name!="") {
+        ly_small->addWidget(new QLabel(m_name),0,0);
+        ly_small->addItem(new QSpacerItem(0,6,QSizePolicy::Fixed,QSizePolicy::Fixed),1,0);
+    }
     ly_small->addWidget(b,2,0);
 
     QWidget* w_small = new QWidget();
@@ -248,5 +276,9 @@ void LPen::handleButtonEdit(int val, QPushButton *btn)
 */
   //  Data::data.currentColor = m_colorIndex;//  m_list[val].m_altColour;
 
+}
+
+int LPen::Get() {
+    return m_colorIndex;
 }
 

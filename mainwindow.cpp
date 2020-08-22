@@ -574,8 +574,13 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
     }
     editor->m_currentFileShort = fileName;
     editor->InitDocument(nullptr, m_iniFile, m_currentProject.m_ini);
+    if (!editor->Load(editor->m_currentSourceFile)) {
+        QMessageBox msgBox;
+        msgBox.setText("Error opening file '"+editor->m_currentSourceFile+"'.\nUnknown or corrupt file!");
+        msgBox.exec();
+        return;
+    }
     ui->tabMain->addTab(editor, fileName);
-    editor->Load(editor->m_currentSourceFile);
 
 
     m_currentProject.m_ini->addStringList("open_files", editor->m_currentFileShort, true);
@@ -1037,6 +1042,8 @@ void MainWindow::SaveAs()
 
     if (filename=="")
         return;
+    if (!filename.contains("."))
+        filename = filename + "."+ext;
     QString orgFile;
     //filename = filename.split("/").last();
 

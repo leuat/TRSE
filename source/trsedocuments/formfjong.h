@@ -29,7 +29,7 @@ public:
     FjongHighlighter* highlighter = nullptr;
 
     void Save(QString filename) override;
-    void Load(QString filename) override;
+    bool Load(QString filename) override;
 
     void UpdateFromIni() override;
 

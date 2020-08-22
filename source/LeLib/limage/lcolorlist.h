@@ -82,6 +82,7 @@ public:
 
     void SetPPUColors(char c1, int idx);
     QSize m_windowSize;
+    void InitPalettePens(int cnt);
 
     static unsigned char TypeToChar(Type t);
     static Type CharToType(unsigned char c);
@@ -138,10 +139,8 @@ public:
     QColor getClosestColor(QColor col, int& winner);
 
     int getPen(int pcol);
-    void setPen(int pcol, int colorIndex) {
-        if (pcol<m_pens.count())
-            m_pens[pcol]->m_colorIndex = colorIndex;
-    }
+    int getPenIndex(int pcol);
+    void setPen(int pcol, int colorIndex);
 
     QColor getPenColour(int pcol);
 

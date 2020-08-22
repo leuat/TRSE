@@ -433,6 +433,7 @@ void FormImageEditor::UpdateImage()
 
     UpdateGrid();
 
+
     if (Data::data.redrawFileList) {
         Data::data.redrawFileList = false;
     }
@@ -584,7 +585,7 @@ void FormImageEditor::Initialize()
 
 
 
-void FormImageEditor::Load(QString filename)
+bool FormImageEditor::Load(QString filename)
 {
 /*    QString f = "Image Files (*." + LImageIO::m_fileExtension + ")";
     QString filename = QFileDialog::getOpenFileName(this,
@@ -593,10 +594,10 @@ void FormImageEditor::Load(QString filename)
         return;
 */
     if (!QFile::exists(filename))
-        return;
+        return false;
     LImage* img = LImageIO::Load(filename);
     if (img==nullptr)
-        return;
+        return false;
 
     if (!m_isInitialized)
        m_work.New(img, filename);
@@ -607,6 +608,7 @@ void FormImageEditor::Load(QString filename)
 //    qDebug() << "EXTRACOLS " << img->m_extraCols[0] <<img->m_extraCols[1] << img->m_extraCols[2];
 
     Initialize();
+    return true;
 }
 
 
@@ -633,6 +635,11 @@ void FormImageEditor::Save(QString filename)
 
     m_projectIniFile->setStringList("data_header_"+m_currentFileShort,lst);
     m_projectIniFile->Save(m_projectIniFile->filename);
+    ui->lblImageQt->m_imageChanged = false;
+    ui->lblImage->m_imageChanged = false;
+    m_documentIsChanged = false;
+
+//    qDebug() << "SAVE";
 }
 
 void FormImageEditor::FillImageEffect()

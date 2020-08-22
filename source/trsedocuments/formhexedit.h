@@ -19,7 +19,7 @@ public:
     CIniFile m_colors;
     void Destroy() override {}
 
-    void Load(QString filename) override;
+    bool Load(QString filename) override;
     void Save(QString filename) override;
 
     void InitDocument(WorkerThread* t, QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> iniProject) override;

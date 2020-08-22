@@ -41,7 +41,7 @@ void FormFjong::Save(QString filename)
     m_documentIsChanged = false;
 }
 
-void FormFjong::Load(QString filename)
+bool FormFjong::Load(QString filename)
 {
     QFile file(filename);
     if (file.open(QFile::ReadOnly | QFile::Text)) {
@@ -52,6 +52,7 @@ void FormFjong::Load(QString filename)
     SetupHighlighter();
     ui->txtEditor->m_textChanged = false;
     m_documentIsChanged = false;
+    return true;
 }
 
 void FormFjong::UpdateFromIni()
