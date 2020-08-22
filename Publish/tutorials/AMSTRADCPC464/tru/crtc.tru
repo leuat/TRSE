@@ -1,7 +1,8 @@
 Unit crtc;
 var 
-	ga : byte; 
-
+	ga,gb,col,pix,x,y : byte; 
+	pa : pointer;
+	lookup : array[200] of pointer;
 
 // Set screen mode
 procedure SetMode(ga: global byte);
@@ -9,6 +10,43 @@ begin
 	asm("
     ld  a,[crtc_ga]
     call  $BC0E
+	");
+end;
+
+procedure SetPalette(pa : global pointer);
+begin
+	for ga:=0 to 16 do
+	begin
+	gb:=pa[ga];
+	asm("
+	ld a,[crtc_gb]
+    ld c, a     
+    ld b, a    
+    ld a, [crtc_ga]
+    call #$BC32 ; set palette
+    ");
+    end;
+end;
+
+procedure SetSinglePalette(ga,gb : global byte);
+begin
+	asm("
+	ld a,[crtc_gb]
+    ld c, a     
+    ld b, a    
+    ld a, [crtc_ga]
+    call #$BC32 ; set palette
+    ");
+end;
+
+
+procedure SetBorder(ga: global byte);
+begin
+	asm("
+    ld a,[crtc_ga]
+    ld b,a
+    ld c, b
+    call $BC38
 	");
 end;
 
@@ -59,6 +97,81 @@ crtc_256widthList:
 
 	");
 end;
+
+
+procedure SetMode0PixelColor(pa:global pointer;col, pix:global byte);
+begin
+  ga := pa[0];
+  
+  if (pix=0) then
+  begin
+    ga := ga & 85;
+
+    if(col & 1=1) then
+      ga :=ga | 128;
+
+    if(col & 2=2) then
+      ga :=ga | 8;
+
+    if(col & 4=4) then
+      ga :=ga | 32;
+
+
+    if(col & 8=8) then
+      ga :=ga | 2;
+
+  end
+  else
+  begin
+    ga := ga & 170;
+
+    if(col & 1=1) then
+      ga :=ga | 64;
+
+    if(col & 2=2) then
+      ga :=ga | 4;
+      
+    if(col & 4=4) then
+      ga :=ga | 16;
+
+    if(col & 8=8) then
+      ga :=ga | 1;
+
+  end;
+  pa[0]:=ga;
+
+end;
+
+
+/*procedure InitLookup();
+begin
+	
+	for y:=0 to 200 do
+	begin
+			
+
+	end;
+end;
+*/
+
+procedure PutPixelMode0(x,y,col : global byte);
+begin
+	pix:=0;
+	gb:=y>>3; // div 8
+	pa:=$C000;
+	pa:=pa +(gb <<6);
+	pa:=pa + gb<<4; // same as MUL 80
+	y:=y&7;
+	pa:=pa +(y <<11); // *2048
+	pix:=x&1;
+	x:=x>>1;
+	pa:=pa +(x);
+//	pix := x&1;	
+	SetMode0PixelColor(pa,col,pix);
+
+end;
+
+
 
 
 end.

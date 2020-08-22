@@ -303,10 +303,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
             as->Asm("ld b,"+node->m_right->getValue(as));
         }
         node->m_left->Accept(this);
-        if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80)
-            as->Asm(getBinaryOperation(node)+" a,b");
-        else
-            as->Asm(getBinaryOperation(node)+" b");
+        as->Asm(getBinaryOperation(node)+" b");
         return;
     }
 
@@ -315,10 +312,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
     node->m_right->Accept(this);
     as->Asm("ld b,a");
     as->Asm("pop af");
-    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80)
-        as->Asm(getBinaryOperation(node)+" a,b");
-    else
-        as->Asm(getBinaryOperation(node)+" b");
+    as->Asm(getBinaryOperation(node)+" b");
 
 //    as->Asm("ld b,a");
 
@@ -474,7 +468,10 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
 
             as->Asm("ld a,["+node->getValue(as)+"]");
             as->Asm("ld "+hl[1]+",a");
+            if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY)
             as->Asm("xor a,a");
+            else
+                as->Asm("xor a");
             as->Asm("ld "+hl[0]+",a");
         }
 
@@ -681,7 +678,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
                 as->Comment("'a:=a + const'  optimization ");
                 //as->Asm(getBinaryOperation(bop) + " ["+var->getValue(as)+"], "+type + " "+bop->m_right->getValue(as));
                 as->Asm("ld a,["+var->getValue(as)+"]");
-                as->Asm(getBinaryOperation(bop) + " a," +bop->m_right->getValue(as));
+                as->Asm(getBinaryOperation(bop)  +bop->m_right->getValue(as));
                 as->Asm("ld ["+var->getValue(as)+"], a");
                 return "";
             }
@@ -689,7 +686,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
             bop->m_right->Accept(this);
             as->Asm("ld b,a");
             as->Asm("ld a,["+var->getValue(as)+"]");
-            as->Asm(getBinaryOperation(bop) + " a,b");
+            as->Asm(getBinaryOperation(bop) + " b");
             as->Asm("ld ["+var->getValue(as)+"], a");
 
             return "";
@@ -757,10 +754,15 @@ QString ASTdispatcherZ80::getX86Value(Assembler *as, QSharedPointer<Node> n) {
 }
 
 QString ASTdispatcherZ80::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
+
+    QString add = "";
+//    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80)
+        add = " a,";
+
     if (bop->m_op.m_type == TokenType::PLUS)
-        return "add";
+        return "add"+add;
     if (bop->m_op.m_type == TokenType::MINUS)
-        return "sub";
+        return "sub"+add;
     if (bop->m_op.m_type == TokenType::BITAND)
         return "and";
     if (bop->m_op.m_type == TokenType::BITOR)

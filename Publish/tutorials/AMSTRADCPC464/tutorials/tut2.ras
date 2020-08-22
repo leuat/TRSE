@@ -1,0 +1,57 @@
+program Tutorial2;
+@use "crtc"
+@use "input"
+
+
+var  
+	done,i1,j,xx,yy,col,shift: byte; 
+	time : byte=0;
+    sinx : array[255] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*80+80");
+    siny : array[255] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*100+100");
+
+
+procedure Init();
+begin
+	time:=0;
+	
+	crtc::SetMode(0);
+	j:=0;
+	for i1:=0 to 16 do
+	begin
+		// Set some default palette
+		crtc::SetSinglePalette(i1,j);
+		if (j=0) then j:=5;
+		j:=j+1;
+	end;
+	crtc::SetBorder(0);
+end;
+
+
+begin
+	Init();
+	
+	while (done=0) do
+	begin
+
+
+
+	
+		xx:=sinx[time];
+		yy:=siny[time+64+shift];
+		
+		crtc::PutPixelMode0(xx,yy,col&15);		
+		
+		time:=time+1;
+		
+
+		if (time&1=0) then col:=col+1;
+		
+		// Make sure that it cycles!
+		if (time=0) then 
+		begin 
+			col:=col+1;
+			shift:=shift+1;
+		end;	
+	end;	
+
+end.
