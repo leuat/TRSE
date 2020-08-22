@@ -48,6 +48,7 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
     m_imageType = imageType;
 
     m_image = LImageFactory::Create(m_imageType, colorType);
+//    m_image->m_colorList.CopyFrom(&img->m_colorList);
 //    m_image->CopyFrom(img);
 //    m_image->m_metaParams
 /*    m_image->m_footer = img->m_footer;
@@ -87,7 +88,7 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 //        m_image = img;
     }
 
-    if (m_image->m_colorList.m_type!=LColorList::NES) {
+    if (m_image->m_colorList.m_type==LColorList::C64 || m_image->m_colorList.m_type==LColorList::VIC20) {
 
     m_image->m_colorList.CreateUI(ui->layoutColors,0);
     m_image->m_colorList.FillComboBox(ui->cmbForeground);

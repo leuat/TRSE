@@ -283,8 +283,13 @@ void MethodsZ80::MemCpy(Assembler *as, bool isCont)
     as->Asm("inc c");
     as->Asm("jr "+lblSkip);
     as->Label(lblCopy);
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY)
+        as->Asm("ld	a,[hl+]");
+    else {
+        as->Asm("ld	a,[hl]");
+        as->Asm("inc hl");
 
-    as->Asm("ld	a,[hl+]");
+    }
     as->Asm("ld	[de],a");
     as->Asm("inc de");
     as->Label(lblSkip);

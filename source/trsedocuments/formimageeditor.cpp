@@ -1925,7 +1925,7 @@ void FormImageEditor::Destroy()
 }
 
 
-void FormImageEditor::on_cmbMC1_activated(int index)
+/*void FormImageEditor::on_cmbMC1_activated(int index)
 {
     SetMCColors();
     emit onImageMouseEvent();
@@ -1941,14 +1941,14 @@ void FormImageEditor::on_cmbMC2_activated(int index)
 
 void FormImageEditor::on_cmbBackgroundMain_3_activated(int index)
 {
-/*    m_work.m_currentImage->m_image->setBackground(index);
+    m_work.m_currentImage->m_image->setBackground(index);
     SetMCColors();
     updateCharSet();
     emit onImageMouseEvent();
     Data::data.redrawOutput = true;
-*/
-}
 
+}
+*/
 void FormImageEditor::on_btnResizeData_clicked()
 {
     ImageLevelEditor* img = dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image);

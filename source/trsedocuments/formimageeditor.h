@@ -237,15 +237,15 @@ private slots:
 
     void on_lstCharMap_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
 
-    void Destroy();
-
+    void Destroy() override;
+/*
     void on_cmbMC1_activated(int index);
 
     void on_cmbMC2_activated(int index);
 
     void on_cmbBackgroundMain_3_activated(int index);
 
-
+*/
 
     void on_btnResizeData_clicked();
 

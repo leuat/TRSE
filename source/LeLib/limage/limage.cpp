@@ -519,7 +519,7 @@ void LImage::CopyFrom(LImage *img) {
     }
     m_colorList.CopyFrom(&img->m_colorList);
     m_footer = img->m_footer;
-
+    m_scaleX = img->m_scaleX;
 #pragma omp parallel for
 
     for (int i=0;i<m_width;i++)
