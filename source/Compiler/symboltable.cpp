@@ -93,6 +93,14 @@ void SymbolTable::Initialize()
 
   //  m_constants.clear();
 
+    QVector<QSharedPointer<Symbol>> keeps;
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMSTRADCPC464 && m_constants.contains("INIT_MUSIC")) {
+        // Addresses change due to compiler
+        keeps.append(m_constants["INIT_MUSIC"]);
+        keeps.append(m_constants["PLAY_MUSIC"]);
+        keeps.append(m_constants["STOP_MUSIC"]);
+    }
+
     QString currentSystem = AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system).toLower();
 //    qDebug() << currentSystem;
     for (QString s: Syntax::s.m_syntaxData.split('\n')) {
@@ -150,6 +158,7 @@ void SymbolTable::Initialize()
 
      }
 //    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES)
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64)
     if (!m_constants.contains("SIDFILE_1_INIT")) {
         for (int i=1;i<10;i++) {
            if (!m_constants.contains("SIDFILE_"+QString::number(i)+"_INIT")) {
@@ -168,6 +177,13 @@ void SymbolTable::Initialize()
         m_constants[k.m_key] = QSharedPointer<Symbol>(new Symbol(QString::number(k.m_value), "BYTE",  k.m_value));
     }
 //    qDebug()  << Util::numToHex(m_constants["KEY_2"]->m_value->m_fVal);
+
+
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMSTRADCPC464 && keeps.count()==3) {
+        m_constants["INIT_MUSIC"] = keeps[0];
+        m_constants["PLAY_MUSIC"] = keeps[1];
+        m_constants["STOP_MUSIC"] = keeps[2];
+    }
 
 }
 

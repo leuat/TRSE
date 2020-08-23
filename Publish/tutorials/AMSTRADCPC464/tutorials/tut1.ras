@@ -9,7 +9,6 @@ var
 	palette : incbin("resources/images/image1_palette.bin");
 
 
-
 begin
 	
 	crtc::SetMode(0);

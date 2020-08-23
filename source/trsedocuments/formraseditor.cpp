@@ -256,7 +256,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         params << "-a" << "run\""+cs+".BIN";*/
         params.insert(0,"-i");
         params << "-o" << "0x"+QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
-        qDebug() <<"CURRADDR" <<"0x"+QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
+//        qDebug() <<"CURRADDR" <<"0x"+QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
         process.setWorkingDirectory(QFileInfo(emu).path());
         QDir::setCurrent(QFileInfo(emu).path());
 

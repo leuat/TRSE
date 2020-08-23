@@ -381,6 +381,14 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
     return false;
 }
 
+void Assembler::WriteConstants()
+{
+    for (QString key: m_symTab->m_constants.keys()) {
+        QSharedPointer<Symbol> s = m_symTab->m_constants[key];
+        m_source << key + " EQU " + Util::numToHex(s->m_value->m_fVal);
+    }
+}
+
 void Assembler::Term(QString s, bool write)
 {
     m_term+=s;

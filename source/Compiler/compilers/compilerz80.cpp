@@ -29,7 +29,10 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 
 
     }
-
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC464) {
+        m_assembler->m_symTab->m_constants = m_parser.m_symTab->m_constants;
+        m_assembler->WriteConstants();
+    }
 
 
 }
@@ -52,6 +55,9 @@ void CompilerZ80::Connect()
         m_assembler->m_source <<m_assembler->m_wram->m_source;
     }
 
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC464) {
+//        m_assembler->IncludeFile(":resources/code/amstrad/playerakg.asm");
+    }
 
 
 

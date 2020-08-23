@@ -52,7 +52,7 @@
 #include "source/LeLib/limage/limageio.h"
 #include "source/LeLib/limage/c64fullscreenchar.h"
 #include "source/trsedocuments/formpaw.h"
-
+#include "source/LeLib/util/tool.h"
 //#include "source/Compiler/sourcebuilder.h"
 
 class ParserBlock {
@@ -203,6 +203,7 @@ public:
     void HandleSpritePacker();
     void HandleProjectSettingsPreprocessors();
     void HandleExecute();
+    void HandleAKGCompiler();
     void HandleUseTPU(QString fileName);
     void Eat();
     void HandleImportChar();

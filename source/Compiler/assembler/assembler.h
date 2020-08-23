@@ -321,6 +321,7 @@ public:
 
     virtual bool DeclareRecord(QString name, QString type, int count, QStringList data, QString pos);
 
+    void WriteConstants();
 
     void ClearTerm() {
         m_term = "";

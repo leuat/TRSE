@@ -900,6 +900,12 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         return;
     }
+    if (m_currentToken.m_value=="compile_akg_music") {
+        Eat();
+        Eat();
+        Eat();
+        return;
+    }
     if (m_currentToken.m_value=="deletefile") {
         Eat();
         Eat();
@@ -1934,6 +1940,11 @@ void Parser::Preprocess()
                 Eat(TokenType::PREPROCESSOR);
                 HandleSpritePacker();
             }
+            else if (m_currentToken.m_value.toLower()=="compile_akg_music") {
+                Eat(TokenType::PREPROCESSOR);
+                HandleAKGCompiler();
+            }
+
 
             else if (m_currentToken.m_value.toLower() =="ignoremethod") {
                 Eat(TokenType::PREPROCESSOR);
@@ -2208,7 +2219,6 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
 */
 //    qDebug() << m_ignoreMethods;
     //qDebug() <<m_lexer->m_text[0];
-    emit EmitTick("<br>Parsing pass #2 ");
     m_symTab->Initialize();
     Node::m_staticBlockInfo.m_blockID=-1;
     QSharedPointer<NodeProgram> root = qSharedPointerDynamicCast<NodeProgram>(Program(param));
@@ -3440,6 +3450,18 @@ void Parser::HandleExportFrame()
     file.close();
 
 }
+
+
+void Parser::HandleAKGCompiler()
+{
+    QString filename = m_currentToken.m_value;
+    Eat(TokenType::STRING); // Filename
+    int addr = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST); // X
+
+    Tool::AKGCompiler(m_currentDir+filename,addr,m_symTab.get());
+}
+
 void Parser::HandleSpriteCompiler()
 {
 
@@ -3583,6 +3605,7 @@ void Parser::HandleExecute()
     QString out;
     Syntax::s.m_currentSystem->StartProcess(f,ls,out);
 }
+
 
 void Parser::HandleUseTPU(QString fileName)
 {

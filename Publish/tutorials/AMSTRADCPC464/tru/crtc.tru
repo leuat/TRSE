@@ -198,7 +198,21 @@ begin
 
 end;
 
-
+procedure WaitForSync();
+begin
+	asm("
+wf_Sync:
+    ld b,#f5
+    in a,(c)
+    rra
+    jr nc,wf_Sync + 2
+    ei
+    nop
+    halt
+    halt
+    di
+    ");
+end;
 
 
 end.

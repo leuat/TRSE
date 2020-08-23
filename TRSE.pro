@@ -134,6 +134,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/lpen.cpp \
     source/LeLib/limage/pixelchar.cpp \
     source/LeLib/util/tikidisk.cpp \
+    source/LeLib/util/tool.cpp \
     source/PmmEdit/fjonghighlighter.cpp \
     source/dialogcolorselect.cpp \
     source/dialogexport3d.cpp \
@@ -327,6 +328,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/lpen.h \
     source/LeLib/limage/pixelchar.h \
     source/LeLib/util/tikidisk.h \
+    source/LeLib/util/tool.h \
     source/PmmEdit/fjonghighlighter.h \
     source/dialogcolorselect.h \
     source/dialogexport3d.h \
@@ -501,6 +503,7 @@ RESOURCES += \
 #LELIB INCLUDES
 
 DISTFILES += \
+    resources/bin/rasm.exe \
     resources/code/amiga/init_p61_player.s \
     resources/code/amiga/p61-play.i \
     resources/code/atari520st/end.s \

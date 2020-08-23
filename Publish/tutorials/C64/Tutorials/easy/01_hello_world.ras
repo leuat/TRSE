@@ -17,4 +17,5 @@ begin
 	printstring("THIS IS ANOTHER STRING",0,40);
 	// Infinite loop
 	Loop(); 
+
 end.
