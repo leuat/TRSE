@@ -115,7 +115,7 @@ void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList dat
 
         for (int i=0;i<data.count();i++) {
             s=s+data[i];
-            if (i%8==7) {
+            if (i%8==7 && i!=data.count()-1) {
                 s=s+"\n";
                 s=s + "\t" +t + " ";
             }

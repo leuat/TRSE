@@ -8,6 +8,8 @@ var
 	time : byte=0;
     sinx : array[255] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*80+80");
     siny : array[255] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*100+100");
+	palette : incbin("resources/images/image1_palette.bin");
+	image : incbin("resources/images/image1.bin");
 
 
 procedure Init();
@@ -23,13 +25,15 @@ begin
 		if (j=0) then j:=5;
 		j:=j+1;
 	end;
+	crtc::SetPalette(palette);
 	crtc::SetBorder(0);
 end;
 
 
 begin
 	Init();
-	
+	memcpy(image, ^$C000, $4000);
+	col:=1;
 	while (done=0) do
 	begin
 		xx:=sinx[time];
@@ -40,13 +44,13 @@ begin
 		time:=time+1;
 		
 
-		if (time&1=0) then col:=col+1;
+		//if (time&1=0) then col:=col+1;
 		
 		// Make sure that it cycles!
 		if (time=0) then 
 		begin 
 			col:=col+1;
-			shift:=shift+7;
+			shift:=shift+3;
 		end;	
 	end;	
 

@@ -5,6 +5,46 @@ var
 	
 	@donotremove y_lookup
 	y_lookup : array[201] of integer = buildTable( "0xC000 + (Math.floor(i/8))*80 + (i&7)*2048");
+	// Lookup for mode 0 pixel 0	
+	pixtab1 : array[16] of byte=(
+%00000000,
+%10000000,
+%00001000,
+%10001000,
+%00100000,
+%10100000,
+%00101000,
+%10101000,
+
+%00000010,
+%10000010,
+%00001010,
+%10001010,
+%00100010,
+%10100010,
+%00101010,
+%10101010);
+
+	// Lookup for mode 0 pixel 1	
+	pixtab2 : array[16] of byte=(
+%00000000,
+%01000000,
+%00000100,
+%01000100,
+%00010000,
+%01010000,
+%00010100,
+%01010100,
+
+%00000001,
+%01000001,
+%00000101,
+%01000101,
+%00010001,
+%01010001,
+%00010101,
+%01010101);
+
 
 // Set screen mode
 procedure SetMode(ga: global byte);
@@ -101,53 +141,12 @@ crtc_256widthList:
 end;
 
 
-procedure SetMode0PixelColor(pa:global pointer;col, pix:global byte);
-begin
-  ga := pa[0];
-  
-  if (pix=0) then
-  begin
-    ga := ga & 85;
-
-    if(col & 1=1) then
-      ga :=ga | 128;
-
-    if(col & 2=2) then
-      ga :=ga | 8;
-
-    if(col & 4=4) then
-      ga :=ga | 32;
-
-
-    if(col & 8=8) then
-      ga :=ga | 2;
-
-  end
-  else
-  begin
-    ga := ga & 170;
-
-    if(col & 1=1) then
-      ga :=ga | 64;
-
-    if(col & 2=2) then
-      ga :=ga | 4;
-      
-    if(col & 4=4) then
-      ga :=ga | 16;
-
-    if(col & 8=8) then
-      ga :=ga | 1;
-
-  end;
-  pa[0]:=ga;
-
-end;
 
 
 
 procedure PutPixelMode0(x,y,col : global byte);
 begin
+	// Simply looks up the y-value and adds x
 	asm("
 		ld hl,crtc_y_lookup
 		ld b,0
@@ -156,6 +155,7 @@ begin
 		add hl,bc
 		add hl,bc
 
+		
 		ld a,[hl]
 		ld [crtc_pa+1],a
 		inc hl
@@ -164,9 +164,17 @@ begin
 		
 		
 	");
-//	pa:=lookup[y];
-//	pix := x&1;	
-	SetMode0PixelColor(pa+x>>1,col,x&1);
+//	pix :=x &1;
+	pa:=pa+x>>1;
+	
+    ga := pa[0];
+    
+	if (x&1=0) then
+		ga := ga & 85 + pixtab1[col]
+  	else
+		ga := ga & 170 + pixtab2[col];
+
+	 pa[0]:=ga;
 
 end;
 
