@@ -1,4 +1,4 @@
-program Tutorial1;
+program Tutorial4_music;
 @use "crtc"
 @use "input"
 @use "music"
@@ -15,12 +15,12 @@ var
   How to do music: 
     a) Download Arkos Tracker 2
     b) Create a 3-track song
-    c) Export as AKG, source file, with some main filename like "mySong"
-    d) In TRSE, use the "compile_akg_music" pre-processor command to compile the music + player
-       to a format that TRSE can recognize. Also specify the desired memory location.
+    c) Export as AKG, type "source file", with some main filename like "mySong"
+    d) In TRSE, use the "compile_akg_music" pre-processor command to compile the music + player using the "mySong" base name
+       to a format that TRSE can recognize. Also specify the desired memory location, somewhere *after* your code.
     e) The compiler has generated a .bin file - include this one 
-    f) Music play/init locations are automatically extracted. All you need to do is call InitMusic(track) and
-       call PlayMusic() on each frame.  
+    f) Music play/init locations are automatically extracted. All you need to do is call music::InitMusic(track) and
+       call music::PlayMusic() on each frame.  
 
 */	
 
