@@ -23,7 +23,7 @@ var
 
 
 // Fills a certain cell
-procedure FillCell(xx,yy,col : byte);
+procedure FillCellFast(xx,yy,col : byte);
 var 
   tmp,f2 :byte;
 begin
@@ -31,14 +31,17 @@ begin
 	tmp:=mergetab[col];
 //tmp:=time;
 		asm("
-			ld a,[crtc_sp]
-			ld h,a
-			ld a,[crtc_sp+1]
-			ld l,a
-			ld a,[xx]
-			ld c,a
-			ld b,0
-			add hl,bc
+;			ld 
+;			ld hl,div16		
+
+
+			pop bc
+			pop hl
+			inc hl
+			inc hl
+			push hl
+			push bc
+
 			ld c,0
 			ld b,16
 
@@ -53,7 +56,7 @@ begin
 			ld [hl],a
 			add hl,bc ; Add 2048*2
 			ld [hl],a
-
+			
 				");
 //	crtc::sp:=crtc::sp+2; // Point to next cell
 end;
@@ -92,10 +95,19 @@ begin
 		x1:=0;
 		crtc::PointToY(y1);
 		crtc::sp:=crtc::sp+8;
+		// Set up HL for fast writing
+		asm("
+			ld a,[crtc_sp]
+			ld d,a
+			ld a,[crtc_sp+1]
+			ld e,a
+;			ld de,$C000
+			push de
+		");
 		for x:=0 to sx do begin
-			FillCell(x1,y1,(sinx[x]+val));
-			x1:=x1+2;
+			FillCellFast(x1,y1,(sinx[x]+val));
 		end;
+		asm(" pop de");
 		y1:=y1+8;
 	end;
 
