@@ -2,7 +2,9 @@ Unit crtc;
 var 
 	ga,gb,col,pix,x,y : byte; 
 	pa : pointer;
-	lookup : array[200] of pointer;
+	
+	@donotremove y_lookup
+	y_lookup : array[201] of integer = buildTable( "0xC000 + (Math.floor(i/8))*80 + (i&7)*2048");
 
 // Set screen mode
 procedure SetMode(ga: global byte);
@@ -143,31 +145,28 @@ begin
 end;
 
 
-/*procedure InitLookup();
-begin
-	
-	for y:=0 to 200 do
-	begin
-			
-
-	end;
-end;
-*/
 
 procedure PutPixelMode0(x,y,col : global byte);
 begin
-	pix:=0;
-	gb:=y>>3; // div 8
-	pa:=$C000;
-	pa:=pa +(gb <<6);
-	pa:=pa + gb<<4; // same as MUL 80
-	y:=y&7;
-	pa:=pa +(y <<11); // *2048
-	pix:=x&1;
-	x:=x>>1;
-	pa:=pa +(x);
+	asm("
+		ld hl,crtc_y_lookup
+		ld b,0
+		ld a,[crtc_y]
+		ld c,a
+		add hl,bc
+		add hl,bc
+
+		ld a,[hl]
+		ld [crtc_pa+1],a
+		inc hl
+		ld a,[hl]
+		ld [crtc_pa],a
+		
+		
+	");
+//	pa:=lookup[y];
 //	pix := x&1;	
-	SetMode0PixelColor(pa,col,pix);
+	SetMode0PixelColor(pa+x>>1,col,x&1);
 
 end;
 

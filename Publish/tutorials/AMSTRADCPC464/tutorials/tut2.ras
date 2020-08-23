@@ -32,10 +32,6 @@ begin
 	
 	while (done=0) do
 	begin
-
-
-
-	
 		xx:=sinx[time];
 		yy:=siny[time+64+shift];
 		
@@ -50,7 +46,7 @@ begin
 		if (time=0) then 
 		begin 
 			col:=col+1;
-			shift:=shift+1;
+			shift:=shift+7;
 		end;	
 	end;	
 

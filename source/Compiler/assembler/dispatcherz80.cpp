@@ -24,6 +24,12 @@ void ASTdispatcherZ80::Handle16bitShift(QSharedPointer<NodeBinOP> node)
         for (int i=0;i<val;i++)
             as->Asm("add hl,hl");
     }
+    if (node->m_op.m_type == TokenType::SHR) {
+        for (int i=0;i<val;i++) {
+            as->Asm("srl h");
+            as->Asm("rr l");
+        }
+    }
 }
 
 void ASTdispatcherZ80::AssignString(QSharedPointer<NodeAssign> node, bool isPointer) {

@@ -11,7 +11,6 @@ var
 
 
 begin
-
 	
 	crtc::SetMode(0);
 	crtc::SetBorder(0);
