@@ -1,7 +1,8 @@
 Unit crtc;
 var 
 	ga,gb,col,pix,x,y : byte; 
-	pa : pointer;
+	@donotremove sp
+	pa,sp : pointer;
 	
 	@donotremove y_lookup
 	y_lookup : array[201] of integer = buildTable( "0xC000 + (Math.floor(i/8))*80 + (i&7)*2048");
@@ -143,6 +144,25 @@ end;
 
 
 
+
+procedure PointToY(y : global byte);
+begin
+	asm("
+		ld hl,crtc_y_lookup
+		ld b,0
+		ld a,[crtc_y]
+		ld c,a
+		add hl,bc
+		add hl,bc
+
+		
+		ld a,[hl]
+		ld [crtc_sp+1],a
+		inc hl
+		ld a,[hl]
+		ld [crtc_sp],a
+	");
+end;
 
 procedure PutPixelMode0(x,y,col : global byte);
 begin

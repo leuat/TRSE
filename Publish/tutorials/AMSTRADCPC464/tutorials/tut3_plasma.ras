@@ -1,0 +1,134 @@
+program Tutorial2;
+@use "crtc"
+@use "input"
+
+
+var  
+	done,i1,j,time: byte; 
+	c2x,c2y,aax,aay,x,y,val,x1,y1 : byte;
+
+	const sx : byte = 30;
+	const sy : byte = 20;
+
+    siny : array[sy] of byte = (0); 
+	sinx : array[sx] of byte = (0); 
+	mergetab : array[16] of byte = (0);
+	// Lookup table for division by 16
+	@donotremove div16
+    sin : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*127+127)");
+    div16 : array[256] of byte = BuildTable("i/16");
+	
+	palette : array[8] of byte = (0, 1, 2 ,5,  11,8,25,26,26,26,26,26);	
+
+
+
+// Fills a certain cell
+procedure FillCell(xx,yy,col : byte);
+var 
+  tmp,f2 :byte;
+begin
+	col := div16[col];
+	tmp:=mergetab[col];
+//tmp:=time;
+		asm("
+			ld a,[crtc_sp]
+			ld h,a
+			ld a,[crtc_sp+1]
+			ld l,a
+			ld a,[xx]
+			ld c,a
+			ld b,0
+			add hl,bc
+			ld c,0
+			ld b,16
+
+	");
+		asm("
+			ld a,[tmp]
+			ld [hl],a
+			;inc hl
+			;ld [hl],a
+			;dec hl
+			add hl,bc ; Add 2048*2
+			ld [hl],a
+			add hl,bc ; Add 2048*2
+			ld [hl],a
+
+				");
+//	crtc::sp:=crtc::sp+2; // Point to next cell
+end;
+
+
+// Plasma procedure
+
+procedure Plasma();
+begin
+	c2x:=aax;
+	c2y:=aay;
+	
+	// Set up y-sine table
+	for x:=0 to sy do begin 
+		i1:=sin[c2x] + sin[c2y];
+		siny[x]:=i1; 
+		c2x:=c2x+4;
+		c2y:=c2y+9;
+	end;
+
+	aax:=aax+3;
+	aay:=aay-5;
+
+	// Set up x-sine table
+	for x:=0 to sx do begin 
+		i1 := sin[c2x] + sin[c2y];
+		sinx[x] := i1;
+		c2x:=c2x+3;
+		c2y:=c2y+7;
+
+	end;
+	
+	y1:=0;
+	for y:=0 to sy do begin
+		val:=siny[y];
+		x1:=0;
+		crtc::PointToY(y1);
+		crtc::sp:=crtc::sp+8;
+		for x:=0 to sx do begin
+			FillCell(x1,y1,(sinx[x]+val));
+			x1:=x1+2;
+		end;
+		y1:=y1+8;
+	end;
+
+end;
+
+
+
+
+procedure Init();
+begin
+	time:=0;
+	aax:=1;
+	aay:=5;
+
+	crtc::SetMode(0);
+	// Sets the palette
+	for j:=0 to 8 do
+	begin
+		crtc::SetSinglePalette(j,palette[j]);
+		crtc::SetSinglePalette(15-j,palette[j]);	
+	end;
+	for j:=0 to 16 do
+		mergetab[j]:=crtc::pixtab1[j] | crtc::pixtab2[j];
+	
+	crtc::SetBorder(0);
+end;
+
+begin
+	Init();
+	while (done=0) do
+	begin
+		Plasma();
+		time:=time+1;
+	end;	
+
+end.

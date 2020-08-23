@@ -768,7 +768,7 @@ QString ASTdispatcherZ80::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
     if (bop->m_op.m_type == TokenType::PLUS)
         return "add"+add;
     if (bop->m_op.m_type == TokenType::MINUS)
-        return "sub"+add;
+        return "sub";//+add;
     if (bop->m_op.m_type == TokenType::BITAND)
         return "and";
     if (bop->m_op.m_type == TokenType::BITOR)
