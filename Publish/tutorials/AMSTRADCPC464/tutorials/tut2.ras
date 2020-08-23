@@ -6,8 +6,8 @@ program Tutorial2;
 var  
 	done,i1,j,xx,yy,col,shift: byte; 
 	time : byte=0;
-    sinx : array[255] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*80+80");
-    siny : array[255] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*100+100");
+    sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*80+79");
+    siny : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*100+99");
 	palette : incbin("resources/images/image1_palette.bin");
 	image : incbin("resources/images/image1.bin");
 
