@@ -2,6 +2,8 @@ program Tutorial2;
 @use "crtc"
 @use "input"
 
+@export "resources/images/image1.flf" "resources/images/image1.bin" 256
+
 
 var  
 	done,i1,j,xx,yy,col,shift: byte; 
@@ -26,20 +28,22 @@ begin
 	Init();
 	memcpy(image, ^$C000, $4000);
 	col:=1;
+	shift:=time+64;
 	while (done=0) do
 	begin
 		xx:=sinx[time];
-		yy:=siny[time+64+shift];
+		yy:=siny[time+shift];
 		
-		crtc::PutPixelMode0(xx,yy,col&15);		
+		crtc::PutPixelMode0(xx,yy,col);		
 		
 		time:=time+1;
 		
 		// Cycling fun!
 		if (time&32 = 0) then shift:=shift+1;
+		
 		if (time=0) then 
 		begin 
-			col:=col+1;
+			col:=(col+1)&15;
 			shift:=shift+1;
 		end;	
 	end;	
