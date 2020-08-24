@@ -54,7 +54,7 @@ private:
 
 public:
 //    uchar m_nesCols[4];    // OBSOLETE REWRITE
-    bool m_isMulticolor = true; // OBSOLETE REWRITE
+//    bool m_isMulticolor = true; // OBSOLETE REWRITE
     bool m_isCharset = false;
     bool m_isHybridMode = false;
     bool m_supportsFooterPen = false;

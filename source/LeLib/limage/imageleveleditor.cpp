@@ -623,7 +623,7 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 
 
         val = m_charset->getCharPixel(v, col, x,y);
-            if (!m_charset->m_colorList.m_isMulticolor)
+            if (m_charset->m_footer.get(LImageFooter::POS_DISPLAY_MULTICOLOR)!=1)
                 if (val!=getBackground())
                     val = col;
     }

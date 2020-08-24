@@ -52,7 +52,7 @@ QVector<int> LColorList::getPenList()
 
 void LColorList::SetIsMulticolor(bool mult)
 {
-    m_isMulticolor = mult;
+//    m_isMulticolor = mult;
     if (m_list.count()==0)
         return;
 
@@ -63,7 +63,7 @@ void LColorList::SetIsMulticolor(bool mult)
         for (int i=0;i<8;i++)
             m_list[i+8].displayList = false;
 
-    if (m_isMulticolor && !m_ignoreSetIsMulti) {
+    if (mult && !m_ignoreSetIsMulti) {
         if (m_type==LColorList::C64 || m_type==LColorList::VIC20) {
             for (int i=0;i<8;i++) {
                 m_list[i].ignoreAltColour = true;
@@ -481,7 +481,6 @@ void LColorList::CopyFrom(LColorList *other)
         m_pens[i] = other->m_pens[i];
 
 
-//        m_pens[i] = QSharedPointer<LPen>(new LPen(&m_pens, &m_list, other->m_pens[i]));
 
     m_curPal = other->m_curPal;
     m_nesPPU = other->m_nesPPU;

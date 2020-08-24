@@ -261,7 +261,7 @@ unsigned int CharsetImage::getPixel(int x, int y)
 
     QPoint p = getXY(x,y);
 
-    if (m_colorList.m_isMulticolor) {
+    if (m_footer.get(LImageFooter::POS_DISPLAY_MULTICOLOR)) {
         return MultiColorImage::getPixel(p.x(),p.y());
     }
 //    return MultiColorImage::getPixel(p.x(),p.y());
@@ -409,7 +409,7 @@ void CharsetImage::setPixel(int x, int y, unsigned int color)
     }
 
 
-    if (m_colorList.m_isMulticolor)
+    if (m_footer.get(LImageFooter::POS_DISPLAY_MULTICOLOR)==1)
         setLimitedPixel(p.x(),p.y(),color);
     else {
 /*        if (color!=m_background)
@@ -639,7 +639,7 @@ int CharsetImage::getDx()
 {
     int dx = 1;
     int s = 1;
-    if (m_colorList.m_isMulticolor)
+    if (m_footer.get(LImageFooter::POS_DISPLAY_MULTICOLOR)==1)
         s = 2;
     if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1) {
         dx = m_width/(8*m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X)/s);
