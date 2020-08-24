@@ -127,7 +127,6 @@ begin
 
 		end;
 		asm(" pop de");
-//		y1:=y1+8;
 	end;
 
 end;

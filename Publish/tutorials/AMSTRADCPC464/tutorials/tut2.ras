@@ -17,7 +17,7 @@ var
 procedure Init();
 begin
 	time:=0;
-	
+	// Mode 0 : 160x200 16 cols
 	crtc::SetMode(0);
 	crtc::SetPalette(palette);
 	crtc::SetBorder(0);
@@ -26,14 +26,15 @@ end;
 
 begin
 	Init();
-	memcpy(image, ^$C000, $4000);
+	// Copy image data to the screen
+	memcpy(image, screen, $4000);
 	col:=1;
 	shift:=time+64;
 	while (done=0) do
 	begin
 		xx:=sinx[time];
 		yy:=siny[time+shift];
-		
+		// Put some pixels!		
 		crtc::PutPixelMode0(xx,yy,col);		
 		
 		time:=time+1;
