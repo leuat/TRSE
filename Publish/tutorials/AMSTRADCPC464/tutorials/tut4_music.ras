@@ -35,7 +35,7 @@ begin
 	crtc::SetBorder(0);
 	crtc::SetPalette(palette);
 	
-	memcpy(image, ^$C000, $3FFF);
+	memcpy(image, screen, $3FFF);
 
 	music::InitMusic(some_song,0);	
 	while (true) do
