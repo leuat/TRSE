@@ -6,17 +6,13 @@ var
 
 procedure Decompress(in, out : global pointer of integer);
 begin
-;//#pragma parameter __D0 fc8_decode(__A0, __A1, __D1)
-asm("
-;asm unsigned short fc8_decode(unsigned char* in, unsigned char* out, unsigned long outsize)
-;	machine 68020
+	asm("
 FC8_HEADER_SIZE EQU 8
 FC8_DECODED_SIZE_OFFSET  EQU 4
 	movem.l	d1-d7/a0-a6,-(sp)
 	move.l compression_in,a0	
 	move.l compression_out,a1	
-;	move.l compression_outsize,d1	
-	move.l #32000,d1	
+;	move.l #32000,d1	
 
 	bra 	_Init_Decode
 
@@ -52,13 +48,7 @@ _Init_Decode:
 	cmp.b	#'_',3(a0)
 	bne	_fail
 	
-	;// check decoded size - enough space in the output buffer?
-;	moveq	#FC8_DECODED_SIZE_OFFSET,d6
-;	bsr.s	_GetUINT32
-;	cmp.l	d7,d1				
-;	bhi	_fail
 
-	;// advance a0 to start of compressed data
 	lea		FC8_HEADER_SIZE(a0),a0
 
 	;// a5 = base of length decode lookup table
@@ -97,7 +87,6 @@ _BR0:
 	move.b	(a4)+,(a1)+
 	btst	#5,d6				;// check b bit
 	beq.s	_mainloop
-;	move.b	(a4)+,(a1)+		;// copy 1 more byte
 	move.b	(a4)+,(a1)+		;// copy 1 more byte
 	bra.s	_mainloop
 	
@@ -131,20 +120,15 @@ _BR2:
 	lsr.b	#1,d6
 	and.w	d1,d6				;// AND with 0x1F
 	move.b	(a5,d6.w),d6		;// d6 = length-1 word for copy = ((word)(t0 >> 3) & 0x7) + 1
-	;// fall through to _copyBackref
 
-	;// copy data from a previous location in the output buffer
-	;// d5 = offset from current buffer position	
 _copyBackref:
 	move.l	a1,a4
 	sub.l	d5,a4 		
-; CHANGES HERE
 
 _nearLoop:
 	    move.b 	(a4)+,(a1)+
 	    dbf 	d6,_nearLoop
 	    bra		_mainloop
-
 
 _fail:
 	moveq.w	#0,d0				;// result = 0
