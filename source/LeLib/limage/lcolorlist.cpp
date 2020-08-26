@@ -788,6 +788,7 @@ void LColorList::InitPalettePens(int cnt)
 
 void LColorList::LoadFromFile(QString fileName)
 {
+
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly)) {
         return;
@@ -824,8 +825,8 @@ QColor LColorList::getClosestColor(QColor col, int& winner)
 
     for (int i=0;i<m_pens.count();i++) {
             //qDebug() << "Metric:";
-//            if (!m_list[i].inUse)
-  //              continue;
+            if (!m_list[i].inUse)
+                continue;
             int pen = m_pens[i]->Get();
             if (pen>=m_list.count())
                 continue;

@@ -1193,16 +1193,22 @@ void ASTDispatcher68000::IncBin(QSharedPointer<NodeVarDecl> node) {
         ErrorHandler::e.Error("Could not locate binary file for inclusion :" +filename);
 
     int size=0;
+
+    if (t->m_flags.contains("compressed")) {
+        QString old = filename;
+        FC8 fc;
+        filename = filename+ "_c";
+        fc.Encode(old,filename);
+
+    }
+
+
+
     QFile f(filename);
     if (f.open(QIODevice::ReadOnly)){
         size = f.size();  //when file does open.
         f.close();
     }
-
-
-
-
-
     if (t->m_position=="") {
         as->Asm(" 	CNOP 0,4");
 

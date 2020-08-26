@@ -806,7 +806,7 @@ QStandardItem* MainWindow::AddTreeRoot(QString path, QString name)
 {
     QStandardItem* root = new QStandardItem(name);
     root->setEditable(false);
-    QStringList exts = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin" <<"*.prg";
+    QStringList exts = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin"<<"*.bin_c" <<"*.prg";
     QDirIterator it(path,QStringList(), QDir::NoDotAndDotDot | QDir::Dirs);
 //    if (m_expandedList.contains(path))
 
@@ -938,8 +938,10 @@ void MainWindow::setupIcons()
 
     img.load(":resources/images/bin.png");
     m_icons["bin"] = QIcon(QPixmap::fromImage(img));
+    m_icons["bin_c"] = QIcon(QPixmap::fromImage(img));
     m_icons["prg"] = QIcon(QPixmap::fromImage(img));
     m_fileColors["bin"] = QColor(c4,c4,c4);
+    m_fileColors["bin_c"] = QColor(c4,c4,c4);
     m_fileColors["prg"] = QColor(c4,c4,c4);
 
 }
@@ -1305,7 +1307,7 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
     if (file.toLower().endsWith(".tru") || file.toLower().endsWith(".ras") || file.toLower().endsWith(".asm")
             || file.toLower().endsWith(".inc") || file.toLower().endsWith(".flf")
             || file.toLower().endsWith(".paw") || file.toLower().endsWith(".fjo")
-        || file.toLower().endsWith(".bin") || file.toLower().endsWith(".prg")) {
+        || file.toLower().endsWith(".bin_c") || file.toLower().endsWith(".bin") || file.toLower().endsWith(".prg") ) {
         LoadDocument(path + file);
     }
 

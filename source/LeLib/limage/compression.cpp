@@ -138,12 +138,15 @@ void Compression::AddAtariBitplaneToData(QByteArray &data, MultiColorImage &img,
             for (int i=0;i<16;i++) {
                 int col = img.getPixel(xx*16+i,yy);
                 if ((col & curBit)==curBit )
-                    c = c | (0x1<<(15-i));
+                    c = c | (0b1<<(15-i));
                 //0101
             }
-            data.append(((c>>8)&255));
-            data.append((c&255));
-            d++;
+            // Test
+//            if (x!=0)
+  //              c=0;
+            data.append((char)((c>>8)&255));
+            data.append((char)(c&255));
+            d+=2;
 //            PixelChar& pc = img.m_data[40*(yy/8)+xx];
   //          data.append(PixelChar::reverse(pc.p[yy&7]));
         }

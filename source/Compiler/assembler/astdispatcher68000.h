@@ -25,6 +25,7 @@
 #include "source/Compiler/ast/nodecase.h"
 #include "source/Compiler/assembler/factorymethods.h"
 #include "source/Compiler/syntax.h"
+#include "source/LeLib/util/fc8/FC8Compression.h"
 
 class ASTDispatcher68000 : public AbstractASTDispatcher
 {

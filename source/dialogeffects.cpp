@@ -1143,8 +1143,20 @@ void DialogEffects::UpdateGlobals()
             QString f = m_script->get<QString>("output.palette_file");
             //      qDebug() << "Here "<<f;
             if (m_effect!=nullptr)
-                if (m_effect->m_mc!=nullptr)
-                    m_effect->m_mc->m_colorList.LoadFromFile(m_currentDir+"/"+f);
+                if (m_effect->m_mc!=nullptr) {
+                    if (f.endsWith(".flf")) {
+                        LImage* img = LImageIO::Load(m_currentDir + f);
+//                        m_effect->m_mc->m_colorList.CopyFrom(&img->m_colorList);
+                        if (img!=nullptr) {
+                            m_effect->m_mc->m_colorList.CopyFrom(&img->m_colorList);
+                            delete img;
+                        }
+                        else     m_infoText+="Could not find palette file: "+f+"\n";
+
+                    }
+                    else
+                        m_effect->m_mc->m_colorList.LoadFromFile(m_currentDir+"/"+f);
+                }
         }
 
     }

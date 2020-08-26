@@ -133,8 +133,10 @@ void DemoEffectRaytracer::Render(QImage &img)
         ConvertToC64(m_rt->m_globals.m_dither,m_rt->m_globals.m_multicolor==1,m_rt->m_globals.m_ditherStrength);
     if (m_outputType==RayTracerGlobals::output_type_pico8)
         ConvertToP8(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
+
     if (m_outputType==RayTracerGlobals::output_type_VGA)
         ConvertToP8(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
+
     if (m_outputType==RayTracerGlobals::output_type_BINARY)
         ConvertToBIN(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
 

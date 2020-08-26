@@ -91,6 +91,7 @@ public:
             return;*/
         int size = 2;
         m_mc->m_colorList.EnableColors(m_cols);
+//        qDebug() <<"COLS IN USE " <<m_cols;
         if (dither==1)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
         if (dither==2)

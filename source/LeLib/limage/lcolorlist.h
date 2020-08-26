@@ -49,12 +49,12 @@ private:
 
     QVector<int> m_multicolors;
     int m_currentType = 0;
-    QVector<LColor> m_list;
     QVector<QSharedPointer<LPen>> m_pens;
 
 public:
 //    uchar m_nesCols[4];    // OBSOLETE REWRITE
 //    bool m_isMulticolor = true; // OBSOLETE REWRITE
+    QVector<LColor> m_list;
     bool m_isCharset = false;
     bool m_isHybridMode = false;
     bool m_supportsFooterPen = false;

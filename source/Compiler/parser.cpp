@@ -61,6 +61,12 @@ QStringList Parser::getFlags() {
             done = false;
         }
 
+        if (m_currentToken.m_type==TokenType::COMPRESSED) {
+            Eat(TokenType::COMPRESSED);
+            flags<<"compressed";
+            done = false;
+        }
+
         if (m_currentToken.m_type==TokenType::WRAM) {
             Eat(TokenType::WRAM);
             flags<<"wram";
@@ -2863,8 +2869,9 @@ QSharedPointer<Node> Parser::TypeSpec()
         }
         Eat(TokenType::RPAREN);
 
-
+ //       qDebug() << "LOOKING FOR FLAGS WITH INCBIN "<< binFile;
         QStringList flags = getFlags();
+   //     qDebug() << "FLAGS FOUND :  "<< flags;
 
         QSharedPointer<NodeVarType> nt =  QSharedPointer<NodeVarType>(new NodeVarType(t,binFile, position));
         nt->m_flags = flags;
