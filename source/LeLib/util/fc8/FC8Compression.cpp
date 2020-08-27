@@ -340,7 +340,7 @@ unsigned int FC8::Encode(QString fileIn, QString fileOut)
     for (int i=0;i<size;i++)
         out.append(data[i]);
     Util::SaveByteArray(out,fileOut);
-    qDebug() << "Compression ratio = " <<QString::number((1.0-size/(float)in.count())*100) +"% with size "+QString::number(size);
+//    qDebug() << "Compression ratio = " <<QString::number((1.0-size/(float)in.count())*100) +"% with size "+QString::number(size);
     delete[] data;
     delete[] dataIn;
 

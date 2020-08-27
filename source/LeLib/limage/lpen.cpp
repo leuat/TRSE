@@ -104,8 +104,8 @@ QWidget *LPen::createButtonSelect(QColor col, int index, int width)
     QObject::connect( palSelect, &QPushButton::clicked,  [=](){
         // Implement!
         DialogColorSelect* dc = new DialogColorSelect();
-        dc->exec();
         dc->Init(LColor(col,""),m_bpp);
+        dc->exec();
         if (dc->m_ok) {
            ((*m_colors)[index]).color = dc->m_color.color;
             Data::data.UpdatePens();

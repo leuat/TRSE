@@ -21,10 +21,11 @@ public:
     bool m_ok = true;
     QVector3D m_bpp;
     LColor m_color;
-    void UpdateGUI(QWidget* except);
+    int m_interval=1;
     void Init(LColor color, QVector3D bpp);
-
+    int forceInterval(int val);
 private slots:
+    void UpdateGUI(QWidget* except);
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
 
@@ -34,6 +35,10 @@ private slots:
 
 
     void on_slBlue_sliderMoved(int position);
+
+    void on_leValue_textChanged(const QString &arg1);
+
+    void on_leValue_editingFinished();
 
 private:
     Ui::DialogColorSelect *ui;

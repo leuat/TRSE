@@ -27,7 +27,7 @@ var
 	// a "images/image1.bin_c" file	
 	image1_data : incbin("images/image1.bin") compressed aligned;
 	image1_pal : incbin("images/image1.pal");
-	
+
 	image2_data : incbin("images/image2.bin") compressed aligned;
 	image2_pal : incbin("images/image2.pal");
 

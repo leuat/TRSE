@@ -9,7 +9,7 @@ var
    	
 	/*
 		In TRSE on M68K systems, when you flag an incbin resources
-		as "compressed", the will will be automatically compressed
+		as "compressed", the file will be automatically compressed
 		and saved as a new file with ending +"_c". In this example,
 		the compressed file will be named "image2.bin_c", and this file 
 		will be included instead of the original. 
