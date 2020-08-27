@@ -3466,7 +3466,8 @@ void Parser::HandleAKGCompiler()
     int addr = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST); // X
 
-    Tool::AKGCompiler(m_currentDir+filename,addr,m_symTab.get());
+    if (!Tool::AKGCompiler(m_currentDir+filename,addr,m_symTab.get()))
+        ErrorHandler::e.Error("Could not find music for inclusion : "+filename+".asm");
 }
 
 void Parser::HandleSpriteCompiler()

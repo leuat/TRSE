@@ -6,9 +6,18 @@ Tool::Tool()
 
 }
 
-void Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
+bool Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
 {
     QString path = QFileInfo(filename).path() + QDir::separator();
+
+    if ((!QFile::exists(filename+".asm")) && (!QFile::exists(filename+".inc")))
+        return false;
+
+    if ((QFile::exists(filename+".asm"))) {
+        Util::CopyFile(filename+".asm",filename+".inc");
+        Util::CopyFile(filename+"_playerconfig.asm",filename+"_playerconfig.inc");
+
+    }
 
 //    qDebug() << path << QFile::exists(":resources/bin/rasm.exe");
     QString player = path+"playerakg.asm";
@@ -25,6 +34,8 @@ void Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
     Util::CopyFile(":resources/bin/rasm.exe",rasm);
 #endif
 
+
+
     Util::CopyFile(":resources/code/amstrad/playerakg.asm",player);
     Util::CopyFile(":resources/code/amstrad/playerakg_soundeffects.asm",snd);
 
@@ -32,8 +43,8 @@ void Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
     file.open(QIODevice::WriteOnly);
     QTextStream qout(&file);
     qout<< "org " + Util::numToHex(Address)<< "\n";
-    qout<<"include \""+filename+".asm\" \n";
-    qout<<"include \""+filename + "_playerconfig.asm\" \n";
+    qout<<"include \""+filename+".inc\" \n";
+    qout<<"include \""+filename + "_playerconfig.inc\" \n";
 
 
     qout<<"PLY_AKG_HARDWARE_CPC = 1\n";
@@ -74,4 +85,5 @@ void Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
     QFile::remove(player);
     QFile::remove(snd);
     QFile::remove(asmFile);
+    return true;
 }

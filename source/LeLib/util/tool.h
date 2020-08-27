@@ -8,7 +8,7 @@ class Tool
 {
 public:
     Tool();
-    static void AKGCompiler(QString filename, int address, SymbolTable* symTab);
+    static bool AKGCompiler(QString filename, int address, SymbolTable* symTab);
 };
 
 #endif // TOOL_H
