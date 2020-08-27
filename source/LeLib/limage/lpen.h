@@ -18,7 +18,7 @@
 class LPen {
 public:
     int m_colorIndex;
-    enum Type {FixedSingle, SingleSelect, Dropdown,DropDownExceptAlreadySelected, DisplayAll, DisplayAllExceptAlreadySelected};
+    enum Type {FixedSingle, SingleSelect, Dropdown,DropDownExceptAlreadySelected, DisplayAll, DisplayAllExceptAlreadySelected, FixedSingleNumbers};
     Type m_type = FixedSingle;
     QString m_name;
     int m_dataType = 0;
@@ -48,6 +48,7 @@ public:
 
 
     QWidget* createButton(QColor col, int index, int width);
+    QWidget* createButtonNumber(QColor col, int index, int width);
     QWidget* createButtonSelect(QColor col, int index, int width);
     QWidget* createComboBox(QColor col,int width, QVector<LColor> &list);
     QWidget* createGrid(QColor col,int width, QVector<LColor> &list);

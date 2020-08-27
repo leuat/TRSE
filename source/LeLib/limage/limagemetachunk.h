@@ -10,7 +10,6 @@ class LMetaChunkItem : public LImageContainerItem {
 public:
 
 //    QByteArray m_header;
-
     QByteArray m_data;
     QByteArray m_attributes;
 
@@ -97,6 +96,11 @@ public:
 
    void setPixel(int x, int y, unsigned int color) override;
    void LoadCharset(QString file, int skipBytes) override;
+
+   void InitPens() override;
+
+   void SetPalette(int pal) override;
+
 
    unsigned int getPixel(int x, int y) override;
 

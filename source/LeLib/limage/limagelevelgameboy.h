@@ -15,6 +15,8 @@ public:
     void ExportBin(QFile &file) override;
     void SetPalette(int pal) override;
 
+    void InitPens() override;
+
 };
 
 #endif // LIMAGELEVELGAMEBOY_H

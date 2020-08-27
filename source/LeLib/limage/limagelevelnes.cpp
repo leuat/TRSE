@@ -81,9 +81,14 @@ unsigned int LImageLevelNES::getPixel(int x, int y)
     if (!PixelToPos(x,y, posC, m_meta.m_colSizex, m_meta.m_colSizey))
         return 0;
 
+//    for (int i=0;i<100;i++)
+  //      m_currentLevel->m_ColorData[i]=1;
+
 
     uchar v = m_currentLevel->m_CharData[pos];
     uchar col = m_currentLevel->m_ColorData[posC];
+
+
 
     return m_charset->getCharPixel(v, col, x,y);
 
@@ -99,15 +104,13 @@ void LImageLevelNES::setPixel(int x, int y, unsigned int color)
     if (!PixelToPos(x,y, posC,m_meta.m_colSizex, m_meta.m_colSizey))
         return; // out of bounds
 
-//        qDebug() << (m_writeType==Color) << color;
-
-
-
 
     if (m_writeType==Character  || m_forcePaintColorAndChar)
         m_currentLevel->m_CharData[pos] = m_currentChar;
     if (m_writeType==Color  || m_forcePaintColorAndChar)
         m_currentLevel->m_ColorData[posC] = color;
+
+
 
     //BuildImage();
 }
@@ -135,6 +138,11 @@ void LImageLevelNES::Initialize()
         }
     SetBank(m_footer.get(LImageFooter::POS_CURRENT_BANK));
 
+}
+
+void LImageLevelNES::InitPens()
+{
+    m_colorList.DefaultPen(LPen::FixedSingleNumbers,4);
 }
 
 void LImageLevelNES::LoadBin(QFile &file)

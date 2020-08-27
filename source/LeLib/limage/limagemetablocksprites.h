@@ -16,6 +16,7 @@ public:
 
     void setPixel(int x, int y, unsigned int color) override;
 
+    void InitPens() override;
 
 
 

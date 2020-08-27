@@ -20,6 +20,7 @@ void LImageLevelGameboy::ExportBin(QFile &file)
 
 void LImageLevelGameboy::SetPalette(int pal)
 {
+    LImageLevelNES::SetPalette(0);
     //    m_colorList.setPen(2-1, m_colorList.)
     //    if (pal==m_oldPal)
     //      return;
@@ -36,4 +37,11 @@ void LImageLevelGameboy::SetPalette(int pal)
          m_colorList.setPen(3,m_colorList.m_nesPPU[0]);
 
     */
+}
+
+void LImageLevelGameboy::InitPens()
+{
+    m_colorList.DefaultPen(LPen::FixedSingleNumbers,1);
+    m_colorList.setPen(0,0);
+    Data::data.currentColor = 0;
 }

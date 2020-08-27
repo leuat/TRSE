@@ -557,7 +557,6 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 //        m_charset->setMultiColor(true);
 
   //  }
-
     pos = v + shift;
 
     int bitmask = 1;

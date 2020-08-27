@@ -90,6 +90,11 @@ void LImageMetaBlockSprites::setPixel(int x, int y, unsigned int color)
 
 }
 
+void LImageMetaBlockSprites::InitPens()
+{
+    m_colorList.DefaultPen(LPen::FixedSingleNumbers,4);
+}
+
 unsigned int LImageMetaBlockSprites::getPixel(int x, int y)
 {
     QPoint p = getPos(x,y);
@@ -125,7 +130,9 @@ unsigned int LImageMetaBlockSprites::getPixel(int x, int y)
     }
     m_charset->m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
 
-    ((LImageNES*)m_charset)->SetPalette(pal);
+  //   if (rand()%100>98)
+//    qDebug() << "Setting PAL "<<pal;
+    m_charset->SetPalette(pal);
 
     return m_charset->getPixel(xx,yy);
 

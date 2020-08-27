@@ -32,6 +32,9 @@ QWidget* LPen::CreateUI(QColor col, int width,int xx,int yy,QVector<LColor>& lis
     if (m_type == FixedSingle)
         widget = createButton(col, m_colorIndex, width);
 
+    if (m_type == FixedSingleNumbers)
+        widget = createButtonNumber(col, m_colorIndex, width);
+
     if (m_type == SingleSelect)
         widget = createButtonSelect(col, m_colorIndex, width);
 
@@ -80,6 +83,42 @@ QWidget *LPen::createButton(QColor col, int index, int width) {
         Data::data.currentColorType = m_dataType;
 //        qDebug() << "Setting "<<Data::data.currentColorType;
         handleButtonEdit(index,b);
+    } );
+    return b;
+}
+
+QWidget *LPen::createButtonNumber(QColor col, int index, int width) {
+    QPushButton *b = new QPushButton();
+    b->setMaximumWidth(width);
+    b->setMinimumWidth(width);
+    b->setMaximumHeight(width);
+    b->setMinimumHeight(width);
+//    b->setFlat(true);
+
+    /*QPalette p;
+
+    if (!col.isValid())
+        col = QColor(0,0,0,255);
+    QPixmap pm = Util::CreateColorIcon(col,width);
+    b->setAutoFillBackground(true);
+    p.setBrush(b->backgroundRole(), QBrush(pm));
+
+    QColor c2(0,0,0,255);
+    if (col.red()+col.green()+col.blue()<(127*3))
+        c2 = QColor(255,255,255,255);
+    p.setColor(b->foregroundRole(),c2);
+    b->setPalette(p);
+    */
+    b->setText(QString::number(index));
+    if (index == Data::data.currentColor)
+        b->setText("["+QString::number(index)+"]");
+
+//    b->setStyleSheet("QLabel { color : " + c2.name() +"; }");
+    QObject::connect( b, &QPushButton::clicked,  [=](){
+        Data::data.currentColorType = m_dataType;
+//        qDebug() << "Setting "<<Data::data.currentColorType;
+        handleButtonEdit(index,b);
+
     } );
     return b;
 }
@@ -260,6 +299,7 @@ void LPen::handleButtonEdit(int val, QPushButton *btn)
 //    Data::data.currentColorType = 0;
 
     Data::data.currentIsColor=true;
+
     Data::data.UpdatePens();
 //    qDebug() << "Setting color "<< val;
     //        SetMulticolor(3,val);
@@ -275,6 +315,7 @@ void LPen::handleButtonEdit(int val, QPushButton *btn)
                 Data::data.currentColor = m_list[val].m_altColour;
 */
   //  Data::data.currentColor = m_colorIndex;//  m_list[val].m_altColour;
+    Data::data.currentIsColor=true;
 
 }
 

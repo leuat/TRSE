@@ -817,6 +817,17 @@ void LColorList::DefaultPen(LPen::Type type = LPen::FixedSingle)
 
 }
 
+void LColorList::DefaultPen(LPen::Type type, int cnt)
+{
+    m_pens.clear();
+
+//    m_pens.append(LPen(&m_pens, 0,m_,LPen::Fixed));
+    for (int i=0;i<cnt;i++) {
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,i,"",type, m_bpp)));
+    }
+
+}
+
 QColor LColorList::getClosestColor(QColor col, int& winner)
 {
     float d = 1E20;

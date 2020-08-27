@@ -135,6 +135,7 @@ public:
         return m_pens.count();
     }
     void DefaultPen(LPen::Type type);
+    void DefaultPen(LPen::Type type, int cnt);
 
     QColor getClosestColor(QColor col, int& winner);
 

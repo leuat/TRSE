@@ -146,6 +146,8 @@ public:
 
     int m_gridWidthDisplay = 40;
 
+
+    bool m_updatePaletteInternal = true;
     virtual void SetBank(int bnk) {
         m_footer.set(LImageFooter::POS_CURRENT_BANK,bnk);
     }
