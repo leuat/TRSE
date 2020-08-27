@@ -42,6 +42,3 @@ dosbox_x86_system = default
 cpu_x86_system = 8086
 override_target_settings_basic = 6.95268e-310
 exomizer_toggle = 0
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/GAMEBOY/UnitTests/
-open_files = ,arithmetic/muldiv.ras, conditional/01_if-then-else.ras
-current_file = arithmetic/integer.ras

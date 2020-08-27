@@ -40,3 +40,5 @@ echo "open_files =, tutorial1.ras" >> SPECTRUM/tutorials/spectrum.trse
 echo "open_files =, tut1.ras" >> ATARI520ST/tutorials/atari520st_tutorials.trse
 echo "open_files =, floskel.ras" >> C64/Floskel/floskel.trse
 echo "open_files =, demo.ras" >> GAMEBOY/yo-grl/yo-grl.trse
+
+echo "open_files =, tutorial1.ras" >> AMIGA/tutorials/tutorials.trse

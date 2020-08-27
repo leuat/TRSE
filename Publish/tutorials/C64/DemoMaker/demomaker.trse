@@ -31,6 +31,4 @@ pascal_settings_use_local_variables = 0
 exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
-open_files = ,demo_part2_empty.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/DemoMaker/
-current_file = demo_part2_empty.ras
+open_files =, demo_part2_empty.ras
