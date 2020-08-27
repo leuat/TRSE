@@ -1131,10 +1131,11 @@ QString MainWindow::getProjectPath()
 
 QString MainWindow::getTRUPath()
 {
-    QString system = m_currentProject.m_ini->getString("system");
+    QString system = m_currentProject.m_ini->getString("system").toUpper();
     QString s =  Util::path + QDir::separator() + "tutorials"+QDir::separator() + system+ QDir::separator() + "tru"+QDir::separator();
     s = s.replace("\\\\","\\");
     if (s.startsWith("\\")) s = s.remove(0,1);
+//    qDebug() << "TRU path "<<s;
     return s;
 
 }

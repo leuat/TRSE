@@ -1,7 +1,7 @@
 program Tutorial7_Grid;
+@use "graphics"
 var  
 
-	sine256_data: incbin("data/sine.bin");
 
    	loo,t,j,sx,sy,l,m,jj,k,i,isDone,time,tt,curFrame: integer = 0; 
    	ll:long;
@@ -9,7 +9,7 @@ var
    	@donotremove LineMode
    	ii,ij,l2,k2:long;
 	curBuf : integer = 0;
-	sin256:pointer of byte;
+	sin : array[256] of byte = buildtable("Math.sin(i/256.0*2*3.14159)*127 +127");
 	p1 : pointer of long;
    	pi,p2,p3,p4 : pointer of integer;
 
@@ -110,12 +110,12 @@ var
 	v:integer;
 begin
 	scs:=scs&255;
-	v := sin256[scs];
+	v := sin[scs];
 	sint:=v-128;	
 	
 	scs_t:=scs+64;	
 	scs_t:=scs_t&255;
-	v := sin256[scs_t];
+	v := sin[scs_t];
 	cost:=v-128;	
 
 
@@ -167,30 +167,12 @@ end;
 
 
 /*
-	Sets up basic screen copper list
-*/
-procedure SetupScreen();
-begin
-	poke16(copper_resolution, 0 , $1200); // $4000  = bitplanes, $200 = colours, 320x200
-	
-	SetCopperList32(screenb1, copper_bitplane0);
-	
-	SetCopperList32(screenb1, copper_bitplane0);
-		// Modulo for each line = 120 (meaning that after 40 bytes are written to screen, 
-	// the copper skips 120 bytes to the next interleaved line of data for the current bitplane
-	poke16(copper_mod_even,0,0);
-	poke16(copper_mod_odd,0,0);
-end;
-
-
-
-/*
 	Initializing method. Most TRSE "Init"-methods will be performed automatically in later versions.
 
 */
 procedure PerformInit();
 begin
-	SetupScreen();
+	Graphics::SetupDefaultScreen(screenb1, 1);
 	InitLine();
 	InitMatmul3x3();
 	InitMatmulVec();
@@ -222,7 +204,7 @@ begin
 			t:=(i+j)<<4;
 			t:=t+time<<3;
 			t:=t&255;
-			k:=sin256[t];
+			k:=sin[t];
 			l2:=k/2;
 			
 			p1[k2]:=l2;
@@ -306,7 +288,6 @@ end;
 begin
 	PerformInit();
 	InitGrid();	
-	sin256:=sine256_data;
 	FlipBuffers();
 	ApplyCopperList();
 	time:=0;
@@ -321,7 +302,7 @@ begin
 		waitverticalblank();		
 		FlipBuffers();
 		time:=time+1;
-		fill(screen,0,10*256);
+		fill(screen,0,10*201);
 	end;
 
 end.

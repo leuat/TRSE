@@ -1,0 +1,73 @@
+program Tutorial5_Compression;
+@use "compression"
+var 
+	done,next : integer = 0;
+	screen : pointer of integer;
+	
+/*
+
+	In this tutorial, we show how to use the TRSE's built-in M68K compression system.
+	When an included binary file (say, "myfile.bin") is flagged with the "compression" flag,
+	TRSE will automatically compress this to a new file called "myfile.bin_c" and include
+	this file instead. 
+	
+	In order to decompress the data, all you need to is to call the method Compression::Decompress.
+	from the compression library.
+	
+	Decompress only takes in two parameters - the resource to decompress, and the location of the
+	extraction. Remember to have enough available space allocated in the destination when deflating!
+
+*/
+
+	
+	@export "images/image2.flf" "images/image1.bin" 256
+	@export "images/image3.flf" "images/image2.bin" 256
+
+	// Compressed flag markes the resources as compressed, and TRSE wil produce 
+	// a "images/image1.bin_c" file	
+	image1_data : incbin("images/image1.bin") compressed aligned;
+	image1_pal : incbin("images/image1.pal");
+	
+	image2_data : incbin("images/image2.bin") compressed aligned;
+	image2_pal : incbin("images/image2.pal");
+
+	index : integer = 0;
+
+begin
+	// Set to lores mode
+	SetLoRes();
+	// Copy palette data
+	// Get screen pointer
+	GetScreen(screen);
+	// Initialize music	
+	next:=false;
+	//Loop until keypressed
+	while (done = false) do
+	begin
+		// Cycle between displaying the two images by pressing space
+		// Naturally, a prettier way would have been to use an address table, but whatever. 
+		
+		// Note that decompression is here happening *live* to the screen. You should
+		// instead decompress to an offscreen buffer etc
+		if (index=0) then 
+		begin
+			// Copy palette
+			memcpy(image1_pal,0,palette_start,0,16,2);
+			Compression::Decompress(image1_data,screen);		
+		end;
+		if (index=1) then 
+		begin
+			// Copy palette
+			memcpy(image2_pal,0,palette_start,0,16,2);
+			Compression::Decompress(image2_data,screen);		
+		end;
+		
+		while (next=false) do			
+			next:=keypressed(sc_key_space_pressed);
+
+		next:=false;		
+		index:=(index+1)&1;
+	end;	
+end.
+
+

@@ -1,4 +1,5 @@
 program Tutorial6_Sprites;
+@use "graphics"
 
 @requirefile "data/sprites_data.bin" "Please execute the Fjong raytracer file 'tutorials6_sprites.fjo' before compiling this program"
 
@@ -6,33 +7,19 @@ var
 
    	j,time: integer = 0; 
    	x,y : byte;
-	sine256_data: incbin("data/sine.bin");
+	sin : array[256] of byte = buildtable("Math.sin(i/256.0*2*3.14159)*127 +127");
    	sprites : incbin("data/sprites_data.bin");
    	
 // 2 bitplanes
-   	
+   	const bpl : integer = 2;
 
 	table2: pointer of integer;
 		
-	sine256 : pointer of byte;
 
 	sprite_struct1 : array[70] of integer chipmem;
-   	screen_data : array[2*40*256] of byte chipmem;
+   	screen_data : array[bpl*40*200] of byte chipmem;
 	
 
-/*
-	Two bitplanes, interleaved
-*/
-procedure SetupScreen();
-begin
-	poke16(copper_resolution, 0 , $2200); // $4000  = bitplanes, $200 = colours, 320x200
-	
-	SetCopperList32(screen_data, copper_bitplane0);
-	SetCopperList32(screen_data+^40, copper_bitplane1);
-
-	poke16(copper_mod_even,0,40);
-	poke16(copper_mod_odd,0,40);
-end;
 
 
 
@@ -53,8 +40,8 @@ begin
 	ApplyCopperList();
 	
 	// Calculate some funky sines
-	x:=sine256[time&255]/2;
-	y:=sine256[(time+64)&255]/2;
+	x:=sin[time&255]/2;
+	y:=sin[(time+64)&255]/2;
 	x:=x+64;
 	y:=y+64;
 	UpdateSpritePos(sprite_struct1, x,y, 32);
@@ -68,9 +55,8 @@ end;
 
 procedure Init();
 begin
-	sine256 := sine256_data;
 	// Clear screen
-	fill(screen_data, 0 ,10*2*256);
+	fill(screen_data, 0 ,10*bpl*201);
 	
 	// Set four colours	
 	
@@ -86,7 +72,7 @@ end;
 
 
 begin	
-	SetupScreen();
+	Graphics::SetupDefaultScreen(screen_data,bpl);
 	Init();
 	vbirq(Raster());
 	EnableInterrupt(VB_IRQ);

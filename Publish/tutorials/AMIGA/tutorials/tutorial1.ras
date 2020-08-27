@@ -1,0 +1,25 @@
+program Tutorial1;
+@use "graphics"
+var  
+
+@export "images/image1.flf"	 "images/image1.bin" 256
+
+   	i,j,k, isDone: integer = 0; 
+   	image : incbin("images/image1.bin") chipmem;
+	image_palette : incbin("images/image1.pal");
+// Some random image   	
+
+
+begin
+	// Set to default interleaved 4-bpl screen
+	Graphics::SetupDefaultScreen(image,4);	
+	setpalette(image_palette,copper_palette,16);	
+		
+	while (isDone=0) do begin
+		// Wait for vertical blank
+		WaitVerticalBlank();	
+		// Apply copper list
+		ApplyCopperList();
+	end;
+
+end.

@@ -1,41 +1,26 @@
 program Tutorial5_Twister;
-
+@use "graphics"
 @requirefile "data/twister_data.bin" "Please execute the Fjong raytracer file 'tutorials5_twister.fjo' before compiling this program"
 
 var	
 
    	k,l,i,time,tt,t2,j: integer = 0; 
  	n : long;
+ 	done : integer = 0;
    	t_tab : incbin("data/twister_table.bin");
    	t_data : incbin("data/twister_data.bin");
    	
 // 2 bitplanes
 	
-   	screen_data : array[2*40*256] of byte chipmem;
+   	screen_data : array[320*200] of byte chipmem;
 // Sine table
-	sine256_data: incbin("data/sine.bin");
 @donotremove text   	
 	text: string = ("LEMONSPAWNANDTRSELEMONSPAWNANDTRSELEMONSPAWNANDTRSELEMONSPAWNANDTRSE");
 
 	table2: pointer of integer;
 		
-	sine256 : pointer of byte;
-	sine32 : array[256] of byte;
+	sine32 : array[256] of byte = buildtable("(Math.sin(i/256.0*2*3.14159)*127+127)/20.0");
 	tp : pointer of byte;
-
-/*
-	Two bitplanes, interleaved
-*/
-procedure SetupScreen();
-begin
-	poke16(copper_resolution, 0 , $2200); // $4000  = bitplanes, $200 = colours, 320x200
-	
-	SetCopperList32(screen_data, copper_bitplane0);
-	SetCopperList32(screen_data+^40, copper_bitplane1);
-
-	poke16(copper_mod_even,0,40);
-	poke16(copper_mod_odd,0,40);
-end;
 
 
 
@@ -55,16 +40,16 @@ begin
 	for i:=0 to 128 do
 	begin
 		j:=sine32[(i+t2)&255]; // Twist turning
-		k:=((tx+j)&15); // Current rotation frame
+		k:=((tx-j)&15); // Current rotation frame
 		l:=(i-tt); // Current shift & text position in y
-		j:=l>>6; // j:=l/32 - find current character
-	 	j:=(tp[j&15])&31; // Look up current character, store in j
+		j:=l>>5; // j:=l/32 - find current character
+	 	j:=(tp[j]-1)&31; // Look up current character, store in j
 	 	// Look up : each charater is 32 height * 16 frames * 2 = 32*32 = shl 10 == shl 5 shl 5 
-	 	n:=j*(64*16);
+	 	n:=j*(32*16);
 	 	
 		l:=l&31;
 		// Look up actual table: Frame (k) + line (l) + letter (n)
-		k:=table2[k<<6+ l +n];
+		k:=table2[k<<5+ l +n];
 
 
 		// Copy 2x2 rows of data
@@ -103,25 +88,20 @@ end;
 
 procedure Init();
 begin
-	sine256 := sine256_data;
-	fill(screen_data,10*2*256,0);
+	fill(screen_data,0,320*200);
 	// Set four colours	
 	poke16(copper_palette,2+4*1,$0555);	
 	poke16(copper_palette,2+4*2,$0800);	
 	poke16(copper_palette,2+4*3,$0F00);	
 	poke16(copper_palette,2+4*4,$0F32);	
 	// Set up sine table	
-	for i:=0 to 256 do
-	begin 
-		sine32[i]:=(sine256[i]/20);
-	end;
 
 
 end;
 
 
 begin	
-	SetupScreen();
+	Graphics::SetupDefaultScreen(screen_data,2);
 	Init();
 	vbirq(Raster());
 	EnableInterrupt(VB_IRQ);

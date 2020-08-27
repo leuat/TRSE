@@ -85,6 +85,11 @@
          </item>
          <item>
           <property name="text">
+           <string>AMIGA</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
            <string>PET</string>
           </property>
          </item>
@@ -95,22 +100,17 @@
          </item>
          <item>
           <property name="text">
-           <string>BBCM</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Amiga</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
            <string>SPECTRUM</string>
           </property>
          </item>
          <item>
           <property name="text">
            <string>OK64</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>AMSTRADCPC464</string>
           </property>
          </item>
          <item>
@@ -145,7 +145,7 @@
          </item>
          <item>
           <property name="text">
-           <string>AMSTRADCPC464</string>
+           <string>BBCM</string>
           </property>
          </item>
         </widget>

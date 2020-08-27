@@ -15,12 +15,12 @@ var
 	@donotremove above2
 	@donotremove above3
 	@donotremove above4
-	above1 : array[512] of byte aligned;
+//	above1 : array[512] of byte aligned;
 	screen1Buf : array[4096*8] of byte aligned;
-	above2 : array[512] of byte aligned;
-	above3 : array[512] of byte aligned;
+//	above2 : array[512] of byte aligned;
+//	above3 : array[512] of byte aligned;
 	screen2Buf : array[4096*8] of byte aligned; 
-	above4 : array[512] of byte aligned;
+//	above4 : array[512] of byte aligned;
 
 	screen_tab : pointer of long;
 

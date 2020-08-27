@@ -1,4 +1,5 @@
 program Tutorial3D;
+@use "graphics"
 var  
 
 /*
@@ -198,22 +199,6 @@ begin
 end;
 
 
-/*
-	Sets up basic screen copper list
-*/
-procedure SetupScreen();
-begin
-	poke16(copper_resolution, 0 , $2200); // $4000  = bitplanes, $200 = colours, 32$200
-	
-	// Setup interleaved image copper list (4 bitplanes, 40*40 modulo 120
-	SetCopperList32(screenb1, copper_bitplane0);
-	SetCopperList32(screenb1+^40, copper_bitplane1);
-	// Modulo for each line = 120 (meaning that after 40 bytes are written to screen, 
-	// the copper skips 120 bytes to the next interleaved line of data for the current bitplane
-	poke16(copper_mod_even,0,40);
-	poke16(copper_mod_odd,0,40);
-end;
-
 
 
 /*
@@ -234,7 +219,7 @@ end;
 
 procedure PerformInit();
 begin
-	SetupScreen();
+	Graphics::SetupDefaultScreen(screenb1,2);
 	InitLine();
 	InitLineStuff();
 	InitMatmul3x3();

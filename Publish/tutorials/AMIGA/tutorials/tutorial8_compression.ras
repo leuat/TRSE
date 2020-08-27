@@ -1,0 +1,51 @@
+program Tutorial8_compression;
+@use "compression"
+@use "graphics"
+var  
+
+@export "images/image2.flf"	 "images/image2.bin" 256
+
+   	i,j,k, isDone: integer = 0; 
+   	
+	/*
+		In TRSE on M68K systems, when you flag an incbin resources
+		as "compressed", the will will be automatically compressed
+		and saved as a new file with ending +"_c". In this example,
+		the compressed file will be named "image2.bin_c", and this file 
+		will be included instead of the original. 
+		
+		All you need to do to decompress the data is to call the decompress
+		method from the decompress library:
+		
+		Compression::Decompress(packed_data, target);
+		
+		Make sure that the target has enough of spare space when decompressing!
+
+	*/
+	// Marked for compression
+   	image_compressed : incbin("images/image2.bin") compressed;
+	image_palette : incbin("images/image2.pal");
+	// Screen space	
+	screen : array[4*40*200] of byte chipmem;
+// Some random image   	
+
+ /*
+	Sets up the copper list to point to the screen 
+*/
+
+begin
+	// Sets default screen with 4 bitplanes
+	Graphics::SetupDefaultScreen(screen,4);
+	// Set palette from image	
+	setpalette(image_palette,copper_palette,16);	
+	// Deflate image directly to the screen!
+	Compression::Decompress(image_compressed,screen);		
+	
+	while (isDone=0) do begin
+		// Wait for vertical blank
+		WaitVerticalBlank();	
+		// Apply copper list
+		ApplyCopperList();
+	end;
+
+end.

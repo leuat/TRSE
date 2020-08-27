@@ -1,4 +1,5 @@
 program Tutorial3_blitter_example;
+@use "graphics"
 var  
    	x,y,i,j,k, isDone,time,src,sourcex,sourcey: integer = 0; 
 
@@ -37,32 +38,19 @@ var
    	// Allocate screen memory
    	screen : array[@width*@height*@bitplanes] of byte  chipmem;
 
-procedure SetupScreen();
-begin
-	poke16(copper_resolution, 0 , $4200); // $4000  = bitplanes, $200 = colours, 320x200
-	
-	// Setup interleaved image copper list (4 bitplanes, 40*40 modulo 120
-	SetCopperList32(screen, copper_bitplane0);
-	SetCopperList32(screen+^40, copper_bitplane1);
-	SetCopperList32(screen+^80, copper_bitplane2);
-	SetCopperList32(screen+^120, copper_bitplane3);
-	// Modulo for each line = 120 (meaning that after 40 bytes are written to screen, 
-	// the copper skips 120 bytes to the next interleaved line of data for the current bitplane
-	poke16(copper_mod_even,0,120);
-	poke16(copper_mod_odd,0,120);
-end;
 
 procedure AsciiToPositionInBitmap(a_char :integer);
 begin
 	// ascii character A - 65 = 0
 	j:=a_char-65;
 	sourcey:=0;
-	j:=0;	
 		// There are 10 characters for each row, increase sourcey by 24 pixels
+		
 	while (j>=bitmapFont_noCharactersInColumns) do begin
 		j:=j-bitmapFont_noCharactersInColumns; 
 		sourcey:=sourcey+bitmapFont_characterHeight; // height of bitmap font
 	end;
+	
 	sourcex:=j*4; // bitmap font is 4 bytes wide
 	src:=sourcex + sourcey*40; // Source position in bitmap font
 end;
@@ -87,7 +75,7 @@ end;
 
 
 begin
-	SetupScreen();
+	Graphics::SetupDefaultScreen(screen,4);
 	
 	// Copy logo.bin to the screen using the blitter. 
 	/*
