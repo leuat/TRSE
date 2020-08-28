@@ -117,7 +117,7 @@ public:
    }
 
 
-
+    void InitPens() override;
    void ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center) override;
 
 

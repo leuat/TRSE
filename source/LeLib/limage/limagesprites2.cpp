@@ -411,6 +411,12 @@ void LImageSprites2::PasteChar()
 
 }
 
+void LImageSprites2::InitPens()
+{
+    m_colorList.SetC64Pens(m_bitMask == 0b11,true);
+
+}
+
 void LImageSprites2::ToQImage(LColorList &lst, QImage &img, float zoom, QPointF center)
 {
     LSprite* s = ((LSprite*)m_items[m_current]);

@@ -1,0 +1,103 @@
+
+/*
+	An Experiment in TRSE by Eugenio R.
+*/
+program CaleidoTRSE;
+var
+	x,y,c: byte;
+	alfa: integer;
+	// Size of the square
+	const width : byte = 23;	
+
+
+begin
+	
+	SCREEN_BG_COL:=BLACK;
+    SCREEN_FG_COL:=BLACK;
+	
+	definescreen();
+	clearscreen(81, screen_char_loc);		// clearscreen to fill the screen_char_loc screen memory with the character code 81, this is the BALL character
+	clearscreen(BLACK, screen_col_loc);		// clearscreen to fill the screen_col_loc colour memory with the colour code for BLACK
+
+	screenmemory := screen_col_loc;
+		
+	while (true) do
+		begin
+			x:=mod(random(),12);			// now x is an integer random number in the range [0,11]
+			y:=mod(random(),12);			// now y is an integer random number in the range [0,11]
+			c:=random();					// c: random integer for color
+					
+/*
+Let's put the 'c' color on the ball B1 at line x, column y	
+*/	
+			
+			alfa := x + y*screen_width;
+			screenmemory := screenmemory + alfa;
+			screenmemory[0]:=c;
+			screenmemory := screenmemory - alfa;
+			
+/*
+Now, in the square with vertexes (0,0), (23,0), (0,23), (23,23), 
+let's put the same color on the ball B2 symmetrical of B1 
+respect to the diagonal (0,0)-(23,23): x and y are exchanged.
+
+Same idea for the ball B3, symmetrical of B1 with respect to
+the vertical axis of the square : new x is 23-x, y doesn't change
+
+then B4, symmetrical of B3 with respect to the diagonal (0,0)-(23,23)
+then B5, symmetrical of B4  with respect to the horizontal axis...
+
+and so on; I' sure you got the idea, something like this:
+
+	. . . . . . . . .
+	. . o . . . o . .
+	. o . . . . . o .
+	. . . . . . . . .
+	. . . . . . . . .
+	. . . . . . . . .
+	. o . . . . . o .
+	. . o . . . o . .
+	. . . . . . . . .
+
+*/
+	
+	
+			alfa := y + x*screen_width;
+			screenmemory := screenmemory + alfa;
+			screenmemory[0]:=c;
+			screenmemory := screenmemory - alfa;
+	
+			alfa := (width-x)+ y*screen_width;
+			screenmemory := screenmemory + alfa;
+			screenmemory[0]:=c;
+			screenmemory := screenmemory - alfa;
+	
+			alfa := (width-y)+ x*screen_width;
+			screenmemory := screenmemory + alfa;
+			screenmemory[0]:=c;
+			screenmemory := screenmemory - alfa;
+	
+			alfa := x+ (width-y)*screen_width;
+			screenmemory := screenmemory + alfa;
+			screenmemory[0]:=c;
+			screenmemory := screenmemory - alfa;
+			
+			alfa := y+ (width-x)*screen_width;
+			screenmemory := screenmemory + alfa;
+			screenmemory[0]:=c;
+			screenmemory := screenmemory - alfa;
+	
+			alfa := (width-x)+ (width-y)*screen_width;
+			screenmemory := screenmemory + alfa;
+			screenmemory[0]:=c;
+			screenmemory := screenmemory - alfa;
+	
+			alfa := (width-y)+ (width-x)*screen_width;
+			screenmemory := screenmemory + alfa;
+			screenmemory[0]:=c;
+			screenmemory := screenmemory - alfa;
+		end;
+	loop();
+end.
+
+
