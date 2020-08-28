@@ -370,6 +370,30 @@ void LColorList::Initialize(Type t)
 
 }
 
+void LColorList::SetC64SpritePen(bool m_isMulticolor) {
+    QVector<int> oldList = getPenList();
+    // Make sure old data is kept!
+    for (int i=0;i<4;i++) {
+        if (i>=oldList.count())
+            oldList.append(i);
+
+    }
+    m_pens.clear();
+//    qDebug()<< "OLD LIST " <<oldList;
+
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[0],"Background",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[1],"Multicolor 1",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[2],"Multicolor 2",LPen::Dropdown)));
+
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Free colour",LPen::DisplayAll)));
+
+    if (!m_isMulticolor) {
+        m_pens[1]->Hide(true);
+        m_pens[2]->Hide(true);
+    }
+}
+
+
 void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
 {
     QVector<int> oldList = getPenList();
@@ -482,8 +506,8 @@ void LColorList::CopyFrom(LColorList *other)
 
 
 
-    m_curPal = other->m_curPal;
-    m_nesPPU = other->m_nesPPU;
+//    m_curPal = other->m_curPal;
+//    m_nesPPU = other->m_nesPPU;
 
 }
 

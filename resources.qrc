@@ -514,5 +514,13 @@
         <file>resources/bin/rasm.exe</file>
         <file>resources/code/amstrad/playerakg_soundeffects.asm</file>
         <file>resources/bin/rasm</file>
+        <file>resources/images/billboard/b8.png</file>
+        <file>resources/images/billboard/b7.png</file>
+        <file>resources/images/billboard/b6.png</file>
+        <file>resources/images/billboard/b5.png</file>
+        <file>resources/images/billboard/b4.png</file>
+        <file>resources/images/billboard/b3.png</file>
+        <file>resources/images/billboard/b2.png</file>
+        <file>resources/images/billboard/b1.png</file>
     </qresource>
 </RCC>

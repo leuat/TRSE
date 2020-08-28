@@ -390,7 +390,7 @@ begin
 
 			star_dx[k]:=star_dx[k]-star_ddx[k];
 			if (star_dx[k]>=127) then begin
-				star_dx[k]:=star_dx[x]+8;
+				star_dx[k]:=star_dx[x]&7;
 
 				m:=star_x[k];
 				l:=screenmemory[m];
@@ -415,7 +415,7 @@ begin
 //			if (l=$20 or (l>@starPos and l<@starPosEnd)) then begin
 			if (l=$20) then begin
 				p1[m]:=fadeBlue[dsx&15];
-				screenmemory[m]:=@starPos + star_dx[k];
+				screenmemory[m]:=star_dx[k] + @starPos;
 			end;
 
 			inc(k);
@@ -640,23 +640,22 @@ begin
 	for i:=0 to 24 do begin
 		rand(0,160,j);
 		star_x[i]:=j/4;	
-		rand(0,255,j);
-		star_dx[i]:=j&7;
+		star_dx[i]:=random();
 		rand(0,255,j);
 		star_ddx[i]:=j&3 +1;
 
 	end;
-	zp:=$2000+8*@starPos;
+	zp:=$2000+@starPos*8;
 	for i:=0 to 8 do begin
 		fill(zp,0,8);
 		togglebit(zp[3],7-i,1);
 		togglebit(zp[4],7-i,1);
+		zp:=zp+8;
 /*		togglebit(zp[4],8-i,1);
 		togglebit(zp[4],6-i,1);
 		togglebit(zp[4],7-i,1);
 		togglebit(zp[3],7-i,1);
 		togglebit(zp[5],7-i,1);*/
-		inczp(zp,8);
 	end;
 end;
 

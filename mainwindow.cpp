@@ -77,6 +77,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->glslider->m_slides.append(GLSlide(":resources/images/image_icon.png","Nibbler",""));
     ui->glslider->m_slides.append(GLSlide(":resources/images/GAMEBOY.png","Nibbler",""));
     ui->glslider->m_slides.append(GLSlide(":resources/images/nopgrl.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b1.png","b1",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b2.png","b1",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b3.png","b1",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b4.png","b1",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b5.png","b1",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b6.png","b1",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b7.png","b1",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b8.png","b1",""));
     ui->glslider->Init();
     ui->glslider->setCurrentTexture();
 

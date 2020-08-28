@@ -954,7 +954,8 @@ void MultiColorImage::setMultiColor(bool doSet)
         m_charset->setMultiColor(doSet);
 
 //     SetPens();
-    InitPens();
+    if (m_type!=Sprites2)
+        InitPens();
 }
 
 void MultiColorImage::CalculateCharIndices()

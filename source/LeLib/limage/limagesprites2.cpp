@@ -19,7 +19,7 @@ LImageSprites2::LImageSprites2(LColorList::Type t) : CharsetImage(t) {
 
     m_exportParams.clear();
     m_supports.displayCharOperations = false;
-
+    m_footer.set(LImageFooter::POS_DISPLAY_MULTICOLOR,0);
 
     AddNew(1,1);
     //Data::data.currentColor=0;
@@ -146,7 +146,7 @@ unsigned int LImageSprites2::getPixel(int x, int y)
 
 
     LSprite* s = (LSprite*)m_items[m_current];
-    CharsetImage::setMultiColor(s->m_header[s->HEADER_MULTICOLOR]==(char)1);
+//    CharsetImage::setMultiColor(s->m_header[s->HEADER_MULTICOLOR]==(char)1);
 
     float fx = x/(float)m_width;
     float fy = y/(float)m_height;
@@ -413,7 +413,15 @@ void LImageSprites2::PasteChar()
 
 void LImageSprites2::InitPens()
 {
-    m_colorList.SetC64Pens(m_bitMask == 0b11,true);
+    LSprite* s = ((LSprite*)m_items[m_current]);
+    m_colorList.SetC64SpritePen(true);
+    for (int i=0;i<s->m_data.count();i++) {
+        s->m_data[i].c[0] = m_colorList.getPen(0);
+        s->m_data[i].c[1] = m_colorList.getPen(1);
+        s->m_data[i].c[2] = m_colorList.getPen(2);
+    }
+
+
 
 }
 
@@ -433,6 +441,7 @@ void LImageSprites2::ToggleSpriteMulticolor()
 
     s->m_header[s->HEADER_MULTICOLOR]=(s->m_header[s->HEADER_MULTICOLOR]+1)&1;
 
+    InitPens();
 
 }
 // Transforms x/y, flips

@@ -1621,7 +1621,7 @@ void FormImageEditor::UpdateSpriteImages()
 
 
     int keep = cont->m_current;
-    int sx = 40*2.5;
+    int sx = 30*2.5;
     int sy = 32*2.5;
     for (int i=0;i<3;i++) {
         int k = i-1+cont->m_current;
