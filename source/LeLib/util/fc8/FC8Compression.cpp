@@ -343,6 +343,6 @@ unsigned int FC8::Encode(QString fileIn, QString fileOut)
 //    qDebug() << "Compression ratio = " <<QString::number((1.0-size/(float)in.count())*100) +"% with size "+QString::number(size);
     delete[] data;
     delete[] dataIn;
-
+    return size;
 }
 
