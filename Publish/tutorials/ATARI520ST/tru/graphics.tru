@@ -1,7 +1,7 @@
 Unit Graphics;
 var  
    curBufIndex, i,k,j,l,m,n,c1,c2: integer = 0; 
-   addr,curBuf,offBuf,buf1,buf2 : pointer of integer;
+   p1,p2,addr,curBuf,offBuf,buf1,buf2 : pointer of integer;
    col,x,y : integer;
 	htabInOrg : array[16] of integer = buildtable("(((65536-Math.pow(2.0,16-i))))");
 	htabOutOrg : array[16] of integer  = buildtable("(Math.pow(2,16-i)-1)");
@@ -11,10 +11,6 @@ var
 	@donotremove empty
 	empty : array[512] of byte aligned;
 	
-	@donotremove above1
-	@donotremove above2
-	@donotremove above3
-	@donotremove above4
 //	above1 : array[512] of byte aligned;
 	screen1Buf : array[4096*8] of byte aligned;
 //	above2 : array[512] of byte aligned;
@@ -76,6 +72,7 @@ var
 	8,6,
 	8,7,
 	8,8);
+
 
 
 
@@ -865,5 +862,24 @@ poly3	rts
 	
 end;
 
+procedure CopyMask(p1,p2 : global pointer of integer; i : global integer);
+begin
+asm("
+	move.l graphics_p1,a0
+	move.l graphics_p2,a1
+	
+	move.w graphics_i,d5
 
+copymask_loop:
+	move.l (a0)+,d0
+	move.l d0,d1
+	eor d1,d1
+	move.l #0,d1
+	and (a1),d1
+	or.l d0,(a1)+
+	dbf.w d5,copymask_loop	
+
+
+	");
+end;
 end.

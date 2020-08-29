@@ -66,6 +66,7 @@ class Util {
 public:
 
     static QElapsedTimer globalTimer;
+    static QMap<QString, long> sm_fileSizes;
 
     static void Tokenize(const string& str,
                          vector<string>& tokens,
@@ -228,6 +229,8 @@ public:
 
     static QPixmap CreateColorIcon(QColor col, int s);
 
+
+    static bool fileChanged(QString filename);
 
 };
 

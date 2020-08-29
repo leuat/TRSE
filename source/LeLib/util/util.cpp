@@ -826,6 +826,27 @@ QPixmap Util::CreateColorIcon(QColor col, int s) {
 
 }
 
+QMap<QString, long> Util::sm_fileSizes;
+
+
+bool Util::fileChanged(QString filename)
+{
+    long size = QFile(filename).size();
+    // First time
+    if (!sm_fileSizes.contains(filename)) {
+        sm_fileSizes[filename] = size;
+        return true;
+    }
+    // Exists, but sizes are different
+    if (sm_fileSizes[filename]!=size) {
+        sm_fileSizes[filename] = size;
+        return true;
+    }
+    // Sizes are the same! No change. Probably.
+    return false;
+
+}
+
 
 
 float Util::smoothstep(float edge0, float edge1, float x)

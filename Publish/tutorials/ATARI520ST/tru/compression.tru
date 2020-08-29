@@ -131,11 +131,11 @@ _nearLoop:
 	    bra		_mainloop
 
 _fail:
-	moveq.w	#0,d0				;// result = 0
+	move.w	#0,d0				;// result = 0
 	bra		_exit	
 	
 _done:
-	moveq.w	#1,d0				;// result = 1
+	move.w	#1,d0				;// result = 1
 	
 _exit:	
 	movem.l	(sp)+,d1-d7/a0-a6

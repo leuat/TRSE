@@ -38,7 +38,7 @@ void CompilerM68K::Connect()
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::ATARI520ST) {
             m_assembler->IncludeFile(":resources/code/atari520st/end.s");
-            m_assembler->IncludeFile(":resources/code/atari520st/poly.s");
+//            m_assembler->IncludeFile(":resources/code/atari520st/poly.s");
 
     }
 
