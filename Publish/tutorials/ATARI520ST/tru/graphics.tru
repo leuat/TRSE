@@ -10,13 +10,17 @@ var
 	htabIn, htabOut : array[64*16] of integer;
 	@donotremove empty
 	empty : array[512] of byte aligned;
+	@donotremove above1
+	@donotremove above2
+	@donotremove above3
+	@donotremove above4
 	
-//	above1 : array[512] of byte aligned;
+	above1 : array[512] of byte aligned;
 	screen1Buf : array[4096*8] of byte aligned;
-//	above2 : array[512] of byte aligned;
-//	above3 : array[512] of byte aligned;
+	above2 : array[512] of byte aligned;
+	above3 : array[512] of byte aligned;
 	screen2Buf : array[4096*8] of byte aligned; 
-//	above4 : array[512] of byte aligned;
+	above4 : array[512] of byte aligned;
 
 	screen_tab : pointer of long;
 
@@ -658,6 +662,50 @@ blit2_x:
 		add.l Graphics_badd,a1
 		
 		dbf d3,blit2_y
+						
+		
+
+	");	
+
+end;
+
+
+procedure BlitMaskSingle(bsrc,bdst: global pointer of integer; bdx, bdy,bw,bh : global integer; badd:global long);
+begin
+	asm("
+		
+		jsr Graphics_BlitSetup
+		move.w Graphics_bh,d3 ; height
+blit3_y:
+		move.w Graphics_bw,d4 ; width
+		
+blit3_x:
+
+		move.l #3,d5
+blit3_inner	:	
+
+		move.w 0(a1),d0
+		swap d0
+		move.w 8(a1),d0
+	;	swap d0
+		lsr.l d6,d0
+		lsr.l d7,d0
+			
+		eor #$FFFFFFFF,d0
+		and.w d0,(a2)+
+
+		add.l #2,a1	
+;		add.l #6,a2	
+
+		dbf  d5,blit3_inner
+
+
+		dbf d4,blit3_x
+		
+		add.l Graphics_badd,a2
+		add.l Graphics_badd,a1
+		
+		dbf d3,blit3_y
 						
 		
 
