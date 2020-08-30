@@ -61,8 +61,8 @@ QStringList Parser::getFlags() {
             done = false;
         }
 
-        if (m_currentToken.m_type==TokenType::PURE) {
-            Eat(TokenType::PURE);
+        if (m_currentToken.m_type==TokenType::PPURE) {
+            Eat(TokenType::PPURE);
             flags<<"pure";
             done = false;
         }

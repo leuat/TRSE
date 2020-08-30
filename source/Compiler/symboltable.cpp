@@ -508,7 +508,7 @@ TokenType::Type Symbol::getTokenType() {
     if (m_type.toLower()=="global")
         return TokenType::GLOBAL;
     if (m_type.toLower()=="pure")
-        return TokenType::PURE;
+        return TokenType::PPURE;
     if (m_type.toLower()=="pure_variable")
         return TokenType::PURE_VARIABLE;
     if (m_type.toLower()=="pure_number")
