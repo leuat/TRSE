@@ -416,6 +416,24 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedure> node)
                               + QString::number(node->m_procedure->m_paramDecl.count()) +" parameters, not "
                               + QString::number(node->m_parameters.count()) + ".", node->m_op.m_lineNumber);
 
+    // Now, check for pureness
+    for (int i=0; i<node->m_parameters.count();i++) {
+        QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(node->m_procedure->m_paramDecl[i]);
+        QSharedPointer<NodeVarType> vt = qSharedPointerDynamicCast<NodeVarType>(vd->m_typeNode);
+        if (vt->m_flags.contains("pure"))
+            if (!node->m_parameters[i]->isPure())
+                ErrorHandler::e.Error("Procedure '"+node->m_procedure->m_procName+"' requires parameter "+QString::number(i) +" to be a pure variable or number", node->m_op.m_lineNumber);
+        if (vt->m_flags.contains("pure_number"))
+            if (!node->m_parameters[i]->isPureNumeric())
+                ErrorHandler::e.Error("Procedure '"+node->m_procedure->m_procName+"' requires parameter "+QString::number(i) +" to be a pure number / constant", node->m_op.m_lineNumber);
+        if (vt->m_flags.contains("pure_variable"))
+            if (!node->m_parameters[i]->isPureVariable())
+                ErrorHandler::e.Error("Procedure '"+node->m_procedure->m_procName+"' requires parameter "+QString::number(i) +" to be a pure variable", node->m_op.m_lineNumber);
+//        qDebug() <<"typenode flags" <<node->m_procedure->m_procName<<vt->m_flags << vd->m_varNode->getValue(as);
+    }
+
+
+
     if (node->m_procedure->m_isInline) {
         InlineProcedure(node);
         return;

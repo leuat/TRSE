@@ -284,6 +284,9 @@ void SymbolTable::InitBuiltins()
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("INCNSF","")));
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("RECORD","")));
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("GLOBAL","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("PURE","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("PURE_VARIABLE","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("PURE_NUMBER","")));
 
     Define(QSharedPointer<Symbol>(new Symbol("return","")));
 
@@ -504,6 +507,13 @@ TokenType::Type Symbol::getTokenType() {
         return TokenType::RECORD;
     if (m_type.toLower()=="global")
         return TokenType::GLOBAL;
+    if (m_type.toLower()=="pure")
+        return TokenType::PURE;
+    if (m_type.toLower()=="pure_variable")
+        return TokenType::PURE_VARIABLE;
+    if (m_type.toLower()=="pure_number")
+        return TokenType::PURE_NUMBER;
+
     return TokenType::NADA;
 }
 

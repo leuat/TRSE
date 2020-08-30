@@ -61,6 +61,24 @@ QStringList Parser::getFlags() {
             done = false;
         }
 
+        if (m_currentToken.m_type==TokenType::PURE) {
+            Eat(TokenType::PURE);
+            flags<<"pure";
+            done = false;
+        }
+        if (m_currentToken.m_type==TokenType::PURE_VARIABLE) {
+            Eat(TokenType::PURE_VARIABLE);
+            flags<<"pure_variable";
+            done = false;
+        }
+
+        if (m_currentToken.m_type==TokenType::PURE_NUMBER) {
+            Eat(TokenType::PURE_NUMBER);
+            flags<<"pure_number";
+            done = false;
+        }
+
+
         if (m_currentToken.m_type==TokenType::COMPRESSED) {
             Eat(TokenType::COMPRESSED);
             flags<<"compressed";
@@ -2726,6 +2744,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
         Eat();
     }
 
+    QStringList preflags  =getFlags(); // Allow for flags to be defined before the type
     // NOW do the syms define
     if (!isGlobal)
     for (QSharedPointer<Symbol> s: syms) {
@@ -2740,6 +2759,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
 //    qDebug() << "CURVAL " <<m_currentToken.m_value;
     QSharedPointer<NodeVarType> typeNode = qSharedPointerDynamicCast<NodeVarType>(TypeSpec());
     typeNode->m_flags.append(getFlags());
+    typeNode->m_flags.append(preflags);
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY || Syntax::s.m_currentSystem->m_system==AbstractSystem::COLECO) {
         //if (typeNode->m_op.m_type==TokenType::POINTER)
         if (typeNode->m_data.count()<=1 && typeNode->m_op.m_type!=TokenType::INCBIN && typeNode->m_op.m_type!=TokenType::STRING)

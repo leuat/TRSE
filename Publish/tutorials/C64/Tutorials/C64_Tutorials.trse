@@ -49,6 +49,6 @@ remove_unused_symbols = 1
 data_header_resources/images/octopus.flf = 6.93276e-310
 data_header_resources/images/jack.flf = 0
 data_header_resources/charsets/charset_16x16.flf = 0
-open_files = ,resources/images/petscii_animation.flf, resources/images/neo_rider_by_the_diad.flf, Hello.ras
+open_files = ,[external]math.tru, resources/images/petscii_animation.flf, resources/images/neo_rider_by_the_diad.flf, Hello.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
 current_file = resources/images/petscii_animation.flf
