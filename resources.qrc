@@ -522,5 +522,8 @@
         <file>resources/images/billboard/b3.png</file>
         <file>resources/images/billboard/b2.png</file>
         <file>resources/images/billboard/b1.png</file>
+        <file>resources/text/help/r/pure_variable.rtf</file>
+        <file>resources/text/help/r/pure_number.rtf</file>
+        <file>resources/text/help/r/pure.rtf</file>
     </qresource>
 </RCC>
