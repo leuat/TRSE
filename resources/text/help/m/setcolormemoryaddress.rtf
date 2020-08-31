@@ -1,0 +1,21 @@
+<h3>SetColorMemoryAddress();</h3>
+
+<h3>Description</h3>
+<p>The ScreenMemory and ColorMemory pointers are primarily used to modify the characters displayed on the screen.</p>
+<p>ScreenMemory typically points to the screen memory area and ColorMemory does the same in the color memory area.  
+When setting the ScreenMemory to point to a location on the screen you will often want to also set the ColorMemory
+as well. This command will calculate the correct address for the ColorMemory using the current ScreenMemory address.<p>
+<p>This is an optimised command and is a quite fast way to align the ColorMemory pointer relative to the ScreenMemory.</p>
+
+<h3>Example</h3>
+
+<code>
+// set the ScreenMemory pointer to 16 characters across
+ScreenMemory := $1e10;
+
+// set the ColorMemory pointer to the same position but in the color memory area
+SetColorMemoryAddress();
+
+ScreenMemory[ 0 ] := 1; // put an A character this location on screen
+ColorMemory[ 0 ] := RED; // make this character red
+</code>
