@@ -473,10 +473,9 @@ void Parser::PreprocessIfDefs(bool ifdef)
     m_ignoreAll = true;
     int ignorePop=0; // Counter to keep track of proper ifdef / else /end
     while (!m_lexer->m_finished) {
-      //  qDebug() << m_currentToken.m_value;
+//        qDebug() << "PARSER " <<m_currentToken.m_value;
         if (m_currentToken.m_type==TokenType::PREPROCESSOR) {
 
-         //   qDebug() << "HERE 1 "<<m_currentToken.m_value;
             m_pass=1;
             // Ignore preprocessors ifdef etc within preprocessors
             if (m_currentToken.m_value.startsWith("if")) {
@@ -1059,13 +1058,19 @@ void Parser::HandlePreprocessorInParsing()
     }
     if (m_currentToken.m_value=="raisewarning") {
         Eat();
+        if (!m_ignoreAll)
+            ErrorHandler::e.Warning(m_currentToken.m_value, m_currentToken.m_lineNumber);
+//        Eat();
         Eat();
         return;
     }
 
     if (m_currentToken.m_value=="raiseerror") {
         Eat();
-        Eat();
+        if (!m_ignoreAll)
+          ErrorHandler::e.Error(m_currentToken.m_value, m_currentToken.m_lineNumber);
+
+
         return;
     }
 
@@ -2034,11 +2039,13 @@ void Parser::Preprocess()
             }
             else if (m_currentToken.m_value.toLower() =="raisewarning") {
                 Eat();
-                ErrorHandler::e.Warning(m_currentToken.m_value, m_currentToken.m_lineNumber);
             }
             else if (m_currentToken.m_value.toLower() =="raiseerror") {
                 Eat();
-                ErrorHandler::e.Error(m_currentToken.m_value, m_currentToken.m_lineNumber);
+/*                qDebug() << "PARSER RAISEERROR " <<m_ignoreAll <<m_pass;
+                if (!m_ignoreAll)
+                    ErrorHandler::e.Error(m_currentToken.m_value, m_currentToken.m_lineNumber);
+                    */
             }
             else if (m_currentToken.m_value.toLower() =="use") {
                 Eat();
