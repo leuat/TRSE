@@ -525,5 +525,6 @@
         <file>resources/text/help/r/pure_variable.rtf</file>
         <file>resources/text/help/r/pure_number.rtf</file>
         <file>resources/text/help/r/pure.rtf</file>
+        <file>resources/text/help/m/setcolormemoryaddress.rtf</file>
     </qresource>
 </RCC>

@@ -336,6 +336,7 @@ void SymbolTable::InitBuiltins()
             ) {
 
         Define(QSharedPointer<Symbol>(new Symbol("screenmemory", "pointer")));
+        Define(QSharedPointer<Symbol>(new Symbol("colormemory", "pointer")));
     }
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA) {
 

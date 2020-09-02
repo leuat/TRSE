@@ -1939,6 +1939,9 @@ void TRSEProject::VerifyDefaults() {
     if (!m_ini->contains("zeropage_screenmemory"))
         m_ini->setString("zeropage_screenmemory","$fe");
 
+    if (!m_ini->contains("zeropage_colormemory"))
+        m_ini->setString("zeropage_colormemory","$fc");
+
     if (!m_ini->contains("zeropage_decrunch1"))
         m_ini->setString("zeropage_decrunch1","$47");
 

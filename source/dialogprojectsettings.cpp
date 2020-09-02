@@ -46,6 +46,7 @@ void DialogProjectSettings::on_btnClose_clicked()
 void DialogProjectSettings::FillFromIni()
 {
     ui->leZeropageScreenMemory->setText(m_ini->getString("zeropage_screenmemory"));
+    ui->leZeropageColorMemory->setText(m_ini->getString("zeropage_colormemory"));
 
     ui->leDecrunchZp1->setText(m_ini->getString("zeropage_decrunch1"));
     ui->leDecrunchZp2->setText(m_ini->getString("zeropage_decrunch2"));
@@ -177,6 +178,7 @@ void DialogProjectSettings::FillToIni()
     m_ini->setStringList("var_zeropages", toStringList(ui->levarZP->text()));
 
     m_ini->setString("zeropage_screenmemory", Util::numToHex(Util::NumberFromStringHex(ui->leZeropageScreenMemory->text())));
+    m_ini->setString("zeropage_colormemory", Util::numToHex(Util::NumberFromStringHex(ui->leZeropageColorMemory->text())));
 
     m_ini->setFloat("border_color", ui->leBorderColor->text().toInt());
     m_ini->setFloat("background_color", ui->leBackgroundColor->text().toInt());

@@ -195,6 +195,7 @@ public:
 
     void InitSinusTable(Assembler* as);
     void DefineScreen(Assembler *as);
+    void SetColorMemoryAddress(Assembler *as);
     void InitMoveto(Assembler *as);
     void InitMoveto80(Assembler *as);
     void InitEightBitMul(Assembler* as);

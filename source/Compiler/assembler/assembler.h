@@ -173,7 +173,8 @@ public:
 
     QVector<MemoryBlock> m_userWrittenBlocks;
     QStringList m_startInsertAssembler;
-    QString m_zeropageScreenMemory="$fb";
+    QString m_zeropageScreenMemory="$fe";
+    QString m_zeropageColorMemory="$fc";
     QMap<QString, QString> m_replaceValues;
 
     RegisterStack m_regAcc;

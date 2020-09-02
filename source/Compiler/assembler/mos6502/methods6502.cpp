@@ -907,6 +907,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("definescreen")) {
         DefineScreen(as);
     }
+    if (Command("setcolormemoryaddress")) {
+        SetColorMemoryAddress(as);
+    }
     if (Command("initmoveto")) {
         InitMoveto(as);
     }
@@ -1361,8 +1364,27 @@ void Methods6502::DefineScreen(Assembler *as)
         return;
 
     as->Label("screenmemory =  "+as->m_zeropageScreenMemory);
+    as->Label("colormemory =  "+as->m_zeropageColorMemory);
 
     m_node->m_isInitialized["initscreen"]=true;
+}
+
+// Set the colormemory pointer to the same location on screen as the screenmemory pointer
+// but in the colour space
+// TODO:  This is currently only implemented for the Vic20. It could be converted for C64/128
+void Methods6502::SetColorMemoryAddress(Assembler *as)
+{
+
+    as->Comment("Set ColorMemory pointer to same position on screen as ScreenMemory pointer");
+    as->Comment("For VIC20 take high byte AND with $03, then add $94");
+    as->Asm("lda screenmemory+1	; address of screen (high byte)");
+    as->Asm("and #$03");
+    as->Asm("clc");
+    as->Asm("adc #$94		; bring up to colour space");
+    as->Asm("sta colormemory+1");
+    as->Asm("lda screenmemory");
+    as->Asm("sta colormemory");
+
 }
 
 void Methods6502::InitMoveto(Assembler *as)

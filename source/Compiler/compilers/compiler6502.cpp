@@ -105,6 +105,7 @@ void Compiler6502::Init6502Assembler()
 
     m_assembler->InitZeroPointers(m_projectIni->getStringList("zeropages"),m_projectIni->getStringList("temp_zeropages"),m_projectIni->getStringList("var_zeropages"));
     m_assembler->m_zeropageScreenMemory = m_projectIni->getString("zeropage_screenmemory");
+    m_assembler->m_zeropageColorMemory = m_projectIni->getString("zeropage_colormemory");
     m_assembler->m_replaceValues["@DECRUNCH_ZP1"] = m_projectIni->getString("zeropage_decrunch1");
     m_assembler->m_replaceValues["@DECRUNCH_ZP2"] = m_projectIni->getString("zeropage_decrunch2");
     m_assembler->m_replaceValues["@DECRUNCH_ZP3"] = m_projectIni->getString("zeropage_decrunch3");
