@@ -45,7 +45,7 @@ begin
 		printdecimal(CustomUnit::number,4);
 		// One row down : print the unit constant 
 		screenmemory:=screenmemory+screen_width;		 
-		printdecimal(SomeUnitConstant,2);
+		printdecimal(CustomUnit::SomeUnitConstant,2);
 		
 		Render($80+key_space); // Filled black char = $80 + $20
 		

@@ -50,6 +50,7 @@ public:
     // For records
     QString m_arrayTypeText;
     QStringList m_flags;
+    bool m_constIsPrefixed = false;
     int m_org = 0;
     int m_size = 0;
     int m_lineNumber;

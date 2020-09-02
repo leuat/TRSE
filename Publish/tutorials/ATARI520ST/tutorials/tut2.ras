@@ -27,9 +27,11 @@ end;
 interrupt Timer();
 begin
 	if (line<98) then
-		palette_start:=col
+		palette_start[0]:=col
 	else 
-		palette_start:=0;
+		palette_start[0]:=0;
+
+
 	
 	col:=col+4;
 	line:=line+1;

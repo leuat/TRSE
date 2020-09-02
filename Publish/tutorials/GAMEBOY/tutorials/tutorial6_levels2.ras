@@ -72,7 +72,7 @@ begin
 	y:=py/8;
 	y:=y+colldiry;
 	x:=x+colldirx;
-	p1:=temp;
+	p1:=Levels::temp;
 	p1:=p1+y*32;
 	i:=p1[x];
 	blockr:=0;

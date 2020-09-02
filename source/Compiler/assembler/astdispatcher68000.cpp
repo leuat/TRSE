@@ -1121,6 +1121,10 @@ QString ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
 
 
     // Trying to assign a PURE record
+  //  if (v == nullptr) {
+//        ErrorHandler::e.Error("Left is null pointer, should not happen! ", node->m_op.m_lineNumber);
+    //}
+    if (v!=nullptr)
     if (v->isRecord(as) && !v->isRecordData(as)) {
         if (!node->m_right->isRecord(as))
             ErrorHandler::e.Error("Right-hand side of assignment must also be record of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);

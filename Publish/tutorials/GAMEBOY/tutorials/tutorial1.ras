@@ -72,14 +72,14 @@ begin
 
 	// Fill with some empty character ($80)
 	// Clear both the screen and temporary address. 
-	Screens::ClearScreen(storage, $80);	
+	Screens::ClearScreen(Screens::storage, $80);	
 	Screens::ClearScreen(screen0, $80);	
 
 	// Print text to buffer
-	Screens::PrintText(storage,3,3, 0, text1);
+	Screens::PrintText(Screens::storage,3,3, 0, text1);
 	
 	// Copy buffer to screen - again, only on HBLANK!
-	Screens::CopyBankHB(storage, screen0, 4); // Copy 4x$100 bytes of data to the screen
+	Screens::CopyBankHB(Screens::storage, screen0, 4); // Copy 4x$100 bytes of data to the screen
 	
 	// The next line will fail (on gambatte or real hardware), since we are writing directly to VRAM during non-blank intervals
 	Screens::PrintText(screen0,0,8, 26, text2);

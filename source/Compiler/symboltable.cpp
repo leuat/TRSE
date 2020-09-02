@@ -206,7 +206,12 @@ void SymbolTable::Merge(SymbolTable *other, bool mergeConstants)
     for (QString k : other->m_constants.keys()) {
 
         if (!m_constants.contains(k)) {
-            m_constants[k] = other->m_constants[k];
+            QString newName = k;
+            if (!other->m_constants[k]->m_constIsPrefixed) {
+                newName = other->m_gPrefix.toUpper()+k;
+                other->m_constants[k]->m_constIsPrefixed = true;
+            }
+            m_constants[newName] = other->m_constants[k];
         }
 
 
@@ -444,6 +449,7 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
         if (similarSymbol!="") {
             em+="Did you mean '<font color=\"#A080FF\">"+similarSymbol+"</font>'?<br>";
         }
+//        qDebug() << "SYMTAB HERE " << "NAME "<< name <<   "    LOCALHAME "<< localName <<m_symbols.;;
         ErrorHandler::e.Error("Could not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>"+em, lineNumber);
         return nullptr;
     }

@@ -1,6 +1,6 @@
 program HelloWorld;
 var  
-  	text : cstring = ("HELLO WORLD");
+  	text : string = ("HELLO WORLD");
 
 begin
 	// Fill the screen (at screen_char_loc) with  40*25 bytes of character $20 - "space"
