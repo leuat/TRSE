@@ -564,7 +564,7 @@
              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.875pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;Variables declared witihn a procedure will be regarded as &amp;quot;local&amp;quot;, and will internally be named &amp;quot;procedurename_variablename&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
@@ -708,20 +708,215 @@ p, li { white-space: pre-wrap; }
         <attribute name="title">
          <string>Zeropages</string>
         </attribute>
-        <widget class="QTextBrowser" name="textBrowser">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>310</y>
-           <width>911</width>
-           <height>181</height>
-          </rect>
-         </property>
-         <property name="html">
-          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <layout class="QGridLayout" name="gridLayout_11">
+         <item row="0" column="0">
+          <widget class="QGroupBox" name="groupBox">
+           <property name="title">
+            <string>Zeropages</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_9">
+            <item row="0" column="0">
+             <layout class="QGridLayout" name="gridLayout_3">
+              <item row="10" column="0">
+               <widget class="QLabel" name="label_14">
+                <property name="toolTip">
+                 <string>Zeropages used in internal methods such as division, multiplication, sqrt etc</string>
+                </property>
+                <property name="text">
+                 <string>Workhorse zeropages</string>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="0">
+               <widget class="QLabel" name="label_29">
+                <property name="toolTip">
+                 <string>Temporary variables are needed in longer expressions. If no temp var zeropages are left, a regular variable is used instead.</string>
+                </property>
+                <property name="text">
+                 <string>Internal variable zeropages</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="1">
+               <layout class="QHBoxLayout" name="horizontalLayout_9"/>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_11">
+                <property name="toolTip">
+                 <string>Internal zeropages used when decrunching (exomizer)</string>
+                </property>
+                <property name="text">
+                 <string>Decrunch zero pages</string>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="3">
+               <widget class="QLineEdit" name="levarZP"/>
+              </item>
+              <item row="11" column="3">
+               <widget class="QLineEdit" name="leTempZP"/>
+              </item>
+              <item row="3" column="3">
+               <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="2,2">
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_7">
+                  <item>
+                   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0">
+                    <item>
+                     <layout class="QHBoxLayout" name="horizontalLayout_2">
+                      <item>
+                       <widget class="QLineEdit" name="leDecrunchZp1"/>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="leDecrunchZp2"/>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="leDecrunchZp3"/>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="leDecrunchZp4"/>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_13">
+                  <property name="font">
+                   <font>
+                    <pointsize>6</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>*note: The 2nd zeropage here also uses the following zp+1 zeropage address (so using $48 implies using both $48 and $49)</string>
+                  </property>
+                  <property name="scaledContents">
+                   <bool>false</bool>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="2" column="3">
+               <widget class="QLineEdit" name="leZeropages"/>
+              </item>
+              <item row="8" column="3">
+               <widget class="QLineEdit" name="leZeropageColorMemory">
+                <property name="text">
+                 <string>$fc</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="3">
+               <widget class="QPushButton" name="btnDefaultZP">
+                <property name="text">
+                 <string>Set platform default values</string>
+                </property>
+               </widget>
+              </item>
+              <item row="10" column="3">
+               <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="2,2">
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_14">
+                  <item>
+                   <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0">
+                    <item>
+                     <layout class="QHBoxLayout" name="horizontalLayout_15">
+                      <item>
+                       <widget class="QLineEdit" name="leInternalZp1"/>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="leInternalZp2"/>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="leInternalZp3"/>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="leInternalZp4"/>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_15">
+                  <property name="font">
+                   <font>
+                    <pointsize>6</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>These are used internally in TRSE for increased speed. Note that these are used in 4 pairs, 8 addresses in total</string>
+                  </property>
+                  <property name="scaledContents">
+                   <bool>false</bool>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_7">
+                <property name="toolTip">
+                 <string>These are the zeropages that will be used when declaring &quot;pointers&quot;</string>
+                </property>
+                <property name="text">
+                 <string>Pointer zeropages</string>
+                </property>
+               </widget>
+              </item>
+              <item row="11" column="0">
+               <widget class="QLabel" name="label_16">
+                <property name="toolTip">
+                 <string>Temporary variables are needed in longer expressions. If no temp var zeropages are left, a regular variable is used instead.</string>
+                </property>
+                <property name="text">
+                 <string>Temp vars zeropages</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="3">
+               <widget class="QLineEdit" name="leZeropageScreenMemory"/>
+              </item>
+              <item row="7" column="0">
+               <widget class="QLabel" name="label_12">
+                <property name="toolTip">
+                 <string>The built-in &quot;screenmemory&quot; pointer</string>
+                </property>
+                <property name="text">
+                 <string>Screenmemory zero page</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0">
+               <widget class="QLabel" name="label_32">
+                <property name="text">
+                 <string>Colormemory zero page</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QTextBrowser" name="textBrowser">
+           <property name="html">
+            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.875pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;Zeropages&lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt; are the workhorses of the C64, providing the coder with something that acts as pointers. Due to this fact, most flexible projects must use zeropages in one way of another. In TRSE, zeropages are assigned whenever you create a &lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;pointer, &lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;and lets you perform actions such as:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-style:italic;&quot;&gt;var &lt;/span&gt;&lt;/p&gt;
@@ -741,215 +936,10 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;An important note: &lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;On larger projects with both rasters and main loop worhorse calculators together with SID music, there is always the possibility that the SID music might use some zeropages that are also being employed in the main loop work routine. In this case, the workhorse might be halted by an interrupt in the middle of a zeropage operation in order to play the SID music in the raster update, which in turn might change that zeropage and enable the main work routine to crash horribly. &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;In order to prevent this from happening, please make sure to check whether your SID tunes operates on zeropages that are also used elsewhere in your program. The &lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;Memory Analyzer &lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;tool does exactly this, and will give you a fair warning on whether you might have a conflicting zeropage address problem.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-        </widget>
-        <widget class="QGroupBox" name="groupBox">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>20</y>
-           <width>931</width>
-           <height>291</height>
-          </rect>
-         </property>
-         <property name="title">
-          <string>Zeropages</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_9">
-          <item row="0" column="0">
-           <layout class="QGridLayout" name="gridLayout_3">
-            <item row="10" column="0">
-             <widget class="QLabel" name="label_14">
-              <property name="toolTip">
-               <string>Zeropages used in internal methods such as division, multiplication, sqrt etc</string>
-              </property>
-              <property name="text">
-               <string>Workhorse zeropages</string>
-              </property>
-             </widget>
-            </item>
-            <item row="12" column="0">
-             <widget class="QLabel" name="label_29">
-              <property name="toolTip">
-               <string>Temporary variables are needed in longer expressions. If no temp var zeropages are left, a regular variable is used instead.</string>
-              </property>
-              <property name="text">
-               <string>Internal variable zeropages</string>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_9" stretch=""/>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_11">
-              <property name="toolTip">
-               <string>Internal zeropages used when decrunching (exomizer)</string>
-              </property>
-              <property name="text">
-               <string>Decrunch zero pages</string>
-              </property>
-             </widget>
-            </item>
-            <item row="12" column="3">
-             <widget class="QLineEdit" name="levarZP"/>
-            </item>
-            <item row="11" column="3">
-             <widget class="QLineEdit" name="leTempZP"/>
-            </item>
-            <item row="3" column="3">
-             <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="2,2">
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_7">
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0">
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_2">
-                    <item>
-                     <widget class="QLineEdit" name="leDecrunchZp1"/>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="leDecrunchZp2"/>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="leDecrunchZp3"/>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="leDecrunchZp4"/>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_13">
-                <property name="font">
-                 <font>
-                  <pointsize>6</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>*note: The 2nd zeropage here also uses the following zp+1 zeropage address (so using $48 implies using both $48 and $49)</string>
-                </property>
-                <property name="scaledContents">
-                 <bool>false</bool>
-                </property>
-                <property name="wordWrap">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="2" column="3">
-             <widget class="QLineEdit" name="leZeropages"/>
-            </item>
-            <item row="8" column="3">
-             <widget class="QLineEdit" name="leZeropageColorMemory">
-              <property name="text">
-               <string>$fc</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="3">
-             <widget class="QPushButton" name="btnDefaultZP">
-              <property name="text">
-               <string>Set platform default values</string>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="3">
-             <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="2,2">
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_14">
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0">
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_15">
-                    <item>
-                     <widget class="QLineEdit" name="leInternalZp1"/>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="leInternalZp2"/>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="leInternalZp3"/>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="leInternalZp4"/>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_15">
-                <property name="font">
-                 <font>
-                  <pointsize>6</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>These are used internally in TRSE for increased speed. Note that these are used in 4 pairs, 8 addresses in total</string>
-                </property>
-                <property name="scaledContents">
-                 <bool>false</bool>
-                </property>
-                <property name="wordWrap">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_7">
-              <property name="toolTip">
-               <string>These are the zeropages that will be used when declaring &quot;pointers&quot;</string>
-              </property>
-              <property name="text">
-               <string>Pointer zeropages</string>
-              </property>
-             </widget>
-            </item>
-            <item row="11" column="0">
-             <widget class="QLabel" name="label_16">
-              <property name="toolTip">
-               <string>Temporary variables are needed in longer expressions. If no temp var zeropages are left, a regular variable is used instead.</string>
-              </property>
-              <property name="text">
-               <string>Temp vars zeropages</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="3">
-             <widget class="QLineEdit" name="leZeropageScreenMemory"/>
-            </item>
-            <item row="7" column="0">
-             <widget class="QLabel" name="label_12">
-              <property name="toolTip">
-               <string>The built-in &quot;screenmemory&quot; pointer</string>
-              </property>
-              <property name="text">
-               <string>Screenmemory zero page</string>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="0">
-             <widget class="QLabel" name="label_32">
-              <property name="text">
-               <string>Colormemory zero page</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -1064,20 +1054,74 @@ p, li { white-space: pre-wrap; }
         <attribute name="title">
          <string>Post optimizer</string>
         </attribute>
-        <widget class="QTextBrowser" name="textBrowser_2">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>290</y>
-           <width>661</width>
-           <height>171</height>
-          </rect>
-         </property>
-         <property name="html">
-          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <layout class="QGridLayout" name="gridLayout_12">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Post-optimization passes that are enabled/disabled for this project:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="2" column="0">
+            <widget class="QCheckBox" name="chkPassLdaTax">
+             <property name="text">
+              <string>Pass LdaTax</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="chkPassJmp">
+             <property name="text">
+              <string>Pass Jmp</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="chkPassStaLda">
+             <property name="text">
+              <string>Pass StaLda</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="chkPassLdx">
+             <property name="text">
+              <string>Pass Ldx</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QCheckBox" name="chkPassLda">
+             <property name="text">
+              <string>Pass Lda</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QCheckBox" name="chkPassCmp0">
+             <property name="text">
+              <string>Pass cmp #0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QCheckBox" name="chkPassPhaPla">
+             <property name="text">
+              <string>Pass pha/pla</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="2" column="0">
+          <widget class="QTextBrowser" name="textBrowser_2">
+           <property name="html">
+            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.875pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;Introduction&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;Without an optimizer, the TRSE compiler would have been awfully bloated. In order to accomodate for every possible binary operation or assignment, even a single operation such as &lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-style:italic;&quot;&gt;array[i]:=0;&lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt; would produce a horrendous amount of garbage assembly code. But it would still work, albeit slowly. &lt;/span&gt;&lt;/p&gt;
@@ -1129,82 +1173,10 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;label:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;this pass just removes those jumps.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-        </widget>
-        <widget class="QWidget" name="gridLayoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>100</y>
-           <width>661</width>
-           <height>171</height>
-          </rect>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="chkPassLdaTax">
-            <property name="text">
-             <string>Pass LdaTax</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QCheckBox" name="chkPassJmp">
-            <property name="text">
-             <string>Pass Jmp</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="chkPassStaLda">
-            <property name="text">
-             <string>Pass StaLda</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QCheckBox" name="chkPassLdx">
-            <property name="text">
-             <string>Pass Ldx</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QCheckBox" name="chkPassLda">
-            <property name="text">
-             <string>Pass Lda</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="chkPassCmp0">
-            <property name="text">
-             <string>Pass cmp #0</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QCheckBox" name="chkPassPhaPla">
-            <property name="text">
-             <string>Pass pha/pla</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QLabel" name="label_3">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>50</y>
-           <width>501</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Post-optimization passes that are enabled/disabled for this project:</string>
-         </property>
-        </widget>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
        <widget class="QWidget" name="tab_8">
         <attribute name="title">
