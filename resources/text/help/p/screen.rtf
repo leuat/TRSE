@@ -1,5 +1,5 @@
 <h3>General information</h3>
-<p>Use DefineScreen() to set up the built in <strong>screenmemory</strong> pointer.</p>
+<p>Use DefineScreen() to set up the built in <strong>screenmemory</strong> and <strong>colormemory</strong> pointers.</p>
 <p>Commands such as MoveTo, PrintString, PrintDecimal, PrintNumber and Tile will utilise this pointer.</p>
 <p>CreateAddressTable and AddressTable commands can be used to set up a faster way to set the location on the screen
 to draw to.</p>
@@ -31,6 +31,7 @@ begin
 
 <h3>Vic 20</h3>
 <p>The Vic20 has a default screen display of 22 x 23 characters, each allowing a character colour to be assigned.</p>
+<p>Note that on the Vic20, after setting the screenmemory pointer, SetColorAddr(); can be used to set the equivalent address in the colour memory. This is a shortcut and fast command. </p>
 <ul>
     <li>$1E00 = Default screen memory address for the unexpanded Vic</li>
     <li>$9600 = Default color memory address for the unexplanded Vic</li>

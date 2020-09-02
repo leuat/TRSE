@@ -1,8 +1,9 @@
 <h3>Description</h3>
 <p>Character string using PETSCII values.  For example, A = 1 instead of 65.</p>
+<p>no_term can be added to supress the zero terminating byte if required.</p>
 
 
-<h3>Example</h3>
+<h3>Example 1</h3>
 
 <code>
 cs : cstring = "TRSE SPEAK PETSCII";
@@ -12,4 +13,15 @@ cs
 	dc.b	$14, $12, $13, $5, $20, $13, $10, $5, $1
 	dc.b	$b, $20, $10, $5, $14, $13, $3, $9, $9
 	dc.b	0 
+</code>
+
+<h3>Example 2</h3>
+
+<code>
+cs : cstring no_term = ("TRSE SPEAK PETSCII");
+
+// ASM generated:
+cs	
+	dc.b	$14, $12, $13, $5, $20, $13, $10, $5, $1
+	dc.b	$b, $20, $10, $5, $14, $13, $3, $9, $9
 </code>

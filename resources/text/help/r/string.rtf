@@ -1,5 +1,6 @@
 <h3>Description</h3>
 <p>A data type for defining a string of characters or text.</p>
+<p>no_term can be added to supress the zero terminating byte if required.</p>
 
 
 <h3>Example</h3>
@@ -7,4 +8,5 @@
 <code>
     myString : string;
     complex : string = ("Hello there", 35, "I am so cool", 17);
+    noTerm : cstring no_term = ("THIS HAS NO END");
 </code>
