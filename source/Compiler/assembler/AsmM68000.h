@@ -28,9 +28,9 @@ public:
 
     void BinOP(TokenType::Type t, bool clearFlag=true) override;
 
-    void DeclareString(QString name, QStringList initval) override;
+    void DeclareString(QString name, QStringList initval, QStringList flags) override;
 
-    QString String(QStringList lst) override;
+    QString String(QStringList lst, bool term) override;
 
     QString GetOrg(int pos ) override;
 

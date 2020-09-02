@@ -53,60 +53,26 @@ QStringList Parser::getFlags() {
 
     bool done = false;
 
+    m_typeFlags[TokenType::CHIPMEM] = "chipmem";
+    m_typeFlags[TokenType::PPURE] = "pure";
+    m_typeFlags[TokenType::PURE_VARIABLE] = "pure_variable";
+    m_typeFlags[TokenType::PURE_NUMBER] = "pure_number";
+    m_typeFlags[TokenType::COMPRESSED] = "compressed";
+    m_typeFlags[TokenType::WRAM] = "wram";
+    m_typeFlags[TokenType::SPRRAM] = "sprram";
+    m_typeFlags[TokenType::HRAM] = "hram";
+    m_typeFlags[TokenType::ALIGNED] = "aligned";
+    m_typeFlags[TokenType::NO_TERM] = "no_term";
+
     while (!done)  {
         done = true;
-        if (m_currentToken.m_type==TokenType::CHIPMEM) {
-            Eat(TokenType::CHIPMEM);
-            flags<<"chipmem";
+        TokenType::Type type = m_currentToken.m_type;
+        if (m_typeFlags.contains(type)) {
+            Eat(type);
+            flags<<m_typeFlags[type];
             done = false;
         }
-
-        if (m_currentToken.m_type==TokenType::PPURE) {
-            Eat(TokenType::PPURE);
-            flags<<"pure";
-            done = false;
-        }
-        if (m_currentToken.m_type==TokenType::PURE_VARIABLE) {
-            Eat(TokenType::PURE_VARIABLE);
-            flags<<"pure_variable";
-            done = false;
-        }
-
-        if (m_currentToken.m_type==TokenType::PURE_NUMBER) {
-            Eat(TokenType::PURE_NUMBER);
-            flags<<"pure_number";
-            done = false;
-        }
-
-
-        if (m_currentToken.m_type==TokenType::COMPRESSED) {
-            Eat(TokenType::COMPRESSED);
-            flags<<"compressed";
-            done = false;
-        }
-
-        if (m_currentToken.m_type==TokenType::WRAM) {
-            Eat(TokenType::WRAM);
-            flags<<"wram";
-            done = false;
-        }
-
-        if (m_currentToken.m_type==TokenType::SPRRAM) {
-            Eat(TokenType::SPRRAM);
-            flags<<"sprram";
-            done = false;
-        }
-        if (m_currentToken.m_type==TokenType::HRAM) {
-            Eat(TokenType::HRAM);
-            done = false;
-            flags<<"hram";
-        }
-
-        if (m_currentToken.m_type==TokenType::ALIGNED) {
-            Eat(TokenType::ALIGNED);
-            done = false;
-            flags<<"aligned";
-        }
+        // Bank is a special case :/
         if (m_currentToken.m_type==TokenType::BANK) {
             Eat(TokenType::BANK);
             done = false;
@@ -2458,6 +2424,7 @@ QSharedPointer<Node> Parser::ForLoop(bool inclusive)
 QSharedPointer<Node> Parser::String()
 {
 
+
     if (m_currentToken.m_type==TokenType::STRING || m_currentToken.m_type==TokenType::CSTRING) {
         QSharedPointer<NodeString> node = QSharedPointer<NodeString>(new NodeString(m_currentToken,QStringList()<<m_currentToken.m_value,m_currentToken.m_type==TokenType::CSTRING));
         Eat();
@@ -2465,6 +2432,7 @@ QSharedPointer<Node> Parser::String()
     }
     if (m_currentToken.m_type!=TokenType::LPAREN)
         ErrorHandler::e.Error("String declaration must be single string or paranthesis with multi values.", m_currentToken.m_lineNumber);
+
 
     Eat();
     Token token(TokenType::STRING, m_currentToken.m_value);
@@ -2999,12 +2967,16 @@ QSharedPointer<Node> Parser::TypeSpec()
     if (m_currentToken.m_type == TokenType::STRING || m_currentToken.m_type==TokenType::CSTRING) {
         Eat();
         QStringList initData;
+        QStringList flags = getFlags();
+
         if (m_currentToken.m_type == TokenType::EQUALS) {
             Eat();
             QSharedPointer<NodeString> str = qSharedPointerDynamicCast<NodeString>(String());
             initData = str->m_val;
         }
-        return QSharedPointer<NodeVarType>(new NodeVarType(t,initData));
+        QSharedPointer<NodeVarType> str = QSharedPointer<NodeVarType>(new NodeVarType(t,initData));
+        str->m_flags = flags;
+        return str;
     }
 
     if (m_currentToken.m_type == TokenType::POINTER) {

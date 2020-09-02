@@ -282,8 +282,8 @@ public:
     virtual void EndProgram() {}
     virtual void VarDeclHeader() {}
     virtual void DeclareVariable(QString name, QString type, QString initVal, QString position){}
-    virtual void DeclareString(QString name, QStringList initVal) {}
-    virtual void DeclareCString(QString name, QStringList initVal) {}
+    virtual void DeclareString(QString name, QStringList initVal, QStringList flags) {}
+    virtual void DeclareCString(QString name, QStringList initVal, QStringList flags) {}
     virtual void DeclareArray(QString name, QString type, int count, QStringList lst, QString position) {}
     virtual void BeginBlock() {}
     virtual void EndBlock() {}
@@ -291,7 +291,7 @@ public:
 //    virtual void EndAssignVariable(QString var) {}
     virtual void ApplyTerm() {}
     virtual void Number(QString n) {}
-    virtual QString  String(QStringList s) { return "";}
+    virtual QString  String(QStringList s, bool term) { return "";}
     virtual void BinOP(TokenType::Type t, bool clearFlag=true){}
 //    virtual void Poke(bool start) = 0;
 //    virtual void Peek(bool start) {}

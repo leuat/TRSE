@@ -201,9 +201,9 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
     }
 }
 
-void AsmZ80::DeclareString(QString name, QStringList initVal) {
+void AsmZ80::DeclareString(QString name, QStringList initVal, QStringList flags) {
 //    qDebug() << "HERE" << name << initVal;
-    Write(name +"\t" + String(initVal),0);
+    Write(name +"\t" + String(initVal,!flags.contains("no_term")),0);
 }
 
 void AsmZ80::BinOP(TokenType::Type t, bool clearFlag)
@@ -330,7 +330,7 @@ QString AsmZ80::GetOrg(int pos)
     return "[org " + Util::numToHex(pos).replace("$","0x") + "]";
 }
 
-QString AsmZ80::String(QStringList lst)
+QString AsmZ80::String(QStringList lst, bool term)
 {
 
     QString res;
@@ -349,7 +349,8 @@ QString AsmZ80::String(QStringList lst)
         */
 
     }
-    res=res + "\t"+mark+"\t0";
+    if (term)
+        res=res + "\t"+mark+"\t0";
     m_term +=res;
     return res;
 }

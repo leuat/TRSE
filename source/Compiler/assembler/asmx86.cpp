@@ -191,7 +191,7 @@ void AsmX86::BinOP(TokenType::Type t, bool clearFlag)
 
 }
 
-QString AsmX86::String(QStringList lst)
+QString AsmX86::String(QStringList lst, bool term)
 {
     return "";
 }

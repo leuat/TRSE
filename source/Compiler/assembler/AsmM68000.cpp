@@ -152,17 +152,17 @@ void AsmM68000::BinOP(TokenType::Type t, bool clearFlag)
     m_varStack.push(v);
 }
 
-void AsmM68000::DeclareString(QString name, QStringList initval)
+void AsmM68000::DeclareString(QString name, QStringList initval, QStringList flags)
 {
 
     Asm(" 	CNOP 0,4");
-    Write(name +"\t" + String(initval));
+    Write(name +"\t" + String(initval,!flags.contains("no_term")));
     m_term="";
     Asm(" 	CNOP 0,4");
 
 }
 
-QString AsmM68000::String(QStringList lst)
+QString AsmM68000::String(QStringList lst, bool term)
 {
 
     QString res;
@@ -181,7 +181,8 @@ QString AsmM68000::String(QStringList lst)
     */
 
     }
-    res=res + "\t"+mark+"\t0";
+    if (term)
+        res=res + "\t"+mark+"\t0";
     m_term +=res;
     return res;
 }

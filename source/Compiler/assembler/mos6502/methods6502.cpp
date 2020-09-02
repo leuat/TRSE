@@ -1819,7 +1819,7 @@ void Methods6502::PrintString(Assembler *as)
     if (str!=nullptr) {
 //        as->Asm("jmp " + lbl);
         varName = lbl2;
-        as->m_tempVars<<varName + as->String(str->m_val);
+        as->m_tempVars<<varName + as->String(str->m_val,true);
 //        as->Label(varName + as->String(str->m_val));
         as->m_term="";
     }
@@ -2744,7 +2744,7 @@ QString Methods6502::checkAndInitStringParameter(Assembler *as, int n)
     if (str!=nullptr) {
         QString name= as->NewLabel("new_string_define");
 
-        as->m_tempVars<< name + as->String(str->m_val);
+        as->m_tempVars<< name + as->String(str->m_val,true);
     //        as->Label(varName + as->String(str->m_val));
         as->m_term="";
         as->PopLabel("new_string_define");

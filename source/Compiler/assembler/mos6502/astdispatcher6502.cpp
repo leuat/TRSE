@@ -905,7 +905,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeString> node)
 {
     node->DispatchConstructor(as);
 
-    as->String(node->m_val);
+    as->String(node->m_val,true);
 }
 
 

@@ -30,7 +30,7 @@ public:
     int CodeSizeEstimator(QStringList& lines) override {return 0;}
 
 
-    QString String(QStringList lst) override;
+    QString String(QStringList lst, bool term) override;
     void Label(QString s) override;
 
     QString GetOrg(int pos) override;

@@ -550,7 +550,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeVarDecl> node)
         s->m_arrayType = t->m_arrayVarType.m_type;
     }else
         if (t->m_op.m_type==TokenType::STRING) {
-            as->DeclareString(v->value, t->m_data);
+            as->DeclareString(v->value, t->m_data, t->m_flags);
             node->m_dataSize = 0;
             for (QString s: t->m_data)
                 node->m_dataSize+=s.count();
@@ -558,7 +558,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeVarDecl> node)
         }
         else
             if (t->m_op.m_type==TokenType::CSTRING) {
-                as->DeclareCString(v->value, t->m_data);
+                as->DeclareCString(v->value, t->m_data, t->m_flags);
                 node->m_dataSize = 0;
                 for (QString s: t->m_data)
                     node->m_dataSize+=s.count();

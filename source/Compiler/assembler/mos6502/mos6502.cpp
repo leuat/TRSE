@@ -301,13 +301,14 @@ void AsmMOS6502::DeclareVariable(QString name, QString type, QString initval, QS
 
 }
 
-void AsmMOS6502::DeclareString(QString name, QStringList initval)
+void AsmMOS6502::DeclareString(QString name, QStringList initval, QStringList flags)
 {
-    Write(name +"\t" + String(initval));
+//    qDebug() << "ASMMOS6502 FLAGS " <<flags <<!flags.contains("no_term");
+    Write(name +"\t" + String(initval,!flags.contains("no_term")));
     m_term="";
 }
 
-void AsmMOS6502::DeclareCString(QString name, QStringList initVal)
+void AsmMOS6502::DeclareCString(QString name, QStringList initVal, QStringList flags)
 {
     Write(name + "\t");
     bool done=false;
@@ -362,9 +363,21 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal)
 
 
     }
-    if (curOut!=0)
-        Write(s + "0");
-    else Write("\tdc.b\t0 ");
+
+
+
+    if (curOut!=0) {
+        if (!flags.contains("no_term"))
+            Write(s + "0"); // add 0
+        else {
+            s.remove(s.length()-2,1);// Remove final ","
+            Write(s);
+        }
+    }
+    else
+    if (!flags.contains("no_term"))
+        Write("\tdc.b\t0 "); // add 0
+
 }
 
 
@@ -414,7 +427,7 @@ void AsmMOS6502::Comment(QString s)
     Asm("; "+ s) ;
 }
 
-QString AsmMOS6502::String(QStringList lst)
+QString AsmMOS6502::String(QStringList lst, bool term)
 {
 
     QString res;
@@ -433,7 +446,8 @@ QString AsmMOS6502::String(QStringList lst)
 */
 
     }
-    res=res + "\t"+mark+"\t0";
+    if (term)
+        res=res + "\t"+mark+"\t0";
     m_term +=res;
     return res;
 }

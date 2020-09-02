@@ -84,8 +84,8 @@ public:
 
     void VarDeclHeader();
     void DeclareVariable(QString name, QString type, QString initval, QString position) override;
-    void DeclareString(QString name, QStringList initval) override;
-    void DeclareCString(QString name, QStringList initval) override;
+    void DeclareString(QString name, QStringList initval, QStringList flags) override;
+    void DeclareCString(QString name, QStringList initval, QStringList flags) override;
 
     void PopTempVar() override;
     void BeginBlock() override;
@@ -93,7 +93,7 @@ public:
     void ApplyTerm() override;
     void Number(QString n) override;
     void Comment(QString s) override;
-    QString String(QStringList s) override;
+    QString String(QStringList s, bool term) override;
  //   void AssignVariable(QString v) override;
  //   void EndAssignVariable(QString variable) override;
     void BinOP(TokenType::Type t, bool clearFlag=true) override;

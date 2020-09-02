@@ -99,6 +99,7 @@ public:
     bool m_isRecord = false;
     bool m_removeUnusedDecls = false;
     QStringList  m_initJumps;
+    QMap<TokenType::Type, QString> m_typeFlags;
     QSharedPointer<SymbolTable>  m_symTab = nullptr;
     QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
     QSharedPointer<Node> m_tree;
