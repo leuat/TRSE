@@ -927,6 +927,12 @@ void Parser::HandlePreprocessorInParsing()
         Eat();
         Eat();
     }
+    if (m_currentToken.m_value.toLower()=="macro") {
+        Eat();
+        Eat();
+        Eat();
+        Eat();
+    }
     if (m_currentToken.m_value=="execute") {
         Eat();
         Eat();
@@ -1144,6 +1150,9 @@ void Parser::HandlePreprocessorInParsing()
         m_pass = i;
 
         return;
+    }
+    if (m_macros.contains(m_currentToken.m_value.toLower())) {
+        HandleCallMacro(m_currentToken.m_value.toLower(), true);
     }
 
 
@@ -1949,6 +1958,10 @@ void Parser::Preprocess()
                 Eat(TokenType::PREPROCESSOR);
                 HandleExport();
             }
+            else if (m_currentToken.m_value.toLower() =="macro") {
+                Eat(TokenType::PREPROCESSOR);
+                HandleMacro();
+            }
             else if (m_currentToken.m_value.toLower() =="exportrgb8palette") {
                 Eat(TokenType::PREPROCESSOR);
                 HandleExportPalette();
@@ -2122,7 +2135,10 @@ void Parser::Preprocess()
                 }*/
             }
             else {
-                Eat();
+                if (m_macros.contains(m_currentToken.m_value.toLower()))
+                        HandleCallMacro(m_currentToken.m_value.toLower(),false);
+                else
+                   Eat();
             }
 
           /*  else if (m_currentToken.m_value.toLower() =="error") {
@@ -3243,6 +3259,73 @@ void Parser::HandleExportPalette()
 
 }
 
+void Parser::HandleMacro()
+{
+    LMacro m;
+    QString name = m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    m.noParams = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    m.str = m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    m_macros[name.toLower()] = m;
+//    qDebug() << "MACRO "<<m.str;
+
+}
+
+void Parser::HandleCallMacro(QString name, bool ignore)
+{
+    Eat();
+    Eat(TokenType::LPAREN);
+    QStringList params;
+    QString p;
+    for (int i=0;i<m_macros[name].noParams;i++) {
+        QString val = m_currentToken.m_value;
+        if (val=="")
+            val = QString::number(getParsedNumberOrConstant());
+        Eat();
+        params<<val;
+        p+="p"+QString::number(i);
+ //       qDebug() << val <<m_currentToken.m_value;
+        if (m_currentToken.m_type==TokenType::COMMA) {
+            Eat();
+            p+=",";
+        }
+    }
+    Eat(TokenType::RPAREN);
+    uint pos = m_lexer->m_pos+1;
+    Eat(TokenType::SEMI);
+
+    if (ignore)
+        return;
+
+    QJSEngine myEngine;
+/*    QString consts = "";
+    for (QString key:m_symTab->m_constants.keys())
+        consts +=key+"="+QString::number(m_symTab->m_constants[key]->m_value->m_fVal)+";";
+*/
+
+//     QJSValue fun = myEngine.evaluate("(function("+p+") { "+consts+";return "+str+"; })");
+//    qDebug() << m_macros[name].str;
+     QJSValue fun = myEngine.evaluate("(function("+p+") { "+m_macros[name].str+"})");
+     if (fun.isError())
+        ErrorHandler::e.Error("Error evaluation javascript expression : " + fun.toString() + " <br><br>", m_currentToken.m_lineNumber);
+
+        QJSValueList args;
+        for (QString p: params)
+            args << p;
+        QJSValue ret = fun.call(args);
+
+
+        if (ret.isError())
+            ErrorHandler::e.Error("Error evaluation javascript expression : " + ret.toString() + " <br><br>", m_currentToken.m_lineNumber);
+
+       m_lexer->m_text.insert(pos,ret.toString());
+//       qDebug() << "TEXT" <<m_lexer->m_text;
+
+
+}
+
 
 void Parser::HandleExport()
 {
@@ -3302,6 +3385,9 @@ void Parser::HandleExport()
     file.close();
 
 }
+
+
+
 
 void Parser::HandleBuildPaw()
 {

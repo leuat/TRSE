@@ -104,6 +104,7 @@ Lexer::Lexer(QString text, QStringList lines, QString path) {
 
 void Lexer::Advance()
 {
+    m_prevPos = m_pos;
     m_pos++;
     m_localPos++;
     if (m_pos>m_text.length()-1) {

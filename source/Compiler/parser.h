@@ -61,6 +61,20 @@ public:
     QString pos;
 };
 
+class LMacro {
+public:
+    QString str;
+    QStringList params;
+    int noParams;
+    LMacro() {
+
+    }
+    LMacro(QString pstr, QStringList pparams, int no ) {
+        str = pstr;
+        params = pparams;
+        noParams = no;
+    }
+};
 
 
 class Parser : public QObject {
@@ -70,6 +84,7 @@ public:
 
     QVector<ParserBlock> m_parserBlocks;
     static QStringList s_usedTRUs, s_usedTRUNames;
+    QMap<QString, LMacro> m_macros;
 //    int m_currentParserBlock=-1;
 
     bool m_hasBeenApplied = false;
@@ -194,6 +209,8 @@ public:
 
 
     void HandleExportPalette();
+    void HandleMacro();
+    void HandleCallMacro(QString name, bool ignore);
     void HandleExport();
     void HandleBuildPaw();
     void HandleExportPrg2Bin();

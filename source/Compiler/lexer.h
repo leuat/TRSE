@@ -50,7 +50,7 @@ class Lexer
 
 public:
     QString m_currentChar;
-    uint m_pos = 0;
+    uint m_pos =0, m_prevPos = 0;
     bool m_finished = false;
     QString m_orgText = "";
     QString m_text = "";
