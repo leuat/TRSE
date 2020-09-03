@@ -2218,6 +2218,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     //qDebug() <<m_lexer->m_text[0];
     m_symTab->Initialize();
     Node::m_staticBlockInfo.m_blockID=-1;
+//    qDebug() << "PARSER "<< m_isTRU << m_preprocessorDefines;
     QSharedPointer<NodeProgram> root = qSharedPointerDynamicCast<NodeProgram>(Program(param));
 
 
@@ -3655,7 +3656,7 @@ void Parser::HandleUseTPU(QString fileName)
 //    qDebug() << "Copying over: " << m_procedures.keys();
     p->m_procedures = m_procedures;
 
-
+    p->m_preprocessorDefines = m_preprocessorDefines;
     l->m_text = Util::loadTextFile(fname);
     l->m_text = l->m_text.replace("\r\n","\n");
     l->m_orgText = l->m_text;
