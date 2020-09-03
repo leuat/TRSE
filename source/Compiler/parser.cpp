@@ -3671,7 +3671,7 @@ void Parser::HandleUseTPU(QString fileName)
                              m_projectIni->getdouble("pascal_settings_use_local_variables")==1.0);
     }catch (FatalErrorException e)
     {
-        e.message = "<font color=\"#FFB030\">Error during compiling the Turbo Rascal Unit file : '</font><font color=\"yellow\">" +fileName + "</font>'<br>Please make sure that this TRU files is working correctly, and compiles stand-alone! <br><br>Original error message: <font color=\"grey\">"+e.message+"</font>";
+        e.message = "<font color=\"#FFB030\">Error during compiling the Turbo Rascal Unit file : '</font><font color=\"yellow\">" +fileName + "</font>'<font color=\"#FFB030\"> on line " +QString::number(e.linenr)+ "</font><br><font color=\"red\">"+e.message+"</font>";
         e.linenr = m_currentToken.m_lineNumber;
        throw e;
     }
