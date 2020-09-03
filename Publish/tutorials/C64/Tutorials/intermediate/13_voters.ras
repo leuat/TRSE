@@ -57,9 +57,9 @@ begin
 	
 // Now, let's turn some "dots" into "asterisks" 
 	
-	fori x:= 0 to 39 do
+	fori x:= 0 to (screen_width-1) do
 		begin
-			fori y:= 0 to 24 do
+			fori y:= 0 to (screen_height-1) do
 				begin
 					if (Random()<128) then 	// (*)
 						begin
@@ -76,8 +76,8 @@ begin
 	while (true) do
 		begin
 			screenmemory := screen_char_loc;
-			x:=mod(random(),38)+1;  // now x is a random integer in [1,38]
-			y:=mod(random(),23)+1; 	// now y is a random integer in [1,23]
+			x:=mod(random(),(screen_width-2))+1;  // now x is a random integer in [1,38]
+			y:=mod(random(),(screen_height-2))+1; 	// now y is a random integer in [1,23]
 			
 // Let's call BETA the chosen element:
 // x is the column number, y is the row number of BETA.
