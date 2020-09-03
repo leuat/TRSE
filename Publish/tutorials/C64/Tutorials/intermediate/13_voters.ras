@@ -1,0 +1,126 @@
+/*
+	Another shy experiment in TRSE by Eugenio Rapella
+	
+At the beginning the screen is randomly filled with two symbols (with a probability
+of 50% is a ".", with a probability of 50% is a "*") that represent two states
+somehow "in conflict" (conservative/reformist; normal skin cell/altereted cell; 
+Juventus supporter(hurra!)/Turin supporters ... Virus/NoVirus).
+
+At this point the main cycle opens: an element of the grid is chosen at random
+(those of the first and last row, of the first and last column are excluded) and
+we count how many asteriks are present among the eight "neighbors", ie those
+located at North, South, East, West, NW, NE, SW, SE. If this value (ns) is greater
+than 4 the chosen element turns into an "asterik" (regardeless of the original 
+content), if "ns" is less than 4 the symbol becomes a "dot" (if ns=4 the symbol
+remains unchanged).
+The idea is that the neighborhood affects the chosen element: it assumes the
+"position" of the majority of its neighbors.
+
+Once the trasformation is performed, another element is chosen at random for a
+new possible trasformation.
+
+What happens in the long run? Well, load and "run".
+
+It takes few seconds to get a "stable" configuration; run the PRG a few times 
+to see some different configurations.
+
+The Random() method returns a random number in the range [0, 255]. Changing
+the 128 in line (*) modifies the probability. If you try 90 instead of 128, you
+get more "." than "*" at the beginning and this affects the final pattern (the
+symbols in the first and last row, in the first and last column never change).
+
+If you exchange char2 and char1 in lines (**) and (***), the chosen element behaves like
+a "rebel". Am I surrounded by "*"? I turn into a "."! ... and vice versa.
+See how the final pattern changes...
+
+*/
+
+program VotersTRSE;
+var
+	x,y,ns: byte;
+	alfa: integer;
+	
+
+	const char1 : byte = 46;
+	const char2 : byte = 42;
+	
+begin
+	
+	SCREEN_BG_COL:=BLACK;
+    SCREEN_FG_COL:=BLACK;
+	
+	definescreen();
+	clearscreen(char1, screen_char_loc);		// fill the C64 screen with ... "dots" (code char1)
+	clearscreen(WHITE, screen_col_loc);		// fill the screen colour memory with ... WHITE
+
+	screenmemory := screen_char_loc;
+	
+// Now, let's turn some "dots" into "asterisks" 
+	
+	fori x:= 0 to 39 do
+		begin
+			fori y:= 0 to 24 do
+				begin
+					if (Random()<128) then 	// (*)
+						begin
+							alfa := x + y*screen_width;
+							screenmemory := screenmemory + alfa;
+							screenmemory[0]:=char2; // the code for "*" is char2
+							screenmemory := screenmemory - alfa;
+						end;
+				end;
+		end;
+		
+// Let's go with the MAIN LOOP ...
+
+	while (true) do
+		begin
+			screenmemory := screen_char_loc;
+			x:=mod(random(),38)+1;  // now x is a random integer in [1,38]
+			y:=mod(random(),23)+1; 	// now y is a random integer in [1,23]
+			
+// Let's call BETA the chosen element:
+// x is the column number, y is the row number of BETA.
+// The elements of the external frame of the screen (column 0, column 39,
+// row 0, row 24) are excluded so that BETA has all eight neighbors
+			
+			
+			ns:=0; 	// counts the number of "*" around BETA
+			
+			alfa := x + y*screen_width;
+			
+			screenmemory := screenmemory + alfa; //screenmemory points BETA
+			
+			screenmemory := screenmemory-(screen_width+1); // now points NW of BETA (-40 one row up, -1 one column left)
+			if (screenmemory[0]=char2) then inc(ns); // is it a star? If so add 1 to ns
+			
+			screenmemory := screenmemory+1; // one step to the right: North of BETA
+			if (screenmemory[0]=char2) then inc(ns); // is it a star? ...
+			
+			screenmemory := screenmemory+1; // one more step to the right: NE of BETA
+			if (screenmemory[0]=char2) then inc(ns); // is it...
+			
+			screenmemory := screenmemory+(screen_width-2); // one line down (+40) but two step to the left > West of BETA
+			if (screenmemory[0]=char2) then inc(ns);
+			 
+			screenmemory := screenmemory+2; // ... East of BETA
+			if (screenmemory[0]=char2) then inc(ns);
+			
+			screenmemory := screenmemory+(screen_width-2); // from E to SW of BETA
+			if (screenmemory[0]=char2) then inc(ns);
+			
+			screenmemory := screenmemory+1; // South of BETA
+			if (screenmemory[0]=char2) then inc(ns);
+			
+			screenmemory := screenmemory+1; // SE of BETA
+			if (screenmemory[0]=char2) then inc(ns);
+			
+// Now ns helds the total number of * around BETA, an integer in the range [0,8]
+			
+			screenmemory := screenmemory-(screen_width+1); // from SE of BETA back to BETA
+			
+			if (ns>4) then screenmemory[0]:=char2;	// (**)  BETA turns into a "*"
+			if (ns<4) then screenmemory[0]:=char1;	// (***) BETA turns into a "."
+		end;
+	loop();
+end.

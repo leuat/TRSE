@@ -249,6 +249,10 @@ Token Lexer::_Id()
             Advance();
             m_currentChar = "_";
         }
+        if (m_currentChar=="Æ" || m_currentChar=="?" || m_currentChar =="•") {
+//            Advance();
+            m_currentChar = "_";
+        }
 
     }
     return Syntax::s.GetID(result);
