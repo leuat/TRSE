@@ -67,6 +67,7 @@ OrgasmLine Orgasm::LexLine(int i) {
     line = line.replace("!by", ".byte");
     line = line.replace("!fi", ".byte");
     line = line.replace("dc.w", ".word");
+    line = line.replace(" EQU ", " = ");
     //line = line.replace("ds.w", ".word");
  //   line = line.replace("equ", "=");
 //    line = line.replace("EQU", "=");

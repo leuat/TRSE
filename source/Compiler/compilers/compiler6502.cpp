@@ -12,6 +12,10 @@ void Compiler6502::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sys
 void Compiler6502::Connect()
 {
 //    m_assembler->EndMemoryBlock();
+
+ /*  m_assembler->m_symTab->m_constants = m_parser.m_symTab->m_constants;
+    m_assembler->WriteConstants();
+*/
     m_assembler->Connect();
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI2600)
