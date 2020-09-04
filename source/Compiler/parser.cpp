@@ -3275,13 +3275,13 @@ void Parser::HandleMacro()
 
 void Parser::HandleCallMacro(QString name, bool ignore)
 {
-    qDebug() << "Calling macro " << name << m_currentToken.m_value;
+    //qDebug() << "Calling macro " << name << m_currentToken.m_value;
     Eat();
-    qDebug() << "mac " << name << m_currentToken.m_value;
+    //qDebug() << "mac " << name << m_currentToken.m_value;
     Eat(TokenType::LPAREN);
     QStringList params;
     QString p;
-    qDebug() << "Before " <<m_pass <<m_currentToken.m_value << m_lexer->m_pos << m_lexer->m_text[m_lexer->m_pos];
+    //qDebug() << "Before " <<m_pass <<m_currentToken.m_value << m_lexer->m_pos << m_lexer->m_text[m_lexer->m_pos];
 
     for (int i=0;i<m_macros[name].noParams;i++) {
         QString val = m_currentToken.m_value;
@@ -3301,7 +3301,7 @@ void Parser::HandleCallMacro(QString name, bool ignore)
     if (m_currentToken.m_type == TokenType::SEMI)
         Eat(TokenType::SEMI);
 
-    qDebug() << m_pass;
+  //  qDebug() << m_pass;
     if (ignore)
         return;
 
@@ -3313,7 +3313,12 @@ void Parser::HandleCallMacro(QString name, bool ignore)
 
 //     QJSValue fun = myEngine.evaluate("(function("+p+") { "+consts+";return "+str+"; })");
 //    qDebug() << m_macros[name].str;
-     QJSValue fun = myEngine.evaluate("__oo = ''; \n function Write(__v) {__oo=__oo+__v + '\\n'; } \n   (function("+p+") { "+m_macros[name].str+"; return __oo;})");
+     QJSValue fun = myEngine.evaluate("__oo = ''; "
+                                      "\n function Writeln(__v) {__oo=__oo+__v + '\\n'; } "
+                                      "\n function writeln(__v) {__oo=__oo+__v + '\\n'; } "
+                                      "\n function Write(__v) {__oo=__oo+__v; } "
+                                      "\n function write(__v) {__oo=__oo+__v; } "
+                                      "\n   (function("+p+") { "+m_macros[name].str+"; return __oo;})");
      if (fun.isError())
         ErrorHandler::e.Error("Error evaluation javascript expression : " + fun.toString() + " <br><br>", m_currentToken.m_lineNumber);
 
@@ -3328,7 +3333,7 @@ void Parser::HandleCallMacro(QString name, bool ignore)
 
        m_lexer->m_text.insert(pos,ret.toString());
 //       m_lexer->m_pos -=1;
-       qDebug() << "TEXT" <<m_lexer->m_text;
+//       qDebug() << "TEXT" <<m_lexer->m_text;
 
 
 }
