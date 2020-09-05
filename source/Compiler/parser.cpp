@@ -685,8 +685,7 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
         str+=")";
     str = str.remove("()");
 
-    QJSEngine myEngine;
-    QJSValue ret = myEngine.evaluate(str);
+    QJSValue ret = m_jsEngine.evaluate(str);
 //   qDebug() << str << ret.toInt();
     int r = ret.toInt();
 //    qDebug() << "PARSER "<<r;
@@ -3200,7 +3199,7 @@ QStringList Parser::BuildTable(int cnt,TokenType::Type type)
     QString sentence = m_currentToken.m_value;
     Eat(TokenType::STRING);
     QStringList data;
-    QJSEngine myEngine;
+    QJSEngine m_jsEngine;
     int AND = 0xFFFF;
 //    qDebug() << "PARSER " <<TokenType::getType(type);
     if (type==TokenType::BYTE)
@@ -3216,8 +3215,8 @@ QStringList Parser::BuildTable(int cnt,TokenType::Type type)
     for (int i=0;i<cnt;i++) {
         QString str = sentence;
 //        str = str.replace("i",QString::number(i));
-//        QJSValue ret = myEngine.evaluate(str);
-        QJSValue fun = myEngine.evaluate("(function(i) { "+consts+";return "+str+"; })");
+//        QJSValue ret = m_jsEngine.evaluate(str);
+        QJSValue fun = m_jsEngine.evaluate("(function(i) { "+consts+";return "+str+"; })");
         if (fun.isError())
             ErrorHandler::e.Error("Error evaluation javascript expression : " + fun.toString() + " <br><br>", m_currentToken.m_lineNumber);
 
@@ -3282,7 +3281,7 @@ void Parser::HandleCallMacro(QString name, bool ignore)
     QStringList params;
     QString p;
     //qDebug() << "Before " <<m_pass <<m_currentToken.m_value << m_lexer->m_pos << m_lexer->m_text[m_lexer->m_pos];
-
+    // Build the parameter list + "p"
     for (int i=0;i<m_macros[name].noParams;i++) {
         QString val = m_currentToken.m_value;
         if (val=="")
@@ -3290,7 +3289,7 @@ void Parser::HandleCallMacro(QString name, bool ignore)
         Eat();
         params<<val;
         p+="p"+QString::number(i);
- //       qDebug() << val <<m_currentToken.m_value;
+        //       qDebug() << val <<m_currentToken.m_value;
         if (m_currentToken.m_type==TokenType::COMMA) {
             Eat();
             p+=",";
@@ -3301,39 +3300,43 @@ void Parser::HandleCallMacro(QString name, bool ignore)
     if (m_currentToken.m_type == TokenType::SEMI)
         Eat(TokenType::SEMI);
 
-  //  qDebug() << m_pass;
+    //  qDebug() << m_pass;
+    // Ignore calling macros in pass 1. Or perhaps pass 0? hm
     if (ignore)
         return;
 
-    QJSEngine myEngine;
-/*    QString consts = "";
+    /*    QString consts = "";
     for (QString key:m_symTab->m_constants.keys())
         consts +=key+"="+QString::number(m_symTab->m_constants[key]->m_value->m_fVal)+";";
 */
 
-//     QJSValue fun = myEngine.evaluate("(function("+p+") { "+consts+";return "+str+"; })");
-//    qDebug() << m_macros[name].str;
-     QJSValue fun = myEngine.evaluate("__oo = ''; "
-                                      "\n function Writeln(__v) {__oo=__oo+__v + '\\n'; } "
-                                      "\n function writeln(__v) {__oo=__oo+__v + '\\n'; } "
-                                      "\n function Write(__v) {__oo=__oo+__v; } "
-                                      "\n function write(__v) {__oo=__oo+__v; } "
-                                      "\n   (function("+p+") { "+m_macros[name].str+"; return __oo;})");
-     if (fun.isError())
+    //     QJSValue fun = m_jsEngine.evaluate("(function("+p+") { "+consts+";return "+str+"; })");
+    //    qDebug() << m_macros[name].str;
+    // Construct the javascript macro
+    QJSValue fun = m_jsEngine.evaluate("__oo = ''; "
+                                     "\n function Writeln(__v) {__oo=__oo+__v + '\\n'; } "
+                                     "\n function writeln(__v) {__oo=__oo+__v + '\\n'; } "
+                                     "\n function Write(__v) {__oo=__oo+__v; } "
+                                     "\n function write(__v) {__oo=__oo+__v; } "
+                                     "\n   (function("+p+") { "+m_macros[name].str+"; return __oo;})");
+    if (fun.isError())
         ErrorHandler::e.Error("Error evaluation javascript expression : " + fun.toString() + " <br><br>", m_currentToken.m_lineNumber);
 
-        QJSValueList args;
-        for (QString p: params)
-            args << p;
-        QJSValue ret = fun.call(args);
+    QJSValueList args;
+    // Add parameters
+    for (QString p: params)
+        args << p;
 
+    // Execute javascript
+    QJSValue ret = fun.call(args);
 
-        if (ret.isError())
-            ErrorHandler::e.Error("Error evaluation javascript expression : " + ret.toString() + " <br><br>", m_currentToken.m_lineNumber);
+    if (ret.isError())
+        ErrorHandler::e.Error("Error evaluation javascript expression : " + ret.toString() + " <br><br>", m_currentToken.m_lineNumber);
 
-       m_lexer->m_text.insert(pos,ret.toString());
-//       m_lexer->m_pos -=1;
-//       qDebug() << "TEXT" <<m_lexer->m_text;
+    // Inject macro text into the source code
+    m_lexer->m_text.insert(pos,ret.toString());
+    //       m_lexer->m_pos -=1;
+    //       qDebug() << "TEXT" <<m_lexer->m_text;
 
 
 }

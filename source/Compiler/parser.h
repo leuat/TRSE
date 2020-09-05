@@ -138,6 +138,7 @@ public:
         Delete();
     }
     QVector<QSharedPointer<MemoryBlock>> m_userBlocks;
+    QJSEngine m_jsEngine;
 
     void Delete();
     void InitObsolete();

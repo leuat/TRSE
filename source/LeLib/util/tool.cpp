@@ -33,7 +33,14 @@ bool Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
     QString rasm = path+"rasm.exe";
     Util::CopyFile(":resources/bin/rasm.exe",rasm);
 #endif
-
+#ifdef _WIN32
+    QString rasm = path+"rasm.exe";
+    Util::CopyFile(":resources/bin/rasm.exe",rasm);
+#endif
+#ifdef __APPLE__
+    QString rasm = path+"rasm.exe";
+    Util::CopyFile(":resources/bin/rasm.exe",rasm);
+#endif
 
 
     Util::CopyFile(":resources/code/amstrad/playerakg.asm",player);
