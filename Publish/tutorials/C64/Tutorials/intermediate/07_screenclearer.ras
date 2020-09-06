@@ -13,7 +13,7 @@ var
 // Random place to store 1000 bytes
 	const dataLoc : address = $5000;	
 // Turn off to un-optimize
-@define IS_OPTIMIZED 1
+@define IS_OPTIMIZED 0
 
 procedure CalculateCircles();
 begin
@@ -53,7 +53,7 @@ begin
 	for j:=0 to screen_height do begin
 		for i:=0 to screen_width do begin
 		
-@ifndef IS_OPTIMIZED
+@if IS_OPTIMIZED=0
 			k:=l1[i];
 			if (k) then begin
 				dec(k);
@@ -61,7 +61,7 @@ begin
 				p1[i]:=colorsc1[k];
 			end;		
 @endif
-@ifdef IS_OPTIMIZED
+@if IS_OPTIMIZED=1
 			asm("
 				ldy i
 				lda (l1),y

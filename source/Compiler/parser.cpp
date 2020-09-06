@@ -122,9 +122,9 @@ void Parser::Eat(TokenType::Type t)
     if (m_currentToken.m_type == t) {
         m_currentToken = m_lexer->GetNextToken();
 //        if (m_pass==1)
-  //          qDebug() << "Token : " <<m_currentToken.m_value <<(m_currentToken.m_type==TokenType::PREPROCESSOR) << m_pass;
+//            qDebug() << "Token : " <<m_currentToken.getType() <<m_currentToken.m_value <<(m_currentToken.m_type==TokenType::PREPROCESSOR) << m_pass;
         int cnt =0;
-        while (m_currentToken.m_type==TokenType::PREPROCESSOR && m_pass==1 && cnt++<32 ) {
+        while (m_currentToken.m_type==TokenType::PREPROCESSOR && m_pass>PASS_PREPRE && m_pass!=PASS_OTHER  && cnt++<32 ) {
             HandlePreprocessorInParsing();
           //  qDebug() << "Inside handle: " << m_currentToken.m_value;
 
@@ -442,6 +442,7 @@ void Parser::PreprocessIfDefs(bool ifdef)
 //        qDebug() << "PARSER " <<m_currentToken.m_value;
         if (m_currentToken.m_type==TokenType::PREPROCESSOR) {
 
+            int org = m_pass;
             m_pass=1;
             // Ignore preprocessors ifdef etc within preprocessors
             if (m_currentToken.m_value.startsWith("if")) {
@@ -449,11 +450,13 @@ void Parser::PreprocessIfDefs(bool ifdef)
         //        qDebug() << "INCREASING POP "<<ignorePop;
             }
             Eat();
+            m_pass = org;
         }
         else {
+            int org = m_pass;
             m_pass = 0;
             Eat(); // OM NOM NOM
-            m_pass = 1;
+            m_pass = org;
         }
 
         if (m_currentToken.m_type==TokenType::PREPROCESSOR) {
@@ -466,6 +469,8 @@ void Parser::PreprocessIfDefs(bool ifdef)
                 if (ignorePop==0) {
                 Eat();
                 m_ignoreAll = false;
+                if (m_lastKey.count()==0)
+                    ErrorHandler::e.Error("Preprocessor '@endif' mismatch error", m_currentToken.m_lineNumber);
                 m_lastKey.removeLast();
                 m_lastIfdef.removeLast();
                 return; // Finish
@@ -881,204 +886,215 @@ void Parser::RemoveUnusedSymbols(QSharedPointer<NodeProgram> root)
 
 void Parser::HandlePreprocessorInParsing()
 {
+    if (m_pass>=PASS_CODE) {
 
-    if (m_currentToken.m_value=="define") {
-        Eat();
-        Eat();
-        Eat();
-        return;
-    }
-    if (m_currentToken.m_value=="compile_akg_music") {
-        Eat();
-        Eat();
-        Eat();
-        return;
-    }
-    if (m_currentToken.m_value=="deletefile") {
-        Eat();
-        Eat();
-        return;
-    }
-    if (m_currentToken.m_value=="export") {
-        Eat();
-        Eat();
-        Eat();
-        Eat();
-        if (m_currentToken.m_type==TokenType::INTEGER_CONST)
+        if (m_currentToken.m_value=="define") {
             Eat();
-        return;
-    }
-    if (m_currentToken.m_value=="exportrgb8palette") {
-        Eat();
-        Eat();
-        Eat();
-        return;
-    }
-    if (m_currentToken.m_value=="exportprg2bin") {
-        Eat();
-        Eat();
-        Eat();
-        Eat();
-        Eat();
-        return;
-    }
-    if (m_currentToken.m_value.toLower()=="vicmemoryconfig") {
-        Eat();
-        Eat();
-    }
-    if (m_currentToken.m_value.toLower()=="macro") {
-        Eat();
-        Eat();
-        Eat();
-        Eat();
-    }
-    if (m_currentToken.m_value=="execute") {
-        Eat();
-        Eat();
-        return;
-    }
-    if (m_currentToken.m_value=="spritepacker") {
-        Eat();
-        Eat(TokenType::STRING);
-        Eat(TokenType::STRING);
-        Eat(TokenType::STRING);
-        Eat(TokenType::STRING);
-        Eat();
-        Eat();
-        Eat();
-        Eat();
-        Eat();
-        return;
-    }
-    if (m_currentToken.m_value=="importchar") {
-        Eat();
-        Eat();
-        Eat();
-        Eat();
-        Eat();
-        return;
-    }
-    if (m_currentToken.m_value=="spritecompiler") {
-        Eat(); // Preprocessor
-        Eat(); // Filename
-        Eat(); // Name
-        Eat(); // X
-        Eat(); // Y
-        Eat(); // W
-        Eat(); // H
-    }
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="compile_akg_music") {
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="deletefile") {
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="export") {
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            if (m_currentToken.m_type==TokenType::INTEGER_CONST)
+                Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="exportrgb8palette") {
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="exportprg2bin") {
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value.toLower()=="vicmemoryconfig") {
+            Eat();
+            Eat();
+        }
+        if (m_currentToken.m_value.toLower()=="macro") {
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+        }
+        if (m_currentToken.m_value=="execute") {
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="spritepacker") {
+            Eat();
+            Eat(TokenType::STRING);
+            Eat(TokenType::STRING);
+            Eat(TokenType::STRING);
+            Eat(TokenType::STRING);
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="importchar") {
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="spritecompiler") {
+            Eat(); // Preprocessor
+            Eat(); // Filename
+            Eat(); // Name
+            Eat(); // X
+            Eat(); // Y
+            Eat(); // W
+            Eat(); // H
+        }
 
-    if (m_currentToken.m_value=="vbmexport") {
-        Eat();
-        Eat(TokenType::STRING);
-        Eat(TokenType::STRING);
-        Eat(TokenType::INTEGER_CONST);
-        Eat(TokenType::INTEGER_CONST);
-        Eat(TokenType::INTEGER_CONST);
-        Eat(TokenType::INTEGER_CONST);
-        return;
-    }
-    if (m_currentToken.m_value=="vbmexportchunk") {
-        Eat();
-        Eat(TokenType::STRING);
-        Eat(TokenType::STRING);
-        Eat(TokenType::INTEGER_CONST);
-        Eat(TokenType::INTEGER_CONST);
-        Eat(TokenType::INTEGER_CONST);
-        Eat(TokenType::INTEGER_CONST);
-        return;
-    }
-    if (m_currentToken.m_value=="ignoresystemheaders") {
-        Eat();
-    }
+        if (m_currentToken.m_value=="vbmexport") {
+            Eat();
+            Eat(TokenType::STRING);
+            Eat(TokenType::STRING);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            return;
+        }
+        if (m_currentToken.m_value=="vbmexportchunk") {
+            Eat();
+            Eat(TokenType::STRING);
+            Eat(TokenType::STRING);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            return;
+        }
+        if (m_currentToken.m_value=="ignoresystemheaders") {
+            Eat();
+        }
 
-    if (m_currentToken.m_value=="exportframe") {
-        Eat();
-        Eat(TokenType::STRING);
-        Eat(TokenType::STRING);
-        Eat(TokenType::INTEGER_CONST);
-        Eat(TokenType::INTEGER_CONST);
-        Eat(TokenType::INTEGER_CONST);
-        Eat(TokenType::INTEGER_CONST);
-        Eat(TokenType::INTEGER_CONST);
-        Eat(TokenType::INTEGER_CONST);
-        Eat(TokenType::INTEGER_CONST);
-        Eat(TokenType::INTEGER_CONST);
-        return;
-    }
-
-
-    if (m_currentToken.m_value=="donotremove") {
-        Eat();
-        m_doNotRemoveMethods.append(m_symTab->m_gPrefix+m_currentToken.m_value);
-        Eat();
-        return;
-    }
-    if (m_currentToken.m_value=="userdata") {
-        Eat();
-        Eat();
-        Eat();
-        Eat();
-        return;
-    }
-    if (m_currentToken.m_value=="requirefile") {
-        Eat();
-        Eat();
-        Eat();
-        return;
-    }
-    if (m_currentToken.m_value=="raisewarning") {
-        Eat();
-        if (!m_ignoreAll)
-            ErrorHandler::e.Warning(m_currentToken.m_value, m_currentToken.m_lineNumber);
-//        Eat();
-        Eat();
-        return;
-    }
-
-    if (m_currentToken.m_value=="raiseerror") {
-        Eat();
-        if (!m_ignoreAll)
-          ErrorHandler::e.Error(m_currentToken.m_value, m_currentToken.m_lineNumber);
+        if (m_currentToken.m_value=="exportframe") {
+            Eat();
+            Eat(TokenType::STRING);
+            Eat(TokenType::STRING);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            return;
+        }
 
 
-        return;
-    }
+        if (m_currentToken.m_value=="donotremove") {
+            Eat();
+            m_doNotRemoveMethods.append(m_symTab->m_gPrefix+m_currentToken.m_value);
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="userdata") {
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="requirefile") {
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="raisewarning") {
+            Eat();
+            if (!m_ignoreAll)
+                ErrorHandler::e.Warning(m_currentToken.m_value, m_currentToken.m_lineNumber);
+            //        Eat();
+            Eat();
+            return;
+        }
 
-    if (m_currentToken.m_value=="ignoremethod") {
-        Eat();
-        Eat();
-        return;
-    }
-    if (m_currentToken.m_value=="projectsettings") {
-        Eat();
-        Eat();
-        Eat();
-        return;
-    }
-    if (m_currentToken.m_value=="buildpaw") {
-        Eat();
-        Eat();
-        return;
-    }
-    if (m_currentToken.m_value=="startassembler") {
-        Eat();
-        Eat();
-        return;
-    }
-    if (m_currentToken.m_value=="use") {
-        Eat();
-        Eat();
-//        Eat();
-//        Eat();
-        return;
-    }
+        if (m_currentToken.m_value=="raiseerror") {
+            Eat();
+            if (!m_ignoreAll)
+                ErrorHandler::e.Error(m_currentToken.m_value, m_currentToken.m_lineNumber);
 
 
-    if (m_currentToken.m_value=="include") {
-        Eat();
-        Eat();
-        return;
+            return;
+        }
+
+        if (m_currentToken.m_value=="error") {
+                Eat();
+
+                if (!m_ignoreAll)
+                  ErrorHandler::e.Error(m_currentToken.m_value, m_currentToken.m_lineNumber);
+
+                return;
+        }
+
+        if (m_currentToken.m_value=="ignoremethod") {
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="projectsettings") {
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="buildpaw") {
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="startassembler") {
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="use") {
+            Eat();
+            Eat();
+            //        Eat();
+            //        Eat();
+            return;
+        }
+
+
+        if (m_currentToken.m_value=="include") {
+            Eat();
+            Eat();
+            return;
+        }
     }
 
 //    qDebug() <<"VAL " <<m_currentToken.m_value;
@@ -1100,6 +1116,9 @@ void Parser::HandlePreprocessorInParsing()
     }
     }
     if (m_currentToken.m_value=="endif") {
+        if (m_lastKey.count()==0)
+            ErrorHandler::e.Error("Preprocessor '@endif' mismatch error", m_currentToken.m_lineNumber);
+
         m_lastKey.removeLast();
         m_lastIfdef.removeLast();
         Eat();
@@ -1107,20 +1126,11 @@ void Parser::HandlePreprocessorInParsing()
     }
 
 
-    if (m_currentToken.m_value=="error") {
-            Eat();
-
-            if (!m_ignoreAll)
-              ErrorHandler::e.Error(m_currentToken.m_value, m_currentToken.m_lineNumber);
-
-            return;
-    }
-
 
 
     if (m_currentToken.m_value=="endblock") {
         int i = m_pass;
-        m_pass = 2;
+        m_pass = PASS_OTHER;
         Eat();
         m_pass=i;
 //        qDebug() << "HandleCurrent Endblock " << Node::m_staticBlockInfo.m_blockPos;
@@ -1132,7 +1142,7 @@ void Parser::HandlePreprocessorInParsing()
     }
     if (m_currentToken.m_value=="startblock") {
         int i = m_pass;
-        m_pass = 2;
+        m_pass = PASS_OTHER;
         Eat();
         QString startPos = m_currentToken.getNumAsHexString();
         Eat();
@@ -1189,10 +1199,9 @@ bool Parser::PreprocessIncludeFiles()
     while (m_currentToken.m_type!=TokenType::TEOF) {
         if (m_currentToken.m_type == TokenType::PREPROCESSOR) {
             if (m_currentToken.m_value.toLower()=="include") {
-
-//                QString str = m_currentToken.m_value;
                 Eat(TokenType::PREPROCESSOR);
                 QString name = m_currentToken.m_value;
+                qDebug() << "INCLUDING " <<name;
                 QString filename =(m_currentDir +"/"+ m_currentToken.m_value);
                 filename = filename.replace("//","/");
                 QString text = m_lexer->loadTextFile(filename);
@@ -1203,14 +1212,14 @@ bool Parser::PreprocessIncludeFiles()
                             FilePart(name,ln, ln+ count, ln-m_acc,ln+count-m_acc,count));
                 m_acc-=count-1;
                 done = false;
-                Eat(TokenType::STRING);
-            }
+                Eat(TokenType::STRING);            }
         }
         Eat();
 //        qDebug() << m_currentToken.m_value;
 
     }
     return done;
+    qDebug() <<m_lexer->m_text;
 }
 
 
@@ -1854,8 +1863,291 @@ QSharedPointer<Node> Parser::Term()
     return node;
 }
 
+void Parser::PreprocessSingle() {
+//              qDebug() << "***PRE" << m_currentToken.m_value << m_pass;
 
-void Parser::Preprocess()
+
+  /*            if (m_currentToken.m_value.toLower()=="include") {
+
+  //                QString str = m_currentToken.m_value;
+                  Eat(TokenType::PREPROCESSOR);
+                  QString name = m_currentToken.m_value;
+                  QString filename =(m_currentDir +"/"+ m_currentToken.m_value);
+                  filename = filename.replace("//","/");
+                  QString text = m_lexer->loadTextFile(filename);
+                  int ln=m_lexer->getLineNumber(m_currentToken.m_value)+m_acc;
+                  m_lexer->m_text.insert(m_lexer->m_pos, text);
+                  int count = text.split("\n").count();
+                  m_lexer->m_includeFiles.append(
+                              FilePart(name,ln, ln+ count, ln-m_acc,ln+count-m_acc,count));
+                  m_acc-=count-1;
+
+                  Eat(TokenType::STRING);
+              }*/
+              if (m_currentToken.m_value.toLower() =="deletefile") {
+                  Eat(TokenType::PREPROCESSOR);
+                  QString file = m_currentToken.m_value;
+                  Eat();
+                  if (QFile::exists(m_currentDir+file))
+                      QFile::remove(m_currentDir+file);
+
+              }
+              else
+              if (m_currentToken.m_value.toLower() =="define") {
+                  Eat(TokenType::PREPROCESSOR);
+                  QString key = m_currentToken.m_value;
+                  Eat();
+  //                qDebug() << m_currentToken.m_value;
+      //            int i = getIntVal(m_currentToken);
+    //              qDebug() << "After: " << Util::numToHex(i);
+                  QString val = m_currentToken.m_value;
+                  if (val=="")
+                      val = QString::number(m_currentToken.m_intVal);
+
+                  if (m_pass == PASS_PRE)
+                      m_preprocessorDefines[key] = val;
+
+//                  if (m_pass == PASS_PRE)
+  //                    qDebug() << "Defined: " << key << val;
+
+              }
+              else if (m_currentToken.m_value.toLower() =="ignoresystemheaders") {
+                  Eat(TokenType::PREPROCESSOR);
+                  Syntax::s.m_currentSystem->m_systemParams["ignoresystemheaders"]="1";
+              }
+
+              else if (m_currentToken.m_value.toLower() =="userdata") {
+                  Eat(TokenType::PREPROCESSOR);
+                  QString from = m_currentToken.getNumAsHexString();
+                  Eat();
+                  QString to = m_currentToken.getNumAsHexString();
+                  Eat();
+                  QString name = m_currentToken.m_value;
+                  bool ok;
+                  m_userBlocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(Util::NumberFromStringHex(from), Util::NumberFromStringHex(to),
+                                                  MemoryBlock::USER, name)));
+
+              }
+              else if (m_currentToken.m_value.toLower() =="projectsettings") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleProjectSettingsPreprocessors();
+
+              }
+              else if (m_currentToken.m_value.toLower() =="buildpaw") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleBuildPaw();
+              }
+              else if (m_currentToken.m_value.toLower() =="spritepacker") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleSpritePacker();
+              }
+              else if (m_currentToken.m_value.toLower()=="compile_akg_music") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleAKGCompiler();
+              }
+
+
+              else if (m_currentToken.m_value.toLower() =="ignoremethod") {
+                  Eat(TokenType::PREPROCESSOR);
+                  m_ignoreMethods.append(m_currentToken.m_value);
+              }
+              else if (m_currentToken.m_value.toLower() =="export") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleExport();
+              }
+              else if (m_currentToken.m_value.toLower() =="macro") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleMacro();
+              }
+              else if (m_currentToken.m_value.toLower() =="exportrgb8palette") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleExportPalette();
+              }
+              else if (m_currentToken.m_value.toLower() =="exportprg2bin") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleExportPrg2Bin();
+              }
+              else if (m_currentToken.m_value.toLower()=="vicmemoryconfig") {
+                  Eat(TokenType::PREPROCESSOR);
+                  m_vicMemoryConfig = m_currentToken.m_value;
+                  Eat();
+              }
+              else if (m_currentToken.m_value.toLower() =="vbmexport") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleVBMExport();
+              }
+              else if (m_currentToken.m_value.toLower() =="vbmexportchunk") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleVBMExportChunk();
+              }
+              else if (m_currentToken.m_value.toLower() =="exportframe") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleExportFrame();
+              }
+              else if (m_currentToken.m_value.toLower() =="spritecompiler") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleSpriteCompiler();
+              }
+
+              else if (m_currentToken.m_value.toLower() =="importchar") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleImportChar();
+              }
+
+              else if (m_currentToken.m_value.toLower() =="execute") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleExecute();
+              }
+
+              else if (m_currentToken.m_value.toLower() =="startassembler") {
+                  Eat(TokenType::PREPROCESSOR);
+                  m_initAssembler = m_currentToken.m_value;
+                  //m_ignoreMethods.append(m_currentToken.m_value);
+              }
+              else if (m_currentToken.m_value.toLower() =="requirefile") {
+                  Eat();
+                  QString requiredFile = m_currentToken.m_value;
+                  Eat();
+                  QString message = m_currentToken.m_value;
+                  if (!QFile::exists(m_currentDir+"/"+requiredFile))
+                      ErrorHandler::e.Error("The following file is required for compilation: <font color=\"#FF80A0\">'" + requiredFile + "'</font>.<br><font color=\"#FFB060\">" +message+"</font>", m_currentToken.m_lineNumber);
+
+              }
+              else if (m_currentToken.m_value.toLower() =="raisewarning") {
+                  Eat();
+              }
+              else if (m_currentToken.m_value.toLower() =="raiseerror") {
+                  Eat();
+  /*                qDebug() << "PARSER RAISEERROR " <<m_ignoreAll <<m_pass;
+                  if (!m_ignoreAll)
+                      ErrorHandler::e.Error(m_currentToken.m_value, m_currentToken.m_lineNumber);
+                      */
+              }
+              else if (m_currentToken.m_value.toLower() =="use") {
+                  Eat();
+                  QString type = m_currentToken.m_value;
+                  bool ok=false;
+                  if (type.toLower()=="krillsloader") {
+                      ok=true;
+                      int ln = Pmm::Data::d.lineNumber;
+
+                      //m_lexer->m_lines.removeAt(ln);
+                      //m_lexer->m_orgText.replace(orgL,"\n");
+                      Eat();
+                      int loaderPos = m_currentToken.m_intVal;
+                      Eat();
+                      int loaderOrgPos = m_currentToken.m_intVal;
+                      Eat();
+                      int installerPos = m_currentToken.m_intVal;
+
+
+                      m_preprocessorDefines["_InstallKrill"] = Util::numToHex(installerPos + 0x1390);
+                      m_preprocessorDefines["_LoadrawKrill"] = Util::numToHex(loaderPos);
+  //                    m_preprocessorDefines["_LoadrawKrill"] = Util::numToHex(loaderPos);
+  //                    qDebug() << m_preprocessorDefines["_LoadrawKrill"];
+                      m_preprocessorDefines["_ResidentLoaderSource"] = Util::numToHex(loaderOrgPos);
+                      m_preprocessorDefines["_ResidentLoaderDestination"] = Util::numToHex(loaderPos);
+
+
+                      QString pos = QString::number(loaderPos,16);
+                      if (pos=="200") pos = "0200";
+                      QString loaderFile =":resources/bin/krill/loader_PAL_NTSC_"+pos.toUpper()+"-c64.prg";
+                      QString installerFile =":resources/bin/krill/install_PAL_NTSC_"+QString::number(installerPos,16).toUpper()+"-c64.prg";
+
+                      if (!QFile::exists(loaderFile))
+                          ErrorHandler::e.Error("When using krills loader, the loader location must be either 0200, 1000,2000 etc");
+
+                      if (!QFile::exists(installerFile))
+                          ErrorHandler::e.Error("When using krills loader, the installer location must be either 1000, 2000, 3000 etc");
+
+
+                      QString outFolder = m_currentDir+"/auto_bin/";
+                      QString outFolderShort = "auto_bin/";
+
+                      if (!QDir().exists(outFolder))
+                              QDir().mkdir(outFolder);
+
+                      QString outFile = outFolder+"krill_loader.bin";
+                      if (QFile::exists(outFile)) {
+                          QFile f(outFile);
+                          f.remove();
+                      }
+  //                    QFile::copy(loaderFile, outFile);
+                      Util::ConvertFileWithLoadAddress(loaderFile,outFile);
+
+                      outFile = outFolder+"krill_installer.bin";
+                      if (QFile::exists(outFile)) {
+                          QFile f(outFile);
+                          f.remove();
+                      }
+                      Util::ConvertFileWithLoadAddress(installerFile,outFile);
+  //                    QFile in(installerFile);
+    //                  QByteArray data =
+
+                      //QFile::copy(installerFile, outFile);
+
+                      outFile = outFolderShort+"krill_loader.bin";
+                      QString replaceLine = "_ResidentLoader_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(loaderOrgPos,16)+");";
+                      outFile = outFolderShort+"krill_installer.bin";
+                      replaceLine += "\n_Installer_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(installerPos,16)+");";
+
+                      for (QString s: m_diskFiles) {
+                          QString var = s;
+                          for (int i=0;i<256;i++) {
+                              QString r = "#P"+QString::number(i)+";";
+                              var = var.replace(r,"");
+  //                            s = s.replace(r,QChar(i));
+   //                           s = s.replace(r,"\""  +QString::number(i)  + "\"");
+                          }
+
+                          replaceLine+= var + ": string=(\""+s.toUpper()+"\");";
+
+                      }
+  //                    qDebug() << replaceLine;
+
+                      // Now load all disk files
+  //                    CIniFile paw;
+    //                  paw.Load()
+
+
+  //_Installer_Binary: 		incbin ("bin/install-c64.bin",$5000);
+    //                  qDebug() << replaceLine;
+  //                    qDebug() << Util::numToHex(loaderPos);
+                      QString orgL =  m_lexer->m_lines[ln];
+
+
+
+                      m_lexer->m_text.replace(orgL,replaceLine+"\n\t");
+                      m_lexer->m_pos-=orgL.count();
+
+
+                      //Eat();
+                  }
+                  else {
+  //                    if (m_pass==0)
+                          HandleUseTPU(type);
+                  }
+    /*              if (!ok) {
+                      ErrorHandler::e.Error("Uknown @use parameter : "+type, m_currentToken.m_lineNumber);
+                  }*/
+              }
+              else {
+                  if (m_macros.contains(m_currentToken.m_value.toLower()))
+                          HandleCallMacro(m_currentToken.m_value.toLower(),false);
+                  else
+                     Eat();
+              }
+
+            /*  else if (m_currentToken.m_value.toLower() =="error") {
+                  Eat(TokenType::PREPROCESSOR);
+                  ErrorHandler::e.Error("Error from preprocessor3: " +m_currentToken.m_value);
+
+              }*/
+
+}
+
+
+void Parser::PreprocessAll()
 {
     m_lexer->Initialize();
     m_lexer->m_ignorePreprocessor = false;
@@ -1866,285 +2158,8 @@ void Parser::Preprocess()
 //        qDebug() << m_currentToken.getType() << m_currentToken.m_value;
 
 
-
         if (m_currentToken.m_type == TokenType::PREPROCESSOR) {
-  //          qDebug() << "***PRE" << m_currentToken.m_value;
-
-
-/*            if (m_currentToken.m_value.toLower()=="include") {
-
-//                QString str = m_currentToken.m_value;
-                Eat(TokenType::PREPROCESSOR);
-                QString name = m_currentToken.m_value;
-                QString filename =(m_currentDir +"/"+ m_currentToken.m_value);
-                filename = filename.replace("//","/");
-                QString text = m_lexer->loadTextFile(filename);
-                int ln=m_lexer->getLineNumber(m_currentToken.m_value)+m_acc;
-                m_lexer->m_text.insert(m_lexer->m_pos, text);
-                int count = text.split("\n").count();
-                m_lexer->m_includeFiles.append(
-                            FilePart(name,ln, ln+ count, ln-m_acc,ln+count-m_acc,count));
-                m_acc-=count-1;
-
-                Eat(TokenType::STRING);
-            }*/
-            if (m_currentToken.m_value.toLower() =="deletefile") {
-                Eat(TokenType::PREPROCESSOR);
-                QString file = m_currentToken.m_value;
-                Eat();
-                if (QFile::exists(m_currentDir+file))
-                    QFile::remove(m_currentDir+file);
-
-            }
-            else
-            if (m_currentToken.m_value.toLower() =="define") {
-                Eat(TokenType::PREPROCESSOR);
-                QString key = m_currentToken.m_value;
-                Eat();
-//                qDebug() << m_currentToken.m_value;
-    //            int i = getIntVal(m_currentToken);
-  //              qDebug() << "After: " << Util::numToHex(i);
-                QString val = m_currentToken.m_value;
-                if (val=="")
-                    val = QString::number(m_currentToken.m_intVal);
-
-                m_preprocessorDefines[key] = val;
-
-//                qDebug() << "Defined: " << key << val;
-
-            }
-            else if (m_currentToken.m_value.toLower() =="ignoresystemheaders") {
-                Eat(TokenType::PREPROCESSOR);
-                Syntax::s.m_currentSystem->m_systemParams["ignoresystemheaders"]="1";
-            }
-
-            else if (m_currentToken.m_value.toLower() =="userdata") {
-                Eat(TokenType::PREPROCESSOR);
-                QString from = m_currentToken.getNumAsHexString();
-                Eat();
-                QString to = m_currentToken.getNumAsHexString();
-                Eat();
-                QString name = m_currentToken.m_value;
-                bool ok;
-                m_userBlocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(Util::NumberFromStringHex(from), Util::NumberFromStringHex(to),
-                                                MemoryBlock::USER, name)));
-
-            }
-            else if (m_currentToken.m_value.toLower() =="projectsettings") {
-                Eat(TokenType::PREPROCESSOR);
-                HandleProjectSettingsPreprocessors();
-
-            }
-            else if (m_currentToken.m_value.toLower() =="buildpaw") {
-                Eat(TokenType::PREPROCESSOR);
-                HandleBuildPaw();
-            }
-            else if (m_currentToken.m_value.toLower() =="spritepacker") {
-                Eat(TokenType::PREPROCESSOR);
-                HandleSpritePacker();
-            }
-            else if (m_currentToken.m_value.toLower()=="compile_akg_music") {
-                Eat(TokenType::PREPROCESSOR);
-                HandleAKGCompiler();
-            }
-
-
-            else if (m_currentToken.m_value.toLower() =="ignoremethod") {
-                Eat(TokenType::PREPROCESSOR);
-                m_ignoreMethods.append(m_currentToken.m_value);
-            }
-            else if (m_currentToken.m_value.toLower() =="export") {
-                Eat(TokenType::PREPROCESSOR);
-                HandleExport();
-            }
-            else if (m_currentToken.m_value.toLower() =="macro") {
-                Eat(TokenType::PREPROCESSOR);
-                HandleMacro();
-            }
-            else if (m_currentToken.m_value.toLower() =="exportrgb8palette") {
-                Eat(TokenType::PREPROCESSOR);
-                HandleExportPalette();
-            }
-            else if (m_currentToken.m_value.toLower() =="exportprg2bin") {
-                Eat(TokenType::PREPROCESSOR);
-                HandleExportPrg2Bin();
-            }
-            else if (m_currentToken.m_value.toLower()=="vicmemoryconfig") {
-                Eat(TokenType::PREPROCESSOR);
-                m_vicMemoryConfig = m_currentToken.m_value;
-                Eat();
-            }
-            else if (m_currentToken.m_value.toLower() =="vbmexport") {
-                Eat(TokenType::PREPROCESSOR);
-                HandleVBMExport();
-            }
-            else if (m_currentToken.m_value.toLower() =="vbmexportchunk") {
-                Eat(TokenType::PREPROCESSOR);
-                HandleVBMExportChunk();
-            }
-            else if (m_currentToken.m_value.toLower() =="exportframe") {
-                Eat(TokenType::PREPROCESSOR);
-                HandleExportFrame();
-            }
-            else if (m_currentToken.m_value.toLower() =="spritecompiler") {
-                Eat(TokenType::PREPROCESSOR);
-                HandleSpriteCompiler();
-            }
-
-            else if (m_currentToken.m_value.toLower() =="importchar") {
-                Eat(TokenType::PREPROCESSOR);
-                HandleImportChar();
-            }
-
-            else if (m_currentToken.m_value.toLower() =="execute") {
-                Eat(TokenType::PREPROCESSOR);
-                HandleExecute();
-            }
-
-            else if (m_currentToken.m_value.toLower() =="startassembler") {
-                Eat(TokenType::PREPROCESSOR);
-                m_initAssembler = m_currentToken.m_value;
-                //m_ignoreMethods.append(m_currentToken.m_value);
-            }
-            else if (m_currentToken.m_value.toLower() =="requirefile") {
-                Eat();
-                QString requiredFile = m_currentToken.m_value;
-                Eat();
-                QString message = m_currentToken.m_value;
-                if (!QFile::exists(m_currentDir+"/"+requiredFile))
-                    ErrorHandler::e.Error("The following file is required for compilation: <font color=\"#FF80A0\">'" + requiredFile + "'</font>.<br><font color=\"#FFB060\">" +message+"</font>", m_currentToken.m_lineNumber);
-
-            }
-            else if (m_currentToken.m_value.toLower() =="raisewarning") {
-                Eat();
-            }
-            else if (m_currentToken.m_value.toLower() =="raiseerror") {
-                Eat();
-/*                qDebug() << "PARSER RAISEERROR " <<m_ignoreAll <<m_pass;
-                if (!m_ignoreAll)
-                    ErrorHandler::e.Error(m_currentToken.m_value, m_currentToken.m_lineNumber);
-                    */
-            }
-            else if (m_currentToken.m_value.toLower() =="use") {
-                Eat();
-                QString type = m_currentToken.m_value;
-                bool ok=false;
-                if (type.toLower()=="krillsloader") {
-                    ok=true;
-                    int ln = Pmm::Data::d.lineNumber;
-
-                    //m_lexer->m_lines.removeAt(ln);
-                    //m_lexer->m_orgText.replace(orgL,"\n");
-                    Eat();
-                    int loaderPos = m_currentToken.m_intVal;
-                    Eat();
-                    int loaderOrgPos = m_currentToken.m_intVal;
-                    Eat();
-                    int installerPos = m_currentToken.m_intVal;
-
-
-                    m_preprocessorDefines["_InstallKrill"] = Util::numToHex(installerPos + 0x1390);
-                    m_preprocessorDefines["_LoadrawKrill"] = Util::numToHex(loaderPos);
-//                    m_preprocessorDefines["_LoadrawKrill"] = Util::numToHex(loaderPos);
-//                    qDebug() << m_preprocessorDefines["_LoadrawKrill"];
-                    m_preprocessorDefines["_ResidentLoaderSource"] = Util::numToHex(loaderOrgPos);
-                    m_preprocessorDefines["_ResidentLoaderDestination"] = Util::numToHex(loaderPos);
-
-
-                    QString pos = QString::number(loaderPos,16);
-                    if (pos=="200") pos = "0200";
-                    QString loaderFile =":resources/bin/krill/loader_PAL_NTSC_"+pos.toUpper()+"-c64.prg";
-                    QString installerFile =":resources/bin/krill/install_PAL_NTSC_"+QString::number(installerPos,16).toUpper()+"-c64.prg";
-
-                    if (!QFile::exists(loaderFile))
-                        ErrorHandler::e.Error("When using krills loader, the loader location must be either 0200, 1000,2000 etc");
-
-                    if (!QFile::exists(installerFile))
-                        ErrorHandler::e.Error("When using krills loader, the installer location must be either 1000, 2000, 3000 etc");
-
-
-                    QString outFolder = m_currentDir+"/auto_bin/";
-                    QString outFolderShort = "auto_bin/";
-
-                    if (!QDir().exists(outFolder))
-                            QDir().mkdir(outFolder);
-
-                    QString outFile = outFolder+"krill_loader.bin";
-                    if (QFile::exists(outFile)) {
-                        QFile f(outFile);
-                        f.remove();
-                    }
-//                    QFile::copy(loaderFile, outFile);
-                    Util::ConvertFileWithLoadAddress(loaderFile,outFile);
-
-                    outFile = outFolder+"krill_installer.bin";
-                    if (QFile::exists(outFile)) {
-                        QFile f(outFile);
-                        f.remove();
-                    }
-                    Util::ConvertFileWithLoadAddress(installerFile,outFile);
-//                    QFile in(installerFile);
-  //                  QByteArray data =
-
-                    //QFile::copy(installerFile, outFile);
-
-                    outFile = outFolderShort+"krill_loader.bin";
-                    QString replaceLine = "_ResidentLoader_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(loaderOrgPos,16)+");";
-                    outFile = outFolderShort+"krill_installer.bin";
-                    replaceLine += "\n_Installer_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(installerPos,16)+");";
-
-                    for (QString s: m_diskFiles) {
-                        QString var = s;
-                        for (int i=0;i<256;i++) {
-                            QString r = "#P"+QString::number(i)+";";
-                            var = var.replace(r,"");
-//                            s = s.replace(r,QChar(i));
- //                           s = s.replace(r,"\""  +QString::number(i)  + "\"");
-                        }
-
-                        replaceLine+= var + ": string=(\""+s.toUpper()+"\");";
-
-                    }
-//                    qDebug() << replaceLine;
-
-                    // Now load all disk files
-//                    CIniFile paw;
-  //                  paw.Load()
-
-
-//_Installer_Binary: 		incbin ("bin/install-c64.bin",$5000);
-  //                  qDebug() << replaceLine;
-//                    qDebug() << Util::numToHex(loaderPos);
-                    QString orgL =  m_lexer->m_lines[ln];
-
-
-
-                    m_lexer->m_text.replace(orgL,replaceLine+"\n\t");
-                    m_lexer->m_pos-=orgL.count();
-
-
-                    //Eat();
-                }
-                else {
-//                    if (m_pass==0)
-                        HandleUseTPU(type);
-                }
-  /*              if (!ok) {
-                    ErrorHandler::e.Error("Uknown @use parameter : "+type, m_currentToken.m_lineNumber);
-                }*/
-            }
-            else {
-                if (m_macros.contains(m_currentToken.m_value.toLower()))
-                        HandleCallMacro(m_currentToken.m_value.toLower(),false);
-                else
-                   Eat();
-            }
-
-          /*  else if (m_currentToken.m_value.toLower() =="error") {
-                Eat(TokenType::PREPROCESSOR);
-                ErrorHandler::e.Error("Error from preprocessor3: " +m_currentToken.m_value);
-
-            }*/
+            PreprocessSingle();
         }
         else Eat();
 //        if (m_currentToken.m_type!=TokenType::PREPROCESSOR)
@@ -2202,12 +2217,19 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     InitSystemPreprocessors();
     bool done = false;
     //while (!done)
-    done = PreprocessIncludeFiles();
+    m_pass = PASS_PRE;
 //    m_symTab->m_constants.clear();
-    Preprocess();
+    PreprocessAll();
+    done = PreprocessIncludeFiles();
+    PreprocessAll();
     ApplyTPUBefore();
+//    qDebug().noquote() << "SOURCE" << m_lexer->m_text;
 //    PreprocessConstants();
-    m_pass = 1;
+  //  m_pass = PASS_PRE;
+
+//    PreprocessAll();
+
+    m_pass = PASS_CODE;
 
 //    if (!m_isTRU)
   //      m_tpus.clear();

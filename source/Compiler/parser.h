@@ -109,6 +109,11 @@ public:
     Token m_currentToken;
     QString m_inCurrentProcedure="";
     bool m_isTRU = false;
+    int PASS_PREPRE = 0;
+    int PASS_PRE = 1;
+    int PASS_CODE = 2;
+    int PASS_OTHER = 4;
+
     int m_pass = 0, m_acc=0;
     bool m_ignoreAll = false;
     bool m_isRecord = false;
@@ -149,7 +154,8 @@ public:
     void StripWhiteSpaceBeforeParenthesis();
     void RemoveComments();
     bool PreprocessIncludeFiles();
-    void Preprocess();
+    void PreprocessAll();
+    void PreprocessSingle();
     void PreprocessReplace();
     void PreprocessIfDefs(bool ifdef);
     void PreprocessConstants();

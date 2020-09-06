@@ -4,7 +4,14 @@ var
 
 @define charLoc $2000
  // use chars 64-72 as fire chars. You could try others here, like 80
-@define fireChar 64
+ 
+@define OPTIMIZED 1 // Optimized, turn to 0 to turn off optimization
+
+
+
+   const fireChar:byte = 64;
+
+
 
 	val,i : byte;
 	x,y,ystart : byte;
@@ -20,7 +27,6 @@ var
 	colorzp: pointer;
 
 // Remove this line to use unoptimized version
-@define OPTIMIZED 1
 
 /*
  	This tutorial shows a typical preferred coding method using the TRSE language: 
@@ -42,7 +48,7 @@ begin
 
 	for y:=0 to 5 do begin // 160*4
 	//	 Original code
-@ifndef OPTIMIZED
+@if OPTIMIZED = 0
 		for x:=0 to 160 onpage do begin
 			// This is the main method for calculating "fire" : current neighbouring values+ lower value
 			val:=screenmemory[x+39]+screenmemory[x+40]+screenmemory[x+41] + screenmemory[x+80];
@@ -51,7 +57,7 @@ begin
 			colorzp[x]:=color[val];
 		end;
 @endif
-@ifdef OPTIMIZED
+@if OPTIMIZED=1
 			
 			// Optimized
 			for x:=0 to 160 onpage do 
@@ -112,7 +118,7 @@ begin
 	ClearScreen(black, screen_col_loc);
 	SetCharsetLocation(@charLoc);
 
-	memcpy(^@charLoc+^@fireChar*^8,0,^@charLoc,0);	
+	memcpy(^@charLoc+fireChar*^8,0,^@charLoc,0);	
 	fill(^@charLoc+^8*^8,$FF,128);
 	
 	while (true) do 

@@ -1,11 +1,12 @@
-@ifdef debug_raster
+
 procedure DebugRaster(dbc:byte);
 begin
+@ifdef debug_raster
 	if (show_raster=1) then 
 		SCREEN_BG_COL:=dbc;
+@endif
 end;
 
-@endif
 
 
 

@@ -14,10 +14,7 @@ var
 */
 
 @requirefile "05_paw_resources_auto_generated.ras" "Please compile the corresponding '05_paw_file.paw' before attempting to compile this program." 
-// The following include file is automatically generated during paw file build
 @include "05_paw_resources_auto_generated.ras"
-
-
 
 begin
 	// Data located in high memory area $A000 range, so disable basic and stuff

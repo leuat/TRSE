@@ -25,6 +25,7 @@ var
 	lookupDiv16 : array[256] of byte;
 
 
+
 	const yStart:byte = 2;
 	const yEnd:byte = 23;
 	const xStart:byte = 1;
@@ -69,7 +70,7 @@ begin
 			// we have created a lookup table instead!
 			c:=lookupDiv16[ (sinx[x] +val) ];
 			// Set the screen memory
-			screenmemory[x]:=c + @baseCharacter;
+			screenmemory[x]:=c + baseCharacter;
 			// Set color memory
 			colorP[x] := fade[ c ];
 

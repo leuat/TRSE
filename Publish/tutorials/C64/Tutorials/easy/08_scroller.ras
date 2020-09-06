@@ -8,7 +8,7 @@ var
 	const kernal : byte = 1;
 	
 // Position of scroller
-   @define ypos 16
+	const ypos : byte = 16;
 // Position of scroller raster line
 	const yposRaster:byte=$A0;
 
@@ -18,7 +18,7 @@ var
 */
 procedure PrintText();
 begin
-	moveto(0,@ypos,hi(screen_char_loc));
+	moveto(0,ypos,hi(screen_char_loc));
 	memcpy(textPointer, 0, screenmemory, screen_width-1);
 end;
 
@@ -56,7 +56,7 @@ begin
 	screen_bg_col:=red;
 	screen_fg_col:=red;
 	scrollx(0); // make sure that everythingin the "TOP" layer doesn't scroll
-	RasterIRQ(Bottom(),@yposRaster,kernal); // bottom os referenced here, so it needs to be forward declared
+	RasterIRQ(Bottom(),yposRaster,kernal); // bottom os referenced here, so it needs to be forward declared
 	// Update text and etc from the "Top" layer
 	UpdateScrollAndText();		
 	CloseIRQ();

@@ -49,8 +49,9 @@ var
 procedure FindAvailableSlot(); // returns j
 begin
 	j:=0;
-	for i:=0 to @maxx do begin
-		if text[i].time=0 then begin 
+	for i:=0 to maxx do begin
+		if text[i].time=0 then
+		begin 
 			j:=i; 
 			return(); 
 		end;
