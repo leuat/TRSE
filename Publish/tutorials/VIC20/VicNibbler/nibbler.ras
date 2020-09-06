@@ -192,8 +192,8 @@ var
 // -------------------------------------------------------------------------------
 // The magic bytes needed at address $A000
 
-@ifdef BUILDCRT
 @startblock $A000 "CARTAUTOSTART"
+@ifdef BUILDCRT
 @donotremove cartAutostart
 procedure cartAutostart();
 begin
@@ -201,8 +201,8 @@ begin
 	cart::Autostart();
 	
 end;
-@endblock
 @endif
+@endblock
 
 // -------------------------------------------------------------------------------
 
