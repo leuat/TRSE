@@ -57,5 +57,4 @@ data_header_resources/charsets/charset.flf = 0
 data_header_resources/images/test4.flf = 6.92678e-310
 data_header_resources/images/logo.flf = 0
 zeropage_colormemory = $fc
-open_files = ,easy/01_hello_world.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/tutorials/
+open_files =, easy/01_hello_world.ras

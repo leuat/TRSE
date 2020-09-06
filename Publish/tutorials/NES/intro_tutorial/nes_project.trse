@@ -49,7 +49,4 @@ data_header_tiles/game_sprite_meta.flf = 0
 charset_levels/game_levels.flf = /home/leuat/code/TRSE/tutorials/NES/intro_tutorial/tiles/game_meta_tiles.flf
 remove_unused_symbols = 1
 ignore_initial_jump = 0
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/NES/intro_tutorial/
 zeropage_colormemory = $fc
-open_files = 6.94586e-310
-current_file = tutorial_4_hello_scrolling.ras
