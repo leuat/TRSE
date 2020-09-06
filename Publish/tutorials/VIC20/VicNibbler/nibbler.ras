@@ -11,26 +11,34 @@ program Nibbler;
 
 var
 
-// these are the 3k RAM expanded PRG settings
-@VicMemoryConfig "3k"
-@projectsettings "ignorebasicsysstart" 0
-@projectsettings "basicsysaddress" $400
-@projectsettings "startaddress" $410
+
 
 @define DEBUG		0	// set to 1 for debugging active (cheat)
+//@define BUILDCRT	1	// uncomment to build as a cartridge
 
 // when building and testing with CART, set mem to ALL
 // uncomment the following six lines:
 
-/* 
-@define BUILDCRT	1
-@VicMemoryConfig "all"
-@projectsettings "ignorebasicsysstart" 0
-@projectsettings "basicsysaddress" $1200
-@projectsettings "startaddress" $A1A0
-@exportprg2bin "nibbler.prg" "a000.prg" $a000 $c000
 
-*/
+@ifndef BUILDCRT
+	// these are the 3k RAM expanded PRG settings
+	@VicMemoryConfig "3k"
+	@projectsettings "ignorebasicsysstart" 0
+	@projectsettings "basicsysaddress" $400
+	@projectsettings "startaddress" $410
+
+@endif
+
+@ifdef BUILDCRT
+
+	@VicMemoryConfig "all"
+	@projectsettings "ignorebasicsysstart" 0
+	@projectsettings "basicsysaddress" $1200
+	@projectsettings "startaddress" $A1A0
+	@exportprg2bin "nibbler.prg" "a000.prg" $a000 $c000
+
+@endif
+
 
 
 
@@ -168,6 +176,7 @@ var
 @ifndef BUILDCRT
 	charset : incbin("bin\nibbler.bin", @CHAR_ADDR);  // custom character set
 @endif
+
 @ifdef BUILDCRT
 	charset : incbin("bin\nibbler.bin", @CHAR_ADDR_CART);  // custom character set
 @endif
@@ -183,17 +192,17 @@ var
 // -------------------------------------------------------------------------------
 // The magic bytes needed at address $A000
 
+@ifdef BUILDCRT
 @startblock $A000 "CARTAUTOSTART"
 @donotremove cartAutostart
-@ifdef BUILDCRT
 procedure cartAutostart();
 begin
 
 	cart::Autostart();
 	
 end;
-@endif
 @endblock
+@endif
 
 // -------------------------------------------------------------------------------
 
