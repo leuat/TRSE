@@ -9,7 +9,7 @@ var
 
 procedure InitTabs();
 begin
-	for i:=0 to 0 do list[i]:=vals[(sine[i]/13)&7];
+	for i:=0 to 255 do list[i]:=vals[(sine[i]/8)&7];
 end;
 
 procedure Render();
@@ -23,7 +23,8 @@ begin
 		j:=sine[k+i*2]/2;
 		j:=j+sine[k+j*2]/4;
 		
-		tp:=list + j;
+		tp:=list;
+		tp:=tp + j;
 		memcpy(tp,0,zp,screen_width);
 		zp:=zp+screen_width;
 		inc(j);

@@ -47,6 +47,6 @@ ignore_initial_jump = 0
 data_header_bin/chars.flf = 6.95265e-310
 data_header_bin\chars.flf = 6.95265e-310
 open_files = ,nibbler.ras
-project_path = C:/src/TRSE/Publish/tutorials/VIC20/VicNibbler/
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/VicNibbler/
 zeropage_colormemory = $fc
 current_file = nibbler.ras

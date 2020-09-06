@@ -1100,31 +1100,35 @@ void Parser::HandlePreprocessorInParsing()
 //    qDebug() <<"VAL " <<m_currentToken.m_value;
 
     if (!m_ignoreAll) {
-    if (m_currentToken.m_value=="ifdef" || m_currentToken.m_value=="if") {
-        PreprocessIfDefs(true);
-        return;
-    }
-    if (m_currentToken.m_value=="ifndef") {
-        PreprocessIfDefs(false);
-        return;
-    }
+        if (m_currentToken.m_value=="ifdef" || m_currentToken.m_value=="if") {
+            PreprocessIfDefs(true);
+            return;
+        }
+        if (m_currentToken.m_value=="ifndef") {
+            PreprocessIfDefs(false);
+            return;
+        }
 
-    if (m_currentToken.m_value=="else") {
-//        qDebug() << "Start with ELSE : " << m_lastIfdef.last() << m_lastKey.last();
-        PreprocessIfDefs(!m_lastIfdef.last());
-        return;
-    }
-    }
-    if (m_currentToken.m_value=="endif") {
-        if (m_lastKey.count()==0)
-            ErrorHandler::e.Error("Preprocessor '@endif' mismatch error", m_currentToken.m_lineNumber);
+        if (m_currentToken.m_value=="else") {
+            //        qDebug() << "Start with ELSE : " << m_lastIfdef.last() << m_lastKey.last();
+            PreprocessIfDefs(!m_lastIfdef.last());
+            return;
+        }
+        if (m_currentToken.m_value=="endif") {
 
-        m_lastKey.removeLast();
-        m_lastIfdef.removeLast();
-        Eat();
-        return;
-    }
+            qDebug() << "ENDIF " <<m_lastKey;
 
+            if (m_lastKey.count()==0)
+                ErrorHandler::e.Error("Preprocessor '@endif' mismatch error", m_currentToken.m_lineNumber);
+
+            m_lastKey.removeLast();
+            m_lastIfdef.removeLast();
+            Eat();
+            return;
+        }
+
+
+    }
 
 
 
@@ -1132,7 +1136,7 @@ void Parser::HandlePreprocessorInParsing()
         int i = m_pass;
         m_pass = PASS_OTHER;
         Eat();
-        m_pass=i;
+        m_pass = i;
 //        qDebug() << "HandleCurrent Endblock " << Node::m_staticBlockInfo.m_blockPos;
         Node::m_staticBlockInfo.m_blockID = -1;
         Node::m_staticBlockInfo.m_blockPos = "";

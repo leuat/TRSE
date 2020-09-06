@@ -3,7 +3,7 @@ program Tutorial3_Plasma;
 @use "input"
 
 // Turn on / off optimizing. Understanding the unoptimized version is much easier!
-@define OPTIMIZED 1
+@define OPTIMIZED 1 // 0 (off) or 1 (on)
 
 var  
 	done,i1,j,time,tmp: byte; 
