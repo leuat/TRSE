@@ -21,7 +21,6 @@ void DemoEffectRaytracer::Initialize()
        if (m_mc==nullptr)
            delete m_mc;
        m_mc = new CharsetImage(LColorList::C64);
-
        //((CharsetImage*)(m_mc))->m_currentMode = CharsetImage::FULL_IMAGE;
 
    }
@@ -131,6 +130,7 @@ void DemoEffectRaytracer::Render(QImage &img)
 
     if (m_outputType==RayTracerGlobals::output_type_c64)
         ConvertToC64(m_rt->m_globals.m_dither,m_rt->m_globals.m_multicolor==1,m_rt->m_globals.m_ditherStrength);
+
     if (m_outputType==RayTracerGlobals::output_type_pico8)
         ConvertToP8(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
 

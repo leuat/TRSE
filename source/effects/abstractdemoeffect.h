@@ -63,16 +63,20 @@ public:
     {
         if (!(m_outputType==1  || m_outputType==5))
             return;
-//        qDebug() <<"HERE";
         m_mc->setMultiColor(isMulticolor);
-//        qDebug() << "Dither " << dither;
-        if (m_cols.count()>=4) {
-            m_mc->SetColor(m_cols[0],0);
-            m_mc->SetColor(m_cols[1],1);
-            m_mc->SetColor(m_cols[3],2);
-            m_mc->SetColor(m_cols[2],3);
-        }
+            m_mc->m_colorList.DefaultPen(LPen::Type::FixedSingle,m_cols.count());
+            for (int i=0;i<m_cols.count();i++)
+                m_mc->m_colorList.setPen(i,m_cols[i]);
+
+
+//            m_mc->m_colorList.DefaultPen(LPen::Type::FixedSingle);
+
+
+        m_mc->setBackground(m_cols[0]);
+        m_mc->m_footer.set(LImageFooter::POS_DISPLAY_MULTICOLOR,isMulticolor==1);
+        m_mc->m_footer.set(LImageFooter::POS_DISPLAY_HYBRID,0);
         int size = 2;
+   //     m_mc->m_forcePaintColorAndChar = false;
         m_mc->m_colorList.EnableColors(m_cols);
         if (dither==1)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);

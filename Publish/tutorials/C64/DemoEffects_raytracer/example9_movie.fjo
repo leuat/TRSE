@@ -25,7 +25,7 @@ output = {
 	aspect = 1,
 	dither = 1,
 	ditherStrength = {x=1, y=1, z=1},
-	index_colors = { 0,4,1,6 }
+	index_colors = { 0,4,6,1 }
 }
 
 

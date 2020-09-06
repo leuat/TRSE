@@ -46,7 +46,9 @@ output = {
 	c64_imageType = 0, -- 0 = character set (4 colors, compressable), 1 = multicolor image 
 	c64_multicolor = 1,
 	-- Define the 4 colors (black, purple, white, blue)
-	index_colors = { 0,4,1,6 }
+--	index_colors = { 0,4,1,6 }
+	index_colors = { 0,4,6,1 }
+
 }
 
 -- Two materials in this scene: a regular one and a black one

@@ -26,7 +26,7 @@ output = {
 	dither = 0,
 	ditherStrength = { x = 30, y= 1, z= 1},
 
-	index_colors = { 0,3,1,6 }
+	index_colors = { 0,14,6,1 }
 }
 
 

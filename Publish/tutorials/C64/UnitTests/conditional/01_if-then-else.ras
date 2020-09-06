@@ -329,6 +329,16 @@ begin
 	text := "   B1:"; if (7 > 5)  then begin PASS(); nop(120);end else begin FAIL(); end;
 end;
 
+// when v1 is 255 and v2 is 0
+procedure AdvancedI4();
+begin
+	i1:=$600;
+	v1:=$F0;	
+	text := "   AI:"; asm(";bummer");if ((i1 > $501) and (i1 < $551)) then FAIL() else PASS();
+//	text := "   AI:"; asm(";bummer");if ((i1 > $551)) then FAIL() else PASS();
+//	text := "   AI:"; asm(";bummer");if (v1 > $20 and v1 < $50) then FAIL() else PASS();
+end;
+
 
 
 //--------------------------------------------------------------------------------------------
@@ -397,6 +407,7 @@ begin
 	AdvancedI1();
 	AdvancedI2();
 	AdvancedI3();
+	AdvancedI4();
 
 //	BranchSize1();
 

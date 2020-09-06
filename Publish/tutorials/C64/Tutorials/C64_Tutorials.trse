@@ -50,4 +50,6 @@ data_header_resources/images/octopus.flf = 6.93276e-310
 data_header_resources/images/jack.flf = 0
 data_header_resources/charsets/charset_16x16.flf = 0
 zeropage_colormemory = $fc
-open_files =, Hello.ras
+open_files = ,resources/charsets/charset.flf, resources/images/jack.flf, Hello.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
+current_file = resources/images/jack.flf

@@ -854,66 +854,51 @@ void LColorList::DefaultPen(LPen::Type type, int cnt)
 
 QColor LColorList::getClosestColor(QColor col, int& winner)
 {
-    float d = 1E20;
-//    qDebug() << "WHOO";
-    winner = 0;
 
-    for (int i=0;i<m_pens.count();i++) {
+    float d = 1E20;
+    //    qDebug() << "WHOO";
+    winner = 0;
+    if (m_selectClosestFromPen) {
+
+        for (int i=0;i<m_pens.count();i++) {
             //qDebug() << "Metric:";
-            if (!m_list[i].inUse)
-                continue;
+
             int pen = m_pens[i]->Get();
+
             if (pen>=m_list.count())
                 continue;
+
+            if (!m_list[pen].inUse)
+                continue;
+
+
             float v = m_metric->getDistance(m_list[pen].color, col);
+            //qDebug() << "end:";
+            if (v<d) {
+                d = v;
+                winner = pen;
+            }
+        }
+        return m_list[winner].color;
+    }
+      else
+      {
+        for (int i=0;i<m_list.count();i++) {
+            //qDebug() << "Metric:";
+
+            if (!m_list[i].inUse)
+                continue;
+
+            float v = m_metric->getDistance(m_list[i].color, col);
             //qDebug() << "end:";
             if (v<d) {
                 d = v;
                 winner = i;
             }
         }
-    /*    if (rand()%500==0) {
-            qDebug() << "Testing for: " << col.red() << ", " << col.green() << ", " << col.blue();
-            qDebug() << "Winner: " <<m_list[winner].color.red() << ", " <<m_list[winner].color.green() << ", " << m_list[winner].color.blue();
-        }*/
-    return m_list[winner].color;
-/*
+        return m_list[winner].color;
 
-
-    if (m_type==NES) {
-        winner = m_nesCols[0];
-        for (int i=0;i<4;i++) {
-            //qDebug() << "Metric:";
-            int j=m_nesCols[i];
-
-            float v = m_metric->getDistance(m_list[j].color, col);
-            //qDebug() << "end:";
-            if (v<d) {
-//                qDebug() << winner;
-                d = v;
-                winner = j;
-            }
-        }
-     //   qDebug() << "WINNER "<<Util::numToHex(winner);
-
-   }
-
-    else
-    for (int i=0;i<m_list.count();i++) {
-        //qDebug() << "Metric:";
-        if (!m_list[i].inUse)
-            continue;
-        float v = m_metric->getDistance(m_list[i].color, col);
-        //qDebug() << "end:";
-        if (v<d) {
-            d = v;
-            winner = i;
-        }
-    }
-
-    */
-    return getPenColour(winner);
-//    return m_list[winner].color;
+      }
 
 }
 

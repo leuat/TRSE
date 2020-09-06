@@ -111,6 +111,7 @@ public:
     bool m_isTRU = false;
     int PASS_PREPRE = 0;
     int PASS_PRE = 1;
+    int PASS_FIRST = 10;
     int PASS_CODE = 2;
     int PASS_OTHER = 4;
 

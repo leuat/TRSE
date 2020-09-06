@@ -1116,7 +1116,7 @@ void Parser::HandlePreprocessorInParsing()
         }
         if (m_currentToken.m_value=="endif") {
 
-            qDebug() << "ENDIF " <<m_lastKey;
+//            qDebug() << "ENDIF " <<m_lastKey;
 
             if (m_lastKey.count()==0)
                 ErrorHandler::e.Error("Preprocessor '@endif' mismatch error", m_currentToken.m_lineNumber);
@@ -1908,7 +1908,7 @@ void Parser::PreprocessSingle() {
                   if (val=="")
                       val = QString::number(m_currentToken.m_intVal);
 
-                  if (m_pass == PASS_PRE)
+                  if (m_pass == PASS_PRE || m_pass == PASS_FIRST)
                       m_preprocessorDefines[key] = val;
 
 //                  if (m_pass == PASS_PRE)
@@ -2221,9 +2221,10 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     InitSystemPreprocessors();
     bool done = false;
     //while (!done)
-    m_pass = PASS_PRE;
+    m_pass = PASS_FIRST;
 //    m_symTab->m_constants.clear();
     PreprocessAll();
+    m_pass = PASS_PRE;
     done = PreprocessIncludeFiles();
     PreprocessAll();
     ApplyTPUBefore();
@@ -3593,6 +3594,9 @@ void Parser::HandleAKGCompiler()
     int addr = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST); // X
 
+    if (m_pass!=PASS_PRE)
+        return;
+
     if (!Tool::AKGCompiler(m_currentDir+filename,addr,m_symTab.get()))
         ErrorHandler::e.Error("Could not find music for inclusion : "+filename+".asm");
 }
@@ -3613,12 +3617,19 @@ void Parser::HandleSpriteCompiler()
     int h = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST); // H
 
+    QString id = "drawsprite_cga_"+name;
+
+    if (m_pass!=PASS_PRE)
+        return;
+
+//    if (Syntax::s.builtInFunctions.contains(id))
+  //      return;
+
     LImage* img = LImageIO::Load(m_currentDir +"/"+filename);
     m_parserAppendix << img->SpriteCompiler(name,"","",x,y,w,h);
 
 
 
-    QString id = "drawsprite_cga_"+name;
     QList<BuiltInFunction::Type> paramList;
     paramList<<BuiltInFunction::ADDRESS;
     paramList<<BuiltInFunction::ADDRESS;
@@ -3655,6 +3666,8 @@ void Parser::HandleSpritePacker()
     Eat(TokenType::INTEGER_CONST); // H
     int comp = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST); // H
+    if (m_pass!=PASS_PRE)
+        return;
 
     LImage* imgChrOut = nullptr;
     LImage* imgSrc = nullptr;

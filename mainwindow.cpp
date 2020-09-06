@@ -1677,6 +1677,8 @@ void MainWindow::LoadProject(QString filename)
     QObject::connect(m_watcher.get(), SIGNAL(directoryChanged(QString)), this, SLOT(RefreshFileList()));
     QObject::connect(m_watcher.get(), SIGNAL(fileChanged(QString)), this, SLOT(RefreshFileList()));
     UpdateSymbolTree();
+    RefreshFileList();
+    update();
 }
 
 

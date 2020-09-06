@@ -60,6 +60,10 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 //    m_image->Clear();
     m_image->m_colorList.CopyFrom(&img->m_colorList);
 
+   if (m_image->m_colorList.m_type == LColorList::C64)
+       m_image->m_colorList.m_selectClosestFromPen = false;
+
+
     LImageVIC20* vic = dynamic_cast<LImageVIC20*>(img);
     if (vic!=nullptr) {
         LImageVIC20* i = dynamic_cast<LImageVIC20*>(m_image);

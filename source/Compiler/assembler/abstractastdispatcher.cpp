@@ -255,8 +255,11 @@ void AbstractASTDispatcher::HandleCompoundBinaryClause(QSharedPointer<Node> node
     }
 
     if (node->m_op.m_type == TokenType::AND) {
-        HandleCompoundBinaryClause(node->m_left,  lblFailed, lblSuccess, offpage);
-        as->Comment("; logical AND");
+        QString lblLocalSuccess = as->NewLabel("localsuccess");
+//        HandleCompoundBinaryClause(node->m_left,  lblFailed, lblSuccess, offpage);
+        HandleCompoundBinaryClause(node->m_left,  lblFailed, lblLocalSuccess, offpage);
+        as->Label(lblLocalSuccess+": ;keep");
+        as->Comment("; logical AND, second requirement");
         HandleCompoundBinaryClause(node->m_right,  lblFailed,lblSuccess,offpage);
     }
     if (node->m_op.m_type == TokenType::OR) {
