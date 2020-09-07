@@ -1678,7 +1678,7 @@ void MainWindow::LoadProject(QString filename)
     QObject::connect(m_watcher.get(), SIGNAL(fileChanged(QString)), this, SLOT(RefreshFileList()));
     UpdateSymbolTree();
     RefreshFileList();
-    update();
+    ui->treeFiles->setFocus();
 }
 
 

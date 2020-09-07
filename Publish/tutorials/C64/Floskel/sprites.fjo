@@ -30,7 +30,7 @@ output = {
 	c64_imageType = 0, -- charset-based colors
 	dither = 2,
 	ditherStrength = { x = 10, y= 1, z= 1},
-	index_colors = { 0,4,6,3 }
+	index_colors = { 0,4,3,6 }
 }
 
 Material0 = {
