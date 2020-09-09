@@ -28,7 +28,6 @@ var
 // Fills a certain cell
 
 
-// Plasma procedure, optimized
 
 procedure CalculatePlasmaTables();
 begin
@@ -59,6 +58,7 @@ begin
 
 end;
 
+// Plasma procedure, optimized
 
 procedure PlasmaOptimized();
 begin

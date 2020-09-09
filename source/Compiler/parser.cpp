@@ -2504,6 +2504,148 @@ QSharedPointer<Node> Parser::String()
 }
 
 
+void Parser::VarDeclarations(QVector<QSharedPointer<Node>>& decl, QString blockName) {
+    Eat(TokenType::VAR);
+//      qDebug() << "PARSER INSIDE " <<isMain  <<m_currentToken.getType();
+    while (m_currentToken.m_type==TokenType::ID || m_currentToken.m_type == TokenType::CONSTANT) {
+
+        if (m_currentToken.m_type == TokenType::CONSTANT) {
+            ConstDeclaration();
+        }
+        else {
+
+            QVector<QSharedPointer<Node>> ns = VariableDeclarations(blockName);
+
+            for (QSharedPointer<Node> n: ns)
+                decl.append(n);
+        }
+        Eat(TokenType::SEMI);
+    }
+
+}
+
+void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString blokName)
+{
+    int type=0;
+    if (m_currentToken.m_type == TokenType::INTERRUPT) type=1;
+    if (m_currentToken.m_type == TokenType::WEDGE) type=2;
+    bool isFunction = m_currentToken.m_type == TokenType::FUNCTION;
+ //   bool isInterrupt= (m_currentToken.m_type==TokenType::PROCEDURE)?false:true;
+    Token tok = m_currentToken;
+    Eat(m_currentToken.m_type);
+    bool isInline = false;
+    QString procName =m_symTab->m_gPrefix+ m_currentToken.m_value;
+
+    m_inCurrentProcedure = procName;
+    //qDebug() << tok.m_value  << " : " << procName;
+    Eat(TokenType::ID);
+    //exit(1);
+    QVector<QSharedPointer<Node>> paramDecl;
+    if (m_currentToken.m_type==TokenType::LPAREN)
+        paramDecl = Parameters(procName);
+    //qDebug()<< "current : " << m_currentToken.getType();
+    // If no parameters
+    if (m_currentToken.m_type==TokenType::RPAREN)
+        Eat(TokenType::RPAREN);
+
+    if (m_currentToken.m_type == TokenType::INLINE) {
+        isInline = true;
+        Eat(TokenType::INLINE);
+    }
+    QSharedPointer<Node> funcType;
+    if (isFunction) {
+        Eat(TokenType::COLON);
+        funcType = TypeSpec();
+        auto t = qSharedPointerDynamicCast<NodeVarType>(funcType);
+        if (!(t->value.toLower()=="integer" || t->value.toLower()=="byte")) {
+            ErrorHandler::e.Error("TRSE currently only supports return values of type 'byte' and 'integer'",t->m_op.m_lineNumber);
+        }
+
+
+    }
+
+
+    Eat(TokenType::SEMI);
+    QSharedPointer<Node> block = nullptr;
+    QSharedPointer<NodeProcedureDecl> procDecl = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(tok, procName, paramDecl, block, type));
+    procDecl->m_fileName = m_currentFileShort;
+    procDecl->m_isInline = isInline;
+    procDecl->m_isFunction = isFunction;
+    AppendComment(procDecl);
+
+    if (m_procedures[procName]!=nullptr) {
+        procDecl->m_isUsed = m_procedures[procName]->m_isUsed;
+        // Make sure that the correct number of parameters + types etc are identical for the forward declared procedure
+        QSharedPointer<NodeProcedureDecl> existing = qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]);
+        if (existing->m_paramDecl.count()!=procDecl->m_paramDecl.count())
+            ErrorHandler::e.Error("Forward declared procedure '"+ WashVariableName(procName) +"' has incorrect number of parameters. ", tok.m_lineNumber);
+
+        for (int i=0;i<existing->m_paramDecl.count();i++) {
+            QSharedPointer<NodeVarDecl> a = qSharedPointerDynamicCast<NodeVarDecl>(existing->m_paramDecl[i]);
+            QSharedPointer<NodeVarDecl> b = qSharedPointerDynamicCast<NodeVarDecl>(procDecl->m_paramDecl[i]);
+            if ( qSharedPointerDynamicCast<NodeVar>(a->m_varNode)->value!=
+                 qSharedPointerDynamicCast<NodeVar>(b->m_varNode)->value)
+                ErrorHandler::e.Error("Forward declared procedure '"+ WashVariableName(procName) +"' has incorrect or missing declared parameter '"+WashVariableName(qSharedPointerDynamicCast<NodeVar>(a->m_varNode)->value)+"'", tok.m_lineNumber);
+
+            if ( qSharedPointerDynamicCast<NodeVarType>(a->m_typeNode)->value!=
+                 qSharedPointerDynamicCast<NodeVarType>(b->m_typeNode)->value)
+                ErrorHandler::e.Error("Forward declared procedure '"+ WashVariableName(procName) +
+                                      "' has incorrect declared parameter type for parameter '"+WashVariableName(qSharedPointerDynamicCast<NodeVar>(a->m_varNode)->value)+"', should be "
+                                      +WashVariableName(qSharedPointerDynamicCast<NodeVarType>(a->m_typeNode)->value), tok.m_lineNumber);
+
+
+        }
+//            qDebug() << procName << procDecl->m_paramDecl.count() << existing->m_paramDecl.count();
+
+    }
+    m_procedures[procName] = procDecl;
+//        qDebug() << "Adding to GLOBAL list: " <<procName;
+    m_symTab->m_globalList.append(procName);
+    if (isFunction)
+        qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName])->m_returnType = funcType;
+
+
+
+    // For recursive procedures, it is vital that we forward declare the current procedure
+    block = Block(false, procName);
+//        if (block==nullptr)
+//          qDebug() << "Procedure decl: " << procName;
+    //decl.append(procDecl);
+    if (block!=nullptr)
+        Eat(TokenType::SEMI);
+    else {
+        // Forward declared variables are used
+        procDecl->m_isUsed = true;
+
+    }
+
+    procDecl->AppendBlock(block);
+    //qDebug() <<procName;
+
+    if (block!=nullptr) {
+        bool ok = true;
+         // Check if procedure already declared
+        for (QSharedPointer<Node> n: m_proceduresOnly) {
+            QSharedPointer<NodeProcedureDecl> proc =qSharedPointerDynamicCast<NodeProcedureDecl>(n);
+            if (proc->m_procName==procName) {
+                ok = false;
+                // Verify that the parameters are identical:
+            }
+
+
+        }
+        if (!ok)
+            ErrorHandler::e.Error("Procedure '"+ procName +"' already defined", tok.m_lineNumber);
+
+        m_proceduresOnly.append(procDecl);
+    }
+
+
+
+}
+
+
+
 QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockName, bool hasBlock )
 {
     QVector<QSharedPointer<Node>> decl;
@@ -2514,163 +2656,16 @@ QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockNam
             ErrorHandler::e.Error("Main program must start with 'var' keyword",m_currentToken.m_lineNumber);
 
 */
-    if (m_currentToken.m_type==TokenType::VAR) {
-        Eat(TokenType::VAR);
-  //      qDebug() << "PARSER INSIDE " <<isMain  <<m_currentToken.getType();
-        while (m_currentToken.m_type==TokenType::ID || m_currentToken.m_type == TokenType::CONSTANT) {
 
-            if (m_currentToken.m_type == TokenType::CONSTANT) {
-                ConstDeclaration();
-            }
-            else {
 
-                QVector<QSharedPointer<Node>> ns = VariableDeclarations(blockName);
-
-                for (QSharedPointer<Node> n: ns)
-                    decl.append(n);
-            }
-            Eat(TokenType::SEMI);
+    while (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type == TokenType::WEDGE  || m_currentToken.m_type==TokenType::FUNCTION || m_currentToken.m_type==TokenType::VAR) {
+        if (m_currentToken.m_type==TokenType::VAR) {
+            VarDeclarations(decl, blockName);
         }
-    }
-
-
-
-
-/*
-    while (m_currentToken.m_type==TokenType::ID || m_currentToken.m_type==TokenType::PROCEDURE ||
-           m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type == TokenType::VAR) {
-
-
-    if (m_currentToken.m_type==TokenType::VAR) {
-        Eat(TokenType::VAR);
-        continue;
-    }
-
-    if (m_currentToken.m_type==TokenType::ID) {
-            QVector<QSharedPointer<Node>> ns = VariableDeclarations();
-            for (QSharedPointer<Node> n: ns)
-                decl.append(n);
-            Eat(TokenType::SEMI);
-            continue;
-     }
-
-
-*/
-    while (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type == TokenType::WEDGE  || m_currentToken.m_type==TokenType::FUNCTION) {
-        int type=0;
-        if (m_currentToken.m_type == TokenType::INTERRUPT) type=1;
-        if (m_currentToken.m_type == TokenType::WEDGE) type=2;
-        bool isFunction = m_currentToken.m_type == TokenType::FUNCTION;
-     //   bool isInterrupt= (m_currentToken.m_type==TokenType::PROCEDURE)?false:true;
-        Token tok = m_currentToken;
-        Eat(m_currentToken.m_type);
-        bool isInline = false;
-        QString procName =m_symTab->m_gPrefix+ m_currentToken.m_value;
-
-        m_inCurrentProcedure = procName;
-        //qDebug() << tok.m_value  << " : " << procName;
-        Eat(TokenType::ID);
-        //exit(1);
-        QVector<QSharedPointer<Node>> paramDecl;
-        if (m_currentToken.m_type==TokenType::LPAREN)
-            paramDecl = Parameters(procName);
-        //qDebug()<< "current : " << m_currentToken.getType();
-        // If no parameters
-        if (m_currentToken.m_type==TokenType::RPAREN)
-            Eat(TokenType::RPAREN);
-
-        if (m_currentToken.m_type == TokenType::INLINE) {
-            isInline = true;
-            Eat(TokenType::INLINE);
+        else
+        {
+            ProcDeclarations(decl, blockName);
         }
-        QSharedPointer<Node> funcType;
-        if (isFunction) {
-            Eat(TokenType::COLON);
-            funcType = TypeSpec();
-            auto t = qSharedPointerDynamicCast<NodeVarType>(funcType);
-            if (!(t->value.toLower()=="integer" || t->value.toLower()=="byte")) {
-                ErrorHandler::e.Error("TRSE currently only supports return values of type 'byte' and 'integer'",t->m_op.m_lineNumber);
-            }
-
-
-        }
-
-
-        Eat(TokenType::SEMI);
-        QSharedPointer<Node> block = nullptr;
-        QSharedPointer<NodeProcedureDecl> procDecl = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(tok, procName, paramDecl, block, type));
-        procDecl->m_fileName = m_currentFileShort;
-        procDecl->m_isInline = isInline;
-        procDecl->m_isFunction = isFunction;
-        AppendComment(procDecl);
-
-        if (m_procedures[procName]!=nullptr) {
-            procDecl->m_isUsed = m_procedures[procName]->m_isUsed;
-            // Make sure that the correct number of parameters + types etc are identical for the forward declared procedure
-            QSharedPointer<NodeProcedureDecl> existing = qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]);
-            if (existing->m_paramDecl.count()!=procDecl->m_paramDecl.count())
-                ErrorHandler::e.Error("Forward declared procedure '"+ WashVariableName(procName) +"' has incorrect number of parameters. ", tok.m_lineNumber);
-
-            for (int i=0;i<existing->m_paramDecl.count();i++) {
-                QSharedPointer<NodeVarDecl> a = qSharedPointerDynamicCast<NodeVarDecl>(existing->m_paramDecl[i]);
-                QSharedPointer<NodeVarDecl> b = qSharedPointerDynamicCast<NodeVarDecl>(procDecl->m_paramDecl[i]);
-                if ( qSharedPointerDynamicCast<NodeVar>(a->m_varNode)->value!=
-                     qSharedPointerDynamicCast<NodeVar>(b->m_varNode)->value)
-                    ErrorHandler::e.Error("Forward declared procedure '"+ WashVariableName(procName) +"' has incorrect or missing declared parameter '"+WashVariableName(qSharedPointerDynamicCast<NodeVar>(a->m_varNode)->value)+"'", tok.m_lineNumber);
-
-                if ( qSharedPointerDynamicCast<NodeVarType>(a->m_typeNode)->value!=
-                     qSharedPointerDynamicCast<NodeVarType>(b->m_typeNode)->value)
-                    ErrorHandler::e.Error("Forward declared procedure '"+ WashVariableName(procName) +
-                                          "' has incorrect declared parameter type for parameter '"+WashVariableName(qSharedPointerDynamicCast<NodeVar>(a->m_varNode)->value)+"', should be "
-                                          +WashVariableName(qSharedPointerDynamicCast<NodeVarType>(a->m_typeNode)->value), tok.m_lineNumber);
-
-
-            }
-//            qDebug() << procName << procDecl->m_paramDecl.count() << existing->m_paramDecl.count();
-
-        }
-        m_procedures[procName] = procDecl;
-//        qDebug() << "Adding to GLOBAL list: " <<procName;
-        m_symTab->m_globalList.append(procName);
-        if (isFunction)
-            qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName])->m_returnType = funcType;
-
-
-
-        // For recursive procedures, it is vital that we forward declare the current procedure
-        block = Block(false, procName);
-//        if (block==nullptr)
-  //          qDebug() << "Procedure decl: " << procName;
-        //decl.append(procDecl);
-        if (block!=nullptr)
-            Eat(TokenType::SEMI);
-        else {
-            // Forward declared variables are used
-            procDecl->m_isUsed = true;
-
-        }
-
-        procDecl->AppendBlock(block);
-        //qDebug() <<procName;
-
-        if (block!=nullptr) {
-            bool ok = true;
-             // Check if procedure already declared
-            for (QSharedPointer<Node> n: m_proceduresOnly) {
-                QSharedPointer<NodeProcedureDecl> proc =qSharedPointerDynamicCast<NodeProcedureDecl>(n);
-                if (proc->m_procName==procName) {
-                    ok = false;
-                    // Verify that the parameters are identical:
-                }
-
-
-            }
-            if (!ok)
-                ErrorHandler::e.Error("Procedure '"+ procName +"' already defined", tok.m_lineNumber);
-
-            m_proceduresOnly.append(procDecl);
-        }
-
     }
 //    }
    // qDebug() << "Finally:" << m_currentToken.getType();

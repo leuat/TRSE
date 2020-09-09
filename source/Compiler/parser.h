@@ -173,6 +173,10 @@ public:
     void RemoveUnusedProcedures();
     void RemoveUnusedSymbols(QSharedPointer<NodeProgram> root);
     QSharedPointer<Node> Parse(bool removeUnusedDecls, QString param, QString globalDefines, bool useLocals);
+    void VarDeclarations(QVector<QSharedPointer<Node>>& decl, QString blokName);
+    void ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString blokName);
+
+
     QSharedPointer<Node> Variable(bool isSubVar=false);
     QSharedPointer<Node> SubVariable(QString parent);
     QSharedPointer<Node> Empty();

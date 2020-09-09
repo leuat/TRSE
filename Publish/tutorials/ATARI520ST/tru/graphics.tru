@@ -1,5 +1,20 @@
 Unit Graphics;
 var  
+	@donotremove above1
+	@donotremove above2
+	@donotremove above3
+	@donotremove above4
+	above1 : array[511] of byte aligned;
+	screen1Buf : array[180*200] of byte aligned;
+	//above2 : array[4096] of byte aligned; 
+	screen2Buf : array[180*200] of byte aligned; 
+	empty : array[512] of byte aligned;
+
+
+
+	rnd : array[256] of integer = buildtable("Math.random()*0xFFFF");
+	screen_tab : pointer of long;
+	
    curBufIndex, i,k,j,l,m,n,c1,c2: integer = 0; 
    p1,p2,addr,curBuf,offBuf,buf1,buf2 : pointer of integer;
    col,x,y : integer;
@@ -9,23 +24,7 @@ var
 	hTabMainCol : array[64*2] of integer;
 	htabIn, htabOut : array[64*16] of integer;
 	@donotremove empty
-	empty : array[512] of byte aligned;
-	@donotremove above1
-	@donotremove above2
-	@donotremove above3
-	@donotremove above4
-	
-	above1 : array[512] of byte aligned;
-	screen1Buf : array[4096*8] of byte aligned;
-	above2 : array[512] of byte aligned;
-	above3 : array[512] of byte aligned;
-	screen2Buf : array[4096*8] of byte aligned; 
-	above4 : array[512] of byte aligned;
 
-	screen_tab : pointer of long;
-
-
-	rnd : array[256] of integer = buildtable("Math.random()*0xFFFF");
 	
 
 	screentab1, screentab2 : array[256] of long aligned;
