@@ -127,6 +127,7 @@ begin
 			
 		end;
 	end;
+//	asm(";here");
 	
 	index := bitmapstart;
 	k:=0;

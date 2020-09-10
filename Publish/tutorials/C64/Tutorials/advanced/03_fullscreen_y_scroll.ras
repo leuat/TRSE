@@ -36,12 +36,12 @@ procedure CopyColor( ul2_copycolor:byte );
 begin
 	 if ul2_copycolor=0 then begin
 		// First, copy the missing line
-		memcpyfast(screen_col_loc+^$208, 0, temp_colorCopy, 40);
+		memcpyfast(screen_col_loc+^$208, 0, #temp_colorCopy, 40);
 		copyhalfscreen(screen_col_loc, screen_col_loc+^40,13, 1,1);
 	end
 	else begin 
 		copyhalfscreen(screen_col_loc+^14*^40 , screen_col_loc+^15*^40,10,1,1);
-		memcpyfast(temp_colorCopy, 0, screen_col_loc + ^14*^40, 40);
+		memcpyfast(#temp_colorCopy, 0, screen_col_loc + ^14*^40, 40);
 
 	end;
 end;

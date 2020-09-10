@@ -120,7 +120,7 @@ begin
 		if val>=64 then begin
 			y:=sine[shift];
 			// Calculate position in character map: (val-64)*8 bytes, use address table
-			p1:=addressTable(eightTable,0,val-64);
+			p1:=addressTable(#eightTable,0,val-64);
 			// Copy 8 bytes from the original character location to the char memory space
 			p2:=zeropage2+y+4;
 			memcpyunroll(p1,0,p2,8);
@@ -237,7 +237,7 @@ procedure InitScreenCharsAndColor();
 begin
 	k:=0;
 	moveto(0,@yrow,hi(screen_char_loc));
-	zeropage5 := text;
+	zeropage5 := #text;
 	scroll := 7;
 	i:=0;
 	for i:=0 to screen_width do begin
@@ -271,7 +271,7 @@ begin
 	// change sine table, divide by 12
 	for a:=0 to 256 do sine[a]:=sine[a]/12;
 	// Create a lookup table for character data
-	createaddresstable(eightTable, @charmap, 8, @noChars); // only need 32 chars
+	createaddresstable(#eightTable, @charmap, 8, @noChars); // only need 32 chars
 
 	SetCharsetLocation(@charLoc);
 	hideborderx(1);
@@ -283,7 +283,7 @@ begin
 	screen_bg_col:=black;
 
 	// copy image data to bank 2 ($8400 etc) 
-	copyimagecolordata(image_color,2);
+	copyimagecolordata(#image_color,2);
 	// Initialize screen data (drawing chars, colors)
 	InitScreenCharsAndColor();
 

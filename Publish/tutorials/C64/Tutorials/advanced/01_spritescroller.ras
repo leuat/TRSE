@@ -132,7 +132,7 @@ begin
 	if (k=key_space) then  // skip on $20
 	begin
 		ep:=ep+1;
-		if (ep[0]=0) then ep:=scrollerText;
+		if (ep[0]=0) then ep:=#scrollerText;
 		return();
 	end;
 	if (k>64) then begin
@@ -168,7 +168,7 @@ begin
 	sprite_stretch_X:=$FF;
 	sprite_stretch_Y:=$FF;
 
-	fill(textSprite_status,0,maxTextSprites);
+	fill(#textSprite_status,0,maxTextSprites);
 	// Set up sine function
 	for i:=0 to 0 do
 		temp2[i]:=sine[i]/@spriteScrollerWaviness;
@@ -192,7 +192,7 @@ begin
 	disableciainterrupts();	
 	setmemoryconfig(1,useKernal,0);
 	Init16x16Sprites();
-	ep:=scrollerText;
+	ep:=#scrollerText;
 	StartRasterChain(RasterMain(),0,@useKernal);
 	Loop();
 end.

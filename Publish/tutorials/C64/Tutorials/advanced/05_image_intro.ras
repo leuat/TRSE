@@ -219,7 +219,7 @@ begin
 	orgChar:=vic_data_loc;
 	
 	// Copy image color data #1 to $4400
-	zp:=image_color;
+	zp:=#image_color;
 	zp:=zp+2;
 	copyfullscreen(zp,screen_char_loc2);
 	
@@ -228,7 +228,7 @@ begin
 	// Initialize black sprites	
 	InitSprites();
 
-	tp:=text;
+	tp:=#text;
 
 	RasterIRQ(RasterText(),0, @useKernal);
 	EnableRasterIRQ();

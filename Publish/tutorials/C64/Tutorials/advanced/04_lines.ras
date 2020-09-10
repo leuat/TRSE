@@ -29,14 +29,14 @@ begin
 	if BitmapGraphics::currbank=0 then begin
 		BitmapGraphics::currbank := $40;
 		SetBank(VIC_BANK0);
-		clearbitmap(bank2_screen, 22); // Clear a certain window only
+		clearbitmap(#bank2_screen, 22); // Clear a certain window only
 	end
 	
 	else
 	begin
 		BitmapGraphics::currbank:=0;
 		SetBank(VIC_BANK1);
-		clearbitmap(bank1_screen, 22);
+		clearbitmap(#bank1_screen, 22);
 	end;
 	
 end;
@@ -78,7 +78,7 @@ end;
 begin	
 	screen_bg_col:=black;
 	BitmapGraphics::currbank :=0; // Current bitmap bank (added to high bit of putpixel)
-	BitmapGraphics::InitBitmapGraphics(1, bank1);
+	BitmapGraphics::InitBitmapGraphics(1, #bank1);
 	zeropage1:=zeropage1+10; // Move to the center of the screen
 	vic_data_loc:=$18;
 	

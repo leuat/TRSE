@@ -118,7 +118,7 @@ begin
 		val:=@textpointer[0]; // Look up current char
 		if (val>=64) then val:=val-65; // Look up in charmap
 		
-		zeropage1:=font;
+		zeropage1:=#font;
 		if (val=key_space) then begin
 			val:=$40; // Point to an empty location in font space
 		end;	
@@ -156,7 +156,7 @@ begin
 				// Reset and increase text pointer!
 				scrollsplit:=0;
 				@textpointer:=@textpointer+1;
-				if @textpointer[0]=0 then @textpointer:=text;
+				if @textpointer[0]=0 then @textpointer:=#text;
 			end;
 		end;
 		// Reset scroll
@@ -200,7 +200,7 @@ end;
 // Fill the screen with purdy colors
 procedure InitColors();
 begin
-	zeropage1:=screen_col_loc;
+	zeropage1:=#screen_col_loc;
 	for k:=0 to screen_height do
 	begin
 		for i:=0 to screen_width do 
@@ -227,7 +227,7 @@ begin
 	// Fill colors
 	InitColors();	
 	// Initialize text pointer	
-	@textpointer:=text;
+	@textpointer:=#text;
 	
 	shiftx:=7;
 	scrollsplit := 0;
