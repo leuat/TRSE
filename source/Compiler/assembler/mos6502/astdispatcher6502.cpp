@@ -2469,8 +2469,17 @@ bool ASTDispatcher6502::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QShare
 //        qDebug() << "OPTIMIZATION " <<bvar->getValue(as) << var->getValue(as);
 //
         as->Comment("INTEGER optimization: a=b+c ");
+        QString Blo = getValue(bvar);
+        QString Bhi = getValue(bvar)+"+1";
+        if (var->isPointer(as)) {
+            as->Comment("Resulting var is POINTER: Assuming : a=address+c ");
+            if (bvar->isPureVariable() && !bvar->isPointer(as)) {
+                Blo ="#<"+getValue(bvar);
+                Bhi="#>"+getValue(bvar);
+            }
+        }
         //var->Accept(this);
-        as->Asm("lda " + getValue(bvar));
+        as->Asm("lda " +Blo);
         as->Term();
         //        as->Asm("clc");
         as->BinOP(rterm->m_op.m_type);
@@ -2507,7 +2516,7 @@ bool ASTDispatcher6502::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QShare
         }
         else {
 
-            as->Asm("lda "+getValue(bvar)+"+1");
+            as->Asm("lda "+Bhi);
             as->ClearTerm();
             as->BinOP(rterm->m_op.m_type,false);
             as->Term(rterm->m_right->getValue8bit(as,true),true);

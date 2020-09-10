@@ -1213,17 +1213,6 @@ bool AsmMOS6502::ContainsAChangingOpcodes(QString l1) {
             || l1.startsWith("ror") || l1.startsWith("rol") ||
             l1.startsWith("jsr") || l1.startsWith("rts");
 
-/*
-            ;
-
-
-    if (op==("lda") || op==("txa") || op==("tya") || op=="jmp" || op=="rts" || op=="jsr" ||
-            op==("ina") || op==("dea")|| op.length()!=3  || op==("adc") || op==("sbc") || op==("cmp")
-            || op=="clc" || op=="sec" || op=="asl" || op=="rol" || op=="ror" || op=="lsr"
-            || op=="bcc" || op=="bcs" || op=="pla" || op=="beq" || op=="bpl" || op=="bne"
-            || op=="and" || op=="ora" || op=="eor" || op=="bit"
-            */
-
 }
 
 int AsmMOS6502::getLineCount()
