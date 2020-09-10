@@ -146,6 +146,9 @@ bool NodeVar::isWord(Assembler *as) {
 //    if (getType(as)==TokenType::POINTER)
 //    qDebug() << "NodeVar isWord : is array: " << (getType(as)==TokenType::ADDRESS) << TokenType::getType(getType(as));
 //    if (getType(as)==TokenType::ADDRESS && m_expr!=nullptr)
+   if (isReference())
+       return true;
+
         if (getType(as)==TokenType::ADDRESS)
         return (getArrayType(as)==TokenType::INTEGER);
         //qDebug() << "  Array type : " << getArrayType(as);
@@ -250,12 +253,12 @@ QString NodeVar::getValue(Assembler* as) {
 //    if (as!=nullptr)
         if (as!=nullptr) {
             QString t = as->m_symTab->Lookup(v, m_op.m_lineNumber)->m_type.toLower();
-            qDebug() << v<< "TYPE" << as->m_symTab->Lookup(v, m_op.m_lineNumber)->m_type <<m_op.getType();
+//            qDebug() << v<< "TYPE" << as->m_symTab->Lookup(v, m_op.m_lineNumber)->m_type <<m_op.getType();
             if (m_op.m_type!=TokenType::ADDRESS) // const screen_bg_col etc
             if (!as->m_symTab->m_constants.contains(v))
-            if ((t=="address") || t=="incbin")
+            if ((t=="address") || t=="incbin" || t=="string" || t=="cstring" || t=="incsid" || t=="incnsf")
                 if (!isReference() && !isArrayIndex() && !isPointer(as))
-                    ErrorHandler::e.Error("Unknown usage of variable / array. Did you mean to reference it? (#"+v+")",m_op.m_lineNumber);
+                    ErrorHandler::e.Error("Unknown usage of data or array. <font color=\"orange\">Did you mean to reference it? (#"+v+")</font>",m_op.m_lineNumber);
 
         }
 

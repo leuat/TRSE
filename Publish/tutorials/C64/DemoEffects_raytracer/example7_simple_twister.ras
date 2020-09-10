@@ -61,7 +61,7 @@ begin
 				// However, the multiplication (or left shift) is a slow operation, so instead we have  
 				// created a lookup table for this exact reason (and runs about 4 times faster!)
 			*/
-			source := AddressTable( twisterTable, 0, l ); 
+			source := AddressTable( #twisterTable, 0, l ); 
 	
 			// Use m as row counter
 			m:=k;
@@ -113,7 +113,7 @@ end;
 begin
 	InitScreen();
 	// Create twister address table: Twister consist of 64 rows of 16 byte data starting at @twisterLoc	
-	CreateAddressTable( twisterTable, twisterLoc, 16, 64 );
+	CreateAddressTable( #twisterTable, #twisterLoc, 16, 64 );
 	StartRasterChain(UpdateRaster(),0,1);
 	Loop();
 	

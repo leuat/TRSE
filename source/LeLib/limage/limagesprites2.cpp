@@ -57,6 +57,7 @@ void LImageSprites2::ExportBin(QFile &f)
     for (int i=0;i<m_items.count();i++) {
         m_bitMask = ((LSprite*) m_items[i])->m_header[LSprite::HEADER_MULTICOLOR];
         if (m_bitMask ==0) m_bitMask = 0b1; else m_bitMask=0b11;
+//        qDebug() << m_bitMask;
         f.write(m_items[i]->ToQByteArray(m_bitMask));
     }
 }

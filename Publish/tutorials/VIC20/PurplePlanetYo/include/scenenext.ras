@@ -54,21 +54,21 @@ end;
 procedure InitSceneNext();
 begin
 	dy:=timeStamps[currentPos+4];
-	decrunch(charsetc);
+	decrunch(#charsetc);
 	TransitionH(dy, 0, 1);
 
 	if (timeStamps[currentPos+2]=0) then 
-		tp:=textScroller1;
+		tp:=#textScroller1;
 
 
 	if (timeStamps[currentPos+2]=1) then 
-		tp:=textScroller2;
+		tp:=#textScroller2;
 
 	if (timeStamps[currentPos+2]=2) then 
-		tp:=textScroller3;
+		tp:=#textScroller3;
 
 //	tp:=textScroller1;
-	decrunch(perlinc);
+	decrunch(#perlinc);
 	setcharsetlocation($1400);
 	SCREEN_TEXT_WIDTH:=22;
 	SCREEN_TEXT_HEIGHT:=46;

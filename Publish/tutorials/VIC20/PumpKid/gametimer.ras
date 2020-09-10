@@ -31,7 +31,7 @@ begin
 	if moonPos >= 6 then SpawnAZombie();
 	
 	// score
-	bcdadd(score, scMoon, 4);
+	bcdadd(#score, #scMoon, 4);
 	DisplayScore();
 
 end;
@@ -58,50 +58,50 @@ begin
 		4 : 
 		begin
 			ClearTime();
-			printstring(t11, 0, 4);
+			printstring(#t11, 0, 4);
 		end;
 		
 		6 : 
 		begin
 			ClearTime();
 			screenmemory := screenmemory - 2;
-			printstring(t12, 0, 8);
+			printstring(#t12, 0, 8);
 		end;
 
 		8 : 
 		begin
 			ClearTime();
-			printstring(t01, 0, 4);
+			printstring(#t01, 0, 4);
 		end;
 
 		10: 
 		begin
 			ClearTime();
-			printstring(t02, 0, 4);
+			printstring(#t02, 0, 4);
 		end;
 
 		12: 
 		begin
 			ClearTime();
-			printstring(t03, 0, 4);
+			printstring(#t03, 0, 4);
 		end;
 
 		14: 
 		begin
 			ClearTime();
-			printstring(t04, 0, 4);
+			printstring(#t04, 0, 4);
 		end;
 
 		16: 
 		begin
 			ClearTime();
-			printstring(t05, 0, 4);
+			printstring(#t05, 0, 4);
 		end;
 
 		18: 
 		begin
 			ClearTime();
-			printstring(t06, 0, 4);
+			printstring(#t06, 0, 4);
 		end;
 
 	end;

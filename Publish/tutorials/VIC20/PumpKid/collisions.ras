@@ -45,7 +45,7 @@ begin
 	sndFlag := true;
 
 	// Play shoot sound
-	psndfx:=sndShoot;
+	psndfx:=#sndShoot;
 	PlaySndfx(254);
 
 end;
@@ -64,7 +64,7 @@ begin
 			gameMode := @GAMEMODE_LOSTLIFE;
 			screenmemory := $1030;
 			printstring("@OUT@OF@TIME@@",0 ,14);
-			psnd1 := sndDead;
+			psnd1 := #sndDead;
 			PlaySnd1(160);			 
 			CollisionWait();
 			return();
@@ -77,22 +77,22 @@ begin
 		begin
 			
 			// next time will appear
-			screenmemory := addresstable(scr, 0, ly);
+			screenmemory := addresstable(#scr, 0, ly);
 			screenmemory[ lx ] := 0;
 			pbgchar := 0;
 			lostchildlevel := lostchildlevel + ( mod(random(),2) + 1 );
 			lx := 0;
 			ly := 0;
 			if (lives < 10) then lives := lives + 1;
-			bcdadd(score, scWitch, 4);
+			bcdadd(#score, #scWitch, 4);
 			DisplayScore();
 			
-			psnd3:= sndPickup;
+			psnd3:= #sndPickup;
 			PlaySnd3(230);
 			
 		end;
 
-	screenmemory := addresstable(scr, 0, py);
+	screenmemory := addresstable(#scr, 0, py);
 
 	if px = wx then
 		if py = wy then
@@ -101,7 +101,7 @@ begin
 			gameMode := @GAMEMODE_LOSTLIFE;
 			screenmemory := $1030;
 			printstring("@GOT@BY@WITCH@",0 ,14);
-			psnd1 := sndDead;
+			psnd1 := #sndDead;
 			PlaySnd1(160);			 
 			CollisionWait();
 			return();
@@ -114,7 +114,7 @@ begin
 			gameMode := @GAMEMODE_LOSTLIFE;
 			screenmemory := $1030;
 			printstring("POISONED@SKULL",0 ,14);			 
-			psnd1 := sndDead;
+			psnd1 := #sndDead;
 			PlaySnd1(160);			 
 			CollisionWait();
 			return();
@@ -131,7 +131,7 @@ begin
 				gameMode := @GAMEMODE_LOSTLIFE;
 				screenmemory := $1030;
 				printstring("@GOT@BY@GHOST@",0 ,14);
-				psnd1 := sndDead;
+				psnd1 := #sndDead;
 				PlaySnd1(160);			 
 				CollisionWait();
 				return();
@@ -153,7 +153,7 @@ begin
 					gameMode := @GAMEMODE_LOSTLIFE;
 					screenmemory := $1030;
 					printstring("@GOT@BY@ZOMBIE@",0 ,15);
-					psnd1 := sndDead;
+					psnd1 := #sndDead;
 					PlaySnd1(160);			 
 					CollisionWait();
 					return();
@@ -185,20 +185,20 @@ begin
 	DrawCandyCounter();
 			
 	// draw skull
-	screenmemory := addresstable(scr, 0, cy);
+	screenmemory := addresstable(#scr, 0, cy);
 	screenmemory[ cx ] := wbgchar;
-	p1 := addresstable(clr, 0, cy);
+	p1 := addresstable(#clr, 0, cy);
 	p1[ cx ] := wbgcol;
 
 	// end candy
 	EndCandy();
 
 	// score
-	bcdadd(score, scWitch, 4);
+	bcdadd(#score, #scWitch, 4);
 	DisplayScore();
 
 	// play hit sound
-	psndfx := sndExplode;
+	psndfx := #sndExplode;
 	PlaySndfx(160);
 	
 end;
@@ -216,18 +216,18 @@ begin
 	gy[ i ] := 1;
 		
 	// clear space
-	screenmemory := addresstable(scr, 0, cy);
+	screenmemory := addresstable(#scr, 0, cy);
 	screenmemory[ cx ] := 0;
 
 	// end candy
 	EndCandy();
 	
 	// score
-	bcdadd(score, scGhost, 4);
+	bcdadd(#score, #scGhost, 4);
 	DisplayScore();
 
 	// play hit sound
-	psndfx := sndExplode;
+	psndfx := #sndExplode;
 	PlaySndfx(160);
 
 end;
@@ -242,18 +242,18 @@ begin
 	zspawn[ i ] := @ZOMBIESPAWNDELAY; // stun zombie for a while	
 
 	// clear space
-	screenmemory := addresstable(scr, 0, cy);
+	screenmemory := addresstable(#scr, 0, cy);
 	screenmemory[ cx ] := 42; // zombie in ground
 
 	// end candy
 	EndCandy();
 
 	// score
-	bcdadd(score, scZombie, 4);
+	bcdadd(#score, #scZombie, 4);
 	DisplayScore();
 
 	// play hit sound
-	psndfx := sndExplode;
+	psndfx := #sndExplode;
 	PlaySndfx(160);
 	
 end;

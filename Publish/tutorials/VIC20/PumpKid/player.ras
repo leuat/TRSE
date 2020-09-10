@@ -7,8 +7,8 @@ begin
 	begin
 
 		pd := @PD_LEFT;
-		screenmemory := AddressTable( scr, px-1, py );
-		p1 := AddressTable( clr, px-1, py );
+		screenmemory := AddressTable( #scr, px-1, py );
+		p1 := AddressTable( #clr, px-1, py );
 		if ( cMask[ screenmemory[ 0 ] ] < @CWALL ) then
 		begin
 			screenmemory[ 1 ] := pbgchar;
@@ -27,8 +27,8 @@ begin
 	begin
 
 		pd := @PD_RIGHT;
-		screenmemory := AddressTable( scr, 0, py );
-		p1 := AddressTable( clr, 0, py );
+		screenmemory := AddressTable( #scr, 0, py );
+		p1 := AddressTable( #clr, 0, py );
 		if ( cMask[ screenmemory[ px + 1 ] ] < @CWALL ) then
 		begin
 			screenmemory[ px ] := pbgchar;
@@ -45,8 +45,8 @@ begin
 	if (joy1 & JOY_UP) then
 	begin
 	
-		screenmemory := AddressTable( scr, 0, py - 1 );
-		p1 := AddressTable( clr, 0, py - 1 );
+		screenmemory := AddressTable( #scr, 0, py - 1 );
+		p1 := AddressTable( #clr, 0, py - 1 );
 		if ( cMask[ screenmemory[ px ] ] < @CWALL ) then
 		begin
 			screenmemory[ px + SCREEN_WIDTH ] := pbgchar;
@@ -63,8 +63,8 @@ begin
 	if (joy1 & JOY_DOWN) then
 	begin
 	
-		screenmemory := AddressTable( scr, 0, py );
-		p1 := AddressTable( clr, 0, py );
+		screenmemory := AddressTable( #scr, 0, py );
+		p1 := AddressTable( #clr, 0, py );
 		if ( cMask[ screenmemory[ px + SCREEN_WIDTH ] ] < @CWALL ) then
 		begin
 			screenmemory[ px ] := pbgchar;
@@ -101,14 +101,14 @@ begin
 			if (pstep > 0) then
 			begin
 				// play a footstep noise
-				psnd1 := sndPumpkidFootsteps;
+				psnd1 := #sndPumpkidFootsteps;
 				PlaySnd1( 160 + stepsnd );
 				if stepsnd = 0 then stepsnd := 30 else stepsnd := 0;
 			end;
 		end;
 
-	screenmemory := AddressTable( scr, 0, py );
-	p1 := AddressTable( clr, 0, py );
+	screenmemory := AddressTable( #scr, 0, py );
+	p1 := AddressTable( #clr, 0, py );
 	
 	screenmemory[ px ] := panFrames[ pan ] + pd;
 	p1[ px ] := RED;
@@ -126,11 +126,11 @@ begin
 			if ( candyscr > 0 ) then candyscr := candyscr - 1;
 			
 			// score
-			bcdadd(score, scCandy, 4);
+			bcdadd(#score, #scCandy, 4);
 			DisplayScore();
 			
 			//play pick up sound
-			psnd3:= sndPickup;
+			psnd3:= #sndPickup;
 			PlaySnd3(230);
 		
 		end;

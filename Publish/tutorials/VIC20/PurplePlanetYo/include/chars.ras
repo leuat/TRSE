@@ -128,7 +128,7 @@ end;
 procedure TransitionH(th_c, th_dc, th_inv:byte);
 begin
 	if (th_dc=1) then begin 
-		decrunch(charsetc);
+		decrunch(#charsetc);
 		setcharsetlocation($1400);
 
 	end;

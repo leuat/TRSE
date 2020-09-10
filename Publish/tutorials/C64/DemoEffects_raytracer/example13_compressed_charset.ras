@@ -55,7 +55,7 @@ begin
 	if(frame=maxFrames) then
 	begin
 		frame:=0;
-		sp:=screens1;
+		sp:=#screens1;
 		
 	end;
 end;
@@ -73,7 +73,7 @@ end;
 
 
 begin
-	sp:=screens1;
+	sp:=#screens1;
 	
 	setbank(vic_bank1);
 	setmulticolormode();

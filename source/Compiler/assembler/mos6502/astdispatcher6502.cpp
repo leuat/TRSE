@@ -78,7 +78,7 @@ void ASTDispatcher6502::HandleGenericBinop16bit(QSharedPointer<Node> node) {
     as->Asm("ldy #0");
 //    qDebug() <<node->m_left->m_op.m_value;
   //  exit(1);
-//    node->m_right->forceWord();
+ //   node->m_right->forceWord();
     node->m_right->Accept(this);
 
     // 255 + k - j doesn't work
@@ -728,13 +728,11 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeNumber>node)
     }
 
 
-    if (node->m_op.m_type==TokenType::INTEGER_CONST && node->m_val>255) {
+    if ((node->m_op.m_type==TokenType::INTEGER_CONST && node->m_val>255) || node->isReference()) {
         as->Comment("Integer constant assigning");
-        int hiBit = ((int)node->m_val)>>8;
-        int loBit = ((int)node->m_val)&0xff;
         as->ClearTerm();
-        as->Asm("ldy #" + Util::numToHex(hiBit) );
-        as->Asm("lda #" + Util::numToHex(loBit) );
+        as->Asm("ldy " + node->getValue8bit(as,true));
+        as->Asm("lda " + node->getValue8bit(as,false));
         return;
 
     }
@@ -762,6 +760,7 @@ QString ASTDispatcher6502::getValue(QSharedPointer<Node> n) {
 }
 
 QString ASTDispatcher6502::getValue8bit(QSharedPointer<Node> n, bool isHi) {
+
     if (m_inlineParameters.contains(n->getValue(as)))
         return m_inlineParameters[n->getValue(as)]->getValue8bit(as,isHi);
 
@@ -1213,7 +1212,7 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node,QString lb
     QSharedPointer<NodeVar> vara = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 
     if (vara==nullptr)
-        ErrorHandler::e.Error("Integer comparison: only pure integer variable is supported");
+        ErrorHandler::e.Error("Integer comparison: only pure integer variable is supported", node->m_op.m_lineNumber);
 
     QString lbl2 = lblFailed;
     QString lbl1 = lblSuccess;
@@ -1897,7 +1896,7 @@ void ASTDispatcher6502::LoadPointer(QSharedPointer<NodeVar> node) {
     as->ClearTerm();
     if (!LoadXYVarOrNum(node, node->m_expr,false))
     {
-        as->Comment("LDA stuff");
+
         if (!(m=="" || m.startsWith("lda")))
             as->Asm("pha");
         node->m_expr->Accept(this);
@@ -1955,7 +1954,8 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeVar> node)
         if (s->getTokenType()==TokenType::POINTER && as->m_term=="") {
             isOK = false;
         }
-        if (((s->getTokenType()==TokenType::ADDRESS || s->getTokenType()==TokenType::INCBIN)  && as->m_term=="")) {
+//        qDebug() << "HERE " <<as->m_term << node->isReference() << val;
+        if (((s->getTokenType()==TokenType::ADDRESS || s->getTokenType()==TokenType::INCBIN || node->isReference())  && as->m_term=="")) {
             as->Asm("lda #<" + val);
             as->Asm("ldy #>" + val);
             return;
@@ -2009,8 +2009,11 @@ void ASTDispatcher6502::LoadByteArray(QSharedPointer<NodeVar> node) {
     // Optimizer: if expression is number, just return direct
 
     QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber);
+    if (node->isReference())
+        ErrorHandler::e.Error("Unknown syntax: referenced address with index. ", node->m_op.m_lineNumber);
     if (s->m_arrayType==TokenType::INTEGER)
         as->Comment("Load Integer array");
+
     else if (s->m_arrayType==TokenType::BYTE)
         as->Comment("Load Byte array");
     else
@@ -2113,6 +2116,13 @@ void ASTDispatcher6502::LoadAddress(QSharedPointer<Node> node)
 void ASTDispatcher6502::LoadVariable(QSharedPointer<NodeNumber>node)
 {
    as->ClearTerm();
+//   qDebug() << "OAD NUMBER";
+   if (node->isReference()) {
+       as->ClearTerm();
+       as->Asm("lda "+node->getValue8bit(as,false));
+       as->Asm("ldy "+node->getValue8bit(as,true));
+        return;
+   }
    as->Term("lda ");
    node->Accept(this);
    as->Term();
@@ -2289,17 +2299,17 @@ void ASTDispatcher6502::AssignPointer(QSharedPointer<NodeAssign> node) {
 
 //    if (!node->m_right->isAddress())
   //      ErrorHandler::e.Error("Must be address", node->m_op.m_lineNumber);
-
     if (IsSimpleIncDec(aVar,  node))
         return;
 
-
+/*
 
     if (bVar==nullptr && !node->m_right->isPureNumeric()) {
 
         //ErrorHandler::e.Error("Error assigning pointer: right-hand must be variable or number", node->m_op.m_lineNumber);
 //        if (!node->m_right->isAddress())
   //          ErrorHandler::e.Error("Error assigning pointer: right-hand must be variable or number", node->m_op.m_lineNumber);
+
         node->m_right->forceWord();
         node->m_right->setForceType(TokenType::INTEGER);
         as->Term();
@@ -2310,13 +2320,13 @@ void ASTDispatcher6502::AssignPointer(QSharedPointer<NodeAssign> node) {
         as->Asm("sty "+ getValue(aVar)+"+1");
         return;
     }
+*/
 
 
 
+//    if (bVar!=nullptr) {
 
-    if (bVar!=nullptr) {
-
-        if (bVar->getType(as)!=TokenType::POINTER) {
+/*        if (bVar->getType(as)!=TokenType::POINTER) {
 //            if (bVar->m_op.m_type==TokenType::ADDRESS) {
                 as->Asm("lda #<" + getValue(bVar));
                 as->Asm("ldx #>" + getValue(bVar));
@@ -2332,17 +2342,41 @@ void ASTDispatcher6502::AssignPointer(QSharedPointer<NodeAssign> node) {
             as->Asm("sta " + getValue(aVar));
             as->Asm("stx "+ getValue(aVar)+"+1");
             return;
-        }
+        }*/
+    if (node->m_right->isPure()) {
+        as->Asm("lda " + getValue8bit(node->m_right,false));
+        as->Asm("ldx " + getValue8bit(node->m_right,true));
+        as->Asm("sta " + getValue(aVar));
+        as->Asm("stx "+ getValue(aVar)+"+1");
+        //if (!node->m_right->isWord(as))
+        //    ErrorHandler::e.Warning("Assigning an 8-bit value to pointer. Is this intentional?", node->m_op.m_lineNumber);
 
+        return;
     }
-    if (node->m_right->isPureNumeric()) {
+    // Generic expression
+
+  /*  if (node->m_right->isPureNumeric()) {
         as->Asm("lda #" + QString::number(((int)node->m_right->numValue()) & 255));
         as->Asm("ldx #" + QString::number(((int)node->m_right->numValue()>>8) & 255) );
         as->Asm("sta " + getValue(aVar));
         as->Asm("stx "+ getValue(aVar)+"+1");
         return;
 
-    }
+    }*/
+    node->m_right->forceWord();
+    node->m_right->setForceType(TokenType::INTEGER);
+//    qDebug() << "ARGH HERE";
+    as->Term();
+    node->m_right->Accept(this);
+    as->Term();
+ //  as->Comment(";end");
+    as->Asm("sta " + getValue(aVar));
+//    if (node->m_right->isWord(as))
+        as->Asm("sty "+ getValue(aVar)+"+1");
+  //  else
+    //    ErrorHandler::e.Warning("Assigning an 8-bit value to pointer. Is this intentional?", node->m_op.m_lineNumber);
+
+    return;
      ErrorHandler::e.Error("Right-hand side must be constant or address", node->m_op.m_lineNumber);
 
 }
@@ -2584,6 +2618,7 @@ bool ASTDispatcher6502::IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPoint
         }
     }
     else {
+//        as->Asm("IS simple 16 bit");
         return isSimpleAeqAOpB16Bit(var, node);
     }
 

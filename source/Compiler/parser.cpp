@@ -1598,6 +1598,9 @@ QSharedPointer<Node> Parser::BinaryClause()
         Token t;
         t.m_type = TokenType::BYTE;
         t.m_intVal = 0;
+        t.m_lineNumber = m_currentToken.m_lineNumber;
+        t.m_isReference = false;
+ //       qDebug() << "WOOT";
         b = QSharedPointer<NodeNumber>(new NodeNumber(t,0));
         comparetoken.m_type = TokenType::NOTEQUALS;
     }
@@ -3853,6 +3856,8 @@ QSharedPointer<Node> Parser::Expr()
         Token t;
         t.m_type = node->VerifyAndGetNumericType();
         t.m_lineNumber = node->m_lineNumber;
+        t.m_isReference = node->isReference();
+//        qDebug() << "IS REFERENCE" <<val <<t.m_isReference;
 //        qDebug() << "Collapsing node to " << Util::numToHex(val) << t.getType() << t.m_lineNumber << node->m_op.getType();
 
         return QSharedPointer<NodeNumber>(new NodeNumber(t,val));

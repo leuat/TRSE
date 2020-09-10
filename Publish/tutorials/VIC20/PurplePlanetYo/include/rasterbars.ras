@@ -47,7 +47,7 @@ begin
 	SCREEN_TEXT_WIDTH:=22;
 	SCREEN_TEXT_HEIGHT:=46;
 //	blockmemcpy(^$8000,^$1400,8);
-	decrunch(charsetc);
+	decrunch(#charsetc);
 	dx:=1;
 	SCREEN_BG_COLOR:=BLACK;
 	InitCharset();
@@ -70,7 +70,7 @@ begin
 	//printstring("HALLA",0,40);
 	for i:=0 to 0 do poke(^@table2, i, sine[i]/rasterSpread);
 
-	textP:=text1;
+	textP:=#text1;
 end;
 
 
@@ -84,7 +84,7 @@ begin
 	zp:=zp+k+rasterStart;
 //	inczp(zp, k+rasterStart);
 	
-	memcpy(rCol,0, zp,9);
+	memcpy(#rCol,0, zp,9);
 /*	for i:=k to j do begin
 		table[i]:=rCol[l];
 		l:=l+1;

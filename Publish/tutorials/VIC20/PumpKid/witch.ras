@@ -38,7 +38,7 @@ begin
 			
 			wdelay := mod( random(), 40 ) + 15;
 			// play stop noise
-			psndfx := sndSWitch;
+			psndfx := #sndSWitch;
 			PlaySndfx(254);
 		
 		end;
@@ -71,8 +71,8 @@ begin
 		@WD_UP :
 		begin
 
-			screenmemory := addresstable( scr, 0, wy - 1);
-			p1 := AddressTable( clr, 0, wy - 1 );
+			screenmemory := addresstable( #scr, 0, wy - 1);
+			p1 := AddressTable( #clr, 0, wy - 1 );
 			i := @WITCHCHAR; // direction
 			if ( cMask[ screenmemory[ wx ] ] < @CMONSTER ) then
 			begin
@@ -94,8 +94,8 @@ begin
 		@WD_RIGHT :
 		begin
 
-			screenmemory := addresstable( scr, 0, wy );
-			p1 := AddressTable( clr, 0, wy );
+			screenmemory := addresstable( #scr, 0, wy );
+			p1 := AddressTable( #clr, 0, wy );
 			i := @WITCHCHAR + 1; // direction
 			if ( cMask[ screenmemory[ wx + 1 ] ] < @CMONSTER ) then
 			begin
@@ -117,8 +117,8 @@ begin
 		@WD_DOWN :
 		begin
 
-			screenmemory := addresstable( scr, 0, wy );
-			p1 := AddressTable( clr, 0, wy );
+			screenmemory := addresstable( #scr, 0, wy );
+			p1 := AddressTable( #clr, 0, wy );
 			i := @WITCHCHAR; // direction
 			if ( cMask[ screenmemory[ wx + SCREEN_WIDTH ] ] < @CMONSTER ) then
 			begin
@@ -140,8 +140,8 @@ begin
 		@WD_LEFT :
 		begin
 
-			screenmemory := addresstable( scr, wx-1, wy );
-			p1 := AddressTable( clr, wx-1, wy );
+			screenmemory := addresstable( #scr, wx-1, wy );
+			p1 := AddressTable( #clr, wx-1, wy );
 			i := @WITCHCHAR; // direction
 			if ( cMask[ screenmemory[ 0 ] ] < @CMONSTER ) then
 			begin
@@ -162,8 +162,8 @@ begin
 		
 	end;
 
-	screenmemory := AddressTable( scr, 0, wy );
-	p1 := AddressTable( clr, 0, wy );
+	screenmemory := AddressTable( #scr, 0, wy );
+	p1 := AddressTable( #clr, 0, wy );
 
 	screenmemory[ wx ] := i; // show witch in correct direction
 	p1[ wx ] := GREEN; 

@@ -46,6 +46,7 @@ public:
     bool isWord(Assembler* as) override;
 
     QString getValue(Assembler* as) override;
+    virtual bool isReference() override { return m_op.m_isReference; }
 
     QString getValue8bit(Assembler* as, bool isHi) override;
 
@@ -55,7 +56,7 @@ public:
 
     //void LoadVariable(AbstractASTDispatcher* dispatcher) override;
 
-    int numValue() { return m_val;}
+    int numValue() override { return m_val;}
 
     QString getAddress() override {
         return HexValue();

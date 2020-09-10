@@ -13,13 +13,13 @@ begin
 		
 			lx := mod(random(), 19)+1;
 			ly := mod(random(), 18)+4;
-			screenmemory := addresstable(scr, 0, ly);
+			screenmemory := addresstable(#scr, 0, ly);
 			if (cMask[ screenmemory[ lx ] ] = @CSPACE) then
 			begin
 			
 				i := 1;
 				screenmemory[ lx ] := 39;
-				p1 := addresstable(clr, 0, ly);
+				p1 := addresstable(#clr, 0, ly);
 				p1[ lx ] := YELLOW;
 			
 			end;
@@ -33,7 +33,7 @@ begin
 	begin
 	
 		// next time will appear
-		screenmemory := addresstable(scr, 0, ly);
+		screenmemory := addresstable(#scr, 0, ly);
 		lostchildlevel := lostchildlevel + ( mod(random(),2) + 1 );
 		screenmemory[ lx ] := 0;
 		lx := 0;

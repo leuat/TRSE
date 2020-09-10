@@ -3,7 +3,7 @@ procedure DisplayScore();
 begin
 
 	screenmemory := $1000;
-	bcdprint(score, 4);
+	bcdprint(#score, 4);
 
 end;
 
@@ -288,7 +288,7 @@ end;
 procedure FindStartPos();
 begin
 
-	screenmemory := AddressTable( scr, 0, 3 );
+	screenmemory := AddressTable( #scr, 0, 3 );
 	for y := 3 to 23 do
 	begin
 

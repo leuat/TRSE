@@ -101,13 +101,13 @@ end;
 */
 procedure SetupMovie();
 begin
-	zp:=data1;
+	zp:=#data1;
 
 	for i:=0 to 22 do begin
-		if (i=6) then zp:=data2;
-		if (i=12) then zp:=data3;
-		if (i=18) then zp:=data4;
-		if (i=20) then zp:=data5;
+		if (i=6) then zp:=#data2;
+		if (i=12) then zp:=#data3;
+		if (i=18) then zp:=#data4;
+		if (i=20) then zp:=#data5;
 
 		j:=2*i;
 		tab[j]:=lo(zp);

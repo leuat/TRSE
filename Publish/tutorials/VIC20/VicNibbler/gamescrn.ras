@@ -15,7 +15,7 @@ var
 begin
 
 	screenmemory := $1e14;//addresstable(scrm,1,2);
-	printstring(titleText,0,11);
+	printstring(#titleText,0,11);
 	screenmemory := $1e27;//screenmemory + @SCREEN_WIDTH;
 	p1:= $9627;//addresstable(clrm,1,3);
 	r:=0;
@@ -31,11 +31,11 @@ begin
 		p1 := p1 + @SCREEN_WIDTH;
 	end;
 	screenmemory := $1f6c; //addresstable(scrm,3,20);
-	printstring(rockText,0,13);
+	printstring(#rockText,0,13);
 	screenmemory := $1f92; //addresstable(scrm,3,22);
-	printstring(hewcoText,0,13);
+	printstring(#hewcoText,0,13);
 	screenmemory := $1fb7; 
-	printstring(tfw8bText,0,14);
+	printstring(#tfw8bText,0,14);
 
 	screenmemory := $1eea; //addresstable(scrm,6,12);
 	printdecimal(score,5);
@@ -90,7 +90,7 @@ begin
 		if scrnNo = 3 then scrnNo := 1;
 		if scrnNo = 1 then TitleScreen();
 
-		p1 := textInst0;
+		p1 := #textInst0;
 		p2 := 7680;
 		i := 0; // p1 index
 		r := 3; // p2 index (screen)

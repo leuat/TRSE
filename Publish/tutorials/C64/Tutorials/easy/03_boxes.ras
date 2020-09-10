@@ -26,8 +26,8 @@ begin
     clearscreen(key_space, screen_char_loc);
     clearscreen(black, screen_col_loc);
 	// Sets up the address tables for the screen & color memory    
-	createaddresstable(saddr,screen_char_loc,screen_width,screen_height);
-	createaddresstable(caddr,screen_col_loc,screen_width,screen_height);
+	createaddresstable(#saddr,screen_char_loc,screen_width,screen_height);
+	createaddresstable(#caddr,screen_col_loc,screen_width,screen_height);
 
 	// dx and dy are initialized to 1
 	dx:=1;
@@ -50,7 +50,7 @@ begin
 		// Make sure that t loops from 0-15
 		t:=(t+1)&15;
 		// Draw two boxes in opposing corners
-		drawcolortextbox(saddr, caddr, box, x, y, 9, 5, t);
-		drawcolortextbox(saddr, caddr, box, 31 - x, 20 - y, 9, 5, 16 - t);
+		drawcolortextbox(#saddr, #caddr, #box, x, y, 9, 5, t);
+		drawcolortextbox(#saddr, #caddr, #box, 31 - x, 20 - y, 9, 5, 16 - t);
 	end;
 end.

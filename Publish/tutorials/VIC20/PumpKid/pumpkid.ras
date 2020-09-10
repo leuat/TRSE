@@ -322,12 +322,13 @@ begin
 		begin
 		
 			// Play shoot sound
-			psndfx:=sndShoot;
+			psndfx:=#sndShoot;
 			PlaySndfx(254);
 				
 			// todo: reset score ----------------------------------------
 			lives := @NUMBEROFLIVES;
-			score := bcdsub(score, score, 4);
+			// Andy FIX!
+			//score := bcdsub(score, score, 4);
 			level := 0;		// start level
 			witchHits := 0;		// start with no hits on the witch
 			

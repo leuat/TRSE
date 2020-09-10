@@ -64,10 +64,11 @@ public:
        m_left->forceWord();
        m_right->forceWord();
     }
-    bool containsPointer(Assembler* as);
+    bool containsPointer(Assembler* as) override;
 
     void SwapVariableFirst();
 
+    virtual bool isReference() override { return m_left->m_op.m_isReference || m_right->m_op.m_isReference; }
 
     bool ContainsVariable(Assembler* as, QString var);
 

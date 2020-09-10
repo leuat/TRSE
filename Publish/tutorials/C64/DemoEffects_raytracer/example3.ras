@@ -25,7 +25,7 @@ var
 procedure RenderMovie();
 begin
 	// zp will be the location at the screen
-	zp:=screen_char_loc+4; // Place in center of the screen
+	zp:=#screen_char_loc+4; // Place in center of the screen
 	// Set the counter "j" to zero
 	j:=0;
 	// Locate position in table. Each line in the table has 24x2=48 bytes of pointer data

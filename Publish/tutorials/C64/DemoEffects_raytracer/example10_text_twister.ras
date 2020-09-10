@@ -44,7 +44,7 @@ begin
 	j:=tp[gi_c];
 	if (j=key_space) then // Account for space bar
 		j:=0;
-	
+
 	returnValue(ToPointer(ttableposHi+j*2,0));
 end;
 
@@ -57,7 +57,6 @@ begin
 	zp:=getI(0);
 	cp2:=getI(2);
 	cp:=getI(1);
-
 	// Start at the center of the screen
 	zp2:=$040A;
 
@@ -79,11 +78,12 @@ begin
 			j:=j-32;
 		end; 
 		//Lookup mul 32
-		kp:=tmpp+AddressTable(table32,32,k);
+		kp:=tmpp+AddressTable(#table32,32,k);
 		
 		l:=kp[j];
 		h:=kp[j+1];
 		
+		asm(";lookk");
 		p1:=toPointer(h+$30, l);
 		memcpyunroll(p1,0,zp2,16);
 			
@@ -105,7 +105,7 @@ begin
 		begin
 			tp:=tp+1;
 			shift:=0;
-			if  tp[2]=0 then tp:=text;
+			if  tp[2]=0 then tp:=#text;
 		end;
 
 	end;
@@ -141,7 +141,7 @@ procedure InitScreen();
 begin
 	settextmode();	
 	hidebordery(1);
-	CreateAddressTable(table32, 0, 32,16);
+	CreateAddressTable(#table32, 0, 32,16);
 	disableciainterrupts();
 	setmemoryconfig(1,0,0);
 	
@@ -156,7 +156,7 @@ end;
 
 begin
 	InitScreen();	
-	tp:=text;
+	tp:=#text;
 	for i:=0 to 256 do sine2[i]:=sine[i]/5;
 	RasterIRQ(RasterMain(),rasterMainPos,0);
 	EnableRasterIRQ();

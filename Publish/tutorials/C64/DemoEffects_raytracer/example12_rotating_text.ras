@@ -62,7 +62,7 @@ procedure SetSprite(ss_i, ss_char, ss_frame:byte);
 begin
 	zp:=spriteLoc + ss_i*64;
 	if (ss_char=$20) then begin
-		memcpyfast(zero,0,zp,63);
+		memcpyfast(#zero,0,zp,63);
 		return();
 	end;
 	ss_char:=ss_char-65;
@@ -122,8 +122,8 @@ end;
 procedure InitSprites();
 begin
 	sprite_bitmask:=$ff;
-	zp:=text;
-	memcpy(colors,0,sprite_color,8);
+	zp:=#text;
+	memcpy(#colors,0,sprite_color,8);
 	sprite_stretch_X:=$FF;
 	sprite_stretch_Y:=$FF;
 	setbank(vic_bank1);
@@ -131,7 +131,7 @@ begin
 		setspriteloc(i, (spriteLoc - $4000)/64+i,1);
 
 	sprite_multicolor:=0;
-	fill(zero,0,64);
+	fill(#zero,0,64);
 
 end;
 
@@ -151,7 +151,7 @@ begin
 	screen_fg_col:=black;
 	clearscreen(black, screen_char_loc2);	
 	clearscreen(black, screen_col_loc);	
-	tp:=text;
+	tp:=#text;
 	InitSprites();
 	disableciainterrupts();
 	setmemoryconfig(1,@useKernal,0);

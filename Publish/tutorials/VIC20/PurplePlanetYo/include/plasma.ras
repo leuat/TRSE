@@ -87,12 +87,12 @@ begin
 	
 	fill(^$1000,$20,0);
 	fill(^$1100,$20,0);
- 	decrunch(charsetc);
+ 	decrunch(#charsetc);
 	dx:=1;
 	charsetShift:=33;
 	InitCharset();	
 	fill(^$1400+^$20*^8,0,8);
-	decrunch(perlinc);
+	decrunch(#perlinc);
 
 	i:=AUX_COLOR_AND_VOLUME;
 	i:=i&15;
@@ -106,7 +106,7 @@ begin
 	fill(^$1100,64+32,0);
 	fill(^$9400,6+8,0);
 	fill(^$9500,6+8,0);
-	textP:=textPlasma;
+	textP:=#textPlasma;
 	g1:=1;
 end;
 

@@ -337,7 +337,7 @@ procedure InitMainDemo();
 begin
 
 	DisableVIC20IRQ();
-	decrunch(music);
+	decrunch(#music);
 	if (1=2) then ModMusic();
 	
 	isPal:=0;

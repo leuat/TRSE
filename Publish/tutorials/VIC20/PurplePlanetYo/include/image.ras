@@ -91,9 +91,9 @@ begin
 	setcharsetlocation(@charsetAndBitmap);
 	SCREEN_TEXT_HEIGHT:=@imageHeight-1;
 	SCREEN_TEXT_WIDTH:=@imageWidth;
-	decrunch(charsetc);
+	decrunch(#charsetc);
 	blockmemcpy(^$1400,^$0400,4);
-	decrunch(logoc);
+	decrunch(#logoc);
 	blockmemcpy(^@unpackAddress,^$1400,$C);
 	blockmemcpy(^$0400,^@fontAddress,4);
 
@@ -152,19 +152,19 @@ begin
 
 
 	if (c2x=27) then begin
-		tp:=title1;
+		tp:=#title1;
 		screenmemory:=$1000 + 3+20*3;
 		PrintOrgText();
 		inc(c2x);
 	end;
 	if (c2x=33) then begin
-		tp:=title2;
+		tp:=#title2;
 		screenmemory:=$1000 + 5+20*5;
 		PrintOrgText();
 		inc(c2x);
 	end;
 	if (c2x=40) then begin
-		tp:=title3;
+		tp:=#title3;
 		screenmemory:=$1000 + 7+20*7;
 		PrintOrgText();
 		inc(c2x);

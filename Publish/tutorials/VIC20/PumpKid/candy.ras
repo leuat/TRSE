@@ -7,7 +7,7 @@ begin
 	
 	t := 0;
 
-	screenmemory := addresstable(scr, 0, y);
+	screenmemory := addresstable(#scr, 0, y);
 	while (t = 0) do
 	begin
 	
@@ -30,7 +30,7 @@ begin
 		
 	end;
 
-	p1 := addresstable(clr, 0, y);
+	p1 := addresstable(#clr, 0, y);
 	screenmemory[ x ] := @CANDYCHAR;
 	p1[ x ] := CYAN;
 	candyscr := candyscr + 1;
@@ -39,7 +39,7 @@ begin
 	if (psnd2[ 0 ] = @VSA_IDLE) then
 	begin
 		
-		psnd2 := sndCAppear;
+		psnd2 := #sndCAppear;
 		PlaySnd2(250);
 	
 	end;
@@ -52,7 +52,7 @@ end;
 procedure EndCandy();
 begin
 
-	p1 := addresstable(clr, 0, cy);
+	p1 := addresstable(#clr, 0, cy);
 	if (cy > 3) then p1[ cx ] := CYAN;
 
 	cx := 0;
@@ -105,8 +105,8 @@ end;
 procedure MoveCandy();
 begin
 
-	screenmemory := addresstable(scr, 0, cy);
-	p1 := addresstable(clr, 0, cy);
+	screenmemory := addresstable(#scr, 0, cy);
+	p1 := addresstable(#clr, 0, cy);
 
 	screenmemory[ cx ] := cbgchar;
 	p1[ cx ] := cbgcol;
@@ -156,8 +156,8 @@ begin
 			if (pd = @PD_LEFT) then cdx := -1;
 			if (pd = @PD_RIGHT) then cdx := 1;
 
-			screenmemory := addresstable(scr, 0, cy);
-			p1 := addresstable(clr, 0, cy);
+			screenmemory := addresstable(#scr, 0, cy);
+			p1 := addresstable(#clr, 0, cy);
 
 			if (cdx = 1) then x := px + 1;
 			if (cdx <> 1) then x := px - 1;
@@ -185,7 +185,7 @@ begin
 				DrawCandyCounter();
 				
 				// Play shoot sound
-				psndfx:=sndShoot;
+				psndfx:=#sndShoot;
 				PlaySndfx(254);
 			
 			end;

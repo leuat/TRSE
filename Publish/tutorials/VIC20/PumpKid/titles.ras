@@ -197,8 +197,8 @@ begin
 	decrunchfromindex(packedScreens,1);	// chars for game
 	decrunchfromindex(packedScreens,30);	// How to play screen
 	
-	screenmemory := addresstable(scr, 7, 12);
-	bcdprint(score, 4);
+	screenmemory := addresstable(#scr, 7, 12);
+	bcdprint(#score, 4);
 	ColourTitleScreen2();
 
 	t := 5;
@@ -251,12 +251,12 @@ begin
 	// witch
 	x := 0;
 	y := 7;
-	screenmemory := addresstable(scr, 0 , y);
-	p1 := addresstable(clr, 0 , y);
+	screenmemory := addresstable(#scr, 0 , y);
+	p1 := addresstable(#clr, 0 , y);
 
 	pan := 0;
 
-	psnd1 := sndWitchDive;
+	psnd1 := #sndWitchDive;
 	PlaySnd1( 255 );
 
 	t := 80;
@@ -276,8 +276,8 @@ begin
 			
 			x := x + 1;
 			if (y<12) then y := y + 1;
-			screenmemory := addresstable(scr, 0 , y);
-			p1 := addresstable(clr, 0 , y);
+			screenmemory := addresstable(#scr, 0 , y);
+			p1 := addresstable(#clr, 0 , y);
 
 			screenmemory[ x ] := 33;
 			p1[ x ] := GREEN;
@@ -289,7 +289,7 @@ begin
 				screenmemory[ x+22 ] := 62;
 				p1[ x+22 ] := RED;
 				
-				psnd3 := sndWitchSpell;
+				psnd3 := #sndWitchSpell;
 				PlaySnd3( 195 );
 
 			end;
@@ -328,7 +328,7 @@ begin
 			if (mod(n,4) = 0) then
 			begin
 			
-				psnd1 := sndPumpkidFootsteps;
+				psnd1 := #sndPumpkidFootsteps;
 				PlaySnd1( 160 + stepsnd );
 				if stepsnd = 0 then stepsnd := 30 else stepsnd := 0;
 				

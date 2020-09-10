@@ -87,8 +87,8 @@ begin
 //	vscroll:=250;
 //	setscreenlocation($1000);
 //	setcharsetlocation($1400);
-	decrunch(logotextc);
-	decrunch(charsetc);
+	decrunch(#logotextc);
+	decrunch(#charsetc);
 	//animShift:=128;
 	ignoreColor:=0;
 	animShift:=0;

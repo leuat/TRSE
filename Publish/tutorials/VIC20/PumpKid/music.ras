@@ -32,7 +32,7 @@ begin
 	if (musicStep = 0) then
 	begin
 		// start note
-		psnd3 := sndMNoteShort;
+		psnd3 := #sndMNoteShort;
 		PlaySnd3( tuneTitle[ musicNote ] );
 		musicNote := musicNote + 1;
 		if (musicNote = @TUNELEN) then

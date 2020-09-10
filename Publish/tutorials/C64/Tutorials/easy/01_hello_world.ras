@@ -10,7 +10,7 @@ begin
 	// Move cursor to x,y position 10,12
 	moveto(10,12,hi(screen_char_loc));
 	// Print the text
-	printstring(text,0,40);
+	printstring(#text,0,40);
 	// Move cursor 2 rows down (2*40)
 	screenmemory:=screenmemory+2*screen_width;
 	// Print something else

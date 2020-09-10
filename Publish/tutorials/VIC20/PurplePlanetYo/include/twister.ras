@@ -157,7 +157,7 @@ begin
 	fill(^$1400+^8*^$20,0,8);
 	dy:=0;
 	dx:=0;
-	decrunch(twisterc);
+	decrunch(#twisterc);
 //	fill(^$1500,0,0);
 	fill(^$1600,0,0);
 	fill(^$1700,0,0);
@@ -169,7 +169,7 @@ begin
 	InitTable();
 	InitSine();
 
-	textP:=textTwister;
+	textP:=#textTwister;
 	fill(^$9400,YELLOW+8,0);
 	fill(^$9500,YELLOW+8,0);
 	fill(^$1000,$20,0);

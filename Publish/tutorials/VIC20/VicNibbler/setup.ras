@@ -48,8 +48,8 @@ begin
 	AUX_COLOR_AND_VOLUME := 12; // volume
 	SCREEN_BG_COLOR := 8;
 	
-	CreateAddressTable( scrm, $1e00, @SCREEN_WIDTH, @SCREEN_HEIGHT ); // bug- constants not accepted @SCREEN_ADDR and @COLOUR_ADDR
-	CreateAddressTable( clrm, $9600, @SCREEN_WIDTH, @SCREEN_HEIGHT );
+	CreateAddressTable( #scrm, $1e00, @SCREEN_WIDTH, @SCREEN_HEIGHT ); // bug- constants not accepted @SCREEN_ADDR and @COLOUR_ADDR
+	CreateAddressTable( #clrm, $9600, @SCREEN_WIDTH, @SCREEN_HEIGHT );
 	
 	@ifdef BUILDCRT
 	

@@ -162,7 +162,7 @@ var
 begin
 
 	// plot level pieces
-	p1 := level0;// + (levelNo * 19);
+	p1 := #level0;// + (levelNo * 19);
 	r := levelarray[ levelId ];
 	if r <> 0 then
 		fori i:=1 to r do
@@ -255,7 +255,7 @@ begin
 
 	numFood := 0;
 	
-	p1 := foodLevel0;// + (levelNo * 17);
+	p1 := #foodLevel0;// + (levelNo * 17);
 	r := foodarray[ levelId ];
 	if r <> 0 then
 		fori i:=1 to r do
@@ -344,15 +344,15 @@ var
 	waveString: string = (58,59,60,61);
 begin
 	screenmemory := $1e00;//addressTable( scrm,0,0 );
-	printstring( plyrString,0,4 );
+	printstring( #plyrString,0,4 );
 	screenmemory[10] := 48;
 	screenmemory := $1e0e;//screenmemory + 14;
-	printstring( leftString,0,2 );
+	printstring( #leftString,0,2 );
 	screenmemory := $1e45;//screenmemory + 55;
-	printstring( timeString,0,4 );
+	printstring( #timeString,0,4 );
 	screenmemory[6] := 48;
 	screenmemory := $1fbb;//addressTable( scrm,6,23 );
-	printstring( waveString,0,4 );
+	printstring( #waveString,0,4 );
 end;
 
 procedure DrawUIBonus();

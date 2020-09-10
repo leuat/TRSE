@@ -20,8 +20,8 @@ begin
 		x := mod( random(), 20 ) + 1;
 		y := mod( random(), 18 ) + 4;
 		
-		screenmemory := addresstable(scr, 0, y);
-		p1 := addresstable(scr, x-1, y-1);
+		screenmemory := addresstable(#scr, 0, y);
+		p1 := addresstable(#scr, x-1, y-1);
 		
 		// check top, left, centre, right and bottom
 		
@@ -35,7 +35,7 @@ begin
 		begin
 
 			// Found a free space
-			p1 := addresstable(clr, 0, y);
+			p1 := addresstable(#clr, 0, y);
 			
 			j := 1; // can now exit this loop
 			
@@ -84,7 +84,7 @@ begin
 		begin
 
 			// play spawn sound
-			psnd3 := sndGhostAppear;
+			psnd3 := #sndGhostAppear;
 			PlaySnd3( 200 );
 		
 			for i := 0 to 30 do
@@ -117,8 +117,8 @@ begin
 		if (gy[ i ] > 3) then
 		begin
 		
-			screenmemory := addresstable( scr, 0, gy[ i ] );
-			p1 := addresstable( clr, 0, gy[ i ] );
+			screenmemory := addresstable( #scr, 0, gy[ i ] );
+			p1 := addresstable( #clr, 0, gy[ i ] );
 			screenmemory[ gx[ i ] ] := @GHOSTCHAR + ((gcurrent + i) >> 1 & 1);
 			p1[ gx[ i ] ] := WHITE;
 		
@@ -139,8 +139,8 @@ begin
 	n := x; // store current location, in case decide cannot move to new space
 	s := y;
 
-	screenmemory := addresstable(scr, 0, y );
-	p1 := addresstable(clr, 0, y );
+	screenmemory := addresstable(#scr, 0, y );
+	p1 := addresstable(#clr, 0, y );
 
 	// restore the bg
 	screenmemory[ x ] := gbgchar[ gcurrent ];
@@ -159,7 +159,7 @@ begin
 		end;
 
 		// is new space free?  If not move back
-		p1 := addresstable(scr, x, y);
+		p1 := addresstable(#scr, x, y);
 		if cMask[ p1[ 0 ] ] > @CPKID then x := n; 
 
 		if gmode[ gcurrent ] = @GMODE_HUNT then
@@ -171,7 +171,7 @@ begin
 		end;
 		
 		// is new space free?  If not move back
-		p1 := addresstable(scr, x, y);
+		p1 := addresstable(#scr, x, y);
 		if cMask[ p1[ 0 ] ] > @CPKID then y := s; 		
 
 	end
@@ -182,13 +182,13 @@ begin
 		
 		// x movement
 		if (i & 1) then x := x + 1 else x := x - 1;
-		p1 := addresstable(scr, x, y);
+		p1 := addresstable(#scr, x, y);
 		if cMask[ p1[ 0 ] ] > @CPKID then x := n; 
 		
 		// y movement
 		if (i & 2) then y := y - 1 else y := y + 1;
 		// is new space free?  If not move back
-		p1 := addresstable(scr, x, y);
+		p1 := addresstable(#scr, x, y);
 		if cMask[ p1[ 0 ] ] > @CPKID then y := s; 		
 
 	end;
@@ -197,8 +197,8 @@ begin
 	gy[ gcurrent ] := y;
 	
 	// get new bg
-	screenmemory := addresstable(scr, 0, y );
-	p1 := addresstable(clr, 0, y );
+	screenmemory := addresstable(#scr, 0, y );
+	p1 := addresstable(#clr, 0, y );
 	gbgchar[ gcurrent ] := screenmemory[ x ];
 	gbgcol[ gcurrent ] := p1[ x ];
 	
@@ -244,7 +244,7 @@ begin
 				
 					Ghost_Respawn();
 					// play spawn sound
-					psnd3 := sndGhostAppear;
+					psnd3 := #sndGhostAppear;
 					PlaySnd3( 200 );
 					
 				end;

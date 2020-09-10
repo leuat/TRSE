@@ -118,7 +118,7 @@ begin
 
 	g0:=timeStamps[currentPos+2];
 
-	decrunch(charsetc);
+	decrunch(#charsetc);
 	fill(^$1400+^$20*^8+^128*^8,0,8);
 	fill(^$1400+^$20*^8,0,8);
 	dx:=1;
@@ -137,12 +137,12 @@ begin
 	SCREEN_TEXT_WIDTH:=22;
 	SCREEN_TEXT_HEIGHT:=46;
 
-	decrunch(perlinc);
+	decrunch(#perlinc);
 	scroll:=0; // Current scene
 	if (g0=1) then 
-		decrunch(boxc);
+		decrunch(#boxc);
 	if (g0=0) then 
-		decrunch(torusc);
+		decrunch(#torusc);
 
 
 	SCREEN_BG_COLOR:=BLUE+BLACK*16;
@@ -176,10 +176,10 @@ begin
 	end;
 
 	if (g0=0) then 
-		textP:=text2;
+		textP:=#text2;
 		
 	if (g0=1) then 
-		textP:=text3;
+		textP:=#text3;
 
 
 	g1:=0;

@@ -48,11 +48,11 @@ begin
 	vscroll:=250;
 	setscreenlocation($1000);
 	setcharsetlocation($1400);
-	decrunch(wavesetc);
+	decrunch(#wavesetc);
 	memcpy(^$1400,0,^$0400, 8*8);
 	memcpy(^$1400+^40*^8,0,^$0400+^64, 8*8);
 
-	decrunch(charsetc);
+	decrunch(#charsetc);
 	//animShift:=128;
 	ignoreColor:=0;
 	dy:=23;
@@ -92,7 +92,7 @@ begin
 	loadChars := $39;
 	InitCharset();
 
-	textP:=textCredits;
+	textP:=#textCredits;
 	scroll:=10;
 	memcpy(^$0400,0,^$1400+^@expc*^8, 8*8);
 	memcpy(^$0400+^64,0,^$1400+^40*^8+^@expc*^8, 8*8);

@@ -47,6 +47,9 @@ bool NodeNumber::isWord(Assembler *as) {
 //    return (m_val>=256 && m_op.m_type == TokenType::INTEGER_CONST);
     if (m_forceType == TokenType::INTEGER)
         return true;
+    if (isReference())
+        return true;
+
     return (m_val>=256 && m_op.m_type == TokenType::INTEGER_CONST);
 }
 
@@ -63,6 +66,7 @@ QString NodeNumber::getValue8bit(Assembler *as, bool isHi) {
         hash = as->m_hash;
 
     if (isAddress()) hash="";
+    if (isReference()) hash="#";
     if (isHi)
         return hash + Util::numToHex((int)m_val>>8);
     else
