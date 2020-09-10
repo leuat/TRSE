@@ -217,7 +217,7 @@ void AsmMOS6502::DeclareArray(QString name, QString type, int count, QStringList
 
         for (int i=0;i<data.count();i++) {
             s=s+data[i];
-            if (i%8==7) {
+            if (i%8==7 && i!=data.count()-1) {
                 s=s+"\n";
                 s=s + "\t" +t + " ";
             }
@@ -255,7 +255,8 @@ void AsmMOS6502::VarDeclHeader()
 void AsmMOS6502::DeclareVariable(QString name, QString type, QString initval, QString position)
 {
     QString t = "";
-
+    if (initval=="")
+        initval="0";
     if (DeclareRecord(name,type,1,QStringList(),position))
          return;
 

@@ -41,7 +41,7 @@ var
 	
 	bsrc,bdst: pointer of integer; 
 	bdx, bdy,bw,bh : integer;
-	badd : long;
+	badd,badd2 : long;
 	hx, hy, hl,hc:integer;
 
 	@donotremove Graphics_htabIn
@@ -598,8 +598,9 @@ blit_y:
 		move.w Graphics_bw,d4 ; width
 		
 blit_x:
-		move.w #3,d2
+;		move.w #3,d2
 inner:
+		rept 4
 		move.w 0(a1),d0
 		swap d0
 		move.w 8(a1),d0
@@ -614,8 +615,8 @@ inner:
 
 
 
-		dbf d2,inner
-			
+;		dbf d2,inner
+		endr			
 
 
 		dbf d4,blit_x
@@ -630,6 +631,50 @@ inner:
 	");	
 
 end;
+
+procedure BlitChar(bsrc,bdst: global pointer of integer; bdx, bdy,bw,bh : global integer;badd,badd2:global long);
+begin
+	asm("
+		jsr Graphics_BlitSetup	
+
+		move.w Graphics_bh,d3 ; height
+blitc_y:
+		move.w Graphics_bw,d4 ; width
+		
+blitc_x:
+;		move.w #3,d2
+innerc:
+		rept 4
+		move.w 0(a1),d0
+		swap d0
+		move.w 8(a1),d0
+;		swap d0
+		
+		lsr.l d6,d0
+		lsr.l d7,d0
+		or.w d0,(a2)+
+		add.l #2,a1	
+
+
+
+		endr
+;		dbf d2,innerc
+			
+
+
+		dbf d4,blitc_x
+		
+		add.l Graphics_badd,a2
+		add.l Graphics_badd2,a1
+		
+		dbf d3,blitc_y
+						
+		
+
+	");	
+
+end;
+
 
 procedure BlitSingle(bsrc,bdst: global pointer of integer; bdx, bdy,bw,bh : global integer; badd:global long);
 begin
@@ -668,6 +713,30 @@ blit2_x:
 
 end;
 
+procedure Clear8pixelBorder(badd: global long);
+begin
+	asm("
+		move.l Graphics_curBuf,a2
+		move.l Graphics_badd,d1
+		move.l #199,d5
+megafill_whoo:
+		move.l d1,(a2)+
+		move.l d1,(a2)+
+		move.l d1,(a2)+
+		move.l d1,(a2)+
+		add.l #160-(8*4),a2
+		move.l d1,(a2)+
+		move.l d1,(a2)+
+		move.l d1,(a2)+
+		move.l d1,(a2)+
+
+		dbf d5,megafill_whoo				
+
+
+	");
+
+end;
+
 
 procedure BlitMaskSingle(bsrc,bdst: global pointer of integer; bdx, bdy,bw,bh : global integer; badd:global long);
 begin
@@ -680,8 +749,9 @@ blit3_y:
 		
 blit3_x:
 
-		move.l #3,d5
+;		move.l #3,d5
 blit3_inner	:	
+		rept 4
 
 		move.w 0(a1),d0
 		swap d0
@@ -695,8 +765,8 @@ blit3_inner	:
 
 		add.l #2,a1	
 ;		add.l #6,a2	
-
-		dbf  d5,blit3_inner
+		endr
+;		dbf  d5,blit3_inner
 
 
 		dbf d4,blit3_x

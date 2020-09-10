@@ -51,4 +51,6 @@ charset_images/level.flf = /home/leuat/code/TRSE/tutorials/GAMEBOY/tutorials/ima
 data_header_images/metatiles.flf = 0
 data_header_images/charset.flf = 6.91604e-310
 zeropage_colormemory = $fc
-open_files =, tutorial1.ras
+open_files = ,tutorial6_levels2.ras, images/level.flf, images/sprites.flf, tutorial2_sprites.ras, tutorial3_levels.ras, tutorial1.ras
+project_path = /home/leuat/code/TRSE/Release/../tutorials/GAMEBOY/tutorials/
+current_file = tutorial3_levels.ras
