@@ -1205,7 +1205,7 @@ bool Parser::PreprocessIncludeFiles()
             if (m_currentToken.m_value.toLower()=="include") {
                 Eat(TokenType::PREPROCESSOR);
                 QString name = m_currentToken.m_value;
-                qDebug() << "INCLUDING " <<name;
+  //              qDebug() << "INCLUDING " <<name;
                 QString filename =(m_currentDir +"/"+ m_currentToken.m_value);
                 filename = filename.replace("//","/");
                 QString text = m_lexer->loadTextFile(filename);

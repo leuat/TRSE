@@ -129,6 +129,8 @@ public:
 
     void Optimise(CIniFile& ini) override;
     void OptimisePassStaLda();
+    void OptimisePassStaLda2();
+
     void OptimisePassLdx(QString x);
     void OptimisePassLdaTax(QString x);
     void OptimiseJumps();
@@ -140,8 +142,13 @@ public:
     void OptimisePassStaLdx(QString x);
     QString getLine(int i);
     QString getNextLine(int i, int &j);
+    bool nextLineIsLabel(int i);
     QString getToken(QString, int t);
     void RemoveLines();
+    void RemoveLinesDebug();
+
+    bool ContainsAChangingOpcodes(QString l1);
+
 
     int getLineCount() override;
 
@@ -150,6 +157,7 @@ public:
     int CalculateCycles(MOSOperation op);
     int CountInstructionCycle(QStringList s) override;
 };
+
 
 
 #endif // MOS6502_H

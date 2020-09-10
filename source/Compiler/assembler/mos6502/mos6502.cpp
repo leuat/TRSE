@@ -727,8 +727,10 @@ void AsmMOS6502::Optimise(CIniFile& ini)
         OptimisePassLdaTax("y");
 
 
-    if (ini.getdouble("post_optimizer_passstalda")==1)
+    if (ini.getdouble("post_optimizer_passstalda")==1) {
         OptimisePassStaLda();
+        OptimisePassStaLda2();
+    }
 
     if (ini.getdouble("post_optimizer_passldx")==1)
         OptimisePassLdx("x");
@@ -1163,6 +1165,14 @@ QString AsmMOS6502::getNextLine(int i, int &j)
 
 }
 
+bool AsmMOS6502::nextLineIsLabel(int i)
+{
+//    qDebug() <<  "   NXT "<< m_source[i+1] << !(m_source[i+1].remove(" ").startsWith("\t"));
+    QString s = m_source[i+1];
+    return !s.remove(" ").startsWith("\t");
+
+}
+
 QString AsmMOS6502::getToken(QString s, int t)
 {
     QStringList lst = s.split(" ");
@@ -1181,6 +1191,39 @@ void AsmMOS6502::RemoveLines()
         m_totalOptimizedLines++;
     }
     m_removeLines.clear();
+}
+
+void AsmMOS6502::RemoveLinesDebug()
+{
+    for (int i: m_removeLines) {
+        //qDebug() << "Removing line " << (i) << " : " << getLine(i-k);
+        m_source[i] +="; DEBUG REMOVE";
+    }
+    m_removeLines.clear();
+}
+
+bool AsmMOS6502::ContainsAChangingOpcodes(QString l1) {
+    l1 = l1.trimmed().toLower();
+    return    l1.startsWith("txa") || l1.startsWith("tya")
+            || l1.startsWith("lda") || l1.startsWith("pla")
+            || l1.startsWith("ina") || l1.startsWith("dea")
+            || l1.startsWith("adc") || l1.startsWith("sbc")
+            || l1.startsWith("asl") || l1.startsWith("lsr")
+            || l1.startsWith("and")
+            || l1.startsWith("ror") || l1.startsWith("rol") ||
+            l1.startsWith("jsr") || l1.startsWith("rts");
+
+/*
+            ;
+
+
+    if (op==("lda") || op==("txa") || op==("tya") || op=="jmp" || op=="rts" || op=="jsr" ||
+            op==("ina") || op==("dea")|| op.length()!=3  || op==("adc") || op==("sbc") || op==("cmp")
+            || op=="clc" || op=="sec" || op=="asl" || op=="rol" || op=="ror" || op=="lsr"
+            || op=="bcc" || op=="bcs" || op=="pla" || op=="beq" || op=="bpl" || op=="bne"
+            || op=="and" || op=="ora" || op=="eor" || op=="bit"
+            */
+
 }
 
 int AsmMOS6502::getLineCount()
@@ -1302,4 +1345,64 @@ void AsmMOS6502::InitZeroPointers(QStringList lst, QStringList tmpList, QStringL
 //       qDebug() << "ASMMos6502 initzero " <<m_tempZeroPointers;
 
 
+}
+
+// Optimises: "sta p1   lda p1"
+void AsmMOS6502::OptimisePassStaLda2()
+{
+    m_removeLines.clear();
+    int j;
+    QString curA ="";
+    for (int i=0;i<m_source.count()-1;i++) {
+        QString l0 = getLine(i);
+        if (l0.contains("sta ") && !l0.contains(",") && !nextLineIsLabel(i)) {
+            curA = l0.split(" ")[1];
+            QString l1 = getNextLine(i,j);
+        //    qDebug() << "FOUND sta "<<l0;
+            bool done = false;
+            while (!done) {
+
+/*                if (op==("lda") || op==("txa") || op==("tya") || op=="jmp" || op=="rts" || op=="jsr" ||
+                        op==("ina") || op==("dea")|| op.length()!=3  || op==("adc") || op==("sbc") || op==("cmp")
+                        || op=="clc" || op=="sec" || op=="asl" || op=="rol" || op=="ror" || op=="lsr"
+                        || op=="bcc" || op=="bcs" || op=="pla" || op=="beq" || op=="bpl" || op=="bne"
+                        || op=="and" || op=="ora" || op=="eor" || op=="bit"
+  */
+                bool abort = false;
+//                qDebug() << "NEXT IS LABEL " <<nextLineIsLabel(j);
+                while ((done==false && !l1.startsWith("lda")) && !abort && !nextLineIsLabel(j)) {
+                    l1 = getNextLine(j,j);
+//                    qDebug() << l1;
+                    if (!l1.startsWith("lda")) {
+                        abort = ContainsAChangingOpcodes(l1);
+                        if (!abort) {
+                            abort = nextLineIsLabel(j);
+                   //         if (abort)
+                     //           qDebug() << "ABORTING NEXT LINE IS LABEL "<<l1;
+
+                        }
+                       /* if (abort) {
+                            qDebug() << "ABORTING because "<<l1;
+                        }*/
+                    }
+//                    qDebug() << j <<m_source.count();
+                    if (j>=m_source.count()-2)
+                        done = true;
+                }
+                done = true;
+                if (!abort) {
+                    QStringList lst = l1.split(" ");
+                    if (lst.count()>=2)
+                        if (lst[0] == "lda" && lst[1]==curA &&!l1.contains("keep")) {
+                            qDebug() << "Removing: " << l1 << " on line " << j << lst[0] << lst[1] << curA;
+                            m_removeLines.append(j);
+                            //                    done = false;
+
+
+                        }
+                }
+            }
+        }
+    }
+    RemoveLines();
 }
