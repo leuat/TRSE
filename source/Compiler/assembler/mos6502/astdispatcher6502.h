@@ -54,6 +54,7 @@ public:
 
     QString getValue(QSharedPointer<Node> n) override;
 
+    QString getValue8bit(QSharedPointer<Node> n, bool isHi);
 
     QString getJmp(bool isOffPage) override {
         return "jmp";

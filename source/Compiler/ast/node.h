@@ -52,6 +52,7 @@ public:
     bool m_forceAddress = false;
     bool m_ignoreSuccess = false; // Used for binary expressions
     int m_forcePage = 0;
+    static QString sForceFlag;
 
     // Used to set various states, such as if binary operations are used etc
     static QMap<QString, bool> flags;
@@ -63,6 +64,7 @@ public:
     static MemoryBlockInfo m_staticBlockInfo;
     static QSharedPointer<MemoryBlock> m_curMemoryBlock;
 
+    virtual bool isReference() { return false;}
 
     virtual bool containsPointer(Assembler* as) {return false;}
 

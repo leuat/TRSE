@@ -189,6 +189,14 @@ bool NodeVar::isRecordData(Assembler *as)
 }
 
 QString NodeVar::getValue8bit(Assembler *as, bool isHi) {
+
+    if (isReference()) {
+        if (isHi)
+            return "#>"+getValue(as);
+        else
+            return "#<"+getValue(as);
+    }
+
     if (isHi) {
         if (getOrgType(as)==TokenType::BYTE)
             return "#0";
@@ -239,9 +247,15 @@ QString NodeVar::getValue(Assembler* as) {
 
 
     }
+//    if (!isReference() && isArrayIndex() && !isPointer(as))
+/*        ErrorHandler::e.Error("Unknown usage: data / array")
+    int a;
+        int* c=a;
+  */
 //    qDebug() << "NodeVar:: getValue : " << value << "  "  << TokenType::getType(getType(as));
 //    if (m_forceAddress && !(getType(as)==TokenType::POINTER)) return "#" + v;
 //    if (m_forceAddress && !(getType(as)==TokenType::POINTER)) return "#" + v;
+    if (isReference()) return "#" + v;
     if (m_forceAddress && !(isPointer(as))) return "#" + v;
     return v;
 }

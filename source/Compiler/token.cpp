@@ -36,7 +36,7 @@ QString TokenType::types[no_types] = {
             "GREATEREQUAL", "LESSEQUAL","DONOTREMOVE", "CASE", "WORD", "SHR", "SHL", "XOR", "REPEAT",
             "UNTIL", "CONST", "COMMENT", "ABSOLUTE", "LENGTH", "RECORD", "UNIT", "GLOBAL",
             "WRAM", "HRAM", "ALIGNED", "BANK", "SPRRAM","INLINE", "BUILDTABLE", "USES", "FUNCTION", "COMPRESSED",
-            "PURE", "PURE_VARIABLE", "PURE_NUMBER", "NO_TERM","MACRO"
+            "PURE", "PURE_VARIABLE", "PURE_NUMBER", "NO_TERM","MACRO", "REFERENCE"
 
 };
 
@@ -62,18 +62,20 @@ QString Token::getNumAsHexString()
     return position;
 }
 
-Token::Token(TokenType::Type t, QString val) {
+Token::Token(TokenType::Type t, QString val, bool isRef) {
     m_value = val;
     m_type = t;
     m_lineNumber = Pmm::Data::d.lineNumber;
     m_currentLineText = Pmm::Data::d.currentLineText;
+    m_isReference = isRef;
 }
 
-Token::Token(TokenType::Type t, long val) {
+Token::Token(TokenType::Type t, long val, bool isRef) {
     m_intVal = val;
     m_type = t;
     m_lineNumber = Pmm::Data::d.lineNumber;
     m_currentLineText = Pmm::Data::d.currentLineText;
+    m_isReference = isRef;
 
 }
 

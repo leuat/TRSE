@@ -29,7 +29,7 @@
 
 class TokenType {
 public:
-#define no_types 109
+#define no_types 110
 
     enum Type {
         NONE, INTEGER, PLUS, MINUS, MUL, DIV, LPAREN,
@@ -47,7 +47,7 @@ public:
         UNTIL, CONSTANT ,COMMENT, ABSOLUT, LENGTH, RECORD, UNIT,
         GLOBAL, WRAM, HRAM, ALIGNED,BANK, SPRRAM, INLINE, BUILDTABLE,
         USES, FUNCTION, COMPRESSED,
-        PPURE, PURE_VARIABLE, PURE_NUMBER, NO_TERM,MACRO
+        PPURE, PURE_VARIABLE, PURE_NUMBER, NO_TERM,MACRO, REFERENCE
 
     };
 
@@ -80,14 +80,15 @@ public:
     QString m_value;
     long m_intVal=0;
     int m_lineNumber=0;
+    bool m_isReference;
     QString m_currentLineText="";
     QString getType();
 
     Token();
     QString getNumAsHexString();
 
-    Token(TokenType::Type t, QString val);
-    Token(TokenType::Type t, long val);
+    Token(TokenType::Type t, QString val, bool isRef=false);
+    Token(TokenType::Type t, long val, bool isRef=false);
 
 };
 

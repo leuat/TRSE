@@ -62,6 +62,8 @@ public:
     bool isRecord(Assembler* as) override;
     bool isRecordData(Assembler* as) override;
 
+    virtual bool isReference() override { return m_op.m_isReference; }
+
     void forceWord() override {
         m_fake16bit = true;
     }

@@ -58,7 +58,7 @@ public:
     QStringList m_lines;
     QString m_path;
     QVector<FilePart> m_includeFiles;
-    bool m_ignorePreprocessor;
+    bool m_ignorePreprocessor, m_nextIsReference = false;
 
     QString m_currentComment="";
 

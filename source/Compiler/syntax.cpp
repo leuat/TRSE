@@ -264,7 +264,7 @@ bool Syntax::isAlpha(QString s) {
     return alpha.contains(s.toLower());
 }
 
-Token Syntax::GetID(QString val) {
+Token Syntax::GetID(QString val, bool isRef) {
     for (Token& t: reservedWords)
         if (val.toUpper()==t.m_value) {
             t.m_lineNumber = Pmm::Data::d.lineNumber;
@@ -272,7 +272,7 @@ Token Syntax::GetID(QString val) {
         }
 
     //exit(1);
-    return Token(TokenType::ID, val);
+    return Token(TokenType::ID, val, isRef);
 }
 
 

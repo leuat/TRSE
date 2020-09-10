@@ -761,6 +761,13 @@ QString ASTDispatcher6502::getValue(QSharedPointer<Node> n) {
     return n->getValue(as);
 }
 
+QString ASTDispatcher6502::getValue8bit(QSharedPointer<Node> n, bool isHi) {
+    if (m_inlineParameters.contains(n->getValue(as)))
+        return m_inlineParameters[n->getValue(as)]->getValue8bit(as,isHi);
+
+    return n->getValue8bit(as,isHi);
+}
+
 
 void ASTDispatcher6502::dispatch(QSharedPointer<Node> node)
 {
@@ -2469,15 +2476,15 @@ bool ASTDispatcher6502::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QShare
 //        qDebug() << "OPTIMIZATION " <<bvar->getValue(as) << var->getValue(as);
 //
         as->Comment("INTEGER optimization: a=b+c ");
-        QString Blo = getValue(bvar);
-        QString Bhi = getValue(bvar)+"+1";
-        if (var->isPointer(as)) {
+        QString Blo = getValue8bit(bvar,false);
+        QString Bhi = getValue8bit(bvar,true);
+/*        if (var->isPointer(as)) {
             as->Comment("Resulting var is POINTER: Assuming : a=address+c ");
             if (bvar->isPureVariable() && !bvar->isPointer(as)) {
                 Blo ="#<"+getValue(bvar);
                 Bhi="#>"+getValue(bvar);
             }
-        }
+        }*/
         //var->Accept(this);
         as->Asm("lda " +Blo);
         as->Term();

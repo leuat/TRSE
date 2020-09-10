@@ -1232,7 +1232,6 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
 {
     QSharedPointer<Node> n = nullptr;
 
-
     bool isConstant = false;
     if (m_symTab->m_constants.contains(m_currentToken.m_value.toUpper())) {
         QSharedPointer<Symbol> s = m_symTab->m_constants[m_currentToken.m_value.toUpper()];

@@ -161,6 +161,15 @@ Highlighter::Highlighter(CIniFile ini, int type, QTextDocument *parent)
     rule.format = numberFormat;
     highlightingRules.append(rule);
 
+    numberFormat.setFontWeight(QFont::Normal);
+    numberFormat.setForeground(m_colors.getColor("addresscolor"));
+//    rule.pattern = QRegularExpression("#[0-9a-f#\\\$%]+",QRegularExpression::CaseInsensitiveOption);
+//    rule.pattern = QRegularExpression("(\\b\\$[0-9a-f]+)||(\\b[0-9]+)",QRegularExpression::CaseInsensitiveOption);
+//    rule.pattern = QRegularExpression("(?!(\\\^))(\\\$)?\\b[0-9a-f]+\\b",QRegularExpression::CaseInsensitiveOption);
+    rule.pattern = QRegularExpression("((\\\#)\\b([0-9a-z]+)\\b)|(\\b([0-9]+)\\b)",QRegularExpression::CaseInsensitiveOption);
+    rule.format = numberFormat;
+    highlightingRules.append(rule);
+
 
     addressFormat.setFontWeight(QFont::Normal);
     addressFormat.setForeground(m_colors.getColor("addresscolor"));

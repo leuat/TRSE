@@ -120,7 +120,7 @@ public:
 
     bool isAlpha(QString s);
 
-    Token GetID(QString val);
+    Token GetID(QString val, bool isRef);
 };
 
 #endif // SYNTAX_H

@@ -256,7 +256,9 @@ Token Lexer::_Id()
         }
 
     }
-    return Syntax::s.GetID(result);
+    bool isRef =  m_nextIsReference;
+    m_nextIsReference = false;
+    return Syntax::s.GetID(result,isRef);
 
 }
 
@@ -400,6 +402,11 @@ Token Lexer::GetNextToken()
             Advance();
             return Token(TokenType::COLON, ":");
         }
+        if (m_currentChar=="#") {
+            Advance();
+            m_nextIsReference = true;
+            return _Id();
+        }
 
         if (m_currentChar=="=") {
             Advance();
@@ -483,6 +490,7 @@ Token Lexer::GetNextToken()
             //m_text = m_text.replace("\n", "");
             return Token(TokenType::DOT, ".");
         }
+
         ErrorHandler::e.Error( "Error parsing: " + m_currentChar,Pmm::Data::d.lineNumber );
 
 
