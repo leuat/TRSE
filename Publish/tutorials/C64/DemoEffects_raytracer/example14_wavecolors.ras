@@ -239,7 +239,7 @@ begin
 	disableciainterrupts();
 	setmemoryconfig(1,0,0);
 	// Setup 
-	Init(data1,Black2White);
+	Init(#data1,#Black2White);
 	// Colors
 	
 	screen_bg_col:=black;

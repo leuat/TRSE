@@ -43,8 +43,7 @@ begin
 	shiftx:=shiftx+31;
 	ystart:=3;
 	moveto(0, ystart, hi(screen_char_loc));
-	colorzp:=screen_col_loc;
-	colorzp:=colorzp +ystart*screen_width;
+	colorzp:=#screen_col_loc +ystart*screen_width;
 
 	for y:=0 to 5 do begin // 160*4
 	//	 Original code

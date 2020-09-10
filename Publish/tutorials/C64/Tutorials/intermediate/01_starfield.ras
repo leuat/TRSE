@@ -40,7 +40,7 @@ var
 // Creates 8 characters with 1 dot in each char from @charPos
 procedure GenerateCharset();
 begin
-	zp:=charsetPos + charPos*8;
+	zp:=#charsetPos + charPos*8;
 	for i:=0 to 8 do begin
 		for j:=0 to 8 do begin
 			zp[j]:=0;
@@ -80,7 +80,7 @@ end;
 procedure RenderStarfield();
 begin
 	moveto(0,0,hi(screen_char_loc));
-	cp:=screen_col_loc;
+	cp:=#screen_col_loc;
 	for i:=0 to noStars do begin
 		if i<>12 then begin // ignore stars at line 12
 			x:=stars[i].x;
@@ -123,7 +123,7 @@ end;
 procedure InitializeText();
 begin
 	moveto(12,12,hi(screen_char_loc));
-	printstring(text,0,20);
+	printstring(#text,0,20);
 end;
 
 

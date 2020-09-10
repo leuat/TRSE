@@ -45,7 +45,7 @@ begin
 	vic_data_loc:=$18;
 	setbank(vic_bank1);
 	// Copy image color data from $5000 to $4400 (on bank 1) and $D800 
-	copyimagecolordata(image_color,1);
+	copyimagecolordata(#image_color,1);
 	screen_fg_col:=black;
 	/*
 	// Example of how to copy the color data manually

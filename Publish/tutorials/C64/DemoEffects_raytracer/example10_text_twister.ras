@@ -9,7 +9,7 @@ var
 	const charLoc : address = $2000;
 
 	const rasterMainPos : byte = 0;
-
+	
 @requirefile "data/example10_screen.bin" "Please run the Fjong raytracer file 'example10_text_twister.fjo' before compiling this program"
 
 

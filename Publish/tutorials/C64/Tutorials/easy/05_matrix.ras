@@ -23,8 +23,8 @@ begin
 	// ypos has values 0-128
 	for i:=0 to screen_width do ypos[i]:=random()/2;
 	// Lookup address tables for 40 column mode, screen address and color address
-	createaddresstable(saddr,screen_char_loc,screen_width,screen_height);
-	createaddresstable(caddr,screen_col_loc,screen_width,screen_height);
+	createaddresstable(#saddr,screen_char_loc,screen_width,screen_height);
+	createaddresstable(#caddr,screen_col_loc,screen_width,screen_height);
 
 end;
 
@@ -38,7 +38,7 @@ begin
 	if (yy>ymax) then yy:=yy+screen_height;
 	if (yy<screen_height) then 
 	begin
-		sp:=AddressTable(caddr,xx,yy);
+		sp:=AddressTable(#caddr,xx,yy);
 		sp[0]:=cc;	
 	end;
 end;
@@ -55,7 +55,7 @@ begin
 		j:=ypos[i]/8;
 		// Print random character
 		if (j<screen_height) then begin
-			sp:=AddressTable(saddr,i,j);
+			sp:=AddressTable(#saddr,i,j);
 			sp[0]:=random()/4; // random character is located between 0 and 64
 		end;
 		// Fill the "tail" colors

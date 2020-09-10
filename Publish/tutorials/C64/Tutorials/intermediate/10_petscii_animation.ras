@@ -28,6 +28,6 @@ end;
 begin
 	screen_bg_col:=black;
 	screen_fg_col:=black;
-	Animations::ReadAnimationHeader(anim);
+	Animations::ReadAnimationHeader(#anim);
 	Render();	
 end.

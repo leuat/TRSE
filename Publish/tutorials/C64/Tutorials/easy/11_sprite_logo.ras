@@ -75,13 +75,13 @@ begin
 	// Move screen pointer to upper left pointer
 	moveto(0,0,hi(screen_char_loc));
 	// text pointer pointing to text
-	tp:=text;
+	tp:=#text;
 	// go through 25 rows
 	for j:=0 to screen_height do begin
 		// and 40 columns 
 		for i:=0 to screen_width do begin
 			// if text pointer is zero, the end of string has been reached. If so, reset text pointer
-			if (tp[0]=0) then tp:=text;
+			if (tp[0]=0) then tp:=#text;
 			// copy text char from text to screen
 			screenmemory[i]:=tp[0];
 			// Increase text pointer

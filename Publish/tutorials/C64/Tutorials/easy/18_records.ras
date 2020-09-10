@@ -50,10 +50,10 @@ procedure RenderMonsters(render_char:byte);
 begin
 	for i:=0 to no do
 	begin
-		screenmemory:=addresstable(saddr,monsters[i].prevx,monsters[i].prevy);
+		screenmemory:=addresstable(#saddr,monsters[i].prevx,monsters[i].prevy);
 		screenmemory[0]:=key_space;
 
-		screenmemory:=addresstable(saddr,monsters[i].x,monsters[i].y);
+		screenmemory:=addresstable(#saddr,monsters[i].x,monsters[i].y);
 		screenmemory[0]:=render_char;
 		screenmemory:=screenmemory+$D400;
 		screenmemory[0]:=monsters[i].color;
@@ -109,7 +109,7 @@ begin
 	clearscreen(black,screen_col_loc);
 	DefineScreen();
 	// Initialize tables
-	createaddresstable(saddr,screen_char_loc,screen_width,screen_height);
+	createaddresstable(#saddr,screen_char_loc,screen_width,screen_height);
 	for i:=0 to 256 do 
 		randomTable[i]:=random()&3;
 

@@ -87,7 +87,7 @@ begin
 		// Point to next character in the text
 		pText:=pText+1;
 		// If the text pointer has reached the string terminal value 0, simply reset the text pointer
-		if (pText[0]=0) then pText:=text;
+		if (pText[0]=0) then pText:=#text;
 	end;
 end;
 
@@ -152,7 +152,7 @@ begin
 	ClearScreen(@textColor1, screen_col_loc);
 
 	// Initialize text pointer
-	pText:=text;
+	pText:=#text;
 	// Hide the 0th and 39th column
 	hideborderx(0);
 	SetMemoryConfig(1,@useKernal,0);

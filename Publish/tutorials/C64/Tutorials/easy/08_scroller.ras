@@ -37,7 +37,7 @@ begin
 		// Increase text pointer
 		textPointer:=textPointer+1;
 		// Reset scroller text if string termination "0" is encountered
-		if (textPointer[39]=0) then textPointer:=text;
+		if (textPointer[39]=0) then textPointer:=#text;
 		// Print new string to the screen
 		PrintText();			
 	end
@@ -88,7 +88,7 @@ begin
 	// Fill the upper screen color ram with black
 	fill(screen_col_loc,black,0);	
 	// Fill the scroll area with light red
-	fill(screen_col_loc+^@ypos*^40,light_red,0);	
+	fill(screen_col_loc+ypos*^40,light_red,0);	
 	
 	// Print some static text
 	moveto(6,2,hi(screen_char_loc));
@@ -102,7 +102,7 @@ end;
 begin
 	InitScreen();
 	// Let the text pointer point to the actual text
-	textPointer:=text;
+	textPointer:=#text;
 	// Start the raster chain!
 	StartRasterChain(Top(), 0,kernal);
 	Loop(); 

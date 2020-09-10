@@ -95,7 +95,7 @@ begin
 	// Pointing to the next
 	textPtr:=textPtr+2;
 	// If value is 255, then reset text pointer
-	if (textPtr[0]=255) then textPtr:=demotext;
+	if (textPtr[0]=255) then textPtr:=#demotext;
 end;
 
 /*
@@ -148,7 +148,7 @@ end;
 begin
 	screen_bg_col:=black;
 	screen_fg_col:=black;
-	textPtr:=demotext;
+	textPtr:=#demotext;
 	ClearScreen(key_space,screen_char_loc);
 	ClearScreen(black,screen_col_loc);
 	

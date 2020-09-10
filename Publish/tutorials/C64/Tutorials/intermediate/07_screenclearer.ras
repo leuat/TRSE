@@ -13,11 +13,11 @@ var
 // Random place to store 1000 bytes
 	const dataLoc : address = $5000;	
 // Turn off to un-optimize
-@define IS_OPTIMIZED 0
+@define IS_OPTIMIZED 1
 
 procedure CalculateCircles();
 begin
-	zp:=dataLoc;
+	zp:=#dataLoc;
 	// Since perlin noise repeats every 16 bytes, we add a higher frequency noise with a shifted phase	
 	for j:=0 to screen_height do begin
 		for i:=0 to screen_width do begin
@@ -44,9 +44,9 @@ end;
 */
 procedure PerformPerlin();
 begin
-	zp:=screen_char_loc;
-	p1:=screen_col_loc;
-	l1:=@dataLoc;
+	zp:=#screen_char_loc;
+	p1:=#screen_col_loc;
+	l1:=#dataLoc;
 		
 
 

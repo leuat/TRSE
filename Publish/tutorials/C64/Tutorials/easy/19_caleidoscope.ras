@@ -19,7 +19,7 @@ begin
 	clearscreen(81, screen_char_loc);		// clearscreen to fill the screen_char_loc screen memory with the character code 81, this is the BALL character
 	clearscreen(BLACK, screen_col_loc);		// clearscreen to fill the screen_col_loc colour memory with the colour code for BLACK
 
-	screenmemory := screen_col_loc;
+	screenmemory := #screen_col_loc;
 		
 	while (true) do
 		begin

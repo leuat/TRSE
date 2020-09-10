@@ -50,7 +50,7 @@ begin
 	
 	// finally, let's print a string of text
 	screenmemory := screenmemory + screen_width - 10;  // move to next line down and back 10 characters
-	printstring(gameover, 0, 9);	// print the gameover string, starting at character 0 and ending at character 9
+	printstring(#gameover, 0, 9);	// print the gameover string, starting at character 0 and ending at character 9
 
 	// Click the 'Run (c-r)' button at the bottom left to start the program 
 	// The two scores, lives and the text string will be displayed on the screen.

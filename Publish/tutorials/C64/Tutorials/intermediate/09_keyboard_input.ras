@@ -81,18 +81,18 @@ end;
 procedure ExecuteCommand();
 begin
 	fill(screenmemory,key_space,40);
-		Message(command);
+		Message(#command);
 	
-	if (strcmp(command,"HELLO")) then
+	if (strcmp(#command,"HELLO")) then
 		Message("HELLO TO YOU");
 
-	if (strcmp(command,"HOW ARE YOU")) then
+	if (strcmp(#command,"HOW ARE YOU")) then
 		Message("FINE INDEED");
 
-	if (strcmp(command,"GO AWAY")) then
+	if (strcmp(#command,"GO AWAY")) then
 		Message("NO I WON'T");
 
-	if (strcmp(command,"WHO ARE YOU")) then
+	if (strcmp(#command,"WHO ARE YOU")) then
 		Message("I AM COMPUTER");
 
 end;
