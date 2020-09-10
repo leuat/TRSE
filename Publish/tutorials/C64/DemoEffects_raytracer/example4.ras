@@ -40,7 +40,7 @@ In this program, we simply display these 16 screens while updating the character
 procedure SetScreen();
 begin
 	// Ugly but works, sets p1 to point to screen memory location 1000*frame 
-	p1:=screen+frame*4*250;
+	p1:=#screen+frame*4*250;
 	
 
 	// Enable bank switching to remove flickering
@@ -70,7 +70,7 @@ end;
 
 procedure SetupScreenShift();
 begin
-	p1:=screen;
+	p1:=#screen;
 	for i:=0 to 16 do begin
 		k:=(i&3)*64;
 		for y:=0 to 25 do begin

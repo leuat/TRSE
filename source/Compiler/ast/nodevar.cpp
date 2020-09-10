@@ -249,11 +249,11 @@ QString NodeVar::getValue(Assembler* as) {
     }
 //    if (as!=nullptr)
         if (as!=nullptr) {
-
-//            qDebug() << v<< "TYPE" << as->m_symTab->Lookup(v, m_op.m_lineNumber)->m_type <<m_op.getType();
+            QString t = as->m_symTab->Lookup(v, m_op.m_lineNumber)->m_type.toLower();
+            qDebug() << v<< "TYPE" << as->m_symTab->Lookup(v, m_op.m_lineNumber)->m_type <<m_op.getType();
             if (m_op.m_type!=TokenType::ADDRESS) // const screen_bg_col etc
             if (!as->m_symTab->m_constants.contains(v))
-            if (as->m_symTab->Lookup(v, m_op.m_lineNumber)->m_type.toLower()=="address" || m_op.m_type==TokenType::INCBIN)
+            if ((t=="address") || t=="incbin")
                 if (!isReference() && !isArrayIndex() && !isPointer(as))
                     ErrorHandler::e.Error("Unknown usage of variable / array. Did you mean to reference it? (#"+v+")",m_op.m_lineNumber);
 

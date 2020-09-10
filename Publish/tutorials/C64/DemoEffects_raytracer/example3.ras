@@ -29,7 +29,7 @@ begin
 	// Set the counter "j" to zero
 	j:=0;
 	// Locate position in table. Each line in the table has 24x2=48 bytes of pointer data
-	kp:=table + frame*48; 
+	kp:=#table + frame*48; 
 	// kp now points to correct frame in table
 	for y:=0 to 24 do begin
 		// Lookup lo and hi byte in table
