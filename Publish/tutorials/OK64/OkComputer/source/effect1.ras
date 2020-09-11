@@ -71,7 +71,7 @@ begin
 //	SetupPalette();
 	yp:=255;
 	m:=0;
-	zp:=text2;	
+	zp:=#text2;	
 	scroll:=15;
 	start:=128;
 	OKVC_BORDER_WIDTH:=96;

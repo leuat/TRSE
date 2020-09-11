@@ -159,7 +159,7 @@ begin
 	SetDefaultPalette();
 	okvc_border_width:=128;
 	okvc_border_height:=16;
-	tp:=textE6;
+	tp:=#textE6;
 	while (isDone=false) do
 	begin
 //		clearscreen(%01000001);

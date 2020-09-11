@@ -196,7 +196,7 @@ begin
 	okvc_border_height:=128;
 	InitEffect5();
 	SetupPaletteEffect4();
-	zp:=textCredits;
+	zp:=#textCredits;
 	y4:=127+40;
 	start:=0;
 	while (isDone=false) do

@@ -254,8 +254,10 @@ begin
 	
 	InitEffect(64);
 	Effect3();
+	
 	InitEffect(54);
 	Effect4();
+	
 	InitEffect(48);
 	Effect6(); // scroller
 	

@@ -200,7 +200,7 @@ begin
 	begin
 		balls_x[i]:=i*32 + 16;
 	end;
-	tp:=textE3;
+	tp:=#textE3;
 	scroll:=0;
 end;
 
@@ -267,7 +267,7 @@ begin
 		call(sidfile_1_play);
 		RenderTriangles();
 		RenderEffect4Balls(0,40);
-		RenderEffect4Balls(64,0-40);
+		RenderEffect4Balls(64,-40);
 				
 		RenderE4Text();
 

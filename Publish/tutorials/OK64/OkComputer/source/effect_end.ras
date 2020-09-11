@@ -59,7 +59,7 @@ begin
 			inc(t);
 		inc(time);
 		
-		PrintInfoText(textEnd,t);
+		PrintInfoText(#textEnd,t);
 		if (textEnd[0]=0) then Loop(); // HALT
 		waitforvsync();
 	end;

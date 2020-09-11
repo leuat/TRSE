@@ -158,7 +158,7 @@ begin
 			if (scroll>0) then scroll:=scroll-1;
 		end;
 			
-		PrintInfoText(text3,textTime);
+		PrintInfoText(#text3,textTime);
 			
 		waitforvsync();
 		call(sidfile_1_play);

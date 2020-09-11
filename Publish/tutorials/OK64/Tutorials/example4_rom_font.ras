@@ -101,8 +101,8 @@ begin
 		clearscreen(0);
 		time:=time+2;
 		RenderBackground();	
-		PrintCustomText(text1,32,8,8,$F);
-		PrintCustomText(text2,128,16,16,$D);
+		PrintCustomText(#text1,32,8,8,$F);
+		PrintCustomText(#text2,128,16,16,$D);
 		WaitForVSync();
 
 	end;

@@ -14,7 +14,7 @@ begin
 //		ll:=;
 		//ll:=frame&31;
 //		ll:=(ll/8)&31;
-		zp:=AddressTable( addressT, 0,div8[time-frame]&31 );
+		zp:=AddressTable( #addressT, 0,div8[time-frame]&31 );
 		j:=i+yy;
 		if (j>sstart and j<send) then
 			memcpyokvc($3,zp[k],zp[k+1],  $1,j, xp + sine2[time+frame],  0,32);
@@ -111,7 +111,7 @@ begin
 	for i:=0 to 0 do sine2[i]:=sine[i]/8;	 
 	okvc_border_color:=0;
 	SetDefaultPalette();
-	CreateAddressTable( addressT, @tpos, 64, 32 );
+	CreateAddressTable( #addressT, @tpos, 64, 32 );
 	
 
 

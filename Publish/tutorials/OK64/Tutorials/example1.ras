@@ -12,7 +12,7 @@ var
 
 begin
 	// Set the palette
-	zp:=palette;
+	zp:=#palette;
 	for i:=0 to 256 do
 	begin
 		setpalette(i,zp[0],zp[1],zp[2]);
