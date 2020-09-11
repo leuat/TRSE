@@ -1596,7 +1596,14 @@ QSharedPointer<Node> Parser::BinaryClause()
     QSharedPointer<Node> b;
     // Nothing : the null test. Check if NOT EQUALS ZERO
 
-    if (m_currentToken.m_type==TokenType::RPAREN || m_currentToken.m_type==TokenType::THEN || m_currentToken.m_type==TokenType::DO || m_currentToken.m_type==TokenType::OFFPAGE || m_currentToken.m_type==TokenType::ONPAGE)  {
+    if (m_currentToken.m_type==TokenType::RPAREN
+            || m_currentToken.m_type==TokenType::THEN
+            || m_currentToken.m_type==TokenType::DO
+            || m_currentToken.m_type==TokenType::AND
+            || m_currentToken.m_type==TokenType::OR
+            || m_currentToken.m_type==TokenType::XOR
+            || m_currentToken.m_type==TokenType::OFFPAGE
+            || m_currentToken.m_type==TokenType::ONPAGE)  {
         Token t;
         t.m_type = TokenType::BYTE;
         t.m_intVal = 0;
