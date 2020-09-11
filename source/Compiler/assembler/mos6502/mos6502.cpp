@@ -1168,9 +1168,9 @@ QString AsmMOS6502::getNextLine(int i, int &j)
 bool AsmMOS6502::nextLineIsLabel(int i)
 {
 //    qDebug() <<  "   NXT "<< m_source[i+1] << !(m_source[i+1].remove(" ").startsWith("\t"));
-    if (i+1>=m_source.count()-1)
+    if (i>=m_source.count()-1)
         return "";
-    QString s = m_source[i+1];
+    QString s = m_source[i];
     return !s.remove(" ").startsWith("\t");
 
 }
@@ -1396,5 +1396,5 @@ void AsmMOS6502::OptimisePassStaLda2()
             }
         }
     }
-    RemoveLinesDebug();
+    RemoveLines();
 }

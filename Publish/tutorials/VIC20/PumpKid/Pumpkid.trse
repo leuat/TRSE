@@ -43,5 +43,5 @@ ignore_initial_jump = 0
 exomizer_toggle = 0
 zeropage_colormemory = $fc
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/PumpKid/
-open_files = ,pumpkid.asm, titles.ras, pumpkid.ras
-current_file = titles.ras
+open_files = ,pumpkid.asm, pumpkid.ras, titles.ras, player.ras
+current_file = pumpkid.ras

@@ -50,7 +50,7 @@ begin
 
 	musicStep := musicStep + 1;
 
-	if (musicStep = @MUSICLEN) then psnd3 := noSound;
+	if (musicStep = @MUSICLEN) then psnd3 := #noSound;
 	if (musicStep = @MUSICRESET) then musicStep := 0;
 	 
 end;

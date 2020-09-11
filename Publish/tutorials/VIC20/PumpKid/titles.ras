@@ -66,6 +66,7 @@ begin
 	screenmemory := $1187;
 
 	t := 20;
+	asm(";wtf");
 	while (t > 0) do
 	begin
 			

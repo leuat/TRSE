@@ -129,22 +129,22 @@ begin
 
 	vsnd1 := 0;
 	vsnd1Time := 0;
-	psnd1 := noSound;
+	psnd1 := #noSound;
 	poke(^@VICsnd1, 0, 0);
 
 	vsnd2 := 0;
 	vsnd2Time := 0;
-	psnd2 := noSound;
+	psnd2 := #noSound;
 	poke(^@VICsnd2, 0, 0);
 	
 	vsnd3 := 0;
 	vsnd3Time := 0;
-	psnd3 := noSound;
+	psnd3 := #noSound;
 	poke(^@VICsnd3, 0, 0);
 	
 	vsndfx := 0;
 	vsndfxTime := 0;
-	psndfx := noSound;
+	psndfx := #noSound;
 	poke(^@VICsndfx, 0, 0);
 
 end;
