@@ -1467,18 +1467,18 @@ void MainWindow::on_actionImage_triggered()
     }
     FormImageEditor* editor = new FormImageEditor(this);
     editor->m_work.New(dNewFile->m_metaImage,dNewFile->retVal);
-    delete dNewFile;
 
 
     editor->UpdatePalette();
     editor->InitDocument(nullptr, m_iniFile, m_currentProject.m_ini);
     editor->m_currentSourceFile = "";
     editor->m_currentFileShort = "";
-    ui->tabMain->addTab(editor, "New Image");
 //    editor->PrepareImageTypeGUI();
+    ui->tabMain->addTab(editor, "New Image");
 
     editor->setFocus();
     editor->showMaximized();
+
     ui->tabMain->setCurrentWidget(editor);
 
     //m_iniFile->setString("current_file", fileName);
@@ -1489,6 +1489,7 @@ void MainWindow::on_actionImage_triggered()
     editor->Initialize();
     editor->SetMCColors();
     ConnectDocument();
+    delete dNewFile;
 
 }
 

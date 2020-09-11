@@ -100,9 +100,8 @@ void FormImageEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini
         ui->lblName->setText(LImage::TypeToString(m_work.m_currentImage->m_image->m_type));
 
     }
-
-
-    UpdateGrid();
+//    qDebug() <<((C64FullScreenChar*)m_work.m_currentImage->m_image)->m_charWidth;
+//    UpdateGrid();
     ui->chkBackgroundArea->setVisible(false);
 
     if (m_painterType==QtPaint) {
@@ -117,8 +116,6 @@ void FormImageEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini
         connect(ui->lblImage, SIGNAL(EmitMouseMove()), this, SLOT(onImageMouseEvent()));
         connect(ui->lblImage, SIGNAL(EmitMouseRelease()), this, SLOT(onImageMouseReleaseEvent()));
         connect(ui->lblImage, SIGNAL(EmitSwapDisplayMode()), this, SLOT(onSwapDisplayMode()));
-
-
     }
 
     QObject::connect(ui->splitter, SIGNAL(splitterMoved(int,int)), this, SLOT(UpdateAspect()));

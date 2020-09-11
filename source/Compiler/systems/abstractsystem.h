@@ -43,6 +43,7 @@ public:
     QElapsedTimer timer;
     QString m_orgOutput;
     QMap<int,int> m_addresses;
+    bool m_hasVariableColorPalette = false;
 
     QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
     int m_startAddress = 0x800;

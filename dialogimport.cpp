@@ -23,6 +23,7 @@
 #include "ui_dialogimport.h"
 #include <QString>
 #include <QFileDialog>
+#include "source/Compiler/syntax.h"
 
 DialogImport::DialogImport(QWidget *parent) :
     QDialog(parent),
@@ -48,6 +49,8 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
     m_imageType = imageType;
 
     m_image = LImageFactory::Create(m_imageType, colorType);
+    if (!Syntax::s.m_currentSystem->m_hasVariableColorPalette)
+        ui->chkGenPal->setVisible(false);
 //    m_image->m_colorList.CopyFrom(&img->m_colorList);
 //    m_image->CopyFrom(img);
 //    m_image->m_metaParams
@@ -62,6 +65,7 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 
    if (m_image->m_colorList.m_type == LColorList::C64)
        m_image->m_colorList.m_selectClosestFromPen = false;
+
 
 
     LImageVIC20* vic = dynamic_cast<LImageVIC20*>(img);

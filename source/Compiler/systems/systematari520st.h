@@ -9,6 +9,7 @@ public:
     SystemAtari520ST(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : SystemM68000(settings, proj) {
         m_processor = M68000;
         m_system = ATARI520ST;
+        m_hasVariableColorPalette = true;
     }
 
     void Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable>  symTab) override;

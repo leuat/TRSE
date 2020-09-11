@@ -13,6 +13,7 @@ public:
         m_startAddress = 0x03FF;
         m_programStartAddress = 0x03FF;
         m_memorySize = 65536 + 65536*16;
+        m_hasVariableColorPalette = true;
     }
 };
 
