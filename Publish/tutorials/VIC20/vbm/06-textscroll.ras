@@ -68,9 +68,9 @@ begin
 	screenmemory[ 2 ] := CYAN;
 	screenmemory[ 16 ] := CYAN;
 
-	vbmDrawTileMap( map, chars, 0,10, 20,146 );
+	vbmDrawTileMap( #map, #chars, 0,10, 20,146 );
 
-	p1 := message;
+	p1 := #message;
 
 	while (true) offpage do
 	begin
@@ -88,13 +88,13 @@ begin
 			if (char = 0) then
 			begin
 			
-				p1 := message;
+				p1 := #message;
 				char := 32;
 
 			end;
 			
 			i := 0;
-			vbmDrawText( char, font, 19, 184, 8 );
+			vbmDrawText( #char, #font, 19, 184, 8 );
 			
 		end;
 // uncomment this line and the similar one above to see how much time it is taking

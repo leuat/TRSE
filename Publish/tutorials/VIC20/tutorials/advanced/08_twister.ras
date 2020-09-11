@@ -80,8 +80,8 @@ end;
 
 procedure InitTable();
 begin
-	zp:=twisterAddr;
-	p1:=table;
+	zp:=#twisterAddr;
+	p1:=#table;
 	k:=0;
 	for i:=0 to 128 do begin
 		j:=i*2;
@@ -93,7 +93,7 @@ begin
 			k:=0;
 			zp := zp + 7*8;
 		end;
-		if (i=63) then 	zp:=twister;
+		if (i=63) then 	zp:=#twister;
 
 	end;
 

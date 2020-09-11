@@ -33,7 +33,7 @@ begin
 	// set screen colour
 	SCREEN_BG_COLOR := SCREEN_BG_BLACK + BLACK;
 
-	vbmDrawTileMap( map, chars, 0,0, 20,184 );
+	vbmDrawTileMap( #map, #chars, 0,0, 20,184 );
 
 	fill(^$9414, yellow, 20);
 	fill(^$94b4, white, 20);
@@ -43,9 +43,9 @@ begin
 	while (true) do
 	begin
 	
-		vbmDrawTileE( circle );
+		vbmDrawTileE( #circle );
 		waitforraster( 125 );
-		vbmDrawTileE( circle );
+		vbmDrawTileE( #circle );
 		
 		i := i - 3;
 

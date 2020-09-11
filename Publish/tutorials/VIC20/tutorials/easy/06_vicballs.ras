@@ -29,7 +29,7 @@ procedure InitialiseTables();
 begin
 	// create an address table of screen row addresses, we will use this to quickly find the Y position in screen memory
 	// without needing to use costly multiplication
-	createaddresstable(scr, screen_char_loc, screen_width, screen_height);
+	createaddresstable(#scr, screen_char_loc, screen_width, screen_height);
 end;
 
 procedure InitialiseBalls();
@@ -57,7 +57,7 @@ begin
 	for i := 0 to NUM_BALLS do
 	begin
 		// find screen address where we will draw the ball
-		screenmemory := addresstable(scr, 0, balls[ i ].yp);
+		screenmemory := addresstable(#scr, 0, balls[ i ].yp);
 		screenmemory[balls[ i ].xp] := 32; // clear the ball in current position by writing 32, a space character
 		// change direction delta (dx / dy) if ball is at screen edges
 		if (balls[ i ].xp = 0 ) then balls[ i ].dx := 1;
@@ -68,7 +68,7 @@ begin
 		balls[ i ].xp := balls[ i ].xp + balls[ i ].dx;
 		balls[ i ].yp := balls[ i ].yp + balls[ i ].dy;
 		// find new address of ball
-		screenmemory := addresstable(scr, 0, balls[ i ].yp);
+		screenmemory := addresstable(#scr, 0, balls[ i ].yp);
 		screenmemory[balls[ i ].xp] := 81; // draw the ball in the new position by writing 81, a Petscii ball shape
 	end;
 end;

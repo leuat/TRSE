@@ -53,7 +53,7 @@ begin
 	SCREEN_BG_COLOR := SCREEN_BG_BLACK + BLACK;
 
 	// draw tilemap of main screen
-	vbmDrawTileMap( map, chars, 0,0, 20,191 );
+	vbmDrawTileMap( #map, #chars, 0,0, 20,191 );
 
 	y := 100;
 
@@ -62,12 +62,12 @@ begin
 	
 		// draw buggy
 		vbmSetPosition1( 76, y );
-		vbmDrawTileE( buggy );
+		vbmDrawTileE( #buggy );
 
 		waitforraster( 0 );	
 
 		// erase buggy
-		vbmDrawTileE( buggy );
+		vbmDrawTileE( #buggy );
 		
 		// scroll screen
 		//vbmScreenShiftLeft( 168, 176);

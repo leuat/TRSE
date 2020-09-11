@@ -27,19 +27,22 @@ begin
 	k:=k-65;
 	if (k<>0) then begin
 		if (k>31) then begin
-			inczp(h1,31*8);
+//			inczp(h1,31*8);
+			zp:=zp+31*8;
 			k:=k-31;
 		end;
 		end;
-	inczp(h1,k*8);
+	h1:=h1+k*8;
 
 	moveto(21,@ScrollerY,$30);
+//	fill(screenmemory,2,40);
 	for i:=0 to 8 do begin
 		j:=getbit(h1[i],7-scroll);
 		k:=0;//$20;
 		if (j=1) then k:=1;//@charCopyPos;
 		screenmemory[0]:=k;
-		inczp(screenmemory,22);
+		screenmemory:=screenmemory+22;
+//		inczp(screenmemory,22);
 	end;
 	end;
 	inc(scroll);
@@ -47,7 +50,7 @@ begin
 	if (scroll=8) then begin
 		inczp(tp,1);
 		scroll:=0;
-		if (tp[0]=0) then tp:=text;
+		if (tp[0]=0) then tp:=#text;
 	end;
 end;
 
@@ -130,7 +133,7 @@ end;
 begin
 	setcharsetlocation(@charPos);
 
-	tp:=@text;
+	tp:=#text;
 
 	disablevic20irq();
 	Clear();
@@ -140,7 +143,7 @@ begin
 	
 //	poke(^@charPos+^@orgChar*^8,0,0);
 //	poke(^@charPos+^@charCopyPos*^8+^16+^8,0,0);
-	while (1=1) do begin
+	while (true) do begin
 		waitforraster(0);
 		SCREEN_BG_COLOR:=BLACK;
 		inc(time);
@@ -157,7 +160,7 @@ begin
 			end;
 
 		end;
-		if (scrollx=2) then 			PrintText();
+		if (scrollx=2) then PrintText();
 
 		inc(scrollx);
 		if (scrollx=8) then scrollx:=0;

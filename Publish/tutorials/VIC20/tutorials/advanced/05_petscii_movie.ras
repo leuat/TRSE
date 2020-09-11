@@ -39,7 +39,7 @@ begin
 	for pass:=0 to 2 do begin
 
 		case pass of
-			1:	screenmemory:=screen_col_loc;
+			1:	screenmemory:=#screen_col_loc;
 			0:	screenmemory:=@screenLoc;
 		end;
 	

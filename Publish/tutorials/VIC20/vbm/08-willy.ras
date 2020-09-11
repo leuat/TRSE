@@ -90,9 +90,9 @@ begin
 	
 		vbmsetposition2( xp, yp );
 		if dir = 1 then
-			vbmDrawSpriteE( adrWillyR_A, adrWillyR_B )
+			vbmDrawSpriteE( #adrWillyR_A, #adrWillyR_B )
 		else
-			vbmDrawSpriteE( adrWillyL_A, adrWillyL_B );
+			vbmDrawSpriteE( #adrWillyL_A, #adrWillyL_B );
 
 	
 		waitForRaster( 122 );
@@ -100,9 +100,9 @@ begin
 
 		vbmsetposition2( xp, yp );
 		if dir = 1 then
-			vbmDrawSpriteE( adrWillyR_A, adrWillyR_B )
+			vbmDrawSpriteE( #adrWillyR_A, #adrWillyR_B )
 		else
-			vbmDrawSpriteE( adrWillyL_A, adrWillyL_B );
+			vbmDrawSpriteE( #adrWillyL_A, #adrWillyL_B );
 		
 		i := i + 1;
 		

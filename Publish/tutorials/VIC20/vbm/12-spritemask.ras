@@ -89,16 +89,16 @@ begin
 	// at increments of 1 pixel
 	
 	// sprite 8x16 - pre-shift in 8 positions, using 64 bytes (8 x 16 = $80)
-	vbmSpriteShiftR( spr8, spr1a, 1, 16, spr1a_a ); // spr8 into addr A000, 1 pixel increments, 8 lines
-	vbmSpriteShiftL( spr8, spr1b, 1, 16, spr1b_a ); // spr8 into addr A080, 1 pixel increments, 8 lines
+	vbmSpriteShiftR( #spr8, #spr1a, 1, 16, #spr1a_a ); // spr8 into addr A000, 1 pixel increments, 8 lines
+	vbmSpriteShiftL( #spr8, #spr1b, 1, 16, #spr1b_a ); // spr8 into addr A080, 1 pixel increments, 8 lines
 
 	// same for mask
-	vbmSpriteShiftR( spr8mask, spr1maska, 1, 16, spr1maska_a ); // spr8mask left side
-	vbmSpriteShiftL( spr8mask, spr1maskb, 1, 16, spr1maskb_a ); // spr8mask right side
+	vbmSpriteShiftR( #spr8mask, #spr1maska, 1, 16, #spr1maska_a ); // spr8mask left side
+	vbmSpriteShiftL( #spr8mask, #spr1maskb, 1, 16, #spr1maskb_a ); // spr8mask right side
 	
 
 	// Draw a tile map for the sprite to move over
-	vbmDrawTileMap( map, tiles, 0, 0, 20, 184 );
+	vbmDrawTileMap( #map, #tiles, 0, 0, 20, 184 );
 
     x := 0;
 
@@ -118,11 +118,11 @@ begin
 
 		// next, use clearsprite to 'cut out' the mask from the background
 		vbmSetPosition1(x,x);
-		vbmClearSprite( spr1maska_a, spr1maskb_a );
+		vbmClearSprite( #spr1maska_a, #spr1maskb_a );
 		
 		// then draw the sprite in its position, inside the cut-out area
 		vbmSetPosition1(x,x);
-		vbmDrawSprite( spr1a_a, spr1b_a );
+		vbmDrawSprite( #spr1a_a, #spr1b_a );
 		
 	SCREEN_BG_COLOR := SCREEN_BG_WHITE + YELLOW;
 

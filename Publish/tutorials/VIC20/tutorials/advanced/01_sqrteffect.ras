@@ -43,8 +43,8 @@ end;
  
 procedure Update();
 begin
-	screen:=screen_char_loc; // Screen character memory
-	cp:=SCREEN_COL_LOC; // Color memory
+	screen:=#screen_char_loc; // Screen character memory
+	cp:=#SCREEN_COL_LOC; // Color memory
 	data:=dataloc;
 	for y:=0 to screen_height do 
 	begin

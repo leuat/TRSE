@@ -43,13 +43,13 @@ begin
 	
 	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
 
-	vbmDrawSmallTextE( strScore, font, 1, 89, 8 );
+	vbmDrawSmallTextE( #strScore, #font, 1, 89, 8 );
 
 	while (true) do
 	begin
 	
-		bcdAdd( numb, add, 5 );
-		vbmDrawSmallBcd( numb, adrNumbers, 1, 96, 5 );
+		bcdAdd( #numb, #add, 5 );
+		vbmDrawSmallBcd( #numb, #adrNumbers, 1, 96, 5 );
 		
 		waitforraster(0);
 

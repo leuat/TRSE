@@ -139,7 +139,7 @@ begin
 	SCREEN_BG_COLOR := SCREEN_BG_BLACK + BLACK;
 
 	// draw vic 20 ship
-	vbmDrawTileMap( map, chars, 6,114, 18,170 ); //12,7
+	vbmDrawTileMap( #map, #chars, 6,114, 18,170 ); //12,7
 
 	// set up all stars with random locations and direction
 	for i := 0 to @NUM_STARS do

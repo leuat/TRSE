@@ -44,7 +44,7 @@ begin
 		// write a message to the screen
 		// using the font (character set)
 		// params are: text, characterset, x, y, line spacing
-		vbmDrawText( message, font, i, i << 4, 8 );
+		vbmDrawText( #message, #font, i, i << 4, 8 );
 		
 	end;
 	

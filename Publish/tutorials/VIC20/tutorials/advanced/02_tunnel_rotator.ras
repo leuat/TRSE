@@ -10,13 +10,12 @@ var
 
 // Place to dump generated data.
 const dataloc:address = $1800;
-const lineloc:address = $19FA;
+const lineloc:address = $1A00;
 
 	x,y,i,j,k,time,dx,dy,time2 : byte=0;
 	wrk : integer;
 	// Pointers to color, data and screen
 	cp,l1,c1,screen:pointer;
-	perlin: incbin("resources/data/perlin16.dat", $2A00);
 
 const charsetLoc:address = $1c00;
 
@@ -28,13 +27,15 @@ const charsetLoc:address = $1c00;
 
 procedure Calculate();
 begin
-	cp:=dataloc;
-	screen:=lineloc;
-	for y:=0 to screen_height do begin
-		for x:=0 to screen_width do begin
+	cp:=#dataloc;
+	screen:=#lineloc;
+	for y:=0 to screen_height do 
+	begin
+		for x:=0 to screen_width do 
+		begin
 			dx:=abs(11-x);
 			dy:=abs(12-y);
-			wrk := dx*dx + dy*dy;
+			wrk := (dx*dx) + (dy*dy);
 			i:=(sqrt(wrk)/2);
 //			cp[x]:=255/i;
 			cp[x]:=i/4;
@@ -51,16 +52,15 @@ end;
 
 procedure Update();
 begin
-	screen:=screen_char_loc;
-	cp:=screen_col_loc; // Color memory
-	c1:=dataloc;
-	l1:=lineloc;
+	screen:=#screen_char_loc;
+	cp:=#screen_col_loc; // Color memory
+	c1:=#dataloc;
+	l1:=#lineloc;
 	for y:=0 to screen_height do begin
 		for x:=0 to screen_width do begin
 			i:=(l1[x]-time);
-			j:=c1[x]+time2;
-			i:=i+sine[j]/8;
-			k:=i&15;
+//			j:=c1[x];//+time2;
+			k:=(i+sine[c1[x]]/8)&15;
 			screen[x]:=k+80;
 			cp[x]:=(k/4)&1+2;
 		end;

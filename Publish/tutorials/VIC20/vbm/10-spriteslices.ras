@@ -73,9 +73,9 @@ begin
 	begin
 	
 		vbmsetposition2( xp, yp );
-		vbmDrawSpriteSliceE( adrSprite_A, i, j );
+		vbmDrawSpriteSliceE( #adrSprite_A, i, j );
 		vbmNextColumn();
-		vbmDrawSpriteSliceE( adrSprite_B, i, j );
+		vbmDrawSpriteSliceE( #adrSprite_B, i, j );
 
 	
 		waitForRaster( 122 );
@@ -83,9 +83,9 @@ begin
 
 		vbmsetposition2( xp, yp );
 		vbmsetposition2( xp, yp );
-		vbmDrawSpriteSliceE( adrSprite_A, i, j );
+		vbmDrawSpriteSliceE( #adrSprite_A, i, j );
 		vbmNextColumn();
-		vbmDrawSpriteSliceE( adrSprite_B, i, j );
+		vbmDrawSpriteSliceE( #adrSprite_B, i, j );
 		
 		// update Willy
 		readjoy1();

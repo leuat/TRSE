@@ -34,7 +34,7 @@ const charsetAndBitmap:address = $1400;
 procedure CopyImageColor();
 begin
 
-	zp:=charsetAndBitmap + imageWidth*imageHeight*8;
+	zp:=#charsetAndBitmap + imageWidth*imageHeight*8;
 //	
 	moveto(0,0,$94);
 	for j:=0 to imageHeight do begin

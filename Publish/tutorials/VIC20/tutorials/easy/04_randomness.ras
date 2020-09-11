@@ -29,8 +29,8 @@ begin
 	// infinite loop
 	while (true) do  begin
 		// Set pointer to point to beginning of screen/color ram ($0400 and $D800)
-		screenP:=screen_char_loc;
-		colorP:=screen_col_loc;
+		screenP:=#screen_char_loc;
+		colorP:=#screen_col_loc;
 		// loop y		
 		for y:=0 to screen_height do begin
 			// moves current screen position

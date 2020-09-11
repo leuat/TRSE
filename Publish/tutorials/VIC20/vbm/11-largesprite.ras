@@ -52,16 +52,16 @@ begin
 
 
 	// sprite is 24 x 40.  Need 40 bytes per shift ($28) x 4 shifts = $A0
-	vbmSpriteShiftR( spra0,		dstAddr0, 2, sizeOfEachSprite, spr0 ); 
-	vbmSpriteShiftL( spra0, 	dstAddr1, 2, sizeOfEachSprite, spr1 ); 
+	vbmSpriteShiftR( #spra0,	#dstAddr0, 2, sizeOfEachSprite, #spr0 ); 
+	vbmSpriteShiftL( #spra0, 	#dstAddr1, 2, sizeOfEachSprite, #spr1 ); 
 
-	vbmSpriteShiftR( spra1,		dstAddr2, 2, sizeOfEachSprite, spr2 ); 
-	vbmSpriteStitch( dstAddr2,	dstAddr1, sizeOfEachSprite*4 );  		// 40 high * 4 = 160
-	vbmSpriteShiftL( spra1,		dstAddr2, 2, sizeOfEachSprite, spr2 ); 
+	vbmSpriteShiftR( #spra1,	#dstAddr2, 2, sizeOfEachSprite, #spr2 ); 
+	vbmSpriteStitch( #dstAddr2,	#dstAddr1, sizeOfEachSprite*4 );  		// 40 high * 4 = 160
+	vbmSpriteShiftL( #spra1,	#dstAddr2, 2, sizeOfEachSprite, #spr2 ); 
 
-	vbmSpriteShiftR( spra2,		dstAddr3, 2, sizeOfEachSprite, spr3 ); 
-	vbmSpriteStitch( dstAddr3,	dstAddr2, sizeOfEachSprite*4 );
-	vbmSpriteShiftL( spra2, 	dstAddr3, 2, sizeOfEachSprite, spr3 ); 
+	vbmSpriteShiftR( #spra2,	#dstAddr3, 2, sizeOfEachSprite, #spr3 ); 
+	vbmSpriteStitch( #dstAddr3,	#dstAddr2, sizeOfEachSprite*4 );
+	vbmSpriteShiftL( #spra2, 	#dstAddr3, 2, sizeOfEachSprite, #spr3 ); 
 
 	/*
 		What is the above doing?
@@ -104,13 +104,13 @@ begin
 
 		vbmSetPosition2(x,y);
 
-		vbmDrawSpriteSlice( spr0, s, h );
+		vbmDrawSpriteSlice( #spr0, s, h );
 		vbmNextColumn();
-		vbmDrawSpriteSlice( spr1, s, h );
+		vbmDrawSpriteSlice( #spr1, s, h );
 		vbmNextColumn();
-		vbmDrawSpriteSlice( spr2, s, h );
+		vbmDrawSpriteSlice( #spr2, s, h );
 		vbmNextColumn();
-		vbmDrawSpriteSlice( spr3, s, h );
+		vbmDrawSpriteSlice( #spr3, s, h );
 
 
 		waitforraster(100);
@@ -118,13 +118,13 @@ begin
 
 		vbmSetPosition2(x,y);
 
-		vbmClearSpriteSlice( spr0, s, h );
+		vbmClearSpriteSlice( #spr0, s, h );
 		vbmNextColumn();
-		vbmClearSpriteSlice( spr1, s, h );
+		vbmClearSpriteSlice( #spr1, s, h );
 		vbmNextColumn();
-		vbmClearSpriteSlice( spr2, s, h );
+		vbmClearSpriteSlice( #spr2, s, h );
 		vbmNextColumn();
-		vbmClearSpriteSlice( spr3, s, h );
+		vbmClearSpriteSlice( #spr3, s, h );
 
 
 		x := x + 2;
