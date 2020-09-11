@@ -121,9 +121,13 @@ void FormImageEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini
     QObject::connect(ui->splitter, SIGNAL(splitterMoved(int,int)), this, SLOT(UpdateAspect()));
 //    QObject::connect(&Data::data, SIGNAL(EmitPenChanged()), this,SLOT(onImageMouseEvent()));
     QObject::connect(&Data::data, SIGNAL(EmitPenChanged()), this,SLOT(onPenChanged()));
-    if (m_work.m_currentImage!=nullptr)
+    if (m_work.m_currentImage!=nullptr) {
 
+        QObject::connect(m_work.m_currentImage->m_image, SIGNAL(emitImportRom()), this, SLOT(ImportROM()));
         m_work.m_currentImage->m_image->InitPens();
+        m_work.m_currentImage->m_image->Initialize();
+
+    }
 
 }
 
@@ -2161,6 +2165,15 @@ void FormImageEditor::on_btnImportRom_clicked()
     if (reply == QMessageBox::No)
         return;
 
+
+    ImportROM();
+
+}
+
+void FormImageEditor::ImportROM()
+{
+
+
     QString fileName = ":resources/character.rom";
 
     m_work.m_currentImage->m_image->LoadCharset(fileName,0);
@@ -2259,24 +2272,13 @@ void FormImageEditor::on_btnPalette_clicked()
     UpdatePalette();
 }
 
-void FormImageEditor::on_cmbBorderMain_3_currentIndexChanged(int index)
-{
-//    SetMCColors();
-
-}
-
-void FormImageEditor::on_cmbMC1_currentIndexChanged(int index)
-{
-
-}
-
-void FormImageEditor::on_cmbBorderMain_3_activated(int index)
+/*void FormImageEditor::on_cmbBorderMain_3_activated(int index)
 {
     SetMCColors();
     emit onImageMouseEvent();
 
 }
-
+*/
 void FormImageEditor::on_cmbNesPalette_currentIndexChanged(int index)
 {
     if (!m_work.m_currentImage->m_image->isNes())

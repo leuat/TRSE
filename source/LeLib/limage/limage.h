@@ -92,9 +92,9 @@ public:
 
 
 
-class LImage
+class LImage : public QObject
 {
-
+Q_OBJECT
 
 
 public:
@@ -373,6 +373,8 @@ public:
     virtual int getDx();
     virtual int getDy();
 
+signals:
+    void emitImportRom();
 };
 
 

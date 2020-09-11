@@ -72,7 +72,7 @@ public:
 
     MultiColorImage(LColorList::Type t);
 //    QVector<PixelChar> m_data;
-    PixelChar m_data[40*25*2];
+    PixelChar m_data[40*25*10];
  //   QVector<PixelChar> m_data;
     virtual PixelChar& getPixelChar(int x, int y);
 //    virtual void Clear() override;

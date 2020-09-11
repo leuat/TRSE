@@ -1474,6 +1474,10 @@ void MainWindow::on_actionImage_triggered()
     editor->m_currentSourceFile = "";
     editor->m_currentFileShort = "";
 //    editor->PrepareImageTypeGUI();
+
+//    QTime dieTime= QTime::currentTime().addSecs(10);
+  //  while (QTime::currentTime() < dieTime);
+        //QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
     ui->tabMain->addTab(editor, "New Image");
 
     editor->setFocus();

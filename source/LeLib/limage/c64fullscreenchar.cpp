@@ -158,6 +158,7 @@ void C64FullScreenChar::OrdererdDither(QImage &img, LColorList &colors, QVector3
 
 void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
 {
+
     float sx = img->width()/m_charWidth;
     float sy = img->height()/m_charHeight;
  //   float sy = img->height()/25;
@@ -214,12 +215,12 @@ void C64FullScreenChar::Initialize()
 {
     DeleteAll();
     AddNew(m_charWidth, m_charHeight);
+    emit emitImportRom();
 
 }
 
 bool C64FullScreenChar::KeyPress(QKeyEvent *e)
 {
-
     if (e->key()==Qt::Key_A)
         Prev();
     if (e->key()==Qt::Key_D)
@@ -527,7 +528,7 @@ QString C64FullScreenChar::getMetaInfo()
     QString txt="";
     m_charWidth = getMetaParameter("screen_width")->value;
     m_charHeight = getMetaParameter("screen_height")->value;
-
+//    Initialize();
     txt+= "The screen animation...";
 
 

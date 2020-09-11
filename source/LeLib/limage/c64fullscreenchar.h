@@ -52,11 +52,11 @@ public:
     }
 
     void Clear() override {
-    for (int i=0;i<m_rawData.count();i++)
-        m_rawData[i] = 0x20;
+        for (int i=0;i<m_rawData.count();i++)
+            m_rawData[i] = 0x20;
 
-    for (int i=0;i<m_rawData.count();i++)
-        m_rawColors[i] = 0x2;
+        for (int i=0;i<m_rawData.count();i++)
+            m_rawColors[i] = 0x2;
     }
 
 };
