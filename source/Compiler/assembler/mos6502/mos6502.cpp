@@ -1359,7 +1359,7 @@ void AsmMOS6502::OptimisePassStaLda2()
                         || op=="bcc" || op=="bcs" || op=="pla" || op=="beq" || op=="bpl" || op=="bne"
                         || op=="and" || op=="ora" || op=="eor" || op=="bit"
   */
-                bool abort = ContainsAChangingOpcodes(l1);
+                bool abort = ContainsAChangingOpcodes(l1) & !nextLineIsLabel(j);
 ;
 //                qDebug() << "NEXT IS LABEL " <<nextLineIsLabel(j);
                 while ((done==false && !l1.startsWith("lda")) && !abort && !nextLineIsLabel(j)) {
@@ -1396,5 +1396,5 @@ void AsmMOS6502::OptimisePassStaLda2()
             }
         }
     }
-    RemoveLines();
+    RemoveLinesDebug();
 }
