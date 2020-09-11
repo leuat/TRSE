@@ -82,7 +82,7 @@ begin
 	screen_bg_col:=black;
 	screen_fg_col:=black;
 	// Pointer to character color definitions
-	Levels::cp := colors;
+	Levels::cp := #colors;
 	multicolor_char_col[1]:=grey;
 	multicolor_char_col[2]:=brown;
 
@@ -225,7 +225,7 @@ begin
 	InitMainSprite();
 
 	Levels::lp:=@levelPosition;
-	Levels::cdp:=colors;;
+	Levels::cdp:=#colors;
 	redraw:=1;
 	// Turn off all interrupts
 	DisableCIAInterrupts();

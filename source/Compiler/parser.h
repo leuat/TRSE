@@ -195,6 +195,8 @@ public:
     QSharedPointer<Node> FindProcedure(bool& isAssign);
     QSharedPointer<Node> BinaryClause();
 
+    bool nextIsExpr();
+
     void AppendComment(QSharedPointer<Node> n);
 
 //    void AppendComment(QSharedPointer<Node> n);

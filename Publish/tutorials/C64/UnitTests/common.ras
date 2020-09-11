@@ -13,8 +13,8 @@ begin
 	DefineScreen();
 	SCREEN_BG_COL := BLACK;
 	SCREEN_FG_COL := BLACK;
-	sc := SCREEN_CHAR_LOC;
-	co := SCREEN_COL_LOC;
+	sc := #SCREEN_CHAR_LOC;
+	co := #SCREEN_COL_LOC;
 	clearscreen(32, SCREEN_CHAR_LOC);
 	clearscreen(WHITE, SCREEN_COL_LOC);
 end;
@@ -22,7 +22,7 @@ end;
 procedure PASS();
 begin
 	screenmemory := sc;
-	PrintString(text, 0, 12);
+	PrintString(#text, 0, 12);
 	sc[2] := $53; // heart
 	co[2] := GREEN;
 	
@@ -33,7 +33,7 @@ end;
 procedure FAIL();
 begin
 	screenmemory := sc;
-	PrintString(text, 0, 12);
+	PrintString(#text, 0, 12);
 	sc[2] := $56; // cross
 	co[2] := RED;
 	

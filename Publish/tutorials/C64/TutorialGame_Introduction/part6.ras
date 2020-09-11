@@ -86,7 +86,7 @@ begin
 	Initialize();
 	// Remember to set level location!
 	Levels::lp:=@levelPosition;
-	Levels::cdp := colors;
+	Levels::cdp := #colors;
 	// Render the level to $0400
 	Levels::RenderCharsetColorLevel(curLevel_x,curLevel_y,hi(screen_char_loc));
 

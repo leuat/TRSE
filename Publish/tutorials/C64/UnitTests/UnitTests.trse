@@ -39,3 +39,6 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 exomizer_toggle = 0
 zeropage_colormemory = $fc
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/UnitTests/
+open_files = -1
+current_file = conditional/01_if-then-else.ras

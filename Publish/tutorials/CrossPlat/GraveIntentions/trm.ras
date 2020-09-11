@@ -35,7 +35,7 @@ begin
 
 		case pass of
 			1:	s:=0;
-			0:	s:=screen_char_loc+xpos;
+			0:	s:=#screen_char_loc+xpos;
 		end;
 	cnt:=0;
 	s:=s+screen_width*ypos;
@@ -104,8 +104,8 @@ begin
 	
 	for pass:=0 to 2 do begin
 		case pass of
-			1:	s:=screen_col_loc+xpos;
-			0:	s:=screen_char_loc+xpos;
+			1:	s:=#screen_col_loc+xpos;
+			0:	s:=#screen_char_loc+xpos;
 		end;
 	cnt:=0;
 	s:=s+screen_width*ypos;
@@ -161,7 +161,7 @@ begin
 	for pass:=0 to 2 do begin
 
 		case pass of
-			1:	begin s:=screen_col_loc; end; 
+			1:	begin s:=#screen_col_loc; end; 
 //			0:	s:=@vicTempScreen+xpos;
 			0:	s:=@vicTempScreen+xpos;
 		end;
@@ -199,7 +199,7 @@ begin
 	end;
 	
 	p1:=@vicTempScreen;
-	s:=screen_char_loc;
+	s:=#screen_char_loc;
 	for y:=0 to 12 do
 	begin
 		k:=0;

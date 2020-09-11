@@ -1158,6 +1158,8 @@ void ASTDispatcher6502::BuildToCmp(QSharedPointer<Node> node)
   //  if (numb!=nullptr)
         b = getValue(node->m_right);
 
+    qDebug() << "WOOT " <<TokenType::getType(node->m_right->getType(as));
+
     node->m_left->Accept(this);
     as->Term();
     if (b!="") {

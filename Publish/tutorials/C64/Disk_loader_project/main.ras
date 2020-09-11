@@ -23,14 +23,14 @@ begin
 	screen_fg_col:=black;
 	i:=0;
 	setbank(vic_bank1);
-	while (true) offpage do begin
+	while (true) do begin
 		// Display data while loading! cool stuff
-		if (i=0) then KrillLoad(octopus_color);
-		if (i=1) then KrillLoad(moose_color);
+		if (i=0) then KrillLoad(#octopus_color);
+		if (i=1) then KrillLoad(#moose_color);
 		copyimagecolordata(^$2000,1);
 
-		if (i=0) then KrillLoad(octopus_data);
-		if (i=1) then KrillLoad(moose_data);
+		if (i=0) then KrillLoad(#octopus_data);
+		if (i=1) then KrillLoad(#moose_data);
 		while (keypressed(key_space)=false) do 
 			waitforraster(0);
 

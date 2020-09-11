@@ -256,7 +256,7 @@ QString NodeVar::getValue(Assembler* as) {
 //            qDebug() << v<< "TYPE" << as->m_symTab->Lookup(v, m_op.m_lineNumber)->m_type <<m_op.getType();
             if (m_op.m_type!=TokenType::ADDRESS) // const screen_bg_col etc
             if (!as->m_symTab->m_constants.contains(v))
-            if ((t=="address") || t=="incbin" || t=="string" || t=="cstring" || t=="incsid" || t=="incnsf")
+            if ((t=="address") || t=="incbin"  || t=="incsid" || t=="incnsf")
                 if (!isReference() && !isArrayIndex() && !isPointer(as))
                     ErrorHandler::e.Error("Unknown usage of data or array. <font color=\"orange\">Did you mean to reference it? (#"+v+")</font>",m_op.m_lineNumber);
 

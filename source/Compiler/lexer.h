@@ -67,6 +67,11 @@ public:
 
     void FindLineNumberAndFile(int inLe, QString& file, int& outle);
 
+    QVector<uint> m_stack;
+
+
+    void PushState();
+    void PopState();
 
     Lexer();
     Lexer(QString text, QStringList lines, QString path);

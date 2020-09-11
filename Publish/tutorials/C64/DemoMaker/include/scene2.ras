@@ -51,7 +51,7 @@ begin
 
 	clearscreen(i,^$D800);
 	enableallram();
-	decrunch(charset_c);
+	decrunch(#charset_c);
 	poke(^$01, 0, keep01);
 	RenderScene2Effect();
 	

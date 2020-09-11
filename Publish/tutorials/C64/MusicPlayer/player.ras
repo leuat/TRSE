@@ -209,7 +209,7 @@ begin
 	screenmemory:=$4400;
 	tp:=$D800;
 	zp:=@colPos+2;
-	sp:=perlin;
+	sp:=#perlin;
 	for jj:=0 to 12 do begin
 		for ii:=0 to 83 do begin
 			asm("

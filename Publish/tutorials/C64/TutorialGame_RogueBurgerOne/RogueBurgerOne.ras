@@ -426,14 +426,14 @@ begin
 	if (currentScroll<>0) then
 	for i:=0 to currentScroll do begin
 		moveto(0,y,$44);
-		if i=0 then printstring(ScrollText1,0,40);
-		if i=1 then printstring(ScrollText2,0,40);
-		if i=2 then printstring(ScrollText3,0,40);
-		if i=3 then printstring(ScrollText4,0,40);
-		if i=4 then printstring(ScrollText5,0,40);
-		if i=5 then printstring(ScrollText6,0,40);
-		if i=6 then printstring(ScrollText7,0,40);
-		if i=7 then printstring(ScrollText8,0,40);
+		if i=0 then printstring(#ScrollText1,0,40);
+		if i=1 then printstring(#ScrollText2,0,40);
+		if i=2 then printstring(#ScrollText3,0,40);
+		if i=3 then printstring(#ScrollText4,0,40);
+		if i=4 then printstring(#ScrollText5,0,40);
+		if i=5 then printstring(#ScrollText6,0,40);
+		if i=6 then printstring(#ScrollText7,0,40);
+		if i=7 then printstring(#ScrollText8,0,40);
 
 		y:=y+l;
 	
@@ -585,7 +585,7 @@ begin
 	frameCounter:=0;
 	
 	setmulticolormode();
-	decrunch(leveldata_crunched);
+	decrunch(#leveldata_crunched);
 
 end;
 
@@ -673,8 +673,8 @@ end;
 procedure IntroImageScreen();
 begin
 
-	decrunch(logodata_crunched);
-	copyimagecolordata(logodata_colors,2);
+	decrunch(#logodata_crunched);
+	copyimagecolordata(#logodata_colors,2);
 
 	setmulticolormode();
 	setbitmapmode();
@@ -688,8 +688,8 @@ begin
 	clearscreen(00,^$8400);
 
 	
-	decrunch(imagedata_crunched);
-	copyimagecolordata(imagedata_colors,2);
+	decrunch(#imagedata_crunched);
+	copyimagecolordata(#imagedata_colors,2);
 	SCREEN_BG_COL:=BLACK;
 	SCREEN_FG_COL:=BLACK;
 
@@ -698,7 +698,7 @@ begin
 
 	settextmode();
 	clearscreen($20,^$8400);
-	decrunch(leveldata_crunched);
+	decrunch(#leveldata_crunched);
 end;
 
 begin

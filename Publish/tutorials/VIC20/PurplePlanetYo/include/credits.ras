@@ -47,7 +47,7 @@ begin
 	fill(^$9400,BLACK,0);
 	fill(^$9500,BLACK,0);
 	SCREEN_TEXT_WIDTH:=0;
-	zp:=^$1400;
+	zp:=$1400;
 	for i:=0 to 255 do begin
 		for j:=0 to 4 do zp[2*j]:=%10101010;
 		for j:=0 to 4 do zp[2*j+1]:=%01010101;
@@ -85,7 +85,6 @@ begin
 			b:=b-2; 
 
 	end;
-
 
 	k:=time*2;
 	l:=32+aa;

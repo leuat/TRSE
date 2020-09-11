@@ -102,6 +102,26 @@ Lexer::Lexer(QString text, QStringList lines, QString path) {
     m_text = newText;
 }*/
 
+void Lexer::PushState()
+{
+    m_stack.append(m_prevPos);
+    m_stack.append(m_pos);
+    m_stack.append(m_localPos);
+    m_stack.append(Pmm::Data::d.lineNumber);
+}
+
+void Lexer::PopState()
+{
+    if (m_stack.count()==0)
+        return;
+    Pmm::Data::d.lineNumber= m_stack.last();m_stack.removeLast();
+    m_localPos = m_stack.last();m_stack.removeLast();
+    m_pos = m_stack.last();m_stack.removeLast();
+    m_prevPos = m_stack.last();m_stack.removeLast();
+    m_currentChar = m_text[m_pos];
+}
+
+
 void Lexer::Advance()
 {
     m_prevPos = m_pos;
@@ -250,10 +270,11 @@ Token Lexer::_Id()
             Advance();
             m_currentChar = "_";
         }
-        if (m_currentChar=="Æ" || m_currentChar=="?" || m_currentChar =="•") {
+/*        if (m_currentChar=="Æ" || m_currentChar=="?" || m_currentChar =="•") {
 //            Advance();
             m_currentChar = "_";
         }
+        */
 
     }
     bool isRef =  m_nextIsReference;

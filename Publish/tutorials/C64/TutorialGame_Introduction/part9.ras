@@ -130,7 +130,7 @@ end;
 procedure LoadEntities();
 begin
 	// Make sure all ID's are set to zer0
-	fill(entity_id,0, @numEntities);
+	fill(#entity_id,0, @numEntities);
 	for i:=0 to @numEntities do begin
 		if Levels::lp[0]=0 then return();
 		entity_id[i] := Levels::lp[0];
@@ -321,7 +321,7 @@ begin
 	InitMainSprite();
 
 	Levels::lp:=@levelPosition;
-	Levels::cdp := colors;
+	Levels::cdp := #colors;
 	redraw:=true;
 	LoadEntities();
 	InitEntities();

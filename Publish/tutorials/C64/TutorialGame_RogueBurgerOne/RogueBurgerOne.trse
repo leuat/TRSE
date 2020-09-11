@@ -48,5 +48,5 @@ exomizer_toggle = 0
 data_header_images/titlescreen2.flf = 6.95335e-310
 zeropage_colormemory = $fc
 open_files = ,RogueBurgerOne.ras
-project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/TutorialGame_RogueBurgerOne/
-current_file = RogueBurgerOne.asm
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/TutorialGame_RogueBurgerOne/
+current_file = RogueBurgerOne.ras

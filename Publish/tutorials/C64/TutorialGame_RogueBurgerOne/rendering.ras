@@ -232,7 +232,7 @@ begin
 		poke(^$D800+ ^40, i, val);
 	end;*/
 	
-	@renderText2x2:=TextRogueBurger;
+	@renderText2x2:=#TextRogueBurger;
 	moveto(0,0,$84);
 	RenderText2x2();
 	

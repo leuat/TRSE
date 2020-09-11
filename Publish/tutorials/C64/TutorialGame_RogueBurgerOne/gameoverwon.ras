@@ -56,7 +56,7 @@ begin
 	SPRITE_COLOR[1]:=RED;
 	SPRITE_COLOR[2]:=RED;
 	SPRITE_COLOR[3]:=RED;
-	zeropage4:=EndingTextWriter;
+	zeropage4:=#EndingTextWriter;
 
 	SPRITE_STRETCH_X:=%00001110;
 	SPRITE_STRETCH_Y:=%00001110;
@@ -73,7 +73,7 @@ begin
 	tmp:=tmp+24+24;
 	spritepos(tmp, 40+21+21, 3);
 
-	zeropage1:=EndingText;
+	zeropage1:=#EndingText;
 	clearscreen(DARK_GREY, ^$D800);
 	
 
@@ -180,7 +180,7 @@ begin
 	MULTICOLOR_CHAR_COL[2]:=DARK_GREY;
 	
 	RenderScrollerText(12);
-	if (zeropage1[0]=0) then zeropage1:=EndingText;
+	if (zeropage1[0]=0) then zeropage1:=#EndingText;
 
 	
 	RasterIRQ(GameWonScrollerEnds(),164, @usekernal);

@@ -1359,7 +1359,8 @@ void AsmMOS6502::OptimisePassStaLda2()
                         || op=="bcc" || op=="bcs" || op=="pla" || op=="beq" || op=="bpl" || op=="bne"
                         || op=="and" || op=="ora" || op=="eor" || op=="bit"
   */
-                bool abort = false;
+                bool abort = ContainsAChangingOpcodes(l1);
+;
 //                qDebug() << "NEXT IS LABEL " <<nextLineIsLabel(j);
                 while ((done==false && !l1.startsWith("lda")) && !abort && !nextLineIsLabel(j)) {
                     l1 = getNextLine(j,j);
@@ -1385,7 +1386,7 @@ void AsmMOS6502::OptimisePassStaLda2()
                     QStringList lst = l1.split(" ");
                     if (lst.count()>=2)
                         if (lst[0] == "lda" && lst[1]==curA &&!l1.contains("keep")) {
-                            qDebug() << "Removing: " << l1 << " on line " << j << lst[0] << lst[1] << curA;
+                      //      qDebug() << "Removing: " << l1 << " on line " << j << lst[0] << lst[1] << curA;
                             m_removeLines.append(j);
                             //                    done = false;
 

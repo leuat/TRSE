@@ -125,6 +125,7 @@ var
 //				@SceneTwister, $3A , 0, 0, 0,0,  // twister
 //				@SceneTwister, $2, 1, 0, 0,0,
 //				@SceneCharEffect, $60,0,0,0,0,
+//				@SceneSineEffect, $6B,$00,0,0,0,
 
 
 				@SceneRasters, $11, 0, 0, 0,0,
@@ -491,7 +492,8 @@ procedure MainDemo();
 begin
 //	Loop();
 	InitMainDemo();
-	while (true) do begin
+	while (true) do 
+	begin
 //		waitforraster(0);
 
 		waitforraster(0);

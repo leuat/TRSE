@@ -24,7 +24,7 @@ begin
 	// Move cursor to x,y position 10,12
 	moveto(8,8,hi(screen_char_loc));
 	// Print the text
-	printstring(text,0,22);
+	printstring(#text,0,22);
 	// Move cursor 2 rows down (2*22) and back 8 characters
 	screenmemory:=screenmemory+2*screen_width-8;
 	// Print something else

@@ -84,7 +84,7 @@ begin
 	screen_bg_col:=blue;
 	@endif
 
-	fill(StretchTab, $FF,0);
+	fill(#StretchTab, $FF,0);
 	
 //		AddVal:=time*2;
 		k:=time*6;
@@ -123,7 +123,7 @@ end;
 procedure CreateSpritesTable();
 begin
 	cur:=0;
-	p1:=spriteTab;
+	p1:=#spriteTab;
 	k2:=40;
 	k2:=k2 - curMax;
 	for i:=0 to 8 do
@@ -175,9 +175,9 @@ begin
 		cur:=0;
 		if (startColors>=2) then
 			txt:=txt+1;
-		if txt[0]=0 then txt:=text;
+		if txt[0]=0 then txt:=#text;
 		shift:=shift+32;
-		spr:=spriteTab;
+		spr:=#spriteTab;
 	end;
 
 end;
@@ -207,11 +207,11 @@ begin
 		begin
 			k:=j-65;
 			//Lookup character (64 sprite bytes *32 frames)
-			src:=AddressTable(charTable,0,k);
+			src:=AddressTable(#charTable,0,k);
 			// Use a nice sine frame
 			ft:=sin24[frame];
 			// Lookupt the character frame (64 sprite bytes per frame)
-			src := src + AddressTable(table64,0,ft);
+			src := src + AddressTable(#table64,0,ft);
 			// Use unroll loop
 			memcpyunroll(src,0,dst,63);
 		end
@@ -312,7 +312,7 @@ begin
 	if (smallCharFrame=64) then
 	begin
 		smallCharFrame:=0;
-		psmall:=small;
+		psmall:=#small;
 	end;
 end;
 
@@ -511,29 +511,29 @@ begin
 	// Sine tab modded with $FE	
 	for i:=0 to 0 do sinTab[i]:=sinTab[i]&%11111110;
 	k:=30;
-	txt:=text;
+	txt:=#text;
 	k2:=@sprLoc;
 	for i:=0 to 32 do
 	begin
 		charTable[i]:=k2;
 		k2:=k2+(24*64);
 	end;
-	CreateAddressTable(table64, 0, 64,24);
+	CreateAddressTable(#table64, 0, 64,24);
 	setbank(VIC_bank0);
 //	CalcStretch();	
-	copyfullscreen(screen,^$0400);
+	copyfullscreen(#screen,^$0400);
 	setcharsetlocation($2000);
 	fill(^$2000+255*8,0,8);
-	fill(lumi,red,64);	
+	fill(#lumi,red,64);	
 	clearscreen(black,^$D800);
 	InitSprites();
 	PrintToScreen();
-	psmall := small;
+	psmall := #small;
 	for i:=0 to 8 do
 	UpdateSmallChar();
 	CreateSpritesTable();	
 //	UpdateSprites1();
-	spr:=spriteTab;
+	spr:=#spriteTab;
 	CopySprites(0,7);
 	
 

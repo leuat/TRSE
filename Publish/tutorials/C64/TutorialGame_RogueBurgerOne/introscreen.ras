@@ -54,9 +54,9 @@ begin
 	fill(^$D800 + ^5*^40, LIGHT_GREY, 80);
 	//fill(^$D800 + ^0, LIGHT_GREEN, 160);
 
-	zeropage4:=CreditsText;
-	zeropage5:=screenmemory;
-	zeropage1:=IntroText;
+	zeropage4:=#CreditsText;
+	zeropage5:=#screenmemory;
+	zeropage1:=#IntroText;
 	moveto(5, 10, $44);
 	j:=10;
 
@@ -235,7 +235,7 @@ begin
 	MULTICOLOR_CHAR_COL[2]:=BROWN;
 	
 	RenderScrollerText(5);
-	if (zeropage1[0]=0) then zeropage1:=IntroText;
+	if (zeropage1[0]=0) then zeropage1:=#IntroText;
 
 	RasterIRQ(MainScreenScrollerEnds(),110, @usekernal);
 
@@ -285,7 +285,7 @@ begin
 	end;
 
 	if val=0 then begin
-		zeropage4:=CreditsText;
+		zeropage4:=#CreditsText;
 		return();
 	end;
 	if val=@cclear then begin

@@ -121,8 +121,8 @@ void Parser::Eat(TokenType::Type t)
  //   qDebug() << m_currentToken.m_value << m_currentToken.m_intVal;
     if (m_currentToken.m_type == t) {
         m_currentToken = m_lexer->GetNextToken();
-//        if (m_pass==1)
-//            qDebug() << "Token : " <<m_currentToken.getType() <<m_currentToken.m_value <<(m_currentToken.m_type==TokenType::PREPROCESSOR) << m_pass;
+       // if (m_pass==2)
+         //   qDebug() << "Token : " <<m_currentToken.getType() <<m_currentToken.m_value <<(m_currentToken.m_type==TokenType::PREPROCESSOR) << m_pass;
         int cnt =0;
         while (m_currentToken.m_type==TokenType::PREPROCESSOR && m_pass>PASS_PREPRE && m_pass!=PASS_OTHER  && cnt++<32 ) {
             HandlePreprocessorInParsing();
@@ -1575,7 +1575,7 @@ QSharedPointer<Node> Parser::Case()
 
 QSharedPointer<Node> Parser::BinaryClause()
 {
-    if (m_currentToken.m_type == TokenType::LPAREN) {
+    if (m_currentToken.m_type == TokenType::LPAREN && !nextIsExpr()) {
         // Logical clause AND OR
         Eat(TokenType::LPAREN);
         QSharedPointer<Node> a = BinaryClause();
@@ -1589,12 +1589,14 @@ QSharedPointer<Node> Parser::BinaryClause()
         Eat(TokenType::RPAREN);
         return QSharedPointer<NodeBinaryClause>(new NodeBinaryClause(logical, a, b));
     }
-
+    //qDebug() << "***** BEFORE EXPR";
     QSharedPointer<Node> a = Expr();
+    //qDebug() << "***** AFTER EXPR";
     Token comparetoken;
     QSharedPointer<Node> b;
     // Nothing : the null test. Check if NOT EQUALS ZERO
-    if (m_currentToken.m_type==TokenType::RPAREN || m_currentToken.m_type==TokenType::THEN) {
+
+    if (m_currentToken.m_type==TokenType::RPAREN || m_currentToken.m_type==TokenType::THEN || m_currentToken.m_type==TokenType::DO || m_currentToken.m_type==TokenType::OFFPAGE || m_currentToken.m_type==TokenType::ONPAGE)  {
         Token t;
         t.m_type = TokenType::BYTE;
         t.m_intVal = 0;
@@ -1606,6 +1608,7 @@ QSharedPointer<Node> Parser::BinaryClause()
     }
     else
     {
+
         comparetoken = m_currentToken;
 
         if (!(comparetoken.m_type==TokenType::EQUALS || comparetoken.m_type==TokenType::NOTEQUALS ||
@@ -1621,7 +1624,26 @@ QSharedPointer<Node> Parser::BinaryClause()
         b = Expr();
 
     }
-    return QSharedPointer<NodeBinaryClause>(new NodeBinaryClause(comparetoken, a, b));
+        return QSharedPointer<NodeBinaryClause>(new NodeBinaryClause(comparetoken, a, b));
+}
+
+bool Parser::nextIsExpr()
+{
+    bool ret = true;
+    Token keep = m_currentToken;
+    m_lexer->PushState();
+//    qDebug() << "Trying EXPRESSION... ";
+    try {
+        QSharedPointer<Node> val = Expr();
+    }
+    catch(FatalErrorException fe) {
+        ret = false;
+    }
+  //  qDebug() << "Next is EXPRESSION : " << ret;
+    m_currentToken = keep;
+    m_lexer->PopState();
+    return ret;
+
 }
 
 

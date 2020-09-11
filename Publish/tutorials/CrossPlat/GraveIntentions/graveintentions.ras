@@ -82,13 +82,12 @@ var
 //	charset:incbin("charset/charset.bin",@charsetPos);
 
 @include "rooms.ras"
+@include "trm.ras"
 
 @ifdef C64
 @include "c64_methods.ras"
-
 @endif
 
-@include "trm.ras"
 //@include "fire.ras"
 
 procedure FindRoom();
@@ -96,7 +95,7 @@ var
 	notDone : byte = true;
 begin
 	notDone:=true;
-	roomP := room1;
+	roomP := #room1;
 //	inc(^$D020);
 	while (notDone) do
 	begin
@@ -396,13 +395,13 @@ var
 begin
 	ok:=false;
 	if (command[0]=0) then return();
-	StrToLower(command);
-	strSplit(command, sSplit, key_space);
+	StrToLower(#command);
+	strSplit(#command, #sSplit, key_space);
 	// Command
-	cmd:=strgetfromindex(sSplit,0);
-	arg1:=strgetfromindex(sSplit,1);
+	cmd:=strgetfromindex(#sSplit,0);
+	arg1:=strgetfromindex(#sSplit,1);
 
-	if (strcmp(cmd,cmdGo)) then
+	if (strcmp(#cmd,#cmdGo)) then
 		ok:=CommandGO(arg1);
 	
 	commandNotOK:=1-ok;
@@ -464,7 +463,7 @@ begin
 			if (key=$8E) then // return 
 			begin
 				renderChar:=false;
-				memcpy(screenmemory,0,command,40);
+				memcpy(#screenmemory,0,#command,40);
 				command[cur]:=0;
 				cur:=0;
 				ExecuteCommand();
