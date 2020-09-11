@@ -1205,16 +1205,19 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node,QString lb
 
     as->Comment("Binary clause INTEGER: " + node->m_op.getType());
     //    as->Asm("pha"); // Push that baby
-
+/*
     QSharedPointer<NodeVar> varb = qSharedPointerDynamicCast<NodeVar>(node->m_right);
 
     QSharedPointer<NodeNumber> numb = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
 
 
     QSharedPointer<NodeVar> vara = qSharedPointerDynamicCast<NodeVar>(node->m_left);
+*/
+    if (!node->m_left->isPure())
+        ErrorHandler::e.Error("Integer comparison: only pure integer number / variable is supported", node->m_op.m_lineNumber);
 
-    if (vara==nullptr)
-        ErrorHandler::e.Error("Integer comparison: only pure integer variable is supported", node->m_op.m_lineNumber);
+    if (!node->m_right->isPure())
+        ErrorHandler::e.Error("Integer comparison: only pure integer number / variable is supported", node->m_op.m_lineNumber);
 
     QString lbl2 = lblFailed;
     QString lbl1 = lblSuccess;
@@ -1223,17 +1226,10 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node,QString lb
 //    QString lbl2 = as->NewLabel("binaryclauseinteger_fail"); // failed
 //    QString lbl3 = as->NewLabel("binaryclauseintegerfinished"); // failed
 
-    QString lo = "";
-    QString hi = "";
 
-    if (numb!=nullptr) {
-        lo = "#" + QString::number(((int)numb->m_val) & 255);
-        hi = "#" + QString::number(((int)numb->m_val>>8) & 255);
-    }
-    if (varb!=nullptr) {
-        lo = getValue(varb);
-        hi = getValue(varb)+ "+1";
-    }
+
+    QString lo = getValue8bit(node->m_right,false);
+    QString hi = getValue8bit(node->m_right,true);
 
     //m_left->Build(as);
     //as->Term();
@@ -1260,36 +1256,35 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node,QString lb
   */
 
 
-    if (numb!=nullptr || varb!=nullptr) {
+//    if (numb!=nullptr || varb!=nullptr) {
+    QSharedPointer<Node> vara = node->m_left;
+        as->Comment("Compare INTEGER with pure num / var optimization. GREATER. ");
         if (node->m_op.m_type==TokenType::GREATER) {
-            as->Comment("Compare INTEGER with pure num / var optimization. GREATER. ");
-            as->Asm("lda " + getValue(vara) + "+1   ; compare high bytes");
+            as->Asm("lda " + getValue8bit(vara,true) + "   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
             as->Asm("bcc " + lbl2);
         //    as->Asm("beq " + lbl2);
             as->Asm("bne " + lbl1);
-            as->Asm("lda " + getValue(vara));
+            as->Asm("lda " + getValue8bit(vara,false));
             as->Asm("cmp " + lo +" ;keep");
             as->Asm("bcc " + lbl2);
             as->Asm("beq " + lbl2);
         }
         if (node->m_op.m_type==TokenType::GREATEREQUAL) {
-            as->Comment("Compare INTEGER with pure num / var optimization. GREATEREQUAL. ");
-            as->Asm("lda " + getValue(vara) + "+1   ; compare high bytes");
+            as->Asm("lda " + getValue8bit(vara,true) + "   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
             as->Asm("bcc " + lbl2);
             as->Asm("bne " + lbl1);
-            as->Asm("lda " + getValue(vara));
+            as->Asm("lda " + getValue8bit(vara,false));
             as->Asm("cmp " + lo +" ;keep");
             as->Asm("bcc " + lbl2);
         }
         if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL) {
-            as->Comment("Compare INTEGER with pure num / var optimization");
-            as->Asm("lda " + getValue(vara) + "+1   ; compare high bytes");
+            as->Asm("lda " + getValue8bit(vara,true) + "   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
             as->Asm("bcc " + lbl1);
             as->Asm("bne " + lbl2);
-            as->Asm("lda " + getValue(vara));
+            as->Asm("lda " + getValue8bit(vara,false));
             as->Asm("cmp " + lo+" ;keep");
             if (node->m_op.m_type==TokenType::LESSEQUAL)
                 as->Asm("beq "+lbl1);
@@ -1299,17 +1294,27 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node,QString lb
 
         }
         if (node->m_op.m_type==TokenType::EQUALS) {
-            as->Comment("Compare INTEGER with pure num / var optimization");
-            as->Asm("lda " + getValue(vara) + "+1   ; compare high bytes");
+            as->Asm("lda " + getValue8bit(vara,true) + "   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
             as->Asm("bne " + lbl2);
-            as->Asm("lda " + getValue(vara));
+            as->Asm("lda " + getValue8bit(vara,false));
             as->Asm("cmp " + lo+" ;keep");
             as->Asm("bne " + lbl2);
             as->Asm("jmp " + lbl1);
         }
         if (node->m_op.m_type==TokenType::NOTEQUALS){
-            ErrorHandler::e.Error("Comparison of integer NOTEQUALS<> not implemented!", node->m_op.m_lineNumber);
+//            ErrorHandler::e.Error("Comparison of integer NOTEQUALS<> not implemented!", node->m_op.m_lineNumber);
+            QString lblPass1  = as->NewLabel("pass1");
+            as->Asm("lda " + getValue8bit(vara,true) + "   ; compare high bytes");
+            as->Asm("cmp " + hi + " ;keep");
+            as->Asm("beq " + lblPass1);
+            as->Asm("jmp " + lbl1);
+            as->Label(lblPass1);
+            as->Asm("lda " + getValue8bit(vara,false));
+            as->Asm("cmp " + lo+" ;keep");
+            as->Asm("beq " + lbl2);
+            as->Asm("jmp " + lbl1);
+            as->PopLabel("pass1");
 
         }
 /*        as->Label(lbl1); // ok
@@ -1322,11 +1327,11 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node,QString lb
 
 */
         // Now all is ok
+  //  }
+  /*  else {
+        ErrorHandler::e.Error("Comparison of integer only implemented for pure number or variable",node->m_op.m_lineNumber);
     }
-    else {
-        ErrorHandler::e.Error("Comparison of integer only works with number or variable",node->m_op.m_lineNumber);
-    }
-
+*/
 
 
 

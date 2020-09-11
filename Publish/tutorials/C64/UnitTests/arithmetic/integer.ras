@@ -64,6 +64,7 @@ begin
 	text := "04:"; if i1<i2 then FAIL() else PASS();
 end;
 
+
 // less or equals than
 procedure T05();
 begin
@@ -80,13 +81,23 @@ begin
 	text := "06:"; if i1<=i2 then PASS() else FAIL();
 end;
 
+
+// less than
+procedure T066();
+begin
+	i1:=$2000;
+	asm(";wtf");
+	text := "07:"; if (i1<>$2001) then PASS() else FAIL();
+end;
+
+
 // plus Simple
 procedure T07();
 begin
 	i1:=1000;
 	i2:=2000;
 	i1:=i1 + i2;
-	text := "07:"; if i1=3000 then PASS() else FAIL();
+	text := "08:"; if i1=3000 then PASS() else FAIL();
 end;
 
 // minus Simple
@@ -95,7 +106,7 @@ begin
 	i1:=1000;
 	i2:=2000;
 	i1:=i1 - i2;
-	text := "08:"; if i1=64536 then PASS() else FAIL();
+	text := "09:"; if i1=64536 then PASS() else FAIL();
 end;
 
 // plus semi advanced
@@ -104,7 +115,7 @@ begin
 	i1:=1000;
 	i2:=2000;
 	i1:=i1*2 + i2;
-	text := "09:"; if i1=4000 then PASS() else FAIL();
+	text := "10:"; if i1=4000 then PASS() else FAIL();
 end;
 
 // minus semi advanced
@@ -113,7 +124,7 @@ begin
 	i1:=1000;
 	i2:=4000;
 	i1:=i1*2 - i2;
-	text := "10:"; if i1=63536 then PASS() else FAIL();
+	text := "11:"; if i1=63536 then PASS() else FAIL();
 end;
 
 
@@ -123,7 +134,7 @@ begin
 	i1:=1000;
 	i2:=4000;
 	i1:=i1*3 + i2*2+ 500;
-	text := "11:"; if i1=11500 then PASS() else FAIL();
+	text := "12:"; if i1=11500 then PASS() else FAIL();
 end;
 
 
@@ -133,7 +144,7 @@ begin
 	i1:=1000;
 	i2:=4000;
 	i1:=i1*3 - i2*2+  1000 - i2;
-	text := "12:"; if i1=57536 then PASS() else FAIL();
+	text := "13:"; if i1=57536 then PASS() else FAIL();
 end;
 
 
@@ -183,6 +194,7 @@ begin
 	T05();
 	T06();
 
+	T066();
 	T07();
 	T08();
 	T09();
