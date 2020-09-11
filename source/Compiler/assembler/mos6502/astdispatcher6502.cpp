@@ -911,7 +911,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeString> node)
 {
     node->DispatchConstructor(as);
 //    exit(1);
-    if (node->m_val.count()==1 && node->m_val[0].count()==1) {
+    if (node->m_val.count()>=1 && node->m_val[0].count()>=1) {
         as->ClearTerm();
 
 //        as->Asm("lda #"+QString::number(QChar(node->m_val[0][0]).unicode()));
