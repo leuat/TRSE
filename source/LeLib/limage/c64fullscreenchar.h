@@ -163,6 +163,7 @@ public:
     }
 
     void Transform(int x, int y) override;
+    void OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, int size, float gamma = 1.0) override;
 
 
     QString getMetaInfo();

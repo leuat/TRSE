@@ -150,6 +150,12 @@ void C64FullScreenChar::ExportBin(QFile &f)
 
 }
 
+void C64FullScreenChar::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, int size, float gamma)
+{
+    fromQImage(&img, colors);
+
+}
+
 void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
 {
     float sx = img->width()/m_charWidth;
@@ -157,12 +163,12 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
  //   float sy = img->height()/25;
 //    qDebug() <<m_charWidth << m_charHeight;
 
-
+    lst.m_selectClosestFromPen = false;
     for (float i=0;i<m_charWidth;i++)
         for (float j=0;j<m_charHeight;j++) {
             PixelChar pc;
             QVector<int> winner;
-            winner.resize(lst.count());
+            winner.resize(lst.m_list.count());
             for (int y=0;y<8;y++)
                 for (int x=0;x<8;x++) {
                     float xx = (i)*sx+x;
@@ -171,10 +177,11 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
                     yy = (yy-img->height()/2)*m_importScaleY + img->height()/2;
 
 
-                    uchar col = 0;
+                    int col = 0;
                     if (xx>0 && xx<img->width() && yy>0 && yy<img->height())
-                        col = lst.getIndex(QColor(img->pixel(xx,yy)));
-                    if (col!=getBackground()) {
+           //             col = lst.getIndex(QColor(img->pixel(xx,yy)));
+                    lst.getClosestColor(QColor(img->pixel(xx,yy)), col);
+                    if (col!=getBackground() && col<winner.count()) {
                         pc.p[y] |= 1<<x;
                         winner[col]++;
                     }
@@ -513,6 +520,7 @@ void C64FullScreenChar::Transform(int x, int y)
 
         }
 }
+
 
 QString C64FullScreenChar::getMetaInfo()
 {
