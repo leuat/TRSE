@@ -910,7 +910,17 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeBinaryClause> node)
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeString> node)
 {
     node->DispatchConstructor(as);
+//    exit(1);
+    if (node->m_val.count()==1 && node->m_val[0].count()==1) {
+        as->ClearTerm();
 
+//        as->Asm("lda #"+QString::number(QChar(node->m_val[0][0]).unicode()));
+        CStringItem it  = ((AsmMOS6502*)as)->m_cstr[QString(node->m_val[0][0]) ];
+//        as->Asm("lda #"+QString::number(it.m_char.unicode()->unicode()));
+        as->Asm("lda #"+QString::number(it.m_screenCode));
+        as->Term();
+        return;
+    }
     as->String(node->m_val,true);
 }
 
@@ -2884,8 +2894,9 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
         return;
     }
 
-    if (qSharedPointerDynamicCast<NodeString>(node->m_right))
+    if (qSharedPointerDynamicCast<NodeString>(node->m_right) && v->m_expr==nullptr)
     {
+        as->Comment("HERE");
         AssignString(node,node->m_left->isPointer(as));
         return;
     }
