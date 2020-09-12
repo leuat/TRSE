@@ -112,7 +112,7 @@ end;
 procedure InitSprites();
 begin
 	fill(^$200,$FF,0);
-	memcpy(spriteData, 0,^@spriteLoc,6*16);
+	memcpy(#spriteData, 0,^@spriteLoc,6*16);
 	SetSpritePosition();
 end;
 

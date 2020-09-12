@@ -30,20 +30,20 @@ begin
 	screen_fg_col := black;
 	screen_bg_col := cyan;
 
-	screenmemory := screen_char_loc;
+	screenmemory := #screen_char_loc;
 	printstring("HI SCORE:",0,8);
-	screenmemory := screen_char_loc + 10;
-	BcdPrint( hiscore, 5 );  // print the high score using 5 bytes
+	screenmemory := #screen_char_loc + 10;
+	BcdPrint( #hiscore, 5 );  // print the high score using 5 bytes
 
-	screenmemory := screen_char_loc + screen_width;
+	screenmemory := #screen_char_loc + screen_width;
 	printstring("SCORE:",0,5);
-	screenmemory := screen_char_loc + screen_width + 10;
+	screenmemory := #screen_char_loc + screen_width + 10;
 	
 	// repeat this loop until score has reached the high score
-	while (BcdIsEqual(score, hiscore, 5) = false) do
+	while (BcdIsEqual(#score, #hiscore, 5) = false) do
 	begin
-		BcdAdd( score, scoreAdd, 5 );	// add scoreAdd to score
-		BcdPrint( score, 5 ); // print the current score
+		BcdAdd( #score, #scoreAdd, 5 );	// add scoreAdd to score
+		BcdPrint( #score, 5 ); // print the current score
 		
 		waitforraster(140);	// wait for the VBL (slow the program down to synchronise with the screen refresh)
 	end;

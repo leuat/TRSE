@@ -30,7 +30,7 @@ var
 // Renders the tectech pattern in two ways: regular and mixed
 procedure RenderCharEffectBackground();
 begin
-	zp:=screen_char_loc;
+	zp:=#screen_char_loc;
 
 	for j:=0 to screen_height do begin
 		for i:=0 to screen_width do  begin

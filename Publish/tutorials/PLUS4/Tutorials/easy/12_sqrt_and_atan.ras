@@ -41,7 +41,7 @@ begin
 	// could equally well have written "screenmemory:=screen_char_loc;"
 	moveto(0,0,hi(screen_char_loc));
 	// Set cp to point to color memory
-	cp:=screen_col_loc;
+	cp:=#screen_col_loc;
 	// 23 rows
 	for y:=0 to screen_height-1 do begin
 		//40 columns

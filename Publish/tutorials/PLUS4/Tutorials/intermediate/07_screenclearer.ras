@@ -44,8 +44,8 @@ end;
 */
 procedure PerformPerlin();
 begin
-	zp:=screen_char_loc;
-	p1:=screen_col_loc;
+	zp:=#screen_char_loc;
+	p1:=#screen_col_loc;
 	l1:=@dataLoc;
 		
 

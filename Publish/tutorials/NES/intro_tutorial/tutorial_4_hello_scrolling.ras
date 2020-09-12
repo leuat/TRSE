@@ -84,7 +84,7 @@ end;
 procedure ReadHeader();
 
 begin
-	@levelpointer := levels;
+	@levelpointer := #levels;
 
 	// Read level header info
 
@@ -129,7 +129,7 @@ begin
 	
 	
 	// Go past header
-	@levelpointer := levels;
+	@levelpointer := #levels;
 	@levelpointer := @levelpointer +32;
 
 	// Calculate position in level layout
@@ -146,7 +146,7 @@ begin
 	zp:=$2000;
 	for m_rl_j:=0 to m_rl_height do begin
 		for m_rl_i:=0 to m_rl_width do begin
-			dp:=meta + lp[m_rl_i]*4;
+			dp:=#meta + lp[m_rl_i]*4;
 	
 			RenderMetaBlock(zp);
 			zp:=zp+2;
@@ -176,8 +176,7 @@ begin
 	
 	
 	// Go past header
-	@levelpointer := levels;
-	@levelpointer := @levelpointer +32;
+	@levelpointer := #levels + 32;
 
 	// Calculate position in level layout
 
@@ -200,7 +199,7 @@ begin
 	
 	// Write data to temp loc
 	for m_rl_j:=0 to m_rl_height do begin
-			dp:=meta + lp[m_rl_i]*4;
+			dp:=#meta + lp[m_rl_i]*4;
 			zp[m_rl_j*2]:=dp[shift];
 			zp[m_rl_j*2+1]:=dp[shift+2];
 		 @levelpointer:=@levelpointer+m_rl_width;
@@ -396,7 +395,7 @@ end;
 procedure InitSprites();
 begin
 	fill(^$200,$FF,0);
-	memcpy(spriteData, 0,^@spriteLoc,250);
+	memcpy(#spriteData, 0,^@spriteLoc,250);
 	SetSpritePosition();
 end;
 

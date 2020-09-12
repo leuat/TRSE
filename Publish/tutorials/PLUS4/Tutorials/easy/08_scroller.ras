@@ -99,7 +99,7 @@ end;
 begin
 	InitScreen();
 	// Let the text pointer point to the actual text
-	textPointer:=text;
+	textPointer:=#text;
 	// Start the raster chain!
 	StartRasterChain(Top(), 252, @kernal);
 	Loop(); 

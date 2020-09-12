@@ -81,7 +81,7 @@ end;
 procedure RenderStarfield();
 begin
 	moveto(0,0,hi(screen_char_loc));
-	cp:=screen_col_loc;
+	cp:=#screen_col_loc;
 	for i:=0 to @noStars do begin
 		if i<>12 then begin // ignore stars at line 12
 			x:=posx[i];

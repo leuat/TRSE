@@ -44,6 +44,4 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 exomizer_toggle = 0
 zeropage_colormemory = $fc
-open_files = ,example5.ras, example4_rom_font.ras, example3.ras, example2.ras, example1.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/OK64/Tutorials/
-current_file = example5.ras
+open_files =, example1.ras
