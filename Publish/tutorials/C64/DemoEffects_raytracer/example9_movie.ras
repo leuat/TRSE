@@ -51,14 +51,13 @@ var
 
 
 	zp,p1: pointer;
-	tab:array[80] of byte;
+	tab:array[80] of integer;
 
 
 procedure CopyScreen(cs_i:byte);
 begin
 //	cs_i:=frame;
-	j:=cs_i*2;
-	zp:=ToPointer(tab[j+1],tab[j]);	
+	zp:=tab[cs_i];//ToPointer(tab[j+1],tab[j]);	
 
 	j:=cs_i/2;
 	k:=cs_i/6;
@@ -102,20 +101,19 @@ end;
 procedure SetupMovie();
 begin
 	zp:=#data1;
-
+	// Build the tab pointer data
 	for i:=0 to 22 do begin
 		if (i=6) then zp:=#data2;
 		if (i=12) then zp:=#data3;
 		if (i=18) then zp:=#data4;
 		if (i=20) then zp:=#data5;
 
-		j:=2*i;
-		tab[j]:=lo(zp);
-		tab[j+1]:=hi(zp);
+		tab[i]:=zp;
 
-			for k:=0 to 2 do begin
-				if (i&1=1) then
-					for j:=0 to 240 do zp[j]:=zp[j]+128;
+		// + 128 = $80 bytes on every 2nd frame 
+		for k:=0 to 2 do begin
+			if (i&1=1) then
+				for j:=0 to 240 do zp[j]:=zp[j]+128;
 				zp:=zp+240;
 			end;
 

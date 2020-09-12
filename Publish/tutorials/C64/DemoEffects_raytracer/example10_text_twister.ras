@@ -2,7 +2,7 @@ program Twister;
 var  
 
 // Location of twister data
-	const twister: address = $3000;
+	const twisterPos: address = $3000;
 // Location of twister table position
 	const ttablepos : address = $8000;
 	const ttableposHi : byte = $80;
@@ -13,7 +13,7 @@ var
 @requirefile "data/example10_screen.bin" "Please run the Fjong raytracer file 'example10_text_twister.fjo' before compiling this program"
 
 
-	twist: incbin("data/example10_screen.bin",twister);
+	twist: incbin("data/example10_screen.bin",twisterPos);
 	ttable: incbin("data/example10_table.bin",ttablepos);
 	charset: incbin("charsets/main.bin", charLoc);
 	
@@ -23,7 +23,8 @@ var
 	
 	i,j,time,k,l, h,shift,sh, val : byte = 0;
 	
-	zp,zp2,p1,cp,tp,kp,cp2,tmpp:pointer;
+	zp,zp2,p1,cp,tp,cp2,tmpp:pointer;
+	kp : pointer of integer;
 	sine2 : array[256] of byte;
 
 
@@ -63,28 +64,22 @@ begin
 	val:=time;
 	tmpp:=zp;
 	for i:=0 to 50 step 2 do begin
-		j:=(shift+i);
+		j:=(shift+i)>>1;
 		
 		h:=i+time;
 		k:=val +sine2[h];
 		k:=(k/4)&15;
 
-		if (j>=64) then begin 	
-			tmpp:=cp2;
-			j:=j-64;
-		end; 
 		if (j>=32) then begin 	
-			tmpp:=cp;
+			tmpp:=cp2;
 			j:=j-32;
 		end; 
-		//Lookup mul 32
+		if (j>=16) then begin 	
+			tmpp:=cp;
+			j:=j-16;
+		end; 
 		kp:=tmpp+AddressTable(#table32,32,k);
-		
-		l:=kp[j];
-		h:=kp[j+1];
-		
-		asm(";lookk");
-		p1:=toPointer(h+$30, l);
+		p1:=kp[j] +#twisterPos;
 		memcpyunroll(p1,0,zp2,16);
 			
 		zp2:=zp2+screen_width;
@@ -141,7 +136,7 @@ procedure InitScreen();
 begin
 	settextmode();	
 	hidebordery(1);
-	CreateAddressTable(#table32, 0, 32,16);
+	CreateAddressTable(#table32, 000, 32,16);
 	disableciainterrupts();
 	setmemoryconfig(1,0,0);
 	
@@ -155,7 +150,7 @@ end;
 
 
 begin
-	InitScreen();	
+	InitScreen();
 	tp:=#text;
 	for i:=0 to 256 do sine2[i]:=sine[i]/5;
 	RasterIRQ(RasterMain(),rasterMainPos,0);

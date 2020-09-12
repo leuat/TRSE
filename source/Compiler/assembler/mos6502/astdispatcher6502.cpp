@@ -260,9 +260,66 @@ void ASTDispatcher6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
         v->m_expr->Accept(this);
         as->Term();
         if (v->getType(as)==TokenType::POINTER) {
-            as->Asm("tay");
-            as->Asm("lda (" + getValue(v) + "),y");
-            as->Asm("ldy "+lbl+"+1");
+            if (v->getArrayType(as)==TokenType::INTEGER) {
+                // Special case : Load data from integer pointer
+                as->Comment("Integer pointer, special case");
+                as->Asm("asl");
+                as->Asm("tay");
+                as->Asm("lda (" + getValue(v) + "),y");
+//                as->Asm("ldx "+lbl+"+1");
+
+                as->BinOP(node->m_op.m_type);
+                as->Term(lbl,true);
+                as->Asm("pha");
+                //        as->Asm("sta " + varName);
+/*
+                if (node->m_op.m_type==TokenType::PLUS) {
+                    as->Asm("bcc "+lblword);
+                    as->Asm("inc "+lbl+"+1");
+                }
+                else {
+                    as->Asm("bcs "+lblword);
+                    as->Asm("dec "+lbl+"+1");
+                }
+                as->Label(lblword);
+                */
+
+                as->Asm("iny");
+                as->Asm("lda (" + getValue(v) + "),y");
+                as->BinOP(node->m_op.m_type,false);
+                as->Term(lbl+"+1",true);
+
+                as->Asm("tay");
+                as->Asm("pla");
+
+//                as->Asm("lda "+lbl);
+
+
+                as->PopLabel("wordAdd");
+                as->PopTempVar();
+                return;
+
+/*                as->BinOP(node->m_op.m_type);
+                as->Term(lbl,true);
+                //        as->Asm("sta " + varName);
+
+                if (node->m_op.m_type==TokenType::PLUS) {
+                    as->Asm("bcc "+lblword);
+                    as->Asm("inx");
+                }
+                else {
+                    as->Asm("bcs "+lblword);
+                    as->Asm("dex");
+                }
+                as->Label(lblword);
+
+*/
+            }
+            else {
+                as->Asm("tay");
+                as->Asm("lda (" + getValue(v) + "),y");
+                as->Asm("ldy "+lbl+"+1");
+            }
 //            as->Asm("ldy #0");
         }
         else {
@@ -646,11 +703,12 @@ void ASTDispatcher6502::RightIsPureNumericMulDiv8bit(QSharedPointer<Node> node) 
 
 }
 
-void ASTDispatcher6502::Load16bitVariable(QSharedPointer<Node> node)
+void ASTDispatcher6502::Load16bitVariable(QSharedPointer<Node> node, QString reg)
 {
     as->ClearTerm();
+    as->Comment("Load 16 bit var IS WORD "+QString::number(node->isWord(as)));
     if (node->isWord(as))
-        as->Asm("ldy "+getValue8bit(node,true));
+        as->Asm("ld"+reg+" "+getValue8bit(node,true));
     as->Asm("lda "+getValue8bit(node,false));
 }
 
@@ -738,7 +796,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeNumber>node)
 
     if ((node->m_op.m_type==TokenType::INTEGER_CONST && node->m_val>255) || node->isReference()) {
         as->Comment("Integer constant assigning");
-        Load16bitVariable(node);
+        Load16bitVariable(node,"y");
         return;
 
     }
@@ -1919,7 +1977,6 @@ void ASTDispatcher6502::LoadPointer(QSharedPointer<NodeVar> node) {
     as->ClearTerm();
     if (!LoadXYVarOrNum(node, node->m_expr,false))
     {
-
         if (!(m=="" || m.startsWith("lda")))
             as->Asm("pha");
         node->m_expr->Accept(this);
@@ -1928,6 +1985,16 @@ void ASTDispatcher6502::LoadPointer(QSharedPointer<NodeVar> node) {
         if (!(m=="" || m.startsWith("lda")))
             as->Asm("pla");
     }
+    if (node->getArrayType(as)==TokenType::INTEGER) {
+        as->Asm("lda (" + getValue(node)+"),y");
+        as->Asm("pha");
+        as->Asm("iny");
+        as->Asm("lda (" + getValue(node)+"),y");
+        as->Asm("tay");
+        as->Asm("pla");
+        return;
+    }
+
     if (m=="")
         m="lda ";
     as->Asm(m+  "(" + getValue(node)+"),y");
@@ -2000,14 +2067,21 @@ bool ASTDispatcher6502::LoadXYVarOrNum(QSharedPointer<NodeVar> node, QSharedPoin
         return false;
     bool isNumber = other->isPureNumeric();
     QString operand = "ldx ";
-    if (!isx) operand="ldy ";
+    QString x = "x";
+    if (!isx) {
+        operand="ldy ";
+        x = "y";
+    }
+
+
+
     if (var!=nullptr && var->m_expr == nullptr) {
             if (s->m_arrayType==TokenType::INTEGER) // integer array index is *2 (two bytes per array slot)
             {
                 //as->Asm("txa   ; watch for bug, Integer array has index range of 0 to 127");
                 as->Asm("lda "+ getValue(var));
                 as->Asm("asl");
-                as->Asm("tax");
+                as->Asm("ta"+x);
             }
             else {
                 as->Asm(operand + getValue(var));
@@ -2185,7 +2259,8 @@ void ASTDispatcher6502::StoreVariable(QSharedPointer<NodeVar> node) {
             if (node->getArrayType(as)==TokenType::INTEGER) {
                 // Store integer array
                 int i = node->m_expr->getValueAsInt(as)*2;
-                as->Asm("sta " + getValue(node) + "+"+ QString::number(i)); as->Asm("sty "  + getValue(node) +"+"+ QString::number(i+1));
+                as->Asm("sta " + getValue(node) + "+"+ QString::number(i));
+                as->Asm("sty "  + getValue(node) +"+"+ QString::number(i+1));
 
             }
             else {
@@ -2205,7 +2280,10 @@ void ASTDispatcher6502::StoreVariable(QSharedPointer<NodeVar> node) {
                 secondReg="y";
                 pa="(";
                 pb=")";
+                as->Comment("Storing to a pointer");
             }
+
+
 
             // Optimize for number or pure var
             if (node->m_expr->getType(as)==TokenType::INTEGER_CONST) {
@@ -2225,8 +2303,15 @@ void ASTDispatcher6502::StoreVariable(QSharedPointer<NodeVar> node) {
             }
             // Just regular var optimize
             // Regular expression
-
-
+            QString tya ="tya";
+            if (node->isPointer(as) && node->getArrayType(as)==TokenType::INTEGER) {
+                as->Comment("Storing integer to a pointer of integer, need to move data in y to x");
+                as->Asm("pha");
+                as->Asm("tya");
+                as->Asm("tax");
+                as->Asm("pla");
+                tya = "txa";
+            }
 
             bool usePush = true;
 
@@ -2250,7 +2335,9 @@ void ASTDispatcher6502::StoreVariable(QSharedPointer<NodeVar> node) {
             as->Asm("sta " +pa + getValue(node)+pb+","+ secondReg);
             if (node->getArrayType(as)==TokenType::INTEGER) {
                 as->Asm("in"+secondReg);
-             as->Asm("tya");
+
+             as->Asm(tya);
+
              as->Asm("sta " +pa + getValue(node)+pb+","+ secondReg);
             }
         }
@@ -2948,6 +3035,7 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
 
 
 
+//    if (!v->isWord(as) && node->m_right->isPure() && v->m_expr!=nullptr && (!(v->isPointer(as) && v->getArrayType(as)==TokenType::INTEGER))) {
     if (!v->isWord(as) && node->m_right->isPure() && v->m_expr!=nullptr) {
         StoreVariableSimplified(v, node->m_right);
         return;
@@ -3037,6 +3125,20 @@ void ASTDispatcher6502::StoreVariableSimplified(QSharedPointer<NodeVar> node, QS
     if (node->getArrayType(as)==TokenType::INTEGER)
         as->Asm("asl");
 
+
+    if (node->getType(as)==TokenType::POINTER && node->getArrayType(as)==TokenType::INTEGER) {
+        // Integer array. Special case.
+        as->Comment("Store Variable simplified optimization : right-hand term is pure, integer pointer assignment");
+        as->Asm("tay");
+        as->Asm("ldx "+getValue8bit(expr,true));
+        as->Asm("lda "+getValue8bit(expr,false));
+        as->Asm("sta ("+getValue(node)+"),y");
+        as->Asm("iny");
+        as->Asm("txa");
+        as->Asm("sta ("+getValue(node)+"),y");
+        return;
+
+    }
     as->Asm("ta" + secondReg);
     as->ClearTerm();
     expr->Accept(this);

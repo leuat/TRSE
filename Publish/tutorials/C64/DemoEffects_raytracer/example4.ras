@@ -6,11 +6,9 @@ var
 
 @requirefile "data/example4_chardata.bin" "Please run the Fjong raytracer file 'example4.fjo' before compiling this program"
 
-
 	charsetBank1 : incbin("data/example4_chardata.bin",$2000);
 	charsetBank2 : incbin("data/example4_chardata.bin",$6000);
 	screen : incbin("data/example4_screendata.bin",$8000);
-
 
 
 /*

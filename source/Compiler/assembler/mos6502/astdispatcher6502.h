@@ -95,7 +95,7 @@ public:
      *
     */
 
-    void Load16bitVariable(QSharedPointer<Node> node);
+    void Load16bitVariable(QSharedPointer<Node> node, QString reg="y");
 
     void IncSid(QSharedPointer<NodeVarDecl> node);
 
