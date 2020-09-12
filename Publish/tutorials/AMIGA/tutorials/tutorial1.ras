@@ -7,13 +7,15 @@ var
    	i,j,k, isDone: integer = 0; 
    	image : incbin("images/image1.bin") chipmem;
 	image_palette : incbin("images/image1.pal");
+	p1:pointer of integer;
 // Some random image   	
 
 
 begin
-	// Set to default interleaved 4-bpl screen
-	Graphics::SetupDefaultScreen(image,4);	
-	setpalette(image_palette,copper_palette,16);	
+	p1:=image;
+/*	// Set to default interleaved 4-bpl screen
+	Graphics::SetupDefaultScreen(#image,4);	
+	setpalette(#image_palette,#copper_palette,16);	
 		
 	while (isDone=0) do begin
 		// Wait for vertical blank
@@ -21,5 +23,5 @@ begin
 		// Apply copper list
 		ApplyCopperList();
 	end;
-
+*/
 end.

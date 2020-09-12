@@ -646,6 +646,14 @@ void ASTDispatcher6502::RightIsPureNumericMulDiv8bit(QSharedPointer<Node> node) 
 
 }
 
+void ASTDispatcher6502::Load16bitVariable(QSharedPointer<Node> node)
+{
+    as->ClearTerm();
+    if (node->isWord(as))
+        as->Asm("ldy "+getValue8bit(node,true));
+    as->Asm("lda "+getValue8bit(node,false));
+}
+
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeBinOP>node)
 {
@@ -730,9 +738,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeNumber>node)
 
     if ((node->m_op.m_type==TokenType::INTEGER_CONST && node->m_val>255) || node->isReference()) {
         as->Comment("Integer constant assigning");
-        as->ClearTerm();
-        as->Asm("ldy " + node->getValue8bit(as,true));
-        as->Asm("lda " + node->getValue8bit(as,false));
+        Load16bitVariable(node);
         return;
 
     }
@@ -2026,8 +2032,23 @@ void ASTDispatcher6502::LoadByteArray(QSharedPointer<NodeVar> node) {
     // Optimizer: if expression is number, just return direct
 
     QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber);
-    if (node->isReference())
+    if (node->isReference()) {
+        // This should now be handled by the parser
         ErrorHandler::e.Error("Unknown syntax: referenced address with index. ", node->m_op.m_lineNumber);
+        // Handle reference! 16-bit
+        //Load16bitVariable(node);
+/*        if (node->m_expr->isPureNumeric()) {
+            as->Asm("ldy "+getValue8bit(node,true));
+            int size = 1;
+            if (node->getArrayType(as)==TokenType::INTEGER)
+                size=2;
+            as->Asm("lda "+getValue8bit(node,false) +" + "+ Util::numToHex(node->m_expr->getValueAsInt(as)*size));
+
+        }
+        return;
+*/
+    }
+
     if (s->m_arrayType==TokenType::INTEGER)
         as->Comment("Load Integer array");
 
@@ -2108,17 +2129,13 @@ void ASTDispatcher6502::LoadVariable(QSharedPointer<NodeVar> node) {
         if (node->m_expr!=nullptr)
             LoadByteArray(node);
         else {
-            if (node->m_fake16bit)
-                as->Asm("ldy #0");
-            as->Asm("lda " +getValue(node));
+            Load16bitVariable(node);
         }
         return;
     }
     if (t == TokenType::INTEGER) {
         node->m_isWord = true;
-        as->Comment("Integer assignment in nodevar");
-        as->Asm("lda " +getValue(node));
-        as->Asm("ldy " +getValue(node)+"+1");
+        Load16bitVariable(node);
         return;
     }
     ErrorHandler::e.Error(TokenType::getType(t) + " assignment not supported yet for exp: " + getValue(node));
@@ -2313,6 +2330,7 @@ void ASTDispatcher6502::AssignPointer(QSharedPointer<NodeAssign> node) {
 //    QSharedPointer<NodeNumber> bNum = dynamic_cast<QSharedPointer<NodeNumber>>(node->m_right);
     QSharedPointer<NodeVar> aVar = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 
+    node->VerifyReferences(as);
 
 //    if (!node->m_right->isAddress())
   //      ErrorHandler::e.Error("Must be address", node->m_op.m_lineNumber);
@@ -2360,6 +2378,15 @@ void ASTDispatcher6502::AssignPointer(QSharedPointer<NodeAssign> node) {
             as->Asm("stx "+ getValue(aVar)+"+1");
             return;
         }*/
+
+/*    if (node->m_right->isPureVariable()) {
+        if (!node->m_right->isPointer(as))
+        if (!node->m_right->isReference())
+            if (!node->m_right->isArrayIndex())
+                ErrorHandler::e.Error("Unknown usage of data or array. <font color=\"orange\">Did you mean to reference it? (#"+node->m_right->getValue(as)+")</font>",node->m_op.m_lineNumber);
+    }
+*/
+    // Make sure that everything is a reference
     if (node->m_right->isPure()) {
         as->Asm("lda " + getValue8bit(node->m_right,false));
         as->Asm("ldx " + getValue8bit(node->m_right,true));

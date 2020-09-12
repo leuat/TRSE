@@ -108,7 +108,7 @@ begin
 	setscreenmode(mode_cga_320x200);
 	InitLandscape();	
 
-	fillw(data,0,8000);
+	fillw(#data,0,8000);
 
 	px:=90;
 	py:=30;
@@ -138,7 +138,7 @@ begin
 			update:=2;
 			trigger:=2;
 		end;		
-		drawsprite_cga_plane(data,screen_cga,px,py);
+		drawsprite_cga_plane(#data,screen_cga,px,py);
 		RenderTriggerLandscape();	
 	end;
 

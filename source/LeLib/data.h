@@ -25,6 +25,9 @@
 #include <QString>
 #include <QObject>
 
+
+
+
 class Data : public QObject
 {
     Q_OBJECT
@@ -33,7 +36,8 @@ public:
     Data();
     int flfVersion = 2;
     QString version;
-
+    enum CompilerState {PREPROCESSOR, PARSER, DISPATCHER, ASSEMBLER };
+    CompilerState compilerState = PREPROCESSOR;
     bool redrawOutput=false;
     bool redrawInput=false;
     bool forceRedraw = false;

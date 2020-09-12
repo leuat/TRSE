@@ -1334,10 +1334,38 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
                     subVar = SubVariable(t.m_value);
   //                  qDebug() << "H2";
                 }
-
-
                 n = QSharedPointer<NodeVar>(new NodeVar(t, expr));
                 qSharedPointerDynamicCast<NodeVar>(n)->m_subNode = subVar;
+
+                if (expr!=nullptr && t.m_isReference) {
+                    // change  arr[i] to #arr +i
+                    qSharedPointerDynamicCast<NodeVar>(n)->m_expr = nullptr;
+                    Token tb;
+                    tb.m_type = TokenType::PLUS;
+                    tb.m_lineNumber = t.m_lineNumber;
+                    QSharedPointer<Node> expr2 = expr;
+                    QSharedPointer<Symbol> s = m_symTab->Lookup(qSharedPointerDynamicCast<NodeVar>(n)->value,m_currentToken.m_lineNumber);
+                    int size = 1;
+                    if (s->m_arrayType==TokenType::INTEGER) size = 2;
+                    if (s->m_arrayType==TokenType::LONG) size = 4;
+                    //qDebug() << "PARSER SIZE" << size;
+                    if (size!=1) {
+                        //expr2 will also become a nodebinop
+                        Token tb2;
+                        tb2.m_type = TokenType::SHL; // Shift left
+                        tb2.m_lineNumber = t.m_lineNumber;
+
+                        Token tn;
+                        tn.m_type = TokenType::INTEGER_CONST; // Shift left
+                        tn.m_lineNumber = t.m_lineNumber;
+                        int s = 1;
+                        if (size == 4) s = 2; // Shift value
+                        tn.m_intVal = s;
+                        expr2 = QSharedPointer<NodeBinOP>(new NodeBinOP(expr,tb2,QSharedPointer<NodeNumber>(new NodeNumber(tn,s))));
+                    }
+                    QSharedPointer<Node> nb = QSharedPointer<NodeBinOP>(new NodeBinOP(n,tb,expr2));
+                    n = nb;
+                }
 
 
         }
@@ -2248,7 +2276,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
 
     if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::M68000)
         StripWhiteSpaceBeforeParenthesis(); // TODO: make better fix for this
-
+    Data::data.compilerState = Data::PREPROCESSOR;
     InitSystemPreprocessors();
     bool done = false;
     //while (!done)
@@ -2266,6 +2294,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
 //    PreprocessAll();
 
     m_pass = PASS_CODE;
+    Data::data.compilerState = Data::PARSER;
 
 //    if (!m_isTRU)
   //      m_tpus.clear();
@@ -2279,19 +2308,12 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     Node::flags.clear();
 
     m_lexer->Initialize();
-//    qDebug() << m_lexer->m_text;
 
     m_lexer->m_ignorePreprocessor = true;
     m_currentToken = m_lexer->GetNextToken();
-   /* qDebug() << m_lexer->m_pos;
-    qDebug() << m_lexer->m_currentChar;
-    qDebug() << m_currentToken.getType();
-*/
-//    qDebug() << m_ignoreMethods;
-    //qDebug() <<m_lexer->m_text[0];
     m_symTab->Initialize();
     Node::m_staticBlockInfo.m_blockID=-1;
-//    qDebug() << "PARSER "<< m_isTRU << m_preprocessorDefines;
+    // Main parser
     QSharedPointer<NodeProgram> root = qSharedPointerDynamicCast<NodeProgram>(Program(param));
 
 

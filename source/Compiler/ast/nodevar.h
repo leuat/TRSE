@@ -29,6 +29,7 @@
 #include "source/Compiler/ast/nodenumber.h"
 #include "source/Compiler/ast/nodevartype.h"
 #include "source/Compiler/assembler/abstractastdispatcher.h"
+
 class NodeVar : public Node {
 private:
 public:
@@ -94,6 +95,7 @@ public:
 
     bool isArrayIndex() override { return m_expr!=nullptr; }
 
+    bool typeIsArray(Assembler* as) override;
     QString getValue8bit(Assembler* as, bool isHi) override;
 
 
@@ -116,5 +118,7 @@ public:
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeVar>(sharedFromThis()));
     }
+
+    void VerifyReferences(Assembler* as) override;
 
 };

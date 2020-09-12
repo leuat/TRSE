@@ -20,7 +20,7 @@ begin
 	time:=0;
 	delta:=0;
 	// Copy image to screen
-	memcpyw(data,screen_cga,8000);
+	memcpyw(#data,screen_cga,8000);
 	while(true) do
 	begin
 		for t:=0 to 6 do
@@ -28,7 +28,7 @@ begin
 			k:=t*44;
 			y:=sine[time+k]/4 + 10;
 			x:=sine[time+64+delta+k]/2+120;
-			drawsprite_cga_cat(data, screen_cga,x,y);
+			drawsprite_cga_cat(#data, screen_cga,x,y);
 		end;
 		
 		time:=time+1;

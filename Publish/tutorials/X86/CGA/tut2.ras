@@ -17,7 +17,7 @@ begin
 	
 
 	
-	memcpyw(data,screen_cga, 8000); // Display the original image. 
+	memcpyw(#data,screen_cga, 8000); // Display the original image. 
 	//Wait a bit
 	for y:=0 to 80 do waitforverticalblank();
 
@@ -40,7 +40,7 @@ begin
 
 
 		// Copy scanlines 0 data			
-		p1:=toPointer(hi(data), lo(data) + y);		
+		p1:=toPointer(hi(#data), lo(#data) + y);		
 		// Copy image data (only every single scanline, )
 		memcpyw(p1,p2, 40*70); // Copy the data, 70 lines in total (70*40 words = 70*40*2 bytes)
 
@@ -52,7 +52,7 @@ begin
 
 
 		// Copy scanlines 2 data			
-		p1:=toPointer(hi(data), lo(data)+70*80-y);		
+		p1:=toPointer(hi(#data), lo(#data)+70*80-y);		
 		// Copy image data (only every single scanline, )
 		memcpyw(p1,p3, 40*70); // Copy the data, 70 lines in total (70*40 words = 70*40*2 bytes)
 		// Wait for vertical blank		

@@ -27,7 +27,7 @@
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/assembler/assembler.h"
 #include "source/Compiler/assembler/mos6502/mos6502.h"
-
+#include "source/LeLib/data.h"
 #include "source/Compiler/assembler/abstractastdispatcher.h"
 
 
@@ -167,6 +167,11 @@ public:
     virtual void parseConstants(QSharedPointer<SymbolTable>  symTab) {
 
     }
+    virtual bool typeIsArray(Assembler* as) {
+        return false;
+    }
+
+    virtual void VerifyReferences(Assembler* as);
 
 };
 

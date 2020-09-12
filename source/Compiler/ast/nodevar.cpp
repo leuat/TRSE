@@ -191,6 +191,24 @@ bool NodeVar::isRecordData(Assembler *as)
     return m_subNode!=nullptr;
 }
 
+bool NodeVar::typeIsArray(Assembler *as)
+{
+    if (as==nullptr)
+        return false;
+
+    QString v = getValue(as);
+    QString t = as->m_symTab->Lookup(v, m_op.m_lineNumber)->m_type.toLower();
+    //            qDebug() << v<< "TYPE" << as->m_symTab->Lookup(v, m_op.m_lineNumber)->m_type <<m_op.getType();
+    if (m_op.m_type!=TokenType::ADDRESS) // const screen_bg_col etc
+        if (!as->m_symTab->m_constants.contains(v))
+             if ((t=="address") || t=="incbin"  || t=="incsid" || t=="incnsf")
+                    if (!isPointer(as))
+                        return true;
+
+
+    return false;
+}
+
 QString NodeVar::getValue8bit(Assembler *as, bool isHi) {
 
     if (isReference()) {
@@ -251,7 +269,7 @@ QString NodeVar::getValue(Assembler* as) {
 
     }
 //    if (as!=nullptr)
-        if (as!=nullptr) {
+/*        if (as!=nullptr && Data::data.compilerState == Data::DISPATCHER) {
             QString t = as->m_symTab->Lookup(v, m_op.m_lineNumber)->m_type.toLower();
 //            qDebug() << v<< "TYPE" << as->m_symTab->Lookup(v, m_op.m_lineNumber)->m_type <<m_op.getType();
             if (m_op.m_type!=TokenType::ADDRESS) // const screen_bg_col etc
@@ -261,7 +279,7 @@ QString NodeVar::getValue(Assembler* as) {
                     ErrorHandler::e.Error("Unknown usage of data or array. <font color=\"orange\">Did you mean to reference it? (#"+v+")</font>",m_op.m_lineNumber);
 
         }
-
+*/
 
 //    int a;
   //      int* c=a;
@@ -283,5 +301,19 @@ bool NodeVar::isAddress() {
 void NodeVar::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
     QString varName = m_op.m_value;
     QSharedPointer<Symbol> varSymbol = symTab->Lookup(varName, m_op.m_lineNumber);
+
+}
+/*
+ * VerifyReferences throws an error if type needs to be referenced
+ *
+ *
+*/
+void NodeVar::VerifyReferences(Assembler *as) {
+
+    if (!isPointer(as))
+        if (!isReference())
+            if (!isArrayIndex())
+                if (typeIsArray(as))
+                ErrorHandler::e.Error("Unknown usage of data or array. <font color=\"orange\">Did you mean to reference it? (#"+getValue(as)+")</font>",m_op.m_lineNumber);
 
 }

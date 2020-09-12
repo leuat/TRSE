@@ -145,6 +145,7 @@ bool SourceBuilder::Assemble()
         return true;
     }
     connect(m_system.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
+    Data::data.compilerState = Data::ASSEMBLER;
     m_system->Assemble(m_output,m_filename, m_curDir,compiler->m_parser.m_symTab);
     if (compiler->m_assembler!=nullptr && m_system!=nullptr) {
        compiler->m_assembler->m_addresses = m_system->m_addresses;

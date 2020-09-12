@@ -58,6 +58,7 @@ public:
 
     bool isWord(Assembler *as) override;
 
+
 };
 
 #endif // NODEBINARYCLAUSE_H

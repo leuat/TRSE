@@ -763,6 +763,9 @@ void AsmMOS6502::Optimise(CIniFile& ini)
     OptimisePassStaLdx("x");
     OptimisePassStaLdx("y");
 
+    OptimisePassLdyLdy("y");
+    OptimisePassLdyLdy("x");
+
 //        OptimisePhaPla2();
   //      OptimiseCmp("cpy");
   //      OptimiseCmp("cpx");
@@ -1217,6 +1220,33 @@ bool AsmMOS6502::ContainsAChangingOpcodes(QString l1) {
 
 }
 
+bool AsmMOS6502::ContainsYUsingOpcodes(QString l1,QString y)
+{
+    l1 = l1.trimmed().toLower();
+    return  l1.startsWith("t"+y+"a") || l1.startsWith("st"+y) || l1.contains(","+y) || l1.contains(", "+y)  || ContainsBranches(l1);;
+
+}
+
+bool AsmMOS6502::ContainsYChangingOpcodes(QString l1,QString y)
+{
+    l1 = l1.trimmed().toLower();
+    return  l1.startsWith("ta"+y) || l1.startsWith("ld"+y) || ContainsBranches(l1);
+
+}
+
+bool AsmMOS6502::ContainsBranches(QString l1)
+{
+    l1 = l1.trimmed().toLower();
+    return
+            l1.startsWith("jsr") || l1.startsWith("rts")
+            || l1.startsWith("bcc") || l1.startsWith("bcs")
+            || l1.startsWith("bpl") || l1.startsWith("bmi")
+            || l1.startsWith("bvs") || l1.startsWith("bne")
+            || l1.startsWith("jmp") || l1.startsWith("bra")
+            || l1.startsWith("beq") || l1.startsWith("bvc");
+
+}
+
 int AsmMOS6502::getLineCount()
 {
     int lc = 0;
@@ -1394,6 +1424,39 @@ void AsmMOS6502::OptimisePassStaLda2()
                         }
                 }
             }
+        }
+    }
+    RemoveLines();
+}
+
+// Optimises: "sta p1   lda p1"
+void AsmMOS6502::OptimisePassLdyLdy(QString y)
+{
+    m_removeLines.clear();
+    int j;
+    QString curA ="";
+    QString lda = "ld"+y;
+    for (int i=0;i<m_source.count()-1;i++) {
+        QString l0 = getLine(i);
+        if (l0.contains(lda+" ") && !l0.contains(",") && !l0.contains(";keep")) {
+            curA = l0.split(" ")[1];
+            bool done = false;
+            bool deleteme = true;
+            j=i;
+            while (!done) {
+                QString l1 = getNextLine(j,j);
+
+                if (ContainsYUsingOpcodes(l1,y) || nextLineIsLabel(j) || j>=m_source.count()) {
+                        done = true;
+                        deleteme = false;
+                   }
+                if (ContainsYChangingOpcodes(l1,y)) {
+                    done = true;
+                }
+            }
+            if (deleteme)
+                m_removeLines.append(i);
+
         }
     }
     RemoveLines();

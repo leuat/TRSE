@@ -37,7 +37,7 @@ begin
 	end;
 	playfield_color:=$45;
 	k:=0;
-	p1:=pattern;
+	p1:=#pattern;
 	l:=0;
 	for i:=0 to 192 do
 	begin

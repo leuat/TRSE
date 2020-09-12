@@ -140,6 +140,8 @@ public:
     void OptimisePhaLdxPla();
     void OptimiseLdLd();
     void OptimisePassStaLdx(QString x);
+    void OptimisePassLdyLdy(QString y);
+
     QString getLine(int i);
     QString getNextLine(int i, int &j);
     bool nextLineIsLabel(int i);
@@ -148,6 +150,9 @@ public:
     void RemoveLinesDebug();
 
     bool ContainsAChangingOpcodes(QString l1);
+    bool ContainsYUsingOpcodes(QString l1,QString y);
+    bool ContainsYChangingOpcodes(QString l1,QString y);
+    bool ContainsBranches(QString l1);
 
 
     int getLineCount() override;

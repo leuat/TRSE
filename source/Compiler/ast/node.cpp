@@ -126,3 +126,11 @@ bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,
 TokenType::Type Node::VerifyAndGetNumericType() {
    return m_op.m_type;
 }
+
+void Node::VerifyReferences(Assembler *as) {
+    if (m_left!=nullptr)
+        m_left->VerifyReferences(as);
+    if (m_right!=nullptr)
+        m_right->VerifyReferences(as);
+
+}

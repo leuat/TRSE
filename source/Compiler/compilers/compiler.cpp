@@ -115,6 +115,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
         qSharedPointerDynamicCast<NodeProgram>(m_tree)->m_initJumps = m_parser.m_initJumps;
         m_dispatcher->as = m_assembler.get();
         // Visit that AST node tree baby!
+        Data::data.compilerState = Data::DISPATCHER;
         m_tree->Accept(m_dispatcher.get());
 
     } catch (FatalErrorException e) {
