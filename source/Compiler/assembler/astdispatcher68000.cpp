@@ -1117,7 +1117,10 @@ QString ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
     if (node->m_left->getType(as)==TokenType::POINTER && node->m_left->isArrayIndex()) {
         //if (node->m_left->getArrayType(as))
         node->m_right->m_forceType = node->m_left->getArrayType(as); // FORCE integer on right-hand side
+
     }
+    if (node->m_left->isPointer(as))
+        node->m_right->VerifyReferences(as);
 
 
     // Trying to assign a PURE record

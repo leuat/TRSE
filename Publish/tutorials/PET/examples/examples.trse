@@ -38,4 +38,6 @@ exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
 zeropage_colormemory = $fc
-open_files =, 01_hello_world.ras
+open_files = ,05_matrix.ras, 01_hello_world.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/PET/examples/
+current_file = 05_matrix.ras

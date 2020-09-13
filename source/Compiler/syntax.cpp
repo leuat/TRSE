@@ -265,14 +265,24 @@ bool Syntax::isAlpha(QString s) {
 }
 
 Token Syntax::GetID(QString val, bool isRef) {
+    QString org = val;
+    bool isPointer = false;
+//    qDebug() << "Searching for : " << val;
+    if (val.startsWith("^")) {
+        val.remove(0,1);
+        isPointer = true;
+  //      qDebug() << "IS POINTER : " << val;
+    }
     for (Token& t: reservedWords)
         if (val.toUpper()==t.m_value) {
             t.m_lineNumber = Pmm::Data::d.lineNumber;
+            t.m_isPointer = isPointer;
+  //          qDebug() << "Found TYPE SPEC "<< t.m_value << isPointer;
             return t;
         }
 
     //exit(1);
-    return Token(TokenType::ID, val, isRef);
+    return Token(TokenType::ID, org, isRef);
 }
 
 

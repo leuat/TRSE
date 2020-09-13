@@ -65,7 +65,7 @@ end;
 
 
 begin
-	Graphics::SetupDefaultScreen(image, 4);
+	Graphics::SetupDefaultScreen(#image, 4);
 	setpalette(image_palette,copper_palette,16);	
 
 	/*

@@ -269,7 +269,7 @@ void Methods68000::SetCopperList32(Assembler *as)
     m_dispatcher->LoadAddress(m_node->m_params[0]);
     Asm(as,"move.l",as->m_varStack.pop(),d0);
 
-    Asm(as,"lea",addr,a0);
+    Asm(as,"move.l",addr,a0);
     Asm(as,"move.w",d0,"6("+a0+")");
     as->Asm("swap "+d0);
     Asm(as,"move.w",d0,"2("+a0+")");

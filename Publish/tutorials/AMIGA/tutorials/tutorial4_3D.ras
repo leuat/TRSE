@@ -163,12 +163,11 @@ end;
 procedure SetupRotMat(rto3D_t1,rto3D_t2,rto3D_t3 : integer);
 begin
 	SetCosin(rto3D_t1);
-	SetRotationX(rotX,cost, sint);
+	SetRotationX(#rotX,cost, sint);
 	SetCosin(rto3D_t2);
-	SetRotationY(rotY, cost, sint);
+	SetRotationY(#rotY, cost, sint);
 	SetCosin(rto3D_t3);
-	SetRotationZ(rotZ, cost, sint);
-
+	SetRotationZ(#rotZ, cost, sint);
 	// Built-in matmul rulez	
 	MatMul3x3(rotX, rotY, rotmatA);
 	MatMul3x3(rotmatA, rotZ, rotmat);
@@ -183,16 +182,16 @@ end;
 procedure FlipBuffers();
 begin
 	if (curBuf=0) then begin
-		screen:=screenb1;
-		offscreen:=screenb2;
+		screen:=#screenb1;
+		offscreen:=#screenb2;
 
 	end else begin
-		screen:=screenb2;
-		offscreen:=screenb1;
+		screen:=#screenb2;
+		offscreen:=#screenb1;
 	end;
-	SetCopperList32(offscreen, copper_bitplane0);
+	SetCopperList32(offscreen, #copper_bitplane0);
 	ss:=offscreen+40;
-	SetCopperList32(ss, copper_bitplane1);
+	SetCopperList32(ss, #copper_bitplane1);
 
 	curBuf:=(curBuf+1)&1;
 
@@ -219,7 +218,7 @@ end;
 
 procedure PerformInit();
 begin
-	Graphics::SetupDefaultScreen(screenb1,2);
+	Graphics::SetupDefaultScreen(#screenb1,2);
 	InitLine();
 	InitLineStuff();
 	InitMatmul3x3();
@@ -230,19 +229,19 @@ begin
 
 	WaitVerticalBlank();	
 	i:=0;
-	screen:=screenb1;
+	screen:=#screenb1;
 	
-	SetIdentity(rotX);	
-	SetIdentity(rotY);	
-	SetIdentity(rotZ);	
+	SetIdentity(#rotX);	
+	SetIdentity(#rotY);	
+	SetIdentity(#rotZ);	
 
 
 	// Some random palette
-	poke16(copper_palette,2,$0012);
-	poke16(copper_palette,2+4*1,$070F);
-	poke16(copper_palette,2+4*2,$006E);
-	poke16(copper_palette,2+4*3,$070F);
-	poke16(copper_palette,2+4*3,$0FF0);
+	poke16(#copper_palette,2,$0012);
+	poke16(#copper_palette,2+4*1,$070F);
+	poke16(#copper_palette,2+4*2,$006E);
+	poke16(#copper_palette,2+4*3,$070F);
+	poke16(#copper_palette,2+4*3,$0FF0);
 
 	// Set line modulo
 //	poke16(^$dff060,0,80);
@@ -266,16 +265,16 @@ begin
 		// Setup rotation matrix "rotmat"
 		SetupRotMat(time,i,jj);
 		// Multiply rotmat with each vector3 in "vertices", store in "vertices_T"
-		MatmulVec(rotmat, vertices, vertices_T, vcount);
+/*		MatmulVec(#rotmat, #vertices, #vertices_T, vcount);
 		// Multiply rotmat with each normal z (byte) in "normals", store in "normals_T"
-		MatmulVecNormalZ(rotmat, normals, normals_T, lcount);
+		MatmulVecNormalZ(#rotmat, #normals, #normals_T, lcount);
 		// Render object as lines with vertices in"vertices_T", normals in "normals_T" and line A/B list in verticesLineList.
 		// Center xyz = 160,100 and a zpos 
-		RenderObjectLines(vertices_T, normals_T, verticesLineList, lcount, 160,128, zpos);		
-		
+		RenderObjectLines(#vertices_T, #normals_T, #verticesLineList, lcount, 160,128, zpos);		
+	*/	
 
 		// Perform backbuffer flipping etc
-		FlipBuffers();
+//		FlipBuffers();
 		WaitVerticalBlank();	
 		time:=time+1;
 		

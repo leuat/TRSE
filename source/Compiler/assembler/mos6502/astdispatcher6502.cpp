@@ -271,18 +271,6 @@ void ASTDispatcher6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
                 as->BinOP(node->m_op.m_type);
                 as->Term(lbl,true);
                 as->Asm("pha");
-                //        as->Asm("sta " + varName);
-/*
-                if (node->m_op.m_type==TokenType::PLUS) {
-                    as->Asm("bcc "+lblword);
-                    as->Asm("inc "+lbl+"+1");
-                }
-                else {
-                    as->Asm("bcs "+lblword);
-                    as->Asm("dec "+lbl+"+1");
-                }
-                as->Label(lblword);
-                */
 
                 as->Asm("iny");
                 as->Asm("lda (" + getValue(v) + "),y");
@@ -298,22 +286,6 @@ void ASTDispatcher6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
                 as->PopLabel("wordAdd");
                 as->PopTempVar();
                 return;
-
-/*                as->BinOP(node->m_op.m_type);
-                as->Term(lbl,true);
-                //        as->Asm("sta " + varName);
-
-                if (node->m_op.m_type==TokenType::PLUS) {
-                    as->Asm("bcc "+lblword);
-                    as->Asm("inx");
-                }
-                else {
-                    as->Asm("bcs "+lblword);
-                    as->Asm("dex");
-                }
-                as->Label(lblword);
-
-*/
             }
             else {
                 as->Asm("tay");

@@ -80,7 +80,8 @@ public:
     QString m_value;
     long m_intVal=0;
     int m_lineNumber=0;
-    bool m_isReference;
+    bool m_isReference = false;
+    bool m_isPointer = false;
     QString m_currentLineText="";
     QString getType();
 

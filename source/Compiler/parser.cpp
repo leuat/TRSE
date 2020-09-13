@@ -3070,9 +3070,25 @@ QSharedPointer<Node> Parser::TypeSpec()
         return str;
     }
 
-    if (m_currentToken.m_type == TokenType::POINTER) {
+    // ^byte, ^integer
+    if (m_currentToken.m_isPointer) {
+        t.m_type = TokenType::POINTER;
+        t.m_value = "POINTER";
+        QSharedPointer<NodeVarType> nvt = QSharedPointer<NodeVarType>(new NodeVarType(t,""));
+        nvt->m_arrayVarType.m_type = m_currentToken.m_type;
+
+        if (!(m_currentToken.m_type==TokenType::INTEGER || m_currentToken.m_type==TokenType::BYTE || m_currentToken.m_type==TokenType::LONG)) {
+            ErrorHandler::e.Error("TRSE currently only supports pointers to bytes, integers and longs (m68k).",m_currentToken.m_lineNumber);
+        }
         Eat();
-        QString type;
+        return nvt;
+
+    }
+
+    if (m_currentToken.m_type == TokenType::POINTER) {
+//        QString type;
+        Eat();
+
         QSharedPointer<NodeVarType> nvt = QSharedPointer<NodeVarType>(new NodeVarType(t,""));
         nvt->m_arrayVarType.m_type = TokenType::BYTE;
 
@@ -3084,6 +3100,7 @@ QSharedPointer<Node> Parser::TypeSpec()
   //          initData = str->m_val;
             Eat();
             nvt->m_arrayVarType.m_type = typ;
+
         }
 
 //        qDebug() <<"Parser typespec pointer: "  << nvt->m_arrayVarType.getType();

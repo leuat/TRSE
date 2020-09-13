@@ -248,6 +248,8 @@ Token Lexer::Number()
     val = res.toLong(&ok, base);
 
 //    qDebug() << val;
+    if (!ok)
+        val = -1E10;
     if (isConstant)
         return Token(TokenType::INTEGER_CONST, val);
     else {
@@ -405,15 +407,39 @@ Token Lexer::GetNextToken()
         }
 
         if (Syntax::s.isDigit(m_currentChar)) {
-            return Number();
+            QString keep = m_currentChar;
+            uint pos = m_pos;
+            uint ppos = m_prevPos;
+            Token number = Number();
+
+            if (number.m_intVal!=-1E10)
+                return number;
+            else {
+                // Roll back evential ^s
+                m_currentChar = keep;
+                m_pos = pos;
+                m_prevPos = ppos;
+            }
         }
 
-        if (Syntax::s.isAlpha(m_currentChar) || m_currentChar=="$") {
+        if (Syntax::s.isAlpha(m_currentChar) || m_currentChar=="$" || (m_currentChar =="^" && Syntax::s.isAlpha(peek()))) {
+            Token id =_Id();
+            if (id.m_value.endsWith("^")) {
+                id.m_value.remove(id.m_value.count()-1,1);
+                m_text.remove(m_pos-1,1);
+                m_text.insert(m_pos-1,"[0]");
+                m_currentChar = "[";
 
-            //qDebug() << m_currentChar << " is Alpha";
-
-            return _Id();
+            }
+//            qDebug() << "found ID "<<id.getType() <<id.m_isPointer;
+/*            if (id.m_value.startsWith("^")) {
+                id.m_value.remove(0,1);
+                id.m_isPointer = true;
+                qDebug() << "Adding pointer : " << id.m_value << id.m_type;
+            }*/
+            return id;
         }
+
         if (m_currentChar==":" && peek()=="=") {
             Advance();
             Advance();

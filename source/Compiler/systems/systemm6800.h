@@ -12,6 +12,10 @@ public:
 
     }
 
+    virtual bool is8bit() override {
+        return false;
+    }
+
 /*    virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);
     virtual void PostProcess(QString& text, QString file, QString currentDir);*/
 };
