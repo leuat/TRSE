@@ -1,7 +1,7 @@
 program Scroller;
 var
 	scrollVal : byte=0;
-	textPointer : pointer;
+	textPointer : ^byte;
 	text : cstring = ("                                        ",
 					"THIS IS A SAMPLE SCROLLER TEXT",
 					 "                                        ");

@@ -9,7 +9,7 @@ var
    	// Screen and color address tables
 	saddr: array[screen_width] of integer; // Screen address table
 	caddr: array[screen_width] of integer; // Color adress table
-   	sp:pointer;
+   	sp : ^byte;
    	
 	const ymax:byte = 240;
 
@@ -56,7 +56,8 @@ begin
 		// Print random character
 		if (j<screen_height) then begin
 			sp:=AddressTable(#saddr,i,j);
-			sp[0]:=random()/4; // random character is located between 0 and 64
+			sp^:=random()/4; // random character is located between 0 and 64
+			// sp^ is the same as sp[0]
 		end;
 		// Fill the "tail" colors
 		FillColor(i,j,light_green);

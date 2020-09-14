@@ -81,9 +81,9 @@ begin
 		// and 40 columns 
 		for i:=0 to screen_width do begin
 			// if text pointer is zero, the end of string has been reached. If so, reset text pointer
-			if (tp[0]=0) then tp:=#text;
+			if (tp^=0) then tp:=#text;
 			// copy text char from text to screen
-			screenmemory[i]:=tp[0];
+			screenmemory[i]:=tp^;
 			// Increase text pointer
 			tp:=tp+1;
 	

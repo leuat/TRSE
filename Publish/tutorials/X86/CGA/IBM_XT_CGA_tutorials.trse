@@ -43,6 +43,3 @@ exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
 zeropage_colormemory = $fc
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/X86/CGA/
-open_files = 6.91144e-310
-current_file = tut1.ras

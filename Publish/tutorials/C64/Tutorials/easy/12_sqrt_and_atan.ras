@@ -32,7 +32,7 @@ var
 	x,y,tangent,i,dx,dy : byte;
 	radial : integer;
 	// Add a color pointer
-	cp:pointer;
+	cp:^byte;
 
 	
 

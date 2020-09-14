@@ -3095,9 +3095,10 @@ QSharedPointer<Node> Parser::TypeSpec()
         if (m_currentToken.m_type == TokenType::OF) {
             Eat();
             TokenType::Type typ = m_currentToken.m_type;
+            if (!(m_currentToken.m_type==TokenType::INTEGER || m_currentToken.m_type==TokenType::BYTE || m_currentToken.m_type==TokenType::LONG)) {
+                ErrorHandler::e.Error("TRSE currently only supports pointers to bytes, integers and longs (m68k).",m_currentToken.m_lineNumber);
+            }
 
-//            QSharedPointer<NodeString> str = (QSharedPointer<NodeString>)String();
-  //          initData = str->m_val;
             Eat();
             nvt->m_arrayVarType.m_type = typ;
 
