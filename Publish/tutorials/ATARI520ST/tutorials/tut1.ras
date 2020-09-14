@@ -36,13 +36,13 @@ begin
 	// Set to lores mode
 	SetLoRes();
 	// Copy palette data
-	memcpy(image_pal,0,palette_start,0,16,2);
+	memcpy(#image_pal,0,#palette_start,0,16,2);
 	// Get screen pointer
 	GetScreen(screen);
 	// Copy image data
-	memcpy(image,0,screen,0,8000,4);
+	memcpy(#image,0,screen,0,8000,4);
 	// Initialize music	
-	InitMusic(ym_file);
+	InitMusic(#ym_file);
 	// Initialize VBLank IRQ
 	setirq(VBLank(), irq_verticalblank);
 

@@ -35,7 +35,7 @@ begin
 end;
 
 begin
-	InitMusic(ym_file);
+	InitMusic(#ym_file);
 	SetLoRes();
 	Graphics::Init();
 	InitGraphics();

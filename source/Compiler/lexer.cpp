@@ -225,6 +225,7 @@ Token Lexer::Number()
 
         return Token(TokenType::REAL_CONST, res.toFloat());
     }
+//    qDebug() <<"LEXER NUMBER " <<res;
     org = res;
     bool ok;
     long val = 0;
@@ -536,6 +537,11 @@ Token Lexer::GetNextToken()
 //            Advance();
             //m_text = m_text.replace("\n", "");
             return Token(TokenType::DOT, ".");
+        }
+        // Picked up a stray ^
+        if (m_currentChar=="^") {
+            Advance();
+            return Token(TokenType::NADA, "NADA");
         }
 
         ErrorHandler::e.Error( "Error parsing: " + m_currentChar,Pmm::Data::d.lineNumber );

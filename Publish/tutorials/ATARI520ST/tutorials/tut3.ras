@@ -19,7 +19,7 @@ begin
 	i:=sin[(time)&255];
 	i:=i*160;
 	//s:=s+i;
-	memcpy(image,55*160,screen,i,40*90,4);
+	memcpy(#image,55*160,screen,i,40*90,4);
 	
 end;
 
@@ -36,8 +36,8 @@ begin
 	
 	SetLoRes();
 	
-	memcpy(image_pal,0,palette_start,0,15,2);
-	InitMusic(ym_file);
+	memcpy(#image_pal,0,#palette_start,0,15,2);
+	InitMusic(#ym_file);
 	setirq(VBLank(), irq_verticalblank);
 
 	

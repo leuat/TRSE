@@ -46,6 +46,8 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
 //                qDebug() << "TYPE: " << m_params[p]->m_op.getType() <<m_params[p]->getValue(as);
                 ErrorHandler::e.Error(error + cp + " to be an address. Did you forget a ^?", m_op.m_lineNumber);
             }
+            // REMEMBER
+            m_params[p]->VerifyReferences(as);
         }
         if (m_function->m_params[p]==BuiltInFunction::NUMBER) {
             if (!m_params[p]->isPureNumeric())

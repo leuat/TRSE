@@ -111,10 +111,10 @@ end;
 
 procedure SingleBuffer();
 begin
-		SetScreenBuffer(screen1Buf);
+		SetScreenBuffer(#screen1Buf);
 		curBuf:=buf1;
 		offBuf:=buf1;
-		screen_tab:=screentab1;
+		screen_tab:=#screentab1;
 
 end;
 
@@ -125,35 +125,35 @@ begin
 	curBufIndex:=(curBufIndex+1)&1;
 	if (curBufIndex=0) then
 	begin
-		SetScreenBuffer(screen1Buf);
+		SetScreenBuffer(#screen1Buf);
 		curBuf:=buf2;
 		offBuf:=buf1;
-		screen_tab:=screentab2;
+		screen_tab:=#screentab2;
 	end
 	else
 	begin
-		SetScreenBuffer(screen2Buf);
+		SetScreenBuffer(#screen2Buf);
 		curBuf:=buf1;
 		offBuf:=buf2;
-		screen_tab:=screentab1;
+		screen_tab:=#screentab1;
 	end;
 	
 end;
 
 procedure Init();
 begin
-	SetScreenBuffer(screen1Buf);
+	SetScreenBuffer(#screen1Buf);
 	GetScreen(buf1);
-	SetScreenBuffer(screen2Buf);
+	SetScreenBuffer(#screen2Buf);
 	GetScreen(buf2);
 	
 	curBuf:=buf1;
 	offBuf:=buf2;
 	
-	SetupMultab(buf2, screentab2);
-	SetupMultab(buf1, screentab1);
+	SetupMultab(buf2, #screentab2);
+	SetupMultab(buf1, #screentab1);
 	
-	screen_tab:=screentab2;
+	screen_tab:=#screentab2;
 
 end;
 

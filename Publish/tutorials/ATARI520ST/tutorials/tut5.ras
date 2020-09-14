@@ -52,14 +52,14 @@ begin
 		if (index=0) then 
 		begin
 			// Copy palette
-			memcpy(image1_pal,0,palette_start,0,16,2);
-			Compression::Decompress(image1_data,screen);		
+			memcpy(#image1_pal,0,#palette_start,0,16,2);
+			Compression::Decompress(#image1_data,screen);		
 		end;
 		if (index=1) then 
 		begin
 			// Copy palette
-			memcpy(image2_pal,0,palette_start,0,16,2);
-			Compression::Decompress(image2_data,screen);		
+			memcpy(#image2_pal,0,#palette_start,0,16,2);
+			Compression::Decompress(#image2_data,screen);		
 		end;
 		
 		while (next=false) do			

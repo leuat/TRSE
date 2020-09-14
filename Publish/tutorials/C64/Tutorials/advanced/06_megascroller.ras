@@ -54,10 +54,12 @@ var
 	
 procedure ShiftCharsetData();
 begin
-	memcpy(^@charsetLoc1+^@charVal*^8, 0, ^@charsetLoc1+^@charVal*^8+^128,8);
-	memcpy(^@charsetLoc1+^@charVal*^8+^8, 0, ^@charsetLoc1+^@charVal*^8,128);
-	memcpy(^@charsetLoc2+^@charVal*^8, 0, ^@charsetLoc2+^@charVal*^8+^128,8);
-	memcpy(^@charsetLoc2+^@charVal*^8+^8, 0, ^@charsetLoc2+^@charVal*^8,128);
+	memcpy(^@charsetLoc1+@charVal*8, 0, ^@charsetLoc1+@charVal*8+128,8);
+	
+
+	memcpy(^@charsetLoc1+@charVal*8+8, 0, ^@charsetLoc1+@charVal*8,128);
+	memcpy(^@charsetLoc2+@charVal*8, 0, ^@charsetLoc2+@charVal*8+128,8);
+	memcpy(^@charsetLoc2+@charVal*8+8, 0, ^@charsetLoc2+@charVal*8,128);
 end;
 
 	/*

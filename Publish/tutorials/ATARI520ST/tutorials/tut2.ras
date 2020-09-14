@@ -43,9 +43,9 @@ begin
 	
 	GetScreen(screen);
 	
-	memcpy(image_pal,0,palette_start,0,15,2);
-	memcpy(image,0,screen,0,8000,4);
-	InitMusic(ym_file);
+	memcpy(#image_pal,0,#palette_start,0,15,2);
+	memcpy(#image,0,screen,0,8000,4);
+	InitMusic(#ym_file);
 	setirq(VBLank(), irq_verticalblank);
 	settimerirq(Timer(),2);
 	
