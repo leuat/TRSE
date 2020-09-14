@@ -129,15 +129,15 @@ end;
 procedure SetupRotMat(rto3D_t1,rto3D_t2,rto3D_t3 : integer);
 begin
 	SetCosin(rto3D_t1);
-	SetRotationX(rotX,cost,sint);
+	SetRotationX(#rotX,cost,sint);
 	SetCosin(rto3D_t2);
-	SetRotationY(rotY,cost,sint);
+	SetRotationY(#rotY,cost,sint);
 	SetCosin(rto3D_t3);
-	SetRotationZ(rotZ,cost,sint);
+	SetRotationZ(#rotZ,cost,sint);
 
 	// Built-in matmul rulez	
-	MatMul3x3(rotX,rotY,rotmatA);
-	MatMul3x3(rotmatA,rotZ,rotmat);
+	MatMul3x3(#rotX,#rotY,#rotmatA);
+	MatMul3x3(#rotmatA,#rotZ,#rotmat);
 	
 //	setidentity(rotmat);
 end;
@@ -151,15 +151,15 @@ end;
 procedure FlipBuffers();
 begin
 	if (curBuf=0) then begin
-		screen:=screenb1;
-		offscreen:=screenb2;
+		screen:=#screenb1;
+		offscreen:=#screenb2;
 
 	end else begin
-		screen:=screenb2;
-		offscreen:=screenb1;
+		screen:=#screenb2;
+		offscreen:=#screenb1;
 	end;
 	
-	SetCopperList32(offscreen,copper_bitplane0);
+	SetCopperList32(#offscreen,#copper_bitplane0);
 
 	curBuf:=(curBuf+1)&1;
 
@@ -172,7 +172,7 @@ end;
 */
 procedure PerformInit();
 begin
-	Graphics::SetupDefaultScreen(screenb1, 1);
+	Graphics::SetupDefaultScreen(#screenb1, 1);
 	InitLine();
 	InitMatmul3x3();
 	InitMatmulVec();
@@ -182,12 +182,12 @@ begin
 
 	WaitVerticalBlank();	
 	i:=0;
-	screen:=screenb1;
-	offscreen:=screenb2;
+	screen:=#screenb1;
+	offscreen:=#screenb2;
 	
-	SetIdentity(rotX);	
-	SetIdentity(rotY);	
-	SetIdentity(rotZ);	
+	SetIdentity(#rotX);	
+	SetIdentity(#rotY);	
+	SetIdentity(#rotZ);	
 
 
 
@@ -195,7 +195,7 @@ end;
 
 procedure UpdateGrid();
 begin
-	p1:=vertices;
+	p1:=#vertices;
 	k2:=1;
 	for i:=0 to size do
 	begin
@@ -223,7 +223,7 @@ procedure InitGrid();
 begin
 	k2:=0;
 	
-	p1:=vertices;
+	p1:=#vertices;
 	
 	for i:=0 to size do
 	begin
@@ -248,7 +248,7 @@ begin
 	k2:=0;
 	m:=size-1;
 
-	pi:=LineList;
+	pi:=#LineList;
 
 	for i:=0 to m do
 	begin
@@ -296,9 +296,9 @@ begin
 		UpdateGrid();	
 		SetupRotMat((time/3)&255,time&255,(time/2)&255);
 		SetupRotMat(0,(92+time)&255,(111-time)&255);
-		MatmulVec(rotmat, vertices, vertices_T, vcount);
-		ProjectAllVertices(vertices_T,PVert, vcount, 160,110,zpos);
-		RenderObjectLines(LineList,lcount);		
+		MatmulVec(#rotmat, #vertices, #vertices_T, vcount);
+		ProjectAllVertices(#vertices_T,#PVert, vcount, 160,110,zpos);
+		RenderObjectLines(#LineList,lcount);		
 		waitverticalblank();		
 		FlipBuffers();
 		time:=time+1;

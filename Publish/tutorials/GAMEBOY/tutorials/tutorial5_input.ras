@@ -43,10 +43,10 @@ begin
 	// Initialize sprite: address of internal table at $C000 (sprGirl), indices, position in sprite data, width, flipping
 
 //		initspritefromdata(sprGirl,sprites_index,pos,6 ,2, sprite_flip_x)
-	initspritefromdata(sprGirl,sprites_index,pos,6 ,2, 0);
+	initspritefromdata(#sprGirl,#sprites_index,pos,6 ,2, 0);
 
 	// Set sprite position			
-	setsprite(sprGirl,x,y, 2,30);
+	setsprite(#sprGirl,x,y, 2,30);
 	if (pad1=0) then return();
 	// Advance to next sprite		
 	if (time&7=0) then

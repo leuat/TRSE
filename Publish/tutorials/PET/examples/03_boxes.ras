@@ -22,7 +22,7 @@ begin
 	
     clearscreen($20, screen_char_loc);
 	// Sets up the address tables for the screen & color memory    
-	createaddresstable(saddr,screen_char_loc,screen_width,screen_height);
+	createaddresstable(#saddr,screen_char_loc,screen_width,screen_height);
 
 	// dx and dy are initialized to 1
 	dx:=1;
@@ -43,7 +43,7 @@ begin
 	    		0: dy := 1;
 		end;
 		// Draw two boxes in opposing corners
-		drawtextbox(saddr, box, x, y, 9, 5);
-		drawtextbox(saddr, box, 31 - x, 20 - y, 9, 5);
+		drawtextbox(#saddr, #box, x, y, 9, 5);
+		drawtextbox(#saddr, #box, 31 - x, 20 - y, 9, 5);
 	end;
 end.

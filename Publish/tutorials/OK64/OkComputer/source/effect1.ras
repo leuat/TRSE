@@ -139,7 +139,7 @@ begin
 			scroll:=31;
 			zp:=zp+1;
 			inc(curPos);
-			if(zp[0]=0) then zp:=text2;
+			if(zp[0]=0) then zp:=#text2;
 		end;
 		AdvanceEffect();
 		WaitForVSync();

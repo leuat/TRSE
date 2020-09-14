@@ -5,7 +5,7 @@ var
 	c,val,time,c2x, c2y,ax, ay : byte;
 	x,y : byte;
 	// Use custom charset
-	charset: IncBin("charsets/charset_8x8.bin","$2000");
+	charset: IncBin("charsets/charset_8x8.bin",$2000);
 	// nice colors
 	fade : array [8] of byte = (11,6,12,12,4,14,15,1,1,1,1,15,14,4,12,12,6,11,1,1); 
 	

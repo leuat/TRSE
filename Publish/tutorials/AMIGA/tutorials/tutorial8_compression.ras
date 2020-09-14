@@ -35,11 +35,11 @@ var
 
 begin
 	// Sets default screen with 4 bitplanes
-	Graphics::SetupDefaultScreen(screen,4);
+	Graphics::SetupDefaultScreen(#screen,4);
 	// Set palette from image	
-	setpalette(image_palette,copper_palette,16);	
+	setpalette(#image_palette,#copper_palette,16);	
 	// Deflate image directly to the screen!
-	Compression::Decompress(image_compressed,screen);		
+	Compression::Decompress(#image_compressed,#screen);		
 	
 	while (isDone=0) do begin
 		// Wait for vertical blank

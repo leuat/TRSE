@@ -38,3 +38,7 @@ data_header_images/image1.flf = 0
 exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/X16/Tutorials/
+zeropage_colormemory = $fc
+open_files = 6.95157e-310
+current_file = example1_simple.ras

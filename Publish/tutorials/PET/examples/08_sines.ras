@@ -15,7 +15,7 @@ end;
 procedure Render();
 begin
 	j:=k;
-	zp:=screen_char_loc;
+	zp:=#screen_char_loc;
 	k:=k+3;
 	
 	for i:=0 to screen_height do 
@@ -23,7 +23,7 @@ begin
 		j:=sine[k+i*2]/2;
 		j:=j+sine[k+j*2]/4;
 		
-		tp:=list;
+		tp:=#list;
 		tp:=tp + j;
 		memcpy(tp,0,zp,screen_width);
 		zp:=zp+screen_width;

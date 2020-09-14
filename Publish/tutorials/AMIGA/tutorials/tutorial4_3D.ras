@@ -169,8 +169,8 @@ begin
 	SetCosin(rto3D_t3);
 	SetRotationZ(#rotZ, cost, sint);
 	// Built-in matmul rulez	
-	MatMul3x3(rotX, rotY, rotmatA);
-	MatMul3x3(rotmatA, rotZ, rotmat);
+	MatMul3x3(#rotX, #rotY, #rotmatA);
+	MatMul3x3(#rotmatA, #rotZ, #rotmat);
 end;
 
 
@@ -265,16 +265,16 @@ begin
 		// Setup rotation matrix "rotmat"
 		SetupRotMat(time,i,jj);
 		// Multiply rotmat with each vector3 in "vertices", store in "vertices_T"
-/*		MatmulVec(#rotmat, #vertices, #vertices_T, vcount);
+		MatmulVec(#rotmat, #vertices, #vertices_T, vcount);
 		// Multiply rotmat with each normal z (byte) in "normals", store in "normals_T"
 		MatmulVecNormalZ(#rotmat, #normals, #normals_T, lcount);
 		// Render object as lines with vertices in"vertices_T", normals in "normals_T" and line A/B list in verticesLineList.
 		// Center xyz = 160,100 and a zpos 
 		RenderObjectLines(#vertices_T, #normals_T, #verticesLineList, lcount, 160,128, zpos);		
-	*/	
+		
 
 		// Perform backbuffer flipping etc
-//		FlipBuffers();
+		FlipBuffers();
 		WaitVerticalBlank();	
 		time:=time+1;
 		

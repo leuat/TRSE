@@ -48,13 +48,13 @@ begin
 	// Initialize sprite: address of internal table at $C000 (sprGirl), indices, position in sprite data, width, flipping
 
 	if (64+time<128) then
-		initspritefromdata(sprGirl,sprites_index,pos,6 ,2, sprite_flip_x)
+		initspritefromdata(#sprGirl,#sprites_index,pos,6 ,2, sprite_flip_x)
 	else
-		initspritefromdata(sprGirl,sprites_index,pos,6 ,2, 0);
+		initspritefromdata(#sprGirl,#sprites_index,pos,6 ,2, 0);
 	// Set some sprite X value		
 	x:=sine[time]/2+16;
 	// Set sprite position			
-	setsprite(sprGirl,x,y, 2,30);
+	setsprite(#sprGirl,x,y, 2,30);
 	
 	// Advance to next sprite		
 	if (time&15=0) then

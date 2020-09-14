@@ -13,7 +13,7 @@ var
 begin
 	// Set to default interleaved 4-bpl screen
 	Graphics::SetupDefaultScreen(#image,4);	
-	setpalette(image_palette,copper_palette,16);
+	setpalette(#image_palette,#copper_palette,16);
 	
 	while (isDone=0) do begin
 		// Wait for vertical blank

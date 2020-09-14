@@ -81,6 +81,7 @@ private:
     QTextCharFormat functionFormat;
     QTextCharFormat builtinFunctionFormat;
     QTextCharFormat procedureFormat;
+    QTextCharFormat constantAddressFormat;
     QTextCharFormat constantsFormat;
 };
 

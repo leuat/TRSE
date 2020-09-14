@@ -10,7 +10,7 @@ begin
 	sy:=0;
 //	SetBank(bank_charset);
 
-	memcpyonhblank(main_charset,vram+^$1000,16*$10);
+	memcpyonhblank(#main_charset,vram+^$1000,16*$10);
 	fill(temp,0,16*$10);
 	
 	memcpyonhblank(temp,vram+^$1000+16*$10,16*$10);

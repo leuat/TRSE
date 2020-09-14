@@ -44,35 +44,35 @@ begin
 	y:=sin[(time+64)&255]/2;
 	x:=x+64;
 	y:=y+64;
-	UpdateSpritePos(sprite_struct1, x,y, 32);
+	UpdateSpritePos(#sprite_struct1, x,y, 32);
 
 	// Find frame in data	
 	j:=(time&63)<<7; // 64 frames in total, 128 bytes per frame (<<7)
 	// Copy over 32*4=128 bytes of data
-	memcpy(sprites,j,sprite_struct1,4,32,4);
+	memcpy(#sprites,j,#sprite_struct1,4,32,4);
 end;
 
 
 procedure Init();
 begin
 	// Clear screen
-	fill(screen_data, 0 ,10*bpl*201);
+	fill(#screen_data, 0 ,10*bpl*201);
 	
 	// Set four colours	
 	
-	poke16(copper_palette,2+1*16,$00);	
-	poke16(copper_palette,2+4*17,$0800);	
-	poke16(copper_palette,2+4*18,$0F16);	
-	poke16(copper_palette,2+4*19,$0FA2);	
+	poke16(#copper_palette,2+1*16,$00);	
+	poke16(#copper_palette,2+4*17,$0800);	
+	poke16(#copper_palette,2+4*18,$0F16);	
+	poke16(#copper_palette,2+4*19,$0FA2);	
 	
 	// Setup copper sprite pointer
-	setcopperlist32(sprite_struct1, copper_spritestruct0);
+	setcopperlist32(#sprite_struct1, #copper_spritestruct0);
 
 end;
 
 
 begin	
-	Graphics::SetupDefaultScreen(screen_data,bpl);
+	Graphics::SetupDefaultScreen(#screen_data,bpl);
 	Init();
 	vbirq(Raster());
 	EnableInterrupt(VB_IRQ);

@@ -65,7 +65,7 @@ begin
 		
 
 			l:=((time+sine2[y1] - sine2[y2]))&63;
-			source := AddressTable( twisterTable, 0, l ); 
+			source := AddressTable( #twisterTable, 0, l ); 
 	
 			// Use m as row counter
 			
@@ -142,7 +142,7 @@ begin
 	InitScreen();
 
 	// Create twister address table: Twister consist of 64 rows of 16 byte data starting at @twisterLoc	
-	CreateAddressTable( twisterTable, @twisterLoc, 64, 256 );
+	CreateAddressTable( #twisterTable, @twisterLoc, 64, 256 );
 	
 	while (true) do
 	begin

@@ -31,9 +31,9 @@ begin
 	sy:=0;	
 	//	initspritefromdata(sprGirl,sprites,pos,6,2,sprite_flip_x)
 	
-	initspritefromdata(logo_spr1,image_logo_screen,0,12,6,0);
-	initspritefromdata(logo_spr1+(12*4),image_logo_screen,12, 12,6,0);
-	initspritefromdata(logo_spr1+(24*4),image_logo_screen,24, 14,7,0);
+	initspritefromdata(logo_spr1,#image_logo_screen,0,12,6,0);
+	initspritefromdata(logo_spr1+(12*4),#image_logo_screen,12, 12,6,0);
+	initspritefromdata(logo_spr1+(24*4),#image_logo_screen,24, 14,7,0);
 	x1:=180;
 	x2:=180;
 	x3:=180;

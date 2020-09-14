@@ -109,7 +109,7 @@ begin
 		begin
 			xx:=(tanP[j]+val)&63;
 			yy:=(radP[j]+v2)&63;
-			zp:=addresstable(lookup,xx,yy);
+			zp:=addresstable(#lookup,xx,yy);
 //			VERA_DATA1:=(zp[0]-depP[j]-val)/16;
 			VERA_DATA1:=zp[0];
 		end;
@@ -141,7 +141,7 @@ end;
 
 
 begin
-	createaddresstable(lookup,@perlin,64,64);
+	createaddresstable(#lookup,@perlin,64,64);
 	// [ video mode, layer (1 or 2), enabled=1, disabled =0 ]
 	SetVideoMode(1,1,true);
 	SetPalette();	

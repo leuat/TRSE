@@ -9,8 +9,8 @@ var
 
 	// Put image in bank $8000+
 	charset : IncBin("charsets/charset_8x8.bin", @charmap);
-	image_color: IncBin("images/jack_color.bin", "$7000");
-	image_data: IncBin("images/jack_data.bin", "$A000");
+	image_color: IncBin("images/jack_color.bin", $7000);
+	image_data: IncBin("images/jack_data.bin", $A000);
 
 	zpc,z : byte=0;
 
@@ -239,7 +239,7 @@ begin
 	yy:=20;
 	k:=0;
 	moveto(0,yy,$04);
-	zeropage5 := text;
+	zeropage5 := #text;
 	scroll := 7;
 	i:=0;
 	for i:=0 to 40 do begin
@@ -288,7 +288,7 @@ begin
 	// Banking data loc
 	g_dataLoc := $1A;
 //	togglebit(^$1, 0, 0);
-	copyimagecolordata(image_color,2);
+	copyimagecolordata(#image_color,2);
 
 	moveto(0,20,$D8);
 	for i:=0 to 40 do begin

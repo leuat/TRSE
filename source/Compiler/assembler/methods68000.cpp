@@ -379,9 +379,10 @@ void Methods68000::Setpalette(Assembler *as)
     QString d0 = as->m_regAcc.Get();
     QString lbl = as->NewLabel("setpalette");
 
+
     LoadVariable(as, "move.l",m_node->m_params[2], d0);
-    LoadVariable(as, "lea", m_node->m_params[0], a0);
-    LoadVariable(as, "lea",m_node->m_params[1], a1);
+    LoadVariable(as, "move.l", m_node->m_params[0], a0);
+    LoadVariable(as, "move.l",m_node->m_params[1], a1);
     as->Label(lbl);
 
     as->Asm("addq.l #2,"+a1+"");

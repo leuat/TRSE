@@ -73,7 +73,7 @@ end;
 // Starting point after resetting the NES
 begin
 	// Load palette
-	LoadPalette(palette);
+	LoadPalette(#palette);
 	// Set up background & color values
 	InitScreen();
 	

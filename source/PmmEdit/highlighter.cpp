@@ -133,7 +133,7 @@ Highlighter::Highlighter(CIniFile ini, int type, QTextDocument *parent)
         /* CONSTANTS */
         if (m_symTab==nullptr)
             m_symTab = QSharedPointer<SymbolTable>(new SymbolTable);
-//        SymbolTable::Initialize();
+        //        SymbolTable::Initialize();
 
         constantsFormat.setForeground(m_colors.getColor("constantscolor"));
         constantsFormat.setFontWeight(QFont::Normal);
@@ -141,15 +141,36 @@ Highlighter::Highlighter(CIniFile ini, int type, QTextDocument *parent)
 
         for (QString k: m_symTab->m_constants.keys()) {
             //qDebug() << QString::number(i) << TokenType::types[i].toLower();
-            QString s = "\\b" + k.toLower() + "\\b";
-            keywordPatterns<<s;
+            if (m_symTab->m_constants[k].get()->m_type.toLower()!="address") {
+                QString s = "\\b" + k.toLower() + "\\b";
+                keywordPatterns<<s;
+            }
         }
+        foreach (const QString &pattern, keywordPatterns) {
+            rule.pattern = QRegularExpression(pattern,QRegularExpression::CaseInsensitiveOption);
+            rule.format = constantsFormat;
+            highlightingRules.append(rule);
+        }
+
+        constantAddressFormat.setForeground(m_colors.getColor("constantscolor"));
+        constantAddressFormat.setFontWeight(QFont::Normal);
+        keywordPatterns.clear();
+
+        for (QString k: m_symTab->m_constants.keys()) {
+            //qDebug() << QString::number(i) << TokenType::types[i].toLower();
+            if (m_symTab->m_constants[k].get()->m_type.toLower()=="address") {
+                QString s = "\\b" + k.toLower() + "\\b";
+                keywordPatterns<<s;
+            }
+        }
+
     }
     foreach (const QString &pattern, keywordPatterns) {
         rule.pattern = QRegularExpression(pattern,QRegularExpression::CaseInsensitiveOption);
-        rule.format = constantsFormat;
+        rule.format = constantAddressFormat;
         highlightingRules.append(rule);
     }
+
 
 
     numberFormat.setFontWeight(QFont::Normal);
@@ -159,6 +180,9 @@ Highlighter::Highlighter(CIniFile ini, int type, QTextDocument *parent)
 //    rule.pattern = QRegularExpression("(?!(\\\^))(\\\$)?\\b[0-9a-f]+\\b",QRegularExpression::CaseInsensitiveOption);
     rule.pattern = QRegularExpression("((\\\$)\\b([0-9a-f]+)\\b)|(\\b([0-9]+)\\b)",QRegularExpression::CaseInsensitiveOption);
     rule.format = numberFormat;
+
+
+
     highlightingRules.append(rule);
 
     numberFormat.setFontWeight(QFont::Normal);

@@ -4,9 +4,9 @@ var
 	// Various
 	c,val,time,i, scroll,scrollsplit,val2,k : byte = 0;
 	
-	charset: IncBin("charsets/charset_8x8.bin","$2800");
-	charset1_2: IncBin("charsets/charset_8x8.bin","$6800");
-	charset2: IncBin("charsets/charset_16x16.bin","$A000");
+	charset: IncBin("charsets/charset_8x8.bin",$2800);
+	charset1_2: IncBin("charsets/charset_8x8.bin",$6800);
+	charset2: IncBin("charsets/charset_16x16.bin",$A000);
 	
 	// Scroll shift
 	shiftx: byte;
@@ -94,7 +94,7 @@ begin
 		val:=@textpointer[0]; // Look up current char
 		if (val<>$20) then begin
 		if (val>64) then val:=val-65; // Look up in charmap
-			zeropage1:=charset2;
+			zeropage1:=#charset2;
 		if val>16 then val:=val+24;   // Align chars (for this particular font)
 			
 		// point to the correct char in memory, each char is 2x2 x 8 bytes, so 16 bytes in total
@@ -107,7 +107,7 @@ begin
 		// val2 here is the actual character to draw, 74 is semi-filled char
 		val2:=168-shiftx+scrollsplit;
 		// Scrollsplit decides whether we use the first (0) char in a letter or the second (8)
-		inczp(zeropage1, scrollsplit);
+		zeropage1:=zeropage1 + scrollsplit;
 		// Draw upper 8 chars
 		for i:=0 to 8 do begin
 			// Default is blank
@@ -115,6 +115,7 @@ begin
 			if (getbit(zeropage1[i], shiftx)=1) then c:=val2;
 //			c:=val2;
 			screenmemory[39]:=c;
+			screenmemory:=screenmemory+screen_width;
 			inczp(screenmemory,40);
 			
 		end;
@@ -149,7 +150,7 @@ begin
 				// Reset and increase text pointer!
 				scrollsplit:=0;
 				inczp(@textpointer,1);
-				if @textpointer[0]=0 then @textpointer:=text;
+				if @textpointer[0]=0 then @textpointer:=#text;
 			end;
 			
 		end;
@@ -218,7 +219,7 @@ begin
 	ClearScreen(@clearVal, ^$0400);
 	ClearScreen(LIGHT_BLUE, SCREEN_COL_LOC);
 	
-	@textpointer:=text;
+	@textpointer:=#text;
 	
 //	setmulticolormode();
 	MULTICOLOR_CHAR_COL[1]:=LIGHT_BLUE;

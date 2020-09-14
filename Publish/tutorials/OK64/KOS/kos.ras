@@ -107,22 +107,22 @@ begin
 end;
 
 
-procedure Execute();
+procedure Run();
 var 
   ok:byte=false;
 begin
 	ok:=false;
-	zp:=sInput;
+	zp:=#sInput;
 	if (zp[0]=0) then
 		return();
 	
-	StrToLower(sInput);
-	strSplit(sInput, sSplit, key_space);
+	StrToLower(#sInput);
+	strSplit(#sInput, #sSplit, key_space);
 
 	//printText(sSplit);
 	
-	cmd:=strgetfromindex(sSplit,0);
-	arg:=strgetfromindex(sSplit,1);
+	cmd:=strgetfromindex(#sSplit,0);
+	arg:=strgetfromindex(#sSplit,1);
 	
 	if (strcmp(cmd,cmdList)) then 
 	begin
@@ -179,7 +179,7 @@ begin
 		ok:=false;
 		sInput[curPos]:=0;
 		curPos:=0;
-		Execute();
+		Run();
 	end;
 	if (key=8) then
 	begin

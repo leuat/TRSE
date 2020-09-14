@@ -423,7 +423,7 @@ begin
 
 	DefineScreen();	
 	// Load palette
-	LoadPalette(palette);
+	LoadPalette(#palette);
 	// Read level header data	
 	ReadHeader();
 	// Initialize sprite data

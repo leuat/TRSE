@@ -94,7 +94,7 @@ end;
 
 procedure CopyCharset();
 begin
-	zp1:=charset;
+	zp1:=#charset;
 	vdcwrite(18,$20);
 	vdcwrite(19,$00);
 	vdcinit(31);
@@ -115,9 +115,9 @@ end;
 procedure SetupTables();
 begin
 	for i:=0 to 0 do begin
-		k:=peek(perlin,i);
+		k:=peek(#perlin,i);
 		k:=k/28;
-		poke(perlin,i,k);
+		poke(#perlin,i,k);
 	end;
 
 end;

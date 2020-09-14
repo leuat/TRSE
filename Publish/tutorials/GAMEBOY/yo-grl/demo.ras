@@ -390,7 +390,7 @@ credits1 : string = ("      When yo grl got to the end of the demo       she too
 
 begin
 	current_bank:=bank_sine;
-	memcpy(sine_org,sine,256);
+	memcpy(#sine_org,#sine,256);
 	copyTick:=0;
 //	TestImage();
 	LoadMusic("mibri1",5);
