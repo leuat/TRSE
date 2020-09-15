@@ -37,7 +37,7 @@ begin
 		// Increase text pointer
 		textPointer:=textPointer+1;
 		// Reset scroller text if string termination "0" is encountered
-		if (textPointer[screen_width-1]=0) then textPointer:=text;
+		if (textPointer[screen_width-1]=0) then textPointer:=#text;
 		// Print new string to the screen
 		PrintText();			
 	end
