@@ -297,6 +297,12 @@ bool NodeVar::isAddress() {
     return true;
 }
 
+bool NodeVar::isSigned(Assembler* as)
+{
+    QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(as), m_op.m_lineNumber);
+    return s->m_flags.contains("signed");
+}
+
 
 void NodeVar::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
     QString varName = m_op.m_value;

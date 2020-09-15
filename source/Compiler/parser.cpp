@@ -63,6 +63,7 @@ QStringList Parser::getFlags() {
     m_typeFlags[TokenType::HRAM] = "hram";
     m_typeFlags[TokenType::ALIGNED] = "aligned";
     m_typeFlags[TokenType::NO_TERM] = "no_term";
+    m_typeFlags[TokenType::SIGNED] = "signed";
 
     while (!done)  {
         done = true;

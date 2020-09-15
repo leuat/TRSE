@@ -1135,24 +1135,33 @@ void ASTDispatcher6502::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
 
 void ASTDispatcher6502::PrintCompare(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed)
 {
+
+    QString bcs ="bcs ";
+    QString bcc ="bcc ";
+    if (node->isSigned(as)) {
+       as->Comment("Signed compare");
+       bcs = "bpl ";
+       bcc = "bmi ";
+    }
+
     if (node->m_op.m_type==TokenType::EQUALS)
         as->Asm("bne " + lblFailed);
     if (node->m_op.m_type==TokenType::NOTEQUALS)
         as->Asm("beq " + lblFailed);
     if (node->m_op.m_type==TokenType::GREATEREQUAL) {
-        as->Asm("bcc " + lblFailed);
+        as->Asm(bcc + lblFailed);
     }
     if (node->m_op.m_type==TokenType::GREATER) {
-        as->Asm("bcc " + lblFailed);
+        as->Asm(bcc + lblFailed);
         as->Asm("beq " + lblFailed);
     }
     if (node->m_op.m_type==TokenType::LESSEQUAL ) {
         as->Asm("beq " + lblSuccess);
-        as->Asm("bcs " + lblFailed);
+        as->Asm(bcs + lblFailed);
     }
 
     if (node->m_op.m_type==TokenType::LESS)
-        as->Asm("bcs " + lblFailed);
+        as->Asm(bcs + lblFailed);
 
 }
 /*

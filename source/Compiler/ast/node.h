@@ -172,6 +172,7 @@ public:
     }
 
     virtual void VerifyReferences(Assembler* as);
+    virtual bool isSigned(Assembler* as);
 
 };
 

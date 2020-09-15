@@ -135,7 +135,8 @@ Highlighter::Highlighter(CIniFile ini, int type, QTextDocument *parent)
             m_symTab = QSharedPointer<SymbolTable>(new SymbolTable);
         //        SymbolTable::Initialize();
 
-        constantsFormat.setForeground(m_colors.getColor("constantscolor"));
+        QVector3D c = Util::fromColor(m_colors.getColor("constantscolor"))*1.5;
+        constantsFormat.setForeground(Util::toColor(c));
         constantsFormat.setFontWeight(QFont::Normal);
         keywordPatterns.clear();
 

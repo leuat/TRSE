@@ -109,6 +109,7 @@ public:
 
     bool isAddress() override;
 
+    bool isSigned(Assembler* as) override;
 /*    void LoadVariable(AbstractASTDispatcher* dispatcher) override;
     void LoadPointer(Assembler* as);
 

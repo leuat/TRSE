@@ -134,3 +134,13 @@ void Node::VerifyReferences(Assembler *as) {
         m_right->VerifyReferences(as);
 
 }
+
+bool Node::isSigned(Assembler *as) {
+    bool isSigned = false;
+    if (m_left!=nullptr)
+        isSigned |= m_left->isSigned(as);
+    if (m_right!=nullptr)
+        isSigned |= m_right->isSigned(as);
+
+    return isSigned;
+}
