@@ -747,11 +747,13 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeUnaryOp> node)
 {
     node->DispatchConstructor(as);
 
-    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
+//    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
 
-    if (num!=nullptr) {
-        int s = num->m_val;
+    if (node->m_right->isPureNumeric()) {
+        int s = node->getValueAsInt(as);
         bool isWord = node->m_forceType==TokenType::INTEGER;
+        QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
+
         if (node->m_op.m_type==TokenType::MINUS) {
             if (!isWord)
                 num->m_val=256-num->m_val;

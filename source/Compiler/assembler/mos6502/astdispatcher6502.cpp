@@ -3031,10 +3031,30 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
     return;
 }
 
+void ASTDispatcher6502::dispatch(QSharedPointer<NodeUnaryOp> node)
+{
+    node->DispatchConstructor(as);
+    AbstractASTDispatcher::dispatch(node);
+    if (node->m_right->isPureNumeric())
+        return;
+    node->m_right->Accept(this);
+    as->Term();
+    if (node->m_op.m_type==TokenType::MINUS) {
+        if (node->m_right->isWord(as))
+            ErrorHandler::e.Error("Unary operator (-) for integer not implemented yet. Please bug the developer!",node->m_op.m_lineNumber);
+        as->Comment("Unary operator: Negate 8-bit number");
+        as->Asm("eor #$FF");
+        as->Asm("clc");
+        as->Asm("adc #1");
+    }
+
+
+}
+
 
 void ASTDispatcher6502::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
 {
-/*    if (!isOffPage)
+    /*    if (!isOffPage)
         SmallLoop(node,qSharedPointerDynamicCast<NodeVar>(nVar->m_left), inclusive);
     else
         LargeLoop(node,qSharedPointerDynamicCast<NodeVar>(nVar->m_left), inclusive);

@@ -196,6 +196,8 @@ public:
     QString getReturnInterrupt() override { return "rti";}
 
 
+    void dispatch(QSharedPointer<NodeUnaryOp> node) override;
+
 };
 
 #endif // ASTdispatcher6502_H
