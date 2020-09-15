@@ -27,7 +27,7 @@ end;
 begin
 	Init();
 	// Copy image data to the screen
-	memcpy(image, screen, $4000);
+	memcpy(#image, screen, $4000);
 	col:=1;
 	shift:=time+64;
 	while (done=0) do
