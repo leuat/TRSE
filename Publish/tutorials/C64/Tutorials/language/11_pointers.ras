@@ -1,15 +1,15 @@
 /*
-   Understanding pointers is an essential part of programming. All languages and computers uses 
+   Understanding pointers is an essential part of programming. All languages and computers use 
    pointers, although some are more hidden than others. Since Turbo Rascal is a low-level
    programming language, understanding pointers is vital in order to be able to program
    for the commodore 64 and other supported systems. 
    
    Hoewever, understanding pointers doesn't have to be difficult. Think of pointers as your pointy
    friend - someone who constantly points at someone else, and doesn't have much to say for 
-   themselves except for whom they are pointing at. 
+   themselves - except for whom they are pointing at. 
    
-	A nice metaphor is how we humans (I'm making assumptions here) like to organize ourselves
-	in houses. Houses have fixed addresses, but people can relocate. 
+	A nice metaphor is how we humans (I'm making assumptions here) prefer to organize ourselves
+	in houses. Houses have fixed, permanent addresses, but people who live inside them can relocate. 
 	
 	In this little example, "house A" here contains the person "PETE", while  
 	house B contains "LIZA".
@@ -40,9 +40,10 @@
 	*********      *********
      $1000           $1001
      
-	Here, "$1000" is a memory address. Think of this address as a very small house. Currently,
-	this address contains a very small house - and the current tenant of this small house is value $10. 
-	Just as with people, there is a distinction between the address of a house ($1000) and *who* lives in that house ($10).  
+	Here, "$1000" is a memory address. Currently,
+	this address contains a very small house - and the current tenant of this house is value $10. 
+	Just as with people, there is a distinction between the address of a house ($1000) and *who* 
+	lives in that house ($10).  
 
 */
 
@@ -52,6 +53,7 @@ var
 	
 	myLargeHouse : array[10] of byte = ($10,$20,$30,$40) at $1000 ;
 
+	// Another house with different tenants
 	myOtherLargeHouse : array[10] of byte = ($50,$60,$70,$80) at $2000 ;
 	
 	someMovieData : array[] of byte at $3000;
@@ -65,12 +67,12 @@ var
 
 begin
 	b := 10; // this really means: the address where "b" resides now contains the value 10;
-	bp := 10; // this means: "bp" now points to "address 10", which really doesn't make any sense
+	bp := 10; // this means: "bp" now points to "address 10", which really doesn't make any sense since we don't have anything here
 	
-	// let's play around the tenants of myFriends! First, we need to let 
-	// the pointer point to the address of the house!
+	// let's play around the tenants of myLargeHouse! First, we need to let 
+	// the pointer point to the address of the house : 
 	bp := #myLargeHouse;   // you should read the "#" as "the address of" 
-	// bp := points to the address of myLargeHouse;
+	// bp := points to the address of myLargeHouse
 	b:= bp[0]; // b now gets the value  that lives in myLargeHouse[0], or $10
 	bp := #myOtherLargeHouse;   // bp now points to the Other Large House 
 	bp[2]:=b; // same as myOtherLargeHouse[2]:=b;
