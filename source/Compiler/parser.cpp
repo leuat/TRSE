@@ -2831,12 +2831,10 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
         //if (typeNode->m_op.m_type==TokenType::POINTER)
         if (typeNode->m_data.count()<=1 && typeNode->m_op.m_type!=TokenType::INCBIN && typeNode->m_op.m_type!=TokenType::STRING)
         {
-//            qDebug() << "HERE" << vars;
             typeNode->m_flags.append("wram"); // Always declare pointers in WRAM on GB
         }
     }
-    // Set all types
-
+    // Set all types and array types, sizes
     for (QSharedPointer<Symbol> s: syms) {
        s->m_type = typeNode->m_op.m_value;
        s->m_flags = typeNode->m_flags;
@@ -2850,28 +2848,15 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
            if (s->m_type.toLower()=="long")
                s->m_size =4;
        }
-      // qDebug() << "A";
-/*       s->m_size = typeNode->m_op.m_intVal;
-       if (s->m_size==0)
-           s->m_size = typeNode->m_data.count();*/
-//       qDebug() << "B";
        s->m_arrayType = typeNode->m_arrayVarType.m_type;
-  //     qDebug() << typeNode->m_arrayVarType.m_type;
        s->m_arrayTypeText = TokenType::getType(typeNode->m_arrayVarType.m_type);
-    //   qDebug() << "C";
        if (typeNode->m_arrayVarType.m_type==TokenType::RECORD) {
-  //         qDebug() << typeNode->m_op.m_value << TokenType::getType(typeNode->m_op.m_type)  << TokenType::getType(typeNode->m_arrayVarType.m_type);
-//
            s->m_arrayTypeText = typeNode->m_arrayVarType.m_value;
 
        }
-//       qDebug() << "D";
     }
 
 
-/*    for (QSharedPointer<Node> v: vars) {
-        Syntax::s.globals[((Var*)v)->value] = 0;
-    }*/
 
     QVector<QSharedPointer<Node>> var_decleratons;
     if (isGlobal) { // Typecheck that they exist
@@ -3082,6 +3067,11 @@ QSharedPointer<Node> Parser::TypeSpec()
             ErrorHandler::e.Error("TRSE currently only supports pointers to bytes, integers and longs (m68k).",m_currentToken.m_lineNumber);
         }
         Eat();
+        if (m_currentToken.m_type == TokenType::EQUALS) {
+            ErrorHandler::e.Error("On the 6502, pointers must be initialized through code. Z80/M68K pointer initialization not yet implemented in TRSE. ",m_currentToken.m_lineNumber);
+
+        }
+
         return nvt;
 
     }

@@ -146,6 +146,8 @@ void SymbolTable::Initialize()
                 m_constants[constant] = QSharedPointer<Symbol>(new Symbol("^"+value,"ADDRESS", ival));
             if (type=="i")
                 m_constants[constant] = QSharedPointer<Symbol>(new Symbol(value,"INTEGER", ival));
+            if (type=="l")
+                m_constants[constant] = QSharedPointer<Symbol>(new Symbol(value,"LONG", ival));
 
 //            if (constant.toLower().contains("palette"))
     //            qDebug() << "SYMTAB "<<constant<<value<<ival <<m_constants[constant]->m_value->m_fVal;

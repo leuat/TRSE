@@ -929,6 +929,13 @@ m; fmul;OK64;b,b
 
 
 
+# NULL pointer:
+
+c; NIL;X16,C64, PLUS4, C128, VIC20, PET,  NES, BBCM, OK64, X86, GAMEBOY, AMSTRADCPC464, COLECO, SPECTRUM, TIKI100, ATARI2600; i; 0
+c; NIL;Amiga, ATARI520ST, OK64 ; l; 0
+
+
+
 # PLUS4 specific methods
 
 m; Set256CharMode; PLUS4;

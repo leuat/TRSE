@@ -5506,9 +5506,10 @@ void Methods6502::ClearScreen(Assembler *as)
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::OK64)
         return;
     int val = m_node->m_params[1]->numValue();  // start address (offset) to fill
+    if (m_node->m_params[1]->isPointer(as))
+        ErrorHandler::e.Error("ClearScreen does currently not support pointers.",m_node->m_op.m_lineNumber);
 
     AddMemoryBlock(as,1);
-
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::PLUS4 || Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 || Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system==AbstractSystem::NES || Syntax::s.m_currentSystem->m_system==AbstractSystem::PET) {
 
         QString lbl = as->NewLabel("clearloop");

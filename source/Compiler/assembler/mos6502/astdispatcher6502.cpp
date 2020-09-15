@@ -3040,8 +3040,13 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeUnaryOp> node)
     node->m_right->Accept(this);
     as->Term();
     if (node->m_op.m_type==TokenType::MINUS) {
-        if (node->m_right->isWord(as))
+        if (node->m_right->isWord(as)) {
+
             ErrorHandler::e.Error("Unary operator (-) for integer not implemented yet. Please bug the developer!",node->m_op.m_lineNumber);
+            /*Token t = node->m_op;
+            QSharedPointer<NodeBinOP> bop = new QSharedPointer<NodeBinOP>(new NodeBinOP())
+            */
+        }
         as->Comment("Unary operator: Negate 8-bit number");
         as->Asm("eor #$FF");
         as->Asm("clc");
