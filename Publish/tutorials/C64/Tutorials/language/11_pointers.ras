@@ -1,0 +1,96 @@
+/*
+   Understanding pointers is an essential part of programming. All languages and computers uses 
+   pointers, although some are more hidden than others. Since Turbo Rascal is a low-level
+   programming language, understanding pointers is vital in order to be able to program
+   for the commodore 64 and other supported systems. 
+   
+   Hoewever, understanding pointers doesn't have to be difficult. Think of pointers as your pointy
+   friend - someone who constantly points at someone else, and doesn't have much to say for 
+   themselves except for whom they are pointing at. 
+   
+	A nice metaphor is how we humans (I'm making assumptions here) like to organize ourselves
+	in houses. Houses have fixed addresses, but people can relocate. 
+	
+	In this little example, "house A" here contains the person "PETE", while  
+	house B contains "LIZA".
+	
+       
+    ********        ********
+    *      *        *      *
+    * PETE *        * LIZA *
+    *      *        *      *
+    ********        ********
+    house A          house B
+    
+	A "house pointer" can be something as simple 
+	as a piece of paper containing the address of a particular house. You can't assign 
+	a "person" to this piece of paper - since it can only contain a piece of written text! This is 
+	the house pointer. You can change the pointer by simply writing down a new address. 
+	
+	Now, the pointer has another special propery : you can ask it *who* lives at the current address, and
+	if the pointer address is "house A", then the reply will be "PETE". If you change the pointer to "house B",
+	you will get "LIZA".
+	
+	Now, let's switch to actual programming on the commodore 64: 
+ 
+	*********      *********	  
+	*       *      *       *
+	*  $10  *      *  $20  *
+	*       *      *       *
+	*********      *********
+     $1000           $1001
+     
+	Here, "$1000" is a memory address. Think of this address as a very small house. Currently,
+	this address contains a very small house - and the current tenant of this small house is value $10. 
+	Just as with people, there is a distinction between the address of a house ($1000) and *who* lives in that house ($10).  
+
+*/
+
+program Pointers;
+var  
+	// Here, we create a nice house of tenants placed at address $1000
+	
+	myLargeHouse : array[10] of byte = ($10,$20,$30,$40) at $1000 ;
+
+	myOtherLargeHouse : array[10] of byte = ($50,$60,$70,$80) at $2000 ;
+	
+	someMovieData : array[] of byte at $3000;
+	currentFrame: byte;	
+
+
+	b : byte; // a regular good ol' byte, placed at some memory location
+	bp: ^byte; // This is a byte pointer 
+	bp2 : pointer; // this is also a byte pointer.  
+	bp3 : pointer of byte; // this again is also a byte pointer. you can choose any of these 3 forms, as they are mean the same!
+
+begin
+	b := 10; // this really means: the address where "b" resides now contains the value 10;
+	bp := 10; // this means: "bp" now points to "address 10", which really doesn't make any sense
+	
+	// let's play around the tenants of myFriends! First, we need to let 
+	// the pointer point to the address of the house!
+	bp := #myLargeHouse;   // you should read the "#" as "the address of" 
+	// bp := points to the address of myLargeHouse;
+	b:= bp[0]; // b now gets the value  that lives in myLargeHouse[0], or $10
+	bp := #myOtherLargeHouse;   // bp now points to the Other Large House 
+	bp[2]:=b; // same as myOtherLargeHouse[2]:=b;
+	
+	bp := bp + 3; // Move the address forward 3 bytes;
+	// bp now points to #myOtherLargeHouse + 3, which currently contains the value $70
+	bp^ := $F0; // bp^ is the same as writing bp[0];
+	
+
+	/*
+		Pointers are very useful for looking up data in large tables. For example, say that you have
+		a "movie" with 64-byte frames. This means that in order to "look up" a frame 
+		that is located at "currentFrame", you need to add "currentFrame*64" to the movie data. 
+		Since this is hard to do on the 6502 (being limited to data chunk sizes up to 256),
+		using pointers is much more efficient :		
+
+	*/
+	
+	// reads : bp points to the address of the movie data + the value of currentFrame*64
+	bp := #someMovieData + currentFrame*64; 
+	// Copy 64 bytes to the screen!
+	memcpy(bp,0,screen_char_loc,64);
+end.
