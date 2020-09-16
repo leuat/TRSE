@@ -3,6 +3,13 @@ unit BitmapGraphics;
 @use "math/math"
 
 var
+	const bank1 : address = $2000;
+	const bank2 : address = $6000;
+
+	const bank1_screen : address = bank1+$400;
+	const bank2_screen : address = bank2+$400;
+
+
 	xtablelow: array[160] of byte;
 	xtablehigh: array[160] of byte;
 	ytablelow: array[200] of byte;
@@ -114,8 +121,8 @@ begin
 	low:=0;
 	high:=0;
 	k:=0;
-	index:=0;
-	zp := index;
+	index:=$00;
+	zp := #index;
 	
 	for i:=0 to 160 do begin
 		xtablelow[i] := zp[0];
@@ -165,6 +172,10 @@ begin
 
 	bitmapstart:=bsta;
 	SetupPixelTables();
+	setbitmapmode();
+	setmulticolormode();
+	clearbitmap(#bank1,32);
+	clearbitmap(#bank2,32);
 
 end;
 
