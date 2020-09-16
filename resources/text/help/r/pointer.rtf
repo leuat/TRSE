@@ -10,10 +10,29 @@
 
 <code>
     var
+        i: byte; // some byte value
         p : pointer;
+        pb : pointer of byte; // same as "pointer"
+        pb2 : ^byte; // Same as "pointer of byte", Pascal standard
+        pi : ^integer; // same as "pointer of integer", points to 16-bit values
+        ival : integer; // some integer
+        someData : array[256] of byte; // Some array
+
 
     begin
         p := $0400;  // set the address to $0400 (C64 screen address)
-        p[0] := 1; // set the first location at $0400 to 1
+        p[0] := 1; // set the first location at $0400 to 1, same as p^ := 1;
+
+        p := #someData; // p points to the address of someData
+
+        p := #someData + i * 64; // looks up the ith position of a 64-byte chunked data set
+
+        p := #screen_char_loc + screen_width * i; // points to the ith row on the C64 screen
+
+        // integer examples
+        ival := $5000; // set int value to contain $5000
+        pi := #ival; // pi points to the address of ival
+        pi^ := $6000; // sets the value that pi points to (ival) to $6000, same as pi[0] := $6000;
+        // ival is now $6000
 
 </code>

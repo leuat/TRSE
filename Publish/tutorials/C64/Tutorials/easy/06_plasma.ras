@@ -4,7 +4,7 @@ var
 	// some plasma variables
 	c,val,c2x, c2y,ax, ay : byte;
 	x,y : byte;
-	colorP: pointer;	
+	colorP: ^byte; // same as "pointer" or "pointer of byte";	
 
 // charset will be placed at $2000 in bank 1	
 	const charsetLocation: address = $2000;

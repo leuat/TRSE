@@ -282,6 +282,8 @@ public slots:
     void AddTreeFileItem(QStandardItem* parent, QString path, QStringList ext);
     QStandardItem* AddTreeRoot(QString path, QString name);
 
+    void VerifyTRSEVersion();
+
 
 signals:
    void ValueChanged();

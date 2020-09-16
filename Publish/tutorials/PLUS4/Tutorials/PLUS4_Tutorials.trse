@@ -39,4 +39,6 @@ exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
 zeropage_colormemory = $fc
-open_files =, Hello.ras
+open_files = ,easy/08_scroller.ras, Hello.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/PLUS4/Tutorials/
+current_file = easy/12_sqrt_and_atan.ras

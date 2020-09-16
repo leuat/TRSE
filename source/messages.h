@@ -72,6 +72,7 @@ public:
     int NO_AMIGA_EMULATOR = 12;
     int AMIGA_WARNING = 13;
     int PROJECT_BUILDER_HELP = 14;
+    int ADDRESS_UPDATE = 15;
 
     QMap<int, Message> m_messages;
     QSharedPointer<CIniFile> m_iniFile;

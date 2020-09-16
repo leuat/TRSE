@@ -105,6 +105,17 @@ void Messages::InitMessages()
 
                                           );
 
+    m_messages[ADDRESS_UPDATE] = Message(ADDRESS_UPDATE, Message::Msg,
+   "<p>The way that pointers and references work in TRSE has been change since version 0.11.1, and may now break existing code."
+   "<p>The TRSE reference symbol '#' is analogous to the C/C++ reference '&' and Pascal '@'."
+   "<p>Pointers must now be assigned to references (as opposed to variables), eliminating the awkward old system of "
+   "the compiler having to do guesswork on whenever to use the value or address of a variable. <p>In most cases, you'll "
+   "probably simply have to add a reference marker '#' to a lot of places."
+   "<p>Example: <p>  myPointer := someData; // old obsolete way  <p>  myPointer := #someData; // correct way : reads 'myPointer is set to the addres (#) of somedata' "
+   "For more information about the changes + updates, check out 'Pointers' in the help section (F1)."
+
+                                          );
+
 
 
     m_messages[PROJECT_BUILDER_HELP] = Message(PROJECT_BUILDER_HELP, Message::Msg,
@@ -152,5 +163,4 @@ void Messages::DisplayMessage(int message, bool isHelp)
         dm->SetHelp();
 
     delete dm;
-
 }

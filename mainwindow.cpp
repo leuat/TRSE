@@ -830,6 +830,14 @@ QStandardItem* MainWindow::AddTreeRoot(QString path, QString name)
 
 }
 
+void MainWindow::VerifyTRSEVersion()
+{
+    if (!m_currentProject.m_ini->contains("saved_with_trse_version")) {
+
+        Messages::messages.DisplayMessage(Messages::messages.ADDRESS_UPDATE,false);
+    }
+}
+
 void MainWindow::AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBuilder)
 {
     FormRasEditor::m_broadcast=false;
@@ -973,6 +981,8 @@ void MainWindow::OpenProjectSettings()
     if (oldSystem != m_currentProject.m_ini->getString("system"))
         LoadProject(m_currentProject.m_filename);
 
+
+//    if (m_currentProject.m_ini->getString("saved_with_trse_version"))
 }
 
 
@@ -1594,6 +1604,7 @@ void MainWindow::on_actionOpen_project_triggered()
         return;
 
     LoadProject(filename);
+    VerifyTRSEVersion();
 
 
 }
@@ -1691,6 +1702,7 @@ void MainWindow::on_lstRecentProjects_itemDoubleClicked(QListWidgetItem *item)
 {
     QString projectFile = item->data(Qt::UserRole).toString();
     LoadProject(projectFile);
+    VerifyTRSEVersion();
 
 }
 
@@ -2075,6 +2087,7 @@ void MainWindow::on_treeTutorials_itemDoubleClicked(QTreeWidgetItem *item, int c
 
     QString fileName = Util::findFileInDirectory("",dir,"trse");
     LoadProject(fileName);
+    VerifyTRSEVersion();
 
 }
 
@@ -2281,7 +2294,7 @@ void MainWindow::on_lstSampleProjects_itemDoubleClicked(QListWidgetItem *item)
 
     QString fileName = Util::findFileInDirectory("",dir,"trse");
     LoadProject(fileName);
-
+    VerifyTRSEVersion();
 }
 
 void MainWindow::removeFromRecentList()
