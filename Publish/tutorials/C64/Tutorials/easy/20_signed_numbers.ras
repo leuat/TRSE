@@ -1,35 +1,41 @@
-program Signed_numbers_yeah;
-var  
+program Signed_numbers_bouncing_balls;
+var 
+	// Particle record - contains the position (x,y) and velocity (dx, dy) of the particle   
    	particle = record
    		x,y,dx,dy : signed byte;
    		color : byte;
 	end;
 
+	// The scale of which the y-value is multiplied
 	const scale : byte = 4; // Scale of y-data
 	const ball_char : byte = 0; // petscii of ball
 	
-	const noBalls : byte = 16; // Number of balls
+	const noBalls : byte = 12; // Number of balls
 
+	// Our list of heroes!
 	balls : array[ noBalls ] of particle;
+	// Look-up table for screen addresses
 	caddr, saddr: array[screen_height] of integer; // Screen address table
-
-	i,j : byte;
-	s: signed byte;
+	// Counter variables
+	i,y : byte;
 	
 	sp : ^byte; // pointer to the screen, same as "pointer"
 
+// Renders th balls to the screen + color ram
 procedure RenderBalls(rb_ch:byte);
 begin
 	for i:=0 to noBalls do
 	begin
-		sp := AddressTable(#saddr, balls[i].x, (screen_height-1)-balls[i].y/scale); 
-		sp^ := rb_ch; // Draw char!
-		sp := AddressTable(#caddr, balls[i].x, (screen_height-1)-balls[i].y/scale); 
-		sp^ := balls[i].color; // Draw char!
+		y:=(screen_height-1)-balls[i].y/scale;
+		sp := AddressTable(#saddr, balls[i].x, y); 
+		sp^ := rb_ch; // Draw char! same as sp[0] := rb_ch
+		sp := AddressTable(#caddr, balls[i].x, y); 
+		sp^ := balls[i].color; // Draw color!
 	end;
 
 end;
 
+// Clears the screen data
 procedure ClearBalls();
 begin
 	for i:=0 to noBalls do
@@ -40,21 +46,29 @@ begin
 
 end;
 
+// Updates the balls, uses real(tm) physics!
 procedure UpdateBalls();
 begin
 	for i:=0 to noBalls do
 	begin
-		// update X position
+		// update X position, simple enough : when colliding with a wall, reverse velocity dx:=-dx;
 		balls[i].x := balls[i].x + balls[i].dx;
 		if (balls[i].x >= screen_width-1 or balls[i].x <= 0) then 
-			balls[i].dx := -balls[i].dx;	
+			balls[i].dx := -balls[i].dx;	 //reversd!
 			
+		// Update y-position, use some simple physics
+		// Y position is increased by the velocity
 		balls[i].y := balls[i].y + balls[i].dy;
+		// Velocity is decreased with acceleration -1 (falling down)
 		balls[i].dy := balls[i].dy -1;
 		
+		// if the particle hits the lower wall, then 
+		// This step requires a signed byte!
 		if (balls[i].y<0) then
 		begin
-			balls[i].y := balls[i].y&3;
+			// Move to above y=0
+			balls[i].y := balls[i].y&3; 
+			// reverse velocity, add some dampening (-2)
 			balls[i].dy := -balls[i].dy -2;
 		end;
 
@@ -62,19 +76,23 @@ begin
 
 end;
 
+// Initializes the balls
 procedure InitBalls();
 begin
 	for i:=0 to noBalls do
 	begin
-		balls[i].x := mod(random(),screen_width);	
+		// random x between 0 and screen width
+		balls[i].x := mod(random(),(screen_width)-1);	
+		// random y in the upper half the screen
 		balls[i].y := mod(random(),screen_height*scale/2)+screen_height*scale/2;
-		if (random()>127) then 
+		// x-direction is random left / right 
+		if (random()>=127) then 
 			balls[i].dx := 1 
 		else 
-		balls[i].dx := -1;	
-		
+			balls[i].dx := -1;	
+		// Random color except for background color 
 		balls[i].color := random()&15;
-		if (balls[i].color = black) then inc(balls[i].color);
+		if (balls[i].color = screen_bg_col) then inc(balls[i].color);
 		
 
 	end;
@@ -87,6 +105,7 @@ begin
 	screen_bg_col := green;
 	screen_fg_col := black;
 	ClearScreen(black, screen_col_loc);
+	// Set up screen & color address table
 	createaddresstable(#saddr,screen_char_loc,screen_width,screen_height);
 	createaddresstable(#caddr,screen_col_loc,screen_width,screen_height);
 	InitBalls();
@@ -98,7 +117,7 @@ begin
 		UpdateBalls();
 		// Render new set of balls
 		RenderBalls(ball_char);
-		for i:=0 to 3 do
+		for i:=0 to 2 do
 			waitforverticalblank();
 	end;
 	Loop();

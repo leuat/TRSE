@@ -31,8 +31,8 @@ X86; IBM 8086 AT (CGA) tutorials; X86/CGA/; <h2>Main IBM AT (CGA) tutorials</h2>
 
 SPECTRUM; ZX Spectrum tutorials; SPECTRUM/tutorials/;  <h2>Main ZX Spectrum tutorials</h2>Proof-of-concept that the Z80 works, but not much else. A couple of test tutorials. Will be expanded upon at a later point.
 ATARI2600; Atari 2600 tutorials; ATARI2600/tutorials/;  <h2>Main Atari 2600 tutorials</h2>Proof-of-concept, but not much else. A couple of test tutorials. Will be expanded upon at a later point.
-AMIGA; Main Amiga 500 tutorials; AMIGA/tutorials/;<h2>Main Amiga 500 tutorials</h2><p>The main Amiga 500 tutorials in TRSE<p>TRSE currently containts 8 stand-alone Amiga 500 example files, ranging from sprite handling to bitplane manipulation, 3D and text rendering. <p>More tutorials to come soon!
-ATARI520ST; Main Atari 520 ST tutorials; ATARI520ST/tutorials/;<h2>Main Atari 520 ST tutorials</h2><p>The main Atari ST 520 tutorials in TRSE<p>TRSE currently containts 5 stand-alone Atari ST example files, all being demo-oriented.  <p>More tutorials to come soon!
+AMIGA; Main Amiga 500 tutorials; AMIGA/tutorials/;<h2>Main Amiga 500 tutorials</h2><p>The main Amiga 500 tutorials in TRSE<p><img src=":resources/images/AMIGA.png" width="300"><p>TRSE currently containts 8 stand-alone Amiga 500 example files, ranging from sprite handling to bitplane manipulation, 3D and text rendering. <p>More tutorials to come soon!
+ATARI520ST; Main Atari 520 ST tutorials; ATARI520ST/tutorials/;<h2>Main Atari 520 ST tutorials</h2><p>The main Atari ST 520 tutorials in TRSE<p><img src=":resources/images/ATARI.png" width="300"><p>TRSE currently containts 5 stand-alone Atari ST example files, all being demo-oriented.  <p>More tutorials to come soon!
 
 
 OK64; Main OK64 examples ; OK64/Tutorials/; <h2>Main OK64 tutorials</h2>Prelimiary tutorials, prone to change. OK64 is Leuat's very own fake 6502 computer!

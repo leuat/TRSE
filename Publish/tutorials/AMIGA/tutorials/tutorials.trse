@@ -45,6 +45,6 @@ cpu_x86_system = 8086
 override_target_settings_basic = 6.95276e-310
 build_list = ,
 zeropage_colormemory = $fc
-open_files = ,tutorial1.ras
+open_files = ,tutorial7_grid.ras, tutorial1.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/AMIGA/tutorials/
 current_file = tutorial1.ras

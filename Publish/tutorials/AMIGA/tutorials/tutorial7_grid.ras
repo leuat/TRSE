@@ -11,9 +11,9 @@ var
 	curBuf : integer = 0;
 	sin : array[256] of byte = buildtable("Math.sin(i/256.0*2*3.14159)*127 +127");
 	p1 : pointer of long;
-   	pi,p2,p3,p4 : pointer of integer;
+   	pi : pointer of integer;
 
-	screen,offscreen,spp,tp: pointer of long;
+	screen,offscreen: pointer of long;
 
 
 	// Rotation matrices  3 x 3 = 9 longs
@@ -159,7 +159,7 @@ begin
 		offscreen:=#screenb1;
 	end;
 	
-	SetCopperList32(#offscreen,#copper_bitplane0);
+	SetCopperList32(offscreen,#copper_bitplane0);
 
 	curBuf:=(curBuf+1)&1;
 

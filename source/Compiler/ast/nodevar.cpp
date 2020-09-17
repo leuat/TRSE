@@ -322,4 +322,7 @@ void NodeVar::VerifyReferences(Assembler *as) {
                 if (typeIsArray(as))
                 ErrorHandler::e.Error("Unknown usage of data or array. <font color=\"orange\">Did you mean to reference it? (#"+getValue(as)+")</font>",m_op.m_lineNumber);
 
+    if (isPointer(as) && isReference() && !isArrayIndex())
+        ErrorHandler::e.Warning("Referencing the address of a pointer <font color=\"orange\">("+getValue(as)+")</font>. Is this what you intended?</font>",m_op.m_lineNumber);
+
 }
