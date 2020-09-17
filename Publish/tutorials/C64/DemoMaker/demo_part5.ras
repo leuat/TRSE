@@ -8,9 +8,7 @@ var
 @define debug_raster 1
 // Key for turning on / off rasters
 @define rasterDebugKey "KEY_R"
-/*
-	Pointers must be declared outside of blocks
-*/
+
     p1,zp1,p2,zp2,textPointer: pointer;
 
 @ifdef debug_raster

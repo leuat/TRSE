@@ -10,7 +10,6 @@ var
 	charsetBank2 : incbin("data/example4_chardata.bin",$6000);
 	screen : incbin("data/example4_screendata.bin",$8000);
 
-
 /*
 
 make sure that example4.fjo has been running for 16 frames before trying to compile this example file.

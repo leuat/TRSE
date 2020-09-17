@@ -1312,38 +1312,48 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node,QString lb
 
 
 //    if (numb!=nullptr || varb!=nullptr) {
+
+    QString bcs ="bcs ";
+    QString bcc ="bcc ";
+    if (node->isSigned(as)) {
+       as->Comment("Signed compare");
+       bcs = "bpl ";
+       bcc = "bmi ";
+    }
+
+
     QSharedPointer<Node> vara = node->m_left;
         as->Comment("Compare INTEGER with pure num / var optimization. GREATER. ");
         if (node->m_op.m_type==TokenType::GREATER) {
             as->Asm("lda " + getValue8bit(vara,true) + "   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
-            as->Asm("bcc " + lbl2);
+            as->Asm(bcc + lbl2);
         //    as->Asm("beq " + lbl2);
             as->Asm("bne " + lbl1);
             as->Asm("lda " + getValue8bit(vara,false));
             as->Asm("cmp " + lo +" ;keep");
-            as->Asm("bcc " + lbl2);
+            as->Asm(bcc + lbl2);
             as->Asm("beq " + lbl2);
         }
         if (node->m_op.m_type==TokenType::GREATEREQUAL) {
             as->Asm("lda " + getValue8bit(vara,true) + "   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
-            as->Asm("bcc " + lbl2);
+            as->Asm(bcc + lbl2);
             as->Asm("bne " + lbl1);
             as->Asm("lda " + getValue8bit(vara,false));
             as->Asm("cmp " + lo +" ;keep");
-            as->Asm("bcc " + lbl2);
+            as->Asm(bcc + lbl2);
         }
         if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL) {
             as->Asm("lda " + getValue8bit(vara,true) + "   ; compare high bytes");
             as->Asm("cmp " + hi + " ;keep");
-            as->Asm("bcc " + lbl1);
+            as->Asm(bcc + lbl1);
             as->Asm("bne " + lbl2);
             as->Asm("lda " + getValue8bit(vara,false));
             as->Asm("cmp " + lo+" ;keep");
             if (node->m_op.m_type==TokenType::LESSEQUAL)
                 as->Asm("beq "+lbl1);
-            as->Asm("bcs " + lbl2);
+            as->Asm(bcs + lbl2);
 
 
 

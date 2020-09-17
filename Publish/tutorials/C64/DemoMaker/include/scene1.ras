@@ -23,9 +23,9 @@ begin
 	// Enable reading $D000-$DFFF
 	enableallram();
 	// Decrunch image data to $6000	
-	decrunchfromindex(packed_data_addresses,i); 
+	decrunchfromindex(#packed_data_addresses,i); 
 	// Decrunch color data to $4800
-	decrunchfromindex(packed_data_addresses,i+1);
+	decrunchfromindex(#packed_data_addresses,i+1);
 	// Restore memory config
 	poke(^$01, 0,keep01);
 	// Don't copy color data: Set everything black
