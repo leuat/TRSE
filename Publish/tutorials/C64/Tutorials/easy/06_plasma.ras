@@ -1,6 +1,10 @@
-program Tutorial3_plasma;
+program PlasmaProgram;
 
 var
+
+// set to "0" to get the unoptimized version
+@define OPTIMIZED 1
+
 	// some plasma variables
 	c,val,c2x, c2y,ax, ay : byte;
 	x,y : byte;
@@ -63,17 +67,36 @@ begin
 	
 	colorP:=#screen_col_loc + yStart*screen_width;
 	
-	for y:=yStart to yEnd do begin
+	for y:=yStart to yEnd do 
+	begin
 		val:=siny[y];
-		for x:=xStart to xEnd do begin
+		for x:=xStart to xEnd do 
+		begin
+		
+@if OPTIMIZED = 0
 			// here, we take (sin[x]+val) and divide by 16. However, since this is a slow procedure,
 			// we have created a lookup table instead!
 			c:=lookupDiv16[ (sinx[x] +val) ];
 			// Set the screen memory
-			screenmemory[x]:=c + baseCharacter;
+			screenmemory[x]:=c;
 			// Set color memory
 			colorP[x] := fade[ c ];
-
+@endif
+// This is the optimized version
+@if OPTIMIZED = 1
+			asm("
+				ldx x
+				lda sinx,x
+				adc val
+				tax
+				lda lookupDiv16,x
+				ldy x
+				sta (screenmemory),y
+				tax
+				lda fade,x
+				sta (colorP),y
+			");
+@endif
 		end;
 		// Increase screen memory pointer by 40 (next row)
 		screenmemory:=screenmemory+screen_width;
@@ -96,6 +119,8 @@ begin
 	screen_fg_col:=black;
 	// Set charmap location at $2000
 	SetCharsetLocation(charsetLocation);
+	// Copy the 16 characters rom baseCharacter to 0
+	memcpy(charsetLocation +8*baseCharacter, 0, charsetLocation,8*16);
 	InitDivision16();
 	ax:=1;
 	ay:=5;

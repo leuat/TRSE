@@ -50,6 +50,3 @@ data_header_resources/images/image3.flf = 6.91708e-310
 data_header_resources/images/image4.flf = 6.91708e-310
 data_header_resources/images/image5.flf = 6.91708e-310
 zeropage_colormemory = $fc
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/AMSTRADCPC464/tutorials/
-open_files = 6.94037e-310
-current_file = tut3_plasma.ras

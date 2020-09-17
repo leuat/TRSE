@@ -55,7 +55,7 @@ begin
 	//fill(^$D800 + ^0, LIGHT_GREEN, 160);
 
 	zeropage4:=#CreditsText;
-	zeropage5:=#screenmemory;
+	zeropage5:=screenmemory;
 	zeropage1:=#IntroText;
 	moveto(5, 10, $44);
 	j:=10;

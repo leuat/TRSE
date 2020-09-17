@@ -3,12 +3,12 @@ var
    	org_x, x: integer;
 	y, org_y,i,j, time: byte;
 
-	@define spriteLoc $2000
+	const spriteLoc : integer = $2000;
 
 	// The original sprite is located in sprites/logo.flf
 @export "resources/sprites/logo.flf" "resources/sprites/logo.bin" 256
 
-	sprites: incbin("resources/sprites/logo.bin", @spriteLoc);
+	sprites: incbin("resources/sprites/logo.bin", spriteLoc);
 	// cstring because we mean to just copy the data onto the screen
 	text: cstring=("  SPRITELOGO  ");
 	// A pointer to the text
@@ -26,9 +26,10 @@ begin
 	sprite_stretch_y:=$FF;
 	sprite_multicolor_reg1:=light_blue;
 	sprite_multicolor_reg2:=grey;
-	for i:=0 to 8 do begin
+	for i:=0 to 8 do 
+	begin
 		sprite_color[i]:=blue;
-		setspriteloc(i,@spriteLoc/64+i,0);
+		setspriteloc(i,spriteLoc/64+i,0);
 	end;
 end;
 

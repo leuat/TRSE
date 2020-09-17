@@ -85,6 +85,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b6.png","b1",""));
     ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b7.png","b1",""));
     ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b8.png","b1",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b9.png","b1",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b10.png","b1",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b11.png","b1",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b12.png","b1",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b13.png","b1",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b14.png","b1",""));
     ui->glslider->Init();
     ui->glslider->setCurrentTexture();
 

@@ -33,11 +33,11 @@ begin
 		// Turn off screen during decrunching process
 		screenoff(); // turn off screen while decrunching..
 		// unpacks color data to $2000
-		decrunchfromindex(packed_addresses,i+1); 
+		decrunchfromindex(#packed_addresses,i+1); 
 		// copy color data to screen + $D800
 		copyimagecolordata(^$2000,1);
 		// Decrunch image data
-		decrunchfromindex(packed_addresses,i); // decrunches to vic 1
+		decrunchfromindex(#packed_addresses,i); // decrunches to vic 1
 		// Turn on screen
 		screenon();
 		while (keypressed(key_space)=0) do waitforraster(0);

@@ -20,7 +20,7 @@ begin
 	
 	while (true) do begin
 		waitforverticalblank();
-		moveto(x_position, precalculated_sinewave_table[i], hi(SCREEN_CHAR_LOC));
+		moveto(x_position, precalculated_sinewave_table[i], hi(screen_char_loc));
 		printstring(#symbol,0,1);
 		
 		i:=i+8;

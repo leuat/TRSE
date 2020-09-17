@@ -4,28 +4,33 @@ var
    i,x,y,shift: byte = 0; 
    ix : integer;
    time,t1,t2 : byte = 0;
+   // A suitable sine function (sin(t)/3)
    sine3 : array[256] of byte = BuildTable("(Math.sin(i/(256.0)*3.14156265*2.0)*0x7F+0x7F)/3");
    p : ^byte;   
 
+// Simple pixel example, no double buffering
 
 procedure LoopPixels();
 begin
+
 	x:=sine3[t1];
 	y:=sine3[t2];
 	BitmapGraphics::x1:=sine[time]/4+x;
 	BitmapGraphics::y1:=sine[time+64+shift]/4+y;
-	
+	// Put that pixel!	
 	BitmapGraphics::putpixel2();
 
+	// Some funky phase shifts
 	inc(time);
 	inc(t1);
-	inc(t2);
-	if (time&210=0) then inc(t1);
+	t2:=t2+2;
+	if (time&211=0) then inc(t1);
 	if (time&63=0) then inc(t2);
 	if (time&31=0) then inc(shift);
+	// Clear at certain intervals
 	if (time=0) then 
 	begin
-		clearbitmap(#BitmapGraphics::bank1,32);
+		clearbitmap(#BitmapGraphics::bank1,24);
 	end;
 end;
 
@@ -33,9 +38,7 @@ end;
 
 begin
 	screen_bg_col:=black;
-	
-
-
+	screen_fg_col:=black;
 	BitmapGraphics::InitBitmapGraphics(0, #BitmapGraphics::bank1);
 	vic_data_loc:=$18;
 	BitmapGraphics::currbank :=$0; // Current bitmap bank (added to high bit of putpixel)

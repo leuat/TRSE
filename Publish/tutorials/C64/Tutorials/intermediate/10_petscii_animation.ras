@@ -7,6 +7,8 @@ var
 	const animPos : address = $4000;
 
 // Images are imported using TRSE's petscii importer. Check out the .flf file!
+// You can create your own petscii animation frames by simply importing a .png or .jpg in the
+// TRSE image editor. 
 @export "resources/images/petscii_animation.flf" "resources/images/petscii_animation.trm" 0
 
 	anim: incbin("resources/images/petscii_animation.trm",animPos);

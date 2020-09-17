@@ -20,13 +20,13 @@ var
 
 
 // Let the character set be loacated at $2000 on bank 0
-@define charsetLoc $2000
+	const charsetLoc:address =  $2000;
 // Base of the 16 char value is "64". Check out "charsets/charsets.flf" in order to view the characters at position 64
 	const charVal : byte= 64;
 // Use kernal
  	const useKernal: byte = 1;
 
-	charset: IncBin("resources/charsets/charset.bin", @charsetLoc);
+	charset: IncBin("resources/charsets/charset.bin", charsetLoc);
 
 	// Some variables
 	x,y,tangent,i,dx,dy : byte;
@@ -78,8 +78,8 @@ procedure ShiftCharsetData();
 begin
 	// We copy 16 characters * 8 bytes each 128 byte from the original point in memory @charsetLoc  + 8*@charVal
 	// 8 bytes to the rigth, cycling the characters
-	memcpy(^@charsetLoc+charVal*^8, 0, ^@charsetLoc+charVal*^8+^128,8);
-	memcpy(^@charsetLoc+charVal*^8+^8, 0, ^@charsetLoc+charVal*^8,128);
+	memcpy(charsetLoc+charVal*^8, 0, charsetLoc+charVal*^8+^128,8);
+	memcpy(charsetLoc+charVal*^8+^8, 0, charsetLoc+charVal*^8,128);
 
 end;
 // Main raster, called once per raster cycle. Only shifts charset data with 8 bytes
@@ -94,7 +94,7 @@ end;
 
 // Main initialization routine
 begin
-	setcharsetlocation(@charsetLoc);
+	setcharsetlocation(charsetLoc);
 	screen_fg_col:=black;
 	screen_bg_col:=black;
 	RenderScreen();

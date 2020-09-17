@@ -526,5 +526,11 @@
         <file>resources/text/help/r/pure_number.rtf</file>
         <file>resources/text/help/r/pure.rtf</file>
         <file>resources/text/help/m/setcolormemoryaddress.rtf</file>
+        <file>resources/images/billboard/b14.png</file>
+        <file>resources/images/billboard/b13.png</file>
+        <file>resources/images/billboard/b12.png</file>
+        <file>resources/images/billboard/b11.png</file>
+        <file>resources/images/billboard/b10.png</file>
+        <file>resources/images/billboard/b9.png</file>
     </qresource>
 </RCC>

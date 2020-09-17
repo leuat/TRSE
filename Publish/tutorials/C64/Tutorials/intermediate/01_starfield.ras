@@ -43,10 +43,10 @@ begin
 	zp:=#charsetPos + charPos*8;
 	for i:=0 to 8 do begin
 		for j:=0 to 8 do begin
-			zp[j]:=0;
+			zp[j] := 0;
 		end;
-		zp[4]:=charsetVals[i];
-		zp:=zp+8;
+		zp[4] := charsetVals[i];
+		zp:=zp + 8;
 	end;
 
 end;
@@ -56,10 +56,10 @@ procedure InitializeStarfield();
 begin
 	j:=42;
 	for i:=0 to noStars do begin
-		stars[i].x:=rands[i]/2;  // 0-40
-		stars[i].dx:=rands[j]&63; // 0-64 (will be divided by 8)
-		stars[i].color:=starColors[j&7];  // 0-7
-		stars[i].ddx:=rands[i]&7+1;  // 1-8
+		stars[i].x := rands[i]/2;  // 0-40
+		stars[i].dx := rands[j]&63; // 0-64 (will be divided by 8)
+		stars[i].color := starColors[j&7];  // 0-7
+		stars[i].ddx := rands[i]&7+1;  // 1-8
 		j:=j+11; // just some random shift
 	end;
 end;

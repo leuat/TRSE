@@ -15,14 +15,14 @@ var
 */
 	const useKernal:byte = 1;
 // Use character 64 as base+16 in the charmap (check out resources/charset/charset.flf)
-@define charVal 64
+	const charVal:byte= 64;
 // Place 40x25 noise data at a random position
-@define noisePos $8000
-@define charsetLoc $2000
+	const noisePos : address = $8000;
+	const charsetLoc : address =  $2000;
 
 // include data
-   	noiseData: incbin("resources/data/perlin40.dat",@noisePos); 
-	charset: incbin("resources/charsets/charset.bin",@charsetLoc);   
+   	noiseData: incbin("resources/data/perlin40.dat",noisePos); 
+	charset: incbin("resources/charsets/charset.bin",charsetLoc);   
 // scroll register
 	scroll : byte=0;
 // pointers used for copying data
@@ -44,7 +44,7 @@ begin
 	// print 25 rows
 	for i:=0 to screen_height do begin
 		// divide by some value
-		dst[0]:=src[0]/8 + @charVal-5;
+		dst[0]:=src[0]/8 + charVal-5;
 		// Goto next row
 		dst:=dst+screen_width;
 		src:=src+screen_width;
@@ -81,8 +81,8 @@ procedure ShiftCharsetData();
 begin
 	// We copy 16 characters * 8 bytes each 128 byte from the original point in memory @charsetLoc  + 8*@charVal
 	// 8 bytes to the rigth, cycling the characters
-	memcpy(^@charsetLoc+^@charVal*^8, 0, ^@charsetLoc+^@charVal*^8+^128,8);
-	memcpy(^@charsetLoc+^@charVal*^8+^8, 0, ^@charsetLoc+^@charVal*^8,128);
+	memcpy(charsetLoc+charVal*^8, 0, charsetLoc+charVal*8+128,8);
+	memcpy(charsetLoc+charVal*^8+^8, 0, charsetLoc+charVal*8,128);
 
 end;
 
@@ -103,7 +103,7 @@ end;
 begin
 	// Hide column 0 and 39!
 	hideborderx(1);
-	setcharsetlocation(@charsetLoc);
+	setcharsetlocation(charsetLoc);
 	StartRasterChain(RasterMain(),100,useKernal);
 	Loop();
 end.

@@ -33,7 +33,7 @@ var
 procedure PrintColors();
 begin
 	// Setup initial position
-	zp:=$D800+280-curStart-curStart;
+	zp:=#screen_col_loc+280-curStart-curStart;
 	k:=4+curCol;
 	for i:=0 to 4 do
 	begin
@@ -190,7 +190,7 @@ begin
 		cc:=cc&63;
 		if (cc=63) then cc:=0; // bug?
 		
-		zp:=int2ptr(tableData[cc]);
+		zp:=tableData[cc];
 		if (j>0 and j<3) then // Center blocks
 			Paint(k,0,160);
 		

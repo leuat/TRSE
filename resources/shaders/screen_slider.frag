@@ -185,12 +185,32 @@ vec2 Grid() {
 }
 
 
+vec2 News() {
+
+//    y = clamp(2.0/(y+1.4),-10.5,10.5);
+
+    vec2 t;
+
+    t.x = v_pos.x*sx+cos(time*0.5)*2.0;
+    t.y = 1.0-v_pos.y+cos(time*0.7)*2.0;
+
+    t = rotate2D(t,0.0-time*2.0+0.4*length(t)*cos(time)+0.4*sin(time)*(t.y - t.x));
+
+    float x1 = 1.0+t.x*0.3*(0.7+0.5*sin(time*13.0));
+    float y1 = 1.0+t.y*0.3*(0.7+0.5*cos(time*10.0));
+
+    vec2 p = vec2(t.x*x1,t.y*y1);
+
+
+    return p;
+}
+
 
 vec2 getType(float t)
 {
     t = mod(t,3.0);
 
-
+//    return News();
 //    return Grid();
 
     if (t==0.0) return Grid();

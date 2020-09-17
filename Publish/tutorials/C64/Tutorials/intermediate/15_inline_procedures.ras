@@ -1,0 +1,91 @@
+program T15_Inline_procedures;
+var  
+   	x,y,time,start: byte = 0; 
+	zp,cp:pointer;
+
+@define USE_INLINE 1
+
+// Regular procedure. Will be called with a "jsr" instruction, and also needs to return 
+// afterwards.
+procedure FillNormal( fillVal : byte);
+begin
+	zp[0]:=fillVal;
+	cp[0]:=fillVal;
+	zp:=zp+1;
+	cp:=cp+1;
+end;
+
+/* Inline method : this procedure will be *injected* into the source 
+ code wherever it is called. This is fine an well, but can be seriously 
+ abused by the user, as in this case - "fillValInline" will be evaluated 
+ for every time that is used. In other words. if a user (for some reason) 
+ decides to do something like this
+ 
+FillInline((sine[i]*99 + j/32)<<1);
+
+  then the statements
+
+	zp[0]:=fillValInline;
+	cp[0]:=fillValInline;
+	
+will turn into
+
+	zp[0]:=(sine[i]*99 + j/32)<<1;
+	cp[0]:=(sine[i]*99 + j/32)<<1;
+	
+In order to prevent this from happening, the author of the inline method
+can enforce a "pure" parameter - a parameter that *must* be either a constant value or a 
+pure variable, nothing else is allowed. Similarly, "pure_number" and "pure_variable" flags 
+also exist within the TRSE framework. 
+
+*/
+ 
+procedure FillInline( fillValInline : byte pure) inline;
+begin
+	zp[0]:=fillValInline;
+	cp[0]:=fillValInline;
+	zp:=zp+1;
+	cp:=cp+1;
+end;
+
+
+
+procedure UpdatePositions();
+begin
+	x:=x+1;
+	if (x=screen_width) then
+	begin
+		x:=0;
+		y:=y+1;
+		if (y=screen_height) then
+		begin
+			zp:=#screen_char_loc;
+			cp:=#screen_col_loc;
+			y:=0;
+			start:=start+1;
+			time:=start;
+		end;
+	end;
+
+end;
+
+
+begin
+	zp:=#screen_char_loc;
+	cp:=#screen_col_loc;
+	while (true) do
+	begin
+@if USE_INLINE=1 
+		FillInline(time);
+		// The next line is illegal to call, since the inline parameter value is required to be pure
+		// FillInline(time*2); 
+
+@endif
+@if USE_INLINE=0 
+		FillNormal(time);
+@endif
+		UpdatePositions();
+		time:=time + 1;
+	//	if (time=32) then time:=time+1;
+	end;
+end.

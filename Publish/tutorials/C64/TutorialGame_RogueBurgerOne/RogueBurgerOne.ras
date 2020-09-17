@@ -3,6 +3,13 @@ var
 
 /*
 
+	Note: this game was created with an extremely early version of TRSE back in 2018,
+    and uses a lot of archaic stuff. Please don't use this game as a template on how
+    to code for TRSE in 2020 =)
+
+
+
+
 	Rogue Burger One is a TRSE tutorial game. Actually, right now it is not really a 
 	tutorial but more an example project, without proper documentation and stuff.
 
