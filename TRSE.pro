@@ -40,7 +40,7 @@ macx {
     QMAKE_CXXFLAGS += -openmp
     #LIBS += -openmp
 #    ICON = trse.icns
-    QMAKE_CXXFLAGS += -fast
+    QMAKE_CXXFLAGS += -Ofast
     LIBS += -L$$PWD/libs -Ofast
     LIBS += -ldl
     LIBS += -L$$PWD/libs/lua/ -lluamac
