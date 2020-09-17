@@ -58,5 +58,8 @@ public:
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeVarType>(sharedFromThis()));
     }
 
+    void VerifyFlags(bool isProcedureParameter);
+
+
 };
 #endif // NODEVARTYPE_H

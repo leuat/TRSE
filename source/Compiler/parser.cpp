@@ -64,6 +64,7 @@ QStringList Parser::getFlags() {
     m_typeFlags[TokenType::ALIGNED] = "aligned";
     m_typeFlags[TokenType::NO_TERM] = "no_term";
     m_typeFlags[TokenType::SIGNED] = "signed";
+    m_typeFlags[TokenType::GLOBAL] = "global";
 
     while (!done)  {
         done = true;
@@ -119,11 +120,11 @@ void Parser::Eat(TokenType::Type t)
 {
     if (m_tick++%500==99)
         emit EmitTick(".");
- //   qDebug() << m_currentToken.m_value << m_currentToken.m_intVal;
+//    qDebug() << m_currentToken.m_value << m_currentToken.m_intVal;
     if (m_currentToken.m_type == t) {
         m_currentToken = m_lexer->GetNextToken();
-       // if (m_pass==2)
-         //   qDebug() << "Token : " <<m_currentToken.getType() <<m_currentToken.m_value <<(m_currentToken.m_type==TokenType::PREPROCESSOR) << m_pass;
+//        if (m_pass==2)
+  //          qDebug() << "Token : " <<m_currentToken.getType() <<m_currentToken.m_value << m_currentToken.m_intVal;
         int cnt =0;
         while (m_currentToken.m_type==TokenType::PREPROCESSOR && m_pass>PASS_PREPRE && m_pass!=PASS_OTHER  && cnt++<32 ) {
             HandlePreprocessorInParsing();
@@ -799,7 +800,6 @@ void Parser::VerifyTypeSpec(Token& t)
         }
 
 
-
         //return;
         if (!ok)
             m_symTab->Lookup(t.m_value,t.m_lineNumber);
@@ -1446,9 +1446,10 @@ void Parser::Record(QString name)
             QSharedPointer<Symbol> s = QSharedPointer<Symbol>(new Symbol(var->value, typ->value));
             s->m_arrayType = typ->m_arrayVarType.m_type;
             s->m_arrayTypeText = typ->m_arrayVarTypeText;
+            s->m_flags = typ->m_flags;
             record->Define(s);
             record->m_orderedByDefinition.append(var->value);
-//            qDebug() << "APPEND " <<var->value;
+//            qDebug() << "RECORD PPEND " <<var->value << s->m_flags;
         }
         Eat(TokenType::SEMI);
 
@@ -1860,7 +1861,23 @@ QSharedPointer<Node> Parser::Factor()
 
     if (t.m_type == TokenType::PLUS || t.m_type==TokenType::MINUS ){
         Eat(t.m_type);
-        return QSharedPointer<NodeUnaryOp>(new NodeUnaryOp(t, Factor()));
+        QSharedPointer<Node> expr = Factor();
+        if (expr->isPureNumeric()) {
+            bool isMinus = t.m_type==TokenType::MINUS;
+            t.m_type = TokenType::INTEGER_CONST;
+            t.m_value = "";
+            t.m_intVal = expr->getValueAsInt(nullptr);
+            if (isMinus) {
+                if (t.m_intVal<256)
+                    t.m_intVal = 256-t.m_intVal;
+                else
+                    t.m_intVal = 65536-t.m_intVal;
+            }
+            return QSharedPointer<NodeNumber>(new NodeNumber(t,t.m_intVal));
+
+
+        }
+        return QSharedPointer<NodeUnaryOp>(new NodeUnaryOp(t, expr));
     }
 
 
@@ -2454,7 +2471,7 @@ QVector<QSharedPointer<Node> > Parser::Parameters(QString blockName)
     if (m_currentToken.m_type==TokenType::LPAREN) {
         Eat(TokenType::LPAREN);
         while (m_currentToken.m_type==TokenType::ID) {
-            QVector<QSharedPointer<Node>> ns = VariableDeclarations(blockName);
+            QVector<QSharedPointer<Node>> ns = VariableDeclarations(blockName,true);
 
             for (QSharedPointer<Node> n: ns)
                 decl.append(n);
@@ -2609,7 +2626,7 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString blokN
     QSharedPointer<Node> funcType;
     if (isFunction) {
         Eat(TokenType::COLON);
-        funcType = TypeSpec();
+        funcType = TypeSpec(false);
         auto t = qSharedPointerDynamicCast<NodeVarType>(funcType);
         if (!(t->value.toLower()=="integer" || t->value.toLower()=="byte")) {
             ErrorHandler::e.Error("TRSE currently only supports return values of type 'byte' and 'integer'",t->m_op.m_lineNumber);
@@ -2761,7 +2778,7 @@ QVector<QSharedPointer<Node>> Parser::ConstDeclaration()
 
 
 
-QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
+QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, bool isProcedureParams)
 {
     if (blockName!="")
         m_symTab->SetCurrentProcedure(blockName+"_");
@@ -2805,13 +2822,10 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
         Eat(TokenType::ID);
     }
     Eat(TokenType::COLON);
-    bool isGlobal = false;
-    if (m_currentToken.m_type==TokenType::GLOBAL) {
-        isGlobal = true;
-        Eat();
-    }
 
     QStringList preflags  =getFlags(); // Allow for flags to be defined before the type
+    bool isGlobal = preflags.contains("global");
+
     // NOW do the syms define
     if (!isGlobal)
     for (QSharedPointer<Symbol> s: syms) {
@@ -2824,9 +2838,10 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
     }
 
 //    qDebug() << "CURVAL " <<m_currentToken.m_value;
-    QSharedPointer<NodeVarType> typeNode = qSharedPointerDynamicCast<NodeVarType>(TypeSpec());
+    QSharedPointer<NodeVarType> typeNode = qSharedPointerDynamicCast<NodeVarType>(TypeSpec(isProcedureParams));
     typeNode->m_flags.append(getFlags());
     typeNode->m_flags.append(preflags);
+    typeNode->VerifyFlags(isProcedureParams);
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY || Syntax::s.m_currentSystem->m_system==AbstractSystem::COLECO) {
         //if (typeNode->m_op.m_type==TokenType::POINTER)
         if (typeNode->m_data.count()<=1 && typeNode->m_op.m_type!=TokenType::INCBIN && typeNode->m_op.m_type!=TokenType::STRING)
@@ -2852,6 +2867,8 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
        s->m_arrayTypeText = TokenType::getType(typeNode->m_arrayVarType.m_type);
        if (typeNode->m_arrayVarType.m_type==TokenType::RECORD) {
            s->m_arrayTypeText = typeNode->m_arrayVarType.m_value;
+  //         s->m_flags = typeNode->m_flags;
+//           qDebug() << "FLAGS " << s->m_flags;
 
        }
     }
@@ -2922,7 +2939,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName)
 
 
 
-QSharedPointer<Node> Parser::TypeSpec()
+QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure)
 {
     Token t = m_currentToken;
 
@@ -2947,7 +2964,7 @@ QSharedPointer<Node> Parser::TypeSpec()
 
         QSharedPointer<NodeVarType> nt =  QSharedPointer<NodeVarType>(new NodeVarType(t,binFile, position));
         nt->m_flags = flags;
-
+        nt->VerifyFlags(isInProcedure);
         return nt;
 
 
@@ -3036,6 +3053,7 @@ QSharedPointer<Node> Parser::TypeSpec()
 
         QSharedPointer<NodeVarType> nt =  QSharedPointer<NodeVarType>(new NodeVarType(t,position, arrayType,data));
         nt->m_flags = flags;
+        nt->VerifyFlags(isInProcedure);
         return nt;
 
 
@@ -3053,6 +3071,7 @@ QSharedPointer<Node> Parser::TypeSpec()
         }
         QSharedPointer<NodeVarType> str = QSharedPointer<NodeVarType>(new NodeVarType(t,initData));
         str->m_flags = flags;
+        str->VerifyFlags(isInProcedure);
         return str;
     }
 
@@ -3071,6 +3090,7 @@ QSharedPointer<Node> Parser::TypeSpec()
             ErrorHandler::e.Error("On the 6502, pointers must be initialized through code. Z80/M68K pointer initialization not yet implemented in TRSE. ",m_currentToken.m_lineNumber);
 
         }
+        nvt->VerifyFlags(isInProcedure);
 
         return nvt;
 
@@ -3096,6 +3116,7 @@ QSharedPointer<Node> Parser::TypeSpec()
         }
 
 //        qDebug() <<"Parser typespec pointer: "  << nvt->m_arrayVarType.getType();
+        nvt->VerifyFlags(isInProcedure);
 
         return nvt;
     }
@@ -3118,6 +3139,7 @@ QSharedPointer<Node> Parser::TypeSpec()
         // Only declare as CONST if NOT a record
         nt->m_flag = 1;
 //        VerifyTypeSpec(t);
+        nt->VerifyFlags(isInProcedure);
 
         return nt;
     }
@@ -3137,7 +3159,10 @@ QSharedPointer<Node> Parser::TypeSpec()
     }
     VerifyTypeSpec(t);
 
-    return QSharedPointer<NodeVarType>(new NodeVarType(t,initVal));
+    QSharedPointer<NodeVarType> nvt = QSharedPointer<NodeVarType>(new NodeVarType(t,initVal));
+    nvt->VerifyFlags(isInProcedure);
+
+    return nvt;
 
 }
 

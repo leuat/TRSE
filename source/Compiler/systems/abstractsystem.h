@@ -58,6 +58,9 @@ public:
     static QMap<SystemLabel::Type, QColor> m_labelColors;
     QColor m_systemColor = QColor(64,64,128);
 
+    QStringList m_allowedGlobalTypeFlags;
+    QStringList m_allowedProcedureTypeFlags;
+
     virtual bool is8bit() {
         return true;
     }

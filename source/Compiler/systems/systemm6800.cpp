@@ -86,3 +86,10 @@ void SystemM68000::PostProcess(QString &text, QString file, QString currentDir)
 
 }
 */
+
+SystemM68000::SystemM68000(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : AbstractSystem(settings, proj) {
+    m_allowedGlobalTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" << "chipmem" <<"aligned" << "compressed";
+    m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"global" << "aligned";
+    m_processor = M68000;
+
+}

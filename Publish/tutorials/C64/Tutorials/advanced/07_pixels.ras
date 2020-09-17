@@ -34,6 +34,8 @@ end;
 begin
 	screen_bg_col:=black;
 	
+
+
 	BitmapGraphics::InitBitmapGraphics(0, #BitmapGraphics::bank1);
 	vic_data_loc:=$18;
 	BitmapGraphics::currbank :=$0; // Current bitmap bank (added to high bit of putpixel)

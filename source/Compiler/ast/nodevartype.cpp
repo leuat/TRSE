@@ -54,3 +54,23 @@ NodeVarType::NodeVarType(Token t, QString initvalue) : Node() {
     initVal = initvalue;
 
 }
+
+void NodeVarType::VerifyFlags(bool isProcedureParameter) {
+    for (QString f : m_flags) {
+        if (isProcedureParameter) {
+            if (!Syntax::s.m_currentSystem->m_allowedProcedureTypeFlags.contains(f))
+                ErrorHandler::e.Error("Procedure type '"+value+"' on this system does not support the flag '"+f+"'",m_op.m_lineNumber);
+        }
+        else {
+            if (!Syntax::s.m_currentSystem->m_allowedGlobalTypeFlags.contains(f))
+                ErrorHandler::e.Error("Globally defined type '"+value+"' on this system does not support the flag '"+f+"'",m_op.m_lineNumber);
+        }
+        if (f=="no_term") {
+            // only works for strings
+            if (m_op.m_type!=TokenType::STRING)
+                ErrorHandler::e.Error("Type flag 'no_term' is only allowed for strings.",m_op.m_lineNumber);
+        }
+    }
+    // Individual type tests
+
+}

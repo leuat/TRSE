@@ -213,8 +213,8 @@ public:
     QSharedPointer<Node> Conditional(bool isWhileLoop=false);
 //    QVector<QSharedPointer<Node>> Procedure();
     QVector<QSharedPointer<Node>> Declarations(bool isMain, QString blockName, bool hasBlock = true);
-    QVector<QSharedPointer<Node>> VariableDeclarations(QString blockName);
-    QSharedPointer<Node> TypeSpec();
+    QVector<QSharedPointer<Node>> VariableDeclarations(QString blockName, bool isProcedureParams = false);
+    QSharedPointer<Node> TypeSpec(bool isInProcedure);
     QSharedPointer<Node> BuiltinFunction();
     QSharedPointer<Node> Constant();
     QSharedPointer<Node> InlineAssembler();

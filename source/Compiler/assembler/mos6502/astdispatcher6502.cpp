@@ -765,7 +765,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeNumber>node)
         as->Asm("ldy #0   ; Force integer assignment, set y = 0 for values lower than 255");
     }
 
-
+//    as->Comment("Value assignment : " + Util::numToHex(node->m_val) + " "+ val + " " +QString::number(node->getValueAsInt(as)));
     if ((node->m_op.m_type==TokenType::INTEGER_CONST && node->m_val>255) || node->isReference()) {
         as->Comment("Integer constant assigning");
         Load16bitVariable(node,"y");
@@ -2946,6 +2946,7 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
 
 
     as->Comment("Assigning single variable : " + getValue(v));
+//    as->Comment("Is word : " + QString::number(v->isWord(as)));
     QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(v), node->m_op.m_lineNumber, v->isAddress());
 
     // Trying to assign a PURE record
@@ -2991,7 +2992,6 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
 
     if (qSharedPointerDynamicCast<NodeString>(node->m_right) && v->m_expr==nullptr)
     {
-        as->Comment("HERE");
         AssignString(node,node->m_left->isPointer(as));
         return;
     }
@@ -3035,6 +3035,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeUnaryOp> node)
 {
     node->DispatchConstructor(as);
     AbstractASTDispatcher::dispatch(node);
+//    as->Comment("Unary op beware!");
     if (node->m_right->isPureNumeric())
         return;
     node->m_right->Accept(this);

@@ -8,9 +8,7 @@
 class SystemM68000 : public AbstractSystem
 {
 public:
-    SystemM68000(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : AbstractSystem(settings, proj) {
-
-    }
+    SystemM68000(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
 
     virtual bool is8bit() override {
         return false;

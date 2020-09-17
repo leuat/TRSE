@@ -346,7 +346,7 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
         //        ErrorHandler::e.Error("Record types not implemented yet: " + type);
         QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
         for (QSharedPointer<Symbol> s : st->m_symbols) {
-            //qDebug() << "WTF " <<s->m_name <<s->m_type;
+//            qDebug() << "WTF " <<s->m_name <<s->m_type;
             // Build the name
             QString n = name + "_" + st->m_name+"_"+s->m_name;
             QString w = n;

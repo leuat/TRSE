@@ -1,0 +1,105 @@
+program Signed_numbers_yeah;
+var  
+   	particle = record
+   		x,y,dx,dy : signed byte;
+   		color : byte;
+	end;
+
+	const scale : byte = 4; // Scale of y-data
+	const ball_char : byte = 0; // petscii of ball
+	
+	const noBalls : byte = 16; // Number of balls
+
+	balls : array[ noBalls ] of particle;
+	caddr, saddr: array[screen_height] of integer; // Screen address table
+
+	i,j : byte;
+	s: signed byte;
+	
+	sp : ^byte; // pointer to the screen, same as "pointer"
+
+procedure RenderBalls(rb_ch:byte);
+begin
+	for i:=0 to noBalls do
+	begin
+		sp := AddressTable(#saddr, balls[i].x, (screen_height-1)-balls[i].y/scale); 
+		sp^ := rb_ch; // Draw char!
+		sp := AddressTable(#caddr, balls[i].x, (screen_height-1)-balls[i].y/scale); 
+		sp^ := balls[i].color; // Draw char!
+	end;
+
+end;
+
+procedure ClearBalls();
+begin
+	for i:=0 to noBalls do
+	begin
+		sp := AddressTable(#saddr, balls[i].x, (screen_height-1)-balls[i].y/scale); 
+		sp^ := key_space; // Draw char!
+	end;
+
+end;
+
+procedure UpdateBalls();
+begin
+	for i:=0 to noBalls do
+	begin
+		// update X position
+		balls[i].x := balls[i].x + balls[i].dx;
+		if (balls[i].x >= screen_width-1 or balls[i].x <= 0) then 
+			balls[i].dx := -balls[i].dx;	
+			
+		balls[i].y := balls[i].y + balls[i].dy;
+		balls[i].dy := balls[i].dy -1;
+		
+		if (balls[i].y<0) then
+		begin
+			balls[i].y := balls[i].y&3;
+			balls[i].dy := -balls[i].dy -2;
+		end;
+
+	end;
+
+end;
+
+procedure InitBalls();
+begin
+	for i:=0 to noBalls do
+	begin
+		balls[i].x := mod(random(),screen_width);	
+		balls[i].y := mod(random(),screen_height*scale/2)+screen_height*scale/2;
+		if (random()>127) then 
+			balls[i].dx := 1 
+		else 
+		balls[i].dx := -1;	
+		
+		balls[i].color := random()&15;
+		if (balls[i].color = black) then inc(balls[i].color);
+		
+
+	end;
+
+end;
+
+
+begin
+	ClearScreen(key_space, screen_char_loc);
+	screen_bg_col := green;
+	screen_fg_col := black;
+	ClearScreen(black, screen_col_loc);
+	createaddresstable(#saddr,screen_char_loc,screen_width,screen_height);
+	createaddresstable(#caddr,screen_col_loc,screen_width,screen_height);
+	InitBalls();
+	while (true) do
+	begin	
+		// Clear previous positions
+		ClearBalls();
+		// Update
+		UpdateBalls();
+		// Render new set of balls
+		RenderBalls(ball_char);
+		for i:=0 to 3 do
+			waitforverticalblank();
+	end;
+	Loop();
+end.
