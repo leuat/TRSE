@@ -206,7 +206,7 @@ QString Lexer::loadTextFile(QString filename)
     return text;
 }
 
-Token Lexer::Number()
+Token Lexer::Number(bool& isOk)
 {
     QString res="";
     QString org;
@@ -246,11 +246,9 @@ Token Lexer::Number()
         res.remove("^");
         isConstant = false;
     }
-    val = res.toLong(&ok, base);
+    val = res.toLong(&isOk, base);
 
 //    qDebug() << val;
-    if (!ok)
-        val = -1E10;
     if (isConstant)
         return Token(TokenType::INTEGER_CONST, val);
     else {
@@ -411,9 +409,11 @@ Token Lexer::GetNextToken()
             QString keep = m_currentChar;
             uint pos = m_pos;
             uint ppos = m_prevPos;
-            Token number = Number();
+            bool ok=true;
+            Token number = Number(ok);
 
-            if (number.m_intVal!=-1E10)
+//            qDebug() << " IS NUM " <<number.m_intVal;
+            if (ok)
                 return number;
             else {
                 // Roll back evential ^s

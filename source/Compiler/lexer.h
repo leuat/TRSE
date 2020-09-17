@@ -82,7 +82,7 @@ public:
     void SkipComment();
     void SkipUntilNewLine();
     QString loadTextFile(QString filename);
-    Token Number();
+    Token Number(bool& isOk);
     Token _Id();
     Token Preprocessor();
     Token String();

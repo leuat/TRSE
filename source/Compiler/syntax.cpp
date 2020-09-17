@@ -269,7 +269,7 @@ Token Syntax::GetID(QString val, bool isRef) {
     bool isPointer = false;
 //    qDebug() << "Searching for : " << val;
     if (val.startsWith("^")) {
-        val.remove(0,1);
+        val = val.remove(0,1);
         isPointer = true;
   //      qDebug() << "IS POINTER : " << val;
     }
