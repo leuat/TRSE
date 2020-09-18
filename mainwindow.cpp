@@ -323,6 +323,9 @@ void MainWindow::VerifyDefaults()
     if (!m_iniFile->contains("display_cycles"))
         m_iniFile->setFloat("display_cycles", 1);
 
+    if (!m_iniFile->contains("backup_files_count"))
+        m_iniFile->setFloat("backup_files_count", 10);
+
     if (!m_iniFile->contains("display_warnings"))
         m_iniFile->setFloat("display_warnings", 1);
 

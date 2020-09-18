@@ -20,6 +20,7 @@
 */
 
 #include "trsedocument.h"
+#include <QDateTime>
 
 QPalette TRSEDocument::m_defaultPalette;
 
@@ -46,6 +47,41 @@ bool TRSEDocument::SaveChanges()
         return false;
 
     return true;
+
+}
+
+void TRSEDocument::Backup()
+{
+    QString op = m_currentDir + ".backup";
+    if (!QDir().exists(op))
+        QDir().mkdir(op);
+
+
+    QString washedFile = m_currentFileShort;
+    washedFile = washedFile.replace(QDir::separator(),"_");
+
+    QString fileDir = op + QDir::separator() + washedFile;
+
+    if (!QDir().exists(fileDir))
+        QDir().mkdir(fileDir);
+
+    QString fileName = fileDir +QDir::separator()+ "backup_"+ QDateTime::currentDateTime().toString() +".bak";
+
+    Save(fileName);
+
+    QDir folder (fileDir);
+    QStringList files = folder.entryList(QDir::Files, QDir::Time);
+    // delete the oldest files
+    int keepCount = m_iniFile->getdouble("backup_files_count");
+    int i=0;
+    for (QString f : files) {
+        if (i++>=keepCount) {
+            QString name =fileDir+QDir::separator()+f;
+//            qDebug() << "Deleting file "<<name;
+            QFile::remove(name);
+        }
+    }
+
 
 }
 

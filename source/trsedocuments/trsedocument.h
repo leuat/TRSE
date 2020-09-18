@@ -67,6 +67,8 @@ public:
             emit requestSaveAs();
             return;
         }
+        if (m_iniFile->getdouble("auto_backup")==1.0)
+            Backup();
         Save(m_currentSourceFile);
         Data::data.blink = true;
         emit updatePaletteSignal();
@@ -75,6 +77,9 @@ public:
     virtual void Build(bool isShadow = false) {}
     virtual void Run() {}
     virtual void PrepareClose() {}
+
+
+    void Backup();
 
     virtual void MemoryAnalyze() {}
     virtual void LookupSymbolUnderCursor() {}

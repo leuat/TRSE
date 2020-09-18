@@ -73,6 +73,9 @@ void DialogTRSESettings::FillFromIni()
     ui->leTinyCrunch->setText(m_ini->getString("tinycrunch"));
     ui->leCursorWidth->setText(QString::number((int)m_ini->getdouble("editor_cursor_width")));
     ui->chkAutoInject->setChecked(m_ini->getdouble("auto_inject")==1.0);
+    ui->leBackupFiles->setText(QString::number((int)m_ini->getdouble("backup_files_count")));
+
+    ui->chkBackup->setChecked(m_ini->getdouble("auto_backup")==1.0);
 
     ui->leCPCDisk->setText(m_ini->getString("cpcdisk_location"));
 
@@ -158,6 +161,7 @@ void DialogTRSESettings::FillToIni()
 
     m_ini->setString("cpcdisk_location",ui->leCPCDisk->text());
 
+    m_ini->setFloat("backup_files_count",ui->leBackupFiles->text().toInt());
 
 
     m_ini->setFloat("display_addresses", ui->chkDisplayAddresses->isChecked());
@@ -180,6 +184,8 @@ void DialogTRSESettings::FillToIni()
     m_ini->setFloat("image_painter",ui->cmbPainter->currentIndex());
 
     m_ini->setFloat("auto_inject", ui->chkAutoInject->isChecked()?1:0);
+    m_ini->setFloat("auto_backup", ui->chkBackup->isChecked()?1:0);
+
     m_ini->setString("user_defined_command",ui->leUserDefined->text());
 
     m_ini->setFloat("disable_file_colors", ui->chkDisableFileColors->isChecked()?1:0);
