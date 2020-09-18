@@ -65,7 +65,7 @@ void TRSEDocument::Backup()
     if (!QDir().exists(fileDir))
         QDir().mkdir(fileDir);
 
-    QString fileName = fileDir +QDir::separator()+ "backup_"+ QDateTime::currentDateTime().toString() +".bak";
+    QString fileName = fileDir +QDir::separator()+ "backup_"+ QDateTime::currentDateTime().toString().replace(":","_") +".bak";
 
     Save(fileName);
 
