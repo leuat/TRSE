@@ -67,7 +67,7 @@ void NodeVarType::VerifyFlags(bool isProcedureParameter) {
         }
         if (f=="no_term") {
             // only works for strings
-            if (m_op.m_type!=TokenType::STRING)
+            if (!(m_op.m_type==TokenType::STRING  || m_op.m_type==TokenType::CSTRING))
                 ErrorHandler::e.Error("Type flag 'no_term' is only allowed for strings.",m_op.m_lineNumber);
         }
     }
