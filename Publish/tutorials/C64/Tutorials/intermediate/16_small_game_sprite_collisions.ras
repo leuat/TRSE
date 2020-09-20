@@ -1,0 +1,250 @@
+program SpritesAndHardwareCollision_Game;
+var  
+	// sprite_x is an integer since x values range between 0 and 320
+	sprite_x : integer = 160;
+	sprite_y : byte = 100;
+	// joystick_dir is used to display either left or right-pointing sprite
+	joystick_dir : byte;
+	// sprite location is where we keep the sprite in the memory.
+	// also used for setspriteloc that needs this value divided by 64
+   	@define spriteLoc $2000
+   	// In this tuturial, we use sprite "0" as the default one
+   	const useSprite:byte = 0;
+   	// Sprite "1" is the enemy, "2" target
+   	const useEnemy:byte = 1;
+   	const useTarget:byte = 2;
+   	// Use joystick port 2
+   	const joystickPort: byte = 2;
+   	const useBank:byte = 0;
+   	
+	enemyPlayerCollision : byte = false;
+	// Include the sprite binary file. The original 
+	// image is located under sprites/sprites.flf 
+
+	ii : integer;
+
+	particle = record
+		x,next_x : byte;
+		y,next_y : byte;
+	end;
+	
+	scorePlayer, scoreEnemy : integer = 0;
+
+	cx,cy : signed byte;
+	i, time : byte;
+	enemy : particle;	
+
+// Export all sprites automatically on each build
+@export "resources/sprites/sprites.flf" "resources/sprites/sprites.bin" 256 	  	
+	sprites:incbin("resources/sprites/sprites.bin", @spriteLoc); 
+
+
+// This method initializes the screen
+procedure InitScreen();
+begin
+	screen_bg_col:=purple;
+	screen_fg_col:=black;
+	clearscreen(key_space, screen_char_loc);
+	moveto(0,22,hi(screen_char_loc));
+	printstring("JOYSTICK IN PORT 2 TO MOVE",0,40);
+end;   
+
+
+
+
+procedure GetRandomLocation();
+begin
+	enemy.next_x := mod(random(),160);
+	enemy.next_y := mod(random(),200);	
+	enemy.next_y:=enemy.next_y + 32;
+	ii := enemy.next_x;
+	spritepos(ii*2, enemy.next_y, useTarget);
+	SetSpriteLoc(useTarget, @spriteLoc/64 + 3, useBank);
+
+		
+end;
+
+procedure UpdateText();
+begin
+	moveto(0,24,hi(screen_char_loc));
+	fill(screenmemory,key_space,40); // clear 
+	printstring("PLAYER ",0,40);
+	screenmemory := screenmemory + 7;
+	printdecimal(scorePlayer,2);
+	screenmemory := screenmemory + 10;
+	printstring("ENEMY ",0,40);
+	screenmemory := screenmemory + 7;
+	printdecimal(scoreEnemy,2);
+end;
+
+procedure InitEnemies();
+begin
+	GetRandomLocation();
+	enemy.x := enemy.next_x;
+	enemy.y := enemy.next_y;
+	GetRandomLocation();
+end;
+
+
+// This method initializes the sprites
+procedure InitSprites();
+begin
+	// Set all sprites to be multicolor
+	sprite_multicolor:=$ff;
+	// Set common sprite multicolor #1 
+	sprite_multicolor_reg1:=light_red;
+	// Set  common sprite multicolor #2 
+	sprite_multicolor_reg2:=white;
+	// Set sprite "0" individual color value 
+	sprite_color[useSprite]:=green;
+	sprite_color[useEnemy]:=purple;
+	// Turn on sprite 0 (or @useSprite)
+	togglebit(sprite_bitmask,useSprite,1);
+	togglebit(sprite_bitmask,useEnemy,1);
+	togglebit(sprite_bitmask,useTarget,1);
+end;
+
+
+
+
+procedure UpdateEnemy();
+begin
+	
+	ii := enemy.x;
+	spritepos(ii*2, enemy.y, useEnemy);
+	SetSpriteLoc(useEnemy, @spriteLoc/64 + 2, useBank);
+	cx := enemy.x - enemy.next_x;
+	cy := enemy.y - enemy.next_y;
+	if (abs(cx)<4 and abs(cy)<4) then 
+		GetRandomLocation();
+	if (cx<0) then inc(enemy.x);
+	if (cx>0) then dec(enemy.x);
+	if (cy<0) then inc(enemy.y);
+	if (cy>0) then dec(enemy.y);
+end;
+
+procedure UpdateCollisions();
+begin
+	i := sprite_collision;
+	screen_fg_col:=black; 
+	screen_bg_col:=purple;
+	enemyPlayerCollision := false;
+
+	if (getbit(i,useSprite)) then // Player sprite hit something!
+	begin
+		// Player has collided with something
+		if getbit(i,useTarget) then // Player wins! target hit
+		begin
+			scorePlayer := scorePlayer + 1;
+			PlaySound(sid_channel2, 
+				15,  // Volume
+				20+Random()/16,  // Hi byte frequency
+				0*16+0,  // Attack voice 1
+				6*16 + 8,   // Sustain = 16*15 + release=6
+				1 +sid_tri,  // Waveform
+				sid_tri);  // waveform 
+			GetRandomLocation();
+				
+		end;
+		if (getbit(i,useEnemy)) then // Enemy sprite hit PLAYER!
+		begin
+			// Flashy warning!
+			screen_bg_col:=random()&15;
+			enemyPlayerCollision := true;		
+			if (scorePlayer<>0) then scorePlayer := scorePlayer - 1;
+			// Play some wonky collision music 
+			PlaySound(sid_channel2, 
+				15,  // Volume
+				20+sine[time*8]/2,  // Hi byte frequency
+				0*16+0,  // Attack voice 1
+				3*16 + 3,   // Sustain = 16*15 + release=6
+				1 +sid_tri,  // Waveform
+				sid_tri);  // waveform 
+				
+
+		end;
+
+	end;
+
+	if (getbit(i,useEnemy)) then // Enemy sprite hit something!
+	begin
+		// Player has collided with something
+		if getbit(i,useTarget) then // Enemy wins! target hit
+		begin
+			scoreEnemy := scoreEnemy + 1;
+			// Play enemy sound
+			PlaySound(sid_channel2, 
+				15,  // Volume
+				20+Random()/16,  // Hi byte frequency
+				0*16+0,  // Attack voice 1
+				6*16 + 8,   // Sustain = 16*15 + release=6
+				1 +sid_saw,  // Waveform
+				sid_saw);  // waveform 
+			GetRandomLocation();
+				
+		end;
+	end;
+
+end;
+
+// This method is called one time per raster cycle
+procedure UpdateSprite();
+begin
+	// Update sprite position based on joystick values
+	sprite_x:=sprite_x + joystickright - joystickleft;
+	sprite_y:=sprite_y + joystickdown - joystickup;
+	// Update the sprite position on screen for sprite number @useSprite	
+	SpritePos(sprite_x, sprite_y, useSprite);
+	
+	// Set left/right offset pointer for sprite
+	if (joystickright) then
+		joystick_dir := 1;
+	if (joystickleft) then
+		joystick_dir := 0;
+	
+	// Set the sprite pointer to point to the sprite data + direction offset
+	SetSpriteLoc(useSprite, @spriteLoc/64 + joystick_dir, useBank);
+
+	if (enemyPlayerCollision=false) then
+	if ((joystickright+joystickleft) or (joystickup+joystickdown)) then
+		PlaySound(sid_channel1, 
+				4,  // Volume
+				40+Random()/16,  // Hi byte frequency
+				0*16+0,  // Attack voice 1
+				3*16 + 3,   // Sustain = 16*15 + release=6
+				1 +sid_saw,  // Waveform
+				sid_saw);  // waveform 
+
+
+end;
+
+// This interrupt is triggered one time pr raster cycle
+interrupt MainRaster();
+begin
+	startirq(1);
+	inc(time);
+	// Update joystick here
+	Joystick(joystickPort);
+	// Update sprites
+	UpdateSprite();
+	// Only updated enemy every 2nd frame	
+	if (time&1=1) then 
+		UpdateEnemy()
+	else
+		UpdateText();
+		
+
+
+	UpdateCollisions();
+
+	closeirq();
+end;
+
+// Main program
+begin
+	InitScreen();
+	InitSprites();
+	InitEnemies();
+	StartRasterChain(MainRaster(),0,1);		
+	Loop();
+end.

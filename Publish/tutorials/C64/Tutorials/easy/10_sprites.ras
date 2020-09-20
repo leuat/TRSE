@@ -16,6 +16,8 @@ var
 	// Include the sprite binary file. The original 
 	// image is located under sprites/sprites.flf 
 	  	
+// Export all sprites automatically on each build
+@export "resources/sprites/sprites.flf" "resources/sprites/sprites.bin" 256 	  	
 	sprites:incbin("resources/sprites/sprites.bin", @spriteLoc); 
 
 
