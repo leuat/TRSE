@@ -151,7 +151,8 @@ begin
 			// Flashy warning!
 			screen_bg_col:=random()&15;
 			enemyPlayerCollision := true;		
-			if (scorePlayer<>0) then scorePlayer := scorePlayer - 1;
+			if (time&15=0) then 
+				if (scorePlayer<>0) then scorePlayer := scorePlayer - 1;
 			// Play some wonky collision music 
 			PlaySound(sid_channel2, 
 				15,  // Volume
