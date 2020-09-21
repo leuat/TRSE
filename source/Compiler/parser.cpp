@@ -915,6 +915,14 @@ void Parser::HandlePreprocessorInParsing()
                 Eat();
             return;
         }
+        if (m_currentToken.m_value=="exportcompressed") {
+            Eat();
+            Eat();
+            Eat();
+            while (m_currentToken.m_type==TokenType::INTEGER_CONST)
+                Eat();
+            return;
+        }
         if (m_currentToken.m_value=="exportrgb8palette") {
             Eat();
             Eat();
@@ -2035,6 +2043,10 @@ void Parser::PreprocessSingle() {
               else if (m_currentToken.m_value.toLower() =="export") {
                   Eat(TokenType::PREPROCESSOR);
                   HandleExport();
+              }
+              else if (m_currentToken.m_value.toLower() =="exportcompressed") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleExportCompressed();
               }
               else if (m_currentToken.m_value.toLower() =="macro") {
                   Eat(TokenType::PREPROCESSOR);
@@ -3507,6 +3519,60 @@ void Parser::HandleExport()
 
 
     file.close();
+
+}
+
+void Parser::HandleExportCompressed()
+{
+    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile =m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+
+
+    int x0 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int y0 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int w = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int h = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int c = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    if (!QFile::exists(inFile)) {
+        ErrorHandler::e.Error("File not found : "+inFile,ln);
+    }
+    LImage* img = LImageIO::Load(inFile);
+    img->m_exportParams["StartX"] = x0;
+    img->m_exportParams["EndX"] = w;
+    img->m_exportParams["StartY"] = y0;
+    img->m_exportParams["EndY"] = h;
+    img->m_exportParams["Compression"] = c;
+
+
+
+    QString screenFile = Util::getFileWithoutEnding(outFile) +"_screen.bin";
+    QString charFile = Util::getFileWithoutEnding(outFile) +"_charset.bin";
+
+//    QFile file(outFile);
+
+  //  file.open(QFile::WriteOnly);
+    img->m_silentExport = true;
+    img->ExportCompressed(screenFile, charFile);
+    if (img->m_exportMessage!="")
+        ErrorHandler::e.Warning(img->m_exportMessage);
+
+
+
+//    file.close();
 
 }
 

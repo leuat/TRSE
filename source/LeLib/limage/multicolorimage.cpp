@@ -794,13 +794,16 @@ void MultiColorImage::ExportCompressed(QString f1, QString f2)
     Util::SaveByteArray(screenData, f1);
     Util::SaveByteArray(charData, f2);
 
+    QString s = "Compression level: " +QString::number((int)m_exportParams["Compression"])+"<br>";
+    s+= "Packed image to : "+QString::number(noChars) + " characters";
+    m_exportMessage = s;
+    if (!m_silentExport) {
+        QMessageBox msgBox;
+        msgBox.setText(s);
+        msgBox.exec();
 
-    QMessageBox msgBox;
-    QString s = "Compression used: " +QString::number((int)m_exportParams["Compression"])+"\n\n";
-    s+= "Packed to #chars : "+QString::number(noChars);
+    }
 
-    msgBox.setText(s);
-    msgBox.exec();
 
 
 }

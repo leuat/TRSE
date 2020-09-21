@@ -532,5 +532,6 @@
         <file>resources/images/billboard/b11.png</file>
         <file>resources/images/billboard/b10.png</file>
         <file>resources/images/billboard/b9.png</file>
+        <file>resources/text/help/r/exportcompressed.rtf</file>
     </qresource>
 </RCC>

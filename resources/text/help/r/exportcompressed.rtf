@@ -1,0 +1,36 @@
+<h3>Description</h3>
+<p>Preprocessor that compresses and exports a TRSE image file (.flf) to binary on build.</p>
+<p>Note that this method currently <b>only works on c64/NES/gameboy or other charset-based images</b>
+<h3>Parameters</h3>
+<ul>
+<li>Parameter 0 is the a string of the input file
+<li>Parameter 1 is the a string of the base name of the output file
+<li>Parameter 2 is the a numeric value of the X start position in the charset (0)
+<li>Parameter 3 is the a numeric value of the Y start position in the charset (0)
+<li>Parameter 4 is the a numeric value of the width (40 for full-width on the c64)
+<li>Parameter 5 is the a numeric value of the height (25 for full-width on the c64)
+<li>Parameter 6 is the a numeric value of the compression value that should be used
+</ul>
+The compression value must be tweaked in order to get a charset with less than 256 characters,
+if that is desired.
+<h3>Example</h3>
+For a working example, see tutorial C64/intermediate/17_skull_image_scroll.ras
+<p>
+The follow example will compressed and export a c64 character image from the .flf charset file to two
+binary files : the charset data and the screen data.
+<code>
+program CharsetCompress;
+
+// compression level "7" produces &lt;256 characters for this specific image, so this one is used here
+@exportcompressed "charsets/someSharsetImage.flf" "charsets/someCharsetImage.bin" 0 0 40 25 7
+var
+    charset : incbin("charsets/someCharsetImage_charset.bin",$2000);
+    screen : incbin("charsets/someCharsetImage_screen.bin",$2000);
+
+begin
+    setcharsetlocation($2000);
+    CopyFullscreen(#screen, ^$0400);
+    Loop();
+end.
+</code>
+

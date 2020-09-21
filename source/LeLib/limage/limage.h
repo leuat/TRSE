@@ -110,6 +110,7 @@ public:
     virtual ~LImage() {
         Release();
     }
+    QString m_exportMessage="";
     LImageSupports m_supports;
 
     LImageFooter m_footer;

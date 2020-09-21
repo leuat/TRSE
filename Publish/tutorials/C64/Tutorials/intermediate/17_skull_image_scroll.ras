@@ -1,0 +1,132 @@
+program skull_charset_image;
+var  
+   i: byte; 
+   t2:byte=64;
+   
+/*
+	ExportCompressed takes the follow paramters:
+	X start, Y start, width, height, compression level
+	make sure that the compression level creates a charset that is *lower* than 256, 
+	or you'll be missing some chars!
+
+*/
+
+// Compression 4 seems to fit nicely here, with 246 chars exported
+@exportcompressed "resources/images/skull.flf" "resources/images/skull.bin" 0 0 40 25 4
+
+   image_screen : incbin("resources/images/skull_screen.bin", $3000);
+   image_charset : incbin("resources/images/skull_charset.bin",$2000);
+
+	const screenLoc : address = $4000;
+	zp,p1 : ^byte;
+	xscroll,yscroll,time : byte;
+	siny : 	array[256] of byte = buildtable( "(Math.sin(i/256*3.14159*2)*0x7f + 0x7f)/1.5+30");
+	// fast integer i*80 table for screen lookup
+	ytab : array[50] of integer = buildtable("i*80");
+
+
+
+/*
+
+	Sets up the backbuffer screen by creating a 80x50 black screen, and then filling in
+	the 40x25 image at the center
+	
+*/
+procedure SetupScreen();
+begin
+	zp:=#screenLoc;
+	p1:=#image_screen;
+	for i:=0 to 50 do
+	begin
+		fill(zp,1,20); // first 		
+		zp:=zp+20;
+		if (i>=12 and i<12+25) then
+		begin
+			memcpy(p1,1,zp,40);
+			p1:=p1+40;
+		end
+		else
+			fill(zp,1,40); // middle 		
+			
+		zp:=zp+40;
+		fill(zp,1,20); // first 		
+		zp:=zp+20;
+				
+	end;
+
+end;
+
+/*
+	Copies the data to the screen on each frame
+*/
+
+procedure CopyAll();
+begin
+	for i:=0 to 25 do
+	begin
+		memcpyunroll(zp,0,p1,40);
+		zp:=zp+80;
+		p1:=p1+40;
+	end;
+end;
+
+
+// Called before each new vertical blank irq. Sets up the pointers for copying
+procedure Prepare();
+begin
+	xscroll:=sine[time];
+	yscroll:=siny[t2];
+	hideborderx(1);
+	hidebordery(1);
+
+	zp:=#screenLoc + xscroll/8;
+	zp:=zp +ytab[yscroll/8];
+	p1 := $0400;
+end;
+
+// Updates x and y time counters
+procedure UpdateTime();
+begin
+	inc(time);
+	if (time&1=1) then inc(t2);
+	if (time&7=0) then inc(t2);
+	if (time&15=0) then inc(t2);
+	if (time&31=0) then inc(t2);
+end;
+
+
+
+// Main raster
+interrupt Raster();
+begin
+	startirq(0);
+	// Set scroll registers
+	scrolly(7-yscroll&7);
+	scrollx(7-xscroll&7);
+	// Copy data
+	CopyAll();
+	// Update time
+	UpdateTime();
+	// prepare pointers for next round	
+	Prepare();
+	closeirq();
+end;
+
+begin
+	SetupScreen();
+	setcharsetlocation($2000);
+	setmulticolormode();
+	
+	screen_bg_col:=black;
+	screen_fg_col:=0;
+	screen_fg_col[2]:=dark_grey;
+	screen_fg_col[1]:=grey;
+	clearscreen(white|8,^$D800);
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	Prepare();
+	StartRasterchain(Raster(), 250,0);
+
+
+	loop();
+end.
