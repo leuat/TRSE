@@ -18,7 +18,7 @@ var
    image_charset : incbin("resources/images/skull_charset.bin",$2000);
 
 	const screenLoc : address = $4000;
-	zp,p1 : ^byte;
+	zp,p1,p2 : ^byte;
 	xscroll,yscroll,time : byte;
 	siny : 	array[256] of byte = buildtable( "(Math.sin(i/256*3.14159*2)*0x7f + 0x7f)/1.5+30");
 	// fast integer i*80 table for screen lookup
@@ -32,7 +32,7 @@ var
 	the 40x25 image at the center
 	
 */
-procedure SetupScreen();
+/*procedure SetupScreen();
 begin
 	zp:=#screenLoc;
 	p1:=#image_screen;
@@ -52,6 +52,33 @@ begin
 		fill(zp,1,20); // first 		
 		zp:=zp+20;
 				
+	end;
+
+end;
+*/
+
+procedure SetupScreen();
+begin
+	zp:=#screenLoc;;
+	p1:=#image_screen + 12*40;
+	p2:=#image_screen;
+	for i:=0 to 75 do
+	begin
+		//fill(zp,1,20); // first 		
+		memcpy(p2,0,zp,40); // first image
+		zp:=zp+40;
+	
+		
+		memcpy(p1,0,zp,40); // cneter
+		zp:=zp+40;
+		
+		p2:=p2+40;
+		p1:=p1+40;		
+
+		if (i=24) then p2:=#image_screen;				
+		if (i=49) then p2:=#image_screen;				
+		if (i=12) then p1:=#image_screen;				
+		if (i=12+25) then p1:=#image_screen;				
 	end;
 
 end;
@@ -89,9 +116,6 @@ procedure UpdateTime();
 begin
 	inc(time);
 	if (time&1=1) then inc(t2);
-	if (time&7=0) then inc(t2);
-	if (time&15=0) then inc(t2);
-	if (time&31=0) then inc(t2);
 end;
 
 
