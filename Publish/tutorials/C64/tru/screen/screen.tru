@@ -1,0 +1,48 @@
+Unit Screen;
+
+/*
+
+	Library for char-based screen handling
+
+*/
+
+var
+   	p1, sp, cp : pointer;
+	i, j, x, y, c : byte;
+
+
+procedure PrintCStringColor(p1 : global pointer; x, y, c : global byte);
+begin
+	sp := #screen_char_loc + y*screen_width + x;
+	cp := $D800 + y*screen_width + x;
+	
+	while (p1^<>0) do
+	begin	
+		sp^ := p1^;
+		cp^ := c;
+		// Advance poiters
+		sp := sp + 1;
+		cp := cp + 1;
+		p1 := p1 +1;
+	end;
+end;
+
+procedure PrintStringColor(p1 : global pointer; x, y, c : global byte);
+begin
+	sp := #screen_char_loc + y*screen_width + x;
+	cp := $D800 + y*screen_width + x;
+	
+	while (p1^<>0) do
+	begin	
+		j := p1^;
+		if (j>64) then j:=j-64;
+		sp^ := j;
+		cp^ := c;
+		// Advance poiters
+		sp := sp + 1;
+		cp := cp + 1;
+		p1 := p1 +1;
+	end;
+end;
+
+end.

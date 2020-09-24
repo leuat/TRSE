@@ -25,36 +25,11 @@ var
 	ytab : array[50] of integer = buildtable("i*80");
 
 
-
 /*
 
-	Sets up the backbuffer screen by creating a 80x50 black screen, and then filling in
-	the 40x25 image at the center
+	Sets up the backbuffer screen by creating a 80x50 buffer with 
+	4x offset copies of the 40x25 screen data
 	
-*/
-/*procedure SetupScreen();
-begin
-	zp:=#screenLoc;
-	p1:=#image_screen;
-	for i:=0 to 50 do
-	begin
-		fill(zp,1,20); // first 		
-		zp:=zp+20;
-		if (i>=12 and i<12+25) then
-		begin
-			memcpy(p1,1,zp,40);
-			p1:=p1+40;
-		end
-		else
-			fill(zp,1,40); // middle 		
-			
-		zp:=zp+40;
-		fill(zp,1,20); // first 		
-		zp:=zp+20;
-				
-	end;
-
-end;
 */
 
 procedure SetupScreen();
@@ -62,7 +37,7 @@ begin
 	zp:=#screenLoc;;
 	p1:=#image_screen + 12*40;
 	p2:=#image_screen;
-	for i:=0 to 75 do
+	for i:=0 to 50 do
 	begin
 		//fill(zp,1,20); // first 		
 		memcpy(p2,0,zp,40); // first image
@@ -75,10 +50,8 @@ begin
 		p2:=p2+40;
 		p1:=p1+40;		
 
-		if (i=24) then p2:=#image_screen;				
-		if (i=49) then p2:=#image_screen;				
-		if (i=12) then p1:=#image_screen;				
-		if (i=12+25) then p1:=#image_screen;				
+		if (i=24 or i=24+25) then p2:=#image_screen;				
+		if (i=12 or i=12+25) then p1:=#image_screen;				
 	end;
 
 end;

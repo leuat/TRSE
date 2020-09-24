@@ -1,0 +1,14 @@
+program MyProgram;
+@use "screen/screen"
+var  
+   i: byte; 
+
+	ctext : cstring = ("THIS IS A CSTRING");
+
+begin
+	// Prints regular strings
+	Screen::PrintStringColor("THIS IS A DIRECT STRING",5,8,0);	
+	// Prints regular strings
+	Screen::PrintCStringColor(#ctext,5,12,1);	
+	Loop();
+end.
