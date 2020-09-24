@@ -55,8 +55,8 @@ begin
 	// clear fire pressed from game over
 	readjoy1();
 
-	decrunchfromindex(packedScreens,2);	// chars for title screen
-	decrunchfromindex(packedScreens,0);	// title screen
+	decrunchfromindex(#packedScreens,2);	// chars for title screen
+	decrunchfromindex(#packedScreens,0);	// title screen
 	ColourTitleScreen();
 
 	SetupMusic(); // reset music vars
@@ -107,8 +107,8 @@ end;
 procedure TitleCredits();
 begin
 
-	decrunchfromindex(packedScreens,31);	// chars
-	decrunchfromindex(packedScreens,32);	// screen
+	decrunchfromindex(#packedScreens,31);	// chars
+	decrunchfromindex(#packedScreens,32);	// screen
 	ColourCreditsScreen();
 
 	t := 10;
@@ -123,8 +123,8 @@ end;
 procedure TitleStory();
 begin
 
-	decrunchfromindex(packedScreens,1);	// chars for game
-	decrunchfromindex(packedScreens,8);	// story screen
+	decrunchfromindex(#packedScreens,1);	// chars for game
+	decrunchfromindex(#packedScreens,8);	// story screen
 	ColourTitleScreen2();
 
 	t := 20;
@@ -139,8 +139,8 @@ end;
 procedure TitleStory2();
 begin
 
-	decrunchfromindex(packedScreens,1);	// chars for game
-	decrunchfromindex(packedScreens,11);	// story screen 2
+	decrunchfromindex(#packedScreens,1);	// chars for game
+	decrunchfromindex(#packedScreens,11);	// story screen 2
 	ColourTitleScreen2();
 
 	t := 20;
@@ -157,8 +157,8 @@ begin
 
 	BlankScreen();
 
-	decrunchfromindex(packedScreens,1);	// chars for game
-	decrunchfromindex(packedScreens,9);	// cast screen
+	decrunchfromindex(#packedScreens,1);	// chars for game
+	decrunchfromindex(#packedScreens,9);	// cast screen
 	ColourTitleScreen2();
 	
 	t := 20;
@@ -175,8 +175,8 @@ begin
 
 	BlankScreen();
 
-	decrunchfromindex(packedScreens,1);	// chars for game
-	decrunchfromindex(packedScreens,10);	// How to play screen
+	decrunchfromindex(#packedScreens,1);	// chars for game
+	decrunchfromindex(#packedScreens,10);	// How to play screen
 	ColourTitleScreen2();
 	
 	t := 20;
@@ -193,8 +193,8 @@ begin
 
 	BlankScreen();
 	
-	decrunchfromindex(packedScreens,1);	// chars for game
-	decrunchfromindex(packedScreens,30);	// How to play screen
+	decrunchfromindex(#packedScreens,1);	// chars for game
+	decrunchfromindex(#packedScreens,30);	// How to play screen
 	
 	screenmemory := addresstable(#scr, 7, 12);
 	bcdprint(#score, 4);
@@ -214,9 +214,9 @@ begin
 
 	BlankScreen();
 
-	decrunchfromindex(packedScreens,1);	// charset for game
-	decrunchfromindex(packedScreens,3);	// level start screen
-	decrunchfromindex(packedScreens,14);	// header
+	decrunchfromindex(#packedScreens,1);	// charset for game
+	decrunchfromindex(#packedScreens,3);	// level start screen
+	decrunchfromindex(#packedScreens,14);	// header
 	ColourScreen();
 	ColourHeader();
 
@@ -362,8 +362,8 @@ begin
 
 	BlankScreen();
 	
-	decrunchfromindex(packedScreens,12);	// chars for screen
-	decrunchfromindex(packedScreens,13);	// screen map
+	decrunchfromindex(#packedScreens,12);	// chars for screen
+	decrunchfromindex(#packedScreens,13);	// screen map
 	ColourFailScreen();
 
 	SCREEN_BG_COLOR := SCREEN_BG_BLACK;
@@ -380,8 +380,8 @@ begin
 
 	BlankScreen();
 	
-	decrunchfromindex(packedScreens,4);	// chars for screen
-	decrunchfromindex(packedScreens,6);	// screen map
+	decrunchfromindex(#packedScreens,4);	// chars for screen
+	decrunchfromindex(#packedScreens,6);	// screen map
 	ColourGameOverScreen();
 
 	SCREEN_BG_COLOR := SCREEN_BG_BLACK;
@@ -400,8 +400,8 @@ begin
 
 	BlankScreen();
 	
-	decrunchfromindex(packedScreens,5);	// chars for screen
-	decrunchfromindex(packedScreens,7);	// screen map
+	decrunchfromindex(#packedScreens,5);	// chars for screen
+	decrunchfromindex(#packedScreens,7);	// screen map
 	ColourGameWonScreen();
 
 	SCREEN_BG_COLOR := SCREEN_BG_BLACK;
@@ -420,8 +420,8 @@ begin
 
 	BlankScreen();
 	
-	decrunchfromindex(packedScreens,28);	// chars for screen
-	decrunchfromindex(packedScreens,29);	// screen map
+	decrunchfromindex(#packedScreens,28);	// chars for screen
+	decrunchfromindex(#packedScreens,29);	// screen map
 	ColourGameNextScreen();
 
 	SCREEN_BG_COLOR := SCREEN_BG_BLACK;

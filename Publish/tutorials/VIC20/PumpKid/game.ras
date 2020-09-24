@@ -104,8 +104,8 @@ begin
 	BlankScreen();
 
 	// draw screen
-	decrunchfromindex(packedScreens,level+15); // level
-	decrunchfromindex(packedScreens,14); // header
+	decrunchfromindex(#packedScreens,level+15); // level
+	decrunchfromindex(#packedScreens,14); // header
 	ColourScreen();
 	ColourHeader();
 	
