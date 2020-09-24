@@ -32,6 +32,12 @@ QSharedPointer<SymbolTable>  Node::parserSymTab;
 
 //QMap<QSharedPointer<Node>, QSharedPointer<Node>> Node::s_uniqueSymbols;
 
+void Node::SwapNodes() {
+    QSharedPointer<Node> n = m_left;
+    m_left = m_right;
+    m_right = n;
+}
+
 void Node::DispatchConstructor(Assembler *as) {
     //        m_blockInfo = m_staticBlockInfo;s
     m_currentLineNumber = m_op.m_lineNumber;

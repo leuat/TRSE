@@ -60,6 +60,9 @@ public:
 
     QSharedPointer<Node> m_left = nullptr;
     QSharedPointer<Node> m_right = nullptr;
+
+    void SwapNodes();
+
     bool m_isWord = false;
     static MemoryBlockInfo m_staticBlockInfo;
     static QSharedPointer<MemoryBlock> m_curMemoryBlock;

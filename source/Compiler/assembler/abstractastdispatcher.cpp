@@ -250,6 +250,24 @@ void AbstractASTDispatcher::HandleCompoundBinaryClause(QSharedPointer<Node> node
 {
     //    QSharedPointer<NodeBinaryClause> bc = qSharedPointerDynamicCast<NodeBinaryClause>(node);
     if (!node->isCompoundClause()) { // IS LEAF
+
+        // Flip A and B if B is complex and A is pure
+        if (node->m_left->isPure() && !node->m_right->isPure()) {
+            node->SwapNodes();
+            if (node->m_op.m_type == TokenType::GREATER)
+                node->m_op.m_type = TokenType::LESS;
+            else
+                if (node->m_op.m_type == TokenType::LESS)
+                    node->m_op.m_type = TokenType::GREATER;
+                else
+            if (node->m_op.m_type == TokenType::LESSEQUAL)
+                node->m_op.m_type = TokenType::GREATEREQUAL;
+            else
+            if (node->m_op.m_type == TokenType::GREATEREQUAL)
+                node->m_op.m_type = TokenType::LESSEQUAL;
+            as->Comment("Swapped comparison expressions");
+        }
+
         BuildSimple(node,  lblSuccess, lblFailed, offpage);
         return;
     }
