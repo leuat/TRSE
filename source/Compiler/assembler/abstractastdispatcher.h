@@ -126,6 +126,8 @@ public:
 
     void LineNumber(int ln);
 
+    virtual void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) {}
+
 
 public:
 signals:

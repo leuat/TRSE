@@ -190,6 +190,8 @@ public:
 //    void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign>node);
 
 
+    void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) override;
+
 
 
     QString getReturn() override { return "rts";}

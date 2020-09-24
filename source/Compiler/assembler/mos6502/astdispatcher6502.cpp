@@ -3041,6 +3041,38 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
     return;
 }
 
+void ASTDispatcher6502::OptimizeBinaryClause(QSharedPointer<Node> node, Assembler* as)
+{
+    if (node->m_left->isWord(as)) // no word optimizations.. yet
+        return;
+
+//    return;
+    if (node->m_right->isPureNumeric()) {
+        // is numeric
+        //   a >= N+1  is better than a > N
+        int val = node->m_right->getValueAsInt(as);
+        if (node->m_op.m_type == TokenType::GREATER && val!=255) {
+            node->m_op.m_type = TokenType::GREATEREQUAL;
+            Token t = node->m_right->m_op;
+            t.m_intVal = val+1;
+            // Replace with N+1
+            node->m_right = QSharedPointer<NodeNumber>(new NodeNumber(t,t.m_intVal));
+            as->Comment("Optimization: replacing a > N with a >= N+1");
+            return;
+       }
+        if (node->m_op.m_type == TokenType::LESSEQUAL && val!=0 && val!=255) {
+            as->Comment("Optimization: replacing a <= N with a <= N-1");
+            node->m_op.m_type = TokenType::LESS;
+            Token t = node->m_right->m_op;
+            t.m_intVal = val+1;
+            // Replace with N+1
+            node->m_right = QSharedPointer<NodeNumber>(new NodeNumber(t,t.m_intVal));
+            return;
+       }
+
+    }
+}
+
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeUnaryOp> node)
 {
     node->DispatchConstructor(as);
