@@ -52,6 +52,10 @@ public:
 
 //    virtual void getEmulatorAndParams(QString emulator, QStringList params) = 0;
 
+
+    virtual QString CompressFile(QString fileName) {
+        return fileName;
+    }
     int m_memoryType = 0;
     QVector<SystemLabel> m_labels;
     int m_memorySize = 65536;

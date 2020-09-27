@@ -54,39 +54,14 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
         m_buildSuccess = false;
         return;
     }
+    if (m_buildSuccess) {
+        text +="<br>Assembled file size: <b>" + QString::number(QFileInfo(filename+".bin").size()) + "</b> bytes";
+    }
+
     output+="<br>";
-/*
-    // Temporary solution
-    QString fn = filename;
-    fn = fn.remove(currentDir).remove("/");
-    QProcess* pr = new QProcess();
-#ifdef _WIN32
-    QStringList ps = QStringList()                 << "-File"<< ( fn+".bin")
-                                                   <<"-AddAmsdosHeader"<< "6000"
-                                                   <<"-AddToNewDsk"<< fn+".dsk";
 
-    pr->setWorkingDirectory(currentDir);
-    pr->start(m_settingsIni->getString("cpcdisk_location"), ps);
-#else
-
-    QStringList ps = QStringList()                  <<m_settingsIni->getString("cpcdisk_location")
-                                                   << "-File"<< ( fn+".bin")
-                                                   <<"-AddAmsdosHeader"<< "6000"
-                                                   <<"-AddToNewDsk"<< fn+".dsk";
-
-    pr->setWorkingDirectory(currentDir);
-    pr->start("wine", ps);
-#endif
-    pr->waitForFinished();
-*/
-//    qDebug() <<     fn+".dsk";
-  //  Util::CopyFile(fn+".dsk",fn+"2.dsk");
-    //Util::CopyFile(fn+"2.dsk",fn+".dsk");
-
-//    int assembleTime = timer.elapsed()- time;
     time = timer.elapsed();
 
-    //    qDebug() << "*********" << output;
 
     text+=output;
 

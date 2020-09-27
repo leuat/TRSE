@@ -4,7 +4,8 @@ var
 	screen : pointer of integer;
 	// Music is a sample .ym song from Arkos Tracker II 
 	// Download from https://www.julien-nevo.com/arkostracker/ . Export as ".ym" file, load in TRSE!
-	ym_file : incbin("music/test1.ym");
+//	ym_file : incbin("music/test1.ym");
+	ym_file : incbin("music/maze.ym");
 	
 	@export "images/image1.flf" "images/image1.bin" 256
 	

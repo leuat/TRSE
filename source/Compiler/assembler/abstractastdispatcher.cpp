@@ -14,6 +14,7 @@
 #include "source/Compiler/ast/nodeunaryop.h"
 #include "source/Compiler/assembler/abstractmethods.h"
 #include "source/Compiler/assembler/factorymethods.h"
+#include "source/LeLib/util/fc8/FC8Compression.h"
 
 AbstractASTDispatcher::AbstractASTDispatcher()
 {
@@ -642,6 +643,10 @@ void AbstractASTDispatcher::IncBin(QSharedPointer<NodeVarDecl> node) {
         size = f.size();  //when file does open.
         f.close();
     }
+
+    if (t->m_flags.contains("compressed"))
+        filename = Syntax::s.m_currentSystem->CompressFile(filename);
+
 
 
     if (t->m_position=="") {

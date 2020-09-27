@@ -185,6 +185,7 @@ begin
 	end
 	else
 		screenmemory:=$0400;
+		
 	for j:=a to b do begin
 		cc:=shifts[(3-j+curCol)&3];		
 		cc:=cc&63;

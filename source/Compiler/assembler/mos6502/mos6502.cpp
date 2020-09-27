@@ -739,6 +739,7 @@ void AsmMOS6502::Optimise(CIniFile& ini)
         OptimisePassLdx("y");
 
 
+
     if (ini.getdouble("post_optimizer_passlda")==1)
 
         OptimisePassLdx("a");
@@ -869,7 +870,7 @@ void AsmMOS6502::OptimisePassLdx(QString x)
                     // Changex in x
                     if (x=="x" || x=="y")
                     if (op==("ld"+x) || op==("ta"+x) || op=="jmp" || op=="rts" || op=="jsr" ||
-                            op==("in" +x) || op==("de"+x)|| op.length()!=3 )
+                            op==("in" +x) || op==("de"+x)|| op.length()!=3)
 //                        op==("in" +x) || op==("de"+x)|| op==("sta")|| op.length()!=3 ) {
 //                        qDebug() << "Done because: " << l1;
                         done=true;
@@ -877,6 +878,16 @@ void AsmMOS6502::OptimisePassLdx(QString x)
                     // ldx i
                     // inc i
                     // ldx i
+
+                    if (x=="a") {
+                        if (l0.contains(",y"))
+                            if (op == "iny" || op == "ldy")
+                                done = true;
+                        if (l0.contains(",x"))
+                            if (op == "inx" || op == "ldx")
+                                done = true;
+                    }
+
                     if ((x=="x" || x=="y" )) {
                         if (op=="inc" || op=="dec" || op=="sta") {
                             if (op2==value)

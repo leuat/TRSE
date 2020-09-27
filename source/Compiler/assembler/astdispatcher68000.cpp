@@ -1209,7 +1209,6 @@ void ASTDispatcher68000::IncBin(QSharedPointer<NodeVarDecl> node) {
   //      if (Util::fileChanged(filename) || !QFile(old).exists())
             fc.Encode(old,filename);
 //        else qDebug() << "Ignoring compressing " << old;
-
     }
 
 

@@ -234,8 +234,6 @@ begin
 	else
 		UpdateText();
 		
-
-
 	UpdateCollisions();
 
 	closeirq();

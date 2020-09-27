@@ -79,6 +79,7 @@ begin
 			push de ; use as HL on stack
 			; de and b won't be modified at all
 			ld de,$1000 ; d = 16 hi bit = 16*$100 = $800*2
+;			ld de,$FFF ; d = 16 hi bit = 16*$100 = $800*2
 			ld b,0
 			ld iy,siny
 
