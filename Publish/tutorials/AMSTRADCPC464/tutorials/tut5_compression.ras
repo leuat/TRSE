@@ -1,0 +1,44 @@
+program Tutorial5_compression;
+@use "crtc"
+@use "input"
+@use "compression"
+
+@export "resources/images/image1.flf" "resources/images/image1.bin" 256
+@export "resources/images/image3.flf" "resources/images/image2.bin" 256
+
+var  
+	// By adding the "compressed" flag, the resource will automatically be compressed and included
+	image1 : incbin("resources/images/image1.bin") compressed;
+	palette1 : incbin("resources/images/image1_palette.bin");
+	image2 : incbin("resources/images/image2.bin") compressed;
+	palette2 : incbin("resources/images/image2_palette.bin");
+	j, k : byte;
+
+procedure Sleep(sl : byte);
+begin
+	for k:=0 to sl do
+		for j:=0 to 255 do
+			wait(30);
+
+end;
+
+begin
+	
+	crtc::SetMode(0);
+	crtc::SetBorder(0);
+	while (true) do
+	begin
+		crtc::SetPalette(palette1);
+		// Decompress first image directly to the screen
+		Compression::Decompress(#image1, screen);
+		// wait a bit
+		Sleep(30);		
+		crtc::SetPalette(palette2);
+		// Decompress second image
+		Compression::Decompress(#image2, screen);
+		Sleep(30);		
+	end;
+		
+	Loop();
+
+end.
