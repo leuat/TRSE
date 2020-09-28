@@ -2,7 +2,7 @@ program TRSE_LZ4_Compression;
 @use "compression/compression"
 var
 /*
-	TRSE has since version 0.11.3 a built-in lossless LZ4 compression system for 
+	TRSE has since version 0.11.3 got a built-in lossless LZ4 compression system for 
 	the 6502, Z80 and M68K systems. 
 	
 	You compress a resource automatically by adding the "compressed" flag to an 
@@ -20,9 +20,12 @@ var
 	
 	@export "resources/images/octopus2.flf" "resources/images/octopus2.bin" 256
 	@export "resources/images/cat.flf" "resources/images/cat.bin" 256
+	@export "resources/images/paint.flf" "resources/images/paint.bin" 256
 	
 // Put the two images at $8000
 @startblock $8000 "Data"
+	image3_color: IncBin("resources/images/paint_color.bin") compressed;
+	image3_data: IncBin("resources/images/paint_data.bin") compressed;
 	image1_color: IncBin("resources/images/octopus2_color.bin") compressed;
 	image1_data: IncBin("resources/images/octopus2_data.bin") compressed;
 	image2_color: IncBin("resources/images/cat_color.bin") compressed;
@@ -58,6 +61,8 @@ begin
 	// Turn off multicolor if you want hires! 
 	setmulticolormode();
 	setbitmapmode();
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
 	screen_fg_col:=black;
 	screen_bg_col:=black;
 	// Set data pointer to $6000
@@ -68,5 +73,6 @@ begin
 	begin
 		SetupImage(#image1_data, #image1_color);		
 		SetupImage(#image2_data, #image2_color);		
+		SetupImage(#image3_data, #image3_color);		
 	end;
 end.

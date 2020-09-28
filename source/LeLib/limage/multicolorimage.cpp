@@ -370,34 +370,6 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
             color.setGreen(min((float)pow(color.green(),gamma) + bayer4x4(xp % size,yp % size),255.0f));
             color.setBlue(min((float)pow(color.blue(),gamma) + bayer4x4(xp % size,yp % size),255.0f));
 
-        //    if (rand()%100>98)
-         //       qDebug() << "WINNER : " <<Util::numToHex(winner) << newPixel;
-            //int c = m_colorList.getIndex(newPixel);
-
-            // Then finally: get max closest colours
-
-/*            int sz = 4;
-            for (int i=0;i<16;i++) hist[i]=QPoint(0,i);
-            for (int y2=0;y2<sz;y2++) {
-                for (int x2=0;x2<sz;x2++) {
-                    int c;
-                    int xx = (x2-sz/2+x-img.width()/2)*m_importScaleX + img.width()/2;
-                    int yy = (y2-sz/2+y-img.height()/2)*m_importScaleY + img.height()/2;
-                    QColor color = QColor(img.pixel(xx,yy));
-                    colors.getClosestColor(color, c);
-                     hist[c].setX(hist[c].x()+1);
-                }
-
-            }
-            qSort(hist.begin(), hist.end(), compareHist);
-//            PixelChar& pc = getPixelChar(x,y);
-
-
-            int winner = 0;
-            QColor newPixel = colors.getClosestColor(color, winner);
-            if (hist[0].y()==winner || hist[1].y()==winner || hist[2].y()==winner || hist[3].y()==winner)
-                setPixel(x,y,winner);
-*/
             int winner = 0;
             QColor newPixel = colors.getClosestColor(color, winner);
 //            PixelChar& pc = getPixelChar(x,y);

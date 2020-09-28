@@ -280,8 +280,6 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
     QMatrix4x4 bayer4x4 = QMatrix4x4(0,8,2,10,  12,4,14,6, 3,11,1,9, 15,7,13,5);
     bayer4x4 = bayer4x4*1/16.0*strength.x();
 
-    int sizex = size;
-    int sizey = size;
 
     for (int y=0;y<height;y++) {
         for (int x=0;x<width;x++) {
@@ -293,13 +291,11 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
 
 
             QColor color = QColor(img.pixel(xx,yy));
-            int yp = yy + xx%(int)strength.y();
-            int xp = xx + yy%(int)strength.z();
-            xp=xp&3;
-            yp=yp&3;
-            color.setRed(min((float)pow(color.red(),gamma) + bayer4x4(xp % sizex,yp % sizey),255.0f));
-            color.setGreen(min((float)pow(color.green(),gamma) + bayer4x4(xp % sizex,yp % sizey),255.0f));
-            color.setBlue(min((float)pow(color.blue(),gamma) + bayer4x4(xp % sizex,yp % sizey),255.0f));
+            int yp = y + x%(int)strength.y();
+            int xp = x + y%(int)strength.z();
+            color.setRed(min((float)pow(color.red(),gamma) + bayer4x4(xp % size,yp % 2),255.0f));
+            color.setGreen(min((float)pow(color.green(),gamma) + bayer4x4(xp % size,yp % 2),255.0f));
+            color.setBlue(min((float)pow(color.blue(),gamma) + bayer4x4(xp % size,yp % 2),255.0f));
 
             int winner = 0;
             QColor newPixel = colors.getClosestColor(color, winner);
@@ -311,6 +307,8 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
 
 
 }
+
+
 
 void LImage::InitPens() {
 
