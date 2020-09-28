@@ -16,7 +16,6 @@ begin
 	crtc::SetPalette(palette);
 	// Copy image to screen 
 	memcpy(#image, screen, $4000);
-	
 	Loop();
 
 end.

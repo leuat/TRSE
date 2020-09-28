@@ -11,7 +11,7 @@ class SystemMOS6502 : public AbstractSystem
 {
 public:
     SystemMOS6502(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : AbstractSystem(settings, proj) {
-        m_allowedGlobalTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term";
+        m_allowedGlobalTypeFlags << "compressed"<<"pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term";
         m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"global";
 
 
@@ -32,6 +32,11 @@ public:
     bool BuildDiskFiles(QString currentDir, QStringList& d64Params, QString iniData);
 
     void DefaultValues() override;
+
+    QString CompressFile(QString fileName) override
+    {
+        return CompressLZ4(fileName);
+    }
 
 
 };

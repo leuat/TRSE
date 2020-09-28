@@ -533,5 +533,6 @@
         <file>resources/images/billboard/b10.png</file>
         <file>resources/images/billboard/b9.png</file>
         <file>resources/text/help/r/exportcompressed.rtf</file>
+        <file>resources/code/Z80/memcpy.asm</file>
     </qresource>
 </RCC>

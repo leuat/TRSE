@@ -9,10 +9,6 @@ procedure Decompress(in, out : global pointer of integer);
 begin
 
 	asm("
-; hl' compressed data adress
-; de' negative lenght of outputed data (set -256 to output 256 bytes)
-; de  output adress of data
-;
 ; HL - pointer to the buffer with compressed source data
 ; DE - pointer to the destination buffer for decompressed data
 ; BC - size of the compressed data

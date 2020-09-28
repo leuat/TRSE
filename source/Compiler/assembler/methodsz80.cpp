@@ -265,6 +265,19 @@ void MethodsZ80::MemCpy(Assembler *as, bool isCont)
 /*    ; hl - source address
     ; de - destination
     ; bc - size*/
+
+    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::GAMEBOY) {
+
+        LoadAddress(as,1,"de");
+        as->Term();
+        LoadAddress(as,0,"hl");
+        as->Term();
+        LoadVar(as,2,"bc");
+        as->Asm("call z80_copy_mem");
+        return;
+    }
+
+
     QString lblCopy = "."+as->NewLabel("copy");
     QString lblSkip = "."+as->NewLabel("skip");
     as->ClearTerm();

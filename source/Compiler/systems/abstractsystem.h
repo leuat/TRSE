@@ -52,6 +52,8 @@ public:
 
 //    virtual void getEmulatorAndParams(QString emulator, QStringList params) = 0;
 
+    QString CompressLZ4(QString fileName);
+
 
     virtual QString CompressFile(QString fileName) {
         return fileName;

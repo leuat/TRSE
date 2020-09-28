@@ -35,6 +35,10 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
     }
 
 
+    // Init default stuff
+
+
+
 }
 
 void CompilerZ80::Connect()
@@ -43,6 +47,9 @@ void CompilerZ80::Connect()
 
     m_assembler->EndMemoryBlock();
     m_assembler->Connect();
+
+    m_assembler->IncludeFile(":resources/code/Z80/memcpy.asm");
+
 
     if (Syntax::s.m_currentSystem->m_system != AbstractSystem::COLECO)
         m_assembler->Asm("end "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
@@ -58,6 +65,7 @@ void CompilerZ80::Connect()
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC464) {
 //        m_assembler->IncludeFile(":resources/code/amstrad/playerakg.asm");
     }
+
 
 
 
