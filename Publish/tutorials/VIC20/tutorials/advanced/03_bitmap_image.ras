@@ -31,7 +31,7 @@ const charsetAndBitmap:address = $1400;
 @startblock $2600 Code
 
 // Copy color data from bitmap data
-procedure CopyImageColor(image_data : pointer);
+procedure CopyImageColor();
 begin
 	zp:=#charsetAndBitmap + imageWidth*imageHeight*8;
 //	

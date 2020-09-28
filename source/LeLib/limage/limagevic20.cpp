@@ -46,7 +46,7 @@ LImageVIC20::LImageVIC20(LColorList::Type t)  : CharsetImage (t)
     SetColor(5,3);
 
     m_exportParams["Start"] = 0;
-    m_exportParams["End"] = std::min(m_charWidth*m_charHeight,192*2);
+    m_exportParams["End"] = std::min(m_charWidth*m_charHeight,256*2);
     m_exportParams["IncludeColors"] = 1;
 
 
@@ -115,7 +115,7 @@ void LImageVIC20::LoadBin(QFile& file)
     m_width = 8*m_charWidth;
     m_height = 8*m_charHeight;
 
-    m_exportParams["End"] = std::min(m_charWidth*m_charHeight,192*2);
+    m_exportParams["End"] = m_charWidth*m_charHeight;
 
     m_exportParams["StartX"] = 0;
     m_exportParams["EndX"] = m_charWidth;
@@ -131,7 +131,7 @@ void LImageVIC20::setPixel(int x, int y, unsigned int color)
     int dx = x/(8/m_scale);
     int dy = y/8;
     int i = dx + m_charWidth*dy;
-    if (i>m_charHeight*m_charWidth || i>=192*2 || i<0)
+    if (i>m_charHeight*m_charWidth || i>=256*2 || i<0)
         return;
 
     CharsetImage::setPixel(x,y,color);
@@ -158,21 +158,22 @@ void LImageVIC20::ToRaw(QByteArray &arr)
                 arr.append(PixelChar::reverse(PixelChar::VIC20Swap(pc2.p[k])));
         }
     }
-    if (m_exportParams["IncludeColors"] != 0) {
+  /*  if (m_exportParams["IncludeColors"] != 0) {
         QByteArray cols;
         cols.resize(size);
 
         //m_extraCols[0]=m_background;
 
-
+//        qDebug() << "START END "<<start << end << size;
         for (int i=start;i<end;i++) {
             PixelChar& pc = m_data[i];
-            uchar v = getVariableColor(&pc);
+            uchar v = pc.c[3];//getVariableColor(&pc);
+
             if (v==255)v=0;
-            cols[(i-start)] = (v & 7) +8;
+            cols[(i-start)] = (v & 7) |8;
         }
         arr.append(cols);
-    }
+    }*/
 }
 
 QString LImageVIC20::getMetaInfo()
@@ -183,8 +184,8 @@ QString LImageVIC20::getMetaInfo()
     m_charHeight = getMetaParameter("screen_height")->value;
     int chars = m_charWidth*m_charHeight/2;
     txt+= "Chars (8x16) used: " + QString::number(chars) +"\n";
-    if (chars>192)
-        txt+= "WARNING more than 192 chars! Will be truncated. \n";
+//    if (chars>192)
+  //      txt+= "WARNING more than 192 chars! Will be truncated. \n";
 
     txt+= "Data size: " + QString::number(m_charWidth*m_charHeight*8) + " bytes\n";
     txt+= "Color size: " + QString::number(m_charWidth*m_charHeight) + " bytes\n";
@@ -193,5 +194,23 @@ QString LImageVIC20::getMetaInfo()
 
 
     return txt;
+}
+
+void LImageVIC20::Color2Raw(QByteArray &ba, int ys)
+{
+    char mc = 0;
+    if (isMultiColor())
+        mc = 8;
+    for (int y=0;y<m_charHeight;y+=ys)
+    for (int x=0;x<m_charWidth;x++)
+        ba.append(m_data[y*m_charWidth + x].c[3] | mc);
+
+}
+
+void LImageVIC20::FixUp(QByteArray &ba) {
+    for (int i=0;i<ba.count();i++) {
+        ba[i] = PixelChar::reverse(PixelChar::VIC20Swap(PixelChar::reverse(ba[i])));
+
+    }
 }
 

@@ -2256,6 +2256,7 @@ void FormImageEditor::on_btnExportCompressed_clicked()
 
     QString f1 = fileName + "_screen.bin";
     QString f2 = fileName + "_charset.bin";
+    QString f3 = fileName + "_color.bin";
 
     if (QFile::exists(f1))
         QFile::remove(f1);
@@ -2263,8 +2264,11 @@ void FormImageEditor::on_btnExportCompressed_clicked()
     if (QFile::exists(f2))
         QFile::remove(f2);
 
+    if (QFile::exists(f3))
+        QFile::remove(f3);
 
-    m_work.m_currentImage->m_image->ExportCompressed(f1,f2);
+
+    m_work.m_currentImage->m_image->ExportCompressed(f1,f2,f3);
 
 
 }

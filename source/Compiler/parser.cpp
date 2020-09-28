@@ -3561,12 +3561,13 @@ void Parser::HandleExportCompressed()
 
     QString screenFile = Util::getFileWithoutEnding(outFile) +"_screen.bin";
     QString charFile = Util::getFileWithoutEnding(outFile) +"_charset.bin";
+    QString colorFile = Util::getFileWithoutEnding(outFile) +"_color.bin";
 
 //    QFile file(outFile);
 
   //  file.open(QFile::WriteOnly);
     img->m_silentExport = true;
-    img->ExportCompressed(screenFile, charFile);
+    img->ExportCompressed(screenFile, charFile, colorFile);
     if (img->m_exportMessage!="")
         ErrorHandler::e.Warning(img->m_exportMessage);
 

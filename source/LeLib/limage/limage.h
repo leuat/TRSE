@@ -322,7 +322,7 @@ public:
 
     virtual void ExportRGB8Palette(QString filename);
 
-    virtual void ExportCompressed(QString f1, QString f2) {}
+    virtual void ExportCompressed(QString f1, QString f2, QString f3) {}
 
     virtual void ExportMovie(QFile &file) {}
 

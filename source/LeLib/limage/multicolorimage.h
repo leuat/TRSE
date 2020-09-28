@@ -124,6 +124,7 @@ public:
     void SaveBin(QFile& f) override;
     void LoadBin(QFile& f) override;
 
+    virtual void Color2Raw(QByteArray& ba, int ly);
 
     virtual int charWidthDisplay() {
         return m_charWidth;
@@ -169,7 +170,9 @@ public:
 
     void SetCharSize(int x, int y);
 
-   void ExportCompressed(QString f1, QString f2) override;
+    virtual void FixUp(QByteArray& ba) {}
+
+   void ExportCompressed(QString f1, QString f2, QString f3) override;
 
    virtual void CompressAndSave(QByteArray& chars, QVector<int>& screen, int x0,int x1, int y0, int y1, int& noChars, int compression, int maxChars);
 

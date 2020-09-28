@@ -158,17 +158,14 @@ void CharsetImage::ExportBin(QFile &f)
 {
     ToRaw(m_rawData);
     f.write(m_rawData);
-
     QByteArray colorData;
-    for (int i=0;i<m_charWidth*m_charHeight;i++)
-        colorData.append(m_data[i].c[3]);
-
+    Color2Raw(colorData,2);
     QString filenameBase = Util::getFileWithoutEnding(f.fileName());
     QString fColor = filenameBase + "_color.bin";
-    QFile f2(fColor);
-    f2.open(QFile::WriteOnly);
-    f2.write(colorData);
-    f2.close();
+    Util::SaveByteArray(colorData,fColor);
+
+
+
 
 }
 

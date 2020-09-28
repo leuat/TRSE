@@ -19,6 +19,10 @@ public:
 
     QString getMetaInfo() override;
 
+    void Color2Raw(QByteArray &ba, int ys) override;
+
+    virtual void FixUp(QByteArray& ba);
+
 };
 
 #endif // LIMAGEVIC20_H

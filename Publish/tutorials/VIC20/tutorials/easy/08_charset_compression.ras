@@ -1,0 +1,67 @@
+program TRSE_Decompress;
+@use "compression/compression"
+var
+/*
+	exportcompressed will take a charset image (C64 or VIC20) and do the following : 
+	  - Analyze the image and compress the charset up to a compression level
+	  - output screen, charset and color data
+	  - Parameters are as follows: 
+	    @exportcompressed [ input ] [ output base name ] [ x start ] [ y start ] [ width ] [ height ] [ compression level ]
+	 
+      In order for image to display correctly, the number of exported characters needs to be less
+      than 256.
+	    
+
+*/
+
+// Exports data + color data. Experiment with your own image and compression level (here, 1)
+	@exportcompressed "resources/images/full_charset.flf" "resources/images/full.bin" 0 0 22 23 1
+	
+	const charsetLoc:address = $1400;
+	const screenLoc:address = $1000;
+
+	
+@startblock $1800 ImageData
+var
+
+	image_screen: IncBin("resources/images/full_screen.bin") compressed;
+	image_charset: IncBin("resources/images/full_charset.bin") compressed;
+	image_color: IncBin("resources/images/full_color.bin") compressed;
+	
+@endblock
+
+// Put all code at $2400
+@startblock $2300 Code
+var
+
+
+procedure Run();
+begin
+	definescreen();
+	DisableVIC20IRQ();
+	// Set screen at $1000
+	setscreenlocation(screenLoc);
+	// Set charset at $1400
+	setcharsetlocation(charsetLoc);
+	// Flip between the two images
+	screen_bg_color:=15;
+	aux_color_and_volume:=green*16;
+	
+	screen_text_height := 22*2; // remove lowest row
+ 	screen_text_width := 22;
+	
+	// Decompress color data directly to color ram
+	Compression::Decompress(#image_color, #screen_col_loc); 
+	// decompress screen data to screen location
+	Compression::Decompress(#image_screen, #screenLoc); 
+	// Decompress charset data directly to the character map address 
+	Compression::Decompress(#image_charset, #charsetLoc); 
+
+	Loop();
+end;
+
+@endblock
+
+begin
+	Run();
+end.

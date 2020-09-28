@@ -1,0 +1,99 @@
+program TRSE_LZ4_Compression;
+@use "compression/compression"
+var
+/*
+	TRSE has since version 0.11.3 got a built-in lossless LZ4 compression system for 
+	the 6502, Z80 and M68K systems. 
+	
+	You compress a resource automatically by adding the "compressed" flag to an 
+	included data file. This file will be LZ4-compressed to a hidden binary
+	file (with ending "_c") and included instead of the original file.
+	
+	In order to decompress this file, simpy use the "compression/compression" library and
+	call "Decompress" with two parameters: the address of the data and the address to unpack to.  
+
+	Since LZ4-compression is lossless, please remember that less noisy/detailed resources compress 
+	better than detailed ones. 
+
+*/
+
+// Exports data + color data	
+	@export "resources/images/octopus.flf" "resources/images/octopus.bin" 256
+	@export "resources/images/skull.flf" "resources/images/skull.bin" 256
+	
+// Put the two images at $8000
+
+	const imageHeight : byte = 20;
+	const imageWidth : byte = 20;
+
+	i,j,k: byte;
+	zp:pointer;
+	
+// Bitmap will be loaded as a charset
+	const charsetAndBitmap:address = $1400;
+
+	
+@startblock $3000 ImageData
+var
+
+	image1_data: IncBin("resources/images/octopus.bin") compressed;
+	image1_color: IncBin("resources/images/octopus_color.bin") compressed;
+	
+	image2_data: IncBin("resources/images/skull.bin") compressed;
+	image2_color: IncBin("resources/images/skull_color.bin") compressed;
+@endblock
+
+// Put all code at $2400
+@startblock $2600 Code
+var
+
+procedure SetupImage(data, cp: pointer);
+begin
+	
+	// Decompress image data directly to the character map address 
+	Compression::Decompress(data, #charsetAndBitmap); 
+	// Decompress image data directly to color ram
+	Compression::Decompress(cp, #screen_col_loc); 
+	// Artistic pause
+	for j:=0 to 3 do
+		for i:=0 to 255 do waitforraster(30);
+
+end;
+
+procedure Run();
+begin
+	definescreen();
+	DisableVIC20IRQ();
+	// Set screen at $1000
+	setscreenlocation($1000);
+	// Set charset at $1400
+	setcharsetlocation(charsetAndBitmap);
+	// Set height of columns (-1, needs to be odd)
+	screen_text_height:=imageHeight-1;
+	// Width of screen same as bitmap
+	screen_text_width:=imageWidth;
+	
+	// Draw 256 chars on the screen from 0 to 256
+	screenmemory := $1000;
+	for i:=0 to 0 do 
+		screenmemory[i]:=i;
+
+	// Flip between the two images
+	while (true) do
+	begin
+		screen_bg_color:=blue*16;
+		aux_color_and_volume:=cyan*16;
+		SetupImage(#image1_data, #image1_color);
+		
+		screen_bg_color:=blue*16;
+		aux_color_and_volume:=white*16;
+		SetupImage(#image2_data, #image2_color);
+	end;
+
+end;
+
+@endblock
+
+begin
+	Run();
+end.

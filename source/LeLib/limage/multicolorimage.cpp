@@ -230,7 +230,14 @@ void MultiColorImage::LoadBin(QFile& file)
     qDebug() << "LoadBin"<< c1 << c2;
 */
 //    QByteArray data = file.read(m_charHeight*m_charWidth*12);
-  //  memcpy(&m_data, &data, m_charHeight*m_charWidth*12);
+    //  memcpy(&m_data, &data, m_charHeight*m_charWidth*12);
+}
+
+void MultiColorImage::Color2Raw(QByteArray &ba, int yl)
+{
+    for (int i=0;i<m_charWidth*m_charHeight;i++)
+        ba.append(m_data[i].c[3]);
+
 }
 
 void MultiColorImage::ImportKoa(QFile &f)
@@ -439,7 +446,7 @@ void MultiColorImage::CopyFrom(LImage* img)
 void MultiColorImage::ForceColorFlattening()
 {
     PixelChar& org = m_data[0];
-    for (int i=1;i<1000;i++) {
+    for (int i=1;i<m_charWidth*m_charHeight;i++) {
         for (int j=0;j<4;j++)
             m_data[j].c[j] = org.c[j];
     }
@@ -745,13 +752,13 @@ void MultiColorImage::SetCharSize(int x, int y)
     m_charHeight = y;
 }
 
-void MultiColorImage::ExportCompressed(QString f1, QString f2)
+void MultiColorImage::ExportCompressed(QString f1, QString f2, QString f3)
 {
     //int x0,int x1, int y0, int y1, int& noChars, int compression, int maxChars) {
 
     Compression c;
 //    c.OptimizeAndPackCharsetData()
-    QByteArray charData, screenData;
+    QByteArray charData, screenData, colorData;
     QVector<int> i_screenData;
     int noChars;
 
@@ -763,9 +770,11 @@ void MultiColorImage::ExportCompressed(QString f1, QString f2)
                     noChars,    m_exportParams["Compression"],255 );
 //    qDebug() << "No chars :" << noChars;
     screenData = Util::toQByteArray(i_screenData);
+    FixUp(charData);
     Util::SaveByteArray(screenData, f1);
     Util::SaveByteArray(charData, f2);
-
+    Color2Raw(colorData,1);
+    Util::SaveByteArray(colorData, f3);
     QString s = "Compression level: " +QString::number((int)m_exportParams["Compression"])+"<br>";
     s+= "Packed image to : "+QString::number(noChars) + " characters";
     m_exportMessage = s;
@@ -1242,7 +1251,7 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen
 
         for (int i=0;i<sx;i++)
         {
-            PixelChar& pc = m_data[i+x0 + (j+y0)*40];
+            PixelChar& pc = m_data[i+x0 + (j+y0)*m_charWidth];
             int pi = 0;
             bool found = false;
             int cur = 1E5;
