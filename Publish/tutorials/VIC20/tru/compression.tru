@@ -1,0 +1,133 @@
+unit Compression;
+
+var
+	endd,count: integer;
+	src, dst : pointer of integer;
+
+procedure Decompress(src, dst : global pointer of integer);
+begin
+	src := src + 7;
+	// Look up count and end
+	count :=src^ ;
+	src := src + 4;	
+	endd := src + count;
+	asm("
+
+
+;unpacker variables, no need to change these
+delta	=	$B4
+
+
+	ldy	#0
+
+
+	lda $10
+	sta Compression_count
+	lda $10
+	sta Compression_count+1
+
+
+
+parsetoken:
+	jsr	getsrc
+	pha
+	lsr
+	lsr
+	lsr
+	lsr
+	beq	copymatches
+	jsr	buildcount
+	tax
+	jsr	docopy
+	lda	Compression_src
+	cmp	Compression_endd
+	lda	Compression_src+1
+	sbc	Compression_endd+1
+	bcs	done
+
+copymatches
+	jsr	getsrc
+	sta	delta
+	jsr	getsrc
+	sta	delta+1
+	pla
+	and	#$0f
+	jsr	buildcount
+	clc
+	adc	#4
+	tax
+	bcc	c_b1
+	inc	Compression_count+1
+c_b1:
+	lda	Compression_src+1
+	pha
+	lda	Compression_src
+	pha
+	sec
+	lda	Compression_dst
+	sbc	delta
+	sta	Compression_src
+	lda	Compression_dst+1
+	sbc	delta+1
+	sta	Compression_src+1
+	jsr	docopy
+	pla
+	sta	Compression_src
+	pla
+	sta	Compression_src+1
+	jmp	parsetoken
+
+done
+	pla
+	rts
+
+docopy
+	jsr	getput
+	dex
+	bne	docopy
+	dec	Compression_count+1
+	bne	docopy
+	rts
+
+buildcount
+	ldx	#1
+	stx	Compression_count+1
+	cmp	#$0f
+	bne	c_q1
+c_m1	
+	sta	Compression_count
+	jsr	getsrc
+	tax
+	clc
+	adc	Compression_count
+	bcc	c_b2
+	inc	Compression_count+1
+c_b2
+	inx
+	beq	c_m1
+c_q1
+	rts
+
+getput
+	jsr	getsrc
+
+putdst
+	sta 	(Compression_dst),y
+	inc	Compression_dst
+	bne	c_p1
+	inc	Compression_dst+1
+c_p1
+	rts
+
+getsrc
+	lda 	(Compression_src),y
+	inc	Compression_src
+	bne	c_p2
+	inc	Compression_src+1
+c_p2
+	");
+
+end;
+
+
+end.
