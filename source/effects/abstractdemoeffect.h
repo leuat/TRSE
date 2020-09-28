@@ -81,7 +81,7 @@ public:
         if (dither==1)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
         if (dither==2)
-            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,size, 1);
+            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(size,1), 1);
         if (dither==0)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
 
@@ -99,7 +99,7 @@ public:
         if (dither==1)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
         if (dither==2)
-            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,size,1);
+            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(size,1),1);
         if (dither==0)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
 
@@ -116,7 +116,7 @@ public:
         if (dither==1)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
         if (dither==2)
-            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,2,1.0);
+            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(size,1),1.0);
         if (dither==0)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
 
@@ -132,7 +132,7 @@ public:
         if (dither==1)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
         if (dither==2)
-            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,2,1);
+            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(2,1),1);
         if (dither==0)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
 

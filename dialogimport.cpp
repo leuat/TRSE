@@ -33,7 +33,8 @@ DialogImport::DialogImport(QWidget *parent) :
     QFontDatabase d;
     ui->cmbFonts->addItems(d.families());
     ui->cmbFonts->setCurrentText("Courier 10 Pitch");
-    ui->cmbDither->setCurrentIndex(1);
+    ui->cmbDitherY->setCurrentIndex(1);
+    ui->cmbDitherX->setCurrentIndex(0);
 
 }
 
@@ -150,14 +151,15 @@ void DialogImport::Convert()
 
 //    for (int i=0;i<4;i++)
   //      qDebug() << "COLS : S " <<QString::number(m_image->m_extraCols[i]);
-    matrixSize = ui->cmbDither->currentText().toInt();
+    matrixSizeX = ui->cmbDitherX->currentText().toInt();
+    matrixSizeY = ui->cmbDitherY->currentText().toInt();
 //    qDebug() << matrixSize;
     if (!useDither)
        m_image->fromQImage(m_output.m_qImage, m_image->m_colorList);
     else
 //        m_image->FloydSteinbergDither(*m_output.m_qImage,m_image->m_colorList, true);
 
-        m_image->OrdererdDither(*m_output.m_qImage,m_image->m_colorList, strength,matrixSize,1);
+        m_image->OrdererdDither(*m_output.m_qImage,m_image->m_colorList, strength,QPoint(matrixSizeX,matrixSizeY),1);
 
 
 

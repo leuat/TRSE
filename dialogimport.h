@@ -48,7 +48,8 @@ public:
     float m_hsv = 0.5;
     float m_saturation = 0.5;
     float m_blur = 0;
-    int matrixSize = 2;
+    int matrixSizeX = 2;
+    int matrixSizeY = 1;
     QPointF m_scale = QPointF(1,1);
 
     bool isPetscii = false;

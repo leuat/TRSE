@@ -255,7 +255,7 @@ public:
 
 
     virtual void FloydSteinbergDither(QImage& img, LColorList& colors, bool dither);
-    virtual void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength, int size,float gamma);
+    virtual void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength, QPoint size,float gamma);
 
     virtual void InitPens();
 

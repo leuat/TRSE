@@ -136,7 +136,7 @@ public:
 
 
     void FloydSteinbergDither(QImage& img, LColorList& colors, bool dither) override;
-    void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength, int size, float gamma) override;
+    void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength, QPoint size, float gamma) override;
 
     void Initialize(int width, int height) override {}
     virtual void CopyImageData(LImage* img) override;

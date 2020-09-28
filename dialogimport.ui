@@ -390,10 +390,40 @@
      <string>Dither matrix:</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="cmbDither">
+   <widget class="QComboBox" name="cmbDitherX">
     <property name="geometry">
      <rect>
       <x>140</x>
+      <y>250</y>
+      <width>96</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>1</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>2</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>3</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>4</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QComboBox" name="cmbDitherY">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
       <y>250</y>
       <width>96</width>
       <height>28</height>

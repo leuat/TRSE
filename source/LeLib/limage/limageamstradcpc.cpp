@@ -92,15 +92,12 @@ void LImageAmstradCPC::ToQImage(LColorList &lst, QImage &img, float zoom, QPoint
     //return img;
 }
 
-void LImageAmstradCPC::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, int size, float gamma)
+void LImageAmstradCPC::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma)
 {
     int height  =min(img.height(), m_height);
     int width  =min(img.width(), m_width);
     QMatrix4x4 bayer4x4 = QMatrix4x4(0,8,2,10,  12,4,14,6, 3,11,1,9, 15,7,13,5);
     bayer4x4 = bayer4x4*1/16.0*strength.x();
-
-    int sizex = size;
-    int sizey = size;
 
 //    qDebug() << "COLORS " << colors.getPen(7);
     for (int y=0;y<height;y++) {
@@ -113,13 +110,11 @@ void LImageAmstradCPC::OrdererdDither(QImage &img, LColorList &colors, QVector3D
 
 
             QColor color = QColor(img.pixel(xx,yy));
-            int yp = yy + xx%(int)strength.y();
-            int xp = xx + yy%(int)strength.z();
-            xp=xp&3;
-            yp=yp&3;
-            color.setRed(min((float)pow(color.red(),gamma) + bayer4x4(xp % sizex,yp % sizey),255.0f));
-            color.setGreen(min((float)pow(color.green(),gamma) + bayer4x4(xp % sizex,yp % sizey),255.0f));
-            color.setBlue(min((float)pow(color.blue(),gamma) + bayer4x4(xp % sizex,yp % sizey),255.0f));
+            int yp = y + x%(int)strength.y();
+            int xp = x + y%(int)strength.z();
+            color.setRed(min((float)pow(color.red(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
+            color.setGreen(min((float)pow(color.green(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
+            color.setBlue(min((float)pow(color.blue(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
 
             int winner = 0;
 

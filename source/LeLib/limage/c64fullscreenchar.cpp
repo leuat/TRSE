@@ -150,7 +150,7 @@ void C64FullScreenChar::ExportBin(QFile &f)
 
 }
 
-void C64FullScreenChar::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, int size, float gamma)
+void C64FullScreenChar::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma)
 {
     fromQImage(&img, colors);
 
