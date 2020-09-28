@@ -1,0 +1,92 @@
+Unit Screen;
+var  
+/*
+
+	SCREEN and CHAR locations
+	------------------------
+	screen = high nibble + bit 7
+	chars  = low nibble
+	 
+	SCREEN bits 7654 + 7
+	address	$9005	$9002
+	1000	1100 	0
+	1200	1100	1
+	1400	1101	0
+	1600	1101	1
+	1800	1110	0
+	1a00	1110	1
+	1c00	1111	0
+	1e00	1111	1
+
+	CHAR
+	address	$9005	location
+	1000	1100 	RAM 256 characters
+	1400	1101	RAM 256 characters
+	1800	1110	RAM 256 characters
+	1c00	1111	RAM 64 characters + ROM Uppercase
+	....
+	8000	0000	ROM Uppercase
+	8400	0001	ROM Uppercase reversed
+	8800	0010	ROM	Lowercase
+	8c00	0011	ROM Lowercase reversed
+
+
+*/
+const SCREEN_1000: byte = %11000000;
+const SCREEN_1400: byte = %11010000;
+const SCREEN_1800: byte = %11100000;
+const SCREEN_1c00: byte = %11110000;
+const SCREEN_ADD_0000: byte = %00000000;
+const SCREEN_ADD_0200: byte = %10000000;
+const SCREEN_0200_CLEAR: byte = %01111111;
+
+const CHAR_1000: byte   = %00001100;
+const CHAR_1400: byte   = %00001101;
+const CHAR_1800: byte   = %00001110;
+const CHAR_1c00: byte   = %00001111;
+const CHAR_8000: byte   = %00000000;
+const CHAR_8400: byte   = %00000001;
+const CHAR_8800: byte   = %00000010;
+const CHAR_8c00: byte   = %00000011;
+
+
+// Params are used as global references in Macros so do not really occupy memory
+	const SCREEN_PARAMS: address	= $03f0;		// Put params here just in case
+	pa, pb, pc, pd, pe, pf: byte at SCREEN_PARAMS;	// parameters for methods
+
+
+@ifdef SCREENWIDTH
+	@RAISEERROR "SCREENWIDTH:byte constant missing. Set to width of screen, eg: 22"
+@endif
+
+
+// Set the screen and character addresses
+// Example:
+// Screen::SetScreenCharAddress( SCREEN_1c00 + CHAR_1c00, SCREEN_ADD_0200 );
+procedure SetScreenCharAddress( pa, pb: global pure_number byte ) inline;
+begin
+
+	poke( ^$9005, 0, pa );
+	screenmemory := $9002;
+	screenmemory[0] := screenmemory[ 0 ] & SCREEN_0200_CLEAR;
+	screenmemory[0] := screenmemory[ 0 ] | pb;
+	
+
+end;
+
+
+// Print a character at current ScreenMemory/ColorMemory location
+// pa = offset
+// pb = character
+// pc = colour
+procedure PrintChar( pa, pb, pc: global pure byte ) inline;
+begin
+
+	screenmemory[ pa ] := pb;
+	colormemory[ pa ] := pc;
+
+end;
+
+
+
+end.
