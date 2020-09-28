@@ -1,0 +1,72 @@
+program TRSE_LZ4_Compression;
+@use "compression/compression"
+var
+/*
+	TRSE has since version 0.11.3 a built-in lossless LZ4 compression system for 
+	the 6502, Z80 and M68K systems. 
+	
+	You compress a resource automatically by adding the "compressed" flag to an 
+	included data file. This file will be LZ4-compressed to a hidden binary
+	file (with ending "_c") and included instead of the original file.
+	
+	In order to decompress this file, simpy use the "compression/compression" library and
+	call "Decompress" with two parameters: the address of the data and the address to unpack to.  
+
+	Since LZ4-compression is lossless, please remember that less noisy/detailed resources compress 
+	better than detailed ones. 
+
+*/
+
+	
+	@export "resources/images/octopus2.flf" "resources/images/octopus2.bin" 256
+	@export "resources/images/cat.flf" "resources/images/cat.bin" 256
+	
+// Put the two images at $8000
+@startblock $8000 "Data"
+	image1_color: IncBin("resources/images/octopus2_color.bin") compressed;
+	image1_data: IncBin("resources/images/octopus2_data.bin") compressed;
+	image2_color: IncBin("resources/images/cat_color.bin") compressed;
+	image2_data: IncBin("resources/images/cat_data.bin") compressed;
+@endblock
+
+	// Address of screen bitmap data
+	const dataAddress : address = $6000;
+	// Temporary address of screen color data
+	const colorAddress : address = $5000;
+
+	i: byte;
+
+procedure SetupImage(data, color : pointer);
+begin
+	// Clear the screen & color ram first
+	clearbitmap(^$6000,32);	
+	clearscreen(black,^$D800);
+	clearscreen(black,^$4400);
+	// Decompress the color data
+	Compression::Decompress(color, #colorAddress); 
+	// Copy color data to color ram at $4400 and $D800
+	copyimagecolordata(colorAddress,1);
+	// Decompress image data directly to the address
+	Compression::Decompress(data, #dataAddress); 
+	// Artistic pause
+	for i:=0 to 255 do waitforraster(0);
+
+end;
+
+
+begin
+	// Turn off multicolor if you want hires! 
+	setmulticolormode();
+	setbitmapmode();
+	screen_fg_col:=black;
+	screen_bg_col:=black;
+	// Set data pointer to $6000
+	vic_data_loc:=$18;
+	setbank(vic_bank1);
+	// Continuously decompress data
+	while (true) do
+	begin
+		SetupImage(#image1_data, #image1_color);		
+		SetupImage(#image2_data, #image2_color);		
+	end;
+end.

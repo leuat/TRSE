@@ -273,7 +273,7 @@ public slots:
 
     bool CloseAll();
     QString getProjectPath();
-    QString getTRUPath();
+    QStringList getTRUPaths();
 
     void closeEvent(QCloseEvent *event) override;
 

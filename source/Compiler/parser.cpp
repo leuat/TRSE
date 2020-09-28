@@ -3917,6 +3917,7 @@ void Parser::HandleUseTPU(QString fileName)
     QStringList dirs;
     dirs << m_currentDir + QDir::separator();
     dirs << Util::GetSystemPrefix()+ "tutorials/"+Syntax::s.m_systemString+ QDir::separator()+ "tru"+QDir::separator();
+    dirs << Util::GetSystemPrefix()+ "tutorials/tru/"+AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor)+ QDir::separator();
     QString fname = Util::findFileInDirectories(fileName + ".tru", dirs);
 
 
