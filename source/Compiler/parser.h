@@ -230,6 +230,7 @@ public:
     void HandleBuildPaw();
     void HandleExportPrg2Bin();
     void HandleVBMExport();
+    void HandleVBMExportColor();
     void HandleVBMExportChunk();
     void HandleExportFrame();
     void HandleSpriteCompiler();
