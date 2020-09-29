@@ -20,12 +20,9 @@ var
 	
 	@export "resources/images/octopus2.flf" "resources/images/octopus2.bin" 256
 	@export "resources/images/cat.flf" "resources/images/cat.bin" 256
-	@export "resources/images/paint.flf" "resources/images/paint.bin" 256
 	
 // Put the two images at $8000
 @startblock $8000 "Data"
-	image3_color: IncBin("resources/images/paint_color.bin") compressed;
-	image3_data: IncBin("resources/images/paint_data.bin") compressed;
 	image1_color: IncBin("resources/images/octopus2_color.bin") compressed;
 	image1_data: IncBin("resources/images/octopus2_data.bin") compressed;
 	image2_color: IncBin("resources/images/cat_color.bin") compressed;
@@ -73,6 +70,5 @@ begin
 	begin
 		SetupImage(#image1_data, #image1_color);		
 		SetupImage(#image2_data, #image2_color);		
-		SetupImage(#image3_data, #image3_color);		
 	end;
 end.
