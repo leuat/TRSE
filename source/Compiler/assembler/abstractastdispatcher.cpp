@@ -652,6 +652,7 @@ void AbstractASTDispatcher::IncBin(QSharedPointer<NodeVarDecl> node) {
     if (t->m_position=="") {
         as->Label(v->value);
         as->Asm(getIncbin()+" \"" + filename + "\"");
+//        as->m_currentBlock-
     }
     else {
         //            qDebug() << "bin: "<<getValue(v) << " at " << t->m_position;
@@ -671,8 +672,7 @@ void AbstractASTDispatcher::IncBin(QSharedPointer<NodeVarDecl> node) {
             start = t->m_position.remove("$").toInt(&ok, 16);
         }
         else start = t->m_position.toInt();
-
-        as->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start,start+size, MemoryBlock::DATA,t->m_filename)));
+        as->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start,start+size, MemoryBlock::DATA,filename)));
 
     }
 }

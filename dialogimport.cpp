@@ -136,6 +136,8 @@ void DialogImport::Convert()
         return;
     if (m_image == nullptr)
         return;
+
+
     m_output.m_qImage = m_work.Resize(m_image->m_width, m_image->m_height, m_image->m_colorList, m_contrast, m_shift, m_hsv, m_saturation, m_scale, useDither);
 //    qDebug() << m_image->m_width << m_output.m_qImage->width();
     //exit(1);
@@ -188,6 +190,8 @@ void DialogImport::Convert()
 
 void DialogImport::Blur()
 {
+    if (m_input.m_qImage == nullptr)
+        return;
     m_work.Release();
     m_work.m_qImage = m_input.Blur(m_blur);
 

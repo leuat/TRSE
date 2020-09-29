@@ -32,10 +32,10 @@ var
 // Bitmap will be loaded as a charset
 	const charsetAndBitmap:address = $1400;
 
-	
-@startblock $3000 ImageData
-var
 
+	
+@startblock $3000 "ImageData"
+var
 	image1_data: IncBin("resources/images/octopus.bin") compressed;
 	image1_color: IncBin("resources/images/octopus_color.bin") compressed;
 	
@@ -44,7 +44,7 @@ var
 @endblock
 
 // Put all code at $2400
-@startblock $2600 Code
+@startblock $2600 "Code"
 var
 
 procedure SetupImage(data, cp: pointer);

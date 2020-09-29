@@ -1,0 +1,20 @@
+<h3>Compressed</h3>
+<p><b>Compressed</b> is a type modifier flag that signals TRSE to compress the included file to a new
+file (with an added ending "_c" to the original filename), and then include the compressed file instead of the original.
+<p><br>
+"Compressed" is a flag that works
+on the 6502, Z80 and M68K computers. On the 6502 and Z80, LZ4 compression is used, while
+the M68K uses a slightly modified LZ77 compression scheme.
+<p><br>In order to decompress your data, simply use the "Decompress" method of the <b>Compression</b> TRU library.
+<code>
+// 6502, m68k and z80 simply has @use "compression"
+@use "compression/compression"
+var
+   compressed_data : incbin("image1.bin") compressed;
+
+begin
+    // Deflates the data to $2000
+    Compression::Decompress(#compressed_data, $2000);
+    ...
+</code>
+<p>Also, see the compression tutorials for the C64, VIC20, ATARI ST and Amiga.
