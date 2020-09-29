@@ -1000,6 +1000,7 @@ void Parser::HandlePreprocessorInParsing()
             Eat(TokenType::INTEGER_CONST);
             Eat(TokenType::INTEGER_CONST);
             Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
             return;
         }
 
@@ -3687,6 +3688,8 @@ void Parser::HandleVBMExportColor()
     int param2 = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
     int param3 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param4 = m_currentToken.m_intVal;
 
     if (!QFile::exists(inFile)) {
         ErrorHandler::e.Error("File not found : "+inFile,ln);
@@ -3700,7 +3703,7 @@ void Parser::HandleVBMExportColor()
     file.open(QFile::WriteOnly);
     img->m_silentExport = true;
 
-    img->VBMExportColor(file, param1,param2,param3);
+    img->VBMExportColor(file, param1,param2,param3,param4);
 
     file.close();
 

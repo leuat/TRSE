@@ -535,5 +535,6 @@
         <file>resources/text/help/r/exportcompressed.rtf</file>
         <file>resources/code/Z80/memcpy.asm</file>
         <file>resources/text/help/r/compressed.rtf</file>
+        <file>resources/text/help/r/vbmexportcolor.rtf</file>
     </qresource>
 </RCC>

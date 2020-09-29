@@ -720,7 +720,7 @@ void MultiColorImage::VBMExport(QFile &file, int start, int end, int height, int
     }
     file.write(data);
 }
-void MultiColorImage::VBMExportColor(QFile &file, int start, int width, int height)
+void MultiColorImage::VBMExportColor(QFile &file, int start, int width, int height, int lineHeight)
 {
 
     // do colour map
@@ -740,8 +740,7 @@ void MultiColorImage::VBMExportColor(QFile &file, int start, int width, int heig
             if (pos>=0 && pos< m_charWidth*m_charHeight) {
                 //PixelChar& pc = m_data[pos];
                 // colour
-                int line = y  % 1;
-                if (m_colorList.m_type == LColorList::VIC20) line = y % 2; // for colour data
+                int line = y  % lineHeight;
 
                 if (line == 0) { // process colour lines (will be every even line if vic 20)
                     PixelChar& pc = m_data[pos];
