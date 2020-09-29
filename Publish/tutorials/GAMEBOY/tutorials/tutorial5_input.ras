@@ -29,7 +29,7 @@ var
 	sprites_data : incbin("images/sprites_packed.bin") bank(spriteBank);
 
 	// 1 sprite takes up 4 bytes, the grl sprite is 3x2x4 bytes starting at $C000 (Sprite ram)
-	sprGirl : array[3*2*4] of byte sprram aligned;
+	sprGirl : array[3*2*4] of byte sprram;
 
 	time,x,y,pos,pad1,pad2  : byte;
 

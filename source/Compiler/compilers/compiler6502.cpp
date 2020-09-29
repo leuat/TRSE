@@ -22,9 +22,9 @@ void Compiler6502::Connect()
         m_assembler->IncludeFile(":resources/code/atari2600/end.asm");
 
 
+
     if (m_ini->getdouble("post_optimize")==1.0) {
         m_assembler->m_totalOptimizedLines = 0;
-
         for (int i=0;i<4;i++)
             m_assembler->Optimise(*m_projectIni);
     }
