@@ -101,6 +101,7 @@ public:
     static int s_id;
     int m_id;
     int m_dataSize = 0;
+    int m_incDataSize = 0;
     Appendix() {
         m_id=s_id++;
     }

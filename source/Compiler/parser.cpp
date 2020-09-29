@@ -120,7 +120,7 @@ void Parser::Eat(TokenType::Type t)
 {
     if (m_tick++%500==99)
         emit EmitTick(".");
-//    qDebug() << m_currentToken.m_value << m_currentToken.m_intVal;
+   //qDebug() << m_currentToken.m_value << m_currentToken.m_intVal;
     if (m_currentToken.m_type == t) {
         m_currentToken = m_lexer->GetNextToken();
 //        if (m_pass==2)
@@ -165,6 +165,7 @@ int Parser::findSymbolLineNumber(QString symbol)
 void Parser::InitBuiltinFunctions()
 {
     m_initJumps.clear();
+    int oldBlock = Node::m_staticBlockInfo.m_blockID;
     if (m_preprocessorDefines.contains("BuiltinMethodsLocation")) {
 
         ParserBlock pb;
@@ -321,9 +322,11 @@ void Parser::InitBuiltinFunctions()
 
 
     }
-    Node::m_staticBlockInfo.m_blockID = -1;
-    Node::m_staticBlockInfo.m_blockPos = "";
-    Node::m_staticBlockInfo.m_blockName = "";
+    if (m_preprocessorDefines.contains("BuiltinMethodsLocation")) {
+        Node::m_staticBlockInfo.m_blockID = oldBlock;
+        Node::m_staticBlockInfo.m_blockPos = "";
+        Node::m_staticBlockInfo.m_blockName = "";
+    }
 }
 
 void Parser::VerifyInlineSymbols6502(QString s)
@@ -1145,8 +1148,9 @@ void Parser::HandlePreprocessorInParsing()
         int i = m_pass;
         m_pass = PASS_OTHER;
         Eat();
+//        if (i == PASS_CODE)
+  //          qDebug() << "HandleCurrent Endblock " << Node::m_staticBlockInfo.m_blockPos;
         m_pass = i;
-//        qDebug() << "HandleCurrent Endblock " << Node::m_staticBlockInfo.m_blockPos;
         Node::m_staticBlockInfo.m_blockID = -1;
         Node::m_staticBlockInfo.m_blockPos = "";
         Node::m_staticBlockInfo.m_blockName="";
@@ -1155,6 +1159,7 @@ void Parser::HandlePreprocessorInParsing()
     }
     if (m_currentToken.m_value=="startblock") {
         int i = m_pass;
+
         m_pass = PASS_OTHER;
         Eat();
         QString startPos = m_currentToken.getNumAsHexString();
@@ -1168,8 +1173,9 @@ void Parser::HandlePreprocessorInParsing()
         Node::m_staticBlockInfo.m_blockID = pb.m_blockID;
         Node::m_staticBlockInfo.m_blockPos = pb.pos;
         Node::m_staticBlockInfo.m_blockName = name;
-//        qDebug() << "HandleCurrent StartBlock " << Node::m_staticBlockInfo.m_blockPos;
         m_pass = i;
+      //  if (i == PASS_CODE)
+    //    qDebug() << "HandleCurrent StartBlock " << Node::m_staticBlockInfo.m_blockPos;
 
         return;
     }
@@ -2651,6 +2657,7 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString blokN
     Eat(TokenType::SEMI);
     QSharedPointer<Node> block = nullptr;
     QSharedPointer<NodeProcedureDecl> procDecl = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(tok, procName, paramDecl, block, type));
+//    qDebug() << "Starting new procedure decl block with : "<< procName << procDecl->m_blockInfo.m_blockID;
     procDecl->m_fileName = m_currentFileShort;
     procDecl->m_isInline = isInline;
     procDecl->m_isFunction = isFunction;

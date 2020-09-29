@@ -345,6 +345,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
 //    LineNumber(ln+1);
 
     if (UseBlocks()) {
+        as->Comment("NodeProcedureDecl "+ QString::number(node->m_blockInfo.m_blockID));
         int ret = node->MaintainBlocks(as);
         if (ret==3) node->m_curMemoryBlock=nullptr;
         if (as->m_currentBlock!=nullptr) {
@@ -652,7 +653,9 @@ void AbstractASTDispatcher::IncBin(QSharedPointer<NodeVarDecl> node) {
     if (t->m_position=="") {
         as->Label(v->value);
         as->Asm(getIncbin()+" \"" + filename + "\"");
-//        as->m_currentBlock-
+        if (as->m_currentBlock!=nullptr)
+            if (as->m_mainBlock != as->m_currentBlock)
+                as->m_currentBlock->m_incDataSize+=QFileInfo(filename).size();
     }
     else {
         //            qDebug() << "bin: "<<getValue(v) << " at " << t->m_position;

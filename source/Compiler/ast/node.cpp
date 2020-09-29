@@ -65,7 +65,7 @@ int Node::MaintainBlocks(Assembler* as)
 //    if (as->m_currentBlock!=nullptr)
   //      qDebug() << as->m_currentBlock->m_pos;
 
-
+//    as->Asm(";"+QString::number(m_blockInfo.m_blockID) + "  " + m_op.getType() + " " +m_op.getNumAsHexString());
     if (m_blockInfo.m_blockID == -1) {
         if (as->m_currentBlock!=nullptr && (!as->m_currentBlock->m_isMainBlock)) {
             //qDebug() << "Ending blocks " << as->m_currentBlock->m_pos ;

@@ -114,6 +114,21 @@ bool caseInsensitiveLessThan(const QSharedPointer<Appendix> s1, const QSharedPoi
 void Assembler::StartMemoryBlock(QString pos) {
     //EndMemoryBlock();
     //        qDebug() << "Starting emory pos: "<< pos;
+
+    for (QSharedPointer<Appendix> app: m_appendix) {
+
+        if (app->m_pos == pos)
+        {
+            m_currentBlock = app;
+            m_blockStack.append(m_currentBlock);
+            Comment("Resuming memory block at "+pos);
+            m_currentBlock->m_id++;
+            m_currentBlock->s_id++;
+            return;
+
+        }
+    }
+
     Appendix app(pos);
     m_currentBlock = QSharedPointer<Appendix>(new Appendix(pos));
     m_appendix.append(m_currentBlock);

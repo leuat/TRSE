@@ -34,18 +34,16 @@ var
 
 
 	
-@startblock $3000 "ImageData"
+	
+
+// Put all code and data at $2000
+@startblock $2000 "Code2"
 var
 	image1_data: IncBin("resources/images/octopus.bin") compressed;
 	image1_color: IncBin("resources/images/octopus_color.bin") compressed;
 	
 	image2_data: IncBin("resources/images/skull.bin") compressed;
 	image2_color: IncBin("resources/images/skull_color.bin") compressed;
-@endblock
-
-// Put all code at $2400
-@startblock $2600 "Code"
-var
 
 procedure SetupImage(data, cp: pointer);
 begin
@@ -81,12 +79,12 @@ begin
 	// Flip between the two images
 	while (true) do
 	begin
-		screen_bg_color:=blue*16;
-		aux_color_and_volume:=cyan*16;
+		screen_bg_color:=blue<<4;
+		aux_color_and_volume:=cyan<<4;
 		SetupImage(#image1_data, #image1_color);
 		
-		screen_bg_color:=blue*16;
-		aux_color_and_volume:=white*16;
+		screen_bg_color:=blue<<4;
+		aux_color_and_volume:=white<<4;
 		SetupImage(#image2_data, #image2_color);
 	end;
 
