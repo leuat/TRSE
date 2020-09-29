@@ -1,0 +1,34 @@
+<h3>Description</h3>
+<p>Preprocessor that exports the colour data from a TRSE character image file (.flf) to binary on build in a format suitable for the
+    Vic Bitmap Mode (VBM).</p>
+<p>
+    VBM export takes six parameters.  
+</p>
+<ul>
+    <li>The source flf file</li>
+    <li>The destination bin file to create</li>
+    <li>The start character</li>
+    <li>The width in characters</li>
+    <li>The height in characters</li>
+    <li>Line height - use 1 for 8x8 colour maps and 2 for 8x16 colour maps</li>
+</ul>
+<p>The line height allows taller characters to be exported.  If set to 1, the colour for a character is exported
+    normally for each 1x1 sized character (8x8 pixels).  If set at 2, the coloyr for a character is
+    exported for each 1x2 sized character (8*16 pixels) from the FLF bitmap. Values greater than 2 can be used, the line height
+    actually just tells the exporter how many lines to skip in the colour data.
+</p>
+
+<h3>Example</h3>
+The follow example will export a full colour map for a VBM 20 x 24, double hieght character mode:
+<code>
+program VBMExport;
+
+@vbmexportColor "chr/title.flf" "chr/title_col.bin"  0 20 24  2	// S W H  LH
+
+var
+    binColourMap : incbin("chr/title_col.bin",$2000);
+
+begin
+    Loop();
+end.
+</code>
