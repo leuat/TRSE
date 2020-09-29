@@ -2374,3 +2374,8 @@ void MainWindow::on_btnChangelog_clicked()
     ab->exec();
     delete ab;
 }
+
+void MainWindow::on_actionView_changelog_triggered()
+{
+    on_btnChangelog_clicked();
+}

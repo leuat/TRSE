@@ -10,7 +10,9 @@ var
 	 
       In order for image to display correctly, the number of exported characters needs to be less
       than 256.
-	    
+	
+	The total number of characters that the image is compressed to will be displayed in the 
+	"warnings" tab   
 
 */
 
