@@ -362,6 +362,10 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
     QVector<QPoint> hist;
     hist.resize(16);
 
+  //  QElapsedTimer timer;
+    //    timer.start();
+
+
     for (int y=0;y<height;y++) {
         for (int x=0;x<width;x++) {
 
@@ -380,10 +384,12 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
             int winner = 0;
             QColor newPixel = colors.getClosestColor(color, winner);
 //            PixelChar& pc = getPixelChar(x,y);
+
             setPixel(x,y,winner);
 
         }
     }
+    //qDebug() << "The slow operation took" << timer.elapsed() << "milliseconds";
 
 }
 
@@ -399,7 +405,7 @@ void MultiColorImage::CopyImageData(LImage *img)
 
 void MultiColorImage::fromQImage(QImage *img, LColorList &lst)
 {
-//#pragma omp parallel for
+//  #pragma omp parallel for
     for (int i=0;i<m_width;i++)
         for (int j=0;j<m_height;j++) {
             unsigned char col = lst.getIndex(QColor(img->pixel(i, j)));

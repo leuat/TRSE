@@ -156,6 +156,8 @@ void DialogImport::Convert()
     matrixSizeX = ui->cmbDitherX->currentText().toInt();
     matrixSizeY = ui->cmbDitherY->currentText().toInt();
 //    qDebug() << matrixSize;
+
+
     if (!useDither)
        m_image->fromQImage(m_output.m_qImage, m_image->m_colorList);
     else
