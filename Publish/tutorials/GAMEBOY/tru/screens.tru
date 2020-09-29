@@ -1,6 +1,6 @@
 unit Screens;
 var
-	p1,zp:pointer wram aligned;
+	p1,zp:pointer wram;
 	w,h,adde,b,x,y,j,i,done,c:byte wram;
 	screenOn : byte;
 

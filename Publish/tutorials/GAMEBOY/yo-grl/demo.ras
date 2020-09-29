@@ -252,7 +252,7 @@ credits1 : string = ("      When yo grl got to the end of the demo       she too
 	dt : byte;
 //	@donotremove balle
 	px,py,nomsg,textStart,fade,tt,b1,c3,c2,cc,ll,scroll, frame, copyTick, curBank, wt, pos,state,xx,yy,time,time2,val,v2,k,i,t,t2,va,vb,sx,sy,x1,y1,x2,y2,x3,y3:byte;
-	kp1,d2,p1,zp,p2,p3,d1,acc,src,dst,msgp,kp2:pointer wram aligned;
+	kp1,d2,p1,zp,p2,p3,d1,acc,src,dst,msgp,kp2:pointer wram;
 
 		
 	demoCounter: byte wram;

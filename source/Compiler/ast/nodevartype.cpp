@@ -62,6 +62,7 @@ void NodeVarType::VerifyFlags(bool isProcedureParameter) {
                 ErrorHandler::e.Error("Procedure type '"+value+"' on this system does not support the flag '"+f+"'",m_op.m_lineNumber);
         }
         else {
+            if (!m_flags.contains("bank"))
             if (!Syntax::s.m_currentSystem->m_allowedGlobalTypeFlags.contains(f))
                 ErrorHandler::e.Error("Globally defined type '"+value+"' on this system does not support the flag '"+f+"'",m_op.m_lineNumber);
         }
