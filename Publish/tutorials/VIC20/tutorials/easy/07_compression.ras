@@ -36,8 +36,8 @@ var
 	
 	
 
-// Put all code and data at $2000
-@startblock $2000 "Code2"
+// Put all code and data at $2400
+@startblock $2100 "Code2"
 var
 	image1_data: IncBin("resources/images/octopus.bin") compressed;
 	image1_color: IncBin("resources/images/octopus_color.bin") compressed;
