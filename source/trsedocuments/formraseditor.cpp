@@ -255,7 +255,10 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         cs = cs.toUpper().remove(".RAS");
         params << "-a" << "run\""+cs+".BIN";*/
         params.insert(0,"-i");
-        params << "-o" << "0x"+QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
+        int num = Syntax::s.m_currentSystem->m_programStartAddress;
+        if (m_projectIniFile->getdouble("exomizer_toggle")==1)
+            num = 0x4000; /// Always start at 0x4000
+        params << "-o" << "0x"+QString::number(num,16);
 //        qDebug() <<"CURRADDR" <<"0x"+QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
         process.setWorkingDirectory(QFileInfo(emu).path());
         QDir::setCurrent(QFileInfo(emu).path());

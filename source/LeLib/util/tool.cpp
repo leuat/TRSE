@@ -69,6 +69,7 @@ bool Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
         bool ok;
         if (d[0]=="PLY_AKG_INIT") {
             symTab->m_constants["INIT_MUSIC"]->m_value->m_fVal = d[1].toInt(&ok,16);
+//            qDebug() << "INIT MUSIC IS " << Util::numToHex(symTab->m_constants["INIT_MUSIC"]->m_value->m_fVal);
         }
         if (d[0]=="PLY_AKG_PLAY") {
             symTab->m_constants["PLAY_MUSIC"]->m_value->m_fVal = d[1].toInt(&ok,16);

@@ -218,6 +218,7 @@ public:
     static QString getFileWithoutEnding(QString f);
 
     static QString loadTextFile(QString filename);
+    static void SaveTextFile(QString filename, QString text);
 
     static QString MilisecondToString(int ms);
     static QVector3D maxQvector3D(const QVector3D a, const QVector3D b);

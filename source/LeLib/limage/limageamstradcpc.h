@@ -33,7 +33,7 @@ public:
 
     void ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center) override;
 
-    void OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma=1.0) override;
+//    void OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma=1.0) override;
 
     void ExportBin(QFile& ofile) override;
     void LoadBin(QFile& file) override;

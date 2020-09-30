@@ -1,6 +1,6 @@
 #include "systemamstradcpc464.h"
-
-
+#include "source/LeLib/util/lz4/lz4.h"
+#include "source/Compiler/errorhandler.h"
 SystemAmstradCPC464::SystemAmstradCPC464(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj): SystemZ80(settings, proj) {
     m_processor = Z80;
     m_system = AMSTRADCPC464;
@@ -45,8 +45,60 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
         QFile::remove(filename+".dsk");
 */
     QProcess process;
-    QStringList params;
     StartProcess(assembler, QStringList() << filename+".asm" <<filename+".bin", output);
+
+
+
+
+    if (m_projectIni->getdouble("exomizer_toggle")==1) {
+
+        QString fn = filename+".bin";
+        int maxx = 0xB400;
+        int start = 0x4000;
+        int actualStart  = 0;
+        int size = QFileInfo(fn).size();
+        if (size>maxx) {
+            text += "<br><font color=\"red\">Error compressing CPC file: file is too large : </font>"+Util::numToHex(size)+" > " + Util::numToHex(maxx);
+            m_buildSuccess = false;
+            if (QFile::exists(fn+"_c"))
+                QFile::remove(fn+"_c");
+            return;
+
+        }
+        QFile::remove(fn+".bin_c");
+
+        CompressLZ4(fn);
+
+        fn = filename+".bin_c";
+//        QByteArray ba = Util::loadBinaryFile(fn);
+        size = QFileInfo(fn).size();
+        text += "<br>Compressed file : <b>" + Util::numToHex(size) + "</b> bytes.";
+/*        while (ba.size()<(maxx-start))
+            ba.append((char)0);
+*/
+        if (size>(maxx-start)) {
+                    text += "<br><font color=\"red\">Error compressing CPC file: compressed file is too large : </font>"+Util::numToHex(size)+" > " + Util::numToHex(maxx-start);
+                    m_buildSuccess = false;
+                    if (QFile::exists(fn+"_c"))
+                        QFile::remove(fn+"_c");
+
+                    return;
+
+                }
+
+//        Util::SaveByteArray(ba,fn);
+        // Make sure there are padding before
+        actualStart = maxx - size;
+        QString code = Util::loadTextFile(":resources/code/amstrad/unpack.asm");
+        code = code.replace("@START", Util::numToHex(actualStart));
+        code = code.replace("@FILE", fn);
+        QString codeFile = QFileInfo(fn).dir().path()+QDir::separator() + "_unpack.asm";
+        Util::SaveTextFile(codeFile, code);
+        QFile::remove(filename+".bin");
+        StartProcess(assembler, QStringList() << codeFile <<filename+".bin", output);
+
+
+    }
 
     if (!QFile::exists(filename+".bin")) {
         text  += "<br><font color=\"#FFFF00\">Error during assembly : please check source assembly for errors.</font>";

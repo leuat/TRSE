@@ -91,7 +91,7 @@ void LImageAmstradCPC::ToQImage(LColorList &lst, QImage &img, float zoom, QPoint
         }
     //return img;
 }
-
+/*
 void LImageAmstradCPC::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma)
 {
     int height  =min(img.height(), m_height);
@@ -127,7 +127,7 @@ void LImageAmstradCPC::OrdererdDither(QImage &img, LColorList &colors, QVector3D
 
 
 }
-
+*/
 void LImageAmstradCPC::ExportBin(QFile &ofile)
 {
 

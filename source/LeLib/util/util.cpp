@@ -744,6 +744,21 @@ QString Util::loadTextFile(QString filename) {
     return data;
 }
 
+void Util::SaveTextFile(QString fname, QString text)
+{
+    if (QFile::exists(fname)) {
+        QFile::remove(fname);
+    }
+    if (fname=="")
+        return;
+    QFile file(fname);
+    file.open(QIODevice::WriteOnly| QIODevice::Text);
+    QTextStream f(&file);
+    f<<text;
+    file.close();
+
+}
+
 QByteArray Util::loadBinaryFile(QString filename) {
     QFile file(filename);
     file.open(QIODevice::ReadOnly);
