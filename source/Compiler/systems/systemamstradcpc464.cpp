@@ -15,8 +15,9 @@ SystemAmstradCPC464::SystemAmstradCPC464(QSharedPointer<CIniFile> settings, QSha
     m_labels.append(SystemLabel(SystemLabel::KERNAL,"IO",0xFF00, 0xFF7f));
     m_labels.append(SystemLabel(SystemLabel::FREE,"HRAM",0xFF80, 0xFFFF));
 */
-    m_startAddress = 0x6000;
-    m_programStartAddress = 0x6000;
+    m_startAddress = 0x4000;
+    m_programStartAddress = 0x4000;
+    m_supportsExomizer = true;
 
 }
 
@@ -53,7 +54,7 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
     if (m_projectIni->getdouble("exomizer_toggle")==1) {
 
         QString fn = filename+".bin";
-        int maxx = 0xB400;
+        int maxx = 0xF8FF;
         int start = 0x4000;
         int actualStart  = 0;
         int size = QFileInfo(fn).size();
@@ -72,7 +73,7 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
         fn = filename+".bin_c";
 //        QByteArray ba = Util::loadBinaryFile(fn);
         size = QFileInfo(fn).size();
-        text += "<br>Compressed file : <b>" + Util::numToHex(size) + "</b> bytes.";
+        text += "<br>Compressed file : <b>" + QString::number(size) +" bytes ( "+Util::numToHex(size) + ") </b>";
 /*        while (ba.size()<(maxx-start))
             ba.append((char)0);
 */
@@ -90,8 +91,9 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
         // Make sure there are padding before
         actualStart = maxx - size;
         QString code = Util::loadTextFile(":resources/code/amstrad/unpack.asm");
-        code = code.replace("@START", Util::numToHex(actualStart));
+//        code = code.replace("@START", Util::numToHex(actualStart));
         code = code.replace("@FILE", fn);
+//        code = code.replace("@UNPACKCODE", "$F000");
         QString codeFile = QFileInfo(fn).dir().path()+QDir::separator() + "_unpack.asm";
         Util::SaveTextFile(codeFile, code);
         QFile::remove(filename+".bin");

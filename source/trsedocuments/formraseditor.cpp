@@ -51,6 +51,14 @@ FormRasEditor::FormRasEditor(QWidget *parent) :
     m_type = RAS;
     m_timer.start();
     m_lastBuild = m_timer.elapsed();
+
+    ui->chkExomize->setText(Syntax::s.m_currentSystem->m_exomizerName);
+    if (!Syntax::s.m_currentSystem->m_supportsExomizer) {
+        ui->chkExomize->setVisible(false);
+        ui->btnHelpExomize->setVisible(false);
+
+    }
+
     // Enable shadow builds?
 /*    QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(ShadowBuild()));

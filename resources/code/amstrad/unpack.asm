@@ -1,21 +1,22 @@
     org $4000
 ; data FIRST
-	jp start
-
-    org @START
-
-compressed_data: 
-   incbin "@FILE"
 
 start   
-	di
-	call $B909; Disable ROM
-	call $B903; Disable UROM
+    di
+    call $B909; Disable ROM
+    call $B903; Disable UROM
+    ld hl,real_start
+    ld de,$100
+    ld bc,256
+    ldir
+    jp $100
+
+real_start
 	ld hl,compressed_data
-	ld de,$100
+        ld de,$200
 
 
-	jp LZ4_Version4
+        jr LZ4_Version4
 LZ4_version_not_supported
 LZ4_decompress_error:
     adc a,1
@@ -182,4 +183,8 @@ LZ4_decompress_success:
 ;	jp loope
 
 
-	jp $100
+        jp $200
+
+compressed_data:
+   incbin "@FILE"
+

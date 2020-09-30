@@ -44,6 +44,8 @@ public:
     QString m_orgOutput;
     QMap<int,int> m_addresses;
     bool m_hasVariableColorPalette = false;
+    bool m_supportsExomizer = false;
+    QString m_exomizerName = "Exomize";
 
     QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
     int m_startAddress = 0x800;
