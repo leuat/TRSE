@@ -30,6 +30,7 @@
 #include <QPixmap>
 #include "source/Compiler/systems/abstractsystem.h"
 #include <QToolTip>
+#include <QWheelEvent>
 namespace Ui {
 class DialogMemoryAnalyze;
 }
@@ -46,6 +47,10 @@ class DialogMemoryAnalyze : public QDialog
     QPoint cur;
     QPoint mpos;
 
+    QPoint zoomCenter;
+    float zoomVal = 1;
+
+
 public:
     explicit DialogMemoryAnalyze(QSharedPointer<CIniFile> ini, AbstractSystem* system, QWidget *parent = 0);
     void Initialize(QVector<QSharedPointer<MemoryBlock>>& blocks, int fontSize);
@@ -58,6 +63,10 @@ public:
     ~DialogMemoryAnalyze();
 
     void mouseMoveEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent* event) override;
+
+    QPoint Trans(QPoint p);
+    QRect Trans(QRect r);
 
 private slots:
     void on_btnClose_clicked();
