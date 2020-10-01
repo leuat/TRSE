@@ -19,6 +19,16 @@ SystemAmstradCPC464::SystemAmstradCPC464(QSharedPointer<CIniFile> settings, QSha
     m_programStartAddress = 0x4000;
     m_supportsExomizer = true;
 
+
+    m_labels.append(SystemLabel(SystemLabel::ZEROPAGE,"Ssystem values",0,0x00FF));
+    m_labels.append(SystemLabel(SystemLabel::STACK,"Stack",0xBF00,0xBFFF));
+    m_labels.append(SystemLabel(SystemLabel::BASIC,"Basic",0x0200,0x3FFF));
+    m_labels.append(SystemLabel(SystemLabel::FREE,"Free",0x4000,0xAFFF));
+    m_labels.append(SystemLabel(SystemLabel::SID,"SCREEN",0xC000,0xFFFF));
+
+    m_systemColor = QColor(40,90,40);
+
+
 }
 
 void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)

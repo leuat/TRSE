@@ -163,29 +163,30 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
         int box1 = x2-x1-xborder-box2s;
         int box2 = x2-xborder-box2s;
         int height= y1-y0;
-        p.setPen(QPen(QColor(32,32,48)));
-        p.setFont(QFont("Courier", fontSize, QFont::Bold));
-        p.drawText(Trans(QRect(x1+160/zoomVal, y0,box1, height+32)), Qt::AlignLeft, mb->m_name);
+        if (height*zoomVal>=fontSize) {
+            p.setPen(QPen(QColor(32,32,48)));
+            p.setFont(QFont("Courier", fontSize, QFont::Bold));
+            //p.drawText(Trans(QRect(x1+160/zoomVal, y0,box1, height)), Qt::AlignLeft | Qt::AlignHCenter, mb->m_name);
 
-        QString f = "$"+QString::number(mb->m_start,16).rightJustified(4, '0');
-        QString t = "$"+QString::number(mb->m_end,16).rightJustified(4, '0');
+            QString f = "$"+QString::number(mb->m_start,16).rightJustified(4, '0');
+            QString t = "$"+QString::number(mb->m_end,16).rightJustified(4, '0');
 
-        p.drawText(Trans(QRect(x1, y0,box1, height+32)), Qt::AlignLeft, f + " - " + t);
+            p.drawText(Trans(QRect(x1, y0,box1, height)), Qt::AlignLeft | Qt::AlignVCenter, " " + f + " - " + t + " : " +mb->m_name);
 
-        // Zeropages
-        QString zp = "";
-        int cnt=0;
-        for (int i: mb->m_zeropages) {
-            zp+=Util::numToHex(i) + " ";
-            if (cnt++==5) { zp+="\n"; cnt=0; }
+            // Zeropages
+            QString zp = "";
+            int cnt=0;
+            for (int i: mb->m_zeropages) {
+                zp+=Util::numToHex(i) + " ";
+                if (cnt++==5) { zp+="\n"; cnt=0; }
+            }
+            if (mb->m_zeropages.count()!=0)
+                zp = "zp :"+zp;
+            zp=zp.trimmed();
+            p.setFont(QFont("Courier", min(fontSize,height), QFont::Bold));
+
+            p.drawText(Trans(QRect(x2-xborder-box2s+12, y0,box2, y1-y0)), Qt::AlignLeft|Qt::AlignTop, zp);
         }
-        if (mb->m_zeropages.count()!=0)
-            zp = "zp :"+zp;
-        zp=zp.trimmed();
-        p.setFont(QFont("Courier", min(fontSize,height), QFont::Bold));
-
-        p.drawText(Trans(QRect(x2-xborder-box2s+12, y0,box2, y1-y0)), Qt::AlignLeft|Qt::AlignTop, zp);
-
 
 
         i++;
