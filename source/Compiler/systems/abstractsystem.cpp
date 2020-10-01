@@ -44,7 +44,7 @@ QString AbstractSystem::CompressLZ4(QString fileName) {
 }
 
 
-void AbstractSystem::StartProcess(QString file, QStringList params, QString& output) {
+void AbstractSystem::StartProcess(QString file, QStringList params, QString& output, bool standardOutput ) {
     // qDebug() << params;
     QProcess process;
     process.start(file, params);
@@ -52,6 +52,8 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
     //    qDebug() << process.readAllStandardOutput();;
     //    qDebug() << process.readAllStandardError();
     //        output+= process.readAllStandardOutput();
+    if (standardOutput)
+        output+= process.readAllStandardOutput();
     output+= process.readAllStandardError();
 
 }

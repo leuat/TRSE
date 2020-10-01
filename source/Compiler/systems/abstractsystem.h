@@ -73,7 +73,7 @@ public:
         return true;
     }
 
-    void StartProcess(QString file, QStringList params, QString& output);
+    void StartProcess(QString file, QStringList params, QString& output, bool standardOutput = false);
 
     static void InitLabelColors();
 

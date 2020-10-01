@@ -212,19 +212,19 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
     int width = 800;
     // Render "tooltip" text
     if (curT!="") {
-       p.drawRoundedRect(Trans(QRect(mpos.x(),mpos.y(),width,70)),round,round);
+       p.drawRoundedRect(QRect(mpos.x(),mpos.y(),width,60),round,round);
        c = QColor(100,220,255,255);
        p.setPen(c);
 //       p.setBrush(c);
        p.setFont(QFont("Courier", 15, QFont::Bold));
-       p.drawText(Trans(QRect(mpos.x(),mpos.y(),width,60)), curT);
+       p.drawText(QRect(mpos.x()+180,mpos.y(),width,60), curT);
        p.setFont(QFont("Courier", 12, QFont::Bold));
        c = QColor(80,130,255,255);
        p.setPen(c);
 
        QString address = "$"+QString::number(cur.x(),16).rightJustified(4, '0');
        address += " - $"+QString::number(cur.y(),16).rightJustified(4, '0');
-       p.drawText(Trans(QRect(mpos.x(),mpos.y()+40,500,60)), address);
+       p.drawText(QRect(mpos.x(),mpos.y()+4,500,60), address);
     }
 
 

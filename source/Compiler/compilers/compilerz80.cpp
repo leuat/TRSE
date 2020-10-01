@@ -75,3 +75,63 @@ void CompilerZ80::Connect()
 
 }
 
+void CompilerZ80::SetupMemoryAnalyzer(QString filename)
+{
+ /*   Orgasm orgAsm;
+    orgAsm.SetupConstants(m_parser.m_symTab);
+    //orgAsm.Codes();
+    orgAsm.Assemble(filename+".asm", filename+".prg");
+    if (!orgAsm.m_success) {
+        return;
+    }
+    */
+
+    QProcess process;
+    QString assembler = m_ini->getString("pasmo");
+    QString output;
+    Syntax::s.m_currentSystem->StartProcess(assembler, QStringList() << "-1"<< filename+".asm" <<filename+".bin", output, true);
+
+
+/*    int codeEnd=FindEndSymbol(orgAsm);
+    QVector<int> ends = FindBlockEndSymbols(orgAsm);
+    //    qDebug() << "B";
+    ConnectBlockSymbols(ends);
+        */
+    int start = 0;
+    int end = 0;
+    QStringList lst = output.split("\n");
+    int cnt = 0;
+    for (QString s : lst) {
+
+        s = s.replace("\t"," ").trimmed().simplified();
+        QStringList l = s.split(" ");
+        if (l.count()==0) continue;
+        bool ok = false;
+        if (l[0].toLower() == "org")
+            start = l[1].toInt(&ok,16);
+
+        if (l.count()>=2)
+        if (l[1].toLower() == "end") {
+            end = l[0].split(":")[0].toInt(&ok,16);
+        }
+
+        if (l[0].toLower()=="incbin") {
+            QString file = l[1];
+            int binStart = lst[cnt-1].split(":")[0].toInt(&ok,16);
+            int binEnd = binStart + QFileInfo(file).size();
+            m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(binStart, binEnd, MemoryBlock::DATA, file)));
+
+        }
+        cnt++;
+
+    }
+    qDebug().noquote() << output;
+   // qDebug() << Util::numToHex(start) << Util::numToHex(end);
+    //int start = Syntax::s.m_currentSystem->m_startAddress;
+    //if (Syntax::s.m_currentSystem->m_startAddress!=Syntax::s.m_currentSystem->m_programStartAddress)
+    //    start = Syntax::s.m_currentSystem->m_programStartAddress;
+    m_assembler->blocks.insert(0,QSharedPointer<MemoryBlock>(new MemoryBlock(start, end, MemoryBlock::CODE, "code")));
+
+
+}
+

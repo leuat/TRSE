@@ -872,6 +872,7 @@ void FormRasEditor::MemoryAnalyze()
     if (m_builderThread.m_isRunning)
         return;
 
+
     if (!m_currentSourceFile.endsWith(".ras")) {
         ErrorHandler::e.m_warnings.clear();
         ErrorHandler::e.m_teOut = "";
