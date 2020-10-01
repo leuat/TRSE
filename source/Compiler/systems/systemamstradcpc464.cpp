@@ -20,11 +20,12 @@ SystemAmstradCPC464::SystemAmstradCPC464(QSharedPointer<CIniFile> settings, QSha
     m_supportsExomizer = true;
 
 
-    m_labels.append(SystemLabel(SystemLabel::ZEROPAGE,"Ssystem values",0,0x00FF));
+    m_labels.append(SystemLabel(SystemLabel::ZEROPAGE,"System values",0,0x00FF));
     m_labels.append(SystemLabel(SystemLabel::STACK,"Stack",0xBF00,0xBFFF));
     m_labels.append(SystemLabel(SystemLabel::BASIC,"Basic",0x0200,0x3FFF));
     m_labels.append(SystemLabel(SystemLabel::FREE,"Free",0x4000,0xAFFF));
-    m_labels.append(SystemLabel(SystemLabel::SID,"SCREEN",0xC000,0xFFFF));
+    m_labels.append(SystemLabel(SystemLabel::VIC,"Video memory",0xC000,0xFFFF));
+    m_labels.append(SystemLabel(SystemLabel::SID,"Firmware",0xB000,0xBEFF));
 
     m_systemColor = QColor(40,90,40);
 
