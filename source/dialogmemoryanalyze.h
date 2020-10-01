@@ -49,7 +49,7 @@ class DialogMemoryAnalyze : public QDialog
 
     QPoint zoomCenter;
     float zoomVal = 1;
-
+    int time = 0;
 
 public:
     explicit DialogMemoryAnalyze(QSharedPointer<CIniFile> ini, AbstractSystem* system, QWidget *parent = 0);
@@ -65,7 +65,7 @@ public:
     void mouseMoveEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent* event) override;
 
-    QPoint Trans(QPoint p);
+    QPointF Trans(QPointF p);
     QRect Trans(QRect r);
 
 private slots:

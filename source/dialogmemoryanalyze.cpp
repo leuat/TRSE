@@ -91,6 +91,7 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
     QImage img(QSize(xsize,ysize), QImage::Format_ARGB32);
 
     img.fill(m_system->m_systemColor);
+    QString prevT = curT;
     curT="";
     int xstart = xsize/3;
     int ww = xsize/5;
@@ -103,7 +104,7 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
 
     QPainter p;
     p.begin(&img);
-
+    time = time +1;
 
     RenderSystemLabels(p,xstart,fontSize);
 
@@ -114,6 +115,11 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
         //float scale=(0.5 + (rand()%100/100.0));
         float scale = 0.9;
         if (i%2==1) scale=1.2f;
+
+//        qDebug() << curT << mb->m_name;
+        if (prevT == mb->m_name)
+            scale = 1.7;//1+sin(time*0.1);
+
         c.setRed(min(c.red()*scale,255.0f));
         c.setGreen(min(c.green()*scale,255.0f));
         c.setBlue(min(c.blue()*scale,255.0f));
@@ -132,7 +138,7 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
         }
 
 
-        p.drawRoundedRect(Trans(QRect(x1,y0,x2-xborder-x1-ww,y1-y0)),round,round);
+        p.drawRoundedRect(Trans(QRect(x1,y0,x2-xborder-x1-ww,y1-y0+1)),round,round);
 
         int box2s = ww;
         float s2 = 0.75f;
@@ -140,7 +146,7 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
         c.setGreen(min(c.green()*scale*s2,255.0f));
         c.setBlue(min(c.blue()*scale*s2,255.0f));
 
-        QRect r = Trans(QRect(x1,y0+shift,x2-xborder,y1-y0));
+        QRect r = Trans(QRect(x1,y0+shift/zoomVal,x2-xborder,y1-y0));
         if (r.contains(mpos)) {
             curT = mb->m_name;
             cur.setX(mb->m_start);
@@ -158,13 +164,13 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
         int box2 = x2-xborder-box2s;
         int height= y1-y0;
         p.setPen(QPen(QColor(32,32,48)));
-        p.setFont(QFont("Courier", min(fontSize,height), QFont::Bold));
-        p.drawText(Trans(QRect(x1, y0+fontSize*1.2,box1, height+16)), Qt::AlignLeft, mb->m_name);
+        p.setFont(QFont("Courier", fontSize, QFont::Bold));
+        p.drawText(Trans(QRect(x1+160/zoomVal, y0,box1, height+32)), Qt::AlignLeft, mb->m_name);
 
         QString f = "$"+QString::number(mb->m_start,16).rightJustified(4, '0');
         QString t = "$"+QString::number(mb->m_end,16).rightJustified(4, '0');
 
-        p.drawText(Trans(QRect(x1, y0+fontSize*0.2,box1, height)), Qt::AlignLeft|Qt::AlignTop, f + " - " + t);
+        p.drawText(Trans(QRect(x1, y0,box1, height+32)), Qt::AlignLeft, f + " - " + t);
 
         // Zeropages
         QString zp = "";
@@ -241,6 +247,7 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
     ui->lblImage->setPixmap(pm);
 
     VerifyZPMusic(blocks);
+    repaint();
 }
 
 void DialogMemoryAnalyze::InitColors()
@@ -312,14 +319,14 @@ void DialogMemoryAnalyze::wheelEvent(QWheelEvent *event)
     zoomVal = max(1.0f, zoomVal);
 }
 
-QPoint DialogMemoryAnalyze::Trans(QPoint p)
+QPointF DialogMemoryAnalyze::Trans(QPointF p)
 {
     return (p-zoomCenter)*zoomVal + zoomCenter;
 }
 
 QRect DialogMemoryAnalyze::Trans(QRect r)
 {
-    QPoint p = Trans(QPoint(r.x(),r.y()));
+    QPointF p = Trans(QPoint(r.x(),r.y()));
     return QRect(p.x(),p.y(),r.width()*zoomVal,r.height()*zoomVal);
 }
 
