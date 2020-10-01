@@ -152,19 +152,19 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
         p.setPen(c);
         p.setBrush(c);
         if (mb->m_bank<0)
-            p.drawRoundedRect(Trans(QRect(x2-xborder-box2s,y0,x2-xborder,y1-y0)),round,round);
+            p.drawRoundedRect(Trans(QRect(x2-xborder-box2s,y0,x2-xborder,y1-y0+1)),round,round);
 
         int box1 = x2-x1-xborder-box2s;
         int box2 = x2-xborder-box2s;
         int height= y1-y0;
         p.setPen(QPen(QColor(32,32,48)));
         p.setFont(QFont("Courier", min(fontSize,height), QFont::Bold));
-        p.drawText(Trans(QRect(x1, y0,box1, height)), Qt::AlignCenter, mb->m_name);
+        p.drawText(Trans(QRect(x1, y0+fontSize*1.2,box1, height+16)), Qt::AlignLeft, mb->m_name);
 
         QString f = "$"+QString::number(mb->m_start,16).rightJustified(4, '0');
         QString t = "$"+QString::number(mb->m_end,16).rightJustified(4, '0');
 
-        p.drawText(Trans(QRect(x1, y0,box1, height)), Qt::AlignLeft|Qt::AlignTop, f + " - " + t);
+        p.drawText(Trans(QRect(x1, y0+fontSize*0.2,box1, height)), Qt::AlignLeft|Qt::AlignTop, f + " - " + t);
 
         // Zeropages
         QString zp = "";
