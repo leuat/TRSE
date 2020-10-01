@@ -46,6 +46,7 @@ class DialogMemoryAnalyze : public QDialog
     QString curT = "";
     QPoint cur;
     QPoint mpos;
+    float delta;
 
     QPoint zoomCenter;
     float zoomVal = 1;
@@ -66,7 +67,8 @@ public:
     void wheelEvent(QWheelEvent* event) override;
 
     QPointF Trans(QPointF p);
-    QRect Trans(QRect r);
+    QRect Trans(QRect r, float addy = 0);
+    QRect Trans(float, float, float, float);
 
 private slots:
     void on_btnClose_clicked();

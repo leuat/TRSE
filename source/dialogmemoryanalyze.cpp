@@ -138,7 +138,7 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
         }
 
 
-        p.drawRoundedRect(Trans(QRect(x1,y0,x2-xborder-x1-ww,y1-y0+1)),round,round);
+        p.drawRoundedRect(Trans(x1,y0,x2-xborder-x1-ww,y1-y0),round,round);
 
         int box2s = ww;
         float s2 = 0.75f;
@@ -146,7 +146,7 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
         c.setGreen(min(c.green()*scale*s2,255.0f));
         c.setBlue(min(c.blue()*scale*s2,255.0f));
 
-        QRect r = Trans(QRect(x1,y0+shift/zoomVal,x2-xborder,y1-y0));
+        QRect r = Trans(x1,y0+shift/zoomVal,x2-xborder,y1-y0);
         if (r.contains(mpos)) {
             curT = mb->m_name;
             cur.setX(mb->m_start);
@@ -158,7 +158,7 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
         p.setPen(c);
         p.setBrush(c);
         if (mb->m_bank<0)
-            p.drawRoundedRect(Trans(QRect(x2-xborder-box2s,y0,x2-xborder,y1-y0+1)),round,round);
+            p.drawRoundedRect(Trans(x2-xborder-box2s,y0,x2-xborder,y1-y0+1),round,round);
 
         int box1 = x2-x1-xborder-box2s;
         int box2 = x2-xborder-box2s;
@@ -171,7 +171,7 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
             QString f = "$"+QString::number(mb->m_start,16).rightJustified(4, '0');
             QString t = "$"+QString::number(mb->m_end,16).rightJustified(4, '0');
 
-            p.drawText(Trans(QRect(x1, y0,box1, height)), Qt::AlignLeft | Qt::AlignVCenter, " " + f + " - " + t + " : " +mb->m_name);
+            p.drawText(Trans(x1, y0,box1, height), Qt::AlignLeft | Qt::AlignVCenter, " " + f + " - " + t + " : " +mb->m_name);
 
             // Zeropages
             QString zp = "";
@@ -185,7 +185,7 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
             zp=zp.trimmed();
             p.setFont(QFont("Courier", min(fontSize,height), QFont::Bold));
 
-            p.drawText(Trans(QRect(x2-xborder-box2s+12, y0,box2, y1-y0)), Qt::AlignLeft|Qt::AlignTop, zp);
+            p.drawText(Trans(x2-xborder-box2s+12, y0,box2, y1-y0), Qt::AlignLeft|Qt::AlignTop, zp);
         }
 
 
@@ -201,11 +201,11 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
         int y0=(ysize/16)*i;
         int y1=(ysize/16)*(i+1);
         p.setPen(QColor(0,0,0,255));
-        p.drawText(Trans(QRect(0, y0,xstart, y1)), Qt::AlignLeft|Qt::AlignTop, v);
+        p.drawText(Trans(0, y0,xstart, y1), Qt::AlignLeft|Qt::AlignTop, v);
         p.setPen(QColor(0,0,0,0));
         int ysize=1;
         if (i%4==0) ysize=4;
-        p.drawRect(Trans(QRect(0,y0,xsize,ysize)));
+        p.drawRect(Trans(0,y0,xsize,ysize));
 
     }
 
@@ -316,7 +316,7 @@ void DialogMemoryAnalyze::mouseMoveEvent(QMouseEvent *event)
 
 void DialogMemoryAnalyze::wheelEvent(QWheelEvent *event)
 {
-    zoomVal +=0.002f*event->delta();
+    zoomVal *=1+0.001f*event->delta();
     zoomVal = max(1.0f, zoomVal);
 }
 
@@ -325,10 +325,17 @@ QPointF DialogMemoryAnalyze::Trans(QPointF p)
     return (p-zoomCenter)*zoomVal + zoomCenter;
 }
 
-QRect DialogMemoryAnalyze::Trans(QRect r)
+QRect DialogMemoryAnalyze::Trans(QRect r,float addy)
 {
-    QPointF p = Trans(QPoint(r.x(),r.y()));
-    return QRect(p.x(),p.y(),r.width()*zoomVal,r.height()*zoomVal);
+    QPointF p = Trans(QPointF(r.x(),r.y()));
+    return QRect(p.x(),p.y(),r.width()*zoomVal,(r.height())*zoomVal);
+}
+
+QRect DialogMemoryAnalyze::Trans(float x, float y, float w, float h)
+{
+    QPointF p = Trans(QPointF(x,y));
+    return QRect(p.x(),p.y(),w*zoomVal,h*zoomVal);
+
 }
 
 void DialogMemoryAnalyze::on_btnClose_clicked()
