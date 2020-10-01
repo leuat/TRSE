@@ -13,7 +13,7 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC464)
     if (m_projectIni->getdouble("exomizer_toggle")==1.0)
-        Syntax::s.m_currentSystem->m_programStartAddress = 0x200; // Unpack address
+        Syntax::s.m_currentSystem->m_programStartAddress = 0x300; // Unpack address
 
 
 //    m_assembler->Asm("CPU "+m_projectIni->getString("cpu_Z80_system"));

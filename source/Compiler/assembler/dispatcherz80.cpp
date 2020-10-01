@@ -788,10 +788,15 @@ void ASTdispatcherZ80::LoadAddress(QSharedPointer<Node> n)
     QString hl =getHL();
 
     if (n->isPointer(as)) {
-        as->Asm("ld a,[" +n->getValue(as)+"]");
-        as->Asm("ld "+hl[0]+",a");
-        as->Asm("ld a,[" +n->getValue(as)+"+1]");
-        as->Asm("ld "+hl[1]+",a");
+        if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80) {
+            as->Asm("ld a,[" +n->getValue(as)+"]");
+            as->Asm("ld "+hl[0]+",a");
+            as->Asm("ld a,[" +n->getValue(as)+"+1]");
+            as->Asm("ld "+hl[1]+",a");
+
+        }
+        else
+        as->Asm("ld hl,["+n->getValue(as)+"]");
     }
     else as->Asm("ld "+hl+"," +n->getValue(as));
 }
@@ -800,21 +805,29 @@ void ASTdispatcherZ80::LoadInteger(QSharedPointer<Node> n)
 {
     QString hl =getHL();
 
-    as->Asm("ld a,[" +n->getValue(as)+"]");
-    as->Asm("ld "+hl[0]+",a");
-    as->Asm("ld a,[" +n->getValue(as)+"+1]");
-    as->Asm("ld "+hl[1]+",a");
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80) {
+        as->Asm("ld a,[" +n->getValue(as)+"]");
+        as->Asm("ld "+hl[0]+",a");
+        as->Asm("ld a,[" +n->getValue(as)+"+1]");
+        as->Asm("ld "+hl[1]+",a");
+    }
+    else
+    as->Asm("ld "+hl+",["+n->getValue(as)+"]");
 }
 
 
 void ASTdispatcherZ80::StoreAddress(QSharedPointer<Node> n)
 {
     QString hl =getHL();
-    as->Asm("ld a,"+hl[0]+"");
-    as->Asm("ld ["+n->getValue(as)+"], a");
-    as->Asm("ld a,"+hl[1]+"");
-    as->Asm("ld ["+n->getValue(as)+"+1], a");
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80) {
+        as->Asm("ld a,"+hl[0]+"");
+        as->Asm("ld ["+n->getValue(as)+"], a");
+        as->Asm("ld a,"+hl[1]+"");
+        as->Asm("ld ["+n->getValue(as)+"+1], a");
 
+    }
+    else
+        as->Asm("ld ["+n->getValue(as)+"],"+hl);
 }
 
 QString ASTdispatcherZ80::getHL() {
@@ -1008,9 +1021,9 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
                     if (bop->m_right->isPureNumeric() && (bop->m_right->getValueAsInt(as)&0xFF)==0) {
                         as->Comment("RHS is pure constant of $100");
                         as->Asm("ld b,"+Util::numToHex(bop->m_right->getValueAsInt(as)>>8));
-                        as->Asm("ld a,[ "+var->value+" ]");
+                        as->Asm("ld a,[ "+var->value+"+1 ]");
                         as->Asm("add a,b");
-                        as->Asm("ld [ "+var->value+" ],a");
+                        as->Asm("ld [ "+var->value+"+1 ],a");
                         return;
 
                     }

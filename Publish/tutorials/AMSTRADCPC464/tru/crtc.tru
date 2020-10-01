@@ -1,9 +1,13 @@
 Unit crtc;
+@use "memory"
 var 
-	ga,gb,col,pix,x,y : byte; 
+	@donotremove none
+	@donotremove none2
+	ga,gb,col,pix,x,none,y,none2 : byte=0; 
 	@donotremove sp
 	pa,sp : pointer;
-	
+	j: byte;
+
 	@donotremove y_lookup
 	y_lookup : array[201] of integer = buildTable( "0xC000 + (Math.floor(i/8))*80 + (i&7)*2048");
 	// Lookup for mode 0 pixel 0	
@@ -47,6 +51,22 @@ var
 %01010101);
 
 
+procedure WaitForSync();
+begin
+	asm("
+wf_Sync:
+    ld b,#f5
+    in a,(c)
+    rra
+    jr nc,wf_Sync + 2
+    ei
+    nop
+    halt
+    halt
+    di
+    ");
+end;
+
 // Set screen mode
 procedure SetMode(ga: global byte);
 begin
@@ -58,17 +78,23 @@ end;
 
 procedure SetPalette(pa : global pointer);
 begin
+	asm("	
+	
+	ld hl,[crtc_pa]
+	ld de,0
+	");	
 	for ga:=0 to 16 do
 	begin
-	gb:=pa[ga];
-	asm("
-	ld a,[crtc_gb]
-    ld c, a     
-    ld b, a    
-    ld a, [crtc_ga]
-    call #$BC32 ; set palette
+		gb:=pa[ga];
+		asm("
+
+		ld a, [crtc_gb]
+    	ld c, a     
+    	ld b, a    
+    	ld a, [crtc_ga]
+    	call $BC32 ; set palette
     ");
-    end;
+    	end;
 end;
 
 procedure SetSinglePalette(ga,gb : global byte);
@@ -139,6 +165,7 @@ crtc_256widthList:
 	defb $00	; R13 - screen start
 
 	");
+
 end;
 
 
@@ -169,19 +196,14 @@ begin
 	// Simply looks up the y-value and adds x
 	asm("
 		ld hl,crtc_y_lookup
-		ld b,0
-		ld a,[crtc_y]
-		ld c,a
+		ld bc,[crtc_y]
 		add hl,bc
 		add hl,bc
 
-		
-		ld a,[hl]
-		ld [crtc_pa+1],a
-		inc hl
-		ld a,[hl]
-		ld [crtc_pa],a
-		
+		ld de,crtc_pa
+		ldi
+		ldi
+			
 		
 	");
 //	pix :=x &1;
@@ -198,21 +220,6 @@ begin
 
 end;
 
-procedure WaitForSync();
-begin
-	asm("
-wf_Sync:
-    ld b,#f5
-    in a,(c)
-    rra
-    jr nc,wf_Sync + 2
-    ei
-    nop
-    halt
-    halt
-    di
-    ");
-end;
 
 
 end.

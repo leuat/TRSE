@@ -19,7 +19,9 @@ begin
 	for k:=0 to 24 do
 	begin
 		fill(p1,la,$100);
+		asm(";here");
 		p1:=p1+$100;
+		asm(";done");
 		la:=la<<1;
 	end;
 	

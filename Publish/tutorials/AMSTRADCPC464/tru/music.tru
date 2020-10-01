@@ -5,9 +5,7 @@ var
 procedure InitMusic(p:global pointer;val:global byte);
 begin
 	asm("
-	   ld a,[music_p]
-	   ld h,a
-	   ld a,[music_p+1]
+	   ld hl, [music_p]
 	   ld l,a
 	   ld a,[music_val]              
        call INIT_MUSIC 		

@@ -1,28 +1,48 @@
     org $4000
 ; data FIRST
 
+firmware_RST_jp EQU $38
+; dw 0
+
 start   
     di
     call $B909; Disable ROM
     call $B903; Disable UROM
     ld hl,real_start
-    ld de,$100
+    ld de,$202
     ld bc,256
     ldir
-    jp $100
+
+ ld   hl, (firmware_RST_jp+1)   ;; [5] Obtain pointer to the present interrupt handler
+ ex   de, hl                    ;; [1] DE = HL (DE saves present pointer to previous interrupt handler)
+
+ im   1                        ;; [2] Set Interrupt Mode 1 (CPU will jump to 0x38 when a interrupt occurs)
+ ld   hl, $C9FB               ;; [3] FB C9 (take into account little endian) => EI : RET
+
+ ld (firmware_RST_jp), hl       ;; [5] Setup new "null interrupt handler" and enable interrupts again
+ ;ei                             ;; [1]
+ ex   de, hl                    ;; [1] HL = Pointer to previous interrupt handler (return value)
+
+  ld ($200), hl
+; push hl
+di
+    ; Set new stack pointer
+    ld sp, $200
+
+    jp $202
 
 real_start
 	ld hl,compressed_data
-        ld de,$200
+        ld de,$300
 
 
         jr LZ4_Version4
 LZ4_version_not_supported
 LZ4_decompress_error:
-    adc a,1
-    ld b,a
-    ld c, b
-    call $BC38
+;    adc a,1
+ ;   ld b,a
+  ;  ld c, b
+   ; call $BC38
 
 	jp LZ4_decompress_error
 
@@ -170,7 +190,7 @@ LZ4_copymatches:
 LZ4_decompress_success:
 	pop		hl							; store destination pointer 
 	sbc		hl,de						; calculate the number of decompressed bytes 
-	xor		a							; clear exit code
+;	xor		a							; clear exit code
 
 
 ;	call $B900; Enable UROM
@@ -181,10 +201,23 @@ LZ4_decompress_success:
 ;    call $BC38
 ;loope:
 ;	jp loope
+    ; restore
 
+;    di
+;    pop hl
+;    im   1                        ;; [2] Set Interrupt Mode 1 (CPU will jump to 0x38 when a interrupt occurs)
+;    ld (firmware_RST_jp), hl       ;; Restore
+;    ei
+    ld hl,[$200]
+    di                         ;; [1] Disable interrupts
+   ld a, $C3           ;; [2] A = 0xC3, opcode for JP instruction
+   ld (firmware_RST_jp), a    ;; [4] Put JP instruction at 0x0038, to create a jump to the pointer at 0x0039
+   ld (firmware_RST_jp+1), hl ;; [5] HL = previous interrupt handler pointer (firmware ROM pointer)
+ ;  ei                         ;; [1] Reenable interrupts and return
+    ld sp,$C000
+        jp $300
 
-        jp $200
-
+;  org @START
 compressed_data:
    incbin "@FILE"
 

@@ -89,9 +89,9 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
 
 //        Util::SaveByteArray(ba,fn);
         // Make sure there are padding before
-        actualStart = maxx - size;
+        actualStart = 0xB000 - size;
         QString code = Util::loadTextFile(":resources/code/amstrad/unpack.asm");
-//        code = code.replace("@START", Util::numToHex(actualStart));
+        code = code.replace("@START", Util::numToHex(actualStart));
         code = code.replace("@FILE", fn);
 //        code = code.replace("@UNPACKCODE", "$F000");
         QString codeFile = QFileInfo(fn).dir().path()+QDir::separator() + "_unpack.asm";

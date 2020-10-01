@@ -13,17 +13,9 @@ begin
 ; DE - pointer to the destination buffer for decompressed data
 ; BC - size of the compressed data
 
-	ld a,[Compression_in]
-	ld h,a
-	ld a,[Compression_in+1]
-	ld l,a
-	
+	ld hl,[Compression_in]
+	ld de,[Compression_out]
 
-;	exx
-	ld a,[Compression_out]
-	ld d,a
-	ld a,[Compression_out+1]
-	ld e,a
 
 	");
 	

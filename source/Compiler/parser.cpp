@@ -571,7 +571,7 @@ void Parser::ApplyTPUAfter(QVector<QSharedPointer<Node>>& declBlock, QVector<QSh
 
         QVector<QSharedPointer<Node>> copy;
         for (auto p: declBlock)
-            copy.append(p);
+                copy.append(p);
 
         declBlock.clear();
         // Make sure that TRU variables are declared FIRST. Ordering is important for the GB
@@ -1829,7 +1829,7 @@ QSharedPointer<Node> Parser::Program(QString param)
 
 
     if (!m_isTRU)
-     block = qSharedPointerDynamicCast<NodeBlock>(Block(true));
+        block = qSharedPointerDynamicCast<NodeBlock>(Block(true));
     else
         block = qSharedPointerDynamicCast<NodeBlock>(BlockNoCompound(true));
 
@@ -2485,8 +2485,12 @@ QSharedPointer<Node> Parser::Block(bool useOwnSymTab, QString blockName)
 QSharedPointer<Node> Parser::BlockNoCompound(bool useOwnSymTab, QString blockName)
 {
 
-    if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type==TokenType::WEDGE || m_currentToken.m_type==TokenType::FUNCTION)
-        return nullptr;
+//    if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type==TokenType::WEDGE || m_currentToken.m_type==TokenType::FUNCTION)
+  //      return nullptr;
+
+    if (m_currentToken.m_type!=TokenType::VAR)
+        ErrorHandler::e.Error("TRUs must contain at least one \"var\" declaration block.", m_currentToken.m_lineNumber);
+
 
 
     QVector<QSharedPointer<Node>> decl =  Declarations(useOwnSymTab, blockName, false);
