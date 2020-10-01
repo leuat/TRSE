@@ -100,7 +100,18 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
 
 //        Util::SaveByteArray(ba,fn);
         // Make sure there are padding before
-        actualStart = 0xB000 - size;
+        actualStart = 0xB780 - size;
+        text += "<br><font color=\"yellow\">Start address : " +Util::numToHex(actualStart) + " to " + Util::numToHex(actualStart+size) + ".</font>";
+        if (actualStart<0x4100) {
+            text += "<br><font color=\"red\">Error compressing CPC file: compressed file is too large : </font>"+Util::numToHex(size)+" > " + Util::numToHex(0xb780-0x4100);
+            m_buildSuccess = false;
+            if (QFile::exists(fn+"_c"))
+                QFile::remove(fn+"_c");
+
+            return;
+
+
+        }
         QString code = Util::loadTextFile(":resources/code/amstrad/unpack.asm");
         code = code.replace("@START", Util::numToHex(actualStart));
         code = code.replace("@FILE", fn);

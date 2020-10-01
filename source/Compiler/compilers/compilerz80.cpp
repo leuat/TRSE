@@ -55,8 +55,10 @@ void CompilerZ80::Connect()
     m_assembler->IncludeFile(":resources/code/Z80/memcpy.asm");
 
 
+
+
     if (Syntax::s.m_currentSystem->m_system != AbstractSystem::COLECO)
-        m_assembler->Asm("end "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
+        m_assembler->Asm("end");//+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
 
 
 
@@ -91,6 +93,7 @@ void CompilerZ80::SetupMemoryAnalyzer(QString filename)
     QString output;
     Syntax::s.m_currentSystem->StartProcess(assembler, QStringList() << "-1"<< filename+".asm" <<filename+".bin", output, true);
 
+    m_assembler->blocks.clear();
 
 /*    int codeEnd=FindEndSymbol(orgAsm);
     QVector<int> ends = FindBlockEndSymbols(orgAsm);
@@ -101,8 +104,12 @@ void CompilerZ80::SetupMemoryAnalyzer(QString filename)
     int end = 0;
     QStringList lst = output.split("\n");
     int cnt = 0;
+    QVector<QSharedPointer<MemoryBlock>> codeBlocks;
+    bool ignore = false;
     for (QString s : lst) {
 
+        if (ignore)
+            continue;
         s = s.replace("\t"," ").trimmed().simplified();
         QStringList l = s.split(" ");
         if (l.count()==0) continue;
@@ -110,28 +117,39 @@ void CompilerZ80::SetupMemoryAnalyzer(QString filename)
         if (l[0].toLower() == "org")
             start = l[1].toInt(&ok,16);
 
-        if (l.count()>=2)
-        if (l[1].toLower() == "end") {
-            end = l[0].split(":")[0].toInt(&ok,16);
-        }
 
         if (l[0].toLower()=="incbin") {
             QString file = l[1];
             int binStart = lst[cnt-1].split(":")[0].toInt(&ok,16);
             int binEnd = binStart + QFileInfo(file).size();
             m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(binStart, binEnd, MemoryBlock::DATA, file)));
+//            qDebug() << "Found FILE " << file << Util::numToHex(binStart) << Util::numToHex(binEnd);
 
+        }
+        if (l.count()>=2) {
+//            qDebug() << l;
+            if (l[1].toLower() == "end" || s.toLower().contains("endsymbol")) {
+                end = l[0].split(":")[0].toInt(&ok,16);
+                codeBlocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start, end, MemoryBlock::CODE, "code")));
+  //              qDebug() << "**************************** END found at "<< Util::numToHex(end);
+
+            }
+            if (l[1].toLower() == "end") {
+//                qDebug() <<" Breaking at END";
+                ignore = true;
+                break;
+
+            }
         }
         cnt++;
 
     }
-    qDebug().noquote() << output;
-   // qDebug() << Util::numToHex(start) << Util::numToHex(end);
+  //  qDebug().noquote() << output;
+    //qDebug() << Util::numToHex(start) << Util::numToHex(end);
     //int start = Syntax::s.m_currentSystem->m_startAddress;
     //if (Syntax::s.m_currentSystem->m_startAddress!=Syntax::s.m_currentSystem->m_programStartAddress)
     //    start = Syntax::s.m_currentSystem->m_programStartAddress;
-    m_assembler->blocks.insert(0,QSharedPointer<MemoryBlock>(new MemoryBlock(start, end, MemoryBlock::CODE, "code")));
-
+    m_assembler->blocks = codeBlocks <<m_assembler->blocks;
 
 }
 

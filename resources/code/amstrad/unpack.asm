@@ -217,7 +217,7 @@ LZ4_decompress_success:
     ld sp,$C000
         jp $300
 
-;  org @START
+  org @START
 compressed_data:
    incbin "@FILE"
 
