@@ -50,6 +50,4 @@ data_header_resources/images/image3.flf = 6.91708e-310
 data_header_resources/images/image4.flf = 6.91708e-310
 data_header_resources/images/image5.flf = 6.91708e-310
 zeropage_colormemory = $fc
-open_files = ,tut1.asm, tut3_plasma.ras, tut5_compression.ras, tut2.ras, tut1.ras, [external]compression.tru
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/AMSTRADCPC464/tutorials/
-current_file = [external]memory.tru
+open_files =, tut1.ras

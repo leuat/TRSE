@@ -3018,10 +3018,12 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure)
 
         Eat(TokenType::RBRACKET);
         Eat(TokenType::OF);
+        QStringList flags = getFlags();
         Token arrayType = m_currentToken;
         VerifyTypeSpec(arrayType);
         TokenType::Type dataType = m_currentToken.m_type;
         Eat(m_currentToken.m_type);
+        flags<< getFlags();
         QStringList data;
         // Contains constant init?
         if (m_currentToken.m_type==TokenType::EQUALS) {
@@ -3077,7 +3079,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure)
 
            // Eat(m_currentToken.m_type);
         }
-        QStringList flags = getFlags();
+//        QStringList flags = getFlags();
 
         t.m_intVal = count;
 //        qDebug() << "Type: " << t.m_value;

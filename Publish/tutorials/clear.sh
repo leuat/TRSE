@@ -9,6 +9,8 @@ find . -name "*.com" -type f -delete
 find . -name "*.trse" -type f  -exec sed -i /project_path/d {} +
 find . -name "*.trse" -type f  -exec sed -i /open_files/d {} +
 find . -name "*.trse" -type f  -exec sed -i /current_file/d {} +
+find . -name .backup -exec rm -rf {} \;
+
 echo "open_files =, Hello.ras" >> C64/Tutorials/C64_Tutorials.trse
 echo "open_files =, RogueBurgerOne.ras" >> C64/TutorialGame_RogueBurgerOne/RogueBurgerOne.trse
 echo "open_files =, demo_part2_empty.ras" >> C64/DemoMaker/demomaker.trse

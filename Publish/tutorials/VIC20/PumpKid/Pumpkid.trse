@@ -42,6 +42,3 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 exomizer_toggle = 0
 zeropage_colormemory = $fc
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/PumpKid/
-open_files = ,pumpkid.ras
-current_file = pumpkid.ras
