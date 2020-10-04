@@ -135,6 +135,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/pixelchar.cpp \
     source/LeLib/util/fc8/FC8Compression.cpp \
     source/LeLib/util/lz4/lz4.c \
+    source/LeLib/util/spline2d.cpp \
     source/LeLib/util/tikidisk.cpp \
     source/LeLib/util/tool.cpp \
     source/PmmEdit/fjonghighlighter.cpp \
@@ -331,6 +332,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/pixelchar.h \
     source/LeLib/util/fc8/FC8Compression.h \
     source/LeLib/util/lz4/lz4.h \
+    source/LeLib/util/spline2d.h \
     source/LeLib/util/tikidisk.h \
     source/LeLib/util/tool.h \
     source/PmmEdit/fjonghighlighter.h \

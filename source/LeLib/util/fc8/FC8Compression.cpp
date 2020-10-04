@@ -327,7 +327,7 @@ unsigned int FC8::Encode(QString fileIn, QString fileOut)
     if (QFile::exists(fileOut))
         QFile::remove(fileOut);
 
-    int max = 1024*1024*64;
+    int max = 1024*1024;
 
     uint8_t* data = new uint8_t[max];
     uint8_t* dataIn = new uint8_t[in.count()];

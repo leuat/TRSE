@@ -52,6 +52,8 @@ public:
     void dispatch(QSharedPointer<NodeComment> node) override;
 
 
+    bool Evaluate16bitExpr(QSharedPointer<Node> node, QString& lo, QString& hi);
+
 
     QString getValue(QSharedPointer<Node> n) override;
 

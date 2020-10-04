@@ -176,6 +176,8 @@ int main(int argc, char *argv[])
 //    ColumnTab();
 //    RandTable("rnd256.bin");
 //    CircleAndAtan("/home/leuat/Dropbox/TRSE/gameboytest/data/circle.bin","/home/leuat/Dropbox/TRSE/gameboytest/data/atan.bin",16,16);
+    Tool::PathTool("/home/leuat/Pictures/pathtest/pathtest",
+                   "/home/leuat/Dropbox/TRSE/SummerOfSquid/data/path",320,8);
     QApplication a(argc, argv);
     a.setOrganizationDomain("lemonspawn.com");
     a.setApplicationName("TRSE");
@@ -183,7 +185,7 @@ int main(int argc, char *argv[])
     fixCurrentDir(QString(argv[0]));
     a.setStyle(QStyleFactory::create("Fusion"));
     MainWindow w;
-    for (int i=0;i<argc;i++)
+    for (int i=0;   i<argc;i++)
         w.m_commandParams+=QString(argv[i]);
     w.show();
     w.AfterStart(oldCurDir);

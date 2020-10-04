@@ -78,11 +78,6 @@ end;
 
 procedure SetPalette(pa : global pointer);
 begin
-	asm("	
-	
-	ld hl,[crtc_pa]
-	ld de,0
-	");	
 	for ga:=0 to 16 do
 	begin
 		gb:=pa[ga];
@@ -95,6 +90,7 @@ begin
     	call $BC32 ; set palette
     ");
     	end;
+
 end;
 
 procedure SetSinglePalette(ga,gb : global byte);

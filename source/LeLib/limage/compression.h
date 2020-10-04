@@ -24,6 +24,7 @@ public:
     void AddToDataVGA(QByteArray& data, LImageQImage& img,int x, int y, int w, int h);
     void AddBitplaneToData(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h, int bpl);
     void AddAtariBitplaneToData(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h);
+    void AddSingleAtariBitplaneToData(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h, int bpl_select);
 
     int CompareSprites(QByteArray& d1,QByteArray& d2, int sprite1, int sprite2);
 

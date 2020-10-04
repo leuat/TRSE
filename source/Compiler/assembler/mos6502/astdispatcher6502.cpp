@@ -536,7 +536,7 @@ void ASTDispatcher6502::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>nod
 void ASTDispatcher6502::Mul16x8(QSharedPointer<Node> node) {
     as->Comment("Mul 16x8 setup");
     as->Asm("");
-    if (node->m_left->getType(as)==TokenType::INTEGER) {
+    if (node->m_left->isWord(as)) {
 
         as->Asm("ldy #0");
         LoadVariable(node->m_left);
@@ -1268,50 +1268,30 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node,QString lb
 
     QSharedPointer<NodeVar> vara = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 */
+    /*
     if (!node->m_left->isPure())
         ErrorHandler::e.Error("Integer comparison: only pure integer number / variable is supported", node->m_op.m_lineNumber);
 
     if (!node->m_right->isPure())
         ErrorHandler::e.Error("Integer comparison: only pure integer number / variable is supported", node->m_op.m_lineNumber);
-
+*/
     QString lbl2 = lblFailed;
     QString lbl1 = lblSuccess;
 
-//    QString lbl1 = as->NewLabel("binaryclauseinteger_success");
-//    QString lbl2 = as->NewLabel("binaryclauseinteger_fail"); // failed
-//    QString lbl3 = as->NewLabel("binaryclauseintegerfinished"); // failed
+    QString lo1,lo2,hi1,hi2;
+    Evaluate16bitExpr(node->m_left,lo1,hi1);
+    Evaluate16bitExpr(node->m_right,lo2,hi2);
+/*    lo1 = getValue8bit(node->m_left,false);
+    hi1 = getValue8bit(node->m_left,true);
 
-
-
-    QString lo = getValue8bit(node->m_right,false);
-    QString hi = getValue8bit(node->m_right,true);
-
+    lo2 = getValue8bit(node->m_right,false);
+    hi2 = getValue8bit(node->m_right,true);
+*/
     //m_left->Build(as);
     //as->Term();
 
-/*    if (node->m_op.m_type==TokenType::EQUALS)
-        as->Asm("bne " + lblFailed);
-    if (node->m_op.m_type==TokenType::NOTEQUALS)
-        as->Asm("beq " + lblFailed);
-    if (node->m_op.m_type==TokenType::GREATEREQUAL) {
-        as->Asm("bcc " + lblFailed);
-    }
-    if (node->m_op.m_type==TokenType::GREATER) {
-        as->Asm("bcc " + lblFailed);
-        as->Asm("beq " + lblFailed);
-    }
-    if (node->m_op.m_type==TokenType::LESSEQUAL ) {
-        as->Asm("beq " + lblSuccess);
-        as->Asm("bcs " + lblFailed);
-    }
-
-    if (node->m_op.m_type==TokenType::LESS)
-        as->Asm("bcs " + lblFailed);
-
-  */
 
 
-//    if (numb!=nullptr || varb!=nullptr) {
 
     QString bcs ="bcs ";
     QString bcc ="bcc ";
@@ -1319,38 +1299,79 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node,QString lb
        as->Comment("Signed compare");
        bcs = "bpl ";
        bcc = "bmi ";
+       QString label1 = as->NewLabel("label1");
+       QString label2 = as->NewLabel("label1");
+
+       if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL) {
+           as->Asm("sec");
+           as->Asm("lda " + hi1 + "   ; compare high bytes");
+           as->Asm("sbc " + hi2 + " ");
+           as->Asm("bvc " + label1);
+           as->Asm("eor #$80");
+           as->Label(label1);
+           as->Asm("bmi "+lblSuccess);
+           as->Asm("bvc "+label2);
+           as->Asm("eor #$80");
+           as->Label(label2);
+           as->Asm("bne "+lblFailed);
+           as->Asm("lda " + lo1 + "   ; compare high bytes");
+           as->Asm("sbc " + lo2 + " ");
+           as->Asm("bcs "+lblFailed);
+            return;
+/*
+           SEC
+                LDA NUM1H  ; compare high bytes
+                SBC NUM2H
+                BVC LABEL1 ; the equality comparison is in the Z flag here
+                EOR #$80   ; the Z flag is affected here
+         LABEL1 BMI LABEL4 ; if NUM1H < NUM2H then NUM1 < NUM2
+                BVC LABEL2 ; the Z flag was affected only if V is 1
+                EOR #$80   ; restore the Z flag to the value it had after SBC NUM2H
+         LABEL2 BNE LABEL3 ; if NUM1H <> NUM2H then NUM1 > NUM2 (so NUM1 >= NUM2)
+                LDA NUM1L  ; compare low bytes
+                SBC NUM2L
+                BCC LABEL4 ; if NUM1L < NUM2L then NUM1 < NUM2
+         LABEL3
+  */
+
+
+       }
+       ErrorHandler::e.Error("Signed integer comparison: only 'less' (&le;) is currently implemented.", node->m_op.m_lineNumber);
+
+
     }
 
 
-    QSharedPointer<Node> vara = node->m_left;
+
+
         as->Comment("Compare INTEGER with pure num / var optimization. GREATER. ");
         if (node->m_op.m_type==TokenType::GREATER) {
-            as->Asm("lda " + getValue8bit(vara,true) + "   ; compare high bytes");
-            as->Asm("cmp " + hi + " ;keep");
+            as->Asm("lda " + hi1 + "   ; compare high bytes");
+            as->Asm("cmp " + hi2 + " ;keep");
             as->Asm(bcc + lbl2);
         //    as->Asm("beq " + lbl2);
             as->Asm("bne " + lbl1);
-            as->Asm("lda " + getValue8bit(vara,false));
-            as->Asm("cmp " + lo +" ;keep");
+            as->Asm("lda " + lo1);
+            as->Asm("cmp " + lo2 +" ;keep");
             as->Asm(bcc + lbl2);
             as->Asm("beq " + lbl2);
         }
         if (node->m_op.m_type==TokenType::GREATEREQUAL) {
-            as->Asm("lda " + getValue8bit(vara,true) + "   ; compare high bytes");
-            as->Asm("cmp " + hi + " ;keep");
+            as->Asm("lda " + hi1 + "   ; compare high bytes");
+            as->Asm("cmp " + hi2 + " ;keep");
             as->Asm(bcc + lbl2);
             as->Asm("bne " + lbl1);
-            as->Asm("lda " + getValue8bit(vara,false));
-            as->Asm("cmp " + lo +" ;keep");
+            as->Asm("lda " + lo1);
+            as->Asm("cmp " + lo2 +" ;keep");
             as->Asm(bcc + lbl2);
         }
         if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL) {
-            as->Asm("lda " + getValue8bit(vara,true) + "   ; compare high bytes");
-            as->Asm("cmp " + hi + " ;keep");
+            as->Asm("lda " + hi1 + "   ; compare high bytes");
+            as->Asm("cmp " + hi2 + " ;keep");
             as->Asm(bcc + lbl1);
             as->Asm("bne " + lbl2);
-            as->Asm("lda " + getValue8bit(vara,false));
-            as->Asm("cmp " + lo+" ;keep");
+            as->Asm("lda " + lo1);
+            as->Asm("cmp " + lo2+" ;keep");
             if (node->m_op.m_type==TokenType::LESSEQUAL)
                 as->Asm("beq "+lbl1);
             as->Asm(bcs + lbl2);
@@ -1359,24 +1380,24 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node,QString lb
 
         }
         if (node->m_op.m_type==TokenType::EQUALS) {
-            as->Asm("lda " + getValue8bit(vara,true) + "   ; compare high bytes");
-            as->Asm("cmp " + hi + " ;keep");
+            as->Asm("lda " + hi1 + "   ; compare high bytes");
+            as->Asm("cmp " + hi2 + " ;keep");
             as->Asm("bne " + lbl2);
-            as->Asm("lda " + getValue8bit(vara,false));
-            as->Asm("cmp " + lo+" ;keep");
+            as->Asm("lda " + lo1);
+            as->Asm("cmp " + lo2+" ;keep");
             as->Asm("bne " + lbl2);
             as->Asm("jmp " + lbl1);
         }
         if (node->m_op.m_type==TokenType::NOTEQUALS){
 //            ErrorHandler::e.Error("Comparison of integer NOTEQUALS<> not implemented!", node->m_op.m_lineNumber);
             QString lblPass1  = as->NewLabel("pass1");
-            as->Asm("lda " + getValue8bit(vara,true) + "   ; compare high bytes");
-            as->Asm("cmp " + hi + " ;keep");
+            as->Asm("lda " + hi1 + "   ; compare high bytes");
+            as->Asm("cmp " + hi2 + " ;keep");
             as->Asm("beq " + lblPass1);
             as->Asm("jmp " + lbl1);
             as->Label(lblPass1);
-            as->Asm("lda " + getValue8bit(vara,false));
-            as->Asm("cmp " + lo+" ;keep");
+            as->Asm("lda " + lo1);
+            as->Asm("cmp " + lo2+" ;keep");
             as->Asm("beq " + lbl2);
             as->Asm("jmp " + lbl1);
             as->PopLabel("pass1");
@@ -2923,6 +2944,20 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeComment> node)
         as->Comment(node->m_comment.replace("\n","\n; "));
     }
 
+}
+
+bool ASTDispatcher6502::Evaluate16bitExpr(QSharedPointer<Node> node, QString &lo, QString &hi)
+{
+    if (node->isPure()) {
+        lo = getValue8bit(node,false);
+        hi = getValue8bit(node,true);
+        return true;
+    }
+    node->Accept(this);
+    QString lbl = as->StoreInTempVar("rightvarInteger", "word");
+    lo = lbl;
+    hi = lbl+"+1";
+    return false;
 }
 
 
