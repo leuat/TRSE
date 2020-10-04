@@ -730,6 +730,7 @@ void MainWindow::RefreshFileList()
 
     QStringList truPath = getTRUPaths();
 
+//    qDebug() << "PPATH" << getProjectPath();
     QStandardItem* root = AddTreeRoot(getProjectPath(),"Project ("+m_currentProject.m_projectName+")");
     ui->treeFiles->setHeaderHidden(true);
 //    QStandardItem* root = AddTreeRoot(getProjectPath(),"Project");
@@ -737,10 +738,12 @@ void MainWindow::RefreshFileList()
     QStandardItem* trus = nullptr;
     //qDebug() << "TRU PATH " << truPath<<QDir().exists(truPath);
 
+  //  qDebug() << "TRU 0" << truPath[0];
     if (QDir().exists(truPath[0])) {
        trus = AddTreeRoot(truPath[0],system+" library (TRSE)");
         m_im->insertRow(1,trus);
     }
+    //qDebug() << "TRU 1" << truPath[1];
     if (QDir().exists(truPath[1])) {
        trus = AddTreeRoot(truPath[1],Syntax::s.m_currentSystem->StringFromProcessor(system)+" library (TRSE)");
         m_im->insertRow(2,trus);
@@ -828,7 +831,6 @@ QStandardItem* MainWindow::AddTreeRoot(QString path, QString name)
 {
     QStandardItem* root = new QStandardItem(name);
     root->setEditable(false);
-    QStringList exts = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin"<<"*.bin_c" <<"*.prg";
     QDirIterator it(path,QStringList(), QDir::NoDotAndDotDot | QDir::Dirs);
 //    if (m_expandedList.contains(path))
 

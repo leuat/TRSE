@@ -186,6 +186,8 @@ public:
     TRSEProject m_currentProject;
 
 
+    QStringList exts = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin"<<"*.bin_c" <<"*.prg";
+
     TRSEDocument* m_currentDoc = nullptr;
 
     void LoadIniFile();

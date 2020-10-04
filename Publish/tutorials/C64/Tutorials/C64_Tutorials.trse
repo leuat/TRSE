@@ -56,4 +56,6 @@ data_header_resources/images/skull.flf = 0
 data_header_resources/images/cat.flf = 6.91519e-310
 data_header_resources/images/octopus2.flf = 6.91519e-310
 data_header_resources/images/paint.flf = 0
-open_files =, Hello.ras
+open_files = ,intermediate/17_skull_image_scroll.ras, Hello.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
+current_file = Hello.ras
