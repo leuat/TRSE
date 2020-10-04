@@ -379,6 +379,8 @@ void HexView::keyPressEvent(QKeyEvent *event)
         setVisible = true;
     }
 
+
+
     if (event->matches(QKeySequence::Copy))
     {
         if(m_pdata)
@@ -418,6 +420,17 @@ void HexView::keyPressEvent(QKeyEvent *event)
 
     QString t = event->text();
 
+    if(event->key() == Qt::Key_Delete)
+    {
+        m_pdata->Delete(m_cursorPos/2);
+    }
+
+    if(event->key() == Qt::Key_I)
+    {
+        m_pdata->Insert(m_cursorPos/2,0);
+    }
+
+
     if (valid.contains(t) && t!="") {
         uchar val = m_pdata->getData(m_cursorPos/2,1)[0];
         bool ok;
@@ -437,6 +450,8 @@ void HexView::keyPressEvent(QKeyEvent *event)
         resetSelection(m_cursorPos);
         setVisible = true;
     }
+
+
 
 
 

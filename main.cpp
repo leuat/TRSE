@@ -176,8 +176,8 @@ int main(int argc, char *argv[])
 //    ColumnTab();
 //    RandTable("rnd256.bin");
 //    CircleAndAtan("/home/leuat/Dropbox/TRSE/gameboytest/data/circle.bin","/home/leuat/Dropbox/TRSE/gameboytest/data/atan.bin",16,16);
-/*    Tool::PathTool("/home/leuat/Pictures/pathtest/pathtest",
-                   "/home/leuat/Dropbox/TRSE/SummerOfSquid/data/path",320,8);*/
+    Tool::PathTool("/home/leuat/Pictures/pathtest/pathtest",
+                   "/home/leuat/Dropbox/TRSE/SummerOfSquid/data/path",320,8);
     QApplication a(argc, argv);
     a.setOrganizationDomain("lemonspawn.com");
     a.setApplicationName("TRSE");

@@ -29,6 +29,12 @@ class HexView: public QAbstractScrollArea
                 virtual QByteArray getData(std::size_t position, std::size_t length) = 0;
                 virtual void setData(std::size_t position, unsigned char val) = 0;
                 virtual std::size_t size() = 0;
+            void Insert(uchar val, int index) {
+                m_data.insert(index,val);
+            }
+            void Delete(int index) {
+                m_data.remove(index,1);
+            }
             QByteArray    m_data;
         };
 

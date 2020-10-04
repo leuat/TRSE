@@ -16,6 +16,7 @@ var
 	screen_tab : pointer of long;
 	
    curBufIndex, i,k,j,l,m,n,c1,c2: integer = 0; 
+   il : long;
    p1,p2,addr,curBuf,offBuf,buf1,buf2 : pointer of integer;
    col,x,y : integer;
 	htabInOrg : array[16] of integer = buildtable("(((65536-Math.pow(2.0,16-i))))");
@@ -1190,4 +1191,23 @@ copymask_loop:
 
 	");
 end;
+
+procedure EorBuffer(p1 : global pointer of integer; il: global long);
+begin
+	asm("
+		move.l Graphics_p1,a2
+		move.l #$FFFFFFFF,d2
+		move.l Graphics_il,d3
+topp_flipp_eor:
+		move.w (a2),d0
+		eor.w d2,d0
+		move.w d0,(a2)+
+		
+		dbf d3,topp_flipp_eor
+
+	");
+
+end;
+
+
 end.
