@@ -53,6 +53,12 @@
 #include "lz4hc.h"
 
 
+int LZ4_versionNumber (void) { return LZ4_VERSION_NUMBER; }
+const char* LZ4_versionString(void) { return LZ4_VERSION_STRING; }
+int LZ4_compressBound(int isize)  { return LZ4_COMPRESSBOUND(isize); }
+int LZ4_sizeofState(void) { return LZ4_STREAMSIZE; }
+
+
 /*===   Common LZ4 definitions   ===*/
 #if defined(__GNUC__)
 #  pragma GCC diagnostic ignored "-Wunused-function"

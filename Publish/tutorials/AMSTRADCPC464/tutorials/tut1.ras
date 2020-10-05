@@ -1,17 +1,15 @@
 program Tutorial1;
 @use "crtc"
 @use "input"
+@use "memory"
 
 @export "resources/images/image5.flf" "resources/images/image1.bin" 256
 
 var  
 	image : incbin("resources/images/image1.bin");
 	palette : incbin("resources/images/image1_palette.bin");
-	p1,p2 : pointer;
 
 begin
-	memcpy(p1,p2,0);
-/*	
 	crtc::SetMode(0);
 	crtc::SetBorder(0);
 	crtc::Synchronize();
@@ -20,5 +18,5 @@ begin
 	// Copy image to screen 
 	memcpy(#image, screen, $4000);
 	Loop();
-*/
+
 end.

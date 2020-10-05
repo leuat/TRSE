@@ -94,6 +94,9 @@ LZ4LIB_API int LZ4_compress_HC_destSize(void* stateHC,
                                         int compressionLevel);
 
 
+
+
+
 /*-************************************
  *  Streaming Compression
  *  Bufferless synchronous API
