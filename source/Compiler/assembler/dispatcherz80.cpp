@@ -957,61 +957,6 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
         if (bop!=nullptr) {
             // Pointer := Pointer BOP expr
             if (bop->m_left->getValue(as)==var->getValue(as)) {
-/*                // Handle MINUS
-                if (bop->m_right->isPure()) {
-
-                    // Simple p1 := p1 + VAL
-                    as->ClearTerm();
-                    QString lbl = as->NewLabel("pcont");
-                    if (bop->m_right->isPureNumeric()) {
-                        int lo = bop->m_right->getValueAsInt(as)&0xFF;
-                        if (lo!=0) {
-                            as->Asm("ld a,["+var->getValue(as)+"+1]");
-
-                            as->Asm(getPlusMinus(bop->m_op)+"a,"+Util::numToHex(lo));
-                            as->Asm("ld ["+var->getValue(as)+"+1],a");
-                            as->Asm("jr nc,"+lbl);
-                            as->Asm("ld a,["+var->getValue(as)+"]");
-                            if (bop->m_op.m_type==TokenType::PLUS)
-                                as->Asm("inc a");
-                            else
-                                as->Asm("dec a");
-                            as->PopLabel("pcont");
-
-                        }
-                        else {
-                            as->Asm("ld a,["+var->getValue(as)+"]");
-
-                        }
-
-                        int hi = (bop->m_right->getValueAsInt(as)>>8)&0xFF;
-                        if (hi!=0)
-                           as->Asm(getPlusMinus(bop->m_op)+"a,"+Util::numToHex(hi));
-
-                        as->Asm("ld ["+var->getValue(as)+"],a");
-                        as->Label(lbl);
-                        return;
-                    }
-                    else {
-                        as->Asm("ld a,["+bop->m_right->getValue(as)+"]");
-                        as->Asm("ld b,a");
-                        as->Asm("ld a,["+var->getValue(as)+"+1]");
-                        as->Asm(getPlusMinus(bop->m_op)+"a,b");
-
-                    }
-                    as->Asm("ld ["+var->getValue(as)+"+1],a");
-                    as->Asm("jr nc,"+lbl);
-                    as->Asm("ld a,["+var->getValue(as)+"]");
-                    if (bop->m_op.m_type==TokenType::PLUS)
-                       as->Asm("inc a");
-                    else
-                        as->Asm("dec a");
-                    as->Asm("ld ["+var->getValue(as)+"],a");
-                    as->Label(lbl);
-                    as->PopLabel("pcont");
-                    return;
-                }
-  */
                 as->Comment(";generic pointer/integer P:=P+(expr) add expression");
 
                 bop->setForceType(TokenType::INTEGER);
@@ -1062,18 +1007,25 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
 
 
                   */
-//                as->Asm(getPlusMinus(bop->m_op)+" hl,de");
+                //                as->Asm(getPlusMinus(bop->m_op)+" hl,de");
                 // Store address
 
-               return;
+                return;
             }
             else ErrorHandler::e.Error("Pointers in GBZ80 TRSE do not support this expression",bop->m_op.m_lineNumber);
         }
         // Generic : Doesn't really work
+        as->Comment("Generic assign 16-bit pointer");
         node->m_right->setForceType(TokenType::POINTER);
         node->m_right->Accept(this);
+        as->Comment("Store 16-bit address");
+        as->Asm("ld e,a");
+        as->Asm("inc hl");
+        as->Asm("ld a,[hl]");
+        as->Asm("ld d,a");
+        as->Asm("ex de,hl");
         StoreAddress(var);
-
+        return;
 
         // Generic case ))
     }
@@ -1086,7 +1038,7 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
             as->Asm("push af");
         }
         LoadAddress(var);
-/*        as->Asm("ld a,[p1]");
+        /*        as->Asm("ld a,[p1]");
         as->Asm("ld h,a");
         as->Asm("ld a,[p1+1]");
         as->Asm("ld l,a");*/
@@ -1110,7 +1062,7 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
 
         return;
     }
-    ErrorHandler::e.Error("Pointers must be assigned to variables or addresses",node->m_op.m_lineNumber);
+    ErrorHandler::e.Error("Pointers must be assigned to variables or addresses.",node->m_op.m_lineNumber);
 
 }
 

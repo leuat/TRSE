@@ -193,7 +193,6 @@ void LImageAmstradCPC::ExportBin(QFile &ofile)
         if (y>=m_height) {
             y=0;
             dy++;
-            if (m_width==160)
             for (int i=0;i<0x30;i++) // Extra data to align to $0, $0800, $1000 etc
                 data.append((char)0);
         }

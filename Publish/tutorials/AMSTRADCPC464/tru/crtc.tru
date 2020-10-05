@@ -239,10 +239,10 @@ begin
 
 		
 		ld a,[hl]
-		ld [crtc_sp+1],a
+		ld [crtc_sp],a
 		inc hl
 		ld a,[hl]
-		ld [crtc_sp],a
+		ld [crtc_sp+1],a
 	");
 end;
 

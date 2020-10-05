@@ -15,6 +15,8 @@ public:
 
     void SaveBin(QFile& file) override;
 
+    void ExportBin(QFile &ofile) override;
+
 };
 
 #endif // LIMAGEAMSTRADGENERIC_H

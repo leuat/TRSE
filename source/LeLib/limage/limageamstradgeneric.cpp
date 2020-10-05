@@ -73,3 +73,62 @@ void LImageAmstradGeneric::SaveBin(QFile &file)
     LImageAmstradCPC::SaveBin(file);
 
 }
+
+void LImageAmstradGeneric::ExportBin(QFile &ofile)
+{
+
+    QString f = ofile.fileName();
+
+    QString filenameBase = Util::getFileWithoutEnding(f);
+
+    QString fColor = filenameBase + "_palette.bin";
+
+    if (QFile::exists(fColor))
+        QFile::remove(fColor);
+
+    QByteArray palette,data;
+
+    QVector<int> lst = m_colorList.getPenList();
+    for (auto i : lst)
+        palette.append(((unsigned char)i));
+
+    Util::SaveByteArray(palette,fColor);
+
+    int y = 0;
+    int dy = 0;
+    int xw;
+    /*    if (m_width==320)  xw=80;
+        if (m_width==160)  xw=80;
+        if (m_width==256)  xw=64;
+    */
+    for (int i=0;i<m_height;i++) {
+        char c = 0;
+        int curBit = 0;
+        for (int x=0;x<m_width;x++) {
+            //int pixel = ((dy+y)/10)&15;
+            int pixel = getPixel(x,y+dy);
+            //            qDebug() <<curBit << pixel << x;
+            //pixel = 4;
+            c|=table160[pixel]<<(1-curBit);
+
+
+            curBit+=1;
+
+            if (curBit>=2) {
+                curBit=0;
+                data.append((AmstradCrazySwap(c)));
+                //                data.append(c);
+                c=0;
+            }
+
+
+        }
+        y=y+1;
+
+    }
+
+
+
+
+    ofile.write(data);
+}
