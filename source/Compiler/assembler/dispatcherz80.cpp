@@ -786,7 +786,6 @@ QString ASTdispatcherZ80::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
 void ASTdispatcherZ80::LoadAddress(QSharedPointer<Node> n)
 {
     QString hl =getHL();
-
     if (n->isPointer(as)) {
         if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80) {
             as->Asm("ld a,[" +n->getValue(as)+"]");
@@ -796,7 +795,7 @@ void ASTdispatcherZ80::LoadAddress(QSharedPointer<Node> n)
 
         }
         else
-        as->Asm("ld hl,["+n->getValue(as)+"]");
+        as->Asm("ld "+hl+",["+n->getValue(as)+"]");
     }
     else as->Asm("ld "+hl+"," +n->getValue(as));
 }

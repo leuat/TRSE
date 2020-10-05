@@ -199,7 +199,7 @@ public:
     void SetLevel(QPoint f);
     ImageLevelEditor(LColorList::Type t);
 //    void Initialize(CharmapGlobalData meta);
-    void Initialize() override;
+    void ReInitialize() override;
 
     QString GetCurrentDataString() override;
 

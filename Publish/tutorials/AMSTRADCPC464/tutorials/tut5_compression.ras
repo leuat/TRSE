@@ -45,6 +45,9 @@ begin
 	
 	crtc::SetMode(0);
 	crtc::SetBorder(0);
+	Memory::DisableFirmware();
+	crtc::Synchronize();
+	Memory::DisableInterrupts();	
 	while (true) do
 	begin
 		crtc::SetPalette(palette1);

@@ -1346,6 +1346,7 @@ int LZ4_compress_fast(const char* source, char* dest, int inputSize, int maxOutp
 
 int LZ4_compress_default(const char* src, char* dst, int srcSize, int maxOutputSize)
 {
+//    return LZ4_compress_fast(src, dst, srcSize, maxOutputSize, 1);
     return LZ4_compress_fast(src, dst, srcSize, maxOutputSize, 1);
 }
 

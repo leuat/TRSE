@@ -10,7 +10,13 @@ var
 
 	@donotremove y_lookup
 	y_lookup : array[201] of integer = buildTable( "0xC000 + (Math.floor(i/8))*80 + (i&7)*2048");
-	// Lookup for mode 0 pixel 0	
+	// Lookup for mode 0 pixel 0
+	
+	hwConv : array[26] of byte = (
+	$14,$4,$15,$1c,$18,$1D,$0c,$05,$D,$16,$06,$17,$1E,$00,$1F,$0e,$07,$0f,$12,$02,$13,$1A,$19,$1b,$0a,$03,$0b);
+
+
+	
 	pixtab1 : array[16] of byte=(
 %00000000,
 %10000000,
@@ -76,9 +82,69 @@ begin
 	");
 end;
 
+
+procedure Synchronize();
+begin
+asm("
+;; wait vsync (loop passes if VSYNC signal is high = in vsync)
+	ld b,$f5
+__wait1:
+	in a,(c)
+	rra
+	jr nc,__wait1
+;; wait for end of vsync (loop passes when VSYNC signal is low = out of vsync)
+__wait2:
+	in a,(c)
+	rra
+	jr c,__wait2
+;; now wait again for start (because we know we found the end, if we wait for VSYNC to be active
+;; we know it will be the start)
+__wait3:
+	in a,(c)
+	rra
+jr nc,__wait3
+");
+end;
+
+/*
+procedure SetSinglePalette(ga,gb : global byte);
+begin
+	asm("
+	ld a,[crtc_gb]
+    ld c, a     
+    ld b, a    
+    ld a, [crtc_ga]
+    call #$BC32 ; set palette
+    ");
+end;
+*/
+
+procedure SetSinglePaletteHW(ga, gb: global byte);
+begin
+	gb := hwConv[gb];
+asm("
+	ld a,[crtc_ga]
+	ld l,a
+	ld a,[crtc_gb]
+	ld h,a
+	ld c,0
+;	ld a,$0
+	ld c,0
+	
+
+   ld     b, $7F ;; [2] B = Gate Array Port (0x7F). C has the command that GA will execute.
+   out  (c), l             ;; [4] GA command: Select PENR. C = Command + Parameter (PENR + PEN number to select)
+
+   ld     a, $40     ;; [2] (CCCnnnnn) Mix 3 bits for INKR command (C) and 5 for INKR number (n). 
+   or     h                ;; [1]
+   out  (c), a             ;; [4] GA command: Set INKR. A = Command + Parameter 
+                           ;; .... (INKR + INK to be set for selected PEN number)
+	");
+end;
+
 procedure SetPalette(pa : global pointer);
 begin
-	for ga:=0 to 16 do
+/*	for ga:=0 to 16 do
 	begin
 		gb:=pa[ga];
 		asm("
@@ -90,19 +156,12 @@ begin
     	call $BC32 ; set palette
     ");
     	end;
+*/
+	for j:=0 to 16 do
+		SetSinglePaletteHW(j,pa[j]);
 
 end;
 
-procedure SetSinglePalette(ga,gb : global byte);
-begin
-	asm("
-	ld a,[crtc_gb]
-    ld c, a     
-    ld b, a    
-    ld a, [crtc_ga]
-    call #$BC32 ; set palette
-    ");
-end;
 
 
 procedure SetBorder(ga: global byte);

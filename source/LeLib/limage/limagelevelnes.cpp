@@ -124,10 +124,10 @@ QString LImageLevelNES::getMetaInfo()
     return ImageLevelEditor::getMetaInfo();
 }
 
-void LImageLevelNES::Initialize()
+void LImageLevelNES::ReInitialize()
 {
 
-    ImageLevelEditor::Initialize();
+    ImageLevelEditor::ReInitialize();
 
     for (int i=0;i<m_meta.m_sizex;i++)
         for (int j=0;j<m_meta.m_sizey;j++) {
@@ -152,7 +152,7 @@ void LImageLevelNES::LoadBin(QFile &file)
     m_meta.Calculate();
     m_meta.m_startx = 0;
     m_meta.m_starty = 0;
-    Initialize();
+    ReInitialize();
     m_width = m_meta.m_width*16;
     m_height = m_meta.m_height*16;
     for (CharmapLevel* l : m_levels) {

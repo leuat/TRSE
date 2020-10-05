@@ -51,7 +51,7 @@ void ImageEdit::Initialize(LImage* img)
 {
     m_image = img;
     m_temp = LImageFactory::Create(m_image->m_type,m_image->m_colorList.m_type);
-    img->Initialize();
+    img->ReInitialize();
 }
 
 void ImageEdit::Undo()

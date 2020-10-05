@@ -120,6 +120,7 @@ SOURCES += main.cpp\
     source/LeLib/lglslideshow.cpp \
     source/LeLib/limage/lcolor.cpp \
     source/LeLib/limage/limageamstradcpc.cpp \
+    source/LeLib/limage/limageamstradgeneric.cpp \
     source/LeLib/limage/limageatari520st.cpp \
     source/LeLib/limage/limagefooter.cpp \
     source/LeLib/limage/limagegamboy.cpp \
@@ -135,6 +136,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/pixelchar.cpp \
     source/LeLib/util/fc8/FC8Compression.cpp \
     source/LeLib/util/lz4/lz4.c \
+    source/LeLib/util/lz4/lz4hc.c \
     source/LeLib/util/spline2d.cpp \
     source/LeLib/util/tikidisk.cpp \
     source/LeLib/util/tool.cpp \
@@ -317,6 +319,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/lglslideshow.h \
     source/LeLib/limage/lcolor.h \
     source/LeLib/limage/limageamstradcpc.h \
+    source/LeLib/limage/limageamstradgeneric.h \
     source/LeLib/limage/limageatari520st.h \
     source/LeLib/limage/limagefooter.h \
     source/LeLib/limage/limagegamboy.h \
@@ -332,6 +335,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/pixelchar.h \
     source/LeLib/util/fc8/FC8Compression.h \
     source/LeLib/util/lz4/lz4.h \
+    source/LeLib/util/lz4/lz4hc.h \
     source/LeLib/util/spline2d.h \
     source/LeLib/util/tikidisk.h \
     source/LeLib/util/tool.h \

@@ -3,13 +3,18 @@
 LImageAmstradCPC::LImageAmstradCPC(LColorList::Type t)  : LImageQImage(t)
 {
     m_type = LImage::Type::AmstradCPC;
-    SetMode(0);
     m_supports.asmExport = false;
     m_supports.binaryLoad = false   ;
     m_supports.binarySave = false;
     m_supports.flfSave = true;
     m_supports.flfLoad = true;
     m_colorList.m_supportsFooterPen = true;
+
+/*    m_metaParams.append(new MetaParameter("mode","Mode",0,3,3));
+    m_metaParams.append(new MetaParameter("screen_width","Screen width",160,2,1000));
+    m_metaParams.append(new MetaParameter("screen_height","Screen height",200,2,1000));*/
+    m_mode = 0;
+    SetMode();
 
 }
 
@@ -18,21 +23,26 @@ uchar LImageAmstradCPC::AmstradCrazySwap(uchar c) {
     return (((c&0b00000011)<<6) | ((c&0b00001100)<<0) | ((c&0b00110000)<<0) | ((c&0b11000000)>>6));
 }
 
-void LImageAmstradCPC::SetMode(int mode)
+void LImageAmstradCPC::SetMode()
 {
-    m_footer.set(LImageFooter::POS_CURRENT_MODE,mode);
     m_qImage = nullptr;
-    if (mode == 0) {
+    if (m_mode == 0) {
         Initialize(160,200);
         m_colors = 16;
         m_bpp = 4;
         m_scaleX = 2;
     }
-    if (mode == 1) {
+    if (m_mode == 1) {
         Initialize(320,200);
         m_colors = 4;
         m_scaleX = 1;
         m_bpp = 2;
+    }
+    if (m_mode == 2) {
+        Initialize(640,200);
+        m_colors = 1;
+        m_bpp = 1;
+        m_scaleX = 0.5;
     }
 
     InitPens();
@@ -42,8 +52,9 @@ void LImageAmstradCPC::InitPens()
 {
     //m_colorList.InitAmstradCPC();
 //    qDebug() << "HERE INITPENS";
-  //  m_colorList.InitPalettePens(m_colors);
+    //  m_colorList.InitPalettePens(m_colors);
 }
+
 
 void LImageAmstradCPC::setPixel(int x, int y, unsigned int color)
 {
@@ -151,11 +162,10 @@ void LImageAmstradCPC::ExportBin(QFile &ofile)
     int y = 0;
     int dy = 0;
     int xw;
-    if (m_width==320)  xw=80;
+/*    if (m_width==320)  xw=80;
     if (m_width==160)  xw=80;
     if (m_width==256)  xw=64;
-
-    if (m_width==160)
+*/
     for (int i=0;i<m_height;i++) {
         char c = 0;
         int curBit = 0;
@@ -183,6 +193,7 @@ void LImageAmstradCPC::ExportBin(QFile &ofile)
         if (y>=m_height) {
             y=0;
             dy++;
+            if (m_width==160)
             for (int i=0;i<0x30;i++) // Extra data to align to $0, $0800, $1000 etc
                 data.append((char)0);
         }
@@ -198,25 +209,14 @@ void LImageAmstradCPC::ExportBin(QFile &ofile)
 void LImageAmstradCPC::LoadBin(QFile &file)
 {
     m_qImage = new QImage(m_width, m_height, QImage::Format_ARGB32);
-    unsigned char *data = new unsigned char[m_width*m_height];
-    file.read((char*)data, m_width*m_height);
+    unsigned char *temp_data = new unsigned char[m_width*m_height];
+    file.read((char*)temp_data, m_width*m_height);
+    // Perform actual copy of data)
     for (int i=0;i<m_width;i++)
         for (int j=0;j<m_height;j++) {
-            setPixel(i,j, data[i+j*m_width]);
+            setPixel(i,j, temp_data[i+j*m_width]);
         }
-    delete data;
+    delete[] temp_data;
+
 }
 
-// Not implemented yet!
-/*void LImageAmstradCPC::fromQImage(QImage *img, LColorList &lst)
-{
-#pragma omp parallel for
-    for (int i=0;i<m_qImage->width();i++)
-        for (int j=0;j<m_qImage->height();j++) {
-            unsigned char col = lst.getIndex(QColor(img->pixel(i, j)));
-
-           // m_qImage->setPixel(i,j,col);
-        }
-}
-
-*/

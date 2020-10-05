@@ -37,6 +37,8 @@ public:
 
     void Initialize(int width, int height) override;
 
+    virtual void ReInitialize() override {}
+
     void setPixel(int x, int y, unsigned int color) override;
     unsigned int getPixel(int x, int y) override;
 

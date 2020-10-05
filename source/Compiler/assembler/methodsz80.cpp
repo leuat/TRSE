@@ -80,6 +80,18 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->PopLabel("vblank");
 
     }
+    else if (Command("rasterirq")) {
+        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC464) {
+            QSharedPointer<NodeProcedure> proc = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
+
+            as->Asm("di");
+            as->Asm("ld a,&c3	;; Z80 JP instruction");
+            as->Asm("ld hl,"+proc->m_procedure->m_procName);
+            as->Asm("ld ($0038),a	;; write JP instruction");
+            as->Asm("ld ($0039),hl	;; write address");
+            as->Asm("ei");
+        }
+    }
     else if (Command("enablevblank")) {
         as->Asm("ld	a,[rIE]");
         as->Asm("or	a,IEF_VBLANK");

@@ -81,6 +81,8 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageHybridCharset(colorType);
     if (t == LImage::Type::AmstradCPC)
         return new LImageAmstradCPC(colorType);
+    if (t == LImage::Type::AmstradCPCGeneric)
+        return new LImageAmstradGeneric(colorType);
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;
     return nullptr;

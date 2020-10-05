@@ -19,8 +19,10 @@ begin
 	time:=0;
 	// Mode 0 : 160x200 16 cols
 	crtc::SetMode(0);
-	crtc::SetPalette(palette);
 	crtc::SetBorder(0);
+	crtc::Synchronize();
+	Memory::DisableInterrupts();
+	crtc::SetPalette(palette);
 end;
 
 

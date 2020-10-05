@@ -24,7 +24,7 @@ public:
 
     QString getMetaInfo();
 
-    void Initialize() override;
+    void ReInitialize() override;
     void InitPens() override;
 
     void LoadBin(QFile &file) override;

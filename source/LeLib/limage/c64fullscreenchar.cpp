@@ -211,7 +211,7 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
 
 }
 
-void C64FullScreenChar::Initialize()
+void C64FullScreenChar::ReInitialize()
 {
     DeleteAll();
     AddNew(m_charWidth, m_charHeight);

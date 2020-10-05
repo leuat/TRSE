@@ -95,7 +95,7 @@ public:
     void fromQImage(QImage *img, LColorList &lst) override;
 
 
-    void Initialize() override;
+    void ReInitialize() override;
 
 //    void FromRaw(QByteArray& arr);
 //    void ToRaw(QByteArray& arr);

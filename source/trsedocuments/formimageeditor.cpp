@@ -125,7 +125,7 @@ void FormImageEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini
 
         QObject::connect(m_work.m_currentImage->m_image, SIGNAL(emitImportRom()), this, SLOT(ImportROM()));
         m_work.m_currentImage->m_image->InitPens();
-        m_work.m_currentImage->m_image->Initialize();
+        m_work.m_currentImage->m_image->ReInitialize();
 
     }
 

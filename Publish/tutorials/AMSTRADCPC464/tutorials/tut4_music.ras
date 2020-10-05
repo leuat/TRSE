@@ -30,9 +30,12 @@ var
 	j1,j2,time : byte = 0;
 
 begin
-	
+	Memory::SaveFirmware();
 	crtc::SetMode(0);
 	crtc::SetBorder(0);
+	crtc::Synchronize();
+	Memory::DisableFirmware();
+	Memory::DisableInterrupts();
 	crtc::SetPalette(palette);
 	
 	memcpy(#image, screen, $3FFF);
@@ -41,7 +44,7 @@ begin
 	while (true) do
 	begin
 		time:=time+1;
-		crtc::SetBorder(time);
+		Memory::DisableInterrupts();
 		crtc::WaitForSync();
 		music::PlayMusic();
 	end;	

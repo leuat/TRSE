@@ -118,7 +118,7 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     EnsureSystemColours();
 }
 
-void ImageLevelEditor::Initialize()
+void ImageLevelEditor::ReInitialize()
 {
 //    m_meta = meta;
     m_meta.Calculate();
@@ -249,7 +249,7 @@ void ImageLevelEditor::LoadBin(QFile &file)
     m_meta.fromHeader(h1);
     m_meta.Calculate();
 
-    Initialize();
+    ReInitialize();
     m_meta.m_startx = 0;
     m_meta.m_starty = 0;
     for (CharmapLevel* l : m_levels) {
@@ -658,7 +658,7 @@ void ImageLevelEditor::CopyFrom(LImage *mc)
         //d.m_sizex = 1;
         //d.m_sizey = 1;
         m_meta = c->m_meta;
-        Initialize();
+        ReInitialize();
 
         m_currentChar = c->m_currentChar;
         m_forcePaintColorAndChar = c->m_forcePaintColorAndChar;

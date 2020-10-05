@@ -93,7 +93,14 @@ void CompilerZ80::SetupMemoryAnalyzer(QString filename)
     QString output;
     Syntax::s.m_currentSystem->StartProcess(assembler, QStringList() << "-1"<< filename+".asm" <<filename+".bin", output, true);
 
+    QVector<QSharedPointer<MemoryBlock>> nb;
+    for (QSharedPointer<MemoryBlock> mb: m_assembler->blocks) {
+        if (mb->m_type == MemoryBlock::USER)
+            nb.append(mb);
+    }
+
     m_assembler->blocks.clear();
+    m_assembler->blocks = nb;
 
 /*    int codeEnd=FindEndSymbol(orgAsm);
     QVector<int> ends = FindBlockEndSymbols(orgAsm);

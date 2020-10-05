@@ -48,6 +48,7 @@
 #include "source/LeLib/limage/limagemetablocksprites.h"
 #include "source/LeLib/limage/limagehybridcharset.h"
 #include "source/LeLib/limage/limageamstradcpc.h"
+#include "source/LeLib/limage/limageamstradgeneric.h"
 class LImageFactory {
 public:
     static LImage* Create(LImage* img) {

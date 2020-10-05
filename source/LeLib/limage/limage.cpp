@@ -90,6 +90,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 23;
     if (t==AmstradCPC)
         return 24;
+    if (t==AmstradCPCGeneric)
+        return 25;
 
 
     return 255;
@@ -147,6 +149,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "Hybrid multicolor/hires";
     if (t==AmstradCPC)
         return "Amstrad CPC";
+    if (t==AmstradCPCGeneric)
+        return "Amstrad Generic NxM";
 
     return "Unknown image type";
 
@@ -205,6 +209,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return HybridCharset;
     if (c==24)
         return AmstradCPC;
+    if (c==25)
+        return AmstradCPCGeneric;
 
     return NotSupported;
 

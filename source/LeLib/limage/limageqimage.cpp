@@ -50,16 +50,7 @@ void LImageQImage::LoadBin(QFile& file)
         for (int j=0;j<m_height;j++) {
            setPixel(i,j, data[i+j*m_width]);
         }
-    delete data;
-}
-
-void LImageQImage::LoadQImage(QString filename)
-{
-    Release();
-    m_qImage = new QImage();
-
-    if (!m_qImage->load(filename))
-        qDebug() << "Could not find file " << filename;
+    delete[] data;
 }
 
 void LImageQImage::SaveBin(QFile& file)
@@ -74,6 +65,15 @@ void LImageQImage::SaveBin(QFile& file)
     delete[] data;
 
 }
+void LImageQImage::LoadQImage(QString filename)
+{
+    Release();
+    m_qImage = new QImage();
+
+    if (!m_qImage->load(filename))
+        qDebug() << "Could not find file " << filename;
+}
+
 
 
 void LImageQImage::Initialize(int width, int height)
