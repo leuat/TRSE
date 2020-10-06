@@ -143,20 +143,25 @@ bool NodeVar::DataEquals(QSharedPointer<Node> other) {
 
 bool NodeVar::isWord(Assembler *as) {
 
-//    if (getType(as)==TokenType::POINTER)
-//    qDebug() << "NodeVar isWord : is array: " << (getType(as)==TokenType::ADDRESS) << TokenType::getType(getType(as));
-//    if (getType(as)==TokenType::ADDRESS && m_expr!=nullptr)
-   if (isReference())
-       return true;
+    //    if (getType(as)==TokenType::POINTER)
+    //    qDebug() << "NodeVar isWord : is array: " << (getType(as)==TokenType::ADDRESS) << TokenType::getType(getType(as));
+    //    if (getType(as)==TokenType::ADDRESS && m_expr!=nullptr)
+    if (isReference())
+        return true;
 
-        if (getType(as)==TokenType::ADDRESS)
+    if (getType(as)==TokenType::ADDRESS)
         return (getArrayType(as)==TokenType::INTEGER);
-        //qDebug() << "  Array type : " << getArrayType(as);
-   // qDebug() << "NodeVar is Word : " << (getType(as)==TokenType::ARRAY) << getArrayType(as);
-//    if (m_fake16bit)
-  //      qDebug() << "FAKE 16 bit: "<<value;
+    //qDebug() << "  Array type : " << getArrayType(as);
+    // qDebug() << "NodeVar is Word : " << (getType(as)==TokenType::ARRAY) << getArrayType(as);
+    //    if (m_fake16bit)
+    //      qDebug() << "FAKE 16 bit: "<<value;
+    if (getType(as)==TokenType::POINTER && m_expr!=nullptr) {
+        if (getArrayType(as)==TokenType::INTEGER)
+            return true;
+    }
+
     return getType(as)==TokenType::INTEGER || (getType(as)==TokenType::POINTER && m_expr==nullptr) || m_fake16bit;
-/*    return m_op.m_type==TokenType::INTEGER;
+    /*    return m_op.m_type==TokenType::INTEGER;
     QSharedPointer<Symbol> s = as->m_symTab->Lookup(value, m_op.m_lineNumber);
 
     return s->m_type.toLower()=="integer";*/

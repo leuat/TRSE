@@ -1,5 +1,10 @@
 #include "limageamstradcpc.h"
 
+QVector<int> LImageAmstradCPC::table160 =  {0b00000000, 0b00000001,0b00000100,0b00000101,
+                          0b00010000, 0b00010001,0b00010100,0b00010101,
+                          0b01000000, 0b01000001,0b01000100,0b01000101,
+                          0b01010000, 0b01010001,0b01010100,0b01010101};
+
 LImageAmstradCPC::LImageAmstradCPC(LColorList::Type t)  : LImageQImage(t)
 {
     m_type = LImage::Type::AmstradCPC;

@@ -81,7 +81,7 @@ public:
         if (dither==1)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
         if (dither==2)
-            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(size,1), 1);
+            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(1,size), 1);
         if (dither==0)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
 
@@ -99,7 +99,33 @@ public:
         if (dither==1)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
         if (dither==2)
-            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(size,1),1);
+            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(1,size),1);
+        if (dither==0)
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
+
+        m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
+
+    }
+
+    void ConvertToCPC(int dither, QVector3D ditherStrength)
+    {
+/*        if (m_outputType!=1)
+            return;*/
+        int size = 2;
+/*        for (int i=0;i<16;i++) {
+            int pen = 0;
+            if (i<m_cols.size())
+                pen = m_cols[i];
+            m_mc->m_colorList.setPen(i,pen);
+        }*/
+        m_mc->m_colorList.m_selectClosestFromPen = true;
+
+        m_mc->m_colorList.EnableColors(m_cols);
+//        qDebug() <<"COLS IN USE " <<m_cols;
+        if (dither==1)
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
+        if (dither==2)
+            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(1,size),1);
         if (dither==0)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
 
@@ -112,6 +138,8 @@ public:
 /*        if (m_outputType!=1)
             return;*/
         int size = 2;
+//        m_mc->m_colorList.m_selectClosestFromPen = false;
+
         m_mc->m_colorList.EnableColors(m_cols);
         if (dither==1)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
@@ -132,7 +160,7 @@ public:
         if (dither==1)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
         if (dither==2)
-            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(2,1),1);
+            m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(1,2),1);
         if (dither==0)
             m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
 

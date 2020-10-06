@@ -178,6 +178,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
 {
     if (node->m_left->isWord(as))
         node->m_right->setForceType(TokenType::INTEGER);
+
     if (node->m_right->isWord(as))
         node->m_left->setForceType(TokenType::INTEGER);
 
@@ -300,7 +301,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
     }
 
     // Special case if B-node is simple:
-    if (node->m_right->isPure() && node->m_left->isPure()) {
+    if (node->m_right->isPure() && node->m_left->isPure() && !node->m_right->isWord(as)) {
         if (node->m_right->isPureVariable())  {
             node->m_right->Accept(this);
             as->Asm("ld b,a");
@@ -310,6 +311,28 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
         }
         node->m_left->Accept(this);
         as->Asm(getBinaryOperation(node)+" b");
+        return;
+    }
+
+    if (node->m_right->isWord(as)) {
+        as->Comment("Generic 16-bit binop");
+
+        node->m_right->Accept(this);
+        as->Asm("ex de,hl");
+        node->m_left->Accept(this);
+        if (node->m_op.m_type == TokenType::PLUS) {
+            as->Asm("add hl,de");
+            return;
+        }
+        if (node->m_op.m_type == TokenType::MINUS) {
+            as->Asm("sbc hl,de");
+            return;
+
+        }
+        ErrorHandler::e.Error("TRSE currently does not support the following 16-bit binary opreation : "+node->m_op.getType(),node->m_op.m_lineNumber);
+
+//        as->Asm(getBinaryOperation(node)+" hl,de");
+
         return;
     }
 
@@ -418,12 +441,31 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
             return;
         }
         node->m_expr->Accept(this);
+/*        if (node->isWord(as))
+            as->Asm("rlca"); // *2 for integer arrays
+  */
         as->Asm("ld e,a");
         as->Asm("ld d,0");
   //      as->Asm("ld hl,"+node->getValue(as));
         LoadAddress(node);
         as->Asm("add hl,de");
+        if (node->isWord(as))
+            as->Asm("add hl,de");
+
+
+
         as->Asm("ld a,[hl]");
+
+        as->Comment("LoadVar Testing if '"+node->getValue(as)+"' is word : "+QString::number(node->isWord(as)));
+        if (node->isWord(as)) // More complicated: Load integer byte array into de
+        {
+                as->Asm("ld e,a");
+                as->Asm("inc hl");
+                as->Asm("ld a,[hl]");
+                as->Asm("ld d,a");
+                as->Asm("ex de,hl");
+        }
+
         return;
 
 
@@ -472,13 +514,24 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
         else {
             QString hl =getHL();
 
+            if (node->isReference()) {
+//                as->Comment("")
+                as->Asm("ld "+hl+","+node->getValue(as));
+                return;
+
+            }
+
             as->Asm("ld a,["+node->getValue(as)+"]");
             as->Asm("ld "+hl[1]+",a");
-            if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY)
-            as->Asm("xor a,a");
+            if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY) {
+                as->Asm("xor a,a");
+            }
             else
-                as->Asm("xor a");
-            as->Asm("ld "+hl[0]+",a");
+            {
+//                as->Asm("xor a");
+  //          as->Asm("ld "+hl[0]+",a");
+                as->Asm("ld "+hl[0]+",0");
+            }
         }
 
     }
@@ -766,15 +819,15 @@ QString ASTdispatcherZ80::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
         add = " a,";
 
     if (bop->m_op.m_type == TokenType::PLUS)
-        return "add"+add;
+        return "add "+add;
     if (bop->m_op.m_type == TokenType::MINUS)
-        return "sub";//+add;
+        return "sub ";//+add;
     if (bop->m_op.m_type == TokenType::BITAND)
-        return "and";
+        return "and ";
     if (bop->m_op.m_type == TokenType::BITOR)
-        return "or";
+        return "or ";
     if (bop->m_op.m_type == TokenType::XOR)
-        return "xor";
+        return "xor ";
 /*    if (bop->m_op.m_type == TokenType::DIV)
         return "div";
     if (bop->m_op.m_type == TokenType::MUL)
@@ -975,10 +1028,19 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
                     bop->m_right->Accept(this);
                 }
                 else {
-                    bop->m_right->Accept(this);
+                    as->Comment("Executing 16 bit binop here");
+                    bop->Accept(this);
+/*                    as->Asm("ld d,h");
+                    as->Asm("ld e,l");*/
 
-                    as->Asm("ld d,h");
-                    as->Asm("ld e,l");
+/*                    as->Asm("ld e,a");
+                    as->Asm("inc hl");
+                    as->Asm("ld a,[hl]");
+                    as->Asm("ld d,a");
+                    as->Asm("ex de,hl");*/
+                    StoreAddress(var);
+                    return;
+
                 }
                 LoadAddress(var); // Load address into hl
                 if (bop->m_op.m_type==TokenType::PLUS) {
@@ -1012,18 +1074,15 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
 
                 return;
             }
-            else ErrorHandler::e.Error("Pointers in GBZ80 TRSE do not support this expression",bop->m_op.m_lineNumber);
+
+
+//            else ErrorHandler::e.Error("Pointers in GBZ80 TRSE do not support this expression",bop->m_op.m_lineNumber);
         }
         // Generic : Doesn't really work
         as->Comment("Generic assign 16-bit pointer");
-        node->m_right->setForceType(TokenType::POINTER);
+        node->m_right->setForceType(TokenType::INTEGER);
         node->m_right->Accept(this);
         as->Comment("Store 16-bit address");
-        as->Asm("ld e,a");
-        as->Asm("inc hl");
-        as->Asm("ld a,[hl]");
-        as->Asm("ld d,a");
-        as->Asm("ex de,hl");
         StoreAddress(var);
         return;
 

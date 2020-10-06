@@ -23,6 +23,7 @@ public:
     void AddToDataX(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h);
     void AddToDataVGA(QByteArray& data, LImageQImage& img,int x, int y, int w, int h);
     void AddBitplaneToData(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h, int bpl);
+    void AddAmstradCPCToData(QByteArray& data, LImage* img,int x, int y, int w, int h);
     void AddAtariBitplaneToData(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h);
     void AddSingleAtariBitplaneToData(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h, int bpl_select);
 

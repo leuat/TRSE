@@ -609,6 +609,16 @@ static int AddBitplaneToData(lua_State* L) {
     return 0;
 }
 
+static int AddAmstradCPCToData(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddAmstradCPCToData"))
+        return 0;
+
+    if (m_effect!=nullptr)
+       m_compression.AddAmstradCPCToData(m_charData, m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+
+    return 0;
+}
+
 static int AddAtariBitplaneToData(lua_State* L) {
     if (!VerifyFjongParameters(L,"AddAtariBitplaneTodata"))
         return 0;
@@ -1045,6 +1055,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "CopyFile", CopyFile);
     lua_register(m_script->L, "AddToPng", AddToPng);
 
+    lua_register(m_script->L, "AddAmstradCPCToData", AddAmstradCPCToData);
     lua_register(m_script->L, "AddAmigaBitplaneToData", AddBitplaneToData);
     lua_register(m_script->L, "AddAtariBitplaneToData", AddAtariBitplaneToData);
     lua_register(m_script->L, "AddAtariSingleBitplaneToData", AddAtariSingleBitplaneToData);
@@ -1147,7 +1158,7 @@ void DialogEffects::UpdateGlobals()
     if (m_script->lua_exists("globals.translate"))
         m_rt.m_globals.m_translate = m_script->getVec("globals.translate");
 
-    if (m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_VGA)  {
+    if (m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_VGA || m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_AMSTRAD)  {
         if (m_script->lua_exists("output.palette_file"))
         {
             QString f = m_script->get<QString>("output.palette_file");
@@ -1156,8 +1167,10 @@ void DialogEffects::UpdateGlobals()
                 if (m_effect->m_mc!=nullptr) {
                     if (f.endsWith(".flf")) {
                         LImage* img = LImageIO::Load(m_currentDir + f);
+
 //                        m_effect->m_mc->m_colorList.CopyFrom(&img->m_colorList);
                         if (img!=nullptr) {
+//                            qDebug() << "HER " << f;
                             m_effect->m_mc->m_colorList.CopyFrom(&img->m_colorList);
                             delete img;
                         }

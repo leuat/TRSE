@@ -1,5 +1,5 @@
 #include "compression.h"
-
+#include "source/LeLib/limage/limageamstradcpc.h"
 Compression::Compression()
 {
 
@@ -115,6 +115,31 @@ void Compression::AddBitplaneToData(QByteArray &data, MultiColorImage &img, int 
 
 }
 
+
+
+void Compression::AddAmstradCPCToData(QByteArray &data, LImage *img, int xx, int yy, int w, int h)
+{
+
+    int d= 0;
+    for (int y=0;y<h;y+=1) {
+
+        char c = 0;
+        for (int x=0;x<w;x++) {
+             int curBit = x&1;
+
+             int pixel = img->getPixel(x+xx,y+yy);
+             c|= LImageAmstradCPC::table160[pixel]<<(1-curBit);
+
+             if (curBit==1)
+             {
+                data.append(LImageAmstradCPC::AmstradCrazySwap(c));
+                d++;
+                c = 0;
+             }
+     }
+    }
+//    qDebug() << "AddCPC data size and width : " <<d << w << h;
+}
 
 void Compression::AddAtariBitplaneToData(QByteArray &data, MultiColorImage &img, int xp, int yp, int w, int h)
 {
