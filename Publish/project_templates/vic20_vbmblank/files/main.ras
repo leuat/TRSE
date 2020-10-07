@@ -58,8 +58,8 @@ begin
 	AUX_COLOR_AND_VOLUME := %00000010;
 	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
 
-	vbmDrawText( strTitle, font8, 2, 40, 8 );
-	vbmDrawSmallTextO( strDesc, font4, 4, 50, 6 );
+	vbmDrawText( #strTitle, #font8, 2, 40, 8 );
+	vbmDrawSmallTextO( #strDesc, #font4, 4, 50, 6 );
 
 	// main game loop
 	while (true) offpage do 

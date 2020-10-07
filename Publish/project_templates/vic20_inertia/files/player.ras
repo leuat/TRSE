@@ -17,7 +17,7 @@ begin
 
 	//vbmSetPosition1( peek( px, 1 ), peek( py, 1 ) );
 	vbmSetPosition1( Hi( px ), Hi( py ) );
-	vbmDrawSprite8E( sprPlayerA, sprPlayerB );
+	vbmDrawSprite8E( #sprPlayerA, #sprPlayerB );
 
 end;
 
