@@ -1,0 +1,137 @@
+<h3>Tips for working with ASM in TRSE</h3>
+
+<p>
+When writing code in TRSE you will be mostly using Turbo Rascal's 'pascal'-like language. This is very powerful and optimised. However,
+there will be times when you need to use assmebler for either speed or to achieve something very specific. TRSE has your back.
+</p>
+
+<p>
+You can break out to assembler code at any time using the ASM("") command. For example:
+</p>
+
+<code>
+    asm("
+asmLabel
+    lda #02
+    sta $fe
+    ");
+
+</code>
+
+<p>
+The general rule is to make sure only labels are placed in the first column of text and a space or tab inserted for the assembler
+mnemonics, otherwise it will be treated as a label. Comments begin with a ';' character.
+</p>
+
+<p>
+When you write assembler code, you can reference TRSE variables directly by their name. For example, if you have a variable called
+score, you can write:
+</p>
+
+<code>
+    lda score ; load the value stored in score into the accumulator
+</code>
+
+<p>
+If using a unit or local variables in a procedure, TRSE will prefix the variable with the unit name or procedure. For example, if
+you have a unit called input and a varible defined within it called key, the variable will be called input_key and you can write:
+</p>
+
+<code>
+    lda input_key ; load the value stored in key in the input unit into the accumulator
+</code>
+
+<p>
+You can also reference constants, but they must be defined and referenced in UPPER CASE CHARACTERS, for example:
+</p>
+
+<code>
+    const SCREENRIGHT: byte = 151;
+
+    ...
+
+    asm("
+
+    lda #SCREENRIGHT
+
+    "); 
+</code>
+
+<p>
+TRSE will also allow you to return a value from assembler to use to assign a variable, or in a condition, for example:
+</p>
+
+<code>
+
+procedure MyAsmProcedure();
+begin
+
+    asm("
+
+    lda #02 ; load the accumulator with the value we wish to return from this procedure
+
+    ; note no RTS mnemonic is required, because the procedure will generate one
+
+    ");
+
+end;
+
+// main program
+
+begin
+
+    result := MyAsmProcedure(); // YAY we assigned result with the value of 2
+
+    if ( MyAsmProcedure() = 2 ) then // YAY we returned the value of 2
+
+end.
+
+</code>
+
+<p>
+When you build a program in TRSE, the code is compiled to assembler and is optmised. This assembler file, which is usually the same name as 
+your 'ras' file but with an 'asm' extension, will show the complete assembler program, data and any inline assembler you have written.
+It is recommended that you review this asm file from time to time to understand better how your Turbo Rascal program is being
+converted to assembler. It can help you write better code and for debugging unexpexcted behaviour.
+</p>
+
+<p>
+When debugging Turbo Rascal code or assembler code, in Emulators such as VICE, you can add breakpoints to the assembler allowing
+you to examine registers and memory, or to step through the assemlber instructions to observe what happens. TRSE has a special command
+for inserting a breakpoint in your code:
+</p>
+
+<code>
+
+procedure DebugThis();
+begin
+
+    myVar : = 0;
+
+    // a breakpoint will be added on to the next instruction, in this case it will be the lda myVar directly below
+    AddBreakPoint();
+
+    asm("
+
+    lda myVar
+
+    ");
+
+end;
+</code>
+
+<p>VICE will halt on the lda myVar line and you can use the built in monitor to step through the code, examine memory and 
+observe what the assembler instructions are doing. Great for figuring out strange problems.</p>
+
+<h3>VICE Monitor</h3>
+<p>
+The VICE monitor is a whole other topic and is quite powerful. On most platforms it is command line driven and shares commonality
+with the Vic and C64 monitor cartridge commands. The Windows VICE emulator from versions 3.1 and earlier, has a nice GUI showing the 
+disassembler, memory, register and command window, where you can single step into or over instructions, view the contents of memory
+and of registers. It can be useful to see everything together at the same time and be a little faster to debug. Unfortunately, on later
+versions this GUI is lost, and other platforms (Mac + Linux) do not have the nice GUI at all. The command line monitor is still available and very
+powerful. It is worth learning as it offers more control with conditional breakpoints, searching and other features you may need.
+A topic on VICE's monitor may be added in a future release.
+</p>
+<p>Other emulators will have their own monitors or debugging capabilities. If there is anything TRSE can do to integrate better with them
+please let us know on Github by raising a request for new features or improvements.</p>

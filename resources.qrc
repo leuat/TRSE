@@ -537,5 +537,6 @@
         <file>resources/text/help/r/compressed.rtf</file>
         <file>resources/text/help/r/vbmexportcolor.rtf</file>
         <file>resources/code/amstrad/unpack.asm</file>
+        <file>resources/text/help/p/asm_tips.rtf</file>
     </qresource>
 </RCC>
