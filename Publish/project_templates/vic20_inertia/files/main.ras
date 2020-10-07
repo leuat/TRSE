@@ -59,8 +59,8 @@ begin
 	AUX_COLOR_AND_VOLUME := %00000010;
 	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
 
-	vbmDrawText( strTitle, font8, 1, 40, 8 );
-	vbmDrawSmallTextO( strDesc, font4, 8, 50, 6 );
+	vbmDrawText( #strTitle, #font8, 1, 40, 8 );
+	vbmDrawSmallTextO( #strDesc, #font4, 8, 50, 6 );
 
 	Player_Init();
 

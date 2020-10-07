@@ -12,8 +12,8 @@
 procedure Level_Draw();
 begin
 
-	vbmDrawTileMap( aLevel, aTiles, 0,0, 20, 186 );
-	vbmDrawSmallTextO( strTitle, font4, 12, 2, 6 );
+	vbmDrawTileMap( #aLevel, #aTiles, 0,0, 20, 186 );
+	vbmDrawSmallTextO( #strTitle, #font4, 12, 2, 6 );
 
 end;
 
@@ -28,7 +28,7 @@ begin
 	j := py + 7;
 	j := j >> 3;
 	
-	p1 := addresstable(levelAddr, i, j);
+	p1 := addresstable( #levelAddr, i, j );
 	k := p1[0];								// check tile on level
 	k := tileBlockTypes[ k ]; 				// convert tile into a type
 
@@ -45,7 +45,7 @@ begin
 	j := py + 8;
 	j := j >> 3;
 	
-	p1 := addresstable(levelAddr, i, j);
+	p1 := addresstable( #levelAddr, i, j );
 	k := p1[0];								// check tile on level
 	k := tileBlockTypes[ k ]; 				// convert tile into a type
 
@@ -62,7 +62,7 @@ begin
 	j := py + 8;
 	j := j >> 3;
 	
-	p1 := addresstable(levelAddr, i, j);
+	p1 := addresstable( #levelAddr, i, j );
 	k := p1[0];								// check tile on level
 	k := tileBlockTypes[ k ]; 				// convert tile into a type
 
@@ -70,7 +70,7 @@ begin
 	begin
 		i := px + 4;
 		i := i >> 3;
-		p1 := addresstable(levelAddr, i, j);
+		p1 := addresstable( #levelAddr, i, j );
 		k := p1[0];								// check tile on level
 		k := tileBlockTypes[ k ]; 				// convert tile into a type
 		
@@ -89,7 +89,7 @@ begin
 	j := py + 3;
 	j := j >> 3;
 	
-	p1 := addresstable(levelAddr, i, j);
+	p1 := addresstable( #levelAddr, i, j );
 	k := p1[0];								// check tile on level
 	k := tileBlockTypes[ k ]; 				// convert tile into a type
 	
@@ -106,7 +106,7 @@ begin
 	j := py + 3;
 	j := j >> 3;
 	
-	p1 := addresstable(levelAddr, i, j);
+	p1 := addresstable( #levelAddr, i, j );
 	k := p1[0];								// check tile on level
 	k := tileBlockTypes[ k ]; 				// convert tile into a type
 	
@@ -123,7 +123,7 @@ begin
 	j := py - 1;
 	j := j >> 3;
 	
-	p1 := addresstable(levelAddr, i, j);
+	p1 := addresstable( #levelAddr, i, j );
 	k := p1[0];								// check tile on level
 	k := tileBlockTypes[ k ]; 				// convert tile into a type
 	
