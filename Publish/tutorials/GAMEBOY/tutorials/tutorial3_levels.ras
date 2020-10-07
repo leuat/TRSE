@@ -31,7 +31,7 @@ var
 procedure RenderLevel(x,y : global byte);
 begin
 	current_bank := levelBank;
-	Levels::lp := level_data;
+	Levels::lp := #level_data;
 	Levels::RenderLevel2x2MetaTiles(x,y);
 	// Remember to turn off LCD before copying to VRAM!
 	Screens::StopLCD();
@@ -61,12 +61,13 @@ procedure InitLevelData();
 begin
 	current_bank := levelBank;
 	// Set up tile data
-	Screens::CopyFullCharset(tiles);
+	Screens::CopyFullCharset(#tiles);
 
 	// Set TRU data to point to level & metatiles
-	Levels::lp := level_data;
-	Levels::mt := metatiles;
+	Levels::lp := #level_data;
+	Levels::mt := #metatiles;
 	
+	asm(";wtf");
 	Levels::ReadHeader();
 	// Set a nice palette
 	background_palette:=%11010010;

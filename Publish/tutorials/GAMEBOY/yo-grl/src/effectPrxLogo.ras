@@ -8,10 +8,10 @@ begin
 	SetBank(bank_prx_logo);
 //	Screens::ClearScreen($F0);
 //	background_palette:=%11001001;
-	Screens::CopyBankHB(img_prx,^$9000,8);
+	Screens::CopyBankHB(#img_prx,^$9000,8);
 	fill(temp,$F0,1024);
-	Screens::RenderOffScreen(temp,img_prx_tab, 0, bank_prx_logo, 4,20, 16,6);
-	Screens::RenderOffScreen(temp,img_prx_tab, 16*6, bank_prx_logo, 20,20, 3,6);
+	Screens::RenderOffScreen(temp,#img_prx_tab, 0, bank_prx_logo, 4,20, 16,6);
+	Screens::RenderOffScreen(temp,#img_prx_tab, 16*6, bank_prx_logo, 20,20, 3,6);
 
 end;
 
@@ -67,7 +67,7 @@ begin
 //	d1:=vram;
 	//d1:=d1-$40;
 //	d1:=vram+presents_char*$10 + ^$1000;
-		p2:=presents_data;
+		p2:=#presents_data;
 	end;
 //	waitforraster($8E);
 	xx:=$10;	

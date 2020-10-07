@@ -22,7 +22,7 @@ begin
 	crtc::SetBorder(0);
 	crtc::Synchronize();
 	Memory::DisableInterrupts();
-	crtc::SetPalette(palette);
+	crtc::SetPalette(#palette);
 end;
 
 

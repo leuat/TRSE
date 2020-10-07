@@ -48,11 +48,11 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 void CompilerZ80::Connect()
 {
     m_assembler->m_source<<m_parser.m_parserAppendix;
+    m_assembler->IncludeFile(":resources/code/Z80/memcpy.asm");
 
     m_assembler->EndMemoryBlock();
     m_assembler->Connect();
 
-    m_assembler->IncludeFile(":resources/code/Z80/memcpy.asm");
 
 
 

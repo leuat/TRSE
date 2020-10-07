@@ -23,7 +23,8 @@ QString AbstractSystem::CompressLZ4(QString fileName) {
     header.append(0x22);
     header.append(0x4d);
     header.append(0x18); // magic number
-    header.append((0x64 | in.length()) & 0xFF); // lo size
+//    header.append((0x64 | in.length()) & 0xFF); // lo size
+    header.append((0x64)); // lo size
 //    header.append((in.length()>>8)&0xFF);
     header.append(0x40);
 

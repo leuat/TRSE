@@ -408,7 +408,7 @@ begin
 
 	*/
 
-
+/*
 	// PRX logo
 	InitEffect(15);
 	SetBank(bank_prx_logo);
@@ -437,16 +437,18 @@ begin
 
 	 // CHEATING 2 Cubes and toruses
 	InitEffect(28);
-	msgp := msg_torus2;
+	msgp := #msg_torus2;
 	InitBGStuff();
 	EffectBGStuff();
-
+*/
 	// VS Some effect
-	InitEffect(14);
-	msgp := msg_l1;
-	InitEffect1(circle1);;
+	InitEffect(4);
+	msgp := #msg_l1;
+	InitEffect1(#circle1);;
 	Effect1();	
 	
+
+
 
 	// YO GRL rotating cubes
 	InitEffect(30);
@@ -468,8 +470,8 @@ begin
 
 	// VS Some intermediate effect
 	InitEffect(10);
-	msgp := msg_wonder;
-	InitEffect1(circle2);
+	msgp := #msg_wonder;
+	InitEffect1(#circle2);
 	Effect1();	
 
 
@@ -482,8 +484,8 @@ begin
 
 	// VS Some effect
 	InitEffect(8);
-	msgp := msg_head;
-	InitEffect1(circle3);
+	msgp := #msg_head;
+	InitEffect1(#circle3);
 	Effect1();	
 	
 	// Credits

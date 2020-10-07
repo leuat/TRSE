@@ -193,7 +193,7 @@ end;
 procedure SetupInvertedFont();
 begin
 	SetBank(bank_small_text_data);	
-	Screens::CopyBankHB(small_text_data,^$D000,4);
+	Screens::CopyBankHB(#small_text_data,^$D000,4);
 	// Invert colors
 	
 	p1:=$D000;
@@ -212,19 +212,19 @@ begin
 	
 	Screens::CopyBankHB(^$D000,vram,4);
 
-	Screens::CopyBankHB(portraits,vram+$400,4);
+	Screens::CopyBankHB(#portraits,vram+$400,4);
 
 
 end;
 procedure SetupFont();
 begin
 	SetBank(bank_small_text_data);	
-	Screens::CopyBankHB(small_text_data,^$D000,4);
+	Screens::CopyBankHB(#small_text_data,^$D000,4);
 	// Invert colors
 	
 	Screens::CopyBankHB(^$D000,vram,4);
 
-	Screens::CopyBankHB(portraits,vram+$400,4);
+	Screens::CopyBankHB(#portraits,vram+$400,4);
 
 
 end;
@@ -249,9 +249,9 @@ end;
 procedure UpdateMessages();
 begin
 	kp2:=$C041; // y sprite 64+1
-	kp1:=tabs;
+	kp1:=#tabs;
 	kp1:=kp1+1; 
-	
+//	nomsg:=2;
 	c2:=demoCounter;// - textStart;
 	if (transition=0) then
 	begin
@@ -261,8 +261,6 @@ begin
 
 		ll:=kp1[0];
 		k:=kp2[0];
-// 		k:=k&$Fe;
-//		c1:=i;
 				
 		if (demoCounter>i+textStart and k<>100) then
 		begin 			
@@ -271,6 +269,7 @@ begin
 				kp2[0]:=kp2[0] - 2;
 				kp2:=kp2 + 4;
 			end;
+			
 
 		end
 		else kp2:=kp2+ ll*4;
@@ -294,6 +293,7 @@ begin
 		begin 			
 			for j:=0 to ll do
 			begin
+				asm(";here");
 				kp2[0]:=kp2[0] + 2;
 				kp2:=kp2 + 4;
 			end;
@@ -318,7 +318,7 @@ begin
 	SetupInvertedFont();
 	
 	nomsg:=msgp[0];
-	p1:=tabs;
+	p1:=#tabs;
 	p2:=$C000; // Sprites
 	
 	k:=msgp[1];

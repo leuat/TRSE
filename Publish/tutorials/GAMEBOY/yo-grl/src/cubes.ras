@@ -15,9 +15,9 @@ begin
 //		k:=k&15;
 		j:=i+yy;
 		if (j&1=0) then
-		p1:=cubes_data
+		p1:=#cubes_data
 		else
-		p1:=cubes_data2;
+		p1:=#cubes_data2;
 
 //		p1:=cubes_data;
 		if (k<>0) then	
@@ -81,7 +81,7 @@ begin
 //	Screens::ClearScreen($FE);
 	
 	SetBank(bank_grl);
-	Screens::CopyFullCharset(image_cubes_data);
+	Screens::CopyFullCharset(#image_cubes_data);
 
 	Screens::FillVRAM(^$8800+^$7E*^$10,$FF, $10);
 	Screens::FillVRAM(^$8800+^$7E*^$10,$FF, $10);
@@ -89,9 +89,8 @@ begin
 //	fill(^$8800+^$7E*^$10,$FF,$10);
 	//UpdateMusicTick();
 	fill(temp,$FE,1024);
-	Screens::RenderOffScreen(temp, image_cubes_screen,0,bank_cubes,6,16, 11,16);
+	Screens::RenderOffScreen(temp, #image_cubes_screen,0,bank_cubes,6,16, 11,16);
 	memcpyonhblank(temp,screen0,1024);
-
 
 
 //	fill(vram+$800,$30,$1000);

@@ -50,6 +50,7 @@ public:
     virtual void ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center) override;
     void fromQImage(QImage* img, LColorList& lst) override;
 
+    void ExportBlackWhite(QFile &file, int p1, int p2, int p3, int p4) override;
 
     void Release() override;
 

@@ -58,7 +58,6 @@ begin
 	lp := lp +dataSize*pos;
 
 	sp:=temp;
-	
 	// Fill temp data with chars
 	for j:=0 to height  do begin
 		idx:=0;

@@ -34,7 +34,7 @@ begin
 	frame:=(frame+1)&15;
 /*	frame:=sine[time<<1]>>2;
 	frame:=frame&15;*/
-	p1:=quads_data;
+	p1:=#quads_data;
 	p1:=p1+ frame*$100;
 //	p1:=p1+ frame*$80;
 //	memcpy(p1,vram+^$1000,$160);
@@ -130,7 +130,7 @@ begin
 	begin
 //	cc:=71; // G is gone?
 	if (cc>64) then cc:=cc-(65-26);
-	p1:=small_text_data;
+	p1:=#small_text_data;
 //	cc:=68;	
 	p1:=p1 + cc*($10);
 //	p1:=p1 + (32*$10);
@@ -211,7 +211,7 @@ begin
 	begin
 //	cc:=71; // G is gone?
 	if (cc>64) then cc:=cc-(65-26);
-	p1:=small_text_data;
+	p1:=#small_text_data;
 //	cc:=68;	
 	p1:=p1 + cc*($10);
 //	p1:=p1 + (32*$10);
@@ -373,7 +373,7 @@ end;
 procedure UpdateQuadFont();
 begin
 	SetBank(bank_charset);
-	p1:=main_charset;
+	p1:=#main_charset;
 	p1:=p1+$20;
 //	p1:=p1+$180;
 	x1:=time>>2;

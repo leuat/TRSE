@@ -7,7 +7,7 @@ begin
 	SetBank(bank_logo);
 //	Screens::StopLCD();
 	k:=0;
-	Screens::CopyFullCharset(image_logo_grl);	
+	Screens::CopyFullCharset(#image_logo_grl);	
 	//Screens::ClearScreen(0);
 	fill(^$D000,0,1024);
 	p1:=$D022;
@@ -23,7 +23,7 @@ begin
 	// Copy image
 	Screens::CopyBankHB($D000,screen0,4);
 	// Copy sprites
-	Screens::CopyBankHB(image_logo_packed,vram,8);
+	Screens::CopyBankHB(#image_logo_packed,vram,8);
 
 
 //	MemcpyOnHBlank(^$D000,0,screen0,1024

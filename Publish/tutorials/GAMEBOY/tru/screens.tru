@@ -24,6 +24,19 @@ begin
 	begin
 		waitforraster(0);
 		memcpyonHBlank4(cp1,cp2,256);
+/*		asm("
+	ld b,$01
+	ld a,[ Screens_cp1 ]
+	add a,b
+	ld [ Screens_cp1 ],a
+	
+	ld b,$01
+	ld a,[ Screens_cp2 ]
+	add a,b
+	ld [ Screens_cp2 ],a
+
+
+		");	*/	
 		cp1:=cp1+256;
 		cp2:=cp2+256;
 	end;
@@ -117,6 +130,7 @@ begin
 	p1:=ro_dst;
 	ro_p:=ro_p+ro_adde;
 	p1:=p1+ro_x;
+	
 	if (ro_y<>0) then
 		p1:=p1+ro_y*32;
 
@@ -148,7 +162,7 @@ begin
 	end;
 end;
 
-procedure PrintText(p1 :global  pointer;x,y,c : global byte ; text : pointer);
+procedure PrintText(p1 :global  pointer;x,y,c : global byte ; text : pointer of byte);
 begin
 	done:=false;
 	j:=0;
@@ -169,10 +183,12 @@ begin
 			begin
 				i:=i-65+c;
 			end;
+			asm(";here");				
 			p1[j]:=i;
 
 		end;
 		j:=j+1;
+		
 		if (text[j]=0) then done:=true;		
 	
 	end;	

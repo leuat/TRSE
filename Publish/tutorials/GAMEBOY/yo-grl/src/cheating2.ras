@@ -7,8 +7,8 @@ begin
 	sy:=128+8;
 		
 	Screens::ClearScreen(screen0,0);
-	Screens::CopyFullCharset(movie_charset);	
-	msgp:=msg_torus;
+	Screens::CopyFullCharset(#movie_charset);	
+	msgp:=#msg_torus;
 	SetupMessages();
 end;
 
@@ -17,7 +17,7 @@ begin
 	SetBank(bank_movieD);
 	zp:=screen0;
 	zp:=zp+(32*1);
-	p1:=movie_screen;
+	p1:=#movie_screen;
 //	frame:=0;
 	// 24*24 = 576 = 512 + 64
 	i:=frame*1;

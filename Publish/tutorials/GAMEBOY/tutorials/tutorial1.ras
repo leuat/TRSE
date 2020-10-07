@@ -16,8 +16,8 @@ var
 	
 	text2 : string = "DIS FAILS ON REAL HW";
 
-	zp : pointer;
-
+	zp,zp2 : pointer;
+	i,y:byte;
 
 
 /*
@@ -60,7 +60,7 @@ begin
 	current_bank:=charBank;
 	// Copy $400 bytes from the ROM font to VRAM charset. MUST be done on HBLANK, or else 
 	// writing to screen ram wil lfail
-	Screens::CopyBankHB(font, vram_charset, 4); // Copy 4x$100 bytes of data
+	Screens::CopyBankHB(#font, vram_charset, 4); // Copy 4x$100 bytes of data
 	
 	/*
 	If you call memcpy directly, data will be copied outside of vblank - and produce
@@ -76,15 +76,14 @@ begin
 	Screens::ClearScreen(screen0, $80);	
 
 	// Print text to buffer
-	Screens::PrintText(Screens::storage,3,3, 0, text1);
+	Screens::PrintText(#Screens::storage,3,3, 0, #text1);
+
 	
 	// Copy buffer to screen - again, only on HBLANK!
-	Screens::CopyBankHB(Screens::storage, screen0, 4); // Copy 4x$100 bytes of data to the screen
+	Screens::CopyBankHB(#Screens::storage, screen0, 4); // Copy 4x$100 bytes of data to the screen
 	
 	// The next line will fail (on gambatte or real hardware), since we are writing directly to VRAM during non-blank intervals
-	Screens::PrintText(screen0,0,8, 26, text2);
 
-
-
+	Screens::PrintText(screen0,0,8, 26, #text2);
 	Loop();			
 end.

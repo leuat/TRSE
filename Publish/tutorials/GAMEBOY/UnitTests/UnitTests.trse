@@ -43,3 +43,6 @@ cpu_x86_system = 8086
 override_target_settings_basic = 6.95268e-310
 exomizer_toggle = 0
 zeropage_colormemory = $fc
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/GAMEBOY/UnitTests/
+open_files = ,common.ras
+current_file = conditional/01_if-then-else.ras

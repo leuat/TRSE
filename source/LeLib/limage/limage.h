@@ -173,6 +173,9 @@ public:
 
     virtual void CopySingleChar(LImage* src, int srcChar, int dstChar) {qDebug() << "CopySingleChar not implemented";}
 
+    virtual void ExportBlackWhite(QFile& file, int p1, int p2, int p3, int p4) {}
+
+
     virtual QStringList SpriteCompiler(QString name, QString src, QString dst, int x, int y, int w, int h) {return QStringList();}
 
     virtual void BeforeRightButton() {}

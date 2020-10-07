@@ -50,12 +50,12 @@ begin
 	Memory::DisableInterrupts();	
 	while (true) do
 	begin
-		crtc::SetPalette(palette1);
+		crtc::SetPalette(#palette1);
 		// Decompress first image directly to the screen
 		Compression::Decompress(#image1, screen);
 		// wait a bit
 		Sleep(30);		
-		crtc::SetPalette(palette2);
+		crtc::SetPalette(#palette2);
 		// Decompress second image
 		Compression::Decompress(#image2, screen);
 		Sleep(30);		

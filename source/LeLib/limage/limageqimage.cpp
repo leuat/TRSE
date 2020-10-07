@@ -65,6 +65,29 @@ void LImageQImage::SaveBin(QFile& file)
     delete[] data;
 
 }
+
+void LImageQImage::ExportBlackWhite(QFile &file, int xx, int yy, int w, int h) {
+
+    char c = 0;
+    int cnt = 0;
+    QByteArray data;
+    for (int y=0;y<h;y++)
+        for (int x=0;x<w;x++) {
+            int p = getPixel(x+xx,y+yy);
+            if (p!=0)
+                c |= 1<<(cnt);
+
+            cnt++;
+            if (cnt==8) {
+                data.append(c);
+                c = 0;
+                cnt = 0;
+            }
+
+        }
+    file.write(data);
+}
+
 void LImageQImage::LoadQImage(QString filename)
 {
     Release();

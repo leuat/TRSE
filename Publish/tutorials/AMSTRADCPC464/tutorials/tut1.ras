@@ -14,7 +14,7 @@ begin
 	crtc::SetBorder(0);
 	crtc::Synchronize();
 	Memory::DisableInterrupts();
-	crtc::SetPalette(palette);
+	crtc::SetPalette(#palette);
 	// Copy image to screen 
 	memcpy(#image, screen, $4000);
 	Loop();

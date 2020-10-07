@@ -422,7 +422,10 @@ void HexView::keyPressEvent(QKeyEvent *event)
 
     if(event->key() == Qt::Key_Delete)
     {
-        m_pdata->Delete(m_cursorPos/2);
+        //m_pdata->Delete(m_cursorPos/2);
+//        m_pdata->getData()
+        m_pdata->m_data.remove(m_selectBegin / 2, (m_selectEnd - m_selectBegin) / 2 + 1);
+
     }
 
     if(event->key() == Qt::Key_I)

@@ -131,7 +131,10 @@ void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList dat
         }
         else {
             QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix(pos));
-            app->Append("org [" + pos +"]",1);
+            if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY)
+                app->Append("org [" + pos +"]",1);
+            else
+                app->Append("org " + pos +"",1);
             for (int i=0;i<lst.count();i++)
                 app->Append(lst[i],0);
 

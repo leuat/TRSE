@@ -130,9 +130,9 @@ void ASTdispatcherZ80::HandleAeqAopB16bit(QSharedPointer<NodeBinOP> bop, QShared
         if (bop->m_right->isPureNumeric() && (bop->m_right->getValueAsInt(as)&0xFF)==0) {
             as->Comment("RHS is pure constant of $100");
             as->Asm("ld b,"+Util::numToHex(bop->m_right->getValueAsInt(as)>>8));
-            as->Asm("ld a,[ "+var->value+" ]");
+            as->Asm("ld a,[ "+var->value+"]");
             as->Asm("add a,b");
-            as->Asm("ld [ "+var->value+" ],a");
+            as->Asm("ld [ "+var->value+"],a");
             return;
 
         }
@@ -318,7 +318,12 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
         as->Comment("Generic 16-bit binop");
 
         node->m_right->Accept(this);
-        as->Asm("ex de,hl");
+        if (isGB()) {
+            as->Asm("push hl");
+            as->Asm("pop de");
+        }
+        else
+            as->Asm("ex de,hl");
         node->m_left->Accept(this);
         if (node->m_op.m_type == TokenType::PLUS) {
             as->Asm("add hl,de");
@@ -524,7 +529,8 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
             as->Asm("ld a,["+node->getValue(as)+"]");
             as->Asm("ld "+hl[1]+",a");
             if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY) {
-                as->Asm("xor a,a");
+//                as->Asm("xor a,a");
+                as->Asm("ld "+hl[0]+",0");
             }
             else
             {
@@ -649,7 +655,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
         return "";
     }
 
-    if (var->isArrayIndex()) {
+    if (var->isArrayIndex() && !var->isWord(as)) {
         // Is an array
 
         // Optimization : array[ constant ] := expr
@@ -762,7 +768,28 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
     QString name = var->getValue(as);
     if (var->isWord(as)) {
         node->m_right->setForceType(TokenType::INTEGER);
+
         node->m_right->Accept(this);
+        if (var->isArrayIndex())  { // Storing in 16 bit array index
+
+            as->Comment("Storing in 16-bit array index");
+            as->Asm("push hl");
+            LoadAddress(var);
+            var->m_expr->Accept(this);
+            as->Asm("ld d,0");
+            as->Asm("ld e,a");
+            as->Asm("add hl,de");
+            as->Asm("add hl,de");
+            as->Asm("pop de");
+            as->Asm("ld a,e");
+            as->Asm("ld [hl],a");
+            as->Asm("ld a,d");
+            as->Asm("inc hl");
+            as->Asm("ld [hl],a");
+            return "";
+        }
+
+
         as->Comment("Integer assignment ");
         as->Asm("ld a,h");
         as->Asm("ld ["+name+"],a");
@@ -848,7 +875,11 @@ void ASTdispatcherZ80::LoadAddress(QSharedPointer<Node> n)
 
         }
         else
-        as->Asm("ld "+hl+",["+n->getValue(as)+"]");
+//            if (n->isReference())
+  //              as->Asm("ld "+hl+","+n->getValue(as)+"");
+    //    else
+            as->Asm("ld "+hl+",["+n->getValue(as)+"]");
+
     }
     else as->Asm("ld "+hl+"," +n->getValue(as));
 }
@@ -995,6 +1026,7 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
 {
     //        qDebug() << "IS POINTER "<<node->m_right->isPure();
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
+    node->VerifyReferences(as);
 
     if (!var->isArrayIndex()) {
 
@@ -1018,9 +1050,9 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
                     if (bop->m_right->isPureNumeric() && (bop->m_right->getValueAsInt(as)&0xFF)==0) {
                         as->Comment("RHS is pure constant of $100");
                         as->Asm("ld b,"+Util::numToHex(bop->m_right->getValueAsInt(as)>>8));
-                        as->Asm("ld a,[ "+var->value+"+1 ]");
+                        as->Asm("ld a,[ "+var->value+"]");
                         as->Asm("add a,b");
-                        as->Asm("ld [ "+var->value+"+1 ],a");
+                        as->Asm("ld [ "+var->value+"],a");
                         return;
 
                     }

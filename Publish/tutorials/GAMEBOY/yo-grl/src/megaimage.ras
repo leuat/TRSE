@@ -85,7 +85,7 @@ begin
 	sx:=128-16;
 	x1:=32;
 	scroll:=0;
-	src:=limg1;
+	src:=#limg1;
 	zp:=vram_charset;
 	y1:=0;	
 	
@@ -104,25 +104,25 @@ begin
 	if (c1=16) then 
 	begin 
 		zp:=vram_charset; 
-		src:=limg2;
+		src:=#limg2;
 		y1:=0; 
 	end; 
 	if (c1=32) then 
 	begin 
 		zp:=vram_charset; 
-		src:=limg3;
+		src:=#limg3;
 		y1:=0; 
 	end; 
 	if (c1=48) then 
 	begin 
 		zp:=vram_charset; 
-		src:=limg4;
+		src:=#limg4;
 		y1:=0; 
 	end; 
 	if (c1=64) then
 	begin
 		zp:=vram_charset;
-		src:=limg1;
+		src:=#limg1;
 		y1:=0; 
 	end;
 	

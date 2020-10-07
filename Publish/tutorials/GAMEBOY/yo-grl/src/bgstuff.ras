@@ -61,7 +61,7 @@ begin
 		SetBank(bank_bgstuff)
 	else
 		SetBank(bank_bgstuff2);
-	p1:=bgstuff_data;
+	p1:=#bgstuff_data;
 //	i:=frame*4;
 	asm("
 		ld a,[k]

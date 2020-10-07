@@ -3,13 +3,13 @@
 
 procedure InitCheating();
 begin
-	msgp:=msg_cheq;
+	msgp:=#msg_cheq;
 	SetupMessages();
 	SetBank(bank_cheating);
 	
 	Screens::ClearScreen(screen0,0);
 	zp:=temp+$800;//vram + $1000;
-	p1:=cheating_charset;
+	p1:=#cheating_charset;
 //	Screens::ClearSprites(40);
 	for j:=0 to 2 offpage do
 	begin
@@ -37,7 +37,7 @@ begin
 	SetBank(bank_cheatingD);
 	zp:=screen0;
 	zp:=zp+(32*1);
-	p1:=cheating_screen;
+	p1:=#cheating_screen;
 //	frame:=0;
 	// 24*24 = 576 = 512 + 64
 	i:=frame*2;

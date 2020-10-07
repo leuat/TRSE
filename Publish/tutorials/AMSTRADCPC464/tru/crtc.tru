@@ -237,7 +237,6 @@ begin
 		add hl,bc
 		add hl,bc
 
-		
 		ld a,[hl]
 		ld [crtc_sp],a
 		inc hl

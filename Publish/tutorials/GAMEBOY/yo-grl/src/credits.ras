@@ -7,7 +7,7 @@ begin
 	fill(^$d040,255,20);
 	fill(^$d060,255,20);
 	dst:=$D000;
-	src:=image_portraits_screen;
+	src:=#image_portraits_screen;
 	SetBank(bank_portraits);
 	j:=2;
 	x1:=0;
@@ -18,7 +18,7 @@ begin
 		
 		if (i<250) then
 		begin
-			p3:=portraits_packer;
+			p3:=#portraits_packer;
 			p3:=p3+i*4;
 			
 			k:=p3[0];
@@ -66,8 +66,8 @@ procedure InitCredits();
 begin
 
 	SetBank(bank_portraits);
-	Screens::CopyBankHB(image_portraits_data,vram_charset,4);
-	Screens::CopyFullCharset(image_portraits_data);
+	Screens::CopyBankHB(#image_portraits_data,vram_charset,4);
+	Screens::CopyFullCharset(#image_portraits_data);
 
 	Screens::ClearScreen(screen0,255);
 	waitforverticalblank();
@@ -85,7 +85,7 @@ begin
 	object0_palette:=%10001111;
 //	object0_palette:=%10110000;
 	object0_palette:=%10001111;
-	p2:=credits1;
+	p2:=#credits1;
 	sx:=0;
 	sy:=0;
 	y2:=128+32;
@@ -110,7 +110,7 @@ begin
 		poke(^$C000,j,127);
 		j:=j+4;
 	end;*/
-	d1:=creditsImages;
+	d1:=#creditsImages;
 	c3:=0;
 	
 end;

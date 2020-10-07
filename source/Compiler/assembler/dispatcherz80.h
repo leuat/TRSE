@@ -50,7 +50,7 @@ public:
 
     QString AssignVariable(QSharedPointer<NodeAssign> node) override;
 
-
+    bool isGB() {return Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY; }
 
     QString getAx(QSharedPointer<Node> n) override;
     QString getA(QSharedPointer<Node> n);

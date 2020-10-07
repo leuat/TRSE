@@ -227,6 +227,7 @@ public:
     void HandleCallMacro(QString name, bool ignore);
     void HandleExportCompressed();
     void HandleExport();
+    void HandleExportBW();
     void HandleBuildPaw();
     void HandleExportPrg2Bin();
     void HandleVBMExport();

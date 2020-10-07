@@ -918,6 +918,14 @@ void Parser::HandlePreprocessorInParsing()
                 Eat();
             return;
         }
+        if (m_currentToken.m_value=="exportblackwhite") {
+            Eat();
+            Eat();
+            Eat();
+            while (m_currentToken.m_type==TokenType::INTEGER_CONST)
+                Eat();
+            return;
+        }
         if (m_currentToken.m_value=="exportcompressed") {
             Eat();
             Eat();
@@ -2060,6 +2068,10 @@ void Parser::PreprocessSingle() {
               else if (m_currentToken.m_value.toLower() =="export") {
                   Eat(TokenType::PREPROCESSOR);
                   HandleExport();
+              }
+              else if (m_currentToken.m_value.toLower() =="exportblackwhite") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleExportBW();
               }
               else if (m_currentToken.m_value.toLower() =="exportcompressed") {
                   Eat(TokenType::PREPROCESSOR);
@@ -3542,6 +3554,43 @@ void Parser::HandleExport()
     }
     else
         img->ExportBin(file);
+
+
+
+
+    file.close();
+
+}
+
+void Parser::HandleExportBW()
+{
+    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile =m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+
+
+    int x = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int y = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int w = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int h = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    LImage* img = LImageIO::Load(inFile);
+    if (QFile::exists(outFile))
+        QFile::remove(outFile);
+
+
+
+    QFile file(outFile);
+
+    file.open(QFile::WriteOnly);
+    img->m_silentExport = true;
+    img->ExportBlackWhite(file,x,y,w,h);
 
 
 
