@@ -34,13 +34,13 @@ begin
 	
 	// using panim, decide which sprite graphic/animation to use
 	case panim of
-		panim_walkRight: vbmDrawSprite8E( sprPlayerRight_A, sprPlayerRight_B );
-		panim_walkLeft: vbmDrawSprite8E( sprPlayerLeft_A, sprPlayerLeft_B );
-		panim_jumpRight: vbmDrawSprite8E( sprPlayerJumpRight_A, sprPlayerJumpRight_B );
-		panim_jumpLeft: vbmDrawSprite8E( sprPlayerJumpLeft_A, sprPlayerJumpLeft_B );
-		panim_standRight: vbmDrawSprite8E( sprPlayerStandRight_A, sprPlayerStandRight_B );
-		panim_standLeft: vbmDrawSprite8E( sprPlayerStandLeft_A, sprPlayerStandLeft_B );
-		panim_onLadder: vbmDrawSprite8E( sprPlayerClimb_A, sprPlayerClimb_B );
+		panim_walkRight: vbmDrawSprite8E( #sprPlayerRight_A, #sprPlayerRight_B );
+		panim_walkLeft: vbmDrawSprite8E( #sprPlayerLeft_A, #sprPlayerLeft_B );
+		panim_jumpRight: vbmDrawSprite8E( #sprPlayerJumpRight_A, #sprPlayerJumpRight_B );
+		panim_jumpLeft: vbmDrawSprite8E( #sprPlayerJumpLeft_A, #sprPlayerJumpLeft_B );
+		panim_standRight: vbmDrawSprite8E( #sprPlayerStandRight_A, #sprPlayerStandRight_B );
+		panim_standLeft: vbmDrawSprite8E( #sprPlayerStandLeft_A, #sprPlayerStandLeft_B );
+		panim_onLadder: vbmDrawSprite8E( #sprPlayerClimb_A, #sprPlayerClimb_B );
 	end;
 	
 end;

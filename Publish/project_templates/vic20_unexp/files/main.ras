@@ -26,14 +26,14 @@ begin
 	
 	DefineScreen();
 
-	ClearScreen( 32, SCREEN_CHAR_LOC); 		// ^$1e00 - unexpanded screen location
-	ClearScreen( GREEN, SCREEN_COL_LOC); 	// ^$9600 - unexpanded colour location
+	ClearScreen( 32, #SCREEN_CHAR_LOC); 		// ^$1e00 - unexpanded screen location
+	ClearScreen( GREEN, #SCREEN_COL_LOC); 	// ^$9600 - unexpanded colour location
 
 	AUX_COLOR_AND_VOLUME := %00000010;
 	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
 
-	screenmemory := SCREEN_CHAR_LOC;
-	PrintString( strHello, 0, 11 );
+	screenmemory := #SCREEN_CHAR_LOC;
+	PrintString( #strHello, 0, 11 );
 
 	// main game loop
 	while (true) offpage do 

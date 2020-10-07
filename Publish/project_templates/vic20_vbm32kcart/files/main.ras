@@ -15,38 +15,40 @@ program MainProgram;
 				_lookup		- read only look up tables
 */
 var  
+@use "Cart"
 
-//@define DEBUG		1				// uncomment to show debugging timings
-@define BUILDCRT		1			// uncomment to build for cartridge
-//@define EXPORTBIN		1			// uncomment to export cartridge images
+//@define DEBUG		1		// uncomment to show debugging timings
 
-@ifdef EXPORTBIN
+@define BUILDCRT	1		// uncomment to build for cartridge
 
-	// as separate 8k blocks
-	@exportprg2bin "main.prg" "2000.prg" $2000 $4000	
-	@exportprg2bin "main.prg" "4000.prg" $4000 $6000	
-	@exportprg2bin "main.prg" "6000.prg" $6000 $8000	
-	@exportprg2bin "main.prg" "a000.prg" $a000 $c000
 
+// CART
+@ifdef BUILDCRT
+
+	// Need all RAM memory model for cart so can inject into a000
+	@VicMemoryConfig "all"
+	@exportprg2bin   "main.prg" "a000.prg" $a000 $c000
+	@exportprg2bin   "main.prg" "2000.prg" $2000 $4000
+	@exportprg2bin   "main.prg" "4000.prg" $4000 $6000
+	@exportprg2bin   "main.prg" "6000.prg" $6000 $8000
+	@projectsettings "ignorebasicsysstart" 0
+	@projectsettings "basicsysaddress" $1200
+//	@projectsettings "startaddress" $a010 // other blocks, eg: $a010
+	@projectsettings "startaddress" $2000 // other blocks, eg: $2000
+	//
+	
 @endif
 
-@ifdef BUILDCRT
-	
-	// These project settings are needed to run as a cartridge build
-	@projectsettings "ignorebasicsysstart" 1
-	@projectsettings "basicsysaddress" $1200
-	@projectsettings "startaddress" $2000
-
-@endif	
-
-
+// RAM
 @ifndef BUILDCRT
 
-	// These project settings are needed to run when not a cartridge build
+	// Regular Tape or Disk - default output is PRG
+	@VicMemoryConfig "all"
 	@projectsettings "ignorebasicsysstart" 0
 	@projectsettings "basicsysaddress" $1200
 	@projectsettings "startaddress" $2000
-
+	//
+	
 @endif
 
 // -------------------------------------------------------------------------------
@@ -55,19 +57,18 @@ var
 @include "_memoryzp.ras"			// variables in Zero Page and binary data
 
 
+
 // -------------------------------------------------------------------------------
 // The magic bytes needed at address $A000
 
-@donotremove cartAutostart
 @startblock $A000 "CARTAUTOSTART"
+@donotremove cartAutostart
 @ifdef BUILDCRT
 procedure cartAutostart();
 begin
-	asm("
-	dc.b <CRTStart,>CRTStart				; Cart reset start address
-	dc.b <restoreKeyStart,>restoreKeyStart 	; Restore keypress jump address
-	dc.b $41,$30,$c3,$c2,$cd				; Signature for cart autostart (a0CBM)
-	"); 
+
+	Cart::Autostart();
+	
 end;
 @endif
 @endblock
@@ -92,44 +93,12 @@ end;
 
 begin
 
-@ifdef BUILDCRT
+	@ifdef BUILDCRT
 
-	// Initialize system when run as cartridge
-	asm("
-		jmp PRGstart		; resolves problem with joystick to start prg builds here
-
-CRTStart:					; crt builds start here
-
-		; Disable interrupts
-		sei
-     	cld                 ; clear decimal mode
-     	
-     	ldx #$FB			; value for start stack
-     	txs					; set stack pointer
-     	
-		; Run kernal setup routines.
-		jsr $FD8D			; initialise and test RAM
-PRGstart:		
-		jsr $FD52			; restore default I/O vectors
-		jsr $FDF9			; initialize I/O registers 
-restoreKeyStart:
-		; Disable interrupts again (for Restore-key)
-		sei
-		jsr $E518			; initialise hardware
-		
-     	cli					; enable interrupts
-     
-     	jsr $E45B			; initialise BASIC vector tables
-     	jsr $E3A4			; initialise BASIC RAM locations     
-     	jsr $C644			; perform NEW (bypass check)
-
-		; Prevent lower/uppercase swap
-		lda #$80
-		sta $0291		
-
-	");
+		Cart::Init();
 	
-@endif
+	@endif
+
 
 	Vbl_Init(); // call before set display mode
 	
@@ -140,8 +109,8 @@ restoreKeyStart:
 	AUX_COLOR_AND_VOLUME := %00000010;
 	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
 
-	vbmDrawText( strTitle, font8, 2, 40, 8 );
-	vbmDrawSmallTextO( strDesc, font4, 4, 50, 6 );
+	vbmDrawText( #strTitle, #font8, 2, 40, 8 );
+	vbmDrawSmallTextO( #strDesc, #font4, 4, 50, 6 );
 
 	// main game loop
 	while (true) offpage do 

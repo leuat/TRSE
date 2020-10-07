@@ -1,2 +1,12 @@
 <p>ASM files are text files containing the compiled assembly instructions for your current target system. ASM files are generated
-every time you compile your RAS source file / project, so any changes you make will be overwritten.
+every time you compile your RAS source file / project, so any changes you make will be overwritten.</p>
+
+<p><b>Tip:</b> It can be useful to examine the ASM file produced when you are debugging your programs. They can also
+be useful to determine if there are faster or better ways to optimise your code. For example, writing:</p>
+
+<code>
+if ( a > 10 ) then // do something
+if ( a >= 11 ) then // do something
+</code>
+
+<p>Both lines achieve the same, but on the 6502 platform for example, the second line produces less code due to the way comparisons work.</p>
