@@ -39,4 +39,6 @@ exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
 zeropage_colormemory = $fc
-open_files =, Hello.ras
+open_files = ,intermediate/06_tech.ras, Hello.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/PLUS4/Tutorials/
+current_file = Hello.ras

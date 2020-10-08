@@ -33,4 +33,5 @@ exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
 zeropage_colormemory = $fc
-open_files =, main.ras
+open_files = ,main.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Disk_loader_project/

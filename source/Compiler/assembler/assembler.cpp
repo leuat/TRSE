@@ -112,7 +112,17 @@ bool caseInsensitiveLessThan(const QSharedPointer<Appendix> s1, const QSharedPoi
     // list: [ "AlPha", "beTA", "DELTA", "gamma" ]
 }*/
 void Assembler::StartMemoryBlock(QString pos) {
-    //EndMemoryBlock();
+
+    if (m_currentBlock!=nullptr && !m_currentBlock->m_extraOutput)  {
+ //       qDebug() << m_currentBlock->m_id;
+//        Asm("; ID = " + QString::number(m_currentBlock->m_id));
+ //       EndMemoryBlock();
+        QString s = m_currentBlock->m_pos;
+        s = s.remove("$");
+        Label("EndBlock"+s + "_extra");
+        m_currentBlock->m_extraOutput = true;
+
+    }
     //        qDebug() << "Starting emory pos: "<< pos;
 
     for (QSharedPointer<Appendix> app: m_appendix) {
@@ -143,7 +153,10 @@ void Assembler::EndMemoryBlock() {
     //        qDebug() << "Trying to end memory block.. ";
     Comment("Ending memory block");
     if (m_currentBlock!=nullptr) {
-        Label("EndBlock"+QString::number(m_currentBlock->m_id));
+//        Label("EndBlock"+QString::number(m_currentBlock->m_id));
+        QString s = m_currentBlock->m_pos;
+        s = s.remove("$");
+        Label("EndBlock"+s);
 
     }
     m_currentBlock=nullptr;

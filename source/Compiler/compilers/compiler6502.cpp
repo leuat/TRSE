@@ -186,16 +186,44 @@ void Compiler6502::SetupMemoryAnalyzer(QString filename)
     if (!orgAsm.m_success) {
         return;
     }
-    int codeEnd=FindEndSymbol(orgAsm);
-    QVector<int> ends = FindBlockEndSymbols(orgAsm);
-//    qDebug() << "B";
-    ConnectBlockSymbols(ends);
 
+    int i = 1;
+
+    for (QSharedPointer<MemoryBlock> mb : m_assembler->blocks) {
+        if (mb->m_type==MemoryBlock::USER)
+            continue;
+        if (mb->m_type==MemoryBlock::MUSIC)
+            continue;
+
+        QString str = Util::numToHex(mb->m_start);
+        str = str.toLower().remove("$");
+  //      qDebug() << "SEARCHING FOR " << str;;
+        int end = mb->m_start;
+        QString curEnd = ("endblock"+str);
+        for (QString s : orgAsm.m_symbols.keys())  {
+            //qDebug() << s.toLower() << curEnd << Util::numToHex(orgAsm.m_symbols[s]);
+            QString chk = s;
+            chk = chk.remove("_extra"); // Ignore the extra label
+            if (chk.toLower()==curEnd) {
+                end = orgAsm.m_symbols[s];
+//                qDebug() << " * ******************* FOUND " << Util::numToHex(end);
+                break;
+            }
+        }
+        mb->m_end = end;
+//        qDebug() << mb->m_name << mb->m_type;;
+        if (mb->m_type == MemoryBlock::CODE && mb->m_name=="")
+            mb->m_name ="Code block " + QString::number(i);
+
+
+    }
+
+/*
     int start = Syntax::s.m_currentSystem->m_startAddress;
     if (Syntax::s.m_currentSystem->m_startAddress!=Syntax::s.m_currentSystem->m_programStartAddress)
         start = Syntax::s.m_currentSystem->m_programStartAddress;
-    m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start, codeEnd, MemoryBlock::CODE, "code")));
-
+//    m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start, codeEnd, MemoryBlock::CODE, "code")));
+*/
 
 }
 

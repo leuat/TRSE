@@ -2325,7 +2325,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     m_lexer->m_orgText = m_lexer->m_orgText + "\n" + globalDefines+"\n";
     m_lexer->m_text = m_lexer->m_orgText;
     m_removeUnusedDecls = removeUnusedDecls;
-
+    Node::m_curMemoryBlock = nullptr; //
     m_vicMemoryConfig = m_projectIni->getString("vic_memory_config");
 
     if (!m_isTRU || m_symTab==nullptr)

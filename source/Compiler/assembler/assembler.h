@@ -36,7 +36,7 @@ class MemoryBlock {
   public:
     int m_start, m_end, m_lineNumber, m_bank=-1;
     enum Type {CODE, DATA, MUSIC, USER, ARRAY};
-    Type m_type;
+    Type m_type = CODE;
     QVector<int> m_zeropages;
     QString m_name;
     int m_currentLineNumber;
@@ -105,6 +105,7 @@ public:
     Appendix() {
         m_id=s_id++;
     }
+    bool m_extraOutput = false;
     Appendix(QString pos) {
         m_pos=pos;
         m_id=s_id++;
