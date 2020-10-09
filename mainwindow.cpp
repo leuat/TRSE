@@ -1441,7 +1441,18 @@ void MainWindow::on_actionDelete_file_triggered()
     int ret = msgBox.exec();
     if (ret==QMessageBox::Ok) {
 //        qDebug() << "Removing : " << path+filename;
-        QFile::remove(path + filename);
+        if (QFile::exists(path+filename))
+            QFile::remove(path + filename);
+        else {
+            QStringList otherPaths = getTRUPaths();
+            for (QString f : otherPaths)
+                if (QFile::exists(f+filename)) {
+                    QFile::remove(f + filename);
+                    break;
+                }
+
+        }
+
         RefreshFileList();
     }
 }
