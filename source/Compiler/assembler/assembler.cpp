@@ -113,7 +113,7 @@ bool caseInsensitiveLessThan(const QSharedPointer<Appendix> s1, const QSharedPoi
 }*/
 void Assembler::StartMemoryBlock(QString pos) {
 
-    if (m_currentBlock!=nullptr && !m_currentBlock->m_extraOutput)  {
+/*    if (m_currentBlock!=nullptr && !m_currentBlock->m_extraOutput)  {
  //       qDebug() << m_currentBlock->m_id;
 //        Asm("; ID = " + QString::number(m_currentBlock->m_id));
  //       EndMemoryBlock();
@@ -123,6 +123,7 @@ void Assembler::StartMemoryBlock(QString pos) {
         m_currentBlock->m_extraOutput = true;
 
     }
+  */
     //        qDebug() << "Starting emory pos: "<< pos;
 
     for (QSharedPointer<Appendix> app: m_appendix) {
