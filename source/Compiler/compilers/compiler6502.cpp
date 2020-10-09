@@ -206,7 +206,10 @@ void Compiler6502::SetupMemoryAnalyzer(QString filename)
                 QString name = "Code block "+QString::number(i++);
                 for (auto bl : m_assembler->userBlocks)
                     if (bl->m_start == start)
-                        name = bl->m_name;
+                        if (bl->m_name!="")
+                            name = bl->m_name;
+                qDebug() << "Adding cod eblock with name : "<<name;
+
                 m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start, end, MemoryBlock::CODE, name)));
             }
         }
