@@ -211,7 +211,7 @@ public:
     QMap<QString, LabelStack> m_labelStack;
     QSharedPointer<SymbolTable> m_symTab;
     QString m_projectDir;
-    QVector<QSharedPointer<MemoryBlock>> blocks;
+    QVector<QSharedPointer<MemoryBlock>> blocks, userBlocks;
 
     QStringList m_tempVars;
     int m_varDeclEndsLineNumber = 0;

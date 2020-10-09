@@ -202,7 +202,12 @@ void Compiler6502::SetupMemoryAnalyzer(QString filename)
                 }
             }
             if (start!=end) {
-                m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start, end, MemoryBlock::CODE, "Code block "+QString::number(i++))));
+
+                QString name = "Code block "+QString::number(i++);
+                for (auto bl : m_assembler->userBlocks)
+                    if (bl->m_start == start)
+                        name = bl->m_name;
+                m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start, end, MemoryBlock::CODE, name)));
             }
         }
     }

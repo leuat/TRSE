@@ -354,7 +354,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
                 int pos = p.remove("$").toInt(&ok, 16);
 //                as->StartMemoryBlock()
                 node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::CODE, node->m_blockInfo.m_blockName));
- //               as->blocks.append(node->m_curMemoryBlock);
+                as->userBlocks.append(node->m_curMemoryBlock);
             }
         }
         else {
