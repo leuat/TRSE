@@ -352,8 +352,9 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
                 //            qDebug() << "Creating new block procedure for " << m_procName;
                 QString p = as->m_currentBlock->m_pos;
                 int pos = p.remove("$").toInt(&ok, 16);
+//                as->StartMemoryBlock()
                 node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::CODE, node->m_blockInfo.m_blockName));
-                as->blocks.append(node->m_curMemoryBlock);
+ //               as->blocks.append(node->m_curMemoryBlock);
             }
         }
         else {
@@ -511,6 +512,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProgram> node)
     node->m_NodeBlock->m_isMainBlock = true;
     node->m_NodeBlock->Accept(this);
 
+    as->EndMemoryBlock();
     as->EndProgram();
 }
 

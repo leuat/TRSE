@@ -113,19 +113,6 @@ bool caseInsensitiveLessThan(const QSharedPointer<Appendix> s1, const QSharedPoi
 }*/
 void Assembler::StartMemoryBlock(QString pos) {
 
-/*    if (m_currentBlock!=nullptr && !m_currentBlock->m_extraOutput)  {
- //       qDebug() << m_currentBlock->m_id;
-//        Asm("; ID = " + QString::number(m_currentBlock->m_id));
- //       EndMemoryBlock();
-        QString s = m_currentBlock->m_pos;
-        s = s.remove("$");
-        Label("EndBlock"+s + "_extra");
-        m_currentBlock->m_extraOutput = true;
-
-    }
-  */
-    //        qDebug() << "Starting emory pos: "<< pos;
-
     for (QSharedPointer<Appendix> app: m_appendix) {
 
         if (app->m_pos == pos)
@@ -146,6 +133,9 @@ void Assembler::StartMemoryBlock(QString pos) {
     m_currentBlock->Append(GetOrg(Util::NumberFromStringHex(pos)),1);
     m_blockStack.append(m_currentBlock);
     Comment("Starting new memory block at "+pos);
+    QString p = pos;
+    p = p.remove("$");
+    Label("StartBlock"+p);
 //    qDebug() << "Starting new memory block at "+pos;
     //        m_currentBlockCount = m_appendix.count()-1;
 }
@@ -153,11 +143,12 @@ void Assembler::StartMemoryBlock(QString pos) {
 void Assembler::EndMemoryBlock() {
     //        qDebug() << "Trying to end memory block.. ";
     Comment("Ending memory block");
-    if (m_currentBlock!=nullptr) {
+    if (m_currentBlock!=nullptr && m_currentBlock->m_extraOutput == false) {
 //        Label("EndBlock"+QString::number(m_currentBlock->m_id));
         QString s = m_currentBlock->m_pos;
         s = s.remove("$");
         Label("EndBlock"+s);
+        m_currentBlock->m_extraOutput = true;
 
     }
     m_currentBlock=nullptr;
