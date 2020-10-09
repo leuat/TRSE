@@ -1165,6 +1165,9 @@ void Parser::HandlePreprocessorInParsing()
 
     if (m_currentToken.m_value=="endblock") {
         int i = m_pass;
+        if (Node::m_staticBlockInfo.m_blockID ==-1) {
+            ErrorHandler::e.Error("Cannot end a block that hasn't been started.",m_currentToken.m_lineNumber);
+        }
         m_pass = PASS_OTHER;
         Eat();
 //        if (i == PASS_CODE)
@@ -1178,12 +1181,15 @@ void Parser::HandlePreprocessorInParsing()
     }
     if (m_currentToken.m_value=="startblock") {
         int i = m_pass;
-
+        if (Node::m_staticBlockInfo.m_blockID !=-1) {
+            ErrorHandler::e.Error("Cannot start a block without ending the previous. ",m_currentToken.m_lineNumber);
+        }
         m_pass = PASS_OTHER;
         Eat();
         QString startPos = m_currentToken.getNumAsHexString();
         Eat();
         QString name = m_currentToken.m_value;
+        m_lastStartBlockToken = m_currentToken;
         Eat();
         ParserBlock pb;
         pb.m_blockID = m_parserBlocks.count();
@@ -2326,6 +2332,8 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     m_lexer->m_text = m_lexer->m_orgText;
     m_removeUnusedDecls = removeUnusedDecls;
     Node::m_curMemoryBlock = nullptr; //
+    Node::m_staticBlockInfo.m_blockID = -1;
+
     m_vicMemoryConfig = m_projectIni->getString("vic_memory_config");
 
     if (!m_isTRU || m_symTab==nullptr)
@@ -2405,6 +2413,11 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
 
     if (m_currentToken.m_type!=TokenType::TEOF)
         ErrorHandler::e.Error("End of file error");
+
+
+    if (Node::m_staticBlockInfo.m_blockID !=-1) {
+        ErrorHandler::e.Error("Cannot end program with open blocks. Please use the corresponding @endblock command to close the open block at "+Node::m_staticBlockInfo.m_blockPos,0);
+    }
 
 
 //    qDebug() << m_symTab->m_symbols.keys();

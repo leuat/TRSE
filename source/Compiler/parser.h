@@ -106,7 +106,7 @@ public:
     QVector<QSharedPointer<Node>> m_mergedProcedures;
     QVector<QString> m_ignoreMethods;
     QSharedPointer<Lexer> m_lexer;
-    Token m_currentToken;
+    Token m_currentToken, m_lastStartBlockToken;
     QString m_inCurrentProcedure="";
     bool m_isTRU = false;
     int PASS_PREPRE = 0;
