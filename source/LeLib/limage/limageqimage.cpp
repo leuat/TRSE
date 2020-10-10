@@ -146,7 +146,7 @@ void LImageQImage::RemapCharset(QImage *other, int border_w, int border_h, int b
             for (int x=0;x<dw;x++) {
                 setPixel(dst_curx+x, dst_cury+y,img->pixel(x,y));
             }
-        dst_curx = dst_curx + dw*2;
+        dst_curx = dst_curx + dw;
         if (dst_curx>=m_width) {
             dst_curx = 0;
             dst_cury = dst_cury + dh;
