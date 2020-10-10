@@ -512,7 +512,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProgram> node)
     node->m_NodeBlock->m_isMainBlock = true;
     node->m_NodeBlock->Accept(this);
 
-    as->EndMemoryBlock();
+//    as->EndMemoryBlock();
     as->EndProgram();
 }
 

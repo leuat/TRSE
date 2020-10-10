@@ -113,6 +113,11 @@ bool caseInsensitiveLessThan(const QSharedPointer<Appendix> s1, const QSharedPoi
 }*/
 void Assembler::StartMemoryBlock(QString pos) {
 
+    if (m_currentBlock!=nullptr) {
+        if (m_currentBlock->m_pos==pos)
+            return;
+//        else ErrorHandler("")
+    }
     for (QSharedPointer<Appendix> app: m_appendix) {
 
         if (app->m_pos == pos)

@@ -59,12 +59,16 @@ void AsmZ80::Program(QString name, QString vicParam)
     m_source+=m_startInsertAssembler;
 //    Asm("[ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress) + "]");
     m_hash = "";
+ //   qDebug() << "z80 program start " <<Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
+//    StartMemoryBlock(Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
 
 }
 
 void AsmZ80::EndProgram()
 {
-
+//    qDebug() << m_currentBlock;
+//    EndMemoryBlock();
+//    exit(1);
 }
 
 void AsmZ80::Write(QString str, int level)
@@ -330,7 +334,10 @@ void AsmZ80::Label(QString s)
 
 QString AsmZ80::GetOrg(int pos)
 {
-    return "[org " + Util::numToHex(pos).replace("$","0x") + "]";
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY)
+        return "[org " + Util::numToHex(pos).replace("$","0x") + "]";
+    else
+        return "org " + Util::numToHex(pos);
 }
 
 QString AsmZ80::String(QStringList lst, bool term)
@@ -361,13 +368,23 @@ QString AsmZ80::String(QStringList lst, bool term)
 void AsmZ80::StartMemoryBlock(QString pos) {
 
 //    qDebug() << "START MEMORY BLOCK";
-    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::GAMEBOY)
-        return;
+/*
+    pos = Util::numToHex(Util::NumberFromStringHex(pos));
 
+    Comment("Starting new memory block at "+pos);
+    QString p = pos;
+    p = p.remove("$");
+    Label("StartBlock"+p);
+*/
+
+
+    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::GAMEBOY) {
+        Assembler::StartMemoryBlock(pos);
+        return;
+    }
 
 
     //EndMemoryBlock();
-    pos = Util::numToHex(Util::NumberFromStringHex(pos));
 //            qDebug() << "Starting emory pos: "<< pos << m_banks.keys();
     if (!m_banks.contains(pos)) {
   //      qDebug() << "Creating NEW for code : " << pos;
@@ -377,6 +394,9 @@ void AsmZ80::StartMemoryBlock(QString pos) {
     }
 
     m_currentBlock = m_banks[pos];
+
+
+    //
 //    m_currentBlock->m_isMainBlock = true;
 
     //    qDebug() << "Starting new memory block at "+pos;
@@ -385,12 +405,16 @@ void AsmZ80::StartMemoryBlock(QString pos) {
 
 void AsmZ80::EndMemoryBlock() {
     //        qDebug() << "Trying to end memory block.. ";
-    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::GAMEBOY)
+    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::GAMEBOY) {
+        Assembler::EndMemoryBlock();
         return;
+    }
 
 
     m_currentBlock=nullptr;
 
+//    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::GAMEBOY)
+  //      return;
 
 }
 

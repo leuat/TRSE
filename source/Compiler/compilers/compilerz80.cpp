@@ -47,11 +47,11 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 
 void CompilerZ80::Connect()
 {
+    m_assembler->Connect();
     m_assembler->m_source<<m_parser.m_parserAppendix;
     m_assembler->IncludeFile(":resources/code/Z80/memcpy.asm");
 
     m_assembler->EndMemoryBlock();
-    m_assembler->Connect();
 
 
 
@@ -121,32 +121,54 @@ void CompilerZ80::SetupMemoryAnalyzer(QString filename)
         QStringList l = s.split(" ");
         if (l.count()==0) continue;
         bool ok = false;
-        if (l[0].toLower() == "org")
+        if (l[0].toLower() == "org") {
             start = l[1].toInt(&ok,16);
+//            qDebug() << "ORG " << Util::numToHex(start);
+        }
+
 
 
         if (l[0].toLower()=="incbin") {
+            //qDebug() << s;
             QString file = l[1];
             int binStart = lst[cnt-1].split(":")[0].toInt(&ok,16);
+            if (binStart==0) binStart = start;
             int binEnd = binStart + QFileInfo(file).size();
             m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(binStart, binEnd, MemoryBlock::DATA, file)));
 //            qDebug() << "Found FILE " << file << Util::numToHex(binStart) << Util::numToHex(binEnd);
 
         }
+/*        if (l[0].toLower().startsWith("endblock")) {
+//            qDebug() << "FOUND END AT " <<
+            end = l[0].toLower().remove("endblock").toInt(&ok,16);
+            codeBlocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start, end, MemoryBlock::CODE, "code")));
+
+        }*/
+
         if (l.count()>=2) {
-//            qDebug() << l;
-            if (l[1].toLower() == "end" || s.toLower().contains("endsymbol")) {
+            if (l[1].toLower()=="label") {
+                if (l[2].toLower().startsWith("mainprogram_end")) {
+                    end = l[0].split(":")[0].toInt(&ok,16);
+                    codeBlocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start, end, MemoryBlock::CODE, "code")));
+                  //  qDebug() << "**************************** END found at "<< Util::numToHex(end);
+                    continue;
+
+                }
+            }
+/*            if (l[1].toLower() == "end") {
                 end = l[0].split(":")[0].toInt(&ok,16);
                 codeBlocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start, end, MemoryBlock::CODE, "code")));
-  //              qDebug() << "**************************** END found at "<< Util::numToHex(end);
-
+                qDebug() << "**************************** END found at "<< Util::numToHex(end);
+                continue;
             }
+            */
             if (l[1].toLower() == "end") {
 //                qDebug() <<" Breaking at END";
                 ignore = true;
                 break;
 
             }
+
         }
         cnt++;
 
