@@ -58,4 +58,4 @@ data_header_resources/images/octopus2.flf = 6.91519e-310
 data_header_resources/images/paint.flf = 0
 open_files = ,intermediate/07_screenclearer.ras, intermediate/03_fire.ras, intermediate/03_fire.asm, Hello.ras
 project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
-current_file = intermediate/07_screenclearer.ras
+current_file = intermediate/03_fire.ras

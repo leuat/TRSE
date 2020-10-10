@@ -2389,9 +2389,7 @@ void FormImageEditor::on_cmbCharY_currentIndexChanged(int index)
     SetFooterData(LImageFooter::POS_CURRENT_DISPLAY_Y,ui->cmbCharY->currentText().toInt());
     SetFooterData(LImageFooter::POS_DISPLAY_CHAR,0);
     on_btnCharsetFull_clicked();
-
     Update();
-    UpdateCurrentCell();
 
 }
 
@@ -2467,7 +2465,9 @@ void FormImageEditor::on_cmbCharWidth_currentIndexChanged(const QString &arg1)
     m_work.m_currentImage->m_image->m_charWidthDisplay = arg1.toInt();
     SetFooterData(LImageFooter::POS_CHARSET_WIDTH, ui->cmbCharWidth->currentText().toInt());
     updateCharSet();
-
+    updateCharSet();
+    onImageMouseEvent();
+    Update();
 }
 
 
