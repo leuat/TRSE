@@ -50,10 +50,12 @@ public:
     float m_blur = 0;
     int matrixSizeX = 2;
     int matrixSizeY = 1;
+
     QPointF m_scale = QPointF(1,1);
 
     bool isPetscii = false;
     LImageQImage m_input;
+    LImageQImage m_intermediate;
     LImageQImage m_work;
     LImageQImage m_output;
     LImage* m_image = nullptr;
@@ -111,6 +113,22 @@ private slots:
     void on_hsScaleY_sliderMoved(int position);
 
     void on_cmbDither_currentIndexChanged(int index);
+
+    void on_chkTreatCharset_stateChanged(int arg1);
+
+    void on_leCharWidth_textChanged(const QString &arg1);
+
+    void on_leCharHeight_textChanged(const QString &arg1);
+
+    void on_leBlockWidth_textChanged(const QString &arg1);
+
+    void on_leBlockHeight_textChanged(const QString &arg1);
+
+    void on_leOutCharWidth_textChanged(const QString &arg1);
+
+    void on_leOutCharHeight_textChanged(const QString &arg1);
+
+    void on_leAllowance_textChanged(const QString &arg1);
 
 private:
     Ui::DialogImport *ui;

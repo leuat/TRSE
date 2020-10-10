@@ -29,26 +29,6 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QComboBox" name="cmbBackground">
-   <property name="geometry">
-    <rect>
-     <x>860</x>
-     <y>90</y>
-     <width>61</width>
-     <height>41</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="cmbForeground">
-   <property name="geometry">
-    <rect>
-     <x>770</x>
-     <y>90</y>
-     <width>61</width>
-     <height>41</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
@@ -111,373 +91,232 @@
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
-     <x>740</x>
-     <y>140</y>
-     <width>401</width>
-     <height>301</height>
+     <x>730</x>
+     <y>70</y>
+     <width>411</width>
+     <height>281</height>
     </rect>
    </property>
    <property name="title">
     <string>Parameters</string>
    </property>
-   <widget class="QSlider" name="hsSat">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>110</y>
-      <width>321</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="value">
-     <number>50</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>50</y>
-      <width>55</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Shift</string>
-    </property>
-   </widget>
-   <widget class="QSlider" name="hsShift">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>50</y>
-      <width>321</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="value">
-     <number>50</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>55</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Gamma</string>
-    </property>
-   </widget>
-   <widget class="QSlider" name="hsHsv">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>80</y>
-      <width>321</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="value">
-     <number>50</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>110</y>
-      <width>81</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Saturation</string>
-    </property>
-   </widget>
-   <widget class="QSlider" name="hsContrast">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>20</y>
-      <width>321</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="value">
-     <number>25</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>140</y>
-      <width>81</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Blur</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>80</y>
-      <width>55</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>HSV</string>
-    </property>
-   </widget>
-   <widget class="QSlider" name="hsBlur">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>140</y>
-      <width>321</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="value">
-     <number>0</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QSlider" name="hsScaleX">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>170</y>
-      <width>321</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>99</number>
-    </property>
-    <property name="value">
-     <number>50</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_6">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>170</y>
-      <width>81</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Scale X</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_7">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>200</y>
-      <width>81</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Scale Y</string>
-    </property>
-   </widget>
-   <widget class="QSlider" name="hsScaleY">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>200</y>
-      <width>321</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>99</number>
-    </property>
-    <property name="value">
-     <number>50</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_8">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>230</y>
-      <width>81</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Dither:</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="chkDither">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>220</y>
-      <width>82</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QSlider" name="hsDither">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>220</y>
-      <width>261</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>99</number>
-    </property>
-    <property name="value">
-     <number>20</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_15">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>260</y>
-      <width>141</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Dither matrix:</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="cmbDitherX">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>250</y>
-      <width>96</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <item>
-     <property name="text">
-      <string>1</string>
-     </property>
+   <layout class="QGridLayout" name="gridLayout_4">
+    <item row="7" column="1">
+     <widget class="QSlider" name="hsDither">
+      <property name="maximum">
+       <number>99</number>
+      </property>
+      <property name="value">
+       <number>20</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
     </item>
-    <item>
-     <property name="text">
-      <string>2</string>
-     </property>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Shift</string>
+      </property>
+     </widget>
     </item>
-    <item>
-     <property name="text">
-      <string>3</string>
-     </property>
+    <item row="3" column="1" colspan="3">
+     <widget class="QSlider" name="hsSat">
+      <property name="value">
+       <number>50</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
     </item>
-    <item>
-     <property name="text">
-      <string>4</string>
-     </property>
+    <item row="5" column="1" colspan="3">
+     <widget class="QSlider" name="hsScaleX">
+      <property name="maximum">
+       <number>99</number>
+      </property>
+      <property name="value">
+       <number>50</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
     </item>
-   </widget>
-   <widget class="QComboBox" name="cmbDitherY">
-    <property name="geometry">
-     <rect>
-      <x>250</x>
-      <y>250</y>
-      <width>96</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <item>
-     <property name="text">
-      <string>1</string>
-     </property>
+    <item row="1" column="1" colspan="3">
+     <widget class="QSlider" name="hsShift">
+      <property name="value">
+       <number>50</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
     </item>
-    <item>
-     <property name="text">
-      <string>2</string>
-     </property>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_7">
+      <property name="text">
+       <string>Scale Y</string>
+      </property>
+     </widget>
     </item>
-    <item>
-     <property name="text">
-      <string>3</string>
-     </property>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_6">
+      <property name="text">
+       <string>Scale X</string>
+      </property>
+     </widget>
     </item>
-    <item>
-     <property name="text">
-      <string>4</string>
-     </property>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>HSV</string>
+      </property>
+     </widget>
     </item>
-   </widget>
-  </widget>
-  <widget class="QComboBox" name="cmbMC1">
-   <property name="geometry">
-    <rect>
-     <x>980</x>
-     <y>90</y>
-     <width>61</width>
-     <height>41</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="cmbMC2">
-   <property name="geometry">
-    <rect>
-     <x>1060</x>
-     <y>90</y>
-     <width>61</width>
-     <height>41</height>
-    </rect>
-   </property>
+    <item row="6" column="1" colspan="3">
+     <widget class="QSlider" name="hsScaleY">
+      <property name="maximum">
+       <number>99</number>
+      </property>
+      <property name="value">
+       <number>50</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>Saturation</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QCheckBox" name="chkDither">
+      <property name="text">
+       <string>Dither</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1" colspan="3">
+     <widget class="QSlider" name="hsBlur">
+      <property name="value">
+       <number>0</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1" colspan="3">
+     <widget class="QSlider" name="hsHsv">
+      <property name="value">
+       <number>50</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" colspan="3">
+     <widget class="QSlider" name="hsContrast">
+      <property name="value">
+       <number>25</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_5">
+      <property name="text">
+       <string>Blur</string>
+      </property>
+     </widget>
+    </item>
+    <item row="13" column="0">
+     <widget class="QLabel" name="label_15">
+      <property name="text">
+       <string>Dither matrix:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Gamma</string>
+      </property>
+     </widget>
+    </item>
+    <item row="13" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QComboBox" name="cmbDitherY">
+        <item>
+         <property name="text">
+          <string>1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>2</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>3</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>4</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="cmbDitherX">
+        <item>
+         <property name="text">
+          <string>1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>2</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>3</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>4</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>760</x>
-     <y>450</y>
-     <width>381</width>
-     <height>221</height>
+     <x>730</x>
+     <y>360</y>
+     <width>411</width>
+     <height>311</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -485,34 +324,133 @@
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
-     <string>Image</string>
+     <string>From image</string>
     </attribute>
-    <widget class="QPushButton" name="btnImport">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>201</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Import from Image</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="chkGenPal">
-     <property name="geometry">
-      <rect>
-       <x>230</x>
-       <y>30</y>
-       <width>141</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Generate palette</string>
-     </property>
-    </widget>
+    <layout class="QGridLayout" name="gridLayout_5">
+     <item row="0" column="0">
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_21">
+         <property name="text">
+          <string>In Block height</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_18">
+         <property name="text">
+          <string>Out char width</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="leBlockHeight">
+         <property name="text">
+          <string>1</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="leCharWidth">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_19">
+         <property name="text">
+          <string>In Block width</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QLineEdit" name="leOutCharWidth">
+         <property name="text">
+          <string>16</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="label_20">
+         <property name="text">
+          <string>Out char height</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_17">
+         <property name="text">
+          <string>Y border</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="chkTreatCharset">
+         <property name="text">
+          <string>Treat as charset</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QCheckBox" name="chkGenPal">
+         <property name="text">
+          <string>Generate palette</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="QLineEdit" name="leOutCharHeight">
+         <property name="text">
+          <string>16</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="leCharHeight">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QPushButton" name="btnImport">
+         <property name="text">
+          <string>Load Image</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="leBlockWidth">
+         <property name="text">
+          <string>25</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_16">
+         <property name="text">
+          <string>X border</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QLineEdit" name="leAllowance">
+         <property name="text">
+          <string>10</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="label_22">
+         <property name="text">
+          <string>Pixel allowance</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
    </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">
@@ -521,31 +459,10 @@
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="0" column="0">
       <layout class="QGridLayout" name="gridLayout">
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>Font size:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_13">
-         <property name="text">
-          <string>Use colors</string>
-         </property>
-        </widget>
-       </item>
        <item row="4" column="1">
         <widget class="QLineEdit" name="leUseColors">
          <property name="text">
           <string>255</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="leFontCharsPerLColumn">
-         <property name="text">
-          <string>16</string>
          </property>
         </widget>
        </item>
@@ -556,10 +473,45 @@
          </property>
         </widget>
        </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="leStart">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label_11">
          <property name="text">
           <string>Font</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="leFontCharsPerLColumn">
+         <property name="text">
+          <string>16</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_13">
+         <property name="text">
+          <string>Use colors</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QPushButton" name="btnImport_2">
+         <property name="text">
+          <string>Generate font</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Font size:</string>
          </property>
         </widget>
        </item>
@@ -570,15 +522,15 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="cmbFonts"/>
-       </item>
        <item row="5" column="0">
         <widget class="QLabel" name="label_14">
          <property name="text">
           <string>Start with</string>
          </property>
         </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="cmbFonts"/>
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="label_12">
@@ -594,30 +546,10 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
-        <widget class="QLineEdit" name="leStart">
-         <property name="text">
-          <string>0</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </item>
     </layout>
    </widget>
-  </widget>
-  <widget class="QPushButton" name="btnImport_2">
-   <property name="geometry">
-    <rect>
-     <x>760</x>
-     <y>680</y>
-     <width>151</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Generate font</string>
-   </property>
   </widget>
  </widget>
  <resources/>

@@ -52,6 +52,8 @@ public:
 
     void ExportBlackWhite(QFile &file, int p1, int p2, int p3, int p4) override;
 
+    void RemapCharset(QImage* other, int cw, int ch, int bw, int bh, int dw, int dh, int allowance);
+
     void Release() override;
 
     void ApplyToLabel(QLabel* l) override;

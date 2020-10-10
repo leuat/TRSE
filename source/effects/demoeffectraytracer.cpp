@@ -128,7 +128,7 @@ void DemoEffectRaytracer::Render(QImage &img)
         m_img  = m_img.scaled(w,h,Qt::IgnoreAspectRatio,
                               Qt::SmoothTransformation);
         m_img.save("testAfter.png");
-        qDebug() << "Scaling..";
+//        qDebug() << "Scaling..";
     }
 
 

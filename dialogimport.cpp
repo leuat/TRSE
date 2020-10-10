@@ -100,15 +100,15 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
     if (m_image->m_colorList.m_type==LColorList::C64 || m_image->m_colorList.m_type==LColorList::VIC20) {
 
     m_image->m_colorList.CreateUI(ui->layoutColors,0);
-    m_image->m_colorList.FillComboBox(ui->cmbForeground);
+/*    m_image->m_colorList.FillComboBox(ui->cmbForeground);
     m_image->m_colorList.FillComboBox(ui->cmbBackground);
     m_image->m_colorList.FillComboBox(ui->cmbMC1);
     m_image->m_colorList.FillComboBox(ui->cmbMC2);
-
+*/
 //    qDebug() << "EXTRACOL 3 " <<QString::number(m_image->m_extraCols[3]);
  //   qDebug() << "EXTRACOL 0 " <<QString::number(m_image->m_extraCols[0]);
 
-    if (dynamic_cast<MultiColorImage*>(m_image)!=nullptr) {
+/*    if (dynamic_cast<MultiColorImage*>(m_image)!=nullptr) {
         ui->cmbForeground->setCurrentIndex(m_image->m_colorList.getPen(3));
         ui->cmbBackground->setCurrentIndex(m_image->m_colorList.getPen(0));
         ui->cmbMC1->setCurrentIndex(m_image->m_colorList.getPen(1));
@@ -117,7 +117,7 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 
     if (isPetscii)
         ui->cmbMC1->setCurrentIndex(6);
-
+*/
 
     //QObject::connect(this, LColorList::colorValueChanged, UpdateOutput);
     connect(&m_image->m_colorList, SIGNAL(colorValueChanged()), this, SLOT(UpdateOutput()));
@@ -137,8 +137,27 @@ void DialogImport::Convert()
     if (m_image == nullptr)
         return;
 
+    LImageQImage* img = &m_work;
 
-    m_output.m_qImage = m_work.Resize(m_image->m_width, m_image->m_height, m_image->m_colorList, m_contrast, m_shift, m_hsv, m_saturation, m_scale, useDither);
+    if (ui->chkTreatCharset->isChecked()) {
+        img = &m_intermediate;
+        m_intermediate.Initialize(m_image->m_width, m_image->m_height);
+        m_intermediate.RemapCharset(m_work.m_qImage,
+                                    ui->leCharWidth->text().toInt(),
+                                    ui->leCharHeight->text().toInt(),
+                                    ui->leBlockWidth->text().toInt(),
+                                    ui->leBlockHeight->text().toInt(),
+                                    ui->leOutCharWidth->text().toInt(),
+                                    ui->leOutCharHeight->text().toInt(),
+                                    ui->leAllowance->text().toInt()
+                                    );
+    }
+
+
+    m_output.m_qImage = img->Resize(m_image->m_width,
+                                    m_image->m_height,
+                                    m_image->m_colorList,
+                                    m_contrast, m_shift, m_hsv, m_saturation, m_scale, useDither);
 //    qDebug() << m_image->m_width << m_output.m_qImage->width();
     //exit(1);
 //    m_image->Clear();
@@ -231,14 +250,14 @@ void DialogImport::SetColors()
     if (m_image->m_colorList.m_type!=LColorList::NES) {
 
 
-    int a = ui->cmbMC1->currentIndex();
+/*    int a = ui->cmbMC1->currentIndex();
     int b = ui->cmbMC2->currentIndex();
     int back = ui->cmbBackground->currentIndex();
+*/
 
-
-    m_image->SetColor(back, 0);
-    m_image->SetColor(a, 1);
-    m_image->SetColor(b, 2);
+//    m_image->SetColor(1, 0);
+ //   m_image->SetColor(2, 1);
+  //  m_image->SetColor(b, 2);
     }
 
 }
@@ -372,6 +391,55 @@ void DialogImport::on_hsScaleY_sliderMoved(int position)
 }
 
 void DialogImport::on_cmbDither_currentIndexChanged(int index)
+{
+    UpdateOutput();
+
+}
+
+void DialogImport::on_chkTreatCharset_stateChanged(int arg1)
+{
+    bool enabled = ui->chkTreatCharset->isChecked();
+
+    ui->leCharWidth->setEnabled(enabled);
+    ui->leCharHeight->setEnabled(enabled);
+    ui->leBlockWidth->setEnabled(enabled);
+    ui->leBlockHeight->setEnabled(enabled);
+
+    UpdateOutput();
+
+}
+
+void DialogImport::on_leCharWidth_textChanged(const QString &arg1)
+{
+    UpdateOutput();
+}
+
+void DialogImport::on_leCharHeight_textChanged(const QString &arg1)
+{
+    UpdateOutput();
+}
+
+void DialogImport::on_leBlockWidth_textChanged(const QString &arg1)
+{
+    UpdateOutput();
+}
+
+void DialogImport::on_leBlockHeight_textChanged(const QString &arg1)
+{
+    UpdateOutput();
+}
+
+void DialogImport::on_leOutCharWidth_textChanged(const QString &arg1)
+{
+    UpdateOutput();
+}
+
+void DialogImport::on_leOutCharHeight_textChanged(const QString &arg1)
+{
+    UpdateOutput();
+}
+
+void DialogImport::on_leAllowance_textChanged(const QString &arg1)
 {
     UpdateOutput();
 

@@ -88,6 +88,73 @@ void LImageQImage::ExportBlackWhite(QFile &file, int xx, int yy, int w, int h) {
     file.write(data);
 }
 
+void LImageQImage::RemapCharset(QImage *other, int border_w, int border_h, int blockwidth, int blockheight,int dw,int dh, int allowance)
+{
+    if (blockwidth==0)
+        return;
+    if (blockheight==0)
+        return;
+    if (dw==0)
+        return;
+    if (dh==0)
+        return;
+    QVector<QSharedPointer<QImage>> charset, temp;
+
+    int cw = (other->width()-2*border_w)/blockwidth;
+    int ch = (other->height()-2*border_h)/blockheight;
+    for (int by=0;by<blockheight;by++) {
+        for (int bx=0;bx<blockwidth;bx++) {
+            QSharedPointer<QImage> img = QSharedPointer<QImage>(new QImage(dw,dh, m_qImage->format()));
+            for (int cy=0;cy<dh;cy++) {
+                for (int cx=0;cx<dw;cx++) {
+                    int ox = cx/(float)dw*(float)cw;
+                    int oy = cy/(float)dh*(float)ch;
+                    QColor c = other->pixelColor(border_w+bx*cw+ox, border_h+by*ch+oy);
+                    img->setPixel(cx,cy,c.rgb());
+                }
+
+            }
+            charset.append(img);
+        }
+    }
+
+    for (auto img: charset) {
+        bool ok = true;
+        for (auto img2 : temp) {
+            int unequals = img2->height()*img2->height();
+            for (int y=0;y<img2->height();y++)
+                for (int x=0;x<img2->width();x++) {
+                    if (img->pixel(x,y)!=img2->pixel(x,y))
+                        unequals--;
+                }
+            if (unequals<=allowance)
+                ok = false;
+
+        }
+        if (ok)
+            temp.append(img);
+    }
+    charset = temp;
+
+
+    // Now, write charset to image
+    Clear();
+    int dst_curx = 0;
+    int dst_cury = 0;
+    for (auto img: charset) {
+        for (int y=0;y<dh;y++)
+            for (int x=0;x<dw;x++) {
+                setPixel(dst_curx+x, dst_cury+y,img->pixel(x,y));
+            }
+        dst_curx = dst_curx + dw*2;
+        if (dst_curx>=m_width) {
+            dst_curx = 0;
+            dst_cury = dst_cury + dh;
+        }
+    }
+
+}
+
 void LImageQImage::LoadQImage(QString filename)
 {
     Release();
@@ -226,8 +293,9 @@ unsigned int LImageQImage::getPixel(int x, int y)
 
 void LImageQImage::Release()
 {
-    if (m_qImage)
+    if (m_qImage!=nullptr) {
         delete m_qImage;
+    }
     m_qImage = nullptr;
 }
 
