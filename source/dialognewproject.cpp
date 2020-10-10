@@ -31,6 +31,7 @@ DialogNewProject::DialogNewProject(QSharedPointer<CIniFile> ini, QWidget *parent
     ui->btnOk->setAutoDefault(true);
     ui->pushButton_2->setAutoDefault(false);
 
+//    ui->leProjectName->focusch
 
 }
 
@@ -80,6 +81,9 @@ void DialogNewProject::UpdateProjectInfo()
     ui->lblInfo->setPalette(palette);
     QString p = m_dir+ m_project+"/"+m_project+".trse";
     ui->lblInfo->setText("Project will be created under : "+p);
+
+    if (ui->leProjectName->text()!="")
+        ui->leProjectName->setTabOrder(ui->txtInfo, ui->btnOk);
 }
 
 void DialogNewProject::on_leProjectDir_textChanged(const QString &arg1)
