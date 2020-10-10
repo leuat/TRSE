@@ -5,7 +5,7 @@ var
 	@donotremove none2
 	ga,gb,col,pix,x,none,y,none2 : byte=0; 
 	@donotremove sp
-	pa,sp : pointer;
+	pa,sp,pb,p1 : pointer;
 	j: byte;
 
 	@donotremove y_lookup
@@ -15,6 +15,7 @@ var
 	hwConv : array[26] of byte = (
 	$14,$4,$15,$1c,$18,$1D,$0c,$05,$D,$16,$06,$17,$1E,$00,$1F,$0e,$07,$0f,$12,$02,$13,$1A,$19,$1b,$0a,$03,$0b);
 
+	ytab : array[200] of integer = BuildTable("i*80");
 
 	
 	pixtab1 : array[16] of byte=(
@@ -272,6 +273,65 @@ begin
 
 	 pa[0]:=ga;
 
+end;
+
+procedure CopyImageTransparent(pa,pb:global pointer; ci_width, ci_height,ci_px,ci_py, ci_pyshift: byte);
+begin
+	ga := ci_width>>1;
+		
+	pb:=pb+ci_px;
+	pb:=pb+ ytab[ci_py-ci_pyshift];	
+	for gb:=0 to ci_height do
+	begin
+		crtc::PointToY(ci_py);
+		
+		sp := sp + ci_px;
+			
+		memcpy(pb, sp, ga);
+		
+		pb:=pb + 80;
+		asm("
+			ld hl,[crtc_sp]
+			ex de,hl
+			ld hl,[crtc_pa]
+			ld a,[crtc_ga]
+			ld c,a
+copy_or 
+			ld a,[de]
+			or [hl]
+			ld [de],a
+			inc de
+			inc hl
+			dec c
+			jr nz,copy_or		
+		");
+		
+		pa:=pa+ga;
+		ci_py:=ci_py+1;
+		
+	end;
+	// End with exrra line
+//	ci_py:=ci_py+1;
+
+/*		crtc::PointToY(ci_py);
+		memcpy(keep, crtc::sp, 80);
+		crtc::PointToY(ci_py+1);
+		keep:=keep+80;
+		memcpy(keep, crtc::sp, 80);
+*/
+end;
+
+
+
+procedure CopyScreenToBuffer(ga, gb: global byte; pa : global pointer);
+begin
+//	zp := free2;
+	for y:=ga to gb do
+	begin
+		PointToY(y);
+		memcpy(sp,pa,80);
+		pa:=pa+80;
+	end;
 end;
 
 
