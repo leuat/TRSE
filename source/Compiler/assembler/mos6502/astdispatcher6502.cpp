@@ -678,7 +678,7 @@ void ASTDispatcher6502::RightIsPureNumericMulDiv8bit(QSharedPointer<Node> node) 
 void ASTDispatcher6502::Load16bitVariable(QSharedPointer<Node> node, QString reg)
 {
     as->ClearTerm();
-    as->Comment("Load 16 bit var IS WORD "+QString::number(node->isWord(as)));
+//    as->Comment("Load 16 bit var IS WORD "+QString::number(node->isWord(as)));
     if (node->isWord(as))
         as->Asm("ld"+reg+" "+getValue8bit(node,true));
     as->Asm("lda "+getValue8bit(node,false));
@@ -1575,76 +1575,102 @@ void ASTDispatcher6502::LogicalClause(QSharedPointer<Node> node)
 */
 void ASTDispatcher6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive) {
 
-//    if (!var->isWord(as))
-    {
-        as->ClearTerm();
-        nodeB->Accept(this);
-        as->Term();
 
-        as->Asm("cmp " + nodeA->m_left->getValue(as) +" ;keep");
+    if (nodeA->m_left->isWord(as)) {
+        Token t = nodeA->m_op;
+        Token t_asm = nodeA->m_op;
+        Token t_clause = nodeA->m_op;
+        t_clause.m_type = TokenType::NOTEQUALS;
+        t_asm.m_value = "  jmp " + loopNotDone + "\n";
+        auto nasm = QSharedPointer<NodeAsm>(new NodeAsm(t_asm));
+        QSharedPointer<NodeCompound> comp = QSharedPointer<NodeCompound>(new NodeCompound(t));
+        comp->children.append(nasm);
 
-        int stepValue = 1; // do we have a step value?
-        if (step != nullptr) {
+        QSharedPointer<NodeBlock> block = QSharedPointer<NodeBlock>(new NodeBlock(t,QVector<QSharedPointer<Node>>(),
+                                                                                        comp, false));
 
-            stepValue = step->getValueAsInt(as); //node->m_step->getValue(as);
 
-        }
-        if (inclusive) {    // inclusive version will END after the TO value
 
-            if (!isLarge) {
+        QSharedPointer<NodeBinaryClause> clause = QSharedPointer<NodeBinaryClause>(
+                    new NodeBinaryClause(t_clause,nodeA->m_left, nodeB));
 
-                if (stepValue > 0) {
-                    as->Asm("bcs "+loopNotDone); // or FOR index > TO value
-                } else { //if (stepValue < -1) {
-                    as->Asm("bcc "+loopNotDone); // FOR index < TO value
-                    as->Asm("beq "+loopNotDone); // BEQ then the BCC below
-                }
+        QSharedPointer<NodeConditional> cond = QSharedPointer<NodeConditional>(
+                    new NodeConditional(t,isLarge,clause,block,false));
 
-            }
-            else {
+        as->Comment("Executing integer comparison " + nodeB->getValue(as));
+        cond->Accept(this);
+        return;
 
-                // LargeLoops needs checking
-                if (stepValue > 0) {
-                    as->Asm("bcc "+loopDone); // or FOR index > TO value
-                } else { //if (stepValue < -1) {
-                    as->Asm("beq "+loopNotDone); // BEQ then the BCC below
-                    as->Asm("bcs "+loopDone); // FOR index < TO value
-                }
 
-            }
 
-        } else {            // TRSE version will END on the TO value
+    }
 
-            if (!isLarge) {
+    as->ClearTerm();
+    nodeB->Accept(this);
+    as->Term();
 
-                if (stepValue == 1 || stepValue == -1) {
-                    // increments / decrements of 1 are safe for BNE
-                    as->Asm("bne "+loopNotDone);
-                } else if (stepValue > 1) {
-                    as->Asm("beq "+loopDone); // FOR index == TO value
-                    as->Asm("bcs "+loopNotDone); // or FOR index > TO value
-                } else { //if (stepValue < -1) {
-                    as->Asm("bcc "+loopNotDone); // FOR index < TO value
-                }
+    as->Asm("cmp " + nodeA->m_left->getValue(as) +" ;keep");
 
-            }
-            else {
+    int stepValue = 1; // do we have a step value?
+    if (step != nullptr) {
+        stepValue = step->getValueAsInt(as); //node->m_step->getValue(as);
+    }
+    if (inclusive) {    // inclusive version will END after the TO value
 
-                // LargeLoops needs checking
-                //as->Asm("beq "+loopDone);
-                if (stepValue == 1 || stepValue == -1) {
-                    // increments / decrements of 1 are safe for BNE
-                    as->Asm("beq "+loopDone);
-                } else if (stepValue > 1) {
-                    as->Asm("beq "+loopDone); // FOR index == TO value
-                    as->Asm("bcc "+loopDone); // or FOR index > TO value
-                } else { //if (stepValue < -1) {
-                    as->Asm("bcs "+loopDone); // FOR index < TO value
-                }
+        if (!isLarge) {
 
+            if (stepValue > 0) {
+                as->Asm("bcs "+loopNotDone); // or FOR index > TO value
+            } else { //if (stepValue < -1) {
+                as->Asm("bcc "+loopNotDone); // FOR index < TO value
+                as->Asm("beq "+loopNotDone); // BEQ then the BCC below
             }
 
         }
+        else {
+
+            // LargeLoops needs checking
+            if (stepValue > 0) {
+                as->Asm("bcc "+loopDone); // or FOR index > TO value
+            } else { //if (stepValue < -1) {
+                as->Asm("beq "+loopNotDone); // BEQ then the BCC below
+                as->Asm("bcs "+loopDone); // FOR index < TO value
+            }
+
+        }
+
+    }
+    else {            // TRSE version will END on the TO value
+
+        if (!isLarge) {
+
+            if (stepValue == 1 || stepValue == -1) {
+                // increments / decrements of 1 are safe for BNE
+                as->Asm("bne "+loopNotDone);
+            } else if (stepValue > 1) {
+                as->Asm("beq "+loopDone); // FOR index == TO value
+                as->Asm("bcs "+loopNotDone); // or FOR index > TO value
+            } else { //if (stepValue < -1) {
+                as->Asm("bcc "+loopNotDone); // FOR index < TO value
+            }
+
+        }
+        else {
+
+            // LargeLoops needs checking
+            //as->Asm("beq "+loopDone);
+            if (stepValue == 1 || stepValue == -1) {
+                // increments / decrements of 1 are safe for BNE
+                as->Asm("beq "+loopDone);
+            } else if (stepValue > 1) {
+                as->Asm("beq "+loopDone); // FOR index == TO value
+                as->Asm("bcc "+loopDone); // or FOR index > TO value
+            } else { //if (stepValue < -1) {
+                as->Asm("bcs "+loopDone); // FOR index < TO value
+            }
+
+        }
+
         return;
     }
 
@@ -1698,29 +1724,77 @@ void ASTDispatcher6502::IncreaseCounter(QSharedPointer<Node> step, QSharedPointe
     // no STEP included in FOR TO DO, we assume STEP 1
     if (step==nullptr) {
 
-        //if (!var->isWord(as)) {
+        if (!var->isWord(as)) {
             as->Asm("inc " + var->getValue(as));
-       /* }
+        }
         else {
-            as->Asm("clc");
-            as->Asm("inc " + as->m_stack["for"].current());
+            as->Asm("inc " + var->getValue(as));
             QString lbl = as->NewLabel("lblCounterWord");
-            as->Asm("bcc "+lbl);
-            as->Asm("inc " + as->m_stack["for"].current() +"+1");
+            as->Asm("bne "+lbl);
+            as->Asm("inc " + var->getValue(as) +"+1");
 
             as->Label(lbl);
 
             as->PopLabel("lblCounterWord");
 
-        }*/
+        }
 
     } else {
+
+
+
 
         // STEP included in FOR TO DO statement
         int stepValue = step->getValueAsInt(as);
         //stepValue = node->m_step->getInteger();
         //qDebug() << node->m_step->numValue();
         //qDebug() << node->m_step->getInteger();
+
+        if (var->isWord(as)) {
+            if (stepValue == 1) {
+                as->Asm("inc " + var->getValue(as));
+                QString lbl = as->NewLabel("lblCounterWord");
+                as->Asm("bne "+lbl);
+                as->Asm("inc " + var->getValue(as) +"+1");
+
+                as->Label(lbl);
+
+                as->PopLabel("lblCounterWord");
+                return;
+
+            }
+            if (stepValue == 255) {
+                as->Comment("Decrement word counter");
+                as->Asm("lda " + var->getValue(as));
+                QString lbl = as->NewLabel("lblCounterWord");
+                as->Asm("bne "+lbl);
+                as->Asm("dec " + var->getValue(as) +"+1");
+
+                as->Label(lbl);
+                as->Asm("dec " + var->getValue(as));
+
+                as->PopLabel("lblCounterWord");
+                return;
+
+            }
+            if (!step->isPure())
+                ErrorHandler::e.Error("16 bit counters in for loops can only have integer steps", var->m_op.m_lineNumber);
+
+            QString lbl = as->NewLabel("lblCounterWord");
+            as->Asm("clc");
+            as->Asm("lda " + var->getValue(as));
+            as->Asm("adc #" + Util::numToHex(stepValue));
+            as->Asm("sta " + var->getValue(as));
+
+            as->Asm("lda " + var->getValue(as)+"+1");
+            as->Asm("adc #0");
+            as->Asm("sta " + var->getValue(as)+"+1");
+
+            as->PopLabel("lblCounterWord");
+            return;
+
+
+        }
 
         // if 1 or -1 we can optimise!
         if (stepValue == 1) {
@@ -3146,7 +3220,7 @@ void ASTDispatcher6502::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSh
 
     if (!isOffPage) {
         QString loopDone = as->NewLabel("loopdone");
-        as->Comment("IS ONPAGE");
+        as->Comment("Compare is onpage");
 
         IncreaseCounter(step,qSharedPointerDynamicCast<NodeVar>(nodeA->m_left));
         Compare(nodeA, nodeB, step, false, loopDone, lblJump, isInclusive);

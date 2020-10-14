@@ -82,18 +82,35 @@ begin
 	push hl
 	push ix
 	push iy
+	exx
+	push af
+	push bc
+	push de
+	push hl
+	push ix
+	push iy
+	exx
 	");
 end;
 
 procedure PopAll() inline;
 begin
 	asm("
+	exx
 	pop iy
 	pop ix
 	pop hl
 	pop de
 	pop bc
 	pop af
+	exx
+	pop iy
+	pop ix
+	pop hl
+	pop de
+	pop bc
+	pop af
+
 	");
 end;
 

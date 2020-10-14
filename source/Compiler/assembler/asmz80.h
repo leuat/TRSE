@@ -11,9 +11,6 @@ public:
     AsmZ80();
     ~AsmZ80() {}
 
-    QString byte = "db";
-    QString word = "dw";
-    QString llong = "dl";
 
 
     void Connect() override;

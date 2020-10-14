@@ -81,6 +81,28 @@ void DialogColors::on_leRGB4_textChanged(const QString &arg1)
 void DialogColors::on_btnLoad_clicked()
 {
 
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    "Import palette (from flf image)", m_projectPath,
+                                                    "*.flf");
+    if (fileName == "")
+        return;
+
+    QString f= fileName;
+
+    if (!QFile::exists(f))
+        return;
+
+    if (f.toLower().endsWith(".flf")) {
+        LImage* img = LImageIO::Load(f);
+
+        if (m_img!=nullptr && img!=nullptr) {
+                            qDebug() << "HER " << f;
+            m_lst->CopyFrom(&img->m_colorList);
+        }
+
+    }
+
+
 }
 
 void DialogColors::on_btnSave_2_clicked()
@@ -113,7 +135,8 @@ void DialogColors::on_pushButton_2_clicked()
 
 void DialogColors::on_cbmBitplanes_currentIndexChanged(int index)
 {
-    m_lst->setNoBitplanes(index+1);
+    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::M68000)
+        m_lst->setNoBitplanes(index+1);
     toGUI();
 }
 

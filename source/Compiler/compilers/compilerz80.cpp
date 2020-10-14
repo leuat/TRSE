@@ -54,11 +54,10 @@ void CompilerZ80::Connect()
     m_assembler->EndMemoryBlock();
 
 
-
-
-
     if (Syntax::s.m_currentSystem->m_system != AbstractSystem::COLECO)
         m_assembler->Asm("end");//+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
+
+
 
 
 
@@ -129,7 +128,6 @@ void CompilerZ80::SetupMemoryAnalyzer(QString filename)
 
 
         if (l[0].toLower()=="incbin") {
-            //qDebug() << s;
             QString file = l[1];
             int binStart = lst[cnt-1].split(":")[0].toInt(&ok,16);
             if (binStart==0) binStart = start;

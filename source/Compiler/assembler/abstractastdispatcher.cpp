@@ -135,6 +135,17 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeForLoop> node)
     // Define main for label
     QString lblFor =as->NewLabel("forloop");
     as->Label(lblFor);
+    bool offpage = isOffPage(node, node->m_block, nullptr);
+    Token t_cond = node->m_op;
+ /*
+    QSharedPointer<NodeBinaryClause> bc = new QSharedPointer<NodeBinaryClause>(
+                new NodeBinaryClause(t_bc,node->m_a,node->m_b))
+
+    QSharedPointer<NodeConditional> cond = QSharedPointer<NodeConditional>(
+                new NodeConditional(t_cond,offpage,clause,node->m_block,true,nullptr));
+    cond->Accept(this);
+   */
+
 
     // Maintain b has same type as a
     if (nVar->m_left->isWord(as))
@@ -144,9 +155,9 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeForLoop> node)
     node->m_block->Accept(this);
 
 
-    bool offpage = isOffPage(node, node->m_block, nullptr);
     // Perform counter increase and jimps (individual for each target cpu)
     CompareAndJumpIfNotEqual(node->m_a, node->m_b,  node->m_step, lblFor, offpage,node->m_inclusive);
+
 
     as->PopLabel("forloop");
 

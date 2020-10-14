@@ -161,6 +161,7 @@ void LImageAmstradCPC::ExportBin(QFile &ofile)
     QVector<int> lst = m_colorList.getPenList();
     for (auto i : lst)
         palette.append(((unsigned char)i));
+//    qDebug() << lst;
 
     Util::SaveByteArray(palette,fColor);
 

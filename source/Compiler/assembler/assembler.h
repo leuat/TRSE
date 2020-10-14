@@ -171,6 +171,8 @@ public:
     bool m_countCycles = false;
     int m_noBanks = 0;
 
+
+
     QString m_currentBlockName="";
 
     QVector<MemoryBlock> m_userWrittenBlocks;
@@ -270,6 +272,7 @@ public:
     }
     QString byte = "dc.b";
     QString word = "dc.w";
+    QString llong = "dc.l";
 
     Assembler();
     virtual ~Assembler();

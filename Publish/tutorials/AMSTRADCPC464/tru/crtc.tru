@@ -74,6 +74,22 @@ wf_Sync:
     ");
 end;
 
+procedure WaitForHSync();
+begin
+	asm("
+wf_Sync:
+    ld b,#f5
+    in a,(c)
+    rra
+    jr nc,wf_Sync + 2
+    ei
+    nop
+    halt
+    halt
+    di
+    ");
+end;
+
 // Set screen mode
 procedure SetMode(ga: global byte);
 begin
@@ -280,6 +296,7 @@ begin
 	ga := ci_width>>1;
 		
 	pb:=pb+ci_px;
+//	pb:=pb-1;
 	pb:=pb+ ytab[ci_py-ci_pyshift];	
 	for gb:=0 to ci_height do
 	begin
@@ -287,27 +304,44 @@ begin
 		
 		sp := sp + ci_px;
 			
-		memcpy(pb, sp, ga);
+//		memcpy(pb, sp, ga);
 		
-		pb:=pb + 80;
 		asm("
-			ld hl,[crtc_sp]
+		
+			di
+			
+			ld hl,[crtc_pb]
 			ex de,hl
 			ld hl,[crtc_pa]
+			
+			exx
+			ld hl, [crtc_sp]
+			exx
 			ld a,[crtc_ga]
 			ld c,a
 copy_or 
+			
+			ld a,[hl]
+			cp 0
+			jr nz, __contcopy
 			ld a,[de]
-			or [hl]
-			ld [de],a
+						
+__contcopy			
+			exx
+			ld [hl],a
+			inc hl
+			exx
 			inc de
 			inc hl
 			dec c
 			jr nz,copy_or		
+			
+			ei
 		");
 		
 		pa:=pa+ga;
 		ci_py:=ci_py+1;
+		pb:=pb + 80;
 		
 	end;
 	// End with exrra line

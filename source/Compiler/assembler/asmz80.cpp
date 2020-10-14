@@ -13,6 +13,10 @@ AsmZ80::AsmZ80()
     m_hram->m_isMainBlock = true;
     m_wram->m_isMainBlock = true;
     m_sprram->m_isMainBlock = true;
+    byte = "db";
+    word = "dw";
+    llong = "dl";
+
 
 }
 
@@ -79,6 +83,10 @@ void AsmZ80::Write(QString str, int level)
 
 void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
 {
+    if (DeclareRecord(name,type,count,data,pos))
+        return;
+
+
     QString t = byte;
     if (type.toLower()=="integer")
         t = word;
@@ -90,7 +98,7 @@ void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList dat
 // array  resb  251*256  ;251 ROWS X 256 COLUMNS.
 
      if (data.count()==0 && pos!="") {
-         Write(name + " = " + pos);
+         Write(name + " equ " + pos);
          return;
      }
 
@@ -112,7 +120,7 @@ void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList dat
         }
         else
 
-        Write(name+":" +"\t times "+QString::number(count) +" "+t+" 0",0);
+        Write(name+":" +"\t ds "+QString::number(count));// +" "+t+" 0",0);
 
     }
     else {

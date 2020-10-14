@@ -348,7 +348,7 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
                 //
                 //                  t= word;
 
-                w = w+ "\t = \t" + Util::numToHex(p);
+                w = w+ "\t EQU \t" + Util::numToHex(p);
 
 
                 //if (s->m_type.toLower()=="integer")
