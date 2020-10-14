@@ -25,8 +25,8 @@ var
 
 */	
 
-@compile_akg_music "resources/music/song1" $8800
-	some_song : incbin("resources/music/song1.bin", $8800);
+@compile_akg_music "resources/music/mibri" $8800
+	some_song : incbin("resources/music/mibri.bin", $8800);
 	
 	j1,j2,time,rast : byte = 0;
 

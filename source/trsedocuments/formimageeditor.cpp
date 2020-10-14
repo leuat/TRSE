@@ -855,23 +855,14 @@ bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
                 onSwapDisplayMode();
                 return true;
             }
-            if ((ke->key() == Qt::Key_F)) {
+/*            if ((ke->key() == Qt::Key_F)) {
                 LImage* img = m_work.m_currentImage->m_image;
-/*                for (int y=0;y<img->m_height;y+=2)
+                for (int y=1;y<img->m_height;y+=2)
                     for (int x=0;x<img->m_width;x++) {
                         img->setPixel(x,y,0);
-                    }*/
-                for (int y=0;y<img->m_height;y+=1)
-                    for (int x=0;x<img->m_width;x++) {
-                        int col = img->getPixel(x,y);
-                        if ((y&1)==1) {
-                            if (col==13) img->setPixel(x,y,img->m_colorList.getPen(14));
-                        }
-                        else
-                            if (col==14) img->setPixel(x,y,img->m_colorList.getPen(0));
                     }
             }
-
+*/
             if (ke->key() == Qt::Key_F1) {
                 ui->cmbZoomLevel->setCurrentIndex(0);
                 on_cmbZoomLevel_activated("1x");

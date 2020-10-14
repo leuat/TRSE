@@ -16,7 +16,8 @@ bool Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
 
     if ((QFile::exists(filename+".asm"))) {
         Util::CopyFile(filename+".asm",filename+".inc");
-        Util::CopyFile(filename+"_playerconfig.asm",filename+"_playerconfig.inc");
+        if ((QFile::exists(filename+"_playerconfig.asm")))
+            Util::CopyFile(filename+"_playerconfig.asm",filename+"_playerconfig.inc");
 
     }
 
