@@ -309,8 +309,8 @@ DialogMemoryAnalyze::~DialogMemoryAnalyze()
 
 void DialogMemoryAnalyze::mouseMoveEvent(QMouseEvent *event)
 {
-    Initialize(m_blocks, m_fontSize);
     zoomCenter = this->mapFromGlobal(QCursor::pos());
+    Initialize(m_blocks, m_fontSize);
 
 }
 
@@ -318,6 +318,7 @@ void DialogMemoryAnalyze::wheelEvent(QWheelEvent *event)
 {
     zoomVal *=1+0.001f*event->delta();
     zoomVal = max(1.0f, zoomVal);
+    Initialize(m_blocks, m_fontSize);
 }
 
 QPointF DialogMemoryAnalyze::Trans(QPointF p)
