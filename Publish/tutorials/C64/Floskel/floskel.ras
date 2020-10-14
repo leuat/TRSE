@@ -13,6 +13,7 @@ var
 
 */
 
+
 	// Music by Response/Darklite. $E000.
  	music: incsid("music/oops.sid",2);
  	// Y position of the scroller

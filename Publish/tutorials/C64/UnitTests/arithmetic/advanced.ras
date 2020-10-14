@@ -60,7 +60,6 @@ begin
 	p2[v1]:=2;
 	p1:=$0400;
 
-	asm(";prob");
 	p1:=p1 + p2[v1];
 	text := "04:"; if p1=$0402 then PASS() else FAIL();
 	DebugValue(p1);
@@ -72,7 +71,9 @@ begin
 	p2[1]:=$20;
 	v1:=1;
 	p1:=$0400;
+	asm(";here");
 	p1:=p1 + p2[1]*2;
+
 	text := "05:"; if p1=$0440 then PASS() else FAIL();
 end;
 

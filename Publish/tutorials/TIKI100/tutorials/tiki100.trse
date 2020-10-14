@@ -42,5 +42,4 @@ override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
 zeropage_colormemory = $fc
-open_files = ,tutorial1.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/TIKI100/tutorials/
+open_files =, tutorial1.ras

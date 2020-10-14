@@ -2382,10 +2382,12 @@ void MainWindow::on_cmbSelectSystem_activated(int index)
 
 void MainWindow::on_btnChangelog_clicked()
 {
-    DialogAbout* ab = new DialogAbout();
+/*    DialogAbout* ab = new DialogAbout();
     ab->SetText("Changelog", ui->txtChangelog->toHtml());
     ab->exec();
-    delete ab;
+    delete ab;*/
+    QDesktopServices::openUrl(QUrl("https://lemonspawn.com/turbo-rascal-syntax-error-expected-but-begin/downloads/", QUrl::TolerantMode));
+
 }
 
 void MainWindow::on_actionView_changelog_triggered()

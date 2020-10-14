@@ -1181,8 +1181,11 @@ void Parser::HandlePreprocessorInParsing()
     }
     if (m_currentToken.m_value=="startblock") {
         int i = m_pass;
+/*        qDebug() << Node::m_staticBlockInfo.m_blockID;
+        qDebug() << Node::m_staticBlockInfo.m_blockPos;
+        qDebug() << Node::m_staticBlockInfo.m_blockName;*/
         if (Node::m_staticBlockInfo.m_blockID !=-1) {
-            ErrorHandler::e.Error("Cannot start a block without ending the previous. ",m_currentToken.m_lineNumber);
+//            ErrorHandler::e.Error("Cannot start a block without ending the previous. ",m_currentToken.m_lineNumber);
         }
         m_pass = PASS_OTHER;
         Eat();
@@ -2416,7 +2419,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
 
 
     if (Node::m_staticBlockInfo.m_blockID !=-1) {
-        ErrorHandler::e.Error("Cannot end program with open blocks. Please use the corresponding @endblock command to close the open block at "+Node::m_staticBlockInfo.m_blockPos,0);
+//        ErrorHandler::e.Error("Cannot end program with open blocks. Please use the corresponding @endblock command to close the open block at "+Node::m_staticBlockInfo.m_blockPos,0);
     }
 
 

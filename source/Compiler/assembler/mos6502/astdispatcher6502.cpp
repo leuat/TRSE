@@ -538,10 +538,12 @@ void ASTDispatcher6502::Mul16x8(QSharedPointer<Node> node) {
     as->Asm("");
     if (node->m_left->isWord(as)) {
 
-        as->Asm("ldy #0");
         LoadVariable(node->m_left);
 //        if (!node->m_left->isWord(as))
         as->Term();
+//        if (!node->m_left->getO(as))
+  //          as->Asm("ldy #0");
+
         as->Asm("sta mul16x8_num1");
         as->Asm("sty mul16x8_num1Hi");
     }
@@ -2084,7 +2086,8 @@ void ASTDispatcher6502::LoadPointer(QSharedPointer<NodeVar> node) {
     if (m=="")
         m="lda ";
     as->Asm(m+  "(" + getValue(node)+"),y");
-
+    if (node->m_forceType == TokenType::INTEGER)
+        as->Asm("ldy #0 ; Loading 8-bit pointer, but return type should be integer");
 }
 
 
