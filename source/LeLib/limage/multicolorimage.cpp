@@ -217,6 +217,7 @@ void MultiColorImage::LoadBin(QFile& file)
     file.read( ( char * )( &dummy ),1 );
     m_colorList.setPen(0,dummy); // background
     file.read( ( char * )( &dummy ), 1); // Unused
+ //   qDebug() << sizeof(PixelChar);
     file.read( ( char * )( &m_data ),  m_charHeight*m_charWidth*12 );
 /*    int c1 = 255;
     int c2 = 255;

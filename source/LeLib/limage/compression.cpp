@@ -468,13 +468,14 @@ double Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int le
     }
 
    if (type==TYPE_SSIM) {
-       PixelChar pc1,pc2;
+       PixelCharSSIM pc1,pc2;
        for (int j=0;j<8;j++) {
            pc1.p[j] = a[p1+j];
            pc2.p[j] = b[p2+j];
        }
        pc1.m_lastBitmask = bmask;
        pc2.m_lastBitmask = bmask;
+//       double l = 1;
        double l = pc1.CalcSSIM(&pc2);
        return l;
 

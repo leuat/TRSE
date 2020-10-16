@@ -8,12 +8,12 @@
 #include "ssim.h"
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
-class PixelChar : public SSIM {
+class PixelChar {// : public SSIM {
 public:
     PixelChar();
     unsigned char p[8];
     unsigned char c[4];
-    int m_lastBitmask = 0b1;
+    static int m_lastBitmask;
     unsigned char get(int x, int y, unsigned char bitMask);
     void set(int x, int y, unsigned char color, unsigned char bitMask, unsigned char maxCol, unsigned char minCol);
     void set(int x, int y, unsigned char color, unsigned char bitMask);
@@ -29,23 +29,6 @@ public:
     bool isEqualBytes(PixelChar& o);
     void Reorganize(unsigned char bitMask, unsigned char Scale,unsigned char minCol, unsigned char maxCol, unsigned char bgCol);
     int Count(unsigned int col, unsigned char bitMask, unsigned char Scale);
-
-
-
-    double  getWidth() override {
-        if (m_lastBitmask==1)
-            return 8;
-        return 4;
-    }
-    double  getHeight() override {
-        return 8;
-    }
-
-    double  getL() override {
-        return 4;
-    }
-
-    double  getVal(int x, int y) override;
 
     void ForceBackgroundColor(int col, int swapcol);
 
@@ -72,6 +55,28 @@ public:
        b = (b & 0xAA) >> 1 | (b & 0x55) << 1;
        return b;
     }
+};
+
+
+class PixelCharSSIM : public PixelChar, public SSIM {
+
+
+        double  getWidth() override {
+            if (m_lastBitmask==1)
+                return 8;
+            return 4;
+        }
+        double  getHeight() override {
+            return 8;
+        }
+
+        double  getL() override {
+            return 4;
+        }
+
+        double  getVal(int x, int y) override;
+
+
 };
 
 #endif // PIXELCHAR_H

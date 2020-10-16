@@ -1,6 +1,9 @@
 #include "pixelchar.h"
 #include "limageqimage.h"
 
+int PixelChar::m_lastBitmask = 1;
+
+
 PixelChar::PixelChar()
 {
     Clear(0);
@@ -243,7 +246,7 @@ int PixelChar::Count(unsigned int col, unsigned char bitMask, unsigned char scal
     return cnt;
 }
 
-double PixelChar::getVal(int x, int y) {
+double PixelCharSSIM::getVal(int x, int y) {
     if (x<0 || x>=8 || y<0 || y>=8)
         return 0;
     int s = 1;
@@ -259,6 +262,7 @@ double PixelChar::getVal(int x, int y) {
 
     return d;
 }
+
 
 void PixelChar::ForceBackgroundColor(int col, int swapcol)
 {
@@ -367,7 +371,13 @@ double PixelChar::CompareLength4(PixelChar &other,LColorList& lst, int bmask)
 {
     other.m_lastBitmask = bmask;
     m_lastBitmask = bmask;
-    return CalcSSIM(&other);
+    return 0;
+    PixelCharSSIM p1,p2;
+    for (int i=0;i<4;i++) {
+        p1.p[i] = p[i];
+        p2.p[i] = other.p[i];
+    }
+    return p1.CalcSSIM(&p2);
 }
 
 uchar PixelChar::SwapColor(uchar data, uchar c1, uchar c2)
