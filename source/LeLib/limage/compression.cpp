@@ -268,6 +268,68 @@ int Compression::CompareSprites(QByteArray &d1, QByteArray& d2, int sprite1, int
     return l;
 }
 
+void Compression::CompressScreenAndCharset(QVector<int> &screen, QByteArray &charset, QVector<int> &sOut, QByteArray &cOut, int sw, int sh, int charSize, int noTargetChar, int bmask)
+{
+    cOut.clear();
+    sOut.clear();
+    sOut = screen;
+    cOut = charset;
+    if (sw==0 || sh==0)
+        return;
+    int screens = screen.size()/sw/sh;
+//    QByteArray curCharset = charset;
+    int curChars = cOut.count()/8;
+
+    double compression = 0.01;
+    int pass = 0;
+//    for (int i=0;i<sOut.count();i++)
+ //       qDebug() << "Sout : " << i << sOut[i];
+    // First, make everything unique
+    for (int i=0;i<screens;i++) {
+        int k = charSize*i;
+        for (int j=0;j<sw*sh;j++) {
+            sOut [j + k] += k;
+        }
+    }
+    while (curChars>=noTargetChar) {
+        qDebug() << "Cur chars " <<curChars << " with compression " << compression;
+        // What to do: go through every char and check every other that is the same
+        for (int i=0;i<cOut.count()/8;i++) {
+       //     int found = -1;
+            QVector<int> found;
+            double curMin = 1E5;
+            for (int j=i+1;j<cOut.count()/8;j++) {
+                double res = Compare(cOut, cOut,j*8,i*8,8, 1, bmask);
+                if (res<compression) {
+                    found.append(j);
+//                    curMin = res;
+                 }
+            }
+
+            int cur=0;
+            for (auto f : found) {
+                f = f-cur;// Collaps characters:
+                cur++;
+                cOut.remove(f*8,8); // Removed
+//                found = found &0xFF;// noTargetChar;
+               // int add = 0;
+                for (int j=0;j<sOut.count();j++) {
+                    if (sOut[j]==f) sOut[j] = i;
+                    if (sOut[j]>f) sOut[j]--;
+
+                }
+            }
+        }
+        pass++;
+        curChars = cOut.count()/8;
+        qDebug() << "After pass " << pass <<  "  : " << curChars;
+        if (compression ==0) compression = 0.01;
+        compression = compression * 1.05;
+        // After pass :
+    }
+//    screen = sOut;
+}
+
 void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &charset, QVector<int> &sOut, QByteArray &cOut, int sw, int sh, int charSize, double compression, int type,LColorList& lst, int bmask)
 {
     cOut.clear();
@@ -305,7 +367,7 @@ void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &cha
             double curMin = 8000;
             for (int j=0;j<cOut.count()/8;j++) {
                 //int Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length)
-                double res = Compare(cOut, charset,j*8,s*8,8, type, bmask,lst);
+                double res = Compare(cOut, charset,j*8,s*8,8, type, bmask);
                 if (res<compression && res<curMin) {
 
 
@@ -379,7 +441,7 @@ void Compression::OptimizeScreenAndCharsetGB(QVector<int> &screen, QByteArray &c
             double curMin = 80000;
             for (int j=0;j<cOut.count()/16;j++) {
                 //int Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length)
-                double res = Compare(cOut, charset,j*16,s*16,16,type, bmask,lst);
+                double res = Compare(cOut, charset,j*16,s*16,16,type, bmask);
                 if (res<compression && res<curMin) {
                     found = j;
                     curMin = res;
@@ -448,7 +510,7 @@ void Compression::SaveCompressedSpriteData(QByteArray &data, QString dataFile, Q
 
 }
 
-double Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length, int type, int bmask, LColorList& lst)
+double Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length, int type, int bmask)
 {
     int l = 0;
     if (type==TYPE_REGULAR) {
@@ -473,8 +535,8 @@ double Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int le
            pc1.p[j] = a[p1+j];
            pc2.p[j] = b[p2+j];
        }
-       pc1.m_lastBitmask = bmask;
-       pc2.m_lastBitmask = bmask;
+       pc1.m_lastBitmask = 1;//bmask;
+       pc2.m_lastBitmask = 1;//bmask;
 //       double l = 1;
        double l = pc1.CalcSSIM(&pc2);
        return l;
@@ -509,7 +571,7 @@ void Compression::OptimizeAndPackCharsetData(QByteArray &dataIn, QByteArray &out
         unsigned short currentPointer = 0;
         bool isNew = true;
         for (int j=0;j<out.count()/width;j++) {
-            double metric = Compare(dataIn, out, i*width, j*width, width, type, bmask,lst);
+            double metric = Compare(dataIn, out, i*width, j*width, width, type, bmask);
             if (metric<compression) {
                 currentPointer =j*width;
                 isNew=false;

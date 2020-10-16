@@ -839,7 +839,7 @@ void MultiColorImage::ExportCompressed(QString f1, QString f2, QString f3)
     CompressAndSave(charData, i_screenData,
                     m_exportParams["StartX"],m_exportParams["EndX"],
                     m_exportParams["StartY"],m_exportParams["EndY"],
-                    noChars,    m_exportParams["Compression"],255 );
+                    noChars,    (double)m_exportParams["Compression"]/100.0,255 );
 //    qDebug() << "No chars :" << noChars;
     screenData = Util::toQByteArray(i_screenData);
     FixUp(charData);
@@ -1332,7 +1332,7 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen
             for (PixelChar& p : chars) {
 //                if (found)
   //                  break;
-  //              double metric = pc.CompareLength3(p);
+              //  double metric = pc.CompareLength3(p);
                 double metric = (pc.CompareLength4(p, m_colorList,m_bitMask));
 //                if (rand()%100>98) qDebug() << metric;
 //                int metric = pc.Compare(p);

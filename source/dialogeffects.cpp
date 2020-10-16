@@ -897,6 +897,22 @@ static int OptimizeScreenAndCharset(lua_State* L) {
     return 0;
 }
 
+static int CompressScreenAndCharset(lua_State* L) {
+    if (!VerifyFjongParameters(L,"CompressScreenAndCharset"))
+        return 0;
+
+    QByteArray cOut;
+    QVector<int> sOut;
+    int scale = 1;
+    m_compression.CompressScreenAndCharset(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4),m_effect->m_mc->m_bitMask);
+//    m_charData.clear();
+    m_charData = cOut;
+    m_infoText="Total no. chars : "+QString::number(m_charData.count()/(8*scale)) +"\n"+ m_infoText;
+
+    m_screenData = sOut;
+    return 0;
+}
+
 
 static int DrawLine(lua_State* L) {
 
@@ -1052,6 +1068,7 @@ void DialogEffects::LoadScript(QString file)
 
     lua_register(m_script->L, "CompressAndSaveHorizontalData", CompressAndSaveHorizontalData);
     lua_register(m_script->L, "OptimizeScreenAndCharset", OptimizeScreenAndCharset);
+    lua_register(m_script->L, "CompressScreenAndCharset", CompressScreenAndCharset);
     lua_register(m_script->L, "CompressCharset", CompressCharset);
     lua_register(m_script->L, "SaveScreenAndCharset", SaveScreenAndCharset);
     lua_register(m_script->L, "SaveCompressedSpriteData", SaveCompressedSpriteData);

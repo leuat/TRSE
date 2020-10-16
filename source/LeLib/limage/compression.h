@@ -32,12 +32,14 @@ public:
 
     int CompareSprites(QByteArray& d1,QByteArray& d2, int sprite1, int sprite2);
 
+    void CompressScreenAndCharset(QVector<int>& screen, QByteArray& charset, QVector<int> &sOut, QByteArray& cOut, int sw, int sh, int charSize, int noTargetChar,int bmask);
+
     void OptimizeScreenAndCharset(QVector<int>& screen, QByteArray& charset, QVector<int> &sOut, QByteArray& cOut, int sw, int sh, int charSize, double compression,int type, LColorList& lst, int bmask);
     void OptimizeScreenAndCharsetGB(QVector<int>& screen, QByteArray& charset, QVector<int> &sOut, QByteArray& cOut, int sw, int sh, int charSize, double compression,int type, LColorList& lst, int bmask);
 
     void SaveCompressedSpriteData(QByteArray& data, QString dataFile, QString tableFile, int address, int compressionLevel);
 
-    double Compare(QByteArray& a, QByteArray& b, int p1, int p2, int length, int type, int bmask,LColorList& lst);
+    double Compare(QByteArray& a, QByteArray& b, int p1, int p2, int length, int type, int bmask);
 
     void OptimizeAndPackCharsetData(QByteArray& dataIn, QByteArray& out, QByteArray& table, int width, double compression, bool invertTable,int type,LColorList& lst, int bmask);
 

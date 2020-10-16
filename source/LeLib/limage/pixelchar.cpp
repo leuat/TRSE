@@ -371,12 +371,13 @@ double PixelChar::CompareLength4(PixelChar &other,LColorList& lst, int bmask)
 {
     other.m_lastBitmask = bmask;
     m_lastBitmask = bmask;
-    return 0;
     PixelCharSSIM p1,p2;
-    for (int i=0;i<4;i++) {
+    for (int i=0;i<8;i++) {
         p1.p[i] = p[i];
         p2.p[i] = other.p[i];
     }
+    p1.m_lastBitmask = 1;//bmask;
+    p2.m_lastBitmask = 1;//bmask;
     return p1.CalcSSIM(&p2);
 }
 
