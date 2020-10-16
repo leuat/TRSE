@@ -1,4 +1,5 @@
 #include "pixelchar.h"
+#include "limageqimage.h"
 
 PixelChar::PixelChar()
 {
@@ -18,6 +19,7 @@ unsigned char PixelChar::get(int x, int y, unsigned char bitMask)
 
 void PixelChar::set(int x, int y, unsigned char color, unsigned char bitMask, unsigned char maxCol, unsigned char minCol)
 {
+    m_lastBitmask = bitMask;
     if (x<0 || x>=8 || y<0 || y>=8) {
         qDebug() << "Trying to set " << x << ", " << y << " out of bounds";
         return;
@@ -241,9 +243,26 @@ int PixelChar::Count(unsigned int col, unsigned char bitMask, unsigned char scal
     return cnt;
 }
 
+double PixelChar::getVal(int x, int y) {
+    if (x<0 || x>=8 || y<0 || y>=8)
+        return 0;
+    int s = 1;
+    if (m_lastBitmask==0b11)
+        s = 2;
+
+    double d = (p[y]>>(x*s)) & m_lastBitmask;
+
+//    if (rand()%100>98)
+  //      qDebug() << d << m_lastBitmask << x << y << s;
+
+    if (d!=0) d+=1.5; // Always prioritze background color
+
+    return d;
+}
+
 void PixelChar::ForceBackgroundColor(int col, int swapcol)
 {
-//    if (c[0] == col)
+    //    if (c[0] == col)
   //      return;
 
     int idx = -1;
@@ -339,16 +358,16 @@ int PixelChar::CompareLength3(PixelChar &other)
         }
     }
 
-/*    for (int i=0;i<8;i+=2) {
-        for (int j=0;j<8;j+=2) {
-            char a = (p[i]>>(j))&0b11 + (p[i+1]>>(j))&0b11;
-            char b = (other.p[i]>>(j))&0b11 + (other.p[i+1]>>(j))&0b11;
-            s+=pow(a-b,2);
-        }
-    }
 
-*/
+
     return s;
+}
+
+double PixelChar::CompareLength4(PixelChar &other,LColorList& lst, int bmask)
+{
+    other.m_lastBitmask = bmask;
+    m_lastBitmask = bmask;
+    return CalcSSIM(&other);
 }
 
 uchar PixelChar::SwapColor(uchar data, uchar c1, uchar c2)

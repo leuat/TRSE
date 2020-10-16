@@ -134,6 +134,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagex16.cpp \
     source/LeLib/limage/lpen.cpp \
     source/LeLib/limage/pixelchar.cpp \
+    source/LeLib/limage/ssim.cpp \
     source/LeLib/util/fc8/FC8Compression.cpp \
     source/LeLib/util/lz4/lz4.c \
     source/LeLib/util/lz4/lz4hc.c \
@@ -333,6 +334,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagex16.h \
     source/LeLib/limage/lpen.h \
     source/LeLib/limage/pixelchar.h \
+    source/LeLib/limage/ssim.h \
     source/LeLib/util/fc8/FC8Compression.h \
     source/LeLib/util/lz4/lz4.h \
     source/LeLib/util/lz4/lz4hc.h \

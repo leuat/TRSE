@@ -332,7 +332,7 @@ QString LImageNES::getMetaInfo() {
     return txt;
 }
 
-void LImageNES::CompressAndSave(QByteArray &chardata, QVector<int> &screen, int x0, int x1, int y0, int y1, int &noChars, int compression, int maxChars) {
+void LImageNES::CompressAndSave(QByteArray &chardata, QVector<int> &screen, int x0, int x1, int y0, int y1, int &noChars, double compression, int maxChars) {
 
     QVector<PixelChar> charsA;
     QVector<PixelChar> charsB;

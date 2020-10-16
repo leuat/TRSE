@@ -18,6 +18,9 @@ class Compression
 public:
     Compression();
 
+    const int TYPE_REGULAR = 0;
+    const int TYPE_SSIM = 1;
+
     void SaveCharset(QString filename, QImage& img, int w, int h, int div);
     void AddScreen(QByteArray& data, QImage& img, int w, int h, char base, int div);
     void AddToDataX(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h);
@@ -29,14 +32,14 @@ public:
 
     int CompareSprites(QByteArray& d1,QByteArray& d2, int sprite1, int sprite2);
 
-    void OptimizeScreenAndCharset(QVector<int>& screen, QByteArray& charset, QVector<int> &sOut, QByteArray& cOut, int sw, int sh, int charSize, int compression);
-    void OptimizeScreenAndCharsetGB(QVector<int>& screen, QByteArray& charset, QVector<int> &sOut, QByteArray& cOut, int sw, int sh, int charSize, int compression);
+    void OptimizeScreenAndCharset(QVector<int>& screen, QByteArray& charset, QVector<int> &sOut, QByteArray& cOut, int sw, int sh, int charSize, double compression,int type, LColorList& lst, int bmask);
+    void OptimizeScreenAndCharsetGB(QVector<int>& screen, QByteArray& charset, QVector<int> &sOut, QByteArray& cOut, int sw, int sh, int charSize, double compression,int type, LColorList& lst, int bmask);
 
     void SaveCompressedSpriteData(QByteArray& data, QString dataFile, QString tableFile, int address, int compressionLevel);
 
-    int Compare(QByteArray& a, QByteArray& b, int p1, int p2, int length);
+    double Compare(QByteArray& a, QByteArray& b, int p1, int p2, int length, int type, int bmask,LColorList& lst);
 
-    void OptimizeAndPackCharsetData(QByteArray& dataIn, QByteArray& out, QByteArray& table, int width, int compression, bool invertTable);
+    void OptimizeAndPackCharsetData(QByteArray& dataIn, QByteArray& out, QByteArray& table, int width, double compression, bool invertTable,int type,LColorList& lst, int bmask);
 
     void ConvertToC64(bool dither);
 

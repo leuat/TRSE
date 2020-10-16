@@ -877,13 +877,18 @@ static int OptimizeScreenAndCharset(lua_State* L) {
 
     QByteArray cOut;
     QVector<int> sOut;
+    int type = 0;
     int scale = 1;
+//    if (lua_isuserdata(L, 5))
+        type = lua_tonumber(L,5);
+
+
     if (dynamic_cast<LImageGamboy*>(m_effect->m_mc)!=nullptr) {
         scale=2;
-        m_compression.OptimizeScreenAndCharsetGB(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+        m_compression.OptimizeScreenAndCharsetGB(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4),type,m_effect->m_mc->m_colorList,m_effect->m_mc->m_bitMask);
     }
     else
-    m_compression.OptimizeScreenAndCharset(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+    m_compression.OptimizeScreenAndCharset(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4),type,m_effect->m_mc->m_colorList,m_effect->m_mc->m_bitMask);
 //    m_charData.clear();
     m_charData = cOut;
     m_infoText="Total no. chars : "+QString::number(m_charData.count()/(8*scale)) +"\n"+ m_infoText;
@@ -961,7 +966,7 @@ static int CompressAndSaveHorizontalData(lua_State* L) {
 
 
 
-        m_compression.OptimizeAndPackCharsetData(ba, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1);
+        m_compression.OptimizeAndPackCharsetData(ba, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1,lua_tonumber(L,6),m_effect->m_mc->m_colorList,m_effect->m_mc->m_bitMask);
 
 
     QFile f(m_currentDir+"/"+lua_tostring(L,3));

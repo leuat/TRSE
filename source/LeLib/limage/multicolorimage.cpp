@@ -1293,7 +1293,7 @@ void MultiColorImage::RenderEffect(QMap<QString, float> params)
 
 }
 
-void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen, int x0,int x1, int y0, int y1, int& noChars, int compression, int maxChars) {
+void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen, int x0,int x1, int y0, int y1, int& noChars, double compression, int maxChars) {
     CharsetImage* ni = new CharsetImage(m_colorList.m_type);
 
     QVector<PixelChar> chars;
@@ -1314,10 +1314,10 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen
         p2.p[i]=0b10101010;
         p3.p[i]=0b01010101;
     }
-    chars.append(p0);
+/*    chars.append(p0);
     chars.append(p1);
     chars.append(p2);
-    chars.append(p3);
+    chars.append(p3);*/
     for (int j=0;j<sy;j++) {
 
         for (int i=0;i<sx;i++)
@@ -1325,11 +1325,15 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen
             PixelChar& pc = m_data[i+x0 + (j+y0)*m_charWidth];
             int pi = 0;
             bool found = false;
-            int cur = 1E5;
+            double cur = 1E5;
+
+            if (compression!=0.0)
             for (PixelChar& p : chars) {
 //                if (found)
   //                  break;
-                int metric = pc.CompareLength3(p);
+  //              double metric = pc.CompareLength3(p);
+                double metric = (pc.CompareLength4(p, m_colorList,m_bitMask));
+//                if (rand()%100>98) qDebug() << metric;
 //                int metric = pc.Compare(p);
                 if (metric <=compression && metric<cur ) {
                     data[i + j*sx] = pi;

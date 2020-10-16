@@ -413,10 +413,11 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
     QByteArray data;
     data.append(m_objects.count());
     QVector<QPoint> total;
+    uchar acount = 0;
+    int id = 0;
     for (AbstractRayObject* aro : m_objects) {
-
+        id++;
         QVector<QPoint> reduced;
-        int j=0;
   //      qDebug() << aro->m_2Dpoints.count();
 
         // Combine all 2D points from instances
@@ -424,6 +425,11 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
         QVector<QPoint> perhapsKill;
         for (int i=0;i<32;i++)
             all.append(aro->m_2Dpoints[i]);
+
+        if (all.count()==0)
+            continue;
+
+//        qDebug() << "Org size : " << all.count();
 
         for (QPoint p: all) {
             QPoint org = p;
@@ -457,33 +463,57 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
 //        perhapsKill.remove(0,std::min(maxx,perhapsKill.count()));
         killList.append(perhapsKill);
         total.append(reduced);
-        char cnt = reduced.count();
-        data.append(cnt);
+
         QVector<int> positions;
         for (QPoint p: reduced) {
+
             int i = base + p.x() + p.y()*40;
-            positions.append(i);
+            if (p.x()>=0 && p.x()<40 && p.y()>=0 && p.y()<25)
+                positions.append(i);
   //          qDebug() << Util::numToHex(i);
 //            data.append((char)((i)&0xFF));
   //          data.append((char)((i>>8)&0xFF));
         }
+        char cnt = positions.count();
+
         if (cnt!=0) {
             qSort(positions);
             //        qDebug() << positions;
+            // All
+
+/*
+              data.append(cnt*2);
+
+    for (int i=0; i<positions.count();i++) {
+
+                int org=positions[i];
+  //              qDebug() << "ORG " << Util::numToHex(org) << " cnt " << Util::numToHex(cnt);
+                data.append((char)((org)&0xFF));
+                data.append((char)((org>>8)&0xFF));
+            }*/
+
+            // Relative
+            data.append(cnt);
+            data.append((uchar)id);
+            qDebug() << Util::numToHex((uchar)id);
             int org=positions[0];
             data.append((char)((org)&0xFF));
             data.append((char)((org>>8)&0xFF));
-            data.append((char)0);
-            for (int i=1; i<positions.count();i++) {
-                data.append((uchar)(positions[i]-org));
+            for (int i=0; i<positions.count();i++) {
+                data.append((uchar)(positions[i]-org)&0xff);
             }
+
+            acount++;
+//            data.append((char)((positions.count()*2+1)&0xFF));
+            //            data.append((char)0);
         }
         else {
-            qDebug() << "CNT iS ZERO : " << QString::number(cnt);
-            int org = base;
+//            qDebug() << "CNT iS ZERO : " << QString::number(cnt);
+  //          int org = base;
         }
         for (int i=0;i<32;i++)
-        aro->m_2Dpoints[i].clear();
+          aro->m_2Dpoints[i].clear();
     }
+    data[0] = acount;
     Util::SaveByteArray(data,fileOutput);
 }

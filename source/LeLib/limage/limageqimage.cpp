@@ -162,6 +162,19 @@ void LImageQImage::LoadQImage(QString filename)
 
     if (!m_qImage->load(filename))
         qDebug() << "Could not find file " << filename;
+
+    m_width = m_qImage->width();
+    m_height = m_qImage->height();
+}
+
+double LImageQImage::getVal(int x, int y) {
+  //  unsigned int col = getPixel(x,y);// % 16;
+
+//            img->setPixel(i,j,QRgb(col));
+    QVector3D c = Util::fromColor(m_qImage->pixelColor(x,y));
+
+//    if (rand()%100>98) qDebug() << c << m_qImage->pixelColor(x,y);
+    return (c.x() + c.y() + c.z())/3.0/255.0;
 }
 
 
@@ -262,6 +275,8 @@ void LImageQImage::CopyFrom(LImage *img) {
     }
 
 }
+
+
 
 void LImageQImage::ApplyToLabel(QLabel *l)
 {

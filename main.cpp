@@ -165,6 +165,19 @@ void CircleAndAtan(QString f1, QString f2, int w, int h) {
 }
 
 
+void TestSSIM() {
+    LImageQImage ia, ib;
+    ia.LoadQImage("/home/leuat/Pictures/jupiter1.jpg");
+    ib.LoadQImage("/home/leuat/Pictures/jupiter1.jpg");
+    qDebug() <<" Self : " <<ia.CalcSSIM(&ib);
+    ib.LoadQImage("/home/leuat/Pictures/jupiter2.jpg");
+    qDebug() <<" jup 2 : " <<ia.CalcSSIM(&ib);
+    ib.LoadQImage("/home/leuat/Pictures/skullsanta.jpeg");
+    qDebug() <<" santa : " <<ia.CalcSSIM(&ib);
+    ib.LoadQImage("/home/leuat/Pictures/avail.png");
+    qDebug() <<" avail : " <<ia.CalcSSIM(&ib);
+}
+
 
 //https://www.c64-wiki.com/wiki/Commodore_Plus/4
 
@@ -178,6 +191,9 @@ int main(int argc, char *argv[])
 //    CircleAndAtan("/home/leuat/Dropbox/TRSE/gameboytest/data/circle.bin","/home/leuat/Dropbox/TRSE/gameboytest/data/atan.bin",16,16);
 /*    Tool::PathTool("/home/leuat/Pictures/pathtest/pathtest",
                    "/home/leuat/Dropbox/TRSE/SummerOfSquid/data/path",320,8);*/
+
+//    TestSSIM();
+
     QApplication a(argc, argv);
     a.setOrganizationDomain("lemonspawn.com");
     a.setApplicationName("TRSE");

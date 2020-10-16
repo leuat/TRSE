@@ -268,7 +268,7 @@ int Compression::CompareSprites(QByteArray &d1, QByteArray& d2, int sprite1, int
     return l;
 }
 
-void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &charset, QVector<int> &sOut, QByteArray &cOut, int sw, int sh, int charSize, int compression)
+void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &charset, QVector<int> &sOut, QByteArray &cOut, int sw, int sh, int charSize, double compression, int type,LColorList& lst, int bmask)
 {
     cOut.clear();
     sOut.clear();
@@ -279,7 +279,7 @@ void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &cha
         for (int x=0;x<sw*sh;x++)
             screen[i*sw*sh +x] = screen[i*sw*sh +x]+ charSize*i;
     }*/
-    qDebug() << sw << sh << charSize << screens << charset.count()/8;
+//    qDebug() << sw << sh << charSize << screens << charset.count()/8 << compression;
     int sum = 0;
     cOut.resize(32);
     for (int i=0;i<8;i++) {
@@ -302,11 +302,13 @@ void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &cha
 
 //            qDebug() << "   Current s: " << QString::number(s) ;
             int found = -1;
-            int curMin = 8000;
+            double curMin = 8000;
             for (int j=0;j<cOut.count()/8;j++) {
                 //int Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length)
-                int res = Compare(cOut, charset,j*8,s*8,8);
+                double res = Compare(cOut, charset,j*8,s*8,8, type, bmask,lst);
                 if (res<compression && res<curMin) {
+
+
                     found = j;
                     curMin = res;
     //                qDebug() << "Found similar: " << found;
@@ -332,7 +334,7 @@ void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &cha
 }
 
 
-void Compression::OptimizeScreenAndCharsetGB(QVector<int> &screen, QByteArray &charset, QVector<int> &sOut, QByteArray &cOut, int sw, int sh, int charSize, int compression)
+void Compression::OptimizeScreenAndCharsetGB(QVector<int> &screen, QByteArray &charset, QVector<int> &sOut, QByteArray &cOut, int sw, int sh, int charSize, double compression,int type,LColorList& lst, int bmask)
 {
     cOut.clear();
     sOut.clear();
@@ -343,7 +345,7 @@ void Compression::OptimizeScreenAndCharsetGB(QVector<int> &screen, QByteArray &c
         for (int x=0;x<sw*sh;x++)
             screen[i*sw*sh +x] = screen[i*sw*sh +x]+ charSize*i;
     }*/
-    qDebug() << sw << sh << charSize << screens << charset.count()/16;
+    qDebug() << sw << sh << charSize << screens << charset.count()/16 << compression;
     int sum = 0;
     cOut.resize(64);
     for (int i=0;i<8;i++) {
@@ -374,10 +376,10 @@ void Compression::OptimizeScreenAndCharsetGB(QVector<int> &screen, QByteArray &c
 
 //            qDebug() << "   Current s: " << QString::number(s) ;
             int found = -1;
-            int curMin = 80000;
+            double curMin = 80000;
             for (int j=0;j<cOut.count()/16;j++) {
                 //int Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length)
-                int res = Compare(cOut, charset,j*16,s*16,16);
+                double res = Compare(cOut, charset,j*16,s*16,16,type, bmask,lst);
                 if (res<compression && res<curMin) {
                     found = j;
                     curMin = res;
@@ -446,37 +448,58 @@ void Compression::SaveCompressedSpriteData(QByteArray &data, QString dataFile, Q
 
 }
 
-int Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length)
+double Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length, int type, int bmask, LColorList& lst)
 {
     int l = 0;
-    for (int i=0;i<length;i++) {
-        for (int j=0;j<8;j++) {
-            uchar k1 =(a[p1+i]>>(j)) & 0b1;
-            uchar k2 =(b[p2+i]>>(j)) & 0b1 ;
-            if (k1!=k2) {
-                l++;
-//                if ((i&1)==0)
-//                    qDebug() << "SHOULD NOT HAPPEN";
+    if (type==TYPE_REGULAR) {
+        for (int i=0;i<length;i++) {
+            for (int j=0;j<8;j++) {
+                uchar k1 =(a[p1+i]>>(j)) & 0b1;
+                uchar k2 =(b[p2+i]>>(j)) & 0b1 ;
+                if (k1!=k2) {
+                    l++;
+                    //                if ((i&1)==0)
+                    //                    qDebug() << "SHOULD NOT HAPPEN";
+                }
             }
         }
+        return l;
+
+    }
+
+   if (type==TYPE_SSIM) {
+       PixelChar pc1,pc2;
+       for (int j=0;j<8;j++) {
+           pc1.p[j] = a[p1+j];
+           pc2.p[j] = b[p2+j];
+       }
+       pc1.m_lastBitmask = bmask;
+       pc2.m_lastBitmask = bmask;
+       double l = pc1.CalcSSIM(&pc2);
+       return l;
+
+   }
+   qDebug() << "UKNOWN COMPRESSION TYPE";
+//    exit(1);
 
 
   //      if (a[p1+i]!=b[p2+i]) l++;
-    }
-    return l;
+  //  }
+    return -1;
 }
 
-void Compression::OptimizeAndPackCharsetData(QByteArray &dataIn, QByteArray &out, QByteArray &table, int width, int compression, bool invertTable)
+void Compression::OptimizeAndPackCharsetData(QByteArray &dataIn, QByteArray &out, QByteArray &table, int width, double compression, bool invertTable,int type, LColorList& lst, int bmask)
 {
     out.clear();
     table.clear();
 
     int cnt = dataIn.count()/width;
-    qDebug() << "Width : " << width;
+    qDebug() << "Width : " << width ;
     qDebug() << "Data count : " <<dataIn.count();
     qDebug() << "total rows: " << cnt;
     qDebug() << "total chars x frames: " << (cnt/width);
     qDebug() << "total chars: " << (cnt/32)/width;
+    qDebug() << "Compression : " << compression;
 
     qDebug() << "cnt SHOULD be " << (32*width*6*21);
 
@@ -485,7 +508,7 @@ void Compression::OptimizeAndPackCharsetData(QByteArray &dataIn, QByteArray &out
         unsigned short currentPointer = 0;
         bool isNew = true;
         for (int j=0;j<out.count()/width;j++) {
-            int metric = Compare(dataIn, out, i*width, j*width, width);
+            double metric = Compare(dataIn, out, i*width, j*width, width, type, bmask,lst);
             if (metric<compression) {
                 currentPointer =j*width;
                 isNew=false;

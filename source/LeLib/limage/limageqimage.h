@@ -23,10 +23,11 @@
 #define LIMAGEQIMAGE_H
 #include "source/LeLib/limage/lcolorlist.h"
 #include "source/LeLib/limage/limage.h"
+#include "ssim.h"
 #include <QImage>
 
 
-class LImageQImage : public LImage {
+class LImageQImage : public LImage, public SSIM {
 public:
     LImageQImage() {}
     LImageQImage(LColorList::Type t);
@@ -46,6 +47,13 @@ public:
     void LoadBin(QFile &f) override;
 
     void LoadQImage(QString filename);
+
+    // SSIM stuff
+    double getVal(int x, int y) override;
+    double getWidth() override {return m_width;}
+    double getHeight() override {return m_height;}
+    double getL() override {return 8;}
+
 
     virtual void ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center) override;
     void fromQImage(QImage* img, LColorList& lst) override;
@@ -74,5 +82,15 @@ public:
 
 
     void CopyFrom(LImage *img) override;
+
+    double SSIM(LImageQImage* other);
+    void calcMeanSigma(double& mu, double& s);
+    double calcLuminosity(LImageQImage* other);
+    double calcStructure(LImageQImage* other);
+    double calcContrast(LImageQImage* other);
+    double c1();
+    double c2();
+    double c3();
+
 };
 #endif // LIMAGEQIMAGE_H

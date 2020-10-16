@@ -5,14 +5,15 @@
 #include <QImage>
 #include <QDebug>
 #include "lcolorlist.h"
-
+#include "ssim.h"
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
-class PixelChar {
+class PixelChar : public SSIM {
 public:
     PixelChar();
     unsigned char p[8];
     unsigned char c[4];
+    int m_lastBitmask = 0b1;
     unsigned char get(int x, int y, unsigned char bitMask);
     void set(int x, int y, unsigned char color, unsigned char bitMask, unsigned char maxCol, unsigned char minCol);
     void set(int x, int y, unsigned char color, unsigned char bitMask);
@@ -29,6 +30,23 @@ public:
     void Reorganize(unsigned char bitMask, unsigned char Scale,unsigned char minCol, unsigned char maxCol, unsigned char bgCol);
     int Count(unsigned int col, unsigned char bitMask, unsigned char Scale);
 
+
+
+    double  getWidth() override {
+        if (m_lastBitmask==1)
+            return 8;
+        return 4;
+    }
+    double  getHeight() override {
+        return 8;
+    }
+
+    double  getL() override {
+        return 4;
+    }
+
+    double  getVal(int x, int y) override;
+
     void ForceBackgroundColor(int col, int swapcol);
 
     int Compare(PixelChar& other);
@@ -39,6 +57,7 @@ public:
     int CompareLength2(PixelChar& other);
 
     int CompareLength3(PixelChar& other);
+    double CompareLength4(PixelChar& other, LColorList& lst, int bmask);
 
     static uchar SwapColor(uchar data, uchar c1, uchar c2);
 
