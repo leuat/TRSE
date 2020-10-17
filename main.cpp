@@ -194,7 +194,6 @@ int main(int argc, char *argv[])
 
 //    TestSSIM();
 
-    qDebug() << sizeof(PixelChar);
   //  exit(1);
 
     QApplication a(argc, argv);

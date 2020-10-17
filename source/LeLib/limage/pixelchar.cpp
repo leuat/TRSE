@@ -258,6 +258,8 @@ double PixelCharSSIM::getVal(int x, int y) {
 //    if (rand()%100>98)
   //      qDebug() << d << m_lastBitmask << x << y << s;
 
+
+
     if (d!=0) d+=1.5; // Always prioritze background color
 
     return d;
@@ -300,6 +302,19 @@ void PixelChar::ForceBackgroundColor(int col, int swapcol)
 
 
 
+}
+
+bool PixelChar::isPure()
+{
+    uchar p0 =p[0];
+    if (!(p0==0b0 || p0==0b10101010 || p0 == 0b01010101 || p0 == 0b11111111))
+        return false;
+
+    for (int i=1;i<8;i++) {
+        if (p[i]!=p0)
+            return false;
+    }
+    return true;
 }
 
 int PixelChar::Compare(PixelChar &other) {

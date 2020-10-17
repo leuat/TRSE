@@ -278,6 +278,16 @@ void Compression::CompressScreenAndCharset(QVector<int> &screen, QByteArray &cha
         return;
     int screens = screen.size()/sw/sh;
 //    QByteArray curCharset = charset;
+
+    cOut.insert(0,32,0);
+/*    for (int i=0;i<8;i++) {
+        cOut[i+0] = 0;
+        cOut[i+8] = 0xFF;
+        cOut[i+16] = 0b10101010;
+        cOut[i+24] = 0b01010101;
+    }
+*/
+
     int curChars = cOut.count()/8;
 
     double compression = 0.01;

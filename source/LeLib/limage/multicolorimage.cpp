@@ -1315,10 +1315,10 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen
         p2.p[i]=0b10101010;
         p3.p[i]=0b01010101;
     }
-/*    chars.append(p0);
+    chars.append(p0);
     chars.append(p1);
     chars.append(p2);
-    chars.append(p3);*/
+    chars.append(p3);
     for (int j=0;j<sy;j++) {
 
         for (int i=0;i<sx;i++)

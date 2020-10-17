@@ -175,6 +175,7 @@ void Lexer::SkipComment()
 
     Advance();
     Advance();
+    m_isCurrentlyInABlockComment = false;
 
 }
 
@@ -355,6 +356,7 @@ Token Lexer::GetNextToken()
 
         if (m_currentChar=="/") {
             if (peek()=="*") {
+                m_isCurrentlyInABlockComment = true;
                 Advance();
                 Advance();
                 SkipComment();

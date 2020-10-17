@@ -351,19 +351,13 @@ void Parser::InitBuiltinFunction(QStringList methodName, QString builtinFunction
             return;
     }
     QString txt = m_lexer->m_text.toLower();
+    QRegularExpression expBlockComment("/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/");
+    QRegularExpression expEndComment("(\\/\\/[^\\n\\r]*(?:[\\n\\r]+|$))");
+    txt = txt.replace(expBlockComment,"");
+    txt = txt.replace(expEndComment,"");
+//    qDebug().noquote() << txt;
     for (QString s: methodName)
      if (txt.contains(s)) {
-         //if (m_procedures.contains(builtinFunctionName))
-             //m_ignoreBuiltinFunctionTPU.append(builtinFunctionName);
-         //qDebug() << "ALRADY COMTAINS " << builtinFunctionName;
-//         Node::m_staticBlockInfo.m_blockID=-1;
-//         qDebug() <<m_ignoreBuiltinFunctionTPU;
-         /*if (!m_ignoreBuiltinFunctionTPU.contains(builtinFunctionName))
-            m_procedures[builtinFunctionName] = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(Token(TokenType::PROCEDURE, builtinFunctionName), builtinFunctionName));
-         else {
-             m_procedures.remove(builtinFunctionName);
-            qDebug() << "IGNORING CREATING NEW " <<builtinFunctionName;
-         }*/
          m_procedures[builtinFunctionName] = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(Token(TokenType::PROCEDURE, builtinFunctionName), builtinFunctionName));
          m_ignoreBuiltinFunctionTPU.append(builtinFunctionName);
         if (initJump!="")
@@ -916,6 +910,13 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             if (m_currentToken.m_type==TokenType::INTEGER_CONST)
                 Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="setcompressionweights") {
+            Eat();
+            Eat();
+            Eat();
+            Eat();
             return;
         }
         if (m_currentToken.m_value=="exportblackwhite") {
@@ -2077,6 +2078,10 @@ void Parser::PreprocessSingle() {
               else if (m_currentToken.m_value.toLower() =="export") {
                   Eat(TokenType::PREPROCESSOR);
                   HandleExport();
+              }
+              else if (m_currentToken.m_value.toLower() =="setcompressionweights") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleSetCompressionWeights();
               }
               else if (m_currentToken.m_value.toLower() =="exportblackwhite") {
                   Eat(TokenType::PREPROCESSOR);
@@ -3433,6 +3438,20 @@ void Parser::HandleExportPalette()
 
     img->ExportRGB8Palette(outFile);
 
+}
+
+void Parser::HandleSetCompressionWeights()
+{
+    double param1 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    double param2 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    double param3 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    SSIM::weight_contrast = param3/100.0;
+    SSIM::weight_structure = param2/100.0;
+    SSIM::weight_luminosity = param1/100.0;
 }
 
 void Parser::HandleMacro()

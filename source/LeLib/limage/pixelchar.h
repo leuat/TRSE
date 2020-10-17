@@ -32,6 +32,8 @@ public:
 
     void ForceBackgroundColor(int col, int swapcol);
 
+    bool isPure();
+
     int Compare(PixelChar& other);
     void Invert();
 

@@ -223,6 +223,7 @@ public:
 
 
     void HandleExportPalette();
+    void HandleSetCompressionWeights();
     void HandleMacro();
     void HandleCallMacro(QString name, bool ignore);
     void HandleExportCompressed();

@@ -59,6 +59,7 @@ public:
     QString m_path;
     QVector<FilePart> m_includeFiles;
     bool m_ignorePreprocessor, m_nextIsReference = false;
+    bool m_isCurrentlyInABlockComment = false;
 
     QString m_currentComment="";
 
