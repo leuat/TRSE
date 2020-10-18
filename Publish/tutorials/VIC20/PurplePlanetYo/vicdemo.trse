@@ -55,5 +55,4 @@ build_list = ,
 ignore_initial_jump = 0
 remove_unused_symbols = 1
 zeropage_colormemory = $fc
-open_files = ,demo.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/VIC20/PurplePlanetYo/
+open_files =, demo.ras

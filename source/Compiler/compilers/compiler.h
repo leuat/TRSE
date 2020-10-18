@@ -58,7 +58,7 @@ public:
     virtual void Connect() = 0;
 
 
-    virtual bool SetupMemoryAnalyzer(QString filename) {};
+    virtual bool SetupMemoryAnalyzer(QString filename) { return true;}
 
     void Parse(QString text, QStringList lst, QString fname);
     bool Build( QSharedPointer<AbstractSystem> system, QString projDir);
