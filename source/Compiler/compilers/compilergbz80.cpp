@@ -49,11 +49,11 @@ void CompilerGBZ80::Connect()
 
 }
 
-void CompilerGBZ80::SetupMemoryAnalyzer(QString filename)
+bool CompilerGBZ80::SetupMemoryAnalyzer(QString filename)
 {
     QString s = Util::loadTextFile(filename+".sym");
     if (!QFile::exists(filename+".sym"))
-        return;
+        return false;
 
 
     QStringList lst = s.split("\n");
@@ -103,5 +103,6 @@ void CompilerGBZ80::SetupMemoryAnalyzer(QString filename)
     for (int k: banks.keys())
         m_assembler->blocks.append(banks[k]);
     m_assembler->m_noBanks = banks.count();
+    return true;
 }
 

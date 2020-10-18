@@ -538,5 +538,6 @@
         <file>resources/text/help/r/vbmexportcolor.rtf</file>
         <file>resources/code/amstrad/unpack.asm</file>
         <file>resources/text/help/p/asm_tips.rtf</file>
+        <file>resources/images/error.png</file>
     </qresource>
 </RCC>

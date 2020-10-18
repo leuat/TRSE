@@ -402,7 +402,10 @@ static int AddObject(lua_State *L)
 
         mat.m_shininess_strength = m_script->get<float>(material+".shininess_intensity");
         if (m_script->lua_exists(material+".checkerboard")) {
-            mat.m_checkerBoard = QVector3D(m_script->get<float>(material+".checkerboard"),0,0);
+            mat.m_checkerBoard.setX(m_script->get<float>(material+".checkerboard"));
+        }
+        if (m_script->lua_exists(material+".checkerboard_color")) {
+            mat.m_checkerBoard_color = m_script->getVec(material+".checkerboard_color");
         }
         obj->SetMaterial(mat);
 

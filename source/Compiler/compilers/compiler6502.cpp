@@ -177,16 +177,16 @@ void Compiler6502::Init6502Assembler()
 
 }
 
-void Compiler6502::SetupMemoryAnalyzer(QString filename)
+bool Compiler6502::SetupMemoryAnalyzer(QString filename)
 {
     Orgasm orgAsm;
     orgAsm.SetupConstants(m_parser.m_symTab);
     //orgAsm.Codes();
     orgAsm.Assemble(filename+".asm", filename+".prg");
-    if (!orgAsm.m_success) {
+  /*  if (!orgAsm.m_success) {
         return;
     }
-
+*/
     int i = 1;
 
     // Loop through all symbols for a startblock
@@ -208,7 +208,7 @@ void Compiler6502::SetupMemoryAnalyzer(QString filename)
                     if (bl->m_start == start)
                         if (bl->m_name!="")
                             name = bl->m_name;
-                qDebug() << "Adding cod eblock with name : "<<name;
+//                qDebug() << "Adding cod eblock with name : "<<name;
 
                 m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start, end, MemoryBlock::CODE, name)));
             }
@@ -242,6 +242,26 @@ void Compiler6502::SetupMemoryAnalyzer(QString filename)
 
     }
 
+    qSort(m_assembler->blocks.begin(), m_assembler->blocks.end(),
+           [](const auto& a, const auto& b) { return a->m_start < b->m_start; });
+
+
+    // Check for overlaps:
+    for (int i=0;i<m_assembler->blocks.count();i++) {
+        auto x = m_assembler->blocks[i];
+        for (int j=i+1;j<m_assembler->blocks.count();j++) {
+            auto y = m_assembler->blocks[j];
+//            x1 <= y2 && y1 <= x2
+            if (x->m_start<y->m_end && y->m_start<x->m_end) {
+             //   qDebug() << "OVERLAP " << Util::numToHex(x->m_start)<<Util::numToHex(x->m_end) << " vs " << Util::numToHex(y->m_start)<<Util::numToHex(y->m_end);
+                x->m_isOverlapping = true;
+                y->m_isOverlapping = true;
+                y->m_shift = x->m_shift+1;
+            }
+        }
+    }
+
+    return orgAsm.m_success;
 }
 
 int Compiler6502::FindEndSymbol(Orgasm &orgasm)

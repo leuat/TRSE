@@ -31,11 +31,21 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
         if (symTab!=nullptr)
             orgAsm.SetupConstants(symTab);
         if (symTab!=nullptr)
-         orgAsm.m_extraSymbols = symTab->m_extraAtSymbols;
-           orgAsm.Assemble(filename+".asm", filename+".prg");
+            orgAsm.m_extraSymbols = symTab->m_extraAtSymbols;
+        orgAsm.Assemble(filename+".asm", filename+".prg");
 
-        output = orgAsm.m_output;
         disconnect(&orgAsm, SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
+        output = orgAsm.m_output;
+        if (orgAsm.m_hasOverlappingError) {
+            output = orgAsm.error.msg;
+            output +="<br><br>Line "+QString::number(orgAsm.error.oline.m_lineNumber+1)+ " in " +"<font color=\"orange\">"+filename+" :</font> "" : " +orgAsm.error.oline.m_orgLine;
+            m_orgOutput = output;
+            text="<font color=\"#FF6040\">Fatal error during OrgAsm assembly!</font><br>";
+            text+=output;
+            m_buildSuccess = false;
+            return;
+
+        }
 
         m_addresses = orgAsm.m_lineAddress;
         if (m_projectIni->getdouble("output_debug_symbols")==1.0)

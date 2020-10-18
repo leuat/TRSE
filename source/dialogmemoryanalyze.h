@@ -53,6 +53,7 @@ class DialogMemoryAnalyze : public QDialog
     int time = 0;
 
 public:
+    bool m_success;
     explicit DialogMemoryAnalyze(QSharedPointer<CIniFile> ini, AbstractSystem* system, QWidget *parent = 0);
     void Initialize(QVector<QSharedPointer<MemoryBlock>>& blocks, int fontSize);
     int m_noBanks = 0;

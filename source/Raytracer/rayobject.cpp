@@ -85,8 +85,9 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
             //mul.setZ(fmod(abs(n.z()), x)>x/2);
             float mul = fmod(abs(n.x()+100), x)>x/3;
             mul = mul*fmod(abs(n.y()+100), x)>x/3;
+
 //            mul = mul*fmod(abs(n.z()), x)>x/2;
-            col = col*mul;
+            col = m_material.m_checkerBoard_color*(1.0-mul) + col*mul;
         }
         if (pass==0)
         {

@@ -37,6 +37,8 @@ class MemoryBlock {
     int m_start, m_end, m_lineNumber, m_bank=-1;
     enum Type {CODE, DATA, MUSIC, USER, ARRAY};
     Type m_type = CODE;
+    bool m_isOverlapping = false;
+    int m_shift = 0;
     QVector<int> m_zeropages;
     QString m_name;
     int m_currentLineNumber;

@@ -76,7 +76,7 @@ void CompilerZ80::Connect()
 
 }
 
-void CompilerZ80::SetupMemoryAnalyzer(QString filename)
+bool CompilerZ80::SetupMemoryAnalyzer(QString filename)
 {
  /*   Orgasm orgAsm;
     orgAsm.SetupConstants(m_parser.m_symTab);
@@ -177,6 +177,6 @@ void CompilerZ80::SetupMemoryAnalyzer(QString filename)
     //if (Syntax::s.m_currentSystem->m_startAddress!=Syntax::s.m_currentSystem->m_programStartAddress)
     //    start = Syntax::s.m_currentSystem->m_programStartAddress;
     m_assembler->blocks = codeBlocks <<m_assembler->blocks;
-
+    return true;
 }
 

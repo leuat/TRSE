@@ -17,7 +17,7 @@ public:
 
     void Init6502Assembler();
 
-    void SetupMemoryAnalyzer(QString filename) override;
+    bool SetupMemoryAnalyzer(QString filename) override;
 
 
     int FindEndSymbol(Orgasm& orgasm);

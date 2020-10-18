@@ -255,13 +255,17 @@ bool Orgasm::Assemble(QString filename, QString outFile)
     emit EmitTick(" [symbols] ");
     Compile(OrgasmData::PASS_SYMBOLS);
 
-    m_success = true;
+    if (!m_hasOverlappingError)
+        m_success = true;
+
     if (QFile::exists(outFile))
         QFile::remove(outFile);
-    QFile out(outFile);
-    out.open(QFile::WriteOnly);
-    out.write(m_data);
-    out.close();
+    if (m_success) {
+        QFile out(outFile);
+        out.open(QFile::WriteOnly);
+        out.write(m_data);
+        out.close();
+    }
     m_output = "Complete.";
 
 
@@ -367,6 +371,8 @@ void Orgasm::Compile(OrgasmData::PassType pt)
             else {
                 throw OrgasmError("OrgAsm error: symbol '"+ol.m_label+"' already defined",ol);
             }
+            if (!ol.m_label.toLower().contains("endblock"))
+                m_prevLabel = ol.m_label;
         }
         ol.m_pos = m_pCounter;
         if (pt == OrgasmData::PASS_LABELS && ol.m_rasLineNumber!=0) {
@@ -377,6 +383,7 @@ void Orgasm::Compile(OrgasmData::PassType pt)
             }
             if (ok)
                 m_lineAddress[ol.m_rasLineNumber] = ol.m_pos;
+
         }
 
 //        qDm_pCounter
@@ -536,9 +543,12 @@ void Orgasm::ProcessOrgData(OrgasmLine &ol)
 
         int val = Util::NumberFromStringHex(Util::BinopString(ol.m_expr));
         if (val<m_pCounter) {
-            QString e = "Origin reversed index. Trying to move program counter backwards to '"+Util::numToHex(val)+"' from current counter " + Util::numToHex(m_pCounter)+". ";
-            e+="<br><br><font color=\"#FF7020\">Oh no! You have included/defined overlapping data!</font><br><font color=\"#60FFFF\">Please make sure that your included data does not overlap, and make use of the memory analyzer tool!</font>";
-            throw OrgasmError(e,ol);
+            QString e = "Origin reversed index. Trying to move program counter backwards to '"+Util::numToHex(val)+"' from current counter " + Util::numToHex(m_pCounter)+".";
+            e+="<br>Overlap concerns label : <b><font color=\"#FFFF20\">"+ m_prevLabel+"</font></b>";
+            e+="<br><font color=\"#FF7020\">Oh no! You have included/defined overlapping data!</font><br><font color=\"#60FFFF\">Please make sure that your included data does not overlap, and make use of the memory analyzer tool!</font>";
+            error = OrgasmError(e,ol);
+            m_hasOverlappingError  = true;
+//            throw OrgasmError(e,ol);
         }
 
         while (m_pCounter<val) {

@@ -351,6 +351,7 @@ void Parser::InitBuiltinFunction(QStringList methodName, QString builtinFunction
             return;
     }
     QString txt = m_lexer->m_text.toLower();
+    // Remove comments  /* */ and // from text
     QRegularExpression expBlockComment("/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/");
     QRegularExpression expEndComment("(\\/\\/[^\\n\\r]*(?:[\\n\\r]+|$))");
     txt = txt.replace(expBlockComment,"");

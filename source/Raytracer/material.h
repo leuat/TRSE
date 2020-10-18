@@ -43,6 +43,7 @@ public:
     float m_uvScale = 0.03;
     float m_perlinScale = 5;
     QVector3D m_checkerBoard = QVector3D(0,0,0);
+    QVector3D m_checkerBoard_color = QVector3D(0,0,0);
     Texture m_texture;
     bool m_hasTexture = false;
 

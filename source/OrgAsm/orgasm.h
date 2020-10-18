@@ -133,11 +133,14 @@ public:
 
 class OrgasmError {
 public:
-    QString msg;
+    QString msg = "";
     OrgasmLine oline;
     OrgasmError(QString s, OrgasmLine ln) {
         msg = s;
         oline = ln;
+    }
+    OrgasmError() {
+        msg = "";
     }
 };
 
@@ -146,6 +149,7 @@ public:
 class Orgasm  : public QObject{
     Q_OBJECT
 public:
+
     int m_curRasLine = 0;
     QString m_source;
     QStringList m_lines;
@@ -159,11 +163,14 @@ public:
     QVector<OrgasmLine> m_olines;
     bool m_success = false;
     int m_constantPassLines;
+    int m_hasOverlappingError = false;
     QByteArray m_data;
     QMap<QString, QRegExp*> m_regs;
     QMap<int,int> m_lineAddress;
     QString m_output;
+    QString m_prevLabel = "";
 
+    OrgasmError error;
 
     void SetupConstants(QSharedPointer<SymbolTable> symTab) {
         for(QString k: symTab->m_constants.keys()) {

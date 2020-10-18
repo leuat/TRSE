@@ -107,6 +107,14 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
     time = time +1;
 
     RenderSystemLabels(p,xstart,fontSize);
+    QPixmap imgError(":resources/images/error.png");
+    if (!m_success) {
+        int sx = xsize/10;
+        p.setFont(QFont("Courier", fontSize*2, QFont::Bold));
+         p.drawPixmap(10,10,sx,sx, imgError);  // this works
+         p.drawText(QRect(sx+10,sx/2,xsize,fontSize*3), Qt::AlignLeft | Qt::AlignVCenter, "Compile failed");
+    }
+
 
     for (QSharedPointer<MemoryBlock> mb:blocks) {
         float y0 = (mb->m_start/(float)m_system->m_memorySize)*ysize;
@@ -129,6 +137,13 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
 
         int x1 = xstart;
         int x2 = xsize;
+
+        if (mb->m_isOverlapping) {
+            int w = xsize / 50;
+            p.drawPixmap(Trans(x1,y0,w,w), imgError);  // this works
+            x1 = x1 + w*(mb->m_shift+1);
+
+        }
 
         if (mb->m_bank>=0) {
             int dx = xsize/m_noBanks;

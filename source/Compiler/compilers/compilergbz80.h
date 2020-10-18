@@ -12,7 +12,7 @@ public:
 
     void Connect() override;
 
-    void SetupMemoryAnalyzer(QString filename) override;
+    bool SetupMemoryAnalyzer(QString filename) override;
 
 };
 

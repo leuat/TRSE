@@ -31,12 +31,12 @@ begin
 	definescreen();
 	
 	// next order of business is to initialise the screen by setting the screen and colour memory with the values we want to use
-	clearscreen(32, screen_char_loc);		// clearscreen to fill the screen_char_loc screen memory with the character code 32, this is a SPACE character
-	clearscreen(WHITE, screen_col_loc);		// clearscreen to fill the screen_col_loc colour memory with the colour code for WHITE
+	clearscreen(32, #screen_char_loc);		// clearscreen to fill the screen_char_loc screen memory with the character code 32, this is a SPACE character
+	clearscreen(WHITE, #screen_col_loc);		// clearscreen to fill the screen_col_loc colour memory with the colour code for WHITE
 
 	// definescreen() above provided the 'screenmemory' pointer.  This pointer can be used to write to the screen or colour memory
 	// There are two ways of using it:
-	screenmemory := screen_char_loc;		// 1) here we assign screenmemory with the address of the screen ($0400)
+	screenmemory := #screen_char_loc;		// 1) here we assign screenmemory with the address of the screen ($0400)
 	screenmemory[0] := 1;					// 2) by adding [0] to the variable name, we can write to the address screenmemory is pointing to, ie: write to address $0400 
 	
 	screenmemory[1] := 2;					// changing to [1] is the next address of $0401
