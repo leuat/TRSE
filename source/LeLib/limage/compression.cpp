@@ -279,7 +279,7 @@ void Compression::CompressScreenAndCharset(QVector<int> &screen, QByteArray &cha
     int screens = screen.size()/sw/sh;
 //    QByteArray curCharset = charset;
 
-    cOut.insert(0,32,0);
+//    cOut.insert(0,32,0);
 /*    for (int i=0;i<8;i++) {
         cOut[i+0] = 0;
         cOut[i+8] = 0xFF;
@@ -290,7 +290,7 @@ void Compression::CompressScreenAndCharset(QVector<int> &screen, QByteArray &cha
 
     int curChars = cOut.count()/8;
 
-    double compression = 0.01;
+    double compression = 0.03;
     int pass = 0;
 //    for (int i=0;i<sOut.count();i++)
  //       qDebug() << "Sout : " << i << sOut[i];

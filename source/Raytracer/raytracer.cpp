@@ -408,13 +408,15 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
     return false;
 }
 
-void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QPoint>& killList)
+void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QPoint>& killList, QImage &img)
 {
     QByteArray data;
     data.append(m_objects.count());
-    QVector<QPoint> total;
+//    QVector<QPoint> total;
     uchar acount = 0;
     int id = 0;
+    QVector<int> taken;
+//    img.save("testA.png");
     for (AbstractRayObject* aro : m_objects) {
         id++;
         QVector<QPoint> reduced;
@@ -430,80 +432,81 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
             continue;
 
 //        qDebug() << "Org size : " << all.count();
-
+//        if (id>5) continue;
         for (QPoint p: all) {
-            QPoint org = p;
-            p.setX(p.x()/4);
-            p.setY(p.y()/8);
-            bool ok=true;
-            bool kill = true;
-            for (QPoint op:reduced)
-                if (op==p) {
-                    ok=false;
-                    kill = false;
-                }
+            //            img.setPixelColor(p.x(),p.y(),Qt::red);
+            QColor org = img.pixelColor(p.x(),p.y());
+            p.setX((p.x()+0.5)/4.0);
+            p.setY((p.y()+0.5)/8.0);
 
-/*            for (QPoint op:total)
-                if (op==p) {
-                    ok=false;
-                    kill = false;
-                }
-*/
-            if (ok && reduced.count()<maxx) {
+//            if (rand()%100>95) qDebug() << org;
+            if (org.red()==0 && org.blue() == 0 && org.green()==0)
+            if (!reduced.contains(p)) {
                 reduced.append(p);
-    //            perhapsKill.append(org);
-//                total.append(p);
             }
-            else if (kill) perhapsKill.append(org);
         }
 
-//        if (reduced.count()>)
-  //      if (reduced.count()>maxx) reduced.resize(maxx);
-        // Kill avereything above
-//        perhapsKill.remove(0,std::min(maxx,perhapsKill.count()));
         killList.append(perhapsKill);
-        total.append(reduced);
+  //      total.append(reduced);
 
         QVector<int> positions;
         for (QPoint p: reduced) {
 
             int i = base + p.x() + p.y()*40;
-            if (p.x()>=0 && p.x()<40 && p.y()>=0 && p.y()<25)
-                positions.append(i);
+
+            if (p.x()>=0 && p.x()<40 && p.y()>=0 && p.y()<25) {
+                if (!taken.contains(i)) {
+                    positions.append(i);
+                    taken.append(i);
+                }
+
+
+            }
   //          qDebug() << Util::numToHex(i);
 //            data.append((char)((i)&0xFF));
   //          data.append((char)((i>>8)&0xFF));
         }
-        char cnt = positions.count();
+        int cnt = positions.count();
 
         if (cnt!=0) {
             qSort(positions);
-            //        qDebug() << positions;
-            // All
+//            qDebug() << positions;
+             int cur = 0;
+             int times = 0;
+             while (cnt!=0)
+             {
+                int size = min(cnt,255);
+                int sizePos = data.count();
+                data.append((uchar)size);
 
-/*
-              data.append(cnt*2);
+                data.append((uchar)id);
+               // qDebug() << "CUR : " <<QString::number(times) << QString::number(cnt) << QString::number(size);
 
-    for (int i=0; i<positions.count();i++) {
+                //qDebug() << Util::numToHex((uchar)id);
+                int org=positions[cur];
+                data.append((uchar)((org)&0xFF));
+                data.append((uchar)((org>>8)&0xFF));
+//                data.append((uchar)0);
+                for (int i=0; i<size;i++) {
+                    int diff = positions[i+cur]-org;
+                    if (diff>16) {
+//                        qDebug() << "OH NOES POS TOO LARGE CNT SIZE"<<QString::number(cnt) << QString::number(size);;
+                        size=i; // Break
+                        data[sizePos] = size; // Reset size
+                        break;
+  //                      qDebug() << "NEW SIZE CNT SIZE "<<QString::number(cnt)<<QString::number(size);
 
-                int org=positions[i];
-  //              qDebug() << "ORG " << Util::numToHex(org) << " cnt " << Util::numToHex(cnt);
-                data.append((char)((org)&0xFF));
-                data.append((char)((org>>8)&0xFF));
-            }*/
+                    }
+                    else
+                       data.append((uchar)(diff)&0xff);
+                }
+//                qDebug() << "ADDED SIZE "<< QString::number(size) << QString::number(times);
+                cur+=size;
+                cnt-=size;
+                times++;
 
-            // Relative
-            data.append(cnt);
-            data.append((uchar)id);
-            qDebug() << Util::numToHex((uchar)id);
-            int org=positions[0];
-            data.append((char)((org)&0xFF));
-            data.append((char)((org>>8)&0xFF));
-            for (int i=0; i<positions.count();i++) {
-                data.append((uchar)(positions[i]-org)&0xff);
-            }
-
-            acount++;
+                acount++;
+             }
 //            data.append((char)((positions.count()*2+1)&0xFF));
             //            data.append((char)0);
         }
@@ -516,4 +519,5 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
     }
     data[0] = acount;
     Util::SaveByteArray(data,fileOutput);
+  //  img.save("testB.png");
 }

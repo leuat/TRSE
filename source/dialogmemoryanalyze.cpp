@@ -140,7 +140,8 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
 
         if (mb->m_isOverlapping) {
             int w = xsize / 50;
-            p.drawPixmap(Trans(x1,y0,w,w), imgError);  // this works
+            int px1 = x1 + w*(mb->m_shift);
+            p.drawPixmap(Trans(px1,y0,w,w), imgError);  // this works
             x1 = x1 + w*(mb->m_shift+1);
 
         }

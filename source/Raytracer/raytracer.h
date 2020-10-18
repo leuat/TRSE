@@ -50,7 +50,7 @@ public:
 
     bool RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, int cnt, int tid, QPoint point);
 
-    void Compile2DList(QString fileOutput, int base, int maxx, QVector<QPoint>& killList);
+    void Compile2DList(QString fileOutput, int base, int maxx, QVector<QPoint>& killList,QImage &img);
 };
 
 #endif // RAYTRACER_H

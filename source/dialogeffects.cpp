@@ -698,7 +698,7 @@ static int Save2DInfo(lua_State* L) {
     int base = lua_tonumber(L,2);
     int maxx = lua_tonumber(L,3);
     QVector<QPoint> killList;
-    m_rt.Compile2DList(file,base,maxx, killList);
+    m_rt.Compile2DList(file,base,maxx, killList, m_effect->m_post);
 
    // MultiColorImage mc(m_effect->m_mc->m_colorList.m_type);
   //  mc.m_data[0].C = m_charData;
@@ -924,6 +924,10 @@ static int DrawLine(lua_State* L) {
     painter.setPen(QPen(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)), lua_tonumber(L,8), Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
     painter.drawLine(lua_tonumber(L,1),lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
     painter.end();
+    painter.begin(&m_effect->m_post);
+    painter.setPen(QPen(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)), lua_tonumber(L,8), Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
+    painter.drawLine(lua_tonumber(L,1),lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+    painter.end();
 //    m_effect->m_img.fill((Qt::red));
     return 0;
 }
@@ -932,6 +936,11 @@ static int DrawRect(lua_State* L) {
 
     QPainter painter;
     painter.begin(&m_effect->m_img);
+    painter.setPen(QPen(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)), lua_tonumber(L,8), Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
+    painter.setBrush(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)));
+    painter.drawRect(lua_tonumber(L,1),lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+    painter.end();
+   painter.begin(&m_effect->m_post);
     painter.setPen(QPen(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)), lua_tonumber(L,8), Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
     painter.setBrush(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)));
     painter.drawRect(lua_tonumber(L,1),lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
@@ -945,6 +954,13 @@ static int DrawCircle(lua_State* L) {
 
     QPainter painter;
     painter.begin(&m_effect->m_img);
+    painter.setPen(QPen(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)), lua_tonumber(L,8), Qt::SolidLine,Qt::SquareCap, Qt::BevelJoin));
+    painter.setBrush(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)));
+    painter.drawEllipse(lua_tonumber(L,1)-lua_tonumber(L,3)/(float)2,
+                       lua_tonumber(L,2)-lua_tonumber(L,4)/(float)2,
+                       lua_tonumber(L,3),lua_tonumber(L,4));
+    painter.end();
+    painter.begin(&m_effect->m_post);
     painter.setPen(QPen(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)), lua_tonumber(L,8), Qt::SolidLine,Qt::SquareCap, Qt::BevelJoin));
     painter.setBrush(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)));
     painter.drawEllipse(lua_tonumber(L,1)-lua_tonumber(L,3)/(float)2,

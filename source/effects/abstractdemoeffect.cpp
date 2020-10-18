@@ -3,6 +3,7 @@
 AbstractDemoEffect::AbstractDemoEffect(QGridLayout* gl)
 {
     m_img = QImage(320,200,QImage::Format_ARGB32);
+    m_post = QImage(320,200,QImage::Format_ARGB32);
     m_gl = gl;
 }
 

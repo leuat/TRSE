@@ -53,6 +53,7 @@ void DemoEffectRaytracer::Initialize()
 
    m_rt->m_globals.m_lights[0]->m_color = QVector3D(1,1,0.7);
    m_img = QImage(m_rt->m_globals.m_orgWidth,m_rt->m_globals.m_orgHeight,QImage::Format_ARGB32);
+   m_post = QImage(m_rt->m_globals.m_orgWidth,m_rt->m_globals.m_orgHeight,QImage::Format_ARGB32);
 //   m_rt->m_objects.clear();
 
 }
@@ -110,8 +111,12 @@ void DemoEffectRaytracer::Render(QImage &img)
 
     m_elapsedTime = m_timer.elapsed();
     m_outputType = m_rt->m_globals.m_outputType;
+    m_post.fill(0);
     if (m_script->lua_exists("PostProcess"))
         luaL_dostring(m_script->L, "PostProcess()");
+
+
+
 
     if (m_rt->m_globals.m_smooth!=0) {
         LImageQImage img;
@@ -124,10 +129,10 @@ void DemoEffectRaytracer::Render(QImage &img)
     w = m_rt->m_globals.m_width;
     h = m_rt->m_globals.m_height;
     if (w!=m_rt->m_globals.m_orgWidth || h!=m_rt->m_globals.m_orgHeight) {
-        m_img.save("testBefore.png");
+/*        m_img.save("testBefore.png");
         m_img  = m_img.scaled(w,h,Qt::IgnoreAspectRatio,
                               Qt::SmoothTransformation);
-        m_img.save("testAfter.png");
+        m_img.save("testAfter.png");*/
 //        qDebug() << "Scaling..";
     }
 

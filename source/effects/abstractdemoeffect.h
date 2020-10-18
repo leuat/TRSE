@@ -28,7 +28,7 @@ class AbstractDemoEffect : public QThread
 {
     Q_OBJECT
 public:
-    QImage m_img;
+    QImage m_img, m_post;
     QPixmap m_pixmap;
     float m_time=0;
     bool m_ready = true;
