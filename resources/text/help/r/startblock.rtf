@@ -1,8 +1,144 @@
 <h3>Description</h3>
-<p></p>
+<p>The @startblock preprocessor is used to tell TRSE that the containing code and data should
+go into a different place in memory specified by the start address supplied. ANd @endblock is
+required to tell TRSE where the block ends.</p>
 
+<p>It takes an address followed by a string description that will appear in the memory analyzer.</p>
 
 <h3>Example</h3>
 
 <code>
+@startblock $A000 "CARTAUTOSTART"
+
+procedure cartAutostart();
+begin
+
+	Cart::Autostart();
+	
+end;
+
+@endblock
+</code>
+
+<p>In the above, the 'cartAutostart' procedure is placed at address $a000 in memory.</p>
+
+<p>@startblock is useful for certain architectures, such as the expanded Vic 20, 
+to make best use of available RAM.</p>
+
+<h3>Vic 20 with 32K RAM expansion</h3>
+<p>A Vic 20 with 32K RAM added has a memory map as follows:</p>
+<ul>
+<li>$1000 - $7fff = 28K RAM with screen at $1000 and Code starting after $1200</li>
+<li>$a000 - $bfff = 8K RAM, usually for cartriged</li>
+</ul>
+<p>TRSE can happily use the memory in the first 28K of RAM because it is continuous. 
+With @startblock, the additional 8K of RAM can be used.</p>
+
+<h3>32K cartridge example:</h3>
+<p>This is the Vic 20 32K VBM cart template (go to New Project --> Vic 20 --> VBM 32K cartridge)</p>
+<code>
+program Cart32K;
+var  
+
+@use "Cart"
+
+@define BUILDCRT	1		// uncomment to build for cartridge
+
+
+// CART
+@ifdef BUILDCRT
+
+	// Need all RAM memory model for cart so can inject into a000
+	@VicMemoryConfig "all"    
+	@projectsettings "ignorebasicsysstart" 0
+	@projectsettings "basicsysaddress" $1200
+	@projectsettings "startaddress" $2000 // other blocks, eg: $A0A0
+	
+   	@exportprg2bin   "main.prg" "a000.prg" $a000 $c000
+	@exportprg2bin   "main.prg" "2000.prg" $2000 $4000
+	@exportprg2bin   "main.prg" "4000.prg" $4000 $6000
+	@exportprg2bin   "main.prg" "6000.prg" $6000 $8000
+
+@endif
+
+// RAM
+@ifndef BUILDCRT
+
+	// Regular Tape or Disk - default output is PRG
+	@VicMemoryConfig "all"
+	@projectsettings "ignorebasicsysstart" 0
+	@projectsettings "basicsysaddress" $1200
+	@projectsettings "startaddress" $2000
+	
+@endif
+
+@include "_constants.ras"			// GAME PARAMETERS and CONSTANTS
+@include "_memoryzp.ras"			// variables in Zero Page and binary data
+
+
+// The magic bytes needed at address $A000
+
+@startblock $A000 "CARTAUTOSTART"
+
+@donotremove cartAutostart
+@ifdef BUILDCRT
+procedure cartAutostart();
+begin
+
+	Cart::Autostart();
+	
+end;
+@endif
+
+@endblock
+
+
+@startblock $a0a0 "Code in Block 5"
+
+// look up data
+@include "_memory.ras"				// variables in block 5 RAM
+@include "_lookup.ras"				// read only lookup tables
+
+@endblock
+
+
+// source files						// add your include files here
+@include "vbl.ras"					// vertical blank interrupt
+
+
+// **** MAIN PROGRAM ****
+
+begin
+
+	@ifdef BUILDCRT
+
+		Cart::Init();
+	
+	@endif
+
+
+	Vbl_Init(); // call before set display mode
+	
+	vbmSetDisplayMode( 0 );
+	vbmclear( 0 );
+	vbmClearColor( GREEN );	
+
+	AUX_COLOR_AND_VOLUME := %00000010;
+	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
+
+	vbmDrawText( #strTitle, #font8, 2, 40, 8 );
+	vbmDrawSmallTextO( #strDesc, #font4, 4, 50, 6 );
+
+	// main game loop
+	while (true) offpage do 
+	begin
+	
+		// wait for vertical blank
+		while (ticks = oldticks) do begin end;
+		oldticks := ticks;
+				
+	end;
+
+end.
+
 </code>
