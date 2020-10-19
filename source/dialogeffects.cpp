@@ -695,10 +695,11 @@ static int SaveScreenAndCharset(lua_State* L) {
 
 static int Save2DInfo(lua_State* L) {
     QString file = m_currentDir+"/"+ lua_tostring(L,1);
+    QString fileUnroll = m_currentDir+"/"+ lua_tostring(L,4);
     int base = lua_tonumber(L,2);
     int maxx = lua_tonumber(L,3);
     QVector<QPoint> killList;
-    m_rt.Compile2DList(file,base,maxx, killList, m_effect->m_post);
+    m_rt.Compile2DList(file,base,maxx, killList, m_effect->m_post,fileUnroll);
 
    // MultiColorImage mc(m_effect->m_mc->m_colorList.m_type);
   //  mc.m_data[0].C = m_charData;

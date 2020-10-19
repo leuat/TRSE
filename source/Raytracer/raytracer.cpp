@@ -408,7 +408,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
     return false;
 }
 
-void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QPoint>& killList, QImage &img)
+void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QPoint>& killList, QImage &img, QString unrollName)
 {
     QByteArray data;
     data.append(m_objects.count());
@@ -417,6 +417,11 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
     int id = 0;
     QVector<int> taken;
 //    img.save("testA.png");
+    QString name = unrollName.split(QDir::separator()).last().split(".").first();
+
+    QString unrollData = "procedure "+name+"_unroll();\n";
+    unrollData+="begin asm(\" \n";
+
     for (AbstractRayObject* aro : m_objects) {
         id++;
         QVector<QPoint> reduced;
@@ -466,7 +471,23 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
 //            data.append((char)((i)&0xFF));
   //          data.append((char)((i>>8)&0xFF));
         }
+
+
+
+
         int cnt = positions.count();
+        if (cnt!=0) {
+            unrollData+=" ldx #"+Util::numToHex(id)+"\n";
+            unrollData+=" lda cols,x\n";
+            for (int i: positions) {
+                unrollData += " sta "+Util::numToHex(i) + "\n";
+            }
+
+        }
+
+
+        cnt = positions.count();
+
 
         if (cnt!=0) {
             qSort(positions);
@@ -517,7 +538,10 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
         for (int i=0;i<32;i++)
           aro->m_2Dpoints[i].clear();
     }
+    unrollData+="\"); end;";
     data[0] = acount;
     Util::SaveByteArray(data,fileOutput);
+    qDebug() << "Saving to : "<< unrollName;
+    Util::SaveTextFile(unrollName,unrollData);
   //  img.save("testB.png");
 }
