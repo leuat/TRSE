@@ -18,11 +18,11 @@ begin
 	definescreen();
 	
 	// clear the screen and colour memory
-	clearscreen(32, screen_char_loc);
-	clearscreen(WHITE, screen_col_loc);
+	clearscreen(32, #screen_char_loc);
+	clearscreen(WHITE, #screen_col_loc);
 	
 	// Set the screenmemory pointer to point to the screen memory:
-	screenmemory := screen_char_loc;
+	screenmemory := #screen_char_loc;
 end;
 
 // Here is another procedure, this one is to writing a random character to the screen and then move down one line
@@ -44,7 +44,7 @@ begin
 		DisplayNumber();	// we're calling the DisplayNumber procedure many times!
 	end;
 	
-	screenmemory := screen_char_loc + 2;	// reset the screen memory point back to the top of the screen, but this time two character to the right
+	screenmemory := #screen_char_loc + 2;	// reset the screen memory point back to the top of the screen, but this time two character to the right
 	
 	// let's loop another 25 times
 	for index := 0 to 25 do

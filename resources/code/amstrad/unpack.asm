@@ -7,7 +7,7 @@ firmware_RST_jp EQU $38
 start   
     di
     call $B909; Disable ROM
-    call $B903; Disable UROM
+     call $B903; Disable UROM
     ld hl,real_start
     ld de,$202
     ld bc,256

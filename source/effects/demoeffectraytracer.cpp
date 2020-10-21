@@ -54,6 +54,7 @@ void DemoEffectRaytracer::Initialize()
    m_rt->m_globals.m_lights[0]->m_color = QVector3D(1,1,0.7);
    m_img = QImage(m_rt->m_globals.m_orgWidth,m_rt->m_globals.m_orgHeight,QImage::Format_ARGB32);
    m_post = QImage(m_rt->m_globals.m_orgWidth,m_rt->m_globals.m_orgHeight,QImage::Format_ARGB32);
+   m_prev = QImage(m_rt->m_globals.m_orgWidth,m_rt->m_globals.m_orgHeight,QImage::Format_ARGB32);
 //   m_rt->m_objects.clear();
 
 }
@@ -84,6 +85,10 @@ void DemoEffectRaytracer::Render(QImage &img)
     }
 
     m_ready = false;
+
+
+
+    m_prev = m_img.copy();
 
 
     m_time+=1;

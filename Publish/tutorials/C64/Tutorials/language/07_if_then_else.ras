@@ -26,11 +26,11 @@ begin
 	definescreen();
 	
 	// clear the screen and colour memory
-	clearscreen(32, screen_char_loc);
-	clearscreen(WHITE, screen_col_loc);
+	clearscreen(32, #screen_char_loc);
+	clearscreen(WHITE, #screen_col_loc);
 	
 	// Set the screenmemory pointer to point to the screen memory:
-	screenmemory := screen_char_loc;
+	screenmemory := #screen_char_loc;
 
 	// lets set the val1 and val2 variables to some values we can test with:
 	val1 := 10;

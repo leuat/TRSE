@@ -29,11 +29,12 @@ public:
     bool m_receivesShadow = true;
     bool m_flatten = true;
     bool m_hasNormal = false;
+    int m_id = 0;
     Material m_material;
     QString m_name;
     static SimplexNoise m_sn;
     Ray m_localRay[32];
-    QVector<QPoint> m_2Dpoints[32];
+    QVector<QVector3D> m_2Dpoints[32];
     float m_bbRadius;
 
     QVector<AbstractRayObject*> m_children;

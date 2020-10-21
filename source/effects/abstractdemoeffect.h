@@ -28,7 +28,7 @@ class AbstractDemoEffect : public QThread
 {
     Q_OBJECT
 public:
-    QImage m_img, m_post;
+    QImage m_img, m_post, m_prev;
     QPixmap m_pixmap;
     float m_time=0;
     bool m_ready = true;
@@ -45,6 +45,7 @@ public:
 //    int m_elapsedTime=0;
     QElapsedTimer m_timer;
     int m_elapsedTime;
+    QVector<int> alreadySet;
 
 
     virtual void ToggleAnim() {m_toggleAnim=!m_toggleAnim;}
@@ -56,6 +57,8 @@ public:
     virtual void SetParameters(int preset) {}
     virtual void Save(QString file);
 
+
+    void ExportDiffAsUnrolledBitmap6502(QString file, QString background, QString name, QString wf, int pos, int x, int y, int w, int h);
     virtual void Init() {}
 //    virtual void
 
@@ -88,6 +91,9 @@ public:
         m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
 
     }
+
+
+
 
     void ConvertToP8(int dither, QVector3D ditherStrength)
     {

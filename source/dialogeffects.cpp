@@ -379,8 +379,10 @@ static int AddObject(lua_State *L)
 
     if (obj!=nullptr) {
         obj->m_name= name;
-        if (parent=="")
+        if (parent=="") {
+            obj->m_id = m_rt.m_objects.count();
             m_rt.m_objects.append(obj);
+        }
         else {
             AbstractRayObject* aro = m_rt.Find(parent);
             if (aro==nullptr) {
@@ -432,6 +434,19 @@ static int SetRotation(lua_State *L)
     return 0;
 }
 
+static int SetID(lua_State *L)
+{
+//    int n = lua_gettop(L);
+    QString name = lua_tostring(L,1);
+    AbstractRayObject* aro = m_rt.Find(name);
+    if (aro==nullptr) {
+        m_error +="<br>Error in SetRotation : Could not find object '" + name;;
+        return 0;
+    }
+    aro->m_id = lua_tonumber(L,2);
+    return 0;
+}
+
 
 static int SetQuatAxisAngle(lua_State *L)
 {
@@ -463,6 +478,18 @@ static int SetPosition(lua_State *L)
     aro->m_position = (QVector3D(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4)));
     return 0;
 }
+
+
+static int DeleteFile(lua_State *L)
+{
+//    int n = lua_gettop(L);
+
+    QString fname = m_currentDir+"/"+lua_tostring(L,1);
+    if (QFile::exists(fname))
+        QFile::remove(fname);
+    return 0;
+}
+
 
 static int AddPosition(lua_State *L)
 {
@@ -692,6 +719,20 @@ static int SaveScreenAndCharset(lua_State* L) {
 
 }
 
+
+static int ExportDiffAsUnrolledBitmap(lua_State* L) {
+    QString file = m_currentDir+"/"+ lua_tostring(L,1);
+    QString name = lua_tostring(L,3);
+    QString bg = m_currentDir+"/"+ lua_tostring(L,2);
+    QString waitFunc = lua_tostring(L,4);
+    m_effect->ExportDiffAsUnrolledBitmap6502(file,bg, name,waitFunc,lua_tonumber(L,5),
+                                             lua_tonumber(L,6),
+                                             lua_tonumber(L,7),
+                                             lua_tonumber(L,8),
+                                             lua_tonumber(L,9));
+   // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
+
+}
 
 static int Save2DInfo(lua_State* L) {
     QString file = m_currentDir+"/"+ lua_tostring(L,1);
@@ -972,6 +1013,41 @@ static int DrawCircle(lua_State* L) {
     return 0;
 }
 
+
+
+static int DrawImage(lua_State* L) {
+
+    QPainter painter;
+    QImage img(lua_tostring(L,1));
+    QVector3D pos(lua_tonumber(L,2),lua_tonumber(L,3),0);
+    QVector3D scale(lua_tonumber(L,4),lua_tonumber(L,5),0);
+    double rot = lua_tonumber(L,6);
+
+    for (int y=0;y<m_effect->m_img.height();y++)
+        for (int x=0;x<m_effect->m_img.width();x++) {
+            double xs = ((x-pos.x())/(double)m_effect->m_img.width())*img.width();
+            double ys = ((y-pos.y())/(double)m_effect->m_img.height())*img.height();
+            xs = (xs - img.width()/2);//*scale.x();
+            ys = (ys - img.height()/2);//*scale.y();
+            double xr = xs * cos(rot) -ys*sin(rot);
+            double yr = xs * sin(rot) +ys*cos(rot);
+            xr*=scale.x();
+            yr*=scale.y();
+            xr+=img.width()/2;
+            yr+=img.height()/2;
+            QColor col(0,0,0,0);
+            if (xr>0 && xr<img.width() && yr>0 && yr<img.height()) {
+                col = img.pixelColor(xr,yr);
+            }
+            if (col.alpha()>0) {
+                m_effect->m_img.setPixelColor(x,y,col);
+                m_effect->m_post.setPixelColor(x,y,col);
+            }
+        }
+
+}
+
+
 static int AddRawCharsetData(lua_State* L) {
     int w = lua_tonumber(L,1);
     int h = lua_tonumber(L,1);;
@@ -1076,8 +1152,11 @@ void DialogEffects::LoadScript(QString file)
 
     lua_register(m_script->L, "AddObject", AddObject);
     lua_register(m_script->L, "SetRotation", SetRotation);
+    lua_register(m_script->L, "SetID", SetID);
     lua_register(m_script->L, "SetPosition", SetPosition);
     lua_register(m_script->L, "AddPosition", AddPosition);
+
+    lua_register(m_script->L, "DeleteFile", DeleteFile);
 
     // Data registration
     lua_register(m_script->L, "AddC64LineToData", AddToData);
@@ -1103,6 +1182,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddAtariSingleBitplaneToData", AddAtariSingleBitplaneToData);
     lua_register(m_script->L, "AddGameboyData", AddGameboyData);
     lua_register(m_script->L, "Save2DInfo", Save2DInfo);
+    lua_register(m_script->L, "ExportDiffAsUnrolledBitmap", ExportDiffAsUnrolledBitmap);
     lua_register(m_script->L, "SaveMulticolorImage", SaveMulticolorImage);
     lua_register(m_script->L, "SaveKoalaImage", SaveKoalaImage);
     lua_register(m_script->L, "SaveImage", SaveImage);
@@ -1125,6 +1205,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "DrawLine", DrawLine);
     lua_register(m_script->L, "DrawRect", DrawRect);
     lua_register(m_script->L, "DrawCircle", DrawCircle);
+    lua_register(m_script->L, "DrawImage", DrawImage);
 
     // Particle effects
 

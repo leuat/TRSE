@@ -13,11 +13,11 @@ begin
 	definescreen();
 	
 	// clear the screen and colour memory
-	clearscreen(32, screen_char_loc);
-	clearscreen(WHITE, screen_col_loc);
+	clearscreen(32, #screen_char_loc);
+	clearscreen(WHITE, #screen_col_loc);
 	
 	// Set the screenmemory pointer to point to the screen memory:
-	screenmemory := screen_char_loc;
+	screenmemory := #screen_char_loc;
 
 	// now let's say we want to do something 10 times, a for loop is perfect for this
 	// A for statement is made up of

@@ -131,7 +131,7 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
            for (int i=0;i<w;i++)
         {
 
-            float x = i*m_globals.m_aspect;//*aspect;
+            float x = (i-w/2)*m_globals.m_aspect +w/2;//*aspect;
             float y = j;//*aspect;
 
             QVector3D dir = m_camera.coord2ray(x,y,w,h);;
@@ -145,7 +145,7 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
         int tid = 0;
 #endif
             //int tid = 0;
-            RayMarchSingle(ray, Image, nullptr,m_globals.m_steps,tid, QPoint(x,y));
+            RayMarchSingle(ray, Image, nullptr,m_globals.m_steps,tid, QVector3D(x,y,0));
   //          tmp[i+j*w] = ray.m_intensity;
             QColor c = Util::toColor(ray.m_intensity*256 + m_globals.m_ambient);
             img.setPixel((i+(int)m_globals.m_translate.x())%img.width(),
@@ -229,7 +229,7 @@ void RayTracer::LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat
 
 //}
 
-bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, int cnt, int tid, QPoint point)
+bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, int cnt, int tid, QVector3D point)
 {
     QVector3D isp;
     float t = 1;
@@ -423,13 +423,13 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
     unrollData+="begin asm(\" \n";
 
     for (AbstractRayObject* aro : m_objects) {
-        id++;
-        QVector<QPoint> reduced;
+        id = aro->m_id;
+        QVector<QVector3D> reduced;
   //      qDebug() << aro->m_2Dpoints.count();
 
         // Combine all 2D points from instances
-        QVector<QPoint> all;
-        QVector<QPoint> perhapsKill;
+        QVector<QVector3D> all;
+        QVector<QVector3D> perhapsKill;
         for (int i=0;i<32;i++)
             all.append(aro->m_2Dpoints[i]);
 
@@ -438,11 +438,13 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
 
 //        qDebug() << "Org size : " << all.count();
 //        if (id>5) continue;
-        for (QPoint p: all) {
+        for (QVector3D p: all) {
             //            img.setPixelColor(p.x(),p.y(),Qt::red);
             QColor org = img.pixelColor(p.x(),p.y());
             p.setX((p.x()+0.5)/4.0);
             p.setY((p.y()+0.5)/8.0);
+            p.setX((int)p.x());
+            p.setY((int)p.y());
 
 //            if (rand()%100>95) qDebug() << org;
             if (org.red()==0 && org.blue() == 0 && org.green()==0)
@@ -451,11 +453,11 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
             }
         }
 
-        killList.append(perhapsKill);
+//        killList.append(perhapsKill);
   //      total.append(reduced);
 
         QVector<int> positions;
-        for (QPoint p: reduced) {
+        for (QVector3D p: reduced) {
 
             int i = base + p.x() + p.y()*40;
 

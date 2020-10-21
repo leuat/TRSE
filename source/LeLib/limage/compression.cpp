@@ -361,23 +361,25 @@ void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &cha
         cOut[i+24] = 0b01010101;
     }
 
+
 //    for (int i=0;i<charset.count();i++)
   //      qDebug() << QString::number(charset[i]);
 
     // All screens are set up. Start compressing!
     for (int i=0;i<screens;i++) {
-       // qDebug() << "Current screen : " << i ;
+        qDebug() << "Current screen : " << i ;
 
         for (int x=0;x<sw*sh;x++) {
             int s = screen[i*sw*sh + x] + charSize*i;
 
 
-//            qDebug() << "   Current s: " << QString::number(s) ;
+  //          qDebug() << "   Current s: " << QString::number(s) << " with compression type " <<type ;
             int found = -1;
             double curMin = 8000;
             for (int j=0;j<cOut.count()/8;j++) {
-                //int Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length)
+             //   int Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length)
                 double res = Compare(cOut, charset,j*8,s*8,8, type, bmask);
+//                double res = 1;
                 if (res<compression && res<curMin) {
 
 
@@ -387,11 +389,12 @@ void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &cha
 //                    break;
                 }
             }
+//            qDebug() << "FOUND " << found;
             if (found ==-1) {
                 found = cOut.size()/8;
                 for (int j=0;j<8;j++)
                     cOut.push_back( charset[s*8+j]  );
-      //          qDebug() << "Added new : " << found;
+            //    qDebug() << "Added new : " << found;
             }
 //            qDebug() << "  ADDING : " << QString::number(found) << " vs "  << QString::number(s);
 

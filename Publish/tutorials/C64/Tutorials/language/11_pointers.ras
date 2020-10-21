@@ -95,4 +95,5 @@ begin
 	bp := #someMovieData + currentFrame*64; 
 	// Copy 64 bytes to the screen!
 	memcpy(bp,0,screen_char_loc,64);
+	Loop();
 end.

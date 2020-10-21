@@ -48,7 +48,7 @@ public:
         return -1;
     }
 
-    bool RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, int cnt, int tid, QPoint point);
+    bool RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, int cnt, int tid, QVector3D point);
 
     void Compile2DList(QString fileOutput, int base, int maxx, QVector<QPoint>& killList,QImage &img, QString UnrollFileBase);
 };
