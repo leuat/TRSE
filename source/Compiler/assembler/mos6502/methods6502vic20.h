@@ -50,6 +50,15 @@ public:
 
     void initVbmDot(Assembler* as);
     void initVbmBlot(Assembler* as);
+    void initVbmTestPixel(Assembler *as);
+    void initVbmTestPixel2(Assembler *as);
+    void initVbmDrawDot(Assembler *as);
+    void initVbmClearDot(Assembler *as);
+    void initVbmDrawDotE(Assembler *as);
+    void initVbmDrawBlot(Assembler *as);
+    void initVbmClearBlot(Assembler *as);
+    void initVbmDrawBlotE(Assembler *as);
+
     void vbmTestPixel(Assembler *as);
     void vbmTestPixel2(Assembler *as);
     void vbmDrawDot(Assembler *as);

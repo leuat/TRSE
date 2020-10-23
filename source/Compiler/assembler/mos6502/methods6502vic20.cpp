@@ -140,6 +140,12 @@ void Methods6502Vic20::Assemble(Assembler *as, AbstractASTDispatcher *dispenser)
 
     // Test pixel commands
     else
+    if (Command("initVbmTestPixel"))
+        initVbmTestPixel(as);
+    else
+    if (Command("initVbmTestPixel2"))
+        initVbmTestPixel2(as);
+    else
     if (Command("vbmTestPixel"))
         vbmTestPixel(as);
     else
@@ -165,6 +171,18 @@ void Methods6502Vic20::Assemble(Assembler *as, AbstractASTDispatcher *dispenser)
         initVbmDot(as);
     // Draw dot
     else
+    if (Command("initVbmDrawDot"))
+        initVbmDrawDot(as);
+    // Clear dot
+    else
+    if (Command("initVbmClearDot"))
+        initVbmClearDot(as);
+    // Draw dot with Eor
+    else
+    if (Command("initVbmDrawDotE"))
+        initVbmDrawDotE(as);
+    // Draw dot
+    else
     if (Command("vbmDrawDot"))
         vbmDrawDot(as);
     // Clear dot
@@ -180,6 +198,18 @@ void Methods6502Vic20::Assemble(Assembler *as, AbstractASTDispatcher *dispenser)
     else
     if (Command("initVbmBlot"))
         initVbmBlot(as);
+    // Draw Blot
+    else
+    if (Command("initVbmDrawBlot"))
+        initVbmDrawBlot(as);
+    // Clear Blot
+    else
+    if (Command("initVbmClearBlot"))
+        initVbmClearBlot(as);
+    // Draw Blot with Eor
+    else
+    if (Command("initVbmDrawBlotE"))
+        initVbmDrawBlotE(as);
     // Draw Blot
     else
     if (Command("vbmDrawBlot"))
@@ -418,7 +448,7 @@ void Methods6502Vic20::Assemble(Assembler *as, AbstractASTDispatcher *dispenser)
     else
     if (Command("initVbmDrawSmallBCD"))
         initVbmDrawSmallBCD(as);
-    else
+//    else
     if (Command("vbmDrawSmallBCD"))
         vbmDrawSmallBCD(as);
     else
@@ -2365,6 +2395,14 @@ void Methods6502Vic20::initVbmDot(Assembler* as)
     as->Comment("VBM Dot mask");
     as->Label("vbmDotBit    dc.b $80, $40, $20, $10, $08, $04, $02, $01");
 
+}
+void Methods6502Vic20::initVbmDrawDot(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmDrawDot"])
+        return;
+
+    m_node->m_isInitialized["vbmDrawDot"] = true;
+
     as->Label("vbmDrawDot");
     as->Comment("Accumulator contains X position");
     as->Asm("lsr   ; divide by 8 to find column number");
@@ -2383,6 +2421,14 @@ void Methods6502Vic20::initVbmDot(Assembler* as)
     as->Asm("ora (screenmemory),y");
     as->Asm("sta (screenmemory),y");
     as->Asm("rts");
+
+}
+void Methods6502Vic20::initVbmClearDot(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmClearDot"])
+        return;
+
+    m_node->m_isInitialized["vbmClearDot"] = true;
 
     as->Label("vbmClearDot");
     as->Comment("Accumulator contains X position");
@@ -2403,6 +2449,13 @@ void Methods6502Vic20::initVbmDot(Assembler* as)
     as->Asm("and (screenmemory),y");
     as->Asm("sta (screenmemory),y");
     as->Asm("rts");
+}
+void Methods6502Vic20::initVbmDrawDotE(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmDrawDotE"])
+        return;
+
+    m_node->m_isInitialized["vbmDrawDotE"] = true;
 
     as->Label("vbmDrawDotE");
     as->Comment("Accumulator contains X position");
@@ -2422,6 +2475,13 @@ void Methods6502Vic20::initVbmDot(Assembler* as)
     as->Asm("eor (screenmemory),y");
     as->Asm("sta (screenmemory),y");
     as->Asm("rts");
+}
+void Methods6502Vic20::initVbmTestPixel(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmTestPixel"])
+        return;
+
+    m_node->m_isInitialized["vbmTestPixel"] = true;
 
     as->Label("vbmTestPixel");
     as->Comment("Accumulator contains X position");
@@ -2440,6 +2500,7 @@ void Methods6502Vic20::initVbmDot(Assembler* as)
     as->Asm("ldy vbmY  ; get row");
     as->Asm("and (screenmemory),y ; AND with screenmemory to get pixel value");
 }
+
 void Methods6502Vic20::initVbmBlot(Assembler* as)
 {
     if (m_node->m_isInitialized["vbmBlot"])
@@ -2449,6 +2510,13 @@ void Methods6502Vic20::initVbmBlot(Assembler* as)
 
     as->Comment("VBM Blot mask");
     as->Label("vbmBlotBit    dc.b $c0, $30, $0c, $03");
+}
+void Methods6502Vic20::initVbmDrawBlot(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmDrawBlot"])
+        return;
+
+    m_node->m_isInitialized["vbmDrawBlot"] = true;
 
     as->Label("vbmDrawBlot");
     as->Comment("Accumulator contains X position");
@@ -2473,6 +2541,14 @@ void Methods6502Vic20::initVbmBlot(Assembler* as)
     as->Asm("ora (screenmemory),y");
     as->Asm("sta (screenmemory),y");
     as->Asm("rts");
+
+}
+void Methods6502Vic20::initVbmClearBlot(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmClearBlot"])
+        return;
+
+    m_node->m_isInitialized["vbmClearBlot"] = true;
 
     as->Label("vbmClearBlot");
     as->Comment("Accumulator contains X position");
@@ -2500,6 +2576,14 @@ void Methods6502Vic20::initVbmBlot(Assembler* as)
     as->Asm("sta (screenmemory),y");
     as->Asm("rts");
 
+}
+void Methods6502Vic20::initVbmDrawBlotE(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmDrawBlotE"])
+        return;
+
+    m_node->m_isInitialized["vbmDrawBlotE"] = true;
+
     as->Label("vbmDrawBlotE");
     as->Comment("Accumulator contains X position");
     as->Asm("lsr   ; divide by 8 to find column number");
@@ -2523,6 +2607,14 @@ void Methods6502Vic20::initVbmBlot(Assembler* as)
     as->Asm("eor (screenmemory),y");
     as->Asm("sta (screenmemory),y");
     as->Asm("rts");
+
+}
+void Methods6502Vic20::initVbmTestPixel2(Assembler* as)
+{
+    if (m_node->m_isInitialized["vbmTestPixel2"])
+        return;
+
+    m_node->m_isInitialized["vbmTestPixel2"] = true;
 
     as->Label("vbmTestPixel2");
     as->Comment("Accumulator contains X position");
@@ -2548,6 +2640,7 @@ void Methods6502Vic20::vbmTestPixel(Assembler *as) {
 
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmDot","InitVbmDot");
+    VerifyInitialized("vbmTestPixel","InitVbmTestPixel");
 
     as->Comment("----------");
     as->Comment("vbmTestPixel x, y");
@@ -2579,6 +2672,7 @@ void Methods6502Vic20::vbmTestPixel2(Assembler *as) {
 
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmBlot","InitVbmBlot");
+    VerifyInitialized("vbmTestPixel2","InitVbmTestPixel2");
 
     as->Comment("----------");
     as->Comment("vbmTestPixel2 x, y  - can be used to test for multi-color mode pixels");
@@ -2611,6 +2705,7 @@ void Methods6502Vic20::vbmDrawDot(Assembler *as) {
 
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmDot","InitVbmDot");
+    VerifyInitialized("vbmDrawDot","InitVbmDrawDot");
 
     as->Comment("----------");
     as->Comment("vbmDrawDot x, y");
@@ -2642,6 +2737,7 @@ void Methods6502Vic20::vbmClearDot(Assembler *as) {
 
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmDot","InitVbmDot");
+    VerifyInitialized("vbmClearDot","InitVbmClearDot");
 
     as->Comment("----------");
     as->Comment("vbmClearDot x, y");
@@ -2673,6 +2769,7 @@ void Methods6502Vic20::vbmDrawDotE(Assembler *as) {
 
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmDot","InitVbmDot");
+    VerifyInitialized("vbmDrawDotE","InitVbmDrawDotE");
 
     as->Comment("----------");
     as->Comment("vbmDrawDotE x, y  - draw with Eor");
@@ -2704,6 +2801,7 @@ void Methods6502Vic20::vbmDrawBlot(Assembler *as) {
 
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmBlot","InitVbmBlot");
+    VerifyInitialized("vbmDrawBlot","InitVbmDrawBlot");
 
     as->Comment("----------");
     as->Comment("vbmDrawBlot x, y");
@@ -2735,6 +2833,7 @@ void Methods6502Vic20::vbmClearBlot(Assembler *as) {
 
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmBlot","InitVbmBlot");
+    VerifyInitialized("vbmClearBlot","InitVbmClearBlot");
 
     as->Comment("----------");
     as->Comment("vbmClearBlot x, y");
@@ -2766,6 +2865,7 @@ void Methods6502Vic20::vbmDrawBlotE(Assembler *as) {
 
     VerifyInitialized("vbm","InitVbm");
     VerifyInitialized("vbmBlot","InitVbmBlot");
+    VerifyInitialized("vbmDrawBlotE","InitVbmDrawBlotE");
 
     as->Comment("----------");
     as->Comment("vbmDrawBlotE x, y - Eor");

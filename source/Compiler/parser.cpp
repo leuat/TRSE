@@ -262,8 +262,19 @@ void Parser::InitBuiltinFunctions()
         InitBuiltinFunction(QStringList()<< "vbmsetposition1(" << "vbmsetposition2(" << "vbmsetposition4(", "initVbmSetPosition");
         InitBuiltinFunction(QStringList()<< "vbmclear(", "initVbmClear");
         InitBuiltinFunction(QStringList()<< "vbmnextcolumn(", "initVbmNextColumn");
-        InitBuiltinFunction(QStringList()<< "vbmdrawdot(" << "vbmcleardot(" << "vbmdrawdote(" << "vbmtestpixel(", "initVbmDot");
-        InitBuiltinFunction(QStringList()<< "vbmdrawblot(" << "vbmclearblot(" << "vbmdrawblote(" << "vbmtestpixel2(", "initVbmBlot");
+
+        InitBuiltinFunction(QStringList()<< "vbmdrawdot(", "initVbmDrawDot");
+        InitBuiltinFunction(QStringList()<< "vbmcleardot(", "initVbmClearDot");
+        InitBuiltinFunction(QStringList()<< "vbmdrawdote(", "initVbmDrawDotE");
+        InitBuiltinFunction(QStringList()<< "vbmtestpixel(", "initVbmTestPixel");
+        InitBuiltinFunction(QStringList()<< "vbmdrawdot("<< "vbmcleardot("<< "vbmdrawdote("<< "vbmtestpixel(", "initVbmDot");
+
+        InitBuiltinFunction(QStringList()<< "vbmdrawblot(", "initVbmDrawBlot");
+        InitBuiltinFunction(QStringList()<< "vbmclearblot(", "initVbmClearBlot");
+        InitBuiltinFunction(QStringList()<< "vbmdrawblote(", "initVbmDrawBlotE");
+        InitBuiltinFunction(QStringList()<< "vbmtestpixel2(", "initVbmTestPixel2");
+        InitBuiltinFunction(QStringList()<< "vbmdrawblot("<< "vbmclearblot("<< "vbmdrawblote("<< "vbmtestpixel2(", "initVbmBlot");
+
         InitBuiltinFunction(QStringList()<< "vbmscrollleft(", "initVbmScrollLeft");
         InitBuiltinFunction(QStringList()<< "vbmscrollright(", "initVbmScrollRight");
         InitBuiltinFunction(QStringList()<< "vbmscrollfixtop(", "initVbmScrollFixTop");
