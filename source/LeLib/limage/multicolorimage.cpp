@@ -99,23 +99,18 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
 
 void MultiColorImage::setPixel(int x, int y, unsigned int color)
 {
-
     if (x>=m_width || x<0 || y>=m_height || y<0)
         return;
+
     PixelChar& pc = getPixelChar(x,y);
 
-//    qDebug() << m_minCol;
-  //  qDebug() << m_noColors;
 
-//    qDebug() << m_extraCols[0] << m_background;
-    pc.Reorganize(m_bitMask, m_scale,m_minCol, m_noColors, getBackground());
+
+        pc.Reorganize(m_bitMask, m_scale,m_minCol, m_noColors, getBackground());
 
     int ix = x % (8/m_scale);//- (dx*m_charWidth);
     int iy = y % 8;//- (dy*m_charHeight);
-
-    //if (ix==0 || ix == 2 || ix == 4 || ix == 6)
     pc.set(m_scale*ix, iy, color, m_bitMask, m_noColors, m_minCol);
-
 }
 
 
@@ -164,7 +159,7 @@ void MultiColorImage::setBackground(unsigned int col)
 
 void MultiColorImage::Reorganize()
 {
-#pragma omp parallel for
+//#pragma omp parallel for
     for (int i=0;i<m_charWidth*m_charHeight;i++)
         m_data[i].Reorganize(m_bitMask, m_scale, m_minCol, m_noColors,getBackground());
 }
@@ -385,7 +380,6 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
             int winner = 0;
             QColor newPixel = colors.getClosestColor(color, winner);
 //            PixelChar& pc = getPixelChar(x,y);
-
             setPixel(x,y,winner);
 
         }
@@ -1136,7 +1130,7 @@ PixelChar &MultiColorImage::getPixelChar(int x, int y)
 
 
     int i = Util::clamp(dx + charWidthDisplay()*dy,0,m_charWidth*m_charHeight);
-     return m_data[i];
+    return m_data[i];
 
 }
 
