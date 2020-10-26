@@ -4,9 +4,9 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl qml
+QT += core gui opengl qml
 QT += widgets
-
+CONFIG += c++14
 
 TARGET = trse
 TEMPLATE = app
