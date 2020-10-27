@@ -195,7 +195,6 @@ bool Compiler6502::SetupMemoryAnalyzer(QString filename)
         if (b->m_type!=MemoryBlock::CODE) {
             b->m_shift = 0;
             b->m_isOverlapping = false;
-
             nb.append(b);
         }
 

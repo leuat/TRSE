@@ -4130,6 +4130,7 @@ void Parser::HandleUseTPU(QString fileName)
     m_ignoreBuiltinFunctionTPU.append(p->m_ignoreBuiltinFunctionTPU);
 //    m_userBlocks.append(p->m_userBlocks);
 
+    m_userBlocks.append(p->m_userBlocks);
 
     for (QString s : p->m_symTab->m_symbols.keys()) {
         m_symTab->m_globalList.append(s);
