@@ -1264,6 +1264,13 @@ void DialogEffects::UpdateGlobals()
     m_rt.m_globals.m_width = m_script->get<float>("output.resolution.width");
     m_rt.m_globals.m_height = m_script->get<float>("output.resolution.height");
 
+
+    if (m_script->lua_exists("globals.camera_type")) {
+        int type = m_script->get<float>("globals.camera_type");
+        if (type==1) m_rt.m_globals.m_type = RayTracerGlobals::fisheye;
+    }
+
+
     if (m_script->lua_exists("output.orgresolution.width")) {
         m_rt.m_globals.m_orgWidth = m_script->get<float>("output.orgresolution.width");
         m_rt.m_globals.m_orgHeight = m_script->get<float>("output.orgresolution.height");

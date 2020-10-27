@@ -134,7 +134,14 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
             float x = (i-w/2)*m_globals.m_aspect +w/2;//*aspect;
             float y = j;//*aspect;
 
-            QVector3D dir = m_camera.coord2ray(x,y,w,h);;
+
+
+
+            QVector3D dir;
+            if (m_globals.m_type==RayTracerGlobals::regular)
+                dir = m_camera.coord2ray(x,y,w,h);;
+            if (m_globals.m_type==RayTracerGlobals::fisheye)
+                dir = m_camera.fisheye(x,y,w,h);;
             Ray ray(m_camera.m_camera,dir);
             ray.m_reflect=3;
 

@@ -908,6 +908,7 @@ void FormRasEditor::MemoryAnalyze()
     filename = m_currentSourceFile;
     filename = filename.remove(".ras");
 //    qDebug() << "Filename; "<< m_currentSourceFile;
+//    m_builderThread.m_builder->
     bool success = m_builderThread.m_builder->compiler->SetupMemoryAnalyzer(filename);
 
     m_mca.ClassifyZP(m_builderThread.m_builder->compiler->m_assembler->blocks);

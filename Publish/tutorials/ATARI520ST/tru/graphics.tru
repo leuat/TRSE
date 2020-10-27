@@ -761,7 +761,8 @@ blit3_inner	:
 		lsr.l d6,d0
 		lsr.l d7,d0
 			
-		eor #$FFFFFFFF,d0
+;		eor #$FFFFFFFF,d0
+;		lsl.w #1,d0
 		and.w d0,(a2)+
 
 		add.l #2,a1	
@@ -776,6 +777,57 @@ blit3_inner	:
 		add.l Graphics_badd,a1
 		
 		dbf d3,blit3_y
+						
+		
+
+	");	
+
+end;
+
+procedure BlitMaskSingleOR(bsrc,bdst: global pointer of integer; bdx, bdy,bw,bh : global integer; badd:global long);
+begin
+	asm("
+		
+		jsr Graphics_BlitSetup
+		add.l #2,a2		
+		move.w Graphics_bh,d3 ; height
+blit4or_y:
+		move.w Graphics_bw,d4 ; width
+blit4or_x:
+
+;		move.l #3,d5
+blit4or_inner	:	
+		rept 1
+
+		move.w 0(a1),d0
+		swap d0
+		move.w 8(a1),d0
+	;	swap d0
+		lsr.l d6,d0
+		lsr.l d7,d0
+			
+		;move.w (a2),d1
+		;and d1,d0
+;		eor #$FFFFFFFF,d0
+;		or.w (a2),d0
+		
+		or.w d0,(a2)+
+
+		add.l #2,a1	
+;		add.l #6,a2	
+		endr
+		add.l #2*3,a1	
+		add.l #2*3,a2	
+		
+;		dbf  d5,blit4or_inner
+
+
+		dbf d4,blit4or_x
+		
+		add.l Graphics_badd,a2
+		add.l Graphics_badd,a1
+		
+		dbf d3,blit4or_y
 						
 		
 

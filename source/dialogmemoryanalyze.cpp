@@ -240,14 +240,17 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
        p.setPen(c);
 //       p.setBrush(c);
        p.setFont(QFont("Courier", 15, QFont::Bold));
-       p.drawText(QRect(mpos.x()+180,mpos.y(),width,60), curT);
+       p.drawText(QRect(mpos.x()+240,mpos.y(),width,60), curT);
        p.setFont(QFont("Courier", 12, QFont::Bold));
        c = QColor(80,130,255,255);
        p.setPen(c);
 
        QString address = "$"+QString::number(cur.x(),16).rightJustified(4, '0');
        address += " - $"+QString::number(cur.y(),16).rightJustified(4, '0');
+       int size = cur.y()-cur.x();
        p.drawText(QRect(mpos.x(),mpos.y()+4,500,60), address);
+       QString sizeText = Util::numToHex(size) + " / " + QString::number(size) + " bytes";
+       p.drawText(QRect(mpos.x(),mpos.y()+24,500,60), sizeText);
     }
 
 

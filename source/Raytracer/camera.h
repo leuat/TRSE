@@ -35,6 +35,7 @@ public:
     void setupViewmatrix();
 
     QVector3D coord2ray(float x, float y, float width, float height);
+    QVector3D fisheye(float x, float y, float width, float height);
 
 
     void setRotation(QVector3D& v);

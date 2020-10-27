@@ -15,6 +15,7 @@ public:
     QVector3D m_direction;
     QVector3D m_intensity = QVector3D(0,0,0);
     float m_reflect = 3;
+
     double m_z = 1E20;
 
 
@@ -85,6 +86,9 @@ public:
     static const int output_type_BINARY = 4;
     static const int output_type_GAMEBOY = 5;
     static const int output_type_AMSTRAD = 6;
+
+    enum CameraType {regular, fisheye};
+    CameraType m_type = regular;
 
     double m_steps = 120;
     double m_shadowSteps = 60;
