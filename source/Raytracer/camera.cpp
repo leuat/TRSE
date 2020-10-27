@@ -135,7 +135,7 @@ QVector3D Camera::fisheye(float x, float y, float width, float height)
 
 
 
-    /*float th = 0;//x/width*3.14159*2.0;
+    float th = 0;//x/width*3.14159*2.0;
 
     QVector2D UV(xx,yy);
 //    QVector3D fvcam(xx,yy, th);
@@ -151,7 +151,7 @@ QVector3D Camera::fisheye(float x, float y, float width, float height)
     thetaphi.setY(-thetaphi.y());
 
     return QVector3D(cos(thetaphi.y()) * cos(thetaphi.x()), sin(thetaphi.y()), cos(thetaphi.y()) * sin(thetaphi.x()));
-*/
+
 
 }
 
