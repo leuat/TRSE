@@ -638,7 +638,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
 
 
     if (e->key() == Qt::Key_U &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
-        MemoryAnalyze();
+        MemoryAnalyze(false);
     }
     if (e->key() == Qt::Key_F5 || (e->key() == Qt::Key_R &&  (QApplication::keyboardModifiers() & Qt::ControlModifier))) {
         m_run=true;
@@ -867,7 +867,7 @@ void FormRasEditor::FillToIni()
     m_iniFile->Save();
 }
 
-void FormRasEditor::MemoryAnalyze()
+void FormRasEditor::MemoryAnalyze(bool isHidden)
 {
     if (m_builderThread.m_isRunning)
         return;
@@ -909,12 +909,13 @@ void FormRasEditor::MemoryAnalyze()
     filename = filename.remove(".ras");
 //    qDebug() << "Filename; "<< m_currentSourceFile;
 //    m_builderThread.m_builder->
-    bool success = m_builderThread.m_builder->compiler->SetupMemoryAnalyzer(filename);
-
+//    bool success = m_builderThread.m_builder->compiler->SetupMemoryAnalyzer(filename);
+    if (isHidden)
+        return;
     m_mca.ClassifyZP(m_builderThread.m_builder->compiler->m_assembler->blocks);
 
     DialogMemoryAnalyze* dma = new DialogMemoryAnalyze(m_iniFile,m_builderThread.m_builder->m_system.get());
-    dma->m_success = success;
+    dma->m_success = m_builderThread.m_builder->m_buildSuccess;
     dma->Initialize(m_builderThread.m_builder->compiler->m_assembler->blocks, m_iniFile->getInt("memory_analyzer_font_size"));
     dma->resize(m_iniFile->getdouble("memory_analyzer_window_width"),m_iniFile->getdouble("memory_analyzer_window_height"));
     dma->m_noBanks = m_builderThread.m_builder->compiler->m_assembler->m_noBanks;
@@ -1147,6 +1148,13 @@ void BuilderThread::run()
 
 
         m_builder->Assemble();
+
+        if (m_builder->m_buildSuccess) {
+            m_builder->compiler->SetupMemoryAnalyzer(Util::getFileWithoutEnding(m_filename));
+//            qDebug() << m_builder->getOutput();
+
+        }
+
 
         emit emitText();
         }

@@ -133,7 +133,7 @@ public:
     void FillFromIni();
     void FillToIni();
 
-    void MemoryAnalyze() override;
+    void MemoryAnalyze(bool isHidden) override;
 
 
     void Reload() override;

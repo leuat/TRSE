@@ -81,7 +81,7 @@ public:
 
     void Backup();
 
-    virtual void MemoryAnalyze() {}
+    virtual void MemoryAnalyze(bool isHidden) {}
     virtual void LookupSymbolUnderCursor() {}
 
     virtual void UpdateFromIni() {}

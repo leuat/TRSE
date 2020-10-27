@@ -1815,7 +1815,7 @@ void MainWindow::on_actionHelp_F1_triggered()
 void MainWindow::on_btnMemoryAnalyze_clicked()
 {
     if (m_currentDoc!=nullptr)
-        m_currentDoc->MemoryAnalyze();
+        m_currentDoc->MemoryAnalyze(false);
 }
 
 void MainWindow::on_actionMovie_Creator_triggered()
@@ -2173,7 +2173,7 @@ void MainWindow::on_action_Run_triggered()
 void MainWindow::on_action_Memory_map_C_u_triggered()
 {
     if (m_currentDoc!=nullptr)
-        m_currentDoc->MemoryAnalyze();
+        m_currentDoc->MemoryAnalyze(false);
 
 }
 

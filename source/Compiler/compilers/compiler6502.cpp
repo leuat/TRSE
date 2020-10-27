@@ -268,6 +268,8 @@ bool Compiler6502::SetupMemoryAnalyzer(QString filename)
                 x->m_isOverlapping = true;
                 y->m_isOverlapping = true;
                 y->m_shift = x->m_shift+1;
+                ErrorHandler::e.Warning("Overlapping memory regions: '"+x->m_name + "' and '"+y->m_name+"' at "+Util::numToHex(y->m_start)+" to " +Util::numToHex(x->m_end)+". See the memory analyzer for details.");
+
             }
         }
     }
