@@ -188,7 +188,7 @@ bool Compiler6502::SetupMemoryAnalyzer(QString filename)
     }
 */
     int i = 1;
-
+/*
     // Reset
     QVector<QSharedPointer<MemoryBlock>> nb;
     for (auto b:m_assembler->blocks)
@@ -199,7 +199,7 @@ bool Compiler6502::SetupMemoryAnalyzer(QString filename)
         }
 
     m_assembler->blocks = nb;
-
+*/
     // Loop through all symbols for a startblock
     for (QString s : orgAsm.m_symbolsList){
         if (s.toLower().startsWith("startblock")) {

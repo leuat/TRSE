@@ -168,6 +168,7 @@ public:
     void VBMExportColor(QFile& file, int p1, int p2, int p3, int p4) override;
 
     void VBMExportChunk(QFile& file, int p1, int p2, int p3, int p4) override;
+    void FromLImageQImage(LImage* other) override;
 
     void SetCharSize(int x, int y);
 

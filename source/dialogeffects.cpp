@@ -734,6 +734,20 @@ static int ExportDiffAsUnrolledBitmap(lua_State* L) {
     return 0;
 }
 
+static int ExportDiffAsUnrolledBitmapIn(lua_State* L) {
+    QString file = m_currentDir+"/"+ lua_tostring(L,1);
+    QString name = lua_tostring(L,3);
+    QString bg = m_currentDir+"/"+ lua_tostring(L,2);
+    QString waitFunc = lua_tostring(L,4);
+    m_effect->ExportDiffAsUnrolledBitmap6502In(file,bg, name,waitFunc,lua_tonumber(L,5),
+                                             lua_tonumber(L,6),
+                                             lua_tonumber(L,7),
+                                             lua_tonumber(L,8),
+                                             lua_tonumber(L,9));
+   // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
+    return 0;
+}
+
 static int Save2DInfo(lua_State* L) {
     QString file = m_currentDir+"/"+ lua_tostring(L,1);
     QString fileUnroll = m_currentDir+"/"+ lua_tostring(L,4);
@@ -1184,6 +1198,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddGameboyData", AddGameboyData);
     lua_register(m_script->L, "Save2DInfo", Save2DInfo);
     lua_register(m_script->L, "ExportDiffAsUnrolledBitmap", ExportDiffAsUnrolledBitmap);
+    lua_register(m_script->L, "ExportDiffAsUnrolledBitmapIn", ExportDiffAsUnrolledBitmapIn);
     lua_register(m_script->L, "SaveMulticolorImage", SaveMulticolorImage);
     lua_register(m_script->L, "SaveKoalaImage", SaveKoalaImage);
     lua_register(m_script->L, "SaveImage", SaveImage);

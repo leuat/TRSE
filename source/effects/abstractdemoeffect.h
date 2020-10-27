@@ -59,6 +59,7 @@ public:
 
 
     void ExportDiffAsUnrolledBitmap6502(QString file, QString background, QString name, QString wf, int pos, int x, int y, int w, int h);
+    void ExportDiffAsUnrolledBitmap6502In(QString file, QString background, QString name, QString wf, int pos, int x, int y, int w, int h);
     virtual void Init() {}
 //    virtual void
 

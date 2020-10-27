@@ -31,15 +31,17 @@ void PixelChar::set(int x, int y, unsigned char color, unsigned char bitMask, un
 
      unsigned char winner = 254;
     // Does color exist in map?
+    // for (int i=0;i<maxCol;i++)
+     //    qDebug() << " Colors " << i<<Util::numToHex(c[i]);
     for (int i=0;i<maxCol;i++) {
         if (c[i] == color) {
             winner = i;
             break;
         }
     }
+  //  qDebug() << "NO WINNER " <<winner <<minCol << maxCol;
 
     if (winner==254) {// && color!=c[0]) {
-
         for (int j=minCol;j<maxCol;j++)
             if (c[j]==255) {
                 winner = j;
@@ -49,11 +51,11 @@ void PixelChar::set(int x, int y, unsigned char color, unsigned char bitMask, un
         // not available slots found
         if (winner==254)
         {
-            //winner = 3;
-            winner = (p[y]>>x) & bitMask;
+            winner = 3;
+            /*winner = (p[y]>>x) & bitMask;
             if (winner==0 && minCol!=0)
                 winner = maxCol-1;
-
+*/
         }
 
         if (winner>=minCol)
@@ -234,6 +236,12 @@ void PixelChar::Reorganize(unsigned char bitMask, unsigned char scale, unsigned 
            // qDebug() << "REMOVING COLOR";
         }
     }
+    // Make sure that several are not identical
+/*    qDebug() << "REORG : "<<Util::numToHex(c[0]) <<Util::numToHex(c[1]);
+    if (c[1] == c[0]) {
+        c[1] = 255;
+        qDebug() << "SETTING 1 to 255";
+    }*/
 }
 
 int PixelChar::Count(unsigned int col, unsigned char bitMask, unsigned char scale)

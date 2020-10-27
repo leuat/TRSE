@@ -366,6 +366,7 @@ public:
     }
 
     void CopyTo(LImage* img);
+    virtual void FromLImageQImage(LImage* other) {}
 
     virtual void Clear();
     virtual void fromQImage(QImage* img, LColorList& lst) = 0;

@@ -176,6 +176,20 @@ void DialogImport::Convert()
     matrixSizeY = ui->cmbDitherY->currentText().toInt();
 //    qDebug() << matrixSize;
 
+
+
+    LImageQImage* inter = nullptr;
+    LImage* org = nullptr;
+    if (dynamic_cast<MultiColorImage*>(m_image)!=nullptr) {
+        // OK. we need to do some tricks. Convert to FAKE c64 image first:
+        inter = new LImageQImage(m_image->m_colorList.m_type);
+        inter->Initialize(m_image->m_width, m_image->m_height);
+        org = m_image;
+        m_image = inter;
+        m_image->m_colorList.m_selectClosestFromPen = false;
+    }
+
+
     m_image->Clear();
     if (!useDither)
        m_image->fromQImage(m_output.m_qImage, m_image->m_colorList);
@@ -204,6 +218,15 @@ void DialogImport::Convert()
     //qDebug() << "DIALOGIMPORT:";
     //for (int i=0;i<4;i++)
     //    qDebug() << i << Util::numToHex(m_image->m_colorList.m_nesCols[i]);
+
+    if (inter!=nullptr) {
+        // Need to convert back to c64 cells
+        m_image = org;
+        m_image->FromLImageQImage(inter);
+        delete inter;
+        inter = nullptr;
+
+    }
 
     m_image->ToQImage(m_image->m_colorList,*m_output.m_qImage,1, QPoint(0.0,0.0));
 
