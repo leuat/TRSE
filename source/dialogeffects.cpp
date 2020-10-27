@@ -731,7 +731,7 @@ static int ExportDiffAsUnrolledBitmap(lua_State* L) {
                                              lua_tonumber(L,8),
                                              lua_tonumber(L,9));
    // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
-
+    return 0;
 }
 
 static int Save2DInfo(lua_State* L) {
@@ -1044,6 +1044,7 @@ static int DrawImage(lua_State* L) {
                 m_effect->m_post.setPixelColor(x,y,col);
             }
         }
+    return 0;
 
 }
 
