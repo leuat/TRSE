@@ -180,6 +180,7 @@ void DialogImport::Convert()
 
     LImageQImage* inter = nullptr;
     LImage* org = nullptr;
+    LColorList orgCols;
     if (dynamic_cast<MultiColorImage*>(m_image)!=nullptr) {
         // OK. we need to do some tricks. Convert to FAKE c64 image first:
         inter = new LImageQImage(m_image->m_colorList.m_type);
@@ -187,6 +188,8 @@ void DialogImport::Convert()
         org = m_image;
         m_image = inter;
         m_image->m_colorList.m_selectClosestFromPen = false;
+        m_image->m_colorList.CopyFrom(&org->m_colorList);
+        orgCols.CopyFrom(&org->m_colorList);
     }
 
 
@@ -223,6 +226,8 @@ void DialogImport::Convert()
         // Need to convert back to c64 cells
         m_image = org;
         m_image->FromLImageQImage(inter);
+        m_image->m_colorList.CopyFrom(&orgCols);
+
         delete inter;
         inter = nullptr;
 

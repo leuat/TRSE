@@ -49,7 +49,7 @@ void CompilerGBZ80::Connect()
 
 }
 
-bool CompilerGBZ80::SetupMemoryAnalyzer(QString filename)
+bool CompilerGBZ80::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
 {
     QString s = Util::loadTextFile(filename+".sym");
     if (!QFile::exists(filename+".sym"))

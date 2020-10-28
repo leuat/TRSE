@@ -1150,7 +1150,7 @@ void BuilderThread::run()
         m_builder->Assemble();
 
         if (m_builder->m_buildSuccess) {
-            m_builder->compiler->SetupMemoryAnalyzer(Util::getFileWithoutEnding(m_filename));
+            m_builder->compiler->SetupMemoryAnalyzer(Util::getFileWithoutEnding(m_filename), m_builder->m_system->m_orgAsm);
 //            qDebug() << m_builder->getOutput();
 
         }

@@ -177,12 +177,14 @@ void Compiler6502::Init6502Assembler()
 
 }
 
-bool Compiler6502::SetupMemoryAnalyzer(QString filename)
+bool Compiler6502::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
 {
-    Orgasm orgAsm;
-    orgAsm.SetupConstants(m_parser.m_symTab);
+    if (orgAsm == nullptr)
+        return false;
+ //   Orgasm orgAsm;
+    orgAsm->SetupConstants(m_parser.m_symTab);
     //orgAsm.Codes();
-    orgAsm.Assemble(filename+".asm", filename+".prg");
+    orgAsm->Assemble(filename+".asm", filename+".prg");
   /*  if (!orgAsm.m_success) {
         return;
     }
@@ -201,14 +203,14 @@ bool Compiler6502::SetupMemoryAnalyzer(QString filename)
     m_assembler->blocks = nb;
 */
     // Loop through all symbols for a startblock
-    for (QString s : orgAsm.m_symbolsList){
+    for (QString s : orgAsm->m_symbolsList){
         if (s.toLower().startsWith("startblock")) {
-            int start = orgAsm.m_symbols[s];
+            int start = orgAsm->m_symbols[s];
             QString search = s.toLower().replace("startblock","endblock");
             int end = start;
-            for (QString s2 : orgAsm.m_symbolsList){
+            for (QString s2 : orgAsm->m_symbolsList){
                 if (s2.toLower() == search) {
-                    end = orgAsm.m_symbols[s2];
+                    end = orgAsm->m_symbols[s2];
                     break;
                 }
             }
@@ -240,12 +242,12 @@ bool Compiler6502::SetupMemoryAnalyzer(QString filename)
   //      qDebug() << "SEARCHING FOR " << str;;
         int end = mb->m_start;
         QString curEnd = ("endblock"+str);
-        for (QString s : orgAsm.m_symbols.keys())  {
+        for (QString s : orgAsm->m_symbols.keys())  {
             //qDebug() << s.toLower() << curEnd << Util::numToHex(orgAsm.m_symbols[s]);
             QString chk = s;
 //            chk = chk.remove("_extra"); // Ignore the extra label
             if (chk.toLower()==curEnd) {
-                end = orgAsm.m_symbols[s];
+                end = orgAsm->m_symbols[s];
                 break;
             }
         }
@@ -274,7 +276,7 @@ bool Compiler6502::SetupMemoryAnalyzer(QString filename)
         }
     }
 
-    return orgAsm.m_success;
+    return orgAsm->m_success;
 }
 
 int Compiler6502::FindEndSymbol(Orgasm &orgasm)

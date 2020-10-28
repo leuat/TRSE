@@ -5,8 +5,10 @@
 #include <QFile>
 #include "source/LeLib/util/cinifile.h"
 #include <QMap>
-
+//#include "source/OrgAsm/orgasm.h"
 #include <QElapsedTimer>
+
+class Orgasm;
 
 class SymbolTable;
 
@@ -60,6 +62,8 @@ public:
     virtual QString CompressFile(QString fileName) {
         return fileName;
     }
+    Orgasm* m_orgAsm = nullptr;
+
     int m_memoryType = 0;
     QVector<SystemLabel> m_labels;
     int m_memorySize = 65536;

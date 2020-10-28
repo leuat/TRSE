@@ -35,6 +35,7 @@
 #include "source/LeLib/util/cinifile.h"
 #include <QSharedPointer>
 #include "source/Compiler/systems/abstractsystem.h"
+#include "source/OrgAsm/orgasm.h"
 
 class Compiler : public QObject
 {
@@ -58,7 +59,7 @@ public:
     virtual void Connect() = 0;
 
 
-    virtual bool SetupMemoryAnalyzer(QString filename) { return true;}
+    virtual bool SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm = nullptr) { return true;}
 
     void Parse(QString text, QStringList lst, QString fname);
     bool Build( QSharedPointer<AbstractSystem> system, QString projDir);

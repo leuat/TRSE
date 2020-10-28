@@ -76,7 +76,7 @@ void CompilerZ80::Connect()
 
 }
 
-bool CompilerZ80::SetupMemoryAnalyzer(QString filename)
+bool CompilerZ80::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
 {
  /*   Orgasm orgAsm;
     orgAsm.SetupConstants(m_parser.m_symTab);

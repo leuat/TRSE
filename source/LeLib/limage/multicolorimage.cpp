@@ -851,7 +851,7 @@ void MultiColorImage::FromLImageQImage(LImage *other)
                 int max = -1;
                 int win = -1;
                 for (int j=0;j<cols.size();j++) {
-                    if (cols[j]>max && j!=getBackground()) {
+                    if (cols[j]>max && j!=getBackground() && other->m_colorList.m_list[j].inUse) {
                         max = cols[j];
                         win = j;
                         cols[j] = -1;
