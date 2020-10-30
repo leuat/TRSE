@@ -904,6 +904,12 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             return;
         }
+        if (m_currentToken.m_value=="setvalue") {
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
         if (m_currentToken.m_value=="compile_akg_music") {
             Eat();
             Eat();
@@ -2042,6 +2048,29 @@ void Parser::PreprocessSingle() {
 
                   if (m_pass == PASS_PRE || m_pass == PASS_FIRST)
                       m_preprocessorDefines[key] = val;
+
+//                  if (m_pass == PASS_PRE)
+  //                    qDebug() << "Defined: " << key << val;
+
+              }
+              if (m_currentToken.m_value.toLower() =="setvalue") {
+                  Eat(TokenType::PREPROCESSOR);
+                  QString key = m_currentToken.m_value;
+                  Eat();
+  //                qDebug() << m_currentToken.m_value;
+      //            int i = getIntVal(m_currentToken);
+    //              qDebug() << "After: " << Util::numToHex(i);
+                  int ival = 0;
+                  bool isString = true;
+                  QString val = m_currentToken.m_value;
+                  if (val=="") {
+                      isString = false;
+                      ival = m_currentToken.m_intVal;
+                  }
+                  if (isString)
+                      m_projectIni->setString(key,val);
+                  else
+                      m_projectIni->setFloat(key,ival);
 
 //                  if (m_pass == PASS_PRE)
   //                    qDebug() << "Defined: " << key << val;

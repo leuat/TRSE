@@ -145,6 +145,7 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
         // 2064
 //        Asm(".byte    $0E, $08, $0A, $00, $9E, $20, $28");
         Asm(".byte    $0, $0E, $08, $0A, $00, $9E, $20, $28");
+//        qDebug() << "START ADDRESS " << Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
         QString s = QString::number(Syntax::s.m_currentSystem->m_programStartAddress);
         QString line = ".byte   ";
         for (int i=0;i<s.count();i++) {
@@ -667,10 +668,10 @@ void AsmMOS6502::Variable(QString v, bool isByte)
     else {
         Comment("integer assignment NodeVar");
         if (m_term=="")
-            m_term = "lda ";
+            m_term = "ldy ";
         m_term+=v + "+1 ; Next one";
         Term();
-        Asm("tay");
+//        Asm("tay");
         Term("lda "+v);
 
     }

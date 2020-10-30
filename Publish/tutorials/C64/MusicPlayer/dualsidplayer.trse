@@ -36,4 +36,6 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 data_header_images/main.flf = 6.9229e-310
 zeropage_colormemory = $fc
-open_files =, player.ras
+open_files = ,player.ras
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/MusicPlayer/
+current_file = player.ras

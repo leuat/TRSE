@@ -681,6 +681,8 @@ void ASTDispatcher6502::Load16bitVariable(QSharedPointer<Node> node, QString reg
 {
     as->ClearTerm();
 //    as->Comment("Load 16 bit var IS WORD "+QString::number(node->isWord(as)));
+
+
     if (node->isWord(as))
         as->Asm("ld"+reg+" "+getValue8bit(node,true));
     as->Asm("lda "+getValue8bit(node,false));
@@ -2298,7 +2300,10 @@ void ASTDispatcher6502::LoadVariable(QSharedPointer<NodeVar> node) {
     }
     if (t == TokenType::INTEGER) {
         node->m_isWord = true;
-        Load16bitVariable(node);
+        if (node->m_expr!=nullptr)
+            LoadByteArray(node);
+        else
+            Load16bitVariable(node);
         return;
     }
     ErrorHandler::e.Error(TokenType::getType(t) + " assignment not supported yet for exp: " + getValue(node));
@@ -2423,11 +2428,16 @@ void ASTDispatcher6502::StoreVariable(QSharedPointer<NodeVar> node) {
                 as->Asm("pla");
             as->Asm("sta " +pa + getValue(node)+pb+","+ secondReg);
             if (node->getArrayType(as)==TokenType::INTEGER) {
-                as->Asm("in"+secondReg);
+//                as->Asm("in"+secondReg);
 
+/*             if (tya=="tya" && secondReg=="x") {
+
+                 as->Asm("sty " +pa + getValue(node)+pb+","+ secondReg);
+                 return;
+             }*/
              as->Asm(tya);
 
-             as->Asm("sta " +pa + getValue(node)+pb+","+ secondReg);
+             as->Asm("sta " +pa + getValue(node)+pb+"+1,"+ secondReg);
             }
         }
         return;
