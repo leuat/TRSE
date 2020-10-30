@@ -2428,16 +2428,16 @@ void ASTDispatcher6502::StoreVariable(QSharedPointer<NodeVar> node) {
                 as->Asm("pla");
             as->Asm("sta " +pa + getValue(node)+pb+","+ secondReg);
             if (node->getArrayType(as)==TokenType::INTEGER) {
-//                as->Asm("in"+secondReg);
+                if (pa=="") {
+                    as->Asm(tya);
+                    as->Asm("sta " + getValue(node)+"+1,"+ secondReg);
+                    return;
+                }
+                as->Asm("in"+secondReg);
 
-/*             if (tya=="tya" && secondReg=="x") {
+                as->Asm(tya);
 
-                 as->Asm("sty " +pa + getValue(node)+pb+","+ secondReg);
-                 return;
-             }*/
-             as->Asm(tya);
-
-             as->Asm("sta " +pa + getValue(node)+pb+"+1,"+ secondReg);
+                as->Asm("sta " +pa + getValue(node)+pb+","+ secondReg);
             }
         }
         return;
