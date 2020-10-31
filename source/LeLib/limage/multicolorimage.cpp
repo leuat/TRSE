@@ -811,62 +811,55 @@ void MultiColorImage::VBMExportChunk(QFile &file, int start, int width, int heig
     return s1 < s2;
 }
 */
+
+bool colsSort(const QVector3D s1, const QVector3D s2)
+{
+    return s1.x() > s2.x();
+}
+
 void MultiColorImage::FromLImageQImage(LImage *other)
 {
     Clear();
+/*   QImage test(other->m_width, other->m_height, QImage::Format_ARGB32);
+   ((LImageQImage*)(other))->ToQImage(other->m_colorList,test,1,QPointF(80,100));
+   test.save("test.png");*/
     for (int y=0; y<m_charHeight;y++)
         for (int x=0; x<m_charWidth;x++) {
-            PixelChar& pc = m_data[x + y*m_charWidth];
+            int num  =x + y*m_charWidth;
+            PixelChar& pc = m_data[num];
             int dx = x*8/m_scale;
             int dy = y*8;
 
             // First, analyze chars
-            QVector<int> cols, winners;
+            QVector<QVector3D> cols;
+            QVector<int> winners;
+
             cols.resize(m_colorList.m_list.count());
+            for (int i=0;i<cols.count();i++)
+                cols[i].setY(i);
 
             for (int j=0;j<8;j++) {
                 for (int i=0;i<8/m_scale;i++) {
                     uchar c = other->getPixel(dx+i, dy+j);
-                    cols[c]++;
+                 //   qDebug() << QString::number(c);
+                    cols[c].setX(cols[c].x()+1);
 
                 }
             }
 
+            std::sort(cols.begin(),cols.end(),colsSort);
 
-            //qSort(cols.begin(),cols.end(),qGreater<int>());
-            // Winner are the three first. Let's go with that.
-            int v=0;
+            // Pick out the 3 best winners + background first
+            int j=0;
             winners.append(getBackground());
-/*            for (int i=0;i<3;i++) {
-                if (cols[v] == getBackground())
-                    v++;
-
-                pc.c[i+1] = cols[v];
-                winners.append(cols[v]);
-                v++;
-            }*/
-
-            // Pick out the 3 best winners
             for (int i=0;i<3;i++) {
-                int max = -1;
-                int win = -1;
-                for (int j=0;j<cols.size();j++) {
-                    if (cols[j]>max && j!=getBackground() && other->m_colorList.m_list[j].inUse) {
-                        max = cols[j];
-                        win = j;
-                        cols[j] = -1;
-
-                    }
-                }
-                winners.append(win);
+                if (cols[j].y()==getBackground()) j++;
+                winners.append(cols[j].y());
+                j++;
             }
-
             for (int i=0;i<4;i++)
                 pc.c[i] = winners[i];
 
-
-
-//            qDebug() << winners;
             m_colorList.EnableColors(winners);
             for (int j=0;j<8;j++) {
                 for (int i=0;i<8/m_scale;i++) {
@@ -875,10 +868,7 @@ void MultiColorImage::FromLImageQImage(LImage *other)
                     int winner =  0;
                     m_colorList.getClosestColor(other->m_colorList.m_list[c].color, winner);
                     pc.set(i*m_scale,j,winner,m_bitMask);
-//                    else
-    //                    pc.set(i*m_scale,j,pc.c[1],m_bitMask);
-                        //setPixel(i+dx,j+dy,c);
-                        //setPixel(i+dx,j+dy,pc.c[3]);
+//                    pc.set(i*m_scale,j,c,m_bitMask);
                 }
             }
 
