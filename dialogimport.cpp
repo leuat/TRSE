@@ -181,7 +181,8 @@ void DialogImport::Convert()
     LImageQImage* inter = nullptr;
     LImage* org = nullptr;
     LColorList orgCols;
-    if (dynamic_cast<MultiColorImage*>(m_image)!=nullptr) {
+    bool useCells = dynamic_cast<MultiColorImage*>(m_image)!=nullptr && dynamic_cast<LImageContainer*>(m_image)==nullptr;
+    if (useCells) {
         // OK. we need to do some tricks. Convert to FAKE c64 image first:
         inter = new LImageQImage(m_image->m_colorList.m_type);
         inter->Initialize(m_image->m_width, m_image->m_height);

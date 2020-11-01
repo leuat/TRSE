@@ -1400,7 +1400,7 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen
   //                  break;
               //  double metric = pc.CompareLength3(p);
                 double metric = (pc.CompareLength4(p, m_colorList,m_bitMask));
-//                if (rand()%100>98) qDebug() << metric;
+            //    if (rand()%100>98) qDebug() << metric;
 //                int metric = pc.Compare(p);
                 if (metric <=compression && metric<cur ) {
                     data[i + j*sx] = pi;

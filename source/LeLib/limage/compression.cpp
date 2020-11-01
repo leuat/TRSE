@@ -538,6 +538,7 @@ double Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int le
                 }
             }
         }
+//        if (rand()%100>98) qDebug() << "TYPE: " << l;
         return l;
 
     }

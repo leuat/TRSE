@@ -1,6 +1,6 @@
 globals = {
 	camera = { x = 0, y=0, z=5 },
-	fov = 70, 
+	fov = 68, 
 	target = { x = 0, y=0.0, z=0 },
 	light0 = {   	direction = {x=1, y=0, z=1 }, 
 				color = {x=1, y=1, z=1}, 
@@ -113,8 +113,8 @@ function UpdateScene()
 
 end
 
--- Experiment with the compression level!
-compression = 4
+-- Experiment with the compression level - between 0(no compression) and 1 (compresses to 0 chars)
+compression = 0.1
 
 function Update()
 	

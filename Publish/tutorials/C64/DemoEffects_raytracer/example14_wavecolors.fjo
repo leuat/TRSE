@@ -21,7 +21,7 @@ output = {
 --	resolution = { width = 168, height=105},
 	resolution = { width = 320, height=8*8},
 --	resolution = { width = 320, height=200},
-	aspect = 1.0,
+	aspect = 0.79,
 	output_type = 1,
 	c64_multicolor = 0,
 	c64_imageType = 0,
@@ -91,7 +91,7 @@ end
 function Init()
 ypos = {}
 mbox = 0
-
+--[[
 --	AddObject("box","d1","","MaterialWhite",0,0,0,  1,1,1);
 --	AddObject("torus","d1","","MaterialWhite",0,0,0,  1,0.5,1);
 	ClearAllObjects();
@@ -116,18 +116,8 @@ mbox = 0
 		render = 1
 	--end
 
---[[
-	for y=0,2 do
-	for x=0,2 do
-		xx = (x-1)*4
-		yy = (y-1)*4
-	AddObject("box","d","","MaterialWhite",00,xx,yy,   1,1,1);
-	end
-	end
-]]--
-
 	UpdateScene()
-
+	]]--
 end
 
 
@@ -135,6 +125,7 @@ end
 
 function UpdateScene()
 
+--[[
   	t = ((frame)/(noFrames+7))/(3.14159*4)
 
 --	tt = t*3.14159*2
@@ -176,24 +167,42 @@ function UpdateScene()
 --	if (frame==0) then globals.camera.x = 20000 end
 --	globals.camera.x = 4
 --	globals.target.z = -2
+]]--
 end
 
+function PostProcess()
+	if (frame>noFrames+1) then 
+		return;
+	end
+	wy = output.resolution.height
+	wx = output.resolution.width
+	th = frame/noFrames*3.14159*2
+	sy = wy/8
+	for i=0, wx do
+		t = i/wx*3.14159
+		h = wy/2 + sin(th+t)*sy + cos(th-t)*sy
+		h = h + sin((th+t)*2)*sy/2  + cos((th-t)*4)*sy/2
+		DrawLine(i,h,i,output.resolution.height, 255, 255,1,1);
+	end	
+
+end
 
 
 function Update()
 	
 	if (frame==noFrames-2) then
-		ClearAllObjects();
+--		ClearAllObjects();
 		render=0
 	end;
 	if (hasSaved == 0) then 
 		frame=frame+1
 
-		CompressCharset(0,40,0,8,  1, 64)
+		CompressCharset(0,40,0,8,  0.01, 64)
 
 		if (frame == noFrames) then			
 			Message("DONE");
-			OptimizeScreenAndCharset(40,8,  64, 3);
+		    -- width, height, number of chars (64), compression level (0.15, produces <64 chars), compression type SSIM (1) not SSIM
+			OptimizeScreenAndCharset(40,8,  64, 0.15, 1);
 			SaveScreenAndCharset("data/wavecolors_screen.bin", "data/wavecolors_charset.bin");
 			hasSaved = 1
 		end
