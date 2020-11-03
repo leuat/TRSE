@@ -937,6 +937,17 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             return;
         }
+        if (m_currentToken.m_value=="perlinnoise") {
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
         if (m_currentToken.m_value=="exportblackwhite") {
             Eat();
             Eat();
@@ -2119,6 +2130,10 @@ void Parser::PreprocessSingle() {
               else if (m_currentToken.m_value.toLower() =="export") {
                   Eat(TokenType::PREPROCESSOR);
                   HandleExport();
+              }
+              else if (m_currentToken.m_value.toLower()=="perlinnoise") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandlePerlinNoise();
               }
               else if (m_currentToken.m_value.toLower() =="setcompressionweights") {
                   Eat(TokenType::PREPROCESSOR);
@@ -3506,6 +3521,28 @@ void Parser::HandleMacro()
     Eat(TokenType::STRING);
     m_macros[name.toLower()] = m;
 //    qDebug() << "MACRO "<<m.str;
+
+}
+
+void Parser::HandlePerlinNoise()
+{
+    QString name = m_currentToken.m_value;
+    QString file = m_currentDir+"/"+ name;
+    Eat(TokenType::STRING);
+    int w = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int h = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int oct = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    float scale = m_currentToken.m_intVal;
+    Eat();
+    float pers = m_currentToken.m_intVal/100.0;
+    Eat();
+    int amp = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    SimplexNoise sn;
+    sn.CreateNoiseData(file,w,h,oct,pers,scale,amp);
 
 }
 

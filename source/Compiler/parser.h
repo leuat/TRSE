@@ -53,6 +53,7 @@
 #include "source/LeLib/limage/c64fullscreenchar.h"
 #include "source/trsedocuments/formpaw.h"
 #include "source/LeLib/util/tool.h"
+#include "source/LeLib/util/SimplexNoise.h"
 //#include "source/Compiler/sourcebuilder.h"
 
 class ParserBlock {
@@ -225,6 +226,7 @@ public:
     void HandleExportPalette();
     void HandleSetCompressionWeights();
     void HandleMacro();
+    void HandlePerlinNoise();
     void HandleCallMacro(QString name, bool ignore);
     void HandleExportCompressed();
     void HandleExport();

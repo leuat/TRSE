@@ -286,14 +286,16 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
     QMatrix4x4 bayer4x4 = QMatrix4x4(0,8,2,10,  12,4,14,6, 3,11,1,9, 15,7,13,5);
     bayer4x4 = bayer4x4*1/16.0*strength.x();
 
+//    qDebug() << img.width();
 
     for (int y=0;y<height;y++) {
         for (int x=0;x<width;x++) {
 
 //            color.R = color.R + bayer8x8[x % 8, y % 8] * GAP / 65;
-
-            int xx = (x-img.width()/2)*m_importScaleX + img.width()/2;
-            int yy = (y-img.height()/2)*m_importScaleY + img.height()/2;
+            double dx = x/(double)width*img.width();
+            double dy = y/(double)height*img.height();
+            int xx = (dx-img.width()/2.0)*m_importScaleX + img.width()/2.0;
+            int yy = (dy-img.height()/2.0)*m_importScaleY + img.height()/2.0;
 
 
             QColor color = QColor(img.pixel(xx,yy));

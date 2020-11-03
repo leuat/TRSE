@@ -154,8 +154,9 @@ void DialogImport::Convert()
     }
 
 
-    m_output.m_qImage = img->Resize(m_image->m_width,
-                                    m_image->m_height,
+//    qDebug() << m_output.m_qImage->width();
+    m_output.m_qImage = img->Resize(m_work.m_qImage->width(),
+                                    m_work.m_qImage->height(),
                                     m_image->m_colorList,
                                     m_contrast, m_shift, m_hsv, m_saturation, m_scale, useDither);
 //    qDebug() << m_image->m_width << m_output.m_qImage->width();
@@ -191,22 +192,36 @@ void DialogImport::Convert()
         m_image->m_colorList.m_selectClosestFromPen = false;
         m_image->m_colorList.CopyFrom(&org->m_colorList);
         orgCols.CopyFrom(&org->m_colorList);
+        m_image->m_importScaleX = 1+ (ui->hsScaleX->value()/100.0 - 0.5)*4.0;
+        m_image->m_importScaleY = 1+ (ui->hsScaleY->value()/100.0 - 0.5)*4.0;
+
     }
 
 
     m_image->Clear();
-    if (!useDither)
+/*    if (!useDither)
        m_image->fromQImage(m_output.m_qImage, m_image->m_colorList);
     else
 //        m_image->FloydSteinbergDither(*m_output.m_qImage,m_image->m_colorList, true);
+*/
 
-        m_image->OrdererdDither(*m_output.m_qImage,m_image->m_colorList, strength,QPoint(matrixSizeX,matrixSizeY),1);
+    if (!useDither)
+        strength.setX(0);
+
+    m_image->OrdererdDither(*m_output.m_qImage,m_image->m_colorList, strength,QPoint(matrixSizeX,matrixSizeY),1);
 
 
 
-    if (m_output.m_qImage==nullptr)
-         m_output.m_qImage = new QImage(m_image->m_width, m_image->m_height, QImage::Format_ARGB32);
+    if (m_output.m_qImage!=nullptr)  {
+        delete m_output.m_qImage;
+        m_output.m_qImage = nullptr;
+    }
 
+
+    m_output.m_qImage = new QImage(m_image->m_width, m_image->m_height, QImage::Format_ARGB32);
+
+
+//    qDebug() << "WWW " <<m_output.m_qImage->width();
 
     CharsetImage* chr = dynamic_cast<CharsetImage*>(m_image);
     if (chr!=nullptr && chr->m_colorList.m_type!=LColorList::NES) {

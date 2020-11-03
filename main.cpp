@@ -196,6 +196,7 @@ int main(int argc, char *argv[])
 
   //  exit(1);
 
+    //CreatePerlin("/home/leuat/Dropbox/TRSE/ECM/data/perlin80.dat",80,50,6,1,1,127);
     QApplication a(argc, argv);
     a.setOrganizationDomain("lemonspawn.com");
     a.setApplicationName("TRSE");
