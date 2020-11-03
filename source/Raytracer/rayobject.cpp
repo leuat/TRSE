@@ -78,7 +78,9 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
             r = r.Rotate(m_localRotmat,m_position);
             //r = r.Rotate(m_localRotmatInv,m_localPos);
 
-            n = CalculateUV( r.m_currentPos,normal,tangent) + m_uvShift;
+            n = CalculateUV(r.m_currentPos,normal,tangent) + m_uvShift;
+
+
 //            n = QVector3D(asin(n.y()), atan2(n.z(), n.x()),0);
             //mul.setX(fmod(abs(n.x()), x)>x/2);
             //mul.setY(fmod(abs(n.y()), x)>x/2);
@@ -93,28 +95,72 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
         {
 
             if (m_material.m_hasTexture) {
-                QVector3D uv = CalculateUV(isp, normal, tangent);
 
-                float lvl = pow(0.1*l,0.9);
-//                lvl = 0;
-                //            lvl = 4;
-                QImage* img = m_material.m_texture.get(lvl);
-                float uu = abs((int)(uv.x()*(float)img->width())%img->width());
-                float vv = abs((int)(uv.y()*(float)img->height())%img->height());
-                QVector3D c = Util::fromColor(QColor(img->pixel(uu,vv)))/256.;
-                col.setX(col.x()*c.x());
-                col.setY(col.y()*c.y());
-                col.setZ(col.z()*c.z());
+                //QVector3D uv = CalculateUV(isp, normal, tangent);
+
+/*                QVector<QVector3D> axes;
+                axes.append(QVector3D(1,1,0));
+                axes.append(QVector3D(1,0,1));
+                axes.append(QVector3D(0,1,1));*/
+                Ray r = *ray;// = new Ray();
+                r = r.Rotate(m_localRotmat,m_position);
+                QVector3D n = normal;
+                n = m_localRotmat*n;
+                QVector3D pos = r.m_currentPos;
+                QVector3D res = QVector3D(0,0,0);
+                for (int a = 0;a<3;a++) {
+
+
+                    float uu =0;
+                    float vv =0;
+                    // Project 3 directions.. but pr
+                    if (a==0) {
+                        uu = pos.x();
+                        vv = pos.y();
+                    }
+                    if (a==1) {
+                        uu = pos.y();
+                        vv = pos.z();
+                    }
+                    if (a==2) {
+                        uu = pos.x();
+                        vv = pos.z();
+                    }
+                    float lvl = pow(0.1*l,0.9);
+                    //                lvl = 0;
+                    //            lvl = 4;
+                    QImage* img = m_material.m_texture.get(lvl);
+                    uu = abs((int)((uu+m_material.m_uvShift.x())*(float)img->width()*m_material.m_uvScale.x())%img->width());
+                    vv = abs((int)((vv+m_material.m_uvShift.y())*(float)img->height()*m_material.m_uvScale.y())%img->height());
+                    QVector3D c = Util::fromColor(QColor(img->pixel(uu,vv)))/256.;
+                    //                qDebug() << c <<uv << img->width();
+                    //                col = QVector3D(1,1,1);
+                    //              c = QVector3D(1,1,1);
+                    if (a==0) res+=abs(n.z())*c;
+                    if (a==1) res+=abs(n.x())*c;
+                    if (a==2) res+=abs(n.y())*c;
+//                    res += abs(n[0])c;
+                }
+//                res = QVector3D(res.x()*abs(n.x()), res.y()*abs(n.y()), res.z()*abs(n.z()));
+                col.setX(col.x()*res.x());
+                col.setY(col.y()*res.y());
+                col.setZ(col.z()*res.z());
+
             }
 //            col.setX(1);
 
+            if (m_material.m_lightningType==0) {
 
-
-            ray->m_intensity = col*ApplyDirectionalLight(normal,globals,shadows);
-            ray->m_intensity.setX(max(ray->m_intensity.x(),globals.m_ambient.x()*col.x()));
-            ray->m_intensity.setY(max(ray->m_intensity.y(),globals.m_ambient.y()*col.y()));
-            ray->m_intensity.setZ(max(ray->m_intensity.z(),globals.m_ambient.z()*col.z()));
-            ray->m_intensity += ApplySpecularLight(normal,ray->m_direction,  globals, m_material, shadows);
+                ray->m_intensity = col*ApplyDirectionalLight(normal,globals,shadows);
+                ray->m_intensity.setX(max(ray->m_intensity.x(),globals.m_ambient.x()*col.x()));
+                ray->m_intensity.setY(max(ray->m_intensity.y(),globals.m_ambient.y()*col.y()));
+                ray->m_intensity.setZ(max(ray->m_intensity.z(),globals.m_ambient.z()*col.z()));
+                ray->m_intensity += ApplySpecularLight(normal,ray->m_direction,  globals, m_material, shadows);
+            }
+            // No lights
+            if (m_material.m_lightningType==1) {
+                ray->m_intensity = col;
+            }
         }
         ray->m_z = l;
     }
@@ -309,7 +355,8 @@ float RayObjectTorus::intersect(Ray *ray)
 
 QVector3D RayObjectBox::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D &tangent)
 {
-    return QVector3D(1,1,0);
+//    QVector3D p = m_localPos + pos;
+    return QVector3D(pos.x(),pos.y(),0);
 }
 
 float RayObjectBox::intersect(Ray *ray)

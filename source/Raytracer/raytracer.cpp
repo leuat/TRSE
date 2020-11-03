@@ -383,6 +383,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
                 AbstractRayObject* o= nullptr;
                 if (dynamic_cast<RayObjectBox*>(winner)!=nullptr)
                     o=winner;
+
                 float shadow = 1;
                 if (RayMarchSingle(shadowRay, Shadow, nullptr,14,tid, point)) {
                     shadow = m_globals.m_shadowScale;

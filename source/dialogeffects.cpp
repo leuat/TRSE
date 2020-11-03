@@ -282,6 +282,11 @@ static int AddObject(lua_State *L)
 
         mat.m_shininess_strength = m_script->get<float>(material+".shininess_intensity");
 
+        if (m_script->lua_exists(material+".texture")) {
+            mat.m_hasTexture = true;
+            mat.m_texture.Load(m_currentDir + "/"+ m_script->get<QString>(material+".texture"));
+        }
+
         m_rt.LoadMesh(fn, meshscale,orgPos, mat,name, invertN==1);
         return 0;
 
@@ -402,12 +407,26 @@ static int AddObject(lua_State *L)
 
         mat.m_shininess_strength = m_script->get<float>(material+".shininess_intensity");
 
+        if (m_script->lua_exists(material+".texture")) {
+            mat.m_hasTexture = true;
+            mat.m_texture.Load(m_currentDir + "/"+ m_script->get<QString>(material+".texture"));
+        }
+        if (m_script->lua_exists(material+".uv_scale")) {
+            mat.m_uvScale = m_script->getVec(material+".uv_scale");
+        }
+
         mat.m_shininess_strength = m_script->get<float>(material+".shininess_intensity");
         if (m_script->lua_exists(material+".checkerboard")) {
             mat.m_checkerBoard.setX(m_script->get<float>(material+".checkerboard"));
         }
         if (m_script->lua_exists(material+".checkerboard_color")) {
             mat.m_checkerBoard_color = m_script->getVec(material+".checkerboard_color");
+        }
+        if (m_script->lua_exists(material+".light_type")) {
+            mat.m_lightningType = m_script->get<float>(material+".light_type");
+        }
+        if (m_script->lua_exists(material+".uv_shift")) {
+            mat.m_uvShift = m_script->getVec(material+".uv_shift");
         }
         obj->SetMaterial(mat);
 
