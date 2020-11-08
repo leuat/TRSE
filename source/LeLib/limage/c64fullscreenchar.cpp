@@ -21,6 +21,7 @@
 
 #include "c64fullscreenchar.h"
 #include "source/LeLib/limage/limagenes.h"
+#include "limageqimage.h"
 
 C64FullScreenChar::C64FullScreenChar(LColorList::Type t) : MultiColorImage(t)
 {
@@ -152,6 +153,10 @@ void C64FullScreenChar::ExportBin(QFile &f)
 
 void C64FullScreenChar::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma)
 {
+    if (m_charset==nullptr) {
+        qDebug() << "C64FullScreenChar::orderedDither NO CHARSET loaded";
+        return;
+    }
     fromQImage(&img, colors);
 
 }
@@ -159,12 +164,27 @@ void C64FullScreenChar::OrdererdDither(QImage &img, LColorList &colors, QVector3
 void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
 {
 
+
     float sx = img->width()/m_charWidth;
     float sy = img->height()/m_charHeight;
+
  //   float sy = img->height()/25;
-//    qDebug() <<m_charWidth << m_charHeight;
+    //qDebug() <<"WHOO" << m_charWidth << m_charHeight;
+   // img->save("test2.png");
 
     lst.m_selectClosestFromPen = false;
+    LImageQImage chr(LColorList::C64);
+    chr.Initialize(img->width(),img->height());
+ //   chr.m_colorList.CopyFrom(&m_colorList);
+//    chr.m_colorList.EnableColors(m_colorList.m_enabledColors);
+    chr.m_colorList.EnableColors(QVector<int>()<< 0<<1);
+    chr.m_colorList.m_selectClosestFromPen = false;
+    chr.FloydSteinbergDither(*img,chr.m_colorList,true);
+    QImage out(chr.m_width, chr.m_height,QImage::Format_RGB32);
+    chr.ToQImage(chr.m_colorList,out,1,QPointF(160,100));
+   // out.save("test.png");
+
+
     for (float i=0;i<m_charWidth;i++)
         for (float j=0;j<m_charHeight;j++) {
             PixelChar pc;
@@ -181,7 +201,7 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
                     int col = 0;
                     if (xx>0 && xx<img->width() && yy>0 && yy<img->height())
            //             col = lst.getIndex(QColor(img->pixel(xx,yy)));
-                    lst.getClosestColor(QColor(img->pixel(xx,yy)), col);
+                    lst.getClosestColor( lst.get(chr.getPixel(xx,yy)).color, col);
                     if (col!=getBackground() && col<winner.count()) {
                         pc.p[y] |= 1<<x;
                         winner[col]++;
@@ -202,6 +222,12 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
             else
                 m_currentChar=0xA0;
 */
+            /*
+            m_writeType=Color;
+            setPixel(i*sx,j*sy,col);
+            m_writeType=Character;
+            setPixel(i*sx,j*sy,col);
+            */
             m_writeType=Color;
             setPixel(i*sx,j*sy,col);
             m_writeType=Character;
@@ -217,6 +243,17 @@ void C64FullScreenChar::ReInitialize()
     AddNew(m_charWidth, m_charHeight);
     emit emitImportRom();
 
+}
+
+void C64FullScreenChar::Initialize(int width, int height) {
+//    exit(1);
+    m_width = width;
+    m_height = height;
+    m_charWidth = width/8;
+    m_charHeight = height/8;
+//    qDebug() << "Addnew Initing : " <<m_charWidth<<m_charHeight << width << height;
+
+    ReInitialize();
 }
 
 bool C64FullScreenChar::KeyPress(QKeyEvent *e)
@@ -254,17 +291,21 @@ void C64FullScreenChar::AddNew(int w, int h) {
     C64Screen* s = new C64Screen();
 
     s->Init(m_charWidth, m_charHeight);
+//    qDebug() << "Addnew Initing : " <<m_charWidth<<m_charHeight;
     m_items.append(s);
     m_current = m_items.count()-1;
 }
 
 void C64FullScreenChar::setPixel(int x, int y, unsigned int color)
 {
-    m_width=320;
-    if (x>=320 || x<0 || y>=200 || y<0)
+//    m_width=320;
+    if (x>=m_width || x<0 || y>=m_height || y<0)
         return;
-    x=x*m_charWidth/40.0;
-    y=y*m_charHeight/25.0;
+    //x=x*m_charWidth/40.0;
+    //y=y*m_charHeight/25.0;
+
+//    x=x*m_charWidth/40.0;
+ //   y=y*m_charHeight/25.0;
 
     if (m_writeType==Character)
         ((C64Screen*)m_items[m_current])->m_rawData[x/8+ (y/8)*m_charWidth] = m_currentChar;
@@ -278,17 +319,17 @@ void C64FullScreenChar::setPixel(int x, int y, unsigned int color)
 
 unsigned int C64FullScreenChar::getPixel(int x, int y)
 {
-    m_width=320;
+//    m_width=320;
     if (m_charset==nullptr) {
         return 0;
          }
-    if (x>=320 || x<0 || y>=200 || y<0)
+    if (x>=m_width || x<0 || y>=m_height || y<0)
         return 0;
 
     int ox = x;
     int oy = y;
-    x=x*m_charWidth/40.0;
-    y=y*m_charHeight/25.0;
+  // x=x*m_charWidth/40.0;
+  //  y=y*m_charHeight/25.0;
 
     uchar v = ((C64Screen*)m_items[m_current])->m_rawData[(x/8) + (y/8)*m_charWidth];
     uchar col = ((C64Screen*)m_items[m_current])->m_rawColors[(x/8) + (y/8)*m_charWidth];
@@ -597,6 +638,7 @@ void C64FullScreenChar::LoadBin(QFile& file)
         file.read( ( char * )( &tmp), 1 );
 
     m_items.clear();
+
 
     for (int i=0;i<cnt;i++) {
         C64Screen* s = new C64Screen();

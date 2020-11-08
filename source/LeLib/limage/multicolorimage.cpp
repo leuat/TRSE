@@ -111,6 +111,10 @@ void MultiColorImage::setPixel(int x, int y, unsigned int color)
 
     int ix = x % (8/m_scale);//- (dx*m_charWidth);
     int iy = y % 8;//- (dy*m_charHeight);
+/*    if (rand()%100>98) {
+        qDebug() << Util::numToHex(color) << Util::numToHex(m_noColors) << Util::numToHex(m_minCol);
+    }
+*/
     pc.set(m_scale*ix, iy, color, m_bitMask, m_noColors, m_minCol);
 }
 
@@ -138,10 +142,11 @@ void MultiColorImage::setBackground(unsigned int col)
 {
     m_colorList.setPen(0,col);
     //qDebug() << "SetBackrouund VIC "<<col;
+    if (m_footer.get(LImageFooter::POS_DISPLAY_MULTICOLOR)==1 && m_bitMask!=1)
     for (int i=0;i<m_charWidth*m_charHeight;i++) {
         m_data[i].c[0] = col;
     }
-
+ //   qDebug() << "SETBACK";
     if (m_bitMask==0b11 || m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1) {
 //        qDebug() << "HERE SETBACKGROUND " << m_colorList.getPen(1) << m_colorList.getPen(2) ;;;
         if (m_type != MultiColorBitmap)
@@ -205,16 +210,20 @@ void MultiColorImage::SaveBin(QFile& file)
     file.write( ( char * )( &dummy ), 1 ); // unused
     file.write( ( char * )( &m_data ),  m_charHeight*m_charWidth*12 );
 
+
 }
 
 void MultiColorImage::LoadBin(QFile& file)
 {
     char dummy;
     file.read( ( char * )( &dummy ),1 );
-    m_colorList.setPen(0,dummy); // background
+  //  m_colorList.setPen(0,dummy); // background
     file.read( ( char * )( &dummy ), 1); // Unused
  //   qDebug() << sizeof(PixelChar);
     file.read( ( char * )( &m_data ),  m_charHeight*m_charWidth*12 );
+/*    for (int i=0;i<1000;i++)
+        if (m_data[i].c[0]!=0)
+        qDebug() << i<<Util::numToHex(m_data[i].c[0]);*/
 /*    int c1 = 255;
     int c2 = 255;
     for (int i=0;i<m_charWidth*m_charHeight;i++) {
@@ -606,7 +615,7 @@ void MultiColorImage::ExportBin(QFile& ofile)
     int charC = 3;
 
 
-    if (m_bitMask== 0b1 || m_type==LImage::Type::HiresBitmap) { // Regular color
+    if (m_bitMask== 0b1 || m_type==LImage::Type::HiresBitmap || m_footer.get(LImageFooter::POS_DISPLAY_MULTICOLOR)==0) { // Regular color
         charC = 1;
     }
     if (charC==3)
@@ -853,12 +862,20 @@ void MultiColorImage::FromLImageQImage(LImage *other)
 
             // Pick out the 3 best winners + background first
             int j=0;
-            winners.append(getBackground());
-            for (int i=0;i<3;i++) {
-                if (cols[j].y()==getBackground()) j++;
-                winners.append(cols[j].y());
-                j++;
+            if (m_bitMask==0b11) {
+                winners.append(getBackground());
+                for (int i=0;i<3;i++) {
+                    if (cols[j].y()==getBackground()) j++;
+                    winners.append(cols[j].y());
+                    j++;
+                }
+
             }
+            else
+                for (int i=0;i<4;i++) {
+                    winners.append(cols[j].y());
+                    j++;
+                }
             for (int i=0;i<4;i++)
                 pc.c[i] = winners[i];
 
@@ -1401,7 +1418,7 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen
 //                if (found)
   //                  break;
               //  double metric = pc.CompareLength3(p);
-                double metric = (pc.CompareLength4(p, m_colorList,m_bitMask));
+                double metric = (pc.CompareLengthSSIM(p));
             //    if (rand()%100>98) qDebug() << metric;
 //                int metric = pc.Compare(p);
                 if (metric <=compression && metric<cur ) {

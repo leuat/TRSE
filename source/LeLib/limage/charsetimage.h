@@ -75,6 +75,7 @@ public:
     virtual QPixmap ToQPixMap(int chr);
     virtual void setPixel(int x, int y, unsigned int color) override;
 
+    virtual void CreateMagicalCharset() override;
 
 
 

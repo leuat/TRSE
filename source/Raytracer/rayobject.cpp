@@ -37,7 +37,7 @@ QVector3D AbstractRayObject::ApplyDirectionalLight(QVector3D normal, RayTracerGl
         if (dl==nullptr)
             continue;
 
-        l+= dl->m_color*max(QVector3D::dotProduct(dl->m_direction.normalized(),normal),0.0f)*shadows[cnt];
+        l+= dl->m_color*pow(max(QVector3D::dotProduct(dl->m_direction.normalized(),normal),0.0f),dl->m_power)*shadows[cnt];
         cnt++;
     }
     return l;
@@ -117,21 +117,26 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
                     if (a==0) {
                         uu = pos.x();
                         vv = pos.y();
+    //                    if (pos.z()>0) uu=-uu;
                     }
                     if (a==1) {
-                        uu = pos.y();
-                        vv = pos.z();
+                        uu = pos.z();
+                        vv = pos.y();
+  //                      if (pos.y()>0) uu=-uu;
                     }
                     if (a==2) {
                         uu = pos.x();
                         vv = pos.z();
+//                        if (pos.y()<0) uu=-uu;
                     }
                     float lvl = pow(0.1*l,0.9);
                     //                lvl = 0;
                     //            lvl = 4;
                     QImage* img = m_material.m_texture.get(lvl);
+                    if (img->width()!=0) {
                     uu = abs((int)((uu+m_material.m_uvShift.x())*(float)img->width()*m_material.m_uvScale.x())%img->width());
                     vv = abs((int)((vv+m_material.m_uvShift.y())*(float)img->height()*m_material.m_uvScale.y())%img->height());
+                    }
                     QVector3D c = Util::fromColor(QColor(img->pixel(uu,vv)))/256.;
                     //                qDebug() << c <<uv << img->width();
                     //                col = QVector3D(1,1,1);

@@ -113,7 +113,7 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
             }
     */
         //            QStringList exoParams = QStringList() << "sfx" << "$0810"  << fn<< "-o" << fn ;
-        // qDebug() << exoParams;
+//         qDebug() << m_settingsIni->getString("exomizer") << exoParams;
  //       qDebug() << "Starting exomizer";
         emit EmitTick("Exomizing ...");
 

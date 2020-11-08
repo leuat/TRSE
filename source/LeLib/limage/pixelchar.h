@@ -42,7 +42,7 @@ public:
     int CompareLength2(PixelChar& other);
 
     int CompareLength3(PixelChar& other);
-    double CompareLength4(PixelChar& other, LColorList& lst, int bmask);
+    double CompareLengthSSIM(PixelChar& other);
 
     static uchar SwapColor(uchar data, uchar c1, uchar c2);
 

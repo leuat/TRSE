@@ -97,6 +97,8 @@ public:
 
     void ReInitialize() override;
 
+    void Initialize(int width, int height) override;
+
 //    void FromRaw(QByteArray& arr);
 //    void ToRaw(QByteArray& arr);
     QString GetCurrentDataString() override {

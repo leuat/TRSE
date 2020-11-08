@@ -29,6 +29,34 @@ void PixelChar::set(int x, int y, unsigned char color, unsigned char bitMask, un
     }
 
 
+    // Special case hires
+    if (maxCol==2) {
+        int winner = 255;
+        if (c[1]==color || c[1]==255)
+            winner = 1;
+        if (c[0]==color || c[0]==255)
+            winner = 0;
+
+        if (c[winner]==255)
+            c[winner] = color;
+
+        if (winner==255) {
+        //    int a = Count(0,bitMask,1);
+          //  int b = Count(1,bitMask,1);
+           // if (a<b) winner = 0; else winner = 1;
+            winner = (p[y]>>x)&bitMask;
+            c[winner] = color;
+        }
+//        qDebug() <<"col 0 " <<Util::numToHex(c[0]) << "    col 1: " << Util::numToHex(c[1]) << "     newcol :" << color << "    winner : " <<winner;
+        unsigned int f = ~(bitMask << x);
+        p[y] &= f;
+        // Add
+
+        p[y] |= winner<<x;
+        return;
+    }
+
+
      unsigned char winner = 254;
     // Does color exist in map?
     // for (int i=0;i<maxCol;i++)
@@ -51,7 +79,8 @@ void PixelChar::set(int x, int y, unsigned char color, unsigned char bitMask, un
         // not available slots found
         if (winner==254)
         {
-            winner = 3;
+            winner = maxCol-1;
+
             /*winner = (p[y]>>x) & bitMask;
             if (winner==0 && minCol!=0)
                 winner = maxCol-1;
@@ -78,6 +107,8 @@ void PixelChar::set(int x, int y, unsigned char color, unsigned char bitMask)
         qDebug() << "Trying to set " << x << ", " << y << " out of bounds";
         return;
     }
+
+
 
     // find index
     uchar index = 10;
@@ -249,7 +280,7 @@ int PixelChar::Count(unsigned int col, unsigned char bitMask, unsigned char scal
     int cnt=0;
     for (int i=0;i<8/scale;i++)
         for (int j=0;j<8;j++)
-            if ( ((p[j]>>scale*i) & bitMask)==col)
+            if ( ((p[j]>>(scale*i)) & bitMask)==col)
                 cnt++;
     return cnt;
 }
@@ -390,10 +421,10 @@ int PixelChar::CompareLength3(PixelChar &other)
     return s;
 }
 
-double PixelChar::CompareLength4(PixelChar &other,LColorList& lst, int bmask)
+double PixelChar::CompareLengthSSIM(PixelChar &other)
 {
-    other.m_lastBitmask = bmask;
-    m_lastBitmask = bmask;
+    other.m_lastBitmask = 1;
+    m_lastBitmask =1;
     PixelCharSSIM p1,p2;
     for (int i=0;i<8;i++) {
         p1.p[i] = p[i];

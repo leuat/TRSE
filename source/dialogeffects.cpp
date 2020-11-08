@@ -586,6 +586,38 @@ static int AddScreen(lua_State* L) {
     return 0;
 }
 
+static int AddC64FullScreen(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddC64FullScreen"))
+        return 0;
+
+    if (m_effect!=nullptr) {
+        C64FullScreenChar* img = (C64FullScreenChar*)m_effect->m_mc;
+        if (img==nullptr)
+            return 0;
+
+        C64Screen* screen = (C64Screen*)(img->m_items)[img->m_current];
+//        qDebug() << screen->m_width;
+        for (char c : screen->m_rawData)
+            m_screenData.append(c);
+
+
+        //QByteArray ba;
+  //      qDebug() << "Image size : " << img->m_height << img->m_width;
+/*        for (int y=0;y<img->m_height;y++)
+            for (int x=0;x<img->m_width;x++) {
+
+                m_screenData.append(img->getPixel(x,y));
+            }
+//        m_compression.AddScreen(ba, m_effect->m_img,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));//, lua_tonumber(L,5),lua_tonumber(L,6));
+//        for (char c:ba)
+  //          m_screenData.append(c);
+
+  */
+    }
+
+    return 0;
+}
+
 static int Translate(lua_State* L) {
     if (!VerifyFjongParameters(L,"Translate"))
         return 0;
@@ -931,6 +963,7 @@ static int AddBinaryScreen(lua_State* L) {
 static int AddScreenPetscii(lua_State* L) {
     m_compression.AddPetsciiScreen(m_charData, m_effect->m_img);
 //    m_rt.m_particles.CollideSphere(lua_tonumber(L,1));
+    m_infoText="Added petscii screen";
     return 0;
 }
 
@@ -1224,6 +1257,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "SaveCompressedTRM", SaveCompressedTRM);
 
     lua_register(m_script->L, "AddScreen", AddScreen);
+    lua_register(m_script->L, "AddC64FullScreen", AddC64FullScreen);
     lua_register(m_script->L, "Translate", Translate);
     lua_register(m_script->L, "AddCharsetScreen", AddCharsetScreen);
     lua_register(m_script->L, "AddScreenPetscii", AddScreenPetscii);
@@ -1291,6 +1325,9 @@ void DialogEffects::UpdateGlobals()
     m_rt.m_camera.m_up = m_script->getVec("globals.up");
     m_rt.m_globals.m_lights[0]->m_direction = m_script->getVec("globals.light0.direction").normalized();
     m_rt.m_globals.m_lights[0]->m_color = m_script->getVec("globals.light0.color");
+    if (m_script->lua_exists("globals.light0.power"))
+        m_rt.m_globals.m_lights[0]->m_power = m_script->get<float>("globals.light0.power");
+
     m_rt.m_globals.m_ambient = m_script->getVec("globals.ambient");
     m_rt.m_globals.m_skyScale = m_script->get<float>("globals.sky");
     m_rt.m_globals.m_shadowScale = m_script->get<float>("globals.shadow_scale");
@@ -1299,6 +1336,14 @@ void DialogEffects::UpdateGlobals()
     m_rt.m_globals.m_width = m_script->get<float>("output.resolution.width");
     m_rt.m_globals.m_height = m_script->get<float>("output.resolution.height");
 
+    if (m_script->lua_exists("output.charset")) {
+        QString charName = m_script->get<QString>("output.charset");
+        m_rt.m_globals.m_charset = m_script->get<QString>("output.charset");;
+//        qDebug() << "LOADING : "<< charName;
+        if (m_rt.m_globals.m_charset.toLower()!="rom")
+            m_rt.m_globals.m_charset = m_currentDir+"/"+m_rt.m_globals.m_charset;
+
+    }
 
     if (m_script->lua_exists("globals.camera_type")) {
         int type = m_script->get<float>("globals.camera_type");

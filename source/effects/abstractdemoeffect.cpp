@@ -201,14 +201,76 @@ void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502In(QString file, QString 
 
 }
 
+void AbstractDemoEffect::ConvertToC64(int dither, bool isMulticolor, QVector3D ditherStrength)
+{
+    if (!(m_outputType==1  || m_outputType==5))
+        return;
+    m_mc->setMultiColor(isMulticolor);
+    m_mc->m_colorList.DefaultPen(LPen::Type::FixedSingle,m_cols.count());
+    for (int i=0;i<m_cols.count();i++)
+        m_mc->m_colorList.setPen(i,m_cols[i]);
+
+
+    //            m_mc->m_colorList.DefaultPen(LPen::Type::FixedSingle);
+
+
+    m_mc->setBackground(m_cols[0]);
+    m_mc->m_footer.set(LImageFooter::POS_DISPLAY_MULTICOLOR,isMulticolor==1);
+    m_mc->m_footer.set(LImageFooter::POS_DISPLAY_HYBRID,0);
+    int size = 2;
+    //     m_mc->m_forcePaintColorAndChar = false;
+    m_mc->m_colorList.EnableColors(m_cols);
+    if (dither==1)
+        m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
+    if (dither==2)
+        m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(1,size), 1);
+    if (dither==0)
+        m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
+
+    m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
+
+}
+
+void AbstractDemoEffect::ConvertToCharset(int dither, bool isMulticolor, QVector3D ditherStrength)
+{
+    if (!(m_outputType==7 ))
+        return;
+    isMulticolor = false;
+    m_mc->setMultiColor(isMulticolor);
+    m_mc->m_colorList.DefaultPen(LPen::Type::FixedSingle,m_cols.count());
+    for (int i=0;i<m_cols.count();i++)
+        m_mc->m_colorList.setPen(i,m_cols[i]);
+
+
+
+    //            m_mc->m_colorList.DefaultPen(LPen::Type::FixedSingle);
+
+
+    m_mc->setBackground(m_cols[0]);
+    m_mc->m_footer.set(LImageFooter::POS_DISPLAY_MULTICOLOR,isMulticolor==1);
+    m_mc->m_footer.set(LImageFooter::POS_DISPLAY_HYBRID,0);
+    int size = 2;
+    //     m_mc->m_forcePaintColorAndChar = false;
+    m_mc->m_colorList.EnableColors(m_cols);
+    if (dither==1)
+        m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
+    if (dither==2)
+        m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(1,size), 1);
+    if (dither==0)
+        m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
+
+    m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
+
+}
+
 
 void AbstractDemoEffect::FillToGUI()
 {
     while (m_gl->count()) {
         QLayoutItem * cur_item = m_gl->takeAt(0);
-              if(cur_item->widget())
-                  delete cur_item->widget();
-              delete cur_item;
+        if(cur_item->widget())
+            delete cur_item->widget();
+        delete cur_item;
     }
     int i=0;
     for (QString s: m_params.keys()) {
@@ -219,7 +281,7 @@ void AbstractDemoEffect::FillToGUI()
         m_gl->addWidget(le,i,1);
         i++;
     }
-//    exit(1);
+    //    exit(1);
 }
 
 void AbstractDemoEffect::FillFromGUI()

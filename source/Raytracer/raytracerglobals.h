@@ -61,6 +61,7 @@ class AbstractLight {
 public:
     QVector3D m_color;
     QVector3D m_direction;
+    double m_power = 1;
 };
 
 class DirectionalLight  : public AbstractLight{
@@ -86,10 +87,12 @@ public:
     static const int output_type_BINARY = 4;
     static const int output_type_GAMEBOY = 5;
     static const int output_type_AMSTRAD = 6;
+    static const int output_type_CHARSET = 7;
 
     enum CameraType {regular, fisheye};
     CameraType m_type = regular;
 
+    QString m_charset = "";
     double m_steps = 120;
     double m_shadowSteps = 60;
     float m_isPaused = 0;

@@ -8,6 +8,7 @@
 #include "source/LeLib/luascript.h"
 #include "source/LeLib/limage/limagegamboy.h"
 #include "source/LeLib/limage/limageamstradgeneric.h"
+#include "source/LeLib/limage/c64fullscreenchar.h"
 #include <QMatrix3x3>
 
 class DemoEffectRaytracer : public AbstractDemoEffect
@@ -57,7 +58,6 @@ public:
     int m_compression = 1;
     float m_dither = true;
     int m_N = 6;
-    CharsetImage* m_charset;
 
     void Initialize();
 

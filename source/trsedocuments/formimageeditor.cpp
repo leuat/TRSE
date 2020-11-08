@@ -484,7 +484,6 @@ void FormImageEditor::Initialize()
     }
 */
 
-
     if (GetFooterData(LImageFooter::POS_CHARSET_WIDTH)!=0) {
         if (m_work.m_currentImage->m_image->getCharset()!=nullptr)
             m_work.m_currentImage->m_image->getCharset()->m_charWidthDisplay = GetFooterData(LImageFooter::POS_CHARSET_WIDTH);
@@ -495,6 +494,7 @@ void FormImageEditor::Initialize()
 
     Data::data.redrawFileList = true;
     Data::data.Redraw();
+
 
     UpdatePalette();
     updateCharSet();

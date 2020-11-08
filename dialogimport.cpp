@@ -169,7 +169,6 @@ void DialogImport::Convert()
     SetColors();
     QVector3D strength = QVector3D(1,1,1);
     strength.setX( (ui->hsDither->value()/100.0)*300.0);
-//    m_output.m_qImage->save("temp.png");
 
 //    for (int i=0;i<4;i++)
   //      qDebug() << "COLS : S " <<QString::number(m_image->m_extraCols[i]);
@@ -219,6 +218,7 @@ void DialogImport::Convert()
 
 
     m_output.m_qImage = new QImage(m_image->m_width, m_image->m_height, QImage::Format_ARGB32);
+
 
 
 //    qDebug() << "WWW " <<m_output.m_qImage->width();

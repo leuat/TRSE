@@ -208,6 +208,7 @@ void LColorList::EnableColors(QVector<int> &cols)
             m_list[i].inUse = false;
 
     }
+    m_enabledColors = cols;
 
 }
 

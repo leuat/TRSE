@@ -40,6 +40,20 @@ void DemoEffectRaytracer::Initialize()
        m_mc = new LImageQImage(LColorList::PICO8);
        m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
    }
+   if (m_rt->m_globals.m_outputType == RayTracerGlobals::output_type_CHARSET) {
+       m_mc = new C64FullScreenChar(LColorList::C64);
+//       qDebug() << "HERE" <<m_rt->m_globals.m_width;
+       m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
+       QString charName = m_rt->m_globals.m_charset;
+       if (charName.toLower()=="rom") {
+           m_mc->LoadCharset(":resources/character.rom",0);
+       }
+       else {
+           m_mc->LoadCharset(charName,0);
+       }
+
+//       ((C64FullScreenChar*)m_mc)->m_charset = m_charset;
+   }
    if (m_rt->m_globals.m_outputType == RayTracerGlobals::output_type_GAMEBOY) {
        m_mc = new LImageGamboy(LColorList::NES);
        m_mc->Initialize(m_rt->m_globals.m_width, m_rt->m_globals.m_height);
@@ -159,6 +173,10 @@ void DemoEffectRaytracer::Render(QImage &img)
 
     if (m_outputType==RayTracerGlobals::output_type_GAMEBOY)
         ConvertToC64(m_rt->m_globals.m_dither,m_rt->m_globals.m_multicolor==1,m_rt->m_globals.m_ditherStrength);
+
+
+    if (m_outputType==RayTracerGlobals::output_type_CHARSET)
+        ConvertToCharset(m_rt->m_globals.m_dither,m_rt->m_globals.m_multicolor==1,m_rt->m_globals.m_ditherStrength);
 
 /*
     if (m_outputType==RayTracerGlobals::output_type_GAMEBOY)
