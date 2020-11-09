@@ -681,9 +681,13 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
 //            qDebug() << "Looking for constant " << m_currentToken.m_value.toUpper();
   //          qDebug() << m_symTab->m_constants.keys();
             QSharedPointer<Symbol> s = m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
-    //        qDebug() << " FOUND = " << (s==nullptr);
-              if (s==nullptr)
+//            qDebug() << " FOUND = " << (s==nullptr) << m_currentToken.m_value.toUpper();
+
+              if (s==nullptr) {
                   done=true;
+                  ErrorHandler::e.Error("Could not find constant : '"+m_currentToken.m_value+"'",m_currentToken.m_lineNumber);
+
+              }
               else {
       //            qDebug() << "FOUND adding " <<s->m_value->m_fVal;
                str+=QString::number(s->m_value->m_fVal);
@@ -3132,8 +3136,10 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure)
                         }
                         //                    qDebug() << "ADDRESS " << m_currentToken.m_value <<m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
                     }
-                    if (!found)
+                    if (!found) {
+
                         data << "$0"+QString::number(GetParsedInt(dataType),16);//QString::number(m_currentToken.m_intVal);
+                    }
                     //data << "$0"+QString::number(GetParsedInt(),16);//QString::number(m_currentToken.m_intVal);
                     if (m_currentToken.m_type!=TokenType::RPAREN) {
 
