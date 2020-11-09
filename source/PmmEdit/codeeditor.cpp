@@ -332,28 +332,32 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
         QStringList lst = txt.split('\n');
 
         QString str="";
-
+        bool removeLast = false;
         for (QString& s: lst) {
             if (e->key()==Qt::Key_Tab) {
                 if (s.trimmed()!="")
                     str+="\t"+s+"\n";
                 else str+="\n";
+                removeLast = true;
             }
             else { // Backtab!
 
 //                if (s.trimmed()!="")
  //               {
                 int i = s.indexOf("\t");
-                if (s[i]=='\t')
-                    str+=s.remove(i,1)+"\n";
-                else str+=s+"\n";
+                if (s>0 && i<s.count()) {
+                    if (s[i]=='\t')
+                        str+=s.remove(i,1)+"\n";
+                    else str+=s+"\n";
+                }
 
    //             }
   //              else str+="\n";
 
             }
         }
-        str.remove(str.length()-1,1);
+        if (removeLast)
+            str.remove(str.length()-1,1);
 
         if(cursor.hasSelection())
         {
