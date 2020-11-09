@@ -162,6 +162,8 @@ private slots:
 
     void on_btnCPCDIsk_clicked();
 
+    void on_btnSidPlayer_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

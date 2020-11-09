@@ -186,7 +186,7 @@ public:
     TRSEProject m_currentProject;
 
 
-    QStringList exts = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin"<<"*.bin_c" <<"*.prg";
+    QStringList exts = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin"<<"*.bin_c" <<"*.prg" << "*.sid";
 
     TRSEDocument* m_currentDoc = nullptr;
 
@@ -236,6 +236,7 @@ public slots:
     void acceptBuildMain(bool run);
 
     void acceptSearchSymbols();
+    void OpenSidfile(QString file);
 
     void acceptRunMain();
     void setupIcons();

@@ -1186,7 +1186,7 @@
          <property name="geometry">
           <rect>
            <x>20</x>
-           <y>190</y>
+           <y>280</y>
            <width>803</width>
            <height>61</height>
           </rect>
@@ -1218,7 +1218,7 @@
          <property name="geometry">
           <rect>
            <x>20</x>
-           <y>260</y>
+           <y>340</y>
            <width>621</width>
            <height>63</height>
           </rect>
@@ -1259,19 +1259,12 @@
            <x>20</x>
            <y>90</y>
            <width>651</width>
-           <height>101</height>
+           <height>151</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_20">
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_42">
-            <property name="text">
-             <string>Amstrad CPCDiskXP utility (exe file)</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="btnC1541Emulator">
+          <item row="1" column="2">
+           <widget class="QPushButton" name="btnCPCDIsk">
             <property name="text">
              <string>...</string>
             </property>
@@ -1287,11 +1280,35 @@
           <item row="0" column="1">
            <widget class="QLineEdit" name="leC1541"/>
           </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_42">
+            <property name="text">
+             <string>Amstrad CPCDiskXP utility (exe file)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="btnC1541Emulator">
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="1">
            <widget class="QLineEdit" name="leCPCDisk"/>
           </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="btnCPCDIsk">
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_45">
+            <property name="text">
+             <string>SID player location:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="leSidplayer"/>
+          </item>
+          <item row="2" column="2">
+           <widget class="QPushButton" name="btnSidPlayer">
             <property name="text">
              <string>...</string>
             </property>

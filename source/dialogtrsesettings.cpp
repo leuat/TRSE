@@ -75,6 +75,8 @@ void DialogTRSESettings::FillFromIni()
     ui->chkAutoInject->setChecked(m_ini->getdouble("auto_inject")==1.0);
     ui->leBackupFiles->setText(QString::number((int)m_ini->getdouble("backup_files_count")));
 
+    ui->leSidplayer->setText(m_ini->getString("sidplayer"));
+
     ui->chkBackup->setChecked(m_ini->getdouble("auto_backup")==1.0);
 
     ui->leCPCDisk->setText(m_ini->getString("cpcdisk_location"));
@@ -158,6 +160,8 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("tiki100_emulator", ui->leTiki100->text());
     m_ini->setString("pasmo", ui->lePasmo->text());
 
+
+    m_ini->setString("sidplayer",ui->leSidplayer->text());
 
     m_ini->setString("cpcdisk_location",ui->leCPCDisk->text());
 
@@ -592,6 +596,16 @@ void DialogTRSESettings::on_btnCPCDIsk_clicked()
         tr("Amstrad CPCDiskXP.exe"), m_ini->getString("project_path"), "CPCDiskXP.exe");
     if (filename!="")
         ui->leCPCDisk->setText(filename);
+
+
+}
+
+void DialogTRSESettings::on_btnSidPlayer_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("SID player location"), m_ini->getString("project_path"), "");
+    if (filename!="")
+        ui->leSidplayer->setText(filename);
 
 
 }

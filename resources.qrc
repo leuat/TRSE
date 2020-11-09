@@ -539,5 +539,6 @@
         <file>resources/code/amstrad/unpack.asm</file>
         <file>resources/text/help/p/asm_tips.rtf</file>
         <file>resources/images/error.png</file>
+        <file>resources/images/sid.png</file>
     </qresource>
 </RCC>

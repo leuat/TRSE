@@ -913,6 +913,25 @@ void MainWindow::acceptSearchSymbols()
     ui->leFilterSymbols->setFocus();
 }
 
+void MainWindow::OpenSidfile(QString filename)
+{
+    filename = m_currentPath + "/" + filename;
+    QString player = m_iniFile->getString("sidplayer");
+    if (!QFile::exists(player)) {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Warning");
+        msgBox.setInformativeText("");
+        msgBox.setText("No SID player is currently set up. Please add a path to your favorite SID player in the TRSE settings dialog.");
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+        return;
+    }
+    QProcess p;
+    p.startDetached(player,QStringList() <<filename);
+
+}
+
 void MainWindow::acceptRunMain() {
     if (!VerifyFile(m_currentProject.m_ini->getString("main_ras_file"),"Error trying to build main project file. Please see project settings and specify correct path to main .ras file"))
         return;
@@ -964,6 +983,11 @@ void MainWindow::setupIcons()
     img.load(":resources/images/tru.png");
     m_icons["tru"] = QIcon(QPixmap::fromImage(img));
     m_fileColors["tru"] = QColor(c1,c3,c1);
+
+    img.load(":resources/images/sid.png");
+    m_icons["sid"] = QIcon(QPixmap::fromImage(img));
+    m_fileColors["sid"] = QColor(c1,c1,c3);
+
 
     m_fileColors["dir"] = QColor(c2,c2,c2);
 
@@ -1297,7 +1321,7 @@ void MainWindow::ShowFileContext(const QPoint &pos)
 void MainWindow::FindFileDialog()
 {
 
-    QStringList lst = QStringList() <<"*.asm" << "*.ras" << "*.tru"<< "*.fjo" << "*.flf" << "*.paw";
+    QStringList lst = QStringList() <<"*.asm" << "*.ras" << "*.tru"<< "*.fjo" << "*.flf" << "*.paw" << "*.sid";
     QDirIterator it(getProjectPath(), lst, QDir::Files, QDirIterator::Subdirectories);
     QVector<QString> files;
     while (it.hasNext()) {
@@ -1350,10 +1374,15 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
         return;
     }
 
+    if (file.toLower().endsWith(".sid")) {
+        OpenSidfile(file);
+        return;
+    }
+
     if (file.toLower().endsWith(".tru") || file.toLower().endsWith(".ras") || file.toLower().endsWith(".asm")
             || file.toLower().endsWith(".inc") || file.toLower().endsWith(".flf")
             || file.toLower().endsWith(".paw") || file.toLower().endsWith(".fjo")
-        || file.toLower().endsWith(".bin_c") || file.toLower().endsWith(".bin") || file.toLower().endsWith(".prg") ) {
+        || file.toLower().endsWith(".bin_c") || file.toLower().endsWith(".bin") || file.toLower().endsWith(".prg") || file.toLower().endsWith(".sid") ) {
         LoadDocument(path + file);
     }
 
