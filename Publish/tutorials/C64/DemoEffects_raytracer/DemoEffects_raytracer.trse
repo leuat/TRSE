@@ -39,6 +39,4 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 exomizer_toggle = 0
 zeropage_colormemory = $fc
-open_files = ,example10_text_twister.ras, example10_text_twister.fjo, example14_wavecolors.ras
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/DemoEffects_raytracer/
-current_file = example3.fjo
+open_files =, example5_single_sprite.ras, example5_single_sprite.fjo
