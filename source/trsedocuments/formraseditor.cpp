@@ -446,6 +446,11 @@ void FormRasEditor::LookupSymbolUnderCursor()
     emit emitGotoSymbol(word);
 }
 
+void FormRasEditor::ToggleComment()
+{
+    ui->txtEditor->ToggleComments();
+}
+
 
 
 void FormRasEditor::Setup()
@@ -612,6 +617,11 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
     //    Data::data.requestCloseWindow = true;
 */
 //    if (ui->txtEditor->m_textChanged)
+
+//   if ((e->modifiers() & Qt::ControlModifier) && (e->modifiers() & Qt::ShiftModifier) && e->key()==Qt::Key_C)
+   if ((e->modifiers() & Qt::ControlModifier) && e->key()==Qt::Key_Y)
+        ToggleComment();
+
 
     if (e->key()==Qt::Key_J && (QApplication::keyboardModifiers() & Qt::ControlModifier)) AutoFormat();
     if (e->key()==Qt::Key_F && QApplication::keyboardModifiers() & Qt::ControlModifier) {

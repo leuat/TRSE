@@ -535,6 +535,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionSearch_in_symbols_c_g"/>
     <addaction name="actionLook_up_symbol_F2"/>
     <addaction name="actionReplace"/>
+    <addaction name="action_Comment_Uncomment"/>
     <addaction name="actionAuto_ident"/>
     <addaction name="actionProject_Settings"/>
     <addaction name="actionFind_file_c_s"/>
@@ -784,6 +785,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionView_changelog">
    <property name="text">
     <string>View changelog</string>
+   </property>
+  </action>
+  <action name="action_Comment_Uncomment">
+   <property name="text">
+    <string>&amp;Comment/Uncomment</string>
    </property>
   </action>
  </widget>

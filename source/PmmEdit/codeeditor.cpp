@@ -630,3 +630,23 @@ void CodeEditor::addressAreaPaintEvent(QPaintEvent *event) {
     }
 }
 
+void CodeEditor::ToggleComments()
+{
+    QString s = textCursor().selection().toPlainText();
+
+    QStringList SL = s.split("\n");
+    for(int i=0; i<SL.length(); i++){
+        if(SL.at(i).trimmed().startsWith("//")){
+            s = SL.at(i);
+            s.remove(0,2);//.replace("//","");
+        }else{
+            if (SL.at(i).trimmed()!="")
+                s = "//" + SL.at(i);
+            else s = SL.at(i);
+        }
+        if(i<SL.length()-1) s.append("\n");
+//        qDebug() << s;
+        textCursor().insertText(s);
+    }
+
+}

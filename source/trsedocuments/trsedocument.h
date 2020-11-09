@@ -61,6 +61,9 @@ public:
     virtual void Save(QString filename) {}
     virtual bool Load(QString filename) { return false;}
     virtual void AutoFormat() {}
+
+    virtual void ToggleComment() {}
+
     bool SaveChanges();
     void SaveCurrent() {
         if (m_currentSourceFile=="") {
@@ -77,6 +80,8 @@ public:
     virtual void Build(bool isShadow = false) {}
     virtual void Run() {}
     virtual void PrepareClose() {}
+
+
 
 
     void Backup();

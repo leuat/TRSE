@@ -153,6 +153,8 @@ public:
 
     void BuildNes(QString prg);
     void LookupSymbolUnderCursor() override;
+    void ToggleComment() override;
+
 public slots:
     void HandleBuildComplete();
 

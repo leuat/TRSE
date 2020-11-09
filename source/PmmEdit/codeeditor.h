@@ -81,6 +81,7 @@ public:
 
     void addressAreaPaintEvent(QPaintEvent *event);
 
+    void ToggleComments();
 
 
     void FixBackTab(QKeyEvent* e);

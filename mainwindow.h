@@ -426,6 +426,8 @@ private slots:
 
     void on_actionView_changelog_triggered();
 
+    void on_action_Comment_Uncomment_triggered();
+
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);
 

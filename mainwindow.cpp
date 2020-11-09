@@ -2423,3 +2423,9 @@ void MainWindow::on_actionView_changelog_triggered()
 {
     on_btnChangelog_clicked();
 }
+
+void MainWindow::on_action_Comment_Uncomment_triggered()
+{
+    if (m_currentDoc!=nullptr)
+        m_currentDoc->ToggleComment();
+}
