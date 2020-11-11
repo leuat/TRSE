@@ -269,9 +269,7 @@ public:
     QString m_hash = "#";
     QString NewLabel(QString s);
 
-    void PopLabel(QString s) {
-        m_labelStack[s].pop();
-    }
+    void PopLabel(QString s);
     QString byte = "dc.b";
     QString word = "dc.w";
     QString llong = "dc.l";

@@ -77,8 +77,8 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("ProjectToScreen"))
         ProjectToScreen(as);
 
-    if (Command("return"))
-        as->Asm("rts");
+//    if (Command("return"))
+  //      as->Asm("rts");
 
     if (Command("pusha")) {
         as->Asm("movem.l d0-d7/a0-a6,-(sp)");

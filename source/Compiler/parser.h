@@ -49,6 +49,7 @@
 #include "source/Compiler/ast/nodebinaryclause.h"
 #include "source/Compiler/ast/noderepeatuntil.h"
 #include "source/Compiler/ast/nodecase.h"
+#include "source/Compiler/ast/nodecontrolstatement.h"
 #include "source/LeLib/limage/limageio.h"
 #include "source/LeLib/limage/c64fullscreenchar.h"
 #include "source/trsedocuments/formpaw.h"

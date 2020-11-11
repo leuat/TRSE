@@ -470,9 +470,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("SetMemoryConfig")) {
         SetMemoryConfig(as);
     }
-    if (Command("Return")) {
+/*    if (Command("Return")) {
         as->Asm("rts");
-    }
+    }*/
     if (Command("ReturnInterrupt")) {
         as->Asm("rti");
     }
@@ -2766,11 +2766,10 @@ void Methods6502::RightBitShift(Assembler *as, bool isRight)
     int num = m_node->m_params[1]->getValueAsInt(as);
 
     as->PopLabel("RightBitshift");
+
+
     as->Asm("ldx #0");
     as->Label(lbl);
-
-
-
 
     as->Asm("lda "+addr+",x");
 

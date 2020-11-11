@@ -94,6 +94,7 @@ SOURCES += main.cpp\
     source/Compiler/assembler/mos6502/methods6502vic20.cpp \
     source/Compiler/assembler/methodsx86.cpp \
     source/Compiler/ast/nodecase.cpp \
+    source/Compiler/ast/nodecontrolstatement.cpp \
     source/Compiler/ast/noderepeatuntil.cpp \
     source/Compiler/compilers/compiler6502.cpp \
     source/Compiler/compilers/compilergbz80.cpp \
@@ -294,6 +295,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/assembler/mos6502/methods6502vic20.h \
     source/Compiler/assembler/methodsx86.h \
     source/Compiler/ast/nodecase.h \
+    source/Compiler/ast/nodecontrolstatement.h \
     source/Compiler/ast/noderepeatuntil.h \
     source/Compiler/compilers/compiler6502.h \
     source/Compiler/compilers/compilergbz80.h \

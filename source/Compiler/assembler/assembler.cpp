@@ -278,6 +278,11 @@ QString Assembler::NewLabel(QString s) {
     return pre+ s+m_labelStack[s].m_current;
 }
 
+void Assembler::PopLabel(QString s) {
+    m_labelStack[s].pop();
+}
+
+
 
 void Assembler::Asm(QString s, QString comment)
 {

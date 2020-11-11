@@ -591,11 +591,17 @@ static int AddC64FullScreen(lua_State* L) {
         return 0;
 
     if (m_effect!=nullptr) {
-        C64FullScreenChar* img = (C64FullScreenChar*)m_effect->m_mc;
+        C64FullScreenChar* img = dynamic_cast<C64FullScreenChar*>(m_effect->m_mc);
         if (img==nullptr)
             return 0;
 
-        C64Screen* screen = (C64Screen*)(img->m_items)[img->m_current];
+//        if (img->m_items.count()==0)
+  //          return 0;
+
+        C64Screen* screen = dynamic_cast<C64Screen*>((img->m_items)[img->m_current]);
+        if (screen==nullptr)
+            return 0;
+
 //        qDebug() << screen->m_width;
         for (char c : screen->m_rawData)
             m_screenData.append(c);

@@ -25,6 +25,7 @@ class NodeBinaryClause;
 class NodeCase;
 class NodeRepeatUntil;
 class NodeComment;
+class NodeControlStatement;
 
 
 class ProcedureParameter {
@@ -66,6 +67,7 @@ public:
     virtual void dispatch(QSharedPointer<NodeCase> node) = 0;
     virtual void dispatch(QSharedPointer<NodeRepeatUntil> node) = 0;
     virtual void dispatch(QSharedPointer<NodeComment> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeControlStatement> node);
 
     virtual QString getValue(QSharedPointer<Node> n);
     virtual QString getEndType(Assembler* as, QSharedPointer<Node> v) {return "";}

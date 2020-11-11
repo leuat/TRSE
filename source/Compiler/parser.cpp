@@ -1626,6 +1626,14 @@ QSharedPointer<Node> Parser::Statement()
     else if (m_currentToken.m_type == TokenType::FOR) {
         node = ForLoop(false);
     }
+    else if (m_currentToken.m_type == TokenType::BREAK || m_currentToken.m_type == TokenType::CONTINUE || m_currentToken.m_type == TokenType::RETURN) {
+        node = QSharedPointer<NodeControlStatement>(new NodeControlStatement(m_currentToken));
+        Eat();
+        if (m_currentToken.m_type==TokenType::LPAREN) {
+            Eat(TokenType::LPAREN);
+            Eat(TokenType::RPAREN);
+        }
+    }
     else if (m_currentToken.m_type == TokenType::WHILE) {
         Eat(TokenType::WHILE);
         node = Conditional(true);

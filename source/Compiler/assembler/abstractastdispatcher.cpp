@@ -12,6 +12,7 @@
 #include "source/Compiler/ast/nodecompound.h"
 #include "source/Compiler/ast/nodebuiltinmethod.h"
 #include "source/Compiler/ast/nodeunaryop.h"
+#include "source/Compiler/ast/nodecontrolstatement.h"
 #include "source/Compiler/assembler/abstractmethods.h"
 #include "source/Compiler/assembler/factorymethods.h"
 #include "source/LeLib/util/fc8/FC8Compression.h"
@@ -134,6 +135,8 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeForLoop> node)
 
     // Define main for label
     QString lblFor =as->NewLabel("forloop");
+    QString lblForEnd =as->NewLabel("forloopend");
+    QString lblForCounter =as->NewLabel("forloopcounter");
     as->Label(lblFor);
     bool offpage = isOffPage(node, node->m_block, nullptr);
     Token t_cond = node->m_op;
@@ -156,12 +159,25 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeForLoop> node)
 
 
     // Perform counter increase and jimps (individual for each target cpu)
+    as->Label(lblForCounter);
     CompareAndJumpIfNotEqual(node->m_a, node->m_b,  node->m_step, lblFor, offpage,node->m_inclusive);
 
-
+    as->Label(lblForEnd);
     as->PopLabel("forloop");
+    as->PopLabel("forloopend");
+    as->PopLabel("forloopcounter");
 
 
+}
+
+void AbstractASTDispatcher::dispatch(QSharedPointer<NodeControlStatement> node)
+{
+    if (node->m_op.m_type == TokenType::BREAK)
+        as->Asm(getJmp(true) + " " + as->getLabel("forloopend"));
+    if (node->m_op.m_type == TokenType::CONTINUE)
+        as->Asm(getJmp(true) + " " + as->getLabel("forloopcounter"));
+    if (node->m_op.m_type == TokenType::RETURN)
+        as->Asm(getReturn());
 }
 
 QString AbstractASTDispatcher::getValue(QSharedPointer<Node> n) {

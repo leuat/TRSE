@@ -202,10 +202,10 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->Asm("mov [drawline_color], al");
         as->Asm("call CGA_DrawLine");
     }
-    if (Command("return")) {
+/*    if (Command("return")) {
         as->Asm("ret");
     }
-
+*/
     if (Command("playnote")) {
         LoadVar(as,0);
         as->Asm("call init_playnote_call");
