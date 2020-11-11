@@ -172,10 +172,16 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeForLoop> node)
 
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeControlStatement> node)
 {
-    if (node->m_op.m_type == TokenType::BREAK)
+    if (node->m_op.m_type == TokenType::BREAK) {
+        if (as->m_labelStack["forloopend"].m_vars.count()==0)
+            ErrorHandler::e.Error("'Break' can only be called within a for / while loop", node->m_op.m_lineNumber);
         as->Asm(getJmp(true) + " " + as->getLabel("forloopend"));
-    if (node->m_op.m_type == TokenType::CONTINUE)
+    }
+    if (node->m_op.m_type == TokenType::CONTINUE) {
+        if (as->m_labelStack["forloopend"].m_vars.count()==0)
+            ErrorHandler::e.Error("'Continue' can only be called within a for / while loop", node->m_op.m_lineNumber);
         as->Asm(getJmp(true) + " " + as->getLabel("forloopcounter"));
+    }
     if (node->m_op.m_type == TokenType::RETURN)
         as->Asm(getReturn());
 }
