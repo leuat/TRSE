@@ -29,6 +29,7 @@ $0c - $1F - VBM Column addresses Low byte
 $20 - $34 - VBM Column addresses High byte
 
 $35 - $63 - Free for user program data (46 bytes)
+$7a       - This single byte is free to use
 
 $64 - $7B - TRSE User Pointers
 $7C - $7F - TRSE Decrunch
@@ -38,6 +39,12 @@ $88 - $8F - TRSE Temp vars zeropages
 $FB - $FD - Free for user program data (3 bytes)
 
 $FE - $FF - TRSE ScreenMemory pointer
+
+
+BASIC memory available to re-use
+
+$0200-$0258 - BASIC input buffer, 88 bytes free to use
+$02A1-$02FF - Indirect vectors, 94 bytes, some units may make use of this memory
 
 
 Cassette buffer

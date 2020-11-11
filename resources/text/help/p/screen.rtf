@@ -24,6 +24,9 @@ begin
 
     screenmemory := AddressTable( saddr, 39, 24 ); // pick row 24 (range is 0 to 24) and column 39 (range is 0 to 39)
     screenmemory[0] := 33;  // place a character at the bottom right of the display
+
+    colormemory := AddressTable( cadder, 39, 24 );; // pick same location in colour RAM
+    colormemory := RED;
 </code>
 
 
@@ -54,6 +57,9 @@ begin
 
     screenmemory := AddressTable( saddr, 21, 22 ); // pick row 22 (range is 0 to 22) and column 21 (range is 0 to 21)
     screenmemory[0] := 33;  // place a character at the bottom right of the display
+
+    colormemory := AddressTable( cadder, 21, 22 );; // pick same location in colour RAM
+    colormemory := CYAN;
 </code>
 
 <h3>PETSCII</h3>

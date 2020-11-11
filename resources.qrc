@@ -540,5 +540,8 @@
         <file>resources/text/help/p/asm_tips.rtf</file>
         <file>resources/images/error.png</file>
         <file>resources/images/sid.png</file>
+        <file>resources/text/help/r/break.rtf</file>
+        <file>resources/text/help/r/continue.rtf</file>
+        <file>resources/text/help/r/return.rtf</file>
     </qresource>
 </RCC>
