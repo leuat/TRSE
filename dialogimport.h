@@ -40,8 +40,8 @@ public:
     explicit DialogImport(QWidget *parent = 0);
     ~DialogImport();
     void Initialize(LImage::Type imageType, LColorList::Type colorType, LImage* img);
-
-
+    bool ignore = false;
+    bool ignoreText = false;
     BitmapFont m_bf;
     float m_contrast = 1;
     float m_shift = 0;
@@ -65,7 +65,8 @@ public:
 
     void Convert();
     void Blur();
-
+    void UpdateSliders();
+    void UpdateText();
 
     bool m_ok = false;
 
@@ -129,6 +130,22 @@ private slots:
     void on_leOutCharHeight_textChanged(const QString &arg1);
 
     void on_leAllowance_textChanged(const QString &arg1);
+
+    void on_leDither_textChanged(const QString &arg1);
+
+    void on_leGamma_textChanged(const QString &arg1);
+
+    void on_leShift_textChanged(const QString &arg1);
+
+    void on_leHsv_textChanged(const QString &arg1);
+
+    void on_leSat_textChanged(const QString &arg1);
+
+    void on_leBlur_textChanged(const QString &arg1);
+
+    void on_leScaleX_textChanged(const QString &arg1);
+
+    void on_leScaleY_textChanged(const QString &arg1);
 
 private:
     Ui::DialogImport *ui;

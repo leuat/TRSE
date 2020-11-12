@@ -35,7 +35,7 @@ begin
 		
 		// Stops after 2 rows, breaks out of the loop
 			if (i>=screen_width*2) then 
-			break;
+				break;
 		
 		// Print char
 		

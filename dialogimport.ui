@@ -100,29 +100,39 @@
    <property name="title">
     <string>Parameters</string>
    </property>
-   <layout class="QGridLayout" name="gridLayout_4">
-    <item row="7" column="1">
-     <widget class="QSlider" name="hsDither">
-      <property name="maximum">
-       <number>99</number>
-      </property>
+   <layout class="QGridLayout" name="gridLayout_4" columnstretch="8,8,8,8,1">
+    <item row="4" column="1" colspan="3">
+     <widget class="QSlider" name="hsBlur">
       <property name="value">
-       <number>20</number>
+       <number>0</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label_2">
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_4">
       <property name="text">
-       <string>Shift</string>
+       <string>Saturation</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="1" colspan="3">
-     <widget class="QSlider" name="hsSat">
+    <item row="1" column="1" colspan="3">
+     <widget class="QSlider" name="hsShift">
+      <property name="value">
+       <number>50</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1" colspan="3">
+     <widget class="QSlider" name="hsScaleY">
+      <property name="maximum">
+       <number>99</number>
+      </property>
       <property name="value">
        <number>50</number>
       </property>
@@ -144,13 +154,10 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="1" colspan="3">
-     <widget class="QSlider" name="hsShift">
-      <property name="value">
-       <number>50</number>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_5">
+      <property name="text">
+       <string>Blur</string>
       </property>
      </widget>
     </item>
@@ -161,10 +168,10 @@
       </property>
      </widget>
     </item>
-    <item row="5" column="0">
-     <widget class="QLabel" name="label_6">
+    <item row="13" column="0">
+     <widget class="QLabel" name="label_15">
       <property name="text">
-       <string>Scale X</string>
+       <string>Dither matrix:</string>
       </property>
      </widget>
     </item>
@@ -175,50 +182,23 @@
       </property>
      </widget>
     </item>
-    <item row="6" column="1" colspan="3">
-     <widget class="QSlider" name="hsScaleY">
+    <item row="3" column="1" colspan="3">
+     <widget class="QSlider" name="hsSat">
+      <property name="value">
+       <number>50</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QSlider" name="hsDither">
       <property name="maximum">
        <number>99</number>
       </property>
       <property name="value">
-       <number>50</number>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="label_4">
-      <property name="text">
-       <string>Saturation</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="0">
-     <widget class="QCheckBox" name="chkDither">
-      <property name="text">
-       <string>Dither</string>
-      </property>
-      <property name="checked">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1" colspan="3">
-     <widget class="QSlider" name="hsBlur">
-      <property name="value">
-       <number>0</number>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1" colspan="3">
-     <widget class="QSlider" name="hsHsv">
-      <property name="value">
-       <number>50</number>
+       <number>20</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -235,24 +215,10 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label_5">
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_6">
       <property name="text">
-       <string>Blur</string>
-      </property>
-     </widget>
-    </item>
-    <item row="13" column="0">
-     <widget class="QLabel" name="label_15">
-      <property name="text">
-       <string>Dither matrix:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Gamma</string>
+       <string>Scale X</string>
       </property>
      </widget>
     </item>
@@ -307,6 +273,64 @@
        </widget>
       </item>
      </layout>
+    </item>
+    <item row="2" column="1" colspan="3">
+     <widget class="QSlider" name="hsHsv">
+      <property name="value">
+       <number>50</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Shift</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Gamma</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QCheckBox" name="chkDither">
+      <property name="text">
+       <string>Dither</string>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="4">
+     <widget class="QLineEdit" name="leGamma"/>
+    </item>
+    <item row="1" column="4">
+     <widget class="QLineEdit" name="leShift"/>
+    </item>
+    <item row="2" column="4">
+     <widget class="QLineEdit" name="leHsv"/>
+    </item>
+    <item row="3" column="4">
+     <widget class="QLineEdit" name="leSat"/>
+    </item>
+    <item row="4" column="4">
+     <widget class="QLineEdit" name="leBlur"/>
+    </item>
+    <item row="5" column="4">
+     <widget class="QLineEdit" name="leScaleX"/>
+    </item>
+    <item row="6" column="4">
+     <widget class="QLineEdit" name="leScaleY"/>
+    </item>
+    <item row="7" column="4">
+     <widget class="QLineEdit" name="leDither"/>
     </item>
    </layout>
   </widget>

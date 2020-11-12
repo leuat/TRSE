@@ -35,7 +35,7 @@ DialogImport::DialogImport(QWidget *parent) :
     ui->cmbFonts->setCurrentText("Courier 10 Pitch");
     ui->cmbDitherY->setCurrentIndex(1);
     ui->cmbDitherX->setCurrentIndex(0);
-
+    UpdateText();
 }
 
 DialogImport::~DialogImport()
@@ -182,6 +182,8 @@ void DialogImport::Convert()
     LImage* org = nullptr;
     LColorList orgCols;
     bool useCells = dynamic_cast<MultiColorImage*>(m_image)!=nullptr && dynamic_cast<LImageContainer*>(m_image)==nullptr;
+    if (dynamic_cast<CharsetImage*>(m_image)!=nullptr)
+        useCells = false;
     if (useCells) {
         // OK. we need to do some tricks. Convert to FAKE c64 image first:
         inter = new LImageQImage(m_image->m_colorList.m_type);
@@ -262,8 +264,72 @@ void DialogImport::Blur()
 
 }
 
+void DialogImport::UpdateSliders()
+{
+    if (ignoreText)
+        return;
+    ignore = true;
+    ui->hsContrast->setValue(ui->leGamma->text().toFloat());
+    on_hsContrast_sliderMoved(ui->leGamma->text().toInt());
+    ui->hsShift->setValue(ui->leShift->text().toFloat());
+    on_hsShift_sliderMoved(ui->leShift->text().toInt());
+    ui->hsHsv->setValue(ui->leHsv->text().toFloat());
+    on_hsHsv_sliderMoved(ui->leHsv->text().toInt());
+    ui->hsSat->setValue(ui->leSat->text().toFloat());
+    on_hsSat_sliderMoved(ui->leSat->text().toInt());
+    ui->hsBlur->setValue(ui->leBlur->text().toFloat());
+    on_hsBlur_sliderMoved(ui->leBlur->text().toInt());
+    ui->hsScaleX->setValue(ui->leScaleX->text().toFloat());
+    on_hsScaleX_sliderMoved(ui->leScaleX->text().toInt());
+    ui->hsScaleY->setValue(ui->leScaleY->text().toFloat());
+    on_hsScaleY_sliderMoved(ui->leScaleY->text().toInt());
+    ui->hsDither->setValue(ui->leDither->text().toFloat());
+    on_hsDither_sliderMoved(ui->leDither->text().toInt());
+    ignore = false;
+
+    UpdateOutput();
+
+
+}
+
+void DialogImport::UpdateText()
+{
+    if (ignore)
+        return;
+    ignoreText = true;
+    if (ui->leGamma->text().toInt()!=ui->hsContrast->value()) {
+//        qDebug()<<"GAMMA "<<ui->hsContrast->value();
+        ui->leGamma->setText(QString::number(ui->hsContrast->value()));
+    }
+    if (ui->leShift->text().toInt()!=ui->hsShift->value())
+      ui->leShift->setText(QString::number(ui->hsShift->value()));
+    if (ui->leHsv->text().toInt()!=ui->hsHsv->value())
+      ui->leHsv->setText(QString::number(ui->hsHsv->value()));
+    if (ui->leSat->text().toInt()!=ui->hsSat->value())
+      ui->leSat->setText(QString::number(ui->hsSat->value()));
+    if (ui->leBlur->text().toInt()!=ui->hsBlur->value())
+      ui->leBlur->setText(QString::number(ui->hsBlur->value()));
+    if (ui->leScaleX->text().toInt()!=ui->hsScaleX->value())
+      ui->leScaleX->setText(QString::number(ui->hsScaleX->value()));
+    if (ui->leScaleY->text().toInt()!=ui->hsScaleY->value())
+      ui->leScaleY->setText(QString::number(ui->hsScaleY->value()));
+    if (ui->leDither->text().toInt()!=ui->hsDither->value())
+      ui->leDither->setText(QString::number(ui->hsDither->value()));
+//    UpdateOutput();
+    ignoreText = false;
+    UpdateOutput();
+
+}
+
+
+
 void DialogImport::UpdateOutput()
 {
+    if (ignore)
+        return;
+    if (ignoreText)
+        return;
+
     Convert();
     QPixmap p;
 //    QPixmap p = m_pixMapImage.scaled(QSize(grid.width(),grid.height()),  Qt::IgnoreAspectRatio, Qt::FastTransformation);
@@ -333,38 +399,43 @@ void DialogImport::slotOk()
 
 void DialogImport::on_hsContrast_sliderMoved(int position)
 {
+    UpdateText();
     m_contrast = (float)position/100.0*4;;
-    UpdateOutput();
+//    UpdateOutput();
 
 }
 
 void DialogImport::on_hsShift_sliderMoved(int position)
 {
+    UpdateText();
     m_shift = ((float)position/100.0 - 0.5) * 255;;
-    UpdateOutput();
+  //  UpdateOutput();
 
 }
 
 
 void DialogImport::on_hsHsv_sliderMoved(int position)
 {
+    UpdateText();
     m_hsv = ((float)position/100.0) * 1;;
-    UpdateOutput();
+   // UpdateOutput();
 
 }
 
 void DialogImport::on_hsSat_sliderMoved(int position)
 {
+    UpdateText();
     m_saturation = ((float)position/100.0) * 1;
-    UpdateOutput();
+//    UpdateOutput();
 
 }
 
 void DialogImport::on_hsBlur_sliderMoved(int position)
 {
+    UpdateText();
     m_blur = ((float)position/100.0) ;
     Blur();
-    UpdateOutput();
+  //  UpdateOutput();
 
 }
 
@@ -417,26 +488,29 @@ void DialogImport::on_btnImport_2_clicked()
 
 void DialogImport::on_hsDither_sliderMoved(int position)
 {
+    UpdateText();
     Blur();
-    UpdateOutput();
+//    UpdateOutput();
 
 }
 
 void DialogImport::on_hsScaleX_sliderMoved(int position)
 {
-    UpdateOutput();
+    UpdateText();
+  //  UpdateOutput();
 
 }
 
 void DialogImport::on_hsScaleY_sliderMoved(int position)
 {
-    UpdateOutput();
+    UpdateText();
+   // UpdateOutput();
 
 }
 
 void DialogImport::on_cmbDither_currentIndexChanged(int index)
 {
-    UpdateOutput();
+    //UpdateOutput();
 
 }
 
@@ -486,5 +560,60 @@ void DialogImport::on_leOutCharHeight_textChanged(const QString &arg1)
 void DialogImport::on_leAllowance_textChanged(const QString &arg1)
 {
     UpdateOutput();
+
+}
+
+void DialogImport::on_leDither_textChanged(const QString &arg1)
+{
+    UpdateSliders();
+//    UpdateOutput();
+}
+
+void DialogImport::on_leGamma_textChanged(const QString &arg1)
+{
+    UpdateSliders();
+//    UpdateOutput();
+
+}
+
+void DialogImport::on_leShift_textChanged(const QString &arg1)
+{
+    UpdateSliders();
+ //   UpdateOutput();
+
+}
+
+void DialogImport::on_leHsv_textChanged(const QString &arg1)
+{
+    UpdateSliders();
+ //   UpdateOutput();
+
+}
+
+void DialogImport::on_leSat_textChanged(const QString &arg1)
+{
+    UpdateSliders();
+  //  UpdateOutput();
+
+}
+
+void DialogImport::on_leBlur_textChanged(const QString &arg1)
+{
+    UpdateSliders();
+//    UpdateOutput();
+
+}
+
+void DialogImport::on_leScaleX_textChanged(const QString &arg1)
+{
+    UpdateSliders();
+  //  UpdateOutput();
+
+}
+
+void DialogImport::on_leScaleY_textChanged(const QString &arg1)
+{
+    UpdateSliders();
+    //UpdateOutput();
 
 }
