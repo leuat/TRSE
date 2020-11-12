@@ -27,7 +27,6 @@ var
 	const screenLoc:address= $4400;	
 	
 	const maxFrames : byte=8;
-	//text : string=("         OFFENCE     JEG HAR TISS    HAR DU TISS KANSKJE     ",0,"         ");
 
 @startblock $8000 "Unrolled copy"
 

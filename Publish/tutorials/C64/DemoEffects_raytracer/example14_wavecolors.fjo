@@ -202,7 +202,8 @@ function Update()
 		if (frame == noFrames) then			
 			Message("DONE");
 		    -- width, height, number of chars (64), compression level (0.15, produces <64 chars), compression type SSIM (1) not SSIM
-			OptimizeScreenAndCharset(40,8,  64, 0.15, 1);
+--			OptimizeScreenAndCharset(40,8,  64, 0.15, 1);
+			OptimizeScreenAndCharset(40,8,  64, 3, 0);
 			SaveScreenAndCharset("data/wavecolors_screen.bin", "data/wavecolors_charset.bin");
 			hasSaved = 1
 		end

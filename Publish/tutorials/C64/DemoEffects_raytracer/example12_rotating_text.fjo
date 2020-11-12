@@ -106,7 +106,7 @@ function Update()
 			Message("Files 0 written")
 		end
 		if char == charFrames then 
-			globals.isPaused = 1
+		--	globals.isPaused = 1
 			SaveRawData("data/textsprites1.bin");
 			Message("Files 1 written")
 			Message("You can close the renderer now.")

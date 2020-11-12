@@ -118,7 +118,7 @@ function Update()
 		char=char+1
 		frame = 0
 		if char == 27 then 
-			globals.isPaused = 1
+			--globals.isPaused = 1
 			CompressAndSaveHorizontalData(16,1, "data/example10_screen.bin","data/example10_table.bin");
 
 			Message("Files written to disk. This window can now be closed")

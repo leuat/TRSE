@@ -22,7 +22,6 @@ begin
 	// One sprite is 64 bytes, and since we have 4 sprits per frame, 256 bytes. 
 	// This means that we can basically just add the current frame counter to the high
 	// bit of the sprite pointer!
-	asm(";halla");
 	zp:=toPointer(hi(dataLoc)+curFrame,0);
 	// Copy 256 bytes (4 sprites) worth of data
 	//memcpy(atp2,0,atp3,0);

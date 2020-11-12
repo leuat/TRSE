@@ -42,4 +42,6 @@ override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
 zeropage_colormemory = $fc
-open_files =, tutorial1.ras
+open_files = ,tutorial1.ras
+project_path = tutorials/ATARI2600/tutorials/
+current_file = tutorial4.ras

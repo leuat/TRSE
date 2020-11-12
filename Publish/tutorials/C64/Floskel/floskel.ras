@@ -10,9 +10,11 @@ var
 	(and the "dot" in the "proxima" logo) are both rendered with the Fjong raytracer. 
 	
 
+	Turn OFF post-optimization!
+	
 
 */
-
+@setvalue "post_optimize" 0
 
 	// Music by Response/Darklite. $E000.
  	music: incsid("music/oops.sid",2);

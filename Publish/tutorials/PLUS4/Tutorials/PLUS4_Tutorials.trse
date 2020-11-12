@@ -39,4 +39,6 @@ exomize_toggle = 0
 remove_unused_symbols = 1
 ignore_initial_jump = 0
 zeropage_colormemory = $fc
-open_files =, Hello.ras
+open_files = -1
+project_path = tutorials/PLUS4/Tutorials/
+current_file = Hello.ras

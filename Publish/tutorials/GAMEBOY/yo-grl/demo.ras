@@ -274,7 +274,7 @@ credits1 : string = ("      When yo grl got to the end of the demo       she too
 
 
 /* GRL STATES */
-
+/*
 	grl_state_effect2 : array[] of byte = ( 
 //	  STATE_IDLE, 24,
 	  STATE_MOVETO, 20,100,
@@ -327,7 +327,7 @@ credits1 : string = ("      When yo grl got to the end of the demo       she too
 	  STATE_IDLE, 32,
 	  ) bank(1);
 
-
+*/
 	// #no text, # person, # y , char y,    timer, x, TEXT, 0    timer X TEXT  repeat 
 	msg_torus : string=(
 		3, 0, 20,     

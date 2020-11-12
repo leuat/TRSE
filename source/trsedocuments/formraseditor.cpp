@@ -619,7 +619,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
 //    if (ui->txtEditor->m_textChanged)
 
 //   if ((e->modifiers() & Qt::ControlModifier) && (e->modifiers() & Qt::ShiftModifier) && e->key()==Qt::Key_C)
-   if ((e->modifiers() & Qt::ControlModifier) && e->key()==Qt::Key_Y)
+   if ((e->modifiers() & Qt::ControlModifier) && e->key()==Qt::Key_E)
         ToggleComment();
 
 

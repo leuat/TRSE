@@ -43,4 +43,6 @@ var_zeropages = ,
 dosbox_x86_system = default
 cpu_x86_system = 8086
 override_target_settings_basic = 6.95279e-310
-open_files =, kos.ras
+open_files = -1
+project_path = tutorials/OK64/KOS/
+current_file = kos.ras

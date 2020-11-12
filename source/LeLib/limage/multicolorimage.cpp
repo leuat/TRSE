@@ -924,7 +924,7 @@ void MultiColorImage::ExportCompressed(QString f1, QString f2, QString f3)
     CompressAndSave(charData, i_screenData,
                     m_exportParams["StartX"],m_exportParams["EndX"],
                     m_exportParams["StartY"],m_exportParams["EndY"],
-                    noChars,    (double)m_exportParams["Compression"]/100.0,255 );
+                    noChars,    (double)m_exportParams["Compression"]/100.0,255,1);
 //    qDebug() << "No chars :" << noChars;
     screenData = Util::toQByteArray(i_screenData);
     FixUp(charData);
@@ -1379,7 +1379,7 @@ void MultiColorImage::RenderEffect(QMap<QString, float> params)
 
 }
 
-void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen, int x0,int x1, int y0, int y1, int& noChars, double compression, int maxChars) {
+void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen, int x0,int x1, int y0, int y1, int& noChars, double compression, int maxChars, int type) {
     CharsetImage* ni = new CharsetImage(m_colorList.m_type);
 
     QVector<PixelChar> chars;
@@ -1418,7 +1418,9 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen
 //                if (found)
   //                  break;
               //  double metric = pc.CompareLength3(p);
-                double metric = (pc.CompareLengthSSIM(p));
+                double metric = 0;
+                if (type==1) metric = (pc.CompareLengthSSIM(p));
+                if (type==0) metric = pc.CompareLength3(p);
             //    if (rand()%100>98) qDebug() << metric;
 //                int metric = pc.Compare(p);
                 if (metric <=compression && metric<cur ) {

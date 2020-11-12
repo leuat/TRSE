@@ -2090,10 +2090,14 @@ void Parser::PreprocessSingle() {
                       isString = false;
                       ival = m_currentToken.m_intVal;
                   }
+                  QSharedPointer<CIniFile> f = m_projectIni;
+
+                  if (m_settingsIni->contains(key))
+                      f = m_settingsIni;
                   if (isString)
-                      m_projectIni->setString(key,val);
+                      f->setString(key,val);
                   else
-                      m_projectIni->setFloat(key,ival);
+                      f->setFloat(key,ival);
 
 //                  if (m_pass == PASS_PRE)
   //                    qDebug() << "Defined: " << key << val;

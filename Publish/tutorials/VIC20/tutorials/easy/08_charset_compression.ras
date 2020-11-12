@@ -17,7 +17,7 @@ var
 */
 
 // Exports data + color data. Experiment with your own image and compression level (here, 1)
-	@exportcompressed "resources/images/full_charset.flf" "resources/images/full.bin" 0 0 22 23 1
+	@exportcompressed "resources/images/full_charset.flf" "resources/images/full.bin" 0 0 22 23 2
 	
 	const charsetLoc:address = $1400;
 	const screenLoc:address = $1000;

@@ -33,4 +33,6 @@ ignore_initial_jump = 0
 output_type = prg
 exomizer_toggle = 0
 zeropage_colormemory = $fc
-open_files =, floskel.ras
+open_files = -1
+project_path = tutorials/C64/Floskel/
+current_file = floskel.ras

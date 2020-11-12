@@ -748,7 +748,12 @@ static int CompressCharset(lua_State* L) {
     if (mc==nullptr)
         return 0;
 
-    mc->CompressAndSave(m_charData, m_screenData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3),lua_tonumber(L,4),noChars,lua_tonumber(L,5),  lua_tonumber(L,6));
+    int type =0;
+    int args = lua_gettop(L);
+    if (args>=7)
+        type = lua_tonumber(L,7);
+
+    mc->CompressAndSave(m_charData, m_screenData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3),lua_tonumber(L,4),noChars,lua_tonumber(L,5),  lua_tonumber(L,6), type);
     m_infoText+="Compressed chars: " + QString::number(noChars) + "\n";
     return 0;
 }

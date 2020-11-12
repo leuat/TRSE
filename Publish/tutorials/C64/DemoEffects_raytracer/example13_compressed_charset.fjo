@@ -24,7 +24,7 @@ output = {
 	c64_multicolor = 1,
 	c64_imageType = 0, -- charset type image
 	dither = 2,
-	ditherStrength = { x = 20, y= 1, z= 1},
+	ditherStrength = { x = 15, y= 1, z= 1},
 	-- Four indexed colors
 	index_colors = { 0,6,3,4 }
 
@@ -89,8 +89,8 @@ function Update()
 	
 
 	if (frame>=1 and frame<=noFrames) then
-		-- add every charset to the internal screen/charset 
-		CompressCharset(0,40,0,25,  0.14, 256)
+		-- add every charset to the internal screen/charset
+		CompressCharset(0,40,0,25,  2, 256)
 	end
 	-- saving time!
 	if (frame==noFrames/4 or frame==(noFrames/4)*2 or frame==(noFrames/4)*3 or frame==noFrames) then 

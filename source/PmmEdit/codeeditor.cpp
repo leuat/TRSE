@@ -329,6 +329,12 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
         QTextCursor cursor = textCursor();
         QString txt = cursor.selectedText();
         txt = txt.replace("\u2029","\n");
+        // Damn hack.. above won't work on windows
+        for (int i=0;i<txt.count();i++) {
+            if (txt.at(i).unicode()==8233)
+                txt[i] ='\n';
+        }
+
         QStringList lst = txt.split('\n');
 
         QString str="";
