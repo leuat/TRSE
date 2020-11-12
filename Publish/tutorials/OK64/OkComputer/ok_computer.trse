@@ -47,5 +47,4 @@ data_header_images/ok1.flf = 6.95335e-310
 remove_unused_symbols = 1
 ignore_initial_jump = 0
 zeropage_colormemory = $fc
-open_files = ,main.ras
-project_path = tutorials/OK64/OkComputer/
+open_files =, main.ras
