@@ -124,6 +124,12 @@ void Assembler::StartMemoryBlock(QString pos) {
         {
             m_currentBlock = app;
             m_blockStack.append(m_currentBlock);
+//            qDebug() << "LAST : " <<m_source.l
+            if (m_currentBlock->m_source.last().toLower().startsWith("endblock"))
+                m_currentBlock->m_source.removeLast();
+            m_currentBlock->m_extraOutput = false;
+
+
             Comment("Resuming memory block at "+pos);
             m_currentBlock->m_id++;
             m_currentBlock->s_id++;
