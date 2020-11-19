@@ -159,7 +159,7 @@ void DialogImport::Convert()
                                     m_work.m_qImage->height(),
                                     m_image->m_colorList,
                                     m_contrast, m_shift, m_hsv, m_saturation, m_scale, useDither);
-//    qDebug() << m_image->m_width << m_output.m_qImage->width();
+//    qDebug() << m_image->m_width << m_output.m_qImage->width() << m_work.m_qImage->width();
     //exit(1);
 //    m_image->Clear();
     m_image->m_importScaleX = 1+ (ui->hsScaleX->value()/100.0 - 0.5)*4;
@@ -186,6 +186,11 @@ void DialogImport::Convert()
         useCells = false;
     if (dynamic_cast<LImageVIC20*>(m_image)!=nullptr)
         useCells = false;
+    if (dynamic_cast<LImageSprites2*>(m_image)!=nullptr)
+        useCells = false;
+
+//    useCells = false;
+
     if (useCells) {
         // OK. we need to do some tricks. Convert to FAKE c64 image first:
         inter = new LImageQImage(m_image->m_colorList.m_type);

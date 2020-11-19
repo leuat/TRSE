@@ -44,8 +44,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("EnableAllRam")) {
             as->Comment("Enable all ram visible");
             as->Asm("lda $01");
-            as->Asm("and #%00");
-            as->Asm("ora #%100");
+            as->Asm("and #%11111100");
+  //          as->Asm("and #%00");
+//            as->Asm("ora #%100");
             as->Asm("sta $01");
 
     }

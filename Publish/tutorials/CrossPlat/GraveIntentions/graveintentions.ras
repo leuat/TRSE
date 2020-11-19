@@ -225,7 +225,7 @@ begin
 	end;*/
 	if (specialRoom=255) then
 	begin
-		decrunchfromindex(resources,decrunchIndex);
+		decrunchfromindex(#resources,decrunchIndex);
 		ReadAnimationHeader();
 	end;
 	@ifdef C64

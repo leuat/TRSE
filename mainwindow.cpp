@@ -253,7 +253,8 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         m_currentDoc->keyPressEvent(e);
     }
     if (e->key()==Qt::Key_F2) {
-        m_currentDoc->Focus();
+        if (m_currentDoc != nullptr)
+            m_currentDoc->Focus();
     }
 
 }
